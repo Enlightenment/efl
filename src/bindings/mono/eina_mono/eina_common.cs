@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 
 namespace Eina
 {
+
 namespace Callbacks
 {
 
@@ -41,7 +42,8 @@ internal static class NativeCustomExportFunctions
 }
 
 /// <summary>Wrapper around native memory DllImport'd functions</summary>
-public static class MemoryNative {
+public static class MemoryNative
+{
     public static void Free(IntPtr ptr)
     {
         NativeCustomExportFunctions.efl_mono_native_free(ptr);
@@ -122,7 +124,9 @@ public static class StringConversion
     public static IntPtr ManagedStringToNativeUtf8Alloc(string managedString)
     {
         if (managedString == null)
+        {
             return IntPtr.Zero;
+        }
 
         byte[] strbuf = Encoding.UTF8.GetBytes(managedString);
         IntPtr native = MemoryNative.Alloc(strbuf.Length + 1);
@@ -134,11 +138,15 @@ public static class StringConversion
     public static string NativeUtf8ToManagedString(IntPtr pNativeData)
     {
         if (pNativeData == IntPtr.Zero)
+        {
             return null;
+        }
 
         int len = 0;
         while (Marshal.ReadByte(pNativeData, len) != 0)
+        {
             ++len;
+        }
 
         byte[] strbuf = new byte[len];
         Marshal.Copy(pNativeData, strbuf, 0, strbuf.Length);
@@ -147,7 +155,8 @@ public static class StringConversion
 }
 
 /// <summary>Enum to handle resource ownership between managed and unmanaged code.</summary>
-public enum Ownership {
+public enum Ownership
+{
     /// <summary> The resource is owned by the managed code. It should free the handle on disposal.</summary>
     Managed,
     /// <summary> The resource is owned by the unmanaged code. It won't be freed on disposal.</summary>

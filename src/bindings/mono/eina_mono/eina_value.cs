@@ -14,9 +14,11 @@ using static Eina.EinaNative.UnsafeNativeMethods;
 using static Eina.TraitFunctions;
 
 
-namespace Eina {
+namespace Eina
+{
 
-namespace EinaNative {
+namespace EinaNative
+{
 
 // Structs to be passed from/to C when dealing with containers and
 // optional values.
@@ -36,8 +38,8 @@ struct Value_List
 }
 
 [SuppressUnmanagedCodeSecurityAttribute]
-static internal class UnsafeNativeMethods {
-
+static internal class UnsafeNativeMethods
+{
     [DllImport(efl.Libs.Eina)]
     internal static extern IntPtr eina_value_new(IntPtr type);
 
@@ -526,13 +528,24 @@ public struct ValueNative
 public class SetItemFailedException : Exception
 {
     /// <summary> Default constructor.</summary>
-    public SetItemFailedException() : base () { }
+    public SetItemFailedException() : base()
+    {
+    }
+
     /// <summary> Most commonly used contructor.</summary>
-    public SetItemFailedException(string msg) : base(msg) { }
+    public SetItemFailedException(string msg) : base(msg)
+    {
+    }
+
     /// <summary> Wraps an inner exception.</summary>
-    public SetItemFailedException(string msg, Exception inner) : base(msg, inner) { }
+    public SetItemFailedException(string msg, Exception inner) : base(msg, inner)
+    {
+    }
+
     /// <summary> Serializable constructor.</summary>
-    protected SetItemFailedException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+    protected SetItemFailedException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+    }
 }
 
 /// <summary>Exception for methods that must have been called on a container.</summary>
@@ -540,18 +553,30 @@ public class SetItemFailedException : Exception
 public class InvalidValueTypeException: Exception
 {
     /// <summary> Default constructor.</summary>
-    public InvalidValueTypeException() : base () { }
+    public InvalidValueTypeException() : base()
+    {
+    }
+
     /// <summary> Most commonly used contructor.</summary>
-    public InvalidValueTypeException(string msg) : base(msg) { }
+    public InvalidValueTypeException(string msg) : base(msg)
+    {
+    }
+
     /// <summary> Wraps an inner exception.</summary>
-    public InvalidValueTypeException(string msg, Exception inner) : base(msg, inner) { }
+    public InvalidValueTypeException(string msg, Exception inner) : base(msg, inner)
+    {
+    }
+
     /// <summary> Serializable constructor.</summary>
-    protected InvalidValueTypeException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+    protected InvalidValueTypeException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+    }
 }
 
 
 /// <summary>Managed-side Enum to represent Eina_Value_Type constants</summary>
-public enum ValueType {
+public enum ValueType
+{
     /// <summary>Signed 8 bit integer. Same as 'sbyte'</summary>
     SByte,
     /// <summary>Unsigned 8 bit integer. Same as 'byte'</summary>
@@ -592,10 +617,12 @@ public enum ValueType {
     Empty,
 }
 
-static class ValueTypeMethods {
+static class ValueTypeMethods
+{
     public static bool IsNumeric(this ValueType val)
     {
-        switch (val) {
+        switch (val)
+        {
             case ValueType.SByte:
             case ValueType.Byte:
             case ValueType.Short:
@@ -616,7 +643,8 @@ static class ValueTypeMethods {
 
     public static bool IsString(this ValueType val)
     {
-        switch(val) {
+        switch (val)
+        {
             case ValueType.String:
                 return true;
             default:
@@ -626,7 +654,8 @@ static class ValueTypeMethods {
 
     public static bool IsContainer(this ValueType val)
     {
-        switch(val) {
+        switch (val)
+        {
             case ValueType.Array:
             case ValueType.List:
             case ValueType.Hash:
@@ -649,7 +678,8 @@ static class ValueTypeMethods {
     /// <summary>Returns the Marshal.SizeOf for the given ValueType native structure.</summary>
     public static int MarshalSizeOf(this ValueType val)
     {
-        switch (val) {
+        switch (val)
+        {
             case ValueType.Array:
                 return Marshal.SizeOf(typeof(EinaNative.Value_Array));
             case ValueType.List:
@@ -659,6 +689,7 @@ static class ValueTypeMethods {
         }
     }
 }
+
 static class ValueTypeBridge
 {
     private static Dictionary<ValueType, IntPtr> ManagedToNative = new Dictionary<ValueType, IntPtr>();
@@ -668,7 +699,9 @@ static class ValueTypeBridge
     public static ValueType GetManaged(IntPtr native)
     {
         if (!TypesLoaded)
+        {
             LoadTypes();
+        }
 
         return NativeToManaged[native];
     }
@@ -676,7 +709,9 @@ static class ValueTypeBridge
     public static IntPtr GetNative(ValueType valueType)
     {
         if (!TypesLoaded)
+        {
             LoadTypes();
+        }
 
         return ManagedToNative[valueType];
     }
@@ -779,14 +814,20 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
 
     internal IntPtr Handle { get; set;}
+
     /// <summary> Whether this wrapper owns (can free) the native value. </summary>
     public Ownership Ownership { get; protected set;}
+
     private bool Disposed;
+
     /// <summary> Whether this is an Optional value (meaning it can have a value or not). </summary>
-    public bool Optional {
-        get {
+    public bool Optional
+    {
+        get
+        {
             return GetValueType() == Eina.ValueType.Optional;
         }
+
         /* protected set {
             // Should we expose this?
             // Something like {
@@ -795,23 +836,32 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             // }
          } */
     }
+
     /// <summary> Whether this wrapper is actually empty/uninitialized (zeroed). This is different from an empty optional value. </summary>
-    public bool Empty {
-        get {
+    public bool Empty
+    {
+        get
+        {
             SanityChecks();
             return GetValueType() == Eina.ValueType.Empty;
         }
     }
 
     /// <summary> Whether this optional value is empty. </summary>
-    public bool OptionalEmpty {
-        get {
+    public bool OptionalEmpty
+    {
+        get
+        {
             OptionalSanityChecks();
             bool empty;
             if (!eina_value_optional_empty_is_wrapper(this.Handle, out empty))
+            {
                 throw new System.InvalidOperationException("Couldn't get the empty information");
+            }
             else
+            {
                 return empty;
+            }
         }
     }
 
@@ -826,12 +876,14 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     }
 
     // Constructor to be used by the "FromContainerDesc" methods.
-    private Value() {
+    private Value()
+    {
         this.Handle = Alloc();
         this.Ownership = Ownership.Managed;
     }
 
-    public Value(IntPtr handle, Ownership ownership=Ownership.Managed) {
+    public Value(IntPtr handle, Ownership ownership = Ownership.Managed)
+    {
         this.Handle = handle;
         this.Ownership = ownership;
     }
@@ -840,11 +892,15 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public Value(ValueType type)
     {
         if (type.IsContainer())
+        {
             throw new ArgumentException("To use container types you must provide a subtype");
+        }
 
         this.Handle = Alloc();
         if (this.Handle == IntPtr.Zero)
+        {
             throw new OutOfMemoryException("Failed to allocate memory for Eina.Value");
+        }
 
         // Initialize to EINA_VALUE_EMPTY before performing any other operation on this value.
         MemoryNative.Memset(this.Handle, 0, eina_value_sizeof());
@@ -854,10 +910,12 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     }
 
     /// <summary>Constructor for container values, like Array, Hash.</summary>
-    public Value(ValueType containerType, ValueType subtype, uint step=0)
+    public Value(ValueType containerType, ValueType subtype, uint step = 0)
     {
         if (!containerType.IsContainer())
+        {
             throw new ArgumentException("First type must be a container type.");
+        }
 
         this.Handle = Alloc();
         this.Ownership = Ownership.Managed;
@@ -870,7 +928,9 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         Handle = Alloc();
         if (!eina_value_copy(v.Handle, this.Handle))
+        {
             throw new System.InvalidOperationException("Failed to copy value to managed memory.");
+        }
 
         Disposed = false;
         Ownership = Ownership.Managed;
@@ -880,10 +940,13 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public Value(ValueNative value)
     {
         IntPtr tmp = IntPtr.Zero;
-        try {
+        try
+        {
             this.Handle = Alloc();
             if (value.Type == IntPtr.Zero) // Got an EINA_VALUE_EMPTY by value.
+            {
                 MemoryNative.Memset(this.Handle, 0, Marshal.SizeOf(typeof(ValueNative)));
+            }
             else
             {
                 // We allocate this intermediate ValueNative using malloc to allow freeing with
@@ -895,14 +958,22 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
                 // Copy is used to deep copy the pointed payload (e.g. strings) inside this struct, so we can own this value.
                 if (!eina_value_copy(tmp, this.Handle))
+                {
                     throw new System.InvalidOperationException("Failed to copy value to managed memory.");
+                }
             }
-        } catch {
+        }
+        catch
+        {
             Free(this.Handle);
             throw;
-        } finally {
+        }
+        finally
+        {
             if (tmp != IntPtr.Zero)
+            {
                 MemoryNative.Free(tmp);
+            }
         }
 
         this.Ownership = Ownership.Managed;
@@ -912,77 +983,99 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public Value(byte x) : this(ValueType.Byte)
     {
         if (!Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
     }
 
     /// <summary>Type-specific constructor, for convenience.</summary>
     public Value(sbyte x) : this(ValueType.SByte)
     {
         if (!Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
     }
 
     /// <summary>Type-specific constructor, for convenience.</summary>
     public Value(short x) : this(ValueType.Short)
     {
         if (!Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
     }
 
     /// <summary>Type-specific constructor, for convenience.</summary>
     public Value(ushort x) : this(ValueType.UShort)
     {
         if (!Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
     }
 
     /// <summary>Type-specific constructor, for convenience.</summary>
     public Value(int x) : this(ValueType.Int32)
     {
         if (!Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
     }
 
     /// <summary>Type-specific constructor, for convenience.</summary>
     public Value(uint x) : this(ValueType.UInt32)
     {
         if (!Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
     }
 
     /// <summary>Type-specific constructor, for convenience.</summary>
     public Value(long x) : this(ValueType.Long)
     {
         if (!Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
     }
 
     /// <summary>Type-specific constructor, for convenience.</summary>
     public Value(ulong x) : this(ValueType.ULong)
     {
         if (!Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
     }
 
     /// <summary>Type-specific constructor, for convenience.</summary>
     public Value(float x) : this(ValueType.Float)
     {
         if (!Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
     }
 
     /// <summary>Type-specific constructor, for convenience.</summary>
     public Value(double x) : this(ValueType.Double)
     {
         if (!Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
     }
 
     /// <summary>Type-specific constructor, for convenience.</summary>
     public Value(string x) : this(ValueType.String)
     {
         if (!Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
     }
 
     /// <summary>Implicit conversion from managed value to native struct representation.</summary>
@@ -1002,7 +1095,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         var v = new Eina.Value(ValueType.Byte);
         if (!v.Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
+
         return v;
     }
 
@@ -1011,7 +1107,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         byte b;
         if (!v.Get(out b))
+        {
             throw new InvalidOperationException("Couldn't get value.");
+        }
+
         return b;
     }
 
@@ -1020,7 +1119,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         var v = new Eina.Value(ValueType.SByte);
         if (!v.Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
+
         return v;
     }
 
@@ -1029,7 +1131,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         sbyte b;
         if (!v.Get(out b))
+        {
             throw new InvalidOperationException("Couldn't get value.");
+        }
+
         return b;
     }
 
@@ -1038,7 +1143,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         var v = new Eina.Value(ValueType.Short);
         if (!v.Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
+
         return v;
     }
 
@@ -1047,7 +1155,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         short b;
         if (!v.Get(out b))
+        {
             throw new InvalidOperationException("Couldn't get value.");
+        }
+
         return b;
     }
 
@@ -1056,7 +1167,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         var v = new Eina.Value(ValueType.UShort);
         if (!v.Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
+
         return v;
     }
 
@@ -1065,7 +1179,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         ushort b;
         if (!v.Get(out b))
+        {
             throw new InvalidOperationException("Couldn't get value.");
+        }
+
         return b;
     }
 
@@ -1074,7 +1191,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         var v = new Eina.Value(ValueType.Int32);
         if (!v.Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
+
         return v;
     }
 
@@ -1083,7 +1203,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         int b;
         if (!v.Get(out b))
+        {
             throw new InvalidOperationException("Couldn't get value.");
+        }
+
         return b;
     }
 
@@ -1092,7 +1215,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         var v = new Eina.Value(ValueType.UInt32);
         if (!v.Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
+
         return v;
     }
 
@@ -1101,7 +1227,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         uint b;
         if (!v.Get(out b))
+        {
             throw new InvalidOperationException("Couldn't get value.");
+        }
+
         return b;
     }
 
@@ -1110,7 +1239,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         var v = new Eina.Value(ValueType.Long);
         if (!v.Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
+
         return v;
     }
 
@@ -1119,7 +1251,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         long b;
         if (!v.Get(out b))
+        {
             throw new InvalidOperationException("Couldn't get value.");
+        }
+
         return b;
     }
 
@@ -1128,7 +1263,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         var v = new Eina.Value(ValueType.ULong);
         if (!v.Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
+
         return v;
     }
 
@@ -1137,7 +1275,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         ulong b;
         if (!v.Get(out b))
+        {
             throw new InvalidOperationException("Couldn't get value.");
+        }
+
         return b;
     }
 
@@ -1146,7 +1287,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         var v = new Eina.Value(ValueType.Float);
         if (!v.Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
+
         return v;
     }
 
@@ -1155,7 +1299,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         float b;
         if (!v.Get(out b))
+        {
             throw new InvalidOperationException("Couldn't get value.");
+        }
+
         return b;
     }
 
@@ -1164,7 +1311,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         var v = new Eina.Value(ValueType.Double);
         if (!v.Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
+
         return v;
     }
 
@@ -1173,7 +1323,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         double b;
         if (!v.Get(out b))
+        {
             throw new InvalidOperationException("Couldn't get value.");
+        }
+
         return b;
     }
 
@@ -1182,7 +1335,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         var v = new Eina.Value(ValueType.String);
         if (!v.Set(x))
+        {
             throw new InvalidOperationException("Couldn't set value.");
+        }
+
         return v;
     }
 
@@ -1191,7 +1347,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         string b;
         if (!v.Get(out b))
+        {
             throw new InvalidOperationException("Couldn't get value.");
+        }
+
         return b;
     }
 
@@ -1237,15 +1396,18 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Actually free the wrapped eina value. Can be called from Dispose() or through the GC.</summary>
     protected virtual void Dispose(bool disposing)
     {
-        if (this.Ownership == Ownership.Unmanaged) {
+        if (this.Ownership == Ownership.Unmanaged)
+        {
             Disposed = true;
             return;
         }
 
-        if (!Disposed && (Handle != IntPtr.Zero)) {
+        if (!Disposed && (Handle != IntPtr.Zero))
+        {
             // No need to call flush as eina_value_free already calls it for us.
             Free(this.Handle);
         }
+
         Disposed = true;
     }
 
@@ -1256,10 +1418,15 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     }
 
     /// <summary>Returns the native handle wrapped by this object.</summary>
-    public IntPtr NativeHandle {
-        get {
+    public IntPtr NativeHandle
+    {
+        get
+        {
             if (Disposed)
+            {
                 throw new ObjectDisposedException(base.GetType().Name);
+            }
+
             return this.Handle;
         }
     }
@@ -1268,14 +1435,18 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public bool Setup(ValueType type)
     {
         if (Disposed)
+        {
             throw new ObjectDisposedException(base.GetType().Name);
+        }
 
         // Can't call setup with Empty value type (would give an eina error)
         if (type == Eina.ValueType.Empty)
         {
             // Need to cleanup as it may point to payload outside the underlying Eina_Value (like arrays and strings).
             if (!Empty)
+            {
                 eina_value_flush_wrapper(this.Handle);
+            }
 
             MemoryNative.Memset(this.Handle, 0, eina_value_sizeof());
 
@@ -1283,15 +1454,19 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
 
         if (type.IsContainer())
+        {
             throw new ArgumentException("To setup a container you must provide a subtype.");
+        }
 
         return eina_value_setup_wrapper(this.Handle, ValueTypeBridge.GetNative(type));
     }
 
-    public bool Setup(ValueType containerType, ValueType subtype, uint step=0) {
+    public bool Setup(ValueType containerType, ValueType subtype, uint step = 0)
+    {
         IntPtr native_subtype = ValueTypeBridge.GetNative(subtype);
         bool ret = false;
-        switch (containerType) {
+        switch (containerType)
+        {
             case ValueType.Array:
                 ret = eina_value_array_setup_wrapper(this.Handle, native_subtype, step);
                 break;
@@ -1306,22 +1481,29 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     private void SanityChecks()
     {
         if (Disposed)
+        {
             throw new ObjectDisposedException(GetType().Name);
+        }
     }
 
-    private void ContainerSanityChecks(int targetIndex=-1)
+    private void ContainerSanityChecks(int targetIndex = -1)
     {
         SanityChecks();
         uint size = 0;
         ValueType type = GetValueType();
 
         if (!type.IsContainer())
+        {
                 throw new InvalidValueTypeException("Value type must be a container");
+        }
 
         if (targetIndex == -1)  // Some methods (e.g. append) don't care about size
+        {
             return;
+        }
 
-        switch (type) {
+        switch (type)
+        {
             case ValueType.Array:
                 size = eina_value_array_count_wrapper(this.Handle);
                 break;
@@ -1331,8 +1513,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
 
         if (targetIndex >= size)
+        {
                 throw new System.ArgumentOutOfRangeException(
                         $"Index {targetIndex} is larger than max array index {size-1}");
+        }
     }
 
     private void OptionalSanityChecks()
@@ -1341,7 +1525,9 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         ValueType type = GetValueType();
 
         if (!type.IsOptional())
+        {
             throw new InvalidValueTypeException("Value is not an Optional one");
+        }
     }
 
     /// <summary>Get a ValueNative struct with the *value* pointed by this Eina.Value.</summary>
@@ -1356,13 +1542,18 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         SanityChecks();
 
         if (this.Optional)
+        {
             return eina_value_optional_pset(this.Handle,
                                             ValueTypeBridge.GetNative(ValueType.Byte),
                                             ref value);
+        }
 
         if (!GetValueType().IsNumeric())
+        {
             throw (new ArgumentException(
                         "Trying to set numeric value on a non-numeric Eina.Value"));
+        }
+
         return eina_value_set_wrapper_uchar(this.Handle, value);
     }
 
@@ -1371,13 +1562,18 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         SanityChecks();
 
         if (this.Optional)
+        {
             return eina_value_optional_pset(this.Handle,
                                             ValueTypeBridge.GetNative(ValueType.SByte),
                                             ref value);
+        }
 
         if (!GetValueType().IsNumeric())
+        {
             throw (new ArgumentException(
                         "Trying to set numeric value on a non-numeric Eina.Value"));
+        }
+
         return eina_value_set_wrapper_char(this.Handle, value);
     }
 
@@ -1386,13 +1582,18 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         SanityChecks();
 
         if (this.Optional)
+        {
             return eina_value_optional_pset(this.Handle,
                                             ValueTypeBridge.GetNative(ValueType.Short),
                                             ref value);
+        }
 
         if (!GetValueType().IsNumeric())
+        {
             throw (new ArgumentException(
                         "Trying to set numeric value on a non-numeric Eina.Value"));
+        }
+
         return eina_value_set_wrapper_short(this.Handle, value);
     }
 
@@ -1401,13 +1602,18 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         SanityChecks();
 
         if (this.Optional)
+        {
             return eina_value_optional_pset(this.Handle,
                                             ValueTypeBridge.GetNative(ValueType.UShort),
                                             ref value);
+        }
 
         if (!GetValueType().IsNumeric())
+        {
             throw (new ArgumentException(
                         "Trying to set numeric value on a non-numeric Eina.Value"));
+        }
+
         return eina_value_set_wrapper_ushort(this.Handle, value);
     }
 
@@ -1417,13 +1623,18 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         SanityChecks();
 
         if (this.Optional)
+        {
             return eina_value_optional_pset(this.Handle,
                                             ValueTypeBridge.GetNative(ValueType.UInt32),
                                             ref value);
+        }
 
         if (!GetValueType().IsNumeric())
+        {
             throw (new ArgumentException(
                         "Trying to set numeric value on a non-numeric Eina.Value"));
+        }
+
         return eina_value_set_wrapper_uint(this.Handle, value);
     }
 
@@ -1433,13 +1644,18 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         SanityChecks();
 
         if (this.Optional)
+        {
             return eina_value_optional_pset(this.Handle,
                                             ValueTypeBridge.GetNative(ValueType.Int32),
                                             ref value);
+        }
 
         if (!GetValueType().IsNumeric())
+        {
             throw (new ArgumentException(
                         "Trying to set numeric value on a non-numeric Eina.Value"));
+        }
+
         return eina_value_set_wrapper_int(this.Handle, value);
     }
 
@@ -1449,13 +1665,18 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         SanityChecks();
 
         if (this.Optional)
+        {
             return eina_value_optional_pset(this.Handle,
                                             ValueTypeBridge.GetNative(ValueType.ULong),
                                             ref value);
+        }
 
         if (!GetValueType().IsNumeric())
+        {
             throw (new ArgumentException(
                         "Trying to set numeric value on a non-numeric Eina.Value"));
+        }
+
         return eina_value_set_wrapper_ulong(this.Handle, value);
     }
 
@@ -1465,13 +1686,18 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         SanityChecks();
 
         if (this.Optional)
+        {
             return eina_value_optional_pset(this.Handle,
                                             ValueTypeBridge.GetNative(ValueType.Long),
                                             ref value);
+        }
 
         if (!GetValueType().IsNumeric())
+        {
             throw (new ArgumentException(
                         "Trying to set numeric value on a non-numeric Eina.Value"));
+        }
+
         return eina_value_set_wrapper_long(this.Handle, value);
     }
 
@@ -1481,13 +1707,17 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         SanityChecks();
 
         if (this.Optional)
+        {
             return eina_value_optional_pset(this.Handle,
                                             ValueTypeBridge.GetNative(ValueType.Float),
                                             ref value);
+        }
 
         if (!GetValueType().IsNumeric())
+        {
             throw (new ArgumentException(
                         "Trying to set numeric value on a non-numeric Eina.Value"));
+        }
 
         return eina_value_set_wrapper_float(this.Handle, value);
     }
@@ -1498,13 +1728,18 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         SanityChecks();
 
         if (this.Optional)
+        {
             return eina_value_optional_pset(this.Handle,
                                             ValueTypeBridge.GetNative(ValueType.Double),
                                             ref value);
+        }
 
         if (!GetValueType().IsNumeric())
+        {
             throw (new ArgumentException(
                         "Trying to set numeric value on a non-numeric Eina.Value"));
+        }
+
         return eina_value_set_wrapper_double(this.Handle, value);
     }
 
@@ -1514,13 +1749,18 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         SanityChecks();
 
         if (this.Optional)
+        {
             return eina_value_optional_pset(this.Handle,
                                             ValueTypeBridge.GetNative(ValueType.String),
                                             ref value);
+        }
 
         if (!GetValueType().IsString())
+        {
             throw (new ArgumentException(
                         "Trying to set non-string value on a string Eina.Value"));
+        }
+
         // No need to worry about ownership as eina_value_set will copy the passed string.
         return eina_value_set_wrapper_string(this.Handle, value);
     }
@@ -1533,9 +1773,11 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         int error_code = value;
 
         if (this.Optional)
+        {
             return eina_value_optional_pset(this.Handle,
                                             ValueTypeBridge.GetNative(ValueType.Error),
                                             ref error_code);
+        }
 
         return eina_value_set_wrapper_int(this.Handle, error_code);
     }
@@ -1549,20 +1791,28 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         IntPtr ptr_val = MemoryNative.Alloc(subtype.MarshalSizeOf());
         IntPtr native_type = ValueTypeBridge.GetNative(subtype);
 
-        try {
-            switch (subtype) {
+        try
+        {
+            switch (subtype)
+            {
                 // PSet on Container types require an Eina_Value_<Container>, which is the structure
                 // that contains subtype, etc.
                 case ValueType.Array:
                     EinaNative.Value_Array value_array;
                     if (!eina_value_get_wrapper(value.Handle, out value_array))
+                    {
                         return false;
+                    }
+
                     Marshal.StructureToPtr(value_array, ptr_val, false);
                     break;
                 case ValueType.List:
                     EinaNative.Value_List value_list;
                     if (!eina_value_get_wrapper(value.Handle, out value_list))
+                    {
                         return false;
+                    }
+
                     Marshal.StructureToPtr(value_list, ptr_val, false);
                     break;
                 default:
@@ -1570,7 +1820,9 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             }
 
             return eina_value_optional_pset(this.Handle, native_type, ptr_val);
-        } finally {
+        }
+        finally
+        {
             MemoryNative.Free(ptr_val);
         }
     }
@@ -1580,9 +1832,13 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         SanityChecks();
         if (this.Optional)
+        {
             return eina_value_optional_pget(this.Handle, out value);
+        }
         else
+        {
             return eina_value_get_wrapper(this.Handle, out value);
+        }
     }
 
     /// <summary>Gets the currently stored value as a sbyte.</summary>
@@ -1590,9 +1846,13 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         SanityChecks();
         if (this.Optional)
+        {
             return eina_value_optional_pget(this.Handle, out value);
+        }
         else
+        {
             return eina_value_get_wrapper(this.Handle, out value);
+        }
     }
 
     /// <summary>Gets the currently stored value as a short.</summary>
@@ -1600,9 +1860,13 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         SanityChecks();
         if (this.Optional)
+        {
             return eina_value_optional_pget(this.Handle, out value);
+        }
         else
+        {
             return eina_value_get_wrapper(this.Handle, out value);
+        }
     }
 
     /// <summary>Gets the currently stored value as an ushort.</summary>
@@ -1610,9 +1874,13 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         SanityChecks();
         if (this.Optional)
+        {
             return eina_value_optional_pget(this.Handle, out value);
+        }
         else
+        {
             return eina_value_get_wrapper(this.Handle, out value);
+        }
     }
 
     /// <summary>Gets the currently stored value as an int.</summary>
@@ -1620,9 +1888,13 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         SanityChecks();
         if (this.Optional)
+        {
             return eina_value_optional_pget(this.Handle, out value);
+        }
         else
+        {
             return eina_value_get_wrapper(this.Handle, out value);
+        }
     }
 
     /// <summary>Gets the currently stored value as an uint.</summary>
@@ -1630,9 +1902,13 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         SanityChecks();
         if (this.Optional)
+        {
             return eina_value_optional_pget(this.Handle, out value);
+        }
         else
+        {
             return eina_value_get_wrapper(this.Handle, out value);
+        }
     }
 
     /// <summary>Gets the currently stored value as a long.</summary>
@@ -1640,9 +1916,13 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         SanityChecks();
         if (this.Optional)
+        {
             return eina_value_optional_pget(this.Handle, out value);
+        }
         else
+        {
             return eina_value_get_wrapper(this.Handle, out value);
+        }
     }
 
     /// <summary>Gets the currently stored value as an ulong.</summary>
@@ -1650,9 +1930,13 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         SanityChecks();
         if (this.Optional)
+        {
             return eina_value_optional_pget(this.Handle, out value);
+        }
         else
+        {
             return eina_value_get_wrapper(this.Handle, out value);
+        }
     }
 
     /// <summary>Gets the currently stored value as a float.</summary>
@@ -1660,9 +1944,13 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         SanityChecks();
         if (this.Optional)
+        {
             return eina_value_optional_pget(this.Handle, out value);
+        }
         else
+        {
             return eina_value_get_wrapper(this.Handle, out value);
+        }
     }
 
     /// <summary>Gets the currently stored value as a double.</summary>
@@ -1670,9 +1958,13 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         SanityChecks();
         if (this.Optional)
+        {
             return eina_value_optional_pget(this.Handle, out value);
+        }
         else
+        {
             return eina_value_get_wrapper(this.Handle, out value);
+        }
     }
 
     /// <summary>Gets the currently stored value as a string.</summary>
@@ -1680,15 +1972,20 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         SanityChecks();
         IntPtr output = IntPtr.Zero;
-        if (this.Optional) {
-            if (!eina_value_optional_pget(this.Handle, out output)) {
+        if (this.Optional)
+        {
+            if (!eina_value_optional_pget(this.Handle, out output))
+            {
                 value = String.Empty;
                 return false;
             }
-        } else if (!eina_value_get_wrapper(this.Handle, out output)) {
+        }
+        else if (!eina_value_get_wrapper(this.Handle, out output))
+        {
             value = String.Empty;
             return false;
         }
+
         value = StringConversion.NativeUtf8ToManagedString(output);
         return true;
     }
@@ -1700,9 +1997,13 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         bool ret;
         int intermediate; // It seems out doesn't play well with implicit operators...
         if (this.Optional)
+        {
             ret = eina_value_optional_pget(this.Handle, out intermediate);
+        }
         else
+        {
             ret = eina_value_get_wrapper(this.Handle, out intermediate);
+        }
 
         value = intermediate;
 
@@ -1716,24 +2017,33 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         value = null;
 
         if (!this.Optional)
+        {
             throw new InvalidValueTypeException("Values can only be retreived");
+        }
 
         IntPtr nativeType = eina_value_optional_type_get_wrapper(this.Handle);
         ValueType managedType = ValueTypeBridge.GetManaged(nativeType);
 
-        switch (managedType) {
+        switch (managedType)
+        {
             case ValueType.Array:
                 Eina.EinaNative.Value_Array array_desc;
 
                 if (!eina_value_optional_pget(this.Handle, out array_desc))
+                {
                     return false;
+                }
+
                 value = Value.FromArrayDesc(array_desc);
                 break;
             case ValueType.List:
                 Eina.EinaNative.Value_List list_desc;
 
                 if (!eina_value_optional_pget(this.Handle, out list_desc))
+                {
                     return false;
+                }
+
                 value = Value.FromListDesc(list_desc);
                 break;
         }
@@ -1745,7 +2055,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public ValueType GetValueType()
     {
         if (Disposed)
+        {
             throw new ObjectDisposedException(base.GetType().Name);
+        }
+
         IntPtr native_type = eina_value_type_get_wrapper(this.Handle);
         return ValueTypeBridge.GetManaged(native_type);
     }
@@ -1755,7 +2068,9 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public bool ConvertTo(Value target)
     {
         if (target == null)
+        {
             return false;
+        }
 
         SanityChecks();
 
@@ -1766,7 +2081,10 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public int CompareTo(Value other)
     {
         if (other == null)
+        {
             return 1;
+        }
+
         SanityChecks();
         other.SanityChecks();
         return eina_value_compare_wrapper(this.Handle, other.Handle);
@@ -1780,20 +2098,27 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public override bool Equals(object obj)
     {
         if (obj == null)
+        {
             return false;
+        }
 
         Value v = obj as Value;
         if (v == null)
+        {
             return false;
+        }
 
         return this.Equals(v);
     }
 
     public bool Equals(Value other)
     {
-        try {
+        try
+        {
             return this.CompareTo(other) == 0;
-        } catch (ObjectDisposedException) {
+        }
+        catch (ObjectDisposedException)
+        {
             return false;
         }
     }
@@ -1806,7 +2131,9 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static bool operator==(Value x, Value y)
     {
         if (object.ReferenceEquals(x, null))
+        {
             return object.ReferenceEquals(y, null);
+        }
 
         return x.Equals(y);
     }
@@ -1814,21 +2141,30 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static bool operator!=(Value x, Value y)
     {
         if (object.ReferenceEquals(x, null))
+        {
             return !object.ReferenceEquals(y, null);
+        }
+
         return !x.Equals(y);
     }
 
     public static bool operator>(Value x, Value y)
     {
         if (object.ReferenceEquals(x, null) || object.ReferenceEquals(y, null))
+        {
             return false;
+        }
+
         return x.CompareTo(y) > 0;
     }
 
     public static bool operator<(Value x, Value y)
     {
         if (object.ReferenceEquals(x, null) || object.ReferenceEquals(y, null))
+        {
             return false;
+        }
+
         return x.CompareTo(y) < 0;
     }
 
@@ -1851,25 +2187,32 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     }
 
     // Container methods methods
-    public int Count() {
+    public int Count()
+    {
         ContainerSanityChecks();
-        switch(GetValueType()) {
+        switch (GetValueType())
+        {
             case ValueType.Array:
                 return (int)eina_value_array_count_wrapper(this.Handle);
             case ValueType.List:
                 return (int)eina_value_list_count_wrapper(this.Handle);
         }
+
         return -1;
     }
-    public bool Append(object o) {
+
+    public bool Append(object o)
+    {
         ContainerSanityChecks();
 
-        switch (GetValueSubType()) {
+        switch (GetValueSubType())
+        {
             case ValueType.SByte:
                 {
                     sbyte b = Convert.ToSByte(o);
                     return eina_value_container_append_wrapper_char(this.Handle, b);
                 }
+
             case ValueType.Byte:
                 {
                     byte b = Convert.ToByte(o);
@@ -1881,6 +2224,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                     short b = Convert.ToInt16(o);
                     return eina_value_container_append_wrapper_short(this.Handle, b);
                 }
+
             case ValueType.UShort:
                 {
                     ushort b = Convert.ToUInt16(o);
@@ -1892,6 +2236,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                     int x = Convert.ToInt32(o);
                     return eina_value_container_append_wrapper_int(this.Handle, x);
                 }
+
             case ValueType.UInt32:
                 {
                     uint x = Convert.ToUInt32(o);
@@ -1904,6 +2249,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                     long x = Convert.ToInt64(o);
                     return eina_value_container_append_wrapper_long(this.Handle, x);
                 }
+
             case ValueType.ULong:
             case ValueType.UInt64:
                 {
@@ -1916,6 +2262,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                     float x = Convert.ToSingle(o);
                     return eina_value_container_append_wrapper_float(this.Handle, x);
                 }
+
             case ValueType.Double:
                 {
                     double x = Convert.ToDouble(o);
@@ -1928,21 +2275,25 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                     return eina_value_container_append_wrapper_string(this.Handle, x);
                 }
         }
+
         return false;
     }
 
     public object this[int i]
     {
-        get {
+        get
+        {
             ContainerSanityChecks(i);
 
-            switch (GetValueSubType()) {
+            switch (GetValueSubType())
+            {
                 case ValueType.SByte:
                     {
                         sbyte ret = default(sbyte);
                         eina_value_container_get_wrapper(this.Handle, i, out ret);
                         return ret;
                     }
+
                 case ValueType.Byte:
                     {
                         byte ret = default(byte);
@@ -1956,6 +2307,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                         eina_value_container_get_wrapper(this.Handle, i, out ret);
                         return ret;
                     }
+
                 case ValueType.UShort:
                     {
                         ushort ret = default(ushort);
@@ -1969,6 +2321,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                         eina_value_container_get_wrapper(this.Handle, i, out ret);
                         return ret;
                     }
+
                 case ValueType.UInt32:
                     {
                         uint ret = default(uint);
@@ -1983,6 +2336,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                         eina_value_container_get_wrapper(this.Handle, i, out ret);
                         return ret;
                     }
+
                 case ValueType.ULong:
                 case ValueType.UInt64:
                     {
@@ -1997,6 +2351,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                         eina_value_container_get_wrapper(this.Handle, i, out ret);
                         return ret;
                     }
+
                 case ValueType.Double:
                     {
                         double ret = default(double);
@@ -2012,87 +2367,95 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                         eina_value_container_get_wrapper(this.Handle, i, out ptr);
                         return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
                     }
+
                 default:
                     throw new InvalidOperationException("Subtype not supported.");
             }
         }
-        set {
+        set
+        {
             ContainerSanityChecks(i);
 
-            switch (GetValueSubType()) {
+            switch (GetValueSubType())
+            {
                 case ValueType.SByte:
                     {
                         sbyte v = Convert.ToSByte(value);
                         eina_value_container_set_wrapper_char(this.Handle, i, v);
+                        break;
                     }
-                    break;
+
                 case ValueType.Byte:
                     {
                         byte v = Convert.ToByte(value);
                         eina_value_container_set_wrapper_uchar(this.Handle, i, v);
+                        break;
                     }
-                    break;
 
                 case ValueType.Short:
                     {
                         short x = Convert.ToInt16(value);
                         eina_value_container_set_wrapper_short(this.Handle, i, x);
+                        break;
                     }
-                    break;
+
                 case ValueType.UShort:
                     {
                         ushort x = Convert.ToUInt16(value);
                         eina_value_container_set_wrapper_ushort(this.Handle, i, x);
+                        break;
                     }
-                    break;
 
                 case ValueType.Int32:
                     {
                         int x = Convert.ToInt32(value);
                         eina_value_container_set_wrapper_int(this.Handle, i, x);
+                        break;
                     }
-                    break;
+
                 case ValueType.UInt32:
                     {
                         uint x = Convert.ToUInt32(value);
                         eina_value_container_set_wrapper_uint(this.Handle, i, x);
+                        break;
                     }
-                    break;
 
                 case ValueType.Long:
                 case ValueType.Int64:
                     {
                         long x = Convert.ToInt64(value);
                         eina_value_container_set_wrapper_long(this.Handle, i, x);
+                        break;
                     }
-                    break;
+
                 case ValueType.ULong:
                 case ValueType.UInt64:
                     {
                         ulong x = Convert.ToUInt64(value);
                         eina_value_container_set_wrapper_ulong(this.Handle, i, x);
+                        break;
                     }
-                    break;
 
                 case ValueType.Float:
                     {
                         float x = Convert.ToSingle(value);
                         eina_value_container_set_wrapper_float(this.Handle, i, x);
+                        break;
                     }
-                    break;
+
                 case ValueType.Double:
                     {
                         double x = Convert.ToDouble(value);
                         eina_value_container_set_wrapper_double(this.Handle, i, x);
+                        break;
                     }
-                    break;
 
                 case ValueType.String:
                     {
                         string x = Convert.ToString(value);
                         eina_value_container_set_wrapper_string(this.Handle, i, x);
+                        break;
                     }
-                    break;
             }
         }
     }
@@ -2103,7 +2466,8 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 
         IntPtr native_subtype = IntPtr.Zero;
 
-        switch (GetValueType()) {
+        switch (GetValueType())
+        {
             case ValueType.Array:
                 native_subtype = eina_value_array_subtype_get_wrapper(this.Handle);
                 break;
@@ -2111,86 +2475,113 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                 native_subtype = eina_value_list_subtype_get_wrapper(this.Handle);
                 break;
         }
+
         return ValueTypeBridge.GetManaged(native_subtype);
     }
 }
 
 /// <summary> Custom marshaler to convert value pointers to managed values and back,
 /// without changing ownership.</summary>
-public class ValueMarshaler : ICustomMarshaler {
-
+public class ValueMarshaler : ICustomMarshaler
+{
     /// <summary>Creates a managed value from a C pointer, whitout taking ownership of it.</summary>
-    public object MarshalNativeToManaged(IntPtr pNativeData) {
+    public object MarshalNativeToManaged(IntPtr pNativeData)
+    {
         return new Value(pNativeData, Ownership.Unmanaged);
     }
 
     /// <summary>Retrieves the C pointer from a given managed value,
     /// keeping the managed ownership.</summary>
-    public IntPtr MarshalManagedToNative(object managedObj) {
-        try {
+    public IntPtr MarshalManagedToNative(object managedObj)
+    {
+        try
+        {
             Value v = (Value)managedObj;
             return v.Handle;
-        } catch (InvalidCastException) {
+        }
+        catch (InvalidCastException)
+        {
             return IntPtr.Zero;
         }
     }
 
-    public void CleanUpNativeData(IntPtr pNativeData) {
+    public void CleanUpNativeData(IntPtr pNativeData)
+    {
     }
 
-    public void CleanUpManagedData(object managedObj) {
+    public void CleanUpManagedData(object managedObj)
+    {
     }
 
-    public int GetNativeDataSize() {
+    public int GetNativeDataSize()
+    {
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie) {
-        if (marshaler == null) {
+    public static ICustomMarshaler GetInstance(string cookie)
+    {
+        if (marshaler == null)
+        {
             marshaler = new ValueMarshaler();
         }
+
         return marshaler;
     }
+
     static private ValueMarshaler marshaler;
 }
 
 /// <summary> Custom marshaler to convert value pointers to managed values and back,
 /// also transferring the ownership to the other side.</summary>
-public class ValueMarshalerOwn : ICustomMarshaler {
+public class ValueMarshalerOwn : ICustomMarshaler
+{
     /// <summary>Creates a managed value from a C pointer, taking the ownership.</summary>
-    public object MarshalNativeToManaged(IntPtr pNativeData) {
+    public object MarshalNativeToManaged(IntPtr pNativeData)
+    {
         return new Value(pNativeData, Ownership.Managed);
     }
 
     /// <summary>Retrieves the C pointer from a given managed value,
     /// transferring the ownership to the unmanaged side, which should release it
     /// when not needed. </summary>
-    public IntPtr MarshalManagedToNative(object managedObj) {
-        try {
+    public IntPtr MarshalManagedToNative(object managedObj)
+    {
+        try
+        {
             Value v = (Value)managedObj;
             v.ReleaseOwnership();
             return v.Handle;
-        } catch (InvalidCastException) {
+        }
+        catch (InvalidCastException)
+        {
             return IntPtr.Zero;
         }
     }
 
-    public void CleanUpNativeData(IntPtr pNativeData) {
+    public void CleanUpNativeData(IntPtr pNativeData)
+    {
     }
 
-    public void CleanUpManagedData(object managedObj) {
+    public void CleanUpManagedData(object managedObj)
+    {
     }
 
-    public int GetNativeDataSize() {
+    public int GetNativeDataSize()
+    {
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie) {
-        if (marshaler == null) {
+    public static ICustomMarshaler GetInstance(string cookie)
+    {
+        if (marshaler == null)
+        {
             marshaler = new ValueMarshalerOwn();
         }
+
         return marshaler;
     }
+
     static private ValueMarshalerOwn marshaler;
 }
+
 }

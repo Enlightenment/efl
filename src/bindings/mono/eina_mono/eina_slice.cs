@@ -3,7 +3,8 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Eina {
+namespace Eina
+{
 
 public interface ISliceBase
 {
@@ -21,8 +22,8 @@ public struct Slice : ISliceBase
 
     public int Length
     {
-        get { return (int) Len; }
-        set { Len = (UIntPtr) value; }
+        get { return (int)Len; }
+        set { Len = (UIntPtr)value; }
     }
 
     public Slice(IntPtr mem, UIntPtr len)
@@ -47,8 +48,8 @@ public struct RwSlice : ISliceBase
 
     public int Length
     {
-        get { return (int) Len; }
-        set { Len = (UIntPtr) value; }
+        get { return (int)Len; }
+        set { Len = (UIntPtr)value; }
     }
 
     public RwSlice(IntPtr mem, UIntPtr len)

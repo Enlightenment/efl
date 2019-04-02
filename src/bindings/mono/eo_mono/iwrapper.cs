@@ -9,12 +9,17 @@ using System.Threading;
 using static Eina.NativeCustomExportFunctions;
 using EoG = Efl.Eo.Globals;
 
-namespace Efl { namespace Eo {
+namespace Efl
+{
 
-public class Globals {
+namespace Eo
+{
 
+public class Globals
+{
     /// <summary>Represents the type of the native Efl_Class.</summary>
-    public enum EflClassType {
+    public enum EflClassType
+    {
         /// <summary>Regular EFL classes.</summary>
         Regular = 0,
         /// <summary>Non-instantiable efl classes (i.e. Abstracts).</summary>
@@ -175,27 +180,27 @@ public class Globals {
     [DllImport(efl.Libs.Evil)] public static extern IntPtr dlerror();
 
     public delegate  bool efl_event_callback_priority_add_delegate(
-              System.IntPtr obj,
-              IntPtr desc,
-              short priority,
-              Efl.EventCb cb,
-              System.IntPtr data);
+        System.IntPtr obj,
+        IntPtr desc,
+        short priority,
+        Efl.EventCb cb,
+        System.IntPtr data);
     [DllImport(efl.Libs.Eo)] public static extern bool efl_event_callback_priority_add(
-              System.IntPtr obj,
-              IntPtr desc,
-              short priority,
-              Efl.EventCb cb,
-              System.IntPtr data);
+        System.IntPtr obj,
+        IntPtr desc,
+        short priority,
+        Efl.EventCb cb,
+        System.IntPtr data);
     public delegate  bool efl_event_callback_del_delegate(
-              System.IntPtr obj,
-              IntPtr desc,
-              Efl.EventCb cb,
-              System.IntPtr data);
+        System.IntPtr obj,
+        IntPtr desc,
+        Efl.EventCb cb,
+        System.IntPtr data);
     [DllImport(efl.Libs.Eo)] public static extern bool efl_event_callback_del(
-              System.IntPtr obj,
-              IntPtr desc,
-              Efl.EventCb cb,
-              System.IntPtr data);
+        System.IntPtr obj,
+        IntPtr desc,
+        Efl.EventCb cb,
+        System.IntPtr data);
 
     public const int RTLD_NOW = 2;
 
@@ -205,14 +210,17 @@ public class Globals {
     {
         return v.Value;
     }
+
     public static U GetParamHelper<U>(U v)
     {
         return v;
     }
+
     public static bool ParamHelperCheck<T>(Nullable<T> v) where T : struct
     {
         return v.HasValue;
     }
+
     public static bool ParamHelperCheck<U>(U v)
     {
         return v != null;
@@ -230,9 +238,9 @@ public class Globals {
         description.class_destructor = IntPtr.Zero;
 
         class_initializer init = (IntPtr kls) =>
-            {
-                return Globals.class_initializer_call(kls, type);
-            };
+        {
+            return Globals.class_initializer_call(kls, type);
+        };
 
         description.class_initializer = Marshal.GetFunctionPointerForDelegate(init);
 
@@ -243,12 +251,18 @@ public class Globals {
 
         Eina.Log.Debug($"Going to register new class named {class_name}");
         IntPtr klass = EoG.call_efl_class_new(description_ptr, base_klass, interface_list);
-        if(klass == IntPtr.Zero)
+        if (klass == IntPtr.Zero)
+        {
             Eina.Log.Error("klass was not registered");
+        }
         else
+        {
             Eina.Log.Debug("Registered class successfully");
+        }
+
         return klass;
     }
+
     public static List<IntPtr> get_efl_interfaces(System.Type type)
     {
         System.Type base_type = type.BaseType;
@@ -260,29 +274,35 @@ public class Globals {
         {
             if (!System.Array.Exists(base_ifaces, element => element == iface))
             {
-               var attrs = System.Attribute.GetCustomAttributes(iface);
-               foreach (var attr in attrs)
-               {
-                  if (attr is Efl.Eo.NativeClass) {
-                    ifaces_lst.Add(((Efl.Eo.NativeClass)attr).GetEflClass());
-                    break;
-                  }
-               }
+                var attrs = System.Attribute.GetCustomAttributes(iface);
+                foreach (var attr in attrs)
+                {
+                    if (attr is Efl.Eo.NativeClass)
+                    {
+                        ifaces_lst.Add(((Efl.Eo.NativeClass)attr).GetEflClass());
+                        break;
+                    }
+                }
             }
         }
+
         return ifaces_lst;
     }
+
     private static Efl.Eo.NativeClass get_native_class(System.Type type)
     {
         var attrs = System.Attribute.GetCustomAttributes(type);
         foreach (var attr in attrs)
         {
-            if (attr is Efl.Eo.NativeClass) {
+            if (attr is Efl.Eo.NativeClass)
+            {
                 return (Efl.Eo.NativeClass)attr;
             }
         }
+
         return null;
     }
+
     public static byte class_initializer_call(IntPtr klass, System.Type type)
     {
         Eina.Log.Debug($"called with 0x{klass.ToInt64():x} {type}");
@@ -301,7 +321,7 @@ public class Globals {
                 if (!System.Array.Exists(base_interfaces, element => element == iface))
                 {
                     var nc = get_native_class(iface);
-                    if(nc != null)
+                    if (nc != null)
                     {
                         var moredescs = nc.GetEoOps(type);
                         Eina.Log.Debug($"adding {moredescs.Count} more descs to registration");
@@ -311,13 +331,14 @@ public class Globals {
                 }
             }
 
-            IntPtr descs_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(descs[0])*count);
+            IntPtr descs_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(descs[0]) * count);
             IntPtr ptr = descs_ptr;
-            for(int i = 0; i != count; ++i)
+            for (int i = 0; i != count; ++i)
             {
                Marshal.StructureToPtr(descs[i], ptr, false);
                ptr = IntPtr.Add(ptr, Marshal.SizeOf(descs[0]));
             }
+
             Efl_Object_Ops ops;
             ops.descs = descs_ptr;
             ops.count = (UIntPtr)count;
@@ -327,74 +348,80 @@ public class Globals {
             //EoKlass = klass;
         }
         else
+        {
             Eina.Log.Debug("nativeClass == null");
+        }
 
        return 1;
     }
+
     public static IntPtr call_efl_class_new(IntPtr desc, IntPtr bk, List<IntPtr> il = null)
     {
         IntPtr nul = IntPtr.Zero;
         int iface_list_count = (il == null ? 0 : il.Count);
-        switch(iface_list_count)
+        switch (iface_list_count)
         {
-        default: return nul;
-        case  0: return EoG.efl_class_new(desc, bk, nul);
-        case  1: return EoG.efl_class_new(desc, bk, il[0], nul);
-        case  2: return EoG.efl_class_new(desc, bk, il[0], il[1], nul);
-        case  3: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], nul);
-        case  4: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], nul);
-        case  5: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], nul);
-        case  6: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], nul);
-        case  7: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], nul);
-        case  8: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], nul);
-        case  9: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], nul);
-        case 10: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], nul);
-        case 11: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], nul);
-        case 12: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], nul);
-        case 13: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], nul);
-        case 14: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], nul);
-        case 15: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], nul);
-        case 16: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], nul);
-        case 17: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], nul);
-        case 18: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], nul);
-        case 19: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], nul);
-        case 20: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], nul);
-        case 21: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], nul);
-        case 22: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], nul);
-        case 23: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], nul);
-        case 24: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], nul);
-        case 25: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], nul);
-        case 26: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], nul);
-        case 27: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], nul);
-        case 28: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], nul);
-        case 29: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], nul);
-        case 30: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], nul);
-        case 31: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], nul);
-        case 32: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], nul);
-        case 33: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], nul);
-        case 34: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], nul);
-        case 35: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], nul);
-        case 36: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], nul);
-        case 37: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], nul);
-        case 38: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], nul);
-        case 39: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], nul);
-        case 40: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], il[39], nul);
-        case 41: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], il[39], il[40], nul);
-        case 42: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], il[39], il[40], il[41], nul);
-        case 43: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], il[39], il[40], il[41], il[42], nul);
-        case 44: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], il[39], il[40], il[41], il[42], il[43], nul);
-        case 45: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], il[39], il[40], il[41], il[42], il[43], il[44], nul);
-        case 46: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], il[39], il[40], il[41], il[42], il[43], il[44], il[45], nul);
-        case 47: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], il[39], il[40], il[41], il[42], il[43], il[44], il[45], il[46], nul);
-        case 48: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], il[39], il[40], il[41], il[42], il[43], il[44], il[45], il[46], il[47], nul);
+            default: return nul;
+            case  0: return EoG.efl_class_new(desc, bk, nul);
+            case  1: return EoG.efl_class_new(desc, bk, il[0], nul);
+            case  2: return EoG.efl_class_new(desc, bk, il[0], il[1], nul);
+            case  3: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], nul);
+            case  4: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], nul);
+            case  5: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], nul);
+            case  6: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], nul);
+            case  7: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], nul);
+            case  8: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], nul);
+            case  9: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], nul);
+            case 10: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], nul);
+            case 11: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], nul);
+            case 12: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], nul);
+            case 13: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], nul);
+            case 14: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], nul);
+            case 15: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], nul);
+            case 16: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], nul);
+            case 17: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], nul);
+            case 18: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], nul);
+            case 19: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], nul);
+            case 20: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], nul);
+            case 21: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], nul);
+            case 22: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], nul);
+            case 23: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], nul);
+            case 24: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], nul);
+            case 25: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], nul);
+            case 26: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], nul);
+            case 27: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], nul);
+            case 28: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], nul);
+            case 29: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], nul);
+            case 30: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], nul);
+            case 31: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], nul);
+            case 32: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], nul);
+            case 33: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], nul);
+            case 34: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], nul);
+            case 35: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], nul);
+            case 36: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], nul);
+            case 37: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], nul);
+            case 38: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], nul);
+            case 39: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], nul);
+            case 40: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], il[39], nul);
+            case 41: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], il[39], il[40], nul);
+            case 42: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], il[39], il[40], il[41], nul);
+            case 43: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], il[39], il[40], il[41], il[42], nul);
+            case 44: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], il[39], il[40], il[41], il[42], il[43], nul);
+            case 45: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], il[39], il[40], il[41], il[42], il[43], il[44], nul);
+            case 46: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], il[39], il[40], il[41], il[42], il[43], il[44], il[45], nul);
+            case 47: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], il[39], il[40], il[41], il[42], il[43], il[44], il[45], il[46], nul);
+            case 48: return EoG.efl_class_new(desc, bk, il[0], il[1], il[2], il[3], il[4], il[5], il[6], il[7], il[8], il[9], il[10], il[11], il[12], il[13], il[14], il[15], il[16], il[17], il[18], il[19], il[20], il[21], il[22], il[23], il[24], il[25], il[26], il[27], il[28], il[29], il[30], il[31], il[32], il[33], il[34], il[35], il[36], il[37], il[38], il[39], il[40], il[41], il[42], il[43], il[44], il[45], il[46], il[47], nul);
         }
     }
+
     public static IntPtr instantiate_start(IntPtr klass, Efl.Object parent)
     {
         Eina.Log.Debug($"Instantiating from klass 0x{klass.ToInt64():x}");
         System.IntPtr parent_ptr = System.IntPtr.Zero;
-        if(parent != null)
+        if (parent != null)
+        {
             parent_ptr = parent.NativeHandle;
+        }
 
         System.IntPtr eo = Efl.Eo.Globals._efl_add_internal_start("file", 0, klass, parent_ptr, 1, 0);
         if (eo == System.IntPtr.Zero)
@@ -407,38 +434,43 @@ public class Globals {
         return eo;
     }
 
-    public static IntPtr instantiate_end(IntPtr eo) {
+    public static IntPtr instantiate_end(IntPtr eo)
+    {
         Eina.Log.Debug("calling efl_add_internal_end");
         eo = Efl.Eo.Globals._efl_add_end(eo, 1, 0);
         Eina.Log.Debug($"efl_add_end returned eo 0x{eo.ToInt64():x}");
         return eo;
     }
+
     public static void data_set(Efl.Eo.IWrapper obj)
     {
-      Eina.Log.Debug($"Calling data_scope_get with obj {obj.NativeHandle.ToInt64():x} and klass {obj.NativeClass.ToInt64():x}");
-      IntPtr pd = Efl.Eo.Globals.efl_data_scope_get(obj.NativeHandle, obj.NativeClass);
-      {
-          GCHandle gch = GCHandle.Alloc(obj);
-          EolianPD epd;
-          epd.pointer = GCHandle.ToIntPtr(gch);
-          Marshal.StructureToPtr(epd, pd, false);
-      }
+        Eina.Log.Debug($"Calling data_scope_get with obj {obj.NativeHandle.ToInt64():x} and klass {obj.NativeClass.ToInt64():x}");
+        IntPtr pd = Efl.Eo.Globals.efl_data_scope_get(obj.NativeHandle, obj.NativeClass);
+        {
+            GCHandle gch = GCHandle.Alloc(obj);
+            EolianPD epd;
+            epd.pointer = GCHandle.ToIntPtr(gch);
+            Marshal.StructureToPtr(epd, pd, false);
+        }
     }
+
     public static Efl.Eo.IWrapper data_get(IntPtr pd)
     {
         EolianPD epd = (EolianPD)Marshal.PtrToStructure(pd, typeof(EolianPD));
-        if(epd.pointer != IntPtr.Zero)
+        if (epd.pointer != IntPtr.Zero)
         {
             GCHandle gch = GCHandle.FromIntPtr(epd.pointer);
             return (Efl.Eo.IWrapper)gch.Target;
         }
         else
+        {
             return null;
+        }
     }
 
     public static void free_dict_values(Dictionary<String, IntPtr> dict)
     {
-        foreach(IntPtr ptr in dict.Values)
+        foreach (IntPtr ptr in dict.Values)
         {
             Eina.MemoryNative.Free(ptr);
         }
@@ -446,7 +478,7 @@ public class Globals {
 
     public static void free_stringshare_values(Dictionary<String, IntPtr> dict)
     {
-        foreach(IntPtr ptr in dict.Values)
+        foreach (IntPtr ptr in dict.Values)
         {
             Eina.Stringshare.eina_stringshare_del(ptr);
         }
@@ -467,36 +499,45 @@ public class Globals {
         // Flag to be passed to the cancell callback
         bool fulfilled = false;
 
-        future.Then((Eina.Value received) => {
-                lock (future)
+        future.Then((Eina.Value received) =>
+        {
+            lock (future)
+            {
+                // Convert an failed Future to a failed Task.
+                if (received.GetValueType() == Eina.ValueType.Error)
                 {
-                    // Convert an failed Future to a failed Task.
-                    if (received.GetValueType() == Eina.ValueType.Error)
+                    Eina.Error err;
+                    received.Get(out err);
+                    if (err == Eina.Error.ECANCELED)
                     {
-                        Eina.Error err;
-                        received.Get(out err);
-                        if (err == Eina.Error.ECANCELED)
-                            tcs.SetCanceled();
-                        else
-                            tcs.TrySetException(new Efl.FutureException(received));
+                        tcs.SetCanceled();
                     }
                     else
                     {
-                        // Will mark the returned task below as completed.
-                        tcs.SetResult(received);
+                        tcs.TrySetException(new Efl.FutureException(received));
                     }
-                    fulfilled = true;
-                    return received;
                 }
+                else
+                {
+                    // Will mark the returned task below as completed.
+                    tcs.SetResult(received);
+                }
+
+                fulfilled = true;
+                return received;
+            }
         });
         // Callback to be called when the token is cancelled.
-        token.Register(() => {
-                lock (future)
+        token.Register(() =>
+        {
+            lock (future)
+            {
+                // Will trigger the Then callback above with an Eina.Error
+                if (!fulfilled)
                 {
-                    // Will trigger the Then callback above with an Eina.Error
-                    if (!fulfilled)
-                        future.Cancel();
+                    future.Cancel();
                 }
+            }
         });
 
         return tcs.Task;
@@ -534,6 +575,7 @@ public interface IWrapper
     {
         get;
     }
+
     /// <summary>Pointer to internal Eo class.</summary>
     IntPtr NativeClass
     {
@@ -547,11 +589,14 @@ public static class ClassRegister
     {
         System.Type t;
         if (Efl.Eo.ClassRegister.typeFromKlass.TryGetValue(klass, out t))
+        {
             return t;
+        }
 
         // If it isn't on the dictionary then it is a Native binding class
         IntPtr namePtr = Efl.Eo.Globals.efl_class_name_get(klass);
-        if (namePtr == IntPtr.Zero) {
+        if (namePtr == IntPtr.Zero)
+        {
             throw new System.InvalidOperationException($"Could not get Native class name. Handle: {klass}");
         }
 
@@ -574,16 +619,23 @@ public static class ClassRegister
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
                 if (assembly == curr_asm)
+                {
                     continue;
+                }
 
                 t = assembly.GetType(name);
                 if (t != null)
+                {
                     break;
+                }
             }
-            if (t == null) {
+
+            if (t == null)
+            {
                 throw new System.InvalidOperationException($"Could not find the C# binding class for the EFL class: {name}");
             }
         }
+
         AddToKlassTypeBiDictionary(klass, t); // Cache it in the dictionary
         return t;
     }
@@ -592,11 +644,14 @@ public static class ClassRegister
     {
         IntPtr klass;
         if (klassFromType.TryGetValue(objectType, out klass))
+        {
             return klass;
+        }
 
         // Check if it is a Native binding class
         klass = GetNativeKlassPtr(objectType);
-        if (klass != IntPtr.Zero) {
+        if (klass != IntPtr.Zero)
+        {
             // Add to the dictionary cache
             AddToKlassTypeBiDictionary(klass, objectType);
             return klass;
@@ -605,7 +660,10 @@ public static class ClassRegister
         // Unregistered Inherited class, let's register it
         IntPtr baseKlass = GetNativeBaseKlassPtr(objectType);
         if (baseKlass == IntPtr.Zero)
+        {
             throw new System.InvalidOperationException($"Could not get base C# binding class for Inherited type: {objectType.FullName}");
+        }
+
         return RegisterKlass(baseKlass, objectType);
     }
 
@@ -613,18 +671,23 @@ public static class ClassRegister
     {
         IntPtr klass;
         if (klassFromType.TryGetValue(objectType, out klass))
+        {
             return klass;
+        }
 
         return RegisterKlass(baseKlass, objectType);
     }
 
     private static IntPtr RegisterKlass(IntPtr baseKlass, System.Type objectType)
     {
-        lock (klassAllocLock) {
+        lock (klassAllocLock)
+        {
             IntPtr newKlass = Efl.Eo.Globals.register_class(objectType.FullName, baseKlass, objectType);
-            if (newKlass == IntPtr.Zero) {
+            if (newKlass == IntPtr.Zero)
+            {
                 throw new System.InvalidOperationException($"Failed to register class '{objectType.FullName}'");
             }
+
             AddToKlassTypeBiDictionary(newKlass, objectType);
             return newKlass;
         }
@@ -636,15 +699,20 @@ public static class ClassRegister
         {
             var ptr = GetNativeKlassPtr(t);
             if (ptr != IntPtr.Zero)
+            {
                 return ptr;
+            }
         }
+
         throw new System.InvalidOperationException($"Class '{objectType.FullName}' is not an Efl object");
     }
 
     private static IntPtr GetNativeKlassPtr(System.Type objectType)
     {
         if (objectType == null)
+        {
             return IntPtr.Zero;
+        }
 
         if (objectType.IsInterface)
         {
@@ -653,15 +721,20 @@ public static class ClassRegister
             objectType = assembly.GetType(objectType.FullName + "Concrete");
 
             if (objectType == null)
+            {
                 return IntPtr.Zero;
+            }
         }
 
         var method = objectType.GetMethod("GetEflClassStatic",
                                           System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
 
         if (method == null)
+        {
             return IntPtr.Zero;
-        return (IntPtr) (method.Invoke(null, null));
+        }
+
+        return (IntPtr)(method.Invoke(null, null));
     }
 
     public static void AddToKlassTypeBiDictionary(IntPtr klassPtr, System.Type objectType)
@@ -699,6 +772,7 @@ public class MarshalTest<T, U> : ICustomMarshaler
         Eina.Log.Debug("MarshalTest.GetInstace cookie " + cookie);
         return new MarshalTest<T, U>();
     }
+
     public void CleanUpManagedData(object ManagedObj)
     {
         //Eina.Log.Warning("MarshalTest.CleanUpManagedData not implemented");
@@ -723,7 +797,10 @@ public class MarshalTest<T, U> : ICustomMarshaler
         Eina.Log.Debug("MarshalTest.MarshallManagedToNative");
         var r = ((IWrapper)ManagedObj).NativeHandle;
         if (typeof(U) == typeof(OwnTag))
+        {
             Efl.Eo.Globals.efl_ref(r);
+        }
+
         return r;
     }
 
@@ -731,9 +808,12 @@ public class MarshalTest<T, U> : ICustomMarshaler
     {
         Eina.Log.Debug("MarshalTest.MarshalNativeToManaged");
         if (typeof(U) != typeof(OwnTag))
+        {
             Efl.Eo.Globals.efl_ref(pNativeData);
+        }
+
         return Activator.CreateInstance(typeof(T), new System.Object[] {pNativeData});
-//        return null;
+        //return null;
     }
 }
 
@@ -745,6 +825,7 @@ public class MarshalEflClass : ICustomMarshaler
         Eina.Log.Debug("MarshalTest.GetInstance cookie " + cookie);
         return new MarshalEflClass();
     }
+
     public void CleanUpManagedData(object ManagedObj)
     {
     }
@@ -763,8 +844,11 @@ public class MarshalEflClass : ICustomMarshaler
     {
         Eina.Log.Debug("MarshalTest.MarshallManagedToNative");
         if (ManagedObj == null)
+        {
             return IntPtr.Zero;
-        var t = (System.Type) ManagedObj;
+        }
+
+        var t = (System.Type)ManagedObj;
         return Efl.Eo.ClassRegister.GetKlass(t);
     }
 
@@ -772,193 +856,254 @@ public class MarshalEflClass : ICustomMarshaler
     {
         Eina.Log.Debug("MarshalTest.MarshalNativeToManaged");
         if (pNativeData == IntPtr.Zero)
+        {
             return null;
+        }
+
         return Efl.Eo.ClassRegister.GetManagedType(pNativeData);
     }
 }
 
-public class StringPassOwnershipMarshaler : ICustomMarshaler {
-    public object MarshalNativeToManaged(IntPtr pNativeData) {
+public class StringPassOwnershipMarshaler : ICustomMarshaler
+{
+    public object MarshalNativeToManaged(IntPtr pNativeData)
+    {
         var ret = Eina.StringConversion.NativeUtf8ToManagedString(pNativeData);
         Eina.MemoryNative.Free(pNativeData);
         return ret;
     }
 
-    public IntPtr MarshalManagedToNative(object managedObj) {
+    public IntPtr MarshalManagedToNative(object managedObj)
+    {
         return Eina.MemoryNative.StrDup((string)managedObj);
     }
 
-    public void CleanUpNativeData(IntPtr pNativeData) {
+    public void CleanUpNativeData(IntPtr pNativeData)
+    {
         // No need to cleanup. C will take care of it.
     }
 
-    public void CleanUpManagedData(object managedObj) {
+    public void CleanUpManagedData(object managedObj)
+    {
     }
 
-    public int GetNativeDataSize() {
+    public int GetNativeDataSize()
+    {
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie) {
-        if (marshaler == null) {
+    public static ICustomMarshaler GetInstance(string cookie)
+    {
+        if (marshaler == null)
+        {
             marshaler = new StringPassOwnershipMarshaler();
         }
+
         return marshaler;
     }
+
     static private StringPassOwnershipMarshaler marshaler;
 }
 
-public class StringKeepOwnershipMarshaler: ICustomMarshaler {
-    public object MarshalNativeToManaged(IntPtr pNativeData) {
+public class StringKeepOwnershipMarshaler: ICustomMarshaler
+{
+    public object MarshalNativeToManaged(IntPtr pNativeData)
+    {
         return Eina.StringConversion.NativeUtf8ToManagedString(pNativeData);
     }
 
-    public IntPtr MarshalManagedToNative(object managedObj) {
+    public IntPtr MarshalManagedToNative(object managedObj)
+    {
         return Eina.StringConversion.ManagedStringToNativeUtf8Alloc((string)managedObj);
     }
 
-    public void CleanUpNativeData(IntPtr pNativeData) {
+    public void CleanUpNativeData(IntPtr pNativeData)
+    {
         // No need to free. The Native side will keep the ownership.
     }
 
-    public void CleanUpManagedData(object managedObj) {
+    public void CleanUpManagedData(object managedObj)
+    {
     }
 
-    public int GetNativeDataSize() {
+    public int GetNativeDataSize()
+    {
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie) {
-        if (marshaler == null) {
+    public static ICustomMarshaler GetInstance(string cookie)
+    {
+        if (marshaler == null)
+        {
             marshaler = new StringKeepOwnershipMarshaler();
         }
+
         return marshaler;
     }
+
     static private StringKeepOwnershipMarshaler marshaler;
 }
 
-public class StringsharePassOwnershipMarshaler : ICustomMarshaler {
-    public object MarshalNativeToManaged(IntPtr pNativeData) {
+public class StringsharePassOwnershipMarshaler : ICustomMarshaler
+{
+    public object MarshalNativeToManaged(IntPtr pNativeData)
+    {
         var ret = Eina.StringConversion.NativeUtf8ToManagedString(pNativeData);
         Eina.Stringshare.eina_stringshare_del(pNativeData);
         return ret;
     }
 
-    public IntPtr MarshalManagedToNative(object managedObj) {
+    public IntPtr MarshalManagedToNative(object managedObj)
+    {
         return Eina.Stringshare.eina_stringshare_add((string)managedObj);
     }
 
-    public void CleanUpNativeData(IntPtr pNativeData) {
+    public void CleanUpNativeData(IntPtr pNativeData)
+    {
         // No need to free as it's for own() parameters.
     }
 
-    public void CleanUpManagedData(object managedObj) {
+    public void CleanUpManagedData(object managedObj)
+    {
     }
 
-    public int GetNativeDataSize() {
+    public int GetNativeDataSize()
+    {
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie) {
-        if (marshaler == null) {
+    public static ICustomMarshaler GetInstance(string cookie)
+    {
+        if (marshaler == null)
+        {
             marshaler = new StringsharePassOwnershipMarshaler();
         }
+
         return marshaler;
     }
+
     static private StringsharePassOwnershipMarshaler marshaler;
 }
 
-public class StringshareKeepOwnershipMarshaler : ICustomMarshaler {
-    public object MarshalNativeToManaged(IntPtr pNativeData) {
+public class StringshareKeepOwnershipMarshaler : ICustomMarshaler
+{
+    public object MarshalNativeToManaged(IntPtr pNativeData)
+    {
         return Eina.StringConversion.NativeUtf8ToManagedString(pNativeData);
     }
 
-    public IntPtr MarshalManagedToNative(object managedObj) {
+    public IntPtr MarshalManagedToNative(object managedObj)
+    {
         return Eina.Stringshare.eina_stringshare_add((string)managedObj);
     }
 
-    public void CleanUpNativeData(IntPtr pNativeData) {
+    public void CleanUpNativeData(IntPtr pNativeData)
+    {
         // No need to free, as the native side will keep ownership.
     }
 
-    public void CleanUpManagedData(object managedObj) {
+    public void CleanUpManagedData(object managedObj)
+    {
     }
 
-    public int GetNativeDataSize() {
+    public int GetNativeDataSize()
+    {
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie) {
-        if (marshaler == null) {
+    public static ICustomMarshaler GetInstance(string cookie)
+    {
+        if (marshaler == null)
+        {
             marshaler = new StringshareKeepOwnershipMarshaler();
         }
+
         return marshaler;
     }
+
     static private StringshareKeepOwnershipMarshaler marshaler;
 }
 
-public class StrbufPassOwnershipMarshaler : ICustomMarshaler {
-    public object MarshalNativeToManaged(IntPtr pNativeData) {
+public class StrbufPassOwnershipMarshaler : ICustomMarshaler
+{
+    public object MarshalNativeToManaged(IntPtr pNativeData)
+    {
         return new Eina.Strbuf(pNativeData, Eina.Ownership.Managed);
     }
 
-    public IntPtr MarshalManagedToNative(object managedObj) {
+    public IntPtr MarshalManagedToNative(object managedObj)
+    {
         Eina.Strbuf buf = managedObj as Eina.Strbuf;
         buf.ReleaseOwnership();
         return buf.Handle;
     }
 
-    public void CleanUpNativeData(IntPtr pNativeData) {
+    public void CleanUpNativeData(IntPtr pNativeData)
+    {
         // No need to cleanup. C will take care of it.
     }
 
-    public void CleanUpManagedData(object managedObj) {
+    public void CleanUpManagedData(object managedObj)
+    {
     }
 
-    public int GetNativeDataSize() {
+    public int GetNativeDataSize()
+    {
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie) {
-        if (marshaler == null) {
+    public static ICustomMarshaler GetInstance(string cookie)
+    {
+        if (marshaler == null)
+        {
             marshaler = new StrbufPassOwnershipMarshaler();
         }
+
         return marshaler;
     }
+
     static private StrbufPassOwnershipMarshaler marshaler;
 }
 
-public class StrbufKeepOwnershipMarshaler: ICustomMarshaler {
-    public object MarshalNativeToManaged(IntPtr pNativeData) {
+public class StrbufKeepOwnershipMarshaler: ICustomMarshaler
+{
+    public object MarshalNativeToManaged(IntPtr pNativeData)
+    {
         return new Eina.Strbuf(pNativeData, Eina.Ownership.Unmanaged);
     }
 
-    public IntPtr MarshalManagedToNative(object managedObj) {
+    public IntPtr MarshalManagedToNative(object managedObj)
+    {
         Eina.Strbuf buf = managedObj as Eina.Strbuf;
         return buf.Handle;
     }
 
-    public void CleanUpNativeData(IntPtr pNativeData) {
+    public void CleanUpNativeData(IntPtr pNativeData)
+    {
         // No need to free. The Native side will keep the ownership.
     }
 
-    public void CleanUpManagedData(object managedObj) {
+    public void CleanUpManagedData(object managedObj)
+    {
     }
 
-    public int GetNativeDataSize() {
+    public int GetNativeDataSize()
+    {
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie) {
-        if (marshaler == null) {
+    public static ICustomMarshaler GetInstance(string cookie)
+    {
+        if (marshaler == null)
+        {
             marshaler = new StrbufKeepOwnershipMarshaler();
         }
+
         return marshaler;
     }
+
     static private StrbufKeepOwnershipMarshaler marshaler;
 }
-
-
 
 } // namespace eo
 
@@ -981,7 +1126,10 @@ public class FutureException : EflException
     public FutureException(Eina.Value value) : base("Future failed.")
     {
         if (value.GetValueType() != Eina.ValueType.Error)
+        {
             throw new ArgumentException("FutureException must receive an Eina.Value with Eina.Error.");
+        }
+
         Eina.Error err;
         value.Get(out err);
         Error = err;

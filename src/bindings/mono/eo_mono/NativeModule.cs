@@ -1,6 +1,10 @@
 using System;
 
-namespace Efl { namespace Eo {
+namespace Efl
+{
+
+namespace Eo
+{
 
 ///<summary>Wraps a native module that was opened with dlopen/LoadLibrary.</summary>
 public partial class NativeModule : IDisposable
@@ -35,4 +39,6 @@ public partial class NativeModule : IDisposable
     }
 }
 
-} }
+}
+
+}

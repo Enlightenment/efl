@@ -5,7 +5,8 @@ using System.Runtime.InteropServices;
 
 using static eldbus.EldbusPendingNativeFunctions;
 
-namespace eldbus {
+namespace eldbus
+{
 
 public static class EldbusPendingNativeFunctions
 {
@@ -108,4 +109,3 @@ public class Pending
 }
 
 }
-

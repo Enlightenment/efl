@@ -7,8 +7,8 @@ using static eldbus.EldbusObjectNativeFunctions;
 
 using IntPtr = System.IntPtr;
 
-namespace eldbus {
-
+namespace eldbus
+{
 
 public static class EldbusObjectNativeFunctions
 {
@@ -112,16 +112,26 @@ public class Object : System.IDisposable
     public Object(eldbus.Connection conn, string bus, string path)
     {
         if (conn == null)
+        {
             throw new System.ArgumentNullException("conn");
+        }
+
         if (bus == null)
+        {
             throw new System.ArgumentNullException("bus");
+        }
+
         if (path == null)
+        {
             throw new System.ArgumentNullException("path");
+        }
 
         var handle = eldbus_object_get(conn.Handle, bus, path);
 
         if (handle == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Object' object from eldbus_object_get");
+        }
 
         InitNew(handle, true);
     }
@@ -136,10 +146,14 @@ public class Object : System.IDisposable
         IntPtr h = Handle;
         Handle = IntPtr.Zero;
         if (h == IntPtr.Zero)
+        {
             return;
+        }
 
         if (Own)
+        {
             eldbus_object_unref(h);
+        }
     }
 
     public void Dispose()
@@ -166,7 +180,9 @@ public class Object : System.IDisposable
         var conn = eldbus_object_connection_get(Handle);
 
         if (conn == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Connection' object from eldbus_object_connection_get");
+        }
 
         return new eldbus.Connection(conn, false);
     }
@@ -202,7 +218,9 @@ public class Object : System.IDisposable
         CheckHandle();
 
         if (msg == null)
+        {
             throw new System.ArgumentNullException("msg");
+        }
 
         IntPtr cb_wrapper = dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr();
         IntPtr cb_data = dlgt == null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(dlgt);
@@ -210,7 +228,9 @@ public class Object : System.IDisposable
         var pending_hdl = eldbus_object_send(Handle, msg.Handle, cb_wrapper, cb_data, timeout);
 
         if (pending_hdl == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_object_send");
+        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -222,7 +242,9 @@ public class Object : System.IDisposable
         var hdl = eldbus_object_method_call_new(Handle, _interface, member);
 
         if (hdl == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Message' object from eldbus_object_method_call_new");
+        }
 
         return new eldbus.Message(hdl, false);
     }
@@ -237,7 +259,9 @@ public class Object : System.IDisposable
         var pending_hdl = eldbus_object_peer_ping(Handle, cb_wrapper, cb_data);
 
         if (pending_hdl == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_object_peer_ping");
+        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -252,7 +276,9 @@ public class Object : System.IDisposable
         var pending_hdl = eldbus_object_peer_machine_id_get(Handle, cb_wrapper, cb_data);
 
         if (pending_hdl == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_object_peer_machine_id_get");
+        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -267,7 +293,9 @@ public class Object : System.IDisposable
         var pending_hdl = eldbus_object_introspect(Handle, cb_wrapper, cb_data);
 
         if (pending_hdl == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_object_introspect");
+        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -282,12 +310,12 @@ public class Object : System.IDisposable
         var pending_hdl = eldbus_object_managed_objects_get(Handle, cb_wrapper, cb_data);
 
         if (pending_hdl == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_object_managed_objects_get");
+        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
-
 }
-
 
 }

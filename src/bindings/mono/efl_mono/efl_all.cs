@@ -6,10 +6,11 @@ using System.Threading;
 
 using static Efl.UnsafeNativeMethods;
 
-namespace Efl {
+namespace Efl
+{
 
-static class UnsafeNativeMethods {
-
+static class UnsafeNativeMethods
+{
     private delegate void init_func_delegate();
     [DllImport(efl.Libs.Ecore)] public static extern void ecore_init();
     [DllImport(efl.Libs.Ecore)] public static extern void ecore_shutdown();
@@ -27,39 +28,48 @@ static class UnsafeNativeMethods {
     [DllImport(efl.Libs.Elementary)] public static extern void elm_run();
     [DllImport(efl.Libs.Elementary)] public static extern void elm_exit();
 
-    static UnsafeNativeMethods() {
+    static UnsafeNativeMethods()
+    {
         _evas_init = new Efl.Eo.FunctionWrapper<init_func_delegate>("evas", "evas_init");
     }
+
     public static void evas_init()
     {
         _evas_init.Value.Delegate();
     }
 }
 
-public static class All {
+public static class All
+{
     private static bool InitializedUi = false;
 
-    public static void Init(Efl.Csharp.Components components=Efl.Csharp.Components.Basic) {
+    public static void Init(Efl.Csharp.Components components = Efl.Csharp.Components.Basic)
+    {
         Eina.Config.Init();
         Efl.Eo.Config.Init();
         ecore_init();
         evas_init();
         eldbus.Config.Init();
 
-        if (components == Efl.Csharp.Components.Ui) {
+        if (components == Efl.Csharp.Components.Ui)
+        {
             Efl.Ui.Config.Init();
             InitializedUi = true;
         }
     }
 
     /// <summary>Shutdowns all EFL subsystems.</summary>
-    public static void Shutdown() {
+    public static void Shutdown()
+    {
         // Try to cleanup everything before actually shutting down.
         System.GC.Collect();
         System.GC.WaitForPendingFinalizers();
 
         if (InitializedUi)
+        {
             Efl.Ui.Config.Shutdown();
+        }
+
         eldbus.Config.Shutdown();
         evas_shutdown();
         ecore_shutdown();
@@ -69,29 +79,38 @@ public static class All {
 }
 
 // Placeholder. Will move to elm_config.cs later
-namespace Ui {
+namespace Ui
+{
 
-public static class Config {
-    public static void Init() {
+public static class Config
+{
+    public static void Init()
+    {
         // TODO Support elm command line arguments
 #if WIN32 // Not a native define, we define it in our build system
         // Ecore_Win32 uses OleInitialize, which requires single thread apartments
         if (System.Threading.Thread.CurrentThread.GetApartmentState() != ApartmentState.STA)
+        {
             throw new InvalidOperationException("UI Applications require STAThreadAttribute in Main()");
+        }
 #endif
         elm_init(0, IntPtr.Zero);
 
         elm_policy_set((int)Elm.Policy.Quit, (int)Elm.PolicyQuit.LastWindowHidden);
     }
-    public static void Shutdown() {
+
+    public static void Shutdown()
+    {
         elm_shutdown();
     }
 
-    public static void Run() {
+    public static void Run()
+    {
         elm_run();
     }
 
-    public static void Exit() {
+    public static void Exit()
+    {
         elm_exit();
     }
 }

@@ -5,7 +5,9 @@ using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Diagnostics.Contracts;
 
-namespace Eina { // Manual wrappers around eina functions
+namespace Eina
+{
+// Manual wrappers around eina functions
 
 public class Log
 {
@@ -55,44 +57,54 @@ public class Log
 
     static Log()
     {
-        const String name="mono";
-        const String color="\033[32;1m";
+        const String name = "mono";
+        const String color = "\033[32;1m";
 
         // Maybe move this check outside when other eina stuff get support?
         domain = eina_log_domain_register(name, color);
         if (domain < 0)
-          Console.WriteLine("Error: Couldn't register Eina log domain for name {0}.", name);
+        {
+            Console.WriteLine("Error: Couldn't register Eina log domain for name {0}.", name);
+        }
         else
-          Info($"Registered mono domain with number {domain}");
+        {
+            Info($"Registered mono domain with number {domain}");
+        }
     }
 
     private static void EnsureDomainRegistered()
     {
         if (domain < 0)
-          throw new InvalidOperationException("Log domain is not registered.");
+        {
+            throw new InvalidOperationException("Log domain is not registered.");
+        }
     }
 
-    public static void Critical(String message, [CallerLineNumber] int line=0, [CallerFilePath] string file=null, [CallerMemberName] string member = null)
+    public static void Critical(String message, [CallerLineNumber] int line = 0, [CallerFilePath] string file = null, [CallerMemberName] string member = null)
     {
         EnsureDomainRegistered();
         eina_log_print(domain, Level.Critical, file, member, line, message);
     }
-    public static void Error(String message, [CallerLineNumber] int line=0, [CallerFilePath] string file=null, [CallerMemberName] string member = null)
+
+    public static void Error(String message, [CallerLineNumber] int line = 0, [CallerFilePath] string file = null, [CallerMemberName] string member = null)
     {
         EnsureDomainRegistered();
         eina_log_print(domain, Level.Error, file, member, line, message);
     }
-    public static void Warning(String message, [CallerLineNumber] int line=0, [CallerFilePath] string file=null, [CallerMemberName] string member = null)
+
+    public static void Warning(String message, [CallerLineNumber] int line = 0, [CallerFilePath] string file = null, [CallerMemberName] string member = null)
     {
         EnsureDomainRegistered();
         eina_log_print(domain, Level.Warning, file, member, line, message);
     }
-    public static void Info(String message, [CallerLineNumber] int line=0, [CallerFilePath] string file=null, [CallerMemberName] string member = null)
+
+    public static void Info(String message, [CallerLineNumber] int line = 0, [CallerFilePath] string file = null, [CallerMemberName] string member = null)
     {
         EnsureDomainRegistered();
         eina_log_print(domain, Level.Info, file, member, line, message);
     }
-    public static void Debug(String message, [CallerLineNumber] int line=0, [CallerFilePath] string file=null, [CallerMemberName] string member = null)
+
+    public static void Debug(String message, [CallerLineNumber] int line = 0, [CallerFilePath] string file = null, [CallerMemberName] string member = null)
     {
         EnsureDomainRegistered();
         eina_log_print(domain, Level.Debug, file, member, line, message);
@@ -108,4 +120,5 @@ public class Log
         return eina_log_level_get();
     }
 }
+
 }

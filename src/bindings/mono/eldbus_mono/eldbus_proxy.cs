@@ -5,7 +5,8 @@ using System.Runtime.InteropServices;
 
 using static eldbus.EldbusProxyNativeFunctions;
 
-namespace eldbus {
+namespace eldbus
+{
 
 public static class EldbusProxyNativeFunctions
 {
@@ -104,10 +105,14 @@ public class Proxy : IDisposable
         IntPtr h = Handle;
         Handle = IntPtr.Zero;
         if (h == IntPtr.Zero)
+        {
             return;
+        }
 
         if (Own)
+        {
             eldbus_proxy_unref(h);
+        }
     }
 
     public void Dispose()
@@ -133,7 +138,10 @@ public class Proxy : IDisposable
         CheckHandle();
         var ptr = eldbus_proxy_object_get(Handle);
         if (ptr == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Object' object from eldbus_proxy_object_get");
+        }
+
         return new eldbus.Object(ptr, false);
     }
 
@@ -149,11 +157,16 @@ public class Proxy : IDisposable
         CheckHandle();
 
         if (member == null)
+        {
             throw new ArgumentNullException("member");
+        }
 
         var ptr = eldbus_proxy_method_call_new(Handle, member);
         if (ptr == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Message' object from eldbus_proxy_method_call_new");
+        }
+
         return new eldbus.Message(ptr, false);
     }
 
@@ -162,7 +175,9 @@ public class Proxy : IDisposable
         CheckHandle();
 
         if (msg == null)
+        {
             throw new ArgumentNullException("msg");
+        }
 
         IntPtr cb_wrapper = dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr();
         IntPtr cb_data = dlgt == null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(dlgt);
@@ -170,7 +185,9 @@ public class Proxy : IDisposable
         var pending_hdl = eldbus_proxy_send(Handle, msg.Handle, cb_wrapper, cb_data, timeout);
 
         if (pending_hdl == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_proxy_send");
+        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -180,7 +197,10 @@ public class Proxy : IDisposable
         CheckHandle();
         var ptr = eldbus_proxy_send_and_block(Handle, msg.Handle, timeout);
         if (ptr == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Message' object from eldbus_proxy_send_and_block");
+        }
+
         return new eldbus.Message(ptr, true);
     }
 
@@ -205,4 +225,3 @@ public class Proxy : IDisposable
 }
 
 }
-
