@@ -206,6 +206,8 @@ $(efl_eolian_type_files:%.eot=%.eot.cs) \
 $(edje_eolian_type_files:%.eot=%.eot.cs) \
 $(elm_eolian_type_files:%.eot=%.eot.cs) \
 $(filter-out $(evas_eolian_blacklisted_files),$(evas_canvas_eolian_pub_files:%.eo=%.eo.cs)) \
+$(evas_gesture_eolian_pub_files:%.eo=%.eo.cs) \
+$(evas_gesture_eolian_type_files:%.eot=%.eot.cs) \
 lib/evas/canvas/efl_canvas_image.eo.cs \
 $(evas_canvas_eolian_type_files:%.eot=%.eot.cs) \
 lib/eo/eina_types.eot.cs \
