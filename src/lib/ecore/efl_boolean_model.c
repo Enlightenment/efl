@@ -207,4 +207,121 @@ _efl_boolean_model_boolean_del(Eo *obj EINA_UNUSED,
    eina_stringshare_del(s);
 }
 
+typedef struct _Eina_Iterator_Boolean Eina_Iterator_Boolean;
+
+struct _Eina_Iterator_Boolean
+{
+   Eina_Iterator iterator;
+
+   Eo *obj;
+   Efl_Boolean_Model_Data *pd;
+   Efl_Boolean_Model_Value *v;
+
+   uint64_t index;
+   uint64_t total;
+
+   Eina_Bool request;
+};
+
+static inline Eina_Bool
+_lookup_next_chunk(uint64_t *index, uint64_t total,
+                   Efl_Boolean_Model_Value *v, unsigned char pattern)
+{
+   uint64_t upidx = *index >> 3;
+
+   while (upidx < v->buffer_count &&
+          v->buffer[upidx] == pattern)
+     upidx++;
+
+   *index = upidx << 3;
+   if (upidx == v->buffer_count &&
+       *index >= total) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+efl_boolean_model_iterator_next(Eina_Iterator_Boolean *it, void **data)
+{
+   uint64_t upidx;
+
+   *data = &it->index;
+   it->index++;
+
+ retry:
+   if (it->index >= it->total) return EINA_FALSE;
+   if ((it->index >> 3) >= it->v->buffer_count)
+     {
+        if (it->v->default_value != it->request)
+          return EINA_FALSE;
+        return EINA_TRUE;
+     }
+
+   upidx = it->index >> 3;
+   while ((it->index >> 3) == upidx)
+     {
+        Eina_Bool flag = it->v->buffer[it->index >> 3] &
+          (((unsigned char)1) << (it->index & 0x7));
+
+        if (it->request == !!flag)
+          break;
+
+        it->index++;
+     }
+
+   if ((it->index >> 3) != upidx)
+     {
+        if (!_lookup_next_chunk(&it->index, it->total, it->v, it->request ? 0x00 : 0xFF))
+          return EINA_FALSE;
+        goto retry;
+     }
+
+   return EINA_TRUE;
+}
+
+static Eo *
+efl_boolean_model_iterator_get_container(Eina_Iterator_Boolean *it)
+{
+   return it->obj;
+}
+
+static void
+efl_boolean_model_iterator_free(Eina_Iterator_Boolean *it)
+{
+   efl_unref(it->obj);
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_NONE);
+   free(it);
+}
+
+static Eina_Iterator *
+_efl_boolean_model_boolean_iterator_get(Eo *obj, Efl_Boolean_Model_Data *pd, const char *name, Eina_Bool request)
+{
+   Eina_Iterator_Boolean *itb;
+   Efl_Boolean_Model_Value *v;
+   Eina_Stringshare *s;
+
+   s = eina_stringshare_add(name);
+   v = eina_hash_find(pd->values, s);
+   eina_stringshare_del(s);
+   if (!v) return NULL;
+
+   itb = calloc(1, sizeof (Eina_Iterator_Boolean));
+   if (!itb) return NULL;
+
+   itb->obj = efl_ref(obj);
+   itb->pd = pd;
+   itb->v = v;
+   itb->index = 0;
+   itb->total = efl_model_children_count_get(obj);
+   itb->request = !!request;
+
+   itb->iterator.version = EINA_ITERATOR_VERSION;
+   itb->iterator.next = FUNC_ITERATOR_NEXT(efl_boolean_model_iterator_next);
+   itb->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(efl_boolean_model_iterator_get_container);
+   itb->iterator.free = FUNC_ITERATOR_FREE(efl_boolean_model_iterator_free);
+
+   EINA_MAGIC_SET(&itb->iterator, EINA_MAGIC_ITERATOR);
+   return &itb->iterator;
+}
+
+
 #include "efl_boolean_model.eo.c"
