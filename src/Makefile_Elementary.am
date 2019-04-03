@@ -1813,6 +1813,7 @@ edje_external_elementary_module_la_LIBTOOLFLAGS = --tag=disable-static
 testfilesdir = $(datadir)/elementary/
 testfiles_DATA = \
                 tests/elementary/testfile_entry.txt \
+                tests/elementary/testfile_entry2.txt \
                 tests/elementary/testfile.txt \
                 tests/elementary/testfile-windows.txt \
                 tests/elementary/testfile-withblanks.txt \
