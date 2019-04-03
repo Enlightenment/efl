@@ -831,6 +831,11 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
           {
              obj->callback_mask |= (((uint64_t)1) << type);
           }
+        else if (array[i].desc == EFL_GFX_ENTITY_EVENT_VISIBILITY_CHANGED)
+          {
+             obj->callback_mask |= (((uint64_t)1) << EVAS_CALLBACK_SHOW);
+             obj->callback_mask |= (((uint64_t)1) << EVAS_CALLBACK_HIDE);
+          }
      }
 }
 

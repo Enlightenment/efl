@@ -1937,6 +1937,7 @@ tests_elementary_efl_ui_suite_SOURCES = \
 	tests/elementary/efl_ui_build.c \
 	tests/elementary/elm_test_init.c \
 	tests/elementary/efl_ui_test_atspi.c \
+	tests/elementary/efl_ui_test_callback.c \
 	tests/elementary/efl_ui_test_focus_common.c \
 	tests/elementary/efl_ui_test_focus_common.h \
 	tests/elementary/efl_ui_test_focus.c \
