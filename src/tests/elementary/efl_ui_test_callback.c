@@ -26,14 +26,6 @@ _btn_visibility_change(void *data EINA_UNUSED, const Efl_Event *ev)
      *flag = EINA_TRUE;
 }
 
-static void
-callback_timer_cb(void *data EINA_UNUSED, const Efl_Event *event)
-{
-   ck_assert(0);
-   efl_del(event->object);
-   ecore_main_loop_quit();
-}
-
 EFL_START_TEST(efl_ui_callback_visibility)
 {
    Eina_Bool check = EINA_FALSE;
