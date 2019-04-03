@@ -244,11 +244,14 @@ _ecore_drm2_fb_buffer_release(Ecore_Drm2_Output *output EINA_UNUSED, Ecore_Drm2_
 {
    Ecore_Drm2_Fb *fb = s->fb;
 
+   if (!fb) goto out;
+
    if (fb->status_handler)
      fb->status_handler(fb, ECORE_DRM2_FB_STATUS_RELEASE, fb->status_data);
 
    _ecore_drm2_fb_deref(fb);
    s->fb = NULL;
+out:
    if (_ecore_drm2_use_atomic)
      {
         if (s->atomic_req)
