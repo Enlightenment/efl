@@ -210,8 +210,9 @@ _efl_ui_animation_view_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Animation_View
 {
    if (pd->transit)
      {
+        Elm_Transit *transit = pd->transit;
         pd->transit = NULL;   //Skip perform transit_del_cb()
-        elm_transit_del(pd->transit);
+        elm_transit_del(transit);
      }
    pd->state = EFL_UI_ANIMATION_VIEW_STATE_NOT_READY;
 
