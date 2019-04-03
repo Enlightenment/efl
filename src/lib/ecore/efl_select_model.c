@@ -18,7 +18,7 @@ struct _Efl_Select_Model_Data
    Efl_Select_Model_Data *parent;
    unsigned long last;
 
-   Eina_Bool exclusive : 1;
+   Eina_Bool single_selection : 1;
    Eina_Bool none : 1;
 };
 
@@ -247,7 +247,7 @@ _efl_select_model_efl_model_properties_get(const Eo *obj,
    EFL_COMPOSITE_MODEL_PROPERTIES_SUPER(props,
                                         obj, EFL_SELECT_MODEL_CLASS,
                                         NULL,
-                                        "self.selected", "child.selected", "exclusive");
+                                        "self.selected", "child.selected", "single_selection");
    return props;
 }
 
@@ -258,19 +258,19 @@ _efl_select_model_efl_model_property_set(Eo *obj,
 {
    Eina_Value vf = EINA_VALUE_EMPTY;
 
-   if (!strcmp("exclusive", property))
+   if (!strcmp("single_selection", property))
      {
-        Eina_Bool exclusive = pd->exclusive;
+        Eina_Bool single_selection = pd->single_selection;
         Eina_Bool changed;
 
-        vf = eina_value_bool_init(exclusive);
+        vf = eina_value_bool_init(single_selection);
         eina_value_convert(value, &vf);
-        eina_value_bool_get(&vf, &exclusive);
+        eina_value_bool_get(&vf, &single_selection);
 
-        changed = (!pd->exclusive != !exclusive);
-        pd->exclusive = !!exclusive;
+        changed = (!pd->single_selection != !single_selection);
+        pd->single_selection = !!single_selection;
 
-        if (changed) efl_model_properties_changed(obj, "exclusive");
+        if (changed) efl_model_properties_changed(obj, "single_selection");
 
         return efl_loop_future_resolved(obj, vf);
      }
@@ -291,7 +291,7 @@ _efl_select_model_efl_model_property_set(Eo *obj,
    if (pd->parent && !strcmp("self.selected", property))
      {
         Eina_Bool prevflag = EINA_FALSE, newflag = EINA_FALSE;
-        Eina_Bool exclusive = EINA_FALSE;
+        Eina_Bool single_selection = EINA_FALSE;
         Eina_Bool success;
         Eina_Value *prev;
         Eina_Future *chain;
@@ -306,14 +306,14 @@ _efl_select_model_efl_model_property_set(Eo *obj,
         if (newflag == prevflag)
           return efl_loop_future_resolved(obj, eina_value_bool_init(newflag));
 
-        exclusive = pd->parent->exclusive;
+        single_selection = pd->parent->single_selection;
 
         // First store the new value in the boolean model we inherit from
         chain = efl_model_property_set(efl_super(obj, EFL_SELECT_MODEL_CLASS),
                                        "selected", value);
 
         // Now act !
-        if (exclusive)
+        if (single_selection)
           {
              // We are here either, because we weren't and are after this call
              // or because we were selected and are not anymore. In the later case,
@@ -364,8 +364,8 @@ _efl_select_model_efl_model_property_set(Eo *obj,
 static Eina_Value *
 _efl_select_model_efl_model_property_get(const Eo *obj, Efl_Select_Model_Data *pd, const char *property)
 {
-   if (!strcmp("exclusive", property))
-     return eina_value_bool_new(pd->exclusive);
+   if (!strcmp("single_selection", property))
+     return eina_value_bool_new(pd->single_selection);
    // Last selected child
    if (!strcmp("child.selected", property))
      {
@@ -381,6 +381,30 @@ _efl_select_model_efl_model_property_get(const Eo *obj, Efl_Select_Model_Data *p
      }
 
    return efl_model_property_get(efl_super(obj, EFL_SELECT_MODEL_CLASS), property);
+}
+
+static void
+_efl_select_model_single_selection_set(Eo *obj EINA_UNUSED, Efl_Select_Model_Data *pd, Eina_Bool enable)
+{
+   pd->single_selection = enable;
+}
+
+static Eina_Bool
+_efl_select_model_single_selection_get(const Eo *obj EINA_UNUSED, Efl_Select_Model_Data *pd)
+{
+   return pd->single_selection;
+}
+
+static Eina_Iterator *
+_efl_select_model_selected_get(Eo *obj, Efl_Select_Model_Data *pd EINA_UNUSED)
+{
+   return efl_boolean_model_boolean_iterator_get(obj, "selected", EINA_TRUE);
+}
+
+static Eina_Iterator *
+_efl_select_model_unselected_get(Eo *obj, Efl_Select_Model_Data *pd EINA_UNUSED)
+{
+   return efl_boolean_model_boolean_iterator_get(obj, "selected", EINA_FALSE);
 }
 
 #include "efl_select_model.eo.c"
