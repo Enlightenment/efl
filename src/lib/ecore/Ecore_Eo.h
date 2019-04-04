@@ -119,6 +119,7 @@ EAPI Eo *efl_main_loop_get(void);
 #include "efl_composite_model.eo.h"
 #include "efl_boolean_model.eo.h"
 #include "efl_select_model.eo.h"
+#include "efl_filter_model.eo.h"
 #include "efl_view_model.eo.h"
 
 /**
