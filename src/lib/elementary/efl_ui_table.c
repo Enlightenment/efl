@@ -469,6 +469,7 @@ end:
          eina_inlist_remove(EINA_INLIST_GET(pd->items), EINA_INLIST_GET(gi));
    pd->count--;
    efl_key_data_set(subobj, TABLE_ITEM_KEY, NULL);
+   efl_event_callback_array_del(subobj, subobj_callbacks(), obj);
    free(gi);
 }
 
