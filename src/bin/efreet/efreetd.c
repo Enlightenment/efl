@@ -20,6 +20,7 @@
 #include "efreetd_ipc.h"
 
 int efreetd_log_dom = -1;
+Eina_Mempool *efreetd_mp_stat = NULL;
 
 void
 quit(void)
