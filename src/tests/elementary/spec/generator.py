@@ -2,6 +2,7 @@
 
 tests = [
   ["Efl.Pack_Linear" , "Efl.Ui.Box"],
+  ["Efl.Pack" , "Efl.Ui.Table"],
 ]
 
 fixture_gen_template = """
