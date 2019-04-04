@@ -341,11 +341,12 @@ EFL_START_TEST (efl_ui_table_layout_update_matrix)
      {
         for (j = 0; j < 3; j++)
         {
-           btn[3 * i + j] = efl_add(EFL_UI_BUTTON_CLASS, layout,
-                                    efl_pack_table(layout, efl_added, i, j, 1, 1));
+           btn[3 * i + j] = efl_add(EFL_UI_BUTTON_CLASS, layout);
 
            if ((i == 2) && (j == 1))
              efl_pack_table(layout, btn[3 * i + j], i, j, 1, 2);
+           else
+             efl_pack_table(layout, btn[3 * i + j], i, j, 1, 1);
         }
      }
    for (i = 0; i < max_index; i++)
