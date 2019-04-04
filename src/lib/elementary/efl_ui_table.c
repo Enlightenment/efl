@@ -306,6 +306,18 @@ _pack_at(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *subobj,
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
+   gi = efl_key_data_get(subobj, TABLE_ITEM_KEY);
+
+   if (gi && efl_ui_widget_parent_get(subobj) == obj)
+     {
+        ERR("subobj %p %s is already added to this", subobj, efl_class_name_get(subobj) );
+        return EINA_FALSE;
+     }
+   else if (gi &&  efl_ui_widget_parent_get(subobj) != obj)
+     {
+        gi = NULL;
+     }
+
    if (col < 0) col = 0;
    if (row < 0) row = 0;
 
@@ -327,22 +339,10 @@ _pack_at(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *subobj,
             col, row, colspan, rowspan, pd->req_cols, pd->req_rows);
      }
 
-   if (obj == elm_widget_parent_widget_get(subobj))
-     {
-        gi = efl_key_data_get(subobj, TABLE_ITEM_KEY);
-        if (gi)
-          {
-             gi->col = col;
-             gi->row = row;
-             gi->col_span = colspan;
-             gi->row_span = rowspan;
-             gi->linear = EINA_FALSE;
-          }
-        else ERR("object is a child but internal data was not found!");
-     }
-
    if (!gi)
      {
+        if (!elm_widget_sub_object_add(obj, subobj))
+          return EINA_FALSE;
         gi = calloc(1, sizeof(*gi));
         if (!gi) return EINA_FALSE;
         gi->col = col;
@@ -356,7 +356,6 @@ _pack_at(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *subobj,
               eina_inlist_append(EINA_INLIST_GET(pd->items), EINA_INLIST_GET(gi));
 
         efl_key_data_set(subobj, TABLE_ITEM_KEY, gi);
-        elm_widget_sub_object_add(obj, subobj);
         efl_event_callback_legacy_call(obj, EFL_CONTAINER_EVENT_CONTENT_ADDED, subobj);
         efl_event_callback_array_add(subobj, subobj_callbacks(), obj);
      }
