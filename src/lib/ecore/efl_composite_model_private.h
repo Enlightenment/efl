@@ -1,3 +1,7 @@
+#ifndef EFL_COMPOSITE_MODEL_PRIVATE_H_
+# define EFL_COMPOSITE_MODEL_PRIVATE_H_
+
+#define EFL_COMPOSITE_MODEL_CHILD_INDEX "child.index"
 
 #define EFL_COMPOSITE_MODEL_PROPERTIES(name, dyn, sta, ...) \
   EFL_COMPOSITE_MODEL_PROPERTIES_SUPER(name, NULL, NULL, (dyn), sta, ##__VA_ARGS__)
@@ -36,3 +40,4 @@ _efl_composite_model_properties_mix(Eina_Iterator *super, Eina_Iterator *dyn, Ei
      };
 }
 
+#endif

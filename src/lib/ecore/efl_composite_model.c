@@ -8,9 +8,8 @@
 
 #include "ecore_private.h"
 
+#include "efl_composite_model_private.h"
 #include "efl_composite_model.eo.h"
-
-#define _CHILD_INDEX "child.index"
 
 typedef struct _Efl_Composite_Model_Data Efl_Composite_Model_Data;
 
@@ -148,7 +147,7 @@ _efl_composite_model_index_get(const Eo *obj, Efl_Composite_Model_Data *pd)
    if (pd->need_index)
      return 0xFFFFFFFF;
 
-   fetch = efl_model_property_get(obj, _CHILD_INDEX);
+   fetch = efl_model_property_get(obj, EFL_COMPOSITE_MODEL_CHILD_INDEX);
    if (!eina_value_uint_convert(fetch, &r))
      return 0xFFFFFFFF;
    eina_value_free(fetch);
@@ -179,7 +178,7 @@ _efl_composite_model_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Composite_Mo
    properties = efl_model_properties_get(pd->source);
    EINA_ITERATOR_FOREACH(properties, property)
      {
-        if (!strcmp(property, _CHILD_INDEX))
+        if (!strcmp(property, EFL_COMPOSITE_MODEL_CHILD_INDEX))
           {
              pd->need_index = EINA_FALSE;
              break;
@@ -198,7 +197,7 @@ static Eina_Future *
 _efl_composite_model_efl_model_property_set(Eo *obj, Efl_Composite_Model_Data *pd,
                                             const char *property, Eina_Value *value)
 {
-   if (pd->need_index && !strcmp(property, _CHILD_INDEX))
+   if (pd->need_index && !strcmp(property, EFL_COMPOSITE_MODEL_CHILD_INDEX))
      {
         if (pd->set_index || !pd->source)
           return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_READ_ONLY);
@@ -214,7 +213,7 @@ static Eina_Value *
 _efl_composite_model_efl_model_property_get(const Eo *obj EINA_UNUSED, Efl_Composite_Model_Data *pd,
                                             const char *property)
 {
-   if (pd->need_index && !strcmp(property, _CHILD_INDEX))
+   if (pd->need_index && !strcmp(property, EFL_COMPOSITE_MODEL_CHILD_INDEX))
      {
         if (pd->set_index)
           return eina_value_uint_new(pd->index);
@@ -229,7 +228,7 @@ _efl_composite_model_efl_model_properties_get(const Eo *obj EINA_UNUSED, Efl_Com
    if (pd->need_index)
      {
         static const char *composite_properties[] = {
-          _CHILD_INDEX
+          EFL_COMPOSITE_MODEL_CHILD_INDEX
         };
 
         return eina_multi_iterator_new(efl_model_properties_get(pd->source),
