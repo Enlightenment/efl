@@ -488,20 +488,28 @@ _efl_ui_table_efl_pack_unpack(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *su
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_table_efl_pack_pack_clear(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUSED)
+_efl_ui_table_efl_pack_pack_clear(Eo *obj, Efl_Ui_Table_Data *pd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
+   while (pd->items)
+     _item_remove(obj, pd, pd->items->object);
+
    evas_object_table_clear(wd->resize_obj, EINA_TRUE);
+
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_table_efl_pack_unpack_all(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUSED)
+_efl_ui_table_efl_pack_unpack_all(Eo *obj, Efl_Ui_Table_Data *pd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
+   while (pd->items)
+     _item_remove(obj, pd, pd->items->object);
+
    evas_object_table_clear(wd->resize_obj, EINA_FALSE);
+
    return EINA_TRUE;
 }
 
