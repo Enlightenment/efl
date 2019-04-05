@@ -72,7 +72,14 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
     {
         if (Ownership == Ownership.Managed && Handle != IntPtr.Zero)
         {
-            eina_accessor_free(Handle);
+            if (disposing)
+            {
+                eina_accessor_free(Handle);
+            }
+            else
+            {
+                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eina_accessor_free, Handle);
+            }
             Handle = IntPtr.Zero;
         }
     }

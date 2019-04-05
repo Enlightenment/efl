@@ -2,6 +2,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.CompilerServices;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
@@ -66,6 +67,11 @@ public class Globals
         efl_ref_count_delegate(IntPtr eo);
     [DllImport(efl.Libs.Eo)] public static extern int
         efl_ref_count(IntPtr eo);
+    [DllImport(efl.Libs.CustomExports)] public static extern void
+        efl_mono_thread_safe_efl_unref(IntPtr eo);
+
+    [DllImport(efl.Libs.CustomExports)] public static extern void
+        efl_mono_thread_safe_free_cb_exec(EinaFreeCb free_cb, IntPtr cb_data);
 
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         efl_class_name_get(IntPtr eo);
@@ -415,7 +421,9 @@ public class Globals
         }
     }
 
-    public static IntPtr instantiate_start(IntPtr klass, Efl.Object parent)
+    public static IntPtr instantiate_start(IntPtr klass, Efl.Object parent,
+                                           [CallerFilePath] string file = null,
+                                           [CallerLineNumber] int line = 0)
     {
         Eina.Log.Debug($"Instantiating from klass 0x{klass.ToInt64():x}");
         System.IntPtr parent_ptr = System.IntPtr.Zero;
@@ -424,7 +432,7 @@ public class Globals
             parent_ptr = parent.NativeHandle;
         }
 
-        System.IntPtr eo = Efl.Eo.Globals._efl_add_internal_start("file", 0, klass, parent_ptr, 1, 0);
+        System.IntPtr eo = Efl.Eo.Globals._efl_add_internal_start(file, line, klass, parent_ptr, 1, 0);
         if (eo == System.IntPtr.Zero)
         {
             throw new Exception("Instantiation failed");

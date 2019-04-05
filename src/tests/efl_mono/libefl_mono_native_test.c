@@ -3640,12 +3640,11 @@ Dummy_StructComplex* _dummy_test_object_struct_complex_ptr_return_own(EINA_UNUSE
 }
 
 //                   //
-// Class constructor
+// Class methods
 //                   //
 EOLIAN static void
-_dummy_test_object_class_constructor(Efl_Class *klass)
+_dummy_test_object_create_cmp_array_objects(void)
 {
-   (void)klass;
    modified_seq_obj[0] = base_seq_obj[0] = _new_obj(0x0);
    modified_seq_obj[1] = base_seq_obj[1] = _new_obj(0x2A);
    modified_seq_obj[2] = base_seq_obj[2] = _new_obj(0x42);
@@ -3655,11 +3654,8 @@ _dummy_test_object_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static void
-_dummy_test_object_class_destructor(Efl_Class *klass)
+_dummy_test_object_destroy_cmp_array_objects(void)
 {
-   (void)klass;
-   for (unsigned i = 0; i < base_seq_obj_size; ++i)
-     efl_unref(base_seq_obj[i]);
    for (unsigned i = 0; i < modified_seq_obj_size; ++i)
      efl_unref(modified_seq_obj[i]);
 }

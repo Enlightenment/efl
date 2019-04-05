@@ -8,13 +8,6 @@ bash = find_program('bash')
 map = run_command('map_generate.sh').stdout()
 
 
-efl_mono_lib = library('eflcustomexportsmono',
-    join_paths('..', '..', '..', 'lib', 'efl_mono', 'efl_custom_exports_mono.c'),
-    install : true,
-    install_dir : join_paths(dir_lib, 'efl-mono-'+version_major),
-    dependencies : [eo, eina]
-)
-
 efl_libs = configuration_data()
 efl_libs.set('EFL_MONO_LIBRARY_MAP', map)
 efl_libs.set('CUSTOM_EXPORTS_MONO_DL_MONO', 'eflcustomexportsmono')
