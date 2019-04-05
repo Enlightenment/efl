@@ -50,6 +50,12 @@ public class Globals {
     [DllImport(efl.Libs.Eo)] public static extern int
         efl_ref_count(IntPtr eo);
     [DllImport(efl.Libs.CustomExports)] public static extern void
+        efl_mono_gchandle_callbacks_set(Efl.FreeGCHandleCb freeGCHandleCb, Efl.RemoveEventsCb removeEventsCb);
+    [DllImport(efl.Libs.CustomExports)] public static extern void
+        efl_mono_native_dispose(IntPtr eo, IntPtr gcHandle);
+    [DllImport(efl.Libs.CustomExports)] public static extern void
+        efl_mono_thread_safe_native_dispose(IntPtr eo, IntPtr gcHandle);
+    [DllImport(efl.Libs.CustomExports)] public static extern void
         efl_mono_thread_safe_efl_unref(IntPtr eo);
 
     [DllImport(efl.Libs.CustomExports)] public static extern void
@@ -168,28 +174,14 @@ public class Globals {
     public delegate  IntPtr dlerror_delegate();
     [DllImport(efl.Libs.Evil)] public static extern IntPtr dlerror();
 
-    public delegate  bool efl_event_callback_priority_add_delegate(
-              System.IntPtr obj,
-              IntPtr desc,
-              short priority,
-              Efl.EventCb cb,
-              System.IntPtr data);
-    [DllImport(efl.Libs.Eo)] public static extern bool efl_event_callback_priority_add(
-              System.IntPtr obj,
-              IntPtr desc,
-              short priority,
-              Efl.EventCb cb,
-              System.IntPtr data);
-    public delegate  bool efl_event_callback_del_delegate(
-              System.IntPtr obj,
-              IntPtr desc,
-              Efl.EventCb cb,
-              System.IntPtr data);
-    [DllImport(efl.Libs.Eo)] public static extern bool efl_event_callback_del(
-              System.IntPtr obj,
-              IntPtr desc,
-              Efl.EventCb cb,
-              System.IntPtr data);
+    [DllImport(efl.Libs.Eo)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+        efl_event_callback_priority_add(IntPtr obj, IntPtr desc, short priority, Efl.EventCb cb, IntPtr data);
+
+    [DllImport(efl.Libs.Eo)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+        efl_event_callback_del(IntPtr obj, IntPtr desc, Efl.EventCb cb, IntPtr data);
+
+    [DllImport(efl.Libs.Eo)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+        efl_event_callback_call(IntPtr obj, IntPtr desc, IntPtr event_info);
 
     public const int RTLD_NOW = 2;
 
@@ -497,6 +489,52 @@ public class Globals {
 
         return tcs.Task;
     }
+
+    public static void FreeGCHandleCallback(IntPtr gcHandlePtr)
+    {
+        try
+        {
+            GCHandle gcHandle = GCHandle.FromIntPtr(gcHandlePtr);
+            gcHandle.Free();
+        }
+        catch (Exception e)
+        {
+            Eina.Log.Error(e.ToString());
+            Eina.Error.Set(Eina.Error.UNHANDLED_EXCEPTION);
+        }
+    }
+
+    public static void RemoveEventsCallback(IntPtr obj, IntPtr gcHandlePtr)
+    {
+        try
+        {
+            GCHandle gcHandle = GCHandle.FromIntPtr(gcHandlePtr);
+            var eoEvents = gcHandle.Target as Dictionary<(IntPtr desc, object evtDelegate), Efl.EventCb>;
+            if (eoEvents == null)
+            {
+                return;
+            }
+
+            foreach (var item in eoEvents)
+            {
+                if (!efl_event_callback_del(obj, item.Key.desc, item.Value, IntPtr.Zero))
+                {
+                    Eina.Log.Error($"Failed to remove event proxy for event {item.Key.desc}");
+                }
+            }
+        }
+        catch (Exception e)
+        {
+            Eina.Log.Error(e.ToString());
+            Eina.Error.Set(Eina.Error.UNHANDLED_EXCEPTION);
+        }
+    }
+
+    public static void SetNativeDisposeCallbacks()
+    {
+        efl_mono_gchandle_callbacks_set(FreeGCHandleCallback, RemoveEventsCallback);
+    }
+
 } // Globals
 
 public static class Config
@@ -504,6 +542,7 @@ public static class Config
     public static void Init()
     {
         Globals.efl_object_init();
+        Globals.SetNativeDisposeCallbacks();
     }
 
     public static void Shutdown()
