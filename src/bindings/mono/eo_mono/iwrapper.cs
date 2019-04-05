@@ -175,10 +175,10 @@ public class Globals {
     [DllImport(efl.Libs.Evil)] public static extern IntPtr dlerror();
 
     [DllImport(efl.Libs.Eo)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
-        efl_event_callback_priority_add(IntPtr obj, IntPtr desc, short priority, Efl.EventCb cb, IntPtr data);
+        efl_event_callback_priority_add(IntPtr obj, IntPtr desc, short priority, IntPtr cb, IntPtr data);
 
     [DllImport(efl.Libs.Eo)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
-        efl_event_callback_del(IntPtr obj, IntPtr desc, Efl.EventCb cb, IntPtr data);
+        efl_event_callback_del(IntPtr obj, IntPtr desc, IntPtr cb, IntPtr data);
 
     [DllImport(efl.Libs.Eo)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
         efl_event_callback_call(IntPtr obj, IntPtr desc, IntPtr event_info);
@@ -509,17 +509,18 @@ public class Globals {
         try
         {
             GCHandle gcHandle = GCHandle.FromIntPtr(gcHandlePtr);
-            var eoEvents = gcHandle.Target as Dictionary<(IntPtr desc, object evtDelegate), Efl.EventCb>;
+            var eoEvents = gcHandle.Target as Dictionary<(IntPtr desc, object evtDelegate), (IntPtr evtCallerPtr, Efl.EventCb evtCaller)>;
             if (eoEvents == null)
             {
+                Eina.Log.Error($"Invalid event dictionary [GCHandle pointer: {gcHandlePtr}]");
                 return;
             }
 
             foreach (var item in eoEvents)
             {
-                if (!efl_event_callback_del(obj, item.Key.desc, item.Value, IntPtr.Zero))
+                if (!efl_event_callback_del(obj, item.Key.desc, item.Value.evtCallerPtr, IntPtr.Zero))
                 {
-                    Eina.Log.Error($"Failed to remove event proxy for event {item.Key.desc}");
+                    Eina.Log.Error($"Failed to remove event proxy for event {item.Key.desc} [cb: {item.Value.evtCallerPtr}]");
                 }
             }
         }

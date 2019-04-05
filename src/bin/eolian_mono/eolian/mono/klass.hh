@@ -472,7 +472,7 @@ struct klass
        return true;
 
      if (cls.get_all_events().size() > 0)
-        if (!as_generator(scope_tab << visibility << "Dictionary<(IntPtr desc, object evtDelegate), Efl.EventCb> eoEvents = new Dictionary<(IntPtr desc, object evtDelegate), Efl.EventCb>();\n"
+        if (!as_generator(scope_tab << visibility << "Dictionary<(IntPtr desc, object evtDelegate), (IntPtr evtCallerPtr, Efl.EventCb evtCaller)> eoEvents = new Dictionary<(IntPtr desc, object evtDelegate), (IntPtr evtCallerPtr, Efl.EventCb evtCaller)>();\n"
                           << scope_tab << visibility << "readonly object eventLock = new object();\n")
               .generate(sink, attributes::unused, context))
           return false;
@@ -667,13 +667,14 @@ struct klass
             << scope_tab << scope_tab << scope_tab << "return;\n"
             << scope_tab << scope_tab << "}\n\n"
 
-            << scope_tab << scope_tab << "if (!Efl.Eo.Globals.efl_event_callback_priority_add(handle, desc, 0, evtCaller, IntPtr.Zero))\n"
+            << scope_tab << scope_tab << "IntPtr evtCallerPtr = Marshal.GetFunctionPointerForDelegate(evtCaller);\n"
+            << scope_tab << scope_tab << "if (!Efl.Eo.Globals.efl_event_callback_priority_add(handle, desc, 0, evtCallerPtr, IntPtr.Zero))\n"
             << scope_tab << scope_tab << "{\n"
             << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Failed to add event proxy for event {key}\");\n"
             << scope_tab << scope_tab << scope_tab << "return;\n"
             << scope_tab << scope_tab << "}\n\n"
 
-            << scope_tab << scope_tab << "eoEvents[(desc, evtDelegate)] = evtCaller;\n"
+            << scope_tab << scope_tab << "eoEvents[(desc, evtDelegate)] = (evtCallerPtr, evtCaller);\n"
             << scope_tab << scope_tab << "Eina.Error.RaiseIfUnhandledException();\n"
             << scope_tab << "}\n\n"
 
@@ -692,10 +693,10 @@ struct klass
             << scope_tab << scope_tab << "}\n\n"
 
             << scope_tab << scope_tab << "var evtPair = (desc, evtDelegate);\n"
-            << scope_tab << scope_tab << "if (eoEvents.TryGetValue(evtPair, out var evtCaller))\n"
+            << scope_tab << scope_tab << "if (eoEvents.TryGetValue(evtPair, out var caller))\n"
             << scope_tab << scope_tab << "{\n"
 
-            << scope_tab << scope_tab << scope_tab << "if (!Efl.Eo.Globals.efl_event_callback_del(handle, desc, evtCaller, IntPtr.Zero))\n"
+            << scope_tab << scope_tab << scope_tab << "if (!Efl.Eo.Globals.efl_event_callback_del(handle, desc, caller.evtCallerPtr, IntPtr.Zero))\n"
             << scope_tab << scope_tab << scope_tab << "{\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Failed to remove event proxy for event {key}\");\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "return;\n"
