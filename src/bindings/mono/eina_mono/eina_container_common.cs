@@ -4,6 +4,7 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Reflection;
 
 using Eina.Callbacks;
 using static Eina.HashNativeFunctions;
@@ -196,13 +197,6 @@ public class StringElementTraits : IBaseElementTraits<string>
 
 public class EflObjectElementTraits<T> : IBaseElementTraits<T>
 {
-    private System.Type concreteType = null;
-
-    public EflObjectElementTraits(System.Type concrete)
-    {
-        concreteType = concrete;
-    }
-
     public IntPtr ManagedToNativeAlloc(T man)
     {
         IntPtr h = ((Efl.Eo.IWrapper)man).NativeHandle;
@@ -290,7 +284,7 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
             return default(T);
         }
 
-        return (T)Activator.CreateInstance(concreteType, Efl.Eo.Globals.efl_ref(nat));
+        return (T) Efl.Eo.Globals.CreateWrapperFor(nat, shouldIncRef: true);
     }
 
     public T NativeToManagedRef(IntPtr nat)
@@ -762,7 +756,9 @@ public static class TraitFunctions
                 throw new Exception("Failed to get a suitable concrete class for this type.");
             }
 
-            traits = new EflObjectElementTraits<T>(concrete);
+            // No need to pass concrete as the traits class will use reflection to get the actually most
+            // derived type returned.
+            traits = new EflObjectElementTraits<T>();
         }
         else if (IsString(type))
         {

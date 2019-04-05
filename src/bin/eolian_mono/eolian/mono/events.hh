@@ -73,7 +73,7 @@ struct unpack_event_args_visitor
    }
    bool operator()(grammar::attributes::klass_name const& cls) const
    {
-      return as_generator("new " + name_helpers::klass_full_concrete_name(cls) + "(evt.Info)").generate(sink, attributes::unused, *context);
+      return as_generator("(Efl.Eo.Globals.CreateWrapperFor(evt.Info) as " + name_helpers::klass_full_concrete_name(cls) + ")").generate(sink, attributes::unused, *context);
    }
    bool operator()(attributes::complex_type_def const&) const
    {

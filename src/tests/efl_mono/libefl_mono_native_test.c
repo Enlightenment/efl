@@ -45,11 +45,11 @@
 # endif
 #endif
 
+#include "dummy_test_iface.eo.h"
+#include "dummy_inherit_iface.eo.h"
 #include "dummy_numberwrapper.eo.h"
 #include "dummy_test_object.eo.h"
 #include "dummy_child.eo.h"
-#include "dummy_test_iface.eo.h"
-#include "dummy_inherit_iface.eo.h"
 #include "dummy_inherit_helper.eo.h"
 #include "dummy_part_holder.eo.h"
 
@@ -170,6 +170,11 @@ Efl_Object *_dummy_test_object_return_object(Eo *obj, EINA_UNUSED Dummy_Test_Obj
 Efl_Object *_dummy_test_object_return_null_object(Eo *obj EINA_UNUSED, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
   return NULL;
+}
+
+Dummy_Test_Iface *_dummy_test_object_return_iface(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+  return obj;
 }
 
 void _dummy_test_object_int_out(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, int x, int *y)

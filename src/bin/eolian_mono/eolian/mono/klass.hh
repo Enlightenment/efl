@@ -32,20 +32,6 @@
 namespace eolian_mono {
 
 template <typename OutputIterator, typename Context>
-static bool generate_static_cast_method(OutputIterator sink, grammar::attributes::klass_def const& cls, Context const &context)
-{
-   return as_generator(
-       scope_tab << "///<summary>Casts obj into an instance of this type.</summary>\n"
-       << scope_tab << "public " << (helpers::has_regular_ancestor(cls) ? "new " : "") <<"static " << name_helpers::klass_concrete_name(cls) << " static_cast(Efl.Object obj)\n"
-       << scope_tab << "{\n"
-       << scope_tab << scope_tab << "if (obj == null)\n"
-       << scope_tab << scope_tab << scope_tab << "throw new System.ArgumentNullException(\"obj\");\n"
-       << scope_tab << scope_tab << "return new " << name_helpers::klass_concrete_name(cls) << "(obj.NativeHandle);\n"
-       << scope_tab << "}\n"
-       ).generate(sink, nullptr, context);
-}
-
-template <typename OutputIterator, typename Context>
 static bool generate_equals_method(OutputIterator sink, Context const &context)
 {
    return as_generator(
@@ -110,7 +96,7 @@ struct klass
          suffix = "CLASS";
          break;
        case attributes::class_type::abstract_:
-         class_type = "class";
+         class_type = "abstract class";
          suffix = "CLASS";
          break;
        case attributes::class_type::mixin:
@@ -207,7 +193,7 @@ struct klass
                     });
 
      // Concrete class for interfaces, mixins, etc.
-     if(class_type != "class")
+     if(class_type != "class" && class_type != "abstract class")
        {
          auto concrete_cxt = context_add_tag(class_context{class_context::concrete}, context);
          auto concrete_name = name_helpers::klass_concrete_name(cls);
@@ -234,7 +220,7 @@ struct klass
              << ")] internal static extern System.IntPtr\n"
              << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n"
              << scope_tab << "///<summary>Internal usage: Constructs an instance from a native pointer. This is used when interacting with C code and should not be used directly.</summary>\n"
-             << scope_tab << "public " << concrete_name << "(System.IntPtr raw)" << (root ? "" : " : base(raw)") << "\n"
+             << scope_tab << "private " << concrete_name << "(System.IntPtr raw)" << (root ? "" : " : base(raw)") << "\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << (root ? "handle = raw;\n" : "")
              << scope_tab << scope_tab << "RegisterEventProxies();\n"
@@ -244,9 +230,6 @@ struct klass
            return false;
 
          if (!generate_dispose_methods(sink, cls, concrete_cxt))
-           return false;
-
-         if (!generate_static_cast_method(sink, cls, concrete_cxt))
            return false;
 
          if (!generate_equals_method(sink, concrete_cxt))
@@ -296,7 +279,7 @@ struct klass
        }
 
      // Inheritable class
-     if(class_type == "class")
+     if(class_type == "class" || class_type == "abstract class")
        {
         auto inherit_cxt = context_add_tag(class_context{class_context::inherit}, context);
 
@@ -325,9 +308,6 @@ struct klass
            return false;
 
          if (!generate_dispose_methods(sink, cls, inherit_cxt))
-           return false;
-
-         if (!generate_static_cast_method(sink, cls, inherit_cxt))
            return false;
 
          if (!generate_equals_method(sink, inherit_cxt))
@@ -430,7 +410,7 @@ struct klass
               << scope_tab << "}\n"
            ).generate(sink, attributes::unused, inative_cxt))
            return false;
-         
+
          // Native method definitions
          if(!as_generator(*(native_function_definition(cls)))
             .generate(sink, helpers::get_all_implementable_methods(cls), inative_cxt)) return false;
@@ -534,13 +514,30 @@ struct klass
                      << scope_tab << scope_tab << "FinishInstantiation();\n"
                      << scope_tab << "}\n"
                      << scope_tab << "///<summary>Internal usage: Constructs an instance from a native pointer. This is used when interacting with C code and should not be used directly.</summary>\n"
-                     << scope_tab << "public " << inherit_name << "(System.IntPtr raw)" << (root ? "" : " : base(raw)") << "\n"
+                     << scope_tab << "protected " << inherit_name << "(System.IntPtr raw)" << (root ? "" : " : base(raw)") << "\n"
                      << scope_tab << "{\n"
                      << scope_tab << scope_tab << (root ? "handle = raw;\n" : "")
                      << scope_tab << scope_tab << "RegisterEventProxies();\n"
                      << scope_tab << "}\n"
                  ).generate(sink, std::make_tuple(constructors, constructors, constructors), context))
          return false;
+
+     // Some abstract classes (like Efl.App) have a simple regular class that is used to instantiate them
+     // in a controlled manner. These fake-private classes can be returned from C and we use a similarly-named
+     // private class to be able to instantiate them when they get to the C# world.
+     if (cls.type == attributes::class_type::abstract_)
+     {
+         if (!as_generator(
+                scope_tab << "[Efl.Eo.PrivateNativeClass]\n"
+                << scope_tab << "private class " << inherit_name << "Realized : " << inherit_name << "\n"
+                << scope_tab << "{\n"
+                << scope_tab << scope_tab << "private " << inherit_name << "Realized(IntPtr ptr) : base(ptr)\n"
+                << scope_tab << scope_tab << "{\n"
+                << scope_tab << scope_tab << "}\n"
+                << scope_tab << "}\n"
+            ).generate(sink, attributes::unused, context))
+           return false;
+     }
 
      // Internal constructors
      if (!root)
@@ -564,13 +561,14 @@ struct klass
              << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << "handle = Efl.Eo.Globals.instantiate_start(actual_klass, parent);\n"
              << scope_tab << scope_tab << "RegisterEventProxies();\n"
+             << scope_tab << scope_tab << "if (inherited)\n"
+             << scope_tab << scope_tab << "{\n"
+             << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.PrivateDataSet(this);\n"
+             << scope_tab << scope_tab << "}\n"
              << scope_tab << "}\n"
 
              << scope_tab << "protected void FinishInstantiation()\n"
              << scope_tab << "{\n"
-             << scope_tab << scope_tab << "if (inherited) {\n"
-             << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.data_set(this);\n"
-             << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << "handle = Efl.Eo.Globals.instantiate_end(handle);\n"
              << scope_tab << scope_tab << "Eina.Error.RaiseIfUnhandledException();\n"
              << scope_tab << "}\n"
