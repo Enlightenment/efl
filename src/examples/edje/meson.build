@@ -72,7 +72,7 @@ foreach edc_file : edc_files
               '-md', meson.current_source_dir(),
               '-td', meson.current_source_dir(),
               '@INPUT@', '@OUTPUT@'],
-    depends : edje_cc, )
+    depends : edje_depends, )
 endforeach
 
 codegen = custom_target('edje_cc_codegen_edc',
@@ -87,7 +87,7 @@ codegen = custom_target('edje_cc_codegen_edc',
             '-md', meson.current_source_dir(),
             '-td', meson.current_source_dir(),
             '@INPUT@', '@OUTPUT@'],
-  depends : edje_cc, )
+  depends : edje_depends, )
 
 themes += custom_target('edje_codegen_codegen.edj',
             input : codegen,

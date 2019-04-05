@@ -131,7 +131,7 @@ themes = []
 
 foreach edc_file : edc_files
    themes += custom_target('edje_cc_' + edc_file,
-    depends : edje_cc,
+    depends : edje_depends,
     input : edc_file,
     output : '@BASENAME@.edj',
     command : edje_cc_exe + ['-beta',

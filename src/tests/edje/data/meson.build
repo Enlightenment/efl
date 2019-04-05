@@ -34,5 +34,5 @@ foreach edc_file : edc_files
               '-md', meson.current_source_dir(),
               '-td', meson.current_source_dir(),
               '@INPUT@', '@OUTPUT@'],
-    depends : edje_cc)
+    depends : edje_depends)
 endforeach
