@@ -223,7 +223,6 @@ struct klass
              << scope_tab << "private " << concrete_name << "(System.IntPtr raw)" << (root ? "" : " : base(raw)") << "\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << (root ? "handle = raw;\n" : "")
-             << scope_tab << scope_tab << "RegisterEventProxies();\n"
              << scope_tab << "}\n"
             )
             .generate(sink, attributes::unused, concrete_cxt))
@@ -236,9 +235,6 @@ struct klass
            return false;
 
          if (!generate_events(sink, cls, concrete_cxt))
-             return false;
-
-         if (!generate_events_registration(sink, cls, concrete_cxt))
              return false;
 
          // Parts
@@ -314,9 +310,6 @@ struct klass
            return false;
 
          if (!generate_events(sink, cls, inherit_cxt))
-             return false;
-
-         if (!generate_events_registration(sink, cls, inherit_cxt))
              return false;
 
          // Parts
@@ -459,7 +452,9 @@ struct klass
        return true;
 
      if (cls.get_all_events().size() > 0)
-        if (!as_generator(scope_tab << (is_inherit ? "protected " : "private ") << "EventHandlerList eventHandlers = new EventHandlerList();\n").generate(sink, attributes::unused, context))
+        if (!as_generator(scope_tab << visibility << "Dictionary<(IntPtr desc, object evtDelegate), (IntPtr evtCallerPtr, Efl.EventCb evtCaller)> eoEvents = new Dictionary<(IntPtr desc, object evtDelegate), (IntPtr evtCallerPtr, Efl.EventCb evtCaller)>();\n"
+                          << scope_tab << visibility << "readonly object eventLock = new object();\n")
+              .generate(sink, attributes::unused, context))
           return false;
 
      if (is_inherit)
@@ -517,7 +512,6 @@ struct klass
                      << scope_tab << "protected " << inherit_name << "(System.IntPtr raw)" << (root ? "" : " : base(raw)") << "\n"
                      << scope_tab << "{\n"
                      << scope_tab << scope_tab << (root ? "handle = raw;\n" : "")
-                     << scope_tab << scope_tab << "RegisterEventProxies();\n"
                      << scope_tab << "}\n"
                  ).generate(sink, std::make_tuple(constructors, constructors, constructors), context))
          return false;
@@ -560,7 +554,6 @@ struct klass
              << scope_tab << scope_tab << scope_tab << "actual_klass = Efl.Eo.ClassRegister.GetInheritKlassOrRegister(base_klass, ((object)this).GetType());\n"
              << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << "handle = Efl.Eo.Globals.instantiate_start(actual_klass, parent);\n"
-             << scope_tab << scope_tab << "RegisterEventProxies();\n"
              << scope_tab << scope_tab << "if (inherited)\n"
              << scope_tab << scope_tab << "{\n"
              << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.PrivateDataSet(this);\n"
@@ -580,7 +573,6 @@ struct klass
    template <typename OutputIterator, typename Context>
    bool generate_dispose_methods(OutputIterator sink, attributes::klass_def const& cls, Context const& context) const
    {
-     std::string name = join_namespaces(cls.namespaces, '.') + cls.eolian_name;
      if (helpers::has_regular_ancestor(cls))
        return true;
 
@@ -588,90 +580,62 @@ struct klass
 
      auto inherit_name = name_helpers::klass_concrete_name(cls);
 
+     std::string events_gchandle;
+     if (cls.get_all_events().size() > 0)
+       {
+           auto events_gchandle_sink = std::back_inserter(events_gchandle);
+           if (!as_generator(scope_tab << scope_tab << scope_tab << "if (eoEvents.Count != 0)\n"
+                             << scope_tab << scope_tab << scope_tab << "{\n"
+                             << scope_tab << scope_tab << scope_tab << scope_tab << "GCHandle gcHandle = GCHandle.Alloc(eoEvents);\n"
+                             << scope_tab << scope_tab << scope_tab << scope_tab << "gcHandlePtr = GCHandle.ToIntPtr(gcHandle);\n"
+                             << scope_tab << scope_tab << scope_tab << "}\n\n")
+                 .generate(events_gchandle_sink, attributes::unused, context))
+             return false;
+       }
+
      return as_generator(
 
              scope_tab << "///<summary>Destructor.</summary>\n"
              << scope_tab << "~" << inherit_name << "()\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "Dispose(false);\n"
-             << scope_tab << "}\n"
+             << scope_tab << "}\n\n"
 
              << scope_tab << "///<summary>Releases the underlying native instance.</summary>\n"
              << scope_tab << visibility << "void Dispose(bool disposing)\n"
              << scope_tab << "{\n"
-             << scope_tab << scope_tab << "if (handle != System.IntPtr.Zero) {\n"
+             << scope_tab << scope_tab << "if (handle != System.IntPtr.Zero)\n"
+             << scope_tab << scope_tab << "{\n"
+             << scope_tab << scope_tab << scope_tab << "IntPtr h = handle;\n"
+             << scope_tab << scope_tab << scope_tab << "handle = IntPtr.Zero;\n\n"
+
+             << scope_tab << scope_tab << scope_tab << "IntPtr gcHandlePtr = IntPtr.Zero;\n"
+             << events_gchandle
+
              << scope_tab << scope_tab << scope_tab << "if (disposing)\n"
              << scope_tab << scope_tab << scope_tab << "{\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.efl_unref(handle);\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.efl_mono_native_dispose(h, gcHandlePtr);\n"
              << scope_tab << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << scope_tab << "else\n"
              << scope_tab << scope_tab << scope_tab << "{\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.efl_mono_thread_safe_efl_unref(handle);\n"
+
+             << scope_tab << scope_tab << scope_tab << scope_tab << "Monitor.Enter(Efl.Eo.Config.InitLock);\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << "if (Efl.Eo.Config.Initialized)\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << "{\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.efl_mono_thread_safe_native_dispose(h, gcHandlePtr);\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << "}\n\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << "Monitor.Exit(Efl.Eo.Config.InitLock);\n"
              << scope_tab << scope_tab << scope_tab << "}\n"
-             << scope_tab << scope_tab << scope_tab << "handle = System.IntPtr.Zero;\n"
              << scope_tab << scope_tab << "}\n"
-             << scope_tab << "}\n"
+             << scope_tab << "}\n\n"
 
              << scope_tab << "///<summary>Releases the underlying native instance.</summary>\n"
              << scope_tab << "public void Dispose()\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "Dispose(true);\n"
              << scope_tab << scope_tab << "GC.SuppressFinalize(this);\n"
-             << scope_tab << "}\n"
+             << scope_tab << "}\n\n"
              ).generate(sink, attributes::unused, context);
-   }
-
-   template <typename OutputIterator, typename Context>
-   bool generate_events_registration(OutputIterator sink, attributes::klass_def const& cls, Context const& context) const
-   {
-     bool root = !helpers::has_regular_ancestor(cls);
-     std::string virtual_modifier = " ";
-
-     if (!root)
-       virtual_modifier = "override ";
-     else
-       {
-          if (is_inherit_context(context))
-             virtual_modifier = "virtual ";
-       }
-
-     // Event proxy registration
-     if (!as_generator(
-            scope_tab << "///<summary>Register the Eo event wrappers making the bridge to C# events. Internal usage only.</summary>\n"
-            << scope_tab << (is_inherit_context(context) || !root ? "protected " : "") << virtual_modifier << "void RegisterEventProxies()\n"
-            << scope_tab << "{\n"
-         )
-         .generate(sink, NULL, context))
-         return false;
-
-     // Generate event registrations here
-
-     if (!root)
-       if (!as_generator(scope_tab << scope_tab << "base.RegisterEventProxies();\n").generate(sink, NULL, context))
-         return false;
-
-     // Assigning the delegates
-     if (!as_generator(*(event_registration(cls, cls))).generate(sink, cls.events, context))
-       return false;
-
-     for (auto&& c : helpers::non_implemented_interfaces(cls, context))
-       {
-          // Only non-regular types (which declare events through interfaces) need to register them.
-          if (c.type == attributes::class_type::regular)
-            continue;
-
-          attributes::klass_def klass(get_klass(c, cls.unit), cls.unit);
-
-          if (!as_generator(*(event_registration(klass, cls))).generate(sink, klass.events, context))
-             return false;
-       }
-
-     if (!as_generator(
-            scope_tab << "}\n"
-                 ).generate(sink, NULL, context))
-         return false;
-
-     return true;
    }
 
    template <typename OutputIterator, typename Context>
@@ -685,69 +649,70 @@ struct klass
 
      if (!helpers::has_regular_ancestor(cls))
        {
-         if (!as_generator(scope_tab << visibility << "readonly object eventLock = new object();\n"
-                 << scope_tab << visibility << "Dictionary<string, int> event_cb_count = new Dictionary<string, int>();\n")
-                 .generate(sink, NULL, context))
-             return false;
-
      // Callback registration functions
      if (!as_generator(
             scope_tab << "///<summary>Adds a new event handler, registering it to the native event. For internal use only.</summary>\n"
             << scope_tab << "///<param name=\"lib\">The name of the native library definining the event.</param>\n"
             << scope_tab << "///<param name=\"key\">The name of the native event.</param>\n"
-            << scope_tab << "///<param name=\"evt_delegate\">The delegate to be called on event raising.</param>\n"
-            << scope_tab << "///<returns>True if the delegate was successfully registered.</returns>\n"
-            << scope_tab << visibility << "bool AddNativeEventHandler(string lib, string key, Efl.EventCb evt_delegate) {\n"
-            << scope_tab << scope_tab << "int event_count = 0;\n"
-            << scope_tab << scope_tab << "if (!event_cb_count.TryGetValue(key, out event_count))\n"
-            << scope_tab << scope_tab << scope_tab << "event_cb_count[key] = event_count;\n"
-            << scope_tab << scope_tab << "if (event_count == 0) {\n"
+            << scope_tab << "///<param name=\"evtCaller\">Delegate to be called by native code on event raising.</param>\n"
+            << scope_tab << "///<param name=\"evtDelegate\">Managed delegate that will be called by evtCaller on event raising.</param>\n"
+            << scope_tab << visibility << "void AddNativeEventHandler(string lib, string key, Efl.EventCb evtCaller, object evtDelegate)\n"
+            << scope_tab << "{\n"
 
-            << scope_tab << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative(lib, key);\n"
-            << scope_tab << scope_tab << scope_tab << "if (desc == IntPtr.Zero) {\n"
-            << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Failed to get native event {key}\");\n"
-            << scope_tab << scope_tab << scope_tab << scope_tab << "return false;\n"
-            << scope_tab << scope_tab << scope_tab << "}\n"
+            << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative(lib, key);\n"
+            << scope_tab << scope_tab << "if (desc == IntPtr.Zero)\n"
+            << scope_tab << scope_tab << "{\n"
+            << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Failed to get native event {key}\");\n"
+            << scope_tab << scope_tab << "}\n\n"
 
-            << scope_tab << scope_tab << scope_tab << " bool result = Efl.Eo.Globals.efl_event_callback_priority_add(handle, desc, 0, evt_delegate, System.IntPtr.Zero);\n"
-            << scope_tab << scope_tab << scope_tab << "if (!result) {\n"
-            << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Failed to add event proxy for event {key}\");\n"
-            << scope_tab << scope_tab << scope_tab << scope_tab << "return false;\n"
-            << scope_tab << scope_tab << scope_tab << "}\n"
-            << scope_tab << scope_tab << scope_tab << "Eina.Error.RaiseIfUnhandledException();\n"
-            << scope_tab << scope_tab << "} \n"
-            << scope_tab << scope_tab << "event_cb_count[key]++;\n"
-            << scope_tab << scope_tab << "return true;\n"
-            << scope_tab << "}\n"
+            << scope_tab << scope_tab << "if (eoEvents.ContainsKey((desc, evtDelegate)))\n"
+            << scope_tab << scope_tab << "{\n"
+            << scope_tab << scope_tab << scope_tab << "Eina.Log.Warning($\"Event proxy for event {key} already registered!\");\n"
+            << scope_tab << scope_tab << scope_tab << "return;\n"
+            << scope_tab << scope_tab << "}\n\n"
+
+            << scope_tab << scope_tab << "IntPtr evtCallerPtr = Marshal.GetFunctionPointerForDelegate(evtCaller);\n"
+            << scope_tab << scope_tab << "if (!Efl.Eo.Globals.efl_event_callback_priority_add(handle, desc, 0, evtCallerPtr, IntPtr.Zero))\n"
+            << scope_tab << scope_tab << "{\n"
+            << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Failed to add event proxy for event {key}\");\n"
+            << scope_tab << scope_tab << scope_tab << "return;\n"
+            << scope_tab << scope_tab << "}\n\n"
+
+            << scope_tab << scope_tab << "eoEvents[(desc, evtDelegate)] = (evtCallerPtr, evtCaller);\n"
+            << scope_tab << scope_tab << "Eina.Error.RaiseIfUnhandledException();\n"
+            << scope_tab << "}\n\n"
+
             << scope_tab << "///<summary>Removes the given event handler for the given event. For internal use only.</summary>\n"
+            << scope_tab << "///<param name=\"lib\">The name of the native library definining the event.</param>\n"
             << scope_tab << "///<param name=\"key\">The name of the native event.</param>\n"
-            << scope_tab << "///<param name=\"evt_delegate\">The delegate to be removed.</param>\n"
-            << scope_tab << "///<returns>True if the delegate was successfully registered.</returns>\n"
-            << scope_tab << visibility << "bool RemoveNativeEventHandler(string key, Efl.EventCb evt_delegate) {\n"
-            << scope_tab << scope_tab << "int event_count = 0;\n"
-            << scope_tab << scope_tab << "if (!event_cb_count.TryGetValue(key, out event_count))\n"
-            << scope_tab << scope_tab << scope_tab << "event_cb_count[key] = event_count;\n"
-            << scope_tab << scope_tab << "if (event_count == 1) {\n"
+            << scope_tab << "///<param name=\"evtDelegate\">The delegate to be removed.</param>\n"
+            << scope_tab << visibility << "void RemoveNativeEventHandler(string lib, string key, object evtDelegate)\n"
+            << scope_tab << "{\n"
 
-            << scope_tab << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative("
-            << context_find_tag<library_context>(context).actual_library_name(cls.filename) << ", key);\n"
-            << scope_tab << scope_tab << scope_tab << "if (desc == IntPtr.Zero) {\n"
-            << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Failed to get native event {key}\");\n"
-            << scope_tab << scope_tab << scope_tab << scope_tab << "return false;\n"
-            << scope_tab << scope_tab << scope_tab << "}\n"
+            << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative(lib, key);\n"
+            << scope_tab << scope_tab << "if (desc == IntPtr.Zero)\n"
+            << scope_tab << scope_tab << "{\n"
+            << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Failed to get native event {key}\");\n"
+            << scope_tab << scope_tab << scope_tab << "return;\n"
+            << scope_tab << scope_tab << "}\n\n"
 
-            << scope_tab << scope_tab << scope_tab << "bool result = Efl.Eo.Globals.efl_event_callback_del(handle, desc, evt_delegate, System.IntPtr.Zero);\n"
-            << scope_tab << scope_tab << scope_tab << "if (!result) {\n"
+            << scope_tab << scope_tab << "var evtPair = (desc, evtDelegate);\n"
+            << scope_tab << scope_tab << "if (eoEvents.TryGetValue(evtPair, out var caller))\n"
+            << scope_tab << scope_tab << "{\n"
+
+            << scope_tab << scope_tab << scope_tab << "if (!Efl.Eo.Globals.efl_event_callback_del(handle, desc, caller.evtCallerPtr, IntPtr.Zero))\n"
+            << scope_tab << scope_tab << scope_tab << "{\n"
             << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Failed to remove event proxy for event {key}\");\n"
-            << scope_tab << scope_tab << scope_tab << scope_tab << "return false;\n"
-            << scope_tab << scope_tab << scope_tab << "}\n"
+            << scope_tab << scope_tab << scope_tab << scope_tab << "return;\n"
+            << scope_tab << scope_tab << scope_tab << "}\n\n"
+
+            << scope_tab << scope_tab << scope_tab << "eoEvents.Remove(evtPair);\n"
             << scope_tab << scope_tab << scope_tab << "Eina.Error.RaiseIfUnhandledException();\n"
-            << scope_tab << scope_tab << "} else if (event_count == 0) {\n"
-            << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Trying to remove proxy for event {key} when there is nothing registered.\");\n"
-            << scope_tab << scope_tab << scope_tab << "return false;\n"
-            << scope_tab << scope_tab << "} \n"
-            << scope_tab << scope_tab << "event_cb_count[key]--;\n"
-            << scope_tab << scope_tab << "return true;\n"
+            << scope_tab << scope_tab << "}\n"
+            << scope_tab << scope_tab << "else\n"
+            << scope_tab << scope_tab << "{\n"
+            << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Trying to remove proxy for event {key} when it is nothing registered.\");\n"
+            << scope_tab << scope_tab << "}\n"
             << scope_tab << "}\n"
             )
              .generate(sink, NULL, context))

@@ -49,6 +49,7 @@ class TestEo
        Test.Assert(delEventCalled, "DEL event not called");
     } */
 
+    /* Commented until we figure out a new way to test disposing
     public static void dispose_really_frees()
     {
        bool delEventCalled = false;
@@ -62,6 +63,7 @@ class TestEo
 
        Test.Assert(delEventCalled, "DEL event not called");
     }
+    */
 
     /* Commented out as adding the event listener seems to prevent it from being GC'd.
     public static void derived_destructor_really_frees()

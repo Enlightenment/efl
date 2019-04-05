@@ -23,6 +23,46 @@
 # endif
 #endif /* ! _WIN32 */
 
+typedef void (*Efl_Mono_Free_GCHandle_Cb)(void *gchandle);
+typedef void (*Efl_Mono_Remove_Events_Cb)(Eo *obj, void *gchandle);
+
+static Efl_Mono_Free_GCHandle_Cb _efl_mono_free_gchandle_call = NULL;
+static Efl_Mono_Remove_Events_Cb _efl_mono_remove_events_call = NULL;
+
+EAPI void efl_mono_gchandle_callbacks_set(Efl_Mono_Free_GCHandle_Cb free_gchandle_cb, Efl_Mono_Remove_Events_Cb remove_events_cb)
+{
+    _efl_mono_free_gchandle_call = free_gchandle_cb;
+    _efl_mono_remove_events_call = remove_events_cb;
+}
+
+EAPI void efl_mono_native_dispose(Eo *obj, void* gchandle)
+{
+   if (gchandle) _efl_mono_remove_events_call(obj, gchandle);
+   efl_unref(obj);
+   if (gchandle) _efl_mono_free_gchandle_call(gchandle);
+}
+
+typedef struct _Efl_Mono_Native_Dispose_Data
+{
+   Eo *obj;
+   void *gchandle;
+} Efl_Mono_Native_Dispose_Data;
+
+static void _efl_mono_native_dispose_cb(void *data)
+{
+   Efl_Mono_Native_Dispose_Data *dd = data;
+   efl_mono_native_dispose(dd->obj, dd->gchandle);
+   free(dd);
+}
+
+EAPI void efl_mono_thread_safe_native_dispose(Eo *obj, void* gchandle)
+{
+   Efl_Mono_Native_Dispose_Data *dd = malloc(sizeof(Efl_Mono_Native_Dispose_Data));
+   dd->obj = obj;
+   dd->gchandle = gchandle;
+   ecore_main_loop_thread_safe_call_async(_efl_mono_native_dispose_cb, dd);
+}
+
 static void _efl_mono_unref_cb(void *obj)
 {
    efl_unref(obj);
