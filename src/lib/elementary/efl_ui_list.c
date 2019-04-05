@@ -413,6 +413,8 @@ _efl_ui_list_size_hint_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 EOLIAN static Eo *
 _efl_ui_list_efl_object_constructor(Eo *obj, Efl_Ui_List_Data *pd EINA_UNUSED)
 {
+   if (!elm_widget_theme_klass_get(obj))
+     elm_widget_theme_klass_set(obj, "list");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    return obj;
@@ -425,10 +427,6 @@ _efl_ui_list_efl_object_finalize(Eo *obj,
    obj = efl_finalize(efl_super(obj, MY_CLASS));
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
-
-   Eina_Error theme_apply_ret = efl_ui_layout_theme_set(obj, "list", "base", efl_ui_widget_style_get(obj));
-   if (theme_apply_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC)
-     CRI("list(%p) failed to set theme [efl/list:%s]!", obj, efl_ui_widget_style_get(obj) ?: "NULL");
 
    pd->smanager = efl_add(EFL_UI_SCROLL_MANAGER_CLASS, obj);
    efl_ui_mirrored_set(pd->smanager, efl_ui_mirrored_get(obj));
