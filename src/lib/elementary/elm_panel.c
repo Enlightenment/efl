@@ -1251,6 +1251,21 @@ _elm_panel_efl_ui_widget_disabled_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool dis
      {
         if (efl_ui_widget_disabled_get(obj) && sd->callback_added)
           {
+             switch (sd->orient)
+               {
+                  case ELM_PANEL_ORIENT_BOTTOM:
+                  case ELM_PANEL_ORIENT_TOP:
+                     elm_interface_scrollable_movement_block_set
+                        (obj, EFL_UI_SCROLL_BLOCK_VERTICAL);
+                     break;
+
+                  case ELM_PANEL_ORIENT_RIGHT:
+                  case ELM_PANEL_ORIENT_LEFT:
+                     elm_interface_scrollable_movement_block_set
+                        (obj, EFL_UI_SCROLL_BLOCK_HORIZONTAL);
+                     break;
+               }
+
              evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_DOWN,
                                             _on_mouse_down);
              evas_object_event_callback_del(obj, EVAS_CALLBACK_MOUSE_MOVE,
@@ -1264,6 +1279,21 @@ _elm_panel_efl_ui_widget_disabled_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool dis
           }
         else if (!efl_ui_widget_disabled_get(obj) && !sd->callback_added)
           {
+             switch (sd->orient)
+               {
+                  case ELM_PANEL_ORIENT_BOTTOM:
+                  case ELM_PANEL_ORIENT_TOP:
+                     elm_interface_scrollable_movement_block_set
+                        (obj, EFL_UI_SCROLL_BLOCK_HORIZONTAL);
+                     break;
+
+                  case ELM_PANEL_ORIENT_RIGHT:
+                  case ELM_PANEL_ORIENT_LEFT:
+                     elm_interface_scrollable_movement_block_set
+                        (obj, EFL_UI_SCROLL_BLOCK_VERTICAL);
+                     break;
+               }
+
              evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_DOWN,
                                             _on_mouse_down, sd);
              evas_object_event_callback_add(obj, EVAS_CALLBACK_MOUSE_MOVE,
