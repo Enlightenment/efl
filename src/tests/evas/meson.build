@@ -21,6 +21,7 @@ evas_suite_src = [
 evas_suite = executable('evas_suite',
   evas_suite_src,
   dependencies: [evas_bin, evas, ecore_evas, dl, check],
+  include_directories: include_directories(join_paths('..', '..', 'modules', 'evas', 'engines', 'buffer')),
   c_args : [
   '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
   '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']

@@ -5,8 +5,10 @@
 #include <stdio.h>
 
 #include <Evas.h>
+#include <Evas_Engine_Buffer.h>
 
 #include "evas_suite.h"
+#include "evas_tests_helpers.h"
 
 static Eina_Bool
 _find_list(const Eina_List *lst, const char *item)
@@ -75,8 +77,62 @@ EFL_START_TEST(evas_render_lookup)
 }
 EFL_END_TEST
 
+static unsigned int counter;
+
+static void
+render_post(void *data EINA_UNUSED, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   counter++;
+}
+
+static void
+render_flush_post(void *data EINA_UNUSED, Evas *e, void *event_info EINA_UNUSED)
+{
+   counter++;
+   evas_event_callback_add(e, EVAS_CALLBACK_RENDER_POST, render_post, NULL);
+}
+
+static void
+render_flush_pre(void *data EINA_UNUSED, Evas *e, void *event_info EINA_UNUSED)
+{
+   counter++;
+   evas_event_callback_add(e, EVAS_CALLBACK_RENDER_FLUSH_POST, render_flush_post, NULL);
+}
+
+static void
+render_pre(void *data EINA_UNUSED, Evas *e, void *event_info EINA_UNUSED)
+{
+   counter++;
+   evas_event_callback_add(e, EVAS_CALLBACK_RENDER_FLUSH_PRE, render_flush_pre, NULL);
+}
+
+EFL_START_TEST(evas_render_callbacks)
+{
+   Evas_Object *rect;
+   Evas *evas = EVAS_TEST_INIT_EVAS();
+   Evas_Engine_Info_Buffer *einfo;
+
+   einfo = (Evas_Engine_Info_Buffer *)evas_engine_info_get(evas);
+   /* 500 x 500 */
+   einfo->info.dest_buffer_row_bytes = 500 * sizeof(int);
+   einfo->info.dest_buffer = malloc(einfo->info.dest_buffer_row_bytes * 500);
+   ck_assert(evas_engine_info_set(evas, (Evas_Engine_Info *)einfo));
+
+   rect = evas_object_rectangle_add(evas);
+   evas_object_color_set(rect, 255, 0, 0, 255);
+   evas_object_resize(rect, 500, 500);
+   evas_object_show(rect);
+
+   evas_event_callback_add(evas, EVAS_CALLBACK_RENDER_PRE, render_pre, NULL);
+   evas_render(evas);
+   ck_assert_int_eq(counter, 4);
+   evas_free(evas);
+}
+EFL_END_TEST
+
 void evas_test_render_engines(TCase *tc)
 {
    tcase_add_test(tc, evas_render_engines);
    tcase_add_test(tc, evas_render_lookup);
+   tcase_add_test(tc, evas_render_callbacks);
 }
