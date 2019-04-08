@@ -1,3 +1,4 @@
+
 // 66.74 % of time
 static void
 FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
