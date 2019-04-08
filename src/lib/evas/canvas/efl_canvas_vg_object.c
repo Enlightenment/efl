@@ -414,8 +414,8 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
 //renders a vg_tree to an offscreen buffer and push it to the cache.
 static void *
 _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
-                  void *engine, Efl_VG *root, int w, int h, void *key,
-                  void *buffer, Eina_Bool do_async)
+                  void *engine, Efl_VG *root, int w, int h, void *buffer,
+                  Eina_Bool do_async)
 {
    Ector_Surface *ector;
    RGBA_Draw_Context *context;
@@ -458,7 +458,10 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd
    evas_common_draw_context_free(context);
 
    if (buffer_created)
-     ENFN->ector_surface_cache_set(engine, key, buffer);
+     {
+        //Use root as a cache key.
+        ENFN->ector_surface_cache_set(engine, root, buffer);
+     }
 
    return buffer;
 }
@@ -510,8 +513,7 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
    void *buffer = ENFN->ector_surface_cache_get(engine, root);
 
    if (!buffer)
-     buffer = _render_to_buffer(obj, pd, engine, root, w, h, root, NULL,
-                                do_async);
+     buffer = _render_to_buffer(obj, pd, engine, root, w, h, NULL, do_async);
    else
      //cache reference was increased when we get the cache.
      ENFN->ector_surface_cache_drop(engine, root);
@@ -547,8 +549,7 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
      {
         // render to the buffer
         buffer = _render_to_buffer(obj, pd, engine, user_entry->root,
-                                   w, h, user_entry->root, buffer,
-                                   do_async);
+                                   w, h, buffer, do_async);
      }
    else
      {
@@ -557,7 +558,6 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
           buffer = _render_to_buffer(obj, pd, engine,
                                      user_entry->root,
                                      w, h,
-                                     user_entry->root,
                                      buffer,
                                      do_async);
         //cache reference was increased when we get the cache.
