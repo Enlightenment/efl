@@ -764,6 +764,9 @@ _evas_common_map_rgba_internal_high(RGBA_Image *src, RGBA_Image *dst,
    Eina_Bool dst_alpha = dst->cache_entry.flags.alpha;
    Eina_Bool col_blend = EINA_FALSE;   //Necessary blending vertex color?
 
+   //FIXME: we cannot apply anti_aliasing per polygons.
+   anti_alias = EINA_FALSE;
+
    /* Prepare points data. 
       Convert to float, 
       shift XY coordinates to match the sub-pixeling technique.

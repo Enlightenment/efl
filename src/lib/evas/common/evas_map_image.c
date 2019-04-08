@@ -866,11 +866,7 @@ evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
 
    if (dc->anti_alias && smooth)
      {
-        //FIXME: we cannot apply anti_aliasing per polygons.
-        Eina_Bool aa = dc->anti_alias;
-        if (npoints > 4) dc->anti_alias = EINA_FALSE;
         cb = evas_common_map_rgba_internal_high;
-        if (npoints > 4) dc->anti_alias = aa;
      }
    else
      {
@@ -899,8 +895,6 @@ evas_common_map_rgba_draw(RGBA_Image *src, RGBA_Image *dst, int clip_x, int clip
    //The best quaility requsted.
    if (anti_alias && smooth)
      {
-        //FIXME: we cannot apply anti_aliasing per polygons.
-        if (npoints > 4) anti_alias = EINA_FALSE;
         _evas_common_map_rgba_internal_high(src, dst,
                                             clip_x, clip_y, clip_w, clip_h,
                                             mul_col, render_op,
