@@ -84,8 +84,6 @@ _interpolated_clip_span(Span *s, int c1, int c2, Eina_Bool interp_col)
      }
 }
 
-#include "evas_map_image_aa.c"
-
 // 12.63 % of time - this can improve
 static void
 _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy EINA_UNUSED, int cw, int ch EINA_UNUSED)
@@ -861,14 +859,18 @@ evas_common_map_thread_rgba_cb(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Conte
 EAPI void
 evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
                      RGBA_Draw_Context *dc,
-                     int npoints EINA_UNUSED, RGBA_Map_Point *p,
+                     int npoints, RGBA_Map_Point *p,
                      int smooth, int level)
 {
    Evas_Common_Map_RGBA_Cb cb;
 
    if (dc->anti_alias && smooth)
      {
+        //FIXME: we cannot apply anti_aliasing per polygons.
+        Eina_Bool aa = dc->anti_alias;
+        if (npoints > 4) dc->anti_alias = EINA_FALSE;
         cb = evas_common_map_rgba_internal_high;
+        if (npoints > 4) dc->anti_alias = aa;
      }
    else
      {
@@ -892,11 +894,13 @@ evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
 }
 
 EAPI void
-evas_common_map_rgba_draw(RGBA_Image *src, RGBA_Image *dst, int clip_x, int clip_y, int clip_w, int clip_h, DATA32 mul_col, int render_op, int npoints EINA_UNUSED, RGBA_Map_Point *p, int smooth, Eina_Bool anti_alias, int level, RGBA_Image *mask_ie, int mask_x, int mask_y)
+evas_common_map_rgba_draw(RGBA_Image *src, RGBA_Image *dst, int clip_x, int clip_y, int clip_w, int clip_h, DATA32 mul_col, int render_op, int npoints, RGBA_Map_Point *p, int smooth, Eina_Bool anti_alias, int level, RGBA_Image *mask_ie, int mask_x, int mask_y)
 {
    //The best quaility requsted.
    if (anti_alias && smooth)
      {
+        //FIXME: we cannot apply anti_aliasing per polygons.
+        if (npoints > 4) anti_alias = EINA_FALSE;
         _evas_common_map_rgba_internal_high(src, dst,
                                             clip_x, clip_y, clip_w, clip_h,
                                             mul_col, render_op,
