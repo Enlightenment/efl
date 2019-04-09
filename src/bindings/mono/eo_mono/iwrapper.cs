@@ -302,6 +302,29 @@ public class Globals
         return null;
     }
 
+    public static System.Collections.Generic.List<System.Reflection.MethodInfo>
+        GetUserMethods(System.Type type)
+    {
+        var r = new System.Collections.Generic.List<System.Reflection.MethodInfo>();
+        r.AddRange(type.GetMethods());
+        var base_type = type.BaseType;
+
+        for (;base_type != null; base_type = base_type.BaseType)
+        {
+            var attrs = System.Attribute.GetCustomAttributes(type);
+            foreach (var attr in attrs)
+            {
+                if (attr is Efl.Eo.NativeClass)
+                {
+                    return r;
+                }
+            }
+
+            r.AddRange(base_type.GetMethods());
+        }
+        return r;
+    }
+
     public static byte class_initializer_call(IntPtr klass, System.Type type)
     {
         Eina.Log.Debug($"called with 0x{klass.ToInt64():x} {type}");

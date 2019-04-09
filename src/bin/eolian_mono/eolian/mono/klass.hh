@@ -369,6 +369,7 @@ struct klass
              << scope_tab << "public override System.Collections.Generic.List<Efl_Op_Description> GetEoOps(System.Type type)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "var descs = new System.Collections.Generic.List<Efl_Op_Description>();\n"
+             << scope_tab << scope_tab << "var methods = Efl.Eo.Globals.GetUserMethods(type);\n"
             )
             .generate(sink, attributes::unused, inative_cxt))
            return false;

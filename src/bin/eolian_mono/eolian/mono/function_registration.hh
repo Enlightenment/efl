@@ -44,7 +44,10 @@ struct function_registration_generator
       return false;
 
     if(!as_generator
-       (scope_tab << scope_tab << "descs.Add(new Efl_Op_Description() {"
+       (scope_tab << scope_tab
+        << "if (methods.FirstOrDefault(m => m.Name == \"" << string << "\") != null)\n"
+        << scope_tab << scope_tab << scope_tab
+        << "descs.Add(new Efl_Op_Description() {"
 #ifdef _WIN32
         << "api_func = Marshal.StringToHGlobalAnsi(\"" << string << "\")"
 #else
@@ -52,7 +55,7 @@ struct function_registration_generator
 #endif
         << ", func = Marshal.GetFunctionPointerForDelegate(" << string << "_static_delegate)});\n"
        )
-       .generate(sink, std::make_tuple(f.c_name, f.c_name), context))
+       .generate(sink, std::make_tuple(name_helpers::managed_method_name(f), f.c_name, f.c_name), context))
       return false;
     return true;
       }
