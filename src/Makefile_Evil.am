@@ -91,6 +91,7 @@ tests/evil/evil_test_unistd.c
 
 tests_evil_evil_suite_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
+-I$(top_builddir)/src/lib/eina \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/evil\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)/\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/evil\" \

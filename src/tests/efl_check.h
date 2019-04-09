@@ -75,7 +75,9 @@ struct _Efl_Test_Case
    void (*build)(TCase *tc);
 };
 
+#ifdef HAVE_FORK
 static int timeout_pid = 0;
+#endif
 
 EINA_UNUSED static void
 _efl_test_expect_error(const Eina_Log_Domain *d EINA_UNUSED, Eina_Log_Level level, const char *file EINA_UNUSED, const char *fnc, int line EINA_UNUSED, const char *fmt EINA_UNUSED, void *data, va_list args EINA_UNUSED)
@@ -153,6 +155,7 @@ _efl_test_use(int argc, const char **argv, const char *test_case)
    return 0;
 }
 
+#ifdef HAVE_FORK
 static int
 _efl_test_fork_has(SRunner *sr)
 {
@@ -174,6 +177,7 @@ _efl_test_fork_has(SRunner *sr)
    /* should never get there */
    return 0;
 }
+#endif
 
 #ifdef ENABLE_TIMING_INFO
 EINA_UNUSED static double _timing_start_time;
@@ -308,29 +312,47 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
    SRunner *sr;
    TCase *tc;
    int i, failed_count = 0;
+#ifdef HAVE_FORK
    int do_fork;
    int num_forks = 0;
    int can_fork = 0;
-#ifdef HAVE_FORK
    Eina_Bool timeout_reached = EINA_FALSE;
+# ifdef ENABLE_TIMING_INFO
+   double tcstart = 0.0;
+# endif
 #endif
 #ifdef ENABLE_TIMING_INFO
-   double tstart = 0.0, tcstart = 0.0;
-   int timing = _timing_enabled();
-
-   if (timing)
-     tcstart = tstart = _timing_time_get();
+   double tstart = 0.0;
+   int timing;
 #endif
+
+#ifdef ENABLE_TIMING_INFO
+   timing = _timing_enabled();
+   if (timing)
+     tstart = _timing_time_get();
+#endif
+
+#ifdef HAVE_FORK
+# ifdef ENABLE_TIMING_INFO
+   if (timing)
+     tcstart = tstart;
+# endif
+#endif
+
    fflush(stdout);
    s = suite_create(suite_name);
    sr = srunner_create(s);
+#ifdef HAVE_FORK
    do_fork = _efl_test_fork_has(sr);
    if (do_fork)
      can_fork = !!etc[1].test_case /* can't parallelize 1 test */;
+#endif
 
    for (i = 0; etc[i].test_case; ++i)
      {
+#ifdef HAVE_FORK
         int pid = 0;
+#endif
 
         if (!_efl_test_use(argc, argv, etc[i].test_case))
            continue;
@@ -352,10 +374,10 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
                   if (!fork_map) fork_map = eina_hash_int32_new(NULL);
                   eina_hash_add(fork_map, &pid, etc[i].test_case);
                   num_forks++;
-#ifdef ENABLE_TIMING_INFO
+# ifdef ENABLE_TIMING_INFO
                   if (timing)
                     tcstart = _timing_time_get();
-#endif
+# endif
                   continue;
                }
           }
@@ -365,8 +387,10 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
         if (init || shutdown)
           tcase_add_checked_fixture(tc, init, shutdown);
 
+#ifdef HAVE_FORK
         if (do_fork)
           tcase_set_timeout(tc, 0);
+#endif
 
         etc[i].build(tc);
         suite_add_tcase(s, tc);
@@ -376,10 +400,10 @@ _efl_suite_build_and_run(int argc, const char **argv, const char *suite_name, co
              failed_count = _efl_suite_run_end(sr, etc[i].test_case);
              if (failed_count > 255)
                failed_count = 255;
-#ifdef ENABLE_TIMING_INFO
+# ifdef ENABLE_TIMING_INFO
              if (timing)
                printf("TC TIME %s: %.5g\n", etc[i].test_case, _timing_time_get() - tcstart);
-#endif
+# endif
              exit(failed_count);
           }
 #endif
