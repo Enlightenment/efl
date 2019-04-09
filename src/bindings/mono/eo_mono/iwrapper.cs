@@ -589,6 +589,12 @@ public class Globals
     /// <returns>The C# wrapper for this instance.</returns>
     public static Efl.Eo.IWrapper CreateWrapperFor(System.IntPtr handle, bool shouldIncRef=true)
     {
+
+        if (handle == IntPtr.Zero)
+        {
+            return null;
+        }
+
         IntPtr eoKlass = efl_class_get(handle);
 
         if (eoKlass == IntPtr.Zero)
