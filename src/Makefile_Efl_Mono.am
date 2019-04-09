@@ -495,9 +495,15 @@ tests_efl_mono_efl_mono_SOURCES = \
      tests/efl_mono/EinaTestData.cs \
      tests/efl_mono/StructHelpers.cs
 
+beta_mono_flags =
+
+if HAVE_CSHARP_BETA
+beta_mono_flags += -define:EFL_BETA
+endif
+
 tests/efl_mono/efl_mono$(EXEEXT): $(tests_efl_mono_efl_mono_SOURCES) tests/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll tests/efl_mono/libefl_mono_test.dll tests/efl_mono/efl_mono$(EXEEXT).config
 	@rm -f $@
-	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -r:$(abs_top_builddir)/src/tests/efl_mono/libefl_mono_test.dll -out:$@ $(filter %.cs, $(^))
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -r:$(abs_top_builddir)/src/tests/efl_mono/libefl_mono_test.dll -out:$@ $(filter %.cs, $(^)) $(beta_mono_flags)
 
 # Rule for generating the .cs files
 tests/efl_mono/%.eo.cs: tests/efl_mono/%.eo $(_EOLIAN_MONO_DEP)
