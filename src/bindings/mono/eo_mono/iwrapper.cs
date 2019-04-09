@@ -824,7 +824,7 @@ public static class ClassRegister
 
             if (t == null)
             {
-                throw new System.InvalidOperationException($"Could not find the C# binding class for the EFL class: {name}");
+                return typeof(Efl.Object);
             }
         }
 
