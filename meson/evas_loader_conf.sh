@@ -1,4 +1,4 @@
-#!/bin/dash
+#!/bin/sh
 
 original_loader=$1
 filename="$(basename $original_loader)"
