@@ -290,7 +290,7 @@ public class Globals
 
     private static Efl.Eo.NativeClass GetNativeClass(System.Type type)
     {
-        var attrs = System.Attribute.GetCustomAttributes(type);
+        var attrs = System.Attribute.GetCustomAttributes(type, false);
         foreach (var attr in attrs)
         {
             if (attr is Efl.Eo.NativeClass)
@@ -306,21 +306,21 @@ public class Globals
         GetUserMethods(System.Type type)
     {
         var r = new System.Collections.Generic.List<System.Reflection.MethodInfo>();
-        r.AddRange(type.GetMethods());
+        var flags = System.Reflection.BindingFlags.Instance
+                    | System.Reflection.BindingFlags.DeclaredOnly
+                    | System.Reflection.BindingFlags.Public
+                    | System.Reflection.BindingFlags.NonPublic;
+        r.AddRange(type.GetMethods(flags));
         var base_type = type.BaseType;
 
         for (;base_type != null; base_type = base_type.BaseType)
         {
-            var attrs = System.Attribute.GetCustomAttributes(type);
-            foreach (var attr in attrs)
+            if (IsGeneratedClass(base_type))
             {
-                if (attr is Efl.Eo.NativeClass)
-                {
-                    return r;
-                }
+                return r;
             }
 
-            r.AddRange(base_type.GetMethods());
+            r.AddRange(base_type.GetMethods(flags));
         }
         return r;
     }
@@ -353,7 +353,13 @@ public class Globals
                 }
             }
 
-            IntPtr descs_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(descs[0]) * count);
+            IntPtr descs_ptr = IntPtr.Zero;
+
+            if (count > 0)
+            {
+                descs_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(descs[0]) * count);
+            }
+
             IntPtr ptr = descs_ptr;
             for (int i = 0; i != count; ++i)
             {
