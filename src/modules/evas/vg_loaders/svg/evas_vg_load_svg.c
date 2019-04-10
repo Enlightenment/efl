@@ -144,13 +144,6 @@ _gradient_to_double(Evas_SVG_Parser *svg_parse, const char *str, SVG_Parser_Leng
    double parsed_value = strtod(str, &end);
    double max = 1;
 
-   /* unique case, if that is percentage, just return it */
-   if (strstr(str, "%"))
-     {
-        parsed_value = parsed_value / 100.0;
-        return parsed_value;
-     }
-
    /**
     * That is according to Units in here
     *
@@ -164,7 +157,9 @@ _gradient_to_double(Evas_SVG_Parser *svg_parse, const char *str, SVG_Parser_Leng
      max = sqrt(pow(svg_parse->global.height, 2) +
                 pow(svg_parse->global.width, 2)) / sqrt(2.0);
 
-   if (strstr(str, "cm"))
+   if (strstr(str, "%"))
+     parsed_value = parsed_value / 100.0;
+   else if (strstr(str, "cm"))
      parsed_value = parsed_value * 35.43307;
    else if (strstr(str, "mm"))
      parsed_value = parsed_value * 3.543307;
