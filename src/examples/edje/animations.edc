@@ -68,8 +68,6 @@ collections {
       }
       program {
          name: "animation,state1";
-         signal: "animation,start";
-         source: "";
          in: 1.0 0.0;
          action: STATE_SET "invert" 1.0;
          target: "part_one";
@@ -80,8 +78,6 @@ collections {
       }
       program {
          name: "animation,state2";
-         signal: "animation,start";
-         source: "";
          in: 1.0 0.0;
          action: STATE_SET "default" 0.0;
          target: "part_one";
