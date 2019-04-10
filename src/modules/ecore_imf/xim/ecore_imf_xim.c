@@ -795,7 +795,7 @@ _ecore_imf_xim_init(void)
 static void
 _ecore_imf_xim_shutdown(void)
 {
-   while (open_ims)
+   if (open_ims)
      {
         XIM_Im_Info *info = open_ims->data;
         Ecore_X_Display *display = ecore_x_display_get();
