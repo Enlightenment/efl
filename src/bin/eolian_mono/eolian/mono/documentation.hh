@@ -313,12 +313,22 @@ struct documentation_generator
    }
 
    template<typename OutputIterator, typename Context>
-   bool generate_tag_example(OutputIterator sink, std::string const& example, Context const& context) const
+   bool generate_tag_example(OutputIterator sink, std::string const& object_name, Context const& context) const
    {
+      auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
+      // Example embedding not requested
+      if (options.examples_dir.empty()) return true;
+      std::string file_name = options.examples_dir + object_name + ".cs";
+      std::ifstream exfile(file_name);
+      // There is no example file for this class or method, just return
+      if (!exfile.good()) return true;
+      std::stringstream example_buff;
+      example_buff << exfile.rdbuf();
+
       if (!as_generator(scope_tab(scope_size) << "/// ").generate(sink, attributes::unused, context)) return false;
       if (!generate_opening_tag(sink, "example", context)) return false;
       if (!generate_opening_tag(sink, "code", context)) return false;
-      if (!generate_escaped_content(sink, example, context)) return false;
+      if (!generate_escaped_content(sink, example_buff.str(), context)) return false;
       if (!generate_closing_tag(sink, "code", context)) return false;
       if (!generate_closing_tag(sink, "example", context)) return false;
       return as_generator("\n").generate(sink, attributes::unused, context);
@@ -329,6 +339,15 @@ struct documentation_generator
    bool generate(OutputIterator sink, Attribute const& attr, Context const& context) const
    {
        return generate(sink, attr.documentation, context);
+   }
+
+   template<typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::klass_def const& klass, Context const& context) const
+   {
+       if (!generate(sink, klass.documentation, context)) return false;
+
+       std::string klass_name = name_helpers::klass_full_concrete_or_interface_name(klass);
+       return generate_tag_example(sink, klass_name, context);
    }
 
    template<typename OutputIterator, typename Context>
@@ -343,9 +362,12 @@ struct documentation_generator
        else if (prop.getter.is_engaged())
          text = prop.getter->return_documentation.full_text;
        // If there are no docs at all, do not generate <value> tag
-       else return true;
+       if (!text.empty())
+         if (!generate_tag_value(sink, text, context)) return false;
 
-       return generate_tag_value(sink, text, context);
+       std::string managed_name = name_helpers::klass_full_concrete_or_interface_name(prop.klass);
+       managed_name += "." + name_helpers::property_managed_name(prop);
+       return generate_tag_example(sink, managed_name, context);
    }
 
    template<typename OutputIterator, typename Context>
@@ -381,7 +403,7 @@ struct documentation_generator
        if (!generate_tag_return(sink, func.return_documentation.full_text, context))
          return false;
 
-       return true;
+       return generate_tag_example(sink, function_conversion(func), context);
    }
 
    template<typename OutputIterator, typename Context>
@@ -397,7 +419,7 @@ struct documentation_generator
        if (!generate_tag_return(sink, func.return_documentation.full_text, context))
          return false;
 
-       return true;
+       return generate_tag_example(sink, function_conversion(func), context);
    }
 
    template<typename OutputIterator, typename Context>
