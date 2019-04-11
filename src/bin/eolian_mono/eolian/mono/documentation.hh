@@ -313,12 +313,12 @@ struct documentation_generator
    }
 
    template<typename OutputIterator, typename Context>
-   bool generate_tag_example(OutputIterator sink, std::string const& object_name, Context const& context) const
+   bool generate_tag_example(OutputIterator sink, std::string const& full_object_name, Context const& context) const
    {
       auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
       // Example embedding not requested
       if (options.examples_dir.empty()) return true;
-      std::string file_name = options.examples_dir + object_name + ".cs";
+      std::string file_name = options.examples_dir + full_object_name + ".cs";
       std::ifstream exfile(file_name);
       // There is no example file for this class or method, just return
       if (!exfile.good()) return true;
@@ -333,6 +333,24 @@ struct documentation_generator
       if (!generate_closing_tag(sink, "code", context)) return false;
       if (!generate_closing_tag(sink, "example", context)) return false;
       return as_generator("\n").generate(sink, attributes::unused, context);
+   }
+
+   template<typename OutputIterator, typename Context>
+   bool generate_all_tag_examples(OutputIterator sink, std::string const & full_class_name, std::string const& object_name, Context const& context) const
+   {
+      // Take example from derived class
+      auto derived_klass = efl::eolian::grammar::context_find_tag<class_context>(context);
+      std::string derived_full_name =
+        derived_klass.name.empty() ? object_name : derived_klass.name + "." + object_name;
+      std::string base_full_name =
+        full_class_name.empty() ? object_name : full_class_name + "." + object_name;
+      if (!derived_klass.name.empty())
+        {
+           if (!generate_tag_example(sink, derived_full_name, context)) return false;
+        }
+      if (derived_full_name.compare(base_full_name) == 0) return true;
+      // Take example from base class
+      return generate_tag_example(sink, base_full_name, context);
    }
 
    // Actual exported generators
@@ -366,9 +384,10 @@ struct documentation_generator
        if (!text.empty())
          if (!generate_tag_value(sink, text, context)) return false;
 
-       std::string managed_name = name_helpers::klass_full_concrete_or_interface_name(prop.klass);
-       managed_name += "." + name_helpers::property_managed_name(prop);
-       return generate_tag_example(sink, managed_name, context);
+       return generate_all_tag_examples(sink,
+                                        name_helpers::klass_full_concrete_or_interface_name(prop.klass),
+                                        name_helpers::property_managed_name(prop),
+                                        context);
    }
 
    template<typename OutputIterator, typename Context>
@@ -404,7 +423,10 @@ struct documentation_generator
        if (!generate_tag_return(sink, func.return_documentation.full_text, context))
          return false;
 
-       return generate_tag_example(sink, function_conversion(func), context);
+       return generate_all_tag_examples(sink,
+                                        name_helpers::klass_full_concrete_or_interface_name(func.klass),
+                                        name_helpers::managed_method_name(func.klass.eolian_name, func.name),
+                                        context);
    }
 
    template<typename OutputIterator, typename Context>
@@ -420,7 +442,10 @@ struct documentation_generator
        if (!generate_tag_return(sink, func.return_documentation.full_text, context))
          return false;
 
-       return generate_tag_example(sink, function_conversion(func), context);
+       return generate_all_tag_examples(sink,
+                                        name_helpers::klass_full_concrete_or_interface_name(func.klass),
+                                        name_helpers::managed_method_name(func.klass.eolian_name, func.name),
+                                        context);
    }
 
    template<typename OutputIterator, typename Context>
