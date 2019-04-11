@@ -104,8 +104,7 @@ struct documentation_generator
 
    static std::string function_conversion(attributes::function_def const& func)
    {
-      attributes::klass_def klass(get_klass(func.klass, func.unit), func.unit);
-      std::string name = name_helpers::klass_full_concrete_or_interface_name(klass);
+      std::string name = name_helpers::klass_full_concrete_or_interface_name(func.klass);
       switch (func.type)
       {
           // managed_method_name takes care of reordering the function name so the get/set goes first
@@ -114,8 +113,8 @@ struct documentation_generator
           case attributes::function_type::prop_set:
           case attributes::function_type::prop_get:
             if (blacklist::is_function_blacklisted(func.c_name))return "";
-            name += ".";
-            name += name_helpers::managed_method_name(klass.eolian_name, func.name);
+            if (!name.empty()) name += ".";
+            name += name_helpers::managed_method_name(func.klass.eolian_name, func.name);
             break;
           default:
             // No need to deal with property as function_defs are converted to get/set when building a given klass_def.
