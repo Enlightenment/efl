@@ -323,7 +323,8 @@ struct documentation_generator
       // There is no example file for this class or method, just return
       if (!exfile.good()) return true;
       std::stringstream example_buff;
-      example_buff << exfile.rdbuf();
+      // Start with a newline so the first line renders with same indentation as the rest
+      example_buff << std::endl << exfile.rdbuf();
 
       if (!as_generator(scope_tab(scope_size) << "/// ").generate(sink, attributes::unused, context)) return false;
       if (!generate_opening_tag(sink, "example", context)) return false;
