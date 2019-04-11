@@ -20,6 +20,7 @@ struct class_context
         variables,
     };
     wrapper_kind current_wrapper_kind;
+    std::string name;
 };
 
 struct indentation_context
