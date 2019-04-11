@@ -17,7 +17,7 @@
 # include <systemd/sd-daemon.h>
 #endif
 
-#ifdef HAVE_WS2TCPIP_H
+#ifdef _WIN32
 # include <ws2tcpip.h>
 #endif
 

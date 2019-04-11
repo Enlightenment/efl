@@ -45,11 +45,11 @@
 # endif
 #endif
 
+#include "dummy_test_iface.eo.h"
+#include "dummy_inherit_iface.eo.h"
 #include "dummy_numberwrapper.eo.h"
 #include "dummy_test_object.eo.h"
 #include "dummy_child.eo.h"
-#include "dummy_test_iface.eo.h"
-#include "dummy_inherit_iface.eo.h"
 #include "dummy_inherit_helper.eo.h"
 #include "dummy_part_holder.eo.h"
 
@@ -170,6 +170,11 @@ Efl_Object *_dummy_test_object_return_object(Eo *obj, EINA_UNUSED Dummy_Test_Obj
 Efl_Object *_dummy_test_object_return_null_object(Eo *obj EINA_UNUSED, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
   return NULL;
+}
+
+Dummy_Test_Iface *_dummy_test_object_return_iface(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+  return obj;
 }
 
 void _dummy_test_object_int_out(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, int x, int *y)
@@ -3635,12 +3640,11 @@ Dummy_StructComplex* _dummy_test_object_struct_complex_ptr_return_own(EINA_UNUSE
 }
 
 //                   //
-// Class constructor
+// Class methods
 //                   //
 EOLIAN static void
-_dummy_test_object_class_constructor(Efl_Class *klass)
+_dummy_test_object_create_cmp_array_objects(void)
 {
-   (void)klass;
    modified_seq_obj[0] = base_seq_obj[0] = _new_obj(0x0);
    modified_seq_obj[1] = base_seq_obj[1] = _new_obj(0x2A);
    modified_seq_obj[2] = base_seq_obj[2] = _new_obj(0x42);
@@ -3650,11 +3654,8 @@ _dummy_test_object_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static void
-_dummy_test_object_class_destructor(Efl_Class *klass)
+_dummy_test_object_destroy_cmp_array_objects(void)
 {
-   (void)klass;
-   for (unsigned i = 0; i < base_seq_obj_size; ++i)
-     efl_unref(base_seq_obj[i]);
    for (unsigned i = 0; i < modified_seq_obj_size; ++i)
      efl_unref(modified_seq_obj[i]);
 }

@@ -109,7 +109,7 @@ class @beta Efl.Io.Manager extends Efl.Loop_Consumer
       [[Closes an open Eina.File.]]
       params {
         @in file: ptr(Eina.File); [[Eina file handle]]
-        // Here we're just interested whether the promise was fullfilled or not. No value needed.
+        // Here we're just interested whether the promise was fulfilled or not. No value needed.
       }
       return: future<int> @owned; [[Close return code]]
     }

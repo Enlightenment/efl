@@ -1819,6 +1819,8 @@ edje_external_elementary_module_la_LIBTOOLFLAGS = --tag=disable-static
 
 testfilesdir = $(datadir)/elementary/
 testfiles_DATA = \
+                tests/elementary/testfile_entry.txt \
+                tests/elementary/testfile_entry2.txt \
                 tests/elementary/testfile.txt \
                 tests/elementary/testfile-windows.txt \
                 tests/elementary/testfile-withblanks.txt \
@@ -1944,6 +1946,7 @@ tests_elementary_efl_ui_suite_SOURCES = \
 	tests/elementary/efl_ui_build.c \
 	tests/elementary/elm_test_init.c \
 	tests/elementary/efl_ui_test_atspi.c \
+	tests/elementary/efl_ui_test_callback.c \
 	tests/elementary/efl_ui_test_focus_common.c \
 	tests/elementary/efl_ui_test_focus_common.h \
 	tests/elementary/efl_ui_test_focus.c \
@@ -2014,4 +2017,4 @@ lib/elementary/elm_code_widget_undo.c \
 lib/elementary/config_embed
 
 lib/elementary/elm_default_config.x:
-	lib/elementary/config_embed $(abs_top_srcdir)/data/elementary/config/standard/base.src.in $@
+	$(top_srcdir)/src/lib/elementary/config_embed $(abs_top_srcdir)/data/elementary/config/standard/base.src.in $@

@@ -49,6 +49,7 @@ class TestEo
        Test.Assert(delEventCalled, "DEL event not called");
     } */
 
+    /* Commented until we figure out a new way to test disposing
     public static void dispose_really_frees()
     {
        bool delEventCalled = false;
@@ -62,6 +63,7 @@ class TestEo
 
        Test.Assert(delEventCalled, "DEL event not called");
     }
+    */
 
     /* Commented out as adding the event listener seems to prevent it from being GC'd.
     public static void derived_destructor_really_frees()
@@ -131,7 +133,7 @@ class TestEoParent
 
         Test.AssertEquals(parent, child.GetParent());
 
-        var parent_retrieved = Dummy.TestObject.static_cast(child.GetParent());
+        var parent_retrieved = child.GetParent() as Dummy.TestObject;
         Test.AssertEquals(parent, parent_retrieved);
     }
 
@@ -142,7 +144,7 @@ class TestEoParent
 
         Test.AssertEquals(parent, child.GetParent());
 
-        Dummy.Numberwrapper parent_retrieved = Dummy.Numberwrapper.static_cast(child.GetParent());
+        Dummy.Numberwrapper parent_retrieved = child.GetParent() as Dummy.Numberwrapper;
         Test.AssertEquals(parent, parent_retrieved);
     }
 
@@ -160,7 +162,7 @@ class TestEoParent
 
         Test.AssertEquals(parent, child.GetParent());
 
-        var parent_from_cast = Dummy.TestObject.static_cast(child.GetParent());
+        var parent_from_cast = child.GetParent() as Derived;
         Test.AssertEquals(parent, parent_from_cast);
     }
 }
@@ -430,7 +432,7 @@ class TestInterfaceConcrete
     public static void test_iface_concrete_methods()
     {
         var obj = new Dummy.TestObject();
-        Dummy.ITestIface iface = Dummy.ITestIfaceConcrete.static_cast(obj);
+        Dummy.ITestIface iface = obj.ReturnIface();
 
         iface.IfaceProp = 1970;
         Test.AssertEquals(iface.IfaceProp, 1970);
@@ -443,7 +445,7 @@ class TestProvider
     {
         // Tests only the direction C# -> C
         var obj = new Dummy.TestObject();
-        Dummy.Numberwrapper provider = Dummy.Numberwrapper.static_cast(obj.FindProvider(typeof(Dummy.Numberwrapper)));
+        Dummy.Numberwrapper provider = obj.FindProvider(typeof(Dummy.Numberwrapper)) as Dummy.Numberwrapper;
         Test.AssertEquals(provider.GetType(), typeof(Dummy.Numberwrapper));
         Test.AssertEquals(provider.GetNumber(), 1999);
     }

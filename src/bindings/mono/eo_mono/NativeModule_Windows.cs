@@ -1,7 +1,11 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Efl { namespace Eo {
+namespace Efl
+{
+
+namespace Eo
+{
 
 public class partial NativeModule
 {
@@ -9,7 +13,6 @@ public class partial NativeModule
    public static extern IntPtr LoadLibrary(string libFilename);
 }
 
+}
 
-
-
-} }
+}

@@ -47,7 +47,7 @@ EAPI void ___efl_ref2_reset(const Eo *obj_id);
 #define EFL_CLASS_SIMPLE_CLASS(FUNC, NAME, ABSTRACT_CLASS) \
 static const Efl_Class_Description FUNC ##_realized_class_desc = { \
      EO_VERSION, \
-     #NAME"_Realized", \
+     NAME "_Realized", \
      EFL_CLASS_TYPE_REGULAR, \
      0, NULL, NULL, NULL \
 }; \

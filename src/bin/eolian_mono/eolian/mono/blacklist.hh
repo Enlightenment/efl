@@ -16,6 +16,7 @@ inline bool is_function_blacklisted(std::string const& c_name)
 {
   return
     c_name == "efl_event_callback_array_priority_add"
+    || c_name == "efl_constructor"
     || c_name == "efl_player_position_get"
     || c_name == "efl_ui_widget_focus_set"
     || c_name == "efl_ui_widget_focus_get"

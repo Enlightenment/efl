@@ -3,7 +3,8 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Eina {
+namespace Eina
+{
 
 public class Binbuf : IDisposable
 {
@@ -43,7 +44,7 @@ public class Binbuf : IDisposable
 
     public int Length
     {
-        get { return (int) GetLength(); }
+        get { return (int)GetLength(); }
     }
 
     private void InitNew()
@@ -51,7 +52,9 @@ public class Binbuf : IDisposable
         Handle = eina_binbuf_new();
         Own = true;
         if (Handle == IntPtr.Zero)
+        {
             throw new SEHException("Could not alloc binbuf");
+        }
     }
 
     public Binbuf()
@@ -98,8 +101,16 @@ public class Binbuf : IDisposable
     {
         IntPtr h = Handle;
         Handle = IntPtr.Zero;
-        if (Own && h != IntPtr.Zero) {
-            eina_binbuf_free(Handle);
+        if (Own && h != IntPtr.Zero)
+        {
+            if (disposing)
+            {
+                eina_binbuf_free(Handle);
+            }
+            else
+            {
+                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eina_binbuf_free, Handle);
+            }
         }
     }
 
@@ -180,7 +191,9 @@ public class Binbuf : IDisposable
     {
         var ptr = eina_binbuf_string_get(Handle);
         if (ptr == IntPtr.Zero)
+        {
             return null;
+        }
 
         var size = (int)(this.GetLength());
         byte[] mArray = new byte[size];

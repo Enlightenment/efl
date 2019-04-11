@@ -51,28 +51,35 @@ public struct EolianPD
 }
 
 #pragma warning disable 0169
+
 public struct EvasObjectBoxLayout
 {
     IntPtr o;
     IntPtr priv;
     IntPtr user_data;
 };
+
 [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
 public struct EvasObjectBoxData
 {
 }
-public struct EvasObjectBoxOption {
+
+public struct EvasObjectBoxOption
+{
     IntPtr obj;
     [MarshalAsAttribute(UnmanagedType.U1)] bool max_reached;
     [MarshalAsAttribute(UnmanagedType.U1)] bool min_reached;
     Evas.Coord alloc_size;
 };
+
 #pragma warning restore 0169
 
-namespace Efl {
+namespace Efl
+{
 
 [StructLayout(LayoutKind.Sequential)]
-public struct EventDescription {
+public struct EventDescription
+{
     public IntPtr Name;
     [MarshalAs(UnmanagedType.U1)] public bool Unfreezable;
     [MarshalAs(UnmanagedType.U1)] public bool Legacy_is;
@@ -94,20 +101,26 @@ public struct EventDescription {
         {
             IntPtr data = Efl.Eo.FunctionInterop.LoadFunctionPointer(module, name);
 
-            if (data == IntPtr.Zero) {
+            if (data == IntPtr.Zero)
+            {
                 string error = Eina.StringConversion.NativeUtf8ToManagedString(Efl.Eo.Globals.dlerror());
                 throw new Exception(error);
             }
+
             descriptions.Add(name, data);
         }
+
         return descriptions[name];
     }
 };
 
 public delegate void EventCb(System.IntPtr data, ref Event.NativeStruct evt);
+public delegate void FreeGCHandleCb(System.IntPtr gcHandle);
+public delegate void RemoveEventsCb(System.IntPtr obj, System.IntPtr gcHandle);
 
 [StructLayout(LayoutKind.Sequential)]
-public struct TextCursorCursor {
+public struct TextCursorCursor
+{
     IntPtr obj;
     UIntPtr pos; // UIntPtr to automatically change size_t between 32/64
     IntPtr node;
@@ -115,7 +128,8 @@ public struct TextCursorCursor {
 }
 
 [StructLayout(LayoutKind.Sequential)]
-public struct TextAnnotateAnnotation {
+public struct TextAnnotateAnnotation
+{
     IntPtr list;
     IntPtr obj;
     IntPtr start_node;
@@ -125,9 +139,11 @@ public struct TextAnnotateAnnotation {
 
 public delegate void SignalCb(IntPtr data, IntPtr obj, IntPtr emission, IntPtr source);
 
-namespace Access {
+namespace Access
+{
 
-public struct ActionData {
+public struct ActionData
+{
     public IntPtr name;
     public IntPtr action;
     public IntPtr param;
@@ -138,16 +154,25 @@ public struct ActionData {
 
 } // namespace Efl
 
-namespace Evas {
+namespace Evas
+{
 
-public struct Coord {
+public struct Coord
+{
     int val;
 
-    public Coord(int value) { val = value; }
-    static public implicit operator Coord(int val) {
+    public Coord(int value)
+    {
+        val = value;
+    }
+
+    static public implicit operator Coord(int val)
+    {
         return new Coord(val);
     }
-    static public implicit operator int(Coord coord) {
+
+    static public implicit operator int(Coord coord)
+    {
         return coord.val;
     }
 }
@@ -155,44 +180,44 @@ public struct Coord {
 /* Copied from Evas_Legacy.h */
 public enum TextStyleType
 {
-   ///<summary> plain, standard text.</summary>
-   Plain = 0,
-   ///<summary> text with shadow underneath.</summary>
-   Shadow,
-   ///<summary> text with an outline.</summary>
-   Outline,
-   ///<summary> text with a soft outline.</summary>
-   SoftOutline,
-   ///<summary> text with a glow effect.</summary>
-   Glow,
-   ///<summary> text with both outline and shadow effects.</summary>
-   OutlineShadow,
-   ///<summary> text with (far) shadow underneath.</summary>
-   FarShadow,
-   ///<summary> text with outline and soft shadow effects combined.</summary>
-   OutlineSoftShadow,
-   ///<summary> text with (soft) shadow underneath.</summary>
-   SoftShadow,
-   ///<summary> text with (far soft) shadow underneath.</summary>
-   FarSoftShadow,
+    ///<summary> plain, standard text.</summary>
+    Plain = 0,
+    ///<summary> text with shadow underneath.</summary>
+    Shadow,
+    ///<summary> text with an outline.</summary>
+    Outline,
+    ///<summary> text with a soft outline.</summary>
+    SoftOutline,
+    ///<summary> text with a glow effect.</summary>
+    Glow,
+    ///<summary> text with both outline and shadow effects.</summary>
+    OutlineShadow,
+    ///<summary> text with (far) shadow underneath.</summary>
+    FarShadow,
+    ///<summary> text with outline and soft shadow effects combined.</summary>
+    OutlineSoftShadow,
+    ///<summary> text with (soft) shadow underneath.</summary>
+    SoftShadow,
+    ///<summary> text with (far soft) shadow underneath.</summary>
+    FarSoftShadow,
 
-   // Shadow direction modifiers
-   ///<summary> shadow growing to bottom right.</summary>
-   ShadowDirectionBottomRight = 0 /* 0 >> 4 */,
-  ///<summary> shadow growing to the bottom.</summary>
-   ShadowDirectionBottom= 16 /* 1 >> 4 */,
-   ///<summary> shadow growing to bottom left.</summary>
-   ShadowDirectionBottomLeft = 32 /* 2 >> 4 */,
-   ///<summary> shadow growing to the left.</summary>
-   ShadowDirectionLeft = 48 /* 3 >> 4 */,
-   ///<summary> shadow growing to top left.</summary>
-   ShadowDirectionTopLeft = 64 /* 4 >> 4 */,
-   ///<summary> shadow growing to the top.</summary>
-   ShadowDirectionTop = 80 /* 5 >> 4 */,
-   ///<summary> shadow growing to top right.</summary>
-   ShadowDirectionTopRight = 96 /* 6 >> 4 */,
-   ///<summary> shadow growing to the right.</summary>
-   ShadowDirectionRight = 112 /* 7 >> 4 */
+    // Shadow direction modifiers
+    ///<summary> shadow growing to bottom right.</summary>
+    ShadowDirectionBottomRight = 0 /* 0 >> 4 */,
+    ///<summary> shadow growing to the bottom.</summary>
+    ShadowDirectionBottom = 16 /* 1 >> 4 */,
+    ///<summary> shadow growing to bottom left.</summary>
+    ShadowDirectionBottomLeft = 32 /* 2 >> 4 */,
+    ///<summary> shadow growing to the left.</summary>
+    ShadowDirectionLeft = 48 /* 3 >> 4 */,
+    ///<summary> shadow growing to top left.</summary>
+    ShadowDirectionTopLeft = 64 /* 4 >> 4 */,
+    ///<summary> shadow growing to the top.</summary>
+    ShadowDirectionTop = 80 /* 5 >> 4 */,
+    ///<summary> shadow growing to top right.</summary>
+    ShadowDirectionTopRight = 96 /* 6 >> 4 */,
+    ///<summary> shadow growing to the right.</summary>
+    ShadowDirectionRight = 112 /* 7 >> 4 */
 };
 
 } // namespace Evas
@@ -201,8 +226,8 @@ public enum TextStyleType
 public delegate int Eina_Compare_Cb(IntPtr a, IntPtr b);
 public delegate void ElmInterfaceScrollableCb(IntPtr obj, IntPtr data);
 public delegate void ElmInterfaceScrollableMinLimitCb(IntPtr obj,
-                                                     [MarshalAsAttribute(UnmanagedType.U1)]bool w,
-                                                     [MarshalAsAttribute(UnmanagedType.U1)]bool h);
+                                                      [MarshalAsAttribute(UnmanagedType.U1)]bool w,
+                                                      [MarshalAsAttribute(UnmanagedType.U1)]bool h);
 public delegate void ElmInterfaceScrollableResizeCb(IntPtr obj, Evas.Coord w, Evas.Coord h);
 [return: MarshalAsAttribute(UnmanagedType.U1)]
 public delegate bool ElmMultibuttonentryItemFilterCb(IntPtr obj, IntPtr item_label, IntPtr item_data, IntPtr data);

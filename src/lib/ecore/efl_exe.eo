@@ -44,7 +44,7 @@ class @beta Efl.Exe extends Efl.Task implements Efl.Io.Reader, Efl.Io.Writer, Ef
       }
       @property env {
          [[ If $env is $null then the process created by this object is
-            going to inherit the enviroment of this process.
+            going to inherit the environment of this process.
 
             In case $env is not $null then the environment variables declared
             in this object will represent the environment passed to the new process.

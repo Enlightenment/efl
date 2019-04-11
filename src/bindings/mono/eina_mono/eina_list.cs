@@ -8,7 +8,8 @@ using static Eina.TraitFunctions;
 using static Eina.ListNativeFunctions;
 using Eina.Callbacks;
 
-namespace Eina {
+namespace Eina
+{
 
 public static class ListNativeFunctions
 {
@@ -44,6 +45,8 @@ public static class ListNativeFunctions
         eina_list_move_list(ref IntPtr to, ref IntPtr from, IntPtr data);
     [DllImport(efl.Libs.Eina)] public static extern IntPtr
         eina_list_free(IntPtr list);
+    [DllImport(efl.Libs.CustomExports)] public static extern void
+        efl_mono_thread_safe_eina_list_free(IntPtr list);
     [DllImport(efl.Libs.Eina)] public static extern IntPtr
         eina_list_nth(IntPtr list, uint n);
     [DllImport(efl.Libs.Eina)] public static extern IntPtr
@@ -175,18 +178,29 @@ public class List<T> : IEnumerable<T>, IDisposable
         IntPtr h = Handle;
         Handle = IntPtr.Zero;
         if (h == IntPtr.Zero)
+        {
             return;
+        }
 
         if (OwnContent)
         {
-            for(IntPtr curr = h; curr != IntPtr.Zero; curr = InternalNext(curr))
+            for (IntPtr curr = h; curr != IntPtr.Zero; curr = InternalNext(curr))
             {
                 NativeFree<T>(InternalDataGet(curr));
             }
         }
 
         if (Own)
-            eina_list_free(h);
+        {
+            if (disposing)
+            {
+                eina_list_free(h);
+            }
+            else
+            {
+                efl_mono_thread_safe_eina_list_free(h);
+            }
+        }
     }
 
     public void Dispose()
@@ -221,7 +235,7 @@ public class List<T> : IEnumerable<T>, IDisposable
 
     public int Count()
     {
-        return (int) eina_list_count_custom_export_mono(Handle);
+        return (int)eina_list_count_custom_export_mono(Handle);
     }
 
     public void Append(T val)
@@ -274,9 +288,15 @@ public class List<T> : IEnumerable<T>, IDisposable
     {
         IntPtr pos = eina_list_nth_list(Handle, (uint)idx);
         if (pos == IntPtr.Zero)
+        {
             throw new IndexOutOfRangeException();
+        }
+
         if (OwnContent)
+        {
             NativeFree<T>(InternalDataGet(pos));
+        }
+
         IntPtr ele = ManagedToNativeAlloc(val);
         InternalDataSet(pos, ele);
     }
@@ -314,17 +334,20 @@ public class List<T> : IEnumerable<T>, IDisposable
     {
         var managed = new T[Count()];
         int i = 0;
-        for(IntPtr curr = Handle; curr != IntPtr.Zero; curr = InternalNext(curr), ++i)
+        for (IntPtr curr = Handle; curr != IntPtr.Zero; curr = InternalNext(curr), ++i)
         {
             managed[i] = NativeToManaged<T>(InternalDataGet(curr));
         }
+
         return managed;
     }
 
     public void AppendArray(T[] values)
     {
         foreach (T v in values)
+        {
             Append(v);
+        }
     }
 
 
@@ -340,7 +363,7 @@ public class List<T> : IEnumerable<T>, IDisposable
 
     public IEnumerator<T> GetEnumerator()
     {
-        for(IntPtr curr = Handle; curr != IntPtr.Zero; curr = InternalNext(curr))
+        for (IntPtr curr = Handle; curr != IntPtr.Zero; curr = InternalNext(curr))
         {
             yield return NativeToManaged<T>(InternalDataGet(curr));
         }

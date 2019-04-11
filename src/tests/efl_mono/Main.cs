@@ -92,6 +92,8 @@ class TestMain
         }
         Console.WriteLine("[   END SUITE ] " + ckRunSuite);
 
+        Efl.All.Shutdown();
+
         if (!pass)
           return -1;
 

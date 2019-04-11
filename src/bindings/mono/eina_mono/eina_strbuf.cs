@@ -5,8 +5,10 @@ using static Eina.EinaNative.StrbufNativeMethods;
 
 namespace Eina
 {
+
 namespace EinaNative
 {
+
 static internal class StrbufNativeMethods
 {
     [DllImport(efl.Libs.Eina)]
@@ -48,7 +50,7 @@ public class Strbuf : IDisposable
     private bool Disposed;
 
     ///<summary>Creates a new Strbuf. By default its lifetime is managed.</summary>
-    public Strbuf(Ownership ownership=Ownership.Managed)
+    public Strbuf(Ownership ownership = Ownership.Managed)
     {
         this.Handle = eina_strbuf_new();
         this.Ownership = ownership;
@@ -89,9 +91,20 @@ public class Strbuf : IDisposable
             return;
         }
 
-        if (!Disposed && (Handle != IntPtr.Zero)) {
-            eina_strbuf_free(Handle);
+        if (!Disposed && (Handle != IntPtr.Zero))
+        {
+            if (disposing)
+            {
+                eina_strbuf_free(Handle);
+            }
+            else
+            {
+                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eina_strbuf_free, Handle);
+            }
+
+            Handle = IntPtr.Zero;
         }
+
         Disposed = true;
     }
 
@@ -115,7 +128,10 @@ public class Strbuf : IDisposable
     public void Reset()
     {
         if (Disposed)
+        {
             throw new ObjectDisposedException(base.GetType().Name);
+        }
+
         eina_strbuf_reset(Handle);
     }
 
@@ -123,7 +139,10 @@ public class Strbuf : IDisposable
     public bool Append(string text)
     {
         if (Disposed)
+        {
             throw new ObjectDisposedException(base.GetType().Name);
+        }
+
         return eina_strbuf_append(Handle, text);
     }
 
@@ -131,7 +150,10 @@ public class Strbuf : IDisposable
     public bool AppendEscaped(string text)
     {
         if (Disposed)
+        {
             throw new ObjectDisposedException(base.GetType().Name);
+        }
+
         return eina_strbuf_append_escaped(Handle, text);
     }
 
@@ -139,7 +161,10 @@ public class Strbuf : IDisposable
     public bool Append(char c)
     {
         if (Disposed)
+        {
             throw new ObjectDisposedException(base.GetType().Name);
+        }
+
         return eina_strbuf_append_char(Handle, c);
     }
 
@@ -147,10 +172,12 @@ public class Strbuf : IDisposable
     public string Steal()
     {
         if (Disposed)
+        {
             throw new ObjectDisposedException(base.GetType().Name);
+        }
+
         return eina_strbuf_string_steal(Handle);
     }
 }
 
 } // namespace eina
-

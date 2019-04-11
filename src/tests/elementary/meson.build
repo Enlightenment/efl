@@ -120,6 +120,7 @@ efl_ui_suite_src = [
   'suite_helpers.h',
   'elm_test_init.c',
   'efl_ui_test_atspi.c',
+  'efl_ui_test_callback.c',
   'efl_ui_test_focus_common.c',
   'efl_ui_test_focus_common.h',
   'efl_ui_test_focus.c',

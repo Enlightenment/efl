@@ -235,7 +235,7 @@ abstract Efl.Object
            Use this method to delay expensive operations until user configuration
            has finished, to avoid building the object in a "default" state in the
            constructor, just to have to throw it all away because a user
-           configuration (a property being set, for example) requires a diferent
+           configuration (a property being set, for example) requires a different
            state.
            This is the last call inside efl_add() and will set @.finalized to $true
            once it returns.

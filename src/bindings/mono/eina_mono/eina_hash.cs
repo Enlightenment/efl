@@ -137,8 +137,10 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
     public bool OwnKey {get; set;}
     public bool OwnValue {get; set;}
 
-    public int Count {
-        get {
+    public int Count
+    {
+        get
+        {
             return Population();
         }
     }
@@ -179,10 +181,21 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         IntPtr h = Handle;
         Handle = IntPtr.Zero;
         if (h == IntPtr.Zero)
+        {
             return;
+        }
 
         if (Own)
-            eina_hash_free(h);
+        {
+            if (disposing)
+            {
+                eina_hash_free(h);
+            }
+            else
+            {
+                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eina_hash_free, h);
+            }
+        }
     }
 
     public void Dispose()
@@ -218,7 +231,9 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         OwnValue = ownValue;
 
         if (ownValue)
+        {
             eina_hash_free_cb_set(Handle, EinaFreeCb<TValue>());
+        }
     }
 
     public void SetOwnership(bool ownAll)
@@ -289,7 +304,9 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         //NativeFreeRef<TKey>(nk);
         FreeNativeIndirection<TKey>(gchnk, ForceRefKey<TKey>());
         if (found == IntPtr.Zero)
+        {
             throw new KeyNotFoundException();
+        }
 
         return NativeToManaged<TValue>(IndirectNative<TValue>(found, false));
     }
@@ -305,6 +322,7 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
             val = default(TValue);
             return false;
         }
+
         val = NativeToManaged<TValue>(IndirectNative<TValue>(found, false));
         return true;
     }
@@ -334,8 +352,12 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
             NativeFree<TValue>(nv);
             return false;
         }
+
         if (OwnValue)
+        {
             NativeFree<TValue>(old);
+        }
+
         return true;
     }
 
@@ -355,7 +377,7 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
 
             return GCHandle.ToIntPtr(gch);
         }
-        else if(IsEflObject(typeof(T)) && forceRef)
+        else if (IsEflObject(typeof(T)) && forceRef)
         {
             GCHandle gch = GCHandle.Alloc(new byte[Marshal.SizeOf<IntPtr>()], GCHandleType.Pinned);
             IntPtr pin = gch.AddrOfPinnedObject();
@@ -369,6 +391,7 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
             return ManagedToNativeAlloc(value);
         }
     }
+
     private static IntPtr GetNativePtr<T>(IntPtr gchptr, bool forceRef)
     {
         if (forceRef)
@@ -383,6 +406,7 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
             return gchptr;
         }
     }
+
     private static void FreeNativeIndirection<T>(IntPtr gchptr, bool forceRef)
     {
         if (forceRef)
@@ -416,7 +440,9 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         FreeNativeIndirection<TKey>(gchnk, ForceRefKey<TKey>());
         FreeNativeIndirection<TValue>(gchnv, false);
         if (OwnValue || old != IntPtr.Zero)
+        {
             NativeFree<TValue>(old);
+        }
     }
 
     public TValue this[TKey key]
@@ -494,4 +520,3 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
 }
 
 }
-

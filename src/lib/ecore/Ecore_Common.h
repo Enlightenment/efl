@@ -67,7 +67,7 @@ EAPI int ecore_shutdown(void);
  * should call ecore_init() first, then register your callback on
  * @c EFL_LOOP_EVENT_ARGUMENTS and finally call ecore_init_ex().
  *
- * Once you are shuting down your program, you should symetrically
+ * Once you are shuting down your program, you should symmetrically
  * call ecore_shutdown_ex().
  */
 EAPI unsigned int ecore_init_ex(int argc, char **argv);

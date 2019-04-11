@@ -3,7 +3,8 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace eldbus {
+namespace eldbus
+{
 
 public static class Config
 {
@@ -13,7 +14,9 @@ public static class Config
     public static void Init()
     {
         if (eldbus_init() == 0)
+        {
             throw new Efl.EflException("Failed to initialize Eldbus");
+        }
     }
 
     public static void Shutdown()

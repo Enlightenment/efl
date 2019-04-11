@@ -571,10 +571,13 @@ ecore_fork_reset(void)
 
         EINA_LIST_FOREACH_SAFE(_thread_cb, l, ln, call)
           {
-             if (call->suspend || call->sync) continue;
-             if (call->cb.async != (Ecore_Cb)&_ecore_thread_join) continue;
-             _thread_cb = eina_list_remove_list(_thread_cb, l);
-             free(call);
+             //if something is supsend, then the mainloop will be blocked until until thread is calling ecore_thread_main_loop_end()
+             //if something tries to join a thread as callback, ensure that we remove this
+             if (call->suspend || (call->cb.async == (Ecore_Cb)&_ecore_thread_join))
+               {
+                  _thread_cb = eina_list_remove_list(_thread_cb, l);
+                  free(call);
+               }
           }
         if (_thread_cb) ecore_pipe_write(_thread_call, &wakeup, sizeof (int));
      }
@@ -686,7 +689,7 @@ ecore_thread_main_loop_begin(void)
         return ++_thread_loop;
      }
 
-   order = malloc(sizeof (Ecore_Safe_Call));
+   order = calloc(1, sizeof (Ecore_Safe_Call));
    if (!order) return -1;
 
    eina_lock_take(&_thread_id_lock);

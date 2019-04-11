@@ -784,59 +784,20 @@ _efl_ui_pager_loop_mode_get(const Eo *obj EINA_UNUSED,
    return pd->loop;
 }
 
-static void
-_unpack_all(Efl_Ui_Pager_Data *pd,
-            Eina_Bool clear)
-{
-   Eo *subobj;
-
-   pd->cnt = 0;
-   pd->curr.page = -1;
-   pd->curr.pos = 0.0;
-
-   if (pd->transition)
-     {
-        efl_page_transition_unpack_all(pd->transition);
-     }
-   else
-     {
-        subobj = eina_list_nth(pd->content_list, pd->curr.page);
-        efl_pack_unpack(pd->page_box, subobj);
-     }
-
-   if (clear)
-     {
-        EINA_LIST_FREE(pd->content_list, subobj)
-           evas_object_del(subobj);
-     }
-   else
-     {
-        EINA_LIST_FREE(pd->content_list, subobj)
-           efl_canvas_object_clipper_set(subobj, NULL);
-     }
-
-   if (pd->indicator)
-     {
-        efl_page_indicator_unpack_all(pd->indicator);
-     }
-}
-
 EOLIAN static Eina_Bool
 _efl_ui_pager_efl_pack_pack_clear(Eo *obj EINA_UNUSED,
-                                  Efl_Ui_Pager_Data *pd)
+                                  Efl_Ui_Pager_Data *pd EINA_UNUSED)
 {
-   _unpack_all(pd, EINA_TRUE);
-
-   return EINA_TRUE;
+   ERR("Soon to be implemented");
+   return EINA_FALSE;
 }
 
 EOLIAN static Eina_Bool
 _efl_ui_pager_efl_pack_unpack_all(Eo *obj EINA_UNUSED,
-                                  Efl_Ui_Pager_Data *pd)
+                                  Efl_Ui_Pager_Data *pd EINA_UNUSED)
 {
-   _unpack_all(pd, EINA_FALSE);
-
-   return EINA_TRUE;
+   ERR("Soon to be implemented");
+   return EINA_FALSE;
 }
 
 static void
@@ -892,19 +853,12 @@ _efl_ui_pager_efl_pack_unpack(Eo *obj,
 }
 
 EOLIAN static Efl_Gfx_Entity *
-_efl_ui_pager_efl_pack_linear_pack_unpack_at(Eo *obj,
-                                             Efl_Ui_Pager_Data *pd,
-                                             int index)
+_efl_ui_pager_efl_pack_linear_pack_unpack_at(Eo *obj EINA_UNUSED,
+                                             Efl_Ui_Pager_Data *pd EINA_UNUSED,
+                                             int index EINA_UNUSED)
 {
-   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return NULL;
-
-   if ((index >= pd->cnt) || (index < 0)) return NULL;
-
-   Efl_Gfx_Entity *subobj = eina_list_nth(pd->content_list, index);
-
-   _unpack(obj, pd, subobj, index);
-
-   return subobj;
+   ERR("Soon to be implemented");
+   return NULL;
 }
 
 

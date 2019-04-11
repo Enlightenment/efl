@@ -2284,6 +2284,7 @@ tests/evas/evas_suite.h
 tests_evas_evas_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/lib/ecore_evas \
 -I$(top_builddir)/src/lib/evas/canvas \
+-I$(top_srcdir)/src/modules/evas/engines/buffer \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/evas\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/evas\" \

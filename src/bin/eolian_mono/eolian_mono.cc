@@ -134,6 +134,7 @@ run(options_type const& opts)
                      "using System.Runtime.InteropServices;\n"
                      "using System.Collections.Generic;\n"
                      "using System.Linq;\n"
+                     "using System.Threading;\n"
                      "using System.ComponentModel;\n")
      .generate(iterator, efl::eolian::grammar::attributes::unused, efl::eolian::grammar::context_null()))
      {
@@ -288,8 +289,8 @@ _usage(const char *progname)
      << "  -c, --class <name>      The Eo class name to generate code for." << std::endl
      << "  -D, --out-dir <dir>     Output directory where generated code will be written." << std::endl
      << "  -I, --in <file/dir>     The source containing the .eo descriptions." << std::endl
-     << "  -o, --out-file <file>   The output file name. [default: <classname>.eo.hh]" << std::endl
-     << "  -n, --namespace <ns>    Wrap generated code in a namespace. [Eg: efl::ecore::file]" << std::endl
+     << "  -o, --out-file <file>   The output file name. [default: <classname>.eo.cs]" << std::endl
+     << "  -n, --namespace <ns>    Wrap generated code in a namespace. [Eg: Efl.Ui.Widget]" << std::endl
      << "  -r, --recurse           Recurse input directories loading .eo files." << std::endl
      << "  -v, --version           Print the version." << std::endl
      << "  -b, --beta              Enable @beta methods." << std::endl

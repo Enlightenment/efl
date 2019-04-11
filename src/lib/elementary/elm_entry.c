@@ -4984,8 +4984,8 @@ _elm_entry_file_text_format_set(Eo *obj EINA_UNUSED, Elm_Entry_Data *sd, Elm_Tex
 EAPI Eina_Bool
 elm_entry_file_set(Evas_Object *obj, const char *file, Elm_Text_Format format)
 {
-   Eina_Bool ret;
-   ELM_ENTRY_DATA_GET(obj, sd);
+   Eina_Bool ret = EINA_FALSE;
+   ELM_ENTRY_DATA_GET_OR_RETURN_VAL(obj, sd, ret);
    ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
    if (sd->auto_save) _save_do(obj);
    elm_obj_entry_file_text_format_set(obj, format);

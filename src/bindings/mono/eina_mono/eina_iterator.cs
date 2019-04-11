@@ -7,7 +7,8 @@ using System.Collections.Generic;
 using static Eina.TraitFunctions;
 using static Eina.IteratorNativeFunctions;
 
-namespace Eina {
+namespace Eina
+{
 
 public static class IteratorNativeFunctions
 {
@@ -58,18 +59,29 @@ public class Iterator<T> : IEnumerable<T>, IDisposable
         var h = Handle;
         Handle = IntPtr.Zero;
         if (h == IntPtr.Zero)
+        {
             return;
+        }
 
         if (OwnContent)
         {
-            for(IntPtr data; eina_iterator_next(h, out data);)
+            for (IntPtr data; eina_iterator_next(h, out data);)
             {
                 NativeFree<T>(data);
             }
         }
 
         if (Own)
-            eina_iterator_free(h);
+        {
+            if (disposing)
+            {
+                eina_iterator_free(h);
+            }
+            else
+            {
+                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eina_iterator_free, h);
+            }
+        }
     }
 
     public void Dispose()
@@ -114,7 +126,9 @@ public class Iterator<T> : IEnumerable<T>, IDisposable
         res = NativeToManaged<T>(data);
 
         if (OwnContent)
+        {
             NativeFree<T>(data);
+        }
 
         return true;
     }
@@ -131,7 +145,7 @@ public class Iterator<T> : IEnumerable<T>, IDisposable
 
     public IEnumerator<T> GetEnumerator()
     {
-        for(T curr; Next(out curr);)
+        for (T curr; Next(out curr);)
         {
             yield return curr;
         }

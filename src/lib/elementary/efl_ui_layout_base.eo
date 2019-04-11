@@ -32,8 +32,8 @@ abstract Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container,
          ]]
          set {
             return: Eina.Error;
-               [[Whether the style was successfully applied or not, see
-                 the values of Efl.Ui.Theme.Apply_Error for more information.]]
+               [[Whether the theme was successfully applied or not, see
+                 the Efl.Ui.Theme.Apply_Error subset of @Eina.Error for more information.]]
          }
          get {
          }

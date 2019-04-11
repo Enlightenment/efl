@@ -26,7 +26,7 @@ foreach edc_file : edc_files
               '-id', join_paths(meson.current_source_dir()),
               '-fd', join_paths(meson.current_source_dir()),
               '@INPUT@', '@OUTPUT@'],
-    depends : edje_cc,
+    depends : edje_depends,
     install : true,
     install_dir : join_paths(dir_data, 'elementary', 'objects'),
    )

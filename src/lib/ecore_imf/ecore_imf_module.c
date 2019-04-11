@@ -33,7 +33,7 @@ void
 ecore_imf_module_init(void)
 {
    const char *built_modules[] = {
-#ifdef ENABLE_XIM
+#ifdef BUILD_ECORE_IMF_XIM
       "xim",
 #endif
 #ifdef BUILD_ECORE_IMF_IBUS

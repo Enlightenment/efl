@@ -20,7 +20,6 @@ struct _Evas_SVG_Parser {
       int x, y, width, height;
    } global;
    struct {
-      Eina_Bool x1_percent, x2_percent, y1_percent, y2_percent;
       Eina_Bool fx_parsed;
       Eina_Bool fy_parsed;
    } gradient;
@@ -144,13 +143,6 @@ _gradient_to_double(Evas_SVG_Parser *svg_parse, const char *str, SVG_Parser_Leng
    double parsed_value = strtod(str, &end);
    double max = 1;
 
-   /* unique case, if that is percentage, just return it */
-   if (strstr(str, "%"))
-     {
-        parsed_value = parsed_value / 100.0;
-        return parsed_value;
-     }
-
    /**
     * That is according to Units in here
     *
@@ -164,7 +156,9 @@ _gradient_to_double(Evas_SVG_Parser *svg_parse, const char *str, SVG_Parser_Leng
      max = sqrt(pow(svg_parse->global.height, 2) +
                 pow(svg_parse->global.width, 2)) / sqrt(2.0);
 
-   if (strstr(str, "cm"))
+   if (strstr(str, "%"))
+     parsed_value = parsed_value / 100.0;
+   else if (strstr(str, "cm"))
      parsed_value = parsed_value * 35.43307;
    else if (strstr(str, "mm"))
      parsed_value = parsed_value * 3.543307;
@@ -1795,9 +1789,9 @@ _attr_parse_radial_gradient_node(void *data, const char *key, const char *value)
      {
         grad->ref = _id_from_href(value);
      }
-   else if (!strcmp(key, "gradientUnits") && !strcmp(value, "objectBoundingBox"))
+   else if (!strcmp(key, "gradientUnits") && !strcmp(value, "userSpaceOnUse"))
      {
-        grad->user_space = EINA_FALSE;
+        grad->user_space = EINA_TRUE;
      }
 
    return EINA_TRUE;
@@ -1810,7 +1804,7 @@ _create_radialGradient(Evas_SVG_Loader *loader, const char *buf, unsigned buflen
    loader->svg_parse->style_grad = grad;
 
    grad->type = SVG_RADIAL_GRADIENT;
-   grad->user_space = EINA_TRUE;
+   grad->user_space = EINA_FALSE;
    grad->radial = calloc(1, sizeof(Svg_Radial_Gradient));
    /**
     * Default values of gradient
@@ -1860,95 +1854,35 @@ static void
 _handle_linear_x1_attr(Evas_SVG_Loader *loader, Svg_Linear_Gradient* linear, const char *value)
 {
    linear->x1 = _gradient_to_double(loader->svg_parse, value, SVG_PARSER_LENGTH_HORIZONTAL);
-   if (strstr(value, "%"))
-     loader->svg_parse->gradient.x1_percent = EINA_TRUE;
 }
 
 static void
 _handle_linear_y1_attr(Evas_SVG_Loader *loader, Svg_Linear_Gradient* linear, const char *value)
 {
    linear->y1 = _gradient_to_double(loader->svg_parse, value, SVG_PARSER_LENGTH_VERTICAL);
-   if (strstr(value, "%"))
-     loader->svg_parse->gradient.y1_percent = EINA_TRUE;
 }
 
 static void
 _handle_linear_x2_attr(Evas_SVG_Loader *loader, Svg_Linear_Gradient* linear, const char *value)
 {
    linear->x2 = _gradient_to_double(loader->svg_parse, value, SVG_PARSER_LENGTH_HORIZONTAL);
-   /* checking if there are no percentage because x2 have default value
-    * already set in percentages (100%) */
-   if (!strstr(value, "%"))
-     loader->svg_parse->gradient.x2_percent = EINA_FALSE;
 }
 
 static void
 _handle_linear_y2_attr(Evas_SVG_Loader *loader, Svg_Linear_Gradient* linear, const char *value)
 {
    linear->y2 = _gradient_to_double(loader->svg_parse, value, SVG_PARSER_LENGTH_VERTICAL);
-   if (strstr(value, "%"))
-     loader->svg_parse->gradient.y2_percent = EINA_TRUE;
-}
-
-static void
-_recalc_linear_x1_attr(Evas_SVG_Loader *loader, Svg_Linear_Gradient* linear, Eina_Bool user_space)
-{
-   if (!loader->svg_parse->gradient.x1_percent && !user_space)
-     {
-        /* Since previous percentage is not required (it was already percent)
-         * so oops and make it all back */
-        linear->x1 = linear->x1 * loader->svg_parse->global.width;
-     }
-   loader->svg_parse->gradient.x1_percent = EINA_FALSE;
-}
-
-static void
-_recalc_linear_y1_attr(Evas_SVG_Loader *loader, Svg_Linear_Gradient* linear, Eina_Bool user_space)
-{
-   if (!loader->svg_parse->gradient.y1_percent && !user_space)
-     {
-        /* Since previous percentage is not required (it was already percent)
-         * so oops and make it all back */
-        linear->y1 = linear->y1 * loader->svg_parse->global.height;
-     }
-   loader->svg_parse->gradient.y1_percent = EINA_FALSE;
-}
-
-static void
-_recalc_linear_x2_attr(Evas_SVG_Loader *loader, Svg_Linear_Gradient* linear, Eina_Bool user_space)
-{
-   if (!loader->svg_parse->gradient.x2_percent && !user_space)
-     {
-        /* Since previous percentage is not required (it was already percent)
-         * so oops and make it all back */
-        linear->x2 = linear->x2 * loader->svg_parse->global.width;
-     }
-   loader->svg_parse->gradient.x2_percent = EINA_FALSE;
-}
-
-static void
-_recalc_linear_y2_attr(Evas_SVG_Loader *loader, Svg_Linear_Gradient* linear, Eina_Bool user_space)
-{
-   if (!loader->svg_parse->gradient.y2_percent && !user_space)
-     {
-        /* Since previous percentage is not required (it was already percent)
-         * so oops and make it all back */
-        linear->y2 = linear->y2 * loader->svg_parse->global.height;
-     }
-   loader->svg_parse->gradient.y2_percent = EINA_FALSE;
 }
 
 typedef void (*Linear_Method)(Evas_SVG_Loader *loader, Svg_Linear_Gradient *linear, const char *value);
-typedef void (*Linear_Method_Recalc)(Evas_SVG_Loader *loader, Svg_Linear_Gradient *linear, Eina_Bool user_space);
 
 #define LINEAR_DEF(Name)       \
-  { #Name, sizeof (#Name), _handle_linear_##Name##_attr, _recalc_linear_##Name##_attr}
+  { #Name, sizeof (#Name), _handle_linear_##Name##_attr}
 
 static const struct {
    const char *tag;
    int sz;
    Linear_Method tag_handler;;
-   Linear_Method_Recalc tag_recalc;;
 } linear_tags[] = {
   LINEAR_DEF(x1),
   LINEAR_DEF(y1),
@@ -1984,7 +1918,7 @@ _attr_parse_linear_gradient_node(void *data, const char *key, const char *value)
      {
         grad->ref = _id_from_href(value);
      }
-   else if (!strcmp(key, "gradientUnits") && !strcmp(value, "objectBoundingBox"))
+   else if (!strcmp(key, "gradientUnits") && !strcmp(value, "userSpaceOnUse"))
      {
         grad->user_space = EINA_TRUE;
      }
@@ -1998,21 +1932,15 @@ _create_linearGradient(Evas_SVG_Loader *loader, const char *buf, unsigned buflen
    Svg_Style_Gradient *grad = calloc(1, sizeof(Svg_Style_Gradient));
    loader->svg_parse->style_grad = grad;
 
-   unsigned int i;
-
    grad->type = SVG_LINEAR_GRADIENT;
-   grad->user_space = EINA_TRUE;
+   grad->user_space = EINA_FALSE;
    grad->linear = calloc(1, sizeof(Svg_Linear_Gradient));
    /**
     * Default value of x2 is 100%
     */
    grad->linear->x2 = 1;
-   loader->svg_parse->gradient.x2_percent = EINA_TRUE;
    eina_simple_xml_attributes_parse(buf, buflen,
                                     _attr_parse_linear_gradient_node, loader);
-
-   for (i = 0; i < sizeof (linear_tags) / sizeof(linear_tags[0]); i++)
-     linear_tags[i].tag_recalc(loader, grad->linear, grad->user_space);
 
    return loader->svg_parse->style_grad;
 }

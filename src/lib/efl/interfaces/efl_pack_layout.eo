@@ -17,9 +17,9 @@ interface @beta Efl.Pack_Layout
          [[Implementation of this container's layout algorithm.
 
            EFL will call this function whenever the contents of this
-           container need to be re-layed out on the canvas.
+           container need to be re-laid out on the canvas.
 
-           This can be overriden to implement custom layout behaviours.
+           This can be overriden to implement custom layout behaviors.
          ]]
       }
    }

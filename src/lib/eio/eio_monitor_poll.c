@@ -196,7 +196,7 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
           }
 
         cmp->version = backend->version;
-        if (ecore_thread_check(thread)) break;
+        if (thread && ecore_thread_check(thread)) break;
      }
 
    if (it) eina_iterator_free(it);
@@ -346,6 +346,9 @@ eio_monitor_fallback_add(Eio_Monitor *monitor)
    backend->parent = monitor;
    monitor->backend = backend;
    monitor->fallback = EINA_TRUE;
+
+   //ensure this is initialized here
+   _eio_monitor_fallback_heavy_cb(backend, NULL);
    backend->work = ecore_thread_run(_eio_monitor_fallback_heavy_cb,
                                     _eio_monitor_fallback_end_cb,
                                     _eio_monitor_fallback_cancel_cb,

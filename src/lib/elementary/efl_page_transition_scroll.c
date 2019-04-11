@@ -413,24 +413,6 @@ _efl_page_transition_scroll_pack(Eo *obj,
 }
 
 EOLIAN static void
-_efl_page_transition_scroll_unpack_all(Eo *obj EINA_UNUSED,
-                                       Efl_Page_Transition_Scroll_Data *pd)
-{
-   Eina_List *list;
-   Page_Info *pi;
-
-   EINA_LIST_FOREACH(pd->page_infos, list, pi)
-     {
-        efl_pack_unpack(pi->obj, pi->content);
-
-        pi->content_num = -1;
-        pi->content = NULL;
-        pi->visible = EINA_FALSE;
-     }
-   return;
-}
-
-EOLIAN static void
 _efl_page_transition_scroll_curr_page_change(Eo *obj EINA_UNUSED,
                                              Efl_Page_Transition_Scroll_Data *pd,
                                              int diff)
@@ -674,8 +656,6 @@ _efl_page_transition_scroll_efl_object_invalidate(Eo *obj,
                       _efl_page_transition_scroll_update), \
    EFL_OBJECT_OP_FUNC(efl_page_transition_pack, \
                       _efl_page_transition_scroll_pack), \
-   EFL_OBJECT_OP_FUNC(efl_page_transition_unpack_all, \
-                      _efl_page_transition_scroll_unpack_all), \
    EFL_OBJECT_OP_FUNC(efl_page_transition_curr_page_change, \
                       _efl_page_transition_scroll_curr_page_change), \
    EFL_OBJECT_OP_FUNC(efl_page_transition_page_size_set, \

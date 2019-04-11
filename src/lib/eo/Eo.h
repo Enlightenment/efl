@@ -359,7 +359,7 @@ typedef struct _Efl_Future_Cb_Desc {
     * @param value The operation result
     * @return An Eina_Value to pass to the next Eina_Future in the chain (if any).
     * If there is no need to convert the received value, it's @b recommended
-    * to pass-thru @p value argument. If you need to convert to a different type
+    * to passthrough @p value argument. If you need to convert to a different type
     * or generate a new value, use @c eina_value_setup() on @b another Eina_Value
     * and return it. By returning a promise Eina_Value (eina_promise_as_value()) the
     * whole chain will wait until the promise is resolved in
@@ -378,7 +378,7 @@ typedef struct _Efl_Future_Cb_Desc {
     * may also return a non-error, in which case the next future in the chain will receive a regular
     * value, which may call its @c success.
     *
-    * If this function is not provided, then it will pass thru the error to the next error handler.
+    * If this function is not provided, then it will passthrough the error to the next error handler.
     *
     * It may be called with @c EINVAL if @c success_type is provided and doesn't
     * match the received type.

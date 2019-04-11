@@ -1,7 +1,7 @@
 
 ### Library
 
-ecore_con_eolian_files = \
+ecore_con_eolian_files_common = \
         lib/ecore_con/efl_net_socket.eo \
         lib/ecore_con/efl_net_socket_simple.eo \
         lib/ecore_con/efl_net_socket_fd.eo \
@@ -30,16 +30,22 @@ ecore_con_eolian_files = \
         lib/ecore_con/efl_net_session.eo \
         lib/ecore_con/efl_net_ip_address.eo
 
-if HAVE_WINDOWS
-ecore_con_eolian_files += \
+ecore_con_eolian_files_windows = \
         lib/ecore_con/efl_net_socket_windows.eo \
         lib/ecore_con/efl_net_dialer_windows.eo \
         lib/ecore_con/efl_net_server_windows.eo
-else
-ecore_con_eolian_files += \
+
+ecore_con_eolian_files_unix = \
         lib/ecore_con/efl_net_socket_unix.eo \
         lib/ecore_con/efl_net_dialer_unix.eo \
         lib/ecore_con/efl_net_server_unix.eo
+
+ecore_con_eolian_files = $(ecore_con_eolian_files_common)
+
+if HAVE_WINDOWS
+ecore_con_eolian_files += $(ecore_con_eolian_files_windows)
+else
+ecore_con_eolian_files += $(ecore_con_eolian_files_unix)
 endif
 
 ecore_con_eolian_type_files = \
@@ -64,8 +70,10 @@ ecoreconeolianfiles_DATA = \
 endif
 
 EXTRA_DIST2 += \
-              $(ecore_con_eolian_files) \
-			   $(ecore_con_eolian_type_files)
+$(ecore_con_eolian_files_common) \
+$(ecore_con_eolian_files_unix) \
+$(ecore_con_eolian_files_windows) \
+$(ecore_con_eolian_type_files)
 
 
 lib_LTLIBRARIES += lib/ecore_con/libecore_con.la

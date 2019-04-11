@@ -446,7 +446,7 @@ EAPI double ephysics_quaternion_angle_get(const EPhysics_Quaternion *quat1, cons
  * Return the length of the quaternion.
  *
  * @param quat Quaternion to get length of.
- * @return The lenght of @p quat or @c 0 on error.
+ * @return The length of @p quat or @c 0 on error.
  *
  * @ingroup EPhysics_Quaternion
  */
@@ -457,7 +457,7 @@ EAPI double ephysics_quaternion_length_get(const EPhysics_Quaternion *quat);
  * Return the length squared of the quaternion.
  *
  * @param quat Quaternion to get length of.
- * @return The lenght of @p quat or @c 0 on error.
+ * @return The length of @p quat or @c 0 on error.
  *
  * @ingroup EPhysics_Quaternion
  */
@@ -489,7 +489,7 @@ EAPI double ephysics_quaternion_length2_get(const EPhysics_Quaternion *quat);
  * @ref ephysics_shape_save(). With that shapes can be done or visualized
  * on design applications.
  *
- * @note Using primitive shapes has better perfomance than generic shapes.
+ * @note Using primitive shapes has better performance than generic shapes.
  * @note For now, only convex shapes are supported.
  *
  */
@@ -2435,11 +2435,11 @@ EAPI double ephysics_body_soft_body_drag_coefficient_get(const EPhysics_Body *bo
  *
  * While dragging a soft body the user may want to freeze a specific trimesh
  * face, after calling this function EPhysics will do freeze the @p triangle
- * untill it gets a call to unset it with
+ * until it gets a call to unset it with
  * ephysics_body_soft_body_dragging_unset().
  *
  * @note Freezing a specific trimesh face means no forces are applied to it, no
- * gravity enforced, that's @p triangle will have no mass untill it dragging
+ * gravity enforced, that's @p triangle will have no mass until it dragging
  * gets unset.
  *
  * @param body The body of interest.

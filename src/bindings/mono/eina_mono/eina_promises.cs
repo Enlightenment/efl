@@ -6,9 +6,11 @@ using System.Linq;
 
 using static Eina.EinaNative.PromiseNativeMethods;
 
-namespace Eina {
+namespace Eina
+{
 
-namespace EinaNative {
+namespace EinaNative
+{
 
 static internal class PromiseNativeMethods
 {
@@ -25,6 +27,9 @@ static internal class PromiseNativeMethods
 
     [DllImport(efl.Libs.Eina)]
     internal static extern void eina_promise_reject(IntPtr scheduler, Eina.Error reason);
+
+    [DllImport(efl.Libs.CustomExports)]
+    internal static extern void efl_mono_thread_safe_promise_reject(IntPtr scheduler, Eina.Error reason);
 
     [DllImport(efl.Libs.Eina)]
     internal static extern IntPtr eina_future_new(IntPtr promise);
@@ -80,7 +85,7 @@ public class Promise : IDisposable
     /// Currently, creating a promise directly uses the Main Loop scheduler the source of notifications (i.e. the
     /// future callbacks will be called mainly from a loop iteration).
     /// </summary>
-    public Promise(CancelCb cancelCb=null)
+    public Promise(CancelCb cancelCb = null)
     {
         Efl.Loop loop = Efl.App.AppMain;
 
@@ -90,10 +95,13 @@ public class Promise : IDisposable
         IntPtr cb_data = IntPtr.Zero;
 
         // A safety clean callback to mark this wrapper as invalid
-        CancelCb safetyCb = () => {
+        CancelCb safetyCb = () =>
+        {
             Handle = IntPtr.Zero;
             if (cancelCb != null)
+            {
                 cancelCb();
+            }
         };
 
         CleanupHandle = GCHandle.Alloc(safetyCb);
@@ -105,14 +113,21 @@ public class Promise : IDisposable
     private static void NativeCancelCb(IntPtr data, IntPtr dead)
     {
         if (data == IntPtr.Zero)
+        {
             return;
+        }
 
         GCHandle handle = GCHandle.FromIntPtr(data);
         CancelCb cb = handle.Target as CancelCb;
         if (cb != null)
+        {
             cb();
+        }
         else
+        {
             Eina.Log.Info("Null promise CancelCb found");
+        }
+
         handle.Free();
     }
 
@@ -136,7 +151,14 @@ public class Promise : IDisposable
     {
         if (Handle != IntPtr.Zero)
         {
-            eina_promise_reject(Handle, Eina.Error.ECANCELED);
+            if (disposing)
+            {
+                eina_promise_reject(Handle, Eina.Error.ECANCELED);
+            }
+            else
+            {
+                efl_mono_thread_safe_promise_reject(Handle, Eina.Error.ECANCELED);
+            }
             Handle = IntPtr.Zero;
         }
     }
@@ -144,7 +166,9 @@ public class Promise : IDisposable
     private void SanityChecks()
     {
         if (this.Handle == IntPtr.Zero)
+        {
             throw new ObjectDisposedException(GetType().Name);
+        }
     }
 
     /// <summary>
@@ -200,7 +224,8 @@ public class Future
     /// </summary>
     public Future(IntPtr handle)
     {
-        Handle = ThenRaw(handle, (Eina.Value value) => {
+        Handle = ThenRaw(handle, (Eina.Value value) =>
+        {
             Handle = IntPtr.Zero;
             return value;
         });
@@ -212,12 +237,16 @@ public class Future
     /// Optionally a resolved callback may be provided. If so, it will be chained
     /// before the returned future.
     /// </summary>
-    public Future(Promise promise, ResolvedCb cb=null)
+    public Future(Promise promise, ResolvedCb cb = null)
     {
         IntPtr intermediate = eina_future_new(promise.Handle);
-        Handle = ThenRaw(intermediate, (Eina.Value value) => {
+        Handle = ThenRaw(intermediate, (Eina.Value value) =>
+        {
             if (cb != null)
+            {
                 value = cb(value);
+            }
+
             Handle = IntPtr.Zero;
             return value;
         });
@@ -226,7 +255,9 @@ public class Future
     private void SanityChecks()
     {
         if (this.Handle == IntPtr.Zero)
+        {
             throw new ObjectDisposedException(GetType().Name);
+        }
     }
 
     /// <summary>
@@ -266,14 +297,20 @@ public class Future
         desc.data = GCHandle.ToIntPtr(handle);
         return eina_future_then_from_desc(previous, desc);
     }
+
     private static Eina.ValueNative NativeResolvedCb(IntPtr data, Eina.ValueNative value, IntPtr dead_future)
     {
         GCHandle handle = GCHandle.FromIntPtr(data);
         ResolvedCb cb = handle.Target as ResolvedCb;
         if (cb != null)
+        {
             value = cb(value);
+        }
         else
+        {
             Eina.Log.Warning("Failed to get future callback.");
+        }
+
         handle.Free();
         return value;
     }
@@ -308,14 +345,18 @@ public class Future
             for (int j = 0; j <= i; j++)
             {
                 if (descs[i].data == IntPtr.Zero)
+                {
                     continue;
+                }
 
                 GCHandle handle = GCHandle.FromIntPtr(descs[i].data);
                 handle.Free();
             }
+
             Eina.Log.Error($"Failed to create native future description for callbacks. Error: {e.ToString()}");
             return null;
         }
+
         return new Future(eina_future_chain_array(Handle, descs));
     }
 }
@@ -341,17 +382,24 @@ public class FutureMarshaler : ICustomMarshaler
     {
         Future f = managedObj as Future;
         if (f == null)
+        {
             return IntPtr.Zero;
+        }
+
         return f.Handle;
     }
 
     ///<summary>Not implemented. The code receiving the native data is in charge of releasing it.</summary>
     ///<param name="pNativeData">The native pointer to be released.</param>
-    public void CleanUpNativeData(IntPtr pNativeData) { }
+    public void CleanUpNativeData(IntPtr pNativeData)
+    {
+    }
 
     ///<summary>Not implemented. The runtime takes care of releasing it.</summary>
     ///<param name="managedObj">The managed object to be cleaned.</param>
-    public void CleanUpManagedData(object managedObj) { }
+    public void CleanUpManagedData(object managedObj)
+    {
+    }
 
     ///<summary>Size of the native data size returned</summary>
     ///<returns>The size of the data.</returns>
@@ -363,9 +411,13 @@ public class FutureMarshaler : ICustomMarshaler
     ///<summary>Gets an instance of this marshaller.</summary>
     ///<param name="cookie">A name that could be used to customize the returned marshaller. Currently not used.</param>
     ///<returns>The <see cref="Eina.FutureMarshaler"/> instance that will marshall the data.</returns>
-    public static ICustomMarshaler GetInstance(string cookie) {
+    public static ICustomMarshaler GetInstance(string cookie)
+    {
         if (marshaler == null)
+        {
             marshaler = new FutureMarshaler();
+        }
+
         return marshaler;
     }
 

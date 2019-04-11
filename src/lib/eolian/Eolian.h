@@ -2566,7 +2566,7 @@ eolian_typedecl_namespaces_get(const Eolian_Typedecl *tp)
 EAPI Eina_Stringshare *eolian_typedecl_free_func_get(const Eolian_Typedecl *tp);
 
 /*
- * @breif Get the function object for this function pointer type.
+ * @brief Get the function object for this function pointer type.
  *
  * @param[in] tp the type.
  * @return the function or NULL;

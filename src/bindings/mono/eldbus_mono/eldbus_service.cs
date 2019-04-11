@@ -5,7 +5,8 @@ using System.Runtime.InteropServices;
 
 using static eldbus.EldbusServiceNativeFunctions;
 
-namespace eldbus {
+namespace eldbus
+{
 
 public static class EldbusServiceNativeFunctions
 {
@@ -65,4 +66,3 @@ public static class EldbusServiceNativeFunctions
 }
 
 }
-

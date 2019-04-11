@@ -72,7 +72,7 @@ class @beta Efl.Net.Dialer_Http extends Efl.Loop_Consumer implements Efl.Net.Dia
                - If @Efl.Net.Dialer_Http_Primary_Mode.auto, then
                  @Efl.Net.Dialer_Http_Primary_Mode.download or
                  @Efl.Net.Dialer_Http_Primary_Mode.upload will be
-                 choosen based on the @.method: if "PUT", then it's
+                 chosen based on the @.method: if "PUT", then it's
                  upload, otherwise it's download.
 
                - If @Efl.Net.Dialer_Http_Primary_Mode.upload, applying

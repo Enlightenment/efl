@@ -709,6 +709,8 @@ _efl_canvas_image_internal_efl_gfx_buffer_buffer_update_add(Eo *eo_obj, Evas_Ima
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Eina_Rectangle *r;
+   Eo *eo_obj2;
+   Eina_List *l;
    int x, y, w, h;
    int cnt;
 
@@ -767,6 +769,12 @@ _efl_canvas_image_internal_efl_gfx_buffer_buffer_update_add(Eo *eo_obj, Evas_Ima
 
    o->changed = EINA_TRUE;
    evas_object_change(eo_obj, obj);
+
+   EINA_LIST_FOREACH(obj->proxy->proxies, l, eo_obj2)
+     {
+        Evas_Object_Protected_Data *obj2 = efl_data_scope_get(eo_obj2, EFL_CANVAS_OBJECT_CLASS);
+        evas_object_change(eo_obj2, obj2);
+     }
 }
 
 EOLIAN static void

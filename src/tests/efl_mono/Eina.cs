@@ -454,10 +454,26 @@ class TestEinaSlice
 
 class TestEinaArray
 {
+    public static void SetUp()
+    {
+        Dummy.TestObject.CreateCmpArrayObjects();
+    }
+
+    public static void TearDown()
+    {
+        Dummy.TestObject.DestroyCmpArrayObjects();
+    }
+
     public static void eina_array_default()
     {
         var a = new Eina.Array<int>();
         Test.Assert(a.Handle != IntPtr.Zero);
+    }
+
+    public static void create_array_from_null()
+    {
+        Test.AssertRaises<ArgumentNullException>(() => new Eina.Array<int>(IntPtr.Zero, false));
+        Test.AssertRaises<ArgumentNullException>(() => new Eina.Array<int>(IntPtr.Zero, false, false));
     }
 
     public static void push_int()
@@ -1267,6 +1283,16 @@ class TestEinaInarray
 
 class TestEinaList
 {
+    public static void SetUp()
+    {
+        Dummy.TestObject.CreateCmpArrayObjects();
+    }
+
+    public static void TearDown()
+    {
+        Dummy.TestObject.DestroyCmpArrayObjects();
+    }
+
     public static void data_set_int()
     {
         var lst = new Eina.List<int>();
@@ -2541,6 +2567,16 @@ class TestEinaHash
 
 class TestEinaIterator
 {
+    public static void SetUp()
+    {
+        Dummy.TestObject.CreateCmpArrayObjects();
+    }
+
+    public static void TearDown()
+    {
+        Dummy.TestObject.DestroyCmpArrayObjects();
+    }
+
     // Array //
 
     public static void eina_array_int_empty_iterator()

@@ -155,7 +155,7 @@ typedef struct _Emile_Image_Property Emile_Image_Property;
 /**
  * @enum _Emile_Action
  * @typedef Emile_Action
- * What action emile is refering to.
+ * What action emile is referring to.
  * @since 1.19
  */
 typedef enum _Emile_Action
@@ -221,7 +221,7 @@ struct _Emile_Image_Load_Opts
     int smooth;
 
     /* This should have never been part of this structure, but we keep it
-       for ABI/API compability with Evas_Loader */
+       for ABI/API compatibility with Evas_Loader */
     Emile_Image_Scale_Hint scale_hint;
   } scale_load;
   double dpi;

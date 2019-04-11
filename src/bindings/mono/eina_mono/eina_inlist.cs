@@ -8,7 +8,8 @@ using static Eina.TraitFunctions;
 using static Eina.InlistNativeFunctions;
 using Eina.Callbacks;
 
-namespace Eina {
+namespace Eina
+{
 
 public static class InlistNativeFunctions
 {
@@ -111,11 +112,16 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
     private IntPtr InternalAt(int idx)
     {
         if (idx < 0)
+        {
             return IntPtr.Zero;
+        }
 
         IntPtr curr = Handle;
         for (int n = 0; n != idx && curr != IntPtr.Zero; ++n)
+        {
             curr = InternalNext(curr);
+        }
+
         return curr;
     }
 
@@ -159,11 +165,13 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
         IntPtr h = Handle;
         Handle = IntPtr.Zero;
         if (h == IntPtr.Zero)
+        {
             return;
+        }
 
         if (OwnContent)
         {
-            for(IntPtr curr = h; curr != IntPtr.Zero; curr = InternalNext(curr))
+            for (IntPtr curr = h; curr != IntPtr.Zero; curr = InternalNext(curr))
             {
                 NativeFreeInlistNodeElement<T>(curr);
             }
@@ -212,7 +220,7 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
 
     public int Count()
     {
-        return (int) eina_inlist_count(Handle);
+        return (int)eina_inlist_count(Handle);
     }
 
     public void Clean()
@@ -248,7 +256,10 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
     {
         IntPtr node = InternalAt(idx);
         if (node == IntPtr.Zero)
+        {
             throw new IndexOutOfRangeException();
+        }
+
         return NativeToManagedInlistNode<T>(node);
     }
 
@@ -256,7 +267,9 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
     {
         IntPtr old = InternalAt(idx);
         if (old == IntPtr.Zero)
+        {
             throw new IndexOutOfRangeException();
+        }
 
         IntPtr new_node = ManagedToNativeAllocInlistNode(val);
 
@@ -282,17 +295,20 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
     {
         var managed = new T[Count()];
         int i = 0;
-        for(IntPtr curr = Handle; curr != IntPtr.Zero; ++i, curr = InternalNext(curr))
+        for (IntPtr curr = Handle; curr != IntPtr.Zero; ++i, curr = InternalNext(curr))
         {
             managed[i] = NativeToManagedInlistNode<T>(curr);
         }
+
         return managed;
     }
 
     public void AppendArray(T[] values)
     {
         foreach (T v in values)
+        {
             Append(v);
+        }
     }
 
 
@@ -303,7 +319,7 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
 
     public IEnumerator<T> GetEnumerator()
     {
-        for(IntPtr curr = Handle; curr != IntPtr.Zero; curr = InternalNext(curr))
+        for (IntPtr curr = Handle; curr != IntPtr.Zero; curr = InternalNext(curr))
         {
             yield return NativeToManagedInlistNode<T>(curr);
         }

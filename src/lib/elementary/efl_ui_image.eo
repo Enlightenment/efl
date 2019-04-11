@@ -23,7 +23,11 @@ class @beta Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.
                  Efl.Layout.Calc,
                  Efl.Layout.Group, Efl.Layout.Signal
 {
-   [[ Efl UI image class]]
+   [[Efl UI image class
+
+     When loading images from a file, the @Efl.File.key property can be used to access different
+     streams. For example, when accessing Evas image caches.
+   ]]
    event_prefix: efl_ui_image;
    methods {
       @property scalable {

@@ -1,7 +1,11 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Efl { namespace Eo {
+namespace Efl
+{
+
+namespace Eo
+{
 
 ///<summary>Class to load functions pointers from a native module.
 ///
@@ -51,14 +55,20 @@ public class FunctionWrapper<T> // NOTE: When supporting C# >=7.3, add a where T
     private static FunctionLoadResult<T> LazyInitialization(NativeModule module, string functionName)
     {
         if (module.Module == IntPtr.Zero)
+        {
             return new FunctionLoadResult<T>(FunctionLoadResultKind.LibraryNotFound);
+        }
         else
         {
             IntPtr funcptr = FunctionInterop.LoadFunctionPointer(module.Module, functionName);
             if (funcptr == IntPtr.Zero)
+            {
                 return new FunctionLoadResult<T>(FunctionLoadResultKind.FunctionNotFound);
+            }
             else
+            {
                 return new FunctionLoadResult<T>(Marshal.GetDelegateForFunctionPointer<T>(funcptr));
+            }
         }
     }
 
@@ -66,7 +76,7 @@ public class FunctionWrapper<T> // NOTE: When supporting C# >=7.3, add a where T
     ///<param name="moduleName">The name of the module containing the function.</param>
     ///<param name="functionName">The name of the function to search for.</param>
     public FunctionWrapper(string moduleName, string functionName)
-        : this (new NativeModule(moduleName), functionName)
+        : this(new NativeModule(moduleName), functionName)
     {
     }
 
@@ -95,7 +105,8 @@ public class FunctionWrapper<T> // NOTE: When supporting C# >=7.3, add a where T
 }
 
 ///<summary>The outcome of the function load process.</summary>
-public enum FunctionLoadResultKind {
+public enum FunctionLoadResultKind
+{
     ///<summary>Function was loaded successfully.</summary>
     Success,
     ///<summary>Library was not found.</summary>
@@ -116,9 +127,13 @@ public class FunctionLoadResult<T>
     ///Throws InvalidOperationException if trying to access while not loaded.</summary>
     public T Delegate
     {
-        get {
+        get
+        {
             if (_Delegate == null)
+            {
                 throw new InvalidOperationException($"Trying to get Delegate while not loaded. Load result: {Kind}");
+            }
+
             return _Delegate;
         }
     }
@@ -139,4 +154,6 @@ public class FunctionLoadResult<T>
     }
 }
 
-} }
+}
+
+}

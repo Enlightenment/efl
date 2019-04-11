@@ -8,7 +8,7 @@ custom_target('edje_cc_ethumb_frame',
               '-id', join_paths(meson.current_source_dir()),
               '-fd', join_paths(meson.current_source_dir()),
               '@INPUT@', '@OUTPUT@'],
-    depends : edje_cc,
+    depends : edje_depends,
     install : true,
     install_dir : join_paths(dir_data, 'ethumb', 'frames'),
 )

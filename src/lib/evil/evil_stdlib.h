@@ -97,7 +97,7 @@ EAPI int mkstemps(char *__template, int suffixlen);
  * by @p resolved_name. The buffer is at most @c PATH_MAX bytes long.
  * If @p resolved_name is @c NULL, malloc() is used to allocate a
  * buffer of sufficient length to hold the path name. In that case, it
- * is the responsability of the caller to free this buffer with free().
+ * is the responsibility of the caller to free this buffer with free().
  *
  * That function can be used to obtain the absolute path name for
  * relative paths (relPath) that include "./" or "../" in their names.

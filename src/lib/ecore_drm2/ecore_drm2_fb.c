@@ -510,6 +510,16 @@ _fb_flip(Ecore_Drm2_Output *output)
    int ret = 0;
 
    fb = output->prep.fb;
+   if (!fb)
+     {
+        fb =  output->pending.fb;
+        ERR("Trying to flip NULL fb - fallback to pending fb");
+     }
+   if (!fb)
+     {
+        ERR("Pending fb is also NULL, give up flipping");
+        return ret;
+     }
 
    if ((!output->current.fb) ||
        (output->current.fb->strides[0] != fb->strides[0]))

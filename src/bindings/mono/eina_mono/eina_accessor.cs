@@ -7,7 +7,8 @@ using static Eina.TraitFunctions;
 
 using static Eina.AccessorNativeFunctions;
 
-namespace Eina {
+namespace Eina
+{
 
 internal class AccessorNativeFunctions
 {
@@ -43,7 +44,7 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
     /// <summary>Create a new accessor wrapping the given pointer.</summary>
     /// <param name="handle">The native handle to be wrapped.</param>
     /// <param name="owner">Whether this wrapper owns the native accessor.</param>
-    public Accessor(IntPtr handle, Ownership owner=Ownership.Managed)
+    public Accessor(IntPtr handle, Ownership owner = Ownership.Managed)
     {
         Handle = handle;
         Ownership = owner;
@@ -53,7 +54,7 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
     /// <param name="handle">The native handle to be wrapped.</param>
     /// <param name="own">Whether this wrapper owns the native accessor.</param>
     /// <param name="ownContent">For compatibility with other EFL# containers. Ignored in acessors.</param>
-    public Accessor(IntPtr handle, bool own, bool ownContent=false)
+    public Accessor(IntPtr handle, bool own, bool ownContent = false)
         : this(handle, own ? Ownership.Managed : Ownership.Unmanaged)
     {
     }
@@ -71,7 +72,14 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
     {
         if (Ownership == Ownership.Managed && Handle != IntPtr.Zero)
         {
-            eina_accessor_free(Handle);
+            if (disposing)
+            {
+                eina_accessor_free(Handle);
+            }
+            else
+            {
+                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eina_accessor_free, Handle);
+            }
             Handle = IntPtr.Zero;
         }
     }
@@ -96,13 +104,16 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
     public IEnumerator<T> GetEnumerator()
     {
         if (Handle == IntPtr.Zero)
+        {
             throw new ObjectDisposedException(base.GetType().Name);
+        }
+
         IntPtr tmp = MemoryNative.Alloc(Marshal.SizeOf(typeof(IntPtr)));
         uint position = 0;
 
         try
         {
-            while(eina_accessor_data_get(Handle, position, tmp))
+            while (eina_accessor_data_get(Handle, position, tmp))
             {
                 IntPtr data = (IntPtr)Marshal.PtrToStructure(tmp, typeof(IntPtr));
                 yield return Convert(data);
@@ -124,11 +135,12 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
 ///<summary>Accessor for Inlists.</summary>
 public class AccessorInList<T> : Accessor<T>
 {
-
     /// <summary>Create a new accessor wrapping the given pointer.</summary>
     /// <param name="handle">The native handle to be wrapped.</param>
     /// <param name="own">Whether this wrapper owns the native accessor.</param>
-    public AccessorInList(IntPtr handle, Ownership own): base(handle, own) {}
+    public AccessorInList(IntPtr handle, Ownership own) : base(handle, own)
+    {
+    }
 
     /// <summary>Convert the native data into managed. This is used when returning the data through a
     /// <see cref="System.Collections.Generic.IEnumerator&lt;T&gt;"/>.</summary>
@@ -146,7 +158,9 @@ public class AccessorInArray<T> : Accessor<T>
     /// <summary>Create a new accessor wrapping the given pointer.</summary>
     /// <param name="handle">The native handle to be wrapped.</param>
     /// <param name="own">Whether this wrapper owns the native accessor.</param>
-    public AccessorInArray(IntPtr handle, Ownership own): base(handle, own) {}
+    public AccessorInArray(IntPtr handle, Ownership own) : base(handle, own)
+    {
+    }
 
     /// <summary>Convert the native data into managed. This is used when returning the data through a
     /// <see cref="System.Collections.Generic.IEnumerator&lt;T&gt;"/>.</summary>

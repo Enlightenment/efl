@@ -111,6 +111,10 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: Dummy.Test_Object;
       }
 
+      return_iface {
+         return: Dummy.Test_Iface;
+      }
+
       int_out {
          params {
             @in x: int;
@@ -1352,6 +1356,12 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
       }
 
+      create_cmp_array_objects @class {
+      }
+
+      destroy_cmp_array_objects @class {
+      }
+
       /* Futures */
 
       get_future {
@@ -1401,8 +1411,6 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
    }
    implements {
-      class.constructor;
-      class.destructor;
       Efl.Object.constructor;
       Efl.Object.provider_find;
       Dummy.Test_Iface.emit_nonconflicted;

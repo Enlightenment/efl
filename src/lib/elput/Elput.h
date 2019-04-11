@@ -271,7 +271,7 @@ EAPI const Eina_List *elput_manager_seats_get(Elput_Manager *manager);
  * input manager. Setting a window on the input manager is done so that
  * when we raise events (mouse movement, keyboard key, etc) then this
  * window is passed to the event structure as the window which the event
- * occured on.
+ * occurred on.
  *
  * @param manager
  * @param window
@@ -522,7 +522,7 @@ EAPI Eina_Bool elput_touch_drag_enabled_get(Elput_Device *device);
  * @param device
  * @param enabled
  *
- * @return EINA_TRUE on sucess, EINA_FALSE otherwise
+ * @return EINA_TRUE on success, EINA_FALSE otherwise
  *
  * @ingroup Elput_Touch_Group
  * @since 1.19

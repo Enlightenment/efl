@@ -48,7 +48,7 @@ struct to_internal_field_convert_generator
       if (klass)
         {
            if (!as_generator(
-                 indent << scope_tab << scope_tab << "_internal_struct." << string << " = _external_struct." << string << ".NativeHandle;\n")
+                 indent << scope_tab << scope_tab << "_internal_struct." << string << " = _external_struct." << string << "?.NativeHandle ?? System.IntPtr.Zero;\n")
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
@@ -112,7 +112,7 @@ struct to_internal_field_convert_generator
       else if (field.type.c_type == "Eina_Value *" || field.type.c_type == "const Eina_Value *")
         {
            if (!as_generator(
-                 indent << scope_tab << scope_tab << "_internal_struct." << string << " = _external_struct." << string << ".NativeHandle;\n"
+                 indent << scope_tab << scope_tab << "_internal_struct." << string << " = _external_struct." << string << "?.NativeHandle ?? System.IntPtr.Zero;\n"
                ).generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
@@ -159,10 +159,8 @@ struct to_external_field_convert_generator
            if (!as_generator(
                  "\n"
                  << indent << scope_tab << scope_tab << "_external_struct." << string
-                 << " = (" << concrete_name << ") System.Activator.CreateInstance(typeof("
-                 << concrete_name << "), new System.Object[] {_internal_struct." << string << "});\n"
-                 << indent << scope_tab << scope_tab << "Efl.Eo.Globals.efl_ref(_internal_struct." << string << ");\n")
-               .generate(sink, std::make_tuple(field_name, field_name, field_name), context))
+                 << " = (" << concrete_name << ") Efl.Eo.Globals.CreateWrapperFor(_internal_struct." << string << ");\n"
+                 ).generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }
       else if (field.type.c_type == "Eina_Binbuf *" || field.type.c_type == "const Eina_Binbuf *")

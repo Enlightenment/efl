@@ -193,13 +193,13 @@ Edje_Part_Collection *_edje_collection_convert(Edje_File *file,
                                                Old_Edje_Part_Collection *oedc);
 
 /**
- * Convert old Edje part descripton into new format.
+ * Convert old Edje part description into new format.
  *
  * @param type The edje par description common type
  * @param ce an edje collection directory entry
- * @param the old edje part descripton
+ * @param the old edje part description
  *
- * @return a new edje part descripton common
+ * @return a new edje part description common
  */
 Edje_Part_Description_Common *_edje_description_convert(int type,
                                                         Edje_Part_Collection_Directory_Entry *ce,

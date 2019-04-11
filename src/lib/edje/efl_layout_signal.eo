@@ -9,7 +9,7 @@
 */
 
 function EflLayoutSignalCb {
-  [[EflLayoutSignalCb function that is called when a specifc pair of signal/emision is triggered
+  [[EflLayoutSignalCb function that is called when a specifc pair of signal/emission is triggered
 
     @since 1.22
   ]]

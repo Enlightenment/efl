@@ -390,6 +390,7 @@ _text_draw(void *data)
         remained_w -= seg->length;
      }
    evas_object_map_enable_set(pd->text_obj, EINA_TRUE);
+   evas_object_anti_alias_set(pd->text_obj, EINA_TRUE);
    evas_object_map_set(pd->text_obj, map);
    evas_map_free(map);
 

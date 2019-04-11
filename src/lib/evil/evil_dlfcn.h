@@ -61,7 +61,7 @@ x * This header provides functions to load and unload dynamic-link
 
 /**
  * @typedef Dl_info
- * @brief A structure that stores infomation of a calling process.
+ * @brief A structure that stores information of a calling process.
  * This typedef is defined only when _GNU_SOURCE was defined before
  * including dlfcn.h.
  */
@@ -69,7 +69,7 @@ typedef struct Dl_info Dl_info;
 
 /**
  * @struct Dl_info
- * @brief A structure that stores infomation of a calling process.
+ * @brief A structure that stores information of a calling process.
  * This structure is defined only when _GNU_SOURCE was defined before
  * including dlfcn.h.
  */
@@ -148,7 +148,7 @@ EAPI void *dlopen(const char* path, int mode);
  * @brief Close a dynamic-link library.
  *
  * @param handle Handle that references a dynamic-link library.
- * @return O on sucess, -1 otherwise.
+ * @return O on success, -1 otherwise.
  *
  * Release a reference to the dynamic-link library referenced
  * by @p handle.  If the reference count drops to 0, the handle is
@@ -173,7 +173,7 @@ EAPI int dlclose(void* handle);
  *
  * @param handle Handle that references a dynamic-link library.
  * @param symbol @c NULL-terminated string.
- * @return O on sucess, NULL otherwise.
+ * @return O on success, NULL otherwise.
  *
  * Return the address of the code or data location specified by the
  * string @p symbol.  @p handle references a library that contains

@@ -103,7 +103,7 @@ struct native_function_definition_generator
         /****/
         << scope_tab << scope_tab << "Eina.Log.Debug(\"function " << string << " was called\");\n"
         /****/
-        << scope_tab << scope_tab << "Efl.Eo.IWrapper wrapper = Efl.Eo.Globals.data_get(pd);\n"
+        << scope_tab << scope_tab << "Efl.Eo.IWrapper wrapper = Efl.Eo.Globals.PrivateDataGet(pd);\n"
         << scope_tab << scope_tab << "if(wrapper != null) {\n"
         << scope_tab << scope_tab << scope_tab << eolian_mono::native_function_definition_preamble()
         << scope_tab << scope_tab << scope_tab << "try {\n"

@@ -3,6 +3,7 @@
 #endif
 
 #include <stdbool.h>
+#include <libgen.h> /* basename() */
 
 #include <Eina.h>
 #include <Ecore.h>

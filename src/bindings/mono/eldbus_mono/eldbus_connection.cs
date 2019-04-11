@@ -5,8 +5,8 @@ using System.Runtime.InteropServices;
 
 using static eldbus.EldbusConnectionNativeFunctions;
 
-namespace eldbus {
-
+namespace eldbus
+{
 
 public static class EldbusConnectionNativeFunctions
 {
@@ -155,10 +155,21 @@ public class Connection : IDisposable
         IntPtr h = Handle;
         Handle = IntPtr.Zero;
         if (h == IntPtr.Zero)
+        {
             return;
+        }
 
         if (Own)
-            eldbus_connection_unref(h);
+        {
+            if (disposing)
+            {
+                eldbus_connection_unref(h);
+            }
+            else
+            {
+                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eldbus_connection_unref, h);
+            }
+        }
     }
 
     public void Dispose()
@@ -184,15 +195,19 @@ public class Connection : IDisposable
         CheckHandle();
 
         if (msg == null)
+        {
             throw new ArgumentNullException("msg");
+        }
 
         IntPtr cb_wrapper = (dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr());
         IntPtr cb_data = (dlgt == null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(dlgt));
 
         var pending_hdl = eldbus_connection_send(Handle, msg.Handle, cb_wrapper, cb_data, timeout);
 
-        if(pending_hdl == IntPtr.Zero)
+        if (pending_hdl == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_connection_send");
+        }
 
         msg.Ref();
 
@@ -204,7 +219,10 @@ public class Connection : IDisposable
         CheckHandle();
         var ptr = eldbus_connection_unique_name_get(Handle);
         if (ptr == IntPtr.Zero)
+        {
             return null;
+        }
+
         return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
@@ -213,15 +231,19 @@ public class Connection : IDisposable
         CheckHandle();
 
         if (bus == null)
+        {
             throw new ArgumentNullException("bus");
+        }
 
         IntPtr cb_wrapper = (dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr());
         IntPtr cb_data = (dlgt == null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(dlgt));
 
         var pending_hdl = eldbus_name_request(Handle, bus, flags, cb_wrapper, cb_data);
 
-        if(pending_hdl == IntPtr.Zero)
+        if (pending_hdl == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_name_request");
+        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -231,15 +253,19 @@ public class Connection : IDisposable
         CheckHandle();
 
         if (bus == null)
+        {
             throw new ArgumentNullException("bus");
+        }
 
         IntPtr cb_wrapper = (dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr());
         IntPtr cb_data = (dlgt == null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(dlgt));
 
         var pending_hdl = eldbus_name_release(Handle, bus, cb_wrapper, cb_data);
 
-        if(pending_hdl == IntPtr.Zero)
+        if (pending_hdl == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_name_release");
+        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -249,15 +275,19 @@ public class Connection : IDisposable
         CheckHandle();
 
         if (bus == null)
+        {
             throw new ArgumentNullException("bus");
+        }
 
         IntPtr cb_wrapper = (dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr());
         IntPtr cb_data = (dlgt == null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(dlgt));
 
         var pending_hdl = eldbus_name_owner_get(Handle, bus, cb_wrapper, cb_data);
 
-        if(pending_hdl == IntPtr.Zero)
+        if (pending_hdl == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_name_owner_get");
+        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -267,15 +297,19 @@ public class Connection : IDisposable
         CheckHandle();
 
         if (bus == null)
+        {
             throw new ArgumentNullException("bus");
+        }
 
         IntPtr cb_wrapper = (dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr());
         IntPtr cb_data = (dlgt == null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(dlgt));
 
         var pending_hdl = eldbus_name_owner_has(Handle, bus, cb_wrapper, cb_data);
 
-        if(pending_hdl == IntPtr.Zero)
+        if (pending_hdl == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_name_owner_has");
+        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -289,8 +323,10 @@ public class Connection : IDisposable
 
         var pending_hdl = eldbus_names_list(Handle, cb_wrapper, cb_data);
 
-        if(pending_hdl == IntPtr.Zero)
+        if (pending_hdl == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_names_list");
+        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -304,8 +340,10 @@ public class Connection : IDisposable
 
         var pending_hdl = eldbus_names_activatable_list(Handle, cb_wrapper, cb_data);
 
-        if(pending_hdl == IntPtr.Zero)
+        if (pending_hdl == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_names_activatable_list");
+        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -319,8 +357,10 @@ public class Connection : IDisposable
 
         var pending_hdl = eldbus_hello(Handle, cb_wrapper, cb_data);
 
-        if(pending_hdl == IntPtr.Zero)
+        if (pending_hdl == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_hello");
+        }
 
         return new eldbus.Pending(pending_hdl, false);
     }
@@ -330,15 +370,19 @@ public class Connection : IDisposable
         CheckHandle();
 
         if (bus == null)
+        {
             throw new ArgumentNullException("bus");
+        }
 
         IntPtr cb_wrapper = (dlgt == null ? IntPtr.Zero : eldbus.Common.GetMessageCbWrapperPtr());
         IntPtr cb_data = (dlgt == null ? IntPtr.Zero : Marshal.GetFunctionPointerForDelegate(dlgt));
 
         var pending_hdl = eldbus_name_start(Handle, bus, flags, cb_wrapper, cb_data);
 
-        if(pending_hdl == IntPtr.Zero)
+        if (pending_hdl == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Pending' object from eldbus_name_start");
+        }
 
         return new eldbus.Pending(pending_hdl, false);
     }

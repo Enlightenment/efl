@@ -130,7 +130,7 @@ EAPI void *mmap(void   *addr,
  * Unmaps a mapped view of a file from the calling process's
  * address space. @p addr is the pointer to the base address.
  * This value must be identical to the value returned by a
- * previous call to mmap(). The parameter @p len is unsed.
+ * previous call to mmap(). The parameter @p len is unused.
  *
  * Conformity: None.
  *

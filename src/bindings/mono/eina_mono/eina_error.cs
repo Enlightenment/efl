@@ -3,7 +3,8 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Eina {
+namespace Eina
+{
 
 public struct Error : IComparable<Error>
 {
@@ -21,19 +22,26 @@ public struct Error : IComparable<Error>
     public static Error ENOENT = new Error(2);
     public static Error ECANCELED = new Error(125);
 
-    public Error(int value) { code = value; }
+    public Error(int value)
+    {
+        code = value;
+    }
+
     static public implicit operator Error(int val)
     {
         return new Error(val);
     }
+
     static public implicit operator int(Error error)
     {
         return error.code;
     }
+
     public int CompareTo(Error err)
     {
         return code.CompareTo(err.code);
     }
+
     public override string ToString()
     {
         return "Eina.Error(" + code + ")";
@@ -80,7 +88,9 @@ public struct Error : IComparable<Error>
     public static void Raise(Error e)
     {
         if (e != 0)
+        {
             throw (new Efl.EflException(MsgGet(e)));
+        }
     }
 
     public static void Clear()
@@ -93,4 +103,5 @@ public struct Error : IComparable<Error>
         return eina_error_msg_register(msg);
     }
 }
+
 }

@@ -1,7 +1,11 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Efl { namespace Eo {
+namespace Efl
+{
+
+namespace Eo
+{
 
 public partial class FunctionInterop
 {
@@ -21,4 +25,6 @@ public partial class FunctionInterop
     }
 }
 
-} }
+}
+
+}
