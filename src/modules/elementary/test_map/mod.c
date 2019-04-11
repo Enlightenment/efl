@@ -6,7 +6,9 @@
 #include "elm_module_helper.h"
 #include "elm_widget_map.h"
 
-#define ELEMENTARY_BUILD
+#ifndef EFL_BUILD
+# define EFL_BUILD
+#endif
 #undef ELM_MODULE_HELPER_H
 #include "elm_module_helper.h"
 
