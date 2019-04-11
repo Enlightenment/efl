@@ -467,7 +467,7 @@ _efl_ui_list_efl_object_finalize(Eo *obj,
 }
 
 EOLIAN static void
-_efl_ui_list_efl_object_destructor(Eo *obj, Efl_Ui_List_Data *pd)
+_efl_ui_list_efl_object_invalidate(Eo *obj, Efl_Ui_List_Data *pd)
 {
    _scroll_edje_object_detach(obj);
 
@@ -488,12 +488,14 @@ _efl_ui_list_efl_object_destructor(Eo *obj, Efl_Ui_List_Data *pd)
 
    efl_del(pd->box);
    pd->box = NULL;
+
    efl_del(pd->pan);
    pd->pan = NULL;
+
    efl_del(pd->smanager);
    pd->smanager = NULL;
 
-   efl_destructor(efl_super(obj, MY_CLASS));
+   efl_invalidate(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
