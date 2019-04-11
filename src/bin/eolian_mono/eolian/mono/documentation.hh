@@ -244,7 +244,19 @@ struct documentation_generator
 
    /// Tag generator helpers
    template<typename OutputIterator, typename Context>
-   bool generate_tag(OutputIterator sink, std::string const& tag, std::string const &text, Context const& context, std::string tag_params = "") const
+   bool generate_opening_tag(OutputIterator sink, std::string const& tag, Context const& context, std::string tag_params = "") const
+   {
+      return as_generator("<" << tag << tag_params << ">").generate(sink, attributes::unused, context);
+   }
+
+   template<typename OutputIterator, typename Context>
+   bool generate_closing_tag(OutputIterator sink, std::string const& tag, Context const& context) const
+   {
+      return as_generator("</" << tag << ">").generate(sink, attributes::unused, context);
+   }
+
+   template<typename OutputIterator, typename Context>
+   bool generate_escaped_content(OutputIterator sink, std::string const &text, Context const& context) const
    {
       std::string new_text;
       if (!as_generator(html_escaped_string).generate(std::back_inserter(new_text), text, context))
@@ -256,14 +268,24 @@ struct documentation_generator
 
       std::istringstream ss(new_text);
       std::string para;
-      std::string final_text = "<" + tag + tag_params + ">";
+      std::string final_text;
       bool first = true;
       while (std::getline(ss, para)) {
         if (first) final_text += para;
         else final_text += "\n" + tabs + para;
         first = false;
       }
-      return as_generator(scope_tab(scope_size) << "/// " << final_text << "</" << tag << ">\n").generate(sink, attributes::unused, context);
+      return as_generator(final_text).generate(sink, attributes::unused, context);
+   }
+
+   template<typename OutputIterator, typename Context>
+   bool generate_tag(OutputIterator sink, std::string const& tag, std::string const &text, Context const& context, std::string tag_params = "") const
+   {
+      if (!as_generator(scope_tab(scope_size) << "/// ").generate(sink, attributes::unused, context)) return false;
+      if (!generate_opening_tag(sink, tag, context, tag_params)) return false;
+      if (!generate_escaped_content(sink, text, context)) return false;
+      if (!generate_closing_tag(sink, tag, context)) return false;
+      return as_generator("\n").generate(sink, attributes::unused, context);
    }
 
    template<typename OutputIterator, typename Context>
@@ -288,6 +310,18 @@ struct documentation_generator
    bool generate_tag_value(OutputIterator sink, std::string const& text, Context const& context) const
    {
       return generate_tag(sink, "value", text, context);
+   }
+
+   template<typename OutputIterator, typename Context>
+   bool generate_tag_example(OutputIterator sink, std::string const& example, Context const& context) const
+   {
+      if (!as_generator(scope_tab(scope_size) << "/// ").generate(sink, attributes::unused, context)) return false;
+      if (!generate_opening_tag(sink, "example", context)) return false;
+      if (!generate_opening_tag(sink, "code", context)) return false;
+      if (!generate_escaped_content(sink, example, context)) return false;
+      if (!generate_closing_tag(sink, "code", context)) return false;
+      if (!generate_closing_tag(sink, "example", context)) return false;
+      return as_generator("\n").generate(sink, attributes::unused, context);
    }
 
    // Actual exported generators
