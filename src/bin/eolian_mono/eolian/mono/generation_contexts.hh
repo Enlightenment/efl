@@ -78,6 +78,7 @@ struct eolian_state_context {
 
 struct options_context {
     bool want_beta;
+    std::string examples_dir;
 };
 
 }

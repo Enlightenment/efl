@@ -127,6 +127,7 @@ foreach lib : mono_sublibs
             command : [eolian_mono_gen, beta_option, '-I', meson.current_source_dir(), eolian_include_directories,
                                        '--dllimport', package_name,
                                        '-o', join_paths(meson.current_build_dir(), mono_gen_file + '.cs'),
+                                       '-e', get_option('mono-examples-dir'),
                                        '@INPUT@'])
         endif
       endforeach

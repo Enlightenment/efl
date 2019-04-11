@@ -43,6 +43,7 @@ struct options_type
    std::vector<std::string> include_dirs;
    std::string in_file;
    std::string out_file;
+   std::string examples_dir;
    std::string dllimport;
    mutable Eolian_State* state;
    mutable Eolian_Unit const* unit;
@@ -145,7 +146,8 @@ run(options_type const& opts)
 
    auto context = context_add_tag(eolian_mono::indentation_context{0},
                   context_add_tag(eolian_mono::eolian_state_context{opts.state},
-                  context_add_tag(eolian_mono::options_context{opts.want_beta},
+                  context_add_tag(eolian_mono::options_context{opts.want_beta,
+                                                               opts.examples_dir},
                   context_add_tag(eolian_mono::library_context{opts.dllimport,
                                                                opts.v_major,
                                                                opts.v_minor,
@@ -294,6 +296,7 @@ _usage(const char *progname)
      << "  -r, --recurse           Recurse input directories loading .eo files." << std::endl
      << "  -v, --version           Print the version." << std::endl
      << "  -b, --beta              Enable @beta methods." << std::endl
+     << "  -e, --example-dir <dir> Folder to search for example files." << std::endl
      << "  -h, --help              Print this help." << std::endl;
    exit(EXIT_FAILURE);
 }
@@ -324,9 +327,10 @@ opts_get(int argc, char **argv)
        { "vmin", required_argument, 0, 'm' },
        { "references", required_argument, 0, 'r'},
        { "beta", no_argument, 0, 'b'},
+       { "example-dir", required_argument, 0,  'e' },
        { 0,           0,                 0,   0  }
      };
-   const char* options = "I:D:o:c:M:m:ar:vhb";
+   const char* options = "I:D:o:c:M:m:ar:vhbe:";
 
    int c, idx;
    while ( (c = getopt_long(argc, argv, options, long_options, &idx)) != -1)
@@ -381,6 +385,11 @@ opts_get(int argc, char **argv)
         else if (c == 'b')
           {
              opts.want_beta = true;
+          }
+        else if (c == 'e')
+          {
+             opts.examples_dir = optarg;
+             if (!opts.examples_dir.empty() && opts.examples_dir.back() != '/') opts.examples_dir += "/";
           }
      }
    if (optind == argc-1)
