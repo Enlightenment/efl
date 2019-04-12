@@ -1421,7 +1421,6 @@ _efl_ui_widget_widget_parent_set(Eo *obj, Elm_Widget_Smart_Data *pd, Efl_Ui_Widg
     */
    double scale, prev_scale = efl_gfx_entity_scale_get(obj);
    Elm_Theme *th, *prev_th = elm_widget_theme_get(obj);
-   Eina_Bool mirrored, pmirrored = efl_ui_mirrored_get(parent);
    int disabled_delta = pd->disabled - (pd->parent_obj ? _disabled_counter_get(pd->parent_obj) : 0);
 
    old_parent = pd->parent_obj;
@@ -1430,6 +1429,7 @@ _efl_ui_widget_widget_parent_set(Eo *obj, Elm_Widget_Smart_Data *pd, Efl_Ui_Widg
    // now lets sync up all states
    if (pd->parent_obj)
      {
+        Eina_Bool mirrored, pmirrored = efl_ui_mirrored_get(pd->parent_obj);
         scale = efl_gfx_entity_scale_get(obj);
         th = elm_widget_theme_get(obj);
         mirrored = efl_ui_mirrored_get(obj);
