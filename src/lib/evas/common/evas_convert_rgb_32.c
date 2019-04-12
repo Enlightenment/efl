@@ -62,7 +62,7 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_180 (DATA32 *src, DATA8 *dst, int
             const pix_type *ptr4 = ptr3 + src_stride; \
             for(x = 0; x < w; x += 4) { \
                pix_type s_array[4] = { *ptr1, *ptr2, *ptr3, *ptr4 }; \
-               vst1q_s32(d, vld1q_s32(s_array)); \
+               vst1q_u32(d, vld1q_u32(s_array)); \
                d += 4; \
                ptr1 += klght; \
                ptr2 += klght; \
@@ -96,7 +96,7 @@ evas_common_convert_rgba_to_32bpp_rgb_8888_rot_180 (DATA32 *src, DATA8 *dst, int
             const pix_type *ptr4 = ptr3 + src_stride; \
             for(x = 0; x < w; x+=4) { \
                pix_type s_array[4] = { *ptr1, *ptr2, *ptr3, *ptr4 }; \
-               vst1q_s32(d, vld1q_s32(s_array)); \
+               vst1q_u32(d, vld1q_u32(s_array)); \
                d += 4; \
                ptr1 += klght; \
                ptr2 += klght; \
