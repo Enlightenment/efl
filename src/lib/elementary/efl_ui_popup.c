@@ -215,8 +215,6 @@ _efl_ui_popup_efl_object_constructor(Eo *obj, Efl_Ui_Popup_Data *pd)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
 
-   elm_widget_sub_object_parent_add(obj);
-
    elm_widget_can_focus_set(obj, EINA_TRUE);
    if (elm_widget_theme_object_set(obj, wd->resize_obj,
                                        elm_widget_theme_klass_get(obj),

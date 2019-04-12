@@ -99,7 +99,6 @@ _efl_ui_tab_pager_efl_object_constructor(Eo *obj, Efl_Ui_Tab_Pager_Data *sd)
      elm_widget_theme_klass_set(obj, "tab_pager");
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    efl_ui_widget_focus_allow_set(obj, EINA_TRUE);
 

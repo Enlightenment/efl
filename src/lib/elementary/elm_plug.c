@@ -114,7 +114,6 @@ _elm_plug_efl_canvas_group_group_add(Eo *obj, void *sd EINA_UNUSED)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    ee = ecore_evas_ecore_evas_get(evas_object_evas_get(obj));
    if (!ee) return;

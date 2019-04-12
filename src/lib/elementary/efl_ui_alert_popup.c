@@ -242,8 +242,6 @@ _efl_ui_alert_popup_efl_object_constructor(Eo *obj,
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
 
-   elm_widget_sub_object_parent_add(obj);
-
    return obj;
 }
 

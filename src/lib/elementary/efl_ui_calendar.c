@@ -910,8 +910,6 @@ _efl_ui_calendar_constructor_internal(Eo *obj, Efl_Ui_Calendar_Data *priv)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
-   elm_widget_sub_object_parent_add(obj);
-
    priv->date_min.tm_year = 2;
    priv->date_min.tm_mon = 0;
    priv->date_min.tm_mday = 1;

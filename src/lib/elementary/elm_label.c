@@ -380,8 +380,6 @@ _elm_label_efl_canvas_group_group_add(Eo *obj, Elm_Label_Data *priv)
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
 
-   elm_widget_sub_object_parent_add(obj);
-
    priv->linewrap = ELM_WRAP_NONE;
    priv->wrap_w = -1;
    priv->slide_duration = 10;

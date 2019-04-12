@@ -2126,8 +2126,6 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
      elm_widget_theme_klass_set(obj, "text");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   elm_widget_sub_object_parent_add(obj);
-
    text_obj = efl_add(EFL_UI_INTERNAL_TEXT_INTERACTIVE_CLASS, obj);
    efl_event_callback_forwarder_add(text_obj, EFL_UI_TEXT_EVENT_CHANGED_USER, obj);
    efl_event_callback_forwarder_add(text_obj, EFL_UI_TEXT_EVENT_CHANGED, obj);

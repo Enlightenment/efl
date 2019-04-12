@@ -492,7 +492,6 @@ _efl_ui_relative_layout_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Relative_Layo
 {
    evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, NULL);
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
 }

@@ -1833,8 +1833,6 @@ _efl_ui_image_zoomable_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Zoomable
    Evas_Object *edje;
    Evas_Coord minw, minh;
 
-   elm_widget_sub_object_parent_add(obj);
-
    edje = edje_object_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, edje);
 

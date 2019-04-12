@@ -5782,7 +5782,6 @@ _elm_genlist_efl_canvas_group_group_add(Eo *obj, Elm_Genlist_Data *priv)
    int i;
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    priv->size_caches = eina_hash_pointer_new(_size_cache_free);
    priv->hit_rect = evas_object_rectangle_add(e);

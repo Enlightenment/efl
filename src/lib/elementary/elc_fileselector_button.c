@@ -216,7 +216,6 @@ _elm_fileselector_button_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Bu
    const char *path;
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    priv->window_title = eina_stringshare_add(DEFAULT_WINDOW_TITLE);
    path = eina_environment_home_get();

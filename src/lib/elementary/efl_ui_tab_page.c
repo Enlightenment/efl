@@ -55,9 +55,6 @@ _efl_ui_tab_page_efl_object_constructor(Eo *obj, Efl_Ui_Tab_Page_Data *sd)
                                        elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
-
-   elm_widget_sub_object_parent_add(obj);
-
    efl_ui_widget_focus_allow_set(obj, EINA_TRUE);
 
    sd->content = NULL;

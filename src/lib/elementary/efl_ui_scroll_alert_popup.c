@@ -266,8 +266,6 @@ _efl_ui_scroll_alert_popup_efl_object_constructor(Eo *obj,
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
 
-   elm_widget_sub_object_parent_add(obj);
-
    pd->scroller = elm_scroller_add(obj);
    elm_object_style_set(pd->scroller, "popup/no_inset_shadow");
    elm_scroller_policy_set(pd->scroller, ELM_SCROLLER_POLICY_AUTO,

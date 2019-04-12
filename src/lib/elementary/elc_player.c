@@ -592,7 +592,6 @@ _elm_player_efl_canvas_group_group_add(Eo *obj, Elm_Player_Data *priv)
    char buf[256];
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set(obj, "player", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");

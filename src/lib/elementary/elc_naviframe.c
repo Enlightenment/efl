@@ -1392,7 +1392,6 @@ _elm_naviframe_efl_canvas_group_group_add(Eo *obj, Elm_Naviframe_Data *priv)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    priv->dummy_edje = wd->resize_obj;
    evas_object_smart_member_add(priv->dummy_edje, obj);

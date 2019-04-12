@@ -148,7 +148,6 @@ _efl_ui_box_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Box_Data *pd)
    efl_ui_widget_sub_object_add(obj, pd->clipper);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    efl_ui_widget_focus_allow_set(obj, EINA_FALSE);
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
