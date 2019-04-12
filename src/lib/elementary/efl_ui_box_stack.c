@@ -16,8 +16,8 @@ struct _Item_Calc
 EOLIAN static void
 _efl_ui_box_stack_efl_pack_layout_layout_update(Eo *obj, void *_pd EINA_UNUSED)
 {
-   Evas_Object_Box_Option *opt;
-   Evas_Object_Box_Data *bd;
+   Efl_Ui_Box_Data *bd = efl_data_scope_get(obj, EFL_UI_BOX_CLASS);
+   Eo *child;
    Efl_Ui_Container_Layout_Calc box_calc[2];
    Efl_Ui_Container_Item_Hints *hints;
    Item_Calc *items, *item;
@@ -25,10 +25,6 @@ _efl_ui_box_stack_efl_pack_layout_layout_update(Eo *obj, void *_pd EINA_UNUSED)
    Eina_Size2D want = { 0, 0 };
    Evas_Object *old_child = NULL;
    int i = 0, count;
-
-   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(obj, EFL_UI_BOX_CLASS));
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   bd = efl_data_scope_get(wd->resize_obj, EVAS_BOX_CLASS);
 
    count = eina_list_count(bd->children);
    if (!count)
@@ -44,13 +40,13 @@ _efl_ui_box_stack_efl_pack_layout_layout_update(Eo *obj, void *_pd EINA_UNUSED)
    memset(items, 0, count * sizeof(*items));
 #endif
 
-   EINA_LIST_FOREACH(bd->children, l, opt)
+   EINA_LIST_FOREACH(bd->children, l, child)
      {
         item = &items[i++];
-        item->obj = opt->obj;
+        item->obj = child;
         hints = item->hints;
 
-        _efl_ui_container_layout_item_init(opt->obj, hints);
+        _efl_ui_container_layout_item_init(child, hints);
 
         if (want.w < hints[0].space)
           want.w = hints[0].space;

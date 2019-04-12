@@ -63,18 +63,14 @@ _row_weight_sort_cb(const void *l1, const void *l2)
 EOLIAN static void
 _efl_ui_box_flow_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Box_Flow_Data *pd EINA_UNUSED)
 {
-   Evas_Object_Box_Data *bd;
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   bd = efl_data_scope_get(wd->resize_obj, EVAS_BOX_CLASS);
-   Efl_Ui_Box_Data *bcd = efl_data_scope_get(obj, EFL_UI_BOX_CLASS);
-   Evas_Object_Box_Option *opt;
+   Efl_Ui_Box_Data *bd = efl_data_scope_get(obj, EFL_UI_BOX_CLASS);
+   Eo *child;
    Eina_List *li;
    Eina_Inlist *inlist = NULL;
    Item_Calc *items, *item;
    Row_Calc *rows, *row;
    Efl_Ui_Container_Item_Hints *hints, *hint;
-   Eina_Bool axis = !efl_ui_dir_is_horizontal(bcd->dir, EINA_FALSE);
+   Eina_Bool axis = !efl_ui_dir_is_horizontal(bd->dir, EINA_FALSE);
    Eina_Bool c_axis = !axis;
    int want[2] = { 0, 0 };
    int rc = 0, count, i = 0, id, item_last = 0;
@@ -84,7 +80,7 @@ _efl_ui_box_flow_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Box_Flow_Data *pd
    count = eina_list_count(bd->children);
    if (!count)
      {
-        efl_gfx_hint_size_min_set(obj, EINA_SIZE2D(0, 0));
+        efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(0, 0));
         return;
      }
 
@@ -99,20 +95,20 @@ _efl_ui_box_flow_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Box_Flow_Data *pd
 #endif
 
    // scan all items, get their properties, calculate total weight & min size
-   EINA_LIST_FOREACH(bd->children, li, opt)
+   EINA_LIST_FOREACH(bd->children, li, child)
      {
         item = &items[i++];
-        item->obj = opt->obj;
+        item->obj = child;
         hints = item->hints;
 
         _efl_ui_container_layout_item_init(item->obj, hints);
 
-        if ((bcd->homogeneous && !axis) || box_calc[0].fill)
+        if ((bd->homogeneous && !axis) || box_calc[0].fill)
           hints[0].weight = 1;
         else if (hints[0].weight < 0)
           hints[0].weight = 0;
 
-        if ((bcd->homogeneous && axis) || box_calc[1].fill)
+        if ((bd->homogeneous && axis) || box_calc[1].fill)
           hints[1].weight = 1;
         else if (hints[1].weight < 0)
           hints[1].weight = 0;
@@ -120,7 +116,7 @@ _efl_ui_box_flow_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Box_Flow_Data *pd
         if (want[axis] < hints[axis].space)
           want[axis] = hints[axis].space;
 
-        if (bcd->homogeneous)
+        if (bd->homogeneous)
           continue;
 
         if (i == 1)
@@ -150,7 +146,7 @@ _efl_ui_box_flow_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Box_Flow_Data *pd
      }
 
    // initialize homogeneous properties
-   if (bcd->homogeneous)
+   if (bd->homogeneous)
      {
         min_sum = 0;
         for (i = 0; i < count; i++)
@@ -198,7 +194,7 @@ _efl_ui_box_flow_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Box_Flow_Data *pd
         cross_min_sum += row->cross_space;
         cross_weight_sum += row->cross_weight;
 
-        if (bcd->homogeneous)
+        if (bd->homogeneous)
           continue;
 
         if (row->weight_sum > 0)
@@ -323,7 +319,7 @@ _efl_ui_box_flow_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Box_Flow_Data *pd
 
         row = item->row;
 
-        if (bcd->homogeneous)
+        if (bd->homogeneous)
           hints[axis].space = row->hgsize;
         hints[c_axis].space = row->cross_space;
         sw = hints[0].space - (hints[0].margin[0] + hints[0].margin[1]);
