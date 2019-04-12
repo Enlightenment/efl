@@ -611,7 +611,6 @@ _elm_segment_control_efl_canvas_group_group_add(Eo *obj, Elm_Segment_Control_Dat
 {
    sd->obj = obj;
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set
        (obj, "segment_control", "base", elm_widget_style_get(obj)))

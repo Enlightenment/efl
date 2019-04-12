@@ -830,7 +830,6 @@ _efl_ui_spin_button_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
    char *group;
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
    elm_widget_theme_klass_set(obj, "spin_button");
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);

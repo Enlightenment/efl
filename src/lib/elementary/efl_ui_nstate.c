@@ -37,7 +37,6 @@ _efl_ui_nstate_efl_object_constructor(Eo *obj, Efl_Ui_Nstate_Data *pd)
      elm_widget_theme_klass_set(obj, "nstate");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
-   elm_widget_sub_object_parent_add(obj);
 
    pd->state = 0;
    // Default: 2 states

@@ -226,8 +226,6 @@ _efl_ui_timepicker_efl_object_constructor(Eo *obj, Efl_Ui_Timepicker_Data *pd EI
 
    _fields_init(obj);
 
-   elm_widget_sub_object_parent_add(obj);
-
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
    return obj;

@@ -336,8 +336,6 @@ _efl_ui_pager_efl_object_constructor(Eo *obj,
                                        elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
-   elm_widget_sub_object_parent_add(obj);
-
    pd->cnt = 0;
    pd->loop = EFL_UI_PAGER_LOOP_DISABLED;
 

@@ -59,8 +59,6 @@ _elm_grid_efl_canvas_group_group_add(Eo *obj, void *_pd EINA_UNUSED)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Object *grid;
 
-   elm_widget_sub_object_parent_add(obj);
-
    grid = evas_object_grid_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, grid);
    evas_object_grid_size_set(wd->resize_obj, 100, 100);

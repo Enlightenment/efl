@@ -3748,7 +3748,6 @@ EOLIAN static void
 _elm_gesture_layer_efl_canvas_group_group_add(Eo *obj, Elm_Gesture_Layer_Data *priv)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    priv->line_min_length =
      _elm_config->glayer_line_min_length * elm_config_finger_size_get();

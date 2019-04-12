@@ -161,8 +161,6 @@ _efl_ui_table_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Table_Data *pd)
    Custom_Table_Data *custom;
    Evas_Object *table;
 
-   elm_widget_sub_object_parent_add(obj);
-
    table = efl_add(CUSTOM_TABLE_CLASS, obj);
    custom = efl_data_scope_get(table, CUSTOM_TABLE_CLASS);
    custom->gd = pd;

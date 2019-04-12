@@ -284,7 +284,6 @@ _elm_mapbuf_efl_canvas_group_group_add(Eo *obj, Elm_Mapbuf_Data *priv)
    elm_widget_resize_object_set(obj, rect);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    evas_object_static_clip_set(rect, EINA_TRUE);
    evas_object_pass_events_set(rect, EINA_TRUE);

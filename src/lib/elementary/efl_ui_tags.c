@@ -1009,7 +1009,6 @@ _efl_ui_tags_efl_object_constructor(Eo *obj, Efl_Ui_Tags_Data *sd)
      elm_widget_theme_klass_set(obj, "tags");
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    if (elm_widget_theme_object_set(obj, wd->resize_obj,
                                        elm_widget_theme_klass_get(obj),

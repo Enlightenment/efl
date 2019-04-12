@@ -29,7 +29,6 @@ _efl_ui_bg_efl_object_constructor(Eo *obj, Efl_Ui_Bg_Data *pd)
      elm_widget_theme_klass_set(obj, "bg");
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    if (elm_widget_theme_object_set(obj, wd->resize_obj,

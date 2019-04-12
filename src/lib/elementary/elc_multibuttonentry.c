@@ -1562,7 +1562,6 @@ _elm_multibuttonentry_efl_canvas_group_group_add(Eo *obj, Elm_Multibuttonentry_D
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "multibuttonentry");
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    if (elm_widget_theme_object_set(obj, wd->resize_obj,
                                        elm_widget_theme_klass_get(obj),

@@ -830,7 +830,6 @@ _elm_panel_efl_canvas_group_group_add(Eo *obj, Elm_Panel_Data *priv)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
    priv->panel_edje = wd->resize_obj;
