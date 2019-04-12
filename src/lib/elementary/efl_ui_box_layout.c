@@ -28,10 +28,9 @@ _weight_sort_cb(const void *l1, const void *l2)
 }
 
 void
-_efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
+_efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Efl_Ui_Box_Data *pd)
 {
-   Efl_Ui_Box_Data *pd = efl_data_scope_get(ui_box, EFL_UI_BOX_CLASS);
-   Evas_Object_Box_Option *opt;
+   Eo *child;
    Eina_List *li;
    Eina_Inlist *inlist = NULL;
    Item_Calc *items, *item;
@@ -44,7 +43,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
    Efl_Ui_Container_Layout_Calc box_calc[2]; /* 0 is x-axis, 1 is y-axis */
 
 
-   count = eina_list_count(bd->children);
+   count = eina_list_count(pd->children);
    if (!count)
      {
         efl_gfx_hint_size_restricted_min_set(ui_box, EINA_SIZE2D(0, 0));
@@ -59,10 +58,10 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
 #endif
 
    // scan all items, get their properties, calculate total weight & min size
-   EINA_LIST_FOREACH(bd->children, li, opt)
+   EINA_LIST_FOREACH(pd->children, li, child)
      {
         item = &items[i++];
-        item->obj = opt->obj;
+        item->obj = child;
         hints = item->hints;
 
         _efl_ui_container_layout_item_init(item->obj, hints);
@@ -200,4 +199,6 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Evas_Object_Box_Data *bd)
               (box_calc[1].pad * (count - 1));
 
    efl_gfx_hint_size_restricted_min_set(ui_box, EINA_SIZE2D(want[0], want[1]));
+
+   efl_event_callback_call(ui_box, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);
 }
