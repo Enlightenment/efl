@@ -13,12 +13,12 @@ interface @beta Efl.Pack_Linear extends Efl.Pack
            container without deleting it.
          ]]
          params {
-            @in subobj: Efl.Gfx.Entity; [[Item to pack.]]
+            @in subobj: Efl.Gfx.Entity; [[Item to pack at the beginning.]]
          }
-         return: bool; [[$false if $subobj could not be packed]]
+         return: bool; [[$false if $subobj could not be packed.]]
       }
       pack_end {
-         [[Append object at the end of this container.
+         [[Append item at the end of this container.
 
            This is the same as @.pack_at($subobj, -1).
 
@@ -29,7 +29,7 @@ interface @beta Efl.Pack_Linear extends Efl.Pack
          params {
             @in subobj: Efl.Gfx.Entity; [[Item to pack at the end.]]
          }
-         return: bool; [[$false if $subobj could not be packed]]
+         return: bool; [[$false if $subobj could not be packed.]]
       }
       pack_before {
          [[Prepend item before other sub object.
@@ -60,46 +60,72 @@ interface @beta Efl.Pack_Linear extends Efl.Pack
                          could not be packed.]]
       }
       pack_at {
-          [[Inserts $subobj at the specified $index.
+          [[Inserts $subobj BEFORE the item at position $index.
 
-            Valid range: -$count to +$count. -1 refers to the last element.
-            Out of range indices will trigger an append.
+            $index ranges from -$count to $count-1, where positive numbers go
+            from first item (0) to last item ($count-1), and negative numbers go
+            from last item (-1) to first item (-$count). Where $count is
+            the number of items currently in the container.
+
+            If $index is less than -$count, it will trigger @.pack_begin($subobj)
+            whereas $index greater than $count-1 will trigger @.pack_end($subobj).
 
             When this container is deleted, it will request deletion of the
             given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
             container without deleting it.
           ]]
           params {
-             @in subobj: Efl.Gfx.Entity; [[Item to pack at given index.]]
-             @in index:  int; [[A position.]]
+             @in subobj: Efl.Gfx.Entity; [[Item to pack.]]
+             @in index:  int; [[Index of item to insert BEFORE.
+                                Valid range is -$count to ($count-1).
+                              ]]
           }
           return: bool; [[$false if $subobj could not be packed.]]
       }
       pack_content_get {
-         [[Content at a given index in this container.
+         [[Content at a given $index in this container.
 
-           Index -1 refers to the last item. The valid range is -(count - 1) to
-           (count - 1).
+           $index ranges from -$count to $count-1, where positive numbers go
+           from first item (0) to last item ($count-1), and negative numbers go
+           from last item (-1) to first item (-$count). Where $count is
+           the number of items currently in the container.
+
+           If $index is less than -$count, it will return the first item
+           whereas $index greater than $count-1 will return the last item.
          ]]
          params {
-            index: int; [[Index number]]
+            @in index: int; [[Index of the item to retrieve.
+                              Valid range is -$count to ($count-1).
+                            ]]
          }
          return: Efl.Gfx.Entity; [[The object contained at the given $index.]]
       }
       pack_index_get {
          [[Get the index of a child in this container.]]
          params {
-            subobj: const(Efl.Gfx.Entity); [[An object contained in this pack.]]
+            @in subobj: const(Efl.Gfx.Entity); [[An object contained in this pack.]]
          }
-         return: int(-1); [[-1 in case of failure, or the index of this item.]]
+         return: int(-1); [[-1 in case $subobj is not a child of this object,
+                            or the index of this item in the range 0 to ($count-1).
+                          ]]
       }
       pack_unpack_at {
-         [[Pop out item at specified $index.
+         [[Pop out (remove) the item at the specified $index.
 
-           Equivalent to unpack(content_at($index)).
+           $index ranges from -$count to $count-1, where positive numbers go
+           from first item (0) to last item ($count-1), and negative numbers go
+           from last item (-1) to first item (-$count). Where $count is
+           the number of items currently in the container.
+
+           If $index is less than -$count, it will remove the first item
+           whereas $index greater than $count-1 will remove the last item.
+
+           Equivalent to @Efl.Pack.unpack(@.pack_content_get($index)).
          ]]
          params {
-            index: int; [[Index number]]
+            @in index: int; [[Index of item to remove.
+                              Valid range is -$count to ($count-1).
+                            ]]
          }
          return: Efl.Gfx.Entity; [[The child item if it could be removed.]]
       }
