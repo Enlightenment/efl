@@ -1004,3 +1004,7 @@ group { name: "efl/panes/horizontal:down-fold";
       }
    }
 }
+
+#undef PANEMIN
+#undef PANEMIN2
+#undef PANEWID
