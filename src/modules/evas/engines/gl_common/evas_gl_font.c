@@ -5,7 +5,7 @@ evas_gl_font_texture_new(void *context, RGBA_Font_Glyph *fg)
 {
    Evas_Engine_GL_Context *gc = context;
    Evas_GL_Texture *tex;
-   int w, h, j, nw, fh, y;
+   int w, h, nw, fh, y;
    DATA8 *ndata, *data, *p1, *p2;
 
    if (fg->ext_dat) return fg->ext_dat; // FIXME: one engine at a time can do this :(
@@ -17,8 +17,6 @@ evas_gl_font_texture_new(void *context, RGBA_Font_Glyph *fg)
    if (!fg->glyph_out->rle) return NULL;
    data = evas_common_font_glyph_uncompress(fg, &w, &h);
    if (!data) return NULL;
-   j = w;
-   if (j < w) j = w;
 
    // expand to 32bit (4 byte) aligned rows for texture upload
    nw = ((w + 3) / 4) * 4;
@@ -31,7 +29,7 @@ evas_gl_font_texture_new(void *context, RGBA_Font_Glyph *fg)
       // else copy row by row
       for (y = 0; y < h; y++)
       {
-        p1 = data + (j * y);
+        p1 = data + (w * y);
         p2 = ndata + (nw * y);
         memcpy(p2,p1,w);
       }
