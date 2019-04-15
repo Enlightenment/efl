@@ -1215,4 +1215,7 @@ EAPI Eina_Bool  ecore_getopt_callback_size_parse(const Ecore_Getopt *parser, con
  * @}
  */
 
+#undef EAPI
+#define EAPI
+
 #endif /* _ECORE_GETOPT_H */

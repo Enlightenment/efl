@@ -34,6 +34,7 @@ lib_ecore_evas_libecore_evas_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ecore_evas\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
+-DEFL_BUILD \
 @ECORE_EVAS_CFLAGS@
 lib_ecore_evas_libecore_evas_la_LIBADD = @ECORE_EVAS_LIBS@
 lib_ecore_evas_libecore_evas_la_DEPENDENCIES = @ECORE_EVAS_INTERNAL_LIBS@
@@ -83,6 +84,7 @@ $(install_ecoreevasenginexpkgLTLIBRARIES): install-libLTLIBRARIES
 
 modules_ecore_evas_engines_x_module_la_SOURCES = $(XSOURCES)
 modules_ecore_evas_engines_x_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
 @ECORE_EVAS_CFLAGS@ \
 @ECORE_X_CFLAGS@ \
 -I$(top_srcdir)/src/modules/evas/engines/software_x11 \
@@ -193,6 +195,7 @@ $(install_ecoreevasenginesdlpkgLTLIBRARIES): install-libLTLIBRARIES
 
 modules_ecore_evas_engines_sdl_module_la_SOURCES = $(SDLSOURCES)
 modules_ecore_evas_engines_sdl_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
 @ECORE_EVAS_CFLAGS@ \
 @ECORE_SDL_CFLAGS@ \
 -I$(top_srcdir)/src/modules/evas/engines/buffer \
@@ -220,6 +223,7 @@ $(install_ecoreevasengineswin32pkgLTLIBRARIES): install-libLTLIBRARIES
 
 modules_ecore_evas_engines_win32_module_la_SOURCES = $(WIN32SOURCES)
 modules_ecore_evas_engines_win32_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
 @ECORE_EVAS_CFLAGS@ \
 @ECORE_WIN32_CFLAGS@ \
 -I$(top_srcdir)/src/modules/evas/engines/software_ddraw \

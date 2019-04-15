@@ -127,7 +127,7 @@ static_libs/buildsystem/buildsystem.h \
 static_libs/buildsystem/buildsystem_autotools.c
 
 
-lib_edje_libedje_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS)
+lib_edje_libedje_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS) -DEFL_BUILD
 lib_edje_libedje_la_LIBADD = @EDJE_LIBS@ @EDJE_LUA_LIBS@
 lib_edje_libedje_la_DEPENDENCIES = @EDJE_INTERNAL_LIBS@
 lib_edje_libedje_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

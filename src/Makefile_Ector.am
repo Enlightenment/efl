@@ -161,6 +161,7 @@ lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/static_libs/freetype \
 -I$(top_srcdir)/src/static_libs/draw \
 -I$(top_srcdir)/src/static_libs/triangulator \
+-DEFL_BUILD \
 @ECTOR_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \

@@ -47,7 +47,7 @@ lib/evil/evil_util.c \
 lib/evil/evil_private.h \
 lib/evil/evil_fnmatch_private.h
 
-lib_evil_libevil_la_CPPFLAGS = @EVIL_CPPFLAGS@
+lib_evil_libevil_la_CPPFLAGS = @EVIL_CPPFLAGS@ -DEFL_BUILD
 lib_evil_libevil_la_CFLAGS = @EVIL_CFLAGS@ @EVIL_CFLAGS_WRN@ -D__USE_MINGW_ANSI_STDIO
 lib_evil_libevil_la_LIBADD = @EVIL_LIBS@
 lib_evil_libevil_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

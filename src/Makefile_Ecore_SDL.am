@@ -13,7 +13,7 @@ lib/ecore_sdl/ecore_sdl.c \
 lib/ecore_sdl/Ecore_Sdl_Keys.h \
 lib/ecore_sdl/ecore_sdl_private.h
 
-lib_ecore_sdl_libecore_sdl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_SDL_CFLAGS@
+lib_ecore_sdl_libecore_sdl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_SDL_CFLAGS@ -DEFL_BUILD
 lib_ecore_sdl_libecore_sdl_la_LIBADD = @ECORE_SDL_LIBS@
 lib_ecore_sdl_libecore_sdl_la_DEPENDENCIES = @ECORE_SDL_INTERNAL_LIBS@
 lib_ecore_sdl_libecore_sdl_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

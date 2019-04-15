@@ -53,6 +53,7 @@ lib_eeze_libeeze_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eeze\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
+-DEFL_BUILD \
 @EEZE_CFLAGS@
 lib_eeze_libeeze_la_LIBADD = @EEZE_LIBS@
 lib_eeze_libeeze_la_DEPENDENCIES = @EEZE_INTERNAL_LIBS@

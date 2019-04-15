@@ -139,7 +139,7 @@ lib/efl/interfaces/efl_text_markup_util.c \
 lib/efl/interfaces/efl_ui_direction_readonly.c \
 $(NULL)
 
-lib_efl_libefl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_srcdir)/src/lib/efl @EFL_CFLAGS@ -DEFL_GFX_FILTER_BETA
+lib_efl_libefl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_srcdir)/src/lib/efl @EFL_CFLAGS@ -DEFL_GFX_FILTER_BETA -DEFL_BUILD
 lib_efl_libefl_la_LIBADD = @EFL_LIBS@
 lib_efl_libefl_la_DEPENDENCIES = @EFL_INTERNAL_LIBS@
 lib_efl_libefl_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

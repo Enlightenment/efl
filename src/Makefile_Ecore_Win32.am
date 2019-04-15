@@ -28,7 +28,7 @@ lib/ecore_win32/ecore_win32_dnd_drop_source.h \
 lib/ecore_win32/ecore_win32_dnd_drop_target.h \
 lib/ecore_win32/ecore_win32_keysym_table.h
 
-lib_ecore_win32_libecore_win32_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_WIN32_CFLAGS@
+lib_ecore_win32_libecore_win32_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_WIN32_CFLAGS@ -DEFL_BUILD
 lib_ecore_win32_libecore_win32_la_LIBADD = @ECORE_WIN32_LIBS@
 lib_ecore_win32_libecore_win32_la_DEPENDENCIES = @ECORE_WIN32_INTERNAL_LIBS@
 lib_ecore_win32_libecore_win32_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

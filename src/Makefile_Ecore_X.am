@@ -49,6 +49,7 @@ lib/ecore_x/ecore_x_private.h
 
 lib_ecore_x_libecore_x_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
 @ECORE_X_CFLAGS@ @ECORE_CON_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
