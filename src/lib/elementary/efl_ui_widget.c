@@ -1373,7 +1373,15 @@ _disabled_counter_get(Eo *widget)
 static void
 _mirror_disabled_state(Eo *obj, Elm_Widget_Smart_Data *pd, int disabled_delta)
 {
+   int prev_disabled = pd->disabled;
+
    pd->disabled = (pd->parent_obj ? _disabled_counter_get(pd->parent_obj) : 0) + disabled_delta;
+
+   //The current disabled state is the same as the parent
+   //when the parent is assigned or changed, no further action is required.
+   if (((prev_disabled > 0 && pd->disabled > 0)) ||
+       ((prev_disabled <= 0 && pd->disabled <= 0)))
+     return;
 
    //we should not call disabled_set when things are invalidated
    //otherwise we will unleashe an amount of errors in efl_ui_layout
@@ -1413,7 +1421,6 @@ _efl_ui_widget_widget_parent_set(Eo *obj, Elm_Widget_Smart_Data *pd, Efl_Ui_Widg
     */
    double scale, prev_scale = efl_gfx_entity_scale_get(obj);
    Elm_Theme *th, *prev_th = elm_widget_theme_get(obj);
-   Eina_Bool mirrored, pmirrored = efl_ui_mirrored_get(parent);
    int disabled_delta = pd->disabled - (pd->parent_obj ? _disabled_counter_get(pd->parent_obj) : 0);
 
    old_parent = pd->parent_obj;
@@ -1422,6 +1429,7 @@ _efl_ui_widget_widget_parent_set(Eo *obj, Elm_Widget_Smart_Data *pd, Efl_Ui_Widg
    // now lets sync up all states
    if (pd->parent_obj)
      {
+        Eina_Bool mirrored, pmirrored = efl_ui_mirrored_get(pd->parent_obj);
         scale = efl_gfx_entity_scale_get(obj);
         th = elm_widget_theme_get(obj);
         mirrored = efl_ui_mirrored_get(obj);

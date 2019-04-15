@@ -42,7 +42,7 @@ class @beta Efl.Ui.List extends Efl.Ui.Layout_Base implements
       //Efl.Object
       Efl.Object.constructor;
       Efl.Object.finalize;
-      Efl.Object.destructor;
+      Efl.Object.invalidate;
 
       //Efl.Canvas
       Efl.Canvas.Group.group_calculate;

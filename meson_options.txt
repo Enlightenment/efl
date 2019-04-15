@@ -323,6 +323,12 @@ option('mono-beta',
   description: 'Flag for enabling @beta Eo methods in the api'
 )
 
+option('mono-examples-dir',
+  type: 'string',
+  value: '',
+  description: 'Directory where eolian_mono will search for examples to embed into the documentation'
+)
+
 option('lua-interpreter',
   type: 'combo',
   choices: ['luajit', 'lua'],

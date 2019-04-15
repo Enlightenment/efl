@@ -117,7 +117,9 @@ struct klass
      // Interface class
      if(class_type == "interface")
      {
-       auto iface_cxt = context_add_tag(class_context{class_context::interface}, context);
+       auto iface_cxt = context_add_tag(class_context{class_context::interface,
+                                        name_helpers::klass_full_concrete_or_interface_name(cls)},
+                                        context);
 
        if(!as_generator(documentation).generate(sink, cls, iface_cxt))
          return false;
@@ -195,7 +197,9 @@ struct klass
      // Concrete class for interfaces, mixins, etc.
      if(class_type != "class" && class_type != "abstract class")
        {
-         auto concrete_cxt = context_add_tag(class_context{class_context::concrete}, context);
+         auto concrete_cxt = context_add_tag(class_context{class_context::concrete,
+                                             name_helpers::klass_full_concrete_or_interface_name(cls)},
+                                             context);
          auto concrete_name = name_helpers::klass_concrete_name(cls);
          auto interface_name = name_helpers::klass_interface_name(cls);
 
@@ -277,7 +281,9 @@ struct klass
      // Inheritable class
      if(class_type == "class" || class_type == "abstract class")
        {
-        auto inherit_cxt = context_add_tag(class_context{class_context::inherit}, context);
+        auto inherit_cxt = context_add_tag(class_context{class_context::inherit,
+                                           name_helpers::klass_full_concrete_or_interface_name(cls)},
+                                           context);
 
         // Class header
         if(!as_generator
@@ -351,7 +357,9 @@ struct klass
      // Native Inherit class
      //if(class_type == "class")
        {
-         auto inative_cxt = context_add_tag(class_context{class_context::inherit_native}, context);
+         auto inative_cxt = context_add_tag(class_context{class_context::inherit_native,
+                                            name_helpers::klass_full_concrete_or_interface_name(cls)},
+                                            context);
          auto native_inherit_name = name_helpers::klass_native_inherit_name(cls);
          auto inherit_name = name_helpers::klass_inherit_name(cls);
          std::string base_name;

@@ -2297,6 +2297,15 @@ evas_vg_load_file_open_svg(Eina_File *file,
         defs = loader.doc->node.doc.defs;
         if (defs)
           _update_gradient(loader.doc, defs->node.defs.gradients);
+        else
+          {
+             if (loader.gradient)
+               {
+                  Eina_List* gradient_list = eina_list_append(NULL, loader.gradient);
+                  _update_gradient(loader.doc, gradient_list);
+                  eina_list_free(gradient_list);
+               }
+          }
 
         *error = EVAS_LOAD_ERROR_NONE;
      }

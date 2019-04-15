@@ -20,6 +20,7 @@ struct class_context
         variables,
     };
     wrapper_kind current_wrapper_kind;
+    std::string name;
 };
 
 struct indentation_context
@@ -78,6 +79,7 @@ struct eolian_state_context {
 
 struct options_context {
     bool want_beta;
+    std::string examples_dir;
 };
 
 }

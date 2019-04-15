@@ -104,8 +104,7 @@ struct documentation_generator
 
    static std::string function_conversion(attributes::function_def const& func)
    {
-      attributes::klass_def klass(get_klass(func.klass, func.unit), func.unit);
-      std::string name = name_helpers::klass_full_concrete_or_interface_name(klass);
+      std::string name = name_helpers::klass_full_concrete_or_interface_name(func.klass);
       switch (func.type)
       {
           // managed_method_name takes care of reordering the function name so the get/set goes first
@@ -114,8 +113,8 @@ struct documentation_generator
           case attributes::function_type::prop_set:
           case attributes::function_type::prop_get:
             if (blacklist::is_function_blacklisted(func.c_name))return "";
-            name += ".";
-            name += name_helpers::managed_method_name(klass.eolian_name, func.name);
+            if (!name.empty()) name += ".";
+            name += name_helpers::managed_method_name(func.klass.eolian_name, func.name);
             break;
           default:
             // No need to deal with property as function_defs are converted to get/set when building a given klass_def.
@@ -245,7 +244,19 @@ struct documentation_generator
 
    /// Tag generator helpers
    template<typename OutputIterator, typename Context>
-   bool generate_tag(OutputIterator sink, std::string const& tag, std::string const &text, Context const& context, std::string tag_params = "") const
+   bool generate_opening_tag(OutputIterator sink, std::string const& tag, Context const& context, std::string tag_params = "") const
+   {
+      return as_generator("<" << tag << tag_params << ">").generate(sink, attributes::unused, context);
+   }
+
+   template<typename OutputIterator, typename Context>
+   bool generate_closing_tag(OutputIterator sink, std::string const& tag, Context const& context) const
+   {
+      return as_generator("</" << tag << ">").generate(sink, attributes::unused, context);
+   }
+
+   template<typename OutputIterator, typename Context>
+   bool generate_escaped_content(OutputIterator sink, std::string const &text, Context const& context) const
    {
       std::string new_text;
       if (!as_generator(html_escaped_string).generate(std::back_inserter(new_text), text, context))
@@ -257,14 +268,24 @@ struct documentation_generator
 
       std::istringstream ss(new_text);
       std::string para;
-      std::string final_text = "<" + tag + tag_params + ">";
+      std::string final_text;
       bool first = true;
       while (std::getline(ss, para)) {
         if (first) final_text += para;
         else final_text += "\n" + tabs + para;
         first = false;
       }
-      return as_generator(scope_tab(scope_size) << "/// " << final_text << "</" << tag << ">\n").generate(sink, attributes::unused, context);
+      return as_generator(final_text).generate(sink, attributes::unused, context);
+   }
+
+   template<typename OutputIterator, typename Context>
+   bool generate_tag(OutputIterator sink, std::string const& tag, std::string const &text, Context const& context, std::string tag_params = "") const
+   {
+      if (!as_generator(scope_tab(scope_size) << "/// ").generate(sink, attributes::unused, context)) return false;
+      if (!generate_opening_tag(sink, tag, context, tag_params)) return false;
+      if (!generate_escaped_content(sink, text, context)) return false;
+      if (!generate_closing_tag(sink, tag, context)) return false;
+      return as_generator("\n").generate(sink, attributes::unused, context);
    }
 
    template<typename OutputIterator, typename Context>
@@ -291,11 +312,61 @@ struct documentation_generator
       return generate_tag(sink, "value", text, context);
    }
 
+   template<typename OutputIterator, typename Context>
+   bool generate_tag_example(OutputIterator sink, std::string const& full_object_name, Context const& context) const
+   {
+      auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
+      // Example embedding not requested
+      if (options.examples_dir.empty()) return true;
+      std::string file_name = options.examples_dir + full_object_name + ".cs";
+      std::ifstream exfile(file_name);
+      // There is no example file for this class or method, just return
+      if (!exfile.good()) return true;
+      std::stringstream example_buff;
+      // Start with a newline so the first line renders with same indentation as the rest
+      example_buff << std::endl << exfile.rdbuf();
+
+      if (!as_generator(scope_tab(scope_size) << "/// ").generate(sink, attributes::unused, context)) return false;
+      if (!generate_opening_tag(sink, "example", context)) return false;
+      if (!generate_opening_tag(sink, "code", context)) return false;
+      if (!generate_escaped_content(sink, example_buff.str(), context)) return false;
+      if (!generate_closing_tag(sink, "code", context)) return false;
+      if (!generate_closing_tag(sink, "example", context)) return false;
+      return as_generator("\n").generate(sink, attributes::unused, context);
+   }
+
+   template<typename OutputIterator, typename Context>
+   bool generate_all_tag_examples(OutputIterator sink, std::string const & full_class_name, std::string const& object_name, Context const& context) const
+   {
+      // Take example from derived class
+      auto derived_klass = efl::eolian::grammar::context_find_tag<class_context>(context);
+      std::string derived_full_name =
+        derived_klass.name.empty() ? object_name : derived_klass.name + "." + object_name;
+      std::string base_full_name =
+        full_class_name.empty() ? object_name : full_class_name + "." + object_name;
+      if (!derived_klass.name.empty())
+        {
+           if (!generate_tag_example(sink, derived_full_name, context)) return false;
+        }
+      if (derived_full_name.compare(base_full_name) == 0) return true;
+      // Take example from base class
+      return generate_tag_example(sink, base_full_name, context);
+   }
+
    // Actual exported generators
    template<typename OutputIterator, typename Attribute, typename Context>
    bool generate(OutputIterator sink, Attribute const& attr, Context const& context) const
    {
        return generate(sink, attr.documentation, context);
+   }
+
+   template<typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::klass_def const& klass, Context const& context) const
+   {
+       if (!generate(sink, klass.documentation, context)) return false;
+
+       std::string klass_name = name_helpers::klass_full_concrete_or_interface_name(klass);
+       return generate_tag_example(sink, klass_name, context);
    }
 
    template<typename OutputIterator, typename Context>
@@ -310,9 +381,13 @@ struct documentation_generator
        else if (prop.getter.is_engaged())
          text = prop.getter->return_documentation.full_text;
        // If there are no docs at all, do not generate <value> tag
-       else return true;
+       if (!text.empty())
+         if (!generate_tag_value(sink, text, context)) return false;
 
-       return generate_tag_value(sink, text, context);
+       return generate_all_tag_examples(sink,
+                                        name_helpers::klass_full_concrete_or_interface_name(prop.klass),
+                                        name_helpers::property_managed_name(prop),
+                                        context);
    }
 
    template<typename OutputIterator, typename Context>
@@ -348,7 +423,10 @@ struct documentation_generator
        if (!generate_tag_return(sink, func.return_documentation.full_text, context))
          return false;
 
-       return true;
+       return generate_all_tag_examples(sink,
+                                        name_helpers::klass_full_concrete_or_interface_name(func.klass),
+                                        name_helpers::managed_method_name(func.klass.eolian_name, func.name),
+                                        context);
    }
 
    template<typename OutputIterator, typename Context>
@@ -364,7 +442,10 @@ struct documentation_generator
        if (!generate_tag_return(sink, func.return_documentation.full_text, context))
          return false;
 
-       return true;
+       return generate_all_tag_examples(sink,
+                                        name_helpers::klass_full_concrete_or_interface_name(func.klass),
+                                        name_helpers::managed_method_name(func.klass.eolian_name, func.name),
+                                        context);
    }
 
    template<typename OutputIterator, typename Context>

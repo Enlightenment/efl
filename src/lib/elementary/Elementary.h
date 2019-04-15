@@ -87,7 +87,7 @@
 #endif
 
 #ifdef _WIN32
-# ifdef ELEMENTARY_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
@@ -386,7 +386,7 @@ typedef Eo Efl_Ui_Pager;
 }
 #endif
 
-#ifndef ELEMENTARY_BUILD
+#ifndef EFL_BUILD
 # undef EAPI
 # define EAPI
 #endif
