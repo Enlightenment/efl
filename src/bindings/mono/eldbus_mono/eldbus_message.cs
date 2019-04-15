@@ -236,7 +236,7 @@ public class Message : IDisposable
             }
             else
             {
-                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eldbus_message_unref, h);
+                Efl.Eo.Globals.ThreadSafeFreeCbExec(eldbus_message_unref, h);
             }
         }
     }
