@@ -77,7 +77,7 @@ public class Globals
         efl_mono_thread_safe_efl_unref(IntPtr eo);
 
     [DllImport(efl.Libs.CustomExports)] public static extern void
-        efl_mono_thread_safe_free_cb_exec(EinaFreeCb free_cb, IntPtr cb_data);
+        efl_mono_thread_safe_free_cb_exec(IntPtr free_cb, IntPtr cb_data);
 
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         efl_class_name_get(IntPtr eo);
@@ -653,6 +653,7 @@ public class Globals
         return ret;
     }
 
+    private static Efl.FreeGCHandleCb FreeGCHandleCallbackDelegate = new Efl.FreeGCHandleCb(FreeGCHandleCallback);
     public static void FreeGCHandleCallback(IntPtr gcHandlePtr)
     {
         try
@@ -667,6 +668,7 @@ public class Globals
         }
     }
 
+    private static Efl.RemoveEventsCb RemoveEventsCallbackDelegate = new Efl.RemoveEventsCb(RemoveEventsCallback);
     public static void RemoveEventsCallback(IntPtr obj, IntPtr gcHandlePtr)
     {
         try
@@ -696,7 +698,27 @@ public class Globals
 
     public static void SetNativeDisposeCallbacks()
     {
-        efl_mono_gchandle_callbacks_set(FreeGCHandleCallback, RemoveEventsCallback);
+        efl_mono_gchandle_callbacks_set(FreeGCHandleCallbackDelegate, RemoveEventsCallbackDelegate);
+    }
+
+    public static void ThreadSafeFreeCbExec(EinaFreeCb cbFreeCb, IntPtr cbData)
+    {
+        EinaFreeCb cb = (IntPtr gcHandlePtr) => {
+            cbFreeCb(cbData);
+            GCHandle gcHandle = GCHandle.FromIntPtr(gcHandlePtr);
+            gcHandle.Free();
+        };
+
+        Monitor.Enter(Efl.All.InitLock);
+        if (Efl.All.MainLoopInitialized)
+        {
+            IntPtr cbPtr = Marshal.GetFunctionPointerForDelegate(cb);
+            var handle = GCHandle.Alloc(cb);
+            var handlePtr = GCHandle.ToIntPtr(handle);
+
+            efl_mono_thread_safe_free_cb_exec(cbPtr, handlePtr);
+        }
+        Monitor.Exit(Efl.All.InitLock);
     }
 
 } // Globals
@@ -704,27 +726,14 @@ public class Globals
 public static class Config
 {
 
-    public static bool Initialized {
-        get;
-        private set;
-    }
-
-    public static readonly object InitLock = new object();
-
     public static void Init()
     {
         Globals.efl_object_init();
-        Monitor.Enter(InitLock);
-        Initialized = true;
-        Monitor.Exit(InitLock);
         Globals.SetNativeDisposeCallbacks();
     }
 
     public static void Shutdown()
     {
-        Monitor.Enter(InitLock);
-        Initialized = false;
-        Monitor.Exit(InitLock);
         Globals.efl_object_shutdown();
     }
 }

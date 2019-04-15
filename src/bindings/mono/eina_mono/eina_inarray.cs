@@ -147,7 +147,7 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
             }
             else
             {
-                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eina_inarray_free, h);
+                Efl.Eo.Globals.ThreadSafeFreeCbExec(eina_inarray_free, h);
             }
         }
     }

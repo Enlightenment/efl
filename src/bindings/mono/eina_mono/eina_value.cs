@@ -1411,7 +1411,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             }
             else
             {
-                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eina_value_free, this.Handle);
+                Efl.Eo.Globals.ThreadSafeFreeCbExec(eina_value_free, this.Handle);
             }
         }
 
