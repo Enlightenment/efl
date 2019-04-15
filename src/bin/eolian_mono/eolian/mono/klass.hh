@@ -206,7 +206,7 @@ struct klass
          if(!as_generator
             (
              documentation
-             << "sealed public class " << concrete_name << " : " << "\n"
+             << "sealed internal class " << concrete_name << " : " << "\n"
              << (klass_full_concrete_or_interface_name % ",") << "\n"
              << (inherit_classes.size() > 0 ? ", " : "" ) << interface_name << "\n"
              << scope_tab << *(", " << name_helpers::klass_full_concrete_or_interface_name) << "\n"
