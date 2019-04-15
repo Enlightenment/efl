@@ -49,21 +49,21 @@ lib/efreet/efreet_cache_private.h \
 static_libs/buildsystem/buildsystem.h \
 static_libs/buildsystem/buildsystem_autotools.c
 
-lib_efreet_libefreet_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS)
+lib_efreet_libefreet_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS) -DEFL_BUILD
 lib_efreet_libefreet_la_LIBADD = @EFREET_LIBS@ @EVIL_LIBS@
 lib_efreet_libefreet_la_DEPENDENCIES = @EFREET_INTERNAL_LIBS@
 lib_efreet_libefreet_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 # libefreet_mime.la
 lib_efreet_libefreet_mime_la_SOURCES = lib/efreet/efreet_mime.c
-lib_efreet_libefreet_mime_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS)
+lib_efreet_libefreet_mime_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS) -DEFL_BUILD
 lib_efreet_libefreet_mime_la_LIBADD = @USE_EFREET_LIBS@ @EVIL_LIBS@
 lib_efreet_libefreet_mime_la_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
 lib_efreet_libefreet_mime_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 # libefreet_trash.la
 lib_efreet_libefreet_trash_la_SOURCES = lib/efreet/efreet_trash.c
-lib_efreet_libefreet_trash_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS)
+lib_efreet_libefreet_trash_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS) -DEFL_BUILD
 lib_efreet_libefreet_trash_la_LIBADD = @USE_EFREET_LIBS@ @EVIL_LIBS@
 lib_efreet_libefreet_trash_la_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
 lib_efreet_libefreet_trash_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

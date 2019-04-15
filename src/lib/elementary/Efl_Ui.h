@@ -53,41 +53,6 @@
 #include <Eo.h>
 #include <Efl.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-#ifdef EWAPI
-# undef EWAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-# define EAPI_WEAK
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#   define EAPI_WEAK __attribute__ ((weak))
-#  else
-#   define EAPI
-#   define EAPI_WEAK
-# endif
-# else
-#  define EAPI
-#  define EAPI_WEAK
-# endif
-#endif
-
-#define EWAPI EAPI EAPI_WEAK
-
 #ifdef _WIN32
 # define WIN32_LEAN_AND_MEAN
 # include <winsock2.h>
@@ -132,6 +97,41 @@
 #ifdef ELM_EMAP
 #include <EMap.h>
 #endif
+
+#ifdef EAPI
+# undef EAPI
+#endif
+#ifdef EWAPI
+# undef EWAPI
+#endif
+
+#ifdef _WIN32
+# ifdef EFL_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI __declspec(dllimport)
+# endif
+# define EAPI_WEAK
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#   define EAPI_WEAK __attribute__ ((weak))
+#  else
+#   define EAPI
+#   define EAPI_WEAK
+# endif
+# else
+#  define EAPI
+#  define EAPI_WEAK
+# endif
+#endif
+
+#define EWAPI EAPI EAPI_WEAK
 
 #ifdef __cplusplus
 extern "C" {

@@ -84,6 +84,7 @@ lib/eldbus/eldbus_introspection.c
 
 lib_eldbus_libeldbus_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -include $(top_builddir)/config.h \
+-DEFL_BUILD \
 @ELDBUS_CFLAGS@ @EFL_CFLAGS@
 lib_eldbus_libeldbus_la_LIBADD = @ELDBUS_LIBS@ @EFL_LIBS@
 lib_eldbus_libeldbus_la_DEPENDENCIES = @ELDBUS_INTERNAL_LIBS@ @EFL_INTERNAL_LIBS@

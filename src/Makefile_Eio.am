@@ -61,7 +61,7 @@ endif
 endif
 endif
 
-lib_eio_libeio_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EIO_CFLAGS@ @EFL_CFLAGS@
+lib_eio_libeio_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EIO_CFLAGS@ @EFL_CFLAGS@ -DEFL_BUILD
 lib_eio_libeio_la_LIBADD = @EIO_LIBS@ @EFL_LIBS@
 lib_eio_libeio_la_DEPENDENCIES = @EIO_INTERNAL_LIBS@ @EFL_INTERNAL_LIBS@
 lib_eio_libeio_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

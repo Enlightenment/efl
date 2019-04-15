@@ -17,7 +17,7 @@ lib/elocation/gen/eldbus_geo_clue2_client.c \
 lib/elocation/gen/eldbus_geo_clue2_location.c \
 lib/elocation/gen/eldbus_geo_clue2_manager.c
 
-lib_elocation_libelocation_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ELOCATION_CFLAGS@ @EFL_CFLAGS@
+lib_elocation_libelocation_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ELOCATION_CFLAGS@ @EFL_CFLAGS@ -DEFL_BUILD
 lib_elocation_libelocation_la_LIBADD = @ELOCATION_LIBS@
 lib_elocation_libelocation_la_DEPENDENCIES = @ELOCATION_INTERNAL_LIBS@
 lib_elocation_libelocation_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

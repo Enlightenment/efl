@@ -10,7 +10,7 @@ lib/ecore_avahi/Ecore_Avahi.h
 lib_ecore_avahi_libecore_avahi_la_SOURCES = \
 lib/ecore_avahi/ecore_avahi.c
 
-lib_ecore_avahi_libecore_avahi_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_AVAHI_CFLAGS@
+lib_ecore_avahi_libecore_avahi_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_AVAHI_CFLAGS@ -DEFL_BUILD
 lib_ecore_avahi_libecore_avahi_la_LIBADD = @ECORE_AVAHI_LIBS@
 lib_ecore_avahi_libecore_avahi_la_DEPENDENCIES = @ECORE_AVAHI_INTERNAL_LIBS@
 lib_ecore_avahi_libecore_avahi_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

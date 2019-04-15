@@ -22,6 +22,7 @@ lib_ecore_imf_libecore_imf_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ecore_imf\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
+-DEFL_BUILD \
 @ECORE_IMF_CFLAGS@
 lib_ecore_imf_libecore_imf_la_LIBADD = @ECORE_IMF_LIBS@
 lib_ecore_imf_libecore_imf_la_DEPENDENCIES = @ECORE_IMF_INTERNAL_LIBS@
