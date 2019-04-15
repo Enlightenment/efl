@@ -64,6 +64,10 @@ struct documentation_generator
       ::Eolian_Function_Type ftype = ::eolian_function_type_get(function);
       const char* eo_name = ::eolian_function_name_get(function);
       std::string name = object_ref_conversion(klass);
+
+      // Klass is needed to check the property naming rulles
+      attributes::klass_def klass_d((const ::Eolian_Class *)klass, eolian_object_unit_get(klass));
+
       switch(ftype)
       {
          case ::EOLIAN_METHOD:
@@ -75,17 +79,17 @@ struct documentation_generator
            break;
          case ::EOLIAN_PROP_SET:
            name += ".Set";
-           name += name_helpers::property_managed_name(eo_name);
+           name += name_helpers::property_managed_name(klass_d, eo_name);
            break;
          case ::EOLIAN_PROP_GET:
            name += ".Get";
-           name += name_helpers::property_managed_name(eo_name);
+           name += name_helpers::property_managed_name(klass_d, eo_name);
            break;
          case ::EOLIAN_PROPERTY:
            {
              int getter_params = property_num_parameters(function, ::EOLIAN_PROP_GET);
              int setter_params = property_num_parameters(function, ::EOLIAN_PROP_SET);
-             std::string short_name = name_helpers::property_managed_name(eo_name);
+             std::string short_name = name_helpers::property_managed_name(klass_d, eo_name);
              bool blacklisted = blacklist::is_property_blacklisted(name + "." + short_name);
              // EO properties with keys, with more than one value, or blacklisted, are not
              // converted into C# properties.

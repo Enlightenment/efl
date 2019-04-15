@@ -38,6 +38,10 @@ inline bool is_equal(std::string const& lhs, std::string const& rhs)
 }
 }
 
+// Forward declarations
+template<typename  T>
+inline std::string klass_concrete_or_interface_name(T const& klass);
+
 inline std::string identity(std::string const& str)
 {
   return str;
@@ -184,6 +188,12 @@ inline std::string managed_method_name(std::string const& klass, std::string con
   if (candidate == klass)
       candidate = "Do" + candidate;
 
+  // Avoid clashing with System.Object.GetType
+  if (candidate == "GetType" || candidate == "SetType")
+    {
+       candidate.insert(3, klass);
+    }
+
   return candidate;
 }
 
@@ -252,17 +262,26 @@ inline std::string to_field_name(std::string const& in)
   return utils::capitalize(in);
 }
 
-inline std::string property_managed_name(const std::string name)
+
+
+template<typename T>
+inline std::string property_managed_name(T const& klass, std::string const& name)
 {
   auto names = utils::split(name, '_');
   // No need to escape keyword here as it will be capitalized and already
   // namespaced inside the owner class.
-  return utils::to_pascal_case(names);
+  auto managed_name = utils::to_pascal_case(names);
+  auto managed_klass_name = klass_concrete_or_interface_name(klass);
+
+  if (managed_name == "Type")
+    managed_name = managed_klass_name + managed_name;
+
+  return managed_name;
 }
 
 inline std::string property_managed_name(attributes::property_def const& property)
 {
-  return property_managed_name(property.name);
+  return property_managed_name(property.klass, property.name);
 }
 
 inline std::string managed_part_name(attributes::part_def const& part)
