@@ -151,8 +151,8 @@ struct marshall_annotation_visitor_generate
        name = "Efl.Eo.MarshalEflClass";
      else
        {
-          auto own = klass_name.base_qualifier & qualifier_info::is_own ? "OwnTag" : "NonOwnTag";
-          name = "Efl.Eo.MarshalTest<" + name + ", Efl.Eo." + own + ">";
+          std::string own = klass_name.base_qualifier & qualifier_info::is_own ? "OwnTag" : "NonOwnTag";
+          name = "Efl.Eo.MarshalEo<Efl.Eo." + own + ">";
        }
 
      return as_generator(
