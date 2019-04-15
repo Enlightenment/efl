@@ -1023,7 +1023,7 @@ _efl_ui_scroll_manager_mouse_up_event_momentum_eval(Efl_Ui_Scroll_Manager_Data *
 {
    double t, at;
    Evas_Coord dx, dy, ax, ay, vel;
-   char sdx, sdy;
+   signed char sdx, sdy;
 
    t = ev->timestamp / 1000.0;
 
@@ -1294,7 +1294,7 @@ _scroll_manager_momentum_animator_add(Efl_Ui_Scroll_Manager_Data *sd, double vx,
 #define INVERSE_MASS 1
 #define ACCEL (FRICTION * INVERSE_MASS)
    double dur = 0.0;
-   char sdx = 0, sdy = 0;
+   signed char sdx = 0, sdy = 0;
    Evas_Coord dstx = 0, dsty = 0;
 
 /*
