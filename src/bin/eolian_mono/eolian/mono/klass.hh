@@ -362,6 +362,7 @@ struct klass
                                             context);
          auto native_inherit_name = name_helpers::klass_native_inherit_name(cls);
          auto inherit_name = name_helpers::klass_inherit_name(cls);
+         auto implementable_methods = helpers::get_all_implementable_methods(cls);
          std::string base_name;
          if(!root)
            {
@@ -377,14 +378,25 @@ struct klass
              << scope_tab << "public override System.Collections.Generic.List<Efl_Op_Description> GetEoOps(System.Type type)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "var descs = new System.Collections.Generic.List<Efl_Op_Description>();\n"
-             << scope_tab << scope_tab << "var methods = Efl.Eo.Globals.GetUserMethods(type);\n"
             )
             .generate(sink, attributes::unused, inative_cxt))
            return false;
 
          // Native wrapper registration
+         // We write them first to a temporary function as the implementable function list may contain
+         // only non-registrable methods like class functions, leading to unused `methods` variable.
+         std::string tmp_registration;
          if(!as_generator(*(function_registration(cls)))
-            .generate(sink, helpers::get_all_implementable_methods(cls), inative_cxt)) return false;
+            .generate(std::back_inserter(tmp_registration), implementable_methods, inative_cxt))
+           return false;
+
+         if (tmp_registration.find("methods") != std::string::npos)
+           if (!as_generator(
+                    scope_tab << scope_tab << "var methods = Efl.Eo.Globals.GetUserMethods(type);\n"
+                    << tmp_registration
+                ).generate(sink,  attributes::unused, inative_cxt))
+             return false;
+
 
          if(!root)
            if(!as_generator(scope_tab << scope_tab << "descs.AddRange(base.GetEoOps(type));\n").generate(sink, attributes::unused, inative_cxt))
@@ -415,7 +427,7 @@ struct klass
 
          // Native method definitions
          if(!as_generator(*(native_function_definition(cls)))
-            .generate(sink, helpers::get_all_implementable_methods(cls), inative_cxt)) return false;
+            .generate(sink, implementable_methods, inative_cxt)) return false;
 
          if(!as_generator("}\n").generate(sink, attributes::unused, inative_cxt)) return false;
        }
