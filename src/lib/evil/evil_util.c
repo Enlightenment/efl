@@ -168,19 +168,6 @@ _evil_last_error_display(const char *fct)
    fprintf(stderr, "[Evil] [%s] ERROR: %s\n", fct, evil_last_error_get());
 }
 
-
-const char *
-evil_tmpdir_get(void)
-{
-   return NULL;
-}
-
-const char *
-evil_homedir_get(void)
-{
-   return NULL;
-}
-
 int
 evil_path_is_absolute(const char *path)
 {
