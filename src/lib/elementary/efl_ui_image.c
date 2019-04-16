@@ -534,7 +534,7 @@ EOLIAN static void
 _efl_ui_image_efl_gfx_image_smooth_scale_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, Eina_Bool smooth)
 {
    sd->smooth = smooth;
-   if (!sd->edje) evas_object_image_smooth_scale_set(sd->img, smooth);
+   if (sd->img && (!sd->edje)) evas_object_image_smooth_scale_set(sd->img, smooth);
 }
 
 EOLIAN static Eina_Bool
