@@ -2418,6 +2418,7 @@ _efl_ui_scroll_manager_efl_object_constructor(Eo *obj, Efl_Ui_Scroll_Manager_Dat
    sd->scrolling = EINA_FALSE;
 
    sd->event_rect = evas_object_rectangle_add(evas_object_evas_get(sd->parent));
+   efl_key_data_set(sd->event_rect, "_elm_leaveme", obj);
    efl_canvas_group_member_add(sd->parent, sd->event_rect);
    efl_ui_widget_sub_object_add(sd->parent, sd->event_rect);
 
