@@ -1223,12 +1223,12 @@ _ecore_x_fd_handler(void *data,
         XEvent ev;
 
         XNextEvent(d, &ev);
-#ifdef ENABLE_XIM
+#ifdef BUILD_ECORE_IMF_XIM
         /* Filter event for XIM */
         if (XFilterEvent(&ev, ev.xkey.window))
           continue;
 
-#endif /* ifdef ENABLE_XIM */
+#endif /* ifdef BUILD_ECORE_IMF_XIM */
         if ((ev.type >= 0) && (ev.type < _ecore_x_event_handlers_num))
           {
              if (_ecore_x_event_handlers[AnyXEvent])

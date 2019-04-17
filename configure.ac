@@ -4479,7 +4479,7 @@ if test "x${want_xim}" = "xyes" && test "x${want_ecore_imf_xim}" = "xyes" ; then
    [X11 XOpenIM],
    [
      have_ecore_imf_xim=yes
-     AC_DEFINE([ENABLE_XIM], [1], [Enable X Input Method])
+     AC_DEFINE([BUILD_ECORE_IMF_XIM], [1], [Enable X Input Method])
    ])
 fi
 
