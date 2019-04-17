@@ -784,20 +784,59 @@ _efl_ui_pager_loop_mode_get(const Eo *obj EINA_UNUSED,
    return pd->loop;
 }
 
+static void
+_unpack_all(Efl_Ui_Pager_Data *pd,
+            Eina_Bool clear)
+{
+   Eo *subobj;
+
+   pd->cnt = 0;
+   pd->curr.page = -1;
+   pd->curr.pos = 0.0;
+
+   if (pd->transition)
+     {
+        efl_page_transition_unpack_all(pd->transition);
+     }
+   else
+     {
+        subobj = eina_list_nth(pd->content_list, pd->curr.page);
+        efl_pack_unpack(pd->page_box, subobj);
+     }
+
+   if (clear)
+     {
+        EINA_LIST_FREE(pd->content_list, subobj)
+           evas_object_del(subobj);
+     }
+   else
+     {
+        EINA_LIST_FREE(pd->content_list, subobj)
+           efl_canvas_object_clipper_set(subobj, NULL);
+     }
+
+   if (pd->indicator)
+     {
+        efl_page_indicator_unpack_all(pd->indicator);
+     }
+}
+
 EOLIAN static Eina_Bool
 _efl_ui_pager_efl_pack_pack_clear(Eo *obj EINA_UNUSED,
-                                  Efl_Ui_Pager_Data *pd EINA_UNUSED)
+                                  Efl_Ui_Pager_Data *pd)
 {
-   ERR("Soon to be implemented");
-   return EINA_FALSE;
+   _unpack_all(pd, EINA_TRUE);
+
+   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
 _efl_ui_pager_efl_pack_unpack_all(Eo *obj EINA_UNUSED,
-                                  Efl_Ui_Pager_Data *pd EINA_UNUSED)
+                                  Efl_Ui_Pager_Data *pd)
 {
-   ERR("Soon to be implemented");
-   return EINA_FALSE;
+   _unpack_all(pd, EINA_FALSE);
+
+   return EINA_TRUE;
 }
 
 static void
