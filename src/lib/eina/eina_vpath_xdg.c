@@ -13,62 +13,65 @@
 void
 eina_xdg_env_init(void)
 {
-   char *s;
-   char home[PATH_MAX];
+   char home[PATH_MAX], *s;
    Eina_Vpath_Interface_User user;
 
    eina_vpath_resolve_snprintf(home, sizeof(home), "(:home:)/");
-
    memset(&user, 0, sizeof(Eina_Vpath_Interface_User));
 
+#define FATAL_SNPRINTF(_buf, _err, _fmt, ...) \
+   do { \
+      if ((size_t)snprintf(_buf, sizeof(_buf), _fmt, ## __VA_ARGS__) >= (sizeof(_buf) - 1)) { \
+         fprintf(stderr, _err"\n", _buf); \
+         abort(); \
+      } \
+   } while (0)
+
 #ifdef _WIN32
-
 # define ENV_SET(_env, _dir, _meta) \
-   char _meta [PATH_MAX + 128]; \
-   char *_meta##env = _env; \
-   char *_meta##dir = _dir; \
-   if (_meta##env) \
-     strcpy(_meta, getenv(_meta##env)); \
-   else \
-     strcpy(_meta, home); \
-   if (_meta##dir) \
-     strcat(_meta, _meta##dir); \
-   s = _meta; \
-   (&user)->_meta = s;
+   char _meta[PATH_MAX + 128]; \
+   if (_env) { \
+      s = getenv(_env); \
+      if (!s) s = home; \
+   } else s = home; \
+   if (_dir) FATAL_SNPRINTF(_meta, "vpath string '%s' truncated - fatal", "%s\\%s", s, _dir); \
+   else FATAL_SNPRINTF(_meta, "vpath string '%s' truncated - fatal", "%s\\", s); \
+   (&user)->_meta = _meta;
 
-   ENV_SET(NULL, "\\Desktop", desktop);
-   ENV_SET(NULL, "\\Documents", documents);
-   ENV_SET(NULL, "\\Downloads", downloads);
-   ENV_SET(NULL, "\\Music", music);
-   ENV_SET(NULL, "\\Pictures", pictures);
+   ENV_SET(NULL, "Desktop", desktop);
+   ENV_SET(NULL, "Documents", documents);
+   ENV_SET(NULL, "Downloads", downloads);
+   ENV_SET(NULL, "Music", music);
+   ENV_SET(NULL, "Pictures", pictures);
    ENV_SET("CommonProgramFiles", NULL, pub);
-   ENV_SET("APPDATA", "\\Microsoft\\Windows\\Templates", templates);
-   ENV_SET(NULL, "\\Videos", videos);
+   ENV_SET("APPDATA", "Microsoft\\Windows\\Templates", templates);
+   ENV_SET(NULL, "Videos", videos);
    ENV_SET("LOCALAPPDATA", NULL, data);
-   ENV_SET("LOCALAPPDATA", "\\Temp", tmp);
+   ENV_SET("LOCALAPPDATA", "Temp", tmp);
    ENV_SET("APPDATA", NULL, config);
    ENV_SET("LOCALAPPDATA", NULL, cache);
-   ENV_SET("APPDATA", NULL, run);
-
+   if (!(s = getenv("APPDATA")))
+     user.run = NULL;
+   else
+     user.run = s;
 #else /* _WIN32 */
-
 # if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
 #  define ENV_HOME_SET(_env, _dir, _meta) \
    char _meta [PATH_MAX + 128]; \
    if ((getuid() != geteuid()) || (!(s = getenv(_env)))) { \
-      snprintf(_meta, sizeof(_meta), "%s/"_dir, home); \
+      FATAL_SNPRINTF(_meta, "vpath string '%s' truncated - fatal", "%s/"_dir, home); \
       s = _meta; \
    } \
    (&user)->_meta = s;
-#else
+# else
 #  define ENV_HOME_SET(_env, _dir, _meta) \
    char _meta [PATH_MAX + 128]; \
    if (!(s = getenv(_env))) { \
-      snprintf(_meta, sizeof(_meta), "%s/"_dir, home); \
+      FATAL_SNPRINTF(_meta, "vpath string '%s' truncated - fatal", "%s/"_dir, home); \
       s = _meta; \
    } \
    (&user)->_meta = s;
-#endif
+# endif
    // $XDG_DESKTOP_DIR="$HOME/Desktop"
    ENV_HOME_SET("XDG_DESKTOP_DIR", "Desktop", desktop);
    // $XDG_DOCUMENTS_DIR="$HOME/Documents"
@@ -102,15 +105,14 @@ eina_xdg_env_init(void)
    //   $HOME/.cache should be used.
    ENV_HOME_SET("XDG_CACHE_HOME", ".cache", cache);
 
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+# if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if ((getuid() != geteuid()) || (!(s = getenv("XDG_RUNTIME_DIR"))))
-#else
+# else
    if (!(s = getenv("XDG_RUNTIME_DIR")))
-#endif
+# endif
      user.run = NULL;
    else
      user.run = s;
-
 #endif /* _WIN32 */
 
    eina_vpath_interface_user_set(&user);
