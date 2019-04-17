@@ -1,6 +1,6 @@
 interface Efl.Content
 {
-   [[Common interface for objects that have a (single) content.
+   [[Common interface for objects that have a single sub-object as content.
 
      This is used for the default content part of widgets, as well as for
      individual parts through @Efl.Part.
@@ -9,17 +9,24 @@ interface Efl.Content
    ]]
    methods {
       @property content {
-         [[Swallowed sub-object contained in this object.]]
+         [[Sub-object currently set as this object's single content.
+
+           If it is set multiple times, previous sub-objects are removed first.
+           Therefore, if an invalid $content is set the object will
+           become empty (it will have no sub-object).
+         ]]
          set {
-            return: bool; [[$true on success, $false otherwise]]
+            return: bool; [[$true if $content was successfully swallowed.]]
          }
          get {}
          values {
-            content: Efl.Gfx.Entity; [[The object to swallow.]]
+            content: Efl.Gfx.Entity; [[The sub-object.]]
          }
       }
       content_unset {
-         [[Unswallow the object in the current container and return it.]]
+         [[Remove the sub-object currently set as content of this object and return it.
+           This object becomes empty.
+         ]]
          return: Efl.Gfx.Entity; [[Unswallowed object]]
       }
    }
