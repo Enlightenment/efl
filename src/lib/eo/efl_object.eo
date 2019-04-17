@@ -411,6 +411,11 @@ abstract Efl.Object
       del @hot: void; [[Object is being deleted. See @.destructor.]]
       invalidate @hot: void; [[Object is being invalidated and losing its parent. See @.invalidate.]]
       noref @hot: void; [[Object has lost its last reference, only parent relationship is keeping it alive. Advanced usage.]]
+      ownership,unique @hot: void; [[Object has lost a reference and only one is left. It has just one owner now.
+                                     Triggered whenever the refcount goes from two to one.]]
+      ownership,shared @hot: void; [[Object has acquired a second reference. It has multiple owners now.
+                                     Triggered whenever increasing the refcount from one to two,
+                                     it will not trigger by further increasing the refcount beyond two.]]
       destruct @hot: void; [[Object has been fully destroyed. It can not be used
          beyond this point. This event should only serve to clean up any
          reference you keep to the object.]]
