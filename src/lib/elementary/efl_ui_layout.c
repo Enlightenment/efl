@@ -1010,8 +1010,11 @@ _efl_ui_layout_content_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Ev
              if (!strcmp(part, sub_d->part))
                {
                   if (content == sub_d->obj) goto end;
-                  _eo_unparent_helper(sub_d->obj, obj);
-                  evas_object_del(sub_d->obj);
+                  if (efl_alive_get(sub_d->obj))
+                    {
+                       _eo_unparent_helper(sub_d->obj, obj);
+                       evas_object_del(sub_d->obj);
+                    }
                   break;
                }
              /* was previously swallowed at another part -- mimic
