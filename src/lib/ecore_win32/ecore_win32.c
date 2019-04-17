@@ -25,12 +25,6 @@
  * @cond LOCAL
  */
 
-/* FIXME: uncomment when mingw-w64 will be updated in win-builds */
-
-/* #ifndef WM_CLIPBOARDUPDATE */
-# define WM_CLIPBOARDUPDATE 0x031D
-/* #endif */
-
 /* OLE IID for Drag'n Drop */
 
 #define INITGUID
