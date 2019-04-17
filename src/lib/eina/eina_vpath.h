@@ -36,7 +36,7 @@
  *   (:app.tmp:)/some-temp-file/path/file.txt
  *
  *   (:usr.desktop:)/file-in-users-desktop-directory.txt
- *   (:usr.documents:)/letter-to-gradma.doc
+ *   (:usr.documents:)/letter-to-grandma.doc
  *   (:usr.downloads:)/file-downloaded-here.zip
  *   (:usr.music:)/fave-song.mp3
  *   (:usr.pictures:)/a-photo.,jpg
@@ -44,7 +44,7 @@
  *   (:usr.templates:)/some-template-document.txt
  *   (:usr.videos:)/some-video-file.mp4
  *   (:usr.data:)/file-in-user-data-dir
- *   (:usr.config:)/file-in-user-conifg-dir
+ *   (:usr.config:)/file-in-user-config-dir
  *   (:usr.cache:)/file-in-user-cache-dir
  *   (:usr.run:)/file-in-xdg-runtime-dir
  *   (:usr.tmp:)/some-temp-file/path/file.txt

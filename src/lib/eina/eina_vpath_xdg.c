@@ -21,6 +21,37 @@ eina_xdg_env_init(void)
 
    memset(&user, 0, sizeof(Eina_Vpath_Interface_User));
 
+#ifdef _WIN32
+
+# define ENV_SET(_env, _dir, _meta) \
+   char _meta [PATH_MAX + 128]; \
+   char *_meta##env = _env; \
+   char *_meta##dir = _dir; \
+   if (_meta##env) \
+     strcpy(_meta, getenv(_meta##env)); \
+   else \
+     strcpy(_meta, home); \
+   if (_meta##dir) \
+     strcat(_meta, _meta##dir); \
+   s = _meta; \
+   (&user)->_meta = s;
+
+   ENV_SET(NULL, "\\Desktop", desktop);
+   ENV_SET(NULL, "\\Documents", documents);
+   ENV_SET(NULL, "\\Downloads", downloads);
+   ENV_SET(NULL, "\\Music", music);
+   ENV_SET(NULL, "\\Pictures", pictures);
+   ENV_SET("CommonProgramFiles", NULL, pub);
+   ENV_SET("APPDATA", "\\Microsoft\\Windows\\Templates", templates);
+   ENV_SET(NULL, "\\Videos", videos);
+   ENV_SET("LOCALAPPDATA", NULL, data);
+   ENV_SET("LOCALAPPDATA", "\\Temp", tmp);
+   ENV_SET("APPDATA", NULL, config);
+   ENV_SET("LOCALAPPDATA", NULL, cache);
+   ENV_SET("APPDATA", NULL, run);
+
+#else /* _WIN32 */
+
 # if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
 #  define ENV_HOME_SET(_env, _dir, _meta) \
    char _meta [PATH_MAX + 128]; \
@@ -79,6 +110,8 @@ eina_xdg_env_init(void)
      user.run = NULL;
    else
      user.run = s;
+
+#endif /* _WIN32 */
 
    eina_vpath_interface_user_set(&user);
 }
