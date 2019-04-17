@@ -1179,6 +1179,12 @@ _special_event_count_inc(Eo *obj_id, Efl_Object_Data *pd, const Efl_Callback_Arr
      }
    else if (it->desc == EFL_EVENT_DESTRUCT)
      pd->has_destroyed_event_cb = EINA_TRUE;
+   else if (it->desc == EFL_EVENT_OWNERSHIP_SHARED || it->desc == EFL_EVENT_OWNERSHIP_UNIQUE)
+     {
+        EO_OBJ_POINTER_RETURN(obj_id, obj);
+        obj->ownership_track = EINA_TRUE;
+        EO_OBJ_DONE(obj_id);
+     }
 }
 
 static inline void
