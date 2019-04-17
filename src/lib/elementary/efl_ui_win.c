@@ -7547,7 +7547,7 @@ _efl_ui_win_content_set(Eo *obj, Efl_Ui_Win_Data *sd, const char *part, Eo *cont
    if (eina_streq(part, "content"))
      {
         if (sd->content == content) return EINA_TRUE;
-        if (!elm_widget_sub_object_add(obj, content))
+        if (content && !elm_widget_sub_object_add(obj, content))
           goto err;
         /* FIXME: Switch to swallow inside the frame
         if (!edje_object_part_swallow(sd->frame_obj, "elm.swallow.client", content))
