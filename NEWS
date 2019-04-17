@@ -1,6 +1,20 @@
 ==========
-EFL 1.22.0
+EFL 1.22.1
 ==========
+
+Changes since 1.22.0:
+---------------------
+
+Fixes:
+
+   * remove vpath test for user dir the test was broken and fixing is insane (T7728)
+   * tests - fix check header to always include eina due to windows
+   * evas - fix crash/junk pixel content but with tiled rotate at 270 + neon
+   * tests - remove one of the eina strtod tests as libc is failing
+   * ecore_imf: do not loop forever on shutdown when there is no more a display
+   * efl_ui_list: fix to delete sub objects in efl_object_invalidate
+   * efl_ui_widget: Fix disabled set calling without meaning. (T7799)
+
 
 Changes since 1.21.0:
 ---------------------

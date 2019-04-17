@@ -1,5 +1,5 @@
 project('efl', ['c','cpp'],
-  version: '1.22.0',
+  version: '1.22.1',
   default_options : ['buildtype=release', 'cpp_std=c++11'],
   meson_version : '>=0.47'
 )
