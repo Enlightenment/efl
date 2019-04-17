@@ -2248,15 +2248,14 @@ modules_evas_image_savers_tgv_module_la_CPPFLAGS = \
 -I$(top_srcdir)/src/static_libs/rg_etc \
 -I$(top_srcdir)/src/lib/evas/ \
 -DEFL_BUILD \
-@EVAS_CFLAGS@ \
-@evas_image_saver_tgv_cflags@
+@EVAS_CFLAGS@
+
 if ! ENABLE_LIBLZ4
 modules_evas_image_savers_tgv_module_la_CPPFLAGS += \
 -I$(top_srcdir)/src/static_libs/lz4
 endif
 modules_evas_image_savers_tgv_module_la_LIBADD = \
-@USE_EVAS_LIBS@ \
-@evas_image_saver_tgv_libs@
+@USE_EVAS_LIBS@
 modules_evas_image_savers_tgv_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
 modules_evas_image_savers_tgv_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
 modules_evas_image_savers_tgv_module_la_LIBTOOLFLAGS = --tag=disable-static
