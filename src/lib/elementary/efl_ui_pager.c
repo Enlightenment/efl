@@ -853,12 +853,19 @@ _efl_ui_pager_efl_pack_unpack(Eo *obj,
 }
 
 EOLIAN static Efl_Gfx_Entity *
-_efl_ui_pager_efl_pack_linear_pack_unpack_at(Eo *obj EINA_UNUSED,
-                                             Efl_Ui_Pager_Data *pd EINA_UNUSED,
-                                             int index EINA_UNUSED)
+_efl_ui_pager_efl_pack_linear_pack_unpack_at(Eo *obj,
+                                             Efl_Ui_Pager_Data *pd,
+                                             int index)
 {
-   ERR("Soon to be implemented");
-   return NULL;
+   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return NULL;
+
+   if ((index >= pd->cnt) || (index < 0)) return NULL;
+
+   Efl_Gfx_Entity *subobj = eina_list_nth(pd->content_list, index);
+
+   _unpack(obj, pd, subobj, index);
+
+   return subobj;
 }
 
 
