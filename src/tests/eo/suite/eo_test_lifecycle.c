@@ -163,6 +163,228 @@ EFL_START_TEST(eo_test_unref_noref)
 EFL_END_TEST
 
 typedef struct {
+   int shared, unique, invalidate;
+} OwnershipEventsCounter;
+
+static void
+_ownership_shared_event(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   OwnershipEventsCounter *counter = data;
+   ++(counter->shared);
+}
+
+static void
+_ownership_unique_event(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   OwnershipEventsCounter *counter = data;
+   ++(counter->unique);
+}
+
+static void
+_invalidate_ownership_event(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   OwnershipEventsCounter *counter = data;
+   ++(counter->invalidate);
+}
+
+
+EFL_START_TEST(eo_test_ownership_events)
+{
+   OwnershipEventsCounter counter = {0,};
+   Eo *obj = efl_add_ref(SIMPLE_CLASS, NULL);
+
+   efl_event_callback_add(obj, EFL_EVENT_OWNERSHIP_SHARED, _ownership_shared_event, &counter);
+   efl_event_callback_add(obj, EFL_EVENT_OWNERSHIP_UNIQUE, _ownership_unique_event, &counter);
+   efl_event_callback_add(obj, EFL_EVENT_INVALIDATE, _invalidate_ownership_event, &counter);
+
+   efl_ref(obj);
+   ck_assert_int_eq(counter.shared, 1);
+   ck_assert_int_eq(counter.unique, 0);
+
+   efl_unref(obj);
+   ck_assert_int_eq(counter.shared, 1);
+   ck_assert_int_eq(counter.unique, 1);
+
+   efl_ref(obj);
+   ck_assert_int_eq(counter.shared, 2);
+   ck_assert_int_eq(counter.unique, 1);
+   efl_ref(obj);
+   ck_assert_int_eq(counter.shared, 2);
+   ck_assert_int_eq(counter.unique, 1);
+   efl_ref(obj);
+   ck_assert_int_eq(counter.shared, 2);
+   ck_assert_int_eq(counter.unique, 1);
+
+   efl_unref(obj);
+   ck_assert_int_eq(counter.shared, 2);
+   ck_assert_int_eq(counter.unique, 1);
+   efl_unref(obj);
+   ck_assert_int_eq(counter.shared, 2);
+   ck_assert_int_eq(counter.unique, 1);
+   efl_unref(obj);
+   ck_assert_int_eq(counter.shared, 2);
+   ck_assert_int_eq(counter.unique, 2);
+   ck_assert_int_eq(counter.invalidate, 0);
+
+   efl_unref(obj);
+   ck_assert_int_eq(counter.shared, 2);
+   ck_assert_int_eq(counter.unique, 2);
+   ck_assert_int_eq(counter.invalidate, 1);
+}
+EFL_END_TEST
+
+EFL_START_TEST(eo_test_ownership_events_with_parent)
+{
+   OwnershipEventsCounter counter = {0,};
+   Eo *par = efl_add_ref(SIMPLE_CLASS, NULL);
+   Eo *obj = efl_add(SIMPLE_CLASS, par);
+
+   efl_event_callback_add(obj, EFL_EVENT_OWNERSHIP_SHARED, _ownership_shared_event, &counter);
+   efl_event_callback_add(obj, EFL_EVENT_OWNERSHIP_UNIQUE, _ownership_unique_event, &counter);
+   efl_event_callback_add(obj, EFL_EVENT_INVALIDATE, _invalidate_ownership_event, &counter);
+
+   efl_ref(obj);
+   ck_assert_int_eq(counter.shared, 1);
+   ck_assert_int_eq(counter.unique, 0);
+
+   efl_unref(obj);
+   ck_assert_int_eq(counter.shared, 1);
+   ck_assert_int_eq(counter.unique, 1);
+
+   efl_ref(obj);
+   ck_assert_int_eq(counter.shared, 2);
+   ck_assert_int_eq(counter.unique, 1);
+   efl_ref(obj);
+   ck_assert_int_eq(counter.shared, 2);
+   ck_assert_int_eq(counter.unique, 1);
+
+   efl_unref(obj);
+   ck_assert_int_eq(counter.shared, 2);
+   ck_assert_int_eq(counter.unique, 1);
+   efl_unref(obj);
+   ck_assert_int_eq(counter.shared, 2);
+   ck_assert_int_eq(counter.unique, 2);
+   ck_assert_int_eq(counter.invalidate, 0);
+
+   efl_del(obj);
+   ck_assert_int_eq(counter.shared, 2);
+   ck_assert_int_eq(counter.unique, 2);
+   ck_assert_int_eq(counter.invalidate, 1);
+
+   efl_unref(par);
+   ck_assert_int_eq(counter.shared, 2);
+   ck_assert_int_eq(counter.unique, 2);
+}
+EFL_END_TEST
+
+EFL_START_TEST(eo_test_ownership_events_with_parent_invalidate)
+{
+   OwnershipEventsCounter counter = {0,};
+   Eo *par = efl_add_ref(SIMPLE_CLASS, NULL);
+   Eo *obj = efl_add(SIMPLE_CLASS, par);
+
+   efl_event_callback_add(obj, EFL_EVENT_OWNERSHIP_SHARED, _ownership_shared_event, &counter);
+   efl_event_callback_add(obj, EFL_EVENT_OWNERSHIP_UNIQUE, _ownership_unique_event, &counter);
+   efl_event_callback_add(obj, EFL_EVENT_INVALIDATE, _invalidate_ownership_event, &counter);
+
+   /* Kill parent */
+   efl_unref(par);
+   ck_assert_int_eq(counter.shared, 0);
+   ck_assert_int_eq(counter.unique, 0);
+   ck_assert_int_eq(counter.invalidate, 1);
+}
+EFL_END_TEST
+
+EFL_START_TEST(eo_test_ownership_events_with_parent_invalidate2)
+{
+   OwnershipEventsCounter counter = {0,};
+   Eo *par = efl_add_ref(SIMPLE_CLASS, NULL);
+   Eo *obj = efl_add(SIMPLE_CLASS, par);
+
+   efl_event_callback_add(obj, EFL_EVENT_OWNERSHIP_SHARED, _ownership_shared_event, &counter);
+   efl_event_callback_add(obj, EFL_EVENT_OWNERSHIP_UNIQUE, _ownership_unique_event, &counter);
+   efl_event_callback_add(obj, EFL_EVENT_INVALIDATE, _invalidate_ownership_event, &counter);
+
+   efl_ref(obj);
+   ck_assert_int_eq(counter.shared, 1);
+   ck_assert_int_eq(counter.unique, 0);
+   ck_assert_int_eq(counter.invalidate, 0);
+
+   /* Kill parent */
+   efl_unref(par);
+   ck_assert_int_eq(counter.shared, 1);
+   ck_assert_int_eq(counter.unique, 0);
+   ck_assert_int_eq(counter.invalidate, 1);
+}
+EFL_END_TEST
+
+EFL_START_TEST(eo_test_ownership_events_with_parent_invalidate3)
+{
+   OwnershipEventsCounter counter = {0,};
+   Eo *par = efl_add_ref(SIMPLE_CLASS, NULL);
+   Eo *obj = efl_add(SIMPLE_CLASS, par);
+
+   efl_event_callback_add(obj, EFL_EVENT_OWNERSHIP_SHARED, _ownership_shared_event, &counter);
+   efl_event_callback_add(obj, EFL_EVENT_OWNERSHIP_UNIQUE, _ownership_unique_event, &counter);
+   efl_event_callback_add(obj, EFL_EVENT_INVALIDATE, _invalidate_ownership_event, &counter);
+
+   efl_ref(obj);
+   ck_assert_int_eq(counter.shared, 1);
+   ck_assert_int_eq(counter.unique, 0);
+
+   efl_unref(obj);
+   ck_assert_int_eq(counter.shared, 1);
+   ck_assert_int_eq(counter.unique, 1);
+
+   efl_ref(obj);
+   ck_assert_int_eq(counter.shared, 2);
+   ck_assert_int_eq(counter.unique, 1);
+   efl_ref(obj);
+   ck_assert_int_eq(counter.shared, 2);
+   ck_assert_int_eq(counter.unique, 1);
+   ck_assert_int_eq(counter.invalidate, 0);
+
+   /* Kill parent */
+   efl_unref(par);
+   ck_assert_int_eq(counter.shared, 2);
+   ck_assert_int_eq(counter.unique, 1);
+   ck_assert_int_eq(counter.invalidate, 1);
+}
+EFL_END_TEST
+
+EFL_START_TEST(eo_test_ownership_events_self_invalidate)
+{
+   OwnershipEventsCounter counter = {0,};
+   Eo *par = efl_add_ref(SIMPLE_CLASS, NULL);
+   Eo *obj = efl_add(SIMPLE_CLASS, par);
+
+   efl_event_callback_add(obj, EFL_EVENT_OWNERSHIP_SHARED, _ownership_shared_event, &counter);
+   efl_event_callback_add(obj, EFL_EVENT_OWNERSHIP_UNIQUE, _ownership_unique_event, &counter);
+   efl_event_callback_add(obj, EFL_EVENT_INVALIDATE, _invalidate_ownership_event, &counter);
+
+   ck_assert_int_eq(counter.shared, 0);
+   ck_assert_int_eq(counter.unique, 0);
+   ck_assert_int_eq(counter.invalidate, 0);
+
+   efl_ref(obj);
+   ck_assert_int_eq(counter.shared, 1);
+   ck_assert_int_eq(counter.unique, 0);
+   ck_assert_int_eq(counter.invalidate, 0);
+
+   efl_del(obj);
+   ck_assert_int_eq(counter.shared, 1);
+   ck_assert_int_eq(counter.unique, 0);
+   ck_assert_int_eq(counter.invalidate, 1);
+
+   /* Kill parent */
+   efl_unref(par);
+   ck_assert_int_eq(counter.shared, 1);
+   ck_assert_int_eq(counter.unique, 0);
+   ck_assert_int_eq(counter.invalidate, 1);
+}
+EFL_END_TEST
+
+typedef struct {
   Eo *par;
   Eina_Bool called;
 } Invalidating_Test_Helper;
@@ -216,6 +438,12 @@ void eo_test_lifecycle(TCase *tc)
    tcase_add_test(tc, eo_test_shutdown_eventting);
    tcase_add_test(tc, eo_test_del_in_noref);
    tcase_add_test(tc, eo_test_unref_noref);
+   tcase_add_test(tc, eo_test_ownership_events);
+   tcase_add_test(tc, eo_test_ownership_events_with_parent);
+   tcase_add_test(tc, eo_test_ownership_events_with_parent_invalidate);
+   tcase_add_test(tc, eo_test_ownership_events_with_parent_invalidate2);
+   tcase_add_test(tc, eo_test_ownership_events_with_parent_invalidate3);
+   tcase_add_test(tc, eo_test_ownership_events_self_invalidate);
    tcase_add_test(tc, eo_test_invalidating_get);
    tcase_add_test(tc, eo_test_alive_get);
 }
