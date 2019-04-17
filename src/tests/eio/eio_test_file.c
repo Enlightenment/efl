@@ -41,11 +41,10 @@ _delete_filter_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED,
 }
 
 static void
-_main_cb(void *data, Eio_File *handler EINA_UNUSED, const char *file)
+_main_cb(void *data, Eio_File *handler EINA_UNUSED, const char *file EINA_UNUSED)
 {
    int *number_of_listed_files = (int *)data;
 
-   fprintf(stderr, "Processing file:%s\n", file);
    (*number_of_listed_files)++;
 }
 
@@ -63,11 +62,10 @@ _direct_filter_cb(void *data EINA_UNUSED, Eio_File *handler EINA_UNUSED,
 }
 
 static void
-_direct_main_cb(void *data, Eio_File *handler EINA_UNUSED, const Eina_File_Direct_Info *info)
+_direct_main_cb(void *data, Eio_File *handler EINA_UNUSED, const Eina_File_Direct_Info *info EINA_UNUSED)
 {
    int *number_of_listed_files = (int *)data;
 
-   fprintf(stderr, "Processing file:%s\n", info->path);
    (*number_of_listed_files)++;
 }
 
