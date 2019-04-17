@@ -427,7 +427,7 @@ _efl_page_transition_scroll_unpack_all(Eo *obj EINA_UNUSED,
         pi->content = NULL;
         pi->visible = EINA_FALSE;
      }
-   return EINA_TRUE;
+   return;
 }
 
 EOLIAN static void
