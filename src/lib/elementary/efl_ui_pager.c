@@ -379,6 +379,19 @@ _efl_ui_pager_efl_object_constructor(Eo *obj,
    return obj;
 }
 
+EOLIAN static void
+_efl_ui_pager_efl_object_invalidate(Eo *obj,
+                                    Efl_Ui_Pager_Data *pd)
+{
+   efl_invalidate(efl_super(obj, MY_CLASS));
+
+   /* Since the parent of foreclip and backclip is evas, foreclip and backclip
+    * are not deleted automatically when pager is deleted.
+    * Therefore, foreclip and backclip are deleted manually here. */
+   efl_del(pd->foreclip);
+   efl_del(pd->backclip);
+}
+
 EOLIAN static int
 _efl_ui_pager_efl_container_content_count(Eo *obj EINA_UNUSED,
                                           Efl_Ui_Pager_Data *pd)
