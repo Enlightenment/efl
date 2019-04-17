@@ -785,6 +785,7 @@ _elm_scroller_efl_canvas_group_group_add(Eo *obj, Elm_Scroller_Data *priv)
      CRI("Failed to set layout!");
 
    priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
+   evas_object_data_set(priv->hit_rect, "_elm_leaveme", obj);
    evas_object_smart_member_add(priv->hit_rect, obj);
    elm_widget_sub_object_add(obj, priv->hit_rect);
 
