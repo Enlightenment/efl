@@ -1622,9 +1622,10 @@ _evas_nv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
    unsigned char *yp1, *yp2, *up, *vp;
    unsigned char *dp1;
    unsigned char *dp2;
+   int stride = sizeof(DATA32) * w;
 
    dp1 = rgb;
-   dp2 = dp1 + sizeof (int) * w;
+   dp2 = dp1 + stride;
 
    for (yy = 0; yy < h; yy++)
      {
@@ -1646,8 +1647,8 @@ _evas_nv12torgb_raster(unsigned char **yuv, unsigned char *rgb, int w, int h)
           }
 
         /* jump one line */
-        dp1 += sizeof (int) * w;
-        dp2 += sizeof (int) * w;
+        dp1 += stride;
+        dp2 += stride;
      }
 }
 
