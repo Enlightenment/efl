@@ -58,6 +58,7 @@ static Eina_Hash *_eina_value_inner_mps = NULL;
 static Eina_Lock _eina_value_inner_mps_lock;
 static char *_eina_value_mp_choice = NULL;
 static int _eina_value_log_dom = -1;
+static const Eina_Value _eina_value_empty = EINA_VALUE_EMPTY;
 
 #ifdef ERR
 #undef ERR
@@ -3954,6 +3955,7 @@ _eina_value_type_value_vset(const Eina_Value_Type *type EINA_UNUSED, void *mem, 
 {
    Eina_Value *dst = mem;
    Eina_Value src = va_arg(args, Eina_Value);
+
    return eina_value_copy(&src, dst);
 }
 
@@ -3962,6 +3964,7 @@ _eina_value_type_value_pset(const Eina_Value_Type *type EINA_UNUSED, void *mem, 
 {
    Eina_Value *dst = mem;
    const Eina_Value *src = ptr;
+
    return eina_value_copy(src, dst);
 }
 
@@ -5591,9 +5594,7 @@ eina_value_new(const Eina_Value_Type *type)
    if (!value) return NULL;
    if (!type)
      {
-        const Eina_Value empty = EINA_VALUE_EMPTY;
-
-        memcpy(value, &empty, sizeof (empty));
+        memcpy(value, &_eina_value_empty, sizeof (_eina_value_empty));
         return value;
      }
    if (!eina_value_setup(value, type))
@@ -5622,6 +5623,13 @@ eina_value_copy(const Eina_Value *value, Eina_Value *copy)
    Eina_Bool ret;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(value, EINA_FALSE);
+
+   if (!memcmp(value, &_eina_value_empty, sizeof (Eina_Value)))
+     {
+        memcpy(copy, &_eina_value_empty, sizeof (Eina_Value));
+        return EINA_TRUE;
+     }
+
    EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_type_check(value->type),
                                    EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(copy, EINA_FALSE);
