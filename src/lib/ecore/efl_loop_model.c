@@ -97,6 +97,7 @@ _efl_loop_model_efl_model_property_ready_get(Eo *obj, void *pd EINA_UNUSED, cons
              efl_event_callback_add(obj,
                                     EFL_MODEL_EVENT_PROPERTIES_CHANGED,
                                     _propagate_future, wd);
+             return efl_future_then(obj, eina_future_new(wd->p));
           }
 
         return eina_future_rejected(efl_loop_future_scheduler_get(obj), err);
