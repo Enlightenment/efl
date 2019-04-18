@@ -31,7 +31,6 @@ static const Efl_Test_Case etc[] = {
    { "Dlfcn", evil_test_dlfcn },
    /* { "Fcntl", evil_test_fcntl }, */
    /* { "Langinfo", evil_test_langinfo }, */
-   { "Libgen", evil_test_libgen },
    { "Main", evil_test_main },
    /* { "Mman", evil_test_mman }, */
    /* { "Pwd", evil_test_pwd }, */

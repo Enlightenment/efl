@@ -61,7 +61,6 @@ tests_evil_evil_suite_SOURCES = \
 tests/evil/evil_suite.c \
 tests/evil/evil_suite.h \
 tests/evil/evil_test_dlfcn.c \
-tests/evil/evil_test_libgen.c \
 tests/evil/evil_test_main.c \
 tests/evil/evil_test_stdio.c \
 tests/evil/evil_test_stdlib.c \
