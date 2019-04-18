@@ -406,6 +406,8 @@ _elm_fileselector_entry_path_set_internal(Evas_Object *obj, const char *path)
 EOLIAN static void
 _elm_fileselector_entry_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Elm_Fileselector_Entry_Data *sd, Efl_Model *model)
 {
+   if (!efl_isa(model, EFL_IO_MODEL_CLASS))
+     return ;
    efl_ui_view_model_set(sd->button, model);
    efl_ui_view_model_set(sd->entry, model);
    efl_ui_property_bind(sd->entry, "default", "path");
