@@ -1229,17 +1229,49 @@ eng_image_scale_hint_get(void *engine EINA_UNUSED, void *image)
 }
 
 static Eina_Bool
-eng_image_map_draw(void *engine EINA_UNUSED, void *data, void *context, void *surface, void *image,
-                   RGBA_Map *m, int smooth, int level, Eina_Bool do_async EINA_UNUSED)
+eng_image_map_draw(void *engine, void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level, Eina_Bool do_async)
 {
    Evas_Engine_GL_Context *gl_context;
+   Evas_GL_Image *gim = image;
+
    if (!image) return EINA_FALSE;
    gl_context = gl_generic_context_get(data, 1);
    evas_gl_common_context_target_surface_set(gl_context, surface);
    gl_context->dc = context;
 
-   evas_gl_common_image_map_draw(gl_context, image, m->count, &m->pts[0],
-                                 smooth, level);
+   if ((m->pts[0].x == m->pts[3].x) &&
+       (m->pts[1].x == m->pts[2].x) &&
+       (m->pts[0].y == m->pts[1].y) &&
+       (m->pts[3].y == m->pts[2].y) &&
+       (m->pts[0].x <= m->pts[1].x) &&
+       (m->pts[0].y <= m->pts[2].y) &&
+       (m->pts[0].u == 0) &&
+       (m->pts[0].v == 0) &&
+       (m->pts[1].u == (gim->w << FP)) &&
+       (m->pts[1].v == 0) &&
+       (m->pts[2].u == (gim->w << FP)) &&
+       (m->pts[2].v == (gim->h << FP)) &&
+       (m->pts[3].u == 0) &&
+       (m->pts[3].v == (gim->h << FP)) &&
+       (m->pts[0].col == 0xffffffff) &&
+       (m->pts[1].col == 0xffffffff) &&
+       (m->pts[2].col == 0xffffffff) &&
+       (m->pts[3].col == 0xffffffff))
+     {
+        int dx, dy, dw, dh;
+
+        dx = m->pts[0].x >> FP;
+        dy = m->pts[0].y >> FP;
+        dw = (m->pts[2].x >> FP) - dx;
+        dh = (m->pts[2].y >> FP) - dy;
+        eng_image_draw(engine, data, context, surface, image,
+                       0, 0, gim->w, gim->h, dx, dy, dw, dh, smooth, do_async);
+     }
+   else
+     {
+        evas_gl_common_image_map_draw(gl_context, image, m->count, &m->pts[0],
+                                      smooth, level);
+     }
 
    return EINA_FALSE;
 }

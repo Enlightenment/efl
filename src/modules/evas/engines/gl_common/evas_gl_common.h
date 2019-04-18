@@ -335,7 +335,7 @@ struct _Evas_Engine_GL_Context
       } shader;
       struct {
          int            num, alloc;
-         GLfloat       *vertex;
+         GLshort       *vertex;
          GLubyte       *color;
          GLfloat       *texuv;
          GLfloat       *texuv2;
