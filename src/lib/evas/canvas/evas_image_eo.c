@@ -15,6 +15,7 @@ _evas_image_class_initializer(Efl_Class *klass)
 
    EFL_OPS_DEFINE(ops,
       EFL_OBJECT_OP_FUNC(efl_file_load, _evas_image_efl_file_load),
+      EFL_OBJECT_OP_FUNC(efl_file_unload, _evas_image_efl_file_unload),
       EVAS_IMAGE_EXTRA_OPS
    );
    opsp = &ops;
