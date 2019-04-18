@@ -1,3 +1,4 @@
+#define EFL_BETA_API_SUPPORT
 #include <Efl_Net.h>
 #include <Ecore_Getopt.h>
 
@@ -235,7 +236,7 @@ efl_main(void *data EINA_UNUSED,
    /* The TCP client to use to send/receive network data */
    dialer = efl_add(EFL_NET_DIALER_TCP_CLASS, ev->object,
                     efl_name_set(efl_added, "dialer"),
-                    efl_event_callback_add(efl_added, EFL_NET_DIALER_EVENT_CONNECTED, _dialer_connected, NULL));
+                    efl_event_callback_add(efl_added, EFL_NET_DIALER_EVENT_DIALER_CONNECTED, _dialer_connected, NULL));
    if (!dialer)
      {
         fprintf(stderr, "ERROR: could not create Efl_Net_Dialer_Tcp\n");

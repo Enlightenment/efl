@@ -426,7 +426,7 @@ EAPI int edje_object_freeze(Evas_Object *obj);
  *
  * This function thaws the given Edje object.
  *
- * @note If sucessive freezes were done, an equal number of thaws will be
+ * @note If successive freezes were done, an equal number of thaws will be
  * required.
  *
  * See also @ref edje_object_freeze()
@@ -1533,16 +1533,32 @@ EAPI double edje_object_base_scale_get(const Evas_Object *obj);
  * @{
  */
 
-/** Dragable properties values */
-typedef Efl_Ui_Drag_Dir Edje_Drag_Dir;
-/** Not dragable */
-#define EDJE_DRAG_DIR_NONE EFL_UI_DRAG_DIR_NONE
-/** Dragable horizontally */
-#define EDJE_DRAG_DIR_X     EFL_UI_DRAG_DIR_X
-/** Dragable verically */
-#define EDJE_DRAG_DIR_Y    EFL_UI_DRAG_DIR_Y
-/** Dragable in both directions */
-#define EDJE_DRAG_DIR_XY   EFL_UI_DRAG_DIR_XY
+/**
+ * @defgroup Edje_Part_Drag Edje Drag
+ *
+ * @brief Functions that deal with dragable parts.
+ *
+ * To create a movable part it must be declared as dragable
+ * in EDC file. To do so, one must define a "dragable" block inside
+ * the "part" block.
+ *
+ * These functions are used to set dragging properties to a
+ * part or get dragging information about it.
+ *
+ * @see @ref tutorial_edje_drag
+ *
+ * @ingroup Edje_Object_Part
+ *
+ * @{
+ */
+
+typedef enum _Edje_Drag_Dir
+{
+   EDJE_DRAG_DIR_NONE = 0,
+   EDJE_DRAG_DIR_X = 1,
+   EDJE_DRAG_DIR_Y = 2,
+   EDJE_DRAG_DIR_XY = 3
+} Edje_Drag_Dir;
 
 
 /**
@@ -2187,10 +2203,10 @@ EAPI void *edje_object_text_insert_filter_callback_del_full(Evas_Object *obj, co
  * text is to be rejected, freeing it and setting the pointer to @c null will
  * make Edje break out of the filter cycle and reject the inserted text. This
  * function is different from edje_object_text_insert_filter_callback_add() in
- * that the text parameter in the fucn filter is always markup.
+ * that the text parameter in the func filter is always markup.
  *
  * @warning If you use this function with
- * edje_object_text_insert_filter_callback_add() togehter, all
+ * edje_object_text_insert_filter_callback_add() together, all
  * Edje_Text_Filter_Cb functions and Edje_Markup_Filter_Cb functions will be
  * executed, and then filtered text will be inserted.
  *
@@ -3150,30 +3166,60 @@ EAPI void edje_object_item_provider_set(Edje_Object *obj, Edje_Item_Provider_Cb 
  */
 EAPI const char *edje_object_color_class_description_get(const Edje_Object *obj, const char * color_class);
 
-typedef Efl_Canvas_Layout_Part_Type Edje_Part_Type;
-#define EDJE_PART_TYPE_NONE        EFL_CANVAS_LAYOUT_PART_TYPE_NONE
-#define EDJE_PART_TYPE_RECTANGLE   EFL_CANVAS_LAYOUT_PART_TYPE_RECTANGLE
-#define EDJE_PART_TYPE_TEXT        EFL_CANVAS_LAYOUT_PART_TYPE_TEXT
-#define EDJE_PART_TYPE_IMAGE       EFL_CANVAS_LAYOUT_PART_TYPE_IMAGE
-#define EDJE_PART_TYPE_SWALLOW     EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW
-#define EDJE_PART_TYPE_TEXTBLOCK   EFL_CANVAS_LAYOUT_PART_TYPE_TEXTBLOCK
-#define EDJE_PART_TYPE_GRADIENT    EFL_CANVAS_LAYOUT_PART_TYPE_GRADIENT
-#define EDJE_PART_TYPE_GROUP       EFL_CANVAS_LAYOUT_PART_TYPE_GROUP
-#define EDJE_PART_TYPE_BOX         EFL_CANVAS_LAYOUT_PART_TYPE_BOX
-#define EDJE_PART_TYPE_TABLE       EFL_CANVAS_LAYOUT_PART_TYPE_TABLE
-#define EDJE_PART_TYPE_EXTERNAL    EFL_CANVAS_LAYOUT_PART_TYPE_EXTERNAL
-#define EDJE_PART_TYPE_PROXY       EFL_CANVAS_LAYOUT_PART_TYPE_PROXY
-#define EDJE_PART_TYPE_SPACER      EFL_CANVAS_LAYOUT_PART_TYPE_SPACER
-#define EDJE_PART_TYPE_MESH_NODE   EFL_CANVAS_LAYOUT_PART_TYPE_MESH_NODE
-#define EDJE_PART_TYPE_LIGHT       EFL_CANVAS_LAYOUT_PART_TYPE_LIGHT
-#define EDJE_PART_TYPE_CAMERA      EFL_CANVAS_LAYOUT_PART_TYPE_CAMERA
-#define EDJE_PART_TYPE_SNAPSHOT    EFL_CANVAS_LAYOUT_PART_TYPE_SNAPSHOT
-#define EDJE_PART_TYPE_VECTOR      EFL_CANVAS_LAYOUT_PART_TYPE_VECTOR
-#define EDJE_PART_TYPE_LAST        EFL_CANVAS_LAYOUT_PART_TYPE_LAST
+/**
+ * @defgroup Edje_Object_Part Edje Part
+ *
+ * @brief Functions that deal with layout components
+ *
+ * Parts are layout components, but as a layout, they are objects too.
+ *
+ * There are several types of parts, these types can be divided into two
+ * main categories, the first being containers. Containers are parts
+ * that are in effect a group of elements. The second group is that of
+ * the elements, these part types may not contain others.
+ *
+ * This section has some functions specific for some types and others that
+ * could be applied to any type.
+ *
+ * @ingroup Edje_Object_Group
+ *
+ * @{
+ */
+
+/**
+ * @typedef Edje_Part_Type
+ *
+ * All possible "part" types in Edje
+ */
+typedef enum _Edje_Part_Type
+{
+   EDJE_PART_TYPE_NONE      = 0,  /**< None type value */
+   EDJE_PART_TYPE_RECTANGLE = 1,  /**< Rectangle type value */
+   EDJE_PART_TYPE_TEXT      = 2,  /**< Text type value */
+   EDJE_PART_TYPE_IMAGE     = 3,  /**< Image type value */
+   EDJE_PART_TYPE_SWALLOW   = 4,  /**< Swallow  type value */
+   EDJE_PART_TYPE_TEXTBLOCK = 5,  /**< Text block type value */
+   EDJE_PART_TYPE_GRADIENT  = 6,  /**< Gradient type value */
+   EDJE_PART_TYPE_GROUP     = 7,  /**< Group type value */
+   EDJE_PART_TYPE_BOX       = 8,  /**< Box type value */
+   EDJE_PART_TYPE_TABLE     = 9,  /**< Table type value */
+   EDJE_PART_TYPE_EXTERNAL  = 10, /**< External type value */
+   EDJE_PART_TYPE_PROXY     = 11, /**< Proxy type value */
+   EDJE_PART_TYPE_SPACER    = 12, /**< Spacer type value @since 1.7 */
+   EDJE_PART_TYPE_MESH_NODE = 13,
+   EDJE_PART_TYPE_LIGHT     = 14,
+   EDJE_PART_TYPE_CAMERA    = 15,
+   EDJE_PART_TYPE_SNAPSHOT  = 16, /**< Snapshot @since 1.16 */
+   EDJE_PART_TYPE_VECTOR    = 17, /**< Vector @since 1.18 */
+   EDJE_PART_TYPE_LAST      = 18  /**< Last type value */
+} Edje_Part_Type;
+/**
+ * @}
+ */
 
 /**
  * @}
  */
-#include "efl_canvas_layout.eo.legacy.h"
-#include "edje_edit.eo.legacy.h"
-#include "efl_layout_group.eo.legacy.h"
+#include "efl_canvas_layout_eo.legacy.h"
+#include "edje_edit_eo.legacy.h"
+#include "efl_layout_group_eo.legacy.h"

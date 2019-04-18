@@ -1,6 +1,7 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 static const struct {
@@ -142,7 +143,7 @@ my_bt_open(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
         if (eina_list_count(grps) > 0)
           {
              const char *grp = eina_list_nth(grps, 0);
-             efl_file_set(ph, file, grp);
+             efl_file_simple_load(ph, file, grp);
              printf("Successfully set the edje file: %s, group: %s\n", file, grp);
           }
         else printf("Failed to set edje file\n");
@@ -805,7 +806,7 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    char buf[PATH_MAX];
 
    win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
                  efl_text_set(efl_added, "Efl.Ui.Image_Zoomable animation"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -816,14 +817,15 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    efl_add(EFL_UI_TEXT_CLASS, bx,
            efl_text_set(efl_added, "Clicking the image will play/pause animation."),
            efl_text_interactive_editable_set(efl_added, EINA_FALSE),
-           efl_gfx_size_hint_weight_set(efl_added, 1, 0),
+           efl_gfx_hint_weight_set(efl_added, 1, 0),
            efl_canvas_text_style_set(efl_added, NULL, "DEFAULT='align=center font=Sans font_size=10 color=#fff wrap=word'"),
            efl_pack(bx, efl_added)
           );
 
    snprintf(buf, sizeof(buf), "%s/images/animated_logo.gif", elm_app_data_dir_get());
    zoomable = efl_add(EFL_UI_IMAGE_ZOOMABLE_CLASS, win,
-                      efl_file_set(efl_added, buf, NULL),
+                      efl_file_set(efl_added, buf),
+                      efl_file_load(efl_added),
                       efl_pack(bx, efl_added),
                       efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _zoomable_clicked_cb, NULL)
                      );
@@ -836,14 +838,14 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 
    rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win,
                   efl_gfx_color_set(efl_added, 0, 0, 0, 0),
-                  efl_gfx_stack_raise(efl_added),
+                  efl_gfx_stack_raise_to_top(efl_added),
                   efl_canvas_object_repeat_events_set(efl_added, EINA_TRUE),
                   efl_event_callback_add(efl_added, EFL_EVENT_POINTER_WHEEL, _zoomable_mouse_wheel_cb, zoomable)
                  );
 
    // add move/resize callbacks to resize rect manually
-   efl_event_callback_add(zoomable, EFL_GFX_ENTITY_EVENT_RESIZE, _zoomable_move_resize_cb, rect);
-   efl_event_callback_add(zoomable, EFL_GFX_ENTITY_EVENT_MOVE, _zoomable_move_resize_cb, rect);
+   efl_event_callback_add(zoomable, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _zoomable_move_resize_cb, rect);
+   efl_event_callback_add(zoomable, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _zoomable_move_resize_cb, rect);
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(300,  320));
 }

@@ -247,7 +247,9 @@ _ecore_signal_pipe_init(void)
           }
         eina_file_close_on_exec(sig_pipe[0], EINA_TRUE);
         eina_file_close_on_exec(sig_pipe[1], EINA_TRUE);
-        fcntl(sig_pipe[0], F_SETFL, O_NONBLOCK);
+        if (fcntl(sig_pipe[0], F_SETFL, O_NONBLOCK) < 0)
+          ERR("can't set pipe to NONBLOCK");
+
      }
    _signalhandler_setup();
    if (!sig_pipe_handler)
@@ -445,7 +447,7 @@ _ecore_signal_waitpid(Eina_Bool once, siginfo_t info)
                     efl_add(EFL_LOOP_TIMER_CLASS, ML_OBJ,
                             efl_loop_timer_interval_set(efl_added, 0.1),
                             efl_event_callback_add
-                            (efl_added, EFL_LOOP_TIMER_EVENT_TICK,
+                            (efl_added, EFL_LOOP_TIMER_EVENT_TIMER_TICK,
                              _ecore_signal_exe_exit_delay, e));
                   _ecore_exe_doomsday_clock_set(e->exe, doomsday_clock);
                }

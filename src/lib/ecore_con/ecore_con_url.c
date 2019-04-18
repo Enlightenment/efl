@@ -425,7 +425,7 @@ _ecore_con_url_dialer_can_read_changed(void *data, const Efl_Event *event EINA_U
         ssize_t r = write(url_con->write_fd, slice.bytes, slice.len);
         if (r == -1)
           {
-             ERR("Could not write to fd=%d: %s", url_con->write_fd, strerror(errno));
+             ERR("Could not write to fd=%d: %s", url_con->write_fd, eina_error_msg_get(errno));
              break;
           }
         slice.bytes += r;
@@ -508,7 +508,7 @@ _ecore_con_url_dialer_headers_done(void *data, const Efl_Event *event EINA_UNUSE
 EFL_CALLBACKS_ARRAY_DEFINE(ecore_con_url_dialer_cbs,
                            { EFL_IO_READER_EVENT_CAN_READ_CHANGED, _ecore_con_url_dialer_can_read_changed },
                            { EFL_IO_READER_EVENT_EOS, _ecore_con_url_dialer_eos },
-                           { EFL_NET_DIALER_EVENT_ERROR, _ecore_con_url_dialer_error },
+                           { EFL_NET_DIALER_EVENT_DIALER_ERROR, _ecore_con_url_dialer_error },
                            { EFL_NET_DIALER_HTTP_EVENT_HEADERS_DONE, _ecore_con_url_dialer_headers_done });
 
 static Eina_Bool
@@ -734,7 +734,7 @@ _ecore_con_url_request_prepare(Ecore_Con_Url *url_con, const char *method)
 
    if (url_con->time.condition != ECORE_CON_URL_TIME_NONE)
      {
-        char *ts = efl_net_dialer_http_date_serialize(EFL_NET_DIALER_HTTP_CLASS, url_con->time.stamp);
+        char *ts = efl_net_dialer_http_date_serialize(url_con->time.stamp);
         if (ts)
           {
              efl_net_dialer_http_request_header_add(url_con->dialer,
@@ -1177,7 +1177,7 @@ ecore_con_url_ftp_upload(Ecore_Con_Url *url_con,
 
    file = efl_add(EFL_IO_FILE_CLASS, efl_loop_get(url_con->dialer),
                   efl_name_set(efl_added, "upload-file"),
-                  efl_file_set(efl_added, filename, NULL),
+                  efl_file_set(efl_added, filename),
                   efl_io_file_flags_set(efl_added, O_RDONLY),
                   efl_io_closer_close_on_invalidate_set(efl_added, EINA_TRUE),
                   efl_io_closer_close_on_exec_set(efl_added, EINA_TRUE));

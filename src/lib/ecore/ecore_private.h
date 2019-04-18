@@ -5,7 +5,7 @@
 
 #include "ecore_internal.h"
 
-#include "ecore_exe.eo.h"
+#include "ecore_exe_eo.h"
 #include "ecore_event_message.eo.h"
 #include "ecore_event_message_handler.eo.h"
 
@@ -94,14 +94,7 @@ typedef struct _Efl_Loop_Data Efl_Loop_Data;
 typedef struct _Efl_Task_Data Efl_Task_Data;
 typedef struct _Efl_Appthread_Data Efl_Appthread_Data;
 
-typedef struct _Message_Handler Message_Handler;
 typedef struct _Message Message;
-
-struct _Message_Handler
-{
-   Eo       *handler;
-   const Eo *klass;
-};
 
 struct _Message
 {
@@ -138,6 +131,7 @@ struct _Efl_Loop_Data
    Ecore_Fd_Handler    *fd_handlers;
    Eina_List           *fd_handlers_with_prep;
    Eina_List           *file_fd_handlers;
+   Eina_List           *always_fd_handlers;
    Eina_List           *fd_handlers_with_buffer;
    Eina_List           *fd_handlers_to_delete;
    Ecore_Fd_Handler    *fd_handlers_to_call;
@@ -149,7 +143,6 @@ struct _Efl_Loop_Data
    Eina_List           *win32_handlers_to_delete;
 # endif
 
-   Eina_Inarray        *message_handlers;
    Eina_Inlist         *message_queue;
    unsigned int         message_walking;
 
@@ -188,7 +181,6 @@ struct _Efl_Task_Data
 {
    Eina_Stringshare  *command;
    Eina_Array        *args;
-   Eina_Hash         *env;
    Efl_Task_Priority  priority;
    int                exit_code;
    Efl_Task_Flags     flags;

@@ -1,6 +1,7 @@
 #ifdef HAVE_CONFIG_H
 #include "elementary_config.h"
 #endif
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 /* A simple test, just displaying clock in its default format */
@@ -48,17 +49,17 @@ test_ui_clock(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    Evas_Object *win, *bx;
 
    win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
                  efl_text_set(efl_added, "Efl.Ui.Clock"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                 efl_content_set(win, efl_added),
-                efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(360, 240)));
+                efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(360, 240)));
 
    dt1 = efl_add(EFL_UI_CLOCK_CLASS, bx,
-                 efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-                 efl_gfx_size_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
+                 efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
+                 efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
                  efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_HOUR, EINA_FALSE),
                  efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_MINUTE, EINA_FALSE),
                  efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_AMPM, EINA_FALSE),
@@ -69,8 +70,8 @@ test_ui_clock(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
                  efl_pack(bx, efl_added));
 
    dt2 = efl_add(EFL_UI_CLOCK_CLASS, bx,
-                 efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-                 efl_gfx_size_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
+                 efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
+                 efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
                  efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_YEAR, EINA_FALSE),
                  efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_MONTH, EINA_FALSE),
                  efl_ui_clock_field_visible_set(efl_added, EFL_UI_CLOCK_TYPE_DATE, EINA_FALSE),
@@ -80,21 +81,21 @@ test_ui_clock(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    elm_object_disabled_set(dt2, EINA_TRUE);
 
    dt3 = efl_add(EFL_UI_CLOCK_CLASS, bx,
-                 efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-                 efl_gfx_size_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
+                 efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
+                 efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
                  efl_pack(bx, efl_added));
 
    efl_add(EFL_UI_TEXT_CLASS, bx,
            efl_text_set(efl_added, "Editable Clock:"),
-           efl_gfx_size_hint_weight_set(efl_added, 0.0, 0.0),
-           efl_gfx_size_hint_align_set(efl_added, 0, 0.5),
-           efl_gfx_size_hint_fill_set(efl_added, EINA_FALSE, EINA_TRUE),
-           efl_gfx_size_hint_min_set(efl_added, EINA_SIZE2D(100, 25)),
+           efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
+           efl_gfx_hint_align_set(efl_added, 0, 0.5),
+           efl_gfx_hint_fill_set(efl_added, EINA_FALSE, EINA_TRUE),
+           efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(100, 25)),
            efl_pack(bx, efl_added));
 
    dt4 = efl_add(EFL_UI_CLOCK_CLASS, bx,
-                 efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-                 efl_gfx_size_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
+                 efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
+                 efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
                  efl_ui_clock_edit_mode_set(efl_added, EINA_TRUE),
                  efl_ui_clock_pause_set(efl_added, EINA_TRUE),
                  efl_pack(bx, efl_added));

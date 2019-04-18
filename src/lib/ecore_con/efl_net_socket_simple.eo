@@ -1,4 +1,4 @@
-class Efl.Net.Socket_Simple extends Efl.Io.Buffered_Stream implements Efl.Net.Socket {
+class @beta Efl.Net.Socket_Simple extends Efl.Io.Buffered_Stream implements Efl.Net.Socket {
     [[A wrapper socket offering an easy to use, buffered I/O.
 
       The simple socket encapsulates an actual @Efl.Net.Socket and
@@ -33,8 +33,6 @@ class Efl.Net.Socket_Simple extends Efl.Io.Buffered_Stream implements Efl.Net.So
       @Efl.Io.Buffered_Stream.inner_io.set and can be retrieved with
       @Efl.Io.Buffered_Stream.inner_io.get, which should be used with
       care.
-
-      @since 1.19
     ]]
 
     implements {

@@ -11,8 +11,7 @@ edje_eolian_files = \
 	lib/edje/efl_canvas_layout_part_external.eo \
 	lib/edje/efl_canvas_layout_part_swallow.eo \
 	lib/edje/efl_canvas_layout_part_table.eo \
-	lib/edje/efl_canvas_layout_part_text.eo \
-	lib/edje/edje_edit.eo
+	lib/edje/efl_canvas_layout_part_text.eo
 
 edje_eolian_type_files = \
     lib/edje/edje_types.eot
@@ -36,15 +35,19 @@ BUILT_SOURCES += \
                  $(edje_eolian_priv_c) \
                  $(edje_eolian_priv_h)
 
+if INSTALL_EO_FILES
 edjeeolianfilesdir = $(datadir)/eolian/include/edje-@VMAJ@
 edjeeolianfiles_DATA = \
-                       $(edje_eolian_files) \
-                       $(edje_eolian_type_files)
+$(edje_eolian_files) \
+$(edje_eolian_type_files)
+endif
 
 noinst_DATA += $(edje_eolian_priv_c) $(edje_eolian_priv_h)
 
-EXTRA_DIST2 += ${edjeeolianfiles_DATA} \
-              $(edje_eolian_priv_files)
+EXTRA_DIST2 += \
+$(edje_eolian_files) \
+$(edje_eolian_type_files) \
+$(edje_eolian_priv_files)
 
 lib_LTLIBRARIES += lib/edje/libedje.la
 
@@ -66,7 +69,16 @@ lib/edje/Edje.h \
 lib/edje/Edje_Common.h \
 lib/edje/Edje_Eo.h \
 lib/edje/Edje_Legacy.h \
-lib/edje/Edje_Edit.h
+lib/edje/Edje_Edit.h \
+lib/edje/edje_edit_eo.h \
+lib/edje/edje_edit_eo.legacy.h \
+lib/edje/efl_canvas_layout_eo.legacy.h \
+lib/edje/efl_layout_group_eo.legacy.h
+
+EXTRA_DIST2 += \
+lib/edje/edje_edit_eo.c \
+lib/edje/efl_canvas_layout_eo.legacy.c \
+lib/edje/efl_layout_group_eo.legacy.c
 
 nodist_installed_edjemainheaders_DATA = \
                                         $(edje_eolian_h) \
@@ -115,7 +127,7 @@ static_libs/buildsystem/buildsystem.h \
 static_libs/buildsystem/buildsystem_autotools.c
 
 
-lib_edje_libedje_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS)
+lib_edje_libedje_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EDJE_COMMON_CPPFLAGS) -DEFL_BUILD
 lib_edje_libedje_la_LIBADD = @EDJE_LIBS@ @EDJE_LUA_LIBS@
 lib_edje_libedje_la_DEPENDENCIES = @EDJE_INTERNAL_LIBS@
 lib_edje_libedje_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

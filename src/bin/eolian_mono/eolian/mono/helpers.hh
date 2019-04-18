@@ -102,8 +102,10 @@ std::set<attributes::klass_name, attributes::compare_klass_name_by_name> interfa
 
 // Returns the set of interfaces implemented by this type that haven't been implemented
 // by a regular parent class.
-std::set<attributes::klass_name, attributes::compare_klass_name_by_name> non_implemented_interfaces(attributes::klass_def const& cls)
+template<typename Context>
+std::set<attributes::klass_name, attributes::compare_klass_name_by_name> non_implemented_interfaces(attributes::klass_def const& cls, Context const& context)
 {
+   auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
    std::set<attributes::klass_name, attributes::compare_klass_name_by_name> implemented_interfaces;
    std::set<attributes::klass_name, attributes::compare_klass_name_by_name> interfaces;
 
@@ -114,6 +116,9 @@ std::set<attributes::klass_name, attributes::compare_klass_name_by_name> non_imp
           attributes::klass_def c(get_klass(klass, cls.unit), cls.unit);
           for(auto&& inherit : c.immediate_inherits)
             {
+               if (inherit.is_beta && !options.want_beta)
+                   continue;
+
                switch(inherit.type)
                  {
                  case attributes::class_type::mixin:
@@ -221,6 +226,12 @@ inline bool is_unique_event(attributes::event_def const& evt
                      });
 }
 
+inline std::vector<attributes::constructor_def> reorder_constructors(std::vector<attributes::constructor_def> constructors)
+{
+  auto is_required = [](attributes::constructor_def const& ctr) { return !ctr.is_optional; };
+  std::stable_partition(constructors.begin(), constructors.end(), is_required);
+  return constructors;
+}
 
 } // namespace helpers
 

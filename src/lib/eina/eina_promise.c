@@ -333,6 +333,10 @@ _eina_future_cb_dispatch(Eina_Future *f, const Eina_Value value)
 {
    Eina_Future_Cb cb = f->cb;
 
+   // Cleaning up prev and past to avoid recursion
+   if (f->next) f->next->prev = NULL;
+   if (f->prev) f->prev->next = NULL;
+
    f->cb = EINA_FUTURE_DISPATCHED;
    if (f->storage) *f->storage = NULL;
 
@@ -364,6 +368,7 @@ _eina_future_dispatch_internal(Eina_Future **f,
         _eina_promise_value_dbg("No future to deliver value", NULL, value);
         return value;
      }
+   if ((*f)->cb == EINA_FUTURE_DISPATCHED) return value;
    next_value = _eina_future_cb_dispatch(*f, value);
    *f = _eina_future_free(*f);
    return next_value;
@@ -396,6 +401,12 @@ _eina_future_dispatch(Eina_Future_Scheduler *scheduler, Eina_Future *f, Eina_Val
          return;
       }
 
+    // Break early if finding a cb that is already dispatching
+    if (f->cb == EINA_FUTURE_DISPATCHED)
+      {
+         eina_value_flush(&next_value);
+         return;
+      }
     if (next_value.type == &EINA_VALUE_TYPE_PROMISE)
       {
          if (EINA_UNLIKELY(eina_log_domain_level_check(_promise_log_dom, EINA_LOG_LEVEL_DBG)))
@@ -463,6 +474,8 @@ _eina_future_cancel(Eina_Future *f, int err)
 
    while (f)
      {
+        // Stop on partially dispatched future
+        if (f->cb == EINA_FUTURE_DISPATCHED) break;
         if (f->cb)
           {
              Eina_Value r = _eina_future_cb_dispatch(f, value);
@@ -634,6 +647,11 @@ _eina_promise_clean_dispatch(Eina_Promise *p, Eina_Value v)
         _eina_promise_unlink(p);
         // This function is called on a promise created with a scheduler, not a continue one.
         _eina_future_dispatch(p->scheduler, f, v);
+     }
+   else
+     {
+        // Nobody is going to flush this value if we don't
+        eina_value_flush(&v);
      }
    eina_mempool_free(_promise_mp, p);
 }
@@ -1200,7 +1218,7 @@ _race_then_cb(void *data, const Eina_Value v,
    Eina_Promise *p = ctx->base.promise;
    Eina_Bool found, r;
    Eina_Value result;
-   unsigned int i;
+   unsigned int i = 0;
 
    //This is not allowed!
    assert(v.type != &EINA_VALUE_TYPE_PROMISE);

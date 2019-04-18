@@ -121,6 +121,7 @@ struct _Eo_Object
      Eina_Bool unref_compensate : 1;
      Eina_Bool allow_parent_unref : 1;
 
+     Eina_Bool noref_event : 1;
      Eina_Bool del_triggered:1;
      Eina_Bool destructed:1;
      Eina_Bool manual_free:1;
@@ -183,6 +184,8 @@ struct _Efl_Class
    Eo_Extension_Data_Offset *extn_data_off;
 
    const _Efl_Class **mro;
+
+   const Efl_Object_Property_Reflection_Ops *reflection;
 
    /* cached object for faster allocation */
    struct {
@@ -387,7 +390,7 @@ _efl_unref_internal(_Eo_Object *obj, const char *func_name, const char *file, in
              while (obj->xrefs)
                {
                   Eina_Inlist *nitr = obj->xrefs->next;
-                  Eo_Xref_Node *xref = EINA_INLIST_CONTAINER_GET(obj->data_xrefs, Eo_Xref_Node);
+                  Eo_Xref_Node *xref = EINA_INLIST_CONTAINER_GET(obj->xrefs, Eo_Xref_Node);
                   ERR("in %s:%d: func '%s' Object %p is still referenced by object %p. Origin: %s:%d",
                       file, line, func_name, obj_id, xref->ref_obj, xref->file, xref->line);
                   eina_freeq_ptr_main_add(xref, free, sizeof(*xref));

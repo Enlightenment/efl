@@ -11,8 +11,8 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_naviframe.eo.h"
-#include "elm_naviframe_item.eo.h"
+#include "elm_naviframe_eo.h"
+#include "elm_naviframe_item_eo.h"
 #include "elm_widget_naviframe.h"
 #include "elm_widget_container.h"
 
@@ -366,7 +366,7 @@ _item_title_enabled_update(Elm_Naviframe_Item_Data *nit, Eina_Bool transition)
    edje_object_message_signal_process(elm_layout_edje_get(VIEW(nit)));
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_naviframe_efl_ui_widget_theme_apply(Eo *obj, Elm_Naviframe_Data *sd)
 {
    Elm_Naviframe_Item_Data *it;
@@ -384,7 +384,7 @@ _elm_naviframe_efl_ui_widget_theme_apply(Eo *obj, Elm_Naviframe_Data *sd)
      }
 
    elm_layout_sizing_eval(obj);
-   return EFL_UI_THEME_APPLY_RESULT_SUCCESS;
+   return EFL_UI_THEME_APPLY_ERROR_NONE;
 }
 
 static char *
@@ -1392,7 +1392,6 @@ _elm_naviframe_efl_canvas_group_group_add(Eo *obj, Elm_Naviframe_Data *priv)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    priv->dummy_edje = wd->resize_obj;
    evas_object_smart_member_add(priv->dummy_edje, obj);
@@ -1439,7 +1438,7 @@ _deferred(void *data, const Efl_Event *event EINA_UNUSED)
         free(nfo);
      }
 
-   efl_event_callback_del(nfd->obj, EFL_EVENT_ANIMATOR_TICK, _deferred, nfd);
+   efl_event_callback_del(nfd->obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _deferred, nfd);
 }
 
 EOLIAN static void
@@ -1534,7 +1533,7 @@ static void
 _schedule_deferred(Elm_Naviframe_Op *nfo, Elm_Naviframe_Data *sd)
 {
    if (!sd->ops)
-     efl_event_callback_add(sd->obj, EFL_EVENT_ANIMATOR_TICK, _deferred, sd);
+     efl_event_callback_add(sd->obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _deferred, sd);
 
    sd->ops = eina_list_append(sd->ops, nfo);
 }
@@ -2052,5 +2051,5 @@ ELM_PART_OVERRIDE_TEXT_GET(elm_naviframe, ELM_NAVIFRAME, Elm_Naviframe_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_naviframe), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_naviframe)
 
-#include "elm_naviframe_item.eo.c"
-#include "elm_naviframe.eo.c"
+#include "elm_naviframe_item_eo.c"
+#include "elm_naviframe_eo.c"

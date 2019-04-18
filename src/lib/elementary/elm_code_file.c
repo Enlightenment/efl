@@ -97,6 +97,7 @@ EAPI char *_elm_code_file_tmp_path_get(Elm_Code_File *file)
    dirlen = strlen(path) - strlen(name);
 
    tmp = malloc(sizeof(char) * (strlen(path) + 6));
+   if (!tmp) return NULL;
    snprintf(tmp, dirlen + 1, "%s", path);
    snprintf(tmp + dirlen, strlen(name) + 6, ".%s.tmp", name);
 
@@ -111,6 +112,7 @@ EAPI Elm_Code_File *elm_code_file_new(Elm_Code *code)
      elm_code_file_free(code->file);
 
    ret = calloc(1, sizeof(Elm_Code_File));
+   if (!ret) return NULL;
    code->file = ret;
    ret->parent = code;
 
@@ -119,6 +121,8 @@ EAPI Elm_Code_File *elm_code_file_new(Elm_Code *code)
 
 EAPI Elm_Code_File *elm_code_file_open(Elm_Code *code, const char *path)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(code, NULL);
+
    Elm_Code_File *ret;
    Eina_File *file;
    Eina_File_Line *line;
@@ -212,7 +216,13 @@ EAPI void elm_code_file_save(Elm_Code_File *file)
    free(tmp);
 
    if (have_mode)
-     chmod(path, mode);
+     {
+        if(chmod(path, mode) < 0)
+          {
+             ERR("Error in chmod(%s, %d) - %d(%s)\n", path, mode, errno, strerror(errno));
+             return;
+          }
+     }
 
    if (file->parent)
      {

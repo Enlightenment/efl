@@ -6,7 +6,7 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
-EFL_START_TEST (elm_colorselector_legacy_type_check)
+EFL_START_TEST(elm_colorselector_legacy_type_check)
 {
    Evas_Object *win, *colorselector;
    const char *type;
@@ -26,7 +26,7 @@ EFL_START_TEST (elm_colorselector_legacy_type_check)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_colorselector_palette)
+EFL_START_TEST(elm_colorselector_palette)
 {
    Evas_Object *win, *c;
    unsigned int palette_cnt;
@@ -51,7 +51,7 @@ EFL_START_TEST (elm_colorselector_palette)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_atspi_role_get)
+EFL_START_TEST(elm_atspi_role_get)
 {
    Evas_Object *win, *c;
    Efl_Access_Role role;

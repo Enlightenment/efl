@@ -5,13 +5,12 @@
 # include "config.h"
 #else
 # define EFL_BETA_API_SUPPORT 1
-# define EFL_EO_API_SUPPORT 1
 #endif
 
 #include <Elementary.h>
 #include <Efl.h>
 #include <Eio.h>
-#include <eio_model.eo.h>
+#include <efl_io_model.eo.h>
 #include <stdio.h>
 
 #define EFL_MODEL_TEST_FILENAME_PATH "/tmp"
@@ -54,7 +53,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_show(genlist);
 
-   priv.filemodel = efl_add(EIO_MODEL_CLASS, win, eio_model_path_set(efl_added, dirname));
+   priv.filemodel = efl_add(EFL_IO_MODEL_CLASS, win, efl_io_model_path_set(efl_added, dirname));
    priv.fileview = efl_add(ELM_VIEW_LIST_CLASS, win, elm_view_list_genlist_set(efl_added, genlist, ELM_GENLIST_ITEM_TREE, "double_label"));
    elm_view_list_model_set(priv.fileview, priv.filemodel);
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _cleanup_cb, &priv);

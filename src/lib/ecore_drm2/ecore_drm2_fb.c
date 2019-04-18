@@ -263,6 +263,11 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
 
+   if (output->flip_timeout)
+     {
+        ecore_timer_del(output->flip_timeout);
+        output->flip_timeout = NULL;
+     }
    if (output->current.fb && (output->current.fb != output->pending.fb))
      _ecore_drm2_fb_buffer_release(output, &output->current);
 
@@ -408,6 +413,25 @@ _fb_atomic_flip_test(Ecore_Drm2_Output *output)
           sym_drmModeAtomicAddProperty(req, pstate->obj_id,
                                        pstate->ch.id, pstate->ch.value);
         if (ret < 0) goto err;
+
+#if 0
+        /* XXX: Disable hardware plane rotation for now as this has broken
+         * recently. The break happens because of an invalid argument,
+         * ie: the value being sent from pstate->rotation_map ends up being
+         * incorrect for some reason. I suspect the breakage to be from
+         * kernel drivers (linux 4.20.0) but have not confirmed that version */
+        if ((pstate->rotation.id) &&
+            (pstate->type.value == DRM_PLANE_TYPE_PRIMARY))
+          {
+             DBG("Plane %d Atomic Rotation: %lu",
+                 pstate->obj_id, pstate->rotation.value);
+             ret =
+               sym_drmModeAtomicAddProperty(req, pstate->obj_id,
+                                            pstate->rotation.id,
+                                            pstate->rotation_map[pstate->rotation.value]);
+             if (ret < 0) goto err;
+          }
+#endif
      }
 
    ret =
@@ -425,6 +449,21 @@ err:
    DBG("Failed Atomic Test: %m");
    sym_drmModeAtomicFree(req);
 
+   return EINA_FALSE;
+}
+
+static int _fb_atomic_flip(Ecore_Drm2_Output *output);
+static int _fb_flip(Ecore_Drm2_Output *output);
+
+static Eina_Bool
+_cb_flip_timeout(void *data)
+{
+   Ecore_Drm2_Output *output = data;
+
+   output->flip_timeout = NULL;
+   ERR("flip event callback timout 0.05sec - try again");
+   if (_ecore_drm2_use_atomic) _fb_atomic_flip(output);
+   else _fb_flip(output);
    return EINA_FALSE;
 }
 
@@ -453,6 +492,11 @@ _fb_atomic_flip(Ecore_Drm2_Output *output)
         ERR("Failed Atomic Commit: %m");
         return -1;
      }
+   else
+     {
+        if (output->flip_timeout) ecore_timer_del(output->flip_timeout);
+        output->flip_timeout = ecore_timer_add(0.05, _cb_flip_timeout, output);
+     }
 
    return 0;
 }
@@ -466,6 +510,16 @@ _fb_flip(Ecore_Drm2_Output *output)
    int ret = 0;
 
    fb = output->prep.fb;
+   if (!fb)
+     {
+        fb =  output->pending.fb;
+        ERR("Trying to flip NULL fb - fallback to pending fb");
+     }
+   if (!fb)
+     {
+        ERR("Pending fb is also NULL, give up flipping");
+        return ret;
+     }
 
    if ((!output->current.fb) ||
        (output->current.fb->strides[0] != fb->strides[0]))
@@ -525,6 +579,11 @@ _fb_flip(Ecore_Drm2_Output *output)
                   break;
                }
              usleep(100);
+          }
+        else
+          {
+             if (output->flip_timeout) ecore_timer_del(output->flip_timeout);
+             output->flip_timeout = ecore_timer_add(0.05, _cb_flip_timeout, output);
           }
      }
    while (repeat);

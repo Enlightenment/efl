@@ -21,7 +21,6 @@
 # include <config.h>
 #endif
 
-#define EIO_SENTRY_BETA 1
 
 #include <Eo.h>
 #include "Ecore.h"

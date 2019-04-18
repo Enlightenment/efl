@@ -1,4 +1,4 @@
-#include "elm_gesture_layer.eo.legacy.h"
+#include "elm_gesture_layer_eo.legacy.h"
 
 /**
  * Call this function to construct a new gesture-layer object.

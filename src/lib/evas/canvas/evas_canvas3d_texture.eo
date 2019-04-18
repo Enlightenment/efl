@@ -1,6 +1,6 @@
 type @extern Evas_Colorspace: int; [[Evas colorspace type]] /* FIXME: Need to get emile migrated. */
 
-class Evas.Canvas3D.Texture extends Evas.Canvas3D.Object implements Efl.File
+class @beta Evas.Canvas3D.Texture extends Evas.Canvas3D.Object implements Efl.File
 {
    [[Evas 3d canvas texture class]]
    data : Evas_Canvas3D_Texture_Data;
@@ -155,6 +155,8 @@ class Evas.Canvas3D.Texture extends Evas.Canvas3D.Object implements Efl.File
       Efl.Object.destructor;
       Evas.Canvas3D.Object.update_notify;
       Evas.Canvas3D.Object.change_notify;
-      Efl.File.mmap { set; get; }
+      Efl.File.load;
+      @empty Evas.Canvas3D.Object.callback_register;
+      @empty Evas.Canvas3D.Object.callback_unregister;
    }
 }

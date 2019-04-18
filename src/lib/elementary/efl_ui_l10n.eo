@@ -1,4 +1,4 @@
-interface Efl.Ui.L10n
+interface @beta Efl.Ui.L10n
 {
    [[Interface for all translatable text APIs.
 

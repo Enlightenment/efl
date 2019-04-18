@@ -12,7 +12,7 @@ interface Efl.Io.Reader {
       "can_read,changed" or property @.can_read to known whenever a read
       would have data to return.
 
-      @since 1.19
+      @since 1.22
     ]]
 
     methods {
@@ -55,7 +55,7 @@ interface Efl.Io.Reader {
     }
 
     events {
-        can_read,changed: void; [[Notifies can_read property changed.
+        can_read,changed: bool; [[Notifies can_read property changed.
 
                             If @.can_read is $true there is data to
                             @.read without blocking/error. If

@@ -37,7 +37,6 @@ _efl_ui_nstate_efl_object_constructor(Eo *obj, Efl_Ui_Nstate_Data *pd)
      elm_widget_theme_klass_set(obj, "nstate");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
-   elm_widget_sub_object_parent_add(obj);
 
    pd->state = 0;
    // Default: 2 states
@@ -45,7 +44,7 @@ _efl_ui_nstate_efl_object_constructor(Eo *obj, Efl_Ui_Nstate_Data *pd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    efl_layout_signal_callback_add
-     (wd->resize_obj, "efl,action,state,changed", "*", _on_state_changed, obj);
+     (wd->resize_obj, "efl,action,state,changed", "*", obj, _on_state_changed, NULL);
 
    //TODO: Add ATSPI call here
 
@@ -116,13 +115,13 @@ _efl_ui_nstate_value_set(Eo *obj, Efl_Ui_Nstate_Data *pd, int state)
    _state_active(obj, pd);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _efl_ui_nstate_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Nstate_Data *pd)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    _state_signal_emit(obj, pd);
 

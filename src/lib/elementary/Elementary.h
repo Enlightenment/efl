@@ -70,7 +70,6 @@
 #include <Efreet_Mime.h>
 #include <Efreet_Trash.h>
 #include <Ethumb_Client.h>
-#include <Efl.h>
 
 #ifdef ELM_ELOCATION
 #include <Elocation.h>
@@ -88,7 +87,7 @@
 #endif
 
 #ifdef _WIN32
-# ifdef ELEMENTARY_BUILD
+# ifdef EFL_BUILD
 #  ifdef DLL_EXPORT
 #   define EAPI __declspec(dllexport)
 #  else
@@ -147,11 +146,16 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_config.h>
 #include <elm_focus.h>
 
-#if defined (EFL_EO_API_SUPPORT) && defined (EFL_BETA_API_SUPPORT)
-
+#include <Efl.h>
+/* FIXME: wtf? */
+#ifndef EFL_UI_RADIO_EVENT_CHANGED
+# define EFL_UI_RADIO_EVENT_CHANGED EFL_UI_NSTATE_EVENT_CHANGED
+#endif
+# include <efl_ui.eot.h>
 //define focus manager earlier since focus object and manager is circular
 typedef Eo Efl_Ui_Focus_Manager;
 #define _EFL_UI_FOCUS_MANAGER_EO_CLASS_TYPE
+
 
 # include <efl_ui_focus_object.eo.h>
 # include <efl_ui_focus_manager.eo.h>
@@ -163,9 +167,10 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_l10n.eo.h>
 # include <efl_ui_focus_composition.eo.h>
 # include <efl_ui_focus_layer.eo.h>
+
+#ifdef EFL_BETA_API_SUPPORT
 # include <elm_interface_scrollable.h>
 # include <elm_interface_scrollable.eo.h>
-# include <elm_spinner.eo.h>
 #endif
 
 #include <elm_tooltip.h>
@@ -279,7 +284,6 @@ typedef Eo Efl_Ui_Focus_Manager;
 #include <elm_web.h>
 #include <elm_win.h>
 
-#ifdef EFL_EO_API_SUPPORT
 # include <efl_ui_selection_types.eot.h>
 # include <efl_ui_theme.eo.h>
 # include <efl_config_global.eo.h>
@@ -341,12 +345,10 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_grid_default_item.eo.h>
 # include <efl_ui_grid.eo.h>
 # include <efl_ui_list_view_types.eot.h>
-# include <efl_ui_list_view_seg_array.h>
-# include <efl_ui_list_view_seg_array.eo.h>
 # include <efl_ui_list_view_model.eo.h>
-# include <efl_ui_list_view_relayout.eo.h>
 # include <efl_ui_list_view.eo.h>
 # include <efl_ui_list_view_pan.eo.h>
+# include <efl_ui_widget_factory.eo.h>
 # include <efl_ui_caching_factory.eo.h>
 # include <efl_ui_pan.eo.h>
 # include <efl_ui_scroll_manager.eo.h>
@@ -355,11 +357,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_selection.eo.h>
 # include <efl_ui_dnd.eo.h>
 # include <efl_ui_dnd_container.eo.h>
-# include <efl_ui_navigation_bar.eo.h>
-# include <efl_ui_navigation_bar_part.eo.h>
-# include <efl_ui_navigation_bar_part_back_button.eo.h>
-# include <efl_ui_navigation_layout.eo.h>
-# include <efl_ui_stack.eo.h>
+# include <efl_ui_relative_layout.eo.h>
 
 # ifndef _EFL_UI_PAGER_EO_CLASS_TYPE
 # define _EFL_UI_PAGER_EO_CLASS_TYPE
@@ -376,7 +374,6 @@ typedef Eo Efl_Ui_Pager;
 # include <efl_ui_tab_page.eo.h>
 # include <efl_ui_tab_page_part_tab.eo.h>
 # include <efl_ui_tab_pager.eo.h>
-#endif
 
 /* include deprecated calls last of all */
 #include <elm_deprecated.h>
@@ -387,7 +384,7 @@ typedef Eo Efl_Ui_Pager;
 }
 #endif
 
-#ifndef ELEMENTARY_BUILD
+#ifndef EFL_BUILD
 # undef EAPI
 # define EAPI
 #endif

@@ -6,7 +6,7 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
-EFL_START_TEST (elm_fileselector_button_legacy_type_check)
+EFL_START_TEST(elm_fileselector_button_legacy_type_check)
 {
    Evas_Object *win, *fs_button;
    const char *type;
@@ -26,7 +26,20 @@ EFL_START_TEST (elm_fileselector_button_legacy_type_check)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_atspi_role_get)
+EFL_START_TEST(elm_fileselector_button_current_name)
+{
+   Evas_Object *win, *fs_button;
+
+   win = win_add(NULL, "fileselector_button", ELM_WIN_BASIC);
+
+   fs_button = elm_fileselector_button_add(win);
+
+   elm_fileselector_current_name_set(fs_button, "test.txt");
+   ck_assert_str_eq(elm_fileselector_current_name_get(fs_button), "test.txt");
+}
+EFL_END_TEST
+
+EFL_START_TEST(elm_atspi_role_get)
 {
    Evas_Object *win, *fs_button;
    Efl_Access_Role role;
@@ -44,5 +57,6 @@ EFL_END_TEST
 void elm_test_fileselector_button(TCase *tc)
 {
    tcase_add_test(tc, elm_fileselector_button_legacy_type_check);
+   tcase_add_test(tc, elm_fileselector_button_current_name);
    tcase_add_test(tc, elm_atspi_role_get);
 }

@@ -11,14 +11,14 @@ foreach edc_file : edc_files
     input : edc_file,
     depfile: '@BASENAME@.edj.d',
     output : '@BASENAME@.edj',
-    command : edje_cc_exe + [ '-beta',
+    command : edje_cc_exe + [ '-beta', '-fastcomp',
               '-deps', '@DEPFILE@',
               '-sd', join_paths(meson.current_source_dir(), 'snd'),
               '-id', elm_themes_image_include,
               '-id', join_paths(meson.current_source_dir(), 'fdo'),
               '-fd', join_paths(meson.current_source_dir(), 'fnt'),
               '@INPUT@', '@OUTPUT@'],
-    depends : edje_cc,
+    depends : edje_depends,
     install : true,
     install_dir : join_paths(dir_data, 'elementary', 'themes'),
    )
@@ -37,3 +37,4 @@ install_subdir('fdo',
     join_paths('actions', '128-svg'),
   ]
 )
+elementary_img_data = join_paths(meson.current_source_dir())

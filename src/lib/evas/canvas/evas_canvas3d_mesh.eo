@@ -2,7 +2,7 @@ import evas_canvas3d_types;
 
 struct @extern Eina.Inarray; [[Eina inarray data structure]]
 
-class Evas.Canvas3D.Mesh extends Evas.Canvas3D.Object implements Efl.File
+class @beta Evas.Canvas3D.Mesh extends Evas.Canvas3D.Object implements Efl.File, Efl.File_Save
 {
    [[Evas 3D canvas mesh class]]
    data: Evas_Canvas3D_Mesh_Data;
@@ -426,9 +426,10 @@ class Evas.Canvas3D.Mesh extends Evas.Canvas3D.Object implements Efl.File
       Efl.Object.destructor;
       Evas.Canvas3D.Object.update_notify;
       Evas.Canvas3D.Object.change_notify;
-      Efl.File.file { set; }
-      Efl.File.mmap { set; }
-      Efl.File.save;
+      Efl.File.load;
+      Efl.File_Save.save;
+      @empty Evas.Canvas3D.Object.callback_register;
+      @empty Evas.Canvas3D.Object.callback_unregister;
    }
 
 }

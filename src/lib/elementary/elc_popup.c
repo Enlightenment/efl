@@ -365,7 +365,7 @@ _populate_theme_scroll(Elm_Popup_Data *sd)
    sd->theme_scroll = EINA_FALSE;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_popup_efl_ui_widget_theme_apply(Eo *obj, Elm_Popup_Data *sd)
 {
    Elm_Popup_Item_Data *it;
@@ -439,7 +439,7 @@ _elm_popup_efl_ui_widget_theme_apply(Eo *obj, Elm_Popup_Data *sd)
    /* access */
    if (_elm_config->access_mode) _access_obj_process(obj, EINA_TRUE);
 
-   return EFL_UI_THEME_APPLY_RESULT_SUCCESS;
+   return EFL_UI_THEME_APPLY_ERROR_NONE;
 }
 
 static void
@@ -503,14 +503,6 @@ _elm_popup_elm_layout_sizing_eval(Eo *obj, Elm_Popup_Data *sd)
         else
           evas_object_size_hint_min_set(sd->spacer, minw, minh);
 
-        if (sd->main_layout)
-          {
-             Evas *ev = evas_object_evas_get(sd->main_layout);
-             if (evas_smart_objects_calculating_get(ev))
-               evas_object_smart_calculate(sd->main_layout);
-             else
-               evas_object_smart_need_recalculate_set(sd->main_layout, EINA_TRUE);
-          }
        return;
      }
 
@@ -1425,7 +1417,6 @@ _elm_popup_efl_canvas_group_group_add(Eo *obj, Elm_Popup_Data *priv)
    char style[1024];
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    snprintf(style, sizeof(style), "popup/%s", elm_widget_style_get(obj));
 
@@ -1504,10 +1495,11 @@ _parent_geom_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_i
    evas_object_resize(popup, w, h);
 }
 
-EOLIAN static void
-_elm_popup_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Popup_Data *sd, Evas_Object *parent)
+static void
+_parent_setup(Eo *obj, Elm_Popup_Data *sd, Evas_Object *parent)
 {
    Evas_Coord x, y, w, h;
+
    evas_object_geometry_get(parent, &x, &y, &w, &h);
 
    if (efl_isa(parent, EFL_UI_WIN_CLASS))
@@ -1549,6 +1541,7 @@ _elm_popup_efl_object_constructor(Eo *obj, Elm_Popup_Data *_pd EINA_UNUSED)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_DIALOG);
    legacy_object_focus_handle(obj);
+   _parent_setup(obj, _pd, efl_parent_get(obj));
 
    return obj;
 }
@@ -1824,7 +1817,7 @@ _elm_popup_efl_access_object_state_set_get(const Eo *obj, Elm_Popup_Data *sd EIN
    Efl_Access_State_Set ret;
    ret = efl_access_object_state_set_get(efl_super(obj, MY_CLASS));
 
-   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MODAL);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_MODAL);
 
    return ret;
 }
@@ -1875,5 +1868,5 @@ ELM_PART_OVERRIDE_TEXT_GET(elm_popup, ELM_POPUP, Elm_Popup_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_popup), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_popup)
 
-#include "elm_popup.eo.c"
-#include "elm_popup_item.eo.c"
+#include "elm_popup_eo.c"
+#include "elm_popup_item_eo.c"

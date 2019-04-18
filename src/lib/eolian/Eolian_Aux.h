@@ -105,7 +105,7 @@ EAPI size_t eolian_aux_class_callables_get(const Eolian_Class *klass, Eina_List 
 /**
  * @brief Get all implementations of a function in a state.
  *
- * Given a function and a childen hierarchy from
+ * Given a function and a children hierarchy from
  * eolian_aux_state_class_children_find(), this will func
  * all implementations of that function in the system. This
  * is useful for various utilities. You need to free the list

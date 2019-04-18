@@ -1,0 +1,15 @@
+class @beta Efl.Select_Model extends Efl.Boolean_Model
+{
+   [[Efl select model class]]
+   implements {
+      Efl.Object.constructor;
+      Efl.Model.property { get; set; }
+      Efl.Model.properties { get; }
+   }
+   events {
+      /* FIXME: The object is emitted in the event_info. This is redundant. */
+      selected: Efl.Object;
+      /* FIXME: The object is emitted in the event_info. This is redundant. */
+      unselected: Efl.Object;
+   }
+}

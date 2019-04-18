@@ -3,6 +3,7 @@
 
 #include "grammar/generator.hpp"
 #include "grammar/klass_def.hpp"
+#include "grammar/attribute_reorder.hpp"
 #include "grammar/case.hpp"
 #include "helpers.hh"
 #include "marshall_type.hh"
@@ -34,6 +35,10 @@ namespace eolian_mono {
     struct native_convert_return_variable_generator;
     struct convert_function_pointer_generator;
     struct native_convert_function_pointer_generator;
+    struct constructor_param_generator;
+    struct constructor_invocation_generator;
+    struct constructor_parameter_name_generator;
+    struct constructor_parameter_name_paremeterized;
 }
 
 namespace efl { namespace eolian { namespace grammar {
@@ -232,6 +237,38 @@ template <>
 struct attributes_needed< ::eolian_mono::native_convert_function_pointer_generator> : std::integral_constant<int, 1> {};
 }
 
+template <>
+struct is_eager_generator< ::eolian_mono::constructor_param_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::constructor_param_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::constructor_param_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::constructor_invocation_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::constructor_invocation_generator> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::constructor_invocation_generator> : std::integral_constant<int, 1> {};
+}
+
+template <>
+struct is_eager_generator< ::eolian_mono::constructor_parameter_name_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::constructor_parameter_name_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::constructor_parameter_name_paremeterized> : std::true_type {};
+
+namespace type_traits {
+template <>
+struct attributes_needed< ::eolian_mono::constructor_parameter_name_generator> : std::integral_constant<int, 1> {};
+}
+
 } } }
 
 namespace eolian_mono {
@@ -263,18 +300,10 @@ inline bool param_should_use_out_var(attributes::parameter_def const& param, boo
            || param_is_acceptable(param, "Eina_Array *", WANT_OWN, WANT_OUT)
            || param_is_acceptable(param, "const Eina_Array *", !WANT_OWN, WANT_OUT)
            || param_is_acceptable(param, "const Eina_Array *", WANT_OWN, WANT_OUT)
-           || param_is_acceptable(param, "Eina_Inarray *", !WANT_OWN, WANT_OUT)
-           || param_is_acceptable(param, "Eina_Inarray *", WANT_OWN, WANT_OUT)
-           || param_is_acceptable(param, "const Eina_Inarray *", !WANT_OWN, WANT_OUT)
-           || param_is_acceptable(param, "const Eina_Inarray *", WANT_OWN, WANT_OUT)
            || param_is_acceptable(param, "Eina_List *", !WANT_OWN, WANT_OUT)
            || param_is_acceptable(param, "Eina_List *", WANT_OWN, WANT_OUT)
            || param_is_acceptable(param, "const Eina_List *", !WANT_OWN, WANT_OUT)
            || param_is_acceptable(param, "const Eina_List *", WANT_OWN, WANT_OUT)
-           || param_is_acceptable(param, "Eina_Inlist *", !WANT_OWN, WANT_OUT)
-           || param_is_acceptable(param, "Eina_Inlist *", WANT_OWN, WANT_OUT)
-           || param_is_acceptable(param, "const Eina_Inlist *", !WANT_OWN, WANT_OUT)
-           || param_is_acceptable(param, "const Eina_Inlist *", WANT_OWN, WANT_OUT)
            || param_is_acceptable(param, "Eina_Accessor *", !WANT_OWN, WANT_OUT)
            || param_is_acceptable(param, "Eina_Accessor *", WANT_OWN, WANT_OUT)
            || param_is_acceptable(param, "const Eina_Accessor *", !WANT_OWN, WANT_OUT)
@@ -315,22 +344,14 @@ inline bool param_should_use_in_var(attributes::parameter_def const& param, bool
         || param_is_acceptable(param, "Eina_Array *", WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "const Eina_Array *", !WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "const Eina_Array *", WANT_OWN, !WANT_OUT)
-        || param_is_acceptable(param, "Eina_Inarray *", !WANT_OWN, !WANT_OUT)
-        || param_is_acceptable(param, "Eina_Inarray *", WANT_OWN, !WANT_OUT)
-        || param_is_acceptable(param, "const Eina_Inarray *", !WANT_OWN, !WANT_OUT)
-        || param_is_acceptable(param, "const Eina_Inarray *", WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "Eina_List *", !WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "Eina_List *", WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "const Eina_List *", !WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "const Eina_List *", WANT_OWN, !WANT_OUT)
-        || param_is_acceptable(param, "Eina_Inlist *", !WANT_OWN, !WANT_OUT)
-        || param_is_acceptable(param, "Eina_Inlist *", WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "Eina_Accessor *", !WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "Eina_Accessor *", WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "const Eina_Accessor *", !WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "const Eina_Accessor *", WANT_OWN, !WANT_OUT)
-        || param_is_acceptable(param, "const Eina_Inlist *", !WANT_OWN, !WANT_OUT)
-        || param_is_acceptable(param, "const Eina_Inlist *", WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "Eina_Hash *", !WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "Eina_Hash *", WANT_OWN, !WANT_OUT)
         || param_is_acceptable(param, "const Eina_Hash *", !WANT_OWN, !WANT_OUT)
@@ -559,8 +580,8 @@ struct native_convert_in_variable_generator
       else if (helpers::need_struct_conversion(regular))
         {
            return as_generator(
-                "var " << string << " = " << type << "_StructConversion.ToManaged(" << escape_keyword(param.param_name) << ");\n"
-             ).generate(sink, std::make_tuple(in_variable_name(param.param_name), param.type), context);
+                type << " " << string << " = " << escape_keyword(param.param_name) << ";\n"
+             ).generate(sink, std::make_tuple(param.type, in_variable_name(param.param_name)), context);
         }
       else if (param.type.c_type == "Eina_Binbuf *" || param.type.c_type == "const Eina_Binbuf *")
         {
@@ -582,9 +603,7 @@ struct native_convert_in_variable_generator
             ).generate(sink, std::make_tuple(in_variable_name(param.param_name), param.type), context);
        }
      else if (param.type.c_type == "Eina_Array *" || param.type.c_type == "const Eina_Array *"
-              || param.type.c_type == "Eina_Inarray *" || param.type.c_type == "const Eina_Inarray *"
               || param.type.c_type == "Eina_List *" || param.type.c_type == "const Eina_List *"
-              || param.type.c_type == "Eina_Inlist *" || param.type.c_type == "const Eina_Inlist *"
               || param.type.c_type == "Eina_Iterator *" || param.type.c_type == "const Eina_Iterator *"
               || param.type.c_type == "Eina_Accessor *" || param.type.c_type == "const Eina_Accessor *"
      )
@@ -628,8 +647,8 @@ struct convert_in_variable_generator
       else if (helpers::need_struct_conversion(regular))
         {
            return as_generator(
-                "var " << string << " = " << type << "_StructConversion.ToInternal(" << escape_keyword(param.param_name) << ");\n"
-             ).generate(sink, std::make_tuple(in_variable_name(param.param_name), param.type), context);
+                marshall_type << " " << string << " = " << escape_keyword(param.param_name) << ";\n"
+             ).generate(sink, std::make_tuple(param.type, in_variable_name(param.param_name)), context);
         }
       else if (param.type.c_type == "Eina_Binbuf *" || param.type.c_type == "const Eina_Binbuf *")
         {
@@ -670,9 +689,7 @@ struct convert_in_variable_generator
              return false;
         }
       else if (param.type.c_type == "Eina_Array *" || param.type.c_type == "const Eina_Array *"
-               || param.type.c_type == "Eina_Inarray *" || param.type.c_type == "const Eina_Inarray *"
                || param.type.c_type == "Eina_List *" || param.type.c_type == "const Eina_List *"
-               || param.type.c_type == "Eina_Inlist *" || param.type.c_type == "const Eina_Inlist *"
                || param.type.c_type == "Eina_Iterator *" || param.type.c_type == "const Eina_Iterator *"
                || param.type.c_type == "Eina_Accessor *" || param.type.c_type == "const Eina_Accessor *"
       )
@@ -741,18 +758,10 @@ struct convert_out_variable_generator
                || param_is_acceptable(param, "Eina_Array *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Array *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Array *", !WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "Eina_Inarray *", WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "Eina_Inarray *", !WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "const Eina_Inarray *", WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "const Eina_Inarray *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_List *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_List *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_List *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_List *", !WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "Eina_Inlist *", WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "Eina_Inlist *", !WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "const Eina_Inlist *", WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "const Eina_Inlist *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_Accessor *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_Accessor *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Accessor *", WANT_OWN, WANT_OUT)
@@ -820,18 +829,10 @@ struct native_convert_out_variable_generator
                || param_is_acceptable(param, "Eina_Array *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Array *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Array *", !WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "Eina_Inarray *", WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "Eina_Inarray *", !WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "const Eina_Inarray *", WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "const Eina_Inarray *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_List *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_List *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_List *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_List *", !WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "Eina_Inlist *", WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "Eina_Inlist *", !WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "const Eina_Inlist *", WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "const Eina_Inlist *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_Accessor *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_Accessor *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Accessor *", WANT_OWN, WANT_OUT)
@@ -898,8 +899,8 @@ struct convert_out_assign_generator
       else if (helpers::need_struct_conversion(regular))
         {
            return as_generator(
-                string << " = " << type << "_StructConversion.ToManaged(" << out_variable_name(param.param_name) << ");\n"
-             ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type), context);
+                string << " = " << out_variable_name(param.param_name) << ";\n"
+             ).generate(sink, escape_keyword(param.param_name), context);
         }
       else if (param_is_acceptable(param, "Eina_Binbuf *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_Binbuf *", !WANT_OWN, WANT_OUT)
@@ -932,18 +933,10 @@ struct convert_out_assign_generator
                || param_is_acceptable(param, "Eina_Array *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Array *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Array *", !WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "Eina_Inarray *", WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "Eina_Inarray *", !WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "const Eina_Inarray *", WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "const Eina_Inarray *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_List *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_List *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_List *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_List *", !WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "Eina_Inlist *", WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "Eina_Inlist *", !WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "const Eina_Inlist *", WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "const Eina_Inlist *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_Accessor *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_Accessor *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Accessor *", WANT_OWN, WANT_OUT)
@@ -985,8 +978,8 @@ struct native_convert_in_ptr_assign_generator
       if (param_should_use_in_var(param, true) &&  param.type.is_ptr && !param.type.has_own && helpers::need_struct_conversion(regular))
         {
            return as_generator(
-                 string << " = " << type << "_StructConversion.ToInternal(" << in_variable_name(param.param_name) << ");\n"
-             ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type), context);
+                 string << " = " << in_variable_name(param.param_name) << ";\n"
+             ).generate(sink, escape_keyword(param.param_name), context);
         }
 
       return true;
@@ -1002,8 +995,8 @@ struct convert_in_ptr_assign_generator
       if (param_should_use_in_var(param, true) &&  param.type.is_ptr && !param.type.has_own && helpers::need_struct_conversion(regular))
         {
            return as_generator(
-                 string << " = " << type << "_StructConversion.ToManaged(" << in_variable_name(param.param_name) << ");\n"
-             ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type), context);
+                 string << " = " << in_variable_name(param.param_name) << ";\n"
+             ).generate(sink, escape_keyword(param.param_name), context);
         }
 
       return true;
@@ -1040,8 +1033,8 @@ struct convert_return_generator
      else if (helpers::need_struct_conversion(regular))
        {
           return as_generator(
-               "return " << type << "_StructConversion.ToManaged(_ret_var);\n"
-            ).generate(sink, ret_type, context);
+               "return _ret_var;\n"
+            ).generate(sink, nullptr, context);
        }
      else if (ret_type.c_type == "Eina_Binbuf *" || ret_type.c_type == "const Eina_Binbuf *")
        {
@@ -1063,9 +1056,7 @@ struct convert_return_generator
              return false;
        }
      else if (ret_type.c_type == "Eina_Array *" || ret_type.c_type == "const Eina_Array *"
-              || ret_type.c_type == "Eina_Inarray *" || ret_type.c_type == "const Eina_Inarray *"
               || ret_type.c_type == "Eina_List *" || ret_type.c_type == "const Eina_List *"
-              || ret_type.c_type == "Eina_Inlist *" || ret_type.c_type == "const Eina_Inlist *"
               || ret_type.c_type == "Eina_Iterator *" || ret_type.c_type == "const Eina_Iterator *"
               || ret_type.c_type == "Eina_Accessor *" || ret_type.c_type == "const Eina_Accessor *"
      )
@@ -1110,8 +1101,8 @@ struct native_convert_out_assign_generator
       else if (helpers::need_struct_conversion(regular))
         {
            return as_generator(
-                string << " = " << type << "_StructConversion.ToInternal(" << string << ");\n"
-             ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type, out_variable_name(param.param_name)), context);
+                string << " = " << string << ";\n"
+             ).generate(sink, std::make_tuple(escape_keyword(param.param_name), out_variable_name(param.param_name)), context);
         }
       else if (param_is_acceptable(param, "Eina_Stringshare *", !WANT_OWN, WANT_OUT))
         {
@@ -1121,7 +1112,7 @@ struct native_convert_out_assign_generator
                 return false;
              }
            return as_generator(
-                string << "= Efl.Eo.Globals.cached_stringshare_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_stringshares, " << string << ");\n"
+                string << "= " << string << ";\n"
               ).generate(sink, std::make_tuple(escape_keyword(param.param_name), out_variable_name(param.param_name)), context);
         }
       else if (param_is_acceptable(param, "const char *", !WANT_OWN, WANT_OUT))
@@ -1132,7 +1123,7 @@ struct native_convert_out_assign_generator
                 return false;
              }
            return as_generator(
-                string << "= Efl.Eo.Globals.cached_string_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_strings, " << string << ");\n"
+                string << " = " << string << ";\n"
               ).generate(sink, std::make_tuple(escape_keyword(param.param_name), out_variable_name(param.param_name)), context);
         }
       else if (param_is_acceptable(param, "Eina_Binbuf *", WANT_OWN, WANT_OUT)
@@ -1182,18 +1173,10 @@ struct native_convert_out_assign_generator
                || param_is_acceptable(param, "Eina_Array *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Array *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Array *", !WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "Eina_Inarray *", WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "Eina_Inarray *", !WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "const Eina_Inarray *", WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "const Eina_Inarray *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_List *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_List *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_List *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_List *", !WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "Eina_Inlist *", WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "Eina_Inlist *", !WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "const Eina_Inlist *", WANT_OWN, WANT_OUT)
-               || param_is_acceptable(param, "const Eina_Inlist *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_Iterator *", WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "Eina_Iterator *", !WANT_OWN, WANT_OUT)
                || param_is_acceptable(param, "const Eina_Iterator *", WANT_OWN, WANT_OUT)
@@ -1257,8 +1240,8 @@ struct native_convert_return_generator
      else if (helpers::need_struct_conversion(regular))
        {
           return as_generator(
-               "return " << type << "_StructConversion.ToInternal(_ret_var);\n"
-            ).generate(sink, ret_type, context);
+               "return _ret_var;\n"
+            ).generate(sink, nullptr, context);
        }
      else if (ret_type.c_type == "const char *")
        {
@@ -1270,7 +1253,7 @@ struct native_convert_return_generator
                     return false;
                  }
                return as_generator(
-                    "return Efl.Eo.Globals.cached_string_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_strings, _ret_var);\n"
+                    "return _ret_var;\n"
                  ).generate(sink, attributes::unused, context);
             }
           else
@@ -1288,7 +1271,7 @@ struct native_convert_return_generator
                     return false;
                  }
               return as_generator(
-                   "return Efl.Eo.Globals.cached_stringshare_to_intptr(((" << name_helpers::klass_inherit_name(*klass) << ")wrapper).cached_stringshares, _ret_var);\n"
+                   "return _ret_var;\n"
                 ).generate(sink, attributes::unused, context);
            }
          else
@@ -1325,9 +1308,7 @@ struct native_convert_return_generator
             .generate(sink, attributes::unused, context);
        }
      else if (ret_type.c_type == "Eina_Array *" || ret_type.c_type == "const Eina_Array *"
-              || ret_type.c_type == "Eina_Inarray *" || ret_type.c_type == "const Eina_Inarray *"
               || ret_type.c_type == "Eina_List *" || ret_type.c_type == "const Eina_List *"
-              || ret_type.c_type == "Eina_Inlist *" || ret_type.c_type == "const Eina_Inlist *"
               || ret_type.c_type == "Eina_Iterator *" || ret_type.c_type == "const Eina_Iterator *"
               || ret_type.c_type == "Eina_Accessor *" || ret_type.c_type == "const Eina_Accessor *"
      )
@@ -1435,6 +1416,89 @@ struct native_convert_function_pointer_generator
    }
 
 } const native_convert_function_pointer {};
+
+struct constructor_parameter_name_generator
+{
+   
+   template <typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
+   {
+     auto target_name = name_helpers::constructor_managed_name(ctor.name);
+
+     // Only multi-valued constructing methods get their actual parameter names
+     if (ctor.function.parameters.size() > 1)
+       target_name += '_' + param.param_name;
+
+     auto name = name_helpers::managed_name(target_name);
+     name[0] = std::tolower(name[0]);
+
+     return as_generator(string).generate(sink, name, context);
+   }
+
+   attributes::constructor_def const& ctor;
+};
+
+struct constructor_parameter_name_parameterized
+{
+   constructor_parameter_name_generator const operator()(attributes::constructor_def const& ctor) const
+   {
+       return {ctor};
+   }
+} const constructor_parameter_name;
+
+// Generates the parameters for the given constructor
+// If the constructor receives multiple parameters, they get the name
+// of the constructor plus the name of the parameter (e.g. DefineParentData, DefineIndex)
+struct constructor_param_generator
+{
+  template<typename OutputIterator, typename Context>
+  bool generate(OutputIterator sink, attributes::constructor_def const& ctor, Context const& context) const
+  {
+     auto params = ctor.function.parameters;
+
+     if (!as_generator(
+                       efl::eolian::grammar::attribute_reorder<1, -1>
+                       (type(false, ctor.is_optional) << " " << constructor_parameter_name(ctor) << (ctor.is_optional ? " = null" : "")) % ","
+                ).generate(sink, params, context))
+       return false;
+     //   }
+     return true;
+  }
+
+} const constructor_param;
+
+// Generates the invocation of the given parameter
+struct constructor_invocation_generator
+{
+  template<typename OutputIterator, typename Context>
+  bool generate(OutputIterator sink, attributes::constructor_def const& ctor, Context const& context) const
+  {
+     auto params = ctor.function.parameters;
+     if (!as_generator(
+                       "if (" <<
+                       (efl::eolian::grammar::attribute_reorder<-1>
+                        ("Efl.Eo.Globals.ParamHelperCheck(" << constructor_parameter_name(ctor) << ")") % "||") << ")\n"
+                       << scope_tab << scope_tab << scope_tab << name_helpers::managed_method_name(ctor.function) << "("
+             ).generate(sink, params, context))
+       return false;
+
+     size_t idx = 0;
+
+     for (auto&& param : params)
+       {
+          idx++;
+          if (!as_generator(
+              "Efl.Eo.Globals.GetParamHelper(" << constructor_parameter_name(ctor) << ")" << ((idx < params.size()) ? ", " : "")
+              ).generate(sink, param, context))
+            return false;
+       }
+
+     if (!as_generator(");").generate(sink, attributes::unused, context))
+       return false;
+     return true;
+  }
+
+} const constructor_invocation;
 
 }
 

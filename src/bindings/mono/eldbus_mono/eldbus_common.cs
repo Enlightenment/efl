@@ -5,7 +5,8 @@ using System.Runtime.InteropServices;
 
 using static eldbus.EldbusMessageNativeFunctions;
 
-namespace eldbus {
+namespace eldbus
+{
 
 public static class Timeout
 {
@@ -26,6 +27,7 @@ public struct ObjectPath
     {
         return new ObjectPath(str);
     }
+
     public static implicit operator string(ObjectPath path)
     {
         return path.value;
@@ -46,6 +48,7 @@ public struct SignatureString
     {
         return new SignatureString(str);
     }
+
     public static implicit operator string(SignatureString sig)
     {
         return sig.value;
@@ -66,6 +69,7 @@ public struct UnixFd
     {
         return new UnixFd(fd);
     }
+
     public static implicit operator Int32(UnixFd unix_fd)
     {
         return unix_fd.value;
@@ -75,23 +79,107 @@ public struct UnixFd
 
 public static class Argument
 {
-    public class ByteType       { public const char Code = 'y'; public const string Signature = "y"; }
-    public class BooleanType    { public const char Code = 'b'; public const string Signature = "b"; }
-    public class Int16Type      { public const char Code = 'n'; public const string Signature = "n"; }
-    public class UInt16Type     { public const char Code = 'q'; public const string Signature = "q"; }
-    public class Int32Type      { public const char Code = 'i'; public const string Signature = "i"; }
-    public class UInt32Type     { public const char Code = 'u'; public const string Signature = "u"; }
-    public class Int64Type      { public const char Code = 'x'; public const string Signature = "x"; }
-    public class UInt64Type     { public const char Code = 't'; public const string Signature = "t"; }
-    public class DoubleType     { public const char Code = 'd'; public const string Signature = "d"; }
-    public class StringType     { public const char Code = 's'; public const string Signature = "s"; }
-    public class ObjectPathType { public const char Code = 'o'; public const string Signature = "o"; }
-    public class SignatureType  { public const char Code = 'g'; public const string Signature = "g"; }
-    public class ArrayType      { public const char Code = 'a'; public const string Signature = "a"; }
-    public class StructType     { public const char Code = 'r'; public const string Signature = "r"; }
-    public class VariantType    { public const char Code = 'v'; public const string Signature = "v"; }
-    public class DictEntryType  { public const char Code = 'e'; public const string Signature = "e"; }
-    public class UnixFdType     { public const char Code = 'h'; public const string Signature = "h"; }
+    public class ByteType
+    {
+        public const char Code = 'y';
+        public const string Signature = "y";
+    }
+
+    public class BooleanType
+    {
+        public const char Code = 'b';
+        public const string Signature = "b";
+    }
+
+    public class Int16Type
+    {
+        public const char Code = 'n';
+        public const string Signature = "n";
+    }
+
+    public class UInt16Type
+    {
+        public const char Code = 'q';
+        public const string Signature = "q";
+    }
+
+    public class Int32Type
+    {
+        public const char Code = 'i';
+        public const string Signature = "i";
+    }
+
+    public class UInt32Type
+    {
+        public const char Code = 'u';
+        public const string Signature = "u";
+    }
+
+    public class Int64Type
+    {
+        public const char Code = 'x';
+        public const string Signature = "x";
+    }
+
+    public class UInt64Type
+    {
+        public const char Code = 't';
+        public const string Signature = "t";
+    }
+
+    public class DoubleType
+    {
+        public const char Code = 'd';
+        public const string Signature = "d";
+    }
+
+    public class StringType
+    {
+        public const char Code = 's';
+        public const string Signature = "s";
+    }
+
+    public class ObjectPathType
+    {
+        public const char Code = 'o';
+        public const string Signature = "o";
+    }
+
+    public class SignatureType
+    {
+        public const char Code = 'g';
+        public const string Signature = "g";
+    }
+
+    public class ArrayType
+    {
+        public const char Code = 'a';
+        public const string Signature = "a";
+    }
+
+    public class StructType
+    {
+        public const char Code = 'r';
+        public const string Signature = "r";
+    }
+
+    public class VariantType
+    {
+        public const char Code = 'v';
+        public const string Signature = "v";
+    }
+
+    public class DictEntryType
+    {
+        public const char Code = 'e';
+        public const string Signature = "e";
+    }
+
+    public class UnixFdType
+    {
+        public const char Code = 'h';
+        public const string Signature = "h";
+    }
 
 //     public static readonly ByteType       ByteT       = new ByteType();
 //     public static readonly BooleanType    BooleanT    = new BooleanType();
@@ -135,13 +223,17 @@ public abstract class BasicMessageArgument
     public void AppendTo(eldbus.Message msg)
     {
         if (!InternalAppendTo(msg))
+        {
             throw new SEHException("Eldbus: could not append basic type to eldbus.Message");
+        }
     }
 
     public void AppendTo(eldbus.MessageIterator iter)
     {
         if (!InternalAppendTo(iter))
+        {
             throw new SEHException("Eldbus: could not append basic type to eldbus.MessageIterator");
+        }
     }
 
     public abstract char TypeCode {get;}
@@ -219,8 +311,15 @@ public class ByteMessageArgument : BasicMessageArgument
         value = arg;
     }
 
-    public override char TypeCode { get { return Argument.ByteType.Code; } }
-    public override string Signature { get { return Argument.ByteType.Signature; } }
+    public override char TypeCode
+    {
+        get { return Argument.ByteType.Code; }
+    }
+
+    public override string Signature
+    {
+        get { return Argument.ByteType.Signature; }
+    }
 
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
@@ -242,8 +341,15 @@ public class BoolMessageArgument : BasicMessageArgument
         value = Convert.ToInt32(arg);
     }
 
-    public override char TypeCode { get { return Argument.BooleanType.Code; } }
-    public override string Signature { get { return Argument.ByteType.Signature; } }
+    public override char TypeCode
+    {
+        get { return Argument.BooleanType.Code; }
+    }
+
+    public override string Signature
+    {
+        get { return Argument.ByteType.Signature; }
+    }
 
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
@@ -265,8 +371,15 @@ public class Int16MessageArgument : BasicMessageArgument
         value = arg;
     }
 
-    public override char TypeCode { get { return Argument.Int16Type.Code; } }
-    public override string Signature { get { return Argument.ByteType.Signature; } }
+    public override char TypeCode
+    {
+        get { return Argument.Int16Type.Code; }
+    }
+
+    public override string Signature
+    {
+        get { return Argument.ByteType.Signature; }
+    }
 
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
@@ -288,8 +401,15 @@ public class UInt16MessageArgument : BasicMessageArgument
         value = arg;
     }
 
-    public override char TypeCode { get { return Argument.UInt16Type.Code; } }
-    public override string Signature { get { return Argument.ByteType.Signature; } }
+    public override char TypeCode
+    {
+        get { return Argument.UInt16Type.Code; }
+    }
+
+    public override string Signature
+    {
+        get { return Argument.ByteType.Signature; }
+    }
 
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
@@ -311,8 +431,15 @@ public class Int32MessageArgument : BasicMessageArgument
         value = arg;
     }
 
-    public override char TypeCode { get { return Argument.Int32Type.Code; } }
-    public override string Signature { get { return Argument.ByteType.Signature; } }
+    public override char TypeCode
+    {
+        get { return Argument.Int32Type.Code; }
+    }
+
+    public override string Signature
+    {
+        get { return Argument.ByteType.Signature; }
+    }
 
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
@@ -334,8 +461,15 @@ public class UInt32MessageArgument : BasicMessageArgument
         value = arg;
     }
 
-    public override char TypeCode { get { return Argument.UInt32Type.Code; } }
-    public override string Signature { get { return Argument.ByteType.Signature; } }
+    public override char TypeCode
+    {
+        get { return Argument.UInt32Type.Code; }
+    }
+
+    public override string Signature
+    {
+        get { return Argument.ByteType.Signature; }
+    }
 
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
@@ -357,8 +491,15 @@ public class Int64MessageArgument : BasicMessageArgument
         value = arg;
     }
 
-    public override char TypeCode { get { return Argument.Int64Type.Code; } }
-    public override string Signature { get { return Argument.ByteType.Signature; } }
+    public override char TypeCode
+    {
+        get { return Argument.Int64Type.Code; }
+    }
+
+    public override string Signature
+    {
+        get { return Argument.ByteType.Signature; }
+    }
 
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
@@ -380,8 +521,15 @@ public class UInt64MessageArgument : BasicMessageArgument
         value = arg;
     }
 
-    public override char TypeCode { get { return Argument.UInt64Type.Code; } }
-    public override string Signature { get { return Argument.ByteType.Signature; } }
+    public override char TypeCode
+    {
+        get { return Argument.UInt64Type.Code; }
+    }
+
+    public override string Signature
+    {
+        get { return Argument.ByteType.Signature; }
+    }
 
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
@@ -403,8 +551,15 @@ public class DoubleMessageArgument : BasicMessageArgument
         value = arg;
     }
 
-    public override char TypeCode { get { return Argument.DoubleType.Code; } }
-    public override string Signature { get { return Argument.ByteType.Signature; } }
+    public override char TypeCode
+    {
+        get { return Argument.DoubleType.Code; }
+    }
+
+    public override string Signature
+    {
+        get { return Argument.ByteType.Signature; }
+    }
 
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
@@ -439,32 +594,53 @@ public abstract class StringLikeMessageArgument : BasicMessageArgument
 
 public class StringMessageArgument : StringLikeMessageArgument
 {
-    public StringMessageArgument(string arg)
-        : base(arg)
-    {}
+    public StringMessageArgument(string arg) : base(arg)
+    {
+    }
 
-    public override char TypeCode { get { return Argument.StringType.Code; } }
-    public override string Signature { get { return Argument.ByteType.Signature; } }
+    public override char TypeCode
+    {
+        get { return Argument.StringType.Code; }
+    }
+
+    public override string Signature
+    {
+        get { return Argument.ByteType.Signature; }
+    }
 }
 
 public class ObjectPathMessageArgument : StringLikeMessageArgument
 {
-    public ObjectPathMessageArgument(ObjectPath arg)
-        : base(arg.value)
-    {}
+    public ObjectPathMessageArgument(ObjectPath arg) : base(arg.value)
+    {
+    }
 
-    public override char TypeCode { get { return Argument.ObjectPathType.Code; } }
-    public override string Signature { get { return Argument.ByteType.Signature; } }
+    public override char TypeCode
+    {
+        get { return Argument.ObjectPathType.Code; }
+    }
+
+    public override string Signature
+    {
+        get { return Argument.ByteType.Signature; }
+    }
 }
 
 public class SignatureMessageArgument : StringLikeMessageArgument
 {
-    public SignatureMessageArgument(SignatureString arg)
-        : base(arg.value)
-    {}
+    public SignatureMessageArgument(SignatureString arg) : base(arg.value)
+    {
+    }
 
-    public override char TypeCode { get { return Argument.SignatureType.Code; } }
-    public override string Signature { get { return Argument.ByteType.Signature; } }
+    public override char TypeCode
+    {
+        get { return Argument.SignatureType.Code; }
+    }
+
+    public override string Signature
+    {
+        get { return Argument.ByteType.Signature; }
+    }
 }
 
 public class UnixFdMessageArgument : BasicMessageArgument
@@ -476,8 +652,15 @@ public class UnixFdMessageArgument : BasicMessageArgument
         value = arg.value;
     }
 
-    public override char TypeCode { get { return Argument.UnixFdType.Code; } }
-    public override string Signature { get { return Argument.ByteType.Signature; } }
+    public override char TypeCode
+    {
+        get { return Argument.UnixFdType.Code; }
+    }
+
+    public override string Signature
+    {
+        get { return Argument.ByteType.Signature; }
+    }
 
     protected override bool InternalAppendTo(eldbus.Message msg)
     {
@@ -497,7 +680,10 @@ public static class Common
     public static void RaiseNullHandle()
     {
         if (NullHandleError == 0)
+        {
             NullHandleError = Eina.Error.Register("Eldbus: null handle");
+        }
+
         Eina.Error.Raise(NullHandleError);
     }
 
@@ -511,7 +697,10 @@ public static class Common
     public static Eldbus_Message_Cb GetMessageCbWrapper()
     {
         if (message_cb_wrapper == null)
+        {
             message_cb_wrapper = new Eldbus_Message_Cb(MessageCbWrapper);
+        }
+
         return message_cb_wrapper;
     }
 
@@ -532,7 +721,7 @@ public static class Common
             msg = new eldbus.Message(msg_hdl, false);
             pending = new eldbus.Pending(pending_hdl, false);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             Eina.Log.Error("Eldbus: could not convert Eldbus_Message_Cb parameters. Exception: " + e.ToString());
             return;
@@ -542,7 +731,7 @@ public static class Common
         {
             dlgt(msg, pending);
         }
-        catch(Exception e)
+        catch (Exception e)
         {
             Eina.Log.Error("Eldbus: Eldbus_Message_Cb delegate error. Exception: " + e.ToString());
         }
@@ -553,5 +742,3 @@ public static class Common
 }
 
 }
-
-

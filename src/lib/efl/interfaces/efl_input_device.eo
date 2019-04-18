@@ -1,4 +1,4 @@
-enum Efl.Input.Device_Type
+enum @beta Efl.Input.Device_Type
 {
    [[General type of input device.
 
@@ -19,11 +19,9 @@ enum Efl.Input.Device_Type
   @property canvas { values { canvas: Efl.Canvas; } }
 */
 
-class Efl.Input.Device extends Efl.Object
+class @beta Efl.Input.Device extends Efl.Object
 {
    [[Represents a pointing device such as a touch finger, pen or mouse.
-
-     @since 1.18
    ]]
    methods {
       @property device_type {
@@ -56,8 +54,6 @@ class Efl.Input.Device extends Efl.Object
       }
       @property seat_id {
          [[Seat id number
-
-           @since 1.20
          ]]
           values {
              id: uint; [[The id of the seat]]
@@ -68,8 +64,6 @@ class Efl.Input.Device extends Efl.Object
 
            This is only meaningful with seat devices, as they are groups of
            real input devices.
-
-           @since 1.20
          ]]
          return: iterator<const(Efl.Input.Device)> @owned; [[List of device children]]
       }
@@ -79,8 +73,6 @@ class Efl.Input.Device extends Efl.Object
            Returns 1 for Mouse, Touch, Pen, Pointer, and Wand type devices.
 
            If a seat device is passed returns the number of pointer devices in the seat.
-
-           @since 1.20
          ]]
          return: uint; [[Pointer caps]]
       }

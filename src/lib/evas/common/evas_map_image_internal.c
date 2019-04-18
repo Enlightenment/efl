@@ -1,10 +1,11 @@
+
 // 66.74 % of time
 static void
 FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
           int clip_x, int clip_y, int clip_w, int clip_h,
           DATA32 mul_col, int render_op,
           RGBA_Map_Point *p,
-          int smooth, int anti_alias, int level EINA_UNUSED, // level unused for now - for future use
+          int smooth, int anti_alias EINA_UNUSED, int level EINA_UNUSED, // level unused for now - for future use
           RGBA_Image *mask_ie, int mask_x, int mask_y)
 {
    int i;
@@ -83,9 +84,6 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
    // calculate the spans list
    _calc_spans(p, spans, ystart, yend, cx, cy, cw, ch);
 
-   // calculate anti alias edges
-   if (anti_alias) _calc_aa_edges(spans, ystart, yend);
-
    // walk through spans and render
 
    // if operation is solid, bypass buf and draw func and draw direct to dst
@@ -96,7 +94,7 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
       pixels composition. we can optimize it. */
 
    if ((!sa) && (!da) &&
-       (mul_col == 0xffffffff) && (!havea) && (!anti_alias) && (!mask_ie))
+       (mul_col == 0xffffffff) && (!havea) && (!mask_ie))
      {
         direct = 1;
      }
@@ -105,7 +103,7 @@ FUNC_NAME(RGBA_Image *src, RGBA_Image *dst,
         buf = alloca(cw * sizeof(DATA32));
         if (havea) sa = EINA_TRUE;
 
-        saa = (anti_alias | sa);
+        saa = sa;
 
         if (!mask_ie)
           {
@@ -138,7 +136,7 @@ static void
 FUNC_NAME_DO(RGBA_Image *src, RGBA_Image *dst,
              RGBA_Draw_Context *dc,
              const RGBA_Map_Spans *ms,
-             int smooth, int anti_alias, int level EINA_UNUSED) // level unused for now - for future use
+             int smooth, int anti_alias EINA_UNUSED, int level EINA_UNUSED) // level unused for now - for future use
 {
    Line *spans;
    DATA32 *buf = NULL, *sp;
@@ -191,7 +189,7 @@ FUNC_NAME_DO(RGBA_Image *src, RGBA_Image *dst,
         buf = alloca(cw * sizeof(DATA32));
         if (ms->havea) sa = EINA_TRUE;
 
-        saa = (anti_alias | sa);
+        saa = sa;
 
         if (!mask_ie)
           {

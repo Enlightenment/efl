@@ -5,7 +5,7 @@
 #include "elm_suite.h"
 #include "Elementary.h"
 
-EFL_START_TEST (elm_code_file_memory_lines)
+EFL_START_TEST(elm_code_file_memory_lines)
 {
    Elm_Code *code;
 
@@ -22,7 +22,7 @@ EFL_START_TEST (elm_code_file_memory_lines)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_file_memory_tokens)
+EFL_START_TEST(elm_code_file_memory_tokens)
 {
    Elm_Code_File *file;
    Elm_Code_Line *line;

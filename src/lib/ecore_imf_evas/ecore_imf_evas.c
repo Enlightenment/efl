@@ -184,6 +184,7 @@ ecore_imf_evas_event_key_down_wrap(Evas_Event_Key_Down *evas_event,
    imf_event->string = evas_event->string ? evas_event->string : _ecore_imf_evas_event_empty;
    imf_event->compose = evas_event->compose ? evas_event->compose : _ecore_imf_evas_event_empty;
    imf_event->timestamp = evas_event->timestamp;
+   imf_event->keycode = evas_event->keycode;
 
    if (evas_event->dev)
      {
@@ -223,6 +224,7 @@ ecore_imf_evas_event_key_up_wrap(Evas_Event_Key_Up *evas_event,
    imf_event->string = evas_event->string ? evas_event->string : _ecore_imf_evas_event_empty;
    imf_event->compose = evas_event->compose ? evas_event->compose : _ecore_imf_evas_event_empty;
    imf_event->timestamp = evas_event->timestamp;
+   imf_event->keycode = evas_event->keycode;
 
    if (evas_event->dev)
      {

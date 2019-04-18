@@ -9,7 +9,7 @@
 static int prev_abort;
 static int prev_abort_level;
 
-EFL_START_TEST (elm_naviframe_test_legacy_type_check)
+EFL_START_TEST(elm_naviframe_test_legacy_type_check)
 {
    Evas_Object *win, *naviframe;
    const char *type;
@@ -29,7 +29,7 @@ EFL_START_TEST (elm_naviframe_test_legacy_type_check)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_naviframe_test_atspi_role_get)
+EFL_START_TEST(elm_naviframe_test_atspi_role_get)
 {
    Evas_Object *win, *naviframe;
    Efl_Access_Role role;
@@ -78,7 +78,7 @@ _transition_finished(void *data EINA_UNUSED, Evas_Object *obj, void *event_info 
      popped_it = elm_naviframe_item_pop(obj);
 }
 
-EFL_START_TEST (elm_naviframe_test_content_preserve_on_pop)
+EFL_START_TEST(elm_naviframe_test_content_preserve_on_pop)
 {
    Evas_Object *win, *naviframe;
 

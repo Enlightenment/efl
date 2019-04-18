@@ -223,8 +223,8 @@ evas_fonts_zero_free()
         if (fd->source) eina_stringshare_del(fd->source);
         evas_common_font_free((RGBA_Font *)fd->font);
 #ifdef HAVE_FONTCONFIG
-   if (fd->set) FcFontSetDestroy(fd->set);
-   if (fd->p_nm) FcPatternDestroy(fd->p_nm);
+        if (fd->set) FcFontSetDestroy(fd->set);
+        if (fd->p_nm) FcPatternDestroy(fd->p_nm);
 #endif
         free(fd);
      }
@@ -559,9 +559,9 @@ evas_font_name_parse(Evas_Font_Description *fdesc, const char *name)
 
    end = strchr(name, ':');
    if (!end)
-      eina_stringshare_replace(&(fdesc->name), name);
+     eina_stringshare_replace(&(fdesc->name), name);
    else
-      eina_stringshare_replace_length(&(fdesc->name), name, end - name);
+     eina_stringshare_replace_length(&(fdesc->name), name, end - name);
 
    while (end)
      {
@@ -569,9 +569,9 @@ evas_font_name_parse(Evas_Font_Description *fdesc, const char *name)
         name = end;
         end = strchr(end + 1, ':');
         if (!end)
-           tend = name + strlen(name);
+          tend = name + strlen(name);
         else
-           tend = end;
+          tend = end;
 
         if (!strncmp(name, ":style=", 7))
           {
@@ -636,9 +636,9 @@ evas_font_load(const Eina_List *font_paths, int hinting, Evas_Font_Description *
    fdesc->is_new = EINA_FALSE;
 
    if (fdesc->slant != EVAS_FONT_SLANT_NORMAL)
-      wanted_rend |= FONT_REND_SLANT;
+     wanted_rend |= FONT_REND_SLANT;
    if (fdesc->weight == EVAS_FONT_WEIGHT_BOLD)
-      wanted_rend |= FONT_REND_WEIGHT;
+     wanted_rend |= FONT_REND_WEIGHT;
 
    evas_font_init();
 
@@ -693,7 +693,7 @@ evas_font_load(const Eina_List *font_paths, int hinting, Evas_Font_Description *
                #ifdef HAVE_FONTCONFIG
                   else if (fd->set && fd->p_nm && !fd->file_font)
                     {
-                                 found_fd = fd;
+                       found_fd = fd;
                     }
                #endif
                }
@@ -969,7 +969,7 @@ evas_font_load(const Eina_List *font_paths, int hinting, Evas_Font_Description *
      }
 
    if (font)
-      evas_common_font_hinting_set((RGBA_Font *)font, hinting);
+     evas_common_font_hinting_set((RGBA_Font *)font, hinting);
    return font;
 }
 

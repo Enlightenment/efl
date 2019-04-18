@@ -387,26 +387,26 @@ EFL_START_TEST(evas_text_set_get)
 
    /* Direction of an empty text should be NEUTRAL */
    evas_object_text_text_set(to, "");
-   fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_NEUTRAL);
+   fail_if((Evas_BiDi_Direction)evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_NEUTRAL);
 
    /* LTR paragraphs */
    evas_object_text_text_set(to, "Test נסיון");
-   fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_LTR);
+   fail_if((Evas_BiDi_Direction)evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_LTR);
 
    /* RTL paragraphs */
    evas_object_text_text_set(to, "נסיון test");
 #ifdef HAVE_FRIBIDI
-   fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_RTL);
+   fail_if((Evas_BiDi_Direction)evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_RTL);
 #else
-   fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_LTR);
+   fail_if((Evas_BiDi_Direction)evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_LTR);
 #endif
 
 #ifdef HAVE_FRIBIDI
    /* Check direction with evas_object_paragraph_direction_set API */
    evas_object_text_text_set(to, "12345");
-   fail_if(evas_object_text_direction_get(to) == EVAS_BIDI_DIRECTION_RTL);
+   fail_if((Evas_BiDi_Direction)evas_object_text_direction_get(to) == EVAS_BIDI_DIRECTION_RTL);
    evas_object_paragraph_direction_set(to, EVAS_BIDI_DIRECTION_RTL);
-   fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_RTL);
+   fail_if((Evas_BiDi_Direction)evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_RTL);
    evas_object_paragraph_direction_set(to, EVAS_BIDI_DIRECTION_NEUTRAL);
 #endif
 
@@ -478,9 +478,9 @@ EFL_START_TEST(evas_text_bidi)
    evas_object_text_font_set(to, font, size);
 
    evas_object_text_text_set(to, buf);
-   fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_LTR);
+   fail_if((Evas_BiDi_Direction)evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_LTR);
    evas_object_text_text_set(to, "בדיקה");
-   fail_if(evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_RTL);
+   fail_if((Evas_BiDi_Direction)evas_object_text_direction_get(to) != EVAS_BIDI_DIRECTION_RTL);
 
    /* With RTL text coords should be monotontically decreasing. */
    evas_object_text_text_set(to, "נסיון...");

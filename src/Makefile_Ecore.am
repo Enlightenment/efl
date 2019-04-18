@@ -1,11 +1,9 @@
 
 ### Library
 
-ecore_eolian_files_legacy = \
-	lib/ecore/ecore_exe.eo \
+ecore_eolian_files_priv = \
 	lib/ecore/ecore_event_message.eo \
-	lib/ecore/ecore_event_message_handler.eo \
-	lib/ecore/efl_loop_timer.eo
+	lib/ecore/ecore_event_message_handler.eo
 
 ecore_eolian_files_public = \
 	lib/ecore/efl_app.eo \
@@ -17,6 +15,7 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_loop_message_handler.eo \
 	lib/ecore/efl_loop_message_future.eo \
 	lib/ecore/efl_loop_message_future_handler.eo \
+ lib/ecore/efl_loop_timer.eo \
 	lib/ecore/efl_exe.eo \
 	lib/ecore/efl_thread.eo \
 	lib/ecore/efl_threadio.eo \
@@ -41,33 +40,58 @@ ecore_eolian_files_public = \
 	lib/ecore/efl_bounce_interpolator.eo \
 	lib/ecore/efl_spring_interpolator.eo \
 	lib/ecore/efl_cubic_bezier_interpolator.eo \
-	lib/ecore/efl_model_loop.eo \
-	lib/ecore/efl_model_item.eo \
-	lib/ecore/efl_model_container.eo \
-	lib/ecore/efl_model_container_item.eo \
-	lib/ecore/efl_model_composite_boolean.eo \
-	lib/ecore/efl_model_composite_boolean_children.eo \
-	lib/ecore/efl_model_composite_selection.eo \
-	lib/ecore/efl_model_composite_selection_children.eo \
-	lib/ecore/efl_model_composite.eo \
-	lib/ecore/efl_model_view.eo
+	lib/ecore/efl_loop_model.eo \
+	lib/ecore/efl_generic_model.eo \
+	lib/ecore/efl_container_model.eo \
+	lib/ecore/efl_boolean_model.eo \
+	lib/ecore/efl_select_model.eo \
+	lib/ecore/efl_composite_model.eo \
+	lib/ecore/efl_view_model.eo \
+	lib/ecore/efl_core_env.eo \
+	lib/ecore/efl_core_proc_env.eo \
+	lib/ecore/efl_core_command_line.eo
+
+ecore_test_eolian_files = \
+	tests/ecore/efl_app_test_cml.eo \
+ tests/ecore/ecore_audio_out_test.eo
 
 ecore_eolian_files = \
-	$(ecore_eolian_files_legacy) \
 	$(ecore_eolian_files_public)
 
 ecore_eolian_c = $(ecore_eolian_files:%.eo=%.eo.c)
-ecore_eolian_h = $(ecore_eolian_files:%.eo=%.eo.h) \
-                 $(ecore_eolian_files_legacy:%.eo=%.eo.legacy.h)
+ecore_eolian_h = $(ecore_eolian_files:%.eo=%.eo.h)
+ecore_test_c = $(ecore_test_eolian_files:%.eo=%.eo.c)
+ecore_test_h = $(ecore_test_eolian_files:%.eo=%.eo.h)
+
+ecore_priv_c = $(ecore_eolian_files_priv:%.eo=%.eo.c)
+ecore_priv_h = $(ecore_eolian_files_priv:%.eo=%.eo.h)
 
 BUILT_SOURCES += \
                  $(ecore_eolian_c) \
-                 $(ecore_eolian_h)
+                 $(ecore_eolian_h) \
+                 $(ecore_test_c) \
+                 $(ecore_test_h) \
+                 $(ecore_priv_c) \
+                 $(ecore_priv_h)
 
+if INSTALL_EO_FILES
 ecoreeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
 ecoreeolianfiles_DATA = $(ecore_eolian_files_public) lib/ecore/efl_loop_timer.eo
+endif
+
+ecore_legacy_eo_c = \
+lib/ecore/ecore_exe_eo.c \
+lib/ecore/ecore_exe_eo.h \
+lib/ecore/efl_loop_timer_eo.legacy.c
+
+ecore_legacy_eo_h = \
+lib/ecore/ecore_exe_eo.legacy.h \
+lib/ecore/efl_loop_timer_eo.legacy.h
 
 EXTRA_DIST2 += $(ecore_eolian_files)
+EXTRA_DIST2 += $(ecore_eolian_files_priv)
+EXTRA_DIST2 += $(ecore_test_eolian_files)
+EXTRA_DIST2 += $(ecore_legacy_eo_c)
 
 lib_LTLIBRARIES += lib/ecore/libecore.la
 
@@ -79,7 +103,8 @@ lib/ecore/Ecore_Legacy.h \
 lib/ecore/Ecore_Eo.h \
 lib/ecore/Efl_Core.h \
 lib/ecore/efl_general.h \
-lib/ecore/Ecore_Getopt.h
+lib/ecore/Ecore_Getopt.h \
+$(ecore_legacy_eo_h)
 
 nodist_installed_ecoremainheaders_DATA = \
                                          $(ecore_eolian_h)
@@ -99,6 +124,9 @@ lib/ecore/ecore_job.c \
 lib/ecore/ecore_main.c \
 lib/ecore/ecore_event_message.c \
 lib/ecore/ecore_event_message_handler.c \
+lib/ecore/efl_core_command_line.c \
+lib/ecore/efl_core_env.c \
+lib/ecore/efl_core_proc_env.c \
 lib/ecore/efl_app.c \
 lib/ecore/efl_loop.c \
 lib/ecore/efl_loop_consumer.c \
@@ -119,18 +147,16 @@ lib/ecore/efl_io_stderr.c \
 lib/ecore/efl_io_file.c \
 lib/ecore/efl_io_copier.c \
 lib/ecore/efl_io_buffered_stream.c \
-lib/ecore/efl_model_loop.c \
-lib/ecore/efl_model_item.c \
-lib/ecore/efl_model_container.c \
-lib/ecore/efl_model_container_item.c \
-lib/ecore/efl_model_container_private.h \
-lib/ecore/efl_model_composite.c \
-lib/ecore/efl_model_composite_boolean.c \
-lib/ecore/efl_model_composite_selection.c \
-lib/ecore/efl_model_composite_private.h \
+lib/ecore/efl_loop_model.c \
+lib/ecore/efl_generic_model.c \
+lib/ecore/efl_container_model.c \
+lib/ecore/efl_composite_model.c \
+lib/ecore/efl_boolean_model.c \
+lib/ecore/efl_select_model.c \
+lib/ecore/efl_composite_model_private.h \
 lib/ecore/efl_model_accessor_view.c \
 lib/ecore/efl_model_accessor_view_private.h \
-lib/ecore/efl_model_view.c \
+lib/ecore/efl_view_model.c \
 lib/ecore/efl_linear_interpolator.c \
 lib/ecore/efl_accelerate_interpolator.c \
 lib/ecore/efl_decelerate_interpolator.c \
@@ -181,6 +207,7 @@ lib_ecore_libecore_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ecore\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
+-DEFL_BUILD \
 @ECORE_CFLAGS@
 lib_ecore_libecore_la_LIBADD = @ECORE_LIBS@ @EVIL_LIBS@
 lib_ecore_libecore_la_DEPENDENCIES = @ECORE_INTERNAL_LIBS@
@@ -292,7 +319,7 @@ tests/ecore/ecore_test_args.c \
 tests/ecore/ecore_test_pipe.c \
 tests/ecore/ecore_suite.h
 
-tests_ecore_ecore_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+tests_ecore_ecore_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_builddir)/src/tests/ecore \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore\" \
@@ -336,10 +363,12 @@ tests/ecore/efl_app_test_loop.c \
 tests/ecore/efl_app_test_loop_fd.c \
 tests/ecore/efl_app_test_loop_timer.c \
 tests/ecore/efl_app_test_promise.c \
+tests/ecore/efl_app_test_cml.c \
+tests/ecore/efl_app_test_env.c \
 tests/ecore/efl_app_suite.c \
 tests/ecore/efl_app_suite.h
 
-tests_ecore_efl_app_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+tests_ecore_efl_app_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_builddir)/src/tests/ecore \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/ecore\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/ecore\" \

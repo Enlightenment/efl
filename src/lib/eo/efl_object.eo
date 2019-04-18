@@ -1,7 +1,10 @@
 import eina_types;
 
 struct Efl.Event_Description {
-    [[This struct holds the description of a specific event.]]
+    [[This struct holds the description of a specific event.
+
+      @since 1.22
+    ]]
     name: string; [[name of the event.]]
     unfreezable: bool; [[$true if the event cannot be frozen.]]
     legacy_is: bool; [[Internal use: $true if a legacy event.]]
@@ -18,7 +21,9 @@ type Efl.Callback_Priority : short;
   specified @Efl.Callback_Priority_Default is to be assumed.
 
   See @Efl.Callback_Priority_Before @Efl.Callback_Priority_Default  @Efl.Callback_Priority_After
- ]]
+
+  @since 1.22
+]]
 
 const Efl.Callback_Priority_Before : Efl.Callback_Priority = -100;
 [[Slightly more prioritized than default.]]
@@ -29,25 +34,56 @@ const Efl.Callback_Priority_After : Efl.Callback_Priority = 100;
 
 abstract Efl.Object
 {
-   [[Abstract Efl object class]]
+   [[Abstract EFL object class.
+
+     All EFL objects inherit from this class, which provides basic functionality
+     like naming, debugging, hierarchy traversal, event emission and life cycle
+     management.
+
+     Life Cycle
+     Objects are created with efl_add() and mostly disposed of with efl_del().
+     As an optimization, efl_add() accepts a list of initialization functions
+     which the programmer can use to further customize the object before it is
+     fully constructed.
+     Also, objects can have a parent which will keep them alive as long as the
+     parent is alive, so the programmer does not need to keep track of references.
+     (See the @.parent property for details).
+     Due to the above characteristics, EFL objects undergo the following phases
+     during their Life Cycle:
+     - Construction: The @.constructor method is called. Afterwards, any
+       user-supplied initialization methods are called.
+     - Finalization: The @.finalize method is called and @.finalized is set to
+       $true when it returns. Object is usable at this point.
+     - Invalidation: The object has lost its parent. The @.invalidate method is
+       called so all the object's relationships can be terminated. @.invalidated
+       is set to $true.
+     - Destruction: The object has no parent and it can be destroyed. The
+       @.destructor method is called, use it to return any resources the object
+       might have gathered during its life.
+
+     @since 1.22
+   ]]
    eo_prefix: efl;
 
    methods {
       @property parent {
          [[The parent of an object.
 
-           Parents keep references to their children. In order to
-           delete objects which have parents you need to set parent to
-           NULL or use efl_del(). This will both delete & unref
-           the object).
+           Parents keep references to their children and will release these
+           references when destroyed. In this way, objects can be assigned to
+           a parent upon creation, tying their life cycle so the programmer
+           does not need to worry about destroying the child object.
+           In order to destroy an object before its parent, set the parent to
+           $NULL and use efl_unref(), or use efl_del() directly.
 
            The Eo parent is conceptually user set. That means that a parent
            should not be changed behind the scenes in an unexpected way.
 
            For example:
-           If you have a widget that has a box internally and
-           when you 'swallow' a widget and the swallowed object ends up in
-           the box, the parent should be the widget, not the box.
+           If you have a widget which can swallow objects into an internal
+           box, the parent of the swallowed objects should be the widget, not
+           the internal box. The user is not even aware of the existence of
+           the internal box.
          ]]
 
          set {
@@ -55,32 +91,31 @@ abstract Efl.Object
          get {
          }
          values {
-            parent: Efl.Object @nullable; [[The new parent]]
+            parent: Efl.Object @nullable; [[The new parent.]]
          }
       }
       @property name {
-         [[ The name of the object.
+         [[The name of the object.
 
-           Every object can have a string name. Names may not contain
-           the following characters:
-             / ? * [ ] ! \ :
-           Using any of these in a name will result in undefined
-           behavior later on. An empty string is considered the same as a
-           NULL string or no string for the name.
+           Every EFL object can have a name. Names may not contain the
+           following characters: / ? * [ ] ! \ :
+           Using any of these in a name will result in undefined behavior
+           later on. An empty string is considered the same as a $NULL string
+           or no string for the name.
          ]]
          set {
          }
          get {
          }
          values {
-           name: string @nullable; [[The name]]
+           name: string @nullable; [[The name.]]
          }
       }
       @property comment {
-         [[ A human readable comment for the object
+         [[A human readable comment for the object.
 
-           Every object can have a string comment. This is intended for developers
-           and debugging. An empty string is considered the same as a NULL
+           Every EFL object can have a comment. This is intended for developers
+           and debugging. An empty string is considered the same as a $NULL
            string or no string for the comment.
          ]]
          set {
@@ -88,11 +123,11 @@ abstract Efl.Object
          get {
          }
          values {
-           comment: string @nullable; [[The comment]]
+           comment: string @nullable; [[The comment.]]
          }
       }
       debug_name_override {
-         [[ Build a read-only name for this object used for debugging.
+         [[Build a read-only name for this object used for debugging.
 
             Multiple calls using efl_super() can be chained in order to build
             the entire debug name, from parent to child classes. In C the usual
@@ -103,60 +138,66 @@ abstract Efl.Object
 
             Usually more debug information should be added to $sb after
             calling the super function.
-
-            @since 1.21
          ]]
          params {
-            @in sb: ptr(Eina.Strbuf); [[A string buffer, must not be $null.]]
+            @in sb: strbuf; [[A string buffer, must not be $null.]]
          }
       }
       @property event_global_freeze_count @class {
          get {
-            [[Return freeze events of object.
+            [[Return the global count of freeze events.
 
-              Return event freeze count.
+              This is the amount of calls to @.event_global_freeze minus
+              the amount of calls to @.event_global_thaw.
+              EFL will not emit any event while this count is > 0 (Except
+              events marked $hot).
             ]]
          }
          values {
-            fcount: int; [[The event freeze count of the object]]
+            fcount: int; [[The global event freeze count.]]
          }
       }
       @property event_freeze_count {
          get {
-            [[Return freeze events of object.
+            [[Return the count of freeze events for this object.
 
-              Return event freeze count.
+              This is the amount of calls to @.event_freeze minus
+              the amount of calls to @.event_thaw.
+              This object will not emit any event while this count is > 0
+              (Except events marked $hot).
             ]]
          }
          values {
-            fcount: int; [[The event freeze count of the object]]
+            fcount: int; [[The event freeze count of this object.]]
          }
       }
       @property finalized {
-         [[True if the object is already finalized, otherwise false.]]
+         [[$true if the object has been finalized, i.e. construction has finished.
+           See the Life Cycle section in this class' description.]]
          get {
          }
          values {
-            finalized: bool; [[$true if the object is finalized, $false otherwise]]
+            finalized: bool; [[$true if the object is finalized, $false otherwise.]]
          }
       }
       @property invalidated {
-         [[True if the object is already invalidated, otherwise false.]]
+         [[$true if the object has been invalidated, i.e. it has no parent.
+           See the Life Cycle section in this class' description.]]
          get {
          }
          values {
-            finalized: bool; [[$true if the object is invalidated, $false otherwise]]
+            finalized: bool; [[$true if the object is invalidated, $false otherwise.]]
          }
       }
       @property invalidating {
-         [[True if the object is about to be invalidated, and the invalidation of the children is already happening.
-
-           Note this is true before the invalidate call on the object.
-         ]]
+         [[$true if the object has started the invalidation phase, but has not
+           finished it yet.
+           Note: This might become $true before @.invalidate is called.
+           See the Life Cycle section in this class' description.]]
          get {
          }
          values {
-            invalidating: bool; [[$true if the object is invalidating, $false otherwise]]
+            invalidating: bool; [[$true if the object is invalidating, $false otherwise.]]
          }
       }
       provider_find @const {
@@ -170,36 +211,53 @@ abstract Efl.Object
           If this is not done the class cannot be found up in the object tree.
         ]]
         params {
-          klass : const(Efl.Class); [[The class identifier to search for]]
+          klass : const(Efl.Class); [[The class identifier to search for.]]
         }
-        return : Efl.Object; [[Object from the provider list]]
+        return : Efl.Object; [[Object from the provider list.]]
       }
       constructor {
-         [[Call the object's constructor.
+         [[Implement this method to provide optional initialization code for your object.
 
-           Should not be used with #eo_do. Only use it with #eo_do_super.
-         ]]
-         return: Efl.Object; [[The new object created, can be NULL if aborting]]
+           See the Life Cycle section in this class' description.]]
+         return: Efl.Object; [[The new object, can be $NULL if aborted.]]
       }
       destructor {
-         [[Call the object's destructor.
+         [[Implement this method to provide deinitialization code for your object if you need it.
 
-           Should not be used with #efl_do. Only use it with #efl_do_super.
-	   Will be triggered once #invalidate and #noref have been triggered.
-         ]]
+           Will be called once @.invalidate has returned.
+           See the Life Cycle section in this class' description.]]
       }
       finalize {
-         [[Called at the end of efl_add. Should not be called, just overridden.]]
-         return: Efl.Object; [[The new object created, can be NULL if aborting]]
+         [[Implement this method to finish the initialization of your object
+           after all (if any) user-provided configuration methods have been
+           executed.
+
+           Use this method to delay expensive operations until user configuration
+           has finished, to avoid building the object in a "default" state in the
+           constructor, just to have to throw it all away because a user
+           configuration (a property being set, for example) requires a different
+           state.
+           This is the last call inside efl_add() and will set @.finalized to $true
+           once it returns.
+           This is an optimization and implementing this method is optional if you
+           already perform all your initialization in the @.constructor method.
+           See the Life Cycle section in this class' description.]]
+         return: Efl.Object; [[The new object. Return $NULL to abort object creation.]]
       }
       invalidate {
-         [[Called when parent reference is lost/set to $NULL and switch the state of the object to invalidate.]]
-      }
-      noref {
-         [[Triggered when no reference are keeping the object alive.
+         [[Implement this method to perform special actions when your object loses
+           its parent, if you need to.
 
-           The parent can be the last one keeping an object alive and so $noref can happen before $invalidate
-           as it is only impacted by the ref/unref of the object.]]
+           It is called when the parent reference is lost or set to $NULL. After this
+           call returns, @.invalidated is set to $true.
+           This allows a simpler tear down of complex hierarchies, by performing
+           object destruction in two steps, first all object relationships are
+           broken and then the isolated objects are destroyed. Performing everything
+           in the @.destructor can sometimes lead to deadlocks, but implementing
+           this method is optional if this is not your case.
+           When an object with a parent is destroyed, it first receives a call to
+           @.invalidate and then to @.destructor.
+           See the Life Cycle section in this class' description.]]
       }
       name_find @const {
          [[Find a child object with the given name and return it.
@@ -211,32 +269,41 @@ abstract Efl.Object
            the search will match any object of that class.
          ]]
          params {
-            @in search: string; [[The name search string]]
+            @in search: string; [[The name search string.]]
          }
-         return: Efl.Object; [[The first object found]]
+         return: Efl.Object; [[The first object found.]]
       }
       event_thaw {
          [[Thaw events of object.
 
-           Allows event callbacks to be called for an object.
+           Allows event callbacks to be called again for this object after a call
+           to @.event_freeze. The amount of thaws must match the amount of freezes
+           for events to be re-enabled.
          ]]
       }
       event_freeze {
-         [[Freeze events of object.
+         [[Freeze events of this object.
 
-           Prevents event callbacks from being called for an object.
+           Prevents event callbacks from being called for this object. Enable
+           events again using @.event_thaw. Events marked $hot cannot be stopped.
          ]]
       }
       event_global_thaw @class {
-         [[Thaw events of object.
+         [[Gobally thaw events for ALL EFL OBJECTS.
 
-           Allows event callbacks be called for an object.
+           Allows event callbacks to be called for all EFL objects after they have
+           been disabled by @.event_global_freeze. The amount of thaws must match
+           the amount of freezes for events to be re-enabled.
          ]]
       }
       event_global_freeze @class {
-         [[Freeze events of object.
+         [[Globally freeze events for ALL EFL OBJECTS.
 
-           Prevents event callbacks from being called for an object.
+           Prevents event callbacks from being called for all EFL objects.
+           Enable events again using @.event_global_thaw. Events marked $hot
+           cannot be stopped.
+
+           Note: USE WITH CAUTION.
          ]]
       }
       event_callback_stop {
@@ -283,7 +350,7 @@ abstract Efl.Object
          [[Get an iterator on all childrens]]
          return: iterator<Efl.Object> @owned @warn_unused; [[Children iterator]]
       }
-      composite_attach {
+      composite_attach @beta {
            [[Make an object a composite object of another.
 
              The class of comp_obj must be part of the extensions of the class of the parent.
@@ -297,7 +364,7 @@ abstract Efl.Object
            }
            return: bool; [[$true if successful. $false otherwise.]]
       }
-      composite_detach {
+      composite_detach @beta {
            [[Detach a composite object from another object.
 
              This functions also sets the parent of comp_obj to $null.
@@ -309,14 +376,14 @@ abstract Efl.Object
            }
            return: bool; [[$true if successful. $false otherwise.]]
       }
-      composite_part_is {
+      composite_part_is @beta {
            [[Check if an object is part of a composite object.
 
              See @.composite_attach, @.composite_part_is.
            ]]
            return: bool; [[$true if it is. $false otherwise.]]
       }
-      @property allow_parent_unref {
+      @property allow_parent_unref @beta {
          [[Allow an object to be deleted by unref even if it has a parent.
 
            This simply hides the error message warning that an object being
@@ -325,13 +392,13 @@ abstract Efl.Object
            In a normal object use case, when ownership of an object is given
            to a caller, said ownership should be released with efl_unref().
            If the object has a parent, this will print error messages, as
-           $efl_unref() is stealing the ref from the parent.
+           efl_unref() is stealing the ref from the parent.
 
            Warning: Use this function very carefully, unless you're absolutely
            sure of what you are doing.
          ]]
          values {
-            allow: bool(false); [[Whether to allow $efl_unref() to zero
+            allow: bool(false); [[Whether to allow efl_unref() to zero
                even if @.parent is not $null.]]
          }
       }
@@ -341,12 +408,12 @@ abstract Efl.Object
         class.destructor;
    }
    events {
-      del @hot: void; [[Object is being deleted.]]
-      invalidate @hot: void; [[Object is being invalidated and loosing its parent.]]
-      noref @hot: void; [[Object has lost its last reference, only parent relationship is keeping it alive.]]
+      del @hot: void; [[Object is being deleted. See @.destructor.]]
+      invalidate @hot: void; [[Object is being invalidated and losing its parent. See @.invalidate.]]
+      noref @hot: void; [[Object has lost its last reference, only parent relationship is keeping it alive. Advanced usage.]]
       destruct @hot: void; [[Object has been fully destroyed. It can not be used
          beyond this point. This event should only serve to clean up any
-         dangling pointer.]]
+         reference you keep to the object.]]
    }
 }
 
@@ -357,5 +424,9 @@ struct Efl.Event {
     ]]
     object: Efl.Object; [[The object the callback was called on.]]
     desc: const(ptr(Efl.Event_Description)); [[The event description.]]
-    info: void_ptr; [[Extra event information passed by the event caller]]
+    info: void_ptr; [[Extra event information passed by the event caller.
+      Must be cast to the event type declared in the EO file. Keep in mind that:
+      1) Objects are passed as a normal Eo*. Event subscribers can call functions on these objects.
+      2) Structs, built-in types and containers are passed as const pointers, with one level of indirection.
+    ]]
 }

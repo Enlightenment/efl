@@ -103,7 +103,7 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Text_Alert_Popup_Data *pd, Eina_Size2D obj
         efl_gfx_entity_size_set(obj, new_size);
     }
 
-    efl_gfx_size_hint_min_set(obj, new_min);
+    efl_gfx_hint_size_min_set(obj, new_min);
 }
 
 EOLIAN static void
@@ -127,7 +127,7 @@ _sizing_eval(Eo *obj, Efl_Ui_Text_Alert_Popup_Data *pd)
    //Calculate popup's min size including scroller's min size
      {
         elm_label_line_wrap_set(pd->message, ELM_WRAP_NONE);
-        text_min = efl_gfx_size_hint_combined_min_get(pd->message);
+        text_min = efl_gfx_hint_size_combined_min_get(pd->message);
         elm_label_line_wrap_set(pd->message, ELM_WRAP_MIXED);
 
         elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_TRUE);
@@ -198,7 +198,7 @@ _efl_ui_text_alert_popup_text_set(Eo *obj, Efl_Ui_Text_Alert_Popup_Data *pd, con
              // TODO: Change internal component to Efl.Ui.Widget
              pd->message = elm_label_add(obj);
              //elm_widget_element_update(obj, pd->message, PART_NAME_TEXT);
-             efl_gfx_size_hint_weight_set(pd->message, EVAS_HINT_EXPAND,
+             efl_gfx_hint_weight_set(pd->message, EVAS_HINT_EXPAND,
                                           EVAS_HINT_EXPAND);
              efl_content_set(pd->scroller, pd->message);
           }
@@ -270,11 +270,9 @@ _efl_ui_text_alert_popup_efl_object_constructor(Eo *obj,
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
    if (!elm_widget_theme_klass_get(obj))
-     elm_widget_theme_klass_set(obj, "scroll_alert_popup");
+     elm_widget_theme_klass_set(obj, "text_alert_popup");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
-
-   elm_widget_sub_object_parent_add(obj);
 
    pd->scroller = elm_scroller_add(obj);
    elm_object_style_set(pd->scroller, "popup/no_inset_shadow");

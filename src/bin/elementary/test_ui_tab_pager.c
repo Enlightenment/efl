@@ -1,6 +1,7 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 #define TAB_LABEL_COUNT 15
@@ -86,10 +87,12 @@ content_add(Eo *parent, char *text)
    snprintf(buf, sizeof(buf), "%s/objects/test_tab_pager.edj", elm_app_data_dir_get());
 
    page = efl_add(EFL_UI_LAYOUT_CLASS, parent,
-                  efl_file_set(efl_added, buf, "page_layout"),
+                  efl_file_set(efl_added, buf),
+                  efl_file_key_set(efl_added, "page_layout"),
+                  efl_file_load(efl_added),
                   efl_text_set(efl_part(efl_added, "text"), text),
-                  efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-                  efl_gfx_size_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE));
+                  efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
+                  efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE));
 
    return page;
 }
@@ -122,31 +125,32 @@ test_ui_tab_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    int i;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
                  efl_text_set(efl_added, "Efl.Ui.Tab_Pager"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE),
                  efl_event_callback_add(efl_added, EFL_EVENT_DEL, _win_del_cb, ad));
 
    snprintf(buf, sizeof(buf), "%s/objects/test_tab_pager.edj", elm_app_data_dir_get());
    layout = efl_add(EFL_UI_LAYOUT_CLASS, win,
-                    efl_file_set(efl_added, buf, "tab_page_layout"),
+                    efl_file_set(efl_added, buf),
+                    efl_file_key_set(efl_added, "tab_page_layout"),
                     efl_content_set(win, efl_added));
 
    navi = elm_naviframe_add(layout);
-   efl_gfx_size_hint_weight_set(navi, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   efl_gfx_size_hint_align_set(navi, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   efl_gfx_hint_weight_set(navi, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   efl_gfx_hint_align_set(navi, EVAS_HINT_FILL, EVAS_HINT_FILL);
    efl_content_set(efl_part(layout, "menu"), navi);
 
    list = elm_list_add(navi);
-   efl_gfx_size_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   efl_gfx_size_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   efl_gfx_hint_weight_set(list, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   efl_gfx_hint_align_set(list, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_list_select_mode_set(list, ELM_OBJECT_SELECT_MODE_ALWAYS);
    elm_naviframe_item_push(navi, "Properties", NULL, NULL, list, NULL);
    efl_gfx_entity_visible_set(list, EINA_TRUE);
 
    tp = efl_add(EFL_UI_TAB_PAGER_CLASS, layout,
-                efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-                efl_gfx_size_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
+                efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
+                efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
                 efl_ui_pager_page_size_set(efl_added, EINA_SIZE2D(-1, -1)),
                 efl_ui_pager_padding_set(efl_added, 20),
                 efl_content_set(efl_part(layout, "tab_pager"), efl_added));
@@ -395,6 +399,7 @@ _unpack_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    int index = efl_ui_pager_current_page_get(tab_pager);
    Eo *tab_page = efl_pack_content_get(tab_pager, index);
    efl_pack_unpack(tab_pager, tab_page);
+   efl_del(tab_page);
 }
 
 static void
@@ -443,6 +448,7 @@ _unpack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Clear"),
                  efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _clear_btn_cb, tab_pager),
+                 efl_ui_widget_disabled_set(efl_added, EINA_TRUE), //Soon to be implemented
                  efl_pack_end(box, efl_added));
 
    /* Unpack */
@@ -455,6 +461,7 @@ _unpack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Unpack All"),
                  efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _unpack_all_btn_cb, tab_pager),
+                 efl_ui_widget_disabled_set(efl_added, EINA_TRUE), //Soon to be implemented
                  efl_pack_end(box, efl_added));
 
    in_box = efl_add(EFL_UI_BOX_CLASS, box,
@@ -475,6 +482,7 @@ _unpack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                  efl_text_set(efl_added, "Unpack At"),
                  efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _unpack_at_btn_cb, tsd),
                  efl_event_callback_add(efl_added, EFL_EVENT_DEL, _unpack_at_btn_del_cb, tsd),
+                 efl_ui_widget_disabled_set(efl_added, EINA_TRUE), //Soon to be implemented
                  efl_pack_end(in_box, efl_added));
 }
 

@@ -6,7 +6,7 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
-EFL_START_TEST (elm_popup_legacy_type_check)
+EFL_START_TEST(elm_popup_legacy_type_check)
 {
    Evas_Object *win, *popup;
    const char *type;
@@ -26,7 +26,7 @@ EFL_START_TEST (elm_popup_legacy_type_check)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_atspi_role_get)
+EFL_START_TEST(elm_atspi_role_get)
 {
    Evas_Object *win, *popup;
    Efl_Access_Role role;
@@ -49,7 +49,7 @@ _focus_cb(void *data, Evas_Object *obj EINA_UNUSED,
 }
 
 
-EFL_START_TEST (elm_popup_focus_get)
+EFL_START_TEST(elm_popup_focus_get)
 {
    Evas_Object *win, *popup;
    Eina_Bool focused = EINA_FALSE;
@@ -70,9 +70,24 @@ EFL_START_TEST (elm_popup_focus_get)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_popup_text_set)
+{
+   Evas_Object *win, *popup;
+   const char *popup_text = "hello world";
+
+   win = win_add(NULL, "popup", ELM_WIN_BASIC);
+
+   popup = elm_popup_add(win);
+
+   ck_assert(elm_layout_text_set(popup, NULL, popup_text));
+   ck_assert_str_eq(elm_object_text_get(popup), popup_text);
+}
+EFL_END_TEST
+
 void elm_test_popup(TCase *tc)
 {
    tcase_add_test(tc, elm_popup_focus_get);
    tcase_add_test(tc, elm_popup_legacy_type_check);
+   tcase_add_test(tc, elm_popup_text_set);
    tcase_add_test(tc, elm_atspi_role_get);
 }

@@ -1,9 +1,0 @@
-class Efl.Ui.Flip_Legacy extends Efl.Ui.Flip implements Efl.Ui.Legacy
-{
-   [[Efl UI flip class]]
-   data: null;
-   implements {
-      class.constructor;
-      Efl.Object.constructor;
-   }
-}

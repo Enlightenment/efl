@@ -101,14 +101,14 @@ _efl_input_focus_efl_duplicate_duplicate(const Eo *obj, Efl_Input_Focus_Data *pd
    return evt;
 }
 
-EOLIAN static Efl_Input_Focus *
-_efl_input_focus_efl_input_event_instance_get(Eo *klass, void *_pd EINA_UNUSED,
-                                              Eo *owner, void **priv)
+
+EOAPI Eo*
+efl_input_focus_instance_get(Efl_Object *owner, void **priv)
 {
    Efl_Input_Focus_Data *ev;
    Efl_Input_Focus *evt;
 
-   evt = efl_input_event_instance_get(klass, owner);
+   evt = efl_input_event_instance_get(EFL_INPUT_FOCUS_CLASS, owner);
    if (!evt) return NULL;
 
    ev = efl_data_scope_get(evt, MY_CLASS);
@@ -130,9 +130,22 @@ _efl_input_focus_efl_input_event_reset(Eo *obj, Efl_Input_Focus_Data *pd)
    pd->eo = obj;
 }
 
-/* Internal EO APIs */
+EOLIAN static void
+_efl_input_focus_efl_input_event_event_flags_set(Eo *obj EINA_UNUSED, Efl_Input_Focus_Data *pd, Efl_Input_Flags flags)
+{
+   if (flags == EFL_INPUT_FLAGS_SCROLLING)
+     ERR("A focus event cannot be created based on scrolling");
+   else
+     pd->event_flags |= flags;
+}
 
-#define EFL_INPUT_FOCUS_EXTRA_CLASS_OPS \
-   EFL_OBJECT_OP_FUNC(efl_input_instance_get, _efl_input_focus_efl_input_event_instance_get)
+EOLIAN static Efl_Input_Flags
+_efl_input_focus_efl_input_event_event_flags_get(const Eo *obj EINA_UNUSED, Efl_Input_Focus_Data *pd)
+{
+   return pd->event_flags;
+}
+
+
+/* Internal EO APIs */
 
 #include "efl_input_focus.eo.c"

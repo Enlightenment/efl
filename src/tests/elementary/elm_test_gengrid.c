@@ -8,7 +8,7 @@
 
 static Elm_Gengrid_Item_Class *gic = NULL;
 
-EFL_START_TEST (elm_gengrid_legacy_type_check)
+EFL_START_TEST(elm_gengrid_legacy_type_check)
 {
    Evas_Object *win, *gengrid;
    const char *type;
@@ -28,7 +28,7 @@ EFL_START_TEST (elm_gengrid_legacy_type_check)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_atspi_role_get)
+EFL_START_TEST(elm_atspi_role_get)
 {
    Evas_Object *win, *gengrid;
    Efl_Access_Role role;
@@ -101,7 +101,7 @@ _realized(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info
      ecore_main_loop_quit();
 }
 
-EFL_START_TEST (elm_gengrid_focus)
+EFL_START_TEST(elm_gengrid_focus)
 {
    Evas_Object *win, *grid, *bx, *bt;
    Elm_Object_Item *it;
@@ -153,11 +153,62 @@ EFL_START_TEST (elm_gengrid_focus)
 }
 EFL_END_TEST
 
+static void
+_gengrid_item_content_test_realize(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   ecore_main_loop_quit();
+}
+
+static Evas_Object *
+_item_content_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part EINA_UNUSED)
+{
+   Evas_Object *ic = elm_button_add(obj);
+   return ic;
+}
+
+EFL_START_TEST(elm_gengrid_item_content)
+{
+   Evas_Object *win, *gengrid;
+   Elm_Genlist_Item_Class *gtc;
+   Evas_Object *content, *parent;
+   Elm_Object_Item *it;
+
+   gtc = elm_gengrid_item_class_new();
+   gtc->item_style = "default";
+   gtc->func.content_get = _item_content_get;
+   gtc->func.state_get = NULL;
+   gtc->func.del = NULL;
+
+   win = win_add(NULL, "gengrid", ELM_WIN_BASIC);
+
+   gengrid = elm_gengrid_add(win);
+   evas_object_smart_callback_add(gengrid, "realized", _gengrid_item_content_test_realize, NULL);
+
+   it = elm_gengrid_item_append(gengrid, gtc, NULL, NULL, NULL);
+
+   evas_object_resize(gengrid, 100, 100);
+   evas_object_resize(win, 150, 150);
+   evas_object_show(gengrid);
+   evas_object_show(win);
+
+   ecore_main_loop_begin();
+
+   content = elm_object_item_part_content_get(it, "elm.swallow.end");
+   parent = elm_object_parent_widget_get(content);
+   ck_assert_ptr_eq(parent, gengrid);
+
+   elm_gengrid_item_all_contents_unset(it, NULL);
+   parent = elm_object_parent_widget_get(content);
+   ck_assert_ptr_eq(parent, win);
+}
+EFL_END_TEST
+
 void elm_test_gengrid(TCase *tc)
 {
    tcase_add_test(tc, elm_gengrid_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
    tcase_add_test(tc, elm_gengrid_focus);
+   tcase_add_test(tc, elm_gengrid_item_content);
 #if 0
    tcase_add_test(tc, elm_atspi_children_parent);
 #endif

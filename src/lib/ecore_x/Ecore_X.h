@@ -2763,7 +2763,7 @@ EAPI Eina_Bool                             ecore_x_window_keygrab_unset(Ecore_X_
 
 //this API for keyrouter protocol
 EAPI void                                  ecore_x_e_keyrouter_set(Ecore_X_Window root, Eina_Bool on); /**< @since 1.15 */ //Key router set keyrouter flag using this
-EAPI Eina_Bool                             ecore_x_e_keyrouter_get(Ecore_X_Window root); /**< @since 1.15 */ //Client check the existance of keyrouter using this
+EAPI Eina_Bool                             ecore_x_e_keyrouter_get(Ecore_X_Window root); /**< @since 1.15 */ //Client check the existence of keyrouter using this
 
 #ifdef EFL_BETA_API_SUPPORT
 // XXX: FIXME: re-evaluate this after looking at xdg foreign in wayland

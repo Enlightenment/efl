@@ -1,7 +1,9 @@
 //Compile with:
 //gcc -o location_example_01 location_example_01.c -g `pkg-config --cflags --libs elementary elocation`
+#ifndef EFL_BETA_API_SUPPORT
+# define EFL_BETA_API_SUPPORT
+#endif
 
-#define EFL_BETA_API_SUPPORT
 #include <Elementary.h>
 #ifdef ELM_ELOCATION
 #include <Elocation.h>
@@ -57,7 +59,7 @@ _print_address(Elocation_Address *address)
 }
 
 static Eina_Bool
-_position_changed(void *data, int ev_type, void *event)
+_position_changed(void *data EINA_UNUSED, int ev_type EINA_UNUSED, void *event)
 {
    Elocation_Position *position;
 

@@ -4,9 +4,9 @@
 #include "elementary_config.h"
 #else
 #define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
 #endif
 
+#include <Efl_Ui.h>
 #include <Elementary.h>
 #include <Efl.h>
 #include <stdio.h>
@@ -23,8 +23,8 @@ EoGenerate(const Efl_Class *klass, Eo *parent, Efl_Ui_Dir dir)
 {
    Eo* obj = efl_add(klass, parent);
    if (dir != EFL_UI_DIR_DEFAULT) efl_ui_direction_set(obj, dir);
-   efl_gfx_size_hint_weight_set(obj, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND);
-   efl_gfx_size_hint_fill_set(obj, EINA_TRUE, EINA_TRUE);
+   efl_gfx_hint_weight_set(obj, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND);
+   efl_gfx_hint_fill_set(obj, EINA_TRUE, EINA_TRUE);
    return obj;
 }
 
@@ -39,7 +39,7 @@ elm_main(int argc, char **argv)
    Grid_Event_Data *gd = calloc(sizeof(Grid_Event_Data *), 1);
 
    win =  efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-      efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+      efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
       efl_text_set(efl_added, "Efl.Ui.Grid"),
       efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -47,8 +47,8 @@ elm_main(int argc, char **argv)
    elm_win_resize_object_add(win, box);
 
    Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, box);
-   efl_gfx_size_hint_weight_set(btn, 0.3, 0.3);
-   efl_gfx_size_hint_fill_set(btn, EINA_TRUE, EINA_TRUE);
+   efl_gfx_hint_weight_set(btn, 0.3, 0.3);
+   efl_gfx_hint_fill_set(btn, EINA_TRUE, EINA_TRUE);
    efl_text_set(btn, "BUTTON");
    efl_pack_end(box, btn);
 

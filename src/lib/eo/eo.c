@@ -44,6 +44,7 @@ int _eo_log_dom = -1;
 Eina_Thread _efl_object_main_thread;
 static unsigned int efl_del_api_generation = 0;
 static Efl_Object_Op _efl_del_api_op_id = 0;
+static Eina_Hash *class_overrides;
 
 typedef enum _Eo_Ref_Op {
    EO_REF_OP_NONE,
@@ -383,6 +384,16 @@ _eo_kls_itr_next(const _Efl_Class *orig_kls, const _Efl_Class *cur_klass,
    return NULL;
 }
 
+static inline void
+_apply_auto_unref(_Eo_Object *obj, const Eo *eo_obj)
+{
+   if (EINA_UNLIKELY(obj && obj->auto_unref))
+     {
+        if (obj->finalized && !(--obj->auto_unref))
+          efl_unref(eo_obj);
+     }
+}
+
 /************************************ EO ************************************/
 
 static EFL_FUNC_TLS _Efl_Class *_super_klass = NULL;
@@ -575,11 +586,7 @@ err_func_src:
 err:
    if (is_obj)
      {
-        if (EINA_UNLIKELY(obj->auto_unref != 0))
-          {
-             if (obj->finalized && !(--obj->auto_unref))
-               efl_unref(eo_id);
-          }
+        _apply_auto_unref(obj, eo_id);
         _efl_unref(obj);
         _eo_obj_pointer_done((Eo_Id)eo_id);
      }
@@ -643,11 +650,7 @@ _efl_object_call_end(Efl_Object_Op_Call_Data *call)
 {
    if (EINA_LIKELY(!!call->obj))
      {
-        if (EINA_UNLIKELY(call->obj->auto_unref != 0))
-          {
-             if (call->obj->finalized && !(--call->obj->auto_unref))
-               efl_unref(call->eo_id);
-          }
+        _apply_auto_unref(call->obj, call->eo_id);
         _efl_unref(call->obj);
         _eo_obj_pointer_done((Eo_Id)call->eo_id);
      }
@@ -714,11 +717,7 @@ _efl_object_op_api_id_get(const void *api_func, const Eo *eo_obj, const char *ap
                        file, api_func_name, line,
                        "Unable to resolve op for api func %p for obj=%p (%s)",
                        api_func, eo_obj, efl_class_name_get(eo_obj));
-        if (EINA_UNLIKELY(obj && obj->auto_unref))
-          {
-             if (obj->finalized && !(--obj->auto_unref))
-               efl_unref(eo_obj);
-          }
+        _apply_auto_unref(obj, eo_obj);
         return EFL_NOOP;
      }
 
@@ -818,7 +817,7 @@ _eo_class_funcs_set(Eo_Vtable *vtable, const Efl_Object_Ops *ops, const _Efl_Cla
 }
 
 EAPI Eina_Bool
-efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Ops *class_ops)
+efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Property_Reflection_Ops *reflection_table)
 {
    EO_CLASS_POINTER_GOTO(klass_id, klass, err_klass);
    Efl_Object_Ops empty_ops = { 0 };
@@ -829,9 +828,9 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
 
    if (!object_ops) object_ops = &empty_ops;
 
-   if (!class_ops) class_ops = &empty_ops;
+   klass->reflection = reflection_table;
 
-   klass->ops_count = object_ops->count + class_ops->count;
+   klass->ops_count = object_ops->count;
 
    klass->base_id = _eo_ops_last_id;
    _eo_ops_last_id += klass->ops_count + 1;
@@ -848,8 +847,7 @@ efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_
           _vtable_copy_all(&klass->vtable, &(*mro_itr)->vtable);
      }
 
-   return _eo_class_funcs_set(&klass->vtable, object_ops, klass, klass, 0, EINA_FALSE) &&
-      _eo_class_funcs_set(&klass->vtable, class_ops, klass, klass, object_ops->count, EINA_FALSE);
+   return _eo_class_funcs_set(&klass->vtable, object_ops, klass, klass, 0, EINA_FALSE);
 
 err_funcs:
    ERR("Class %s already had its functions set..", klass->desc->name);
@@ -867,6 +865,12 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
    Eo_Stack_Frame *fptr = NULL;
 
    if (is_fallback) fptr = _efl_add_fallback_stack_push(NULL);
+
+   if (class_overrides)
+     {
+        const Efl_Class *override = eina_hash_find(class_overrides, &klass_id);
+        if (override) klass_id = override;
+     }
 
    EO_CLASS_POINTER_GOTO_PROXY(klass_id, klass, err_klass);
 
@@ -975,7 +979,7 @@ _efl_add_internal_end(Eo *eo_id, Eo *finalized_id)
         // fails or succeeds based on if service is there.
         //
         // until there is a better solution - don't complain here.
-        // 
+        //
         //             ERR("Object of class '%s' - Finalizing the object failed.",
         //                   klass->desc->name);
         goto cleanup;
@@ -1510,6 +1514,9 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
                    return NULL;
                 }
               break;
+           default:
+             ERR("type cannot be INVALID");
+             return NULL;
           }
      }
 
@@ -1536,6 +1543,10 @@ efl_class_new(const Efl_Class_Description *desc, const Efl_Class *parent_id, ...
                      case EFL_CLASS_TYPE_MIXIN:
                        extn_list = eina_list_append(extn_list, extn);
                        break;
+                     default:
+                       ERR("type cannot be INVALID");
+                       va_end(p_list);
+                       return NULL;
                     }
                }
              extn_id = va_arg(p_list, Eo_Id *);
@@ -1756,6 +1767,24 @@ efl_isa(const Eo *eo_id, const Efl_Class *klass_id)
    Eina_Bool isa = EINA_FALSE;
 
    if (EINA_UNLIKELY(!eo_id)) return EINA_FALSE;
+
+   // Everything can add a override to an existing class, which pretty much means, everything is a efl override
+   // This is required in order to support our debug-profile for the users of efl_override
+   if (EINA_UNLIKELY(klass_id == EFL_OBJECT_OVERRIDE_CLASS)) return EINA_TRUE;
+
+   // Case where we are looking if eo_id is a class that contain klass_id
+   if (EINA_UNLIKELY(_eo_is_a_class(eo_id)))
+     {
+
+        EO_CLASS_POINTER_GOTO(klass_id, klass, err_class);
+        EO_CLASS_POINTER_GOTO(eo_id, lookinto, err_class0);
+
+        const op_type_funcs *func = _vtable_func_get
+          (&lookinto->vtable, klass->base_id + klass->ops_count);
+
+        return (func && (func->func == _eo_class_isa_func));;
+     }
+
    domain = ((Eo_Id)eo_id >> SHIFT_DOMAIN) & MASK_DOMAIN;
    data = _eo_table_data_get();
    tdata = _eo_table_data_table_get(data, domain);
@@ -1819,6 +1848,10 @@ err_shared_class: EINA_COLD
    EO_OBJ_DONE(eo_id);
 err_shared_obj: EINA_COLD
    eina_lock_release(&(_eo_table_data_shared_data->obj_lock));
+   return EINA_FALSE;
+
+err_class0:
+   _EO_POINTER_ERR(eo_id, "Class (%p) is an invalid ref.", eo_id);
    return EINA_FALSE;
 
 err_class: EINA_COLD
@@ -1924,11 +1957,11 @@ efl_unref(const Eo *obj_id)
 
    _efl_ref(obj);
 
-   if (EINA_UNLIKELY((!obj->unref_compensate) &&
+   if (EINA_UNLIKELY((obj->noref_event) && (!obj->unref_compensate) &&
                      ((obj->user_refcount == 1 && !obj->parent) ||
                       (obj->user_refcount == 2 && obj->parent))))
      {
-        // We need to report efl_ref_count correctly during efl_noref, so fake it
+        // We need to report efl_ref_count correctly during EFL_EVENT_NOREF, so fake it
         // by adjusting efl_ref_count while inside efl_unref (This should avoid
         // infinite loop)
         obj->unref_compensate = EINA_TRUE;
@@ -1936,7 +1969,6 @@ efl_unref(const Eo *obj_id)
         // The noref event should happen before any object in the
         // tree get affected by the change in refcount.
         efl_event_callback_call((Eo *) obj_id, EFL_EVENT_NOREF, NULL);
-        efl_noref((Eo *) obj_id);
 
         obj->unref_compensate = EINA_FALSE;
      }
@@ -1959,6 +1991,9 @@ efl_unref(const Eo *obj_id)
           }
         _efl_unref(obj);
      }
+
+   _apply_auto_unref(obj, obj_id);
+
    _efl_unref(obj);
    EO_OBJ_DONE(obj_id);
 }
@@ -2443,21 +2478,26 @@ EAPI Eina_Bool
 efl_domain_switch(Efl_Id_Domain domain)
 {
    Eo_Id_Data *data = _eo_table_data_get();
+   Eo_Id_Data *new_data;
    if ((domain < EFL_ID_DOMAIN_MAIN) || (domain > EFL_ID_DOMAIN_THREAD) ||
        (domain == EFL_ID_DOMAIN_SHARED))
      {
         ERR("Invalid domain %i being switched to", domain);
         return EINA_FALSE;
      }
-   if (data)
+   if ((data) && (data->local_domain == domain))
+     return EINA_TRUE;
+
+   new_data = _eo_table_data_new(domain);
+   if (!new_data)
      {
-        if (data->local_domain == domain) return EINA_TRUE;
-        _eo_free_ids_tables(data);
+        ERR("Could not allocate domain %i table data", domain);
+        return EINA_FALSE;
      }
-   data = _eo_table_data_new(domain);
-   data->local_domain = domain;
-   data->domain_stack[data->stack_top] = domain;
-   eina_tls_set(_eo_table_data, data);
+   if (data) _eo_free_ids_tables(data);
+   new_data->local_domain = domain;
+   new_data->domain_stack[new_data->stack_top] = domain;
+   eina_tls_set(_eo_table_data, new_data);
    return EINA_TRUE;
 }
 
@@ -2572,6 +2612,33 @@ efl_compatible(const Eo *obj, const Eo *obj_target)
    DBG("Object %p and %p are not compatible. Domain %i and %i do not match",
        obj, obj_target, domain1, domain2);
    return EINA_FALSE;
+}
+
+EAPI Eina_Bool
+efl_class_override_register(const Efl_Class *klass, const Efl_Class *override)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(klass, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(override, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!efl_isa(override, klass), EINA_FALSE);
+   if (!class_overrides)
+     class_overrides = eina_hash_pointer_new(NULL);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(class_overrides, EINA_FALSE);
+
+   eina_hash_set(class_overrides, &klass, override);
+   return EINA_TRUE;
+}
+
+EAPI Eina_Bool
+efl_class_override_unregister(const Efl_Class *klass, const Efl_Class *override)
+{
+   const Efl_Class *set;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(klass, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(override, EINA_FALSE);
+   if (!class_overrides) return EINA_TRUE;
+
+   set = eina_hash_find(class_overrides, &klass);
+   if (set != override) return EINA_FALSE;
+   return eina_hash_del_by_key(class_overrides, &klass);
 }
 
 EAPI Eina_Bool
@@ -3541,3 +3608,94 @@ static const Eina_Value_Type _EINA_VALUE_TYPE_OBJECT = {
 };
 
 EOAPI const Eina_Value_Type *EINA_VALUE_TYPE_OBJECT = &_EINA_VALUE_TYPE_OBJECT;
+
+static const Efl_Object_Property_Reflection*
+_efl_class_reflection_find(const _Efl_Class *klass, const char *property_name)
+{
+   const _Efl_Class **klass_iter = klass->extensions;
+   const Efl_Object_Property_Reflection_Ops *ref = klass->reflection;
+   unsigned int i;
+
+   for (i = 0; ref && i < ref->count; ++i)
+     {
+        if (eina_streq(property_name, ref->table[i].property_name))
+          return &ref->table[i];
+     }
+
+   if (klass->parent)
+     {
+        const Efl_Object_Property_Reflection *ref;
+
+        ref = _efl_class_reflection_find(klass->parent, property_name);
+        if (ref) return ref;
+     }
+
+   for (; *klass_iter; klass_iter++)
+     {
+        const Efl_Object_Property_Reflection *ref;
+
+        ref = _efl_class_reflection_find(*klass_iter, property_name);
+        if (ref) return ref;
+     }
+
+   return NULL;
+}
+
+EAPI Eina_Error
+efl_property_reflection_set(Eo *obj_id, const char *property_name, Eina_Value value)
+{
+   Eina_Error r = EINA_ERROR_NOT_IMPLEMENTED;
+   Eina_Bool freed = EINA_FALSE;
+
+   EO_OBJ_POINTER_GOTO(obj_id, obj, end);
+   const Efl_Object_Property_Reflection *reflection = _efl_class_reflection_find(obj->klass, property_name);
+
+   if (reflection && reflection->set)
+     {
+        r = reflection->set(obj_id, value);
+        freed = EINA_TRUE;
+     }
+
+ end:
+   if (!freed) eina_value_flush(&value);
+   EO_OBJ_DONE(obj_id);
+   return r;
+}
+
+EAPI Eina_Value
+efl_property_reflection_get(const Eo *obj_id, const char *property_name)
+{
+   Eina_Value r = eina_value_error_init(EINA_ERROR_NOT_IMPLEMENTED);
+
+   EO_OBJ_POINTER_GOTO(obj_id, obj, end);
+   const Efl_Object_Property_Reflection *reflection = _efl_class_reflection_find(obj->klass, property_name);
+
+   if (reflection && reflection->get)
+     r = reflection->get(obj_id);
+
+ end:
+   EO_OBJ_DONE(obj_id);
+
+   return r;
+}
+
+EAPI Eina_Bool
+efl_property_reflection_exist(Eo *obj_id, const char *property_name)
+{
+   Eina_Bool r = EINA_FALSE;
+   EO_OBJ_POINTER_GOTO(obj_id, obj, end);
+   const Efl_Object_Property_Reflection *reflection = _efl_class_reflection_find(obj->klass, property_name);
+
+   if (reflection) r = EINA_TRUE;
+ end:
+   EO_OBJ_DONE(obj_id);
+   return r;
+}
+
+EAPI Efl_Class_Type
+efl_class_type_get(const Efl_Class *klass_id)
+{
+   EO_CLASS_POINTER_RETURN_VAL(klass_id, klass, EFL_CLASS_TYPE_INVALID);
+
+   return klass->desc->type;
+}

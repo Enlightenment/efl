@@ -880,7 +880,7 @@ _x11_fixes_selection_notify(void *data, int t EINA_UNUSED, void *event)
    _e->exists = e.exist;
 
    ecore_event_add(ELM_CNP_EVENT_SELECTION_CHANGED, _e, NULL, NULL);
-   efl_event_callback_call(sel->owner, EFL_UI_SELECTION_EVENT_SELECTION_CHANGED, &e);
+   efl_event_callback_call(sel->owner, EFL_UI_SELECTION_EVENT_WM_SELECTION_CHANGED, &e);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -1142,15 +1142,20 @@ static Eina_Bool
 _x11_vcard_send(char *target EINA_UNUSED, void *data EINA_UNUSED, int size EINA_UNUSED, void **data_ret, int *size_ret, Ecore_X_Atom *ttype EINA_UNUSED, int *typesize EINA_UNUSED)
 {
    Sel_Manager_Selection *sel;
-   char *s;
 
    sel_debug("Vcard send called");
    sel = *(Sel_Manager_Selection **)data;
-   s = malloc(sel->data.len + 1);
-   if (!s) return EINA_FALSE;
-   memcpy(s, sel->data.mem, sel->data.len);
-   s[sel->data.len] = 0;
-   if (data_ret) *data_ret = s;
+   if (data_ret)
+     {
+        char *s;        
+
+        s = malloc(sel->data.len + 1);
+        if (!s) return EINA_FALSE;
+        memcpy(s, sel->data.mem, sel->data.len);
+        s[sel->data.len] = 0;
+        *data_ret = s;
+     }
+
    if (size_ret) *size_ret = sel->data.len;
    return EINA_TRUE;
 }
@@ -1205,7 +1210,7 @@ _x11_text_converter(char *target, void *data, int size EINA_UNUSED, void **data_
      }
    else if (sel->format & EFL_UI_SELECTION_FORMAT_IMAGE)
      {
-        efl_file_get(sel->request_obj, (const char **)data_ret, NULL);
+        efl_file_simple_get(sel->request_obj, (const char **)data_ret, NULL);
         if (!*data_ret) *data_ret = strdup("No file");
         else *data_ret = strdup(*data_ret);
 
@@ -1340,7 +1345,7 @@ _x11_drag_mouse_up(void *data, int etype EINA_UNUSED, void *event)
                     {
                        Evas_Object *win = elm_widget_top_get(seat_sel->drag_obj);
                        if (win && efl_isa(win, EFL_UI_WIN_CLASS))
-                         efl_event_callback_del(win, EFL_UI_WIN_EVENT_ROTATION_CHANGED,
+                         efl_event_callback_del(win, EFL_UI_WIN_EVENT_WIN_ROTATION_CHANGED,
                                                 _x11_win_rotation_changed_cb, seat_sel->drag_win);
                     }
                }
@@ -1496,7 +1501,7 @@ _x11_efl_sel_manager_drag_start(Eo *obj EINA_UNUSED, Efl_Ui_Selection_Manager_Da
         if (win && efl_isa(win, EFL_UI_WIN_CLASS))
           {
              elm_win_rotation_set(seat_sel->drag_win, elm_win_rotation_get(win));
-             efl_event_callback_add(win, EFL_UI_WIN_EVENT_ROTATION_CHANGED,
+             efl_event_callback_add(win, EFL_UI_WIN_EVENT_WIN_ROTATION_CHANGED,
                                     _x11_win_rotation_changed_cb, seat_sel->drag_win);
           }
      }
@@ -2487,7 +2492,7 @@ _wl_text_converter(char *target, Sel_Manager_Selection *sel, void *data, int siz
    else if (format & EFL_UI_SELECTION_FORMAT_IMAGE)
      {
         sel_debug("Image %s\n", evas_object_type_get(sel->request_obj));
-        efl_file_get(sel->request_obj, (const char **)data_ret, NULL);
+        efl_file_simple_get(sel->request_obj, (const char **)data_ret, NULL);
         if (!*data_ret) *data_ret = strdup("No file");
         else *data_ret = strdup(*data_ret);
 
@@ -2650,7 +2655,7 @@ _wl_selection_changed(void *data, int type EINA_UNUSED, void *event)
    _e->exists = e.exist;
 
    ecore_event_add(ELM_CNP_EVENT_SELECTION_CHANGED, _e, _wl_selection_changed_free, ev->display);
-   efl_event_callback_call(sel->request_obj, EFL_UI_SELECTION_EVENT_SELECTION_CHANGED, &e);
+   efl_event_callback_call(sel->request_obj, EFL_UI_SELECTION_EVENT_WM_SELECTION_CHANGED, &e);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -4927,7 +4932,7 @@ _efl_ui_selection_manager_drag_cancel(Eo *obj EINA_UNUSED, Efl_Ui_Selection_Mana
                {
                   Evas_Object *win = elm_widget_top_get(seat_sel->drag_obj);
                   if (win && efl_isa(win, EFL_UI_WIN_CLASS))
-                     efl_event_callback_del(win, EFL_UI_WIN_EVENT_ROTATION_CHANGED,
+                     efl_event_callback_del(win, EFL_UI_WIN_EVENT_WIN_ROTATION_CHANGED,
                                             _x11_win_rotation_changed_cb, seat_sel->drag_win);
                }
           }
@@ -5179,7 +5184,11 @@ _efl_ui_selection_manager_efl_object_constructor(Eo *obj, Efl_Ui_Selection_Manag
      }
    if (init_x)
      {
-        ecore_x_init(NULL);
+        if (!ecore_x_init(NULL))
+          {
+             ERR("Could not initialize Ecore_X");
+             return NULL;
+          }
      }
 #endif
 #ifdef HAVE_ELEMENTARY_WL2

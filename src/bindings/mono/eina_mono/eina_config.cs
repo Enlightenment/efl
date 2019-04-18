@@ -3,18 +3,24 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Eina {
+namespace Eina
+{
 
-public class Config {
+public class Config
+{
     [DllImport(efl.Libs.Eina)] private static extern int eina_init();
     [DllImport(efl.Libs.Eina)] private static extern int eina_shutdown();
 
-    public static void Init() {
+    public static void Init()
+    {
         if (eina_init() == 0)
+        {
             throw (new Efl.EflException("Failed to initialize Eina"));
+        }
     }
 
-    public static int Shutdown() {
+    public static int Shutdown()
+    {
         return eina_shutdown();
     }
 
@@ -24,15 +30,15 @@ public class Config {
 /// Wrapper class for pointers that need some cleanup afterwards
 /// like strings.
 /// </summary>
-public class DisposableIntPtr : IDisposable {
-
+public class DisposableIntPtr : IDisposable
+{
     public IntPtr Handle { get; set; }
     private bool ShouldFree;
     private bool Disposed;
 
     /// <summary>Wraps a new ptr what will be freed based on the
     /// value of shouldFree</summary>
-    public DisposableIntPtr(IntPtr ptr, bool shouldFree=false)
+    public DisposableIntPtr(IntPtr ptr, bool shouldFree = false)
     {
         Handle = ptr;
         ShouldFree = shouldFree;
@@ -46,9 +52,11 @@ public class DisposableIntPtr : IDisposable {
 
     protected virtual void Dispose(bool disposing)
     {
-        if (!Disposed && ShouldFree) {
+        if (!Disposed && ShouldFree)
+        {
             MemoryNative.Free(this.Handle);
         }
+
         Disposed = true;
     }
 
@@ -57,4 +65,5 @@ public class DisposableIntPtr : IDisposable {
         Dispose(false);
     }
 }
+
 }

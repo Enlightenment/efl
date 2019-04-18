@@ -142,7 +142,7 @@ _efl_net_server_udp_resolved_bind(Eo *o, Efl_Net_Server_Udp_Data *pd, const stru
         if (mr)
           {
              ERR("could not join pending multicast group '%s': %s", mcast_addr, eina_error_msg_get(mr));
-             efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &mr);
+             efl_event_callback_call(o, EFL_NET_SERVER_EVENT_SERVER_ERROR, &mr);
           }
      }
 
@@ -171,7 +171,7 @@ _efl_net_server_udp_resolved(void *data, const char *host EINA_UNUSED, const cha
    Eo *o = data;
    Efl_Net_Server_Udp_Data *pd = efl_data_scope_get(o, MY_CLASS);
    const struct addrinfo *addr;
-   Eina_Error err;
+   Eina_Error err = EINA_ERROR_NO_ERROR;
 
    pd->resolver = NULL;
 
@@ -191,7 +191,7 @@ _efl_net_server_udp_resolved(void *data, const char *host EINA_UNUSED, const cha
    freeaddrinfo(result);
 
  end:
-   if (err) efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
+   if (err) efl_event_callback_call(o, EFL_NET_SERVER_EVENT_SERVER_ERROR, &err);
 
    efl_unref(o);
 }
@@ -328,7 +328,7 @@ _efl_net_server_udp_efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Serve
         Eina_Error err = efl_net_socket_error_get();
         ERR("recvfrom(" SOCKET_FMT ", %p, %zu, 0, %p, %d): %s", fd, buf, buflen, &addr, addrlen, eina_error_msg_get(err));
         free(buf);
-        efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
+        efl_event_callback_call(o, EFL_NET_SERVER_EVENT_SERVER_ERROR, &err);
         return;
      }
    if ((size_t)r < buflen)
@@ -341,7 +341,7 @@ _efl_net_server_udp_efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Serve
 
              free(buf);
              ERR("Out of memory on efl net udp data incoming");
-             efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
+             efl_event_callback_call(o, EFL_NET_SERVER_EVENT_SERVER_ERROR, &err);
              return;
           }
      }
@@ -351,6 +351,7 @@ _efl_net_server_udp_efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Serve
    client = eina_hash_find(pd->clients, str);
    if (client)
      {
+        free(buf);
         _efl_net_server_udp_client_feed(client, slice);
         return;
      }
@@ -393,8 +394,12 @@ _efl_net_server_udp_efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Serve
    efl_event_callback_add(client, EFL_IO_CLOSER_EVENT_CLOSED, _efl_net_server_udp_client_event_closed, o);
 
    if (!efl_net_server_client_announce(o, client))
-     return;
+     {
+        free(buf);
+        return;
+     }
 
+   free(buf);
    _efl_net_server_udp_client_feed(client, slice);
 }
 

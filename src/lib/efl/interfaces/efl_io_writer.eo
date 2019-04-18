@@ -12,7 +12,7 @@ interface Efl.Io.Writer {
       "can_write,changed" or property @.can_write to known whenever a write
       could push more data.
 
-      @since 1.19
+      @since 1.22
     ]]
 
     methods {
@@ -47,7 +47,7 @@ interface Efl.Io.Writer {
     }
 
     events {
-        can_write,changed: void; [[Notifies can_write property changed.
+        can_write,changed: bool; [[Notifies can_write property changed.
 
                              If @.can_write is $true there is data to
                              @.write without blocking/error. If

@@ -5,7 +5,7 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "elm_systray.eo.h"
+#include "elm_systray_eo.h"
 #include "elm_systray_watcher.h"
 
 EAPI int ELM_EVENT_SYSTRAY_READY = 0;
@@ -514,4 +514,4 @@ _elm_unneed_systray(void)
      }
 }
 
-#include "elm_systray.eo.c"
+#include "elm_systray_eo.c"

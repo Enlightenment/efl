@@ -1,4 +1,4 @@
-class Efl.Ui.Clock_Legacy extends Efl.Ui.Clock implements Efl.Ui.Legacy
+class @beta Efl.Ui.Clock_Legacy extends Efl.Ui.Clock implements Efl.Ui.Legacy
 {
    [[Efl UI clock class]]
    data: null;

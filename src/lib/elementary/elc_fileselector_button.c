@@ -3,16 +3,15 @@
 #endif
 
 #define EFL_ACCESS_OBJECT_PROTECTED
-#define ELM_INTERFACE_FILESELECTOR_BETA
 
 #include <Elementary.h>
 #include "Eio_Eo.h"
 #include "elm_priv.h"
-#include "elm_fileselector_button.eo.h"
-#include "elm_fileselector_entry.eo.h"
+#include "elm_fileselector_button_eo.h"
+#include "elm_fileselector_entry_eo.h"
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector_button.h"
-#include "elm_fileselector.eo.h"
+#include "elm_fileselector_eo.h"
 
 #define MY_CLASS ELM_FILESELECTOR_BUTTON_CLASS
 
@@ -39,15 +38,15 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 };
 #undef ELM_PRIV_FILESELECTOR_BUTTON_SIGNALS
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_fileselector_button_efl_ui_widget_theme_apply(Eo *obj, Elm_Fileselector_Button_Data *sd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    char buf[4096];
    const char *style;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
 
    style = eina_stringshare_add(elm_widget_style_get(obj));
 
@@ -57,7 +56,7 @@ _elm_fileselector_button_efl_ui_widget_theme_apply(Eo *obj, Elm_Fileselector_But
    eina_stringshare_replace(&(wd->style), buf);
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    eina_stringshare_replace(&(wd->style), style);
 
@@ -88,7 +87,7 @@ _selection_done(void *data, const Efl_Event *event EINA_UNUSED)
         efl_event_callback_call
           (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, model);
         _event_to_legacy_call
-          (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, file);
+          (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN->name, file);
 
         eina_value_free(path);
         free(file);
@@ -96,9 +95,9 @@ _selection_done(void *data, const Efl_Event *event EINA_UNUSED)
    else
      {
         _model_event_call
-          (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, NULL, NULL);
+          (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN->name, NULL, NULL);
      }
-
+   eina_stringshare_replace(&sd->fsd.current_name, elm_interface_fileselector_current_name_get(sd->fs));
    del = sd->fsw;
    sd->fs = NULL;
    sd->fsw = NULL;
@@ -217,15 +216,14 @@ _elm_fileselector_button_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Bu
    const char *path;
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    priv->window_title = eina_stringshare_add(DEFAULT_WINDOW_TITLE);
    path = eina_environment_home_get();
    if (path) priv->fsd.path = eina_stringshare_add(path);
    else priv->fsd.path = eina_stringshare_add("/");
 
-   priv->fsd.model = efl_add_ref(EIO_MODEL_CLASS, obj,
-                                 eio_model_path_set(efl_added, priv->fsd.path),
+   priv->fsd.model = efl_add_ref(EFL_IO_MODEL_CLASS, obj,
+                                 efl_io_model_path_set(efl_added, priv->fsd.path),
                                  efl_event_callback_array_add(efl_added, noref_death(), NULL));
 
    priv->fsd.expandable = _elm_config->fileselector_expand_enable;
@@ -326,7 +324,7 @@ _elm_fileselector_button_path_set_internal(Evas_Object *obj, const char *path)
 {
    ELM_FILESELECTOR_BUTTON_DATA_GET_OR_RETURN(obj, sd);
 
-   Efl_Model *model = efl_add(EIO_MODEL_CLASS, obj, eio_model_path_set(efl_added, path));
+   Efl_Model *model = efl_add(EFL_IO_MODEL_CLASS, obj, efl_io_model_path_set(efl_added, path));
    if (!model)
      {
         ERR("Efl.Model allocation error");
@@ -367,7 +365,7 @@ _elm_fileselector_button_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Elm_Filesele
    eina_stringshare_replace(&sd->fsd.path, file);
 
    _event_to_legacy_call
-     (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN, file);
+     (sd->obj, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN->name, file);
 
    free(file);
 
@@ -629,6 +627,54 @@ _elm_fileselector_button_elm_interface_fileselector_hidden_visible_set(Eo *obj E
    if (sd->fs) elm_fileselector_hidden_visible_set(sd->fs, visible);
 }
 
+EOLIAN static void
+_elm_fileselector_button_elm_interface_fileselector_current_name_set(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd, const char *name)
+{
+   eina_stringshare_replace(&sd->fsd.current_name, name);
+   if (sd->fs) elm_fileselector_current_name_set(sd->fs, sd->fsd.current_name);
+}
+
+EOLIAN static const char*
+_elm_fileselector_button_elm_interface_fileselector_current_name_get(const Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd)
+{
+  if (sd->fs)
+    return elm_fileselector_current_name_get(sd->fs);
+
+  return sd->fsd.current_name;
+}
+
+#define FS_USAGE_API(ret)\
+   if (!pd->fs) \
+     { \
+        ERR("This function is only supported when there is a fileselector"); \
+        return ret; \
+     } \
+
+EOLIAN static Eina_Bool
+_elm_fileselector_button_elm_interface_fileselector_custom_filter_append(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *pd, Elm_Fileselector_Filter_Func func, void *data, const char *filter_name)
+{
+   FS_USAGE_API(EINA_FALSE)
+
+   return elm_interface_fileselector_custom_filter_append(pd->fs, func, data, filter_name);
+}
+
+EOLIAN static Eina_Bool
+_elm_fileselector_button_elm_interface_fileselector_mime_types_filter_append(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *pd, const char *mime_types, const char *filter_name)
+{
+   FS_USAGE_API(EINA_FALSE)
+
+   return elm_interface_fileselector_mime_types_filter_append(pd->fs, mime_types, filter_name);
+}
+
+EOLIAN static void
+_elm_fileselector_button_elm_interface_fileselector_filters_clear(Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *pd)
+{
+   FS_USAGE_API()
+
+   elm_interface_fileselector_filters_clear(pd->fs);
+}
+
+
 EOLIAN static Eina_Bool
 _elm_fileselector_button_elm_interface_fileselector_hidden_visible_get(const Eo *obj EINA_UNUSED, Elm_Fileselector_Button_Data *sd)
 {
@@ -656,4 +702,4 @@ elm_fileselector_button_inwin_mode_get(const Eo *obj)
 #define ELM_FILESELECTOR_BUTTON_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_fileselector_button)
 
-#include "elm_fileselector_button.eo.c"
+#include "elm_fileselector_button_eo.c"

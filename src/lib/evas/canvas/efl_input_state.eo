@@ -2,10 +2,14 @@ import efl_input_types;
 
 interface Efl.Input.State
 {
-   [[Efl input state interface]]
+   [[Efl input state interface.
+
+     @since 1.22
+   ]]
    eo_prefix: efl_input;
    methods {
-      @property modifier_enabled {
+      /* FIXME Efl.Input.Device is not stable yet*/
+      @property modifier_enabled @beta {
          [[Indicates whether a key modifier is on, such as Ctrl, Shift, ...]]
          get {}
          keys {
@@ -16,7 +20,8 @@ interface Efl.Input.State
             is_set: bool; [[$true if the key modifier is pressed.]]
          }
       }
-      @property lock_enabled {
+      /* FIXME Efl.Input.Device is not stable yet*/
+      @property lock_enabled @beta {
          [[Indicates whether a key lock is on, such as NumLock, CapsLock, ...]]
          get {}
          keys {

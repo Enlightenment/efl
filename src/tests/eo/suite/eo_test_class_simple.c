@@ -23,12 +23,32 @@ _a_set(Eo *obj EINA_UNUSED, void *class_data, int a)
    efl_event_callback_legacy_call(obj, EV_A_CHANGED, &pd->a);
 }
 
+static Eina_Error
+_a_set_reflect(Eo *obj, Eina_Value value)
+{
+   int a;
+
+   eina_value_int_convert(&value, &a);
+   simple_a_set(obj, a);
+   eina_value_flush(&value);
+
+   return 0;
+}
+
 static int
-_a_get(Eo *obj EINA_UNUSED, void *class_data)
+_a_get(const Eo *obj EINA_UNUSED, void *class_data)
 {
    Simple_Public_Data *pd = class_data;
 
    return pd->a;
+}
+
+static Eina_Value
+_a_get_reflect(const Eo *obj)
+{
+   int a = simple_a_get(obj);
+
+   return eina_value_int_init(a);
 }
 
 static Eina_Bool
@@ -36,14 +56,6 @@ _a_print(Eo *obj EINA_UNUSED, void *class_data)
 {
    const Simple_Public_Data *pd = class_data;
    printf("Print %s %d\n", efl_class_name_get(MY_CLASS), pd->a);
-
-   return EINA_TRUE;
-}
-
-static Eina_Bool
-_class_hi_print(Efl_Class *klass, void *data EINA_UNUSED)
-{
-   printf("Hi Print %s\n", efl_class_name_get(klass));
 
    return EINA_TRUE;
 }
@@ -82,9 +94,8 @@ _dbg_info_get(Eo *eo_obj, void *_pd EINA_UNUSED, Efl_Dbg_Info *root)
 }
 
 EFL_VOID_FUNC_BODYV(simple_a_set, EFL_FUNC_CALL(a), int a);
-EFL_FUNC_BODY(simple_a_get, int, 0);
+EFL_FUNC_BODY_CONST(simple_a_get, int, 0);
 EFL_FUNC_BODY(simple_a_print, Eina_Bool, EINA_FALSE);
-EFL_FUNC_BODY_CONST(simple_class_hi_print, Eina_Bool, EINA_FALSE);
 EFL_VOID_FUNC_BODY(simple_pure_virtual);
 EFL_VOID_FUNC_BODY(simple_no_implementation);
 
@@ -100,11 +111,14 @@ _class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(simple_pure_virtual, NULL),
          EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _dbg_info_get),
    );
-   EFL_OPS_DEFINE(cops,
-         EFL_OBJECT_OP_FUNC(simple_class_hi_print, _class_hi_print),
-   );
+   static const Efl_Object_Property_Reflection reflection_table[] = {
+         {"simple_a", _a_set_reflect, _a_get_reflect},
+   };
+   static const Efl_Object_Property_Reflection_Ops ref_ops = {
+         reflection_table, EINA_C_ARRAY_LENGTH(reflection_table)
+   };
 
-   return efl_class_functions_set(klass, &ops, &cops);
+   return efl_class_functions_set(klass, &ops, &ref_ops);
 }
 
 static const Efl_Class_Description class_desc = {
@@ -118,24 +132,13 @@ static const Efl_Class_Description class_desc = {
 };
 
 EFL_DEFINE_CLASS(simple_class_get, &class_desc, EO_CLASS, NULL)
-
-
-static int
-_beef_get(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED)
-{
-   return 0xBEEF;
-}
-
 EFL_FUNC_BODY_CONST(simple2_class_beef_get, int, 0);
 
 static Eina_Bool
 _class_initializer2(Efl_Class *klass)
 {
-   EFL_OPS_DEFINE(cops,
-         EFL_OBJECT_OP_FUNC(simple2_class_beef_get, _beef_get),
-   );
 
-   return efl_class_functions_set(klass, NULL, &cops);
+   return efl_class_functions_set(klass, NULL, NULL);
 }
 
 static const Efl_Class_Description class_desc2 = {

@@ -1,7 +1,6 @@
-enum Efl.Ui.Zoom_Mode
+enum @beta Efl.Ui.Zoom_Mode
 {
    [[Types of zoom available.]]
-   legacy: efl_ui_zoom_mode;
    manual = 0, [[Zoom controlled normally by efl_ui_zoom_set]]
    auto_fit, [[Zoom until photo fits in zoomable object]]
    auto_fill, [[Zoom until photo fills zoomable object]]
@@ -9,7 +8,7 @@ enum Efl.Ui.Zoom_Mode
    last [[Sentinel value to indicate last enum field during iteration]]
 }
 
-interface Efl.Ui.Zoom
+interface @beta Efl.Ui.Zoom
 {
    [[Efl UI zoom interface]]
    event_prefix: efl_ui;
@@ -17,23 +16,14 @@ interface Efl.Ui.Zoom
 
    methods {
       @property zoom_animation {
-         set {
-            [[Enable zoom animation
-
-              This sets the zoom animation state to on or off for zoomable. The
-              default is off. This will stop zooming using animation on
-              zoom level changes and change instantly. This will stop any
-              existing animations that are running.
-            ]]
-         }
-         get {
-            [[Disable zoom animation
-
-              This gets the current zoom animation state for the zoomable object.
-            ]]
-         }
+         [[This sets the zoom animation state to on or off for zoomable. The
+           default is off. When $paused is $true, it will stop zooming using
+           animation on zoom level changes and change instantly, stopping any
+           existing animations that are running.]]
+         set {}
+         get {}
          values {
-            paused: bool; [[The pause state.]]
+            paused: bool; [[The paused state.]]
          }
       }
       @property zoom_level {

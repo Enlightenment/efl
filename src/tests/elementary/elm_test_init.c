@@ -5,7 +5,7 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
-EFL_START_TEST (elm_main)
+EFL_START_TEST(elm_main)
 {
 }
 EFL_END_TEST

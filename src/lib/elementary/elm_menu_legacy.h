@@ -30,5 +30,5 @@ EAPI void                         elm_menu_parent_set(Evas_Object *obj, Evas_Obj
  */
 EAPI Evas_Object                 *elm_menu_parent_get(const Evas_Object *obj);
 
-#include "elm_menu_item.eo.legacy.h"
-#include "elm_menu.eo.legacy.h"
+#include "elm_menu_item_eo.legacy.h"
+#include "elm_menu_eo.legacy.h"

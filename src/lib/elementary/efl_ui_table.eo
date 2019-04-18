@@ -1,12 +1,26 @@
-class Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pack_Layout,
+class @beta Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pack_Layout,
                    Efl.Ui.Direction
 {
    [[Efl UI table class]]
+   methods {
+      @property homogeneous {
+         [[Control homogeneous mode.
+
+           This will enable the homogeneous mode where cells are of the same
+           weight and of the same min size which is determined by maximum min
+           size of cells.]]
+         values {
+            homogeneoush : bool; [[$true if the box is homogeneous horizontally,
+                                   $false otherwise]]
+            homogeneousv : bool; [[$true if the box is homogeneous vertically,
+                                   $false otherwise]]
+         }
+      }
+   }
    implements {
       Efl.Object.constructor;
       Efl.Canvas.Group.group_calculate;
       Efl.Ui.Widget.theme_apply;
-      //Efl.Container.content_remove; // TODO
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Ui.Direction.direction { get; set; }
@@ -15,6 +29,7 @@ class Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pack_Lay
       Efl.Pack.unpack;
       Efl.Pack.pack;
       Efl.Pack.pack_padding { get; set; }
+      Efl.Pack.pack_align { get; set; }
       Efl.Pack_Table.pack_table;
       Efl.Pack_Table.table_content_get;
       Efl.Pack_Table.table_contents_get;
@@ -23,7 +38,6 @@ class Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pack_Lay
       Efl.Pack_Table.table_columns { get; set; }
       Efl.Pack_Table.table_rows { get; set; }
       Efl.Pack_Table.table_direction { get; set; }
-      Efl.Pack_Linear.pack_end;
       Efl.Pack_Layout.layout_update;
       Efl.Pack_Layout.layout_request;
    }

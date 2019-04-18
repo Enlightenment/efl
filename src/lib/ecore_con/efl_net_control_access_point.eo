@@ -1,7 +1,5 @@
-enum Efl.Net.Control.Access_Point_State {
+enum @beta Efl.Net.Control.Access_Point_State {
     [[Provides the access point state.
-
-      @since 1.19
     ]]
     idle, [[Nothing is happening with this access point]]
     association, [[The access point is trying to associate itself. This is the first state after a connection attempt.]]
@@ -12,10 +10,8 @@ enum Efl.Net.Control.Access_Point_State {
     failure, [[The connection attempt failed, @Efl.Net.Control.Access_Point.error will provide more details]]
 }
 
-enum Efl.Net.Control.Access_Point_Error {
+enum @beta Efl.Net.Control.Access_Point_Error {
     [[The reason for the connection error.
-
-      @since 1.19
     ]]
     none, [[All OK, no errors]]
     out_of_range, [[Wireless device is out of range.]]
@@ -25,10 +21,8 @@ enum Efl.Net.Control.Access_Point_Error {
     login_failed, [[Login or authentication information was incorrect, agent_request_input event may be emitted.]]
 }
 
-enum Efl.Net.Control.Access_Point_Security {
+enum @beta Efl.Net.Control.Access_Point_Security {
     [[Bitwise-able securities supported by an access point.
-
-      @since 1.19
     ]]
     unknow = 0, [[Unknown]]
     none = (1 << 0), [[Open access, no security]]
@@ -37,10 +31,8 @@ enum Efl.Net.Control.Access_Point_Security {
     ieee802_1x = (1 << 3), [[IEEE 802.1X]]
 }
 
-enum Efl.Net.Control.Access_Point_Ipv4_Method {
+enum @beta Efl.Net.Control.Access_Point_Ipv4_Method {
     [[The method used to configure IPv4
-
-      @since 1.19
     ]]
     off, [[IPv4 is disabled.]]
     dhcp, [[IPv4 is configured using DHCP.]]
@@ -48,10 +40,8 @@ enum Efl.Net.Control.Access_Point_Ipv4_Method {
     unset, [[Only to be used with @Efl.Net.Control.Access_Point.configuration_ipv4]]
 }
 
-enum Efl.Net.Control.Access_Point_Ipv6_Method {
+enum @beta Efl.Net.Control.Access_Point_Ipv6_Method {
     [[The method used to configure IPv6
-
-      @since 1.19
     ]]
     off, [[IPv6 is disabled.]]
     fixed, [[IPv6 is fixed by operator and cannot be changed.]]
@@ -63,10 +53,8 @@ enum Efl.Net.Control.Access_Point_Ipv6_Method {
     unset, [[Only to be used with @Efl.Net.Control.Access_Point.configuration_ipv6]]
 }
 
-enum Efl.Net.Control.Access_Point_Proxy_Method {
+enum @beta Efl.Net.Control.Access_Point_Proxy_Method {
     [[The method used to configure Proxies.
-
-      @since 1.19
     ]]
     off, [[Direct connection to the internet, no proxy used.]]
     auto, [[Proxy is autoconfigured using Proxy-Auto-Configuration (PAC) using given URL.]]
@@ -74,7 +62,7 @@ enum Efl.Net.Control.Access_Point_Proxy_Method {
     unset, [[Only to be used with @Efl.Net.Control.Access_Point.configuration_proxy.]]
 }
 
-class Efl.Net.Control.Access_Point extends Efl.Loop_Consumer {
+class @beta Efl.Net.Control.Access_Point extends Efl.Loop_Consumer {
     [[An access point for network connectivity.
 
       The @Efl.Net.Control.Manager is composed of multiple technologies, each
@@ -82,8 +70,6 @@ class Efl.Net.Control.Access_Point extends Efl.Loop_Consumer {
 
       An application requiring only a network connection can just
       use a @Efl.Net.Session instead.
-
-      @since 1.19
     ]]
 
     events {

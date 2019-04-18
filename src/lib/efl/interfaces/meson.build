@@ -5,7 +5,7 @@ pub_legacy_eo_files = [
   'efl_gfx_entity.eo',
   'efl_gfx_color.eo',
   'efl_gfx_image.eo',
-  'efl_gfx_image_animation_controller.eo',
+  'efl_gfx_frame_controller.eo',
   'efl_input_device.eo',
   'efl_ui_draggable.eo',
   'efl_ui_clickable.eo',
@@ -29,16 +29,6 @@ foreach eo_file : pub_legacy_eo_files
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
                            '-gchd', '@INPUT@'])
-  pub_eo_file_target += custom_target('eolian_gen_legacy_' + eo_file,
-    input : eo_file,
-    output : [eo_file + '.legacy.h'],
-    depfile : eo_file + '.legacy.d',
-    install : true,
-    install_dir : join_paths(dir_package_include, 'interfaces'),
-    command : eolian_gen + [ '-I', meson.current_source_dir(), eolian_include_directories,
-                           '-o', 'l:' + join_paths(meson.current_build_dir(), eo_file + '.legacy.h'),
-                           '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.legacy.d'),
-                           '-gld', '@INPUT@'])
 endforeach
 
 pub_eo_files = [
@@ -49,6 +39,7 @@ pub_eo_files = [
   'efl_control.eo',
   'efl_duplicate.eo',
   'efl_file.eo',
+  'efl_file_save.eo',
   'efl_gfx_image_load_controller.eo',
   'efl_part.eo',
   'efl_player.eo',
@@ -59,6 +50,7 @@ pub_eo_files = [
   'efl_text_cursor.eo',
   'efl_text_annotate.eo',
   'efl_text_markup.eo',
+  'efl_text_markup_interactive.eo',
   'efl_text_markup_util.eo',
   'efl_gfx_stack.eo',
   'efl_gfx_view.eo',
@@ -70,9 +62,8 @@ pub_eo_files = [
   'efl_gfx_gradient_radial.eo',
   'efl_gfx_filter.eo',
   'efl_gfx_blur.eo',
-  'efl_gfx_size_hint.eo',
+  'efl_gfx_hint.eo',
   'efl_model.eo',
-  'efl_animator.eo',
   'efl_interpolator.eo',
   'efl_orientation.eo',
   'efl_container.eo',
@@ -83,11 +74,14 @@ pub_eo_files = [
   'efl_pack_table.eo',
   'efl_ui_i18n.eo',
   'efl_ui_direction.eo',
+  'efl_ui_direction_readonly.eo',
   'efl_ui_drag.eo',
-  'efl_ui_range.eo',
+  'efl_ui_range_display.eo',
+  'efl_ui_range_interactive.eo',
   'efl_ui_view.eo',
-  'efl_ui_model_connect.eo',
+  'efl_ui_property_bind.eo',
   'efl_ui_factory.eo',
+  'efl_ui_factory_bind.eo',
   'efl_ui_multi_selectable.eo',
   'efl_screen.eo',
   'efl_io_closer.eo',
@@ -144,9 +138,11 @@ foreach eo_file : pub_eo_types_files
                            '-ghd', '@INPUT@'])
 endforeach
 
-install_data(pub_eo_files + pub_legacy_eo_files + pub_eo_types_files,
-  install_dir: join_paths(eolian_include_dir, package_version_name)
-)
+if get_option('install-eo-files')
+  install_data(pub_eo_files + pub_legacy_eo_files + pub_eo_types_files,
+    install_dir: join_paths(eolian_include_dir, package_version_name)
+  )
+endif
 
 efl_interfaces_eo_files = pub_eo_files
 efl_interfaces_eot_files = pub_eo_types_files
@@ -171,11 +167,16 @@ efl_src += files([
   'efl_observer.c',
   'efl_file.c',
   'efl_ui_format.c',
+  'efl_ui_direction_readonly.c',
   'efl_text_markup_util.c',
 ])
 
 #efl_header_src += files([
 #  'efl_common_internal.h'
 #])
+
+install_headers('efl_file.h',
+  install_dir : join_paths(dir_package_include, 'interfaces'),
+)
 
 eolian_include_directories += ['-I', meson.current_source_dir()]

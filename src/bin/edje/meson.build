@@ -2,7 +2,7 @@ subdir('epp')
 
 edje_bin_deps = [
   eina, eo, efl, m,
-  luajit, eet, evas,
+  lua, eet, evas,
   ecore_file, ecore_input,
   ecore_imf, ecore_imf_evas,
   embryo, efreet, eio,
@@ -34,9 +34,11 @@ if meson.is_cross_build()
   _edje_cc = find_program('edje_cc', native: true)
   edje_cc_path = _edje_cc.path()
   edje_cc_exe = [_edje_cc]
+  edje_depends = []
 else
   env = find_program('env', native: true)
   edje_cc_exe = [env, 'EFL_RUN_IN_TREE=1', edje_cc.full_path()]
+  edje_depends = [edje_cc, epp]
 endif
 
 edje_decc_src = [
@@ -80,6 +82,15 @@ edje_codegen = executable('edje_codegen',
         install: true,
         c_args : package_c_args,
 )
+
+if meson.is_cross_build()
+  _edje_codegen = find_program('edje_codegen', native: true)
+  edje_codegen_path = _edje_codegen.path()
+  edje_codegen_exe = [_edje_codegen]
+else
+  env = find_program('env', native: true)
+  edje_codegen_exe = [env, 'EFL_RUN_IN_TREE=1', edje_codegen.full_path()]
+endif
 
 edje_pick = executable('edje_pick',
         'edje_pick.c',

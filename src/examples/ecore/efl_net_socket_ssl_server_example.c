@@ -1,3 +1,4 @@
+#define EFL_BETA_API_SUPPORT
 #include <Efl_Net.h>
 #include <Ecore_Getopt.h>
 #include <fcntl.h>
@@ -152,7 +153,7 @@ _server_serving(void *data EINA_UNUSED, const Efl_Event *event)
 
 EFL_CALLBACKS_ARRAY_DEFINE(server_cbs,
                            { EFL_NET_SERVER_EVENT_CLIENT_ADD, _server_client_add },
-                           { EFL_NET_SERVER_EVENT_ERROR, _server_error },
+                           { EFL_NET_SERVER_EVENT_SERVER_ERROR, _server_error },
                            { EFL_NET_SERVER_EVENT_SERVING, _server_serving });
 
 static const char *ciphers_strs[] = {

@@ -1,4 +1,4 @@
-interface Efl.Duplicate
+interface @beta Efl.Duplicate
 {
    [[An interface for duplication of objects.
 

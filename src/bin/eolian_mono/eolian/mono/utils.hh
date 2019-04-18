@@ -30,19 +30,29 @@ namespace eolian_mono { namespace utils {
       return ret;
    }
 
-   std::vector<std::string> split(std::string const &input, char delim)
+   std::vector<std::string> split(std::string const &input, std::string delims)
    {
-      std::stringstream ss(input);
-      std::string name;
       std::vector<std::string> names;
+      size_t pos = 0;
 
-      while (std::getline(ss, name, delim))
+      while(pos != std::string::npos)
         {
-           if (!name.empty())
-             names.push_back(name);
+           size_t newpos = input.find_first_of(delims, pos);
+           names.push_back(input.substr(pos, newpos-pos));
+           pos = newpos;
+
+           if (pos != std::string::npos)
+             pos++;
         }
+
       return names;
    }
+
+   std::vector<std::string> split(std::string const &input, char delim)
+   {
+      return split(input, {1, delim});
+   }
+
 
    std::string to_pascal_case(const std::vector<std::string> &names, std::string const& delim="")
    {
@@ -69,6 +79,14 @@ namespace eolian_mono { namespace utils {
    {
        name.erase(std::remove(name.begin(), name.end(), target), name.end());
        return name;
+   }
+
+   inline bool ends_with(std::string const& source, std::string suffix)
+   {
+       if (source.size() > suffix.size())
+           return (0 == source.compare(source.size() - suffix.size(), suffix.size(), suffix));
+       else
+           return false;
    }
 } }
 

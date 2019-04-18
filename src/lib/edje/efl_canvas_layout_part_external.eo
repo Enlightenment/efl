@@ -1,4 +1,4 @@
-class Efl.Canvas.Layout_Part_External extends Efl.Canvas.Layout_Part implements Efl.Content
+class @beta Efl.Canvas.Layout_Part_External extends Efl.Canvas.Layout_Part implements Efl.Content
 {
    [[Class representing an external part in Edje layouts.
 
@@ -20,11 +20,10 @@ class Efl.Canvas.Layout_Part_External extends Efl.Canvas.Layout_Part implements 
        efl_text_set(efl_part(layout, "title"), "hello");
      Or in pseudo-script:
        layout["title"].text = "hello";
-
-     @since 1.20
    ]]
    data: null;
    implements {
-      Efl.Content.content { get; }
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
    }
 }

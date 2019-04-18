@@ -20,7 +20,7 @@
 #define MY_CLASS_NAME "Elm_Notify"
 #define MY_CLASS_NAME_LEGACY "elm_notify"
 
-static Efl_Ui_Theme_Apply_Result
+static Eina_Error
 _notify_theme_apply(Evas_Object *obj)
 {
    const char *style = elm_widget_style_get(obj);
@@ -139,16 +139,20 @@ _sizing_eval(Evas_Object *obj)
    evas_object_geometry_set(obj, x, y, w, h);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_notify_efl_ui_widget_theme_apply(Eo *obj, Elm_Notify_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   Eina_Error notify_theme_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
-   int_ret &= _notify_theme_apply(obj);
+   notify_theme_ret = _notify_theme_apply(obj);
+   if (notify_theme_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC)
+     return notify_theme_ret;
+
    if (sd->block_events) _block_events_theme_apply(obj);
 
    edje_object_scale_set
@@ -156,7 +160,11 @@ _elm_notify_efl_ui_widget_theme_apply(Eo *obj, Elm_Notify_Data *sd)
 
    _sizing_eval(obj);
 
-   return int_ret;
+   if ((int_ret == EFL_UI_THEME_APPLY_ERROR_DEFAULT) ||
+       (notify_theme_ret == EFL_UI_THEME_APPLY_ERROR_DEFAULT))
+     return EFL_UI_THEME_APPLY_ERROR_DEFAULT;
+
+   return EFL_UI_THEME_APPLY_ERROR_NONE;
 }
 
 /* Legacy compat. Note that notify has no text parts in the default theme... */
@@ -374,6 +382,7 @@ _elm_notify_content_set(Eo *obj, Elm_Notify_Data *sd, const char *part, Evas_Obj
           _changed_size_hints_cb, obj);
         edje_object_part_swallow(sd->notify, "elm.swallow.content", content);
      }
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, content);
 
    _calc(obj);
 
@@ -399,6 +408,7 @@ _elm_notify_content_unset(Eo *obj, Elm_Notify_Data *sd, const char *part)
    content = sd->content;
    _elm_widget_sub_object_redirect_to_top(obj, sd->content);
    edje_object_part_unswallow(sd->notify, content);
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
 
    return content;
 }
@@ -439,7 +449,6 @@ EOLIAN static void
 _elm_notify_efl_canvas_group_group_add(Eo *obj, Elm_Notify_Data *priv)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    priv->allow_events = EINA_TRUE;
 
@@ -472,26 +481,9 @@ elm_notify_add(Evas_Object *parent)
    return elm_legacy_add(MY_CLASS, parent);
 }
 
-EOLIAN static Eo *
-_elm_notify_efl_object_constructor(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED)
-{
-   obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
-   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_NOTIFICATION);
 
-   return obj;
-}
-
-EAPI void
-elm_notify_parent_set(Evas_Object *obj,
-                      Evas_Object *parent)
-{
-   ELM_NOTIFY_CHECK(obj);
-   efl_ui_widget_parent_set(obj, parent);
-}
-
-EOLIAN static void
-_elm_notify_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Notify_Data *sd, Evas_Object *parent)
+static void
+_parent_setup(Eo *obj, Elm_Notify_Data *sd, Evas_Object *parent)
 {
    if (sd->parent)
      {
@@ -528,6 +520,27 @@ _elm_notify_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Notify_Data *sd, Evas_O
    _calc(obj);
 }
 
+EOLIAN static Eo *
+_elm_notify_efl_object_constructor(Eo *obj, Elm_Notify_Data *sd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_NOTIFICATION);
+   _parent_setup(obj, sd, efl_parent_get(obj));
+
+   return obj;
+}
+
+EAPI void
+elm_notify_parent_set(Evas_Object *obj,
+                      Evas_Object *parent)
+{
+   ELM_NOTIFY_CHECK(obj);
+   ELM_NOTIFY_DATA_GET(obj, sd);
+   efl_ui_widget_sub_object_add(parent, obj);
+   _parent_setup(obj, sd, parent);
+}
+
 EAPI Evas_Object *
 elm_notify_parent_get(const Evas_Object *obj)
 {
@@ -535,12 +548,6 @@ elm_notify_parent_get(const Evas_Object *obj)
    Evas_Object *ret = NULL;
    ret = efl_ui_widget_parent_get((Eo *) obj);
    return ret;
-}
-
-EOLIAN static Evas_Object*
-_elm_notify_efl_ui_widget_widget_parent_get(const Eo *obj EINA_UNUSED, Elm_Notify_Data *sd)
-{
-   return sd->parent;
 }
 
 EINA_DEPRECATED EAPI void
@@ -733,4 +740,4 @@ _elm_notify_part_efl_ui_l10n_l10n_text_set(Eo *obj, void *_pd EINA_UNUSED, const
    ELM_PART_CONTENT_DEFAULT_OPS(elm_notify), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_notify)
 
-#include "elm_notify.eo.c"
+#include "elm_notify_eo.c"

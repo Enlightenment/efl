@@ -3,6 +3,7 @@
 #endif
 
 #include <string.h>
+#include <Efl_Ui.h>
 #include <Elementary.h>
 #include "test.h"
 #include "test_explode.h"
@@ -28,8 +29,8 @@ void test_box_horiz(void *data, Evas_Object *obj, void *event_info);
 void test_box_homo(void *data, Evas_Object *obj, void *event_info);
 void test_box_transition(void *data, Evas_Object *obj, void *event_info);
 void test_box_align(void *data, Evas_Object *obj, void *event_info);
-void test_box_stack(void *data, Evas_Object *obj, void *event_info);
 void test_ui_box(void *data, Evas_Object *obj, void *event_info);
+void test_ui_box_stack(void *data, Evas_Object *obj, void *event_info);
 void test_button(void *data, Evas_Object *obj, void *event_info);
 void test_ui_button(void *data, Evas_Object *obj, void *event_info);
 void test_cnp(void *data, Evas_Object *obj, void *event_info);
@@ -211,6 +212,11 @@ void test_menu2(void *data, Evas_Object *obj, void *event_info);
 void test_panel(void *data, Evas_Object *obj, void *event_info);
 void test_panel2(void *data, Evas_Object *obj, void *event_info);
 void test_panes(void *data, Evas_Object *obj, void *event_info);
+void test_panes_flush(void *data, Evas_Object *obj, void *event_info);
+void test_panes_left_fold(void *data, Evas_Object *obj, void *event_info);
+void test_panes_right_fold(void *data, Evas_Object *obj, void *event_info);
+void test_panes_up_fold(void *data, Evas_Object *obj, void *event_info);
+void test_panes_down_fold(void *data, Evas_Object *obj, void *event_info);
 void test_panes_minsize(void *data, Evas_Object *obj, void *event_info);
 void test_calendar(void *data, Evas_Object *obj, void *event_info);
 void test_calendar2(void *data, Evas_Object *obj, void *event_info);
@@ -351,7 +357,7 @@ void test_evas_mask(void *data, Edje_Object *obj, void *event_info);
 void test_gfx_filters(void *data, Evas_Object *obj, void *event_info);
 void test_evas_snapshot(void *data, Evas_Object *obj, void *event_info);
 void test_evas_map(void *data, Edje_Object *obj, void *event_info);
-void test_efl_gfx_map(void *data, Edje_Object *obj, void *event_info);
+void test_efl_gfx_mapping(void *data, Edje_Object *obj, void *event_info);
 void test_ui_textpath(void *data, Edje_Object *obj, void *event_info);
 
 void test_efl_anim_alpha(void *data, Evas_Object *obj, void *event_info);
@@ -365,7 +371,6 @@ void test_efl_anim_translate(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_translate_absolute(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_group_parallel(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_group_sequential(void *data, Evas_Object *obj, void *event_info);
-void test_efl_anim_event_anim(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_pause(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_repeat(void *data, Evas_Object *obj, void *event_info);
 void test_efl_anim_start_delay(void *data, Evas_Object *obj, void *event_info);
@@ -374,6 +379,10 @@ void test_efl_anim_interpolator(void *data, Evas_Object *obj, void *event_info);
 void test_gesture_framework(void *data, Evas_Object *obj, void *event_info);
 
 void test_ui_tab_pager(void *data, Evas_Object *obj, void *event_info);
+void test_ui_pager(void *data, Evas_Object *obj, void *event_info);
+void test_ui_pager_scroll(void *data, Evas_Object *obj, void *event_info);
+
+void test_ui_relative_layout(void *data, Evas_Object *obj, void *event_info);
 
 static void _list_udpate(void);
 
@@ -822,7 +831,6 @@ add_tests:
    ADD_TEST(NULL, "Containers", "Box Homogeneous", test_box_homo);
    ADD_TEST(NULL, "Containers", "Box Transition", test_box_transition);
    ADD_TEST(NULL, "Containers", "Box Align", test_box_align);
-   ADD_TEST(NULL, "Containers", "Box Stack", test_box_stack);
    ADD_TEST(NULL, "Containers", "Table", test_table);
    ADD_TEST(NULL, "Containers", "Table Homogeneous", test_table2);
    ADD_TEST(NULL, "Containers", "Table 3", test_table3);
@@ -837,9 +845,11 @@ add_tests:
 
    //------------------------------//
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Box", test_ui_box);
+   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Box_Stack", test_ui_box_stack);
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Table", test_ui_table);
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Table (Linear API)", test_ui_table_linear);
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Table_Static", test_ui_table_static);
+   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Relative_Layout", test_ui_relative_layout);
 
    //------------------------------//
    ADD_TEST_EO(NULL, "Events", "Event Refeed", test_events);
@@ -918,7 +928,6 @@ add_tests:
    ADD_TEST_EO(NULL, "Effects", "Efl.Animation.Translate Absolute", test_efl_anim_translate_absolute);
    ADD_TEST_EO(NULL, "Effects", "Efl.Animation.Group Parallel", test_efl_anim_group_parallel);
    ADD_TEST_EO(NULL, "Effects", "Efl.Animation.Group Sequential", test_efl_anim_group_sequential);
-   ADD_TEST_EO(NULL, "Effects", "Efl.Animation.Event Animation", test_efl_anim_event_anim);
    ADD_TEST_EO(NULL, "Effects", "Efl.Animation.Pause", test_efl_anim_pause);
    ADD_TEST_EO(NULL, "Effects", "Efl.Animation.Repeat", test_efl_anim_repeat);
    ADD_TEST_EO(NULL, "Effects", "Efl.Animation.Start Delay", test_efl_anim_start_delay);
@@ -1092,6 +1101,8 @@ add_tests:
 
    //------------------------------//
    ADD_TEST_EO(NULL, "Tab Pager", "Efl.Ui.Tab_Pager", test_ui_tab_pager);
+   ADD_TEST_EO(NULL, "Pager", "Efl.Ui.Pager", test_ui_pager);
+   ADD_TEST_EO(NULL, "Scroll Pager", "Efl.Ui.Pager (Scroll)", test_ui_pager_scroll);
 
    //------------------------------//
    ADD_TEST(NULL, "Popups", "Ctxpopup", test_ctxpopup);
@@ -1166,6 +1177,11 @@ add_tests:
    ADD_TEST(NULL, "Dividers", "Panel", test_panel);
    ADD_TEST(NULL, "Dividers", "Panel Scrollable", test_panel2);
    ADD_TEST(NULL, "Dividers", "Panes", test_panes);
+   ADD_TEST(NULL, "Dividers", "Panes Flush", test_panes_flush);
+   ADD_TEST(NULL, "Dividers", "Panes Left Fold", test_panes_left_fold);
+   ADD_TEST(NULL, "Dividers", "Panes Right Fold", test_panes_right_fold);
+   ADD_TEST(NULL, "Dividers", "Panes Up Fold", test_panes_up_fold);
+   ADD_TEST(NULL, "Dividers", "Panes Down Fold", test_panes_down_fold);
    ADD_TEST_EO(NULL, "Dividers", "Efl.Ui.Panes", test_panes_minsize);
    ADD_TEST_EO(NULL, "Dividers", "Efl.Ui.Panel", test_ui_panel);
    ADD_TEST_EO(NULL, "Dividers", "Efl.Ui.Panel Scrollable", test_ui_panel2);
@@ -1206,7 +1222,7 @@ add_tests:
    ADD_TEST(NULL, "Evas", "Gfx Filters", test_gfx_filters);
    ADD_TEST(NULL, "Evas", "Snapshot", test_evas_snapshot);
    ADD_TEST(NULL, "Evas", "Map", test_evas_map);
-   ADD_TEST_EO(NULL, "Evas", "Efl.Gfx.Map", test_efl_gfx_map);
+   ADD_TEST_EO(NULL, "Evas", "Efl.Gfx.Mapping", test_efl_gfx_mapping);
 
    //------------------------------//
    ADD_TEST(NULL, "Widgets Disable/Enable", "Box", test_box_disable);

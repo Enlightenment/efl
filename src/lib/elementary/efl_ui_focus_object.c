@@ -24,7 +24,7 @@ _efl_ui_focus_object_focus_set(Eo *obj, Efl_Ui_Focus_Object_Data *pd, Eina_Bool 
    parent = efl_ui_focus_object_focus_parent_get(obj);
    if (parent)
      efl_ui_focus_object_child_focus_set(parent, focus);
-   efl_event_callback_call(obj, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED , (void*) (uintptr_t) focus);
+   efl_event_callback_call(obj, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED , &focus);
 }
 
 EOLIAN static Eina_Bool
@@ -34,13 +34,13 @@ _efl_ui_focus_object_focus_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Object_Da
 }
 
 EOLIAN static void
-_efl_ui_focus_object_prepare_logical(Eo *obj, Efl_Ui_Focus_Object_Data *pd)
+_efl_ui_focus_object_setup_order(Eo *obj, Efl_Ui_Focus_Object_Data *pd)
 {
   if (pd->ongoing_prepare_call) return;
 
   pd->ongoing_prepare_call = EINA_TRUE;
 
-  efl_ui_focus_object_prepare_logical_none_recursive(obj);
+  efl_ui_focus_object_setup_order_non_recursive(obj);
 
   pd->ongoing_prepare_call = EINA_FALSE;
 }

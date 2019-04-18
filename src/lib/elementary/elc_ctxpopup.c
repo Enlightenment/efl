@@ -5,7 +5,6 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_UI_WIDGET_PROTECTED
-//#define EFL_UI_WIDGET_BETA
 #define ELM_WIDGET_ITEM_PROTECTED
 #define EFL_UI_L10N_PROTECTED
 #define EFL_PART_PROTECTED
@@ -14,8 +13,8 @@
 
 #include "elm_priv.h"
 #include "elm_widget_ctxpopup.h"
-#include "elm_ctxpopup_item.eo.h"
-#include "elm_ctxpopup.eo.h"
+#include "elm_ctxpopup_item_eo.h"
+#include "elm_ctxpopup_eo.h"
 
 #include "elm_ctxpopup_part.eo.h"
 #include "elm_part_helper.h"
@@ -667,13 +666,13 @@ _on_content_resized(void *data,
 }
 
 //FIXME: lost the content size when theme hook is called.
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_ctxpopup_efl_ui_widget_theme_apply(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    elm_widget_theme_object_set
      (obj, sd->bg, "ctxpopup", "bg", elm_widget_style_get(obj));
@@ -1028,27 +1027,12 @@ _elm_ctxpopup_item_efl_object_destructor(Eo *eo_ctxpopup_it,
    efl_destructor(efl_super(eo_ctxpopup_it, ELM_CTXPOPUP_ITEM_CLASS));
 }
 
-EOLIAN static Eina_Bool
-_elm_ctxpopup_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Ctxpopup_Data *sd, Eina_Bool disabled)
-{
-   if (!efl_ui_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
-     return EINA_FALSE;
-
-   if (sd->list)
-     elm_object_disabled_set(sd->list, disabled);
-   else if (sd->content)
-     elm_object_disabled_set(sd->content, disabled);
-
-   return EINA_TRUE;
-}
-
 EOLIAN static void
 _elm_ctxpopup_efl_canvas_group_group_add(Eo *obj, Elm_Ctxpopup_Data *priv)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set
        (obj, "ctxpopup", "base", elm_widget_style_get(obj)))
@@ -1059,7 +1043,7 @@ _elm_ctxpopup_efl_canvas_group_group_add(Eo *obj, Elm_Ctxpopup_Data *priv)
 
    //Background
    priv->bg = edje_object_add(evas_object_evas_get(obj));
-   if (!elm_widget_theme_object_set(obj, priv->bg, "ctxpopup", "bg", "default"))
+   if (elm_widget_theme_object_set(obj, priv->bg, "ctxpopup", "bg", "default"))
      CRI("ctxpopup(%p) failed to set theme [efl/ctxpopup/bg/default]!", obj);
 
    edje_object_signal_callback_add
@@ -1116,13 +1100,6 @@ _elm_ctxpopup_efl_canvas_group_group_del(Eo *obj, Elm_Ctxpopup_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static void
-_elm_ctxpopup_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Ctxpopup_Data *_pd EINA_UNUSED, Evas_Object *parent)
-{
-   //default parent is to be hover parent
-   elm_ctxpopup_hover_parent_set(obj, parent);
-}
-
 EAPI Evas_Object *
 elm_ctxpopup_add(Evas_Object *parent)
 {
@@ -1144,7 +1121,8 @@ _elm_ctxpopup_efl_object_constructor(Eo *obj, Elm_Ctxpopup_Data *_pd EINA_UNUSED
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_POPUP_MENU);
-
+   //default parent is to be hover parent
+   elm_ctxpopup_hover_parent_set(obj, efl_parent_get(obj));
    return obj;
 }
 
@@ -1400,7 +1378,7 @@ _elm_ctxpopup_selected_item_get(const Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd
 }
 
 EOLIAN static Elm_Object_Item*
-_elm_ctxpopup_efl_ui_widget_focused_item_get(const Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd)
+_elm_ctxpopup_elm_widget_item_container_focused_item_get(const Eo *obj EINA_UNUSED, Elm_Ctxpopup_Data *sd)
 {
    if (!sd->list) return NULL;
 
@@ -1530,7 +1508,7 @@ _elm_ctxpopup_efl_access_object_state_set_get(const Eo *obj, Elm_Ctxpopup_Data *
    Efl_Access_State_Set ret;
    ret = efl_access_object_state_set_get(efl_super(obj, MY_CLASS));
 
-   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_MODAL);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_MODAL);
 
    return ret;
 }
@@ -1575,5 +1553,5 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_ctxpopup, ELM_CTXPOPUP, Elm_Ctxpopup_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_ctxpopup), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_ctxpopup)
 
-#include "elm_ctxpopup_item.eo.c"
-#include "elm_ctxpopup.eo.c"
+#include "elm_ctxpopup_item_eo.c"
+#include "elm_ctxpopup_eo.c"

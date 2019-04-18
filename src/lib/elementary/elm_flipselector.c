@@ -10,8 +10,8 @@
 #include "elm_priv.h"
 #include "elm_widget_flipselector.h"
 
-#include "elm_flipselector.eo.h"
-#include "elm_flipselector_item.eo.h"
+#include "elm_flipselector_eo.h"
+#include "elm_flipselector_item_eo.h"
 
 #define MY_CLASS ELM_FLIPSELECTOR_CLASS
 
@@ -233,8 +233,7 @@ _on_item_changed(Elm_Flipselector_Data *sd)
 
    if (item->func)
      item->func((void *)WIDGET_ITEM_DATA_GET(eo_item), WIDGET(item), eo_item);
-   efl_event_callback_legacy_call
-     (sd->obj, EFL_UI_EVENT_SELECTED, eo_item);
+   evas_object_smart_callback_call(sd->obj, "selected", eo_item);
 }
 
 static void
@@ -350,16 +349,16 @@ _item_new(Evas_Object *obj,
    return eo_item;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_flipselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Flipselector_Data *sd)
 {
    const char *max_len;
 
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    max_len = edje_object_data_get(wd->resize_obj, "max_len");
    if (!max_len) sd->max_len = MAX_LEN_DEFAULT;
@@ -474,7 +473,7 @@ _items_add(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_flipselector_efl_ui_range_range_min_max_set(Eo *obj, Elm_Flipselector_Data *sd, double min, double max)
+_elm_flipselector_efl_ui_range_display_range_min_max_set(Eo *obj, Elm_Flipselector_Data *sd, double min, double max)
 {
    if ((sd->val_min == min) && (sd->val_max == max)) return;
 
@@ -485,14 +484,14 @@ _elm_flipselector_efl_ui_range_range_min_max_set(Eo *obj, Elm_Flipselector_Data 
 }
 
 EOLIAN static void
-_elm_flipselector_efl_ui_range_range_min_max_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double *min, double *max)
+_elm_flipselector_efl_ui_range_display_range_min_max_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->val_min;
    if (max) *max = sd->val_max;
 }
 
 EOLIAN static void
-_elm_flipselector_efl_ui_range_range_step_set(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double step)
+_elm_flipselector_efl_ui_range_interactive_range_step_set(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double step)
 {
    if (sd->step == step) return;
 
@@ -504,13 +503,13 @@ _elm_flipselector_efl_ui_range_range_step_set(Eo *obj EINA_UNUSED, Elm_Flipselec
 }
 
 EOLIAN static double
-_elm_flipselector_efl_ui_range_range_step_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
+_elm_flipselector_efl_ui_range_interactive_range_step_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
 {
    return sd->step;
 }
 
 EOLIAN static double
-_elm_flipselector_efl_ui_range_range_value_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
+_elm_flipselector_efl_ui_range_display_range_value_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd)
 {
    if (sd->val_min == 0 && sd->val_max == 0)
      {
@@ -522,7 +521,7 @@ _elm_flipselector_efl_ui_range_range_value_get(const Eo *obj EINA_UNUSED, Elm_Fl
 }
 
 EOLIAN static void
-_elm_flipselector_efl_ui_range_range_value_set(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double val)
+_elm_flipselector_efl_ui_range_display_range_value_set(Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double val)
 {
    Eina_List *l;
    Elm_Object_Item *it;
@@ -617,7 +616,6 @@ EOLIAN static void
 _elm_flipselector_efl_canvas_group_group_add(Eo *obj, Elm_Flipselector_Data *priv)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set
        (obj, "flipselector", "base", elm_widget_style_get(obj)))
@@ -903,5 +901,5 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_flipselector, Elm_Flipselector_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_flipselector), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_flipselector)
 
-#include "elm_flipselector_item.eo.c"
-#include "elm_flipselector.eo.c"
+#include "elm_flipselector_item_eo.c"
+#include "elm_flipselector_eo.c"

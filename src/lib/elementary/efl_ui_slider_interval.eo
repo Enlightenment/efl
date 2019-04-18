@@ -1,23 +1,16 @@
-class Efl.Ui.Slider_Interval extends Efl.Ui.Slider
+class @beta Efl.Ui.Slider_Interval extends Efl.Ui.Slider
 {
     [[An interval slider.
 
       This is a slider with two indicators.
-
-      @since 1.21
     ]]
-    legacy_prefix: null;
     methods {
         @property interval_value {
             [[Sets up position of two indicators at start and end position.
-
-             @since 1.21
             ]]
             get {
-                legacy: null;
             }
             set {
-                legacy: null;
             }
             values {
                 from: double;[[interval minimum value]]

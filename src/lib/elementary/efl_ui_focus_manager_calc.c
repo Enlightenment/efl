@@ -157,7 +157,7 @@ border_onedirection_set(Node *node, Efl_Ui_Focus_Direction direction, Eina_List 
 
    EINA_LIST_FREE(border->one_direction, partner)
      {
-        Border *b = &DIRECTION_ACCESS(partner, efl_ui_focus_util_direction_complement(EFL_UI_FOCUS_UTIL_CLASS,direction));
+        Border *b = &DIRECTION_ACCESS(partner, efl_ui_focus_util_direction_complement(direction));
         b->cleanup_nodes = eina_list_remove(b->cleanup_nodes, node);
      }
 
@@ -165,7 +165,7 @@ border_onedirection_set(Node *node, Efl_Ui_Focus_Direction direction, Eina_List 
 
    EINA_LIST_FOREACH(border->one_direction, lnode, partner)
      {
-        Border *comp_border = &DIRECTION_ACCESS(partner,efl_ui_focus_util_direction_complement(EFL_UI_FOCUS_UTIL_CLASS,direction));
+        Border *comp_border = &DIRECTION_ACCESS(partner,efl_ui_focus_util_direction_complement(direction));
 
         comp_border->cleanup_nodes = eina_list_append(comp_border->cleanup_nodes, node);
      }
@@ -183,7 +183,7 @@ border_onedirection_cleanup(Node *node, Efl_Ui_Focus_Direction direction)
 
    EINA_LIST_FREE(border->cleanup_nodes, partner)
      {
-        Border *b = &DIRECTION_ACCESS(partner, efl_ui_focus_util_direction_complement(EFL_UI_FOCUS_UTIL_CLASS,direction));
+        Border *b = &DIRECTION_ACCESS(partner, efl_ui_focus_util_direction_complement(direction));
         b->one_direction = eina_list_remove(b->one_direction, node);
      }
 }
@@ -1047,7 +1047,7 @@ _prepare_node(Node *root)
    Eina_List *n;
    Node *node;
 
-   efl_ui_focus_object_prepare_logical(root->focusable);
+   efl_ui_focus_object_setup_order(root->focusable);
 
    EINA_LIST_FOREACH(root->tree.children, n, node)
      {
@@ -1193,7 +1193,7 @@ _prev_item(Node *node)
    parent = T(node).parent;
 
    //we are accessing the parents children, prepare!
-   efl_ui_focus_object_prepare_logical(parent->focusable);
+   efl_ui_focus_object_setup_order(parent->focusable);
 
    lnode = eina_list_data_find_list(T(parent).children, node);
    lnode = eina_list_prev(lnode);
@@ -1232,7 +1232,7 @@ _next(Node *node)
         parent = T(n).parent;
 
         //we are accessing the parents children, prepare!
-        efl_ui_focus_object_prepare_logical(parent->focusable);
+        efl_ui_focus_object_setup_order(parent->focusable);
 
         lnode = eina_list_data_find_list(T(parent).children, n);
         lnode = eina_list_next(lnode);
@@ -1262,7 +1262,7 @@ _prev(Node *node)
 
    //we are accessing prev items children, prepare them!
    if (n && n->focusable)
-     efl_ui_focus_object_prepare_logical(n->focusable);
+     efl_ui_focus_object_setup_order(n->focusable);
 
    //case 1 there is a item in the parent previous to node, which has children
    if (n && T(n).children && !n->redirect_manager)
@@ -1323,7 +1323,7 @@ _logical_movement(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd EINA_UNUSED, Node 
                   tmp = eina_list_clone(T(result).saved_order);
                   efl_ui_focus_manager_calc_update_order(obj, result->focusable, tmp);
                }
-             efl_ui_focus_object_prepare_logical(result->focusable);
+             efl_ui_focus_object_setup_order(result->focusable);
           }
 
         result = deliver(result);
@@ -1413,7 +1413,7 @@ _request_subchild(Node *node)
         do
           {
              if (target != node)
-               efl_ui_focus_object_prepare_logical(target->focusable);
+               efl_ui_focus_object_setup_order(target->focusable);
 
              target = _next(target);
              //abort if we are exceeding the childrens of node
@@ -1466,7 +1466,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
         F_DBG(" %p is logical, fetching the next subnode that is either a redirect or a regular", obj);
 
         //important! if there are no children _next would return the parent of node which will exceed the limit of children of node
-        efl_ui_focus_object_prepare_logical(node->focusable);
+        efl_ui_focus_object_setup_order(node->focusable);
 
         target = _request_subchild(node);
 
@@ -1489,7 +1489,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
      {
         //the correct one is focused
         if (node->redirect_manager == pd->redirect)
-          return;
+          goto end;
      }
 
    //make sure this manager is in the chain of redirects
@@ -1553,7 +1553,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
           efl_ui_focus_object_focus_set(last_focusable, EINA_FALSE);
         if (new_focusable)
           efl_ui_focus_object_focus_set(new_focusable, EINA_TRUE);
-        efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, last_focusable);
+        efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, last_focusable);
      }
 
     _current_focused_parent_to_array(obj, pd, chain);
@@ -1566,11 +1566,18 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
      }
 
    while (eina_array_count(chain) > 1)
-     efl_event_callback_call(eina_array_pop(chain), EFL_UI_FOCUS_OBJECT_EVENT_CHILD_FOCUS_CHANGED , (void*)EINA_TRUE);
+     {
+        Eina_Bool child_focus_changed = EINA_TRUE;
+        efl_event_callback_call(eina_array_pop(chain), EFL_UI_FOCUS_OBJECT_EVENT_CHILD_FOCUS_CHANGED , &child_focus_changed);
+     }
 
    while (eina_array_count(old_chain) > 1)
-     efl_event_callback_call(eina_array_pop(old_chain), EFL_UI_FOCUS_OBJECT_EVENT_CHILD_FOCUS_CHANGED, (void*)EINA_FALSE);
+     {
+        Eina_Bool child_focus_changed = EINA_FALSE;
+        efl_event_callback_call(eina_array_pop(old_chain), EFL_UI_FOCUS_OBJECT_EVENT_CHILD_FOCUS_CHANGED, &child_focus_changed);
+     }
 
+end:
    eina_array_free(old_chain);
    eina_array_free(chain);
 }
@@ -1796,10 +1803,10 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focus_Mana
 
    dirty_flush(obj, pd, n);
 
-   //make sure to prepare_logical so next and prev are correctly
+   //make sure to setup_order so next and prev are correctly
    if (n->tree.parent)
-     efl_ui_focus_object_prepare_logical(n->tree.parent->focusable);
-   efl_ui_focus_object_prepare_logical(n->focusable);
+     efl_ui_focus_object_setup_order(n->tree.parent->focusable);
+   efl_ui_focus_object_setup_order(n->focusable);
 
 #define DIR_CLONE(dir) _convert(DIRECTION_ACCESS(n,dir));
 
@@ -1868,7 +1875,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_reset_history(Eo *obj EINA_UNUSE
 
   pd->focus_stack = eina_list_free(pd->focus_stack);
 
-  efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, last_focusable);
+  efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, last_focusable);
 }
 
 EOLIAN static void
@@ -1909,7 +1916,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_pop_history_stack(Eo *obj EINA_U
          efl_ui_focus_manager_focus_set(obj, last->focusable);
     }
 
-  efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, last_focusable);
+  efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, last_focusable);
 }
 
 EOLIAN static Efl_Ui_Focus_Object*
@@ -1949,18 +1956,23 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_dirty_logic_freeze(Eo *obj, Efl_
 {
   pd->freeze ++;
   if (pd->freeze == 1)
-    efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, (void*)EINA_TRUE);
-}
+    {
+       Eina_Bool event_info = EINA_TRUE;
+       efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, &event_info);
+    }
 
+}
 
 EOLIAN static void
 _efl_ui_focus_manager_calc_efl_ui_focus_manager_dirty_logic_unfreeze(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd)
 {
   pd->freeze --;
   if (!pd->freeze)
-    efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, (void*)EINA_FALSE);
+    {
+       Eina_Bool event_info = EINA_FALSE;
+       efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, &event_info);
+    }
 }
-
 
 #define EFL_UI_FOCUS_MANAGER_CALC_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_ui_focus_manager_calc_efl_object_dbg_info_get)

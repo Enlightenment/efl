@@ -1,7 +1,7 @@
-abstract Efl.Canvas.Image_Internal extends Efl.Canvas.Object implements Efl.Canvas.Filter.Internal,
+abstract @beta Efl.Canvas.Image_Internal extends Efl.Canvas.Object implements Efl.Canvas.Filter.Internal,
                                     Efl.Gfx.Image, Efl.Gfx.Buffer,
                                     Efl.Gfx.Fill, Efl.Gfx.View,
-                                    Efl.Orientation, Efl.File
+                                    Efl.Orientation, Efl.File_Save
 {
    [[Efl canvas internal image class]]
    data: Evas_Image_Data;
@@ -10,7 +10,7 @@ abstract Efl.Canvas.Image_Internal extends Efl.Canvas.Object implements Efl.Canv
       Efl.Object.destructor;
       Efl.Object.finalize;
       Efl.Object.debug_name_override;
-      Efl.File.save;
+      Efl.File_Save.save;
       Efl.Orientation.orientation { get; set; }
       Efl.Orientation.flip { get; set; }
       Efl.Gfx.Image.smooth_scale { get; set; }
@@ -21,6 +21,7 @@ abstract Efl.Canvas.Image_Internal extends Efl.Canvas.Object implements Efl.Canv
       Efl.Gfx.Image.scale_hint { get; set; }
       Efl.Gfx.Image.content_hint { get; set; }
       Efl.Gfx.Image.image_size { get; }
+      Efl.Gfx.Image.image_load_error { get; }
       Efl.Gfx.Buffer.alpha { get; set; }
       Efl.Gfx.Buffer.buffer_update_add;
       Efl.Gfx.Buffer.colorspace { get; }

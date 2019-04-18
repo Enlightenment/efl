@@ -1,4 +1,4 @@
-class Efl.Ui.Navigation_Bar_Part_Back_Button extends Efl.Ui.Layout_Part implements Efl.Ui.Clickable, Efl.Gfx.Entity, Efl.Text, Efl.Content
+class @beta Efl.Ui.Navigation_Bar_Part_Back_Button extends Efl.Ui.Layout_Part implements Efl.Ui.Clickable, Efl.Gfx.Entity, Efl.Text, Efl.Content
 {
    [[Efl Ui Navigation_Bar internal part back button class]]
    data: null;

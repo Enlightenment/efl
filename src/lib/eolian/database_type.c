@@ -26,7 +26,6 @@ database_typedecl_del(Eolian_Typedecl *tp)
    database_type_del(tp->base_type);
    if (tp->fields) eina_hash_free(tp->fields);
    if (tp->field_list) eina_list_free(tp->field_list);
-   if (tp->legacy) eina_stringshare_del(tp->legacy);
    if (tp->freefunc) eina_stringshare_del(tp->freefunc);
    database_doc_del(tp->doc);
    free(tp);
@@ -46,8 +45,9 @@ void
 database_struct_add(Eolian_Unit *unit, Eolian_Typedecl *tp)
 {
    EOLIAN_OBJECT_ADD(unit, tp->base.name, tp, structs);
-   eina_hash_set(unit->state->staging.structs_f, tp->base.file, eina_list_append
-                ((Eina_List*)eina_hash_find(unit->state->staging.structs_f, tp->base.file), tp));
+   Eina_Hash *sh = unit->state->staging.structs_f;
+   eina_hash_set(sh, tp->base.file, eina_list_append
+                ((Eina_List*)eina_hash_find(sh, tp->base.file), tp));
    database_object_add(unit, &tp->base);
 }
 

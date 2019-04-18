@@ -21,3 +21,15 @@ eo_function_overrides = executable('eo_function_overrides',
 test('eo-function-overrides', eo_interface,
   env : test_env
 )
+
+eo_function_overrides = executable('eo_function_overrides_dbg',
+  eo_function_overrides_src,
+  dependencies: [eo_dbg],
+  c_args : [
+  '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
+  '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']
+)
+
+test('eo-function-overrides-dbg', eo_interface,
+  env : test_env
+)

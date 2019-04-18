@@ -27,6 +27,7 @@ lib_eet_libeet_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eet\" \
+-DEFL_BUILD \
 @EET_CFLAGS@ \
 @NEON_CFLAGS@
 lib_eet_libeet_la_LIBADD = @EET_LIBS@ @EVIL_LIBS@

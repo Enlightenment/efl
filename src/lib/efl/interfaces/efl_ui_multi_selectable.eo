@@ -1,6 +1,5 @@
-enum Efl.Ui.Select_Mode {
+enum @beta Efl.Ui.Select_Mode {
    [[Type of multi selectable object.]]
-   legacy: efl_ui_select;
    single, [[Only single child is selected. if the child is selected,
              previous selected child will be unselected.]]
    single_always, [[Same as single select except, this will be selected
@@ -9,7 +8,7 @@ enum Efl.Ui.Select_Mode {
    none [[Last value of select mode. child cannot be selected at all.]]
 }
 
-interface Efl.Ui.Multi_Selectable
+interface @beta Efl.Ui.Multi_Selectable
 {
    [[Efl UI Multi selectable interface.
      The container have to control select property of multiple chidren.]]

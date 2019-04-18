@@ -1,11 +1,9 @@
-class Efl.Io.File extends Efl.Loop_Fd implements Efl.File, Efl.Io.Reader_Fd, Efl.Io.Writer_Fd, Efl.Io.Closer_Fd, Efl.Io.Sizer_Fd, Efl.Io.Positioner_Fd {
+class @beta Efl.Io.File extends Efl.Loop_Fd implements Efl.File, Efl.Io.Reader_Fd, Efl.Io.Writer_Fd, Efl.Io.Closer_Fd, Efl.Io.Sizer_Fd, Efl.Io.Positioner_Fd {
     [[File access (open, close, read, write, lseek, ftruncate)
 
       @Efl.Io.Closer.close_on_exec and
       @Efl.Io.Closer.close_on_invalidate are respected and default to
       $true. @Efl.Io.Closer.close_on_exec.set sets flag O_CLOEXEC.
-
-      @since 1.19
     ]]
 
     methods {
@@ -51,7 +49,6 @@ class Efl.Io.File extends Efl.Loop_Fd implements Efl.File, Efl.Io.Reader_Fd, Efl
         Efl.Object.destructor;
         Efl.Object.finalize;
         Efl.Loop_Fd.fd_file { set; }
-        Efl.File.file { get; set; }
         Efl.Io.Reader.read;
         Efl.Io.Writer.write;
         Efl.Io.Closer.close;

@@ -1,8 +1,8 @@
 #include "edje_private.h"
 
-#include "../evas/canvas/evas_box.eo.h"
-#include "../evas/canvas/evas_line.eo.h"
-#include "../evas/canvas/evas_text.eo.h"
+#include "../evas/canvas/evas_box_eo.h"
+#include "../evas/canvas/evas_line_eo.h"
+#include "../evas/canvas/evas_text_eo.h"
 
 typedef struct _Edje_Box_Layout Edje_Box_Layout;
 struct _Edje_Box_Layout
@@ -1979,7 +1979,6 @@ _edje_object_part_text_raw_generic_set(Edje *ed, Evas_Object *obj, Edje_Real_Par
           {
              char *mkup;
              mkup = efl_text_markup_util_text_to_markup(
-                EFL_TEXT_MARKUP_UTIL_CLASS,
                 text);
              rp->typedata.text->text = eina_stringshare_add(mkup);
              free(mkup);
@@ -2039,6 +2038,7 @@ _edje_user_text_style_definition_fetch(Edje *ed, const char *part)
    if (!eud)
      {
         eud = _edje_user_definition_new(EDJE_USER_TEXT_STYLE, part, ed);
+        if (!eud) return NULL;
         eud->u.text_style.types = EDJE_PART_TEXT_PROP_NONE;
         eud->u.text_style.props = NULL;
      }
@@ -2063,6 +2063,7 @@ _edje_user_text_expand_definition_fetch(Edje *ed, const char *part)
    if (!eud)
      {
         eud = _edje_user_definition_new(EDJE_USER_TEXT_EXPAND, part, ed);
+        if (!eud) return NULL;
         eud->u.text_expand.expand = EFL_CANVAS_LAYOUT_PART_TEXT_EXPAND_NONE;
      }
 
@@ -3059,7 +3060,7 @@ _edje_efl_content_content_set(Edje *ed, const char *part, Efl_Gfx_Entity *obj_sw
              eud->u.swallow.child = obj_swallow;
           }
      }
-
+   efl_event_callback_call(ed->obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, obj_swallow);
    return EINA_TRUE;
 }
 
@@ -3362,7 +3363,7 @@ _swallow_real_part_get(Evas_Object *obj_swallow)
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_efl_container_content_remove(Eo *obj EINA_UNUSED, Edje *ed, Evas_Object *obj_swallow)
+_efl_canvas_layout_content_remove(Eo *obj EINA_UNUSED, Edje *ed, Evas_Object *obj_swallow)
 {
    Edje_Real_Part *rp;
    Edje_User_Defined *eud;
@@ -3396,6 +3397,82 @@ _efl_canvas_layout_efl_container_content_remove(Eo *obj EINA_UNUSED, Edje *ed, E
 
    return EINA_TRUE;
 }
+
+typedef struct _Content_Part_Iterator Content_Part_Iterator;
+struct _Content_Part_Iterator
+{
+   Eina_Iterator  iterator;
+   Eo            *object;
+   Edje          *ed;
+   unsigned       index;
+};
+
+static Eina_Bool
+_content_part_iterator_next(Content_Part_Iterator *it, void **data)
+{
+   for (; it->index < it->ed->table_parts_size; it->index++)
+     {
+        Edje_Real_Part *rp = it->ed->table_parts[it->index];
+        if (rp->part && rp->part->type == EDJE_PART_TYPE_SWALLOW)
+          {
+             if (data) *data = (void*) rp->typedata.swallow->swallowed_object;
+             it->index++;
+             return EINA_TRUE;
+          }
+     }
+
+   return EINA_FALSE;
+}
+
+static Eo *
+_content_part_iterator_get_container(Content_Part_Iterator *it)
+{
+   return it->object;
+}
+
+static void
+_content_part_iterator_free(Content_Part_Iterator *it)
+{
+   free(it);
+}
+
+EOLIAN Eina_Iterator*
+_efl_canvas_layout_efl_container_content_iterate(Eo *obj, Edje *ed)
+{
+   Content_Part_Iterator *it;
+
+   it = calloc(1, sizeof(*it));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_content_part_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(_content_part_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_content_part_iterator_free);
+   it->object = obj;
+   it->ed = ed;
+   it->index = 0;
+
+   return &it->iterator;
+}
+
+EOLIAN int
+_efl_canvas_layout_efl_container_content_count(Eo *obj EINA_UNUSED, Edje *pd)
+{
+   Edje_Real_Part *rp;
+   int result = 0;
+
+   for (int i = 0; i < pd->table_parts_size; ++i)
+     {
+        rp = pd->table_parts[i];
+        if (rp->part && rp->part->type == EDJE_PART_TYPE_SWALLOW)
+          result ++;
+     }
+
+   return result;
+}
+
 
 Efl_Gfx_Entity *
 _edje_efl_content_content_get(Edje *ed, const char *part)
@@ -6384,7 +6461,7 @@ edje_object_part_swallow(Edje_Object *obj, const char *part, Evas_Object *obj_sw
 EAPI void
 edje_object_part_unswallow(Edje_Object *obj, Evas_Object *obj_swallow)
 {
-   efl_content_remove(obj, obj_swallow);
+   efl_canvas_layout_content_remove(obj, obj_swallow);
 }
 
 EAPI Evas_Object *

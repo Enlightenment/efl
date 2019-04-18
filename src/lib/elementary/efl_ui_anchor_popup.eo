@@ -1,4 +1,4 @@
-class Efl.Ui.Anchor_Popup extends Efl.Ui.Popup
+class @beta Efl.Ui.Anchor_Popup extends Efl.Ui.Popup
 {
    [[EFL UI Anchor Popup class]]
    methods {

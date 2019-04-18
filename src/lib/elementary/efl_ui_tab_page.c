@@ -26,6 +26,13 @@ _efl_ui_tab_page_efl_content_content_set(Eo *obj, Efl_Ui_Tab_Page_Data *sd, Eo *
    return EINA_TRUE;
 }
 
+EOLIAN static Efl_Gfx_Entity*
+_efl_ui_tab_page_efl_content_content_unset(Eo *obj, Efl_Ui_Tab_Page_Data *pd EINA_UNUSED)
+{
+   return efl_content_unset(efl_part(obj, "efl.content"));
+}
+
+
 EOLIAN static Eo *
 _efl_ui_tab_page_efl_content_content_get(const Eo *obj EINA_UNUSED, Efl_Ui_Tab_Page_Data *sd)
 {
@@ -42,13 +49,11 @@ _efl_ui_tab_page_efl_object_constructor(Eo *obj, Efl_Ui_Tab_Page_Data *sd)
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
-                                    elm_widget_theme_klass_get(obj),
-                                    elm_widget_theme_element_get(obj),
-                                    elm_widget_theme_style_get(obj)))
+   if (elm_widget_theme_object_set(obj, wd->resize_obj,
+                                       elm_widget_theme_klass_get(obj),
+                                       elm_widget_theme_element_get(obj),
+                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
-
-   elm_widget_sub_object_parent_add(obj);
 
    efl_ui_widget_focus_allow_set(obj, EINA_TRUE);
 

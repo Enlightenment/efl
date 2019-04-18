@@ -14,7 +14,6 @@ class Ns.ColourableSquare extends Ns.Colourable
             }
         }
         size_constructor {
-            legacy: null;
             params {
                 @in size: int;
             }

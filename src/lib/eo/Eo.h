@@ -182,8 +182,6 @@ typedef Eo Efl_Class;
 typedef Eo Efl_Object;
 #define _EFL_OBJECT_EO_CLASS_TYPE
 
-#ifdef EFL_BETA_API_SUPPORT
-
 /**
  * @var _efl_class_creation_lock
  * This variable is used for locking purposes in the class_get function
@@ -216,7 +214,6 @@ typedef void (*Efl_Del_Intercept) (Eo *obj_id);
 
 #include "efl_object_override.eo.h"
 #include "efl_object.eo.h"
-#include "efl_interface.eo.h"
 #define EO_CLASS EFL_OBJECT_CLASS
 
 /** An event callback prototype. */
@@ -314,7 +311,10 @@ EOAPI Eina_Bool efl_event_callback_array_del(Eo *obj, const Efl_Callback_Array_I
  * @brief Call the callbacks for an event of an object.
  *
  * @param[in] desc The description of the event to call.
- * @param[in] event_info Extra event info to pass to the callbacks.
+ * @param[in] event_info Extra event info to pass to the callbacks. Please provide objects of the same type as
+ *    advertised in the EO file, as this is what listeners of this event will be expecting. Keep in mind that:
+ *    1) Objects must be passed as a normal Eo*. Event subscribers can call functions on these objects.
+ *    2) Structs, built-in types and containers must be passed as const pointers, with one level of indirection.
  *
  * @return @c false If one of the callbacks aborted the call, @c true otherwise
  */
@@ -359,7 +359,7 @@ typedef struct _Efl_Future_Cb_Desc {
     * @param value The operation result
     * @return An Eina_Value to pass to the next Eina_Future in the chain (if any).
     * If there is no need to convert the received value, it's @b recommended
-    * to pass-thru @p value argument. If you need to convert to a different type
+    * to passthrough @p value argument. If you need to convert to a different type
     * or generate a new value, use @c eina_value_setup() on @b another Eina_Value
     * and return it. By returning a promise Eina_Value (eina_promise_as_value()) the
     * whole chain will wait until the promise is resolved in
@@ -378,7 +378,7 @@ typedef struct _Efl_Future_Cb_Desc {
     * may also return a non-error, in which case the next future in the chain will receive a regular
     * value, which may call its @c success.
     *
-    * If this function is not provided, then it will pass thru the error to the next error handler.
+    * If this function is not provided, then it will passthrough the error to the next error handler.
     *
     * It may be called with @c EINVAL if @c success_type is provided and doesn't
     * match the received type.
@@ -779,7 +779,8 @@ enum _Efl_Class_Type
    EFL_CLASS_TYPE_REGULAR = 0, /**< Regular class. */
    EFL_CLASS_TYPE_REGULAR_NO_INSTANT, /**< Regular non instant-able class. */
    EFL_CLASS_TYPE_INTERFACE, /**< Interface */
-   EFL_CLASS_TYPE_MIXIN /**< Mixin */
+   EFL_CLASS_TYPE_MIXIN, /**< Mixin */
+   EFL_CLASS_TYPE_INVALID
 };
 
 /**
@@ -826,6 +827,40 @@ struct _Efl_Class_Description
    void (*class_constructor)(Efl_Class *klass); /**< The constructor of the class. */
    void (*class_destructor)(Efl_Class *klass); /**< The destructor of the class. */
 };
+/**
+ * Setter type which is used to set an #Eina_Value, this function should access one particular property field
+ */
+typedef Eina_Error (*Efl_Object_Property_Reflection_Setter)(Eo *obj, Eina_Value value);
+
+/**
+ * Getter type which is used to get an #Eina_Value, this function should access one particular property field
+ */
+typedef Eina_Value (*Efl_Object_Property_Reflection_Getter)(const Eo *obj);
+
+/**
+ * @struct _Efl_Object_Property_Reflection
+ *
+ * This structure holds one line of the reflection table.
+ * The two fields get and set might be NULL,
+ * the property_name is a normal c string containing the name of the property
+ * that the get and set function changes.
+ */
+typedef struct _Efl_Object_Property_Reflection{
+   const char *property_name; /**< The name of the property */
+   Efl_Object_Property_Reflection_Setter set; /**< The function used to set a generic #Eina_Value on this property of the object. */
+   Efl_Object_Property_Reflection_Getter get; /**< The function used to retrieve a generic #Eina_Value from this property of the object. */
+} Efl_Object_Property_Reflection;
+
+/**
+ * @struct _Efl_Object_Property_Reflection_Ops
+ *
+ * This structure holds the reflection table and the size of this table.
+ */
+typedef struct _Efl_Object_Property_Reflection_Ops
+{
+   const Efl_Object_Property_Reflection *table; /**< The reflection table. */
+   size_t count; /**< Number of table lines descriptions. */
+} Efl_Object_Property_Reflection_Ops;
 
 /**
  * @typedef Efl_Class_Description
@@ -856,13 +891,15 @@ EAPI const Efl_Class *efl_class_new(const Efl_Class_Description *desc, const Efl
  * @param klass_id the class whose functions we are setting.
  * @param object_ops The function structure we are setting for object functions
  * @param class_ops The function structure we are setting for class functions
+ * @param reflection_table The reflection table to use within eo
  * @return True on success, False otherwise.
  *
  * This should only be called from within the initializer function.
- *
+ * The reflection_table contains a getter and setter per property name. Which are called when either
+ * efl_property_reflection_set() or efl_property_reflection_get() is called.
  * @see #EFL_DEFINE_CLASS
  */
-EAPI Eina_Bool efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Ops *class_ops);
+EAPI Eina_Bool efl_class_functions_set(const Efl_Class *klass_id, const Efl_Object_Ops *object_ops, const Efl_Object_Property_Reflection_Ops *reflection_table);
 
 /**
  * @brief Override Eo functions of this object.
@@ -910,9 +947,12 @@ EAPI Eina_Bool efl_object_override(Eo *obj, const Efl_Object_Ops *ops);
  * @brief Check if an object "is a" klass.
  * @param obj The object to check
  * @param klass The klass to check against.
- * @return @c EINA_TRUE if obj implements klass, @c EINA_FALSE otherwise.
+ * @return @c EINA_TRUE if obj implements klass or is an Efl_Class which inherits
+ * from/implements klass, @c EINA_FALSE otherwise.
  *
  * Notice: This function does not support composite objects.
+ * Note: that an Efl_Class is also an Efl_Object, so if you pass an Efl_Class
+ * as obj, it will check if that class contain klass.
  */
 EAPI Eina_Bool efl_isa(const Eo *obj, const Efl_Class *klass);
 
@@ -971,6 +1011,7 @@ EAPI Eina_Bool efl_object_init(void);
  */
 EAPI Eina_Bool efl_object_shutdown(void);
 
+#ifdef EFL_BETA_API_SUPPORT
 
 /**
  * The virtual allocation domain where an object lives
@@ -1005,7 +1046,7 @@ typedef struct _Efl_Domain_Data Efl_Domain_Data;
  * where it's called. Calling it after this point will result in
  * undefined behavior, so be sure to call this immediaetly after a thread
  * begins to execute. You must not change the domain of the main thread.
- * 
+ *
  * @see efl_domain_switch()
  * @see efl_domain_current_get()
  * @see efl_domain_current_set()
@@ -1028,7 +1069,7 @@ EAPI Efl_Id_Domain    efl_domain_get(void);
  * new domain temporarily with efl_domain_current_set(),
  * efl_domain_current_push() or efl_domain_current_pop(),
  * efl_domain_data_adopt() and efl_domain_data_return().
- * 
+ *
  * @see efl_domain_get()
  */
 EAPI Eina_Bool        efl_domain_switch(Efl_Id_Domain domain);
@@ -1041,7 +1082,7 @@ EAPI Eina_Bool        efl_domain_switch(Efl_Id_Domain domain);
  * There is actually a stack of domans to use. You can alter this via
  * efl_domain_current_push() and efl_domain_current_pop(). This only gets
  * the domain for the current thread.
- * 
+ *
  * @see efl_domain_get()
  */
 EAPI Efl_Id_Domain    efl_domain_current_get(void);
@@ -1055,7 +1096,7 @@ EAPI Efl_Id_Domain    efl_domain_current_get(void);
  * efl_domain_current_push() and efl_domain_current_pop(). The current
  * domain is the one on the top of the stack, so this entry is altered
  * without pushing or popping. This only applies to the calling thread.
- * 
+ *
  * @see efl_domain_get()
  */
 EAPI Eina_Bool        efl_domain_current_set(Efl_Id_Domain domain);
@@ -1068,7 +1109,7 @@ EAPI Eina_Bool        efl_domain_current_set(Efl_Id_Domain domain);
  * This pushes a domain on the domain stack that can be popped later with
  * efl_domain_current_pop(). If the stack is full this may fail and return
  * EINA_FALSE. This applies only to the calling thread.
- * 
+ *
  * @see efl_domain_get()
  */
 EAPI Eina_Bool        efl_domain_current_push(Efl_Id_Domain domain);
@@ -1078,7 +1119,7 @@ EAPI Eina_Bool        efl_domain_current_push(Efl_Id_Domain domain);
  *
  * This pops the top domain off the domain stack for the calling thread
  * that was pushed with efl_domain_current_push().
- * 
+ *
  * @see efl_domain_get()
  */
 EAPI void             efl_domain_current_pop(void);
@@ -1117,7 +1158,7 @@ EAPI Efl_Domain_Data *efl_domain_data_get(void);
  * your local domain as well, but be aware that creation will require
  * some switch of domain by push, pop or set. Return the domain with
  * efl_domain_data_return() when done.
- * 
+ *
  * @see efl_domain_get()
  */
 EAPI Efl_Id_Domain    efl_domain_data_adopt(Efl_Domain_Data *data_in);
@@ -1133,7 +1174,7 @@ EAPI Efl_Id_Domain    efl_domain_data_adopt(Efl_Domain_Data *data_in);
  * the current domain is the same one pushed implicitly by
  * efl_domain_data_adopt(). You cannot return your own native local
  * domain, only the one that was adopted by efl_domain_data_adopt().
- * 
+ *
  * @see efl_domain_get()
  */
 EAPI Eina_Bool        efl_domain_data_return(Efl_Id_Domain domain);
@@ -1149,13 +1190,12 @@ EAPI Eina_Bool        efl_domain_data_return(Efl_Id_Domain domain);
  * need to call this if you have objects from multiple domains (an
  * adopted domain with efl_domain_data_adopt() or the shared domain
  * EFL_ID_DOMAIN_SHARED where objects may be accessed by any thread).
- * 
+ *
  * @see efl_domain_get()
  */
 EAPI Eina_Bool        efl_compatible(const Eo *obj, const Eo *obj_target);
 
-
-
+#endif
 
 // to fetch internal function and object data at once
 typedef struct _Efl_Object_Op_Call_Data
@@ -1514,6 +1554,33 @@ EAPI Eo * _efl_add_internal_start(const char *file, int line, const Efl_Class *k
 EAPI void efl_del(const Eo *obj);
 
 /**
+ * @brief Set an override for a class
+ *
+ * This can be used to override a class with another class such that when @p klass is added
+ * with efl_add(), an object of type @p override is returned.
+ *
+ * @param[in] klass The class to be overridden
+ * @param[in] override The class to override with; must inherit from or implement @p klass
+ * @return Return @c true if the override was successfully set
+ *
+ * @ingroup Efl_Object
+ */
+EAPI Eina_Bool efl_class_override_register(const Efl_Class *klass, const Efl_Class *override);
+
+/**
+ * @brief Unset an override for a class
+ *
+ * This is used to unset a previously-set override on a given class. It will only succeed if
+ * @p override is the currently-set override for @p klass.
+ *
+ * @param[in] klass The class to unset the override from
+ * @param[in] override The class override to be removed
+ * @return Return @c true if the override was successfully unset
+ *
+ * @ingroup Efl_Object
+ */
+EAPI Eina_Bool efl_class_override_unregister(const Efl_Class *klass, const Efl_Class *override);
+/**
  * @brief Get a pointer to the data of an object for a specific class.
  *
  * The data reference count is not incremented. The pointer must be used only
@@ -1655,7 +1722,7 @@ EAPI int efl_ref_count(const Eo *obj);
  * is about to go from a reference count of 1 to 0, thus triggering actual
  * destruction of the object. Instead of going to a reference count of 0 and
  * being destroyed, the object will stay alive with a reference count of 1
- * and this intercept function will be called instead. 
+ * and this intercept function will be called instead.
  * The interceptor function handles any further deletion of of the object
  * from here.
  *
@@ -1670,7 +1737,7 @@ EAPI int efl_ref_count(const Eo *obj);
  * on its owning loop to be destroyed at some time in the future and now
  * set the intercept function to NULL so it is not called again on the next
  * "real deletion".
- * 
+ *
  * @see efl_del_intercept_get()
  * @see efl_unref()
  * @see efl_del()
@@ -1689,7 +1756,7 @@ EAPI void efl_del_intercept_set(Eo *obj, Efl_Del_Intercept del_intercept_func);
  * If you want to override the interceptor be sure to call it after your
  * own interceptor function has finished. It's generally be a bad idea
  * to override these functions however.
- * 
+ *
  * @see efl_del_intercept_set()
  */
 EAPI Efl_Del_Intercept efl_del_intercept_get(const Eo *obj);
@@ -1788,7 +1855,7 @@ EOAPI void *efl_key_data_get(const Eo *obj, const char * key);
  * @brief Generic object reference with string key to object.
  *
  * The object will be automatically ref'd when set and unref'd when replaced or
- * deleted or when the referring object is deleted. If the referenced object 
+ * deleted or when the referring object is deleted. If the referenced object
  * is deleted, then the key is deleted automatically.
  *
  * This is the same key store used by key_data and key_value. Keys are shared
@@ -1803,7 +1870,7 @@ EOAPI void efl_key_ref_set(Eo *obj, const char * key, const Efl_Object *objdata)
  * @brief Generic object reference with string key to object.
  *
  * The object will be automatically ref'd when set and unref'd when replaced or
- * deleted or when the referring object is deleted. If the referenced object is 
+ * deleted or when the referring object is deleted. If the referenced object is
  * deleted then the key is deleted automatically.
  *
  * This is the same key store used by key_data and key_value. Keys are shared
@@ -1878,7 +1945,7 @@ EOAPI Eina_Value *efl_key_value_get(const Eo *obj, const char * key);
  * @param obj the object to work on.
  * @param manual_free indicates if the free is manual (EINA_TRUE) or automatic (EINA_FALSE).
  *
- * The developer is in charge of calling the function efl_manual_free to free the memory 
+ * The developer is in charge of calling the function efl_manual_free to free the memory
  * allocated for this object.
  *
  * Do not use this unless you really know what you are doing. It's used by Evas
@@ -1915,11 +1982,51 @@ EAPI Eina_Bool efl_manual_free(Eo *obj);
 EAPI Eina_Bool efl_destructed_is(const Eo *obj);
 
 /**
+ * @brief Set the given #Eina_Value to the property with the specified \c property_name.
+ * @param obj The object to set the property on
+ * @param property_name The name of the property to modify.
+ * @param value The value to set, the value passed here will be flushed by the function
+ *
+ * @see efl_property_reflection_get() and efl_property_reflection_exist()
+ */
+EAPI Eina_Error efl_property_reflection_set(Eo *obj, const char *property_name, Eina_Value value);
+
+/**
+ * @brief Retrieve an #Eina_Value containing the current value of the property specified with \c property_name.
+ * @param obj The object to set the property on
+ * @param property_name The name of the property to get.
+ *
+ * @return The value that got returned by the actual property in form of a generic Eina_Value. The user of this API is owning the returned Value.
+ *
+ * @see efl_property_reflection_set() and efl_property_reflection_exist()
+ */
+EAPI Eina_Value efl_property_reflection_get(const Eo *obj, const char *property_name);
+
+/**
+ * @brief Check if a property exist for reflection.
+ * @param obj The object to inspect.
+ * @param property_name The name of the property to check if it exist.
+ *
+ * @return EINA_TRUE if the property exist, EINA_FALSE otherwise.
+ *
+ * @see efl_property_reflection_set() and efl_property_reflection_get()
+ */
+EAPI Eina_Bool efl_property_reflection_exist(Eo *obj, const char *property_name);
+
+/**
  * @addtogroup Efl_Class_Class Eo's Class class.
  * @{
  */
 
 #include "efl_class.eo.h"
+
+/**
+ * @brief Get the type of this class.
+ * @param klass The Efl_Class to get the type from.
+ *
+ * @return The type of this class or INVALID if the klass parameter was invalid.
+ */
+EAPI Efl_Class_Type efl_class_type_get(const Efl_Class *klass);
 
 /**
  * @}
@@ -1977,14 +2084,6 @@ typedef void (*efl_key_data_free_func)(void *);
  * @addtogroup Efl_Events Eo's Event Handling
  * @{
  */
-
-/**
- * Don't use this.
- * The values of the returned event structure are also internal, don't assume
- * anything about them.
- * @internal
- */
-EAPI const Efl_Event_Description *efl_object_legacy_only_event_description_get(const char *_event_name);
 
 /**
  * Helper for sorting callbacks array. Automatically used by
@@ -2137,7 +2236,7 @@ eina_value_object_init(Eo *obj)
  * @since 1.21
  */
 static inline Eo *
-eina_value_object_get(Eina_Value *v)
+eina_value_object_get(const Eina_Value *v)
 {
    Eo *r = NULL;
 
@@ -2149,6 +2248,7 @@ eina_value_object_get(Eina_Value *v)
    return r;
 }
 
+#ifdef EFL_BETA_API_SUPPORT
 /**
  * @brief Get if the object is in its main lifetime.
  * @param obj the object to check
@@ -2161,6 +2261,7 @@ efl_alive_get(const Eo *obj)
 {
   return efl_finalized_get(obj) && !efl_invalidating_get(obj) && !efl_invalidated_get(obj);
 }
+#endif /* EFL_BETA_API_SUPPORT */
 
 /**
  * @brief Event triggered when a callback was added to the object
@@ -2209,7 +2310,6 @@ EAPI Eina_Iterator *eo_objects_iterator_new(void);
  * @}
  */
 
-#endif
 
 #ifdef __cplusplus
 }

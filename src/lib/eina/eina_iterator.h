@@ -350,7 +350,7 @@ EAPI Eina_Iterator *eina_carray_length_iterator_new(void** array, unsigned int s
 EAPI Eina_Iterator* eina_iterator_filter_new(Eina_Iterator *original, Eina_Each_Cb filter, Eina_Free_Cb free_cb, void *data) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
- * @brief Creates an Eina_Iterator that iterates through a serie
+ * @brief Creates an Eina_Iterator that iterates through a series
  * of Eina_Iterator.
  *
  * @param[in] it The first Eina_Iterator to iterate over
@@ -367,7 +367,7 @@ EAPI Eina_Iterator *eina_multi_iterator_internal_new(Eina_Iterator *it, ...) EIN
 
 /**
  * @def eina_multi_iterator_new
- * @brief Creates an Eina_Iterator that iterates through a serie
+ * @brief Creates an Eina_Iterator that iterates through a series
  * of Eina_Iterator.
  *
  * @param[in] it The first Eina_Iterator to iterate over

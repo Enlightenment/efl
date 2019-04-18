@@ -1,4 +1,4 @@
-class Elm_Label.Part extends Efl.Ui.Layout_Part_Legacy
+class @beta Elm_Label.Part extends Efl.Ui.Layout_Part_Legacy
 {
    [[Elementary button internal part class]]
    data: null;

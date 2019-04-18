@@ -4,8 +4,7 @@ eo_pub_deps = [eina]
 pub_eo_files = [
   'efl_object.eo',
   'efl_class.eo',
-  'efl_object_override.eo',
-  'efl_interface.eo'
+  'efl_object_override.eo'
 ]
 
 eo_src = [
@@ -51,7 +50,7 @@ eo_lib = library('eo',
     version : meson.project_version()
 )
 
-library('eo_dbg',
+eo_lib_dbg = library('eo_dbg',
     eo_src, pub_eo_file_target,
     dependencies: [eina, valgrind, dl, execinfo],
     install: true,
@@ -66,9 +65,18 @@ eo = declare_dependency(
   dependencies: eo_deps + eo_pub_deps,
 )
 
-install_data(pub_eo_files + pub_eo_types_files,
-  install_dir: join_paths(eolian_include_dir, package_version_name)
+eo_dbg = declare_dependency(
+  include_directories: [include_directories('.')],
+  link_with: eo_lib_dbg,
+  sources : pub_eo_file_target + priv_eo_file_target,
+  dependencies: eo_deps + eo_pub_deps,
 )
+
+if get_option('install-eo-files')
+  install_data(pub_eo_files + pub_eo_types_files,
+    install_dir: join_paths(eolian_include_dir, package_version_name)
+  )
+endif
 
 install_headers(eo_header,
   install_dir : dir_package_include,

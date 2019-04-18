@@ -9,9 +9,9 @@
 #include "elm_view_list.h"
 
 #include "elm_priv.h"
-#include "elm_entry.eo.h"
-#include "elm_thumb.eo.h"
-#include "elm_label.eo.h"
+#include "elm_entry_eo.h"
+#include "elm_thumb_eo.h"
+#include "elm_label_eo.h"
 
 #include <assert.h>
 
@@ -47,11 +47,11 @@ _link_dying(void* data, Efl_Event const* event)
 static Eina_Bool
 _elm_view_widget_add(Elm_View_Form_Data *priv, const char *property, Evas_Object *link)
 {
-   if (!efl_isa(link, EFL_UI_MODEL_CONNECT_INTERFACE)) return EINA_FALSE;
+   if (!efl_isa(link, EFL_UI_PROPERTY_BIND_INTERFACE)) return EINA_FALSE;
    if (!property) property = "default";
 
    efl_ui_view_model_set(link, priv->model);
-   efl_ui_model_connect(link, "default", property);
+   efl_ui_property_bind(link, "default", property);
    efl_event_callback_add(link, EFL_EVENT_DEL, _link_dying, priv);
 
    priv->links = eina_list_append(priv->links, link);
@@ -96,4 +96,4 @@ _elm_view_form_widget_add(Eo *obj EINA_UNUSED, Elm_View_Form_Data *priv, const c
    _elm_view_widget_add(priv, propname, evas);
 }
 
-#include "elm_view_form.eo.c"
+#include "elm_view_form_eo.c"

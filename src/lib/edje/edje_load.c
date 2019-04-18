@@ -159,19 +159,21 @@ static int        _sort_defined_boxes(const void *a, const void *b);
 
 /************************** API Routines **************************/
 
-EOLIAN void
-_efl_canvas_layout_efl_file_file_get(Eo *obj EINA_UNUSED, Edje *ed, const char **file, const char **group)
+EOLIAN const char *
+_efl_canvas_layout_efl_file_file_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
-   if (file) *file = ed->path;
-   if (group) *group = ed->group;
+   return ed->path;
 }
 
-EOLIAN Efl_Gfx_Image_Load_Error
-_efl_canvas_layout_efl_file_load_error_get(const Eo *obj, Edje *ed)
+EOLIAN const char *
+_efl_canvas_layout_efl_file_group_get(Eo *obj EINA_UNUSED, Edje *ed)
 {
-   Efl_Gfx_Image_Load_Error p = efl_file_load_error_get(efl_super(obj, EFL_CANVAS_LAYOUT_CLASS));
+   return ed->group;
+}
 
-   if (p != EFL_GFX_IMAGE_LOAD_ERROR_NONE) return p;
+EOLIAN Eina_Error
+_efl_canvas_layout_layout_load_error_get(const Eo *obj EINA_UNUSED, Edje *ed)
+{
    switch (ed->load_error)
      {
       case EDJE_LOAD_ERROR_NONE: return EFL_GFX_IMAGE_LOAD_ERROR_NONE;
@@ -184,8 +186,9 @@ _efl_canvas_layout_efl_file_load_error_get(const Eo *obj, Edje *ed)
       case EDJE_LOAD_ERROR_INCOMPATIBLE_FILE: return EFL_GFX_IMAGE_LOAD_ERROR_INCOMPATIBLE_FILE;
       case EDJE_LOAD_ERROR_UNKNOWN_COLLECTION: return EFL_GFX_IMAGE_LOAD_ERROR_UNKNOWN_COLLECTION;
       case EDJE_LOAD_ERROR_RECURSIVE_REFERENCE: return EFL_GFX_IMAGE_LOAD_ERROR_RECURSIVE_REFERENCE;
-      default: return EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
+      default: break;
      }
+   return EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
 }
 
 EAPI const char *
@@ -761,7 +764,7 @@ _edje_devices_add(Edje *ed, Evas *tev)
                             _edje_device_changed_cb, ed);
 }
 
-int
+Eina_Error
 _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested)
 {
    Edje *ed;
@@ -782,12 +785,12 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
    Edje_Nested_Support *st_nested = (idx >= 0) ? eina_array_data_get(nested, idx) : NULL;
 
    ed = _edje_fetch(obj);
-   if (!ed) return 0;
+   if (!ed) return EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
    if (!group) group = "";
    if ((ed->file) && (ed->file->f == file) &&
        (ed->group) && (!strcmp(group, ed->group)))
      {
-        return 1;
+        return 0;
      }
 
    tev = evas_object_evas_get(obj);
@@ -840,7 +843,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
           {
              ed->load_error = EDJE_LOAD_ERROR_CORRUPT_FILE;
              _edje_file_del(ed);
-             return 0;
+             return EFL_GFX_IMAGE_LOAD_ERROR_CORRUPT_FILE;
           }
         eina_array_step_set(&parts, sizeof (Eina_Array), 8);
 
@@ -1009,7 +1012,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                        eina_mempool_free(_edje_real_part_mp, rp);
                        evas_event_thaw(tev);
                        evas_event_thaw_eval(tev);
-                       return 0;
+                       return EFL_GFX_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
                     }
 
                   _edje_ref(ed);
@@ -1106,7 +1109,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
 
                           if (pd_mesh_node->mesh_node.mesh.primitive == EVAS_CANVAS3D_MESH_PRIMITIVE_NONE)
                             {
-                               efl_file_set(mesh, ed->file->model_dir->entries[pd_mesh_node->mesh_node.mesh.id].entry, NULL);
+                               efl_file_simple_load(mesh, ed->file->model_dir->entries[pd_mesh_node->mesh_node.mesh.id].entry, NULL);
                             }
                           else
                             {
@@ -1460,6 +1463,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
 
                        do
                          {
+                            Eina_Error load_error;
                             child_obj = edje_object_add(ed->base.evas);
                             edje_object_mirrored_set(child_obj, edje_object_mirrored_get(ed->obj));
 
@@ -1469,7 +1473,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                                  _edje_real_part_swallow(ed, rp, child_obj, EINA_FALSE);
                               }
 
-                            if (!_edje_object_file_set_internal(child_obj, file, source, rp->part->name, group_path, nested))
+                            load_error = _edje_object_file_set_internal(child_obj, file, source, rp->part->name, group_path, nested);
+                            if (load_error)
                               {
                                  ERR("impossible to set part '%s' of group '%s' from file '%s' to '%s'",
                                      rp->part->name, group_path_entry, eina_file_filename_get(file), source);
@@ -1724,11 +1729,11 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
         eina_array_flush(&parts);
         evas_event_thaw(tev);
         evas_event_thaw_eval(tev);
-        return 1;
+        return 0;
      }
    evas_event_thaw(tev);
    evas_event_thaw_eval(tev);
-   return 0;
+   return EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
 
 on_error:
    eina_list_free(textblocks);
@@ -1748,7 +1753,7 @@ on_error:
      }
    evas_event_thaw(tev);
    evas_event_thaw_eval(tev);
-   return 0;
+   return EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
 }
 
 void
@@ -2100,7 +2105,7 @@ _edje_file_del(Edje *ed)
         EINA_LIST_FREE(ed->actions, runp)
           free(runp);
      }
-   efl_event_callback_del(ed->obj, EFL_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed);
+   efl_event_callback_del(ed->obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed);
    ecore_animator_del(ed->animator);
    ed->animator = NULL;
 

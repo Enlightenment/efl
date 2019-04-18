@@ -19,5 +19,5 @@ EAPI void elm_naviframe_item_style_set(Elm_Object_Item *obj, const char *style);
  */
 EAPI const char *elm_naviframe_item_style_get(const Elm_Object_Item *obj);
 
-#include "elm_naviframe_item.eo.legacy.h"
-#include "elm_naviframe.eo.legacy.h"
+#include "elm_naviframe_item_eo.legacy.h"
+#include "elm_naviframe_eo.legacy.h"

@@ -1,5 +1,5 @@
-class Efl.Canvas.Layout_Part_Box extends Efl.Canvas.Layout_Part implements Efl.Pack_Linear,
-                                  Efl.Ui.Direction
+class @beta Efl.Canvas.Layout_Part_Box extends Efl.Canvas.Layout_Part implements Efl.Pack_Linear,
+                                  Efl.Ui.Direction_Readonly
 {
    [[Represents a Box created as part of a layout.
 
@@ -10,7 +10,6 @@ class Efl.Canvas.Layout_Part_Box extends Efl.Canvas.Layout_Part implements Efl.P
    implements {
       Efl.Container.content_iterate;
       Efl.Container.content_count;
-      Efl.Container.content_remove;
       Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;

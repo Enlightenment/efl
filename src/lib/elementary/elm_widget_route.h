@@ -1,7 +1,7 @@
 #ifndef ELM_WIDGET_ROUTE_H
 #define ELM_WIDGET_ROUTE_H
 
-#include "elm_route.eo.h"
+#include "elm_route_eo.h"
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT

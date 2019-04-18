@@ -1,24 +1,24 @@
-struct Efl.Ui.Stack_Event_Loaded {
+struct @beta Efl.Ui.Stack_Event_Loaded {
    [[Information of loaded event.]]
    content: Efl.Canvas.Object; [[Loaded content.]]
 }
 
-struct Efl.Ui.Stack_Event_Unloaded {
+struct @beta Efl.Ui.Stack_Event_Unloaded {
    [[Information of unloaded event.]]
    content: Efl.Canvas.Object; [[Unloaded content.]]
 }
 
-struct Efl.Ui.Stack_Event_Activated {
+struct @beta Efl.Ui.Stack_Event_Activated {
    [[Information of activated event.]]
    content: Efl.Canvas.Object; [[Activated content.]]
 }
 
-struct Efl.Ui.Stack_Event_Deactivated {
+struct @beta Efl.Ui.Stack_Event_Deactivated {
    [[Information of deactivated event.]]
    content: Efl.Canvas.Object; [[Deactivated content.]]
 }
 
-class Efl.Ui.Stack extends Efl.Ui.Layout
+class @beta Efl.Ui.Stack extends Efl.Ui.Layout_Base
 {
    [[Stack widget.
 

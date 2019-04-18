@@ -6,10 +6,10 @@
 
 #include "elm_priv.h"
 
-#include "elm_sys_notify_interface.eo.h"
-#include "elm_sys_notify.eo.h"
-#include "elm_sys_notify_dbus.eo.h"
-#include "elm_sys_notify_dbus.eo.legacy.h"
+#include "elm_sys_notify_interface_eo.h"
+#include "elm_sys_notify_eo.h"
+#include "elm_sys_notify_dbus_eo.h"
+#include "elm_sys_notify_dbus_eo.legacy.h"
 
 #define MY_CLASS ELM_SYS_NOTIFY_CLASS
 
@@ -199,8 +199,7 @@ _elm_sys_notify_servers_get(const Eo            *obj EINA_UNUSED,
 }
 
 EOLIAN static Elm_Sys_Notify *
-_elm_sys_notify_singleton_get(Eo   *obj EINA_UNUSED,
-                              void *sd  EINA_UNUSED)
+_elm_sys_notify_singleton_get(void)
 {
    if (!_singleton)
      _singleton = efl_add(MY_CLASS, efl_main_loop_get());
@@ -224,7 +223,7 @@ _elm_sys_notify_class_constructor(Efl_Class *klass EINA_UNUSED)
 void
 _elm_unneed_sys_notify(void)
 {
-   Elm_Sys_Notify *manager = elm_sys_notify_singleton_get();
+   Elm_Sys_Notify *manager = elm_obj_sys_notify_singleton_get();
    if (manager)
      {
         elm_obj_sys_notify_servers_set(manager, ELM_SYS_NOTIFY_SERVER_NONE);
@@ -242,7 +241,7 @@ elm_need_sys_notify(void)
    /* In theory, there can be N notification managers, but
     * in the implementation there will be only one: the
     * singleton which is initialized here. */
-   manager = elm_sys_notify_singleton_get();
+   manager = elm_obj_sys_notify_singleton_get();
    if (EINA_UNLIKELY(!manager))
      {
         CRI("Failed to get notification manager");
@@ -289,5 +288,5 @@ elm_sys_notify_close(unsigned int id)
    elm_obj_sys_notify_interface_close(_singleton, id);
 }
 
-#include "elm_sys_notify.eo.c"
+#include "elm_sys_notify_eo.c"
 

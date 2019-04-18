@@ -31,6 +31,9 @@ foreach eo_file : pub_eo_files
                            '-gchd', '@INPUT@'])
 endforeach
 
-install_data(pub_eo_files,
-  install_dir: join_paths(eolian_include_dir, package_version_name)
-)
+
+if get_option('install-eo-files')
+  install_data(pub_eo_files,
+    install_dir: join_paths(eolian_include_dir, package_version_name)
+  )
+endif

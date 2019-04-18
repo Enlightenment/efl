@@ -5,6 +5,23 @@
 
 #define MY_CLASS EFL_CANVAS_VG_CONTAINER_CLASS
 
+
+//FIXME: This enum add temporarily to help understanding of additional code
+//related to masking in prepare_mask.
+//This needs to be formally declared through the eo class.
+//This is a list of blending supported via efl_canvas_vg_node_mask_set().
+typedef enum _EFL_CANVAS_VG_NODE_BLEND_TYPE
+{
+   EFL_CANVAS_VG_NODE_BLEND_TYPE_NONE = 0,
+   EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA,
+   EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA_INV,
+   EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_ADD,
+   EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_SUBSTRACT,
+   EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_INTERSECT,
+   EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_DIFFERENCE
+}EFL_CANVAS_VG_NODE_BLEND_TYPE;
+//
+
 static void
 _invalidate_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
@@ -22,11 +39,38 @@ _invalidate_cb(void *data EINA_UNUSED, const Efl_Event *event)
       efl_unref(child);
 }
 
+static void
+_draw_mask(Evas_Object_Protected_Data *obj, Efl_VG *node,
+           Ector_Surface *ector, void *engine, void *output,
+           void *context)
+{
+   if (!efl_gfx_entity_visible_get(node)) return;
+
+   if (efl_isa(node, EFL_CANVAS_VG_CONTAINER_CLASS))
+     {
+        Efl_Canvas_Vg_Container_Data *cd =
+           efl_data_scope_get(node, EFL_CANVAS_VG_CONTAINER_CLASS);
+
+        //Draw Mask Image.
+        Efl_VG *child;
+        Eina_List *l;
+        EINA_LIST_FOREACH(cd->children, l, child)
+          _draw_mask(obj, child, ector, engine, output, context);
+     }
+   else
+     {
+        Efl_Canvas_Vg_Node_Data *nd = efl_data_scope_get(node, EFL_CANVAS_VG_NODE_CLASS);
+        ENFN->ector_renderer_draw(engine, output, context, nd->renderer, NULL, EINA_FALSE);
+     }
+}
+
 static Ector_Buffer *
 _prepare_mask(Evas_Object_Protected_Data *obj,     //vector object
               Efl_Canvas_Vg_Node* mask_obj,
+              void *engine, void *output, void *context,
               Ector_Surface *surface,
               Eina_Matrix3 *ptransform,
+              Eina_Matrix3 *ctransform,
               Ector_Buffer *mask,
               int mask_op)
 {
@@ -34,6 +78,7 @@ _prepare_mask(Evas_Object_Protected_Data *obj,     //vector object
    Efl_Canvas_Vg_Node_Data *nd =
          efl_data_scope_get(mask_obj, EFL_CANVAS_VG_NODE_CLASS);
    if (nd->flags == EFL_GFX_CHANGE_FLAG_NONE) return pd->mask.buffer;
+   uint32_t init_buffer = 0x0;
 
    //1. Mask Size
    Eina_Rect mbound;
@@ -42,7 +87,9 @@ _prepare_mask(Evas_Object_Protected_Data *obj,     //vector object
    mbound.w = obj->cur->geometry.w;
    mbound.h = obj->cur->geometry.h;
 
-//   efl_gfx_path_bounds_get(mask, &mbound);
+   //FIXME: If mask typs is SUBSTRACT or INTERSECT, buffer fills in white color(Full alpha color).
+   if (pd->mask.option == EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_SUBSTRACT || pd->mask.option == EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_INTERSECT)
+     init_buffer = 0xFFFFFFFF;
 
    //2. Reusable ector buffer?
    if (!pd->mask.buffer || (pd->mask.bound.w != mbound.w) ||
@@ -50,7 +97,8 @@ _prepare_mask(Evas_Object_Protected_Data *obj,     //vector object
      {
         if (pd->mask.pixels) free(pd->mask.pixels);
         if (pd->mask.buffer) efl_unref(pd->mask.buffer);
-        pd->mask.pixels = calloc(sizeof(uint32_t), mbound.w * mbound.h);
+        pd->mask.pixels = malloc(sizeof(uint32_t) * (mbound.w * mbound.h));
+        memset(pd->mask.pixels, init_buffer, sizeof(uint32_t) * (mbound.w * mbound.h));
         pd->mask.buffer = ENFN->ector_buffer_new(ENC, obj->layer->evas->evas,
                                                  mbound.w, mbound.h,
                                                  EFL_GFX_COLORSPACE_ARGB8888,
@@ -67,7 +115,7 @@ _prepare_mask(Evas_Object_Protected_Data *obj,     //vector object
    else
      {
         if (pd->mask.pixels)
-          memset(pd->mask.pixels, 0x0, sizeof(uint32_t) * mbound.w * mbound.h);
+          memset(pd->mask.pixels, init_buffer, sizeof(uint32_t) * mbound.w * mbound.h);
      }
 
    pd->mask.bound.x = mbound.x;
@@ -75,10 +123,33 @@ _prepare_mask(Evas_Object_Protected_Data *obj,     //vector object
 
    if (!pd->mask.buffer) ERR("Mask Buffer is invalid");
 
-   pd->mask.dirty = EINA_TRUE;
+   //FIXME: This code means that there is another masking container.
+   if (pd->mask.option != EFL_CANVAS_VG_NODE_BLEND_TYPE_NONE)
+     {
+        Efl_Canvas_Vg_Container_Data *src_pd = pd;
+        mask = pd->mask.buffer;
+        for (Efl_VG *mask_src = pd->mask_src; mask_src; mask_src = src_pd->mask_src)
+          {
+             Efl_Canvas_Vg_Container_Data *target_pd = NULL;
+             src_pd = efl_data_scope_get(mask_src, MY_CLASS);
+             target_pd = efl_data_scope_get(eina_list_nth(src_pd->mask.target, 0), MY_CLASS);
+             _evas_vg_render_pre(obj, mask_src,
+                                 engine, output, context, surface,
+                                 ctransform, mask, target_pd->mask.option);
+          }
+     }
 
-   //3. Prepare Drawing shapes...
-   _evas_vg_render_pre(obj, mask_obj, surface, ptransform, mask, mask_op);
+   //3. Prepare Drawing shapes.
+   _evas_vg_render_pre(obj, mask_obj,
+                       engine, output, context,
+                       surface,
+                       ptransform, mask, mask_op);
+
+   //4. Generating Mask Image.
+   ector_buffer_pixels_set(surface, pd->mask.pixels, mbound.w, mbound.h, 0,
+                           EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
+   ector_surface_reference_point_set(surface, -mbound.x, -mbound.y);
+   _draw_mask(obj, mask_obj, surface, engine, output, context);
 
    return pd->mask.buffer;
 }
@@ -87,6 +158,7 @@ static void
 _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
                                     Efl_VG *obj EINA_UNUSED,
                                     Efl_Canvas_Vg_Node_Data *nd,
+                                    void *engine, void *output, void *context,
                                     Ector_Surface *surface,
                                     Eina_Matrix3 *ptransform,
                                     Ector_Buffer *mask,
@@ -106,11 +178,12 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
    EFL_CANVAS_VG_COMPUTE_MATRIX(ctransform, ptransform, nd);
 
    //Container may have mask source.
-   if (pd->mask_src)
+   if (pd->mask_src && !pd->mask.target)
      {
-        mask = _prepare_mask(vg_pd, pd->mask_src, surface, ptransform, mask,
-                             mask_op);
         mask_op = pd->mask.option;
+        mask = _prepare_mask(vg_pd, pd->mask_src,
+                             engine, output, context, surface,
+                             ptransform, ctransform, mask, mask_op);
      }
 
    EINA_LIST_FOREACH(pd->children, l, child)
@@ -133,7 +206,9 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
         if (flag & EFL_GFX_CHANGE_FLAG_MATRIX)
           child_nd->flags |= EFL_GFX_CHANGE_FLAG_MATRIX;
 
-        _evas_vg_render_pre(vg_pd, child, surface, ctransform, mask, mask_op);
+        _evas_vg_render_pre(vg_pd, child,
+                            engine, output, context, surface,
+                            ctransform, mask, mask_op);
      }
 }
 
@@ -371,3 +446,4 @@ evas_vg_container_add(Efl_VG *parent)
 }
 
 #include "efl_canvas_vg_container.eo.c"
+#include "efl_canvas_vg_container_eo.legacy.c"

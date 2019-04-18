@@ -5,7 +5,8 @@ using System.Runtime.InteropServices;
 
 using static eldbus.EldbusPendingNativeFunctions;
 
-namespace eldbus {
+namespace eldbus
+{
 
 public static class EldbusPendingNativeFunctions
 {
@@ -82,30 +83,29 @@ public class Pending
     {
         CheckHandle();
         var ptr = eldbus_pending_destination_get(Handle);
-        return Marshal.PtrToStringAuto(ptr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
     public string GetPath()
     {
         CheckHandle();
         var ptr = eldbus_pending_path_get(Handle);
-        return Marshal.PtrToStringAuto(ptr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
     public string GetInterface()
     {
         CheckHandle();
         var ptr = eldbus_pending_interface_get(Handle);
-        return Marshal.PtrToStringAuto(ptr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
     public string GetMethod()
     {
         CheckHandle();
         var ptr = eldbus_pending_method_get(Handle);
-        return Marshal.PtrToStringAuto(ptr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 }
 
 }
-

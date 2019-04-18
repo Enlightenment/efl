@@ -127,9 +127,7 @@ extern "C" {
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "Emotion_Legacy.h"
 #endif
-#ifdef EFL_EO_API_SUPPORT
 #include "Emotion_Eo.h"
-#endif
 
 /**
  * @file Emotion.h
@@ -238,7 +236,7 @@ enum _Emotion_Vis
 /**
  * @enum Emotion_Suspend
  *
- * Used for emotion pipeline ressource management.
+ * Used for emotion pipeline resource management.
  *
  * @see emotion_object_suspend_set()
  * @see emotion_object_suspend_get()
@@ -248,7 +246,7 @@ enum _Emotion_Vis
 typedef enum
 {
   EMOTION_WAKEUP, /**< pipeline is up and running */
-  EMOTION_SLEEP, /**< turn off hardware ressource usage like overlay */
+  EMOTION_SLEEP, /**< turn off hardware resource usage like overlay */
   EMOTION_DEEP_SLEEP, /**< destroy the pipeline, but keep full resolution pixels output around */
   EMOTION_HIBERNATE /**< destroy the pipeline, and keep half resolution or object resolution if lower */
 } Emotion_Suspend;
@@ -372,7 +370,7 @@ EAPI extern Emotion_Version *emotion_version;
  */
 
 /**
- * @defgroup Emotion_Ressource Video ressource management
+ * @defgroup Emotion_Ressource Video resource management
  */
 
 /**
@@ -1183,7 +1181,7 @@ EAPI Eina_Bool    emotion_object_vis_supported         (const Evas_Object *obj, 
  * Picture in Picture is needed. And most application just have a few video stream that really
  * deserve high frame rate, high quality output. That's why this call is for.
  *
- * Please note that if Emotion can't acquire a priviledged hardware ressource, it will fallback
+ * Please note that if Emotion can't acquire a priviledged hardware resource, it will fallback
  * to the no-priority path. This work on the first asking first get basis system.
  *
  * @see emotion_object_priority_get()

@@ -1,4 +1,4 @@
-class Ecore.Event.Message.Handler extends Efl.Loop_Message_Handler
+class @beta Ecore.Event.Message.Handler extends Efl.Loop_Message_Handler
 {
    [[ For Legacy API usage Only
       This class is rather hacky/messy as it's really internal glue

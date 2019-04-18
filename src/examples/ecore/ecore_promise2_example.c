@@ -1,3 +1,4 @@
+#define EFL_BETA_API_SUPPORT 1
 #include <Efl_Core.h>
 #include <stdlib.h>
 #include <errno.h>
@@ -58,7 +59,7 @@ _promise_ctx_new(Efl_Loop *loop, Eina_Value *v)
    Ctx *ctx;
    ctx = calloc(1, sizeof(Ctx));
    EINA_SAFETY_ON_NULL_GOTO(ctx, err_ctx);
-   ctx->p = efl_loop_promise_new(loop, NULL);
+   ctx->p = efl_loop_promise_new(loop);
    EINA_SAFETY_ON_NULL_GOTO(ctx->p, err_timer);
    ctx->value = v;
    return ctx;

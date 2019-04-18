@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <unistd.h>
 
 #include <Eina.h>
 #include <Elua.h>
@@ -79,22 +80,6 @@ EFL_START_TEST(elua_api)
     fail_if(lua_type(lst, -1) != LUA_TFUNCTION);
     lua_pop(lst, 1);
 
-    fail_if(!elua_util_require(st, "util"));
-    fail_if(!elua_util_string_run(st, "return 1337", "foo"));
-    fail_if(elua_util_string_run(st, "foo bar", "foo")); /* invalid code */
-    fail_if(elua_util_app_load(st, "test"));
-    fail_if(lua_type(lst, -1) != LUA_TFUNCTION);
-    lua_pop(lst, 1);
-    fail_if(!elua_util_app_load(st, "non_existent_app"));
-    fail_if(lua_type(lst, -1) != LUA_TSTRING);
-    lua_pop(lst, 1);
-    fail_if(elua_io_loadfile(st, ELUA_CORE_DIR "/util.lua"));
-    fail_if(lua_type(lst, -1) != LUA_TFUNCTION);
-    lua_pop(lst, 1);
-    fail_if(!elua_io_loadfile(st, ELUA_CORE_DIR "/non_existent_file.lua"));
-    fail_if(lua_type(lst, -1) != LUA_TSTRING);
-    lua_pop(lst, 1);
-
     fd = mkstemp(buf);
     fail_if(fd < 0);
     f = fdopen(fd, "wb");
@@ -112,6 +97,11 @@ EFL_START_TEST(elua_api)
     fail_if(!elua_util_error_report(st, 5));
     fail_if(lua_gettop(lst) > 0);
 
+    f = fopen(buf, "wb");
+    fail_if(!f);
+    fprintf(f, "return true");
+    fclose(f);
+    cargv[1] = buf;
     fail_if(!elua_util_script_run(st, 2, cargv, 1, &quit));
     fail_if(quit != 1);
 
@@ -119,10 +109,30 @@ EFL_START_TEST(elua_api)
     fail_if(!f);
     fprintf(f, "return false");
     fclose(f);
-    cargv[1] = buf;
     fail_if(!elua_util_script_run(st, 2, cargv, 1, &quit));
     fail_if(quit != 0);
     fail_if(remove(buf));
+
+    /* elua API here tries accessing files by relative path,
+     * prevent any unintentional file accesses in cwd
+     */
+    fail_if(chdir(TESTS_SRC_DIR));
+
+    fail_if(!elua_util_require(st, "util"));
+    fail_if(!elua_util_string_run(st, "return 1337", "foo"));
+    fail_if(elua_util_string_run(st, "foo bar", "foo")); /* invalid code */
+    fail_if(elua_util_app_load(st, "test"));
+    fail_if(lua_type(lst, -1) != LUA_TFUNCTION);
+    lua_pop(lst, 1);
+    fail_if(!elua_util_app_load(st, "non_existent_app"));
+    fail_if(lua_type(lst, -1) != LUA_TSTRING);
+    lua_pop(lst, 1);
+    fail_if(elua_io_loadfile(st, ELUA_CORE_DIR "/util.lua"));
+    fail_if(lua_type(lst, -1) != LUA_TFUNCTION);
+    lua_pop(lst, 1);
+    fail_if(!elua_io_loadfile(st, ELUA_CORE_DIR "/non_existent_file.lua"));
+    fail_if(lua_type(lst, -1) != LUA_TSTRING);
+    lua_pop(lst, 1);
 
     elua_state_free(st);
 }

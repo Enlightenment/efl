@@ -68,7 +68,7 @@ struct _Evas_Text_Props
 #define EVAS_TP_SZLEN_ONE 1
 
 // special case textprop for ONE char! should use this for textgrid but
-// we have to modify every bit of code that usea a textprop to go thru a
+// we have to modify every bit of code that usea a textprop to go through a
 // getter or setter etc. etc.
 struct _Evas_Text_Props_One
 {

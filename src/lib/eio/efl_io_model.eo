@@ -1,0 +1,53 @@
+import eina_types;
+
+function @beta EflIoFilter {
+  [[EflIoFilter function]]
+  params {
+    @in model: Efl.Io.Model;
+    @in entry: ptr(Eina.File_Direct_Info);
+  }
+  return: int;
+};
+
+class @beta Efl.Io.Model extends Efl.Loop_Model
+{
+    [[Efl Io model class]]
+
+    methods {
+       children_filter_set {
+          [[Set children filter callback.
+
+            This function sets, along with user's private data userdata,
+            the Eio's Eio_Filter_Direct_Cb which is a mid-step before
+            receiving the real data. Once in filter callback we can decide,
+            by returning either EINA_FALSE, to abort the notification or
+            EINA_TRUE to keep it.
+
+            See also @Efl.Model.children_slice_get.
+          ]]
+          params {
+             filter: EflIoFilter; [[Filter callback]]
+          }
+       }
+       @property path {
+          [[ Define the root path of a model.
+          ]]
+	  set { [[ Only possible during construction. ]] }
+	  get { }
+	  values {
+             path: string; [[ Root path of the model. ]]
+          }
+       }
+    }
+    implements {
+      Efl.Object.finalize;
+      Efl.Object.invalidate;
+      Efl.Object.destructor;
+      Efl.Model.properties { get; }
+      Efl.Model.property { set; get; }
+      Efl.Model.child_add;
+      Efl.Model.child_del;
+      Efl.Model.children_slice_get;
+      Efl.Model.children_count { get; }
+    }
+}

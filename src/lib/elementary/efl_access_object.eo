@@ -1,4 +1,4 @@
-enum Efl.Access.Type
+enum @beta Efl.Access.Type
 {
    [[Type of accessibility object]]
    regular, [[default accessible object]]
@@ -6,7 +6,7 @@ enum Efl.Access.Type
    skipped [[skip object in accessibility hierarchy]]
 }
 
-enum Efl.Access.Role
+enum @beta Efl.Access.Role
 {
    [[Describes the role of an object visible to Accessibility Clients.]]
    invalid, [[Role: invalid]]
@@ -115,10 +115,9 @@ enum Efl.Access.Role
    last_defined,  [[Last enum entry sentinel]]
 }
 
-enum Efl.Access.State_Type
+enum @beta Efl.Access.State_Type
 {
    [[Describes the possible states for an object visible to accessibility clients.]]
-   legacy: efl_access_state;
    invalid, [[State: invalid]]
    active, [[State: active]]
    armed, [[State: armed]]
@@ -134,7 +133,7 @@ enum Efl.Access.State_Type
    focused, [[State: focused]]
    has_tooltip, [[State: has a tooltip]]
    horizontal, [[State: horizontal]]
-   iconified, [[State: iconified]]
+   minimized, [[State: minimized]]
    modal, [[State: modal]]
    multi_line, [[State: multi line]]
    multiselectable, [[State: multiselectable]]
@@ -163,10 +162,9 @@ enum Efl.Access.State_Type
    last_defined,  [[Last enum entry sentinel]]
 }
 
-enum Efl.Access.Relation_Type
+enum @beta Efl.Access.Relation_Type
 {
    [[Describes the relationship between two objects.]]
-   legacy: efl_access_relation;
    null, [[No relation]]
    label_for, [[Label for relation]]
    labelled_by, [[Labelled by relation]]
@@ -189,7 +187,7 @@ enum Efl.Access.Relation_Type
    last_defined, [[Last enum entry sentinel]]
 }
 
-enum Efl.Access.Reading.Info.Type
+enum @beta Efl.Access.Reading.Info.Type
 {
    [[The accessible Reading information type that can be read.]]
    name = 1 << 0, [[Name should be read]]
@@ -198,18 +196,18 @@ enum Efl.Access.Reading.Info.Type
    state = 1 << 3, [[State should be read.]]
 }
 
-type Efl.Access.State_Set: uint64; [[Accessibility object state set.]]
+type @beta Efl.Access.State_Set: uint64; [[Accessibility object state set.]]
 
-struct Efl.Access.Event.Handler; [[Accessibility event listener]]
+struct @beta Efl.Access.Event.Handler; [[Accessibility event listener]]
 
-struct Efl.Access.Event.State_Changed.Data
+struct @beta Efl.Access.Event.State_Changed.Data
 {
    [[Accessibility state changed event data]]
    type: Efl.Access.State_Type; [[Type of the state changed event]]
    new_value: bool; [[New value]]
 }
 
-struct Efl.Access.Event.Geometry_Changed.Data
+struct @beta Efl.Access.Event.Geometry_Changed.Data
 {
    [[Accessibility geometry changed event data]]
    x: int; [[X coordinate]]
@@ -218,28 +216,28 @@ struct Efl.Access.Event.Geometry_Changed.Data
    height: int; [[Height]]
 }
 
-struct Efl.Access.Event.Children_Changed.Data
+struct @beta Efl.Access.Event.Children_Changed.Data
 {
    [[Accessibility children changed event data]]
    is_added: bool; [[Child is added or not]]
    child: Efl.Object; [[Child object]]
 }
 
-struct Efl.Access.Attribute
+struct @free(efl_access_attribute_free) Efl.Access.Attribute
 {
    [[Accessibility Attribute]]
    key: string; [[Attribute key]]
    value: string; [[Attribute value]]
 }
 
-struct Efl.Access.Relation
+struct @beta Efl.Access.Relation
 {
    [[Accessibility Relation]]
    type: Efl.Access.Relation_Type; [[Relation type]]
    objects: list<Efl.Object>; [[List with relation objects]]
 }
 
-mixin Efl.Access.Object requires Efl.Object
+mixin @beta Efl.Access.Object requires Efl.Object
 {
    [[Accessibility accessible mixin]]
    eo_prefix: efl_access_object;
@@ -309,15 +307,26 @@ mixin Efl.Access.Object requires Efl.Object
             @in value: string; [[The string value to give extra information]]
          }
       }
+      attribute_del {
+         [[delete key-value pair identifying object extra attributes when key is given
+         ]]
+         params {
+            @in key: string; [[The string key to identify the key-value pair]]
+         }
+      }
       attributes_clear {
          [[Removes all attributes in accessible object.]]
       }
       @property reading_info_type @protected {
          get {
-            [[Gets reading information types of an accessible object.]]
+            [[Gets reading information types of an accessible object. if no reading information
+            is set, 0 is returned which means all four reading information types will be read on
+            object highlight]]
          }
          set {
-            [[Sets reading information of an accessible object.]]
+            [[Sets reading information of an accessible object. If set as 0, existing
+            reading info will be deleted and by default all four reading information types
+            like name, role, state and description will be read on object highlight]]
          }
          values {
             reading_info: Efl.Access.Reading.Info.Type; [[Reading information types]]
@@ -376,7 +385,7 @@ mixin Efl.Access.Object requires Efl.Object
            properties.
 
            Translation domain should be set if the application wants to support i18n
-           for accessibily "name" and "description" properties.
+           for accessibility "name" and "description" properties.
 
            When translation domain is set, values of "name" and "description"
            properties will be translated with the dgettext function using the
@@ -413,8 +422,8 @@ mixin Efl.Access.Object requires Efl.Object
            provide customized feedback, improving overall user experience.
 
            Relationship_append API is asymmetric, which means that
-           appending, for example, relation EFL_ACCESS_RELATION_FLOWS_TO from object A to B,
-           do NOT append relation EFL_ACCESS_RELATION_FLOWS_FROM from object B to
+           appending, for example, relation EFL_ACCESS_RELATION_TYPE_FLOWS_TO from object A to B,
+           do NOT append relation EFL_ACCESS_RELATION_TYPE_FLOWS_FROM from object B to
            object A.]]
          return: bool; [[$true if relationship was successfully appended, $false otherwise]]
          params {

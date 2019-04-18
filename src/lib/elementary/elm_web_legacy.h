@@ -126,4 +126,4 @@ EAPI void elm_web_zoom_set(Evas_Object *obj, double zoom);
  * @ingroup Elm_Web
  */
 EAPI double elm_web_zoom_get(const Evas_Object *obj);
-#include "elm_web.eo.legacy.h"
+#include "elm_web_eo.legacy.h"

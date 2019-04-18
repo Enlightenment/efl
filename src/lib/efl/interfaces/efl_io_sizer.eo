@@ -1,12 +1,10 @@
 import eina_types;
 
-mixin Efl.Io.Sizer {
+mixin @beta Efl.Io.Sizer {
     [[Generic interface for objects that can resize or report size of themselves.
 
       This interface allows external objects to transparently resize
       or report its size.
-
-      @since 1.19
     ]]
 
     data: null;

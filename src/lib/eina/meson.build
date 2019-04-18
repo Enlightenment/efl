@@ -349,13 +349,17 @@ if sys_osx == true
    if cc.has_header_symbol('mach/task.h', 'semaphore_create')
      eina_config.set('EINA_HAVE_OSX_SEMAPHORE', 1)
    endif
+endif
 
+if host_machine.endian() == 'big'
+   eina_config.set('EINA_HAVE_WORDS_BIGENDIAN', '1')
 endif
 
 eina_config_file = configure_file(
   output: 'eina_config.h',
   configuration: eina_config,
-  install: true)
+  install: true,
+  install_dir: dir_package_include)
 
 public_headers += eina_config_file
 

@@ -4,7 +4,7 @@ efl_eolian_legacy_files = \
 	lib/efl/interfaces/efl_gfx_entity.eo \
 	lib/efl/interfaces/efl_gfx_color.eo \
 	lib/efl/interfaces/efl_gfx_image.eo \
-	lib/efl/interfaces/efl_gfx_image_animation_controller.eo \
+	lib/efl/interfaces/efl_gfx_frame_controller.eo \
 	lib/efl/interfaces/efl_input_device.eo \
         lib/efl/interfaces/efl_ui_draggable.eo \
         lib/efl/interfaces/efl_ui_clickable.eo \
@@ -23,6 +23,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_control.eo \
       lib/efl/interfaces/efl_duplicate.eo \
       lib/efl/interfaces/efl_file.eo \
+      lib/efl/interfaces/efl_file_save.eo \
       lib/efl/interfaces/efl_gfx_image_load_controller.eo \
       lib/efl/interfaces/efl_part.eo \
       lib/efl/interfaces/efl_playable.eo \
@@ -34,6 +35,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_text_cursor.eo \
       lib/efl/interfaces/efl_text_annotate.eo \
       lib/efl/interfaces/efl_text_markup.eo \
+      lib/efl/interfaces/efl_text_markup_interactive.eo \
       lib/efl/interfaces/efl_text_markup_util.eo \
       lib/efl/interfaces/efl_gfx_stack.eo \
       lib/efl/interfaces/efl_gfx_view.eo \
@@ -45,9 +47,8 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_gfx_gradient_radial.eo \
       lib/efl/interfaces/efl_gfx_filter.eo \
       lib/efl/interfaces/efl_gfx_blur.eo \
-      lib/efl/interfaces/efl_gfx_size_hint.eo \
+      lib/efl/interfaces/efl_gfx_hint.eo \
       lib/efl/interfaces/efl_model.eo \
-      lib/efl/interfaces/efl_animator.eo \
       lib/efl/interfaces/efl_orientation.eo \
       lib/efl/interfaces/efl_container.eo \
       lib/efl/interfaces/efl_content.eo \
@@ -57,11 +58,14 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_pack_table.eo \
       lib/efl/interfaces/efl_ui_i18n.eo \
       lib/efl/interfaces/efl_ui_direction.eo \
+      lib/efl/interfaces/efl_ui_direction_readonly.eo \
       lib/efl/interfaces/efl_ui_drag.eo \
-      lib/efl/interfaces/efl_ui_range.eo \
+      lib/efl/interfaces/efl_ui_range_display.eo \
+      lib/efl/interfaces/efl_ui_range_interactive.eo \
       lib/efl/interfaces/efl_ui_view.eo \
-      lib/efl/interfaces/efl_ui_model_connect.eo \
+      lib/efl/interfaces/efl_ui_property_bind.eo \
       lib/efl/interfaces/efl_ui_factory.eo \
+      lib/efl/interfaces/efl_ui_factory_bind.eo \
       lib/efl/interfaces/efl_screen.eo \
       lib/efl/interfaces/efl_io_closer.eo \
       lib/efl/interfaces/efl_io_positioner.eo \
@@ -93,23 +97,24 @@ efl_eolian_type_files = \
 efl_eolian_files_h = $(efl_eolian_files:%.eo=%.eo.h) \
                      $(efl_eolian_type_files:%.eot=%.eot.h)
 efl_eolian_files_c = $(efl_eolian_files:%.eo=%.eo.c)
-efl_eolian_legacy_files_h = $(efl_eolian_legacy_files:%.eo=%.eo.legacy.h)
 
 BUILT_SOURCES += \
                  $(efl_eolian_files_c) \
-                 $(efl_eolian_files_h) \
-                 $(efl_eolian_legacy_files_h)
+                 $(efl_eolian_files_h)
 
 EXTRA_DIST2 += \
       lib/efl/Efl_Config.h \
       lib/efl/Efl_Config.h.in \
       lib/efl/Efl.h \
+      lib/efl/interfaces/efl_file.h \
       lib/efl/interfaces/efl_common_internal.h \
       $(efl_eolian_files) \
       $(efl_eolian_type_files)
 
+if INSTALL_EO_FILES
 efleolianfilesdir = $(datadir)/eolian/include/efl-@VMAJ@
 efleolianfiles_DATA = $(efl_eolian_files) $(efl_eolian_type_files)
+endif
 
 lib_LTLIBRARIES += lib/efl/libefl.la
 
@@ -131,9 +136,10 @@ lib/efl/interfaces/efl_file.c \
 lib/efl/interfaces/efl_ui_format.c \
 lib/efl/interfaces/efl_gfx_color.c \
 lib/efl/interfaces/efl_text_markup_util.c \
+lib/efl/interfaces/efl_ui_direction_readonly.c \
 $(NULL)
 
-lib_efl_libefl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_srcdir)/src/lib/efl @EFL_CFLAGS@ -DEFL_GFX_FILTER_BETA
+lib_efl_libefl_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl -I$(top_srcdir)/src/lib/efl @EFL_CFLAGS@ -DEFL_GFX_FILTER_BETA -DEFL_BUILD
 lib_efl_libefl_la_LIBADD = @EFL_LIBS@
 lib_efl_libefl_la_DEPENDENCIES = @EFL_INTERNAL_LIBS@
 lib_efl_libefl_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
@@ -147,7 +153,7 @@ dist_installed_eflheaders_DATA = \
 installed_eflinterfacesdir = $(includedir)/efl-@VMAJ@/interfaces
 nodist_installed_eflinterfaces_DATA = \
 	$(efl_eolian_files_h) \
-	$(efl_eolian_legacy_files_h)
+	lib/efl/interfaces/efl_file.h
 
 if HAVE_LUA_BINDINGS
 
@@ -198,9 +204,9 @@ TESTS += tests/efl/efl_suite
 
 tests_efl_efl_suite_SOURCES = \
 tests/efl/efl_suite.c \
-tests/efl/efl_test_model_container.c \
-tests/efl/efl_test_model_composite.c \
-tests/efl/efl_test_model_view.c \
+tests/efl/efl_test_container_model.c \
+tests/efl/efl_test_composite_model.c \
+tests/efl/efl_test_view_model.c \
 tests/efl/efl_suite.h
 
 tests_efl_efl_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \

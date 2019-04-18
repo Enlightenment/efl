@@ -103,4 +103,4 @@ EAPI Eina_Bool elm_icon_standard_set(Evas_Object *obj, const char *name);
  */
 EAPI const char *elm_icon_standard_get(const Evas_Object *obj);
 
-#include "elm_icon.eo.legacy.h"
+#include "elm_icon_eo.legacy.h"

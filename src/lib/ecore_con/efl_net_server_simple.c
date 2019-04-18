@@ -109,20 +109,20 @@ static void
 _efl_net_server_simple_inner_server_error(void *data, const Efl_Event *event)
 {
    Eo *o = data;
-   efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, event->info);
+   efl_event_callback_call(o, EFL_NET_SERVER_EVENT_SERVER_ERROR, event->info);
 }
 
 static void
-_efl_net_server_simple_inner_server_serving(void *data, const Efl_Event *event)
+_efl_net_server_simple_inner_server_serving(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Eo *o = data;
-   efl_event_callback_call(o, EFL_NET_SERVER_EVENT_SERVING, event->info);
+   efl_event_callback_call(o, EFL_NET_SERVER_EVENT_SERVING, NULL);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(_efl_net_server_simple_inner_server_cbs,
                            { EFL_NET_SERVER_EVENT_CLIENT_ADD, _efl_net_server_simple_inner_server_client_add },
                            { EFL_NET_SERVER_EVENT_CLIENT_REJECTED, _efl_net_server_simple_inner_server_client_rejected },
-                           { EFL_NET_SERVER_EVENT_ERROR, _efl_net_server_simple_inner_server_error },
+                           { EFL_NET_SERVER_EVENT_SERVER_ERROR, _efl_net_server_simple_inner_server_error },
                            { EFL_NET_SERVER_EVENT_SERVING, _efl_net_server_simple_inner_server_serving });
 
 EOLIAN static Efl_Object *

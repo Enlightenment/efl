@@ -97,12 +97,12 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _efl_ui_flip_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Flip_Data *sd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    _sizing_eval(obj);
 
@@ -1812,7 +1812,6 @@ EOLIAN static void
 _efl_ui_flip_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Flip_Data *priv)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    priv->clip = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_static_clip_set(priv->clip, EINA_TRUE);
@@ -1959,7 +1958,7 @@ _internal_elm_flip_go_to(Evas_Object *obj,
 }
 
 EOLIAN static void
-_efl_ui_flip_go_to(Eo *obj, Efl_Ui_Flip_Data *sd, Eina_Bool front, Elm_Flip_Mode mode)
+_efl_ui_flip_go_to(Eo *obj, Efl_Ui_Flip_Data *sd, Eina_Bool front, Efl_Ui_Flip_Mode mode)
 {
    if (sd->next_state == front) return;
 
@@ -1967,7 +1966,7 @@ _efl_ui_flip_go_to(Eo *obj, Efl_Ui_Flip_Data *sd, Eina_Bool front, Elm_Flip_Mode
 }
 
 EOLIAN static void
-_efl_ui_flip_go(Eo *obj, Efl_Ui_Flip_Data *sd, Elm_Flip_Mode mode)
+_efl_ui_flip_go(Eo *obj, Efl_Ui_Flip_Data *sd, Efl_Ui_Flip_Mode mode)
 {
    _internal_elm_flip_go_to(obj, sd, !sd->state, mode);
 }
@@ -2210,15 +2209,6 @@ _efl_ui_flip_efl_container_content_count(Eo *obj EINA_UNUSED, Efl_Ui_Flip_Data *
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_flip_efl_container_content_remove(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *content)
-{
-   pd->content_list = eina_list_remove(pd->content_list, content);
-   pd->content_list = eina_list_remove(pd->content_list, content);
-   _content_removed(obj, pd, content);
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
 _efl_ui_flip_efl_pack_unpack(Eo *obj, Efl_Ui_Flip_Data *pd, Efl_Gfx_Entity *subobj)
 {
    pd->content_list = eina_list_remove(pd->content_list, subobj);
@@ -2358,8 +2348,9 @@ ELM_PART_CONTENT_DEFAULT_GET(efl_ui_flip, "front")
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_flip)
 
 #include "efl_ui_flip.eo.c"
+#include "efl_ui_flip_eo.legacy.c"
 
-#include "efl_ui_flip_legacy.eo.h"
+#include "efl_ui_flip_legacy_eo.h"
 
 #define MY_CLASS_NAME_LEGACY "elm_flip"
 
@@ -2384,4 +2375,4 @@ elm_flip_add(Evas_Object *parent)
    return elm_legacy_add(EFL_UI_FLIP_LEGACY_CLASS, parent);
 }
 
-#include "efl_ui_flip_legacy.eo.c"
+#include "efl_ui_flip_legacy_eo.c"

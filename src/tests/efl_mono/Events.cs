@@ -1,4 +1,5 @@
 using System;
+using System.Linq;
 
 namespace TestSuite
 {
@@ -25,7 +26,7 @@ class TestEoEvents
 
     public static void idle_event()
     {
-        Efl.Loop loop = new Efl.Loop();
+        Efl.Loop loop = Efl.App.AppMain;
         loop.SetName("loop");
         TestEoEvents listener = new TestEoEvents();
         listener.loop = loop;
@@ -164,19 +165,26 @@ class TestEoEvents
         Test.AssertEquals(sent_struct.Fobj, received_struct.Fobj);
     }
 
-    public static void event_in_init_callback()
+    public static void event_with_array_payload()
     {
-        int received = 0;
-        int sent = 42;
-        var obj = new Dummy.TestObject(null, (Dummy.TestObject t) => {
-            t.EvtWithIntEvt += (object sender, Dummy.TestObjectEvtWithIntEvt_Args e) => {
-                received = e.arg;
-            };
-        });
+        var obj = new Dummy.TestObject();
+        Eina.Array<string> received = null;
+        Eina.Array<string> sent = new Eina.Array<string>();
 
-        obj.EmitEventWithInt(sent);
+        sent.Append("Abc");
+        sent.Append("Def");
+        sent.Append("Ghi");
 
-        Test.AssertEquals(sent, received);
+        obj.EvtWithArrayEvt += (object sender, Dummy.TestObjectEvtWithArrayEvt_Args e) => {
+            received = e.arg;
+        };
+
+        obj.EmitEventWithArray(sent);
+
+        Test.AssertEquals(sent.Length, received.Length);
+        var pairs = sent.Zip(received, (string sentItem, string receivedItem) => new { Sent = sentItem, Received = receivedItem } );
+        foreach (var pair in pairs)
+            Test.AssertEquals(pair.Sent, pair.Received);
     }
 }
 
@@ -217,32 +225,26 @@ class TestInterfaceEvents
         obj.EmitNonconflicted();
         Test.Assert(called);
     }
+}
 
-    public static void test_conflicting_events()
+class TestEventNaming
+{
+    // For events named line focus_geometry,changed
+    public static void test_event_naming()
     {
         var obj = new Dummy.TestObject();
         var test_called = false;
-        var another_called = false;
 
         EventHandler cb = (object sender, EventArgs e) => {
             test_called = true;
         };
 
-        EventHandler another_cb = (object sender, EventArgs e) => {
-            another_called = true;
-        };
+        obj.EvtWithUnderEvt += cb;
 
-        ((Dummy.TestIface)obj).ConflictedEvt += cb;
-        ((Dummy.AnotherIface)obj).ConflictedEvt += another_cb;
+        obj.EmitEventWithUnder();
 
-        obj.EmitTestConflicted();
         Test.Assert(test_called);
-        Test.Assert(!another_called);
-        test_called = false;
 
-        obj.EmitAnotherConflicted();
-        Test.Assert(!test_called);
-        Test.Assert(another_called);
     }
 }
 }

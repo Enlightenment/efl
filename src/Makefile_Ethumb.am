@@ -22,6 +22,7 @@ lib_ethumb_libethumb_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ethumb\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
+-DEFL_BUILD \
 @ETHUMB_CFLAGS@
 lib_ethumb_libethumb_la_LIBADD = @ETHUMB_LIBS@
 lib_ethumb_libethumb_la_DEPENDENCIES = @ETHUMB_INTERNAL_LIBS@
@@ -46,6 +47,7 @@ modules_ethumb_emotion_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ethumb\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DEFL_BUILD \
 @EMOTION_CFLAGS@ \
 @ETHUMB_CFLAGS@
 modules_ethumb_emotion_module_la_LIBADD = \
@@ -64,11 +66,11 @@ modules/ethumb/emotion/template.edj: modules/ethumb/emotion/template.edc modules
 
 ethumbmoduleemotion_DATA = modules/ethumb/emotion/template.edj
 CLEANFILES += modules/ethumb/emotion/template.edj
+endif
 
 EXTRA_DIST2 += \
 modules/ethumb/emotion/template.edc \
 modules/ethumb/emotion/placeholder.png
-endif
 
 
 ### Binary

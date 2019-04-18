@@ -33,4 +33,4 @@ EAPI void         elm_hover_parent_set(Evas_Object *obj, Evas_Object *parent);
  */
 EAPI Evas_Object *elm_hover_parent_get(const Evas_Object *obj);
 
-#include "elm_hover.eo.legacy.h"
+#include "elm_hover_eo.legacy.h"

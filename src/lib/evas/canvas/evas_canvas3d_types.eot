@@ -1,9 +1,9 @@
 // ----------------------------------------------------------------------------
 // All the below types are for Evas 3D
 
-type Evas.Real: double; [[A type for floating value]]
+type @beta Evas.Real: double; [[A type for floating value]]
 
-enum Evas.Canvas3D.Object_Type
+enum @beta Evas.Canvas3D.Object_Type
 {
    [[Type of 3D Object
 
@@ -21,7 +21,7 @@ enum Evas.Canvas3D.Object_Type
                @since 1.15]]
 }
 
-enum Evas.Canvas3D.State
+enum @beta Evas.Canvas3D.State
 {
    [[State of the Evas 3D
 
@@ -94,7 +94,7 @@ enum Evas.Canvas3D.State
               @since 1.18]]
 }
 
-enum Evas.Canvas3D.Space
+enum @beta Evas.Canvas3D.Space
 {
    [[Transform space
 
@@ -104,7 +104,7 @@ enum Evas.Canvas3D.Space
    world      [[World coordinate space]]
 }
 
-enum Evas.Canvas3D.Node_Type
+enum @beta Evas.Canvas3D.Node_Type
 {
    [[Types of a node
 
@@ -116,7 +116,7 @@ enum Evas.Canvas3D.Node_Type
    mesh      [[Node which can contain mesh objects]]
 }
 
-enum Evas.Canvas3D.Node_Orientation_Type
+enum @beta Evas.Canvas3D.Node_Orientation_Type
 {
    [[Types of node orientation
 
@@ -128,7 +128,7 @@ enum Evas.Canvas3D.Node_Orientation_Type
    quaternion  [[Node orientation is given as a quaternion]]
 }
 
-enum Evas.Canvas3D.Index_Format
+enum @beta Evas.Canvas3D.Index_Format
 {
    [[Index formats
 
@@ -138,7 +138,7 @@ enum Evas.Canvas3D.Index_Format
    unsigned_short [[Index is of type unsigned short]]
 }
 
-enum Evas.Canvas3D.Frustum_Mode
+enum @beta Evas.Canvas3D.Frustum_Mode
 {
   [[Frustum modes
 
@@ -148,7 +148,7 @@ enum Evas.Canvas3D.Frustum_Mode
    central_point [[Central point]]
 }
 
-enum Evas.Canvas3D.Vertex_Assembly
+enum @beta Evas.Canvas3D.Vertex_Assembly
 {
    [[Vertex assembly modes. Vertex assembly represents how the vertices are organized into geometric primitives.
 
@@ -162,7 +162,7 @@ enum Evas.Canvas3D.Vertex_Assembly
    triangle_fan    [[Vertices are organized as a triangle fan]]
 }
 
-enum Evas.Canvas3D.Comparison
+enum @beta Evas.Canvas3D.Comparison
 {
   [[Comparsion functions for testing(alpha, depth, stencil) in fragment shader
 
@@ -177,7 +177,7 @@ enum Evas.Canvas3D.Comparison
    always    [[Always passes (initial value)]]
 }
 
-enum Evas.Canvas3D.Wrap_Mode
+enum @beta Evas.Canvas3D.Wrap_Mode
 {
   [[Wrap modes for texture units
 
@@ -187,7 +187,7 @@ enum Evas.Canvas3D.Wrap_Mode
    reflect    [[Values will be repeated in a reflected manner]]
 }
 
-enum Evas.Canvas3D.Texture_Filter
+enum @beta Evas.Canvas3D.Texture_Filter
 {
   [[Filters for texture units
 
@@ -200,7 +200,7 @@ enum Evas.Canvas3D.Texture_Filter
    linear_mipmap_linear    [[Linear sampling in mipmap and interpolate]]
 }
 
-enum Evas.Canvas3D.Mesh_Primitive
+enum @beta Evas.Canvas3D.Mesh_Primitive
 {
    [[Mesh primitive
 
@@ -217,7 +217,7 @@ enum Evas.Canvas3D.Mesh_Primitive
    count     [[Sentinel value to indicate last enum field during iteration]]
 }
 
-enum Evas.Canvas3D.Primitive_Mode
+enum @beta Evas.Canvas3D.Primitive_Mode
 {
    [[Mode of mesh primitive
 
@@ -227,7 +227,7 @@ enum Evas.Canvas3D.Primitive_Mode
    alternative_uv [[Ptimitive with alternative uv (supported for sphere)]]
 }
 
-enum Evas.Canvas3D.Shader_Mode
+enum @beta Evas.Canvas3D.Shader_Mode
 {
    [[Shader shade modes
 
@@ -243,7 +243,7 @@ enum Evas.Canvas3D.Shader_Mode
    post_processing_FXAA [[Render full screen quard]]
 }
 
-enum Evas.Canvas3D.Vertex_Attrib
+enum @beta Evas.Canvas3D.Vertex_Attrib
 {
    [[Vertex attribute IDs
 
@@ -255,7 +255,7 @@ enum Evas.Canvas3D.Vertex_Attrib
    texcoord       [[vertex texture coordinate]]
 }
 
-enum Evas.Canvas3D.Blend_Func
+enum @beta Evas.Canvas3D.Blend_Func
 {
    [[Blending function
 
@@ -278,7 +278,7 @@ enum Evas.Canvas3D.Blend_Func
    src_alpha_saturate        [[The scale factors for color components is (i, i, i, 1) where i = min(as, ka, ad)/ka]]
 }
 
-enum Evas.Canvas3D.Material_Attrib
+enum @beta Evas.Canvas3D.Material_Attrib
 {
   [[Material attributes
 
@@ -290,4 +290,4 @@ enum Evas.Canvas3D.Material_Attrib
    normal       [[Normal map term]]
 }
 
-type Evas.Canvas3D.Surface_Func: __undefined_type; [[Evas 3D canvas surface function type]]
+type @beta Evas.Canvas3D.Surface_Func: __undefined_type; [[Evas 3D canvas surface function type]]

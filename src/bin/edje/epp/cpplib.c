@@ -7405,7 +7405,7 @@ static void
 cpp_pedwarn_with_line(cpp_reader * pfile, int line, int column, const char *msg)
 {
    if (CPP_OPTIONS(pfile)->pedantic_errors)
-      cpp_error_with_line(pfile, column, line, msg);
+      cpp_error_with_line(pfile, line, column, msg);
    else
       cpp_warning_with_line(pfile, line, column, msg);
 }

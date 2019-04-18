@@ -1,0 +1,8 @@
+class Unimpl implements Iface {
+    composite {
+        Iface;
+    }
+    implements {
+        Iface.foo;
+    }
+}

@@ -1,10 +1,12 @@
-class Efl.Ui.Widget_Part_Bg extends Efl.Ui.Widget_Part implements Efl.File, Efl.Gfx.Color, Efl.Gfx.Image
+class @beta Efl.Ui.Widget_Part_Bg extends Efl.Ui.Widget_Part implements Efl.File, Efl.Gfx.Color, Efl.Gfx.Image
 {
    [[Elementary widget internal part background class]]
    data: null;
    implements {
       Efl.File.file { get; set; }
-      //Efl.File.mmap { get; set; }
+      Efl.File.key { get; set; }
+      Efl.File.mmap { get; set; }
+      Efl.File.load;
       Efl.Gfx.Color.color { set; get; }
       Efl.Gfx.Image.scale_type { get; set; }
    }

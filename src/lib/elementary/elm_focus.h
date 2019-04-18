@@ -318,7 +318,7 @@ EAPI const char  *elm_object_focus_highlight_style_get(const Evas_Object *obj);
 EAPI void                 elm_object_focus_move_policy_set(Evas_Object *obj, Elm_Focus_Move_Policy policy);
 
 /**
- * Get the focus movement policy from a given Elementary objet.
+ * Get the focus movement policy from a given Elementary object.
  *
  * @param obj The Elementary widget to get the information from
  * @return The focus movement policy
@@ -351,6 +351,8 @@ EAPI Elm_Focus_Move_Policy  elm_object_focus_move_policy_get(const Evas_Object *
  * to show the focus region as a widget. If the focus region want to be shown
  * as an item, set the mode ELM_FOCUS_REGION_SHOW_ITEM.
  * If then, it will be scrolled as an item.
+ *
+ * This API is only implemented for Elm_Gengrid widgets. Every other widgets will always automatically show the widget.
  *
  * @since 1.16
  *

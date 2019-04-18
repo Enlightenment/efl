@@ -1,4 +1,4 @@
-class Efl.Ui.Panes_Part extends Efl.Ui.Layout_Part_Content
+class @beta Efl.Ui.Panes_Part extends Efl.Ui.Layout_Part_Content
 {
    [[Elementary Panes internal part class]]
    data: null;
@@ -6,7 +6,7 @@ class Efl.Ui.Panes_Part extends Efl.Ui.Layout_Part_Content
       @property hint_min_allow {
           [[Allows the user to set size hints to be respected and ignored combined
             with a minimum size. If this flag is set, the minimum size set by
-            @Efl.Gfx.Size_Hint.hint_min.set is respected forcefully.
+            @Efl.Gfx.Hint.hint_size_min.set is respected forcefully.
           ]]
           values {
              allow: bool; [[If $true minimum size is forced]]
@@ -15,7 +15,7 @@ class Efl.Ui.Panes_Part extends Efl.Ui.Layout_Part_Content
       @property split_ratio_min {
         [[Controls the relative minimum size of panes widget's part.
 
-          If @Efl.Gfx.Size_Hint.hint_min.set is also used along with
+          If @Efl.Gfx.Hint.hint_size_min.set is also used along with
           @.split_ratio_min.set, maximum value is set as minimum size to part.
           ]]
         values {

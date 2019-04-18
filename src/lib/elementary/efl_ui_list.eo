@@ -1,6 +1,6 @@
 import efl_ui_list_item;
 
-class Efl.Ui.List extends Efl.Ui.Layout implements
+class @beta Efl.Ui.List extends Efl.Ui.Layout_Base implements
                    Efl.Ui.Scrollable_Interactive,
                    Efl.Ui.Scrollbar,
                    Efl.Pack_Linear, Efl.Pack_Layout,
@@ -42,7 +42,7 @@ class Efl.Ui.List extends Efl.Ui.Layout implements
       //Efl.Object
       Efl.Object.constructor;
       Efl.Object.finalize;
-      Efl.Object.destructor;
+      Efl.Object.invalidate;
 
       //Efl.Canvas
       Efl.Canvas.Group.group_calculate;
@@ -82,5 +82,9 @@ class Efl.Ui.List extends Efl.Ui.Layout implements
 
       //Efl.Ui.Multi_Selectable
       Efl.Ui.Multi_Selectable.select_mode {get; set;}
+   }
+   composite {
+      Efl.Ui.Scrollable_Interactive;
+      Efl.Ui.Scrollbar;
    }
 }

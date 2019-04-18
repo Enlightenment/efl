@@ -773,7 +773,7 @@ EFL_START_TEST(evas_object_image_map_unmap)
    const char *imgpath = TESTS_IMG_DIR "/Pic4.png";
 
    o = efl_add(EFL_CANVAS_IMAGE_CLASS, e);
-   efl_file_set(o, imgpath, NULL);
+   efl_file_simple_load(o, imgpath, NULL);
    sz = efl_gfx_view_size_get(o);
    cs = efl_gfx_buffer_colorspace_get(o);
 
@@ -852,7 +852,7 @@ EFL_START_TEST(evas_object_image_map_unmap)
         uint32_t *dest, *orig;
 
         o2 = efl_add(EFL_CANVAS_IMAGE_CLASS, e);
-        efl_file_set(o2, tmp, NULL);
+        efl_file_simple_load(o2, tmp, NULL);
         sz = efl_gfx_view_size_get(o);
         w2 = sz.w;
         h2 = sz.h;

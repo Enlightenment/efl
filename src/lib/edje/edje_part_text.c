@@ -187,7 +187,7 @@ _efl_canvas_layout_part_text_efl_text_cursor_cursor_geometry_get(const Eo *obj,
 }
 
 EOLIAN static void
-_efl_canvas_layout_part_text_efl_text_markup_cursor_markup_insert(Eo *obj,
+_efl_canvas_layout_part_text_efl_text_markup_interactive_cursor_markup_insert(Eo *obj,
       void *_pd EINA_UNUSED, Efl_Text_Cursor_Cursor *cur EINA_UNUSED,
       const char *text)
 {
@@ -477,6 +477,8 @@ _canvas_layout_user_text_collect(Edje *ed, Edje_User_Defined *eud)
    Eina_List **props = &eud->u.text_style.props;
 
    rp = _edje_real_part_recursive_get(&ed, eud->part);
+   if (!rp) return;
+
    if (eud->u.text_style.types == EDJE_PART_TEXT_PROP_NONE) return;
 
    if (eud->u.text_style.types & EDJE_PART_TEXT_PROP_BACKING_TYPE)

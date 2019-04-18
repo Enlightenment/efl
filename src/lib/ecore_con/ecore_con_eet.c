@@ -11,10 +11,6 @@
 # endif
 #endif
 
-#ifdef HAVE_ARPA_INET_H
-# include <arpa/inet.h>
-#endif
-
 #include <Eina.h>
 
 #include "Ecore.h"
@@ -318,11 +314,11 @@ _ecore_con_eet_data(Ecore_Con_Reply *n, void *data, unsigned int size)
         unsigned int *tmp = data;
         size -= 4 * sizeof (unsigned int);
 
-        if (ntohl(tmp[0]) == ECORE_CON_EET_RAW_MAGIC)
+        if (eina_ntohl(tmp[0]) == ECORE_CON_EET_RAW_MAGIC)
           {
-             unsigned int protocol_length = ntohl(tmp[1]);
-             unsigned int section_length = ntohl(tmp[2]);
-             unsigned int data_length = ntohl(tmp[3]);
+             unsigned int protocol_length = eina_ntohl(tmp[1]);
+             unsigned int section_length = eina_ntohl(tmp[2]);
+             unsigned int data_length = eina_ntohl(tmp[3]);
 
              if (protocol_length > 1 && section_length > 1 && protocol_length + section_length <= size && data_length < 10 * 1024 * 1024)
                {
@@ -559,10 +555,10 @@ _ecore_con_eet_base_raw_send(Eo *obj EINA_UNUSED, Ecore_Con_Eet_Base_Data *pd, E
    if (protocol_length == 1) return;
    section_length = strlen(section) + 1;
 
-   protocol[0] = htonl(ECORE_CON_EET_RAW_MAGIC);
-   protocol[1] = htonl(protocol_length);
-   protocol[2] = htonl(section_length);
-   protocol[3] = htonl(length);
+   protocol[0] = eina_htonl(ECORE_CON_EET_RAW_MAGIC);
+   protocol[1] = eina_htonl(protocol_length);
+   protocol[2] = eina_htonl(section_length);
+   protocol[3] = eina_htonl(length);
 
    size = sizeof (protocol) + protocol_length + section_length;
    tmp = alloca(size);
@@ -959,6 +955,6 @@ ecore_con_eet_raw_send(Ecore_Con_Reply *reply, const char *protocol_name, const 
    eina_binbuf_free(buf);
 }
 
-#include "ecore_con_eet_base.eo.c"
-#include "ecore_con_eet_server_obj.eo.c"
-#include "ecore_con_eet_client_obj.eo.c"
+#include "ecore_con_eet_base_eo.c"
+#include "ecore_con_eet_server_obj_eo.c"
+#include "ecore_con_eet_client_obj_eo.c"

@@ -1,4 +1,4 @@
-class Efl.Ui.Frame extends Efl.Ui.Layout implements Efl.Ui.Clickable, Efl.Text, Efl.Text_Markup,
+class @beta Efl.Ui.Frame extends Efl.Ui.Layout_Base implements Efl.Ui.Clickable, Efl.Text, Efl.Text_Markup,
                     Efl.Content
 {
    [[Frame widget
@@ -7,7 +7,6 @@ class Efl.Ui.Frame extends Efl.Ui.Layout implements Efl.Ui.Clickable, Efl.Text, 
    by clicking on the frame label.
    the label and content can be set using text_set and content_set api.
    ]]
-   legacy_prefix: elm_frame;
    methods {
       @property collapse {
          set {

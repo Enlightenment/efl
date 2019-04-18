@@ -2,18 +2,47 @@ import eina_types;
 
 interface Efl.Screen
 {
-   [[Efl screen interface]]
-   methods {
-      @property screen_size {
-         get {
-            [[Get screen geometry details for the screen that a window is on.
+   [[Efl screen interface
 
-              Note that on some display systems this information is not
-              available (this could be the case Wayland for instance).
+     @since 1.22
+   ]]
+   methods {
+      @property screen_size_in_pixels {
+         get {
+            [[Get screen size (in pixels) for the screen.
+
+              Note that on some display systems this information is not available and
+              a value of 0x0 will be returned.
             ]]
          }
          values {
-            size: Eina.Size2D; [[The screen size.]]
+            size: Eina.Size2D; [[The screen size in pixels.]]
+         }
+      }
+//      @property screen_size_in_mm {
+//         get {
+//            [[Get screen geometry (in millimeters) for the screen.
+//
+//              Note that on some display systems this information is not available and
+//              a value of 0x0 will be returned.
+//            ]]
+//         }
+//         values {
+//            size: Eina.Size2D; [[The screen size in millimeters.]]
+//         }
+//      }
+      @property screen_scale_factor {
+         get {
+            [[Get screen scaling factor.
+
+              This is the factor by which window contents will be scaled on the screen.
+
+              Note that on some display systems this information is not available and a
+              value of 1.0 will be returned.
+            ]]
+         }
+         values {
+            size: float; [[The screen scaling factor.]]
          }
       }
       @property screen_rotation {
@@ -21,23 +50,20 @@ interface Efl.Screen
             [[Get the rotation of the screen.
 
               Most engines only return multiples of 90.
-              @since 1.19
             ]]
          }
          values {
-            rotation: int; [[The degree of the screen.]]
+            rotation: int; [[Screen rotation in degrees.]]
          }
       }
       @property screen_dpi {
          get {
-            [[Get screen dpi for the screen that a window is on.
-
-              @since 1.7
+            [[Get the pixel density in DPI (Dots Per Inch) for the screen that a window is on.
             ]]
          }
          values {
-            xdpi: int; [[Pointer to value to store return horizontal dpi. May be $null.]]
-            ydpi: int; [[Pointer to value to store return vertical dpi. May be $null.]]
+            xdpi: int; [[Horizontal DPI.]]
+            ydpi: int; [[Vertical DPI.]]
          }
       }
    }

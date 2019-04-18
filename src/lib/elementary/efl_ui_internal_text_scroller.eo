@@ -1,11 +1,11 @@
-enum Efl.Ui.Text_Scroller_Mode
+enum @beta Efl.Ui.Text_Scroller_Mode
 {
    default = 0,
    singleline = 0,
    multiline = 1,
 }
 
-class Efl.Ui.Internal_Text_Scroller extends Efl.Ui.Scroller
+class @beta Efl.Ui.Internal_Text_Scroller extends Efl.Ui.Scroller
 {
    [[Internal-usage text scroller class.
 

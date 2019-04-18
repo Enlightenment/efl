@@ -289,8 +289,8 @@ _elm_cursor_obj_add(Evas_Object *obj, Elm_Cursor *cur)
    edje_object_freeze(cur->obj);
    edje_object_update_hints_set(cur->obj, 1);
 
-   if (!elm_widget_theme_object_set(obj, cur->obj, "cursor", cur->cursor_name,
-                             cur->style ? cur->style : "default"))
+   if (elm_widget_theme_object_set(obj, cur->obj, "cursor", cur->cursor_name,
+                             cur->style ? cur->style : "default") == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      {
         ELM_SAFE_FREE(cur->obj, evas_object_del);
         return EINA_FALSE;
@@ -672,7 +672,7 @@ elm_object_sub_cursor_set(Evas_Object *eventarea, Evas_Object *owner, const char
 }
 
 EOLIAN Eina_Bool
-_efl_ui_widget_efl_ui_cursor_cursor_set(Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
+_efl_ui_widget_cursor_set(Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
                                      const char *cursor)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
@@ -688,7 +688,7 @@ elm_object_sub_cursor_get(const Evas_Object *obj)
 }
 
 EOLIAN const char *
-_efl_ui_widget_efl_ui_cursor_cursor_get(const Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
+_efl_ui_widget_cursor_get(const Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    return elm_object_sub_cursor_get(obj);
 }
@@ -779,8 +779,8 @@ elm_object_sub_cursor_style_set(Evas_Object *obj, const char *style)
      }
    else
      {
-        if (!elm_widget_theme_object_set(obj, cur->obj, "cursor", cur->cursor_name,
-                                   style))
+        if (elm_widget_theme_object_set(obj, cur->obj, "cursor", cur->cursor_name,
+                                   style) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
           {
              ERR("Could not apply the theme to the cursor style=%s", style);
              return EINA_FALSE;
@@ -793,7 +793,7 @@ elm_object_sub_cursor_style_set(Evas_Object *obj, const char *style)
 }
 
 EOLIAN Eina_Bool
-_efl_ui_widget_efl_ui_cursor_cursor_style_set(Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
+_efl_ui_widget_cursor_style_set(Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
                                            const char *style)
 {
    return elm_object_sub_cursor_style_set(obj, style);
@@ -807,7 +807,7 @@ elm_object_sub_cursor_style_get(const Evas_Object *obj)
 }
 
 EOLIAN const char *
-_efl_ui_widget_efl_ui_cursor_cursor_style_get(const Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
+_efl_ui_widget_cursor_style_get(const Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    return elm_object_sub_cursor_style_get(obj);
 }
@@ -820,8 +820,8 @@ void
 elm_cursor_theme(Elm_Cursor *cur)
 {
    if ((!cur) || (!cur->obj)) return;
-   if (!elm_widget_theme_object_set(cur->owner, cur->obj, "cursor",
-                              cur->cursor_name, cur->style))
+   if (elm_widget_theme_object_set(cur->owner, cur->obj, "cursor",
+                              cur->cursor_name, cur->style) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      ERR("Could not apply the theme to the cursor style=%s", cur->style);
    else
      _elm_cursor_set_hot_spots(cur);
@@ -838,7 +838,7 @@ elm_object_sub_cursor_theme_search_enabled_set(Evas_Object *obj, Eina_Bool theme
 }
 
 EOLIAN Eina_Bool
-_efl_ui_widget_efl_ui_cursor_cursor_theme_search_enabled_set(Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
+_efl_ui_widget_cursor_theme_search_enabled_set(Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED,
                                                              Eina_Bool theme_search)
 {
    return elm_object_sub_cursor_theme_search_enabled_set(obj, theme_search);
@@ -852,9 +852,7 @@ elm_object_sub_cursor_theme_search_enabled_get(const Evas_Object *obj)
 }
 
 EOLIAN Eina_Bool
-_efl_ui_widget_efl_ui_cursor_cursor_theme_search_enabled_get(const Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
+_efl_ui_widget_cursor_theme_search_enabled_get(const Evas_Object *obj, Elm_Widget_Smart_Data *pd EINA_UNUSED)
 {
    return elm_object_sub_cursor_theme_search_enabled_get(obj);
 }
-
-#include "efl_ui_cursor.eo.c"

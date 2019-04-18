@@ -1,7 +1,5 @@
-enum Efl.Net.Control.Technology_Type {
+enum @beta Efl.Net.Control.Technology_Type {
     [[Technology types
-
-      @since 1.19
     ]]
     unknown, [[Type: unknown]]
     system, [[Type: system]]
@@ -15,7 +13,7 @@ enum Efl.Net.Control.Technology_Type {
     p2p, [[Type: Peer-2-Peer]]
 }
 
-class Efl.Net.Control.Technology extends Efl.Loop_Consumer {
+class @beta Efl.Net.Control.Technology extends Efl.Loop_Consumer {
     [[A technology that allows control of network access points.
 
       The @Efl.Net.Control.Manager is composed of multiple technologies, each
@@ -24,8 +22,6 @@ class Efl.Net.Control.Technology extends Efl.Loop_Consumer {
       When powered, the technology will dynamically create and remove
       access points in
       @Efl.Net.Control.Manager.access_points.
-
-      @since 1.19
     ]]
     events {
         changed: void; [[Called when some properties were changed.]]

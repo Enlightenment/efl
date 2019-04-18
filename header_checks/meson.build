@@ -43,7 +43,6 @@ header_checks = [
   'sys/wait.h',
   'sys/resource.h',
   'sys/times.h',
-  'dirent.h',
   'longinfo.h',
   'exotic.h',
   'ieeefp.h',
@@ -53,8 +52,21 @@ header_checks = [
   'langinfo.h',
   'locale.h',
   'uv.h',
-  'ws2tcpip.h'
+  'crt_externs.h'
 ]
+
+#### The below is logically broken
+#### the declaration of symbol + headers when you look the symbols up
+#### in man pages you'll find that, for example, kevent needs you to
+#### include ALL of the headers listed below. same for setxattr,
+#### listxattr, pthread_getcpuclockid ... i stopped looking at this
+#### point because it seems this is the pattern, but the foreach below
+#### does not do this. it includes one header at a time from the list
+#### then checks to see if the symbol exists. this leads to failures
+#### in the checks (specifically i noticed kevent on bsd). so the whole
+#### construct for this is wrong. it needs a rethink. i'm putting this
+#### comment here as a note that this is the case for now as i'm just
+#### trying to fix the meson build on freebsd for now
 
 function_checks = [
 # function name | headers that are needed | libraries to include | Defines that are needed
@@ -92,7 +104,6 @@ function_checks = [
 #FIXME strlcpy is detected by meson but drops at compilation time
 #  ['strlcpy', ['string.h']],
   ['siginfo_t', ['signal.h']],
-  ['strerror_r', ['string.h']],
   ['pthread_getcpuclockid', ['pthread.h', 'time.h']],
   ['timerfd_create', ['sys/timerfd.h']],
   ['kevent', ['sys/types.h', 'sys/event.h', 'sys/time.h']],
@@ -190,10 +201,13 @@ if jpeg.found() == false
   jpeg = cc.find_library('jpeg')
 endif
 
-if config_h.has('HAVE_KEVENT')
+if sys_bsd == true
   config_h.set('HAVE_NOTIFY_KEVENT', '1')
 endif
 
+if sys_osx == true
+  config_h.set('HAVE_NOTIFY_COCOA', '1')
+endif
 config_h.set('SIZEOF_INT', cc.sizeof('int'))
 config_h.set('SIZEOF_LONG', cc.sizeof('long'))
 

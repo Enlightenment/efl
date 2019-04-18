@@ -13,7 +13,7 @@
 #include "elm_priv.h"
 #include "elm_widget_multibuttonentry.h"
 #include "elm_multibuttonentry_part.eo.h"
-#include "elm_entry.eo.h"
+#include "elm_entry_eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS ELM_MULTIBUTTONENTRY_CLASS
@@ -91,7 +91,7 @@ _format_count(int count, void *data EINA_UNUSED)
    return strdup(buf);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_multibuttonentry_efl_ui_widget_theme_apply(Eo *obj, Elm_Multibuttonentry_Data *sd)
 {
    const char *str;
@@ -100,9 +100,9 @@ _elm_multibuttonentry_efl_ui_widget_theme_apply(Eo *obj, Elm_Multibuttonentry_Da
    Elm_Object_Item *eo_item;
    double pad_scale;
 
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    str = elm_layout_data_get(obj, "horizontal_pad");
    if (str) hpad = atoi(str);
@@ -212,7 +212,7 @@ _shrink_mode_set(Evas_Object *obj,
         if (sd->label && sd->label_packed)
           {
              elm_box_pack_end(sd->box, sd->label);
-             w -= efl_gfx_size_hint_combined_min_get(sd->label).w;
+             w -= efl_gfx_hint_size_combined_min_get(sd->label).w;
              w -= box_inner_item_width_padding;
           }
 
@@ -229,7 +229,7 @@ _shrink_mode_set(Evas_Object *obj,
              evas_object_show(VIEW(item));
              item->visible = EINA_TRUE;
 
-             w -= efl_gfx_size_hint_combined_min_get(VIEW(item)).w;
+             w -= efl_gfx_hint_size_combined_min_get(VIEW(item)).w;
              w -= box_inner_item_width_padding;
              count--;
 
@@ -495,7 +495,7 @@ _on_item_clicked(void *data,
 
    if (_elm_config->atspi_mode)
      efl_access_state_changed_signal_emit(eo_it,
-                                          EFL_ACCESS_STATE_CHECKED,
+                                          EFL_ACCESS_STATE_TYPE_CHECKED,
                                           EINA_TRUE);
 
    if (sd->selected_it)
@@ -938,7 +938,7 @@ _item_new(Elm_Multibuttonentry_Data *sd,
 //FIXME: having an empty event handling function and reacting on Evas
 //events on specific objects is crazy, someone should fix that.
 EOLIAN static Eina_Bool
-_elm_multibuttonentry_efl_ui_widget_widget_event(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Data *sd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src EINA_UNUSED)
+_elm_multibuttonentry_efl_ui_widget_widget_input_event_handler(Eo *obj EINA_UNUSED, Elm_Multibuttonentry_Data *sd EINA_UNUSED, const Efl_Event *eo_event EINA_UNUSED, Evas_Object *src EINA_UNUSED)
 {
    // ACCESS
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON) return EINA_FALSE;
@@ -1562,12 +1562,11 @@ _elm_multibuttonentry_efl_canvas_group_group_add(Eo *obj, Elm_Multibuttonentry_D
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "multibuttonentry");
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
-   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
+   if (elm_widget_theme_object_set(obj, wd->resize_obj,
                                        elm_widget_theme_klass_get(obj),
                                        elm_widget_theme_element_get(obj),
-                                       elm_widget_theme_style_get(obj)))
+                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
@@ -1974,10 +1973,10 @@ _elm_multibuttonentry_item_efl_access_object_state_set_get(const Eo *eo_it, Elm_
 
    sel = elm_obj_multibuttonentry_item_selected_get(eo_it);
 
-   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_EDITABLE);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_EDITABLE);
 
    if (sel)
-     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_CHECKED);
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_CHECKED);
 
    return ret;
 }
@@ -2033,5 +2032,5 @@ ELM_PART_OVERRIDE_TEXT_GET(elm_multibuttonentry, ELM_MULTIBUTTONENTRY, Elm_Multi
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_multibuttonentry), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_multibuttonentry)
 
-#include "elm_multibuttonentry_item.eo.c"
-#include "elm_multibuttonentry.eo.c"
+#include "elm_multibuttonentry_item_eo.c"
+#include "elm_multibuttonentry_eo.c"

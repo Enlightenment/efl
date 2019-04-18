@@ -461,7 +461,7 @@ draw_gear(GLData *gld, Gear *gear, GLfloat *transform,
 
    // Set up the position of the attributes in the vertex buffer object
    gl->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), NULL);
-   gl->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLfloat *)(0 + 3 * sizeof(GLfloat *)));
+   gl->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 6 * sizeof(GLfloat), (GLfloat *)(0 + 3 * sizeof(GLfloat)));
 
    // Enable the attributes
    gl->glEnableVertexAttribArray(0);
@@ -673,6 +673,7 @@ _init_gl(Evas_Object *obj)
 {
    GLData *gld = evas_object_data_get(obj, "gld");
    if (!gld) return;
+   gld->glapi = elm_glview_gl_api_get(obj);
 
    gears_init(gld);
 }
@@ -841,10 +842,18 @@ test_glview_manygears(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
    if (!(gld = calloc(1, sizeof(GLData)))) return;
    gldata_init(gld);
 
+   // add a Z-depth buffer to the window and try to use GL
+   Eina_Stringshare *accel;
+   accel = eina_stringshare_add(elm_config_accel_preference_get());
+   elm_config_accel_preference_set("gl:depth");
+
    // new window - do the usual and give it a name, title and delete handler
    win = elm_win_util_standard_add("glview_manygears", "GLView Many Gears");
    elm_win_autodel_set(win, EINA_TRUE);
 
+   // restore previous accel preference
+   elm_config_accel_preference_set(accel);
+   eina_stringshare_del(accel);
 
    // add an image bg
    bg = elm_bg_add(win);
@@ -892,7 +901,6 @@ test_glview_manygears(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 
         // Add animator for rendering
         ani = ecore_animator_add(_anim, gl);
-        gld->glapi = elm_glview_gl_api_get(gl);
         evas_object_data_set(gl, "ani", ani);
         evas_object_data_set(gl, "gld", gld);
         evas_object_event_callback_add(gl, EVAS_CALLBACK_DEL, _del, gl);

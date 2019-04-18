@@ -1,10 +1,8 @@
-class Efl.Net.Server_Simple extends Efl.Loop_Consumer implements Efl.Net.Server {
+class @beta Efl.Net.Server_Simple extends Efl.Loop_Consumer implements Efl.Net.Server {
     [[A network server wrapper that creates clients based on @Efl.Net.Socket_Simple.
 
       This is just a wrapper server. It takes an actual server
       using @.inner_server or creates one using @.inner_class.
-
-      @since 1.19
     ]]
     methods {
         @property inner_class {

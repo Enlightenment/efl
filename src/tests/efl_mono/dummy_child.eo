@@ -2,8 +2,57 @@ import eina_types;
 
 class Dummy.Child extends Dummy.Test_Object {
 
+   methods {
+      double_params {
+         params {
+            @in a: string;
+            @in b: double;
+         }
+      }
+
+      @property iface_was_set {
+        get {}
+        values {
+          data: bool;
+        }
+      }
+
+      obligatory_beta_ctor @beta {
+         params {
+            @in a: int;
+         }
+      }
+
+      optional_beta_ctor @beta {
+        params {
+            @in a: int;
+        }
+      }
+
+      @property obligatory_beta_ctor_was_called {
+        get{}
+        values {
+          data: bool;
+        }
+      }
+
+      @property optional_beta_ctor_was_called {
+        get{}
+        values {
+          data: bool;
+        }
+      }
+   }
+   constructors {
+      Dummy.Test_Iface.iface_prop @optional;
+      .double_params;
+      .obligatory_beta_ctor;
+      .optional_beta_ctor @optional;
+   }
    implements {
+      Dummy.Test_Iface.iface_prop { get; set; }
       class.constructor;
       class.destructor;
+      Efl.Object.constructor;
    }
 }

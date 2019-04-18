@@ -384,7 +384,7 @@ _efl_canvas_vg_node_efl_object_parent_set(Eo *obj,
 }
 
 static void
-_efl_canvas_vg_node_efl_gfx_stack_raise(Eo *obj, Efl_Canvas_Vg_Node_Data *pd EINA_UNUSED)
+_efl_canvas_vg_node_efl_gfx_stack_raise_to_top(Eo *obj, Efl_Canvas_Vg_Node_Data *pd EINA_UNUSED)
 {
    Efl_Canvas_Vg_Container_Data *cd;
    Eina_List *lookup, *next;
@@ -472,7 +472,7 @@ _efl_canvas_vg_node_efl_gfx_stack_stack_below(Eo *obj,
 }
 
 static void
-_efl_canvas_vg_node_efl_gfx_stack_lower(Eo *obj, Efl_Canvas_Vg_Node_Data *pd EINA_UNUSED)
+_efl_canvas_vg_node_efl_gfx_stack_lower_to_bottom(Eo *obj, Efl_Canvas_Vg_Node_Data *pd EINA_UNUSED)
 {
    Efl_Canvas_Vg_Container_Data *cd;
    Eina_List *lookup, *prev;
@@ -833,13 +833,14 @@ evas_vg_node_stack_above(Eo *obj, Eo *above)
 EAPI void
 evas_vg_node_raise(Eo *obj)
 {
-   efl_gfx_stack_raise(obj);
+   efl_gfx_stack_raise_to_top(obj);
 }
 
 EAPI void
 evas_vg_node_lower(Eo *obj)
 {
-   efl_gfx_stack_lower(obj);
+   efl_gfx_stack_lower_to_bottom(obj);
 }
 
 #include "efl_canvas_vg_node.eo.c"
+#include "efl_canvas_vg_node_eo.legacy.c"

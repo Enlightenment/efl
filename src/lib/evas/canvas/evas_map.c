@@ -1381,12 +1381,8 @@ evas_object_map_update(Evas_Object *eo_obj,
         pt->x = (lround(p->x) + x) * FP1;
         pt->y = (lround(p->y) + y) * FP1;
         pt->z = (lround(p->z)    ) * FP1;
-        /* FIXME: Adding the framespace is a workaround for a bug on the EGL
-         * wayland backend, which does not affect other ports. Remove this when
-         * it is correctly handled inside the GL rendering code, which handles
-         * maps with perspective set. */
-        pt->fx = p->px + obj->layer->evas->framespace.x;
-        pt->fy = p->py + obj->layer->evas->framespace.y;
+        pt->fx = p->x + (float) x;
+        pt->fy = p->y + (float) y;
         pt->fz = p->z;
         if ((uvw == 0) || (imagew == 0)) pt->u = 0;
         else pt->u = ((lround(p->u) * imagew) / uvw) * FP1;

@@ -627,6 +627,7 @@ eng_image_size_set(void *engine, void *image, int w, int h)
    Evas_GL_Image *im_old;
 
    if (!im) return NULL;
+   gl_context = gl_generic_context_find(engine, 1);
    if (im->native.data)
      {
         im->w = w;
@@ -634,7 +635,6 @@ eng_image_size_set(void *engine, void *image, int w, int h)
         evas_gl_common_image_native_enable(im);
         return image;
      }
-   gl_context = gl_generic_context_find(engine, 1);
    if ((im->tex) && (im->tex->pt->dyn.img))
      {
         evas_gl_common_texture_free(im->tex, EINA_TRUE);
@@ -2306,7 +2306,7 @@ eng_renderer_3d_get(void *output)
 static void *
 eng_drawable_new(void *engine, int w, int h, int alpha)
 {
-   eng_context_3d_use(engine);
+   eng_context_3d_use(gl_generic_output_find(engine));
 #ifdef GL_GLES
    return e3d_drawable_new(w, h, alpha, GL_DEPTH_STENCIL_OES, GL_NONE);
 #else
@@ -2317,7 +2317,7 @@ eng_drawable_new(void *engine, int w, int h, int alpha)
 static void
 eng_drawable_free(void *engine, void *drawable)
 {
-   eng_context_3d_use(engine);
+   eng_context_3d_use(gl_generic_output_find(engine));
    e3d_drawable_free(drawable);
 }
 
@@ -2349,7 +2349,7 @@ eng_image_drawable_set(void *engine, void *image, void *drawable)
 }
 
 static void
-eng_drawable_scene_render(void *engine EINA_UNUSED, void *data, void *drawable, void *scene_data)
+eng_drawable_scene_render(void *engine, void *data, void *drawable, void *scene_data)
 {
    Evas_Engine_GL_Context *gl_context;
    E3D_Renderer *renderer = NULL;
@@ -2357,7 +2357,7 @@ eng_drawable_scene_render(void *engine EINA_UNUSED, void *data, void *drawable, 
    gl_context = gl_generic_context_get(data, 1);
    evas_gl_common_context_flush(gl_context);
 
-   eng_context_3d_use(data);
+   eng_context_3d_use(gl_generic_output_find(engine));
    renderer = eng_renderer_3d_get(data);
    e3d_drawable_scene_render(drawable, renderer, scene_data);
 }
@@ -2390,7 +2390,7 @@ eng_drawable_scene_render_to_texture(void *engine, void *drawable, void *scene_d
    gl_context = gl_generic_context_get(engine, 1);
    evas_gl_common_context_flush(gl_context);
 
-   eng_context_3d_use(engine);
+   eng_context_3d_use(gl_generic_output_find(engine));
    renderer = eng_renderer_3d_get(engine);
 
    return e3d_drawable_scene_render_to_texture((E3D_Drawable *)drawable, renderer, scene_data);
@@ -2453,7 +2453,7 @@ eng_texture_image_set(void *engine, void *texture, void *image)
 {
    Evas_Engine_GL_Context *gl_context;
 
-   gl_context = gl_generic_context_get(engine, 1);
+   gl_context = gl_generic_context_find(engine, 1);
 
    e3d_texture_set(gl_context, (E3D_Texture *)texture, (Evas_GL_Image *)image);
 }

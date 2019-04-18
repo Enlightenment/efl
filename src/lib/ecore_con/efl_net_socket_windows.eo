@@ -1,11 +1,9 @@
-class Efl.Net.Socket_Windows extends Efl.Loop_Consumer implements Efl.Net.Socket {
+class @beta Efl.Net.Socket_Windows extends Efl.Loop_Consumer implements Efl.Net.Socket {
     [[A base Windows NamedPipe socket.
 
       This is the common class and takes an existing file HANDLE,
       usually created by an dialer (CreatFile()) or server
       (CreateNamedPipe()).
-
-      @since 1.19
     ]]
 
     implements {

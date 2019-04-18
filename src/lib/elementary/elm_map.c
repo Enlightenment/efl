@@ -10,8 +10,9 @@
 #include "elm_priv.h"
 #include "elm_widget_map.h"
 #include "elm_interface_scrollable.h"
-#include "elm_map_pan.eo.h"
-#include "elm_map.eo.h"
+#include "elm_pan_eo.h"
+#include "elm_map_pan_eo.h"
+#include "elm_map_eo.h"
 
 #define MY_PAN_CLASS ELM_MAP_PAN_CLASS
 
@@ -797,7 +798,7 @@ _download_job(void *data)
 
    EINA_LIST_REVERSE_FOREACH_SAFE(sd->download_list, l, ll, gi)
    {
-      Eina_Bool ret;
+      Eina_Bool ret, file_exists;
 
       if ((gi->g->zoom != sd->zoom) || !(_grid_item_in_viewport(gi)))
         {
@@ -807,21 +808,41 @@ _download_job(void *data)
       if (sd->download_num >= MAX_CONCURRENT_DOWNLOAD)
         return ECORE_CALLBACK_RENEW;
 
-      ret = ecore_file_download_full
-          (gi->url, gi->file, _downloaded_cb, NULL, gi, &(gi->job), sd->ua);
-
-      if ((!ret) || (!gi->job))
-        ERR("Can't start to download from %s to %s", gi->url, gi->file);
-      else
+      file_exists = ecore_file_exists(gi->file);
+      if (!file_exists)
         {
-           sd->download_list = eina_list_remove(sd->download_list, gi);
+           /* Check here if we can download into this directory even if this one
+              disappear due to some user black magic */
+           char *dir_path;
+           dir_path = ecore_file_dir_get(gi->file);
+           if (!ecore_file_exists(dir_path)) ecore_file_mkpath(dir_path);
+           free(dir_path);
+           ret = ecore_file_download_full
+              (gi->url, gi->file, _downloaded_cb, NULL, gi, &(gi->job), sd->ua);
+
+           if ((!ret) || (!gi->job))
+             {
+                ERR("Can't start to download from %s to %s", gi->url, gi->file);
+                continue;
+             }
            sd->try_num++;
            sd->download_num++;
+        }
+      sd->download_list = eina_list_remove(sd->download_list, gi);
+      efl_event_callback_legacy_call
+         (obj, ELM_MAP_EVENT_TILE_LOAD, NULL);
+      if (sd->download_num == 1)
+        edje_object_signal_emit(wd->resize_obj,
+                                "elm,state,busy,start", "elm");
+      if (file_exists)
+        {
+           /* It seem the file already exists, try to load it and let
+              _grid_item_update do his job. If this file isn't a image the func
+              will invalidate it and try to redownload it. */
+           _grid_item_update(gi);
+           gi->wsd->finish_num++;
            efl_event_callback_legacy_call
-             (obj, ELM_MAP_EVENT_TILE_LOAD, NULL);
-           if (sd->download_num == 1)
-             edje_object_signal_emit(wd->resize_obj,
-                                     "elm,state,busy,start", "elm");
+              ((gi->wsd)->obj, ELM_MAP_EVENT_TILE_LOADED, NULL);
         }
    }
 
@@ -1214,9 +1235,9 @@ _zoom_animator_set(Elm_Map_Data *sd,
    Eina_Bool r = EINA_FALSE;
 
    sd->zoom_animator = !!callback;
-   r = efl_event_callback_del(sd->obj, EFL_EVENT_ANIMATOR_TICK, _zoom_anim_cb, sd->obj);
-   r |= efl_event_callback_del(sd->obj, EFL_EVENT_ANIMATOR_TICK, _zoom_bring_anim_cb, sd->obj);
-   if (callback) efl_event_callback_add(sd->obj, EFL_EVENT_ANIMATOR_TICK, callback, sd->obj);
+   r = efl_event_callback_del(sd->obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _zoom_anim_cb, sd->obj);
+   r |= efl_event_callback_del(sd->obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _zoom_bring_anim_cb, sd->obj);
+   if (callback) efl_event_callback_add(sd->obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, callback, sd->obj);
 
    return r;
 }
@@ -3975,15 +3996,15 @@ _elm_map_pan_class_constructor(Efl_Class *klass)
    evas_smart_legacy_type_register(MY_PAN_CLASS_NAME_LEGACY, klass);
 }
 
-#include "elm_map_pan.eo.c"
+#include "elm_map_pan_eo.c"
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_map_efl_ui_widget_theme_apply(Eo *obj, Elm_Map_Data *sd EINA_UNUSED)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
 
    elm_widget_theme_object_set
@@ -4070,8 +4091,6 @@ _elm_map_efl_canvas_group_group_add(Eo *obj, Elm_Map_Data *priv)
    Evas_Coord minw, minh;
    Elm_Map_Pan_Data *pan_data;
    Evas_Object *edje;
-
-   elm_widget_sub_object_parent_add(obj);
 
    edje = edje_object_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, edje);
@@ -4475,7 +4494,7 @@ _elm_map_region_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd, double *lon, do
 }
 
 EOLIAN static void
-_elm_map_paused_set(Eo *obj, Elm_Map_Data *sd, Eina_Bool paused)
+_elm_map_efl_ui_zoom_zoom_animation_set(Eo *obj, Elm_Map_Data *sd, Eina_Bool paused)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -4499,7 +4518,7 @@ _elm_map_paused_set(Eo *obj, Elm_Map_Data *sd, Eina_Bool paused)
 }
 
 EOLIAN static Eina_Bool
-_elm_map_paused_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
+_elm_map_efl_ui_zoom_zoom_animation_get(const Eo *obj EINA_UNUSED, Elm_Map_Data *sd)
 {
    return sd->paused;
 }
@@ -5504,6 +5523,18 @@ elm_map_wheel_disabled_get(const Evas_Object *obj)
    return elm_interface_scrollable_wheel_disabled_get(obj);
 }
 
+EAPI void
+elm_map_paused_set(Evas_Object *obj, Eina_Bool paused)
+{
+   efl_ui_zoom_animation_set(obj, paused);
+}
+
+EAPI Eina_Bool
+elm_map_paused_get(const Evas_Object *obj)
+{
+   return efl_ui_zoom_animation_get(obj);
+}
+
 EOLIAN static Elm_Map_Overlay*
 _elm_map_overlay_route_add(Eo *obj, Elm_Map_Data *sd, const Elm_Map_Route *route)
 {
@@ -5694,4 +5725,4 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_map, Elm_Map_Data)
 #define ELM_MAP_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_map)
 
-#include "elm_map.eo.c"
+#include "elm_map_eo.c"

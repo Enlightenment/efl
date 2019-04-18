@@ -110,4 +110,4 @@ EAPI void                        elm_button_autorepeat_set(Evas_Object *obj, Ein
  */
 EAPI Eina_Bool                   elm_button_autorepeat_get(const Evas_Object *obj);
 
-#include "efl_ui_button.eo.legacy.h"
+#include "efl_ui_button_eo.legacy.h"

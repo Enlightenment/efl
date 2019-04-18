@@ -1,7 +1,7 @@
 // g++ -g `pkg-config --cflags --libs elementary-cxx efl-cxx eina-cxx eo-cxx ecore-cxx evas-cxx edje-cxx` slider_cxx_example.cc -o slider_cxx_example
 
 #define EFL_CXXPERIMENTAL
-
+#define EFL_BETA_API_SUPPORT
 #include <Elementary.hh>
 
 using namespace std::placeholders;
@@ -27,23 +27,18 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
    efl::ui::Slider sl2(instantiate, win);
    efl::ui::Image ic(instantiate, win);
-   ic.icon_set("home");
+   ic.icon_set("folder");
    ic.scalable_set(false, false);
-   sl2.content_set(ic);
-
-   efl::ui::Image ic2(instantiate, win);
-   ic2.icon_set("folder");
-   ic2.scalable_set(false, false);
    // FIXME: C++ part API needs special reference handling! This will show ERR!
    efl::eo::downcast<efl::Content>(sl2.part_get("elm.swallow.end"))
-         .content_set(ic2);
+         .content_set(ic);
 
    sl2.hint_fill_set(true, false);
    bx.pack_end(sl2);
 
    efl::ui::Slider sl3(instantiate, win);
    sl3.range_value_set(1);
-   sl3.hint_min_set({220, 0});
+   sl3.hint_size_min_set({220, 0});
    sl3.hint_fill_set(true, false);
    bx.pack_end(sl3);
 
@@ -57,14 +52,14 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    sl5.range_step_set(1);
    sl5.direction_set(EFL_UI_DIR_UP);
    sl5.hint_fill_set(true, false);
-   sl5.hint_min_set({0, 120});
+   sl5.hint_size_min_set({0, 120});
    bx.pack_end(sl5);
 
    efl::ui::Slider sl6(instantiate, win);
    sl6.direction_set(EFL_UI_DIR_HORIZONTAL);
    sl6.range_min_max_set(0, 10);
    sl6.hint_fill_set(false, true);
-   sl6.hint_weight_set(0, EFL_GFX_SIZE_HINT_EXPAND);
+   sl6.hint_weight_set(0, EFL_GFX_HINT_EXPAND);
    bx.pack_end(sl6);
 
    efl::ui::Slider sl7(instantiate, win);

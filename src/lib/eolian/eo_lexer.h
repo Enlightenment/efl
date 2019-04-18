@@ -24,10 +24,10 @@ enum Tokens
  * they just fill in the "kw" field of the token */
 #define KEYWORDS KW(class), KW(const), KW(enum), KW(return), KW(struct), \
     \
-    KW(abstract), KW(constructor), KW(constructors), KW(data), \
-    KW(destructor), KW(eo), KW(eo_prefix), KW(event_prefix), KW(events), \
+    KW(abstract), KW(composite), KW(constructor), KW(constructors), KW(data), \
+    KW(destructor), KW(eo_prefix), KW(event_prefix), KW(events), \
     KW(extends), KW(free), KW(get), KW(implements), KW(import), KW(interface), \
-    KW(keys), KW(legacy), KW(legacy_prefix), KW(methods), KW(mixin), KW(params), \
+    KW(keys), KW(legacy), KW(methods), KW(mixin), KW(params), \
     KW(parse), KW(parts), KW(ptr), KW(set), KW(type), KW(values), KW(var), KW(requires), \
     \
     KWAT(auto), KWAT(beta), KWAT(class), KWAT(const), KWAT(cref), KWAT(empty), \
@@ -50,10 +50,12 @@ enum Tokens
     \
     KW(bool), \
     \
+    KW(slice), KW(rw_slice), \
+    \
     KW(void), \
     \
     KW(accessor), KW(array), KW(future), KW(iterator), KW(hash), KW(list), \
-    KW(inarray), KW(inlist), KW(any_value), KW(any_value_ptr), \
+    KW(any_value), KW(any_value_ptr), \
     KW(mstring), KW(string), KW(stringshare), KW(strbuf), \
     \
     KW(void_ptr), \
@@ -210,7 +212,7 @@ int         eo_lexer_get            (Eo_Lexer *ls);
 int         eo_lexer_lookahead      (Eo_Lexer *ls);
 /* "throws" an error, with a custom message and custom token */
 void        eo_lexer_lex_error      (Eo_Lexer *ls, const char *msg, int token);
-/* like above, but uses the lexstate->t.token, aka current token */
+/* like above, but uses the lexstate->t.token, a.k.a. current token */
 void        eo_lexer_syntax_error   (Eo_Lexer *ls, const char *msg);
 /* turns the token into a string, writes into the given buffer */
 void        eo_lexer_token_to_str   (int token, char *buf);

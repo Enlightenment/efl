@@ -517,8 +517,7 @@ EAPI const char      *elm_theme_data_get(Elm_Theme *th, const char *key);
  * string that is returned by functions like eina_stringshare_add() so it can
  * be just references via stringshare functions if desired.
  *
- * If group is NULL, then nothing can be looked up, so it is a non-sensical
- * request.
+ * If group is NULL, then nothing can be looked up.
  *
  * @since 1.8
  * @ingroup Elm_Theme
@@ -533,10 +532,10 @@ EAPI const char *elm_theme_group_path_find(Elm_Theme *th, const char *group);
  * @return A list of collection names (sorted) or NULL if none found
  *
  * This function will walk all theme files configured in the theme @p th (or
- * NULL if its the default) and find all groups that BEGIN with the string
+ * NULL if it's the default) and find all groups that BEGIN with the string
  * @p begin and have that string as at LEAST their start, and then add the
- * fulll group name that matches to the list and return that full group
- * group string.
+ * full group name that matches to the list and return that full group
+ * string.
  *
  * The list returned must be freed by the caller, with each string being a
  * stringshared string to be freed with eina_stringshare_del(). Not doing so

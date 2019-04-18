@@ -1,4 +1,4 @@
-class Efl.Config_Global extends Efl.Object implements Efl.Config
+class @beta Efl.Config_Global extends Efl.Object implements Efl.Config
 {
    [[This class is a singleton representing the global configuration for the
      running application.
@@ -79,8 +79,6 @@ class Efl.Config_Global extends Efl.Object implements Efl.Config
            At this point it is not expected that anyone would generally use
            this API except if you are a desktop environment and so the user
            base of this API will be enlightenment itself.
-
-           @since 1.17
          ]]
          params {
             profile: string; [[The new profile's name.]]
@@ -97,8 +95,6 @@ class Efl.Config_Global extends Efl.Object implements Efl.Config
            At this point it is not expected that anyone would generally use
            this API except if you are a desktop environment and so the user
            base of this API will be enlightenment itself.
-
-           @since 1.17
          ]]
          params {
             profile: string; [[The name of the profile that is to be deleted.]]

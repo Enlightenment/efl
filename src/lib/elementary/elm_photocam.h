@@ -80,9 +80,6 @@ struct _Elm_Photocam_Error
    Eina_Bool open_error;
 };
 
-#ifdef EFL_EO_API_SUPPORT
-#include "efl_ui_image_zoomable_eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_photocam_legacy.h"
 #endif

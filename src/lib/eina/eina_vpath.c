@@ -188,6 +188,8 @@ eina_vpath_init(void)
 Eina_Bool
 eina_vpath_shutdown(void)
 {
+   eina_hash_free(vpath_data);
+   vpath_data = NULL;
    eina_log_domain_unregister(_eina_vpath_log_dom);
    _eina_vpath_log_dom = -1;
    return EINA_TRUE;
@@ -212,6 +214,7 @@ _fetch_user_homedir(char **str, const char *name, const char *error)
 #else
   ERR("User fetching is disabled on this system\nThe string was: %s", error);
   return EINA_FALSE;
+  (void) name;
 #endif
 }
 

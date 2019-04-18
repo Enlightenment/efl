@@ -2,7 +2,6 @@
 #define _ELDBUS_MODEL_H
 
 #include <Eldbus.h>
-#include <Efl.h>
 #include <Eo.h>
 
 #ifdef __cplusplus
@@ -10,7 +9,7 @@ extern "C" {
 #endif
 
 #ifdef EFL_BETA_API_SUPPORT
-
+#include <Efl.h>
 #include <eldbus_model_connection.eo.h>
 #include <eldbus_model_object.eo.h>
 #include <eldbus_model_proxy.eo.h>

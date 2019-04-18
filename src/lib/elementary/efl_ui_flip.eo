@@ -1,9 +1,8 @@
 import efl_ui_direction;
 
-enum Efl.Ui.Flip_Mode
+enum @beta Efl.Ui.Flip_Mode
 {
    [[Efl UI flip mode ]]
-   legacy: efl_ui_flip;
    rotate_y_center_axis, [[Rotate Y center axis flip mode]]
    rotate_x_center_axis, [[Rotate X center axis flip mode]]
    rotate_xz_center_axis, [[Rotate XZ center axis flip mode]]
@@ -19,7 +18,7 @@ enum Efl.Ui.Flip_Mode
    cross_fade, [[Cross fade flip mode]]
 }
 
-enum Efl.Ui.Flip_Interaction
+enum @beta Efl.Ui.Flip_Interaction
 {
    [[Efl UI flip interaction]]
    none, [[No interaction]]
@@ -28,10 +27,9 @@ enum Efl.Ui.Flip_Interaction
    page [[Page interaction]]
 }
 
-class Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
+class @beta Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
 {
    [[Efl UI flip class]]
-   legacy_prefix: elm_flip;
    methods {
       @property interaction {
          set {
@@ -87,7 +85,6 @@ class Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
 
            See also @.interaction.set.
          ]]
-         legacy: null;
          params {
             @in dir: Efl.Ui.Dir; [[The hit area to set.]]
             @in hitsize: double; [[The amount of that dimension (0.0 to 1.0) to use.]]
@@ -96,7 +93,6 @@ class Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
       interaction_direction_hitsize_get {
          [[Get the amount of the flip that is sensitive to interactive flip.]]
          return: double; [[The size set for that direction.]]
-         legacy: null;
          params {
             @in dir: Efl.Ui.Dir; [[The direction to check.]]
          }
@@ -113,7 +109,6 @@ class Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
            @.interaction_direction_hitsize_set. By default, a minimum
            hit area will be created on the opposite edge of the flip.
          ]]
-         legacy: null;
          params {
             @in dir: Efl.Ui.Dir; [[The direction to change.]]
             @in enabled: bool; [[If that direction is enabled or not.]]
@@ -122,7 +117,6 @@ class Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
       interaction_direction_enabled_get {
          [[Get the enabled state of that flip direction.]]
          return: bool; [[If that direction is enabled or not.]]
-         legacy: null;
          params {
             @in dir: Efl.Ui.Dir; [[The direction to check.]]
          }
@@ -146,7 +140,7 @@ class Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
            other content is shown as the other side of the flip),
            #ELM_FLIP_ROTATE_YZ_CENTER_AXIS (rotate the currently visible
            content around a diagonal axis in the middle of its height, the
-           other content is hown as the other side of the flip).
+           other content is shown as the other side of the flip).
            #ELM_FLIP_CUBE_LEFT (rotate the currently visible content to the
            left as if the flip was a cube, the other content is shown as the
            right face of the cube), #ELM_FLIP_CUBE_RIGHT (rotate the
@@ -235,7 +229,6 @@ class Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
       Efl.Ui.Widget.widget_sub_object_del;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
-      Efl.Container.content_remove;
       Efl.Part.part_get;
       Efl.Pack.unpack;
       Efl.Pack.pack;

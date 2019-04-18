@@ -1,0 +1,43 @@
+import eina_types;
+
+
+struct Efl.File_Save_Info
+{
+   [[Info used to determine various attributes when saving a file.
+
+     @since 1.22
+   ]]
+   quality: uint; [[The quality level (0-100) to save the file with; commonly used when saving image files.]]
+   compression: uint; [[The compression level (0-100) to save the file with.]]
+   encoding: string; [[The encoding to use when saving the file.]]
+}
+
+interface Efl.File_Save {
+   [[Efl file saving interface
+
+     @since 1.22
+   ]]
+   methods {
+      save @const {
+         [[Save the given image object's contents to an (image) file.
+
+           The extension suffix on $file will determine which saver
+           module Evas is to use when saving, thus the final file's
+           format. If the file supports multiple data stored in it (Eet ones),
+           you can specify the key to be used as the index of the image in it.
+
+           You can specify some flags when saving the image.  Currently
+           acceptable flags are $quality and $compress. Eg.:
+           "quality=100 compress=9".
+         ]]
+         params {
+            @in file: string @nonull; [[The filename to be used to save the image (extension
+                                              obligatory).]]
+            @in key: string; [[The image key in the file (if an Eet one), or $null,
+                                     otherwise.]]
+            @in info: const(ptr(Efl.File_Save_Info)); [[The flags to be used ($null for defaults).]]
+         }
+         return: bool;  [[$true on success, $false otherwise]]
+      }
+   }
+}

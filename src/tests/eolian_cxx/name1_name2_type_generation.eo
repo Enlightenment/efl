@@ -10,7 +10,7 @@ class Name1.Name2.Type_Generation extends Efl.Object
      }
      inrefintown {
        params {
-         @in v: ptr(int) @owned;
+         @in v: free(ptr(int),free) @owned;
        }
      }
      inrefintownfree {
@@ -36,7 +36,7 @@ class Name1.Name2.Type_Generation extends Efl.Object
      }
      inintptrown {
        params {
-         @in v: ptr(int) @owned;
+         @in v: free(ptr(int),free) @owned;
        }
      }
      inintptrownfree {
@@ -78,7 +78,7 @@ class Name1.Name2.Type_Generation extends Efl.Object
        return: ptr(int);
      }
      returnintptrown {
-       return: ptr(int) @owned;
+       return: free(ptr(int),free) @owned;
      }
      returnintptrownfree {
        params {
@@ -115,7 +115,7 @@ class Name1.Name2.Type_Generation extends Efl.Object
      }
      outintptrown {
        params {
-         @out v: ptr(int) @owned;
+         @out v: free(ptr(int),free) @owned;
        }
      }
      outintptrownfree {
@@ -166,7 +166,7 @@ class Name1.Name2.Type_Generation extends Efl.Object
      }
      optionalinintptrown {
        params {
-         @in v: ptr(int) @owned @optional;
+         @in v: free(ptr(int),free) @owned @optional;
        }
      }
      optionalinintptrownfree {
@@ -191,7 +191,7 @@ class Name1.Name2.Type_Generation extends Efl.Object
      }
      optionaloutintptrown {
        params {
-         @out v: ptr(int) @owned @optional;
+         @out v: free(ptr(int),free) @owned @optional;
        }
      }
      optionaloutintptrownfree {

@@ -1,6 +1,6 @@
 #include "efl_ui_table_private.h"
 
-#include "../evas/canvas/evas_table.eo.h"
+#include "../evas/canvas/evas_table_eo.h"
 
 #define MY_CLASS EFL_UI_TABLE_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Table"
@@ -28,12 +28,12 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
    evas_object_table_mirrored_set(wd->resize_obj, rtl);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _efl_ui_table_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
@@ -74,7 +74,16 @@ _table_size_hints_changed(void *data, Evas *e EINA_UNUSED,
 {
    Efl_Ui_Table_Data *pd = efl_data_scope_get(data, MY_CLASS);
 
-   _sizing_eval(data, pd);
+   if (table == data)
+     efl_pack_layout_request(data);
+   else
+     _sizing_eval(data, pd);
+}
+
+static void
+_efl_ui_table_size_hints_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   efl_pack_layout_request(ev->object);
 }
 
 /* Custom table class: overrides smart_calculate. */
@@ -83,11 +92,11 @@ static void _custom_table_calc(Eo *obj, Custom_Table_Data *pd);
 static Eina_Bool
 _custom_table_initializer(Efl_Class *klass)
 {
-   EFL_OPS_DEFINE(class_ops,
+   EFL_OPS_DEFINE(ops,
          EFL_OBJECT_OP_FUNC(efl_canvas_group_calculate, _custom_table_calc)
    );
 
-   return efl_class_functions_set(klass, NULL, &class_ops);
+   return efl_class_functions_set(klass, &ops, NULL);
 };
 
 static const Efl_Class_Description custom_table_class_desc = {
@@ -114,12 +123,28 @@ _custom_table_calc(Eo *obj, Custom_Table_Data *pd)
 /* End of custom table class */
 
 EOLIAN static void
+_efl_ui_table_homogeneous_set(Eo *obj, Efl_Ui_Table_Data *pd, Eina_Bool homogeneoush, Eina_Bool homogeneousv)
+{
+   if ((pd->homogeneoush == !!homogeneoush) &&
+       (pd->homogeneousv == !!homogeneousv))
+     return;
+
+   pd->homogeneoush = !!homogeneoush;
+   pd->homogeneousv = !!homogeneousv;
+   efl_pack_layout_request(obj);
+}
+
+EOLIAN static void
+_efl_ui_table_homogeneous_get(const Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd, Eina_Bool *homogeneoush, Eina_Bool *homogeneousv)
+{
+   if (homogeneoush) *homogeneoush = pd->homogeneoush;
+   if (homogeneousv) *homogeneousv = pd->homogeneousv;
+}
+
+EOLIAN static void
 _efl_ui_table_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Table_Data *pd)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   _sizing_eval(obj, pd);
-   efl_canvas_group_calculate(efl_super(wd->resize_obj, CUSTOM_TABLE_CLASS));
+   _efl_ui_table_custom_layout(obj, pd);
 }
 
 EOLIAN void
@@ -136,8 +161,6 @@ _efl_ui_table_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Table_Data *pd)
    Custom_Table_Data *custom;
    Evas_Object *table;
 
-   elm_widget_sub_object_parent_add(obj);
-
    table = efl_add(CUSTOM_TABLE_CLASS, obj);
    custom = efl_data_scope_get(table, CUSTOM_TABLE_CLASS);
    custom->gd = pd;
@@ -148,6 +171,8 @@ _efl_ui_table_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Table_Data *pd)
 
    evas_object_event_callback_add
          (table, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _table_size_hints_changed, obj);
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
+                          _efl_ui_table_size_hints_changed_cb, NULL);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
 
@@ -168,6 +193,8 @@ _efl_ui_table_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNU
    evas_object_event_callback_del_full
          (wd->resize_obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
           _table_size_hints_changed, obj);
+   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
+                          _efl_ui_table_size_hints_changed_cb, NULL);
 
    /* let's make our table object the *last* to be processed, since it
     * may (smart) parent other sub objects here */
@@ -197,6 +224,8 @@ _efl_ui_table_efl_object_constructor(Eo *obj, Efl_Ui_Table_Data *pd)
    pd->last_row = -1;
    pd->req_cols = 0;
    pd->req_rows = 0;
+   pd->align.h = 0.5;
+   pd->align.v = 0.5;
 
    return obj;
 }
@@ -232,6 +261,28 @@ _efl_ui_table_efl_pack_pack_padding_get(const Eo *obj, Efl_Ui_Table_Data *pd EIN
    if (v) *v = pd->pad.v;
 }
 
+EOLIAN static void
+_efl_ui_table_efl_pack_pack_align_set(Eo *obj, Efl_Ui_Table_Data *pd, double h, double v)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   if (h < 0) h = -1;
+   if (v < 0) v = -1;
+   if (h > 1) h = 1;
+   if (v > 1) v = 1;
+   pd->align.h = h;
+   pd->align.v = v;
+
+   efl_pack_layout_request(obj);
+}
+
+EOLIAN static void
+_efl_ui_table_efl_pack_pack_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd, double *h, double *v)
+{
+   if (h) *h = pd->align.h;
+   if (v) *v = pd->align.v;
+}
+
 static void
 _subobj_del_cb(void *data, const Efl_Event *event)
 {
@@ -252,6 +303,18 @@ _pack_at(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *subobj,
    Table_Item *gi = NULL;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+
+   gi = efl_key_data_get(subobj, TABLE_ITEM_KEY);
+
+   if (gi && efl_ui_widget_parent_get(subobj) == obj)
+     {
+        ERR("subobj %p %s is already added to this", subobj, efl_class_name_get(subobj) );
+        return EINA_FALSE;
+     }
+   else if (gi &&  efl_ui_widget_parent_get(subobj) != obj)
+     {
+        gi = NULL;
+     }
 
    if (col < 0) col = 0;
    if (row < 0) row = 0;
@@ -274,23 +337,12 @@ _pack_at(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *subobj,
             col, row, colspan, rowspan, pd->req_cols, pd->req_rows);
      }
 
-   if (obj == elm_widget_parent_widget_get(subobj))
-     {
-        gi = efl_key_data_get(subobj, TABLE_ITEM_KEY);
-        if (gi)
-          {
-             gi->col = col;
-             gi->row = row;
-             gi->col_span = colspan;
-             gi->row_span = rowspan;
-             gi->linear = EINA_FALSE;
-          }
-        else ERR("object is a child but internal data was not found!");
-     }
-
    if (!gi)
      {
+        if (!elm_widget_sub_object_add(obj, subobj))
+          return EINA_FALSE;
         gi = calloc(1, sizeof(*gi));
+        if (!gi) return EINA_FALSE;
         gi->col = col;
         gi->row = row;
         gi->col_span = colspan;
@@ -302,7 +354,6 @@ _pack_at(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *subobj,
               eina_inlist_append(EINA_INLIST_GET(pd->items), EINA_INLIST_GET(gi));
 
         efl_key_data_set(subobj, TABLE_ITEM_KEY, gi);
-        elm_widget_sub_object_add(obj, subobj);
         efl_event_callback_legacy_call(obj, EFL_CONTAINER_EVENT_CONTENT_ADDED, subobj);
         efl_event_callback_array_add(subobj, subobj_callbacks(), obj);
      }
@@ -415,6 +466,7 @@ end:
          eina_inlist_remove(EINA_INLIST_GET(pd->items), EINA_INLIST_GET(gi));
    pd->count--;
    efl_key_data_set(subobj, TABLE_ITEM_KEY, NULL);
+   efl_event_callback_array_del(subobj, subobj_callbacks(), obj);
    free(gi);
 }
 
@@ -435,20 +487,28 @@ _efl_ui_table_efl_pack_unpack(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *su
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_table_efl_pack_pack_clear(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUSED)
+_efl_ui_table_efl_pack_pack_clear(Eo *obj, Efl_Ui_Table_Data *pd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
+   while (pd->items)
+     _item_remove(obj, pd, pd->items->object);
+
    evas_object_table_clear(wd->resize_obj, EINA_TRUE);
+
    return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_table_efl_pack_unpack_all(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUSED)
+_efl_ui_table_efl_pack_unpack_all(Eo *obj, Efl_Ui_Table_Data *pd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
+   while (pd->items)
+     _item_remove(obj, pd, pd->items->object);
+
    evas_object_table_clear(wd->resize_obj, EINA_FALSE);
+
    return EINA_TRUE;
 }
 
@@ -658,21 +718,14 @@ _efl_ui_table_efl_pack_table_table_rows_get(const Eo *obj EINA_UNUSED, Efl_Ui_Ta
      {
         ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, 0);
         int rows;
-        evas_object_table_col_row_size_get(wd->resize_obj, &rows, NULL);
+        evas_object_table_col_row_size_get(wd->resize_obj, NULL, &rows);
         return rows;
      }
    return pd->req_rows;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_table_efl_pack_pack(Eo *obj, Efl_Ui_Table_Data *pd EINA_UNUSED, Efl_Gfx_Entity *subobj)
-{
-   /* this is just an alias */
-   return efl_pack_end(obj, subobj);
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_table_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *subobj)
+_efl_ui_table_efl_pack_pack(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *subobj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(subobj, EINA_FALSE);
 

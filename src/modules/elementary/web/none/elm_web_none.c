@@ -9,10 +9,12 @@
 #include "elm_priv.h"
 #include "elm_widget_web.h"
 
-#define ELEMENTARY_BUILD
+#ifndef EFL_BUILD
+# define EFL_BUILD
+#endif
 #undef ELM_MODULE_HELPER_H
 #include "elm_module_helper.h"
-#include "elm_web_none.eo.h"
+#include "elm_web_none_eo.h"
 
 #define MY_CLASS ELM_WEB_CLASS
 
@@ -57,7 +59,6 @@ _elm_web_none_efl_canvas_group_group_add(Eo *obj, Elm_Web_None_Data *_pd EINA_UN
    elm_widget_resize_object_set(obj, resize_obj);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 }
 
 EOLIAN static Evas_Object*
@@ -147,7 +148,7 @@ _elm_web_none_elm_web_bg_color_get(const Eo *obj EINA_UNUSED, Elm_Web_None_Data 
    if (a) *a = 0;
 }
 
-EOLIAN static const char*
+EOLIAN static char*
 _elm_web_none_elm_web_selection_get(const Eo *obj EINA_UNUSED, Elm_Web_None_Data *_pd EINA_UNUSED)
 {
    return NULL;
@@ -365,4 +366,4 @@ ewm_class_get(void)
 #define ELM_WEB_NONE_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(elm_web_none)
 
-#include "elm_web_none.eo.c"
+#include "elm_web_none_eo.c"

@@ -3,8 +3,9 @@
 
 #include <Eina.h>
 #include <Eo.h>
+#ifdef EFL_BETA_API_SUPPORT
 #include <Efl.h>
-
+#endif
 #ifdef EAPI
 # undef EAPI
 #endif
@@ -99,7 +100,7 @@ typedef Eo Ector_Renderer;
 
 /**
  * @typedef Ector_Colorspace
- * The definiton of colorspace.
+ * The definition of colorspace.
  */
   // FIXME: Enable this when we have merged Emile
 /* typedef Evas_Colorspace Ector_Colorspace; */

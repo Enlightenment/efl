@@ -10,9 +10,9 @@ _scale_get(Eo *target)
    Eina_Rect geometry;
 
    geometry = efl_gfx_entity_geometry_get(target);
-   efl_gfx_map_coord_absolute_get(target, 0, &x1, &y1, NULL);
-   efl_gfx_map_coord_absolute_get(target, 1, &x2, &y2, NULL);
-   efl_gfx_map_coord_absolute_get(target, 2, &x3, &y3, NULL);
+   efl_gfx_mapping_coord_absolute_get(target, 0, &x1, &y1, NULL);
+   efl_gfx_mapping_coord_absolute_get(target, 1, &x2, &y2, NULL);
+   efl_gfx_mapping_coord_absolute_get(target, 2, &x3, &y3, NULL);
 
    w = sqrt(((x2 - x1) * (x2 - x1)) + ((y2 - y1) * (y2 - y1)));
    h = sqrt(((x3 - x2) * (x3 - x2)) + ((y3 - y2) * (y3 - y2)));
@@ -161,7 +161,7 @@ _efl_canvas_animation_scale_efl_canvas_animation_animation_apply(Eo *eo_obj,
 
    if (pd->use_rel_pivot)
      {
-        efl_gfx_map_zoom(target,
+        efl_gfx_mapping_zoom(target,
                          new_scale.scale_x / prev_scale.scale_x,
                          new_scale.scale_y / prev_scale.scale_y,
                          (pd->rel_pivot.obj) ? pd->rel_pivot.obj : target,
@@ -169,7 +169,7 @@ _efl_canvas_animation_scale_efl_canvas_animation_animation_apply(Eo *eo_obj,
      }
    else
      {
-        efl_gfx_map_zoom_absolute(target,
+        efl_gfx_mapping_zoom_absolute(target,
                                   new_scale.scale_x / prev_scale.scale_x,
                                   new_scale.scale_y / prev_scale.scale_y,
                                   pd->abs_pivot.cx, pd->abs_pivot.cy);

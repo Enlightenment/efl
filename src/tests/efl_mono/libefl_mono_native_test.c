@@ -45,13 +45,13 @@
 # endif
 #endif
 
+#include "dummy_test_iface.eo.h"
+#include "dummy_inherit_iface.eo.h"
 #include "dummy_numberwrapper.eo.h"
 #include "dummy_test_object.eo.h"
 #include "dummy_child.eo.h"
-#include "dummy_test_iface.eo.h"
-#include "dummy_another_iface.eo.h"
-#include "dummy_inherit_iface.eo.h"
 #include "dummy_inherit_helper.eo.h"
+#include "dummy_part_holder.eo.h"
 
 #include <interfaces/efl_part.eo.h>
 
@@ -67,12 +67,12 @@ typedef struct Dummy_Test_Object_Data
   Eina_Value *stored_value;
   Dummy_StructSimple stored_struct;
   int stored_int;
-  Eo *part_one;
-  Eo *part_two;
   Eina_Promise *promise;
   Eina_List *list_for_accessor;
   int setter_only;
   int iface_prop;
+  Eo *provider;
+  Eo *iface_provider;
 } Dummy_Test_Object_Data;
 
 typedef struct Dummy_Numberwrapper_Data
@@ -82,7 +82,19 @@ typedef struct Dummy_Numberwrapper_Data
 
 typedef struct Dummy_Child_Data
 {
+  int iface_prop;
+  const char* a;
+  double b;
+  Eina_Bool iface_was_set;
+  Eina_Bool obligatory_beta_ctor_was_called;
+  Eina_Bool optional_beta_ctor_was_called;
 } Dummy_Child_Data;
+
+typedef struct Dummy_Part_Holder_Data
+{
+  Eo *part_one;
+  Eo *part_two;
+} Dummy_Part_Holder_Data;
 
 typedef struct Dummy_Inherit_Helper_Data
 {
@@ -138,18 +150,29 @@ static Efl_Object*
 _dummy_test_object_efl_object_constructor(Eo *obj, Dummy_Test_Object_Data *pd)
 {
    efl_constructor(efl_super(obj, DUMMY_TEST_OBJECT_CLASS));
+   pd->provider = efl_add(DUMMY_NUMBERWRAPPER_CLASS, obj);
 
-   // To avoid an infinite loop calling the same constructor
-   if (!efl_parent_get(obj))
-     {
-        pd->part_one = efl_add(DUMMY_TEST_OBJECT_CLASS, obj, efl_name_set(efl_added, "part_one"));
-        pd->part_two = efl_add(DUMMY_TEST_OBJECT_CLASS, obj, efl_name_set(efl_added, "part_two"));
-     }
+   if (efl_parent_get(obj) == NULL) { // Avoid recursion
+       pd->iface_provider = efl_add(DUMMY_TEST_OBJECT_CLASS, obj);
+       dummy_test_iface_prop_set(pd->iface_provider, 1997);
+   } else
+       pd->iface_provider = NULL;
+   dummy_numberwrapper_number_set(pd->provider, 1999);
 
    return obj;
 }
 
 Efl_Object *_dummy_test_object_return_object(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+  return obj;
+}
+
+Efl_Object *_dummy_test_object_return_null_object(Eo *obj EINA_UNUSED, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+  return NULL;
+}
+
+Dummy_Test_Iface *_dummy_test_object_return_iface(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
   return obj;
 }
@@ -165,7 +188,7 @@ void _dummy_test_object_int_ptr_out(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data 
     *y = &pd->stored_int;
 }
 
-const char *_dummy_test_object_in_string(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, const char *str)
+char *_dummy_test_object_in_string(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, const char *str)
 {
   const char *ret = malloc(sizeof(char)*(strlen(str) + 1));
   return strcpy((char*)ret, str);
@@ -196,7 +219,7 @@ const char *_dummy_test_object_return_string(EINA_UNUSED Eo *obj, EINA_UNUSED Du
   return "string";
 }
 
-const char *_dummy_test_object_return_own_string(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+char *_dummy_test_object_return_own_string(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
   static const char* reference = "own_string";
   const char *ret = malloc(sizeof(char)*(strlen(reference) + 1));
@@ -208,7 +231,7 @@ void _dummy_test_object_out_string(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_O
   *str = "out_string";
 }
 
-void _dummy_test_object_out_own_string(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, const char**str)
+void _dummy_test_object_out_own_string(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, char**str)
 {
   static const char* reference = "out_own_string";
   *str = malloc(sizeof(char)*(strlen(reference) + 1));
@@ -230,7 +253,7 @@ const char *_dummy_test_object_call_return_string(Eo *obj, EINA_UNUSED Dummy_Tes
   return dummy_test_object_return_string(obj);
 }
 
-const char *_dummy_test_object_call_return_own_string(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+char *_dummy_test_object_call_return_own_string(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
   return dummy_test_object_return_own_string(obj);
 }
@@ -242,9 +265,9 @@ const char *_dummy_test_object_call_out_string(Eo *obj, EINA_UNUSED Dummy_Test_O
   return ret;
 }
 
-const char *_dummy_test_object_call_out_own_string(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+char *_dummy_test_object_call_out_own_string(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
-  const char *ret = NULL;
+  char *ret = NULL;
   dummy_test_object_out_own_string(obj, &ret);
   return ret;
 }
@@ -3328,18 +3351,9 @@ void struct_complex_with_values(Dummy_StructComplex *complex)
    eina_array_push(complex->farray, _new_int(0x2A));
    eina_array_push(complex->farray, _new_int(0x42));
 
-   complex->finarray = eina_inarray_new(sizeof(int), 0);
-   eina_inarray_push(complex->finarray, _int_ref(0x0));
-   eina_inarray_push(complex->finarray, _int_ref(0x2A));
-   eina_inarray_push(complex->finarray, _int_ref(0x42));
-
    complex->flist = eina_list_append(complex->flist, strdup("0x0"));
    complex->flist = eina_list_append(complex->flist, strdup("0x2A"));
    complex->flist = eina_list_append(complex->flist, strdup("0x42"));
-
-   complex->finlist = eina_inlist_append(complex->finlist, _new_inlist_int(0x0));
-   complex->finlist = eina_inlist_append(complex->finlist, _new_inlist_int(0x2A));
-   complex->finlist = eina_inlist_append(complex->finlist, _new_inlist_int(0x42));
 
    complex->fhash = eina_hash_string_superfast_new(NULL);
    eina_hash_add(complex->fhash, "aa", strdup("aaa"));
@@ -3370,13 +3384,7 @@ Eina_Bool check_and_modify_struct_complex(Dummy_StructComplex *complex)
    if (!_array_int_equal(complex->farray, base_seq_int, base_seq_int_size))
      return EINA_FALSE;
 
-   if (!_inarray_int_equal(complex->finarray, base_seq_int, base_seq_int_size))
-     return EINA_FALSE;
-
    if (!_list_str_equal(complex->flist, base_seq_str, base_seq_str_size))
-     return EINA_FALSE;
-
-   if (!_inlist_int_equal(complex->finlist, base_seq_int, base_seq_int_size))
      return EINA_FALSE;
 
    if (!_hash_str_check(complex->fhash, "aa", "aaa")
@@ -3632,12 +3640,11 @@ Dummy_StructComplex* _dummy_test_object_struct_complex_ptr_return_own(EINA_UNUSE
 }
 
 //                   //
-// Class constructor
+// Class methods
 //                   //
 EOLIAN static void
-_dummy_test_object_class_constructor(Efl_Class *klass)
+_dummy_test_object_create_cmp_array_objects(void)
 {
-   (void)klass;
    modified_seq_obj[0] = base_seq_obj[0] = _new_obj(0x0);
    modified_seq_obj[1] = base_seq_obj[1] = _new_obj(0x2A);
    modified_seq_obj[2] = base_seq_obj[2] = _new_obj(0x42);
@@ -3647,11 +3654,8 @@ _dummy_test_object_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static void
-_dummy_test_object_class_destructor(Efl_Class *klass)
+_dummy_test_object_destroy_cmp_array_objects(void)
 {
-   (void)klass;
-   for (unsigned i = 0; i < base_seq_obj_size; ++i)
-     efl_unref(base_seq_obj[i]);
    for (unsigned i = 0; i < modified_seq_obj_size; ++i)
      efl_unref(modified_seq_obj[i]);
 }
@@ -3787,14 +3791,14 @@ void _dummy_test_object_emit_event_with_struct_complex(Eo *obj, EINA_UNUSED Dumm
     efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_STRUCT_COMPLEX, &data);
 }
 
-Efl_Object *_dummy_test_object_efl_part_part_get(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd, const char *name)
+void _dummy_test_object_emit_event_with_array(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Array *data)
 {
-    if (!strcmp(name, "part_one"))
-      return pd->part_one;
-    else if (!strcmp(name, "part_two"))
-      return pd->part_two;
-    else
-      return NULL;
+    efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_ARRAY, data);
+}
+
+void _dummy_test_object_emit_event_with_under(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+    efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_UNDER, NULL);
 }
 
 void _dummy_test_object_append_to_strbuf(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Strbuf *buf, const char *str)
@@ -3823,24 +3827,15 @@ Dummy_MyInt _dummy_test_object_bypass_typedef(EINA_UNUSED Eo *obj, EINA_UNUSED D
 /* Class Properties */
 static int _dummy_test_object_klass_prop = 0;
 
-int _dummy_test_object_klass_prop_get(const Eo *klass, EINA_UNUSED void *pd)
+int _dummy_test_object_klass_prop_get(void)
 {
-    EINA_LOG_ERR("FAIL on GET");
-   if (klass != dummy_test_object_class_get())
-     {
-        eina_error_set(EINVAL);
-        return -1;
-     }
+   EINA_LOG_ERR("FAIL on GET");
    return _dummy_test_object_klass_prop;
 }
 
-void _dummy_test_object_klass_prop_set(Eo *klass, EINA_UNUSED void *pd, int value)
+void _dummy_test_object_klass_prop_set(int value)
 {
-    EINA_LOG_ERR("FAIL on SET");
-   if (klass != dummy_test_object_class_get())
-     {
-        eina_error_set(EINVAL);
-     }
+   EINA_LOG_ERR("FAIL on SET");
    _dummy_test_object_klass_prop = value;
 }
 
@@ -3854,7 +3849,7 @@ Eina_Future* _dummy_test_object_get_future(EINA_UNUSED Eo *obj, Dummy_Test_Objec
 {
     if (pd->promise == NULL)
       {
-         Eo *loop = efl_app_main_get(EFL_APP_CLASS);
+         Eo *loop = efl_app_main_get();
          Eina_Future_Scheduler *scheduler = efl_loop_future_scheduler_get(loop);
          pd->promise = eina_promise_new(scheduler, _promise_cancelled, pd);
       }
@@ -3900,19 +3895,9 @@ Eina_Accessor *_dummy_test_object_clone_accessor(Eo *obj EINA_UNUSED, Dummy_Test
    return eina_list_accessor_new(pd->list_for_accessor);
 }
 
-void _dummy_test_object_dummy_test_iface_emit_test_conflicted(Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED)
-{
-    efl_event_callback_legacy_call(obj, DUMMY_TEST_IFACE_EVENT_CONFLICTED, NULL);
-}
-
 void _dummy_test_object_dummy_test_iface_emit_nonconflicted(Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED)
 {
     efl_event_callback_legacy_call(obj, DUMMY_TEST_IFACE_EVENT_NONCONFLICTED, NULL);
-}
-
-void _dummy_test_object_dummy_another_iface_emit_another_conflicted(Eo *obj, Dummy_Test_Object_Data *pd EINA_UNUSED)
-{
-    efl_event_callback_legacy_call(obj, DUMMY_ANOTHER_IFACE_EVENT_CONFLICTED, NULL);
 }
 
 void _dummy_test_object_setter_only_set(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd, int value)
@@ -3935,7 +3920,88 @@ int _dummy_test_object_dummy_test_iface_iface_prop_get(EINA_UNUSED const Eo *obj
     return pd->iface_prop;
 }
 
+Eo * _dummy_test_object_efl_object_provider_find(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd, const Efl_Class *klass)
+{
+    EINA_LOG_ERR("klass: %p, NUMBERWRAPPER: %p", klass, DUMMY_NUMBERWRAPPER_CLASS);
+    if (klass == DUMMY_NUMBERWRAPPER_CLASS)
+        return pd->provider;
+    else if (klass == DUMMY_TEST_IFACE_INTERFACE)
+        return pd->iface_provider;
+    return efl_provider_find(efl_super(obj, DUMMY_TEST_OBJECT_CLASS), klass);
+}
+
+Efl_Object *_dummy_test_object_call_find_provider(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, const Efl_Class *type)
+{
+    printf("CALLING FIND PROVIDER FROM C");
+    return efl_provider_find(obj, type);
+}
+
+Efl_Object *_dummy_test_object_call_find_provider_for_iface(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+    printf("CALLING FIND PROVIDER FROM C");
+    return efl_provider_find(obj, DUMMY_TEST_IFACE_INTERFACE);
+}
+
 /// Dummy.Child
+
+static Efl_Object *
+_dummy_child_efl_object_constructor(Eo *obj, Dummy_Child_Data *pd)
+{
+    efl_constructor(efl_super(obj, DUMMY_CHILD_CLASS));
+
+    pd->iface_prop = 1984;
+    pd->iface_was_set = EINA_FALSE;
+    pd->obligatory_beta_ctor_was_called = EINA_FALSE;
+    pd->optional_beta_ctor_was_called = EINA_FALSE;
+    return obj;
+}
+
+void _dummy_child_dummy_test_iface_iface_prop_set(EINA_UNUSED Eo *obj, Dummy_Child_Data *pd, int value)
+{
+    pd->iface_prop = value;
+    pd->iface_was_set = EINA_TRUE;
+}
+
+int _dummy_child_dummy_test_iface_iface_prop_get(EINA_UNUSED const Eo *obj, Dummy_Child_Data *pd)
+{
+    return pd->iface_prop;
+}
+
+void _dummy_child_double_params(EINA_UNUSED Eo* obj, Dummy_Child_Data *pd, const char* a, double b)
+{
+    if (pd->a)
+      free((void*)pd->a);
+    pd->a = malloc(sizeof(char)*(strlen(a) + 1));
+    strcpy((char*)pd->a, a);
+
+    pd->b = b;
+}
+
+Eina_Bool _dummy_child_iface_was_set_get(EINA_UNUSED const Eo* obj, Dummy_Child_Data *pd)
+{
+    return pd->iface_was_set;
+}
+
+void _dummy_child_obligatory_beta_ctor(EINA_UNUSED Eo* obj, Dummy_Child_Data *pd, EINA_UNUSED int a)
+{
+    pd->obligatory_beta_ctor_was_called = EINA_TRUE;
+}
+
+void _dummy_child_optional_beta_ctor(EINA_UNUSED Eo* obj, Dummy_Child_Data *pd, EINA_UNUSED int a)
+{
+    pd->optional_beta_ctor_was_called = EINA_TRUE;
+}
+
+Eina_Bool _dummy_child_obligatory_beta_ctor_was_called_get(EINA_UNUSED const Eo* obj, Dummy_Child_Data *pd)
+{
+    return pd->obligatory_beta_ctor_was_called;
+}
+
+Eina_Bool _dummy_child_optional_beta_ctor_was_called_get(EINA_UNUSED const Eo* obj, Dummy_Child_Data *pd)
+{
+    return pd->optional_beta_ctor_was_called;
+}
+
 EOLIAN static void
 _dummy_child_class_constructor(Efl_Class *klass)
 {
@@ -3949,23 +4015,51 @@ _dummy_child_class_destructor(Efl_Class *klass)
 }
 
 // Inherit
-int _dummy_inherit_helper_receive_dummy_and_call_int_out(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Dummy_Test_Object *x)
+int _dummy_inherit_helper_receive_dummy_and_call_int_out(Dummy_Test_Object *x)
 {
   int v = 8;
   dummy_test_object_int_out (x, 5, &v);
   return v;
 }
 
-const char* _dummy_inherit_helper_receive_dummy_and_call_in_stringshare(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Dummy_Test_Object *x)
+const char* _dummy_inherit_helper_receive_dummy_and_call_in_stringshare(Dummy_Test_Object *x)
 {
   return dummy_inherit_iface_stringshare_test (x, eina_stringshare_add("hello world"));
 }
+
+// Part holder
+static Efl_Object*
+_dummy_part_holder_efl_object_constructor(Eo *obj, Dummy_Part_Holder_Data *pd)
+{
+   efl_constructor(efl_super(obj, DUMMY_PART_HOLDER_CLASS));
+
+   // To avoid an infinite loop calling the same constructor
+   if (!efl_parent_get(obj))
+     {
+        pd->part_one = efl_add(DUMMY_TEST_OBJECT_CLASS, obj, efl_name_set(efl_added, "part_one"));
+        pd->part_two = efl_add(DUMMY_TEST_OBJECT_CLASS, obj, efl_name_set(efl_added, "part_two"));
+     }
+
+   return obj;
+}
+
+Efl_Object *_dummy_part_holder_efl_part_part_get(EINA_UNUSED const Eo *obj, Dummy_Part_Holder_Data *pd, const char *name)
+{
+    if (!strcmp(name, "part_one"))
+      return pd->part_one;
+    else if (!strcmp(name, "part_two"))
+      return pd->part_two;
+    else
+      return NULL;
+}
+
+
 
 #include "dummy_test_object.eo.c"
 #include "dummy_numberwrapper.eo.c"
 #include "dummy_child.eo.c"
 #include "dummy_test_iface.eo.c"
-#include "dummy_another_iface.eo.c"
 #include "dummy_inherit_helper.eo.c"
 #include "dummy_inherit_iface.eo.c"
+#include "dummy_part_holder.eo.c"
 

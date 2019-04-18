@@ -5,7 +5,7 @@
 
 #ifdef EFL_BETA_API_SUPPORT
 
-#include <Eldbus_Model.eo.hh>
+#include <Eldbus.eo.hh>
 
 #endif
 #endif

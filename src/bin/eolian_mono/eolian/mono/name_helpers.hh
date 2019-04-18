@@ -38,6 +38,10 @@ inline bool is_equal(std::string const& lhs, std::string const& rhs)
 }
 }
 
+// Forward declarations
+template<typename  T>
+inline std::string klass_concrete_or_interface_name(T const& klass);
+
 inline std::string identity(std::string const& str)
 {
   return str;
@@ -184,7 +188,19 @@ inline std::string managed_method_name(std::string const& klass, std::string con
   if (candidate == klass)
       candidate = "Do" + candidate;
 
+  // Avoid clashing with System.Object.GetType
+  if (candidate == "GetType" || candidate == "SetType")
+    {
+       candidate.insert(3, klass);
+    }
+
   return candidate;
+}
+
+inline std::string managed_name(std::string const& name, char separator='_')
+{
+  auto tokens = utils::split(name, separator);
+  return utils::to_pascal_case(tokens);
 }
 
 inline std::string managed_method_name(attributes::function_def const& f)
@@ -246,17 +262,26 @@ inline std::string to_field_name(std::string const& in)
   return utils::capitalize(in);
 }
 
-inline std::string property_managed_name(const std::string name)
+
+
+template<typename T>
+inline std::string property_managed_name(T const& klass, std::string const& name)
 {
   auto names = utils::split(name, '_');
   // No need to escape keyword here as it will be capitalized and already
   // namespaced inside the owner class.
-  return utils::to_pascal_case(names);
+  auto managed_name = utils::to_pascal_case(names);
+  auto managed_klass_name = klass_concrete_or_interface_name(klass);
+
+  if (managed_name == "Type")
+    managed_name = managed_klass_name + managed_name;
+
+  return managed_name;
 }
 
 inline std::string property_managed_name(attributes::property_def const& property)
 {
-  return property_managed_name(property.name);
+  return property_managed_name(property.klass, property.name);
 }
 
 inline std::string managed_part_name(attributes::part_def const& part)
@@ -272,7 +297,11 @@ struct klass_interface_name_generator
   template <typename T>
   std::string operator()(T const& klass) const
   {
-    return utils::remove_all(klass.eolian_name, '_');
+    std::string name = utils::remove_all(klass.eolian_name, '_');
+    if (klass.type == attributes::class_type::mixin || klass.type == attributes::class_type::interface_)
+      return "I" + name;
+    else
+      return name;
   }
 
   template <typename OutputIterator, typename Attr, typename Context>
@@ -300,10 +329,23 @@ struct klass_full_interface_name_generator
 template<typename T>
 inline std::string klass_concrete_name(T const& klass)
 {
-  std::string name = utils::remove_all(klass.eolian_name, '_');
-  if (klass.type == attributes::class_type::regular || klass.type == attributes::class_type::abstract_)
-    return name;
-  return name + "Concrete";
+  if (klass.type == attributes::class_type::mixin || klass.type == attributes::class_type::interface_)
+    return klass_interface_name(klass) + "Concrete";
+
+  return utils::remove_all(klass.eolian_name, '_');
+}
+
+template<typename  T>
+inline std::string klass_concrete_or_interface_name(T const& klass)
+{
+    switch(klass.type)
+    {
+    case attributes::class_type::abstract_:
+    case attributes::class_type::regular:
+      return klass_concrete_name(klass);
+    default:
+      return klass_interface_name(klass);
+    }
 }
 
 struct klass_full_concrete_name_generator
@@ -358,13 +400,27 @@ inline std::string klass_inherit_name(T const& klass)
 template<typename T>
 inline std::string klass_native_inherit_name(T const& klass)
 {
-  return klass_concrete_name(klass) + "NativeInherit";
+  switch(klass.type)
+  {
+  case attributes::class_type::abstract_:
+  case attributes::class_type::regular:
+    return klass_concrete_name(klass) + "NativeInherit";
+  default:
+    return klass_interface_name(klass) + "NativeInherit";
+  }
 }
 
 template<typename T>
 inline std::string klass_full_native_inherit_name(T const& klass)
 {
-  return klass_full_concrete_name(klass) + "NativeInherit";
+  switch(klass.type)
+  {
+  case attributes::class_type::abstract_:
+  case attributes::class_type::regular:
+    return klass_full_concrete_name(klass) + "NativeInherit";
+  default:
+    return klass_full_interface_name(klass) + "NativeInherit";
+  }
 }
 
 template<typename T>
@@ -382,13 +438,13 @@ inline std::string klass_get_full_name(T const& clsname)
 // Events
 inline std::string managed_event_name(std::string const& name)
 {
-   return utils::to_pascal_case(utils::split(name, ','), "") + "Evt";
+   return utils::to_pascal_case(utils::split(name, "_,"), "") + "Evt";
 }
 
 inline std::string managed_event_args_short_name(attributes::event_def const& evt)
 {
    std::string ret;
-     ret = klass_interface_name(evt.klass);
+     ret = klass_concrete_or_interface_name(evt.klass);
    return ret + name_helpers::managed_event_name(evt.name) + "_Args";
 }
 
@@ -405,7 +461,7 @@ inline std::string translate_inherited_event_name(const attributes::event_def &e
 
 // Open/close namespaces
 template<typename OutputIterator, typename Context>
-bool open_namespaces(OutputIterator sink, std::vector<std::string> namespaces, Context context)
+bool open_namespaces(OutputIterator sink, std::vector<std::string> namespaces, Context const& context)
 {
   std::transform(namespaces.begin(), namespaces.end(), namespaces.begin(), managed_namespace);
 
@@ -414,13 +470,18 @@ bool open_namespaces(OutputIterator sink, std::vector<std::string> namespaces, C
 }
 
 template<typename OutputIterator, typename Context>
-bool close_namespaces(OutputIterator sink, std::vector<std::string> const& namespaces, Context context)
+bool close_namespaces(OutputIterator sink, std::vector<std::string> const& namespaces, Context const& context)
 {
      auto close_namespace = *(lit("} ")) << "\n";
      return as_generator(close_namespace).generate(sink, namespaces, context);
 }
 
+std::string constructor_managed_name(std::string full_name)
+{
+    auto tokens = utils::split(full_name, '.');
 
+    return managed_name(tokens.at(tokens.size()-1));
+}
 
 } // namespace name_helpers
 

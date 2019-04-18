@@ -1,31 +1,4 @@
 
-pub_legacy_eo_files = [
-  'evas_canvas.eo',
-  'evas_line.eo',
-  'evas_table.eo',
-  'evas_grid.eo',
-  'evas_box.eo',
-  'evas_text.eo',
-  'evas_textgrid.eo',
-  'evas_image.eo',
-]
-
-foreach eo_file : pub_legacy_eo_files
-  pub_eo_file_target += custom_target('eolian_gen_' + eo_file,
-    input : eo_file,
-    output : [eo_file + '.legacy.h',],
-    depfile : eo_file + '.d',
-    install : true,
-    install_dir : join_paths(dir_package_include, 'canvas'),
-    command : eolian_gen + [ '-I', meson.current_source_dir(), eolian_include_directories,
-                           '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
-                           '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
-                           '-o', 'l:' + join_paths(meson.current_build_dir(), eo_file + '.legacy.h'),
-                           '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
-                           '-gchld', '@INPUT@'])
-
-endforeach
-
 pub_eo_files = [
   'efl_canvas_polygon.eo',
   'efl_canvas_image_internal.eo',
@@ -74,7 +47,7 @@ pub_eo_files = [
   'efl_canvas_vg_gradient_radial.eo',
   'efl_canvas_vg_gradient_linear.eo',
   'efl_canvas_group.eo',
-  'efl_gfx_map.eo',
+  'efl_gfx_mapping.eo',
   'efl_canvas_event_grabber.eo',
   'efl_canvas_text.eo'
 ]
@@ -130,6 +103,25 @@ endforeach
 
 pub_evas_eot_files += files(pub_eo_types_files)
 
+evas_legacy_h = files([
+  'efl_canvas_event_grabber_eo.legacy.h',
+  'efl_canvas_group_eo.legacy.h',
+  'efl_canvas_object_eo.legacy.h',
+  'efl_canvas_text_eo.legacy.h',
+  'efl_canvas_vg_container_eo.legacy.h',
+  'efl_canvas_vg_node_eo.legacy.h',
+  'efl_canvas_vg_object_eo.legacy.h',
+  'efl_canvas_vg_shape_eo.legacy.h',
+  'evas_box_eo.legacy.h',
+  'evas_canvas_eo.legacy.h',
+  'evas_grid_eo.legacy.h',
+  'evas_image_eo.legacy.h',
+  'evas_line_eo.legacy.h',
+  'evas_table_eo.legacy.h',
+  'evas_text_eo.legacy.h',
+  'evas_textgrid_eo.legacy.h',
+])
+
 evas_src += files([
   'evas_callbacks.c',
   'evas_clip.c',
@@ -179,7 +171,7 @@ evas_src += files([
   'efl_canvas_surface_tbm.c',
   'efl_canvas_surface_x11.c',
   'efl_canvas_surface_wayland.c',
-  'efl_gfx_map.c',
+  'efl_gfx_mapping.c',
   'efl_input_event.c',
   'efl_input_key.c',
   'efl_input_pointer.c',
@@ -218,7 +210,7 @@ evas_src += files([
 
 evas_include_directories += include_directories('.')
 
-install_headers('evas_textblock_legacy.h',
+install_headers(['evas_textblock_legacy.h', evas_legacy_h],
   install_dir : join_paths(dir_package_include, 'canvas'),
 )
 

@@ -16,7 +16,6 @@
 #else
 #define PACKAGE_EXAMPLES_DIR "."
 #define EFL_BETA_API_SUPPORT
-#define EFL_EO_API_SUPPORT
 #endif
 
 #include <Eo.h>
@@ -159,7 +158,7 @@ main(void)
 
    material = efl_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
    texture = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
-   efl_file_set(texture, image_path, NULL);
+   efl_file_simple_load(texture, image_path, NULL);
    evas_canvas3d_texture_filter_set(texture, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST);
    evas_canvas3d_texture_wrap_set(texture, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);
    evas_canvas3d_material_texture_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, texture);
@@ -182,7 +181,7 @@ main(void)
         mesh[i] = efl_add(EVAS_CANVAS3D_MESH_CLASS, evas);
 
         snprintf(buffer, PATH_MAX, "%s%s", input_template, file_name[i % 8]);
-        efl_file_set(mesh[i], buffer, NULL);
+        efl_file_simple_load(mesh[i], buffer, NULL);
         evas_canvas3d_mesh_frame_material_set(mesh[i], 0, material);
         evas_canvas3d_mesh_shader_mode_set(mesh[i], draw_mode[(i % 8)]);
 
@@ -191,7 +190,7 @@ main(void)
 
         if (i > 15)
           {
-             efl_file_set(mesh[i], buffer, NULL);
+             efl_file_simple_load(mesh[i], buffer, NULL);
              evas_canvas3d_mesh_frame_material_set(mesh[i], 0, material);
              evas_canvas3d_mesh_shader_mode_set(mesh[i], draw_mode[(i % 8)]);
           }

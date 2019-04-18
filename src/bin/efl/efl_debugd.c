@@ -21,7 +21,6 @@
 #endif
 
 #define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
 
 #include <fcntl.h>
 #include "eina_debug_private.h"
@@ -570,7 +569,7 @@ _local_server_create(void)
      }
 
    efl_event_callback_add(_local_server, EFL_NET_SERVER_EVENT_CLIENT_ADD, _client_add, NULL);
-   efl_event_callback_add(_local_server, EFL_NET_SERVER_EVENT_ERROR, _error, NULL);
+   efl_event_callback_add(_local_server, EFL_NET_SERVER_EVENT_SERVER_ERROR, _error, NULL);
 
 #ifdef EFL_NET_SERVER_UNIX_CLASS
    {
@@ -620,7 +619,7 @@ _remote_server_create(void)
       efl_net_server_fd_reuse_address_set(inner_server, EINA_TRUE);
    }
    efl_event_callback_add(_remote_server, EFL_NET_SERVER_EVENT_CLIENT_ADD, _client_add, NULL);
-   efl_event_callback_add(_remote_server, EFL_NET_SERVER_EVENT_ERROR, _error, NULL);
+   efl_event_callback_add(_remote_server, EFL_NET_SERVER_EVENT_SERVER_ERROR, _error, NULL);
 
    sprintf(address, "127.0.0.1:%d", REMOTE_SERVER_PORT);
    err = efl_net_server_serve(_remote_server, address);

@@ -192,12 +192,6 @@ mkstemps(char *__template, int suffixlen)
    return -1;
 }
 
-int
-mkstemp(char *__template)
-{
-   return mkstemps(__template, 0);
-}
-
 char *
 realpath(const char *file_name, char *resolved_name)
 {

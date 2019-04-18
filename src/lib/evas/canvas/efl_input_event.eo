@@ -1,14 +1,12 @@
 import efl_input_types;
 
-mixin Efl.Input.Event requires Efl.Object extends Efl.Duplicate
+mixin @beta Efl.Input.Event requires Efl.Object extends Efl.Duplicate
 {
    [[Represents a generic event data.
 
      Note: Most Efl Events do not carry Efl Objects, rather simple data
            structures. This class is intended to carry more complex event
            data, such as pointer events.
-
-     @since 1.19
    ]]
    eo_prefix: efl_input;
    data: null;

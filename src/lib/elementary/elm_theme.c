@@ -5,7 +5,7 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "elm_icon.eo.h"
+#include "elm_icon_eo.h"
 
 #include "efl_ui_theme.eo.h"
 
@@ -302,7 +302,7 @@ _elm_theme_data_find(Elm_Theme *th, const char *key)
    return NULL;
 }
 
-Efl_Ui_Theme_Apply_Result
+Eina_Error
 _elm_theme_object_set(Evas_Object *parent, Evas_Object *o, const char *clas, const char *group, const char *style)
 {
    Elm_Theme *th = NULL;
@@ -323,7 +323,7 @@ _elm_theme_object_icon_set(Evas_Object *o,
    return _elm_theme_icon_set(th, o, group, style);
 }
 
-Efl_Ui_Theme_Apply_Result
+Eina_Error
 _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *group, const char *style, Eina_Bool is_legacy)
 {
    Eina_File *file;
@@ -331,9 +331,9 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
    const char *group_sep = "/";
    const char *style_sep = ":";
 
-   if ((!clas) || !o) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if ((!clas) || !o) return EFL_UI_THEME_APPLY_ERROR_GENERIC;
    if (!th) th = theme_default;
-   if (!th) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (!th) return EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    if (eina_streq(style, "default")) style = NULL;
 
@@ -348,7 +348,7 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
         file = _elm_theme_group_file_find(th, buf2);
         if (file)
           {
-             if (edje_object_mmap_set(o, file, buf2)) return EFL_UI_THEME_APPLY_RESULT_SUCCESS;
+             if (edje_object_mmap_set(o, file, buf2)) return EFL_UI_THEME_APPLY_ERROR_NONE;
              else
                {
                   ERR("could not set theme group '%s' from file '%s': %s",
@@ -362,11 +362,12 @@ _elm_theme_set(Elm_Theme *th, Evas_Object *o, const char *clas, const char *grou
      }
 
    if (!style)
-     return EFL_UI_THEME_APPLY_RESULT_FAIL;
+     return EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    // Use the elementary default style.
-   return (EFL_UI_THEME_APPLY_RESULT_DEFAULT &
-           _elm_theme_set(th, o, clas, group, NULL, is_legacy));
+   if (_elm_theme_set(th, o, clas, group, NULL, is_legacy) == EFL_UI_THEME_APPLY_ERROR_NONE)
+     return EFL_UI_THEME_APPLY_ERROR_DEFAULT;
+   return EFL_UI_THEME_APPLY_ERROR_GENERIC;
 }
 
 Eina_Bool
@@ -543,6 +544,7 @@ elm_theme_files_copy(Eina_Inlist **dst, Eina_Inlist **src)
    EINA_INLIST_FOREACH(*src, etf)
      {
         cpy = malloc(sizeof(Elm_Theme_File));
+        EINA_SAFETY_ON_NULL_RETURN(cpy);
         cpy->item = eina_stringshare_ref(etf->item);
         cpy->handle = eina_file_dup(etf->handle);
         *dst = eina_inlist_append(*dst, EINA_INLIST_GET(cpy));
@@ -1121,7 +1123,7 @@ _efl_ui_theme_efl_object_destructor(Eo *obj, Efl_Ui_Theme_Data *pd)
 }
 
 EOLIAN static Efl_Ui_Theme *
-_efl_ui_theme_default_get(const Eo *obj EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_ui_theme_default_get(void)
 {
    if (theme_default)
      return theme_default->eo_theme;

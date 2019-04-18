@@ -5,10 +5,7 @@
 EAPI Edje_Load_Error
 edje_object_load_error_get(const Eo *obj)
 {
-   Efl_Gfx_Image_Load_Error p = efl_file_load_error_get(obj);
    Edje *ed;
-
-   if (p != EFL_GFX_IMAGE_LOAD_ERROR_NONE) return EDJE_LOAD_ERROR_DOES_NOT_EXIST;
 
    ed = _edje_fetch(obj);
    if (!ed) return EDJE_LOAD_ERROR_GENERIC;
@@ -77,7 +74,11 @@ edje_object_message_signal_recursive_process(Edje_Object *obj)
 EAPI void
 edje_object_signal_callback_add(Evas_Object *obj, const char *emission, const char *source, Edje_Signal_Cb func, void *data)
 {
-   efl_layout_signal_callback_add(obj, emission, source, (Efl_Signal_Cb) func, data);
+   Edje *ed;
+
+   ed = _edje_fetch(obj);
+   if (!ed || ed->delete_me) return;
+   _edje_object_signal_callback_add(ed, emission, source, func, NULL, NULL, data);
 }
 
 EAPI void *
@@ -95,7 +96,8 @@ edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, con
    emission = eina_stringshare_add(emission);
    source = eina_stringshare_add(source);
 
-   ok = _edje_signal_callback_disable(gp, emission, source, func, data);
+   // We can cast here as the function won't be used and is just going to be used for comparison
+   ok = _edje_signal_callback_disable(gp, emission, source, func, NULL, NULL, data);
 
    // Legacy only
    if (!ok && !data)
@@ -104,7 +106,8 @@ edje_object_signal_callback_del_full(Evas_Object *obj, const char *emission, con
           {
              if (emission == gp->matches->matches[i].signal &&
                  source == gp->matches->matches[i].source &&
-                 func == gp->matches->matches[i].func &&
+                 func == gp->matches->matches[i].legacy &&
+                 gp->flags[i].legacy &&
                  !gp->flags[i].delete_me)
                {
                   gp->flags[i].delete_me = EINA_TRUE;
@@ -425,7 +428,7 @@ EAPI void
 edje_object_part_text_cursor_geometry_get(const Edje_Object *obj, const char * part, int *x, int *y, int *w, int *h)
 {
    efl_text_cursor_geometry_get(efl_part(obj, part),
-         efl_text_cursor_get(efl_part(obj, part), EFL_TEXT_CURSOR_GET_MAIN),
+         efl_text_cursor_get(efl_part(obj, part), EFL_TEXT_CURSOR_GET_TYPE_MAIN),
          EFL_TEXT_CURSOR_TYPE_BEFORE,
          x, y, w, h, NULL, NULL, NULL, NULL
          );

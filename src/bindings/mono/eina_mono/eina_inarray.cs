@@ -7,7 +7,8 @@ using System.Collections.Generic;
 using static Eina.TraitFunctions;
 using static Eina.InarrayNativeFunctions;
 
-namespace Eina {
+namespace Eina
+{
 
 public static class InarrayNativeFunctions
 {
@@ -86,7 +87,9 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         Own = true;
         OwnContent = true;
         if (Handle == IntPtr.Zero)
+        {
             throw new SEHException("Could not alloc inarray");
+        }
     }
 
     public Inarray()
@@ -123,19 +126,30 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         IntPtr h = Handle;
         Handle = IntPtr.Zero;
         if (h == IntPtr.Zero)
+        {
             return;
+        }
 
         if (OwnContent)
         {
             uint len = eina_inarray_count(h);
-            for(uint i = 0; i < len; ++i)
+            for (uint i = 0; i < len; ++i)
             {
                 NativeFreeInplace<T>(eina_inarray_nth(h, i));
             }
         }
 
         if (Own)
-            eina_inarray_free(h);
+        {
+            if (disposing)
+            {
+                eina_inarray_free(h);
+            }
+            else
+            {
+                Efl.Eo.Globals.ThreadSafeFreeCbExec(eina_inarray_free, h);
+            }
+        }
     }
 
     public void Dispose()
@@ -176,7 +190,7 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
 
     public int Count()
     {
-        return (int) eina_inarray_count(Handle);
+        return (int)eina_inarray_count(Handle);
     }
 
     public void SetOwnership(bool ownAll)
@@ -193,11 +207,20 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
 
     public int Push(T val)
     {
-        IntPtr ele = ManagedToNativeAllocInplace(val);
-        var r = eina_inarray_push(Handle, ele);
+        IntPtr ele = IntPtr.Zero;
+        GCHandle gch = GCHandle.Alloc(ele, GCHandleType.Pinned);
+        IntPtr ind = gch.AddrOfPinnedObject();
+
+        ManagedToNativeCopyTo(val, ind);
+
+        var r = eina_inarray_push(Handle, ind);
         if (r == -1)
+        {
             NativeFreeInplace<T>(ele);
+        }
+
         ResidueFreeInplace<T>(ele);
+        gch.Free();
         return r;
     }
 
@@ -205,7 +228,9 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
 //     public void Add(T val)
 //     {
 //         if (!Push(val))
-//           throw;
+//         {
+//             throw;
+//         }
 //     }
 
     public T Pop()
@@ -213,7 +238,10 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
         IntPtr ele = eina_inarray_pop(Handle);
         var r = NativeToManagedInplace<T>(ele);
         if (OwnContent && ele != IntPtr.Zero)
+        {
             NativeFreeInplace<T>(ele);
+        }
+
         return r;
     }
 
@@ -230,10 +258,18 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
 
     public bool InsertAt(uint idx, T val)
     {
-        IntPtr ele = ManagedToNativeAllocInplace(val);
-        var r = eina_inarray_insert_at(Handle, idx, ele);
+        IntPtr ele = IntPtr.Zero;
+        GCHandle gch = GCHandle.Alloc(ele, GCHandleType.Pinned);
+        IntPtr ind = gch.AddrOfPinnedObject();
+
+        ManagedToNativeCopyTo(val, ind);
+
+        var r = eina_inarray_insert_at(Handle, idx, ind);
         if (!r)
+        {
             NativeFreeInplace<T>(ele);
+        }
+
         ResidueFreeInplace<T>(ele);
         return r;
     }
@@ -242,11 +278,22 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
     {
         var old = eina_inarray_nth(Handle, idx);
         if (old == IntPtr.Zero)
+        {
             return false;
+        }
+
         if (OwnContent)
+        {
             NativeFreeInplace<T>(old);
-        var ele = ManagedToNativeAllocInplace(val);
-        var r = eina_inarray_replace_at(Handle, idx, ele);
+        }
+
+        var ele = IntPtr.Zero;
+        GCHandle gch = GCHandle.Alloc(ele, GCHandleType.Pinned);
+        IntPtr ind = gch.AddrOfPinnedObject();
+
+        ManagedToNativeCopyTo(val, ind);
+
+        var r = eina_inarray_replace_at(Handle, idx, ind);
         ResidueFreeInplace<T>(ele);
         return r;
     }
@@ -267,9 +314,14 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
     {
         IntPtr ele = eina_inarray_nth(Handle, idx);
         if (ele == IntPtr.Zero)
+        {
             return false;
+        }
+
         if (OwnContent)
+        {
             NativeFreeInplace<T>(ele);
+        }
 
         return eina_inarray_remove_at(Handle, idx);
     }
@@ -283,18 +335,24 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
     {
         int len = Length;
         var managed = new T[len];
-        for(int i = 0; i < len; ++i)
+        for (int i = 0; i < len; ++i)
         {
             managed[i] = At(i);
         }
+
         return managed;
     }
 
     public bool Append(T[] values)
     {
-        foreach(T v in values)
+        foreach (T v in values)
+        {
             if (Push(v) == -1)
+            {
                 return false;
+            }
+        }
+
         return true;
     }
 
@@ -311,7 +369,7 @@ public class Inarray<T> : IEnumerable<T>, IDisposable
     public IEnumerator<T> GetEnumerator()
     {
         int len = Length;
-        for(int i = 0; i < len; ++i)
+        for (int i = 0; i < len; ++i)
         {
             yield return At(i);
         }

@@ -54,7 +54,7 @@ struct _Elm_Fileselector_Data
    const char              *path;
    Efl_Model               *model;
    Efl_Model               *prev_model;
-   Ecore_Idler             *populate_idler;
+   Eina_List               *children;
    Ecore_Idler             *path_entry_idler;
 
    Efl_Model               *target;
@@ -85,6 +85,7 @@ struct _Elm_Fileselector_Data
    Eina_Bool                dir_selected : 1;
 
    Eina_Bool                hidden_visible : 1;
+   Eina_Bool                target_ready : 1;
 };
 
 struct sel_data

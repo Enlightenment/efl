@@ -195,7 +195,7 @@ _efl_access_object_attributes_get(const Eo *obj EINA_UNUSED, Efl_Access_Object_D
           {
              Efl_Access_Attribute *attr = calloc(1, sizeof(Efl_Access_Attribute));
              if (!attr)
-                  return attr_list;
+               return attr_list;
 
              attr->key = eina_stringshare_add(t_attr->key);
              attr->value = eina_stringshare_add(t_attr->value);
@@ -232,6 +232,29 @@ _efl_access_object_attribute_append(Eo *obj EINA_UNUSED, Efl_Access_Object_Data 
    pd->attr_list = eina_list_append(pd->attr_list, attr);
 }
 
+EOLIAN static void
+_efl_access_object_attribute_del(Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd, const char *key)
+{
+   Eina_List *l;
+   Efl_Access_Attribute *attr = NULL;
+
+   if (!key) return;
+   if (!pd->attr_list) return;
+
+   /* Check whether existing attribute list has this key and delete */
+   EINA_LIST_FOREACH(pd->attr_list, l, attr)
+     {
+        if (!strcmp((const char *)attr->key, key))
+          {
+             pd->attr_list = eina_list_remove_list(pd->attr_list, l);
+             eina_stringshare_del(attr->key);
+             eina_stringshare_del(attr->value);
+             free(attr);
+             return;
+          }
+     }
+}
+
 EOLIAN static void _efl_access_object_attributes_clear(Eo *obj EINA_UNUSED, Efl_Access_Object_Data *pd)
 {
    if (!pd->attr_list) return;
@@ -249,7 +272,14 @@ EOLIAN static void
 _efl_access_object_reading_info_type_set(Eo *obj, Efl_Access_Object_Data *pd, Efl_Access_Reading_Info_Type reading_info)
 {
    Eina_Strbuf *buf = NULL;
+   if (reading_info == pd->reading_info)
+     return;
    pd->reading_info = reading_info;
+   if (!pd->reading_info)
+     {
+        efl_access_object_attribute_del(obj, "reading_info_type");
+        return;
+     }
    buf = eina_strbuf_new();
    eina_strbuf_reset(buf);
    if (reading_info & (EFL_ACCESS_READING_INFO_TYPE_NAME))
@@ -383,19 +413,25 @@ _efl_access_object_relations_get(const Eo *obj EINA_UNUSED, Efl_Access_Object_Da
    return eina_list_iterator_new(pd->relations);
 }
 
+EAPI void
+efl_access_attribute_free(Efl_Access_Attribute *attr)
+{
+   eina_stringshare_del(attr->key);
+   eina_stringshare_del(attr->value);
+   free(attr);
+}
+
 EAPI void efl_access_attributes_list_free(Eina_List *list)
 {
    Efl_Access_Attribute *attr;
    EINA_LIST_FREE(list, attr)
      {
-        eina_stringshare_del(attr->key);
-        eina_stringshare_del(attr->value);
-        free(attr);
+        efl_access_attribute_free(attr);
      }
 }
 
 EOLIAN void
-_efl_access_object_event_emit(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Eo *accessible, const Efl_Event_Description *event, void *event_info)
+_efl_access_object_event_emit(Eo *accessible, const Efl_Event_Description *event, void *event_info)
 {
    Eina_List *l;
    Efl_Access_Event_Handler *hdl;
@@ -431,9 +467,10 @@ _efl_access_object_event_emit(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Eo *a
 }
 
 EOLIAN Efl_Access_Event_Handler *
-_efl_access_object_event_handler_add(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Efl_Event_Cb cb, void *data)
+_efl_access_object_event_handler_add(Efl_Event_Cb cb, void *data)
 {
    Efl_Access_Event_Handler *ret = calloc(1, sizeof(Efl_Access_Event_Handler));
+   if (!ret) return NULL;
 
    ret->cb = cb;
    ret->data = data;
@@ -443,8 +480,8 @@ _efl_access_object_event_handler_add(Eo *class EINA_UNUSED, void *pd EINA_UNUSED
    return ret;
 }
 
-EOLIAN void 
-_efl_access_object_event_handler_del(Eo *class EINA_UNUSED, void *pd EINA_UNUSED, Efl_Access_Event_Handler *handler)
+EOLIAN void
+_efl_access_object_event_handler_del(Efl_Access_Event_Handler *handler)
 {
    Eina_List *l, *l2;
    Efl_Access_Event_Handler *hdl;
@@ -589,7 +626,7 @@ _efl_access_object_relationships_clear(Eo *obj EINA_UNUSED, Efl_Access_Object_Da
 }
 
 EOLIAN Eo*
-_efl_access_object_access_root_get(const Eo *class EINA_UNUSED, void *pd EINA_UNUSED)
+_efl_access_object_access_root_get(void)
 {
    if (!root)
      root = efl_add(ELM_ATSPI_APP_OBJECT_CLASS, efl_main_loop_get());

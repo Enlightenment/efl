@@ -70,10 +70,12 @@ static const char * const ctypes[] =
 
    "Eina_Bool",
 
+   "Eina_Slice", "Eina_Rw_Slice",
+
    "void",
 
    "Eina_Accessor *", "Eina_Array *", "Eina_Future *", "Eina_Iterator *",
-   "Eina_Hash *", "Eina_List *", "Eina_Inarray *", "Eina_Inlist *",
+   "Eina_Hash *", "Eina_List *",
    "Eina_Value", "Eina_Value *",
    "char *", "const char *", "Eina_Stringshare *", "Eina_Strbuf *",
 

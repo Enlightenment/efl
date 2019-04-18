@@ -1,6 +1,6 @@
 import efl_types;
 
-enum Efl.Ui.Calendar_Weekday
+enum @beta Efl.Ui.Calendar_Weekday
 {
    [[A weekday
 
@@ -16,7 +16,7 @@ enum Efl.Ui.Calendar_Weekday
    last  [[Sentinel value to indicate last enum field during iteration]]
 }
 
-class Efl.Ui.Calendar extends Efl.Ui.Layout implements Efl.Ui.Focus.Composition, Efl.Access.Widget.Action, Efl.Ui.Format
+class @beta Efl.Ui.Calendar extends Efl.Ui.Layout_Base implements Efl.Ui.Focus.Composition, Efl.Access.Widget.Action, Efl.Ui.Format
 {
    [[Calendar widget
 
@@ -109,7 +109,7 @@ class Efl.Ui.Calendar extends Efl.Ui.Layout implements Efl.Ui.Focus.Composition,
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_access_update;
       Efl.Ui.Focus.Object.on_focus_update;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Ui.Format.format_cb { set; }
       Efl.Ui.Format.format_string { set; get;}

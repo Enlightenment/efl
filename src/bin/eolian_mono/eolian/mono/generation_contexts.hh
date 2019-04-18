@@ -1,6 +1,9 @@
 #ifndef EOLIAN_MONO_GENERATION_CONTEXTS_HH
 #define EOLIAN_MONO_GENERATION_CONTEXTS_HH
 
+#include "grammar/context.hpp"
+#include "grammar/indentation.hpp"
+
 namespace eolian_mono {
 
 struct class_context
@@ -14,9 +17,38 @@ struct class_context
         enums,
         function_ptr,
         alias,
+        variables,
     };
     wrapper_kind current_wrapper_kind;
+    std::string name;
 };
+
+struct indentation_context
+{
+  constexpr indentation_context(indentation_context const& other) = default;
+  constexpr indentation_context(efl::eolian::grammar::scope_tab_generator indent)
+    : indent(indent)
+  {}
+  constexpr indentation_context(int n)
+    : indent(n)
+  {}
+  constexpr indentation_context(int n, int m)
+    : indent(n, m)
+  {}
+  efl::eolian::grammar::scope_tab_generator indent;
+};
+
+template <typename Context>
+inline constexpr efl::eolian::grammar::scope_tab_generator const& current_indentation(Context const& context)
+{
+  return efl::eolian::grammar::context_find_tag<indentation_context>(context).indent;
+}
+
+template <typename Context>
+inline constexpr Context change_indentation(efl::eolian::grammar::scope_tab_generator const& indent, Context const& context)
+{
+  return efl::eolian::grammar::context_replace_tag(indentation_context(indent), context);
+}
 
 struct library_context
 {
@@ -47,6 +79,7 @@ struct eolian_state_context {
 
 struct options_context {
     bool want_beta;
+    std::string examples_dir;
 };
 
 }

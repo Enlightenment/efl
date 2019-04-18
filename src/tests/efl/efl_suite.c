@@ -26,9 +26,9 @@
 #include "../efl_check.h"
 
 static const Efl_Test_Case etc[] = {
-   { "Efl_Model_Container", efl_test_case_model_container },
-   { "Efl_Model_View", efl_test_case_model_view },
-   { "Efl_Model_Composite_Boolean", efl_test_case_model_composite_boolean },
+   { "Efl_Container_Model", efl_test_case_container_model },
+   { "Efl_View_Model", efl_test_case_view_model },
+   { "Efl_Boolean_Model", efl_test_case_boolean_model },
    { NULL, NULL }
 };
 

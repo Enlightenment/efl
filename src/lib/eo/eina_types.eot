@@ -77,6 +77,7 @@ struct @extern Eina.Rw_Slice {
     mem: void_ptr; [[Pointer to memory segment]]
 }
 
+struct @extern Eina.Value; [[Eina value placeholder so it can be referenced from docs.]]
 struct @extern Eina.Value_Type; [[Eina value type]]
 
 struct @extern Eina.Stat {
@@ -99,7 +100,7 @@ struct @extern Eina.Stat {
     ctimensec: ulong; [[The nano version of the timestmap when the file was created]]
 }
 
-struct @extern Eina.Promise; [[Eina promise type]]
+struct @extern @free(eina_promise_free) Eina.Promise; [[Eina promise type]]
 
 /* FIXME: This definitely shouldn't be here. */
 type Efl.Event_Cb: __undefined_type; [[Efl event callback type]]

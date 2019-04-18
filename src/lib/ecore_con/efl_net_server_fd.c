@@ -54,7 +54,7 @@ efl_net_accept4(SOCKET fd, struct sockaddr *addr, socklen_t *addrlen, Eina_Bool 
         if (!eina_file_close_on_exec(client, EINA_TRUE))
           {
              int errno_bkp = errno;
-             ERR("fcntl(" SOCKET_FMT ", F_SETFD, FD_CLOEXEC): %s", client, strerror(errno));
+             ERR("fcntl(" SOCKET_FMT ", F_SETFD, FD_CLOEXEC): %s", client, eina_error_msg_get(errno));
              closesocket(client);
              errno = errno_bkp;
              return INVALID_SOCKET;
@@ -81,7 +81,7 @@ _efl_net_server_fd_event_error(void *data EINA_UNUSED, const Efl_Event *event)
    Eina_Error err = EBADF;
 
    efl_net_server_serving_set(o, EINA_FALSE);
-   efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
+   efl_event_callback_call(o, EFL_NET_SERVER_EVENT_SERVER_ERROR, &err);
 }
 
 EOLIAN static Efl_Object *
@@ -282,7 +282,7 @@ _efl_net_server_fd_close_on_exec_set(Eo *o, Efl_Net_Server_Fd_Data *pd, Eina_Boo
 
    if (!eina_file_close_on_exec(fd, close_on_exec))
      {
-        ERR("fcntl(" SOCKET_FMT ", F_SETFD,): %s", fd, strerror(errno));
+        ERR("fcntl(" SOCKET_FMT ", F_SETFD,): %s", fd, eina_error_msg_get(errno));
         pd->close_on_exec = old;
         return EINA_FALSE;
      }
@@ -311,7 +311,7 @@ _efl_net_server_fd_close_on_exec_get(const Eo *o, Efl_Net_Server_Fd_Data *pd)
    flags = fcntl(fd, F_GETFD);
    if (flags < 0)
      {
-        ERR("fcntl(" SOCKET_FMT ", F_GETFD): %s", fd, strerror(errno));
+        ERR("fcntl(" SOCKET_FMT ", F_GETFD): %s", fd, eina_error_msg_get(errno));
         return EINA_FALSE;
      }
 
@@ -474,7 +474,7 @@ _efl_net_server_fd_process_incoming_data(Eo *o, Efl_Net_Server_Fd_Data *pd)
      {
         Eina_Error err = efl_net_socket_error_get();
         ERR("accept(" SOCKET_FMT "): %s", fd, eina_error_msg_get(err));
-        efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
+        efl_event_callback_call(o, EFL_NET_SERVER_EVENT_SERVER_ERROR, &err);
         return;
      }
 

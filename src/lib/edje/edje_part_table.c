@@ -3,7 +3,7 @@
 #include "efl_canvas_layout_part_table.eo.h"
 #define MY_CLASS EFL_CANVAS_LAYOUT_PART_TABLE_CLASS
 
-#include "../evas/canvas/evas_table.eo.h"
+#include "../evas/canvas/evas_table_eo.h"
 
 PROXY_IMPLEMENTATION(table, MY_CLASS, EINA_FALSE)
 #undef PROXY_IMPLEMENTATION
@@ -27,12 +27,6 @@ _efl_canvas_layout_part_table_efl_container_content_count(Eo *obj, void *_pd EIN
 {
    PROXY_DATA_GET(obj, pd);
    return evas_obj_table_count(pd->rp->object);
-}
-
-EOLIAN static Eina_Bool
-_efl_canvas_layout_part_table_efl_container_content_remove(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED EINA_UNUSED, Efl_Gfx_Entity *content)
-{
-   return efl_pack_unpack(obj, content);
 }
 
 EOLIAN static Eina_Bool

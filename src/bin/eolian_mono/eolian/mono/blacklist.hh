@@ -16,6 +16,7 @@ inline bool is_function_blacklisted(std::string const& c_name)
 {
   return
     c_name == "efl_event_callback_array_priority_add"
+    || c_name == "efl_constructor"
     || c_name == "efl_player_position_get"
     || c_name == "efl_ui_widget_focus_set"
     || c_name == "efl_ui_widget_focus_get"
@@ -52,7 +53,7 @@ inline bool is_function_blacklisted(std::string const& c_name)
 }
 
 template<typename Context>
-inline bool is_function_blacklisted(attributes::function_def const& func, Context context)
+inline bool is_function_blacklisted(attributes::function_def const& func, Context const& context)
 {
   auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
   auto c_name = func.c_name;
@@ -67,6 +68,7 @@ inline bool is_function_blacklisted(attributes::function_def const& func, Contex
 // Blacklist structs that require some kind of manual binding.
 inline bool is_struct_blacklisted(std::string const& full_name)
 {
+   // For now, these manual structs are blacklisted regardless of beta status
    return full_name == "Efl.Event_Description"
        || full_name == "Eina.Binbuf"
        || full_name == "Eina.Strbuf"
@@ -78,9 +80,26 @@ inline bool is_struct_blacklisted(std::string const& full_name)
        || full_name == "Eina.Future";
 }
 
-inline bool is_struct_blacklisted(attributes::struct_def const& struct_)
+template <typename Context>
+inline bool is_struct_blacklisted(attributes::struct_def const& struct_, Context const& context)
 {
+   auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
+   if (struct_.is_beta && !options.want_beta)
+     return true;
+
    return is_struct_blacklisted(name_helpers::struct_full_eolian_name(struct_));
+}
+
+// Struct as type_def is for places where the struct is used as a struct field or parameter/return.
+template <typename Context>
+inline bool is_struct_blacklisted(attributes::type_def const& struct_, Context const& context)
+{
+   auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
+   if (struct_.is_beta && !options.want_beta)
+     return true;
+
+   auto regular = efl::eina::get<attributes::regular_type_def>(struct_.original_type);
+   return is_struct_blacklisted(name_helpers::type_full_eolian_name(regular));
 }
 
 inline bool is_struct_blacklisted(attributes::regular_type_def const& struct_)
@@ -97,11 +116,11 @@ inline bool is_property_blacklisted(std::string const& name)
 {
     return name == "Efl.Input.Key.Key"
         || name == "Efl.Input.Hold.Hold"
-        || name == "Efl.Text.Text";
+        || name == "Efl.IText.Text";
 }
 
 template<typename Context>
-inline bool is_property_blacklisted(attributes::property_def const& property, Context context)
+inline bool is_property_blacklisted(attributes::property_def const& property, Context const& context)
 {
     auto name = name_helpers::klass_full_concrete_or_interface_name(property.klass) + "." + name_helpers::property_managed_name(property);
 
@@ -112,6 +131,47 @@ inline bool is_property_blacklisted(attributes::property_def const& property, Co
       if (is_function_blacklisted(*property.setter, context))
         return true;
     return is_property_blacklisted(name);
+}
+
+template<typename Context>
+inline bool is_property_blacklisted(attributes::property_def const& property,
+                                    attributes::klass_def const& implementing_class,
+                                    Context const& context)
+{
+   std::string property_name = name_helpers::property_managed_name(property);
+   std::string klass_name = name_helpers::klass_concrete_or_interface_name(implementing_class);
+
+   // This property wrapper is invalidated as it would clash with the implementing
+   // class constructor. CS
+   if (property_name == klass_name)
+     return true;
+
+   return is_property_blacklisted(property, context);
+}
+
+template<typename Context>
+inline bool is_class_blacklisted(attributes::klass_def const& cls, Context const& context)
+{
+   auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
+
+   return cls.is_beta && !options.want_beta;
+}
+
+template<typename Context>
+inline bool is_class_blacklisted(attributes::klass_name const& cls, Context const& context)
+{
+   auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
+
+   return cls.is_beta && !options.want_beta;
+}
+
+
+template<typename Context>
+inline bool is_event_blacklisted(attributes::event_def const& evt, Context const& context)
+{
+   auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
+
+   return evt.beta && !options.want_beta;
 }
 
 }

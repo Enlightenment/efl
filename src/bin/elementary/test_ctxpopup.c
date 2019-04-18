@@ -39,10 +39,11 @@ _print_current_dir(Evas_Object *obj)
 }
 
 static void
-_btn_clicked_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
+_btn_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED,
                 void *event_info EINA_UNUSED)
 {
    printf("Button Clicked\n");
+   elm_object_disabled_set(data, !elm_object_disabled_get(data));
 }
 
 static void

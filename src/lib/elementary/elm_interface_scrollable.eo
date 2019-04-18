@@ -27,7 +27,7 @@ enum Elm.Scroller.Single_Direction
    last  [[Sentinel value to indicate last enum field during iteration]]
 }
 
-mixin Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrollable, Efl.Ui.Focus.Manager_Sub, Efl.Ui.Widget_Focus_Manager
+mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrollable, Efl.Ui.Focus.Manager_Sub, Efl.Ui.Widget_Focus_Manager
 {
    [[Elm scrollable mixin]]
    eo_prefix: elm_interface_scrollable;
@@ -42,7 +42,7 @@ mixin Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrollable,
            The scroller will adjust the view to glue itself as follows.
 
             x=0.0, for staying where it is relative to the left edge of the content
-            x=1.0, for staying where it is relative to the rigth edge of the content
+            x=1.0, for staying where it is relative to the right edge of the content
             y=0.0, for staying where it is relative to the top edge of the content
             y=1.0, for staying where it is relative to the bottom edge of the content
 
@@ -216,8 +216,7 @@ mixin Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrollable,
 
            Note: If $obj is not set to have pages, nothing will happen after
            this call.
-
-           @since 1.8]]
+         ]]
          set {
          }
          get {
@@ -251,8 +250,7 @@ mixin Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrollable,
            such as the movement angle. If the user scrolls roughly in one
            direction only, it will only move according to it while if the move
            was clearly wanted on both axes, it will happen on both of them.
-
-           @since 1.8]]
+         ]]
          set {
          }
          get {
@@ -274,8 +272,7 @@ mixin Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrollable,
       }
       @property content_loop {
          [[Controls an infinite loop for a scroller.
-
-           @since 1.14]]
+         ]]
          set {
          }
          get {

@@ -58,10 +58,12 @@ BUILT_SOURCES += \
 	$(ector_eolian_c) \
 	$(ector_eolian_h)
 
+if INSTALL_EO_FILES
 ectoreolianfilesdir = $(datadir)/eolian/include/ector-@VMAJ@
 ectoreolianfiles_DATA = $(ector_eolian_files) $(ector_eolian_type_files)
+endif
 
-EXTRA_DIST2 += $(ectoreolianfiles_DATA) \
+EXTRA_DIST2 += $(ector_eolian_files) $(ector_eolian_type_files) \
 lib/ector/Ector.h \
 lib/ector/ector_util.h \
 lib/ector/ector_surface.h \
@@ -159,10 +161,12 @@ lib_ector_libector_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/static_libs/freetype \
 -I$(top_srcdir)/src/static_libs/draw \
 -I$(top_srcdir)/src/static_libs/triangulator \
+-DEFL_BUILD \
 @ECTOR_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ector\" \
+-DEFL_BETA_API_SUPPORT=1 \
 @VALGRIND_CFLAGS@ \
 @SSE3_CFLAGS@
 

@@ -100,7 +100,7 @@ _activate(Evas_Object *obj)
 
    if (_elm_config->atspi_mode)
      efl_access_state_changed_signal_emit(obj,
-                                          EFL_ACCESS_STATE_CHECKED,
+                                          EFL_ACCESS_STATE_TYPE_CHECKED,
                                           efl_ui_nstate_value_get(obj));
 }
 
@@ -112,7 +112,7 @@ _efl_ui_check_efl_access_object_state_set_get(const Eo *obj, Efl_Ui_Check_Data *
    states = efl_access_object_state_set_get(efl_super(obj, EFL_UI_CHECK_CLASS));
 
    if (elm_check_state_get(obj))
-       STATE_TYPE_SET(states, EFL_ACCESS_STATE_CHECKED);
+       STATE_TYPE_SET(states, EFL_ACCESS_STATE_TYPE_CHECKED);
 
    return states;
 }
@@ -135,16 +135,15 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
    return EINA_TRUE;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _efl_ui_check_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Check_Data *sd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    if (elm_widget_is_legacy(obj))
      {
@@ -234,7 +233,7 @@ _on_check_off(void *data,
 
    if (_elm_config->atspi_mode)
      efl_access_state_changed_signal_emit(data,
-                                          EFL_ACCESS_STATE_CHECKED,
+                                          EFL_ACCESS_STATE_TYPE_CHECKED,
                                           efl_ui_nstate_value_get(obj));
 }
 
@@ -259,7 +258,7 @@ _on_check_on(void *data,
 
    if (_elm_config->atspi_mode)
      efl_access_state_changed_signal_emit(data,
-                                          EFL_ACCESS_STATE_CHECKED,
+                                          EFL_ACCESS_STATE_TYPE_CHECKED,
                                           efl_ui_nstate_value_get(obj));
 }
 
@@ -327,20 +326,20 @@ _efl_ui_check_efl_object_constructor(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
    if (elm_widget_is_legacy(obj))
      {
         efl_layout_signal_callback_add
-           (wd->resize_obj, "elm,action,check,on", "*", _on_check_on, obj);
+          (wd->resize_obj, "elm,action,check,on", "*", obj, _on_check_on, NULL);
         efl_layout_signal_callback_add
-           (wd->resize_obj, "elm,action,check,off", "*", _on_check_off, obj);
+          (wd->resize_obj, "elm,action,check,off", "*", obj, _on_check_off, NULL);
         efl_layout_signal_callback_add
-           (wd->resize_obj, "elm,action,check,toggle", "*", _on_check_toggle, obj);
+          (wd->resize_obj, "elm,action,check,toggle", "*", obj, _on_check_toggle, NULL);
      }
    else
      {
         efl_layout_signal_callback_add
-           (wd->resize_obj, "efl,action,check,on", "*", _on_check_on, obj);
+          (wd->resize_obj, "efl,action,check,on", "*", obj, _on_check_on, NULL);
         efl_layout_signal_callback_add
-           (wd->resize_obj, "efl,action,check,off", "*", _on_check_off, obj);
+          (wd->resize_obj, "efl,action,check,off", "*", obj, _on_check_off, NULL);
         efl_layout_signal_callback_add
-           (wd->resize_obj, "efl,action,check,toggle", "*", _on_check_toggle, obj);
+          (wd->resize_obj, "efl,action,check,toggle", "*", obj, _on_check_toggle, NULL);
      }
 
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_CHECK_BOX);
@@ -449,8 +448,9 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX)
 
 #include "efl_ui_check.eo.c"
+#include "efl_ui_check_eo.legacy.c"
 
-#include "efl_ui_check_legacy.eo.h"
+#include "efl_ui_check_legacy_eo.h"
 #include "efl_ui_check_legacy_part.eo.h"
 
 #define MY_CLASS_NAME_LEGACY "elm_check"
@@ -492,13 +492,13 @@ _icon_signal_emit(Evas_Object *obj)
 /* FIXME: replicated from elm_layout just because check's icon spot
  * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
  * can changed the theme API */
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _efl_ui_check_legacy_efl_ui_widget_theme_apply(Eo *obj, void *_pd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, EFL_UI_CHECK_LEGACY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    _icon_signal_emit(obj);
 
@@ -558,4 +558,4 @@ elm_check_add(Evas_Object *parent)
    return elm_legacy_add(EFL_UI_CHECK_LEGACY_CLASS, parent);
 }
 
-#include "efl_ui_check_legacy.eo.c"
+#include "efl_ui_check_legacy_eo.c"

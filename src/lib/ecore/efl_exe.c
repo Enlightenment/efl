@@ -40,6 +40,7 @@ typedef struct _Efl_Exe_Data Efl_Exe_Data;
 
 struct _Efl_Exe_Data
 {
+   Efl_Core_Env *env;
    int exit_signal;
    Efl_Exe_Flags flags;
 #ifdef _WIN32
@@ -165,22 +166,6 @@ _exec(const char *cmd, Efl_Exe_Flags flags)
      }
 }
 
-static Eina_Bool
-_foreach_env(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, void *fdata EINA_UNUSED)
-{
-   int keylen;
-   char *buf, *s;
-
-   if (!data) return EINA_TRUE;
-   keylen = strlen(key);
-   buf = alloca(keylen + 1 + strlen(data) + 1);
-   strcpy(buf, key);
-   buf[keylen] = '=';
-   strcpy(buf + keylen + 1, data);
-   if ((s = strdup(buf))) putenv(s);
-   return EINA_TRUE;
-}
-
 static void
 _exe_exit_eval(Eo *obj, Efl_Exe_Data *pd)
 {
@@ -206,7 +191,7 @@ _exe_exit_eval(Eo *obj, Efl_Exe_Data *pd)
                   // 128+n Fatal error signal "n"         kill -9 $PPID       $? returns 137 (128 + 9)
                   // 130   Script terminated by Control-C Ctl-C               Control-C is fatal error signal 2, (130 = 128 + 2, see above)
                   // 255*  Exit status out of range       exit -1             exit takes only integer args in the range 0 - 255
-                  // 
+                  //
                   // According to the above table, exit codes 1 - 2,
                   // 126 - 165, and 255 [1] have special meanings, and
                   // should therefore be avoided for user-specified exit
@@ -300,6 +285,25 @@ _run_clean_cb(Efl_Loop_Consumer *consumer EINA_UNUSED,
 
 //////////////////////////////////////////////////////////////////////////
 
+
+EOLIAN static void
+_efl_exe_env_set(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd, Efl_Core_Env *env)
+{
+   if (pd->env == env) return;
+
+   if (!pd->env)
+     efl_unref(pd->env);
+   pd->env = env;
+   if (pd->env)
+     efl_ref(pd->env);
+}
+
+EOLIAN static Efl_Core_Env*
+_efl_exe_env_get(const Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
+{
+   return pd->env;
+}
+
 EOLIAN static void
 _efl_exe_signal(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd, Efl_Exe_Signal sig)
 {
@@ -391,7 +395,7 @@ _efl_exe_efl_task_priority_get(const Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
 }
 
 EOLIAN static Eina_Future *
-_efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
+_efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
 {
 #ifdef _WIN32
    return EINA_FALSE;
@@ -410,7 +414,7 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
    if (!td) return NULL;
 
    // get a cmdline to run
-   cmd = efl_task_command_get(obj);
+   cmd = efl_core_command_line_command_get(obj);
    if (!cmd) return NULL;
 
    ret = pipe(pipe_exited);
@@ -564,17 +568,28 @@ _efl_exe_efl_task_run(Eo *obj EINA_UNUSED, Efl_Exe_Data *pd)
    // clear systemd notify socket... only relevant for systemd world,
    // otherwise shouldn't be trouble
    putenv("NOTIFY_SOCKET=");
-   // force the env hash to update from env vars
-   efl_task_env_get(loop, "HOME");
 
-   // actually setenv the env hash (clear what was there before so it is
+   // actually setenv the env object (clear what was there before so it is
    // the only env there)
-#ifdef HAVE_CLEARENV
-   clearenv();
-#else
-   environ = NULL;
-#endif
-   eina_hash_foreach(td->env, _foreach_env, NULL);
+   if (pd->env)
+     {
+        Eina_Iterator *itr;
+        const char *key;
+
+# ifdef HAVE_CLEARENV
+        clearenv();
+# else
+        environ = NULL;
+# endif
+        itr = efl_core_env_content_get(pd->env);
+
+        EINA_ITERATOR_FOREACH(itr, key)
+          {
+             setenv(key, efl_core_env_get(pd->env, key) , 1);
+          }
+       efl_unref(pd->env);
+       pd->env = NULL;
+     }
 
    // actually execute!
    _exec(cmd, pd->flags);
@@ -744,7 +759,7 @@ _efl_exe_efl_io_reader_can_read_set(Eo *obj, Efl_Exe_Data *pd, Eina_Bool can_rea
    else
      efl_loop_handler_active_set(pd->fd.out_handler,
                                  EFL_LOOP_HANDLER_FLAGS_READ);
-   efl_event_callback_call(obj, EFL_IO_READER_EVENT_CAN_READ_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_IO_READER_EVENT_CAN_READ_CHANGED, &can_read);
 }
 
 EOLIAN static Eina_Bool
@@ -842,7 +857,7 @@ _efl_exe_efl_io_writer_can_write_set(Eo *obj, Efl_Exe_Data *pd, Eina_Bool can_wr
    else
      efl_loop_handler_active_set(pd->fd.in_handler,
                                  EFL_LOOP_HANDLER_FLAGS_WRITE);
-   efl_event_callback_call(obj, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, &can_write);
 }
 
 EOLIAN static Eina_Bool

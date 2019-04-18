@@ -6,8 +6,8 @@
 #include "elm_priv.h"
 
 //we need those for legacy compatible code
-#include "elm_genlist.eo.h"
-#include "elm_gengrid.eo.h"
+#include "elm_genlist_eo.h"
+#include "elm_gengrid_eo.h"
 
 #define API_ENTRY()\
    EINA_SAFETY_ON_NULL_RETURN(obj); \
@@ -86,12 +86,12 @@ _custom_chain_set(Efl_Ui_Widget *node, Eina_List *lst)
 
    if (pd->legacy_focus.custom_chain && !pd->legacy_focus.listen_to_manager)
      {
-        efl_event_callback_add(node, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_changed, NULL);
+        efl_event_callback_add(node, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, _manager_changed, NULL);
         pd->legacy_focus.listen_to_manager = EINA_TRUE;
      }
    else if (!pd->legacy_focus.custom_chain && pd->legacy_focus.listen_to_manager)
      {
-        efl_event_callback_del(node, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_changed, NULL);
+        efl_event_callback_del(node, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, _manager_changed, NULL);
         pd->legacy_focus.listen_to_manager = EINA_FALSE;
      }
 
@@ -107,11 +107,11 @@ elm_object_focus_next_object_set(Evas_Object        *obj,
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(next, EFL_UI_WIDGET_CLASS));
    ELM_WIDGET_DATA_GET_OR_RETURN(next, next_pd);
 
-   #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction) pd->legacy_focus.field = next;
+   #define MAP(direction, field)  if ((Efl_Ui_Focus_Direction)dir == EFL_UI_FOCUS_DIRECTION_ ##direction) pd->legacy_focus.field = next;
    MAPPING()
    #undef MAP
-   dir = efl_ui_focus_util_direction_complement(EFL_UI_FOCUS_UTIL_CLASS, dir);
-   #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction) next_pd->legacy_focus.field = obj;
+   dir = efl_ui_focus_util_direction_complement(dir);
+   #define MAP(direction, field)  if ((Efl_Ui_Focus_Direction)dir == EFL_UI_FOCUS_DIRECTION_ ##direction) next_pd->legacy_focus.field = obj;
    MAPPING()
    #undef MAP
 }
@@ -178,13 +178,13 @@ _get_legacy_target(EINA_UNUSED Evas_Object *eo, Elm_Widget_Smart_Data *pd, Elm_F
 {
    Evas_Object *result = NULL;
 
-   #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction && pd->legacy_focus.item_ ##field) result = elm_object_item_widget_get(pd->legacy_focus.item_ ##field);
+   #define MAP(direction, field)  if ((Efl_Ui_Focus_Direction)dir == EFL_UI_FOCUS_DIRECTION_ ##direction && pd->legacy_focus.item_ ##field) result = elm_object_item_widget_get(pd->legacy_focus.item_ ##field);
    MAPPING()
    #undef MAP
 
    if (!result)
      {
-        #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction && pd->legacy_focus.field) result = pd->legacy_focus.field;
+        #define MAP(direction, field)  if ((Efl_Ui_Focus_Direction)dir == EFL_UI_FOCUS_DIRECTION_ ##direction && pd->legacy_focus.field) result = pd->legacy_focus.field;
         MAPPING()
         #undef MAP
      }
@@ -218,7 +218,7 @@ elm_object_focus_next(Evas_Object        *obj,
    top = elm_object_top_widget_get(obj);
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(top, EFL_UI_WIN_CLASS));
 
-   manager_top = efl_ui_focus_util_active_manager(EFL_UI_FOCUS_UTIL_CLASS, obj);
+   manager_top = efl_ui_focus_util_active_manager(obj);
    logical = efl_ui_focus_manager_focus_get(manager_top);
 
    if (elm_widget_is(logical))
@@ -245,7 +245,12 @@ elm_object_focus_next(Evas_Object        *obj,
                {
                   Evas_Object *parent = eina_array_data_get(old_chain, i);
                   if (!elm_widget_is(parent)) continue;
-                  ELM_WIDGET_DATA_GET_OR_RETURN(parent, ppd);
+                  ELM_WIDGET_DATA_GET(parent, ppd);
+                  if (!ppd)
+                    {
+                       ERR("Failed to get Elm widget data for parent");
+                       break;
+                    }
                   legacy_target = _get_legacy_target(parent, ppd, dir);
                   if (legacy_target) break;
                }
@@ -255,7 +260,7 @@ elm_object_focus_next(Evas_Object        *obj,
 
         if (legacy_target)
           {
-             efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, legacy_target);
+             efl_ui_focus_util_focus(legacy_target);
              if (elm_object_focused_object_get(top) == legacy_target)
                {
                   legacy_focus_move = EINA_TRUE;
@@ -268,7 +273,7 @@ elm_object_focus_next(Evas_Object        *obj,
      o = efl_ui_focus_manager_move(top, dir);
    if (!o)
      {
-        if (dir == EFL_UI_FOCUS_DIRECTION_NEXT || dir == EFL_UI_FOCUS_DIRECTION_PREVIOUS)
+        if ((Efl_Ui_Focus_Direction)dir == EFL_UI_FOCUS_DIRECTION_NEXT || (Efl_Ui_Focus_Direction)dir == EFL_UI_FOCUS_DIRECTION_PREVIOUS)
           {
              Efl_Ui_Focus_Object *root;
 
@@ -285,11 +290,11 @@ elm_object_focus_next_object_get(const Evas_Object  *obj,
    Efl_Ui_Widget *top = elm_object_top_widget_get(obj);
    API_ENTRY_VAL(NULL)
 
-   #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction && pd->legacy_focus.field) return pd->legacy_focus.field;
+   #define MAP(direction, field)  if ((Efl_Ui_Focus_Direction)dir == EFL_UI_FOCUS_DIRECTION_ ##direction && pd->legacy_focus.field) return pd->legacy_focus.field;
    MAPPING()
    #undef MAP
 
-   return efl_ui_focus_manager_request_move(efl_ui_focus_util_active_manager(EFL_UI_FOCUS_UTIL_CLASS, top), dir, NULL, EINA_FALSE);
+   return efl_ui_focus_manager_request_move(efl_ui_focus_util_active_manager(top), dir, NULL, EINA_FALSE);
 }
 
 EAPI Elm_Object_Item *
@@ -298,7 +303,7 @@ elm_object_focus_next_item_get(const Evas_Object  *obj,
 {
    API_ENTRY_VAL(NULL)
 
-   #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction && pd->legacy_focus.item_ ##field) return pd->legacy_focus.item_ ##field;
+   #define MAP(direction, field)  if ((Efl_Ui_Focus_Direction)dir == EFL_UI_FOCUS_DIRECTION_ ##direction && pd->legacy_focus.item_ ##field) return pd->legacy_focus.item_ ##field;
    MAPPING()
    #undef MAP
 
@@ -312,7 +317,7 @@ elm_object_focus_next_item_set(Evas_Object     *obj,
 {
    API_ENTRY()
 
-   #define MAP(direction, field)  if (dir == EFL_UI_FOCUS_DIRECTION_ ##direction) pd->legacy_focus.item_ ##field = next_item;
+   #define MAP(direction, field)  if ((Efl_Ui_Focus_Direction)dir == EFL_UI_FOCUS_DIRECTION_ ##direction) pd->legacy_focus.item_ ##field = next_item;
    MAPPING()
    #undef MAP
 }
@@ -364,7 +369,7 @@ elm_object_focus_set(Evas_Object *obj,
    else if (elm_widget_is(obj))
      {
         if (focus)
-          efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, obj);
+          efl_ui_focus_util_focus(obj);
         else
           {
              if (efl_ui_focus_manager_focus_get(efl_ui_focus_object_focus_manager_get(obj)) == obj)
@@ -413,7 +418,7 @@ legacy_efl_ui_focus_manager_widget_legacy_signals(Efl_Ui_Focus_Manager *manager,
    state->emittee = emittee;
    state->focused = EINA_FALSE;
 
-   efl_event_callback_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _focus_manager_focused, state);
+   efl_event_callback_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, _focus_manager_focused, state);
    efl_event_callback_add(manager, EFL_EVENT_DEL, _focus_manager_del, state);
 }
 
@@ -443,10 +448,10 @@ _manager_focus_object_changed(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Legacy_Object_Focus_State *state = data;
    if (state->registered_manager)
-     efl_event_callback_del(state->registered_manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _manager_focus_changed, state);
+     efl_event_callback_del(state->registered_manager, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, _manager_focus_changed, state);
    state->registered_manager = efl_ui_focus_object_focus_manager_get(state->emittee);
    if (state->registered_manager)
-     efl_event_callback_add(state->registered_manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED, _manager_focus_changed, state);
+     efl_event_callback_add(state->registered_manager, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, _manager_focus_changed, state);
 }
 
 void
@@ -455,7 +460,7 @@ legacy_child_focus_handle(Efl_Ui_Focus_Object *object)
    Legacy_Object_Focus_State *state = calloc(1, sizeof(Legacy_Object_Focus_State));
    state->emittee = object;
 
-   efl_event_callback_add(object, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_focus_object_changed, state);
+   efl_event_callback_add(object, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, _manager_focus_object_changed, state);
    efl_event_callback_add(object, EFL_EVENT_DEL, _focus_manager_del, state);
 }
 

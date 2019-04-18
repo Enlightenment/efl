@@ -29,3 +29,15 @@ eo_constructors = executable('eo_constructors',
 test('eo-constructors', eo_constructors,
   env : test_env
 )
+
+eo_constructors = executable('eo_constructors_dbg',
+  eo_constructors_src,
+  dependencies: [eo_dbg],
+  c_args : [
+  '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
+  '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']
+)
+
+test('eo-constructors-dbg', eo_constructors,
+  env : test_env
+)

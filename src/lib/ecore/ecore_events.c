@@ -245,10 +245,9 @@ _ecore_event_init(void)
    const char *choice = getenv("EINA_MEMPOOL");
    if ((!choice) || (!choice[0])) choice = "chained_mempool";
 
-   _event_msg_handler =
-     efl_loop_message_handler_get(EFL_LOOP_CLASS,
-                                  _mainloop_singleton,
-                                  ECORE_EVENT_MESSAGE_HANDLER_CLASS);
+   _event_msg_handler = efl_add(ECORE_EVENT_MESSAGE_HANDLER_CLASS, _mainloop_singleton);
+   efl_loop_register(_mainloop_singleton, ECORE_EVENT_MESSAGE_HANDLER_CLASS, _event_msg_handler);
+
    if (!_event_msg_handler)
      {
         ERR("Cannot create legacy ecore event message handler");

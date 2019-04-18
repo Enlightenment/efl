@@ -42,7 +42,8 @@ edc_files = [
   'table.edc',
   'text.edc',
   'textblock-hyphen.edc',
-  'toggle_using_filter.edc'
+  'toggle_using_filter.edc',
+  'multisense.edc',
 ]
 
 if (get_option('physics'))
@@ -62,7 +63,7 @@ foreach edc_file : edc_files
    themes += custom_target('edje_cc_' + edc_file,
     input : edc_file,
     output : '@BASENAME@.edj',
-    command : edje_cc_exe + [ '-beta',
+    command : edje_cc_exe + [ '-beta', '-fastcomp',
               '-id', meson.current_source_dir(),
               '-fd', meson.current_source_dir(),
               '-sd', meson.current_source_dir(),
@@ -71,13 +72,13 @@ foreach edc_file : edc_files
               '-md', meson.current_source_dir(),
               '-td', meson.current_source_dir(),
               '@INPUT@', '@OUTPUT@'],
-    depends : edje_cc, )
+    depends : edje_depends, )
 endforeach
 
 codegen = custom_target('edje_cc_codegen_edc',
   input : 'codegen.edc',
   output : '@BASENAME@.edj',
-  command : edje_cc_exe + [ '-beta',
+  command : edje_cc_exe + [ '-beta', '-fastcomp',
             '-id', meson.current_source_dir(),
             '-fd', meson.current_source_dir(),
             '-sd', meson.current_source_dir(),
@@ -86,13 +87,12 @@ codegen = custom_target('edje_cc_codegen_edc',
             '-md', meson.current_source_dir(),
             '-td', meson.current_source_dir(),
             '@INPUT@', '@OUTPUT@'],
-  depends : edje_cc, )
+  depends : edje_depends, )
 
 themes += custom_target('edje_codegen_codegen.edj',
             input : codegen,
             output : ['@BASENAME@_example_generated.c', '@BASENAME@_example_generated.h'],
-            command : ['/usr/bin/env', 'EFL_RUN_IN_TREE=1', edje_codegen.full_path(),
-                       '--prefix=codegen_example',  '@INPUT@',
+            command : edje_codegen_exe + [ '--prefix=codegen_example',  '@INPUT@',
                        'example_group', '@OUTPUT0@', '@OUTPUT1@'],
             depends : [edje_codegen, themes])
 
@@ -131,6 +131,7 @@ foreach edje_example : edje_examples
   executable(edje_example,
     [edje_example + '.c'] +  themes,
     dependencies: [edje, ecore_evas],
-    c_args: ['-DPACKAGE_DATA_DIR="'+ meson.current_build_dir()+'"',]
+    c_args: ['-DPACKAGE_DATA_DIR="'+ meson.current_build_dir()+'"',
+             '-DPACKAGE_SOURCE_DATA_DIR="'+ meson.current_source_dir()+'"',]
   )
 endforeach

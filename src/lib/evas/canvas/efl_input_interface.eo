@@ -1,4 +1,4 @@
-interface Efl.Input.Interface
+interface @beta Efl.Input.Interface
 {
    [[An object implementing this interface can send pointer events.
 
@@ -18,13 +18,11 @@ interface Efl.Input.Interface
      A "key" is a key press from a keyboard or equivalent type of input device.
      Long, repeated, key presses will always happen like this:
      down...up,down...up,down...up (not down...up or down...down...down...up).
-
-     @since 1.19
    ]]
    eo_prefix: efl_input;
    event_prefix: efl;
    methods {
-      @property seat_event_filter {
+      @property seat_event_filter @beta {
           set {
              [[Add or remove a given seat to the filter list. If the filter list is empty this object
                will report mouse, keyboard and focus events from any seat, otherwise those events will

@@ -1,21 +1,16 @@
 import elm_general;
 
-struct Efl.Ui.List_View_Item_Event
+struct @beta Efl.Ui.List_View_Item_Event
 {
    layout: Efl.Ui.Layout;
    child: Efl.Model;
    index: int;
 }
-class Efl.Ui.List_View extends Efl.Ui.Layout implements Efl.Ui.Scrollable_Interactive, Efl.Ui.Scrollbar,
+class @beta Efl.Ui.List_View extends Efl.Ui.Layout_Base implements Efl.Ui.Scrollable_Interactive, Efl.Ui.Scrollbar,
                 Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Ui.Focus.Composition, Efl.Ui.Focus.Manager_Sub,
                 Efl.Ui.Clickable, Efl.Ui.Selectable, Efl.Ui.List_View_Model, Efl.Ui.Widget_Focus_Manager
 {
    methods {
-      @property relayout {
-         values {
-            object: Efl.Ui.List_View_Relayout;
-         }
-      }
       @property homogeneous {
          get {
            [[Get whether the homogeneous mode is enabled.]]
@@ -56,8 +51,6 @@ class Efl.Ui.List_View extends Efl.Ui.Layout implements Efl.Ui.Scrollable_Intera
       item,unfocused : Efl.Ui.List_View_Item_Event;
       item,highlighted : Efl.Ui.List_View_Item_Event;
       item,unhighlighted : Efl.Ui.List_View_Item_Event;
-      item,selected : Efl.Ui.List_View_Item_Event;
-      item,unselected : Efl.Ui.List_View_Item_Event;
    }
 
    implements {
@@ -78,17 +71,13 @@ class Efl.Ui.List_View extends Efl.Ui.Layout implements Efl.Ui.Scrollable_Intera
 
       // Widget
       Efl.Ui.Widget_Focus_Manager.focus_manager_create;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Ui.Widget.focus_state_apply;
       Efl.Ui.Focus.Composition.prepare;
       Efl.Ui.View.model { get; set; }
 
-//      Efl.Ui.Scrollable_Interactive.scroll;
       Efl.Layout.Signal.signal_callback_add;
       Efl.Layout.Signal.signal_callback_del;
-//      Elm.Interface.Atspi_Accessible.children { get; }
-//      Elm.Interface.Atspi_Widget.Action.elm_actions { get; }
-//      Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Access.Object.access_children { get; }
       Efl.Access.Selection.selected_children_count { get; }
       Efl.Access.Selection.selected_child { get; }
@@ -98,5 +87,9 @@ class Efl.Ui.List_View extends Efl.Ui.Layout implements Efl.Ui.Scrollable_Intera
       Efl.Access.Selection.is_child_selected;
       Efl.Access.Selection.all_children_select;
       Efl.Access.Selection.access_selection_clear;
+   }
+   composite {
+      Efl.Ui.Scrollable_Interactive;
+      Efl.Ui.Scrollbar;
    }
 }

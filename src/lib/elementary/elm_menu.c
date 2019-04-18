@@ -129,7 +129,7 @@ _submenu_sizing_eval(Elm_Menu_Item_Data *parent_it)
         ELM_MENU_ITEM_DATA_GET(eo_item, item);
         elm_layout_sizing_eval(VIEW(item));
         if (_elm_config->atspi_mode)
-          efl_access_state_changed_signal_emit(eo_item, EFL_ACCESS_STATE_SHOWING, EINA_TRUE);
+          efl_access_state_changed_signal_emit(eo_item, EFL_ACCESS_STATE_TYPE_SHOWING, EINA_TRUE);
      }
 
 
@@ -231,10 +231,10 @@ _sizing_eval(Evas_Object *obj)
      }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_menu_efl_ui_widget_theme_apply(Eo *obj, Elm_Menu_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    Eina_List *l, *_l, *_ll, *ll = NULL;
    Elm_Object_Item *eo_item;
@@ -242,7 +242,7 @@ _elm_menu_efl_ui_widget_theme_apply(Eo *obj, Elm_Menu_Data *sd)
    char style[1024];
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    if (sd->menu_bar)
       snprintf(style, sizeof(style), "main_menu/%s", elm_widget_style_get(obj));
@@ -498,7 +498,7 @@ _menu_item_activate_cb(void *data,
              if (eo_item2 != EO_OBJ(item))
                elm_menu_item_selected_set(eo_item2, 0);
           }
-        efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, EO_OBJ(item->parent), EFL_ACCESS_SELECTION_EVENT_SELECTION_CHANGED, NULL);
+        efl_access_object_event_emit(EO_OBJ(item->parent), EFL_ACCESS_SELECTION_EVENT_ACCESS_SELECTION_CHANGED, NULL);
      }
    else
      {
@@ -513,12 +513,12 @@ _menu_item_activate_cb(void *data,
                   elm_menu_item_selected_set(eo_item2, 0);
                }
           }
-        efl_access_object_event_emit(EFL_ACCESS_OBJECT_MIXIN, WIDGET(item), EFL_ACCESS_SELECTION_EVENT_SELECTION_CHANGED, NULL);
+        efl_access_object_event_emit(WIDGET(item), EFL_ACCESS_SELECTION_EVENT_ACCESS_SELECTION_CHANGED, NULL);
         if (sd->menu_bar && was_open)
           _menu_item_select_cb(item, NULL, NULL, NULL);
      }
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(EO_OBJ(item), EFL_ACCESS_STATE_SELECTED, EINA_TRUE);
+     efl_access_state_changed_signal_emit(EO_OBJ(item), EFL_ACCESS_STATE_TYPE_SELECTED, EINA_TRUE);
 }
 
 static void
@@ -532,7 +532,7 @@ _menu_item_inactivate_cb(void *data,
    item->selected = 0;
    if (item->submenu.open) _submenu_hide(item);
    if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(EO_OBJ(item), EFL_ACCESS_STATE_SELECTED, EINA_FALSE);
+     efl_access_state_changed_signal_emit(EO_OBJ(item), EFL_ACCESS_STATE_TYPE_SELECTED, EINA_FALSE);
 }
 
 static void
@@ -690,7 +690,6 @@ EOLIAN static void
 _elm_menu_efl_canvas_group_group_add(Eo *obj, Elm_Menu_Data *priv)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -815,54 +814,8 @@ _elm_menu_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj EINA_UNUSED, 
    return manager;
 }
 
-EOLIAN static Eo *
-_elm_menu_efl_object_constructor(Eo *obj, Elm_Menu_Data *sd)
-{
-   Eo *parent = NULL;
-
-   obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
-   evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
-   parent = efl_parent_get(obj);
-   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_MENU);
-
-   elm_menu_parent_set(obj, parent);
-   elm_hover_target_set(sd->hv, sd->location);
-   elm_layout_content_set
-     (sd->hv, elm_hover_best_content_location_get
-       (sd->hv, ELM_HOVER_AXIS_VERTICAL), sd->bx);
-
-   _sizing_eval(obj);
-   efl_event_callback_add
-     (obj, ELM_MENU_EVENT_ELM_ACTION_BLOCK_MENU, _block_menu, sd);
-   efl_event_callback_add
-     (obj, ELM_MENU_EVENT_ELM_ACTION_UNBLOCK_MENU, _unblock_menu, sd);
-
-   sd->obj = obj;
-   return obj;
-}
-
-EOLIAN static void
-_elm_menu_efl_object_destructor(Eo *obj, Elm_Menu_Data *sd)
-{
-   Eina_List *itr, *itr2;
-   Elm_Object_Item *eo_item;
-   EINA_LIST_FOREACH_SAFE(sd->items, itr, itr2, eo_item)
-     efl_del(eo_item);
-
-   efl_destructor(efl_super(obj, MY_CLASS));
-}
-
-EAPI void
-elm_menu_parent_set(Evas_Object *obj,
-                    Evas_Object *parent)
-{
-   ELM_MENU_CHECK(obj);
-   efl_ui_widget_parent_set(obj, parent);
-}
-
-EOLIAN static void
-_elm_menu_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Menu_Data *sd, Evas_Object *parent)
+static void
+_parent_setup(Eo *obj, Elm_Menu_Data *sd, Evas_Object *parent)
 {
    Eina_List *l, *_l, *_ll, *ll = NULL;
    Elm_Object_Item *eo_item;
@@ -904,17 +857,60 @@ _elm_menu_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Menu_Data *sd, Evas_Objec
    _sizing_eval(obj);
 }
 
+EOLIAN static Eo *
+_elm_menu_efl_object_constructor(Eo *obj, Elm_Menu_Data *sd)
+{
+   Eo *parent = NULL;
+
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
+   _parent_setup(obj, sd, efl_parent_get(obj));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+   parent = efl_parent_get(obj);
+   efl_access_object_role_set(obj, EFL_ACCESS_ROLE_MENU);
+
+   elm_menu_parent_set(obj, parent);
+   elm_hover_target_set(sd->hv, sd->location);
+   elm_layout_content_set
+     (sd->hv, elm_hover_best_content_location_get
+       (sd->hv, ELM_HOVER_AXIS_VERTICAL), sd->bx);
+
+   _sizing_eval(obj);
+   efl_event_callback_add
+     (obj, ELM_MENU_EVENT_ELM_ACTION_BLOCK_MENU, _block_menu, sd);
+   efl_event_callback_add
+     (obj, ELM_MENU_EVENT_ELM_ACTION_UNBLOCK_MENU, _unblock_menu, sd);
+
+   sd->obj = obj;
+   return obj;
+}
+
+EOLIAN static void
+_elm_menu_efl_object_destructor(Eo *obj, Elm_Menu_Data *sd)
+{
+   Eina_List *itr, *itr2;
+   Elm_Object_Item *eo_item;
+   EINA_LIST_FOREACH_SAFE(sd->items, itr, itr2, eo_item)
+     efl_del(eo_item);
+
+   efl_destructor(efl_super(obj, MY_CLASS));
+}
+
+EAPI void
+elm_menu_parent_set(Evas_Object *obj,
+                    Evas_Object *parent)
+{
+   ELM_MENU_CHECK(obj);
+   ELM_MENU_DATA_GET(obj, sd);
+   efl_ui_widget_sub_object_add(parent, obj);
+   _parent_setup(obj, sd, parent);
+}
+
 EAPI Evas_Object *
 elm_menu_parent_get(const Evas_Object *obj)
 {
    ELM_MENU_CHECK(obj) NULL;
    return efl_ui_widget_parent_get(obj);
-}
-
-EOLIAN static Evas_Object*
-_elm_menu_efl_ui_widget_widget_parent_get(const Eo *obj EINA_UNUSED, Elm_Menu_Data *sd)
-{
-   return sd->parent;
 }
 
 EOLIAN static void
@@ -1359,10 +1355,10 @@ _elm_menu_item_efl_access_object_state_set_get(const Eo *obj EINA_UNUSED, Elm_Me
    Efl_Access_State_Set ret;
    ret = efl_access_object_state_set_get(efl_super(obj, ELM_MENU_ITEM_CLASS));
 
-   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_SELECTABLE);
+   STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_SELECTABLE);
 
    if (sd->selected)
-      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_SELECTED);
+      STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_SELECTED);
 
    return ret;
 }
@@ -1461,5 +1457,5 @@ _elm_menu_efl_object_provider_find(const Eo *obj, Elm_Menu_Data *pd, const Efl_O
 #define ELM_MENU_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_menu)
 
-#include "elm_menu_item.eo.c"
-#include "elm_menu.eo.c"
+#include "elm_menu_item_eo.c"
+#include "elm_menu_eo.c"

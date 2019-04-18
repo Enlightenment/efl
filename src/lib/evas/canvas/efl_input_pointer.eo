@@ -1,10 +1,8 @@
 import efl_input_types;
 
-class Efl.Input.Pointer extends Efl.Object implements Efl.Input.Event, Efl.Input.State
+class @beta Efl.Input.Pointer extends Efl.Object implements Efl.Input.Event, Efl.Input.State
 {
    [[Event data carried over with any pointer event (mouse, touch, pen, ...)
-
-     @since 1.18
    ]]
    methods {
       @property action {

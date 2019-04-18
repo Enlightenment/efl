@@ -10,8 +10,8 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "elm_segment_control.eo.h"
-#include "elm_segment_control_item.eo.h"
+#include "elm_segment_control_eo.h"
+#include "elm_segment_control_item_eo.h"
 #include "elm_widget_segment_control.h"
 
 #define MY_CLASS ELM_SEGMENT_CONTROL_CLASS
@@ -215,16 +215,16 @@ _update_list(Elm_Segment_Control_Data *sd)
      }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_segment_control_efl_ui_widget_theme_apply(Eo *obj, Elm_Segment_Control_Data *sd)
 {
    Eina_List *l;
    Eina_Bool rtl;
    Elm_Object_Item *eo_item;
 
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    rtl = efl_ui_mirrored_get(obj);
 
@@ -244,15 +244,12 @@ _elm_segment_control_efl_ui_widget_theme_apply(Eo *obj, Elm_Segment_Control_Data
    return int_ret;
 }
 
-EOLIAN static Eina_Bool
-_elm_segment_control_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Segment_Control_Data *sd, Eina_Bool disabled)
+
+EOLIAN static void
+_elm_segment_control_efl_ui_widget_disabled_set(Eo *obj, Elm_Segment_Control_Data *sd, Eina_Bool disabled)
 {
-   if (!efl_ui_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
-     return EINA_FALSE;
-
+   efl_ui_widget_disabled_set(efl_super(obj, MY_CLASS), disabled);
    _update_list(sd);
-
-   return EINA_TRUE;
 }
 
 // TODO: elm_widget_focus_list_next_get supports only Elm_widget list,
@@ -614,7 +611,6 @@ _elm_segment_control_efl_canvas_group_group_add(Eo *obj, Elm_Segment_Control_Dat
 {
    sd->obj = obj;
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set
        (obj, "segment_control", "base", elm_widget_style_get(obj)))
@@ -832,5 +828,5 @@ _elm_segment_control_item_efl_ui_focus_object_focus_parent_get(const Eo *obj EIN
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_segment_control), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_segment_control)
 
-#include "elm_segment_control_item.eo.c"
-#include "elm_segment_control.eo.c"
+#include "elm_segment_control_item_eo.c"
+#include "elm_segment_control_eo.c"

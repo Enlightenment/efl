@@ -1,6 +1,6 @@
 import efl_ui;
 
-mixin Efl.Access.Action
+mixin @beta Efl.Access.Action
 {
    [[Accessible action mixin]]
    data: null;

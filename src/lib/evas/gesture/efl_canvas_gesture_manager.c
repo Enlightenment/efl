@@ -97,10 +97,18 @@ _efl_canvas_gesture_manager_efl_object_destructor(Eo *obj, Efl_Canvas_Gesture_Ma
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
-void
-_efl_canvas_gesture_manager_callback_add_hook(Eo *obj, Eo *target, const Efl_Event_Description *type)
+void *
+_efl_canvas_gesture_manager_private_data_get(Eo *obj)
 {
    Efl_Canvas_Gesture_Manager_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+
+   return pd;
+}
+
+void
+_efl_canvas_gesture_manager_callback_add_hook(void *data, Eo *target, const Efl_Event_Description *type)
+{
+   Efl_Canvas_Gesture_Manager_Data *pd = data;
    // if there is a recognizer registered for that event then add it to the gesture context
    Efl_Canvas_Gesture_Recognizer *recognizer = eina_hash_find (pd->m_recognizers, &type);
    if (recognizer)
@@ -111,9 +119,9 @@ _efl_canvas_gesture_manager_callback_add_hook(Eo *obj, Eo *target, const Efl_Eve
 }
 
 void
-_efl_canvas_gesture_manager_callback_del_hook(Eo *obj, Eo *target, const Efl_Event_Description *type)
+_efl_canvas_gesture_manager_callback_del_hook(void *data, Eo *target, const Efl_Event_Description *type)
 {
-   Efl_Canvas_Gesture_Manager_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+   Efl_Canvas_Gesture_Manager_Data *pd = data;
    // if there is a recognizer registered for that event then add it to the gesture context
    Efl_Canvas_Gesture_Recognizer *recognizer = eina_hash_find (pd->m_recognizers, &type);
    if (recognizer)
@@ -344,5 +352,23 @@ _cleanup_cached_gestures(Efl_Canvas_Gesture_Manager_Data *pd,
      }
 }
 
+Eina_Bool
+_efl_canvas_gesture_manager_watches(const Efl_Event_Description *ev)
+{
+   /* These are a subset of _elm_win_evas_feed_fake_callbacks
+    * in efl_ui_win.c */
+   if ((ev == EFL_EVENT_POINTER_MOVE) ||
+       (ev == EFL_EVENT_POINTER_DOWN) ||
+       (ev == EFL_EVENT_POINTER_UP) ||
+       (ev == EFL_EVENT_POINTER_IN) ||
+       (ev == EFL_EVENT_POINTER_OUT) ||
+       (ev == EFL_EVENT_POINTER_CANCEL) ||
+       (ev == EFL_EVENT_POINTER_WHEEL) ||
+       (ev == EFL_EVENT_FINGER_MOVE) ||
+       (ev == EFL_EVENT_FINGER_DOWN) ||
+       (ev == EFL_EVENT_FINGER_UP))
+     return EINA_TRUE;
+   return EINA_FALSE;
+}
 
 #include "efl_canvas_gesture_manager.eo.c"

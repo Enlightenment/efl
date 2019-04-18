@@ -1,14 +1,24 @@
-import elm_interface_scrollable;
+/* FIXME: this widget should just implement a scroller */
+enum @beta Elm.Code_Widget_Scroller_Policy
+{
+   [[Type that controls when scrollbars should appear.
+
+     See also @Elm.Interface_Scrollable.policy.set.
+   ]]
+   auto = 0, [[Show scrollbars as needed]]
+   on, [[Always show scrollbars]]
+   off, [[Never show scrollbars]]
+   last [[Sentinel value to indicate last enum field during iteration]]
+}
 
 /* FIXME: Those types make elm_code unusable from pure EO */
 struct @extern Elm.Code; [[Elementary code main data structure]] /* The main interface currently defined in code */
 struct @extern Elm.Code_Line; [[Elementary code line data structure]] /* Parts of the interface currently defined in code */
 
-class Elm.Code_Widget extends Efl.Ui.Layout implements Efl.Access.Text
+class @beta Elm.Code_Widget extends Efl.Ui.Layout_Base
 {
    [[Elementary code widget]]
-   eo_prefix: elm_obj_code_widget;
-   legacy_prefix: elm_code_widget;
+   eo_prefix: efl_ui_code_widget;
    methods {
       @property code {
          set {
@@ -70,8 +80,8 @@ class Elm.Code_Widget extends Efl.Ui.Layout implements Efl.Access.Text
            [[Get the widget's policy for scrollbar visibility.]]
          }
          values {
-            policy_h: Elm.Scroller.Policy; [[The horizontal scrollbar visibility policy]]
-            policy_v: Elm.Scroller.Policy; [[The vertical scrollbar visibility policy]]
+            policy_h: Elm.Code_Widget_Scroller_Policy; [[The horizontal scrollbar visibility policy]]
+            policy_v: Elm.Code_Widget_Scroller_Policy; [[The vertical scrollbar visibility policy]]
          }
       }
       @property tabstop {
@@ -312,7 +322,7 @@ class Elm.Code_Widget extends Efl.Ui.Layout implements Efl.Access.Text
       class.constructor;
       Efl.Object.constructor;
       Efl.Object.finalize;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Ui.Widget.theme_apply;
    }
    constructors {
@@ -324,11 +334,11 @@ class Elm.Code_Widget extends Efl.Ui.Layout implements Efl.Access.Text
       changed,user: void; [[Called when object changed due to user interaction]]
       /* FIXME: All events below send the obj in the event_info, which is redundant */
       cursor,changed: Elm.Code_Widget; [[Called when cursor changed]]
-      selection,start: Elm.Code_Widget; [[Called when a selection is started]]
-      selection,changed: Elm.Code_Widget; [[Called when selection changed]]
-      selection,cleared: Elm.Code_Widget; [[Called when selection was cleared]]
-      selection,cut: Elm.Code_Widget; [[Called when a cut action is performed]]
-      selection,copy: Elm.Code_Widget; [[Called when a copy action is performed]]
-      selection,paste: Elm.Code_Widget; [[Called when a paste action is performed]]
+      code,selection,start: Elm.Code_Widget; [[Called when a selection is started]]
+      code,selection,changed: Elm.Code_Widget; [[Called when selection changed]]
+      code,selection,cleared: Elm.Code_Widget; [[Called when selection was cleared]]
+      code,selection,cut: Elm.Code_Widget; [[Called when a cut action is performed]]
+      code,selection,copy: Elm.Code_Widget; [[Called when a copy action is performed]]
+      code,selection,paste: Elm.Code_Widget; [[Called when a paste action is performed]]
    }
 }

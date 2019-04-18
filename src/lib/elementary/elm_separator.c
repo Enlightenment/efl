@@ -7,7 +7,7 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "elm_separator.eo.h"
+#include "elm_separator_eo.h"
 #include "elm_widget_separator.h"
 #include "elm_widget_layout.h"
 
@@ -16,10 +16,10 @@
 #define MY_CLASS_NAME "Elm_Separator"
 #define MY_CLASS_NAME_LEGACY "elm_separator"
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_separator_efl_ui_widget_theme_apply(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    if (sd->horizontal)
      elm_widget_theme_element_set(obj, "horizontal");
@@ -27,7 +27,7 @@ _elm_separator_efl_ui_widget_theme_apply(Eo *obj, Elm_Separator_Data *sd EINA_UN
      elm_widget_theme_element_set(obj, "vertical");
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    return int_ret;
 }
@@ -48,7 +48,6 @@ EOLIAN static void
 _elm_separator_efl_canvas_group_group_add(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    if (!elm_layout_theme_set
@@ -104,4 +103,4 @@ _elm_separator_class_constructor(Efl_Class *klass)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_separator), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_separator)
 
-#include "elm_separator.eo.c"
+#include "elm_separator_eo.c"

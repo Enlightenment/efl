@@ -6,7 +6,7 @@
 #include "Elementary.h"
 #include "elm_code_text.h"
 
-EFL_START_TEST (elm_code_text_get_test)
+EFL_START_TEST(elm_code_text_get_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -29,7 +29,7 @@ EFL_START_TEST (elm_code_text_get_test)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_text_insert_test)
+EFL_START_TEST(elm_code_text_insert_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -52,7 +52,7 @@ EFL_START_TEST (elm_code_text_insert_test)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_text_contains_test)
+EFL_START_TEST(elm_code_text_contains_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -75,7 +75,7 @@ EFL_START_TEST (elm_code_text_contains_test)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_text_strpos_test)
+EFL_START_TEST(elm_code_text_strpos_test)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -102,7 +102,7 @@ EFL_START_TEST (elm_code_text_strpos_test)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_text_newline_position_test)
+EFL_START_TEST(elm_code_text_newline_position_test)
 {
    short nllen;
    const char *unixtext = "a test\nwith newline";
@@ -118,7 +118,7 @@ EFL_START_TEST (elm_code_text_newline_position_test)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_text_is_whitespace_test)
+EFL_START_TEST(elm_code_text_is_whitespace_test)
 {
    const char *text;
 

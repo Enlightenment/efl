@@ -1,4 +1,4 @@
-mixin Efl.Ui.Focus.Composition requires Efl.Ui.Widget {
+mixin @beta Efl.Ui.Focus.Composition requires Efl.Ui.Widget {
    [[This defines the inheriting widget as Composition widget.
 
      A composition widget is a widget that's the logical parent of another set of widgets which can be used for interaction.
@@ -29,15 +29,6 @@ mixin Efl.Ui.Focus.Composition requires Efl.Ui.Widget {
            You can use this function to call composition_elements.
          ]]
       }
-      @property custom_manager @protected {
-         [[Register all children in this manager
-
-           Set to $null to register them in the same manager as the implementor is
-         ]]
-         values {
-            custom_manager : Efl.Ui.Focus.Manager; [[EFL focus manager]]
-         }
-      }
       @property logical_mode @protected {
          [[Set to true if all children should be registered as logicals]]
          values {
@@ -48,7 +39,7 @@ mixin Efl.Ui.Focus.Composition requires Efl.Ui.Widget {
    implements {
       Efl.Object.invalidate;
       Efl.Ui.Widget.focus_state_apply;
-      Efl.Ui.Focus.Object.prepare_logical_none_recursive;
+      Efl.Ui.Focus.Object.setup_order_non_recursive;
       @empty .prepare;
    }
 }

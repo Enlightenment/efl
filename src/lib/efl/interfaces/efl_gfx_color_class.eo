@@ -1,10 +1,11 @@
 import efl_gfx_types;
 
-interface Efl.Gfx.Color_Class
+mixin @beta Efl.Gfx.Color_Class
 {
-   [[Efl Gfx Color Class interface]]
+   [[Efl Gfx Color Class mixin class]]
+   data: null;
    methods {
-      @property color_class {
+      @property color_class @pure_virtual {
          set {
             [[Set the color of color class.
 
@@ -46,7 +47,47 @@ interface Efl.Gfx.Color_Class
             a: int; [[The alpha value]]
          }
       }
-      @property color_class_description {
+      @property color_class_code {
+          set {
+            [[Set the hex color string of color class.
+
+              This function sets the color values for a color class. This will
+              cause all edje parts in the specified object that have the specified
+              color class to have their colors multiplied by these values.
+
+              The first color is the object, the second is the text outline, and
+              the third is the text shadow. (Note that the second two only apply
+              to text parts).
+
+              Setting color emits a signal "color_class,set" with source being
+              the given color.
+
+              Note: These color values are expected to be premultiplied by the alpha.]]
+            return: bool; [[$true if setting the color succeeded, $false otherwise]]
+          }
+          get {
+            [[Get the hex color string of color class.
+
+              This function gets the color values for a color class. If no explicit
+              object color is set, then global values will be used.
+
+              The first color is the object, the second is the text outline, and
+              the third is the text shadow. (Note that the second two only apply
+              to text parts).
+
+              Returns NULL if the color class cannot be fetched.
+
+              Note: These color values are expected to be premultiplied by $a.]]
+          }
+          keys {
+             color_class: string; [[The name of color class]]
+             layer: Efl.Gfx.Color_Class_Layer @optional; [[The layer to set the color]]
+          }
+          values {
+             colorcode: string; [[the hex color code.]]
+         }
+      }
+      @property color_class_description @pure_virtual {
          get {
             [[Get the description of a color class.
 
@@ -59,7 +100,7 @@ interface Efl.Gfx.Color_Class
             description: string; [[The description of the target color class or $null if not found]]
          }
       }
-      color_class_del {
+      color_class_del @pure_virtual {
          [[Delete the color class.
 
            This function deletes any values for the specified color class.
@@ -73,14 +114,13 @@ interface Efl.Gfx.Color_Class
             @in color_class: string; [[The name of color_class]]
          }
       }
-      color_class_clear {
+      color_class_clear @pure_virtual {
          [[Delete all color classes defined in object level.
 
            This function deletes any color classes defined in object level.
            Clearing color classes will revert the color of all edje parts to
            the values defined in global level or theme file.
-
-           @since 1.17.0]]
+         ]]
       }
    }
 }

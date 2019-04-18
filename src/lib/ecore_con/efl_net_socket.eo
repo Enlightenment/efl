@@ -1,4 +1,4 @@
-interface Efl.Net.Socket extends Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer {
+interface @beta Efl.Net.Socket extends Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer {
     [[The basic socket interface.
 
       This is built upon the three core Input/Output interfaces:
@@ -7,8 +7,6 @@ interface Efl.Net.Socket extends Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer {
         - @Efl.Io.Closer: to close the socket for further operations.
 
       As such it can be used with utilities like @Efl.Io.Copier.
-
-      @since 1.19
     ]]
     methods {
         @property address_local {

@@ -20,11 +20,13 @@ BUILT_SOURCES += \
                  $(ecore_audio_eolian_c) \
                  $(ecore_audio_eolian_h)
 
+if INSTALL_EO_FILES
 ecore_audioeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
 ecore_audioeolianfiles_DATA = $(ecore_audio_eolian_files)
+endif
 
 EXTRA_DIST2 += \
-              ${ecore_audioeolianfiles_DATA}
+              $(ecore_audio_eolian_files)
 
 lib_LTLIBRARIES += lib/ecore_audio/libecore_audio.la
 
@@ -51,7 +53,7 @@ lib/ecore_audio/ecore_audio_obj_out.c \
 lib/ecore_audio/ecore_audio_obj_in_tone.c \
 lib/ecore_audio/ecore_audio_private.h
 
-lib_ecore_audio_libecore_audio_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_AUDIO_CFLAGS@ @ECORE_AUDIO_ALSA_CFLAGS@ @ECORE_AUDIO_PULSE_CFLAGS@ @ECORE_AUDIO_SNDFILE_CFLAGS@
+lib_ecore_audio_libecore_audio_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_AUDIO_CFLAGS@ @ECORE_AUDIO_ALSA_CFLAGS@ @ECORE_AUDIO_PULSE_CFLAGS@ @ECORE_AUDIO_SNDFILE_CFLAGS@ -DEFL_BUILD
 lib_ecore_audio_libecore_audio_la_LIBADD = @ECORE_AUDIO_LIBS@ @ECORE_AUDIO_ALSA_LIBS@
 lib_ecore_audio_libecore_audio_la_DEPENDENCIES = @ECORE_AUDIO_INTERNAL_LIBS@
 lib_ecore_audio_libecore_audio_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

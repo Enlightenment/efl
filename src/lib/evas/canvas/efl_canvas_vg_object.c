@@ -206,13 +206,13 @@ _efl_canvas_vg_object_viewbox_set(Eo *obj, Efl_Canvas_Vg_Object_Data *pd, Eina_R
              eina_matrix3_identity(&m);
              efl_canvas_vg_node_transformation_set(pd->root, &m);
              // unregister the resize callback
-             efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_RESIZE, _evas_vg_resize, pd);
+             efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _evas_vg_resize, pd);
           }
         return;
      }
    // register for resize callback if not done yet
    if (eina_rectangle_is_empty(&pd->viewbox.rect))
-     efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_RESIZE, _evas_vg_resize, pd);
+     efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _evas_vg_resize, pd);
 
    pd->viewbox = viewbox;
    _update_vgtree_viewport(obj, pd);
@@ -244,53 +244,80 @@ _efl_canvas_vg_object_viewbox_align_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg
    if (align_y) *align_y = pd->align_y;
 }
 
-EOLIAN static Eina_Bool
-_efl_canvas_vg_object_efl_file_file_set(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd, const char *file, const char *key)
+EOLIAN static Eina_Error
+_efl_canvas_vg_object_efl_file_file_set(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd EINA_UNUSED, const char *file)
 {
-   Vg_Cache_Entry *old_entry;
+   /* Careful: delete previous vg entry.
+      When a new efl file is set, ex-file will be invalid.
+      Since vg cache hashes all file entries,
+      we must remove it from vg cache before we lost file handle. */
+   if (efl_file_loaded_get(eo_obj))
+     {
+        const char *pname = efl_file_get(eo_obj);
+        int pl = pname ? strlen(pname) : 0;
+        int cl = file ? strlen(file) : 0;
 
-   if (!file) return EINA_FALSE;
+        if ((pl != cl) || (pname && file && strcmp(pname, file)))
+          {
+             Evas_Object_Protected_Data *obj;
+             obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+             evas_cache_vg_entry_del(pd->vg_entry);
+             evas_object_change(eo_obj, obj);
+             pd->vg_entry = NULL;
+             evas_object_change(eo_obj, obj);
+          }
+     }
 
-   old_entry = pd->vg_entry;
+   Eina_Error err;
+   err = efl_file_set(efl_super(eo_obj, MY_CLASS), file);
+   if (err) return err;
 
+   return 0;
+}
+
+EOLIAN static Eina_Error
+_efl_canvas_vg_object_efl_file_load(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd)
+{
+   Eina_Error err;
+   if (efl_file_loaded_get(eo_obj)) return 0;
+
+   err = efl_file_load(efl_super(eo_obj, MY_CLASS));
+   if (err) return err;
+
+   const Eina_File *file = efl_file_mmap_get(eo_obj);
+   const char *key = efl_file_key_get(eo_obj);
    Evas_Object_Protected_Data *obj;
+
    obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-
-   if (file)
-     pd->vg_entry = evas_cache_vg_entry_create(file, key,
-                                               obj->cur->geometry.w,
-                                               obj->cur->geometry.h);
-   else
-     pd->vg_entry = NULL;
-
+   pd->vg_entry = evas_cache_vg_entry_create(file, key,
+                                             obj->cur->geometry.w,
+                                             obj->cur->geometry.h);
    evas_object_change(eo_obj, obj);
-   evas_cache_vg_entry_del(old_entry);
 
-   return EINA_TRUE;
+   return 0;
 }
 
 EOLIAN static void
-_efl_canvas_vg_object_efl_file_file_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Object_Data *pd, const char **file, const char **key)
+_efl_canvas_vg_object_efl_file_unload(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd)
 {
-   if (file) *file = NULL;
-   if (key) *key = NULL;
+   if (!efl_file_loaded_get(eo_obj)) return;
 
-   if (pd->vg_entry)
-     {
-        if (file) *file = pd->vg_entry->file;
-        if (key) *key = pd->vg_entry->key;
-     }
+   Evas_Object_Protected_Data *obj;
+   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   evas_cache_vg_entry_del(pd->vg_entry);
+   evas_object_change(eo_obj, obj);
+   pd->vg_entry = NULL;
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_vg_object_efl_file_save(const Eo *obj, Efl_Canvas_Vg_Object_Data *pd, const char *file, const char *key, const char *flags)
+_efl_canvas_vg_object_efl_file_save_save(const Eo *obj, Efl_Canvas_Vg_Object_Data *pd, const char *file, const char *key, const Efl_File_Save_Info *info)
 {
    if (pd->vg_entry)
-     return evas_cache_vg_entry_file_save(pd->vg_entry, file, key, flags);
+     return evas_cache_vg_entry_file_save(pd->vg_entry, file, key, info);
 
    Evas_Coord w, h;
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
-   return evas_cache_vg_file_save(pd->root, w, h, file, key, flags);
+   return evas_cache_vg_file_save(pd->root, w, h, file, key, info);
 }
 
 static void
@@ -368,43 +395,6 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
         Efl_Canvas_Vg_Container_Data *cd =
            efl_data_scope_get(node, EFL_CANVAS_VG_CONTAINER_CLASS);
 
-        //Update Mask Image
-        if (cd->mask_src)
-          {
-             Efl_Canvas_Vg_Container_Data *cd2 =
-                efl_data_scope_get(cd->mask_src, EFL_CANVAS_VG_CONTAINER_CLASS);
-
-             if (cd2->mask.buffer && cd2->mask.dirty)
-               {
-                  Ector_Surface *ector = evas_ector_get(obj->layer->evas);
-                  if (!ector) return;
-
-                  ENFN->ector_end(engine, output, context, ector, EINA_FALSE);
-
-                  //Need a better approach.
-                  ector_buffer_pixels_set(ector, cd2->mask.pixels, cd2->mask.bound.w, cd2->mask.bound.h, 0,
-                                          EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
-                  ector_surface_reference_point_set(ector, -cd2->mask.bound.x, -cd2->mask.bound.y);
-
-                  //Draw Mask Image.
-                  Efl_VG *child;
-                  Eina_List *l;
-                  EINA_LIST_FOREACH(cd2->children, l, child)
-                     _evas_vg_render(obj, pd, engine, output, context, child,
-                                     clips, EINA_FALSE);
-
-                  cd2->mask.dirty = EINA_FALSE;
-#if 0
-                  FILE *fp = fopen("./test.raw", "w+");
-                  fwrite(cd2->mask.pixels, cd2->mask.bound.w * cd2->mask.bound.h, sizeof(uint32_t), fp);
-                  fclose(fp);
-                  ERR("size = %d x %d", cd2->mask.bound.w, cd2->mask.bound.h);
-#endif
-                  //Restore previous ector context
-                  ENFN->ector_begin(engine, output, context, ector, 0, 0, EINA_FALSE, do_async);
-               }
-          }
-
         if (cd->mask.target) return;   //Don't draw mask itself.
 
         Efl_VG *child;
@@ -424,8 +414,8 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
 //renders a vg_tree to an offscreen buffer and push it to the cache.
 static void *
 _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
-                  void *engine, Efl_VG *root, int w, int h, void *key,
-                  void *buffer, Eina_Bool do_async)
+                  void *engine, Efl_VG *root, int w, int h, void *buffer,
+                  Eina_Bool do_async)
 {
    Ector_Surface *ector;
    RGBA_Draw_Context *context;
@@ -443,13 +433,17 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd
         buffer_created = EINA_TRUE;
      }
 
-   _evas_vg_render_pre(obj, root, ector, NULL, NULL, 0);
-
    //initialize buffer
    context = evas_common_draw_context_new();
    evas_common_draw_context_set_render_op(context, _EVAS_RENDER_COPY);
    evas_common_draw_context_set_color(context, 255, 255, 255, 255);
 
+   //ector begin - end for drawing mask images.
+   //ENFN->ector_begin(engine, buffer, context, ector, 0, 0, EINA_FALSE, EINA_FALSE);
+   _evas_vg_render_pre(obj, root, engine, buffer, context, ector, NULL, NULL, 0);
+   //ENFN->ector_end(engine, buffer, context, ector, EINA_FALSE);
+
+   //Actual content drawing
    ENFN->ector_begin(engine, buffer, context, ector, 0, 0, EINA_TRUE, do_async);
 
    //draw on buffer
@@ -464,7 +458,10 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd
    evas_common_draw_context_free(context);
 
    if (buffer_created)
-     ENFN->ector_surface_cache_set(engine, key, buffer);
+     {
+        //Use root as a cache key.
+        ENFN->ector_surface_cache_set(engine, root, buffer);
+     }
 
    return buffer;
 }
@@ -516,8 +513,7 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
    void *buffer = ENFN->ector_surface_cache_get(engine, root);
 
    if (!buffer)
-     buffer = _render_to_buffer(obj, pd, engine, root, w, h, root, NULL,
-                                do_async);
+     buffer = _render_to_buffer(obj, pd, engine, root, w, h, NULL, do_async);
    else
      //cache reference was increased when we get the cache.
      ENFN->ector_surface_cache_drop(engine, root);
@@ -553,8 +549,7 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
      {
         // render to the buffer
         buffer = _render_to_buffer(obj, pd, engine, user_entry->root,
-                                   w, h, user_entry, buffer,
-                                   do_async);
+                                   w, h, buffer, do_async);
      }
    else
      {
@@ -563,7 +558,6 @@ _user_vg_entry_render(Evas_Object_Protected_Data *obj,
           buffer = _render_to_buffer(obj, pd, engine,
                                      user_entry->root,
                                      w, h,
-                                     user_entry,
                                      buffer,
                                      do_async);
         //cache reference was increased when we get the cache.
@@ -641,9 +635,10 @@ _efl_canvas_vg_object_render_pre(Evas_Object *eo_obj,
      }
 
    // FIXME: handle damage only on changed renderer.
+   // FIXME: Move this render_pre to efl_canvas_vg_render()
    s = evas_ector_get(obj->layer->evas);
    if (pd->root && s)
-     _evas_vg_render_pre(obj, pd->root, s, NULL, NULL, 0);
+     _evas_vg_render_pre(obj, pd->root, NULL, NULL, NULL, s, NULL, NULL, 0);
 
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
@@ -775,3 +770,4 @@ evas_object_vg_add(Evas *e)
 }
 
 #include "efl_canvas_vg_object.eo.c"
+#include "efl_canvas_vg_object_eo.legacy.c"

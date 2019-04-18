@@ -181,6 +181,13 @@ ecore_drm2_plane_fb_set(Ecore_Drm2_Plane *plane, Ecore_Drm2_Fb *fb)
 
    fallback_id = plane->state->fid.value;
    plane->state->fid.value = fb->id;
+
+   /* Update plane state based on fb */
+   plane->state->sw.value = fb->w << 16;
+   plane->state->sh.value = fb->h << 16;
+   plane->state->cw.value = fb->w;
+   plane->state->ch.value = fb->h;
+
    if (_fb_atomic_flip_test(plane->output))
      {
         _ecore_drm2_fb_ref(fb);

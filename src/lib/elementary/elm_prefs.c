@@ -7,7 +7,7 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "elm_prefs.eo.h"
+#include "elm_prefs_eo.h"
 #include "elm_widget_prefs.h"
 #include "elm_prefs_edd.x"
 
@@ -48,7 +48,6 @@ EOLIAN static void
 _elm_prefs_efl_canvas_group_group_add(Eo *obj, Elm_Prefs_Data *_pd EINA_UNUSED)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 }
 
 static void _item_free(Elm_Prefs_Item_Node *it);
@@ -1099,69 +1098,6 @@ _elm_prefs_values_get_user(Elm_Prefs_Data *sd,
 }
 
 EOLIAN static Eina_Bool
-_elm_prefs_efl_file_file_set(Eo *obj, Elm_Prefs_Data *sd, const char *file, const char *page)
-{
-   const char *prefix;
-
-   if (!_elm_prefs_init_count)
-     {
-        CRI("prefs_iface module is not loaded! you can't"
-            " create prefs widgets");
-        return EINA_FALSE;
-     }
-   prefix = elm_app_data_dir_get();
-   if (!strlen(prefix))
-     {
-        WRN("we could not figure out the program's data"
-            " dir, fallbacking to local directory.");
-        prefix = ".";
-     }
-
-   if (!file)
-     sd->file = eina_stringshare_printf("%s/%s", prefix, "preferences.epb");
-   else
-     {
-#ifndef _WIN32
-        if (*file != '/') /* relative */
-#else
-        if (!evil_path_is_absolute(file)) /* relative */
-#endif
-          sd->file = eina_stringshare_printf("%s/%s", prefix, file);
-        else
-          sd->file = eina_stringshare_add(file);
-     }
-
-   sd->page = eina_stringshare_add(page ? page : "main");
-
-   sd->root = _elm_prefs_page_load(obj, sd->page);
-   if (!sd->root) return EINA_FALSE;
-
-   if (!_elm_prefs_page_populate(sd->root, obj))
-     {
-        _root_node_free(sd);
-        sd->root = NULL;
-
-        return EINA_FALSE;
-     }
-
-   elm_widget_resize_object_set(obj, sd->root->w_obj);
-
-   _elm_prefs_values_get_default(sd->root, EINA_FALSE);
-
-   efl_event_callback_legacy_call
-     (obj, ELM_PREFS_EVENT_PAGE_LOADED, (char *)sd->root->name);
-
-   return EINA_TRUE;
-}
-
-EOLIAN static void
-_elm_prefs_efl_file_file_get(const Eo *obj EINA_UNUSED, Elm_Prefs_Data *sd, const char **file, const char **page)
-{
-   if (file) *file = sd->file;
-   if (page) *page = sd->page;
-}
-
-EOLIAN static Eina_Bool
 _elm_prefs_data_set(Eo *obj, Elm_Prefs_Data *sd, Elm_Prefs_Data *prefs_data)
 {
    if (!sd->root) return EINA_FALSE;
@@ -1853,14 +1789,68 @@ _elm_prefs_class_constructor(Efl_Class *klass)
 EAPI Eina_Bool
 elm_prefs_file_set(Eo *obj, const char *file, const char *page)
 {
-   return efl_file_set((Eo *) obj, file, page);
+   Elm_Prefs_Data *sd = efl_data_scope_get(obj, MY_CLASS);
+   const char *prefix;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
+
+   if (!_elm_prefs_init_count)
+     {
+        CRI("prefs_iface module is not loaded! you can't"
+            " create prefs widgets");
+        return EINA_FALSE;
+     }
+   prefix = elm_app_data_dir_get();
+   if (!strlen(prefix))
+     {
+        WRN("we could not figure out the program's data"
+            " dir, fallbacking to local directory.");
+        prefix = ".";
+     }
+
+   if (!file)
+     sd->file = eina_stringshare_printf("%s/%s", prefix, "preferences.epb");
+   else
+     {
+#ifndef _WIN32
+        if (*file != '/') /* relative */
+#else
+        if (!evil_path_is_absolute(file)) /* relative */
+#endif
+          sd->file = eina_stringshare_printf("%s/%s", prefix, file);
+        else
+          sd->file = eina_stringshare_add(file);
+     }
+
+   sd->page = eina_stringshare_add(page ? page : "main");
+
+   sd->root = _elm_prefs_page_load(obj, sd->page);
+   if (!sd->root) return EINA_FALSE;
+
+   if (!_elm_prefs_page_populate(sd->root, obj))
+     {
+        _root_node_free(sd);
+        sd->root = NULL;
+
+        return EINA_FALSE;
+     }
+
+   elm_widget_resize_object_set(obj, sd->root->w_obj);
+
+   _elm_prefs_values_get_default(sd->root, EINA_FALSE);
+
+   efl_event_callback_legacy_call
+     (obj, ELM_PREFS_EVENT_PAGE_LOADED, (char *)sd->root->name);
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
 elm_prefs_file_get(const Eo *obj, const char **file, const char **page)
 {
-   efl_file_get((Eo *) obj, file, page);
-
+   Elm_Prefs_Data *sd = efl_data_scope_get(obj, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd, EINA_FALSE);
+   if (file) *file = sd->file;
+   if (page) *page = sd->page;
    return EINA_TRUE;
 }
 
@@ -1869,4 +1859,4 @@ elm_prefs_file_get(const Eo *obj, const char **file, const char **page)
 #define ELM_PREFS_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_prefs)
 
-#include "elm_prefs.eo.c"
+#include "elm_prefs_eo.c"

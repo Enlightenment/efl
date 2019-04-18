@@ -1,6 +1,6 @@
 import eldbus_types;
 
-class Eldbus.Model.Arguments extends Eldbus.Model {
+class @beta Eldbus.Model.Arguments extends Eldbus.Model {
     [[Eldbus model arguments class]]
 
     methods {

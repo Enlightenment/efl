@@ -3,9 +3,9 @@
  * gcc -o efl_ui_theme_example_01 efl_ui_theme_example_01.c `pkg-config --cflags --libs elementary`
  */
 #define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
 
 #define EFL_UI_WIDGET_PROTECTED
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 #define EXAMPLE_EDJ_FILE_PATH "./efl_ui_theme_example.edj"
@@ -16,7 +16,7 @@ _btn_extension_clicked_cb(void *data EINA_UNUSED, const Efl_Event *event)
    static Eina_Bool loaded = EINA_TRUE;
    Efl_Ui_Theme *default_theme;
 
-   default_theme = efl_ui_theme_default_get(efl_ui_theme_class_get());
+   default_theme = efl_ui_theme_default_get();
 
    if (loaded)
      {
@@ -48,11 +48,11 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
         efl_exit(0);
      }
 
-   default_theme = efl_ui_theme_default_get(efl_ui_theme_class_get());
+   default_theme = efl_ui_theme_default_get();
    efl_ui_theme_extension_add(default_theme, EXAMPLE_EDJ_FILE_PATH);
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
                  efl_text_set(efl_added, "Efl.Ui.Theme example"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE)
                 );

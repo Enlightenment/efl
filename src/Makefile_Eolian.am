@@ -40,6 +40,7 @@ lib_eolian_libeolian_la_SOURCES = \
                                   lib/eolian/eolian_aux.c
 
 lib_eolian_libeolian_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EOLIAN_CFLAGS@ \
+        -DEFL_BUILD \
 	-DPACKAGE_DATA_DIR=\"$(datadir)/eolian\"
 
 lib_eolian_libeolian_la_LIBADD = @EOLIAN_LIBS@
@@ -105,6 +106,8 @@ tests/eolian/data/function_types.eot \
 tests/eolian/data/import_types.eot \
 tests/eolian/data/class_requires.eo \
 tests/eolian/data/mixins_require.eo \
+tests/eolian/data/iface.eo \
+tests/eolian/data/unimpl.eo \
 tests/eolian/data_aux/aux_a.eo \
 tests/eolian/data_aux/aux_b.eo \
 tests/eolian/data_aux/aux_c.eo
@@ -159,10 +162,8 @@ tests/eolian/data/owning.eo.c \
 tests/eolian/data/class_simple_ref.c \
 tests/eolian/data/override_ref.c \
 tests/eolian/data/class_simple_ref_eo.h \
-tests/eolian/data/class_simple_ref_legacy.h \
 tests/eolian/data/import_types_ref.h \
 tests/eolian/data/docs_ref.h \
-tests/eolian/data/docs_ref_legacy.h \
 tests/eolian/data/function_types_ref.h \
 tests/eolian/data/function_as_argument_impl_ref.c \
 tests/eolian/data/function_as_argument_ref.c \

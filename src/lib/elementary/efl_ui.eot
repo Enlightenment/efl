@@ -1,15 +1,11 @@
 /* Efl.Ui enum and struct types */
+import eina_types;
 
-enum Efl.Ui.Theme_Apply_Result
-{
-   [[Return error code when setting the style on a widget.]]
-   fail = 0,    [[Failed to apply theme. The widget may become unusable.]]
-   default = 1, [[Successfully applied the default style. The widget may
-                  look different from the rest of the UI if a custom theme
-                  is in use, but it should be usable.]]
-   success = 3  [[Successfully applied the requested style from the current
-                  theme.]]
-}
+var Efl.Ui.Theme.Apply_Error.NONE: Eina.Error; [[Successfully applied the requested style from the current theme.]]
+var Efl.Ui.Theme.Apply_Error.DEFAULT: Eina.Error; [[Successfully applied the default style. The widget may
+                                                    look different from the rest of the UI if a custom theme
+                                                    is in use, but it should be usable.]]
+var Efl.Ui.Theme.Apply_Error.GENERIC: Eina.Error; [[Failed to apply theme. The widget may become unusable.]]
 
 enum Efl.Ui.Focus.Direction
 {
@@ -23,26 +19,19 @@ enum Efl.Ui.Focus.Direction
    last = 6      [[ last direction ]]
 }
 
-enum Efl.Ui.Interest_Region_Mode
-{
-   [[Focus region show mode.]]
-   widget, [[As a widget.]]
-   item, [[As an item.]]
-}
-
 enum Efl.Ui.Focus.Move_Policy
 {
    [[Focus Movement Policy.
      @since 1.10]]
    click, [[Move focus by mouse click or touch. Elementary focus is set on mouse
             click and this is checked at mouse up time. (default)]]
-   in, [[Move focus by mouse in. Elementary focus is set on mouse move when the
+   move_in, [[Move focus by mouse in. Elementary focus is set on mouse move when the
          mouse pointer is moved into an object.]]
    key_only, [[Move focus by key. Elementary focus is set on key input like
                Left, Right, Up, Down, Tab, or Shift+Tab.]]
 }
 
-enum Efl.Ui.Slider_Indicator_Visible_Mode
+enum @beta Efl.Ui.Slider_Indicator_Visible_Mode
 {
    [[Slider's indicator visibility mode.
 
@@ -65,7 +54,7 @@ enum Efl.Ui.Focus.Autoscroll_Mode
    bring_in [[Bring in the focused region or item automatically which might invole the scrolling.]]
 }
 
-enum Efl.Ui.Softcursor_Mode
+enum @beta Efl.Ui.Softcursor_Mode
 {
    [[Software cursor mode.
 
@@ -77,7 +66,7 @@ enum Efl.Ui.Softcursor_Mode
 }
 
 /* 'on_access_activate' is beta API in the Widget class */
-enum Efl.Ui.Activate
+enum @beta Efl.Ui.Activate
 {
    [[Accessibility ]]
    default = 0, [[Activate default]]
@@ -88,7 +77,7 @@ enum Efl.Ui.Activate
    back, [[Activate back]]
 }
 
-enum Efl.Ui.Widget_Orientation_Mode
+enum @beta Efl.Ui.Widget_Orientation_Mode
 {
    [[Widget orientation mode, or how the theme handles screen orientation.
 
@@ -103,4 +92,4 @@ enum Efl.Ui.Widget_Orientation_Mode
 }
 
 /* Types for A11Y (internal/beta API) */
-type @extern Efl.Access.Action_Data: __undefined_type; [[Internal struct for accesssibility.]]
+type @beta @extern Efl.Access.Action_Data: __undefined_type; [[Internal struct for accesssibility.]]

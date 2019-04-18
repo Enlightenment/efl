@@ -123,17 +123,17 @@ _item_location_get(Elm_Dayselector_Data *sd,
           ELM_DAYSELECTOR_MAX;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_dayselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Dayselector_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    Eina_List *l;
    char buf[1024];
    Elm_Dayselector_Item_Data *it;
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    EINA_LIST_FOREACH(sd->items, l, it)
      {
@@ -445,7 +445,6 @@ EOLIAN static void
 _elm_dayselector_efl_canvas_group_group_add(Eo *obj, Elm_Dayselector_Data *priv)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set(obj, "dayselector", "base",
                              elm_widget_style_get(obj)))
@@ -653,6 +652,6 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_dayselector, ELM_DAYSELECTOR, Elm_Dayselecto
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_dayselector), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_dayselector)
 
-#include "elm_dayselector.eo.c"
-#include "elm_dayselector_item.eo.c"
+#include "elm_dayselector_eo.c"
+#include "elm_dayselector_item_eo.c"
 

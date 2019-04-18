@@ -1,4 +1,4 @@
-interface Efl.Net.Server {
+interface @beta Efl.Net.Server {
     [[The basic server interface.
 
       This will start serving and accepting clients once @.serve is
@@ -9,8 +9,6 @@ interface Efl.Net.Server {
       interface. These implement the standard @Efl.Io.Reader,
       @Efl.Io.Writer and @Efl.Io.Closer interfaces, so can be used
       with utilities such as @Efl.Io.Copier.
-
-      @since 1.19
     ]]
 
     events {
@@ -26,7 +24,7 @@ interface Efl.Net.Server {
                                    excess, see @.clients_limit.
                                  ]]
 
-        error: Eina.Error; [[An error has occurred and the server needs
+        server,error: Eina.Error; [[An error has occurred and the server needs
                              to be stopped.
                            ]]
         serving: void; [[Notifies the server is ready to accept clients.

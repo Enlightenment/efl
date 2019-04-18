@@ -1,16 +1,14 @@
 import eina_types;
 
-enum Efl.Io.Positioner_Whence {
+enum @beta Efl.Io.Positioner_Whence {
     [[Seek position modes]]
     start, [[Seek from start of the stream/file]]
     current, [[Seek from current position]]
     end, [[Seek from the end of stream/file]]
 }
 
-mixin Efl.Io.Positioner {
+mixin @beta Efl.Io.Positioner {
     [[Generic interface for objects that can change or report position.
-
-      @since 1.19
     ]]
 
     data: null;

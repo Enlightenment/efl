@@ -1,4 +1,4 @@
-class Efl.Ui.Nstate extends Efl.Ui.Button
+class @beta Efl.Ui.Nstate extends Efl.Ui.Button
 {
    [[Efl UI nstate class]]
    methods {
@@ -31,7 +31,7 @@ class Efl.Ui.Nstate extends Efl.Ui.Button
       class.constructor;
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
    }
    events {
       changed: void; [[Called when the value changed.]]

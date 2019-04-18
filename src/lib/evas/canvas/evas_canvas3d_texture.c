@@ -372,24 +372,26 @@ _evas_canvas3d_texture_data_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd,
    evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_TEXTURE_DATA, NULL);
 }
 
-EOLIAN static void
-_evas_canvas3d_texture_efl_file_mmap_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Texture_Data *pd, const Eina_File **f, const char **key)
+EOLIAN static Eina_Error
+_evas_canvas3d_texture_efl_file_load(Eo *obj, Evas_Canvas3D_Texture_Data *pd)
 {
-   if (f) *f = pd->f;
-   if (key) *key = pd->key;
-}
-
-EOLIAN static Eina_Bool
-_evas_canvas3d_texture_efl_file_mmap_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd, const Eina_File *f, const char *key)
-{
-
    Evas_Image_Load_Opts lo;
    int load_error;
    Eo *evas = NULL;
    void *image;
+   const Eina_File *f;
+   const char *key;
+
+   if (efl_file_loaded_get(obj)) return 0;
 
    evas = evas_object_evas_get(obj);
    Evas_Public_Data *e = efl_data_scope_get(evas, EVAS_CANVAS_CLASS);
+
+   Eina_Error err = efl_file_load(efl_super(obj, MY_CLASS));
+   if (err) return err;
+
+   f = efl_file_mmap_get(obj);
+   key = efl_file_key_get(obj);
 
    if (!pd->engine_data && e->engine.func->texture_new)
      pd->engine_data = e->engine.func->texture_new(_evas_engine_context(e), pd->atlas_enable);

@@ -8,8 +8,8 @@
 
 #include "elm_priv.h"
 #include "elm_widget_photo.h"
-#include "elm_photo.eo.h"
-#include "elm_icon.eo.h"
+#include "elm_photo_eo.h"
+#include "elm_icon_eo.h"
 
 #define MY_CLASS ELM_PHOTO_CLASS
 
@@ -49,14 +49,14 @@ _sizing_eval(Evas_Object *obj)
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_photo_efl_ui_widget_theme_apply(Eo *obj, Elm_Photo_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    edje_object_mirrored_set
      (wd->resize_obj, efl_ui_mirrored_get(obj));
@@ -72,6 +72,20 @@ _elm_photo_efl_ui_widget_theme_apply(Eo *obj, Elm_Photo_Data *sd)
    _sizing_eval(obj);
 
    return int_ret;
+}
+
+EOLIAN static void
+_elm_photo_efl_ui_draggable_drag_target_set(Eo *obj EINA_UNUSED,
+                                            Elm_Photo_Data *pd EINA_UNUSED,
+                                            Eina_Bool set EINA_UNUSED)
+{
+}
+
+EOLIAN static Eina_Bool
+_elm_photo_efl_ui_draggable_drag_target_get(const Eo *obj EINA_UNUSED,
+                                            Elm_Photo_Data *pd EINA_UNUSED)
+{
+   return EINA_FALSE;
 }
 
 static void
@@ -248,7 +262,6 @@ _elm_photo_efl_canvas_group_group_add(Eo *obj, Elm_Photo_Data *priv)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -301,6 +314,17 @@ elm_photo_add(Evas_Object *parent)
 }
 
 EOLIAN static Eo *
+_elm_photo_efl_object_finalize(Eo *obj, Elm_Photo_Data *sd)
+{
+   obj = efl_finalize(efl_super(obj, MY_CLASS));
+   if (!obj) return NULL;
+   if (efl_file_get(sd->icon) || efl_file_mmap_get(sd->icon))
+     efl_file_load(sd->icon);
+
+   return obj;
+}
+
+EOLIAN static Eo *
 _elm_photo_efl_object_constructor(Eo *obj, Elm_Photo_Data *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
@@ -311,21 +335,61 @@ _elm_photo_efl_object_constructor(Eo *obj, Elm_Photo_Data *_pd EINA_UNUSED)
    return obj;
 }
 
-EOLIAN static Eina_Bool
-_elm_photo_efl_file_file_set(Eo *obj, Elm_Photo_Data *sd, const char *file, const char *key EINA_UNUSED)
+EOLIAN static Eina_Error
+_elm_photo_efl_file_load(Eo *obj, Elm_Photo_Data *sd)
 {
+   const char *file = efl_file_get(sd->icon);
+   Eina_Error err = 0;
    if (!file)
      {
         if (!elm_icon_standard_set(sd->icon, "no_photo")) return EINA_FALSE;
      }
    else
      {
-        if (!elm_image_file_set(sd->icon, file, NULL)) return EINA_FALSE;
+        if (efl_file_loaded_get(obj)) return 0;
+        err = efl_file_load(sd->icon);
+        if (err) return err;
      }
 
    _sizing_eval(obj);
 
-   return EINA_TRUE;
+   return 0;
+}
+
+EOLIAN static const Eina_File *
+_elm_photo_efl_file_mmap_get(const Eo *obj EINA_UNUSED, Elm_Photo_Data *sd)
+{
+   return efl_file_mmap_get(sd->icon);
+}
+
+EOLIAN static Eina_Error
+_elm_photo_efl_file_mmap_set(Eo *obj EINA_UNUSED, Elm_Photo_Data *sd, const Eina_File *file)
+{
+   return efl_file_mmap_set(sd->icon, file);
+}
+
+EOLIAN static Eina_Error
+_elm_photo_efl_file_file_set(Eo *obj EINA_UNUSED, Elm_Photo_Data *sd, const char *file)
+{
+   return efl_file_set(sd->icon, file);
+}
+
+EOLIAN static const char *
+_elm_photo_efl_file_file_get(const Eo *obj EINA_UNUSED, Elm_Photo_Data *sd)
+{
+   return efl_file_get(sd->icon);
+}
+
+EOLIAN static void
+_elm_photo_efl_file_key_set(Eo *obj EINA_UNUSED, Elm_Photo_Data *sd, const char *key)
+{
+   return efl_file_key_set(sd->icon, key);
+}
+
+EOLIAN static const char *
+_elm_photo_efl_file_key_get(const Eo *obj EINA_UNUSED, Elm_Photo_Data *sd)
+{
+   return efl_file_key_get(sd->icon);
 }
 
 static void
@@ -337,7 +401,7 @@ _elm_photo_class_constructor(Efl_Class *klass)
 EAPI Eina_Bool
 elm_photo_file_set(Eo *obj, const char *file)
 {
-   return efl_file_set((Eo *) obj, file, NULL);
+   return efl_file_simple_load((Eo *) obj, file, NULL);
 }
 
 /* Legacy deprecated functions */
@@ -428,4 +492,4 @@ elm_photo_thumb_set(Evas_Object *obj, const char *file, const char *group)
 #define ELM_PHOTO_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_photo)
 
-#include "elm_photo.eo.c"
+#include "elm_photo_eo.c"

@@ -50,7 +50,7 @@ _new_default_device_find(Evas_Public_Data *e, Evas_Device *old_dev)
 
    EINA_LIST_FOREACH(e->devices, l, dev)
      {
-        if (efl_input_device_type_get(dev) != old_class)
+        if ((Evas_Device_Class)efl_input_device_type_get(dev) != old_class)
           continue;
 
         def = dev;
@@ -142,6 +142,12 @@ EAPI Evas_Device *
 evas_device_get(Evas *eo_e, const char *name)
 {
    return efl_canvas_scene_device_get(eo_e, name);
+}
+
+EOLIAN Efl_Input_Device *
+_evas_canvas_efl_canvas_scene_seat_default_get(Evas *eo_e EINA_UNUSED, Evas_Public_Data *e)
+{
+   return e->default_seat;
 }
 
 EOLIAN Efl_Input_Device *
@@ -394,7 +400,7 @@ evas_device_class_set(Evas_Device *dev, Evas_Device_Class clas)
    Efl_Input_Device_Data *d = efl_data_scope_get(dev, EFL_INPUT_DEVICE_CLASS);
    Evas_Public_Data *edata = efl_data_scope_get(d->evas, EVAS_CANVAS_CLASS);
 
-   if (d->klass == clas)
+   if ((Evas_Device_Class)d->klass == clas)
      return;
 
    if (_is_pointer(d->klass))
@@ -519,4 +525,32 @@ _evas_device_top_get(const Evas *eo_e)
    num = eina_array_count(e->cur_device);
    if (num < 1) return NULL;
    return eina_array_data_get(e->cur_device, num - 1);
+}
+
+EOLIAN Eina_Bool
+_evas_canvas_efl_canvas_scene_pointer_position_get(const Eo *eo_e, Evas_Public_Data *e, Efl_Input_Device *seat, Eina_Position2D *pos)
+{
+   Eina_Iterator *it;
+   Eo *child;
+
+   if (!pos) return EINA_FALSE;
+
+   *pos = EINA_POSITION2D(0, 0);
+   if (!e->default_seat) return EINA_FALSE;
+   if (!seat)
+     {
+        evas_pointer_canvas_xy_get(eo_e, &pos->x, &pos->y);
+        return EINA_TRUE;
+     }
+   it = efl_input_device_children_iterate(seat);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(it, EINA_FALSE);
+
+   EINA_ITERATOR_FOREACH(it, child)
+     if (_is_pointer(efl_input_device_type_get(child)))
+       break;
+   if (child)
+     *pos = efl_input_pointer_position_get(child);
+
+   eina_iterator_free(it);
+   return !!child;
 }

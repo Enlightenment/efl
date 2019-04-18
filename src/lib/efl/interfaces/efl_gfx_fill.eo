@@ -1,6 +1,6 @@
 import eina_types;
 
-interface Efl.Gfx.Fill {
+interface @beta Efl.Gfx.Fill {
    [[Efl graphics fill interface]]
    methods {
       @property fill_auto {

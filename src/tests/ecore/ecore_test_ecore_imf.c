@@ -14,7 +14,7 @@ EFL_START_TEST(ecore_test_ecore_imf_init)
 EFL_END_TEST
 
 static const char *built_modules[] = {
-#ifdef ENABLE_XIM
+#ifdef BUILD_ECORE_IMF_XIM
   "xim",
 #endif
 #ifdef BUILD_ECORE_IMF_IBUS

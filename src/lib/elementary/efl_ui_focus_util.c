@@ -12,7 +12,7 @@ typedef struct {
 static void
 _manager_changed(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, data);
+   efl_ui_focus_util_focus(data);
 }
 
 static Eina_Bool
@@ -25,7 +25,7 @@ _can_take_focus(Efl_Ui_Focus_Manager *m, Efl_Ui_Focus_Object *user)
 }
 
 EOLIAN static void
-_efl_ui_focus_util_focus(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus_Object *user)
+_efl_ui_focus_util_focus(Efl_Ui_Focus_Object *user)
 {
    Efl_Ui_Focus_Object *entry;
    Efl_Ui_Widget *top, *o;
@@ -34,7 +34,7 @@ _efl_ui_focus_util_focus(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus
    top = elm_widget_top_get(user);
 
    o = efl_key_data_get(top, "__delayed_focus_set");
-   if (o) efl_event_callback_del(o, EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED, _manager_changed, o);
+   if (o) efl_event_callback_del(o, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, _manager_changed, o);
    efl_key_data_set(top, "__delayed_focus_set", NULL);
 
    registered_manager = m = efl_ui_focus_object_focus_manager_get(user);
@@ -54,7 +54,7 @@ _efl_ui_focus_util_focus(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus
      {
         efl_key_data_set(top, "__delayed_focus_set", entry);
         efl_event_callback_add(entry,
-                               EFL_UI_FOCUS_OBJECT_EVENT_MANAGER_CHANGED,
+                               EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED,
                                _manager_changed, user);
      }
    else if (efl_isa(m, EFL_UI_WIN_CLASS))
@@ -64,7 +64,7 @@ _efl_ui_focus_util_focus(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_focus_util_active_manager(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus_Manager *manager)
+_efl_ui_focus_util_active_manager(Efl_Ui_Focus_Manager *manager)
 {
    while (efl_ui_focus_manager_redirect_get(manager))
      manager = efl_ui_focus_manager_redirect_get(manager);
@@ -73,7 +73,7 @@ _efl_ui_focus_util_active_manager(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl
 }
 
 EOLIAN static Efl_Ui_Focus_Direction
-_efl_ui_focus_util_direction_complement(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Ui_Focus_Direction dir)
+_efl_ui_focus_util_direction_complement(Efl_Ui_Focus_Direction dir)
 {
   #define COMP(a,b) \
         if (dir == a) return b; \

@@ -2,6 +2,7 @@ using System;
 
 public class Example
 {
+#if EFL_BETA
     public static Efl.Ui.Button CreateButton(Efl.Object parent,
                                              string text,
                                              int w, int h,
@@ -73,5 +74,10 @@ public class Example
 
         Efl.All.Shutdown();
     }
+#else
+    public static void Main()
+    {
+    }
+#endif
 
 }

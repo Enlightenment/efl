@@ -298,12 +298,12 @@ _hov_show_do(Evas_Object *obj)
    }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_hover_efl_ui_widget_theme_apply(Eo *obj, Elm_Hover_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    if (sd->smt_sub) _elm_hover_smt_sub_re_eval(obj);
 
@@ -582,7 +582,6 @@ EOLIAN static void
 _elm_hover_efl_canvas_group_group_add(Eo *obj, Elm_Hover_Data *sd)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    ELM_HOVER_PARTS_FOREACH
      sd->subs[i].swallow = _content_aliases[i].alias;
@@ -689,6 +688,29 @@ elm_hover_add(Evas_Object *parent)
    return elm_legacy_add(MY_CLASS, parent);
 }
 
+static void
+_parent_setup(Eo *obj, Elm_Hover_Data *sd, Evas_Object *parent)
+{
+   _elm_hover_parent_detach(obj);
+
+   sd->parent = parent;
+   if (sd->parent)
+     {
+        evas_object_event_callback_add
+          (sd->parent, EVAS_CALLBACK_MOVE, _parent_move_cb, obj);
+        evas_object_event_callback_add
+          (sd->parent, EVAS_CALLBACK_RESIZE, _parent_resize_cb, obj);
+        evas_object_event_callback_add
+          (sd->parent, EVAS_CALLBACK_SHOW, _parent_show_cb, obj);
+        evas_object_event_callback_add
+          (sd->parent, EVAS_CALLBACK_HIDE, _parent_hide_cb, obj);
+        evas_object_event_callback_add
+          (sd->parent, EVAS_CALLBACK_DEL, _parent_del_cb, obj);
+     }
+
+   elm_layout_sizing_eval(obj);
+}
+
 EOLIAN static Eo *
 _elm_hover_efl_object_constructor(Eo *obj, Elm_Hover_Data *pd EINA_UNUSED)
 {
@@ -697,6 +719,7 @@ _elm_hover_efl_object_constructor(Eo *obj, Elm_Hover_Data *pd EINA_UNUSED)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_POPUP_MENU);
    legacy_child_focus_handle(obj);
+   _parent_setup(obj, pd, efl_parent_get(obj));
 
    return obj;
 }
@@ -735,30 +758,9 @@ elm_hover_parent_set(Evas_Object *obj,
                      Evas_Object *parent)
 {
    ELM_HOVER_CHECK(obj);
-   efl_ui_widget_parent_set(obj, parent);
-}
-
-EOLIAN static void
-_elm_hover_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Hover_Data *sd, Evas_Object *parent)
-{
-   _elm_hover_parent_detach(obj);
-
-   sd->parent = parent;
-   if (sd->parent)
-     {
-        evas_object_event_callback_add
-          (sd->parent, EVAS_CALLBACK_MOVE, _parent_move_cb, obj);
-        evas_object_event_callback_add
-          (sd->parent, EVAS_CALLBACK_RESIZE, _parent_resize_cb, obj);
-        evas_object_event_callback_add
-          (sd->parent, EVAS_CALLBACK_SHOW, _parent_show_cb, obj);
-        evas_object_event_callback_add
-          (sd->parent, EVAS_CALLBACK_HIDE, _parent_hide_cb, obj);
-        evas_object_event_callback_add
-          (sd->parent, EVAS_CALLBACK_DEL, _parent_del_cb, obj);
-     }
-
-   elm_layout_sizing_eval(obj);
+   ELM_HOVER_DATA_GET(obj, sd);
+   efl_ui_widget_sub_object_add(parent, obj);
+   _parent_setup(obj, sd, parent);
 }
 
 EOLIAN static Evas_Object*
@@ -772,12 +774,6 @@ elm_hover_parent_get(const Evas_Object *obj)
 {
    ELM_HOVER_CHECK(obj) NULL;
    return efl_ui_widget_parent_get((Eo *) obj);
-}
-
-EOLIAN static Evas_Object*
-_elm_hover_efl_ui_widget_widget_parent_get(const Eo *obj EINA_UNUSED, Elm_Hover_Data *sd)
-{
-   return sd->parent;
 }
 
 EOLIAN static const char*
@@ -859,7 +855,7 @@ _elm_hover_efl_access_object_state_set_get(const Eo *obj, Elm_Hover_Data *pd EIN
    Efl_Access_State_Set states;
    states = efl_access_object_state_set_get(efl_super(obj, MY_CLASS));
 
-   STATE_TYPE_SET(states, EFL_ACCESS_STATE_MODAL);
+   STATE_TYPE_SET(states, EFL_ACCESS_STATE_TYPE_MODAL);
    return states;
 }
 
@@ -883,4 +879,4 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_hover, ELM_HOVER, Elm_Hover_Data)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_hover), \
    _ELM_LAYOUT_ALIASES_OPS(elm_hover, content)
 
-#include "elm_hover.eo.c"
+#include "elm_hover_eo.c"

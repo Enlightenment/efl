@@ -1,3 +1,4 @@
+#define EFL_BETA_API_SUPPORT
 #include <Efl_Net.h>
 #include <Ecore_Getopt.h>
 #include <fcntl.h>
@@ -76,9 +77,9 @@ _dialer_connected(void *data EINA_UNUSED, const Efl_Event *event)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(dialer_cbs,
-                           { EFL_NET_DIALER_EVENT_RESOLVED, _dialer_resolved },
-                           { EFL_NET_DIALER_EVENT_ERROR, _dialer_error },
-                           { EFL_NET_DIALER_EVENT_CONNECTED, _dialer_connected });
+                           { EFL_NET_DIALER_EVENT_DIALER_RESOLVED, _dialer_resolved },
+                           { EFL_NET_DIALER_EVENT_DIALER_ERROR, _dialer_error },
+                           { EFL_NET_DIALER_EVENT_DIALER_CONNECTED, _dialer_connected });
 
 static void
 _http_headers_done(void *data EINA_UNUSED, const Efl_Event *event)
@@ -663,7 +664,7 @@ efl_main(void *data EINA_UNUSED,
      {
         /* regular file, open with flags: read-only and close-on-exec */
         input = efl_add_ref(EFL_IO_FILE_CLASS, NULL,
-                        efl_file_set(efl_added, input_fname, NULL), /* mandatory */
+                        efl_file_set(efl_added, input_fname), /* mandatory */
                         efl_io_file_flags_set(efl_added, O_RDONLY), /* default */
                         efl_io_closer_close_on_exec_set(efl_added, EINA_TRUE), /* recommended, set *after* flags, or include O_CLOEXEC in flags -- be careful with _WIN32 that doesn't support it. */
                         efl_event_callback_array_add(efl_added, input_cbs(), NULL) /* optional */
@@ -939,7 +940,7 @@ efl_main(void *data EINA_UNUSED,
          * create if did not exist and truncate if exist.
          */
         output = efl_add_ref(EFL_IO_FILE_CLASS, NULL,
-                         efl_file_set(efl_added, output_fname, NULL), /* mandatory */
+                         efl_file_set(efl_added, output_fname), /* mandatory */
                          efl_io_file_flags_set(efl_added, O_WRONLY | O_CREAT | O_TRUNC), /* mandatory for write */
                          efl_io_closer_close_on_exec_set(efl_added, EINA_TRUE), /* recommended, set *after* flags, or include O_CLOEXEC in flags -- be careful with _WIN32 that doesn't support it. */
                          efl_io_file_mode_set(efl_added, 0644), /* mandatory for write */

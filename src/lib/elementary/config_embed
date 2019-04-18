@@ -1,0 +1,4 @@
+#!/bin/bash
+echo "static const char *embedded_config = \"\"" > $2
+sed -e 's/"/\\"/g; s/$/\"/; s/^/\"/' $1 >> $2
+echo "\"\";" >> $2

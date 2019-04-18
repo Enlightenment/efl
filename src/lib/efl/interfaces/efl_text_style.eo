@@ -1,18 +1,18 @@
-enum Efl.Text_Style_Backing_Type
+enum @beta Efl.Text_Style_Backing_Type
 {
    [[Whether to apply backing style to the displayed text or not]]
    disabled = 0, [[Do not use backing]]
    enabled,      [[Use backing style]]
 }
 
-enum Efl.Text_Style_Strikethrough_Type
+enum @beta Efl.Text_Style_Strikethrough_Type
 {
    [[Whether to apply strikethrough style to the displayed text or not]]
    disabled = 0, [[Do not use strikethrough]]
    enabled,      [[Use strikethrough style]]
 }
 
-enum Efl.Text_Style_Effect_Type
+enum @beta Efl.Text_Style_Effect_Type
 {
    [[Effect to apply to the displayed text]]
    none = 0, [[No effect]]
@@ -32,7 +32,7 @@ enum Efl.Text_Style_Effect_Type
    outline_soft_shadow, [[Outline soft shadow effect]]
 }
 
-enum Efl.Text_Style_Shadow_Direction
+enum @beta Efl.Text_Style_Shadow_Direction
 {
    [[Direction of the shadow style, if used]]
    bottom_right = 0, [[Shadow towards bottom right]]
@@ -45,7 +45,7 @@ enum Efl.Text_Style_Shadow_Direction
    right, [[Shadow towards right]]
 }
 
-enum Efl.Text_Style_Underline_Type
+enum @beta Efl.Text_Style_Underline_Type
 {
    [[Underline type of the displayed text]]
    off = 0, [[Text without underline]]
@@ -55,12 +55,10 @@ enum Efl.Text_Style_Underline_Type
    dashed, [[Underlined with a dashed line]]
 }
 
-interface Efl.Text_Style {
+interface @beta Efl.Text_Style {
    [[Style to apply to the text
 
      A style can be coloring, effects, underline, strikethrough etc.
-
-     @since 1.20
    ]]
    eo_prefix: efl_text;
    methods {

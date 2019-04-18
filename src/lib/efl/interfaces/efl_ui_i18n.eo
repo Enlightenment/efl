@@ -1,4 +1,4 @@
-interface Efl.Ui.I18n
+interface @beta Efl.Ui.I18n
 {
    [[A common Internationalization interface for UI objects.]]
    eo_prefix: efl_ui;

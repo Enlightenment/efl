@@ -8,8 +8,9 @@ class Efl.Canvas.Group extends Efl.Canvas.Object
      sense that a standard widget may not have any empty slots for content.
      However it's still a group of low-level canvas objects (clipper, raw objects,
      etc.).
+
+     @since 1.22
    ]]
-   legacy_prefix: evas_object_smart;
    data: Evas_Smart_Data;
    methods {
       @property group_need_recalculate {
@@ -27,10 +28,8 @@ class Efl.Canvas.Group extends Efl.Canvas.Object
            See also @.group_calculate.
          ]]
          set {
-            legacy: evas_object_smart_need_recalculate_set;
          }
          get {
-            legacy: evas_object_smart_need_recalculate_get;
          }
          values {
             value: bool; [[$true if the group layout needs to be recalculated, $false otherwise]]
@@ -43,14 +42,12 @@ class Efl.Canvas.Group extends Efl.Canvas.Object
            recalculation. As an effect, on the next rendering cycle its
            @.group_calculate method will be called.
          ]]
-         legacy: evas_object_smart_changed;
       }
       group_calculate {
          [[Triggers an immediate recalculation of this object's geometry.
 
            This will also reset the flag @.group_need_recalculate.
          ]]
-         legacy: evas_object_smart_calculate;
       }
       group_members_iterate @const {
          [[Returns an iterator over the children of this object, which are
@@ -62,7 +59,6 @@ class Efl.Canvas.Group extends Efl.Canvas.Object
          ]]
          return: iterator<Efl.Canvas.Object> @owned;
             [[Iterator to object children]]
-         legacy: evas_object_smart_iterator_new;
       }
       group_member_add {
          [[Set a canvas object as a member of a given group (or smart object).
@@ -77,15 +73,14 @@ class Efl.Canvas.Group extends Efl.Canvas.Object
            to ensure the proper stacking of special objects, such as clippers,
            event rectangles, etc...
 
-           See also @.group_member_del.
+           See also @.group_member_remove.
            See also @.group_member_is.
          ]]
          params {
             @in sub_obj: Efl.Canvas.Object @nonull; [[The member object.]]
          }
-         legacy: null;
       }
-      group_member_del {
+      group_member_remove {
          [[Removes a member object from a given smart object.
 
            This removes a member object from a smart object, if it was added
@@ -98,7 +93,6 @@ class Efl.Canvas.Group extends Efl.Canvas.Object
          params {
             @in sub_obj: Efl.Canvas.Object; [[The member object to remove.]]
          }
-         legacy: null;
       }
       group_member_is @const {
          [[Finds out if a given object is a member of this group.]]
@@ -106,7 +100,6 @@ class Efl.Canvas.Group extends Efl.Canvas.Object
             @in sub_obj: const(Efl.Canvas.Object); [[A potential sub object.]]
          }
          return: bool; [[$true if $sub_obj is a member of this group.]]
-         legacy: null;
       }
       @property group_clipper @protected {
          [[The internal clipper object used by this group.
@@ -119,9 +112,12 @@ class Efl.Canvas.Group extends Efl.Canvas.Object
          }
          get {
             [[Get the internal clipper.]]
-            legacy: null;
          }
       }
+   }
+   events {
+      member,added: Efl.Gfx.Entity; [[Called when a member is added to the group.]]
+      member,removed: Efl.Gfx.Entity; [[Called when a member is removed from the group.]]
    }
    implements {
       class.constructor;
@@ -132,7 +128,7 @@ class Efl.Canvas.Group extends Efl.Canvas.Object
       Efl.Gfx.Color.color { set; }
       Efl.Gfx.Entity.visible { set; }
       Efl.Gfx.Entity.position { set; }
-      Efl.Canvas.Object.clip { set; }
+      Efl.Canvas.Object.clipper { set; }
       Efl.Canvas.Object.no_render { set; }
       Efl.Canvas.Object.paragraph_direction { get; set; }
    }

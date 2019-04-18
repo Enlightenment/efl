@@ -736,13 +736,17 @@ eina_file_open(const char *path, Eina_Bool shared)
 
    if (handle == INVALID_HANDLE_VALUE)
      {
+       errno = GetLastError();
        WRN("eina_file_open() failed with file %s: %s",
-           filename, evil_last_error_get());
+           filename, evil_format_message(errno));
        goto free_file;
      }
 
    if (!GetFileAttributesEx(filename, GetFileExInfoStandard, &fad))
-     goto close_handle;
+     {
+        errno = GetLastError();
+        goto close_handle;
+     }
 
    length.u.LowPart = fad.nFileSizeLow;
    length.u.HighPart = fad.nFileSizeHigh;

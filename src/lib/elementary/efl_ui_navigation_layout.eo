@@ -1,4 +1,4 @@
-class Efl.Ui.Navigation_Layout extends Efl.Ui.Layout implements Efl.Content
+class @beta Efl.Ui.Navigation_Layout extends Efl.Ui.Layout_Base implements Efl.Content
 {
    [[Navigation_Layout widget.
 
@@ -16,7 +16,7 @@ class Efl.Ui.Navigation_Layout extends Efl.Ui.Layout implements Efl.Content
          get {
          }
          values {
-            value: Efl.Ui.Layout;
+            value: Efl.Ui.Layout_Base;
                [[The bar object located at the top area of the Navigation Layout.
                ]]
          }

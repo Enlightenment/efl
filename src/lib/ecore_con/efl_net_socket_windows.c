@@ -816,7 +816,7 @@ _efl_net_socket_windows_efl_io_reader_can_read_set(Eo *o, Efl_Net_Socket_Windows
    EINA_SAFETY_ON_TRUE_RETURN(efl_io_closer_closed_get(o) && can_read);
    if (pd->can_read == can_read) return;
    pd->can_read = can_read;
-   efl_event_callback_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, &can_read);
 }
 
 EOLIAN static Eina_Bool
@@ -899,7 +899,7 @@ _efl_net_socket_windows_efl_io_writer_can_write_set(Eo *o, Efl_Net_Socket_Window
    EINA_SAFETY_ON_TRUE_RETURN(efl_io_closer_closed_get(o) && can_write);
    if (pd->can_write == can_write) return;
    pd->can_write = can_write;
-   efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, &can_write);
 }
 
 EOLIAN static Eina_Bool

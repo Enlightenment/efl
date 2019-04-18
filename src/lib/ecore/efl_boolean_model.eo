@@ -1,0 +1,25 @@
+class @beta Efl.Boolean_Model extends Efl.Composite_Model
+{
+   [[Efl boolean model class]]
+   methods {
+      boolean_add {
+         [[Add a new named boolean property with a defined default value.]]
+         params {
+            @in name: string;
+            @in default_value: bool;
+	 }
+      }
+      boolean_del {
+         [[Delete an existing named boolean property]]
+         params {
+            @in name: string;
+	 }
+      }
+   }
+   implements {
+      Efl.Model.properties { get; }
+      Efl.Model.property { get; set; }
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

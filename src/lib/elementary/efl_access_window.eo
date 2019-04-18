@@ -1,12 +1,12 @@
-interface Efl.Access.Window
+interface @beta Efl.Access.Window
 {
    [[Elementary accessible window interface]]
    events {
       window,created: void; [[Called when new window has been created.]]
       window,destroyed: void; [[Called when window has been destroyed.]]
-      window,activated: void; [[Called when window has been activated. (unfocused)]]
+      window,activated: void; [[Called when window has been activated. (focused)]]
       window,deactivated: void; [[Called when window has been deactivated (unfocused).]]
-      window,maximized: void; [[Called when window has been maximmized]]
+      window,maximized: void; [[Called when window has been maximized]]
       window,minimized: void; [[Called when window has been minimized]]
       window,restored: void; [[Called when window has been restored]]
    }

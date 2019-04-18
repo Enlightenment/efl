@@ -88,7 +88,64 @@ eina_swap64(unsigned long long x)
 #endif
 }
 
+static inline unsigned short
+eina_htons(unsigned short host)
+{
+#ifdef EINA_HAVE_BIGENDIAN
+   return host;
+#else
+   return eina_swap16(host);
+#endif
+}
 
+static inline unsigned int
+eina_htonl(unsigned int host)
+{
+#ifdef EINA_HAVE_BIGENDIAN
+   return host;
+#else
+   return eina_swap32(host);
+#endif
+}
+
+static inline unsigned long long
+eina_htonll(unsigned long long host)
+{
+#ifdef EINA_HAVE_BIGENDIAN
+   return host;
+#else
+   return eina_swap64(host);
+#endif
+}
+
+static inline unsigned short
+eina_ntohs(unsigned short net)
+{
+#ifdef EINA_HAVE_BIGENDIAN
+   return net;
+#else
+   return eina_swap16(net);
+#endif
+}
+
+static inline unsigned int
+eina_ntohl(unsigned int net)
+{
+#ifdef EINA_HAVE_BIGENDIAN
+   return net;
+#else
+   return eina_swap32(net);
+#endif
+}
+
+static inline unsigned long long
+eina_ntohll(unsigned long long net)
+{
+#ifdef EINA_HAVE_BIGENDIAN
+   return net;
+#else
+   return eina_swap64(net);
+#endif
+}
 
 #endif
-

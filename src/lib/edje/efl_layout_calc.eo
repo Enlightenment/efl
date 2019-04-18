@@ -8,7 +8,7 @@ interface Efl.Layout.Calc
      This defines all the APIs supported by legacy "Edje" object, known in EO
      API as Efl.Canvas.Layout.
 
-     @since 1.21
+    @since 1.22
    ]]
    event_prefix: efl_layout;
    methods {
@@ -90,7 +90,7 @@ interface Efl.Layout.Calc
            This function thaws (in other words "unfreezes") the given layout
            object.
 
-           Note: If sucessive freezes were done, an equal number of thaws will
+           Note: If successive freezes were done, an equal number of thaws will
            be required.
 
            See also @.calc_freeze.
@@ -109,8 +109,7 @@ interface Efl.Layout.Calc
    }
    events {
       recalc: void; [[The layout was recalculated.]]
-      /* FIXME: The actual type is list<string> but the C# bindings do not support that yet */
-      circular,dependency: void; [[A circular dependency between parts of the
+      circular,dependency: const(array<string>); [[A circular dependency between parts of the
          object was found.]]
    }
 }

@@ -1,6 +1,6 @@
 import efl_ui_list_view_types;
 
-interface Efl.Ui.List_View_Model extends Efl.Interface
+interface @beta Efl.Ui.List_View_Model
 {
    methods {
       @property load_range {
@@ -21,13 +21,6 @@ interface Efl.Ui.List_View_Model extends Efl.Interface
             item: ptr(Efl.Ui.List_View_Layout_Item);
          }
       }
-      // @property visible_range {
-      //    set {}
-      //    values {
-      //       first: int;
-      //       count: int;
-      //    }
-      // }
       @property model_size {
          get {}
          values {

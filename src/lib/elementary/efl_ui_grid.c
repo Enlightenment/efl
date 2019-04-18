@@ -5,7 +5,6 @@
 #define ELM_LAYOUT_PROTECTED
 #define EFL_UI_SCROLL_MANAGER_PROTECTED
 #define EFL_UI_SCROLLBAR_PROTECTED
-#define EFL_UI_SCROLLBAR_BETA
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -65,7 +64,7 @@ _relayout(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
      {
         EFL_UI_GRID_ITEM_DATA_GET(item, id);
 
-        if (pd->need_update || id->update_me || id->update_begin)
+        if (pd->need_update || (id && (id->update_me || id->update_begin)))
           {
              // Index begin with zero value :
              id->index = count;
@@ -118,8 +117,8 @@ _relayout(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
                     }
                }
 
-             min = efl_gfx_size_hint_min_get(item);
-             max = efl_gfx_size_hint_max_get(item);
+             min = efl_gfx_hint_size_min_get(item);
+             max = efl_gfx_hint_size_max_get(item);
 
              if (pd->item.size.w < min.w) pd->item.size.w = min.w;
              if (pd->item.size.h < min.h) pd->item.size.h = min.h;
@@ -140,7 +139,7 @@ _relayout(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
         //
         efl_gfx_entity_position_set(item, ipos);
         efl_gfx_entity_size_set(item, id->geo.size);
-        //efl_gfx_size_hint_restricted_min_set(item, id->geo.size);
+        //efl_gfx_hint_size_restricted_min_set(item, id->geo.size);
 
         prev = id;
         count++;
@@ -151,7 +150,7 @@ _relayout(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
    else
      pd->geo.h = cur.y + pd->item.size.h + pd->item.pad.h - pd->geo.y;
 
-   //efl_gfx_size_hint_restricted_min_set(pd->content, pd->geo.size);
+   //efl_gfx_hint_size_restricted_min_set(pd->content, pd->geo.size);
    efl_gfx_entity_size_set(pd->content, pd->geo.size);
 
    pd->need_update = EINA_FALSE;
@@ -168,12 +167,13 @@ _reposition(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
    EINA_LIST_FOREACH(pd->items, l, item)
      {
         EFL_UI_GRID_ITEM_DATA_GET(item, id);
+        if (!id) continue;
 
         ipos.x = id->geo.x - pan.x;
         ipos.y = id->geo.y - pan.y;
         efl_gfx_entity_position_set(item, ipos);
         efl_gfx_entity_size_set(item, id->geo.size);
-        //efl_gfx_size_hint_min_set(item, id->geo.size);
+        //efl_gfx_hint_size_min_set(item, id->geo.size);
      }
 
 }
@@ -198,14 +198,14 @@ _item_scroll_internal(Eo *obj,
    if (pd->dir == EFL_UI_DIR_HORIZONTAL)
      {
        ipos.y = view.y;
-       ipos.h = ipos.h;
+       //ipos.h = ipos.h;
 
        // FIXME: align case will not correctly show in the position because of
        //        bar size calculation. there are no certain way to know the scroll calcuation finished.
        if (EINA_DBL_EQ(align, -1.0)) //Internal Prefix
          {
             ipos.x = ipos.x + vpos.x - view.x;
-            ipos.w = ipos.w;
+            //ipos.w = ipos.w;
          }
        else if ((align > 0.0 || EINA_DBL_EQ(align, 0.0)) &&
                 (align < 1.0 || EINA_DBL_EQ(align, 1.0)))
@@ -219,14 +219,14 @@ _item_scroll_internal(Eo *obj,
   else //VERTICAL
     {
        ipos.x = view.x;
-       ipos.w = ipos.w;
+       //ipos.w = ipos.w;
 
        // FIXME: align case will not correctly show in the position because of
        //        bar size calculation. there are no certain way to know the scroll calcuation finished.
        if (EINA_DBL_EQ(align, -1.0)) //Internal Prefix
          {
             ipos.y = ipos.y + vpos.y - view.y;
-            ipos.h = ipos.h;
+            //ipos.h = ipos.h;
          }
        else if ((align > 0.0 || EINA_DBL_EQ(align, 0.0)) &&
                 (align < 1.0 || EINA_DBL_EQ(align, 1.0)))
@@ -435,40 +435,40 @@ _scroll_edje_object_attach(Eo *obj)
    EFL_UI_GRID_DATA_GET_OR_RETURN(obj, pd);
 
    efl_layout_signal_callback_add(obj, "reload", "efl",
-                                  _efl_ui_grid_reload_cb, obj);
+                                  obj, _efl_ui_grid_reload_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag", "efl.dragable.vbar",
-                                  _efl_ui_grid_vbar_drag_cb, obj);
+                                  obj, _efl_ui_grid_vbar_drag_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,set", "efl.dragable.vbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,start", "efl.dragable.vbar",
-                                  _efl_ui_grid_edje_drag_start_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_start_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,stop", "efl.dragable.vbar",
-                                  _efl_ui_grid_edje_drag_stop_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_stop_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,step", "efl.dragable.vbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,page", "efl.dragable.vbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_add(obj, "efl,vbar,press", "efl",
-                                  _efl_ui_grid_vbar_press_cb, obj);
+                                  obj, _efl_ui_grid_vbar_press_cb, NULL);
    efl_layout_signal_callback_add(obj, "efl,vbar,unpress", "efl",
-                                  _efl_ui_grid_vbar_unpress_cb, obj);
+                                  obj, _efl_ui_grid_vbar_unpress_cb, NULL);
 
    efl_layout_signal_callback_add(obj, "drag", "efl.dragable.hbar",
-                                  _efl_ui_grid_hbar_drag_cb, obj);
+                                  obj, _efl_ui_grid_hbar_drag_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,set", "efl.dragable.hbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,start", "efl.dragable.hbar",
-                                  _efl_ui_grid_edje_drag_start_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_start_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,stop", "efl.dragable.hbar",
-                                  _efl_ui_grid_edje_drag_stop_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_stop_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,step", "efl.dragable.hbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,page", "efl.dragable.hbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_add(obj, "efl,hbar,press", "efl",
-                                  _efl_ui_grid_hbar_press_cb, obj);
+                                  obj, _efl_ui_grid_hbar_press_cb, NULL);
    efl_layout_signal_callback_add(obj, "efl,hbar,unpress", "efl",
-                                  _efl_ui_grid_hbar_unpress_cb, obj);
+                                  obj, _efl_ui_grid_hbar_unpress_cb, NULL);
 }
 
 static void
@@ -477,40 +477,40 @@ _scroll_edje_object_detach(Eo *obj)
    EFL_UI_GRID_DATA_GET_OR_RETURN(obj, pd);
 
    efl_layout_signal_callback_del(obj, "reload", "efl",
-                                  _efl_ui_grid_reload_cb, obj);
+                                  obj, _efl_ui_grid_reload_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag", "efl.dragable.vbar",
-                                  _efl_ui_grid_vbar_drag_cb, obj);
+                                  obj, _efl_ui_grid_vbar_drag_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,set", "efl.dragable.vbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,start", "efl.dragable.vbar",
-                                  _efl_ui_grid_edje_drag_start_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_start_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,stop", "efl.dragable.vbar",
-                                  _efl_ui_grid_edje_drag_stop_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_stop_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,step", "efl.dragable.vbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,page", "efl.dragable.vbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_del(obj, "efl,vbar,press", "efl",
-                                  _efl_ui_grid_vbar_press_cb, obj);
+                                  obj, _efl_ui_grid_vbar_press_cb, NULL);
    efl_layout_signal_callback_del(obj, "efl,vbar,unpress", "efl",
-                                  _efl_ui_grid_vbar_unpress_cb, obj);
+                                  obj, _efl_ui_grid_vbar_unpress_cb, NULL);
 
    efl_layout_signal_callback_del(obj, "drag", "efl.dragable.hbar",
-                                  _efl_ui_grid_hbar_drag_cb, obj);
+                                  obj, _efl_ui_grid_hbar_drag_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,set", "efl.dragable.hbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,start", "efl.dragable.hbar",
-                                  _efl_ui_grid_edje_drag_start_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_start_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,stop", "efl.dragable.hbar",
-                                  _efl_ui_grid_edje_drag_stop_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_stop_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,step", "efl.dragable.hbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,page", "efl.dragable.hbar",
-                                  _efl_ui_grid_edje_drag_cb, obj);
+                                  obj, _efl_ui_grid_edje_drag_cb, NULL);
    efl_layout_signal_callback_del(obj, "efl,hbar,press", "efl",
-                                  _efl_ui_grid_hbar_press_cb, obj);
+                                  obj, _efl_ui_grid_hbar_press_cb, NULL);
    efl_layout_signal_callback_del(obj, "efl,hbar,unpress", "efl",
-                                  _efl_ui_grid_hbar_unpress_cb, obj);
+                                  obj, _efl_ui_grid_hbar_unpress_cb, NULL);
 }
 
 static void
@@ -577,7 +577,7 @@ _efl_ui_grid_efl_object_finalize(Eo *obj,
    efl_ui_scroll_manager_pan_set(pd->smanager, pd->pan);
    edje_object_part_swallow(wd->resize_obj, "efl.content", pd->pan);
 
-   pd->select_mode = EFL_UI_SELECT_SINGLE;
+   pd->select_mode = EFL_UI_SELECT_MODE_SINGLE;
 
    if ((pd->item.size.w == 0) && (pd->item.size.h == 0))
      {
@@ -601,13 +601,13 @@ _efl_ui_grid_efl_object_finalize(Eo *obj,
                           _efl_ui_grid_bar_show_cb, obj);
    efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_HIDE,
                           _efl_ui_grid_bar_hide_cb, obj);
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_RESIZE,
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
                           _efl_ui_grid_resized_cb, obj);
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS,
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
                           _efl_ui_grid_size_hint_changed_cb, obj);
-   efl_event_callback_add(pd->pan, EFL_GFX_ENTITY_EVENT_RESIZE,
+   efl_event_callback_add(pd->pan, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
                           _efl_ui_grid_pan_resized_cb, obj);
-   efl_event_callback_add(pd->content, EFL_GFX_ENTITY_EVENT_MOVE,
+   efl_event_callback_add(pd->content, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED,
                           _efl_ui_grid_content_moved_cb, obj);
 
    elm_layout_sizing_eval(obj);
@@ -629,13 +629,13 @@ _efl_ui_grid_efl_object_invalidate(Eo *obj, Efl_Ui_Grid_Data *pd)
                           _efl_ui_grid_bar_show_cb, obj);
    efl_event_callback_del(obj, EFL_UI_SCROLLBAR_EVENT_BAR_HIDE,
                           _efl_ui_grid_bar_hide_cb, obj);
-   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_RESIZE,
+   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
                           _efl_ui_grid_resized_cb, obj);
-   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS,
+   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
                           _efl_ui_grid_size_hint_changed_cb, obj);
-   efl_event_callback_del(pd->pan, EFL_GFX_ENTITY_EVENT_RESIZE,
+   efl_event_callback_del(pd->pan, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
                           _efl_ui_grid_pan_resized_cb, obj);
-   efl_event_callback_del(pd->content, EFL_GFX_ENTITY_EVENT_MOVE,
+   efl_event_callback_del(pd->content, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED,
                           _efl_ui_grid_content_moved_cb, obj);
    _grid_clear_internal(obj, pd);
 
@@ -709,8 +709,9 @@ _efl_ui_grid_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Grid_Data *pd)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
 
-   min = efl_gfx_size_hint_combined_min_get(obj);
-   max = efl_gfx_size_hint_max_get(obj);
+   min = efl_gfx_hint_size_combined_min_get(obj);
+   max = efl_gfx_hint_size_max_get(obj);
+   efl_gfx_hint_weight_get(obj, &xw, &yw);
 
    if (pd->smanager)
      view = efl_ui_scrollable_viewport_geometry_get(pd->smanager);
@@ -740,11 +741,11 @@ _efl_ui_grid_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Grid_Data *pd)
    if (pd->match_content_w) size.w = vmw + min.w;
    if (pd->match_content_h) size.h = vmh + min.h;
 
-   max = efl_gfx_size_hint_max_get(obj);
+   max = efl_gfx_hint_size_max_get(obj);
    if ((max.w > 0) && (size.w > max.w)) size.w = max.w;
    if ((max.h > 0) && (size.h > max.h)) size.h = max.h;
    pd->geo = view;
-   efl_gfx_size_hint_min_set(obj, size);
+   efl_gfx_hint_size_min_set(obj, size);
 
    _need_update(pd);
    return;
@@ -844,12 +845,12 @@ _efl_ui_grid_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Gr
 }
 
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _efl_ui_grid_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Grid_Data *pd)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    efl_ui_mirrored_set(pd->smanager, efl_ui_mirrored_get(obj));
 
@@ -891,7 +892,7 @@ _grid_item_selected(void *data, const Efl_Event *event)
    EFL_UI_GRID_DATA_GET_OR_RETURN(obj, pd);
 
    /* Single Select */
-   if (pd->select_mode != EFL_UI_SELECT_MULTI)
+   if (pd->select_mode != EFL_UI_SELECT_MODE_MULTI)
      {
         EINA_LIST_FREE(pd->selected, selected)
           {
@@ -902,7 +903,7 @@ _grid_item_selected(void *data, const Efl_Event *event)
    pd->selected = eina_list_append(pd->selected, item);
    pd->last_selected = item;
 
-   efl_event_callback_call(obj, EFL_UI_EVENT_SELECTED, item);
+   efl_event_callback_call(obj, EFL_UI_EVENT_ITEM_SELECTED, item);
 }
 
 static void
@@ -915,7 +916,7 @@ _grid_item_unselected(void *data, const Efl_Event *event)
    pd->selected = eina_list_remove(pd->selected, item);
    if (pd->last_selected == item) pd->last_selected = NULL;
 
-   efl_event_callback_call(obj, EFL_UI_EVENT_UNSELECTED, item);
+   efl_event_callback_call(obj, EFL_UI_EVENT_ITEM_UNSELECTED, item);
 }
 
 static void
@@ -923,7 +924,7 @@ _grid_item_deleted(void *data, const Efl_Event *event)
 {
    Eo *obj = data;
    Efl_Ui_Grid_Item *it = event->object;
-   EFL_UI_GRID_DATA_GET(obj, pd);
+   EFL_UI_GRID_DATA_GET_OR_RETURN(obj, pd);
    _grid_item_unpack_internal(obj, pd, it);
 }
 
@@ -933,8 +934,8 @@ _grid_item_process(Eo *obj, Efl_Ui_Grid_Data *pd, EINA_UNUSED Efl_Ui_Grid_Item *
    EFL_UI_GRID_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
 
    //FIXME: This is tricky workaround for set select mode and parent value.
-   EFL_UI_GRID_ITEM_DATA_GET(it, gd);
-   EFL_UI_ITEM_DATA_GET(it, id);
+   EFL_UI_GRID_ITEM_DATA_GET_OR_RETURN(it, gd, EINA_FALSE);
+   EFL_UI_ITEM_DATA_GET_OR_RETURN(it, id, EINA_FALSE);
    id->select_mode = &(pd->select_mode);
    id->parent = obj;
    gd->parent = obj;
@@ -944,8 +945,8 @@ _grid_item_process(Eo *obj, Efl_Ui_Grid_Data *pd, EINA_UNUSED Efl_Ui_Grid_Item *
    efl_event_callback_add(it, EFL_UI_EVENT_PRESSED, _grid_item_pressed, obj);
    efl_event_callback_add(it, EFL_UI_EVENT_UNPRESSED, _grid_item_unpressed, obj);
    efl_event_callback_add(it, EFL_UI_EVENT_LONGPRESSED, _grid_item_longpressed, obj);
-   efl_event_callback_add(it, EFL_UI_EVENT_SELECTED, _grid_item_selected, obj);
-   efl_event_callback_add(it, EFL_UI_EVENT_UNSELECTED, _grid_item_unselected, obj);
+   efl_event_callback_add(it, EFL_UI_EVENT_ITEM_SELECTED, _grid_item_selected, obj);
+   efl_event_callback_add(it, EFL_UI_EVENT_ITEM_UNSELECTED, _grid_item_unselected, obj);
    efl_event_callback_add(it, EFL_EVENT_DEL, _grid_item_deleted, obj);
 
    return EINA_TRUE;
@@ -955,11 +956,11 @@ static void
 _grid_item_unpack_internal(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Ui_Grid_Item *it)
 {
    EFL_UI_GRID_ITEM_CHECK_OR_RETURN(it);
-   EFL_UI_GRID_ITEM_DATA_GET(it, ld);
-   EFL_UI_ITEM_DATA_GET(it, id);
+   EFL_UI_GRID_ITEM_DATA_GET_OR_RETURN(it, gd);
+   EFL_UI_ITEM_DATA_GET_OR_RETURN(it, id);
    id->select_mode = NULL;
    id->parent = NULL;
-   ld->parent = NULL;
+   gd->parent = NULL;
 
    pd->items = eina_list_remove(pd->items, it);
    if (efl_ui_item_selected_get(it))
@@ -970,8 +971,8 @@ _grid_item_unpack_internal(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Ui_Grid_Item *it)
    efl_event_callback_del(it, EFL_UI_EVENT_PRESSED, _grid_item_pressed, obj);
    efl_event_callback_del(it, EFL_UI_EVENT_UNPRESSED, _grid_item_unpressed, obj);
    efl_event_callback_del(it, EFL_UI_EVENT_LONGPRESSED, _grid_item_longpressed, obj);
-   efl_event_callback_del(it, EFL_UI_EVENT_SELECTED, _grid_item_selected, obj);
-   efl_event_callback_del(it, EFL_UI_EVENT_UNSELECTED, _grid_item_unselected, obj);
+   efl_event_callback_del(it, EFL_UI_EVENT_ITEM_SELECTED, _grid_item_selected, obj);
+   efl_event_callback_del(it, EFL_UI_EVENT_ITEM_UNSELECTED, _grid_item_unselected, obj);
    efl_event_callback_del(it, EFL_EVENT_DEL, _grid_item_deleted, obj);
 }
 
@@ -1039,7 +1040,7 @@ EOLIAN static Eina_Bool
 _efl_ui_grid_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_Entity *subobj)
 {
    if (!_grid_item_process(obj, pd, subobj)) return EINA_FALSE;
-   EFL_UI_GRID_ITEM_DATA_GET(subobj, pid);
+   EFL_UI_GRID_ITEM_DATA_GET_OR_RETURN(subobj, pid, EINA_FALSE);
    pd->items = eina_list_append(pd->items, subobj);
 
    pid->update_me = EINA_TRUE;
@@ -1052,7 +1053,7 @@ EOLIAN static Eina_Bool
 _efl_ui_grid_efl_pack_linear_pack_begin(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_Entity *subobj)
 {
    if (!_grid_item_process(obj, pd, subobj)) return EINA_FALSE;
-   EFL_UI_GRID_ITEM_DATA_GET(subobj, pid);
+   EFL_UI_GRID_ITEM_DATA_GET_OR_RETURN(subobj, pid, EINA_FALSE);
    pd->items = eina_list_prepend(pd->items, subobj);
    // Defered item's placing in group calculation
    pid->update_me = EINA_TRUE;
@@ -1068,7 +1069,7 @@ _efl_ui_grid_efl_pack_linear_pack_before(Eo *obj,
 {
    if (!_grid_item_process(obj, pd, subobj)) return EINA_FALSE;
    EFL_UI_GRID_ITEM_CHECK_OR_RETURN(existing, EINA_FALSE);
-   EFL_UI_GRID_ITEM_DATA_GET(subobj, pid);
+   EFL_UI_GRID_ITEM_DATA_GET_OR_RETURN(subobj, pid, EINA_FALSE);
 
    pd->items = eina_list_prepend_relative(pd->items, subobj, existing);
    // Defered item's placing in group calculation
@@ -1085,7 +1086,7 @@ _efl_ui_grid_efl_pack_linear_pack_after(Eo *obj,
 {
    if (!_grid_item_process(obj, pd, subobj)) return EINA_FALSE;
    EFL_UI_GRID_ITEM_CHECK_OR_RETURN(existing, EINA_FALSE);
-   EFL_UI_GRID_ITEM_DATA_GET(subobj, pid);
+   EFL_UI_GRID_ITEM_DATA_GET_OR_RETURN(subobj, pid, EINA_FALSE);
 
    pd->items = eina_list_append_relative(pd->items, subobj, existing);
    // Defered item's placing in group calculation
@@ -1102,7 +1103,7 @@ _efl_ui_grid_efl_pack_linear_pack_at(Eo *obj,
 {
    if (!_grid_item_process(obj, pd, subobj)) return EINA_FALSE;
    Efl_Ui_Grid_Item *existing = eina_list_nth(pd->items, index);
-   EFL_UI_GRID_ITEM_DATA_GET(subobj, pid);
+   EFL_UI_GRID_ITEM_DATA_GET_OR_RETURN(subobj, pid, EINA_FALSE);
 
    pd->items = eina_list_prepend_relative(pd->items, subobj, existing);
    // Defered item's placing in group calculation
@@ -1222,9 +1223,9 @@ _efl_ui_grid_efl_ui_multi_selectable_select_mode_set(Eo *obj EINA_UNUSED,
 {
    Efl_Ui_Grid_Item *selected;
 
-   if ((pd->select_mode == EFL_UI_SELECT_MULTI &&
-        mode != EFL_UI_SELECT_MULTI) ||
-       mode == EFL_UI_SELECT_NONE)
+   if ((pd->select_mode == EFL_UI_SELECT_MODE_MULTI &&
+        mode != EFL_UI_SELECT_MODE_MULTI) ||
+       mode == EFL_UI_SELECT_MODE_NONE)
      {
         Eina_List *clone = eina_list_clone(pd->selected);
         EINA_LIST_FREE(clone, selected)

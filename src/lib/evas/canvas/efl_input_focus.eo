@@ -1,6 +1,9 @@
 class Efl.Input.Focus extends Efl.Object implements Efl.Input.Event
 {
-   [[Represents a focus event. @since 1.19]]
+   [[Represents a focus event.
+
+     @since 1.22
+   ]]
    methods {
       @property object {
          [[The focused object]]
@@ -17,6 +20,7 @@ class Efl.Input.Focus extends Efl.Object implements Efl.Input.Event
       Efl.Object.destructor;
       Efl.Input.Event.device { get; set; }
       Efl.Input.Event.reset;
+      Efl.Input.Event.event_flags { get; set;}
       Efl.Duplicate.duplicate;
          [[Creates a copy of this event. @Efl.Input.Event.fake is $true.
 

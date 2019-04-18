@@ -5,7 +5,7 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_color_class.h"
-#include "elm_colorselector.eo.h"
+#include "elm_colorselector_eo.h"
 
 //static Eldbus_Proxy *cc_proxy;
 //static Ecore_Event_Handler *h1;
@@ -743,7 +743,7 @@ elm_color_class_editor_add(Evas_Object *obj)
    elm_genlist_mode_set(gl, ELM_LIST_COMPRESS);
    elm_object_part_content_set(ly, "elm.swallow.list", gl);
    efl_event_callback_add
-     (gl, EFL_UI_EVENT_SELECTED, _colorclass_activate, cc);
+     (gl, EFL_UI_EVENT_ITEM_SELECTED, _colorclass_activate, cc);
 
    cc->reset = bt = elm_button_add(ly);
    elm_object_style_set(bt, "colorclass");

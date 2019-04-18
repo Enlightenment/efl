@@ -43,7 +43,9 @@ EOAPI EFL_VOID_FUNC_BODYV_FALLBACK(owning_test2, _owning_test2_ownership_fallbac
 static Eina_Bool
 _owning_class_initializer(Efl_Class *klass)
 {
-   const Efl_Object_Ops *opsp = NULL, *copsp = NULL;
+   const Efl_Object_Ops *opsp = NULL;
+
+   const Efl_Object_Property_Reflection_Ops *ropsp = NULL;
 
 #ifndef OWNING_EXTRA_OPS
 #define OWNING_EXTRA_OPS
@@ -56,12 +58,7 @@ _owning_class_initializer(Efl_Class *klass)
    );
    opsp = &ops;
 
-#ifdef OWNING_EXTRA_CLASS_OPS
-   EFL_OPS_DEFINE(cops, OWNING_EXTRA_CLASS_OPS);
-   copsp = &cops;
-#endif
-
-   return efl_class_functions_set(klass, opsp, copsp);
+   return efl_class_functions_set(klass, opsp, ropsp);
 }
 
 static const Efl_Class_Description _owning_class_desc = {

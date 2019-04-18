@@ -63,9 +63,11 @@ source_fetch_file(const char *fil, const char *filname)
         exit(-1);
      }
 
-   fseek(f, 0, SEEK_END);
+   if (fseek(f, 0, SEEK_END) < 0)
+     ERR("Error seeking");
    sz = ftell(f);
-   fseek(f, 0, SEEK_SET);
+   if (fseek(f, 0, SEEK_SET) < 0)
+     ERR("Error seeking");
    sf = mem_alloc(SZ(SrcFile));
    sf->name = mem_strdup(filname);
    sf->file = mem_alloc(sz + 1);
@@ -80,7 +82,8 @@ source_fetch_file(const char *fil, const char *filname)
      }
 
    sf->file[sz] = '\0';
-   fseek(f, 0, SEEK_SET);
+   if (fseek(f, 0, SEEK_SET) < 0)
+     ERR("Error seeking");
    srcfiles.list = eina_list_append(srcfiles.list, sf);
 
    while (fgets(buf, sizeof(buf), f))

@@ -4,7 +4,6 @@
 static Outbuf *_evas_gl_drm_window = NULL;
 static EGLContext context = EGL_NO_CONTEXT;
 static int win_count = 0;
-static unsigned char gl_context_valid = 0;
 
 #ifdef EGL_MESA_platform_gbm
 static PFNEGLGETPLATFORMDISPLAYEXTPROC dlsym_eglGetPlatformDisplayEXT = NULL;
@@ -464,11 +463,10 @@ evas_outbuf_use(Outbuf *ob)
 
    glsym_evas_gl_preload_render_lock(_evas_outbuf_make_current, ob);
 
-   if ((_evas_gl_drm_window) && (!gl_context_valid))
+   if (_evas_gl_drm_window)
      {
         if (eglGetCurrentContext() != _evas_gl_drm_window->egl.context)
           force = EINA_TRUE;
-        gl_context_valid = 1;
      }
 
    if ((_evas_gl_drm_window != ob) || (force))
@@ -550,14 +548,18 @@ evas_outbuf_reconfigure(Outbuf *ob, int w, int h, int rot, Outbuf_Depth depth)
 
    while (ecore_drm2_fb_release(ob->priv.output, EINA_TRUE));
 
+   ob->w = w;
+   ob->h = h;
+   ob->rotation = rot;
+
    _evas_outbuf_gbm_surface_destroy(ob);
+
    if ((ob->rotation == 0) || (ob->rotation == 180))
      _evas_outbuf_gbm_surface_create(ob, w, h);
    else if ((ob->rotation == 90) || (ob->rotation == 270))
      _evas_outbuf_gbm_surface_create(ob, h, w);
-   _evas_outbuf_egl_setup(ob);
 
-   glsym_evas_gl_common_context_resize(ob->gl_context, w, h, rot);
+   _evas_outbuf_egl_setup(ob);
 }
 
 Render_Output_Swap_Mode
@@ -622,7 +624,7 @@ evas_outbuf_update_region_first_rect(Outbuf *ob)
 
    if (!_re_wincheck(ob)) return EINA_TRUE;
 
-   /* glsym_evas_gl_common_context_resize(ob->gl_context, ob->w, ob->h, ob->rotation); */
+   glsym_evas_gl_common_context_resize(ob->gl_context, ob->w, ob->h, ob->rotation);
    glsym_evas_gl_common_context_flush(ob->gl_context);
    glsym_evas_gl_common_context_newframe(ob->gl_context);
 
@@ -767,7 +769,6 @@ evas_outbuf_flush(Outbuf *ob, Tilebuf_Rect *surface_damage, Tilebuf_Rect *buffer
 end:
    //TODO: Need render unlock after drm page flip?
    glsym_evas_gl_preload_render_unlock(_evas_outbuf_make_current, ob);
-   gl_context_valid = 0;
 }
 
 Evas_Engine_GL_Context *

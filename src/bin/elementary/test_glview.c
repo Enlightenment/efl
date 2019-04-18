@@ -1,8 +1,8 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
-#include <Elementary.h>
 
+#include <Efl_Ui.h>
 #include <Elementary.h>
 #ifndef M_PI
 #define M_PI 3.14159265
@@ -249,7 +249,7 @@ draw_gear(GLData *gld, Gear *gear, GLfloat *m,
    gl->glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE,
                              6 * sizeof(GLfloat), NULL);
    gl->glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE,
-                             6 * sizeof(GLfloat), (GLfloat *)(0 + 3 * sizeof(GLfloat *)));
+                             6 * sizeof(GLfloat), (GLfloat *)(0 + 3 * sizeof(GLfloat)));
    gl->glEnableVertexAttribArray(0);
    gl->glEnableVertexAttribArray(1);
    gl->glDrawArrays(GL_TRIANGLE_STRIP, 0, gear->count);
@@ -428,6 +428,7 @@ _init_gl(Evas_Object *obj)
 {
    GLData *gld = evas_object_data_get(obj, "gld");
 
+   gld->glapi = elm_glview_gl_api_get(obj);
    printf("GL_VERSION: %s\n", gld->glapi->glGetString(GL_VERSION));
    fflush(stdout);
 
@@ -630,7 +631,7 @@ _test_glview_do(Evas_GL_Context_Version version)
    if (!(gld = calloc(1, sizeof(GLData)))) return;
    gldata_init(gld);
 
-#if 0
+#if 1
    // add a Z-depth buffer to the window and try to use GL
    Eina_Stringshare *accel;
    accel = eina_stringshare_add(elm_config_accel_preference_get());
@@ -684,7 +685,6 @@ _test_glview_do(Evas_GL_Context_Version version)
 
         // Animator and other vars
         ani = ecore_animator_add(_anim, gl);
-        gld->glapi = elm_glview_gl_api_get(gl);
         evas_object_data_set(gl, "ani", ani);
         evas_object_data_set(gl, "gld", gld);
         evas_object_event_callback_add(gl, EVAS_CALLBACK_DEL, _del, gl);
@@ -729,6 +729,7 @@ _test_glview_do(Evas_GL_Context_Version version)
    evas_object_smart_callback_add(bt, "clicked", _on_done, win);
 
    evas_object_resize(win, 320, 480);
+   evas_object_show(win);
 }
 
 void

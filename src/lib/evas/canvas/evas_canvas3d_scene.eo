@@ -1,6 +1,6 @@
 import evas_canvas3d_types;
 
-class Evas.Canvas3D.Scene extends Evas.Canvas3D.Object
+class @beta Evas.Canvas3D.Scene extends Evas.Canvas3D.Object
 {
    [[Efl 3D canvas scene class]]
    data: Evas_Canvas3D_Scene_Data;
@@ -165,5 +165,7 @@ class Evas.Canvas3D.Scene extends Evas.Canvas3D.Object
       Efl.Object.constructor;
       Evas.Canvas3D.Object.update_notify;
       Evas.Canvas3D.Object.change_notify;
+      @empty Evas.Canvas3D.Object.callback_register;
+      @empty Evas.Canvas3D.Object.callback_unregister;
    }
 }

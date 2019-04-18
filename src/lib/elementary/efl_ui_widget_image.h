@@ -80,7 +80,6 @@ struct _Efl_Ui_Image_Data
    const char           *stdicon;
 
    struct {
-      Efl_Model         *model;
       Eina_Stringshare  *file;
       Eina_Stringshare  *key;
 
@@ -91,8 +90,6 @@ struct _Efl_Ui_Image_Data
       int       requested_size;
       Eina_Bool use : 1;
    } freedesktop;
-
-   Ecore_Job *sizing_job;
 
    Eina_Bool             aspect_fixed : 1;
    Eina_Bool             fill_inside : 1;

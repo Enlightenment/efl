@@ -48,7 +48,6 @@ EOLIAN static void
 _elm_access_efl_canvas_group_group_add(Eo *obj, void *_pd EINA_UNUSED)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 }
 
 static Eina_Bool
@@ -701,7 +700,7 @@ _elm_access_highlight_cycle(Evas_Object *obj, Elm_Focus_Direction dir)
           }
         else
           {
-             efl_ui_focus_util_focus(EFL_UI_FOCUS_UTIL_CLASS, obj);
+             efl_ui_focus_util_focus(obj);
              efl_ui_focus_manager_move(elm_widget_top_get(obj), dir);
           }
      }
@@ -1531,8 +1530,8 @@ _elm_access_efl_access_object_state_set_get(const Eo *obj, void *pd EINA_UNUSED)
    Elm_Access_Info *info = _elm_access_info_get(obj);
    if (info && !evas_object_visible_get(info->part_object))
      {
-        STATE_TYPE_UNSET(ret, EFL_ACCESS_STATE_VISIBLE);
-        STATE_TYPE_UNSET(ret, EFL_ACCESS_STATE_SHOWING);
+        STATE_TYPE_UNSET(ret, EFL_ACCESS_STATE_TYPE_VISIBLE);
+        STATE_TYPE_UNSET(ret, EFL_ACCESS_STATE_TYPE_SHOWING);
      }
 
    return ret;
@@ -1543,4 +1542,4 @@ _elm_access_efl_access_object_state_set_get(const Eo *obj, void *pd EINA_UNUSED)
 #define ELM_ACCESS_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(elm_access)
 
-#include "elm_access.eo.c"
+#include "elm_access_eo.c"

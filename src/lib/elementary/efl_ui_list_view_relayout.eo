@@ -1,11 +1,11 @@
-interface Efl.Ui.List_View_Relayout extends Efl.Interface
+interface @beta Efl.Ui.List_View_Relayout
 {
    methods {
       layout_do {
          params {
             modeler: Efl.Ui.List_View_Model;
             first: int;
-            children: Efl.Ui.List_View_Seg_Array;
+            children: ptr(Efl_Ui_List_View_Seg_Array);
          }
       }
       content_created {

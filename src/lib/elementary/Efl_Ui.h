@@ -4,14 +4,10 @@
 #include <Efl_Config.h>
 #include <Elementary_Options.h>
 
-#ifndef EFL_EO_API_SUPPORT
-# define EFL_EO_API_SUPPORT
+/* FIXME: wtf? */
+#ifndef EFL_UI_RADIO_EVENT_CHANGED
+# define EFL_UI_RADIO_EVENT_CHANGED EFL_UI_NSTATE_EVENT_CHANGED
 #endif
-
-#ifndef EFL_BETA_API_SUPPORT
-# define EFL_BETA_API_SUPPORT
-#endif
-
 /* Standard headers for standard system calls etc. */
 #include <stdio.h>
 #include <stdlib.h>
@@ -56,41 +52,6 @@
 #include <Eina.h>
 #include <Eo.h>
 #include <Efl.h>
-
-#ifdef EAPI
-# undef EAPI
-#endif
-#ifdef EWAPI
-# undef EWAPI
-#endif
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-# define EAPI_WEAK
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#   define EAPI_WEAK __attribute__ ((weak))
-#  else
-#   define EAPI
-#   define EAPI_WEAK
-# endif
-# else
-#  define EAPI
-#  define EAPI_WEAK
-# endif
-#endif
-
-#define EWAPI EAPI EAPI_WEAK
 
 #ifdef _WIN32
 # define WIN32_LEAN_AND_MEAN
@@ -137,6 +98,41 @@
 #include <EMap.h>
 #endif
 
+#ifdef EAPI
+# undef EAPI
+#endif
+#ifdef EWAPI
+# undef EWAPI
+#endif
+
+#ifdef _WIN32
+# ifdef EFL_BUILD
+#  ifdef DLL_EXPORT
+#   define EAPI __declspec(dllexport)
+#  else
+#   define EAPI
+#  endif
+# else
+#  define EAPI __declspec(dllimport)
+# endif
+# define EAPI_WEAK
+#else
+# ifdef __GNUC__
+#  if __GNUC__ >= 4
+#   define EAPI __attribute__ ((visibility("default")))
+#   define EAPI_WEAK __attribute__ ((weak))
+#  else
+#   define EAPI
+#   define EAPI_WEAK
+# endif
+# else
+#  define EAPI
+#  define EAPI_WEAK
+# endif
+#endif
+
+#define EWAPI EAPI EAPI_WEAK
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -153,6 +149,9 @@ typedef Eo Efl_Ui_Focus_Manager;
 
 # include <efl_ui_focus_object.eo.h>
 # include <efl_ui_focus_manager.eo.h>
+# ifdef EFL_BETA_API_SUPPORT
+EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
+# endif
 # include <efl_ui_focus_manager_calc.eo.h>
 # include <efl_ui_focus_manager_sub.eo.h>
 # include <efl_ui_focus_manager_root_focus.eo.h>
@@ -173,7 +172,11 @@ typedef Eo Efl_Ui_Focus_Manager;
 
 # include <efl_ui_theme.eo.h>
 # include <efl_config_global.eo.h>
+# include <efl_ui_widget.eo.h>
+# include <efl_ui_widget_common.h>
 # include <efl_ui_widget_part.eo.h>
+# include <efl_ui_layout_base.eo.h>
+# include <efl_ui_layout.eo.h>
 # include <efl_ui_layout_part.eo.h>
 # include <efl_ui_layout_part_box.eo.h>
 # include <efl_ui_layout_part_content.eo.h>
@@ -188,11 +191,15 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_table_static.eo.h>
 # include <efl_ui_image.eo.h>
 # include <efl_ui_win.eo.h>
+/* FIXME: what the actual fuck. */
+# include <elm_win_eo.h>
 # include <efl_ui_win_inlined.eo.h>
 # include <efl_ui_win_socket.eo.h>
+# include <efl_ui_relative_layout.eo.h>
 
 /* FIXME: Efl.Ui.Text must not use elm_general.h */
-# warning Efl.Ui.Text is not available yet without Elementary.h
+// no.
+//# warning Efl.Ui.Text is not available yet without Elementary.h
 # if 0
 # include <efl_ui_text_interactive.eo.h>
 # include <efl_ui_text.eo.h>
@@ -208,12 +215,11 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_button_eo.h>
 
 # include "efl_ui_caching_factory.eo.h"
+# include "efl_ui_widget_factory.eo.h"
 
 /* FIXME: Multibuttonentry must not use elm_widget_item */
-# warning Efl.Ui.Multibutton is not available yet without Elementary.h
-# if 0
-# include <efl_ui_multibuttonentry.h>
-# endif
+
+# include <efl_ui_tags.eo.h>
 
 # include <efl_ui_flip_eo.h>
 # include <efl_ui_frame_eo.h>
@@ -222,6 +228,13 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_progressbar_eo.h>
 # include <efl_ui_radio_eo.h>
 # include <efl_ui_panes_eo.h>
+# include <efl_ui_panes_part.eo.h>
+
+# include <efl_ui_navigation_bar.eo.h>
+# include <efl_ui_navigation_bar_part.eo.h>
+# include <efl_ui_navigation_bar_part_back_button.eo.h>
+# include <efl_ui_navigation_layout.eo.h>
+# include <efl_ui_stack.eo.h>
 
 /**
  * Initialize Elementary

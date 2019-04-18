@@ -193,15 +193,15 @@ _eio_dir_init(Ecore_Thread *thread,
 }
 
 static void
-_eio_dir_target(Eio_Dir_Copy *order, char *target, const char *dir, int length_source, int length_dest)
+_eio_dir_target(Eio_Dir_Copy *order, Eina_Strbuf *target, const char *dir, int length_source, int length_dest)
 {
    int length;
 
    length = eina_stringshare_strlen(dir);
 
-   memcpy(target, order->progress.dest, length_dest);
-   target[length_dest] = '/';
-   memcpy(target + length_dest + 1, dir + length_source, length - length_source + 1);
+   eina_strbuf_append_length(target, order->progress.dest, length_dest);
+   eina_strbuf_append(target, "/");
+   eina_strbuf_append_length(target, dir + length_source, length - length_source + 1);
 }
 
 static Eina_Bool
@@ -211,18 +211,20 @@ _eio_dir_mkdir(Ecore_Thread *thread, Eio_Dir_Copy *order,
 {
    const char *dir;
    Eina_List *l;
-   char target[PATH_MAX];
+   Eina_Strbuf *target = eina_strbuf_new();
 
    /* create all directory */
    EINA_LIST_FOREACH(order->dirs, l, dir)
      {
+        eina_strbuf_reset(target);
         /* build target dir path */
         _eio_dir_target(order, target, dir, length_source, length_dest);
 
         /* create the directory (we will apply the mode later) */
-        if (mkdir(target, 0777) != 0)
+        if (mkdir(eina_strbuf_string_get(target), 0777) != 0)
           {
              eio_file_thread_error(&order->progress.common, thread);
+             eina_strbuf_free(target);
              return EINA_FALSE;
           }
 
@@ -232,9 +234,13 @@ _eio_dir_mkdir(Ecore_Thread *thread, Eio_Dir_Copy *order,
 
         /* check for cancel request */
         if (ecore_thread_check(thread))
-          return EINA_FALSE;
+          {
+             eina_strbuf_free(target);
+             return EINA_FALSE;
+          }
      }
 
+   eina_strbuf_free(target);
    return EINA_TRUE;
 }
 
@@ -247,32 +253,54 @@ _eio_dir_link(Ecore_Thread *thread, Eio_Dir_Copy *order,
 {
    const char *ln;
    Eina_List *l;
-   char oldpath[PATH_MAX];
-   char target[PATH_MAX];
-   char buffer[PATH_MAX];
-   char *newpath;
+   Eina_Strbuf *oldpath, *buffer;
+   char *target = NULL, *newpath = NULL;
+   ssize_t bsz = -1;
+   struct stat st;
+
+   oldpath = eina_strbuf_new();
+   buffer = eina_strbuf_new();
 
    /* Build once the base of the link target */
-   memcpy(buffer, order->progress.dest, length_dest);
-   buffer[length_dest] = '/';
+   eina_strbuf_append_length(buffer, order->progress.dest, length_dest);
+   eina_strbuf_append(buffer, "/");
 
    /* recreate all links */
    EINA_LIST_FOREACH(order->links, l, ln)
      {
         ssize_t length;
 
+        eina_strbuf_reset(oldpath);
+
         /* build oldpath link */
         _eio_dir_target(order, oldpath, ln, length_source, length_dest);
 
+        if (lstat(ln, &st) == -1)
+          {
+             goto on_error;
+          }
+        if (st.st_size == 0)
+          {
+             bsz = PATH_MAX;
+             free(target);
+             target = malloc(bsz);
+          }
+        else if(bsz < st.st_size + 1)
+          {
+             bsz = st.st_size +1;
+             free(target);
+             target = malloc(bsz);
+          }
+
         /* read link target */
-        length = readlink(ln, target, PATH_MAX);
+        length = readlink(ln, target, bsz);
         if (length < 0)
           goto on_error;
 
         if (strncmp(target, order->progress.source, length_source) == 0)
           {
              /* The link is inside the zone to copy, so rename it */
-             memcpy(buffer + length_dest + 1, target + length_source, length - length_source + 1);
+             eina_strbuf_insert_length(buffer, target + length_source,length - length_source + 1, length_dest + 1);
              newpath = target;
           }
         else
@@ -282,7 +310,7 @@ _eio_dir_link(Ecore_Thread *thread, Eio_Dir_Copy *order,
           }
 
         /* create the link */
-        if (symlink(newpath, oldpath) != 0)
+        if (symlink(newpath, eina_strbuf_string_get(oldpath)) != 0)
           goto on_error;
 
         /* inform main thread */
@@ -291,13 +319,21 @@ _eio_dir_link(Ecore_Thread *thread, Eio_Dir_Copy *order,
 
         /* check for cancel request */
         if (ecore_thread_check(thread))
-          return EINA_FALSE;
+          goto on_thread_error;
      }
+
+   eina_strbuf_free(oldpath);
+   eina_strbuf_free(buffer);
+   if(target) free(target);
 
    return EINA_TRUE;
 
  on_error:
    eio_file_thread_error(&order->progress.common, thread);
+ on_thread_error:
+   eina_strbuf_free(oldpath);
+   eina_strbuf_free(buffer);
+   if(target) free(target);
    return EINA_FALSE;
 }
 #endif
@@ -309,11 +345,15 @@ _eio_dir_chmod(Ecore_Thread *thread, Eio_Dir_Copy *order,
                Eina_Bool rmdir_source)
 {
    const char *dir = NULL;
-   char target[PATH_MAX];
+   Eina_Strbuf *target;
    struct stat buffer;
+
+   target = eina_strbuf_new();
 
    while (order->dirs)
      {
+        eina_strbuf_reset(target);
+
         /* destroy in reverse order so that we don't prevent change of lower dir */
         dir = eina_list_data_get(eina_list_last(order->dirs));
         order->dirs = eina_list_remove_list(order->dirs, eina_list_last(order->dirs));
@@ -327,7 +367,7 @@ _eio_dir_chmod(Ecore_Thread *thread, Eio_Dir_Copy *order,
           goto on_error;
 
         /* set the orginal mode to the newly created dir */
-        if (chmod(target, buffer.st_mode) != 0)
+        if (chmod(eina_strbuf_string_get(target), buffer.st_mode) != 0)
           goto on_error;
 
         /* if required destroy original directory */
@@ -349,12 +389,14 @@ _eio_dir_chmod(Ecore_Thread *thread, Eio_Dir_Copy *order,
         dir = NULL;
      }
 
+   eina_strbuf_free(target);
    return EINA_TRUE;
 
  on_error:
    eio_file_thread_error(&order->progress.common, thread);
  on_cancel:
    if (dir) eina_stringshare_del(dir);
+   eina_strbuf_free(target);
    return EINA_FALSE;
 }
 
@@ -367,7 +409,7 @@ _eio_dir_copy_heavy(void *data, Ecore_Thread *thread)
    const char *ln;
 
    Eio_File_Progress file_copy;
-   char target[PATH_MAX];
+   Eina_Strbuf *target;
 
    int length_source = 0;
    int length_dest = 0;
@@ -377,6 +419,8 @@ _eio_dir_copy_heavy(void *data, Ecore_Thread *thread)
    /* list all the content that should be copied */
    if (!_eio_dir_recursiv_ls(thread, copy, copy->progress.source))
      return;
+
+   target = eina_strbuf_new();
 
    /* init all structure needed to copy the file */
    if (!_eio_dir_init(thread, &step, &count, &length_source, &length_dest, copy, &file_copy))
@@ -392,11 +436,13 @@ _eio_dir_copy_heavy(void *data, Ecore_Thread *thread)
    /* copy all files */
    EINA_LIST_FREE(copy->files, file)
      {
+        eina_strbuf_reset(target);
+
         /* build target file path */
         _eio_dir_target(copy, target, file, length_source, length_dest);
 
         file_copy.source = file;
-        file_copy.dest = eina_stringshare_add(target);
+        file_copy.dest = eina_stringshare_add(eina_strbuf_string_get(target));
 
         /* copy the file */
         if (!eio_file_copy_do(thread, &file_copy))
@@ -443,6 +489,8 @@ _eio_dir_copy_heavy(void *data, Ecore_Thread *thread)
 
    if (!ecore_thread_check(thread))
      eio_progress_send(thread, &copy->progress, count, count);
+
+   eina_strbuf_free(target);
 
    return;
 }
@@ -492,7 +540,7 @@ _eio_dir_move_heavy(void *data, Ecore_Thread *thread)
    const char *dir = NULL;
 
    Eio_File_Progress file_move;
-   char target[PATH_MAX];
+   Eina_Strbuf *target;
 
    int length_source;
    int length_dest;
@@ -511,6 +559,8 @@ _eio_dir_move_heavy(void *data, Ecore_Thread *thread)
    if (!_eio_dir_recursiv_ls(thread, move, move->progress.source))
      return;
 
+   target = eina_strbuf_new();
+
    /* init all structure needed to move the file */
    if (!_eio_dir_init(thread, &step, &count, &length_source, &length_dest, move, &file_move))
      goto on_error;
@@ -525,11 +575,13 @@ _eio_dir_move_heavy(void *data, Ecore_Thread *thread)
    /* move file around */
    EINA_LIST_FREE(move->files, file)
      {
+        eina_strbuf_reset(target);
+
         /* build target file path */
         _eio_dir_target(move, target, file, length_source, length_dest);
 
         file_move.source = file;
-        file_move.dest = eina_stringshare_add(target);
+        file_move.dest = eina_stringshare_add(eina_strbuf_string_get(target));
 
         /* first try to rename */
         if (rename(file_move.source, file_move.dest) < 0)
@@ -594,6 +646,8 @@ _eio_dir_move_heavy(void *data, Ecore_Thread *thread)
    if (!ecore_thread_check(thread))
      eio_progress_send(thread, &move->progress, count, count);
 
+   eina_strbuf_free(target);
+
    return;
 }
 
@@ -613,7 +667,7 @@ _eio_dir_rmrf_heavy(void *data, Ecore_Thread *thread)
 
    /* init counter */
    step = 0;
-   count = eina_list_count(rmrf->files) + eina_list_count(rmrf->dirs) + 1;
+   count = ((long long) eina_list_count(rmrf->files)) + ((long long) eina_list_count(rmrf->dirs)) + 1;
 
    EINA_LIST_FREE(rmrf->files, file)
      {

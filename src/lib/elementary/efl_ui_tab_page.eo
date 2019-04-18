@@ -1,14 +1,14 @@
-enum Efl.Ui.Tab_Page_Tab_Changed {
+enum @beta Efl.Ui.Tab_Page_Tab_Changed {
    label = 0, [[Label changed]]
    icon [[Icon changed]]
 }
 
-struct Efl.Ui.Tab_Page_Tab_Changed_Event {
+struct @beta Efl.Ui.Tab_Page_Tab_Changed_Event {
    [[Information of changed event]]
    changed_info: Efl.Ui.Tab_Page_Tab_Changed;
 }
 
-class Efl.Ui.Tab_Page extends Efl.Ui.Layout implements Efl.Content
+class @beta Efl.Ui.Tab_Page extends Efl.Ui.Layout_Base implements Efl.Content
 {
    [[Tab Page class]]
    methods {
@@ -20,6 +20,7 @@ class Efl.Ui.Tab_Page extends Efl.Ui.Layout implements Efl.Content
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
       Efl.Part.part_get;
    }
    events {

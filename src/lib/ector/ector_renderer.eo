@@ -1,6 +1,6 @@
 import eina_types;
 
-abstract Ector.Renderer extends Efl.Object
+abstract @beta Ector.Renderer extends Efl.Object
 {
    [[Ector renderer abstract interface]]
 
@@ -98,10 +98,6 @@ abstract Ector.Renderer extends Efl.Object
       }
       prepare @pure_virtual {
          [[Prepare for rendering]]
-         return: bool; [[$true on success, $false otherwise]]
-      }
-      done @pure_virtual {
-         [[Done with rendering]]
          return: bool; [[$true on success, $false otherwise]]
       }
    }

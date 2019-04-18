@@ -22,8 +22,11 @@
 # include <Eio.h>
 
 // Evas internal EO APIs
+# include "Evas.h"
 # include "Evas_Internal.h"
 
+#include "Elementary.h"
+#include "Efl_Ui.h"
 # ifdef EAPI
 #  undef EAPI
 # endif
@@ -32,7 +35,7 @@
 # endif
 
 # ifdef _WIN32
-#  ifdef ELEMENTARY_BUILD
+#  ifdef EFL_BUILD
 #   ifdef DLL_EXPORT
 #    define EAPI __declspec(dllexport)
 #   else
@@ -61,14 +64,112 @@
 # define EWAPI EAPI EAPI_WEAK
 
 # include "elm_widget.h"
-# include "elm_access.eo.h"
 # include "elm_code_private.h"
+#include "elm_access_eo.h"
+#include "elm_actionslider_eo.h"
+#include "elm_atspi_app_object_eo.h"
+#include "elm_atspi_bridge_eo.h"
+#include "elm_box_eo.h"
+#include "elm_bubble_eo.h"
+#include "elm_calendar_eo.h"
+#include "elm_calendar_item_eo.h"
+#include "elm_clock_eo.h"
+#include "elm_code_widget_legacy_eo.h"
+#include "elm_color_item_eo.h"
+#include "elm_colorselector_eo.h"
+#include "elm_conformant_eo.h"
+#include "elm_ctxpopup_eo.h"
+#include "elm_ctxpopup_item_eo.h"
+#include "elm_dayselector_eo.h"
+#include "elm_dayselector_item_eo.h"
+#include "elm_diskselector_eo.h"
+#include "elm_diskselector_item_eo.h"
+#include "elm_entry_eo.h"
+#include "elm_fileselector_button_eo.h"
+#include "elm_fileselector_entry_eo.h"
+#include "elm_fileselector_eo.h"
+#include "elm_flipselector_eo.h"
+#include "elm_flipselector_item_eo.h"
+#include "elm_gengrid_eo.h"
+#include "elm_gengrid_item_eo.h"
+#include "elm_gengrid_pan_eo.h"
+#include "elm_genlist_eo.h"
+#include "elm_genlist_item_eo.h"
+#include "elm_genlist_pan_eo.h"
+#include "elm_gesture_layer_eo.h"
+#include "elm_glview_eo.h"
+#include "elm_grid_eo.h"
+#include "elm_hover_eo.h"
+#include "elm_hoversel_eo.h"
+#include "elm_hoversel_item_eo.h"
+#include "elm_icon_eo.h"
+#include "elm_image_eo.h"
+#include "elm_index_eo.h"
+#include "elm_index_item_eo.h"
+#include "elm_interface_fileselector_eo.h"
+#include "elm_inwin_eo.h"
+#include "elm_label_eo.h"
+#include "elm_list_eo.h"
+#include "elm_list_item_eo.h"
+#include "elm_mapbuf_eo.h"
+#include "elm_map_eo.h"
+#include "elm_map_pan_eo.h"
+#include "elm_menu_eo.h"
+#include "elm_menu_item_eo.h"
+#include "elm_multibuttonentry_eo.h"
+#include "elm_multibuttonentry_item_eo.h"
+#include "elm_naviframe_eo.h"
+#include "elm_naviframe_item_eo.h"
+#include "elm_notify_eo.h"
+#include "elm_panel_eo.h"
+#include "elm_pan_eo.h"
+#include "elm_photo_eo.h"
+#include "elm_player_eo.h"
+#include "elm_plug_eo.h"
+#include "elm_popup_eo.h"
+#include "elm_popup_item_eo.h"
+#include "elm_prefs_eo.h"
+#include "elm_route_eo.h"
+#include "elm_scroller_eo.h"
+#include "elm_segment_control_eo.h"
+#include "elm_segment_control_item_eo.h"
+#include "elm_separator_eo.h"
+#include "elm_slider_eo.h"
+#include "elm_slider_part_indicator_eo.h"
+#include "elm_slideshow_eo.h"
+#include "elm_slideshow_item_eo.h"
+#include "elm_spinner_eo.h"
+#include "elm_sys_notify_dbus_eo.h"
+#include "elm_sys_notify_eo.h"
+#include "elm_sys_notify_interface_eo.h"
+#include "elm_systray_eo.h"
+#include "elm_table_eo.h"
+#include "elm_thumb_eo.h"
+#include "elm_toolbar_eo.h"
+#include "elm_toolbar_item_eo.h"
+#include "elm_web_eo.h"
+#include "elm_widget_item_container_eo.h"
+#include "elm_widget_item_eo.h"
+#include "elm_widget_item_static_focus_eo.h"
+#include "elm_win_eo.h"
+
 # include "efl_ui_focus_parent_provider.eo.h"
 # include "efl_ui_widget_focus_manager.eo.h"
 # include "efl_ui_focus_parent_provider_standard.eo.h"
-# include "elm_widget_item_static_focus.eo.h"
-#include "efl_ui_selection_manager.eo.h"
+# include "elm_widget_item_static_focus_eo.h"
+# include "efl_ui_selection_manager.eo.h"
 # include "efl_datetime_manager.eo.h"
+# include "efl_ui_size_model.eo.h"
+# include "efl_ui_homogeneous_model.eo.h"
+# include "efl_ui_exact_model.eo.h"
+# include "efl_ui_average_model.eo.h"
+
+extern const char *_efl_model_property_itemw;
+extern const char *_efl_model_property_itemh;
+extern const char *_efl_model_property_selfw;
+extern const char *_efl_model_property_selfh;
+extern const char *_efl_model_property_totalw;
+extern const char *_efl_model_property_totalh;
 
 # ifdef HAVE_LANGINFO_H
 #  include <langinfo.h>
@@ -166,7 +267,7 @@ struct _Efl_Ui_Theme_Data
  * the users config doesn't need to be wiped - simply new values need
  * to be put in
  */
-# define ELM_CONFIG_FILE_GENERATION 0x0014
+# define ELM_CONFIG_FILE_GENERATION 0x0015
 # define ELM_CONFIG_VERSION_EPOCH_OFFSET 16
 # define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << ELM_CONFIG_VERSION_EPOCH_OFFSET) | \
                                      ELM_CONFIG_FILE_GENERATION)
@@ -578,7 +679,7 @@ void                 _elm_win_standard_init(Eo *win);
 
 Ecore_X_Window       _elm_ee_xwin_get(const Ecore_Evas *ee);
 
-Efl_Ui_Theme_Apply_Result      _elm_theme_object_set(Evas_Object *parent,
+Eina_Error      _elm_theme_object_set(Evas_Object *parent,
                                            Evas_Object *o,
                                            const char *clas,
                                            const char *group,
@@ -586,7 +687,7 @@ Efl_Ui_Theme_Apply_Result      _elm_theme_object_set(Evas_Object *parent,
 Eina_Bool            _elm_theme_object_icon_set(Evas_Object *o,
                                                 const char *group,
                                                 const char *style);
-Efl_Ui_Theme_Apply_Result      _elm_theme_set(Elm_Theme *th,
+Eina_Error      _elm_theme_set(Elm_Theme *th,
                                     Evas_Object *o,
                                     const char *clas,
                                     const char *group,
@@ -633,7 +734,7 @@ void                 _elm_config_sub_init(void);
 void                 _elm_config_shutdown(void);
 void                 _elm_config_sub_shutdown(void);
 Eina_Bool            _elm_config_save(Elm_Config *cfg, const char *profile);
-void                 _elm_config_reload(Eina_Bool on_flush);
+void                 _elm_config_reload(void);
 size_t               _elm_config_user_dir_snprintf(char *dst, size_t size,
                                                    const char *fmt, ...)
                                                    EINA_PRINTF(3, 4);
@@ -773,12 +874,15 @@ void                 _elm_widget_full_eval_children(Eo *obj, Elm_Widget_Smart_Da
 EOAPI void			 efl_page_transition_page_size_set(Eo *obj, Eina_Size2D sz);
 EOAPI void			 efl_page_transition_padding_size_set(Eo *obj, int padding);
 EOAPI void			 efl_page_transition_update(Eo *obj, double pos);
-EOAPI void			 efl_page_transition_curr_page_change(Eo *obj, double move);
-EOAPI void			 efl_page_transition_pack_end(Eo *obj, Efl_Gfx_Entity *subobj);
-EOAPI void			 efl_page_transition_loop_set(Eo *obj, Efl_Ui_Pager_Loop loop);
+EOAPI void			 efl_page_transition_pack(Eo *obj, int index);
+EOAPI void			 efl_page_transition_unpack_all(Eo *obj);
+EOAPI void			 efl_page_transition_curr_page_change(Eo *obj, int diff);
+EOAPI Eina_Bool		 efl_page_transition_loop_set(Eo *obj, Efl_Ui_Pager_Loop loop);
 
 EOAPI void			 efl_page_indicator_update(Eo *obj, double pos);
 EOAPI void			 efl_page_indicator_pack(Eo *obj, int index);
+EOAPI void			 efl_page_indicator_unpack(Eo *obj, int index);
+EOAPI void			 efl_page_indicator_unpack_all(Eo *obj);
 
 Eina_Bool _elm_config_accel_preference_parse(const char *pref, Eina_Stringshare **accel, int *gl_depth, int *gl_stencil, int *gl_msaa);
 
@@ -798,6 +902,8 @@ extern const char SIG_WIDGET_LANG_CHANGED[];
 extern const char SIG_WIDGET_ACCESS_CHANGED[];
 extern const char SIG_LAYOUT_FOCUSED[];
 extern const char SIG_LAYOUT_UNFOCUSED[];
+
+extern Eina_Stringshare *_property_style_ss;
 
 extern Eina_Bool _config_profile_lock;
 
@@ -866,7 +972,7 @@ void efl_ui_slider_move_knob(Evas_Object *obj, double button_x, double button_y)
 
 # define ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(_pfx, _typ) \
 EOLIAN static Eina_Bool \
-_##_pfx##_efl_ui_widget_widget_event(Eo *obj, _typ *_pd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED) \
+_##_pfx##_efl_ui_widget_widget_input_event_handler(Eo *obj, _typ *_pd EINA_UNUSED, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED) \
 { \
    Evas_Event_Key_Down *ev; \
    if (eo_event->desc != EFL_EVENT_KEY_DOWN) return EINA_FALSE; \

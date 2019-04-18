@@ -27,6 +27,7 @@ struct _Entry
    Evas_Coord             ox, oy;
    Evas_Object           *cursor_bg;
    Evas_Object           *cursor_fg, *cursor_fg2;
+/* CHANGE EDJE_ENTRY_NUM_CURSOR_OBJS IF YOU ADD MORE OBJECTS HERE */
    Evas_Textblock_Cursor *cursor;
    Evas_Textblock_Cursor *sel_start, *sel_end;
    Evas_Textblock_Cursor *cursor_user, *cursor_user_extra;
@@ -2888,9 +2889,9 @@ _edje_entry_init(Edje *ed)
                                   _edje_key_down_cb, ed);
    evas_object_event_callback_add(ed->obj, EVAS_CALLBACK_KEY_UP,
                                   _edje_key_up_cb, ed);
-   efl_event_callback_add(ed->base.evas, EFL_CANVAS_SCENE_EVENT_FOCUS_IN,
+   efl_event_callback_add(ed->base.evas, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN,
                           _evas_focus_in_cb, ed);
-   efl_event_callback_add(ed->base.evas, EFL_CANVAS_SCENE_EVENT_FOCUS_OUT,
+   efl_event_callback_add(ed->base.evas, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT,
                           _evas_focus_out_cb, ed);
 }
 
@@ -2909,10 +2910,27 @@ _edje_entry_shutdown(Edje *ed)
                                   _edje_key_down_cb);
    evas_object_event_callback_del(ed->obj, EVAS_CALLBACK_KEY_UP,
                                   _edje_key_up_cb);
-   efl_event_callback_del(ed->base.evas, EFL_CANVAS_SCENE_EVENT_FOCUS_IN,
+   efl_event_callback_del(ed->base.evas, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN,
                           _evas_focus_in_cb, ed);
-   efl_event_callback_del(ed->base.evas, EFL_CANVAS_SCENE_EVENT_FOCUS_OUT,
+   efl_event_callback_del(ed->base.evas, EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT,
                           _evas_focus_out_cb, ed);
+}
+
+int
+_edje_entry_real_part_cursor_objs_get(Edje_Real_Part *rp, Evas_Object **cursor_objs)
+{
+   Entry *en;
+   int ret = 0;
+
+   if ((rp->type != EDJE_RP_TYPE_TEXT) ||
+       (!rp->typedata.text) || (!rp->typedata.text->entry_data)) return -1;
+
+   en = rp->typedata.text->entry_data;
+
+   if (en->cursor_bg) cursor_objs[ret++] = en->cursor_bg;
+   if (en->cursor_fg) cursor_objs[ret++] = en->cursor_fg;
+   if (en->cursor_fg2) cursor_objs[ret++] = en->cursor_fg2;
+   return ret;
 }
 
 void

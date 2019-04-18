@@ -4,6 +4,7 @@
 
 #include <stdlib.h>
 #include <string.h>
+#include <stdint.h>
 
 #include "Ecore_Data.h"
 
@@ -452,10 +453,10 @@ _ecore_sheap_update_data(Ecore_Sheap *heap)
 int
 ecore_direct_compare(const void *key1, const void *key2)
 {
-   unsigned long k1, k2;
+   uintptr_t k1, k2;
 
-   k1 = (unsigned long)key1;
-   k2 = (unsigned long)key2;
+   k1 = (uintptr_t)key1;
+   k2 = (uintptr_t)key2;
 
    if (k1 > k2)
       return 1;

@@ -9,15 +9,17 @@
 #include "function_helpers.hh"
 #include "documentation.hh"
 #include "generation_contexts.hh"
+#include "blacklist.hh"
 
 namespace eolian_mono {
 
 // Blacklist structs that require some kind of manual binding.
-static bool is_function_ptr_blacklisted(attributes::function_def const& func)
+template <typename Context>
+static bool is_function_ptr_blacklisted(attributes::function_def const& func, Context const& context)
 {
   std::string name = name_helpers::function_ptr_full_eolian_name(func);
 
-  return false;
+  return blacklist::is_function_blacklisted(func, context);
 }
 
 struct function_pointer {
@@ -28,12 +30,12 @@ struct function_pointer {
       // FIXME export Typedecl in eolian_cxx API
       auto funcptr_ctx = context_add_tag(class_context{class_context::function_ptr}, context);
 
+      if (is_function_ptr_blacklisted(f, context))
+        return true;
+
       std::string return_type;
       if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))
         return false;
-
-      if (is_function_ptr_blacklisted(f))
-        return true;
 
       if (!name_helpers::open_namespaces(sink, f.namespaces, funcptr_ctx))
         return false;
@@ -47,14 +49,14 @@ struct function_pointer {
               .generate(sink, std::make_tuple(f, f.return_type, f_name, f.parameters), funcptr_ctx))
           return false;
       // "Internal" delegate, 1-to-1 with the Unamaged function type
-      if (!as_generator(marshall_native_annotation(true)
+      if (!as_generator(marshall_annotation(true)
                   << "public delegate " << marshall_type(true) << " " << string // public?
-                  << "Internal(IntPtr data" << *grammar::attribute_reorder<-1, -1>((", " << marshall_native_annotation << " " << marshall_parameter)) << ");\n")
+                  << "Internal(IntPtr data" << *grammar::attribute_reorder<-1, -1>((", " << marshall_annotation << " " << marshall_parameter)) << ");\n")
               .generate(sink, std::make_tuple(f.return_type, f.return_type, f_name, f.parameters), funcptr_ctx))
           return false;
 
       // Wrapper type, with callback matching the Unamanaged one
-      if (!as_generator("internal class " << f_name << "Wrapper\n"
+      if (!as_generator("internal class " << f_name << "Wrapper : IDisposable\n"
                   << "{\n\n"
                   << scope_tab << "private " << f_name  << "Internal _cb;\n"
                   << scope_tab << "private IntPtr _cb_data;\n"
@@ -69,8 +71,31 @@ struct function_pointer {
 
                   << scope_tab << "~" << f_name << "Wrapper()\n"
                   << scope_tab << "{\n"
+                  << scope_tab << scope_tab << "Dispose(false);\n"
+                  << scope_tab << "}\n\n"
+
+                  << scope_tab << "protected virtual void Dispose(bool disposing)\n"
+                  << scope_tab << "{\n"
                   << scope_tab << scope_tab << "if (this._cb_free_cb != null)\n"
-                  << scope_tab << scope_tab << scope_tab << "this._cb_free_cb(this._cb_data);\n"
+                  << scope_tab << scope_tab << "{\n"
+                  << scope_tab << scope_tab << scope_tab << "if (disposing)\n"
+                  << scope_tab << scope_tab << scope_tab << "{\n"
+                  << scope_tab << scope_tab << scope_tab << scope_tab << "this._cb_free_cb(this._cb_data);\n"
+                  << scope_tab << scope_tab << scope_tab << "}\n"
+                  << scope_tab << scope_tab << scope_tab << "else\n"
+                  << scope_tab << scope_tab << scope_tab << "{\n"
+                  << scope_tab << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.ThreadSafeFreeCbExec(this._cb_free_cb, this._cb_data);\n"
+                  << scope_tab << scope_tab << scope_tab << "}\n"
+                  << scope_tab << scope_tab << scope_tab << "this._cb_free_cb = null;\n"
+                  << scope_tab << scope_tab << scope_tab << "this._cb_data = IntPtr.Zero;\n"
+                  << scope_tab << scope_tab << scope_tab << "this._cb = null;\n"
+                  << scope_tab << scope_tab << "}\n"
+                  << scope_tab << "}\n\n"
+
+                  << scope_tab << "public void Dispose()\n"
+                  << scope_tab << "{\n"
+                  << scope_tab << scope_tab << "Dispose(true);\n"
+                  << scope_tab << scope_tab << "GC.SuppressFinalize(this);\n"
                   << scope_tab << "}\n\n"
 
                   << scope_tab << "internal " << type << " ManagedCb(" << (parameter % ",") << ")\n"
@@ -80,14 +105,14 @@ struct function_pointer {
                   << scope_tab << "}\n\n"
 
 
-                  << scope_tab << marshall_native_annotation(true)
-                  << scope_tab << "internal static " << marshall_type(true) << " Cb(IntPtr cb_data" << *grammar::attribute_reorder<-1, -1>((", " << marshall_native_annotation << " " << marshall_parameter)) << ")\n"
+                  << scope_tab << marshall_annotation(true)
+                  << scope_tab << "internal static " << marshall_type(true) << " Cb(IntPtr cb_data" << *grammar::attribute_reorder<-1, -1>((", " << marshall_annotation << " " << marshall_parameter)) << ")\n"
                   << scope_tab << "{\n"
                   << scope_tab << scope_tab << "GCHandle handle = GCHandle.FromIntPtr(cb_data);\n"
                   << scope_tab << scope_tab << string << " cb = (" << string << ")handle.Target;\n"
                   << native_function_definition_preamble
                   << scope_tab << scope_tab << "try {\n"
-                  << scope_tab << scope_tab << scope_tab <<  (return_type != " void" ? "_ret_var = " : "") << "cb(" << (native_argument_invocation % ", ") << ");\n"
+                  << scope_tab << scope_tab << scope_tab <<  (return_type != "void" ? "_ret_var = " : "") << "cb(" << (native_argument_invocation % ", ") << ");\n"
                   << scope_tab << scope_tab << "} catch (Exception e) {\n"
                   << scope_tab << scope_tab << scope_tab << "Eina.Log.Warning($\"Callback error: {e.ToString()}\");\n"
                   << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.UNHANDLED_EXCEPTION);\n"

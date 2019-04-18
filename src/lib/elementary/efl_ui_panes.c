@@ -4,7 +4,7 @@
 
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
-#define EFL_GFX_SIZE_HINT_PROTECTED
+#define EFL_GFX_HINT_PROTECTED
 #define EFL_PART_PROTECTED
 
 #include <Elementary.h>
@@ -110,14 +110,14 @@ _efl_ui_panes_theme_group_get(Evas_Object *obj, Efl_Ui_Panes_Data *sd)
    return eina_strbuf_release(new_group);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _efl_ui_panes_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Panes_Data *sd)
 {
    double size;
    Evas_Coord minw = 0, minh = 0;
    char *group;
 
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    group = _efl_ui_panes_theme_group_get(obj, sd);
    if (group)
@@ -131,7 +131,7 @@ _efl_ui_panes_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Panes_Data *sd)
    evas_object_size_hint_min_set(sd->event, minw, minh);
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    size = elm_panes_content_left_size_get(obj);
 
@@ -223,17 +223,17 @@ _efl_ui_panes_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panes_Data *sd)
    if (first_content)
      {
         if (!sd->first_hint_min_allow)
-          sd->first_min = efl_gfx_size_hint_combined_min_get(first_content);
+          sd->first_min = efl_gfx_hint_size_combined_min_get(first_content);
         else
-          sd->first_min = efl_gfx_size_hint_min_get(first_content);
+          sd->first_min = efl_gfx_hint_size_min_get(first_content);
      }
 
    if (second_content)
      {
         if (!sd->second_hint_min_allow)
-          sd->second_min = efl_gfx_size_hint_combined_min_get(second_content);
+          sd->second_min = efl_gfx_hint_size_combined_min_get(second_content);
         else
-          sd->second_min = efl_gfx_size_hint_min_get(second_content);
+          sd->second_min = efl_gfx_hint_size_min_get(second_content);
      }
 
    if (sd->dir == EFL_UI_DIR_HORIZONTAL)
@@ -247,7 +247,7 @@ _efl_ui_panes_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panes_Data *sd)
         min.h = MAX(sd->first_min.h, sd->second_min.h);
      }
 
-   efl_gfx_size_hint_restricted_min_set(obj, min);
+   efl_gfx_hint_size_restricted_min_set(obj, min);
    _set_min_size_new(obj);
 }
 
@@ -408,13 +408,12 @@ _efl_ui_panes_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UN
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "panes");
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    group = _efl_ui_panes_theme_group_get(obj, sd);
-   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
+   if (elm_widget_theme_object_set(obj, wd->resize_obj,
                                        elm_widget_theme_klass_get(obj),
                                        group,
-                                       elm_widget_theme_style_get(obj)))
+                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
    free(group);
@@ -716,8 +715,9 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_panes)
    ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_panes)
 
 #include "efl_ui_panes.eo.c"
+#include "efl_ui_panes_eo.legacy.c"
 
-#include "efl_ui_panes_legacy.eo.h"
+#include "efl_ui_panes_legacy_eo.h"
 #define MY_CLASS_NAME_LEGACY "elm_panes"
 
 static void
@@ -904,4 +904,4 @@ elm_panes_content_right_unset(Evas_Object *obj)
    return elm_layout_content_unset(obj, "right");
 }
 
-#include "efl_ui_panes_legacy.eo.c"
+#include "efl_ui_panes_legacy_eo.c"

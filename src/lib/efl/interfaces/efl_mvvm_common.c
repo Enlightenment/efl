@@ -15,6 +15,7 @@ EAPI Eina_Error EFL_MODEL_ERROR_INCORRECT_VALUE = 0;
 EAPI Eina_Error EFL_MODEL_ERROR_INVALID_OBJECT = 0;
 
 EAPI Eina_Error EFL_FACTORY_ERROR_NOT_SUPPORTED = 0;
+EAPI Eina_Error EFL_PROPERTY_ERROR_INVALID_KEY = 0;
 
 static const char EFL_MODEL_ERROR_UNKNOWN_STR[]           = "Unknown Error";
 static const char EFL_MODEL_ERROR_NOT_SUPPORTED_STR[]     = "Operation not supported";
@@ -26,6 +27,9 @@ static const char EFL_MODEL_ERROR_INCORRECT_VALUE_STR[]   = "Incorrect value";
 static const char EFL_MODEL_ERROR_INVALID_OBJECT_STR[]    = "Object is invalid";
 
 static const char EFL_FACTORY_ERROR_NOT_SUPPORTED_STR[]   = "Operation not supported";
+
+static const char EFL_PROPERTY_ERROR_INVALID_KEY_STR[]    = "Incorrect key provided";
+
 
 EAPI int
 efl_model_init(void)
@@ -44,6 +48,10 @@ efl_model_init(void)
 #define _ERROR(Name) EFL_FACTORY_ERROR_##Name = eina_error_msg_static_register(EFL_FACTORY_ERROR_##Name##_STR);
    _ERROR(NOT_SUPPORTED);
 
+#undef _ERROR
+#define _ERROR(Name) EFL_PROPERTY_ERROR_##Name = eina_error_msg_static_register(EFL_PROPERTY_ERROR_##Name##_STR);
+   _ERROR(INVALID_KEY);
+
    return EINA_TRUE;
 }
 
@@ -54,6 +62,7 @@ _efl_model_properties_changed_internal(const Efl_Model *model, ...)
 {
    Efl_Model_Property_Event ev = { 0 };
    Eina_Array *properties = eina_array_new(1);
+   Eina_Stringshare *sp;
    const char *property;
    va_list args;
 
@@ -61,7 +70,7 @@ _efl_model_properties_changed_internal(const Efl_Model *model, ...)
 
    while ((property = (const char*) va_arg(args, const char*)))
      {
-        eina_array_push(properties, property);
+        eina_array_push(properties, eina_stringshare_add(property));
      }
 
    va_end(args);
@@ -70,6 +79,8 @@ _efl_model_properties_changed_internal(const Efl_Model *model, ...)
 
    efl_event_callback_call((Efl_Model *) model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &ev);
 
+   while ((sp = eina_array_pop(properties)))
+     eina_stringshare_del(sp);
    eina_array_free(properties);
 }
 
@@ -79,13 +90,16 @@ efl_model_property_invalidated_notify(Efl_Model *model, const char *property)
    Eina_Array *invalidated_properties = eina_array_new(1);
    EINA_SAFETY_ON_NULL_RETURN(invalidated_properties);
 
-   Eina_Bool ret = eina_array_push(invalidated_properties, property);
+   Eina_Stringshare *sp = eina_stringshare_add(property);
+
+   Eina_Bool ret = eina_array_push(invalidated_properties, sp);
    EINA_SAFETY_ON_FALSE_GOTO(ret, on_error);
 
    Efl_Model_Property_Event evt = {.invalidated_properties = invalidated_properties};
    efl_event_callback_call(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
 
 on_error:
+   eina_stringshare_del(sp);
    eina_array_free(invalidated_properties);
 }
 

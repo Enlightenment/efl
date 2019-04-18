@@ -4,7 +4,9 @@
 
 #include "Elementary.h"
 
-#define ELEMENTARY_BUILD
+#ifndef EFL_BUILD
+# define EFL_BUILD
+#endif
 #undef ELM_MODULE_HELPER_H
 #include "private.h"
 

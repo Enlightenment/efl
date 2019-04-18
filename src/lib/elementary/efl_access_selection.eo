@@ -1,4 +1,4 @@
-interface Efl.Access.Selection
+interface @beta Efl.Access.Selection
 {
    [[Elementary access selection interface]]
    methods {
@@ -55,6 +55,6 @@ interface Efl.Access.Selection
       }
    }
    events {
-      selection,changed: void; [[Called when selection has been changed.]]
+      access,selection,changed: void; [[Called when selection has been changed.]]
    }
 }

@@ -1,4 +1,4 @@
-class Efl.Page.Transition_Scroll extends Efl.Page.Transition
+class @beta Efl.Page.Transition_Scroll extends Efl.Page.Transition
 {
    [[Page transition for @Efl.Ui.Pager
 

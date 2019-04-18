@@ -507,4 +507,4 @@ evas_object_grid_mirrored_get(const Evas_Grid *obj)
    return efl_ui_mirrored_get(obj);
 }
 
-#include "canvas/evas_grid.eo.c"
+#include "canvas/evas_grid_eo.c"

@@ -1,6 +1,6 @@
 import eina_types;
 
-interface Efl.Gfx.View
+interface @beta Efl.Gfx.View
 {
    [[Efl graphics view interface]]
    eo_prefix: efl_gfx;

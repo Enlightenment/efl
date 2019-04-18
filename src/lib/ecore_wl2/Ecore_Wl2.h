@@ -1482,7 +1482,7 @@ EAPI Ecore_Wl2_Offer* ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input);
  *
  * @param types a null-terminated array of mimetypes supported by the client
  *
- * @return serial of request on sucess, 0 on failure
+ * @return serial of request on success, 0 on failure
  *
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.17
@@ -1494,7 +1494,7 @@ EAPI uint32_t ecore_wl2_dnd_selection_set(Ecore_Wl2_Input *input, const char **t
  *
  * @param input the input to clear
  *
- * @return serial of request on sucess, 0 on failure
+ * @return serial of request on success, 0 on failure
  *
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.17

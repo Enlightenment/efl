@@ -1,13 +1,12 @@
-enum Efl.Ui.Textpath_Direction {
+enum @beta Efl.Ui.Textpath_Direction {
     [[Textpath direction]]
     cw, [[Clockwise]]
     ccw [[Counter-clockwise]]
 }
 
-class Efl.Ui.Textpath extends Efl.Ui.Layout implements Efl.Text, Efl.Gfx.Path
+class @beta Efl.Ui.Textpath extends Efl.Ui.Layout_Base implements Efl.Text, Efl.Gfx.Path
 {
    [[Efl Ui Textpath class]]
-   legacy_prefix: elm_textpath;
    methods {
       circle_set {
          [[Set a circle with given center, radius, and start angle.]]

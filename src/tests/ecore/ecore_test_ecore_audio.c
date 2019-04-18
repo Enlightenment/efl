@@ -22,7 +22,7 @@ static void _looped_cb(void *data EINA_UNUSED, const Efl_Event *event)
 }
 
 #ifdef HAVE_PULSE
-#if 0
+
 static void _failed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
   Eina_Bool *pulse_context_failed = data;
@@ -82,7 +82,6 @@ EFL_START_TEST(ecore_test_ecore_audio_obj_pulse)
    efl_unref(in);
 }
 EFL_END_TEST
-#endif
 #endif
 
 static Eina_Bool _quit(void *data EINA_UNUSED)
@@ -312,6 +311,9 @@ EFL_START_TEST(ecore_test_ecore_audio_obj_sndfile)
 }
 EFL_END_TEST
 
+#include "ecore_audio_out_test.eo.h"
+#include "ecore_audio_out_test.eo.c"
+
 EFL_START_TEST(ecore_test_ecore_audio_obj_in_out)
 {
   Eo *out2;
@@ -320,7 +322,7 @@ EFL_START_TEST(ecore_test_ecore_audio_obj_in_out)
 
   Eo *in = efl_add_ref(ECORE_AUDIO_IN_CLASS, NULL);
   Eo *in2 = efl_add_ref(ECORE_AUDIO_IN_CLASS, NULL);
-  Eo *out = efl_add_ref(ECORE_AUDIO_OUT_CLASS, NULL);
+  Eo *out = efl_add_ref(ECORE_AUDIO_OUT_TEST_CLASS, NULL);
 
   fail_if(!in);
   fail_if(!in2);
@@ -419,7 +421,7 @@ EFL_START_TEST(ecore_test_ecore_audio_obj_vio)
   in = efl_add_ref(ECORE_AUDIO_IN_CLASS, NULL);
   fail_if(!in);
 
-  out = efl_add_ref(ECORE_AUDIO_OUT_CLASS, NULL);
+  out = efl_add_ref(ECORE_AUDIO_OUT_TEST_CLASS, NULL);
   fail_if(!out);
 
   ecore_audio_obj_vio_set(in, &in_vio, NULL, NULL);
@@ -544,7 +546,7 @@ EFL_START_TEST(ecore_test_ecore_audio_obj)
   objs[0] = efl_add_ref(ECORE_AUDIO_IN_CLASS, NULL);
   fail_if(!objs[0]);
 
-  objs[1] = efl_add_ref(ECORE_AUDIO_OUT_CLASS, NULL);
+  objs[1] = efl_add_ref(ECORE_AUDIO_OUT_TEST_CLASS, NULL);
   fail_if(!objs[1]);
 
   for (i=0; i<2; i++) {
@@ -627,7 +629,7 @@ ecore_test_ecore_audio(TCase *tc)
    tcase_add_test(tc, ecore_test_ecore_audio_cleanup);
 #endif
 #ifdef HAVE_PULSE
-   //tcase_add_test(tc, ecore_test_ecore_audio_obj_pulse);
+   tcase_add_test(tc, ecore_test_ecore_audio_obj_pulse);
 #endif
 }
 

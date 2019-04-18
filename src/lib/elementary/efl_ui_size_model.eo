@@ -1,0 +1,19 @@
+class @beta Efl.Ui.Size_Model extends Efl.Composite_Model
+{
+   [[Class to be used to store object item size for List/Grid View.
+
+   This model provide the following properties that can be retrived by
+   @Efl.Model.properties.get :
+   - "$self.width" and "$self.height" define the size of this object from the point of
+   view of the @Efl.Ui.View that use it. It only apply on children and not on the
+   top root object.
+   - "$item.width" and "$item.height" define all the children size and is available
+   only on @Efl.Ui.Size_Model that do have children.
+   - "$total.width" and "$total.height" define the accumulated size used by all the children.
+   Only vertical list accumulation logic is implemented at this point.]]
+
+   data: null;
+   implements {
+      Efl.Model.properties { get; }
+   }
+}

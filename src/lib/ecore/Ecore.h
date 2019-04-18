@@ -330,9 +330,7 @@ extern "C" {
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "Ecore_Legacy.h"
 #endif
-#ifdef EFL_EO_API_SUPPORT
 #include "Ecore_Eo.h"
-#endif
 
 #ifdef __cplusplus
 }

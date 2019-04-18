@@ -1,4 +1,4 @@
-enum Efl.Net.Ssl.Verify_Mode {
+enum @beta Efl.Net.Ssl.Verify_Mode {
     [[Defines how remote peers should be verified.
 
       @since 1.19
@@ -8,7 +8,7 @@ enum Efl.Net.Ssl.Verify_Mode {
     required, [[Always verify and fail if certificate wasn't provided]]
 }
 
-enum Efl.Net.Ssl.Cipher {
+enum @beta Efl.Net.Ssl.Cipher {
     [[Defines the SSL/TLS version to use.
 
       Prefer 'auto' or one of the TLS variants.

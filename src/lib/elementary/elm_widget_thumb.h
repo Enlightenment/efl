@@ -65,6 +65,7 @@ struct _Elm_Thumb_Data
    Eina_Bool                   on_hold : 1;
    Eina_Bool                   is_video : 1;
    Eina_Bool                   was_video : 1;
+   Eina_Bool                   loaded : 1;
 };
 
 /**

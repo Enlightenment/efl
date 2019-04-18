@@ -102,7 +102,7 @@ EAPI Evas_Engine_Info *evas_engine_info_get(const Evas *obj);
 EAPI Eina_Bool evas_image_max_size_get(Eo *eo_e, int *w, int *h);
 
 
-#include "canvas/evas_canvas.eo.legacy.h"
+#include "canvas/evas_canvas_eo.legacy.h"
 
 /**
  * @}
@@ -684,7 +684,7 @@ EAPI void             evas_event_thaw_eval(Evas *e) EINA_ARG_NONNULL(1);
 /**
  * @brief Mouse move event feed.
  *
- * This function will set some evas properties that is necessary when the mouse
+ * This function will set some evas properties that are necessary when the mouse
  * is moved from its last position. It prepares information to be treated by
  * the callback function.
  *
@@ -715,7 +715,7 @@ EAPI void             evas_event_input_mouse_move(Evas *obj, int x, int y, unsig
 /**
  * @brief Mouse up event feed.
  *
- * This function will set some evas properties that is necessary when the mouse
+ * This function will set some evas properties that are necessary when the mouse
  * button is released. It prepares information to be treated by the callback
  * function.
  *
@@ -728,7 +728,7 @@ EAPI void             evas_event_feed_mouse_up(Evas *obj, int b, Evas_Button_Fla
 /**
  * @brief Mouse down event feed.
  *
- * This function will set some evas properties that is necessary when the mouse
+ * This function will set some evas properties that are necessary when the mouse
  * button is pressed. It prepares information to be treated by the callback
  * function.
  *
@@ -741,7 +741,7 @@ EAPI void             evas_event_feed_mouse_down(Evas *obj, int b, Evas_Button_F
 /**
  * @brief Mouse wheel event feed.
  *
- * This function will set some evas properties that is necessary when the mouse
+ * This function will set some evas properties that are necessary when the mouse
  * wheel is scrolled up or down. It prepares information to  be treated by the
  * callback function.
  *
@@ -754,7 +754,7 @@ EAPI void             evas_event_feed_mouse_wheel(Evas *obj, int direction, int 
 /**
  * @brief Mouse in event feed.
  *
- * This function will set some evas properties that is necessary when the mouse
+ * This function will set some evas properties that are necessary when the mouse
  * in event happens. It prepares information to be treated by the callback
  * function.
  *
@@ -765,7 +765,7 @@ EAPI void             evas_event_feed_mouse_in(Evas *obj, unsigned int timestamp
 /**
  * @brief Mouse out event feed.
  *
- * This function will set some evas properties that is necessar when the mouse
+ * This function will set some evas properties that are necessary when the mouse
  * out event happens. It prepares information to be treated by the callback
  * function.
  *
@@ -793,7 +793,7 @@ EAPI void             evas_event_feed_multi_up(Evas *obj, int d, int x, int y, d
 /**
  * @brief Key down event feed.
  *
- * This function will set some evas properties that is necessary when a key is
+ * This function will set some evas properties that are necessary when a key is
  * pressed. It prepares information to be treated by the callback function.
  *
  * @param[in] key The key pressed.
@@ -807,7 +807,7 @@ EAPI void             evas_event_feed_key_down(Evas *obj, const char *keyname, c
 /**
  * @brief Key up event feed.
  *
- * This function will set some evas properties that is necessary when a key is
+ * This function will set some evas properties that are necessary when a key is
  * released. It prepares information to be treated by the callback function.
  *
  * @param[in] key The key released.
@@ -821,7 +821,7 @@ EAPI void             evas_event_feed_key_up(Evas *obj, const char *keyname, con
 /**
  * @brief Key down event feed with keycode.
  *
- * This function will set some evas properties that is necessary when a key is
+ * This function will set some evas properties that are necessary when a key is
  * pressed. It prepares information to be treated by the callback function.
  *
  * @param[in] key The key released.
@@ -838,7 +838,7 @@ EAPI void             evas_event_feed_key_down_with_keycode(Evas *obj, const cha
 /**
  * @brief Key up event feed with keycode.
  *
- * This function will set some evas properties that is necessary when a key is
+ * This function will set some evas properties that are necessary when a key is
  * released. It prepares information to be treated by the callback function.
  *
  * @param[in] key The key released.
@@ -855,7 +855,7 @@ EAPI void             evas_event_feed_key_up_with_keycode(Evas *obj, const char 
 /**
  * @brief Input device axis update event feed.
  *
- * This function will set some evas properties that is necessary when an e.g.
+ * This function will set some evas properties that are necessary when an e.g.
  * stylus axis is updated. It prepares information to be treated by the
  * callback function.
  *
@@ -1628,7 +1628,7 @@ EAPI void evas_object_size_hint_max_get(const Evas_Object *obj, Evas_Coord *w, E
 /**
  * @brief Sets the hints for an object's optimum size.
  *
- * This is not a size enforcement in any way, it's just a hint that hould be
+ * This is not a size enforcement in any way, it's just a hint that should be
  * used whenever appropriate.
  *
  * Values 0 will be treated as unset hint components, when queried by managers.
@@ -1895,21 +1895,21 @@ EAPI void evas_object_size_hint_aspect_get(const Evas_Object *obj, Evas_Aspect_C
 /** Display mode size hint. */
 typedef enum
 {
-  EFL_GFX_SIZE_HINT_MODE_NONE = 0, /**< Default mode */
-  EFL_GFX_SIZE_HINT_MODE_COMPRESS = 1, /**< Use this mode when you want to give
+  EFL_GFX_HINT_MODE_NONE = 0, /**< Default mode */
+  EFL_GFX_HINT_MODE_COMPRESS = 1, /**< Use this mode when you want to give
                                         * compress display mode hint to an object */
-  EFL_GFX_SIZE_HINT_MODE_EXPAND = 2, /**< Use this mode when you want to give
+  EFL_GFX_HINT_MODE_EXPAND = 2, /**< Use this mode when you want to give
                                       * expand display mode hint to an object */
-  EFL_GFX_SIZE_HINT_MODE_DONT_CHANGE = 3 /**< Use this mode when an object
+  EFL_GFX_HINT_MODE_DONT_CHANGE = 3 /**< Use this mode when an object
                                           * should not change its display mode */
-} Efl_Gfx_Size_Hint_Mode;
+} Efl_Gfx_Hint_Mode;
 
-typedef Efl_Gfx_Size_Hint_Mode             Evas_Display_Mode;
+typedef Efl_Gfx_Hint_Mode             Evas_Display_Mode;
 
-#define EVAS_DISPLAY_MODE_NONE             EFL_GFX_SIZE_HINT_MODE_NONE
-#define EVAS_DISPLAY_MODE_COMPRESS         EFL_GFX_SIZE_HINT_MODE_COMPRESS
-#define EVAS_DISPLAY_MODE_EXPAND           EFL_GFX_SIZE_HINT_MODE_EXPAND
-#define EVAS_DISPLAY_MODE_DONT_CHANGE      EFL_GFX_SIZE_HINT_MODE_DONT_CHANGE
+#define EVAS_DISPLAY_MODE_NONE             EFL_GFX_HINT_MODE_NONE
+#define EVAS_DISPLAY_MODE_COMPRESS         EFL_GFX_HINT_MODE_COMPRESS
+#define EVAS_DISPLAY_MODE_EXPAND           EFL_GFX_HINT_MODE_EXPAND
+#define EVAS_DISPLAY_MODE_DONT_CHANGE      EFL_GFX_HINT_MODE_DONT_CHANGE
 
 /**
  * @brief Sets the hints for an object's disply mode,
@@ -2130,6 +2130,19 @@ EAPI void evas_object_static_clip_set(Evas_Object *obj, Eina_Bool is_static_clip
  */
 EAPI const Eina_List *evas_object_clipees_get(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
 
+/**
+ * @brief Test if any object is clipped by @c obj.
+ *
+ * @param[in] obj The object.
+ *
+ * @return @c true if any object is clipped by @c obj, @c false otherwise
+ *
+ * @since 1.8
+ *
+ * @ingroup Evas_Object
+ */
+EAPI Eina_Bool evas_object_clipees_has(const Evas_Object *obj) EINA_WARN_UNUSED_RESULT;
+
 /** How the object should be rendered to output.
  *
  * @ingroup Evas
@@ -2282,7 +2295,7 @@ EAPI Eina_Bool evas_object_pointer_inside_get(const Evas_Object *obj) EINA_WARN_
 
 EAPI Eina_Bool evas_object_pointer_coords_inside_get(const Evas_Object *eo_obj, int x, int y) EINA_WARN_UNUSED_RESULT;
 
-#include "canvas/efl_canvas_object.eo.legacy.h"
+#include "canvas/efl_canvas_object_eo.legacy.h"
 
 /**
  * @brief Get the Evas to which this object belongs to
@@ -2786,7 +2799,7 @@ EAPI void                     evas_object_data_set(Evas_Object *obj, const char 
  * will be returned. If this is not the case, @c NULL will be
  * returned, signifying an invalid object or a non-existent key. It is
  * possible that a @c NULL pointer was stored given that key, but this
- * situation is non-sensical and thus can be considered an error as
+ * situation is nonsensical and thus can be considered an error as
  * well. @c NULL pointers are never stored as this is the return value
  * if an error occurs.
  *
@@ -3602,9 +3615,9 @@ EAPI Evas_Object *evas_object_rectangle_add(Evas *e) EINA_WARN_UNUSED_RESULT EIN
  */
 EAPI Evas_Object *evas_object_vg_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
-#include "canvas/efl_canvas_vg_node.eo.legacy.h"
-#include "canvas/efl_canvas_vg_object.eo.legacy.h"
-#include "canvas/efl_canvas_vg_container.eo.legacy.h"
+#include "canvas/efl_canvas_vg_node_eo.legacy.h"
+#include "canvas/efl_canvas_vg_object_eo.legacy.h"
+#include "canvas/efl_canvas_vg_container_eo.legacy.h"
 /**
  * Creates a new vector shape object.
  *
@@ -3797,7 +3810,7 @@ EAPI void evas_vg_node_raise(Eo *obj);
  */
 EAPI void evas_vg_node_lower(Eo *obj);
 
-#include "canvas/efl_canvas_vg_node.eo.legacy.h"
+#include "canvas/efl_canvas_vg_node_eo.legacy.h"
 
 /**
  *
@@ -4240,7 +4253,7 @@ EAPI void evas_vg_shape_stroke_fill_set(Eo *obj, Efl_VG *f);
  */
 EAPI Efl_VG* evas_vg_shape_stroke_fill_get(const Eo *obj);
 
-#include "canvas/efl_canvas_vg_shape.eo.legacy.h"
+#include "canvas/efl_canvas_vg_shape_eo.legacy.h"
 
 /**
  *
@@ -5094,7 +5107,7 @@ EAPI int evas_object_image_load_scale_down_get(const Evas_Object *obj);
 EAPI void evas_object_image_load_head_skip_set(Evas_Object *obj, Eina_Bool skip);
 
 /**
- * @breif Get the load option to skip header loads before preload
+ * @brief Get the load option to skip header loads before preload
  * 
  * This gets the heade skip value set by evas_object_image_load_head_skip_set()
  * 
@@ -5925,7 +5938,7 @@ EAPI void evas_object_image_reload(Evas_Object *obj) EINA_DEPRECATED;
  */
 EAPI void evas_object_image_alpha_mask_set(Evas_Object *obj, Eina_Bool ismask) EINA_ARG_NONNULL(1) EINA_DEPRECATED;
 
-#include "canvas/evas_image.eo.legacy.h"
+#include "canvas/evas_image_eo.legacy.h"
 
 /**
  * @}
@@ -6009,7 +6022,7 @@ typedef enum
    EVAS_TEXT_STYLE_SHADOW_DIRECTION_RIGHT = 112 /* 7 >> 4 */ /**< shadow growing to the right */
 } Evas_Text_Style_Type;
 
-#include "canvas/evas_text.eo.legacy.h"
+#include "canvas/evas_text_eo.legacy.h"
 
 /**
  *
@@ -6095,7 +6108,7 @@ EAPI void evas_object_text_font_get(const Eo *obj, const char **font, Evas_Font_
  */
 EAPI Evas_Object *evas_object_textgrid_add(Evas *e);
 
-#include "canvas/evas_textgrid.eo.legacy.h"
+#include "canvas/evas_textgrid_eo.legacy.h"
 
 /**
  *
@@ -6199,7 +6212,7 @@ EAPI void evas_object_textgrid_font_get(const Eo *obj, const char **font_name, E
  */
 EAPI Evas_Object *evas_object_line_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
-#include "canvas/evas_line.eo.legacy.h"
+#include "canvas/evas_line_eo.legacy.h"
 
 /**
  * @}
@@ -6641,7 +6654,7 @@ EAPI Evas_Object *evas_object_smart_clipped_clipper_get(const Evas_Object *obj) 
  * This function will return @c null when a non-smart object is passed.
  *
  * See also @ref Efl.Canvas.Group.group_member_add,
- * @ref Efl.Canvas.Group.group_member_del and @ref evas_object_smart_iterator_new.
+ * @ref Efl.Canvas.Group.group_member_remove and @ref evas_object_smart_iterator_new.
  *
  * @return Returns the list of the member objects of @c obj.
  *
@@ -6698,7 +6711,7 @@ EAPI Eina_Bool evas_object_smart_need_recalculate_get(const Evas_Object *obj);
  * object.
  *
  * See also @ref Efl.Canvas.Group.group_member_add and
- * @ref Efl.Canvas.Group.group_member_del
+ * @ref Efl.Canvas.Group.group_member_remove
  *
  * @return Returns the iterator of the member objects of @c obj.
  *
@@ -6755,7 +6768,7 @@ EAPI void evas_object_smart_changed(Evas_Object *obj);
  */
 EAPI void evas_object_smart_move_children_relative(Evas_Object *obj, Evas_Coord dx, Evas_Coord dy);
 
-#include "canvas/efl_canvas_group.eo.legacy.h"
+#include "canvas/efl_canvas_group_eo.legacy.h"
 
 /**
  * @}
@@ -6891,7 +6904,7 @@ EAPI Eina_Bool                  evas_object_box_option_property_get(const Evas_O
  */
 EAPI Eina_List                 *evas_object_box_children_get(const Evas_Object *o) EINA_WARN_UNUSED_RESULT EINA_ARG_NONNULL(1) EINA_MALLOC;
 
-#include "canvas/evas_box.eo.legacy.h"
+#include "canvas/evas_box_eo.legacy.h"
 
 /**
  * @}
@@ -6938,7 +6951,7 @@ EAPI void evas_object_table_mirrored_set(Eo *obj, Eina_Bool mirrored);
  */
 EAPI Eina_Bool evas_object_table_mirrored_get(const Eo *obj);
 
-#include "canvas/evas_table.eo.legacy.h"
+#include "canvas/evas_table_eo.legacy.h"
 
 /**
  * @}
@@ -6988,7 +7001,7 @@ EAPI void evas_object_grid_mirrored_set(Eo *obj, Eina_Bool mirrored);
  */
 EAPI Eina_Bool evas_object_grid_mirrored_get(const Eo *obj);
 
-#include "canvas/evas_grid.eo.legacy.h"
+#include "canvas/evas_grid_eo.legacy.h"
 
 /**
  * @}
@@ -7524,7 +7537,7 @@ EAPI void            evas_map_util_points_populate_from_geometry(Evas_Map *m, Ev
 /**
  * Set color of all points to given color.
  *
- * This call is useful to reuse maps after they had 3d lightning or
+ * This call is useful to reuse maps after they had 3d lighting or
  * any other colorization applied before.
  *
  * @param m map to change the color of.
@@ -8037,7 +8050,7 @@ EAPI void evas_object_map_enable_set(Evas_Object *obj, Eina_Bool enabled);
  */
 EAPI Eina_Bool evas_object_map_enable_get(const Evas_Object *obj);
 
-#include "canvas/efl_gfx_map.eo.legacy.h"
+#include "canvas/efl_gfx_mapping.eo.legacy.h"
 
 /**
  * @brief Apply an evas filter program on this text object.
@@ -8081,7 +8094,83 @@ EAPI void evas_object_text_filter_source_set(Evas_Object *obj, const char *name,
  * @since 1.20
  */
 EAPI Evas_Object *evas_object_event_grabber_add(Evas *e);
-#include "canvas/efl_canvas_event_grabber.eo.legacy.h"
+
+/**
+ * @brief If @c true the object belongs to the window border decorations.
+ *
+ * This will be @c false by default, and should be @c false for all objects
+ * created by the application, unless swallowed in some very specific parts of
+ * the window.
+ *
+ * It is very unlikely that an application needs to call this manually, as the
+ * window will handle this feature automatically.
+ *
+ * @param[in] obj The object.
+ * @param[in] is_frame @c true if the object is a frame, @c false otherwise
+ *
+ * @since 1.2
+ *
+ * @ingroup Evas_Object_Group
+ */
+EAPI void evas_object_is_frame_object_set(Efl_Canvas_Object *obj, Eina_Bool is_frame);
+
+/**
+ * @brief If @c true the object belongs to the window border decorations.
+ *
+ * This will be @c false by default, and should be @c false for all objects
+ * created by the application, unless swallowed in some very specific parts of
+ * the window.
+ *
+ * It is very unlikely that an application needs to call this manually, as the
+ * window will handle this feature automatically.
+ *
+ * @param[in] obj The object.
+ *
+ * @return @c true if the object is a frame, @c false otherwise
+ *
+ * @since 1.2
+ *
+ * @ingroup Evas_Object_Group
+ */
+EAPI Eina_Bool evas_object_is_frame_object_get(const Efl_Canvas_Object *obj);
+
+/**
+ * @brief Set whether an Evas object is to freeze (discard) events.
+ *
+ * If @c freeze is @c true, it will force events on @c obj to be discarded.
+ * Unlike @ref evas_object_pass_events_set, events will not be passed to next
+ * lower object. This API can be used for blocking events while @c obj is in
+ * transition.
+ *
+ * If @c freeze is @c false, events will be processed on that object as normal.
+ *
+ * @warning If you block only key/mouse up events with this API, you can't be
+ * sure of the state of any objects that have only key/mouse down events.
+ *
+ * @param[in] obj The object.
+ * @param[in] freeze Pass when @c obj is to freeze events ($true) or not
+ * ($false).
+ *
+ * @since 1.1
+ *
+ * @ingroup Evas_Object_Group
+ */
+EAPI void evas_object_freeze_events_set(Efl_Canvas_Object *obj, Eina_Bool freeze);
+
+/**
+ * @brief Determine whether an object is set to freeze (discard) events.
+ *
+ * @param[in] obj The object.
+ *
+ * @return Pass when @c obj is to freeze events ($true) or not ($false).
+ *
+ * @since 1.1
+ *
+ * @ingroup Evas_Object_Group
+ */
+EAPI Eina_Bool evas_object_freeze_events_get(const Efl_Canvas_Object *obj);
+
+#include "canvas/efl_canvas_event_grabber_eo.legacy.h"
 
 #include "canvas/efl_canvas_animation_alpha.eo.legacy.h"
 #include "canvas/efl_canvas_animation.eo.legacy.h"

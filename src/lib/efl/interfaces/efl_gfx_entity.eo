@@ -1,7 +1,10 @@
 import eina_types;
 
 interface Efl.Gfx.Entity {
-   [[Efl graphics interface]]
+   [[Efl graphics interface
+
+     @since 1.22
+   ]]
    eo_prefix: efl_gfx_entity;
    methods {
       @property position {
@@ -31,7 +34,7 @@ interface Efl.Gfx.Entity {
 
               Note that setting the actual size of an object might be the job
               of its container, so this function might have no effect.
-              Look at @Efl.Gfx.Size_Hint instead, when manipulating
+              Look at @Efl.Gfx.Hint instead, when manipulating
               widgets.
             ]]
          }
@@ -101,9 +104,8 @@ interface Efl.Gfx.Entity {
       }
    }
    events {
-      show: void; [[Object just became visible.]]
-      hide: void; [[Object just became invisible.]]
-      move: void; [[Object was moved, its position during the event is the new one.]]
-      resize: void; [[Object was resized, its size during the event is the new one.]]
+      visibility,changed: bool; [[Object's visibility state changed, the event value is the new state.]]
+      position,changed: Eina.Position2D; [[Object was moved, its position during the event is the new one.]]
+      size,changed: Eina.Size2D; [[Object was resized, its size during the event is the new one.]]
    }
 }

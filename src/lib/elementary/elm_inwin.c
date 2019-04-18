@@ -10,7 +10,7 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "elm_inwin.eo.h"
+#include "elm_inwin_eo.h"
 #include "elm_widget_inwin.h"
 #include "elm_widget_layout.h"
 #include "elm_part_helper.h"
@@ -46,7 +46,6 @@ EOLIAN static void
 _elm_inwin_efl_canvas_group_group_add(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
@@ -55,14 +54,6 @@ _elm_inwin_efl_canvas_group_group_add(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
    evas_object_size_hint_align_set(obj, EVAS_HINT_FILL, EVAS_HINT_FILL);
    if (!elm_layout_theme_set(obj, "win", "inwin", elm_object_style_get(obj)))
      CRI("Failed to set layout!");
-}
-
-EOLIAN static void
-_elm_inwin_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED, Evas_Object *parent)
-{
-   elm_win_resize_object_add(parent, obj);
-
-   elm_layout_sizing_eval(obj);
 }
 
 EAPI Evas_Object *
@@ -86,6 +77,8 @@ _elm_inwin_efl_object_constructor(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
      }
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   elm_win_resize_object_add(efl_parent_get(obj), obj);
+   elm_layout_sizing_eval(obj);
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_GLASS_PANE);
 
@@ -141,4 +134,4 @@ ELM_PART_CONTENT_DEFAULT_IMPLEMENT(elm_inwin, Elm_Inwin_Data)
    EFL_CANVAS_GROUP_ADD_OPS(elm_inwin), \
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_inwin)
 
-#include "elm_inwin.eo.c"
+#include "elm_inwin_eo.c"

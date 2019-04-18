@@ -4,9 +4,11 @@ using System;
 using System.Runtime.InteropServices;
 
 
-namespace Eina {
+namespace Eina
+{
 
-public class Stringshare {
+public class Stringshare
+{
     [DllImport(efl.Libs.Eina)] public static extern System.IntPtr
         eina_stringshare_add_length(string str, System.UInt32 slen);
     [DllImport(efl.Libs.Eina)] public static extern System.IntPtr
@@ -16,4 +18,3 @@ public class Stringshare {
 }
 
 }
-

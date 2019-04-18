@@ -1,13 +1,12 @@
 // FIXME: This EO doc needs a direct link to the "edcref" doc
 
-class Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.Container, Efl.Part,
+class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.Container, Efl.Part,
                          Efl.Observer, Efl.Layout.Calc,
                          Efl.Layout.Signal, Efl.Layout.Group,
                          Efl.Player, Efl.Gfx.Color_Class, Efl.Gfx.Text_Class,
                          Efl.Gfx.Size_Class
 {
    [[Edje object class]]
-   legacy_prefix: edje_object;
    event_prefix: efl_layout;
    data: Edje;
    methods {
@@ -35,7 +34,6 @@ class Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.Contai
 
       access_part_iterate @beta {
          [[Iterates over all accessibility-enabled part names.]]
-         legacy: null;
          return: iterator<string> @owned; [[Part name iterator]]
       }
       @property seat {
@@ -46,8 +44,7 @@ class Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.Contai
               Edje naming follows a incrementional convention: first
               registered name is "seat1", second is "seat2", differently
               from Evas.
-
-              @since 1.19]]
+            ]]
 
             return: Efl.Input.Device; [[The seat device or $null if not found.]]
          }
@@ -63,14 +60,27 @@ class Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.Contai
               Edje naming follows a incrementional convention: first
               registered name is "seat1", second is "seat2", differently
               from Evas.
-
-              @since 1.19]]
-
+            ]]
             return: stringshare; [[The name's character string or $null if not found.]]
          }
          keys {
             device: Efl.Input.Device; [[The seat device]]
          }
+      }
+      @property layout_load_error {
+          get {
+              [[Gets the (last) file loading error for a given object.]]
+          }
+          values {
+             error: Eina.Error; [[The load error code.]]
+          }
+      }
+      content_remove {
+         [[Unswallow an object from this Edje.]]
+         params {
+            @in content: Efl.Gfx.Entity; [[To be removed content.]]
+         }
+         return: bool; [[$false if $content was not a child or can not be removed.]]
       }
    }
    events {
@@ -113,9 +123,9 @@ class Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.Contai
       Efl.Ui.I18n.mirrored { set; get; }
       Efl.Ui.I18n.language { set; get; }
       Efl.Gfx.Entity.scale { set; get; }
-      Efl.File.load_error { get; }
-      Efl.File.mmap { get; set; }
-      Efl.Container.content_remove;
+      Efl.File.load;
+      Efl.Container.content_iterate;
+      Efl.Container.content_count;
       Efl.Part.part_get; [[Returns @Efl.Canvas.Layout_Part]]
       Efl.Observer.update;
       Efl.Player.playable { get; }

@@ -106,8 +106,6 @@ static Eina_Condition _thread_cond;
 static Eina_Lock _thread_feedback_mutex;
 static Eina_Condition _thread_feedback_cond;
 
-Eina_Lock _environ_lock;
-
 static Eina_Lock _thread_id_lock;
 static int _thread_id = -1;
 static int _thread_id_max = 0;
@@ -266,8 +264,6 @@ ecore_init(void)
         goto shutdown_log_dom;
      }
 
-   eina_lock_new(&_environ_lock);
-
    efl_object_init();
 
    if (getenv("ECORE_FPS_DEBUG")) _ecore_fps_debug = 1;
@@ -325,7 +321,7 @@ ecore_init(void)
            efl_add(EFL_LOOP_TIMER_CLASS, efl_main_loop_get(),
                    efl_loop_timer_interval_set(efl_added, sec / 2),
                    efl_event_callback_add(efl_added,
-                                          EFL_LOOP_TIMER_EVENT_TICK,
+                                          EFL_LOOP_TIMER_EVENT_TIMER_TICK,
                                           _systemd_watchdog_cb, NULL));
         unsetenv("WATCHDOG_USEC");
 
@@ -471,8 +467,6 @@ ecore_shutdown(void)
 
      efl_object_shutdown();
 
-     eina_lock_free(&_environ_lock);
-
      eina_evlog("<RUN", NULL, 0.0, NULL);
      eina_shutdown();
 #ifdef _WIN32
@@ -577,10 +571,13 @@ ecore_fork_reset(void)
 
         EINA_LIST_FOREACH_SAFE(_thread_cb, l, ln, call)
           {
-             if (call->suspend || call->sync) continue;
-             if (call->cb.async != (Ecore_Cb)&_ecore_thread_join) continue;
-             _thread_cb = eina_list_remove_list(_thread_cb, l);
-             free(call);
+             //if something is supsend, then the mainloop will be blocked until until thread is calling ecore_thread_main_loop_end()
+             //if something tries to join a thread as callback, ensure that we remove this
+             if (call->suspend || (call->cb.async == (Ecore_Cb)&_ecore_thread_join))
+               {
+                  _thread_cb = eina_list_remove_list(_thread_cb, l);
+                  free(call);
+               }
           }
         if (_thread_cb) ecore_pipe_write(_thread_call, &wakeup, sizeof (int));
      }
@@ -692,7 +689,7 @@ ecore_thread_main_loop_begin(void)
         return ++_thread_loop;
      }
 
-   order = malloc(sizeof (Ecore_Safe_Call));
+   order = calloc(1, sizeof (Ecore_Safe_Call));
    if (!order) return -1;
 
    eina_lock_take(&_thread_id_lock);

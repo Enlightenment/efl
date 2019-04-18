@@ -1,11 +1,11 @@
-struct Eio.Sentry.Event
+struct @beta Eio.Sentry.Event
 {
   [[Wraps the data about a monitor event on a file.]]
   trigger: string; [[The cause of the event.]]
   source: string; [[The original monitored path.]]
 }
 
-class Eio.Sentry extends Efl.Object
+class @beta Eio.Sentry extends Efl.Object
 {
   [[Monitors files and directories for changes.]]
 

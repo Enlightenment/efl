@@ -13,7 +13,6 @@
 #else
 #define PACKAGE_EXAMPLES_DIR "."
 #define EFL_BETA_API_SUPPORT
-#define EFL_EO_API_SUPPORT
 #endif
 
 #include <Eo.h>
@@ -138,9 +137,9 @@ _mesh_setup(Scene_Data *data)
 
    data->texture_rocks = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
    data->texture_rocks_n = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
-   efl_file_set(data->texture_rocks, rock_diffuse, NULL);
+   efl_file_simple_load(data->texture_rocks, rock_diffuse, NULL);
    evas_canvas3d_texture_wrap_set(data->texture_rocks, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);
-   efl_file_set(data->texture_rocks_n, rock_n_and_height_map, NULL);
+   efl_file_simple_load(data->texture_rocks_n, rock_n_and_height_map, NULL);
    evas_canvas3d_texture_wrap_set(data->texture_rocks_n, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);
 
    evas_canvas3d_material_texture_set(data->material_rocks, EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL, data->texture_rocks_n);
@@ -160,9 +159,9 @@ _mesh_setup(Scene_Data *data)
 
    data->texture_wood = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
    data->texture_four_n = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
-   efl_file_set(data->texture_wood, wood_diffuse, NULL);
+   efl_file_simple_load(data->texture_wood, wood_diffuse, NULL);
    evas_canvas3d_texture_wrap_set(data->texture_wood, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);
-   efl_file_set(data->texture_four_n, wood_n_and_height_map, NULL);
+   efl_file_simple_load(data->texture_four_n, wood_n_and_height_map, NULL);
    evas_canvas3d_texture_wrap_set(data->texture_four_n, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);
 
    evas_canvas3d_material_texture_set(data->material_wood, EVAS_CANVAS3D_MATERIAL_ATTRIB_NORMAL, data->texture_four_n);

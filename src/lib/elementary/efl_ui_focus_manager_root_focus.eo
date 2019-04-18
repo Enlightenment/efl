@@ -1,4 +1,4 @@
-class Efl.Ui.Focus.Manager_Root_Focus extends Efl.Ui.Focus.Manager_Calc  {
+class @beta Efl.Ui.Focus.Manager_Root_Focus extends Efl.Ui.Focus.Manager_Calc  {
   [[ This class ensures that the root is at least focusable, if nothing else is focusable]]
   methods {
      @property canvas_object {

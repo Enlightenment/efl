@@ -1,6 +1,6 @@
 import efl_canvas_animation_types;
 
-abstract Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
+class @beta Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
 {
    [[Efl animation class]]
    eo_prefix: efl_animation;
@@ -62,7 +62,7 @@ abstract Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
          get {
          }
          values {
-            interpolator: Efl.Interpolator; [[Interpolator which indicates interpolation fucntion. Efl_Interpolator is required.]]
+            interpolator: Efl.Interpolator; [[Interpolator which indicates interpolation function. Efl_Interpolator is required.]]
          }
       }
       animation_apply {

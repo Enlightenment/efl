@@ -70,4 +70,4 @@ _elm_atspi_app_object_efl_access_object_role_get(const Eo *obj EINA_UNUSED, Elm_
    return EFL_ACCESS_ROLE_APPLICATION;
 }
 
-#include "elm_atspi_app_object.eo.c"
+#include "elm_atspi_app_object_eo.c"

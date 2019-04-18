@@ -1,12 +1,10 @@
-class Efl.Canvas.Scene3d extends Efl.Canvas.Image_Internal
+class @beta Efl.Canvas.Scene3d extends Efl.Canvas.Image_Internal
 {
    [[A UI view for EFL Canvas 3D.]]
    data: null;
    methods {
       @property scene3d {
          [[The 3d scene to display in this view.
-
-           @since 1.10
          ]]
          set {}
          get {}

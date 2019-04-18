@@ -33,6 +33,7 @@
 #include <eolian/mono/marshall_annotation.hh>
 #include <eolian/mono/function_pointer.hh>
 #include <eolian/mono/alias_definition.hh>
+#include <eolian/mono/variable_definition.hh>
 
 namespace eolian_mono {
 
@@ -42,6 +43,7 @@ struct options_type
    std::vector<std::string> include_dirs;
    std::string in_file;
    std::string out_file;
+   std::string examples_dir;
    std::string dllimport;
    mutable Eolian_State* state;
    mutable Eolian_Unit const* unit;
@@ -133,21 +135,24 @@ run(options_type const& opts)
                      "using System.Runtime.InteropServices;\n"
                      "using System.Collections.Generic;\n"
                      "using System.Linq;\n"
+                     "using System.Threading;\n"
                      "using System.ComponentModel;\n")
      .generate(iterator, efl::eolian::grammar::attributes::unused, efl::eolian::grammar::context_null()))
      {
         throw std::runtime_error("Failed to generate file preamble");
      }
 
-   auto lib_context = efl::eolian::grammar::context_add_tag(eolian_mono::library_context{opts.dllimport,
-                                                                                     opts.v_major,
-                                                                                     opts.v_minor,
-                                                                                     opts.references_map},
-                                                        efl::eolian::grammar::context_null());
+   using efl::eolian::grammar::context_add_tag;
 
-   auto options_context = efl::eolian::grammar::context_add_tag(eolian_mono::options_context{opts.want_beta}, lib_context);
-
-   auto context = efl::eolian::grammar::context_add_tag(eolian_mono::eolian_state_context{opts.state}, options_context);
+   auto context = context_add_tag(eolian_mono::indentation_context{0},
+                  context_add_tag(eolian_mono::eolian_state_context{opts.state},
+                  context_add_tag(eolian_mono::options_context{opts.want_beta,
+                                                               opts.examples_dir},
+                  context_add_tag(eolian_mono::library_context{opts.dllimport,
+                                                               opts.v_major,
+                                                               opts.v_minor,
+                                                               opts.references_map},
+                                  efl::eolian::grammar::context_null()))));
 
    EINA_ITERATOR_FOREACH(aliases, tp)
      {
@@ -167,6 +172,20 @@ run(options_type const& opts)
                 throw std::runtime_error("Failed to generate alias.");
            }
      }
+
+   // Constants
+   {
+      auto var_cxt = context_add_tag(class_context{class_context::variables}, context);
+      for (efl::eina::iterator<const Eolian_Variable> var_iterator( ::eolian_state_constants_by_file_get(opts.state, basename_input.c_str()))
+              , var_last; var_iterator != var_last; ++var_iterator)
+        {
+           efl::eolian::grammar::attributes::variable_def var(&*var_iterator, opts.unit);
+           if (!eolian_mono::constant_definition.generate(iterator, var, var_cxt))
+             {
+                throw std::runtime_error("Failed to generate enum");
+             }
+        }
+   }
 
    if (klass)
      {
@@ -272,11 +291,12 @@ _usage(const char *progname)
      << "  -c, --class <name>      The Eo class name to generate code for." << std::endl
      << "  -D, --out-dir <dir>     Output directory where generated code will be written." << std::endl
      << "  -I, --in <file/dir>     The source containing the .eo descriptions." << std::endl
-     << "  -o, --out-file <file>   The output file name. [default: <classname>.eo.hh]" << std::endl
-     << "  -n, --namespace <ns>    Wrap generated code in a namespace. [Eg: efl::ecore::file]" << std::endl
+     << "  -o, --out-file <file>   The output file name. [default: <classname>.eo.cs]" << std::endl
+     << "  -n, --namespace <ns>    Wrap generated code in a namespace. [Eg: Efl.Ui.Widget]" << std::endl
      << "  -r, --recurse           Recurse input directories loading .eo files." << std::endl
      << "  -v, --version           Print the version." << std::endl
      << "  -b, --beta              Enable @beta methods." << std::endl
+     << "  -e, --example-dir <dir> Folder to search for example files." << std::endl
      << "  -h, --help              Print this help." << std::endl;
    exit(EXIT_FAILURE);
 }
@@ -294,7 +314,7 @@ _assert_not_dup(std::string option, std::string value)
 static eolian_mono::options_type
 opts_get(int argc, char **argv)
 {
-   eolian_mono::options_type opts;
+   eolian_mono::options_type opts{};
 
    const struct option long_options[] =
      {
@@ -307,9 +327,10 @@ opts_get(int argc, char **argv)
        { "vmin", required_argument, 0, 'm' },
        { "references", required_argument, 0, 'r'},
        { "beta", no_argument, 0, 'b'},
+       { "example-dir", required_argument, 0,  'e' },
        { 0,           0,                 0,   0  }
      };
-   const char* options = "I:D:o:c:M:m:ar:vhb";
+   const char* options = "I:D:o:c:M:m:ar:vhbe:";
 
    int c, idx;
    while ( (c = getopt_long(argc, argv, options, long_options, &idx)) != -1)
@@ -364,6 +385,11 @@ opts_get(int argc, char **argv)
         else if (c == 'b')
           {
              opts.want_beta = true;
+          }
+        else if (c == 'e')
+          {
+             opts.examples_dir = optarg;
+             if (!opts.examples_dir.empty() && opts.examples_dir.back() != '/') opts.examples_dir += "/";
           }
      }
    if (optind == argc-1)

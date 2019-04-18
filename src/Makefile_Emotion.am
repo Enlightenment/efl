@@ -4,25 +4,26 @@ emotion_eolian_files = \
 	lib/emotion/efl_canvas_video.eo
 
 emotion_eolian_c = $(emotion_eolian_files:%.eo=%.eo.c)
-emotion_eolian_h = $(emotion_eolian_files:%.eo=%.eo.h) \
-                   $(emotion_eolian_files:%.eo=%.eo.legacy.h)
+emotion_eolian_h = $(emotion_eolian_files:%.eo=%.eo.h)
 
 BUILT_SOURCES += \
                  $(emotion_eolian_c) \
                  $(emotion_eolian_h)
-
+if INSTALL_EO_FILES
 emotioneolianfilesdir = $(datadir)/eolian/include/emotion-@VMAJ@
 emotioneolianfiles_DATA = \
                           $(emotion_eolian_files)
-
+endif
 EXTRA_DIST2 += \
-              ${emotioneolianfiles_DATA}
+lib/emotion/efl_canvas_video_eo.legacy.c \
+              ${emotion_eolian_files}
 
 lib_LTLIBRARIES += \
 lib/emotion/libemotion.la
 
 installed_emotionmainheadersdir = $(includedir)/emotion-@VMAJ@
 dist_installed_emotionmainheaders_DATA = lib/emotion/Emotion.h \
+                                         lib/emotion/efl_canvas_video_eo.legacy.h \
                                          lib/emotion/Emotion_Legacy.h \
                                          lib/emotion/Emotion_Eo.h
 
@@ -46,6 +47,7 @@ lib_emotion_libemotion_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_DATA_DIR=\"$(datadir)/emotion\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
+-DEFL_BUILD \
 @EMOTION_CFLAGS@
 lib_emotion_libemotion_la_LIBADD = @EMOTION_LIBS@
 lib_emotion_libemotion_la_DEPENDENCIES = @EMOTION_INTERNAL_LIBS@
@@ -73,6 +75,7 @@ $(install_emotionmodulexineLTLIBRARIES): install-libLTLIBRARIES
 
 modules_emotion_xine_module_la_SOURCES = $(EMOTION_XINE_SOURCES)
 modules_emotion_xine_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
 @EMOTION_CFLAGS@ \
 @EMOTION_MODULE_XINE_CFLAGS@
 modules_emotion_xine_module_la_LIBADD = \
@@ -107,6 +110,7 @@ $(install_emotionmodulegstreamerLTLIBRARIES): install-libLTLIBRARIES
 
 modules_emotion_gstreamer_module_la_SOURCES = $(EMOTION_GSTREAMER_SOURCES)
 modules_emotion_gstreamer_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
 @EMOTION_CFLAGS@ \
 @EMOTION_MODULE_GSTREAMER_CFLAGS@
 modules_emotion_gstreamer_module_la_LIBADD = \
@@ -145,6 +149,7 @@ $(install_emotionmodulegstreamer1LTLIBRARIES): install-libLTLIBRARIES
 
 modules_emotion_gstreamer1_module_la_SOURCES = $(EMOTION_GSTREAMER1_SOURCES)
 modules_emotion_gstreamer1_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
 @EMOTION_CFLAGS@ \
 @EMOTION_MODULE_GSTREAMER1_CFLAGS@
 modules_emotion_gstreamer1_module_la_LIBADD = \
@@ -174,6 +179,7 @@ $(install_emotionmodulelibvlcLTLIBRARIES): install-libLTLIBRARIES
 
 modules_emotion_libvlc_module_la_SOURCES = $(EMOTION_LIBVLC_SOURCES)
 modules_emotion_libvlc_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
 @EMOTION_CFLAGS@ \
 @EMOTION_MODULE_LIBVLC_CFLAGS@
 modules_emotion_libvlc_module_la_LIBADD = \
@@ -204,6 +210,7 @@ $(install_emotionmodulegenericLTLIBRARIES): install-libLTLIBRARIES
 
 modules_emotion_generic_module_la_SOURCES = $(EMOTION_GENERIC_SOURCES)
 modules_emotion_generic_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
 @EMOTION_CFLAGS@ \
 @EMOTION_MODULE_GENERIC_CFLAGS@ \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
@@ -236,6 +243,7 @@ $(install_emotionedjeexternalLTLIBRARIES): install-libLTLIBRARIES
 edje_external_emotion_module_la_SOURCES = \
 edje_external/emotion/emotion.c
 edje_external_emotion_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
 @EDJE_CFLAGS@ \
 @EMOTION_CFLAGS@ \
 -DPACKAGE_DATA_DIR=\"$(datadir)/emotion\"

@@ -17,7 +17,7 @@
 # include <systemd/sd-daemon.h>
 #endif
 
-#ifdef HAVE_WS2TCPIP_H
+#ifdef _WIN32
 # include <ws2tcpip.h>
 #endif
 
@@ -127,7 +127,7 @@ _ecore_con_local_mkpath(const char *path, mode_t mode)
                {
                   if (errno != EEXIST)
                     {
-                       ERR("could not create parent directory '%s' of path '%s': %s", d, path, strerror(errno));
+                       ERR("could not create parent directory '%s' of path '%s': %s", d, path, eina_error_msg_get(errno));
                        goto end;
                     }
                }
@@ -138,7 +138,7 @@ _ecore_con_local_mkpath(const char *path, mode_t mode)
    if (mkdir(d, mode) != 0)
      {
         if (errno != EEXIST)
-          ERR("could not create parent directory '%s' of path '%s': %s", d, path, strerror(errno));
+          ERR("could not create parent directory '%s' of path '%s': %s", d, path, eina_error_msg_get(errno));
         else
           {
              struct stat st;

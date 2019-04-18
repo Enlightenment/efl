@@ -2,10 +2,6 @@
 # include <config.h>
 #endif /* ifdef HAVE_CONFIG_H */
 
-#ifdef _WIN32
-# include <winsock2.h>
-#endif /* ifdef _WIN32 */
-
 #include <stdio.h>
 #include <errno.h>
 #include <sys/types.h>
@@ -15,14 +11,6 @@
 #include <unistd.h>
 #include <fnmatch.h>
 #include <fcntl.h>
-
-#ifdef HAVE_NETINET_IN_H
-# include <netinet/in.h>
-#endif
-
-#ifdef _WIN32
-# include <Evil.h>
-#endif /* ifdef _WIN32 */
 
 #include <Eina.h>
 #include <Emile.h>
@@ -384,9 +372,9 @@ eet_flush2(Eet_File *ef)
      num_dictionary_entries;
 
    /* go thru and write the header */
-   head[0] = (int)htonl((unsigned int)EET_MAGIC_FILE2);
-   head[1] = (int)htonl((unsigned int)num_directory_entries);
-   head[2] = (int)htonl((unsigned int)num_dictionary_entries);
+   head[0] = (int)eina_htonl((unsigned int)EET_MAGIC_FILE2);
+   head[1] = (int)eina_htonl((unsigned int)num_directory_entries);
+   head[2] = (int)eina_htonl((unsigned int)num_dictionary_entries);
 
    fseek(fp, 0, SEEK_SET);
    if (fwrite(head, sizeof (head), 1, fp) != 1)
@@ -414,12 +402,12 @@ eet_flush2(Eet_File *ef)
 
              efn->offset = data_offset;
 
-             ibuf[0] = (int)htonl((unsigned int)data_offset);
-             ibuf[1] = (int)htonl((unsigned int)efn->size);
-             ibuf[2] = (int)htonl((unsigned int)efn->data_size);
-             ibuf[3] = (int)htonl((unsigned int)strings_offset);
-             ibuf[4] = (int)htonl((unsigned int)efn->name_size);
-             ibuf[5] = (int)htonl((unsigned int)flag);
+             ibuf[0] = (int)eina_htonl((unsigned int)data_offset);
+             ibuf[1] = (int)eina_htonl((unsigned int)efn->size);
+             ibuf[2] = (int)eina_htonl((unsigned int)efn->data_size);
+             ibuf[3] = (int)eina_htonl((unsigned int)strings_offset);
+             ibuf[4] = (int)eina_htonl((unsigned int)efn->name_size);
+             ibuf[5] = (int)eina_htonl((unsigned int)flag);
 
              strings_offset += efn->name_size;
              data_offset += efn->size;
@@ -449,11 +437,11 @@ eet_flush2(Eet_File *ef)
              if (ef->ed->hash[ef->ed->all_hash[j]] == j)
                prev = -1;
 
-             sbuf[0] = (int)htonl((unsigned int)ef->ed->all_hash[j]);
-             sbuf[1] = (int)htonl((unsigned int)offset);
-             sbuf[2] = (int)htonl((unsigned int)ef->ed->all[j].len);
-             sbuf[3] = (int)htonl((unsigned int)prev);
-             sbuf[4] = (int)htonl((unsigned int)ef->ed->all[j].next);
+             sbuf[0] = (int)eina_htonl((unsigned int)ef->ed->all_hash[j]);
+             sbuf[1] = (int)eina_htonl((unsigned int)offset);
+             sbuf[2] = (int)eina_htonl((unsigned int)ef->ed->all[j].len);
+             sbuf[3] = (int)eina_htonl((unsigned int)prev);
+             sbuf[4] = (int)eina_htonl((unsigned int)ef->ed->all[j].next);
 
              offset += ef->ed->all[j].len;
 
@@ -755,14 +743,14 @@ eet_internal_read2(Eet_File *ef)
    unsigned int i;
 
    idx += sizeof(int);
-   if (eet_test_close((int)ntohl(*data) != EET_MAGIC_FILE2, ef))
+   if (eet_test_close((int)eina_ntohl(*data) != EET_MAGIC_FILE2, ef))
      return NULL;
 
    data++;
 
 #define GET_INT(Value, Pointer, Index) \
   {                                    \
-     Value = ntohl(*Pointer);          \
+     Value = eina_ntohl(*Pointer);          \
      Pointer++;                        \
      Index += sizeof(int);             \
   }
@@ -1003,9 +991,9 @@ eet_internal_read2(Eet_File *ef)
              /* check the signature has the magic number and sig + cert len
               * + magic is sane */
              memcpy(head, buffer, 3 * sizeof(int));
-             head[0] = ntohl(head[0]);
-             head[1] = ntohl(head[1]);
-             head[2] = ntohl(head[2]);
+             head[0] = eina_ntohl(head[0]);
+             head[1] = eina_ntohl(head[1]);
+             head[2] = eina_ntohl(head[2]);
              if ((head[0] == EET_MAGIC_SIGN) && (head[1] > 0) && (head[2] > 0))
                {
                   /* there appears to be an actual valid identity at the end
@@ -1061,14 +1049,14 @@ eet_internal_read1(Eet_File *ef)
    /* build header table if read mode */
    /* geat header */
    idx += sizeof(int);
-   if (eet_test_close((int)ntohl(*((int *)ef->data)) != EET_MAGIC_FILE, ef))
+   if (eet_test_close((int)eina_ntohl(*((int *)ef->data)) != EET_MAGIC_FILE, ef))
      return NULL;
 
 #define EXTRACT_INT(Value, Pointer, Index)       \
   {                                              \
      int tmp;                                    \
      memcpy(&tmp, Pointer + Index, sizeof(int)); \
-     Value = ntohl(tmp);                         \
+     Value = eina_ntohl(tmp);                         \
      Index += sizeof(int);                       \
   }
 
@@ -1248,7 +1236,7 @@ eet_internal_read(Eet_File *ef)
    if (eet_test_close(ef->data_size < (int)sizeof(int) * 3, ef))
      return NULL;
 
-   switch (ntohl(*data))
+   switch (eina_ntohl(*data))
      {
 #if EET_OLD_EET_FILE_FORMAT
       case EET_MAGIC_FILE:

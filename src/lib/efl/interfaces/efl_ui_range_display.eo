@@ -1,0 +1,51 @@
+interface @beta Efl.Ui.Range_Display
+{
+   [[Interface that contains properties regarding the displaying of a range.]]
+   eo_prefix: efl_ui_range;
+   methods {
+      @property range_value {
+         [[Control the range value (in percentage) on a given range widget
+
+           Use this call to set range levels.
+
+           Note: If you pass a value out of the specified interval for
+           $val, it will be interpreted as the closest of the boundary
+           values in the interval.]]
+         set {
+         }
+         get {
+         }
+         values {
+            val: double; [[The range value (must be between $0.0 and 1.0)]]
+         }
+      }
+      @property range_min_max {
+         set {
+            [[Set the minimum and maximum values for given range widget.
+
+              Define the allowed range of values to be selected by the user.
+
+              If actual value is less than $min, it will be updated to $min.
+              If it is bigger then $max, will be updated to $max. The actual value
+              can be obtained with @Efl.Ui.Range_Display.range_value.get
+
+              The minimum and maximum values may be different for each class.
+
+              Warning: maximum must be greater than minimum, otherwise behavior
+              is undefined.
+            ]]
+         }
+         get {
+            [[Get the minimum and maximum values of the given range widget.
+
+              Note: If only one value is needed, the other pointer can be passed
+              as $null.
+            ]]
+         }
+         values {
+            min: double; [[The minimum value.]]
+            max: double; [[The maximum value.]]
+         }
+      }
+   }
+}

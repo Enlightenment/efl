@@ -1,3 +1,4 @@
+#include "eo_internal.h"
 #include "evas_common_private.h"
 #include "evas_private.h"
 

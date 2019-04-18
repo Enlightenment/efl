@@ -50,11 +50,13 @@ extern "C" {
 #define EFL_VERSION_1_19 1
 #define EFL_VERSION_1_20 1
 #define EFL_VERSION_1_21 1
+#define EFL_VERSION_1_22 1
+#define EFL_VERSION_1_23 1
 
 /* Add here all the required ifdef for any @protected method */
 #ifdef EFL_BUILD
 # define EFL_PACK_LAYOUT_PROTECTED
-# define EFL_GFX_SIZE_HINT_PROTECTED
+# define EFL_GFX_HINT_PROTECTED
 #endif
 
 /**
@@ -69,8 +71,6 @@ typedef struct tm Efl_Time;
 typedef struct _Efl_Text_Cursor_Cursor Efl_Text_Cursor_Cursor;
 typedef struct _Efl_Text_Annotate_Annotation Efl_Text_Annotate_Annotation;
 
-#ifdef EFL_BETA_API_SUPPORT
-
 #include "interfaces/efl_types.eot.h"
 
 #include <Efl_MVVM_Common.h>
@@ -84,9 +84,11 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_config.eo.h"
 #include "interfaces/efl_control.eo.h"
 #include "interfaces/efl_duplicate.eo.h"
+#include "interfaces/efl_file.h"
 #include "interfaces/efl_file.eo.h"
+#include "interfaces/efl_file_save.eo.h"
 #include "interfaces/efl_gfx_image.eo.h"
-#include "interfaces/efl_gfx_image_animation_controller.eo.h"
+#include "interfaces/efl_gfx_frame_controller.eo.h"
 #include "interfaces/efl_gfx_image_load_controller.eo.h"
 #include "interfaces/efl_part.eo.h"
 #include "interfaces/efl_playable.eo.h"
@@ -96,8 +98,10 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_orientation.eo.h"
 #include "interfaces/efl_ui_i18n.eo.h"
 #include "interfaces/efl_ui_direction.eo.h"
+#include "interfaces/efl_ui_direction_readonly.eo.h"
 #include "interfaces/efl_ui_drag.eo.h"
-#include "interfaces/efl_ui_range.eo.h"
+#include "interfaces/efl_ui_range_display.eo.h"
+#include "interfaces/efl_ui_range_interactive.eo.h"
 #include "interfaces/efl_ui_autorepeat.eo.h"
 #include "interfaces/efl_ui_draggable.eo.h"
 #include "interfaces/efl_ui_clickable.eo.h"
@@ -116,7 +120,6 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #define EFL_ORIENT_270 EFL_ORIENT_LEFT
 
 /* Core interface */
-#include "interfaces/efl_animator.eo.h"
 #include "interfaces/efl_interpolator.eo.h"
 
 /* Graphics */
@@ -133,7 +136,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_gfx_gradient_radial.eo.h"
 #include "interfaces/efl_gfx_filter.eo.h"
 #include "interfaces/efl_gfx_blur.eo.h"
-#include "interfaces/efl_gfx_size_hint.eo.h"
+#include "interfaces/efl_gfx_hint.eo.h"
 #include "interfaces/efl_gfx_color_class.eo.h"
 #include "interfaces/efl_gfx_text_class.eo.h"
 #include "interfaces/efl_gfx_size_class.eo.h"
@@ -146,8 +149,9 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_canvas_scene.eo.h"
 #include "interfaces/efl_canvas_pointer.eo.h"
 #include "interfaces/efl_ui_view.eo.h"
-#include "interfaces/efl_ui_model_connect.eo.h"
+#include "interfaces/efl_ui_property_bind.eo.h"
 #include "interfaces/efl_ui_factory.eo.h"
+#include "interfaces/efl_ui_factory_bind.eo.h"
 #include "interfaces/efl_ui_format.eo.h"
 #include "interfaces/efl_cached_item.eo.h"
 
@@ -180,7 +184,12 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_text_cursor.eo.h"
 #include "interfaces/efl_text_annotate.eo.h"
 #include "interfaces/efl_text_markup.eo.h"
+#include "interfaces/efl_text_markup_interactive.eo.h"
 #include "interfaces/efl_text_markup_util.eo.h"
+
+#ifdef EFL_BETA_API_SUPPORT
+
+EAPI void efl_observable_tuple_free(Efl_Observable_Tuple *tuple);
 
 /**
  * @brief Get a proxy object referring to a part of an object.
@@ -220,11 +229,6 @@ EAPI Eina_Future *efl_ui_view_factory_create_with_event(Efl_Ui_Factory *factory,
 #include "interfaces/efl_gfx_types.eot.h"
 #include "interfaces/efl_ui_types.eot.h"
 #include "interfaces/efl_input_types.eot.h"
-#include "interfaces/efl_gfx_fill.eo.legacy.h"
-#include "interfaces/efl_gfx_entity.eo.legacy.h"
-#include "interfaces/efl_gfx_image.eo.legacy.h"
-#include "interfaces/efl_gfx_image_animation_controller.eo.legacy.h"
-#include "interfaces/efl_input_device.eo.legacy.h"
 #include "interfaces/efl_text_types.eot.h"
 #endif
 

@@ -35,7 +35,6 @@ elementary_test_src = [
   'test_efl_anim_translate.c',
   'test_efl_anim_group_parallel.c',
   'test_efl_anim_group_sequential.c',
-  'test_efl_anim_event_anim.c',
   'test_efl_anim_pause.c',
   'test_efl_anim_repeat.c',
   'test_efl_anim_start_delay.c',
@@ -47,7 +46,7 @@ elementary_test_src = [
   'test_events.c',
   'test_evas_mask.c',
   'test_evas_map.c',
-  'test_efl_gfx_map.c',
+  'test_efl_gfx_mapping.c',
   'test_evas_snapshot.c',
   'test_external.c',
   'test_fileselector_button.c',
@@ -99,6 +98,8 @@ elementary_test_src = [
   'test_panes.c',
   'test_ui_panes.c',
   'test_ui_panel.c',
+  'test_ui_pager.c',
+  'test_ui_pager_scroll.c',
   'test_part_bg.c',
   'test_part_shadow.c',
   'test_photo.c',
@@ -133,6 +134,7 @@ elementary_test_src = [
   'test_transit.c',
   'test_transit_bezier.c',
   'test_ui_box.c',
+  'test_ui_box_stack.c',
   'test_ui_clock.c',
   'test_ui_table.c',
   'test_ui_popup.c',
@@ -153,6 +155,7 @@ elementary_test_src = [
   'test_win_indicator.c',
   'test_gesture_framework.c',
   'test_ui_tab_pager.c',
+  'test_ui_relative_layout.c',
   'test.h'
 ]
 
@@ -211,6 +214,13 @@ elementary_codegen = executable('elementary_codegen',
         c_args : package_c_args,
         link_args: link_args
 )
+
+if meson.is_cross_build()
+  elementary_codegen_exe = [find_program('elementary_codegen', native: true)]
+else
+  env = find_program('env', native: true)
+  elementary_codegen_exe = [env, 'EFL_RUN_IN_TREE=1', elementary_codegen.full_path()]
+endif
 
 elm_prefs_cc_src = [
    'elm_prefs_cc.h',

@@ -1,15 +1,13 @@
-var Efl.Net.Socket_Ssl_Error.HANDSHAKE: Eina.Error; [[Failed SSL handshake]]
-var Efl.Net.Socket_Ssl_Error.CERTIFICATE_VERIFY_FAILED: Eina.Error; [[Failed to verify peer's certificate]]
+var @beta Efl.Net.Socket_Ssl_Error.HANDSHAKE: Eina.Error; [[Failed SSL handshake]]
+var @beta Efl.Net.Socket_Ssl_Error.CERTIFICATE_VERIFY_FAILED: Eina.Error; [[Failed to verify peer's certificate]]
 
-class Efl.Net.Socket_Ssl extends Efl.Loop_Consumer implements Efl.Net.Socket {
+class @beta Efl.Net.Socket_Ssl extends Efl.Loop_Consumer implements Efl.Net.Socket {
     [[A wrapper socket doing SSL (Secure Sockets Layer).
 
       Use this wrapper around an existing socket for secure
       communication. One common use is to apply it to TCP sockets
       created with @Efl.Net.Dialer_Tcp or @Efl.Net.Server_Tcp created
       with "client,add" event.
-
-      @since 1.19
     ]]
 
     events {

@@ -4,22 +4,23 @@ using System;
 using System.Linq;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.Reflection;
 
 using Eina.Callbacks;
 using static Eina.HashNativeFunctions;
 using static Eina.InarrayNativeFunctions;
 using static Eina.InlistNativeFunctions;
 using static Eina.NativeCustomExportFunctions;
-using static Eina.ContainerCommonData;
 
-namespace Eina {
-
-public enum ElementType { NumericType, StringType, ObjectType };
-
-public static class ContainerCommonData
+namespace Eina
 {
-    public static IBaseElementTraits<IntPtr> intPtrTraits = null;
-}
+
+public enum ElementType
+{
+    NumericType,
+    StringType,
+    ObjectType
+};
 
 [StructLayout(LayoutKind.Sequential)]
 public struct InlistMem
@@ -36,21 +37,17 @@ public struct InlistNode<T>
     public T Val {get;set;}
 }
 
-
 public interface IBaseElementTraits<T>
 {
     IntPtr ManagedToNativeAlloc(T man);
-    IntPtr ManagedToNativeAllocRef(T man, bool refs);
     IntPtr ManagedToNativeAllocInlistNode(T man);
-    IntPtr ManagedToNativeAllocInplace(T man);
+    void ManagedToNativeCopyTo(T man, IntPtr mem);
     void NativeFree(IntPtr nat);
-    void NativeFreeRef(IntPtr nat, bool unrefs);
     void NativeFreeInlistNodeElement(IntPtr nat);
     void NativeFreeInlistNode(IntPtr nat, bool freeElement);
     void NativeFreeInplace(IntPtr nat);
     void ResidueFreeInplace(IntPtr nat);
     T NativeToManaged(IntPtr nat);
-    T NativeToManagedRef(IntPtr nat);
     T NativeToManagedInlistNode(IntPtr nat);
     T NativeToManagedInplace(IntPtr nat);
     IntPtr EinaCompareCb();
@@ -60,67 +57,67 @@ public interface IBaseElementTraits<T>
     IntPtr EinaHashIteratorKeyNew(IntPtr hash);
 }
 
-public class StringElementTraits<T> : IBaseElementTraits<T>
+public class StringElementTraits : IBaseElementTraits<string>
 {
-
     public StringElementTraits()
     {
-        if (intPtrTraits == null)
-            intPtrTraits = TraitFunctions.GetTypeTraits<IntPtr>();
     }
 
-    public IntPtr ManagedToNativeAlloc(T man)
+    public IntPtr ManagedToNativeAlloc(string man)
     {
-        return MemoryNative.StrDup((string)(object)man);
+        IntPtr newstring = MemoryNative.StrDup(man);
+        return newstring;
     }
 
-    public IntPtr ManagedToNativeAllocRef(T man, bool refs)
-    {
-        // Keep alloc on C# ?
-        return ManagedToNativeAlloc(man);
-    }
-
-    public IntPtr ManagedToNativeAllocInlistNode(T man)
+    public IntPtr ManagedToNativeAllocInlistNode(string man)
     {
         var node = new InlistNode<IntPtr>();
         node.Val = ManagedToNativeAlloc(man);
         GCHandle pinnedData = GCHandle.Alloc(node, GCHandleType.Pinned);
         IntPtr ptr = pinnedData.AddrOfPinnedObject();
-        IntPtr nat = MemoryNative.AllocCopy(ptr, Marshal.SizeOf<InlistNode<IntPtr> >());
+        IntPtr nat = MemoryNative.AllocCopy(ptr, Marshal.SizeOf<InlistMem>() + Marshal.SizeOf<IntPtr>());
         pinnedData.Free();
         return nat;
     }
 
-    public IntPtr ManagedToNativeAllocInplace(T man)
+    public void ManagedToNativeCopyTo(string man, IntPtr mem)
     {
-        return intPtrTraits.ManagedToNativeAlloc(ManagedToNativeAlloc(man));
+        IntPtr stringptr = ManagedToNativeAlloc(man);
+        Marshal.WriteIntPtr(mem, stringptr);
     }
 
     public void NativeFree(IntPtr nat)
     {
         if (nat != IntPtr.Zero)
+        {
             MemoryNative.Free(nat);
-    }
-
-    public void NativeFreeRef(IntPtr nat, bool unrefs)
-    {
-        NativeFree(nat);
+        }
     }
 
     public void NativeFreeInlistNodeElement(IntPtr nat)
     {
         if (nat == IntPtr.Zero)
+        {
             return;
-        var node = Marshal.PtrToStructure< InlistNode<IntPtr> >(nat);
-        NativeFree(node.Val);
+        }
+
+        var val = Marshal.PtrToStructure<IntPtr>
+            (nat + Marshal.SizeOf<InlistMem>());
+        NativeFree(val);
     }
 
     public void NativeFreeInlistNode(IntPtr nat, bool freeElement)
     {
         if (nat == IntPtr.Zero)
+        {
             return;
+        }
+
         if (freeElement)
+        {
             NativeFreeInlistNodeElement(nat);
+        }
+
         MemoryNative.Free(nat);
     }
 
@@ -131,37 +128,45 @@ public class StringElementTraits<T> : IBaseElementTraits<T>
 
     public void ResidueFreeInplace(IntPtr nat)
     {
-        intPtrTraits.NativeFree(nat);
     }
 
-    public T NativeToManaged(IntPtr nat)
+    public string NativeToManaged(IntPtr nat)
     {
         if (nat == IntPtr.Zero)
-            return default(T);
-        return (T)(object)StringConversion.NativeUtf8ToManagedString(nat);
+        {
+            return default(string);
+        }
+
+        return StringConversion.NativeUtf8ToManagedString(nat);
     }
 
-    public T NativeToManagedRef(IntPtr nat)
-    {
-        return NativeToManaged(nat);
-    }
-
-    public T NativeToManagedInlistNode(IntPtr nat)
+    public string NativeToManagedInlistNode(IntPtr nat)
     {
         if (nat == IntPtr.Zero)
         {
             Eina.Log.Error("Null pointer for Inlist node.");
-            return default(T);
+            return default(string);
         }
-        var w = Marshal.PtrToStructure< InlistNode<IntPtr> >(nat);
-        return NativeToManaged(w.Val);
+
+        IntPtr ptr_location = nat + Marshal.SizeOf<InlistMem>();
+        return NativeToManaged(Marshal.ReadIntPtr(ptr_location));
     }
 
-    public T NativeToManagedInplace(IntPtr nat)
+    // Strings inplaced are always a pointer, because they are variable-sized
+    public string NativeToManagedInplace(IntPtr nat)
     {
         if (nat == IntPtr.Zero)
-            return default(T);
-        return NativeToManaged(intPtrTraits.NativeToManaged(nat));
+        {
+            return default(string);
+        }
+
+        nat = Marshal.ReadIntPtr(nat);
+        if (nat == IntPtr.Zero)
+        {
+            return default(string);
+        }
+
+        return NativeToManaged(nat);
     }
 
     public IntPtr EinaCompareCb()
@@ -192,28 +197,15 @@ public class StringElementTraits<T> : IBaseElementTraits<T>
 
 public class EflObjectElementTraits<T> : IBaseElementTraits<T>
 {
-    private System.Type concreteType = null;
-
-    public EflObjectElementTraits(System.Type concrete)
-    {
-        if (intPtrTraits == null)
-            intPtrTraits = TraitFunctions.GetTypeTraits<IntPtr>();
-
-        concreteType = concrete;
-    }
-
     public IntPtr ManagedToNativeAlloc(T man)
     {
         IntPtr h = ((Efl.Eo.IWrapper)man).NativeHandle;
         if (h == IntPtr.Zero)
+        {
             return h;
-        return Efl.Eo.Globals.efl_ref(h);
-    }
+        }
 
-    public IntPtr ManagedToNativeAllocRef(T man, bool refs)
-    {
-        IntPtr h = refs ? ManagedToNativeAlloc(man) : ((Efl.Eo.IWrapper)man).NativeHandle;
-        return intPtrTraits.ManagedToNativeAlloc(h);
+        return Efl.Eo.Globals.efl_ref(h);
     }
 
     public IntPtr ManagedToNativeAllocInlistNode(T man)
@@ -222,68 +214,87 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
         node.Val = ManagedToNativeAlloc(man);
         GCHandle pinnedData = GCHandle.Alloc(node, GCHandleType.Pinned);
         IntPtr ptr = pinnedData.AddrOfPinnedObject();
-        IntPtr nat = MemoryNative.AllocCopy(ptr, Marshal.SizeOf<InlistNode<IntPtr> >());
+        IntPtr nat = MemoryNative.AllocCopy(ptr, Marshal.SizeOf<InlistMem>() + Marshal.SizeOf<IntPtr>());
         pinnedData.Free();
         return nat;
     }
 
-    public IntPtr ManagedToNativeAllocInplace(T man)
+    public void ManagedToNativeCopyTo(T man, IntPtr mem)
     {
-        return intPtrTraits.ManagedToNativeAlloc(ManagedToNativeAlloc(man));
+        IntPtr v = ManagedToNativeAlloc(man);
+        Marshal.WriteIntPtr(mem, v);
     }
 
     public void NativeFree(IntPtr nat)
     {
         if (nat != IntPtr.Zero)
-            Efl.Eo.Globals.efl_unref(nat);
+        {
+	    Efl.Eo.Globals.efl_mono_thread_safe_efl_unref(nat);
+        }
     }
 
     public void NativeFreeRef(IntPtr nat, bool unrefs)
     {
         if (unrefs)
-            NativeFree(intPtrTraits.NativeToManaged(nat));
-        intPtrTraits.NativeFree(nat);
+        {
+            NativeFree(nat);
+        }
     }
 
     public void NativeFreeInlistNodeElement(IntPtr nat)
     {
         if (nat == IntPtr.Zero)
+        {
             return;
-        var node = Marshal.PtrToStructure< InlistNode<IntPtr> >(nat);
-        NativeFree(node.Val);
+        }
+
+        var val = Marshal.PtrToStructure<IntPtr>
+            (nat + Marshal.SizeOf<InlistMem>());
+        NativeFree(val);
     }
 
     public void NativeFreeInlistNode(IntPtr nat, bool freeElement)
     {
         if (nat == IntPtr.Zero)
+        {
             return;
+        }
+
         if (freeElement)
+        {
             NativeFreeInlistNodeElement(nat);
+        }
+
         MemoryNative.Free(nat);
     }
 
     public void NativeFreeInplace(IntPtr nat)
     {
-        NativeFree(intPtrTraits.NativeToManaged(nat));
+        NativeFree(nat);
     }
 
     public void ResidueFreeInplace(IntPtr nat)
     {
-        intPtrTraits.NativeFree(nat);
     }
 
     public T NativeToManaged(IntPtr nat)
     {
         if (nat == IntPtr.Zero)
+        {
             return default(T);
-        return (T) Activator.CreateInstance(concreteType, Efl.Eo.Globals.efl_ref(nat));
+        }
+
+        return (T) Efl.Eo.Globals.CreateWrapperFor(nat, shouldIncRef: true);
     }
 
     public T NativeToManagedRef(IntPtr nat)
     {
         if (nat == IntPtr.Zero)
+        {
             return default(T);
-        return NativeToManaged(intPtrTraits.NativeToManaged(nat));
+        }
+
+        return NativeToManaged(nat);
     }
 
     public T NativeToManagedInlistNode(IntPtr nat)
@@ -293,15 +304,26 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
             Eina.Log.Error("Null pointer for Inlist node.");
             return default(T);
         }
-        var w = Marshal.PtrToStructure< InlistNode<IntPtr> >(nat);
-        return NativeToManaged(w.Val);
+
+        IntPtr ptr_location = nat + Marshal.SizeOf<InlistMem>();
+        return NativeToManaged(Marshal.ReadIntPtr(ptr_location));
     }
 
+    // EFL objects inplaced are always a pointer, because they are variable-sized
     public T NativeToManagedInplace(IntPtr nat)
     {
         if (nat == IntPtr.Zero)
+        {
             return default(T);
-        return NativeToManaged(intPtrTraits.NativeToManaged(nat));
+        }
+
+        nat = Marshal.ReadIntPtr(nat);
+        if (nat == IntPtr.Zero)
+        {
+            return default(T);
+        }
+
+        return NativeToManaged(nat);
     }
 
     public IntPtr EinaCompareCb()
@@ -345,14 +367,10 @@ public abstract class PrimitiveElementTraits<T>
         node.Val = man;
         GCHandle pinnedData = GCHandle.Alloc(node, GCHandleType.Pinned);
         IntPtr ptr = pinnedData.AddrOfPinnedObject();
-        IntPtr nat = MemoryNative.AllocCopy(ptr, Marshal.SizeOf< InlistNode<T> >());
+        int Tsize = Marshal.SizeOf<T>() < Marshal.SizeOf<IntPtr>() ? Marshal.SizeOf<IntPtr>() : Marshal.SizeOf<T>();
+        IntPtr nat = MemoryNative.AllocCopy(ptr, Marshal.SizeOf<InlistMem>() + Tsize);
         pinnedData.Free();
         return nat;
-    }
-
-    public IntPtr ManagedToNativeAllocInplace(T man)
-    {
-        return ManagedToNativeAlloc(man);
     }
 
     public void NativeFree(IntPtr nat)
@@ -387,6 +405,7 @@ public abstract class PrimitiveElementTraits<T>
             Eina.Log.Error("Null pointer on primitive/struct container.");
             return default(T);
         }
+
         return PrimitiveConversion.PointerToManaged<T>(nat);
     }
 
@@ -395,16 +414,6 @@ public abstract class PrimitiveElementTraits<T>
         return NativeToManaged(nat);
     }
 
-    public T NativeToManagedInlistNode(IntPtr nat)
-    {
-        if (nat == IntPtr.Zero)
-        {
-            Eina.Log.Error("Null pointer for Inlist node.");
-            return default(T);
-        }
-        var w = Marshal.PtrToStructure< InlistNode<T> >(nat);
-        return w.Val;
-    }
 
     public T NativeToManagedInplace(IntPtr nat)
     {
@@ -413,7 +422,7 @@ public abstract class PrimitiveElementTraits<T>
 
     private int PrimitiveCompareCb(IntPtr ptr1, IntPtr ptr2)
     {
-        var m1 = (IComparable) NativeToManaged(ptr1);
+        var m1 = (IComparable)NativeToManaged(ptr1);
         var m2 = NativeToManaged(ptr2);
         return m1.CompareTo(m2);
     }
@@ -421,7 +430,10 @@ public abstract class PrimitiveElementTraits<T>
     public IntPtr EinaCompareCb()
     {
         if (dlgt == null)
+        {
             dlgt = new Eina_Compare_Cb(PrimitiveCompareCb);
+        }
+
         return Marshal.GetFunctionPointerForDelegate(dlgt);
     }
 
@@ -441,18 +453,27 @@ public abstract class PrimitiveElementTraits<T>
     }
 }
 
-public class Primitive32ElementTraits<T> : PrimitiveElementTraits<T>, IBaseElementTraits<T>
+abstract public class Primitive32ElementTraits<T> : PrimitiveElementTraits<T>, IBaseElementTraits<T>
 {
     private static IBaseElementTraits<Int32> int32Traits = null;
 
     public Primitive32ElementTraits()
     {
         if (int32Traits == null)
+        {
             if (typeof(T) == typeof(Int32)) // avoid infinite recursion
+            {
                 int32Traits = (IBaseElementTraits<Int32>)this;
+            }
             else
+            {
                 int32Traits = TraitFunctions.GetTypeTraits<Int32>();
+            }
+        }
     }
+
+    public abstract void ManagedToNativeCopyTo(T man, IntPtr mem);
+    public abstract T NativeToManagedInlistNode(IntPtr nat);
 
     public IntPtr ManagedToNativeAllocRef(T man, bool refs)
     {
@@ -470,18 +491,27 @@ public class Primitive32ElementTraits<T> : PrimitiveElementTraits<T>, IBaseEleme
     }
 }
 
-public class Primitive64ElementTraits<T> : PrimitiveElementTraits<T>, IBaseElementTraits<T>
+abstract public class Primitive64ElementTraits<T> : PrimitiveElementTraits<T>, IBaseElementTraits<T>
 {
     private static IBaseElementTraits<Int64> int64Traits = null;
 
     public Primitive64ElementTraits()
     {
         if (int64Traits == null)
+        {
             if (typeof(T) == typeof(Int64)) // avoid infinite recursion
+            {
                 int64Traits = (IBaseElementTraits<Int64>)this;
+            }
             else
+            {
                 int64Traits = TraitFunctions.GetTypeTraits<Int64>();
+            }
+        }
     }
+
+    public abstract void ManagedToNativeCopyTo(T man, IntPtr mem);
+    public abstract T NativeToManagedInlistNode(IntPtr nat);
 
     public IntPtr ManagedToNativeAllocRef(T man, bool refs)
     {
@@ -496,6 +526,174 @@ public class Primitive64ElementTraits<T> : PrimitiveElementTraits<T>, IBaseEleme
     public IntPtr EinaHashNew()
     {
         return eina_hash_int64_new(IntPtr.Zero);
+    }
+}
+
+public class IntElementTraits : Primitive32ElementTraits<int>, IBaseElementTraits<int>
+{
+    override public void ManagedToNativeCopyTo(int man, IntPtr mem)
+    {
+        var arr = new int[1];
+        arr[0] = man;
+        Marshal.Copy(arr, 0, mem, 1);
+    }
+
+    override public int NativeToManagedInlistNode(IntPtr nat)
+    {
+        if (nat == IntPtr.Zero)
+        {
+            Eina.Log.Error("Null pointer for Inlist node.");
+            return default(int);
+        }
+
+        IntPtr loc = nat + Marshal.SizeOf<InlistMem>();
+        var v = new int[1];
+        Marshal.Copy(loc, v, 0, 1);
+        return v[0];
+    }
+}
+
+public class CharElementTraits : Primitive32ElementTraits<char>, IBaseElementTraits<char>
+{
+    override public void ManagedToNativeCopyTo(char man, IntPtr mem)
+    {
+        var arr = new char[1];
+        arr[0] = man;
+        Marshal.Copy(arr, 0, mem, 1);
+    }
+
+    override public char NativeToManagedInlistNode(IntPtr nat)
+    {
+        if (nat == IntPtr.Zero)
+        {
+            Eina.Log.Error("Null pointer for Inlist node.");
+            return default(char);
+        }
+
+        IntPtr loc = nat + Marshal.SizeOf<InlistMem>();
+        var v = new char[1];
+        Marshal.Copy(loc, v, 0, 1);
+        return v[0];
+    }
+}
+
+public class LongElementTraits : Primitive64ElementTraits<long>, IBaseElementTraits<long>
+{
+    override public void ManagedToNativeCopyTo(long man, IntPtr mem)
+    {
+        var arr = new long[1];
+        arr[0] = man;
+        Marshal.Copy(arr, 0, mem, 1);
+    }
+
+    override public long NativeToManagedInlistNode(IntPtr nat)
+    {
+        if (nat == IntPtr.Zero)
+        {
+            Eina.Log.Error("Null pointer for Inlist node.");
+            return default(long);
+        }
+
+        IntPtr loc = nat + Marshal.SizeOf<InlistMem>();
+        var v = new long[1];
+        Marshal.Copy(loc, v, 0, 1);
+        return v[0];
+    }
+}
+
+public class ShortElementTraits : Primitive32ElementTraits<short>, IBaseElementTraits<short>
+{
+    override public void ManagedToNativeCopyTo(short man, IntPtr mem)
+    {
+        var arr = new short[1];
+        arr[0] = man;
+        Marshal.Copy(arr, 0, mem, 1);
+    }
+
+    override public short NativeToManagedInlistNode(IntPtr nat)
+    {
+        if (nat == IntPtr.Zero)
+        {
+            Eina.Log.Error("Null pointer for Inlist node.");
+            return default(short);
+        }
+
+        IntPtr loc = nat + Marshal.SizeOf<InlistMem>();
+        var v = new short[1];
+        Marshal.Copy(loc, v, 0, 1);
+        return v[0];
+    }
+}
+
+public class FloatElementTraits : Primitive32ElementTraits<float>, IBaseElementTraits<float>
+{
+    override public void ManagedToNativeCopyTo(float man, IntPtr mem)
+    {
+        var arr = new float[1];
+        arr[0] = man;
+        Marshal.Copy(arr, 0, mem, 1);
+    }
+
+    override public float NativeToManagedInlistNode(IntPtr nat)
+    {
+        if (nat == IntPtr.Zero)
+        {
+            Eina.Log.Error("Null pointer for Inlist node.");
+            return default(float);
+        }
+
+        IntPtr loc = nat + Marshal.SizeOf<InlistMem>();
+        var v = new float[1];
+        Marshal.Copy(loc, v, 0, 1);
+        return v[0];
+    }
+}
+
+public class DoubleElementTraits : Primitive64ElementTraits<double>, IBaseElementTraits<double>
+{
+    override public void ManagedToNativeCopyTo(double man, IntPtr mem)
+    {
+        var arr = new double[1];
+        arr[0] = man;
+        Marshal.Copy(arr, 0, mem, 1);
+    }
+
+    override public double NativeToManagedInlistNode(IntPtr nat)
+    {
+        if (nat == IntPtr.Zero)
+        {
+            Eina.Log.Error("Null pointer for Inlist node.");
+            return default(double);
+        }
+
+        IntPtr loc = nat + Marshal.SizeOf<InlistMem>();
+        var v = new double[1];
+        Marshal.Copy(loc, v, 0, 1);
+        return v[0];
+    }
+}
+
+public class ByteElementTraits : Primitive32ElementTraits<byte>, IBaseElementTraits<byte>
+{
+    override public void ManagedToNativeCopyTo(byte man, IntPtr mem)
+    {
+        var arr = new byte[1];
+        arr[0] = man;
+        Marshal.Copy(arr, 0, mem, 1);
+    }
+
+    override public byte NativeToManagedInlistNode(IntPtr nat)
+    {
+        if (nat == IntPtr.Zero)
+        {
+            Eina.Log.Error("Null pointer for Inlist node.");
+            return default(byte);
+        }
+
+        IntPtr loc = nat + Marshal.SizeOf<InlistMem>();
+        var v = new byte[1];
+        Marshal.Copy(loc, v, 0, 1);
+        return v[0];
     }
 }
 
@@ -514,11 +712,17 @@ public static class TraitFunctions
     public static Eina.ElementType GetElementTypeCode(System.Type type)
     {
         if (IsEflObject(type))
+        {
             return ElementType.ObjectType;
+        }
         else if (IsString(type))
+        {
             return ElementType.StringType;
+        }
         else
+        {
             return ElementType.NumericType;
+        }
     }
 
     private static IDictionary<System.Type, object> register = new Dictionary<System.Type, object>();
@@ -526,51 +730,79 @@ public static class TraitFunctions
     private static System.Type AsEflInstantiableType(System.Type type)
     {
         if (!IsEflObject(type))
+        {
             return null;
+        }
 
         if (type.IsInterface)
         {
-            string[] names = type.FullName.Split('.');
-            names[names.Count() - 1] = names.Last().Substring(1); // Remove the leading 'I' (What about user-defined interfaces?)
-
-            string fullName = string.Join(".", names);
+            string fullName = type.FullName + "Concrete";
             return type.Assembly.GetType(fullName); // That was our best guess...
         }
 
-
-        System.Type current = type;
-        while (current != null)
-        {
-            if (current.Name.EndsWith("Inherit"))
-                throw new Exception("Inherit-based classes are not currently supported.");
-            current = current.BaseType;
-        }
-
-        return type; // Not inherited neither interface, so it should be a concrete.
+        return type; // Not interface, so it should be a concrete.
     }
 
     public static object RegisterTypeTraits<T>()
     {
+        Eina.Log.Debug($"Finding TypeTraits for {typeof(T).Name}");
         object traits;
         var type = typeof(T);
         if (IsEflObject(type))
         {
             System.Type concrete = AsEflInstantiableType(type);
             if (concrete == null || !type.IsAssignableFrom(concrete))
+            {
                 throw new Exception("Failed to get a suitable concrete class for this type.");
-            traits = new EflObjectElementTraits<T>(concrete);
+            }
+
+            // No need to pass concrete as the traits class will use reflection to get the actually most
+            // derived type returned.
+            traits = new EflObjectElementTraits<T>();
         }
         else if (IsString(type))
-            traits = new StringElementTraits<T>();
+        {
+            traits = new StringElementTraits();
+        }
         else if (type.IsValueType)
         {
-            if (Marshal.SizeOf<T>() <= 4)
-                traits = new Primitive32ElementTraits<T>();
+            if (type == typeof(int))
+            {
+                traits = new IntElementTraits();
+            }
+            else if (type == typeof(char))
+            {
+                traits = new CharElementTraits();
+            }
+            else if (type == typeof(long))
+            {
+                traits = new LongElementTraits();
+            }
+            else if (type == typeof(short))
+            {
+                traits = new ShortElementTraits();
+            }
+            else if (type == typeof(float))
+            {
+                traits = new FloatElementTraits();
+            }
+            else if (type == typeof(double))
+            {
+                traits = new DoubleElementTraits();
+            }
+            else if (type == typeof(byte))
+            {
+                traits = new ByteElementTraits();
+            }
             else
-                traits = new Primitive64ElementTraits<T>();
+            {
+                throw new Exception("No traits registered for this type");
+            }
         }
         else
+        {
             throw new Exception("No traits registered for this type");
+        }
 
         register[type] = traits;
         return traits;
@@ -586,8 +818,11 @@ public static class TraitFunctions
     {
         object traits;
         if (!register.TryGetValue(typeof(T), out traits))
+        {
             traits = RegisterTypeTraits<T>();
-        return (IBaseElementTraits<T>) traits;
+        }
+
+        return (IBaseElementTraits<T>)traits;
     }
 
     //                  //
@@ -601,14 +836,9 @@ public static class TraitFunctions
         return GetTypeTraits<T>().ManagedToNativeAlloc(man);
     }
 
-    public static IntPtr ManagedToNativeAllocRef<T>(T man, bool refs = false)
+    public static void ManagedToNativeCopyTo<T>(T man, IntPtr mem)
     {
-        return GetTypeTraits<T>().ManagedToNativeAllocRef(man, refs);
-    }
-
-    public static IntPtr ManagedToNativeAllocInplace<T>(T man)
-    {
-        return GetTypeTraits<T>().ManagedToNativeAllocInplace(man);
+        GetTypeTraits<T>().ManagedToNativeCopyTo(man, mem);
     }
 
     public static IntPtr ManagedToNativeAllocInlistNode<T>(T man)
@@ -619,11 +849,6 @@ public static class TraitFunctions
     public static void NativeFree<T>(IntPtr nat)
     {
         GetTypeTraits<T>().NativeFree(nat);
-    }
-
-    public static void NativeFreeRef<T>(IntPtr nat, bool unrefs = false)
-    {
-        GetTypeTraits<T>().NativeFreeRef(nat, unrefs);
     }
 
     public static void NativeFreeInlistNodeElement<T>(IntPtr nat)
@@ -649,11 +874,6 @@ public static class TraitFunctions
     public static T NativeToManaged<T>(IntPtr nat)
     {
         return GetTypeTraits<T>().NativeToManaged(nat);
-    }
-
-    public static T NativeToManagedRef<T>(IntPtr nat)
-    {
-        return GetTypeTraits<T>().NativeToManagedRef(nat);
     }
 
     public static T NativeToManagedInlistNode<T>(IntPtr nat)

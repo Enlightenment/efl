@@ -7,7 +7,8 @@ using System.Collections.Generic;
 using static Eina.TraitFunctions;
 using static Eina.ArrayNativeFunctions;
 
-namespace Eina {
+namespace Eina
+{
 
 public static class ArrayNativeFunctions
 {
@@ -64,7 +65,9 @@ public class Array<T> : IEnumerable<T>, IDisposable
         Own = true;
         OwnContent = true;
         if (Handle == IntPtr.Zero)
+        {
             throw new SEHException("Could not alloc array");
+        }
     }
 
     internal bool InternalPush(IntPtr ele)
@@ -99,6 +102,11 @@ public class Array<T> : IEnumerable<T>, IDisposable
 
     public Array(IntPtr handle, bool own)
     {
+        if (handle == IntPtr.Zero)
+        {
+            throw new ArgumentNullException("Handle can't be null");
+        }
+
         Handle = handle;
         Own = own;
         OwnContent = own;
@@ -106,6 +114,11 @@ public class Array<T> : IEnumerable<T>, IDisposable
 
     public Array(IntPtr handle, bool own, bool ownContent)
     {
+        if (handle == IntPtr.Zero)
+        {
+            throw new ArgumentNullException("Handle can't be null");
+        }
+
         Handle = handle;
         Own = own;
         OwnContent = ownContent;
@@ -121,19 +134,30 @@ public class Array<T> : IEnumerable<T>, IDisposable
         IntPtr h = Handle;
         Handle = IntPtr.Zero;
         if (h == IntPtr.Zero)
+        {
             return;
+        }
 
         if (OwnContent)
         {
             int len = (int)eina_array_count_custom_export_mono(h);
-            for(int i = 0; i < len; ++i)
+            for (int i = 0; i < len; ++i)
             {
                 NativeFree<T>(eina_array_data_get_custom_export_mono(h, (uint)i));
             }
         }
 
         if (Own)
-            eina_array_free(h);
+        {
+            if (disposing)
+            {
+                eina_array_free(h);
+            }
+            else
+            {
+                Efl.Eo.Globals.ThreadSafeFreeCbExec(eina_array_free, h);
+            }
+        }
     }
 
     public void Dispose()
@@ -159,7 +183,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
         if (OwnContent)
         {
             int len = Length;
-            for(int i = 0; i < len; ++i)
+            for (int i = 0; i < len; ++i)
             {
                 NativeFree<T>(InternalDataGet(i));
             }
@@ -180,7 +204,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
 
     public int Count()
     {
-        return (int) eina_array_count_custom_export_mono(Handle);
+        return (int)eina_array_count_custom_export_mono(Handle);
     }
 
     public void SetOwnership(bool ownAll)
@@ -200,7 +224,10 @@ public class Array<T> : IEnumerable<T>, IDisposable
         IntPtr ele = ManagedToNativeAlloc(val);
         var r = InternalPush(ele);
         if (!r)
+        {
             NativeFree<T>(ele);
+        }
+
         return r;
     }
 
@@ -208,7 +235,9 @@ public class Array<T> : IEnumerable<T>, IDisposable
 //     public void Add(T val)
 //     {
 //         if (!Push(val))
-//           throw;
+//         {
+//             throw;
+//         }
 //     }
 
     public T Pop()
@@ -216,7 +245,10 @@ public class Array<T> : IEnumerable<T>, IDisposable
         IntPtr ele = InternalPop();
         var r = NativeToManaged<T>(ele);
         if (OwnContent && ele != IntPtr.Zero)
+        {
             NativeFree<T>(ele);
+        }
+
         return r;
     }
 
@@ -235,7 +267,10 @@ public class Array<T> : IEnumerable<T>, IDisposable
     {
         IntPtr ele = InternalDataGet(idx); // TODO: check bondaries ??
         if (OwnContent && ele != IntPtr.Zero)
+        {
             NativeFree<T>(ele);
+        }
+
         ele = ManagedToNativeAlloc(val);
         InternalDataSet(idx, ele);
     }
@@ -256,18 +291,24 @@ public class Array<T> : IEnumerable<T>, IDisposable
     {
         int len = Length;
         var managed = new T[len];
-        for(int i = 0; i < len; ++i)
+        for (int i = 0; i < len; ++i)
         {
             managed[i] = DataGet(i);
         }
+
         return managed;
     }
 
     public bool Append(T[] values)
     {
-        foreach(T v in values)
+        foreach (T v in values)
+        {
             if (!Push(v))
+            {
                 return false;
+            }
+        }
+
         return true;
     }
 
@@ -280,7 +321,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
     public IEnumerator<T> GetEnumerator()
     {
         int len = Length;
-        for(int i = 0; i < len; ++i)
+        for (int i = 0; i < len; ++i)
         {
             yield return DataGet(i);
         }

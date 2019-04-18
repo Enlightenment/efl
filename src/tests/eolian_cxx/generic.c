@@ -115,10 +115,10 @@ static void _generic_call_event3(Eo *obj, Generic_Data* pd EINA_UNUSED)
 static void _generic_call_event4(Eo *obj, Generic_Data* pd EINA_UNUSED)
 {
   int i = 42;
-  Eina_List* p = eina_list_append(NULL, &i);
-  ck_assert(p != NULL);
+  Eina_Array* p = eina_array_new(1);
+  ck_assert(eina_array_push(p, &i));
   efl_event_callback_call(obj, GENERIC_EVENT_PREFIX_EVENT4, p);
-  eina_list_free(p);
+  eina_array_free(p);
 }
 static void _generic_call_event5(Eo *obj, Generic_Data* pd EINA_UNUSED)
 {

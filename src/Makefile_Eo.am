@@ -4,8 +4,7 @@
 eo_eolian_files = \
 	lib/eo/efl_object.eo \
 	lib/eo/efl_class.eo \
-	lib/eo/efl_object_override.eo \
-	lib/eo/efl_interface.eo
+	lib/eo/efl_object_override.eo
 
 eo_eolian_c = $(eo_eolian_files:%.eo=%.eo.c)
 eo_eolian_h = $(eo_eolian_files:%.eo=%.eo.h)
@@ -36,6 +35,7 @@ lib/eo/eo_private.h
 
 lib_eo_libeo_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
 @EO_CFLAGS@ \
 @VALGRIND_CFLAGS@
 lib_eo_libeo_la_LIBADD = @EO_LIBS@
@@ -44,7 +44,7 @@ lib_eo_libeo_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 ### The Eo debug build
 lib_eo_libeo_dbg_la_SOURCES = $(lib_eo_libeo_la_SOURCES)
-lib_eo_libeo_dbg_la_CPPFLAGS = $(lib_eo_libeo_la_CPPFLAGS) -DEO_DEBUG
+lib_eo_libeo_dbg_la_CPPFLAGS = $(lib_eo_libeo_la_CPPFLAGS) -DEO_DEBUG -DEFL_BUILD
 lib_eo_libeo_dbg_la_LIBADD = $(lib_eo_libeo_la_LIBADD)
 lib_eo_libeo_dbg_la_DEPENDENCIES = $(lib_eo_libeo_la_DEPENDENCIES)
 lib_eo_libeo_dbg_la_LDFLAGS = $(lib_eo_libeo_la_LDFLAGS)
@@ -52,13 +52,15 @@ lib_eo_libeo_dbg_la_LDFLAGS = $(lib_eo_libeo_la_LDFLAGS)
 bin_SCRIPTS += scripts/eo/eo_debug
 
 ######
-
+if INSTALL_EO_FILES
 eoeolianfilesdir = $(datadir)/eolian/include/eo-@VMAJ@
 eoeolianfiles_DATA = \
 					 $(eo_eolian_files) \
 					 lib/eo/eina_types.eot # We don't generate .c/.h on purpose
-
-EXTRA_DIST2 += ${eoeolianfiles_DATA}
+endif
+EXTRA_DIST2 += \
+$(eo_eolian_files) \
+lib/eo/eina_types.eot
 
 ### Unit tests
 
@@ -149,7 +151,8 @@ tests/eo/suite/eo_test_value.c \
 tests/eo/suite/eo_test_event.c \
 tests/eo/suite/eo_test_threaded_calls.c \
 tests/eo/suite/eo_test_init.c \
-tests/eo/suite/eo_test_lifecycle.c
+tests/eo/suite/eo_test_lifecycle.c \
+tests/eo/suite/eo_test_reflection.c
 
 tests_eo_eo_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
@@ -230,7 +233,11 @@ TESTS += tests/eo/test_signals
 endif
 
 
-EXTRA_DIST2 += tests/eo/eunit_tests.h lib/eo/eo_ptr_indirection.x
+EXTRA_DIST2 += \
+tests/eo/eunit_tests.h \
+tests/eo/suite/eo_test_reflection_complex_class_structure.c \
+tests/eo/suite/eo_test_reflection_complex_class_structure.h \
+lib/eo/eo_ptr_indirection.x
 
 if HAVE_JS
 

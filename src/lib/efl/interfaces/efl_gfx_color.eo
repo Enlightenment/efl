@@ -2,7 +2,10 @@ import efl_gfx_types;
 
 mixin Efl.Gfx.Color
 {
-   [[Efl Gfx Color mixin class]]
+   [[Efl Gfx Color mixin class
+
+     @since 1.22
+   ]]
    data: null;
    methods {
       @property color @pure_virtual {
@@ -57,25 +60,6 @@ mixin Efl.Gfx.Color
           values {
              colorcode: string; [[the hex color code.]]
           }
-      }
-      @property color_class_code {
-          set {
-             [[Set the color class color of given Evas Object to the given hex color code(#RRGGBBAA).
-               e.g. efl_gfx_color_class_code_set(obj, "color_class_name", layer, "#FFCCAACC");
-             ]]
-          }
-          get {
-             [[Get hex color class code of given Evas Object.
-               This returns a short lived hex color class code string.
-             ]]
-          }
-          keys {
-             color_class: string; [[The name of color class]]
-             layer: Efl.Gfx.Color_Class_Layer @optional; [[The layer to set the color]]
-          }
-          values {
-             colorcode: string; [[the hex color code.]]
-         }
       }
    }
 }

@@ -1,4 +1,4 @@
-class Efl.Ui.Layout_Part_Table extends Efl.Object implements Efl.Pack_Table
+class @beta Efl.Ui.Layout_Part_Table extends Efl.Object implements Efl.Pack_Table
 {
    [[Represents a Table created as part of a layout.
 
@@ -21,7 +21,6 @@ class Efl.Ui.Layout_Part_Table extends Efl.Object implements Efl.Pack_Table
       Efl.Object.destructor;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
-      Efl.Container.content_remove;
       Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;

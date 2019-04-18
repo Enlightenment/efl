@@ -130,17 +130,9 @@ eet_dictionary_string_add(Eet_Dictionary *ed,
    current->str = str;
    current->len = len;
 
-   if (idx == -1)
-     {
-        current->next = ed->hash[hash];
-        ed->hash[hash] = ed->count;
-     }
-   else
-     {
-        current->next = idx;
-        if (pidx != -1) ed->all[pidx].next = ed->count;
-        else ed->hash[hash] = ed->count;
-     }
+   current->next = ed->hash[hash];
+   ed->hash[hash] = ed->count;
+
    cnt = ed->count++;
    eina_rwlock_release(&ed->rwlock);
    return cnt;

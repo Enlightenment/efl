@@ -1,30 +1,39 @@
-#include "efl_ui_flip.eo.legacy.h"
-
 typedef Eo Elm_Flip;
 
-typedef Efl_Ui_Flip_Interaction       Elm_Flip_Interaction;
 
-#define ELM_FLIP_INTERACTION_NONE     EFL_UI_FLIP_INTERACTION_NONE
-#define ELM_FLIP_INTERACTION_ROTATE   EFL_UI_FLIP_INTERACTION_ROTATE
-#define ELM_FLIP_INTERACTION_CUBE     EFL_UI_FLIP_INTERACTION_CUBE
-#define ELM_FLIP_INTERACTION_PAGE     EFL_UI_FLIP_INTERACTION_PAGE
+/** Elm flip mode
+ *
+ * @ingroup Elm_Flip
+ */
+typedef enum
+{
+  ELM_FLIP_ROTATE_Y_CENTER_AXIS = 0, /**< Rotate Y center axis flip mode */
+  ELM_FLIP_ROTATE_X_CENTER_AXIS, /**< Rotate X center axis flip mode */
+  ELM_FLIP_ROTATE_XZ_CENTER_AXIS, /**< Rotate XZ center axis flip mode */
+  ELM_FLIP_ROTATE_YZ_CENTER_AXIS, /**< Rotate YZ center axis flip mode */
+  ELM_FLIP_CUBE_LEFT, /**< Cube left flip mode */
+  ELM_FLIP_CUBE_RIGHT, /**< Cube right flip mode */
+  ELM_FLIP_CUBE_UP, /**< Cube up flip mode */
+  ELM_FLIP_CUBE_DOWN, /**< Cube down flip mode */
+  ELM_FLIP_PAGE_LEFT, /**< Page left flip mode */
+  ELM_FLIP_PAGE_RIGHT, /**< Page right flip mode */
+  ELM_FLIP_PAGE_UP, /**< Page up flip mode */
+  ELM_FLIP_PAGE_DOWN, /**< Page down flip mode */
+  ELM_FLIP_CROSS_FADE /**< Cross fade flip mode */
+} Elm_Flip_Mode;
 
+/** Efl UI flip interaction
+ *
+ * @ingroup Efl_Ui
+ */
+typedef enum
+{
+  ELM_FLIP_INTERACTION_NONE = 0, /**< No interaction */
+  ELM_FLIP_INTERACTION_ROTATE, /**< Rotate interaction */
+  ELM_FLIP_INTERACTION_CUBE, /**< Cube interaction */
+  ELM_FLIP_INTERACTION_PAGE /**< Page interaction */
+} Elm_Flip_Interaction;
 
-typedef Efl_Ui_Flip_Mode                  Elm_Flip_Mode;
-
-#define ELM_FLIP_ROTATE_Y_CENTER_AXIS     EFL_UI_FLIP_ROTATE_Y_CENTER_AXIS
-#define ELM_FLIP_ROTATE_X_CENTER_AXIS     EFL_UI_FLIP_ROTATE_X_CENTER_AXIS
-#define ELM_FLIP_ROTATE_XZ_CENTER_AXIS    EFL_UI_FLIP_ROTATE_XZ_CENTER_AXIS
-#define ELM_FLIP_ROTATE_YZ_CENTER_AXIS    EFL_UI_FLIP_ROTATE_YZ_CENTER_AXIS
-#define ELM_FLIP_CUBE_LEFT                EFL_UI_FLIP_CUBE_LEFT
-#define ELM_FLIP_CUBE_RIGHT               EFL_UI_FLIP_CUBE_RIGHT
-#define ELM_FLIP_CUBE_UP                  EFL_UI_FLIP_CUBE_UP
-#define ELM_FLIP_CUBE_DOWN                EFL_UI_FLIP_CUBE_DOWN
-#define ELM_FLIP_PAGE_LEFT                EFL_UI_FLIP_PAGE_LEFT
-#define ELM_FLIP_PAGE_RIGHT               EFL_UI_FLIP_PAGE_RIGHT
-#define ELM_FLIP_PAGE_UP                  EFL_UI_FLIP_PAGE_UP
-#define ELM_FLIP_PAGE_DOWN                EFL_UI_FLIP_PAGE_DOWN
-#define ELM_FLIP_CROSS_FADE               EFL_UI_FLIP_CROSS_FADE
 
 typedef enum
 {
@@ -58,9 +67,9 @@ typedef enum
  *
  * @param[in] hitsize The amount of that dimension (0.0 to 1.0) to use.
  *
- * @ingroup Efl_Ui_Flip
+ * @ingroup Elm_Flip
  */
-EAPI void elm_flip_interaction_direction_hitsize_set(Efl_Ui_Flip *obj, Elm_Flip_Direction dir, double hitsize);
+EAPI void elm_flip_interaction_direction_hitsize_set(Elm_Flip *obj, Elm_Flip_Direction dir, double hitsize);
 
 /**
  * @brief Get the amount of the flip that is sensitive to interactive flip.
@@ -69,9 +78,9 @@ EAPI void elm_flip_interaction_direction_hitsize_set(Efl_Ui_Flip *obj, Elm_Flip_
  *
  * @return The size set for that direction.
  *
- * @ingroup Efl_Ui_Flip
+ * @ingroup Elm_Flip
  */
-EAPI double elm_flip_interaction_direction_hitsize_get(Efl_Ui_Flip *obj, Elm_Flip_Direction dir);
+EAPI double elm_flip_interaction_direction_hitsize_get(Elm_Flip *obj, Elm_Flip_Direction dir);
 
 /**
  * @brief Set which directions of the flip respond to interactive flip
@@ -86,9 +95,9 @@ EAPI double elm_flip_interaction_direction_hitsize_get(Efl_Ui_Flip *obj, Elm_Fli
  *
  * @param[in] enabled If that direction is enabled or not.
  *
- * @ingroup Efl_Ui_Flip
+ * @ingroup Elm_Flip
  */
-EAPI void elm_flip_interaction_direction_enabled_set(Efl_Ui_Flip *obj, Elm_Flip_Direction dir, Eina_Bool enabled);
+EAPI void elm_flip_interaction_direction_enabled_set(Elm_Flip *obj, Elm_Flip_Direction dir, Eina_Bool enabled);
 
 /**
  * @brief Get the enabled state of that flip direction.
@@ -97,9 +106,9 @@ EAPI void elm_flip_interaction_direction_enabled_set(Efl_Ui_Flip *obj, Elm_Flip_
  *
  * @return If that direction is enabled or not.
  *
- * @ingroup Efl_Ui_Flip
+ * @ingroup Elm_Flip
  */
-EAPI Eina_Bool elm_flip_interaction_direction_enabled_get(Efl_Ui_Flip *obj, Elm_Flip_Direction dir);
+EAPI Eina_Bool elm_flip_interaction_direction_enabled_get(Elm_Flip *obj, Elm_Flip_Direction dir);
 
 /**
  * @brief Add a new flip to the parent
@@ -124,3 +133,4 @@ EAPI Evas_Object *elm_flip_add(Evas_Object *parent);
  * @ingroup Elm_Flip
  */
 EAPI void                 elm_flip_perspective_set(Evas_Object *obj, Evas_Coord foc, Evas_Coord x, Evas_Coord y);
+#include "efl_ui_flip_eo.legacy.h"

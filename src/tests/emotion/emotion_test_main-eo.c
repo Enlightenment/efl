@@ -1,7 +1,6 @@
 #ifdef HAVE_CONFIG_H
 #include "config.h"
 #else
-#define EFL_EO_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
 #endif
 
@@ -112,7 +111,7 @@ static void
 bg_setup(void)
 {
    o_bg = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas);
-   efl_file_set(o_bg, theme_file, "background");
+   efl_file_simple_load(o_bg, theme_file, "background");
    efl_gfx_entity_position_set(o_bg, EINA_POSITION2D(0, 0));
    efl_gfx_entity_size_set(o_bg, EINA_SIZE2D(startw,  starth));
    efl_gfx_stack_layer_set(o_bg, -999);
@@ -506,7 +505,7 @@ video_obj_signal_frame_move_start_cb(void *data EINA_UNUSED, Evas_Object *o, con
    evas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
    fd->x = x;
    fd->y = y;
-   efl_gfx_stack_raise(o);
+   efl_gfx_stack_raise_to_top(o);
 }
 
 static void
@@ -531,7 +530,7 @@ video_obj_signal_frame_resize_start_cb(void *data EINA_UNUSED, Evas_Object *o, c
    evas_pointer_canvas_xy_get(evas_object_evas_get(o), &x, &y);
    fd->x = x;
    fd->y = y;
-   efl_gfx_stack_raise(o);
+   efl_gfx_stack_raise_to_top(o);
 }
 
 static void
@@ -624,7 +623,7 @@ init_video_object(const char *module_filename, const char *filename)
    oe = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas);
    efl_event_callback_add(oe, EFL_EVENT_DEL, _oe_free_cb, fd);
    efl_key_data_set(oe, "frame_data", fd);
-   efl_file_set(oe, theme_file, reflex ? "video_controller/reflex" : "video_controller");
+   efl_file_simple_load(oe, theme_file, reflex ? "video_controller/reflex" : "video_controller");
    edje_object_part_swallow(oe, "video_swallow", o);
 
    offset = 20 * (eina_list_count(video_objs) - 1);
@@ -634,17 +633,17 @@ init_video_object(const char *module_filename, const char *filename)
 
    efl_event_callback_array_add(o, emotion_object_test_callbacks(), oe);
 
-   efl_layout_signal_callback_add(oe, "video_control", "play", video_obj_signal_play_cb, o);
-   efl_layout_signal_callback_add(oe, "video_control", "pause", video_obj_signal_pause_cb, o);
-   efl_layout_signal_callback_add(oe, "video_control", "stop", video_obj_signal_stop_cb, o);
-   efl_layout_signal_callback_add(oe, "drag", "video_progress", video_obj_signal_jump_cb, o);
-   efl_layout_signal_callback_add(oe, "drag", "video_alpha", video_obj_signal_alpha_cb, o);
-   efl_layout_signal_callback_add(oe, "drag", "video_volume", video_obj_signal_vol_cb, o);
-   efl_layout_signal_callback_add(oe, "frame_move", "start", video_obj_signal_frame_move_start_cb, oe);
-   efl_layout_signal_callback_add(oe, "frame_move", "stop", video_obj_signal_frame_move_stop_cb, oe);
-   efl_layout_signal_callback_add(oe, "frame_resize", "start", video_obj_signal_frame_resize_start_cb, oe);
-   efl_layout_signal_callback_add(oe, "frame_resize", "stop", video_obj_signal_frame_resize_stop_cb, oe);
-   efl_layout_signal_callback_add(oe, "mouse, move", "*", video_obj_signal_frame_move_cb, oe);
+   efl_layout_signal_callback_add(oe, "video_control", "play", o, video_obj_signal_play_cb, NULL);
+   efl_layout_signal_callback_add(oe, "video_control", "pause", o, video_obj_signal_pause_cb, NULL);
+   efl_layout_signal_callback_add(oe, "video_control", "stop", o, video_obj_signal_stop_cb, NULL);
+   efl_layout_signal_callback_add(oe, "drag", "video_progress", o, video_obj_signal_jump_cb, NULL);
+   efl_layout_signal_callback_add(oe, "drag", "video_alpha", o, video_obj_signal_alpha_cb, NULL);
+   efl_layout_signal_callback_add(oe, "drag", "video_volume", o, video_obj_signal_vol_cb, NULL);
+   efl_layout_signal_callback_add(oe, "frame_move", "start", oe, video_obj_signal_frame_move_start_cb, NULL);
+   efl_layout_signal_callback_add(oe, "frame_move", "stop", oe, video_obj_signal_frame_move_stop_cb, NULL);
+   efl_layout_signal_callback_add(oe, "frame_resize", "start", oe, video_obj_signal_frame_resize_start_cb, NULL);
+   efl_layout_signal_callback_add(oe, "frame_resize", "stop", oe, video_obj_signal_frame_resize_stop_cb, NULL);
+   efl_layout_signal_callback_add(oe, "mouse, move", "*", oe, video_obj_signal_frame_move_cb, NULL);
    efl_ui_drag_value_set(efl_part(oe, "video_alpha"), 0.0, 1.0);
    efl_text_set(efl_part(oe, "video_alpha_txt"), "alpha 255");
    efl_ui_drag_value_set(efl_part(oe, "video_volume"), 0.0, 0.5);

@@ -1,5 +1,7 @@
 enum Efl.Task_Priority {
-   [[ ]]
+   [[
+     @since 1.22
+   ]]
    normal,
    background,
    low,
@@ -8,114 +10,21 @@ enum Efl.Task_Priority {
 }
 
 enum Efl.Task_Flags {
-   [[ ]]
+   [[
+     @since 1.22
+   ]]
    none               = 0,
    use_stdin          = 1,
    use_stdout         = 2,
    no_exit_code_error = 4,
 }
 
-abstract Efl.Task extends Efl.Object implements Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer
+abstract Efl.Task extends Efl.Loop_Consumer
 {
-   [[ ]]
+   [[
+     @since 1.22
+   ]]
    methods {
-      @property command {
-         [[ A commandline that encodes arguments in a command string.
-            This command is unix shell-style, thus whitespace separates
-            arguments unless escaped. Also a semi-colon ';', ampersand
-            '&', pipe/bar '|', hash '#', bracket, square brace, brace
-            character ('(', ')', '[', ']', '{', '}'), exclamation
-            mark '!',  backquote '`', greator or less than ('>' '<')
-            character unless escaped or in quotes would cause
-            args_count/value to not be generated properly, because
-            it would force complex shell interpretation which
-            will not be supported in evaluating the arg_count/value
-            information, but the final shell may interpret this if this
-            is executed via a command-line shell. To not be a complex
-            shell command, it should be simple with paths, options
-            and variable expansions, but nothing more complex involving
-            the above unescaped characters.
-
-            "cat -option /path/file"
-            "cat 'quoted argument'"
-            "cat ~/path/escaped\ argument"
-            "/bin/cat escaped\ argument $VARIABLE"
-            etc.
-
-            It should not try and use "complex shell features" if you
-            want the arg_count and arg_value set to be correct after
-            setting the command string. For example none of:
-
-            "VAR=x /bin/command && /bin/othercommand >& /dev/null"
-            "VAR=x /bin/command `/bin/othercommand` | /bin/cmd2 && cmd3 &"
-            etc.
-
-            If you set the command the arg_count/value property contents
-            can change and be completely re-evaluated by parsing the
-            command string into an argument array set along with
-            interpreting escapes back into individual argument strings. ]]
-         get { }
-         set { }
-         values {
-            command: string; [[ The command string as described ]]
-         }
-      }
-      @property arg_count {
-         [[ Number of arguments passed in or arguments that are to be
-            passed as sepcified by arg_value ]]
-         get { }
-         values {
-            args: uint; [[ ]]
-         }
-      }
-      @property arg_value {
-         [[ Argument number by index. If the index does not exist when
-            set, it is allocated and created. Getting an argument that
-            Has not been set yet will return $NULL. Empty arguments will
-            Be ignored. Setting an argument will result in the command
-            porperty being re-evaluated and escaped into a single
-            command string if needed. ]]
-         set { }
-         get { }
-         keys {
-            num: uint; [[ ]]
-         }
-         values {
-            arg: string; [[ ]]
-         }
-      }
-      arg_append {
-         [[ Append a new string argument at the end of the arg set.
-            This functions like setting an arg_value at the end of the
-            current set so the set increases by 1 in size. ]]
-         params {
-            arg: string; [[ ]]
-         }
-      }
-      arg_reset {
-         [[ Clear all arguments in arg_value/count set. Will result in the
-            command property also being cleared. ]]
-      }
-      @property env {
-         [[ The environment to be passed in or that was passed to the
-            task. This is a string key, value list which map to environment
-            variables where appropriate. The var string must contain
-            only an underscore ('_'), letters ('a-z', 'A-Z'),
-            numbers ('0-9'), but the first character may not be a number.]]
-         set { }
-         get { }
-         keys {
-            var: string; [[ The variable name as a string ]]
-         }
-         values {
-            value: string; [[ Set var to this value if not $NULL,
-                              otherwise clear this env value if value
-                              is $NULL or if it is an empty string ]]
-         }
-      }
-      env_reset {
-         [[ Clear all environment variables. ]]
-      }
       @property priority {
          [[ The priority of this task. ]]
          get { }

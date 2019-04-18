@@ -1,4 +1,4 @@
-struct @extern Eo;
+struct @free(efl_del) @extern Eo;
 
 class Complex_Type {
    methods {
@@ -15,6 +15,7 @@ class Complex_Type {
       foo {
          params {
             buf: mstring @owned;
+            sl: slice<ubyte>;
          }
          return: list<stringshare> @owned; [[comment for method return]]
       }

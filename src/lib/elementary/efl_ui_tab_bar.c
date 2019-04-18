@@ -2,7 +2,6 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_UI_TAB_BAR_BETA
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -87,7 +86,7 @@ _tab_icon_set_cb(void *data,
    Tab_Info *ti = data;
    _tab_icon_update(ti);
 
-   efl_layout_signal_callback_del(obj, emission, source, _tab_icon_set_cb, ti);
+   efl_layout_signal_callback_del(obj, emission, source, ti, _tab_icon_set_cb, NULL);
    efl_layout_signal_emit(ti->tab, "efl,state,icon,reset", "efl");
 }
 
@@ -129,7 +128,7 @@ _tab_icon_obj_set(Eo *obj,
           (efl_part(ti->tab, "efl.icon_new"), ti->icon);
         efl_layout_signal_emit(ti->tab, "efl,state,icon_new,set", "efl");
         efl_layout_signal_callback_add
-          (ti->tab, "efl,state,icon_set,done", "efl", _tab_icon_set_cb, ti);
+          (ti->tab, "efl,state,icon_set,done", "efl", ti, _tab_icon_set_cb, NULL);
      }
    else
      _tab_icon_update(ti);
@@ -188,9 +187,9 @@ _tab_select(Efl_Ui_Tab_Bar_Data *sd, Tab_Info *ti)
 
         index = eina_list_data_idx(sd->tab_infos, ti);
 
-        efl_event_callback_call(tp, EFL_UI_EVENT_SELECTED, (void *)(intptr_t)index);
-
         sd->cur = index;
+
+        efl_event_callback_call(tp, EFL_UI_EVENT_ITEM_SELECTED, NULL);
      }
 }
 
@@ -214,14 +213,19 @@ _tab_add(Eo *obj, const char *label, const char *icon)
 {
    Eo *tab, *icon_obj;
    Tab_Info *ti;
-   Efl_Ui_Theme_Apply_Result theme_apply;
+   Eina_Error theme_apply;
 
    ti = calloc(1, sizeof(*ti));
 
    ti->tab = NULL;
    ti->label = eina_stringshare_add(label);
 
-   tab = efl_add(EFL_UI_LAYOUT_CLASS, obj);
+   tab = efl_add(EFL_UI_LAYOUT_CLASS, obj,
+                 efl_gfx_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL));
+   /* FIXME: This is for tab sizing issue.
+    * Recently, the size_hint_fill API has been added,
+    * but currently tab_bar is not available because it uses evas_object_box.
+    * This should be removed after the box in tab_bar has been replaced by efl.ui.box */
 
    icon_obj = elm_icon_add(tab);
 
@@ -239,11 +243,11 @@ _tab_add(Eo *obj, const char *label, const char *icon)
 
    theme_apply = elm_widget_element_update(obj, tab, PART_NAME_TAB);
 
-   if (theme_apply == EFL_UI_THEME_APPLY_RESULT_FAIL)
+   if (theme_apply == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
    efl_layout_signal_callback_add
-     (tab, "efl,action,click", "efl", _action_click_cb, ti);
+     (tab, "efl,action,click", "efl", ti,_action_click_cb, NULL);
 
    if (ti->icon)
      efl_content_set(efl_part(tab, "efl.icon"), ti->icon);
@@ -366,13 +370,11 @@ _efl_ui_tab_bar_efl_object_constructor(Eo *obj, Efl_Ui_Tab_Bar_Data *sd)
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
-                                    elm_widget_theme_klass_get(obj),
-                                    elm_widget_theme_element_get(obj),
-                                    elm_widget_theme_style_get(obj)))
+   if (elm_widget_theme_object_set(obj, wd->resize_obj,
+                                       elm_widget_theme_klass_get(obj),
+                                       elm_widget_theme_element_get(obj),
+                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
-
-   elm_widget_sub_object_parent_add(obj);
 
    sd->dir = EFL_UI_DIR_HORIZONTAL;
    sd->bx = evas_object_box_add(evas_object_evas_get(obj));

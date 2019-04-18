@@ -11,10 +11,6 @@
 
 #define MY_CLASS_NAME "Evas_Text"
 
-#ifdef EVAS_CSERVE2
-# include "evas_cs2_private.h"
-#endif
-
 /* save typing */
 #define COL_OBJECT(obj, sub) ARGB_JOIN(obj->sub->color.a, obj->sub->color.r, obj->sub->color.g, obj->sub->color.b)
 #define COL_JOIN(o, sub, color) ARGB_JOIN(o->sub.color.a, o->sub.color.r, o->sub.color.g, o->sub.color.b)
@@ -1112,7 +1108,7 @@ _evas_text_efl_text_text_get(const Eo *eo_obj EINA_UNUSED, Evas_Text_Data *o)
    return o->cur.utf8_text;
 }
 
-EOLIAN static Evas_BiDi_Direction
+EOLIAN static Efl_Text_Bidirectional_Type
 _evas_text_direction_get(const Eo *eo_obj, Evas_Text_Data *o)
 {
 #ifdef BIDI_SUPPORT
@@ -1141,7 +1137,7 @@ _evas_text_direction_get(const Eo *eo_obj, Evas_Text_Data *o)
      }
 #endif
 
-   return o->bidi_dir;
+   return (Efl_Text_Bidirectional_Type)o->bidi_dir;
 }
 
 EOLIAN static Evas_Coord
@@ -2380,16 +2376,16 @@ evas_object_text_filter_source_set(Evas_Object *obj, const char *name, Evas_Obje
 
 EOLIAN static void
 _evas_text_efl_canvas_object_paragraph_direction_set(Eo *eo_obj, Evas_Text_Data *o,
-                                                     Evas_BiDi_Direction dir)
+                                                     Efl_Text_Bidirectional_Type dir)
 {
 #ifdef BIDI_SUPPORT
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
-   if ((!(o->inherit_paragraph_direction) && (o->paragraph_direction == dir)) ||
-       (o->inherit_paragraph_direction && (dir == EVAS_BIDI_DIRECTION_INHERIT)))
+   if ((!(o->inherit_paragraph_direction) && (o->paragraph_direction == (Evas_BiDi_Direction)dir)) ||
+       (o->inherit_paragraph_direction && ((Evas_BiDi_Direction)dir == EVAS_BIDI_DIRECTION_INHERIT)))
      return;
 
-   if (dir == EVAS_BIDI_DIRECTION_INHERIT)
+   if (dir == (Efl_Text_Bidirectional_Type)EVAS_BIDI_DIRECTION_INHERIT)
      {
         o->inherit_paragraph_direction = EINA_TRUE;
         Evas_BiDi_Direction parent_dir = EVAS_BIDI_DIRECTION_NEUTRAL;
@@ -2418,11 +2414,11 @@ _evas_text_efl_canvas_object_paragraph_direction_set(Eo *eo_obj, Evas_Text_Data 
 #endif
 }
 
-EOLIAN static Evas_BiDi_Direction
+EOLIAN static Efl_Text_Bidirectional_Type
 _evas_text_efl_canvas_object_paragraph_direction_get(const Eo *eo_obj EINA_UNUSED,
                                                      Evas_Text_Data *o)
 {
-   return o->paragraph_direction;
+   return (Efl_Text_Bidirectional_Type)o->paragraph_direction;
 }
 
 EOLIAN static void
@@ -2443,4 +2439,4 @@ _evas_text_efl_text_font_font_bitmap_scalable_get(const Eo *eo_obj EINA_UNUSED, 
 #define EVAS_TEXT_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _evas_text_efl_object_dbg_info_get)
 
-#include "canvas/evas_text.eo.c"
+#include "canvas/evas_text_eo.c"

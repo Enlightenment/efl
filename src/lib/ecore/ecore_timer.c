@@ -79,7 +79,7 @@ _check_timer_event_catcher_add(void *data, const Efl_Event *event)
 
    for (i = 0; array[i].desc != NULL; i++)
      {
-        if (array[i].desc == EFL_LOOP_TIMER_EVENT_TICK)
+        if (array[i].desc == EFL_LOOP_TIMER_EVENT_TIMER_TICK)
           {
              if (timer->listening++ > 0) return;
              _efl_loop_timer_util_instanciate(timer->loop_data, timer);
@@ -99,7 +99,7 @@ _check_timer_event_catcher_del(void *data, const Efl_Event *event)
 
    for (i = 0; array[i].desc != NULL; i++)
      {
-        if (array[i].desc == EFL_LOOP_TIMER_EVENT_TICK)
+        if (array[i].desc == EFL_LOOP_TIMER_EVENT_TIMER_TICK)
           {
              if ((--timer->listening) > 0) return;
              _efl_loop_timer_util_instanciate(timer->loop_data, timer);
@@ -164,7 +164,7 @@ _ecore_timer_legacy_tick(void *data, const Efl_Event *event)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(legacy_timer,
-                          { EFL_LOOP_TIMER_EVENT_TICK, _ecore_timer_legacy_tick },
+                          { EFL_LOOP_TIMER_EVENT_TIMER_TICK, _ecore_timer_legacy_tick },
                           { EFL_EVENT_DEL, _ecore_timer_legacy_del });
 
 EAPI Ecore_Timer *
@@ -240,26 +240,26 @@ ecore_timer_del(Ecore_Timer *timer)
 }
 
 EOLIAN static void
-_efl_loop_timer_interval_set(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer, double in)
+_efl_loop_timer_timer_interval_set(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer, double in)
 {
    if (in < 0.0) in = 0.0;
    timer->in = in;
 }
 
 EOLIAN static double
-_efl_loop_timer_interval_get(const Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
+_efl_loop_timer_timer_interval_get(const Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
 {
    return timer->in;
 }
 
 EOLIAN static void
-_efl_loop_timer_delay(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *pd, double add)
+_efl_loop_timer_timer_delay(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *pd, double add)
 {
    _efl_loop_timer_util_delay(pd, add);
 }
 
 EOLIAN static void
-_efl_loop_timer_reset(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
+_efl_loop_timer_timer_reset(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
 {
    double now, add;
 
@@ -280,7 +280,7 @@ _efl_loop_timer_reset(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
 }
 
 EOLIAN static void
-_efl_loop_timer_loop_reset(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
+_efl_loop_timer_timer_loop_reset(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
 {
    double now, add;
 
@@ -301,7 +301,7 @@ _efl_loop_timer_loop_reset(Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
 }
 
 EOLIAN static double
-_efl_loop_timer_pending_get(const Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
+_efl_loop_timer_time_pending_get(const Eo *obj EINA_UNUSED, Efl_Loop_Timer_Data *timer)
 {
    double now, ret = 0.0;
 
@@ -639,7 +639,7 @@ _efl_loop_timer_expired_call(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, double when
 
         efl_ref(timer->object);
         eina_evlog("+timer", timer, 0.0, NULL);
-        efl_event_callback_call(timer->object, EFL_LOOP_TIMER_EVENT_TICK, NULL);
+        efl_event_callback_call(timer->object, EFL_LOOP_TIMER_EVENT_TIMER_TICK, NULL);
         eina_evlog("-timer", timer, 0.0, NULL);
 
         // may have changed in recursive main loops
@@ -670,3 +670,4 @@ _efl_loop_timer_set(Efl_Loop_Timer_Data *timer, double at, double in)
 }
 
 #include "efl_loop_timer.eo.c"
+#include "efl_loop_timer_eo.legacy.c"

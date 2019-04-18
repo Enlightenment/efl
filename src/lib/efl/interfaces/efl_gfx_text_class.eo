@@ -1,6 +1,6 @@
 import efl_gfx_types;
 
-interface Efl.Gfx.Text_Class
+interface @beta Efl.Gfx.Text_Class
 {
    [[Efl Gfx Text Class interface]]
    methods {
@@ -34,8 +34,7 @@ interface Efl.Gfx.Text_Class
 
            Deleting the text class will revert it to the values defined
            by @.text_class.set() or the text class defined in the theme file.
-
-           @since 1.17]]
+         ]]
          params {
             @in text_class: string; [[The text class to be deleted.]]
          }

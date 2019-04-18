@@ -398,17 +398,17 @@ _key_action_drag(Evas_Object *obj, const char *params)
    return EINA_TRUE;
 }
 
-// _slider_efl_ui_widget_widget_event
+// _slider_efl_ui_widget_widget_input_event_handler
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(slider, Elm_Slider_Data)
 
 EOLIAN static Eina_Bool
-_elm_slider_efl_ui_widget_widget_event(Eo *obj, Elm_Slider_Data *sd, const Efl_Event *eo_event, Evas_Object *src)
+_elm_slider_efl_ui_widget_widget_input_event_handler(Eo *obj, Elm_Slider_Data *sd, const Efl_Event *eo_event, Evas_Object *src)
 {
    Eo *ev = eo_event->info;
 
    if (eo_event->desc == EFL_EVENT_KEY_DOWN)
      {
-        if (!_slider_efl_ui_widget_widget_event(obj, sd, eo_event, src))
+        if (!_slider_efl_ui_widget_widget_input_event_handler(obj, sd, eo_event, src))
           return EINA_FALSE;
      }
    else if (eo_event->desc == EFL_EVENT_KEY_UP)
@@ -804,12 +804,12 @@ _elm_slider_theme_group_get(Evas_Object *obj, Elm_Slider_Data *sd)
    return eina_strbuf_release(new_group);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_slider_efl_ui_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
-   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd2, EFL_UI_THEME_APPLY_RESULT_FAIL);
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
+   EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd2, EFL_UI_THEME_APPLY_ERROR_GENERIC);
    char *group;
 
    group = _elm_slider_theme_group_get(obj, sd);
@@ -820,7 +820,7 @@ _elm_slider_efl_ui_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
      }
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    if (_is_horizontal(sd2->dir))
      evas_object_size_hint_min_set
@@ -1193,7 +1193,7 @@ _elm_slider_part_indicator_visible_mode_get(const Eo *obj, void *_pd EINA_UNUSED
    return sd->indicator_visible_mode;
 }
 
-#include "elm_slider_part_indicator.eo.c"
+#include "elm_slider_part_indicator_eo.c"
 
 /* Efl.Part end */
 
@@ -1490,4 +1490,4 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(elm_slider)
    EFL_UI_SLIDER_DOWN_KNOB_OPS(elm_slider), \
    EFL_UI_SLIDER_MOVE_KNOB_OPS(elm_slider)
 
-#include "elm_slider.eo.c"
+#include "elm_slider_eo.c"

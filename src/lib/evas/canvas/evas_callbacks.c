@@ -1,5 +1,3 @@
-#define EFL_CANVAS_OBJECT_BETA
-#define EVAS_CANVAS_BETA
 
 #include "evas_common_private.h"
 #include "evas_private.h"
@@ -52,23 +50,23 @@ DEFINE_EVAS_CALLBACKS(_legacy_evas_callback_table, EVAS_CALLBACK_LAST,
                       EFL_EVENT_FOCUS_OUT,
                       EFL_GFX_ENTITY_EVENT_SHOW,
                       EFL_GFX_ENTITY_EVENT_HIDE,
-                      EFL_GFX_ENTITY_EVENT_MOVE,
-                      EFL_GFX_ENTITY_EVENT_RESIZE,
-                      EFL_GFX_ENTITY_EVENT_RESTACK,
+                      EFL_GFX_ENTITY_EVENT_POSITION_CHANGED,
+                      EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
+                      EFL_GFX_ENTITY_EVENT_STACKING_CHANGED,
                       EVAS_OBJECT_EVENT_DEL,
                       EFL_EVENT_HOLD,
-                      EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS,
-                      EFL_GFX_IMAGE_EVENT_PRELOAD,
-                      EFL_CANVAS_SCENE_EVENT_FOCUS_IN,
-                      EFL_CANVAS_SCENE_EVENT_FOCUS_OUT,
+                      EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
+                      EFL_GFX_IMAGE_EVENT_IMAGE_PRELOAD,
+                      EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN,
+                      EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT,
                       EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE,
                       EVAS_CANVAS_EVENT_RENDER_FLUSH_POST,
                       EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN,
                       EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_OUT,
-                      EFL_GFX_IMAGE_EVENT_UNLOAD,
+                      EFL_GFX_IMAGE_EVENT_IMAGE_UNLOAD,
                       EFL_CANVAS_SCENE_EVENT_RENDER_PRE,
                       EFL_CANVAS_SCENE_EVENT_RENDER_POST,
-                      EFL_GFX_IMAGE_EVENT_RESIZE,
+                      EFL_GFX_IMAGE_EVENT_IMAGE_RESIZE,
                       EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED,
                       EFL_EVENT_POINTER_AXIS,
                       EVAS_CANVAS_EVENT_VIEWPORT_RESIZE );
@@ -349,6 +347,21 @@ evas_event_callback_call(Evas *eo_e, Evas_Callback_Type type, void *event_info)
    efl_event_callback_legacy_call(eo_e, _legacy_evas_callback_table(type), event_info);
 }
 
+static void
+_evas_callback_legacy_smart_compatibility_do_it(Evas_Object *eo_obj, const Efl_Event_Description *efl_event_desc, void *event_info)
+{
+   if (efl_event_desc == EFL_GFX_ENTITY_EVENT_POSITION_CHANGED)
+     evas_object_smart_callback_call(eo_obj, "move", NULL);
+   else if (efl_event_desc == EFL_GFX_ENTITY_EVENT_SIZE_CHANGED)
+     evas_object_smart_callback_call(eo_obj, "resize", NULL);
+   else if (efl_event_desc == EFL_GFX_ENTITY_EVENT_STACKING_CHANGED)
+     evas_object_smart_callback_call(eo_obj, "restack", NULL);
+   /* this is inverted: the base call is the legacy compat and this is the new event */
+   else if ((efl_event_desc == EFL_GFX_ENTITY_EVENT_SHOW) || (efl_event_desc == EFL_GFX_ENTITY_EVENT_HIDE))
+     efl_event_callback_call(eo_obj, EFL_GFX_ENTITY_EVENT_VISIBILITY_CHANGED, event_info);
+}
+
+
 void
 evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
                                 Evas_Callback_Type type, void *event_info, int event_id,
@@ -412,6 +425,7 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
    e->current_event = type;
 
    efl_event_callback_legacy_call(eo_obj, efl_event_desc, event_info);
+   _evas_callback_legacy_smart_compatibility_do_it(eo_obj, efl_event_desc, event_info);
 
    /* multi events with finger 0 - only for eo callbacks */
    if (type == EVAS_CALLBACK_MOUSE_DOWN)
@@ -782,7 +796,7 @@ _animator_repeater(void *data, const Efl_Event *event)
 {
    Evas_Object_Protected_Data *obj = data;
 
-   efl_event_callback_legacy_call(obj->object, EFL_EVENT_ANIMATOR_TICK, event->info);
+   efl_event_callback_legacy_call(obj->object, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, event->info);
    DBG("Emitting animator tick on %p.", obj->object);
 }
 
@@ -792,24 +806,35 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
    const Efl_Callback_Array_Item_Full *array = event->info;
    Evas_Object_Protected_Data *obj = data;
    Evas_Callback_Type type = EVAS_CALLBACK_LAST;
+   void *gd = NULL;
    int i;
 
    for (i = 0; array[i].desc != NULL; i++)
      {
-        if (obj->layer->evas->gesture_manager)
-          _efl_canvas_gesture_manager_callback_add_hook(obj->layer->evas->gesture_manager, obj->object, array[i].desc);
+        if (obj->layer->evas->gesture_manager &&
+            _efl_canvas_gesture_manager_watches(array[i].desc))
+          {
+             if (!gd) gd = _efl_canvas_gesture_manager_private_data_get(obj->layer->evas->gesture_manager);
 
-        if (array[i].desc == EFL_EVENT_ANIMATOR_TICK)
+             _efl_canvas_gesture_manager_callback_add_hook(gd, obj->object, array[i].desc);
+          }
+
+        if (array[i].desc == EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK)
           {
              if (obj->animator_ref++ > 0) break;
 
-             efl_event_callback_add(obj->layer->evas->evas, EFL_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
+             efl_event_callback_add(obj->layer->evas->evas, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
              DBG("Registering an animator tick on canvas %p for object %p.",
                  obj->layer->evas->evas, obj->object);
           }
         else if ((type = _legacy_evas_callback_type(array[i].desc)) != EVAS_CALLBACK_LAST)
           {
              obj->callback_mask |= (((uint64_t)1) << type);
+          }
+        else if (array[i].desc == EFL_GFX_ENTITY_EVENT_VISIBILITY_CHANGED)
+          {
+             obj->callback_mask |= (((uint64_t)1) << EVAS_CALLBACK_SHOW);
+             obj->callback_mask |= (((uint64_t)1) << EVAS_CALLBACK_HIDE);
           }
      }
 }
@@ -819,6 +844,7 @@ _check_event_catcher_del(void *data, const Efl_Event *event)
 {
    const Efl_Callback_Array_Item_Full *array = event->info;
    Evas_Object_Protected_Data *obj = data;
+   void *gd = NULL;
    int i;
 
    if (!obj->layer ||
@@ -827,14 +853,19 @@ _check_event_catcher_del(void *data, const Efl_Event *event)
 
    for (i = 0; array[i].desc != NULL; i++)
      {
-        if (obj->layer->evas->gesture_manager)
-          _efl_canvas_gesture_manager_callback_del_hook(obj->layer->evas->gesture_manager, obj->object, array[i].desc);
+        if (obj->layer->evas->gesture_manager &&
+            _efl_canvas_gesture_manager_watches(array[i].desc))
+          {
+             if (!gd) gd = _efl_canvas_gesture_manager_private_data_get(obj->layer->evas->gesture_manager);
 
-        if (array[i].desc == EFL_EVENT_ANIMATOR_TICK)
+             _efl_canvas_gesture_manager_callback_del_hook(gd, obj->object, array[i].desc);
+          }
+
+        if (array[i].desc == EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK)
           {
              if ((--obj->animator_ref) > 0) break;
 
-             efl_event_callback_del(obj->layer->evas->evas, EFL_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
+             efl_event_callback_del(obj->layer->evas->evas, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
              DBG("Unregistering an animator tick on canvas %p for object %p.",
                  obj->layer->evas->evas, obj->object);
           }

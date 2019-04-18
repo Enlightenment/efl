@@ -1,27 +1,27 @@
 import eina_types;
 
-struct Eio.Data
+struct @beta Eio.Data
 {
   [[A structure to handle arbitrary data to be sent over Promises.]]
   data: void_ptr; [[Private data pointer]]
   size: uint; [[Size of private data]]
 }
 
-function EflIoPath {
+function @beta EflIoPath {
   [[EflIoPath function]]
   params {
      @in paths: array<string>; [[Accessor to an array of path.]]
   }
 };
 
-function EflIoDirectInfo {
+function @beta EflIoDirectInfo {
   [[EflIoDirectInfo function]]
   params {
      @in entries: array<ptr(Eina.File_Direct_Info)>; [[Accessor to an array of info.]]
   }
 };
 
-class Efl.Io.Manager extends Efl.Loop_Consumer
+class @beta Efl.Io.Manager extends Efl.Loop_Consumer
 {
   [[Class representing an asynchronous file operation.]]
 
@@ -109,7 +109,7 @@ class Efl.Io.Manager extends Efl.Loop_Consumer
       [[Closes an open Eina.File.]]
       params {
         @in file: ptr(Eina.File); [[Eina file handle]]
-        // Here we're just interested whether the promise was fullfilled or not. No value needed.
+        // Here we're just interested whether the promise was fulfilled or not. No value needed.
       }
       return: future<int> @owned; [[Close return code]]
     }

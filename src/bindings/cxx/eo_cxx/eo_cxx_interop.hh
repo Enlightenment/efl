@@ -34,6 +34,10 @@ template <>
 struct in_traits<eina::stringshare> { typedef eina::stringshare type; };
 template <>
 struct in_traits<eina::stringshare const> { typedef eina::stringshare const type; };
+template <>
+struct in_traits<efl::eina::strbuf> { typedef efl::eina::strbuf type; };
+template <>
+struct in_traits<efl::eina::strbuf const> { typedef efl::eina::strbuf const type; };
 template <typename T>
 struct in_traits<T&> { typedef T& type; };
 template <typename T>
@@ -531,6 +535,10 @@ inline const char* convert_to_c_impl(efl::eina::stringshare x, tag<const char*, 
 {
    return eina_stringshare_ref(x.c_str());
 }
+inline Eina_Strbuf* convert_to_c_impl(efl::eina::strbuf& x, tag<Eina_Strbuf*, efl::eina::strbuf, false>)
+{
+   return x.native_handle();
+}
 template <typename T, typename U, typename Deleter>
 T* convert_to_c_impl(std::unique_ptr<U, Deleter>& v, tag<T*, std::unique_ptr<U, Deleter>>)
 {
@@ -698,6 +706,10 @@ inline efl::eina::value convert_to_return(Eina_Value* value, tag<Eina_Value*, ef
 inline efl::eina::value_view convert_to_return(Eina_Value* value, tag<Eina_Value*, efl::eina::value_view>)
 {
   return efl::eina::value_view{value};
+}
+inline efl::eina::value_view convert_to_return(Eina_Value const* value, tag<Eina_Value const*, efl::eina::value_view const>)
+{
+  return efl::eina::value_view{const_cast<Eina_Value*>(value)};
 }
 template <typename T, typename U>
 T convert_to_return(U* value, tag<T, U*>, typename std::enable_if<is_range<T>::value || is_container<T>::value>::type* = 0)

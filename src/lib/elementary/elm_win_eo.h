@@ -1,3 +1,6 @@
+#ifndef ELM_WIN_EO_H
+# define ELM_WIN_EO_H
+
 /**
  * @ingroup Elm_Win
  *
@@ -8,7 +11,7 @@
 
 EAPI void elm_win_autodel_set(Evas_Object *obj, Eina_Bool autodel);
 EAPI Eina_Bool elm_win_autodel_get(const Evas_Object *obj);
-
+#ifdef EFL_BETA_API_SUPPORT
 /**
  * @brief Set the window's autodel state.
  *
@@ -57,3 +60,6 @@ efl_ui_win_autodel_get(const Efl_Ui_Win *obj)
 /**
  * @}
  */
+#endif
+
+#endif

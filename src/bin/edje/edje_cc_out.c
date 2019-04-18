@@ -1432,7 +1432,9 @@ data_write_vectors(Eet_File *ef, int *vector_num)
              if (!f) continue;
              eina_file_close(f);
 
-             if (!efl_file_set(vg, eina_strbuf_string_get(buf), NULL))
+             if (efl_file_set(vg, eina_strbuf_string_get(buf)))
+               error_and_abort(ef, "Failed to parse svg : %s", vector->entry);
+             if (efl_file_load(vg))
                error_and_abort(ef, "Failed to parse svg : %s", vector->entry);
 
              eina_strbuf_reset(buf);
@@ -2190,7 +2192,8 @@ data_thread_script(void *data, Ecore_Thread *thread EINA_UNUSED)
         return;
      }
 
-   fseek(f, 0, SEEK_END);
+   if (fseek(f, 0, SEEK_END) < 0)
+     ERR("Error seeking");
    size = ftell(f);
    rewind(f);
 

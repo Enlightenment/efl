@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+#define EFL_LOOP_PROTECTED
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -14,8 +16,6 @@
 #include "ecore_private.h"
 
 #include "ecore_main_common.h"
-
-extern char **environ;
 
 typedef struct _Efl_Loop_Promise_Simple_Data Efl_Loop_Promise_Simple_Data;
 typedef struct _Efl_Internal_Promise Efl_Internal_Promise;
@@ -30,38 +30,13 @@ struct _Efl_Loop_Promise_Simple_Data
 };
 GENERIC_ALLOC_SIZE_DECLARE(Efl_Loop_Promise_Simple_Data);
 
-EOLIAN static Efl_Loop_Message_Handler *
-_efl_loop_message_handler_get(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Loop *loop, const Efl_Class *klass)
-{
-   Message_Handler mh = { 0 }, *mh2;
-   Efl_Loop_Data *ld = efl_data_scope_get(loop, EFL_LOOP_CLASS);
-   unsigned int i, n;
-
-   if (!ld) return NULL;
-   n = eina_inarray_count(ld->message_handlers);
-   for (i = 0; i < n; i++)
-     {
-        mh2 = eina_inarray_nth(ld->message_handlers, i);
-        if (mh2->klass == klass) return mh2->handler;
-     }
-   mh.klass = klass;
-   mh.handler = efl_add(klass, loop);
-   eina_inarray_push(ld->message_handlers, &mh);
-   return mh.handler;
-}
-
 Eo            *_mainloop_singleton = NULL;
 Efl_Loop_Data *_mainloop_singleton_data = NULL;
-
-extern Eina_Lock   _environ_lock;
-static Eina_List  *_environ_strings_set = NULL;
-
-static void _clean_old_environ(void);
 
 EAPI Eo *
 efl_main_loop_get(void)
 {
-   return efl_app_main_get(EFL_APP_CLASS);
+   return efl_app_main_get();
 }
 
 EOLIAN static void
@@ -173,6 +148,7 @@ efl_loop_exit_code_process(Eina_Value *value)
              out = stderr;
           }
         fprintf(out, "%s\n", msg);
+        free(msg);
      }
    return r;
 }
@@ -216,7 +192,7 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
                   pd->poll_high = efl_add
                     (EFL_LOOP_TIMER_CLASS, event->object,
                      efl_event_callback_add(efl_added,
-                                            EFL_LOOP_TIMER_EVENT_TICK,
+                                            EFL_LOOP_TIMER_EVENT_TIMER_TICK,
                                             _poll_trigger,
                                             EFL_LOOP_EVENT_POLL_HIGH),
                      efl_loop_timer_interval_set(efl_added, 1.0 / 60.0));
@@ -230,7 +206,7 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
                   pd->poll_medium = efl_add
                     (EFL_LOOP_TIMER_CLASS, event->object,
                      efl_event_callback_add(efl_added,
-                                            EFL_LOOP_TIMER_EVENT_TICK,
+                                            EFL_LOOP_TIMER_EVENT_TIMER_TICK,
                                             _poll_trigger,
                                             EFL_LOOP_EVENT_POLL_MEDIUM),
                      efl_loop_timer_interval_set(efl_added, 6));
@@ -244,7 +220,7 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
                   pd->poll_low = efl_add
                     (EFL_LOOP_TIMER_CLASS, event->object,
                      efl_event_callback_add(efl_added,
-                                            EFL_LOOP_TIMER_EVENT_TICK,
+                                            EFL_LOOP_TIMER_EVENT_TIMER_TICK,
                                             _poll_trigger,
                                             EFL_LOOP_EVENT_POLL_LOW),
                      efl_loop_timer_interval_set(efl_added, 66));
@@ -311,11 +287,11 @@ _efl_loop_efl_object_constructor(Eo *obj, Efl_Loop_Data *pd)
 
    pd->loop_time = ecore_time_get();
    pd->providers = eina_hash_pointer_new(EINA_FREE_CB(efl_unref));
-   pd->message_handlers = eina_inarray_new(sizeof(Message_Handler), 32);
    pd->epoll_fd = -1;
    pd->timer_fd = -1;
-   pd->future_message_handler = efl_loop_message_handler_get
-     (EFL_LOOP_CLASS, obj, EFL_LOOP_MESSAGE_FUTURE_HANDLER_CLASS);
+   pd->future_message_handler = efl_add(EFL_LOOP_MESSAGE_FUTURE_HANDLER_CLASS, obj);
+   efl_loop_register(obj, EFL_LOOP_MESSAGE_FUTURE_HANDLER_CLASS, pd->future_message_handler);
+
    return obj;
 }
 
@@ -334,12 +310,6 @@ _efl_loop_efl_object_invalidate(Eo *obj, Efl_Loop_Data *pd)
    pd->poll_medium = NULL;
    pd->poll_high = NULL;
 
-   if (pd->message_handlers)
-     {
-        eina_inarray_free(pd->message_handlers);
-        pd->message_handlers = NULL;
-     }
-
    // After invalidate, it won't be possible to parent to the singleton anymore
    if (obj == _mainloop_singleton)
      {
@@ -352,14 +322,6 @@ EOLIAN static void
 _efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
 {
    pd->future_message_handler = NULL;
-
-   eina_lock_take(&_environ_lock);
-   _clean_old_environ();
-   _environ_strings_set = eina_list_free(_environ_strings_set);
-   pd->env.environ_ptr = NULL;
-   free(pd->env.environ_copy);
-   pd->env.environ_copy = NULL;
-   eina_lock_release(&_environ_lock);
 
    efl_destructor(efl_super(obj, EFL_LOOP_CLASS));
 }
@@ -397,17 +359,22 @@ _efl_loop_arguments_cleanup(Eo *o EINA_UNUSED, void *data, const Eina_Future *de
 EAPI void
 ecore_loop_arguments_send(int argc, const char **argv)
 {
-   Eina_Array *arga;
+   Eina_Array *arga, *cml;
    int i = 0;
 
-   efl_task_arg_reset(efl_main_loop_get());
    arga = eina_array_new(argc);
+   cml = eina_array_new(argc);
    for (i = 0; i < argc; i++)
      {
-        eina_array_push(arga, eina_stringshare_add(argv[i]));
-        efl_task_arg_append(efl_main_loop_get(), argv[i]);
+        Eina_Stringshare *arg;
+
+        arg = eina_stringshare_add(argv[i]);
+        eina_array_push(arga, arg);
+        arg = eina_stringshare_add(argv[i]);
+        eina_array_push(cml, arg);
      }
 
+   efl_core_command_line_command_array_set(efl_app_main_get(), cml);
    efl_future_then(efl_main_loop_get(), efl_loop_job(efl_main_loop_get()),
                    .success = _efl_loop_arguments_send,
                    .free = _efl_loop_arguments_cleanup,
@@ -526,7 +493,7 @@ _efl_loop_timeout(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, double tim)
    d->timer = efl_add(EFL_LOOP_TIMER_CLASS, obj,
                       efl_loop_timer_interval_set(efl_added, tim),
                       efl_event_callback_add(efl_added,
-                                             EFL_LOOP_TIMER_EVENT_TICK,
+                                             EFL_LOOP_TIMER_EVENT_TIMER_TICK,
                                              _efl_loop_timeout_done, d),
                       efl_event_callback_add(efl_added,
                                              EFL_EVENT_DEL,
@@ -669,178 +636,6 @@ efl_build_version_set(int vmaj, int vmin, int vmic, int revision,
    free((char *)_app_efl_version.build_id);
    _app_efl_version.flavor = flavor ? strdup(flavor) : NULL;
    _app_efl_version.build_id = build_id ? strdup(build_id) : NULL;
-}
-
-static void
-_env_sync(Efl_Loop_Data *pd, Efl_Task_Data *td)
-{
-   Eina_Bool update = EINA_FALSE;
-   unsigned int count = 0, i;
-   char **p;
-
-   // count environs
-   if (environ)
-     {
-        for (p = environ; *p; p++) count++;
-     }
-   // cached env ptr is the same... so look deeper if things changes
-   if (pd->env.environ_ptr == environ)
-     {
-        // if we have no cached copy then update
-        if (!pd->env.environ_copy) update = EINA_TRUE;
-        else
-          {
-             // if any ptr in the cached copy doesnt match environ ptr
-             // then update
-             for (i = 0; i <= count; i++)
-               {
-                  if (pd->env.environ_copy[i] != environ[i])
-                    {
-                       update = EINA_TRUE;
-                       break;
-                    }
-               }
-          }
-     }
-   // cached env ptr changed so we need to update anyway
-   else update = EINA_TRUE;
-   if (!update) return;
-   // things changed - do the update
-   pd->env.environ_ptr = environ;
-   free(pd->env.environ_copy);
-   pd->env.environ_copy = NULL;
-   if (count > 0)
-     {
-        pd->env.environ_copy = malloc((count + 1) * sizeof(char *));
-        if (pd->env.environ_copy)
-          {
-             for (i = 0; i <= count; i++)
-               pd->env.environ_copy[i] = environ[i];
-          }
-     }
-   // clear previous env hash and rebuild it from environ so it matches
-   if (td->env) eina_hash_free(td->env);
-   td->env = eina_hash_string_superfast_new
-     ((Eina_Free_Cb)eina_stringshare_del);
-   for (i = 0; i < count; i++)
-     {
-        char *var;
-        const char *value;
-
-        if (!environ[i]) continue;
-        if ((value = strchr(environ[i], '=')))
-          {
-             if (*value)
-               {
-                  if ((var = malloc(value - environ[i] + 1)))
-                    {
-                       strncpy(var, environ[i], value - environ[i]);
-                       var[value - environ[i]] = 0;
-                       value++;
-                       eina_hash_add(td->env, var,
-                                     eina_stringshare_add(value));
-                       free(var);
-                    }
-               }
-          }
-     }
-}
-
-static void
-_clean_old_environ(void)
-{
-   char **p;
-   const char *str;
-   Eina_List *l, *ll;
-   Eina_Bool ok;
-
-   // clean up old strings no longer in environ
-   EINA_LIST_FOREACH_SAFE(_environ_strings_set, l, ll, str)
-     {
-        ok = EINA_FALSE;
-        for (p = environ; *p; p++)
-          {
-             if (*p == str)
-               {
-                  ok = EINA_TRUE;
-                  break;
-               }
-          }
-        if (!ok)
-          {
-             _environ_strings_set =
-               eina_list_remove_list(_environ_strings_set, l);
-             eina_stringshare_del(str);
-          }
-     }
-}
-
-EOLIAN static void
-_efl_loop_efl_task_env_set(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED, const char *var, const char *value)
-{
-   char *str, *str2;
-   size_t varlen, vallen = 0;
-
-   if (!var) return;
-
-   Efl_Task_Data *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
-   if (!td) return;
-
-   varlen = strlen(var);
-   if (value) vallen = strlen(value);
-
-   str = malloc(varlen + 1 + vallen + 1);
-   if (!str) return;
-   strcpy(str, var);
-   str[varlen] = '=';
-   if (value) strcpy(str + varlen + 1, value);
-   else str[varlen + 1] = 0;
-
-   str2 = (char *)eina_stringshare_add(str);
-   free(str);
-   if (!str2) return;
-
-   eina_lock_take(&_environ_lock);
-   if (putenv(str2) != 0)
-     {
-        eina_stringshare_del(str2);
-        eina_lock_release(&_environ_lock);
-        return;
-     }
-   _environ_strings_set = eina_list_append(_environ_strings_set, str2);
-   eina_lock_release(&_environ_lock);
-
-   efl_task_env_set(efl_super(obj, EFL_LOOP_CLASS), var, value);
-
-   eina_lock_take(&_environ_lock);
-   _clean_old_environ();
-   eina_lock_release(&_environ_lock);
-}
-
-EOLIAN static const char *
-_efl_loop_efl_task_env_get(const Eo *obj, Efl_Loop_Data *pd, const char *var)
-{
-   Efl_Task_Data *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
-   if (!td) return NULL;
-   eina_lock_take(&_environ_lock);
-   _env_sync(pd, td);
-   eina_lock_release(&_environ_lock);
-   return efl_task_env_get(efl_super(obj, EFL_LOOP_CLASS), var);
-}
-
-EOLIAN static void
-_efl_loop_efl_task_env_reset(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd)
-{
-   Efl_Task_Data *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
-   if (!td) return;
-   eina_lock_take(&_environ_lock);
-#ifdef HAVE_CLEARENV
-   clearenv();
-#else
-   environ = NULL;
-#endif
-   _env_sync(pd, td);
-   eina_lock_release(&_environ_lock);
 }
 
 EOLIAN static Eina_Future *

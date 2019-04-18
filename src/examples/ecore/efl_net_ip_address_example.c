@@ -1,5 +1,4 @@
 #define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
 #ifdef HAVE_CONFIG_H
 # include "config.h"
 #endif
@@ -43,13 +42,13 @@ _print_ip_addr_info(const Eo *o)
      {
         struct sockaddr_in *a = (struct sockaddr_in *)sa;
         inet_ntop(sa->sa_family, &a->sin_addr, buf, sizeof(buf));
-        port = ntohs(a->sin_port);
+        port = eina_ntohs(a->sin_port);
      }
    else
      {
         struct sockaddr_in6 *a = (struct sockaddr_in6 *)sa;
         inet_ntop(sa->sa_family, &a->sin6_addr, buf, sizeof(buf));
-        port = ntohs(a->sin6_port);
+        port = eina_ntohs(a->sin6_port);
      }
 
    printf("INFO:   - sockaddr=%p (%d, '%s', %u)\n",
@@ -123,7 +122,7 @@ main(int argc, char *argv[])
    for (i = 1; i < argc; i++)
      {
         const char *address = argv[i];
-        Eo *o = efl_net_ip_address_parse(EFL_NET_IP_ADDRESS_CLASS, address);
+        Eo *o = efl_net_ip_address_parse( address);
         if (o)
           {
              _print_ip_addr_info(o);
@@ -131,7 +130,7 @@ main(int argc, char *argv[])
           }
         else
           {
-             Eina_Future *f = efl_net_ip_address_resolve(EFL_NET_IP_ADDRESS_CLASS, address, 0, 0);
+             Eina_Future *f = efl_net_ip_address_resolve( address, 0, 0);
              eina_future_then(f, _resolved, address);
              printf("INFO: %s is not numeric, resolving...\n", address);
              resolving = eina_list_append(resolving, f);

@@ -4,7 +4,7 @@ interface Efl.Layout.Group
 {
    [[APIs representing static data from a group in an edje file.
 
-     @since 1.21
+    @since 1.22
    ]]
    methods {
       @property group_size_min {
@@ -89,7 +89,6 @@ interface Efl.Layout.Group
               Warning: Do not confuse this call with edje_file_data_get(), which
               queries for a global EDC data field on an EDC declaration file.
             ]]
-            legacy: edje_object_data_get;
          }
          keys {
             key: string; [[The data field's key string]]

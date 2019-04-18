@@ -1,25 +1,21 @@
 import eina_types;
 import efl_net_http_types;
 
-enum Efl.Net.Dialer_Websocket_Streaming_Mode {
+enum @beta Efl.Net.Dialer_Websocket_Streaming_Mode {
     [[How to map WebSocket to EFL I/O Interfaces.
-
-      @since 1.19
     ]]
     disabled, [[@Efl.Io.Writer.write and @Efl.Io.Reader.read will fail by returning ENOSTR]]
     binary, [[@Efl.Io.Writer.write will result in @Efl.Net.Dialer_Websocket.binary_send]]
     text, [[@Efl.Io.Writer.write will result in @Efl.Net.Dialer_Websocket.text_send]]
 }
 
-enum Efl.Net.Dialer_Websocket_Close_Reason {
+enum @beta Efl.Net.Dialer_Websocket_Close_Reason {
     [[Registered reasons for the CLOSE (opcode=0x8).
 
       These are the well known reasons, with some ranges being defined
       using "_start" and "end" suffixes.
 
       See https://tools.ietf.org/html/rfc6455#section-7.4.1
-
-      @since 1.19
     ]]
     normal = 1000, [[Indicates a normal closure, meaning that the purpose for which the connection was established has been fulfilled.]]
     going_away = 1001, [[Indicates that an endpoint is "going away", such as a server going down or a browser having navigated away from a page.]]
@@ -38,16 +34,14 @@ enum Efl.Net.Dialer_Websocket_Close_Reason {
     private_end = 4999, [[Applications can use range 4000-4999]]
 }
 
-struct Efl.Net.Dialer_Websocket_Closed_Reason {
+struct @beta Efl.Net.Dialer_Websocket_Closed_Reason {
     [[Close reason event payload.
-
-      @since 1.19
     ]]
     reason: Efl.Net.Dialer_Websocket_Close_Reason; [[Closing reason]]
     message: string; [[Textual closing reason message]]
 }
 
-class Efl.Net.Dialer_Websocket extends Efl.Loop_Consumer implements Efl.Net.Dialer {
+class @beta Efl.Net.Dialer_Websocket extends Efl.Loop_Consumer implements Efl.Net.Dialer {
     [[WebSocket Dialer (Client).
 
       The WebSocket Protocol (https://tools.ietf.org/html/rfc6455) is
@@ -74,8 +68,6 @@ class Efl.Net.Dialer_Websocket extends Efl.Loop_Consumer implements Efl.Net.Dial
        - socks5://proxyserver (default port 1080)
        - socks4a://proxyserver:port (SOCKSv4 and let socks server to resolve domain)
        - socks4://proxyserver:port (SOCKSv4)
-
-      @since 1.19
     ]]
 
     methods {
@@ -325,7 +317,7 @@ class Efl.Net.Dialer_Websocket extends Efl.Loop_Consumer implements Efl.Net.Dial
         Efl.Net.Socket.address_remote { get; set; }
         Efl.Io.Reader.read;
         Efl.Io.Reader.can_read { get; set; }
-        Efl.Io.Reader.eos { get; }
+        Efl.Io.Reader.eos { get; set; }
         Efl.Io.Writer.write;
         Efl.Io.Writer.can_write { get; set; }
         Efl.Io.Closer.close;

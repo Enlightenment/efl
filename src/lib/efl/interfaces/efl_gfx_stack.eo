@@ -3,7 +3,10 @@ const Efl.Gfx.Stack_Layer_Max: short = 32767;  [[top-most layer number]]
 
 interface Efl.Gfx.Stack
 {
-   [[Efl graphics stack interface]]
+   [[Efl graphics stack interface
+
+     @since 1.22
+   ]]
    event_prefix: efl_gfx_entity;
    methods {
       @property layer {
@@ -32,7 +35,7 @@ interface Efl.Gfx.Stack
          }
          values {
             l: short; [[The number of the layer to place the object on.
-                        Must be between #EFL_GFX_STACK_LAYER_MIN and #EFL_GFX_STACK_LAYER_MAX.]]
+                        Must be between @Efl.Gfx.Stack_Layer_Min and @Efl.Gfx.Stack_Layer_Max.]]
          }
       }
       @property below {
@@ -43,8 +46,8 @@ interface Efl.Gfx.Stack
               objects on layers below the one $obj is placed at.
 
               See also @.layer.get(), @.layer.set() and @.below.get()]]
-            return: Efl.Gfx.Stack @warn_unused; [[The #Efl_Gfx_Stack directly below $obj, if any,
-                                                    or $null, if none]]
+            return: Efl.Gfx.Stack @warn_unused; [[The @Efl.Gfx.Stack object directly below $obj, if any,
+                                                    or $null, if none.]]
          }
       }
       @property above {
@@ -55,8 +58,8 @@ interface Efl.Gfx.Stack
               objects on layers above the one $obj is placed at.
 
               See also @.layer.get(), @.layer.set() and @.below.get()]]
-            return: Efl.Gfx.Stack @warn_unused; [[The #Efl_Gfx_Stack directly below $obj, if any,
-                                                    or $null, if none]]
+            return: Efl.Gfx.Stack @warn_unused; [[The @Efl.Gfx.Stack object directly below $obj, if any,
+                                                    or $null, if none.]]
          }
       }
       stack_below {
@@ -84,13 +87,13 @@ interface Efl.Gfx.Stack
             @in below: Efl.Gfx.Stack @nonull; [[The object below which to stack]]
          }
       }
-      raise {
+      raise_to_top {
          [[Raise $obj to the top of its layer.
 
            $obj will, then, be the highest one in the layer it belongs
            to. Object on other layers won't get touched.
 
-           See also @.stack_above(), @.stack_below() and @.lower()]]
+           See also @.stack_above(), @.stack_below() and @.lower_to_bottom()]]
 
       }
       stack_above {
@@ -118,17 +121,17 @@ interface Efl.Gfx.Stack
             @in above: Efl.Gfx.Stack @nonull; [[The object above which to stack]]
          }
       }
-      lower {
+      lower_to_bottom {
          [[Lower $obj to the bottom of its layer.
 
            $obj will, then, be the lowest one in the layer it belongs
            to. Objects on other layers won't get touched.
 
-           See also @.stack_above(), @.stack_below() and @.raise() ]]
+           See also @.stack_above(), @.stack_below() and @.raise_to_top() ]]
 
       }
    }
    events {
-      restack: void; [[Object stacking was changed.]]
+      stacking,changed: void; [[Object stacking was changed.]]
    }
 }

@@ -1,5 +1,6 @@
 #include "Eo.h"
 #include "Eina.h"
+#include "Ecore.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -21,6 +22,92 @@
 #  define EAPI
 # endif
 #endif /* ! _WIN32 */
+
+typedef void (*Efl_Mono_Free_GCHandle_Cb)(void *gchandle);
+typedef void (*Efl_Mono_Remove_Events_Cb)(Eo *obj, void *gchandle);
+
+static Efl_Mono_Free_GCHandle_Cb _efl_mono_free_gchandle_call = NULL;
+static Efl_Mono_Remove_Events_Cb _efl_mono_remove_events_call = NULL;
+
+EAPI void efl_mono_gchandle_callbacks_set(Efl_Mono_Free_GCHandle_Cb free_gchandle_cb, Efl_Mono_Remove_Events_Cb remove_events_cb)
+{
+    _efl_mono_free_gchandle_call = free_gchandle_cb;
+    _efl_mono_remove_events_call = remove_events_cb;
+}
+
+EAPI void efl_mono_native_dispose(Eo *obj, void* gchandle)
+{
+   if (gchandle) _efl_mono_remove_events_call(obj, gchandle);
+   efl_unref(obj);
+   if (gchandle) _efl_mono_free_gchandle_call(gchandle);
+}
+
+typedef struct _Efl_Mono_Native_Dispose_Data
+{
+   Eo *obj;
+   void *gchandle;
+} Efl_Mono_Native_Dispose_Data;
+
+static void _efl_mono_native_dispose_cb(void *data)
+{
+   Efl_Mono_Native_Dispose_Data *dd = data;
+   efl_mono_native_dispose(dd->obj, dd->gchandle);
+   free(dd);
+}
+
+EAPI void efl_mono_thread_safe_native_dispose(Eo *obj, void* gchandle)
+{
+   Efl_Mono_Native_Dispose_Data *dd = malloc(sizeof(Efl_Mono_Native_Dispose_Data));
+   dd->obj = obj;
+   dd->gchandle = gchandle;
+   ecore_main_loop_thread_safe_call_async(_efl_mono_native_dispose_cb, dd);
+}
+
+static void _efl_mono_unref_cb(void *obj)
+{
+   efl_unref(obj);
+}
+
+EAPI void efl_mono_thread_safe_efl_unref(Eo* obj)
+{
+   ecore_main_loop_thread_safe_call_async(_efl_mono_unref_cb, obj);
+}
+
+EAPI void efl_mono_thread_safe_free_cb_exec(Eina_Free_Cb free_cb, void* cb_data)
+{
+   ecore_main_loop_thread_safe_call_async(free_cb, cb_data);
+}
+
+static void _efl_mono_list_free_cb(void *l)
+{
+   eina_list_free(l);
+}
+
+EAPI void efl_mono_thread_safe_eina_list_free(Eina_List* list)
+{
+   ecore_main_loop_thread_safe_call_async(_efl_mono_list_free_cb, list);
+}
+
+typedef struct _Efl_Mono_Promise_Reject_Data
+{
+   Eina_Promise *promise;
+   Eina_Error err;
+} Efl_Mono_Promise_Reject_Data;
+
+static void _efl_mono_promise_reject_cb(void *data)
+{
+   Efl_Mono_Promise_Reject_Data *d = data;
+   eina_promise_reject(d->promise, d->err);
+   free(d);
+}
+
+EAPI void efl_mono_thread_safe_promise_reject(Eina_Promise *p, Eina_Error err)
+{
+   Efl_Mono_Promise_Reject_Data *d = malloc(sizeof(Efl_Mono_Promise_Reject_Data));
+   d->promise = p;
+   d->err = err;
+   ecore_main_loop_thread_safe_call_async(_efl_mono_promise_reject_cb, d);
+}
 
 EAPI void *efl_mono_native_alloc(unsigned int size)
 {
@@ -81,7 +168,7 @@ EAPI Eina_Free_Cb efl_mono_native_free_addr_get()
 
 EAPI Eina_Free_Cb efl_mono_native_efl_unref_addr_get()
 {
-    return (Eina_Free_Cb)efl_unref;
+    return (Eina_Free_Cb)efl_mono_thread_safe_efl_unref;
 }
 
 // Iterator Wrapper //
@@ -348,6 +435,63 @@ EINA_SET_WRAPPER(float, float)
 EINA_SET_WRAPPER(double, double)
 EINA_SET_WRAPPER(string, const char *)
 EINA_SET_WRAPPER(ptr, void *)
+
+#define EINA_CONTAINER_SET_WRAPPER(N, T) EAPI Eina_Bool eina_value_container_set_wrapper_##N(Eina_Value *value, int i, T new_value) \
+{ \
+    const Eina_Value_Type *tp = eina_value_type_get(value); \
+    if (tp == EINA_VALUE_TYPE_ARRAY) \
+        return eina_value_array_set(value, i, new_value); \
+    else if (tp == EINA_VALUE_TYPE_LIST) \
+        return eina_value_list_set(value, i, new_value); \
+    else \
+        return EINA_FALSE; \
+}
+
+EINA_CONTAINER_SET_WRAPPER(char, char)
+EINA_CONTAINER_SET_WRAPPER(uchar, unsigned char)
+EINA_CONTAINER_SET_WRAPPER(short, short)
+EINA_CONTAINER_SET_WRAPPER(ushort, unsigned short)
+EINA_CONTAINER_SET_WRAPPER(int, int)
+EINA_CONTAINER_SET_WRAPPER(uint, unsigned int)
+EINA_CONTAINER_SET_WRAPPER(long, long)
+EINA_CONTAINER_SET_WRAPPER(ulong, unsigned long)
+EINA_CONTAINER_SET_WRAPPER(float, float)
+EINA_CONTAINER_SET_WRAPPER(double, double)
+EINA_CONTAINER_SET_WRAPPER(string, const char *)
+EINA_CONTAINER_SET_WRAPPER(ptr, void *)
+
+#define EINA_CONTAINER_APPEND_WRAPPER(N, T) EAPI Eina_Bool eina_value_container_append_wrapper_##N(Eina_Value *value, T new_value) \
+{ \
+    const Eina_Value_Type *tp = eina_value_type_get(value); \
+    if (tp == EINA_VALUE_TYPE_ARRAY) \
+        return eina_value_array_append(value, new_value); \
+    else if (tp == EINA_VALUE_TYPE_LIST) \
+        return eina_value_list_append(value, new_value); \
+    else \
+        return EINA_FALSE; \
+}
+
+EINA_CONTAINER_APPEND_WRAPPER(char, char)
+EINA_CONTAINER_APPEND_WRAPPER(uchar, unsigned char)
+EINA_CONTAINER_APPEND_WRAPPER(short, short)
+EINA_CONTAINER_APPEND_WRAPPER(ushort, unsigned short)
+EINA_CONTAINER_APPEND_WRAPPER(int, int)
+EINA_CONTAINER_APPEND_WRAPPER(uint, unsigned int)
+EINA_CONTAINER_APPEND_WRAPPER(long, long)
+EINA_CONTAINER_APPEND_WRAPPER(ulong, unsigned long)
+EINA_CONTAINER_APPEND_WRAPPER(float, float)
+EINA_CONTAINER_APPEND_WRAPPER(double, double)
+EINA_CONTAINER_APPEND_WRAPPER(string, const char *)
+EINA_CONTAINER_APPEND_WRAPPER(ptr, void *)
+
+EAPI void eina_value_container_get_wrapper(const Eina_Value *value, int i, void *output)
+{
+    const Eina_Value_Type *tp = eina_value_type_get(value);
+    if (tp == EINA_VALUE_TYPE_ARRAY)
+        eina_value_array_get(value, i, output);
+    else if (tp == EINA_VALUE_TYPE_LIST)
+        eina_value_list_get(value, i, output);
+}
 
 EAPI Eina_Bool eina_value_setup_wrapper(Eina_Value *value,
                                    const Eina_Value_Type *type)

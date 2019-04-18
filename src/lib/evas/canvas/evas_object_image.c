@@ -283,7 +283,7 @@ _evas_image_init_set(const Eina_File *f, const char *key,
           }
         ENFN->image_free(ENC, o->engine_data);
      }
-   o->load_error = EVAS_LOAD_ERROR_NONE;
+   o->load_error = EFL_GFX_IMAGE_LOAD_ERROR_NONE;
    lo->emile.scale_down_by = o->load_opts->scale_down_by;
    lo->emile.dpi = o->load_opts->dpi;
    lo->emile.w = o->load_opts->w;
@@ -340,8 +340,8 @@ _evas_image_done_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Dat
      }
    else
      {
-        if (o->load_error == EVAS_LOAD_ERROR_NONE)
-          o->load_error = EVAS_LOAD_ERROR_GENERIC;
+        if (o->load_error == EFL_GFX_IMAGE_LOAD_ERROR_NONE)
+          o->load_error = EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
 
         EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
         {
@@ -709,6 +709,8 @@ _efl_canvas_image_internal_efl_gfx_buffer_buffer_update_add(Eo *eo_obj, Evas_Ima
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Eina_Rectangle *r;
+   Eo *eo_obj2;
+   Eina_List *l;
    int x, y, w, h;
    int cnt;
 
@@ -767,6 +769,12 @@ _efl_canvas_image_internal_efl_gfx_buffer_buffer_update_add(Eo *eo_obj, Evas_Ima
 
    o->changed = EINA_TRUE;
    evas_object_change(eo_obj, obj);
+
+   EINA_LIST_FOREACH(obj->proxy->proxies, l, eo_obj2)
+     {
+        Evas_Object_Protected_Data *obj2 = efl_data_scope_get(eo_obj2, EFL_CANVAS_OBJECT_CLASS);
+        evas_object_change(eo_obj2, obj2);
+     }
 }
 
 EOLIAN static void
@@ -854,11 +862,17 @@ _efl_canvas_image_internal_efl_gfx_image_ratio_get(const Eo *eo_obj EINA_UNUSED,
    return (double)o->cur->image.w / (double)o->cur->image.h;
 }
 
+EOLIAN static Eina_Error
+_efl_canvas_image_internal_efl_gfx_image_image_load_error_get(const Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+{
+   return o->load_error;
+}
+
 EOLIAN static Eina_Bool
-_efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, const char *file, const char *key, const char *flags)
+_efl_canvas_image_internal_efl_file_save_save(const Eo *eo_obj, Evas_Image_Data *o, const char *file, const char *key, const Efl_File_Save_Info *info)
 {
    int quality = 80, compress = 9, ok = 0;
-   char *encoding = NULL;
+   const char *encoding = NULL;
    Image_Entry *ie;
    Evas_Colorspace cspace = EVAS_COLORSPACE_ARGB8888;
    Evas_Colorspace want_cspace = EVAS_COLORSPACE_ARGB8888;
@@ -883,46 +897,31 @@ _efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, c
 
    cspace = ENFN->image_file_colorspace_get(ENC, pixels);
    want_cspace = cspace;
-
-   if (flags)
+   if (info)
      {
-        const char *ext;
-        char *p, *pp;
-        char *tflags;
+        encoding = info->encoding;
+        quality = info->quality;
+        compress = info->compression;
+     }
 
-        tflags = alloca(strlen(flags) + 1);
-        strcpy(tflags, flags);
-        p = tflags;
-        while (p)
+   if (encoding)
+     {
+        const char *ext = strrchr(file, '.');
+        if (ext && !strcasecmp(ext, ".tgv"))
           {
-             pp = strchr(p, ' ');
-             if (pp) *pp = 0;
-             sscanf(p, "quality=%4i", &quality);
-             sscanf(p, "compress=%4i", &compress);
-             sscanf(p, "encoding=%ms", &encoding);
-             if (pp) p = pp + 1;
-             else break;
-          }
-
-        if (encoding)
-          {
-             ext = strrchr(file, '.');
-             if (ext && !strcasecmp(ext, ".tgv"))
+             if (!strcmp(encoding, "auto"))
+               want_cspace = cspace;
+             else if (!strcmp(encoding, "etc1"))
+               want_cspace = EVAS_COLORSPACE_ETC1;
+             else if (!strcmp(encoding, "etc2"))
                {
-                  if (!strcmp(encoding, "auto"))
-                    want_cspace = cspace;
-                  else if (!strcmp(encoding, "etc1"))
-                    want_cspace = EVAS_COLORSPACE_ETC1;
-                  else if (!strcmp(encoding, "etc2"))
-                    {
-                       if (!ENFN->image_alpha_get(ENC, pixels))
-                         want_cspace = EVAS_COLORSPACE_RGB8_ETC2;
-                       else
-                         want_cspace = EVAS_COLORSPACE_RGBA8_ETC2_EAC;
-                    }
-                  else if (!strcmp(encoding, "etc1+alpha"))
-                    want_cspace = EVAS_COLORSPACE_ETC1_ALPHA;
+                  if (!ENFN->image_alpha_get(ENC, pixels))
+                    want_cspace = EVAS_COLORSPACE_RGB8_ETC2;
+                  else
+                    want_cspace = EVAS_COLORSPACE_RGBA8_ETC2_EAC;
                }
+             else if (!strcmp(encoding, "etc1+alpha"))
+               want_cspace = EVAS_COLORSPACE_ETC1_ALPHA;
           }
      }
 
@@ -965,12 +964,10 @@ _efl_canvas_image_internal_efl_file_save(const Eo *eo_obj, Evas_Image_Data *o, c
    if (unmap_it)
      ENFN->image_data_unmap(ENC, pixels, &slice);
 
-   free(encoding);
    if (!ok) ERR("Image save failed.");
    return ok;
 
 no_pixels:
-   free(encoding);
    ERR("Could not get image pixels for saving.");
    return EINA_FALSE;
 }
@@ -1132,7 +1129,7 @@ _evas_image_unload(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bo
         ENFN->image_free(ENC, o->engine_data);
      }
    o->engine_data = NULL;
-   o->load_error = EVAS_LOAD_ERROR_NONE;
+   o->load_error = EFL_GFX_IMAGE_LOAD_ERROR_NONE;
 
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
    {
@@ -1151,6 +1148,7 @@ void
 _evas_image_load(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Image_Data *o)
 {
    Evas_Image_Load_Opts lo;
+   int load_error = 0;
 
    if (o->engine_data) return;
 
@@ -1173,7 +1171,8 @@ _evas_image_load(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Imag
    lo.emile.orientation = o->load_opts->orientation;
    lo.emile.degree = 0;
    lo.skip_head = o->skip_head;
-   o->engine_data = ENFN->image_mmap(ENC, o->cur->f, o->cur->key, &o->load_error, &lo);
+   o->engine_data = ENFN->image_mmap(ENC, o->cur->f, o->cur->key, &load_error, &lo);
+   o->load_error = _evas_load_error_to_efl_gfx_image_load_error(load_error);
 
    if (o->engine_data)
      {
@@ -1202,7 +1201,7 @@ _evas_image_load(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Imag
      }
    else
      {
-        o->load_error = EVAS_LOAD_ERROR_GENERIC;
+        o->load_error = EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
      }
 }
 
@@ -1241,12 +1240,12 @@ _evas_image_load_post_update(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
 
         //preloading error check
         if (ENFN->image_load_error_get)
-          o->load_error = ENFN->image_load_error_get(ENC, o->engine_data);
+          o->load_error = _evas_load_error_to_efl_gfx_image_load_error(ENFN->image_load_error_get(ENC, o->engine_data));
      }
    else
      {
         o->preload = EVAS_IMAGE_PRELOAD_NONE;
-        o->load_error = EVAS_LOAD_ERROR_GENERIC;
+        o->load_error = EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
      }
 }
 
@@ -2702,6 +2701,9 @@ evas_object_image_render_post(Evas_Object *eo_obj EINA_UNUSED,
 {
    Evas_Image_Data *o = type_private_data;
    Eina_Rectangle *r;
+
+   /* image is not ready yet, skip rendering. Leave it to next frame */
+   if (o->preload & EVAS_IMAGE_PRELOADING) return;
 
    /* this moves the current data to the previous state parts of the object */
    /* in whatever way is safest for the object. also if we don't need object */

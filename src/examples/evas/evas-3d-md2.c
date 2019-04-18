@@ -11,7 +11,6 @@
 #else
 #define PACKAGE_EXAMPLES_DIR "."
 #define EFL_BETA_API_SUPPORT
-#define EFL_EO_API_SUPPORT
 #endif
 
 #include <Eo.h>
@@ -124,12 +123,12 @@ main(void)
    mesh = efl_add(EVAS_CANVAS3D_MESH_CLASS, evas);
    material = efl_add(EVAS_CANVAS3D_MATERIAL_CLASS, evas);
 
-   efl_file_set(mesh, model_path, NULL);
+   efl_file_simple_load(mesh, model_path, NULL);
    evas_canvas3d_mesh_frame_material_set(mesh, 0, material);
    evas_canvas3d_mesh_shader_mode_set(mesh, EVAS_CANVAS3D_SHADER_MODE_PHONG);
 
    texture = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
-   efl_file_set(texture, image_path, NULL);
+   efl_file_simple_load(texture, image_path, NULL);
    evas_canvas3d_texture_filter_set(texture, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST);
    evas_canvas3d_texture_wrap_set(texture, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);
    evas_canvas3d_material_texture_set(material, EVAS_CANVAS3D_MATERIAL_ATTRIB_DIFFUSE, texture);

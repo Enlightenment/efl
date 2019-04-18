@@ -1,6 +1,6 @@
 import efl_gfx_types;
 
-enum Ector.Buffer.Flag {
+enum @beta Ector.Buffer.Flag {
    [[Buffer capabilities]]
    none              = 0x00, [[Buffer may not have any backing, indicates an invalid buffer.]]
    cpu_readable      = 0x01, [[Can be read from the CPU after map. Reading may still be very slow.]]
@@ -13,7 +13,7 @@ enum Ector.Buffer.Flag {
 /* non_coherent      = 0x80, [[Memory may be mapped but will not be coherent between GPU and CPU. Call flush or invalidate to synchronize it.]] */
 }
 
-enum Ector.Buffer.Access_Flag {
+enum @beta Ector.Buffer.Access_Flag {
    [[Buffer access permissions]]
    none      = 0x0, [[No access permission]]
    read      = 0x1, [[Read access permission]]
@@ -21,11 +21,9 @@ enum Ector.Buffer.Access_Flag {
    cow       = 0x4, [[Forces copy-on-write if already mapped as read-only. Requires write.]]
 }
 
-mixin Ector.Buffer
+mixin @beta Ector.Buffer
 {
    [[2D pixel buffer interface for Ector
-
-     @since 1.17
    ]]
    eo_prefix: ector_buffer;
    methods {

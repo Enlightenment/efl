@@ -13,6 +13,7 @@ lib_elua_libelua_la_SOURCES = \
 	lib/elua/cache.c
 
 lib_elua_libelua_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ELUA_CFLAGS@ \
+        -DEFL_BUILD \
 	-DLOCALE_DIR=\"@LOCALE_DIR@\" \
 	-DPACKAGE_BIN_DIR=\"$(bindir)\" \
 	-DPACKAGE_DATA_DIR=\"$(datadir)/elua\"
@@ -123,13 +124,14 @@ tests/elua/elua_suite.c \
 tests/elua/elua_suite.h
 
 tests_elua_elua_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
--DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/elua\" \
+-DTESTS_BUILD_DIR=\"$(abs_top_builddir)/src/tests/elua\" \
+-DTESTS_SRC_DIR=\"$(abs_top_srcdir)/src/tests/elua\" \
 -DPACKAGE_DATA_DIR=\"$(top_srcdir)/src/tests/elua\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DELUA_BINDINGS_DIR=\"$(ELUA_BINDINGS_DIR)\" \
 -DELUA_CORE_DIR=\"$(ELUA_CORE_DIR)\" \
 -DELUA_MODULES_DIR=\"$(ELUA_MODULES_DIR)\" \
--DELUA_APPS_DIR=\"$(top_srcdir)/src/tests/elua/data/apps\" \
+-DELUA_APPS_DIR=\"$(abs_top_srcdir)/src/tests/elua/data/apps\" \
 @CHECK_CFLAGS@ \
 @ELUA_CFLAGS@
 

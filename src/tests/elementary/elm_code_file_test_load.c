@@ -7,7 +7,7 @@
 #include "elm_suite.h"
 #include "Elementary.h"
 
-EFL_START_TEST (elm_code_file_load)
+EFL_START_TEST(elm_code_file_load)
 {
    char *path = TESTS_SRC_DIR "/testfile.txt";
    char real[EINA_PATH_MAX];
@@ -28,7 +28,7 @@ EFL_START_TEST (elm_code_file_load)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_file_load_lines)
+EFL_START_TEST(elm_code_file_load_lines)
 {
    char *path = TESTS_SRC_DIR "/testfile.txt";
    Elm_Code_File *file;
@@ -46,7 +46,7 @@ EFL_START_TEST (elm_code_file_load_lines)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_file_load_blank_lines)
+EFL_START_TEST(elm_code_file_load_blank_lines)
 {
    char *path = TESTS_SRC_DIR "/testfile-withblanks.txt";
    Elm_Code_File *file;
@@ -64,7 +64,7 @@ EFL_START_TEST (elm_code_file_load_blank_lines)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_file_load_windows)
+EFL_START_TEST(elm_code_file_load_windows)
 {
    char *path = TESTS_SRC_DIR "/testfile-windows.txt";
    Elm_Code_File *file;
@@ -94,7 +94,7 @@ static void _assert_line_content_eq(const char *content, Elm_Code_Line *line)
      ck_assert_uint_eq(content[c], line->content[c]);
 }
 
-EFL_START_TEST (elm_code_file_load_content)
+EFL_START_TEST(elm_code_file_load_content)
 {
    char *path = TESTS_SRC_DIR "/testfile.txt";
    Elm_Code_File *file;
@@ -113,7 +113,7 @@ EFL_START_TEST (elm_code_file_load_content)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_file_line_ending_unix)
+EFL_START_TEST(elm_code_file_line_ending_unix)
 {
    char *path = TESTS_SRC_DIR "/testfile.txt";
    Elm_Code_File *file;
@@ -135,7 +135,7 @@ EFL_START_TEST (elm_code_file_line_ending_unix)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_file_line_ending_windows)
+EFL_START_TEST(elm_code_file_line_ending_windows)
 {
    char *path = TESTS_SRC_DIR "/testfile-windows.txt";
    Elm_Code_File *file;

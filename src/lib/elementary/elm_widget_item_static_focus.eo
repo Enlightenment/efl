@@ -1,9 +1,0 @@
-class Elm.Widget.Item.Static_Focus extends Elm.Widget.Item implements Efl.Ui.Focus.Object
-{
-   [[A class that ensures that at least ONE focusable target is behind this widget item. If there is none registered to it after a prepare call it will register the view of the item as item.]]
-   implements {
-           Efl.Object.constructor;
-           Efl.Object.destructor;
-           Efl.Ui.Focus.Object.prepare_logical_none_recursive;
-   }
-}

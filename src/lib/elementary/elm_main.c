@@ -23,10 +23,12 @@
 
 #include "elm_priv.h"
 #include "elm_interface_scrollable.h"
+#include "elm_pan_eo.h"
 
 //we need those for legacy compatible code
-#include "elm_genlist.eo.h"
-#include "elm_gengrid.eo.h"
+#include "elm_genlist_eo.h"
+#include "elm_gengrid_eo.h"
+#include "elm_widget_gengrid.h"
 
 #define SEMI_BROKEN_QUICKLAUNCH 1
 
@@ -44,14 +46,15 @@ EAPI Elm_Version *elm_version = &_version;
 static void
 _focus_ev_redirect_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   efl_event_callback_call(data, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_GEOMETRY_CHANGED, NULL);
+   Eina_Rect rect = efl_ui_focus_object_focus_geometry_get(data);
+   efl_event_callback_call(data, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_GEOMETRY_CHANGED, &rect);
 }
 
 void
 _efl_ui_focus_event_redirector(Efl_Ui_Focus_Object *obj, Efl_Ui_Focus_Object *goal)
 {
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_MOVE, _focus_ev_redirect_cb, goal);
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_RESIZE, _focus_ev_redirect_cb, goal);
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _focus_ev_redirect_cb, goal);
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _focus_ev_redirect_cb, goal);
 }
 
 void
@@ -59,7 +62,7 @@ _efl_ui_focus_manager_redirect_events_del(Efl_Ui_Focus_Manager *manager, Eo *obj
 {
    efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, obj);
    efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED, obj);
-   efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED , obj);
+   efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED , obj);
    efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, obj);
    efl_event_callback_forwarder_del(manager, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, obj);
 }
@@ -69,7 +72,7 @@ _efl_ui_focus_manager_redirect_events_add(Efl_Ui_Focus_Manager *manager, Eo *obj
 {
    efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_FLUSH_PRE, obj);
    efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_REDIRECT_CHANGED, obj);
-   efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_FOCUS_CHANGED , obj);
+   efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED , obj);
    efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, obj);
    efl_event_callback_forwarder_add(manager, EFL_UI_FOCUS_MANAGER_EVENT_DIRTY_LOGIC_FREEZE_CHANGED, obj);
 }
@@ -397,6 +400,19 @@ _sys_lang_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA
    return ECORE_CALLBACK_PASS_ON;
 }
 
+EAPI Eina_Error EFL_UI_THEME_APPLY_ERROR_NONE = 0;
+EAPI Eina_Error EFL_UI_THEME_APPLY_ERROR_DEFAULT = 0;
+EAPI Eina_Error EFL_UI_THEME_APPLY_ERROR_GENERIC = 0;
+
+static void
+_efl_ui_theme_apply_error_init(void)
+{
+   if (EFL_UI_THEME_APPLY_ERROR_DEFAULT) return;
+   /* NONE should always be 0 */
+   EFL_UI_THEME_APPLY_ERROR_DEFAULT = eina_error_msg_static_register("Fallback to default style was enabled for this widget");
+   EFL_UI_THEME_APPLY_ERROR_GENERIC = eina_error_msg_static_register("An error occurred and no theme could be set for this widget");
+}
+
 // This is necessary to keep backward compatibility
 static const char *bcargv[] = { "exe" };
 
@@ -435,6 +451,7 @@ elm_init(int argc, char **argv)
      if (_efl_startup_time <= 0)
        _efl_startup_time = _elm_startup_time;
    _elm_startup_time = _efl_startup_time;
+   _efl_ui_theme_apply_error_init();
 
    return _elm_init_count;
 shutdown_ql:
@@ -793,6 +810,7 @@ elm_quicklaunch_init(int    argc EINA_UNUSED,
      }
    if (!_elm_data_dir) _elm_data_dir = eina_stringshare_add("/");
    if (!_elm_lib_dir) _elm_lib_dir = eina_stringshare_add("/");
+   if (!_property_style_ss) _property_style_ss = eina_stringshare_add("style");
 
    eina_log_timing(_elm_log_dom, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);
 
@@ -909,6 +927,7 @@ elm_quicklaunch_shutdown(void)
    pfx = NULL;
    ELM_SAFE_FREE(_elm_data_dir, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_lib_dir, eina_stringshare_del);
+   ELM_SAFE_FREE(_property_style_ss, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_appname, free);
 
    ELM_SAFE_FREE(_elm_exit_handler, ecore_event_handler_del);
@@ -1477,7 +1496,7 @@ elm_object_domain_translatable_part_text_set(Evas_Object *obj, const char *part,
      {
         if (!part)
           part = efl_ui_widget_default_text_part_get(obj);
-        else if (efl_isa(obj, EFL_UI_LAYOUT_CLASS))
+        else if (efl_isa(obj, EFL_UI_LAYOUT_BASE_CLASS))
            _elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE);
 
         elm_widget_part_translatable_text_set(obj, part, text, domain);
@@ -1499,7 +1518,7 @@ elm_object_translatable_part_text_get(const Evas_Object *obj, const char *part)
      {
         if (!part)
           part = efl_ui_widget_default_text_part_get(obj);
-        else if (efl_isa(obj, EFL_UI_LAYOUT_CLASS))
+        else if (efl_isa(obj, EFL_UI_LAYOUT_BASE_CLASS))
            _elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE);
 
         return elm_widget_part_translatable_text_get(obj, part, NULL);
@@ -1558,9 +1577,7 @@ elm_object_style_set(Evas_Object *obj,
                      const char  *style)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
-   if (elm_widget_style_set(obj, style))
-     return EINA_TRUE;
-   return EINA_FALSE;
+   return elm_widget_style_set(obj, style) == EFL_UI_THEME_APPLY_ERROR_NONE;
 }
 
 EAPI Eina_Bool
@@ -1568,14 +1585,14 @@ elm_object_focus_highlight_style_set(Evas_Object *obj,
                                      const char  *style)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
-   return elm_widget_focus_highlight_style_set(obj, style);
+   return elm_win_focus_highlight_style_set(elm_widget_top_get(obj), style);
 }
 
 EAPI const char *
 elm_object_focus_highlight_style_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   return elm_widget_focus_highlight_style_get(obj);
+   return elm_win_focus_highlight_style_get(elm_widget_top_get(obj));
 }
 
 EAPI const char *
@@ -1590,6 +1607,20 @@ elm_object_disabled_set(Evas_Object *obj,
                         Eina_Bool    disabled)
 {
    EINA_SAFETY_ON_NULL_RETURN(obj);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, pd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(efl_ui_widget_parent_get(obj), ppd);
+   if (disabled)
+     {
+        //we aim here for the disabled count of parent + 1
+        if (pd->disabled == ppd->disabled + 1) return;
+        pd->disabled = ppd->disabled;
+     }
+   else
+     {
+         //we aim for the same disabled count as the parent here
+        if (pd->disabled == ppd->disabled) return;
+        pd->disabled = ppd->disabled + 1;
+     }
    elm_widget_disabled_set(obj, disabled);
 }
 
@@ -1912,35 +1943,60 @@ elm_object_name_find(const Evas_Object *obj, const char *name, int recurse)
 EAPI void
 elm_object_orientation_mode_disabled_set(Evas_Object *obj, Eina_Bool disabled)
 {
-   Efl_Ui_Widget_Orientation_Mode mode =
-         disabled ? EFL_UI_WIDGET_ORIENTATION_MODE_DISABLED
-                  : EFL_UI_WIDGET_ORIENTATION_MODE_DEFAULT;
-   efl_ui_widget_orientation_mode_set(obj, mode);
+   if (efl_isa(obj, EFL_UI_LAYOUT_BASE_CLASS))
+     {
+        efl_ui_layout_automatic_theme_rotation_set(obj, disabled);
+     }
+   else
+     {
+        //legacy behaviour
+        efl_key_data_set(obj, "__orientation_mode_disabled", (void*) (intptr_t) disabled);
+     }
 }
 
 EAPI Eina_Bool
 elm_object_orientation_mode_disabled_get(const Evas_Object *obj)
 {
-   return efl_ui_widget_orientation_mode_get(obj) == EFL_UI_WIDGET_ORIENTATION_MODE_DISABLED;
+   if (efl_isa(obj, EFL_UI_LAYOUT_BASE_CLASS))
+     {
+        return efl_ui_layout_automatic_theme_rotation_get(obj);
+     }
+   else
+     {
+        if (efl_key_data_get(obj, "__orientation_mode_disabled"))
+          return EINA_TRUE;
+     }
+   return EINA_FALSE;
 }
 
 EAPI Elm_Object_Item *
 elm_object_focused_item_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, NULL);
-   return efl_ui_widget_focused_item_get(obj);
+   if (!efl_isa(obj, ELM_WIDGET_ITEM_CONTAINER_INTERFACE))
+     return NULL;
+   return elm_widget_item_container_focused_item_get(obj);
 }
 
 EAPI void
 elm_object_focus_region_show_mode_set(Evas_Object *obj, Elm_Focus_Region_Show_Mode mode)
 {
-   elm_widget_focus_region_show_mode_set(obj, mode);
+   if (efl_isa(obj, ELM_GENGRID_CLASS))
+     {
+        Elm_Gengrid_Data *pd = efl_data_scope_get(obj, ELM_GENGRID_CLASS);
+        pd->mode = mode;
+     }
 }
 
 EAPI Elm_Focus_Region_Show_Mode
 elm_object_focus_region_show_mode_get(const Evas_Object *obj)
 {
-   return elm_widget_focus_region_show_mode_get(obj);
+   if (efl_isa(obj, ELM_GENGRID_CLASS))
+     {
+        Elm_Gengrid_Data *pd = efl_data_scope_get(obj, ELM_GENGRID_CLASS);
+        return pd->mode;
+     }
+   return ELM_FOCUS_REGION_SHOW_WIDGET;
 }
 
 static void
@@ -1966,4 +2022,41 @@ elm_object_item_del(Eo *obj)
    if (!item) return ;
    efl_event_callback_add(obj, EFL_EVENT_NOREF, _item_noref, NULL);
    item->on_deletion = EINA_TRUE;
+}
+
+
+EAPI Eina_Bool
+elm_object_cursor_set(Eo *obj, const char *cursor)
+{
+   return efl_ui_widget_cursor_set(obj, cursor);
+}
+
+EAPI const char *
+elm_object_cursor_get(const Eo *obj)
+{
+   return efl_ui_widget_cursor_get(obj);
+}
+
+EAPI Eina_Bool
+elm_object_cursor_style_set(Eo *obj, const char *style)
+{
+   return efl_ui_widget_cursor_style_set(obj, style);
+}
+
+EAPI const char *
+elm_object_cursor_style_get(const Eo *obj)
+{
+   return efl_ui_widget_cursor_style_get(obj);
+}
+
+EAPI Eina_Bool
+elm_object_cursor_theme_search_enabled_set(Eo *obj, Eina_Bool allow)
+{
+   return efl_ui_widget_cursor_theme_search_enabled_set(obj, allow);
+}
+
+EAPI Eina_Bool
+elm_object_cursor_theme_search_enabled_get(const Eo *obj)
+{
+   return efl_ui_widget_cursor_theme_search_enabled_get(obj);
 }

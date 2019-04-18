@@ -238,7 +238,7 @@ EINA_DEPRECATED EAPI void      elm_cache_flush_interval_all_set(int size);
  * applications on the display.
  *
  * @param enabled The cache flush enabled state
- * @deprecated Use elm_cache_flush_enabled_set adnd elm_config_all_flush()
+ * @deprecated Use elm_cache_flush_enabled_set and elm_config_all_flush()
  * @ingroup Elm_Caches
  */
 EINA_DEPRECATED EAPI void      elm_cache_flush_enabled_all_set(Eina_Bool enabled);

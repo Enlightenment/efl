@@ -2,7 +2,6 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_UI_SCROLL_ALERT_POPUP_BETA
 #define EFL_PART_PROTECTED
 
 #include <Elementary.h>
@@ -100,7 +99,7 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd,
         efl_gfx_entity_size_set(obj, new_size);
      }
 
-   efl_gfx_size_hint_min_set(obj, new_min);
+   efl_gfx_hint_size_min_set(obj, new_min);
 }
 
 static void
@@ -160,8 +159,8 @@ _efl_ui_scroll_alert_popup_content_set(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *
         pd->content = content;
 
         //Content should have expand propeties since the scroller is not layout layer
-        efl_gfx_size_hint_weight_set(pd->content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        efl_gfx_size_hint_fill_set(pd->content, EINA_TRUE, EINA_TRUE);
+        efl_gfx_hint_weight_set(pd->content, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        efl_gfx_hint_fill_set(pd->content, EINA_TRUE, EINA_TRUE);
 
         efl_content_set(pd->scroller, pd->content);
      }
@@ -266,8 +265,6 @@ _efl_ui_scroll_alert_popup_efl_object_constructor(Eo *obj,
      elm_widget_theme_klass_set(obj, "scroll_alert_popup");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
-
-   elm_widget_sub_object_parent_add(obj);
 
    pd->scroller = elm_scroller_add(obj);
    elm_object_style_set(pd->scroller, "popup/no_inset_shadow");

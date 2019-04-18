@@ -31,11 +31,8 @@
  * Elm_Scrollable_Smart_Interface::extern_pan_set.
  */
 
-#ifdef EFL_EO_API_SUPPORT
-#include "elm_pan.eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
-#include "elm_pan.eo.legacy.h"
+#include "elm_pan_eo.legacy.h"
 #endif
 
 /**
@@ -61,12 +58,7 @@ typedef void      (*Elm_Interface_Scrollable_Resize_Cb)(Evas_Object *obj, Evas_C
 typedef struct _Elm_Scrollable_Smart_Interface_Data
   Elm_Scrollable_Smart_Interface_Data;
 
-#ifdef EFL_EO_API_SUPPORT
 #include "elm_interface_scrollable.eo.h"
-#endif
-#ifndef EFL_NOLEGACY_API_SUPPORT
-#include "elm_interface_scrollable.eo.legacy.h"
-#endif
 
 struct _Elm_Scrollable_Smart_Interface_Data
 {
@@ -250,7 +242,7 @@ struct _Elm_Scrollable_Smart_Interface_Data
        return __VA_ARGS__;                                                   \
     }
 
-#if defined(EFL_EO_API_SUPPORT) && defined(EFL_BETA_API_SUPPORT)
+#ifdef EFL_BETA_API_SUPPORT
 EAPI void elm_pan_gravity_set(Elm_Pan *, double x, double) EINA_DEPRECATED;
 EAPI void elm_pan_gravity_get(const Elm_Pan *, double *, double *) EINA_DEPRECATED;
 #endif

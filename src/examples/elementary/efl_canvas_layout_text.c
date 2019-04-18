@@ -6,10 +6,10 @@
 # include "elementary_config.h"
 #else
 # define EFL_BETA_API_SUPPORT 1
-# define EFL_EO_API_SUPPORT 1
 #endif
 
 #include <Efl.h>
+#include <Efl_Ui.h>
 #include <Elementary.h>
 #include <string.h>
 
@@ -37,17 +37,6 @@ static struct
      { EFL_TEXT_FORMAT_WRAP_MIXED, "mixed" }
 };
 
-static struct
-{
-   Efl_Text_Format_Wrap wrap;
-   const char *desc;
-} group[] =
-{
-     { EFL_TEXT_FORMAT_WRAP_NONE, "none" },
-     { EFL_TEXT_FORMAT_WRAP_WORD, "word" },
-     { EFL_TEXT_FORMAT_WRAP_CHAR, "char" },
-     { EFL_TEXT_FORMAT_WRAP_MIXED, "mixed" }
-};
 static struct
 {
    Efl_Canvas_Layout_Part_Text_Expand expand;
@@ -88,7 +77,7 @@ _on_key_down(void *data, const Efl_Event *event)
      {
         // edje group
         group_itr = (group_itr + 1) % 2;
-        efl_file_set(layout, edjefile, groups[group_itr]);
+        efl_file_simple_load(layout, edjefile, groups[group_itr]);
         printf("Changed layout group to: %s\n", groups[group_itr]);
      }
    else if (!strcmp(key, "w"))
@@ -125,21 +114,21 @@ _on_key_down(void *data, const Efl_Event *event)
 
 EAPI_MAIN void
 efl_main(void *data EINA_UNUSED,
-         const Efl_Event *ev)
+         const Efl_Event *ev EINA_UNUSED)
 {
 
    Eo *layout;
    Eo *win;
 
    win = efl_add(EFL_UI_WIN_CLASS, NULL,
-         efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+         efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
          efl_text_set(efl_added, "Efl Canvas_Layout"),
          efl_ui_win_autodel_set(efl_added, EINA_TRUE),
          efl_event_callback_add(efl_added, EFL_UI_WIN_EVENT_DELETE_REQUEST, _on_win_delete, NULL));
 
 
    layout = efl_add(EFL_CANVAS_LAYOUT_CLASS, win);
-   efl_file_set(layout, edjefile, groups[group_itr]);
+   efl_file_simple_load(layout, edjefile, groups[group_itr]);
 
    efl_content_set(win, layout);
    efl_gfx_entity_size_set(win, EINA_SIZE2D(110, 100));

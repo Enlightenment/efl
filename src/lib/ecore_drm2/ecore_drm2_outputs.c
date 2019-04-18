@@ -859,14 +859,14 @@ next:
           {
              output->connected = EINA_FALSE;
              output->enabled = EINA_FALSE;
-             _output_event_send(output);
           }
         else
           {
              output->connected = EINA_TRUE;
              output->enabled = EINA_TRUE;
-             _output_event_send(output);
           }
+
+        _output_event_send(output);
      }
    free(connected);
 }
@@ -891,10 +891,7 @@ _output_destroy(Ecore_Drm2_Device *dev EINA_UNUSED, Ecore_Drm2_Output *output)
      {
         if (output->prep.atomic_req)
           sym_drmModeAtomicFree(output->prep.atomic_req);
-     }
 
-   if (_ecore_drm2_use_atomic)
-     {
         EINA_LIST_FREE(output->plane_states, pstate)
           free(pstate);
 
@@ -919,10 +916,26 @@ _output_destroy(Ecore_Drm2_Device *dev EINA_UNUSED, Ecore_Drm2_Output *output)
    eina_stringshare_del(output->serial);
    eina_stringshare_del(output->relative.to);
 
+   if (output->flip_timeout) ecore_timer_del(output->flip_timeout);
+
    sym_drmModeFreeProperty(output->dpms);
    free(output->edid.blob);
 
    free(output);
+}
+
+/* this function is used to indicate if we are in a multi-gpu situation
+ * and need to calculate vblank sync with high crtc mask */
+static unsigned int
+_output_vblank_pipe(Ecore_Drm2_Output *output)
+{
+   if (output->pipe > 1)
+     return ((output->pipe << DRM_VBLANK_HIGH_CRTC_SHIFT) &
+             DRM_VBLANK_HIGH_CRTC_MASK);
+   else if (output->pipe > 0)
+     return DRM_VBLANK_SECONDARY;
+   else
+     return 0;
 }
 
 EAPI Eina_Bool
@@ -1333,8 +1346,8 @@ ecore_drm2_output_mode_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mo
              else
                buffer = output->ocrtc->buffer_id;
 
-             if (sym_drmModeSetCrtc(output->fd, output->crtc_id, buffer,
-                                    0, 0, &output->conn_id, 1, &mode->info) < 0)
+             if (sym_drmModeSetCrtc(output->fd, output->crtc_id, buffer, 0, 0,
+                                    &output->conn_id, 1, &mode->info) < 0)
                {
                   ERR("Failed to set Mode %dx%d for Output %s: %m",
                       mode->width, mode->height, output->name);
@@ -1505,10 +1518,18 @@ ecore_drm2_output_supported_rotations_get(Ecore_Drm2_Output *output)
 EAPI Eina_Bool
 ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rotation)
 {
-   Eina_Bool ret = EINA_FALSE;
+   Eina_Bool ret = EINA_TRUE;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
 
+   output->rotation = rotation;
+
+#if 0
+   /* XXX: Disable hardware plane rotation for now as this has broken
+    * recently. The break happens because of an invalid argument,
+    * ie: the value being sent from pstate->rotation_map ends up being
+    * incorrect for some reason. I suspect the breakage to be from
+    * kernel drivers (linux 4.20.0) but have not confirmed that version */
    if (_ecore_drm2_use_atomic)
      {
         Eina_List *l;
@@ -1537,8 +1558,7 @@ ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rotation)
                                                 pstate->rotation.id, rotation);
              if (res < 0) goto err;
 
-             res = sym_drmModeAtomicCommit(output->fd, req, flags,
-                                           output);
+             res = sym_drmModeAtomicCommit(output->fd, req, flags, output);
              if (res < 0)
                goto err;
              else
@@ -1551,8 +1571,16 @@ ecore_drm2_output_rotation_set(Ecore_Drm2_Output *output, int rotation)
 err:
         sym_drmModeAtomicFree(req);
      }
+#endif
 
    return ret;
+}
+
+EAPI int
+ecore_drm2_output_rotation_get(Ecore_Drm2_Output *output)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, -1);
+   return output->rotation;
 }
 
 EAPI unsigned int
@@ -1619,6 +1647,7 @@ ecore_drm2_output_blanktime_get(Ecore_Drm2_Output *output, int sequence, long *s
 
    memset(&v, 0, sizeof(v));
    v.request.type = DRM_VBLANK_RELATIVE;
+   v.request.type |= _output_vblank_pipe(output);
    v.request.sequence = sequence;
    ret = sym_drmWaitVBlank(output->fd, &v);
    success = (ret == 0) && (v.reply.tval_sec > 0 || v.reply.tval_usec > 0);
@@ -1646,8 +1675,21 @@ ecore_drm2_output_info_get(Ecore_Drm2_Output *output, int *x, int *y, int *w, in
    EINA_SAFETY_ON_NULL_RETURN(output);
    EINA_SAFETY_ON_TRUE_RETURN(!output->current_mode);
 
-   if (w) *w = output->current_mode->width;
-   if (h) *h = output->current_mode->height;
+   switch (output->rotation)
+     {
+      case ECORE_DRM2_ROTATION_90:
+      case ECORE_DRM2_ROTATION_270:
+        if (w) *w = output->current_mode->height;
+        if (h) *h = output->current_mode->width;
+        break;
+      case ECORE_DRM2_ROTATION_NORMAL:
+      case ECORE_DRM2_ROTATION_180:
+      default:
+        if (w) *w = output->current_mode->width;
+        if (h) *h = output->current_mode->height;
+        break;
+     }
+
    if (refresh) *refresh = output->current_mode->refresh;
    if (x) *x = output->x;
    if (y) *y = output->y;

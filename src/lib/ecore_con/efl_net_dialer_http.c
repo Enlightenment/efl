@@ -318,7 +318,7 @@ _efl_net_dialer_http_curlm_check(Efl_Net_Dialer_Http_Curlm *cm)
         efl_ref(dialer);
         pd = efl_data_scope_get(dialer, MY_CLASS);
         if (pd->error)
-          efl_event_callback_call(dialer, EFL_NET_DIALER_EVENT_ERROR, &pd->error);
+          efl_event_callback_call(dialer, EFL_NET_DIALER_EVENT_DIALER_ERROR, &pd->error);
         if (pd->recv.used > 0) pd->pending_eos = EINA_TRUE;
         else
           {
@@ -369,7 +369,7 @@ _efl_net_dialer_http_curlm_timer_schedule(CURLM *multi EINA_UNUSED, long timeout
      {
         cm->timer = efl_add(EFL_LOOP_TIMER_CLASS, cm->loop,
                             efl_loop_timer_interval_set(efl_added, seconds),
-                            efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _efl_net_dialer_http_curlm_timer_do, cm));
+                            efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TIMER_TICK, _efl_net_dialer_http_curlm_timer_do, cm));
         EINA_SAFETY_ON_NULL_RETURN_VAL(cm->timer, -1);
      }
 
@@ -1460,7 +1460,7 @@ _efl_net_dialer_http_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Http_Dat
     * allow_redirects will trigger more than once
     */
    pd->connected = connected;
-   if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_CONNECTED, NULL);
+   if (connected) efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_CONNECTED, NULL);
 }
 
 EOLIAN static Eina_Bool
@@ -1524,7 +1524,7 @@ EOLIAN static void
 _efl_net_dialer_http_efl_net_socket_address_remote_set(Eo *o, Efl_Net_Dialer_Http_Data *pd, const char *address)
 {
    if (eina_stringshare_replace(&pd->address_remote, address))
-     efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
+     efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_RESOLVED, NULL);
 }
 
 EOLIAN static const char *
@@ -1626,7 +1626,7 @@ _efl_net_dialer_http_efl_io_reader_can_read_set(Eo *o, Efl_Net_Dialer_Http_Data 
    EINA_SAFETY_ON_TRUE_RETURN(efl_io_closer_closed_get(o));
    if (pd->can_read == can_read) return;
    pd->can_read = can_read;
-   efl_event_callback_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, &can_read);
 }
 
 EOLIAN static Eina_Bool
@@ -1714,7 +1714,7 @@ _efl_net_dialer_http_efl_io_writer_can_write_set(Eo *o, Efl_Net_Dialer_Http_Data
    EINA_SAFETY_ON_TRUE_RETURN(efl_io_closer_closed_get(o));
    if (pd->can_write == can_write) return;
    pd->can_write = can_write;
-   efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, &can_write);
 }
 
 static Eina_Value _efl_net_dialer_http_pending_close(Eo *o, void *data, Eina_Value value);
@@ -1796,7 +1796,7 @@ _efl_net_dialer_http_efl_io_closer_close_on_exec_set(Eo *o EINA_UNUSED, Efl_Net_
 
    if (!eina_file_close_on_exec(pd->fd, close_on_exec))
      {
-        ERR("fcntl(" SOCKET_FMT ", F_SETFD): %s", pd->fd, strerror(errno));
+        ERR("fcntl(" SOCKET_FMT ", F_SETFD): %s", pd->fd, eina_error_msg_get(errno));
         pd->close_on_exec = old;
         return EINA_FALSE;
      }
@@ -2375,14 +2375,14 @@ _efl_net_dialer_http_ssl_certificate_revocation_list_get(const Eo *o EINA_UNUSED
 }
 
 EOLIAN static int64_t
-_efl_net_dialer_http_date_parse(Efl_Class *cls EINA_UNUSED, void *cd EINA_UNUSED, const char *str)
+_efl_net_dialer_http_date_parse(const char *str)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(str, 0);
    return curl_getdate(str, NULL);
 }
 
 EOLIAN static char *
-_efl_net_dialer_http_date_serialize(Efl_Class *cls EINA_UNUSED, void *cd EINA_UNUSED, int64_t ts)
+_efl_net_dialer_http_date_serialize(int64_t ts)
 {
    static const char *const wkday[] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
    static const char * const month[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };

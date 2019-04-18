@@ -1,6 +1,6 @@
 project('efl', ['c','cpp'],
-  version: '1.21.99',
-  default_options : ['buildtype=plain', 'cpp_std=c++11'],
+  version: '1.22.99',
+  default_options : ['buildtype=release', 'cpp_std=c++11'],
   meson_version : '>=0.47'
 )
 
@@ -97,7 +97,6 @@ add_global_arguments(dev_cflags, language: 'cpp')
 foreach lang : ['c', 'objc', 'cpp']
   add_global_arguments('-DHAVE_CONFIG_H=1', language: lang)
   add_global_arguments('-D_GNU_SOURCE=1', language: lang)
-  add_global_arguments('-DEFL_EO_API_SUPPORT=1', language: lang)
   add_global_arguments('-DEFL_BETA_API_SUPPORT=1', language: lang)
   add_global_arguments('-DNEED_RUN_IN_TREE=1', language: lang)
   add_global_arguments('-DEFL_BUILD=1', language: lang)
@@ -121,6 +120,7 @@ foreach lang : ['c', 'objc', 'cpp']
     else
       error('Version of targetted Windows incorrect')
     endif
+    add_global_arguments('-D__USE_MINGW_ANSI_STDIO', language: lang)
   endif
 endforeach
 
@@ -210,6 +210,7 @@ elif sys_osx == true
   sys_lib_extension = 'dylib'
   sys_exe_extension = ''
   sys_mod_extension = 'dylib'
+  config_h.set('environ', '(*_NSGetEnviron())')
 else
   error('System '+host_machine.system()+' not known')
 endif
@@ -240,6 +241,12 @@ if get_option('wl') == true
 endif
 
 ecore_evas_wayland_engine_include_dir = []
+
+boot_strap_eolian = [
+  ['evil'             ,[]                    , false,  true, false, false, false, false, [], []],
+  ['eina'             ,[]                    , false,  true, false, false, false, false, [], []],
+  ['eolian'           ,[]                    , false,  true,  true, false, false, false, ['eina'], []],
+]
 
 subprojects = [
 # name              |   option              | mod  | lib  | bin  | bench | tests | examples | pkg-config options | name of static libs
@@ -280,12 +287,12 @@ subprojects = [
 ['efreet'           ,[]                    , false, false,  true, false, false, false, ['eina', 'efl', 'eo'], []],
 ['ecore_imf_evas'   ,[]                    , false,  true, false, false, false, false, ['eina', 'efl', 'eo'], []],
 ['ephysics'         ,['physics']           , false,  true, false, false, false, false, ['eina', 'efl', 'eo'], []],
-['edje'             ,[]                    , false,  true,  true, false,  true,  true, ['evas', 'eo', 'efl', 'luajit'], []],
+['edje'             ,[]                    , false,  true,  true, false,  true,  true, ['evas', 'eo', 'efl', get_option('lua-interpreter')], []],
 ['emotion'          ,[]                    ,  true,  true, false, false,  true,  true, ['eina', 'efl', 'eo'], []],
 ['ethumb'           ,[]                    ,  true,  true,  true, false, false, false, ['eina', 'efl', 'eo'], []],
 ['ethumb_client'    ,[]                    , false,  true,  true, false, false,  true, ['eina', 'efl', 'eo', 'ethumb'], []],
 ['elocation'        ,[]                    , false,  true, false, false, false, false, ['ecore', 'eldbus'], []],
-['elementary'       ,[]                    ,  true,  true,  true,  true,  true, false, ['eina', 'efl', 'eo', 'eet', 'evas', 'ecore', 'ecore-evas', 'ecore-file', 'ecore-input', 'edje', 'ethumb-client', 'emotion', 'ecore-imf', 'ecore-con', 'eldbus', 'efreet', 'efreet-mime', 'efreet-trash', 'eio', 'elocation'], ['atspi']],
+['elementary'       ,[]                    ,  true,  true,  true,  true,  true,  true, ['eina', 'efl', 'eo', 'eet', 'evas', 'ecore', 'ecore-evas', 'ecore-file', 'ecore-input', 'edje', 'ethumb-client', 'emotion', 'ecore-imf', 'ecore-con', 'eldbus', 'efreet', 'efreet-mime', 'efreet-trash', 'eio', 'elocation'], ['atspi']],
 ['efl_wl'           ,['wl']                , false,  true,  true, false, false, false, ['evas', 'ecore'], []],
 ['elua'             ,['elua']              , false,  true,  true, false,  true, false, ['eina', 'luajit'], []],
 ['ecore_wayland'    ,['wl-deprecated']     , false,  true, false, false, false, false, ['eina'], []],
@@ -303,6 +310,9 @@ test_dirs = []
 example_dirs = []
 tmp_empty = declare_dependency()
 
+if get_option('eolian-bootstrap')
+   subprojects = boot_strap_eolian
+endif
 
 foreach package : subprojects
   package_name = package[0]
@@ -403,23 +413,26 @@ foreach package : subprojects
 
 endforeach
 
-#build this later, as the debug services are depending on ecore
-subdir(join_paths('src', 'bin', 'efl'))
-
-subdir(join_paths('src', 'generic', 'evas'))
-subdir(join_paths('src', 'generic', 'emotion'))
 subdir('cmakeconfig')
+#build this later, as the debug services are depending on ecore
+if get_option('eolian-bootstrap') == false
+  subdir(join_paths('src', 'bin', 'efl'))
 
-bindings = get_option('bindings')
+  subdir(join_paths('src', 'generic', 'evas'))
+  subdir(join_paths('src', 'generic', 'emotion'))
 
-foreach binding : bindings
-  subdir(join_paths('src', 'bindings', binding))
-endforeach
+  bindings = get_option('bindings')
+  bindings_order = ['luajit', 'cxx', 'mono']
 
-subdir(join_paths('src', 'edje_external'))
+  foreach binding : bindings_order
+    if bindings.contains(binding)
+      subdir(join_paths('src', 'bindings', binding))
+    endif
+  endforeach
 
-
-subdir(join_paths('data'))
+  subdir(join_paths('src', 'edje_external'))
+  subdir(join_paths('data'))
+endif
 
 if get_option('build-tests')
   check = dependency('check')
@@ -457,7 +470,6 @@ efl_config_h.set('EFL_VERSION_MICRO', version_micro)
 efl_config_h.set('EFL_BUILD_ID', get_option('build-id'))
 
 #FIXME placeholder
-efl_config_h.set('EFL_API_EO_DEF', '#define EFL_API_EO_DEF "FIXME NOT IMPLEMENTED"')
 efl_config_h.set('EFL_API_LEGACY_DEF', '#define EFL_API_LEGACY_DEF "FIXME NOT IMPLEMENTED"')
 
 configure_file(

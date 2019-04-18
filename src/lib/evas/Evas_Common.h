@@ -89,7 +89,7 @@ EAPI extern Evas_Version * evas_version;
  * @since 1.1
  */
 // Support not having eo available
-#if defined (EFL_BETA_API_SUPPORT) && defined(EFL_EO_API_SUPPORT)
+#ifdef EFL_BETA_API_SUPPORT
 typedef Efl_Callback_Priority Evas_Callback_Priority;
 #else
 typedef short Evas_Callback_Priority;
@@ -246,10 +246,12 @@ typedef struct _Evas_Pixel_Import_Source Evas_Pixel_Import_Source; /**< A source
 /* Opaque types */
 typedef Eo                               Evas_Device; /**< A source device handle - where the event came from */
 
-typedef Efl_Gfx_Image_Content_Hint           Evas_Image_Content_Hint;
-#define EVAS_IMAGE_CONTENT_HINT_NONE     EFL_GFX_IMAGE_CONTENT_HINT_NONE
-#define EVAS_IMAGE_CONTENT_HINT_DYNAMIC  EFL_GFX_IMAGE_CONTENT_HINT_DYNAMIC
-#define EVAS_IMAGE_CONTENT_HINT_STATIC   EFL_GFX_IMAGE_CONTENT_HINT_STATIC
+typedef enum _Evas_Image_Content_Hint
+{
+   EVAS_IMAGE_CONTENT_HINT_NONE = 0, /**< No hint at all */
+   EVAS_IMAGE_CONTENT_HINT_DYNAMIC = 1, /**< The contents will change over time */
+   EVAS_IMAGE_CONTENT_HINT_STATIC = 2 /**< The contents won't change over time */
+} Evas_Image_Content_Hint; /**< How an image's data is to be treated by Evas, for optimization */
 
 typedef enum _Evas_Alloc_Error
 {
@@ -295,17 +297,18 @@ typedef enum _Evas_Engine_Render_Mode
 
 typedef Efl_Gfx_Event_Render_Post          Evas_Event_Render_Post; /**< Event info sent after a frame was rendered. @since 1.18 */
 
-typedef Efl_Input_Device_Type             Evas_Device_Class;
-
-#define EVAS_DEVICE_CLASS_NONE             EFL_INPUT_DEVICE_TYPE_NONE /**< Not a device @since 1.8 */
-#define EVAS_DEVICE_CLASS_SEAT             EFL_INPUT_DEVICE_TYPE_SEAT /**< The user/seat (the user themselves) @since 1.8 */
-#define EVAS_DEVICE_CLASS_KEYBOARD         EFL_INPUT_DEVICE_TYPE_KEYBOARD /**< A regular keyboard, numberpad or attached buttons @since 1.8 */
-#define EVAS_DEVICE_CLASS_MOUSE            EFL_INPUT_DEVICE_TYPE_MOUSE /**< A mouse, trackball or touchpad relative motion device @since 1.8 */
-#define EVAS_DEVICE_CLASS_TOUCH            EFL_INPUT_DEVICE_TYPE_TOUCH /**< A touchscreen with fingers or stylus @since 1.8 */
-#define EVAS_DEVICE_CLASS_PEN              EFL_INPUT_DEVICE_TYPE_PEN /**< A special pen device @since 1.8 */
-#define EVAS_DEVICE_CLASS_POINTER          EFL_INPUT_DEVICE_TYPE_WAND /**< A laser pointer, wii-style or "minority report" pointing device @since 1.8 */
-#define EVAS_DEVICE_CLASS_WAND             EFL_INPUT_DEVICE_TYPE_WAND /**< A synonym for EVAS_DEVICE_CLASS_POINTER @since 1.18 */
-#define EVAS_DEVICE_CLASS_GAMEPAD          EFL_INPUT_DEVICE_TYPE_GAMEPAD /**<  A gamepad controller or joystick @since 1.8 */
+typedef enum _Evas_Device_Class
+{
+   EVAS_DEVICE_CLASS_NONE, /**< Not a device @since 1.8 */
+   EVAS_DEVICE_CLASS_SEAT, /**< The user/seat (the user themselves) @since 1.8 */
+   EVAS_DEVICE_CLASS_KEYBOARD, /**< A regular keyboard, numberpad or attached buttons @since 1.8 */
+   EVAS_DEVICE_CLASS_MOUSE, /**< A mouse, trackball or touchpad relative motion device @since 1.8 */
+   EVAS_DEVICE_CLASS_TOUCH, /**< A touchscreen with fingers or stylus @since 1.8 */
+   EVAS_DEVICE_CLASS_PEN, /**< A special pen device @since 1.8 */
+#define EVAS_DEVICE_CLASS_WAND EVAS_DEVICE_CLASS_POINTER
+   EVAS_DEVICE_CLASS_POINTER, /**< A laser pointer, wii-style or "minority report" pointing device @since 1.8 */
+   EVAS_DEVICE_CLASS_GAMEPAD /**<  A gamepad controller or joystick @since 1.8 */
+} Evas_Device_Class; /**< A general class of device @since 1.8 */
 
 /**
  * @brief Specific type of input device.
@@ -329,39 +332,65 @@ typedef enum
   EVAS_DEVICE_SUBCLASS_TRACKBALL /**< A trackball style mouse. */
 } Evas_Device_Subclass;
 
-typedef Efl_Pointer_Flags                  Evas_Button_Flags;
+/**
+ * Flags for Mouse Button events
+ */
+typedef enum _Evas_Button_Flags
+{
+   EVAS_BUTTON_NONE = 0, /**< No extra mouse button data */
+   EVAS_BUTTON_DOUBLE_CLICK = (1 << 0), /**< This mouse button press was the 2nd press of a double click */
+   EVAS_BUTTON_TRIPLE_CLICK = (1 << 1) /**< This mouse button press was the 3rd press of a triple click */
+} Evas_Button_Flags; /**< Flags for Mouse Button events */
 
-#define EVAS_BUTTON_NONE                   EFL_POINTER_FLAGS_NONE
-#define EVAS_BUTTON_DOUBLE_CLICK           EFL_POINTER_FLAGS_DOUBLE_CLICK
-#define EVAS_BUTTON_TRIPLE_CLICK           EFL_POINTER_FLAGS_TRIPLE_CLICK
+/**
+ * Flags for Events
+ */
+typedef enum _Evas_Event_Flags
+{
+   EVAS_EVENT_FLAG_NONE = 0, /**< No fancy flags set */
+   EVAS_EVENT_FLAG_ON_HOLD = (1 << 0), /**< This event is being delivered but should be put "on hold" until the on hold flag is unset. The event should be used for informational purposes and maybe some indications visually, but not actually perform anything */
+   EVAS_EVENT_FLAG_ON_SCROLL = (1 << 1) /**< This event flag indicates the event occurs while scrolling; for example, DOWN event occurs during scrolling; the event should be used for informational purposes and maybe some indications visually, but not actually perform anything */
+} Evas_Event_Flags; /**< Flags for Events */
 
-typedef Efl_Input_Flags                    Evas_Event_Flags;
+typedef enum _Evas_Aspect_Control
+{
+   EVAS_ASPECT_CONTROL_NONE = 0, /**< Preference on scaling unset */
+   EVAS_ASPECT_CONTROL_NEITHER = 1, /**< Same effect as unset preference on scaling */
+   EVAS_ASPECT_CONTROL_HORIZONTAL = 2, /**< Use all horizontal container space to place an object, using the given aspect */
+   EVAS_ASPECT_CONTROL_VERTICAL = 3, /**< Use all vertical container space to place an object, using the given aspect */
+   EVAS_ASPECT_CONTROL_BOTH = 4 /**< Use all horizontal @b and vertical container spaces to place an object (never growing it out of those bounds), using the given aspect */
+} Evas_Aspect_Control; /**< Aspect types/policies for scaling size hints, used for evas_object_size_hint_aspect_set() */
 
-#define EVAS_EVENT_FLAG_NONE               EFL_INPUT_FLAGS_NONE
-#define EVAS_EVENT_FLAG_ON_HOLD            EFL_INPUT_FLAGS_PROCESSED
-#define EVAS_EVENT_FLAG_ON_SCROLL          EFL_INPUT_FLAGS_SCROLLING
+typedef enum _Evas_BiDi_Direction
+{
+   EVAS_BIDI_DIRECTION_NATURAL,
+   EVAS_BIDI_DIRECTION_NEUTRAL = EVAS_BIDI_DIRECTION_NATURAL,
+   EVAS_BIDI_DIRECTION_LTR,
+   EVAS_BIDI_DIRECTION_RTL,
+   EVAS_BIDI_DIRECTION_INHERIT
+} Evas_BiDi_Direction;
 
-typedef Efl_Gfx_Size_Hint_Aspect           Evas_Aspect_Control; /**< Aspect types/policies for scaling size hints, used for evas_object_size_hint_aspect_set */
-
-#define EVAS_ASPECT_CONTROL_NONE           EFL_GFX_SIZE_HINT_ASPECT_NONE
-#define EVAS_ASPECT_CONTROL_NEITHER        EFL_GFX_SIZE_HINT_ASPECT_NEITHER
-#define EVAS_ASPECT_CONTROL_HORIZONTAL     EFL_GFX_SIZE_HINT_ASPECT_HORIZONTAL
-#define EVAS_ASPECT_CONTROL_VERTICAL       EFL_GFX_SIZE_HINT_ASPECT_VERTICAL
-#define EVAS_ASPECT_CONTROL_BOTH           EFL_GFX_SIZE_HINT_ASPECT_BOTH
-
-typedef Efl_Text_Bidirectional_Type        Evas_BiDi_Direction;
-
-#define EVAS_BIDI_DIRECTION_NATURAL        EFL_TEXT_BIDIRECTIONAL_TYPE_NATURAL
-#define EVAS_BIDI_DIRECTION_NEUTRAL        EFL_TEXT_BIDIRECTIONAL_TYPE_NEUTRAL
-#define EVAS_BIDI_DIRECTION_LTR            EFL_TEXT_BIDIRECTIONAL_TYPE_LTR
-#define EVAS_BIDI_DIRECTION_RTL            EFL_TEXT_BIDIRECTIONAL_TYPE_RTL
-#define EVAS_BIDI_DIRECTION_INHERIT        EFL_TEXT_BIDIRECTIONAL_TYPE_INHERIT
-
-typedef Efl_Input_Object_Pointer_Mode      Evas_Object_Pointer_Mode;
-
-#define EVAS_OBJECT_POINTER_MODE_AUTOGRAB  EFL_INPUT_OBJECT_POINTER_MODE_AUTO_GRAB
-#define EVAS_OBJECT_POINTER_MODE_NOGRAB    EFL_INPUT_OBJECT_POINTER_MODE_NO_GRAB
-#define EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN EFL_INPUT_OBJECT_POINTER_MODE_NO_GRAB_NO_REPEAT_UPDOWN
+/**
+ * How the mouse pointer should be handled by Evas.
+ *
+ * In the mode #EVAS_OBJECT_POINTER_MODE_AUTOGRAB, when a mouse button
+ * is pressed down over an object and held, with the mouse pointer
+ * being moved outside of it, the pointer still behaves as being bound
+ * to that object, albeit out of its drawing region. When the button
+ * is released, the event will be fed to the object, that may check if
+ * the final position is over it or not and do something about it.
+ *
+ * In the mode #EVAS_OBJECT_POINTER_MODE_NOGRAB, the pointer will
+ * always be bound to the object right below it.
+ *
+ * @ingroup Evas_Object_Group_Extras
+ */
+typedef enum _Evas_Object_Pointer_Mode
+{
+   EVAS_OBJECT_POINTER_MODE_AUTOGRAB, /**< default, X11-like */
+   EVAS_OBJECT_POINTER_MODE_NOGRAB, /**< pointer always bound to the object right below it */
+   EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN /**< useful on object with "repeat events" enabled, where mouse/touch up and down events WONT be repeated to objects and these objects wont be auto-grabbed. @since 1.2 */
+} Evas_Object_Pointer_Mode; /**< How the mouse pointer should be handled by Evas. */
 
 // FIXME: Move to Evas_Legacy.h
 /** Identifier of callbacks to be set for Evas canvases or Evas objects. */
@@ -1003,7 +1032,7 @@ EAPI const Eina_List *evas_device_list(Evas *e, const Evas_Device *dev);
  * @param e The canvas to find the device on
  * @param name The name of the device.
  *
- * Gets the first ocurrence of a device named as @p name
+ * Gets the first occurrence of a device named as @p name
  * on Evas @p e list of devices.
  *
  * @return the device or NULL if an error occurred, no name was provided,
@@ -3453,6 +3482,28 @@ typedef Eo Efl_Animation_Group_Sequential;
 
 #define EFL_ANIMATION_REPEAT_INFINITE -1
 #define EFL_ANIMATION_PLAYER_REPEAT_INFINITE -1
+
+#ifndef _EFL_INPUT_DEVICE_EO_H_
+#define _EFL_INPUT_DEVICE_EO_H_
+typedef Eo Efl_Input_Device;
+typedef unsigned int Efl_Input_Device_Type;
+
+#endif
+
+#ifndef _EFL_TEXT_CURSOR_EO_H_
+#define _EFL_TEXT_CURSOR_EO_H_
+
+#endif
+#ifndef _EFL_GFX_ENTITY_EO_H_
+#define _EFL_GFX_ENTITY_EO_H_
+
+#ifndef _EFL_GFX_ENTITY_EO_CLASS_TYPE
+#define _EFL_GFX_ENTITY_EO_CLASS_TYPE
+
+typedef Eo Efl_Gfx_Entity;
+
+#endif
+#endif
 
 /**
  * @}

@@ -271,7 +271,7 @@ _eldbus_model_proxy_efl_model_property_set(Eo *obj EINA_UNUSED,
                                            const char *property,
                                            Eina_Value *value)
 {
-   Eldbus_Model_Proxy_Property_Set_Data *data;
+   Eldbus_Model_Proxy_Property_Set_Data *data = NULL;
    const char *signature;
    Eldbus_Pending *pending;
    unsigned char access;
@@ -314,6 +314,7 @@ _eldbus_model_proxy_efl_model_property_set(Eo *obj EINA_UNUSED,
                           .data = data, .free = _eldbus_model_proxy_cancel_cb);
 
  on_error:
+   free(data);
    return efl_loop_future_rejected(obj, err);
 }
 
@@ -530,6 +531,7 @@ _eldbus_model_proxy_property_get_all_load(const Eldbus_Message *msg, Eldbus_Mode
    Eldbus_Message_Iter *values = NULL;
    Eldbus_Message_Iter *entry;
    Eina_Array *changed_properties;
+   Eina_Stringshare *tmp = NULL;
    const char *error_name, *error_text;
 
    if (eldbus_message_error_get(msg, &error_name, &error_text))
@@ -547,7 +549,6 @@ _eldbus_model_proxy_property_get_all_load(const Eldbus_Message *msg, Eldbus_Mode
    changed_properties = eina_array_new(1);
    while (eldbus_message_iter_get_and_next(values, 'e', &entry))
      {
-        Eina_Stringshare *tmp;
         const char *property;
         Eldbus_Message_Iter *variant;
         Eina_Value *struct_value;
@@ -567,7 +568,6 @@ _eldbus_model_proxy_property_get_all_load(const Eldbus_Message *msg, Eldbus_Mode
 
         tmp = eina_stringshare_add(property);
         prop_value = eina_hash_find(pd->properties, tmp);
-        eina_stringshare_del(tmp);
         if (!prop_value) goto on_error;
 
         ret = eina_value_copy(&arg0, prop_value);
@@ -575,14 +575,20 @@ _eldbus_model_proxy_property_get_all_load(const Eldbus_Message *msg, Eldbus_Mode
 
         eina_value_flush(&arg0);
 
-        ret = eina_array_push(changed_properties, property);
+        ret = eina_array_push(changed_properties, tmp);
         if (!ret) goto on_error;
+
+        // Reset tmp to NULL to avoid double free.
+        tmp = NULL;
      }
 
    pd->is_loaded = EINA_TRUE;
    return changed_properties;
 
  on_error:
+   eina_stringshare_del(tmp);
+   while ((tmp = eina_array_pop(changed_properties)))
+     eina_stringshare_del(tmp);
    eina_array_free(changed_properties);
    return NULL;
 }
@@ -603,6 +609,7 @@ _eldbus_model_proxy_property_get_all_cb(void *data,
 {
    Eldbus_Model_Proxy_Data *pd = (Eldbus_Model_Proxy_Data*)data;
    Eldbus_Property_Promise* p;
+   Eina_Stringshare *sp;
    Eina_Array *properties;
    Efl_Model_Property_Event evt;
 
@@ -623,6 +630,8 @@ _eldbus_model_proxy_property_get_all_cb(void *data,
 
    evt.changed_properties = properties;
    efl_event_callback_call(pd->obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
+   while ((sp = eina_array_pop(properties)))
+     eina_stringshare_del(sp);
    eina_array_free(properties);
 }
 
@@ -635,6 +644,7 @@ _eldbus_model_proxy_property_set_load_cb(void *data,
    Eldbus_Model_Proxy_Property_Set_Data *set_data = (Eldbus_Model_Proxy_Property_Set_Data *)data;
    Eldbus_Model_Proxy_Data *pd = set_data->pd;
    Eina_Array *properties;
+   Eina_Stringshare *sp;
    const char *signature;
 
    pd->pendings = eina_list_remove(pd->pendings, pending);
@@ -645,16 +655,20 @@ _eldbus_model_proxy_property_set_load_cb(void *data,
    if (!signature || !properties)
      {
         eina_promise_reject(set_data->promise, EFL_MODEL_ERROR_UNKNOWN);
-        eina_array_free(properties);
         _eldbus_model_proxy_property_set_data_free(set_data);
-        return;
+        goto end;
      }
 
-   eina_array_free(properties);
    pending = eldbus_proxy_property_value_set(pd->proxy, set_data->property,
                                              signature, set_data->value,
                                              _eldbus_model_proxy_property_set_cb, set_data);
    pd->pendings = eina_list_append(pd->pendings, pending);
+
+end:
+   if (!properties) return;
+   while ((sp = eina_array_pop(properties)))
+     eina_stringshare_del(sp);
+   eina_array_free(properties);
 }
 
 

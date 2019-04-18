@@ -1,4 +1,4 @@
-class Eldbus.Model.Object extends Eldbus.Model {
+class @beta Eldbus.Model.Object extends Eldbus.Model {
     [[Eldbus model object class]]
 
     data: Eldbus_Model_Object_Data;

@@ -1,115 +1,111 @@
 import eina_types;
-import efl_gfx_types;
 
-mixin Efl.File {
-   [[Efl file interface]]
+mixin Efl.File requires Efl.Object {
+   [[Efl file interface
+
+     @since 1.22
+   ]]
    methods {
-      @property load_error {
-         get {
-            [[Gets the (last) file loading error for a given object.]]
-         }
-         values {
-            error: Efl.Gfx.Image_Load_Error(Efl.Gfx.Image_Load_Error.none); [[The load error code.]]
-         }
-      }
       @property mmap {
-         set @pure_virtual {
-            [[Set the source mmaped file from where an image object must fetch the real
-              image data (it must be an Eina_File).
+         set {
+            [[Set the mmaped file from where an object will fetch the real
+              data (it must be an @Eina.File).
 
-              If the file supports multiple data stored in it (as Eet files do),
-              you can specify the key to be used as the index of the image in
-              this file.
+              If mmap is set during object construction, the object will automatically
+              call @.load during the finalize phase of construction.
+            ]]
 
-              @since 1.8]]
-
-            return: bool; [[$true on success, $false otherwise]]
+            return: Eina.Error; [[0 on success, error code otherwise]]
          }
-         get @pure_virtual {
-            [[Get the source mmaped file from where an image object must fetch the real
-              image data (it must be an Eina_File).
-
-              If the file supports multiple data stored in it (as Eet files do),
-              you can get the key to be used as the index of the image in
-              this file.
-
-              @since 1.10]]
+         get {
+            [[Get the mmaped file from where an object will fetch the real
+              data (it must be an @Eina.File).
+            ]]
          }
          values {
-            f: ptr(const(Eina.File)); [[The handler to an Eina_File that will be used as image source]]
-            key: string @optional; [[The group that the image belongs to, in case 
-                                           it's an EET(including Edje case) file. This can be used
-                                           as a key inside evas image cache if this is a normal image
-                                           file not eet file.]]
+            f: ptr(const(Eina.File)); [[The handle to the @Eina.File that will be used]]
          }
       }
       @property file {
          set {
-            [[Set the source file from where an image object must fetch the real
-              image data (it may be an Eet file, besides pure image ones).
+            [[Set the file path from where an object will fetch the data.
 
-              If the file supports multiple data stored in it (as Eet files do),
-              you can specify the key to be used as the index of the image in
-              this file.]]
+              If file is set during object construction, the object will automatically
+              call @.load during the finalize phase of construction.
+            ]]
 
-            /* FIXME-doc
-             * Example:
-             * @code
-             * img = evas_object_image_add(canvas);
-             * evas_object_image_file_set(img, "/path/to/img", NULL);
-             * err = evas_object_image_load_error_get(img);
-             * if (err != EVAS_LOAD_ERROR_NONE)
-             * {
-             * fprintf(stderr, "could not load image '%s'. error string is \"%s\"\n",
-             * valid_path, evas_load_error_str(err));
-             * }
-             * else
-             * {
-             * evas_object_image_fill_set(img, 0, 0, w, h);
-             * evas_object_resize(img, w, h);
-             * evas_object_show(img);
-             * }
-             * @endcode
-             */
-
-            return: bool; [[$true on success, $false otherwise]]
+            return: Eina.Error; [[0 on success, error code otherwise]]
          }
          get {
-            [[Retrieve the source file from where an image object is to fetch the
-              real image data (it may be an Eet file, besides pure image ones).
+            [[Retrieve the file path from where an object is to fetch the data.
 
               You must not modify the strings on the returned pointers.
-
-              Note: Use $null pointers on the file components you're not
-              interested in: they'll be ignored by the function.]]
+            ]]
          }
          values {
-            file: string; [[The image file path.]]
-            key: string; [[The image key in $file (if its an Eet one), or
-                                 $null, otherwise.]]
+            file: string; [[The file path.]]
          }
       }
-      save @const @pure_virtual {
-         [[Save the given image object's contents to an (image) file.
+      @property key {
+         set {
+            [[Set the key which corresponds to the target data within a file.
 
-           The extension suffix on $file will determine which saver
-           module Evas is to use when saving, thus the final file's
-           format. If the file supports multiple data stored in it (Eet ones),
-           you can specify the key to be used as the index of the image in it.
+              Some filetypes can contain multiple data streams which are indexed by
+              a key. Use this property for such cases.
+            ]]
+         }
+         get {
+            [[Get the previously-set key which corresponds to the target data within a file.
 
-           You can specify some flags when saving the image.  Currently
-           acceptable flags are $quality and $compress. Eg.:
-           "quality=100 compress=9".
+              Some filetypes can contain multiple data streams which are indexed by
+              a key. Use this property for such cases (See for example @Efl.Ui.Image or
+              @Efl.Ui.Layout).
+
+              You must not modify the strings on the returned pointers.
+            ]]
+         }
+         values {
+            key: string; [[The group that the data belongs to. See the class documentation
+                           for particular implementations of this interface to see how this
+                           property is used.]]
+         }
+      }
+      @property loaded {
+         get {
+            [[Get the load state of the object.
+            ]]
+         }
+         values {
+            loaded: bool; [[$true if the object is loaded, $false otherwise.]]
+         }
+      }
+
+      load {
+         [[Perform all necessary operations to open and load file data into the object
+           using the @.file (or @.mmap) and @.key properties.
+
+           In the case where @.file.set has been called on an object, this will internally
+           open the file and call @.mmap.set on the object using the opened file handle.
+
+           Calling @.load on an object which has already performed file operations based on
+           the currently set properties will have no effect.
          ]]
-         params {
-            @in file: string @nonull; [[The filename to be used to save the image (extension
-                                              obligatory).]]
-            @in key: string; [[The image key in the file (if an Eet one), or $null,
-                                     otherwise.]]
-            @in flags: string; [[String containing the flags to be used ($null for
-                                       none).]]
-         }
-         return: bool;  [[$true on success, $false otherwise]]
+
+         return: Eina.Error; [[0 on success, error code otherwise]]
       }
+
+      unload {
+         [[Perform all necessary operations to unload file data from the object.
+
+           In the case where @.mmap.set has been externally called on an object, the file handle
+           stored in the object will be preserved.
+
+           Calling @.unload on an object which is not currently loaded will have no effect.
+         ]]
+      }
+   }
+   implements {
+       Efl.Object.destructor;
+       Efl.Object.finalize;
    }
 }

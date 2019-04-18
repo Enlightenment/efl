@@ -7,17 +7,18 @@ using System.Diagnostics.CodeAnalysis;
 
 namespace TestSuite {
 
+#if EFL_BETA
 
 [SuppressMessage("Gendarme.Rules.Portability", "DoNotHardcodePathsRule")]
 public static class TestParts
 {
     public static void basic_part_test()
     {
-        var t = new Dummy.TestObject();
+        var t = new Dummy.PartHolder();
         do_part_test(t);
     }
 
-    private class Child : Dummy.TestObject
+    private class Child : Dummy.PartHolder
     {
         public Child() : base(null) {}
     }
@@ -27,7 +28,7 @@ public static class TestParts
         do_part_test(t);
     }
 
-    private static void do_part_test(Dummy.TestObject t)
+    private static void do_part_test(Dummy.PartHolder t)
     {
         var p1 = t.PartOne;
         var p2 = t.PartTwo;
@@ -37,5 +38,7 @@ public static class TestParts
         Test.AssertEquals("part_two", p2.GetName());
     }
 }
+
+#endif
 
 }

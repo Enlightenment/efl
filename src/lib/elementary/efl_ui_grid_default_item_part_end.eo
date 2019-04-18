@@ -1,4 +1,4 @@
-class Efl.Ui.Grid_Default_Item_Part_End extends Efl.Ui.Layout_Part implements Efl.Content
+class @beta Efl.Ui.Grid_Default_Item_Part_End extends Efl.Ui.Layout_Part implements Efl.Content
 {
    [[Grid Default Item internal content of end part class]]
 	data: null;

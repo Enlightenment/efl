@@ -208,6 +208,7 @@ struct _Ecore_Drm2_Output
    int fd;
    int pipe;
    int x, y, w, h, pw, ph;
+   int rotation;
 
    long fallback_sec, fallback_usec;
 
@@ -251,6 +252,8 @@ struct _Ecore_Drm2_Output
 
    /* unused when doing atomic */
    drmModePropertyPtr dpms;
+
+   Ecore_Timer *flip_timeout;
 
    Ecore_Drm2_Output_Mode *current_mode;
    Eina_List *modes;

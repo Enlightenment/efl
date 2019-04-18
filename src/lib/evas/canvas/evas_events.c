@@ -1843,7 +1843,7 @@ _canvas_event_feed_mouse_updown(Eo *eo_e, int b, Evas_Button_Flags flags,
    if (!e) return;
    EVAS_EVENT_FEED_SAFETY_CHECK(e);
 
-   evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, eo_e, (void **) &ev);
+   evt = efl_input_pointer_instance_get( eo_e, (void **) &ev);
    if (!ev) return;
 
    ev->data = (void *) data;
@@ -1957,7 +1957,7 @@ evas_event_feed_mouse_cancel(Eo *eo_e, unsigned int timestamp, const void *data)
    Efl_Input_Pointer_Data *ev = NULL;
    Efl_Input_Pointer *evt;
 
-   evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, eo_e, (void **) &ev);
+   evt = efl_input_pointer_instance_get( eo_e, (void **) &ev);
    if (!ev) return;
    EVAS_EVENT_FEED_SAFETY_CHECK(e);
 
@@ -2048,7 +2048,7 @@ evas_event_feed_mouse_wheel(Eo *eo_e, int direction, int z, unsigned int timesta
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(eo_e, EVAS_CANVAS_CLASS));
    Efl_Input_Pointer_Data *ev = NULL;
-   Efl_Input_Pointer *evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, eo_e, (void **) &ev);
+   Efl_Input_Pointer *evt = efl_input_pointer_instance_get( eo_e, (void **) &ev);
 
    if (!ev) return;
 
@@ -2489,7 +2489,7 @@ _canvas_event_feed_mouse_move_legacy(Evas *eo_e, Evas_Public_Data *e, int x, int
    Efl_Input_Pointer_Data *ev = NULL;
    Efl_Input_Pointer *evt;
 
-   evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, eo_e, (void **) &ev);
+   evt = efl_input_pointer_instance_get( eo_e, (void **) &ev);
    if (!ev) return;
 
    ev->data = (void *) data;
@@ -2716,7 +2716,7 @@ _canvas_event_feed_mouse_inout_legacy(Eo *eo_e, unsigned int timestamp,
    Efl_Input_Pointer_Data *ev = NULL;
    Efl_Input_Pointer *evt;
 
-   evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, eo_e, (void **) &ev);
+   evt = efl_input_pointer_instance_get( eo_e, (void **) &ev);
    if (!ev) return;
 
    ev->timestamp = timestamp;
@@ -2938,7 +2938,7 @@ _canvas_event_feed_multi_internal(Evas *eo_e, Evas_Public_Data *e,
    Efl_Input_Pointer_Data *ev = NULL;
    Efl_Input_Pointer *evt;
 
-   evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, eo_e, (void **) &ev);
+   evt = efl_input_pointer_instance_get( eo_e, (void **) &ev);
    if (!e || !ev) return;
    EVAS_EVENT_FEED_SAFETY_CHECK(e);
 
@@ -3417,7 +3417,7 @@ _canvas_event_feed_key_legacy(Eo *eo_e, Evas_Public_Data *e,
 
    if (!keyname) return;
 
-   evt = efl_input_instance_get(EFL_INPUT_KEY_CLASS, eo_e, (void **) &ev);
+   evt = efl_input_key_instance_get( eo_e, (void **) &ev);
    if (!ev) return;
 
    ev->keyname = (char *) keyname;
@@ -3491,7 +3491,7 @@ evas_event_feed_hold(Eo *eo_e, int hold, unsigned int timestamp, const void *dat
 
    event_id = _evas_object_event_new();
 
-   evt = efl_input_instance_get(EFL_INPUT_HOLD_CLASS, eo_e, (void **) &ev);
+   evt = efl_input_hold_instance_get(eo_e, (void **) &ev);
    if (!ev) return;
 
    ev->hold = !!hold;
@@ -3590,7 +3590,7 @@ evas_event_feed_axis_update(Evas *eo_e, unsigned int timestamp, int device, int 
    if (!e) return;
    EVAS_EVENT_FEED_SAFETY_CHECK(e);
 
-   evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, eo_e, (void **) &ev);
+   evt = efl_input_pointer_instance_get( eo_e, (void **) &ev);
    if (!ev) return;
 
    ev->data = (void *) data;
@@ -3715,23 +3715,53 @@ _feed_mouse_move_eval_internal(Eo *eo_obj, Evas_Object_Protected_Data *obj)
                                              evas->last_timestamp, NULL);
      }
 }
-
 EOLIAN void
-_efl_canvas_object_freeze_events_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Bool freeze)
+_efl_canvas_object_efl_object_event_freeze(Eo *obj, Evas_Object_Protected_Data *pd)
 {
-   freeze = !!freeze;
-   if (obj->freeze_events == freeze) return;
-   obj->freeze_events = freeze;
-   evas_object_smart_member_cache_invalidate(eo_obj, EINA_FALSE, EINA_TRUE,
-                                             EINA_FALSE);
-   if (obj->freeze_events) return;
-   _feed_mouse_move_eval_internal(eo_obj, obj);
+   efl_event_freeze(efl_super(obj, EFL_CANVAS_OBJECT_CLASS));
+   if (efl_event_freeze_count_get(obj) == 1)
+     {
+        pd->freeze_events = EINA_TRUE;
+        evas_object_smart_member_cache_invalidate(obj, EINA_FALSE, EINA_TRUE,
+                                                  EINA_FALSE);
+     }
 }
 
-EOLIAN Eina_Bool
-_efl_canvas_object_freeze_events_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+EOLIAN void
+_efl_canvas_object_efl_object_event_thaw(Eo *obj, Evas_Object_Protected_Data *pd)
 {
-   return obj->freeze_events;
+   if (efl_event_freeze_count_get(obj) == 1)
+     {
+        pd->freeze_events = EINA_FALSE;
+        evas_object_smart_member_cache_invalidate(obj, EINA_FALSE, EINA_TRUE,
+                                                  EINA_FALSE);
+        _feed_mouse_move_eval_internal(obj, pd);
+     }
+   efl_event_thaw(efl_super(obj, EFL_CANVAS_OBJECT_CLASS));
+}
+
+EAPI void
+evas_object_freeze_events_set(Eo *eo_obj, Eina_Bool freeze)
+{
+   Evas_Object_Protected_Data *pd = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
+   EINA_SAFETY_ON_NULL_RETURN(pd);
+
+   freeze = !!freeze;
+   if (pd->freeze_events == freeze) return;
+
+   if (freeze)
+     efl_event_freeze(eo_obj);
+   else
+     // The following check is needed, as eo does not accept more thaw calls than freeze calls.
+     // However, evas legacy stuff accepted multiple flase sets
+     if (efl_event_freeze_count_get(eo_obj) > 0)
+       efl_event_thaw(eo_obj);
+}
+
+EAPI Eina_Bool
+evas_object_freeze_events_get(const Eo *eo_obj EINA_UNUSED)
+{
+   return (efl_event_freeze_count_get(eo_obj) > 0);
 }
 
 EOLIAN void
@@ -4203,7 +4233,7 @@ _evas_canvas_event_pointer_move_event_dispatch(Evas_Public_Data *edata,
    Efl_Input_Pointer_Data *ev = NULL;
    Efl_Input_Pointer *evt;
 
-   evt = efl_input_instance_get(EFL_INPUT_POINTER_CLASS, edata->evas,
+   evt = efl_input_pointer_instance_get( edata->evas,
                                 (void **) &ev);
    if (!evt) return;
 

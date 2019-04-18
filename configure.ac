@@ -1,4 +1,4 @@
-EFL_VERSION([1], [21], [99], [dev])
+EFL_VERSION([1], [22], [99], [dev])
 AC_INIT([efl], [efl_version], [enlightenment-devel@lists.sourceforge.net])
 
 AC_PREREQ([2.60])
@@ -28,7 +28,6 @@ CXXFLAGS="${CXXFLAGS} -Wno-shadow" # No shadow warnings
 #### Apply configuring with legacy api's only, eo api's or both.
 
 EFL_API_LEGACY_DEF="#define EFL_NOLEGACY_API_SUPPORT"
-EFL_API_EO_DEF="#define EFL_EO_API_SUPPORT"
 efl_api="both"
 
 #### For the moment the Eo EFL API is not ready you need to explicitly optin.
@@ -43,22 +42,15 @@ AC_ARG_WITH([api],
 case "$efl_api" in
     eo)
         EFL_API_LEGACY_DEF="#define EFL_NOLEGACY_API_SUPPORT"
-        EFL_API_EO_DEF="#define EFL_EO_API_SUPPORT"
         CFOPT_WARNING="xyes"
         ;;
-    legacy)
+    legacy|both)
         EFL_API_LEGACY_DEF=""
-        EFL_API_EO_DEF=""
-        ;;
-    both)
-        EFL_API_LEGACY_DEF=""
-        EFL_API_EO_DEF="#define EFL_EO_API_SUPPORT"
         ;;
     *) AC_MSG_ERROR([Invalid api (${efl_api}): must be eo, legacy or both]) ;;
 esac
 
 AC_SUBST(EFL_API_LEGACY_DEF)
-AC_SUBST(EFL_API_EO_DEF)
 
 #### Additional options to configure
 
@@ -146,6 +138,20 @@ case "${build_tests}" in
      AC_MSG_ERROR([Unknown build tests option: --with-tests=${build_tests}])
      ;;
 esac
+
+install_eo_files="no"
+AC_ARG_ENABLE([install-eo-files],
+   [AS_HELP_STRING([--enable-install-eo-files],[Enable installing eo files. @<:@default=disabled@:>@])],
+   [
+    if test "x${enableval}" = "xyes" ; then
+       install_eo_files="yes"
+    else
+       install_eo_files="no"
+    fi
+   ],
+   [install_eo_files="no"])
+
+AM_CONDITIONAL([INSTALL_EO_FILES], [test "${install_eo_files}" = "yes"])
 
 AC_ARG_WITH([ecore-con-http-test-url],
    [AS_HELP_STRING([--with-ecore-con-http-test-url=http://username:password@example.com],[Url of http server for testing with username and password])],[ECORE_CON_HTTP_TEST_URL=${withval}][AC_DEFINE_UNQUOTED([ECORE_CON_HTTP_TEST_URL],["$withval"],[Http url for testing])])
@@ -804,7 +810,7 @@ EFL_SELECT_WINDOWS_VERSION
 
 ### Checks for libraries
 
-EFL_ADD_LIBS([EVIL], [-lpsapi -lole32 -lws2_32 -lsecur32 -luuid -lmsvcr100])
+EFL_ADD_LIBS([EVIL], [-lpsapi -lole32 -lws2_32 -lsecur32 -luuid])
 
 ### Checks for header files
 
@@ -1117,6 +1123,7 @@ EINA_CONFIG([HAVE_DEBUG_THREADS], [test "x${want_debug_threads}" = "xyes"])
 EINA_CONFIG([HAVE_POSIX_SPINLOCK], [test "x${efl_have_posix_threads_spinlock}" = "xyes"])
 EINA_CONFIG([HAVE_OSX_SPINLOCK], [test "x${efl_have_osx_spinlock}" = "xyes"])
 EINA_CONFIG([HAVE_OSX_SEMAPHORE], [test "x${have_darwin}" = "xyes"])
+EINA_CONFIG([HAVE_WORDS_BIGENDIAN], [test "x${ac_cv_c_bigendian}" = "xyes"])
 
 ### Modules
 
@@ -1428,6 +1435,7 @@ EFL_LIB_START_OPTIONAL([Efl_Custom_Exports_Mono], [test "x${want_csharp}" = "xye
 EFL_PLATFORM_DEPEND([EFL_CUSTOM_EXPORTS_MONO], [evil])
 EFL_INTERNAL_DEPEND_PKG([EFL_CUSTOM_EXPORTS_MONO], [Eina])
 EFL_INTERNAL_DEPEND_PKG([EFL_CUSTOM_EXPORTS_MONO], [Eo])
+EFL_INTERNAL_DEPEND_PKG([EFL_CUSTOM_EXPORTS_MONO], [Ecore])
 EFL_INTERNAL_DEPEND_PKG([EFL_CUSTOM_EXPORTS_MONO], [Efl])
 EFL_INTERNAL_DEPEND_PKG([EFL_CUSTOM_EXPORTS_MONO], [Eldbus])
 
@@ -1464,7 +1472,6 @@ if test "x${have_windows}" = "xyes"; then
 else
   EVIL_DL_MONO="dl"
 fi
-ECORE_EVAS_DL_MONO="${DLIB_PREFIX_MONO}ecore_evas${DLIB_SUFFIX_MONO}"
 EDJE_DL_MONO="${DLIB_PREFIX_MONO}edje${DLIB_SUFFIX_MONO}"
 ELEMENTARY_DL_MONO="${DLIB_PREFIX_MONO}elementary${DLIB_SUFFIX_MONO}"
 ELDBUS_DL_MONO="${DLIB_PREFIX_MONO}eldbus${DLIB_SUFFIX_MONO}"
@@ -1476,7 +1483,6 @@ AC_SUBST([EINA_DL_MONO])
 AC_SUBST([EO_DL_MONO])
 AC_SUBST([EVAS_DL_MONO])
 AC_SUBST([EVIL_DL_MONO])
-AC_SUBST([ECORE_EVAS_DL_MONO])
 AC_SUBST([EDJE_DL_MONO])
 AC_SUBST([ELEMENTARY_DL_MONO])
 AC_SUBST([ELDBUS_DL_MONO])
@@ -1582,8 +1588,6 @@ fi
 EFL_CHECK_LIBS([EMILE], [zlib])
 
 EFL_INTERNAL_DEPEND_PKG([EMILE], [eina])
-requirements_cflags_emile="${requirements_cflags_emile} -I\${top_srcdir}/src/lib/efl -I\${top_builddir}/src/lib/efl"
-requirements_pc_emile="efl >= ${PACKAGE_VERSION} ${requirements_pc_emile}"
 
 EFL_EVAL_PKGS([EMILE])
 
@@ -1635,8 +1639,6 @@ fi
 
 EFL_INTERNAL_DEPEND_PKG([EET], [eina])
 EFL_INTERNAL_DEPEND_PKG([EET], [emile])
-requirements_pc_eet="${requirements_pc_eet} ${requirements_pc_emile}"
-requirements_cflags_eet="${requirements_cflags_eet} ${requirements_cflags_emile}"
 
 EFL_EVAL_PKGS([EET])
 
@@ -2543,19 +2545,6 @@ AC_ARG_ENABLE([pixman-image-scale-sample],
    ],
    [have_pixman_image_scale_sample="no"])
 
-# Tile rotate
-AC_ARG_ENABLE([tile-rotate],
-   [AS_HELP_STRING([--enable-tile-rotate],[Enable tiled rotate algorithm. @<:@default=disabled@:>@])],
-   [
-    if test "x${enableval}" = "xyes" ; then
-       have_tile_rotate="yes"
-       CFOPT_WARNING="xyes"
-    else
-       have_tile_rotate="no"
-    fi
-  ],
-  [have_tile_rotate="no"])
-
 # Ecore Buffer
 AC_ARG_ENABLE([ecore-buffer],
    [AS_HELP_STRING([--enable-ecore-buffer],[enable ecore-buffer. @<:@default=disabled@:>@])],
@@ -2989,13 +2978,6 @@ AC_CHECK_LIB([m], [lround],
 
 ### Configuration
 
-## Tile rotation
-
-if test "x${have_tile_rotate}" = "xyes" ; then
-   AC_DEFINE(TILE_ROTATE, 1, [Enable tiled rotate algorithm])
-fi
-
-
 ## dither options
 
 AC_ARG_WITH([evas-dither-mask],
@@ -3277,7 +3259,7 @@ EFL_EVAL_PKGS([ECORE_CON])
 
 ### Checks for header files
 
-AC_CHECK_HEADERS([ws2tcpip.h netdb.h sys/filio.h])
+AC_CHECK_HEADERS([netdb.h sys/filio.h])
 
 if test "x${ac_cv_header_netdb_h}" = "xno" && test "x${have_windows}" = "xno"; then
    AC_MSG_ERROR([netdb.h is requested to have Ecore_Con. Exiting...])
@@ -3285,18 +3267,19 @@ fi
 
 ### Checks for types
 
-have_ipv6="no"
-AC_CHECK_TYPES([struct ipv6_mreq],
-   [have_ipv6="yes"],
-   [have_ipv6="no"],
-   [[
+if test "x${have_win32}" = "xyes" ; then
+   have_ipv6="yes"
+else
+   have_ipv6="no"
+   AC_CHECK_TYPES([struct ipv6_mreq],
+      [have_ipv6="yes"],
+      [have_ipv6="no"],
+      [[
 #ifdef HAVE_NETINET_IN_H
 # include <netinet/in.h>
 #endif
-#ifdef HAVE_WS2TCPIP_H
-# include <ws2tcpip.h>
-#endif
-]])
+      ]])
+fi
 
 AC_DEFINE_IF([HAVE_IPV6],
    [test "x${have_ipv6}" = "xyes"],
@@ -4107,7 +4090,6 @@ if test "x${want_sndfile}" = "xyes" ; then
 fi
 if test "x${want_wasapiaudio}" = "xyes" ; then
   EFL_ADD_LIBS([ECORE_AUDIO], [-luuid -lwinmm -lksuser])
-  AC_DEFINE([HAVE_WASAPI], [1], [Wasapiaudio support])
 fi
 
 dnl EFL_OPTIONAL_DEPEND_PKG([ECORE_AUDIO_ALSA], [${want_alsa}], [ALSA], [alsa])
@@ -4136,7 +4118,6 @@ EFL_ADD_FEATURE([ECORE_AUDIO], [wasapiaudio])
 EFL_LIB_END_OPTIONAL([Ecore_Audio])
 AM_CONDITIONAL([HAVE_ECORE_AUDIO_PULSE], [test "x${want_pulseaudio}" = "xyes"])
 AM_CONDITIONAL([HAVE_ECORE_AUDIO_SNDFILE], [test "x${want_sndfile}" = "xyes"])
-AM_CONDITIONAL([HAVE_ECORE_AUDIO_WASASPI], [test "x${want_wasapiaudio}" = "xyes"])
 
 #### End of Ecore_Audio
 
@@ -4498,7 +4479,7 @@ if test "x${want_xim}" = "xyes" && test "x${want_ecore_imf_xim}" = "xyes" ; then
    [X11 XOpenIM],
    [
      have_ecore_imf_xim=yes
-     AC_DEFINE([ENABLE_XIM], [1], [Enable X Input Method])
+     AC_DEFINE([BUILD_ECORE_IMF_XIM], [1], [Enable X Input Method])
    ])
 fi
 
@@ -5843,52 +5824,52 @@ dbus-services/org.enlightenment.Ethumb.service
 systemd-services/ethumb.service
 $po_makefile_in
 cmakeconfig/EflConfig.cmake
-cmakeconfig/EflConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EflConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EinaConfig.cmake
-cmakeconfig/EinaConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EinaConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EioConfig.cmake
-cmakeconfig/EioConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EioConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EezeConfig.cmake
-cmakeconfig/EezeConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EezeConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EoConfig.cmake
-cmakeconfig/EoConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EoConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EolianConfig.cmake
-cmakeconfig/EolianConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EolianConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EolianHelper.cmake
 cmakeconfig/EolianCxxConfig.cmake
-cmakeconfig/EolianCxxConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EolianCxxConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EinaCxxConfig.cmake
-cmakeconfig/EinaCxxConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EinaCxxConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EoCxxConfig.cmake
-cmakeconfig/EoCxxConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EoCxxConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EcoreCxxConfig.cmake
-cmakeconfig/EcoreCxxConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EcoreCxxConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EvasCxxConfig.cmake
-cmakeconfig/EvasCxxConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EvasCxxConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EetCxxConfig.cmake
-cmakeconfig/EetCxxConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EetCxxConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EetConfig.cmake
-cmakeconfig/EetConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EetConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EvasConfig.cmake
-cmakeconfig/EvasConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EvasConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EcoreConfig.cmake
-cmakeconfig/EcoreConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EcoreConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EdjeConfig.cmake
-cmakeconfig/EdjeConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EdjeConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EldbusConfig.cmake
-cmakeconfig/EldbusConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EldbusConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EfreetConfig.cmake
-cmakeconfig/EfreetConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EfreetConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EthumbConfig.cmake
-cmakeconfig/EthumbConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EthumbConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EthumbClientConfig.cmake
-cmakeconfig/EthumbClientConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EthumbClientConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EmotionConfig.cmake
-cmakeconfig/EmotionConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EmotionConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EluaConfig.cmake
-cmakeconfig/EluaConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EluaConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/EmileConfig.cmake
-cmakeconfig/EmileConfigVersion.cmake:cmakeconfig/EFLConfigVersion.cmake.in
+cmakeconfig/EmileConfigVersion.cmake:cmakeconfig/EflConfigVersion.cmake.in
 cmakeconfig/ElementaryConfigVersion.cmake
 cmakeconfig/ElementaryConfig.cmake
 ])

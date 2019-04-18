@@ -1,4 +1,4 @@
-class Efl.Io.Buffer extends Efl.Object implements Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Efl.Io.Sizer, Efl.Io.Positioner {
+class @beta Efl.Io.Buffer extends Efl.Object implements Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Efl.Io.Sizer, Efl.Io.Positioner {
     [[Generic In-memory buffer of data to be used as I/O.
 
       This class offers both input and output, which can be used at
@@ -10,8 +10,6 @@ class Efl.Io.Buffer extends Efl.Object implements Efl.Io.Reader, Efl.Io.Writer, 
 
       A fixed sized buffer can be implemented by setting @.limit
       followed by @.preallocate
-
-      @since 1.19
     ]]
 
     methods {

@@ -1,6 +1,7 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 static Evas_Object *_test_code_win_create(const char *id, const char *name)
@@ -69,7 +70,7 @@ _elm_code_test_welcome_setup(Evas_Object *parent)
    evas_object_show(widget);
 
    efl_event_callback_add(widget, &ELM_CODE_EVENT_LINE_LOAD_DONE, _elm_code_test_line_done_cb, NULL);
-   efl_event_callback_add(widget, ELM_OBJ_CODE_WIDGET_EVENT_LINE_CLICKED, _elm_code_test_line_clicked_cb, code);
+   efl_event_callback_add(widget, EFL_UI_CODE_WIDGET_EVENT_LINE_CLICKED, _elm_code_test_line_clicked_cb, code);
 
    _append_line(code->file, "❤ Hello World, Elm Code! ❤");
    _append_line(code->file, "*** Currently experimental ***");
@@ -103,10 +104,10 @@ _elm_code_test_editor_setup(Evas_Object *parent, Eina_Bool log)
    evas_object_size_hint_align_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(widget);
 
-   elm_obj_code_widget_font_set(widget, NULL, 14);
-   elm_obj_code_widget_editable_set(widget, EINA_TRUE);
-   elm_obj_code_widget_show_whitespace_set(widget, EINA_TRUE);
-   elm_obj_code_widget_line_numbers_set(widget, EINA_TRUE);
+   efl_ui_code_widget_font_set(widget, NULL, 14);
+   efl_ui_code_widget_editable_set(widget, EINA_TRUE);
+   efl_ui_code_widget_show_whitespace_set(widget, EINA_TRUE);
+   efl_ui_code_widget_line_numbers_set(widget, EINA_TRUE);
 
    if (!log)
      {
@@ -135,11 +136,11 @@ _elm_code_test_syntax_setup(Evas_Object *parent)
    evas_object_size_hint_align_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(widget);
 
-   elm_obj_code_widget_editable_set(widget, EINA_TRUE);
-   elm_obj_code_widget_syntax_enabled_set(widget, EINA_TRUE);
-   elm_obj_code_widget_code_get(widget)->file->mime = "text/x-csrc";
-   elm_obj_code_widget_show_whitespace_set(widget, EINA_TRUE);
-   elm_obj_code_widget_line_numbers_set(widget, EINA_TRUE);
+   efl_ui_code_widget_editable_set(widget, EINA_TRUE);
+   efl_ui_code_widget_syntax_enabled_set(widget, EINA_TRUE);
+   efl_ui_code_widget_code_get(widget)->file->mime = "text/x-csrc";
+   efl_ui_code_widget_show_whitespace_set(widget, EINA_TRUE);
+   efl_ui_code_widget_line_numbers_set(widget, EINA_TRUE);
 
    _append_line(code->file, "#include <stdio.h>");
    _append_line(code->file, "int main(int argc, char **argv)");
@@ -163,13 +164,13 @@ _elm_code_test_syntax_tabbed_setup(Evas_Object *parent)
 
    code = elm_code_create();
    code->config.indent_style_efl = EINA_FALSE;
-   widget = efl_add(ELM_CODE_WIDGET_CLASS, parent, elm_obj_code_widget_code_set(efl_added, code));
-   elm_obj_code_widget_editable_set(widget, EINA_TRUE);
-   elm_obj_code_widget_syntax_enabled_set(widget, EINA_TRUE);
-   elm_obj_code_widget_code_get(widget)->file->mime = "text/x-csrc";
-   elm_obj_code_widget_show_whitespace_set(widget, EINA_TRUE);
-   elm_obj_code_widget_line_numbers_set(widget, EINA_TRUE);
-   elm_obj_code_widget_tab_inserts_spaces_set(widget, EINA_FALSE);
+   widget = efl_add(ELM_CODE_WIDGET_CLASS, parent, efl_ui_code_widget_code_set(efl_added, code));
+   efl_ui_code_widget_editable_set(widget, EINA_TRUE);
+   efl_ui_code_widget_syntax_enabled_set(widget, EINA_TRUE);
+   efl_ui_code_widget_code_get(widget)->file->mime = "text/x-csrc";
+   efl_ui_code_widget_show_whitespace_set(widget, EINA_TRUE);
+   efl_ui_code_widget_line_numbers_set(widget, EINA_TRUE);
+   efl_ui_code_widget_tab_inserts_spaces_set(widget, EINA_FALSE);
 
    _append_line(code->file, "#include <stdio.h>");
    _append_line(code->file, "int main(int argc, char **argv)");
@@ -199,8 +200,8 @@ _elm_code_test_mirror_setup(Elm_Code *code, char *font_name, Evas_Object *parent
    evas_object_size_hint_align_set(widget, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_show(widget);
 
-   elm_obj_code_widget_font_set(widget, font_name, 11);
-   elm_obj_code_widget_line_numbers_set(widget, EINA_TRUE);
+   efl_ui_code_widget_font_set(widget, font_name, 11);
+   efl_ui_code_widget_line_numbers_set(widget, EINA_TRUE);
 
    return widget;
 }
@@ -326,7 +327,7 @@ test_code_log(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    o = elm_button_add(screen);
    elm_object_text_set(o, "log");
-   evas_object_smart_callback_add(o, "clicked", _elm_code_test_log_clicked, elm_obj_code_widget_code_get(code));
+   evas_object_smart_callback_add(o, "clicked", _elm_code_test_log_clicked, efl_ui_code_widget_code_get(code));
    elm_box_pack_end(screen, o);
    evas_object_show(o);
 
@@ -348,7 +349,7 @@ test_code_mirror(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    evas_object_size_hint_weight_set(screen, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
    widget = _elm_code_test_editor_setup(screen, EINA_FALSE);
-   code = elm_obj_code_widget_code_get(widget);
+   code = efl_ui_code_widget_code_get(widget);
    elm_box_pack_end(screen, widget);
 
    elm_box_pack_end(screen, _elm_code_test_mirror_setup(code, "Mono:style=Oblique", screen));

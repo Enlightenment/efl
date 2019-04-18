@@ -66,6 +66,18 @@ _simple_obj_override_a_double_set(Eo *obj, void *class_data EINA_UNUSED, int a)
    simple_a_set(efl_super(obj, EFL_OBJECT_OVERRIDE_CLASS), 2 * a);
 }
 
+EAPI int test_class_beef_get(const Efl_Object *obj);
+
+EFL_FUNC_BODY_CONST(test_class_beef_get, int, 0)
+
+static int
+_simple_obj_override_beef_get(Eo *obj, void *class_data EINA_UNUSED)
+{
+   test_class_beef_get(efl_super(obj, EFL_OBJECT_OVERRIDE_CLASS));
+
+   return 1337;
+}
+
 EFL_START_TEST(efl_object_override_tests)
 {
 
@@ -105,7 +117,7 @@ EFL_START_TEST(efl_object_override_tests)
    /* Try introducing a new function */
    EFL_OPS_DEFINE(
             overrides3,
-            EFL_OBJECT_OP_FUNC(simple2_class_beef_get, _simple_obj_override_a_double_set));
+            EFL_OBJECT_OP_FUNC(test_class_beef_get, _simple_obj_override_beef_get));
    fail_if(efl_object_override(obj, &overrides3));
    fail_if(!efl_object_override(obj, NULL));
    fail_if(efl_object_override(obj, &overrides3));
@@ -327,6 +339,8 @@ EFL_START_TEST(efl_data_safe_fetch)
    fail_if(!efl_isa(obj, SIMPLE_CLASS));
    fail_if(!efl_isa(obj, SIMPLE2_CLASS));
    fail_if(!efl_isa(obj, SIMPLE3_CLASS));
+   fail_if(!efl_isa(SIMPLE3_CLASS, SIMPLE_CLASS));
+   fail_if(!efl_isa(SIMPLE_CLASS, SIMPLE_CLASS));
    fail_if(!efl_data_scope_safe_get(obj, SIMPLE_CLASS));
    fail_if(!efl_data_scope_safe_get(obj, SIMPLE3_CLASS));
    fail_if(efl_data_scope_safe_get(obj, SIMPLE2_CLASS) != NULL);
@@ -1792,7 +1806,45 @@ EFL_START_TEST(efl_object_size)
 {
    // This test is checking that we are not increasing the size of our object over time
    // Update this number only if you modified the class size on purpose
+
+#ifdef EO_DEBUG
+   ck_assert_int_le(efl_class_memory_size_get(SIMPLE_CLASS), 164);
+#else
    ck_assert_int_le(efl_class_memory_size_get(SIMPLE_CLASS), 148);
+#endif
+}
+EFL_END_TEST
+
+EFL_START_TEST(eo_test_class_replacement)
+{
+   Eo *obj;
+
+   /* test basic override */
+   ck_assert(efl_class_override_register(SIMPLE_CLASS, SIMPLE3_CLASS));
+   obj = efl_add_ref(SIMPLE_CLASS, NULL);
+   fail_if(!obj);
+   ck_assert_ptr_eq(efl_class_get(obj), SIMPLE3_CLASS);
+   efl_unref(obj);
+
+   /* test overriding with non-inheriting class */
+   ck_assert(!efl_class_override_register(SIMPLE_CLASS, SIMPLE2_CLASS));
+
+   /* test removing an invalid override */
+   ck_assert(!efl_class_override_unregister(SIMPLE_CLASS, SIMPLE2_CLASS));
+
+   /* test removing an override */
+   ck_assert(efl_class_override_unregister(SIMPLE_CLASS, SIMPLE3_CLASS));
+   obj = efl_add_ref(SIMPLE_CLASS, NULL);
+   fail_if(!obj);
+   ck_assert_ptr_eq(efl_class_get(obj), SIMPLE_CLASS);
+   efl_unref(obj);
+}
+EFL_END_TEST
+
+EFL_START_TEST(eo_test_class_type)
+{
+   ck_assert_int_eq(efl_class_type_get(SIMPLE_CLASS), EFL_CLASS_TYPE_REGULAR);
+   ck_assert_int_eq(efl_class_type_get((void*)0xAFFE), EFL_CLASS_TYPE_INVALID);
 }
 EFL_END_TEST
 
@@ -1801,6 +1853,7 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, eo_simple);
    tcase_add_test(tc, eo_singleton);
    tcase_add_test(tc, efl_object_override_tests);
+   tcase_add_test(tc, eo_test_class_replacement);
    tcase_add_test(tc, eo_signals);
    tcase_add_test(tc, efl_data_fetch);
    tcase_add_test(tc, efl_data_safe_fetch);
@@ -1824,4 +1877,5 @@ void eo_test_general(TCase *tc)
    tcase_add_test(tc, efl_object_destruct_test);
    tcase_add_test(tc, efl_object_auto_unref_test);
    tcase_add_test(tc, efl_object_size);
+   tcase_add_test(tc, eo_test_class_type);
 }

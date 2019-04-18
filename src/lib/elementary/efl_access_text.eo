@@ -1,6 +1,6 @@
 import eina_types;
 
-enum Efl.Access.Text_Granularity
+enum @beta Efl.Access.Text_Granularity
 {
    [[Text accessibility granularity]]
    char, [[Character granularity]]
@@ -10,24 +10,23 @@ enum Efl.Access.Text_Granularity
    paragraph [[Paragraph granularity]]
 }
 
-enum Efl.Access.Text_Clip_Type
+enum @beta Efl.Access.Text_Clip_Type
 {
    [[Text clip type]]
-   legacy: elm_atspi_text_clip;
    none, [[No clip type]]
    min, [[Minimum clip type]]
    max, [[Maximum clip type]]
    both [[Both clip types]]
 }
 
-struct Efl.Access.Text_Attribute
+struct @free(elm_atspi_text_text_attribute_free) Efl.Access.Text_Attribute
 {
    [[Text attribute]]
    name:  string; [[Text attribute name]]
    value: string; [[Text attribute value]]
 }
 
-struct Efl.Access.Text_Range
+struct @free(elm_atspi_text_text_range_free) Efl.Access.Text_Range
 {
    [[Text range]]
    start_offset: int; [[Range start offset]]
@@ -35,7 +34,7 @@ struct Efl.Access.Text_Range
    content: ptr(char); [[Range content]]
 }
 
-struct Efl.Access.Text_Change_Info
+struct @beta Efl.Access.Text_Change_Info
 {
    [[Text change information]]
    content: string; [[Change content]]
@@ -44,7 +43,7 @@ struct Efl.Access.Text_Change_Info
    len: size; [[Change length]]
 }
 
-interface Efl.Access.Text
+interface @beta Efl.Access.Text
 {
    [[Elementary accessible text interface]]
    methods {

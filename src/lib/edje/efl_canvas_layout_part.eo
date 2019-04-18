@@ -1,6 +1,6 @@
 import edje_types;
 
-class Efl.Canvas.Layout_Part extends Efl.Object implements Efl.Gfx.Entity, Efl.Ui.Drag
+class @beta Efl.Canvas.Layout_Part extends Efl.Object implements Efl.Gfx.Entity, Efl.Ui.Drag
 {
    [[Common class for part proxy objects for @Efl.Canvas.Layout.
 
@@ -8,8 +8,6 @@ class Efl.Canvas.Layout_Part extends Efl.Object implements Efl.Gfx.Entity, Efl.U
      to be used for one and only one function call. In pseudo-code, the use
      of object of this type looks like the following:
        rect = layout.part("somepart").geometry_get();
-
-     @since 1.20
    ]]
    methods {
       @property state {

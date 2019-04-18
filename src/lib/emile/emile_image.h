@@ -9,29 +9,39 @@
  * @{
  */
 
-typedef Efl_Gfx_Colorspace Emile_Colorspace;
-
-#define EMILE_COLORSPACE_ARGB8888 EFL_GFX_COLORSPACE_ARGB8888
-#define EMILE_COLORSPACE_YCBCR422P601_PL EFL_GFX_COLORSPACE_YCBCR422P601_PL
-#define EMILE_COLORSPACE_YCBCR422P709_PL EFL_GFX_COLORSPACE_YCBCR422P709_PL
-#define EMILE_COLORSPACE_RGB565_A5P EFL_GFX_COLORSPACE_RGB565_A5P
-#define EMILE_COLORSPACE_GRY8 EFL_GFX_COLORSPACE_GRY8
-#define EMILE_COLORSPACE_YCBCR422601_PL EFL_GFX_COLORSPACE_YCBCR422601_PL
-#define EMILE_COLORSPACE_YCBCR420NV12601_PL EFL_GFX_COLORSPACE_YCBCR420NV12601_PL
-#define EMILE_COLORSPACE_YCBCR420TM12601_PL EFL_GFX_COLORSPACE_YCBCR420TM12601_PL
-#define EMILE_COLORSPACE_AGRY88 EFL_GFX_COLORSPACE_AGRY88
-   // ETC1/2 support
-#define EMILE_COLORSPACE_ETC1 EFL_GFX_COLORSPACE_ETC1
-#define EMILE_COLORSPACE_RGB8_ETC2 EFL_GFX_COLORSPACE_RGB8_ETC2
-#define EMILE_COLORSPACE_RGBA8_ETC2_EAC EFL_GFX_COLORSPACE_RGBA8_ETC2_EAC
-#define EMILE_COLORSPACE_ETC1_ALPHA EFL_GFX_COLORSPACE_ETC1_ALPHA
-   // S3TC support
-#define EMILE_COLORSPACE_RGB_S3TC_DXT1 EFL_GFX_COLORSPACE_RGB_S3TC_DXT1
-#define EMILE_COLORSPACE_RGBA_S3TC_DXT1 EFL_GFX_COLORSPACE_RGBA_S3TC_DXT1
-#define EMILE_COLORSPACE_RGBA_S3TC_DXT2 EFL_GFX_COLORSPACE_RGBA_S3TC_DXT2
-#define EMILE_COLORSPACE_RGBA_S3TC_DXT3 EFL_GFX_COLORSPACE_RGBA_S3TC_DXT3
-#define EMILE_COLORSPACE_RGBA_S3TC_DXT4 EFL_GFX_COLORSPACE_RGBA_S3TC_DXT4
-#define EMILE_COLORSPACE_RGBA_S3TC_DXT5 EFL_GFX_COLORSPACE_RGBA_S3TC_DXT5
+/**
+ * @typedef Emile_Colorspace
+ *
+ * Flags that describe all colorspace known by EFL. Some routine may not know all of them.
+ * All the value from below enum should be the same as in Evas_Loader.h
+ *
+ * @see Evas_Colorspace
+ * @see Eet_Colorspace
+ *
+ * @since 1.14
+ */
+typedef enum _Emile_Colorspace
+{
+  EMILE_COLORSPACE_ARGB8888,/**< ARGB 32 bits per pixel, high-byte is Alpha, accessed 1 32bit word at a time */
+  EMILE_COLORSPACE_YCBCR422P601_PL, /**< YCbCr 4:2:2 Planar, ITU.BT-601 specifications. The data pointed to is just an array of row pointer, pointing to the Y rows, then the Cb, then Cr rows */
+  EMILE_COLORSPACE_YCBCR422P709_PL, /**< YCbCr 4:2:2 Planar, ITU.BT-709 specifications. The data pointed to is just an array of row pointer, pointing to the Y rows, then the Cb, then Cr rows */
+  EMILE_COLORSPACE_RGB565_A5P, /**< 16bit rgb565 + Alpha plane at end - 5 bits of the 8 being used per alpha byte */
+  EMILE_COLORSPACE_GRY8 = 4,
+  EMILE_COLORSPACE_YCBCR422601_PL, /**<  YCbCr 4:2:2, ITU.BT-601 specifications. The data pointed to is just an array of row pointer, pointing to line of Y,Cb,Y,Cr bytes */
+  EMILE_COLORSPACE_YCBCR420NV12601_PL, /**< YCbCr 4:2:0, ITU.BT-601 specification. The data pointed to is just an array of row pointer, pointing to the Y rows, then the Cb,Cr rows. */
+  EMILE_COLORSPACE_YCBCR420TM12601_PL, /**< YCbCr 4:2:0, ITU.BT-601 specification. The data pointed to is just an array of tiled row pointer, pointing to the Y rows, then the Cb,Cr rows. */
+  EMILE_COLORSPACE_AGRY88 = 8, /**< AY 8bits Alpha and 8bits Grey, accessed 1 16bits at a time */
+  EMILE_COLORSPACE_ETC1 = 9, /**< OpenGL ETC1 encoding of RGB texture (4 bit per pixel) @since 1.10 */
+  EMILE_COLORSPACE_RGB8_ETC2 = 10, /**< OpenGL GL_COMPRESSED_RGB8_ETC2 texture compression format (4 bit per pixel) @since 1.10 */
+  EMILE_COLORSPACE_RGBA8_ETC2_EAC = 11,	/**< OpenGL GL_COMPRESSED_RGBA8_ETC2_EAC texture compression format, supports alpha (8 bit per pixel) @since 1.10 */
+  EMILE_COLORSPACE_ETC1_ALPHA = 12, /**< ETC1 with alpha support using two planes: ETC1 RGB and ETC1 grey for alpha @since 1.11 */
+  EMILE_COLORSPACE_RGB_S3TC_DXT1 = 13,	/**< OpenGL COMPRESSED_RGB_S3TC_DXT1_EXT format with RGB only. @since 1.11 */
+  EMILE_COLORSPACE_RGBA_S3TC_DXT1 = 14,	/**< OpenGL COMPRESSED_RGBA_S3TC_DXT1_EXT format with RGBA punchthrough. @since 1.11 */
+  EMILE_COLORSPACE_RGBA_S3TC_DXT2 = 15,	/**< DirectDraw DXT2 format with premultiplied RGBA. Not supported by OpenGL itself. @since 1.11 */
+  EMILE_COLORSPACE_RGBA_S3TC_DXT3 = 16,	/**< OpenGL COMPRESSED_RGBA_S3TC_DXT3_EXT format with RGBA. @since 1.11 */
+  EMILE_COLORSPACE_RGBA_S3TC_DXT4 = 17,	/**< DirectDraw DXT4 format with premultiplied RGBA. Not supported by OpenGL itself. @since 1.11 */
+  EMILE_COLORSPACE_RGBA_S3TC_DXT5 = 18	/**< OpenGL COMPRESSED_RGBA_S3TC_DXT5_EXT format with RGBA. @since 1.11 */
+} Emile_Colorspace;
 
 /**
  * @typedef Emile_Image_Encoding
@@ -145,7 +155,7 @@ typedef struct _Emile_Image_Property Emile_Image_Property;
 /**
  * @enum _Emile_Action
  * @typedef Emile_Action
- * What action emile is refering to.
+ * What action emile is referring to.
  * @since 1.19
  */
 typedef enum _Emile_Action
@@ -211,7 +221,7 @@ struct _Emile_Image_Load_Opts
     int smooth;
 
     /* This should have never been part of this structure, but we keep it
-       for ABI/API compability with Evas_Loader */
+       for ABI/API compatibility with Evas_Loader */
     Emile_Image_Scale_Hint scale_hint;
   } scale_load;
   double dpi;

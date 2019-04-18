@@ -138,7 +138,7 @@ _efl_net_server_tcp_resolved(void *data, const char *host EINA_UNUSED, const cha
    freeaddrinfo(result);
 
  end:
-   if (err) efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
+   if (err) efl_event_callback_call(o, EFL_NET_SERVER_EVENT_SERVER_ERROR, &err);
 
    efl_unref(o);
 }

@@ -107,7 +107,7 @@ EFL_START_TEST(edje_test_swallows_eoapi)
    fail_if(!efl_content_set(efl_part(ly, "swallow"), o1));
    ck_assert_ptr_eq(efl_parent_get(o1), ly);
 
-   efl_content_remove(ly, o1);
+   efl_canvas_layout_content_remove(ly, o1);
    ck_assert_ptr_eq(efl_parent_get(o1), evas_object_evas_get(o1));
 
    fail_if(!efl_content_set(efl_part(ly, "swallow"), o1));
@@ -123,6 +123,39 @@ EFL_START_TEST(edje_test_swallows_eoapi)
 }
 EFL_END_TEST
 
+EFL_START_TEST(edje_test_swallows_container_api)
+{
+   Evas *evas = _setup_evas();
+   Evas_Object *ly, *o1;
+
+   ly = efl_add(EFL_CANVAS_LAYOUT_CLASS, evas);
+   fail_unless(edje_object_file_set(ly, test_layout_get("test_swallows.edj"), "test_group"));
+
+   fail_unless(edje_object_part_exists(ly, "swallow"));
+
+   o1 = efl_add(EFL_CANVAS_LAYOUT_CLASS, ly);
+   fail_if(!efl_content_set(efl_part(ly, "swallow"), o1));
+
+   ck_assert_int_eq(efl_content_count(ly), 1);
+
+   {
+      Eina_Array *arr = eina_array_new(1);
+      Eina_Iterator *iter = efl_content_iterate(ly);
+      Eo *content;
+
+      EINA_ITERATOR_FOREACH(iter, content)
+        {
+           eina_array_push(arr, content);
+        }
+
+      ck_assert_int_eq(eina_array_count(arr), 1);
+      ck_assert_ptr_eq(eina_array_data_get(arr, 0), o1);
+      eina_array_free(arr);
+   }
+
+   evas_free(evas);
+}
+EFL_END_TEST
 
 void edje_test_swallow(TCase *tc)
 {
@@ -130,4 +163,5 @@ void edje_test_swallow(TCase *tc)
    tcase_add_test(tc, edje_test_swallows_lifetime);
    tcase_add_test(tc, edje_test_swallows_invalidate);
    tcase_add_test(tc, edje_test_swallows_eoapi);
+   tcase_add_test(tc, edje_test_swallows_container_api);
 }

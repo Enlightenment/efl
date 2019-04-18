@@ -1,9 +1,0 @@
-class Efl.Ui.Panes_Legacy extends Efl.Ui.Panes implements Efl.Ui.Legacy
-{
-   [[Elementary panes class]]
-   data: null;
-   implements {
-      class.constructor;
-      Efl.Object.constructor;
-   }
-}

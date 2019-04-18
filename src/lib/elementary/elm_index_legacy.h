@@ -43,5 +43,5 @@ EAPI void elm_index_horizontal_set(Evas_Object *obj, Eina_Bool horizontal);
  */
 EAPI Eina_Bool elm_index_horizontal_get(const Evas_Object *obj);
 
-#include "elm_index_item.eo.legacy.h"
-#include "elm_index.eo.legacy.h"
+#include "elm_index_item_eo.legacy.h"
+#include "elm_index_eo.legacy.h"

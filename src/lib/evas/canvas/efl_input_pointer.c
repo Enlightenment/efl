@@ -24,17 +24,16 @@
  */
 
 /* internal eo */
-static Efl_Input_Pointer *
-_efl_input_pointer_efl_input_event_instance_get(Eo *klass, void *_pd EINA_UNUSED,
-                                                Eo *owner, void **priv)
+EOAPI Eo*
+efl_input_pointer_instance_get(Efl_Object *owner, void **priv)
 {
    Efl_Input_Pointer_Data *ev;
    Efl_Input_Pointer *evt;
 
-   evt = efl_input_event_instance_get(klass, owner);
+   evt = efl_input_event_instance_get(EFL_INPUT_POINTER_CLASS, owner);
    if (!evt) return NULL;
 
-   ev = efl_data_scope_get(evt, klass);
+   ev = efl_data_scope_get(evt, EFL_INPUT_POINTER_CLASS);
    ev->fake = EINA_FALSE;
    if (priv) *priv = ev;
 
@@ -622,8 +621,5 @@ _efl_input_pointer_efl_input_event_legacy_info_get(Eo *obj, Efl_Input_Pointer_Da
 
 #define EFL_INPUT_POINTER_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_input_legacy_info_get, _efl_input_pointer_efl_input_event_legacy_info_get)
-
-#define EFL_INPUT_POINTER_EXTRA_CLASS_OPS \
-   EFL_OBJECT_OP_FUNC(efl_input_instance_get, _efl_input_pointer_efl_input_event_instance_get)
 
 #include "efl_input_pointer.eo.c"

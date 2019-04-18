@@ -70,7 +70,7 @@ _find_loader_module(const char *file)
 }
 
 static Vg_File_Data *
-_vg_load_from_file(const char *file, const char *key)
+_vg_load_from_file(const Eina_File *file, const char *key)
 {
    Evas_Module       *em;
    Evas_Vg_Load_Func *loader;
@@ -78,11 +78,12 @@ _vg_load_from_file(const char *file, const char *key)
    Vg_File_Data      *vfd;
    unsigned int i;
 
-   em = _find_loader_module(file);
+   const char *file_name = eina_file_filename_get(file);
+   em = _find_loader_module(file_name);
    if (em)
      {
         loader = em->functions;
-        vfd = loader->file_open(file, key, &error);
+        vfd = loader->file_open((Eina_File *) file, key, &error);
         if (vfd)
           {
              vfd->loader = loader;
@@ -97,7 +98,8 @@ _vg_load_from_file(const char *file, const char *key)
              if (em)
                {
                   loader = em->functions;
-                  vfd = loader->file_open(file, key, &error);
+                  vfd = loader->file_open((Eina_File *) file, key, &error);
+                  if (vfd)
                     {
                        vfd->loader = loader;
                        return vfd;
@@ -105,7 +107,7 @@ _vg_load_from_file(const char *file, const char *key)
                }
           }
      }
-   WRN("Exhausted all means to load vector file = %s", file);
+   WRN("Exhausted all means to load vector file = %s", file_name);
    return NULL;
 }
 
@@ -148,11 +150,12 @@ _evas_cache_vg_entry_free_cb(void *data)
    if (vg_entry->vfd)
      {
         vg_entry->vfd->ref--;
+
         if (vg_entry->vfd->ref <= 0)
           {
              Eina_Strbuf *hash_key = eina_strbuf_new();
              eina_strbuf_append_printf(hash_key, "%s/%s",
-                                       vg_entry->file,
+                                       eina_file_filename_get(vg_entry->file),
                                        vg_entry->key);
              if (!eina_hash_del(vg_cache->vfd_hash, eina_strbuf_string_get(hash_key), vg_entry->vfd))
                ERR("Failed to delete vfd = (%p) from hash", vg_entry->vfd);
@@ -167,32 +170,16 @@ _evas_cache_vg_entry_free_cb(void *data)
 }
 
 static Eina_Bool
-_vg_file_save(Vg_File_Data *vfd, const char *file, const char *key, const char *flags)
+_vg_file_save(Vg_File_Data *vfd, const char *file, const char *key, const Efl_File_Save_Info *info)
 {
    Evas_Module       *em;
    Evas_Vg_Save_Func *saver;
-   int                error = EVAS_LOAD_ERROR_GENERIC;
+   Evas_Load_Error    error = EVAS_LOAD_ERROR_GENERIC;
    int                compress = 9;
 
    if (!file) return EINA_FALSE;
 
-   if (flags)
-     {
-        char *p, *pp;
-        char *tflags;
-
-        tflags = alloca(strlen(flags) + 1);
-        strcpy(tflags, flags);
-        p = tflags;
-        while (p)
-          {
-             pp = strchr(p, ' ');
-             if (pp) *pp = 0;
-             sscanf(p, "compress=%i", &compress);
-             if (pp) p = pp + 1;
-             else break;
-          }
-     }
+   if (info) compress = info->compression;
 
    em = _find_saver_module(file);
    if (em)
@@ -299,13 +286,13 @@ evas_cache_vg_shutdown(void)
 }
 
 Vg_File_Data *
-evas_cache_vg_file_open(const char *file, const char *key)
+evas_cache_vg_file_open(const Eina_File *file, const char *key)
 {
    Vg_File_Data *vfd;
    Eina_Strbuf *hash_key;
 
    hash_key = eina_strbuf_new();
-   eina_strbuf_append_printf(hash_key, "%s/%s", file, key);
+   eina_strbuf_append_printf(hash_key, "%s/%s", eina_file_filename_get(file), key);
    vfd = eina_hash_find(vg_cache->vfd_hash, eina_strbuf_string_get(hash_key));
    if (!vfd)
      {
@@ -324,7 +311,7 @@ evas_cache_vg_entry_resize(Vg_Cache_Entry *vg_entry, int w, int h)
 }
 
 Vg_Cache_Entry*
-evas_cache_vg_entry_create(const char *file,
+evas_cache_vg_entry_create(const Eina_File *file,
                            const char *key,
                            int w, int h)
 {
@@ -336,7 +323,7 @@ evas_cache_vg_entry_create(const char *file,
    //TODO: zero-sized entry is useless. how to skip it?
 
    hash_key = eina_strbuf_new();
-   eina_strbuf_append_printf(hash_key, "%s/%s/%d/%d", file, key, w, h);
+   eina_strbuf_append_printf(hash_key, "%p/%s/%d/%d", file, key, w, h);
    vg_entry = eina_hash_find(vg_cache->vg_entry_hash, eina_strbuf_string_get(hash_key));
    if (!vg_entry)
      {
@@ -347,7 +334,7 @@ evas_cache_vg_entry_create(const char *file,
              eina_strbuf_free(hash_key);
              return NULL;
           }
-        vg_entry->file = eina_stringshare_add(file);
+        vg_entry->file = file;
         vg_entry->key = eina_stringshare_add(key);
         vg_entry->w = w;
         vg_entry->h = h;
@@ -407,20 +394,18 @@ evas_cache_vg_entry_del(Vg_Cache_Entry *vg_entry)
 }
 
 Eina_Bool
-evas_cache_vg_entry_file_save(Vg_Cache_Entry *vg_entry, const char *file, const char *key,
-                              const char *flags)
+evas_cache_vg_entry_file_save(Vg_Cache_Entry *vg_entry, const char *file, const char *key, const Efl_File_Save_Info *info)
 {
    Vg_File_Data *vfd =
       evas_cache_vg_file_open(vg_entry->file, vg_entry->key);
 
    if (!vfd) return EINA_FALSE;
 
-   return _vg_file_save(vfd, file, key, flags);
+   return _vg_file_save(vfd, file, key, info);
 }
 
 Eina_Bool
-evas_cache_vg_file_save(Efl_VG *root, int w, int h, const char *file, const char *key,
-                        const char *flags)
+evas_cache_vg_file_save(Efl_VG *root, int w, int h, const char *file, const char *key, const Efl_File_Save_Info *info)
 {
    Vg_File_Data vfd = {};
 
@@ -431,5 +416,5 @@ evas_cache_vg_file_save(Efl_VG *root, int w, int h, const char *file, const char
    vfd.root = root;
    vfd.preserve_aspect = EINA_FALSE;
 
-   return _vg_file_save(&vfd, file, key, flags);
+   return _vg_file_save(&vfd, file, key, info);
 }

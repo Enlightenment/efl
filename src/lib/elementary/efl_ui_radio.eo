@@ -1,7 +1,6 @@
-class Efl.Ui.Radio extends Efl.Ui.Check implements Efl.Access.Widget.Action, Efl.Content
+class @beta Efl.Ui.Radio extends Efl.Ui.Check implements Efl.Access.Widget.Action, Efl.Content
 {
    [[Elementary radio class]]
-   legacy_prefix: elm_radio;
    methods {
       @property state_value {
          set {
@@ -63,7 +62,7 @@ class Efl.Ui.Radio extends Efl.Ui.Check implements Efl.Access.Widget.Action, Efl
       Efl.Object.destructor;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_access_activate;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Access.Object.state_set { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Ui.Nstate.value { set; get; }

@@ -1,20 +1,18 @@
-class Efl.Ui.Slider extends Efl.Ui.Layout implements Efl.Ui.Range, Efl.Ui.Direction,
+class @beta Efl.Ui.Slider extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Interactive, Efl.Ui.Direction,
                      Efl.Access.Value,
-                     Efl.Access.Widget.Action,
-                     Efl.Content
+                     Efl.Access.Widget.Action
 {
    [[Elementary slider class]]
-   legacy_prefix: null;
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.on_access_activate;
       Efl.Ui.Focus.Object.on_focus_update;
-      Efl.Ui.Widget.widget_event;
-      Efl.Ui.Range.range_value { get; set; }
-      Efl.Ui.Range.range_min_max {get; set; }
-      Efl.Ui.Range.range_step { get; set; }
+      Efl.Ui.Widget.widget_input_event_handler;
+      Efl.Ui.Range_Display.range_value { get; set; }
+      Efl.Ui.Range_Display.range_min_max {get; set; }
+      Efl.Ui.Range_Interactive.range_step { get; set; }
       Efl.Ui.Direction.direction { get; set; }
       Efl.Access.Value.value_and_text { get; set; }
       Efl.Access.Value.range { get; }

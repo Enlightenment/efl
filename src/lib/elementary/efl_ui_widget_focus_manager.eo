@@ -1,5 +1,8 @@
 mixin Efl.Ui.Widget_Focus_Manager requires Efl.Ui.Widget extends Efl.Ui.Focus.Manager
 {
+  [[
+    @since 1.22
+  ]]
   methods {
       focus_manager_create @protected @pure_virtual {
          [[If the widget needs a focus manager, this function will be called.
@@ -18,5 +21,8 @@ mixin Efl.Ui.Widget_Focus_Manager requires Efl.Ui.Widget extends Efl.Ui.Focus.Ma
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Ui.Widget.focus_state_apply;
+  }
+  composite {
+      Efl.Ui.Focus.Manager;
   }
 }

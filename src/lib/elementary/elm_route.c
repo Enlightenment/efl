@@ -86,12 +86,12 @@ _move_resize_cb(void *data EINA_UNUSED,
    _sizing_eval(obj);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_route_efl_ui_widget_theme_apply(Eo *obj, Elm_Route_Data *sd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    //TODO
 
@@ -138,7 +138,6 @@ _elm_route_efl_canvas_group_group_add(Eo *obj, Elm_Route_Data *priv)
 {
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    evas_object_event_callback_add
@@ -265,4 +264,4 @@ _elm_route_class_constructor(Efl_Class *klass)
 #define ELM_ROUTE_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_route)
 
-#include "elm_route.eo.c"
+#include "elm_route_eo.c"

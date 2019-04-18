@@ -651,7 +651,7 @@ EAPI double       elm_config_scroll_thumbscroll_smooth_amount_get(void);
  *
  * Scrolling with your finger can be smoothed out and the amount to smooth
  * is determined by this parameter. 0.0 means to not smooth at all and
- * 1.0 is to smoth as much as possible.
+ * 1.0 is to smooth as much as possible.
  * 
  * @param amount the amount to smooth from 0.0 to 1.0 with 0.0 being none
  *
@@ -1675,8 +1675,8 @@ EAPI Eina_Bool  elm_config_vsync_get(void);
 EAPI void       elm_config_vsync_set(Eina_Bool enabled);
 
 /**
- * Get the configure flag that will define if a window agressively drop its
- * ressource when minimized.
+ * Get the configure flag that will define if a window aggressively drop its
+ * resources when minimized.
  *
  * @return if it does.
  *
@@ -1685,8 +1685,8 @@ EAPI void       elm_config_vsync_set(Eina_Bool enabled);
 EAPI Eina_Bool elm_config_agressive_withdrawn_get(void);
 
 /**
- * Set the configure flag that will make a window agressively drop its
- * ressource when minimized.
+ * Set the configure flag that will make a window aggressively drop its
+ * resources when minimized.
  *
  * @param enabled This should be @c EINA_TRUE if enabled, or @c EINA_FALSE if
  * not.
@@ -2136,7 +2136,7 @@ EAPI void      elm_config_audio_mute_set(Edje_Channel channel, Eina_Bool mute);
  * This determines if elementary will show a focus box indicating the focused
  * widget automatically if keyboard controls like "Tab" are used to switch
  * focus between widgets. Mouse or touch control will hide this auto shown
- * focus, unless focus display has been expliccitly forced on for the window.
+ * focus, unless focus display has been explicitly forced on for the window.
  *
  * @return The enabled state for auto focus display
  * @since 1.14
@@ -2149,7 +2149,7 @@ EAPI Eina_Bool elm_config_window_auto_focus_enable_get(void);
  * This determines if elementary will show a focus box indicating the focused
  * widget automatically if keyboard controls like "Tab" are used to switch
  * focus between widgets. Mouse or touch control will hide this auto shown
- * focus, unless focus display has been expliccitly forced on for the window.
+ * focus, unless focus display has been explicitly forced on for the window.
  *
  * @param enable the auto focus display enabled state
  * @since 1.14
@@ -2356,7 +2356,8 @@ EAPI void elm_config_drag_anim_duration_set(double set);
 
 /* new efl.config interface helpers in C */
 
-#ifdef EFL_EO_API_SUPPORT
+/* FIXME these depend on stuff from Efl.h but this is included before that */
+#ifdef EFL_BETA_API_SUPPORT
 
 static inline Eina_Bool
 efl_config_bool_set(Efl_Config *obj, const char * name, Eina_Bool val)

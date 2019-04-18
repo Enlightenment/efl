@@ -1,4 +1,4 @@
-enum Efl.Ui.Drag_Dir {
+enum @beta Efl.Ui.Drag_Dir {
    [[Permitted directions for dragging objects.]]
    none = 0,  [[Not draggable in any direction.]]
    x = 1,     [[Draggable horizontally.]]

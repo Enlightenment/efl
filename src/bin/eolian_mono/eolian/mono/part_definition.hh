@@ -18,14 +18,16 @@ struct part_definition_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::part_def const& part, Context const& context) const
   {
+     if (blacklist::is_class_blacklisted(part.klass, context))
+       return true;
+
      auto part_klass_name = name_helpers::klass_full_concrete_or_interface_name(part.klass);
      return as_generator(scope_tab << documentation
                        << scope_tab << "public " << part_klass_name << " " << name_helpers::managed_part_name(part) << "\n"
                        << scope_tab << "{\n"
                        << scope_tab << scope_tab << "get\n"
                        << scope_tab << scope_tab << "{\n"
-                       << scope_tab << scope_tab << scope_tab << "Efl.Object obj = efl_part_get(NativeHandle, \"" << part.name << "\");\n"
-                       << scope_tab << scope_tab << scope_tab << "return " << part_klass_name << ".static_cast(obj);\n"
+                       << scope_tab << scope_tab << scope_tab << "return Efl.IPartNativeInherit.efl_part_get_ptr.Value.Delegate(NativeHandle, \"" << part.name << "\") as " << part_klass_name << ";\n"
                        << scope_tab << scope_tab << "}\n"
                        << scope_tab << "}\n"
             ).generate(sink, part.documentation, context);

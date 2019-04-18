@@ -3,7 +3,6 @@
 #endif
 
 #define EFL_BETA_API_SUPPORT 1
-#define EFL_EO_API_SUPPORT 1
 #include <Eet.h>
 #include <Ecore.h>
 #include <Ecore_Con.h>

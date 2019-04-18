@@ -4,18 +4,17 @@
 #endif
 
 #define EFL_ACCESS_OBJECT_PROTECTED
-#define ELM_INTERFACE_FILESELECTOR_BETA
 #define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 #include "Eio_Eo.h"
 #include "elm_priv.h"
-#include "elm_fileselector_button.eo.h"
-#include "elm_fileselector_entry.eo.h"
+#include "elm_fileselector_button_eo.h"
+#include "elm_fileselector_entry_eo.h"
 #include "elm_interface_fileselector.h"
 #include "elm_widget_fileselector_entry.h"
-#include "elm_entry.eo.h"
-#include "elm_fileselector.eo.h"
+#include "elm_entry_eo.h"
+#include "elm_fileselector_eo.h"
 
 #include "elm_fileselector_entry_part.eo.h"
 #include "elm_part_helper.h"
@@ -78,13 +77,13 @@ _FILE_CHOSEN_fwd(void *data, const Efl_Event *event)
    ELM_FILESELECTOR_ENTRY_DATA_GET(fs, sd);
 
    efl_ui_view_model_set(sd->entry, model);
-   efl_ui_model_connect(sd->entry, "default", "path");
+   efl_ui_property_bind(sd->entry, "default", "path");
 
    path = efl_model_property_get(model, "path");
    file = eina_value_to_string(path);
 
    _model_event_call
-     (fs, ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN, model, file);
+     (fs, ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN, ELM_FILESELECTOR_ENTRY_EVENT_FILE_CHOSEN->name, model, file);
 
    eina_value_free(path);
    free(file);
@@ -128,17 +127,17 @@ _elm_fileselector_entry_elm_layout_sizing_eval(Eo *obj, Elm_Fileselector_Entry_D
    evas_object_size_hint_max_set(obj, -1, -1);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_fileselector_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Fileselector_Entry_Data *sd)
 {
    const char *style;
    char buf[1024];
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
 
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    style = elm_widget_style_get(obj);
 
@@ -157,18 +156,6 @@ _elm_fileselector_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Fileselector_Entr
    elm_layout_sizing_eval(obj);
 
    return int_ret;
-}
-
-EOLIAN static Eina_Bool
-_elm_fileselector_entry_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Fileselector_Entry_Data *sd, Eina_Bool disabled)
-{
-   if (!efl_ui_widget_on_disabled_update(efl_super(obj, MY_CLASS), disabled))
-     return EINA_FALSE;
-
-   elm_widget_disabled_set(sd->button, disabled);
-   elm_widget_disabled_set(sd->entry, disabled);
-
-   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -235,12 +222,12 @@ EOLIAN static void
 _elm_fileselector_entry_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Entry_Data *priv)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    priv->button = elm_fileselector_button_add(obj);
    efl_ui_mirrored_automatic_set(priv->button, EINA_FALSE);
    efl_ui_mirrored_set(priv->button, efl_ui_mirrored_get(obj));
    elm_widget_style_set(priv->button, "fileselector_entry/default");
+   efl_composite_attach(obj, priv->button);
 
    elm_fileselector_expandable_set
      (priv->button, _elm_config->fileselector_expand_enable);
@@ -421,7 +408,7 @@ _elm_fileselector_entry_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Elm_Fileselec
 {
    efl_ui_view_model_set(sd->button, model);
    efl_ui_view_model_set(sd->entry, model);
-   efl_ui_model_connect(sd->entry, "default", "path");
+   efl_ui_property_bind(sd->entry, "default", "path");
 }
 
 EINA_DEPRECATED EAPI const char *
@@ -586,4 +573,4 @@ ELM_PART_CONTENT_DEFAULT_GET(elm_fileselector_entry, "button icon")
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_fileselector_entry), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_fileselector_entry)
 
-#include "elm_fileselector_entry.eo.c"
+#include "elm_fileselector_entry_eo.c"

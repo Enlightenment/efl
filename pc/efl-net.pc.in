@@ -2,6 +2,8 @@ prefix=@prefix@
 exec_prefix=@exec_prefix@
 libdir=@libdir@
 includedir=@includedir@
+datarootdir=@datarootdir@
+datadir=@datadir@
 eoincludedir=@datadir@/eolian/include
 eolian_flags=-I${pc_sysrootdir}${eoincludedir}/ecore-con-@VMAJ@ -I${pc_sysrootdir}${eoincludedir}/ecore-@VMAJ@ -I${pc_sysrootdir}${eoincludedir}/efl-@VMAJ@ -I${pc_sysrootdir}${eoincludedir}/eo-@VMAJ@ -I${pc_sysrootdir}${eoincludedir}/eet-@VMAJ@ -I${pc_sysrootdir}${eoincludedir}/emile-@VMAJ@ -I${pc_sysrootdir}${eoincludedir}/eina-@VMAJ@
 

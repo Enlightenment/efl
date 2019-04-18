@@ -1,7 +1,7 @@
 
 ### Library
 
-ecore_con_eolian_files = \
+ecore_con_eolian_files_common = \
         lib/ecore_con/efl_net_socket.eo \
         lib/ecore_con/efl_net_socket_simple.eo \
         lib/ecore_con/efl_net_socket_fd.eo \
@@ -28,21 +28,24 @@ ecore_con_eolian_files = \
         lib/ecore_con/efl_net_control_technology.eo \
         lib/ecore_con/efl_net_control_manager.eo \
         lib/ecore_con/efl_net_session.eo \
-        lib/ecore_con/efl_net_ip_address.eo \
-	lib/ecore_con/ecore_con_eet_base.eo \
-	lib/ecore_con/ecore_con_eet_server_obj.eo \
-	lib/ecore_con/ecore_con_eet_client_obj.eo
+        lib/ecore_con/efl_net_ip_address.eo
 
-if HAVE_WINDOWS
-ecore_con_eolian_files += \
+ecore_con_eolian_files_windows = \
         lib/ecore_con/efl_net_socket_windows.eo \
         lib/ecore_con/efl_net_dialer_windows.eo \
         lib/ecore_con/efl_net_server_windows.eo
-else
-ecore_con_eolian_files += \
+
+ecore_con_eolian_files_unix = \
         lib/ecore_con/efl_net_socket_unix.eo \
         lib/ecore_con/efl_net_dialer_unix.eo \
         lib/ecore_con/efl_net_server_unix.eo
+
+ecore_con_eolian_files = $(ecore_con_eolian_files_common)
+
+if HAVE_WINDOWS
+ecore_con_eolian_files += $(ecore_con_eolian_files_windows)
+else
+ecore_con_eolian_files += $(ecore_con_eolian_files_unix)
 endif
 
 ecore_con_eolian_type_files = \
@@ -53,20 +56,24 @@ ecore_con_eolian_type_files = \
 
 ecore_con_eolian_c = $(ecore_con_eolian_files:%.eo=%.eo.c)
 ecore_con_eolian_h = $(ecore_con_eolian_files:%.eo=%.eo.h) \
-                     $(ecore_con_eolian_type_files:%.eot=%.eot.h) \
-                     $(ecore_con_eolian_files:%.eo=%.eo.legacy.h)
+                     $(ecore_con_eolian_type_files:%.eot=%.eot.h)
 
 BUILT_SOURCES += \
                  $(ecore_con_eolian_c) \
                  $(ecore_con_eolian_h)
 
+if INSTALL_EO_FILES
 ecoreconeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
 ecoreconeolianfiles_DATA = \
                            $(ecore_con_eolian_files) \
 			   $(ecore_con_eolian_type_files)
+endif
 
 EXTRA_DIST2 += \
-              ${ecoreconeolianfiles_DATA}
+$(ecore_con_eolian_files_common) \
+$(ecore_con_eolian_files_unix) \
+$(ecore_con_eolian_files_windows) \
+$(ecore_con_eolian_type_files)
 
 
 lib_LTLIBRARIES += lib/ecore_con/libecore_con.la
@@ -77,7 +84,14 @@ lib/ecore_con/Ecore_Con.h \
 lib/ecore_con/Efl_Net.h \
 lib/ecore_con/Ecore_Con_Eet.h \
 lib/ecore_con/Ecore_Con_Eet_Legacy.h \
-lib/ecore_con/Ecore_Con_Eet_Eo.h
+lib/ecore_con/Ecore_Con_Eet_Eo.h \
+lib/ecore_con/ecore_con_eet_base_eo.h \
+lib/ecore_con/ecore_con_eet_base_eo.legacy.h \
+lib/ecore_con/ecore_con_eet_client_obj_eo.h \
+lib/ecore_con/ecore_con_eet_client_obj_eo.legacy.h \
+lib/ecore_con/ecore_con_eet_server_obj_eo.h \
+lib/ecore_con/ecore_con_eet_server_obj_eo.legacy.h
+
 
 nodist_installed_ecoreconmainheaders_DATA = \
                                             $(ecore_con_eolian_h)
@@ -145,6 +159,10 @@ endif
 # object Private Data and allows functions to
 # be all static
 EXTRA_DIST2 += \
+lib/ecore_con/ecore_con_eet_base_eo.c \
+lib/ecore_con/ecore_con_eet_base_eo.legacy.c \
+lib/ecore_con/ecore_con_eet_client_obj_eo.c \
+lib/ecore_con/ecore_con_eet_server_obj_eo.c \
 lib/ecore_con/efl_net_ssl_conn-openssl.c \
 lib/ecore_con/efl_net_ssl_conn-gnutls.c \
 lib/ecore_con/efl_net_ssl_conn-none.c \
@@ -170,6 +188,7 @@ lib_ecore_con_libecore_con_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ecore\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
+-DEFL_BUILD \
 @ECORE_CON_CFLAGS@
 lib_ecore_con_libecore_con_la_LIBADD = @ECORE_CON_LIBS@ @EVIL_LIBS@
 lib_ecore_con_libecore_con_la_DEPENDENCIES = @ECORE_CON_INTERNAL_LIBS@

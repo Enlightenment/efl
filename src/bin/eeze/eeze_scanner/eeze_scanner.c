@@ -513,7 +513,7 @@ main(void)
      }
 
    efl_event_callback_add(server, EFL_NET_SERVER_EVENT_CLIENT_ADD, cl_add, NULL);
-   efl_event_callback_add(server, EFL_NET_SERVER_EVENT_ERROR, server_error, NULL);
+   efl_event_callback_add(server, EFL_NET_SERVER_EVENT_SERVER_ERROR, server_error, NULL);
 
 #ifdef EFL_NET_SERVER_UNIX_CLASS
    {

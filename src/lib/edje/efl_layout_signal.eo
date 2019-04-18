@@ -2,19 +2,29 @@
   Edje signaling interface.
 
   Note: This API must be manually bound in other languages as this uses function
-  pointers! This is by design, to keep the API simplhe API simple.
+  pointers! This is by design, to keep the API simple.
 
   If function pointers really become allowed in EO this needs to be altered to
   match that.
 */
 
-type Efl.Signal_Cb: __undefined_type; [[Signal callback.]]
+function EflLayoutSignalCb {
+  [[EflLayoutSignalCb function that is called when a specifc pair of signal/emission is triggered
+
+    @since 1.22
+  ]]
+  params {
+     @in object: Efl.Layout.Signal; [[The object the callback is being triggered from.]]
+     @in emission: string; [[The name component of the signal.]]
+     @in source: string; [[The source of a signal used as context.]]
+  }
+};
 
 interface Efl.Layout.Signal
 {
    [[Layouts asynchronous messaging and signaling interface.
 
-     @since 1.21
+     @since 1.22
    ]]
    methods {
       // FIXME: There is no message_handler in EO!
@@ -83,9 +93,8 @@ interface Efl.Layout.Signal
          params {
             @in emission: string; [[The signal's "emission" string]]
             @in source: string; [[The signal's "source" string]]
-            @in func: Efl.Signal_Cb;
+            @in func: EflLayoutSignalCb;
                [[The callback function to be executed when the signal is emitted.]]
-            @in data: void_ptr; [[A pointer to data to pass to $func.]]
          }
          return: bool; [[$true in case of success, $false in case of error.]]
       }
@@ -102,9 +111,8 @@ interface Efl.Layout.Signal
          params {
             @in emission: string; [[The signal's "emission" string]]
             @in source: string; [[The signal's "source" string]]
-            @in func: Efl.Signal_Cb;
+            @in func: EflLayoutSignalCb;
                [[The callback function to be executed when the signal is emitted.]]
-            @in data: void_ptr; [[A pointer to data to pass to $func.]]
          }
          return: bool; [[$true in case of success, $false in case of error.]]
       }

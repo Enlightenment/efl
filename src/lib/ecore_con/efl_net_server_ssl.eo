@@ -1,7 +1,5 @@
-class Efl.Net.Server_Ssl extends Efl.Net.Server_Tcp {
+class @beta Efl.Net.Server_Ssl extends Efl.Net.Server_Tcp {
     [[A SSL server over TCP.
-
-      @since 1.19
     ]]
 
     methods {

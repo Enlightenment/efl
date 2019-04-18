@@ -141,4 +141,35 @@ EAPI void elm_map_wheel_disabled_set(Evas_Object *obj, Eina_Bool disabled);
  */
 EAPI Eina_Bool elm_map_wheel_disabled_get(const Evas_Object *obj);
 
-#include "elm_map.eo.legacy.h"
+/**
+ * @brief Pause or unpause the map.
+ *
+ * This sets the paused state to on @c true or off @c false for map.
+ *
+ * The default is off.
+ *
+ * This will stop zooming using animation, changing zoom levels will change
+ * instantly. This will stop any existing animations that are running.
+ *
+ * @param[in] obj The object.
+ * @param[in] paused Use @c true to pause the map @c obj or @c false to unpause
+ * it.
+ *
+ * @ingroup Elm_Map_Group
+ */
+EAPI void elm_map_paused_set(Evas_Object *obj, Eina_Bool paused);
+
+/**
+ * @brief Get a value whether map is paused or not.
+ *
+ * This gets the current paused state for the map object.
+ *
+ * @param[in] obj The object.
+ *
+ * @return Use @c true to pause the map @c obj or @c false to unpause it.
+ *
+ * @ingroup Elm_Map_Group
+ */
+EAPI Eina_Bool elm_map_paused_get(const Evas_Object *obj);
+
+#include "elm_map_eo.legacy.h"

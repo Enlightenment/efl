@@ -2,7 +2,7 @@ import eina_types;
 import efl_gfx_types;
 
 /*
-enum Efl.Gfx.Image_Load_Controller_State
+enum @beta Efl.Gfx.Image_Load_Controller_State
 {
    none = 0,      [[Not loading any image.]]
    loaded = 1,    [[Image data is loaded, nothing is pending.]]
@@ -13,7 +13,7 @@ enum Efl.Gfx.Image_Load_Controller_State
 }
 */
 
-interface Efl.Gfx.Image_Load_Controller
+interface @beta Efl.Gfx.Image_Load_Controller
 {
    [[Common APIs for all loadable 2D images.]]
 
@@ -92,8 +92,6 @@ interface Efl.Gfx.Image_Load_Controller
       @property load_region_support {
          [[Indicates whether the @.load_region property is supported for the
            current file.
-
-           @since 1.2
          ]]
          get {}
          values {
@@ -130,8 +128,6 @@ interface Efl.Gfx.Image_Load_Controller
            JPEG image. If this flag is $false, then the orientation will be
            ignored at load time, otherwise the image will be loaded with the
            proper orientation.
-
-           @since 1.1
          ]]
          set {}
          get {}
@@ -180,6 +176,6 @@ interface Efl.Gfx.Image_Load_Controller
    }
    events {
       load,done: void; [[Called when he image was loaded]]
-      load,error: Efl.Gfx.Image_Load_Error; [[Called when an error happened during image loading]]
+      load,error: Eina.Error; [[Called when an error happened during image loading]]
    }
 }

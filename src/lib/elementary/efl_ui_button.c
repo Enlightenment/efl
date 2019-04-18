@@ -218,7 +218,6 @@ _efl_ui_button_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Button_Data *_pd EINA_
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "button");
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    if (elm_widget_is_legacy(obj))
      {
@@ -255,10 +254,10 @@ _efl_ui_button_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Button_Data *_pd EINA_
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
+   if (elm_widget_theme_object_set(obj, wd->resize_obj,
                                        elm_widget_theme_klass_get(obj),
                                        elm_widget_theme_element_get(obj),
-                                       elm_widget_theme_style_get(obj)))
+                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 }
 
@@ -410,7 +409,7 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #include "efl_ui_button.eo.c"
 
-#include "efl_ui_button_legacy.eo.h"
+#include "efl_ui_button_legacy_eo.h"
 #include "efl_ui_button_legacy_part.eo.h"
 
 EOLIAN static Eo *
@@ -442,13 +441,13 @@ _icon_signal_emit(Evas_Object *obj)
 /* FIXME: replicated from elm_layout just because button's icon spot
  * is elm.swallow.content, not elm.swallow.icon. Fix that whenever we
  * can changed the theme API */
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _efl_ui_button_legacy_efl_ui_widget_theme_apply(Eo *obj, void *_pd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, EFL_UI_BUTTON_LEGACY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
    _icon_signal_emit(obj);
 
    return int_ret;
@@ -507,4 +506,4 @@ elm_button_add(Evas_Object *parent)
    return elm_legacy_add(EFL_UI_BUTTON_LEGACY_CLASS, parent);
 }
 
-#include "efl_ui_button_legacy.eo.c"
+#include "efl_ui_button_legacy_eo.c"

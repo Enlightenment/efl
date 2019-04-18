@@ -116,12 +116,24 @@ static inline unsigned int eina_swap32(unsigned int x);
  * @brief Reverses the byte order of a 64-bit (destination) register.
  *
  * @param[in] x The binary word to swap
- * @return A byte order swapped 64-bit integer.  
+ * @return A byte order swapped 64-bit integer.
  *
  * On big endian systems, the number is converted to little endian byte order.
  * On little endian systems, the number is converted to big endian byte order.
  */
 static inline unsigned long long eina_swap64(unsigned long long x);
+
+static inline unsigned short eina_htons(unsigned short host);
+
+static inline unsigned int eina_htonl(unsigned int host);
+
+static inline unsigned long long eina_htonll(unsigned long long host);
+
+static inline unsigned short eina_ntohs(unsigned short net);
+
+static inline unsigned int eina_ntohl(unsigned int net);
+
+static inline unsigned long long eina_ntohll(unsigned long long net);
 
 #ifndef MIN
 # define MIN(x, y)          (((x) > (y)) ? (y) : (x))

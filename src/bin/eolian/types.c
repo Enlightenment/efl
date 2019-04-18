@@ -156,6 +156,12 @@ _type_generate(const Eolian_State *state, const Eolian_Typedecl *tp,
         eina_strbuf_reset(buf);
         break;
      }
+   eina_strbuf_append_char(buf, ';');
+   if (eolian_typedecl_is_beta(tp))
+     {
+        eina_strbuf_prepend(buf, "#ifdef EFL_BETA_API_SUPPORT\n");
+        eina_strbuf_append(buf, "\n#endif /* EFL_BETA_API_SUPPORT */");
+     }
    return buf;
 }
 
@@ -200,6 +206,11 @@ _var_generate(const Eolian_State *state, const Eolian_Variable *vr, Eina_Bool le
         eina_stringshare_del(ct);
      }
    free(fn);
+   if (eolian_variable_is_beta(vr))
+     {
+        eina_strbuf_prepend(buf, "#ifdef EFL_BETA_API_SUPPORT\n");
+        eina_strbuf_append(buf, "\n#endif /* EFL_BETA_API_SUPPORT */");
+     }
    return buf;
 }
 
@@ -252,7 +263,7 @@ void eo_gen_types_header_gen(const Eolian_State *state,
         if (tbuf)
           {
              eina_strbuf_append(buf, eina_strbuf_string_get(tbuf));
-             eina_strbuf_append(buf, ";\n\n");
+             eina_strbuf_append(buf, "\n\n");
              eina_strbuf_free(tbuf);
           }
      }

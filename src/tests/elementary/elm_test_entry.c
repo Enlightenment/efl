@@ -8,7 +8,7 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
-EFL_START_TEST (elm_entry_legacy_type_check)
+EFL_START_TEST(elm_entry_legacy_type_check)
 {
    Evas_Object *win, *entry;
    const char *type;
@@ -28,7 +28,7 @@ EFL_START_TEST (elm_entry_legacy_type_check)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_entry_del)
+EFL_START_TEST(elm_entry_del)
 {
    Evas_Object *win, *entry;
 
@@ -46,7 +46,7 @@ _dummy_cb(void *data EINA_UNUSED, Eo *obj EINA_UNUSED,
 {
 }
 
-EFL_START_TEST (elm_entry_signal_callback)
+EFL_START_TEST(elm_entry_signal_callback)
 {
    Evas_Object *win, *entry;
    void *data;
@@ -85,7 +85,7 @@ EFL_START_TEST (elm_entry_signal_callback)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_entry_atspi_text_char_get)
+EFL_START_TEST(elm_entry_atspi_text_char_get)
 {
    Evas_Object *win, *entry;
    Eina_Unicode *expected;
@@ -123,7 +123,7 @@ EFL_START_TEST (elm_entry_atspi_text_char_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_entry_atspi_text_char_count)
+EFL_START_TEST(elm_entry_atspi_text_char_count)
 {
    Evas_Object *win, *entry;
    int val;
@@ -141,7 +141,7 @@ EFL_START_TEST (elm_entry_atspi_text_char_count)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_entry_atspi_text_string_get_char)
+EFL_START_TEST(elm_entry_atspi_text_string_get_char)
 {
    Evas_Object *win, *entry;
    char *val;
@@ -184,7 +184,7 @@ EFL_START_TEST (elm_entry_atspi_text_string_get_char)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_entry_atspi_text_string_get_word)
+EFL_START_TEST(elm_entry_atspi_text_string_get_word)
 {
    Evas_Object *win, *entry;
    char *val;
@@ -228,7 +228,7 @@ EFL_START_TEST (elm_entry_atspi_text_string_get_word)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_entry_atspi_text_string_get_paragraph)
+EFL_START_TEST(elm_entry_atspi_text_string_get_paragraph)
 {
    Evas_Object *win, *entry;
    char *val;
@@ -272,7 +272,7 @@ EFL_START_TEST (elm_entry_atspi_text_string_get_paragraph)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_entry_atspi_text_string_get_line)
+EFL_START_TEST(elm_entry_atspi_text_string_get_line)
 {
    Evas_Object *win, *entry;
    char *val;
@@ -305,7 +305,7 @@ EFL_START_TEST (elm_entry_atspi_text_string_get_line)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_entry_atspi_text_text_get)
+EFL_START_TEST(elm_entry_atspi_text_text_get)
 {
    Evas_Object *win, *entry;
    char *val;
@@ -334,7 +334,7 @@ EFL_START_TEST (elm_entry_atspi_text_text_get)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_entry_atspi_text_selections)
+EFL_START_TEST(elm_entry_atspi_text_selections)
 {
    Evas_Object *win, *entry;
    int val, start, end;
@@ -378,7 +378,7 @@ EFL_START_TEST (elm_entry_atspi_text_selections)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_atspi_role_get)
+EFL_START_TEST(elm_atspi_role_get)
 {
    Evas_Object *win, *entry;
    Efl_Access_Role role;
@@ -389,6 +389,142 @@ EFL_START_TEST (elm_atspi_role_get)
    role = efl_access_object_role_get(entry);
 
    ck_assert(role == EFL_ACCESS_ROLE_ENTRY);
+
+}
+EFL_END_TEST
+
+static Eina_Bool
+end_test()
+{
+   ecore_main_loop_quit();
+   return EINA_FALSE;
+}
+
+static void
+mag_job(void *e)
+{
+   evas_event_feed_mouse_out(e, 0, NULL);
+   evas_event_feed_mouse_in(e, 0, NULL);
+   evas_event_feed_mouse_move(e, 200, 100, 0, NULL);
+   evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
+   real_timer_add(elm_config_longpress_timeout_get() + 0.1, end_test, NULL);
+}
+
+static void
+norendered(void *data EINA_UNUSED, Evas *e, void *event_info EINA_UNUSED)
+{
+   ecore_job_add(mag_job, e);
+   evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, norendered);
+}
+
+EFL_START_TEST(elm_entry_magnifier)
+{
+   Evas_Object *win, *entry;
+   char buf[4096];
+
+   win = win_add_focused(NULL, "entry", ELM_WIN_BASIC);
+   evas_object_size_hint_weight_set(win, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
+   entry = elm_entry_add(win);
+   elm_entry_line_wrap_set(entry, ELM_WRAP_NONE);
+   snprintf(buf, sizeof(buf),
+            "This is an entry widget in this window that<br/>"
+            "uses markup <b>like this</> for styling and<br/>"
+            "formatting <em>like this</>, as well as<br/>"
+            "<a href=X><link>links in the text</></a>, so enter text<br/>"
+            "in here to edit it. By the way, links are<br/>"
+            "called <a href=anc-02>Anchors</a> so you will need<br/>"
+            "to refer to them this way.<br/>"
+            "<br/>"
+
+            "Also you can stick in items with (relsize + ascent): "
+            "<item relsize=16x16 vsize=ascent href=emoticon/evil-laugh></item>"
+            " (full) "
+            "<item relsize=16x16 vsize=full href=emoticon/guilty-smile></item>"
+            " (to the left)<br/>"
+
+            "Also (size + ascent): "
+            "<item size=16x16 vsize=ascent href=emoticon/haha></item>"
+            " (full) "
+            "<item size=16x16 vsize=full href=emoticon/happy-panting></item>"
+            " (before this)<br/>"
+
+            "And as well (absize + ascent): "
+            "<item absize=64x64 vsize=ascent href=emoticon/knowing-grin></item>"
+            " (full) "
+            "<item absize=64x64 vsize=full href=emoticon/not-impressed></item>"
+            " or even paths to image files on disk too like: "
+            "<item absize=96x128 vsize=full href=file://%s/images/sky_01.jpg></item>"
+            " ... end."
+            , elm_app_data_dir_get()
+            );
+   elm_object_text_set(entry, buf);
+   evas_object_size_hint_weight_set(entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(entry, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   evas_object_show(entry);
+   elm_win_resize_object_add(win, entry);
+   evas_object_show(win);
+   evas_object_resize(entry, 600, 400);
+   evas_object_resize(win, 600, 400);
+   evas_smart_objects_calculate(evas_object_evas_get(win));
+   evas_event_callback_add(evas_object_evas_get(win), EVAS_CALLBACK_RENDER_POST, norendered, NULL);
+   ecore_main_loop_begin();
+}
+EFL_END_TEST
+
+EFL_START_TEST(elm_entry_text_set)
+{
+   Evas_Object *win, *entry;
+   const char *entry_text = "hello world";
+   const char *entry_text2 = "scrollable";
+
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
+
+   entry = elm_entry_add(win);
+
+   ck_assert(elm_layout_text_set(entry, NULL, entry_text));
+   ck_assert_str_eq(elm_object_text_get(entry), entry_text);
+
+   elm_entry_scrollable_set(entry, EINA_TRUE);
+   ck_assert(elm_layout_text_set(entry, NULL, entry_text2));
+   ck_assert_str_eq(elm_object_text_get(entry), entry_text2);
+}
+EFL_END_TEST
+
+EFL_START_TEST(elm_entry_file_get_set)
+{
+   Evas_Object *win, *entry;
+   const char *file_path = NULL;
+   Elm_Text_Format format = ELM_TEXT_FORMAT_PLAIN_UTF8;
+
+   win = win_add(NULL, "entry", ELM_WIN_BASIC);
+   entry = elm_entry_add(win);
+
+   ck_assert(elm_entry_file_set(entry, TESTS_SRC_DIR"/testfile_entry.txt", ELM_TEXT_FORMAT_PLAIN_UTF8));
+   elm_entry_file_get(entry, &file_path, &format);
+   fprintf(stderr, "elm_entry_file_get_set1 %s, %s, %d\n", elm_object_text_get(entry), file_path, format);
+
+   ck_assert_str_eq(elm_object_text_get(entry), "hello world<br/>");
+   ck_assert_str_eq(file_path, TESTS_SRC_DIR"/testfile_entry.txt");
+   ck_assert(format == ELM_TEXT_FORMAT_PLAIN_UTF8);
+
+   ck_assert(elm_entry_file_set(entry, TESTS_SRC_DIR"/testfile_entry2.txt", ELM_TEXT_FORMAT_PLAIN_UTF8));
+   elm_entry_file_get(entry, &file_path, &format);
+   fprintf(stderr, "elm_entry_file_get_set2 %s, %s, %d\n", elm_object_text_get(entry), file_path, format);
+
+   ck_assert_str_eq(elm_object_text_get(entry), "hello elementary<br/>hello entry<br/>");
+   ck_assert_str_eq(file_path, TESTS_SRC_DIR"/testfile_entry2.txt");
+   ck_assert(format == ELM_TEXT_FORMAT_PLAIN_UTF8);
+
+   ck_assert(elm_entry_file_set(entry, NULL, ELM_TEXT_FORMAT_PLAIN_UTF8));
+   elm_entry_file_get(entry, &file_path, &format);
+   fprintf(stderr, "elm_entry_file_get_set3 %s, %s, %d\n", elm_object_text_get(entry), file_path, format);
+
+   ck_assert_str_eq(elm_object_text_get(entry), "");
+   ck_assert(file_path == NULL);
+   ck_assert(format == ELM_TEXT_FORMAT_PLAIN_UTF8);
+
+   fprintf(stderr, "elm_entry_file_get_set4\n");
 
 }
 EFL_END_TEST
@@ -407,4 +543,7 @@ void elm_test_entry(TCase *tc)
    tcase_add_test(tc, elm_entry_atspi_text_text_get);
    tcase_add_test(tc, elm_entry_atspi_text_selections);
    tcase_add_test(tc, elm_atspi_role_get);
+   tcase_add_test(tc, elm_entry_text_set);
+   tcase_add_test(tc, elm_entry_magnifier);
+   tcase_add_test(tc, elm_entry_file_get_set);
 }

@@ -5,7 +5,7 @@
 
 #include <Eio.h>
 
-#include "elm_clock.eo.h"
+#include "elm_clock_eo.h"
 
 /* DO NOT USE THIS HEADER UNLESS YOU ARE PREPARED FOR BREAKING OF YOUR
  * CODE. THIS IS ELEMENTARY'S INTERNAL WIDGET API (for now) AND IS NOT

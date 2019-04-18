@@ -9,11 +9,10 @@
 
 #define _EDJE_EDIT_EO_CLASS_TYPE
 #define EFL_CANVAS_GROUP_PROTECTED
-#define EFL_CANVAS_GROUP_BETA
 
 #include "edje_private.h"
 
-#include "canvas/evas_canvas.eo.h"
+#include "canvas/evas_canvas_eo.h"
 
 #define EDJE_EDIT_IS_UNSTABLE_AND_I_KNOW_ABOUT_IT
 #include "Edje_Edit.h"
@@ -239,11 +238,17 @@ _load_scripts(Eo *obj, Edje_Edit *eed)
    return EINA_TRUE;
 }
 
-EOLIAN static Eina_Bool
-_edje_edit_efl_file_file_set(Eo *obj, Edje_Edit *eed, const char *file, const char *group)
+EOLIAN static Eina_Error
+_edje_edit_efl_file_load(Eo *obj, Edje_Edit *eed)
 {
+   Eina_Error err;
+
+   if (efl_file_loaded_get(obj)) return 0;
+
    _edje_edit_data_clean(eed);
 
+   err = efl_file_load(efl_super(obj, MY_CLASS));
+   if (err) return err;
    /* TODO and maybes:
     *  * The whole point of this thing is keep track of stuff such as
     *    strings to free and who knows what, so we need to take care
@@ -258,34 +263,10 @@ _edje_edit_efl_file_file_set(Eo *obj, Edje_Edit *eed, const char *file, const ch
     *    groups).
     *  P.S. don't forget about mmap version below
     */
-   file = eina_vpath_resolve(file);
-
-   Eina_Bool int_ret;
-   int_ret = efl_file_set(efl_super(obj, MY_CLASS), file, group);
-
-   if (!int_ret)
-     return EINA_FALSE;
-
    if (!_load_scripts(obj, eed))
-     return EINA_FALSE;
+     return EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
 
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_edje_edit_efl_file_mmap_set(Eo *obj, Edje_Edit *eed, const Eina_File *mmap, const char *group)
-{
-   _edje_edit_data_clean(eed);
-
-   Eina_Bool int_ret;
-   int_ret = efl_file_mmap_set(efl_super(obj, MY_CLASS), mmap, group);
-   if (!int_ret)
-     return EINA_FALSE;
-
-   if (!_load_scripts(obj, eed))
-     return EINA_FALSE;
-
-   return EINA_TRUE;
+   return 0;
 }
 
 EAPI Evas_Object *
@@ -16770,4 +16751,4 @@ edje_edit_print_internal_status(Evas_Object *obj)
 #define EDJE_EDIT_EXTRA_OPS \
    EFL_CANVAS_GROUP_DEL_OPS(edje_edit)
 
-#include "edje_edit.eo.c"
+#include "edje_edit_eo.c"

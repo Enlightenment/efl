@@ -104,7 +104,7 @@ _efl_net_ip_address_family_get(const Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data 
 EOLIAN static void
 _efl_net_ip_address_port_set(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd, uint16_t port)
 {
-   uint16_t *pport, nport = htons(port);
+   uint16_t *pport, nport = eina_htons(port);
 
    EINA_SAFETY_ON_TRUE_RETURN(pd->addr.sa_family == 0);
    if (pd->addr.sa_family == AF_INET6)
@@ -115,7 +115,7 @@ _efl_net_ip_address_port_set(Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd, uin
    if (*pport == nport) return;
    if (*pport)
      {
-        ERR("port already set to %hu, new %hu", ntohs(*pport), port);
+        ERR("port already set to %hu, new %hu", eina_ntohs(*pport), port);
         return;
      }
 
@@ -133,7 +133,7 @@ _efl_net_ip_address_port_get(const Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *p
    else
      pport = &pd->ipv4.sin_port;
 
-   return ntohs(*pport);
+   return eina_ntohs(*pport);
 }
 
 EOLIAN static void
@@ -213,7 +213,7 @@ _efl_net_ip_address_sockaddr_get(const Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Dat
    return &pd->addr;
 }
 
-#define IPV4_ADDR_GET(pd) ntohl(pd->ipv4.sin_addr.s_addr)
+#define IPV4_ADDR_GET(pd) eina_ntohl(pd->ipv4.sin_addr.s_addr)
 
 EOLIAN static Eina_Bool
 _efl_net_ip_address_ipv4_class_a_check(const Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *pd)
@@ -300,7 +300,7 @@ _efl_net_ip_address_any_check(const Eo *o EINA_UNUSED, Efl_Net_Ip_Address_Data *
 }
 
 EOLIAN static Efl_Net_Ip_Address *
-_efl_net_ip_address_create(Eo *cls, void *pd EINA_UNUSED, uint16_t port, const Eina_Slice address)
+_efl_net_ip_address_create(uint16_t port, const Eina_Slice address)
 {
    int family;
 
@@ -311,26 +311,26 @@ _efl_net_ip_address_create(Eo *cls, void *pd EINA_UNUSED, uint16_t port, const E
    else
      family = AF_INET;
 
-   return efl_add_ref(cls, efl_main_loop_get(),
+   return efl_add_ref(EFL_NET_IP_ADDRESS_CLASS, efl_main_loop_get(),
                   efl_net_ip_address_family_set(efl_added, family),
                   efl_net_ip_address_port_set(efl_added, port),
                   efl_net_ip_address_set(efl_added, address));
 }
 
 EOLIAN static Efl_Net_Ip_Address *
-_efl_net_ip_address_create_sockaddr(Eo *cls, void *pd EINA_UNUSED, const void *ptr)
+_efl_net_ip_address_create_sockaddr(const void *ptr)
 {
    const struct sockaddr *sockaddr = ptr;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(sockaddr, NULL);
    EINA_SAFETY_ON_TRUE_RETURN_VAL((sockaddr->sa_family != AF_INET) && (sockaddr->sa_family != AF_INET6), NULL);
 
-   return efl_add_ref(cls, efl_main_loop_get(),
+   return efl_add_ref(EFL_NET_IP_ADDRESS_CLASS, efl_main_loop_get(),
                   efl_net_ip_address_sockaddr_set(efl_added, sockaddr));
 }
 
 EOLIAN static Efl_Net_Ip_Address *
-_efl_net_ip_address_parse(Eo *cls, void *pd EINA_UNUSED, const char *numeric_address)
+_efl_net_ip_address_parse(const char *numeric_address)
 {
    struct sockaddr_storage ss;
    Eina_Bool r;
@@ -368,7 +368,7 @@ _efl_net_ip_address_parse(Eo *cls, void *pd EINA_UNUSED, const char *numeric_add
         return NULL;
      }
 
-   return efl_add_ref(cls, efl_main_loop_get(),
+   return efl_add_ref(EFL_NET_IP_ADDRESS_CLASS, efl_main_loop_get(),
                   efl_net_ip_address_sockaddr_set(efl_added, &ss));
 }
 
@@ -509,7 +509,7 @@ _efl_net_ip_address_resolve_done(void *data,
         if (EINA_UNLIKELY(_efl_net_ip_address_find(&r, a->ai_addr) >= 0))
           continue;
 
-        o = efl_net_ip_address_create_sockaddr(EFL_NET_IP_ADDRESS_CLASS, a->ai_addr);
+        o = efl_net_ip_address_create_sockaddr(a->ai_addr);
         if (!o) continue ;
 
         eina_value_array_append(&r, o);
@@ -536,7 +536,7 @@ _efl_net_ip_address_resolve_done(void *data,
 }
 
 EOLIAN static Eina_Future *
-_efl_net_ip_address_resolve(Eo *cls EINA_UNUSED, void *pd EINA_UNUSED, const char *address, int family, int flags)
+_efl_net_ip_address_resolve(const char *address, int family, int flags)
 {
    Efl_Net_Ip_Address_Resolve_Context *ctx;
    struct addrinfo hints = { };

@@ -1,0 +1,31 @@
+import eina_types;
+
+struct Efl.Ui.Property_Event {
+   [[EFL Ui property event data structure triggered when an object property change due
+     to the interaction on the object.]]
+   changed_properties: array<stringshare>; [[List of changed properties]]
+}
+
+interface @beta Efl.Ui.Property_Bind
+{
+   [[Efl UI Property_Bind interface.
+     view object can have @Efl.Model to manage the data,
+     the interface can help loading and tracking child data from the model property.
+     see @Efl.Model
+     see @Efl.Ui.Factory]]
+   methods {
+      property_bind {
+         [[bind property data with the given key string. when the data is ready or changed,
+           bind the data to the key action and process promised work.]]
+         params {
+            key: string; [[key string for bind model property data]]
+            property: string; [[Model property name]]
+         }
+         return: Eina.Error; [[0 when it succeed, an error code otherwise.]]
+      }
+   }
+   events {
+      properties,changed: Efl.Ui.Property_Event; [[Event dispatched when a property on the object has changed due to an user interaction on the object that a model could be interested in.]]
+      property,bound: stringshare; [[Event dispatched when a property on the object is bound to a model. This is useful to not overgenerate event.]]
+   }
+}

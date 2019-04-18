@@ -1,7 +1,6 @@
-class Efl.Canvas.Vg.Container extends Efl.Canvas.Vg.Node
+class @beta Efl.Canvas.Vg.Container extends Efl.Canvas.Vg.Node
 {
    [[Efl vector graphics container class]]
-   legacy_prefix: evas_vg_container;
    methods {
       child_get {
          [[Get child of container]]

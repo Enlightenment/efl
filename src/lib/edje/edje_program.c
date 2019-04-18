@@ -236,8 +236,10 @@ edje_transition_duration_factor_set(double scale)
    _edje_transition_duration_scale = FROM_DOUBLE(scale);
 }
 
-static inline Eina_Bool
-_edje_object_signal_callback_add(Edje *ed, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
+Eina_Bool
+_edje_object_signal_callback_add(Edje *ed, const char *emission, const char *source,
+                                 Edje_Signal_Cb func_legacy,
+                                 Efl_Signal_Cb func_eo, Eina_Free_Cb func_free_cb, void *data)
 {
    Edje_Signal_Callback_Group *gp;
    const char *sig;
@@ -252,7 +254,7 @@ _edje_object_signal_callback_add(Edje *ed, const char *emission, const char *sou
    src = eina_stringshare_add(source);
 
    gp = (Edje_Signal_Callback_Group *) ed->callbacks;
-   ok = _edje_signal_callback_push(gp, sig, src, func, data, EINA_TRUE);
+   ok = _edje_signal_callback_push(gp, sig, src, func_legacy, func_eo, func_free_cb, data, EINA_TRUE);
 
    eina_stringshare_del(sig);
    eina_stringshare_del(src);
@@ -267,17 +269,17 @@ edje_object_propagate_callback_add(Evas_Object *obj, Efl_Signal_Cb func, void *d
 
    ed = _edje_fetch(obj);
    if (!ed || ed->delete_me) return;
-   _edje_object_signal_callback_add(ed, "*", "*", func, data);
+   _edje_object_signal_callback_add(ed, "*", "*", func, NULL, NULL, data);
 }
 
-EOLIAN Eina_Bool
-_efl_canvas_layout_efl_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
+Eina_Bool
+_efl_canvas_layout_efl_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
 {
-   return _edje_object_signal_callback_add(ed, emission, source, func, data);
+   return _edje_object_signal_callback_add(ed, emission, source, NULL, func, func_free_cb, func_data);
 }
 
-EOLIAN Eina_Bool
-_efl_canvas_layout_efl_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, Efl_Signal_Cb func, void *data)
+Eina_Bool
+_efl_canvas_layout_efl_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Edje *ed, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
 {
    Edje_Signal_Callback_Group *gp;
    Eina_Bool ok;
@@ -291,7 +293,7 @@ _efl_canvas_layout_efl_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Ed
    emission = eina_stringshare_add(emission);
    source = eina_stringshare_add(source);
 
-   ok = _edje_signal_callback_disable(gp, emission, source, func, data);
+   ok = _edje_signal_callback_disable(gp, emission, source, NULL, func, func_free_cb, func_data);
 
    eina_stringshare_del(emission);
    eina_stringshare_del(source);
@@ -395,7 +397,7 @@ _edje_program_run_cleanup(Edje *ed, Edje_Running_Program *runp)
    ed->actions = eina_list_remove(ed->actions, runp);
    if (!ed->actions)
      {
-        efl_event_callback_del(ed->obj, EFL_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed);
+        efl_event_callback_del(ed->obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed);
         ecore_animator_del(ed->animator);
         ed->animator = NULL;
      }
@@ -759,7 +761,7 @@ low_mem_current:
              if (!ed->actions)
                {
                   if (ed->canvas_animator)
-                    efl_event_callback_add(ed->obj, EFL_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed);
+                    efl_event_callback_add(ed->obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _edje_timer_cb, ed);
                   else
                     ed->animator = ecore_animator_add(_edje_animator_cb, ed);
                }
@@ -1669,13 +1671,16 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Da
 
                   cb = &m->matches[*i];
 
-                  cb->func((void *)ed->callbacks->custom_data[*i], ed->obj, sig, src);
+                  if (ed->callbacks->flags[*i].legacy)
+                    cb->legacy((void *)ed->callbacks->custom_data[*i], ed->obj, sig, src);
+                  else
+                    cb->eo((void *)ed->callbacks->custom_data[*i], ed->obj, sig, src);
                   if (_edje_block_break(ed)) break;
                }
           }
 
 break_prog:
-        _edje_signal_callback_matches_unref(m);
+        _edje_signal_callback_matches_unref(m, ed->callbacks->flags, ed->callbacks->custom_data);
 
         _edje_signal_callback_patterns_unref(ssp);
      }

@@ -1,9 +1,9 @@
-interface Efl.Config
+interface @beta Efl.Config
 {
    [[A generic configuration interface, that holds key-value pairs.]]
    methods {
       @property config {
-         [[A generic configuration value, refered to by name.]]
+         [[A generic configuration value, referred to by name.]]
          get {
             keys {
                name: string; [[Configuration option name.]]

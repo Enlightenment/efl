@@ -1,4 +1,4 @@
-class Efl.Net.Server_Udp_Client extends Efl.Object implements Efl.Net.Socket {
+class @beta Efl.Net.Server_Udp_Client extends Efl.Object implements Efl.Net.Socket {
     [[A UDP client child of Efl.Net.Server_Udp
 
       Unlike connection protocols such as TCP or Local, UDP doesn't
@@ -9,8 +9,6 @@ class Efl.Net.Server_Udp_Client extends Efl.Object implements Efl.Net.Socket {
       Given this limitation, some features such as 'cork' (used to
       coalesce multiple writes() into a single datagram) are not
       available since it could interfere with other clients.
-
-      @since 1.19
     ]]
 
     methods {

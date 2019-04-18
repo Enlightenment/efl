@@ -1,4 +1,4 @@
-class Efl.Ui.Pan extends Efl.Canvas.Group implements Efl.Content
+class @beta Efl.Ui.Pan extends Efl.Canvas.Group implements Efl.Content
 {
    [[Elementary pan class]]
    methods {
@@ -43,12 +43,13 @@ class Efl.Ui.Pan extends Efl.Canvas.Group implements Efl.Content
       Efl.Gfx.Entity.visible { set; }
       Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set; }
-      Efl.Content.content { set; }
+      Efl.Content.content { set; get; }
+      Efl.Content.content_unset;
       Efl.Canvas.Group.group_calculate;
    }
    events {
-      content,changed: void; [[Called when pan content changed]]
-      viewport,changed: void; [[Called when pan viewport changed]]
-      position,changed: void; [[Called when pan position changed]]
+      pan,content,changed: void; [[Called when pan content changed]]
+      pan,viewport,changed: void; [[Called when pan viewport changed]]
+      pan,position,changed: void; [[Called when pan position changed]]
    }
 }

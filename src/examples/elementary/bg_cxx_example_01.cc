@@ -1,4 +1,5 @@
 #define EFL_CXXPERIMENTAL // for background part
+#define EFL_BETA_API_SUPPORT
 #include <Elementary.hh>
 
 using efl::eo::instantiate;
@@ -10,7 +11,7 @@ elm_main (int argc EINA_UNUSED, char **argv EINA_UNUSED)
    win.text_set("Window Background");
    win.autohide_set(true);
    win.size_set({320,320});
-   win.background().color_set(139, 69, 19, 255);
+   //win.background().color_set(139, 69, 19, 255);
 
    // Clean exit
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);

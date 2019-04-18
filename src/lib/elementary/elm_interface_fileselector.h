@@ -1,11 +1,8 @@
 #ifndef ELM_INTEFARCE_FILESELECTOR_H
 #define ELM_INTEFARCE_FILESELECTOR_H
 
-#ifdef EFL_EO_API_SUPPORT
-#include "elm_interface_fileselector.eo.h"
-#endif
 #ifndef EFL_NOLEGACY_API_SUPPORT
-#include "elm_interface_fileselector.eo.legacy.h"
+#include "elm_interface_fileselector_eo.legacy.h"
 #endif
 
 #define ELM_FILESELECTOR_INTERFACE_CHECK(obj, ...) \
@@ -63,9 +60,9 @@ _elm_fileselector_button_selected_paths_get_internal(const Evas_Object *obj);
 
 
 void
-_event_to_legacy_call(Eo *obj, const Efl_Event_Description *evt_desc, void *event_info);
+_event_to_legacy_call(Eo *obj, const char *evt, void *event_info);
 
 void
-_model_event_call(Eo *obj, const Efl_Event_Description *evt_desc, Efl_Model *model, const char *path);
+_model_event_call(Eo *obj, const Efl_Event_Description *evt_desc, const char *legacy_evt, Efl_Model *model, const char *path);
 
 #endif

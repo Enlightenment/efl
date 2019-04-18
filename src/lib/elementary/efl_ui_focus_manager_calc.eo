@@ -1,11 +1,9 @@
-class Efl.Ui.Focus.Manager_Calc extends Efl.Object implements Efl.Ui.Focus.Manager {
+class @beta Efl.Ui.Focus.Manager_Calc extends Efl.Object implements Efl.Ui.Focus.Manager {
     [[Calculates the directions of Efl.Ui.Focus.Direction
 
       Each registered item will get an other registered object in each
       direction. You can get items for the currently focused item if
       you call request move.
-
-      @since 1.20
     ]]
     methods {
         register {

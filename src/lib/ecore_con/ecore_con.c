@@ -38,11 +38,8 @@
 # include <systemd/sd-daemon.h>
 #endif
 
-#ifdef HAVE_WS2TCPIP_H
-# include <ws2tcpip.h>
-#endif
-
 #ifdef _WIN32
+# include <ws2tcpip.h>
 # include <Evil.h>
 #endif
 
@@ -201,7 +198,7 @@ efl_net_unix_fmt(char *buf, size_t buflen, SOCKET fd, const struct sockaddr_un *
         int r = snprintf(buf, buflen, "unnamed:" SOCKET_FMT, fd);
         if (r < 0)
           {
-             ERR("snprintf(): %s", strerror(errno));
+             ERR("snprintf(): %s", eina_error_msg_get(errno));
              return EINA_FALSE;
           }
         else if ((size_t)r > buflen)
@@ -288,13 +285,13 @@ efl_net_ip_port_parse_split(const char *host, const char *port, struct sockaddr_
    if (storage->ss_family == AF_INET6)
      {
         struct sockaddr_in6 *a = (struct sockaddr_in6 *)storage;
-        a->sin6_port = htons(p);
+        a->sin6_port = eina_htons(p);
         x = inet_pton(AF_INET6, host, &a->sin6_addr);
      }
    else
      {
         struct sockaddr_in *a = (struct sockaddr_in *)storage;
-        a->sin_port = htons(p);
+        a->sin_port = eina_htons(p);
         x = inet_pton(AF_INET, host, &a->sin_addr);
      }
 
@@ -313,13 +310,13 @@ efl_net_ip_port_fmt(char *buf, size_t buflen, const struct sockaddr *addr)
      {
         const struct sockaddr_in *a = (const struct sockaddr_in *)addr;
         mem = &a->sin_addr;
-        port = ntohs(a->sin_port);
+        port = eina_ntohs(a->sin_port);
      }
    else if (addr->sa_family == AF_INET6)
      {
         const struct sockaddr_in6 *a = (const struct sockaddr_in6 *)addr;
         mem = &a->sin6_addr;
-        port = ntohs(a->sin6_port);
+        port = eina_ntohs(a->sin6_port);
      }
    else
      {
@@ -330,7 +327,7 @@ efl_net_ip_port_fmt(char *buf, size_t buflen, const struct sockaddr *addr)
    if (!inet_ntop(addr->sa_family, mem, p, sizeof(p)))
      {
         ERR("inet_ntop(%d, %p, %p, %zd): %s",
-            addr->sa_family, mem, p, sizeof(p), strerror(errno));
+            addr->sa_family, mem, p, sizeof(p), eina_error_msg_get(errno));
         return EINA_FALSE;
      }
 
@@ -341,7 +338,7 @@ efl_net_ip_port_fmt(char *buf, size_t buflen, const struct sockaddr *addr)
 
    if (r < 0)
      {
-        ERR("could not snprintf(): %s", strerror(errno));
+        ERR("could not snprintf(): %s", eina_error_msg_get(errno));
         return EINA_FALSE;
      }
    else if ((size_t)r > buflen)

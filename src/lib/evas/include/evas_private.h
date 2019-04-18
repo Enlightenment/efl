@@ -48,13 +48,13 @@
 #define ENFN obj->layer->evas->engine.func
 #define ENC  _evas_engine_context(obj->layer->evas)
 
-#include "canvas/evas_canvas.eo.h"
-#include "canvas/evas_text.eo.h"
-#include "canvas/evas_textgrid.eo.h"
-#include "canvas/evas_line.eo.h"
-#include "canvas/evas_box.eo.h"
-#include "canvas/evas_table.eo.h"
-#include "canvas/evas_grid.eo.h"
+#include "canvas/evas_canvas_eo.h"
+#include "canvas/evas_text_eo.h"
+#include "canvas/evas_textgrid_eo.h"
+#include "canvas/evas_line_eo.h"
+#include "canvas/evas_box_eo.h"
+#include "canvas/evas_table_eo.h"
+#include "canvas/evas_grid_eo.h"
 
 #define RENDER_METHOD_INVALID            0x00000000
 
@@ -1147,8 +1147,6 @@ struct _Evas_Object_Protected_Data
    unsigned char               no_change_render;
    unsigned char               delete_me;
 
-   Eina_Inlist                *event_anims; //List of Efl_Animation
-
    Eina_Bool                   render_pre : 1;
    Eina_Bool                   rect_del : 1;
 
@@ -1186,8 +1184,8 @@ struct _Evas_Object_Protected_Data
    Eina_Bool                   snapshot_needs_redraw : 1;
    Eina_Bool                   snapshot_no_obscure : 1;
    Eina_Bool                   is_image_object : 1;
-   Eina_Bool                   gfx_map_has : 1;
-   Eina_Bool                   gfx_map_update : 1;
+   Eina_Bool                   gfx_mapping_has : 1;
+   Eina_Bool                   gfx_mapping_update : 1;
 
    struct {
       Eina_Bool                ctor : 1; // used legacy constructor
@@ -1525,14 +1523,14 @@ struct _Vg_File_Data
 
 struct _Evas_Vg_Load_Func
 {
-   Vg_File_Data *(*file_open) (const char *file, const char *key, int *error);
+   Vg_File_Data *(*file_open) (Eina_File *file, const char *key, int *error);
    Eina_Bool (*file_close) (Vg_File_Data *vfd);
    Eina_Bool (*file_data) (Vg_File_Data *vfd);
 };
 
 struct _Evas_Vg_Save_Func
 {
-   int (*file_save) (Vg_File_Data *vfd, const char *file, const char *key, int compress);
+   Evas_Load_Error (*file_save) (Vg_File_Data *vfd, const char *file, const char *key, int compress);
 };
 
 #ifdef __cplusplus
@@ -1647,7 +1645,7 @@ void evas_object_inform_call_image_resize(Evas_Object *obj);
 void evas_object_intercept_cleanup(Evas_Object *obj);
 void evas_object_grabs_cleanup(Evas_Object *obj, Evas_Object_Protected_Data *pd);
 void evas_key_grab_free(Evas_Object *obj, Evas_Object_Protected_Data *pd, const char *keyname, Evas_Modifier_Mask modifiers, Evas_Modifier_Mask not_modifiers);
-void evas_object_smart_member_cache_invalidate(Evas_Object *obj, Eina_Bool pass_events, Eina_Bool freeze_events, Eina_Bool sourve_invisible);
+void evas_object_smart_member_cache_invalidate(Evas_Object *obj, Eina_Bool pass_events, Eina_Bool freeze_events, Eina_Bool source_invisible);
 void evas_text_style_pad_get(Evas_Text_Style_Type style, int *l, int *r, int *t, int *b);
 void _evas_object_text_rehint(Evas_Object *obj);
 void _evas_object_textblock_rehint(Evas_Object *obj);
@@ -1669,10 +1667,10 @@ void evas_font_draw_async_check(Evas_Object_Protected_Data *obj,
                                 int x, int y, int w, int h, int ow, int oh,
                                 Evas_Text_Props *intl_props, Eina_Bool do_async);
 
-void _efl_canvas_object_clip_prev_reset(Evas_Object_Protected_Data *obj, Eina_Bool cur_prev);
+void _efl_canvas_object_clipper_prev_reset(Evas_Object_Protected_Data *obj, Eina_Bool cur_prev);
 
-Eina_Bool _efl_canvas_object_clip_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_clip, Evas_Object_Protected_Data *clip);
-Eina_Bool _efl_canvas_object_clip_unset_block(Eo *eo_obj, Evas_Object_Protected_Data *obj);
+Eina_Bool _efl_canvas_object_clipper_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_clip, Evas_Object_Protected_Data *clip);
+Eina_Bool _efl_canvas_object_clipper_unset_block(Eo *eo_obj, Evas_Object_Protected_Data *obj);
 Eina_Bool _efl_canvas_object_efl_gfx_entity_size_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord w, Evas_Coord h, Eina_Bool internal);
 
 void _evas_focus_device_invalidate_cb(void *data, const Efl_Event *ev);
@@ -1736,10 +1734,10 @@ void _evas_canvas3d_eet_file_free(Evas_Canvas3D_File_Eet* eet_file);
 void evas_filter_init(void);
 void evas_filter_shutdown(void);
 
-/* Efl.Gfx.Map */
-void _efl_gfx_map_init(void);
-void _efl_gfx_map_shutdown(void);
-void _efl_gfx_map_update(Eo *eo_obj);
+/* Efl.Gfx.Mapping */
+void _efl_gfx_mapping_init(void);
+void _efl_gfx_mapping_shutdown(void);
+void _efl_gfx_mapping_update(Eo *eo_obj);
 
 /* Ector */
 Ector_Surface *evas_ector_get(Evas_Public_Data *evas);
@@ -1867,7 +1865,7 @@ void _evas_device_cleanup(Evas *e);
 Evas_Device *_evas_device_top_get(const Evas *e);
 
 /* legacy/eo events */
-Efl_Input_Event *efl_input_event_instance_get(Eo *klass, Eo *owner);
+Efl_Input_Event *efl_input_event_instance_get(const Eo *klass, Eo *owner);
 void efl_input_event_instance_clean(Eo *klass);
 
 void *efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Callback_Type type, Evas_Event_Flags **pflags);
@@ -1896,9 +1894,11 @@ void efl_canvas_output_info_get(Evas_Public_Data *e, Efl_Canvas_Output *output);
 void evas_object_pixels_get_force(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj);
 
 // Gesture Manager
+void *_efl_canvas_gesture_manager_private_data_get(Eo *obj);
 void _efl_canvas_gesture_manager_filter_event(Eo *gesture_manager, Eo *target, void *event);
-void _efl_canvas_gesture_manager_callback_del_hook(Eo *gesture_manager, Eo *target, const Efl_Event_Description *type);
-void _efl_canvas_gesture_manager_callback_add_hook(Eo *gesture_manager, Eo *target, const Efl_Event_Description *type);
+void _efl_canvas_gesture_manager_callback_del_hook(void *data, Eo *target, const Efl_Event_Description *type);
+void _efl_canvas_gesture_manager_callback_add_hook(void *data, Eo *target, const Efl_Event_Description *type);
+Eina_Bool _efl_canvas_gesture_manager_watches(const Efl_Event_Description *ev);
 
 //evas focus functions
 void evas_focus_init(void);
@@ -1918,6 +1918,9 @@ extern Eina_Cow *evas_object_image_state_cow;
 extern Eina_Cow *evas_object_mask_cow;
 extern Eina_Cow *evas_object_events_cow;
 
+Eina_Error _evas_load_error_to_efl_gfx_image_load_error(Evas_Load_Error err);
+Evas_Load_Error _efl_gfx_image_load_error_to_evas_load_error(Eina_Error err);
+
 # define EINA_COW_STATE_WRITE_BEGIN(Obj, Write, State)          \
   EINA_COW_WRITE_BEGIN(evas_object_state_cow, Obj->State, \
                        Evas_Object_Protected_State, Write)
@@ -1927,6 +1930,13 @@ extern Eina_Cow *evas_object_events_cow;
 		  Write, EINA_FALSE);					\
    }									\
   while (0);
+
+/* BEGIN: events to maintain compatibility with legacy */
+EWAPI extern const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_SHOW;
+#define EFL_GFX_ENTITY_EVENT_SHOW (&(_EFL_GFX_ENTITY_EVENT_SHOW))
+EWAPI extern const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_HIDE;
+#define EFL_GFX_ENTITY_EVENT_HIDE (&(_EFL_GFX_ENTITY_EVENT_HIDE))
+/* END: events to maintain compatibility with legacy */
 
 /****************************************************************************/
 /*****************************************/

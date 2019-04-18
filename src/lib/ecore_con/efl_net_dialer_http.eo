@@ -1,13 +1,13 @@
 import efl_net_http_types;
 
-enum Efl.Net.Dialer_Http_Primary_Mode {
+enum @beta Efl.Net.Dialer_Http_Primary_Mode {
     [[Primary HTTP mode]]
     auto, [[HTTP auto mode]]
     download, [[HTTP download mode]]
     upload, [[HTTP upload mode]]
 }
 
-class Efl.Net.Dialer_Http extends Efl.Loop_Consumer implements Efl.Net.Dialer, Efl.Io.Sizer {
+class @beta Efl.Net.Dialer_Http extends Efl.Loop_Consumer implements Efl.Net.Dialer, Efl.Io.Sizer {
     [[HTTP Dialer (Client).
 
       The effective URL in use, if @.allow_redirects is $true will be
@@ -47,8 +47,6 @@ class Efl.Net.Dialer_Http extends Efl.Loop_Consumer implements Efl.Net.Dialer, E
        - socks5://proxyserver (default port 1080)
        - socks4a://proxyserver:port (SOCKSv4 and let socks server to resolve domain)
        - socks4://proxyserver:port (SOCKSv4)
-
-      @since 1.19
     ]]
     methods {
         @property method {
@@ -74,7 +72,7 @@ class Efl.Net.Dialer_Http extends Efl.Loop_Consumer implements Efl.Net.Dialer, E
                - If @Efl.Net.Dialer_Http_Primary_Mode.auto, then
                  @Efl.Net.Dialer_Http_Primary_Mode.download or
                  @Efl.Net.Dialer_Http_Primary_Mode.upload will be
-                 choosen based on the @.method: if "PUT", then it's
+                 chosen based on the @.method: if "PUT", then it's
                  upload, otherwise it's download.
 
                - If @Efl.Net.Dialer_Http_Primary_Mode.upload, applying

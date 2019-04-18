@@ -26,6 +26,10 @@
  * @{
  */
 
+#include "efl_core_env.eo.h"
+#include "efl_core_proc_env.eo.h"
+#include "efl_core_command_line.eo.h"
+
 #include "efl_loop_message.eo.h"
 #include "efl_loop_message_handler.eo.h"
 
@@ -109,16 +113,13 @@ EAPI Eo *efl_main_loop_get(void);
  * @{
  */
 
-#include "efl_model_loop.eo.h"
-#include "efl_model_item.eo.h"
-#include "efl_model_container.eo.h"
-#include "efl_model_container_item.eo.h"
-#include "efl_model_composite.eo.h"
-#include "efl_model_composite_boolean.eo.h"
-#include "efl_model_composite_boolean_children.eo.h"
-#include "efl_model_composite_selection.eo.h"
-#include "efl_model_composite_selection_children.eo.h"
-#include "efl_model_view.eo.h"
+#include "efl_loop_model.eo.h"
+#include "efl_generic_model.eo.h"
+#include "efl_container_model.eo.h"
+#include "efl_composite_model.eo.h"
+#include "efl_boolean_model.eo.h"
+#include "efl_select_model.eo.h"
+#include "efl_view_model.eo.h"
 
 /**
  * @}

@@ -33,4 +33,4 @@ EAPI void                         elm_notify_parent_set(Evas_Object *obj, Evas_O
  */
 EAPI Evas_Object                 *elm_notify_parent_get(const Evas_Object *obj);
 
-#include "elm_notify.eo.legacy.h"
+#include "elm_notify_eo.legacy.h"

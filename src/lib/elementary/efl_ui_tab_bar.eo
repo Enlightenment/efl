@@ -1,4 +1,4 @@
-class Efl.Ui.Tab_Bar extends Efl.Ui.Layout implements Efl.Ui.Clickable
+class @beta Efl.Ui.Tab_Bar extends Efl.Ui.Layout_Base implements Efl.Ui.Clickable
 {
    [[Tab Bar class]]
    methods {
@@ -38,6 +38,6 @@ class Efl.Ui.Tab_Bar extends Efl.Ui.Layout implements Efl.Ui.Clickable
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
    }
 }

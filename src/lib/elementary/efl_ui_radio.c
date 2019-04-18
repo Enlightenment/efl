@@ -88,7 +88,7 @@ _state_set(Evas_Object *obj, Eina_Bool state, Eina_Bool activate)
           {
              if (sd->state)
                {
-                  efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_CHECKED, EINA_TRUE);
+                  efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_TYPE_CHECKED, EINA_TRUE);
                }
           }
      }
@@ -147,13 +147,13 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
    return EINA_TRUE;
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _efl_ui_radio_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Radio_Data *sd)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, EFL_UI_CHECK_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    if (elm_widget_is_legacy(obj))
      {
@@ -359,7 +359,7 @@ _efl_ui_radio_efl_access_object_state_set_get(const Eo *obj, Efl_Ui_Radio_Data *
 
    ret = efl_access_object_state_set_get(efl_super(obj, EFL_UI_RADIO_CLASS));
    if (obj == elm_radio_selected_object_get(obj))
-     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_CHECKED);
+     STATE_TYPE_SET(ret, EFL_ACCESS_STATE_TYPE_CHECKED);
 
    return ret;
 }
@@ -373,8 +373,9 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX)
 
 #include "efl_ui_radio.eo.c"
+#include "efl_ui_radio_eo.legacy.c"
 
-#include "efl_ui_radio_legacy.eo.h"
+#include "efl_ui_radio_legacy_eo.h"
 #include "efl_ui_radio_legacy_part.eo.h"
 
 #define MY_CLASS_NAME_LEGACY "elm_radio"
@@ -414,12 +415,12 @@ _icon_signal_emit(Evas_Object *obj)
    elm_layout_sizing_eval(obj);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _efl_ui_radio_legacy_efl_ui_widget_theme_apply(Eo *obj, void *_pd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, EFL_UI_RADIO_LEGACY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    /* FIXME: replicated from elm_layout just because radio's icon
     * spot is elm.swallow.content, not elm.swallow.icon. Fix that
@@ -494,4 +495,4 @@ elm_radio_value_get(const Evas_Object *obj)
    return efl_ui_nstate_value_get(obj);
 }
 
-#include "efl_ui_radio_legacy.eo.c"
+#include "efl_ui_radio_legacy_eo.c"

@@ -1,4 +1,4 @@
-interface Efl.Ui.Focus.Parent_Provider {
+interface @beta Efl.Ui.Focus.Parent_Provider {
    [[EFL UI Focus Parent Provider interface]]
    methods {
       find_logical_parent {

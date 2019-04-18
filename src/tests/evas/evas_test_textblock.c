@@ -109,7 +109,9 @@ EFL_START_TEST(evas_textblock_cursor)
    Evas_Coord x, y, w, h;
    size_t i, j, len;
    Evas_Coord nw, nh;
+#ifdef HAVE_FRIBIDI
    Evas_BiDi_Direction dir;
+#endif
    const char *buf = "This is a<br/> test.<ps/>Lets see if this works.<ps/>עוד פסקה.";
 
    /* Walk the textblock using cursor_char_next */
@@ -4630,14 +4632,14 @@ EFL_START_TEST(efl_canvas_text_markup)
 
    efl_text_cursor_position_set(txt, start, 1);
    efl_text_cursor_position_set(txt, end, 2);
-   res = efl_text_markup_range_get(txt, start, end);
+   res = efl_text_markup_interactive_markup_range_get(txt, start, end);
    ck_assert_str_eq(res, "<br>");
    free(res);
 
    efl_text_set(txt, "a\u2029bc\ndef\n\u2029");
    efl_text_cursor_position_set(txt, start, 2);
    efl_text_cursor_position_set(txt, end, 5);
-   res = efl_text_markup_range_get(txt, start, end);
+   res = efl_text_markup_interactive_markup_range_get(txt, start, end);
    ck_assert_str_eq(res, "bc<br>");
    free(res);
 

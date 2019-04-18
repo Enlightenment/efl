@@ -17,7 +17,8 @@ eo_suite_src = [
   'eo_test_event.c',
   'eo_test_threaded_calls.c',
   'eo_test_init.c',
-  'eo_test_lifecycle.c'
+  'eo_test_lifecycle.c',
+  'eo_test_reflection.c'
 ]
 
 eo_suite = executable('eo_suite',
@@ -29,5 +30,32 @@ eo_suite = executable('eo_suite',
 )
 
 test('eo-suite', eo_suite,
+  env : test_env
+)
+
+eo_suite = executable('eo_suite_dbg',
+  eo_suite_src,
+  dependencies: [eo_dbg, check, valgrind],
+  c_args : [
+  '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
+  '-DEO_DEBUG=1',
+  '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']
+)
+
+test('eo-suite-dbg', eo_suite,
+  env : test_env
+)
+
+eo_suite = executable('eo_suite_fallback',
+  eo_suite_src,
+  dependencies: [eo_dbg, check, valgrind],
+  c_args : [
+  '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
+  '-DEO_DEBUG=1',
+  '-D_EO_ADD_FALLBACK_FORCE=1',
+  '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']
+)
+
+test('eo-suite-fallback', eo_suite,
   env : test_env
 )

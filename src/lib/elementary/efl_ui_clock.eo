@@ -1,6 +1,6 @@
 import efl_types;
 
-enum Efl.Ui.Clock_Type
+enum @beta Efl.Ui.Clock_Type
 {
    [[Identifies a clock field, The widget supports 6 fields : Year, month,
      Date, Hour, Minute, AM/PM
@@ -16,7 +16,7 @@ enum Efl.Ui.Clock_Type
    ampm    = 7, [[Indicates AM/PM field .]]
 }
 
-class Efl.Ui.Clock extends Efl.Ui.Layout
+class @beta Efl.Ui.Clock extends Efl.Ui.Layout_Base
 {
    [[Efl UI clock class]]
    methods {
@@ -224,7 +224,6 @@ class Efl.Ui.Clock extends Efl.Ui.Layout
    implements {
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.on_disabled_update;
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.L10n.translation_update;
    }

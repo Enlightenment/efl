@@ -6,7 +6,7 @@
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 
 #include <Elementary.h>
-#include <elm_grid.eo.h>
+#include <elm_grid_eo.h>
 #include "elm_priv.h"
 #include "elm_widget_grid.h"
 
@@ -40,13 +40,13 @@ _mirrored_set(Evas_Object *obj, Eina_Bool rtl)
    evas_object_grid_mirrored_set(wd->resize_obj, rtl);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_grid_efl_ui_widget_theme_apply(Eo *obj, void *sd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 
@@ -58,8 +58,6 @@ _elm_grid_efl_canvas_group_group_add(Eo *obj, void *_pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Object *grid;
-
-   elm_widget_sub_object_parent_add(obj);
 
    grid = evas_object_grid_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, grid);
@@ -217,4 +215,4 @@ _elm_grid_class_constructor(Efl_Class *klass)
 #define ELM_GRID_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_grid)
 
-#include "elm_grid.eo.c"
+#include "elm_grid_eo.c"

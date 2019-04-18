@@ -1,0 +1,3 @@
+class @beta Beta_Class extends Efl.Object
+{
+}

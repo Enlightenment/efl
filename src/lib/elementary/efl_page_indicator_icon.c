@@ -19,8 +19,6 @@ _efl_page_indicator_icon_update(Eo *obj,
                                 double pos)
 {
    EFL_PAGE_INDICATOR_DATA_GET(obj, spd);
-   Eo *item;
-   int page = efl_ui_pager_current_page_get(spd->pager.obj);
    double delta = fabs(pos);
 
    if (pd->curr)
@@ -30,19 +28,23 @@ _efl_page_indicator_icon_update(Eo *obj,
         if (pd->adj) efl_layout_signal_message_send(pd->adj, 1, *(pd->v));
      }
 
-   item = eina_list_nth(pd->items, page);
+   efl_page_indicator_update(efl_super(obj, MY_CLASS), pos);
+
+   pd->curr = eina_list_nth(pd->items, spd->curr_idx);
    eina_value_set(pd->v, (1.0 - delta));
-   efl_layout_signal_message_send(item, 1, *(pd->v));
-   pd->curr = item;
+   efl_layout_signal_message_send(pd->curr, 1, *(pd->v));
 
    if (pos < 0)
-     item = eina_list_nth(pd->items, (page - 1 + spd->cnt) % spd->cnt);
-   else
-     item = eina_list_nth(pd->items, (page + 1 + spd->cnt) % spd->cnt);
+     pd->adj = eina_list_nth(pd->items, (spd->curr_idx - 1 + spd->cnt) % spd->cnt);
+   else if (pos > 0)
+     pd->adj = eina_list_nth(pd->items, (spd->curr_idx + 1 + spd->cnt) % spd->cnt);
+   else pd->adj = NULL;
 
-   eina_value_set(pd->v, delta);
-   efl_layout_signal_message_send(item, 1, *(pd->v));
-   pd->adj = item;
+   if (pd->adj)
+     {
+        eina_value_set(pd->v, delta);
+        efl_layout_signal_message_send(pd->adj, 1, *(pd->v));
+     }
 }
 
 EOLIAN static void
@@ -53,20 +55,14 @@ _efl_page_indicator_icon_pack(Eo *obj,
    EFL_PAGE_INDICATOR_DATA_GET(obj, spd);
    Eo *item, *existing;
 
-   efl_page_indicator_pack(efl_super(obj, MY_CLASS), index);
-
    item = efl_add(EFL_CANVAS_LAYOUT_CLASS, spd->idbox);
    elm_widget_theme_object_set(spd->idbox, item,
                                "pager", "indicator", "default");
-   efl_gfx_size_hint_align_set(item, 0.5, 0.5);
-   efl_gfx_size_hint_weight_set(item, 0, 0);
+   efl_gfx_hint_align_set(item, 0.5, 0.5);
+   efl_gfx_hint_weight_set(item, 0, 0);
+   efl_gfx_hint_fill_set(item, 0, 0);
 
-   if (index == 0)
-     {
-        pd->items = eina_list_prepend(pd->items, item);
-        efl_pack_begin(spd->idbox, item);
-     }
-   else if (index == (spd->cnt - 1))
+   if (index == spd->cnt)
      {
         pd->items = eina_list_append(pd->items, item);
         efl_pack_end(spd->idbox, item);
@@ -77,6 +73,56 @@ _efl_page_indicator_icon_pack(Eo *obj,
         pd->items = eina_list_prepend_relative(pd->items, item, existing);
         efl_pack_before(spd->idbox, item, existing);
      }
+
+   efl_page_indicator_pack(efl_super(obj, MY_CLASS), index);
+
+   if (!pd->curr)
+     {
+        pd->curr = eina_list_nth(pd->items, spd->curr_idx);
+        eina_value_set(pd->v, 1.0);
+        efl_layout_signal_message_send(pd->curr, 1, *(pd->v));
+     }
+}
+
+EOLIAN static void
+_efl_page_indicator_icon_unpack(Eo *obj,
+                                Efl_Page_Indicator_Icon_Data *pd,
+                                int index)
+{
+   EFL_PAGE_INDICATOR_DATA_GET(obj, spd);
+   Eo *item;
+
+   item = eina_list_nth(pd->items, index);
+   pd->items = eina_list_remove(pd->items, item);
+   efl_pack_unpack(spd->idbox, item);
+   efl_del(item);
+
+   if (index == spd->curr_idx) pd->curr = NULL;
+
+   efl_page_indicator_unpack(efl_super(obj, MY_CLASS), index);
+
+   if ((pd->curr == NULL) && (spd->curr_idx != -1))
+     {
+        pd->curr = eina_list_nth(pd->items, spd->curr_idx);
+        eina_value_set(pd->v, 1.0);
+        efl_layout_signal_message_send(pd->curr, 1, *(pd->v));
+     }
+}
+
+EOLIAN static void
+_efl_page_indicator_icon_unpack_all(Eo *obj,
+                                    Efl_Page_Indicator_Icon_Data *pd)
+{
+   Eo *item;
+
+   EINA_LIST_FREE(pd->items, item)
+     {
+        efl_del(item);
+     }
+
+   pd->curr = NULL;
+
+   efl_page_indicator_unpack_all(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -115,8 +161,9 @@ _efl_page_indicator_icon_efl_page_indicator_bind(Eo *obj,
 
                   elm_widget_theme_object_set(spd->idbox, item,
                                               "pager", "indicator", "default");
-                  efl_gfx_size_hint_align_set(item, 0.5, 0.5);
-                  efl_gfx_size_hint_weight_set(item, 0, 0);
+                  efl_gfx_hint_align_set(item, 0.5, 0.5);
+                  efl_gfx_hint_weight_set(item, 0, 0);
+                  efl_gfx_hint_fill_set(item, 0, 0);
                   efl_pack_end(spd->idbox, item);
                }
 
@@ -130,23 +177,15 @@ _efl_page_indicator_icon_efl_page_indicator_bind(Eo *obj,
      }
 }
 
-EOLIAN static void
-_efl_page_indicator_icon_efl_object_invalidate(Eo *obj,
-                                               Efl_Page_Indicator_Icon_Data *pd)
-{
-   Eo *item;
-
-   EINA_LIST_FREE(pd->items, item)
-      efl_del(item);
-
-   efl_invalidate(efl_super(obj, MY_CLASS));
-}
-
 
 #define EFL_PAGE_INDICATOR_ICON_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_page_indicator_update, \
                       _efl_page_indicator_icon_update), \
    EFL_OBJECT_OP_FUNC(efl_page_indicator_pack, \
-                      _efl_page_indicator_icon_pack)
+                      _efl_page_indicator_icon_pack), \
+   EFL_OBJECT_OP_FUNC(efl_page_indicator_unpack, \
+                      _efl_page_indicator_icon_unpack), \
+   EFL_OBJECT_OP_FUNC(efl_page_indicator_unpack_all, \
+                      _efl_page_indicator_icon_unpack_all)
 
 #include "efl_page_indicator_icon.eo.c"

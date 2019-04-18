@@ -11,9 +11,9 @@
 #include "elm_widget_conform.h"
 #include "elm_widget_layout.h"
 #include "elm_widget_plug.h"
-#include "elm_scroller.eo.h"
-#include "elm_genlist.eo.h"
-#include "elm_conformant.eo.h"
+#include "elm_scroller_eo.h"
+#include "elm_genlist_eo.h"
+#include "elm_conformant_eo.h"
 
 #define MY_CLASS ELM_CONFORMANT_CLASS
 #define MY_CLASS_PFX elm_conformant
@@ -573,13 +573,13 @@ _on_rotation_changed(void *data, const Efl_Event *event EINA_UNUSED)
      }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_conformant_efl_ui_widget_theme_apply(Eo *obj, Elm_Conformant_Data *_pd EINA_UNUSED)
 {
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    _conformant_parts_swallow(obj);
 
@@ -927,7 +927,6 @@ EOLIAN static void
 _elm_conformant_efl_canvas_group_group_add(Eo *obj, Elm_Conformant_Data *_pd EINA_UNUSED)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    if (!elm_layout_theme_set
@@ -960,14 +959,24 @@ _elm_conformant_efl_canvas_group_group_del(Eo *obj, Elm_Conformant_Data *sd)
    evas_object_data_set(sd->win, "\377 elm,conformant", NULL);
 
    efl_event_callback_del(sd->win, EFL_UI_WIN_EVENT_INDICATOR_PROP_CHANGED, _on_indicator_mode_changed, obj);
-   efl_event_callback_del(sd->win, EFL_UI_WIN_EVENT_ROTATION_CHANGED, _on_rotation_changed, obj);
+   efl_event_callback_del(sd->win, EFL_UI_WIN_EVENT_WIN_ROTATION_CHANGED, _on_rotation_changed, obj);
 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static void
-_elm_conformant_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Conformant_Data *sd, Evas_Object *parent)
+EAPI Evas_Object *
+elm_conformant_add(Evas_Object *parent)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
+   return elm_legacy_add(MY_CLASS, parent);
+}
+
+EOLIAN static Eo *
+_elm_conformant_efl_object_constructor(Eo *obj, Elm_Conformant_Data *sd)
+{
+   Eo *parent;
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
+   parent = efl_parent_get(obj);
 #ifdef HAVE_ELEMENTARY_X
    Evas_Object *top = elm_widget_top_get(parent);
    Ecore_X_Window xwin = elm_win_xwindow_get(parent);
@@ -986,19 +995,7 @@ _elm_conformant_efl_ui_widget_widget_parent_set(Eo *obj, Elm_Conformant_Data *sd
    (void)sd;
    (void)parent;
 #endif
-}
 
-EAPI Evas_Object *
-elm_conformant_add(Evas_Object *parent)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(parent, NULL);
-   return elm_legacy_add(MY_CLASS, parent);
-}
-
-EOLIAN static Eo *
-_elm_conformant_efl_object_constructor(Eo *obj, Elm_Conformant_Data *sd)
-{
-   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_FILLER);
@@ -1015,7 +1012,7 @@ _elm_conformant_efl_object_constructor(Eo *obj, Elm_Conformant_Data *sd)
    evas_object_data_set(sd->win, "\377 elm,conformant", obj);
 
    efl_event_callback_add(sd->win, EFL_UI_WIN_EVENT_INDICATOR_PROP_CHANGED, _on_indicator_mode_changed, obj);
-   efl_event_callback_add(sd->win, EFL_UI_WIN_EVENT_ROTATION_CHANGED, _on_rotation_changed, obj);
+   efl_event_callback_add(sd->win, EFL_UI_WIN_EVENT_WIN_ROTATION_CHANGED, _on_rotation_changed, obj);
 
    return obj;
 }
@@ -1034,4 +1031,4 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_conformant)
 
-#include "elm_conformant.eo.c"
+#include "elm_conformant_eo.c"

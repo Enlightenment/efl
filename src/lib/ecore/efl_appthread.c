@@ -37,10 +37,10 @@ _efl_appthread_efl_object_destructor(Eo *obj, Efl_Appthread_Data *pd)
 {
    if (pd->fd.in >= 0)
      {
-        efl_del(pd->fd.in_handler);
-        efl_del(pd->fd.out_handler);
-        efl_del(pd->ctrl.in_handler);
-        efl_del(pd->ctrl.out_handler);
+//        efl_del(pd->fd.in_handler);
+//        efl_del(pd->fd.out_handler);
+//        efl_del(pd->ctrl.in_handler);
+//        efl_del(pd->ctrl.out_handler);
         close(pd->fd.in);
         close(pd->fd.out);
         close(pd->ctrl.in);
@@ -139,7 +139,7 @@ _efl_appthread_efl_io_reader_can_read_set(Eo *obj, Efl_Appthread_Data *pd, Eina_
    else
      efl_loop_handler_active_set(pd->fd.in_handler,
                                  EFL_LOOP_HANDLER_FLAGS_READ);
-   efl_event_callback_call(obj, EFL_IO_READER_EVENT_CAN_READ_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_IO_READER_EVENT_CAN_READ_CHANGED, &can_read);
 }
 
 EOLIAN static Eina_Bool
@@ -231,7 +231,7 @@ _efl_appthread_efl_io_writer_can_write_set(Eo *obj, Efl_Appthread_Data *pd, Eina
    else
      efl_loop_handler_active_set(pd->fd.in_handler,
                                  EFL_LOOP_HANDLER_FLAGS_WRITE);
-   efl_event_callback_call(obj, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, &can_write);
 }
 
 EOLIAN static Eina_Bool

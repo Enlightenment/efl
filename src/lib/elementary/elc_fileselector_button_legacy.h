@@ -10,7 +10,7 @@
  */
 EAPI Evas_Object                *elm_fileselector_button_add(Evas_Object *parent);
 
-#include "elm_fileselector_button.eo.legacy.h"
+#include "elm_fileselector_button_eo.legacy.h"
 
 /**
  * @brief Set whether a given file selector button widget's internal file

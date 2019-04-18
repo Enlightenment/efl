@@ -1,4 +1,4 @@
-class Efl.Canvas.Proxy extends Efl.Canvas.Image_Internal
+class @beta Efl.Canvas.Proxy extends Efl.Canvas.Image_Internal
 {
    [[Low-level proxy image object.
 
@@ -15,7 +15,7 @@ class Efl.Canvas.Proxy extends Efl.Canvas.Image_Internal
            source object in its drawing region, without affecting that
            source in any way. The source must be another valid @Efl.Canvas.Object.
            Other effects may be applied to the proxy, such as a map (see
-           @Efl.Gfx.Map) to create a reflection of the original object
+           @Efl.Gfx.Mapping) to create a reflection of the original object
            (for example).
 
            Any existing source object will be removed after this call.
@@ -40,8 +40,6 @@ class Efl.Canvas.Proxy extends Efl.Canvas.Image_Internal
            and apply some sort of transformation on it.
 
            $true means both objects will share the same clip.
-
-           @since 1.8
          ]]
          set {}
          get {}
@@ -60,8 +58,6 @@ class Efl.Canvas.Proxy extends Efl.Canvas.Image_Internal
 
            If $source is $false, events occurring on $obj will be
            processed only on it.
-
-           @since 1.8
          ]]
          set {}
          get {}

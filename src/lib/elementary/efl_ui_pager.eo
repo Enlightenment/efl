@@ -1,11 +1,11 @@
-enum Efl.Ui.Pager_Loop
+enum @beta Efl.Ui.Pager_Loop
 {
    [[Efl ui pager loop mode]]
    disabled,
    enabled
 }
 
-class Efl.Ui.Pager extends Efl.Ui.Layout implements Efl.Pack_Linear
+class @beta Efl.Ui.Pager extends Efl.Ui.Layout_Base implements Efl.Pack_Linear
 {
    [[Pager widget
 
@@ -68,6 +68,11 @@ class Efl.Ui.Pager extends Efl.Ui.Layout implements Efl.Pack_Linear
          [[Pager is not scrolled after it's scrolled to the end by default.
            This property gives the option to make a loop through pages.
          ]]
+         set {
+            return: bool; [[$true on success, $false otherwise]]
+         }
+         get {
+         }
          values {
             loop: Efl.Ui.Pager_Loop;
          }
@@ -85,6 +90,7 @@ class Efl.Ui.Pager extends Efl.Ui.Layout implements Efl.Pack_Linear
    }
    implements {
       Efl.Object.constructor;
+      Efl.Object.invalidate;
       Efl.Container.content_count;
       Efl.Pack.pack_clear;             //TODO
       Efl.Pack.unpack_all;             //TODO

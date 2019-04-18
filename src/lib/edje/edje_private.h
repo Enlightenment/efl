@@ -40,7 +40,6 @@
 #endif
 
 // auto_unref
-#define EFL_CANVAS_LAYOUT_BETA
 #define EFL_CANVAS_OBJECT_PROTECTED
 #define EFL_LAYOUT_CALC_PROTECTED
 
@@ -156,7 +155,9 @@ EAPI extern int _edje_default_log_dom ;
 #define FROM_DOUBLE(a) eina_f32p32_double_from(a)
 #define FROM_INT(a) eina_f32p32_int_from(a)
 #define TO_INT(a) eina_f32p32_int_to(a)
-#define TO_INT_ROUND(a) eina_f32p32_int_to(ADD(a, FROM_DOUBLE(0.5)))
+#define TO_INT_ROUND(a) (((a) >= 0.0) \
+  ? eina_f32p32_int_to(ADD(a, FROM_DOUBLE(0.5)) \
+  : eina_f32p32_int_to(ADD(a, FROM_DOUBLE(-0.5))
 #define ZERO 0
 #define COS(a) eina_f32p32_cos(a)
 #define SIN(a) eina_f32p32_sin(a)
@@ -179,7 +180,7 @@ EAPI extern int _edje_default_log_dom ;
 #define FROM_DOUBLE(a) (a)
 #define FROM_INT(a) (double)(a)
 #define TO_INT(a) (int)(a)
-#define TO_INT_ROUND(a) (int)(a + 0.5)
+#define TO_INT_ROUND(a) (((a) >= 0.0) ? (int)(a + 0.5) : (int)(a - 0.5))
 #define ZERO 0.0
 #define COS(a) cos(a)
 #define SIN(a) sin(a)
@@ -188,6 +189,8 @@ EAPI extern int _edje_default_log_dom ;
 #define NEQ(a, b) !EINA_DBL_EQ(a, b)
 
 #endif
+
+#define EDJE_ENTRY_NUM_CURSOR_OBJS 3
 
 /* Inheritable Edje Smart API. For now private so only Edje Edit makes
  * use of this, but who knows what will be possible in the future */
@@ -1048,12 +1051,16 @@ struct _Edje_Signal_Callback_Match
 {
    const char     *signal;
    const char     *source;
-   Edje_Signal_Cb  func;
+   union {
+      Edje_Signal_Cb  legacy;
+      EflLayoutSignalCb eo;
+   };
 };
 
 struct _Edje_Signal_Callback_Matches
 {
    Edje_Signal_Callback_Match *matches;
+   Eina_Free_Cb *free_cb;
 
    Edje_Signals_Sources_Patterns *patterns;
 
@@ -1065,6 +1072,7 @@ struct _Edje_Signal_Callback_Matches
 
 struct _Edje_Signal_Callback_Flags
 {
+   Eina_Bool legacy:1;
    Eina_Bool delete_me:1;
    Eina_Bool just_added:1;
    Eina_Bool propagate:1;
@@ -2148,6 +2156,7 @@ struct _Edje_Var_Hash
 
 struct _Edje_Var_Timer
 {
+   EINA_INLIST;
    Edje           *edje;
    int             id;
    Embryo_Function func;
@@ -2168,7 +2177,7 @@ struct _Edje_Var_Animator
 struct _Edje_Var_Pool
 {
    int          id_count;
-   Eina_List   *timers;
+   Eina_Inlist *timers;
    Eina_List   *animators;
    int          size;
    Edje_Var    *vars;
@@ -2423,7 +2432,9 @@ const Eina_Inarray *edje_match_signal_source_hash_get(const char *signal,
 						      const char *source,
 						      const Eina_Rbtree *tree);
 void edje_match_signal_source_free(Edje_Signal_Source_Char *key, void *data);
-void _edje_signal_callback_matches_unref(Edje_Signal_Callback_Matches *m);
+Eina_Bool _edje_object_signal_callback_add(Edje *ed, const char *emission, const char *source,
+                                           Edje_Signal_Cb func_legacy,
+                                           Efl_Signal_Cb func_eo, Eina_Free_Cb func_free_cb, void *data);
 
 // FIXME remove below 3 eapi decls when edje_convert goes
 EAPI void _edje_edd_init(void);
@@ -2478,7 +2489,7 @@ static inline Edje_Global *
 _edje_global(void)
 {
 #ifndef NDEBUG
-   return efl_provider_find(efl_main_loop_get(), EFL_GFX_COLOR_CLASS_INTERFACE);
+   return efl_provider_find(efl_main_loop_get(), EFL_GFX_COLOR_CLASS_MIXIN);
 #else
    extern Edje_Global *_edje_global_obj;
    return _edje_global_obj;
@@ -2546,19 +2557,24 @@ void  _edje_callbacks_del(Evas_Object *obj, Edje *ed);
 void  _edje_callbacks_focus_del(Evas_Object *obj, Edje *ed);
 
 const Edje_Signal_Callback_Group *_edje_signal_callback_alloc(void);
+void _edje_signal_callback_matches_unref(Edje_Signal_Callback_Matches *m, Edje_Signal_Callback_Flags *flags, void **custom_data);
 void _edje_signal_callback_free(const Edje_Signal_Callback_Group *cgp);
 Eina_Bool _edje_signal_callback_push(Edje_Signal_Callback_Group *cgp,
                                      const char *signal, const char *source,
-                                     Edje_Signal_Cb func, void *data,
+                                     Edje_Signal_Cb func_legacy,
+                                     Efl_Signal_Cb func_eo,
+                                     Eina_Free_Cb func_free_cb,
+                                     void *data,
                                      Eina_Bool propagate);
 Eina_Bool _edje_signal_callback_disable(Edje_Signal_Callback_Group *cgp,
                                         const char *signal, const char *source,
-                                        Edje_Signal_Cb func, void *data);
+                                        Edje_Signal_Cb func_legacy,
+                                        EflLayoutSignalCb func, Eina_Free_Cb func_free_cb, void *data);
 
 EAPI void _edje_edd_init(void);
 EAPI void _edje_edd_shutdown(void);
 
-int _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested);
+Eina_Error _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested);
 
 void  _edje_file_callbacks_del(Edje *ed, Evas *e);
 void  _edje_file_del(Edje *ed);
@@ -2873,6 +2889,7 @@ void _edje_lua_script_only_message(Edje *ed, Edje_Message *em);
 
 void _edje_entry_init(Edje *ed);
 void _edje_entry_shutdown(Edje *ed);
+int _edje_entry_real_part_cursor_objs_get(Edje_Real_Part *rp, Evas_Object  **objs);
 void _edje_entry_real_part_init(Edje *ed, Edje_Real_Part *rp);
 void _edje_entry_real_part_shutdown(Edje *ed, Edje_Real_Part *rp);
 void _edje_entry_real_part_configure(Edje *ed, Edje_Real_Part *rp);

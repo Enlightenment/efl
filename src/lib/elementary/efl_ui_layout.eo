@@ -1,81 +1,20 @@
 import efl_ui;
 
-class Efl.Ui.Layout extends Efl.Ui.Widget implements Efl.Container, Efl.File,
-                     Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Ui.Factory,
-                     Efl.Layout.Calc, Efl.Layout.Signal,
-                     Efl.Layout.Group
+class Efl.Ui.Layout extends Efl.Ui.Layout_Base implements Efl.File
 {
-   [[Elementary layout class]]
-   methods {
-      @property theme {
-         [[The theme of this widget, defines which edje group will be used.
+   [[Elementary layout class
 
-           Based on the type of widget ($klass), a given $group and a
-           $style (usually "default"), the edje group name will be formed
-           for this object.
+     When loading layouts from a file, use the @Efl.File.key property to specify
+     the group that the data belongs to, in case it's an EET file
+     (including Edje files).
 
-           Widgets that inherit from this class will call this function
-           automatically so it should not be called by applications, unless
-           you are dealing directly with a @Efl.Ui.Layout object.
-         ]]
-         set {
-            [[Sets the edje group from the elementary theme that will be used
-              as layout. Note that $style will be the new style of this object,
-              as in an @Efl.Ui.Widget.style. As a consequence this function can
-              only be called during construction of the object, before finalize.
-
-              If this returns $false the widget is very likely to become
-              non-functioning.
-            ]]
-            return: Efl.Ui.Theme_Apply_Result(0);
-               [[Whether the style was successfully applied or not, see
-                 the values of @Efl.Ui.Theme_Apply_Result for more information.]]
-         }
-         /*
-         TODO:
-         get {
-            [[Get information about the current theme in use.]]
-         }
-         */
-         values {
-            klass: string; [[The class of the group, eg. "button".]]
-            group: string("base"); [[The group, eg. "base".]]
-            style: string("default"); [[The style to use, eg "default".]]
-         }
-      }
-   }
+     @since 1.22
+   ]]
+   data: null;
    implements {
-      class.constructor;
-      Efl.Object.constructor;
-      Efl.Object.finalize;
       Efl.File.file { get; set; }
+      Efl.File.key { get; set; }
       Efl.File.mmap { get; set; }
-      Efl.Canvas.Group.group_calculate;
-      Efl.Layout.Calc.calc_freeze;
-      Efl.Layout.Calc.calc_thaw;
-      Efl.Layout.Signal.signal_callback_add;
-      Efl.Layout.Signal.signal_callback_del;
-      Efl.Layout.Signal.signal_emit;
-      Efl.Layout.Signal.message_send;
-      Efl.Layout.Signal.signal_process;
-      Efl.Layout.Group.group_data { get; }
-      Efl.Layout.Group.group_size_min { get; }
-      Efl.Layout.Group.group_size_max { get; }
-      Efl.Layout.Group.part_exist { get; }
-      Efl.Ui.Widget.widget_sub_object_add;
-      Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.on_disabled_update;
-      Efl.Ui.Widget.widget_sub_object_del;
-      Efl.Ui.Focus.Object.on_focus_update;
-      Efl.Container.content_count;
-      Efl.Container.content_remove;
-      Efl.Container.content_iterate;
-      Efl.Part.part_get;
-      Efl.Ui.View.model { get; set; }
-      Efl.Ui.Model.Connect.connect;
-      Efl.Ui.Factory.model_connect;
-   }
-   events {
-      theme,changed: void; [[Called when theme changed]]
+      Efl.File.load;
    }
 }

@@ -2,7 +2,7 @@ import efl_gfx_types;
 import eina_types;
 
 /* FIXME: this is very very low level. expose to apps? */
-enum Efl.Gfx.Buffer_Access_Mode {
+enum @beta Efl.Gfx.Buffer_Access_Mode {
    [[Graphics buffer access mode]]
    none      = 0x0, [[No buffer access]]
    read      = 0x1, [[Read access to buffer]]
@@ -12,7 +12,7 @@ enum Efl.Gfx.Buffer_Access_Mode {
 
 /* FIXME: YUV and other planar formats are not properly handled in this API! */
 
-interface Efl.Gfx.Buffer
+interface @beta Efl.Gfx.Buffer
 {
    [[Common APIs for all objects representing images and 2D pixel buffers.]]
 

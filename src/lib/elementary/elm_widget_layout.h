@@ -58,19 +58,19 @@ typedef struct _Elm_Layout_Smart_Data
       Eina_Hash         *properties; /**< The list of properties connected to layout parts. */
       Eina_Hash         *signals; /**< The list of signals connected. */
       Eina_Hash         *factories; /**< The hash with parts connected to factories. */
-      Efl_Model         *model; /**< The model */
 
       Eina_Bool          updating : 1;
    } connect;
 
    int                   frozen; /**< Layout freeze counter */
 
-   Eina_Bool             needs_size_calc : 1; /**< This flas is set true when the layout sizing eval is already requested. This defers sizing evaluation until smart calculation to avoid unnecessary calculation. */
+   Eina_Bool             needs_size_calc : 1; /**< This flag is set true when the layout sizing eval is already requested. This defers sizing evaluation until smart calculation to avoid unnecessary calculation. */
    Eina_Bool             restricted_calc_w : 1; /**< This is a flag to support edje restricted_calc in w axis. */
    Eina_Bool             restricted_calc_h : 1; /**< This is a flag to support edje restricted_calc in y axis. */
    Eina_Bool             can_access : 1; /**< This is true when all text(including textblock) parts can be accessible by accessibility. */
    Eina_Bool             destructed_is : 1; /**< This flag indicates if Efl.Ui.Layout destructor was called. This is needed to avoid unnecessary calculation of subobject deletion during layout object's deletion. */
    Eina_Bool             file_set : 1; /**< This flag indicates if Efl.Ui.Layout source is set from a file*/
+   Eina_Bool             automatic_orientation_apply : 1;
 } Efl_Ui_Layout_Data;
 
 /**
@@ -78,10 +78,10 @@ typedef struct _Elm_Layout_Smart_Data
  */
 
 #define EFL_UI_LAYOUT_DATA_GET(o, sd) \
-  Efl_Ui_Layout_Data * sd = efl_data_scope_get(o, EFL_UI_LAYOUT_CLASS)
+  Efl_Ui_Layout_Data * sd = efl_data_scope_get(o, EFL_UI_LAYOUT_BASE_CLASS)
 
 #define EFL_UI_LAYOUT_CHECK(obj) \
-  if (EINA_UNLIKELY(!efl_isa(obj, EFL_UI_LAYOUT_CLASS))) \
+  if (EINA_UNLIKELY(!efl_isa(obj, EFL_UI_LAYOUT_BASE_CLASS))) \
     return
 
 #endif

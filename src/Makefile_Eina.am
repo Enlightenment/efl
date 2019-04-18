@@ -210,7 +210,7 @@ einampchainedpool_LTLIBRARIES = modules/eina/mp/chained_pool/chained_pool_module
 install_einampchainedpoolLTLIBRARIES = install-einampchainedpoolLTLIBRARIES
 $(install_einampchainedpoolLTLIBRARIES): install-libLTLIBRARIES
 
-modules_eina_mp_chained_pool_chained_pool_module_la_CFLAGS = $(EINA_MODULE_COMMON_CFLAGS)
+modules_eina_mp_chained_pool_chained_pool_module_la_CFLAGS = $(EINA_MODULE_COMMON_CFLAGS) -DEFL_BUILD
 modules_eina_mp_chained_pool_chained_pool_module_la_LIBADD = @USE_EINA_LIBS@
 modules_eina_mp_chained_pool_chained_pool_module_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 modules_eina_mp_chained_pool_chained_pool_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
@@ -229,7 +229,7 @@ einamponebig_LTLIBRARIES = modules/eina/mp/one_big/one_big_module.la
 install_einamponebigLTLIBRARIES = install-einamponebigLTLIBRARIES
 $(install_einamponebigLTLIBRARIES): install-libLTLIBRARIES
 
-modules_eina_mp_one_big_one_big_module_la_CFLAGS = $(EINA_MODULE_COMMON_CFLAGS)
+modules_eina_mp_one_big_one_big_module_la_CFLAGS = $(EINA_MODULE_COMMON_CFLAGS) -DEFL_BUILD
 modules_eina_mp_one_big_one_big_module_la_LIBADD = @USE_EINA_LIBS@
 modules_eina_mp_one_big_one_big_module_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 modules_eina_mp_one_big_one_big_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
@@ -248,7 +248,7 @@ einamppassthrough_LTLIBRARIES = modules/eina/mp/pass_through/pass_through_module
 install_einamppassthroughLTLIBRARIES = install-einamppassthroughLTLIBRARIES
 $(install_einamppassthroughLTLIBRARIES): install-libLTLIBRARIES
 
-modules_eina_mp_pass_through_pass_through_module_la_CFLAGS = $(EINA_MODULE_COMMON_CFLAGS)
+modules_eina_mp_pass_through_pass_through_module_la_CFLAGS = $(EINA_MODULE_COMMON_CFLAGS) -DEFL_BUILD
 modules_eina_mp_pass_through_pass_through_module_la_LIBADD = @USE_EINA_LIBS@
 modules_eina_mp_pass_through_pass_through_module_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 modules_eina_mp_pass_through_pass_through_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
@@ -262,6 +262,7 @@ lib_eina_libeina_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_BIN_DIR=\"$(bindir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
 -DPACKAGE_DATA_DIR=\"$(datadir)/eina\" \
+-DEFL_BUILD \
 @VALGRIND_CFLAGS@
 
 lib_eina_libeina_la_LIBADD = @EINA_LIBS@ @UNWIND_LIBS@
@@ -296,7 +297,9 @@ bin_eina_eina_modinfo_eina_modinfo_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@
 
 ### Script
 
-bin_SCRIPTS += scripts/eina/eina-bench-cmp
+# disabled because its a pretty useless script that forces python as a
+# a dependency and doesn't parse anything efl or test apps produce
+# bin_SCRIPTS += scripts/eina/eina-bench-cmp
 
 ### Unit tests
 

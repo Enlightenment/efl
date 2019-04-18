@@ -306,7 +306,7 @@ eet_2_emile_compressor(int comp)
    switch (comp)
      {
       case EET_COMPRESSION_VERYFAST: return EMILE_LZ4HC;
-      case EET_COMPRESSION_SUPERFAST: return EMILE_LZ4HC;
+      case EET_COMPRESSION_SUPERFAST: return EMILE_LZ4;
       default: return EMILE_ZLIB;
      }
 }

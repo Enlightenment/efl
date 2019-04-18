@@ -1,5 +1,5 @@
 #include "elm_interface_scrollable.eo.legacy.h"
-#include "elm_scroller.eo.legacy.h"
+#include "elm_scroller_eo.legacy.h"
 
 /**
  * Type that blocks the scroll movement in one or more direction.
@@ -416,7 +416,7 @@ EAPI void                          elm_scroller_region_bring_in(Evas_Object *obj
  * The scroller will adjust the view to glue itself as follows.
  *
  *  x=0.0, for staying where it is relative to the left edge of the content
- *  x=1.0, for staying where it is relative to the rigth edge of the content
+ *  x=1.0, for staying where it is relative to the right edge of the content
  *  y=0.0, for staying where it is relative to the top edge of the content
  *  y=1.0, for staying where it is relative to the bottom edge of the content
  *

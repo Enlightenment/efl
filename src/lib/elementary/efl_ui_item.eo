@@ -1,4 +1,4 @@
-abstract Efl.Ui.Item extends Efl.Ui.Layout implements Efl.Ui.Selectable, Efl.Ui.Clickable
+abstract @beta Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Selectable, Efl.Ui.Clickable
 {
    [[Item abstract class for pack widget. All item have to be inherited from this class.]]
    methods {

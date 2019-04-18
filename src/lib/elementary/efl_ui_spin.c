@@ -168,7 +168,7 @@ _efl_ui_spin_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Spin_Data *_pd EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_spin_efl_ui_widget_widget_event(Eo *obj, Efl_Ui_Spin_Data *sd, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED)
+_efl_ui_spin_efl_ui_widget_widget_input_event_handler(Eo *obj, Efl_Ui_Spin_Data *sd, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED)
 {
    Eo *ev = eo_event->info;
 
@@ -239,16 +239,14 @@ _efl_ui_spin_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Data *sd)
      elm_widget_theme_klass_set(obj, "spin");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   elm_widget_sub_object_parent_add(obj);
-
    sd->val_max = 100.0;
    sd->step = 1.0;
    sd->special_values = eina_array_new(sizeof(Efl_Ui_Spin_Special_Value));
 
-   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
-                                    elm_widget_theme_klass_get(obj),
-                                    elm_widget_theme_element_get(obj),
-                                    elm_widget_theme_style_get(obj)))
+   if (elm_widget_theme_object_set(obj, wd->resize_obj,
+                                       elm_widget_theme_klass_get(obj),
+                                       elm_widget_theme_element_get(obj),
+                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
    _label_write(obj);
@@ -310,7 +308,7 @@ _efl_ui_spin_efl_ui_format_format_cb_set(Eo *obj, Efl_Ui_Spin_Data *sd, void *fu
 }
 
 EOLIAN static void
-_efl_ui_spin_efl_ui_range_range_min_max_set(Eo *obj, Efl_Ui_Spin_Data *sd, double min, double max)
+_efl_ui_spin_efl_ui_range_display_range_min_max_set(Eo *obj, Efl_Ui_Spin_Data *sd, double min, double max)
 {
    if (max < min)
      {
@@ -331,14 +329,14 @@ _efl_ui_spin_efl_ui_range_range_min_max_set(Eo *obj, Efl_Ui_Spin_Data *sd, doubl
 }
 
 EOLIAN static void
-_efl_ui_spin_efl_ui_range_range_min_max_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd, double *min, double *max)
+_efl_ui_spin_efl_ui_range_display_range_min_max_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->val_min;
    if (max) *max = sd->val_max;
 }
 
 EOLIAN static void
-_efl_ui_spin_efl_ui_range_range_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd, double step)
+_efl_ui_spin_efl_ui_range_interactive_range_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd, double step)
 {
    if (step <= 0)
      {
@@ -350,13 +348,13 @@ _efl_ui_spin_efl_ui_range_range_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *
 }
 
 EOLIAN static double
-_efl_ui_spin_efl_ui_range_range_step_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd)
+_efl_ui_spin_efl_ui_range_interactive_range_step_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd)
 {
    return sd->step;
 }
 
 EOLIAN static void
-_efl_ui_spin_efl_ui_range_range_value_set(Eo *obj, Efl_Ui_Spin_Data *sd, double val)
+_efl_ui_spin_efl_ui_range_display_range_value_set(Eo *obj, Efl_Ui_Spin_Data *sd, double val)
 {
    if (val < sd->val_min)
      val = sd->val_min;
@@ -378,7 +376,7 @@ _efl_ui_spin_efl_ui_range_range_value_set(Eo *obj, Efl_Ui_Spin_Data *sd, double 
 }
 
 EOLIAN static double
-_efl_ui_spin_efl_ui_range_range_value_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd)
+_efl_ui_spin_efl_ui_range_display_range_value_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd)
 {
    return sd->val;
 }

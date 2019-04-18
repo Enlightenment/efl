@@ -125,6 +125,11 @@ _check_class(const Eolian_Class *cl, Eina_Hash *depset, Eina_Hash *chash)
      _add_dep(depset, icl->base.unit);
    eina_iterator_free(itr);
 
+   itr = eina_list_iterator_new(cl->requires);
+   EINA_ITERATOR_FOREACH(itr, icl)
+     _add_dep(depset, icl->base.unit);
+   eina_iterator_free(itr);
+
    const Eolian_Function *fid;
    itr = eina_list_iterator_new(cl->properties);
    EINA_ITERATOR_FOREACH(itr, fid)

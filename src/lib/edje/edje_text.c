@@ -1,7 +1,7 @@
 #include "edje_private.h"
 #define _ELLIP_STR "\xE2\x80\xA6"
 
-#include "../evas/canvas/evas_text.eo.h"
+#include "../evas/canvas/evas_text_eo.h"
 
 /* returns with and height for this part.
  *
@@ -499,7 +499,7 @@ arrange_text:
       FLOAT_T align_x;
       if (params->type.text->align.x < FROM_INT(0))
         {
-           if (evas_object_text_direction_get(ep->object) ==
+           if ((Evas_BiDi_Direction)evas_object_text_direction_get(ep->object) ==
                EVAS_BIDI_DIRECTION_RTL)
              {
                 align_x = FROM_INT(1);

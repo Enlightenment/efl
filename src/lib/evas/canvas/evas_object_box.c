@@ -1,5 +1,4 @@
 #define EFL_CANVAS_GROUP_PROTECTED
-#define EFL_CANVAS_GROUP_BETA
 
 #include "evas_common_private.h"
 #include "evas_private.h"
@@ -165,9 +164,9 @@ _evas_object_box_option_new(Evas_Object *o, Evas_Object_Box_Data *priv EINA_UNUS
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(evas_object_box_callbacks,
-  { EFL_GFX_ENTITY_EVENT_RESIZE, _on_child_resize },
+  { EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _on_child_resize },
   { EFL_EVENT_INVALIDATE, _on_child_invalidate },
-  { EFL_GFX_ENTITY_EVENT_CHANGE_SIZE_HINTS, _on_child_hints_changed }
+  { EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _on_child_hints_changed }
 );
 
 static void
@@ -2010,4 +2009,4 @@ _evas_box_class_constructor(Efl_Class *klass)
 #define EVAS_BOX_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(evas_box)
 
-#include "canvas/evas_box.eo.c"
+#include "canvas/evas_box_eo.c"

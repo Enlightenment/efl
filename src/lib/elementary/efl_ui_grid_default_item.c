@@ -23,9 +23,9 @@ _efl_ui_grid_default_item_efl_object_finalize(Eo *obj, void *pd EINA_UNUSED)
    Eo *eo;
    eo = efl_finalize(efl_super(obj, MY_CLASS));
    ELM_WIDGET_DATA_GET_OR_RETURN(eo, wd, eo);
-   Efl_Ui_Theme_Apply_Result theme_apply = efl_ui_layout_theme_set(obj, "grid_item", NULL, NULL);
+   Eina_Error theme_apply = efl_ui_layout_theme_set(obj, "grid_item", NULL, NULL);
 
-   if (theme_apply == EFL_UI_THEME_APPLY_RESULT_FAIL)
+   if (theme_apply == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Default Item(%p) failed to set theme [efl/grid_item]!", eo);
    return eo;
 }

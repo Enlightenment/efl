@@ -8,4 +8,4 @@
  */
 EAPI Evas_Object *elm_dayselector_add(Evas_Object *parent);
 
-#include "elm_dayselector.eo.legacy.h"
+#include "elm_dayselector_eo.legacy.h"

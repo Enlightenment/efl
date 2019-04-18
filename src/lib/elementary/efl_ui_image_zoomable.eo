@@ -2,12 +2,11 @@
 struct @extern Elm.Photocam.Error;
 struct @extern Elm.Photocam.Progress;
 
-class Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
+class @beta Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
                              Efl.Ui.Scrollable_Interactive,
                              Efl.Ui.Scrollbar
 {
    [[Elementary Image Zoomable class]]
-   legacy_prefix: elm_photocam;
    methods {
       @property gesture_enabled {
          set {
@@ -33,15 +32,12 @@ class Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
 
               See also @.image_region.set.
             ]]
-            legacy: null;
          }
          set {
             [[Set the viewed region of the image
 
               This shows the region of the image without using animation.
-              @since 1.20
             ]]
-            legacy: null;
          }
          values {
             region: Eina.Rect; [[The region in the original image pixels.]]
@@ -64,9 +60,10 @@ class Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
       Efl.Canvas.Group.group_member_add;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.on_focus_update;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Ui.Scrollable_Interactive.scroll;
       Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.File.load;
       Efl.File.file { get; set; }
       Efl.Orientation.orientation { get; set; }
       Efl.Orientation.flip { get; set; }
@@ -86,5 +83,9 @@ class Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
       download,progress: Elm.Photocam.Progress; [[Called when photocam download progress updated]]
       download,done: void; [[Called when photocam download finished]]
       download,error: Elm.Photocam.Error; [[Called when photocam download failed]]
+   }
+   composite {
+      Efl.Ui.Scrollable_Interactive;
+      Efl.Ui.Scrollbar;
    }
 }

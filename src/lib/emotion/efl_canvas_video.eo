@@ -1,4 +1,4 @@
-class Efl.Canvas.Video extends Efl.Canvas.Group implements Efl.File, Efl.Player, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller
+class @beta Efl.Canvas.Video extends Efl.Canvas.Group implements Efl.File, Efl.Player, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller
 {
    [[Efl canvas video class]]
    methods {
@@ -12,7 +12,6 @@ class Efl.Canvas.Video extends Efl.Canvas.Group implements Efl.File, Efl.Player,
                     Please don't use this function, consider using
                     @Efl.Player.mute instead.
                   ]]
-                  legacy: emotion_object_module_option_set;
              }
              values {
                   opt: string; [[The option that is being set. Currently
@@ -39,7 +38,6 @@ class Efl.Canvas.Video extends Efl.Canvas.Group implements Efl.File, Efl.Player,
 
                     See also @Efl.File.file.
                   ]]
-                  legacy: emotion_object_init;
                   return: bool; [[$true if the specified module was successfully
                                   initialized for this object, $false otherwise.]]
              }
@@ -53,7 +51,9 @@ class Efl.Canvas.Video extends Efl.Canvas.Group implements Efl.File, Efl.Player,
         Efl.Object.constructor;
         Efl.Gfx.Entity.position { set; }
         Efl.Gfx.Entity.size { set; }
-        Efl.File.file { get; set; }
+        Efl.File.load;
+        Efl.File.file { set; }
+        Efl.File.loaded { get; }
         Efl.Player.play { get; set; }
         Efl.Player.pos { get; set; }
         Efl.Player.progress { get; }

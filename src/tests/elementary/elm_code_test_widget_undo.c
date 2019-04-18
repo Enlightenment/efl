@@ -6,7 +6,7 @@
 #include "Elementary.h"
 #include "elm_code_widget_private.h"
 
-EFL_START_TEST (elm_code_test_widget_undo_text_insert)
+EFL_START_TEST(elm_code_test_widget_undo_text_insert)
 {
    Elm_Code *code;
    Elm_Code_File *file;
@@ -57,7 +57,7 @@ EFL_START_TEST (elm_code_test_widget_undo_text_insert)
 }
 EFL_END_TEST
 
-EFL_START_TEST (elm_code_test_widget_undo_text_insert_multiple)
+EFL_START_TEST(elm_code_test_widget_undo_text_insert_multiple)
 {
    Elm_Code *code;
    Elm_Code_File *file;

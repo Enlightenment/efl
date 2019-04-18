@@ -1,4 +1,4 @@
-class Efl.Ui.Tab_Pager extends Efl.Ui.Pager
+class @beta Efl.Ui.Tab_Pager extends Efl.Ui.Pager
 {
    [[Tab Pager class]]
    methods {
@@ -14,7 +14,7 @@ class Efl.Ui.Tab_Pager extends Efl.Ui.Pager
       Efl.Container.content_count;
       Efl.Pack.pack_clear;                     // TODO
       Efl.Pack.unpack_all;                     // TODO
-      Efl.Pack.unpack;                         // TODO
+      Efl.Pack.unpack;
       Efl.Pack_Linear.pack_begin;
       Efl.Pack_Linear.pack_end;
       Efl.Pack_Linear.pack_before;

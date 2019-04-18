@@ -3,34 +3,24 @@
 #endif
 
 #define EFL_ACCESS_OBJECT_BETA
+#include <Efl_Ui.h>
 #include <Elementary.h>
-#include "elm_suite.h"
+#include "efl_ui_suite.h"
 
-static Eo *win, *box;
+static Eo *win;
 static Efl_Ui_Grid *grid;
 
 static void
 grid_setup()
 {
-   //win = win_add();
-   win =  efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-      efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
-      efl_text_set(efl_added, "Efl.Ui.Grid"),
-      efl_ui_win_autodel_set(efl_added, EINA_TRUE));
-   box = efl_add(EFL_UI_BOX_CLASS, win,
-                 efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL));
-   efl_gfx_size_hint_weight_set(box, EFL_GFX_SIZE_HINT_EXPAND, EFL_GFX_SIZE_HINT_EXPAND);
-   efl_gfx_size_hint_fill_set(box, EINA_TRUE, EINA_TRUE);
-   elm_win_resize_object_add(win, box);
+   win = win_add();
 
-   grid = efl_add(EFL_UI_GRID_CLASS, box);
+   grid = efl_add(EFL_UI_GRID_CLASS, win);
 
    efl_ui_grid_item_size_set(grid, EINA_SIZE2D(100, 100));
-   efl_pack_padding_set(grid, 5.0, 5.0, EINA_TRUE);
-   efl_pack_align_set(grid, 0.5, 0.5);
-   efl_pack_end(box, grid);
-
-   efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 500));
+   efl_gfx_entity_size_set(grid, EINA_SIZE2D(500, 50));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 50));
+   efl_gfx_entity_visible_set(win, EINA_TRUE);
 }
 
 static void
@@ -63,7 +53,7 @@ grid_item_pack(Eo *grid, int count, Eina_List **l)
 	return EINA_TRUE;
 }
 
-EFL_START_TEST (efl_ui_grid_class_check)
+EFL_START_TEST(efl_ui_grid_class_check)
 {
    const char *class;
 
@@ -74,7 +64,7 @@ EFL_START_TEST (efl_ui_grid_class_check)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_grid_pack)
+EFL_START_TEST(efl_ui_grid_pack)
 {
    Efl_Ui_Grid_Item *item;
    int count;
@@ -88,7 +78,7 @@ EFL_START_TEST (efl_ui_grid_pack)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_grid_unpack)
+EFL_START_TEST(efl_ui_grid_unpack)
 {
    Efl_Ui_Grid_Item *item;
    int count;
@@ -105,7 +95,7 @@ EFL_START_TEST (efl_ui_grid_unpack)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_grid_unpack_all)
+EFL_START_TEST(efl_ui_grid_unpack_all)
 {
    Efl_Ui_Grid_Item *item;
    int count_before = 10;
@@ -127,7 +117,7 @@ EFL_START_TEST (efl_ui_grid_unpack_all)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_grid_pack_clear)
+EFL_START_TEST(efl_ui_grid_pack_clear)
 {
    int count_before = 10;
    int count;
@@ -142,7 +132,7 @@ EFL_START_TEST (efl_ui_grid_pack_clear)
 EFL_END_TEST
 
 
-EFL_START_TEST (efl_ui_grid_pack_end)
+EFL_START_TEST(efl_ui_grid_pack_end)
 {
    Efl_Ui_Grid_Item *item, *compare;
    int count_before = 10;
@@ -163,7 +153,7 @@ EFL_START_TEST (efl_ui_grid_pack_end)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_grid_pack_begin)
+EFL_START_TEST(efl_ui_grid_pack_begin)
 {
    Efl_Ui_Grid_Item *item, *compare;
    int count_before = 10;
@@ -184,7 +174,7 @@ EFL_START_TEST (efl_ui_grid_pack_begin)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_grid_pack_after)
+EFL_START_TEST(efl_ui_grid_pack_after)
 {
    Efl_Ui_Grid_Item *item, *after, *compare;
    int count_before = 10;
@@ -209,7 +199,7 @@ EFL_START_TEST (efl_ui_grid_pack_after)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_grid_pack_before)
+EFL_START_TEST(efl_ui_grid_pack_before)
 {
    Efl_Ui_Grid_Item *item, *before, *compare;
    int count_before = 10;
@@ -234,7 +224,7 @@ EFL_START_TEST (efl_ui_grid_pack_before)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_grid_content_count)
+EFL_START_TEST(efl_ui_grid_content_count)
 {
    int count = 10, compare;
 
@@ -246,7 +236,7 @@ EFL_START_TEST (efl_ui_grid_content_count)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_grid_content_iterate)
+EFL_START_TEST(efl_ui_grid_content_iterate)
 {
    int count = 10;
    Efl_Ui_Grid_Item *item;
@@ -299,7 +289,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(grid_scroll_callbacks,
                            { EFL_UI_EVENT_SCROLL_START, grid_scroll_start_cb },
                            { EFL_UI_EVENT_SCROLL_STOP, grid_scroll_stop_cb });
 
-EFL_START_TEST (efl_ui_grid_scroll)
+EFL_START_TEST(efl_ui_grid_scroll)
 {
    Efl_Ui_Grid_Item *item;
    Efl_Loop_Timer *timer;
@@ -308,7 +298,7 @@ EFL_START_TEST (efl_ui_grid_scroll)
    item = efl_pack_content_get(grid, 50);
 
    timer = efl_add(EFL_LOOP_TIMER_CLASS, efl_main_loop_get(), 
-                   efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, grid_timer_cb, NULL),
+                   efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TIMER_TICK, grid_timer_cb, NULL),
                    efl_loop_timer_loop_reset(efl_added),
                    efl_loop_timer_interval_set(efl_added, 3.0));
 

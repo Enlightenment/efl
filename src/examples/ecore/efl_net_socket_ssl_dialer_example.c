@@ -1,3 +1,4 @@
+#define EFL_BETA_API_SUPPORT
 #include <Efl_Net.h>
 #include <Ecore_Getopt.h>
 #include <fcntl.h>
@@ -176,9 +177,9 @@ _error(void *data EINA_UNUSED, const Efl_Event *event)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(dialer_cbs,
-                           { EFL_NET_DIALER_EVENT_CONNECTED, _connected },
-                           { EFL_NET_DIALER_EVENT_RESOLVED, _resolved },
-                           { EFL_NET_DIALER_EVENT_ERROR, _error });
+                           { EFL_NET_DIALER_EVENT_DIALER_CONNECTED, _connected },
+                           { EFL_NET_DIALER_EVENT_DIALER_RESOLVED, _resolved },
+                           { EFL_NET_DIALER_EVENT_DIALER_ERROR, _error });
 
 
 static char *
@@ -464,7 +465,7 @@ efl_main(void *data EINA_UNUSED,
                      efl_net_ssl_context_hostname_set(efl_added, hostname_override),
                      efl_net_ssl_context_setup(efl_added, cipher, EINA_TRUE));
 #else
-   ssl_ctx = efl_net_ssl_context_default_dialer_get(EFL_NET_SSL_CONTEXT_CLASS);
+   ssl_ctx = efl_net_ssl_context_default_dialer_get();
    fprintf(stderr, "INFO: using default context for dialers.\n");
 #endif
 

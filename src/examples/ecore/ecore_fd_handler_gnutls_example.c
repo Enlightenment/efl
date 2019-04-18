@@ -108,7 +108,7 @@ tcp_connect(void)
 
    memset(&sa, '\0', sizeof (sa));
    sa.sin_family = AF_INET;
-   sa.sin_port = htons(atoi(PORT));
+   sa.sin_port = eina_htons(atoi(PORT));
    inet_pton(AF_INET, SERVER, &sa.sin_addr);
 
    /* connects to server

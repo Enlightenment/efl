@@ -1,0 +1,38 @@
+class @beta Efl.Composite_Model extends Efl.Loop_Model implements Efl.Ui.View
+{
+   [[Efl model for all composite class which provide a unified API to set source of data.
+
+   This class also provide an @Efl.Model.property "$child.index" that match the value of @.index.]]
+   methods {
+      @property index {
+         [[Position of this object in the parent model.]]
+         set {
+            [[Set the index. It can only be set before the object is finalized,
+            but after the Model it compose is set and only if that Model does
+            not provide an index already.]]
+         }
+         get {
+            [[Get the index. It will only work after the object has been finalized.]]
+         }
+         values {
+            index: uint; [[Index of the object in the parent model. The index is uniq and start from zero.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.destructor;
+      Efl.Object.invalidate;
+      Efl.Object.finalize;
+      Efl.Ui.View.model { set; get; }
+      Efl.Model.property { set; get; }
+      Efl.Model.properties { get; }
+      Efl.Model.children_count { get; }
+      Efl.Model.children_slice_get;
+      Efl.Model.child_add;
+      Efl.Model.child_del;
+   }
+   constructors {
+      .index @optional;
+      Efl.Ui.View.model;
+   }
+}

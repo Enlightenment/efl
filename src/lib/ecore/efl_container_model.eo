@@ -1,0 +1,49 @@
+import eina_types;
+
+class @beta Efl.Container_Model extends Efl.Composite_Model
+{
+   [[
+     Class used to create data models from Eina containers.
+
+     Each container supplied represents a series of property values, each item
+     being the property value for a child object.
+
+     The data in the given containers are copied and stored internally.
+
+     Several containers can be supplied and the number of allocated children is
+     based on the container of the largest size.
+   ]]
+   methods {
+      child_property_value_type_get {
+         [[Gets the type of the given property.]]
+         params {
+            name: string; [[Property name]]
+         }
+         return: ptr(const(Eina.Value_Type)); [[Property type]]
+      }
+      child_property_add {
+         [[Adds the given property to child objects and supply the values.
+
+           Each item will represent the value of the given property in the
+           respective child within the data model.
+
+           New children objects are allocated as necessary.
+
+           Value type is required for compatibility with the @Efl.Model API.]]
+         params {
+            name: string; [[Property name]]
+            @cref type: Eina.Value_Type; [[Property type]]
+            values: iterator<const(void_ptr)> @owned; [[Values to be added]]
+         }
+         return: bool; [[$true on success, $false otherwise]]
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.finalize;
+      Efl.Object.destructor;
+      Efl.Model.properties { get; }
+      Efl.Model.property { set; get; }
+      Efl.Model.children_count { get; }
+   }
+}

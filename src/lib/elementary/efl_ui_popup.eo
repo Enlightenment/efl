@@ -1,4 +1,4 @@
-enum Efl.Ui.Popup_Align {
+enum @beta Efl.Ui.Popup_Align {
     [[Popup alignment type]]
     none = 0, [[Popup not aligned]]
     center,   [[Popup aligned to center]]
@@ -8,7 +8,7 @@ enum Efl.Ui.Popup_Align {
     bottom    [[Popup aligned to bottom]]
 }
 
-class Efl.Ui.Popup extends Efl.Ui.Layout implements Efl.Content
+class @beta Efl.Ui.Popup extends Efl.Ui.Layout_Base implements Efl.Content, Efl.Ui.Focus.Layer
 {
    [[EFL UI popup class]]
    methods {

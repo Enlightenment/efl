@@ -22,12 +22,11 @@ Eina_Strbuf *eo_gen_docs_full_gen(const Eolian_State *state, const Eolian_Docume
  * @param[in] fid te function
  * @param[in] type the function type (either METHOD, PROP_GET, PROP_SET)
  * @param[in] indent by how many spaces to indent the comment from second line
- * @param[in] use_legacy whether to use legacy names
  *
  * @return A documentation comment
  *
  */
-Eina_Strbuf *eo_gen_docs_func_gen(const Eolian_State *state, const Eolian_Function *fid, Eolian_Function_Type ftype, int indent, Eina_Bool use_legacy);
+Eina_Strbuf *eo_gen_docs_func_gen(const Eolian_State *state, const Eolian_Function *fid, Eolian_Function_Type ftype, int indent);
 
 /*
  * @brief Generate event documentation

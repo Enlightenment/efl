@@ -203,7 +203,7 @@ EFL_START_TEST(eolian_cxx_test_type_callback)
                            event3 = true;
                            ck_assert(v == 42);
                          });
-  efl::eolian::event_add(g.prefix_event4_event, g, [&] (nonamespace::Generic, efl::eina::range_list<const int &> e)
+  efl::eolian::event_add(g.prefix_event4_event, g, [&] (nonamespace::Generic, efl::eina::range_array<const int &> e)
                          {
                            event4 = true;
                            ck_assert(e.size() == 1);
@@ -258,7 +258,6 @@ EFL_START_TEST(eolian_cxx_test_properties)
 
   klass_def cls = init_test_data("property_holder.eo", "Property_Holder", eolian_state);
 
-  // FIXME Currently parsing only properties with both get/set values.
   auto props = cls.properties;
   ck_assert_int_eq(4, cls.properties.size());
 
@@ -322,6 +321,48 @@ EFL_START_TEST(eolian_cxx_test_cls_get)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eolian_cxx_test_constructors)
+{
+    efl::eolian::eolian_init eolian_init;
+    efl::eolian::eolian_state eolian_state;
+
+    klass_def cls = init_test_data("generic.eo", "Generic", eolian_state);
+
+    auto constructors = cls.constructors;
+
+    ck_assert_int_eq(constructors.size(), 4);
+
+    auto ctor = constructors[0];
+    ck_assert_str_eq("Generic.required_ctor_a", ctor.name.c_str());
+    ck_assert(!ctor.is_optional);
+    ck_assert(!ctor.is_ctor_param);
+
+    auto function = ctor.function;
+    ck_assert_str_eq("required_ctor_a", function.name.c_str());
+
+    ctor = constructors[2];
+    ck_assert_str_eq("Generic.optional_ctor_a", ctor.name.c_str());
+    ck_assert(ctor.is_optional);
+    ck_assert(!ctor.is_ctor_param);
+
+    function = ctor.function;
+    ck_assert_str_eq("optional_ctor_a", function.name.c_str());
+}
+EFL_END_TEST
+
+EFL_START_TEST(eolian_cxx_test_beta)
+{
+    efl::eolian::eolian_init eolian_init;
+    efl::eolian::eolian_state eolian_state;
+
+    klass_def cls = init_test_data("generic.eo", "Generic", eolian_state);
+    klass_def beta_cls = init_test_data("beta_class.eo", "Beta_Class", eolian_state);
+
+    ck_assert(!cls.is_beta);
+    ck_assert(beta_cls.is_beta);
+}
+EFL_END_TEST
+
 void
 eolian_cxx_test_binding(TCase* tc)
 {
@@ -335,4 +376,6 @@ eolian_cxx_test_binding(TCase* tc)
    tcase_add_test(tc, eolian_cxx_test_properties);
    tcase_add_test(tc, eolian_cxx_test_parent_extensions);
    tcase_add_test(tc, eolian_cxx_test_cls_get);
+   tcase_add_test(tc, eolian_cxx_test_constructors);
+   tcase_add_test(tc, eolian_cxx_test_beta);
 }

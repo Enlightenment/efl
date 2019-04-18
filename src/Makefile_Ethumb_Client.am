@@ -9,7 +9,7 @@ lib/ethumb_client/Ethumb_Client.h
 
 # libethumb_client.la
 lib_ethumb_client_libethumb_client_la_SOURCES = lib/ethumb_client/ethumb_client.c
-lib_ethumb_client_libethumb_client_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ETHUMB_CLIENT_CFLAGS@
+lib_ethumb_client_libethumb_client_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ETHUMB_CLIENT_CFLAGS@ -DEFL_BUILD
 lib_ethumb_client_libethumb_client_la_LIBADD = @ETHUMB_CLIENT_LIBS@
 lib_ethumb_client_libethumb_client_la_DEPENDENCIES = @ETHUMB_CLIENT_INTERNAL_LIBS@
 lib_ethumb_client_libethumb_client_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

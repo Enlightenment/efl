@@ -84,8 +84,6 @@ _interpolated_clip_span(Span *s, int c1, int c2, Eina_Bool interp_col)
      }
 }
 
-#include "evas_map_image_aa.c"
-
 // 12.63 % of time - this can improve
 static void
 _calc_spans(RGBA_Map_Point *p, Line *spans, int ystart, int yend, int cx, int cy EINA_UNUSED, int cw, int ch EINA_UNUSED)
@@ -653,6 +651,7 @@ evas_common_map_rgba_prepare(RGBA_Image *src, RGBA_Image *dst,
 #  undef SCALE_USING_NEON
 #endif
 
+#include "evas_map_image_internal_high.c"
 
 #ifdef BUILD_MMX
 void evas_common_map_rgba_internal_mmx(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map_Point *p, int smooth, int level)
@@ -683,6 +682,34 @@ void evas_common_map_rgba_internal_mmx(RGBA_Image *src, RGBA_Image *dst, RGBA_Dr
                                       dc->clip.mask, dc->clip.mask_x, dc->clip.mask_y);
 }
 #endif
+
+void evas_common_map_rgba_internal_high(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map_Point *p, int smooth, int level)
+{
+   int clip_x, clip_y, clip_w, clip_h;
+   DATA32 mul_col;
+
+   if (dc->clip.use)
+     {
+        clip_x = dc->clip.x;
+        clip_y = dc->clip.y;
+        clip_w = dc->clip.w;
+        clip_h = dc->clip.h;
+     }
+   else
+     {
+        clip_x = clip_y = 0;
+        clip_w = dst->cache_entry.w;
+        clip_h = dst->cache_entry.h;
+     }
+
+   mul_col = dc->mul.use ? dc->mul.col : 0xffffffff;
+
+   _evas_common_map_rgba_internal_high(src, dst,
+                                       clip_x, clip_y, clip_w, clip_h,
+                                       mul_col, dc->render_op,
+                                       p, smooth, dc->anti_alias, level,
+                                       dc->clip.mask, dc->clip.mask_x, dc->clip.mask_y);
+}
 
 void evas_common_map_rgba_internal(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Context *dc, RGBA_Map_Point *p, int smooth, int level)
 {
@@ -832,24 +859,32 @@ evas_common_map_thread_rgba_cb(RGBA_Image *src, RGBA_Image *dst, RGBA_Draw_Conte
 EAPI void
 evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
                      RGBA_Draw_Context *dc,
-                     int npoints EINA_UNUSED, RGBA_Map_Point *p,
+                     int npoints, RGBA_Map_Point *p,
                      int smooth, int level)
 {
    Evas_Common_Map_RGBA_Cb cb;
-#ifdef BUILD_MMX
-   int mmx, sse, sse2;
 
-   evas_common_cpu_can_do(&mmx, &sse, &sse2);
-   if (mmx)
-     cb = evas_common_map_rgba_internal_mmx;
+   if (dc->anti_alias && smooth)
+     {
+        cb = evas_common_map_rgba_internal_high;
+     }
    else
+     {
+#ifdef BUILD_MMX
+        int mmx, sse, sse2;
+
+        evas_common_cpu_can_do(&mmx, &sse, &sse2);
+        if (mmx)
+          cb = evas_common_map_rgba_internal_mmx;
+        else
 #endif
 #ifdef BUILD_NEON
-   if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
-     cb = evas_common_map_rgba_internal_neon;
-   else
+          if (evas_common_cpu_has_feature(CPU_FEATURE_NEON))
+            cb = evas_common_map_rgba_internal_neon;
+          else
 #endif
-     cb = evas_common_map_rgba_internal;
+            cb = evas_common_map_rgba_internal;
+     }
 
    evas_common_map_rgba_cb(src, dst, dc, npoints, p, smooth, level, cb);
 }
@@ -857,6 +892,17 @@ evas_common_map_rgba(RGBA_Image *src, RGBA_Image *dst,
 EAPI void
 evas_common_map_rgba_draw(RGBA_Image *src, RGBA_Image *dst, int clip_x, int clip_y, int clip_w, int clip_h, DATA32 mul_col, int render_op, int npoints EINA_UNUSED, RGBA_Map_Point *p, int smooth, Eina_Bool anti_alias, int level, RGBA_Image *mask_ie, int mask_x, int mask_y)
 {
+   //The best quaility requsted.
+   if (anti_alias && smooth)
+     {
+        _evas_common_map_rgba_internal_high(src, dst,
+                                            clip_x, clip_y, clip_w, clip_h,
+                                            mul_col, render_op,
+                                            p, smooth, anti_alias, level,
+                                            mask_ie, mask_x, mask_y);
+     }
+   else
+     {
 #ifdef BUILD_MMX
    int mmx, sse, sse2;
 
@@ -883,6 +929,7 @@ evas_common_map_rgba_draw(RGBA_Image *src, RGBA_Image *dst, int clip_x, int clip
                                     mul_col, render_op,
                                     p, smooth, anti_alias, level,
                                     mask_ie, mask_x, mask_y);
+     }
 }
 
 EAPI void

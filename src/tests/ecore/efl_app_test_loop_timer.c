@@ -47,7 +47,7 @@ EFL_START_TEST(ecore_test_timer_lifecycle)
    efl_event_callback_add((Eo*) t, EFL_EVENT_DEL, _test_death_cb, &dl);
 
    et = efl_add(EFL_LOOP_TIMER_CLASS, efl_main_loop_get(),
-               efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TICK, _test_run_cb, &re),
+               efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TIMER_TICK, _test_run_cb, &re),
                efl_event_callback_add(efl_added, EFL_EVENT_DEL, _test_death_cb, &de),
                efl_loop_timer_interval_set(efl_added, 1.0));
    efl_ref(et);
@@ -66,7 +66,7 @@ EFL_END_TEST
 
 EFL_START_TEST(efl_app_test_loop_timer_invalid)
 {
-   Efl_Object *t = efl_add(EFL_LOOP_TIMER_CLASS, efl_app_main_get(EFL_APP_CLASS));
+   Efl_Object *t = efl_add(EFL_LOOP_TIMER_CLASS, efl_app_main_get());
    fail_if(t != NULL);
 }
 EFL_END_TEST

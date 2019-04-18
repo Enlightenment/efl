@@ -2,11 +2,9 @@
 
 import efl_ui_types;
 
-interface Efl.Ui.Drag
+interface @beta Efl.Ui.Drag
 {
    [[Common interface for draggable objects and parts.
-
-     @since 1.20
    ]]
    methods {
       @property drag_value {

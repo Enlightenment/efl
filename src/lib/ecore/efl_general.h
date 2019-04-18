@@ -31,8 +31,6 @@
 # define __EFL_NET(...)
 #endif
 
-#ifdef EFL_BETA_API_SUPPORT
-
 // This file is designed to be included again and again
 // so cleanup last inclusion before generating this one.
 #undef _EFL_VERSION_MICRO
@@ -127,5 +125,3 @@
      ecore_shutdown();                                                  \
      return real__;                                                     \
   }
-
-#endif /* EFL_BETA_API_SUPPORT */

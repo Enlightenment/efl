@@ -25,10 +25,6 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include "eina_config.h"
 #include "eina_private.h"
 
@@ -110,6 +106,18 @@ _eina_error_msg_alloc(void)
    _eina_errors_count++;
    return _eina_errors + idx;
 }
+
+#ifdef _WIN32
+# define HAVE_STRERROR_R
+# ifdef STRERROR_R_CHAR_P
+#  undef STRERROR_R_CHAR_P
+# endif
+/* Windows has strerror_s(), similar to POSIX strerror_r() */
+static inline int strerror_r(int errnum, char *buf, size_t buflen)
+{
+   return strerror_s(buf, buflen, errnum);
+}
+#endif
 
 /**
  * @endcond

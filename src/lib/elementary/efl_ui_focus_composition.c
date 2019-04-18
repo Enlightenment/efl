@@ -14,7 +14,7 @@
 typedef struct {
    Eina_List *order, *targets_ordered;
    Eina_List *register_target, *registered_targets;
-   Efl_Ui_Focus_Manager *registered, *custom_manager, *old_manager;
+   Efl_Ui_Focus_Manager *registered, *old_manager;
    Eina_Bool dirty;
    Eina_Bool logical;
 } Efl_Ui_Focus_Composition_Data;
@@ -27,10 +27,7 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
    //Legacy code compatibility, only update the custom chain of elements if legacy was NOT messing with it.
    if (elm_widget_is_legacy(obj) && elm_object_focus_custom_chain_get(obj)) return;
 
-   if (pd->custom_manager)
-     manager = pd->custom_manager;
-   else
-     manager = pd->registered;
+   manager = pd->registered;
 
    if (manager)
      {
@@ -92,10 +89,11 @@ _state_apply(Eo *obj, Efl_Ui_Focus_Composition_Data *pd)
      }
 }
 static void
-_del(void *data, const Efl_Event *ev)
+_invalidate(void *data, const Efl_Event *ev)
 {
    Efl_Ui_Focus_Composition_Data *pd = efl_data_scope_get(data, EFL_UI_FOCUS_COMPOSITION_MIXIN);
    pd->register_target = eina_list_remove(pd->register_target, ev->object);
+   pd->registered_targets = eina_list_remove(pd->registered_targets, ev->object);
 }
 
 EOLIAN static void
@@ -107,7 +105,7 @@ _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composi
    pd->targets_ordered = eina_list_free(pd->targets_ordered);
    EINA_LIST_FREE(pd->register_target, elem)
      {
-        efl_event_callback_del(elem, EFL_EVENT_DEL, _del, obj);
+        efl_event_callback_del(elem, EFL_EVENT_INVALIDATE, _invalidate, obj);
      }
 
    pd->order = eina_list_free(pd->order);
@@ -125,7 +123,7 @@ _efl_ui_focus_composition_composition_elements_set(Eo *obj, Efl_Ui_Focus_Composi
              if (efl_isa(elem, EFL_UI_FOCUS_OBJECT_MIXIN))
                {
                   pd->register_target = eina_list_append(pd->register_target , o);
-                  efl_event_callback_add(o, EFL_EVENT_DEL, _del, obj);
+                  efl_event_callback_add(o, EFL_EVENT_INVALIDATE, _invalidate, obj);
                }
              else
                {
@@ -166,7 +164,12 @@ _efl_ui_focus_composition_efl_ui_widget_focus_state_apply(Eo *obj, Efl_Ui_Focus_
    registered = efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, redirect);
 
    if (registered)
-     pd->registered = configured_state->manager;
+     {
+        if (efl_isa(obj, EFL_UI_FOCUS_MANAGER_INTERFACE))
+          pd->registered = obj;
+        else
+          pd->registered = configured_state->manager;
+     }
    else
      pd->registered = NULL;
 
@@ -182,7 +185,7 @@ _efl_ui_focus_composition_dirty(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Da
 }
 
 EOLIAN static void
-_efl_ui_focus_composition_efl_ui_focus_object_prepare_logical_none_recursive(Eo *obj, Efl_Ui_Focus_Composition_Data *pd EINA_UNUSED)
+_efl_ui_focus_composition_efl_ui_focus_object_setup_order_non_recursive(Eo *obj, Efl_Ui_Focus_Composition_Data *pd EINA_UNUSED)
 {
    if (pd->dirty)
      {
@@ -190,19 +193,7 @@ _efl_ui_focus_composition_efl_ui_focus_object_prepare_logical_none_recursive(Eo 
         pd->dirty = EINA_FALSE;
      }
 
-   efl_ui_focus_object_prepare_logical_none_recursive(efl_super(obj, MY_CLASS));
-}
-
-EOLIAN static void
-_efl_ui_focus_composition_custom_manager_set(Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd, Efl_Ui_Focus_Manager *custom_manager)
-{
-   pd->custom_manager = custom_manager;
-}
-
-EOLIAN static Efl_Ui_Focus_Manager*
-_efl_ui_focus_composition_custom_manager_get(const Eo *obj EINA_UNUSED, Efl_Ui_Focus_Composition_Data *pd)
-{
-   return pd->custom_manager;
+   efl_ui_focus_object_setup_order_non_recursive(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -241,14 +232,15 @@ _canvas_object_deleted(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 static void
-_new_geom(void *data, const Efl_Event *event)
+_new_geom(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   efl_event_callback_call(data, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_GEOMETRY_CHANGED, event->info);
+   Eina_Rect rect = efl_ui_focus_object_focus_geometry_get(data);
+   efl_event_callback_call(data, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_GEOMETRY_CHANGED, &rect);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(canvas_obj,
-    {EFL_GFX_ENTITY_EVENT_RESIZE, _new_geom},
-    {EFL_GFX_ENTITY_EVENT_MOVE, _new_geom},
+    {EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _new_geom},
+    {EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _new_geom},
     {EFL_EVENT_DEL, _canvas_object_deleted},
 );
 

@@ -42,20 +42,6 @@ _print2(Eo *obj EINA_UNUSED, void *class_data EINA_UNUSED)
    return EINA_TRUE;
 }
 
-static Eina_Bool
-_class_print(Efl_Class *klass, void *data EINA_UNUSED)
-{
-   Eina_Bool called = EINA_FALSE;
-   printf("Print %s-%s\n", efl_class_name_get(klass), efl_class_name_get(MY_CLASS));
-   called = simple_class_print(efl_super(klass, MY_CLASS));
-   fail_if(!called);
-
-   called = simple_class_print2(efl_super(klass, MY_CLASS));
-   fail_if(!called);
-
-   return EINA_TRUE;
-}
-
 EAPI EFL_FUNC_BODY(inherit2_print, Eina_Bool, EINA_FALSE);
 EAPI EFL_FUNC_BODY(inherit2_print2, Eina_Bool, EINA_FALSE);
 
@@ -67,11 +53,8 @@ _class_initializer(Efl_Class *klass)
          EFL_OBJECT_OP_FUNC(inherit2_print2, _print2),
          EFL_OBJECT_OP_FUNC(simple_a_set, _a_set),
    );
-   EFL_OPS_DEFINE(cops,
-         EFL_OBJECT_OP_FUNC(simple_class_print, _class_print),
-   );
 
-   return efl_class_functions_set(klass, &ops, &cops);
+   return efl_class_functions_set(klass, &ops, NULL);
 }
 
 static const Efl_Class_Description class_desc = {

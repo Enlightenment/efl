@@ -220,7 +220,7 @@ _evas_image_proxy_set(Evas_Object *eo_proxy, Evas_Object *eo_src)
    Evas_Image_Data *o = efl_data_scope_get(eo_proxy, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
 
    if (o->legacy_type)
-     efl_file_set(eo_proxy, NULL, NULL);
+     efl_file_simple_load(eo_proxy, NULL, NULL);
 
    EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, proxy->proxy, Evas_Object_Proxy_Data, proxy_write)
      proxy_write->is_proxy = EINA_TRUE;
@@ -229,7 +229,7 @@ _evas_image_proxy_set(Evas_Object *eo_proxy, Evas_Object *eo_src)
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
      state_write->source = eo_src;
    EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
-   o->load_error = EVAS_LOAD_ERROR_NONE;
+   o->load_error = EFL_GFX_IMAGE_LOAD_ERROR_NONE;;
    o->proxyerror = 0;
 
    EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_src_write)

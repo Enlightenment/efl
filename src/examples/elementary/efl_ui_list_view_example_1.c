@@ -4,9 +4,9 @@
 # include "elementary_config.h"
 #else
 # define EFL_BETA_API_SUPPORT 1
-# define EFL_EO_API_SUPPORT 1
 #endif
 
+#include <Efl_Ui.h>
 #include <Elementary.h>
 #include <Efl.h>
 #include <Eio.h>
@@ -45,11 +45,11 @@ static Efl_Model*
 _make_model(Evas_Object *win)
 {
    Eina_Value vtext;
-   Efl_Model_Item *model, *child;
+   Efl_Generic_Model *model, *child;
    unsigned int i, s;
    char buf[256];
 
-   model = efl_add(EFL_MODEL_ITEM_CLASS, win);
+   model = efl_add(EFL_GENERIC_MODEL_CLASS, win);
    eina_value_setup(&vtext, EINA_VALUE_TYPE_STRING);
 
    for (i = 0; i < (NUM_ITEMS); i++)
@@ -74,7 +74,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    Efl_Ui_Factory *factory;
    Evas_Object *win, *li;
    Eo *model;
-   Efl_Model_Composite_Selection *selmodel;
+   Efl_Select_Model *selmodel;
 
    win = elm_win_util_standard_add("list_view", "List_View");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
@@ -82,14 +82,14 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    elm_win_autodel_set(win, EINA_TRUE);
 
    model = _make_model(win);
-   selmodel = efl_add(EFL_MODEL_COMPOSITE_SELECTION_CLASS, efl_main_loop_get()
+   selmodel = efl_add(EFL_SELECT_MODEL_CLASS, efl_main_loop_get()
      , efl_ui_view_model_set(efl_added, model)
    );
 
    factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win);
-   efl_ui_model_connect(factory, "signal/efl,state,%v", "odd_style");
-   efl_ui_model_connect(factory, "signal/efl,state,%{selected;unselected}", "selected");
-   efl_ui_model_connect(factory, "efl.text", "name");
+   efl_ui_property_bind(factory, "signal/efl,state,%v", "odd_style");
+   efl_ui_property_bind(factory, "signal/efl,state,%{selected;unselected}", "selected");
+   efl_ui_property_bind(factory, "efl.text", "name");
    efl_ui_layout_factory_theme_config(factory, "list_item", NULL, "default");
 
    li = efl_add(EFL_UI_LIST_VIEW_CLASS, win

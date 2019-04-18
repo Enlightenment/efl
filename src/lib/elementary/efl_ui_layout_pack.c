@@ -13,8 +13,8 @@
 #include "elm_widget_layout.h"
 #include "elm_part_helper.h"
 
-#include "../evas/canvas/evas_box.eo.h"
-#include "../evas/canvas/evas_table.eo.h"
+#include "../evas/canvas/evas_box_eo.h"
+#include "../evas/canvas/evas_table_eo.h"
 
 /* layout internals for box & table */
 Eina_Bool    _efl_ui_layout_box_append(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Evas_Object *child);
@@ -67,7 +67,7 @@ EOLIAN static void
 _efl_ui_layout_part_box_real_part_set(Eo *obj, Efl_Ui_Layout_Box_Data *pd, Eo *layout, const char *part)
 {
    pd->obj = layout;
-   pd->sd = efl_data_xref(pd->obj, EFL_UI_LAYOUT_CLASS, obj);
+   pd->sd = efl_data_xref(pd->obj, EFL_UI_LAYOUT_BASE_CLASS, obj);
    eina_stringshare_replace(&pd->part, part);
    pd->temp = 1;
 }
@@ -109,13 +109,6 @@ EOLIAN static Eina_Bool
 _efl_ui_layout_part_box_efl_pack_unpack(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Box_Data *pd, Efl_Gfx_Entity *subobj)
 {
    return _efl_ui_layout_box_remove(pd->obj, pd->sd, pd->part, subobj) != NULL;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_layout_part_box_efl_container_content_remove(Eo *obj, Efl_Ui_Layout_Box_Data *pd, Efl_Gfx_Entity *content)
-{
-   // alias for efl_pack_unpack
-   return _efl_ui_layout_part_box_efl_pack_unpack(obj, pd, content);
 }
 
 EOLIAN static Eina_Bool
@@ -225,7 +218,7 @@ EOLIAN static void
 _efl_ui_layout_part_table_real_part_set(Eo *obj, Efl_Ui_Layout_Table_Data *pd, Eo *layout, const char *part)
 {
    pd->obj = layout;
-   pd->sd = efl_data_xref(pd->obj, EFL_UI_LAYOUT_CLASS, obj);
+   pd->sd = efl_data_xref(pd->obj, EFL_UI_LAYOUT_BASE_CLASS, obj);
    eina_stringshare_replace(&pd->part, part);
    pd->temp = 1;
 }
@@ -279,13 +272,6 @@ _efl_ui_layout_part_table_efl_pack_unpack(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Tab
 {
    if (!subobj) return EINA_FALSE;
    return _efl_ui_layout_table_unpack(pd->obj, pd->sd, pd->part, subobj) == subobj;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_layout_part_table_efl_container_content_remove(Eo *obj, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity *content)
-{
-   // alias for efl_pack_unpack
-   return _efl_ui_layout_part_table_efl_pack_unpack(obj, pd, content);
 }
 
 EOLIAN static Eina_Bool

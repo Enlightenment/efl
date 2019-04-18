@@ -11,4 +11,4 @@
  */
 EAPI Evas_Object      *elm_clock_add(Evas_Object *parent);
 
-#include "elm_clock.eo.legacy.h"
+#include "elm_clock_eo.legacy.h"

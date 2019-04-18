@@ -8,8 +8,8 @@ _rotation_get(Eo *target)
    double x1, x2, y1, y2;
    double theta;
 
-   efl_gfx_map_coord_absolute_get(target, 0, &x1, &y1, NULL);
-   efl_gfx_map_coord_absolute_get(target, 1, &x2, &y2, NULL);
+   efl_gfx_mapping_coord_absolute_get(target, 0, &x1, &y1, NULL);
+   efl_gfx_mapping_coord_absolute_get(target, 1, &x2, &y2, NULL);
    theta = atan((y2 - y1) / (x2 - x1));
 
    return theta * 180 / M_PI;
@@ -125,14 +125,14 @@ _efl_canvas_animation_rotate_efl_canvas_animation_animation_apply(Eo *eo_obj,
 
    if (pd->use_rel_pivot)
      {
-        efl_gfx_map_rotate(target,
+        efl_gfx_mapping_rotate(target,
                            new_degree - prev_degree,
                            (pd->rel_pivot.obj) ? pd->rel_pivot.obj : target,
                            pd->rel_pivot.cx, pd->rel_pivot.cy);
      }
    else
      {
-        efl_gfx_map_rotate_absolute(target,
+        efl_gfx_mapping_rotate_absolute(target,
                                     new_degree - prev_degree,
                                     pd->abs_pivot.cx, pd->abs_pivot.cy);
      }

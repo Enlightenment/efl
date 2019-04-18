@@ -5,7 +5,8 @@ using System.Runtime.InteropServices;
 
 using static eldbus.EldbusMessageNativeFunctions;
 
-namespace eldbus {
+namespace eldbus
+{
 
 public static class EldbusMessageNativeFunctions
 {
@@ -223,10 +224,21 @@ public class Message : IDisposable
         IntPtr h = Handle;
         Handle = IntPtr.Zero;
         if (h == IntPtr.Zero)
+        {
             return;
+        }
 
         if (Own)
-            eldbus_message_unref(h);
+        {
+            if (disposing)
+            {
+                eldbus_message_unref(h);
+            }
+            else
+            {
+                Efl.Eo.Globals.ThreadSafeFreeCbExec(eldbus_message_unref, h);
+            }
+        }
     }
 
     public void Dispose()
@@ -251,7 +263,10 @@ public class Message : IDisposable
     {
         var ptr = eldbus_message_method_call_new(dest, path, iface, method);
         if (ptr == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Message' object from eldbus_message_method_call_new");
+        }
+
         return new eldbus.Message(ptr, true);
     }
 
@@ -259,7 +274,10 @@ public class Message : IDisposable
     {
         var ptr = eldbus_message_signal_new(path, _interface, name);
         if (ptr == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Message' object from eldbus_message_signal_new");
+        }
+
         return new eldbus.Message(ptr, true);
     }
 
@@ -279,42 +297,42 @@ public class Message : IDisposable
     {
         CheckHandle();
         var ptr = eldbus_message_path_get(Handle);
-        return Marshal.PtrToStringAuto(ptr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
     public string GetInterface()
     {
         CheckHandle();
         var ptr = eldbus_message_interface_get(Handle);
-        return Marshal.PtrToStringAuto(ptr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
     public string GetMember()
     {
         CheckHandle();
         var ptr = eldbus_message_member_get(Handle);
-        return Marshal.PtrToStringAuto(ptr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
     public string GetDestination()
     {
         CheckHandle();
         var ptr = eldbus_message_destination_get(Handle);
-        return Marshal.PtrToStringAuto(ptr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
     public string GetSender()
     {
         CheckHandle();
         var ptr = eldbus_message_sender_get(Handle);
-        return Marshal.PtrToStringAuto(ptr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
     public string GetSignature()
     {
         CheckHandle();
         var ptr = eldbus_message_signature_get(Handle);
-        return Marshal.PtrToStringAuto(ptr);
+        return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
     public eldbus.Message NewError(string error_name, string error_msg)
@@ -322,7 +340,10 @@ public class Message : IDisposable
         CheckHandle();
         var ptr = eldbus_message_error_new(Handle, error_name, error_msg);
         if (ptr == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Message' object from eldbus_message_error_new");
+        }
+
         return new eldbus.Message(ptr, false);
     }
 
@@ -331,7 +352,10 @@ public class Message : IDisposable
         CheckHandle();
         var ptr = eldbus_message_method_return_new(Handle);
         if (ptr == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `Message' object from eldbus_message_method_return_new");
+        }
+
         return new eldbus.Message(ptr, false);
     }
 
@@ -341,8 +365,8 @@ public class Message : IDisposable
         IntPtr name_ptr;
         IntPtr text_ptr;
         bool r = eldbus_message_error_get(Handle, out name_ptr, out text_ptr);
-        name = Marshal.PtrToStringAuto(name_ptr);
-        text = Marshal.PtrToStringAuto(text_ptr);
+        name = Eina.StringConversion.NativeUtf8ToManagedString(name_ptr);
+        text = Eina.StringConversion.NativeUtf8ToManagedString(text_ptr);
         return r;
     }
 
@@ -408,7 +432,7 @@ public class Message : IDisposable
         CheckHandle();
         IntPtr aux;
         var r = eldbus_message_arguments_get(Handle, Argument.StringType.Signature, out aux);
-        val = Marshal.PtrToStringAuto(aux);
+        val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
         return r;
     }
 
@@ -417,7 +441,7 @@ public class Message : IDisposable
         CheckHandle();
         IntPtr aux;
         var r = eldbus_message_arguments_get(Handle, Argument.ObjectPathType.Signature, out aux);
-        val = Marshal.PtrToStringAuto(aux);
+        val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
         return r;
     }
 
@@ -426,7 +450,7 @@ public class Message : IDisposable
         CheckHandle();
         IntPtr aux;
         var r = eldbus_message_arguments_get(Handle, Argument.SignatureType.Signature, out aux);
-        val = Marshal.PtrToStringAuto(aux);
+        val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
         return r;
     }
 
@@ -459,7 +483,10 @@ public class Message : IDisposable
         CheckHandle();
         var ptr = eldbus_message_iter_get(Handle);
         if (ptr == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `MessageIterator' object from eldbus_message_iter_get");
+        }
+
         return new eldbus.MessageIterator(ptr, IntPtr.Zero);
     }
 }
@@ -514,12 +541,18 @@ public class MessageIterator
         IntPtr new_iter = IntPtr.Zero;
 
         if (signature[0] == 'v')
+        {
             new_iter = eldbus_message_iter_container_new(Handle, 'v', signature.Substring(1));
+        }
         else if (!eldbus_message_iter_arguments_append(Handle, signature, out new_iter))
+        {
             throw new SEHException("Eldbus: could not append container type");
+        }
 
         if (new_iter == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `MessageIterator' object from eldbus_message_iter_arguments_append");
+        }
 
         return new eldbus.MessageIterator(new_iter, Handle);
     }
@@ -531,7 +564,9 @@ public class MessageIterator
         IntPtr new_iter = eldbus_message_iter_container_new(Handle, type, contained_signature);
 
         if (new_iter == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get `MessageIterator' object from eldbus_message_iter_container_new");
+        }
 
         return new eldbus.MessageIterator(new_iter, Handle);
     }
@@ -541,10 +576,14 @@ public class MessageIterator
         CheckHandle();
 
         if (Parent == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: can not close MessageIterator open container without a parent");
+        }
 
         if (!eldbus_message_iter_container_close(Parent, Handle))
+        {
             throw new SEHException("Eldbus: could not close MessageIterator");
+        }
 
         Handle = IntPtr.Zero;
         Parent = IntPtr.Zero;
@@ -617,7 +656,7 @@ public class MessageIterator
         CheckHandle();
         IntPtr aux;
         bool r = eldbus_message_iter_get_and_next(Handle, Argument.StringType.Code, out aux);
-        val = Marshal.PtrToStringAuto(aux);
+        val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
         return r;
     }
 
@@ -626,7 +665,7 @@ public class MessageIterator
         CheckHandle();
         IntPtr aux;
         bool r = eldbus_message_iter_get_and_next(Handle, Argument.ObjectPathType.Code, out aux);
-        val = Marshal.PtrToStringAuto(aux);
+        val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
         return r;
     }
 
@@ -635,7 +674,7 @@ public class MessageIterator
         CheckHandle();
         IntPtr aux;
         bool r = eldbus_message_iter_get_and_next(Handle, Argument.SignatureType.Code, out aux);
-        val = Marshal.PtrToStringAuto(aux);
+        val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
         return r;
     }
 
@@ -654,7 +693,10 @@ public class MessageIterator
         IntPtr hdl = IntPtr.Zero;
         bool r = eldbus_message_iter_get_and_next(Handle, typecode, out hdl);
         if (hdl == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get argument");
+        }
+
         iter = new eldbus.MessageIterator(hdl, Handle);
 
         return r;
@@ -665,7 +707,10 @@ public class MessageIterator
         CheckHandle();
         IntPtr hdl = IntPtr.Zero;
         if (!eldbus_message_iter_arguments_get(Handle, signatue, out hdl) || hdl == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get argument");
+        }
+
         iter = new eldbus.MessageIterator(hdl, Handle);
 
         return Next();
@@ -732,7 +777,7 @@ public class MessageIterator
         CheckHandle();
         IntPtr aux;
         eldbus_message_iter_basic_get(Handle, out aux);
-        val = Marshal.PtrToStringAuto(aux);
+        val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
     }
 
     public void Get(out eldbus.ObjectPath val)
@@ -740,7 +785,7 @@ public class MessageIterator
         CheckHandle();
         IntPtr aux;
         eldbus_message_iter_basic_get(Handle, out aux);
-        val = Marshal.PtrToStringAuto(aux);
+        val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
     }
 
     public void Get(out eldbus.SignatureString val)
@@ -748,7 +793,7 @@ public class MessageIterator
         CheckHandle();
         IntPtr aux;
         eldbus_message_iter_basic_get(Handle, out aux);
-        val = Marshal.PtrToStringAuto(aux);
+        val = Eina.StringConversion.NativeUtf8ToManagedString(aux);
     }
 
     public void Get(out eldbus.UnixFd val)
@@ -764,7 +809,10 @@ public class MessageIterator
         CheckHandle();
         IntPtr hdl = IntPtr.Zero;
         if (!eldbus_message_iter_arguments_get(Handle, signatue, out hdl) || hdl == IntPtr.Zero)
+        {
             throw new SEHException("Eldbus: could not get argument");
+        }
+
         iter = new eldbus.MessageIterator(hdl, Handle);
     }
 
@@ -789,7 +837,9 @@ public class MessageIterator
         CheckHandle();
 
         if (!eldbus_message_iter_fixed_array_get(Handle, type_code, out value, out n_elements))
+        {
             throw new SEHException("Eldbus: could not get fixed array");
+        }
     }
 
     public void GetFixedArray(out byte[] array)
@@ -880,4 +930,3 @@ public class MessageIterator
 }
 
 }
-

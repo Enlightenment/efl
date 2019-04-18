@@ -8,6 +8,7 @@
 
 #include "elm_priv.h"
 #include "elm_interface_scrollable.h"
+#include "elm_pan_eo.h"
 
 #define MY_PAN_CLASS ELM_PAN_CLASS
 
@@ -33,12 +34,12 @@
     }
 
 #define ELM_ANIMATOR_CONNECT(Obj, Bool, Callback, Data)                 \
-  efl_event_callback_del(Obj, EFL_EVENT_ANIMATOR_TICK, Callback, Data); \
-  efl_event_callback_add(Obj, EFL_EVENT_ANIMATOR_TICK, Callback, Data); \
+  efl_event_callback_del(Obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, Callback, Data); \
+  efl_event_callback_add(Obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, Callback, Data); \
   Bool = 1;
 
 #define ELM_ANIMATOR_DISCONNECT(Obj, Bool, Callback, Data)              \
-  efl_event_callback_del(Obj, EFL_EVENT_ANIMATOR_TICK, Callback, Data); \
+  efl_event_callback_del(Obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, Callback, Data); \
   Bool = 0;
 
 #ifndef CLAMP
@@ -4972,4 +4973,4 @@ _elm_interface_scrollable_item_loop_enabled_get(const Eo *obj EINA_UNUSED, Elm_S
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_interface_scrollable)
 
 #include "elm_interface_scrollable.eo.c"
-#include "elm_pan.eo.c"
+#include "elm_pan_eo.c"

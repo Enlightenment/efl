@@ -19,14 +19,13 @@ typedef struct _Vg_Cache
 typedef struct _Vg_Cache_Entry
 {
    char                 *hash_key;
-   Eina_Stringshare     *file;
+   const Eina_File      *file;
    Eina_Stringshare     *key;
    int                   w;
    int                   h;
    Efl_VG               *root;
    int                   ref;
    Vg_File_Data         *vfd;
-
 } Vg_Cache_Entry;
 
 // holds the vg tree info set by the user
@@ -64,7 +63,8 @@ struct _Efl_Canvas_Vg_Node_Data
    Efl_Canvas_Vg_Object_Data *vd;
 
    void (*render_pre)(Evas_Object_Protected_Data *vg_pd, Efl_VG *node,
-         Efl_Canvas_Vg_Node_Data *nd, Ector_Surface *surface,
+         Efl_Canvas_Vg_Node_Data *nd,
+         void *engine, void *output, void *contenxt, Ector_Surface *surface,
          Eina_Matrix3 *ptransform, Ector_Buffer *mask, int mask_op, void *data);
    void *data;
 
@@ -84,7 +84,6 @@ typedef struct _Vg_Mask
    Eina_Rect bound;                    //Mask boundary
    Eina_List *target;                  //Mask target
    int option;                         //Mask option
-   Eina_Bool dirty : 1;                //Need to update mask image.
 } Vg_Mask;
 
 struct _Efl_Canvas_Vg_Container_Data
@@ -119,12 +118,12 @@ struct _Efl_Canvas_Vg_Interpolation
 void                        evas_cache_vg_init(void);
 void                        evas_cache_vg_shutdown(void);
 Vg_Cache_Entry*             evas_cache_vg_entry_resize(Vg_Cache_Entry *entry, int w, int h);
-Vg_Cache_Entry*             evas_cache_vg_entry_create(const char *file, const char *key, int w, int h);
+Vg_Cache_Entry*             evas_cache_vg_entry_create(const Eina_File *file, const char *key, int w, int h);
 Efl_VG*                     evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry);
 void                        evas_cache_vg_entry_del(Vg_Cache_Entry *vg_entry);
-Vg_File_Data *              evas_cache_vg_file_open(const char *file, const char *key);
-Eina_Bool                   evas_cache_vg_file_save(Efl_VG *root, int w, int h, const char *file, const char *key, const char *flags);
-Eina_Bool                   evas_cache_vg_entry_file_save(Vg_Cache_Entry *vg_entry, const char *file, const char *key, const char *flags);
+Vg_File_Data *              evas_cache_vg_file_open(const Eina_File *file, const char *key);
+Eina_Bool                   evas_cache_vg_file_save(Efl_VG *root, int w, int h, const char *file, const char *key, const Efl_File_Save_Info *info);
+Eina_Bool                   evas_cache_vg_entry_file_save(Vg_Cache_Entry *vg_entry, const char *file, const char *key, const Efl_File_Save_Info *info);
 void                        efl_canvas_vg_node_vg_obj_set(Efl_VG *node, Efl_VG *vg_obj, Efl_Canvas_Vg_Object_Data *vd);
 void                        efl_canvas_vg_node_change(Efl_VG *node);
 void                        efl_canvas_vg_container_vg_obj_update(Efl_VG *obj, Efl_Canvas_Vg_Node_Data *nd);
@@ -138,11 +137,17 @@ efl_canvas_vg_object_change(Efl_Canvas_Vg_Object_Data *vd)
 }
 
 static inline Efl_Canvas_Vg_Node_Data *
-_evas_vg_render_pre(Evas_Object_Protected_Data *vg_pd, Efl_VG *child, Ector_Surface *surface, Eina_Matrix3 *transform, Ector_Buffer *mask, int mask_op)
+_evas_vg_render_pre(Evas_Object_Protected_Data *vg_pd, Efl_VG *child,
+                    void *engine, void *output, void *context,
+                    Ector_Surface *surface,
+                    Eina_Matrix3 *transform,
+                    Ector_Buffer *mask, int mask_op)
 {
    if (!child) return NULL;
    Efl_Canvas_Vg_Node_Data *nd = efl_data_scope_get(child, EFL_CANVAS_VG_NODE_CLASS);
-   if (nd) nd->render_pre(vg_pd, child, nd, surface, transform, mask, mask_op, nd->data);
+   if (nd) nd->render_pre(vg_pd, child, nd,
+                          engine, output, context, surface,
+                          transform, mask, mask_op, nd->data);
    return nd;
 }
 

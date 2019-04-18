@@ -67,6 +67,7 @@ _elm_code_widget_text_multi_get(Elm_Code_Widget *widget, Elm_Code_Widget_Data *p
      }
 
    ret = malloc(sizeof(char) * (ret_len + 1));
+   if (!ret) goto end;
 
    snprintf(ret, strlen(first) + newline_len + 1, "%s%s", first, newline);
 
@@ -84,6 +85,7 @@ _elm_code_widget_text_multi_get(Elm_Code_Widget *widget, Elm_Code_Widget_Data *p
      }
    snprintf(ptr, strlen(last) + 1, "%s", last);
 
+end:
    free(first);
    free(last);
    return ret;
@@ -216,7 +218,7 @@ _elm_code_widget_text_insert_single(Elm_Code_Widget *widget, Elm_Code *code,
    if (newcol > pd->col_count)
      _elm_code_widget_resize(widget, line);
 
-   elm_obj_code_widget_cursor_position_set(widget, row, newcol);
+   efl_ui_code_widget_cursor_position_set(widget, row, newcol);
 }
 
 static void
@@ -263,8 +265,8 @@ _elm_code_widget_text_at_cursor_insert_do(Elm_Code_Widget *widget, const char *t
    if (undo)
      elm_code_widget_selection_delete(widget);
 
-   code = elm_obj_code_widget_code_get(widget);
-   elm_obj_code_widget_cursor_position_get(widget, &row, &col);
+   code = efl_ui_code_widget_code_get(widget);
+   efl_ui_code_widget_cursor_position_get(widget, &row, &col);
    line = elm_code_file_line_get(code->file, row);
    if (line == NULL)
      {
@@ -285,7 +287,7 @@ _elm_code_widget_text_at_cursor_insert_do(Elm_Code_Widget *widget, const char *t
                elm_code_line_text_insert(line, 0, indent_text, indent);
 
              col = elm_code_widget_line_text_column_width_to_position(widget, line, indent + 1);
-             elm_obj_code_widget_cursor_position_set(widget, row, col);
+             efl_ui_code_widget_cursor_position_set(widget, row, col);
           }
      }
 
@@ -293,9 +295,9 @@ _elm_code_widget_text_at_cursor_insert_do(Elm_Code_Widget *widget, const char *t
      _elm_code_widget_text_insert_single(widget, code, col, row, text, length);
    else
      _elm_code_widget_text_insert_multi(widget, code, col, row, text, length);
-   elm_obj_code_widget_cursor_position_get(widget, &end_row, &end_col);
+   efl_ui_code_widget_cursor_position_get(widget, &end_row, &end_col);
 
-   efl_event_callback_legacy_call(widget, ELM_OBJ_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
+   efl_event_callback_legacy_call(widget, EFL_UI_CODE_WIDGET_EVENT_CHANGED_USER, NULL);
 
    if (undo)
      {

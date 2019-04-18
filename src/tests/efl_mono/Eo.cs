@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace TestSuite
 {
@@ -8,6 +9,13 @@ class TestEo
 {
     private class Derived : Dummy.TestObject
     {
+    }
+
+    public static void return_null_object()
+    {
+        var testing = new Dummy.TestObject();
+        var o1 = testing.ReturnNullObject();
+        Test.Assert(o1 == null);
     }
 
     //
@@ -41,6 +49,7 @@ class TestEo
        Test.Assert(delEventCalled, "DEL event not called");
     } */
 
+    /* Commented until we figure out a new way to test disposing
     public static void dispose_really_frees()
     {
        bool delEventCalled = false;
@@ -54,6 +63,7 @@ class TestEo
 
        Test.Assert(delEventCalled, "DEL event not called");
     }
+    */
 
     /* Commented out as adding the event listener seems to prevent it from being GC'd.
     public static void derived_destructor_really_frees()
@@ -88,16 +98,16 @@ class TestEo
 }
 
 
-class MyLoop : Efl.Loop
+class MyObject : Efl.Object
 {
-    public MyLoop() : base(null) { }
+    public MyObject() : base(null) { }
 }
 
 class TestEoInherit
 {
     public static void instantiate_inherited()
     {
-        Efl.Loop loop = new MyLoop();
+        Efl.Object loop = new MyObject();
         Test.Assert(loop.NativeHandle != System.IntPtr.Zero);
     }
 }
@@ -114,43 +124,6 @@ class TestEoNames
     }
 }
 
-class TestEoConstructingMethods
-{
-    public static void constructing_method()
-    {
-        bool called = false;
-        string name = "Test object";
-        var obj = new Dummy.TestObject(null, (Dummy.TestObject a) => {
-                called = true;
-                Console.WriteLine("callback: obj NativeHandle: {0:x}", a.NativeHandle);
-                a.SetName(name);
-            });
-
-        Test.Assert(called);
-        Test.AssertEquals(name, obj.GetName());
-    }
-
-    private class Derived : Dummy.TestObject
-    {
-        public Derived(Dummy.TestObject parent = null,
-                       Dummy.TestObject.ConstructingMethod cb = null) : base(parent, cb) {
-        }
-    }
-
-    public static void constructing_method_inherit()
-    {
-        bool called = false;
-        string name = "Another test object";
-        Derived obj = new Derived(null, (Dummy.TestObject a) => {
-                called = true;
-                a.SetComment(name);
-            });
-
-        Test.Assert(called);
-        Test.AssertEquals(name, obj.GetComment());
-    }
-}
-
 class TestEoParent
 {
     public static void basic_parent()
@@ -160,7 +133,7 @@ class TestEoParent
 
         Test.AssertEquals(parent, child.GetParent());
 
-        var parent_retrieved = Dummy.TestObject.static_cast(child.GetParent());
+        var parent_retrieved = child.GetParent() as Dummy.TestObject;
         Test.AssertEquals(parent, parent_retrieved);
     }
 
@@ -171,7 +144,7 @@ class TestEoParent
 
         Test.AssertEquals(parent, child.GetParent());
 
-        Dummy.Numberwrapper parent_retrieved = Dummy.Numberwrapper.static_cast(child.GetParent());
+        Dummy.Numberwrapper parent_retrieved = child.GetParent() as Dummy.Numberwrapper;
         Test.AssertEquals(parent, parent_retrieved);
     }
 
@@ -189,7 +162,7 @@ class TestEoParent
 
         Test.AssertEquals(parent, child.GetParent());
 
-        var parent_from_cast = Dummy.TestObject.static_cast(child.GetParent());
+        var parent_from_cast = child.GetParent() as Derived;
         Test.AssertEquals(parent, parent_from_cast);
     }
 }
@@ -224,6 +197,24 @@ class TestTypedefs
         Test.AssertEquals((Dummy.MyInt)ret, input);
         Test.AssertEquals(receiver, input);
 
+    }
+}
+
+class TestVariables
+{
+    public static void test_constant_variables()
+    {
+        Test.AssertEquals(Dummy.Constants.ConstvarBool, true);
+        Test.AssertEquals(Dummy.Constants.ConstvarInt, -32766);
+        Test.AssertEquals(Dummy.Constants.ConstvarUInt, 65533U);
+        Test.AssertEquals(Dummy.Constants.ConstvarLong, -2147483644L);
+        Test.AssertEquals(Dummy.Constants.ConstvarULong, 4294967288UL);
+        Test.AssertEquals(Dummy.Constants.ConstvarLLong, -9223372036854775800);
+        Test.AssertEquals(Dummy.Constants.ConstvarULLong, 18446744073709551615);
+        Test.AssertEquals(Dummy.Constants.ConstvarFloat, 16777211.0f);
+        Test.AssertEquals(Dummy.Constants.ConstvarDouble, 9007199254740988.0);
+        Test.AssertEquals(Dummy.Constants.ConstvarChar, '!');
+        Test.AssertEquals(Dummy.Constants.ConstvarString, "test_str");
     }
 }
 
@@ -339,7 +330,7 @@ class TestCsharpProperties
     public static void test_iface_property()
     {
         int val = -33;
-        Dummy.TestIface iface = new Dummy.TestObject();
+        Dummy.ITestIface iface = new Dummy.TestObject();
         iface.IfaceProp = val;
         Test.AssertEquals(val, iface.IfaceProp);
     }
@@ -365,6 +356,13 @@ class TestEoGrandChildrenFinalize
 
     public sealed class GrandChild : Dummy.Child
     {
+
+#if EFL_BETA
+        public GrandChild() : base(null, "", 0.0, 0) { }
+#else
+        public GrandChild() : base(null, "", 0.0) { }
+#endif
+
         public int receivedValue = 0;
         public override Efl.Object FinalizeAdd()
         {
@@ -377,6 +375,124 @@ class TestEoGrandChildrenFinalize
     {
         GrandChild obj = new GrandChild();
         Test.AssertEquals(-42, obj.receivedValue);
+    }
+}
+
+class TestConstructors
+{
+    public static void test_simple_constructor()
+    {
+        int iface_prop = 42;
+        string a = "LFE";
+        double b = 3.14;
+#if EFL_BETA
+        int beta = 1337;
+#endif
+
+#if EFL_BETA
+        var obj = new Dummy.Child(null, a, b, beta, iface_prop, 0);
+#else
+        var obj = new Dummy.Child(null, a, b, iface_prop);
+#endif
+        Test.AssertEquals(iface_prop, obj.IfaceProp);
+
+#if EFL_BETA
+        obj = new Dummy.Child(parent: null, ifaceProp : iface_prop, doubleParamsA : a, doubleParamsB : b,
+                              obligatoryBetaCtor : beta,
+                              optionalBetaCtor : -beta);
+#else
+        obj = new Dummy.Child(parent: null, ifaceProp : iface_prop, doubleParamsA : a, doubleParamsB : b);
+#endif
+        Test.AssertEquals(iface_prop, obj.IfaceProp);
+
+#if EFL_BETA
+        Test.Assert(obj.ObligatoryBetaCtorWasCalled);
+        Test.Assert(obj.OptionalBetaCtorWasCalled);
+#endif
+    }
+
+    public static void test_optional_constructor()
+    {
+        string a = "LFE";
+        double b = 3.14;
+#if EFL_BETA
+        int beta = 2241;
+        var obj = new Dummy.Child(null, a, b, obligatoryBetaCtor : beta);
+        Test.Assert(!obj.OptionalBetaCtorWasCalled);
+#else
+        var obj = new Dummy.Child(null, a, b);
+#endif
+        Test.Assert(!obj.GetIfaceWasSet());
+    }
+}
+
+class TestInterfaceConcrete
+{
+    // For T7619
+    public static void test_iface_concrete_methods()
+    {
+        var obj = new Dummy.TestObject();
+        Dummy.ITestIface iface = obj.ReturnIface();
+
+        iface.IfaceProp = 1970;
+        Test.AssertEquals(iface.IfaceProp, 1970);
+    }
+}
+
+class TestProvider
+{
+    public static void test_find_provider()
+    {
+        // Tests only the direction C# -> C
+        var obj = new Dummy.TestObject();
+        Dummy.Numberwrapper provider = obj.FindProvider(typeof(Dummy.Numberwrapper)) as Dummy.Numberwrapper;
+        Test.AssertEquals(provider.GetType(), typeof(Dummy.Numberwrapper));
+        Test.AssertEquals(provider.GetNumber(), 1999);
+    }
+
+    private class ProviderHolder : Dummy.TestObject
+    {
+        private Dummy.TestObject provider;
+        public string ProviderName
+        {
+            get
+            {
+                return "MyProvider";
+            }
+        }
+
+        public ProviderHolder() : base(null)
+        {
+            this.provider = new Dummy.TestObject(this);
+            this.provider.Name = this.ProviderName;
+            this.provider.IfaceProp = 1997;
+        }
+
+        public override Efl.Object FindProvider(System.Type type)
+        {
+            Console.WriteLine("Called FindProvider");
+            if (type == typeof(Dummy.ITestIface))
+            {
+                return this.provider;
+            }
+            else
+            {
+                return null;
+            }
+        }
+    }
+
+    public static void test_find_provider_iface()
+    {
+        var obj = new ProviderHolder();
+
+        var provider = obj.CallFindProvider(typeof(Efl.Object));
+        Test.AssertNull(provider, msg : "Unkonw provider must be null");
+
+        provider = obj.CallFindProviderForIface();
+        Test.AssertNotNull(provider, msg : "Provider of ITestIFace must not be null");
+        Test.AssertEquals(provider.Name, obj.ProviderName, "Provider name does not match expected");
+
     }
 }
 

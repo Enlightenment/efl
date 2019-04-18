@@ -2,7 +2,7 @@
 #include "elm_widget.h"
 #include <sys/types.h>
 #include <regex.h>
-#include "elm_entry.eo.h"
+#include "elm_entry_eo.h"
 
 #define BLINK_INTERVAL 0.1
 

@@ -14,8 +14,9 @@
 * edje_cc sphere_hunter.edc
 * gcc -o evas_3d_sphere_hunter evas_3d_sphere_hunter.c -g `pkg-config --libs --cflags evas ecore elementary eina eo` -lm
 */
-
-#define EFL_BETA_API_SUPPORT
+#ifndef EFL_BETA_API_SUPPORT
+# define EFL_BETA_API_SUPPORT
+#endif
 
 #include <Elementary.h>
 #include <Ecore.h>
@@ -323,7 +324,7 @@ _sphere_init(int precision)
 }
 
 static void
-_restart_level(void *data, Evas_Object *btn, void *ev)
+_restart_level(void *data, Evas_Object *btn EINA_UNUSED, void *ev EINA_UNUSED)
 {
    Eina_List *l = NULL;
    Eo *item = NULL;
@@ -778,7 +779,7 @@ _animate_cubes(void *data)
 }
 
 EAPI_MAIN int
-elm_main(int argc, char **argv)
+elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Scene_Data data;
    Eina_Bool r = EINA_TRUE;

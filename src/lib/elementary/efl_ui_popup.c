@@ -110,8 +110,8 @@ _efl_ui_popup_efl_ui_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EIN
    efl_gfx_entity_position_set(pd->backwall, EINA_POSITION2D(p_geom.x, p_geom.y));
    efl_gfx_entity_size_set(pd->backwall, EINA_SIZE2D(p_geom.w, p_geom.h));
 
-   efl_event_callback_add(pd->win_parent, EFL_GFX_ENTITY_EVENT_RESIZE, _parent_geom_cb, obj);
-   efl_event_callback_add(pd->win_parent, EFL_GFX_ENTITY_EVENT_MOVE, _parent_geom_cb, obj);
+   efl_event_callback_add(pd->win_parent, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _parent_geom_cb, obj);
+   efl_event_callback_add(pd->win_parent, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _parent_geom_cb, obj);
 }
 
 EOLIAN static void
@@ -215,13 +215,11 @@ _efl_ui_popup_efl_object_constructor(Eo *obj, Efl_Ui_Popup_Data *pd)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
 
-   elm_widget_sub_object_parent_add(obj);
-
    elm_widget_can_focus_set(obj, EINA_TRUE);
-   if (!elm_widget_theme_object_set(obj, wd->resize_obj,
+   if (elm_widget_theme_object_set(obj, wd->resize_obj,
                                        elm_widget_theme_klass_get(obj),
                                        elm_widget_theme_element_get(obj),
-                                       elm_widget_theme_style_get(obj)))
+                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
    pd->backwall = edje_object_add(evas_object_evas_get(obj));
@@ -242,9 +240,9 @@ _efl_ui_popup_efl_object_destructor(Eo *obj, Efl_Ui_Popup_Data *pd)
 {
    ELM_SAFE_DEL(pd->backwall);
 
-   efl_event_callback_del(pd->win_parent, EFL_GFX_ENTITY_EVENT_RESIZE, _parent_geom_cb,
+   efl_event_callback_del(pd->win_parent, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _parent_geom_cb,
                           obj);
-   efl_event_callback_del(pd->win_parent, EFL_GFX_ENTITY_EVENT_MOVE, _parent_geom_cb,
+   efl_event_callback_del(pd->win_parent, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _parent_geom_cb,
                           obj);
 
    efl_destructor(efl_super(obj, MY_CLASS));
@@ -259,7 +257,7 @@ _sizing_eval(Eo *obj)
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    edje_object_size_min_restricted_calc
       (wd->resize_obj, &minw, &minh, minw, minh);
-   efl_gfx_size_hint_min_set(obj, EINA_SIZE2D(minw, minh));
+   efl_gfx_hint_size_min_set(obj, EINA_SIZE2D(minw, minh));
 
    Eina_Size2D size = efl_gfx_entity_size_get(obj);
 
@@ -351,11 +349,18 @@ _efl_ui_popup_part_backwall_repeat_events_get(const Eo *obj, void *_pd EINA_UNUS
    return efl_canvas_object_repeat_events_get(sd->backwall);
 }
 
-EOLIAN static Eina_Bool
-_efl_ui_popup_part_backwall_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, const char *file, const char *group)
+EOLIAN static Eina_Error
+_efl_ui_popup_part_backwall_efl_file_load(Eo *obj, void *_pd EINA_UNUSED)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Popup_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_POPUP_CLASS);
+
+   Eina_Error err;
+
+   if (efl_file_loaded_get(obj)) return 0;
+
+   err = efl_file_load(efl_super(obj, MY_CLASS));
+   if (err) return err;
 
    Eo *prev_obj = edje_object_part_swallow_get(sd->backwall, "efl.content");
    if (prev_obj)
@@ -366,16 +371,23 @@ _efl_ui_popup_part_backwall_efl_file_file_set(Eo *obj, void *_pd EINA_UNUSED, co
      }
 
    Eo *image = elm_image_add(pd->obj);
-   Eina_Bool ret = elm_image_file_set(image, file, group);
+   Eina_Bool ret;
+   const Eina_File *f;
+
+   f = efl_file_mmap_get(obj);
+   if (f)
+     ret = elm_image_mmap_set(image, f, efl_file_key_get(obj));
+   else
+     ret = elm_image_file_set(image, efl_file_get(obj), efl_file_key_get(obj));
    if (!ret)
      {
         efl_del(image);
-        return EINA_FALSE;
+        return EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
      }
    edje_object_part_swallow(sd->backwall, "efl.content", image);
    edje_object_signal_emit(sd->backwall, "efl,state,content,set", "efl");
 
-   return EINA_TRUE;
+   return 0;
 }
 
 #include "efl_ui_popup_part_backwall.eo.c"

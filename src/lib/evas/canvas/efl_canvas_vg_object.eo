@@ -1,4 +1,4 @@
-enum Efl.Canvas.Vg.Fill_Mode
+enum @beta Efl.Canvas.Vg.Fill_Mode
 {
    [[Enumeration that defines how viewbox will be filled int the vg canvs's viewport.
      default Fill_Mode is $none]]
@@ -21,10 +21,9 @@ enum Efl.Canvas.Vg.Fill_Mode
                   dimension of the viewport.]]
 }
 
-class Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File
+class @beta Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, Efl.File_Save
 {
    [[Efl vector graphics class]]
-   legacy_prefix: evas_object_vg;
    methods {
       @property fill_mode {
          [[Control how the viewbox is mapped to the vg canvas's viewport.]]
@@ -54,7 +53,7 @@ class Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File
       @property root_node {
          get {
             [[Get the root node of the evas_object_vg.
-              @since 1.14]]
+            ]]
          }
          set {
             [[Set the root node of the evas_object_vg.
@@ -73,8 +72,9 @@ class Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
-      // FIXME: Implement mmap only (also fix cache keys)
-      Efl.File.file { get; set; }
-      Efl.File.save;
+      Efl.File.load;
+      Efl.File.unload;
+      Efl.File.file { set; }
+      Efl.File_Save.save;
    }
 }

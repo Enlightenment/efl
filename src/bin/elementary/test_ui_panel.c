@@ -1,6 +1,7 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+#include <Efl_Ui.h>
 #include <Elementary.h>
 
 void
@@ -10,7 +11,7 @@ test_ui_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    Eo *win, *table, *panel;
 
    win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-                     efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+                     efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
                      efl_text_set(efl_added, "Efl.Ui.Panel"),
                      efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -19,9 +20,9 @@ test_ui_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    efl_add(EFL_UI_IMAGE_CLASS, table,
-           efl_file_set(efl_added, buf, NULL),
-           efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-           efl_gfx_size_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),
+           efl_file_set(efl_added, buf),
+           efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
+           efl_gfx_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),
            efl_pack_table(table, efl_added, 0, 0, 4, 5));
 
    // Top Panel
@@ -103,7 +104,7 @@ test_ui_panel2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    Eo *win, *box, *check, *btn, *table, *list, *panel;
 
    win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-                     efl_ui_win_type_set(efl_added, EFL_UI_WIN_BASIC),
+                     efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
                      efl_text_set(efl_added, "Efl.Ui.Panel"),
                      efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
@@ -114,17 +115,17 @@ test_ui_panel2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_ui_check_selected_set(efl_added, elm_config_scroll_thumbscroll_enabled_get()),
            efl_text_set(efl_added, "Enable thumb scroll (temporarily"),
            efl_event_callback_add(efl_added, EFL_UI_NSTATE_EVENT_CHANGED, _check_changed, NULL),
-           efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0),
+           efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0),
            efl_pack(box, efl_added));
 
    check = efl_add(EFL_UI_CHECK_CLASS, box,
                    efl_text_set(efl_added, "Reset content on toggle"),
-                   efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0),
+                   efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0),
                    efl_pack(box, efl_added));
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "toggle"),
-                 efl_gfx_size_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0),
+                 efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0),
                  efl_pack(box, efl_added));
 
    table = efl_add(EFL_UI_TABLE_CLASS, box,

@@ -3,7 +3,6 @@
 #endif
 
 #define EFL_ACCESS_ACTION_PROTECTED
-#define EFL_ACCESS_ACTION_BETA
 
 #include <Elementary.h>
 #include "elm_widget.h"

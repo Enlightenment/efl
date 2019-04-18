@@ -8,7 +8,7 @@
 #include <sys/types.h>
 #include <unistd.h>
 
-#ifdef HAVE_WS2TCPIP_H
+#ifdef _WIN32
 # include <ws2tcpip.h>
 #endif
 

@@ -21,10 +21,10 @@ if [ "$BUILDSYSTEM" = "ninja" ] ; then
    if [ "$DISTRO" != "" ] ; then
       # disable them for this distros, after meson 0.49 is out, this can be removed
       # https://github.com/mesonbuild/meson/commit/253c581412d7f2b09af353dd83d943454bd555be
-      if [ "$DISTRO" != "Ubuntu1804" ] && [ "$DISTRO" != "Debian91" ]; then
+      if [ "$DISTRO" != "Ubuntu1810" ] && [ "$DISTRO" != "Debian96" ]; then
         for tries in $(seq 1 ${NUM_TRIES}); do
-            (docker exec --env EINA_LOG_BACKTRACE="0" --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) ninja -C build test) && break
-            docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) cat src/test-suite.log
+            (docker exec --env EINA_LOG_BACKTRACE="0" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) meson test -C build --wrapper dbus-launch ) && break
+            docker exec --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) cat build/meson-logs/testlog-dbus-launch.txt
             if [ $tries != ${NUM_TRIES} ] ; then echo "tests failed, trying again!" ; fi
             false
         done

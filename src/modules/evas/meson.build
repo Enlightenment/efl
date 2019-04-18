@@ -67,6 +67,14 @@ foreach engine_conf : engines
         dependencies : [eina, evas_pre] + engine_deps,
       )
 
+      if engine == 'software_generic'
+        software_generic = declare_dependency(
+          include_directories: engine_include_dir,
+          sources : gen_src,
+          dependencies : [eina, evas_pre] + engine_deps,
+          link_with : tmp
+        )
+      endif
       if engine == 'gl_common'
         #gl_common will only be used by gl_generic, NOT by libevas.so, so we work arround the static list
         gl_common = declare_dependency(

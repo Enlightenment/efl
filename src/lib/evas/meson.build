@@ -129,7 +129,7 @@ if (get_option('pixman'))
    foreach support : pixman_support
      config_h.set(support, '1')
    endforeach
-   evas_deps += dependency('pixman')
+   evas_deps += dependency('pixman-1')
 endif
 
 if (get_option('hyphen'))
@@ -202,9 +202,11 @@ evas_pre_lib_dep = declare_dependency(
   dependencies: [evas_deps, m, draw, valgrind, libunibreak]
 )
 
-install_data(pub_evas_eo_files + pub_evas_eot_files,
-  install_dir: join_paths(eolian_include_dir, package_version_name)
-)
+if get_option('install-eo-files')
+  install_data(pub_evas_eo_files + pub_evas_eot_files,
+    install_dir: join_paths(eolian_include_dir, package_version_name)
+  )
+endif
 
 install_headers(evas_header_src,
   install_dir : dir_package_include,

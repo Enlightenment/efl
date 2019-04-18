@@ -1,0 +1,26 @@
+interface @beta Efl.Ui.Range_Interactive extends Efl.Ui.Range_Display
+{
+   [[Interface that extends the normal displaying properties with usage properties.
+
+     The properties defined here are used to manipulate the way a user interacts with a displayed range.
+   ]]
+   eo_prefix: efl_ui_range;
+   methods {
+      @property range_step {
+         [[Control the step used to increment or decrement values for given widget.
+
+           This value will be incremented or decremented to the displayed value.
+
+           By default step value is equal to 1.
+
+           Warning: The step value should be bigger than 0.]]
+         set {
+         }
+         get {
+         }
+         values {
+           step: double; [[The step value.]]
+         }
+      }
+   }
+}

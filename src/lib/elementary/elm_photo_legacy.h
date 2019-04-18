@@ -116,4 +116,4 @@ EAPI int elm_photo_size_get(const Evas_Object *obj);
  */
 EAPI void elm_photo_thumb_set(Evas_Object *obj, const char *file, const char *group);
 
-#include "elm_photo.eo.legacy.h"
+#include "elm_photo_eo.legacy.h"

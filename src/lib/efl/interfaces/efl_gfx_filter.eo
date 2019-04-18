@@ -1,4 +1,4 @@
-interface Efl.Gfx.Filter
+interface @beta Efl.Gfx.Filter
 {
    [[Graphical filters can be applied to any object implementing this interface.
 
@@ -7,8 +7,6 @@ interface Efl.Gfx.Filter
      be found under "EFL Graphics Filters".
 
      This was a beta feature since 1.15.
-
-     @since 1.18
    ]]
    eo_prefix: efl_gfx;
    methods {

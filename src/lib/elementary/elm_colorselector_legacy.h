@@ -8,4 +8,4 @@
  */
 EAPI Evas_Object *elm_colorselector_add(Evas_Object *parent);
 
-#include "elm_colorselector.eo.legacy.h"
+#include "elm_colorselector_eo.legacy.h"

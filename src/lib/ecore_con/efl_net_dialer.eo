@@ -1,8 +1,8 @@
-var Efl.Net.Dialer_Error.COULDNT_CONNECT: Eina.Error; [[The dialer could not connect to the remote]]
-var Efl.Net.Dialer_Error.COULDNT_RESOLVE_PROXY: Eina.Error; [[The dialer could not resolve the given proxy server]]
-var Efl.Net.Dialer_Error.PROXY_AUTHENTICATION_FAILED: Eina.Error; [[The dialer failed to authenticate against the proxy server]]
+var @beta Efl.Net.Dialer_Error.COULDNT_CONNECT: Eina.Error; [[The dialer could not connect to the remote]]
+var @beta Efl.Net.Dialer_Error.COULDNT_RESOLVE_PROXY: Eina.Error; [[The dialer could not resolve the given proxy server]]
+var @beta Efl.Net.Dialer_Error.PROXY_AUTHENTICATION_FAILED: Eina.Error; [[The dialer failed to authenticate against the proxy server]]
 
-interface Efl.Net.Dialer extends Efl.Net.Socket {
+interface @beta Efl.Net.Dialer extends Efl.Net.Socket {
     [[Creates a client socket to reach a remote peer.
 
       The connection process starts when @.dial is executed. This
@@ -17,8 +17,6 @@ interface Efl.Net.Dialer extends Efl.Net.Socket {
 
       Once the socket is closed, @Efl.Io.Closer.closed will be called
       and the "closed" event is dispatched.
-
-      @since 1.19
     ]]
     methods {
         dial {
@@ -112,7 +110,7 @@ interface Efl.Net.Dialer extends Efl.Net.Socket {
 
     events {
         /* FIXME: Might be NULL, but @nullable does not work on event types */
-        resolved: string; [[Notifies @.address_dial was resolved to
+        dialer,resolved: string; [[Notifies @.address_dial was resolved to
                             @Efl.Net.Socket.address_remote.
 
                             This is emitted before "connected" and may
@@ -124,9 +122,9 @@ interface Efl.Net.Dialer extends Efl.Net.Socket {
                             may be emitted multiple times, such as
                             HTTP.
                           ]]
-        error: Eina.Error; [[Some error happened and the socket
+        dialer,error: Eina.Error; [[Some error happened and the socket
                              stopped working.
                            ]]
-        connected: void; [[Notifies the socket is connected to the remote peer.]]
+        dialer,connected: void; [[Notifies the socket is connected to the remote peer.]]
     }
 }

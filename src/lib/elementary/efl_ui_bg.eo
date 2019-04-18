@@ -1,15 +1,17 @@
-class Efl.Ui.Bg extends Efl.Ui.Layout implements Efl.Gfx.Color, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller
+class @beta Efl.Ui.Bg extends Efl.Ui.Layout_Base implements Efl.File, Efl.Gfx.Color, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller
 {
    [[The bg (background) widget is used for setting (solid) background decorations
    for a window (unless it has transparency enabled) or for any container object. It
    works just like an image, but has some properties useful for backgrounds, such as
    setting it to tiled, centered, scaled or stretched.
    ]]
-   legacy_prefix: elm_bg;
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
+      Efl.Object.finalize;
+      Efl.File.load;
       Efl.File.file { get; set; }
+      Efl.File.key { get; set; }
       Efl.File.mmap { get; set; }
       Efl.Gfx.Color.color { get; set; }
       Efl.Gfx.Image.scale_type { get; set; }

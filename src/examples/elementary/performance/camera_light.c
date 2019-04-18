@@ -226,7 +226,7 @@ init_panel_camera_light(Evas_Object *win, Eo *camera_node, Eo *light_node, doubl
 }
 
 static void
-_camera_light_changeX_cb(void *data, Evas_Object *obj, void *event_info)
+_camera_light_changeX_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Real x, y, z;
 
@@ -238,7 +238,7 @@ _camera_light_changeX_cb(void *data, Evas_Object *obj, void *event_info)
      }
 }
 static void
-_camera_light_changeY_cb(void *data, Evas_Object *obj, void *event_info)
+_camera_light_changeY_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Real x, y, z;
 
@@ -250,7 +250,7 @@ _camera_light_changeY_cb(void *data, Evas_Object *obj, void *event_info)
      }
 }
 static void
-_camera_light_changeZ_cb(void *data, Evas_Object *obj, void *event_info)
+_camera_light_changeZ_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Real x, y, z;
 
@@ -262,7 +262,7 @@ _camera_light_changeZ_cb(void *data, Evas_Object *obj, void *event_info)
      }
 }
 static void
-_camera_light_angle_change_cb(void *data, Evas_Object *obj, void *event_info)
+_camera_light_angle_change_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Axis_Key *key = evas_object_data_get(obj, axiskeys);
    Evas_Real aw = 0;
@@ -274,7 +274,7 @@ _camera_light_angle_change_cb(void *data, Evas_Object *obj, void *event_info)
      }
 }
 static void
-_camera_light_axisX_change_cb(void *data, Evas_Object *obj, void *event_info)
+_camera_light_axisX_change_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *fsa = (Evas_Object*)data;
    Axis_Key *key =  evas_object_data_get(fsa, axiskeys);
@@ -282,7 +282,7 @@ _camera_light_axisX_change_cb(void *data, Evas_Object *obj, void *event_info)
      key->x = elm_spinner_value_get(obj);
 }
 static void
-_camera_light_axisY_change_cb(void *data, Evas_Object *obj, void *event_info)
+_camera_light_axisY_change_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *fsa = (Evas_Object*)data;
    Axis_Key *key =  evas_object_data_get(fsa, axiskeys);
@@ -290,7 +290,7 @@ _camera_light_axisY_change_cb(void *data, Evas_Object *obj, void *event_info)
      key->y = elm_spinner_value_get(obj);
 }
 static void
-_camera_light_axisZ_change_cb(void *data, Evas_Object *obj, void *event_info)
+_camera_light_axisZ_change_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *fsa = (Evas_Object*)data;
    Axis_Key *key =  evas_object_data_get(fsa, axiskeys);

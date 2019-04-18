@@ -1,0 +1,18 @@
+abstract @beta Efl.Loop_Model extends Efl.Loop_Consumer implements Efl.Model
+{
+   data: null;
+   methods {
+      volatile_make {
+         [[To be called when a Child model is created by @Efl.Model.children_slice_get by the one creating the child object.
+
+         This function is used to properly define the lifecycle of the new Child Model object
+         and make sure that once it has 0 ref except its parent Model, it will be destroyed.
+         This function should only be called once per child. It is useful for @Efl.Model who
+         have a lot of children and shouldn't keep more than what is used in memory.]]
+      }
+   }
+   implements {
+      Efl.Object.invalidate;
+      Efl.Model.property_ready_get;
+   }
+}

@@ -1,6 +1,6 @@
 parse efl_ui_direction;
 
-enum Efl.Orient
+enum @beta Efl.Orient
 {
    [[An orientation type, to rotate visual objects.
 
@@ -17,7 +17,7 @@ enum Efl.Orient
    left = 270, [[Orient left, rotate 90 degrees clock-wise.]]
 }
 
-enum Efl.Flip
+enum @beta Efl.Flip
 {
    [[A flip type, to flip visual objects.
 
@@ -28,7 +28,7 @@ enum Efl.Flip
    vertical = 2 [[Flip image vertically]]
 }
 
-interface Efl.Orientation
+interface @beta Efl.Orientation
 {
    [[Efl orientation interface]]
    methods {

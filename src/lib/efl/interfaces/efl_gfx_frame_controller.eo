@@ -1,0 +1,106 @@
+/* FIXME: invalid type from evas/emile! */
+/* type @extern Evas.Animated_Loop_Hint: int; */
+
+enum @beta Efl.Gfx.Frame_Controller_Loop_Hint {
+   [[Frame loop modes]]
+   none = 0,       [[No looping order specified.]]
+   loop = 1,       [[Standard loop: 1->2->3->1->2->3->1]]
+   pingpong = 2    [[Ping-pong bouncing loop: 1->2->3->2->1->2->3->1]]
+}
+
+interface @beta Efl.Gfx.Frame_Controller
+{
+   [[Efl frame controller of frame based animated object interface.]]
+
+   methods {
+      @property animated {
+         get {
+            [[Check if an object can be animated (has multiple frames).
+
+              This will be $true for animated object for instance but $false
+              for a single frame object.
+            ]]
+         }
+         values {
+            is_animated: bool; [[$true if the object is animated]]
+         }
+      }
+      @property frame {
+         [[Index of the current frame of an animated object.
+
+           Ranges from 1 to @.frame_count. Valid only if @.animated.
+         ]]
+         set {
+            [[Set the frame to current frame of an animated object.
+            ]]
+            return: bool; [[Returns $true if the frame index is valid.]]
+         }
+         get {}
+         values {
+            frame_index: int; [[The index of current frame.]]
+         }
+      }
+      @property frame_count {
+         get {
+            [[Get the total number of frames of the object, if animated.
+
+              Returns -1 if not animated.
+            ]]
+            return: int; [[The number of frames in the animated object.]]
+         }
+      }
+      @property loop_type {
+         /* FIXME: external type used from evas / emile */
+         get {
+            [[Get the kind of looping the animated object does.
+
+              This returns the kind of looping the animated object wants to do.
+
+              If it returns @Efl.Gfx.Frame_Controller_Loop_Hint.loop, you should
+              display frames in a sequence like: 1->2->3->1->2->3->1...
+
+              If it returns @Efl.Gfx.Frame_Controller_Loop_Hint.pingpong, it is
+              better to display frames in a sequence like:
+              1->2->3->2->1->2->3->1...
+
+              The default type is @Efl.Gfx.Frame_Controller_Loop_Hint.loop.
+            ]]
+            return: Efl.Gfx.Frame_Controller_Loop_Hint; [[Loop type of the animated object.]]
+         }
+      }
+      @property loop_count {
+         get {
+            [[Get the number times the animation of the object loops.
+
+              This returns loop count of animated object. The loop count is the number
+              of times the animation will play fully from first to last frame
+              until the animation should stop (at the final frame).
+
+              If 0 is returned, then looping should happen indefinitely
+              (no limit to the number of times it loops).
+            ]]
+            return: int; [[The number of loop of an animated object.]]
+         }
+      }
+      @property frame_duration {
+         get {
+            [[Get the duration of a sequence of frames.
+
+              This returns total duration in seconds that the specified
+              sequence of frames should take.
+
+              If $start_frame is 1 and $frame_num is 0, this returns the
+              duration of frame 1. If $start_frame is 1 and $frame_num is 1,
+              this returns the total duration of frame 1 + frame 2.
+            ]]
+         }
+         keys {
+            start_frame: int; [[The first frame, rangers from 1 to @.frame_count.]]
+            frame_num: int; [[Number of frames in the sequence, starts from 0.]]
+         }
+         values {
+            duration: double; [[Duration in seconds]]
+         }
+      }
+   }
+}

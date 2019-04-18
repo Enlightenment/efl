@@ -316,6 +316,9 @@ typedef enum
 
    EOLIAN_TYPE_BUILTIN_BOOL,
 
+   EOLIAN_TYPE_BUILTIN_SLICE,
+   EOLIAN_TYPE_BUILTIN_RW_SLICE,
+
    EOLIAN_TYPE_BUILTIN_VOID,
 
    EOLIAN_TYPE_BUILTIN_ACCESSOR,
@@ -324,8 +327,6 @@ typedef enum
    EOLIAN_TYPE_BUILTIN_ITERATOR,
    EOLIAN_TYPE_BUILTIN_HASH,
    EOLIAN_TYPE_BUILTIN_LIST,
-   EOLIAN_TYPE_BUILTIN_INARRAY,
-   EOLIAN_TYPE_BUILTIN_INLIST,
 
    EOLIAN_TYPE_BUILTIN_ANY_VALUE,
    EOLIAN_TYPE_BUILTIN_ANY_VALUE_PTR,
@@ -333,6 +334,7 @@ typedef enum
    EOLIAN_TYPE_BUILTIN_MSTRING,
    EOLIAN_TYPE_BUILTIN_STRING,
    EOLIAN_TYPE_BUILTIN_STRINGSHARE,
+   EOLIAN_TYPE_BUILTIN_STRBUF,
 
    EOLIAN_TYPE_BUILTIN_VOID_PTR,
    EOLIAN_TYPE_BUILTIN_FREE_CB
@@ -699,6 +701,19 @@ EAPI const char *eolian_object_short_name_get(const Eolian_Object *obj);
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_object_namespaces_get(const Eolian_Object *obj);
+
+/*
+ * @brief Get whether an object is beta.
+ *
+ * This applies to toplevel objects (classes, types) as well as some
+ * others such as functions and events.
+ *
+ * @param[in] obj The object.
+ * @return EINA_TRUE and EINA_FALSE respectively
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_object_is_beta(const Eolian_Object *obj);
 
 /*
  * @brief Scan the given directory for .eo and .eot files.
@@ -1406,16 +1421,6 @@ EAPI Eolian_Class_Type eolian_class_type_get(const Eolian_Class *klass);
 EAPI const Eolian_Documentation *eolian_class_documentation_get(const Eolian_Class *klass);
 
 /*
- * @brief Returns the legacy prefix of a class
- *
- * @param[in] klass the class
- * @return the legacy prefix
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_class_legacy_prefix_get(const Eolian_Class *klass);
-
-/*
  * @brief Returns the eo prefix of a class
  *
  * @param[in] klass the class
@@ -1544,22 +1549,20 @@ eolian_function_name_get(const Eolian_Function *fid)
  *
  * @param[in] function_id Id of the function
  * @param[in] ftype The type of function to get the name for
- * @param[in] use_legacy If true, legacy prefix or name will be used when available
  * @return the function name
  *
  * It's here because the C API names are deduplicated (prefix of function and
  * suffix of prefix merge if applicable) and this helps generators not write
  * the same code over and over.
  *
- * If legacy name is supplied for the given type and use_legacy is set, it
- * will be used. Also, if the given type is PROP_GET or PROPERTY, a "_get"
- * suffix will be applied when not using legacy name, and "_set" for PROP_SET.
+ * If the given type is PROP_GET or PROPERTY, a "_get" suffix will be applied,
+ * and "_set" for PROP_SET.
  *
  * Also, you're responsible for deleting the stringshare.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_function_full_c_name_get(const Eolian_Function *function_id, Eolian_Function_Type ftype, Eina_Bool use_legacy);
+EAPI Eina_Stringshare *eolian_function_full_c_name_get(const Eolian_Function *function_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Get a function in a class by its name and type
@@ -1578,19 +1581,6 @@ EAPI Eina_Stringshare *eolian_function_full_c_name_get(const Eolian_Function *fu
 EAPI const Eolian_Function *eolian_class_function_by_name_get(const Eolian_Class *klass, const char *func_name, Eolian_Function_Type f_type);
 
 /*
- * @brief Returns a legacy name for a function.
- *
- * @param[in] function_id Id of the function
- * @param[in] f_type The function type, for property get/set distinction.
- * @return the legacy name or NULL.
- *
- * Acceptable input types are METHOD, PROP_GET and PROP_SET.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_function_legacy_get(const Eolian_Function *function_id, Eolian_Function_Type f_type);
-
-/*
  * @brief Returns the implement for a function.
  *
  * @param[in] function_id Id of the function
@@ -1599,19 +1589,6 @@ EAPI Eina_Stringshare *eolian_function_legacy_get(const Eolian_Function *functio
  * @ingroup Eolian
  */
 EAPI const Eolian_Implement *eolian_function_implement_get(const Eolian_Function *function_id);
-
-/*
- * @brief Indicates if a function is legacy only.
- *
- * @param[in] function_id Id of the function
- * @param[in] f_type The function type, for property get/set distinction.
- * @return EINA_TRUE if legacy only, EINA_FALSE otherwise.
- *
- * Acceptable input types are METHOD, PROP_GET and PROP_SET.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_function_is_legacy_only(const Eolian_Function *function_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Get whether a function is a class method/property.
@@ -1626,12 +1603,15 @@ EAPI Eina_Bool eolian_function_is_class(const Eolian_Function *function_id);
 /*
  * @brief Get whether a function is beta.
  *
- * @param[in] function_id Id of the function
- * @return EINA_TRUE and EINA_FALSE respectively
+ * @see eolian_object_is_beta
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_function_is_beta(const Eolian_Function *function_id);
+static inline Eina_Bool
+eolian_function_is_beta(const Eolian_Function *function_id)
+{
+   return eolian_object_is_beta(EOLIAN_OBJECT(function_id));
+}
 
 /*
  * @brief Indicates if a function is a constructing function of a given class.
@@ -2131,12 +2111,15 @@ EAPI Eolian_Object_Scope eolian_event_scope_get(const Eolian_Event *event);
 /*
  * @brief Get whether an event is beta.
  *
- * @param[in] event the event handle
- * @return EINA_TRUE and EINA_FALSE respectively
+ * @see eolian_object_is_beta
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_event_is_beta(const Eolian_Event *event);
+static inline Eina_Bool
+eolian_event_is_beta(const Eolian_Event *event)
+{
+   return eolian_object_is_beta(EOLIAN_OBJECT(event));
+}
 
 /*
  * @brief Get whether an event is hot (unfreezable).
@@ -2297,6 +2280,19 @@ EAPI Eina_Stringshare *eolian_class_c_name_get(const Eolian_Class *klass);
  * @ingroup Eolian
  */
 EAPI Eina_Stringshare *eolian_class_c_data_type_get(const Eolian_Class *klass);
+
+/*
+ * @brief Get whether a class is beta.
+ *
+ * @see eolian_object_is_beta
+ *
+ * @ingroup Eolian
+ */
+static inline Eina_Bool
+eolian_class_is_beta(const Eolian_Class *klass)
+{
+   return eolian_object_is_beta(EOLIAN_OBJECT(klass));
+}
 
 /*
  * @brief Get the type of a type declaration.
@@ -2494,6 +2490,19 @@ EAPI const Eolian_Type *eolian_typedecl_aliased_base_get(const Eolian_Typedecl *
 EAPI Eina_Bool eolian_typedecl_is_extern(const Eolian_Typedecl *tp);
 
 /*
+ * @brief Get whether a typedecl is beta.
+ *
+ * @see eolian_object_is_beta
+ *
+ * @ingroup Eolian
+ */
+static inline Eina_Bool
+eolian_typedecl_is_beta(const Eolian_Typedecl *tp)
+{
+   return eolian_object_is_beta(EOLIAN_OBJECT(tp));
+}
+
+/*
  * @brief Get the full C type name of the given type.
  *
  * @param[in] tp the type declaration.
@@ -2557,7 +2566,7 @@ eolian_typedecl_namespaces_get(const Eolian_Typedecl *tp)
 EAPI Eina_Stringshare *eolian_typedecl_free_func_get(const Eolian_Typedecl *tp);
 
 /*
- * @breif Get the function object for this function pointer type.
+ * @brief Get the function object for this function pointer type.
  *
  * @param[in] tp the type.
  * @return the function or NULL;
@@ -2993,6 +3002,19 @@ eolian_variable_namespaces_get(const Eolian_Variable *tp)
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_variable_is_extern(const Eolian_Variable *var);
+
+/*
+ * @brief Get whether a variable is beta.
+ *
+ * @see eolian_object_is_beta
+ *
+ * @ingroup Eolian
+ */
+static inline Eina_Bool
+eolian_variable_is_beta(const Eolian_Variable *var)
+{
+   return eolian_object_is_beta(EOLIAN_OBJECT(var));
+}
 
 /*
  * @brief Get the summary of the documentation.

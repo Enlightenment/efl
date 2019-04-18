@@ -8,7 +8,7 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_bubble.eo.h"
+#include "elm_bubble_eo.h"
 #include "elm_widget_bubble.h"
 #include "elm_widget_layout.h"
 
@@ -147,7 +147,6 @@ _elm_bubble_efl_canvas_group_group_add(Eo *obj, Elm_Bubble_Data *priv)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    priv->pos = ELM_BUBBLE_POS_TOP_LEFT; //default
 
@@ -246,4 +245,4 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_bubble), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_bubble)
 
-#include "elm_bubble.eo.c"
+#include "elm_bubble_eo.c"

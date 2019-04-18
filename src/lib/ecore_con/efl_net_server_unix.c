@@ -165,7 +165,7 @@ _efl_net_server_unix_bind(Eo *o, Efl_Net_Server_Unix_Data *pd)
  error:
    if (err)
      {
-        efl_event_callback_call(o, EFL_NET_SERVER_EVENT_ERROR, &err);
+        efl_event_callback_call(o, EFL_NET_SERVER_EVENT_SERVER_ERROR, &err);
         if (fd != INVALID_SOCKET) closesocket(fd);
         efl_loop_fd_set(o, SOCKET_TO_LOOP_FD(INVALID_SOCKET));
      }

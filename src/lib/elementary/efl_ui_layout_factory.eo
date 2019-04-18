@@ -1,4 +1,4 @@
-class Efl.Ui.Layout_Factory extends Efl.Ui.Caching_Factory
+class @beta Efl.Ui.Layout_Factory extends Efl.Ui.Caching_Factory
 {
    [[Efl Ui Layout Factory class]]
    methods {
@@ -16,7 +16,7 @@ class Efl.Ui.Layout_Factory extends Efl.Ui.Caching_Factory
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Ui.Factory.create;
-      Efl.Ui.Factory.model_connect;
-      Efl.Ui.Model.Connect.connect;
+      Efl.Ui.Property_Bind.property_bind;
+      Efl.Ui.Factory_Bind.factory_bind;
    }
 }

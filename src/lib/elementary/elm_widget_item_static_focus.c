@@ -7,8 +7,8 @@
 #define MY_CLASS ELM_WIDGET_ITEM_STATIC_FOCUS_CLASS
 
 #include <Elementary.h>
-#include "elm_genlist.eo.h"
-#include "elm_gengrid.eo.h"
+#include "elm_genlist_eo.h"
+#include "elm_gengrid_eo.h"
 #include "elm_priv.h"
 #include "efl_ui_focus_composition_adapter.eo.h"
 
@@ -35,7 +35,7 @@ _list_realized_cb(void *data, const Efl_Event *ev)
 
    if (!elm_object_item_disabled_get(data) &&
        elm_genlist_item_type_get(data) != ELM_GENLIST_ITEM_GROUP)
-     efl_ui_focus_object_prepare_logical(data);
+     efl_ui_focus_object_setup_order(data);
 }
 
 static void
@@ -54,11 +54,7 @@ _grid_realized_cb(void *data, const Efl_Event *ev)
 
    if (!elm_object_item_disabled_get(data) && !is_group)
      {
-        Elm_Widget_Item_Data *wpd = efl_data_scope_get(data, ELM_WIDGET_ITEM_CLASS);
-
-        //first prepare the container
-        efl_ui_focus_object_prepare_logical(wpd->widget);
-        efl_ui_focus_object_prepare_logical(data);
+        efl_ui_focus_object_setup_order(data);
      }
 }
 
@@ -83,12 +79,12 @@ _unrealized_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_widget_item_static_focus_efl_ui_focus_object_prepare_logical_none_recursive(Eo *obj, Elm_Widget_Item_Static_Focus_Data *pd EINA_UNUSED)
+_elm_widget_item_static_focus_efl_ui_focus_object_setup_order_non_recursive(Eo *obj, Elm_Widget_Item_Static_Focus_Data *pd EINA_UNUSED)
 {
    Eo *logical_child;
    Elm_Widget_Item_Data *wpd = efl_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
 
-   efl_ui_focus_object_prepare_logical_none_recursive(efl_super(obj, MY_CLASS));
+   efl_ui_focus_object_setup_order_non_recursive(efl_super(obj, MY_CLASS));
 
    if (!pd->realized)
      {
@@ -183,4 +179,4 @@ _elm_widget_item_static_focus_efl_object_destructor(Eo *obj, Elm_Widget_Item_Sta
 }
 
 
-#include "elm_widget_item_static_focus.eo.c"
+#include "elm_widget_item_static_focus_eo.c"

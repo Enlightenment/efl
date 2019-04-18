@@ -432,13 +432,13 @@ _index_priority_change(void *data, Elm_Index_Item_Data *it)
      }
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_index_efl_ui_widget_theme_apply(Eo *obj, Elm_Index_Data *sd)
 {
    Evas_Coord minw = 0, minh = 0;
    Elm_Object_Item *eo_item;
 
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
 
@@ -451,7 +451,7 @@ _elm_index_efl_ui_widget_theme_apply(Eo *obj, Elm_Index_Data *sd)
      elm_widget_theme_element_set(obj, "base/vertical");
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(sd->event_rect[0], minw, minh);
@@ -863,8 +863,7 @@ _on_mouse_up(void *data,
      {
         efl_event_callback_legacy_call
           (data, EFL_UI_EVENT_CLICKED, eo_item);
-        efl_event_callback_legacy_call
-          (data, EFL_UI_EVENT_SELECTED, eo_item);
+        evas_object_smart_callback_call(data, "selected", eo_item);
         eo_id_item = eo_item;
         ELM_INDEX_ITEM_DATA_GET(eo_id_item, id_item);
         if (id_item->func)
@@ -1046,7 +1045,6 @@ _elm_index_efl_canvas_group_group_add(Eo *obj, Elm_Index_Data *priv)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set
        (obj, "index", "base/vertical", elm_widget_style_get(obj)))
@@ -1298,13 +1296,12 @@ _elm_index_item_selected_set(Eo *eo_it,
 
         efl_event_callback_legacy_call
           (obj, ELM_INDEX_EVENT_CHANGED, eo_it);
-        efl_event_callback_legacy_call
-          (obj, EFL_UI_EVENT_SELECTED, eo_it);
+        evas_object_smart_callback_call(obj, "selected", eo_it);
         ecore_timer_del(sd->delay);
         sd->delay = ecore_timer_add(sd->delay_change_time,
                                     _delay_change_cb, obj);
         if (_elm_config->atspi_mode)
-          efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_SELECTED, EINA_TRUE);
+          efl_access_state_changed_signal_emit(eo_it, EFL_ACCESS_STATE_TYPE_SELECTED, EINA_TRUE);
      }
    else
      {
@@ -1710,5 +1707,5 @@ _elm_index_item_efl_access_widget_action_elm_actions_get(const Eo *eo_it EINA_UN
    ELM_LAYOUT_SIZING_EVAL_OPS(elm_index), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_index)
 
-#include "elm_index_item.eo.c"
-#include "elm_index.eo.c"
+#include "elm_index_item_eo.c"
+#include "elm_index_eo.c"

@@ -21,7 +21,7 @@ lib/ephysics/ephysics_quaternion.cpp \
 lib/ephysics/ephysics_shape.cpp \
 lib/ephysics/ephysics_world.cpp
 
-lib_ephysics_libephysics_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EPHYSICS_CFLAGS@
+lib_ephysics_libephysics_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EPHYSICS_CFLAGS@ -DEFL_BUILD
 lib_ephysics_libephysics_la_LIBADD = @EPHYSICS_LIBS@
 lib_ephysics_libephysics_la_DEPENDENCIES = @EPHYSICS_INTERNAL_LIBS@
 lib_ephysics_libephysics_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

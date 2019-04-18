@@ -1,37 +1,38 @@
-struct Efl.Ui.Image_Progress
+struct @beta Efl.Ui.Image_Progress
 {
    [[
      Structure associated with smart callback 'download,progress'.
-     @since 1.8
    ]]
    now:   double; [[Current percentage]]
    total: double; [[Total percentage]]
 }
 
-struct Efl.Ui.Image_Error
+struct @beta Efl.Ui.Image_Error
 {
    [[
      Structure associated with smart callback 'download,progress'.
-     @since 1.8
    ]]
    status:     int; [[Error status of the download]]
    open_error: bool; [[$true if the error happened when opening the file, $false otherwise]]
 }
 
-class Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.Ui.Draggable,
+class @beta Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.Ui.Draggable,
                  Efl.File, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller, Efl.Player, Efl.Gfx.View,
                  Efl.Access.Component, Efl.Access.Widget.Action, Efl.Gfx.Color,
                  Efl.Orientation,
-                 Efl.Ui.View, Efl.Ui.Model.Connect, Efl.Layout.Calc,
+                 Efl.Layout.Calc,
                  Efl.Layout.Group, Efl.Layout.Signal
 {
-   [[ Efl UI image class]]
+   [[Efl UI image class
+
+     When loading images from a file, the @Efl.File.key property can be used to access different
+     streams. For example, when accessing Evas image caches.
+   ]]
    event_prefix: efl_ui_image;
    methods {
       @property scalable {
          [[Enable or disable scaling up or down the internal image.
-
-           @since 1.18]]
+         ]]
          values {
             scale_up: bool;   [[If $true, the internal image might be scaled up
                                 if necessary according to the scale type.
@@ -45,8 +46,7 @@ class Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.Ui.Dra
       }
       @property align {
          [[Controls how the internal image is positioned inside an image object.
-
-           @since 1.18]]
+         ]]
          values {
             align_x: double; [[Alignment in the horizontal axis (0 <= align_x <= 1).]]
             align_y: double; [[Alignment in the vertical axis (0 <= align_y <= 1).]]
@@ -66,8 +66,8 @@ class Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.Ui.Dra
               the absolute path of an image file, this image will be used.
               Lookup order used by @.icon.set can be set using "icon_theme" in config.
 
-              Note: The image set by this function can be changed by
-              @Efl.File.file.set.
+              Note: The image set by this function is changed when
+              @Efl.File.load is called.
 
               Note: This function does not accept relative icon path.
 
@@ -89,8 +89,8 @@ class Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.Ui.Dra
    }
    implements {
       Efl.Object.constructor;
-      Efl.File.file { get; set; }
-      Efl.File.mmap { set; }
+      Efl.File.load;
+      Efl.File.unload;
       Efl.Gfx.Color.color { set; }
       Efl.Gfx.Entity.visible { set; }
       Efl.Gfx.Entity.position { set; }
@@ -107,15 +107,21 @@ class Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.Ui.Dra
       Efl.Layout.Signal.signal_emit;
       Efl.Layout.Group.group_size_min { get; }
       Efl.Layout.Group.group_size_max { get; }
+      Efl.Layout.Group.group_data { get; }
+      Efl.Layout.Group.part_exist { get; }
+      Efl.Layout.Calc.calc_freeze;
+      Efl.Layout.Calc.calc_thaw;
+      Efl.Layout.Calc.calc_auto_update_hints { get; set; }
       Efl.Layout.Calc.calc_size_min;
+      Efl.Layout.Calc.calc_parts_extends;
       Efl.Layout.Calc.calc_force;
-      Efl.Canvas.Object.clip { set; }
+      Efl.Canvas.Object.clipper { set; }
       Efl.Canvas.Group.group_member_add;
       Efl.Ui.Draggable.drag_target { get; set; }
-      Efl.Ui.Model.Connect.connect;
-      Efl.Ui.View.model { get; set; }
+      Efl.Ui.Property_Bind.property_bind;
+      Efl.Ui.View.model { set; }
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Widget.widget_event;
+      Efl.Ui.Widget.widget_input_event_handler;
       Efl.Access.Component.extents { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
    }

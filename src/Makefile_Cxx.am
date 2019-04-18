@@ -103,7 +103,7 @@ nodist_installed_eocxxheaders_DATA = $(eo_eolian_cxx_hh) $(eo_eolian_cxx_impl_hh
 nodist_installed_eflcxxmainheaders_DATA = $(efl_eolian_cxx_hh) $(efl_eolian_cxx_impl_hh) lib/efl/Efl.eo.hh
 nodist_installed_elementarycxxmainheaders_DATA = $(elementary_eolian_cxx_hh) $(elementary_eolian_cxx_impl_hh) \
 lib/elementary/Elementary.eo.hh
-nodist_installed_eldbuscxxmainheaders_DATA = $(eldbus_eolian_cxx_hh) $(eldbus_eolian_cxx_impl_hh) lib/eldbus/Eldbus_Model.eo.hh
+nodist_installed_eldbuscxxmainheaders_DATA = $(eldbus_eolian_cxx_hh) $(eldbus_eolian_cxx_impl_hh) lib/eldbus/Eldbus.eo.hh
 
 CLEANFILES += $(eo_eolian_cxx_hh) $(eo_eolian_cxx_impl_hh)
 
@@ -144,12 +144,12 @@ CLEANFILES += $(evas_canvas_eolian_cxx_hh) $(evas_canvas_eolian_cxx_impl_hh) \
               lib/evas/Evas.eo.hh
 
 
-lib/eldbus/Eldbus_Model.eo.hh: $(eldbus_eolian_files) $(_EOLIAN_CXX_DEP)
+lib/eldbus/Eldbus.eo.hh: $(eldbus_eolian_files) $(_EOLIAN_CXX_DEP)
 	$(AM_V_EOLCXX) \
 	$(MKDIR_P) $(dir $@); \
 	$(EOLIAN_CXX) $(EOLIAN_FLAGS) -m -o $@ $(filter %.eo, $^)
 
-CLEANFILES += $(eldbus_eolian_cxx_hh) $(eldbus_eolian_cxx_impl_hh) lib/eldbus/Eldbus_Model.eo.hh
+CLEANFILES += $(eldbus_eolian_cxx_hh) $(eldbus_eolian_cxx_impl_hh) lib/eldbus/Eldbus.eo.hh
 
 ### Eet C++
 

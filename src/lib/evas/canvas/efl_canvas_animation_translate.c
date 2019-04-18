@@ -17,8 +17,8 @@ _translation_get(Eo *target)
 
    geometry = efl_gfx_entity_geometry_get(target);
 
-   efl_gfx_map_coord_absolute_get(target, 0, &x1, &y1, NULL);
-   efl_gfx_map_coord_absolute_get(target, 2, &x2, &y2, NULL);
+   efl_gfx_mapping_coord_absolute_get(target, 0, &x1, &y1, NULL);
+   efl_gfx_mapping_coord_absolute_get(target, 2, &x2, &y2, NULL);
    translate.x = ((x1 + x2) / 2.0) - (geometry.x + (geometry.w / 2.0));
    translate.y = ((y1 + y2) / 2.0) - (geometry.y + (geometry.h / 2.0));
 
@@ -133,7 +133,7 @@ _efl_canvas_animation_translate_efl_canvas_animation_animation_apply(Eo *eo_obj,
         new.y = GET_STATUS(pd->from.y, pd->to.y, progress);
      }
 
-   efl_gfx_map_translate(target, new.x - prev.x, new.y - prev.y, 0.0);
+   efl_gfx_mapping_translate(target, new.x - prev.x, new.y - prev.y, 0.0);
 
    return progress;
 }

@@ -2,17 +2,6 @@
 #include <config.h>
 #endif
 
-#ifdef HAVE_NETINET_IN_H
-#include <netinet/in.h>
-#endif
-
-#ifdef _WIN32
-#include <winsock2.h>
-#include <Evil.h>
-#define HAVE_BOOLEAN /* This prevents libjpeg to redefine boolean */
-#define XMD_H /* This prevents libjpeg to redefine INT32 */
-#endif
-
 #ifdef ENABLE_LIBLZ4
 #include <lz4.h>
 #else
@@ -337,8 +326,8 @@ _emile_tgv_head(Emile_Image *image,
    image->compress = m[OFFSET_OPTIONS] & 0x1;
    image->blockless = (m[OFFSET_OPTIONS] & 0x2) != 0;
 
-   image->size.width = ntohl(*((unsigned int *)&(m[OFFSET_WIDTH])));
-   image->size.height = ntohl(*((unsigned int *)&(m[OFFSET_HEIGHT])));
+   image->size.width = eina_ntohl(*((unsigned int *)&(m[OFFSET_WIDTH])));
+   image->size.height = eina_ntohl(*((unsigned int *)&(m[OFFSET_HEIGHT])));
 
    if (image->blockless)
      {

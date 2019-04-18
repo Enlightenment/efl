@@ -19,6 +19,11 @@
 #define LOCAL_IMAGE_FOLDER PACKAGE_EXAMPLES_DIR "" EVAS_PROJECT_IMAGE_FOLDER
 #define LOCAL_MODEL_FOLDER PACKAGE_EXAMPLES_DIR "" EVAS_PROJECT_MODEL_FOLDER
 
+
+Evas             *evas              = NULL;
+Eo               *background        = NULL;
+Eo               *image             = NULL;
+
 static const char *gray_brick_n_path = LOCAL_IMAGE_FOLDER "/brick-stone_n.jpg";
 static const char *gray_brick_path = LOCAL_IMAGE_FOLDER "/brick-stone.jpg";
 static const char *red_brick_n_path = LOCAL_IMAGE_FOLDER "/bricks_n.jpg";
@@ -133,14 +138,14 @@ _key_down(void *data,
         if (!scene->blending)
           {
              scene->blending = EINA_TRUE;
-             efl_file_set(scene->texture_diffuse_carpet, gazebo_t_trans_path, NULL);
+             efl_file_simple_load(scene->texture_diffuse_carpet, gazebo_t_trans_path, NULL);
              evas_canvas3d_mesh_blending_enable_set(scene->mesh_carpet, EINA_TRUE);
              evas_canvas3d_mesh_blending_func_set(scene->mesh_carpet, EVAS_CANVAS3D_BLEND_FUNC_SRC_ALPHA, EVAS_CANVAS3D_BLEND_FUNC_ONE_MINUS_SRC_ALPHA);
           }
         else
           {
              scene->blending = EINA_FALSE;
-             efl_file_set(scene->texture_diffuse_carpet, gazebo_t_path, NULL);
+             efl_file_simple_load(scene->texture_diffuse_carpet, gazebo_t_path, NULL);
              evas_canvas3d_mesh_blending_enable_set(scene->mesh_carpet, EINA_FALSE);
           }
      }
@@ -733,7 +738,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
 
    ADD_MESH(tommy, tommy, 0.0, 0.3, 1.0)
    SETUP_MESH_NODE(tommy)
-   efl_file_set(data->mesh_tommy, gun_path, NULL);
+   efl_file_simple_load(data->mesh_tommy, gun_path, NULL);
    efl_file_save(data->mesh_tommy, "try.obj", NULL, NULL);
    evas_canvas3d_mesh_shader_mode_set(data->mesh_tommy, EVAS_CANVAS3D_SHADER_MODE_PHONG);
    evas_canvas3d_mesh_frame_material_set(data->mesh_tommy, 0, data->material_tommy);
@@ -763,7 +768,7 @@ _mesh_setup_gun_planet(Scene_Data *data)
    if (data->blending)
      {
         evas_canvas3d_texture_atlas_enable_set(data->texture_diffuse_carpet, EINA_FALSE);
-        efl_file_set(data->texture_diffuse_carpet, gazebo_t_trans_path, NULL);
+        efl_file_simple_load(data->texture_diffuse_carpet, gazebo_t_trans_path, NULL);
         evas_canvas3d_mesh_blending_enable_set(data->mesh_carpet, EINA_TRUE);
         evas_canvas3d_mesh_blending_func_set(data->mesh_carpet, EVAS_CANVAS3D_BLEND_FUNC_SRC_ALPHA, EVAS_CANVAS3D_BLEND_FUNC_ONE_MINUS_SRC_ALPHA);
      }
@@ -888,7 +893,7 @@ _mesh_setup_column(Scene_Data *data, int index)
 
    data->texture_diffuse_column = efl_add(EVAS_CANVAS3D_TEXTURE_CLASS, evas);
 
-   efl_file_set(data->texture_diffuse_column, red_brick_path, NULL);
+   efl_file_simple_load(data->texture_diffuse_column, red_brick_path, NULL);
    evas_canvas3d_texture_atlas_enable_set(data->texture_diffuse_column, EINA_FALSE);
    evas_canvas3d_texture_filter_set(data->texture_diffuse_column, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST, EVAS_CANVAS3D_TEXTURE_FILTER_NEAREST);
    evas_canvas3d_texture_wrap_set(data->texture_diffuse_column, EVAS_CANVAS3D_WRAP_MODE_REPEAT, EVAS_CANVAS3D_WRAP_MODE_REPEAT);

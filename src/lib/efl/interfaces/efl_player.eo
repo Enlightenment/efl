@@ -1,4 +1,4 @@
-interface Efl.Player
+interface @beta Efl.Player
 {
    [[Efl media player interface]]
    methods {

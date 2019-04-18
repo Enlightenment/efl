@@ -1,7 +1,7 @@
 import efl_gfx_types;
 import eina_types;
 
-enum Efl.Gfx.Image_Content_Hint
+enum @beta Efl.Gfx.Image_Content_Hint
 {
    [[How an image's data is to be treated by EFL, for optimization.]]
    none = 0,    [[No hint on the content (default).]]
@@ -9,7 +9,7 @@ enum Efl.Gfx.Image_Content_Hint
    static = 2   [[The content won't change over time.]]
 }
 
-enum Efl.Gfx.Image_Scale_Hint
+enum @beta Efl.Gfx.Image_Scale_Hint
 {
   /* FIXME: Legacy is in Emile, where it does not belong. */
   [[How an image's data is to be treated by EFL, with regard to scaling cache.]]
@@ -18,7 +18,7 @@ enum Efl.Gfx.Image_Scale_Hint
   static = 2   [[Image will not be re-scaled over time, thus turning scaling cache ON for its data.]]
 }
 
-enum Efl.Gfx.Image_Scale_Type
+enum @beta Efl.Gfx.Image_Scale_Type
 {
    [[Enumeration that defines scale types of an image.]]
    fill,        [[Scale the image so that it matches
@@ -40,7 +40,7 @@ enum Efl.Gfx.Image_Scale_Type
    none         [[Not scale the image]]
 }
 
-interface Efl.Gfx.Image
+interface @beta Efl.Gfx.Image
 {
    [[Common APIs for all 2D images that can be rendered on the canvas.]]
 
@@ -148,8 +148,6 @@ interface Efl.Gfx.Image
            as stored in the original file.
 
            This is a read-only property, and may return 0x0.
-
-           @since 1.20
          ]]
          get {}
          values {
@@ -203,11 +201,19 @@ interface Efl.Gfx.Image
                                           see @Efl.Gfx.Image_Scale_Hint]]
          }
       }
+      @property image_load_error {
+         get {
+             [[Gets the (last) file loading error for a given object.]]
+         }
+         values {
+            error: Eina.Error; [[The load error code.]]
+         }
+      }
    }
    events {
-      preload: void; [[Image data has been preloaded.]]
-      resize: void;  [[Image was resized (its pixel data).]]
-      unload: void;  [[Image data has been unloaded (by some mechanism in
+      image,preload: void; [[Image data has been preloaded.]]
+      image,resize: void;  [[Image was resized (its pixel data).]]
+      image,unload: void;  [[Image data has been unloaded (by some mechanism in
                        EFL that threw out the original image data).]]
    }
 }

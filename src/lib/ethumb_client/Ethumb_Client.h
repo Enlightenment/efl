@@ -112,7 +112,7 @@ typedef void (*Ethumb_Client_Generate_Cb)(void *data, Ethumb_Client *client, int
  * @param data extra context given to ethumb_client_thumb_exists().
  *
  * During the execution of the callback the state of the @p client is
- * temporarily realy restored to what it was when the call to
+ * temporarily really restored to what it was when the call to
  * ethumb_client_thumb_exists() was done.
  */
 typedef void (*Ethumb_Client_Thumb_Exists_Cb)(void *data, Ethumb_Client *client, Ethumb_Exists *thread, Eina_Bool exists);

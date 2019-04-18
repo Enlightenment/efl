@@ -1,14 +1,12 @@
 import efl_gfx_types;
 
-mixin Efl.Gfx.Shape extends Efl.Gfx.Path
+mixin @beta Efl.Gfx.Shape extends Efl.Gfx.Path
 {
    [[EFL graphics shape object interface]]
    methods {
       @property stroke_scale {
          [[The stroke scale to be used for stroking the path. Will be used along
            with stroke width property.
-
-           @since 1.14
          ]]
          set {
          }
@@ -20,8 +18,6 @@ mixin Efl.Gfx.Shape extends Efl.Gfx.Path
       }
       @property stroke_color {
          [[The color to be used for stroking the path.
-
-           @since 1.14
          ]]
          set {
          }
@@ -36,8 +32,6 @@ mixin Efl.Gfx.Shape extends Efl.Gfx.Path
       }
       @property stroke_width {
          [[The stroke width to be used for stroking the path.
-
-           @since 1.14
          ]]
          set {
          }
@@ -79,8 +73,6 @@ mixin Efl.Gfx.Shape extends Efl.Gfx.Path
            open subpath.
 
            See also @Efl.Gfx.Cap.
-
-           @since 1.14
          ]]
          set {
          }
@@ -96,8 +88,6 @@ mixin Efl.Gfx.Shape extends Efl.Gfx.Path
            while stroking the path.
 
            See also @Efl.Gfx.Join.
-
-           @since 1.14
          ]]
          set {
          }
@@ -110,8 +100,6 @@ mixin Efl.Gfx.Shape extends Efl.Gfx.Path
       @property fill_rule {
          [[The fill rule of the given shape object.
            @Efl.Gfx.Fill_Rule.winding or @Efl.Gfx.Fill_Rule.odd_even.
-
-           @since 1.14
          ]]
          set {
          }

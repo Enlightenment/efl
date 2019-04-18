@@ -77,7 +77,7 @@
  * @li \<param\>...\</param\>: Generic parameters.
  * @li \<keyword\>...\</keyword\>: Language keywords (ex: return, NULL, while, for, etc)
  * @li \<preprocessor\>...\</preprocessor\>: Preprocessors definitions.
- * @li \<line_added\>...\</line_added\>: Diff addeded lines.
+ * @li \<line_added\>...\</line_added\>: Diff added lines.
  * @li \<line_removed\>...\</line_removed\>: Diff removed lines.
  * @li \<line_changed\>...\</line_changed\>: Diff changed lines.
  *

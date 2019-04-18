@@ -1,4 +1,4 @@
-#include "elm_entry.eo.legacy.h"
+#include "elm_entry_eo.legacy.h"
 
 /**
  * This adds an entry to @p parent object.

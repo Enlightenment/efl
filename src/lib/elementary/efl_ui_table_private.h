@@ -14,6 +14,8 @@ typedef struct _Efl_Ui_Table_Data Efl_Ui_Table_Data;
 typedef struct _Table_Item_Iterator Table_Item_Iterator;
 typedef struct _Table_Item Table_Item;
 
+void _efl_ui_table_custom_layout(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd);
+
 #define TABLE_ITEM_KEY "__table_item"
 
 struct _Table_Item
@@ -39,7 +41,12 @@ struct _Efl_Ui_Table_Data
       double h, v;
       Eina_Bool scalable: 1;
    } pad;
+   struct {
+      double h, v;
+   } align;
    Eina_Bool linear_recalc : 1;
+   Eina_Bool homogeneoush : 1;
+   Eina_Bool homogeneousv : 1;
 };
 
 struct _Table_Item_Iterator

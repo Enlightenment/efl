@@ -607,8 +607,8 @@ _ecore_ipc_dialer_connected(void *data, const Efl_Event *event EINA_UNUSED)
 
 EFL_CALLBACKS_ARRAY_DEFINE(_ecore_ipc_dialer_cbs,
                            { EFL_IO_READER_EVENT_EOS, _ecore_ipc_dialer_eos },
-                           { EFL_NET_DIALER_EVENT_ERROR, _ecore_ipc_dialer_error },
-                           { EFL_NET_DIALER_EVENT_CONNECTED, _ecore_ipc_dialer_connected });
+                           { EFL_NET_DIALER_EVENT_DIALER_ERROR, _ecore_ipc_dialer_error },
+                           { EFL_NET_DIALER_EVENT_DIALER_CONNECTED, _ecore_ipc_dialer_connected });
 
 static Eina_Bool ecore_ipc_server_data_process(Ecore_Ipc_Server *svr, void *data, int size, Eina_Bool *stolen);
 
@@ -886,7 +886,7 @@ ecore_ipc_server_clients_get(Ecore_Ipc_Server *svr)
         unsigned char *dd; \
         dd = (unsigned char *)&v; \
         v = d; \
-        v = htonl(v); \
+        v = eina_htonl(v); \
         *(dat + s + 0) = dd[0]; \
         *(dat + s + 1) = dd[1]; \
         *(dat + s + 2) = dd[2]; \
@@ -899,7 +899,7 @@ ecore_ipc_server_clients_get(Ecore_Ipc_Server *svr)
         unsigned char *dd; \
         dd = (unsigned char *)&v; \
         v = d; \
-        v = htons(v); \
+        v = eina_htons(v); \
         *(dat + s + 0) = dd[0]; \
         *(dat + s + 1) = dd[1]; \
         s += 2; \
@@ -945,7 +945,7 @@ ecore_ipc_server_send(Ecore_Ipc_Server *svr, int major, int minor, int ref, int 
    *head |= md << (4 * 4);
    SVENC(size);
    *head |= md << (4 * 5);
-   *head = htonl(*head);
+   *head = eina_htonl(*head);
    svr->prev.o = msg;
 
    if (svr->dialer.input)
@@ -1101,7 +1101,7 @@ ecore_ipc_server_flush(Ecore_Ipc_Server *svr)
         unsigned char *dd; \
         dd = (unsigned char *)&v; \
         v = d; \
-        v = htonl(v); \
+        v = eina_htonl(v); \
         *(dat + s + 0) = dd[0]; \
         *(dat + s + 1) = dd[1]; \
         *(dat + s + 2) = dd[2]; \
@@ -1114,7 +1114,7 @@ ecore_ipc_server_flush(Ecore_Ipc_Server *svr)
         unsigned char *dd; \
         dd = (unsigned char *)&v; \
         v = d; \
-        v = htons(v); \
+        v = eina_htons(v); \
         *(dat + s + 0) = dd[0]; \
         *(dat + s + 1) = dd[1]; \
         s += 2; \
@@ -1168,7 +1168,7 @@ ecore_ipc_client_send(Ecore_Ipc_Client *cl, int major, int minor, int ref, int r
    *head |= md << (4 * 4);
    CLENC(size);
    *head |= md << (4 * 5);
-   *head = htonl(*head);
+   *head = eina_htonl(*head);
    cl->prev.o = msg;
 
    if (cl->socket.input)
@@ -1503,7 +1503,7 @@ ecore_ipc_ssl_available_get(void)
         dv[1] = *(cl->buf + offset + s + 1); \
         dv[2] = *(cl->buf + offset + s + 2); \
         dv[3] = *(cl->buf + offset + s + 3); \
-        d = (int)ntohl(v); \
+        d = (int)eina_ntohl(v); \
         s += 4; \
      } \
    else if (md >= DLT_ADD16) \
@@ -1513,7 +1513,7 @@ ecore_ipc_ssl_available_get(void)
         dv = (unsigned char *)&v; \
         dv[0] = *(cl->buf + offset + s + 0); \
         dv[1] = *(cl->buf + offset + s + 1); \
-        d = (int)ntohs(v); \
+        d = (int)eina_ntohs(v); \
         s += 2; \
      } \
    else if (md >= DLT_ADD8) \
@@ -1572,7 +1572,7 @@ ecore_ipc_client_data_process(Ecore_Ipc_Client *cl, void *data, int size, Eina_B
              dd[1] = *(cl->buf + offset + 1);
              dd[2] = *(cl->buf + offset + 2);
              dd[3] = *(cl->buf + offset + 3);
-             head = ntohl(head);
+             head = eina_ntohl(head);
              dd = (unsigned char *)&d;
              s = 4;
              CLSZ(0);
@@ -1695,7 +1695,7 @@ ecore_ipc_client_data_process(Ecore_Ipc_Client *cl, void *data, int size, Eina_B
         dv[1] = *(svr->buf + offset + s + 1); \
         dv[2] = *(svr->buf + offset + s + 2); \
         dv[3] = *(svr->buf + offset + s + 3); \
-        d = (int)ntohl(v); \
+        d = (int)eina_ntohl(v); \
         s += 4; \
      } \
    else if (md >= DLT_ADD16) \
@@ -1705,7 +1705,7 @@ ecore_ipc_client_data_process(Ecore_Ipc_Client *cl, void *data, int size, Eina_B
         dv = (unsigned char *)&v; \
         dv[0] = *(svr->buf + offset + s + 0); \
         dv[1] = *(svr->buf + offset + s + 1); \
-        d = (int)ntohs(v); \
+        d = (int)eina_ntohs(v); \
         s += 2; \
      } \
    else if (md >= DLT_ADD8) \
@@ -1763,7 +1763,7 @@ ecore_ipc_server_data_process(Ecore_Ipc_Server *svr, void *data, int size, Eina_
              dd[1] = *(svr->buf + offset + 1);
              dd[2] = *(svr->buf + offset + 2);
              dd[3] = *(svr->buf + offset + 3);
-             head = ntohl(head);
+             head = eina_ntohl(head);
              dd = (unsigned char *)&d;
              s = 4;
              SVSZ(0);

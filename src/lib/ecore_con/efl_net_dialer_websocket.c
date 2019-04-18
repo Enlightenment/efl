@@ -350,7 +350,7 @@ _efl_net_dialer_websocket_job_send(Eo *o, Efl_Net_Dialer_Websocket_Data *pd)
    if ((err) && (err != EAGAIN))
      {
         ERR("could not write to HTTP socket #%d '%s'", err, eina_error_msg_get(err));
-        efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
+        efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_ERROR, &err);
      }
 }
 
@@ -730,7 +730,7 @@ _efl_net_dialer_websocket_job_receive(Eo *o, Efl_Net_Dialer_Websocket_Data *pd)
        eina_error_msg_get(err));
    efl_ref(o);
    efl_io_closer_close(pd->http);
-   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
+   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_ERROR, &err);
    efl_unref(o);
 }
 
@@ -819,7 +819,7 @@ _efl_net_dialer_websocket_http_error(void *data, const Efl_Event *event)
      return;
    efl_ref(o);
    if (!efl_io_closer_closed_get(o)) efl_io_closer_close(o);
-   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, perr);
+   efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_ERROR, perr);
    efl_unref(o);
 }
 
@@ -846,7 +846,7 @@ _efl_net_dialer_websocket_http_headers_done(void *data, const Efl_Event *event E
             status, EFL_NET_HTTP_STATUS_SWITCHING_PROTOCOLS);
         efl_ref(o);
         efl_io_closer_close(pd->http);
-        efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
+        efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_ERROR, &err);
         efl_unref(o);
         return;
      }
@@ -887,7 +887,7 @@ _efl_net_dialer_websocket_http_headers_done(void *data, const Efl_Event *event E
             upgraded, connection_websocket, accepted);
         efl_ref(o);
         efl_io_closer_close(pd->http);
-        efl_event_callback_call(o, EFL_NET_DIALER_EVENT_ERROR, &err);
+        efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_ERROR, &err);
         efl_unref(o);
         return;
      }
@@ -934,7 +934,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(_efl_net_dialer_websocket_http_cbs,
                            {EFL_IO_READER_EVENT_CAN_READ_CHANGED, _efl_net_dialer_websocket_http_can_read_changed},
                            {EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, _efl_net_dialer_websocket_http_can_write_changed},
                            {EFL_IO_CLOSER_EVENT_CLOSED, _efl_net_dialer_websocket_http_closed},
-                           {EFL_NET_DIALER_EVENT_ERROR, _efl_net_dialer_websocket_http_error},
+                           {EFL_NET_DIALER_EVENT_DIALER_ERROR, _efl_net_dialer_websocket_http_error},
                            {EFL_NET_DIALER_HTTP_EVENT_HEADERS_DONE, _efl_net_dialer_websocket_http_headers_done});
 
 EOLIAN static Efl_Object *
@@ -1182,7 +1182,7 @@ _efl_net_dialer_websocket_efl_net_dialer_connected_set(Eo *o, Efl_Net_Dialer_Web
    if (pd->connected == connected) return;
    pd->connected = connected;
    if (connected)
-     efl_event_callback_call(o, EFL_NET_DIALER_EVENT_CONNECTED, NULL);
+     efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_CONNECTED, NULL);
 }
 
 EOLIAN static Eina_Bool
@@ -1225,7 +1225,7 @@ EOLIAN static void
 _efl_net_dialer_websocket_efl_net_socket_address_remote_set(Eo *o EINA_UNUSED, Efl_Net_Dialer_Websocket_Data *pd, const char *address)
 {
    if (eina_stringshare_replace(&pd->address_remote, address))
-     efl_event_callback_call(o, EFL_NET_DIALER_EVENT_RESOLVED, NULL);
+     efl_event_callback_call(o, EFL_NET_DIALER_EVENT_DIALER_RESOLVED, NULL);
 }
 
 EOLIAN static const char *
@@ -1297,7 +1297,13 @@ _efl_net_dialer_websocket_efl_io_reader_can_read_set(Eo *o, Efl_Net_Dialer_Webso
    if (pd->streaming_mode == EFL_NET_DIALER_WEBSOCKET_STREAMING_MODE_DISABLED) return;
    if (pd->can_read == can_read) return;
    pd->can_read = can_read;
-   efl_event_callback_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_IO_READER_EVENT_CAN_READ_CHANGED, &can_read);
+}
+
+EOLIAN static void
+_efl_net_dialer_websocket_efl_io_reader_eos_set(Eo *obj EINA_UNUSED, Efl_Net_Dialer_Websocket_Data *pd EINA_UNUSED, Eina_Bool is_eos EINA_UNUSED)
+{
+   /* NOP Does not need to be implemented, someone else cannot tell this class to be at the eos. This is done internally and decided within the state of the websocket.*/
 }
 
 EOLIAN static Eina_Bool
@@ -1344,7 +1350,7 @@ _efl_net_dialer_websocket_efl_io_writer_can_write_set(Eo *o, Efl_Net_Dialer_Webs
      can_write = EINA_FALSE;
    if (pd->can_write == can_write) return;
    pd->can_write = can_write;
-   efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_IO_WRITER_EVENT_CAN_WRITE_CHANGED, &can_write);
 }
 
 EOLIAN static Eina_Error

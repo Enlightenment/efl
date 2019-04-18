@@ -18,8 +18,8 @@ _is_socket(SOCKET s)
    fd_set rfds;
    struct timeval tv;
 
-   tv.tv_sec = 0.00000001;
-   tv.tv_usec = 0;
+   tv.tv_sec = 0;
+   tv.tv_usec = 100;
    FD_ZERO(&rfds);
    FD_SET(s, &rfds);
 

@@ -1,4 +1,4 @@
-enum Efl.Text_Format_Wrap {
+enum @beta Efl.Text_Format_Wrap {
    [[Wrap mode of the text (not in effect if not multiline)]]
    none, [[No wrapping]]
    char, [[Wrap mode character]]
@@ -7,22 +7,19 @@ enum Efl.Text_Format_Wrap {
    hyphenation [[Wrap mode hyphenation]]
 }
 
-enum Efl.Text_Format_Horizontal_Alignment_Auto_Type {
+enum @beta Efl.Text_Format_Horizontal_Alignment_Auto_Type {
    [[Auto-horizontal alignment of the text]]
-   legacy: efl_text_horizontal_alignment_auto;
    none,   [[No auto-alignment rule]]
    normal, [[Respects LTR/RTL (bidirectional) settings]]
    locale, [[Respects locale's langauge settings]]
    end     [[Text is places at opposite side of LTR/RTL (bidirectional) settings]]
 }
 
-interface Efl.Text_Format {
+interface @beta Efl.Text_Format {
    [[The look and layout of the text
 
      The text format can affect the geometry of the text object, as well as
      how characters are presented.
-
-     @since 1.20
    ]]
    eo_prefix: efl_text;
    methods {

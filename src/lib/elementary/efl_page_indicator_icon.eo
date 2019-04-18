@@ -1,4 +1,4 @@
-class Efl.Page.Indicator_Icon extends Efl.Page.Indicator
+class @beta Efl.Page.Indicator_Icon extends Efl.Page.Indicator
 {
    [[Icon type page indicator
 
@@ -7,7 +7,6 @@ class Efl.Page.Indicator_Icon extends Efl.Page.Indicator
      arrange them in a linear order. An icon has two states: default and selected.
    ]]
    implements {
-      Efl.Object.invalidate;
       Efl.Page.Indicator.bind;
    }
 }

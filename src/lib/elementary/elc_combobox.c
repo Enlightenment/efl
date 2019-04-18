@@ -10,9 +10,9 @@
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "elm_widget_combobox.h"
-#include "elm_entry.eo.h"
-#include "elm_genlist.eo.h"
-#include "elm_hover.eo.h"
+#include "elm_entry_eo.h"
+#include "elm_genlist_eo.h"
+#include "elm_hover_eo.h"
 
 EOAPI void elm_obj_combobox_hover_begin(Eo *obj);
 EOAPI void elm_obj_combobox_hover_end(Eo *obj);
@@ -79,15 +79,15 @@ _elm_combobox_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Combobox_D
      efl_ui_l10n_translation_update(sd->hover);
 }
 
-EOLIAN static Efl_Ui_Theme_Apply_Result
+EOLIAN static Eina_Error
 _elm_combobox_efl_ui_widget_theme_apply(Eo *obj, Elm_Combobox_Data *sd)
 {
    const char *style;
-   Efl_Ui_Theme_Apply_Result int_ret = EFL_UI_THEME_APPLY_RESULT_FAIL;
+   Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
    Eina_Bool mirrored;
    char buf[128];
 
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_RESULT_FAIL);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
 
    style = eina_stringshare_add(elm_widget_style_get(obj));
 
@@ -97,7 +97,7 @@ _elm_combobox_efl_ui_widget_theme_apply(Eo *obj, Elm_Combobox_Data *sd)
    eina_stringshare_replace(&(wd->style), buf);
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
-   if (!int_ret) return EFL_UI_THEME_APPLY_RESULT_FAIL;
+   if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    eina_stringshare_replace(&(wd->style), style);
 
@@ -279,7 +279,7 @@ _gl_filter_finished_cb(void *data, const Efl_Event *event)
         else _table_resize(data);
         elm_genlist_item_selected_set(sd->item, EINA_TRUE);
      }
-   else 
+   else
      {
         sd->expanded = EINA_FALSE;
         elm_layout_signal_emit(sd->hover, "elm,action,hide,no_animate", "elm");
@@ -331,7 +331,6 @@ EOLIAN static void
 _elm_combobox_efl_canvas_group_group_add(Eo *obj, Elm_Combobox_Data *sd EINA_UNUSED)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    efl_ui_mirrored_automatic_set(obj, EINA_FALSE);
 
@@ -609,7 +608,7 @@ _elm_combobox_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_gfx_entity_size_set, _elm_combobox_efl_gfx_entity_size_set),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_theme_apply, _elm_combobox_efl_ui_widget_theme_apply),
       EFL_OBJECT_OP_FUNC(efl_ui_l10n_translation_update, _elm_combobox_efl_ui_l10n_translation_update),
-      EFL_OBJECT_OP_FUNC(efl_ui_widget_event, _elm_combobox_efl_ui_widget_widget_event),
+      EFL_OBJECT_OP_FUNC(efl_ui_widget_input_event_handler, _elm_combobox_efl_ui_widget_widget_input_event_handler),
       EFL_OBJECT_OP_FUNC(efl_ui_autorepeat_supported_get, _elm_combobox_efl_ui_autorepeat_autorepeat_supported_get),
       EFL_OBJECT_OP_FUNC(elm_obj_genlist_filter_set, _elm_combobox_elm_genlist_filter_set),
       EFL_OBJECT_OP_FUNC(efl_access_widget_action_elm_actions_get, _elm_combobox_efl_access_widget_action_elm_actions_get),

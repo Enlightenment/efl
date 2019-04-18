@@ -265,9 +265,6 @@ struct _RGBA_Font_Int
                                      in order to comply with the wanted_rend. */
 
    Eina_List       *task;
-#ifdef EVAS_CSERVE2
-   void            *cs2_handler;
-#endif
 
    int              generation;
 

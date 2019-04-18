@@ -36,13 +36,6 @@ eolian_event_scope_get(const Eolian_Event *event)
 }
 
 EAPI Eina_Bool
-eolian_event_is_beta(const Eolian_Event *event)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(event, EINA_FALSE);
-   return event->is_beta;
-}
-
-EAPI Eina_Bool
 eolian_event_is_hot(const Eolian_Event *event)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(event, EINA_FALSE);

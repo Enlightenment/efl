@@ -1,7 +1,5 @@
-class Efl.Net.Server_Udp extends Efl.Net.Server_Ip {
+class @beta Efl.Net.Server_Udp extends Efl.Net.Server_Ip {
     [[A UDP server.
-
-      @since 1.19
     ]]
 
     methods {
@@ -99,5 +97,8 @@ class Efl.Net.Server_Udp extends Efl.Net.Server_Ip {
         Efl.Net.Server.serve;
         Efl.Net.Server_Fd.process_incoming_data;
         Efl.Net.Server_Fd.socket_activate;
+        //These functions are not used, udp emits the there defined events from its internals
+        @empty Efl.Net.Server_Fd.client_add;
+        @empty Efl.Net.Server_Fd.client_reject;
     }
 }

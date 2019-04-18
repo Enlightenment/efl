@@ -1,7 +1,6 @@
-abstract Efl.Canvas.Vg.Gradient extends Efl.Canvas.Vg.Node implements Efl.Gfx.Gradient
+abstract @beta Efl.Canvas.Vg.Gradient extends Efl.Canvas.Vg.Node implements Efl.Gfx.Gradient
 {
    [[Efl vectopr graphics gradient abstract class]]
-   legacy_prefix: evas_vg_gradient;
    implements {
       Efl.Gfx.Gradient.stop { get; set; }
       Efl.Gfx.Gradient.spread { get; set; }

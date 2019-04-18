@@ -1223,12 +1223,12 @@ _ecore_x_fd_handler(void *data,
         XEvent ev;
 
         XNextEvent(d, &ev);
-#ifdef ENABLE_XIM
+#ifdef BUILD_ECORE_IMF_XIM
         /* Filter event for XIM */
         if (XFilterEvent(&ev, ev.xkey.window))
           continue;
 
-#endif /* ifdef ENABLE_XIM */
+#endif /* ifdef BUILD_ECORE_IMF_XIM */
         if ((ev.type >= 0) && (ev.type < _ecore_x_event_handlers_num))
           {
              if (_ecore_x_event_handlers[AnyXEvent])
@@ -1921,7 +1921,7 @@ struct _Keygrab
 };
 Keygrab *_ecore_key_grabs = NULL;
 
-static void
+static KeyCode
 _ecore_x_window_key_grab_internal(Ecore_X_Window win,
                                   const char *key,
                                   int mod,
@@ -1940,13 +1940,13 @@ _ecore_x_window_key_grab_internal(Ecore_X_Window win,
      {
         keysym = XStringToKeysym(key);
         if (keysym == NoSymbol)
-          return;
+          return 0;
 
         keycode = XKeysymToKeycode(_ecore_x_disp, keysym);
      }
 
    if (keycode == 0)
-     return;
+     return 0;
 
    m = _ecore_x_event_modifier(mod);
    if (any_mod)
@@ -1966,6 +1966,7 @@ _ecore_x_window_key_grab_internal(Ecore_X_Window win,
                  win, False, GrabModeAsync, GrabModeAsync);
         if (_ecore_xlib_sync) ecore_x_sync();
      }
+   return keycode;
 }
 
 EAPI void
@@ -1975,9 +1976,11 @@ ecore_x_window_key_grab(Ecore_X_Window win,
                         int any_mod)
 {
    Keygrab *t;
+   KeyCode keycode;
 
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
-   _ecore_x_window_key_grab_internal(win, key, mod, any_mod);
+   if (!(keycode = _ecore_x_window_key_grab_internal(win, key, mod, any_mod)))
+      return;
    _ecore_key_grabs_num++;
    t = realloc(_ecore_key_grabs,
                _ecore_key_grabs_num * sizeof(Keygrab));
@@ -2034,7 +2037,7 @@ _ecore_x_key_grab_remove(Ecore_X_Window win,
    return shuffle;
 }
 
-static void
+static KeyCode
 _ecore_x_window_key_ungrab_internal(Ecore_X_Window win,
                                     const char *key,
                                     int mod,
@@ -2053,13 +2056,13 @@ _ecore_x_window_key_ungrab_internal(Ecore_X_Window win,
      {
         keysym = XStringToKeysym(key);
         if (keysym == NoSymbol)
-          return;
+          return 0;
 
         keycode = XKeysymToKeycode(_ecore_x_disp, keysym);
      }
 
    if (keycode == 0)
-     return;
+     return 0;
 
    m = _ecore_x_event_modifier(mod);
    if (any_mod)
@@ -2075,6 +2078,7 @@ _ecore_x_window_key_ungrab_internal(Ecore_X_Window win,
    locks[7] = ECORE_X_LOCK_CAPS | ECORE_X_LOCK_NUM | ECORE_X_LOCK_SCROLL;
    for (i = 0; i < 8; i++)
      XUngrabKey(_ecore_x_disp, keycode, m | locks[i], win);
+   return keycode;
 }
 
 EAPI void

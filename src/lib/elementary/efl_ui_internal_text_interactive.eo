@@ -1,4 +1,4 @@
-class Efl.Ui.Internal.Text.Interactive extends Efl.Canvas.Text implements Efl.Text_Interactive
+class @beta Efl.Ui.Internal.Text.Interactive extends Efl.Canvas.Text implements Efl.Text_Interactive
 {
    [[An internal object in charge of the interactive aspect of the text widget.
 

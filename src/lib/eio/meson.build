@@ -1,7 +1,7 @@
 pub_eo_file_target = []
 
 pub_eo_files = [
-  'eio_model.eo',
+  'efl_io_model.eo',
   'efl_io_manager.eo',
   'eio_sentry.eo'
 ]
@@ -44,8 +44,8 @@ eio_src = [
   'eio_monitor_poll.c',
   'eio_single.c',
   'eio_xattr.c',
-  'eio_model.c',
-  'eio_model_private.h',
+  'efl_io_model.c',
+  'efl_io_model_private.h',
   'eio_private.h',
   'eio_sentry_private.h'
 ]
@@ -83,9 +83,12 @@ eio = declare_dependency(
   dependencies: eio_pub_deps,
 )
 
-install_data(pub_eo_files + pub_eo_types_files,
-  install_dir: join_paths(eolian_include_dir, package_version_name)
-)
+
+if get_option('install-eo-files')
+  install_data(pub_eo_files + pub_eo_types_files,
+    install_dir: join_paths(eolian_include_dir, package_version_name)
+  )
+endif
 
 install_headers(eio_header_src,
   install_dir : dir_package_include,

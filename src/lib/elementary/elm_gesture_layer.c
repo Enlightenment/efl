@@ -4,7 +4,7 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "elm_gesture_layer.eo.h"
+#include "elm_gesture_layer_eo.h"
 
 #define MY_CLASS ELM_GESTURE_LAYER_CLASS
 
@@ -619,7 +619,7 @@ _state_report(Gesture_Info *gesture,
            flags |= cb_info->cb(cb_info->user_data, info);
      }
 
-   return EVAS_EVENT_FLAG_NONE;
+   return flags;
 }
 
 /**
@@ -3296,9 +3296,6 @@ _zoom_with_wheel_test(Evas_Object *obj,
          if (st->zoom_wheel->z > 0) /* zoom out */
            st->info.zoom -= (sd->zoom_finger_factor * sd->zoom_wheel_factor);
 
-         if (st->info.zoom < 0.0)
-           st->info.zoom = 0.0;
-
          st->info.momentum = _zoom_momentum_get
              (st, st->zoom_wheel->timestamp, st->info.zoom);
 
@@ -3736,22 +3733,21 @@ _rotate_test(Evas_Object *obj,
      }
 }
 
-EOLIAN static Eina_Bool
-_elm_gesture_layer_efl_ui_widget_on_disabled_update(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_UNUSED, Eina_Bool disabled)
+EOLIAN static void
+_elm_gesture_layer_efl_ui_widget_disabled_set(Eo *obj, Elm_Gesture_Layer_Data *_pd EINA_UNUSED, Eina_Bool disabled)
 {
-   if (disabled)
+   efl_ui_widget_disabled_set(efl_super(obj, MY_CLASS), disabled);
+
+   if (efl_ui_widget_disabled_get(obj))
      _callbacks_unregister(obj);
    else
      _callbacks_register(obj);
-
-   return EINA_TRUE;
 }
 
 EOLIAN static void
 _elm_gesture_layer_efl_canvas_group_group_add(Eo *obj, Elm_Gesture_Layer_Data *priv)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    priv->line_min_length =
      _elm_config->glayer_line_min_length * elm_config_finger_size_get();
@@ -4178,4 +4174,4 @@ _elm_gesture_layer_class_constructor(Efl_Class *klass)
 #define ELM_GESTURE_LAYER_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_gesture_layer)
 
-#include "elm_gesture_layer.eo.c"
+#include "elm_gesture_layer_eo.c"

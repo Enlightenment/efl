@@ -1,4 +1,4 @@
-class Efl.Canvas.Animation_Translate extends Efl.Canvas.Animation
+class @beta Efl.Canvas.Animation_Translate extends Efl.Canvas.Animation
 {
    [[Efl translate animation class]]
    eo_prefix: efl_animation_translate;

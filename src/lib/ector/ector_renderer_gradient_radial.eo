@@ -1,4 +1,4 @@
-mixin Ector.Renderer.Gradient.Radial extends Efl.Gfx.Gradient_Radial
+mixin @beta Ector.Renderer.Gradient.Radial extends Efl.Gfx.Gradient_Radial
 {
    [[Ector gradient radial renderer mixin]]
    eo_prefix: ector_renderer_gradient_radial;
