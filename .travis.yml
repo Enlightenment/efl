@@ -18,8 +18,8 @@ jobs:
   include:
     - os: osx
       env: BUILDSYSTEM=ninja
-    - os: linux
-      env: DISTRO=Fedora29-mingw CI_BUILD_TYPE=mingw
+    #- os: linux
+      #env: DISTRO=Fedora29-mingw CI_BUILD_TYPE=mingw
     - os: linux
       env: DISTRO=Fedora29 CI_BUILD_TYPE=options-enabled
     - os: linux
