@@ -34,7 +34,7 @@ eina_xdg_env_init(void)
       s = getenv(_env); \
       if (!s) s = home; \
    } else s = home; \
-   if (_dir) FATAL_SNPRINTF(_meta, "vpath string '%s' truncated - fatal", "%s\\%s", s, _dir); \
+   if (_dir) FATAL_SNPRINTF(_meta, "vpath string '%s' truncated - fatal", "%s\\%s", s, (char *)_dir); \
    else FATAL_SNPRINTF(_meta, "vpath string '%s' truncated - fatal", "%s\\", s); \
    (&user)->_meta = _meta;
 
