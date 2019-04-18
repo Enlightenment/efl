@@ -25,17 +25,17 @@ struct _Table_Item
    Efl_Gfx_Entity *object;
    int col_span, row_span;
    int col, row;
-
-   Eina_Bool linear : 1;
 };
 
 struct _Efl_Ui_Table_Data
 {
    Table_Item *items;
+   Eo *clipper;
    int count;
 
+   int cols, rows;
    int req_cols, req_rows; // requested - 0 means infinite
-   int last_col, last_row; // only used by linear apis
+   int last_col, last_row; // only used by pack api
    Efl_Ui_Dir dir1, dir2;  // must be orthogonal (H,V or V,H)
    struct {
       double h, v;
@@ -44,6 +44,8 @@ struct _Efl_Ui_Table_Data
    struct {
       double h, v;
    } align;
+   Eina_Bool cols_recalc : 1;
+   Eina_Bool rows_recalc : 1;
    Eina_Bool linear_recalc : 1;
    Eina_Bool homogeneoush : 1;
    Eina_Bool homogeneousv : 1;
@@ -52,9 +54,8 @@ struct _Efl_Ui_Table_Data
 struct _Table_Item_Iterator
 {
    Eina_Iterator  iterator;
-   Eina_Iterator *real_iterator;
-   Eina_List     *list;
-   Efl_Ui_Table    *object;
+   Efl_Ui_Table  *object;
+   Eina_Inlist   *cur;
 };
 
 #endif

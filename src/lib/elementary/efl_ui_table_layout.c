@@ -224,13 +224,14 @@ _efl_ui_table_custom_layout(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd)
    Table_Item *ti;
    Item_Calc *items, *item;
    Efl_Ui_Container_Item_Hints *hints;
-   int id = 0, i = 0, rows, cols;
+   int id = 0, i = 0, count, rows, cols;
    int (*_efl_ui_table_item_pos_get[2])(Table_Calc *, Item_Calc *, Eina_Bool);
    int (*_efl_ui_table_item_size_get[2])(Table_Calc *, Item_Calc *, Eina_Bool);
-
    Table_Calc table_calc;
 
-   if (!pd->count)
+   count = pd->count;
+
+   if (!count)
      {
         efl_gfx_hint_size_restricted_min_set(ui_table, EINA_SIZE2D(0, 0));
         return;
@@ -249,20 +250,21 @@ _efl_ui_table_custom_layout(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd)
    memset(table_calc.cell_calc[0], 0, cols * sizeof(Cell_Calc));
    memset(table_calc.cell_calc[1], 0, rows * sizeof(Cell_Calc));
 
-   items = alloca(pd->count * sizeof(*items));
+   items = alloca(count * sizeof(*items));
 #ifdef DEBUG
-   memset(items, 0, pd->count * sizeof(*items));
+   memset(items, 0, count * sizeof(*items));
 #endif
 
    table_calc.cols = cols;
    table_calc.rows = rows;
    // scan all items, get their properties, calculate total weight & min size
-   EINA_INLIST_FOREACH(pd->items, ti)
+   EINA_INLIST_FOREACH(EINA_INLIST_GET(pd->items), ti)
      {
         if (((ti->col + ti->col_span) > cols) ||
             ((ti->row + ti->row_span) > rows))
           {
-             efl_gfx_entity_visible_set(ti->object, EINA_FALSE);
+             efl_gfx_entity_geometry_set(ti->object, EINA_RECT(9999, 9999, 0, 0));
+             count--;
              continue;
           }
 
@@ -343,7 +345,7 @@ _efl_ui_table_custom_layout(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd)
         _efl_ui_table_item_size_get[1] = _efl_ui_table_regular_item_size_get;
      }
 
-   for (i = 0; i < pd->count; i++)
+   for (i = 0; i < count; i++)
      {
         Eina_Rect space, item_geom;
         item = &items[i];
