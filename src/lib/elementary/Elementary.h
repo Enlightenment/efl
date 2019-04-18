@@ -291,6 +291,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_widget_part.eo.h>
 # include <efl_ui_widget_part_bg.eo.h>
 # include <efl_ui_widget_part_shadow.eo.h>
+# include <efl_ui_layout.eo.h>
 # include <efl_ui_layout_part.eo.h>
 # include <efl_ui_layout_part_box.eo.h>
 # include <efl_ui_layout_part_content.eo.h>
