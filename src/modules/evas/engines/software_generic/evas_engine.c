@@ -2494,7 +2494,8 @@ _draw_thread_map_draw(void *data)
              continue;
           }
 
-        if ((m->pts[0 + offset].x == m->pts[3 + offset].x) &&
+        if (!(map->anti_alias && map->smooth) &&    //For sub-pixel rendering
+            (m->pts[0 + offset].x == m->pts[3 + offset].x) &&
             (m->pts[1 + offset].x == m->pts[2 + offset].x) &&
             (m->pts[0 + offset].y == m->pts[1 + offset].y) &&
             (m->pts[3 + offset].y == m->pts[2 + offset].y) &&
