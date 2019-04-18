@@ -85,12 +85,10 @@ evas_gesture_eolian_priv_h = $(evas_gesture_eolian_priv_files:%.eo=%.eo.h)
 
 evas_canvas_eolian_pub_c = $(evas_canvas_eolian_pub_files:%.eo=%.eo.c)
 evas_canvas_eolian_pub_h = $(evas_canvas_eolian_pub_files:%.eo=%.eo.h) \
-                           $(evas_canvas_eolian_pub_files:%.eo=%.eo.legacy.h) \
                            $(evas_canvas_eolian_type_files:%.eot=%.eot.h)
 
 evas_gesture_eolian_pub_c = $(evas_gesture_eolian_pub_files:%.eo=%.eo.c)
 evas_gesture_eolian_pub_h = $(evas_gesture_eolian_pub_files:%.eo=%.eo.h) \
-                            $(evas_gesture_eolian_pub_files:%.eo=%.eo.legacy.h) \
                             $(evas_gesture_eolian_type_files:%.eot=%.eot.h)
 
 evas_eolian_files = $(evas_canvas_eolian_pub_files) \
@@ -976,7 +974,6 @@ $(NULL)
 
 evas_gl_generic_eolian_c = $(evas_gl_generic_eolian_files:%.eo=%.eo.c)
 evas_gl_generic_eolian_h = $(evas_gl_generic_eolian_files:%.eo=%.eo.h) \
-                $(evas_gl_generic_eolian_files:%.eo=%.eo.legacy.h) \
                 $(evas_gl_generic_eolian_type_files:%.eot=%.eot.h)
 
 BUILT_SOURCES += \
