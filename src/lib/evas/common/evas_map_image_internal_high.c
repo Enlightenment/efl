@@ -354,7 +354,8 @@ _map_triangle_draw_linear(RGBA_Image *src, RGBA_Image *dst,
    int dw = dst->cache_entry.w;
    int x1, x2, x, y, uu, vv, ar, ab, iru, irv, px, ay;
    float dx, u, v, iptr;
-   float _dcdx[4], _dcdya[4], _ca[4], c[4];
+   float _dcdx[4], _dcdya[4], _ca[4];
+   float c[4] = {0, 0, 0, 0};
    DATA32 *buf, *tmp;
    DATA8 *mbuf;
 
