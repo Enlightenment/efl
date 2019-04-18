@@ -4,13 +4,13 @@
 
 static Eina_Strbuf *
 _type_generate(const Eolian_State *state, const Eolian_Typedecl *tp,
-               Eina_Bool full, Eina_Bool legacy)
+               Eina_Bool full)
 {
    char *grp = strdup(eolian_typedecl_name_get(tp));
    char *p = strrchr(grp, '.');
    if (p) *p = '\0';
    Eina_Strbuf *buf = eo_gen_docs_full_gen(state, eolian_typedecl_documentation_get(tp),
-                                           grp, 0, legacy);
+                                           grp, 0);
    free(grp);
    if (!buf) buf = eina_strbuf_new();
    else eina_strbuf_append_char(buf, '\n');
@@ -54,7 +54,7 @@ _type_generate(const Eolian_State *state, const Eolian_Typedecl *tp,
                       if (nl)
                         {
                            Eina_Strbuf *fbuf = eo_gen_docs_full_gen(state, fdoc, NULL,
-                              strlen(nl), legacy);
+                              strlen(nl));
                            if (fbuf)
                              eina_strbuf_append_printf(buf, " %s",
                                 eina_strbuf_string_get(fbuf));
@@ -108,7 +108,7 @@ _type_generate(const Eolian_State *state, const Eolian_Typedecl *tp,
                      if (nl)
                        {
                           Eina_Strbuf *fbuf = eo_gen_docs_full_gen(state, fdoc, NULL,
-                             strlen(nl), legacy);
+                             strlen(nl));
                           if (fbuf)
                             eina_strbuf_append_printf(buf, " %s",
                                eina_strbuf_string_get(fbuf));
@@ -166,13 +166,13 @@ _type_generate(const Eolian_State *state, const Eolian_Typedecl *tp,
 }
 
 static Eina_Strbuf *
-_var_generate(const Eolian_State *state, const Eolian_Variable *vr, Eina_Bool legacy)
+_var_generate(const Eolian_State *state, const Eolian_Variable *vr)
 {
    char *fn = strdup(eolian_variable_name_get(vr));
    char *p = strrchr(fn, '.');
    if (p) *p = '\0';
    Eina_Strbuf *buf = eo_gen_docs_full_gen(state, eolian_variable_documentation_get(vr),
-                                           fn, 0, legacy);
+                                           fn, 0);
    if (p)
      {
         *p = '_';
@@ -216,7 +216,7 @@ _var_generate(const Eolian_State *state, const Eolian_Variable *vr, Eina_Bool le
 
 void eo_gen_types_header_gen(const Eolian_State *state,
                              Eina_Iterator *itr, Eina_Strbuf *buf,
-                             Eina_Bool full, Eina_Bool legacy)
+                             Eina_Bool full)
 {
    const Eolian_Object *decl;
    EINA_ITERATOR_FOREACH(itr, decl)
@@ -229,7 +229,7 @@ void eo_gen_types_header_gen(const Eolian_State *state,
              if (!vr || eolian_variable_is_extern(vr))
                continue;
 
-             Eina_Strbuf *vbuf = _var_generate(state, vr, legacy);
+             Eina_Strbuf *vbuf = _var_generate(state, vr);
              if (vbuf)
                {
                   eina_strbuf_append(buf, eina_strbuf_string_get(vbuf));
@@ -259,7 +259,7 @@ void eo_gen_types_header_gen(const Eolian_State *state,
                continue;
           }
 
-        Eina_Strbuf *tbuf = _type_generate(state, tp, full, legacy);
+        Eina_Strbuf *tbuf = _type_generate(state, tp, full);
         if (tbuf)
           {
              eina_strbuf_append(buf, eina_strbuf_string_get(tbuf));
