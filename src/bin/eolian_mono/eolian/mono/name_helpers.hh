@@ -176,8 +176,12 @@ inline std::string managed_namespace(std::string const& ns)
   return escape_keyword(utils::remove_all(ns, '_'));
 }
 
-inline std::string managed_method_name(std::string const& klass, std::string const& name)
+inline std::string managed_method_name(attributes::function_def const& f)
 {
+  auto klass = f.klass.eolian_name;
+  // TODO get managed name to check if the managed actually clashes with the method name.
+  auto name = f.name;
+
   std::vector<std::string> names = utils::split(name, '_');
 
   name_helpers::reorder_verb(names);
@@ -201,11 +205,6 @@ inline std::string managed_name(std::string const& name, char separator='_')
 {
   auto tokens = utils::split(name, separator);
   return utils::to_pascal_case(tokens);
-}
-
-inline std::string managed_method_name(attributes::function_def const& f)
-{
-  return managed_method_name(f.klass.eolian_name, f.name);
 }
 
 inline std::string alias_full_eolian_name(attributes::alias_def const& alias)
