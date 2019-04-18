@@ -632,6 +632,7 @@ try_gles2:
    glXGetFBConfigAttrib(gw->disp, evis->config, GLX_FBCONFIG_ID, &gw->gl_context->glxcfg_rgb);
    glXGetFBConfigAttrib(gw->disp, evis2->config, GLX_FBCONFIG_ID, &gw->gl_context->glxcfg_rgba);
 #endif
+   gw->gl_context->msaa = (Eina_Bool) msaa_bits;
    eng_window_use(gw);
    glsym_evas_gl_common_context_resize(gw->gl_context, w, h, rot);
    gw->surf = 1;

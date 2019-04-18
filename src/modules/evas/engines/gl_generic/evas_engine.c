@@ -1229,7 +1229,8 @@ eng_image_scale_hint_get(void *engine EINA_UNUSED, void *image)
 }
 
 static Eina_Bool
-eng_image_map_draw(void *engine, void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level, Eina_Bool do_async)
+eng_image_map_draw(void *engine EINA_UNUSED, void *data, void *context, void *surface, void *image,
+                   RGBA_Map *m, int smooth, int level, Eina_Bool do_async EINA_UNUSED)
 {
    Evas_Engine_GL_Context *gl_context;
    Evas_GL_Image *gim = image;
@@ -1239,7 +1240,8 @@ eng_image_map_draw(void *engine, void *data, void *context, void *surface, void 
    evas_gl_common_context_target_surface_set(gl_context, surface);
    gl_context->dc = context;
 
-   if ((m->pts[0].x == m->pts[3].x) &&
+   if (!gl_context->msaa &&
+       (m->pts[0].x == m->pts[3].x) &&
        (m->pts[1].x == m->pts[2].x) &&
        (m->pts[0].y == m->pts[1].y) &&
        (m->pts[3].y == m->pts[2].y) &&
@@ -1259,7 +1261,6 @@ eng_image_map_draw(void *engine, void *data, void *context, void *surface, void 
        (m->pts[3].col == 0xffffffff))
      {
         int dx, dy, dw, dh;
-
         dx = m->pts[0].x >> FP;
         dy = m->pts[0].y >> FP;
         dw = (m->pts[2].x >> FP) - dx;
