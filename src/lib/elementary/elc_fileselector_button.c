@@ -351,6 +351,9 @@ _elm_fileselector_button_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Elm_Filesele
 {
    char *file = NULL;
 
+   if (!efl_isa(model, EFL_IO_MODEL_CLASS))
+     return ;
+
    efl_replace(&sd->fsd.model, model);
 
    if (model)
