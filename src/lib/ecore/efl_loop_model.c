@@ -125,6 +125,33 @@ _efl_loop_model_volatile_make(Eo *obj, void *pd EINA_UNUSED)
    efl_event_callback_add(obj, EFL_EVENT_NOREF, _noref_death, NULL);
 }
 
+static Eina_Future *
+_efl_loop_model_efl_model_property_set(Eo *obj, void *pd EINA_UNUSED,
+                                       const char *property, Eina_Value *value)
+{
+   Eina_Error err;
+
+   if (!value) return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
+   err = efl_property_reflection_set(obj, property, *value);
+   if (err) return efl_loop_future_rejected(obj, err);
+
+   return efl_loop_future_resolved(obj, efl_property_reflection_get(obj, property));
+}
+
+static Eina_Value *
+_efl_loop_model_efl_model_property_get(const Eo *obj, void *pd EINA_UNUSED,
+                                       const char *property)
+{
+   Eina_Value *r;
+   Eina_Value direct;
+
+   direct = efl_property_reflection_get(obj, property);
+   r = eina_value_dup(&direct);
+   eina_value_flush(&direct);
+
+   return r;
+}
+
 static void
 _efl_loop_model_efl_object_invalidate(Eo *obj, void *pd EINA_UNUSED)
 {
