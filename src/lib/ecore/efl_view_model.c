@@ -350,19 +350,14 @@ _efl_view_model_parent_data(Efl_View_Model *child, Efl_View_Model_Data *ppd)
 static Efl_View_Model *
 _efl_view_model_child_lookup(Efl_View_Model_Data *pd, Efl_Object *parent, Efl_Model *view)
 {
-   Efl_View_Model *co;
-
-   co = efl_key_wref_get(view, "_efl.view_model");
-   if (co) return co;
+   EFL_COMPOSITE_LOOKUP_RETURN(co, parent, view, "_efl.view_model");
 
    co = efl_add(EFL_VIEW_MODEL_CLASS, parent,
                 efl_ui_view_model_set(efl_added, view),
                 _efl_view_model_parent_data(efl_added, pd));
    if (!co) return NULL;
 
-   efl_key_wref_set(view, "_efl.view_model", co);
-
-   return co;
+   EFL_COMPOSITE_REMEMBER_RETURN(co, view);
 }
 
 static void
