@@ -162,6 +162,7 @@ void _evas_image_fill_set(Eo *eo_obj, Evas_Image_Data *o, int x, int y, int w, i
 
 /* Efl.File */
 Eina_Bool _evas_image_file_load(Eo *eo_obj);
+void _evas_image_file_unload(Eo *eo_obj);
 const Eina_File *_evas_image_mmap_get(const Eo *eo_obj);
 const char *_evas_image_key_get(const Eo *eo_obj);
 void _efl_canvas_image_load_error_set(Eo *eo_obj EINA_UNUSED, Eina_Error err);

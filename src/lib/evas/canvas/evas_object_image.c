@@ -283,7 +283,9 @@ _evas_image_init_set(const Eina_File *f, const char *key,
           }
         ENFN->image_free(ENC, o->engine_data);
      }
+   o->engine_data = NULL;
    o->load_error = EFL_GFX_IMAGE_LOAD_ERROR_NONE;
+   if (!lo) return;
    lo->emile.scale_down_by = o->load_opts->scale_down_by;
    lo->emile.dpi = o->load_opts->dpi;
    lo->emile.w = o->load_opts->w;
