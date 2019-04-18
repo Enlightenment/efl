@@ -9,10 +9,25 @@
 
 #include <rlottie_capi.h>
 
+//FIXME: This enum add temporarily to help understanding of additional code
+//related to masking in prepare_mask.
+//This needs to be formally declared through the eo class.
+typedef enum _EFL_CANVAS_VG_NODE_BLEND_TYPE
+{
+   EFL_CANVAS_VG_NODE_BLEND_TYPE_NONE = 0,
+   EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA,
+   EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA_INV,
+   EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_ADD,
+   EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_SUBSTRACT,
+   EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_INTERSECT,
+   EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_DIFFERENCE
+}EFL_CANVAS_VG_NODE_BLEND_TYPE;
+//
+
 static char*
 _get_key_val(void *key)
 {
-   static char buf[20];
+   static char buf[30];
    snprintf(buf, sizeof(buf), "%ld", (size_t) key);
    return buf;
 }
@@ -193,65 +208,56 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
 }
 
 static void
-_construct_mask_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *layer, int depth EINA_UNUSED)
+_construct_mask_nodes(Efl_Canvas_Vg_Container *parent, LOTMask *mask, int depth EINA_UNUSED)
 {
-   if (!parent) return;
+   const float *data = mask->mPath.ptPtr;
+   if (!data) return;
 
-   for (unsigned int i = 0; i < layer->mMaskList.size; i++)
+   char *key = _get_key_val(mask);
+   Efl_Canvas_Vg_Shape *shape = efl_key_data_get(parent, key);
+   if (!shape)
      {
-        LOTMask *mask = &layer->mMaskList.ptr[i];
-        if (!mask) continue;
-
-        const float *data = mask->mPath.ptPtr;
-        if (!data) continue;
-
-        char *key = _get_key_val(mask);
-        Efl_Canvas_Vg_Shape *shape = efl_key_data_get(parent, key);
-        if (!shape)
-          {
-             shape = efl_add(EFL_CANVAS_VG_SHAPE_CLASS, parent);
-             efl_key_data_set(parent, key, shape);
-          }
-        else
-          efl_gfx_path_reset(shape);
-
-        efl_gfx_entity_visible_set(shape, EINA_TRUE);
-
-        efl_gfx_path_reserve(shape, mask->mPath.elmCount, mask->mPath.ptCount);
-
-        for (int i = 0; i < mask->mPath.elmCount; i++)
-          {
-             switch (mask->mPath.elmPtr[i])
-               {
-                case 0:
-                   efl_gfx_path_append_move_to(shape, data[0], data[1]);
-                   data += 2;
-                   break;
-                case 1:
-                   efl_gfx_path_append_line_to(shape, data[0], data[1]);
-                   data += 2;
-                   break;
-                case 2:
-                   efl_gfx_path_append_cubic_to(shape, data[0], data[1], data[2], data[3], data[4], data[5]);
-                   data += 6;
-                   break;
-                case 3:
-                   efl_gfx_path_append_close(shape);
-                   break;
-                default:
-                   ERR("No reserved path type = %d", mask->mPath.elmPtr[i]);
-                   break;
-               }
-          }
-
-        //Temporary solid type setting.
-        float pa = ((float)mask->mAlpha) / 255;
-        int r = (int)(((float) 255) * pa);
-        int g = (int)(((float) 255) * pa);
-        int b = (int)(((float) 255) * pa);
-        int a = (int)(((float) 255) * pa);
-        efl_gfx_color_set(shape, r, g, b, a);
+        shape = efl_add(EFL_CANVAS_VG_SHAPE_CLASS, parent);
+        efl_key_data_set(parent, key, shape);
      }
+   else
+     efl_gfx_path_reset(shape);
+
+   efl_gfx_entity_visible_set(shape, EINA_TRUE);
+
+   efl_gfx_path_reserve(shape, mask->mPath.elmCount, mask->mPath.ptCount);
+
+   for (int i = 0; i < mask->mPath.elmCount; i++)
+     {
+        switch (mask->mPath.elmPtr[i])
+          {
+           case 0:
+              efl_gfx_path_append_move_to(shape, data[0], data[1]);
+              data += 2;
+              break;
+           case 1:
+              efl_gfx_path_append_line_to(shape, data[0], data[1]);
+              data += 2;
+              break;
+           case 2:
+              efl_gfx_path_append_cubic_to(shape, data[0], data[1], data[2], data[3], data[4], data[5]);
+              data += 6;
+              break;
+           case 3:
+              efl_gfx_path_append_close(shape);
+              break;
+           default:
+              ERR("No reserved path type = %d", mask->mPath.elmPtr[i]);
+              break;
+          }
+     }
+   //White color and alpha setting
+   float pa = ((float)mask->mAlpha) / 255;
+   int r = (int) (255.0f * pa);
+   int g = (int) (255.0f * pa);
+   int b = (int) (255.0f * pa);
+   int a = mask->mAlpha;
+   efl_gfx_color_set(shape, r, g, b, a);
 }
 
 static void
@@ -288,6 +294,62 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
 #endif
         _update_vg_tree(ctree, clayer, depth+1);
 
+        if (clayer->mMaskList.size > 0)
+          {
+             Efl_Canvas_Vg_Container *mtarget = ctree;
+             Efl_Canvas_Vg_Container *msource = NULL;
+
+             key = _get_key_val(clayer);
+             msource = efl_key_data_get(mtarget, key);
+             if (!msource)
+               {
+                  msource = efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, ctree);
+                  efl_key_data_set(mtarget, key, msource);
+               }
+
+             //FIXME : EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA option is temporary
+             //Currently matte alpha implemtnes is same the mask intersect impletment.
+             //It has been implemented as a multiplication calculation.
+             efl_canvas_vg_node_mask_set(mtarget, msource, EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA);
+
+             mtarget = msource;
+
+             //Make mask layers
+             for (unsigned int i = 0; i < clayer->mMaskList.size; i++)
+               {
+                  LOTMask *mask = &clayer->mMaskList.ptr[i];
+                  key = _get_key_val(mask);
+                  msource = efl_key_data_get(mtarget, key);
+
+                  if (!msource)
+                    {
+                       msource = efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, mtarget);
+                       efl_key_data_set(mtarget, key, msource);
+                    }
+                  _construct_mask_nodes(msource, mask, depth + 1);
+
+                  EFL_CANVAS_VG_NODE_BLEND_TYPE mask_mode;
+                  switch (mask->mMode)
+                    {
+                     case MaskSubstract:
+                        mask_mode = EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_SUBSTRACT;
+                        break;
+                     case MaskIntersect:
+                        mask_mode = EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_INTERSECT;
+                        break;
+                     case MaskDifference:
+                        mask_mode = EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_DIFFERENCE;
+                        break;
+                     case MaskAdd:
+                     default:
+                        mask_mode = EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_ADD;
+                        break;
+                    }
+                  efl_canvas_vg_node_mask_set(mtarget, msource, mask_mode);
+                  mtarget = msource;
+               }
+          }
+
         if (matte_mode != 0)
            efl_canvas_vg_node_mask_set(ptree, ctree, matte_mode);
 
@@ -301,10 +363,10 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
               matte_mode = 0;
               break;
            case MatteAlpha:
-              matte_mode = 1;
+              matte_mode = EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA;
               break;
            case MatteAlphaInv:
-              matte_mode = 2;
+              matte_mode = EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA_INV;
               break;
            case MatteLuma:
               matte_mode = 0;
@@ -319,43 +381,6 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
               break;
           }
 
-        //This layer has a mask
-        if (clayer->mMaskList.size > 0)
-          {
-             key = _get_key_val(clayer->mMaskList.ptr);
-             Efl_Canvas_Vg_Container *mtree = efl_key_data_get(ctree, key);
-             if (!mtree)
-               {
-                  mtree = efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, ctree);
-                  efl_key_data_set(ctree, key, mtree);
-               }
-             _construct_mask_nodes(mtree, clayer, depth);
-
-             int mask_mode = 0;
-
-             //Remap Mask Mode
-             switch (clayer->mMaskList.ptr->mMode)
-               {
-                case MaskAdd:
-                   mask_mode = 1;
-                   break;
-                case MaskSubstract:
-                   mask_mode = 2;
-                   break;
-                case MaskIntersect:
-                   ERR("TODO: MaskIntersect");
-                   mask_mode = 3;
-                   break;
-                case MaskDifference:
-                   ERR("TODO: MaskDifference");
-                   mask_mode = 0;
-                   break;
-                default:
-                   mask_mode = 0;
-                   break;
-               }
-             efl_canvas_vg_node_mask_set(ctree, mtree, mask_mode);
-          }
      }
    //Construct drawable nodes.
    if (layer->mNodeList.size > 0)
