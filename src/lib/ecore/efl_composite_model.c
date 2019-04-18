@@ -252,6 +252,20 @@ struct _Efl_Composite_Model_Slice_Request
    unsigned int dummy_need;
 };
 
+static Efl_Model *
+_efl_composite_lookup(const Efl_Class *self, Eo *parent, Efl_Model *view, unsigned int index)
+{
+   EFL_COMPOSITE_LOOKUP_RETURN(remember, parent, view, "_efl.composite_model");
+
+   remember = efl_add_ref(self, parent,
+                          efl_ui_view_model_set(efl_added, view),
+                          efl_composite_model_index_set(efl_added, index),
+                          efl_loop_model_volatile_make(efl_added));
+   if (!remember) return NULL;
+
+   EFL_COMPOSITE_REMEMBER_RETURN(remember, view);
+}
+
 static Eina_Value
 _efl_composite_model_then(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
 {
@@ -266,13 +280,8 @@ _efl_composite_model_then(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
      {
         Eo *composite;
 
-        // First set the Model to be used as a source so that we the newly object
-        // can know if it needs to retain the information regarding its index.
-        composite = efl_add_ref(req->self, req->parent,
-                                efl_ui_view_model_set(efl_added, target),
-                                efl_composite_model_index_set(efl_added, req->start + i),
-                                efl_loop_model_volatile_make(efl_added));
-
+        // Fetch an existing composite model for this model or create a new one if none exist
+        composite = _efl_composite_lookup(req->self, req->parent, target, req->start + i);
         eina_value_array_append(&r, composite);
         // Dropping this scope reference
         efl_unref(composite);
