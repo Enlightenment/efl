@@ -1194,7 +1194,7 @@ EAPI Eina_Bool ecore_drm2_output_pending_get(Ecore_Drm2_Output *output);
  *
  * @since 1.23
  */
-EAPI Eina_Bool ecore_drm2_output_background_color_set(Ecore_Drm2_Output *output, int r, int g, int b, int a);
+EAPI Eina_Bool ecore_drm2_output_background_color_set(Ecore_Drm2_Output *output, uint64_t r, uint64_t g, uint64_t b, uint64_t a);
 
 # endif
 

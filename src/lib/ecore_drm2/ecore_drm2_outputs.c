@@ -1748,7 +1748,7 @@ ecore_drm2_output_relative_to_get(Ecore_Drm2_Output *output)
 }
 
 EAPI Eina_Bool
-ecore_drm2_output_background_color_set(Ecore_Drm2_Output *output, int r, int g, int b, int a)
+ecore_drm2_output_background_color_set(Ecore_Drm2_Output *output, uint64_t r, uint64_t g, uint64_t b, uint64_t a)
 {
    Ecore_Drm2_Crtc_State *cstate;
 
