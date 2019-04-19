@@ -2740,8 +2740,6 @@ _elm_toolbar_efl_canvas_group_group_add(Eo *obj, Elm_Toolbar_Data *priv)
 {
    Evas_Object *edje;
 
-   elm_widget_sub_object_parent_add(obj);
-
    edje = edje_object_add(evas_object_evas_get(obj));
    elm_widget_resize_object_set(obj, edje);
 

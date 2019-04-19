@@ -582,7 +582,6 @@ EOLIAN static void
 _elm_hover_efl_canvas_group_group_add(Eo *obj, Elm_Hover_Data *sd)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    ELM_HOVER_PARTS_FOREACH
      sd->subs[i].swallow = _content_aliases[i].alias;

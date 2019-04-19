@@ -323,7 +323,6 @@ _elm_box_efl_canvas_group_group_add(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED)
                                   _on_size_hints_changed, obj);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    efl_event_callback_add
       (wd->resize_obj, ELM_BOX_EVENT_CHILD_ADDED, _child_added_cb_proxy, obj);

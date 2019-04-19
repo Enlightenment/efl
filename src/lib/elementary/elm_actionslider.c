@@ -483,7 +483,6 @@ _elm_actionslider_efl_canvas_group_group_add(Eo *obj, Elm_Actionslider_Data *pri
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    priv->enabled_position = ELM_ACTIONSLIDER_ALL;
 

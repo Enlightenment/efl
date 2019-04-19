@@ -188,6 +188,7 @@ lib_ecore_con_libecore_con_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DPACKAGE_DATA_DIR=\"$(datadir)/ecore\" \
 -DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
 -DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
+-DEFL_BUILD \
 @ECORE_CON_CFLAGS@
 lib_ecore_con_libecore_con_la_LIBADD = @ECORE_CON_LIBS@ @EVIL_LIBS@
 lib_ecore_con_libecore_con_la_DEPENDENCIES = @ECORE_CON_INTERNAL_LIBS@

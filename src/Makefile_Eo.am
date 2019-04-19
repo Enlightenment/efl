@@ -35,6 +35,7 @@ lib/eo/eo_private.h
 
 lib_eo_libeo_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
 @EO_CFLAGS@ \
 @VALGRIND_CFLAGS@
 lib_eo_libeo_la_LIBADD = @EO_LIBS@
@@ -43,7 +44,7 @@ lib_eo_libeo_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
 ### The Eo debug build
 lib_eo_libeo_dbg_la_SOURCES = $(lib_eo_libeo_la_SOURCES)
-lib_eo_libeo_dbg_la_CPPFLAGS = $(lib_eo_libeo_la_CPPFLAGS) -DEO_DEBUG
+lib_eo_libeo_dbg_la_CPPFLAGS = $(lib_eo_libeo_la_CPPFLAGS) -DEO_DEBUG -DEFL_BUILD
 lib_eo_libeo_dbg_la_LIBADD = $(lib_eo_libeo_la_LIBADD)
 lib_eo_libeo_dbg_la_DEPENDENCIES = $(lib_eo_libeo_la_DEPENDENCIES)
 lib_eo_libeo_dbg_la_LDFLAGS = $(lib_eo_libeo_la_LDFLAGS)

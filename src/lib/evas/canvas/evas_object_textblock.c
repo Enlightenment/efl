@@ -13571,6 +13571,7 @@ evas_object_textblock_free(Evas_Object *eo_obj)
         ts->objects = eina_list_remove(ts->objects, eo_obj);
         if (!ts->objects && (ts->delete_me || o->auto_styles))
           {
+             _style_cache = eina_list_remove(_style_cache, ts);
              evas_textblock_style_free(ts);
           }
         free(use);

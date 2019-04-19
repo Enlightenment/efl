@@ -72,7 +72,8 @@ typedef struct _Ecore_Drm2_Atomic_Blob
 
 typedef struct _Ecore_Drm2_Atomic_Property
 {
-   uint32_t id, value;
+   uint32_t id;
+   uint64_t value;
 } Ecore_Drm2_Atomic_Property;
 
 typedef struct _Ecore_Drm2_Connector_State
@@ -90,6 +91,7 @@ typedef struct _Ecore_Drm2_Crtc_State
    uint32_t obj_id;
    int index;
    Ecore_Drm2_Atomic_Property active;
+   Ecore_Drm2_Atomic_Property background;
    Ecore_Drm2_Atomic_Blob mode;
 } Ecore_Drm2_Crtc_State;
 

@@ -408,7 +408,6 @@ _efl_ui_panes_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UN
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "panes");
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    group = _efl_ui_panes_theme_group_get(obj, sd);
    if (elm_widget_theme_object_set(obj, wd->resize_obj,

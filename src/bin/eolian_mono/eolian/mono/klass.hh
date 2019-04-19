@@ -206,7 +206,7 @@ struct klass
          if(!as_generator
             (
              documentation
-             << "sealed public class " << concrete_name << " : " << "\n"
+             << "sealed internal class " << concrete_name << " : " << "\n"
              << (klass_full_concrete_or_interface_name % ",") << "\n"
              << (inherit_classes.size() > 0 ? ", " : "" ) << interface_name << "\n"
              << scope_tab << *(", " << name_helpers::klass_full_concrete_or_interface_name) << "\n"
@@ -362,6 +362,7 @@ struct klass
                                             context);
          auto native_inherit_name = name_helpers::klass_native_inherit_name(cls);
          auto inherit_name = name_helpers::klass_inherit_name(cls);
+         auto implementable_methods = helpers::get_all_implementable_methods(cls);
          std::string base_name;
          if(!root)
            {
@@ -377,14 +378,25 @@ struct klass
              << scope_tab << "public override System.Collections.Generic.List<Efl_Op_Description> GetEoOps(System.Type type)\n"
              << scope_tab << "{\n"
              << scope_tab << scope_tab << "var descs = new System.Collections.Generic.List<Efl_Op_Description>();\n"
-             << scope_tab << scope_tab << "var methods = Efl.Eo.Globals.GetUserMethods(type);\n"
             )
             .generate(sink, attributes::unused, inative_cxt))
            return false;
 
          // Native wrapper registration
+         // We write them first to a temporary function as the implementable function list may contain
+         // only non-registrable methods like class functions, leading to unused `methods` variable.
+         std::string tmp_registration;
          if(!as_generator(*(function_registration(cls)))
-            .generate(sink, helpers::get_all_implementable_methods(cls), inative_cxt)) return false;
+            .generate(std::back_inserter(tmp_registration), implementable_methods, inative_cxt))
+           return false;
+
+         if (tmp_registration.find("methods") != std::string::npos)
+           if (!as_generator(
+                    scope_tab << scope_tab << "var methods = Efl.Eo.Globals.GetUserMethods(type);\n"
+                    << tmp_registration
+                ).generate(sink,  attributes::unused, inative_cxt))
+             return false;
+
 
          if(!root)
            if(!as_generator(scope_tab << scope_tab << "descs.AddRange(base.GetEoOps(type));\n").generate(sink, attributes::unused, inative_cxt))
@@ -415,7 +427,7 @@ struct klass
 
          // Native method definitions
          if(!as_generator(*(native_function_definition(cls)))
-            .generate(sink, helpers::get_all_implementable_methods(cls), inative_cxt)) return false;
+            .generate(sink, implementable_methods, inative_cxt)) return false;
 
          if(!as_generator("}\n").generate(sink, attributes::unused, inative_cxt)) return false;
        }
@@ -628,12 +640,12 @@ struct klass
              << scope_tab << scope_tab << scope_tab << "else\n"
              << scope_tab << scope_tab << scope_tab << "{\n"
 
-             << scope_tab << scope_tab << scope_tab << scope_tab << "Monitor.Enter(Efl.Eo.Config.InitLock);\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << "if (Efl.Eo.Config.Initialized)\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << "Monitor.Enter(Efl.All.InitLock);\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << "if (Efl.All.MainLoopInitialized)\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << "{\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.efl_mono_thread_safe_native_dispose(h, gcHandlePtr);\n"
              << scope_tab << scope_tab << scope_tab << scope_tab << "}\n\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << "Monitor.Exit(Efl.Eo.Config.InitLock);\n"
+             << scope_tab << scope_tab << scope_tab << scope_tab << "Monitor.Exit(Efl.All.InitLock);\n"
              << scope_tab << scope_tab << scope_tab << "}\n"
              << scope_tab << scope_tab << "}\n"
              << scope_tab << "}\n\n"

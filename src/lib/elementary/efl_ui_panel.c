@@ -838,7 +838,6 @@ _efl_ui_panel_efl_object_constructor(Eo *obj, Efl_Ui_Panel_Data *_pd)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
    _pd->panel_edje = wd->resize_obj;

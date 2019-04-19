@@ -189,12 +189,29 @@ if (cc.has_header('sys/mman.h'))
   config_h.set10('HAVE_MMAN_H', true)
 endif
 
+regexp = []
+if sys_windows == true
+   regexp = cc.find_library('regex',
+                            has_headers: ['regex.h', 'fnmatch.h'],
+                            required: true)
+   if regexp.found() == false
+      error('regex can not be found')
+   endif
+else
+   if cc.has_header_symbol('fnmatch.h', 'fnmatch') == false
+      error('fnmatch can not be found')
+   endif
+   if cc.has_header_symbol('regex.h', 'regcomp') == false
+      error('regcomp can not be found')
+   endif
+endif
+
 config_h.set('VMAJ', version_major)
 config_h.set('VMIN', version_minor)
 config_h.set('VMIC', version_micro)
 config_h.set('VREV', '0')
 
-#jpeg detection ... life is a bit more complex there 
+#jpeg detection ... life is a bit more complex there
 
 jpeg = dependency('libjpeg', required: false)
 if jpeg.found() == false

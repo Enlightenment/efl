@@ -40,6 +40,7 @@ lib_eolian_libeolian_la_SOURCES = \
                                   lib/eolian/eolian_aux.c
 
 lib_eolian_libeolian_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EOLIAN_CFLAGS@ \
+        -DEFL_BUILD \
 	-DPACKAGE_DATA_DIR=\"$(datadir)/eolian\"
 
 lib_eolian_libeolian_la_LIBADD = @EOLIAN_LIBS@

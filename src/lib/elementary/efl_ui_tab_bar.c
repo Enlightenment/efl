@@ -376,9 +376,6 @@ _efl_ui_tab_bar_efl_object_constructor(Eo *obj, Efl_Ui_Tab_Bar_Data *sd)
                                        elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
-
-   elm_widget_sub_object_parent_add(obj);
-
    sd->dir = EFL_UI_DIR_HORIZONTAL;
    sd->bx = evas_object_box_add(evas_object_evas_get(obj));
    evas_object_box_align_set(sd->bx, 0.5, 0.5);

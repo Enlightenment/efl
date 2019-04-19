@@ -267,12 +267,12 @@ struct property_wrapper_definition_generator
         return false;
 
       if (property.getter.is_engaged())
-        if (!as_generator(scope_tab << scope_tab << "get " << (interface ? ";" : "{ return Get" + managed_name + "(); }") << "\n"
+        if (!as_generator(scope_tab << scope_tab << "get " << (interface ? ";" : "{ return " + name_helpers::managed_method_name(*property.getter) + "(); }") << "\n"
             ).generate(sink, attributes::unused, context))
           return false;
 
       if (property.setter.is_engaged())
-        if (!as_generator(scope_tab << scope_tab << "set " << (interface ? ";" : "{ Set" + managed_name + "(" + dir_mod + "value); }") << "\n"
+        if (!as_generator(scope_tab << scope_tab << "set " << (interface ? ";" : "{ " + name_helpers::managed_method_name(*property.setter) + "(" + dir_mod + "value); }") << "\n"
             ).generate(sink, attributes::unused, context))
           return false;
 

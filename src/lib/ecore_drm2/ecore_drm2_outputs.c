@@ -1303,6 +1303,20 @@ _output_mode_atomic_set(Ecore_Drm2_Output *output, Ecore_Drm2_Output_Mode *mode)
         goto err;
      }
 
+   if (cstate->background.id)
+     {
+        ret =
+          sym_drmModeAtomicAddProperty(req, cstate->obj_id,
+                                       cstate->background.id,
+                                       cstate->background.value);
+        if (ret < 0)
+          {
+             ERR("Could not add atomic property");
+             ret = EINA_FALSE;
+             goto err;
+          }
+     }
+
    ret = sym_drmModeAtomicCommit(output->fd, req, DRM_MODE_ATOMIC_ALLOW_MODESET,
                                  output);
    if (ret < 0)
@@ -1731,4 +1745,22 @@ ecore_drm2_output_relative_to_get(Ecore_Drm2_Output *output)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, NULL);
    return output->relative.to;
+}
+
+EAPI Eina_Bool
+ecore_drm2_output_background_color_set(Ecore_Drm2_Output *output, uint64_t r, uint64_t g, uint64_t b, uint64_t a)
+{
+   Ecore_Drm2_Crtc_State *cstate;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(output->crtc_state, EINA_FALSE);
+
+   cstate = output->crtc_state;
+   if (cstate->background.id)
+     {
+        cstate->background.value = (a << 48 | b << 32 | g << 16 | r);
+        return _fb_atomic_flip_test(output);
+     }
+
+   return EINA_FALSE;
 }

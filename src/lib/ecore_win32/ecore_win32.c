@@ -25,12 +25,6 @@
  * @cond LOCAL
  */
 
-/* FIXME: uncomment when mingw-w64 will be updated in win-builds */
-
-/* #ifndef WM_CLIPBOARDUPDATE */
-# define WM_CLIPBOARDUPDATE 0x031D
-/* #endif */
-
 /* OLE IID for Drag'n Drop */
 
 #define INITGUID
@@ -42,9 +36,6 @@ DEFINE_OLEGUID(IID_IDropTarget,    0x00000122L, 0, 0);
 DEFINE_OLEGUID(IID_IUnknown,       0x00000000L, 0, 0);
 
 #define IDI_ICON 101
-
-typedef BOOL WINAPI (*efl_AddClipboardFormatListener)(_In_ HWND hwnd);
-typedef BOOL WINAPI (*efl_RemoveClipboardFormatListener)(_In_ HWND hwnd);
 
 static int _ecore_win32_init_count = 0;
 
@@ -205,31 +196,17 @@ _ecore_win32_window_procedure(HWND   window,
        /* Window notifications */
      case WM_CREATE:
        {
-          efl_AddClipboardFormatListener acfl;
-
           INF("create window message");
-
-          acfl = (efl_AddClipboardFormatListener)GetProcAddress(GetModuleHandle("user32.dll"),
-                                                                "AddClipboardFormatListener");
-          if (acfl)
-            {
-               if (!acfl(window))
-                 INF("can not create clipboard format listener; no clipboard notification will be sent");
-            }
+          if (!AddClipboardFormatListener(window))
+            INF("can not create clipboard format listener; no clipboard notification will be sent");
        _ecore_win32_event_handle_create_notify(data);
        return 0;
        }
      case WM_DESTROY:
        {
-          efl_RemoveClipboardFormatListener rcfl;
-
           INF("destroy window message");
           _ecore_win32_event_handle_destroy_notify(data);
-
-          rcfl = (efl_RemoveClipboardFormatListener)GetProcAddress(GetModuleHandle("user32.dll"),
-                                                                   "RemoveClipboardFormatListener");
-          if (rcfl)
-            rcfl(window);
+          RemoveClipboardFormatListener(window);
           return 0;
        }
      case WM_SHOWWINDOW:

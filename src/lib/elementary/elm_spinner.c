@@ -1187,7 +1187,6 @@ _elm_spinner_efl_canvas_group_group_add(Eo *obj, Elm_Spinner_Data *priv)
    ELM_SPINNER_DATA_GET(obj, sd);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    priv->val_max = 100.0;
    priv->step = 1.0;

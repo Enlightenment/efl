@@ -1812,7 +1812,6 @@ EOLIAN static void
 _efl_ui_flip_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Flip_Data *priv)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    priv->clip = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_static_clip_set(priv->clip, EINA_TRUE);

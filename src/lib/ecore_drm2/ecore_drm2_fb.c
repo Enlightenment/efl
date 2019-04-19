@@ -348,6 +348,15 @@ _fb_atomic_flip_test(Ecore_Drm2_Output *output)
                                   cstate->active.value);
    if (ret < 0) goto err;
 
+   if (cstate->background.id)
+     {
+        ret =
+          sym_drmModeAtomicAddProperty(req, cstate->obj_id,
+                                       cstate->background.id,
+                                       cstate->background.value);
+        if (ret < 0) goto err;
+     }
+
    EINA_LIST_FOREACH(output->planes, l, plane)
      {
         pstate = plane->state;

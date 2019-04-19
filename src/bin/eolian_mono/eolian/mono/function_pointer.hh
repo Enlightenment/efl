@@ -84,7 +84,7 @@ struct function_pointer {
                   << scope_tab << scope_tab << scope_tab << "}\n"
                   << scope_tab << scope_tab << scope_tab << "else\n"
                   << scope_tab << scope_tab << scope_tab << "{\n"
-                  << scope_tab << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(this._cb_free_cb, this._cb_data);\n"
+                  << scope_tab << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.ThreadSafeFreeCbExec(this._cb_free_cb, this._cb_data);\n"
                   << scope_tab << scope_tab << scope_tab << "}\n"
                   << scope_tab << scope_tab << scope_tab << "this._cb_free_cb = null;\n"
                   << scope_tab << scope_tab << scope_tab << "this._cb_data = IntPtr.Zero;\n"

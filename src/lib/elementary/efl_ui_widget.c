@@ -1486,6 +1486,7 @@ _efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
    Efl_Ui_Widget *parent;
 
    if (!sobj) return EINA_FALSE;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(sobj, EFL_GFX_ENTITY_INTERFACE), EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(obj == sobj, EINA_FALSE);
 
    //first make sure that we unregister the sobj from the parent
@@ -5058,7 +5059,15 @@ _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UN
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    if (!efl_isa(obj, EFL_UI_WIN_CLASS))
      {
-        efl_ui_widget_sub_object_add(efl_parent_get(obj), obj);
+        Eo *parent = efl_parent_get(obj);
+        if (!efl_isa(parent, EFL_UI_WIDGET_CLASS))
+          {
+             ERR("You passed a wrong parent parameter (%p %s). "
+                 "Elementary widget's parent should be an elementary widget.",
+                 parent, evas_object_type_get(parent));
+          }
+
+        efl_ui_widget_sub_object_add(parent, obj);
      }
 
    sd->on_create = EINA_FALSE;

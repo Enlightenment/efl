@@ -109,7 +109,7 @@ public class Binbuf : IDisposable
             }
             else
             {
-                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eina_binbuf_free, Handle);
+                Efl.Eo.Globals.ThreadSafeFreeCbExec(eina_binbuf_free, Handle);
             }
         }
     }

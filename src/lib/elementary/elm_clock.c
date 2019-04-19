@@ -722,7 +722,6 @@ _elm_clock_efl_canvas_group_group_add(Eo *obj, Elm_Clock_Data *priv)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    priv->cur.ampm = -1;
    priv->cur.seconds = EINA_TRUE;

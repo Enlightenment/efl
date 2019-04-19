@@ -13,6 +13,7 @@ lib_elua_libelua_la_SOURCES = \
 	lib/elua/cache.c
 
 lib_elua_libelua_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ELUA_CFLAGS@ \
+        -DEFL_BUILD \
 	-DLOCALE_DIR=\"@LOCALE_DIR@\" \
 	-DPACKAGE_BIN_DIR=\"$(bindir)\" \
 	-DPACKAGE_DATA_DIR=\"$(datadir)/elua\"

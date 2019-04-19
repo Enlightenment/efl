@@ -331,7 +331,6 @@ EOLIAN static void
 _elm_combobox_efl_canvas_group_group_add(Eo *obj, Elm_Combobox_Data *sd EINA_UNUSED)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    efl_ui_mirrored_automatic_set(obj, EINA_FALSE);
 

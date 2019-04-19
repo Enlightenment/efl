@@ -310,7 +310,6 @@ _elm_slideshow_efl_canvas_group_group_add(Eo *obj, Elm_Slideshow_Data *priv)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    priv->count_item_pre_before = 2;
    priv->count_item_pre_after = 2;

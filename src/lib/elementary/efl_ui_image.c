@@ -534,7 +534,7 @@ EOLIAN static void
 _efl_ui_image_efl_gfx_image_smooth_scale_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, Eina_Bool smooth)
 {
    sd->smooth = smooth;
-   if (!sd->edje) evas_object_image_smooth_scale_set(sd->img, smooth);
+   if (sd->img && (!sd->edje)) evas_object_image_smooth_scale_set(sd->img, smooth);
 }
 
 EOLIAN static Eina_Bool
@@ -566,7 +566,6 @@ EOLIAN static void
 _efl_ui_image_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Data *priv)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    priv->hit_rect = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_smart_member_add(priv->hit_rect, obj);

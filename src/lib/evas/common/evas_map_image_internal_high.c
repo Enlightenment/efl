@@ -354,7 +354,8 @@ _map_triangle_draw_linear(RGBA_Image *src, RGBA_Image *dst,
    int dw = dst->cache_entry.w;
    int x1, x2, x, y, uu, vv, ar, ab, iru, irv, px, ay;
    float dx, u, v, iptr;
-   float _dcdx[4], _dcdya[4], _ca[4], c[4];
+   float _dcdx[4], _dcdya[4], _ca[4];
+   float c[4] = {0, 0, 0, 0};
    DATA32 *buf, *tmp;
    DATA8 *mbuf;
 
@@ -773,8 +774,8 @@ _evas_common_map_rgba_internal_high(RGBA_Image *src, RGBA_Image *dst,
       Check alpha transparency. */
    for (int i = 0; i < 4; i++)
      {
-        x[i] = ((float) (p[i].x >> FP)) + 0.5;
-        y[i] = ((float) (p[i].y >> FP)) + 0.5;
+        x[i] = p[i].fx + 0.5;
+        y[i] = p[i].fy + 0.5;
         u[i] = (p[i].u >> FP);
         v[i] = (p[i].v >> FP);
         c[i] = p[i].col;

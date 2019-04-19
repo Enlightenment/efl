@@ -176,9 +176,9 @@ _gen_func(const Eolian_State *state, const Eolian_Function *fid,
 
 void
 eo_gen_header_gen(const Eolian_State *state, const Eolian_Class *cl,
-                  Eina_Strbuf *buf, Eina_Bool legacy)
+                  Eina_Strbuf *buf)
 {
-   if (!cl || legacy)
+   if (!cl)
      return;
 
    Eina_Iterator *itr;
@@ -196,7 +196,7 @@ eo_gen_header_gen(const Eolian_State *state, const Eolian_Class *cl,
    if (doc)
      {
         Eina_Strbuf *cdoc = eo_gen_docs_full_gen(state, doc,
-           eolian_class_name_get(cl), 0, EINA_FALSE);
+           eolian_class_name_get(cl), 0);
         if (cdoc)
           {
              eina_strbuf_append(buf, eina_strbuf_string_get(cdoc));

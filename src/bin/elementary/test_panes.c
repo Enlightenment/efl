@@ -38,8 +38,8 @@ _clicked_double(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
      elm_panes_content_left_size_set(obj, *size);
 }
 
-void
-test_panes(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+static void
+_test_panes(const char *style)
 {
    Evas_Object *win, *bg, *panes, *panes_h, *bt;
    static double vbar_size = 0.0;
@@ -56,6 +56,7 @@ test_panes(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_show(bg);
 
    panes = elm_panes_add(win);
+   elm_object_style_set(panes, style);
    evas_object_size_hint_weight_set(panes, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_panes_content_left_min_size_set(panes, 100);
    elm_panes_content_left_size_set(panes, 0.7);
@@ -76,6 +77,7 @@ test_panes(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
 
    // add panes
    panes_h = elm_panes_add(win);
+   elm_object_style_set(panes_h, style);
    elm_panes_horizontal_set(panes_h, EINA_TRUE);
    elm_panes_content_right_min_size_set(panes_h, 100);
    elm_panes_content_right_size_set(panes_h, 0.3);
@@ -103,3 +105,42 @@ test_panes(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_inf
    evas_object_resize(win, 320, 400);
    evas_object_show(win);
 }
+
+void
+test_panes(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   _test_panes("default");
+}
+
+void
+test_panes_flush(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   _test_panes("flush");
+}
+
+void
+test_panes_left_fold(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   _test_panes("left-fold");
+}
+
+void
+test_panes_right_fold(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   _test_panes("right-fold");
+}
+
+void
+test_panes_up_fold(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   _test_panes("up-fold");
+}
+
+void
+test_panes_down_fold(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   _test_panes("down-fold");
+}
+
+
+

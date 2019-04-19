@@ -584,7 +584,6 @@ _efl_ui_textpath_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Textpath_Data *priv)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    priv->text_obj = edje_object_add(evas_object_evas_get(obj));
    elm_widget_theme_object_set(obj, priv->text_obj, "textpath", "base",

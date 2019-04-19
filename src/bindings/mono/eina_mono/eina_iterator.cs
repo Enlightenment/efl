@@ -79,7 +79,7 @@ public class Iterator<T> : IEnumerable<T>, IDisposable
             }
             else
             {
-                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eina_iterator_free, h);
+                Efl.Eo.Globals.ThreadSafeFreeCbExec(eina_iterator_free, h);
             }
         }
     }

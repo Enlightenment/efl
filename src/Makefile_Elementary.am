@@ -199,7 +199,6 @@ elm_eolian_type_files = \
 
 elm_public_eolian_c = $(elm_public_eolian_files:%.eo=%.eo.c)
 elm_public_eolian_h = $(elm_public_eolian_files:%.eo=%.eo.h) \
-        $(elm_public_eolian_files:%.eo=%.eo.legacy.h) \
         $(elm_eolian_type_files:%.eot=%.eot.h)
 
 elm_private_eolian_c = $(elm_private_eolian_files:%.eo=%.eo.c)
@@ -207,7 +206,6 @@ elm_private_eolian_h = $(elm_private_eolian_files:%.eo=%.eo.h)
 
 elm_legacy_eolian_c = $(elm_legacy_eolian_files:%.eo=%.eo.c)
 elm_legacy_eolian_eo_h = $(elm_legacy_eolian_files:%.eo=%.eo.h)
-elm_legacy_eolian_legacy_h = $(elm_legacy_eolian_files:%.eo=%.eo.legacy.h)
 
 BUILT_SOURCES += \
 	$(elm_public_eolian_c) \
@@ -215,8 +213,7 @@ BUILT_SOURCES += \
 	$(elm_private_eolian_c) \
 	$(elm_private_eolian_h) \
 	$(elm_legacy_eolian_c) \
-	$(elm_legacy_eolian_eo_h) \
-	$(elm_legacy_eolian_legacy_h)
+	$(elm_legacy_eolian_eo_h)
 
 if INSTALL_EO_FILES
 elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
@@ -775,8 +772,7 @@ includesunstable_HEADERS = \
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
 nodist_includesunstable_HEADERS = \
-	$(elm_public_eolian_h) \
-	$(elm_legacy_eolian_legacy_h)
+	$(elm_public_eolian_h)
 
 includesub_HEADERS = \
 	lib/elementary/elc_ctxpopup.h \
@@ -1250,7 +1246,7 @@ lib_elementary_libelementary_la_CPPFLAGS = \
 -DLOCALE_DIR=\"$(localedir)\" \
 -DICON_DIR=\"$(datadir)/icons\" \
 -DELM_TOP_BUILD_DIR=\"$(top_builddir)\" \
--DELEMENTARY_BUILD \
+-DEFL_BUILD \
 @ELEMENTARY_CFLAGS@
 
 if HAVE_WINDOWS
@@ -1565,6 +1561,7 @@ modules_elementary_access_output_module_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/elementary \
 -DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DEFL_BUILD \
 @ELEMENTARY_CFLAGS@
 modules_elementary_access_output_module_la_LIBADD = @USE_ELEMENTARY_LIBS@
 modules_elementary_access_output_module_la_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
@@ -1592,6 +1589,7 @@ modules_elementary_clock_input_ctxpopup_module_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/elementary \
 -DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DEFL_BUILD \
 @ELEMENTARY_CFLAGS@
 modules_elementary_clock_input_ctxpopup_module_la_LIBADD = @USE_ELEMENTARY_LIBS@
 modules_elementary_clock_input_ctxpopup_module_la_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
@@ -1647,6 +1645,7 @@ modules_elementary_prefs_module_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/elementary \
 -DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DEFL_BUILD \
 @ELEMENTARY_CFLAGS@
 
 if HAVE_WINDOWS
@@ -1681,6 +1680,7 @@ modules_elementary_test_entry_module_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/elementary \
 -DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DEFL_BUILD \
 @ELEMENTARY_CFLAGS@
 modules_elementary_test_entry_module_la_LIBADD = @USE_ELEMENTARY_LIBS@
 modules_elementary_test_entry_module_la_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
@@ -1707,6 +1707,7 @@ modules_elementary_test_map_module_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/elementary \
 -DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DEFL_BUILD \
 @ELEMENTARY_CFLAGS@
 modules_elementary_test_map_module_la_LIBADD = @USE_ELEMENTARY_LIBS@
 modules_elementary_test_map_module_la_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
@@ -1742,6 +1743,7 @@ modules_elementary_web_none_module_la_CPPFLAGS = \
 -I$(top_builddir)/src/modules/elementary/web/none \
 -DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DEFL_BUILD \
 @ELEMENTARY_CFLAGS@
 modules_elementary_web_none_module_la_LIBADD = @USE_ELEMENTARY_LIBS@
 modules_elementary_web_none_module_la_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@
@@ -1811,6 +1813,7 @@ edje_external_elementary_module_la_CPPFLAGS = \
 -I$(top_builddir)/src/edje_externals \
 -DPACKAGE_DATA_DIR=\"$(pkgdatadir)\" \
 -DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DEFL_BUILD \
 @ELEMENTARY_CFLAGS@
 edje_external_elementary_module_la_LIBADD = @USE_ELEMENTARY_LIBS@
 edje_external_elementary_module_la_DEPENDENCIES = @USE_ELEMENTARY_INTERNAL_LIBS@

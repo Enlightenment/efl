@@ -214,6 +214,7 @@ _fetch_user_homedir(char **str, const char *name, const char *error)
 #else
   ERR("User fetching is disabled on this system\nThe string was: %s", error);
   return EINA_FALSE;
+  (void) name;
 #endif
 }
 

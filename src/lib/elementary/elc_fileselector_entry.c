@@ -222,7 +222,6 @@ EOLIAN static void
 _elm_fileselector_entry_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Entry_Data *priv)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    priv->button = elm_fileselector_button_add(obj);
    efl_ui_mirrored_automatic_set(priv->button, EINA_FALSE);

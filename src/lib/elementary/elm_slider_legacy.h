@@ -381,5 +381,3 @@ EAPI double elm_slider_step_get(const Evas_Object *obj);
  * @ingroup Elm_Slider
  */
 EAPI void elm_slider_step_set(Evas_Object *obj, double step);
-
-#include "efl_ui_slider.eo.legacy.h"

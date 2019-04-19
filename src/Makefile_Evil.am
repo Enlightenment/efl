@@ -21,7 +21,6 @@ lib/evil/evil_string.h \
 lib/evil/evil_time.h \
 lib/evil/evil_unistd.h \
 lib/evil/evil_util.h \
-lib/evil/fnmatch.h \
 lib/evil/pwd.h
 
 evilmmanheadersdir = $(includedir)/evil-@VMAJ@/sys
@@ -31,8 +30,6 @@ lib/evil/sys/mman.h
 lib_evil_libevil_la_SOURCES = \
 lib/evil/evil_dlfcn.c \
 lib/evil/evil_fcntl.c \
-lib/evil/evil_fnmatch.c \
-lib/evil/evil_fnmatch_list_of_states.c \
 lib/evil/evil_langinfo.c \
 lib/evil/evil_locale.c \
 lib/evil/evil_main.c \
@@ -44,33 +41,14 @@ lib/evil/evil_string.c \
 lib/evil/evil_time.c \
 lib/evil/evil_unistd.c \
 lib/evil/evil_util.c \
-lib/evil/evil_private.h \
-lib/evil/evil_fnmatch_private.h
+lib/evil/evil_private.h
 
-lib_evil_libevil_la_CPPFLAGS = @EVIL_CPPFLAGS@
+lib_evil_libevil_la_CPPFLAGS = @EVIL_CPPFLAGS@ -DEFL_BUILD
 lib_evil_libevil_la_CFLAGS = @EVIL_CFLAGS@ @EVIL_CFLAGS_WRN@ -D__USE_MINGW_ANSI_STDIO
 lib_evil_libevil_la_LIBADD = @EVIL_LIBS@
 lib_evil_libevil_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 
-# regex
-
-dist_install_evilheaders_DATA += \
-lib/evil/regex/regex.h
-
-lib_evil_libevil_la_SOURCES += \
-lib/evil/regex/regcomp.c \
-lib/evil/regex/regerror.c \
-lib/evil/regex/regexec.c \
-lib/evil/regex/regfree.c \
-lib/evil/regex/cclass.h \
-lib/evil/regex/cname.h \
-lib/evil/regex/regex2.h \
-lib/evil/regex/utils.h
-
-lib_evil_libevil_la_CPPFLAGS += \
--I$(top_srcdir)/src/lib/evil \
--I$(top_srcdir)/src/lib/evil/regex \
--DPOSIX_MISTAKE
+lib_evil_libevil_la_CPPFLAGS += -I$(top_srcdir)/src/lib/evil
 
 ### Unit tests
 
@@ -83,7 +61,6 @@ tests_evil_evil_suite_SOURCES = \
 tests/evil/evil_suite.c \
 tests/evil/evil_suite.h \
 tests/evil/evil_test_dlfcn.c \
-tests/evil/evil_test_libgen.c \
 tests/evil/evil_test_main.c \
 tests/evil/evil_test_stdio.c \
 tests/evil/evil_test_stdlib.c \
@@ -103,9 +80,3 @@ tests_evil_evil_suite_DEPENDENCIES = @USE_EVIL_INTERNAL_LIBS@
 endif
 
 endif
-
-EXTRA_DIST2 += \
-lib/evil/regex/regerror.ih \
-lib/evil/regex/engine.ih \
-lib/evil/regex/regcomp.ih \
-lib/evil/regex/engine.c

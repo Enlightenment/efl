@@ -1023,7 +1023,7 @@ _efl_ui_scroll_manager_mouse_up_event_momentum_eval(Efl_Ui_Scroll_Manager_Data *
 {
    double t, at;
    Evas_Coord dx, dy, ax, ay, vel;
-   char sdx, sdy;
+   signed char sdx, sdy;
 
    t = ev->timestamp / 1000.0;
 
@@ -1294,7 +1294,7 @@ _scroll_manager_momentum_animator_add(Efl_Ui_Scroll_Manager_Data *sd, double vx,
 #define INVERSE_MASS 1
 #define ACCEL (FRICTION * INVERSE_MASS)
    double dur = 0.0;
-   char sdx = 0, sdy = 0;
+   signed char sdx = 0, sdy = 0;
    Evas_Coord dstx = 0, dsty = 0;
 
 /*
@@ -2418,6 +2418,7 @@ _efl_ui_scroll_manager_efl_object_constructor(Eo *obj, Efl_Ui_Scroll_Manager_Dat
    sd->scrolling = EINA_FALSE;
 
    sd->event_rect = evas_object_rectangle_add(evas_object_evas_get(sd->parent));
+   efl_key_data_set(sd->event_rect, "_elm_leaveme", obj);
    efl_canvas_group_member_add(sd->parent, sd->event_rect);
    efl_ui_widget_sub_object_add(sd->parent, sd->event_rect);
 

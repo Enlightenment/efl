@@ -927,7 +927,6 @@ EOLIAN static void
 _elm_conformant_efl_canvas_group_group_add(Eo *obj, Elm_Conformant_Data *_pd EINA_UNUSED)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
    if (!elm_layout_theme_set

@@ -117,7 +117,7 @@ public class Proxy : IDisposable
             }
             else
             {
-                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eldbus_proxy_unref, h);
+                Efl.Eo.Globals.ThreadSafeFreeCbExec(eldbus_proxy_unref, h);
             }
         }
     }

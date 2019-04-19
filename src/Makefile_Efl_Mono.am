@@ -244,6 +244,7 @@ lib_efl_mono_libeflcustomexportsmono_la_SOURCES = \
 lib_efl_mono_libeflcustomexportsmono_la_CPPFLAGS = \
 -DEFL_BETA_API_SUPPORT \
 -I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
 @EFL_CUSTOM_EXPORTS_MONO_CFLAGS@
 lib_efl_mono_libeflcustomexportsmono_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
 lib_efl_mono_libeflcustomexportsmono_la_LIBADD = @EFL_CUSTOM_EXPORTS_MONO_LIBS@

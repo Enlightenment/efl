@@ -163,7 +163,6 @@ EFL_START_TEST(eolian_functions_descriptions)
    _remove_ref(output_filepath, "eo.h");
    fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/class_simple.eo", "-gh", output_filepath));
    fail_if(!_files_compare(TESTS_SRC_DIR"/data/class_simple_ref_eo.h", output_filepath, "eo.h"));
-   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/class_simple.eo", "-gl", output_filepath));
 }
 EFL_END_TEST
 
@@ -186,7 +185,6 @@ EFL_START_TEST(eolian_docs)
    _remove_ref(output_filepath, "eo.h");
    fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/docs.eo", "-gh", output_filepath));
    fail_if(!_files_compare(TESTS_SRC_DIR"/data/docs_ref.h", output_filepath, "eo.h"));
-   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/docs.eo", "-gl", output_filepath));
 }
 EFL_END_TEST
 

@@ -336,8 +336,6 @@ _efl_ui_pager_efl_object_constructor(Eo *obj,
                                        elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
-   elm_widget_sub_object_parent_add(obj);
-
    pd->cnt = 0;
    pd->loop = EFL_UI_PAGER_LOOP_DISABLED;
 
@@ -377,6 +375,19 @@ _efl_ui_pager_efl_object_constructor(Eo *obj,
    efl_gfx_entity_visible_set(pd->backclip, EINA_FALSE);
 
    return obj;
+}
+
+EOLIAN static void
+_efl_ui_pager_efl_object_invalidate(Eo *obj,
+                                    Efl_Ui_Pager_Data *pd)
+{
+   efl_invalidate(efl_super(obj, MY_CLASS));
+
+   /* Since the parent of foreclip and backclip is evas, foreclip and backclip
+    * are not deleted automatically when pager is deleted.
+    * Therefore, foreclip and backclip are deleted manually here. */
+   efl_del(pd->foreclip);
+   efl_del(pd->backclip);
 }
 
 EOLIAN static int
@@ -784,20 +795,59 @@ _efl_ui_pager_loop_mode_get(const Eo *obj EINA_UNUSED,
    return pd->loop;
 }
 
+static void
+_unpack_all(Efl_Ui_Pager_Data *pd,
+            Eina_Bool clear)
+{
+   Eo *subobj;
+
+   pd->cnt = 0;
+   pd->curr.page = -1;
+   pd->curr.pos = 0.0;
+
+   if (pd->transition)
+     {
+        efl_page_transition_unpack_all(pd->transition);
+     }
+   else
+     {
+        subobj = eina_list_nth(pd->content_list, pd->curr.page);
+        efl_pack_unpack(pd->page_box, subobj);
+     }
+
+   if (clear)
+     {
+        EINA_LIST_FREE(pd->content_list, subobj)
+           evas_object_del(subobj);
+     }
+   else
+     {
+        EINA_LIST_FREE(pd->content_list, subobj)
+           efl_canvas_object_clipper_set(subobj, NULL);
+     }
+
+   if (pd->indicator)
+     {
+        efl_page_indicator_unpack_all(pd->indicator);
+     }
+}
+
 EOLIAN static Eina_Bool
 _efl_ui_pager_efl_pack_pack_clear(Eo *obj EINA_UNUSED,
-                                  Efl_Ui_Pager_Data *pd EINA_UNUSED)
+                                  Efl_Ui_Pager_Data *pd)
 {
-   ERR("Soon to be implemented");
-   return EINA_FALSE;
+   _unpack_all(pd, EINA_TRUE);
+
+   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
 _efl_ui_pager_efl_pack_unpack_all(Eo *obj EINA_UNUSED,
-                                  Efl_Ui_Pager_Data *pd EINA_UNUSED)
+                                  Efl_Ui_Pager_Data *pd)
 {
-   ERR("Soon to be implemented");
-   return EINA_FALSE;
+   _unpack_all(pd, EINA_FALSE);
+
+   return EINA_TRUE;
 }
 
 static void
@@ -853,12 +903,19 @@ _efl_ui_pager_efl_pack_unpack(Eo *obj,
 }
 
 EOLIAN static Efl_Gfx_Entity *
-_efl_ui_pager_efl_pack_linear_pack_unpack_at(Eo *obj EINA_UNUSED,
-                                             Efl_Ui_Pager_Data *pd EINA_UNUSED,
-                                             int index EINA_UNUSED)
+_efl_ui_pager_efl_pack_linear_pack_unpack_at(Eo *obj,
+                                             Efl_Ui_Pager_Data *pd,
+                                             int index)
 {
-   ERR("Soon to be implemented");
-   return NULL;
+   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return NULL;
+
+   if ((index >= pd->cnt) || (index < 0)) return NULL;
+
+   Efl_Gfx_Entity *subobj = eina_list_nth(pd->content_list, index);
+
+   _unpack(obj, pd, subobj, index);
+
+   return subobj;
 }
 
 

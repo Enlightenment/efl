@@ -78,7 +78,7 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
             }
             else
             {
-                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eina_accessor_free, Handle);
+                Efl.Eo.Globals.ThreadSafeFreeCbExec(eina_accessor_free, Handle);
             }
             Handle = IntPtr.Zero;
         }

@@ -15,9 +15,6 @@ foreach mod_name : mods
   mod_src = []
   mod_deps = []
 
-  if loader_disabler.contains('xim') == false
-    config_h.set('ENABLE_'+mod_name.to_upper(), '1')
-  endif
   if loader_disabler.contains(mod_name) == false
     mod_install_dir =  join_paths(dir_package_modules, mod_name, version_name)
     subdir(mod_name)

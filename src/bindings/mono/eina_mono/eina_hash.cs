@@ -193,7 +193,7 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
             }
             else
             {
-                Efl.Eo.Globals.efl_mono_thread_safe_free_cb_exec(eina_hash_free, h);
+                Efl.Eo.Globals.ThreadSafeFreeCbExec(eina_hash_free, h);
             }
         }
     }

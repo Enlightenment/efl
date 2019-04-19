@@ -655,7 +655,6 @@ _efl_ui_slider_efl_object_constructor(Eo *obj, Efl_Ui_Slider_Data *priv)
 
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "slider");
-   elm_widget_sub_object_parent_add(obj);
 
    group = _efl_ui_slider_theme_group_get(obj, priv);
    if (elm_widget_theme_object_set(obj, wd->resize_obj,

@@ -218,7 +218,6 @@ _efl_ui_button_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Button_Data *_pd EINA_
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "button");
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    if (elm_widget_is_legacy(obj))
      {

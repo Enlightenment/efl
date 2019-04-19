@@ -239,8 +239,6 @@ _efl_ui_spin_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Data *sd)
      elm_widget_theme_klass_set(obj, "spin");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   elm_widget_sub_object_parent_add(obj);
-
    sd->val_max = 100.0;
    sd->step = 1.0;
    sd->special_values = eina_array_new(sizeof(Efl_Ui_Spin_Special_Value));

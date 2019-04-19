@@ -1045,7 +1045,6 @@ _elm_index_efl_canvas_group_group_add(Eo *obj, Elm_Index_Data *priv)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set
        (obj, "index", "base/vertical", elm_widget_style_get(obj)))

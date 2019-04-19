@@ -532,7 +532,6 @@ _elm_thumb_efl_canvas_group_group_add(Eo *obj, Elm_Thumb_Data *_pd EINA_UNUSED)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    if (!elm_layout_theme_set(obj, "thumb", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");

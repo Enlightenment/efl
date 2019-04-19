@@ -810,9 +810,13 @@ EFL_SELECT_WINDOWS_VERSION
 
 ### Checks for libraries
 
-EFL_ADD_LIBS([EVIL], [-lpsapi -lole32 -lws2_32 -lsecur32 -luuid])
+EFL_ADD_LIBS([EVIL], [-lpsapi -lole32 -lws2_32 -lsecur32 -luuid -lregex])
 
 ### Checks for header files
+
+AC_CHECK_HEADERS([regex.h fnmatch.h],
+   [],
+   [AC_MSG_ERROR([regex.h or fnmatch.h can not be found])])
 
 ### Checks for types
 
@@ -838,6 +842,14 @@ AC_SUBST([EVIL_CXXFLAGS])
 ### Checks for linker characteristics
 
 ### Checks for library functions
+
+AC_SEARCH_LIBS([regcomp], [regex],
+   [],
+   [AC_MSG_ERROR([regcomp() can not be found in libregex])])
+
+AC_SEARCH_LIBS([fnmatch], [regex],
+   [],
+   [AC_MSG_ERROR([fnmatch() can not be found in libregex])])
 
 EFL_LIB_END_OPTIONAL([Evil])
 
@@ -4480,7 +4492,7 @@ if test "x${want_xim}" = "xyes" && test "x${want_ecore_imf_xim}" = "xyes" ; then
    [X11 XOpenIM],
    [
      have_ecore_imf_xim=yes
-     AC_DEFINE([ENABLE_XIM], [1], [Enable X Input Method])
+     AC_DEFINE([BUILD_ECORE_IMF_XIM], [1], [Enable X Input Method])
    ])
 fi
 

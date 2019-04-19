@@ -1221,8 +1221,6 @@ _elm_diskselector_efl_canvas_group_group_add(Eo *obj, Elm_Diskselector_Data *pri
    Evas *evas;
    Evas_Object *blank, *edje;
 
-   elm_widget_sub_object_parent_add(obj);
-
    evas = evas_object_evas_get(obj);
    evas_event_freeze(evas);
 

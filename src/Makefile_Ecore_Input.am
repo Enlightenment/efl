@@ -15,7 +15,7 @@ lib/ecore_input/ecore_input_joystick.c \
 lib/ecore_input/ecore_input_compose.h \
 lib/ecore_input/ecore_input_private.h
 
-lib_ecore_input_libecore_input_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_INPUT_CFLAGS@
+lib_ecore_input_libecore_input_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_INPUT_CFLAGS@ -DEFL_BUILD
 lib_ecore_input_libecore_input_la_LIBADD = @ECORE_INPUT_LIBS@
 lib_ecore_input_libecore_input_la_DEPENDENCIES = @ECORE_INPUT_INTERNAL_LIBS@
 lib_ecore_input_libecore_input_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@

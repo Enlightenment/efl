@@ -3,14 +3,13 @@ AM_V_EOL = $(am__v_EOL_@AM_V@)
 am__v_EOL_ = $(am__v_EOL_@AM_DEFAULT_V@)
 am__v_EOL_0 = @echo "  EOLIAN  " $@;
 
-SUFFIXES = .eo .eo.c .eo.h .eo.legacy.h .eot .eot.h
+SUFFIXES = .eo .eo.c .eo.h .eot .eot.h
 
 
 #disable rules for subdir builds to avoid recursive dependencies
 ../%.eo.c: %.eo ${_EOLIAN_GEN_DEP}
 ../%.eo.h: %.eo ${_EOLIAN_GEN_DEP}
 ../%.eot.h: %.eot ${_EOLIAN_GEN_DEP}
-../%.eo.legacy.h: %.eo ${_EOLIAN_GEN_DEP}
 
 %.eo.c: %.eo ${_EOLIAN_GEN_DEP}
 	$(AM_V_EOL) \
@@ -26,8 +25,3 @@ SUFFIXES = .eo .eo.c .eo.h .eo.legacy.h .eot .eot.h
 	$(AM_V_EOL) \
 	$(MKDIR_P) $(@D); \
 	$(EOLIAN_GEN) $(EOLIAN_FLAGS) $(EOLIAN_GEN_FLAGS) -gh -o h:$@ $<
-
-%.eo.legacy.h: %.eo ${_EOLIAN_GEN_DEP}
-	$(AM_V_EOL) \
-	$(MKDIR_P) $(@D); \
-	$(EOLIAN_GEN) $(EOLIAN_FLAGS) $(EOLIAN_GEN_FLAGS) -gl -o l:$@ $<

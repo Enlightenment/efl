@@ -11,17 +11,16 @@ int _eolian_gen_log_dom = -1;
 enum
 {
    GEN_H        = 1 << 0,
-   GEN_H_LEGACY = 1 << 1,
-   GEN_H_STUB   = 1 << 2,
-   GEN_C        = 1 << 3,
-   GEN_C_IMPL   = 1 << 4,
-   GEN_D        = 1 << 5,
-   GEN_D_FULL   = 1 << 6
+   GEN_H_STUB   = 1 << 1,
+   GEN_C        = 1 << 2,
+   GEN_C_IMPL   = 1 << 3,
+   GEN_D        = 1 << 4,
+   GEN_D_FULL   = 1 << 5
 };
 
-static const char *_dexts[7] =
+static const char *_dexts[6] =
 {
-  ".h", ".legacy.h", ".stub.h", ".c", ".c", ".d", ".d"
+  ".h", ".stub.h", ".c", ".c", ".d", ".d"
 };
 
 static int
@@ -48,7 +47,6 @@ _print_usage(const char *progn, FILE *outf)
                  "\n"
                  "Available types:\n"
                  "  h: C header file (.eo.h/.eot.h)\n"
-                 "  l: Legacy C header file (.eo.legacy.h/.eot.legacy.h)\n"
                  "  s: Stub C header file (.eo.stub.h/.eot.stub.h)\n"
                  "  c: C source file (.eo.c)\n"
                  "  i: Implementation file (.c, merged with existing)\n"
@@ -85,10 +83,6 @@ _try_set_out(char t, char **outs, const char *val, int *what)
       case 'h':
         pos = _get_bit_pos(GEN_H);
         *what |= GEN_H;
-        break;
-      case 'l':
-        pos = _get_bit_pos(GEN_H_LEGACY);
-        *what |= GEN_H_LEGACY;
         break;
       case 's':
         pos = _get_bit_pos(GEN_H_STUB);
@@ -331,13 +325,13 @@ void eo_gen_class_names_get(const Eolian_Class *cl, char **cname,
 
 static Eina_Bool
 _write_header(const Eolian_State *eos, const Eolian_State *state, const char *ofname,
-              const char *ifname, Eina_Bool legacy)
+              const char *ifname)
 {
-   INF("generating header: %s (legacy: %d)", ofname, legacy);
+   INF("generating header: %s", ofname);
    Eina_Strbuf *buf = eina_strbuf_new();
 
    eo_gen_types_header_gen(state, eolian_state_objects_by_file_get(eos, ifname),
-                           buf, EINA_TRUE, legacy);
+                           buf, EINA_TRUE);
    buf = _include_guard(ifname, "TYPES", buf);
 
    Eina_Strbuf *cltd = eo_gen_class_typedef_gen(eos, ifname);
@@ -349,16 +343,13 @@ _write_header(const Eolian_State *eos, const Eolian_State *state, const char *of
         eina_strbuf_free(cltd);
      }
 
-   const Eolian_Class *cl = eolian_state_class_by_file_get(eos, ifname);
-   eo_gen_header_gen(state, cl, buf, legacy);
-   if (cl || !legacy)
+   eo_gen_header_gen(state, eolian_state_class_by_file_get(eos, ifname), buf);
+
+   buf = _include_guard(_get_filename(ofname), NULL, buf);
+   if (_write_file(ofname, buf))
      {
-        buf = _include_guard(_get_filename(ofname), NULL, buf);
-        if (_write_file(ofname, buf))
-          {
-             eina_strbuf_free(buf);
-             return EINA_TRUE;
-          }
+        eina_strbuf_free(buf);
+        return EINA_TRUE;
      }
 
    eina_strbuf_free(buf);
@@ -373,7 +364,7 @@ _write_stub_header(const Eolian_State *eos, const Eolian_State *state, const cha
    Eina_Strbuf *buf = eina_strbuf_new();
 
    eo_gen_types_header_gen(state, eolian_state_objects_by_file_get(eos, ifname),
-                           buf, EINA_FALSE, EINA_FALSE);
+                           buf, EINA_FALSE);
 
    Eina_Strbuf *cltd = eo_gen_class_typedef_gen(eos, ifname);
    if (cltd)
@@ -476,7 +467,6 @@ _write_deps(const Eolian_State *eos, const char *ofname, const char *ifname,
    eina_strbuf_append_char(dbuf, '\n');
 
    _append_dep_line(buf, dbuf, outs, gen_what, GEN_H);
-   _append_dep_line(buf, dbuf, outs, gen_what, GEN_H_LEGACY);
    _append_dep_line(buf, dbuf, outs, gen_what, GEN_H_STUB);
 
    if (gen_what & GEN_D_FULL)
@@ -498,7 +488,7 @@ main(int argc, char **argv)
    int pret = 1;
 
    char *outs[sizeof(_dexts) / sizeof(void *)] = {
-     NULL, NULL, NULL, NULL, NULL, NULL, NULL
+     NULL, NULL, NULL, NULL, NULL, NULL
    };
    char *basen = NULL;
    Eina_List *includes = NULL;
@@ -539,9 +529,6 @@ main(int argc, char **argv)
               {
                case 'h':
                  gen_what |= GEN_H;
-                 break;
-               case 'l':
-                 gen_what |= GEN_H_LEGACY;
                  break;
                case 's':
                  gen_what |= GEN_H_STUB;
@@ -646,9 +633,7 @@ main(int argc, char **argv)
 
    Eina_Bool succ = EINA_TRUE;
    if (gen_what & GEN_H)
-     succ = _write_header(eos, eos, outs[_get_bit_pos(GEN_H)], eobn, EINA_FALSE);
-   if (succ && (gen_what & GEN_H_LEGACY))
-     succ = _write_header(eos, eos, outs[_get_bit_pos(GEN_H_LEGACY)], eobn, EINA_TRUE);
+     succ = _write_header(eos, eos, outs[_get_bit_pos(GEN_H)], eobn);
    if (succ && (gen_what & GEN_H_STUB))
      succ = _write_stub_header(eos, eos, outs[_get_bit_pos(GEN_H_STUB)], eobn);
    if (succ && (gen_what & GEN_C))

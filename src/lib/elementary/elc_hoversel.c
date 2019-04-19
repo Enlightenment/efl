@@ -638,7 +638,6 @@ EOLIAN static void
 _elm_hoversel_efl_canvas_group_group_add(Eo *obj, Elm_Hoversel_Data *pd)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
-   elm_widget_sub_object_parent_add(obj);
 
    efl_event_callback_add(obj, EFL_UI_EVENT_CLICKED, _on_clicked, obj);
 

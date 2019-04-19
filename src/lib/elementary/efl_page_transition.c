@@ -72,6 +72,14 @@ _efl_page_transition_pack(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
+_efl_page_transition_unpack_all(Eo *obj EINA_UNUSED,
+                                Efl_Page_Transition_Data *pd EINA_UNUSED,
+                                int index EINA_UNUSED)
+{
+
+}
+
+EOLIAN static void
 _efl_page_transition_curr_page_change(Eo *obj EINA_UNUSED,
                                       Efl_Page_Transition_Data *pd EINA_UNUSED,
                                       int diff EINA_UNUSED)
@@ -94,6 +102,7 @@ EOAPI EFL_VOID_FUNC_BODYV(efl_page_transition_update,
                           EFL_FUNC_CALL(move), double move)
 EOAPI EFL_VOID_FUNC_BODYV(efl_page_transition_pack,
                           EFL_FUNC_CALL(index), int index)
+EOAPI EFL_VOID_FUNC_BODY(efl_page_transition_unpack_all)
 EOAPI EFL_VOID_FUNC_BODYV(efl_page_transition_curr_page_change,
                           EFL_FUNC_CALL(diff), int diff)
 EOAPI EFL_VOID_FUNC_BODYV(efl_page_transition_page_size_set,
@@ -109,6 +118,8 @@ EOAPI EFL_FUNC_BODYV(efl_page_transition_loop_set, Eina_Bool, 0,
                       _efl_page_transition_update), \
    EFL_OBJECT_OP_FUNC(efl_page_transition_pack, \
                       _efl_page_transition_pack), \
+   EFL_OBJECT_OP_FUNC(efl_page_transition_unpack_all, \
+                      _efl_page_transition_unpack_all), \
    EFL_OBJECT_OP_FUNC(efl_page_transition_curr_page_change, \
                       _efl_page_transition_curr_page_change), \
    EFL_OBJECT_OP_FUNC(efl_page_transition_page_size_set, \
