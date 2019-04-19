@@ -13,7 +13,7 @@ install_headers('Evas_Engine_Buffer.h',
   install_dir : dir_package_include,
 )
 
-if get_option('evas-modules') == 'shared' and not evas_force_static.contains(engine)
+if get_option('evas-modules') == 'shared'
   shared_module(mod_full_name, engine_src,
         include_directories : config_dir + [engine_include_dir],
         dependencies : [eina, evas_pre] + engine_deps,

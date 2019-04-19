@@ -69,10 +69,10 @@ engine_deps = [gl_deps]
 
 engine_include_dir = include_directories(join_paths('..','software_generic'), join_paths('..', 'gl_common'))
 
-if get_option('evas-modules') == 'shared' and not evas_force_static.contains(engine)
+if get_option('evas-modules') == 'shared'
   shared_module(mod_full_name, engine_src,
         include_directories : config_dir + [engine_include_dir],
-        dependencies : [eina, evas_pre] + engine_deps + [software_generic],
+        dependencies : [eina, evas_pre] + engine_deps,
         install : true,
         install_dir : mod_install_dir,
         name_suffix : sys_mod_extension
