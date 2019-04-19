@@ -481,6 +481,7 @@ _svg_style_gradient_free(Svg_Style_Gradient *grad)
    eina_stringshare_del(grad->ref);
    free(grad->radial);
    free(grad->linear);
+   if (grad->transform) free(grad->transform);
 
    EINA_LIST_FREE(grad->stops, stop)
      {
@@ -576,6 +577,33 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_F
              g->linear->x2 = g->linear->x2 * r.w + r.x;
              g->linear->y2 = g->linear->y2 * r.h + r.y;
           }
+
+        if (g->transform)
+          {
+             double cy = ((double) r.h) * 0.5 + r.y;
+             double cx = ((double) r.w) * 0.5 + r.x;
+
+             //Calc start point
+             eina_matrix3_identity(&m);
+             eina_matrix3_translate(&m, g->linear->x1 - cx, g->linear->y1 - cy);
+             eina_matrix3_multiply_copy(&m, g->transform , &m);
+             eina_matrix3_translate(&m, cx, cy);
+
+             eina_matrix3_values_get(&m, NULL, NULL, &g->linear->x1,
+                                     NULL, NULL, &g->linear->y1,
+                                     NULL, NULL, NULL);
+
+             //Calc end point
+             eina_matrix3_identity(&m);
+             eina_matrix3_translate(&m, g->linear->x2 - cx, g->linear->y2 - cy);
+             eina_matrix3_multiply_copy(&m, g->transform , &m);
+             eina_matrix3_translate(&m, cx, cy);
+
+             eina_matrix3_values_get(&m, NULL, NULL, &g->linear->x2,
+                                     NULL, NULL, &g->linear->y2,
+                                     NULL, NULL, NULL);
+          }
+
         efl_gfx_gradient_linear_start_set(grad_obj, g->linear->x1, g->linear->y1);
         efl_gfx_gradient_linear_end_set(grad_obj, g->linear->x2, g->linear->y2);
      }

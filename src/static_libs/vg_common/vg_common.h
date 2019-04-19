@@ -206,6 +206,7 @@ struct _Svg_Style_Gradient
    Eina_List   *stops; // Efl_Gfx_Gradient_Stop
    Svg_Radial_Gradient *radial;
    Svg_Linear_Gradient *linear;
+   Eina_Matrix3 *transform;
    Eina_Bool use_percentage;
 };
 

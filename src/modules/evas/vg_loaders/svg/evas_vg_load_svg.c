@@ -1521,6 +1521,11 @@ _clone_gradient(Svg_Style_Gradient *from)
    grad->spread = from->spread;
    grad->use_percentage = from->use_percentage;
    grad->user_space = from->user_space;
+   if (from->transform)
+     {
+        grad->transform = calloc(1, sizeof(Eina_Matrix3));
+        eina_matrix3_copy(grad->transform, from->transform);
+     }
    grad->stops = _clone_grad_stops(from->stops);
    if (grad->type == SVG_LINEAR_GRADIENT)
      {
@@ -1960,6 +1965,10 @@ _attr_parse_linear_gradient_node(void *data, const char *key, const char *value)
    else if (!strcmp(key, "gradientUnits") && !strcmp(value, "userSpaceOnUse"))
      {
         grad->user_space = EINA_TRUE;
+     }
+   else if (!strcmp(key, "gradientTransform"))
+     {
+        grad->transform = _parse_transformation_matrix(value);
      }
 
    return EINA_TRUE;
