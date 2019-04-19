@@ -13,7 +13,40 @@ engine_src = files([
   join_paths('filters','gl_filter_fill.c'),
   join_paths('filters','gl_filter_mask.c'),
 ])
+common_engine_src = [
+  'evas_gl_private.h',
+  'evas_gl_common.h',
+  'evas_gl_define.h',
+  'evas_gl_context.c',
+  'evas_gl_file_cache.c',
+  'evas_gl_shader.c',
+  'evas_gl_rectangle.c',
+  'evas_gl_texture.c',
+  'evas_gl_preload.c',
+  'evas_gl_image.c',
+  'evas_gl_font.c',
+  'evas_gl_polygon.c',
+  'evas_gl_line.c',
+  'evas_gl_core.c',
+  'evas_gl_api_ext.h',
+  'evas_gl_api_ext_def.h',
+  'evas_gl_core.h',
+  'evas_gl_core_private.h',
+  'evas_gl_api.c',
+  'evas_gl_api_def.h',
+  'evas_gl_api_gles1.c',
+  'evas_gl_api_gles3_def.h',
+  'evas_gl_api_ext.c',
+  'evas_gl_3d_common.h',
+  'evas_gl_3d_private.h',
+  'evas_gl_3d.c',
+  'evas_gl_3d_renderer.c',
+  'evas_gl_3d_shader.c',
+]
 
+foreach src : common_engine_src
+  engine_src += files(join_paths('..','gl_common', src))
+endforeach
 
 pub_eo_files = [
   'evas_ector_gl_buffer.eo',
@@ -32,9 +65,9 @@ foreach eo_file : pub_eo_files
                            '-gchd', '@INPUT@'])
 endforeach
 
-engine_deps = [gl_common]
+engine_deps = [gl_deps]
 
-engine_include_dir = include_directories(join_paths('..','software_generic'))
+engine_include_dir = include_directories(join_paths('..','software_generic'), join_paths('..', 'gl_common'))
 
 if get_option('evas-modules') == 'shared' and not evas_force_static.contains(engine)
   shared_module(mod_full_name, engine_src,

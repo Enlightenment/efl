@@ -9,7 +9,6 @@ engines = [
 
 if get_option('opengl') != 'none'
   engines += [
-   ['gl_common', []],
    ['gl_generic', []],
    ['gl_x11', ['x11']],
    ['gl_drm', ['drm']],
@@ -22,7 +21,7 @@ if get_option('opengl') == 'es-egl'
 endif
 
 #there are a few modules that should NEVER be build as a module but rather be build as static lib and linked in later
-evas_force_static = ['software_generic', 'gl_common']
+evas_force_static = ['software_generic']
 evas_static_list = []
 
 #fixed dependencies by efl
@@ -75,25 +74,17 @@ foreach engine_conf : engines
           link_with : tmp
         )
       endif
-      if engine == 'gl_common'
-        #gl_common will only be used by gl_generic, NOT by libevas.so, so we work arround the static list
-        gl_common = declare_dependency(
-          include_directories : include_directories(join_paths('engines', 'gl_common')),
-          link_with: tmp,
-        )
+      evas_static_list += declare_dependency(
+        include_directories: [include_directories('.')] + config_dir + [engine_include_dir],
+        link_with: tmp,
+        dependencies : [eina, evas_pre] + engine_deps,
+        sources : engine_src
+      )
+      if engine == 'gl_generic'
+        #special case, see evas_module.c
+        config_h.set('EVAS_STATIC_BUILD_GL_COMMON', '1')
       else
-        evas_static_list += declare_dependency(
-          include_directories: [include_directories('.')] + config_dir + [engine_include_dir],
-          link_with: tmp,
-          dependencies : [eina, evas_pre] + engine_deps,
-          sources : engine_src
-        )
-        if engine == 'gl_generic'
-          #special case, see evas_module.c
-          config_h.set('EVAS_STATIC_BUILD_GL_COMMON', '1')
-        else
-          config_h.set('EVAS_STATIC_BUILD_'+engine.to_upper(), '1')
-        endif
+        config_h.set('EVAS_STATIC_BUILD_'+engine.to_upper(), '1')
       endif
     else
       #nothing here shared building is handled directly on the engine configuration side
