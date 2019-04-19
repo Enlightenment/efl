@@ -168,7 +168,7 @@ if get_option('opengl') != 'none'
 endif
 
 evas_pre = declare_dependency(
-  include_directories: evas_include_directories + [vg_common_inc_dir],
+  include_directories: evas_include_directories + [vg_common_inc_dir] + [include_directories(join_paths('..', '..', 'modules', 'evas', 'engines', 'buffer'))],
   sources : pub_eo_file_target + priv_eo_file_target,
   dependencies: [eina, eo, ector, emile, evas_deps, m],
 )
