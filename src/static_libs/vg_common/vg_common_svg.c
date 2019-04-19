@@ -568,8 +568,16 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_F
    if (g->type == SVG_LINEAR_GRADIENT)
      {
         grad_obj = efl_add(EFL_CANVAS_VG_GRADIENT_LINEAR_CLASS, parent);
-        efl_gfx_gradient_linear_start_set(grad_obj, g->linear->x1 * r.w + r.x, g->linear->y1 * r.h + r.y);
-        efl_gfx_gradient_linear_end_set(grad_obj, g->linear->x2 * r.w + r.x, g->linear->y2 * r.h + r.y);
+
+        if (g->use_percentage)
+          {
+             g->linear->x1 = g->linear->x1 * r.w + r.x;
+             g->linear->y1 = g->linear->y1 * r.h + r.y;
+             g->linear->x2 = g->linear->x2 * r.w + r.x;
+             g->linear->y2 = g->linear->y2 * r.h + r.y;
+          }
+        efl_gfx_gradient_linear_start_set(grad_obj, g->linear->x1, g->linear->y1);
+        efl_gfx_gradient_linear_end_set(grad_obj, g->linear->x2, g->linear->y2);
      }
    else if (g->type == SVG_RADIAL_GRADIENT)
      {
@@ -911,6 +919,7 @@ _create_gradient_node(Efl_VG *vg)
         if (!grad->linear) goto oom_error;
         efl_gfx_gradient_linear_start_get(vg, &grad->linear->x1, &grad->linear->y1);
         efl_gfx_gradient_linear_end_get(vg, &grad->linear->x2, &grad->linear->y2);
+        grad->use_percentage = EINA_FALSE;
      }
    else
      {
