@@ -158,10 +158,10 @@ _eet_for_style_gradient(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_eet_style_gradient_node, Svg_Style_Gradient, "type", type, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_eet_style_gradient_node, Svg_Style_Gradient, "id", id, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_eet_style_gradient_node, Svg_Style_Gradient, "spread", spread, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_eet_style_gradient_node, Svg_Style_Gradient, "user_space", user_space, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_LIST(_eet_style_gradient_node, Svg_Style_Gradient, "stops", stops, _eet_gradient_stops_node);
    EET_DATA_DESCRIPTOR_ADD_SUB(_eet_style_gradient_node, Svg_Style_Gradient, "radial", radial, _eet_radial_gradient_node);
    EET_DATA_DESCRIPTOR_ADD_SUB(_eet_style_gradient_node, Svg_Style_Gradient, "linear", linear, _eet_linear_gradient_node);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_eet_style_gradient_node, Svg_Style_Gradient, "user_space", user_space, EET_T_INT);
 
    return _eet_style_gradient_node;
 }
