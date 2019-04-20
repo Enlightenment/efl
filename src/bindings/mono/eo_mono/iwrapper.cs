@@ -48,6 +48,19 @@ public class Globals
     public delegate  IntPtr
         _efl_add_internal_start_delegate([MarshalAs(UnmanagedType.LPStr)] String file, int line,
                                 IntPtr klass, IntPtr parent, byte is_ref, byte is_fallback);
+
+    public delegate void efl_key_data_set_delegate(IntPtr obj, IntPtr key, IntPtr data);
+    public static FunctionWrapper<efl_key_data_set_delegate> efl_key_data_set_ptr =
+        new FunctionWrapper<efl_key_data_set_delegate>(efl.Libs.EoModule, "efl_key_data_set");
+    public static void efl_key_data_set(IntPtr obj, IntPtr key, IntPtr data) => efl_key_data_set_ptr.Value.Delegate(obj, key, data);
+
+    public delegate IntPtr efl_key_data_get_delegate(IntPtr obj, IntPtr key);
+    public static FunctionWrapper<efl_key_data_get_delegate> efl_key_data_get_ptr =
+        new FunctionWrapper<efl_key_data_get_delegate>(efl.Libs.EoModule, "efl_key_data_get");
+    public static IntPtr efl_key_data_get(IntPtr obj, IntPtr key) => efl_key_data_get_ptr.Value.Delegate(obj, key);
+
+    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr efl_mono_lifetime_key_get();
+    
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         _efl_add_internal_start([MarshalAs(UnmanagedType.LPStr)] String file, int line,
                                 IntPtr klass, IntPtr parent, byte is_ref, byte is_fallback);
@@ -464,11 +477,16 @@ public class Globals
         return eo;
     }
 
-    public static IntPtr instantiate_end(IntPtr eo)
+    public static IntPtr instantiate_end(IntPtr eo, Efl.Eo.IWrapper wrapper)
     {
         Eina.Log.Debug("calling efl_add_internal_end");
         eo = Efl.Eo.Globals._efl_add_end(eo, 1, 0);
         Eina.Log.Debug($"efl_add_end returned eo 0x{eo.ToInt64():x}");
+
+        var getter = new Efl.Eo.WrapperGetter (wrapper);
+        GCHandle gch = GCHandle.Alloc (getter);
+        efl_key_data_set (eo, efl_mono_lifetime_key_get(), GCHandle.ToIntPtr(gch));
+        
         return eo;
     }
 
@@ -477,7 +495,7 @@ public class Globals
         Eina.Log.Debug($"Calling data_scope_get with obj {obj.NativeHandle.ToInt64():x} and klass {obj.NativeClass.ToInt64():x}");
         IntPtr pd = Efl.Eo.Globals.efl_data_scope_get(obj.NativeHandle, obj.NativeClass);
         {
-            GCHandle gch = GCHandle.Alloc(obj);
+            GCHandle gch = GCHandle.Alloc(obj, GCHandleType.Weak);
             EolianPD epd;
             epd.pointer = GCHandle.ToIntPtr(gch);
             Marshal.StructureToPtr(epd, pd, false);
@@ -601,6 +619,14 @@ public class Globals
             return null;
         }
 
+        IntPtr lifetime = efl_key_data_get (handle, efl_mono_lifetime_key_get());
+        if (lifetime != IntPtr.Zero)
+        {
+            GCHandle gch = GCHandle.FromIntPtr(lifetime);
+            WrapperGetter owner = (WrapperGetter)gch.Target;
+            return owner.Target;
+        }
+        
         IntPtr eoKlass = efl_class_get(handle);
 
         if (eoKlass == IntPtr.Zero)
@@ -618,20 +644,7 @@ public class Globals
             throw new InvalidOperationException($"Can't get Managed class for object handle 0x{handle.ToInt64():x} with native class [{name}]");
         }
 
-        // Pure C# classes that inherit from generated classes store their C# instance in their
-        // Eo private data field.
-        if (!IsGeneratedClass(managedType))
-        {
-            Efl.Eo.IWrapper instance = null;
-            IntPtr pd = efl_data_scope_get(handle, eoKlass);
-
-            if (pd != IntPtr.Zero)
-            {
-                instance = PrivateDataGet(pd);
-            }
-
-            return instance;
-        }
+        Debug.Assert (IsGeneratedClass(managedType));
 
         System.Reflection.ConstructorInfo constructor = null;
 

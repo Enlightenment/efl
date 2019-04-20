@@ -583,7 +583,7 @@ struct klass
 
              << scope_tab << "protected void FinishInstantiation()\n"
              << scope_tab << "{\n"
-             << scope_tab << scope_tab << "handle = Efl.Eo.Globals.instantiate_end(handle);\n"
+             << scope_tab << scope_tab << "handle = Efl.Eo.Globals.instantiate_end(handle, this);\n"
              << scope_tab << scope_tab << "Eina.Error.RaiseIfUnhandledException();\n"
              << scope_tab << "}\n"
 

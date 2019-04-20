@@ -29,6 +29,11 @@ typedef void (*Efl_Mono_Remove_Events_Cb)(Eo *obj, void *gchandle);
 static Efl_Mono_Free_GCHandle_Cb _efl_mono_free_gchandle_call = NULL;
 static Efl_Mono_Remove_Events_Cb _efl_mono_remove_events_call = NULL;
 
+EAPI const char* efl_mono_lifetime_key_get ()
+{
+  return "__c#__handle__wrapper__lifetime__";
+}
+
 EAPI void efl_mono_gchandle_callbacks_set(Efl_Mono_Free_GCHandle_Cb free_gchandle_cb, Efl_Mono_Remove_Events_Cb remove_events_cb)
 {
     _efl_mono_free_gchandle_call = free_gchandle_cb;
