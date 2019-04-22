@@ -588,6 +588,7 @@ lib/evas/common/evas_map_image_internal.c \
 lib/evas/common/evas_map_image_core.c \
 lib/evas/common/evas_map_image_loop.c \
 lib/evas/common/evas_map_image_aa.c \
+lib/evas/common/evas_map_image_internal_high.c \
 lib/evas/common/evas_scale_smooth_scaler.c \
 lib/evas/common/evas_scale_smooth_scaler_down.c \
 lib/evas/common/evas_scale_smooth_scaler_downx.c \
