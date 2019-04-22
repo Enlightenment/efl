@@ -11,24 +11,44 @@
 
 #define MY_CLASS EFL_UI_TAB_PAGE_CLASS
 
+static void
+_invalidate_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   efl_content_unset(data);
+}
+
 EOLIAN static Eina_Bool
 _efl_ui_tab_page_efl_content_content_set(Eo *obj, Efl_Ui_Tab_Page_Data *sd, Eo *content)
 {
    if (sd->content)
      {
         efl_content_unset(efl_part(obj, "efl.content"));
+        efl_event_callback_del(sd->content, EFL_EVENT_INVALIDATE, _invalidate_cb, obj);
         efl_del(sd->content);
+        sd->content = NULL;
+     }
+
+   if (content && !efl_ui_widget_sub_object_add(obj, content))
+     {
+        efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
+        return EINA_FALSE;
      }
 
    sd->content = content;
+   efl_event_callback_add(sd->content, EFL_EVENT_INVALIDATE, _invalidate_cb, obj);
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, content);
+
    efl_content_set(efl_part(obj, "efl.content"), sd->content);
 
    return EINA_TRUE;
 }
 
 EOLIAN static Efl_Gfx_Entity*
-_efl_ui_tab_page_efl_content_content_unset(Eo *obj, Efl_Ui_Tab_Page_Data *pd EINA_UNUSED)
+_efl_ui_tab_page_efl_content_content_unset(Eo *obj, Efl_Ui_Tab_Page_Data *pd)
 {
+   efl_event_callback_del(pd->content, EFL_EVENT_INVALIDATE, _invalidate_cb, obj);
+   pd->content = NULL;
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
    return efl_content_unset(efl_part(obj, "efl.content"));
 }
 
