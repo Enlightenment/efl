@@ -152,11 +152,7 @@ static void
 _efl_ui_scroller_content_del_cb(void *data,
                                 const Efl_Event *event EINA_UNUSED)
 {
-   EFL_UI_SCROLLER_DATA_GET_OR_RETURN(data, sd);
-
-   sd->content = NULL;
-   if (!sd->smanager) return;
-   efl_ui_scrollbar_bar_visibility_update(sd->smanager);
+   efl_content_unset(data);
 }
 
 EOLIAN static Eina_Bool
@@ -167,14 +163,23 @@ _efl_ui_scroller_efl_content_content_set(Eo *obj,
    if (sd->content)
      {
         efl_content_set(sd->pan_obj, NULL);
-        efl_event_callback_del(sd->content, EFL_EVENT_DEL,
+        efl_event_callback_del(sd->content, EFL_EVENT_INVALIDATE,
                                _efl_ui_scroller_content_del_cb, obj);
+        efl_del(sd->content);
+        sd->content = NULL;
+     }
+
+   if (content && !efl_ui_widget_sub_object_add(obj, content))
+     {
+        efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
+        return EINA_FALSE;
      }
 
    sd->content = content;
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, sd->content);
    if (!content) return EINA_TRUE;
 
-   efl_event_callback_add(sd->content, EFL_EVENT_DEL,
+   efl_event_callback_add(sd->content, EFL_EVENT_INVALIDATE,
                           _efl_ui_scroller_content_del_cb, obj);
 
    efl_content_set(sd->pan_obj, content);
@@ -195,7 +200,9 @@ _efl_ui_scroller_efl_content_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Scroller_
 {
    Efl_Gfx_Entity *old_content = pd->content;
 
+   efl_event_callback_del(pd->content, EFL_EVENT_INVALIDATE, _efl_ui_scroller_content_del_cb, obj);
    pd->content = NULL;
+   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
    if (pd->smanager)
      {
         efl_ui_scrollbar_bar_visibility_update(pd->smanager);
