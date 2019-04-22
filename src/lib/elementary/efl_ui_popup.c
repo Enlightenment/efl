@@ -112,6 +112,8 @@ _efl_ui_popup_efl_ui_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EIN
 
    efl_event_callback_add(pd->win_parent, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _parent_geom_cb, obj);
    efl_event_callback_add(pd->win_parent, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _parent_geom_cb, obj);
+
+   efl_ui_widget_parent_set(efl_super(obj, MY_CLASS), parent);
 }
 
 EOLIAN static void
