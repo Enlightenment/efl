@@ -27,7 +27,7 @@ struct part_definition_generator
                        << scope_tab << "{\n"
                        << scope_tab << scope_tab << "get\n"
                        << scope_tab << scope_tab << "{\n"
-                       << scope_tab << scope_tab << scope_tab << "return Efl.IPartNativeInherit.efl_part_get_ptr.Value.Delegate(NativeHandle, \"" << part.name << "\") as " << part_klass_name << ";\n"
+                       << scope_tab << scope_tab << scope_tab << "return GetPart(\"" << part.name << "\") as " << part_klass_name << ";\n"
                        << scope_tab << scope_tab << "}\n"
                        << scope_tab << "}\n"
             ).generate(sink, part.documentation, context);

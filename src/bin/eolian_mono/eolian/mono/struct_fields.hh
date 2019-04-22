@@ -18,7 +18,7 @@ struct field_argument_default_generator
    template<typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
    {
-       if (!as_generator(type << " " << string << "=default(" << type << ")")
+       if (!as_generator(type << " " << string << " = default(" << type << ")")
                .generate(sink, std::make_tuple(field.type, name_helpers::to_field_name(field.name), field.type), context))
            return false;
        return true;

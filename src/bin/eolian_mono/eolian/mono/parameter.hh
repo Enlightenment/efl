@@ -389,22 +389,22 @@ inline std::string direction_modifier(attributes::parameter_def const& param)
 {
    if (param.direction == attributes::parameter_direction::inout)
      {
-        return " ref ";
+        return "ref ";
      }
    else if (param.direction != attributes::parameter_direction::in)
      {
         if (param.type.c_type == "Eina_Slice" || param.type.c_type == "Eina_Rw_Slice")
-           return " ref ";
+           return "ref ";
         else
-           return " out ";
+           return "out ";
      }
    else if (param.direction == attributes::parameter_direction::in && param.type.is_ptr)
      {
         auto regular = efl::eina::get<attributes::regular_type_def>(&param.type.original_type);
         if (helpers::need_struct_conversion(regular))
-           return " ref "; // Don't add ref on Marshal if it is ptr
+           return "ref "; // Don't add ref on Marshal if it is ptr
      }
-   return " ";
+   return "";
 }
 
 std::string marshall_direction_modifier(attributes::parameter_def const& param)
@@ -1477,7 +1477,8 @@ struct constructor_invocation_generator
      if (!as_generator(
                        "if (" <<
                        (efl::eolian::grammar::attribute_reorder<-1>
-                        ("Efl.Eo.Globals.ParamHelperCheck(" << constructor_parameter_name(ctor) << ")") % "||") << ")\n"
+                        ("Efl.Eo.Globals.ParamHelperCheck(" << constructor_parameter_name(ctor) << ")") % " || ") << ")\n"
+                       << scope_tab << scope_tab << "{\n"
                        << scope_tab << scope_tab << scope_tab << name_helpers::managed_method_name(ctor.function) << "("
              ).generate(sink, params, context))
        return false;
@@ -1493,7 +1494,9 @@ struct constructor_invocation_generator
             return false;
        }
 
-     if (!as_generator(");").generate(sink, attributes::unused, context))
+     if (!as_generator(
+                 ");\n"
+                 << scope_tab << scope_tab << "}\n").generate(sink, attributes::unused, context))
        return false;
      return true;
   }
