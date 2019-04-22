@@ -55,7 +55,7 @@ struct async_function_declaration_generator
 
     if (!as_generator(
             scope_tab << "System.Threading.Tasks.Task<Eina.Value> " << name_helpers::managed_async_method_name(f) << "(" << *(parameter << ",") <<
-                                    " System.Threading.CancellationToken token=default(System.Threading.CancellationToken));\n"
+                                    " System.Threading.CancellationToken token = default(System.Threading.CancellationToken));\n"
         ).generate(sink, f.parameters, context))
       return false;
 
@@ -89,7 +89,7 @@ struct async_function_definition_generator
     std::transform(f.parameters.begin(), f.parameters.end(), std::back_inserter(param_forwarding), parameter_forwarding);
 
     if(!as_generator(
-            scope_tab << "public System.Threading.Tasks.Task<Eina.Value> " << name_helpers::managed_async_method_name(f) << "(" << *(parameter << ",") << " System.Threading.CancellationToken token=default(System.Threading.CancellationToken))\n"
+            scope_tab << "public System.Threading.Tasks.Task<Eina.Value> " << name_helpers::managed_async_method_name(f) << "(" << *(parameter << ",") << " System.Threading.CancellationToken token = default(System.Threading.CancellationToken))\n"
             << scope_tab << "{\n"
             << scope_tab << scope_tab << "Eina.Future future = " << name_helpers::managed_method_name(f) << "(" << (string % ",") << ");\n"
             << scope_tab << scope_tab << "return Efl.Eo.Globals.WrapAsync(future, token);\n"

@@ -35,17 +35,18 @@ struct alias_definition_generator
 
      std::string const alias_name = utils::remove_all(alias.eolian_name, '_');
      if (!as_generator(
-                 "public struct " << alias_name << " {\n"
+                 "public struct " << alias_name << "\n"
+                 << "{\n"
                  << scope_tab << "private " << type << " payload;\n"
                  << scope_tab << "public static implicit operator " << alias_name << "(" << type << " x)\n"
                  << scope_tab << "{\n"
                  << scope_tab << scope_tab << "return new " << alias_name << "{payload=x};\n"
-                 << scope_tab << "}\n"
+                 << scope_tab << "}\n\n"
                  << scope_tab << "public static implicit operator " << type << "(" << alias_name << " x)\n"
                  << scope_tab << "{\n"
                  << scope_tab << scope_tab << "return x.payload;\n"
-                 << scope_tab << "}\n"
-                 << "}\n"
+                 << scope_tab << "}\n\n"
+                 << "}\n\n"
                  ).generate(sink, std::make_tuple(alias.base_type, alias.base_type, alias.base_type), context))
        return false;
 
