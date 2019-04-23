@@ -10,7 +10,7 @@ engine_deps = []
 evas_include_directories += include_directories('.')
 
 install_headers('Evas_Engine_Buffer.h',
-  install_dir : dir_package_include,
+  install_dir : join_paths(dir_include, 'evas-'+version_major),
 )
 
 if get_option('evas-modules') == 'shared'
