@@ -12,7 +12,7 @@
   {{/inheritance}}
   <div class="level{{level}}"><span class="xref"><b>{{fullName.0.value}}</b></span></div>
   {{#derivedClasses}}
-    <div class="level{{index}}">{{{specName.0.value}}}</div>
+    <div class="level{{index}}"><xref uid="{{uid}}" text="{{fullName.0.value}}"/></div>
   {{/derivedClasses}}
   </div>
 </div>
