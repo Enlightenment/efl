@@ -6,6 +6,12 @@
 #include "efl_ui_spec_suite.h"
 #include "suite_helpers.h"
 
+/* spec-meta-start
+      {"test-interface":"Efl.Pack",
+       "test-widgets": ["Efl.Ui.Table"]}
+
+   spec-meta-end */
+
 /*
   In general:
     - If a subobject is deleted the box simply forgets about it. Never return this element again container.

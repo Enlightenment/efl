@@ -7,6 +7,11 @@
 #include "suite_helpers.h"
 #include <limits.h>
 
+/* spec-meta-start
+      {"test-interface":"Efl.Pack_Linear",
+       "test-widgets": ["Efl.Ui.Box"]}
+   spec-meta-end */
+
 static void
 _fill_array(Efl_Ui_Widget *wid[3])
 {
