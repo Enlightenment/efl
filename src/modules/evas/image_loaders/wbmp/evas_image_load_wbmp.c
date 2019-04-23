@@ -163,7 +163,6 @@ evas_image_load_file_data_wbmp(void *loader_data,
 
    for (y = 0; y < (int)prop->h; y++)
      {
-        if (position + line_length > length) goto bail;
         line = ((unsigned char*) map) + position;
         position += line_length;
         for (x = 0; x < (int)prop->w; x++)
