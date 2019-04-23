@@ -74,8 +74,7 @@ struct documentation_generator
            if (blacklist::is_function_blacklisted(
                  ::eolian_function_full_c_name_get(function, ftype))) return "";
            name += ".";
-           name += name_helpers::managed_method_name(
-             ::eolian_object_short_name_get(klass), eo_name);
+           name += name_helpers::managed_method_name({function, ftype, NULL, eolian_object_unit_get(EOLIAN_OBJECT(function))});
            break;
          case ::EOLIAN_PROP_SET:
            name += ".Set";
@@ -118,7 +117,7 @@ struct documentation_generator
           case attributes::function_type::prop_get:
             if (blacklist::is_function_blacklisted(func.c_name))return "";
             if (!name.empty()) name += ".";
-            name += name_helpers::managed_method_name(func.klass.eolian_name, func.name);
+            name += name_helpers::managed_method_name(func);
             break;
           default:
             // No need to deal with property as function_defs are converted to get/set when building a given klass_def.
@@ -432,7 +431,7 @@ struct documentation_generator
 
        return generate_all_tag_examples(sink,
                                         name_helpers::klass_full_concrete_or_interface_name(func.klass),
-                                        name_helpers::managed_method_name(func.klass.eolian_name, func.name),
+                                        name_helpers::managed_method_name(func),
                                         context);
    }
 
@@ -451,7 +450,7 @@ struct documentation_generator
 
        return generate_all_tag_examples(sink,
                                         name_helpers::klass_full_concrete_or_interface_name(func.klass),
-                                        name_helpers::managed_method_name(func.klass.eolian_name, func.name),
+                                        name_helpers::managed_method_name(func),
                                         context);
    }
 
