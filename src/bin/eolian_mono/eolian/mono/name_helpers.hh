@@ -176,22 +176,22 @@ inline std::string managed_namespace(std::string const& ns)
   return escape_keyword(utils::remove_all(ns, '_'));
 }
 
-inline std::string managed_method_name(std::string const& klass, std::string const& name)
+inline std::string managed_method_name(attributes::function_def const& f)
 {
-  std::vector<std::string> names = utils::split(name, '_');
+  std::vector<std::string> names = utils::split(f.name, '_');
 
   name_helpers::reorder_verb(names);
 
   std::string candidate = escape_keyword(utils::to_pascal_case(names));
 
   // Some eolian methods have the same name as their parent class
-  if (candidate == klass)
+  if (candidate == klass_concrete_or_interface_name(f.klass))
       candidate = "Do" + candidate;
 
   // Avoid clashing with System.Object.GetType
   if (candidate == "GetType" || candidate == "SetType")
     {
-       candidate.insert(3, klass);
+       candidate.insert(3, f.klass.eolian_name);
     }
 
   return candidate;
@@ -201,11 +201,6 @@ inline std::string managed_name(std::string const& name, char separator='_')
 {
   auto tokens = utils::split(name, separator);
   return utils::to_pascal_case(tokens);
-}
-
-inline std::string managed_method_name(attributes::function_def const& f)
-{
-  return managed_method_name(f.klass.eolian_name, f.name);
 }
 
 inline std::string alias_full_eolian_name(attributes::alias_def const& alias)
