@@ -215,6 +215,7 @@ _efl_core_command_line_command_array_set(Eo *obj EINA_UNUSED, Efl_Core_Command_L
      {
         char *content = eina_array_data_get(array, i);
         char *param = calloc(1, strlen(content) + 1);
+        char *esc;
 
         if (!param)
           {
@@ -236,7 +237,9 @@ _efl_core_command_line_command_array_set(Eo *obj EINA_UNUSED, Efl_Core_Command_L
         //build the command
         if (i != 0)
           eina_strbuf_append(command, " ");
-        eina_strbuf_append(command, _escape(content));
+        esc = _escape(content);
+        eina_strbuf_append(command, esc);
+        free(esc);
         //convert string to stringshare
         strcpy(param, content);
         _remove_invalid_chars(param);
