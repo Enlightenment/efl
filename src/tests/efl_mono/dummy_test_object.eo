@@ -1412,6 +1412,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
    }
    implements {
       Efl.Object.constructor;
+      Efl.Object.destructor;
       Efl.Object.provider_find;
       Dummy.Test_Iface.emit_nonconflicted;
       Dummy.Test_Iface.iface_prop { get; set; }
