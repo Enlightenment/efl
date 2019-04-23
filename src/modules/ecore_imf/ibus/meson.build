@@ -4,7 +4,7 @@ mod_src = files([
   'ibus_imcontext.h'
 ])
 
-mod_deps = [ecore, ecore_imf, ecore_x, dependency('ibus-1.0'), dependency('glib-2.0'), ecore_evas]
+mod_deps = [ecore, ecore_imf, ecore_x, ecore_x_deps, dependency('ibus-1.0'), dependency('glib-2.0'), ecore_evas]
 
 shared_module(mod_name,
     mod_src,
