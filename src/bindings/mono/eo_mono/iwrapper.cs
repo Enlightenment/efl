@@ -60,6 +60,7 @@ public class Globals
     public static IntPtr efl_key_data_get(IntPtr obj, IntPtr key) => efl_key_data_get_ptr.Value.Delegate(obj, key);
 
     [DllImport(efl.Libs.CustomExports)] public static extern IntPtr efl_mono_lifetime_key_get();
+    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr efl_mono_lifetime_gchandle_key_get();
     
     [DllImport(efl.Libs.Eo)] public static extern IntPtr
         _efl_add_internal_start([MarshalAs(UnmanagedType.LPStr)] String file, int line,
@@ -486,6 +487,33 @@ public class Globals
         var getter = new Efl.Eo.WrapperGetter (wrapper);
         GCHandle gch = GCHandle.Alloc (getter);
         efl_key_data_set (eo, efl_mono_lifetime_key_get(), GCHandle.ToIntPtr(gch));
+
+        Efl.EventCb UniqueCb = (IntPtr data, ref Efl.Event.NativeStruct evt) =>
+            {
+                var obj = getter.Target;
+                if (obj != null)
+                {
+                    Console.WriteLine ("UNIQUE");
+                    IntPtr gchPtr = efl_key_data_get (eo, efl_mono_lifetime_gchandle_key_get());
+                    GCHandle objGCH = GCHandle.FromIntPtr (gchPtr);
+                    objGCH.Free();
+                }
+            };
+        Efl.EventCb SharedCb = (IntPtr data, ref Efl.Event.NativeStruct evt) =>
+            {
+                var obj = getter.Target;
+                if (obj != null)
+                {
+                    Console.WriteLine ("SHARED");
+                    var objGCH = GCHandle.Alloc (obj);
+                    efl_key_data_set (eo, efl_mono_lifetime_gchandle_key_get(), GCHandle.ToIntPtr(objGCH));
+                }
+            };
+        
+        IntPtr UniqueDesc = Efl.EventDescription.GetNative(efl.Libs.Eo, "_EFL_EVENT_OWNERSHIP_UNIQUE");
+        Efl.Eo.Globals.efl_event_callback_priority_add (eo, UniqueDesc, 0, Marshal.GetFunctionPointerForDelegate(UniqueCb), IntPtr.Zero);
+        IntPtr SharedDesc = Efl.EventDescription.GetNative(efl.Libs.Eo, "_EFL_EVENT_OWNERSHIP_SHARED");
+        Efl.Eo.Globals.efl_event_callback_priority_add (eo, SharedDesc, 0, Marshal.GetFunctionPointerForDelegate(SharedCb), IntPtr.Zero);
         
         return eo;
     }
