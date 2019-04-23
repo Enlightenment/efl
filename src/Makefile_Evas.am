@@ -2208,6 +2208,7 @@ modules_evas_image_loaders_tgv_module_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/static_libs/rg_etc \
 -I$(top_srcdir)/src/lib/evas/ \
+-I$(top_srcdir)/src/lib/evas/include \
 -DEFL_BUILD \
 @EVAS_CFLAGS@ \
 @NEON_CFLAGS@
@@ -2245,6 +2246,7 @@ modules_evas_image_savers_tgv_module_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/static_libs/rg_etc \
 -I$(top_srcdir)/src/lib/evas/ \
+-I$(top_srcdir)/src/lib/evas/include \
 -DEFL_BUILD \
 @EVAS_CFLAGS@
 
