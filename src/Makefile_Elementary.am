@@ -803,7 +803,7 @@ includesub_HEADERS = \
 	lib/elementary/efl_ui_animation_view.h \
 	lib/elementary/efl_ui_animation_view_legacy.h \
 	lib/elementary/efl_ui_animation_view.eo.h \
-	lib/elementary/efl_ui_animation_view.eo.legacy.h \
+	lib/elementary/efl_ui_animation_view_eo.legacy.h \
 	lib/elementary/elm_app.h \
 	lib/elementary/elm_atspi_app_object.h \
 	lib/elementary/elm_atspi_bridge.h \
