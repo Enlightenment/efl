@@ -1087,173 +1087,364 @@ _line_free(Evas_Object_Textblock_Line *ln)
 }
 
 /* table of html escapes (that i can find) this should be ordered with the
- * most common first as it's a linear search to match - no hash for this.
+ * sorted by there escape strings and values as it's a binary search to match - no hash for this.
  *
- * these are stored as one large string and one additional array that
- * contains the offsets to the tokens for space efficiency.
+ * these are stored as array of struct of Escape_Value structure (no Runtime sort will happen)
  */
+
+
 /**
  * @internal
- * @var escape_strings[]
- * This string consists of NULL terminated pairs of strings, the first of
- * every pair is an escape and the second is the value of the escape.
+ * @var escape_values_e_sorted[]
+ * This array consists of Escape_Value structure sorted by escape string
+ * And new added value must be placed sorted position, and reflected on escape_values_v_sorted
  */
-static const char escape_strings[] =
-/* most common escaped stuff */
-"&quot;\0"     "\x22\0"
-"&amp;\0"      "\x26\0"
-"&apos;\0"     "\x27\0"
-"&lt;\0"       "\x3c\0"
-"&gt;\0"       "\x3e\0"
-/* all the rest */
-"&nbsp;\0"     "\xc2\xa0\0"
-"&iexcl;\0"    "\xc2\xa1\0"
-"&cent;\0"     "\xc2\xa2\0"
-"&pound;\0"    "\xc2\xa3\0"
-"&curren;\0"   "\xc2\xa4\0"
-"&yen;\0"      "\xc2\xa5\0"
-"&brvbar;\0"   "\xc2\xa6\0"
-"&sect;\0"     "\xc2\xa7\0"
-"&uml;\0"      "\xc2\xa8\0"
-"&copy;\0"     "\xc2\xa9\0"
-"&ordf;\0"     "\xc2\xaa\0"
-"&laquo;\0"    "\xc2\xab\0"
-"&not;\0"      "\xc2\xac\0"
-"&shy;\0"      "\xc2\xad\0"
-"&reg;\0"      "\xc2\xae\0"
-"&macr;\0"     "\xc2\xaf\0"
-"&deg;\0"      "\xc2\xb0\0"
-"&plusmn;\0"   "\xc2\xb1\0"
-"&sup2;\0"     "\xc2\xb2\0"
-"&sup3;\0"     "\xc2\xb3\0"
-"&acute;\0"    "\xc2\xb4\0"
-"&micro;\0"    "\xc2\xb5\0"
-"&para;\0"     "\xc2\xb6\0"
-"&middot;\0"   "\xc2\xb7\0"
-"&cedil;\0"    "\xc2\xb8\0"
-"&sup1;\0"     "\xc2\xb9\0"
-"&ordm;\0"     "\xc2\xba\0"
-"&raquo;\0"    "\xc2\xbb\0"
-"&frac14;\0"   "\xc2\xbc\0"
-"&frac12;\0"   "\xc2\xbd\0"
-"&frac34;\0"   "\xc2\xbe\0"
-"&iquest;\0"   "\xc2\xbf\0"
-"&Agrave;\0"   "\xc3\x80\0"
-"&Aacute;\0"   "\xc3\x81\0"
-"&Acirc;\0"    "\xc3\x82\0"
-"&Atilde;\0"   "\xc3\x83\0"
-"&Auml;\0"     "\xc3\x84\0"
-"&Aring;\0"    "\xc3\x85\0"
-"&Aelig;\0"    "\xc3\x86\0"
-"&Ccedil;\0"   "\xc3\x87\0"
-"&Egrave;\0"   "\xc3\x88\0"
-"&Eacute;\0"   "\xc3\x89\0"
-"&Ecirc;\0"    "\xc3\x8a\0"
-"&Euml;\0"     "\xc3\x8b\0"
-"&Igrave;\0"   "\xc3\x8c\0"
-"&Iacute;\0"   "\xc3\x8d\0"
-"&Icirc;\0"    "\xc3\x8e\0"
-"&Iuml;\0"     "\xc3\x8f\0"
-"&Eth;\0"      "\xc3\x90\0"
-"&Ntilde;\0"   "\xc3\x91\0"
-"&Ograve;\0"   "\xc3\x92\0"
-"&Oacute;\0"   "\xc3\x93\0"
-"&Ocirc;\0"    "\xc3\x94\0"
-"&Otilde;\0"   "\xc3\x95\0"
-"&Ouml;\0"     "\xc3\x96\0"
-"&times;\0"    "\xc3\x97\0"
-"&Oslash;\0"   "\xc3\x98\0"
-"&Ugrave;\0"   "\xc3\x99\0"
-"&Uacute;\0"   "\xc3\x9a\0"
-"&Ucirc;\0"    "\xc3\x9b\0"
-"&Yacute;\0"   "\xc3\x9d\0"
-"&Thorn;\0"    "\xc3\x9e\0"
-"&szlig;\0"    "\xc3\x9f\0"
-"&agrave;\0"   "\xc3\xa0\0"
-"&aacute;\0"   "\xc3\xa1\0"
-"&acirc;\0"    "\xc3\xa2\0"
-"&atilde;\0"   "\xc3\xa3\0"
-"&auml;\0"     "\xc3\xa4\0"
-"&aring;\0"    "\xc3\xa5\0"
-"&aelig;\0"    "\xc3\xa6\0"
-"&ccedil;\0"   "\xc3\xa7\0"
-"&egrave;\0"   "\xc3\xa8\0"
-"&eacute;\0"   "\xc3\xa9\0"
-"&ecirc;\0"    "\xc3\xaa\0"
-"&euml;\0"     "\xc3\xab\0"
-"&igrave;\0"   "\xc3\xac\0"
-"&iacute;\0"   "\xc3\xad\0"
-"&icirc;\0"    "\xc3\xae\0"
-"&iuml;\0"     "\xc3\xaf\0"
-"&eth;\0"      "\xc3\xb0\0"
-"&ntilde;\0"   "\xc3\xb1\0"
-"&ograve;\0"   "\xc3\xb2\0"
-"&oacute;\0"   "\xc3\xb3\0"
-"&ocirc;\0"    "\xc3\xb4\0"
-"&otilde;\0"   "\xc3\xb5\0"
-"&ouml;\0"     "\xc3\xb6\0"
-"&divide;\0"   "\xc3\xb7\0"
-"&oslash;\0"   "\xc3\xb8\0"
-"&ugrave;\0"   "\xc3\xb9\0"
-"&uacute;\0"   "\xc3\xba\0"
-"&ucirc;\0"    "\xc3\xbb\0"
-"&uuml;\0"     "\xc3\xbc\0"
-"&yacute;\0"   "\xc3\xbd\0"
-"&thorn;\0"    "\xc3\xbe\0"
-"&yuml;\0"     "\xc3\xbf\0"
-"&alpha;\0"    "\xce\x91\0"
-"&beta;\0"     "\xce\x92\0"
-"&gamma;\0"    "\xce\x93\0"
-"&delta;\0"    "\xce\x94\0"
-"&epsilon;\0"  "\xce\x95\0"
-"&zeta;\0"     "\xce\x96\0"
-"&eta;\0"      "\xce\x97\0"
-"&theta;\0"    "\xce\x98\0"
-"&iota;\0"     "\xce\x99\0"
-"&kappa;\0"    "\xce\x9a\0"
-"&lambda;\0"   "\xce\x9b\0"
-"&mu;\0"       "\xce\x9c\0"
-"&nu;\0"       "\xce\x9d\0"
-"&xi;\0"       "\xce\x9e\0"
-"&omicron;\0"  "\xce\x9f\0"
-"&pi;\0"       "\xce\xa0\0"
-"&rho;\0"      "\xce\xa1\0"
-"&sigma;\0"    "\xce\xa3\0"
-"&tau;\0"      "\xce\xa4\0"
-"&upsilon;\0"  "\xce\xa5\0"
-"&phi;\0"      "\xce\xa6\0"
-"&chi;\0"      "\xce\xa7\0"
-"&psi;\0"      "\xce\xa8\0"
-"&omega;\0"    "\xce\xa9\0"
-"&hellip;\0"   "\xe2\x80\xa6\0"
-"&euro;\0"     "\xe2\x82\xac\0"
-"&larr;\0"     "\xe2\x86\x90\0"
-"&uarr;\0"     "\xe2\x86\x91\0"
-"&rarr;\0"     "\xe2\x86\x92\0"
-"&darr;\0"     "\xe2\x86\x93\0"
-"&harr;\0"     "\xe2\x86\x94\0"
-"&larr;\0"     "\xe2\x87\x90\0"
-"&rarr;\0"     "\xe2\x87\x92\0"
-"&forall;\0"   "\xe2\x88\x80\0"
-"&exist;\0"    "\xe2\x88\x83\0"
-"&nabla;\0"    "\xe2\x88\x87\0"
-"&prod;\0"     "\xe2\x88\x8f\0"
-"&sum;\0"      "\xe2\x88\x91\0"
-"&and;\0"      "\xe2\x88\xa7\0"
-"&or;\0"       "\xe2\x88\xa8\0"
-"&int;\0"      "\xe2\x88\xab\0"
-"&ne;\0"       "\xe2\x89\xa0\0"
-"&equiv;\0"    "\xe2\x89\xa1\0"
-"&oplus;\0"    "\xe2\x8a\x95\0"
-"&perp;\0"     "\xe2\x8a\xa5\0"
-"&dagger;\0"   "\xe2\x80\xa0\0"
-"&Dagger;\0"   "\xe2\x80\xa1\0"
-"&bull;\0"     "\xe2\x80\xa2\0"
-"&zwnj;\0"     "\xe2\x80\x8c\0"
-"&zwj;\0"      "\xe2\x80\x8d\0"
-"&lrm;\0"      "\xe2\x80\x8e\0"
-"&rlm;\0"      "\xe2\x80\x8f\0"
-;
+typedef struct _Escape_Value Escape_Value;
+
+struct _Escape_Value
+{
+   char *escape;
+   char *value;
+   size_t escape_len;
+   size_t value_len;
+};
+
+#define ESCAPE_VALUE(e,v) {e,v,strlen(e),strlen(v)}
+
+static const Escape_Value escape_values_e_sorted[] = {
+   ESCAPE_VALUE("&Aacute;", "\xc3\x81"),
+   ESCAPE_VALUE("&Acirc;", "\xc3\x82"),
+   ESCAPE_VALUE("&Aelig;", "\xc3\x86"),
+   ESCAPE_VALUE("&Agrave;", "\xc3\x80"),
+   ESCAPE_VALUE("&Aring;", "\xc3\x85"),
+   ESCAPE_VALUE("&Atilde;", "\xc3\x83"),
+   ESCAPE_VALUE("&Auml;", "\xc3\x84"),
+   ESCAPE_VALUE("&Ccedil;", "\xc3\x87"),
+   ESCAPE_VALUE("&Dagger;", "\xe2\x80\xa1"),
+   ESCAPE_VALUE("&Eacute;", "\xc3\x89"),
+   ESCAPE_VALUE("&Ecirc;", "\xc3\x8a"),
+   ESCAPE_VALUE("&Egrave;", "\xc3\x88"),
+   ESCAPE_VALUE("&Eth;", "\xc3\x90"),
+   ESCAPE_VALUE("&Euml;", "\xc3\x8b"),
+   ESCAPE_VALUE("&Iacute;", "\xc3\x8d"),
+   ESCAPE_VALUE("&Icirc;", "\xc3\x8e"),
+   ESCAPE_VALUE("&Igrave;", "\xc3\x8c"),
+   ESCAPE_VALUE("&Iuml;", "\xc3\x8f"),
+   ESCAPE_VALUE("&Ntilde;", "\xc3\x91"),
+   ESCAPE_VALUE("&Oacute;", "\xc3\x93"),
+   ESCAPE_VALUE("&Ocirc;", "\xc3\x94"),
+   ESCAPE_VALUE("&Ograve;", "\xc3\x92"),
+   ESCAPE_VALUE("&Oslash;", "\xc3\x98"),
+   ESCAPE_VALUE("&Otilde;", "\xc3\x95"),
+   ESCAPE_VALUE("&Ouml;", "\xc3\x96"),
+   ESCAPE_VALUE("&Thorn;", "\xc3\x9e"),
+   ESCAPE_VALUE("&Uacute;", "\xc3\x9a"),
+   ESCAPE_VALUE("&Ucirc;", "\xc3\x9b"),
+   ESCAPE_VALUE("&Ugrave;", "\xc3\x99"),
+   ESCAPE_VALUE("&Yacute;", "\xc3\x9d"),
+   ESCAPE_VALUE("&aacute;", "\xc3\xa1"),
+   ESCAPE_VALUE("&acirc;", "\xc3\xa2"),
+   ESCAPE_VALUE("&acute;", "\xc2\xb4"),
+   ESCAPE_VALUE("&aelig;", "\xc3\xa6"),
+   ESCAPE_VALUE("&agrave;", "\xc3\xa0"),
+   ESCAPE_VALUE("&alpha;", "\xce\x91"),
+   ESCAPE_VALUE("&and;", "\xe2\x88\xa7"),
+   ESCAPE_VALUE("&aring;", "\xc3\xa5"),
+   ESCAPE_VALUE("&atilde;", "\xc3\xa3"),
+   ESCAPE_VALUE("&auml;", "\xc3\xa4"),
+   ESCAPE_VALUE("&beta;", "\xce\x92"),
+   ESCAPE_VALUE("&brvbar;", "\xc2\xa6"),
+   ESCAPE_VALUE("&bull;", "\xe2\x80\xa2"),
+   ESCAPE_VALUE("&ccedil;", "\xc3\xa7"),
+   ESCAPE_VALUE("&cedil;", "\xc2\xb8"),
+   ESCAPE_VALUE("&cent;", "\xc2\xa2"),
+   ESCAPE_VALUE("&chi;", "\xce\xa7"),
+   ESCAPE_VALUE("&copy;", "\xc2\xa9"),
+   ESCAPE_VALUE("&curren;", "\xc2\xa4"),
+   ESCAPE_VALUE("&dagger;", "\xe2\x80\xa0"),
+   ESCAPE_VALUE("&darr;", "\xe2\x86\x93"),
+   ESCAPE_VALUE("&deg;", "\xc2\xb0"),
+   ESCAPE_VALUE("&delta;", "\xce\x94"),
+   ESCAPE_VALUE("&divide;", "\xc3\xb7"),
+   ESCAPE_VALUE("&eacute;", "\xc3\xa9"),
+   ESCAPE_VALUE("&ecirc;", "\xc3\xaa"),
+   ESCAPE_VALUE("&egrave;", "\xc3\xa8"),
+   ESCAPE_VALUE("&epsilon;", "\xce\x95"),
+   ESCAPE_VALUE("&equiv;", "\xe2\x89\xa1"),
+   ESCAPE_VALUE("&eta;", "\xce\x97"),
+   ESCAPE_VALUE("&eth;", "\xc3\xb0"),
+   ESCAPE_VALUE("&euml;", "\xc3\xab"),
+   ESCAPE_VALUE("&euro;", "\xe2\x82\xac"),
+   ESCAPE_VALUE("&exist;", "\xe2\x88\x83"),
+   ESCAPE_VALUE("&forall;", "\xe2\x88\x80"),
+   ESCAPE_VALUE("&frac12;", "\xc2\xbd"),
+   ESCAPE_VALUE("&frac14;", "\xc2\xbc"),
+   ESCAPE_VALUE("&frac34;", "\xc2\xbe"),
+   ESCAPE_VALUE("&gamma;", "\xce\x93"),
+   ESCAPE_VALUE("&harr;", "\xe2\x86\x94"),
+   ESCAPE_VALUE("&hellip;", "\xe2\x80\xa6"),
+   ESCAPE_VALUE("&iacute;", "\xc3\xad"),
+   ESCAPE_VALUE("&icirc;", "\xc3\xae"),
+   ESCAPE_VALUE("&iexcl;", "\xc2\xa1"),
+   ESCAPE_VALUE("&igrave;", "\xc3\xac"),
+   ESCAPE_VALUE("&int;", "\xe2\x88\xab"),
+   ESCAPE_VALUE("&iota;", "\xce\x99"),
+   ESCAPE_VALUE("&iquest;", "\xc2\xbf"),
+   ESCAPE_VALUE("&iuml;", "\xc3\xaf"),
+   ESCAPE_VALUE("&kappa;", "\xce\x9a"),
+   ESCAPE_VALUE("&lambda;", "\xce\x9b"),
+   ESCAPE_VALUE("&laquo;", "\xc2\xab"),
+   ESCAPE_VALUE("&larr;", "\xe2\x86\x90"),
+   ESCAPE_VALUE("&larr;", "\xe2\x87\x90"),
+   ESCAPE_VALUE("&lrm;", "\xe2\x80\x8e"),
+   ESCAPE_VALUE("&macr;", "\xc2\xaf"),
+   ESCAPE_VALUE("&micro;", "\xc2\xb5"),
+   ESCAPE_VALUE("&middot;", "\xc2\xb7"),
+   ESCAPE_VALUE("&mu;", "\xce\x9c"),
+   ESCAPE_VALUE("&nabla;", "\xe2\x88\x87"),
+   ESCAPE_VALUE("&nbsp;", "\xc2\xa0"),
+   ESCAPE_VALUE("&ne;", "\xe2\x89\xa0"),
+   ESCAPE_VALUE("&not;", "\xc2\xac"),
+   ESCAPE_VALUE("&ntilde;", "\xc3\xb1"),
+   ESCAPE_VALUE("&nu;", "\xce\x9d"),
+   ESCAPE_VALUE("&oacute;", "\xc3\xb3"),
+   ESCAPE_VALUE("&ocirc;", "\xc3\xb4"),
+   ESCAPE_VALUE("&ograve;", "\xc3\xb2"),
+   ESCAPE_VALUE("&omega;", "\xce\xa9"),
+   ESCAPE_VALUE("&omicron;", "\xce\x9f"),
+   ESCAPE_VALUE("&oplus;", "\xe2\x8a\x95"),
+   ESCAPE_VALUE("&or;", "\xe2\x88\xa8"),
+   ESCAPE_VALUE("&ordf;", "\xc2\xaa"),
+   ESCAPE_VALUE("&ordm;", "\xc2\xba"),
+   ESCAPE_VALUE("&oslash;", "\xc3\xb8"),
+   ESCAPE_VALUE("&otilde;", "\xc3\xb5"),
+   ESCAPE_VALUE("&ouml;", "\xc3\xb6"),
+   ESCAPE_VALUE("&para;", "\xc2\xb6"),
+   ESCAPE_VALUE("&perp;", "\xe2\x8a\xa5"),
+   ESCAPE_VALUE("&phi;", "\xce\xa6"),
+   ESCAPE_VALUE("&pi;", "\xce\xa0"),
+   ESCAPE_VALUE("&plusmn;", "\xc2\xb1"),
+   ESCAPE_VALUE("&pound;", "\xc2\xa3"),
+   ESCAPE_VALUE("&prod;", "\xe2\x88\x8f"),
+   ESCAPE_VALUE("&psi;", "\xce\xa8"),
+   ESCAPE_VALUE("&raquo;", "\xc2\xbb"),
+   ESCAPE_VALUE("&rarr;", "\xe2\x86\x92"),
+   ESCAPE_VALUE("&rarr;", "\xe2\x87\x92"),
+   ESCAPE_VALUE("&reg;", "\xc2\xae"),
+   ESCAPE_VALUE("&rho;", "\xce\xa1"),
+   ESCAPE_VALUE("&rlm;", "\xe2\x80\x8f"),
+   ESCAPE_VALUE("&sect;", "\xc2\xa7"),
+   ESCAPE_VALUE("&shy;", "\xc2\xad"),
+   ESCAPE_VALUE("&sigma;", "\xce\xa3"),
+   ESCAPE_VALUE("&sum;", "\xe2\x88\x91"),
+   ESCAPE_VALUE("&sup1;", "\xc2\xb9"),
+   ESCAPE_VALUE("&sup2;", "\xc2\xb2"),
+   ESCAPE_VALUE("&sup3;", "\xc2\xb3"),
+   ESCAPE_VALUE("&szlig;", "\xc3\x9f"),
+   ESCAPE_VALUE("&tau;", "\xce\xa4"),
+   ESCAPE_VALUE("&theta;", "\xce\x98"),
+   ESCAPE_VALUE("&thorn;", "\xc3\xbe"),
+   ESCAPE_VALUE("&times;", "\xc3\x97"),
+   ESCAPE_VALUE("&uacute;", "\xc3\xba"),
+   ESCAPE_VALUE("&uarr;", "\xe2\x86\x91"),
+   ESCAPE_VALUE("&ucirc;", "\xc3\xbb"),
+   ESCAPE_VALUE("&ugrave;", "\xc3\xb9"),
+   ESCAPE_VALUE("&uml;", "\xc2\xa8"),
+   ESCAPE_VALUE("&upsilon;", "\xce\xa5"),
+   ESCAPE_VALUE("&uuml;", "\xc3\xbc"),
+   ESCAPE_VALUE("&xi;", "\xce\x9e"),
+   ESCAPE_VALUE("&yacute;", "\xc3\xbd"),
+   ESCAPE_VALUE("&yen;", "\xc2\xa5"),
+   ESCAPE_VALUE("&yuml;", "\xc3\xbf"),
+   ESCAPE_VALUE("&zeta;", "\xce\x96"),
+   ESCAPE_VALUE("&zwj;", "\xe2\x80\x8d"),
+   ESCAPE_VALUE("&zwnj;", "\xe2\x80\x8c"),
+};
+
+
+/**
+ * @internal
+ * @var escape_values_e_common_sorted[]
+ * same as escape_values_e_sorted with small subset of common escapes
+ */
+static const Escape_Value escape_values_e_common_sorted[] = {
+   ESCAPE_VALUE("&amp;", "\x26"),
+   ESCAPE_VALUE("&apos;", "\x27"),
+   ESCAPE_VALUE("&gt;", "\x3e"),
+   ESCAPE_VALUE("&quot;", "\x22"),
+   ESCAPE_VALUE("&lt;", "\x3c"),
+};
+
+/**
+ * @internal
+ * @var escape_values_v_sorted[]
+ * This array consists of Escape_Value structure sorted by escape value
+ * And new added value must be placed sorted position, and reflected on escape_values_e_sorted
+ */
+static const Escape_Value escape_values_v_sorted[] = {
+   ESCAPE_VALUE("&nbsp;", "\xc2\xa0"),
+   ESCAPE_VALUE("&iexcl;", "\xc2\xa1"),
+   ESCAPE_VALUE("&cent;", "\xc2\xa2"),
+   ESCAPE_VALUE("&pound;", "\xc2\xa3"),
+   ESCAPE_VALUE("&curren;", "\xc2\xa4"),
+   ESCAPE_VALUE("&yen;", "\xc2\xa5"),
+   ESCAPE_VALUE("&brvbar;", "\xc2\xa6"),
+   ESCAPE_VALUE("&sect;", "\xc2\xa7"),
+   ESCAPE_VALUE("&uml;", "\xc2\xa8"),
+   ESCAPE_VALUE("&copy;", "\xc2\xa9"),
+   ESCAPE_VALUE("&ordf;", "\xc2\xaa"),
+   ESCAPE_VALUE("&laquo;", "\xc2\xab"),
+   ESCAPE_VALUE("&not;", "\xc2\xac"),
+   ESCAPE_VALUE("&shy;", "\xc2\xad"),
+   ESCAPE_VALUE("&reg;", "\xc2\xae"),
+   ESCAPE_VALUE("&macr;", "\xc2\xaf"),
+   ESCAPE_VALUE("&deg;", "\xc2\xb0"),
+   ESCAPE_VALUE("&plusmn;", "\xc2\xb1"),
+   ESCAPE_VALUE("&sup2;", "\xc2\xb2"),
+   ESCAPE_VALUE("&sup3;", "\xc2\xb3"),
+   ESCAPE_VALUE("&acute;", "\xc2\xb4"),
+   ESCAPE_VALUE("&micro;", "\xc2\xb5"),
+   ESCAPE_VALUE("&para;", "\xc2\xb6"),
+   ESCAPE_VALUE("&middot;", "\xc2\xb7"),
+   ESCAPE_VALUE("&cedil;", "\xc2\xb8"),
+   ESCAPE_VALUE("&sup1;", "\xc2\xb9"),
+   ESCAPE_VALUE("&ordm;", "\xc2\xba"),
+   ESCAPE_VALUE("&raquo;", "\xc2\xbb"),
+   ESCAPE_VALUE("&frac14;", "\xc2\xbc"),
+   ESCAPE_VALUE("&frac12;", "\xc2\xbd"),
+   ESCAPE_VALUE("&frac34;", "\xc2\xbe"),
+   ESCAPE_VALUE("&iquest;", "\xc2\xbf"),
+   ESCAPE_VALUE("&Agrave;", "\xc3\x80"),
+   ESCAPE_VALUE("&Aacute;", "\xc3\x81"),
+   ESCAPE_VALUE("&Acirc;", "\xc3\x82"),
+   ESCAPE_VALUE("&Atilde;", "\xc3\x83"),
+   ESCAPE_VALUE("&Auml;", "\xc3\x84"),
+   ESCAPE_VALUE("&Aring;", "\xc3\x85"),
+   ESCAPE_VALUE("&Aelig;", "\xc3\x86"),
+   ESCAPE_VALUE("&Ccedil;", "\xc3\x87"),
+   ESCAPE_VALUE("&Egrave;", "\xc3\x88"),
+   ESCAPE_VALUE("&Eacute;", "\xc3\x89"),
+   ESCAPE_VALUE("&Ecirc;", "\xc3\x8a"),
+   ESCAPE_VALUE("&Euml;", "\xc3\x8b"),
+   ESCAPE_VALUE("&Igrave;", "\xc3\x8c"),
+   ESCAPE_VALUE("&Iacute;", "\xc3\x8d"),
+   ESCAPE_VALUE("&Icirc;", "\xc3\x8e"),
+   ESCAPE_VALUE("&Iuml;", "\xc3\x8f"),
+   ESCAPE_VALUE("&Eth;", "\xc3\x90"),
+   ESCAPE_VALUE("&Ntilde;", "\xc3\x91"),
+   ESCAPE_VALUE("&Ograve;", "\xc3\x92"),
+   ESCAPE_VALUE("&Oacute;", "\xc3\x93"),
+   ESCAPE_VALUE("&Ocirc;", "\xc3\x94"),
+   ESCAPE_VALUE("&Otilde;", "\xc3\x95"),
+   ESCAPE_VALUE("&Ouml;", "\xc3\x96"),
+   ESCAPE_VALUE("&times;", "\xc3\x97"),
+   ESCAPE_VALUE("&Oslash;", "\xc3\x98"),
+   ESCAPE_VALUE("&Ugrave;", "\xc3\x99"),
+   ESCAPE_VALUE("&Uacute;", "\xc3\x9a"),
+   ESCAPE_VALUE("&Ucirc;", "\xc3\x9b"),
+   ESCAPE_VALUE("&Yacute;", "\xc3\x9d"),
+   ESCAPE_VALUE("&Thorn;", "\xc3\x9e"),
+   ESCAPE_VALUE("&szlig;", "\xc3\x9f"),
+   ESCAPE_VALUE("&agrave;", "\xc3\xa0"),
+   ESCAPE_VALUE("&aacute;", "\xc3\xa1"),
+   ESCAPE_VALUE("&acirc;", "\xc3\xa2"),
+   ESCAPE_VALUE("&atilde;", "\xc3\xa3"),
+   ESCAPE_VALUE("&auml;", "\xc3\xa4"),
+   ESCAPE_VALUE("&aring;", "\xc3\xa5"),
+   ESCAPE_VALUE("&aelig;", "\xc3\xa6"),
+   ESCAPE_VALUE("&ccedil;", "\xc3\xa7"),
+   ESCAPE_VALUE("&egrave;", "\xc3\xa8"),
+   ESCAPE_VALUE("&eacute;", "\xc3\xa9"),
+   ESCAPE_VALUE("&ecirc;", "\xc3\xaa"),
+   ESCAPE_VALUE("&euml;", "\xc3\xab"),
+   ESCAPE_VALUE("&igrave;", "\xc3\xac"),
+   ESCAPE_VALUE("&iacute;", "\xc3\xad"),
+   ESCAPE_VALUE("&icirc;", "\xc3\xae"),
+   ESCAPE_VALUE("&iuml;", "\xc3\xaf"),
+   ESCAPE_VALUE("&eth;", "\xc3\xb0"),
+   ESCAPE_VALUE("&ntilde;", "\xc3\xb1"),
+   ESCAPE_VALUE("&ograve;", "\xc3\xb2"),
+   ESCAPE_VALUE("&oacute;", "\xc3\xb3"),
+   ESCAPE_VALUE("&ocirc;", "\xc3\xb4"),
+   ESCAPE_VALUE("&otilde;", "\xc3\xb5"),
+   ESCAPE_VALUE("&ouml;", "\xc3\xb6"),
+   ESCAPE_VALUE("&divide;", "\xc3\xb7"),
+   ESCAPE_VALUE("&oslash;", "\xc3\xb8"),
+   ESCAPE_VALUE("&ugrave;", "\xc3\xb9"),
+   ESCAPE_VALUE("&uacute;", "\xc3\xba"),
+   ESCAPE_VALUE("&ucirc;", "\xc3\xbb"),
+   ESCAPE_VALUE("&uuml;", "\xc3\xbc"),
+   ESCAPE_VALUE("&yacute;", "\xc3\xbd"),
+   ESCAPE_VALUE("&thorn;", "\xc3\xbe"),
+   ESCAPE_VALUE("&yuml;", "\xc3\xbf"),
+   ESCAPE_VALUE("&alpha;", "\xce\x91"),
+   ESCAPE_VALUE("&beta;", "\xce\x92"),
+   ESCAPE_VALUE("&gamma;", "\xce\x93"),
+   ESCAPE_VALUE("&delta;", "\xce\x94"),
+   ESCAPE_VALUE("&epsilon;", "\xce\x95"),
+   ESCAPE_VALUE("&zeta;", "\xce\x96"),
+   ESCAPE_VALUE("&eta;", "\xce\x97"),
+   ESCAPE_VALUE("&theta;", "\xce\x98"),
+   ESCAPE_VALUE("&iota;", "\xce\x99"),
+   ESCAPE_VALUE("&kappa;", "\xce\x9a"),
+   ESCAPE_VALUE("&lambda;", "\xce\x9b"),
+   ESCAPE_VALUE("&mu;", "\xce\x9c"),
+   ESCAPE_VALUE("&nu;", "\xce\x9d"),
+   ESCAPE_VALUE("&xi;", "\xce\x9e"),
+   ESCAPE_VALUE("&omicron;", "\xce\x9f"),
+   ESCAPE_VALUE("&pi;", "\xce\xa0"),
+   ESCAPE_VALUE("&rho;", "\xce\xa1"),
+   ESCAPE_VALUE("&sigma;", "\xce\xa3"),
+   ESCAPE_VALUE("&tau;", "\xce\xa4"),
+   ESCAPE_VALUE("&upsilon;", "\xce\xa5"),
+   ESCAPE_VALUE("&phi;", "\xce\xa6"),
+   ESCAPE_VALUE("&chi;", "\xce\xa7"),
+   ESCAPE_VALUE("&psi;", "\xce\xa8"),
+   ESCAPE_VALUE("&omega;", "\xce\xa9"),
+   ESCAPE_VALUE("&zwnj;", "\xe2\x80\x8c"),
+   ESCAPE_VALUE("&zwj;", "\xe2\x80\x8d"),
+   ESCAPE_VALUE("&lrm;", "\xe2\x80\x8e"),
+   ESCAPE_VALUE("&rlm;", "\xe2\x80\x8f"),
+   ESCAPE_VALUE("&dagger;", "\xe2\x80\xa0"),
+   ESCAPE_VALUE("&Dagger;", "\xe2\x80\xa1"),
+   ESCAPE_VALUE("&bull;", "\xe2\x80\xa2"),
+   ESCAPE_VALUE("&hellip;", "\xe2\x80\xa6"),
+   ESCAPE_VALUE("&euro;", "\xe2\x82\xac"),
+   ESCAPE_VALUE("&larr;", "\xe2\x86\x90"),
+   ESCAPE_VALUE("&uarr;", "\xe2\x86\x91"),
+   ESCAPE_VALUE("&rarr;", "\xe2\x86\x92"),
+   ESCAPE_VALUE("&darr;", "\xe2\x86\x93"),
+   ESCAPE_VALUE("&harr;", "\xe2\x86\x94"),
+   ESCAPE_VALUE("&larr;", "\xe2\x87\x90"),
+   ESCAPE_VALUE("&rarr;", "\xe2\x87\x92"),
+   ESCAPE_VALUE("&forall;", "\xe2\x88\x80"),
+   ESCAPE_VALUE("&exist;", "\xe2\x88\x83"),
+   ESCAPE_VALUE("&nabla;", "\xe2\x88\x87"),
+   ESCAPE_VALUE("&prod;", "\xe2\x88\x8f"),
+   ESCAPE_VALUE("&sum;", "\xe2\x88\x91"),
+   ESCAPE_VALUE("&and;", "\xe2\x88\xa7"),
+   ESCAPE_VALUE("&or;", "\xe2\x88\xa8"),
+   ESCAPE_VALUE("&int;", "\xe2\x88\xab"),
+   ESCAPE_VALUE("&ne;", "\xe2\x89\xa0"),
+   ESCAPE_VALUE("&equiv;", "\xe2\x89\xa1"),
+   ESCAPE_VALUE("&oplus;", "\xe2\x8a\x95"),
+   ESCAPE_VALUE("&perp;", "\xe2\x8a\xa5"),
+};
+
+/**
+ * @internal
+ * @var escape_values_v_common_sorted[]
+ * same as escape_values_v_sorted with small subset of common escapes
+ */
+static const Escape_Value escape_values_v_common_sorted[] = {
+   ESCAPE_VALUE("&quot;", "\x22"),
+   ESCAPE_VALUE("&amp;", "\x26"),
+   ESCAPE_VALUE("&apos;", "\x27"),
+   ESCAPE_VALUE("&lt;", "\x3c"),
+   ESCAPE_VALUE("&gt;", "\x3e"),
+};
+
+
 
 /**
  * @internal
@@ -7521,48 +7712,93 @@ _escaped_is_eq_and_advance(const char *s, const char *s_end,
    return ((s == s_end) && reached_end);
 }
 
+
+/**
+ * @internal
+ *
+ * @param s the escape string to search for its index
+ * @param s_len length of s string 
+ * @param escape_values array of Escape_Value to look inside, Sorted by Escape
+ * @param escape_values_len is the len of Escape_Value array
+ */
+int _escaped_string_search(const char * s, size_t s_len, const Escape_Value escape_values[], const size_t escape_values_len)
+{
+   int l = 0;
+   int r = escape_values_len - 1;
+   while (l <= r)
+     {
+        int m = (l + r) / 2;
+        int res = strncmp(s, escape_values[m].escape, MAX(escape_values[m].escape_len, s_len));
+        if (res == 0)
+          {
+             //Handle special case when s_len is less than escape_len
+             //then we will continue searching
+             //example ("&gt;",1,....)
+             if (escape_values[m].escape_len > s_len)
+               res = -1;
+             else if (escape_values[m].escape_len < s_len)
+               res = 1;
+             else return m;
+          }
+         if (res > 0)
+           l = m + 1;
+         else
+           r = m - 1;
+     }
+   return -1;
+}
+
+/**
+ * @internal
+ *
+ * @param s the value string to search for its index
+ * @param escape_values array of Escape_Value to look inside, Sorted by Value
+ * @param escape_values_len is the len of Escape_Value array
+ */
+int _escaped_value_search(const char * s, const Escape_Value escape_values[], const size_t escape_values_len)
+{
+   int l = 0;
+   int r = escape_values_len - 1;
+   while (l <= r)
+     {
+        int m = (l + r) / 2;
+        int res = strncmp(s, escape_values[m].value, escape_values[m].value_len);
+        if (res == 0)
+          return m;
+        if (res > 0)
+          l = m + 1;
+        else
+          r = m - 1;
+     }
+   return -1;
+}
+
+
 /**
  * @internal
  *
  * @param s the string to match
  */
+
 static inline const char *
 _escaped_char_match(const char *s, int *adv)
 {
-   const char *map_itr, *map_end, *mc, *sc;
-
-   map_itr = escape_strings;
-   map_end = map_itr + sizeof(escape_strings);
-
-   while (map_itr < map_end)
+   static const size_t escape_common_size = sizeof(escape_values_v_common_sorted) / sizeof(Escape_Value);
+   int n_ret = _escaped_value_search(s, escape_values_v_common_sorted, escape_common_size);
+   if (n_ret != -1)
      {
-        const char *escape;
-        int match;
-
-        escape = map_itr;
-        _escaped_advance_after_end_of_string(&map_itr);
-        if (map_itr >= map_end) break;
-
-        mc = map_itr;
-        sc = s;
-        match = 1;
-        while ((*mc) && (*sc))
+        *adv = (int) escape_values_v_common_sorted[n_ret].value_len;
+        return escape_values_v_common_sorted[n_ret].escape; 
+     }
+   else 
+     {
+        static const size_t escape_size = sizeof(escape_values_v_sorted) / sizeof(Escape_Value);
+        n_ret = _escaped_value_search(s, escape_values_v_sorted, escape_size);
+        if (n_ret != -1)
           {
-             if ((unsigned char)*sc < (unsigned char)*mc) return NULL;
-             if (*sc != *mc)
-               {
-                  match = 0;
-                  break;
-               }
-             mc++;
-             sc++;
+             *adv = (int)escape_values_v_sorted[n_ret].value_len;
+             return escape_values_v_sorted[n_ret].escape;
           }
-        if (match)
-          {
-             *adv = mc - map_itr;
-             return escape;
-          }
-        _escaped_advance_after_end_of_string(&map_itr);
      }
    return NULL;
 }
@@ -7617,17 +7853,18 @@ _escaped_char_get(const char *s, const char *s_end)
      }
    else
      {
-        const char *map_itr, *map_end;
-
-        map_itr = escape_strings;
-        map_end = map_itr + sizeof(escape_strings);
-
-        while (map_itr < map_end)
+        static const size_t escape_common_size = sizeof(escape_values_e_common_sorted) / sizeof(Escape_Value);
+        int n_ret = _escaped_string_search(s, s_end-s, escape_values_e_common_sorted, escape_common_size);
+        if (n_ret != -1)
           {
-             if (_escaped_is_eq_and_advance(s, s_end, &map_itr, map_end))
-                return map_itr;
-             if (map_itr < map_end)
-                _escaped_advance_after_end_of_string(&map_itr);
+             return escape_values_e_common_sorted[n_ret].value;
+          }
+        else
+          {
+             static const size_t escape_size = sizeof(escape_values_e_sorted) / sizeof(Escape_Value);
+             n_ret = _escaped_string_search(s, s_end-s, escape_values_e_sorted, escape_size);
+             if (n_ret != -1)
+               return escape_values_e_sorted[n_ret].value;
           }
      }
 
