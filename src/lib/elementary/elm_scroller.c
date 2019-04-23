@@ -1255,14 +1255,9 @@ elm_scroller_step_size_get(const Evas_Object *obj,
    elm_interface_scrollable_step_size_get((Eo *) obj, x, y);
 }
 
-EAPI void
-elm_scroller_loop_set(Evas_Object *obj,
-                      Eina_Bool loop_h,
-                      Eina_Bool loop_v)
+EOLIAN static void
+_elm_scroller_elm_interface_scrollable_content_loop_set(Eo *obj, Elm_Scroller_Data *sd, Eina_Bool loop_h, Eina_Bool loop_v)
 {
-   ELM_SCROLLABLE_CHECK(obj);
-   ELM_SCROLLER_DATA_GET(obj, sd);
-
    int i;
 
    if (sd->loop_h == loop_h && sd->loop_v == loop_v) return;
@@ -1270,7 +1265,7 @@ elm_scroller_loop_set(Evas_Object *obj,
    sd->loop_h = loop_h;
    sd->loop_v = loop_v;
 
-   elm_interface_scrollable_content_loop_set(obj, loop_h, loop_v);
+   elm_interface_scrollable_content_loop_set(efl_super(obj, MY_CLASS), loop_h, loop_v);
 
    if (sd->content)
      {
@@ -1299,6 +1294,23 @@ elm_scroller_loop_set(Evas_Object *obj,
           }
      }
    elm_layout_sizing_eval(obj);
+}
+
+EAPI void
+elm_scroller_loop_set(Evas_Object *obj,
+                      Eina_Bool loop_h,
+                      Eina_Bool loop_v)
+{
+   ELM_SCROLLABLE_CHECK(obj);
+
+   elm_interface_scrollable_content_loop_set(obj, loop_h, loop_v);
+}
+
+EOLIAN static void
+_elm_scroller_elm_interface_scrollable_content_loop_get(Eo *obj EINA_UNUSED, Elm_Scroller_Data *sd, Eina_Bool *loop_h, Eina_Bool *loop_v)
+{
+   if (loop_h) *loop_h = sd->loop_h;
+   if (loop_v) *loop_v = sd->loop_v;
 }
 
 EAPI void

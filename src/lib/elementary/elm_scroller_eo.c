@@ -86,6 +86,12 @@ void _elm_scroller_elm_interface_scrollable_single_direction_set(Eo *obj, Elm_Sc
 Elm_Scroller_Single_Direction _elm_scroller_elm_interface_scrollable_single_direction_get(const Eo *obj, Elm_Scroller_Data *pd);
 
 
+void _elm_scroller_elm_interface_scrollable_content_loop_set(Eo *obj, Elm_Scroller_Data *sd, Eina_Bool loop_h, Eina_Bool loop_v);
+
+
+void _elm_scroller_elm_interface_scrollable_content_loop_get(Eo *obj EINA_UNUSED, Elm_Scroller_Data *sd, Eina_Bool *loop_h, Eina_Bool *loop_v);
+
+
 const Efl_Access_Action_Data *_elm_scroller_efl_access_widget_action_elm_actions_get(const Eo *obj, Elm_Scroller_Data *pd);
 
 
@@ -125,6 +131,8 @@ _elm_scroller_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(elm_interface_scrollable_policy_set, _elm_scroller_elm_interface_scrollable_policy_set),
       EFL_OBJECT_OP_FUNC(elm_interface_scrollable_single_direction_set, _elm_scroller_elm_interface_scrollable_single_direction_set),
       EFL_OBJECT_OP_FUNC(elm_interface_scrollable_single_direction_get, _elm_scroller_elm_interface_scrollable_single_direction_get),
+      EFL_OBJECT_OP_FUNC(elm_interface_scrollable_content_loop_set, _elm_scroller_elm_interface_scrollable_content_loop_set),
+      EFL_OBJECT_OP_FUNC(elm_interface_scrollable_content_loop_get, _elm_scroller_elm_interface_scrollable_content_loop_get),
       EFL_OBJECT_OP_FUNC(efl_access_widget_action_elm_actions_get, _elm_scroller_efl_access_widget_action_elm_actions_get),
       EFL_OBJECT_OP_FUNC(efl_part_get, _elm_scroller_efl_part_part_get),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_focus_state_apply, _elm_scroller_efl_ui_widget_focus_state_apply),
