@@ -41,7 +41,6 @@ _logind_device_pause_complete(Elput_Manager *em, uint32_t major, uint32_t minor)
    if (!msg)
      {
         ERR("Could not create method call for proxy");
-        eldbus_message_unref(msg);
         return;
      }
 
