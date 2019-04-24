@@ -16,6 +16,21 @@ typedef enum {
 } Options;
 
 static void
+_btn_color_clicked_cb(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Eo *layout = data;
+
+   static Eina_Bool changed = EINA_TRUE;
+
+   if (changed)
+     efl_gfx_color_set(layout, 0, 88, 204, 255);
+   else
+     efl_gfx_color_set(layout, 255, 255, 255, 255);
+
+   changed = !changed;
+}
+
+static void
 _btn_clicked_to_cb(void *data, const Efl_Event *event)
 {
    Eo *to, *btn, *obj = event->object;
@@ -297,6 +312,7 @@ test_ui_relative_layout(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
    btn1 = efl_add(EFL_UI_BUTTON_CLASS, layout,
                   efl_text_set(efl_added, "button1"),
                   efl_gfx_hint_align_set(efl_added, 0.0, 0.0),
+                  efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _btn_color_clicked_cb, layout),
                   efl_ui_relative_layout_relation_right_set(layout, efl_added, layout, 0.0),
                   efl_ui_relative_layout_relation_bottom_set(layout, efl_added, layout, 0.0));
 

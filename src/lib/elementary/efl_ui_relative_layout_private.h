@@ -49,7 +49,9 @@ struct _Efl_Ui_Relative_Layout_Calc
 struct _Efl_Ui_Relative_Layout_Data
 {
    Eo        *obj;
+   Eo        *clipper;
    Eina_Hash *children;
+   Efl_Ui_Relative_Layout_Child *base;
 };
 
 struct _Efl_Ui_Relative_Layout_Relation
