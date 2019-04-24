@@ -17,7 +17,7 @@
 
 EFL_START_TEST(content_set_get)
 {
-   Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
+   Efl_Ui_Widget *w = create_test_widget();
 
    ck_assert_int_eq(efl_content_set(widget, w), EINA_TRUE);
    ck_assert_ptr_eq(efl_ui_widget_parent_get(w), widget);
@@ -32,7 +32,7 @@ EFL_END_TEST
 
 EFL_START_TEST(content_set_get2)
 {
-   Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
+   Efl_Ui_Widget *w = create_test_widget();
 
    ck_assert_int_eq(efl_content_set(widget, w), EINA_TRUE);
    ck_assert_ptr_eq(efl_ui_widget_parent_get(w), widget);
@@ -46,7 +46,7 @@ EFL_END_TEST
 
 EFL_START_TEST(content_unset)
 {
-   Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
+   Efl_Ui_Widget *w = create_test_widget();
 
    ck_assert_int_eq(efl_content_set(widget, w), EINA_TRUE);
    efl_content_unset(widget);
@@ -56,7 +56,7 @@ EFL_END_TEST
 
 EFL_START_TEST(content_lifetime1)
 {
-   Efl_Ui_Widget *w1 = efl_add(WIDGET_CLASS, win);
+   Efl_Ui_Widget *w1 = create_test_widget();
 
    efl_wref_add(w1, &w1);
    ck_assert_int_eq(efl_content_set(widget, w1), EINA_TRUE);
@@ -67,7 +67,7 @@ EFL_END_TEST
 
 EFL_START_TEST(content_lifetime2)
 {
-   Efl_Ui_Widget *w1 = efl_add(WIDGET_CLASS, win),  *w2 = efl_add(WIDGET_CLASS, win);
+   Efl_Ui_Widget *w1 = create_test_widget(), *w2 = create_test_widget();
 
    efl_wref_add(w2, &w2);
    efl_wref_add(w1, &w1);
@@ -82,7 +82,7 @@ EFL_END_TEST
 
 EFL_START_TEST(content_lifetime3)
 {
-   Efl_Ui_Widget *w1 = efl_add(WIDGET_CLASS, win);
+   Efl_Ui_Widget *w1 = create_test_widget();
    Eina_Bool content_changed_event = EINA_FALSE;
 
    ck_assert_int_eq(efl_content_set(widget, w1), EINA_TRUE);
@@ -95,7 +95,7 @@ EFL_END_TEST
 
 EFL_START_TEST(content_event)
 {
-   Efl_Ui_Widget *w1 = efl_add(WIDGET_CLASS, win),  *w2 = efl_add(WIDGET_CLASS, win);
+   Efl_Ui_Widget *w1 = create_test_widget(), *w2 = create_test_widget();
    Eina_Bool content_changed_event;
 
    content_changed_event = EINA_FALSE;

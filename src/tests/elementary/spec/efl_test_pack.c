@@ -31,7 +31,7 @@ _setup_std_pack(Efl_Ui_Widget *wid[3])
 
    for (i = 0; i < 3; ++i)
      {
-        wid[i] = efl_add(WIDGET_CLASS, widget);
+        wid[i] = create_test_widget();
         ck_assert_int_eq(efl_pack(widget, wid[i]), EINA_TRUE);
         efl_gfx_entity_visible_set(widget, EINA_TRUE);
      }
@@ -162,7 +162,7 @@ EFL_START_TEST(unpack3)
    Efl_Ui_Widget *wid[3], *invalid;
    _setup_std_pack(wid);
 
-   invalid = efl_add(WIDGET_CLASS, win);
+   invalid = create_test_widget();
    ck_assert_int_eq(efl_pack_unpack(widget, wid[2]), EINA_TRUE);
    EXPECT_ERROR_START;
    ck_assert_int_eq(efl_pack_unpack(widget, wid[2]), EINA_FALSE);
@@ -238,7 +238,7 @@ EFL_END_TEST
 EFL_START_TEST(evt_content_added)
 {
    Eina_Bool called = EINA_TRUE;
-   Efl_Ui_Widget *wid = efl_add(WIDGET_CLASS, win);
+   Efl_Ui_Widget *wid = create_test_widget();
    efl_test_container_expect_evt_content_added(widget, EFL_CONTAINER_EVENT_CONTENT_ADDED, &called, wid);
    efl_pack(widget, wid);
    ck_assert_int_eq(called, EINA_TRUE);
