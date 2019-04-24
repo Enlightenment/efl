@@ -24,6 +24,40 @@ _chain_sort_cb(const void *l1, const void *l2)
    return calc2->comp_factor <= calc1->comp_factor ? -1 : 1;
 }
 
+static void
+_on_child_size_changed(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Efl_Ui_Relative_Layout_Data *pd = data;
+
+   efl_pack_layout_request(pd->obj);
+}
+
+static void
+_on_child_hints_changed(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Efl_Ui_Relative_Layout_Data *pd = data;
+
+   efl_pack_layout_request(pd->obj);
+}
+
+static void
+_on_child_del(void *data, const Efl_Event *event)
+{
+   Efl_Ui_Relative_Layout_Data *pd = data;
+
+   if (eina_hash_del_by_key(pd->children, &event->object))
+     efl_pack_layout_request(pd->obj);
+   else
+     ERR("child(%p(%s)) is not registered", event->object,
+         efl_class_name_get(event->object));
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(efl_ui_relative_layout_callbacks,
+  { EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _on_child_size_changed },
+  { EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _on_child_hints_changed },
+  { EFL_EVENT_DEL, _on_child_del }
+);
+
 static Efl_Ui_Relative_Layout_Child *
 _efl_ui_relative_layout_register(Efl_Ui_Relative_Layout_Data *pd, Eo *child)
 {
@@ -48,6 +82,7 @@ _efl_ui_relative_layout_register(Efl_Ui_Relative_Layout_Data *pd, Eo *child)
 
    efl_key_data_set(child, "_elm_leaveme", pd->obj);
    efl_canvas_object_clipper_set(child, pd->clipper);
+   efl_event_callback_array_add(child, efl_ui_relative_layout_callbacks(), pd);
    efl_canvas_group_member_add(pd->obj, child);
    efl_canvas_group_change(pd->obj);
 
@@ -539,7 +574,7 @@ _efl_ui_relative_layout_unregister(Eo *obj, Efl_Ui_Relative_Layout_Data *pd, Efl
         efl_canvas_group_member_remove(obj, child);
         efl_canvas_object_clipper_set(child, NULL);
         efl_key_data_set(child, "_elm_leaveme", NULL);
-
+        efl_event_callback_array_del(child, efl_ui_relative_layout_callbacks(), pd);
         efl_pack_layout_request(obj);
      }
    else

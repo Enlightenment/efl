@@ -120,8 +120,6 @@ _slider_changed_align_cb(void *data, const Efl_Event *event)
      efl_gfx_hint_align_set(btn, val, y);
    else if (opt == 'y')
      efl_gfx_hint_align_set(btn, x, val);
-
-   efl_pack_layout_request(layout);
 }
 
 static void
