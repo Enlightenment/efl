@@ -933,6 +933,15 @@ _grid_item_process(Eo *obj, Efl_Ui_Grid_Data *pd, EINA_UNUSED Efl_Ui_Grid_Item *
 {
    EFL_UI_GRID_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
 
+   if (eina_list_data_find(pd->items, it))
+     {
+        ERR("Item already added to this container!");
+        return EINA_FALSE;
+     }
+
+   if (!efl_ui_widget_sub_object_add(obj, it))
+     return EINA_FALSE;
+
    //FIXME: This is tricky workaround for set select mode and parent value.
    EFL_UI_GRID_ITEM_DATA_GET_OR_RETURN(it, gd, EINA_FALSE);
    EFL_UI_ITEM_DATA_GET_OR_RETURN(it, id, EINA_FALSE);
