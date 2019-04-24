@@ -1010,6 +1010,9 @@ _grid_item_unpack_internal(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Ui_Grid_Item *it)
    efl_event_callback_del(it, EFL_UI_EVENT_ITEM_SELECTED, _grid_item_selected, obj);
    efl_event_callback_del(it, EFL_UI_EVENT_ITEM_UNSELECTED, _grid_item_unselected, obj);
    efl_event_callback_del(it, EFL_EVENT_DEL, _grid_item_deleted, obj);
+
+   efl_canvas_group_member_remove(pd->pan, it);
+   _elm_widget_sub_object_redirect_to_top(obj, it);
 }
 
 
