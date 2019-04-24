@@ -971,16 +971,8 @@ try_again:
    config_attrs[n++] = 1;
    // FIXME: end n900 breakage
 # endif
-   if (alpha)
-     {
-        config_attrs[i++] = EGL_ALPHA_SIZE;
-        config_attrs[i++] = 1;
-     }
-   else
-     {
-        config_attrs[i++] = EGL_ALPHA_SIZE;
-        config_attrs[i++] = 0;
-     }
+   config_attrs[i++] = EGL_ALPHA_SIZE;
+   config_attrs[i++] = (alpha ? 1 : 0);
 
    if (depth_bits)
      {
