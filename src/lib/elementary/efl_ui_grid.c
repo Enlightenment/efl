@@ -1063,6 +1063,12 @@ _efl_ui_grid_efl_pack_unpack(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_Entity *subo
 {
    Efl_Ui_Grid_Item *item = (Efl_Ui_Grid_Item *)subobj;
 
+   if (!eina_list_data_find(pd->items, item))
+     {
+        ERR("Element is not part of this container");
+        return EINA_FALSE;
+     }
+
    _grid_item_unpack_internal(obj, pd, item);
 
    elm_layout_sizing_eval(obj);
