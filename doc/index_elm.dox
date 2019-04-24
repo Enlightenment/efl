@@ -44,6 +44,8 @@
  *
  * @image html img/widget/actionslider/preview-00.png
  * @image latex img/widget/actionslider/preview-00.eps
+ * @li @ref Elm_Animation_View
+ *
  * @li @ref Elm_Bg
  *
  * @image html img/widget/bg/preview-00.png
