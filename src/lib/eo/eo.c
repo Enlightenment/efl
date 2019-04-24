@@ -1933,7 +1933,7 @@ efl_ref(const Eo *obj_id)
    ++(obj->user_refcount);
    if (EINA_UNLIKELY(obj->user_refcount == 1))
      _efl_ref(obj);
-   else if (!obj->auto_unref && obj->user_refcount == 2)
+   else if (obj->ownership_track && !obj->auto_unref && obj->user_refcount == 2)
      efl_event_callback_call((Eo *) obj_id, EFL_EVENT_OWNERSHIP_SHARED, NULL);
 
 #ifdef EO_DEBUG
@@ -1994,7 +1994,7 @@ efl_unref(const Eo *obj_id)
           }
         _efl_unref(obj);
      }
-   else if (obj->user_refcount == 1)
+   else if (obj->ownership_track && obj->user_refcount == 1)
      {
         efl_event_callback_call((Eo *) obj_id, EFL_EVENT_OWNERSHIP_UNIQUE, NULL);
      }
