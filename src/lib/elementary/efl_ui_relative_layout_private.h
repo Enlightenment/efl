@@ -70,23 +70,35 @@ struct _Efl_Ui_Relative_Layout_Child
 
 #define EFL_UI_RELATIVE_LAYOUT_RELATION_SET_GET(direction, DIRECTION) \
    EOLIAN static void \
-   _efl_ui_relative_layout_relation_ ## direction ## _set(Eo *obj EINA_UNUSED, Efl_Ui_Relative_Layout_Data *pd, Eo *child, Eo *target, double relative) \
+   _efl_ui_relative_layout_relation_ ## direction ## _set(Eo *obj, Efl_Ui_Relative_Layout_Data *pd, Eo *child, Eo *target, double relative) \
    { \
       Efl_Ui_Relative_Layout_Child *rc; \
+      if (!child) return; \
       rc = _relative_child_get(pd, child); \
+      if (!rc) return; \
       if (target) rc->rel[DIRECTION].to = target; \
       if (relative < 0) relative = 0; \
       else if (relative > 1) relative = 1; \
       rc->rel[DIRECTION].relative = relative; \
+      efl_pack_layout_request(obj); \
    } \
    \
    EOLIAN static void \
    _efl_ui_relative_layout_relation_ ## direction ## _get(const Eo *obj EINA_UNUSED, Efl_Ui_Relative_Layout_Data *pd, Eo *child, Eo **target, double *relative) \
    { \
       Efl_Ui_Relative_Layout_Child *rc; \
-      rc = _relative_child_get(pd, child); \
-      if (target) *target = rc->rel[DIRECTION].to; \
-      if (relative) *relative = rc->rel[DIRECTION].relative; \
+      Eo *rel_to = NULL; \
+      double rel_relative = 0.0; \
+      rc = eina_hash_find(pd->children, &child); \
+      if (rc) \
+        { \
+           rel_to = rc->rel[DIRECTION].to; \
+           rel_relative = rc->rel[DIRECTION].relative; \
+        } \
+      else \
+        ERR("child(%p(%s)) is not registered", child, efl_class_name_get(child)); \
+      if (target) *target = rel_to; \
+      if (relative) *relative = rel_relative; \
    }
 
 #endif
