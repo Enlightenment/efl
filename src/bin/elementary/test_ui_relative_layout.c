@@ -150,7 +150,7 @@ _setter_add(Eo *vbox, Eo *btn, Options option)
 
    hbox = efl_add(EFL_UI_BOX_CLASS, vbox,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
-                  efl_pack_padding_set(efl_added, 2, 2, EINA_TRUE),
+                  efl_gfx_arrangement_content_padding_set(efl_added, 2, 2, EINA_TRUE),
                   efl_pack(vbox, efl_added));
 
    efl_add(EFL_UI_TEXT_CLASS, hbox,
@@ -192,13 +192,13 @@ _button_frame_add(Eo *box, Eo *btn)
 
    vbox = efl_add(EFL_UI_BOX_CLASS, f,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
-                  efl_pack_padding_set(efl_added, 2, 2, EINA_TRUE),
+                  efl_gfx_arrangement_content_padding_set(efl_added, 2, 2, EINA_TRUE),
                   efl_gfx_hint_margin_set(efl_added, 2, 2, 2, 2),
                   efl_content_set(f, efl_added));
 
    hbox = efl_add(EFL_UI_BOX_CLASS, vbox,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
-                  efl_pack_padding_set(efl_added, 2, 2, EINA_TRUE),
+                  efl_gfx_arrangement_content_padding_set(efl_added, 2, 2, EINA_TRUE),
                   efl_pack(vbox, efl_added));
 
    efl_add(EFL_CANVAS_RECTANGLE_CLASS, hbox,
@@ -231,7 +231,7 @@ _button_frame_add(Eo *box, Eo *btn)
 
    hbox = efl_add(EFL_UI_BOX_CLASS, vbox,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
-                  efl_pack_padding_set(efl_added, 2, 2, EINA_TRUE),
+                  efl_gfx_arrangement_content_padding_set(efl_added, 2, 2, EINA_TRUE),
                   efl_pack(vbox, efl_added));
 
    efl_add(EFL_UI_TEXT_CLASS, hbox,
@@ -251,7 +251,7 @@ _button_frame_add(Eo *box, Eo *btn)
 
    hbox = efl_add(EFL_UI_BOX_CLASS, vbox,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
-                  efl_pack_padding_set(efl_added, 2, 2, EINA_TRUE),
+                  efl_gfx_arrangement_content_padding_set(efl_added, 2, 2, EINA_TRUE),
                   efl_pack(vbox, efl_added));
 
    efl_add(EFL_UI_TEXT_CLASS, hbox,
@@ -282,7 +282,7 @@ test_ui_relative_layout(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
 
    vbox = efl_add(EFL_UI_BOX_CLASS, win,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
-                  efl_pack_padding_set(efl_added, 10, 10, EINA_TRUE),
+                  efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
                   efl_gfx_hint_margin_set(efl_added, 5, 5, 5, 5),
                   efl_content_set(win, efl_added));
 
@@ -294,7 +294,7 @@ test_ui_relative_layout(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
 
    hbox = efl_add(EFL_UI_BOX_CLASS, f,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
-                  efl_pack_padding_set(efl_added, 10, 0, EINA_TRUE),
+                  efl_gfx_arrangement_content_padding_set(efl_added, 10, 0, EINA_TRUE),
                   efl_content_set(f, efl_added));
 
    /* contents */

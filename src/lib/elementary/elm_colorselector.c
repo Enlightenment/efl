@@ -1348,7 +1348,7 @@ _elm_colorselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Colorselector_Data *sd
         if (vpadstr) v_pad = atoi(vpadstr);
 
         scale = efl_gfx_entity_scale_get(obj) * elm_config_scale_get() / edje_object_base_scale_get(wd->resize_obj);
-        efl_pack_padding_set(sd->palette_box, h_pad * scale, v_pad * scale, 0);
+        efl_gfx_arrangement_content_padding_set(sd->palette_box, h_pad * scale, v_pad * scale, 0);
 
         EINA_LIST_FOREACH(sd->items, elist, eo_item)
           {
@@ -1923,8 +1923,8 @@ _create_colorpalette(Evas_Object *obj)
    if (vpadstr) v_pad = atoi(vpadstr);
 
    scale = efl_gfx_entity_scale_get(obj) * elm_config_scale_get() / edje_object_base_scale_get(wd->resize_obj);
-   efl_pack_padding_set(sd->palette_box, h_pad * scale, v_pad * scale, 0);
-   efl_pack_align_set(sd->palette_box, 0.0, 0.0);
+   efl_gfx_arrangement_content_padding_set(sd->palette_box, h_pad * scale, v_pad * scale, 0);
+   efl_gfx_arrangement_content_align_set(sd->palette_box, 0.0, 0.0);
    if (!elm_layout_content_set(obj, "elm.palette", sd->palette_box))
      elm_layout_content_set(obj, "palette", sd->palette_box);
    sd->palette_name = eina_stringshare_add("default");

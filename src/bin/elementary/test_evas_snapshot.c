@@ -125,7 +125,7 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
                  efl_ui_win_autodel_set(efl_added, 1));
 
    table = efl_add(EFL_UI_TABLE_CLASS, win,
-                  efl_pack_padding_set(efl_added, 5, 5, 1));
+                  efl_gfx_arrangement_content_padding_set(efl_added, 5, 5, 1));
    efl_content_set(win, table);
 
    // Objects below the snapshot

@@ -37,24 +37,5 @@ interface @beta Efl.Pack extends Efl.Container
          }
          return: bool; [[$false if $subobj could not be packed.]]
       }
-      @property pack_align {
-         [[Alignment of the container within its bounds]]
-         set {}
-         get {}
-         values {
-            align_horiz: double; [[Horizontal alignment]]
-            align_vert:  double; [[Vertical alignment]]
-         }
-      }
-      @property pack_padding {
-         [[Padding between items contained in this object.]]
-         set {}
-         get {}
-         values {
-            pad_horiz: double; [[Horizontal padding]]
-            pad_vert:  double; [[Vertical padding]]
-            scalable:  bool; [[$true if scalable, $false otherwise]]
-         }
-      }
    }
 }

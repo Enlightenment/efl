@@ -6,7 +6,8 @@ class @beta Efl.Ui.List extends Efl.Ui.Layout_Base implements
                    Efl.Pack_Linear, Efl.Pack_Layout,
                    Efl.Ui.Clickable,
                    Efl.Ui.Selectable,
-                   Efl.Ui.Multi_Selectable
+                   Efl.Ui.Multi_Selectable,
+                   Efl.Gfx.Arrangement
 {
    [[Simple list widget with Pack interface.]]
    methods {
@@ -74,8 +75,7 @@ class @beta Efl.Ui.List extends Efl.Ui.Layout_Base implements
       Efl.Pack_Linear.pack_index_get;
       Efl.Pack_Layout.layout_update;
       Efl.Pack_Layout.layout_request;
-      Efl.Pack.pack_padding { get; set; }
-      //Efl.Pack.pack_align { get; set; }
+      Efl.Gfx.Arrangement.content_padding { get; set; }
 
       //Efl.Ui.Scrollable
       Efl.Ui.Scrollable_Interactive.match_content { set; }

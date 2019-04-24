@@ -395,7 +395,7 @@ _efl_ui_box_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Box
 }
 
 EOLIAN static void
-_efl_ui_box_efl_pack_pack_padding_set(Eo *obj, Efl_Ui_Box_Data *pd, double h, double v, Eina_Bool scalable)
+_efl_ui_box_efl_gfx_arrangement_content_padding_set(Eo *obj, Efl_Ui_Box_Data *pd, double h, double v, Eina_Bool scalable)
 {
    scalable = !!scalable;
    if (h < 0) h = 0;
@@ -413,7 +413,7 @@ _efl_ui_box_efl_pack_pack_padding_set(Eo *obj, Efl_Ui_Box_Data *pd, double h, do
 }
 
 EOLIAN static void
-_efl_ui_box_efl_pack_pack_padding_get(const Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd, double *h, double *v, Eina_Bool *scalable)
+_efl_ui_box_efl_gfx_arrangement_content_padding_get(const Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd, double *h, double *v, Eina_Bool *scalable)
 {
    if (scalable) *scalable = pd->pad.scalable;
    if (h) *h = pd->pad.h;
@@ -421,7 +421,7 @@ _efl_ui_box_efl_pack_pack_padding_get(const Eo *obj EINA_UNUSED, Efl_Ui_Box_Data
 }
 
 EOLIAN static void
-_efl_ui_box_efl_pack_pack_align_set(Eo *obj, Efl_Ui_Box_Data *pd, double h, double v)
+_efl_ui_box_efl_gfx_arrangement_content_align_set(Eo *obj, Efl_Ui_Box_Data *pd, double h, double v)
 {
    if (h < 0) h = -1;
    else if (h > 1) h = 1;
@@ -438,7 +438,7 @@ _efl_ui_box_efl_pack_pack_align_set(Eo *obj, Efl_Ui_Box_Data *pd, double h, doub
 }
 
 EOLIAN static void
-_efl_ui_box_efl_pack_pack_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd, double *h, double *v)
+_efl_ui_box_efl_gfx_arrangement_content_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd, double *h, double *v)
 {
    if (h) *h = pd->align.h;
    if (v) *v = pd->align.v;

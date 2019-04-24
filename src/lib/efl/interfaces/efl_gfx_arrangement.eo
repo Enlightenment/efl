@@ -1,0 +1,26 @@
+interface @beta Efl.Gfx.Arrangement
+{
+   [[API common to all UI container objects.]]
+   methods
+   {
+      @property content_align {
+         [[Alignment of the container within its bounds]]
+         set {}
+         get {}
+         values {
+            align_horiz: double; [[Horizontal alignment]]
+            align_vert:  double; [[Vertical alignment]]
+         }
+      }
+      @property content_padding {
+         [[Padding between items contained in this object.]]
+         set {}
+         get {}
+         values {
+            pad_horiz: double; [[Horizontal padding]]
+            pad_vert:  double; [[Vertical padding]]
+            scalable:  bool; [[$true if scalable, $false otherwise]]
+         }
+      }
+   }
+}

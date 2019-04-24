@@ -1158,7 +1158,7 @@ _efl_ui_grid_efl_pack_layout_layout_request(Eo *obj, Efl_Ui_Grid_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_pack_padding_set(Eo *obj EINA_UNUSED,
+_efl_ui_grid_efl_gfx_arrangement_content_padding_set(Eo *obj EINA_UNUSED,
                                        Efl_Ui_Grid_Data *pd,
                                        double h,
                                        double v,
@@ -1175,7 +1175,7 @@ _efl_ui_grid_efl_pack_pack_padding_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_pack_padding_get(const Eo *obj EINA_UNUSED,
+_efl_ui_grid_efl_gfx_arrangement_content_padding_get(const Eo *obj EINA_UNUSED,
                                        Efl_Ui_Grid_Data *pd,
                                        double *h,
                                        double *v,
@@ -1188,7 +1188,7 @@ _efl_ui_grid_efl_pack_pack_padding_get(const Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_pack_align_set(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, double h, double v)
+_efl_ui_grid_efl_gfx_arrangement_content_align_set(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, double h, double v)
 {
    pd->item.align.w = h;
    pd->item.align.h = v;
@@ -1196,7 +1196,7 @@ _efl_ui_grid_efl_pack_pack_align_set(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, 
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_pack_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, double *h, double *v)
+_efl_ui_grid_efl_gfx_arrangement_content_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, double *h, double *v)
 {
    *h = pd->item.align.w;
    *v = pd->item.align.h;

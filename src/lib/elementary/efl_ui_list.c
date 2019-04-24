@@ -880,36 +880,36 @@ _efl_ui_list_efl_pack_layout_layout_request(Eo *obj, Efl_Ui_List_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_list_efl_pack_pack_padding_set(Eo *obj EINA_UNUSED,
+_efl_ui_list_efl_gfx_arrangement_content_padding_set(Eo *obj EINA_UNUSED,
                                        Efl_Ui_List_Data *pd,
                                        double h,
                                        double v,
                                        Eina_Bool scalable)
 {
-   efl_pack_padding_set(pd->box, h, v, scalable);
+   efl_gfx_arrangement_content_padding_set(pd->box, h, v, scalable);
 }
 
 EOLIAN static void
-_efl_ui_list_efl_pack_pack_padding_get(const Eo *obj EINA_UNUSED,
+_efl_ui_list_efl_gfx_arrangement_content_padding_get(const Eo *obj EINA_UNUSED,
                                        Efl_Ui_List_Data *pd,
                                        double *h,
                                        double *v,
                                        Eina_Bool *scalable)
 {
-   efl_pack_padding_get(pd->box, h, v, scalable);
+   efl_gfx_arrangement_content_padding_get(pd->box, h, v, scalable);
 }
 
 /* FIXME: align could not work properly on the list
    EOLIAN static void
-   _efl_ui_list_efl_pack_pack_align_set(Eo *obj, Efl_Ui_List_Data *pd, double h, double v)
+   _efl_ui_list_efl_gfx_arrangement_content_align_set(Eo *obj, Efl_Ui_List_Data *pd, double h, double v)
    {
-   efl_pack_align_set(pd->box, h, v);
+   efl_gfx_arrangement_content_align_set(pd->box, h, v);
    }
 
    EOLIAN static void
-   _efl_ui_list_efl_pack_pack_align_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, double *h, double *v)
+   _efl_ui_list_efl_gfx_arrangement_content_align_get(Eo *obj EINA_UNUSED, Efl_Ui_List_Data *pd, double *h, double *v)
    {
-   efl_pack_align_get(pd->box, &h, &v);
+   efl_gfx_arrangement_content_align_get(pd->box, &h, &v);
    }
  */
 

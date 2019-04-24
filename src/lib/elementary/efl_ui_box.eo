@@ -1,5 +1,5 @@
 class @beta Efl.Ui.Box extends Efl.Ui.Widget implements Efl.Pack_Linear, Efl.Pack_Layout,
-                  Efl.Ui.Direction
+                  Efl.Ui.Direction, Efl.Gfx.Arrangement
 {
    [[The box widget.
 
@@ -8,8 +8,8 @@ class @beta Efl.Ui.Box extends Efl.Ui.Widget implements Efl.Pack_Linear, Efl.Pac
 
      By default, the box will use an internal function to set the layout to
      a single row, either vertical or horizontal. This layout is affected
-     by a number of parameters. The values given by @Efl.Pack.pack_padding.set
-     and @Efl.Pack.pack_align.set and the hints set to each object in the box.
+     by a number of parameters. The values given by @Efl.Gfx.Arrangement.content_padding.set
+     and @Efl.Gfx.Arrangement.content_align.set and the hints set to each object in the box.
 
      FIXME:
      THIS CLASS NEEDS GOOD UP TO DATE DOCUMENTATION. LEGACY BOX AND UI BOX
@@ -40,8 +40,8 @@ class @beta Efl.Ui.Box extends Efl.Ui.Widget implements Efl.Pack_Linear, Efl.Pac
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;
       Efl.Pack.pack;
-      Efl.Pack.pack_padding { get; set; }
-      Efl.Pack.pack_align { get; set; }
+      Efl.Gfx.Arrangement.content_padding { get; set; }
+      Efl.Gfx.Arrangement.content_align { get; set; }
       Efl.Pack_Linear.pack_begin;
       Efl.Pack_Linear.pack_end;
       Efl.Pack_Linear.pack_before;

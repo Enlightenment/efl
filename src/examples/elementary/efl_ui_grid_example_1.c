@@ -56,10 +56,10 @@ elm_main(int argc, char **argv)
    // TEST#1 : Create Grid
    gd->grid = grid = EoGenerate(EFL_UI_GRID_CLASS, box, (horiz ? EFL_UI_DIR_HORIZONTAL : EFL_UI_DIR_VERTICAL));
    efl_ui_grid_item_size_set(grid, EINA_SIZE2D(100, 120)); // 4X4
-   efl_pack_padding_set(grid, 5.0, 5.0, EINA_TRUE);
-   efl_pack_align_set(grid, 0.5, 0.5);
+   efl_gfx_arrangement_content_padding_set(grid, 5.0, 5.0, EINA_TRUE);
+   efl_gfx_arrangement_content_align_set(grid, 0.5, 0.5);
    efl_pack_end(box, grid);
-   
+
    // TEST#2 : Set Item Default Size
 
    Efl_Ui_Grid_Item *target = NULL;
