@@ -33,7 +33,7 @@ evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 elm_win_resize_object_add(win, genlist);
 evas_object_show(genlist);
 
-Elm_Genlist_Item_Class gic;
+Elm_Genlist_Item_Class gic = { 0 };
 Elm_Object_Item *glit, *glit_top;
 gic.item_style = "default";
 gic.func.text_get = _text_get;
