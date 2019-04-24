@@ -162,6 +162,15 @@ _show_content_with_anim(Efl_Ui_Stack *obj, Efl_Ui_Stack_Data *pd, Content_Data *
    efl_animation_player_target_set(pd->show, cd->content);
 
    Transit_Data *td = calloc(1, sizeof(Transit_Data));
+   if (!td)
+     {
+        ERR("Memory allocation error!");
+
+        //show content without animation
+        _show_content_without_anim(obj, cd->content);
+        return;
+     }
+
    td->cd = cd;
    pd->show_td = td;
 
@@ -185,6 +194,15 @@ _hide_content_with_anim(Efl_Ui_Stack *obj EINA_UNUSED, Efl_Ui_Stack_Data *pd, Co
    efl_animation_player_target_set(pd->hide, cd->content);
 
    Transit_Data *td = calloc(1, sizeof(Transit_Data));
+   if (!td)
+     {
+        ERR("Memory allocation error!");
+
+        //hide content without animation
+        _hide_content_without_anim(obj, cd->content);
+        return;
+     }
+
    td->cd = cd;
    pd->hide_td = td;
 
