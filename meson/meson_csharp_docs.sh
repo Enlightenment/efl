@@ -4,4 +4,4 @@
 # as meson's library() call can't track files other than the generated
 # efl_mono.dll
 
-cp $1 $2
+cp "$1" "$DESTDIR$2"

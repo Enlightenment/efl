@@ -33,8 +33,8 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 
    model = efl_add(EFL_IO_MODEL_CLASS, win, efl_io_model_path_set(efl_added, dirname));
    factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win);
+   efl_ui_widget_factory_item_class_set(factory, EFL_UI_LIST_DEFAULT_ITEM_CLASS);
    efl_ui_property_bind(factory, "efl.text", "filename");
-   efl_ui_layout_factory_theme_config(factory, "list_item", NULL, "default");
 
    li = efl_add(EFL_UI_LIST_VIEW_CLASS, win);
    efl_ui_list_view_layout_factory_set(li, factory);

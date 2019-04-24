@@ -248,6 +248,27 @@ boot_strap_eolian = [
   ['eolian'           ,[]                    , false,  true,  true, false, false, false, ['eina'], []],
 ]
 
+evas_lib =         ['evas'                       ,[], false,  true, false, false,  true,  true, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']]
+evas_img_modules = ['evas'                       ,[],  true, false, false, false, false, false, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']]
+evas_engines =     [join_paths('evas', 'engines'),[],  true, false, false, false, false, false, [], []]
+evas_goal =        ['evas_goal'                  ,[], false,  true, false, false, false, false, ['eina', 'efl', 'eo'], []]
+
+if get_option('evas-modules') == 'static'
+  evas_settings = [
+    evas_lib,
+    evas_img_modules,
+    evas_engines,
+    evas_goal,
+  ]
+else
+  evas_settings = [
+    evas_lib,
+    evas_img_modules,
+    evas_goal,
+    evas_engines,
+  ]
+endif
+
 subprojects = [
 # name              |   option              | mod  | lib  | bin  | bench | tests | examples | pkg-config options | name of static libs
 ['evil'             ,[]                    , false,  true, false, false, false, false, [], []],
@@ -275,9 +296,7 @@ subprojects = [
 ['ector'            ,[]                    , false,  true, false, false,  true, false, ['eina', 'efl'], ['draw', 'triangulator', 'freetype']],
 ['elput'            ,['drm']               , false,  true, false, false,  true, false, ['eina', 'eldbus'], []],
 ['ecore_drm2'       ,['drm']               , false,  true, false, false, false, false, ['ecore'], ['libdrm']],
-['ecore_cocoa'      ,['cocoa']             , false,  true, false, false, false, false, ['eina'], []],
-['evas'             ,[]                    ,  true,  true, false, false,  true,  true, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']],
-['evas_goal'        ,[]                    , false,  true, false, false, false, false, ['eina', 'efl', 'eo'], []],
+['ecore_cocoa'      ,['cocoa']             , false,  true, false, false, false, false, ['eina'], []]] + evas_settings +[
 ['ecore_input_evas' ,[]                    , false,  true, false, false, false, false, ['eina', 'evas'], []],
 ['ecore_evas'       ,[]                    ,  true,  true,  true, false, false, false, ['evas', 'ector'], []],
 ['ecore_imf'        ,[]                    ,  true,  true, false, false, false, false, ['eina'], []],
@@ -323,7 +342,7 @@ foreach package : subprojects
   ]
   automatic_pkgfile = true
   if package[1].length() == 0 or get_option(package[1][0])
-    config_h.set('HAVE_'+package_name.to_upper(), '1')
+    config_h.set('HAVE_'+package_name.to_upper().underscorify(), '1')
 
     dir_package_include = join_paths(dir_include, package_version_name)
     dir_package_modules = join_paths(dir_lib, package_name, 'modules')
@@ -376,7 +395,7 @@ foreach package : subprojects
        example_dirs += [package_name]
     endif
 
-    set_variable('build_'+package_name, true)
+    set_variable('build_'+package_name.underscorify(), true)
 
     # generate automatic pc files for libraries
     if automatic_pkgfile == true and package[3]

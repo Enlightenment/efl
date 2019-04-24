@@ -22,5 +22,19 @@ for f in `ls api/*.yml`; do
   sed -e 's/\(<xref href=\\"[^\\]*\)\\"/\1?displayProperty=fullName\\"/g' -i $f
 done;
 
+# Add missing references to derived classes, so they can be rendered with
+# their full name.
+# https://github.com/dotnet/docfx/issues/3769#issuecomment-485616064
+for f in `grep -l derivedClasses api/*.yml`; do
+  sed "1,/^  derivedClasses:$/d" $f > /tmp/efl_docfx_gendoc
+  sed -i "/^  [^-]/,$ d" /tmp/efl_docfx_gendoc
+  sed -i "/^[^ ]/,$ d" /tmp/efl_docfx_gendoc
+  while read dash class
+  do
+    sed -i "s/^references:$/references:\n- uid: $class\n  fullName: $class/g" $f
+  done <<< "$(cat /tmp/efl_docfx_gendoc)"
+done;
+rm -rf /tmp/efl_docfx_gendoc
+
 # DocFX Step 2: Generate HTML files
 mono bin/docfx.exe build docfx.json && echo "Docs ready in the _site folder!"

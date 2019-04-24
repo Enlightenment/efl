@@ -2,6 +2,7 @@
 # include "elementary_config.h"
 #endif
 
+#include <Elementary.h>
 #include <Efl_Ui.h>
 #include "efl_ui_spec_suite.h"
 #include "suite_helpers.h"

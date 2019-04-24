@@ -34,7 +34,7 @@ struct constant_definition_generator
     if (!name_helpers::open_namespaces(sink, constant.namespaces, context))
       return false;
 
-    if (!as_generator("public partial class Constants {\n").generate(sink, attributes::unused, context))
+    if (!as_generator("public partial class Constants\n{\n").generate(sink, attributes::unused, context))
       return false;
 
     std::string literal;

@@ -73,6 +73,15 @@ evas_image_load_file_head_wbmp(void *loader_data,
    position++; /* skipping one byte */
    if (read_mb(&w, map, length, &position) < 0) goto bail;
    if (read_mb(&h, map, length, &position) < 0) goto bail;
+
+   /* Wbmp header identifier is too weak....
+      Here checks size validation whether it's acutal wbmp or not. */
+   if ((((w * h) + 7) >> 3) + position != length)
+     {
+        *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+        goto bail;
+     }
+
    if ((w < 1) || (h < 1) || (w > IMG_MAX_SIZE) || (h > IMG_MAX_SIZE) ||
        IMG_TOO_BIG(w, h))
      {
@@ -116,11 +125,20 @@ evas_image_load_file_data_wbmp(void *loader_data,
    if (!map) goto bail;
 
    if (read_mb(&type, map, length, &position) < 0) goto bail;
+
+   if (type != 0)
+     {
+        *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
+        goto bail;
+     }
+
    position++; /* skipping one byte */
    if (read_mb(&w, map, length, &position) < 0) goto bail;
    if (read_mb(&h, map, length, &position) < 0) goto bail;
 
-   if (type != 0)
+   /* Wbmp header identifier is too weak....
+      Here checks size validation whether it's acutal wbmp or not. */
+   if ((((w * h) + 7) >> 3) + position != length)
      {
         *error = EVAS_LOAD_ERROR_UNKNOWN_FORMAT;
         goto bail;
@@ -145,7 +163,6 @@ evas_image_load_file_data_wbmp(void *loader_data,
 
    for (y = 0; y < (int)prop->h; y++)
      {
-        if (position + line_length > length) goto bail;
         line = ((unsigned char*) map) + position;
         position += line_length;
         for (x = 0; x < (int)prop->w; x++)

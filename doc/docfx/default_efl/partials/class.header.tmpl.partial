@@ -12,15 +12,13 @@
   {{/inheritance}}
   <div class="level{{level}}"><span class="xref"><b>{{fullName.0.value}}</b></span></div>
   {{#derivedClasses}}
-    <div class="level{{index}}">{{{specName.0.value}}}</div>
+    <div class="level{{index}}"><xref uid="{{uid}}" text="{{fullName.0.value}}"/></div>
   {{/derivedClasses}}
   </div>
 </div>
 {{/inClass}}
 
 {{#inheritedMembers.0}}
-<h6><strong>{{__global.namespace}}</strong>: {{{namespace.specName.0.value}}}</h6>
-<h6><strong>{{__global.assembly}}</strong>: {{assemblies.0}}.dll</h6>
 <h5 id="{{id}}_syntax">{{__global.syntax}}</h5>
 <div class="codewrapper">
   <pre><code class="lang-{{_lang}} hljs">{{syntax.content.0.value}}</code></pre>

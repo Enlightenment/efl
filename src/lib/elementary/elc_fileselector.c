@@ -2115,6 +2115,8 @@ _elm_fileselector_path_set_internal(Evas_Object *obj, const char *_path)
 EOLIAN static void
 _elm_fileselector_efl_ui_view_model_set(Eo *obj, Elm_Fileselector_Data *sd EINA_UNUSED, Efl_Model *model)
 {
+   if (!efl_isa(model, EFL_IO_MODEL_CLASS))
+     return ;
    _populate(obj, model, NULL, NULL);
 }
 

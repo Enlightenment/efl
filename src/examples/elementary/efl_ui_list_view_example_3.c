@@ -223,7 +223,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    priv->model = _make_model();
    factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win);
    efl_ui_property_bind(factory, "efl.text", "filename");
-   efl_ui_layout_factory_theme_config(factory, "list_item", NULL, "default");
+   efl_ui_widget_factory_item_class_set(factory, EFL_UI_LIST_DEFAULT_ITEM_CLASS);
 
    priv->list1 = efl_add(EFL_UI_LIST_VIEW_CLASS, win, efl_ui_view_model_set(efl_added, priv->model));
    efl_event_callback_add(priv->list1, EFL_UI_LIST_VIEW_EVENT_ITEM_REALIZED, _realized_1_cb, priv);
@@ -235,7 +235,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win);
    efl_ui_property_bind(factory, "efl.text", "filename");
    efl_ui_property_bind(factory, "signal/efl,state,%v", "selected");
-   efl_ui_layout_factory_theme_config(factory, "list_item", NULL, "default");
+   efl_ui_widget_factory_item_class_set(factory, EFL_UI_LIST_DEFAULT_ITEM_CLASS);
    priv->list2 = efl_add(EFL_UI_LIST_VIEW_CLASS, win, efl_ui_view_model_set(efl_added, priv->model));
    efl_event_callback_add(priv->list2, EFL_UI_LIST_VIEW_EVENT_ITEM_REALIZED, _realized_2_cb, priv->list2);
    evas_object_size_hint_weight_set(priv->list2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);

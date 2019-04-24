@@ -588,6 +588,7 @@ lib/evas/common/evas_map_image_internal.c \
 lib/evas/common/evas_map_image_core.c \
 lib/evas/common/evas_map_image_loop.c \
 lib/evas/common/evas_map_image_aa.c \
+lib/evas/common/evas_map_image_internal_high.c \
 lib/evas/common/evas_scale_smooth_scaler.c \
 lib/evas/common/evas_scale_smooth_scaler_down.c \
 lib/evas/common/evas_scale_smooth_scaler_downx.c \
@@ -2237,6 +2238,7 @@ modules_evas_image_loaders_tgv_module_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/static_libs/rg_etc \
 -I$(top_srcdir)/src/lib/evas/ \
+-I$(top_srcdir)/src/lib/evas/include \
 -DEFL_BUILD \
 @EVAS_CFLAGS@ \
 @NEON_CFLAGS@
@@ -2274,6 +2276,7 @@ modules_evas_image_savers_tgv_module_la_CPPFLAGS = \
 -I$(top_builddir)/src/lib/efl \
 -I$(top_srcdir)/src/static_libs/rg_etc \
 -I$(top_srcdir)/src/lib/evas/ \
+-I$(top_srcdir)/src/lib/evas/include \
 -DEFL_BUILD \
 @EVAS_CFLAGS@
 

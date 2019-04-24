@@ -6,6 +6,7 @@ efl_ui_suite_behavior_src = [
   'efl_test_pack.c',
   'efl_test_pack_linear.c',
   'efl_test_container.c',
+  'efl_test_content.c',
 ]
 
 test_generator = find_program('generator.py')

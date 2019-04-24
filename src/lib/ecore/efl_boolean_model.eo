@@ -15,6 +15,14 @@ class @beta Efl.Boolean_Model extends Efl.Composite_Model
             @in name: string;
 	 }
       }
+      boolean_iterator_get {
+         [[Get an iterator that will quickly find all the index with the requested value for a specific boolean.]]
+         params {
+            @in name: string;
+            @in request: bool;
+         }
+         return: iterator<ptr(uint64)>; [[The iterator that is valid until any change is made on the model.]]
+      }
    }
    implements {
       Efl.Model.properties { get; }

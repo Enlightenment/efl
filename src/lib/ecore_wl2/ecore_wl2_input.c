@@ -1242,6 +1242,8 @@ _touch_cb_up(void *data, struct wl_touch *touch EINA_UNUSED, unsigned int serial
    if ((input->grab.window) && (input->grab.button == BTN_LEFT) &&
        (!input->grab.count))
      _ecore_wl2_input_ungrab(input);
+
+   input->focus.touch = NULL;
 }
 
 static void

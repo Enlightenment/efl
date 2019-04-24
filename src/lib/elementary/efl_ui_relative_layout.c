@@ -446,10 +446,9 @@ _hash_child_init_foreach_cb(const Eina_Hash *hash, const void *key EINA_UNUSED,
 }
 
 static void
-_on_size_hints_changed(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
-                       Evas_Object *obj, void *event_info EINA_UNUSED)
+_efl_ui_relative_layout_hints_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   efl_pack_layout_request(obj);
+   efl_pack_layout_request(ev->object);
 }
 
 EOLIAN static void
@@ -490,7 +489,8 @@ _efl_ui_relative_layout_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Relative_Lay
 EOLIAN static void
 _efl_ui_relative_layout_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Relative_Layout_Data *pd EINA_UNUSED)
 {
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, NULL);
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
+                          _efl_ui_relative_layout_hints_changed_cb, NULL);
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
 
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
@@ -514,6 +514,8 @@ _efl_ui_relative_layout_efl_object_constructor(Eo *obj, Efl_Ui_Relative_Layout_D
 EOLIAN static void
 _efl_ui_relative_layout_efl_object_destructor(Eo *obj, Efl_Ui_Relative_Layout_Data *pd)
 {
+   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
+                          _efl_ui_relative_layout_hints_changed_cb, NULL);
    eina_hash_free(pd->children);
    efl_destructor(efl_super(obj, MY_CLASS));
 }

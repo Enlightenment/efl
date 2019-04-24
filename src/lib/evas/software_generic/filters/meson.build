@@ -1,6 +1,6 @@
-engine_include_dir += include_directories('.')
+evas_include_directories += include_directories(join_paths('..', rel_evas_modules, 'filters'))
 
-engine_src += files([
+raw_evas_src = [
   'evas_engine_filter.h',
   'evas_filter_blend.c',
   'evas_filter_blur.c',
@@ -10,4 +10,8 @@ engine_src += files([
   'evas_filter_fill.c',
   'evas_filter_mask.c',
   'evas_filter_transform.c',
-])
+]
+
+foreach file : raw_evas_src
+  evas_src += files(join_paths('..', rel_evas_modules, 'filters', file))
+endforeach
