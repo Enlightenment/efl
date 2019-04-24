@@ -198,8 +198,9 @@ _validate_typedecl(Validate_State *vals, Eolian_Typedecl *tp)
       default:
         return _reset_stable(vals, was_stable, EINA_FALSE);
      }
-   _reset_stable(vals, was_stable, EINA_TRUE);
-   return _validate(&tp->base);
+
+   //Unexpected case?
+   return EINA_FALSE;
 }
 
 static const char * const eo_complex_frees[] =
