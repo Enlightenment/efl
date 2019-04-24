@@ -84,8 +84,12 @@ _animator_cb(void *data)
         duration = efl_animation_duration_get(anim);
         elapsed_time = pd->time.current - pd->time.prev;
         vector = elapsed_time / duration;
-        
-        if (vector <= DBL_EPSILON)
+
+        /* When animation player starts, _animator_cb() is called immediately so
+         * both elapsed time and progress are 0.0.
+         * Since it is the beginning of the animation if progress is 0.0, the
+         * following codes for animation should be executed. */
+        if ((vector <= DBL_EPSILON) && (pd->progress != 0.0))
           return ECORE_CALLBACK_RENEW; // There is no update.
 
         //TODO: check negative play_speed.
