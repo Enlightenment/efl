@@ -20,6 +20,29 @@
 static void _grid_clear_internal(Eo *obj, Efl_Ui_Grid_Data *pd);
 static void _grid_item_unpack_internal(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Ui_Grid_Item *item);
 
+static int
+clamp_index(Efl_Ui_Grid_Data *pd, int index)
+{
+   if (index < ((int)eina_list_count(pd->items)) * -1)
+     return -1;
+   else if (index > (int)eina_list_count(pd->items) - 1)
+     return 1;
+   return 0;
+}
+
+static int
+index_adjust(Efl_Ui_Grid_Data *pd, int index)
+{
+   int c = eina_list_count(pd->items);
+   if (index < c * -1)
+     return 0;
+   else if (index > c - 1)
+     return c - 1;
+   else if (index < 0)
+     return index + c;
+   return index;
+}
+
 static void
 _need_update(Efl_Ui_Grid_Data *pd)
 {
@@ -1110,11 +1133,19 @@ _efl_ui_grid_efl_pack_linear_pack_at(Eo *obj,
                                      Efl_Gfx_Entity *subobj,
                                      int index)
 {
+   int clamp = clamp_index(pd, index);
+   index = index_adjust(pd, index);
    if (!_grid_item_process(obj, pd, subobj)) return EINA_FALSE;
    Efl_Ui_Grid_Item *existing = eina_list_nth(pd->items, index);
    EFL_UI_GRID_ITEM_DATA_GET_OR_RETURN(subobj, pid, EINA_FALSE);
 
-   pd->items = eina_list_prepend_relative(pd->items, subobj, existing);
+   if (clamp == 0)
+     pd->items = eina_list_prepend_relative(pd->items, subobj, existing);
+   else if (clamp == 1)
+     pd->items = eina_list_append(pd->items, subobj);
+   else
+     pd->items = eina_list_prepend(pd->items, subobj);
+
    // Defered item's placing in group calculation
    pid->update_begin = EINA_TRUE;
    _need_update(pd);
@@ -1124,20 +1155,16 @@ _efl_ui_grid_efl_pack_linear_pack_at(Eo *obj,
 EOLIAN static Efl_Gfx_Entity *
 _efl_ui_grid_efl_pack_linear_pack_content_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, int index)
 {
-   return eina_list_nth(pd->items, index);
+  index = index_adjust(pd, index);
+  return eina_list_nth(pd->items, index);
 }
 
 EOLIAN static Efl_Gfx_Entity *
 _efl_ui_grid_efl_pack_linear_pack_unpack_at(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, int index)
 {
+   index = index_adjust(pd, index);
    Efl_Gfx_Entity *target = eina_list_nth(pd->items, index);
-   pd->items = eina_list_remove(pd->items, target);
-   /*
-   if (after)
-     {
-     }
-   else
-   */
+   _grid_item_unpack_internal(obj, pd, target);
    _need_update(pd);
    return target;
 }
