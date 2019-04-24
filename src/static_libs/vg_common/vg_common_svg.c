@@ -1060,6 +1060,8 @@ vg_common_create_svg_node_helper(Efl_VG *vg, Svg_Node *parent)
         memcpy(svg_node->node.command.points, points, sizeof (double) * points_count);
         _apply_svg_property(svg_node, vg);
      }
+
+   free(svg_node);
 }
 
 Svg_Node *
