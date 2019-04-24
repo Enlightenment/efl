@@ -954,7 +954,11 @@ _grid_item_deleted(void *data, const Efl_Event *event)
 static Eina_Bool
 _grid_item_process(Eo *obj, Efl_Ui_Grid_Data *pd, EINA_UNUSED Efl_Ui_Grid_Item *it)
 {
-   EFL_UI_GRID_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
+   if (!efl_isa(it, EFL_UI_GRID_ITEM_CLASS))
+     {
+        ERR("Item must be of type EFL_UI_GRID_ITEM_CLASS");
+        return EINA_FALSE;
+     }
 
    if (eina_list_data_find(pd->items, it))
      {
