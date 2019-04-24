@@ -74,7 +74,6 @@ _btn_clicked_to_cb(void *data, const Efl_Event *event)
         break;
      }
    efl_text_set(obj, ((to == layout) ? "parent" : (char *)efl_text_get(to)));
-   efl_pack_layout_request(layout);
 }
 
 static void
@@ -102,7 +101,6 @@ _slider_changed_relative_cb(void *data, const Efl_Event *event)
         efl_ui_relative_layout_relation_bottom_set(layout, btn, NULL, val);
         break;
      }
-   efl_pack_layout_request(layout);
 }
 
 static void

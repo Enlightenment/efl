@@ -292,10 +292,61 @@ EFL_START_TEST (efl_ui_relative_layout_layout_update_chain)
 }
 EFL_END_TEST
 
+EFL_START_TEST (efl_ui_relative_layout_relation_set)
+{
+   Eo *btn;
+   Eo *target = NULL;
+   double relative;
+
+   btn = efl_add(EFL_UI_BUTTON_CLASS, layout);
+
+   // negative test
+   efl_ui_relative_layout_relation_top_get(layout, NULL, &target, &relative);
+   ck_assert_ptr_eq(target, NULL);
+   ck_assert(EINA_DBL_EQ(relative, 0.0));
+
+   efl_ui_relative_layout_relation_top_get(layout, btn, &target, &relative);
+   ck_assert_ptr_eq(target, NULL);
+   ck_assert(EINA_DBL_EQ(relative, 0.0));
+
+   efl_ui_relative_layout_relation_top_set(layout, NULL, NULL, 0.0);
+   ck_assert_ptr_eq(target, NULL);
+   ck_assert(EINA_DBL_EQ(relative, 0.0));
+
+   // default value test
+   efl_ui_relative_layout_relation_top_set(layout, btn, layout, 0.0);
+
+   efl_ui_relative_layout_relation_top_get(layout, btn, &target, &relative);
+   ck_assert_ptr_eq(target, layout);
+   ck_assert(EINA_DBL_EQ(relative, 0.0));
+   efl_ui_relative_layout_relation_bottom_get(layout, btn, &target, &relative);
+   ck_assert_ptr_eq(target, layout);
+   ck_assert(EINA_DBL_EQ(relative, 1.0));
+   efl_ui_relative_layout_relation_left_get(layout, btn, &target, &relative);
+   ck_assert_ptr_eq(target, layout);
+   ck_assert(EINA_DBL_EQ(relative, 0.0));
+   efl_ui_relative_layout_relation_right_get(layout, btn, &target, &relative);
+   ck_assert_ptr_eq(target, layout);
+   ck_assert(EINA_DBL_EQ(relative, 1.0));
+
+   // positive test
+   efl_ui_relative_layout_relation_top_set(layout, btn, layout, 0.123);
+   efl_ui_relative_layout_relation_top_get(layout, btn, &target, &relative);
+   ck_assert_ptr_eq(target, layout);
+   ck_assert(EINA_DBL_EQ(relative, 0.123));
+
+   efl_ui_relative_layout_relation_top_set(layout, btn, NULL, 0.456);
+   efl_ui_relative_layout_relation_top_get(layout, btn, &target, &relative);
+   ck_assert_ptr_eq(target, layout);
+   ck_assert(EINA_DBL_EQ(relative, 0.456));
+}
+EFL_END_TEST
+
 void efl_ui_test_relative_layout(TCase *tc)
 {
    tcase_add_checked_fixture(tc, layout_setup, layout_teardown);
    tcase_add_test(tc, efl_ui_relative_layout_class_check);
    tcase_add_test(tc, efl_ui_relative_layout_layout_update);
    tcase_add_test(tc, efl_ui_relative_layout_layout_update_chain);
+   tcase_add_test(tc, efl_ui_relative_layout_relation_set);
 }
