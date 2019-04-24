@@ -125,7 +125,7 @@ static void
 _child_aspect_calc(Efl_Ui_Relative_Layout_Child *child, Eina_Bool axis)
 {
    Efl_Ui_Relative_Layout_Calc *calc = &child->calc;
-   int temph;
+   double temph;
 
    if ((calc->aspect[0] <= 0) || (calc->aspect[1] <= 0))
      {
