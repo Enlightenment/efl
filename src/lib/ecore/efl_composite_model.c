@@ -163,7 +163,6 @@ _efl_composite_model_child_added(void *data, const Efl_Event *event)
    if (ev->child)
      cev.child = _efl_composite_lookup(efl_class_get(pd->self),
                                        pd->self, ev->child, ev->index);
-
    efl_event_callback_call(pd->self, EFL_MODEL_EVENT_CHILD_ADDED, &cev);
 
    efl_unref(cev.child);
@@ -302,6 +301,8 @@ _efl_composite_model_then(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
 
         // Fetch an existing composite model for this model or create a new one if none exist
         composite = _efl_composite_lookup(req->self, req->parent, target, req->start + i);
+        if (!composite) continue;
+
         eina_value_array_append(&r, composite);
         // Dropping this scope reference
         efl_unref(composite);
