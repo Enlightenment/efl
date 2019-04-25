@@ -105,8 +105,7 @@ EAPI Eina_Bool elm_animation_view_auto_play_get(const Elm_Animation_View *obj);
  * when animation frame is reached to end. This auto repeat mode is valid to
  * both play and play_back cases.
  *
- * Enable loop mode if @c true, disable otherwise @c true Enable auto play
- * mode, disable otherwise
+ * Enable loop mode if @c true, disable otherwise.
  *
  * @param[in] obj The object.
  * @param[in] auto_repeat Loop mode, Defalut is @c false.

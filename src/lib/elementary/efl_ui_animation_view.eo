@@ -34,17 +34,16 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
            If animation view is disabled, invisible,
            it turns to pause state then resume animation when it's visible again.
 
+           $true Enable auto play mode, disable otherwise.
+
            Warning: This auto play will be only affected to the next animation source.
-           So must be called before setting animation file
+           So must be called before setting animation file.
 
            @since 1.23
          ]]
          set {
-            [[Set auto play mode of an animation view object.
-              $true Enable auto play mode, disable otherwise]]
          }
          get {
-            [[Returns auto play mode of an animation view object.]]
          }
          values {
             auto_play: bool; [[Auto play mode, Default value is $false]]
@@ -56,14 +55,13 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
            If @.auto_repeat is $true, it repeats animation when animation frame is reached to
            end. This auto repeat mode is valid to both play and play_back cases.
 
+           $true Enable auto play mode, disable otherwise.
+
            @since 1.23
          ]]
          set {
-            [[Enable loop mode if $true, disable otherwise
-              $true Enable auto play mode, disable otherwise]]
          }
          get {
-            [[Returns auto repeat mode of an animation view object.]]
          }
          values {
             auto_repeat: bool; [[Loop mode, Defalut is $false.]]
@@ -76,15 +74,16 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
            animation double-time faster, you can give $speed 2. If you want to play
            animation double-time slower, you can give $speed 0.5.
 
+           $true when it's successful. $false otherwise.
+
            Warning: speed must be greater than zero.
 
            @since 1.23
          ]]
          set {
-            return: bool; [[$true when it's successful. $false otherwise.]]
+            return: bool;
          }
          get {
-            [[Returns current animation speed of an animation view object.]]
          }
          values {
             speed: double; [[ Speed factor. Default value is 1.0]]
@@ -99,7 +98,6 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
            @since 1.23
          ]]
          get {
-            [[Returns current duration of an animation in seconds.]]
          }
          values {
             frame_duration: double; [[duration time in the seconds]]
@@ -116,10 +114,8 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
            @since 1.23
          ]]
          set {
-            [[Set the current progress position of an animation view object.]]
          }
          get {
-            [[Returns current progress position of an animation view object.]]
          }
          values {
             progress: double; [[Progress position. Value must be 0 ~ 1.]]
@@ -133,10 +129,8 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
            @since 1.23
          ]]
          set {
-            [[Set the current frame of an animation view object.]]
          }
          get {
-            [[Returns the current frame of an animation view object.]]
          }
          values {
             frame_num: int; [[Current frame number.]]
@@ -205,107 +199,99 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
          return: bool; [[$true when it's successful. $false otherwise.]]
       }
       @property default_size {
-         get {
-            [[Get the default view size that specified from vector resource.
+         [[The default view size that specified from vector resource.
 
-              @since 1.23
-            ]]
+           @since 1.23
+         ]]
+         get {
          }
          values {
             size: Eina.Size2D;
          }
       }
       @property state {
-         get{
-            [[Get current animation view state.
-              see @.State
+         [[Current animation view state.
+           see @.State
 
-              @since 1.23
-            ]]
+           @since 1.23
+         ]]
+         get{
          }
          values {
             state: Efl.Ui.Animation_View.State; [[Current animation view state]]
          }
       }
       is_playing_back {
-            [[Returns the status whether current animation is on playing forward or backward.
-              warning: If animation view is not on playing, it will return $false.
+         [[Returns the status whether current animation is on playing forward or backward.
+           warning: If animation view is not on playing, it will return $false.
 
-              @since 1.23
-            ]]
+           @since 1.23
+         ]]
          return: bool; [[$true, if animation on playing back, $false otherwise.]]
       }
       @property frame_count {
-         get {
-            [[Get the index of end frame of the animation view, if it's animated. 
-              note : frame number starts with 0.
+         [[The index of end frame of the animation view, if it's animated.
+           note : frame number starts with 0.
 
-              @since 1.23
-            ]]
+           @since 1.23
+         ]]
+         get {
          }
          values {
             frame_count: int; [[ The number of frames. 0, if it's not animated.]]
          }
       }
       @property min_progress {
-         [[ The start progress of the play.
-            Default value is 0.
+         [[The start progress of the play.
+           Default value is 0.
 
-            @since 1.23
+           @since 1.23
          ]]
          set {
-            [[Set start progress of an animation object.]]
          }
          get {
-            [[Returns start progress of an animation object.]]
          }
          values {
             min_progress: double; [[ The minimum progress. Value must be 0 ~ 1. ]]
          }
       }
       @property max_progress {
-         [[ The last progress of the play.
-            Default value is 1.
+         [[The last progress of the play.
+           Default value is 1.
 
-            @since 1.23
+           since 1.23
          ]]
          set {
-            [[Set last progress of an animation object.]]
          }
          get {
-            [[Returns last progress of an animation object.]]
          }
          values {
             max_progress: double; [[ The maximum progress. Value must be 0 ~ 1. ]]
          }
       }
       @property min_frame {
-         [[ The start frame of the play.
-            Default value is 0.
+         [[The start frame of the play.
+           Default value is 0.
 
-            @since 1.23
+           @since 1.23
          ]]
          set {
-            [[Set minimum frame of an animation object.]]
          }
          get {
-            [[Returns minimum frame of an animation object.]]
          }
          values {
             min_frame: int; [[ The minimum frame for play. Value must be 0 ~ @.max_frame ]]
          }
       }
       @property max_frame {
-         [[ The last frame of the play.
-            Default value is @.frame_count - 1
+         [[The last frame of the play.
+           Default value is @.frame_count - 1
 
-            @since 1.23
+           @since 1.23
          ]]
          set {
-            [[Set maximum frame of an animation object.]]
          }
          get {
-            [[Returns maximum frame of an animation object.]]
          }
          values {
             max_frame: int; [[ The maximum frame for play. Value must be @.min_frame ~ (@.frame_count - 1) ]]
