@@ -112,6 +112,7 @@ struct _Eo_Object
      short datarefcount;
 #endif
 
+     Eina_Bool ownership_track;
      Eina_Bool condtor_done:1;
      Eina_Bool finalized:1;
      Eina_Bool super:1;
@@ -126,7 +127,6 @@ struct _Eo_Object
      Eina_Bool destructed:1;
      Eina_Bool manual_free:1;
      unsigned char auto_unref : 1; // unref after 1 call - hack for parts
-     Eina_Bool ownership_track:1;
 };
 
 /* How we search and store the implementations in classes. */
