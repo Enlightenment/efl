@@ -56,4 +56,19 @@ _efl_composite_model_properties_mix(Eina_Iterator *super, Eina_Iterator *dyn, Ei
   efl_key_wref_set(View, buf, Remember);               \
   return Remember;
 
+
+static inline Efl_Model *
+_efl_composite_lookup(const Efl_Class *self, Eo *parent, Efl_Model *view, unsigned int index)
+{
+   EFL_COMPOSITE_LOOKUP_RETURN(remember, parent, view, "_efl.composite_model");
+
+   remember = efl_add_ref(self, parent,
+                          efl_ui_view_model_set(efl_added, view),
+                          efl_composite_model_index_set(efl_added, index),
+                          efl_loop_model_volatile_make(efl_added));
+   if (!remember) return NULL;
+
+   EFL_COMPOSITE_REMEMBER_RETURN(remember, view);
+}
+
 #endif
