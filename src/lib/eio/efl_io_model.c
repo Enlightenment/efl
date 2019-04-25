@@ -956,6 +956,8 @@ _efl_io_model_efl_model_children_slice_get(Eo *obj, Efl_Io_Model_Data *pd,
                                      // NOTE: We are assuming here that the parent model will outlive all its children
                                      child_data->filter.cb = pd->filter.cb,
                                      child_data->filter.data = pd->filter.data);
+        else
+          efl_ref(info->object);
         eina_value_array_append(&array, info->object);
 
         efl_wref_add(info->object, &info->object);
