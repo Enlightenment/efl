@@ -533,7 +533,10 @@ elm_theme_free(Elm_Theme *th)
    /* Destructs theme object and theme is deallocated in
     * _elm_theme_free_internal() in theme object desctructor.
     */
-   efl_unref(th->eo_theme);
+   if (efl_ref_count(th->eo_theme) > 1)
+     efl_unref(th->eo_theme);
+   else
+     efl_del(th->eo_theme);
 }
 
 static void
