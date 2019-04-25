@@ -15,10 +15,11 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Output_Swap
    int context_attrs[3];
    int config_attrs[40];
    int major_version, minor_version;
-   int num_config, n = 0;
+   int num_config, n;
    const GLubyte *vendor, *renderer, *version;
    Eina_Bool blacklist = EINA_FALSE;
    struct wl_display *wl_disp;
+   int val = 0;
 
    /* try to allocate space for our window */
    if (!(gw = calloc(1, sizeof(Outbuf))))
@@ -37,30 +38,13 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Output_Swap
    gw->depth = einfo->info.depth;
    gw->alpha = einfo->info.destination_alpha;
    gw->rot = einfo->info.rotation;
+   gw->depth_bits = einfo->depth_bits;
+   gw->stencil_bits = einfo->stencil_bits;
+   gw->msaa_bits = einfo->msaa_bits;
 
    context_attrs[0] = EGL_CONTEXT_CLIENT_VERSION;
    context_attrs[1] = 2;
    context_attrs[2] = EGL_NONE;
-
-   config_attrs[n++] = EGL_SURFACE_TYPE;
-   config_attrs[n++] = EGL_WINDOW_BIT;
-   config_attrs[n++] = EGL_RENDERABLE_TYPE;
-   config_attrs[n++] = EGL_OPENGL_ES2_BIT;
-
-   config_attrs[n++] = EGL_RED_SIZE;
-   config_attrs[n++] = 1;
-   config_attrs[n++] = EGL_GREEN_SIZE;
-   config_attrs[n++] = 1;
-   config_attrs[n++] = EGL_BLUE_SIZE;
-   config_attrs[n++] = 1;
-
-   config_attrs[n++] = EGL_ALPHA_SIZE;
-   config_attrs[n++] = 8 * !!gw->alpha;
-   config_attrs[n++] = EGL_DEPTH_SIZE;
-   config_attrs[n++] = 0;
-   config_attrs[n++] = EGL_STENCIL_SIZE;
-   config_attrs[n++] = 0;
-   config_attrs[n++] = EGL_NONE;
 
    /* FIXME: Remove this line as soon as eglGetDisplay() autodetection
     * gets fixed. Currently it is incorrectly detecting wl_display and
@@ -91,11 +75,65 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Output_Swap
         return NULL;
      }
 
+try_again:
+   n = 0;
+   config_attrs[n++] = EGL_SURFACE_TYPE;
+   config_attrs[n++] = EGL_WINDOW_BIT;
+   config_attrs[n++] = EGL_RENDERABLE_TYPE;
+   config_attrs[n++] = EGL_OPENGL_ES2_BIT;
+
+   config_attrs[n++] = EGL_RED_SIZE;
+   config_attrs[n++] = 1;
+   config_attrs[n++] = EGL_GREEN_SIZE;
+   config_attrs[n++] = 1;
+   config_attrs[n++] = EGL_BLUE_SIZE;
+   config_attrs[n++] = 1;
+
+   config_attrs[n++] = EGL_ALPHA_SIZE;
+   config_attrs[n++] = 8 * !!gw->alpha;
+   config_attrs[n++] = EGL_DEPTH_SIZE;
+   config_attrs[n++] = gw->depth_bits;
+   config_attrs[n++] = EGL_STENCIL_SIZE;
+   config_attrs[n++] = gw->stencil_bits;
+   if (gw->msaa_bits > 0)
+     {
+        config_attrs[n++] = EGL_SAMPLE_BUFFERS;
+        config_attrs[n++] = 1;
+        config_attrs[n++] = EGL_SAMPLES;
+        config_attrs[n++] = gw->msaa_bits;
+     }
+   config_attrs[n++] = EGL_NONE;
+
    num_config = 0;
    if (!eglChooseConfig(gw->egl_disp, config_attrs, &gw->egl_config,
                         1, &num_config) || (num_config != 1))
      {
         ERR("eglChooseConfig() fail. code=%#x", eglGetError());
+
+        if ((gw->depth_bits > 24) || (gw->stencil_bits > 8))
+          {
+             WRN("Please note that your driver might not support 32-bit depth or "
+                 "16-bit stencil buffers, so depth24, stencil8 are the maximum "
+                 "recommended values.");
+             if (gw->depth_bits > 24) gw->depth_bits = 24;
+             if (gw->stencil_bits > 8) gw->stencil_bits = 8;
+             DBG("Trying again with depth:%d, stencil:%d", gw->depth_bits, gw->stencil_bits);
+             goto try_again;
+          }
+        else if (gw->msaa_bits)
+          {
+             gw->msaa_bits /= 2;
+             DBG("Trying again with msaa_samples: %d", gw->msaa_bits);
+             goto try_again;
+          }
+        else if (gw->depth_bits || gw->stencil_bits)
+          {
+             gw->depth_bits = 0;
+             gw->stencil_bits = 0;
+             DBG("Trying again without any depth or stencil buffer");
+             goto try_again;
+          }
+
         eng_window_free(gw);
         return NULL;
      }
@@ -149,6 +187,16 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Output_Swap
         return NULL;
      }
 
+   eglGetConfigAttrib(gw->egl_disp, gw->egl_config, EGL_DEPTH_SIZE, &val);
+   gw->detected.depth_buffer_size = val;
+   DBG("Detected depth size %d", val);
+   eglGetConfigAttrib(gw->egl_disp, gw->egl_config, EGL_STENCIL_SIZE, &val);
+   gw->detected.stencil_buffer_size = val;
+   DBG("Detected stencil size %d", val);
+   eglGetConfigAttrib(gw->egl_disp, gw->egl_config, EGL_SAMPLES, &val);
+   gw->detected.msaa = val;
+   DBG("Detected msaa %d", val);
+
    if (!gw->gl_context)
      {
         eng_gl_symbols(gw->egl_disp);
@@ -167,7 +215,7 @@ eng_window_new(Evas_Engine_Info_Wayland *einfo, int w, int h, Render_Output_Swap
    return gw;
 }
 
-void 
+void
 eng_window_free(Outbuf *gw)
 {
    int ref = 0;
