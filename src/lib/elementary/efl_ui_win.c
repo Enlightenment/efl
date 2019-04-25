@@ -44,7 +44,7 @@
 #define FRAME_OBJ_THEME_MIN_VERSION 119
 
 Ecore_Evas *_wayland_shm_new(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame);
-Ecore_Evas *_wayland_egl_new(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame);
+Ecore_Evas *_wayland_egl_new(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame, const int *opt);
 
 static const Elm_Win_Trap *trap = NULL;
 
@@ -5444,7 +5444,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
              else if (!strcmp(enginelist[i], ELM_WAYLAND_SHM))
                tmp_sd.ee = _wayland_shm_new(NULL, parent_id, 0, 0, 0, 0, 0);
              else if (!strcmp(enginelist[i], ELM_WAYLAND_EGL))
-               tmp_sd.ee = _wayland_egl_new(NULL, parent_id, 0, 0, 0, 0, 0);
+               tmp_sd.ee = _wayland_egl_new(NULL, parent_id, 0, 0, 0, 0, 0, NULL);
              else if (!strcmp(enginelist[i], ELM_SOFTWARE_WIN32))
                tmp_sd.ee = ecore_evas_software_gdi_new(NULL, 0, 0, 1, 1);
              else if (!strcmp(enginelist[i], ELM_SOFTWARE_DDRAW))

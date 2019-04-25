@@ -77,6 +77,7 @@ struct _Ecore_Evas_Engine_Wl_Data
  * @param w Width of the Ecore_Evas window to be created.
  * @param h Height of the Ecore_Evas window to be created.
  * @param frame Deprecated.  (Just pass EINA_FALSE.)
+ * @param opt engine option list
  * @param engine_name Wayland engine to use for rendering.
  * @return Ecore_Evas instance or @c NULL if creation failed.
  *
@@ -95,6 +96,6 @@ struct _Ecore_Evas_Engine_Wl_Data
  * @see ecore_evas_wayland_shm_new()
  * @see ecore_evas_wayland_egl_new()
  */
-Ecore_Evas *_ecore_evas_wl_common_new_internal(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame, const char *engine_name);
+Ecore_Evas *_ecore_evas_wl_common_new_internal(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame, const int *opt, const char *engine_name);
 
 #endif /* _ECORE_EVAS_WAYLAND_PRIVATE_H_ */
