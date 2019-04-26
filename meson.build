@@ -291,6 +291,7 @@ subprojects = [
 ['ecore_fb'         ,['fb']                , false,  true, false, false, false, false, ['eina'], []],
 ['ecore_wl2'        ,['wl']                ,  true,  true, false, false, false, false, ['eina'], ['libdrm']],
 ['ecore_sdl'        ,['sdl']               , false,  true, false, false, false, false, ['eina'], []],
+['ecore_win32'      ,[]                    , false,  true, false, false, false, false, ['eina'], []],
 ['ecore_ipc'        ,[]                    , false,  true, false, false, false, false, ['eina'], []],
 ['ecore_buffer'     ,['buffer']            ,  true,  true,  true, false, false, false, ['eina'], []],
 ['ector'            ,[]                    , false,  true, false, false,  true, false, ['eina', 'efl'], ['draw', 'triangulator', 'freetype']],
