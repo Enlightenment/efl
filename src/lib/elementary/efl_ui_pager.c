@@ -934,4 +934,11 @@ _efl_ui_pager_efl_pack_pack(Eo *obj, Efl_Ui_Pager_Data *pd EINA_UNUSED, Efl_Gfx_
    return efl_pack_begin(obj, subobj);
 }
 
+EOLIAN static Eina_Iterator*
+_efl_ui_pager_efl_container_content_iterate(Eo *obj EINA_UNUSED, Efl_Ui_Pager_Data *pd)
+{
+  return eina_list_iterator_new(pd->content_list);
+}
+
+
 #include "efl_ui_pager.eo.c"
