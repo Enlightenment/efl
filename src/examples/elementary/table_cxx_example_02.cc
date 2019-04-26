@@ -16,7 +16,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
    efl::ui::Table table(instantiate, win);
    win.content_set(table);
-   table.pack_padding_set(5, 5, true);
+   table.content_padding_set(5, 5, true);
 
    efl::canvas::Rectangle rect(instantiate, win);
    rect.color_set(255, 0, 0, 255);

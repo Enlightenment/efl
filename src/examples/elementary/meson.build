@@ -121,6 +121,35 @@ examples = [
 foreach example : examples
   executable(example, example + '.c', dependencies: [elementary, ecore, eio])
 endforeach
+if get_option('bindings').contains('cxx')
+  cxx_examples = [
+    'bg_cxx_example_01',
+    'bg_cxx_example_02',
+    'box_cxx_example_02',
+    'button_cxx_example_00',
+    'button_cxx_example_01',
+    'calendar_cxx_example_01',
+    'calendar_cxx_example_02',
+    'calendar_cxx_example_03',
+    'calendar_cxx_example_04',
+    'calendar_cxx_example_05',
+    'clock_cxx_example',
+    'icon_cxx_example_01',
+    'menu_cxx_example_01',
+    'popup_cxx_example',
+    'radio_cxx_example_01',
+    'slider_cxx_example',
+    'spinner_cxx_example',
+    'table_cxx_example_01',
+    'table_cxx_example_02',
+    'toolbar_cxx_example_01',
+  ]
+
+  foreach example : cxx_examples
+    executable(example, example + '.cc', dependencies: [elementary_cxx])
+  endforeach
+
+endif
 
 edc_files = [
   'codegen_example.edc',
