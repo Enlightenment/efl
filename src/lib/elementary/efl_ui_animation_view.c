@@ -172,7 +172,10 @@ _transit_cb(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
    pd->progress = progress;
    int minframe = (pd->frame_cnt - 1) * pd->min_progress;
    int maxframe = (pd->frame_cnt - 1) * pd->max_progress;
-   evas_object_vg_animated_frame_set(pd->vg, (int)((maxframe - minframe) * progress) + minframe);
+
+   int update_frame = (int)((maxframe - minframe) * progress) + minframe;
+   int current_frame = evas_object_vg_animated_frame_get(pd->vg);
+   evas_object_vg_animated_frame_set(pd->vg, update_frame);
 
    if (pd->auto_repeat)
      {
@@ -184,7 +187,10 @@ _transit_cb(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
           }
      }
 
-   evas_object_smart_callback_call(pd->obj, SIG_PLAY_UPDATE, NULL);
+   //transit_cb is always called with a progress value 0 ~ 1.
+   //SIG_PLAY_UPDATE callback is called only when there is a real change.
+   if (update_frame != current_frame)
+     evas_object_smart_callback_call(pd->obj, SIG_PLAY_UPDATE, NULL);
 }
 
 EOLIAN static void
