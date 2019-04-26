@@ -586,7 +586,8 @@ _efl_ui_pager_current_page_set(Eo *obj,
         Eo *curr;
 
         curr = eina_list_nth(pd->content_list, pd->curr.page);
-        efl_pack_unpack(pd->page_box, curr);
+        if (curr)
+          efl_pack_unpack(pd->page_box, curr);
         efl_canvas_object_clipper_set(curr, pd->backclip);
 
         pd->curr.page = index;
@@ -821,7 +822,9 @@ _unpack_all(Efl_Ui_Pager_Data *pd,
    else
      {
         subobj = eina_list_nth(pd->content_list, pd->curr.page);
-        efl_pack_unpack(pd->page_box, subobj);
+        if (subobj)
+          efl_pack_unpack(pd->page_box, subobj);
+        pd->curr.page = -1;
      }
 
    if (clear)
@@ -890,6 +893,7 @@ _unpack(Eo *obj,
         if (self_curr_page == self_index)
           {
              efl_pack_unpack(pd->page_box, subobj);
+             self_curr_page = pd->curr.page;
              pd->curr.page = -1;
              efl_ui_pager_current_page_set(obj, self_curr_page);
           }
