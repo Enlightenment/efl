@@ -5,6 +5,7 @@
 #include <Efl_Ui.h>
 #include <Elementary.h>
 #include "elm_suite.h"
+#include "elm_priv.h"
 
 #define COORD_EQ(a, b) (!!(abs(a - b) < 2))
 #define GEOMETRY_EQ(a, b) (COORD_EQ(a.x, b.x) && COORD_EQ(a.y, b.y) && \
@@ -551,6 +552,17 @@ EFL_START_TEST (efl_ui_box_properties)
 }
 EFL_END_TEST
 
+EFL_START_TEST (efl_ui_box_internal)
+{
+   Efl_Ui_Widget *w = efl_add(EFL_UI_BUTTON_CLASS, win);
+
+   efl_ui_widget_internal_set(layout, EINA_TRUE);
+   ck_assert_ptr_eq(efl_ui_widget_parent_get(w), win);
+   efl_pack(layout, w);
+   ck_assert_ptr_eq(efl_ui_widget_parent_get(w), win);
+}
+EFL_END_TEST
+
 void efl_ui_test_box(TCase *tc)
 {
    tcase_add_checked_fixture(tc, layout_setup, layout_teardown);
@@ -560,4 +572,5 @@ void efl_ui_test_box(TCase *tc)
    tcase_add_test(tc, efl_ui_box_size);
    tcase_add_test(tc, efl_ui_box_pack_unpack);
    tcase_add_test(tc, efl_ui_box_properties);
+   tcase_add_test(tc, efl_ui_box_internal);
 }

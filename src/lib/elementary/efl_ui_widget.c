@@ -5850,6 +5850,24 @@ _efl_ui_widget_efl_object_invalidate(Eo *obj, Efl_Ui_Widget_Data *pd)
 
 #include "efl_ui_widget_part_bg.eo.c"
 
+EAPI void
+efl_ui_widget_internal_set(Eo *obj, Eina_Bool b)
+{
+   ELM_WIDGET_DATA_GET(obj, pd);
+   EINA_SAFETY_ON_NULL_RETURN(pd);
+
+   pd->internal = b;
+}
+
+EAPI Eina_Bool
+efl_ui_widget_internal_get(Eo *obj)
+{
+   ELM_WIDGET_DATA_GET(obj, pd);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+
+   return pd->internal;
+}
+
 /* Efl.Part Bg end */
 
 

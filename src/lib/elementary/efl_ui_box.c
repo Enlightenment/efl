@@ -52,8 +52,11 @@ _efl_ui_box_child_register(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Gfx_Entity *subobj)
         return EINA_FALSE;
      }
 
-   if (!efl_ui_widget_sub_object_add(obj, subobj))
-     return EINA_FALSE;
+   if (!efl_ui_widget_internal_get(obj))
+     {
+        if (!efl_ui_widget_sub_object_add(obj, subobj))
+          return EINA_FALSE;
+     }
 
    efl_key_data_set(subobj, "_elm_leaveme", obj);
    efl_canvas_group_member_add(obj, subobj);
@@ -74,8 +77,15 @@ _efl_ui_box_child_unregister(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED, Efl_Gfx_E
         ERR("subobj %p %s is not part of this widget", subobj, efl_class_name_get(subobj) );
         return EINA_FALSE;
      }
-   if (!subobj || !_elm_widget_sub_object_redirect_to_top(obj, subobj))
+
+   if (!subobj)
      return EINA_FALSE;
+
+   if (!efl_ui_widget_internal_get(obj))
+     {
+        if (!_elm_widget_sub_object_redirect_to_top(obj, subobj))
+          return EINA_FALSE;
+     }
 
    efl_canvas_group_member_remove(obj, subobj);
    efl_canvas_object_clipper_set(subobj, NULL);
