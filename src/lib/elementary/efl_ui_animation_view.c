@@ -555,7 +555,8 @@ _efl_ui_animation_view_frame_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data
 EOLIAN static int
 _efl_ui_animation_view_frame_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd)
 {
-   return (int) ((double) (evas_object_vg_animated_frame_count_get(pd->vg) - 1) * pd->progress);
+   double progress = (pd->progress * (pd->max_progress - pd->min_progress)) +  pd->min_progress;
+   return (int) ((double) (evas_object_vg_animated_frame_count_get(pd->vg) - 1) * progress);
 }
 
 EOLIAN static double
