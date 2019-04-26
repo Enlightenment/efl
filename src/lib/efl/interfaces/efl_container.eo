@@ -1,8 +1,8 @@
 interface Efl.Container
 {
-   [[Common interface for objects that have multiple contents (sub objects).
+   [[Common interface for objects (containers) that can have multiple contents (sub-objects).
 
-     APIs in this interface deal with containers of multiple sub objects, not
+     APIs in this interface deal with containers of multiple sub-objects, not
      with individual parts.
 
      @since 1.22
@@ -12,15 +12,15 @@ interface Efl.Container
    methods {
       content_iterate {
          [[Begin iterating over this object's contents.]]
-         return: iterator<Efl.Gfx.Entity> @owned @warn_unused; [[Iterator to object content]]
+         return: iterator<Efl.Gfx.Entity> @owned @warn_unused; [[Iterator on object's content.]]
       }
       content_count {
-         [[Returns the number of UI elements packed in this container.]]
-         return: int; [[Number of packed UI elements]]
+         [[Returns the number of contained sub-objects.]]
+         return: int; [[Number of sub-objects.]]
       }
    }
    events {
-      content,added: Efl.Gfx.Entity;    [[Sent after a new item was added.]]
-      content,removed: Efl.Gfx.Entity;  [[Sent after an item was removed, before unref.]]
+      content,added: Efl.Gfx.Entity;    [[Sent after a new sub-object was added.]]
+      content,removed: Efl.Gfx.Entity;  [[Sent after a sub-object was removed, before unref.]]
    }
 }

@@ -1,6 +1,10 @@
 interface @beta Efl.Pack_Linear extends Efl.Pack
 {
-   [[API for containers ]]
+   [[Common interface for objects (containers) with multiple contents
+     (sub-objects) which can be added and removed at runtime in a linear fashion.
+
+     This means the sub-objects are internally organized in an ordered list.
+   ]]
    eo_prefix: efl_pack;
    methods {
       pack_begin {
@@ -13,12 +17,12 @@ interface @beta Efl.Pack_Linear extends Efl.Pack
            container without deleting it.
          ]]
          params {
-            @in subobj: Efl.Gfx.Entity; [[Item to pack at the beginning.]]
+            @in subobj: Efl.Gfx.Entity; [[Object to pack at the beginning.]]
          }
          return: bool; [[$false if $subobj could not be packed.]]
       }
       pack_end {
-         [[Append item at the end of this container.
+         [[Append object at the end of this container.
 
            This is the same as @.pack_at($subobj, -1).
 
@@ -27,45 +31,46 @@ interface @beta Efl.Pack_Linear extends Efl.Pack
            container without deleting it.
          ]]
          params {
-            @in subobj: Efl.Gfx.Entity; [[Item to pack at the end.]]
+            @in subobj: Efl.Gfx.Entity; [[Object to pack at the end.]]
          }
          return: bool; [[$false if $subobj could not be packed.]]
       }
       pack_before {
-         [[Prepend item before other sub object.
+         [[Prepend an object before an existing sub-object.
 
            When this container is deleted, it will request deletion of the
            given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
            container without deleting it.
          ]]
          params {
-            @in subobj: Efl.Gfx.Entity; [[Item to pack before $existing.]]
-            @in existing: const(Efl.Gfx.Entity); [[Item to refer to.]]
+            @in subobj: Efl.Gfx.Entity; [[Object to pack before $existing.]]
+            @in existing: const(Efl.Gfx.Entity); [[Existing reference sub-object.]]
          }
          return: bool; [[$false if $existing could not be found or $subobj
                          could not be packed.]]
       }
       pack_after {
-         [[Append item after other sub object.
+         [[Append an object after an existing sub-object.
 
            When this container is deleted, it will request deletion of the
            given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
            container without deleting it.
          ]]
          params {
-            @in subobj: Efl.Gfx.Entity; [[Item to pack after $existing.]]
-            @in existing: const(Efl.Gfx.Entity); [[Item to refer to.]]
+            @in subobj: Efl.Gfx.Entity; [[Object to pack after $existing.]]
+            @in existing: const(Efl.Gfx.Entity); [[Existing reference sub-object.]]
          }
          return: bool; [[$false if $existing could not be found or $subobj
                          could not be packed.]]
       }
       pack_at {
-          [[Inserts $subobj BEFORE the item at position $index.
+          [[Inserts $subobj BEFORE the sub-object at position $index.
 
             $index ranges from -$count to $count-1, where positive numbers go
-            from first item (0) to last item ($count-1), and negative numbers go
-            from last item (-1) to first item (-$count). Where $count is
-            the number of items currently in the container.
+            from first sub-object (0) to last ($count-1), and negative numbers go
+            from last sub-object (-1) to first (-$count). $count is
+            the number of sub-objects currently in the container as returned by
+            @Efl.Container.content_count.
 
             If $index is less than -$count, it will trigger @.pack_begin($subobj)
             whereas $index greater than $count-1 will trigger @.pack_end($subobj).
@@ -75,59 +80,59 @@ interface @beta Efl.Pack_Linear extends Efl.Pack
             container without deleting it.
           ]]
           params {
-             @in subobj: Efl.Gfx.Entity; [[Item to pack.]]
-             @in index:  int; [[Index of item to insert BEFORE.
+             @in subobj: Efl.Gfx.Entity; [[Object to pack.]]
+             @in index:  int; [[Index of existing sub-object to insert BEFORE.
                                 Valid range is -$count to ($count-1).
                               ]]
           }
           return: bool; [[$false if $subobj could not be packed.]]
       }
       pack_content_get {
-         [[Content at a given $index in this container.
+         [[Sub-object at a given $index in this container.
 
            $index ranges from -$count to $count-1, where positive numbers go
-           from first item (0) to last item ($count-1), and negative numbers go
-           from last item (-1) to first item (-$count). Where $count is
-           the number of items currently in the container.
+           from first sub-object (0) to last ($count-1), and negative numbers go
+           from last sub-object (-1) to first (-$count). $count is
+           the number of sub-objects currently in the container as returned by
+           @Efl.Container.content_count.
 
-           If $index is less than -$count, it will return the first item
-           whereas $index greater than $count-1 will return the last item.
+           If $index is less than -$count, it will return the first sub-object
+           whereas $index greater than $count-1 will return the last sub-object.
          ]]
          params {
-            @in index: int; [[Index of the item to retrieve.
+            @in index: int; [[Index of the existing sub-object to retrieve.
                               Valid range is -$count to ($count-1).
                             ]]
          }
-         return: Efl.Gfx.Entity; [[The object contained at the given $index.]]
+         return: Efl.Gfx.Entity; [[The sub-object contained at the given $index.]]
       }
       pack_index_get {
-         [[Get the index of a child in this container.]]
+         [[Get the index of a sub-object in this container.]]
          params {
-            @in subobj: const(Efl.Gfx.Entity); [[An object contained in this pack.]]
+            @in subobj: const(Efl.Gfx.Entity); [[An existing sub-object in this container.]]
          }
-         return: int(-1); [[-1 in case $subobj is not a child of this object,
-                            or the index of this item in the range 0 to ($count-1).
+         return: int(-1); [[-1 in case $subobj is not found,
+                            or the index of $subobj in the range 0 to ($count-1).
                           ]]
       }
       pack_unpack_at {
-         [[Pop out (remove) the item at the specified $index.
+         [[Pop out (remove) the sub-object at the specified $index.
 
            $index ranges from -$count to $count-1, where positive numbers go
-           from first item (0) to last item ($count-1), and negative numbers go
-           from last item (-1) to first item (-$count). Where $count is
-           the number of items currently in the container.
+           from first sub-object (0) to last ($count-1), and negative numbers go
+           from last sub-object (-1) to first (-$count). $count is
+           the number of sub-objects currently in the container as returned by
+           @Efl.Container.content_count.
 
-           If $index is less than -$count, it will remove the first item
-           whereas $index greater than $count-1 will remove the last item.
-
-           Equivalent to @Efl.Pack.unpack(@.pack_content_get($index)).
+           If $index is less than -$count, it will remove the first sub-object
+           whereas $index greater than $count-1 will remove the last sub-object.
          ]]
          params {
-            @in index: int; [[Index of item to remove.
+            @in index: int; [[Index of the sub-object to remove.
                               Valid range is -$count to ($count-1).
                             ]]
          }
-         return: Efl.Gfx.Entity; [[The child item if it could be removed.]]
+         return: Efl.Gfx.Entity; [[The sub-object if it could be removed.]]
       }
    }
 }
