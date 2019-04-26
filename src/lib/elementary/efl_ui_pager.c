@@ -11,6 +11,8 @@
 
 #define MY_CLASS EFL_UI_PAGER_CLASS
 
+static void _unpack(Eo *obj, Efl_Ui_Pager_Data *pd, Efl_Gfx_Entity *subobj, int index);
+
 static int
 clamp_index(Efl_Ui_Pager_Data *pd, int index)
 {
@@ -420,6 +422,20 @@ _efl_ui_pager_efl_container_content_count(Eo *obj EINA_UNUSED,
    return pd->cnt;
 }
 
+static void
+_child_inv(void *data, const Efl_Event *ev)
+{
+   Efl_Ui_Pager_Data *pd = efl_data_scope_get(data, EFL_UI_PAGER_CLASS);
+   int index = eina_list_data_idx(pd->content_list, ev->object);
+
+   pd->content_list = eina_list_remove(pd->content_list, ev->object);
+
+   if (((index == pd->curr.page) && ((index != 0) || (pd->cnt == 0))) ||
+       (index < pd->curr.page))
+     pd->curr.page--;
+   pd->cnt--;
+}
+
 static Eina_Bool
 _register_child(Eo *obj EINA_UNUSED, Efl_Ui_Pager_Data *pd, Efl_Gfx_Entity *subobj)
 {
@@ -433,6 +449,8 @@ _register_child(Eo *obj EINA_UNUSED, Efl_Ui_Pager_Data *pd, Efl_Gfx_Entity *subo
 
    if (!pd->transition)
      efl_canvas_object_clipper_set(subobj, pd->backclip);
+
+   efl_event_callback_add(subobj, EFL_EVENT_INVALIDATE, _child_inv, obj);
 
    return EINA_TRUE;
 }
@@ -801,7 +819,8 @@ _efl_ui_pager_loop_mode_get(const Eo *obj EINA_UNUSED,
 }
 
 static void
-_unpack_all(Efl_Ui_Pager_Data *pd,
+_unpack_all(Eo *obj EINA_UNUSED,
+            Efl_Ui_Pager_Data *pd,
             Eina_Bool clear)
 {
    Eo *subobj;
@@ -825,12 +844,18 @@ _unpack_all(Efl_Ui_Pager_Data *pd,
    if (clear)
      {
         EINA_LIST_FREE(pd->content_list, subobj)
-           evas_object_del(subobj);
+          {
+             efl_event_callback_del(subobj, EFL_EVENT_INVALIDATE, _child_inv, obj);
+             evas_object_del(subobj);
+          }
      }
    else
      {
         EINA_LIST_FREE(pd->content_list, subobj)
-           efl_canvas_object_clipper_set(subobj, NULL);
+          {
+             efl_event_callback_del(subobj, EFL_EVENT_INVALIDATE, _child_inv, obj);
+             efl_canvas_object_clipper_set(subobj, NULL);
+          }
      }
 
    if (pd->indicator)
@@ -843,7 +868,7 @@ EOLIAN static Eina_Bool
 _efl_ui_pager_efl_pack_pack_clear(Eo *obj EINA_UNUSED,
                                   Efl_Ui_Pager_Data *pd)
 {
-   _unpack_all(pd, EINA_TRUE);
+   _unpack_all(obj, pd, EINA_TRUE);
 
    return EINA_TRUE;
 }
@@ -852,7 +877,7 @@ EOLIAN static Eina_Bool
 _efl_ui_pager_efl_pack_unpack_all(Eo *obj EINA_UNUSED,
                                   Efl_Ui_Pager_Data *pd)
 {
-   _unpack_all(pd, EINA_FALSE);
+   _unpack_all(obj, pd, EINA_FALSE);
 
    return EINA_TRUE;
 }
@@ -897,6 +922,8 @@ _unpack(Eo *obj,
 
    if (pd->indicator)
      efl_page_indicator_unpack(pd->indicator, index);
+
+   efl_event_callback_del(subobj, EFL_EVENT_INVALIDATE, _child_inv, obj);
 }
 
 EOLIAN static Eina_Bool
