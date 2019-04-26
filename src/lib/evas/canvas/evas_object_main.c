@@ -112,6 +112,33 @@ _evas_device_del_cb(void *data, const Efl_Event *ev)
 }
 
 static void
+_evas_object_proxy_grab_del(Evas_Object_Protected_Data *obj,
+                            Evas_Object_Pointer_Data *pdata)
+{
+   Evas_Object *eo_src = _evas_object_image_source_get(obj->object);
+   Evas_Object_Protected_Data *src = efl_data_scope_get(eo_src, EFL_CANVAS_OBJECT_CLASS);
+   Eina_List *copy = eina_list_clone(src->proxy->src_event_in);
+   Eina_List *l;
+   Evas_Object *eo_child;
+   EINA_LIST_FOREACH(copy, l, eo_child)
+     {
+        Evas_Object_Protected_Data *child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
+        if (!child) continue;
+        Evas_Object_Pointer_Data *obj_pdata = _evas_object_pointer_data_get(pdata->evas_pdata, child);
+        if (!obj_pdata)
+          continue;
+        if (obj_pdata->mouse_grabbed > 0)
+          {
+             pdata->evas_pdata->seat->mouse_grabbed -= obj_pdata->mouse_grabbed;
+             obj_pdata->mouse_grabbed = 0;
+             EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_write)
+                proxy_write->src_event_in = eina_list_remove(proxy_write->src_event_in, eo_child);
+             EINA_COW_WRITE_END(evas_object_proxy_cow, src->proxy, proxy_write);
+          }
+     }
+}
+
+static void
 _evas_object_pointer_grab_del(Evas_Object_Protected_Data *obj,
                               Evas_Object_Pointer_Data *pdata)
 {
@@ -119,7 +146,11 @@ _evas_object_pointer_grab_del(Evas_Object_Protected_Data *obj,
      pdata->evas_pdata->seat->mouse_grabbed -= pdata->mouse_grabbed;
    if (((pdata->mouse_in) || (pdata->mouse_grabbed > 0)) &&
        (obj->layer) && (obj->layer->evas))
-     pdata->evas_pdata->seat->object.in = eina_list_remove(pdata->evas_pdata->seat->object.in, obj->object);
+     {
+        pdata->evas_pdata->seat->object.in = eina_list_remove(pdata->evas_pdata->seat->object.in, obj->object);
+        if (obj->proxy->is_proxy && obj->proxy->src_events)
+          _evas_object_proxy_grab_del(obj, pdata);
+     }
    efl_event_callback_del(pdata->evas_pdata->pointer, EFL_EVENT_DEL,
                           _evas_device_del_cb, obj->object);
    EINA_COW_WRITE_BEGIN(evas_object_events_cow, obj->events, Evas_Object_Events_Data, events)
