@@ -7,13 +7,16 @@ examples = [
   'ecore_file_download_example',
   'ecore_idler_example',
   'ecore_job_example',
-  'ecore_pipe_simple_example',
   'ecore_poller_example',
   'ecore_thread_example',
   'ecore_time_functions_example',
   'ecore_timer_example',
   'ecore_getopt_example'
 ]
+
+if config_h.has('HAVE_FORK')
+  examples += 'ecore_pipe_simple_example'
+endif
 
 gnutls = dependency('gnutls', required : false)
 if gnutls.found()
