@@ -360,6 +360,7 @@ _efl_ui_pager_efl_object_constructor(Eo *obj,
    efl_event_callback_add(pd->page_root, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _move_cb, pd);
 
    pd->page_box = efl_add(EFL_UI_BOX_CLASS, obj);
+   efl_ui_widget_internal_set(pd->page_box, EINA_TRUE);
    efl_canvas_group_member_add(pd->page_root, pd->page_box);
 
    pd->foreclip = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
@@ -681,6 +682,7 @@ _efl_ui_pager_indicator_set(Eo *obj EINA_UNUSED,
    if (!pd->idbox)
      {
         pd->idbox = efl_add(EFL_UI_BOX_CLASS, obj);
+        efl_ui_widget_internal_set(pd->idbox, EINA_TRUE);
         efl_content_set(efl_part(obj, "efl.indicator"), pd->idbox);
      }
 
