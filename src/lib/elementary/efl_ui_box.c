@@ -180,6 +180,19 @@ _efl_ui_box_efl_object_constructor(Eo *obj, Efl_Ui_Box_Data *pd)
    return obj;
 }
 
+EOLIAN static void
+_efl_ui_box_efl_object_invalidate(Eo *obj, Efl_Ui_Box_Data *pd)
+{
+   Eo *child;
+
+   efl_invalidate(efl_super(obj, MY_CLASS));
+
+   EINA_LIST_FREE(pd->children, child)
+     {
+        efl_event_callback_array_del(child, efl_ui_box_callbacks(), obj);
+     }
+}
+
 /* CLEAN API BELOW */
 
 EOLIAN static int

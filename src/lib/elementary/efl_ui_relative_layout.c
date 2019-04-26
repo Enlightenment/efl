@@ -556,6 +556,19 @@ _efl_ui_relative_layout_efl_object_constructor(Eo *obj, Efl_Ui_Relative_Layout_D
 }
 
 EOLIAN static void
+_efl_ui_relative_layout_efl_object_invalidate(Eo *obj, Efl_Ui_Relative_Layout_Data *pd)
+{
+   Eo *child;
+
+   efl_invalidate(efl_super(obj, MY_CLASS));
+
+   EINA_LIST_FREE(pd->children, child)
+     {
+        efl_event_callback_array_del(child, efl_ui_relative_layout_callbacks(), pd);
+     }
+}
+
+EOLIAN static void
 _efl_ui_relative_layout_efl_object_destructor(Eo *obj, Efl_Ui_Relative_Layout_Data *pd)
 {
    efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,

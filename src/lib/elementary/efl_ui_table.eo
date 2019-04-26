@@ -19,6 +19,7 @@ class @beta Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pa
    }
    implements {
       Efl.Object.constructor;
+      Efl.Object.invalidate;
       Efl.Canvas.Group.group_calculate;
       Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set; }

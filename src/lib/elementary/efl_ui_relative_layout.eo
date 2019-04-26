@@ -69,6 +69,7 @@ class @beta Efl.Ui.Relative_Layout extends Efl.Ui.Widget implements Efl.Pack_Lay
    }
    implements {
       Efl.Object.constructor;
+      Efl.Object.invalidate;
       Efl.Object.destructor;
       Efl.Canvas.Group.group_calculate;
       Efl.Gfx.Entity.position { set; }

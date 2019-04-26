@@ -235,6 +235,19 @@ _efl_ui_table_efl_object_constructor(Eo *obj, Efl_Ui_Table_Data *pd)
 }
 
 EOLIAN static void
+_efl_ui_table_efl_object_invalidate(Eo *obj, Efl_Ui_Table_Data *pd)
+{
+   Table_Item *gi;
+
+   efl_invalidate(efl_super(obj, MY_CLASS));
+
+   EINA_INLIST_FREE(EINA_INLIST_GET(pd->items), gi)
+     {
+        efl_event_callback_array_del(gi->object, efl_ui_table_callbacks(), obj);
+     }
+}
+
+EOLIAN static void
 _efl_ui_table_efl_pack_pack_padding_set(Eo *obj, Efl_Ui_Table_Data *pd, double h, double v, Eina_Bool scalable)
 {
    scalable = !!scalable;
