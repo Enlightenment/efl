@@ -95,6 +95,7 @@ class @beta Efl.Ui.Pager extends Efl.Ui.Layout_Base implements Efl.Pack_Linear
       Efl.Pack.pack_clear;             //TODO
       Efl.Pack.unpack_all;             //TODO
       Efl.Pack.unpack;                 //TODO
+      Efl.Pack.pack;
       Efl.Pack_Linear.pack_begin;
       Efl.Pack_Linear.pack_end;
       Efl.Pack_Linear.pack_before;
