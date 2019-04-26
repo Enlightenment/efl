@@ -865,6 +865,8 @@ _unpack(Eo *obj,
         Efl_Gfx_Entity *subobj,
         int index)
 {
+   int self_index = eina_list_data_idx(pd->content_list, subobj);
+   int self_curr_page = pd->curr.page;
    pd->content_list = eina_list_remove(pd->content_list, subobj);
    pd->cnt--;
 
@@ -885,9 +887,12 @@ _unpack(Eo *obj,
      }
    else
      {
-        efl_pack_unpack(pd->page_box, subobj);
-        if (pd->curr.page != -1)
-          efl_pack(pd->page_box, eina_list_nth(pd->content_list, pd->curr.page));
+        if (self_curr_page == self_index)
+          {
+             efl_pack_unpack(pd->page_box, subobj);
+             pd->curr.page = -1;
+             efl_ui_pager_current_page_set(obj, self_curr_page);
+          }
      }
 
    if (pd->indicator)
