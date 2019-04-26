@@ -867,6 +867,7 @@ _unpack(Eo *obj,
    int self_curr_page = pd->curr.page;
    pd->content_list = eina_list_remove(pd->content_list, subobj);
    pd->cnt--;
+   _elm_widget_sub_object_redirect_to_top(obj, subobj);
 
    if (((index == pd->curr.page) && ((index != 0) || (pd->cnt == 0))) ||
        (index < pd->curr.page))
