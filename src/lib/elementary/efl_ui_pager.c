@@ -403,8 +403,6 @@ _efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj EINA_UNUSED,
                                          Efl_Ui_Pager_Data *pd,
                                          Efl_Gfx_Entity *subobj)
 {
-   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
-
    pd->content_list = eina_list_prepend(pd->content_list, subobj);
 
    pd->cnt++;
@@ -430,8 +428,6 @@ _efl_ui_pager_efl_pack_linear_pack_end(Eo *obj EINA_UNUSED,
                                        Efl_Ui_Pager_Data *pd,
                                        Efl_Gfx_Entity *subobj)
 {
-   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
-
    pd->content_list = eina_list_append(pd->content_list, subobj);
 
    pd->cnt++;
@@ -458,8 +454,6 @@ _efl_ui_pager_efl_pack_linear_pack_before(Eo *obj EINA_UNUSED,
                                           Efl_Gfx_Entity *subobj,
                                           const Efl_Gfx_Entity *existing)
 {
-   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
-
    int index = eina_list_data_idx(pd->content_list, (void *)existing);
    if (index == -1) return EINA_FALSE;
 
@@ -484,8 +478,6 @@ _efl_ui_pager_efl_pack_linear_pack_after(Eo *obj EINA_UNUSED,
                                          Efl_Gfx_Entity *subobj,
                                          const Efl_Gfx_Entity *existing)
 {
-   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
-
    int index = eina_list_data_idx(pd->content_list, (void *)existing);
    if (index == -1) return EINA_FALSE;
 
@@ -510,8 +502,6 @@ _efl_ui_pager_efl_pack_linear_pack_at(Eo *obj,
                                       Efl_Gfx_Entity *subobj,
                                       int index)
 {
-   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
-
    if ((index > pd->cnt) || (index < 0))
      {
         return EINA_FALSE;
@@ -892,8 +882,6 @@ _efl_ui_pager_efl_pack_unpack(Eo *obj,
                               Efl_Ui_Pager_Data *pd,
                               Efl_Gfx_Entity *subobj)
 {
-   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return EINA_FALSE;
-
    if (!subobj) return EINA_FALSE;
 
    int index = eina_list_data_idx(pd->content_list, subobj);
@@ -909,8 +897,6 @@ _efl_ui_pager_efl_pack_linear_pack_unpack_at(Eo *obj,
                                              Efl_Ui_Pager_Data *pd,
                                              int index)
 {
-   if (!EINA_DBL_EQ(pd->curr.pos, 0.0)) return NULL;
-
    if ((index >= pd->cnt) || (index < 0)) return NULL;
 
    Efl_Gfx_Entity *subobj = eina_list_nth(pd->content_list, index);
