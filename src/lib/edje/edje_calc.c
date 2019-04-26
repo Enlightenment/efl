@@ -3676,7 +3676,7 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
                   rp = ed->table_parts[cep->param1.description->rel1.id_x];
                   if (_circular_dependency_find(ed, ep, rp, arr))
                     {
-                       eina_array_push(arr, eina_stringshare_ref(rp->part->name));
+                       eina_array_push(arr, eina_stringshare_add(rp->part->name));
                        return EINA_TRUE;
                     }
                }
@@ -3685,7 +3685,7 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
                   rp = ed->table_parts[cep->param1.description->rel2.id_x];
                   if (_circular_dependency_find(ed, ep, rp, arr))
                     {
-                       eina_array_push(arr, eina_stringshare_ref(rp->part->name));
+                       eina_array_push(arr, eina_stringshare_add(rp->part->name));
                        return EINA_TRUE;
                     }
                }
@@ -3698,7 +3698,7 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
                   rp = ed->table_parts[cep->param2->description->rel1.id_x];
                   if (_circular_dependency_find(ed, ep, rp, arr))
                     {
-                       eina_array_push(arr, eina_stringshare_ref(rp->part->name));
+                       eina_array_push(arr, eina_stringshare_add(rp->part->name));
                        return EINA_TRUE;
                     }
                }
@@ -3707,7 +3707,7 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
                   rp = ed->table_parts[cep->param2->description->rel2.id_x];
                   if (_circular_dependency_find(ed, ep, rp, arr))
                     {
-                       eina_array_push(arr, eina_stringshare_ref(rp->part->name));
+                       eina_array_push(arr, eina_stringshare_add(rp->part->name));
                        return EINA_TRUE;
                     }
                }
@@ -3722,7 +3722,7 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
                   rp = ed->table_parts[cep->param1.description->rel1.id_y];
                   if (_circular_dependency_find(ed, ep, rp, arr))
                     {
-                       eina_array_push(arr, eina_stringshare_ref(rp->part->name));
+                       eina_array_push(arr, eina_stringshare_add(rp->part->name));
                        return EINA_TRUE;
                     }
                }
@@ -3731,7 +3731,7 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
                   rp = ed->table_parts[cep->param1.description->rel2.id_y];
                   if (_circular_dependency_find(ed, ep, rp, arr))
                     {
-                       eina_array_push(arr, eina_stringshare_ref(rp->part->name));
+                       eina_array_push(arr, eina_stringshare_add(rp->part->name));
                        return EINA_TRUE;
                     }
                }
@@ -3743,7 +3743,7 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
                   rp = ed->table_parts[cep->param2->description->rel1.id_y];
                   if (_circular_dependency_find(ed, ep, rp, arr))
                     {
-                       eina_array_push(arr, eina_stringshare_ref(rp->part->name));
+                       eina_array_push(arr, eina_stringshare_add(rp->part->name));
                        return EINA_TRUE;
                     }
                }
@@ -3752,7 +3752,7 @@ _circular_dependency_find(Edje *ed, Edje_Real_Part *ep, Edje_Real_Part *cep, Ein
                   rp = ed->table_parts[cep->param2->description->rel2.id_y];
                   if (_circular_dependency_find(ed, ep, rp, arr))
                     {
-                       eina_array_push(arr, eina_stringshare_ref(rp->part->name));
+                       eina_array_push(arr, eina_stringshare_add(rp->part->name));
                        return EINA_TRUE;
                     }
                }
