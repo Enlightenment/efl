@@ -862,7 +862,11 @@ _efl_ui_pager_efl_pack_unpack(Eo *obj,
    if (!subobj) return EINA_FALSE;
 
    int index = eina_list_data_idx(pd->content_list, subobj);
-   if (index == -1) return EINA_FALSE;
+   if (index == -1)
+     {
+        ERR("You can only unpack items that have been added before");
+        return EINA_FALSE;
+     }
 
    _unpack(obj, pd, subobj, index);
 
