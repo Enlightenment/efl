@@ -36,8 +36,12 @@ if meson.is_cross_build()
   edje_cc_exe = [_edje_cc]
   edje_depends = []
 else
-  env = find_program('env', native: true)
-  edje_cc_exe = [env, 'EFL_RUN_IN_TREE=1', edje_cc.full_path()]
+  if sys_windows == true
+    edje_cc_exe = [edje_cc.full_path()]
+  else
+    env = find_program('env', native: true)
+    edje_cc_exe = [env, 'EFL_RUN_IN_TREE=1', edje_cc.full_path()]
+  endif
   edje_depends = [edje_cc, epp]
 endif
 
