@@ -11,6 +11,28 @@
 
 #define MY_CLASS EFL_UI_PAGER_CLASS
 
+static int
+clamp_index(Efl_Ui_Pager_Data *pd, int index)
+{
+   if (index < ((int)eina_list_count(pd->content_list)) * -1)
+     return -1;
+   else if (index > (int)eina_list_count(pd->content_list) - 1)
+     return 1;
+   return 0;
+}
+
+static int
+index_rollover(Efl_Ui_Pager_Data *pd, int index)
+{
+   int c = eina_list_count(pd->content_list);
+   if (index < c * -1)
+     return 0;
+   else if (index > c - 1)
+     return c - 1;
+   else if (index < 0)
+     return index + c;
+   return index;
+}
 
 static void
 _efl_ui_pager_update(Efl_Ui_Pager_Data *pd)
@@ -489,11 +511,7 @@ _efl_ui_pager_efl_pack_linear_pack_at(Eo *obj,
                                       Efl_Gfx_Entity *subobj,
                                       int index)
 {
-   if ((index > pd->cnt) || (index < 0))
-     {
-        return EINA_FALSE;
-     }
-   else if (index == pd->cnt)
+   if (index == pd->cnt)
      {
         _efl_ui_pager_efl_pack_linear_pack_end(obj, pd, subobj);
      }
@@ -502,10 +520,25 @@ _efl_ui_pager_efl_pack_linear_pack_at(Eo *obj,
         Efl_Gfx_Entity *existing = NULL;
 
         if (!_register_child(obj, pd, subobj)) return EINA_FALSE;
-        existing = eina_list_nth(pd->content_list, index);
-        pd->content_list = eina_list_prepend_relative(
-           pd->content_list, subobj, existing);
-        _update_internals(obj, pd, subobj, index);
+        int clamp = clamp_index(pd, index);
+        int pass_index = -1;
+        if (clamp == 0)
+          {
+             existing = eina_list_nth(pd->content_list, index_rollover(pd, index));
+             pd->content_list = eina_list_prepend_relative(
+                pd->content_list, subobj, existing);
+          }
+        else if (clamp == 1)
+          {
+             pd->content_list = eina_list_append(pd->content_list, subobj);
+             pass_index = eina_list_count(pd->content_list);
+          }
+        else
+          {
+             pd->content_list = eina_list_prepend(pd->content_list, subobj);
+             pass_index = 0;
+          }
+        _update_internals(obj, pd, subobj, pass_index);
      }
 
    return EINA_TRUE;
@@ -516,7 +549,7 @@ _efl_ui_pager_efl_pack_linear_pack_content_get(Eo *obj EINA_UNUSED,
                                                Efl_Ui_Pager_Data *pd,
                                                int index)
 {
-   return eina_list_nth(pd->content_list, index);
+   return eina_list_nth(pd->content_list, index_rollover(pd, index));
 }
 
 EOLIAN static int
@@ -885,9 +918,7 @@ _efl_ui_pager_efl_pack_linear_pack_unpack_at(Eo *obj,
                                              Efl_Ui_Pager_Data *pd,
                                              int index)
 {
-   if ((index >= pd->cnt) || (index < 0)) return NULL;
-
-   Efl_Gfx_Entity *subobj = eina_list_nth(pd->content_list, index);
+   Efl_Gfx_Entity *subobj = eina_list_nth(pd->content_list, index_rollover(pd, index_rollover(pd, index)));
 
    _unpack(obj, pd, subobj, index);
 
