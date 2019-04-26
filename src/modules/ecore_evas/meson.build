@@ -4,12 +4,13 @@ engines = [
 ['fb', ['fb']],
 ['sdl', ['sdl']],
 ['wayland', ['wl']],
-#['win32', ['ecore_win32']],
 ['x', ['x11']],
 ]
 
 if sys_windows == false
   engines += [['extn', []]]
+else
+  engines += [['win32', []]]
 endif
 
 
