@@ -872,6 +872,10 @@ _efl_ui_pager_efl_pack_linear_pack_unpack_at(Eo *obj EINA_UNUSED,
    return NULL;
 }
 
-
+EOLIAN static Eina_Bool
+_efl_ui_pager_efl_pack_pack(Eo *obj, Efl_Ui_Pager_Data *pd EINA_UNUSED, Efl_Gfx_Entity *subobj)
+{
+   return efl_pack_begin(obj, subobj);
+}
 
 #include "efl_ui_pager.eo.c"
