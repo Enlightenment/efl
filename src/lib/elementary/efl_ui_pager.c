@@ -415,6 +415,24 @@ _register_child(Eo *obj EINA_UNUSED, Efl_Ui_Pager_Data *pd, Efl_Gfx_Entity *subo
    return EINA_TRUE;
 }
 
+static void
+_update_internals(Eo *obj EINA_UNUSED, Efl_Ui_Pager_Data *pd, Efl_Gfx_Entity *subobj EINA_UNUSED, int index)
+{
+   pd->cnt++;
+
+   if (pd->curr.page >= index)
+     pd->curr.page++;
+
+   if (pd->transition)
+     efl_page_transition_pack(pd->transition, index);
+
+   if (pd->indicator)
+     efl_page_transition_pack(pd->indicator, index);
+
+   if (pd->cnt == 1)
+     efl_ui_pager_current_page_set(obj, 0);
+}
+
 EOLIAN static Eina_Bool
 _efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj EINA_UNUSED,
                                          Efl_Ui_Pager_Data *pd,
@@ -422,21 +440,7 @@ _efl_ui_pager_efl_pack_linear_pack_begin(Eo *obj EINA_UNUSED,
 {
    if (!_register_child(obj, pd, subobj)) return EINA_FALSE;
    pd->content_list = eina_list_prepend(pd->content_list, subobj);
-
-   pd->cnt++;
-   pd->curr.page++;
-
-   if (pd->transition)
-     efl_page_transition_pack(pd->transition, 0);
-   else
-     {
-        if (pd->cnt == 1)
-          efl_pack(pd->page_box, subobj);
-     }
-
-   if (pd->indicator)
-     efl_page_indicator_pack(pd->indicator, 0);
-
+   _update_internals(obj, pd, subobj, 0);
    return EINA_TRUE;
 }
 
@@ -447,21 +451,7 @@ _efl_ui_pager_efl_pack_linear_pack_end(Eo *obj EINA_UNUSED,
 {
    if (!_register_child(obj, pd, subobj)) return EINA_FALSE;
    pd->content_list = eina_list_append(pd->content_list, subobj);
-
-   pd->cnt++;
-   if (pd->curr.page == -1) pd->curr.page = 0;
-
-   if (pd->transition)
-     efl_page_transition_pack(pd->transition, (pd->cnt - 1));
-   else
-     {
-        if (pd->cnt == 1)
-          efl_pack(pd->page_box, subobj);
-     }
-
-   if (pd->indicator)
-     efl_page_indicator_pack(pd->indicator, (pd->cnt - 1));
-
+   _update_internals(obj, pd, subobj, eina_list_count(pd->content_list) - 1);
    return EINA_TRUE;
 }
 
@@ -474,18 +464,8 @@ _efl_ui_pager_efl_pack_linear_pack_before(Eo *obj EINA_UNUSED,
    if (!_register_child(obj, pd, subobj)) return EINA_FALSE;
    int index = eina_list_data_idx(pd->content_list, (void *)existing);
    if (index == -1) return EINA_FALSE;
-
    pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
-
-   pd->cnt++;
-   if (pd->curr.page >= index) pd->curr.page++;
-
-   if (pd->transition)
-     efl_page_transition_pack(pd->transition, index);
-
-   if (pd->indicator)
-     efl_page_indicator_pack(pd->indicator, index);
-
+   _update_internals(obj, pd, subobj, index);
    return EINA_TRUE;
 }
 
@@ -498,18 +478,8 @@ _efl_ui_pager_efl_pack_linear_pack_after(Eo *obj EINA_UNUSED,
    if (!_register_child(obj, pd, subobj)) return EINA_FALSE;
    int index = eina_list_data_idx(pd->content_list, (void *)existing);
    if (index == -1) return EINA_FALSE;
-
    pd->content_list = eina_list_append_relative(pd->content_list, subobj, existing);
-
-   pd->cnt++;
-   if (pd->curr.page > index) pd->curr.page++;
-
-   if (pd->transition)
-     efl_page_transition_pack(pd->transition, (index + 1));
-
-   if (pd->indicator)
-     efl_page_indicator_pack(pd->indicator, (index + 1));
-
+   _update_internals(obj, pd, subobj, index + 1);
    return EINA_TRUE;
 }
 
@@ -535,15 +505,7 @@ _efl_ui_pager_efl_pack_linear_pack_at(Eo *obj,
         existing = eina_list_nth(pd->content_list, index);
         pd->content_list = eina_list_prepend_relative(
            pd->content_list, subobj, existing);
-
-        pd->cnt++;
-        if (pd->curr.page >= index) pd->curr.page++;
-
-        if (pd->transition)
-          efl_page_transition_pack(pd->transition, index);
-
-        if (pd->indicator)
-	  efl_page_indicator_pack(pd->indicator, index);
+        _update_internals(obj, pd, subobj, index);
      }
 
    return EINA_TRUE;
