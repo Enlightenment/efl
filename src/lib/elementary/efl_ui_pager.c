@@ -401,6 +401,14 @@ _efl_ui_pager_efl_container_content_count(Eo *obj EINA_UNUSED,
 static Eina_Bool
 _register_child(Eo *obj EINA_UNUSED, Efl_Ui_Pager_Data *pd, Efl_Gfx_Entity *subobj)
 {
+   if (eina_list_data_find(pd->content_list, subobj))
+     {
+        ERR("Object already added!");
+        return EINA_FALSE;
+     }
+   if (!efl_ui_widget_sub_object_add(obj, subobj))
+     return EINA_FALSE;
+
    if (!pd->transition)
      efl_canvas_object_clipper_set(subobj, pd->backclip);
 
