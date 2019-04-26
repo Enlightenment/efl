@@ -261,6 +261,64 @@ _construct_mask_nodes(Efl_Canvas_Vg_Container *parent, LOTMask *mask, int depth 
 }
 
 static void
+_construct_masks(Efl_Canvas_Vg_Container *mtarget, LOTMask *masks, unsigned int mask_cnt, int depth)
+{
+   char *key = NULL;
+
+   Efl_Canvas_Vg_Container *msource = NULL;
+
+   key = _get_key_val(mtarget);
+   msource = efl_key_data_get(mtarget, key);
+   if (!msource)
+     {
+        msource = efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, mtarget);
+        efl_key_data_set(mtarget, key, msource);
+     }
+
+   //FIXME : EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA option is temporary
+   //Currently matte alpha implemtnes is same the mask intersect impletment.
+   //It has been implemented as a multiplication calculation.
+   efl_canvas_vg_node_mask_set(mtarget, msource, EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA);
+
+   mtarget = msource;
+
+   //Make mask layers
+   for (unsigned int i = 0; i < mask_cnt; i++)
+     {
+        LOTMask *mask = &masks[i];;
+        key = _get_key_val(mask);
+        msource = efl_key_data_get(mtarget, key);
+
+        if (!msource)
+          {
+             msource = efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, mtarget);
+             efl_key_data_set(mtarget, key, msource);
+          }
+        _construct_mask_nodes(msource, mask, depth + 1);
+
+        EFL_CANVAS_VG_NODE_BLEND_TYPE mask_mode;
+        switch (mask->mMode)
+          {
+           case MaskSubstract:
+              mask_mode = EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_SUBSTRACT;
+              break;
+           case MaskIntersect:
+              mask_mode = EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_INTERSECT;
+              break;
+           case MaskDifference:
+              mask_mode = EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_DIFFERENCE;
+              break;
+           case MaskAdd:
+           default:
+              mask_mode = EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_ADD;
+              break;
+          }
+        efl_canvas_vg_node_mask_set(mtarget, msource, mask_mode);
+        mtarget = msource;
+     }
+}
+
+static void
 _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int depth EINA_UNUSED)
 {
    if (!layer->mVisible)
@@ -274,6 +332,8 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
 
    //Note: We assume that if matte is valid, next layer must be a matte source.
    int matte_mode = 0;
+   Efl_Canvas_Vg_Container *mtarget = NULL;
+   LOTLayerNode *mlayer = NULL;
 
    //Is this layer a container layer?
    for (unsigned int i = 0; i < layer->mLayerList.size; i++)
@@ -294,66 +354,19 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
 #endif
         _update_vg_tree(ctree, clayer, depth+1);
 
+        if (matte_mode != 0)
+          {
+             efl_canvas_vg_node_mask_set(ptree, ctree, matte_mode);
+             mtarget = ctree;
+          }
+        matte_mode = (int) clayer->mMatte;
+
         if (clayer->mMaskList.size > 0)
           {
-             Efl_Canvas_Vg_Container *mtarget = ctree;
-             Efl_Canvas_Vg_Container *msource = NULL;
-
-             key = _get_key_val(clayer);
-             msource = efl_key_data_get(mtarget, key);
-             if (!msource)
-               {
-                  msource = efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, ctree);
-                  efl_key_data_set(mtarget, key, msource);
-               }
-
-             //FIXME : EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA option is temporary
-             //Currently matte alpha implemtnes is same the mask intersect impletment.
-             //It has been implemented as a multiplication calculation.
-             efl_canvas_vg_node_mask_set(mtarget, msource, EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA);
-
-             mtarget = msource;
-
-             //Make mask layers
-             for (unsigned int i = 0; i < clayer->mMaskList.size; i++)
-               {
-                  LOTMask *mask = &clayer->mMaskList.ptr[i];
-                  key = _get_key_val(mask);
-                  msource = efl_key_data_get(mtarget, key);
-
-                  if (!msource)
-                    {
-                       msource = efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, mtarget);
-                       efl_key_data_set(mtarget, key, msource);
-                    }
-                  _construct_mask_nodes(msource, mask, depth + 1);
-
-                  EFL_CANVAS_VG_NODE_BLEND_TYPE mask_mode;
-                  switch (mask->mMode)
-                    {
-                     case MaskSubstract:
-                        mask_mode = EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_SUBSTRACT;
-                        break;
-                     case MaskIntersect:
-                        mask_mode = EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_INTERSECT;
-                        break;
-                     case MaskDifference:
-                        mask_mode = EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_DIFFERENCE;
-                        break;
-                     case MaskAdd:
-                     default:
-                        mask_mode = EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_ADD;
-                        break;
-                    }
-                  efl_canvas_vg_node_mask_set(mtarget, msource, mask_mode);
-                  mtarget = msource;
-               }
+             mlayer = clayer;
+             if (!mtarget) mtarget = ctree;
           }
 
-        if (matte_mode != 0)
-           efl_canvas_vg_node_mask_set(ptree, ctree, matte_mode);
-
-        matte_mode = (int) clayer->mMatte;
         ptree = ctree;
 
         //Remap Matte Mode
@@ -380,11 +393,15 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
               matte_mode = 0;
               break;
           }
-
      }
+
    //Construct drawable nodes.
    if (layer->mNodeList.size > 0)
      _construct_drawable_nodes(root, layer, depth);
+
+   //Construct node that have mask.
+   if (mlayer)
+     _construct_masks(mtarget, mlayer->mMaskList.ptr, mlayer->mMaskList.size, depth);
 }
 #endif
 
