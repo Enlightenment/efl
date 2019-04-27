@@ -217,37 +217,9 @@ _fetch_user_homedir(char **str, const char *name, const char *error)
 #endif
 }
 
-
-EAPI char *
-eina_vpath_resolve(const char* path)
+static int
+_eina_vpath_resolve(const char *path, char *str, size_t size)
 {
-   char buf[PATH_MAX];
-
-   if (eina_vpath_resolve_snprintf(buf, sizeof(buf), path) > 0)
-     return strdup(buf);
-   return NULL;
-}
-
-EAPI int
-eina_vpath_resolve_snprintf(char *str, size_t size, const char *format, ...)
-{
-   va_list args;
-   char *path;
-   // XXX: implement parse of path then look up in hash if not just create
-   // object where path and result are the same and return that with
-   // path set and result set to resolved path - return obj handler calls
-   // "do" on object to get the result inside fetched or failed callback.
-   // if it's a url then we need a new classs that overrides the do and
-   // begins a fetch and on finish calls the event cb or when wait is called
-   /* FIXME: not working for WIndows */
-   // /* <- full path
-
-   path = alloca(size + 1);
-
-   va_start(args, format);
-   vsnprintf(path, size, format, args);
-   va_end(args);
-
    if (path[0] == '~')
      {
         char *home = NULL;
@@ -260,7 +232,8 @@ eina_vpath_resolve_snprintf(char *str, size_t size, const char *format, ...)
         // ~username/ <- homedir of user "username"
         else
           {
-             char *p, *name;
+             const char *p;
+             char *name;
 
              for (p = path + 1; *p; p++)
                {
@@ -278,60 +251,98 @@ eina_vpath_resolve_snprintf(char *str, size_t size, const char *format, ...)
            {
               return snprintf(str, size, "%s%s", home, path);
            }
-    }
-  // (:xxx:)/* ... <- meta hash table
-  else if ((path[0] == '(') && (path[1] == ':'))
-    {
-       const char *p, *end, *meta;
-       char *name;
-       int max_len = strlen(path);
-       Eina_Bool found = EINA_FALSE;
+     }
+   // (:xxx:)/* ... <- meta hash table
+   else if ((path[0] == '(') && (path[1] == ':'))
+     {
+        const char *p, *end, *meta;
+        char *name;
+        int max_len = strlen(path);
+        Eina_Bool found = EINA_FALSE;
 
-       for (p = path + 2; p <= path + max_len - 2; p++)
-         {
-            if ((p[0] ==':') && (p[1] == ')'))
-              {
-                 end = p;
-                 found = EINA_TRUE;
-                 break;
-              }
-         }
-       p += 2;
+        for (p = path + 2; p <= path + max_len - 2; p++)
+          {
+             if ((p[0] ==':') && (p[1] == ')'))
+               {
+                  end = p;
+                  found = EINA_TRUE;
+                  break;
+               }
+          }
+        p += 2;
 
-       if (!found)
-         {
-            ERR("(: Needs to have a matching ':)'\nThe string was: %s", path);
-            return 0;
-         }
+        if (!found)
+          {
+             ERR("(: Needs to have a matching ':)'\nThe string was: %s", path);
+             return 0;
+          }
 
-       if (*p != '/')
-         {
-            ERR("A / is expected after :)\nThe string was: %s", path);
-            return 0;
-         }
+        if (*p != '/')
+          {
+             ERR("A / is expected after :)\nThe string was: %s", path);
+             return 0;
+          }
 
-       if (found)
-         {
-            name = alloca(end - path);
-            strncpy(name, path + 2, end - path - 2);
-            name[end - path - 2] = 0;
-            meta = _eina_vpath_data_get(name);
-            if (meta)
-              {
-                 return snprintf(str, size, "%s%s", meta, end + 2);
-              }
-            else
-              {
-                 ERR("Meta key '%s' was not registered!\nThe string was: %s", name, path);
-                 return 0;
-              }
-         }
-    }
+        if (found)
+          {
+             name = alloca(end - path);
+             strncpy(name, path + 2, end - path - 2);
+             name[end - path - 2] = 0;
+             meta = _eina_vpath_data_get(name);
+             if (meta)
+               {
+                  return snprintf(str, size, "%s%s", meta, end + 2);
+               }
+             else
+               {
+                  ERR("Meta key '%s' was not registered!\nThe string was: %s", name, path);
+                  return 0;
+               }
+          }
+     }
    //just return the path, since we assume that this is a normal path
    else
-    {
-       return snprintf(str, size, "%s", path);
-    }
+     {
+        return snprintf(str, size, "%s", path);
+     }
+   str[0] = '\0';
+   return 0;
+}
+
+EAPI char *
+eina_vpath_resolve(const char* path)
+{
+   char buf[PATH_MAX];
+
+   if (_eina_vpath_resolve(path, buf, sizeof(buf)) > 0)
+     return strdup(buf);
+   return NULL;
+}
+
+EAPI int
+eina_vpath_resolve_snprintf(char *str, size_t size, const char *format, ...)
+{
+   va_list args;
+   char *path;
+   int r;
+
+   // XXX: implement parse of path then look up in hash if not just create
+   // object where path and result are the same and return that with
+   // path set and result set to resolved path - return obj handler calls
+   // "do" on object to get the result inside fetched or failed callback.
+   // if it's a url then we need a new classs that overrides the do and
+   // begins a fetch and on finish calls the event cb or when wait is called
+   /* FIXME: not working for WIndows */
+   // /* <- full path
+
+   path = alloca(size + 1);
+
+   va_start(args, format);
+   vsnprintf(path, size, format, args);
+   va_end(args);
+
+   r = _eina_vpath_resolve(path, str, size);
+   if (r > 0) return r;
 
    ERR("The path has to start with either '~/' or '(:NAME:)/' or be a normal path \nThe string was: %s", path);
 
