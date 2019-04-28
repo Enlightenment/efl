@@ -119,6 +119,13 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_dnd_container.eo \
 	lib/elementary/efl_ui_focus_manager_window_root.eo \
 	lib/elementary/efl_ui_pager.eo \
+	lib/elementary/efl_ui_active_view_container.eo \
+	lib/elementary/efl_ui_active_view_view_manager.eo \
+	lib/elementary/efl_ui_active_view_view_manager_plain.eo \
+	lib/elementary/efl_ui_active_view_view_manager_scroll.eo \
+	lib/elementary/efl_ui_active_view_view_manager_stack.eo \
+	lib/elementary/efl_ui_active_view_indicator.eo \
+	lib/elementary/efl_ui_active_view_indicator_icon.eo \
 	lib/elementary/efl_page_transition.eo \
 	lib/elementary/efl_page_transition_scroll.eo \
 	lib/elementary/efl_page_indicator.eo \
@@ -1197,6 +1204,13 @@ lib_elementary_libelementary_la_SOURCES = \
 	static_libs/buildsystem/buildsystem.h \
 	static_libs/buildsystem/buildsystem_autotools.c \
 	lib/elementary/efl_ui_pager.c \
+	lib/elementary/efl_ui_active_view_container.c \
+	lib/elementary/efl_ui_active_view_view_manager.c \
+	lib/elementary/efl_ui_active_view_view_manager_plain.c \
+	lib/elementary/efl_ui_active_view_view_manager_scroll.c \
+	lib/elementary/efl_ui_active_view_view_manager_stack.c \
+	lib/elementary/efl_ui_active_view_indicator.c \
+	lib/elementary/efl_ui_active_view_indicator_icon.c \
 	lib/elementary/efl_page_transition.c \
 	lib/elementary/efl_page_transition_scroll.c \
 	lib/elementary/efl_page_indicator.c \
@@ -1435,6 +1449,7 @@ bin/elementary/test_gesture_framework.c \
 bin/elementary/test_ui_tab_pager.c \
 bin/elementary/test_ui_pager.c \
 bin/elementary/test_ui_pager_scroll.c \
+bin/elementary/test_ui_active_view.c \
 bin/elementary/test_ui_relative_layout.c \
 bin/elementary/test.h
 
@@ -1963,6 +1978,7 @@ tests_elementary_efl_ui_suite_SOURCES = \
 	tests/elementary/efl_ui_test_image_zoomable.c \
 	tests/elementary/efl_ui_test_layout.c \
 	tests/elementary/efl_ui_test_widget.c \
+	tests/elementary/efl_ui_test_active_view.c \
 	tests/elementary/efl_ui_suite.h \
 	tests/elementary/efl_ui_model.c
 

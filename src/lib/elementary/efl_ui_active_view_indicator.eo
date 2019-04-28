@@ -1,0 +1,49 @@
+abstract @beta Efl.Ui.Active_View.Indicator extends Efl.Object {
+  [[Indicator object that is used by @Efl.Ui.Active_View.Container]]
+  methods {
+    bind @pure_virtual {
+      [[Initial call to flush the required objects of the active view to the transition object
+
+        This call can be used to setup the indicator part of $active_view.
+
+        if there is a position of the widget, then after this call, $position_update will be called.
+      ]]
+      params {
+        active_view : Efl.Ui.Active_View.Container;
+      }
+    }
+    content_add @pure_virtual  {
+      [[Content has been added to the container passed in .bind. The $subobj is at position $index.
+
+        While in the call, the $current_page property of the active_view might change.
+        If such a change is happening. No animation should be displayed, and the new state should be applied.
+      ]]
+      params {
+        subobj : Efl.Gfx.Entity;
+        index : int;
+      }
+    }
+    content_del @pure_virtual  {
+      [[Content has been removed from the container passed in .bind. The $subobj at position $index is now removed.
+
+        While in the call, the $current_page property of the active_view might change.
+        If such a change is happening. No animation should be displayed, and the new state should be applied.
+      ]]
+      params {
+        subobj : Efl.Gfx.Entity;
+        index : int;
+      }
+    }
+    position_update @pure_virtual {
+      [[The position between the content has been changed.
+
+        The position is absolut and ranges from [-1,x + 1] where x is the number of contents in the active_view.
+
+        Values between two actaul positions must be expected as this is the way the animation of the transition object populates to the indicator
+      ]]
+      params {
+        position : double; [[The position the transition object is currently in]]
+      }
+    }
+  }
+}

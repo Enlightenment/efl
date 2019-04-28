@@ -1,0 +1,79 @@
+struct  @beta Efl.Ui.Active_View.Transition_Event {
+   from : int; [[The id from where the transition started, -1 if not known]]
+   to : int; [[The id from where the transition started, -1 if not known]]
+}
+
+enum Efl.Ui.Active_View.Container_Gravity {
+   content = 0, [[In case the internal list of content is changed, then the $active_index will always point to the same content]]
+   index = 1, [[In case the internal list of content is changed, then the $active_index will keep its value]]
+}
+
+class @beta Efl.Ui.Active_View.Container extends Efl.Ui.Layout_Base implements Efl.Pack_Linear
+{
+   [[ The active view widget can be used to display the added content in some animated way. The details of the animation and way of displaying depends on the transition object.
+      The size of the displayed content can be controlled via $active_view_size. The content with the main attraction can be setted with $active_index.
+
+      Without a transition object this widget will just display the content with the id set with $active_index. On page changes,
+   ]]
+   c_prefix: efl_ui_active_view;
+   methods {
+      @property view_manager {
+        [[The transition object which defines the animation and exact position of the content]]
+        values {
+          transition : Efl.Ui.Active_View.View_Manager @owned;
+        }
+      }
+      @property indicator {
+        [[A indicator object which can be used to display the state and position of the content in this widget
+          When this object here is set, the position of the indicator object is immidiatly called to the current position of the widget
+        ]]
+        values {
+          indicator : Efl.Ui.Active_View.Indicator @owned;
+        }
+      }
+      @property active_index {
+         [[Selects which is the maincontent to display by this widget. The exact positioning depends on the $transition object]]
+         values {
+            index: int;
+         }
+      }
+      @property active_view_gravity {
+         [[active_view can be used to set the currently active viewed content.
+
+           This property can be used to switch_to the semantic of the function. If gravity is content, then newly added content will change the index, but keep the content. If the gravity is set to index, then the index will stay when new content is added, which might show new content.
+         ]]
+         values {
+            gravity : Efl.Ui.Active_View.Container_Gravity;
+         }
+      }
+      @property active_view_size {
+         [[The size that is give to each content when displayed]]
+         values {
+            size: Eina.Size2D;
+         }
+      }
+   }
+   events {
+      transition,start : Efl.Ui.Active_View.Transition_Event;
+      transition,end : Efl.Ui.Active_View.Transition_Event;
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.finalize;
+      Efl.Object.invalidate;
+      Efl.Container.content_count;
+      Efl.Container.content_iterate;
+      Efl.Pack.pack_clear;
+      Efl.Pack.unpack_all;
+      Efl.Pack.unpack;
+      Efl.Pack.pack;
+      Efl.Pack_Linear.pack_begin;
+      Efl.Pack_Linear.pack_end;
+      Efl.Pack_Linear.pack_before;
+      Efl.Pack_Linear.pack_after;
+      Efl.Pack_Linear.pack_at;
+      Efl.Pack_Linear.pack_content_get;
+      Efl.Pack_Linear.pack_index_get;
+      Efl.Pack_Linear.pack_unpack_at;
+   }
+}

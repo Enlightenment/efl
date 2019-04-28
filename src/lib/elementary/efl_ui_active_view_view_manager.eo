@@ -1,0 +1,65 @@
+abstract @beta Efl.Ui.Active_View.View_Manager extends Efl.Object {
+  [[Transition object which is used by active_view.
+
+    The transition object can display changes to the active view with animations.
+    This object can also implement behavior user interaction in a animation manner. For example: Mouse dragging content, to get to a new  $current_page. If this is the case, such a user interaction should terminate with a call to $current_page. The position of the content should be exposed by emitting pos_update.
+  ]]
+  methods {
+    bind @pure_virtual {
+      [[Initial call to flush the required objects of the active view to the transition object]]
+      params {
+        active_view : Efl.Ui.Active_View.Container;
+        group : Efl.Canvas.Group;
+      }
+    }
+    content_add @pure_virtual  {
+      [[Content has been added to the container passed in .bind. The $subobj is at position $index.
+
+        While in the call, the $current_page property of the active_view might change.
+        If such a change is happening. No animation should be displayed, and the new state should be applied.
+      ]]
+      params {
+        subobj : Efl.Gfx.Entity;
+        index : int;
+      }
+    }
+    content_del @pure_virtual  {
+      [[Content has been removed from the container passed in .bind. The $subobj at position $index is now removed.
+
+        While in the call, the $current_page property of the active_view might change.
+        If such a change is happening. No animation should be displayed, and the new state should be applied.
+      ]]
+      params {
+        subobj : Efl.Gfx.Entity;
+        index : int;
+      }
+    }
+    switch_to @pure_virtual  {
+      [[Switch from one side to another, if there has been no side before, from is -1.
+        This function should, if the transition object supports this, display a animation.
+      ]]
+      params {
+        from : int;
+        to : int;
+      }
+    }
+    @property view_size @pure_virtual  {
+      [[Will be called whenever the page size changes]]
+      set {
+
+      }
+      values {
+        size : Eina.Size2D; [[The size of the page, real coordiates at any time]]
+      }
+    }
+    @property animation_enabled @pure_virtual {
+       [[This flag can be used to indicate that no animations should be done]]
+       values {
+          enable : bool; [[$true if you want animations to happen, $false if otherwise]]
+       }
+    }
+  }
+  events {
+    pos_update : double; [[The absolut position where the state of the content currently is. So if there is a animation from 2 to 3 the event will go from 2.0 to 3.0. If there is a $switch_to from 2 to 3, then this event should go in one direction from 2 to 3. Not following this, will result in a event to abort the transition, and instanciating a new one.]]
+  }
+}

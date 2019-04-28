@@ -116,7 +116,8 @@ examples = [
   'efl_ui_list_view_example_3',
   'efl_canvas_layout_text',
   'efl_ui_theme_example_01',
-  'efl_ui_theme_example_02'
+  'efl_ui_theme_example_02',
+  'efl_ui_slideshow_example'
 ]
 
 foreach example : examples
