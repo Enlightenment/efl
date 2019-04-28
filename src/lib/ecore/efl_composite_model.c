@@ -232,13 +232,25 @@ static Eina_Value *
 _efl_composite_model_efl_model_property_get(const Eo *obj EINA_UNUSED, Efl_Composite_Model_Data *pd,
                                             const char *property)
 {
+   Eina_Value *try;
    if (pd->need_index && !strcmp(property, EFL_COMPOSITE_MODEL_CHILD_INDEX))
      {
         if (pd->set_index)
           return eina_value_uint_new(pd->index);
         return eina_value_error_new(EAGAIN);
      }
-   return efl_model_property_get(pd->source, property);
+   try = efl_model_property_get(efl_super(obj, EFL_COMPOSITE_MODEL_CLASS), property);
+   if (eina_value_type_get(try) == EINA_VALUE_TYPE_ERROR)
+     {
+        Eina_Error err = EINA_ERROR_NOT_IMPLEMENTED;
+
+        if (eina_value_error_get(try, &err) && (err == EINA_ERROR_NOT_IMPLEMENTED))
+          {
+             eina_value_free(try);
+             return efl_model_property_get(pd->source, property);
+          }
+     }
+   return try;
 }
 
 static Eina_Iterator *
