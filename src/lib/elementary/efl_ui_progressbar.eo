@@ -15,7 +15,7 @@ class @beta Efl.Ui.Progressbar extends Efl.Ui.Layout_Base implements Efl.Ui.Rang
            without showing the precise progress rate. In the default theme, it will
            animate the bar with content, switching constantly between filling it and back
            to non-filled in a loop. To start and stop this pulsing
-           animation you need to explicitly call efl_ui_progressbar_pulse_set().
+           animation you need to explicitly call @.pulse.set().
          ]]
 
          set {
@@ -30,11 +30,11 @@ class @beta Efl.Ui.Progressbar extends Efl.Ui.Layout_Base implements Efl.Ui.Rang
          set {
            [[Start/stop a given progress bar "pulsing" animation, if its under that mode
 
-           Note: This call won't do anything if $obj is not under "pulsing mode".
+           Note: This call won't do anything if $obj is not under "pulsing mode". See @.pulse_mode.
            ]]
          }
          get {
-            [[ Get the pulsing state on a given progressbar widget.
+            [[ Get the pulsing state on a given progressbar widget. See @.pulse_mode.
             ]]
          }
          values {
