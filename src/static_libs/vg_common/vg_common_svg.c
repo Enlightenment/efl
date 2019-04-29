@@ -94,7 +94,6 @@ _eet_for_ellipse_node(void)
    return eet;
 }
 
-
 static inline Eet_Data_Descriptor*
 _eet_for_gradient_stops(void)
 {
@@ -421,8 +420,6 @@ vg_common_svg_node_eet(void)
    _eet_style_property_node = _eet_for_style_property();
    _eet_matrix3_node = _eet_for_eina_matrix3();
 
-
-
    EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "doc", _eet_doc_node);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "g", _eet_g_node);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "defs", _eet_defs_node);
@@ -437,7 +434,6 @@ vg_common_svg_node_eet(void)
    EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "command", _eet_custom_command_node);
 
    EET_DATA_DESCRIPTOR_ADD_UNION(_eet_vg_node, Svg_Node, "node", node, type, eet_union);
-
 
    EET_DATA_DESCRIPTOR_ADD_LIST(_eet_vg_node, Svg_Node, "child", child, _eet_vg_node);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_eet_vg_node, Svg_Node, "id", id, EET_T_STRING);
@@ -964,7 +960,6 @@ _create_gradient_node(Efl_VG *vg)
 oom_error:
    ERR("OOM: Failed calloc()");
    return grad;
-
 }
 
 static void
@@ -987,7 +982,6 @@ _apply_svg_property(Svg_Node *node, Efl_VG *vg)
      }
 
    if (node->type == SVG_NODE_G) return;
-
 
    // apply the fill style property
    style->fill.fill_rule = efl_gfx_shape_fill_rule_get(vg);
@@ -1022,8 +1016,6 @@ _apply_svg_property(Svg_Node *node, Efl_VG *vg)
    style->stroke.cap = efl_gfx_shape_stroke_cap_get(vg);
    style->stroke.join = efl_gfx_shape_stroke_join_get(vg);
    style->stroke.scale = efl_gfx_shape_stroke_scale_get(vg);
-
-
 }
 
 static void

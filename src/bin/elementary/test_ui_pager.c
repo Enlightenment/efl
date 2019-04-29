@@ -443,12 +443,12 @@ static void pack_cb(void *data,
                                         back_btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
-                 efl_pack_padding_set(efl_added, 10, 10, EINA_TRUE),
+                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
                  elm_naviframe_item_push(navi, "Pack", btn, NULL,
                                          efl_added, NULL));
 
    in_box1 = efl_add(EFL_UI_BOX_CLASS, box,
-                     efl_pack_padding_set(efl_added, 10, 10, EINA_TRUE),
+                     efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
                      efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL));
 
    sp1 = efl_add(EFL_UI_SPIN_BUTTON_CLASS, in_box1,
@@ -458,7 +458,7 @@ static void pack_cb(void *data,
                                         efl_ui_pager_current_page_get(pager)));
 
    in_box2 = efl_add(EFL_UI_BOX_CLASS, box,
-                     efl_pack_padding_set(efl_added, 10, 10, EINA_TRUE),
+                     efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
                      efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL));
 
    sp2 = efl_add(EFL_UI_SPIN_BUTTON_CLASS, in_box2);
@@ -628,7 +628,7 @@ static void current_page_cb(void *data,
                                         back_btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
-                 efl_pack_padding_set(efl_added, 10, 10, EINA_TRUE),
+                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
 		 elm_naviframe_item_push(navi, "Current Page", btn, NULL,
                                          efl_added, NULL));
 
@@ -674,7 +674,7 @@ static void indicator_cb(void *data,
                                         back_btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
-                 efl_pack_padding_set(efl_added, 10, 10, EINA_TRUE),
+                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
                  elm_naviframe_item_push(navi, "Indicator", btn, NULL,
                                          efl_added, NULL));
 

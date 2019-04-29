@@ -52,6 +52,7 @@ efl_eolian_files = \
       lib/efl/interfaces/efl_orientation.eo \
       lib/efl/interfaces/efl_container.eo \
       lib/efl/interfaces/efl_content.eo \
+      lib/efl/interfaces/efl_gfx_arrangement.eo \
       lib/efl/interfaces/efl_pack.eo \
       lib/efl/interfaces/efl_pack_layout.eo \
       lib/efl/interfaces/efl_pack_linear.eo \

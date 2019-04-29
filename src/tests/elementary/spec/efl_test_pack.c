@@ -6,6 +6,12 @@
 #include "efl_ui_spec_suite.h"
 #include "suite_helpers.h"
 
+/* spec-meta-start
+      {"test-interface":"Efl.Pack",
+       "test-widgets": ["Efl.Ui.Table"]}
+
+   spec-meta-end */
+
 /*
   In general:
     - If a subobject is deleted the box simply forgets about it. Never return this element again container.
@@ -25,7 +31,7 @@ _setup_std_pack(Efl_Ui_Widget *wid[3])
 
    for (i = 0; i < 3; ++i)
      {
-        wid[i] = efl_add(WIDGET_CLASS, widget);
+        wid[i] = create_test_widget();
         ck_assert_int_eq(efl_pack(widget, wid[i]), EINA_TRUE);
         efl_gfx_entity_visible_set(widget, EINA_TRUE);
      }
@@ -156,7 +162,7 @@ EFL_START_TEST(unpack3)
    Efl_Ui_Widget *wid[3], *invalid;
    _setup_std_pack(wid);
 
-   invalid = efl_add(WIDGET_CLASS, win);
+   invalid = create_test_widget();
    ck_assert_int_eq(efl_pack_unpack(widget, wid[2]), EINA_TRUE);
    EXPECT_ERROR_START;
    ck_assert_int_eq(efl_pack_unpack(widget, wid[2]), EINA_FALSE);
@@ -229,52 +235,10 @@ EFL_START_TEST(pack3)
 }
 EFL_END_TEST
 
-EFL_START_TEST(pack_align)
-{
-#define TUPLE_CHECK(H,V,rh,rv) \
-  do { \
-   double v, h; \
-   efl_pack_align_set(widget, H, V); \
-   efl_pack_align_get(widget, &h, &v); \
-   ck_assert(v == rv); \
-   ck_assert(h == rh); \
-  } while(0);
-
-  TUPLE_CHECK(  1.0,   1.0,  1.0,  1.0);
-  TUPLE_CHECK(  0.0,   0.0,  0.0,  0.0);
-  TUPLE_CHECK(- 1.0, - 1.0, -1.0, -1.0);
-  TUPLE_CHECK(-42.0, -42.0, -1.0, -1.0);
-  TUPLE_CHECK( 42.0,  42.0,  1.0,  1.0);
-  TUPLE_CHECK(-42.0,  42.0, -1.0,  1.0);
-  TUPLE_CHECK( 42.0, -42.0,  1.0, -1.0);
-#undef TUPLE_CHECK
-}
-EFL_END_TEST
-
-EFL_START_TEST(pack_padding)
-{
-#define TUPLE_CHECK(H, V, rh, rv, S, rs) \
-  do { \
-   double v, h; \
-   Eina_Bool r; \
-   efl_pack_padding_set(widget, H, V, S); \
-   efl_pack_padding_get(widget, &h, &v, &r); \
-   ck_assert(v == rv); \
-   ck_assert(h == rh); \
-   ck_assert_int_eq(r, S); \
-  } while(0);
-
-  TUPLE_CHECK( 0.0, 0.0, 0.0, 0.0, EINA_TRUE, EINA_TRUE);
-  TUPLE_CHECK( -1.0, -123.0, 0.0, 0.0, EINA_FALSE, EINA_FALSE);
-  TUPLE_CHECK( -1.0,  123.0, 0.0, 123.0, EINA_FALSE, EINA_FALSE);
-#undef TUPLE_CHECK
-}
-EFL_END_TEST
-
 EFL_START_TEST(evt_content_added)
 {
    Eina_Bool called = EINA_TRUE;
-   Efl_Ui_Widget *wid = efl_add(WIDGET_CLASS, win);
+   Efl_Ui_Widget *wid = create_test_widget();
    efl_test_container_expect_evt_content_added(widget, EFL_CONTAINER_EVENT_CONTENT_ADDED, &called, wid);
    efl_pack(widget, wid);
    ck_assert_int_eq(called, EINA_TRUE);
@@ -339,8 +303,6 @@ efl_pack_behavior_test(TCase *tc)
    tcase_add_test(tc, pack1);
    tcase_add_test(tc, pack2);
    tcase_add_test(tc, pack3);
-   tcase_add_test(tc, pack_align);
-   tcase_add_test(tc, pack_padding);
    tcase_add_test(tc, evt_content_added);
    tcase_add_test(tc, evt_content_removed);
    tcase_add_test(tc, child_killed);

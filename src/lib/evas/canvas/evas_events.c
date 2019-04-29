@@ -460,6 +460,7 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e,
    Eina_Vector2 point;
    int addgrab = 0;
    int no_rep = 0;
+   int srcgrab = 0;
 
    if (obj->delete_me || src->delete_me || e->is_frozen) return;
 
@@ -472,31 +473,52 @@ _evas_event_source_mouse_down_events(Evas_Object *eo_obj, Evas *eo_e,
    ev->source = eo_obj;
    ev->tool = 0;
 
-   EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_write)
+   EINA_LIST_FOREACH(src->proxy->src_event_in, l, eo_child)
      {
-        if (proxy_write->src_event_in)
-        proxy_write->src_event_in = eina_list_free(proxy_write->src_event_in);
+        Evas_Object_Pointer_Data *obj_pdata;
 
-        if (src->is_smart)
+        child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
+        obj_pdata = _evas_object_pointer_data_get(pdata, child);
+        if (!obj_pdata)
           {
-             proxy_write->src_event_in = _evas_event_object_list_raw_in_get
-               (eo_e, proxy_write->src_event_in,
-                evas_object_smart_members_get_direct(eo_src), NULL,
-                NULL, ev->cur.x, ev->cur.y, &no_rep, EINA_TRUE);
-         }
-       else if (src->is_event_parent)
-         {
-            proxy_write->src_event_in = _evas_event_object_list_raw_in_get
-               (eo_e, proxy_write->src_event_in,
-                NULL, evas_object_event_grabber_members_list(eo_src),
-                NULL, ev->cur.x, ev->cur.y, &no_rep, EINA_TRUE);
-         }
-       else
-         proxy_write->src_event_in = eina_list_append(proxy_write->src_event_in, eo_src);
+             ERR("Could not find the object pointer data for device %p",
+                 ev->device);
+             continue;
+          }
+        srcgrab += obj_pdata->mouse_grabbed;
      }
-   EINA_COW_WRITE_END(evas_object_proxy_cow, src->proxy, proxy_write);
 
-   if (pdata->seat->downs > 1) addgrab = pdata->seat->downs - 1;
+   if (srcgrab == 0)
+     {
+        EINA_COW_WRITE_BEGIN(evas_object_proxy_cow, src->proxy, Evas_Object_Proxy_Data, proxy_write)
+          {
+             if (proxy_write->src_event_in)
+               proxy_write->src_event_in = eina_list_free(proxy_write->src_event_in);
+
+             if (src->is_smart)
+               {
+                  proxy_write->src_event_in = _evas_event_object_list_raw_in_get
+                     (eo_e, proxy_write->src_event_in,
+                      evas_object_smart_members_get_direct(eo_src), NULL,
+                      NULL, ev->cur.x, ev->cur.y, &no_rep, EINA_TRUE);
+               }
+             else if (src->is_event_parent)
+               {
+                  proxy_write->src_event_in = _evas_event_object_list_raw_in_get
+                     (eo_e, proxy_write->src_event_in,
+                      NULL, evas_object_event_grabber_members_list(eo_src),
+                      NULL, ev->cur.x, ev->cur.y, &no_rep, EINA_TRUE);
+               }
+             else
+               proxy_write->src_event_in = eina_list_append(proxy_write->src_event_in, eo_src);
+          }
+        EINA_COW_WRITE_END(evas_object_proxy_cow, src->proxy, proxy_write);
+     }
+
+   if (pdata->seat->mouse_grabbed == 0)
+     {
+        if (pdata->seat->downs > 1) addgrab = pdata->seat->downs - 1;
+     }
 
    EINA_LIST_FOREACH(src->proxy->src_event_in, l, eo_child)
      {
@@ -960,7 +982,10 @@ _evas_event_source_multi_down_events(Evas_Object_Protected_Data *obj, Evas_Publi
    ev->source = obj->object;
    ev->action = EFL_POINTER_ACTION_DOWN;
 
-   if (pdata->seat->downs > 1) addgrab = pdata->seat->downs - 1;
+   if (pdata->seat->mouse_grabbed == 0)
+     {
+        if (pdata->seat->downs > 1) addgrab = pdata->seat->downs - 1;
+     }
 
    EINA_LIST_FOREACH(src->proxy->src_event_in, l, eo_child)
      {

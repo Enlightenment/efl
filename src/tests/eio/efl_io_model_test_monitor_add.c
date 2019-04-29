@@ -58,7 +58,8 @@ _children_got(Eo *o, void *data EINA_UNUSED, const Eina_Value v)
 static Eina_Value
 _children_failed(Eo *o EINA_UNUSED, void *data EINA_UNUSED, const Eina_Error err)
 {
-   ck_abort_msg( "Failed to get the child with '%s'.\n", eina_error_msg_get(err));
+   if (err != ECANCELED)
+     ck_abort_msg( "Failed to get the child with '%s'.\n", eina_error_msg_get(err));
    return eina_value_error_init(err);
 }
 

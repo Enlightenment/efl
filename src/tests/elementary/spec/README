@@ -1,0 +1,29 @@
+== What is this spec test suite for ? ==
+
+The spec test suite tests code purely against interfaces. There is no specific widget code in the tests; only interface calls are tested.
+This is useful for testing the same interface on different implementations.
+
+== Test metadata ==
+
+The test framework is driven by some metadata found at the top of every test file.
+There is a C comment at the top of every test file that starts with "spec-meta-start", followed by a json snippet. For instance:
+/* spec-meta-start
+   {"test-interface":"Efl.Pack_Linear",
+    "test-widgets": ["Efl.Ui.Box", "Efl.Ui.Grid"],
+    "custom-mapping" : {
+       "Efl.Ui.Grid" : "EFL_UI_GRID_DEFAULT_ITEM_CLASS"
+    }
+   }
+   spec-meta-end */
+
+The "test-interface" key specifies the interface being tested.
+The "test-widgets" key specifies the widgets where this interface will be tested.
+"custom-mapping" is an optional key. Some interface methods might require that an object of a specific type is passed as parameter. With "custom-mapping" you can specify the types of these objects for each widget. The above example instructs the test framework to inject objects of type EFL_UI_GRID_DEFAULT_ITEM_CLASS when testing methods of the Efl.Ui.Grid widget that require an object.
+
+== Adding a widget to a test ==
+
+Just add your widget name to the "test-widgets" array and recompile. Next run of the spec test suite will check if your widget follows the spec of this interface.
+
+== Adding a new test ==
+
+To add a new test you need to create the .c file and include the metadata comment at the top.

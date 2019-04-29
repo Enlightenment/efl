@@ -16,6 +16,21 @@ typedef enum {
 } Options;
 
 static void
+_btn_color_clicked_cb(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Eo *layout = data;
+
+   static Eina_Bool changed = EINA_TRUE;
+
+   if (changed)
+     efl_gfx_color_set(layout, 0, 88, 204, 255);
+   else
+     efl_gfx_color_set(layout, 255, 255, 255, 255);
+
+   changed = !changed;
+}
+
+static void
 _btn_clicked_to_cb(void *data, const Efl_Event *event)
 {
    Eo *to, *btn, *obj = event->object;
@@ -59,7 +74,6 @@ _btn_clicked_to_cb(void *data, const Efl_Event *event)
         break;
      }
    efl_text_set(obj, ((to == layout) ? "parent" : (char *)efl_text_get(to)));
-   efl_pack_layout_request(layout);
 }
 
 static void
@@ -87,7 +101,6 @@ _slider_changed_relative_cb(void *data, const Efl_Event *event)
         efl_ui_relative_layout_relation_bottom_set(layout, btn, NULL, val);
         break;
      }
-   efl_pack_layout_request(layout);
 }
 
 static void
@@ -105,8 +118,6 @@ _slider_changed_align_cb(void *data, const Efl_Event *event)
      efl_gfx_hint_align_set(btn, val, y);
    else if (opt == 'y')
      efl_gfx_hint_align_set(btn, x, val);
-
-   efl_pack_layout_request(layout);
 }
 
 static void
@@ -139,7 +150,7 @@ _setter_add(Eo *vbox, Eo *btn, Options option)
 
    hbox = efl_add(EFL_UI_BOX_CLASS, vbox,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
-                  efl_pack_padding_set(efl_added, 2, 2, EINA_TRUE),
+                  efl_gfx_arrangement_content_padding_set(efl_added, 2, 2, EINA_TRUE),
                   efl_pack(vbox, efl_added));
 
    efl_add(EFL_UI_TEXT_CLASS, hbox,
@@ -181,13 +192,13 @@ _button_frame_add(Eo *box, Eo *btn)
 
    vbox = efl_add(EFL_UI_BOX_CLASS, f,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
-                  efl_pack_padding_set(efl_added, 2, 2, EINA_TRUE),
+                  efl_gfx_arrangement_content_padding_set(efl_added, 2, 2, EINA_TRUE),
                   efl_gfx_hint_margin_set(efl_added, 2, 2, 2, 2),
                   efl_content_set(f, efl_added));
 
    hbox = efl_add(EFL_UI_BOX_CLASS, vbox,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
-                  efl_pack_padding_set(efl_added, 2, 2, EINA_TRUE),
+                  efl_gfx_arrangement_content_padding_set(efl_added, 2, 2, EINA_TRUE),
                   efl_pack(vbox, efl_added));
 
    efl_add(EFL_CANVAS_RECTANGLE_CLASS, hbox,
@@ -220,7 +231,7 @@ _button_frame_add(Eo *box, Eo *btn)
 
    hbox = efl_add(EFL_UI_BOX_CLASS, vbox,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
-                  efl_pack_padding_set(efl_added, 2, 2, EINA_TRUE),
+                  efl_gfx_arrangement_content_padding_set(efl_added, 2, 2, EINA_TRUE),
                   efl_pack(vbox, efl_added));
 
    efl_add(EFL_UI_TEXT_CLASS, hbox,
@@ -240,7 +251,7 @@ _button_frame_add(Eo *box, Eo *btn)
 
    hbox = efl_add(EFL_UI_BOX_CLASS, vbox,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
-                  efl_pack_padding_set(efl_added, 2, 2, EINA_TRUE),
+                  efl_gfx_arrangement_content_padding_set(efl_added, 2, 2, EINA_TRUE),
                   efl_pack(vbox, efl_added));
 
    efl_add(EFL_UI_TEXT_CLASS, hbox,
@@ -271,7 +282,7 @@ test_ui_relative_layout(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
 
    vbox = efl_add(EFL_UI_BOX_CLASS, win,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
-                  efl_pack_padding_set(efl_added, 10, 10, EINA_TRUE),
+                  efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
                   efl_gfx_hint_margin_set(efl_added, 5, 5, 5, 5),
                   efl_content_set(win, efl_added));
 
@@ -283,7 +294,7 @@ test_ui_relative_layout(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
 
    hbox = efl_add(EFL_UI_BOX_CLASS, f,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
-                  efl_pack_padding_set(efl_added, 10, 0, EINA_TRUE),
+                  efl_gfx_arrangement_content_padding_set(efl_added, 10, 0, EINA_TRUE),
                   efl_content_set(f, efl_added));
 
    /* contents */
@@ -297,6 +308,7 @@ test_ui_relative_layout(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
    btn1 = efl_add(EFL_UI_BUTTON_CLASS, layout,
                   efl_text_set(efl_added, "button1"),
                   efl_gfx_hint_align_set(efl_added, 0.0, 0.0),
+                  efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _btn_color_clicked_cb, layout),
                   efl_ui_relative_layout_relation_right_set(layout, efl_added, layout, 0.0),
                   efl_ui_relative_layout_relation_bottom_set(layout, efl_added, layout, 0.0));
 

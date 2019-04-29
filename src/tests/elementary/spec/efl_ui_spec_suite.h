@@ -13,9 +13,12 @@ extern Evas_Object *widget;
 void efl_pack_behavior_test(TCase *tc);
 void efl_pack_linear_behavior_test(TCase *tc);
 void efl_content_behavior_test(TCase *tc);
+void efl_gfx_arrangement_behavior_test(TCase *tc);
 
 void efl_test_container_content_equal(Efl_Ui_Widget **wid, unsigned int len);
 void efl_test_container_expect_evt_content_added(Efl_Ui_Widget *widget, const Efl_Event_Description *ev, Eina_Bool *flag, void *event_data);
+
+Eo* create_test_widget(void);
 
 Evas_Object * win_add();
 

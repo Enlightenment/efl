@@ -29,13 +29,13 @@
 
 /* external functions */
 EAPI Ecore_Evas *
-ecore_evas_wayland_egl_new_internal(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame)
+ecore_evas_wayland_egl_new_internal(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame, const int *opt)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
 
    return _ecore_evas_wl_common_new_internal(disp_name, parent,
                                              x, y, w, h, frame,
-                                             "wayland_egl");
+                                             opt, "wayland_egl");
 }
 
 #endif

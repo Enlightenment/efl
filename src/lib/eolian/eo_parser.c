@@ -2192,8 +2192,6 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                 break;
               case KW_at_free:
                 {
-                   if (is_enum)
-                     goto postparams;
                    CASE_LOCK(ls, free, "@free qualifier")
                    if (is_enum)
                      eo_lexer_syntax_error(ls, "enums cannot have @free");

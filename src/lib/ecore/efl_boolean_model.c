@@ -32,9 +32,13 @@ static Eina_Iterator *
 _efl_boolean_model_efl_model_properties_get(const Eo *obj,
                                             Efl_Boolean_Model_Data *pd)
 {
+   Eina_Iterator *properties = NULL;
+
+   if (pd->parent)
+     properties = eina_hash_iterator_key_new(pd->parent->values);
    EFL_COMPOSITE_MODEL_PROPERTIES_SUPER(props,
                                         obj, EFL_BOOLEAN_MODEL_CLASS,
-                                        eina_hash_iterator_key_new(pd->parent->values));
+                                        properties);
    return props;
 }
 

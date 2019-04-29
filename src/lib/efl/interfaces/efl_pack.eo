@@ -1,28 +1,30 @@
 interface @beta Efl.Pack extends Efl.Container
 {
-   [[API common to all UI container objects.]]
+   [[Common interface for objects (containers) with multiple contents
+     (sub-objects) which can be added and removed at runtime.
+   ]]
    methods
    {
       pack_clear {
-         [[Removes all packed contents, and unreferences them.]]
-         return: bool; [[$true on success, $false otherwise]]
+         [[Removes all packed sub-objects and unreferences them.]]
+         return: bool; [[$true on success, $false otherwise.]]
       }
       unpack_all {
-         [[Removes all packed contents, without unreferencing them.
+         [[Removes all packed sub-objects without unreferencing them.
 
            Use with caution.
          ]]
-         return: bool; [[$true on success, $false otherwise]]
+         return: bool; [[$true on success, $false otherwise.]]
       }
       unpack {
-         [[Removes an existing item from the container, without deleting it.]]
+         [[Removes an existing sub-object from the container without deleting it.]]
          params {
-            subobj: Efl.Gfx.Entity; [[The unpacked object.]]
+            subobj: Efl.Gfx.Entity; [[The sub-object to unpack.]]
          }
-         return: bool; [[$false if $subobj wasn't a child or can't be removed]]
+         return: bool; [[$false if $subobj wasn't in the container or couldn't be removed.]]
       }
       pack {
-         [[Adds an item to this container.
+         [[Adds a sub-object to this container.
 
            Depending on the container this will either fill in the default
            spot, replacing any already existing element or append to the end
@@ -33,28 +35,9 @@ interface @beta Efl.Pack extends Efl.Container
            without deleting it.
          ]]
          params {
-            subobj: Efl.Gfx.Entity; [[An object to pack.]]
+            subobj: Efl.Gfx.Entity; [[The object to pack.]]
          }
          return: bool; [[$false if $subobj could not be packed.]]
-      }
-      @property pack_align {
-         [[Alignment of the container within its bounds]]
-         set {}
-         get {}
-         values {
-            align_horiz: double; [[Horizontal alignment]]
-            align_vert:  double; [[Vertical alignment]]
-         }
-      }
-      @property pack_padding {
-         [[Padding between items contained in this object.]]
-         set {}
-         get {}
-         values {
-            pad_horiz: double; [[Horizontal padding]]
-            pad_vert:  double; [[Vertical padding]]
-            scalable:  bool; [[$true if scalable, $false otherwise]]
-         }
       }
    }
 }

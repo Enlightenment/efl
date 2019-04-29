@@ -252,7 +252,7 @@ EFL_START_TEST (efl_ui_box_layout_update)
 {
    int i, max_index = (sizeof(hints) / sizeof(Hint));
 
-   efl_pack_align_set(layout, 0.8, 0.2);
+   efl_gfx_arrangement_content_align_set(layout, 0.8, 0.2);
    efl_ui_direction_set(layout, EFL_UI_DIR_VERTICAL);
 
    Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, layout,
@@ -271,7 +271,7 @@ EFL_START_TEST (efl_ui_box_layout_update_pack)
    int i, max_index2, max_index3;
    Eo *btn, *btn2, *btn3;
 
-   efl_pack_align_set(layout, 0.8, 0.2);
+   efl_gfx_arrangement_content_align_set(layout, 0.8, 0.2);
    efl_ui_direction_set(layout, EFL_UI_DIR_VERTICAL);
 
    max_index2 = ((sizeof(hints2) / sizeof(Hint)) / 2);
@@ -502,34 +502,34 @@ EFL_START_TEST (efl_ui_box_properties)
    Eina_Bool b;
 
    //align test
-   efl_pack_align_get(layout, &h, &v);
+   efl_gfx_arrangement_content_align_get(layout, &h, &v);
    ck_assert(EINA_DBL_EQ(h, 0.5));
    ck_assert(EINA_DBL_EQ(v, 0.5));
 
-   efl_pack_align_set(layout, 0.3, 0.8234);
-   efl_pack_align_get(layout, &h, &v);
+   efl_gfx_arrangement_content_align_set(layout, 0.3, 0.8234);
+   efl_gfx_arrangement_content_align_get(layout, &h, &v);
    ck_assert(EINA_DBL_EQ(h, 0.3));
    ck_assert(EINA_DBL_EQ(v, 0.8234));
 
-   efl_pack_align_set(layout, -0.23, 123);
-   efl_pack_align_get(layout, &h, &v);
+   efl_gfx_arrangement_content_align_set(layout, -0.23, 123);
+   efl_gfx_arrangement_content_align_get(layout, &h, &v);
    ck_assert(EINA_DBL_EQ(h, -1));
    ck_assert(EINA_DBL_EQ(v, 1));
 
    //padding test
-   efl_pack_padding_get(layout, &h, &v, &b);
+   efl_gfx_arrangement_content_padding_get(layout, &h, &v, &b);
    ck_assert(EINA_DBL_EQ(h, 0.0));
    ck_assert(EINA_DBL_EQ(v, 0.0));
    ck_assert_int_eq(b, 0);
 
-   efl_pack_padding_set(layout, 0.3, 0.8234, 1);
-   efl_pack_padding_get(layout, &h, &v, &b);
+   efl_gfx_arrangement_content_padding_set(layout, 0.3, 0.8234, 1);
+   efl_gfx_arrangement_content_padding_get(layout, &h, &v, &b);
    ck_assert(EINA_DBL_EQ(h, 0.3));
    ck_assert(EINA_DBL_EQ(v, 0.8234));
    ck_assert_int_eq(b, 1);
 
-   efl_pack_padding_set(layout, -1.23, 123, 45);
-   efl_pack_padding_get(layout, &h, &v, &b);
+   efl_gfx_arrangement_content_padding_set(layout, -1.23, 123, 45);
+   efl_gfx_arrangement_content_padding_get(layout, &h, &v, &b);
    ck_assert(EINA_DBL_EQ(h, 0));
    ck_assert(EINA_DBL_EQ(v, 123));
    ck_assert_int_eq(b, 1);

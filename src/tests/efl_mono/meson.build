@@ -67,11 +67,11 @@ efl_mono_suite = executable('efl-mono-suite',
   cs_args : extra_cs_args
 )
 
-env = environment()
-env.set('MONO_PATH', efl_mono_test_suite_path )
+env_mono = environment()
+env_mono.set('MONO_PATH', efl_mono_test_suite_path )
 
 if (cs_is_dotnet)
-env.set('LD_LIBRARY_PATH', efl_mono_test_suite_path )
+env_mono.set('LD_LIBRARY_PATH', efl_mono_test_suite_path )
 copy_prog = find_program(['cp', 'copy'])
 
 configure_file(input : 'efl-mono-suite.runtimeconfig.json',
@@ -108,9 +108,9 @@ foreach config : config_libs
   load_lib += repaired_path+':'
 endforeach
 
-env.set('LD_LIBRARY_PATH', load_lib)
+env_mono.set('LD_LIBRARY_PATH', load_lib)
 
 test('efl-mono-suite',
   efl_mono_suite,
-  env : env
+  env : env_mono
 )

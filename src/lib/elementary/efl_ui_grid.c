@@ -20,6 +20,29 @@
 static void _grid_clear_internal(Eo *obj, Efl_Ui_Grid_Data *pd);
 static void _grid_item_unpack_internal(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Ui_Grid_Item *item);
 
+static int
+clamp_index(Efl_Ui_Grid_Data *pd, int index)
+{
+   if (index < ((int)eina_list_count(pd->items)) * -1)
+     return -1;
+   else if (index > (int)eina_list_count(pd->items) - 1)
+     return 1;
+   return 0;
+}
+
+static int
+index_adjust(Efl_Ui_Grid_Data *pd, int index)
+{
+   int c = eina_list_count(pd->items);
+   if (index < c * -1)
+     return 0;
+   else if (index > c - 1)
+     return c - 1;
+   else if (index < 0)
+     return index + c;
+   return index;
+}
+
 static void
 _need_update(Efl_Ui_Grid_Data *pd)
 {
@@ -931,7 +954,20 @@ _grid_item_deleted(void *data, const Efl_Event *event)
 static Eina_Bool
 _grid_item_process(Eo *obj, Efl_Ui_Grid_Data *pd, EINA_UNUSED Efl_Ui_Grid_Item *it)
 {
-   EFL_UI_GRID_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
+   if (!efl_isa(it, EFL_UI_GRID_ITEM_CLASS))
+     {
+        ERR("Item must be of type EFL_UI_GRID_ITEM_CLASS");
+        return EINA_FALSE;
+     }
+
+   if (eina_list_data_find(pd->items, it))
+     {
+        ERR("Item already added to this container!");
+        return EINA_FALSE;
+     }
+
+   if (!efl_ui_widget_sub_object_add(obj, it))
+     return EINA_FALSE;
 
    //FIXME: This is tricky workaround for set select mode and parent value.
    EFL_UI_GRID_ITEM_DATA_GET_OR_RETURN(it, gd, EINA_FALSE);
@@ -974,6 +1010,9 @@ _grid_item_unpack_internal(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Ui_Grid_Item *it)
    efl_event_callback_del(it, EFL_UI_EVENT_ITEM_SELECTED, _grid_item_selected, obj);
    efl_event_callback_del(it, EFL_UI_EVENT_ITEM_UNSELECTED, _grid_item_unselected, obj);
    efl_event_callback_del(it, EFL_EVENT_DEL, _grid_item_deleted, obj);
+
+   efl_canvas_group_member_remove(pd->pan, it);
+   _elm_widget_sub_object_redirect_to_top(obj, it);
 }
 
 
@@ -1023,6 +1062,12 @@ EOLIAN static Eina_Bool
 _efl_ui_grid_efl_pack_unpack(Eo *obj, Efl_Ui_Grid_Data *pd, Efl_Gfx_Entity *subobj)
 {
    Efl_Ui_Grid_Item *item = (Efl_Ui_Grid_Item *)subobj;
+
+   if (!eina_list_data_find(pd->items, item))
+     {
+        ERR("Element is not part of this container");
+        return EINA_FALSE;
+     }
 
    _grid_item_unpack_internal(obj, pd, item);
 
@@ -1101,11 +1146,19 @@ _efl_ui_grid_efl_pack_linear_pack_at(Eo *obj,
                                      Efl_Gfx_Entity *subobj,
                                      int index)
 {
+   int clamp = clamp_index(pd, index);
+   index = index_adjust(pd, index);
    if (!_grid_item_process(obj, pd, subobj)) return EINA_FALSE;
    Efl_Ui_Grid_Item *existing = eina_list_nth(pd->items, index);
    EFL_UI_GRID_ITEM_DATA_GET_OR_RETURN(subobj, pid, EINA_FALSE);
 
-   pd->items = eina_list_prepend_relative(pd->items, subobj, existing);
+   if (clamp == 0)
+     pd->items = eina_list_prepend_relative(pd->items, subobj, existing);
+   else if (clamp == 1)
+     pd->items = eina_list_append(pd->items, subobj);
+   else
+     pd->items = eina_list_prepend(pd->items, subobj);
+
    // Defered item's placing in group calculation
    pid->update_begin = EINA_TRUE;
    _need_update(pd);
@@ -1115,20 +1168,16 @@ _efl_ui_grid_efl_pack_linear_pack_at(Eo *obj,
 EOLIAN static Efl_Gfx_Entity *
 _efl_ui_grid_efl_pack_linear_pack_content_get(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, int index)
 {
-   return eina_list_nth(pd->items, index);
+  index = index_adjust(pd, index);
+  return eina_list_nth(pd->items, index);
 }
 
 EOLIAN static Efl_Gfx_Entity *
 _efl_ui_grid_efl_pack_linear_pack_unpack_at(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, int index)
 {
+   index = index_adjust(pd, index);
    Efl_Gfx_Entity *target = eina_list_nth(pd->items, index);
-   pd->items = eina_list_remove(pd->items, target);
-   /*
-   if (after)
-     {
-     }
-   else
-   */
+   _grid_item_unpack_internal(obj, pd, target);
    _need_update(pd);
    return target;
 }
@@ -1158,7 +1207,7 @@ _efl_ui_grid_efl_pack_layout_layout_request(Eo *obj, Efl_Ui_Grid_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_pack_padding_set(Eo *obj EINA_UNUSED,
+_efl_ui_grid_efl_gfx_arrangement_content_padding_set(Eo *obj EINA_UNUSED,
                                        Efl_Ui_Grid_Data *pd,
                                        double h,
                                        double v,
@@ -1175,7 +1224,7 @@ _efl_ui_grid_efl_pack_pack_padding_set(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_pack_padding_get(const Eo *obj EINA_UNUSED,
+_efl_ui_grid_efl_gfx_arrangement_content_padding_get(const Eo *obj EINA_UNUSED,
                                        Efl_Ui_Grid_Data *pd,
                                        double *h,
                                        double *v,
@@ -1188,7 +1237,7 @@ _efl_ui_grid_efl_pack_pack_padding_get(const Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_pack_align_set(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, double h, double v)
+_efl_ui_grid_efl_gfx_arrangement_content_align_set(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, double h, double v)
 {
    pd->item.align.w = h;
    pd->item.align.h = v;
@@ -1196,7 +1245,7 @@ _efl_ui_grid_efl_pack_pack_align_set(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, 
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_pack_pack_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, double *h, double *v)
+_efl_ui_grid_efl_gfx_arrangement_content_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, double *h, double *v)
 {
    *h = pd->item.align.w;
    *v = pd->item.align.h;

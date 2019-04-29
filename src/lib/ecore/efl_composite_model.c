@@ -45,21 +45,18 @@ _children_indexed_key(const Efl_Composite_Model_Data *node,
    return node->index - *key;
 }
 
-static void
-_efl_composite_model_efl_object_destructor(Eo *obj, Efl_Composite_Model_Data *pd)
+static Efl_Model *
+_efl_composite_lookup(const Efl_Class *self, Eo *parent, Efl_Model *view, unsigned int index)
 {
-   if (pd->source)
-     {
-        efl_event_callback_forwarder_del(pd->source, EFL_MODEL_EVENT_CHILD_ADDED, obj);
-        efl_event_callback_forwarder_del(pd->source, EFL_MODEL_EVENT_CHILD_REMOVED, obj);
-        efl_event_callback_forwarder_del(pd->source, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, obj);
-        efl_event_callback_forwarder_del(pd->source, EFL_MODEL_EVENT_PROPERTIES_CHANGED, obj);
+   EFL_COMPOSITE_LOOKUP_RETURN(remember, parent, view, "_efl.composite_model");
 
-        efl_unref(pd->source);
-        pd->source = NULL;
-     }
+   remember = efl_add_ref(self, parent,
+                          efl_ui_view_model_set(efl_added, view),
+                          efl_composite_model_index_set(efl_added, index),
+                          efl_loop_model_volatile_make(efl_added));
+   if (!remember) return NULL;
 
-   efl_destructor(efl_super(obj, EFL_COMPOSITE_MODEL_CLASS));
+   EFL_COMPOSITE_REMEMBER_RETURN(remember, view);
 }
 
 static void
@@ -156,6 +153,44 @@ _efl_composite_model_index_get(const Eo *obj, Efl_Composite_Model_Data *pd)
 }
 
 static void
+_efl_composite_model_child_added(void *data, const Efl_Event *event)
+{
+   Efl_Composite_Model_Data *pd = data;
+   Efl_Model_Children_Event *ev = event->info;
+   Efl_Model_Children_Event cev = { 0 };
+
+   cev.index = ev->index;
+   if (ev->child)
+     cev.child = _efl_composite_lookup(efl_class_get(pd->self),
+                                       pd->self, ev->child, ev->index);
+
+   efl_event_callback_call(pd->self, EFL_MODEL_EVENT_CHILD_ADDED, &cev);
+
+   efl_unref(cev.child);
+}
+
+static void
+_efl_composite_model_child_removed(void *data, const Efl_Event *event)
+{
+   Efl_Composite_Model_Data *pd = data;
+   Efl_Model_Children_Event *ev = event->info;
+   Efl_Model_Children_Event cev = { 0 };
+
+   cev.index = ev->index;
+   if (ev->child)
+     cev.child = _efl_composite_lookup(efl_class_get(pd->self),
+                                       pd->self, ev->child, ev->index);
+
+   efl_event_callback_call(pd->self, EFL_MODEL_EVENT_CHILD_REMOVED, &cev);
+
+   efl_unref(cev.child);
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(composite_callbacks,
+                           { EFL_MODEL_EVENT_CHILD_ADDED, _efl_composite_model_child_added },
+                           { EFL_MODEL_EVENT_CHILD_REMOVED, _efl_composite_model_child_removed });
+
+static void
 _efl_composite_model_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Composite_Model_Data *pd, Efl_Model *model)
 {
    Eina_Iterator *properties;
@@ -168,8 +203,7 @@ _efl_composite_model_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Composite_Mo
      }
    pd->source = efl_ref(model);
 
-   efl_event_callback_forwarder_priority_add(model, EFL_MODEL_EVENT_CHILD_ADDED, EFL_CALLBACK_PRIORITY_BEFORE, obj);
-   efl_event_callback_forwarder_priority_add(model, EFL_MODEL_EVENT_CHILD_REMOVED, EFL_CALLBACK_PRIORITY_BEFORE, obj);
+   efl_event_callback_array_add(model, composite_callbacks(), pd);
    efl_event_callback_forwarder_priority_add(model, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, EFL_CALLBACK_PRIORITY_BEFORE, obj);
    efl_event_callback_forwarder_priority_add(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED, EFL_CALLBACK_PRIORITY_BEFORE, obj);
 
@@ -266,13 +300,8 @@ _efl_composite_model_then(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
      {
         Eo *composite;
 
-        // First set the Model to be used as a source so that we the newly object
-        // can know if it needs to retain the information regarding its index.
-        composite = efl_add_ref(req->self, req->parent,
-                                efl_ui_view_model_set(efl_added, target),
-                                efl_composite_model_index_set(efl_added, req->start + i),
-                                efl_loop_model_volatile_make(efl_added));
-
+        // Fetch an existing composite model for this model or create a new one if none exist
+        composite = _efl_composite_lookup(req->self, req->parent, target, req->start + i);
         eina_value_array_append(&r, composite);
         // Dropping this scope reference
         efl_unref(composite);
@@ -390,6 +419,22 @@ _efl_composite_model_efl_model_child_del(Eo *obj EINA_UNUSED,
                                          Efl_Object *child)
 {
    efl_model_child_del(pd->source, child);
+}
+
+static void
+_efl_composite_model_efl_object_destructor(Eo *obj, Efl_Composite_Model_Data *pd)
+{
+   if (pd->source)
+     {
+        efl_event_callback_array_del(pd->source, composite_callbacks(), pd);
+        efl_event_callback_forwarder_del(pd->source, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, obj);
+        efl_event_callback_forwarder_del(pd->source, EFL_MODEL_EVENT_PROPERTIES_CHANGED, obj);
+
+        efl_unref(pd->source);
+        pd->source = NULL;
+     }
+
+   efl_destructor(efl_super(obj, EFL_COMPOSITE_MODEL_CLASS));
 }
 
 #include "efl_composite_model.eo.c"

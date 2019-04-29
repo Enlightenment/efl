@@ -296,7 +296,7 @@ _sizing_eval(void *data)
 
    if (sd->horizontal)
      {
-        if (!strcmp(sd->last_location, "left"))
+        if ((sd->last_location) && (!strcmp(sd->last_location, "left")))
           {
              adjusted.x = parent.x;
              if ((adjusted.x + adjusted.w) > base.x)
@@ -314,7 +314,7 @@ _sizing_eval(void *data)
      }
    else
      {
-        if (!strcmp(sd->last_location, "top"))
+        if ((sd->last_location) && (!strcmp(sd->last_location, "top")))
           {
              adjusted.y = parent.y;
              if ((adjusted.y + adjusted.h) > base.y)

@@ -40,4 +40,20 @@ _efl_composite_model_properties_mix(Eina_Iterator *super, Eina_Iterator *dyn, Ei
      };
 }
 
+#define EFL_COMPOSITE_LOOKUP_RETURN(Remember, Parent, View, Base)       \
+  Efl_Model *Remember;                                                  \
+  char buf[1024];                                                       \
+                                                                        \
+  snprintf(buf, sizeof (buf), Base"-%p", Parent);                       \
+  Remember = efl_key_wref_get(View, buf);                               \
+  if (Remember)                                                         \
+    {                                                                   \
+       efl_ref(Remember);                                               \
+       return Remember;                                                 \
+    }
+
+#define EFL_COMPOSITE_REMEMBER_RETURN(Remember, View)  \
+  efl_key_wref_set(View, buf, Remember);               \
+  return Remember;
+
 #endif
