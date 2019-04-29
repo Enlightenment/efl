@@ -286,9 +286,9 @@ _efl_canvas_animation_player_efl_player_pos_get(const Eo *eo_obj,
 {
    //TODO: this is not correct
    Efl_Canvas_Animation *anim = efl_animation_player_animation_get(eo_obj);
-   double length = efl_player_length_get(anim);
+   double length = efl_animation_duration_get(anim);
 
-   return length * efl_player_progress_get(anim);
+   return length * efl_player_progress_get(eo_obj);
 }
 
 EOLIAN static void
@@ -301,7 +301,7 @@ _efl_canvas_animation_player_efl_player_pos_set(Eo *eo_obj,
      return;
 
    EFL_ANIMATION_PLAYER_ANIMATION_GET(eo_obj, anim);
-   double length = efl_player_length_get(anim);
+   double length = efl_animation_duration_get(anim);
    pd->progress = sec / length;
    efl_animation_apply(anim, pd->progress, efl_animation_player_target_get(eo_obj));
 }
