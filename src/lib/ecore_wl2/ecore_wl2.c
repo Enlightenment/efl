@@ -96,16 +96,16 @@ _ecore_wl2_surface_modules_init(void)
           }
      }
 #endif
-   supplied_modules = eina_module_arch_list_get(NULL,
-                                                PACKAGE_LIB_DIR"/ecore_wl2/engines",
-                                                MODULE_ARCH);
+   supplied_modules =
+     eina_module_arch_list_get(NULL, PACKAGE_LIB_DIR"/ecore_wl2/engines",
+                               MODULE_ARCH);
    eina_module_list_load(supplied_modules);
 
    mod_dir = getenv("ECORE_WL2_SURFACE_MODULE_DIR");
    if (mod_dir)
      {
-        local_modules = eina_module_list_get(NULL, mod_dir,
-                                             EINA_TRUE, NULL, NULL);
+        local_modules =
+          eina_module_list_get(NULL, mod_dir, EINA_TRUE, NULL, NULL);
         eina_module_list_load(local_modules);
      }
 
