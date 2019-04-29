@@ -3,7 +3,7 @@ import elm_general;
 
 class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Ui.Clickable,
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.File,
-                 Efl.Ui.Selectable, Efl.Text_Interactive
+                 Efl.Ui.Selectable, Efl.Text_Interactive, Efl.Text_Markup
 {
    [[Efl UI text class]]
    methods {
@@ -379,5 +379,6 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Ui.Clickable,
    }
    composite {
       Efl.Text_Interactive;
+      Efl.Text_Markup;
    }
 }
