@@ -223,7 +223,7 @@ static Eina_Bool
 evas_image_load_file_data_png(void *loader_data,
                               Evas_Image_Property *prop,
                               void *pixels,
-			      int *error)
+                              int *error)
 {
    Evas_Loader_Internal *loader = loader_data;
    Evas_Image_Load_Opts *opts;
@@ -395,9 +395,8 @@ evas_image_load_file_data_png(void *loader_data,
      }
    else
      {
-        unsigned char *src_ptr, *dst_ptr;
+        unsigned char *src_ptr;
         int skip_row = 0, region_x = 0, region_y = 0;
-        dst_ptr = surface;
 
         if (region_set)
           {
@@ -412,20 +411,49 @@ evas_image_load_file_data_png(void *loader_data,
              for (skip_row = 0; skip_row < region_y; skip_row++)
                png_read_row(png_ptr, tmp_line, NULL);
 
-             for (i = 0; i < h; i++)
+             //general case: 4 bytes pixel.
+             if (pack_offset == sizeof(DATA32))
                {
-                  png_read_row(png_ptr, tmp_line, NULL);
-                  src_ptr = tmp_line + region_x * pack_offset;
-                  for (j = 0; j < w; j++)
+                  DATA32 *dst_ptr = (DATA32 *) surface;
+                  DATA32 *src_ptr2;
+
+                  for (i = 0; i < h; i++)
                     {
-                       for (k = 0; k < (int)pack_offset; k++)
-                         dst_ptr[k] = src_ptr[k];
-                       dst_ptr += pack_offset;
-                       src_ptr += scale_ratio * pack_offset;
+                       png_read_row(png_ptr, tmp_line, NULL);
+                       src_ptr2 = (DATA32 *) (tmp_line + region_x * pack_offset);
+
+                       for (j = 0; j < w; j++)
+                         {
+                            *dst_ptr = *src_ptr2;
+                            ++dst_ptr;
+                            src_ptr2 += scale_ratio;
+                         }
+                       for (j = 0; j < (scale_ratio - 1); j++)
+                         png_read_row(png_ptr, tmp_line, NULL);
                     }
-                  for (j = 0; j < (scale_ratio - 1); j++)
-                    png_read_row(png_ptr, tmp_line, NULL);
                }
+             else
+               {
+                  unsigned char *dst_ptr = surface;
+
+                  for (i = 0; i < h; i++)
+                    {
+                       png_read_row(png_ptr, tmp_line, NULL);
+                       src_ptr = tmp_line + region_x * pack_offset;
+
+                       for (j = 0; j < w; j++)
+                         {
+                            for (k = 0; k < (int) pack_offset; k++)
+                              dst_ptr[k] = src_ptr[k];
+
+                            dst_ptr += pack_offset;
+                            src_ptr += scale_ratio * pack_offset;
+                         }
+                       for (j = 0; j < (scale_ratio - 1); j++)
+                         png_read_row(png_ptr, tmp_line, NULL);
+                    }
+               }
+
              for (skip_row = region_y + h * scale_ratio; skip_row < image_h; skip_row++)
                png_read_row(png_ptr, tmp_line, NULL);
           }
@@ -443,15 +471,37 @@ evas_image_load_file_data_png(void *loader_data,
 
                   src_ptr = pixels2 + (region_y * image_w * pack_offset) + region_x * pack_offset;
 
-                  for (i = 0; i < h; i++)
+                  //general case: 4 bytes pixel.
+                  if (pack_offset == sizeof(DATA32))
                     {
-                       for (j = 0; j < w; j++)
+                       DATA32 *dst_ptr = (DATA32 *) surface;
+                       DATA32 *src_ptr2 = (DATA32 *) src_ptr;
+
+                       for (i = 0; i < h; i++)
                          {
-                            for (k = 0; k < (int)pack_offset; k++)
-                              dst_ptr[k] = src_ptr[k + scale_ratio * j * pack_offset];
-                            dst_ptr += pack_offset;
+                            for (j = 0; j < w; j++)
+                              {
+                                 *dst_ptr = *src_ptr2;
+                                 ++dst_ptr;
+                                 src_ptr2 += scale_ratio;
+                              }
+                            src_ptr2 += scale_ratio * image_w;
                          }
-                       src_ptr += scale_ratio * image_w * pack_offset;
+                    }
+                  else
+                    {
+                       unsigned char *dst_ptr = surface;
+
+                       for (i = 0; i < h; i++)
+                         {
+                            for (j = 0; j < w; j++)
+                              {
+                                 for (k = 0; k < (int)pack_offset; k++)
+                                   dst_ptr[k] = src_ptr[k + scale_ratio * j * pack_offset];
+                                 dst_ptr += pack_offset;
+                              }
+                            src_ptr += scale_ratio * image_w * pack_offset;
+                         }
                     }
                   free(pixels2);
                }
