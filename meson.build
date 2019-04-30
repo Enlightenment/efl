@@ -439,7 +439,9 @@ if get_option('eolian-bootstrap') == false
   subdir(join_paths('src', 'bin', 'efl'))
 
   subdir(join_paths('src', 'generic', 'evas'))
-  subdir(join_paths('src', 'generic', 'emotion'))
+  if sys_windows == false
+    subdir(join_paths('src', 'generic', 'emotion'))
+  endif
 
   bindings = get_option('bindings')
   bindings_order = ['luajit', 'cxx', 'mono']
