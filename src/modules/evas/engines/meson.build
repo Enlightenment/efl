@@ -6,6 +6,13 @@ engines = [
  ['wayland_shm', ['wl']],
 ]
 
+if sys_windows == true
+ engines += [
+   ['software_ddraw', []],
+   ['software_gdi', []],
+ ]
+endif
+
 if get_option('opengl') != 'none'
   engines += [
    ['gl_generic', []],
