@@ -382,6 +382,16 @@ EAPI unsigned char *eina_memdup(unsigned char *mem, size_t size, Eina_Bool termi
  */
 EAPI char *eina_strftime(const char *format, const struct tm *tm);
 
+static inline size_t eina_strlen_bounded(const char *str, size_t maxlen);
+
+static inline size_t eina_str_join(char *dst, size_t size, char sep, const char *a, const char *b);
+
+static inline char *eina_strdup(const char *str);
+
+static inline char *eina_strndup(const char *str, size_t n);
+
+static inline Eina_Bool eina_streq(const char *a, const char *b);
+
 #include "eina_inline_str.x"
 
 /**
