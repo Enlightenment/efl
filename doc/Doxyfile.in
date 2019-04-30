@@ -49,7 +49,7 @@ PROJECT_LOGO           =
 # If a relative path is entered, it will be relative to the location
 # where doxygen was started. If left blank the current directory will be used.
 
-OUTPUT_DIRECTORY       = .
+OUTPUT_DIRECTORY       = @top_builddir@/
 
 # If the CREATE_SUBDIRS tag is set to YES, then doxygen will create
 # 4096 sub-directories (in 2 levels) under the output directory of each output
@@ -594,7 +594,8 @@ WARN_LOGFILE           =
 # with spaces.
 
 INPUT                  = @top_srcdir@/src/lib \
-                         @top_srcdir@/elm_intro.h \
+                         @top_builddir@/src/lib \
+                         @top_builddir@/elm_intro.h \
                          @srcdir@/index_elm.dox \
                          @srcdir@/main.dox \
                          @srcdir@/pkgconfig.dox \

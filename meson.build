@@ -478,6 +478,12 @@ foreach evas_loader_map_inst : evas_loader_map
   meson.add_install_script('meson/evas_loader_conf.sh', evas_loader_original, evas_loader_link_types)
 endforeach
 
+doxygen = find_program('doxygen', required : false)
+
+if get_option('eolian-bootstrap') == false and doxygen.found()
+  subdir('doc')
+endif
+
 #
 # Configure files
 #
