@@ -473,6 +473,7 @@ struct _Ecore_Wl2_Input
      {
         unsigned int button, count, timestamp;
         Ecore_Wl2_Window *window;
+        unsigned int touch_count;
      } grab;
 
    struct
