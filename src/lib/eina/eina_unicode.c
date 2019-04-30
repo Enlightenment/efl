@@ -116,6 +116,9 @@ eina_unicode_strndup(const Eina_Unicode *text, size_t n)
    EINA_SAFETY_ON_NULL_RETURN_VAL(text, NULL);
 
    ustr = malloc((n + 1) * sizeof(Eina_Unicode));
+   if (!ustr)
+     return NULL;
+
    memcpy(ustr, text, n * sizeof(Eina_Unicode));
    ustr[n] = 0;
    return ustr;
