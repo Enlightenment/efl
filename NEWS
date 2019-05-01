@@ -1,6 +1,21 @@
 ==========
-EFL 1.22.1
+EFL 1.22.2
 ==========
+
+Changes since 1.22.1:
+---------------------
+
+Fixes:
+
+   * ecore-drm2: Make atomic property values support uint64_t
+   * elm_atspi_bridget: Fix resource leak (CID1399424)
+   * elput: Remove useless call to eldbus_message_unref
+   * efl_core_command_line: Fix resource leak (CID1399105)
+   * ecore-evas-x: Fix double free (CID1382851)
+   * elm_theme: Check the ref count to delete or unref.
+   * elc_hoversel: Fix crash when no sd->last_location
+   * ecore drm2 - fix timeout in case case called from thread
+
 
 Changes since 1.22.0:
 ---------------------
