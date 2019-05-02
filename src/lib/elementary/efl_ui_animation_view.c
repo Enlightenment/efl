@@ -503,6 +503,9 @@ _efl_ui_animation_view_play_back(Eo *obj, Efl_Ui_Animation_View_Data *pd)
    if (!efl_file_loaded_get(obj)) return EINA_FALSE;
    if (!pd->transit && !_ready_play(pd)) return EINA_FALSE;
 
+   if (pd->progress == 0)
+     pd->progress = 1.0;
+
    if (pd->state == EFL_UI_ANIMATION_VIEW_STATE_STOP)
      _transit_go_facade(pd);
    else if (rewind)
