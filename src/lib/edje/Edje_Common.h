@@ -81,6 +81,39 @@ struct _Edje_Size_Class
 };
 
 /**
+ * @defgroup Edje_Object_Communication_Interface_Message Edje Communication Interface: Message
+ * @ingroup Edje_Object_Group
+ *
+ * @brief Functions that deal with messages.
+ *
+ * Edje has two communication interfaces between @b code and @b theme.
+ * Signals and messages.
+ *
+ * Edje messages are one of the communication interfaces between
+ * @b code and a given Edje object's @b theme. With messages, one can
+ * communicate values like strings, float numbers and integer
+ * numbers. Moreover, messages can be identified by integer
+ * numbers. See #Edje_Message_Type for the full list of message types.
+ *
+ * @note Messages must be handled by scripts.
+ *
+ * @{
+ */
+
+/**
+ * @brief Processes all queued up edje messages.
+ *
+ * This function triggers the processing of messages addressed to any
+ * (alive) edje objects.
+ *
+ */
+EAPI void         edje_message_signal_process             (void);
+
+/**
+ * @}
+ */
+
+/**
  * @defgroup Edje_Object_Communication_Interface_Signal Edje Communication Interface: Signal
  * @ingroup Edje_Object_Group
  *
@@ -111,6 +144,98 @@ typedef Efl_Signal_Cb Edje_Signal_Cb;
  * @since 1.1.0
  */
 EAPI void *       edje_object_signal_callback_extra_data_get(void);
+
+
+#ifdef EFL_BETA_API_SUPPORT
+/**
+ * @brief Gets seat data passed to callbacks.
+ *
+ * @return The seat data for that callback.
+ *
+ * When a callback is initiated by an input event from a seat, we try to
+ * provide seat information with it.
+ *
+ * Signals fired as programmed responses to these signals will also try
+ * to carry the seat data along.
+ *
+ * This returns an opaque pointer to the seat data.
+ *
+ * @see edje_object_signal_callback_add() for more on Edje signals.
+ * @since 1.21
+ */
+EAPI void *edje_object_signal_callback_seat_data_get(void);
+#endif
+
+
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Edje_Audio Edje Audio
+ * @ingroup Edje
+ *
+ * @brief Functions to manipulate audio abilities in edje.
+ *
+ * Perspective is a graphical tool that makes objects represented in 2D
+ * look like they have a 3D appearance.
+ *
+ * Edje allows us to use perspective on any edje object. This group of
+ * functions deal with the use of perspective, by creating and configuring
+ * a perspective object that must set to a edje object or a canvas,
+ * affecting all the objects inside that have no particular perspective
+ * set already.
+ *
+ * @{
+ */
+
+/**
+ * Identifiers of Edje message types, which can be sent back and forth
+ * code and a given Edje object's theme file/group.
+ *
+ * @see edje_audio_channel_mute_set()
+ * @see edje_audio_channel_mute_get()
+ *
+ * @since 1.9
+ */
+typedef enum _Edje_Channel
+{
+   EDJE_CHANNEL_EFFECT = 0, /**< Standard audio effects */
+   EDJE_CHANNEL_BACKGROUND = 1, /**< Background audio sounds  */
+   EDJE_CHANNEL_MUSIC = 2, /**< Music audio */
+   EDJE_CHANNEL_FOREGROUND = 3, /**< Foreground audio sounds */
+   EDJE_CHANNEL_INTERFACE = 4, /**< Sounds related to the interface */
+   EDJE_CHANNEL_INPUT = 5, /**< Sounds related to regular input */
+   EDJE_CHANNEL_ALERT = 6, /**< Sounds for major alerts */
+   EDJE_CHANNEL_ALL = 7 /**< All audio channels (convenience) */
+} Edje_Channel;
+
+/**
+ * @brief Sets the mute state of audio for the process as a whole.
+ *
+ * @param channel The channel to set the mute state of
+ * @param mute The mute state
+ *
+ * This sets the mute (no output) state of audio for the given channel.
+ *
+ * @see edje_audio_channel_mute_get()
+ *
+ * @since 1.9
+ */
+EAPI void edje_audio_channel_mute_set(Edje_Channel channel, Eina_Bool mute);
+
+/**
+ * @brief Gets the mute state of the given channel.
+ *
+ * @param channel The channel to get the mute state of
+ * @return The mute state of the channel
+ *
+ * @see edje_audio_channel_mute_set()
+ *
+ * @since 1.9
+ */
+EAPI Eina_Bool edje_audio_channel_mute_get(Edje_Channel channel);
 
 /**
  * @}
@@ -917,6 +1042,48 @@ EAPI const Edje_External_Type       *edje_external_type_get         (const char 
  *
  * @{
  */
+
+/**
+ * @typedef Edje_Aspect_Control
+ *
+ * All Edje aspect control values.
+ *
+ */
+typedef enum _Edje_Aspect_Control
+{
+   EDJE_ASPECT_CONTROL_NONE = 0,       /*< None aspect control value       */
+   EDJE_ASPECT_CONTROL_NEITHER = 1,    /*< Neither aspect control value    */
+   EDJE_ASPECT_CONTROL_HORIZONTAL = 2, /*< Horizontal aspect control value */
+   EDJE_ASPECT_CONTROL_VERTICAL = 3,   /*< Vertical aspect control value   */
+   EDJE_ASPECT_CONTROL_BOTH = 4        /*< Both aspect control value       */
+} Edje_Aspect_Control;
+
+/**
+ * @brief Gets the part name of an edje part object.
+ * @param obj An edje part object
+ * @return The name of the part, if the object is an edje part, or @c NULL
+ * @note If this function returns @c NULL, @p obj was not an Edje part object
+ * @see edje_object_part_object_get()
+ * @since 1.10
+ */
+EAPI const char *edje_object_part_object_name_get(const Evas_Object *obj);
+
+#ifdef EFL_BETA_API_SUPPORT
+
+/**
+ * @brief Creates scene and root node which contains all 3D parts of edje object.
+ * @param obj An edje part object
+ * @param root node to collect all 3D parts
+ * @param scene
+ * @return scene and root node which contains all 3D parts of edje object
+ * @note If this function returns @c EINA_FALSE, @p the scene or the root
+ * node wasn't made
+ * @since 1.18
+ */
+EAPI Eina_Bool edje_3d_object_add(Evas_Object *obj, Eo **root_node, Eo *scene);
+
+#endif
+
 /**
  * @}
  */
@@ -1254,245 +1421,113 @@ EAPI Eina_Iterator *edje_color_class_active_iterator_new(void);
  */
 EAPI Eina_Iterator *edje_mmap_color_class_iterator_new(Eina_File *f);
 
-
 /**
  * @}
  */
 
 /**
- * @defgroup Edje_Object_Part Edje Part
+ * @defgroup Edje_Object_Size_Class Edje Class: Size
  * @ingroup Edje_Object_Group
  *
- * @brief Functions that deal with layout components
+ * @brief Functions that deal with Size Classes
  *
- * Parts are layout components, but as a layout, they are objects too.
+ * Sometimes we want to change the size of two or more parts equally and
+ * that's when we use size classes.
  *
- * There are several types of parts, these types can be divided into two
- * main categories, the first being containers. Containers are parts
- * that are in effect a group of elements. The second group is that of
- * the elements, these part types may not contain others.
- *
- * This section has some functions specific for some types and others that
- * could be applied to any type.
- *
- * @{
- */
-
-/**
- * @defgroup Edje_Part_Text Edje Text Part
- * @ingroup Edje_Object_Part
- *
- * @brief Functions that deal with parts of type text
- *
- * Text is an element type for parts. It's basic functionality is to
- * display a string on the layout, but a lot more things can be done
- * with texts, like string selection, setting the cursor and include
- * a input panel, where one can set a virtual keyboard to handle
- * keyboard entry easily.
- *
- * @{
- */
-
-#define EDJE_TEXT_EFFECT_MASK_BASIC 0xf
-#define EDJE_TEXT_EFFECT_BASIC_SET(x, s) \
-   do { x = ((x) & ~EDJE_TEXT_EFFECT_MASK_BASIC) | (s); } while (0)
-
-#define EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION (0x7 << 4)
-#define EDJE_TEXT_EFFECT_SHADOW_DIRECTION_SET(x, s) \
-   do { x = ((x) & ~EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION) | (s); } while (0)
-
-/**
- * @typedef Edje_Text_Effect
- *
- * All possible text effects in Edje.
- */
-typedef enum _Edje_Text_Effect
-{
-   EDJE_TEXT_EFFECT_NONE                = 0,  /**< None text effect value */
-   EDJE_TEXT_EFFECT_PLAIN               = 1,  /**< Plain text effect value */
-   EDJE_TEXT_EFFECT_OUTLINE             = 2,  /**< Outline text effect value */
-   EDJE_TEXT_EFFECT_SOFT_OUTLINE        = 3,  /**< Soft outline text effect value */
-   EDJE_TEXT_EFFECT_SHADOW              = 4,  /**< Shadown text effect value */
-   EDJE_TEXT_EFFECT_SOFT_SHADOW         = 5,  /**< Soft shadow text effect value */
-   EDJE_TEXT_EFFECT_OUTLINE_SHADOW      = 6,  /**< Outline shadow text effect value */
-   EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW = 7,  /**< Outline soft shadow text effect value */
-   EDJE_TEXT_EFFECT_FAR_SHADOW          = 8,  /**< Far shadow text effect value */
-   EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW     = 9,  /**< Far soft shadow text effect value */
-   EDJE_TEXT_EFFECT_GLOW                = 10, /**< Glow text effect value */
-
-   EDJE_TEXT_EFFECT_LAST                = 11, /**< Last text effect value */
-
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_RIGHT = (0x0 << 4), /**< Bottom right shadow direction value */
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM       = (0x1 << 4), /**< Bottom shadow direction value */
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_LEFT  = (0x2 << 4), /**< Bottom left shadow direction value */
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_LEFT         = (0x3 << 4), /**< Left shadow direction value */
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_LEFT     = (0x4 << 4), /**< Top left shadow direction value */
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP          = (0x5 << 4), /**< Top shadow direction value */
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_RIGHT    = (0x6 << 4), /**< Top right shadow direction value */
-   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_RIGHT        = (0x7 << 4)  /**< right shadow direction value */
-} Edje_Text_Effect;
-
-
-/**
- * @defgroup Edje_Text_Selection Edje Text Selection
- * @ingroup Edje_Part_Text
- *
- * @brief Functions that deal with selection in text parts.
- *
- * Selection is a known functionality for texts in the whole computational
- * world. It is a block of text marked for further manipulation.
- *
- * Edje is responsible for handling this functionality through the
- * following functions.
- *
- * @{
- */
-/**
- * @}
- */
-
-/**
- * @defgroup Edje_Text_Cursor Edje Text Cursor
- * @ingroup Edje_Part_Text
- *
- * @brief Functions that deal with cursor in text parts.
- *
- * Cursor is a known functionality for texts in the whole computational
- * world. It marks a position in the text from where one may want
- * to make a insertion, deletion or selection.
- *
- * Edje is responsible for handling this functionality through the
- * following functions.
+ * If one or more parts are assigned with a size class, when we set attributes
+ * (minw etc.) to this class will update all these parts with the new attributes.
+ * Setting values to a size class at a process level will affect
+ * all parts with that size class, while at object level will affect only
+ * the parts inside an specified object.
  *
  * @{
  */
 
 /**
- * @}
+ * @brief Sets the Edje size class.
+ *
+ * @param size_class The size class name
+ * @param minw The min width
+ * @param minh The min height
+ * @param maxw The max width
+ * @param maxh The max height
+ *
+ * @return @c EINA_TRUE on success, or @c EINA_FALSE on error
+ *
+ * This function updates all Edje members at the process level which
+ * belong to this size class with the new min and max attributes.
+ *
+ * @see edje_size_class_get().
+ *
+ * @since 1.17
  */
+EAPI Eina_Bool    edje_size_class_set             (const char *size_class, Evas_Coord minw, Evas_Coord minh, Evas_Coord maxw, Evas_Coord maxh);
 
 /**
- * @defgroup Edje_Part_Swallow Edje Swallow Part
- * @ingroup Edje_Object_Part
+ * @brief Gets the Edje size class.
  *
- * @brief Functions that deal with parts of type swallow and swallowed objects.
+ * @param size_class The size class name
+ * @param minw The min width
+ * @param minh The min height
+ * @param maxw The max width
+ * @param maxh The max height
  *
- * A important feature of Edje is to be able to create Evas_Objects
- * in code and place them in a layout. And that is what swallowing
- * is all about.
+ * @return @c EINA_TRUE on success, or @c EINA_FALSE on error
  *
- * Swallow parts are place holders defined in the EDC file for
- * objects that one may want to include in the layout later, or for
- * objects that are not native of Edje. In this last case, Edje will
- * only treat the Evas_Object properties of the swallowed objects.
+ * This function gets the min and max size from the specified Edje
+ * size class.
  *
- *
- * @{
+ * @since 1.17
  */
+EAPI Eina_Bool    edje_size_class_get             (const char *size_class, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord *maxw, Evas_Coord *maxh);
 
 /**
- * @typedef Edje_Aspect_Control
+ * @brief Deletes the size class.
  *
- * All Edje aspect control values.
+ * @param size_class The size class name
  *
+ * This function deletes any values at the process level for the
+ * specified size class.
+ *
+ * @since 1.17
  */
-typedef enum _Edje_Aspect_Control
-{
-   EDJE_ASPECT_CONTROL_NONE = 0,       /*< None aspect control value       */
-   EDJE_ASPECT_CONTROL_NEITHER = 1,    /*< Neither aspect control value    */
-   EDJE_ASPECT_CONTROL_HORIZONTAL = 2, /*< Horizontal aspect control value */
-   EDJE_ASPECT_CONTROL_VERTICAL = 3,   /*< Vertical aspect control value   */
-   EDJE_ASPECT_CONTROL_BOTH = 4        /*< Both aspect control value       */
-} Edje_Aspect_Control;
+EAPI void         edje_size_class_del             (const char *size_class);
 
 /**
- * @}
+ * @brief Lists size classes.
+ *
+ * @return A list of size class names (strings). These strings are
+ * stringshares and the list must be eina_stringshare_del()'ed by the caller.
+ *
+ * This function lists all size classes known about by the current
+ * process.
+ *
+ * @since 1.17
  */
+EAPI Eina_List   *edje_size_class_list            (void);
 
 /**
- * @defgroup Edje_Object_Geometry_Group Edje Object Geometry
- * @ingroup Edje_Object_Group
+ * @brief Iterates over all active classes of an application.
  *
- * @brief Functions that deal with object's geometry.
+ * @return An iterator of Edje_Size_Class of the currently active size class
  *
- * By geometry we mean size and position. So in this groups there are
- * functions to manipulate object's geometry or retrieve information
- * about it.
+ * This function only iterates over the Edje_Size_Class in use by
+ * an application.
  *
- * Keep in mind that by changing an object's geometry, it may affect
- * the appearance in the screen of the parts inside. Most times
- * that is what you want.
- *
- * @{
+ * @since 1.17
  */
-/**
- * @}
- */
+EAPI Eina_Iterator *edje_size_class_active_iterator_new(void);
 
 /**
- * @defgroup Edje_Part_Box Edje Box Part
- * @ingroup Edje_Object_Part
+ * @brief Iterates over all size classes provided by an Edje file.
  *
- * @brief Functions that deal with parts of type box.
+ * @param f The mapped edje file.
  *
- * Box is a container type for parts, that means it can contain
- * other parts.
+ * @return an iterator of Edje_Size_Class provided by the Edje file.
  *
- * @{
+ * @since 1.17
  */
-
-/**
- * @brief Registers a custom layout to be used in edje boxes.
- *
- * @param name The name of the layout
- * @param func The function defining the layout
- * @param layout_data_get This function gets the custom data pointer
- * for func
- * @param layout_data_free Passed to func to free its private data
- * when needed
- * @param free_data Frees data
- * @param data Private pointer passed to layout_data_get
- *
- * This function registers custom layouts that can be referred from
- * themes by the registered name. The Evas_Object_Box_Layout
- * functions receive two pointers for internal use, one being private
- * data, and the other the function to free that data when it's not
- * longer needed. From Edje, this private data will be retrieved by
- * calling layout_data_get, and layout_data_free will be the free
- * function passed to func. layout_data_get will be called with data
- * as its parameter, and this one will be freed by free_data whenever
- * the layout is unregistered from Edje.
- */
-EAPI void         edje_box_layout_register        (const char *name, Evas_Object_Box_Layout func, void *(*layout_data_get)(void *), void (*layout_data_free)(void *), void (*free_data)(void *), void *data);
-
-/**
- * @}
- */
-
-/**
- * @defgroup Edje_Part_Table Edje Table Part
- * @ingroup Edje_Object_Part
- *
- * @brief Functions that deal with parts of type table.
- *
- * Table is a container type for parts, that means it can contain
- * other parts.
- *
- * @{
- */
-
-/**
- * @typedef Edje_Object_Table_Homogeneous_Mode
- *
- * Table homogeneous modes.
- *
- */
-typedef enum _Edje_Object_Table_Homogeneous_Mode
-{
-   EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE = 0,  /*< None homogeneous mode  */
-   EDJE_OBJECT_TABLE_HOMOGENEOUS_TABLE = 1, /*< Table homogeneous mode */
-   EDJE_OBJECT_TABLE_HOMOGENEOUS_ITEM = 2   /*< Item homogeneous mode  */
-} Edje_Object_Table_Homogeneous_Mode;
+EAPI Eina_Iterator *edje_mmap_size_class_iterator_new(Eina_File *f);
 
 /**
  * @}
@@ -1602,114 +1637,6 @@ EAPI Eina_Iterator *edje_text_class_active_iterator_new(void);
  *
  */
 EAPI Eina_Iterator *edje_mmap_text_class_iterator_new(Eina_File *f);
-
-/**
- * @}
- */
-
-/**
- * @defgroup Edje_Object_Size_Class Edje Class: Size
- * @ingroup Edje_Object_Group
- *
- * @brief Functions that deal with Size Classes
- *
- * Sometimes we want to change the size of two or more parts equally and
- * that's when we use size classes.
- *
- * If one or more parts are assigned with a size class, when we set attributes
- * (minw etc.) to this class will update all these parts with the new attributes.
- * Setting values to a size class at a process level will affect
- * all parts with that size class, while at object level will affect only
- * the parts inside an specified object.
- *
- * @{
- */
-
-/**
- * @brief Sets the Edje size class.
- *
- * @param size_class The size class name
- * @param minw The min width
- * @param minh The min height
- * @param maxw The max width
- * @param maxh The max height
- *
- * @return @c EINA_TRUE on success, or @c EINA_FALSE on error
- *
- * This function updates all Edje members at the process level which
- * belong to this size class with the new min and max attributes.
- *
- * @see edje_size_class_get().
- *
- * @since 1.17
- */
-EAPI Eina_Bool    edje_size_class_set             (const char *size_class, Evas_Coord minw, Evas_Coord minh, Evas_Coord maxw, Evas_Coord maxh);
-
-/**
- * @brief Gets the Edje size class.
- *
- * @param size_class The size class name
- * @param minw The min width
- * @param minh The min height
- * @param maxw The max width
- * @param maxh The max height
- *
- * @return @c EINA_TRUE on success, or @c EINA_FALSE on error
- *
- * This function gets the min and max size from the specified Edje
- * size class.
- *
- * @since 1.17
- */
-EAPI Eina_Bool    edje_size_class_get             (const char *size_class, Evas_Coord *minw, Evas_Coord *minh, Evas_Coord *maxw, Evas_Coord *maxh);
-
-/**
- * @brief Deletes the size class.
- *
- * @param size_class The size class name
- *
- * This function deletes any values at the process level for the
- * specified size class.
- *
- * @since 1.17
- */
-EAPI void         edje_size_class_del             (const char *size_class);
-
-/**
- * @brief Lists size classes.
- *
- * @return A list of size class names (strings). These strings are
- * stringshares and the list must be eina_stringshare_del()'ed by the caller.
- *
- * This function lists all size classes known about by the current
- * process.
- *
- * @since 1.17
- */
-EAPI Eina_List   *edje_size_class_list            (void);
-
-/**
- * @brief Iterates over all active classes of an application.
- *
- * @return An iterator of Edje_Size_Class of the currently active size class
- *
- * This function only iterates over the Edje_Size_Class in use by
- * an application.
- *
- * @since 1.17
- */
-EAPI Eina_Iterator *edje_size_class_active_iterator_new(void);
-
-/**
- * @brief Iterates over all size classes provided by an Edje file.
- *
- * @param f The mapped edje file.
- *
- * @return an iterator of Edje_Size_Class provided by the Edje file.
- *
- * @since 1.17
- */
-EAPI Eina_Iterator *edje_mmap_size_class_iterator_new(Eina_File *f);
 
 /**
  * @}
@@ -1996,147 +1923,233 @@ EAPI double       edje_transition_duration_factor_get                  (void);
  */
 
 /**
- * @defgroup Edje_Object_Communication_Interface_Message Edje Communication Interface: Message
+ * @defgroup Edje_Object_Geometry_Group Edje Object Geometry
  * @ingroup Edje_Object_Group
  *
- * @brief Functions that deal with messages.
+ * @brief Functions that deal with object's geometry.
  *
- * Edje has two communication interfaces between @b code and @b theme.
- * Signals and messages.
+ * By geometry we mean size and position. So in this groups there are
+ * functions to manipulate object's geometry or retrieve information
+ * about it.
  *
- * Edje messages are one of the communication interfaces between
- * @b code and a given Edje object's @b theme. With messages, one can
- * communicate values like strings, float numbers and integer
- * numbers. Moreover, messages can be identified by integer
- * numbers. See #Edje_Message_Type for the full list of message types.
- *
- * @note Messages must be handled by scripts.
+ * Keep in mind that by changing an object's geometry, it may affect
+ * the appearance in the screen of the parts inside. Most times
+ * that is what you want.
  *
  * @{
  */
-
-/**
- * @brief Processes all queued up edje messages.
- *
- * This function triggers the processing of messages addressed to any
- * (alive) edje objects.
- *
- */
-EAPI void         edje_message_signal_process             (void);
-
 /**
  * @}
  */
 
 /**
- * @defgroup Edje_Audio Edje Audio
- * @ingroup Edje
+ * @defgroup Edje_Object_Part Edje Part
+ * @ingroup Edje_Object_Group
  *
- * @brief Functions to manipulate audio abilities in edje.
+ * @brief Functions that deal with layout components
  *
- * Perspective is a graphical tool that makes objects represented in 2D
- * look like they have a 3D appearance.
+ * Parts are layout components, but as a layout, they are objects too.
  *
- * Edje allows us to use perspective on any edje object. This group of
- * functions deal with the use of perspective, by creating and configuring
- * a perspective object that must set to a edje object or a canvas,
- * affecting all the objects inside that have no particular perspective
- * set already.
+ * There are several types of parts, these types can be divided into two
+ * main categories, the first being containers. Containers are parts
+ * that are in effect a group of elements. The second group is that of
+ * the elements, these part types may not contain others.
+ *
+ * This section has some functions specific for some types and others that
+ * could be applied to any type.
  *
  * @{
  */
 
 /**
- * Identifiers of Edje message types, which can be sent back and forth
- * code and a given Edje object's theme file/group.
+ * @defgroup Edje_Part_Text Edje Text Part
+ * @ingroup Edje_Object_Part
  *
- * @see edje_audio_channel_mute_set()
- * @see edje_audio_channel_mute_get()
+ * @brief Functions that deal with parts of type text
  *
- * @since 1.9
+ * Text is an element type for parts. It's basic functionality is to
+ * display a string on the layout, but a lot more things can be done
+ * with texts, like string selection, setting the cursor and include
+ * a input panel, where one can set a virtual keyboard to handle
+ * keyboard entry easily.
+ *
+ * @{
  */
-typedef enum _Edje_Channel
+
+#define EDJE_TEXT_EFFECT_MASK_BASIC 0xf
+#define EDJE_TEXT_EFFECT_BASIC_SET(x, s) \
+   do { x = ((x) & ~EDJE_TEXT_EFFECT_MASK_BASIC) | (s); } while (0)
+
+#define EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION (0x7 << 4)
+#define EDJE_TEXT_EFFECT_SHADOW_DIRECTION_SET(x, s) \
+   do { x = ((x) & ~EDJE_TEXT_EFFECT_MASK_SHADOW_DIRECTION) | (s); } while (0)
+
+/**
+ * @typedef Edje_Text_Effect
+ *
+ * All possible text effects in Edje.
+ */
+typedef enum _Edje_Text_Effect
 {
-   EDJE_CHANNEL_EFFECT = 0, /**< Standard audio effects */
-   EDJE_CHANNEL_BACKGROUND = 1, /**< Background audio sounds  */
-   EDJE_CHANNEL_MUSIC = 2, /**< Music audio */
-   EDJE_CHANNEL_FOREGROUND = 3, /**< Foreground audio sounds */
-   EDJE_CHANNEL_INTERFACE = 4, /**< Sounds related to the interface */
-   EDJE_CHANNEL_INPUT = 5, /**< Sounds related to regular input */
-   EDJE_CHANNEL_ALERT = 6, /**< Sounds for major alerts */
-   EDJE_CHANNEL_ALL = 7 /**< All audio channels (convenience) */
-} Edje_Channel;
+   EDJE_TEXT_EFFECT_NONE                = 0,  /**< None text effect value */
+   EDJE_TEXT_EFFECT_PLAIN               = 1,  /**< Plain text effect value */
+   EDJE_TEXT_EFFECT_OUTLINE             = 2,  /**< Outline text effect value */
+   EDJE_TEXT_EFFECT_SOFT_OUTLINE        = 3,  /**< Soft outline text effect value */
+   EDJE_TEXT_EFFECT_SHADOW              = 4,  /**< Shadown text effect value */
+   EDJE_TEXT_EFFECT_SOFT_SHADOW         = 5,  /**< Soft shadow text effect value */
+   EDJE_TEXT_EFFECT_OUTLINE_SHADOW      = 6,  /**< Outline shadow text effect value */
+   EDJE_TEXT_EFFECT_OUTLINE_SOFT_SHADOW = 7,  /**< Outline soft shadow text effect value */
+   EDJE_TEXT_EFFECT_FAR_SHADOW          = 8,  /**< Far shadow text effect value */
+   EDJE_TEXT_EFFECT_FAR_SOFT_SHADOW     = 9,  /**< Far soft shadow text effect value */
+   EDJE_TEXT_EFFECT_GLOW                = 10, /**< Glow text effect value */
+
+   EDJE_TEXT_EFFECT_LAST                = 11, /**< Last text effect value */
+
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_RIGHT = (0x0 << 4), /**< Bottom right shadow direction value */
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM       = (0x1 << 4), /**< Bottom shadow direction value */
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_BOTTOM_LEFT  = (0x2 << 4), /**< Bottom left shadow direction value */
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_LEFT         = (0x3 << 4), /**< Left shadow direction value */
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_LEFT     = (0x4 << 4), /**< Top left shadow direction value */
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP          = (0x5 << 4), /**< Top shadow direction value */
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_TOP_RIGHT    = (0x6 << 4), /**< Top right shadow direction value */
+   EDJE_TEXT_EFFECT_SHADOW_DIRECTION_RIGHT        = (0x7 << 4)  /**< right shadow direction value */
+} Edje_Text_Effect;
 
 /**
- * @brief Sets the mute state of audio for the process as a whole.
+ * @defgroup Edje_Text_Selection Edje Text Selection
+ * @ingroup Edje_Part_Text
  *
- * @param channel The channel to set the mute state of
- * @param mute The mute state
+ * @brief Functions that deal with selection in text parts.
  *
- * This sets the mute (no output) state of audio for the given channel.
+ * Selection is a known functionality for texts in the whole computational
+ * world. It is a block of text marked for further manipulation.
  *
- * @see edje_audio_channel_mute_get()
+ * Edje is responsible for handling this functionality through the
+ * following functions.
  *
- * @since 1.9
+ * @{
  */
-EAPI void edje_audio_channel_mute_set(Edje_Channel channel, Eina_Bool mute);
+/**
+ * @}
+ */
 
 /**
- * @brief Gets the mute state of the given channel.
+ * @defgroup Edje_Text_Cursor Edje Text Cursor
+ * @ingroup Edje_Part_Text
  *
- * @param channel The channel to get the mute state of
- * @return The mute state of the channel
+ * @brief Functions that deal with cursor in text parts.
  *
- * @see edje_audio_channel_mute_set()
+ * Cursor is a known functionality for texts in the whole computational
+ * world. It marks a position in the text from where one may want
+ * to make a insertion, deletion or selection.
  *
- * @since 1.9
+ * Edje is responsible for handling this functionality through the
+ * following functions.
+ *
+ * @{
  */
-EAPI Eina_Bool edje_audio_channel_mute_get(Edje_Channel channel);
-
-/**
- * @brief Gets the part name of an edje part object.
- * @param obj An edje part object
- * @return The name of the part, if the object is an edje part, or @c NULL
- * @note If this function returns @c NULL, @p obj was not an Edje part object
- * @see edje_object_part_object_get()
- * @since 1.10
- */
-EAPI const char *edje_object_part_object_name_get(const Evas_Object *obj);
-
-#ifdef EFL_BETA_API_SUPPORT
-
-/**
- * @brief Creates scene and root node which contains all 3D parts of edje object.
- * @param obj An edje part object
- * @param root node to collect all 3D parts
- * @param scene
- * @return scene and root node which contains all 3D parts of edje object
- * @note If this function returns @c EINA_FALSE, @p the scene or the root
- * node wasn't made
- * @since 1.18
- */
-EAPI Eina_Bool edje_3d_object_add(Evas_Object *obj, Eo **root_node, Eo *scene);
-
-/**
- * @brief Gets seat data passed to callbacks.
- *
- * @return The seat data for that callback.
- *
- * When a callback is initiated by an input event from a seat, we try to
- * provide seat information with it.
- *
- * Signals fired as programmed responses to these signals will also try
- * to carry the seat data along.
- *
- * This returns an opaque pointer to the seat data.
- *
- * @see edje_object_signal_callback_add() for more on Edje signals.
- * @since 1.21
- */
-EAPI void *edje_object_signal_callback_seat_data_get(void);
-
-#endif
 
 /**
  * @}
  */
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Edje_Part_Swallow Edje Swallow Part
+ * @ingroup Edje_Object_Part
+ *
+ * @brief Functions that deal with parts of type swallow and swallowed objects.
+ *
+ * A important feature of Edje is to be able to create Evas_Objects
+ * in code and place them in a layout. And that is what swallowing
+ * is all about.
+ *
+ * Swallow parts are place holders defined in the EDC file for
+ * objects that one may want to include in the layout later, or for
+ * objects that are not native of Edje. In this last case, Edje will
+ * only treat the Evas_Object properties of the swallowed objects.
+ *
+ *
+ * @{
+ */
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Edje_Part_Box Edje Box Part
+ * @ingroup Edje_Object_Part
+ *
+ * @brief Functions that deal with parts of type box.
+ *
+ * Box is a container type for parts, that means it can contain
+ * other parts.
+ *
+ * @{
+ */
+
+/**
+ * @brief Registers a custom layout to be used in edje boxes.
+ *
+ * @param name The name of the layout
+ * @param func The function defining the layout
+ * @param layout_data_get This function gets the custom data pointer
+ * for func
+ * @param layout_data_free Passed to func to free its private data
+ * when needed
+ * @param free_data Frees data
+ * @param data Private pointer passed to layout_data_get
+ *
+ * This function registers custom layouts that can be referred from
+ * themes by the registered name. The Evas_Object_Box_Layout
+ * functions receive two pointers for internal use, one being private
+ * data, and the other the function to free that data when it's not
+ * longer needed. From Edje, this private data will be retrieved by
+ * calling layout_data_get, and layout_data_free will be the free
+ * function passed to func. layout_data_get will be called with data
+ * as its parameter, and this one will be freed by free_data whenever
+ * the layout is unregistered from Edje.
+ */
+EAPI void         edje_box_layout_register        (const char *name, Evas_Object_Box_Layout func, void *(*layout_data_get)(void *), void (*layout_data_free)(void *), void (*free_data)(void *), void *data);
+
+/**
+ * @}
+ */
+
+/**
+ * @defgroup Edje_Part_Table Edje Table Part
+ * @ingroup Edje_Object_Part
+ *
+ * @brief Functions that deal with parts of type table.
+ *
+ * Table is a container type for parts, that means it can contain
+ * other parts.
+ *
+ * @{
+ */
+
+/**
+ * @typedef Edje_Object_Table_Homogeneous_Mode
+ *
+ * Table homogeneous modes.
+ *
+ */
+typedef enum _Edje_Object_Table_Homogeneous_Mode
+{
+   EDJE_OBJECT_TABLE_HOMOGENEOUS_NONE = 0,  /*< None homogeneous mode  */
+   EDJE_OBJECT_TABLE_HOMOGENEOUS_TABLE = 1, /*< Table homogeneous mode */
+   EDJE_OBJECT_TABLE_HOMOGENEOUS_ITEM = 2   /*< Item homogeneous mode  */
+} Edje_Object_Table_Homogeneous_Mode;
+
+/**
+ * @}
+ */
+
+/**
+ * @}
+ */
+
