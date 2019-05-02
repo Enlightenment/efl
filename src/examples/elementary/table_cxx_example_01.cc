@@ -1,6 +1,6 @@
 // g++ -g `pkg-config --cflags --libs elementary-cxx efl-cxx eina-cxx eo-cxx ecore-cxx evas-cxx edje-cxx` table_cxx_example_01.cc -o table_cxx_example_01
 
-#include <Elementary.hh>
+#include <Efl_Ui.hh>
 
 using efl::eo::instantiate;
 

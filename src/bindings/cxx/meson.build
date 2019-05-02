@@ -11,7 +11,7 @@ cxx_sublibs = [
   ['Evas',       false,  true,  true, []],
   ['Edje',       false, false,  true, []],
   ['Eldbus',      true,  true,  true, []],
-  ['Elementary', false,  true,  true, []]
+  ['Elementary',  true,  true,  true, []]
 ]
 
 increased_dependency = []

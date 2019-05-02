@@ -14,7 +14,9 @@
 #include <Efl.hh>
 
 extern "C" {
+// Some Elm_* classes are built and require the old header.
 #include "Elementary.h"
+#include "Efl_Ui.h"
 }
 
 #include <Edje.hh>
