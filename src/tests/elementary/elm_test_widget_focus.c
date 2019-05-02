@@ -205,6 +205,8 @@ EFL_START_TEST(elm_test_widget_focus_simple_widget)
          ck_assert_int_eq(elm_object_focus_get(resettor), EINA_TRUE);
          ck_assert_int_eq(elm_object_focus_get(o), EINA_FALSE);
       }
+
+   eina_hash_free(map);
 }
 EFL_END_TEST
 
