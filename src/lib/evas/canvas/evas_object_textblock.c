@@ -1271,8 +1271,8 @@ static const Escape_Value escape_values_e_common_sorted[] = {
    ESCAPE_VALUE("&amp;", "\x26"),
    ESCAPE_VALUE("&apos;", "\x27"),
    ESCAPE_VALUE("&gt;", "\x3e"),
-   ESCAPE_VALUE("&quot;", "\x22"),
    ESCAPE_VALUE("&lt;", "\x3c"),
+   ESCAPE_VALUE("&quot;", "\x22"),
 };
 
 /**
@@ -8185,6 +8185,8 @@ _markup_get_text_utf8_append(Eina_Strbuf *sbuf, const char *text)
            eina_strbuf_append(sbuf, "&amp;");
         else if (ch == '"')
            eina_strbuf_append(sbuf, "&quot;");
+        else if (ch == '\'')
+           eina_strbuf_append(sbuf, "&apos;");
         else if (ch == _PARAGRAPH_SEPARATOR)
            eina_strbuf_append(sbuf, "<ps/>");
         else if (ch == _REPLACEMENT_CHAR)
