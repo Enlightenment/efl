@@ -76,6 +76,7 @@ EFL_START_TEST(binbuf_simple)
    eina_binbuf_reset(buf);
    fail_if(eina_binbuf_length_get(buf) != 0);
 
+   eina_binbuf_free(test_buf);
    eina_binbuf_free(buf);
 
 #undef TEXT
