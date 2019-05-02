@@ -430,8 +430,8 @@ EFL_START_TEST(eina_file_map_new_test)
 
    free(test_file_path);
    free(test_file2_path);
+   free(big_buffer);
    eina_tmpstr_del(test_dirname);
-
 }
 EFL_END_TEST
 
