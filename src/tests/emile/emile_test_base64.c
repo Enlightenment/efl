@@ -114,6 +114,7 @@ EFL_START_TEST(emile_test_base64_url)
    decoded = emile_base64url_decode(str);
    eina_strbuf_free(str);
    fail_if(memcmp(eina_binbuf_string_get(decoded), "Man", 3));
+   eina_binbuf_free(decoded);
 }
 EFL_END_TEST
 
