@@ -30,6 +30,7 @@ examples = [
   'fileselector_example',
   'fileviewlist',
   'filemvc',
+  'filter_example',
   'flip_example_01',
   'flipselector_example',
   'frame_example_01',
