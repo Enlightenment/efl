@@ -245,12 +245,8 @@ EFL_START_TEST(eina_test_tiler_calculation)
    t2 = eina_tiler_new(500, 500);
    fail_if(!t2);
 
-   t = eina_tiler_new(500, 500);
-   fail_if(!t);
-
    eina_tiler_tile_size_set(t1, 1, 1);
    eina_tiler_tile_size_set(t2, 1, 1);
-   eina_tiler_tile_size_set(t, 1, 1);
 
    EINA_RECTANGLE_SET(&r1, 0, 0, 500, 500);
    eina_tiler_rect_add(t1, &r1);
