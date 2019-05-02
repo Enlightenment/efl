@@ -466,6 +466,7 @@ EFL_START_TEST(ecore_test_ecore_file_monitor)
    _writeToFile(file_name, random_text);
 
    ck_assert_str_eq(ecore_file_monitor_path_get(mon), realp);
+   free(realp);
 
    ret = ecore_file_mksubdirs(src_dir, sub_dir);
    fail_if(ret != 1);
@@ -486,7 +487,6 @@ EFL_START_TEST(ecore_test_ecore_file_monitor)
 
    ret = ecore_file_shutdown();
    fail_if(ret != 0);
-
 }
 EFL_END_TEST
 
