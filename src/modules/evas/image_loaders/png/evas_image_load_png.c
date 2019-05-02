@@ -230,6 +230,7 @@ evas_image_load_file_data_png(void *loader_data,
    Eina_File *f;
 
    unsigned char *surface;
+   unsigned char *tmp_line;
    png_structp png_ptr = NULL;
    png_infop info_ptr = NULL;
    Evas_PNG_Info epi;
@@ -381,7 +382,7 @@ evas_image_load_file_data_png(void *loader_data,
      }
 
    passes = png_set_interlace_handling(png_ptr);
-
+   
    /* we read image line by line if scale down was set */
    if (scale_ratio == 1 && region_set == 0)
      {
@@ -395,7 +396,6 @@ evas_image_load_file_data_png(void *loader_data,
    else
      {
         unsigned char *src_ptr;
-        unsigned char *dst_ptr = surface;
         int skip_row = 0, region_x = 0, region_y = 0;
 
         if (region_set)
@@ -406,86 +406,51 @@ evas_image_load_file_data_png(void *loader_data,
 
         if (passes == 1)
           {
-             int line_size = (image_w * pack_offset) - (region_x * pack_offset);
-             unsigned char *tmp_line = (unsigned char *) alloca(image_w * pack_offset);
-             //accumulate pixel color here.
-             unsigned short *interp_buf = (unsigned short *) alloca(line_size * sizeof(unsigned short));
-             unsigned short *pbuf;
+             tmp_line = (unsigned char *) alloca(image_w * pack_offset);
 
              for (skip_row = 0; skip_row < region_y; skip_row++)
                png_read_row(png_ptr, tmp_line, NULL);
 
-             png_read_row(png_ptr, tmp_line, NULL);
-             src_ptr = tmp_line + (region_x * pack_offset);
-
-             //The first pixel, of the first line
-             for (k = 0; k < (int) pack_offset; k++)
-               dst_ptr[k] = src_ptr[k];
-
-             dst_ptr += pack_offset;
-             src_ptr += (scale_ratio * pack_offset);
-
-             for (j = 1; j < w; j++)
+             //general case: 4 bytes pixel.
+             if (pack_offset == sizeof(DATA32))
                {
-                  //rgba
-                  interp_buf[0] = 0;
-                  interp_buf[1] = 0;
-                  interp_buf[2] = 0;
-                  interp_buf[3] = 0;
+                  DATA32 *dst_ptr = (DATA32 *) surface;
+                  DATA32 *src_ptr2;
 
-                  //horizontal interpolation.
-                  for (p = 0; p < scale_ratio; p++)
-                    {
-                       for (k = 0; k < (int) pack_offset; k++)
-                         interp_buf[k] += src_ptr[k - (int)(p * pack_offset)];
-                    }
-                  for (k = 0; k < (int) pack_offset; k++)
-                    dst_ptr[k] = (interp_buf[k] / scale_ratio);
-
-                  dst_ptr += pack_offset;
-                  src_ptr += (scale_ratio * pack_offset);
-               }
-
-             //next lines
-             for (i = 1; i < h; i++)
-               {
-                  memset(interp_buf, 0x00, line_size * sizeof(unsigned short));
-
-                  //vertical interpolation.
-                  for (j = 0; j < scale_ratio; j++)
+                  for (i = 0; i < h; i++)
                     {
                        png_read_row(png_ptr, tmp_line, NULL);
-                       src_ptr = tmp_line + (region_x * pack_offset);
+                       src_ptr2 = (DATA32 *) (tmp_line + region_x * pack_offset);
 
-                      for (p = 0; p < line_size; ++p)
-                         interp_buf[p] += src_ptr[p];
+                       for (j = 0; j < w; j++)
+                         {
+                            *dst_ptr = *src_ptr2;
+                            ++dst_ptr;
+                            src_ptr2 += scale_ratio;
+                         }
+                       for (j = 0; j < (scale_ratio - 1); j++)
+                         png_read_row(png_ptr, tmp_line, NULL);
                     }
+               }
+             else
+               {
+                  unsigned char *dst_ptr = surface;
 
-                  for (p = 0; p < line_size; ++p)
-                    interp_buf[p] /= scale_ratio;
-
-                  pbuf = interp_buf;
-
-                  //The first pixel of the current line
-                  for (k = 0; k < (int) pack_offset; k++)
-                    dst_ptr[k] = pbuf[k];
-
-                  dst_ptr += pack_offset;
-                  pbuf += scale_ratio * pack_offset;
-
-                  for (j = 1; j < w; j++)
+                  for (i = 0; i < h; i++)
                     {
-                       //horizontal interpolation.
-                       for (p = 1; p < scale_ratio; ++p)
+                       png_read_row(png_ptr, tmp_line, NULL);
+                       src_ptr = tmp_line + region_x * pack_offset;
+
+                       for (j = 0; j < w; j++)
                          {
                             for (k = 0; k < (int) pack_offset; k++)
-                              pbuf[k] += pbuf[k - (int)(p * pack_offset)];
-                         }
-                       for (k = 0; k < (int) pack_offset; k++)
-                         dst_ptr[k] = (pbuf[k] / scale_ratio);
+                              dst_ptr[k] = src_ptr[k];
 
-                       dst_ptr += pack_offset;
-                       pbuf += (scale_ratio * pack_offset);
+                            dst_ptr += pack_offset;
+                            src_ptr += scale_ratio * pack_offset;
+                         }
+                       for (j = 0; j < (scale_ratio - 1); j++)
+                         png_read_row(png_ptr, tmp_line, NULL);
                     }
                }
 
@@ -494,8 +459,6 @@ evas_image_load_file_data_png(void *loader_data,
           }
         else
           {
-             //TODO: Scale-down interpolation for multi-pass?
-
              unsigned char *pixels2 = malloc(image_w * image_h * pack_offset);
 
              if (pixels2)
