@@ -74,7 +74,7 @@ EFL_START_TEST(emile_test_base64_normal)
 
    eina_strbuf_append(str, "abc");
    decoded = emile_base64_decode(str);
-   eina_strbuf_reset(str);
+   eina_strbuf_free(str);
    fail_if(decoded);
 }
 EFL_END_TEST
