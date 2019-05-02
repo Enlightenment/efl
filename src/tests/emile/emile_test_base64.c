@@ -59,6 +59,8 @@ EFL_START_TEST(emile_test_base64_normal)
         eina_strbuf_reset(str);
      }
 
+   eina_binbuf_free(buffer);
+
    //Failure scenarios.
    decoded = emile_base64_decode(NULL);
    fail_if(decoded);
