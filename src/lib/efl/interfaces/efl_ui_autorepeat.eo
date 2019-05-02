@@ -1,46 +1,47 @@
 interface @beta Efl.Ui.Autorepeat {
-   [[Efl UI autorepeat interface]]
-      eo_prefix: efl_ui;
+   [[Interface for autorepeating clicks.
+
+     This interface abstracts functions for enabling / disabling this feature.
+     When enabled, keeping a button pressed will continuously emit the $repeated
+     event until the button is released. The time it takes until it starts
+     emitting the event is given by @.autorepeat_initial_timeout, and the
+     time between each new emission by @.autorepeat_gap_timeout.
+   ]]
    methods {
       @property autorepeat_initial_timeout {
-         [[The initial timeout before the autorepeat event is generated
+         [[The initial timeout before the autorepeat event is generated.
 
            Sets the timeout, in seconds, since the button is pressed until the
            first $repeated signal is emitted. If $t is 0.0 or less, there
            won't be any delay and the event will be fired the moment the button is
            pressed.
 
-           See also @.autorepeat_enabled.set, @.autorepeat_gap_timeout.set.
+           See also @.autorepeat_enabled and @.autorepeat_gap_timeout.
          ]]
          values {
-            t: double; [[Timeout in seconds]]
+            t: double; [[Timeout in seconds.]]
          }
       }
       @property autorepeat_gap_timeout {
-         [[The interval between each generated autorepeat event
+         [[The interval between each generated autorepeat event.
 
            After the first $repeated event is fired, all subsequent ones will
            follow after a delay of $t seconds for each.
 
-           See also @.autorepeat_initial_timeout.set.
+           See also @.autorepeat_initial_timeout.
          ]]
          values {
-            t: double; [[Interval in seconds]]
+            t: double; [[Time interval in seconds.]]
          }
       }
       @property autorepeat_enabled {
-         [[Turn on/off the autorepeat event generated when the button is kept pressed
+         [[Turn on/off the autorepeat event generated when a button is kept pressed.
 
            When off, no autorepeat is performed and buttons emit a normal $clicked
-           signal when they are clicked.
-
-           When on, keeping a button pressed will continuously emit a $repeated
-           signal until the button is released. The time it takes until it starts
-           emitting the signal is given by @.autorepeat_initial_timeout.set, and the
-           time between each new emission by @.autorepeat_gap_timeout.set.
+           event when they are clicked.
          ]]
          values {
-            on: bool; [[A bool to turn on/off the event]]
+            on: bool; [[A bool to turn on/off the repeat event generation.]]
          }
       }
    }
