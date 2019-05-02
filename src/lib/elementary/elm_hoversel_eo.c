@@ -160,7 +160,7 @@ _elm_hoversel_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_ui_widget_theme_apply, _elm_hoversel_efl_ui_widget_theme_apply),
       EFL_OBJECT_OP_FUNC(efl_ui_l10n_translation_update, _elm_hoversel_efl_ui_l10n_translation_update),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_input_event_handler, _elm_hoversel_efl_ui_widget_widget_input_event_handler),
-      EFL_OBJECT_OP_FUNC(efl_ui_autorepeat_supported_get, _elm_hoversel_efl_ui_autorepeat_autorepeat_supported_get),
+      EFL_OBJECT_OP_FUNC(efl_ui_autorepeat_enabled_set, _elm_hoversel_efl_ui_autorepeat_autorepeat_enabled_set),
       EFL_OBJECT_OP_FUNC(efl_access_widget_action_elm_actions_get, _elm_hoversel_efl_access_widget_action_elm_actions_get),
       EFL_OBJECT_OP_FUNC(efl_access_object_access_children_get, _elm_hoversel_efl_access_object_access_children_get),
       ELM_HOVERSEL_EXTRA_OPS

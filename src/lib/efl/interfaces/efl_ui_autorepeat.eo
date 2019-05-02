@@ -43,13 +43,5 @@ interface @beta Efl.Ui.Autorepeat {
             on: bool; [[A bool to turn on/off the event]]
          }
       }
-      @property autorepeat_supported {
-         [[Whether the button supports autorepeat.]]
-         get {
-         }
-         values {
-            ret: bool; [[$true if autorepeat is supported, $false otherwise]]
-         }
-      }
    }
 }
