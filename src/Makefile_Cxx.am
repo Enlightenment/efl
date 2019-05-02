@@ -26,7 +26,7 @@ installed_eflcxxextraheadersdir = $(includedir)/efl-cxx-@VMAJ@/cxx
 dist_installed_eflcxxextraheaders_DATA = lib/efl/cxx/efl_part_impl.hh
 
 installed_elementarycxxmainheadersdir = $(includedir)/elementary-cxx-@VMAJ@/
-dist_installed_elementarycxxmainheaders_DATA = lib/elementary/Elementary.hh
+dist_installed_elementarycxxmainheaders_DATA = lib/elementary/Efl_Ui.hh
 
 installed_evascxxmainheadersdir = $(includedir)/evas-cxx-@VMAJ@/
 dist_installed_evascxxmainheaders_DATA = lib/evas/Evas.hh
