@@ -722,7 +722,8 @@ _efl_canvas_image_efl_gfx_buffer_buffer_managed_get(Eo *eo_obj, void *_pd EINA_U
    if (!o->buffer_data_set || !o->engine_data || !ENFN->image_data_direct_get)
      return slice;
 
-   ENFN->image_data_direct_get(ENC, o->engine_data, plane, &slice, &cspace, EINA_FALSE);
+   ENFN->image_data_direct_get(ENC, o->engine_data, plane, &slice, &cspace, EINA_FALSE, NULL);
+
    return slice;
 }
 

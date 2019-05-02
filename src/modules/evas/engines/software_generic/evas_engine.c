@@ -1049,9 +1049,10 @@ eng_image_file_colorspace_get(void *data EINA_UNUSED, void *image)
 static Eina_Bool
 eng_image_data_direct_get(void *data EINA_UNUSED, void *image, int plane,
                           Eina_Slice *slice, Evas_Colorspace *cspace,
-                          Eina_Bool load)
+                          Eina_Bool load, Eina_Bool *tofree)
 {
    RGBA_Image *im = image;
+   if (tofree) *tofree = EINA_FALSE;
 
    if (!slice || !im)
      return EINA_FALSE;
