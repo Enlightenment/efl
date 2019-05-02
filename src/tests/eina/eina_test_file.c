@@ -532,8 +532,8 @@ EFL_START_TEST(eina_test_file_path)
      {
         path = eina_file_path_sanitize(sanitize[i].test);
         fail_if(strcmp(path, sanitize[i].result));
+        free(path);
      }
-
 }
 EFL_END_TEST
 
