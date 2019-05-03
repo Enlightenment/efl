@@ -58,11 +58,12 @@ struct constant_definition_generator
       }
 
     // declare variable
-    if (!as_generator(scope_tab(1)
+    if (!as_generator(documentation(1)
+                      << scope_tab(1)
                       << "public static readonly " << type
                       << " " << utils::remove_all(constant.name, '_')
                       << " = " << literal << ";\n")
-          .generate(sink, constant.base_type, context))
+          .generate(sink, std::make_tuple(constant, constant.base_type), context))
       return false;
 
     // FIXME missing documentation generator
