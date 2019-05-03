@@ -465,9 +465,9 @@ struct klass
 
          // Native method definitions
          if(!as_generator(
-                indent << scope_tab << "#pragma warning disable CA1707, SA1300, SA1600\n\n"
+                indent << scope_tab << "#pragma warning disable CA1707, CS1591, SA1300, SA1600\n\n"
                 <<  *(native_function_definition(cls))
-                << indent << scope_tab << "#pragma warning restore CA1707, SA1300, SA1600\n\n")
+                << indent << scope_tab << "#pragma warning restore CA1707, CS1591, SA1300, SA1600\n\n")
             .generate(sink, implementable_methods, change_indentation(indent.inc(), inative_cxt))) return false;
 
          if(!as_generator("}\n").generate(sink, attributes::unused, inative_cxt)) return false;
@@ -516,15 +516,19 @@ struct klass
        return true;
 
      if (cls.get_all_events().size() > 0)
-        if (!as_generator(scope_tab << visibility << "Dictionary<(IntPtr desc, object evtDelegate), (IntPtr evtCallerPtr, Efl.EventCb evtCaller)> eoEvents = new Dictionary<(IntPtr desc, object evtDelegate), (IntPtr evtCallerPtr, Efl.EventCb evtCaller)>();\n"
-                          << scope_tab << visibility << "readonly object eventLock = new object();\n")
+        if (!as_generator(
+                    scope_tab << "/// <summary>Internal usage by derived classes to track native events.</summary>\n"
+                    << scope_tab << visibility << "Dictionary<(IntPtr desc, object evtDelegate), (IntPtr evtCallerPtr, Efl.EventCb evtCaller)> eoEvents = new Dictionary<(IntPtr desc, object evtDelegate), (IntPtr evtCallerPtr, Efl.EventCb evtCaller)>();\n"
+                    << scope_tab << "/// <summary>Internal usage by derived classes to lock native event handlers.</summary>\n"
+                    << scope_tab << visibility << "readonly object eventLock = new object();\n")
               .generate(sink, attributes::unused, context))
           return false;
 
      if (is_inherit)
       {
          if (!as_generator(
-                scope_tab << "protected bool inherited;\n"
+                scope_tab << "/// <summary>Internal usage to detect whether this instance is from a generated class or not.</summary>\n"
+                << scope_tab << "protected bool inherited;\n"
                 ).generate(sink, attributes::unused, context))
            return false;
       }
