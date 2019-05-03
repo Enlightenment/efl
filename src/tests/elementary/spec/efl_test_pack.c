@@ -8,7 +8,7 @@
 
 /* spec-meta-start
       {"test-interface":"Efl.Pack",
-       "test-widgets": ["Efl.Ui.Table"]}
+       "test-widgets": ["Efl.Ui.Table", "Efl.Ui.Relative_Layout"]}
 
    spec-meta-end */
 
