@@ -804,8 +804,25 @@ EAPI Eina_Iterator *eolian_state_eot_files_get(const Eolian_State *state);
 /*
  * @brief Parse the given .eo or .eot file and fill the database.
  *
- * The input can be either a full path to the file or only a filename.
- * If it's a filename, it must be scanned for first.
+ * The input must be a file name from a directory that was previously
+ * scanned with eolian_state_directory_add().
+ *
+ * @param[in] state The Eolian state.
+ * @param[in] filename The name of the file to parse.
+ * @return The unit corresponding to the parsed file or NULL.
+ *
+ * @see eolian_state_directory_add
+ * @see eolian_state_file_path_parse
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Unit *eolian_state_file_parse(Eolian_State *state, const char *filename);
+
+/*
+ * @brief Parse the given .eo or .eot file and fill the database.
+ *
+ * The input is a file path. Its directory is scanned first, and then
+ * the file itself is parsed and a unit handle is returned.
  *
  * @param[in] state The Eolian state.
  * @param[in] filepath Path to the file to parse.
@@ -815,7 +832,7 @@ EAPI Eina_Iterator *eolian_state_eot_files_get(const Eolian_State *state);
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Unit *eolian_state_file_parse(Eolian_State *state, const char *filepath);
+EAPI const Eolian_Unit *eolian_state_file_path_parse(Eolian_State *state, const char *filepath);
 
 /*
  * @brief Parse all known eo files.

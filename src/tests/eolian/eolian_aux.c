@@ -11,8 +11,8 @@ EFL_START_TEST(eolian_aux_children)
    Eolian_State *eos = eolian_state_new();
 
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data_aux"));
-   fail_if(!eolian_state_file_parse(eos, TESTS_SRC_DIR"/data_aux/aux_a.eo"));
-   fail_if(!eolian_state_file_parse(eos, TESTS_SRC_DIR"/data_aux/aux_b.eo"));
+   fail_if(!eolian_state_file_path_parse(eos, "aux_a.eo"));
+   fail_if(!eolian_state_file_parse(eos, "aux_b.eo"));
 
    Eina_Hash *chash = eolian_aux_state_class_children_find(eos);
    fail_if(!chash);
@@ -48,8 +48,8 @@ EFL_START_TEST(eolian_aux_implements)
    Eolian_State *eos = eolian_state_new();
 
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data_aux"));
-   fail_if(!eolian_state_file_parse(eos, TESTS_SRC_DIR"/data_aux/aux_a.eo"));
-   fail_if(!eolian_state_file_parse(eos, TESTS_SRC_DIR"/data_aux/aux_b.eo"));
+   fail_if(!eolian_state_file_parse(eos, "aux_a.eo"));
+   fail_if(!eolian_state_file_parse(eos, "aux_b.eo"));
 
    Eina_Hash *chash = eolian_aux_state_class_children_find(eos);
    fail_if(!chash);
@@ -75,7 +75,7 @@ EFL_START_TEST(eolian_aux_callables)
    Eolian_State *eos = eolian_state_new();
 
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data_aux"));
-   fail_if(!eolian_state_file_parse(eos, TESTS_SRC_DIR"/data_aux/aux_a.eo"));
+   fail_if(!eolian_state_file_parse(eos, "aux_a.eo"));
 
    const Eolian_Class *acl = eolian_state_class_by_name_get(eos, "Aux_A");
    fail_if(!acl);
@@ -103,7 +103,7 @@ EFL_START_TEST(eolian_aux_implparent)
    Eolian_State *eos = eolian_state_new();
 
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data_aux"));
-   fail_if(!eolian_state_file_parse(eos, TESTS_SRC_DIR"/data_aux/aux_a.eo"));
+   fail_if(!eolian_state_file_parse(eos, "aux_a.eo"));
 
    const Eolian_Class *acl = eolian_state_class_by_name_get(eos, "Aux_A");
    fail_if(!acl);

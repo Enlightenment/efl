@@ -759,22 +759,42 @@ join_path(const char *path, const char *file)
    return ret;
 }
 
-static void
-_scan_cb(const char *name, const char *path, void *data EINA_UNUSED)
+typedef struct _Scan_State
 {
-   Eolian_State *state = data;
+   Eolian_State *eos;
+   Eina_Bool succ;
+} Scan_State;
+
+static void
+_scan_cb(const char *name, const char *path, void *data)
+{
+   Scan_State *sst = data;
    Eina_Bool is_eo = eina_str_has_suffix(name, EO_SUFFIX);
    if (!is_eo && !eina_str_has_suffix(name, EOT_SUFFIX)) return;
-   eina_hash_add(is_eo ? state->filenames_eo : state->filenames_eot,
-                 eina_stringshare_add(name), join_path(path, name));
+   Eina_Hash *fh = is_eo ? sst->eos->filenames_eo : sst->eos->filenames_eot;
+   const char *origpath = eina_hash_find(fh, name);
+   char *newpath = join_path(path, name);
+   if (origpath)
+     {
+        if (strcmp(origpath, newpath))
+          {
+            eolian_state_log(sst->eos,
+                             "conflicting paths for '%s': '%s' -> '%s'",
+                             name, origpath, newpath);
+            sst->succ = EINA_FALSE;
+          }
+        free(newpath);
+     }
+   else
+     eina_hash_add(fh, name, newpath);
 }
 
 EAPI Eina_Bool
 eolian_state_directory_add(Eolian_State *state, const char *dir)
 {
    if (!dir || !state) return EINA_FALSE;
-   eina_file_dir_list(dir, EINA_TRUE, _scan_cb, state);
-   return EINA_TRUE;
+   Scan_State sst = { state, EINA_TRUE };
+   return eina_file_dir_list(dir, EINA_TRUE, _scan_cb, &sst);
 }
 
 EAPI Eina_Bool
@@ -818,25 +838,24 @@ eolian_state_eo_file_paths_get(const Eolian_State *state)
 }
 
 static Eolian_Unit *
-_eolian_file_parse_nodep(Eolian_Unit *parent, const char *filepath)
+_eolian_file_parse_nodep(Eolian_Unit *parent, const char *filename)
 {
    Eina_Bool is_eo;
-   const char *eopath;
-
-   is_eo = eina_str_has_suffix(filepath, EO_SUFFIX);
-   if (!is_eo && !eina_str_has_suffix(filepath, EOT_SUFFIX))
+   is_eo = eina_str_has_suffix(filename, EO_SUFFIX);
+   if (!is_eo && !eina_str_has_suffix(filename, EOT_SUFFIX))
      {
         eolian_state_log(parent->state,
                          "file '%s' doesn't have a correct extension",
-                         filepath);
+                         filename);
         return NULL;
      }
-   if (!(eopath = eina_hash_find(is_eo ? parent->state->filenames_eo : parent->state->filenames_eot, filepath)))
+   const char *eopath = eina_hash_find(is_eo ? parent->state->filenames_eo : parent->state->filenames_eot, filename);
+   if (!eopath)
      {
-        char *vpath = eina_file_path_sanitize(filepath);
-        Eolian_Unit *ret = eo_parser_database_fill(parent, vpath, !is_eo);
-        free(vpath);
-        return ret;
+        eolian_state_log(parent->state,
+                         "file '%s' is not registered in the database",
+                         filename);
+        return NULL;
      }
    return eo_parser_database_fill(parent, eopath, !is_eo);
 }
@@ -1027,13 +1046,13 @@ _merge_staging(Eolian_State *state)
 }
 
 EAPI const Eolian_Unit *
-eolian_state_file_parse(Eolian_State *state, const char *filepath)
+eolian_state_file_parse(Eolian_State *state, const char *filename)
 {
    if (!state)
      return NULL;
 
    _state_clean(state);
-   Eolian_Unit *ret = _eolian_file_parse_nodep(&state->staging.unit, filepath);
+   Eolian_Unit *ret = _eolian_file_parse_nodep(&state->staging.unit, filename);
    if (!ret)
      return NULL;
    if (!_parse_deferred(ret))
@@ -1043,6 +1062,37 @@ eolian_state_file_parse(Eolian_State *state, const char *filepath)
      return NULL;
    _merge_staging(state);
    return ret;
+}
+
+EAPI const Eolian_Unit *
+eolian_state_file_path_parse(Eolian_State *state, const char *filepath)
+{
+   if (!state)
+     return NULL;
+
+   char *mpath = strdup(filepath);
+   if (!mpath)
+     return NULL;
+
+   char *fname = strrchr(mpath, '/');
+   if (fname && strrchr(fname, '\\'))
+     fname = strrchr(fname, '\\');
+
+   const char *toscan = mpath;
+   if (!fname)
+     {
+        toscan = ".";
+        fname = mpath;
+     }
+   else
+     *fname++ = '\0';
+
+   if (!eolian_state_directory_add(state, toscan))
+     {
+        eolian_state_log(state, "could not scan directory '%s'", toscan);
+        return NULL;
+     }
+   return eolian_state_file_parse(state, fname);
 }
 
 typedef struct _Parse_Data

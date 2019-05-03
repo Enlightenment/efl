@@ -310,7 +310,8 @@ ffi.cdef [[
     Eina_Iterator *eolian_state_eot_file_paths_get(const Eolian_State *state);
     Eina_Iterator *eolian_state_eo_files_get(const Eolian_State *state);
     Eina_Iterator *eolian_state_eot_files_get(const Eolian_State *state);
-    const Eolian_Unit *eolian_state_file_parse(Eolian_State *state, const char *filepath);
+    const Eolian_Unit *eolian_state_file_parse(Eolian_State *state, const char *filename);
+    const Eolian_Unit *eolian_state_file_path_parse(Eolian_State *state, const char *filepath);
     Eina_Bool eolian_state_all_eo_files_parse(Eolian_State *state);
     Eina_Bool eolian_state_all_eot_files_parse(Eolian_State *state);
     Eina_Bool eolian_state_check(const Eolian_State *state);
@@ -755,8 +756,16 @@ ffi.metatype("Eolian_State", {
             return eolian.eolian_state_system_directory_add(self) ~= 0
         end,
 
-        file_parse = function(self, fpath)
-            local v = eolian.eolian_state_file_parse(self, fpath)
+        file_parse = function(self, fname)
+            local v = eolian.eolian_state_file_parse(self, fname)
+            if v == nil then
+                return nil
+            end
+            return v
+        end,
+
+        file_path_parse = function(self, fpath)
+            local v = eolian.eolian_state_file_path_parse(self, fpath)
             if v == nil then
                 return nil
             end

@@ -618,7 +618,7 @@ main(int argc, char **argv)
           }
      }
 
-   if (!eolian_state_file_parse(eos, input))
+   if (!eolian_state_file_path_parse(eos, input))
      {
         fprintf(stderr, "eolian: could not parse file '%s'\n", input);
         goto end;

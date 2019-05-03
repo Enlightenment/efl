@@ -52,9 +52,13 @@ lib.eolian_state_new.restype = c_void_p
 lib.eolian_state_free.argtypes = (c_void_p,)
 lib.eolian_state_free.restype = None
 
-# EAPI const Eolian_Unit *eolian_state_file_parse(Eolian_State *state, const char *filepath);
+# EAPI const Eolian_Unit *eolian_state_file_parse(Eolian_State *state, const char *filename);
 lib.eolian_state_file_parse.argtypes = (c_void_p, c_char_p)
 lib.eolian_state_file_parse.restype = c_void_p
+
+# EAPI const Eolian_Unit *eolian_state_file_path_parse(Eolian_State *state, const char *filepath);
+lib.eolian_state_file_path_parse.argtypes = (c_void_p, c_char_p)
+lib.eolian_state_file_path_parse.restype = c_void_p
 
 # EAPI Eina_Iterator *eolian_state_eo_file_paths_get(const Eolian_State *state);
 lib.eolian_state_eo_file_paths_get.argtypes = (c_void_p,)
