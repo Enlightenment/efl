@@ -11,7 +11,7 @@ EFL_START_TEST(eolian_aux_children)
    Eolian_State *eos = eolian_state_new();
 
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data_aux"));
-   fail_if(!eolian_state_file_path_parse(eos, "aux_a.eo"));
+   fail_if(!eolian_state_file_parse(eos, "aux_a.eo"));
    fail_if(!eolian_state_file_parse(eos, "aux_b.eo"));
 
    Eina_Hash *chash = eolian_aux_state_class_children_find(eos);
