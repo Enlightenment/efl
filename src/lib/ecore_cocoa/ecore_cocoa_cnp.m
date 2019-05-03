@@ -112,7 +112,7 @@ ecore_cocoa_clipboard_get(int                  *size,
         NSString *str = [items objectAtIndex: 0];
         data = (void *)[str UTF8String];
         len = [str lengthOfBytesUsingEncoding: NSUTF8StringEncoding];
-        data = strndup((const char *)data, len);
+        data = eina_strndup((const char *)data, len);
 
         if (EINA_UNLIKELY(!data))
           {

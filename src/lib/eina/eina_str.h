@@ -3,6 +3,7 @@
 
 #include <stddef.h>
 #include <string.h>
+#include <time.h>
 
 #include "eina_types.h"
 

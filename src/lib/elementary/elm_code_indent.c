@@ -16,7 +16,7 @@ elm_code_line_indent_startswith_keyword(Elm_Code_Line *line)
    unsigned int textlen;
 
    text = (char *)elm_code_line_text_get(line, &textlen);
-   text = strndup(text, textlen);
+   text = eina_strndup(text, textlen);
 
    ret = regcomp(&regex, "^\\s*("
                          "((if|else\\s*if|while|for|switch)\\s*\\(.*\\)\\s*\\{?)|"

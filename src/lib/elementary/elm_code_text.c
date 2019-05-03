@@ -104,7 +104,7 @@ elm_code_line_text_substr(Elm_Code_Line *line, unsigned int position, int length
      length = line->length - position;
 
    content = elm_code_line_text_get(line, NULL);
-   return strndup(content + position, length);
+   return eina_strndup(content + position, length);
 }
 
 static void

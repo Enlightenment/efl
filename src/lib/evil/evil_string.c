@@ -11,23 +11,9 @@
 
 
 /*
- * bit related functions
+ * string related functions
  *
  */
-
-char *
-strndup(const char *str, size_t n)
-{
-   size_t slen = strnlen(str, n);
-   char *ret;
-
-   ret = malloc (slen + 1);
-   if (!ret) return NULL;
-
-   if (slen > 0) memcpy(ret, str, slen);
-   ret[slen] = '\0';
-   return ret;
-}
 
 char *strcasestr(const char *haystack, const char *needle)
 {
