@@ -1529,6 +1529,9 @@ EFL_START_TEST(eolian_parts)
 
         fail_if(!(klass = eolian_part_class_get(part)));
         ck_assert_str_eq(part_classes[i], eolian_class_short_name_get(klass));
+
+        fail_if(eolian_part_is_beta(part) && (i == 0));
+
         i++;
      }
    eina_iterator_free(iter);

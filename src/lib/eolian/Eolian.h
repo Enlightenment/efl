@@ -2218,6 +2218,19 @@ EAPI const Eolian_Class *eolian_part_class_get(const Eolian_Part *part);
 EAPI const Eolian_Documentation *eolian_part_documentation_get(const Eolian_Part *part);
 
 /*
+ * @brief Get whether a part is beta.
+ *
+ * @see eolian_object_is_beta
+ *
+ * @ingroup Eolian
+ */
+static inline Eina_Bool
+eolian_part_is_beta(const Eolian_Part *part)
+{
+   return eolian_object_is_beta(EOLIAN_OBJECT(part));
+}
+
+/*
  * @brief Get an event in a class by its name
  *
  * @param[in] klass the class

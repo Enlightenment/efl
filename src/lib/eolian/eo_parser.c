@@ -1406,6 +1406,11 @@ parse_part(Eo_Lexer *ls)
    check(ls, TOK_VALUE);
    part->base.name = eina_stringshare_ref(ls->t.value.s);
    eo_lexer_get(ls);
+   if (ls->t.kw == KW_at_beta)
+     {
+        part->base.is_beta = EINA_TRUE;
+        eo_lexer_get(ls);
+     }
    check_next(ls, ':');
    Eina_Strbuf *buf = eina_strbuf_new();
    eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), buf);
