@@ -794,7 +794,7 @@ eolian_state_directory_add(Eolian_State *state, const char *dir)
 {
    if (!dir || !state) return EINA_FALSE;
    Scan_State sst = { state, EINA_TRUE };
-   return eina_file_dir_list(dir, EINA_TRUE, _scan_cb, &sst);
+   return eina_file_dir_list(dir, EINA_TRUE, _scan_cb, &sst) && sst.succ;
 }
 
 EAPI Eina_Bool
