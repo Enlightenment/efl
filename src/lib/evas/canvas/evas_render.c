@@ -279,6 +279,29 @@ _evas_clip_changes_free(const void *container EINA_UNUSED, void *data, void *fda
    return EINA_TRUE;
 }
 
+static inline Eina_Rectangle
+_evas_render_smallest_static_clipped_geometry_get(const Evas_Object_Protected_State *state)
+{
+   int cx, cy, cw, ch;
+
+   cx = state->geometry.x;
+   cy = state->geometry.y;
+   cw = state->geometry.w;
+   ch = state->geometry.h;
+   while (state->clipper && state->has_fixed_size)
+     {
+        /* walk up the clipper tree as long as the clippers are static */
+        RECTS_CLIP_TO_RECT(cx, cy, cw, ch,
+                           state->clipper->cur->geometry.x,
+                           state->clipper->cur->geometry.y,
+                           state->clipper->cur->geometry.w,
+                           state->clipper->cur->geometry.h);
+        if (!state->clipper) break;
+        state = state->clipper->cur;
+     }
+   return (Eina_Rectangle){cx, cy, cw, ch};
+}
+
 static Eina_Bool
 _evas_render_had_map(Evas_Object_Protected_Data *obj)
 {
@@ -1756,9 +1779,10 @@ _evas_render_mapped_mask(Evas_Public_Data *evas, Evas_Object_Protected_Data *obj
 
    if (mask->mask->surface)
      {
+        Eina_Rectangle clip = _evas_render_smallest_static_clipped_geometry_get(mask->cur);
         ENFN->context_clip_image_set(ENC, ctx, mask->mask->surface,
-                                     mask->cur->geometry.x + off_x,
-                                     mask->cur->geometry.y + off_y,
+                                     clip.x + off_x,
+                                     clip.y + off_y,
                                      evas, do_async);
      }
 }
@@ -2400,6 +2424,14 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
    y = mask->cur->geometry.y;
    w = mask->cur->geometry.w;
    h = mask->cur->geometry.h;
+   if (mask->cur->clipper && mask->cur->has_fixed_size)
+     {
+        Eina_Rectangle clip = _evas_render_smallest_static_clipped_geometry_get(mask->cur);
+        x = clip.x;
+        y = clip.y;
+        w = clip.w;
+        h = clip.h;
+     }
 
    r = mask->cur->color.r;
    g = mask->cur->color.g;
@@ -2464,7 +2496,7 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
             {
                int fx, fy, fw, fh;
                evas_object_image_fill_get(mask->object, &fx, &fy, &fw, &fh);
-               if ((fx == 0) && (fy == 0) && (fw == w) && (fh == h))
+               if ((fx == 0) && (fy == 0) && (fw == mask->cur->geometry.w) && (fh == mask->cur->geometry.h))
                  filled = EINA_TRUE;
             }
 
@@ -2530,16 +2562,17 @@ evas_render_mask_subrender(Evas_Public_Data *evas,
           ctx = ENFN->context_new(ENC);
           if (prev_mask)
             {
+               Eina_Rectangle pclip = _evas_render_smallest_static_clipped_geometry_get(prev_mask->cur);
                ENFN->context_clip_image_set(ENC, ctx,
                                             prev_mask->mask->surface,
-                                            prev_mask->cur->geometry.x - x,
-                                            prev_mask->cur->geometry.y - y,
+                                            pclip.x - x,
+                                            pclip.y - y,
                                             evas, do_async);
                ENFN->context_clip_set(ENC, ctx,
-                                      prev_mask->cur->geometry.x - x,
-                                      prev_mask->cur->geometry.y - y,
-                                      prev_mask->cur->geometry.w,
-                                      prev_mask->cur->geometry.h);
+                                      pclip.x - x,
+                                      pclip.y - y,
+                                      pclip.w,
+                                      pclip.h);
             }
 
           if (EINA_LIKELY(!mask->is_smart))
@@ -2994,10 +3027,11 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
 
                        if (mask->mask->surface)
                          {
+                            Eina_Rectangle clip = _evas_render_smallest_static_clipped_geometry_get(mask->cur);
                             ENFN->context_clip_image_set(ENC, context,
                                                          mask->mask->surface,
-                                                         mask->cur->geometry.x + off_x,
-                                                         mask->cur->geometry.y + off_y,
+                                                         clip.x + off_x,
+                                                         clip.y + off_y,
                                                          evas, do_async);
                          }
                     }
