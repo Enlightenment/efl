@@ -81,7 +81,7 @@ tests/eolian/data/class_simple.eo \
 tests/eolian/data/complex_type.eo \
 tests/eolian/data/consts.eo \
 tests/eolian/data/ctor_dtor.eo \
-tests/eolian/data/docs.eo \
+tests/eolian/data/eo_docs.eo \
 tests/eolian/data/enum.eo \
 tests/eolian/data/events.eo \
 tests/eolian/data/extern.eo \

@@ -183,7 +183,7 @@ EFL_START_TEST(eolian_docs)
    snprintf(output_filepath, PATH_MAX, "%s/eolian_docs",
             eina_environment_tmp_get());
    _remove_ref(output_filepath, "eo.h");
-   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/docs.eo", "-gh", output_filepath));
+   fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/eo_docs.eo", "-gh", output_filepath));
    fail_if(!_files_compare(TESTS_SRC_DIR"/data/docs_ref.h", output_filepath, "eo.h"));
 }
 EFL_END_TEST

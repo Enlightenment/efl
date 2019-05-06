@@ -218,18 +218,18 @@ TESTS_EINA_CXX_OBJNAME = tests_eina_cxx_
 endif
 
 
-tests/eina_cxx/$(TESTS_EINA_CXX_OBJNAME)eina_cxx_suite-eina_cxx_test_accessor.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h
-tests/eina_cxx/$(TESTS_EINA_CXX_OBJNAME)eina_cxx_suite-eina_cxx_test_ptrarray.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h
-tests/eina_cxx/$(TESTS_EINA_CXX_OBJNAME)eina_cxx_suite-eina_cxx_test_ptrlist.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h
-tests/eina_cxx/$(TESTS_EINA_CXX_OBJNAME)eina_cxx_suite-eina_cxx_test_iterator.$(OBJEXT): tests/eina_cxx/simple.eo.hh tests/eina_cxx/simple.eo.h
+tests/eina_cxx/$(TESTS_EINA_CXX_OBJNAME)eina_cxx_suite-eina_cxx_test_accessor.$(OBJEXT): tests/eina_cxx/eina_simple.eo.hh tests/eina_cxx/eina_simple.eo.h
+tests/eina_cxx/$(TESTS_EINA_CXX_OBJNAME)eina_cxx_suite-eina_cxx_test_ptrarray.$(OBJEXT): tests/eina_cxx/eina_simple.eo.hh tests/eina_cxx/eina_simple.eo.h
+tests/eina_cxx/$(TESTS_EINA_CXX_OBJNAME)eina_cxx_suite-eina_cxx_test_ptrlist.$(OBJEXT): tests/eina_cxx/eina_simple.eo.hh tests/eina_cxx/eina_simple.eo.h
+tests/eina_cxx/$(TESTS_EINA_CXX_OBJNAME)eina_cxx_suite-eina_cxx_test_iterator.$(OBJEXT): tests/eina_cxx/eina_simple.eo.hh tests/eina_cxx/eina_simple.eo.h
 
-tests/eina_cxx/$(TESTS_EINA_CXX_OBJNAME)eina_cxx_suite-simple.$(OBJEXT): tests/eina_cxx/simple.eo.c tests/eina_cxx/simple.eo.h
+tests/eina_cxx/$(TESTS_EINA_CXX_OBJNAME)eina_cxx_suite-simple.$(OBJEXT): tests/eina_cxx/eina_simple.eo.c tests/eina_cxx/eina_simple.eo.h
 
 CLEANFILES += \
-tests/eina_cxx/simple.eo.c \
-tests/eina_cxx/simple.eo.h \
-tests/eina_cxx/simple.eo.hh \
-tests/eina_cxx/simple.eo.impl.hh
+tests/eina_cxx/eina_simple.eo.c \
+tests/eina_cxx/eina_simple.eo.h \
+tests/eina_cxx/eina_simple.eo.hh \
+tests/eina_cxx/eina_simple.eo.impl.hh
 
 tests_eina_cxx_eina_cxx_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -DTESTS_WD=\"`pwd`\" \
@@ -407,4 +407,4 @@ endif
 endif
 
 EXTRA_DIST2 += \
-tests/eina_cxx/simple.eo
+tests/eina_cxx/eina_simple.eo

@@ -1100,7 +1100,7 @@ EFL_START_TEST(eolian_docs)
 
    fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
 
-   fail_if(!(unit = eolian_state_file_parse(eos, "docs.eo")));
+   fail_if(!(unit = eolian_state_file_parse(eos, "eo_docs.eo")));
 
    fail_if(!(tdl = eolian_unit_struct_by_name_get(unit, "Foo")));
    fail_if(!(doc = eolian_typedecl_documentation_get(tdl)));
@@ -1127,7 +1127,7 @@ EFL_START_TEST(eolian_docs)
      free(dpar);
 
    const char *tdoc = "Note: This is $something, see @pants, "
-                      "@Docs.meth, \\@ref foo and @[Things.Stuffs.foo,bar].";
+                      "@Eo_Docs.meth, \\@ref foo and @[Things.Stuffs.foo,bar].";
 
    Eolian_Doc_Token tok;
    eolian_doc_token_init(&tok);
@@ -1166,7 +1166,7 @@ EFL_START_TEST(eolian_docs)
    tdoc = eolian_documentation_tokenize(tdoc, &tok);
    fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_REF);
    txt = eolian_doc_token_text_get(&tok);
-   fail_if(strcmp(txt, "Docs.meth"));
+   fail_if(strcmp(txt, "Eo_Docs.meth"));
    fail_if(eolian_doc_token_ref_resolve(&tok, eos, NULL, NULL) != EOLIAN_OBJECT_FUNCTION);
    free(txt);
    tdoc = eolian_documentation_tokenize(tdoc, &tok);
@@ -1247,14 +1247,14 @@ EFL_START_TEST(eolian_docs)
                   "Opaque struct docs. See @Foo for another struct."));
    fail_if(eolian_documentation_description_get(doc));
 
-   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Docs")));
+   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Eo_Docs")));
    fail_if(!(doc = eolian_class_documentation_get(class)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Docs for class."));
    fail_if(strcmp(eolian_documentation_description_get(doc),
                   "More docs for class. Testing references now. "
-                  "@Foo @Bar @Alias @pants @Docs.meth @Docs.prop "
-                  "@Docs.prop.get @Docs.prop.set @Foo.field1 @Bar.foo @Docs"));
+                  "@Foo @Bar @Alias @pants @Eo_Docs.meth @Eo_Docs.prop "
+                  "@Eo_Docs.prop.get @Eo_Docs.prop.set @Foo.field1 @Bar.foo @Eo_Docs"));
 
    fail_if(!(fid = eolian_class_function_by_name_get(class, "meth", EOLIAN_METHOD)));
    const Eolian_Implement *fimp = eolian_function_implement_get(fid);
