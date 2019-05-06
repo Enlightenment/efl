@@ -403,7 +403,7 @@ struct struct_definition_generator
           field_name[0] = std::toupper(field_name[0]); // Hack to allow 'static' as a field name
           if (!as_generator
               (
-                  indent << scope_tab << documentation
+               documentation(indent.n + 1)
                << indent << scope_tab << "public " << type << " " << string << ";\n"
               )
               .generate(sink, std::make_tuple(field, field.type, name_helpers::to_field_name(field.name)), context))
