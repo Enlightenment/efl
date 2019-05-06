@@ -22,7 +22,7 @@ struct part_definition_generator
        return true;
 
      auto part_klass_name = name_helpers::klass_full_concrete_or_interface_name(part.klass);
-     return as_generator(scope_tab << documentation
+     return as_generator(documentation(1)
                        << scope_tab << "public " << part_klass_name << " " << name_helpers::managed_part_name(part) << "\n"
                        << scope_tab << "{\n"
                        << scope_tab << scope_tab << "get\n"

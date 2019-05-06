@@ -268,7 +268,7 @@ struct property_wrapper_definition_generator
       std::string managed_name = name_helpers::property_managed_name(property);
 
       if (!as_generator(
-                  scope_tab << documentation
+                  documentation(1)
                   << scope_tab << (interface ? "" : "public ") << (is_static ? "static " : "") << type(true) << " " << managed_name << " {\n"
             ).generate(sink, std::make_tuple(property, prop_type), context))
         return false;
