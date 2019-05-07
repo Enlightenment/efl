@@ -689,10 +689,7 @@ _efl_ui_textpath_circle_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double x, double 
        pd->circle.start_angle == start_angle &&
        pd->direction == direction &&
        _map_point_calc(pd) > 0)
-     {
-        ERR("Same circle");
         return;
-     }
    pd->circle.x = x;
    pd->circle.y = y;
    pd->circle.radius = radius;
