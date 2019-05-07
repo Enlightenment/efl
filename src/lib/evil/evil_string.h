@@ -15,27 +15,9 @@
 
 
 /*
- * bit related functions
+ * string related functions
  *
  */
-/**
- * @brief Duplicate a string
- *
- * @param str String to be duplicated
- * @param n size of new duplicated string
- * @return The strndup() function returns a pointer to the duplicated string, or NULL if insufficient memory was available.
- *
- * This function returns a pointer to a new string which is a duplicate of the string str, 
- * but only copies at most n bytes. If str is longer than n, only n bytes are copied,
- * and a terminating null byte ('\0') is added.
- *
- * Conformity: BSD
- *
- * Supported OS: Windows XP.
- *
- * @since 1.13
- */
-EAPI char *strndup(const char *str, size_t n);
 
 /**
  * @brief Locate a substring into a string, ignoring case.

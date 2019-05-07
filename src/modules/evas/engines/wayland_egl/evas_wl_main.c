@@ -212,7 +212,7 @@ try_again:
      }
    if (w && h)
      eng_window_resurf(gw);
-   gw->gl_context->msaa = (Eina_Bool) gw->msaa_bits;
+   gw->gl_context->msaa = (Eina_Bool) !!gw->msaa_bits;
    return gw;
 }
 

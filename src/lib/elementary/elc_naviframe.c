@@ -1283,8 +1283,6 @@ _item_new(Evas_Object *obj,
    ELM_NAVIFRAME_DATA_GET(obj, sd);
 
    eo_item = efl_add(ELM_NAVIFRAME_ITEM_CLASS, obj);
-   efl_access_object_role_set(eo_item, EFL_ACCESS_ROLE_PAGE_TAB);
-   efl_access_object_i18n_name_set(eo_item, (char*)title_label);
 
    if (!eo_item)
      {
@@ -1295,8 +1293,12 @@ _item_new(Evas_Object *obj,
    ELM_NAVIFRAME_ITEM_DATA_GET(eo_item, it);
 
    //item base layout
-   VIEW_SET(it, elm_layout_add(obj));
+   Eo *elem = elm_layout_add(obj);
+   VIEW_SET(it, elem);
    evas_object_smart_member_add(VIEW(it), obj);
+
+   efl_access_object_role_set(elem, EFL_ACCESS_ROLE_PAGE_TAB);
+   efl_access_object_i18n_name_set(elem, (char*)title_label);
 
    if (!elm_widget_sub_object_add(obj, VIEW(it)))
      ERR("could not add %p as sub object of %p", VIEW(it), obj);

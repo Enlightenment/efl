@@ -59,6 +59,8 @@ EFL_START_TEST(emile_test_base64_normal)
         eina_strbuf_reset(str);
      }
 
+   eina_binbuf_free(buffer);
+
    //Failure scenarios.
    decoded = emile_base64_decode(NULL);
    fail_if(decoded);
@@ -72,7 +74,7 @@ EFL_START_TEST(emile_test_base64_normal)
 
    eina_strbuf_append(str, "abc");
    decoded = emile_base64_decode(str);
-   eina_strbuf_reset(str);
+   eina_strbuf_free(str);
    fail_if(decoded);
 }
 EFL_END_TEST
@@ -112,7 +114,10 @@ EFL_START_TEST(emile_test_base64_url)
 
    eina_strbuf_append(str, "TWFu");
    decoded = emile_base64url_decode(str);
+   eina_strbuf_free(str);
+   eina_binbuf_free(buffer);
    fail_if(memcmp(eina_binbuf_string_get(decoded), "Man", 3));
+   eina_binbuf_free(decoded);
 }
 EFL_END_TEST
 

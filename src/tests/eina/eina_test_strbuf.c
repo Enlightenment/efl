@@ -630,7 +630,6 @@ EFL_START_TEST(eina_test_strbuf_strftime_test)
    fail_if(str == NULL || strcmp(str, cbuf) != 0);
    eina_strbuf_reset(buf);
 
-   buf = eina_strbuf_new();
    eina_strbuf_append(buf, "Hours: Minutes");
    eina_strbuf_prepend_strftime(buf, "%I ", info);
    eina_strbuf_insert_strftime(buf, "%M ", info, 10);

@@ -48,6 +48,8 @@ if target_machine.system() == 'windows'
   evil_lib = library('evil', evil_src,
     dependencies : [psapi, ole32, ws2_32, secur32, uuid, regexp],
     include_directories : [config_dir],
+    install: true,
+    version: meson.project_version(),
   )
 
   evil = declare_dependency(

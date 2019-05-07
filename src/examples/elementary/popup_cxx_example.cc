@@ -3,8 +3,7 @@
 #define EFL_CXXPERIMENTAL
 
 #include <Evas.hh>
-#include <Efl_Ui.h>
-#include <Elementary.hh>
+#include <Efl_Ui.hh>
 #include <iostream>
 
 using efl::eo::instantiate;

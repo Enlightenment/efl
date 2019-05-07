@@ -681,10 +681,12 @@ _elm_hoversel_efl_gfx_entity_visible_set(Eo *obj, Elm_Hoversel_Data *sd, Eina_Bo
    efl_gfx_entity_visible_set(sd->hover, vis);
 }
 
-EOLIAN static Eina_Bool
-_elm_hoversel_efl_ui_autorepeat_autorepeat_supported_get(const Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd EINA_UNUSED)
+EOLIAN static void
+_elm_hoversel_efl_ui_autorepeat_autorepeat_enabled_set(const Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd EINA_UNUSED, Eina_Bool enabled)
 {
-   return EINA_FALSE;
+   if (enabled)
+     ERR("You cannot enable autorepeat on this object");
+   efl_ui_autorepeat_enabled_set(efl_super(obj, MY_CLASS), EINA_FALSE);
 }
 
 EAPI Evas_Object *
@@ -698,6 +700,7 @@ EOLIAN static Eo *
 _elm_hoversel_efl_object_constructor(Eo *obj, Elm_Hoversel_Data *_pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_ui_autorepeat_enabled_set(obj, EINA_FALSE);
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PUSH_BUTTON);

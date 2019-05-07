@@ -1,5 +1,7 @@
 #include "ecore_drm2_private.h"
 
+#define FLIP_TIMEOUT 0.05
+
 static Eina_Bool
 _fb2_create(Ecore_Drm2_Fb *fb)
 {
@@ -255,6 +257,15 @@ _ecore_drm2_fb_buffer_release(Ecore_Drm2_Output *output EINA_UNUSED, Ecore_Drm2_
      }
 }
 
+static void
+_cb_mainloop_async_timer_del(void *data)
+{
+   Ecore_Drm2_Output *output = data;
+
+   ecore_timer_del(output->flip_timeout);
+   output->flip_timeout = NULL;
+}
+
 EAPI Eina_Bool
 ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
 {
@@ -265,9 +276,11 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
 
    if (output->flip_timeout)
      {
-        ecore_timer_del(output->flip_timeout);
-        output->flip_timeout = NULL;
+        // XXX: output ref++
+        ecore_main_loop_thread_safe_call_async
+          (_cb_mainloop_async_timer_del, output);
      }
+   if (!output->pending.fb) fprintf(stderr, "XXX--XXX eeeeek pending fb is NULL so current would become null ----------------------------------\n");
    if (output->current.fb && (output->current.fb != output->pending.fb))
      _ecore_drm2_fb_buffer_release(output, &output->current);
 
@@ -470,10 +483,18 @@ _cb_flip_timeout(void *data)
    Ecore_Drm2_Output *output = data;
 
    output->flip_timeout = NULL;
-   ERR("flip event callback timout 0.05sec - try again");
+   ERR("flip event callback timout %0.2fsec - try again", FLIP_TIMEOUT);
    if (_ecore_drm2_use_atomic) _fb_atomic_flip(output);
    else _fb_flip(output);
    return EINA_FALSE;
+}
+
+static void
+_cb_mainloop_async_timer_reset(void *data)
+{
+   Ecore_Drm2_Output *output = data;
+   if (output->flip_timeout) ecore_timer_del(output->flip_timeout);
+   output->flip_timeout = ecore_timer_add(FLIP_TIMEOUT, _cb_flip_timeout, output);
 }
 
 static int
@@ -493,9 +514,18 @@ _fb_atomic_flip(Ecore_Drm2_Output *output)
    /* Still no req is a bad situation */
    EINA_SAFETY_ON_NULL_RETURN_VAL(output->prep.atomic_req, -1);
 
-   res =
-     sym_drmModeAtomicCommit(output->fd, output->prep.atomic_req, flags,
-                             output);
+   // sometimes we get a EBUSY ... so try again a few times.
+   int i;
+   for (i = 0; i < 10; i++)
+     {
+        res =
+          sym_drmModeAtomicCommit(output->fd, output->prep.atomic_req, flags,
+                                  output);
+        if (res == 0) break;
+        else ERR("DRM atomic commit failed - retry #%i", i + 1);
+        usleep(100);
+     }
+
    if (res < 0)
      {
         ERR("Failed Atomic Commit: %m");
@@ -503,8 +533,9 @@ _fb_atomic_flip(Ecore_Drm2_Output *output)
      }
    else
      {
-        if (output->flip_timeout) ecore_timer_del(output->flip_timeout);
-        output->flip_timeout = ecore_timer_add(0.05, _cb_flip_timeout, output);
+        // XXX: output ref++
+        ecore_main_loop_thread_safe_call_async
+          (_cb_mainloop_async_timer_reset, output);
      }
 
    return 0;
@@ -591,8 +622,9 @@ _fb_flip(Ecore_Drm2_Output *output)
           }
         else
           {
-             if (output->flip_timeout) ecore_timer_del(output->flip_timeout);
-             output->flip_timeout = ecore_timer_add(0.05, _cb_flip_timeout, output);
+             // XXX: output ref++
+             ecore_main_loop_thread_safe_call_async
+               (_cb_mainloop_async_timer_reset, output);
           }
      }
    while (repeat);

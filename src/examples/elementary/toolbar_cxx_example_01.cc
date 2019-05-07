@@ -8,7 +8,7 @@
 #warning This example requires yet unfinished EO APIs
 
 #define EFL_BETA_API_SUPPORT
-#include <Elementary.hh>
+#include <Efl_Ui.hh>
 
 EAPI int
 elm_main(int argc, char* argv[])

@@ -992,6 +992,11 @@ if get_option('cocoa')
   elementary_deps += ecore_cocoa
 endif
 
+if sys_windows == true
+  config_h.set('HAVE_ELEMENTARY_WIN32', '1')
+  elementary_deps += ecore_win32
+endif
+
 c = configure_file(
   output: 'Elementary_Options.h',
   install : true,

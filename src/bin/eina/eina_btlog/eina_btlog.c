@@ -194,7 +194,7 @@ _atos(const char *prog, const char *bin_dir, const char *bin_name, unsigned long
         if ((spaces == func_space_count) && (func_done == EINA_FALSE))
           {
              *s = '\0';
-             *func_name = strndup(buf, (int)(s - &(buf[0])));
+             *func_name = eina_strndup(buf, (int)(s - &(buf[0])));
              func_done = EINA_TRUE;
           }
         else if (*s == '(')
@@ -208,7 +208,7 @@ _atos(const char *prog, const char *bin_dir, const char *bin_name, unsigned long
         else if ((*s == ':') && (func_done == EINA_TRUE))
           {
              *s = '\0';
-             *file_name = strndup(f1, (int)(s - f1));
+             *file_name = eina_strndup(f1, (int)(s - f1));
              s++;
              len = strlen(s);
              s[len - 1] = '\0'; /* Remove the closing parenthesis */
@@ -266,7 +266,7 @@ bt_input_translate(const char *line, char **comment)
             (int)(fileend - filestart), filestart,
             (int)(addrend - addrstart), addrstart,
             (int)(baseend - basestart), basestart);
-   *comment = strndup(line, addrstart - line);
+   *comment = eina_strndup(line, addrstart - line);
    return local;
 }
 

@@ -31,9 +31,11 @@ efreet_test_src = [
   'main.c'
 ]
 
+efreet_test_deps = [check, efreet, ecore, ecore_file, efreet_mime, intl]
+
 efreet_test = executable('efreet_test',
   efreet_test_src,
-  dependencies: [check, efreet, ecore, ecore_file, efreet_mime],
+  dependencies: efreet_test_deps,
   include_directories : config_dir,
   c_args : [
   package_c_args,
@@ -54,7 +56,7 @@ additional_tests = [
 foreach additional_test : additional_tests
   efreet_tmp = executable(additional_test.underscorify(),
     additional_test+'.c',
-    dependencies: [check, efreet, ecore, eet, ecore_file, efreet_mime],
+    dependencies: [efreet_test_deps, eet],
     include_directories : config_dir,
     c_args : [
     package_c_args,

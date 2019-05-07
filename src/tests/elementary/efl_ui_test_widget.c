@@ -60,6 +60,7 @@ EFL_START_TEST(efl_ui_test_widget_parent_iterator)
      }
    eina_iterator_free(it);
    ck_assert_int_eq(eina_array_count(a), 0);
+   eina_array_free(a);
 }
 EFL_END_TEST
 
@@ -86,6 +87,7 @@ EFL_START_TEST(efl_ui_test_widget_widget_iterator)
      }
    eina_iterator_free(it);
    ck_assert_int_eq(eina_array_count(a), 0);
+   eina_array_free(a);
 }
 EFL_END_TEST
 
@@ -117,6 +119,7 @@ EFL_START_TEST(efl_ui_test_widget_widget_sub_iterator)
      }
    eina_iterator_free(it);
    ck_assert_int_eq(eina_array_count(a), 0);
+   eina_array_free(a);
 }
 EFL_END_TEST
 
@@ -146,6 +149,7 @@ EFL_START_TEST(efl_ui_test_widget_iterator)
      }
    eina_iterator_free(it);
    ck_assert_int_eq(eina_array_count(a), 0);
+   eina_array_free(a);
 }
 EFL_END_TEST
 
@@ -172,6 +176,7 @@ EFL_START_TEST(efl_ui_test_widget_sub_iterator)
      }
    eina_iterator_free(it);
    ck_assert_int_eq(eina_array_count(a), 0);
+   eina_array_free(a);
 }
 EFL_END_TEST
 

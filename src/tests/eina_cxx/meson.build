@@ -20,7 +20,7 @@ eina_cxx_suite_src = [
 
 
 pub_eo_files = [
-  'simple.eo'
+  'eina_simple.eo'
 ]
 
 foreach eo_file : pub_eo_files

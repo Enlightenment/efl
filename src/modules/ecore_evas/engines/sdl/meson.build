@@ -1,5 +1,5 @@
 engine_src = files(['ecore_evas_sdl.c'])
-engine_deps = [ecore_sdl, ecore_input, ecore]
+engine_deps = [ecore_sdl, ecore_input, ecore, dependency('sdl2')]
 
 shared_module(mod_full_name, engine_src,
   include_directories : config_dir + [engine_include_dir],

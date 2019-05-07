@@ -647,6 +647,7 @@ _file_to_memory(const char *filename, char **result)
    if ((size_t)size != fread(*result, sizeof(char), size, f))
      {
         free(*result);
+        fclose(f);
         return -1;
      }
    fclose(f);

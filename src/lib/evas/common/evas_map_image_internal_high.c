@@ -396,6 +396,9 @@ _map_triangle_draw_linear(RGBA_Image *src, RGBA_Image *dst,
         dx = 1 - (_xa - x1);
         u = _ua + dx * _dudx;
         v = _va + dx * _dvdx;
+        // FIXME: sometimes u and v are < 0 - don'tc crash
+        if (u < 0) u = 0;
+        if (v < 0) v = 0;
 
         if (col_blend)
           {

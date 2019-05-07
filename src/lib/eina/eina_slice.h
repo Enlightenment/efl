@@ -28,6 +28,8 @@
 
 #include <sys/types.h>
 
+#include "eina_str.h"
+
 /**
  * @addtogroup Eina_Slice_Group Memory Slices
  *

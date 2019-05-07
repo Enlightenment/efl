@@ -8,14 +8,14 @@
 
 #include <stdlib.h>
 
-#include "simple.eo.h"
+#include "eina_simple.eo.h"
 
-#define MY_CLASS SIMPLE_CLASS
+#define MY_CLASS EINA_SIMPLE_CLASS
 
-static Eo *_simple_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
+static Eo *_eina_simple_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
 {
    return efl_constructor(efl_super(obj, MY_CLASS));
 }
 
-#include "simple.eo.c"
+#include "eina_simple.eo.c"
 

@@ -480,8 +480,10 @@ _validate_part(Validate_State *vals, Eolian_Part *part, Eina_Hash *nhash)
         return EINA_TRUE;
      }
 
+   Eina_Bool was_stable = _set_stable(vals, !part->base.is_beta && vals->stable);
+
    if (!_validate_doc(part->doc))
-     return EINA_FALSE;
+     return _reset_stable(vals, was_stable, EINA_FALSE);
 
    /* switch the class name for class */
    Eolian_Class *pcl = eina_hash_find(part->base.unit->classes, part->klass_name);
@@ -489,7 +491,13 @@ _validate_part(Validate_State *vals, Eolian_Part *part, Eina_Hash *nhash)
      {
         _eo_parser_log(&part->base, "unknown part class '%s' (incorrect case?)",
                  part->klass_name);
-        return EINA_FALSE;
+        return _reset_stable(vals, was_stable, EINA_FALSE);
+     }
+   else if (vals->stable && pcl->base.is_beta)
+     {
+        _eo_parser_log(&part->base, "beta part class '%s' used in stable context",
+                       pcl->base.name);
+        return _reset_stable(vals, was_stable, EINA_FALSE);
      }
    eina_stringshare_del(part->klass_name);
    part->klass = pcl;
@@ -497,6 +505,7 @@ _validate_part(Validate_State *vals, Eolian_Part *part, Eina_Hash *nhash)
    if (!oobj)
      eina_hash_add(nhash, &part->base.name, &part->base);
 
+   _reset_stable(vals, was_stable, EINA_TRUE);
    return _validate(&part->base);
 }
 

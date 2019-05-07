@@ -3241,6 +3241,13 @@ EFL_START_TEST(evas_textblock_text_getters)
         fail_if(strcmp(tmp2, "aa"));
         free(tmp2);
         free(tmp);
+
+        tmp = evas_textblock_text_markup_to_utf8(NULL, "&lt;align=center&gt;hello&lt;/align&gt;&amp;gt;&quot;&apos;");
+        fail_if(strcmp(tmp, "<align=center>hello</align>&gt;\"\'"));
+        tmp2 = evas_textblock_text_utf8_to_markup(NULL, tmp);
+        fail_if(strcmp(tmp2, "&lt;align=center&gt;hello&lt;/align&gt;&amp;gt;&quot;&apos;"));
+        free(tmp2);
+        free(tmp);
      }
 
    /* complex markup set/get */

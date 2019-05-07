@@ -1533,25 +1533,6 @@ EAPI double edje_object_base_scale_get(const Evas_Object *obj);
  * @{
  */
 
-/**
- * @defgroup Edje_Part_Drag Edje Drag
- *
- * @brief Functions that deal with dragable parts.
- *
- * To create a movable part it must be declared as dragable
- * in EDC file. To do so, one must define a "dragable" block inside
- * the "part" block.
- *
- * These functions are used to set dragging properties to a
- * part or get dragging information about it.
- *
- * @see @ref tutorial_edje_drag
- *
- * @ingroup Edje_Object_Part
- *
- * @{
- */
-
 typedef enum _Edje_Drag_Dir
 {
    EDJE_DRAG_DIR_NONE = 0,
@@ -1559,7 +1540,6 @@ typedef enum _Edje_Drag_Dir
    EDJE_DRAG_DIR_Y = 2,
    EDJE_DRAG_DIR_XY = 3
 } Edje_Drag_Dir;
-
 
 /**
  * @brief Sets the dragable object location.
@@ -1584,7 +1564,7 @@ typedef enum _Edje_Drag_Dir
  *
  * @return @c true on success, @c false otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Part_Drag
  */
 EAPI Eina_Bool edje_object_part_drag_value_set(Evas_Object *obj, const char * part, double dx, double dy);
 
@@ -1604,7 +1584,7 @@ EAPI Eina_Bool edje_object_part_drag_value_set(Evas_Object *obj, const char * pa
  *
  * @return @c true on success, @c false otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Part_Drag
  */
 EAPI Eina_Bool edje_object_part_drag_value_get(const Evas_Object *obj, const char * part, double *dx, double *dy);
 
@@ -1624,7 +1604,7 @@ EAPI Eina_Bool edje_object_part_drag_value_get(const Evas_Object *obj, const cha
  *
  * @return @c true on success, @c false otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Part_Drag
  */
 EAPI Eina_Bool edje_object_part_drag_size_set(Evas_Object *obj, const char * part, double dw, double dh);
 
@@ -1641,7 +1621,7 @@ EAPI Eina_Bool edje_object_part_drag_size_set(Evas_Object *obj, const char * par
  *
  * @return @c true on success, @c false otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Part_Drag
  */
 EAPI Eina_Bool edje_object_part_drag_size_get(const Evas_Object *obj, const char * part, double *dw, double *dh);
 
@@ -1658,7 +1638,7 @@ EAPI Eina_Bool edje_object_part_drag_size_get(const Evas_Object *obj, const char
  * direction #EDJE_DRAG_DIR_Y: Dragable in Y direction #EDJE_DRAG_DIR_XY:
  * Dragable in X & Y directions
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Part_Drag
  */
 EAPI Edje_Drag_Dir edje_object_part_drag_dir_get(const Evas_Object *obj, const char * part);
 
@@ -1679,7 +1659,7 @@ EAPI Edje_Drag_Dir edje_object_part_drag_dir_get(const Evas_Object *obj, const c
  *
  * @return @c true on success, @c false otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Part_Drag
  */
 EAPI Eina_Bool edje_object_part_drag_step_set(Evas_Object *obj, const char * part, double dx, double dy);
 
@@ -1696,7 +1676,7 @@ EAPI Eina_Bool edje_object_part_drag_step_set(Evas_Object *obj, const char * par
  *
  * @return @c true on success, @c false otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Part_Drag
  */
 EAPI Eina_Bool edje_object_part_drag_step_get(const Evas_Object *obj, const char * part, double *dx, double *dy);
 
@@ -1716,7 +1696,7 @@ EAPI Eina_Bool edje_object_part_drag_step_get(const Evas_Object *obj, const char
  *
  * @return @c true on success, @c false otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Part_Drag
  */
 EAPI Eina_Bool edje_object_part_drag_step(Evas_Object *obj, const char *part, double dx, double dy);
 
@@ -1737,7 +1717,7 @@ EAPI Eina_Bool edje_object_part_drag_step(Evas_Object *obj, const char *part, do
  *
  * @return @c true on success, @c false otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Part_Drag
  */
 EAPI Eina_Bool edje_object_part_drag_page_set(Evas_Object *obj, const char * part, double dx, double dy);
 
@@ -1754,7 +1734,7 @@ EAPI Eina_Bool edje_object_part_drag_page_set(Evas_Object *obj, const char * par
  *
  * @return @c true on success, @c false otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Part_Drag
  */
 EAPI Eina_Bool edje_object_part_drag_page_get(const Evas_Object *obj, const char * part, double *dx, double *dy);
 
@@ -1776,9 +1756,13 @@ EAPI Eina_Bool edje_object_part_drag_page_get(const Evas_Object *obj, const char
  *
  * @return @c true on success, @c false otherwise
  *
- * @ingroup Edje_Object
+ * @ingroup Edje_Part_Drag
  */
 EAPI Eina_Bool edje_object_part_drag_page(Evas_Object *obj, const char *part, double dx, double dy);
+
+/**
+ * @}
+ */
 
 /**
  * @brief Sets a given text to an Edje object @c TEXT or TEXTBLOCK
@@ -2985,6 +2969,37 @@ EAPI void edje_object_size_max_get(const Evas_Object *obj, int *maxw, int *maxh)
 EAPI Eina_Bool edje_object_part_exists(const Evas_Object *obj, const char *part);
 
 
+
+/**
+ * @brief Sets the function that provides item objects for named items in an
+ * edje entry text
+ *
+ * Item objects may be deleted any time by Edje, and will be deleted when the
+ * Edje object is deleted (or file is set to a new file).
+ *
+ * @param[in] obj The object.
+ * @param[in] func The function to call (or @c null to disable) to get item
+ * objects
+ * @param[in] data The data pointer to pass to the func callback
+ *
+ * @ingroup Edje_Object
+ */
+EAPI void edje_object_item_provider_set(Edje_Object *obj, Edje_Item_Provider_Cb func, void *data);
+
+
+/**
+ * @brief Gets the description of an object color class.
+ *
+ * This function gets the description of a color class in use by an object.
+ *
+ * @param[in] color_class Color class description
+ *
+ * @return The description of the target color class or @c null if not found
+ *
+ * @ingroup Edje_Object
+ */
+EAPI const char *edje_object_color_class_description_get(const Edje_Object *obj, const char * color_class);
+
 /**
  * @defgroup Edje_Perspective Edje Perspective
  * @ingroup Edje_Object_Group
@@ -3135,37 +3150,6 @@ EAPI const Edje_Perspective *edje_object_perspective_get(const Evas_Object *obj)
  * @}
  */
 
-
-/**
- * @brief Sets the function that provides item objects for named items in an
- * edje entry text
- *
- * Item objects may be deleted any time by Edje, and will be deleted when the
- * Edje object is deleted (or file is set to a new file).
- *
- * @param[in] obj The object.
- * @param[in] func The function to call (or @c null to disable) to get item
- * objects
- * @param[in] data The data pointer to pass to the func callback
- *
- * @ingroup Edje_Object
- */
-EAPI void edje_object_item_provider_set(Edje_Object *obj, Edje_Item_Provider_Cb func, void *data);
-
-
-/**
- * @brief Gets the description of an object color class.
- *
- * This function gets the description of a color class in use by an object.
- *
- * @param[in] color_class Color class description
- *
- * @return The description of the target color class or @c null if not found
- *
- * @ingroup Edje_Object
- */
-EAPI const char *edje_object_color_class_description_get(const Edje_Object *obj, const char * color_class);
-
 /**
  * @defgroup Edje_Object_Part Edje Part
  *
@@ -3217,9 +3201,6 @@ typedef enum _Edje_Part_Type
  * @}
  */
 
-/**
- * @}
- */
 #include "efl_canvas_layout_eo.legacy.h"
 #include "edje_edit_eo.legacy.h"
 #include "efl_layout_group_eo.legacy.h"

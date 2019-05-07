@@ -58,7 +58,6 @@ _efl_ui_navigation_bar_efl_object_constructor(Eo *obj, Efl_Ui_Navigation_Bar_Dat
 
 
 /* Standard widget overrides */
-ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_navigation_bar, Efl_Ui_Navigation_Bar_Data)
 ELM_PART_TEXT_DEFAULT_GET(efl_ui_navigation_bar, "efl.text")
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_navigation_bar, Efl_Ui_Navigation_Bar_Data)
 

@@ -95,7 +95,7 @@ _generate_ref(const Eolian_State *state, const char *refn, Eina_Strbuf *wbuf)
           }
         if (cl)
           {
-             char *meth = strndup(mname + 1, sfx - mname - 1);
+             char *meth = eina_strndup(mname + 1, sfx - mname - 1);
              fn = eolian_class_function_by_name_get(cl, meth, ftype);
              if (ftype == EOLIAN_UNRESOLVED)
                ftype = eolian_function_type_get(fn);

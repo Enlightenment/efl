@@ -231,4 +231,6 @@ config_h.set('SIZEOF_LONG', cc.sizeof('long'))
 if sys_windows == true
   config_h.set('HAVE_DLSYM', '1')
   config_h.set('HAVE_NOTIFY_WIN32', '1')
+  config_h.set10('HAVE_WINDOWS_H', true)
+  config_h.set10('HAVE_DDRAW_H', true)
 endif

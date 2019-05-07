@@ -1,4 +1,4 @@
-class Simple extends Efl.Object
+class Eina_Simple extends Efl.Object
 {
    data: null;
    implements {

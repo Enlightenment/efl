@@ -30,7 +30,7 @@ static class UnsafeNativeMethods
 
     static UnsafeNativeMethods()
     {
-        _evas_init = new Efl.Eo.FunctionWrapper<init_func_delegate>("evas", "evas_init");
+        _evas_init = new Efl.Eo.FunctionWrapper<init_func_delegate>(efl.Libs.Evas, "evas_init");
     }
 
     public static void evas_init()

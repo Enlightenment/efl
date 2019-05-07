@@ -8,7 +8,7 @@
 #include <algorithm>
 
 #include "eina_cxx_suite.h"
-#include "simple.eo.hh"
+#include "eina_simple.eo.hh"
 
 EFL_START_TEST(eina_cxx_iterator_equal)
 {
@@ -37,22 +37,22 @@ EFL_START_TEST(eina_cxx_eo_iterator_equal)
   efl::eina::eina_init eina_init;
   efl::eo::eo_init eo_init;
 
-  efl::eina::list<nonamespace::Simple> list;
+  efl::eina::list<nonamespace::Eina_Simple> list;
 
-  nonamespace::Simple const w1(efl::eo::instantiate);
-  nonamespace::Simple const w2(efl::eo::instantiate);
-  nonamespace::Simple const w3(efl::eo::instantiate);
-  nonamespace::Simple const w4(efl::eo::instantiate);
+  nonamespace::Eina_Simple const w1(efl::eo::instantiate);
+  nonamespace::Eina_Simple const w2(efl::eo::instantiate);
+  nonamespace::Eina_Simple const w3(efl::eo::instantiate);
+  nonamespace::Eina_Simple const w4(efl::eo::instantiate);
 
   list.push_back(w1);
   list.push_back(w2);
   list.push_back(w3);
   list.push_back(w4);
 
-  efl::eina::iterator<nonamespace::Simple> iterator = list.ibegin()
+  efl::eina::iterator<nonamespace::Eina_Simple> iterator = list.ibegin()
     , last_iterator = list.iend();
 
-  nonamespace::Simple const result[] = {w1, w2, w3, w4};
+  nonamespace::Eina_Simple const result[] = {w1, w2, w3, w4};
 
   ck_assert(std::equal(iterator, last_iterator, result));
 }

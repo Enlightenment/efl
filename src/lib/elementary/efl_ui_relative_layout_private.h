@@ -21,6 +21,7 @@ typedef struct _Efl_Ui_Relative_Layout_Data        Efl_Ui_Relative_Layout_Data;
 typedef struct _Efl_Ui_Relative_Layout_Child       Efl_Ui_Relative_Layout_Child;
 typedef struct _Efl_Ui_Relative_Layout_Calc        Efl_Ui_Relative_Layout_Calc;
 typedef struct _Efl_Ui_Relative_Layout_Relation    Efl_Ui_Relative_Layout_Relation;
+typedef struct _Efl_Ui_Relative_Layout_Content_Iterator Efl_Ui_Relative_Layout_Content_Iterator;
 
 struct _Efl_Ui_Relative_Layout_Calc
 {
@@ -66,6 +67,13 @@ struct _Efl_Ui_Relative_Layout_Child
    Eo                               *layout;
    Efl_Ui_Relative_Layout_Relation   rel[4];
    Efl_Ui_Relative_Layout_Calc       calc;
+};
+
+struct _Efl_Ui_Relative_Layout_Content_Iterator
+{
+   Eina_Iterator  iterator;
+   Eina_Iterator *real_iterator;
+   Eo            *relative_layout;
 };
 
 #define EFL_UI_RELATIVE_LAYOUT_RELATION_SET_GET(direction, DIRECTION) \

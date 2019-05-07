@@ -169,6 +169,7 @@ EFL_START_TEST(evas_object_mesh_loader_saver)
 
    unlink(tmp);
 
+   free(file_mask);
    evas_free(e);
 }
 EFL_END_TEST

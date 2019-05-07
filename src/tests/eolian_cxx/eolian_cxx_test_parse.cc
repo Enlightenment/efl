@@ -15,7 +15,7 @@ EFL_START_TEST(eolian_cxx_test_parse_complex_types)
    efl::eolian::eolian_state state;
    fail_if(!::eolian_state_directory_add(state.value, EO_SRC_DIR));
    fail_if(!::eolian_state_directory_add(state.value, TESTS_SRC_DIR));
-   fail_if(!::eolian_state_file_parse(state.value, TESTS_SRC_DIR"/complex.eo"));
+   fail_if(!::eolian_state_file_parse(state.value, "complex.eo"));
    // TODO finish
 }
 EFL_END_TEST

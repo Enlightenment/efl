@@ -422,8 +422,12 @@ class Eolian_State(Eolian_Unit):
     def __repr__(self):
         return "<eolian.Eolian_State, %d units loaded>" % len(list(self.units))
 
-    def file_parse(self, filepath):
-        c_unit = lib.eolian_state_file_parse(self, _str_to_bytes(filepath))
+    def file_parse(self, filename):
+        c_unit = lib.eolian_state_file_parse(self, _str_to_bytes(filename))
+        return Eolian_Unit(c_unit) if c_unit else None
+
+    def file_path_parse(self, filepath):
+        c_unit = lib.eolian_state_file_path_parse(self, _str_to_bytes(filepath))
         return Eolian_Unit(c_unit) if c_unit else None
 
     @property

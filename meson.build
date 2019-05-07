@@ -291,6 +291,7 @@ subprojects = [
 ['ecore_fb'         ,['fb']                , false,  true, false, false, false, false, ['eina'], []],
 ['ecore_wl2'        ,['wl']                ,  true,  true, false, false, false, false, ['eina'], ['libdrm']],
 ['ecore_sdl'        ,['sdl']               , false,  true, false, false, false, false, ['eina'], []],
+['ecore_win32'      ,[]                    , false,  true, false, false, false, false, ['eina'], []],
 ['ecore_ipc'        ,[]                    , false,  true, false, false, false, false, ['eina'], []],
 ['ecore_buffer'     ,['buffer']            ,  true,  true,  true, false, false, false, ['eina'], []],
 ['ector'            ,[]                    , false,  true, false, false,  true, false, ['eina', 'efl'], ['draw', 'triangulator', 'freetype']],
@@ -438,7 +439,9 @@ if get_option('eolian-bootstrap') == false
   subdir(join_paths('src', 'bin', 'efl'))
 
   subdir(join_paths('src', 'generic', 'evas'))
-  subdir(join_paths('src', 'generic', 'emotion'))
+  if sys_windows == false
+    subdir(join_paths('src', 'generic', 'emotion'))
+  endif
 
   bindings = get_option('bindings')
   bindings_order = ['luajit', 'cxx', 'mono']
@@ -477,6 +480,12 @@ foreach evas_loader_map_inst : evas_loader_map
 
   meson.add_install_script('meson/evas_loader_conf.sh', evas_loader_original, evas_loader_link_types)
 endforeach
+
+doxygen = find_program('doxygen', required : false)
+
+if get_option('eolian-bootstrap') == false and doxygen.found()
+  subdir('doc')
+endif
 
 #
 # Configure files

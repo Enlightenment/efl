@@ -8,7 +8,7 @@
 #include "eina_cxx_suite.h"
 
 extern "C" {
-#include "simple.eo.h"
+#include "eina_simple.eo.h"
 }
 
 struct wrapper : efl::eo::concrete
@@ -50,10 +50,10 @@ EFL_START_TEST(eina_cxx_eo_accessor_indexing)
 
   efl::eina::list<wrapper> list;
 
-  wrapper const w1(efl_new(SIMPLE_CLASS));
-  wrapper const w2(efl_new(SIMPLE_CLASS));
-  wrapper const w3(efl_new(SIMPLE_CLASS));
-  wrapper const w4(efl_new(SIMPLE_CLASS));
+  wrapper const w1(efl_new(EINA_SIMPLE_CLASS));
+  wrapper const w2(efl_new(EINA_SIMPLE_CLASS));
+  wrapper const w3(efl_new(EINA_SIMPLE_CLASS));
+  wrapper const w4(efl_new(EINA_SIMPLE_CLASS));
 
   list.push_back(w1);
   list.push_back(w2);
@@ -104,10 +104,10 @@ EFL_START_TEST(eina_cxx_eo_accessor_iterator)
 
   efl::eina::list<wrapper> list;
 
-  wrapper const w1(efl_new(SIMPLE_CLASS));
-  wrapper const w2(efl_new(SIMPLE_CLASS));
-  wrapper const w3(efl_new(SIMPLE_CLASS));
-  wrapper const w4(efl_new(SIMPLE_CLASS));
+  wrapper const w1(efl_new(EINA_SIMPLE_CLASS));
+  wrapper const w2(efl_new(EINA_SIMPLE_CLASS));
+  wrapper const w3(efl_new(EINA_SIMPLE_CLASS));
+  wrapper const w4(efl_new(EINA_SIMPLE_CLASS));
 
   list.push_back(w1);
   list.push_back(w2);
