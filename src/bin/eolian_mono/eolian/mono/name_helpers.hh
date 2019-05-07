@@ -282,7 +282,7 @@ inline std::string property_managed_name(attributes::property_def const& propert
 inline std::string managed_part_name(attributes::part_def const& part)
 {
   std::vector<std::string> names = utils::split(part.name, '_');
-  return utils::to_pascal_case(names);
+  return utils::to_pascal_case(names) + "Part";
 }
 
 // Class name translation (interface/concrete/inherit/etc)
