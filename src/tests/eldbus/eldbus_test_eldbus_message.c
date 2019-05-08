@@ -1455,7 +1455,6 @@ EFL_START_TEST(utc_eldbus_message_iter_del_p)
         eldbus_message_iter_del(iter);
      }
 
-   eldbus_message_unref(msg);
    eldbus_connection_unref(conn_client);
    eldbus_service_interface_unregister(iface);
    eldbus_connection_unref(conn_server);
