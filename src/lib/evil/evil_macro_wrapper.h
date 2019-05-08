@@ -46,20 +46,6 @@
 #define mkdir(dirname, mode) evil_mkdir(dirname, mode)
 
 /*
- * evil_time.h
- */
-
-/**
- * @def localtime_r(t, r)
- *
- * Wrapper around evil_localtime_r().
- */
-#ifdef localtime_r
-# undef localtime_r
-#endif
-#define localtime_r(t, r) evil_localtime_r(t, r)
-
-/*
  * evil_unistd.h
  */
 

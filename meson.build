@@ -102,6 +102,7 @@ foreach lang : ['c', 'objc', 'cpp']
   add_global_arguments('-DEFL_BUILD=1', language: lang)
   add_global_arguments('-DELM_INTERNAL_API_ARGESFSDFEFC=1', language: lang)
   if sys_windows == true
+    add_global_arguments('-D_POSIX_C_SOURCE=200809L', language: lang)
     if (get_option('windows-version') == 'vista')
       add_global_arguments('-DWINVER=0x060', language: lang)
       add_global_arguments('-D_WIN32_WINNT=0x0600', language: lang)
