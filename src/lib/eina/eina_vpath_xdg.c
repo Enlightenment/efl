@@ -28,28 +28,36 @@ eina_xdg_env_init(void)
    } while (0)
 
 #ifdef _WIN32
-# define ENV_SET(_env, _dir, _meta) \
+# define ENV_DIR_SET(_env, _dir, _meta) \
    char _meta[PATH_MAX + 128]; \
    if (_env) { \
       s = getenv(_env); \
       if (!s) s = home; \
    } else s = home; \
-   if (_dir) FATAL_SNPRINTF(_meta, "vpath string '%s' truncated - fatal", "%s\\%s", s, (char *)_dir); \
-   else FATAL_SNPRINTF(_meta, "vpath string '%s' truncated - fatal", "%s\\", s); \
+   FATAL_SNPRINTF(_meta, "vpath string '%s' truncated - fatal", "%s\\%s", s, (char *)_dir); \
    (&user)->_meta = _meta;
 
-   ENV_SET(NULL, "Desktop", desktop);
-   ENV_SET(NULL, "Documents", documents);
-   ENV_SET(NULL, "Downloads", downloads);
-   ENV_SET(NULL, "Music", music);
-   ENV_SET(NULL, "Pictures", pictures);
-   ENV_SET("CommonProgramFiles", NULL, pub);
-   ENV_SET("APPDATA", "Microsoft\\Windows\\Templates", templates);
-   ENV_SET(NULL, "Videos", videos);
-   ENV_SET("LOCALAPPDATA", NULL, data);
-   ENV_SET("LOCALAPPDATA", "Temp", tmp);
-   ENV_SET("APPDATA", NULL, config);
-   ENV_SET("LOCALAPPDATA", NULL, cache);
+# define ENV_SET(_env, _meta) \
+   char _meta[PATH_MAX + 128]; \
+   if (_env) { \
+      s = getenv(_env); \
+      if (!s) s = home; \
+   } else s = home; \
+   FATAL_SNPRINTF(_meta, "vpath string '%s' truncated - fatal", "%s\\", s); \
+   (&user)->_meta = _meta;
+
+   ENV_DIR_SET(NULL, "Desktop", desktop);
+   ENV_DIR_SET(NULL, "Documents", documents);
+   ENV_DIR_SET(NULL, "Downloads", downloads);
+   ENV_DIR_SET(NULL, "Music", music);
+   ENV_DIR_SET(NULL, "Pictures", pictures);
+   ENV_SET("PUBLIC", pub);
+   ENV_DIR_SET("APPDATA", "Microsoft\\Windows\\Templates", templates);
+   ENV_DIR_SET(NULL, "Videos", videos);
+   ENV_SET("LOCALAPPDATA", data);
+   ENV_DIR_SET("LOCALAPPDATA", "Temp", tmp);
+   ENV_SET("APPDATA", config);
+   ENV_SET("LOCALAPPDATA", cache);
    if (!(s = getenv("APPDATA")))
      user.run = NULL;
    else
