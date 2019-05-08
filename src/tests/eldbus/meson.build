@@ -19,10 +19,15 @@ eldbus_suite_src = [
   'eldbus_suite.h'
 ]
 
-executable('eldbus_suite',
+eldbus_suite = executable('eldbus_suite',
   eldbus_suite_src,
   dependencies: [eldbus, ecore, check],
   c_args : [
   '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
   '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"']
+)
+
+test('eldbus-suite', eldbus_suite,
+  env : test_env,
+  timeout : 60
 )
