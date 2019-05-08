@@ -50,16 +50,6 @@
  */
 
 /**
- * @def getcwd(b,s)
- *
- * Wrapper around evil_getcwd().
- */
-#ifdef getcwd
-# undef getcwd
-#endif
-#define getcwd(b,s) evil_getcwd((b),(s))
-
-/**
  * @def pipe(fds)
  *
  * Wrapper around evil_pipe().

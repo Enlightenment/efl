@@ -5,6 +5,10 @@
 #include <unistd.h>
 #include <fcntl.h>
 
+#ifdef _WIN32
+# include <direct.h> /* getcwd */
+#endif
+
 #include <Eina.h>
 #include <Evas.h>
 #include <Ecore.h>

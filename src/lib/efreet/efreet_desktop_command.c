@@ -6,6 +6,7 @@
 #include <ctype.h>
 
 #ifdef _WIN32
+# include <direct.h> /* getcwd */
 # include <winsock2.h>
 #endif
 
