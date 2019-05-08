@@ -44,7 +44,7 @@ int fcntl(int fd, int cmd, ...)
         HANDLE  h;
         DWORD flag;
 
-        h = _is_socket(fd) ? (HANDLE)fd : (HANDLE)_get_osfhandle(fd);
+        h = _is_socket(fd) ? (HANDLE)(uintptr_t)fd : (HANDLE)_get_osfhandle(fd);
         if (h == INVALID_HANDLE_VALUE)
           return -1;
 
@@ -64,7 +64,7 @@ int fcntl(int fd, int cmd, ...)
         HANDLE  h;
         long flag;
 
-        h = _is_socket(fd) ? (HANDLE)fd : (HANDLE)_get_osfhandle(fd);
+        h = _is_socket(fd) ? (HANDLE)(uintptr_t)fd : (HANDLE)_get_osfhandle(fd);
         if (h == INVALID_HANDLE_VALUE)
           return -1;
 
