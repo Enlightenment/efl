@@ -265,7 +265,6 @@ case "$host_vendor" in
    ;;
 esac
 
-AC_DEFINE([_POSIX_C_SOURCE], [1], [Define the POSIX version])
 AC_SUBST([MODULE_ARCH])
 AC_DEFINE_UNQUOTED([MODULE_ARCH], ["${MODULE_ARCH}"], ["Module architecture"])
 AC_DEFINE_UNQUOTED([SHARED_LIB_SUFFIX], ["${MODULE_EXT}"], [Suffix for shared objects])
