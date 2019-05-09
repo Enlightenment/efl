@@ -260,6 +260,15 @@ _ecore_exe_thread_procedure(LPVOID data EINA_UNUSED)
    return 1;
 }
 
+static DWORD __stdcall
+_ecore_exe_exit_process(void *data)
+{
+   UINT *code;
+   code = (UINT *)data;
+   ExitProcess(*code);
+   return 1;
+}
+
 static BOOL CALLBACK
 _ecore_exe_enum_windows_procedure(HWND window,
                                   LPARAM data)
@@ -267,6 +276,7 @@ _ecore_exe_enum_windows_procedure(HWND window,
    Ecore_Exe *obj = (Ecore_Exe *) data;
    Ecore_Exe_Data *exe = efl_data_scope_get(obj, ECORE_EXE_CLASS);
    DWORD thread_id;
+   UINT code = 0;
 
    if (!exe) return EINA_FALSE;
    thread_id = GetWindowThreadProcessId(window, NULL);
@@ -295,7 +305,8 @@ _ecore_exe_enum_windows_procedure(HWND window,
 
         /* Exit process */
         if (CreateRemoteThread(exe->process, NULL, 0,
-                               (LPTHREAD_START_ROUTINE)ExitProcess, NULL,
+                               (LPTHREAD_START_ROUTINE)_ecore_exe_exit_process,
+                               &code,
                                0, NULL))
           return EINA_FALSE;
 
