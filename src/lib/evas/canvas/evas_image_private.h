@@ -75,6 +75,13 @@ struct _Evas_Object_Image_State
       short         l, r, t, b;
       unsigned char fill;
    } border;
+   struct {
+      struct {
+         uint8_t   *region;
+         uint32_t   stretchable;
+         uint32_t   total;
+      } horizontal, vertical;
+   } stretch;
 
    Evas_Object   *source;
    Evas_Map      *defmap;

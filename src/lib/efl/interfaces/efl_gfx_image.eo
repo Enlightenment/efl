@@ -40,6 +40,17 @@ enum @beta Efl.Gfx.Image_Scale_Type
    none         [[Not scale the image]]
 }
 
+struct Efl.Gfx.Image.Stretch_Region
+{
+   [[This struct holds the description of a stretchable region in one dimension (vertical or horizontal).
+   Used when scaling an image.
+
+     $offset + $length should be smaller than image size in that dimension.
+   ]]
+   offset: uint; [[First pixel of the stretchable region, starting at 0.]]
+   length: uint; [[Length of the stretchable region in pixels.]]
+}
+
 interface @beta Efl.Gfx.Image
 {
    [[Common APIs for all 2D images that can be rendered on the canvas.]]
@@ -152,6 +163,26 @@ interface @beta Efl.Gfx.Image
          get {}
          values {
             fill: Efl.Gfx.Border_Fill_Mode; [[Fill mode of the center region.]]
+         }
+      }
+      @property stretch_region {
+         [[This property defines the stretchable pixels region of an image.
+
+           When the regions are set by the user, the method will walk the iterators
+           once and then destroy them. When the regions are retrieved by the user,
+           it is his responsibility to destroy the iterators.. It will remember the
+           information for the lifetime of the object. It will ignore all value
+           of @.border, @.border_scale and @.border_center_fill . To reset the object
+           you can just pass $null to both horizontal and vertical at the same
+           time.
+         ]]
+         set {
+           return: Eina.Error; [[return an error code if the stretch_region provided are incorrect.]]
+         }
+         get {}
+         values {
+            horizontal: iterator<ptr(Efl.Gfx.Image.Stretch_Region)>; [[Representation of area that are stretchable in the image horizontal space.]]
+            vertical: iterator<ptr(Efl.Gfx.Image.Stretch_Region)>; [[Representation of area that are stretchable in the image vertical space.]]
          }
       }
       @property image_size {
