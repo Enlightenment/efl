@@ -4,69 +4,6 @@
 
 /* Legacy-only function pointer types, for the legacy EO classes (genlist, etc...) */
 type Evas_Smart_Cb: __undefined_type; [[Evas smart callback type]]
-type Eina_Compare_Cb: __undefined_type; [[Eina compare callback type]]
-type @extern Elm.Glob.Match_Flags: __undefined_type; [[Elementary glob matching flags]]
-
-/* FIXME: elm_policy API is not bound to EO */
-struct Elm.Event.Policy_Changed
-{
-   [[Data on the event when an Elementary policy has changed]]
-   policy: uint; [[the policy identifier]]
-   new_value: int; [[value the policy had before the change]]
-   old_value: int; [[new value the policy got]]
-}
-
-/* FIXME: elm_policy API is not bound to EO */
-enum Elm.Policy
-{
-   [[Policy identifiers.]]
-   quit, [[under which circumstances the application should quit automatically.
-           See also @Elm.Policy.quit.]]
-   exit, [[defines elm_exit() behaviour. See also @Elm.Policy.exit.
-
-           @since 1.8
-         ]]
-   throttle, [[defines how throttling should work. See also @Elm.Policy.throttle
-
-               @since 1.8
-             ]]
-   last [[Sentinel value to indicate last enum field during iteration]]
-}
-
-/* FIXME: elm_policy API is not bound to EO */
-enum Elm.Policy_Quit
-{
-   [[Possible values for the @Elm.Policy.quit policy]]
-   none = 0, [[never quit the application automatically]]
-   last_window_closed, [[quit when the application's last window is closed]]
-   last_window_hidden [[quit when the application's last window is hidden
-
-                        @since 1.14]]
-}
-
-/* FIXME: elm_policy API is not bound to EO */
-enum Elm.Policy_Exit
-{
-   [[Possible values for the @Elm.Policy.exit policy.
-
-     @since 1.8
-   ]]
-   none = 0, [[just quit the main loop on elm_exit()]]
-   windows_del [[delete all the windows after quitting the main loop]]
-}
-
-/* FIXME: elm_policy API is not bound to EO */
-enum Elm.Policy_Throttle
-{
-   [[Possible values for the @Elm.Policy.throttle policy.
-
-     @since 1.8
-   ]]
-   config = 0, [[do whatever elementary config is configured to do]]
-   hidden_always, [[always throttle when all windows are no longer visible]]
-   never [[never throttle when windows are all hidden, regardless of config
-           settings]]
-}
 
 /* FIXME: Move to Efl.Ui namespace after Efl.Ui.List gets merged! */
 enum Elm.Object.Select_Mode
@@ -92,38 +29,6 @@ enum Elm.Object.Select_Mode
          is forbidden.]]
 }
 
-/* FIXME: Move to Efl.Ui namespace after Efl.Ui.List gets merged! */
-enum Elm.Object.Multi_Select_Mode
-{
-   [[Possible values for the #ELM_OBJECT_MULTI_SELECT_MODE policy.
-
-     @since 1.8
-   ]]
-   default = 0, [[default multiple select mode]]
-   with_control, [[disallow mutiple selection when clicked without control key
-                   pressed]]
-   max [[canary value: any value greater or equal to
-         ELM_OBJECT_MULTI_SELECT_MODE_MAX is forbidden.]]
-}
-
-/* Legacy only: elm_entry, elm_label, elm_popup */
-enum Elm.Wrap.Type
-{
-   [[Line wrapping types.
-     Type of word or character wrapping to use.
-
-     See also \@ref elm_entry_line_wrap_set, \@ref
-     elm_popup_content_text_wrap_type_set, \@ref elm_label_line_wrap_set.
-   ]]
-
-   legacy: elm_wrap;
-   none = 0, [[No wrap - value is zero.]]
-   char,     [[Char wrap - wrap between characters.]]
-   word,     [[Word wrap - wrap in allowed wrapping points (as defined in the unicode standard).]]
-   mixed,    [[Mixed wrap - Word wrap, and if that fails, char wrap.]]
-   last      [[Sentinel value to indicate last enum field during iteration]]
-}
-
 enum Elm.Icon.Type
 {
    [[Elementary icon types]]
@@ -134,24 +39,11 @@ enum Elm.Icon.Type
 }
 
 /* FIXME: shouldn't exist, they are unusable by the bindings */
-struct @extern Elm_Gen_Item; [[Elementary gen item]]
-struct @extern Efl_Access_Action_Data; [[Efl access action data]]
 struct @extern Elm.Validate_Content; [[Data for the elm_validator_regexp_helper()]]
 struct @extern Elm.Entry_Anchor_Info; [[The info sent in the callback for the "anchor,clicked" signals emitted
                                         by entries.]]
 struct @extern Elm.Entry_Anchor_Hover_Info; [[The info sent in the callback for "anchor,hover" signals emitted
                                               by the Anchor_Hover widget]]
-struct @extern Elm.Entry_Change_Info; [[This corresponds to Edje_Entry_Change_Info. Includes information about
-                                        a change in the entry]]
-
-/* Enums from elm_entry.eo, also used by efl_ui_text */
-enum Elm.Text_Format
-{
-   [[Text Format types.
-   ]]
-   plain_utf8, [[ Plain UTF8 type ]]
-   markup_utf8 [[ Markup UTF8 type ]]
-}
 
 enum Elm.Input.Panel.Layout
 {
@@ -266,114 +158,4 @@ enum Elm.Input.Hints
    autofill_id                            = 0xB00  [[ Autofill hint for a user's ID
 
                                                       @since 1.21]]
-}
-
-enum Elm.Cnp_Mode
-{
-   [[
-     Enum of entry's copy & paste policy.
-   ]]
-   markup,    [[ copy & paste text with markup tag ]]
-   no_image,  [[ copy & paste text without item(image) tag ]]
-   plaintext, [[ copy & paste text without markup tag ]]
-}
-
-/* Elm_Genlist-related types */
-type @extern Elm.Genlist.Item.Class: __undefined_type; [[External elm genlist item class]]
-
-enum Elm.Genlist.Item.Type
-{
-   [[Defines if the item is of any special type (has subitems or it's the
-     index of a group), or is just a simple item.
-   ]]
-   legacy: elm_genlist_item;
-   none = 0, [[Simple item.]]
-   tree = (1 << 0), [[This may be expanded and have child items.]]
-   group = (1 << 1), [[An index item of a group of items. this item can have child items.]]
-   max = (1 << 2) [[Sentinel value to indicate last enum field during iteration]]
-}
-
-enum Elm.Genlist.Item.Field_Type
-{
-   [[Defines the type of the item part
-     Used while updating item's parts
-     It can be used at updating multi fields.
-   ]]
-   legacy: elm_genlist_item_field;
-   all = 0, [[Type all]]
-   text = (1 << 0), [[Type text]]
-   content = (1 << 1), [[Type content]]
-   state = (1 << 2) [[Type state]]
-}
-
-enum Elm.Genlist.Item.Scrollto_Type
-{
-   [[Defines where to position the item in the genlist.]]
-   legacy: elm_genlist_item_scrollto;
-   none = 0,   [[Nothing will happen, Don't use this value.]]
-   in = (1 << 0),   [[To the nearest viewport.]]
-   top = (1 << 1),   [[To the top of viewport.]]
-   middle = (1 << 2),   [[To the middle of viewport.]]
-   bottom = (1 << 3)   [[To the bottom of viewport.]]
-}
-
-/* Elm_Gengrid-related types */
-
-type @extern Elm.Gengrid.Item.Class: __undefined_type; [[External elm gengrid item class]]
-
-enum Elm.Gengrid.Item.Scrollto_Type
-{
-   [[Defines where to position the item in the genlist.]]
-   legacy: elm_gengrid_item_scrollto;
-   none = 0,   [[No scrollto.]]
-   in = (1 << 0),   [[To the nearest viewport.]]
-   top = (1 << 1),   [[To the top of viewport.]]
-   middle = (1 << 2),   [[To the middle of viewport.]]
-   bottom = (1 << 3)   [[To the bottom of viewport.]]
-}
-
-enum Elm.Gengrid.Item.Field_Type
-{
-   [[Defines the type of the item part Used while updating item's parts.
-     It can be used at updating multi fields.]]
-   legacy: elm_gengrid_item_field;
-   all = 0, [[Type all]]
-   text = (1 << 0), [[Type text]]
-   content = (1 << 1), [[Type content]]
-   state = (1 << 2) [[Type state]]
-}
-
-/* Elm_List types */
-enum Elm.List.Mode
-{
-   [[Set list's resizing behavior, transverse axis scrolling and items
-     cropping. See each mode's description for more details.
-
-     Note: Default value is @Elm.List.Mode.scroll.
-
-     Values here don't work as bitmasks -- only one can be chosen at
-     a time.
-   ]]
-   legacy: elm_list;
-   compress = 0, [[The list won't set any of its size hints to inform how a
-                   possible container should resize it. Then, if it's not
-                   created as a "resize object", it might end with zeroed
-                   dimensions. The list will respect the container's geometry
-                   and, if any of its items won't fit into its transverse axis,
-                   one won't be able to scroll it in that direction.]]
-   scroll, [[Default value. This is the same as #ELM_LIST_COMPRESS, with the
-             exception that if any of its items won't fit into its transverse
-             axis, one will be able to scroll it in that direction.]]
-   limit, [[Sets a minimum size hint on the list object, so that containers may
-            respect it (and resize itself to fit the child properly). More
-            specifically, a minimum size hint will be set for its transverse
-            axis, so that the largest item in that direction fits well. This
-            is naturally bound by the list object's maximum size hints, set
-            externally.]]
-   expand, [[Besides setting a minimum size on the transverse axis, just like
-             on @Elm.List.Mode.limit, the list will set a minimum size on the
-             longitudinal axis, trying to reserve space to all its children to
-             be visible at a time. . This is naturally bound by the list
-             object's maximum size hints, set externally.]]
-   last [[Indicates error if returned by elm_list_mode_get().]]
 }
