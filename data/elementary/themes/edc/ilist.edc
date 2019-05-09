@@ -1,5 +1,4 @@
 group { name: "e/ilist";
-   images.image: "darken_square.png" COMP;
    parts {
       part { name: "typebuf_clip"; type: RECT;
          description { state: "default" 0.0;
@@ -11,47 +10,44 @@ group { name: "e/ilist";
             color: 255 255 255 255;
          }
       }
-      part { name: "bevel"; mouse_events: 0;
+      part { name: "base"; type: RECT; mouse_events: 0;
          clip_to: "typebuf_clip";
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.offset: -6 -6;
+            rel1.offset: -8 -8;
             rel1.to: "e.text.label";
-            rel2.offset: 5 5;
+            rel2.offset: 7 7;
             rel2.to: "e.text.label";
-            image.normal: "darken_square.png";
-            image.border: 6 6 6 6;
-            fill.smooth: 0;
+            color: 0 0 0 192;
+            offscale;
          }
       }
       part { name: "e.text.label"; type: TEXT; mouse_events: 0;
          clip_to: "typebuf_clip";
-         effect: SHADOW BOTTOM;
          scale: 1;
          description { state: "default" 0.0;
             rel1.relative: 0.5 0.5;
             rel1.offset: -8 -8;
             rel2.relative: 0.5 0.5;
             rel2.offset: 7 7;
-            color: FN_COL_DEFAULT;
-            color_class: "ilist_typebuf";
+            color: 255 255 255 255;
             text { font: FNBD; size: 10;
                min: 1 1;
                ellipsis: -1;
                align: 0.5 0.5;
                text_class: "ilist_typebuf";
             }
+            offscale;
          }
       }
    }
    programs {
-      program {
-         signal: "e,state,typebuf,start"; source: "e";
+      program { signal: "e,state,typebuf,start"; source: "e";
          action: STATE_SET "active" 0.0;
          transition: SINUSOIDAL 0.25;
          target: "typebuf_clip";
       }
-      program {
-         signal: "e,state,typebuf,stop"; source: "e";
+      program { signal: "e,state,typebuf,stop"; source: "e";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 1.0;
          target: "typebuf_clip";
