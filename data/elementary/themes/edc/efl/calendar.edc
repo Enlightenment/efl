@@ -152,7 +152,7 @@
          rel2.to: "cit_"#_pos"_selected"; \
          rel2.offset: -2 -2; \
          image.normal: "diagonal_stripes.png"; \
-         color: 255 255 255 25; \
+         color: 51 153 255 25; \
          TILED_PATTERN(240, 240) \
          color_class: "calendar_day_selected"; \
          visible: 0; \
@@ -166,9 +166,9 @@
       description { state: "default" 0.0; \
          rel1.to: "cit_"#_pos"_rect"; \
          rel2.to: "cit_"#_pos"_rect"; \
-         image.normal: "outline_glow.png"; \
+         image.normal: "outline.png"; \
          image.border: 4 4 4 4; \
-         color_class: "calendar_day_selected"; \
+         color: 51 153 255 255; \
          visible: 0; \
       } \
       description { state: "selected" 0.0; \
@@ -180,9 +180,9 @@
       description { state: "default" 0.0; \
          rel1.to: "cit_"#_pos"_rect"; \
          rel2.to: "cit_"#_pos"_rect"; \
-         image.normal: "outline_glow.png"; \
+         image.normal: "outline.png"; \
          image.border: 4 4 4 4; \
-         color: 255 255 255 128; \
+         color: 51 153 255 255; \
          color_class: "calendar_day_highlighted"; \
          visible: 0; \
       } \
@@ -426,7 +426,7 @@ group { "efl/calendar";
    images.image: "sym_left_glow_normal.png" COMP;
    images.image: "sym_right_glow_normal.png" COMP;
    images.image: "icon_border_remember.png" COMP;
-   images.image: "outline_glow.png" COMP;
+   images.image: "outline.png" COMP;
    images.image: "box_glow.png" COMP;
    images.image: "diagonal_stripes.png" COMP;
    data.item: "focus_highlight" "on";

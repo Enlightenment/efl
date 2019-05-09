@@ -554,17 +554,18 @@ group { name: "e/modules/ibox/icon_overlay";
 
 group { name: "e/modules/ibox/drop";
    alias: "e/modules/ibar/drop";
-   images.image: "outline_glow.png" COMP;
+   images.image: "outline.png" COMP;
    images.image: "diagonal_stripes.png" COMP;
    parts {
       part { name: "base"; mouse_events: 0;
          description { state: "default" 0.0;
             rel1.offset: 2 2;
             rel2.offset: -3 -3;
-            image.normal: "outline_glow.png";
+            image.normal: "outline.png";
             image.border: 4 4 4 4;
             image.middle: 0;
             fill.smooth: 0;
+            color: 51 153 255 255;
          }
       }
       part { name: "pat"; mouse_events: 0;
@@ -574,7 +575,7 @@ group { name: "e/modules/ibox/drop";
             rel2.offset: -2 -2;
             rel2.to: "base";
             image.normal: "diagonal_stripes.png";
-            color: 255 255 255 25;
+            color: 51 153 255 25;
             TILED_PATTERN(240, 240)
          }
       }

@@ -1,27 +1,21 @@
 group { "e/modules/tiling/indicator";
-   images.image: "outline_glow.png" COMP;
+   images.image: "outline.png" COMP;
    images.image: "diagonal_stripes.png" COMP;
    parts {
       part { name: "base"; mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "outline_glow.png";
+            image.normal: "outline.png";
             image.border: 4 4 4 4;
             image.middle: 0;
             fill.smooth: 0;
+            color: 51 153 255 255;
          }
       }
       image { "background";
          desc { "default";
-            color: 255 255 255 50;
-            image {
-               normal: "diagonal_stripes.png";
-            }
-            fill {
-               size {
-                  relative: 0.0 0.0;
-                  offset: 240 240;
-               }
-            }
+            image.normal: "diagonal_stripes.png";
+            color: 51 153 255 50;
+            TILED_PATTERN(240, 240)
          }
       }
       swallow { "e.client.icon";
