@@ -23,6 +23,7 @@ group { name: "e/modules/appmenu/item";
                ellipsis: -1;
                text_class: "label";
             }
+            offscale;
          }
          description { state: "selected" 0.0;
             inherit: "default" 0.0;
