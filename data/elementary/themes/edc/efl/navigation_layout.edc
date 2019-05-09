@@ -21,6 +21,7 @@ group { "efl/navigation_layout";
                relative: 0.0 1.0;
             }
             rel2.to_x: "base";
+            align: 0.5 0.0;
          }
       }
    }
