@@ -30,8 +30,8 @@ public static class TestParts
 
     private static void do_part_test(Dummy.PartHolder t)
     {
-        var p1 = t.PartOne;
-        var p2 = t.PartTwo;
+        var p1 = t.OnePart;
+        var p2 = t.TwoPart;
         Test.Assert(p1 is Dummy.TestObject);
         Test.AssertEquals("part_one", p1.GetName());
         Test.Assert(p2 is Dummy.TestObject);

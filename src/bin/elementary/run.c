@@ -17,6 +17,10 @@
 # include <alloca.h>
 #endif
 
+#ifdef _WIN32
+# include <direct.h> /* getcwd */
+#endif
+
 #ifdef HAVE_ENVIRON
 extern char **environ;
 #endif

@@ -140,15 +140,7 @@ lib/evas/canvas/evas_canvas3d_node.eo.cs \
 lib/evas/canvas/evas_canvas3d_object.eo.cs \
 lib/evas/canvas/evas_canvas3d_primitive.eo.cs \
 lib/evas/canvas/evas_canvas3d_scene.eo.cs \
-lib/evas/canvas/evas_canvas3d_texture.eo.cs \
-lib/evas/canvas/efl_canvas_vg_object.eo.cs \
-lib/evas/canvas/efl_vg.eo.cs \
-lib/evas/canvas/efl_vg_container.eo.cs \
-lib/evas/canvas/efl_vg_gradient.eo.cs \
-lib/evas/canvas/efl_vg_gradient_radial.eo.cs \
-lib/evas/canvas/efl_vg_gradient_linear.eo.cs \
-lib/evas/canvas/efl_vg_root_node.eo.cs \
-lib/evas/canvas/efl_vg_shape.eo.cs
+lib/evas/canvas/evas_canvas3d_texture.eo.cs
 
 efl_eolian_blacklisted_files = \
 lib/efl/interfaces/efl_io_buffer.eo.cs \

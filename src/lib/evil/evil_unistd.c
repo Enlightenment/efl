@@ -62,17 +62,6 @@ evil_time_get(void)
    return (double)_evil_time_second + (double)(count.QuadPart - _evil_time_count)/ (double)_evil_time_freq;
 }
 
-/*
- * File related functions
- *
- */
-
-char *
-evil_getcwd(char *buffer, size_t size)
-{
-   return _getcwd(buffer, (int)size);
-}
-
 
 /*
  * Sockets and pipe related functions

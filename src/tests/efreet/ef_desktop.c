@@ -8,6 +8,10 @@
 #include <unistd.h>
 #include <limits.h>
 
+#ifdef _WIN32
+# include <direct.h> /* getcwd */
+#endif
+
 #include <Efreet.h>
 
 #include "ef_test.h"

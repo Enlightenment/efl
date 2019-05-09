@@ -117,39 +117,32 @@ _eina_file_win32_is_dir(const char *dir)
    return EINA_TRUE;
 }
 
-static char *
-_eina_file_win32_dir_new(const char *dir)
-{
-   char *new_dir;
-   size_t length;
-
-   length = strlen(dir);
-
-   new_dir = (char *)malloc(sizeof(char) * length + 5);
-   if (!new_dir)
-     return NULL;
-
-   memcpy(new_dir, dir, length);
-   memcpy(new_dir + length, "\\*.*", 5);
-
-   return new_dir;
-}
-
 static HANDLE
 _eina_file_win32_first_file(const char *dir, WIN32_FIND_DATA *fd)
 {
-  HANDLE h;
+   char buf[4096];
+   HANDLE h;
+   size_t l = strlen(dir);
 #ifdef UNICODE
    wchar_t *wdir = NULL;
+#endif
 
-   wdir = evil_char_to_wchar(dir);
+   l = strlen(dir);
+   if ((l + 5) > sizeof(buf))
+     return INVALID_HANDLE_VALUE;
+
+   memcpy(buf, dir, l);
+   memcpy(buf + l, "\\*.*", 5);
+
+#ifdef UNICODE
+   wdir = evil_char_to_wchar(buf);
    if (!wdir)
      return INVALID_HANDLE_VALUE;
 
-   h = FindFirstFile(wdir, fd);
+   h = FindFirstFileEx(wdir, FindExInfoBasic, fd, FindExSearchNameMatch, NULL, 0);
    free(wdir);
 #else
-   h = FindFirstFile(dir, fd);
+   h = FindFirstFileEx(buf, FindExInfoBasic, fd, FindExSearchNameMatch, NULL, 0);
 #endif
 
    if (!h)
@@ -469,7 +462,6 @@ eina_file_dir_list(const char *dir,
 {
    WIN32_FIND_DATA file;
    HANDLE h;
-   char *new_dir;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(cb,  EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(dir, EINA_FALSE);
@@ -478,11 +470,7 @@ eina_file_dir_list(const char *dir,
    if (!_eina_file_win32_is_dir(dir))
      return EINA_FALSE;
 
-   new_dir = _eina_file_win32_dir_new(dir);
-   if (!new_dir)
-      return EINA_FALSE;
-
-   h = _eina_file_win32_first_file(new_dir, &file);
+   h = _eina_file_win32_first_file(dir, &file);
 
    if (h == INVALID_HANDLE_VALUE)
       return EINA_FALSE;
@@ -496,7 +484,9 @@ eina_file_dir_list(const char *dir,
 # else
         filename = file.cFileName;
 # endif /* ! UNICODE */
-        if (!strcmp(filename, ".") || !strcmp(filename, ".."))
+        if ((filename[0] == '.') &&
+            ((filename[1] == '\0') ||
+             ((filename[1] == '.') && (filename[2] == '\0'))))
            continue;
 
         cb(filename, dir, data);
@@ -563,7 +553,6 @@ EAPI Eina_Iterator *
 eina_file_ls(const char *dir)
 {
    Eina_File_Iterator *it;
-   char               *new_dir;
    size_t              length;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
@@ -582,12 +571,7 @@ eina_file_ls(const char *dir)
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
 
-   new_dir = _eina_file_win32_dir_new(dir);
-   if (!new_dir)
-      goto free_it;
-
-   it->handle = _eina_file_win32_first_file(new_dir, &it->data);
-   free(new_dir);
+   it->handle = _eina_file_win32_first_file(dir, &it->data);
    if ((it->handle == INVALID_HANDLE_VALUE) && (GetLastError() != ERROR_NO_MORE_FILES))
      goto free_it;
 
@@ -614,7 +598,6 @@ EAPI Eina_Iterator *
 eina_file_direct_ls(const char *dir)
 {
    Eina_File_Direct_Iterator *it;
-   char                      *new_dir;
    size_t                     length;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(dir, NULL);
@@ -633,12 +616,7 @@ eina_file_direct_ls(const char *dir)
 
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
 
-   new_dir = _eina_file_win32_dir_new(dir);
-   if (!new_dir)
-      goto free_it;
-
-   it->handle = _eina_file_win32_first_file(new_dir, &it->data);
-   free(new_dir);
+   it->handle = _eina_file_win32_first_file(dir, &it->data);
    if ((it->handle == INVALID_HANDLE_VALUE) && (GetLastError() != ERROR_NO_MORE_FILES))
      goto free_it;
 

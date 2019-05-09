@@ -1,7 +1,7 @@
 engine_src = files(['ecore_evas_win32.c'])
 
-config_h.set('BUILD_ECORE_EVAS_SOFTWARE_DDRAW', '1');
-config_h.set('BUILD_ECORE_EVAS_SOFTWARE_GDI', '1');
+config_h.set('BUILD_ECORE_EVAS_SOFTWARE_DDRAW', '1')
+config_h.set('BUILD_ECORE_EVAS_SOFTWARE_GDI', '1')
 
 engine_deps = [engine_software_ddraw, engine_software_gdi]
 

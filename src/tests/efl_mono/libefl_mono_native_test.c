@@ -92,8 +92,8 @@ typedef struct Dummy_Child_Data
 
 typedef struct Dummy_Part_Holder_Data
 {
-  Eo *part_one;
-  Eo *part_two;
+  Eo *one;
+  Eo *two;
 } Dummy_Part_Holder_Data;
 
 typedef struct Dummy_Inherit_Helper_Data
@@ -4057,8 +4057,8 @@ _dummy_part_holder_efl_object_constructor(Eo *obj, Dummy_Part_Holder_Data *pd)
    // To avoid an infinite loop calling the same constructor
    if (!efl_parent_get(obj))
      {
-        pd->part_one = efl_add(DUMMY_TEST_OBJECT_CLASS, obj, efl_name_set(efl_added, "part_one"));
-        pd->part_two = efl_add(DUMMY_TEST_OBJECT_CLASS, obj, efl_name_set(efl_added, "part_two"));
+        pd->one = efl_add(DUMMY_TEST_OBJECT_CLASS, obj, efl_name_set(efl_added, "part_one"));
+        pd->two = efl_add(DUMMY_TEST_OBJECT_CLASS, obj, efl_name_set(efl_added, "part_two"));
      }
 
    return obj;
@@ -4066,10 +4066,10 @@ _dummy_part_holder_efl_object_constructor(Eo *obj, Dummy_Part_Holder_Data *pd)
 
 Efl_Object *_dummy_part_holder_efl_part_part_get(EINA_UNUSED const Eo *obj, Dummy_Part_Holder_Data *pd, const char *name)
 {
-    if (!strcmp(name, "part_one"))
-      return pd->part_one;
-    else if (!strcmp(name, "part_two"))
-      return pd->part_two;
+    if (!strcmp(name, "one"))
+      return pd->one;
+    else if (!strcmp(name, "two"))
+      return pd->two;
     else
       return NULL;
 }
