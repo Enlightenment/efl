@@ -175,6 +175,8 @@ ecore_drm2_plane_fb_set(Ecore_Drm2_Plane *plane, Ecore_Drm2_Fb *fb)
 {
    uint32_t fallback_id;
 
+   if (!_ecore_drm2_use_atomic) return EINA_FALSE;
+
    EINA_SAFETY_ON_NULL_RETURN_VAL(plane, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(fb, EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(plane->dead, EINA_FALSE);
