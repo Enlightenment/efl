@@ -177,7 +177,7 @@ struct _Eolian_Class
    Eolian_Object base;
    Eolian_Class_Type type;
    Eolian_Documentation *doc;
-   Eina_Stringshare *eo_prefix;
+   Eina_Stringshare *c_prefix;
    Eina_Stringshare *ev_prefix;
    Eina_Stringshare *data_type;
    union {

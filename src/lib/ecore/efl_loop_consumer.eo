@@ -6,7 +6,7 @@ abstract Efl.Loop_Consumer extends Efl.Object
 
      @since 1.22
    ]]
-   eo_prefix: efl_loop;
+   c_prefix: efl_loop;
    methods {
       @property loop {
          [[The loop to which this object belongs to.]]

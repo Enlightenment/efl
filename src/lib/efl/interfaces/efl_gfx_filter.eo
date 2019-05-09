@@ -8,7 +8,7 @@ interface @beta Efl.Gfx.Filter
 
      This was a beta feature since 1.15.
    ]]
-   eo_prefix: efl_gfx;
+   c_prefix: efl_gfx;
    methods {
       @property filter_program {
          set {

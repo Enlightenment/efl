@@ -45,7 +45,7 @@ mixin @beta Efl.Canvas.Filter.Internal requires Efl.Object extends Efl.Gfx.Filte
 {
    [[Evas internal implementation of filters.]]
 
-   eo_prefix: evas;
+   c_prefix: evas;
    data: Evas_Filter_Data;
 
    methods {

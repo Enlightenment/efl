@@ -6,7 +6,7 @@ interface Efl.Input.State
 
      @since 1.22
    ]]
-   eo_prefix: efl_input;
+   c_prefix: efl_input;
    methods {
       /* FIXME Efl.Input.Device is not stable yet*/
       @property modifier_enabled @beta {

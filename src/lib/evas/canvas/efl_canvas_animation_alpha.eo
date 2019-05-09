@@ -1,7 +1,7 @@
 class @beta Efl.Canvas.Animation_Alpha extends Efl.Canvas.Animation
 {
    [[Efl alpha animation class]]
-   eo_prefix: efl_animation_alpha;
+   c_prefix: efl_animation_alpha;
    data: Efl_Canvas_Animation_Alpha_Data;
    methods {
       @property alpha {

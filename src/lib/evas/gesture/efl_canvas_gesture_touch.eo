@@ -6,7 +6,7 @@ import efl_input_types;
 class @beta Efl.Canvas.Gesture_Touch extends Efl.Object
 {
    [[EFL Gesture Touch class]]
-   eo_prefix: efl_gesture_touch;
+   c_prefix: efl_gesture_touch;
    methods {
       point_record {
          [[Touch point record method]]

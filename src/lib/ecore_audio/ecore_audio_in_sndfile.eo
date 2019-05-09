@@ -1,7 +1,7 @@
 class @beta Ecore.Audio.In.Sndfile extends Ecore.Audio.In
 {
    [[Ecore Audio sndfile input.]]
-   eo_prefix: ecore_audio_obj_in_sndfile;
+   c_prefix: ecore_audio_obj_in_sndfile;
    implements {
       Efl.Object.destructor;
       Ecore.Audio.source { get; set; }

@@ -2,7 +2,7 @@ class @beta Efl.Canvas.Gesture_Recognizer_Long_Tap extends Efl.Canvas.Gesture_Re
 {
    [[EFL Gesture Recognizer Long Tap class]]
    data: null;
-   eo_prefix: efl_gesture_recognizer_long_tap;
+   c_prefix: efl_gesture_recognizer_long_tap;
    implements {
       Efl.Canvas.Gesture_Recognizer.create;
       Efl.Canvas.Gesture_Recognizer.recognize;

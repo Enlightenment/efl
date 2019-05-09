@@ -60,7 +60,7 @@ interface @beta Efl.Text_Style {
 
      A style can be coloring, effects, underline, strikethrough etc.
    ]]
-   eo_prefix: efl_text;
+   c_prefix: efl_text;
    methods {
       @property normal_color {
          [[Color of text, excluding style]]

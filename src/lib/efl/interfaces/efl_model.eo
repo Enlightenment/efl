@@ -16,7 +16,7 @@ struct @beta Efl.Model_Children_Event {
 interface @beta Efl.Model
 {
    [[Efl model interface]]
-   eo_prefix: efl_model;
+   c_prefix: efl_model;
       methods {
          @property properties {
             get {

@@ -1864,7 +1864,7 @@ error:
 static void
 parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
 {
-   Eina_Bool has_eo_prefix     = EINA_FALSE,
+   Eina_Bool has_c_prefix     = EINA_FALSE,
              has_event_prefix  = EINA_FALSE,
              has_data          = EINA_FALSE,
              has_methods       = EINA_FALSE,
@@ -1880,12 +1880,12 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
      }
    for (;;) switch (ls->t.kw)
      {
-      case KW_eo_prefix:
-        CASE_LOCK(ls, eo_prefix, "eo prefix definition")
+      case KW_c_prefix:
+        CASE_LOCK(ls, c_prefix, "c prefix definition")
         eo_lexer_get(ls);
         check_next(ls, ':');
         _validate_pfx(ls);
-        ls->klass->eo_prefix = eina_stringshare_ref(ls->t.value.s);
+        ls->klass->c_prefix = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
         check_next(ls, ';');
         break;
