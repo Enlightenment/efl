@@ -145,9 +145,11 @@ _blend_mask_add(int count, const SW_FT_Span *spans, void *user_data)
    RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
    uint32_t *mbuffer = mask->pixels.u32;
 
+   int tsize = sd->raster_buffer->generic->w;
+   uint32_t *ttarget = alloca(sizeof(uint32_t) * tsize);
+
    while (count--)
      {
-        uint32_t *ttarget = alloca(sizeof(uint32_t) * spans->len);
         memset(ttarget, 0x00, sizeof(uint32_t) * spans->len);
         uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
         comp_func(ttarget, spans->len, color, spans->coverage);
@@ -234,9 +236,11 @@ _blend_mask_diff(int count, const SW_FT_Span *spans, void *user_data)
    RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
    uint32_t *mbuffer = mask->pixels.u32;
 
+   int tsize = sd->raster_buffer->generic->w;
+   uint32_t *ttarget = alloca(sizeof(uint32_t) * tsize);
+
    while (count--)
      {
-        uint32_t *ttarget = alloca(sizeof(uint32_t) * spans->len);
         memset(ttarget, 0x00, sizeof(uint32_t) * spans->len);
         uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
         comp_func(ttarget, spans->len, color, spans->coverage);
