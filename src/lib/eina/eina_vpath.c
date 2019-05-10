@@ -254,37 +254,53 @@ _eina_vpath_resolve(const char *path, char *str, size_t size)
            }
      }
    // (:xxx:)/* ... <- meta hash table
-   else if ((path[0] == '(') && (path[1] == ':'))
+   else if (((path[0] == '(') && (path[1] == ':')) ||
+            ((path[0] == '$') && (path[1] == '{')))
      {
         const char *p, *end, *meta;
+        const char *msg_start, *msg_end;
         char *name;
+        int offset;
         Eina_Bool found = EINA_FALSE;
 
-        end = p = strstr(path + 2, ":)");
+        if (path[0] == '(')
+          {
+             end = p = strstr(path + 2, ":)");
+             offset = 2;
+             msg_start = "(:";
+             msg_end = ":)";
+          }
+        else
+          {
+             end = p = strchr(path + 2, '}');
+             offset = 1;
+             msg_start = "${";
+             msg_end = "}";
+          }
         if (p) found = EINA_TRUE;
-        p += 2;
+        p += offset;
 
         if (!found)
           {
-             ERR("(: Needs to have a matching ':)'\nThe string was: %s", path);
+             ERR("'%s' Needs to have a matching '%s'\nThe string was: %s", msg_start, msg_end, path);
              return 0;
           }
 
         if (*p != '/')
           {
-             ERR("A / is expected after :)\nThe string was: %s", path);
+             ERR("A / is expected after '%s'\nThe string was: %s", msg_end, path);
              return 0;
           }
 
         if (found)
           {
              name = alloca(end - path);
-             strncpy(name, path + 2, end - path - 2);
+             strncpy(name, path + 2, end - path - offset);
              name[end - path - 2] = 0;
              meta = _eina_vpath_data_get(name);
              if (meta)
                {
-                  return snprintf(str, size, "%s%s", meta, end + 2);
+                  return snprintf(str, size, "%s%s", meta, end + offset);
                }
              else
                {
