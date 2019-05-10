@@ -2312,10 +2312,10 @@ evas_render_proxy_subrender(Evas *eo_e, void *output, Evas_Object *eo_source, Ev
                             Eina_Bool source_clip, Eina_Bool do_async)
 {
    Evas_Public_Data *evas = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
-   Evas_Object_Protected_Data *source;
+   Evas_Object_Protected_Data *source, *proxy;
    int level = 1;
    void *ctx;
-   int w, h;
+   int w, h, off_x = 0, off_y = 0;
 
 #ifdef REND_DBG
    level = __RD_level;
@@ -2324,9 +2324,29 @@ evas_render_proxy_subrender(Evas *eo_e, void *output, Evas_Object *eo_source, Ev
    if (!eo_source) return;
    eina_evlog("+proxy_subrender", eo_proxy, 0.0, NULL);
    source = efl_data_scope_get(eo_source, EFL_CANVAS_OBJECT_CLASS);
+   proxy = efl_data_scope_get(eo_proxy, EFL_CANVAS_OBJECT_CLASS);
 
-   w = source->cur->geometry.w;
-   h = source->cur->geometry.h;
+   if (proxy->proxy->proxies || (!proxy->cur->clipper) || (!proxy->cur->has_fixed_size))
+     {
+        /* make full surface available if this proxy is being sampled from */
+        w = source->cur->geometry.w;
+        h = source->cur->geometry.h;
+     }
+   else
+     {
+        Eina_Rectangle clip = _evas_render_smallest_static_clipped_geometry_get(proxy->cur);
+        /* nothing is using this proxy, so the proxy render surface can be sized
+         * to fit exactly the proxy object's render size, and the proxy render will
+         * naturally be clipped to this geometry
+         */
+        w = clip.w;
+        h = clip.h;
+        /* set the render offset for the proxy offset based on the geometry which will
+         * be visible on the proxy surface after clipping
+         */
+        off_x = proxy->cur->geometry.x - clip.x;
+        off_y = proxy->cur->geometry.y - clip.y;
+     }
 
    RD(level, "  proxy_subrender(source: %s, proxy: %s, %dx%d)\n",
       RDNAME(source), RDNAME(proxy_obj), w, h);
@@ -2379,8 +2399,8 @@ evas_render_proxy_subrender(Evas *eo_e, void *output, Evas_Object *eo_source, Ev
         ctx = ENFN->context_new(ENC);
         evas_render_mapped(evas, eo_source, source, ctx,
                            output, proxy_write->surface,
-                           -source->cur->geometry.x,
-                           -source->cur->geometry.y,
+                           -source->cur->geometry.x + off_x,
+                           -source->cur->geometry.y + off_y,
                            level + 1, 0, 0, evas->output.w, evas->output.h,
                            &proxy_render_data, level + 1, do_async);
         ENFN->context_free(ENC, ctx);
