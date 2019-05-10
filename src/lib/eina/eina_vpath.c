@@ -257,18 +257,10 @@ _eina_vpath_resolve(const char *path, char *str, size_t size)
      {
         const char *p, *end, *meta;
         char *name;
-        int max_len = strlen(path);
         Eina_Bool found = EINA_FALSE;
 
-        for (p = path + 2; p <= path + max_len - 2; p++)
-          {
-             if ((p[0] ==':') && (p[1] == ')'))
-               {
-                  end = p;
-                  found = EINA_TRUE;
-                  break;
-               }
-          }
+        end = p = strstr(path + 2, ":)");
+        if (p) found = EINA_TRUE;
         p += 2;
 
         if (!found)
