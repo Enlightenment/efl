@@ -94,8 +94,8 @@ blacklisted_files = [
 efl_mono_lib = library('eflcustomexportsmono',
     join_paths('..', '..', 'lib', 'efl_mono', 'efl_custom_exports_mono.c'),
     install : true,
-    install_dir : join_paths(dir_lib, 'efl-mono-'+version_major),
-    dependencies : [eo, eina, ecore]
+    dependencies : [eo, eina, ecore],
+    version : meson.project_version()
 )
 
 beta_option = []
