@@ -6768,7 +6768,7 @@ _elm_genlist_item_sorted_insert(Eo *obj, Elm_Genlist_Data *sd, const Elm_Genlist
           {
              // Inlist is not sorted!
              Elm_Gen_Item *prev_rel = NULL;
-             int cmp;
+             int cmp = 0;
 
              EINA_INLIST_FOREACH(sd->items, rel)
                {
