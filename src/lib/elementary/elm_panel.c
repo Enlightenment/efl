@@ -350,7 +350,6 @@ _drawer_close(Evas_Object *obj, Evas_Coord w, Evas_Coord h, Eina_Bool anim)
    int x = 0, y = 0, cx, cy;
    Eina_Bool horizontal = EINA_FALSE;
 
-   elm_widget_tree_unfocusable_set(obj, EINA_TRUE);
    switch (sd->orient)
      {
       case ELM_PANEL_ORIENT_TOP:
@@ -462,7 +461,6 @@ _panel_toggle(void *data EINA_UNUSED,
           }
 
         //if the panel is hidden, make this thing unfocusable
-        elm_widget_tree_unfocusable_set(obj, sd->hidden);
         edje_object_message_signal_process(wd->resize_obj);
      }
 
@@ -1479,7 +1477,6 @@ _elm_panel_scrollable_set(Eo *obj, Elm_Panel_Data *sd, Eina_Bool scrollable)
              evas_object_repeat_events_set(obj, EINA_FALSE);
           }
 
-        elm_widget_tree_unfocusable_set(obj, sd->hidden);
         edje_object_message_signal_process(sd->panel_edje);
 
         evas_object_hide(sd->scr_ly);
