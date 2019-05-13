@@ -162,7 +162,7 @@ _on_clicked(void *data,
             const char *emission EINA_UNUSED,
             const char *source EINA_UNUSED)
 {
-   efl_event_callback_legacy_call(data, EFL_UI_EVENT_CLICKED, NULL);
+   evas_object_smart_callback_call(data, "clicked", NULL);
 }
 
 static void
@@ -196,7 +196,7 @@ _on_unpressed(void *data,
 
    if (sd->double_clicked)
      {
-        efl_event_callback_legacy_call(data, EFL_UI_EVENT_CLICKED_DOUBLE, NULL);
+        evas_object_smart_callback_call(data, "clicked,double", NULL);
         sd->double_clicked = EINA_FALSE;
      }
 }
@@ -620,7 +620,7 @@ _part_is_efl_ui_panes_part(const Eo *obj, const char *part)
         if ((eina_streq(part, "elm.swallow.left")) || (eina_streq(part, "elm.swallow.right")))
           return EINA_TRUE;
      }
-   
+
    return (eina_streq(part, "first")) || (eina_streq(part, "second"));
 }
 

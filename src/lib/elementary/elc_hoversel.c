@@ -114,11 +114,11 @@ _elm_hoversel_efl_ui_widget_theme_apply(Eo *obj, Elm_Hoversel_Data *sd)
 }
 
 static void
-_on_hover_clicked(void *data, const Efl_Event *event)
+_on_hover_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    const char *dismissstr;
 
-   dismissstr = elm_layout_data_get(event->object, "dismiss");
+   dismissstr = elm_layout_data_get(obj, "dismiss");
 
    if (!dismissstr || strcmp(dismissstr, "on"))
      elm_hoversel_hover_end(data); // for backward compatibility
@@ -167,7 +167,7 @@ _auto_update(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void
 }
 
 static void
-_on_item_clicked(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
+_on_item_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Elm_Hoversel_Item_Data *item = data;
    Evas_Object *obj2 = WIDGET(item);
@@ -485,8 +485,7 @@ _activate(Evas_Object *obj)
 
    elm_object_style_set(sd->hover, buf);
 
-   efl_event_callback_add
-     (sd->hover, EFL_UI_EVENT_CLICKED, _on_hover_clicked, obj);
+   evas_object_smart_callback_add(sd->hover, "clicked", _on_hover_clicked, obj);
    elm_layout_signal_callback_add
      (sd->hover, "elm,action,hide,finished", "elm", _hover_end_finished, obj);
    elm_hover_target_set(sd->hover, obj);
@@ -520,7 +519,7 @@ _activate(Evas_Object *obj)
 }
 
 static void
-_on_clicked(void *data, const Efl_Event *event EINA_UNUSED)
+_on_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    _activate(data);
 }
@@ -639,8 +638,7 @@ _elm_hoversel_efl_canvas_group_group_add(Eo *obj, Elm_Hoversel_Data *pd)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
 
-   efl_event_callback_add(obj, EFL_UI_EVENT_CLICKED, _on_clicked, obj);
-
+   evas_object_smart_callback_add(obj, "clicked", _on_clicked, obj);
    //What are you doing here?
    efl_ui_widget_theme_apply(obj);
 
@@ -876,7 +874,8 @@ _elm_hoversel_item_add(Eo *obj, Elm_Hoversel_Data *sd, const char *label, const 
 
     evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
     evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, EVAS_HINT_FILL);
-    efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _on_item_clicked, item);
+    evas_object_smart_callback_add(bt, "clicked", _on_item_clicked, item);
+
     efl_event_callback_add(bt, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _item_focus_changed, item);
 
    sd->items = eina_list_append(sd->items, eo_item);

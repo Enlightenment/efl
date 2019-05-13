@@ -87,8 +87,10 @@ _on_frame_clicked(void *data,
         sd->anim = EINA_TRUE;
         elm_widget_tree_unfocusable_set(data, sd->collapsed);
      }
-   efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_CLICKED, NULL);
+   if (elm_widget_is_legacy(data))
+     evas_object_smart_callback_call(data, "clicked", NULL);
+   else
+     efl_event_callback_call(data, EFL_UI_EVENT_CLICKED, NULL);
 }
 
 /* using deferred sizing evaluation, just like the parent */

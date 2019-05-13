@@ -121,11 +121,11 @@ _elm_combobox_efl_ui_widget_theme_apply(Eo *obj, Elm_Combobox_Data *sd)
 }
 
 static void
-_on_hover_clicked(void *data, const Efl_Event *event)
+_on_hover_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    const char *dismissstr;
 
-   dismissstr = elm_layout_data_get(event->object, "dismiss");
+   dismissstr = elm_layout_data_get(obj, "dismiss");
 
    if (!dismissstr || strcmp(dismissstr, "on"))
      elm_combobox_hover_end(data); // for backward compatibility
@@ -303,7 +303,7 @@ _on_changed(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_on_clicked(void *data, const Efl_Event *event EINA_UNUSED)
+_on_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    elm_combobox_hover_begin(data);
 }
@@ -334,7 +334,7 @@ _elm_combobox_efl_canvas_group_group_add(Eo *obj, Elm_Combobox_Data *sd EINA_UNU
 
    efl_ui_mirrored_automatic_set(obj, EINA_FALSE);
 
-   efl_event_callback_add(obj, EFL_UI_EVENT_CLICKED, _on_clicked, obj);
+   evas_object_smart_callback_add(obj, "clicked", _on_clicked, obj);
 
    //What are you doing here?
    efl_ui_widget_theme_apply(obj);
@@ -410,8 +410,7 @@ _elm_combobox_efl_object_constructor(Eo *obj, Elm_Combobox_Data *sd)
    elm_hover_target_set(sd->hover, obj);
    elm_widget_sub_object_add(obj, sd->hover);
 
-   efl_event_callback_add
-     (sd->hover, EFL_UI_EVENT_CLICKED, _on_hover_clicked, obj);
+   evas_object_smart_callback_add(sd->hover, "clicked", _on_hover_clicked, obj);
    elm_layout_signal_callback_add
      (sd->hover, "elm,action,hide,finished", "elm", _hover_end_finished, obj);
 
@@ -530,7 +529,7 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
      elm_combobox_hover_begin(obj);
    else
      {
-        efl_event_callback_legacy_call(sd->genlist, EFL_UI_EVENT_PRESSED, sd->item);
+        evas_object_smart_callback_call(sd->genlist, "pressed", sd->item);
         elm_entry_cursor_end_set(sd->entry);
      }
    return EINA_TRUE;

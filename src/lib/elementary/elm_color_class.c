@@ -152,14 +152,14 @@ _colorclass_changed(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_colorclass_reset(void *data, const Efl_Event *event EINA_UNUSED)
+_colorclass_reset(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Colorclass_UI *cc = data;
    Colorclass color;
 
    if (!cc->current)
      {
-        efl_event_callback_stop(event->object);
+        efl_event_callback_stop(obj);
         return;
      }
    //if (cc->winid && remote_iface)
@@ -750,8 +750,7 @@ elm_color_class_editor_add(Evas_Object *obj)
    /* FIXME: translate */
    elm_object_text_set(bt, "Reset");
    elm_object_part_content_set(ly, "elm.swallow.reset", bt);
-   efl_event_callback_add
-     (bt, EFL_UI_EVENT_CLICKED, _colorclass_reset, cc);
+   evas_object_smart_callback_add(bt, "clicked", _colorclass_reset, cc);
 
    cc->cs = cs = elm_colorselector_add(ly);
    elm_colorselector_mode_set(cs, ELM_COLORSELECTOR_COMPONENTS);

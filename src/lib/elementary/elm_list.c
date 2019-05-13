@@ -1597,8 +1597,8 @@ _long_press_cb(void *data)
    if (it->base->disabled) goto end;
 
    sd->longpressed = EINA_TRUE;
-   efl_event_callback_legacy_call
-     (WIDGET(it), EFL_UI_EVENT_LONGPRESSED, EO_OBJ(it));
+   evas_object_smart_callback_call
+     (WIDGET(it), "longpressed", EO_OBJ(it));
 
 end:
    return ECORE_CALLBACK_CANCEL;
@@ -1748,8 +1748,8 @@ _mouse_down_cb(void *data,
    /* Always call the callbacks last - the user may delete our context! */
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      {
-        efl_event_callback_legacy_call
-          (WIDGET(it), EFL_UI_EVENT_CLICKED_DOUBLE, EO_OBJ(it));
+        evas_object_smart_callback_call
+          ( WIDGET(it), "clicked,double", EO_OBJ(it));
         efl_event_callback_legacy_call
           (WIDGET(it), ELM_LIST_EVENT_ACTIVATED, EO_OBJ(it));
      }
@@ -1784,8 +1784,8 @@ _mouse_up_cb(void *data,
         if (dx < 0) dx = -dx;
         if (dy < 0) dy = -dy;
         if ((dx < 5) && (dy < 5))
-          efl_event_callback_legacy_call
-            (obj, EFL_UI_EVENT_CLICKED_RIGHT, EO_OBJ(it));
+          evas_object_smart_callback_call
+            ( obj, "clicked,right", EO_OBJ(it));
         return;
      }
 

@@ -63,7 +63,7 @@ _mouse_down_cb(void *data,
    else sd->on_hold = EINA_FALSE;
 
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     efl_event_callback_legacy_call(obj, EFL_UI_EVENT_CLICKED_DOUBLE, NULL);
+     evas_object_smart_callback_call(obj, "clicked", NULL);
    else
      efl_event_callback_legacy_call(obj, ELM_THUMB_EVENT_PRESS, NULL);
 }
@@ -82,7 +82,7 @@ _mouse_up_cb(void *data,
    else sd->on_hold = EINA_FALSE;
 
    if (!sd->on_hold)
-     efl_event_callback_legacy_call(obj, EFL_UI_EVENT_CLICKED, NULL);
+     evas_object_smart_callback_call(obj, "clicked", NULL);
 
    sd->on_hold = EINA_FALSE;
 }

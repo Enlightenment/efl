@@ -184,7 +184,7 @@ _activate(Elm_Fileselector_Button_Data *sd)
 }
 
 static void
-_button_clicked(void *data, const Efl_Event *event EINA_UNUSED)
+_button_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    _activate(data);
 }
@@ -233,7 +233,8 @@ _elm_fileselector_button_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Bu
 
    efl_ui_mirrored_automatic_set(obj, EINA_FALSE);
 
-   efl_event_callback_add(obj, EFL_UI_EVENT_CLICKED, _button_clicked, priv);
+   evas_object_smart_callback_add(obj, "clicked", _button_clicked, priv);
+
 
    efl_ui_widget_theme_apply(obj);
    elm_widget_can_focus_set(obj, EINA_TRUE);

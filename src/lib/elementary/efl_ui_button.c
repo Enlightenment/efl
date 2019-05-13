@@ -71,8 +71,12 @@ _activate(Evas_Object *obj)
           _elm_access_say(E_("Clicked"));
         if (!elm_widget_disabled_get(obj) &&
             !evas_object_freeze_events_get(obj))
-          efl_event_callback_legacy_call
-            (obj, EFL_UI_EVENT_CLICKED, NULL);
+          {
+             if (elm_widget_is_legacy(obj))
+               evas_object_smart_callback_call(obj, "clicked", NULL);
+             else
+               efl_event_callback_call(obj, EFL_UI_EVENT_CLICKED, NULL);
+          }
      }
 }
 
@@ -95,8 +99,10 @@ _efl_ui_button_efl_ui_widget_on_access_activate(Eo *obj, Efl_Ui_Button_Data *_pd
    if (act != EFL_UI_ACTIVATE_DEFAULT) return EINA_FALSE;
    if (evas_object_freeze_events_get(obj)) return EINA_FALSE;
 
-   efl_event_callback_legacy_call
-      (obj, EFL_UI_EVENT_CLICKED, NULL);
+   if (elm_widget_is_legacy(obj))
+     evas_object_smart_callback_call(obj, "clicked", NULL);
+   else
+     efl_event_callback_call(obj, EFL_UI_EVENT_CLICKED, NULL);
 
    if (elm_widget_is_legacy(obj))
      elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
@@ -175,8 +181,13 @@ _on_pressed_signal(void *data,
               (sd->ar_initial_timeout, _autorepeat_initial_send, data);
      }
 
-   efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_PRESSED, NULL);
+   if (elm_widget_is_legacy(data))
+     evas_object_smart_callback_call
+        (data, "pressed", NULL);
+   else
+     efl_event_callback_call
+        (data, EFL_UI_EVENT_PRESSED, NULL);
+
 }
 
 static void
@@ -189,8 +200,13 @@ _on_unpressed_signal(void *data,
 
    ELM_SAFE_FREE(sd->timer, ecore_timer_del);
    sd->repeating = EINA_FALSE;
-   efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_UNPRESSED, NULL);
+
+   if (elm_widget_is_legacy(data))
+     evas_object_smart_callback_call
+        (data, "unpressed", NULL);
+   else
+     efl_event_callback_call
+        (data, EFL_UI_EVENT_UNPRESSED, NULL);
 }
 
 static char *

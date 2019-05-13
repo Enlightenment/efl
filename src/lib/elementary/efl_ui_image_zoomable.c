@@ -857,8 +857,12 @@ _mouse_down_cb(void *data,
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) sd->on_hold = EINA_TRUE;
    else sd->on_hold = EINA_FALSE;
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     efl_event_callback_legacy_call
-       (data, EFL_UI_EVENT_CLICKED_DOUBLE, NULL);
+     {
+        if (elm_widget_is_legacy(data))
+          evas_object_smart_callback_call(data, "clicked,double", NULL);
+        else
+          efl_event_callback_call(data, EFL_UI_EVENT_CLICKED_DOUBLE, NULL);
+     }
    else
      efl_event_callback_legacy_call(data, EFL_UI_IMAGE_ZOOMABLE_EVENT_PRESS, NULL);
    sd->longpressed = EINA_FALSE;
@@ -882,8 +886,12 @@ _mouse_up_cb(void *data,
    else sd->on_hold = EINA_FALSE;
    ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
    if (!sd->on_hold)
-     efl_event_callback_legacy_call
-       (data, EFL_UI_EVENT_CLICKED, NULL);
+     {
+        if (elm_widget_is_legacy(data))
+          evas_object_smart_callback_call(data, "clicked", NULL);
+        else
+          efl_event_callback_call(data, EFL_UI_EVENT_CLICKED, NULL);
+     }
    sd->on_hold = EINA_FALSE;
 }
 

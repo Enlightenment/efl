@@ -120,7 +120,10 @@ _on_mouse_up(void *data,
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (!wd->still_in) return;
 
-   efl_event_callback_legacy_call(data, EFL_UI_EVENT_CLICKED, NULL);
+   if (elm_widget_is_legacy(obj))
+     evas_object_smart_callback_call(data, "clicked", NULL);
+   else
+     efl_event_callback_call(data, EFL_UI_EVENT_CLICKED, NULL);
 }
 
 static Eina_Bool
@@ -735,7 +738,10 @@ _efl_ui_image_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Image_Data *sd EINA_UNUS
 static Eina_Bool
 _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   efl_event_callback_legacy_call(obj, EFL_UI_EVENT_CLICKED, NULL);
+   if (elm_widget_is_legacy(obj))
+     evas_object_smart_callback_call(obj, "clicked", NULL);
+   else
+     efl_event_callback_call(obj, EFL_UI_EVENT_CLICKED, NULL);
    return EINA_TRUE;
 }
 

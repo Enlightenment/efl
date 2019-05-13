@@ -737,13 +737,13 @@ _x11_elm_widget_xwin_get(const Evas_Object *obj)
 }
 
 static void
-_start_grab_pick_cb(void *data, const Efl_Event *event)
+_start_grab_pick_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *o = data;
 
    ELM_COLORSELECTOR_DATA_GET(o, sd);
 
-   elm_object_disabled_set(event->object, EINA_TRUE);
+   elm_object_disabled_set(obj, EINA_TRUE);
 
    sd->grab.mouse_motion = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE, _mouse_grab_pixels, o);
    sd->grab.key_up = ecore_event_handler_add(ECORE_EVENT_KEY_UP, _key_up_cb, o);
@@ -937,8 +937,7 @@ _create_colorpicker(Evas_Object *obj)
         sd->button = elm_button_add(sd->picker);
         elm_object_style_set(sd->button, style);
         elm_object_text_set(sd->button, E_("Pick a color"));
-        efl_event_callback_add
-              (sd->button, EFL_UI_EVENT_CLICKED, _start_grab_pick_cb, obj);
+        evas_object_smart_callback_add(sd->button, "clicked", _start_grab_pick_cb, obj);
         elm_box_pack_end(bx, sd->button);
         evas_object_show(sd->button);
      }
