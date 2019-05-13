@@ -146,12 +146,12 @@ _evas_common_scale_rgba_sample_scale_mask(int y,
    /* clamp/map to mask geometry */
    if (EINA_UNLIKELY(dst_clip_x < mask_x))
      dst_clip_x = mask_x;
-   if (EINA_UNLIKELY(dst_clip_y + y < mask_y))
-     dst_clip_y = mask_y + y;
+   if (EINA_UNLIKELY(dst_clip_y < mask_y))
+     dst_clip_y = mask_y;
    if (EINA_UNLIKELY(dst_clip_x + dst_clip_w > mask_x + (int)mask_ie->cache_entry.w))
-     dst_clip_w = mask_x - mask_ie->cache_entry.w - dst_clip_x;
-   if (EINA_UNLIKELY(dst_clip_y + dst_clip_h + y > mask_y + (int)mask_ie->cache_entry.h))
-     dst_clip_h = mask_y + y - mask_ie->cache_entry.h - dst_clip_y;
+     dst_clip_w = mask_x + mask_ie->cache_entry.w - dst_clip_x;
+   if (EINA_UNLIKELY(dst_clip_y + dst_clip_h > mask_y + (int)mask_ie->cache_entry.h))
+     dst_clip_h = mask_y + mask_ie->cache_entry.h - dst_clip_y;
 
    dptr = dptr + dst_w * y;
    for (; y < dst_clip_h; y++)
