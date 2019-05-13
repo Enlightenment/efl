@@ -561,30 +561,36 @@ _efl_canvas_image_internal_efl_gfx_image_border_center_fill_get(const Eo *eo_obj
    return (Efl_Gfx_Border_Fill_Mode)o->cur->border.fill;
 }
 
+static void
+_toggle_fill_listener(Eo *eo_obj, Evas_Image_Data *o)
+{
+   if (!o->filled)
+     evas_object_event_callback_del(eo_obj, EVAS_CALLBACK_RESIZE,
+                                    evas_object_image_filled_resize_listener);
+   else
+     evas_object_event_callback_add(eo_obj, EVAS_CALLBACK_RESIZE,
+                                    evas_object_image_filled_resize_listener,
+                                    NULL);
+}
+
 EOLIAN static void
 _efl_canvas_image_internal_efl_gfx_fill_fill_auto_set(Eo *eo_obj, Evas_Image_Data *o, Eina_Bool setting)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Eina_Size2D sz;
    setting = !!setting;
    o->filled_set = 1;
    if (o->filled == setting) return;
 
    evas_object_async_block(obj);
    o->filled = setting;
-   if (!o->filled)
-     evas_object_event_callback_del(eo_obj, EVAS_CALLBACK_RESIZE,
-                                    evas_object_image_filled_resize_listener);
-   else
-     {
-        Eina_Size2D sz;
 
-        sz = efl_gfx_entity_size_get(eo_obj);
-        _evas_image_fill_set(eo_obj, o, 0, 0, sz.w, sz.h);
+   _toggle_fill_listener(eo_obj, o);
 
-        evas_object_event_callback_add(eo_obj, EVAS_CALLBACK_RESIZE,
-                                       evas_object_image_filled_resize_listener,
-                                       NULL);
-     }
+   if (!o->filled) return;
+
+   sz = efl_gfx_entity_size_get(eo_obj);
+   _evas_image_fill_set(eo_obj, o, 0, 0, sz.w, sz.h);
 }
 
 EOLIAN static Eina_Bool
@@ -650,6 +656,7 @@ _efl_canvas_image_internal_efl_gfx_fill_fill_set(Eo *eo_obj, Evas_Image_Data *o,
    // Should (0,0,0,0) reset the filled flag to true?
    o->filled = EINA_FALSE;
    o->filled_set = EINA_TRUE;
+   _toggle_fill_listener(eo_obj, o);
    _evas_image_fill_set(eo_obj, o, fill.x, fill.y, fill.w, fill.h);
 }
 
