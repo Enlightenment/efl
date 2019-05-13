@@ -143,14 +143,14 @@ _evas_common_scale_rgba_sample_scale_mask(int y,
    /* a scanline buffer */
    buf = alloca(dst_clip_w * sizeof(DATA32));
 
-   // Adjust clipping info
-   if (EINA_UNLIKELY((dst_clip_x - mask_x) < 0))
+   /* clamp/map to mask geometry */
+   if (EINA_UNLIKELY(dst_clip_x < mask_x))
      dst_clip_x = mask_x;
-   if (EINA_UNLIKELY((dst_clip_y - mask_y + y) < 0))
+   if (EINA_UNLIKELY(dst_clip_y + y < mask_y))
      dst_clip_y = mask_y + y;
-   if (EINA_UNLIKELY((dst_clip_x - mask_x + dst_clip_w) > (int)mask_ie->cache_entry.w))
+   if (EINA_UNLIKELY(dst_clip_x + dst_clip_w > mask_x + (int)mask_ie->cache_entry.w))
      dst_clip_w = mask_x - mask_ie->cache_entry.w - dst_clip_x;
-   if (EINA_UNLIKELY((dst_clip_y - mask_y + y + dst_clip_h) > (int)mask_ie->cache_entry.h))
+   if (EINA_UNLIKELY(dst_clip_y + dst_clip_h + y > mask_y + (int)mask_ie->cache_entry.h))
      dst_clip_h = mask_y + y - mask_ie->cache_entry.h - dst_clip_y;
 
    dptr = dptr + dst_w * y;
@@ -337,15 +337,16 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
           }
         else
           func = evas_common_gfx_func_composite_pixel_mask_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, dst_clip_w, render_op);
-        // Adjust clipping info
-        if (EINA_UNLIKELY((dst_clip_x - mask_x) < 0))
+
+        /* clamp/map to mask geometry */
+        if (EINA_UNLIKELY(dst_clip_x < mask_x))
           dst_clip_x = mask_x;
-        if (EINA_UNLIKELY((dst_clip_y - mask_y) < 0))
+        if (EINA_UNLIKELY(dst_clip_y < mask_y))
           dst_clip_y = mask_y;
-        if (EINA_UNLIKELY((dst_clip_x - mask_x + dst_clip_w) > (int)mask_ie->cache_entry.w))
-          dst_clip_w = mask_ie->cache_entry.w - dst_clip_x + mask_x;
-        if (EINA_UNLIKELY((dst_clip_y - mask_y + dst_clip_h) > (int)mask_ie->cache_entry.h))
-          dst_clip_h = mask_ie->cache_entry.h - dst_clip_y + mask_y;
+        if (EINA_UNLIKELY(dst_clip_x + dst_clip_w > mask_x + (int)mask_ie->cache_entry.w))
+          dst_clip_w = mask_x + mask_ie->cache_entry.w - dst_clip_x;
+        if (EINA_UNLIKELY(dst_clip_y + dst_clip_h > mask_y + (int)mask_ie->cache_entry.h))
+          dst_clip_h = mask_y + mask_ie->cache_entry.h - dst_clip_y;
      }
 
    if ((dst_region_w == src_region_w) && (dst_region_h == src_region_h))
@@ -613,15 +614,15 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
         func = evas_common_gfx_func_composite_pixel_mask_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, dst_clip_w, dc->render_op);
         if (dc->mul.use)
           func2 = evas_common_gfx_func_composite_pixel_color_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dc->mul.col, dst->cache_entry.flags.alpha, dst_clip_w, EVAS_RENDER_COPY);
-        // Adjust clipping info
-        if (EINA_UNLIKELY((dst_clip_x - mask_x) < 0))
+        /* clamp/map to mask geometry */
+        if (EINA_UNLIKELY(dst_clip_x < mask_x))
           dst_clip_x = mask_x;
-        if (EINA_UNLIKELY((dst_clip_y - mask_y) < 0))
+        if (EINA_UNLIKELY(dst_clip_y < mask_y))
           dst_clip_y = mask_y;
-        if (EINA_UNLIKELY((dst_clip_x - mask_x + dst_clip_w) > (int)mask_ie->cache_entry.w))
-          dst_clip_w = mask_ie->cache_entry.w - dst_clip_x + mask_x;
-        if (EINA_UNLIKELY((dst_clip_y - mask_y + dst_clip_h) > (int)mask_ie->cache_entry.h))
-          dst_clip_h = mask_ie->cache_entry.h - dst_clip_y + mask_y;
+        if (EINA_UNLIKELY(dst_clip_x + dst_clip_w > mask_x + (int)mask_ie->cache_entry.w))
+          dst_clip_w = mask_x + mask_ie->cache_entry.w - dst_clip_x;
+        if (EINA_UNLIKELY(dst_clip_y + dst_clip_h > mask_y + (int)mask_ie->cache_entry.h))
+          dst_clip_h = mask_y + mask_ie->cache_entry.h - dst_clip_y;
      }
 
    if ((dst_region_w == src_region_w) && (dst_region_h == src_region_h))
