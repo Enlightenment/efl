@@ -1,3 +1,5 @@
+efl_version: 1 22;
+
 #include "macros.edc"
 
 externals.external: "elm";

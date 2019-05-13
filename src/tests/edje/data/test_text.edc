@@ -1,3 +1,4 @@
+efl_version: 1 22;
 collections {
    styles {
       style { name: "tbstyle";
