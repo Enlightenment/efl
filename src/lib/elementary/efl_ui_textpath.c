@@ -528,7 +528,7 @@ _textpath_ellipsis_set(Efl_Ui_Textpath_Data *pd, Eina_Bool enabled)
 }
 
 static void
-_ellipsis_set(Efl_Ui_Textpath_Data *pd)
+_ellipsis_set(Efl_Ui_Textpath_Data *pd, Eo *obj)
 {
    if (!pd->text_obj) return;
 
@@ -536,7 +536,11 @@ _ellipsis_set(Efl_Ui_Textpath_Data *pd)
    Eina_Bool is_ellipsis = EINA_FALSE;
    const Evas_Object *tb;
 
-   tb = edje_object_part_object_get(pd->text_obj, "efl.text");
+   if (elm_widget_is_legacy(obj))
+     tb = edje_object_part_object_get(pd->text_obj, "elm.text");
+   else
+     tb = edje_object_part_object_get(pd->text_obj, "efl.text");
+
    evas_object_textblock_size_native_get(tb, &w, &h);
    evas_object_size_hint_min_set(pd->text_obj, w, h);
    if (pd->ellipsis)
@@ -566,7 +570,7 @@ _textpath_text_set_internal(Eo *obj, Efl_Ui_Textpath_Data *pd, const char *part,
 
    if (!text) text = "";
    ret = edje_object_part_text_set(pd->text_obj, part, text);
-   _ellipsis_set(pd);
+   _ellipsis_set(pd, obj);
    _sizing_eval(pd);
 
    return ret;
@@ -663,7 +667,7 @@ _efl_ui_textpath_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Textpath_Data *pd)
 
    elm_widget_theme_object_set(obj, pd->text_obj, "textpath", "base",
                                elm_widget_style_get(obj));
-   _ellipsis_set(pd);
+   _ellipsis_set(pd, obj);
 
    return ret;
 }
@@ -728,12 +732,12 @@ _efl_ui_textpath_slice_number_set(Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd,
 }
 
 EOLIAN static void
-_efl_ui_textpath_ellipsis_set(Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd, Eina_Bool ellipsis)
+_efl_ui_textpath_ellipsis_set(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool ellipsis)
 {
    if (pd->ellipsis == ellipsis) return;
    pd->ellipsis = ellipsis;
 
-   _ellipsis_set(pd);
+   _ellipsis_set(pd, obj);
    _sizing_eval(pd);
 }
 
