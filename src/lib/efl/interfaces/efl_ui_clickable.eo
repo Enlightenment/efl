@@ -14,6 +14,5 @@ interface @beta Efl.Ui.Clickable
       unpressed: Efl.Object; [[Called when the object is no longer pressed]]
       /* FIXME: Might be NULL */
       longpressed: Efl.Object; [[Called when the object receives a long press]]
-      repeated: void; [[Called when the object receives repeated presses/clicks]]
    }
 }

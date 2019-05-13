@@ -131,8 +131,11 @@ _autorepeat_send(void *data)
 {
    ELM_BUTTON_DATA_GET_OR_RETURN_VAL(data, sd, ECORE_CALLBACK_CANCEL);
 
-   efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_REPEATED, NULL);
+   if (elm_widget_is_legacy(data))
+     evas_object_smart_callback_call(data, "repeated", NULL);
+   else
+     efl_event_callback_call(data, EFL_UI_AUTOREPEAT_EVENT_REPEATED, NULL);
+
    if (!sd->repeating)
      {
         sd->timer = NULL;
