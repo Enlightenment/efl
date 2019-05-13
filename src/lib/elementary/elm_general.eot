@@ -2,6 +2,33 @@
  * NOTE: Some of those types still need to be moved to Efl.Ui
  */
 
+enum Elm.Policy
+{
+   [[Policy identifiers.]]
+   quit, [[under which circumstances the application should quit automatically.
+           See also @Elm.Policy.quit.]]
+   exit, [[defines elm_exit() behaviour. See also @Elm.Policy.exit.
+
+           @since 1.8
+         ]]
+   throttle, [[defines how throttling should work. See also @Elm.Policy.throttle
+
+               @since 1.8
+             ]]
+   last [[Sentinel value to indicate last enum field during iteration]]
+}
+
+/* FIXME: elm_policy API is not bound to EO */
+enum Elm.Policy_Quit
+{
+   [[Possible values for the @Elm.Policy.quit policy]]
+   none = 0, [[never quit the application automatically]]
+   last_window_closed, [[quit when the application's last window is closed]]
+   last_window_hidden [[quit when the application's last window is hidden
+
+                        @since 1.14]]
+}
+
 /* Legacy-only function pointer types, for the legacy EO classes (genlist, etc...) */
 type Evas_Smart_Cb: __undefined_type; [[Evas smart callback type]]
 
