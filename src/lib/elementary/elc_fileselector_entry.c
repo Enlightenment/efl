@@ -58,14 +58,23 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] =
   }
 SIG_FWD(CHANGED, ELM_FILESELECTOR_ENTRY_EVENT_CHANGED)
 SIG_FWD(PRESS, ELM_FILESELECTOR_ENTRY_EVENT_PRESS)
-SIG_FWD(LONGPRESSED, EFL_UI_EVENT_LONGPRESSED)
-SIG_FWD(CLICKED, EFL_UI_EVENT_CLICKED)
-SIG_FWD(CLICKED_DOUBLE, EFL_UI_EVENT_CLICKED_DOUBLE)
 SIG_FWD(SELECTION_PASTE, EFL_UI_EVENT_SELECTION_PASTE)
 SIG_FWD(SELECTION_COPY, EFL_UI_EVENT_SELECTION_COPY)
 SIG_FWD(SELECTION_CUT, EFL_UI_EVENT_SELECTION_CUT)
-SIG_FWD(UNPRESSED, EFL_UI_EVENT_UNPRESSED)
 #undef SIG_FWD
+
+#define SIG_FWD(name, event)                                                      \
+  static void                                                               \
+  _##name##_fwd(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)             \
+  {                                                                         \
+     evas_object_smart_callback_call(data, event, event_info);              \
+  }
+SIG_FWD(CLICKED, "clicked")
+SIG_FWD(CLICKED_DOUBLE, "clicked,double")
+SIG_FWD(UNPRESSED, "unpressed")
+SIG_FWD(LONGPRESSED, "longpressed")
+#undef SIG_FWD
+
 
 static void
 _FILE_CHOSEN_fwd(void *data, const Efl_Event *event)
@@ -229,9 +238,13 @@ _elm_fileselector_entry_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Ent
      (priv->button, _elm_config->fileselector_expand_enable);
 
 #define SIG_FWD(name, event) \
+  evas_object_smart_callback_add(priv->button, event, _##name##_fwd, obj)
+   SIG_FWD(CLICKED, "clicked");
+   SIG_FWD(UNPRESSED, "unpressed");
+#undef SIG_FWD
+
+#define SIG_FWD(name, event) \
   efl_event_callback_add(priv->button, event, _##name##_fwd, obj)
-   SIG_FWD(CLICKED, EFL_UI_EVENT_CLICKED);
-   SIG_FWD(UNPRESSED, EFL_UI_EVENT_UNPRESSED);
    SIG_FWD(FILE_CHOSEN, ELM_FILESELECTOR_BUTTON_EVENT_FILE_CHOSEN);
 #undef SIG_FWD
 
@@ -247,14 +260,16 @@ _elm_fileselector_entry_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Ent
    SIG_FWD(CHANGED, ELM_ENTRY_EVENT_CHANGED);
    SIG_FWD(ACTIVATED, ELM_ENTRY_EVENT_ACTIVATED);
    SIG_FWD(PRESS, ELM_ENTRY_EVENT_PRESS);
-   SIG_FWD(LONGPRESSED, EFL_UI_EVENT_LONGPRESSED);
-   SIG_FWD(CLICKED, EFL_UI_EVENT_CLICKED);
-   SIG_FWD(CLICKED_DOUBLE, EFL_UI_EVENT_CLICKED_DOUBLE);
    SIG_FWD(SELECTION_PASTE, EFL_UI_EVENT_SELECTION_PASTE);
    SIG_FWD(SELECTION_COPY, EFL_UI_EVENT_SELECTION_COPY);
    SIG_FWD(SELECTION_CUT, EFL_UI_EVENT_SELECTION_CUT);
 #undef SIG_FWD
-
+#define SIG_FWD(name, event) \
+  evas_object_smart_callback_add(priv->entry, event, _##name##_fwd, obj)
+   SIG_FWD(LONGPRESSED, "longpressed");
+   SIG_FWD(CLICKED, "clicked");
+   SIG_FWD(CLICKED_DOUBLE, "clicked,double");
+#undef SIG_FWD
    efl_event_callback_forwarder_add(priv->entry, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, obj);
 
    if (!elm_layout_theme_set
