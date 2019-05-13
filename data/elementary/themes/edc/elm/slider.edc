@@ -40,7 +40,7 @@ group { name: "elm/slider/horizontal/default";
 #define LABEL   2
 #define END     4
 #define UNITS   8
-#define MASK    15
+#define MASKBITS    15
 #define INVERT  16
 #define DISABLE 32
    script {
@@ -579,7 +579,7 @@ group { name: "elm/slider/horizontal/default";
 #undef LABEL
 #undef END
 #undef UNITS
-#undef MASK
+#undef MASKBITS
 #undef INVERT
 #undef DISABLE
 }
@@ -724,7 +724,7 @@ group { name: "elm/slider/vertical/default";
 #define LABEL   2
 #define END     4
 #define UNITS   8
-#define MASK    15
+#define MASKBITS    15
 #define INVERT  16
 #define DISABLE 32
    script {
@@ -1268,7 +1268,7 @@ group { name: "elm/slider/vertical/default";
 #undef LABEL
 #undef END
 #undef UNITS
-#undef MASK
+#undef MASKBITS
 #undef INVERT
 #undef DISABLE
 }
@@ -1415,7 +1415,7 @@ group { name: "elm/slider/range/horizontal/default";
 #define LABEL   2
 #define END     4
 #define UNITS   8
-#define MASK    15
+#define MASKBITS    15
 #define INVERT  16
 #define DISABLE 32
    script {
@@ -2155,7 +2155,7 @@ group { name: "elm/slider/range/horizontal/default";
 #undef LABEL
 #undef END
 #undef UNITS
-#undef MASK
+#undef MASKBITS
 #undef INVERT
 #undef DISABLE
 }
@@ -2171,7 +2171,7 @@ group { name: "elm/slider/range/vertical/default";
 #define LABEL   2
 #define END     4
 #define UNITS   8
-#define MASK    15
+#define MASKBITS    15
 #define INVERT  16
 #define DISABLE 32
    script {
@@ -2915,7 +2915,7 @@ group { name: "elm/slider/range/vertical/default";
 #undef LABEL
 #undef END
 #undef UNITS
-#undef MASK
+#undef MASKBITS
 #undef INVERT
 #undef DISABLE
    
@@ -2954,7 +2954,7 @@ group { name: "elm/slider/range/vertical/default";
 #define LABEL   2
 #define END     4
 #define UNITS   8
-#define MASK    15
+#define MASKBITS    15
 #define INVERT  16
 #define DISABLE 32
    script {
@@ -3708,7 +3708,7 @@ group { name: "elm/slider/range/vertical/default";
 #undef LABEL
 #undef END
 #undef UNITS
-#undef MASK
+#undef MASKBITS
 #undef INVERT
 #undef DISABLE
 #endif
