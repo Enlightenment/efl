@@ -5,7 +5,7 @@ interface Efl.Gfx.Entity {
 
      @since 1.22
    ]]
-   eo_prefix: efl_gfx_entity;
+   c_prefix: efl_gfx_entity;
    methods {
       @property position {
          [[The 2D position of a canvas object.

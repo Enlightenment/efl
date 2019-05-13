@@ -1,7 +1,7 @@
 class @beta Efl.Canvas.Gesture_Tap extends Efl.Canvas.Gesture
 {
    [[EFL Gesture Tap class]]
-   eo_prefix: efl_gesture_tap;
+   c_prefix: efl_gesture_tap;
    event_prefix: efl;
    events {
       gesture,tap: Efl.Canvas.Gesture; [[Event for tap gesture]]

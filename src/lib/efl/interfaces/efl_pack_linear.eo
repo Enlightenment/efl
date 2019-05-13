@@ -5,7 +5,7 @@ interface @beta Efl.Pack_Linear extends Efl.Pack
 
      This means the sub-objects are internally organized in an ordered list.
    ]]
-   eo_prefix: efl_pack;
+   c_prefix: efl_pack;
    methods {
       pack_begin {
          [[Prepend an object at the beginning of this container.

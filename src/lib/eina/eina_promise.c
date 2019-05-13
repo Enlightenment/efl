@@ -1343,7 +1343,7 @@ eina_promise_all_array(Eina_Future *array[])
 
    for (i = 0; i < ctx->base.futures_len; i++)
      {
-        Eina_Value v;
+        Eina_Value v = { 0 };
 
         //Stub values...
         r = eina_value_setup(&v, EINA_VALUE_TYPE_INT);

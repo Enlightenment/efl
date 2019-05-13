@@ -4,7 +4,7 @@ interface @beta Efl.Pack_Layout
 
      Used for containers (box, grid).
    ]]
-   eo_prefix: efl_pack;
+   c_prefix: efl_pack;
    methods {
       // Note: Do we need a layout_force or a sync flag in layout_request?
       layout_request {

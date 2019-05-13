@@ -1,7 +1,7 @@
 class @beta Ecore.Audio.Out.Pulse extends Ecore.Audio.Out
 {
    [[Ecore audio ouput for PulseAudio.]]
-   eo_prefix: ecore_audio_obj_out_pulse;
+   c_prefix: ecore_audio_obj_out_pulse;
    event_prefix: ecore_audio_out_pulse;
    implements {
       Efl.Object.constructor;

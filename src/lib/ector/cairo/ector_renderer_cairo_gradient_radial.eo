@@ -1,7 +1,7 @@
 class @beta Ector.Renderer.Cairo.Gradient.Radial extends Ector.Renderer.Cairo implements Ector.Renderer.Gradient, Ector.Renderer.Gradient.Radial, Efl.Gfx.Path
 {
    [[Ector cairo renderer gradient radial]]
-   eo_prefix: ector_renderer_cairo_gradient_radial;
+   c_prefix: ector_renderer_cairo_gradient_radial;
    implements {
       Ector.Renderer.prepare;
       Ector.Renderer.draw;

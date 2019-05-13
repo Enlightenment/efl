@@ -63,7 +63,7 @@ abstract Efl.Object
 
      @since 1.22
    ]]
-   eo_prefix: efl;
+   c_prefix: efl;
 
    methods {
       @property parent {

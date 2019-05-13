@@ -25,7 +25,7 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
 
      @since 1.22
    ]]
-   //eo_prefix: efl_ui_widget;
+   //c_prefix: efl_ui_widget;
    event_prefix: efl_ui_widget;
    data: Efl_Ui_Widget_Data;
    methods {

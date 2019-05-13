@@ -4,7 +4,7 @@ class @beta Efl.Config_Global extends Efl.Object implements Efl.Config
      running application.
    ]]
    data: null;
-   eo_prefix: efl_config;
+   c_prefix: efl_config;
    methods {
       save @protected {
          [[Saves Elementary configuration to disk.

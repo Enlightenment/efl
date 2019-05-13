@@ -12,7 +12,7 @@ interface @beta Efl.Ui.Multi_Selectable
 {
    [[Efl UI Multi selectable interface.
      The container have to control select property of multiple chidren.]]
-   eo_prefix: efl_ui;
+   c_prefix: efl_ui;
    methods
    {
       @property select_mode {

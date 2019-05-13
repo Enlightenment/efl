@@ -1407,6 +1407,7 @@ EFL_START_TEST(efl_test_future_then)
    Eina_Value *ret = NULL;
    Eina_Error err = 0;
 
+   ecore_init();
    efl_event_callback_add(efl_main_loop_get(), EFL_LOOP_EVENT_ARGUMENTS, efl_main_test, NULL);
    ecore_init_ex(1, argv);
    ret = efl_loop_begin(efl_main_loop_get());
@@ -1415,6 +1416,7 @@ EFL_START_TEST(efl_test_future_then)
    ck_assert_ptr_eq(eina_value_type_get(ret), EINA_VALUE_TYPE_ERROR);
    eina_value_get(ret, &err);
    ck_assert_int_eq(err, EAGAIN);
+   ecore_shutdown();
 }
 EFL_END_TEST
 

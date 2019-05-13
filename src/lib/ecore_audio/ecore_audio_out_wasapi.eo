@@ -1,7 +1,7 @@
 class @beta Ecore.Audio.Out.Wasapi extends Ecore.Audio.Out
 {
    [[Ecore audio ouput for WasapiAudio.]]
-   eo_prefix: ecore_audio_obj_out_wasapi;
+   c_prefix: ecore_audio_obj_out_wasapi;
    event_prefix: ecore_audio_out_wasapi;
    implements {
       Efl.Object.constructor;

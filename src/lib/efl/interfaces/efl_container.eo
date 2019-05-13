@@ -7,7 +7,7 @@ interface Efl.Container
 
      @since 1.22
    ]]
-   eo_prefix: efl_content;
+   c_prefix: efl_content;
    event_prefix: efl_container;
    methods {
       content_iterate {

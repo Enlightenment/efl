@@ -4,7 +4,7 @@ abstract @beta Ector.Renderer extends Efl.Object
 {
    [[Ector renderer abstract interface]]
 
-   eo_prefix: ector_renderer;
+   c_prefix: ector_renderer;
    methods {
       @property surface {
          [[Surface associated with this renderer]]

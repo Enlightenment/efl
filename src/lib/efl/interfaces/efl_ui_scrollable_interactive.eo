@@ -2,7 +2,7 @@ import eina_types;
 
 interface @beta Efl.Ui.Scrollable_Interactive extends Efl.Ui.Scrollable
 {
-   eo_prefix: efl_ui_scrollable;
+   c_prefix: efl_ui_scrollable;
    methods {
       @property content_pos {
          [[The content position]]

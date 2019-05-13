@@ -209,6 +209,9 @@ static void set_wordbreaks(
                 posLast = posCur;
                 break;
             }
+#ifndef __has_attribute
+# define __has_attribute(x) 0
+#endif
 #if __has_attribute(fallthrough)
            __attribute__((fallthrough));
 #endif
@@ -325,6 +328,9 @@ static void set_wordbreaks(
                 wbcSeqStart = wbcCur;
                 posLast = posCur;
             }
+#ifndef __has_attribute
+# define __has_attribute(x) 0
+#endif
 #if __has_attribute(fallthrough)
            __attribute__((fallthrough));
 #endif

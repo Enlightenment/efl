@@ -1,7 +1,7 @@
 class @beta Efl.Canvas.Animation_Group_Parallel extends Efl.Canvas.Animation_Group
 {
    [[Efl group parallel animation class]]
-   eo_prefix: efl_animation_group_parallel;
+   c_prefix: efl_animation_group_parallel;
    data: null;
    methods {
    }

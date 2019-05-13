@@ -1,6 +1,6 @@
 class @beta Efl.Core.Proc_Env extends Efl.Core.Env
 {
-   eo_prefix : efl_env;
+   c_prefix: efl_env;
    methods {
     self @class {
       [[Get a instance of this object

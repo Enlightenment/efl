@@ -8,7 +8,7 @@ mixin @beta Efl.Input.Event requires Efl.Object extends Efl.Duplicate
            structures. This class is intended to carry more complex event
            data, such as pointer events.
    ]]
-   eo_prefix: efl_input;
+   c_prefix: efl_input;
    data: null;
    methods {
       @property timestamp @pure_virtual {

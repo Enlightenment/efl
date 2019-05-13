@@ -25,7 +25,7 @@ mixin @beta Ector.Buffer
 {
    [[2D pixel buffer interface for Ector
    ]]
-   eo_prefix: ector_buffer;
+   c_prefix: ector_buffer;
    methods {
       @property size {
          [[The (rectangular) size of the pixel buffer.]]

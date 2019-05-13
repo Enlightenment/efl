@@ -21,7 +21,7 @@ interface @beta Efl.Text_Format {
      The text format can affect the geometry of the text object, as well as
      how characters are presented.
    ]]
-   eo_prefix: efl_text;
+   c_prefix: efl_text;
    methods {
       @property ellipsis {
          [[Ellipsis value (number from -1.0 to 1.0)]]

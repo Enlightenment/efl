@@ -45,20 +45,6 @@ _children_indexed_key(const Efl_Composite_Model_Data *node,
    return node->index - *key;
 }
 
-static Efl_Model *
-_efl_composite_lookup(const Efl_Class *self, Eo *parent, Efl_Model *view, unsigned int index)
-{
-   EFL_COMPOSITE_LOOKUP_RETURN(remember, parent, view, "_efl.composite_model");
-
-   remember = efl_add_ref(self, parent,
-                          efl_ui_view_model_set(efl_added, view),
-                          efl_composite_model_index_set(efl_added, index),
-                          efl_loop_model_volatile_make(efl_added));
-   if (!remember) return NULL;
-
-   EFL_COMPOSITE_REMEMBER_RETURN(remember, view);
-}
-
 static void
 _efl_composite_model_efl_object_invalidate(Eo *obj, Efl_Composite_Model_Data *pd)
 {
@@ -163,7 +149,6 @@ _efl_composite_model_child_added(void *data, const Efl_Event *event)
    if (ev->child)
      cev.child = _efl_composite_lookup(efl_class_get(pd->self),
                                        pd->self, ev->child, ev->index);
-
    efl_event_callback_call(pd->self, EFL_MODEL_EVENT_CHILD_ADDED, &cev);
 
    efl_unref(cev.child);
@@ -302,6 +287,8 @@ _efl_composite_model_then(Eo *o EINA_UNUSED, void *data, const Eina_Value v)
 
         // Fetch an existing composite model for this model or create a new one if none exist
         composite = _efl_composite_lookup(req->self, req->parent, target, req->start + i);
+        if (!composite) continue;
+
         eina_value_array_append(&r, composite);
         // Dropping this scope reference
         efl_unref(composite);

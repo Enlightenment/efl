@@ -30,7 +30,7 @@ enum Elm.Scroller.Single_Direction
 mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrollable, Efl.Ui.Focus.Manager_Sub, Efl.Ui.Widget_Focus_Manager
 {
    [[Elm scrollable mixin]]
-   eo_prefix: elm_interface_scrollable;
+   c_prefix: elm_interface_scrollable;
    data: Elm_Scrollable_Smart_Interface_Data;
    methods {
       @property gravity {

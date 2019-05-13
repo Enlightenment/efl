@@ -1,7 +1,7 @@
 class @beta Efl.Canvas.Animation_Rotate extends Efl.Canvas.Animation
 {
    [[Efl rotate animation class]]
-   eo_prefix: efl_animation_rotate;
+   c_prefix: efl_animation_rotate;
    data: Efl_Canvas_Animation_Rotate_Data;
    methods {
       @property rotate {

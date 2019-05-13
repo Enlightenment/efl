@@ -12,7 +12,7 @@ interface @beta Efl.Ui.Zoom
 {
    [[Efl UI zoom interface]]
    event_prefix: efl_ui;
-   eo_prefix: efl_ui;
+   c_prefix: efl_ui;
 
    methods {
       @property zoom_animation {
