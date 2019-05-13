@@ -311,6 +311,28 @@ _efl_canvas_object_clipper_unset_common(Evas_Object_Protected_Data *obj, Eina_Bo
 }
 
 EOLIAN void
+_efl_canvas_object_has_fixed_size_set(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, Eina_Bool enable)
+{
+   EVAS_OBJECT_DATA_ALIVE_CHECK(obj);
+
+   enable = !!enable;
+   if (obj->cur->has_fixed_size == enable) return;
+   EINA_COW_STATE_WRITE_BEGIN(obj, state_write, cur)
+     state_write->has_fixed_size = enable;
+   EINA_COW_STATE_WRITE_END(obj, state_write, cur);
+   /* this will take effect next time the object is rendered,
+    * no need to force re-render now.
+    */
+}
+
+EOLIAN Eina_Bool
+_efl_canvas_object_has_fixed_size_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+{
+   EVAS_OBJECT_DATA_ALIVE_CHECK(obj, EINA_FALSE);
+   return obj->cur->has_fixed_size;
+}
+
+EOLIAN void
 _efl_canvas_object_clipper_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas_Object *eo_clip)
 {
    Evas_Object_Protected_Data *clip;

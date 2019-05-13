@@ -138,6 +138,23 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
             clipper: Efl.Canvas.Object; [[The object to clip $obj by.]]
          }
       }
+      @property has_fixed_size @beta {
+            [[A hint for an object that its size will not change.
+
+              When this flag is set, various optimizations may be employed by the
+              renderer based on the fixed size of the object.
+
+              It is a user error to change the size of an object while this flag
+              is set.
+
+              @since 1.23
+            ]]
+         set {}
+         get {}
+         values {
+            enable: bool; [[Whether the object size is known to be static.]]
+         }
+      }
       @property repeat_events {
          set {
             [[Set whether an Evas object is to repeat events.
