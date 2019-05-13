@@ -33,7 +33,7 @@ database_class_del(Eolian_Class *cl)
    eina_list_free(cl->callables);
    eina_list_free(cl->composite);
 
-   if (cl->eo_prefix) eina_stringshare_del(cl->eo_prefix);
+   if (cl->c_prefix)  eina_stringshare_del(cl->c_prefix);
    if (cl->ev_prefix) eina_stringshare_del(cl->ev_prefix);
    if (cl->data_type) eina_stringshare_del(cl->data_type);
 

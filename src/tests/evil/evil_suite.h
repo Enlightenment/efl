@@ -23,9 +23,7 @@
 #include "../efl_check.h"
 void evil_test_dlfcn(TCase *tc);
 /* void evil_test_fcntl(TCase *tc); */
-/* void evil_test_fnmatch(TCase *tc); */
 /* void evil_test_langinfo(TCase *tc); */
-void evil_test_libgen(TCase *tc);
 void evil_test_main(TCase *tc);
 /* void evil_test_mman(TCase *tc); */
 /* void evil_test_pwd(TCase *tc); */

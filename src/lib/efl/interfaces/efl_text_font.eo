@@ -50,7 +50,7 @@ enum @beta Efl.Text_Font_Bitmap_Scalable {
 interface @beta Efl.Text_Font {
    [[Font settings of the text
    ]]
-   eo_prefix: efl_text;
+   c_prefix: efl_text;
    methods {
       @property font {
          set {

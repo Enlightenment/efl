@@ -632,6 +632,7 @@ try_gles2:
    glXGetFBConfigAttrib(gw->disp, evis->config, GLX_FBCONFIG_ID, &gw->gl_context->glxcfg_rgb);
    glXGetFBConfigAttrib(gw->disp, evis2->config, GLX_FBCONFIG_ID, &gw->gl_context->glxcfg_rgba);
 #endif
+   gw->gl_context->msaa = (Eina_Bool) !!msaa_bits;
    eng_window_use(gw);
    glsym_evas_gl_common_context_resize(gw->gl_context, w, h, rot);
    gw->surf = 1;
@@ -971,16 +972,8 @@ try_again:
    config_attrs[n++] = 1;
    // FIXME: end n900 breakage
 # endif
-   if (alpha)
-     {
-        config_attrs[i++] = EGL_ALPHA_SIZE;
-        config_attrs[i++] = 1;
-     }
-   else
-     {
-        config_attrs[i++] = EGL_ALPHA_SIZE;
-        config_attrs[i++] = 0;
-     }
+   config_attrs[i++] = EGL_ALPHA_SIZE;
+   config_attrs[i++] = (alpha ? 1 : 0);
 
    if (depth_bits)
      {

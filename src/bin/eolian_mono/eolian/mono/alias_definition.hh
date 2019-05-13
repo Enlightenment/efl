@@ -33,20 +33,34 @@ struct alias_definition_generator
      if (!name_helpers::open_namespaces(sink, alias.namespaces, context))
        return false;
 
+     std::string alias_type;
+     if (!as_generator(eolian_mono::type).generate(std::back_inserter(alias_type), alias.base_type, context))
+       return false;
+
      std::string const alias_name = utils::remove_all(alias.eolian_name, '_');
      if (!as_generator(
-                 "public struct " << alias_name << " {\n"
-                 << scope_tab << "private " << type << " payload;\n"
-                 << scope_tab << "public static implicit operator " << alias_name << "(" << type << " x)\n"
+                 documentation
+                 << "public struct " << alias_name << "\n"
+                 << "{\n"
+                 << scope_tab << "private " << alias_type << " payload;\n\n"
+
+                 << scope_tab << "/// <summary>Converts an instance of " << alias_type << " to this struct.</summary>\n"
+                 << scope_tab << "/// <param name=\"value\">The value to be converted.</param>\n"
+                 << scope_tab << "/// <returns>A struct with the given value.</returns>\n"
+                 << scope_tab << "public static implicit operator " << alias_name << "(" << alias_type << " value)\n"
                  << scope_tab << "{\n"
-                 << scope_tab << scope_tab << "return new " << alias_name << "{payload=x};\n"
-                 << scope_tab << "}\n"
-                 << scope_tab << "public static implicit operator " << type << "(" << alias_name << " x)\n"
+                 << scope_tab << scope_tab << "return new " << alias_name << "{payload=value};\n"
+                 << scope_tab << "}\n\n"
+
+                 << scope_tab << "/// <summary>Converts an instance of this struct to " << alias_type << ".</summary>\n"
+                 << scope_tab << "/// <param name=\"value\">The value to be converted packed in this struct.</param>\n"
+                 << scope_tab << "/// <returns>The actual value the alias is wrapping.</returns>\n"
+                 << scope_tab << "public static implicit operator " << alias_type << "(" << alias_name << " value)\n"
                  << scope_tab << "{\n"
-                 << scope_tab << scope_tab << "return x.payload;\n"
-                 << scope_tab << "}\n"
-                 << "}\n"
-                 ).generate(sink, std::make_tuple(alias.base_type, alias.base_type, alias.base_type), context))
+                 << scope_tab << scope_tab << "return value.payload;\n"
+                 << scope_tab << "}\n\n"
+                 << "}\n\n"
+                 ).generate(sink, alias, context))
        return false;
 
      if (!name_helpers::close_namespaces(sink, alias.namespaces, context))

@@ -18,17 +18,13 @@ if target_machine.system() == 'windows'
   'evil_unistd.h',
   'evil_util.h',
   'dirent.h',
-  'fnmatch.h',
   'pwd.h',
-  'regex/regex.h'
   ]
   evil_header_sys_src = [join_paths('sys','mman.h')]
 
   evil_src = [
   'evil_dlfcn.c',
   'evil_fcntl.c',
-  'evil_fnmatch.c',
-  'evil_fnmatch_list_of_states.c',
   'evil_langinfo.c',
   'evil_locale.c',
   'evil_main.c',
@@ -41,10 +37,7 @@ if target_machine.system() == 'windows'
   'evil_unistd.c',
   'evil_util.c',
   'evil_private.h',
-  'evil_fnmatch_private.h',
   ]
-
-  subdir('regex')
 
   psapi = cc.find_library('psapi')
   ole32 = cc.find_library('ole32')
@@ -53,13 +46,15 @@ if target_machine.system() == 'windows'
   uuid = cc.find_library('uuid')
 
   evil_lib = library('evil', evil_src,
-    dependencies : [psapi, ole32, ws2_32, secur32, uuid],
-    include_directories : [config_dir, include_directories('regex')],
+    dependencies : [psapi, ole32, ws2_32, secur32, uuid, regexp],
+    include_directories : [config_dir],
+    install: true,
+    version: meson.project_version(),
   )
 
   evil = declare_dependency(
-    include_directories: [config_dir, include_directories('regex'), include_directories('.')],
-    dependencies : [psapi, ole32, ws2_32, secur32, uuid],
+    include_directories: [include_directories('.')],
+    dependencies : [psapi, ole32, ws2_32, secur32, uuid, regexp],
     link_with: evil_lib,
   )
 else

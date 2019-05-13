@@ -1,18 +1,25 @@
-efl_ui_suite_behavior_src = [
+
+efl_ui_suite_behavior_test_files = files([
+  'efl_test_pack.c',
+  'efl_test_pack_linear.c',
+  'efl_test_content.c',
+  'efl_test_gfx_arrangement.c'
+])
+
+efl_ui_suite_behavior_src = files([
   join_paths('..','suite_helpers.c'),
   join_paths('..','suite_helpers.h'),
   join_paths('..','elm_test_init.c'),
   'efl_ui_spec_suite.c',
-  'efl_test_pack.c',
-  'efl_test_pack_linear.c',
   'efl_test_container.c',
-]
+]) + efl_ui_suite_behavior_test_files
 
 test_generator = find_program('generator.py')
 
 generated_test_parts = custom_target('generate_test_suite',
+  input: efl_ui_suite_behavior_test_files,
   output: 'efl_ui_spec_suite_gen.x',
-  command: [test_generator, '@OUTPUT@'],
+  command: [test_generator, '@INPUT@', '@OUTPUT@'],
 )
 
 efl_ui_behavior_suite = executable('efl_ui_spec_suite',

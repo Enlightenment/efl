@@ -1,7 +1,7 @@
 class @beta Ector.Renderer.GL.Shape extends Ector.Renderer.GL implements Ector.Renderer.Shape, Efl.Gfx.Path
 {
    [[Ector GL renderer shape class]]
-   eo_prefix: ector_renderer_gl_shape;
+   c_prefix: ector_renderer_gl_shape;
    implements {
       Ector.Renderer.prepare;
       Ector.Renderer.draw;

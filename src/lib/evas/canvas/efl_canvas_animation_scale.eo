@@ -1,7 +1,7 @@
 class @beta Efl.Canvas.Animation_Scale extends Efl.Canvas.Animation
 {
    [[Efl scale animation class]]
-   eo_prefix: efl_animation_scale;
+   c_prefix: efl_animation_scale;
    data: Efl_Canvas_Animation_Scale_Data;
    methods {
       @property scale {

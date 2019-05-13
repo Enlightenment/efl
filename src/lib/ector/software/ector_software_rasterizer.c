@@ -145,9 +145,11 @@ _blend_mask_add(int count, const SW_FT_Span *spans, void *user_data)
    RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
    uint32_t *mbuffer = mask->pixels.u32;
 
+   int tsize = sd->raster_buffer->generic->w;
+   uint32_t *ttarget = alloca(sizeof(uint32_t) * tsize);
+
    while (count--)
      {
-        uint32_t *ttarget = alloca(sizeof(uint32_t) * spans->len);
         memset(ttarget, 0x00, sizeof(uint32_t) * spans->len);
         uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
         comp_func(ttarget, spans->len, color, spans->coverage);
@@ -234,9 +236,11 @@ _blend_mask_diff(int count, const SW_FT_Span *spans, void *user_data)
    RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
    uint32_t *mbuffer = mask->pixels.u32;
 
+   int tsize = sd->raster_buffer->generic->w;
+   uint32_t *ttarget = alloca(sizeof(uint32_t) * tsize);
+
    while (count--)
      {
-        uint32_t *ttarget = alloca(sizeof(uint32_t) * spans->len);
         memset(ttarget, 0x00, sizeof(uint32_t) * spans->len);
         uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
         comp_func(ttarget, spans->len, color, spans->coverage);
@@ -293,6 +297,120 @@ _blend_gradient(int count, const SW_FT_Span *spans, void *user_data)
      }
 }
 
+static void
+_blend_gradient_alpha(int count, const SW_FT_Span *spans, void *user_data)
+{
+   RGBA_Comp_Func comp_func;
+   Span_Data *data = (Span_Data *)(user_data);
+   src_fetch fetchfunc = NULL;
+   uint32_t *buffer;
+   const int pix_stride = data->raster_buffer->stride / 4;
+   uint32_t gradientbuffer[BLEND_GRADIENT_BUFFER_SIZE];
+
+   // FIXME: Get the proper composition function using ,color, ECTOR_OP etc.
+   if (data->type == LinearGradient) fetchfunc = &fetch_linear_gradient;
+   if (data->type == RadialGradient) fetchfunc = &fetch_radial_gradient;
+
+   if (!fetchfunc)
+     return;
+
+   Ector_Software_Buffer_Base_Data *mask = data->mask;
+   uint32_t *mbuffer = mask->pixels.u32;
+
+   //Temp buffer for intermediate processing
+   uint32_t *tbuffer = malloc(sizeof(uint32_t) * data->raster_buffer->generic->w);
+
+   comp_func = efl_draw_func_span_get(data->op, data->mul_col, data->gradient->alpha);
+
+   // move to the offset location
+   buffer = data->raster_buffer->pixels.u32 + ((pix_stride * data->offy) + data->offx);
+
+   while (count--)
+     {
+        uint32_t *target = buffer + ((data->raster_buffer->generic->w * spans->y) + spans->x);
+        uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
+        uint32_t *temp = tbuffer;
+        int length = spans->len;
+        memset(temp, 0x00, sizeof(uint32_t) * spans->len);
+        while (length)
+          {
+             int l = MIN(length, BLEND_GRADIENT_BUFFER_SIZE);
+             fetchfunc(gradientbuffer, data, spans->y, spans->x, l);
+             comp_func(temp, gradientbuffer, l, data->mul_col, spans->coverage);
+
+             for (int i = 0; i < l; i++)
+               {
+                  *temp = draw_mul_256(((*mtarget)>>24), *temp);
+                  int alpha = 255 - ((*temp) >> 24);
+                  *target = *temp + draw_mul_256(alpha, *target);
+                  ++temp;
+                  ++mtarget;
+                  ++target;
+               }
+             length -= l;
+          }
+        ++spans;
+     }
+   free(tbuffer);
+}
+
+static void
+_blend_gradient_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
+{
+   RGBA_Comp_Func comp_func;
+   Span_Data *data = (Span_Data *)(user_data);
+   src_fetch fetchfunc = NULL;
+   uint32_t *buffer;
+   const int pix_stride = data->raster_buffer->stride / 4;
+   uint32_t gradientbuffer[BLEND_GRADIENT_BUFFER_SIZE];
+
+   // FIXME: Get the proper composition function using ,color, ECTOR_OP etc.
+   if (data->type == LinearGradient) fetchfunc = &fetch_linear_gradient;
+   if (data->type == RadialGradient) fetchfunc = &fetch_radial_gradient;
+
+   if (!fetchfunc)
+     return;
+
+   Ector_Software_Buffer_Base_Data *mask = data->mask;
+   uint32_t *mbuffer = mask->pixels.u32;
+
+   //Temp buffer for intermediate processing
+   uint32_t *tbuffer = malloc(sizeof(uint32_t) * data->raster_buffer->generic->w);
+
+   comp_func = efl_draw_func_span_get(data->op, data->mul_col, data->gradient->alpha);
+
+   // move to the offset location
+   buffer = data->raster_buffer->pixels.u32 + ((pix_stride * data->offy) + data->offx);
+
+   while (count--)
+     {
+        uint32_t *target = buffer + ((data->raster_buffer->generic->w * spans->y) + spans->x);
+        uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
+        uint32_t *temp = tbuffer;
+        int length = spans->len;
+        memset(temp, 0x00, sizeof(uint32_t) * spans->len);
+        while (length)
+          {
+             int l = MIN(length, BLEND_GRADIENT_BUFFER_SIZE);
+             fetchfunc(gradientbuffer, data, spans->y, spans->x, l);
+             comp_func(temp, gradientbuffer, l, data->mul_col, spans->coverage);
+
+             for (int i = 0; i < l; i++)
+               {
+                  if (*mtarget)
+                    *temp = draw_mul_256((255 - ((*mtarget)>>24)), *temp);
+                  int alpha = 255 - ((*temp) >> 24);
+                  *target = *temp + draw_mul_256(alpha, *target);
+                  ++temp;
+                  ++mtarget;
+                  ++target;
+               }
+             length -= l;
+          }
+        ++spans;
+     }
+   free(tbuffer);
+}
 /*!
     \internal
     spans must be sorted on y
@@ -485,46 +603,49 @@ static void
 _adjust_span_fill_methods(Span_Data *spdata)
 {
    //Blending Function
-   switch(spdata->type)
+   if (spdata->mask)
      {
-        case None:
-          spdata->unclipped_blend = NULL;
-          break;
-        case Solid:
+        switch (spdata->mask_op)
           {
-             if (spdata->mask)
-               {
-                  switch (spdata->mask_op)
-                    {
-                     default:
-                     case EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA:
-                        spdata->unclipped_blend = &_blend_alpha;
-                        break;
-                     case EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA_INV:
-                        spdata->unclipped_blend = &_blend_alpha_inv;
-                        break;
-                     case EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_ADD:
-                        spdata->unclipped_blend = &_blend_mask_add;
-                        break;
-                     case EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_SUBSTRACT:
-                        spdata->unclipped_blend = &_blend_mask_sub;
-                        break;
-                     case EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_INTERSECT:
-                        spdata->unclipped_blend = &_blend_mask_ins;
-                        break;
-                     case EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_DIFFERENCE:
-                        spdata->unclipped_blend = &_blend_mask_diff;
-                        break;
-                    }
-               }
-             else
-                spdata->unclipped_blend = &_blend_argb;
-           }
-          break;
-        case LinearGradient:
-        case RadialGradient:
+           default:
+           case EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA:
+              if (spdata->type == Solid)
+                spdata->unclipped_blend = &_blend_alpha;
+              else if (spdata->type == LinearGradient || spdata->type == RadialGradient)
+                spdata->unclipped_blend = &_blend_gradient_alpha;
+              else //None
+                spdata->unclipped_blend = NULL;
+              break;
+           case EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA_INV:
+              if (spdata->type == Solid)
+                spdata->unclipped_blend = &_blend_alpha_inv;
+              else if (spdata->type == LinearGradient || spdata->type == RadialGradient)
+                spdata->unclipped_blend = &_blend_gradient_alpha_inv;
+              else //None
+                spdata->unclipped_blend = NULL;
+              break;
+           case EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_ADD:
+              spdata->unclipped_blend = &_blend_mask_add;
+              break;
+           case EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_SUBSTRACT:
+              spdata->unclipped_blend = &_blend_mask_sub;
+              break;
+           case EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_INTERSECT:
+              spdata->unclipped_blend = &_blend_mask_ins;
+              break;
+           case EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_DIFFERENCE:
+              spdata->unclipped_blend = &_blend_mask_diff;
+              break;
+          }
+     }
+   else
+     {
+        if (spdata->type == Solid)
+          spdata->unclipped_blend = &_blend_argb;
+        else if (spdata->type == LinearGradient || spdata->type == RadialGradient)
           spdata->unclipped_blend = &_blend_gradient;
-          break;
+        else //None
+          spdata->unclipped_blend = NULL;
      }
 
   //FIXME: Mask and mask case is not use clipping.

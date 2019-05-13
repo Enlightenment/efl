@@ -5,6 +5,7 @@
 #include <Efl_Ui.h>
 #include <Elementary.h>
 #include "elm_suite.h"
+#include "elm_priv.h"
 
 #define COORD_EQ(a, b) (!!(abs(a - b) < 2))
 #define GEOMETRY_EQ(a, b) (COORD_EQ(a.x, b.x) && COORD_EQ(a.y, b.y) && \
@@ -252,7 +253,7 @@ EFL_START_TEST (efl_ui_box_layout_update)
 {
    int i, max_index = (sizeof(hints) / sizeof(Hint));
 
-   efl_pack_align_set(layout, 0.8, 0.2);
+   efl_gfx_arrangement_content_align_set(layout, 0.8, 0.2);
    efl_ui_direction_set(layout, EFL_UI_DIR_VERTICAL);
 
    Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, layout,
@@ -271,7 +272,7 @@ EFL_START_TEST (efl_ui_box_layout_update_pack)
    int i, max_index2, max_index3;
    Eo *btn, *btn2, *btn3;
 
-   efl_pack_align_set(layout, 0.8, 0.2);
+   efl_gfx_arrangement_content_align_set(layout, 0.8, 0.2);
    efl_ui_direction_set(layout, EFL_UI_DIR_VERTICAL);
 
    max_index2 = ((sizeof(hints2) / sizeof(Hint)) / 2);
@@ -502,34 +503,34 @@ EFL_START_TEST (efl_ui_box_properties)
    Eina_Bool b;
 
    //align test
-   efl_pack_align_get(layout, &h, &v);
+   efl_gfx_arrangement_content_align_get(layout, &h, &v);
    ck_assert(EINA_DBL_EQ(h, 0.5));
    ck_assert(EINA_DBL_EQ(v, 0.5));
 
-   efl_pack_align_set(layout, 0.3, 0.8234);
-   efl_pack_align_get(layout, &h, &v);
+   efl_gfx_arrangement_content_align_set(layout, 0.3, 0.8234);
+   efl_gfx_arrangement_content_align_get(layout, &h, &v);
    ck_assert(EINA_DBL_EQ(h, 0.3));
    ck_assert(EINA_DBL_EQ(v, 0.8234));
 
-   efl_pack_align_set(layout, -0.23, 123);
-   efl_pack_align_get(layout, &h, &v);
+   efl_gfx_arrangement_content_align_set(layout, -0.23, 123);
+   efl_gfx_arrangement_content_align_get(layout, &h, &v);
    ck_assert(EINA_DBL_EQ(h, -1));
    ck_assert(EINA_DBL_EQ(v, 1));
 
    //padding test
-   efl_pack_padding_get(layout, &h, &v, &b);
+   efl_gfx_arrangement_content_padding_get(layout, &h, &v, &b);
    ck_assert(EINA_DBL_EQ(h, 0.0));
    ck_assert(EINA_DBL_EQ(v, 0.0));
    ck_assert_int_eq(b, 0);
 
-   efl_pack_padding_set(layout, 0.3, 0.8234, 1);
-   efl_pack_padding_get(layout, &h, &v, &b);
+   efl_gfx_arrangement_content_padding_set(layout, 0.3, 0.8234, 1);
+   efl_gfx_arrangement_content_padding_get(layout, &h, &v, &b);
    ck_assert(EINA_DBL_EQ(h, 0.3));
    ck_assert(EINA_DBL_EQ(v, 0.8234));
    ck_assert_int_eq(b, 1);
 
-   efl_pack_padding_set(layout, -1.23, 123, 45);
-   efl_pack_padding_get(layout, &h, &v, &b);
+   efl_gfx_arrangement_content_padding_set(layout, -1.23, 123, 45);
+   efl_gfx_arrangement_content_padding_get(layout, &h, &v, &b);
    ck_assert(EINA_DBL_EQ(h, 0));
    ck_assert(EINA_DBL_EQ(v, 123));
    ck_assert_int_eq(b, 1);
@@ -551,6 +552,17 @@ EFL_START_TEST (efl_ui_box_properties)
 }
 EFL_END_TEST
 
+EFL_START_TEST (efl_ui_box_internal)
+{
+   Efl_Ui_Widget *w = efl_add(EFL_UI_BUTTON_CLASS, win);
+
+   efl_ui_widget_internal_set(layout, EINA_TRUE);
+   ck_assert_ptr_eq(efl_ui_widget_parent_get(w), win);
+   efl_pack(layout, w);
+   ck_assert_ptr_eq(efl_ui_widget_parent_get(w), win);
+}
+EFL_END_TEST
+
 void efl_ui_test_box(TCase *tc)
 {
    tcase_add_checked_fixture(tc, layout_setup, layout_teardown);
@@ -560,4 +572,5 @@ void efl_ui_test_box(TCase *tc)
    tcase_add_test(tc, efl_ui_box_size);
    tcase_add_test(tc, efl_ui_box_pack_unpack);
    tcase_add_test(tc, efl_ui_box_properties);
+   tcase_add_test(tc, efl_ui_box_internal);
 }

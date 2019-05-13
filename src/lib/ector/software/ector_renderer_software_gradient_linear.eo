@@ -1,7 +1,7 @@
 class @beta Ector.Renderer.Software.Gradient.Linear extends Ector.Renderer.Software implements Ector.Renderer.Gradient, Ector.Renderer.Gradient.Linear
 {
    [[Ector software renderer gradient linear class]]
-   eo_prefix: ector_renderer_software_gradient_linear;
+   c_prefix: ector_renderer_software_gradient_linear;
    data: Ector_Renderer_Software_Gradient_Data;
    implements {
       Ector.Renderer.prepare;

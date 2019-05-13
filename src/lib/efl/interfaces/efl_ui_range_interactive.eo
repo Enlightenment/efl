@@ -4,7 +4,7 @@ interface @beta Efl.Ui.Range_Interactive extends Efl.Ui.Range_Display
 
      The properties defined here are used to manipulate the way a user interacts with a displayed range.
    ]]
-   eo_prefix: efl_ui_range;
+   c_prefix: efl_ui_range;
    methods {
       @property range_step {
          [[Control the step used to increment or decrement values for given widget.

@@ -52,8 +52,11 @@ _efl_ui_box_child_register(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Gfx_Entity *subobj)
         return EINA_FALSE;
      }
 
-   if (!efl_ui_widget_sub_object_add(obj, subobj))
-     return EINA_FALSE;
+   if (!efl_ui_widget_internal_get(obj))
+     {
+        if (!efl_ui_widget_sub_object_add(obj, subobj))
+          return EINA_FALSE;
+     }
 
    efl_key_data_set(subobj, "_elm_leaveme", obj);
    efl_canvas_group_member_add(obj, subobj);
@@ -74,8 +77,15 @@ _efl_ui_box_child_unregister(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED, Efl_Gfx_E
         ERR("subobj %p %s is not part of this widget", subobj, efl_class_name_get(subobj) );
         return EINA_FALSE;
      }
-   if (!subobj || !_elm_widget_sub_object_redirect_to_top(obj, subobj))
+
+   if (!subobj)
      return EINA_FALSE;
+
+   if (!efl_ui_widget_internal_get(obj))
+     {
+        if (!_elm_widget_sub_object_redirect_to_top(obj, subobj))
+          return EINA_FALSE;
+     }
 
    efl_canvas_group_member_remove(obj, subobj);
    efl_canvas_object_clipper_set(subobj, NULL);
@@ -178,6 +188,19 @@ _efl_ui_box_efl_object_constructor(Eo *obj, Efl_Ui_Box_Data *pd)
    pd->align.v = 0.5;
 
    return obj;
+}
+
+EOLIAN static void
+_efl_ui_box_efl_object_invalidate(Eo *obj, Efl_Ui_Box_Data *pd)
+{
+   Eo *child;
+
+   efl_invalidate(efl_super(obj, MY_CLASS));
+
+   EINA_LIST_FREE(pd->children, child)
+     {
+        efl_event_callback_array_del(child, efl_ui_box_callbacks(), obj);
+     }
 }
 
 /* CLEAN API BELOW */
@@ -382,7 +405,7 @@ _efl_ui_box_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Box
 }
 
 EOLIAN static void
-_efl_ui_box_efl_pack_pack_padding_set(Eo *obj, Efl_Ui_Box_Data *pd, double h, double v, Eina_Bool scalable)
+_efl_ui_box_efl_gfx_arrangement_content_padding_set(Eo *obj, Efl_Ui_Box_Data *pd, double h, double v, Eina_Bool scalable)
 {
    scalable = !!scalable;
    if (h < 0) h = 0;
@@ -400,7 +423,7 @@ _efl_ui_box_efl_pack_pack_padding_set(Eo *obj, Efl_Ui_Box_Data *pd, double h, do
 }
 
 EOLIAN static void
-_efl_ui_box_efl_pack_pack_padding_get(const Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd, double *h, double *v, Eina_Bool *scalable)
+_efl_ui_box_efl_gfx_arrangement_content_padding_get(const Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd, double *h, double *v, Eina_Bool *scalable)
 {
    if (scalable) *scalable = pd->pad.scalable;
    if (h) *h = pd->pad.h;
@@ -408,7 +431,7 @@ _efl_ui_box_efl_pack_pack_padding_get(const Eo *obj EINA_UNUSED, Efl_Ui_Box_Data
 }
 
 EOLIAN static void
-_efl_ui_box_efl_pack_pack_align_set(Eo *obj, Efl_Ui_Box_Data *pd, double h, double v)
+_efl_ui_box_efl_gfx_arrangement_content_align_set(Eo *obj, Efl_Ui_Box_Data *pd, double h, double v)
 {
    if (h < 0) h = -1;
    else if (h > 1) h = 1;
@@ -425,7 +448,7 @@ _efl_ui_box_efl_pack_pack_align_set(Eo *obj, Efl_Ui_Box_Data *pd, double h, doub
 }
 
 EOLIAN static void
-_efl_ui_box_efl_pack_pack_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd, double *h, double *v)
+_efl_ui_box_efl_gfx_arrangement_content_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd, double *h, double *v)
 {
    if (h) *h = pd->align.h;
    if (v) *v = pd->align.v;

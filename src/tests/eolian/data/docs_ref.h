@@ -1,15 +1,15 @@
 #ifndef _EOLIAN_DOCS_EO_H_
 #define _EOLIAN_DOCS_EO_H_
 
-#ifndef _DOCS_EO_CLASS_TYPE
-#define _DOCS_EO_CLASS_TYPE
+#ifndef _EO_DOCS_EO_CLASS_TYPE
+#define _EO_DOCS_EO_CLASS_TYPE
 
-typedef Eo Docs;
+typedef Eo Eo_Docs;
 
 #endif
 
-#ifndef _DOCS_EO_TYPES
-#define _DOCS_EO_TYPES
+#ifndef _EO_DOCS_EO_TYPES
+#define _EO_DOCS_EO_TYPES
 
 /**
  * @brief This is struct Foo. It does stuff.
@@ -74,16 +74,16 @@ typedef struct _Opaque Opaque;
  * @brief Docs for class.
  *
  * More docs for class. Testing references now. @ref Foo @ref Bar @ref Alias
- * @ref pants @ref docs_meth @ref docs_prop_get @ref docs_prop_get
- * @ref docs_prop_set @ref Foo.field1 @ref BAR_FOO @ref Docs
+ * @ref pants @ref eo_docs_meth @ref eo_docs_prop_get @ref eo_docs_prop_get
+ * @ref eo_docs_prop_set @ref Foo.field1 @ref BAR_FOO @ref Eo_Docs
  *
  * @since 1.18
  *
- * @ingroup Docs
+ * @ingroup Eo_Docs
  */
-#define DOCS_CLASS docs_class_get()
+#define EO_DOCS_CLASS eo_docs_class_get()
 
-EWAPI const Efl_Class *docs_class_get(void);
+EWAPI const Efl_Class *eo_docs_class_get(void);
 
 /**
  * @brief Method documentation.
@@ -97,9 +97,9 @@ EWAPI const Efl_Class *docs_class_get(void);
  *
  * @since 1.18
  *
- * @ingroup Docs
+ * @ingroup Eo_Docs
  */
-EOAPI int docs_meth(Eo *obj, int a, float *b, long *c);
+EOAPI int eo_docs_meth(Eo *obj, int a, float *b, long *c);
 
 /**
  * @brief Property common documentation.
@@ -111,9 +111,9 @@ EOAPI int docs_meth(Eo *obj, int a, float *b, long *c);
  *
  * @since 1.18
  *
- * @ingroup Docs
+ * @ingroup Eo_Docs
  */
-EOAPI void docs_prop_set(Eo *obj, int val);
+EOAPI void eo_docs_prop_set(Eo *obj, int val);
 
 /**
  * @brief Property common documentation.
@@ -126,18 +126,18 @@ EOAPI void docs_prop_set(Eo *obj, int val);
  *
  * @since 1.18
  *
- * @ingroup Docs
+ * @ingroup Eo_Docs
  */
-EOAPI int docs_prop_get(const Eo *obj);
+EOAPI int eo_docs_prop_get(const Eo *obj);
 
-EWAPI extern const Efl_Event_Description _DOCS_EVENT_CLICKED;
+EWAPI extern const Efl_Event_Description _EO_DOCS_EVENT_CLICKED;
 
 /** Event docs.
  *
  * @since 1.18
  *
- * @ingroup Docs
+ * @ingroup Eo_Docs
  */
-#define DOCS_EVENT_CLICKED (&(_DOCS_EVENT_CLICKED))
+#define EO_DOCS_EVENT_CLICKED (&(_EO_DOCS_EVENT_CLICKED))
 
 #endif

@@ -13,10 +13,10 @@ loader_name="$(echo "$loader" | cut -f 1 -d '.')"
 
 original_ext="$(echo "$loader" | tail -c 4)"
 if test "$original_ext" = "$ext" ; then
-    mv "$DESTDIR"/"$original_loader" "$DESTDIR"/"$loader_dir"/"$original_name"
+    mv "$DESTDIR""$original_loader" "$DESTDIR""$loader_dir"/"$original_name"
 fi
 
 shift
 for x in "$@"; do
-  ln -sf "$original_name" "$DESTDIR"/"$loader_dir"/"$loader_name"."$x"
+  ln -sf "$original_name" "$DESTDIR""$loader_dir"/"$loader_name"."$x"
 done

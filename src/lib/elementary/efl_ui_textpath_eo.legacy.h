@@ -13,7 +13,7 @@ typedef Eo Efl_Ui_Textpath;
 
 /** Textpath direction
  *
- * @ingroup Efl_Ui
+ * @ingroup Elm_Textpath_Group
  */
 typedef enum
 {

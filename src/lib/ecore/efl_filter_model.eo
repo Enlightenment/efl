@@ -1,0 +1,31 @@
+function @beta EflFilterModel {
+   [[EflFilterModel function]]
+   params {
+      parent: Efl.Filter_Model; [[This object can be used to know when to cancel the future.]]
+      child: Efl.Model; [[You must reference this object for the duration of your use of it as the caller will not do that for you.]]
+   }
+   return: future<bool>; [[$true if the model should be kept.]]
+};
+
+class @beta Efl.Filter_Model extends Efl.Composite_Model
+{
+   [[Efl model designed to filter its children.]]
+   methods {
+      filter_set {
+         [[Set a filter function that will catch children from the composited model.]]
+         params {
+            filter: EflFilterModel; [[Filter callback]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.destructor;
+      Efl.Model.children_slice_get;
+      Efl.Model.children_count { get; }
+      Efl.Model.property { get; }
+      Efl.Composite_Model.index { get; }
+   }
+   constructors {
+      .filter_set;
+   }
+}

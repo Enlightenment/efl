@@ -1485,7 +1485,6 @@ _efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
 {
    Efl_Ui_Widget *parent;
 
-   if (!sobj) return EINA_FALSE;
    EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(sobj, EFL_GFX_ENTITY_INTERFACE), EINA_FALSE);
    EINA_SAFETY_ON_TRUE_RETURN_VAL(obj == sobj, EINA_FALSE);
 
@@ -1966,325 +1965,6 @@ _propagate_event(void *data EINA_UNUSED, const Efl_Event *eo_event)
 
         parent = sd->parent_obj;
      }
-}
-
-double
-_elm_widget_focus_direction_weight_get(const Evas_Object *obj1,
-                      const Evas_Object *obj2,
-                      double degree)
-{
-   Evas_Coord obj_x1, obj_y1, w1, h1, obj_x2, obj_y2, w2, h2;
-   double x1, yy1, x2, yy2, xx1, yyy1, xx2, yyy2;
-   double ax, ay, cx, cy;
-   double weight = -1.0, g = 0.0;
-
-   if (obj1 == obj2) return 0.0;
-
-   degree -= 90.0;
-   while (degree >= 360.0)
-     degree -= 360.0;
-   while (degree < 0.0)
-     degree += 360.0;
-
-   evas_object_geometry_get(obj1, &obj_x1, &obj_y1, &w1, &h1);
-   cx = obj_x1 + (w1 / 2.0);
-   cy = obj_y1 + (h1 / 2.0);
-   evas_object_geometry_get(obj2, &obj_x2, &obj_y2, &w2, &h2);
-
-   /* For overlapping cases. */
-   if (ELM_RECTS_INTERSECT(obj_x1, obj_y1, w1, h1, obj_x2, obj_y2, w2, h2))
-     return 0.0;
-
-   /* Change all points to relative one. */
-   x1 = obj_x1 - cx;
-   xx1 = x1 + w1;
-   yy1 = obj_y1 - cy;
-   yyy1 = yy1 + h1;
-   x2 = obj_x2 - cx;
-   xx2 = x2 + w2;
-   yy2 = obj_y2 - cy;
-   yyy2 = yy2 + h2;
-
-   /* Get crossing points (ax, ay) between obj1 and a line extending
-    * to the direction of current degree. */
-   if (degree == 0.0)
-     {
-        ax = xx1;
-        ay = 0.0;
-     }
-   else if (degree == 90.0)
-     {
-        ax = 0.0;
-        ay = yyy1;
-     }
-   else if (degree == 180.0)
-     {
-        ax = x1;
-        ay = 0.0;
-     }
-   else if (degree == 270.0)
-     {
-        ax = 0.0;
-        ay = yy1;
-     }
-   else
-     {
-        g = tan(degree * (M_PI / 180.0));
-        if ((degree > 0.0) && (degree < 90.0))
-          {
-             ay = g * xx1;
-             if (ay <= yyy1) ax = xx1;
-             else
-               {
-                  ax = yyy1 / g;
-                  ay = yyy1;
-               }
-          }
-        else if ((degree > 90.0) && (degree < 180.0))
-          {
-             ay = g * x1;
-             if (ay <= yyy1) ax = x1;
-             else
-               {
-                  ax = yyy1 / g;
-                  ay = yyy1;
-               }
-          }
-        else if ((degree > 180.0) && (degree < 270.0))
-          {
-             ay = g * x1;
-             if (ay >= yy1) ax = x1;
-             else
-               {
-                  ax = yy1 / g;
-                  ay = yy1;
-               }
-          }
-        else
-          {
-             ay = g * xx1;
-             if (ay >= yy1) ax = xx1;
-             else
-               {
-                  ax = yy1 / g;
-                  ay = yy1;
-               }
-          }
-     }
-
-   /* Filter obj2, if it is not in the specific derection. */
-   int i = 0;
-   double rx[4] = {0.0, 0.0, 0.0, 0.0}, ry[4] = {0.0, 0.0, 0.0, 0.0};
-   double t1, t2, u1, v1, u2, v2;
-
-   if ((degree == 45.0) || (degree == 225.0) || (degree == 135.0) ||
-       (degree == 315.0))
-     {
-        u1 = 1.0;
-        v1 = 0.0;
-        u2 = 0.0;
-        v2 = 1.0;
-     }
-   else
-     {
-        double g2 = tan((degree + 45.0) * (M_PI / 180.0));
-        u1 = (-1.0 * g2);
-        u2 = (1.0 / g2);
-        v1 = v2 = 1.0;
-     }
-   t1 = (u1 * ax) + (v1 * ay);
-   t2 = (u2 * ax) + (v2 * ay);
-
-#define _R(x) (int)((x + 0.05) * 10.0)
-
-   if ((_R(t1 * ((u1 * x2) + (v1 * yy2))) > 0) && (_R(t2 * ((u2 * x2) +
-                                                            (v2 * yy2))) > 0))
-     {
-        rx[i] = x2;
-        ry[i++] = yy2;
-     }
-   if ((_R(t1 * ((u1 * x2) + (v1 * yyy2))) > 0) && (_R(t2 * ((u2 * x2) +
-                                                             (v2 * yyy2))) > 0))
-     {
-        rx[i] = x2;
-        ry[i++] = yyy2;
-     }
-   if ((_R(t1 * ((u1 * xx2) + (v1 * yy2))) > 0) && (_R(t2 * ((u2 * xx2) +
-                                                             (v2 * yy2))) > 0))
-     {
-        rx[i] = xx2;
-        ry[i++] = yy2;
-     }
-   if ((_R(t1 * ((u1 * xx2) + (v1 * yyy2))) > 0) &&
-       (_R(t2 * ((u2 * xx2) + (v2 * yyy2))) > 0))
-     {
-        rx[i] = xx2;
-        ry[i++] = yyy2;
-     }
-   if (i == 0)
-     {
-        if (degree == 0.0)
-          {
-             if ((_R(xx2) < 0) || (_R(yy2) > 0) || (_R(yyy2) < 0)) return 0.0;
-          }
-        else if (degree == 90.0)
-          {
-             if ((_R(yyy2) < 0) || (_R(x2) > 0) || (_R(xx2) < 0)) return 0.0;
-          }
-        else if (degree == 180.0)
-          {
-             if ((_R(x2) > 0) || (_R(yy2) > 0) || (_R(yyy2) < 0)) return 0.0;
-          }
-        else if (degree == 270.0)
-          {
-             if ((_R(yy2) > 0) || (_R(x2) > 0) || (_R(xx2) < 0)) return 0.0;
-          }
-        else
-          {
-             if ((_R(g * x2) >= _R(yy2)) && (_R((g * x2)) <= _R(yyy2)))
-               {
-                  if (!((_R(ax * x2) > 0) && (_R(ay * (g * x2)) > 0)))
-                    return 0.0;
-               }
-             else if ((_R(g * xx2) >= _R(yy2)) && (_R((g * xx2)) <= _R(yyy2)))
-               {
-                  if (!((_R(ax * xx2) > 0) && (_R(ay * (g * xx2)) > 0)))
-                    return 0.0;
-               }
-             else if ((_R((1.0 / g) * yy2) >= _R(xx2)) && (_R((1.0 / g) * yy2)
-                                                           <= _R(xx2)))
-               {
-                  if (!((_R(ax * ((1.0 / g) * yy2)) > 0)
-                        && (_R(ay * yy2) > 0)))
-                    return 0.0;
-               }
-             else if ((_R((1.0 / g) * yyy2) >= _R(xx2)) &&
-                      (_R((1.0 / g) * yyy2) <= _R(xx2)))
-               {
-                  if (!((_R(ax * ((1.0 / g) * yyy2)) > 0)
-                        && (_R(ay * yyy2) > 0))) return 0.0;
-               }
-             else return 0.0;
-          }
-     }
-
-   /* Calculate the weight for obj2. */
-   if (degree == 0.0)
-     {
-        if (_R(xx1) > _R(x2)) weight = -1.0;
-        else if ((_R(yy2) >= _R(yy1)) && (_R(yyy2) <= _R(yyy1)))
-          weight = (x2 - xx1) * (x2 - xx1);
-        else if (_R(yy2) > 0)
-          weight = ((x2 - xx1) * (x2 - xx1)) + (yy2 * yy2);
-        else if (_R(yyy2) < 0)
-          weight = ((x2 - xx1) * (x2 - xx1)) + (yyy2 * yyy2);
-        else weight = (x2 - xx1) * (x2 - xx1);
-     }
-   else if (degree == 90.0)
-     {
-        if (_R(yyy1) > _R(yy2)) weight = -1.0;
-        else if ((_R(x2) >= _R(x1)) && (_R(xx2) <= _R(xx1)))
-          weight = (yy2 - yyy1) * (yy2 - yyy1);
-        else if (_R(x2) > 0)
-          weight = (x2 * x2) + ((yy2 - yyy1) * (yy2 - yyy1));
-        else if (_R(xx2) < 0)
-          weight = (xx2 * xx2) + ((yy2 - yyy1) * (yy2 - yyy1));
-        else weight = (yy2 - yyy1) * (yy2 - yyy1);
-     }
-   else if (degree == 180.0)
-     {
-        if (_R(x1) < _R(xx2)) weight = -1.0;
-        else if ((_R(yy2) >= _R(yy1)) && (_R(yyy2) <= _R(yyy1)))
-          weight = (x1 - xx2) * (x1 - xx2);
-        else if (_R(yy2) > 0)
-          weight = ((x1 - xx2) * (x1 - xx2)) + (yy2 * yy2);
-        else if (_R(yyy2) < 0)
-          weight = ((x1 - xx2) * (x1 - xx2)) + (yyy2 * yyy2);
-        else weight = (x1 - xx2) * (x1 - xx2);
-     }
-   else if (degree == 270.0)
-     {
-        if (_R(yy1) < _R(yyy2)) weight = -1.0;
-        else if ((_R(x2) >= _R(x1)) && (_R(xx2) <= _R(xx1)))
-          weight = (yy1 - yyy2) * (yy1 - yyy2);
-        else if (_R(x2) > 0)
-          weight = (x2 * x2) + ((yy1 - yyy2) * (yy1 - yyy2));
-        else if (_R(xx2) < 0)
-          weight = (xx2 * xx2) + ((yy1 - yyy2) * (yy1 - yyy2));
-        else weight = (yy1 - yyy2) * (yy1 - yyy2);
-     }
-   else
-     {
-        int j = 0, k = 0;
-        double sx[4] = {0.0, 0.0, 0.0, 0.0}, sy[4] = {0.0, 0.0, 0.0, 0.0};
-        double t_weight[4] = {-1.0, -1.0, -1.0, -1.0};
-        if ((_R(g * x2) >= _R(yy2)) && (_R(g * x2) <= _R(yyy2)))
-          {
-             sx[j] = x2;
-             sy[j] = g * x2;
-             t_weight[j++] = ((ax - x2) * (ax - x2)) +
-               ((ay - (g * x2)) * (ay - (g * x2)));
-          }
-        if ((_R(g * xx2) >= _R(yy2)) && (_R(g * xx2) <= _R(yyy2)))
-          {
-             sx[j] = xx2;
-             sy[j] = g * xx2;
-             t_weight[j++] = ((ax - xx2) * (ax - xx2)) +
-               ((ay - (g * xx2)) * (ay - (g * xx2)));
-          }
-        if ((_R((1.0 / g) * yy2) >= _R(x2)) && (_R((1.0 / g) * yy2) <= _R(xx2)))
-          {
-             sx[j] = (1.0 / g) * yy2;
-             sy[j] = yy2;
-             t_weight[j++] =
-               ((ax - ((1.0 / g) * yy2)) * (ax - ((1.0 / g) * yy2))) +
-               ((ay - yy2) * (ay - yy2));
-          }
-        if ((_R((1.0 / g) * yyy2) >= _R(x2)) && (_R((1.0 / g) * yyy2)
-                                                 <= _R(xx2)))
-          {
-             sx[j] = (1.0 / g) * yyy2;
-             sy[j] = yyy2;
-             t_weight[j++] =
-               ((ax - ((1.0 / g) * yyy2)) * (ax - ((1.0 / g) * yyy2))) +
-               ((ay - yyy2) * (ay - yyy2));
-          }
-
-        if ((j > 2) || ((j == 2) && ((_R(sx[0]) != _R(sx[1])) ||
-                                     (_R(sy[0]) != _R(sy[1])))))
-          {
-             for (; k < j; k++)
-               {
-                  if (_R(t_weight[k]) == 0) return -1.0;
-                  if ((1 / weight) < (1 / t_weight[k])) weight = t_weight[k];
-               }
-          }
-        else
-          {
-             for (; k < i; k++)
-               {
-                  double ccx, ccy, t1_weight, x_diff, y_diff;
-                  ccx = ((1.0 / g) * rx[k] + ry[k]) / (g + (1.0 / g));
-                  ccy = g * ccx;
-                  x_diff = rx[k] - ccx;
-                  if (x_diff < 0) x_diff *= -1.0;
-                  y_diff = ry[k] - ccy;
-                  if (y_diff < 0) y_diff *= -1.0;
-                  t1_weight =
-                    (((ax - ccx) * (ax - ccx)) + ((ay - ccy) * (ay - ccy))) +
-                    ((x_diff * x_diff * x_diff) + (y_diff * y_diff * y_diff));
-                  if ((_R(t1_weight) != 0) && ((1 / weight) < (1 / t1_weight)))
-                    weight = t1_weight;
-               }
-          }
-     }
-   /* Return the current object's weight. */
-   if (weight == -1.0) return 0.0;
-   if (_R(weight) == 0) return -1.0;
-
-#undef _R
-
-   return 1.0 / weight;
 }
 
 /** @internal */
@@ -6168,6 +5848,24 @@ _efl_ui_widget_efl_object_invalidate(Eo *obj, Efl_Ui_Widget_Data *pd)
 }
 
 #include "efl_ui_widget_part_bg.eo.c"
+
+EAPI void
+efl_ui_widget_internal_set(Eo *obj, Eina_Bool b)
+{
+   ELM_WIDGET_DATA_GET(obj, pd);
+   EINA_SAFETY_ON_NULL_RETURN(pd);
+
+   pd->internal = b;
+}
+
+EAPI Eina_Bool
+efl_ui_widget_internal_get(Eo *obj)
+{
+   ELM_WIDGET_DATA_GET(obj, pd);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
+
+   return pd->internal;
+}
 
 /* Efl.Part Bg end */
 

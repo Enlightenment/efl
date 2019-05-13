@@ -12,16 +12,21 @@
 # For now loaders and savers are ALWAYS build statically.
 #
 
+rel_evas_modules = join_paths('..', '..', '..', 'modules', 'evas', 'engines', 'software_generic')
 evas_deps = [eo, eet, eina, efl, emile, ector, ecore, buildsystem, intl]
 pub_eo_file_target = []
 priv_eo_files = []
-
+evas_include_directories = []
+pub_eo_files = []
 pub_evas_eo_files = []
 pub_evas_eot_files = []
 
 pub_legacy_eo_files = [
 
 ]
+evas_src = []
+
+subdir('software_generic')
 
 foreach eo_file : pub_legacy_eo_files
   pub_eo_file_target += custom_target('eolian_gen_' + eo_file,
@@ -35,27 +40,13 @@ foreach eo_file : pub_legacy_eo_files
                            '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
                            '-gchd', '@INPUT@'])
-  pub_eo_file_target += custom_target('eolian_gen_legacy_' + eo_file,
-    input : eo_file,
-    output : [eo_file + '.legacy.h'],
-    depfile : eo_file + '.legacy.d',
-    install : true,
-    install_dir : dir_package_include,
-    command : eolian_gen + [ '-I', meson.current_source_dir(), eolian_include_directories,
-                           '-o', 'l:' + join_paths(meson.current_build_dir(), eo_file + '.legacy.h'),
-                           '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.legacy.d'),
-                           '-gld', '@INPUT@'])
 endforeach
 
-pub_eo_files = [
-
-]
-
 foreach eo_file : pub_eo_files
-  pub_eo_file_target += custom_target('eolian_gen_' + eo_file,
+  pub_eo_file_target += custom_target('eolian_gen_' + eo_file.underscorify(),
     input : eo_file,
-    output : [eo_file + '.h'],
-    depfile : eo_file + '.d',
+    output : [eo_file.underscorify() + '.h'],
+    depfile : eo_file.underscorify() + '.d',
     install : true,
     install_dir : dir_package_include,
     command : eolian_gen + [ '-I', meson.current_source_dir(), eolian_include_directories,
@@ -85,6 +76,8 @@ endforeach
 
 eolian_include_directories += ['-I', meson.current_source_dir()]
 
+evas_src += pub_eo_file_target
+
 evas_header_src = [
   'Evas.h',
   'Evas_Common.h',
@@ -94,7 +87,7 @@ evas_header_src = [
   'Evas_Loader.h',
 ]
 
-evas_include_directories = [
+evas_include_directories += [
   include_directories('.'),
   include_directories('common'),
   include_directories('common3d'),
@@ -104,7 +97,7 @@ evas_include_directories = [
   vg_common_inc_dir
 ]
 
-evas_src = [
+evas_src += [
    'main.c'
 ]
 
@@ -175,7 +168,7 @@ if get_option('opengl') != 'none'
 endif
 
 evas_pre = declare_dependency(
-  include_directories: evas_include_directories + [vg_common_inc_dir],
+  include_directories: evas_include_directories + [vg_common_inc_dir] + [include_directories(join_paths('..', '..', 'modules', 'evas', 'engines', 'buffer'))],
   sources : pub_eo_file_target + priv_eo_file_target,
   dependencies: [eina, eo, ector, emile, evas_deps, m],
 )

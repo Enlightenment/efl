@@ -1,5 +1,5 @@
 /**
- * @defgroup Elm_Textpath Textpath
+ * @defgroup Elm_Textpath_Group Textpath
  * @ingroup Elementary
  */
 

@@ -301,20 +301,86 @@ eng_image_file_colorspace_get(void *engine EINA_UNUSED, void *image)
 static Eina_Bool
 eng_image_data_direct_get(void *engine EINA_UNUSED, void *image, int plane,
                           Eina_Slice *slice, Evas_Colorspace *cspace,
-                          Eina_Bool load)
+                          Eina_Bool load, Eina_Bool *tofree)
 {
+   Eina_Bool ret = EINA_FALSE;
    Evas_GL_Image *im = image;
+   int bpp = 0;
 
-   if (!slice || !im || !im->im)
-     return EINA_FALSE;
+   if (!slice || !im) return ret;
+
+   /* If content hint is DYNAMIC, the im->im could be NULL. If the im->im does 
+      not exist, eng_image_data_direct_get needs to return copied dyn.data to
+      make functions including efl_file_save work. */
+   if ((im->content_hint == EVAS_IMAGE_CONTENT_HINT_DYNAMIC) &&
+       tofree &&
+       (im->tex_only) && (!im->im) &&
+       (im->tex) && (im->tex->pt) && (im->tex->pt->dyn.data))
+     {
+        *tofree = EINA_FALSE;
+        switch ( im->cs.space)
+          {
+           case EFL_GFX_COLORSPACE_ARGB8888:
+             bpp = 4;
+             EINA_FALLTHROUGH;
+             // falltrhough is intended
+           case EFL_GFX_COLORSPACE_AGRY88:
+             if (!bpp) bpp = 2;
+             EINA_FALLTHROUGH;
+             // falltrhough is intended
+           case EFL_GFX_COLORSPACE_GRY8:
+             if (!bpp) bpp = 1;
+             *tofree = EINA_TRUE;
+             im->im = (RGBA_Image *)evas_cache_image_empty(evas_common_image_cache_get());
+             im->im->cache_entry.flags.alpha = im->alpha;
+             im->im->cache_entry.space = im->cs.space;
+             evas_cache_image_colorspace(&im->im->cache_entry, im->cs.space);
+             im->im = (RGBA_Image *)evas_cache_image_size_set(&im->im->cache_entry, im->w, im->h);
+
+             DATA8 *pixels = (DATA8 *)im->tex->pt->dyn.data;
+             for (int i = 0; i < im->tex->pt->dyn.h; i++)
+               {
+                  memcpy(im->im->image.data + (im->w * i),
+                         pixels + (im->tex->pt->dyn.stride * i),
+                         im->w * bpp);
+               }
+             break;
+           default: break;
+          }
+     }
+
+   if (!im->im) return ret;
 
    if (cspace) *cspace = im->im->cache_entry.space;
    if (load)
      {
         if (evas_cache_image_load_data(&im->im->cache_entry) != 0)
-          return EINA_FALSE;
+          {
+             /* Only valid when content hint is DYNAMIC */
+             if (tofree && *tofree)
+               {
+                  evas_cache_image_drop(&im->im->cache_entry);
+                  im->im = NULL;
+               }
+
+             return ret;
+          }
      }
-   return _evas_common_rgba_image_plane_get(im->im, plane, slice);
+
+   ret = _evas_common_rgba_image_plane_get(im->im, plane, slice);
+
+   /* The im->im is not necessary, because it is created temporal purpose to
+      get the slice used by out side of this function. */
+   if (tofree && *tofree)
+     {
+        if (ret)
+          *slice = eina_rw_slice_slice_get(eina_slice_dup(*slice));
+
+        evas_cache_image_drop(&im->im->cache_entry);
+        im->im = NULL;
+     }
+
+   return ret;
 }
 
 static void
@@ -1229,7 +1295,8 @@ eng_image_scale_hint_get(void *engine EINA_UNUSED, void *image)
 }
 
 static Eina_Bool
-eng_image_map_draw(void *engine, void *data, void *context, void *surface, void *image, RGBA_Map *m, int smooth, int level, Eina_Bool do_async)
+eng_image_map_draw(void *engine EINA_UNUSED, void *data, void *context, void *surface, void *image,
+                   RGBA_Map *m, int smooth, int level, Eina_Bool do_async EINA_UNUSED)
 {
    Evas_Engine_GL_Context *gl_context;
    Evas_GL_Image *gim = image;
@@ -1239,7 +1306,8 @@ eng_image_map_draw(void *engine, void *data, void *context, void *surface, void 
    evas_gl_common_context_target_surface_set(gl_context, surface);
    gl_context->dc = context;
 
-   if ((m->pts[0].x == m->pts[3].x) &&
+   if (!gl_context->msaa &&
+       (m->pts[0].x == m->pts[3].x) &&
        (m->pts[1].x == m->pts[2].x) &&
        (m->pts[0].y == m->pts[1].y) &&
        (m->pts[3].y == m->pts[2].y) &&
@@ -1259,7 +1327,6 @@ eng_image_map_draw(void *engine, void *data, void *context, void *surface, void 
        (m->pts[3].col == 0xffffffff))
      {
         int dx, dy, dw, dh;
-
         dx = m->pts[0].x >> FP;
         dy = m->pts[0].y >> FP;
         dw = (m->pts[2].x >> FP) - dx;

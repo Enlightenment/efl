@@ -223,14 +223,13 @@ static Eina_Bool
 evas_image_load_file_data_png(void *loader_data,
                               Evas_Image_Property *prop,
                               void *pixels,
-			      int *error)
+                              int *error)
 {
    Evas_Loader_Internal *loader = loader_data;
    Evas_Image_Load_Opts *opts;
    Eina_File *f;
 
    unsigned char *surface;
-   unsigned char *tmp_line;
    png_structp png_ptr = NULL;
    png_infop info_ptr = NULL;
    Evas_PNG_Info epi;
@@ -382,7 +381,7 @@ evas_image_load_file_data_png(void *loader_data,
      }
 
    passes = png_set_interlace_handling(png_ptr);
-   
+
    /* we read image line by line if scale down was set */
    if (scale_ratio == 1 && region_set == 0)
      {
@@ -395,9 +394,9 @@ evas_image_load_file_data_png(void *loader_data,
      }
    else
      {
-        unsigned char *src_ptr, *dst_ptr;
+        unsigned char *src_ptr;
+        unsigned char *dst_ptr = surface;
         int skip_row = 0, region_x = 0, region_y = 0;
-        dst_ptr = surface;
 
         if (region_set)
           {
@@ -407,30 +406,96 @@ evas_image_load_file_data_png(void *loader_data,
 
         if (passes == 1)
           {
-             tmp_line = (unsigned char *) alloca(image_w * pack_offset);
+             int line_size = (image_w * pack_offset) - (region_x * pack_offset);
+             unsigned char *tmp_line = (unsigned char *) alloca(image_w * pack_offset);
+             //accumulate pixel color here.
+             unsigned short *interp_buf = (unsigned short *) alloca(line_size * sizeof(unsigned short));
+             unsigned short *pbuf;
 
              for (skip_row = 0; skip_row < region_y; skip_row++)
                png_read_row(png_ptr, tmp_line, NULL);
 
-             for (i = 0; i < h; i++)
+             png_read_row(png_ptr, tmp_line, NULL);
+             src_ptr = tmp_line + (region_x * pack_offset);
+
+             //The first pixel, of the first line
+             for (k = 0; k < (int) pack_offset; k++)
+               dst_ptr[k] = src_ptr[k];
+
+             dst_ptr += pack_offset;
+             src_ptr += (scale_ratio * pack_offset);
+
+             for (j = 1; j < w; j++)
                {
-                  png_read_row(png_ptr, tmp_line, NULL);
-                  src_ptr = tmp_line + region_x * pack_offset;
-                  for (j = 0; j < w; j++)
+                  //rgba
+                  interp_buf[0] = 0;
+                  interp_buf[1] = 0;
+                  interp_buf[2] = 0;
+                  interp_buf[3] = 0;
+
+                  //horizontal interpolation.
+                  for (p = 0; p < scale_ratio; p++)
                     {
-                       for (k = 0; k < (int)pack_offset; k++)
-                         dst_ptr[k] = src_ptr[k];
-                       dst_ptr += pack_offset;
-                       src_ptr += scale_ratio * pack_offset;
+                       for (k = 0; k < (int) pack_offset; k++)
+                         interp_buf[k] += src_ptr[k - (int)(p * pack_offset)];
                     }
-                  for (j = 0; j < (scale_ratio - 1); j++)
-                    png_read_row(png_ptr, tmp_line, NULL);
+                  for (k = 0; k < (int) pack_offset; k++)
+                    dst_ptr[k] = (interp_buf[k] / scale_ratio);
+
+                  dst_ptr += pack_offset;
+                  src_ptr += (scale_ratio * pack_offset);
                }
+
+             //next lines
+             for (i = 1; i < h; i++)
+               {
+                  memset(interp_buf, 0x00, line_size * sizeof(unsigned short));
+
+                  //vertical interpolation.
+                  for (j = 0; j < scale_ratio; j++)
+                    {
+                       png_read_row(png_ptr, tmp_line, NULL);
+                       src_ptr = tmp_line + (region_x * pack_offset);
+
+                      for (p = 0; p < line_size; ++p)
+                         interp_buf[p] += src_ptr[p];
+                    }
+
+                  for (p = 0; p < line_size; ++p)
+                    interp_buf[p] /= scale_ratio;
+
+                  pbuf = interp_buf;
+
+                  //The first pixel of the current line
+                  for (k = 0; k < (int) pack_offset; k++)
+                    dst_ptr[k] = pbuf[k];
+
+                  dst_ptr += pack_offset;
+                  pbuf += scale_ratio * pack_offset;
+
+                  for (j = 1; j < w; j++)
+                    {
+                       //horizontal interpolation.
+                       for (p = 1; p < scale_ratio; ++p)
+                         {
+                            for (k = 0; k < (int) pack_offset; k++)
+                              pbuf[k] += pbuf[k - (int)(p * pack_offset)];
+                         }
+                       for (k = 0; k < (int) pack_offset; k++)
+                         dst_ptr[k] = (pbuf[k] / scale_ratio);
+
+                       dst_ptr += pack_offset;
+                       pbuf += (scale_ratio * pack_offset);
+                    }
+               }
+
              for (skip_row = region_y + h * scale_ratio; skip_row < image_h; skip_row++)
                png_read_row(png_ptr, tmp_line, NULL);
           }
         else
           {
+             //TODO: Scale-down interpolation for multi-pass?
+
              unsigned char *pixels2 = malloc(image_w * image_h * pack_offset);
 
              if (pixels2)
@@ -443,15 +508,37 @@ evas_image_load_file_data_png(void *loader_data,
 
                   src_ptr = pixels2 + (region_y * image_w * pack_offset) + region_x * pack_offset;
 
-                  for (i = 0; i < h; i++)
+                  //general case: 4 bytes pixel.
+                  if (pack_offset == sizeof(DATA32))
                     {
-                       for (j = 0; j < w; j++)
+                       DATA32 *dst_ptr = (DATA32 *) surface;
+                       DATA32 *src_ptr2 = (DATA32 *) src_ptr;
+
+                       for (i = 0; i < h; i++)
                          {
-                            for (k = 0; k < (int)pack_offset; k++)
-                              dst_ptr[k] = src_ptr[k + scale_ratio * j * pack_offset];
-                            dst_ptr += pack_offset;
+                            for (j = 0; j < w; j++)
+                              {
+                                 *dst_ptr = *src_ptr2;
+                                 ++dst_ptr;
+                                 src_ptr2 += scale_ratio;
+                              }
+                            src_ptr2 += scale_ratio * image_w;
                          }
-                       src_ptr += scale_ratio * image_w * pack_offset;
+                    }
+                  else
+                    {
+                       unsigned char *dst_ptr = surface;
+
+                       for (i = 0; i < h; i++)
+                         {
+                            for (j = 0; j < w; j++)
+                              {
+                                 for (k = 0; k < (int)pack_offset; k++)
+                                   dst_ptr[k] = src_ptr[k + scale_ratio * j * pack_offset];
+                                 dst_ptr += pack_offset;
+                              }
+                            src_ptr += scale_ratio * image_w * pack_offset;
+                         }
                     }
                   free(pixels2);
                }

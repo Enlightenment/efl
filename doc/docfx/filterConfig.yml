@@ -1,8 +1,10 @@
 apiRules:
 - exclude:
-    uidRegex: ^.*NativeInherit$
+    uidRegex: ^.*NativeMethods$
 - exclude:
     uidRegex: ^.*NativeStruct$
+- exclude:
+    uidRegex: ^.*Concrete$
 - include:
     uidRegex: ^Efl
 - include:

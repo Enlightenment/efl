@@ -1179,6 +1179,23 @@ EAPI int ecore_drm2_device_fd_get(Ecore_Drm2_Device *device);
  */
 EAPI Eina_Bool ecore_drm2_output_pending_get(Ecore_Drm2_Output *output);
 
+/**
+ * Set the background color of an output's crtc
+ *
+ * @param output
+ * @param r
+ * @param g
+ * @param b
+ * @param a
+ *
+ * @return EINA_TRUE on success, EINA_FALSE otherwise
+ *
+ * @note This requires support from the video driver in order to function
+ *
+ * @since 1.23
+ */
+EAPI Eina_Bool ecore_drm2_output_background_color_set(Ecore_Drm2_Output *output, uint64_t r, uint64_t g, uint64_t b, uint64_t a);
+
 # endif
 
 #endif

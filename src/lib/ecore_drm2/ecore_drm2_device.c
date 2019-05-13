@@ -266,9 +266,13 @@ _drm2_atomic_state_crtc_fill(Ecore_Drm2_Crtc_State *cstate, int fd)
           {
              cstate->active.id = prop->prop_id;
              cstate->active.value = oprops->prop_values[i];
-             DBG("\t\t\tValue: %d", cstate->active.value);
+             DBG("\t\t\tValue: %lu", (long)cstate->active.value);
           }
-
+        else if (!strcmp(prop->name, "BACKGROUND_COLOR"))
+          {
+             cstate->background.id = prop->prop_id;
+             cstate->background.value = oprops->prop_values[i];
+          }
 cont:
         sym_drmModeFreeProperty(prop);
      }
@@ -303,13 +307,13 @@ _drm2_atomic_state_conn_fill(Ecore_Drm2_Connector_State *cstate, int fd)
           {
              cstate->crtc.id = prop->prop_id;
              cstate->crtc.value = oprops->prop_values[i];
-             DBG("\t\t\tValue: %d", cstate->crtc.value);
+             DBG("\t\t\tValue: %lu", (long)cstate->crtc.value);
           }
         else if (!strcmp(prop->name, "DPMS"))
           {
              cstate->dpms.id = prop->prop_id;
              cstate->dpms.value = oprops->prop_values[i];
-             DBG("\t\t\tValue: %d", cstate->dpms.value);
+             DBG("\t\t\tValue: %lu", (long)cstate->dpms.value);
           }
         else if (!strcmp(prop->name, "EDID"))
           {
@@ -344,13 +348,13 @@ _drm2_atomic_state_conn_fill(Ecore_Drm2_Connector_State *cstate, int fd)
           {
              cstate->aspect.id = prop->prop_id;
              cstate->aspect.value = oprops->prop_values[i];
-             DBG("\t\t\tValue: %d", cstate->aspect.value);
+             DBG("\t\t\tValue: %lu", (long)cstate->aspect.value);
           }
         else if (!strcmp(prop->name, "scaling mode"))
           {
              cstate->scaling.id = prop->prop_id;
              cstate->scaling.value = oprops->prop_values[i];
-             DBG("\t\t\tValue: %d", cstate->scaling.value);
+             DBG("\t\t\tValue: %lu", (long)cstate->scaling.value);
           }
 
 cont:
@@ -388,13 +392,13 @@ _drm2_atomic_state_plane_fill(Ecore_Drm2_Plane_State *pstate, int fd)
           {
              pstate->cid.id = prop->prop_id;
              pstate->cid.value = oprops->prop_values[i];
-             DBG("\t\t\tValue: %d", pstate->cid.value);
+             DBG("\t\t\tValue: %lu", (long)pstate->cid.value);
           }
         else if (!strcmp(prop->name, "FB_ID"))
           {
              pstate->fid.id = prop->prop_id;
              pstate->fid.value = oprops->prop_values[i];
-             DBG("\t\t\tValue: %d", pstate->fid.value);
+             DBG("\t\t\tValue: %lu", (long)pstate->fid.value);
          }
         else if (!strcmp(prop->name, "CRTC_X"))
           {
@@ -452,7 +456,7 @@ _drm2_atomic_state_plane_fill(Ecore_Drm2_Plane_State *pstate, int fd)
                   DBG("\t\t\tCursor Plane");
                   break;
                 default:
-                  DBG("\t\t\tValue: %d", pstate->type.value);
+                  DBG("\t\t\tValue: %lu", (long)pstate->type.value);
                   break;
                }
           }

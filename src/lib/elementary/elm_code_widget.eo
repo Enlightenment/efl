@@ -18,7 +18,7 @@ struct @extern Elm.Code_Line; [[Elementary code line data structure]] /* Parts o
 class @beta Elm.Code_Widget extends Efl.Ui.Layout_Base
 {
    [[Elementary code widget]]
-   eo_prefix: efl_ui_code_widget;
+   c_prefix: efl_ui_code_widget;
    methods {
       @property code {
          set {

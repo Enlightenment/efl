@@ -33,10 +33,25 @@ struct _Elm_Part_Data
    EFL_OBJECT_OP_FUNC(efl_ui_widget_default_text_part_get, _ ## type ## _default_text_part_get)
 
 #define ELM_PART_CONTENT_DEFAULT_IMPLEMENT(type, typedata) \
+   static void \
+   _ ## type ## _invalidated_cb(void *data, const Efl_Event *ev EINA_UNUSED) \
+   { \
+      efl_content_set(data, NULL); \
+   } \
+   \
    EOLIAN static Eina_Bool \
    _ ## type ## _efl_content_content_set(Eo *obj, typedata *sd EINA_UNUSED, Evas_Object *content) \
    { \
-      return efl_content_set(efl_part(obj, efl_ui_widget_default_content_part_get(obj)), content); \
+      Eina_Bool result; \
+      Efl_Ui_Widget *former; \
+      former = efl_content_get(efl_part(obj, efl_ui_widget_default_content_part_get(obj))); \
+      if (former) \
+        efl_event_callback_del(former, EFL_EVENT_INVALIDATE, _ ## type ## _invalidated_cb, obj); \
+      result = efl_content_set(efl_part(obj, efl_ui_widget_default_content_part_get(obj)), content); \
+      if (content && result) \
+        efl_event_callback_add(content, EFL_EVENT_INVALIDATE, _ ## type ## _invalidated_cb, obj); \
+      efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, result ? content : NULL); \
+      return result; \
    } \
    \
    EOLIAN static Evas_Object* \
@@ -48,7 +63,11 @@ struct _Elm_Part_Data
    EOLIAN static Evas_Object* \
    _ ## type ## _efl_content_content_unset(Eo *obj, typedata *sd EINA_UNUSED) \
    { \
-      return efl_content_unset(efl_part(obj, efl_ui_widget_default_content_part_get(obj))); \
+      Eo *result = efl_content_unset(efl_part(obj, efl_ui_widget_default_content_part_get(obj))); \
+      if (result) \
+        efl_event_callback_del(result, EFL_EVENT_INVALIDATE, _ ## type ## _invalidated_cb, obj); \
+      efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL); \
+      return result; \
    }
 
 static inline Eo *

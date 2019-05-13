@@ -94,7 +94,6 @@ _eet_for_ellipse_node(void)
    return eet;
 }
 
-
 static inline Eet_Data_Descriptor*
 _eet_for_gradient_stops(void)
 {
@@ -158,10 +157,10 @@ _eet_for_style_gradient(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_eet_style_gradient_node, Svg_Style_Gradient, "type", type, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_eet_style_gradient_node, Svg_Style_Gradient, "id", id, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_eet_style_gradient_node, Svg_Style_Gradient, "spread", spread, EET_T_INT);
-   EET_DATA_DESCRIPTOR_ADD_BASIC(_eet_style_gradient_node, Svg_Style_Gradient, "user_space", user_space, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_LIST(_eet_style_gradient_node, Svg_Style_Gradient, "stops", stops, _eet_gradient_stops_node);
    EET_DATA_DESCRIPTOR_ADD_SUB(_eet_style_gradient_node, Svg_Style_Gradient, "radial", radial, _eet_radial_gradient_node);
    EET_DATA_DESCRIPTOR_ADD_SUB(_eet_style_gradient_node, Svg_Style_Gradient, "linear", linear, _eet_linear_gradient_node);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_eet_style_gradient_node, Svg_Style_Gradient, "user_space", user_space, EET_T_INT);
 
    return _eet_style_gradient_node;
 }
@@ -421,8 +420,6 @@ vg_common_svg_node_eet(void)
    _eet_style_property_node = _eet_for_style_property();
    _eet_matrix3_node = _eet_for_eina_matrix3();
 
-
-
    EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "doc", _eet_doc_node);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "g", _eet_g_node);
    EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "defs", _eet_defs_node);
@@ -437,7 +434,6 @@ vg_common_svg_node_eet(void)
    EET_DATA_DESCRIPTOR_ADD_MAPPING(eet_union, "command", _eet_custom_command_node);
 
    EET_DATA_DESCRIPTOR_ADD_UNION(_eet_vg_node, Svg_Node, "node", node, type, eet_union);
-
 
    EET_DATA_DESCRIPTOR_ADD_LIST(_eet_vg_node, Svg_Node, "child", child, _eet_vg_node);
    EET_DATA_DESCRIPTOR_ADD_BASIC(_eet_vg_node, Svg_Node, "id", id, EET_T_STRING);
@@ -481,6 +477,7 @@ _svg_style_gradient_free(Svg_Style_Gradient *grad)
    eina_stringshare_del(grad->ref);
    free(grad->radial);
    free(grad->linear);
+   if (grad->transform) free(grad->transform);
 
    EINA_LIST_FREE(grad->stops, stop)
      {
@@ -568,8 +565,43 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_F
    if (g->type == SVG_LINEAR_GRADIENT)
      {
         grad_obj = efl_add(EFL_CANVAS_VG_GRADIENT_LINEAR_CLASS, parent);
-        efl_gfx_gradient_linear_start_set(grad_obj, g->linear->x1 * r.w + r.x, g->linear->y1 * r.h + r.y);
-        efl_gfx_gradient_linear_end_set(grad_obj, g->linear->x2 * r.w + r.x, g->linear->y2 * r.h + r.y);
+
+        if (g->use_percentage)
+          {
+             g->linear->x1 = g->linear->x1 * r.w + r.x;
+             g->linear->y1 = g->linear->y1 * r.h + r.y;
+             g->linear->x2 = g->linear->x2 * r.w + r.x;
+             g->linear->y2 = g->linear->y2 * r.h + r.y;
+          }
+
+        if (g->transform)
+          {
+             double cy = ((double) r.h) * 0.5 + r.y;
+             double cx = ((double) r.w) * 0.5 + r.x;
+
+             //Calc start point
+             eina_matrix3_identity(&m);
+             eina_matrix3_translate(&m, g->linear->x1 - cx, g->linear->y1 - cy);
+             eina_matrix3_multiply_copy(&m, g->transform , &m);
+             eina_matrix3_translate(&m, cx, cy);
+
+             eina_matrix3_values_get(&m, NULL, NULL, &g->linear->x1,
+                                     NULL, NULL, &g->linear->y1,
+                                     NULL, NULL, NULL);
+
+             //Calc end point
+             eina_matrix3_identity(&m);
+             eina_matrix3_translate(&m, g->linear->x2 - cx, g->linear->y2 - cy);
+             eina_matrix3_multiply_copy(&m, g->transform , &m);
+             eina_matrix3_translate(&m, cx, cy);
+
+             eina_matrix3_values_get(&m, NULL, NULL, &g->linear->x2,
+                                     NULL, NULL, &g->linear->y2,
+                                     NULL, NULL, NULL);
+          }
+
+        efl_gfx_gradient_linear_start_set(grad_obj, g->linear->x1, g->linear->y1);
+        efl_gfx_gradient_linear_end_set(grad_obj, g->linear->x2, g->linear->y2);
      }
    else if (g->type == SVG_RADIAL_GRADIENT)
      {
@@ -911,6 +943,7 @@ _create_gradient_node(Efl_VG *vg)
         if (!grad->linear) goto oom_error;
         efl_gfx_gradient_linear_start_get(vg, &grad->linear->x1, &grad->linear->y1);
         efl_gfx_gradient_linear_end_get(vg, &grad->linear->x2, &grad->linear->y2);
+        grad->use_percentage = EINA_FALSE;
      }
    else
      {
@@ -927,7 +960,6 @@ _create_gradient_node(Efl_VG *vg)
 oom_error:
    ERR("OOM: Failed calloc()");
    return grad;
-
 }
 
 static void
@@ -950,7 +982,6 @@ _apply_svg_property(Svg_Node *node, Efl_VG *vg)
      }
 
    if (node->type == SVG_NODE_G) return;
-
 
    // apply the fill style property
    style->fill.fill_rule = efl_gfx_shape_fill_rule_get(vg);
@@ -985,8 +1016,6 @@ _apply_svg_property(Svg_Node *node, Efl_VG *vg)
    style->stroke.cap = efl_gfx_shape_stroke_cap_get(vg);
    style->stroke.join = efl_gfx_shape_stroke_join_get(vg);
    style->stroke.scale = efl_gfx_shape_stroke_scale_get(vg);
-
-
 }
 
 static void

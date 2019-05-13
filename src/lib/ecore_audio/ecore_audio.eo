@@ -16,7 +16,7 @@ abstract @beta Ecore.Audio extends Efl.Object
 {
    [[Convenience audio class.]]
 
-   eo_prefix: ecore_audio_obj;
+   c_prefix: ecore_audio_obj;
    data: Ecore_Audio_Object;
    methods {
       @property paused {

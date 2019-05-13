@@ -1304,4 +1304,12 @@ _evas_image_efl_file_load(Eo *obj, void *pd EINA_UNUSED)
    return EFL_GFX_IMAGE_LOAD_ERROR_DOES_NOT_EXIST;
 }
 
+EOLIAN static void
+_evas_image_efl_file_unload(Eo *obj, void *pd EINA_UNUSED)
+{
+   EVAS_IMAGE_API(obj);
+   efl_file_unload(efl_super(obj, EVAS_IMAGE_CLASS));
+   _evas_image_file_unload(obj);
+}
+
 #include "canvas/evas_image_eo.c"

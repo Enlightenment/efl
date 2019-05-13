@@ -11,6 +11,7 @@
 #endif
 
 #ifdef _WIN32
+# include <direct.h> /* getcwd */
 # include <Evil.h>
 #endif
 
@@ -42,6 +43,8 @@ Eina_Bool _use_build_config;
 
 static Elm_Version _version = { VMAJ, VMIN, VMIC, VREV };
 EAPI Elm_Version *elm_version = &_version;
+
+Eina_FreeQ *postponed_fq = NULL;
 
 static void
 _focus_ev_redirect_cb(void *data, const Efl_Event *ev EINA_UNUSED)
@@ -755,6 +758,12 @@ elm_quicklaunch_mode_get(void)
    return quicklaunch_on;
 }
 
+static void
+_postpone_cb(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
+{
+   eina_freeq_clear(postponed_fq);
+}
+
 EAPI int
 elm_quicklaunch_init(int    argc EINA_UNUSED,
                      char **argv)
@@ -765,6 +774,8 @@ elm_quicklaunch_init(int    argc EINA_UNUSED,
    EINA_SAFETY_ON_FALSE_GOTO(eina_init(), fail_eina);
    _elm_log_dom = eina_log_domain_register("elementary", EINA_COLOR_LIGHTBLUE);
    EINA_SAFETY_ON_TRUE_GOTO(_elm_log_dom < 0, fail_eina_log);
+
+   postponed_fq = eina_freeq_new(EINA_FREEQ_POSTPONED);
 
    EINA_SAFETY_ON_FALSE_GOTO(eet_init(), fail_eet);
    EINA_SAFETY_ON_FALSE_GOTO(ecore_init(), fail_ecore);
@@ -811,6 +822,8 @@ elm_quicklaunch_init(int    argc EINA_UNUSED,
    if (!_elm_data_dir) _elm_data_dir = eina_stringshare_add("/");
    if (!_elm_lib_dir) _elm_lib_dir = eina_stringshare_add("/");
    if (!_property_style_ss) _property_style_ss = eina_stringshare_add("style");
+
+   efl_event_callback_add(efl_main_loop_get(), EFL_LOOP_EVENT_IDLE_EXIT, _postpone_cb, NULL);
 
    eina_log_timing(_elm_log_dom, EINA_LOG_STATE_STOP, EINA_LOG_STATE_INIT);
 
@@ -945,6 +958,11 @@ elm_quicklaunch_shutdown(void)
 #ifdef HAVE_ELEMENTARY_EMAP
    emap_shutdown();
 #endif
+
+   efl_event_callback_del(efl_main_loop_get(), EFL_LOOP_EVENT_IDLE_EXIT, _postpone_cb, NULL);
+
+   eina_freeq_free(postponed_fq);
+   postponed_fq = NULL;
 
    ecore_file_shutdown();
    eio_shutdown();

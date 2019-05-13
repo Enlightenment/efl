@@ -46,6 +46,8 @@
 # endif
 #endif /* ! _WIN32 */
 
+#define VSYNC_ANIMATOR 1
+
 typedef struct _Ecore_Evas_Engine_Drm_Data
 {
    int cw, ch;
@@ -911,8 +913,13 @@ static Ecore_Evas_Engine_Func _ecore_evas_drm_engine_func =
 
    NULL, // aux_hints_set
 
+#ifndef VSYNC_ANIMATOR
+   NULL,
+   NULL,
+#else
    _drm_animator_register, // animator_register
    _drm_animator_unregister, // animator_unregister
+#endif
 
    _drm_evas_changed, // evas_changed
    NULL, //fn_focus_device_set

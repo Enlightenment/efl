@@ -198,7 +198,6 @@ elm_eolian_type_files = \
 
 elm_public_eolian_c = $(elm_public_eolian_files:%.eo=%.eo.c)
 elm_public_eolian_h = $(elm_public_eolian_files:%.eo=%.eo.h) \
-        $(elm_public_eolian_files:%.eo=%.eo.legacy.h) \
         $(elm_eolian_type_files:%.eot=%.eot.h)
 
 elm_private_eolian_c = $(elm_private_eolian_files:%.eo=%.eo.c)
@@ -206,7 +205,6 @@ elm_private_eolian_h = $(elm_private_eolian_files:%.eo=%.eo.h)
 
 elm_legacy_eolian_c = $(elm_legacy_eolian_files:%.eo=%.eo.c)
 elm_legacy_eolian_eo_h = $(elm_legacy_eolian_files:%.eo=%.eo.h)
-elm_legacy_eolian_legacy_h = $(elm_legacy_eolian_files:%.eo=%.eo.legacy.h)
 
 BUILT_SOURCES += \
 	$(elm_public_eolian_c) \
@@ -214,8 +212,7 @@ BUILT_SOURCES += \
 	$(elm_private_eolian_c) \
 	$(elm_private_eolian_h) \
 	$(elm_legacy_eolian_c) \
-	$(elm_legacy_eolian_eo_h) \
-	$(elm_legacy_eolian_legacy_h)
+	$(elm_legacy_eolian_eo_h)
 
 if INSTALL_EO_FILES
 elementaryeolianfilesdir = $(datadir)/eolian/include/elementary-@VMAJ@
@@ -773,8 +770,7 @@ includesunstable_HEADERS = \
 includesunstabledir = $(includedir)/elementary-@VMAJ@
 
 nodist_includesunstable_HEADERS = \
-	$(elm_public_eolian_h) \
-	$(elm_legacy_eolian_legacy_h)
+	$(elm_public_eolian_h)
 
 includesub_HEADERS = \
 	lib/elementary/elc_ctxpopup.h \

@@ -1,10 +1,13 @@
 emotion_loaders = [
-'generic',
 'gstreamer',
 'gstreamer1',
 'libvlc',
 'xine'
 ]
+
+if sys_windows == false
+  emotion_loaders += 'generic'
+endif
 
 foreach emotion_loader : emotion_loaders
   generic_src = []

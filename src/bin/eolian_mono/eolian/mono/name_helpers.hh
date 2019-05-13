@@ -176,22 +176,22 @@ inline std::string managed_namespace(std::string const& ns)
   return escape_keyword(utils::remove_all(ns, '_'));
 }
 
-inline std::string managed_method_name(std::string const& klass, std::string const& name)
+inline std::string managed_method_name(attributes::function_def const& f)
 {
-  std::vector<std::string> names = utils::split(name, '_');
+  std::vector<std::string> names = utils::split(f.name, '_');
 
   name_helpers::reorder_verb(names);
 
   std::string candidate = escape_keyword(utils::to_pascal_case(names));
 
   // Some eolian methods have the same name as their parent class
-  if (candidate == klass)
+  if (candidate == klass_concrete_or_interface_name(f.klass))
       candidate = "Do" + candidate;
 
   // Avoid clashing with System.Object.GetType
   if (candidate == "GetType" || candidate == "SetType")
     {
-       candidate.insert(3, klass);
+       candidate.insert(3, f.klass.eolian_name);
     }
 
   return candidate;
@@ -201,11 +201,6 @@ inline std::string managed_name(std::string const& name, char separator='_')
 {
   auto tokens = utils::split(name, separator);
   return utils::to_pascal_case(tokens);
-}
-
-inline std::string managed_method_name(attributes::function_def const& f)
-{
-  return managed_method_name(f.klass.eolian_name, f.name);
 }
 
 inline std::string alias_full_eolian_name(attributes::alias_def const& alias)
@@ -287,7 +282,7 @@ inline std::string property_managed_name(attributes::property_def const& propert
 inline std::string managed_part_name(attributes::part_def const& part)
 {
   std::vector<std::string> names = utils::split(part.name, '_');
-  return utils::to_pascal_case(names);
+  return utils::to_pascal_case(names) + "Part";
 }
 
 // Class name translation (interface/concrete/inherit/etc)
@@ -398,29 +393,15 @@ inline std::string klass_inherit_name(T const& klass)
 }
 
 template<typename T>
-inline std::string klass_native_inherit_name(T const& klass)
+inline std::string klass_native_inherit_name(EINA_UNUSED T const& klass)
 {
-  switch(klass.type)
-  {
-  case attributes::class_type::abstract_:
-  case attributes::class_type::regular:
-    return klass_concrete_name(klass) + "NativeInherit";
-  default:
-    return klass_interface_name(klass) + "NativeInherit";
-  }
+  return "NativeMethods";
 }
 
 template<typename T>
 inline std::string klass_full_native_inherit_name(T const& klass)
 {
-  switch(klass.type)
-  {
-  case attributes::class_type::abstract_:
-  case attributes::class_type::regular:
-    return klass_full_concrete_name(klass) + "NativeInherit";
-  default:
-    return klass_full_interface_name(klass) + "NativeInherit";
-  }
+  return klass_full_concrete_name(klass) + "." + klass_native_inherit_name(klass);
 }
 
 template<typename T>
@@ -465,14 +446,14 @@ bool open_namespaces(OutputIterator sink, std::vector<std::string> namespaces, C
 {
   std::transform(namespaces.begin(), namespaces.end(), namespaces.begin(), managed_namespace);
 
-  auto open_namespace = *("namespace " << string << " { ") << "\n";
+  auto open_namespace = *("namespace " << string << " {\n\n");
   return as_generator(open_namespace).generate(sink, namespaces, context);
 }
 
 template<typename OutputIterator, typename Context>
 bool close_namespaces(OutputIterator sink, std::vector<std::string> const& namespaces, Context const& context)
 {
-     auto close_namespace = *(lit("} ")) << "\n";
+     auto close_namespace = (lit("}") % "\n\n" ) << "\n\n";
      return as_generator(close_namespace).generate(sink, namespaces, context);
 }
 

@@ -80,11 +80,13 @@ _future_done_cb(void *data EINA_UNUSED,
         fail_if(!buf);
         fail_if(strcmp((const char*) eina_binbuf_string_get(buf),
                        attr_data[i]) != 0);
+        eina_binbuf_free(buf);
      }
 
    fail_if((int) i != total_attributes);
 
    ecore_main_loop_quit();
+
    return array;
 }
 

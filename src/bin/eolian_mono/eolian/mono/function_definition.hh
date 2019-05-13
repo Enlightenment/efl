@@ -34,12 +34,14 @@ struct native_function_definition_generator
     EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "native_function_definition_generator: " << f.c_name << std::endl;
     if(blacklist::is_function_blacklisted(f, context))
       return true;
-    else
-      {
+
+    auto const& indent = current_indentation(context);
+
+    // Delegate for the C# method we will export to EO as a method implementation.
     if(!as_generator
-       ("\n\n" << scope_tab
-        << eolian_mono::marshall_annotation(true)
-        << " private delegate "
+       (
+        indent << eolian_mono::marshall_annotation(true) << "\n"
+        << indent << "private delegate "
         << eolian_mono::marshall_type(true)
         << " "
         << string
@@ -49,14 +51,15 @@ struct native_function_definition_generator
         (
          (marshall_annotation << " " << marshall_parameter)
         ) % ", ")
-        << ");\n")
+        << ");\n\n")
        .generate(sink, std::make_tuple(f.return_type, f.return_type, f.c_name, f.parameters), context))
       return false;
 
+    // API delegate is the wrapper for the Eo methods exported from C that we will use from C#.
     if(!as_generator
-       ("\n\n" << scope_tab
-        << eolian_mono::marshall_annotation(true)
-        << " public delegate "
+       (
+        indent << eolian_mono::marshall_annotation(true) << "\n"
+        << indent << "public delegate "
         << eolian_mono::marshall_type(true)
         << " "
         << string << "_api_delegate(" << (f.is_static ? "" : "System.IntPtr obj")
@@ -65,17 +68,18 @@ struct native_function_definition_generator
         (
          (marshall_annotation << " " << marshall_parameter)
         ) % ", ")
-        << ");\n")
+        << ");\n\n")
        .generate(sink, std::make_tuple(f.return_type, f.return_type, f.c_name, f.parameters), context))
       return false;
 
+    // Delegate holder (so it can't be collected).
     if(!as_generator
-       (scope_tab
-        << " public static Efl.Eo.FunctionWrapper<" << string << "_api_delegate> " << string << "_ptr = new Efl.Eo.FunctionWrapper<"
-        << string << "_api_delegate>(_Module, \"" << string << "\");\n")
+       (indent << "public static Efl.Eo.FunctionWrapper<" << string << "_api_delegate> " << string << "_ptr = new Efl.Eo.FunctionWrapper<"
+          << string << "_api_delegate>(Module, \"" << string << "\");\n\n")
        .generate(sink, std::make_tuple(f.c_name, f.c_name, f.c_name, f.c_name), context))
       return false;
 
+    // Actual method implementation to be called from C.
     std::string return_type;
     if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))
       return false;
@@ -92,34 +96,37 @@ struct native_function_definition_generator
       self = "";
 
     if(!as_generator
-       (scope_tab
-        << " private static "
+       (indent << "private static "
         << eolian_mono::marshall_type(true) << " "
         << string
         << "(System.IntPtr obj, System.IntPtr pd"
         << *(", " << marshall_parameter)
         << ")\n"
-        << scope_tab << "{\n"
-        /****/
-        << scope_tab << scope_tab << "Eina.Log.Debug(\"function " << string << " was called\");\n"
-        /****/
-        << scope_tab << scope_tab << "Efl.Eo.IWrapper wrapper = Efl.Eo.Globals.PrivateDataGet(pd);\n"
-        << scope_tab << scope_tab << "if(wrapper != null) {\n"
-        << scope_tab << scope_tab << scope_tab << eolian_mono::native_function_definition_preamble()
-        << scope_tab << scope_tab << scope_tab << "try {\n"
-        << scope_tab << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "_ret_var = " : "")
+        << indent << "{\n"
+        << indent << scope_tab << "Eina.Log.Debug(\"function " << string << " was called\");\n"
+        << indent << scope_tab << "Efl.Eo.IWrapper wrapper = Efl.Eo.Globals.PrivateDataGet(pd);\n"
+        << indent << scope_tab << "if (wrapper != null)\n"
+        << indent << scope_tab << "{\n"
+        << eolian_mono::native_function_definition_preamble()
+        << indent << scope_tab << scope_tab << "try\n"
+        << indent << scope_tab << scope_tab << "{\n"
+        << indent << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "_ret_var = " : "")
         << (f.is_static ? "" : "((") << klass_cast_name << (f.is_static ? "." : ")wrapper).") << string
         << "(" << (native_argument_invocation % ", ") << ");\n"
-        << scope_tab << scope_tab << scope_tab << "} catch (Exception e) {\n"
-        << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Warning($\"Callback error: {e.ToString()}\");\n"
-        << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.UNHANDLED_EXCEPTION);\n"
-        << scope_tab << scope_tab << scope_tab << "}\n"
-        << eolian_mono::native_function_definition_epilogue(*klass)
-        << scope_tab << scope_tab << "} else {\n"
-        << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "return " : "") << string
+        << indent << scope_tab << scope_tab << "}\n"
+        << indent << scope_tab << scope_tab << "catch (Exception e)\n"
+        << indent << scope_tab << scope_tab << "{\n"
+        << indent << scope_tab << scope_tab << scope_tab << "Eina.Log.Warning($\"Callback error: {e.ToString()}\");\n"
+        << indent << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.UNHANDLED_EXCEPTION);\n"
+        << indent << scope_tab << scope_tab << "}\n\n"
+        << eolian_mono::native_function_definition_epilogue(*klass) << "\n"
+        << indent << scope_tab << "}\n"
+        << indent << scope_tab << "else\n"
+        << indent << scope_tab << "{\n"
+        << indent << scope_tab << scope_tab << (return_type != "void" ? "return " : "") << string
         << "_ptr.Value.Delegate(" << self << ((!f.is_static && f.parameters.size() > 0) ? ", " : "") << (argument % ", ") << ");\n"
-        << scope_tab << scope_tab << "}\n"
-        << scope_tab << "}\n"
+        << indent << scope_tab << "}\n"
+        << indent << "}\n\n"
        )
        .generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name), f.parameters
                                        , /***/f.c_name/***/
@@ -139,11 +146,11 @@ struct native_function_definition_generator
 
     // This is the delegate that will be passed to Eo to be called from C.
     if(!as_generator(
-            scope_tab << "private static " << f.c_name << "_delegate " << f.c_name << "_static_delegate;\n"
+            indent << "private static " << f.c_name << "_delegate " << f.c_name << "_static_delegate;\n\n"
         ).generate(sink, attributes::unused, context))
       return false;
+
     return true;
-      }
   }
 };
   
@@ -261,7 +268,7 @@ struct property_wrapper_definition_generator
       std::string managed_name = name_helpers::property_managed_name(property);
 
       if (!as_generator(
-                  scope_tab << documentation
+                  documentation(1)
                   << scope_tab << (interface ? "" : "public ") << (is_static ? "static " : "") << type(true) << " " << managed_name << " {\n"
             ).generate(sink, std::make_tuple(property, prop_type), context))
         return false;

@@ -243,8 +243,7 @@ EFL_START_TEST (efl_ui_relative_layout_layout_update)
 {
    int i, max_index = (sizeof(hints) / sizeof(Hint));
 
-   Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, layout,
-                     efl_ui_relative_layout_relation_left_set(layout, efl_added, NULL, 0.0));
+   Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, layout, efl_pack(layout, efl_added));
 
    for (i = 0; i < max_index; i++)
      {
@@ -292,10 +291,94 @@ EFL_START_TEST (efl_ui_relative_layout_layout_update_chain)
 }
 EFL_END_TEST
 
+EFL_START_TEST (efl_ui_relative_layout_relation_set)
+{
+   Eo *btn;
+   Eo *target = NULL;
+   double relative;
+
+   btn = efl_add(EFL_UI_BUTTON_CLASS, layout);
+
+   // negative test
+   efl_ui_relative_layout_relation_top_get(layout, NULL, &target, &relative);
+   ck_assert_ptr_eq(target, NULL);
+   ck_assert(EINA_DBL_EQ(relative, 0.0));
+
+   efl_ui_relative_layout_relation_top_get(layout, btn, &target, &relative);
+   ck_assert_ptr_eq(target, NULL);
+   ck_assert(EINA_DBL_EQ(relative, 0.0));
+
+   efl_ui_relative_layout_relation_top_set(layout, NULL, NULL, 0.0);
+   ck_assert_ptr_eq(target, NULL);
+   ck_assert(EINA_DBL_EQ(relative, 0.0));
+
+   // default value test
+   efl_ui_relative_layout_relation_top_set(layout, btn, layout, 0.0);
+
+   efl_ui_relative_layout_relation_top_get(layout, btn, &target, &relative);
+   ck_assert_ptr_eq(target, layout);
+   ck_assert(EINA_DBL_EQ(relative, 0.0));
+   efl_ui_relative_layout_relation_bottom_get(layout, btn, &target, &relative);
+   ck_assert_ptr_eq(target, layout);
+   ck_assert(EINA_DBL_EQ(relative, 1.0));
+   efl_ui_relative_layout_relation_left_get(layout, btn, &target, &relative);
+   ck_assert_ptr_eq(target, layout);
+   ck_assert(EINA_DBL_EQ(relative, 0.0));
+   efl_ui_relative_layout_relation_right_get(layout, btn, &target, &relative);
+   ck_assert_ptr_eq(target, layout);
+   ck_assert(EINA_DBL_EQ(relative, 1.0));
+
+   // positive test
+   efl_ui_relative_layout_relation_top_set(layout, btn, layout, 0.123);
+   efl_ui_relative_layout_relation_top_get(layout, btn, &target, &relative);
+   ck_assert_ptr_eq(target, layout);
+   ck_assert(EINA_DBL_EQ(relative, 0.123));
+
+   efl_ui_relative_layout_relation_top_set(layout, btn, NULL, 0.456);
+   efl_ui_relative_layout_relation_top_get(layout, btn, &target, &relative);
+   ck_assert_ptr_eq(target, layout);
+   ck_assert(EINA_DBL_EQ(relative, 0.456));
+}
+EFL_END_TEST
+
+EFL_START_TEST (efl_ui_relative_layout_pack)
+{
+   Eo *btn[3], *child;
+   Eina_Iterator *it;
+   int i;
+
+   for (i = 0; i < 3; i++)
+     btn[i] = efl_add(EFL_UI_BUTTON_CLASS, layout, efl_pack(layout, efl_added));
+   ck_assert_int_eq(efl_content_count(layout), 3);
+
+   it = efl_content_iterate(layout);
+   EINA_ITERATOR_FOREACH(it, child)
+     ck_assert_ptr_eq(layout, efl_canvas_object_render_parent_get(child));
+   eina_iterator_free(it);
+
+   efl_pack_unpack(layout, NULL);
+   ck_assert_int_eq(efl_content_count(layout), 3);
+   efl_pack_unpack(layout, btn[0]);
+   ck_assert_int_eq(efl_content_count(layout), 2);
+   efl_pack_unpack_all(layout);
+   ck_assert_int_eq(efl_content_count(layout), 0);
+
+   for (i = 0; i < 3; i++)
+     efl_pack(layout, btn[i]);
+   ck_assert_int_eq(efl_content_count(layout), 3);
+   efl_pack_clear(layout);
+   ck_assert_int_eq(efl_content_count(layout), 0);
+   for (i = 0; i < 3; i++)
+     ck_assert(efl_invalidated_get(btn[i]));
+}
+EFL_END_TEST
+
 void efl_ui_test_relative_layout(TCase *tc)
 {
    tcase_add_checked_fixture(tc, layout_setup, layout_teardown);
    tcase_add_test(tc, efl_ui_relative_layout_class_check);
    tcase_add_test(tc, efl_ui_relative_layout_layout_update);
    tcase_add_test(tc, efl_ui_relative_layout_layout_update_chain);
+   tcase_add_test(tc, efl_ui_relative_layout_relation_set);
+   tcase_add_test(tc, efl_ui_relative_layout_pack);
 }

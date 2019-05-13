@@ -8,7 +8,7 @@ var @extern Bah: double; // not generated
 
 class Class_Simple {
    [[Class Desc Simple]]
-   eo_prefix: efl_canvas_object_simple;
+   c_prefix: efl_canvas_object_simple;
    data: Evas_Simple_Data;
    methods {
       @property a @beta {

@@ -11,7 +11,7 @@ cxx_sublibs = [
   ['Evas',       false,  true,  true, []],
   ['Edje',       false, false,  true, []],
   ['Eldbus',      true,  true,  true, []],
-  ['Elementary', false,  true,  true, []]
+  ['Elementary',  true,  true,  true, []]
 ]
 
 increased_dependency = []
@@ -30,7 +30,6 @@ foreach lib : cxx_sublibs
     '-DNEED_RUN_IN_TREE=1'
   ]
 
-  dir_package_include = package_version_name
   dir_package_modules = join_paths(dir_lib, package_name, 'modules')
   cxx_generator_target = []
   cxx_header_src = []
@@ -50,7 +49,7 @@ foreach lib : cxx_sublibs
         input : join_paths(subdir_file_location, cxx_gen_file),
         output : [cxx_gen_file + '.hh', cxx_gen_file + '.impl.hh'],
         install : true,
-        install_dir : join_paths(dir_package_include, eo_file_subdir),
+        install_dir : join_paths(dir_include, package_version_name, eo_file_subdir),
         command : [eolian_cxx_gen, '-I', meson.current_source_dir(), eolian_include_directories,
                                    '-o', join_paths(meson.current_build_dir(), cxx_gen_file + '.hh'),
                                    '@INPUT@'])
@@ -64,7 +63,7 @@ foreach lib : cxx_sublibs
           input : eo_file_list,
           output : [lib[0] + '.eo.hh'],
           install : true,
-          install_dir : join_paths(dir_package_include),
+          install_dir : join_paths(dir_include, package_version_name),
           command : [eolian_cxx_gen, '-I', meson.current_source_dir(), eolian_include_directories, '-m',
                                      '-o', '@OUTPUT@',
                                      '@INPUT@'])
@@ -97,7 +96,7 @@ foreach lib : cxx_sublibs
   endforeach
 
   install_headers(cxx_header_src,
-    subdir: dir_package_include
+    subdir: package_version_name,
   )
 
   pkgconfig.generate(

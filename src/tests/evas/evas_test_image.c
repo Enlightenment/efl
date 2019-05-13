@@ -647,6 +647,7 @@ _file_to_memory(const char *filename, char **result)
    if ((size_t)size != fread(*result, sizeof(char), size, f))
      {
         free(*result);
+        fclose(f);
         return -1;
      }
    fclose(f);
@@ -726,6 +727,40 @@ EFL_START_TEST(evas_object_image_cached_data_comparision)
         fail_if(w2 != n_w2 || h2 != n_h2);
         fail_if(memcmp(d2, n_d2, w2 * h2 * 4));
      }
+}
+EFL_END_TEST
+
+EFL_START_TEST(evas_object_image_api)
+{
+   Evas *e = _setup_evas();
+   Evas_Object *o;
+   void *pix;
+   int w, h;
+
+   o = evas_object_image_filled_add(e);
+   /* test file load */
+   evas_object_image_file_set(o, TESTS_IMG_DIR"/Light.jpg", NULL);
+   ck_assert(!!efl_file_get(o));
+   pix = evas_object_image_data_get(o, EINA_FALSE);
+   ck_assert(!!pix);
+   evas_object_image_size_get(o, &w, &h);
+   ck_assert(w && h);
+   /* test file unload */
+   evas_object_image_file_set(o, NULL, NULL);
+   ck_assert(!efl_file_get(o));
+   pix = evas_object_image_data_get(o, EINA_FALSE);
+   ck_assert(!pix);
+   evas_object_image_size_get(o, &w, &h);
+   ck_assert(!w && !h);
+   /* test file load after unload */
+   evas_object_image_file_set(o, TESTS_IMG_DIR"/Light.jpg", NULL);
+   ck_assert(!!efl_file_get(o));
+   pix = evas_object_image_data_get(o, EINA_FALSE);
+   ck_assert(!!pix);
+   evas_object_image_size_get(o, &w, &h);
+   ck_assert(w && h);
+
+   evas_free(e);
 }
 EFL_END_TEST
 
@@ -972,6 +1007,7 @@ EFL_END_TEST
 
 void evas_test_image_object(TCase *tc)
 {
+   tcase_add_test(tc, evas_object_image_api);
    tcase_add_test(tc, evas_object_image_defaults);
    tcase_add_test(tc, evas_object_image_loader);
    tcase_add_test(tc, evas_object_image_loader_orientation);

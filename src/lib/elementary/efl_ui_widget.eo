@@ -25,7 +25,7 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
 
      @since 1.22
    ]]
-   //eo_prefix: efl_ui_widget;
+   //c_prefix: efl_ui_widget;
    event_prefix: efl_ui_widget;
    data: Efl_Ui_Widget_Data;
    methods {
@@ -399,10 +399,10 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
          return: bool; [[Returns $true if the widget is registered in the focus manager, $false if not.]]
       }
    }
-//   parts {
-//      shadow: Efl.Ui.Widget_Part_Shadow;
-//      background: Efl.Ui.Widget_Part_Bg;
-//   }
+   parts {
+      shadow @beta: Efl.Ui.Widget_Part_Shadow;
+      background @beta: Efl.Ui.Widget_Part_Bg;
+   }
    implements {
       class.constructor;
       Efl.Object.constructor;

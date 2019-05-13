@@ -97,6 +97,7 @@ _efl_loop_model_efl_model_property_ready_get(Eo *obj, void *pd EINA_UNUSED, cons
              efl_event_callback_add(obj,
                                     EFL_MODEL_EVENT_PROPERTIES_CHANGED,
                                     _propagate_future, wd);
+             return efl_future_then(obj, eina_future_new(wd->p));
           }
 
         return eina_future_rejected(efl_loop_future_scheduler_get(obj), err);
@@ -123,6 +124,33 @@ _efl_loop_model_volatile_make(Eo *obj, void *pd EINA_UNUSED)
    // any potentially previous one.
    efl_event_callback_del(obj, EFL_EVENT_NOREF, _noref_death, NULL);
    efl_event_callback_add(obj, EFL_EVENT_NOREF, _noref_death, NULL);
+}
+
+static Eina_Future *
+_efl_loop_model_efl_model_property_set(Eo *obj, void *pd EINA_UNUSED,
+                                       const char *property, Eina_Value *value)
+{
+   Eina_Error err;
+
+   if (!value) return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
+   err = efl_property_reflection_set(obj, property, *value);
+   if (err) return efl_loop_future_rejected(obj, err);
+
+   return efl_loop_future_resolved(obj, efl_property_reflection_get(obj, property));
+}
+
+static Eina_Value *
+_efl_loop_model_efl_model_property_get(const Eo *obj, void *pd EINA_UNUSED,
+                                       const char *property)
+{
+   Eina_Value *r;
+   Eina_Value direct;
+
+   direct = efl_property_reflection_get(obj, property);
+   r = eina_value_dup(&direct);
+   eina_value_flush(&direct);
+
+   return r;
 }
 
 static void

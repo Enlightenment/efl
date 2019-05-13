@@ -1,7 +1,7 @@
 interface @beta Efl.Ui.I18n
 {
    [[A common Internationalization interface for UI objects.]]
-   eo_prefix: efl_ui;
+   c_prefix: efl_ui;
    methods {
       @property mirrored {
          [[Whether this object should be mirrored.

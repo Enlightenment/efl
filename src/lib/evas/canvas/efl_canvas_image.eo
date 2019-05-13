@@ -17,6 +17,7 @@ class @beta Efl.Canvas.Image extends Efl.Canvas.Image_Internal implements
       Efl.Gfx.Buffer.buffer_map;
       Efl.Gfx.Buffer.buffer_unmap;
       Efl.File.load;
+      Efl.File.unload;
       Efl.Gfx.Frame_Controller.animated { get; }
       Efl.Gfx.Frame_Controller.frame { get; set; }
       Efl.Gfx.Frame_Controller.frame_count { get; }

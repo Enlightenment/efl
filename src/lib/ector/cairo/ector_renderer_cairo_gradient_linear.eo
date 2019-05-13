@@ -1,7 +1,7 @@
 class @beta Ector.Renderer.Cairo.Gradient.Linear extends Ector.Renderer.Cairo implements Ector.Renderer.Gradient, Ector.Renderer.Gradient.Linear, Efl.Gfx.Path
 {
    [[Ector cairo renderer gradient linear]]
-   eo_prefix: ector_renderer_cairo_gradient_linear;
+   c_prefix: ector_renderer_cairo_gradient_linear;
    implements {
       Ector.Renderer.prepare;
       Ector.Renderer.draw;

@@ -711,5 +711,3 @@ EAPI const char *elm_layout_part_cursor_style_get(const Evas_Object *obj, const 
  * @ingroup Elm_Layout
  */
 EAPI Eina_Bool elm_layout_part_cursor_unset(Evas_Object *obj, const char *part_name);
-
-#include "efl_ui_layout.eo.legacy.h"

@@ -12,16 +12,6 @@
 #include "evil_macro_wrapper.h"
 #include "evil_private.h"
 
-struct tm *
-evil_localtime_r(const time_t *timep, struct tm *result)
-{
-   __time64_t t = *timep;
-
-   _localtime64_s(result, &t);
-
-   return result;
-}
-
 /*
  * strptime
  * based on http://cvsweb.netbsd.org/bsdweb.cgi/src/lib/libc/time/strptime.c?rev=HEAD

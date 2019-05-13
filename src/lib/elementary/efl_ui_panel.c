@@ -711,24 +711,36 @@ _efl_ui_panel_efl_ui_widget_widget_input_event_handler(Eo *obj, Efl_Ui_Panel_Dat
    return _panel_efl_ui_widget_widget_input_event_handler(obj, pd, eo_event, src);
 }
 
+static void
+_invalidate_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   efl_content_set(data, NULL);
+}
+
 static Eina_Bool
 _efl_ui_panel_efl_content_content_set(Eo *obj, Efl_Ui_Panel_Data *sd, Efl_Gfx_Entity *content)
 {
    if (sd->content == content) return EINA_TRUE;
+
    if (sd->content)
-     evas_object_box_remove_all(sd->bx, EINA_TRUE);
-   sd->content = content;
-   if (content)
      {
+        efl_event_callback_del(sd->content, EFL_EVENT_INVALIDATE, _invalidate_cb, obj);
+        if (!efl_invalidated_get(sd->content) && !efl_invalidating_get(sd->content))
+          efl_del(sd->content);
+        sd->content = NULL;
+     }
+   if (content && !elm_widget_sub_object_add(obj, content)) return EINA_FALSE;
+   sd->content = content;
+   if (sd->content)
+     {
+        efl_event_callback_add(sd->content, EFL_EVENT_INVALIDATE, _invalidate_cb, obj);
         evas_object_box_append(sd->bx, sd->content);
         evas_object_show(sd->content);
         if (sd->scrollable)
           elm_widget_sub_object_add(sd->scr_ly, sd->content);
-        else
-          elm_widget_sub_object_add(obj, sd->content);
      }
    efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, content);
-   if (efl_finalized_get(obj))
+   if (efl_alive_get(obj))
      elm_layout_sizing_eval(obj);
 
    return EINA_TRUE;
@@ -741,18 +753,10 @@ _efl_ui_panel_efl_content_content_get(const Eo *obj EINA_UNUSED, Efl_Ui_Panel_Da
 }
 
 static Efl_Gfx_Entity*
-_efl_ui_panel_efl_content_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Panel_Data *sd)
+_efl_ui_panel_efl_content_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Panel_Data *sd EINA_UNUSED)
 {
-   Efl_Gfx_Entity *ret = NULL;
-
-   if (!sd->content) return NULL;
-   ret = sd->content;
-
-   evas_object_box_remove_all(sd->bx, EINA_FALSE);
-   if (sd->scrollable)
-     _elm_widget_sub_object_redirect_to_top(sd->scr_ly, sd->content);
-   sd->content = NULL;
-   efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
+   Efl_Gfx_Entity *ret = efl_content_get(obj);
+   efl_content_set(obj, NULL);
    return ret;
 }
 

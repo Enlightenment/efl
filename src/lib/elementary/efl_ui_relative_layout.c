@@ -24,10 +24,43 @@ _chain_sort_cb(const void *l1, const void *l2)
    return calc2->comp_factor <= calc1->comp_factor ? -1 : 1;
 }
 
+static void
+_on_child_size_changed(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Efl_Ui_Relative_Layout *obj = data;
+
+   efl_pack_layout_request(obj);
+}
+
+static void
+_on_child_hints_changed(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Efl_Ui_Relative_Layout *obj = data;
+
+   efl_pack_layout_request(obj);
+}
+
+static void
+_on_child_del(void *data, const Efl_Event *event)
+{
+   Efl_Ui_Relative_Layout *obj = data;
+
+   efl_pack_unpack(obj, event->object);
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(efl_ui_relative_layout_callbacks,
+  { EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _on_child_size_changed },
+  { EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _on_child_hints_changed },
+  { EFL_EVENT_DEL, _on_child_del }
+);
+
 static Efl_Ui_Relative_Layout_Child *
 _efl_ui_relative_layout_register(Efl_Ui_Relative_Layout_Data *pd, Eo *child)
 {
    Efl_Ui_Relative_Layout_Child *rc;
+
+   if (!efl_ui_widget_sub_object_add(pd->obj, child))
+     return NULL;
 
    rc = calloc(1, sizeof(Efl_Ui_Relative_Layout_Child));
    if (!rc) return NULL;
@@ -43,19 +76,11 @@ _efl_ui_relative_layout_register(Efl_Ui_Relative_Layout_Data *pd, Eo *child)
    rc->rel[BOTTOM].to = rc->layout;
    rc->rel[BOTTOM].relative = 1.0;
 
-   if (pd->obj == child)
-     {
-        rc->calc.state[0] = RELATIVE_CALC_DONE;
-        rc->calc.state[1] = RELATIVE_CALC_DONE;
-        rc->calc.chain_state[0] = RELATIVE_CALC_DONE;
-        rc->calc.chain_state[1] = RELATIVE_CALC_DONE;
-     }
-   else
-     {
-        efl_ui_widget_sub_object_add(pd->obj, child);
-        efl_canvas_group_member_add(pd->obj, child);
-        efl_canvas_group_change(pd->obj);
-     }
+   efl_key_data_set(child, "_elm_leaveme", pd->obj);
+   efl_canvas_object_clipper_set(child, pd->clipper);
+   efl_event_callback_array_add(child, efl_ui_relative_layout_callbacks(), pd->obj);
+   efl_canvas_group_member_add(pd->obj, child);
+   efl_canvas_group_change(pd->obj);
 
    eina_hash_add(pd->children, &child, rc);
 
@@ -75,13 +100,19 @@ _relative_child_get(Efl_Ui_Relative_Layout_Data *pd, Eo *child)
 }
 
 static Efl_Ui_Relative_Layout_Child *
-_relative_child_find(const Eina_Hash *children, Eo *target)
+_relative_child_find(Efl_Ui_Relative_Layout_Data *pd, Eo *target)
 {
    Efl_Ui_Relative_Layout_Child *child;
 
-   child = eina_hash_find(children, &target);
+   if (pd->obj == target)
+     return pd->base;
+
+   child = eina_hash_find(pd->children, &target);
    if (!child)
-     ERR("target(%p(%s)) is not registered", target, efl_class_name_get(target));
+     {
+        ERR("target(%p(%s)) is not registered", target, efl_class_name_get(target));
+        child = pd->base;
+     }
 
    return child;
 }
@@ -90,7 +121,7 @@ static void
 _child_aspect_calc(Efl_Ui_Relative_Layout_Child *child, Eina_Bool axis)
 {
    Efl_Ui_Relative_Layout_Calc *calc = &child->calc;
-   int temph;
+   double temph;
 
    if ((calc->aspect[0] <= 0) || (calc->aspect[1] <= 0))
      {
@@ -331,19 +362,26 @@ _hash_free_cb(void *data)
 {
    Efl_Ui_Relative_Layout_Child *child = data;
 
+   efl_canvas_group_member_remove(child->layout, child->obj);
+   efl_canvas_object_clipper_set(child->obj, NULL);
+   efl_key_data_set(child->obj, "_elm_leaveme", NULL);
+   efl_event_callback_array_del(child->obj, efl_ui_relative_layout_callbacks(),
+                                child->layout);
+
+   if (!efl_invalidated_get(child->obj))
+     _elm_widget_sub_object_redirect_to_top(child->layout, child->obj);
+
    free(child);
 }
 
-static Eina_Bool
-_hash_free_foreach_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
-                      void *data, void *fdata EINA_UNUSED)
+static void
+_hash_clear_cb(void *data)
 {
    Efl_Ui_Relative_Layout_Child *child = data;
 
-   _elm_widget_sub_object_redirect_to_top(child->layout, child->obj);
-   _hash_free_cb(child);
-
-   return EINA_TRUE;
+   efl_event_callback_array_del(child->obj, efl_ui_relative_layout_callbacks(),
+                                child->layout);
+   efl_del(child->obj);
 }
 
 static Eina_Bool
@@ -352,9 +390,6 @@ _hash_child_calc_foreach_cb(const Eina_Hash *hash EINA_UNUSED, const void *key E
 {
    Efl_Ui_Relative_Layout_Child *child = data;
    Eina_Rect want;
-
-   if (child->obj == child->layout)
-     return EINA_TRUE;
 
    _child_calc(child, 0);
    _child_calc(child, 1);
@@ -370,35 +405,18 @@ _hash_child_calc_foreach_cb(const Eina_Hash *hash EINA_UNUSED, const void *key E
 
 
 static Eina_Bool
-_hash_child_init_foreach_cb(const Eina_Hash *hash, const void *key EINA_UNUSED,
-                            void *data, void *fdata EINA_UNUSED)
+_hash_child_init_foreach_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
+                            void *data, void *fdata)
 {
    Eina_Size2D max, min, aspect;
    Efl_Ui_Relative_Layout_Child *child = data;
    Efl_Ui_Relative_Layout_Calc *calc = &(child->calc);
+   Efl_Ui_Relative_Layout_Data *pd = fdata;
 
-   calc->to[LEFT] = _relative_child_find(hash, child->rel[LEFT].to);
-   if (!calc->to[LEFT]) calc->to[LEFT] = eina_hash_find(hash, &child->layout);
-   calc->to[RIGHT] = _relative_child_find(hash, child->rel[RIGHT].to);
-   if (!calc->to[RIGHT]) calc->to[RIGHT] = eina_hash_find(hash, &child->layout);
-   calc->to[TOP] = _relative_child_find(hash, child->rel[TOP].to);
-   if (!calc->to[TOP]) calc->to[TOP] = eina_hash_find(hash, &child->layout);
-   calc->to[BOTTOM] = _relative_child_find(hash, child->rel[BOTTOM].to);
-   if (!calc->to[BOTTOM]) calc->to[BOTTOM] = eina_hash_find(hash, &child->layout);
-
-   if (child->obj == child->layout)
-     {
-        Eina_Rect want = efl_gfx_entity_geometry_get(child->obj);
-        calc->want[0].position = want.x;
-        calc->want[0].length = want.w;
-        calc->want[1].position = want.y;
-        calc->want[1].length = want.h;
-        calc->state[0] = RELATIVE_CALC_DONE;
-        calc->state[1] = RELATIVE_CALC_DONE;
-        calc->chain_state[0] = RELATIVE_CALC_DONE;
-        calc->chain_state[1] = RELATIVE_CALC_DONE;
-        return EINA_TRUE;
-     }
+   calc->to[LEFT] = _relative_child_find(pd, child->rel[LEFT].to);
+   calc->to[RIGHT] = _relative_child_find(pd, child->rel[RIGHT].to);
+   calc->to[TOP] = _relative_child_find(pd, child->rel[TOP].to);
+   calc->to[BOTTOM] = _relative_child_find(pd, child->rel[BOTTOM].to);
 
    calc->state[0] = RELATIVE_CALC_NONE;
    calc->state[1] = RELATIVE_CALC_NONE;
@@ -446,16 +464,21 @@ _hash_child_init_foreach_cb(const Eina_Hash *hash, const void *key EINA_UNUSED,
 }
 
 static void
-_on_size_hints_changed(void *data EINA_UNUSED, Evas *e EINA_UNUSED,
-                       Evas_Object *obj, void *event_info EINA_UNUSED)
+_efl_ui_relative_layout_hints_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   efl_pack_layout_request(obj);
+   efl_pack_layout_request(ev->object);
 }
 
 EOLIAN static void
 _efl_ui_relative_layout_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Relative_Layout_Data *pd)
 {
-   eina_hash_foreach(pd->children, _hash_child_init_foreach_cb, NULL);
+   Eina_Rect want = efl_gfx_entity_geometry_get(obj);
+   pd->base->calc.want[0].position = want.x;
+   pd->base->calc.want[0].length = want.w;
+   pd->base->calc.want[1].position = want.y;
+   pd->base->calc.want[1].length = want.h;
+
+   eina_hash_foreach(pd->children, _hash_child_init_foreach_cb, pd);
    eina_hash_foreach(pd->children, _hash_child_calc_foreach_cb, NULL);
 
    efl_event_callback_call(obj, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);
@@ -490,7 +513,14 @@ _efl_ui_relative_layout_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Relative_Lay
 EOLIAN static void
 _efl_ui_relative_layout_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Relative_Layout_Data *pd EINA_UNUSED)
 {
-   evas_object_event_callback_add(obj, EVAS_CALLBACK_CHANGED_SIZE_HINTS, _on_size_hints_changed, NULL);
+   pd->clipper = efl_add(EFL_CANVAS_RECTANGLE_CLASS, obj);
+   evas_object_static_clip_set(pd->clipper, EINA_TRUE);
+   efl_gfx_entity_geometry_set(pd->clipper, EINA_RECT(-49999, -49999, 99999, 99999));
+   efl_canvas_group_member_add(obj, pd->clipper);
+   efl_ui_widget_sub_object_add(obj, pd->clipper);
+
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
+                          _efl_ui_relative_layout_hints_changed_cb, NULL);
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
 
    elm_widget_highlight_ignore_set(obj, EINA_TRUE);
@@ -506,36 +536,141 @@ _efl_ui_relative_layout_efl_object_constructor(Eo *obj, Efl_Ui_Relative_Layout_D
 
    pd->obj = obj;
    pd->children = eina_hash_pointer_new(_hash_free_cb);
-   _efl_ui_relative_layout_register(pd, obj);
+
+   pd->base = calloc(1, sizeof(Efl_Ui_Relative_Layout_Child));
+   if (!pd->base) return NULL;
+
+   pd->base->obj = obj;
+   pd->base->layout = obj;
+   pd->base->rel[LEFT].to = obj;
+   pd->base->rel[LEFT].relative = 0.0;
+   pd->base->rel[RIGHT].to = obj;
+   pd->base->rel[RIGHT].relative = 1.0;
+   pd->base->rel[TOP].to = obj;
+   pd->base->rel[TOP].relative = 0.0;
+   pd->base->rel[BOTTOM].to = obj;
+   pd->base->rel[BOTTOM].relative = 1.0;
+   pd->base->calc.state[0] = RELATIVE_CALC_DONE;
+   pd->base->calc.state[1] = RELATIVE_CALC_DONE;
+   pd->base->calc.chain_state[0] = RELATIVE_CALC_DONE;
+   pd->base->calc.chain_state[1] = RELATIVE_CALC_DONE;
 
    return obj;
 }
 
 EOLIAN static void
+_efl_ui_relative_layout_efl_object_invalidate(Eo *obj, Efl_Ui_Relative_Layout_Data *pd)
+{
+   efl_invalidate(efl_super(obj, MY_CLASS));
+
+   eina_hash_free_buckets(pd->children);
+}
+
+EOLIAN static void
 _efl_ui_relative_layout_efl_object_destructor(Eo *obj, Efl_Ui_Relative_Layout_Data *pd)
 {
+   efl_event_callback_del(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
+                          _efl_ui_relative_layout_hints_changed_cb, NULL);
    eina_hash_free(pd->children);
+   if (pd->base) free(pd->base);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static void
-_efl_ui_relative_layout_unregister(Eo *obj, Efl_Ui_Relative_Layout_Data *pd, Efl_Object *child)
+EOLIAN static Eina_Bool
+_efl_ui_relative_layout_efl_pack_pack(Eo *obj EINA_UNUSED, Efl_Ui_Relative_Layout_Data *pd, Efl_Gfx_Entity *subobj)
 {
-   _elm_widget_sub_object_redirect_to_top(obj, child);
-   if (!eina_hash_del_by_key(pd->children, &child))
-     ERR("child(%p(%s)) is not registered", child, efl_class_name_get(child));
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(subobj, EINA_FALSE);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL(!!eina_hash_find(pd->children, &subobj), EINA_FALSE);
+
+   return !!_efl_ui_relative_layout_register(pd, subobj);
 }
 
-EOLIAN static void
-_efl_ui_relative_layout_unregister_all(Eo *obj EINA_UNUSED, Efl_Ui_Relative_Layout_Data *pd)
+EOLIAN static Eina_Bool
+_efl_ui_relative_layout_efl_pack_unpack(Eo *obj, Efl_Ui_Relative_Layout_Data *pd, Efl_Object *child)
 {
-   eina_hash_foreach(pd->children, _hash_free_foreach_cb, NULL);
+   if (!eina_hash_del_by_key(pd->children, &child))
+     {
+        ERR("child(%p(%s)) is not registered", child, efl_class_name_get(child));
+        return EINA_FALSE;
+     }
+
+   efl_pack_layout_request(obj);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_relative_layout_efl_pack_unpack_all(Eo *obj, Efl_Ui_Relative_Layout_Data *pd)
+{
+   eina_hash_free_buckets(pd->children);
+   efl_pack_layout_request(obj);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_relative_layout_efl_pack_pack_clear(Eo *obj, Efl_Ui_Relative_Layout_Data *pd)
+{
+   eina_hash_free_cb_set(pd->children, _hash_clear_cb);
+   eina_hash_free_buckets(pd->children);
+   eina_hash_free_cb_set(pd->children, _hash_free_cb);
+
+   efl_pack_layout_request(obj);
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_efl_ui_relative_layout_content_iterator_next(Efl_Ui_Relative_Layout_Content_Iterator *it, void **data)
+{
+   Efl_Ui_Relative_Layout_Child *child;
+
+   if (!eina_iterator_next(it->real_iterator, (void **) &child))
+     return EINA_FALSE;
+
+   if (data) *data = child->obj;
+   return EINA_TRUE;
+}
+
+static Eo *
+_efl_ui_relative_layout_content_iterator_get_container(Efl_Ui_Relative_Layout_Content_Iterator *it)
+{
+   return it->relative_layout;
+}
+
+static void
+_efl_ui_relative_layout_content_iterator_free(Efl_Ui_Relative_Layout_Content_Iterator *it)
+{
+   eina_iterator_free(it->real_iterator);
+   free(it);
 }
 
 EOLIAN static Eina_Iterator *
-_efl_ui_relative_layout_children_iterate(Eo *obj EINA_UNUSED, Efl_Ui_Relative_Layout_Data *pd)
+_efl_ui_relative_layout_efl_container_content_iterate(Eo *obj, Efl_Ui_Relative_Layout_Data *pd)
 {
-   return eina_hash_iterator_data_new(pd->children);
+   Efl_Ui_Relative_Layout_Content_Iterator *it;
+
+   it = calloc(1, sizeof(*it));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->relative_layout = obj;
+   it->real_iterator = eina_hash_iterator_data_new(pd->children);
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_efl_ui_relative_layout_content_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
+     _efl_ui_relative_layout_content_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_efl_ui_relative_layout_content_iterator_free);
+
+   return &it->iterator;
+}
+
+EOLIAN static int
+_efl_ui_relative_layout_efl_container_content_count(Eo *obj EINA_UNUSED, Efl_Ui_Relative_Layout_Data *pd)
+{
+   return eina_hash_population(pd->children);
 }
 
 EFL_UI_RELATIVE_LAYOUT_RELATION_SET_GET(left, LEFT);

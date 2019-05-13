@@ -72,7 +72,7 @@ _dict_hyphen_load(const char *lang)
              ERR("Couldn't load hyphen dictionary: %s\n", dic_off - 5);
              continue;
           }
-        _dicts_hyphen[_hyphens_num].lang = strndup(dic_off - 5, 5);
+        _dicts_hyphen[_hyphens_num].lang = eina_strndup(dic_off - 5, 5);
         _dicts_hyphen[_hyphens_num++].dict = dict;
         break;
      }

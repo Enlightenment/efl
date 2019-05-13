@@ -298,6 +298,7 @@ if test "x${have_win32}" = "xyes" ; then
     # autotools macro and CXX is always set to g++ even if
     # it's not found. So we are using an internal variable
     # that does the work for now, may get broken in the future.
+    AC_DEFINE([_POSIX_C_SOURCE], [200809L], [Define the POSIX version])
     if test "x${ac_ct_CXX}" = "x" -a "x${CXX}" = "xg++"; then
        AC_MSG_ERROR([efl requires a C++ compiler got ${ac_ct_CXX} and ${CXX}.])
     fi
@@ -810,9 +811,13 @@ EFL_SELECT_WINDOWS_VERSION
 
 ### Checks for libraries
 
-EFL_ADD_LIBS([EVIL], [-lpsapi -lole32 -lws2_32 -lsecur32 -luuid])
+EFL_ADD_LIBS([EVIL], [-lpsapi -lole32 -lws2_32 -lsecur32 -luuid -lregex])
 
 ### Checks for header files
+
+AC_CHECK_HEADERS([regex.h fnmatch.h],
+   [],
+   [AC_MSG_ERROR([regex.h or fnmatch.h can not be found])])
 
 ### Checks for types
 
@@ -838,6 +843,14 @@ AC_SUBST([EVIL_CXXFLAGS])
 ### Checks for linker characteristics
 
 ### Checks for library functions
+
+AC_SEARCH_LIBS([regcomp], [regex],
+   [],
+   [AC_MSG_ERROR([regcomp() can not be found in libregex])])
+
+AC_SEARCH_LIBS([fnmatch], [regex],
+   [],
+   [AC_MSG_ERROR([fnmatch() can not be found in libregex])])
 
 EFL_LIB_END_OPTIONAL([Evil])
 

@@ -44,7 +44,7 @@
 #define FRAME_OBJ_THEME_MIN_VERSION 119
 
 Ecore_Evas *_wayland_shm_new(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame);
-Ecore_Evas *_wayland_egl_new(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame);
+Ecore_Evas *_wayland_egl_new(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame, const int *opt);
 
 static const Elm_Win_Trap *trap = NULL;
 
@@ -5409,33 +5409,34 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
         if (parent) parent_id = elm_win_window_id_get(parent);
         for (i = 0; i < p; i++)
           {
+             int opt[20], opt_i = 0;
+
+             if (_elm_config->vsync)
+               {
+                  opt[opt_i++] = ECORE_EVAS_OPT_VSYNC;
+                  opt[opt_i++] = 1;
+               }
+             if (gl_depth)
+               {
+                  opt[opt_i++] = ECORE_EVAS_OPT_GL_DEPTH;
+                  opt[opt_i++] = gl_depth;
+               }
+             if (gl_stencil)
+               {
+                  opt[opt_i++] = ECORE_EVAS_OPT_GL_STENCIL;
+                  opt[opt_i++] = gl_stencil;
+               }
+             if (gl_msaa)
+               {
+                  opt[opt_i++] = ECORE_EVAS_OPT_GL_MSAA;
+                  opt[opt_i++] = gl_msaa;
+               }
+             opt[opt_i] = 0;
+
              if (!strcmp(enginelist[i], ELM_SOFTWARE_X11))
                tmp_sd.ee = ecore_evas_software_x11_new(NULL, 0, 0, 0, 0, 0);
              else if (!strcmp(enginelist[i], ELM_OPENGL_X11))
                {
-                  int opt[20], opt_i = 0;
-
-                  if (_elm_config->vsync)
-                    {
-                       opt[opt_i++] = ECORE_EVAS_GL_X11_OPT_VSYNC;
-                       opt[opt_i++] = 1;
-                    }
-                  if (gl_depth)
-                    {
-                       opt[opt_i++] = ECORE_EVAS_GL_X11_OPT_GL_DEPTH;
-                       opt[opt_i++] = gl_depth;
-                    }
-                  if (gl_stencil)
-                    {
-                       opt[opt_i++] = ECORE_EVAS_GL_X11_OPT_GL_STENCIL;
-                       opt[opt_i++] = gl_stencil;
-                    }
-                  if (gl_msaa)
-                    {
-                       opt[opt_i++] = ECORE_EVAS_GL_X11_OPT_GL_MSAA;
-                       opt[opt_i++] = gl_msaa;
-                    }
-                  opt[opt_i] = 0;
                   if (opt_i > 0)
                     tmp_sd.ee = ecore_evas_gl_x11_options_new(NULL, 0, 0, 0, 0, 0, opt);
                   else
@@ -5444,7 +5445,7 @@ _elm_win_finalize_internal(Eo *obj, Efl_Ui_Win_Data *sd, const char *name, Efl_U
              else if (!strcmp(enginelist[i], ELM_WAYLAND_SHM))
                tmp_sd.ee = _wayland_shm_new(NULL, parent_id, 0, 0, 0, 0, 0);
              else if (!strcmp(enginelist[i], ELM_WAYLAND_EGL))
-               tmp_sd.ee = _wayland_egl_new(NULL, parent_id, 0, 0, 0, 0, 0);
+               tmp_sd.ee = _wayland_egl_new(NULL, parent_id, 0, 0, 0, 0, 0, (opt_i > 0) ? opt : NULL);
              else if (!strcmp(enginelist[i], ELM_SOFTWARE_WIN32))
                tmp_sd.ee = ecore_evas_software_gdi_new(NULL, 0, 0, 1, 1);
              else if (!strcmp(enginelist[i], ELM_SOFTWARE_DDRAW))
@@ -7547,7 +7548,7 @@ _efl_ui_win_content_set(Eo *obj, Efl_Ui_Win_Data *sd, const char *part, Eo *cont
    if (eina_streq(part, "content"))
      {
         if (sd->content == content) return EINA_TRUE;
-        if (!elm_widget_sub_object_add(obj, content))
+        if (content && !elm_widget_sub_object_add(obj, content))
           goto err;
         /* FIXME: Switch to swallow inside the frame
         if (!edje_object_part_swallow(sd->frame_obj, "elm.swallow.client", content))

@@ -3,7 +3,7 @@ import ector_types;
 class @beta Ector.GL.Surface extends Ector.GL.Buffer implements Ector.Surface
 {
    [[Ector GL surface class]]
-   eo_prefix: ector_gl_surface;
+   c_prefix: ector_gl_surface;
    methods {
       shader_get {
          [[Get shader]]

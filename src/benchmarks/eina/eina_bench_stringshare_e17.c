@@ -81,6 +81,7 @@ static void
 eina_bench_e17_stringshare(Eina_Stringshare_Test *str)
 {
    Eina_Counter *cnt;
+   char *result;
 
    cnt = eina_counter_new(str->name);
 
@@ -96,7 +97,9 @@ eina_bench_e17_stringshare(Eina_Stringshare_Test *str)
 
    eina_counter_stop(cnt, 1);
 
-   fprintf(stderr, "For `%s`:\n%s\n", str->name,eina_counter_dump(cnt));
+   result = eina_counter_dump(cnt);
+   fprintf(stderr, "For `%s`:\n%s\n", str->name, result);
+   free(result);
 
    eina_counter_free(cnt);
 }

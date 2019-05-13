@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Relative_Layout extends Efl.Ui.Widget implements Efl.Pack_Layout
+class @beta Efl.Ui.Relative_Layout extends Efl.Ui.Widget implements Efl.Pack_Layout, Efl.Pack
 {
    [[The relative layout class.
 
@@ -53,24 +53,18 @@ class @beta Efl.Ui.Relative_Layout extends Efl.Ui.Widget implements Efl.Pack_Lay
                                 ranging from 0.0 to 1.0.]]
          }
       }
-      unregister {
-         [[Remove all relations of the child.]]
-         params {
-            @in child: Efl.Object; [[The child to unregister]]
-         }
-      }
-      unregister_all {
-         [[Remove all relations from the registered children. ]]
-      }
-      children_iterate {
-         [[Begin iterating over this object's children.]]
-         return: iterator<Efl.Object> @owned @warn_unused; [[Iterator to object children.]]
-      }
    }
    implements {
       Efl.Object.constructor;
+      Efl.Object.invalidate;
       Efl.Object.destructor;
       Efl.Canvas.Group.group_calculate;
+      Efl.Pack.pack_clear;
+      Efl.Pack.unpack_all;
+      Efl.Pack.unpack;
+      Efl.Pack.pack;
+      Efl.Container.content_iterate;
+      Efl.Container.content_count;
       Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set; }
       Efl.Pack_Layout.layout_update;

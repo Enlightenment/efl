@@ -82,6 +82,38 @@ eina_strdup(const char *str)
 }
 
 /**
+ * @brief strndup function which takes @c NULL without crashing
+ * @param str The string to copy
+ * @param n The maximum number of char to copy
+ * @return the copied string, must be freed
+ * @note this also implements strndup() on Windows
+ * @since 1.23
+ */
+static inline char *
+eina_strndup(const char *str, size_t n)
+{
+#ifdef _WIN32
+   char *ret;
+   size_t slen;
+
+   if (!str)
+     return NULL;
+
+   slen = strnlen(str, n);
+   ret = (char *)malloc(slen + 1); /* cast for C++ code */
+   if (!ret)
+     return NULL;
+   if (slen > 0)
+     memcpy(ret, str, slen);
+   ret[slen] = '\0';
+
+   return ret;
+#else
+   return str ? strndup(str, n) : NULL;
+#endif
+}
+
+/**
  * @brief streq function which takes @c NULL without crashing
  * @param a string a
  * @param b string b

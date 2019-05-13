@@ -35,6 +35,7 @@ ecore_evas_wayland_shm_new_internal(const char *disp_name, Ecore_Window parent, 
 
    return _ecore_evas_wl_common_new_internal(disp_name, parent,
                                              x, y, w, h, frame,
+                                             NULL,
                                              "wayland_shm");
 }
 

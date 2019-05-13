@@ -387,9 +387,9 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                      efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
                      efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
                      efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
-                     efl_pack_padding_set(efl_added, 5, 5, 1),
+                     efl_gfx_arrangement_content_padding_set(efl_added, 5, 5, 1),
                      efl_gfx_hint_margin_set(efl_added, 5, 5, 5, 5),
-                     efl_pack_align_set(efl_added, 0, 0.5));
+                     efl_gfx_arrangement_content_align_set(efl_added, 0, 0.5));
       efl_pack(box, box2);
 
       for (size_t k = 0; k < EINA_C_ARRAY_LENGTH(images); k++)
@@ -456,7 +456,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                      efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
                      efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
                      efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
-                     efl_pack_align_set(efl_added, 0.5, 0.5));
+                     efl_gfx_arrangement_content_align_set(efl_added, 0.5, 0.5));
       efl_pack(flip, box2);
 
       // Note: No TEXT object with EO APIs
@@ -472,7 +472,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                          efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
                          efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
                          efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
-                         efl_pack_align_set(efl_added, 0.5, 0.5));
+                         efl_gfx_arrangement_content_align_set(efl_added, 0.5, 0.5));
       efl_pack(flip, box2);
 
       const struct { const char *name, *code; } programs [] = {

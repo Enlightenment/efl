@@ -1403,7 +1403,7 @@ array_alloc(Evas_Engine_GL_Context *gc, int n)
       gc->pipe[n].array.field = _pipebuf_resize(gc->pipe[n].array.field, \
                                                 gc->pipe[n].array.alloc * sizeof(type) * size)
 
-   RALOC(vertex, GLshort, VERTEX_CNT);
+   RALOC(vertex, GLfloat, VERTEX_CNT);
    RALOC(color,  GLubyte, COLOR_CNT);
    RALOC(texuv,  GLfloat, TEX_CNT);
    RALOC(texa,   GLfloat, TEX_CNT);
@@ -1778,14 +1778,21 @@ static int
 pipe_region_intersects(Evas_Engine_GL_Context *gc, int n,
                        int x, int y, int w, int h)
 {
-   int rx, ry, rw, rh, ii, end;
-   const GLshort *v;
-   
+#define SPANS_INTERSECT(x1, w1, x2, w2) \
+(!((((x2) + (w2)) <= (x1)) || ((x2) >= ((x1) + (w1)))))
+
+#define REGIONS_INTERSECT(x, y, w, h, xx, yy, ww, hh) \
+((SPANS_COMMON((x), (w), (xx), (ww))) && (SPANS_COMMON((y), (h), (yy), (hh))))
+
+   float rx, ry, rw, rh;
+   int ii, end;
+   const GLfloat *v;
+
    rx = gc->pipe[n].region.x;
    ry = gc->pipe[n].region.y;
    rw = gc->pipe[n].region.w;
    rh = gc->pipe[n].region.h;
-   if (!RECTS_INTERSECT(x, y, w, h, rx, ry, rw, rh)) return 0;
+   if (!REGIONS_INTERSECT(x, y, w, h, rx, ry, rw, rh)) return 0;
 
    // a hack for now. map pipes use their whole bounding box for intersects
    // which at worst case reduces to old pipeline flushes, but cheaper than
@@ -1803,7 +1810,7 @@ pipe_region_intersects(Evas_Engine_GL_Context *gc, int n,
         ry = v[ii + 1];
         rw = v[ii + 3] - rx;
         rh = v[ii + 7] - ry;
-        if (RECTS_INTERSECT(x, y, w, h, rx, ry, rw, rh)) return 1;
+        if (REGIONS_INTERSECT(x, y, w, h, rx, ry, rw, rh)) return 1;
      }
    return 0;
 }
@@ -2930,15 +2937,13 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
        (A_VAL(&(p[2].col)) < 0xff) || (A_VAL(&(p[3].col)) < 0xff))
      blend = EINA_TRUE;
 
-   if ((p[0].z == p[1].z) && (p[1].z == p[2].z) && (p[2].z == p[3].z))
-      flat = EINA_TRUE;
+   if (((p[0].z == p[1].z) && (p[1].z == p[2].z) && (p[2].z == p[3].z)) ||
+       (p[0].foc <= 0))
+     {
+        flat = EINA_TRUE;
+     }
 
    if (!clip) cx = cy = cw = ch = 0;
-
-   if (!flat)
-     {
-        if (p[0].foc <= 0) flat = EINA_TRUE;
-     }
 
    switch (cspace)
      {
@@ -3000,28 +3005,11 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
    w = w - x;
    h = h - y;
 
-   if (!flat)
-     {
-        // FUZZZZ!
-        x -= 3;
-        y -= 3;
-        w += 6;
-        h += 6;
-     }
-   if (clip)
-     {
-        if (flat)
-          {
-             int nx = x, ny = y, nw = w, nh = h;
-
-             RECTS_CLIP_TO_RECT(nx, ny, nw, nh, cx, cy, cw, ch);
-             if ((nx == x) && (ny == y) && (nw == w) && (nh == h))
-               {
-                  clip = 0; cx = 0; cy = 0; cw = 0; ch = 0;
-               }
-             x = nx; y = ny; w = nw; h = nh;
-          }
-     }
+   // FUZZZZ!
+   x -= 3;
+   y -= 3;
+   w += 6;
+   h += 6;
 
    if (!flat)
      {
@@ -3032,6 +3020,17 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
         gc->py = p[0].py >> FP;
         gc->change.size = 1;
         _evas_gl_common_viewport_set(gc);
+     }
+   else if (clip)
+     {
+        int nx = x, ny = y, nw = w, nh = h;
+
+        RECTS_CLIP_TO_RECT(nx, ny, nw, nh, cx, cy, cw, ch);
+        if ((nx == x) && (ny == y) && (nw == w) && (nh == h))
+          {
+             clip = 0; cx = 0; cy = 0; cw = 0; ch = 0;
+          }
+        x = nx; y = ny; w = nw; h = nh;
      }
 
    pn = _evas_gl_common_context_push(SHD_MAP,
@@ -3108,8 +3107,8 @@ evas_gl_common_context_image_map_push(Evas_Engine_GL_Context *gc,
         if (flat)
           {
              PUSH_VERTEX(pn,
-                         (p[points[i]].x >> FP),
-                         (p[points[i]].y >> FP),
+                         p[points[i]].fx,
+                         p[points[i]].fy,
                          0);
           }
         else
@@ -4106,7 +4105,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
           }
 
         // use_vertex is always true
-        glVertexAttribPointer(SHAD_VERTEX, VERTEX_CNT, GL_SHORT, GL_FALSE, 0, vertex_ptr);
+        glVertexAttribPointer(SHAD_VERTEX, VERTEX_CNT, GL_FLOAT, GL_FALSE, 0, vertex_ptr);
 
         if (gc->pipe[i].array.use_color)
           {

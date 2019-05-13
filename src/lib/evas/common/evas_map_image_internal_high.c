@@ -416,6 +416,9 @@ _map_triangle_draw_linear(RGBA_Image *src, RGBA_Image *dst,
           {
              uu = (int) u;
              vv = (int) v;
+             // FIXME: sometimes u and v are < 0 - don'tc crash
+             if (uu < 0) uu = 0;
+             if (vv < 0) vv = 0;
 
              //Range exception handling
              //OPTIMIZE ME, handle in advance?

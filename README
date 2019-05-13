@@ -426,7 +426,7 @@ COMPILING AND INSTALLING
     make
     sudo make install
 
-If you have doxygen, then you csan build documentation with:
+If you have doxygen, then you can build documentation with:
 
     make doc
 

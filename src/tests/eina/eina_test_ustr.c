@@ -295,7 +295,7 @@ EFL_START_TEST(eina_unicode_strdup_test)
    buf = eina_unicode_strdup(EMPTYSTR);
    fail_if(!buf);
    fail_if(buf[0] != 0);
-
+   free(buf);
 }
 EFL_END_TEST
 

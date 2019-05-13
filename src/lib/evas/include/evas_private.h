@@ -1336,7 +1336,7 @@ struct _Evas_Func
    void *(*image_dirty_region)             (void *engine, void *image, int x, int y, int w, int h);
    void *(*image_data_get)                 (void *engine, void *image, int to_write, DATA32 **image_data, int *err, Eina_Bool *tofree);
    void *(*image_data_put)                 (void *engine, void *image, DATA32 *image_data);
-   Eina_Bool (*image_data_direct_get)      (void *engine, void *image, int plane, Eina_Slice *slice, Evas_Colorspace *cspace, Eina_Bool load);
+   Eina_Bool (*image_data_direct_get)      (void *engine, void *image, int plane, Eina_Slice *slice, Evas_Colorspace *cspace, Eina_Bool load, Eina_Bool *tofree);
    void  (*image_data_preload_request)     (void *engine, void *image, const Eo *target);
    void  (*image_data_preload_cancel)      (void *engine, void *image, const Eo *target, Eina_Bool force);
    void *(*image_alpha_set)                (void *engine, void *image, int has_alpha);

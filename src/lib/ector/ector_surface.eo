@@ -2,7 +2,7 @@ mixin @beta Ector.Surface extends Ector.Buffer
 {
    [[Surface interface for Ector]]
 
-   eo_prefix: ector_surface;
+   c_prefix: ector_surface;
    data: null;
    methods {
       @property reference_point {

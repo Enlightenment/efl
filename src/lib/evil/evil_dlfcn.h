@@ -143,7 +143,9 @@ struct Dl_info
  * @ingroup Evil_Dlfcn
  */
 EAPI void *dlopen(const char* path, int mode);
-
+#ifndef HAVE_DLOPEN
+#define HAVE_DLOPEN 1
+#endif
 /**
  * @brief Close a dynamic-link library.
  *
@@ -191,7 +193,9 @@ EAPI int dlclose(void* handle);
  * @ingroup Evil_Dlfcn
  */
 EAPI void *dlsym(void* handle, const char* symbol);
-
+#ifndef HAVE_DLSYM
+#define HAVE_DLSYM 1
+#endif
 #ifdef _GNU_SOURCE
 
 /**
@@ -218,7 +222,9 @@ EAPI void *dlsym(void* handle, const char* symbol);
  * @ingroup Evil_Dlfcn
  */
 EAPI int dladdr (const void *addr, Dl_info *info);
-
+#ifndef HAVE_DLADDR
+#define HAVE_DLADDR 1
+#endif
 #endif /* _GNU_SOURCE */
 
 /**

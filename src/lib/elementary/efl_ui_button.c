@@ -279,61 +279,29 @@ _efl_ui_button_efl_ui_autorepeat_autorepeat_enabled_set(Eo *obj EINA_UNUSED, Efl
    sd->repeating = EINA_FALSE;
 }
 
-#define _AR_CAPABLE(obj) \
-  (_internal_efl_ui_button_autorepeat_supported_get(obj))
-
-static Eina_Bool
-_internal_efl_ui_button_autorepeat_supported_get(const Evas_Object *obj)
-{
-   Eina_Bool ret = EINA_FALSE;
-   ret = efl_ui_autorepeat_supported_get(obj);
-   return ret;
-}
-
 EOLIAN static Eina_Bool
-_efl_ui_button_efl_ui_autorepeat_autorepeat_supported_get(const Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *_pd EINA_UNUSED)
+_efl_ui_button_efl_ui_autorepeat_autorepeat_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *sd)
 {
-   return EINA_TRUE;
-}
-
-EOLIAN static Eina_Bool
-_efl_ui_button_efl_ui_autorepeat_autorepeat_enabled_get(const Eo *obj, Efl_Ui_Button_Data *sd)
-{
-   return (_AR_CAPABLE(obj) & sd->autorepeat);
+   return (sd->autorepeat);
 }
 
 EOLIAN static void
-_efl_ui_button_efl_ui_autorepeat_autorepeat_initial_timeout_set(Eo *obj, Efl_Ui_Button_Data *sd, double t)
+_efl_ui_button_efl_ui_autorepeat_autorepeat_initial_timeout_set(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *sd, double t)
 {
-   if (!_AR_CAPABLE(obj))
-     {
-        ERR("this widget does not support auto repetition of clicks.");
-        return;
-     }
-
    if (EINA_DBL_EQ(sd->ar_initial_timeout, t)) return;
    ELM_SAFE_FREE(sd->timer, ecore_timer_del);
    sd->ar_initial_timeout = t;
 }
 
 EOLIAN static double
-_efl_ui_button_efl_ui_autorepeat_autorepeat_initial_timeout_get(const Eo *obj, Efl_Ui_Button_Data *sd)
+_efl_ui_button_efl_ui_autorepeat_autorepeat_initial_timeout_get(const Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *sd)
 {
-   if (!_AR_CAPABLE(obj))
-      return 0.0;
-   else
-      return sd->ar_initial_timeout;
+   return sd->ar_initial_timeout;
 }
 
 EOLIAN static void
-_efl_ui_button_efl_ui_autorepeat_autorepeat_gap_timeout_set(Eo *obj, Efl_Ui_Button_Data *sd, double t)
+_efl_ui_button_efl_ui_autorepeat_autorepeat_gap_timeout_set(Eo *obj EINA_UNUSED, Efl_Ui_Button_Data *sd, double t)
 {
-   if (!_AR_CAPABLE(obj))
-     {
-        ERR("this widget does not support auto repetition of clicks.");
-        return;
-     }
-
    if (EINA_DBL_EQ(sd->ar_gap_timeout, t)) return;
 
    sd->ar_gap_timeout = t;

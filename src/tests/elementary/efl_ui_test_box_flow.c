@@ -224,7 +224,7 @@ layout_setup()
    win = win_add();
 
    layout = efl_add(EFL_UI_BOX_FLOW_CLASS, win,
-                    efl_pack_align_set(efl_added, 0.8, 0.2),
+                    efl_gfx_arrangement_content_align_set(efl_added, 0.8, 0.2),
                     efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL));
 }
 

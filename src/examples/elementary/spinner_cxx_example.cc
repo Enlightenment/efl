@@ -2,7 +2,7 @@
 
 #define ELM_WIDGET_PROTECTED
 
-#include <Elementary.hh>
+#include <Efl_Ui.hh>
 #include <iostream>
 
 #warning FIXME: This example requires proper EO API usage (not legacy spinner)

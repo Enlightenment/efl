@@ -3,7 +3,7 @@ import efl_canvas_gesture_types;
 abstract @beta Efl.Canvas.Gesture extends Efl.Object
 {
    [[EFL Gesture abstract class]]
-   eo_prefix: efl_gesture;
+   c_prefix: efl_gesture;
    methods {
       @property type {
          [[This property holds the type of the gesture.]]

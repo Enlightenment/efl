@@ -267,7 +267,8 @@ struct struct_internal_definition_generator
      auto const& indent = current_indentation(context);
      if (!as_generator
          (
-          indent << "///<summary>Internal wrapper for struct " << string << ".</summary>\n"
+          indent << "#pragma warning disable CS1591\n\n"
+          << indent << "///<summary>Internal wrapper for struct " << string << ".</summary>\n"
           << indent << "[StructLayout(LayoutKind.Sequential)]\n"
           << indent << "public struct " << string << "\n"
           << indent << "{\n"
@@ -367,7 +368,9 @@ struct struct_internal_definition_generator
        return false;
 
      // close internal class
-     if(!as_generator(indent << "}\n\n").generate(sink, attributes::unused, context)) return false;
+     if(!as_generator(indent << "}\n\n"
+                      << indent << "#pragma warning restore CS1591\n\n"
+                 ).generate(sink, attributes::unused, context)) return false;
 
      return true;
   }
@@ -400,7 +403,7 @@ struct struct_definition_generator
           field_name[0] = std::toupper(field_name[0]); // Hack to allow 'static' as a field name
           if (!as_generator
               (
-                  indent << scope_tab << documentation
+               documentation(indent.n + 1)
                << indent << scope_tab << "public " << type << " " << string << ";\n"
               )
               .generate(sink, std::make_tuple(field, field.type, name_helpers::to_field_name(field.name)), context))
@@ -435,7 +438,9 @@ struct struct_definition_generator
        }
 
      if(!as_generator(
-            indent << scope_tab << "public static implicit operator " << struct_name << "(IntPtr ptr)\n"
+            indent << scope_tab << "///<summary>Implicit conversion to the managed representation from a native pointer.</summary>\n"
+            << indent << scope_tab << "///<param name=\"ptr\">Native pointer to be converted.</param>\n"
+            << indent << scope_tab << "public static implicit operator " << struct_name << "(IntPtr ptr)\n"
             << indent << scope_tab << "{\n"
             << indent << scope_tab << scope_tab << "var tmp = (" << struct_name << ".NativeStruct)Marshal.PtrToStructure(ptr, typeof(" << struct_name << ".NativeStruct));\n"
             << indent << scope_tab << scope_tab << "return tmp;\n"

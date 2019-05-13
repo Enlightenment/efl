@@ -1406,6 +1406,11 @@ parse_part(Eo_Lexer *ls)
    check(ls, TOK_VALUE);
    part->base.name = eina_stringshare_ref(ls->t.value.s);
    eo_lexer_get(ls);
+   if (ls->t.kw == KW_at_beta)
+     {
+        part->base.is_beta = EINA_TRUE;
+        eo_lexer_get(ls);
+     }
    check_next(ls, ':');
    Eina_Strbuf *buf = eina_strbuf_new();
    eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), buf);
@@ -1859,7 +1864,7 @@ error:
 static void
 parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
 {
-   Eina_Bool has_eo_prefix     = EINA_FALSE,
+   Eina_Bool has_c_prefix     = EINA_FALSE,
              has_event_prefix  = EINA_FALSE,
              has_data          = EINA_FALSE,
              has_methods       = EINA_FALSE,
@@ -1875,12 +1880,12 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
      }
    for (;;) switch (ls->t.kw)
      {
-      case KW_eo_prefix:
-        CASE_LOCK(ls, eo_prefix, "eo prefix definition")
+      case KW_c_prefix:
+        CASE_LOCK(ls, c_prefix, "c prefix definition")
         eo_lexer_get(ls);
         check_next(ls, ':');
         _validate_pfx(ls);
-        ls->klass->eo_prefix = eina_stringshare_ref(ls->t.value.s);
+        ls->klass->c_prefix = eina_stringshare_ref(ls->t.value.s);
         eo_lexer_get(ls);
         check_next(ls, ';');
         break;
@@ -2192,8 +2197,6 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
                 break;
               case KW_at_free:
                 {
-                   if (is_enum)
-                     goto postparams;
                    CASE_LOCK(ls, free, "@free qualifier")
                    if (is_enum)
                      eo_lexer_syntax_error(ls, "enums cannot have @free");

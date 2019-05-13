@@ -44,7 +44,7 @@ struct enum_definition_generator
             return false;
        }
 
-     if(!as_generator("}\n").generate(sink, attributes::unused, context)) return false;
+     if(!as_generator("}\n\n").generate(sink, attributes::unused, context)) return false;
 
      if(!name_helpers::close_namespaces(sink, enum_.namespaces, context))
        return false;

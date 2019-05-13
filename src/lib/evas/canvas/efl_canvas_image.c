@@ -4,6 +4,21 @@
 #define MY_CLASS EFL_CANVAS_IMAGE_CLASS
 #define MY_CLASS_NAME efl_class_name_get(MY_CLASS)
 
+void
+_evas_image_file_unload(Eo *eo_obj)
+{
+   Evas_Object_Protected_Data *obj;
+   Evas_Image_Data *o = efl_data_scope_get(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS);
+
+   if (!o->cur->f) return;
+
+   obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
+   _evas_image_init_set(NULL, NULL, eo_obj, obj, o, NULL);
+   o->buffer_data_set = EINA_FALSE;
+   _evas_image_done_set(eo_obj, obj, o);
+   o->load_error = EFL_GFX_IMAGE_LOAD_ERROR_NONE;
+}
 Eina_Bool
 _evas_image_file_load(Eo *eo_obj)
 {
@@ -46,6 +61,13 @@ _efl_canvas_image_efl_file_load(Eo *eo_obj, void *_pd EINA_UNUSED)
    if (_evas_image_file_load(eo_obj))
      return 0;
    return EFL_GFX_IMAGE_LOAD_ERROR_DOES_NOT_EXIST;
+}
+
+EOLIAN static void
+_efl_canvas_image_efl_file_unload(Eo *eo_obj, void *_pd EINA_UNUSED)
+{
+   efl_file_unload(efl_super(eo_obj, MY_CLASS));
+   _evas_image_file_unload(eo_obj);
 }
 
 const Eina_File *
@@ -700,7 +722,8 @@ _efl_canvas_image_efl_gfx_buffer_buffer_managed_get(Eo *eo_obj, void *_pd EINA_U
    if (!o->buffer_data_set || !o->engine_data || !ENFN->image_data_direct_get)
      return slice;
 
-   ENFN->image_data_direct_get(ENC, o->engine_data, plane, &slice, &cspace, EINA_FALSE);
+   ENFN->image_data_direct_get(ENC, o->engine_data, plane, &slice, &cspace, EINA_FALSE, NULL);
+
    return slice;
 }
 

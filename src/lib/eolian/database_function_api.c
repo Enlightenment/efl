@@ -38,11 +38,11 @@ eolian_function_type_get(const Eolian_Function *fid)
 }
 
 static const char *
-_get_eo_prefix(const Eolian_Function *foo_id, char *buf)
+_get_c_prefix(const Eolian_Function *foo_id, char *buf)
 {
     char *tmp = buf;
-    if (foo_id->klass->eo_prefix)
-      return foo_id->klass->eo_prefix;
+    if (foo_id->klass->c_prefix)
+      return foo_id->klass->c_prefix;
     strcpy(buf, foo_id->klass->base.name);
     eina_str_tolower(&buf);
     while ((tmp = strchr(tmp, '.'))) *tmp = '_';
@@ -88,7 +88,7 @@ eolian_function_full_c_name_get(const Eolian_Function *foo_id,
 {
    char tbuf[512];
    tbuf[0] = '\0';
-   const char *prefix = (ftype != EOLIAN_FUNCTION_POINTER) ? _get_eo_prefix(foo_id, tbuf): tbuf;
+   const char *prefix = (ftype != EOLIAN_FUNCTION_POINTER) ? _get_c_prefix(foo_id, tbuf): tbuf;
 
    if (!prefix)
      return NULL;

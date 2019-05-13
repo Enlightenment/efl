@@ -261,7 +261,7 @@ database_load(options_type const& opts)
          << "No input file.";
        assert(false && "Error parsing input file");
      }
-   if (!::eolian_state_file_parse(opts.state, opts.in_file.c_str()))
+   if (!::eolian_state_file_path_parse(opts.state, opts.in_file.c_str()))
      {
        EINA_CXX_DOM_LOG_ERR(eolian_mono::domain)
          << "Failed parsing: " << opts.in_file << ".";

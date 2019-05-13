@@ -55,7 +55,7 @@ eolian_event_c_name_get(const Eolian_Event *event)
     char  buf[512];
     char *tmp = buf;
     const char *pfx = event->klass->ev_prefix;
-    if (!pfx) pfx = event->klass->eo_prefix;
+    if (!pfx) pfx = event->klass->c_prefix;
     if (!pfx) pfx = event->klass->base.name;
     snprintf(buf, sizeof(buf), "%s_EVENT_%s", pfx, event->base.name);
     eina_str_toupper(&tmp);

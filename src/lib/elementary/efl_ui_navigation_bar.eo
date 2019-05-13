@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Navigation_Bar extends Efl.Ui.Layout_Base implements Efl.Content, Efl.Text
+class @beta Efl.Ui.Navigation_Bar extends Efl.Ui.Layout_Base implements Efl.Text
 {
    [[Navigation_Bar widget.
 
@@ -21,8 +21,6 @@ class @beta Efl.Ui.Navigation_Bar extends Efl.Ui.Layout_Base implements Efl.Cont
    }
    implements {
       Efl.Object.constructor;
-      Efl.Content.content { set; get; }
-      Efl.Content.content_unset;
       Efl.Text.text { set; get; }
       Efl.Ui.L10n.l10n_text { set; get; }
       Efl.Part.part_get;

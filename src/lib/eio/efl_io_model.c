@@ -496,12 +496,6 @@ _property_filename_cb(const Eo *obj, Efl_Io_Model_Data *pd)
 }
 
 static Eina_Value *
-_property_path_cb(const Eo *obj EINA_UNUSED, Efl_Io_Model_Data *pd)
-{
-   return eina_value_stringshare_new(pd->path);
-}
-
-static Eina_Value *
 _property_direct_info_cb(const Eo *obj, Efl_Io_Model_Data *pd)
 {
    _efl_io_model_info_build(obj, pd);
@@ -620,7 +614,7 @@ static struct {
    const char *name;
    Eina_Value *(*cb)(const Eo *obj, Efl_Io_Model_Data *pd);
 } properties[] = {
-  PP(filename), PP(path),
+  PP(filename),
   PP(direct_info),
   PP(mtime), PP(atime), PP(ctime), PP(is_dir), PP(is_lnk), PP(size),
   PP(stat),
@@ -649,9 +643,7 @@ _efl_io_model_efl_model_property_get(const Eo *obj, Efl_Io_Model_Data *pd, const
          !strcmp(property, properties[i].name))
        return properties[i].cb(obj, pd);
 
-   ERR("Could not find property '%s'.", property);
-   // Unknow value request
-   return eina_value_error_new(EFL_MODEL_ERROR_NOT_SUPPORTED);
+   return efl_model_property_get(efl_super(obj, EFL_IO_MODEL_CLASS), property);
 }
 
 static Eina_Future *
@@ -956,6 +948,8 @@ _efl_io_model_efl_model_children_slice_get(Eo *obj, Efl_Io_Model_Data *pd,
                                      // NOTE: We are assuming here that the parent model will outlive all its children
                                      child_data->filter.cb = pd->filter.cb,
                                      child_data->filter.data = pd->filter.data);
+        else
+          efl_ref(info->object);
         eina_value_array_append(&array, info->object);
 
         efl_wref_add(info->object, &info->object);

@@ -3,8 +3,8 @@ import eina_types;
 class @beta Dummy.Part_Holder extends Dummy.Test_Object implements Efl.Part {
 
    parts {
-      part_one: Dummy.Test_Object; [[ Part number one. ]]
-      part_two: Dummy.Test_Object; [[ Part number two. ]]
+      one: Dummy.Test_Object; [[ Part number one. ]]
+      two: Dummy.Test_Object; [[ Part number two. ]]
    }
    implements {
       Efl.Part.part_get;

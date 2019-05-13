@@ -7,7 +7,8 @@ class @beta Efl.Ui.Grid extends Efl.Ui.Layout_Base implements
                    Efl.Ui.Direction,
                    Efl.Ui.Clickable,
                    Efl.Ui.Selectable,
-                   Efl.Ui.Multi_Selectable
+                   Efl.Ui.Multi_Selectable,
+                   Efl.Gfx.Arrangement
 {
    [[Simple grid widget with Pack interface.]]
    methods {
@@ -84,8 +85,8 @@ class @beta Efl.Ui.Grid extends Efl.Ui.Layout_Base implements
       Efl.Pack_Linear.pack_content_get;
       Efl.Pack_Layout.layout_update;
       Efl.Pack_Layout.layout_request;
-      Efl.Pack.pack_padding { get; set; }
-      Efl.Pack.pack_align { get; set; }
+      Efl.Gfx.Arrangement.content_padding { get; set; }
+      Efl.Gfx.Arrangement.content_align { get; set; }
 
       //Efl.Ui.Scrollable
       Efl.Ui.Scrollable_Interactive.match_content { set; }

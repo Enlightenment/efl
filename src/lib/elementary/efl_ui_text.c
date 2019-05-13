@@ -1231,6 +1231,7 @@ _cut_cb(Eo *obj)
    _selection_store(EFL_UI_SELECTION_TYPE_CLIPBOARD, obj);
    efl_text_interactive_selection_cursors_get(obj, &start, &end);
    efl_canvas_text_range_delete(obj, start, end);
+   _efl_ui_text_select_none(obj, sd);
 }
 
 static void

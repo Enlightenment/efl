@@ -34,7 +34,7 @@ struct constant_definition_generator
     if (!name_helpers::open_namespaces(sink, constant.namespaces, context))
       return false;
 
-    if (!as_generator("public partial class Constants {\n").generate(sink, attributes::unused, context))
+    if (!as_generator("public partial class Constants\n{\n").generate(sink, attributes::unused, context))
       return false;
 
     std::string literal;
@@ -58,11 +58,12 @@ struct constant_definition_generator
       }
 
     // declare variable
-    if (!as_generator(scope_tab(1)
+    if (!as_generator(documentation(1)
+                      << scope_tab(1)
                       << "public static readonly " << type
                       << " " << utils::remove_all(constant.name, '_')
                       << " = " << literal << ";\n")
-          .generate(sink, constant.base_type, context))
+          .generate(sink, std::make_tuple(constant, constant.base_type), context))
       return false;
 
     // FIXME missing documentation generator

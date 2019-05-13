@@ -283,7 +283,9 @@ _evas_image_init_set(const Eina_File *f, const char *key,
           }
         ENFN->image_free(ENC, o->engine_data);
      }
+   o->engine_data = NULL;
    o->load_error = EFL_GFX_IMAGE_LOAD_ERROR_NONE;
+   if (!lo) return;
    lo->emile.scale_down_by = o->load_opts->scale_down_by;
    lo->emile.dpi = o->load_opts->dpi;
    lo->emile.w = o->load_opts->w;
@@ -878,6 +880,7 @@ _efl_canvas_image_internal_efl_file_save_save(const Eo *eo_obj, Evas_Image_Data 
    Evas_Colorspace want_cspace = EVAS_COLORSPACE_ARGB8888;
    Evas_Object_Protected_Data *obj;
    Eina_Bool unmap_it = EINA_FALSE;
+   Eina_Bool tofree = EINA_FALSE;
    int imagew, imageh, uvw, uvh;
    Eina_Rw_Slice slice = {};
    DATA32 *data = NULL;
@@ -930,7 +933,7 @@ _efl_canvas_image_internal_efl_file_save_save(const Eo *eo_obj, Evas_Image_Data 
         Evas_Colorspace cs;
         Eina_Slice sl;
 
-        ok = ENFN->image_data_direct_get(ENC, pixels, 0, &sl, &cs, EINA_TRUE);
+        ok = ENFN->image_data_direct_get(ENC, pixels, 0, &sl, &cs, EINA_TRUE, &tofree);
         if (ok && (cs == want_cspace))
           data = (DATA32 *)sl.mem;
      }
@@ -963,6 +966,8 @@ _efl_canvas_image_internal_efl_file_save_save(const Eo *eo_obj, Evas_Image_Data 
 
    if (unmap_it)
      ENFN->image_data_unmap(ENC, pixels, &slice);
+
+   if (tofree) free(data);
 
    if (!ok) ERR("Image save failed.");
    return ok;

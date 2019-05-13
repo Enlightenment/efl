@@ -19,7 +19,7 @@ interface @beta Efl.Input.Interface
      Long, repeated, key presses will always happen like this:
      down...up,down...up,down...up (not down...up or down...down...down...up).
    ]]
-   eo_prefix: efl_input;
+   c_prefix: efl_input;
    event_prefix: efl;
    methods {
       @property seat_event_filter @beta {

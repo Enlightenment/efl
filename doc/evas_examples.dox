@@ -693,7 +693,7 @@
  * not seeing its front face.
  * @until evas_object_map_enable_set
  *
- * And we free this map, since since we messed too much with it and for the
+ * And we free this map, since we messed too much with it and for the
  * last object we want something cleaner.
  * @until evas_map_free
  *

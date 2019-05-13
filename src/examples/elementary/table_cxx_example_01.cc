@@ -1,6 +1,6 @@
 // g++ -g `pkg-config --cflags --libs elementary-cxx efl-cxx eina-cxx eo-cxx ecore-cxx evas-cxx edje-cxx` table_cxx_example_01.cc -o table_cxx_example_01
 
-#include <Elementary.hh>
+#include <Efl_Ui.hh>
 
 using efl::eo::instantiate;
 
@@ -15,7 +15,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
    efl::ui::Table table(instantiate, win);
    win.content_set(table);
-   table.pack_padding_set(5, 5, true);
+   table.content_padding_set(5, 5, true);
 //   FIXME
 //   table.homogeneous_set(true);
 

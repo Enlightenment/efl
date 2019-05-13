@@ -1,7 +1,7 @@
 class @beta Ector.Renderer.Cairo.Shape extends Ector.Renderer.Cairo implements Ector.Renderer.Shape, Efl.Gfx.Path
 {
    [[Ector cairo renderer shape class]]
-   eo_prefix: ector_renderer_cairo_shape;
+   c_prefix: ector_renderer_cairo_shape;
    implements {
       Ector.Renderer.prepare;
       Ector.Renderer.draw;

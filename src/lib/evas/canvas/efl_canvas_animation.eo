@@ -3,7 +3,7 @@ import efl_canvas_animation_types;
 class @beta Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
 {
    [[Efl animation class]]
-   eo_prefix: efl_animation;
+   c_prefix: efl_animation;
    methods {
       @property final_state_keep {
          [[Keep final state property]]

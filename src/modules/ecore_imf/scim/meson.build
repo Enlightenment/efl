@@ -9,7 +9,7 @@ if not scim_dep.found()
   scim_dep = dependency('scim-1.0')
 endif
 
-mod_deps = [ecore, ecore_imf, ecore_x, ecore_evas, scim_dep, dependency('glib-2.0')]
+mod_deps = [ecore, ecore_imf, ecore_x, ecore_x_deps, ecore_evas, scim_dep, dependency('glib-2.0')]
 
 shared_module(mod_name,
     mod_src,

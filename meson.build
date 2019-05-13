@@ -102,6 +102,7 @@ foreach lang : ['c', 'objc', 'cpp']
   add_global_arguments('-DEFL_BUILD=1', language: lang)
   add_global_arguments('-DELM_INTERNAL_API_ARGESFSDFEFC=1', language: lang)
   if sys_windows == true
+    add_global_arguments('-D_POSIX_C_SOURCE=200809L', language: lang)
     if (get_option('windows-version') == 'vista')
       add_global_arguments('-DWINVER=0x060', language: lang)
       add_global_arguments('-D_WIN32_WINNT=0x0600', language: lang)
@@ -248,6 +249,27 @@ boot_strap_eolian = [
   ['eolian'           ,[]                    , false,  true,  true, false, false, false, ['eina'], []],
 ]
 
+evas_lib =         ['evas'                       ,[], false,  true, false, false,  true,  true, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']]
+evas_img_modules = ['evas'                       ,[],  true, false, false, false, false, false, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']]
+evas_engines =     [join_paths('evas', 'engines'),[],  true, false, false, false, false, false, [], []]
+evas_goal =        ['evas_goal'                  ,[], false,  true, false, false, false, false, ['eina', 'efl', 'eo'], []]
+
+if get_option('evas-modules') == 'static'
+  evas_settings = [
+    evas_lib,
+    evas_img_modules,
+    evas_engines,
+    evas_goal,
+  ]
+else
+  evas_settings = [
+    evas_lib,
+    evas_img_modules,
+    evas_goal,
+    evas_engines,
+  ]
+endif
+
 subprojects = [
 # name              |   option              | mod  | lib  | bin  | bench | tests | examples | pkg-config options | name of static libs
 ['evil'             ,[]                    , false,  true, false, false, false, false, [], []],
@@ -270,14 +292,13 @@ subprojects = [
 ['ecore_fb'         ,['fb']                , false,  true, false, false, false, false, ['eina'], []],
 ['ecore_wl2'        ,['wl']                ,  true,  true, false, false, false, false, ['eina'], ['libdrm']],
 ['ecore_sdl'        ,['sdl']               , false,  true, false, false, false, false, ['eina'], []],
+['ecore_win32'      ,[]                    , false,  true, false, false, false, false, ['eina'], []],
 ['ecore_ipc'        ,[]                    , false,  true, false, false, false, false, ['eina'], []],
 ['ecore_buffer'     ,['buffer']            ,  true,  true,  true, false, false, false, ['eina'], []],
 ['ector'            ,[]                    , false,  true, false, false,  true, false, ['eina', 'efl'], ['draw', 'triangulator', 'freetype']],
 ['elput'            ,['drm']               , false,  true, false, false,  true, false, ['eina', 'eldbus'], []],
 ['ecore_drm2'       ,['drm']               , false,  true, false, false, false, false, ['ecore'], ['libdrm']],
-['ecore_cocoa'      ,['cocoa']             , false,  true, false, false, false, false, ['eina'], []],
-['evas'             ,[]                    ,  true,  true, false, false,  true,  true, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']],
-['evas_goal'        ,[]                    , false,  true, false, false, false, false, ['eina', 'efl', 'eo'], []],
+['ecore_cocoa'      ,['cocoa']             , false,  true, false, false, false, false, ['eina'], []]] + evas_settings +[
 ['ecore_input_evas' ,[]                    , false,  true, false, false, false, false, ['eina', 'evas'], []],
 ['ecore_evas'       ,[]                    ,  true,  true,  true, false, false, false, ['evas', 'ector'], []],
 ['ecore_imf'        ,[]                    ,  true,  true, false, false, false, false, ['eina'], []],
@@ -323,7 +344,7 @@ foreach package : subprojects
   ]
   automatic_pkgfile = true
   if package[1].length() == 0 or get_option(package[1][0])
-    config_h.set('HAVE_'+package_name.to_upper(), '1')
+    config_h.set('HAVE_'+package_name.to_upper().underscorify(), '1')
 
     dir_package_include = join_paths(dir_include, package_version_name)
     dir_package_modules = join_paths(dir_lib, package_name, 'modules')
@@ -376,7 +397,7 @@ foreach package : subprojects
        example_dirs += [package_name]
     endif
 
-    set_variable('build_'+package_name, true)
+    set_variable('build_'+package_name.underscorify(), true)
 
     # generate automatic pc files for libraries
     if automatic_pkgfile == true and package[3]
@@ -419,7 +440,9 @@ if get_option('eolian-bootstrap') == false
   subdir(join_paths('src', 'bin', 'efl'))
 
   subdir(join_paths('src', 'generic', 'evas'))
-  subdir(join_paths('src', 'generic', 'emotion'))
+  if sys_windows == false
+    subdir(join_paths('src', 'generic', 'emotion'))
+  endif
 
   bindings = get_option('bindings')
   bindings_order = ['luajit', 'cxx', 'mono']
@@ -458,6 +481,12 @@ foreach evas_loader_map_inst : evas_loader_map
 
   meson.add_install_script('meson/evas_loader_conf.sh', evas_loader_original, evas_loader_link_types)
 endforeach
+
+doxygen = find_program('doxygen', required : false)
+
+if get_option('eolian-bootstrap') == false and doxygen.found()
+  subdir('doc')
+endif
 
 #
 # Configure files

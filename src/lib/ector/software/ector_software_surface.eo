@@ -1,7 +1,7 @@
 class @beta Ector.Software.Surface extends Ector.Software.Buffer implements Ector.Surface
 {
    [[Ector surface software class]]
-   eo_prefix: ector_software_surface;
+   c_prefix: ector_software_surface;
    methods {}
    implements {
       Ector.Surface.renderer_factory_new;

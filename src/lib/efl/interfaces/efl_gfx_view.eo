@@ -3,7 +3,7 @@ import eina_types;
 interface @beta Efl.Gfx.View
 {
    [[Efl graphics view interface]]
-   eo_prefix: efl_gfx;
+   c_prefix: efl_gfx;
    methods {
       @property view_size {
          [[The dimensions of this object's viewport.

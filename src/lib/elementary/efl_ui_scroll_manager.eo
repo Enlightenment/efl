@@ -5,7 +5,7 @@ class @beta Efl.Ui.Scroll.Manager extends Efl.Object implements
 {
    [[Efl ui scroll manager class]]
    event_prefix: efl_ui;
-   eo_prefix: efl_ui_scroll_manager;
+   c_prefix: efl_ui_scroll_manager;
    methods {
       @property pan @protected {
     [[This is the internal pan object managed by scroll manager.

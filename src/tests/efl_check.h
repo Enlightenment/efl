@@ -273,6 +273,7 @@ _efl_suite_run_end(SRunner *sr, const char *name)
           }
         snprintf(buf, sizeof(buf), TESTS_BUILD_DIR "/check-results-%s.xml", n);
         srunner_set_xml(sr, buf);
+        free(n);
      }
    else
      srunner_set_xml(sr, TESTS_BUILD_DIR "/check-results.xml");

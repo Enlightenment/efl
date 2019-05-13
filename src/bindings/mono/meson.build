@@ -53,14 +53,6 @@ blacklisted_files = [
   'evas_canvas3d_primitive.eo',
   'evas_canvas3d_scene.eo',
   'evas_canvas3d_texture.eo',
-  'efl_canvas_vg_object.eo',
-  'efl_vg.eo',
-  'efl_vg_container.eo',
-  'efl_vg_gradient.eo',
-  'efl_vg_gradient_radial.eo',
-  'efl_vg_gradient_linear.eo',
-  'efl_vg_root_node.eo',
-  'efl_vg_shape.eo.cs',
   'efl_io_buffer.eo',
   'efl_io_queue.eo',
   'efl_io_sizer.eo',
@@ -94,8 +86,8 @@ blacklisted_files = [
 efl_mono_lib = library('eflcustomexportsmono',
     join_paths('..', '..', 'lib', 'efl_mono', 'efl_custom_exports_mono.c'),
     install : true,
-    install_dir : join_paths(dir_lib, 'efl-mono-'+version_major),
-    dependencies : [eo, eina, ecore]
+    dependencies : [eo, eina, ecore],
+    version : meson.project_version()
 )
 
 beta_option = []

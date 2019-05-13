@@ -315,7 +315,7 @@ run(options_type const& opts)
 
        for(auto&& name : opts.in_files)
          {
-           Eolian_Unit const* unit = ::eolian_state_file_parse(opts.state, name.c_str());
+           Eolian_Unit const* unit = ::eolian_state_file_path_parse(opts.state, name.c_str());
            if(!unit)
              {
                EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
@@ -398,7 +398,7 @@ database_load(options_type const& opts)
          << "No input file.";
        assert(false && "Error parsing input file");
      }
-   if (!opts.main_header && !::eolian_state_file_parse(opts.state, opts.in_files[0].c_str()))
+   if (!opts.main_header && !::eolian_state_file_path_parse(opts.state, opts.in_files[0].c_str()))
      {
        EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
          << "Failed parsing: " << opts.in_files[0] << ".";

@@ -7,12 +7,21 @@
 #include "suite_helpers.h"
 #include <limits.h>
 
+/* spec-meta-start
+      {"test-interface":"Efl.Pack_Linear",
+       "test-widgets": ["Efl.Ui.Box", "Efl.Ui.Grid", "Efl.Ui.Pager"],
+       "custom-mapping" : {
+          "Efl.Ui.Grid" : "EFL_UI_GRID_DEFAULT_ITEM_CLASS"
+        }
+       }
+   spec-meta-end */
+
 static void
 _fill_array(Efl_Ui_Widget *wid[3])
 {
    for (int i = 0; i < 3; ++i)
      {
-        wid[i] = efl_add(WIDGET_CLASS, win);
+        wid[i] = create_test_widget();
      }
 }
 
@@ -29,7 +38,7 @@ _ordering_equals(Efl_Ui_Widget **wid, unsigned int len)
 EFL_START_TEST(pack_begin1)
 {
    Efl_Ui_Widget *wid[3];
-   Efl_Ui_Widget *inv = efl_add(WIDGET_CLASS, win);
+   Efl_Ui_Widget *inv = create_test_widget();
 
    _fill_array(wid);
 
@@ -68,7 +77,7 @@ EFL_END_TEST
 EFL_START_TEST(pack_end1)
 {
    Efl_Ui_Widget *wid[3];
-   Efl_Ui_Widget *inv = efl_add(WIDGET_CLASS, win);
+   Efl_Ui_Widget *inv = create_test_widget();
 
    _fill_array(wid);
 
@@ -108,7 +117,7 @@ EFL_END_TEST
 EFL_START_TEST(pack_before1)
 {
    Efl_Ui_Widget *wid[3];
-   Efl_Ui_Widget *inv = efl_add(WIDGET_CLASS, win);
+   Efl_Ui_Widget *inv = create_test_widget();
 
    _fill_array(wid);
 
@@ -131,7 +140,7 @@ EFL_END_TEST
 EFL_START_TEST(pack_before2)
 {
    Efl_Ui_Widget *wid[3];
-   Efl_Ui_Widget *inv = efl_add(WIDGET_CLASS, win);
+   Efl_Ui_Widget *inv = create_test_widget();
 
    _fill_array(wid);
 
@@ -152,7 +161,7 @@ EFL_END_TEST
 EFL_START_TEST(pack_after1)
 {
    Efl_Ui_Widget *wid[3];
-   Efl_Ui_Widget *inv = efl_add(WIDGET_CLASS, win);
+   Efl_Ui_Widget *inv = create_test_widget();
 
    _fill_array(wid);
 
@@ -175,7 +184,7 @@ EFL_END_TEST
 EFL_START_TEST(pack_after2)
 {
    Efl_Ui_Widget *wid[3];
-   Efl_Ui_Widget *inv = efl_add(WIDGET_CLASS, win);
+   Efl_Ui_Widget *inv = create_test_widget();
 
    _fill_array(wid);
 
@@ -198,7 +207,7 @@ EFL_START_TEST(pack_at1)
    for (int x = -3; x < 3; ++x)
      {
         Efl_Ui_Widget *wid[3];
-        Efl_Ui_Widget *inv = efl_add(WIDGET_CLASS, win);
+        Efl_Ui_Widget *inv = create_test_widget();
         unsigned int i;
 
         _fill_array(wid);
@@ -229,7 +238,7 @@ EFL_START_TEST(pack_at2)
    for (int x = -3; x < 3; ++x)
      {
         Efl_Ui_Widget *wid[3];
-        Efl_Ui_Widget *inv = efl_add(WIDGET_CLASS, win);
+        Efl_Ui_Widget *inv = create_test_widget();
         unsigned int i;
 
         _fill_array(wid);
@@ -263,8 +272,8 @@ EFL_END_TEST
 EFL_START_TEST(pack_at3)
 {
    Efl_Ui_Widget *wid[3];
-   Efl_Ui_Widget *inv = efl_add(WIDGET_CLASS, win);
-   Efl_Ui_Widget *inv2 = efl_add(WIDGET_CLASS, win);
+   Efl_Ui_Widget *inv = create_test_widget();
+   Efl_Ui_Widget *inv2 = create_test_widget();
 
    _fill_array(wid);
    for (int i = 0; i < 3; i++)
@@ -303,7 +312,7 @@ EFL_END_TEST
 EFL_START_TEST(pack_index_get1)
 {
    Efl_Ui_Widget *wid[3];
-   Efl_Ui_Widget *inv = efl_add(WIDGET_CLASS, win);
+   Efl_Ui_Widget *inv = create_test_widget();
 
    _fill_array(wid);
    for (int i = 0; i < 3; i++)

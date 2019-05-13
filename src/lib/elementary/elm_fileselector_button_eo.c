@@ -102,7 +102,7 @@ _elm_fileselector_button_class_initializer(Efl_Class *klass)
    EFL_OPS_DEFINE(ops,
       EFL_OBJECT_OP_FUNC(efl_constructor, _elm_fileselector_button_efl_object_constructor),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_theme_apply, _elm_fileselector_button_efl_ui_widget_theme_apply),
-      EFL_OBJECT_OP_FUNC(efl_ui_autorepeat_supported_get, _elm_fileselector_button_efl_ui_autorepeat_autorepeat_supported_get),
+      EFL_OBJECT_OP_FUNC(efl_ui_autorepeat_enabled_set, _elm_fileselector_button_efl_ui_autorepeat_autorepeat_enabled_set),
       EFL_OBJECT_OP_FUNC(elm_interface_fileselector_selected_models_get, _elm_fileselector_button_elm_interface_fileselector_selected_models_get),
       EFL_OBJECT_OP_FUNC(elm_interface_fileselector_expandable_set, _elm_fileselector_button_elm_interface_fileselector_expandable_set),
       EFL_OBJECT_OP_FUNC(elm_interface_fileselector_expandable_get, _elm_fileselector_button_elm_interface_fileselector_expandable_get),

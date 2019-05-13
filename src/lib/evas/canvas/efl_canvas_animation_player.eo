@@ -1,7 +1,7 @@
 class @beta Efl.Canvas.Animation_Player extends Efl.Object implements Efl.Player
 {
    [[Efl animation object class]]
-   eo_prefix: efl_animation_player;
+   c_prefix: efl_animation_player;
    methods {
       @property animation {
          set {}

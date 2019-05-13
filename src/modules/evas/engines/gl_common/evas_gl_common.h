@@ -308,8 +308,6 @@ struct _Evas_Engine_GL_Context
       Eina_Bool          size       : 1;
    } change;
 
-   Eina_Bool             havestuff  : 1;
-
    struct {
       struct {
          int              x, y, w, h;
@@ -335,7 +333,7 @@ struct _Evas_Engine_GL_Context
       } shader;
       struct {
          int            num, alloc;
-         GLshort       *vertex;
+         GLfloat       *vertex;
          GLubyte       *color;
          GLfloat       *texuv;
          GLfloat       *texuv2;
@@ -380,6 +378,9 @@ struct _Evas_Engine_GL_Context
 
    GLuint preserve_bit;
    int    gles_version;
+
+   Eina_Bool havestuff : 1;
+   Eina_Bool msaa : 1;
 };
 
 struct _Evas_GL_Texture_Pool

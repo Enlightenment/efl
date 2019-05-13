@@ -1439,7 +1439,7 @@ _elm_code_widget_change_create(unsigned int start_col, unsigned int start_line,
    info->end_col = end_col;
    info->end_line = end_line;
 
-   info->content = strndup(text, length);
+   info->content = eina_strndup(text, length);
    info->length = length;
 
    return info;
@@ -1523,7 +1523,7 @@ _elm_code_widget_newline(Elm_Code_Widget *widget)
         line = elm_code_file_line_get(code->file, row);
      }
    oldtext = (char *) elm_code_line_text_get(line, &oldlen);
-   oldtext = strndup(oldtext, oldlen);
+   oldtext = eina_strndup(oldtext, oldlen);
 
    position = elm_code_widget_line_text_position_for_column_get(widget, line, col);
    elm_code_line_split_at(line, position);

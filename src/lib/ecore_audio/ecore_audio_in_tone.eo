@@ -1,7 +1,7 @@
 class @beta Ecore.Audio.In.Tone extends Ecore.Audio.In
 {
    [[Ecore Audio tone input.]]
-   eo_prefix: ecore_audio_obj_in_tone;
+   c_prefix: ecore_audio_obj_in_tone;
    implements {
       Efl.Object.constructor;
       Ecore.Audio.In.length { set; }

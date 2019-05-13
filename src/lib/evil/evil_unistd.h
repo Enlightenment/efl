@@ -36,27 +36,6 @@
  */
 EAPI double evil_time_get(void);
 
-
-/*
- * file related functions
- *
- */
-
-/**
- * @brief Get the current directory.
- *
- * @param buffer Buffer to store the current directory.
- * @param size Size of the buffer.
- * @return The current directory.
- *
- * Use the _getcwd function in MSVCRT.
- *
- * Conformity: Almost POSIX.1 (no errno set)
- *
- * Supported OS: Windows XP.
- */
-EAPI char *evil_getcwd(char *buffer, size_t size);
-
 /*
  * Sockets and pipe related functions
  *

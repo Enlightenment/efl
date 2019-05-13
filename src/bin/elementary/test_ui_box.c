@@ -76,7 +76,7 @@ padding_slider_cb(void *data, const Efl_Event *event)
    Eo *win = data, *box;
 
    box = efl_key_wref_get(win, "box");
-   efl_pack_padding_set(box, val, val, EINA_TRUE);
+   efl_gfx_arrangement_content_padding_set(box, val, val, EINA_TRUE);
 }
 
 static void
@@ -97,8 +97,8 @@ alignh_slider_cb(void *data, const Efl_Event *event)
 
    box = efl_key_wref_get(win, "box");
    val = elm_slider_value_get(event->object);
-   efl_pack_align_get(box, NULL, &av);
-   efl_pack_align_set(box, val, av);
+   efl_gfx_arrangement_content_align_get(box, NULL, &av);
+   efl_gfx_arrangement_content_align_set(box, val, av);
 }
 
 static void
@@ -109,8 +109,8 @@ alignv_slider_cb(void *data, const Efl_Event *event)
 
    box = efl_key_wref_get(win, "box");
    val = elm_slider_value_get(event->object);
-   efl_pack_align_get(box, &ah, NULL);
-   efl_pack_align_set(box, ah, val);
+   efl_gfx_arrangement_content_align_get(box, &ah, NULL);
+   efl_gfx_arrangement_content_align_set(box, ah, val);
 }
 
 static void
@@ -240,7 +240,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    vbox = efl_add(EFL_UI_BOX_CLASS, win,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
-   efl_pack_padding_set(vbox, 10, 10, EINA_TRUE);
+   efl_gfx_arrangement_content_padding_set(vbox, 10, 10, EINA_TRUE);
    efl_gfx_hint_margin_set(vbox, 5, 5, 5, 5);
    elm_win_resize_object_add(win, vbox);
 
@@ -256,7 +256,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    hbox = efl_add(EFL_UI_BOX_CLASS, win,
                   efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL));
    efl_content_set(f, hbox);
-   efl_pack_padding_set(hbox, 10, 0, EINA_TRUE);
+   efl_gfx_arrangement_content_padding_set(hbox, 10, 0, EINA_TRUE);
 
 
    /* weights radio group */
@@ -533,7 +533,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                 efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL));
    efl_key_wref_set(win, "box", bx);
-   efl_pack_padding_set(bx, 10, 10, EINA_TRUE);
+   efl_gfx_arrangement_content_padding_set(bx, 10, 10, EINA_TRUE);
    efl_gfx_hint_align_set(bx, 0.5, 0.5);
    efl_gfx_hint_weight_set(bx, 1, 1);
    efl_content_set(f, bx);

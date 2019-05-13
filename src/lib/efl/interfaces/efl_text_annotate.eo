@@ -3,7 +3,7 @@ import efl_text_types;
 interface @beta Efl.Text_Annotate {
    [[Cursor API
    ]]
-   eo_prefix: efl_text;
+   c_prefix: efl_text;
    methods {
       // Annotation
       @property annotation {

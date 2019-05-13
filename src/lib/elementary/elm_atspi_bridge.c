@@ -4688,7 +4688,11 @@ _elm_atspi_bridge_key_filter(void *data, void *loop EINA_UNUSED, int type, void 
      }
 
    ke = _key_event_info_new(type, key_event, bridge);
-   if (!ke) return EINA_TRUE;
+   if (!ke)
+     {
+        eldbus_message_unref(req);
+        return EINA_TRUE;
+     }
 
    iter = eldbus_message_iter_get(req);
    _iter_marshall_key_event(iter, ke);

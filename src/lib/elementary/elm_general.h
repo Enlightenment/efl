@@ -21,6 +21,219 @@
 // Legacy types
 #include "elm_general.eot.h"
 
+/** Data on the event when an Elementary policy has changed
+ *
+ * @ingroup Elm_Event
+ */
+typedef struct _Elm_Event_Policy_Changed
+{
+  unsigned int policy; /**< the policy identifier */
+  int new_value; /**< value the policy had before the change */
+  int old_value; /**< new value the policy got */
+} Elm_Event_Policy_Changed;
+
+/** Possible values for the @ref ELM_POLICY_EXIT policy.
+ *
+ * @since 1.8
+ *
+ * @ingroup Elm
+ */
+typedef enum
+{
+  ELM_POLICY_EXIT_NONE = 0, /**< just quit the main loop on elm_exit() */
+  ELM_POLICY_EXIT_WINDOWS_DEL /**< delete all the windows after quitting the
+                               * main loop */
+} Elm_Policy_Exit;
+
+/** Possible values for the @ref ELM_POLICY_THROTTLE policy.
+ *
+ * @since 1.8
+ *
+ * @ingroup Elm
+ */
+typedef enum
+{
+  ELM_POLICY_THROTTLE_CONFIG = 0, /**< do whatever elementary config is
+                                   * configured to do */
+  ELM_POLICY_THROTTLE_HIDDEN_ALWAYS, /**< always throttle when all windows are
+                                      * no longer visible */
+  ELM_POLICY_THROTTLE_NEVER /**< never throttle when windows are all hidden,
+                             * regardless of config settings */
+} Elm_Policy_Throttle;
+
+/** Possible values for the #ELM_OBJECT_MULTI_SELECT_MODE policy.
+ *
+ * @since 1.8
+ *
+ * @ingroup Elm_Object
+ */
+typedef enum
+{
+  ELM_OBJECT_MULTI_SELECT_MODE_DEFAULT = 0, /**< default multiple select mode */
+  ELM_OBJECT_MULTI_SELECT_MODE_WITH_CONTROL, /**< disallow mutiple selection
+                                              * when clicked without control
+                                              * key pressed */
+  ELM_OBJECT_MULTI_SELECT_MODE_MAX /**< canary value: any value greater or equal
+                                    * to ELM_OBJECT_MULTI_SELECT_MODE_MAX is
+                                    * forbidden. */
+} Elm_Object_Multi_Select_Mode;
+
+/**
+ * @brief Line wrapping types. Type of word or character wrapping to use.
+ *
+ * See also @ref elm_entry_line_wrap_set, @ref
+ * elm_popup_content_text_wrap_type_set, @ref elm_label_line_wrap_set.
+ *
+ * @ingroup Elm_Wrap
+ */
+typedef enum
+{
+  ELM_WRAP_NONE = 0, /**< No wrap - value is zero. */
+  ELM_WRAP_CHAR, /**< Char wrap - wrap between characters. */
+  ELM_WRAP_WORD, /**< Word wrap - wrap in allowed wrapping points (as defined in
+                  * the unicode standard). */
+  ELM_WRAP_MIXED, /**< Mixed wrap - Word wrap, and if that fails, char wrap. */
+  ELM_WRAP_LAST /**< Sentinel value to indicate last enum field during iteration
+                 */
+} Elm_Wrap_Type;
+
+/** Text Format types.
+ *
+ * @ingroup Elm
+ */
+typedef enum
+{
+  ELM_TEXT_FORMAT_PLAIN_UTF8 = 0, /**< Plain UTF8 type */
+  ELM_TEXT_FORMAT_MARKUP_UTF8 /**< Markup UTF8 type */
+} Elm_Text_Format;
+
+/** Enum of entry's copy & paste policy.
+ *
+ * @ingroup Elm
+ */
+typedef enum
+{
+  ELM_CNP_MODE_MARKUP = 0, /**< copy & paste text with markup tag */
+  ELM_CNP_MODE_NO_IMAGE, /**< copy & paste text without item(image) tag */
+  ELM_CNP_MODE_PLAINTEXT /**< copy & paste text without markup tag */
+} Elm_Cnp_Mode;
+
+/** Defines if the item is of any special type (has subitems or it's the index
+ * of a group), or is just a simple item.
+ *
+ * @ingroup Elm_Genlist_Item
+ */
+typedef enum
+{
+  ELM_GENLIST_ITEM_NONE = 0, /**< Simple item. */
+  ELM_GENLIST_ITEM_TREE = 1 /* 1 >> 0 */, /**< This may be expanded and have
+                                           * child items. */
+  ELM_GENLIST_ITEM_GROUP = 2 /* 1 >> 1 */, /**< An index item of a group of
+                                            * items. this item can have child
+                                            * items. */
+  ELM_GENLIST_ITEM_MAX = 4 /* 1 >> 2 */ /**< Sentinel value to indicate last
+                                         * enum field during iteration */
+} Elm_Genlist_Item_Type;
+
+/** Defines the type of the item part Used while updating item's parts It can
+ * be used at updating multi fields.
+ *
+ * @ingroup Elm_Genlist_Item
+ */
+typedef enum
+{
+  ELM_GENLIST_ITEM_FIELD_ALL = 0, /**< Type all */
+  ELM_GENLIST_ITEM_FIELD_TEXT = 1 /* 1 >> 0 */, /**< Type text */
+  ELM_GENLIST_ITEM_FIELD_CONTENT = 2 /* 1 >> 1 */, /**< Type content */
+  ELM_GENLIST_ITEM_FIELD_STATE = 4 /* 1 >> 2 */ /**< Type state */
+} Elm_Genlist_Item_Field_Type;
+
+/** Defines where to position the item in the genlist.
+ *
+ * @ingroup Elm_Genlist_Item
+ */
+typedef enum
+{
+  ELM_GENLIST_ITEM_SCROLLTO_NONE = 0, /**< Nothing will happen, Don't use this
+                                       * value. */
+  ELM_GENLIST_ITEM_SCROLLTO_IN = 1 /* 1 >> 0 */, /**< To the nearest viewport.
+                                                  */
+  ELM_GENLIST_ITEM_SCROLLTO_TOP = 2 /* 1 >> 1 */, /**< To the top of viewport.
+                                                   */
+  ELM_GENLIST_ITEM_SCROLLTO_MIDDLE = 4 /* 1 >> 2 */, /**< To the middle of
+                                                      * viewport. */
+  ELM_GENLIST_ITEM_SCROLLTO_BOTTOM = 8 /* 1 >> 3 */ /**< To the bottom of
+                                                     * viewport. */
+} Elm_Genlist_Item_Scrollto_Type;
+
+/** Defines where to position the item in the genlist.
+ *
+ * @ingroup Elm_Gengrid_Item
+ */
+typedef enum
+{
+  ELM_GENGRID_ITEM_SCROLLTO_NONE = 0, /**< No scrollto. */
+  ELM_GENGRID_ITEM_SCROLLTO_IN = 1 /* 1 >> 0 */, /**< To the nearest viewport.
+                                                  */
+  ELM_GENGRID_ITEM_SCROLLTO_TOP = 2 /* 1 >> 1 */, /**< To the top of viewport.
+                                                   */
+  ELM_GENGRID_ITEM_SCROLLTO_MIDDLE = 4 /* 1 >> 2 */, /**< To the middle of
+                                                      * viewport. */
+  ELM_GENGRID_ITEM_SCROLLTO_BOTTOM = 8 /* 1 >> 3 */ /**< To the bottom of
+                                                     * viewport. */
+} Elm_Gengrid_Item_Scrollto_Type;
+
+/** Defines the type of the item part Used while updating item's parts. It can
+ * be used at updating multi fields.
+ *
+ * @ingroup Elm_Gengrid_Item
+ */
+typedef enum
+{
+  ELM_GENGRID_ITEM_FIELD_ALL = 0, /**< Type all */
+  ELM_GENGRID_ITEM_FIELD_TEXT = 1 /* 1 >> 0 */, /**< Type text */
+  ELM_GENGRID_ITEM_FIELD_CONTENT = 2 /* 1 >> 1 */, /**< Type content */
+  ELM_GENGRID_ITEM_FIELD_STATE = 4 /* 1 >> 2 */ /**< Type state */
+} Elm_Gengrid_Item_Field_Type;
+
+/**
+ * @brief Set list's resizing behavior, transverse axis scrolling and items
+ * cropping. See each mode's description for more details.
+ *
+ * @note Default value is @ref ELM_LIST_SCROLL.
+ *
+ * Values here don't work as bitmasks -- only one can be chosen at a time.
+ *
+ * @ingroup Elm_List
+ */
+typedef enum
+{
+  ELM_LIST_COMPRESS = 0, /**< The list won't set any of its size hints to inform
+                          * how a possible container should resize it. Then, if
+                          * it's not created as a "resize object", it might end
+                          * with zeroed dimensions. The list will respect the
+                          * container's geometry and, if any of its items won't
+                          * fit into its transverse axis, one won't be able to
+                          * scroll it in that direction. */
+  ELM_LIST_SCROLL, /**< Default value. This is the same as #ELM_LIST_COMPRESS,
+                    * with the exception that if any of its items won't fit
+                    * into its transverse axis, one will be able to scroll it
+                    * in that direction. */
+  ELM_LIST_LIMIT, /**< Sets a minimum size hint on the list object, so that
+                   * containers may respect it (and resize itself to fit the
+                   * child properly). More specifically, a minimum size hint
+                   * will be set for its transverse axis, so that the largest
+                   * item in that direction fits well. This is naturally bound
+                   * by the list object's maximum size hints, set externally.
+                   */
+  ELM_LIST_EXPAND, /**< Besides setting a minimum size on the transverse axis,
+                    * just like on @ref ELM_LIST_LIMIT, the list will set a
+                    * minimum size on the longitudinal axis, trying to reserve
+                    * space to all its children to be visible at a time. . This
+                    * is naturally bound by the list object's maximum size
+                    * hints, set externally. */
+  ELM_LIST_LAST /**< Indicates error if returned by elm_list_mode_get(). */
+} Elm_List_Mode;
 
 typedef enum
 {

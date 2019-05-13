@@ -1,7 +1,7 @@
 class @beta Efl.Ui.Theme extends Efl.Object
 {
    [[Efl Ui Theme class]]
-   eo_prefix: efl_ui_theme;
+   c_prefix: efl_ui_theme;
    data: Efl_Ui_Theme_Data;
    methods {
       @property default @class {

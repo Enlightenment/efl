@@ -4,7 +4,7 @@ class @beta Ector.Cairo.Software.Surface extends Ector.Cairo.Surface implements 
 
    Used to render ector content into a cairo software backend.
    ]]
-   eo_prefix: ector_cairo_software_surface;
+   c_prefix: ector_cairo_software_surface;
    methods {}
    implements {
       Ector.Buffer.pixels_set;

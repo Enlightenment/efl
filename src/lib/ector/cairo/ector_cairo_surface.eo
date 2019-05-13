@@ -6,7 +6,7 @@ class @beta Ector.Cairo.Surface extends Efl.Object implements Ector.Surface
 
    Used to render ector content into a cairo backend.
    ]]
-   eo_prefix: ector_cairo_surface;
+   c_prefix: ector_cairo_surface;
    methods {
       @property context {
          [[Cairo context]]

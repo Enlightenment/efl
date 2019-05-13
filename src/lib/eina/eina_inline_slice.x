@@ -20,6 +20,9 @@
 #define _EINA_INLINE_SLICE_H
 
 #include <string.h>
+#ifdef _WIN32
+# include <Evil.h>
+#endif
 
 static inline Eina_Slice
 eina_rw_slice_slice_get(const Eina_Rw_Slice rw_slice)
@@ -246,7 +249,7 @@ static inline char *
 eina_slice_strdup(const Eina_Slice slice)
 {
    if (slice.len != 0)
-     return strndup((const char *)slice.mem, slice.len);
+     return eina_strndup((const char *)slice.mem, slice.len);
    return strdup("");
 }
 
@@ -254,7 +257,7 @@ static inline char *
 eina_rw_slice_strdup(const Eina_Rw_Slice rw_slice)
 {
    if (rw_slice.len != 0)
-     return strndup((const char *)rw_slice.mem, rw_slice.len);
+     return eina_strndup((const char *)rw_slice.mem, rw_slice.len);
    return strdup("");
 }
 

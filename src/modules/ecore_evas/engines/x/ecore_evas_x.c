@@ -3528,7 +3528,6 @@ _ecore_evas_x_screen_geometry_get(const Ecore_Evas *ee, int *x, int *y, int *w, 
    if (!out)
      {
 norandr:
-        if (out) free(out);
         if (x) *x = 0;
         if (y) *y = 0;
         ecore_x_window_size_get(root, w, h);

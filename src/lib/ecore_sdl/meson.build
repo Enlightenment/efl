@@ -10,7 +10,7 @@ ecore_sdl_header_src = [
   'Ecore_Sdl_Keys.h'
 ]
 
-ecore_sdl_deps += dependency('sdl')
+ecore_sdl_deps += dependency('sdl2')
 
 ecore_sdl_lib = library('ecore_sdl',
     ecore_sdl_src,
