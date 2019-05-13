@@ -140,9 +140,6 @@ _evas_common_scale_rgba_sample_scale_mask(int y,
    DATA32 *buf, *dst_ptr;
    int x;
 
-   /* a scanline buffer */
-   buf = alloca(dst_clip_w * sizeof(DATA32));
-
    /* clamp/map to mask geometry */
    if (EINA_UNLIKELY(dst_clip_x < mask_x))
      dst_clip_x = mask_x;
@@ -152,6 +149,9 @@ _evas_common_scale_rgba_sample_scale_mask(int y,
      dst_clip_w = mask_x + mask_ie->cache_entry.w - dst_clip_x;
    if (EINA_UNLIKELY(dst_clip_y + dst_clip_h > mask_y + (int)mask_ie->cache_entry.h))
      dst_clip_h = mask_y + mask_ie->cache_entry.h - dst_clip_y;
+
+   /* a scanline buffer */
+   buf = alloca(dst_clip_w * sizeof(DATA32));
 
    dptr = dptr + dst_w * y;
    for (; y < dst_clip_h; y++)
