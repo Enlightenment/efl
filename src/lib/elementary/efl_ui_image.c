@@ -7,6 +7,7 @@
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_LAYOUT_CALC_PROTECTED
+#define EFL_UI_CLICKABLE_PROTECTED
 
 #include <Elementary.h>
 
@@ -120,10 +121,7 @@ _on_mouse_up(void *data,
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
    if (!wd->still_in) return;
 
-   if (elm_widget_is_legacy(obj))
-     evas_object_smart_callback_call(data, "clicked", NULL);
-   else
-     efl_event_callback_call(data, EFL_UI_EVENT_CLICKED, NULL);
+   evas_object_smart_callback_call(data, "clicked", NULL);
 }
 
 static Eina_Bool
@@ -578,8 +576,15 @@ _efl_ui_image_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Data *priv)
    evas_object_show(priv->hit_rect);
    evas_object_repeat_events_set(priv->hit_rect, EINA_TRUE);
 
-   evas_object_event_callback_add
-      (priv->hit_rect, EVAS_CALLBACK_MOUSE_UP, _on_mouse_up, obj);
+   if (elm_widget_is_legacy(obj))
+     {
+        evas_object_event_callback_add
+          (priv->hit_rect, EVAS_CALLBACK_MOUSE_UP, _on_mouse_up, obj);
+     }
+   else
+     {
+        efl_ui_clickable_util_bind_to_object(priv->hit_rect, obj);
+     }
 
    priv->smooth = EINA_TRUE;
    priv->fill_inside = EINA_TRUE;

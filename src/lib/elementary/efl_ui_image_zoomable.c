@@ -6,6 +6,7 @@
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_UI_SCROLL_MANAGER_PROTECTED
 #define EFL_UI_SCROLLBAR_PROTECTED
+#define EFL_UI_CLICKABLE_PROTECTED
 
 #include <Elementary.h>
 
@@ -830,19 +831,6 @@ _zoom_anim_cb(void *data, const Efl_Event *event EINA_UNUSED)
      }
 }
 
-static Eina_Bool
-_long_press_cb(void *data)
-{
-   EFL_UI_IMAGE_ZOOMABLE_DATA_GET(data, sd);
-
-   sd->long_timer = NULL;
-   sd->longpressed = EINA_TRUE;
-   efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_LONGPRESSED, NULL);
-
-   return ECORE_CALLBACK_CANCEL;
-}
-
 static void
 _mouse_down_cb(void *data,
                Evas *evas EINA_UNUSED,
@@ -856,24 +844,14 @@ _mouse_down_cb(void *data,
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) sd->on_hold = EINA_TRUE;
    else sd->on_hold = EINA_FALSE;
+
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      {
         if (elm_widget_is_legacy(data))
           evas_object_smart_callback_call(data, "clicked,double", NULL);
-        else
-          {
-             Efl_Ui_Clickable_Clicked clicked;
-             clicked.repeated = 1;
-             clicked.button = 1;
-             efl_event_callback_call(data, EFL_UI_EVENT_CLICKED, &clicked);
-          }
      }
    else
      efl_event_callback_legacy_call(data, EFL_UI_IMAGE_ZOOMABLE_EVENT_PRESS, NULL);
-   sd->longpressed = EINA_FALSE;
-   ecore_timer_del(sd->long_timer);
-   sd->long_timer = ecore_timer_add
-       (_elm_config->longpress_timeout, _long_press_cb, data);
 }
 
 static void
@@ -889,13 +867,11 @@ _mouse_up_cb(void *data,
    if (ev->button != 1) return;
    if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) sd->on_hold = EINA_TRUE;
    else sd->on_hold = EINA_FALSE;
-   ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
+
    if (!sd->on_hold)
      {
         if (elm_widget_is_legacy(data))
           evas_object_smart_callback_call(data, "clicked", NULL);
-        else
-          efl_event_callback_call(data, EFL_UI_EVENT_CLICKED, NULL);
      }
    sd->on_hold = EINA_FALSE;
 }
@@ -1889,6 +1865,7 @@ _efl_ui_image_zoomable_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Zoomable
      (priv->img, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, obj);
    evas_object_event_callback_add
      (priv->img, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, obj);
+   efl_ui_clickable_util_bind_to_object(priv->img, obj);
    evas_object_image_scale_hint_set(priv->img, EVAS_IMAGE_SCALE_HINT_STATIC);
 
    /* XXX: mmm... */
@@ -1937,7 +1914,6 @@ _efl_ui_image_zoomable_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Zoomable
    eina_stringshare_del(sd->file);
    ecore_job_del(sd->calc_job);
    ecore_timer_del(sd->scr_timer);
-   ecore_timer_del(sd->long_timer);
    efl_event_callback_del(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
    efl_event_callback_del(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
    efl_event_callback_del(obj, EFL_UI_EVENT_SCROLL, _scroll_cb, obj);

@@ -8,7 +8,7 @@
 
 /* spec-meta-start
       {"test-interface":"Efl.Ui.Clickable",
-       "test-widgets": ["Efl.Ui.Button"]
+       "test-widgets": ["Efl.Ui.Button", "Efl.Ui.Image"]
        }
    spec-meta-end
  */
@@ -44,6 +44,14 @@ prepare_window(void)
    efl_gfx_entity_geometry_set(win, EINA_RECT(0, 0, 60, 60));
    pos->x = 30;
    pos->y = 30;
+
+   if (efl_isa(widget, EFL_UI_IMAGE_CLASS))
+     {
+        efl_gfx_hint_size_min_set(widget, EINA_SIZE2D(200, 200));
+        efl_file_simple_load(widget, ELM_IMAGE_DATA_DIR"/images/bubble.png", NULL);
+        pos->x = 100;
+        pos->y = 100;
+     }
 
    evas_smart_objects_calculate(evas_object_evas_get(win));
    evas_event_callback_add(evas_object_evas_get(win), EVAS_CALLBACK_RENDER_POST, prepare_window_norendered, pos);
