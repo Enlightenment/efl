@@ -1284,6 +1284,16 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
             @in data: uint;
          }
       }
+      emit_event_with_float {
+         params {
+            @in data: float;
+         }
+      }
+      emit_event_with_double {
+         params {
+            @in data: double;
+         }
+      }
       emit_event_with_obj {
          params {
             @in data: Dummy.Test_Object;
@@ -1422,11 +1432,38 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       evt,with,bool: bool;
       evt,with,int @hot: int;
       evt,with,uint @hot: uint;
+      evt,with,float @hot: float;
+      evt,with,double @hot: double;
       evt,with,obj @hot: Dummy.Test_Object;
       evt,with,error @hot: Eina.Error;
       evt,with,struct @hot: Dummy.StructSimple;
       evt,with,struct,complex @hot: Dummy.StructComplex;
       evt,with,array @hot: const(array<string>);
       evt_with,under @hot: void;
+
+      // Extra events to test generation, but not invocation
+      evt,with,byte: byte;
+      evt,with,ubyte: ubyte;
+
+      evt,with,char: char;
+
+      evt,with,short: short;
+      evt,with,ushort: ushort;
+
+      evt,with,llong: llong;
+      evt,with,ullong: ullong;
+
+      evt,with,int8 @hot: int8;
+      evt,with,uint8 @hot: uint8;
+
+      evt,with,int16 @hot: int16;
+      evt,with,uint16 @hot: uint16;
+
+      evt,with,int32 @hot: int32;
+      evt,with,uint32 @hot: uint32;
+
+      evt,with,int64 @hot: int64;
+      evt,with,uint64 @hot: uint64;
+
    }
 }
