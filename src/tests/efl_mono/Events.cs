@@ -100,6 +100,33 @@ class TestEoEvents
         Test.AssertEquals<uint>(0xbeef, received_uint);
     }
 
+    public static void event_with_float_payload()
+    {
+        var obj = new Dummy.TestObject();
+        float received_float = 0;
+        obj.EvtWithFloatEvt += (object sender, Dummy.TestObjectEvtWithFloatEvt_Args e) => {
+            received_float = e.arg;
+        };
+
+        obj.EmitEventWithFloat(3.14f);
+
+        Test.AssertAlmostEquals(3.14f, received_float);
+    }
+
+    public static void event_with_double_payload()
+    {
+        var obj = new Dummy.TestObject();
+        double received_double = 0;
+        double reference = float.MaxValue + 42;
+        obj.EvtWithDoubleEvt += (object sender, Dummy.TestObjectEvtWithDoubleEvt_Args e) => {
+            received_double = e.arg;
+        };
+
+        obj.EmitEventWithDouble(reference);
+
+        Test.AssertAlmostEquals(reference, received_double);
+    }
+
     public static void event_with_object_payload()
     {
         var obj = new Dummy.TestObject();

@@ -3782,17 +3782,27 @@ void _dummy_test_object_emit_event_with_string(Eo *obj, EINA_UNUSED Dummy_Test_O
 
 void _dummy_test_object_emit_event_with_bool(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Bool data)
 {
-    efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_BOOL, (void *) (uintptr_t) data);
+    efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_BOOL, &data);
 }
 
 void _dummy_test_object_emit_event_with_int(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, int data)
 {
-    efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_INT, (void *) (uintptr_t) data);
+    efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_INT, &data);
 }
 
 void _dummy_test_object_emit_event_with_uint(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, unsigned int data)
 {
-    efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_UINT, (void *) (uintptr_t) data);
+    efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_UINT, &data);
+}
+
+void _dummy_test_object_emit_event_with_float(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, float data)
+{
+    efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_FLOAT, &data);
+}
+
+void _dummy_test_object_emit_event_with_double(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, double data)
+{
+    efl_event_callback_legacy_call(obj, DUMMY_TEST_OBJECT_EVENT_EVT_WITH_DOUBLE, &data);
 }
 
 void _dummy_test_object_emit_event_with_obj(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eo *data)
