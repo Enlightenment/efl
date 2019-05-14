@@ -7,6 +7,7 @@
 #define EFL_ACCESS_EDITABLE_TEXT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_PART_PROTECTED
+#define EFL_UI_CLICKABLE_PROTECTED
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
@@ -1412,8 +1413,8 @@ _menu_call(Evas_Object *obj)
      }
 }
 
-static Eina_Bool
-_long_press_cb(void *data)
+static void
+_long_press_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    EFL_UI_TEXT_DATA_GET(data, sd);
 
@@ -1427,8 +1428,6 @@ _long_press_cb(void *data)
 
    sd->longpress_timer = NULL;
    efl_event_callback_call(data, EFL_UI_EVENT_LONGPRESSED, NULL);
-
-   return ECORE_CALLBACK_CANCEL;
 }
 
 static void
@@ -1495,15 +1494,9 @@ _mouse_down_cb(void *data,
    sd->downy = ev->canvas.y;
    sd->long_pressed = EINA_FALSE;
 
-    if (ev->button == 1)
-      {
-         ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
-         sd->longpress_timer = ecore_timer_add
-           (_elm_config->longpress_timeout, _long_press_cb, data);
-      }
     /* If right button is pressed and context menu disabled is true,
      * then only context menu will appear */
-   else if (ev->button == 3 && (!_elm_config->context_menu_disabled))
+   if (ev->button == 3 && (!_elm_config->context_menu_disabled))
      {
         if (_elm_config->desktop_entry)
           {
@@ -2126,6 +2119,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "text");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_event_callback_add(obj, EFL_UI_EVENT_LONGPRESSED, _long_press_cb, obj);
 
    text_obj = efl_add(EFL_UI_INTERNAL_TEXT_INTERACTIVE_CLASS, obj);
    efl_event_callback_forwarder_add(text_obj, EFL_UI_TEXT_EVENT_CHANGED_USER, obj);
@@ -2215,6 +2209,7 @@ _efl_ui_text_efl_object_finalize(Eo *obj,
      (sd->entry_edje, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, obj);
    evas_object_event_callback_add
      (sd->entry_edje, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, obj);
+   efl_ui_clickable_util_bind_to_object(sd->entry_edje, obj);
 
    efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
          _text_size_changed_cb, obj);
