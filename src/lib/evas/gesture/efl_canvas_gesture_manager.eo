@@ -8,13 +8,19 @@ class @beta Efl.Canvas.Gesture_Manager extends Efl.Object
          params {
             @in recognizer: Efl.Canvas.Gesture_Recognizer; [[The gesture recognizer object]]
          }
-         return: ptr(const(Efl.Event_Description)); [[Returns the Efl.Event_Description type the recognizer supports]]
       }
       recognizer_unregister {
          [[This function is called to unregister a Efl.Canvas.Gesture_Recognizer]]
          params {
             @in recognizer: Efl.Canvas.Gesture_Recognizer; [[The gesture recognizer object]]
          }
+      }
+      recognizer_get {
+         [[Gets event type's recognizer]]
+         params {
+            @in gesture_type: Efl.Canvas.Gesture_Recognizer_Type; [[The gesture type]]
+         }
+         return: const(Efl.Canvas.Gesture_Recognizer); [[The gesture recognizer]]
       }
       @property config {
          [[This property holds the config value for the recognizer]]

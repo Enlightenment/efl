@@ -258,6 +258,15 @@ end:
    return efl_finalize(efl_super(eo_obj, MY_CLASS));
 }
 
+EOLIAN const Efl_Canvas_Gesture_Manager *
+_efl_canvas_object_gesture_manager_get(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *pd)
+{
+   if (!pd->layer || !pd->layer->evas)
+     return NULL;
+
+   return (pd->layer->evas)->gesture_manager;
+}
+
 void
 evas_object_change_reset(Evas_Object_Protected_Data *obj)
 {

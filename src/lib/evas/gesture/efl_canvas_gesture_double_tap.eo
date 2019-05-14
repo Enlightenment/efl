@@ -1,0 +1,9 @@
+class @beta Efl.Canvas.Gesture_Double_Tap extends Efl.Canvas.Gesture
+{
+   [[EFL Gesture Double Tap class]]
+   data: null;
+   c_prefix: efl_gesture_double_tap;
+   implements {
+      Efl.Object.constructor;
+   }
+}

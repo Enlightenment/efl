@@ -1,0 +1,13 @@
+interface @beta Efl.Gesture.Events
+{
+   event_prefix: efl;
+   events {
+      gesture,tap: Efl.Canvas.Gesture_Tap; [[Event for tap gesture]]
+      gesture,double_tap: Efl.Canvas.Gesture_Double_Tap; [[Event for double tap gesture]]
+	  gesture,triple_tap: Efl.Canvas.Gesture_Triple_Tap; [[Event for triple tap gesture]]
+	  gesture,long_tap: Efl.Canvas.Gesture_Long_Tap; [[Event for long tap gesture]]
+      gesture,momentum: Efl.Canvas.Gesture_Momentum; [[Event for momentum gesture]]
+	  gesture,flick: Efl.Canvas.Gesture_Flick; [[Event for flick gesture]]
+	  gesture,zoom: Efl.Canvas.Gesture_Zoom; [[Event for zoom gesture]]
+   }
+}

@@ -13,7 +13,7 @@ class @beta Efl.Canvas.Gesture_Touch extends Efl.Object
          params {
             @in tool       : int; [[The finger id ]]
             @in pos        : Eina.Vector2; [[Position of the event]]
-            @in timestamp  : double; [[The timestamp of the event]]
+            @in timestamp  : uint; [[The timestamp of the event]]
             @in action     : Efl.Pointer.Action; [[action of the event]]
          }
       }
@@ -36,7 +36,21 @@ class @beta Efl.Canvas.Gesture_Touch extends Efl.Object
          [[Returns the first touch point.]]
          get {}
          values {
-            pos: Eina.Vector2; [[The start position.]]
+            pos: Eina.Position2D; [[The start position.]]
+         }
+      }
+      @property cur_point {
+         [[Returns the current touch point.]]
+         get {}
+         values {
+            pos: Eina.Position2D; [[The current position.]]
+         }
+      }
+      @property cur_timestamp {
+         [[Returns the timestamp.]]
+         get {}
+         values {
+            time: uint; [[The timestamp.]]
          }
       }
       @property multi_touch {

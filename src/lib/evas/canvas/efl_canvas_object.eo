@@ -8,7 +8,7 @@ struct Efl.Event_Animator_Tick {
 
 abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack,
                             Efl.Input.Interface, Efl.Gfx.Hint,
-                            Efl.Gfx.Mapping, Efl.Ui.I18n, Efl.Canvas.Pointer
+                            Efl.Gfx.Mapping, Efl.Ui.I18n, Efl.Canvas.Pointer, Efl.Gesture.Events
 {
    [[Efl canvas object abstract class
 
@@ -493,6 +493,10 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
          values {
             return: bool; [[$true if the coords are inside the object, $false otherwise]]
          }
+      }
+      gesture_manager_get @beta {
+         [[Returns current canvas's gesture manager]]
+         return: const(Efl.Canvas.Gesture_Manager); [[The gesture manager]]
       }
    }
    implements {

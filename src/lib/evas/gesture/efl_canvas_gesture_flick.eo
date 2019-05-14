@@ -1,0 +1,20 @@
+import eina_types;
+
+class @beta Efl.Canvas.Gesture_Flick extends Efl.Canvas.Gesture
+{
+   [[EFL Gesture Flick class]]
+   c_prefix: efl_gesture_flick;
+   methods {
+      momentum_get {
+         [[Gets flick gesture momentum value]]
+         return: Eina.Vector2; [[The momentum vector]]
+	  }
+      angle_get {
+         [[Gets flick direction angle]]
+         return: double; [[The angle value]]
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+   }
+}
