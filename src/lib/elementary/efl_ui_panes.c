@@ -6,6 +6,7 @@
 #define ELM_LAYOUT_PROTECTED
 #define EFL_GFX_HINT_PROTECTED
 #define EFL_PART_PROTECTED
+#define EFL_UI_CLICKABLE_PROTECTED
 
 #include <Elementary.h>
 
@@ -183,6 +184,7 @@ _on_pressed(void *data,
             const char *source EINA_UNUSED)
 {
    efl_event_callback_legacy_call(data, ELM_PANES_EVENT_PRESS, NULL);
+   efl_ui_clickable_press(data, 1);
 }
 
 static void
@@ -193,7 +195,7 @@ _on_unpressed(void *data,
 {
    EFL_UI_PANES_DATA_GET(data, sd);
    efl_event_callback_legacy_call(data, ELM_PANES_EVENT_UNPRESS, NULL);
-
+   efl_ui_clickable_unpress(data, 1);
    if (sd->double_clicked)
      {
         evas_object_smart_callback_call(data, "clicked,double", NULL);
@@ -437,18 +439,7 @@ _efl_ui_panes_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UN
      }
    else
      {
-        edje_object_signal_callback_add
-           (wd->resize_obj, "efl,action,click", "*",
-            _on_clicked, obj);
-        edje_object_signal_callback_add
-           (wd->resize_obj, "efl,action,click,double", "*",
-            _double_clicked, obj);
-        edje_object_signal_callback_add
-           (wd->resize_obj, "efl,action,press", "*",
-            _on_pressed, obj);
-        edje_object_signal_callback_add
-           (wd->resize_obj, "efl,action,unpress", "*",
-            _on_unpressed, obj);
+        efl_ui_clickable_util_bind_to_theme(wd->resize_obj, obj);
      }
    evas_object_event_callback_add
      (wd->resize_obj, EVAS_CALLBACK_RESIZE,

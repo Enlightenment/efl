@@ -8,7 +8,7 @@
 
 /* spec-meta-start
       {"test-interface":"Efl.Ui.Clickable",
-       "test-widgets": ["Efl.Ui.Button", "Efl.Ui.Image"]
+       "test-widgets": ["Efl.Ui.Button", "Efl.Ui.Image", "Efl.Ui.Panes"]
        }
    spec-meta-end
  */
