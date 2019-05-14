@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Tab_Bar extends Efl.Ui.Layout_Base implements Efl.Ui.Clickable
+class @beta Efl.Ui.Tab_Bar extends Efl.Ui.Layout_Base
 {
    [[Tab Bar class]]
    methods {
