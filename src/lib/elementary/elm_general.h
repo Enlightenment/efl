@@ -32,6 +32,41 @@ typedef struct _Elm_Event_Policy_Changed
   int old_value; /**< new value the policy got */
 } Elm_Event_Policy_Changed;
 
+/** Policy identifiers.
+ *
+ * @ingroup Elm
+ */
+typedef enum
+{
+  ELM_POLICY_QUIT = 0, /**< under which circumstances the application should
+                        * quit automatically. See also @ref ELM_POLICY_QUIT. */
+  ELM_POLICY_EXIT, /**< defines elm_exit() behaviour. See also
+                    * @ref ELM_POLICY_EXIT.
+                    *
+                    * @since 1.8 */
+  ELM_POLICY_THROTTLE, /**< defines how throttling should work. See also
+                        * @ref ELM_POLICY_THROTTLE
+                        *
+                        * @since 1.8 */
+  ELM_POLICY_LAST /**< Sentinel value to indicate last enum field during
+                   * iteration */
+} Elm_Policy;
+
+/** Possible values for the @ref ELM_POLICY_QUIT policy
+ *
+ * @ingroup Elm
+ */
+typedef enum
+{
+  ELM_POLICY_QUIT_NONE = 0, /**< never quit the application automatically */
+  ELM_POLICY_QUIT_LAST_WINDOW_CLOSED, /**< quit when the application's last
+                                       * window is closed */
+  ELM_POLICY_QUIT_LAST_WINDOW_HIDDEN /**< quit when the application's last
+                                      * window is hidden
+                                      *
+                                      * @since 1.14 */
+} Elm_Policy_Quit;
+
 /** Possible values for the @ref ELM_POLICY_EXIT policy.
  *
  * @since 1.8

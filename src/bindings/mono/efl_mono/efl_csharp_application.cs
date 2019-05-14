@@ -61,7 +61,7 @@ public abstract class Application
 #endif
             elm_init(0, IntPtr.Zero);
 
-            elm_policy_set((int)Elm.Policy.Quit, (int)Elm.PolicyQuit.LastWindowHidden);
+            Efl.Ui.Win.ExitOnAllWindowsClosed = new Eina.Value(0);
         }
 
         initComponent = component;
