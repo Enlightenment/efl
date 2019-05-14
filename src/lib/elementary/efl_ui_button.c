@@ -6,6 +6,7 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_PART_PROTECTED
+#define EFL_UI_CLICKABLE_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -75,7 +76,10 @@ _activate(Evas_Object *obj)
              if (elm_widget_is_legacy(obj))
                evas_object_smart_callback_call(obj, "clicked", NULL);
              else
-               efl_event_callback_call(obj, EFL_UI_EVENT_CLICKED, NULL);
+               {
+                  efl_ui_clickable_press(obj, 1);
+                  efl_ui_clickable_unpress(obj, 1);
+               }
           }
      }
 }
@@ -102,7 +106,10 @@ _efl_ui_button_efl_ui_widget_on_access_activate(Eo *obj, Efl_Ui_Button_Data *_pd
    if (elm_widget_is_legacy(obj))
      evas_object_smart_callback_call(obj, "clicked", NULL);
    else
-     efl_event_callback_call(obj, EFL_UI_EVENT_CLICKED, NULL);
+     {
+        efl_ui_clickable_press(obj, 1);
+        efl_ui_clickable_unpress(obj, 1);
+     }
 
    if (elm_widget_is_legacy(obj))
      elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
@@ -184,9 +191,6 @@ _on_pressed_signal(void *data,
    if (elm_widget_is_legacy(data))
      evas_object_smart_callback_call
         (data, "pressed", NULL);
-   else
-     efl_event_callback_call
-        (data, EFL_UI_EVENT_PRESSED, NULL);
 
 }
 
@@ -204,9 +208,6 @@ _on_unpressed_signal(void *data,
    if (elm_widget_is_legacy(data))
      evas_object_smart_callback_call
         (data, "unpressed", NULL);
-   else
-     efl_event_callback_call
-        (data, EFL_UI_EVENT_UNPRESSED, NULL);
 }
 
 static char *
@@ -253,14 +254,12 @@ _efl_ui_button_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Button_Data *_pd EINA_
    else
      {
         edje_object_signal_callback_add
-           (wd->resize_obj, "efl,action,click", "*",
-            _on_clicked_signal, obj);
-        edje_object_signal_callback_add
            (wd->resize_obj, "efl,action,press", "*",
             _on_pressed_signal, obj);
         edje_object_signal_callback_add
            (wd->resize_obj, "efl,action,unpress", "*",
             _on_unpressed_signal, obj);
+        efl_ui_clickable_util_bind_to_theme(wd->resize_obj, obj);
      }
 
    _elm_access_object_register(obj, wd->resize_obj);

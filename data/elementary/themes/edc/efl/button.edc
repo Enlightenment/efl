@@ -313,6 +313,10 @@ group { name: "efl/button";
          action: SIGNAL_EMIT "efl,action,unpress" "efl";
          after: "button_unclick_anim";
       }
+      program { name: "button_pressed_out";
+         signal: "mouse,pressed,out"; source: "event";
+         action: SIGNAL_EMIT "efl,action,mouse_out" "efl";
+      }
       program { name: "button_unclick_anim";
          script {
             new m = get_int(btmode);
@@ -330,10 +334,6 @@ group { name: "efl/button";
          action: STATE_SET "default" 0.0;
          in: 0.5 0.0;
          target: "base";
-      }
-      program {
-         signal: "mouse,clicked,1"; source: "event";
-         action: SIGNAL_EMIT "efl,action,click" "efl";
       }
       program { name: "button_text_visible";
          signal: "efl,state,text,set"; source: "efl";
