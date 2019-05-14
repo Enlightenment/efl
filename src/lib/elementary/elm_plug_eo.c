@@ -54,6 +54,6 @@ static const Efl_Class_Description _elm_plug_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(elm_plug_class_get, &_elm_plug_class_desc, EFL_UI_WIDGET_CLASS, EFL_UI_CLICKABLE_INTERFACE, EFL_UI_LEGACY_INTERFACE, NULL);
+EFL_DEFINE_CLASS(elm_plug_class_get, &_elm_plug_class_desc, EFL_UI_WIDGET_CLASS, EFL_UI_CLICKABLE_MIXIN, EFL_UI_LEGACY_INTERFACE, NULL);
 
 #include "elm_plug_eo.legacy.c"

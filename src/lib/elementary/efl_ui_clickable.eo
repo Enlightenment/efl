@@ -1,0 +1,47 @@
+struct Efl.Ui.Clickable_Clicked {
+   [[A struct that expresses a click in elementary.]]
+   repeated : int; [[The amount of how often the clicked event was repeated in a certain amount of time]]
+   button : int; [[The Button that is pressed]]
+}
+
+mixin @beta Efl.Ui.Clickable
+{
+   [[Efl UI clickable interface]]
+   event_prefix: efl_ui;
+   methods {
+      press @protected {
+         [[Change internal states that a button got pressed.
+
+           When the button is already pressed, this is silently ignored.
+         ]]
+         params {
+            button : uint; [[The number of the button. FIXME ensure to have the right interval of possible input]]
+         }
+      }
+      unpress @protected {
+         [[Change internal states that a button got unpressed.
+
+           When the button is not pressed, this is silently ignored.
+         ]]
+         params {
+            button : uint; [[The number of the button. FIXME ensure to have the right interval of possible input]]
+         }
+      }
+      button_state_reset @protected {
+         [[This aborts the internal state after a press call.
+
+           This will stop the timer for longpress. And set the state of the clickable mixin back into the unpressed state.
+         ]]
+         params {
+            button : uint;
+         }
+      }
+   }
+   events {
+      clicked: Efl.Ui.Clickable_Clicked; [[Called when object is in sequence pressed and unpressed, by the primary button]]
+      clicked,any : Efl.Ui.Clickable_Clicked; [[Called when object is in sequence pressed and unpressed by any button. The button that triggered the event can be found in the event information.]]
+      pressed: int; [[Called when the object is pressed, event_info is the button that got pressed]]
+      unpressed: int; [[Called when the object is no longer pressed, event_info is the button that got pressed]]
+      longpressed: int; [[Called when the object receives a long press, event_info is the button that got pressed]]
+   }
+}

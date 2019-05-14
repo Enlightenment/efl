@@ -72,7 +72,6 @@
 #include "interfaces/efl_ui_factory_bind.eo.c"
 
 #include "interfaces/efl_ui_draggable.eo.c"
-#include "interfaces/efl_ui_clickable.eo.c"
 #include "interfaces/efl_ui_scrollable.eo.c"
 #include "interfaces/efl_ui_scrollable_interactive.eo.c"
 #include "interfaces/efl_ui_scrollbar.eo.c"

@@ -861,7 +861,12 @@ _mouse_down_cb(void *data,
         if (elm_widget_is_legacy(data))
           evas_object_smart_callback_call(data, "clicked,double", NULL);
         else
-          efl_event_callback_call(data, EFL_UI_EVENT_CLICKED_DOUBLE, NULL);
+          {
+             Efl_Ui_Clickable_Clicked clicked;
+             clicked.repeated = 1;
+             clicked.button = 1;
+             efl_event_callback_call(data, EFL_UI_EVENT_CLICKED, &clicked);
+          }
      }
    else
      efl_event_callback_legacy_call(data, EFL_UI_IMAGE_ZOOMABLE_EVENT_PRESS, NULL);

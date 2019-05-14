@@ -88,4 +88,4 @@ static const Efl_Class_Description _elm_fileselector_entry_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(elm_fileselector_entry_class_get, &_elm_fileselector_entry_class_desc, EFL_UI_LAYOUT_BASE_CLASS, ELM_INTERFACE_FILESELECTOR_INTERFACE, EFL_UI_CLICKABLE_INTERFACE, EFL_UI_SELECTABLE_INTERFACE, EFL_UI_LEGACY_INTERFACE, NULL);
+EFL_DEFINE_CLASS(elm_fileselector_entry_class_get, &_elm_fileselector_entry_class_desc, EFL_UI_LAYOUT_BASE_CLASS, ELM_INTERFACE_FILESELECTOR_INTERFACE, EFL_UI_CLICKABLE_MIXIN, EFL_UI_SELECTABLE_INTERFACE, EFL_UI_LEGACY_INTERFACE, NULL);
