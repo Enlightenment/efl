@@ -15995,11 +15995,6 @@ _efl_canvas_text_efl_text_font_font_bitmap_scalable_get(const Eo *obj EINA_UNUSE
    _FMT(x) = v; \
    _canvas_text_format_changed(obj, o);
 
-#define _FMT_DBL_SET(x, v) \
-   if (EINA_DBL_EQ(_FMT(x), v)) return; \
-   _FMT(x) = v; \
-   _canvas_text_format_changed(obj, o);
-
 /* Helper: updates format field of extended format information, and informs if changed. */
 #define _FMT_INFO_SET_START(x, v) \
    Eina_Bool changed = EINA_FALSE; \
@@ -16453,8 +16448,9 @@ _efl_canvas_text_efl_text_format_halign_set(Eo *obj, Efl_Canvas_Text_Data *o,
       double value)
 {
    ASYNC_BLOCK;
-   _FMT_DBL_SET(halign, value);
+   if (EINA_DBL_EQ(_FMT(halign), value)) return;
    _FMT(halign_auto) = EVAS_TEXTBLOCK_ALIGN_AUTO_NONE;
+   _FMT_SET(halign, value);
 }
 
 static double
