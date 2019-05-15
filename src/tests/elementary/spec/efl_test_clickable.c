@@ -8,7 +8,7 @@
 
 /* spec-meta-start
       {"test-interface":"Efl.Ui.Clickable",
-       "test-widgets": ["Efl.Ui.Button", "Efl.Ui.Image", "Efl.Ui.Panes"]
+       "test-widgets": ["Efl.Ui.Button", "Efl.Ui.Image", "Efl.Ui.Panes", "Efl.Ui.Frame"]
        }
    spec-meta-end
  */
@@ -51,6 +51,12 @@ prepare_window(void)
         efl_file_simple_load(widget, ELM_IMAGE_DATA_DIR"/images/bubble.png", NULL);
         pos->x = 100;
         pos->y = 100;
+     }
+   else if (efl_isa(widget, EFL_UI_FRAME_CLASS))
+     {
+        efl_text_set(widget, "Test, here has to be text in order to make the frame y > 0");
+        pos->x = 30;
+        pos->y = 10;
      }
 
    evas_smart_objects_calculate(evas_object_evas_get(win));

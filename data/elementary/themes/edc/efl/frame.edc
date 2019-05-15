@@ -131,9 +131,14 @@ group { name: "efl/frame";
          transition: DECELERATE 0.3;
          after: "signal";
       }
-      program {
-         signal:  "mouse,up,1"; source:  "event";
-         action:  SIGNAL_EMIT "efl,action,click" "efl";
+      program {signal: "mouse,down,1"; source: "event"; // for "press" smart callback
+         action: SIGNAL_EMIT "efl,action,press" "efl";
+      }
+      program { signal: "mouse,up,1"; source: "event"; // for "unpress" smart callback
+         action: SIGNAL_EMIT "efl,action,unpress" "efl";
+      }
+      program { signal: "mouse,pressed,out"; source: "event";
+         action: SIGNAL_EMIT "efl,action,mouse_out" "efl";
       }
       program {
          signal:  "efl,action,toggle"; source: "efl";

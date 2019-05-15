@@ -5,6 +5,7 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_PART_PROTECTED
+#define EFL_UI_CLICKABLE_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -87,10 +88,7 @@ _on_frame_clicked(void *data,
         sd->anim = EINA_TRUE;
         elm_widget_tree_unfocusable_set(data, sd->collapsed);
      }
-   if (elm_widget_is_legacy(data))
-     evas_object_smart_callback_call(data, "clicked", NULL);
-   else
-     efl_event_callback_call(data, EFL_UI_EVENT_CLICKED, NULL);
+   evas_object_smart_callback_call(data, "clicked", NULL);
 }
 
 /* using deferred sizing evaluation, just like the parent */
@@ -104,6 +102,25 @@ _efl_ui_frame_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Frame_Data *sd)
         /* calling OWN sizing evaluate code here */
         _sizing_eval(obj, sd);
         ld->needs_size_calc = EINA_FALSE;
+     }
+}
+
+static void
+_clicked_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   EFL_UI_FRAME_DATA_GET(data, sd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
+
+   if (sd->anim) return;
+
+   if (sd->collapsible)
+     {
+        efl_event_callback_add(wd->resize_obj, EFL_LAYOUT_EVENT_RECALC, _recalc, data);
+        elm_layout_signal_emit(data, "efl,action,toggle", "efl");
+
+        sd->collapsed++;
+        sd->anim = EINA_TRUE;
+        elm_widget_tree_unfocusable_set(data, sd->collapsed);
      }
 }
 
@@ -130,9 +147,8 @@ _efl_ui_frame_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Frame_Data *_pd EINA_UN
         edje_object_signal_callback_add
            (wd->resize_obj, "efl,anim,done", "efl",
             _on_recalc_done, obj);
-        edje_object_signal_callback_add
-           (wd->resize_obj, "efl,action,click", "efl",
-            _on_frame_clicked, obj);
+        efl_ui_clickable_util_bind_to_theme(wd->resize_obj, obj);
+        efl_event_callback_add(obj, EFL_UI_EVENT_CLICKED, _clicked_cb, obj);
      }
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
