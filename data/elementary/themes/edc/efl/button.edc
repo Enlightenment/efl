@@ -296,9 +296,9 @@ group { name: "efl/button";
       }
    }
    programs {
+      EFL_UI_CLICKABLE_PART_BIND("event")
       program {
          signal: "mouse,down,1"; source: "event";
-         action: SIGNAL_EMIT "efl,action,press" "efl";
          after: "button_click_anim";
       }
       program { name: "button_click_anim";
@@ -310,12 +310,7 @@ group { name: "efl/button";
       }
       program { name: "button_unclick";
          signal: "mouse,up,1"; source: "event";
-         action: SIGNAL_EMIT "efl,action,unpress" "efl";
          after: "button_unclick_anim";
-      }
-      program { name: "button_pressed_out";
-         signal: "mouse,pressed,out"; source: "event";
-         action: SIGNAL_EMIT "efl,action,mouse_out" "efl";
       }
       program { name: "button_unclick_anim";
          script {

@@ -167,6 +167,7 @@ collections {
 #include "edc/O/icons.edc"
 
 // New efl ui themes
+#include "edc/efl/macros.edc"
 #include "edc/efl/bg.edc"
 #include "edc/efl/button.edc"
 #include "edc/efl/calendar.edc"
