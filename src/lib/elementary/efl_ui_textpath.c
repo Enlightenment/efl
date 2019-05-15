@@ -747,7 +747,18 @@ _efl_ui_textpath_ellipsis_get(const Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *p
 }
 
 /* Efl.Part begin */
-ELM_PART_OVERRIDE(efl_ui_textpath, EFL_UI_TEXTPATH, Efl_Ui_Textpath_Data)
+
+static Eina_Bool
+_part_is_efl_ui_textpath_part(const Eo *obj EINA_UNUSED, const char *part)
+{
+   //Use Efl.Ui.Widget's "background" and "shadow" parts
+   if (eina_streq(part, "background") || eina_streq(part, "shadow"))
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+ELM_PART_OVERRIDE_PARTIAL(efl_ui_textpath, EFL_UI_TEXTPATH, Efl_Ui_Textpath_Data, _part_is_efl_ui_textpath_part)
 ELM_PART_OVERRIDE_TEXT_SET(efl_ui_textpath, EFL_UI_TEXTPATH, Efl_Ui_Textpath_Data)
 ELM_PART_OVERRIDE_TEXT_GET(efl_ui_textpath, EFL_UI_TEXTPATH, Efl_Ui_Textpath_Data)
 #include "efl_ui_textpath_part.eo.c"

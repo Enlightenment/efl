@@ -4059,7 +4059,17 @@ _efl_ui_text_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *pd,
 
 #undef STRCMP
 
-ELM_PART_OVERRIDE(efl_ui_text, EFL_UI_TEXT, Efl_Ui_Text_Data)
+static Eina_Bool
+_part_is_efl_ui_text_part(const Eo *obj EINA_UNUSED, const char *part)
+{
+   //Use Efl.Ui.Widget's "background" and "shadow" parts
+   if (eina_streq(part, "background") || eina_streq(part, "shadow"))
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+ELM_PART_OVERRIDE_PARTIAL(efl_ui_text, EFL_UI_TEXT, Efl_Ui_Text_Data, _part_is_efl_ui_text_part)
 ELM_PART_OVERRIDE_TEXT_SET(efl_ui_text, EFL_UI_TEXT, Efl_Ui_Text_Data)
 ELM_PART_OVERRIDE_TEXT_GET(efl_ui_text, EFL_UI_TEXT, Efl_Ui_Text_Data)
 #include "efl_ui_text_part.eo.c"
