@@ -9,7 +9,7 @@
 #include <io.h>
 #include <lmcons.h>
 
-#include "evil_macro.h"
+#include "evil_private.h"
 #include "pwd.h"
 
 

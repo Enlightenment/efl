@@ -3,7 +3,19 @@
 
 #include <sys/types.h>
 
-#include <evil_macro.h>
+#ifdef EAPI
+# undef EAPI
+#endif
+
+#ifdef EFL_BUILD
+# ifdef DLL_EXPORT
+#  define EAPI __declspec(dllexport)
+# else
+#  define EAPI
+# endif
+#else
+# define EAPI __declspec(dllimport)
+#endif
 
 
 #ifdef __cplusplus
@@ -148,7 +160,8 @@ EAPI int   munmap(void  *addr,
 #endif
 
 
-#include <evil_macro_pop.h>
+#undef EAPI
+#define EAPI
 
 
 #endif /* __EVIL_SYS_MMAN_H__ */

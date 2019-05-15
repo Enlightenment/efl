@@ -6,8 +6,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "evil_macro.h"
-#include "evil_string.h"
+#include "evil_private.h"
 
 
 /*

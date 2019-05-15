@@ -4,15 +4,6 @@
 
 #include <stdio.h>
 
-#ifndef WIN32_LEAN_AND_MEAN
-# define WIN32_LEAN_AND_MEAN
-#endif
-#include <winsock2.h>
-#undef WIN32_LEAN_AND_MEAN
-
-#include "evil_macro.h"
-#include "evil_unistd.h"
-#include "evil_main.h"
 #include "evil_private.h"
 
 
