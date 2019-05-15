@@ -282,7 +282,17 @@ _efl_ui_scroll_alert_popup_efl_object_constructor(Eo *obj,
 
 /* Efl.Part begin */
 
-ELM_PART_OVERRIDE(efl_ui_scroll_alert_popup, EFL_UI_SCROLL_ALERT_POPUP, Efl_Ui_Scroll_Alert_Popup_Data)
+static Eina_Bool
+_part_is_efl_ui_scroll_alert_popup_part(const Eo *obj EINA_UNUSED, const char *part)
+{
+   //Use Efl.Ui.Widget's "background" and "shadow" parts
+   if (eina_streq(part, "background") || eina_streq(part, "shadow"))
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+ELM_PART_OVERRIDE_PARTIAL(efl_ui_scroll_alert_popup, EFL_UI_SCROLL_ALERT_POPUP, Efl_Ui_Scroll_Alert_Popup_Data, _part_is_efl_ui_scroll_alert_popup_part)
 ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_scroll_alert_popup, EFL_UI_SCROLL_ALERT_POPUP, Efl_Ui_Scroll_Alert_Popup_Data)
 ELM_PART_OVERRIDE_CONTENT_GET(efl_ui_scroll_alert_popup, EFL_UI_SCROLL_ALERT_POPUP, Efl_Ui_Scroll_Alert_Popup_Data)
 ELM_PART_OVERRIDE_CONTENT_UNSET(efl_ui_scroll_alert_popup, EFL_UI_SCROLL_ALERT_POPUP, Efl_Ui_Scroll_Alert_Popup_Data)
