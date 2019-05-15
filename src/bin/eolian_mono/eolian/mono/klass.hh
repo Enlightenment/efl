@@ -31,37 +31,6 @@
 
 namespace eolian_mono {
 
-template <typename OutputIterator, typename Context>
-static bool generate_equals_method(OutputIterator sink, Context const &context)
-{
-   return as_generator(
-       scope_tab << "/// <summary>Verifies if the given object is equal to this one.</summary>\n"
-       << scope_tab << "/// <param name=\"instance\">The object to compare to.</param>\n"
-       << scope_tab << "/// <returns>True if both objects point to the same native object.</returns>\n"
-       << scope_tab << "public override bool Equals(object instance)\n"
-       << scope_tab << "{\n"
-       << scope_tab << scope_tab << "var other = instance as Efl.Object;\n"
-       << scope_tab << scope_tab << "if (other == null)\n"
-       << scope_tab << scope_tab << "{\n"
-       << scope_tab << scope_tab << scope_tab << "return false;\n"
-       << scope_tab << scope_tab << "}\n"
-       << scope_tab << scope_tab << "return this.NativeHandle == other.NativeHandle;\n"
-       << scope_tab << "}\n\n"
-       << scope_tab << "/// <summary>Gets the hash code for this object based on the native pointer it points to.</summary>\n"
-       << scope_tab << "/// <returns>The value of the pointer, to be used as the hash code of this object.</returns>\n"
-       << scope_tab << "public override int GetHashCode()\n"
-       << scope_tab << "{\n"
-       << scope_tab << scope_tab << "return this.NativeHandle.ToInt32();\n"
-       << scope_tab << "}\n\n"
-       << scope_tab << "/// <summary>Turns the native pointer into a string representation.</summary>\n"
-       << scope_tab << "/// <returns>A string with the type and the native pointer for this object.</returns>\n"
-       << scope_tab << "public override String ToString()\n"
-       << scope_tab << "{\n"
-       << scope_tab << scope_tab << "return $\"{this.GetType().Name}@[{this.NativeHandle.ToInt32():x}]\";\n"
-       << scope_tab << "}\n\n"
-      ).generate(sink, nullptr, context);
-}
-
 /* Get the actual number of functions of a class, checking for blacklisted ones */
 template<typename Context>
 static std::size_t
@@ -216,9 +185,9 @@ struct klass
          if(!as_generator
             (
              documentation
-             << "sealed public class " << concrete_name << " : " << "\n"
-             << (klass_full_concrete_or_interface_name % ",") << "\n"
-             << (inherit_classes.size() > 0 ? ", " : "" ) << interface_name << "\n"
+             << "sealed public class " << concrete_name << " :\n"
+             << scope_tab << (root ? "Efl.Eo.EoWrapper" : "") << (klass_full_concrete_or_interface_name % "") << "\n"
+             << scope_tab << ", " << interface_name << "\n"
              << scope_tab << *(", " << name_helpers::klass_full_concrete_or_interface_name) << "\n"
              << "{\n"
             ).generate(sink, std::make_tuple(cls, inherit_classes, inherit_interfaces), concrete_cxt))
@@ -227,7 +196,6 @@ struct klass
          if (!generate_fields(sink, cls, concrete_cxt))
            return false;
 
-         bool root = !helpers::has_regular_ancestor(cls);
          if (!as_generator
             (
              scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(concrete_cxt).actual_library_name(cls.filename)
@@ -235,18 +203,11 @@ struct klass
              << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n"
              << scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << interface_name << "\"/> class.\n"
              << scope_tab << "/// Internal usage: This is used when interacting with C code and should not be used directly.</summary>\n"
-             << scope_tab << "private " << concrete_name << "(System.IntPtr raw)" << (root ? "" : " : base(raw)") << "\n"
+             << scope_tab << "private " << concrete_name << "(System.IntPtr raw) : base(raw)\n"
              << scope_tab << "{\n"
-             << scope_tab << scope_tab << (root ? "handle = raw;\n" : "")
-             << scope_tab << "}\n"
+             << scope_tab << "}\n\n"
             )
             .generate(sink, attributes::unused, concrete_cxt))
-           return false;
-
-         if (!generate_dispose_methods(sink, cls, concrete_cxt))
-           return false;
-
-         if (!generate_equals_method(sink, concrete_cxt))
            return false;
 
          if (!generate_events(sink, cls, concrete_cxt))
@@ -305,10 +266,9 @@ struct klass
              << "[" << name_helpers::klass_full_native_inherit_name(cls) << "]\n"
              << "public " << class_type << " " << name_helpers::klass_concrete_name(cls) << " : "
              << (klass_full_concrete_or_interface_name % ",") // classes
-             << (inherit_classes.empty() ? "" : ",")
-             << " Efl.Eo.IWrapper" << (root ? ", IDisposable" : "")
-             << (inherit_interfaces.empty() ? "" : ",")
-             << (klass_full_concrete_or_interface_name % ",") // interfaces
+             << (root ? "Efl.Eo.EoWrapper" : "") // ... or root
+             << (inherit_interfaces.empty() ? "" : ", ")
+             << (klass_full_concrete_or_interface_name % ", ") // interfaces
              << "\n{\n"
              )
            .generate(sink, std::make_tuple(cls, inherit_classes, inherit_interfaces), inherit_cxt))
@@ -320,12 +280,6 @@ struct klass
            return false;
 
          if (!generate_constructors(sink, cls, inherit_cxt))
-           return false;
-
-         if (!generate_dispose_methods(sink, cls, inherit_cxt))
-           return false;
-
-         if (!generate_equals_method(sink, inherit_cxt))
            return false;
 
          if (!generate_events(sink, cls, inherit_cxt))
@@ -479,22 +433,14 @@ struct klass
    bool generate_fields(OutputIterator sink, attributes::klass_def const& cls, Context const& context) const
    {
      std::string visibility = is_inherit_context(context) ? "protected " : "private ";
-     bool root = !helpers::has_regular_ancestor(cls);
-     bool is_inherit = is_inherit_context(context);
 
      std::string class_getter = name_helpers::klass_get_name(cls) + "()";
      std::string native_inherit_full_name = name_helpers::klass_full_native_inherit_name(cls);
      auto inherit_name = name_helpers::klass_concrete_name(cls);
 
-     std::string raw_klass_modifier;
-     if (!root)
-       raw_klass_modifier = "override ";
-     else if (is_inherit)
-       raw_klass_modifier = "virtual ";
-
      if(!as_generator(
                 scope_tab << "///<summary>Pointer to the native class description.</summary>\n"
-                << scope_tab << "public " << raw_klass_modifier << "System.IntPtr NativeClass\n"
+                << scope_tab << "public override System.IntPtr NativeClass\n"
                 << scope_tab << "{\n"
                 << scope_tab << scope_tab << "get\n"
                 << scope_tab << scope_tab << "{\n"
@@ -511,42 +457,12 @@ struct klass
             ).generate(sink, attributes::unused, context))
          return false;
 
-     // The remaining fields aren't needed in children classes.
-     if (!root)
-       return true;
-
-     if (cls.get_all_events().size() > 0)
-        if (!as_generator(
-                    scope_tab << "/// <summary>Internal usage by derived classes to track native events.</summary>\n"
-                    << scope_tab << visibility << "Dictionary<(IntPtr desc, object evtDelegate), (IntPtr evtCallerPtr, Efl.EventCb evtCaller)> eoEvents = new Dictionary<(IntPtr desc, object evtDelegate), (IntPtr evtCallerPtr, Efl.EventCb evtCaller)>();\n"
-                    << scope_tab << "/// <summary>Internal usage by derived classes to lock native event handlers.</summary>\n"
-                    << scope_tab << visibility << "readonly object eventLock = new object();\n")
-              .generate(sink, attributes::unused, context))
-          return false;
-
-     if (is_inherit)
-      {
-         if (!as_generator(
-                scope_tab << "/// <summary>Internal usage to detect whether this instance is from a generated class or not.</summary>\n"
-                << scope_tab << "protected bool inherited;\n"
-                ).generate(sink, attributes::unused, context))
-           return false;
-      }
-
-     return as_generator(
-                scope_tab << visibility << " System.IntPtr handle;\n"
-                << scope_tab << "///<summary>Pointer to the native instance.</summary>\n"
-                << scope_tab << "public System.IntPtr NativeHandle\n"
-                << scope_tab << "{\n"
-                << scope_tab << scope_tab << "get { return handle; }\n"
-                << scope_tab << "}\n\n"
-             ).generate(sink, attributes::unused, context);
+     return true;
    }
 
    template <typename OutputIterator, typename Context>
    bool generate_constructors(OutputIterator sink, attributes::klass_def const& cls, Context const& context) const
    {
-     bool root = !helpers::has_regular_ancestor(cls);
      auto inherit_name = name_helpers::klass_concrete_name(cls);
 
      if(!as_generator(
@@ -571,7 +487,7 @@ struct klass
                      // For constructors with arguments, the parent is also required, as optional parameters can't come before non-optional paramenters.
                      << scope_tab << "public " << inherit_name << "(Efl.Object parent" << ((constructors.size() > 0) ? "" : "= null") << "\n"
                      << scope_tab << scope_tab << scope_tab << *(", " << constructor_param ) << ") : "
-                             << (root ? "this" : "base")  << "(" << name_helpers::klass_get_name(cls) <<  "(), typeof(" << inherit_name << "), parent)\n"
+                             << "base(" << name_helpers::klass_get_name(cls) <<  "(), typeof(" << inherit_name << "), parent)\n"
                      << scope_tab << "{\n"
                      << (*(scope_tab << scope_tab << constructor_invocation << "\n"))
                      << scope_tab << scope_tab << "FinishInstantiation();\n"
@@ -579,9 +495,8 @@ struct klass
                      << scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << inherit_name << "\"/> class.\n"
                      << scope_tab << "/// Internal usage: Constructs an instance from a native pointer. This is used when interacting with C code and should not be used directly.</summary>\n"
                      << scope_tab << "/// <param name=\"raw\">The native pointer to be wrapped.</param>\n"
-                     << scope_tab << "protected " << inherit_name << "(System.IntPtr raw)" << (root ? "" : " : base(raw)") << "\n"
+                     << scope_tab << "protected " << inherit_name << "(System.IntPtr raw) : base(raw)\n"
                      << scope_tab << "{\n"
-                     << scope_tab << scope_tab << (root ? "handle = raw;\n" : "")
                      << scope_tab << "}\n\n"
                  ).generate(sink, std::make_tuple(constructors, constructors, constructors), context))
          return false;
@@ -603,124 +518,16 @@ struct klass
            return false;
      }
 
-     // Internal constructors
-     if (!root)
-     {
-         return as_generator(
-                     scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << inherit_name << "\"/> class.\n"
-                     << scope_tab << "/// Internal usage: Constructor to forward the wrapper initialization to the root class that interfaces with native code. Should not be used directly.</summary>\n"
-                     << scope_tab << "/// <param name=\"baseKlass\">The pointer to the base native Eo class.</param>\n"
-                     << scope_tab << "/// <param name=\"managedType\">The managed type of the public constructor that originated this call.</param>\n"
-                     << scope_tab << "/// <param name=\"parent\">The Efl.Object parent of this instance.</param>\n"
-                     << scope_tab << "protected " << inherit_name << "(IntPtr baseKlass, System.Type managedType, Efl.Object parent) : base(baseKlass, managedType, parent)\n"
-                     << scope_tab << "{\n"
-                     << scope_tab << "}\n\n"
-                  ).generate(sink, attributes::unused, context);
-
-     }
-
-     // Detailed constructors go only in root classes.
      return as_generator(
-             /// Actual root costructor that creates class and instantiates 
-             scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << inherit_name << "\"/> class.\n"
-             << scope_tab << "/// Internal usage: Constructor to actually call the native library constructors. C# subclasses\n"
-             << scope_tab << "/// must use the public constructor only.</summary>\n"
-             << scope_tab << "/// <param name=\"baseKlass\">The pointer to the base native Eo class.</param>\n"
-             << scope_tab << "/// <param name=\"managedType\">The managed type of the public constructor that originated this call.</param>\n"
-             << scope_tab << "/// <param name=\"parent\">The Efl.Object parent of this instance.</param>\n"
-             << scope_tab << "protected " << inherit_name << "(IntPtr baseKlass, System.Type managedType, Efl.Object parent)\n"
-             << scope_tab << "{\n"
-             << scope_tab << scope_tab << "inherited = ((object)this).GetType() != managedType;\n"
-             << scope_tab << scope_tab << "IntPtr actual_klass = baseKlass;\n"
-             << scope_tab << scope_tab << "if (inherited)\n"
-             << scope_tab << scope_tab << "{\n"
-             << scope_tab << scope_tab << scope_tab << "actual_klass = Efl.Eo.ClassRegister.GetInheritKlassOrRegister(baseKlass, ((object)this).GetType());\n"
-             << scope_tab << scope_tab << "}\n\n"
-             << scope_tab << scope_tab << "handle = Efl.Eo.Globals.instantiate_start(actual_klass, parent);\n"
-             << scope_tab << scope_tab << "if (inherited)\n"
-             << scope_tab << scope_tab << "{\n"
-             << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.PrivateDataSet(this);\n"
-             << scope_tab << scope_tab << "}\n"
-             << scope_tab << "}\n\n"
-
-             << scope_tab << "/// <summary>Finishes instantiating this object.\n"
-             << scope_tab << "/// Internal usage by generated code.</summary>\n"
-             << scope_tab << "protected void FinishInstantiation()\n"
-             << scope_tab << "{\n"
-             << scope_tab << scope_tab << "handle = Efl.Eo.Globals.instantiate_end(handle);\n"
-             << scope_tab << scope_tab << "Eina.Error.RaiseIfUnhandledException();\n"
-             << scope_tab << "}\n\n"
-
-             ).generate(sink, attributes::unused, context);
-   }
-
-
-   template <typename OutputIterator, typename Context>
-   bool generate_dispose_methods(OutputIterator sink, attributes::klass_def const& cls, Context const& context) const
-   {
-     if (helpers::has_regular_ancestor(cls))
-       return true;
-
-     std::string visibility = is_inherit_context(context) ? "protected virtual " : "private ";
-
-     auto inherit_name = name_helpers::klass_concrete_name(cls);
-
-     std::string events_gchandle;
-     if (cls.get_all_events().size() > 0)
-       {
-           auto events_gchandle_sink = std::back_inserter(events_gchandle);
-           if (!as_generator(scope_tab << scope_tab << scope_tab << "if (eoEvents.Count != 0)\n"
-                             << scope_tab << scope_tab << scope_tab << "{\n"
-                             << scope_tab << scope_tab << scope_tab << scope_tab << "GCHandle gcHandle = GCHandle.Alloc(eoEvents);\n"
-                             << scope_tab << scope_tab << scope_tab << scope_tab << "gcHandlePtr = GCHandle.ToIntPtr(gcHandle);\n"
-                             << scope_tab << scope_tab << scope_tab << "}\n\n")
-                 .generate(events_gchandle_sink, attributes::unused, context))
-             return false;
-       }
-
-     return as_generator(
-
-             scope_tab << "///<summary>Destructor.</summary>\n"
-             << scope_tab << "~" << inherit_name << "()\n"
-             << scope_tab << "{\n"
-             << scope_tab << scope_tab << "Dispose(false);\n"
-             << scope_tab << "}\n\n"
-
-             << scope_tab << "///<summary>Releases the underlying native instance.</summary>\n"
-             << scope_tab << visibility << "void Dispose(bool disposing)\n"
-             << scope_tab << "{\n"
-             << scope_tab << scope_tab << "if (handle != System.IntPtr.Zero)\n"
-             << scope_tab << scope_tab << "{\n"
-             << scope_tab << scope_tab << scope_tab << "IntPtr h = handle;\n"
-             << scope_tab << scope_tab << scope_tab << "handle = IntPtr.Zero;\n\n"
-
-             << scope_tab << scope_tab << scope_tab << "IntPtr gcHandlePtr = IntPtr.Zero;\n"
-             << events_gchandle
-
-             << scope_tab << scope_tab << scope_tab << "if (disposing)\n"
-             << scope_tab << scope_tab << scope_tab << "{\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.efl_mono_native_dispose(h, gcHandlePtr);\n"
-             << scope_tab << scope_tab << scope_tab << "}\n"
-             << scope_tab << scope_tab << scope_tab << "else\n"
-             << scope_tab << scope_tab << scope_tab << "{\n"
-
-             << scope_tab << scope_tab << scope_tab << scope_tab << "Monitor.Enter(Efl.All.InitLock);\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << "if (Efl.All.MainLoopInitialized)\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << "{\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "Efl.Eo.Globals.efl_mono_thread_safe_native_dispose(h, gcHandlePtr);\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << "}\n\n"
-             << scope_tab << scope_tab << scope_tab << scope_tab << "Monitor.Exit(Efl.All.InitLock);\n"
-             << scope_tab << scope_tab << scope_tab << "}\n"
-             << scope_tab << scope_tab << "}\n\n"
-             << scope_tab << "}\n\n"
-
-             << scope_tab << "///<summary>Releases the underlying native instance.</summary>\n"
-             << scope_tab << "public void Dispose()\n"
-             << scope_tab << "{\n"
-             << scope_tab << scope_tab << "Dispose(true);\n"
-             << scope_tab << scope_tab << "GC.SuppressFinalize(this);\n"
-             << scope_tab << "}\n\n"
-             ).generate(sink, attributes::unused, context);
+                 scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << inherit_name << "\"/> class.\n"
+                 << scope_tab << "/// Internal usage: Constructor to forward the wrapper initialization to the root class that interfaces with native code. Should not be used directly.</summary>\n"
+                 << scope_tab << "/// <param name=\"baseKlass\">The pointer to the base native Eo class.</param>\n"
+                 << scope_tab << "/// <param name=\"managedType\">The managed type of the public constructor that originated this call.</param>\n"
+                 << scope_tab << "/// <param name=\"parent\">The Efl.Object parent of this instance.</param>\n"
+                 << scope_tab << "protected " << inherit_name << "(IntPtr baseKlass, System.Type managedType, Efl.Object parent) : base(baseKlass, managedType, parent)\n"
+                 << scope_tab << "{\n"
+                 << scope_tab << "}\n\n"
+              ).generate(sink, attributes::unused, context);
    }
 
    template <typename OutputIterator, typename Context>
@@ -729,80 +536,6 @@ struct klass
 
      if (!has_events(cls))
          return true;
-
-     std::string visibility = is_inherit_context(context) ? "protected " : "private ";
-
-     if (!helpers::has_regular_ancestor(cls))
-       {
-     // Callback registration functions
-     if (!as_generator(
-            scope_tab << "///<summary>Adds a new event handler, registering it to the native event. For internal use only.</summary>\n"
-            << scope_tab << "///<param name=\"lib\">The name of the native library definining the event.</param>\n"
-            << scope_tab << "///<param name=\"key\">The name of the native event.</param>\n"
-            << scope_tab << "///<param name=\"evtCaller\">Delegate to be called by native code on event raising.</param>\n"
-            << scope_tab << "///<param name=\"evtDelegate\">Managed delegate that will be called by evtCaller on event raising.</param>\n"
-            << scope_tab << visibility << "void AddNativeEventHandler(string lib, string key, Efl.EventCb evtCaller, object evtDelegate)\n"
-            << scope_tab << "{\n"
-
-            << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative(lib, key);\n"
-            << scope_tab << scope_tab << "if (desc == IntPtr.Zero)\n"
-            << scope_tab << scope_tab << "{\n"
-            << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Failed to get native event {key}\");\n"
-            << scope_tab << scope_tab << "}\n\n"
-
-            << scope_tab << scope_tab << "if (eoEvents.ContainsKey((desc, evtDelegate)))\n"
-            << scope_tab << scope_tab << "{\n"
-            << scope_tab << scope_tab << scope_tab << "Eina.Log.Warning($\"Event proxy for event {key} already registered!\");\n"
-            << scope_tab << scope_tab << scope_tab << "return;\n"
-            << scope_tab << scope_tab << "}\n\n"
-
-            << scope_tab << scope_tab << "IntPtr evtCallerPtr = Marshal.GetFunctionPointerForDelegate(evtCaller);\n"
-            << scope_tab << scope_tab << "if (!Efl.Eo.Globals.efl_event_callback_priority_add(handle, desc, 0, evtCallerPtr, IntPtr.Zero))\n"
-            << scope_tab << scope_tab << "{\n"
-            << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Failed to add event proxy for event {key}\");\n"
-            << scope_tab << scope_tab << scope_tab << "return;\n"
-            << scope_tab << scope_tab << "}\n\n"
-
-            << scope_tab << scope_tab << "eoEvents[(desc, evtDelegate)] = (evtCallerPtr, evtCaller);\n"
-            << scope_tab << scope_tab << "Eina.Error.RaiseIfUnhandledException();\n"
-            << scope_tab << "}\n\n"
-
-            << scope_tab << "///<summary>Removes the given event handler for the given event. For internal use only.</summary>\n"
-            << scope_tab << "///<param name=\"lib\">The name of the native library definining the event.</param>\n"
-            << scope_tab << "///<param name=\"key\">The name of the native event.</param>\n"
-            << scope_tab << "///<param name=\"evtDelegate\">The delegate to be removed.</param>\n"
-            << scope_tab << visibility << "void RemoveNativeEventHandler(string lib, string key, object evtDelegate)\n"
-            << scope_tab << "{\n"
-
-            << scope_tab << scope_tab << "IntPtr desc = Efl.EventDescription.GetNative(lib, key);\n"
-            << scope_tab << scope_tab << "if (desc == IntPtr.Zero)\n"
-            << scope_tab << scope_tab << "{\n"
-            << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Failed to get native event {key}\");\n"
-            << scope_tab << scope_tab << scope_tab << "return;\n"
-            << scope_tab << scope_tab << "}\n\n"
-
-            << scope_tab << scope_tab << "var evtPair = (desc, evtDelegate);\n"
-            << scope_tab << scope_tab << "if (eoEvents.TryGetValue(evtPair, out var caller))\n"
-            << scope_tab << scope_tab << "{\n"
-
-            << scope_tab << scope_tab << scope_tab << "if (!Efl.Eo.Globals.efl_event_callback_del(handle, desc, caller.evtCallerPtr, IntPtr.Zero))\n"
-            << scope_tab << scope_tab << scope_tab << "{\n"
-            << scope_tab << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Failed to remove event proxy for event {key}\");\n"
-            << scope_tab << scope_tab << scope_tab << scope_tab << "return;\n"
-            << scope_tab << scope_tab << scope_tab << "}\n\n"
-
-            << scope_tab << scope_tab << scope_tab << "eoEvents.Remove(evtPair);\n"
-            << scope_tab << scope_tab << scope_tab << "Eina.Error.RaiseIfUnhandledException();\n"
-            << scope_tab << scope_tab << "}\n"
-            << scope_tab << scope_tab << "else\n"
-            << scope_tab << scope_tab << "{\n"
-            << scope_tab << scope_tab << scope_tab << "Eina.Log.Error($\"Trying to remove proxy for event {key} when it is nothing registered.\");\n"
-            << scope_tab << scope_tab << "}\n"
-            << scope_tab << "}\n\n"
-            )
-             .generate(sink, NULL, context))
-         return false;
-       }
 
      // Self events
      if (!as_generator(*(event_definition(cls, cls))).generate(sink, cls.events, context))
