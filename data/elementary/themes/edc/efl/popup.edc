@@ -15,6 +15,11 @@ group { "efl/popup";
             image.normal: "rounded_square.png";
          }
       }
+      swallow { "efl.background";
+         desc { "default";
+            rel.to: "bg";
+         }
+      }
       swallow { "efl.content";
          desc { "default";
             rel.to: "base";
@@ -34,7 +39,12 @@ group { "efl/alert_popup";
             min: 100 100;
             image.border: 15 15 15 15;
             image.normal: "rounded_square.png";
-          }
+         }
+      }
+      swallow { "efl.background";
+         desc { "default";
+            rel.to: "bg";
+         }
       }
       spacer { "base";
          desc { "default";
