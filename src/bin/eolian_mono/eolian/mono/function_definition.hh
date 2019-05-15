@@ -104,14 +104,14 @@ struct native_function_definition_generator
         << ")\n"
         << indent << "{\n"
         << indent << scope_tab << "Eina.Log.Debug(\"function " << string << " was called\");\n"
-        << indent << scope_tab << "Efl.Eo.IWrapper wrapper = Efl.Eo.Globals.PrivateDataGet(pd);\n"
-        << indent << scope_tab << "if (wrapper != null)\n"
+        << indent << scope_tab << "var ws = Efl.Eo.Globals.GetWrapperSupervisor(obj);\n"
+        << indent << scope_tab << "if (ws != null)\n"
         << indent << scope_tab << "{\n"
         << eolian_mono::native_function_definition_preamble()
         << indent << scope_tab << scope_tab << "try\n"
         << indent << scope_tab << scope_tab << "{\n"
         << indent << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "_ret_var = " : "")
-        << (f.is_static ? "" : "((") << klass_cast_name << (f.is_static ? "." : ")wrapper).") << string
+        << (f.is_static ? "" : "((") << klass_cast_name << (f.is_static ? "." : ")ws.Target).") << string
         << "(" << (native_argument_invocation % ", ") << ");\n"
         << indent << scope_tab << scope_tab << "}\n"
         << indent << scope_tab << scope_tab << "catch (Exception e)\n"

@@ -6,7 +6,9 @@ efl_eo_mono_files = \
 	bindings/mono/eo_mono/iwrapper.cs \
 	bindings/mono/eo_mono/FunctionWrapper.cs \
 	bindings/mono/eo_mono/NativeModule.cs \
-	bindings/mono/eo_mono/workaround.cs
+	bindings/mono/eo_mono/workaround.cs \
+	bindings/mono/eo_mono/EoWrapper.cs \
+	bindings/mono/eo_mono/WrapperSupervisor.cs
 
 if HAVE_WIN32
 

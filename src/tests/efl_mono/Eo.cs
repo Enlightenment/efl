@@ -510,4 +510,19 @@ class TestProvider
     }
 }
 
+class TestObjectDeletion
+{
+    public static void test_object_deletion()
+    {
+        var obj = new Dummy.PartHolder();
+        var part = obj.OnePart;
+
+        Test.AssertNotNull(part);
+
+        part.Del();
+
+        Test.AssertNull(obj.OnePart);
+    }
+}
+
 }

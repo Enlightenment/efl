@@ -9,5 +9,6 @@ class @beta Dummy.Part_Holder extends Dummy.Test_Object implements Efl.Part {
    implements {
       Efl.Part.part_get;
       Efl.Object.constructor;
+      Efl.Object.destructor;
    }
 }
