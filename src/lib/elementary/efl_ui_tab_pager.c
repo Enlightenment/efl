@@ -8,7 +8,6 @@
 
 #include "efl_ui_tab_pager_private.h"
 #include "efl_ui_tab_page_private.h"
-#include "efl_ui_widget_pager.h"
 
 #define MY_CLASS EFL_UI_TAB_PAGER_CLASS
 
