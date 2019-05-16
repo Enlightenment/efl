@@ -20,14 +20,14 @@ _select(Eo *obj, int index)
    else sd->cur = 0;
 
    efl_ui_tab_bar_current_tab_set(sd->tab_bar, sd->cur);
-   efl_ui_pager_current_page_set(efl_super(obj, MY_CLASS), sd->cur);
 }
 
 static void
 _tab_select_cb(void *data, const Efl_Event *event)
 {
    int index = efl_ui_tab_bar_current_tab_get(event->object);
-   _select(data, index);
+   if (efl_ui_active_view_active_index_get(data) != index)
+     efl_ui_active_view_active_index_set(data, index);
 }
 
 static void
@@ -78,8 +78,9 @@ _efl_ui_tab_pager_tab_bar_get(const Eo *obj EINA_UNUSED, Efl_Ui_Tab_Pager_Data *
 }
 
 EOLIAN static void
-_efl_ui_tab_pager_efl_ui_pager_current_page_set(Eo *obj, Efl_Ui_Tab_Pager_Data *sd EINA_UNUSED, int index)
+_efl_ui_tab_pager_efl_ui_active_view_container_active_index_set(Eo *obj, Efl_Ui_Tab_Pager_Data *sd EINA_UNUSED, int index)
 {
+   efl_ui_active_view_active_index_set(efl_super(obj, MY_CLASS), index);
    _select(obj, index);
 }
 

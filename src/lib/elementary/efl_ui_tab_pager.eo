@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Tab_Pager extends Efl.Ui.Pager
+class @beta Efl.Ui.Tab_Pager extends Efl.Ui.Active_View.Container
 {
    [[Tab Pager class]]
    methods {
@@ -23,6 +23,6 @@ class @beta Efl.Ui.Tab_Pager extends Efl.Ui.Pager
       Efl.Pack_Linear.pack_content_get;
       Efl.Pack_Linear.pack_index_get;
       Efl.Pack_Linear.pack_unpack_at;          // TODO
-      Efl.Ui.Pager.current_page { set; }
+      Efl.Ui.Active_View.Container.active_index { set; }
    }
 }
