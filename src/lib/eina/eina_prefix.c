@@ -43,7 +43,7 @@
 
 #ifdef _WIN32
 # include <direct.h> /* getcwd */
-# include <Evil.h>
+# include <evil_private.h> /* path_is_absolute realpath dladdr */
 #endif
 
 #ifdef HAVE_ESCAPE

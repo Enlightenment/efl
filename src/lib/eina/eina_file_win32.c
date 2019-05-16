@@ -23,11 +23,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 
-#define WIN32_LEAN_AND_MEAN
-#include <windows.h>
-#undef WIN32_LEAN_AND_MEAN
-
-#include <Evil.h>
+#include <evil_private.h>
 
 #include "eina_config.h"
 #include "eina_private.h"

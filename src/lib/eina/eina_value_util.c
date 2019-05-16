@@ -23,7 +23,7 @@
 #include <time.h>
 
 #ifdef _WIN32
-# include <Evil.h>
+# include <evil_private.h> /* strptime */
 #endif
 
 #include "eina_safety_checks.h"

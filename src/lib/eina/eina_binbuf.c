@@ -5,10 +5,6 @@
 #include <stdio.h>
 #include <string.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include "eina_private.h"
 #include "eina_strbuf_common.h"
 #include "eina_binbuf.h"

@@ -34,7 +34,7 @@
 #endif
 
 #ifdef _WIN32
-# include <Evil.h>
+# include <windows.h>
 #endif
 
 #ifdef HAVE_EXECINFO_H

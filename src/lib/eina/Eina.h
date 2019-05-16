@@ -202,10 +202,6 @@
  *        make it safer, log errors, manage memory more efficiently and more.
  */
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #ifdef __cplusplus
 extern "C" {
 #endif
