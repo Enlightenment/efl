@@ -337,7 +337,7 @@ struct event_definition_generator
 
            auto sub_context = change_indentation(indent.inc().inc(), context);
 
-           if (!as_generator(scope_tab(6) << wrapper_args_type << " args = new " << wrapper_args_type << "();\n"
+           if (!as_generator(wrapper_args_type << " args = new " << wrapper_args_type << "();\n"
                              << scope_tab(6) << "args.arg = ").generate(arg_initializer_sink, attributes::unused, context))
              return false;
            if (!(*etype).original_type.visit(unpack_event_args_visitor<decltype(arg_initializer_sink), decltype(sub_context)>{arg_initializer_sink, &sub_context, *etype}))
