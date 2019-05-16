@@ -401,7 +401,7 @@ ffi.cdef [[
     Eina_Bool eolian_event_is_hot(const Eolian_Event *event);
     Eina_Bool eolian_event_is_restart(const Eolian_Event *event);
     Eina_Iterator *eolian_class_parts_get(const Eolian_Class *klass);
-    const char *eolian_event_c_name_get(const Eolian_Event *event);
+    const char *eolian_event_c_macro_get(const Eolian_Event *event);
     const Eolian_Class *eolian_part_class_get(const Eolian_Part *part);
     const Eolian_Documentation *eolian_part_documentation_get(const Eolian_Part *part);
     const Eolian_Event *eolian_class_event_by_name_get(const Eolian_Class *klass, const char *event_name);
@@ -1375,8 +1375,8 @@ ffi.metatype("Eolian_Event", {
             return tonumber(eolian.eolian_event_scope_get(self))
         end,
 
-        c_name_get = function(self)
-            local v = eolian.eolian_event_c_name_get(self)
+        c_macro_get = function(self)
+            local v = eolian.eolian_event_c_macro_get(self)
             if v == nil then return nil end
             return ffi_stringshare(v)
         end,

@@ -2214,16 +2214,16 @@ EAPI Eina_Bool eolian_event_is_restart(const Eolian_Event *event);
 EAPI Eina_Iterator *eolian_class_parts_get(const Eolian_Class *klass);
 
 /*
- * @brief Returns the C name of an event
+ * @brief Returns the C macro name used to refer to an event
  *
  * @param[in] event the event handle
- * @return the event C name
+ * @return the event C macro
  *
  * You're responsible for deleting the stringshare.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_event_c_name_get(const Eolian_Event *event);
+EAPI Eina_Stringshare *eolian_event_c_macro_get(const Eolian_Event *event);
 
 /*
  * @brief A helper function to get the name of a part.

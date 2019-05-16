@@ -1041,7 +1041,7 @@ int main(int argc, char** argv)
              {
                 auto tp = eolian_event_type_get(&*first);
                 ss << "  {\n";
-                ss << "    static efl::eo::js::event_information ev_info{&constructor_from_eo, " << eolian_event_c_name_get(&*first);
+                ss << "    static efl::eo::js::event_information ev_info{&constructor_from_eo, " << eolian_event_c_macro_get(&*first);
                 ss << ", &efl::eo::js::event_callback<";
                 ss << (tp ? _eolian_type_cpp_type_named_get(tp, class_name, need_name_getter) : "void");
                 ss << ">, \"" << type_class_name(tp) << "\"};\n";

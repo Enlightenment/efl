@@ -461,9 +461,9 @@ lib.eolian_constructor_is_optional.restype = c_bool
 
 ###  Eolian_Event  ############################################################
 
-# EAPI Eina_Stringshare *eolian_event_c_name_get(const Eolian_Event *event);
-lib.eolian_event_c_name_get.argtypes = (c_void_p,)
-lib.eolian_event_c_name_get.restype = c_void_p  # Stringshare TO BE FREED
+# EAPI Eina_Stringshare *eolian_event_c_macro_get(const Eolian_Event *event);
+lib.eolian_event_c_macro_get.argtypes = (c_void_p,)
+lib.eolian_event_c_macro_get.restype = c_void_p  # Stringshare TO BE FREED
 
 # EAPI const Eolian_Type *eolian_event_type_get(const Eolian_Event *event);
 lib.eolian_event_type_get.argtypes = (c_void_p,)

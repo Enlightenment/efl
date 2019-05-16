@@ -1059,7 +1059,7 @@ struct event_def
     : klass(cls, {attributes::qualifier_info::is_none, std::string()})
     , type( ::eolian_event_type_get(event) ? eina::optional<type_def>{{::eolian_event_type_get(event), unit, EOLIAN_C_TYPE_DEFAULT}} : eina::optional<type_def>{})
     , name( ::eolian_event_name_get(event))
-    , c_name( ::eolian_event_c_name_get(event))
+    , c_name( ::eolian_event_c_macro_get(event))
     , beta( ::eolian_event_is_beta(event))
     , protect( ::eolian_event_scope_get(event) == EOLIAN_SCOPE_PROTECTED)
     , documentation( ::eolian_event_documentation_get(event)) {}

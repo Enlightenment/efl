@@ -248,7 +248,7 @@ events:
    itr = eolian_class_events_get(cl);
    EINA_ITERATOR_FOREACH(itr, ev)
      {
-        Eina_Stringshare *evn = eolian_event_c_name_get(ev);
+        Eina_Stringshare *evn = eolian_event_c_macro_get(ev);
         Eolian_Object_Scope evs = eolian_event_scope_get(ev);
 
         if (evs == EOLIAN_SCOPE_PRIVATE)

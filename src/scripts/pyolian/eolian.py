@@ -794,8 +794,8 @@ class Event(Object):
         return "<eolian.Event '{0.name}', c_name='{0.c_name}'>".format(self)
 
     @cached_property
-    def c_name(self):
-        s = lib.eolian_event_c_name_get(self)
+    def c_macro(self):
+        s = lib.eolian_event_c_macro_get(self)
         ret = _str_to_py(s)
         lib.eina_stringshare_del(c_void_p(s))
         return ret

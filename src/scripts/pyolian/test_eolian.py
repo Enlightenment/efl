@@ -413,7 +413,7 @@ class TestEolianEvent(unittest.TestCase):
         ev = cls.event_by_name_get('tick')
         self.assertIsInstance(ev, eolian.Event)
         self.assertEqual(ev.name, 'tick')
-        self.assertEqual(ev.c_name, 'EFL_LOOP_TIMER_EVENT_TIMER_TICK')
+        self.assertEqual(ev.c_macro, 'EFL_LOOP_TIMER_EVENT_TIMER_TICK')
         self.assertIsNone(ev.type)  # TODO is this correct
         self.assertIsInstance(ev.documentation, eolian.Documentation)
         self.assertEqual(ev.scope, eolian.Eolian_Object_Scope.PUBLIC)
