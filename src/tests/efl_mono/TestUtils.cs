@@ -196,6 +196,20 @@ public static class Test
         if (reference == null)
             throw new AssertionException($"Assertion failed: {file}:{line} ({member}) {msg}");
     }
+
+    /// <summary>Runs a number of garbage collections and iterate the main loop.
+    /// The iteration is needed to make sure objects collected in the GC thread
+    /// are efl_unref'd in the main thread.</summary>
+    public static void CollectAndIterate(int iterations=1000)
+    {
+        for (int i = 0; i < iterations; i++)
+        {
+            System.GC.Collect();
+        }
+        System.GC.WaitForPendingFinalizers();
+        Efl.App.AppMain.Iterate();
+    }
+
 }
 
 
