@@ -1,4 +1,13 @@
-eo_files = ['dummy_child.eo', 'dummy_numberwrapper.eo', 'dummy_test_object.eo', 'dummy_test_iface.eo', 'dummy_inherit_helper.eo', 'dummy_inherit_iface.eo', 'dummy_part_holder.eo']
+eo_files = [
+    'dummy_child.eo',
+    'dummy_numberwrapper.eo',
+    'dummy_test_object.eo',
+    'dummy_test_iface.eo',
+    'dummy_inherit_helper.eo',
+    'dummy_inherit_iface.eo',
+    'dummy_part_holder.eo',
+    'dummy_event_manager.eo',
+]
 
 eo_file_targets = []
 
@@ -23,6 +32,7 @@ efl_mono_native_test = library('efl_mono_native_test',
         'dummy_numberwrapper.c',
         'dummy_part_holder.c',
         'dummy_test_object.c',
+        'dummy_event_manager.c',
     ],
     dependencies : [ecore, eo, efl],
 )

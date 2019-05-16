@@ -1,0 +1,29 @@
+import eina_types;
+
+class @beta Dummy.Event_Manager extends Efl.Object {
+
+   methods {
+      @property emitter {
+         set {
+         }
+         values {
+            emitter: Efl.Object @owned;
+         }
+      }
+
+      emit_with_int {
+         params {
+            data: int;
+         }
+         return: bool;
+      }
+
+      release {
+      }
+   }
+
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}

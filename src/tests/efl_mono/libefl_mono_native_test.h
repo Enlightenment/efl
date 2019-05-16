@@ -54,6 +54,7 @@
 #include "dummy_child.eo.h"
 #include "dummy_inherit_helper.eo.h"
 #include "dummy_part_holder.eo.h"
+#include "dummy_event_manager.eo.h"
 
 #include <interfaces/efl_part.eo.h>
 
