@@ -90,7 +90,7 @@ _efl_ui_table_last_position_get(Eo * obj, Efl_Ui_Table_Data *pd, int *last_col, 
 
    efl_pack_table_size_get(obj, &req_cols, &req_rows);
 
-   if (efl_ui_dir_is_horizontal(pd->dir1, EINA_TRUE))
+   if (efl_ui_dir_is_horizontal(pd->fill_dir, EINA_TRUE))
      {
         EINA_INLIST_REVERSE_FOREACH(EINA_INLIST_GET(pd->items), gi)
           {
@@ -220,8 +220,7 @@ _efl_ui_table_efl_object_constructor(Eo *obj, Efl_Ui_Table_Data *pd)
    efl_access_object_access_type_set(obj, EFL_ACCESS_TYPE_SKIPPED);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_FILLER);
 
-   pd->dir1 = EFL_UI_DIR_RIGHT;
-   pd->dir2 = EFL_UI_DIR_DOWN;
+   pd->fill_dir = EFL_UI_DIR_RIGHT;
    pd->last_col = -1;
    pd->last_row = -1;
    pd->req_cols = 0;
@@ -622,24 +621,13 @@ _efl_ui_table_efl_pack_table_table_contents_get(Eo *obj EINA_UNUSED, Efl_Ui_Tabl
 EOLIAN static void
 _efl_ui_table_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Ui_Dir dir)
 {
-   if (pd->dir1 == dir)
+   if (pd->fill_dir == dir)
      return;
 
    if (dir == EFL_UI_DIR_DEFAULT)
      dir = EFL_UI_DIR_RIGHT;
 
-   pd->dir1 = dir;
-
-   /* if both directions are either horizontal or vertical, need to adjust
-    * secondary direction (dir2) */
-   if (efl_ui_dir_is_horizontal(pd->dir1, EINA_TRUE) ==
-       efl_ui_dir_is_horizontal(pd->dir2, EINA_FALSE))
-     {
-        if (efl_ui_dir_is_horizontal(pd->dir1, EINA_TRUE))
-          pd->dir2 = EFL_UI_DIR_DOWN;
-        else
-          pd->dir2 = EFL_UI_DIR_RIGHT;
-     }
+   pd->fill_dir = dir;
 
    efl_pack_layout_request(obj);
 }
@@ -647,37 +635,7 @@ _efl_ui_table_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Table_Data *pd, Efl
 EOLIAN static Efl_Ui_Dir
 _efl_ui_table_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd)
 {
-   return pd->dir1;
-}
-
-EOLIAN static void
-_efl_ui_table_efl_pack_table_table_direction_set(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Ui_Dir primary, Efl_Ui_Dir secondary)
-{
-   if ((pd->dir1 == primary) && (pd->dir2 == secondary))
-     return;
-
-   pd->dir1 = primary;
-   pd->dir2 = secondary;
-
-   if (efl_ui_dir_is_horizontal(pd->dir1, EINA_TRUE) ==
-       efl_ui_dir_is_horizontal(pd->dir2, EINA_FALSE))
-     {
-        ERR("specified two directions in the same axis, secondary directions "
-            " is reset to a valid default");
-        if (efl_ui_dir_is_horizontal(pd->dir1, EINA_TRUE))
-          pd->dir2 = EFL_UI_DIR_DOWN;
-        else
-          pd->dir2 = EFL_UI_DIR_RIGHT;
-     }
-
-   efl_pack_layout_request(obj);
-}
-
-EOLIAN static void
-_efl_ui_table_efl_pack_table_table_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd, Efl_Ui_Dir *primary, Efl_Ui_Dir *secondary)
-{
-   if (primary) *primary = pd->dir1;
-   if (secondary) *secondary = pd->dir2;
+   return pd->fill_dir;
 }
 
 EOLIAN static void
@@ -770,7 +728,7 @@ _efl_ui_table_efl_pack_pack(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *subo
 
    _efl_ui_table_last_position_get(obj, pd, &last_col, &last_row);
 
-   if (efl_ui_dir_is_horizontal(pd->dir1, EINA_TRUE))
+   if (efl_ui_dir_is_horizontal(pd->fill_dir, EINA_TRUE))
      {
         last_col++;
         if (pd->req_cols && (last_col >= pd->req_cols))

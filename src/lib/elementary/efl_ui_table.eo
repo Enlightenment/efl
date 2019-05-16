@@ -1,7 +1,19 @@
 class @beta Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pack_Layout,
                    Efl.Ui.Direction, Efl.Gfx.Arrangement
 {
-   [[Efl UI table class]]
+   [[Widget container that arranges its elements in a grid.
+   
+     The amount of rows and columns can be controlled with @Efl.Pack_Table.table_rows
+     and @Efl.Pack_Table.table_columns, and elements can be manually positioned with
+     @Efl.Pack_Table.pack_table.
+     Additionally, a fill direction can be defined with @Efl.Ui.Direction.direction and
+     elements added with @Efl.Pack.pack. Elements are then added following this direction
+     (horizontal or vertical) and when the amount of columns or rows has been reached,
+     a step is taken in the orthogonal direction.
+     In this second case there is no need to define both the amount of columns and rows,
+     as the table will expand as needed.
+     The default fill direction is @Efl.Ui.Dir.right.
+   ]]
    methods {
       @property homogeneous {
          [[Control homogeneous mode.
@@ -39,7 +51,6 @@ class @beta Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pa
       Efl.Pack_Table.table_size { get; set; }
       Efl.Pack_Table.table_columns { get; set; }
       Efl.Pack_Table.table_rows { get; set; }
-      Efl.Pack_Table.table_direction { get; set; }
       Efl.Pack_Layout.layout_update;
       Efl.Pack_Layout.layout_request;
    }
