@@ -9,7 +9,7 @@
 #include <Eina.h>
 
 #ifdef _WIN32
-# include <Evil.h>
+# include <evil_private.h> /* evil_time_get dladdr */
 #endif
 
 #if defined(__APPLE__) && defined(__MACH__)
