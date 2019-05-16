@@ -1,38 +1,22 @@
 group { name: "elm/spinner/base/default";
    alias: "elm/spinner/base/colorselector/default";
-   images.image: "vert_bar_inset.png" COMP;
    parts {
       part { name: "clip"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "elm.swallow.text_button";
-            rel2.to: "elm.swallow.text_button";
+            rel.to: "elm.swallow.text_button";
          }
       }
-      part { name: "bg";
-         type: RECT;
+      part { name: "bg"; type: RECT;
          scale: 1;
          description { state: "default" 0.0;
-            color_class: "spinner_bg";
+            color: DARK_GREY_BG_COLOR;
          }
       }
-      part { name: "inset"; mouse_events: 0;
-         description { state: "default" 0.0;
-            rel1.offset: 0 1;
-            rel2.offset: -1 -2;
-            image.normal: "vert_bar_inset.png";
-            image.border: 1 1 8 6;
-            image.middle: 0;
-            fill.smooth: 0;
-         }
-      }
-      part { name: "access";
-         type: RECT;
+      part { name: "access"; type: RECT;
          repeat_events: 1;
          description { state: "default" 0.0;
             fixed: 1 1;
             color: 0 0 0 0;
-            rel1.to: "inset";
-            rel2.to: "inset";
             visible: 0;
          }
          description { state: "active" 0.0;
@@ -40,13 +24,11 @@ group { name: "elm/spinner/base/default";
             visible: 1;
          }
       }
-      part { name: "elm.swallow.entry";
-         type: SWALLOW;
+      part { name: "elm.swallow.entry"; type: SWALLOW;
          clip_to: "clip";
          description { state: "default" 0.0;
             fixed: 1 1;
-            rel1.to: "elm.swallow.text_button";
-            rel2.to: "elm.swallow.text_button";
+            rel.to: "elm.swallow.text_button";
             visible: 0;
          }
          description { state: "active" 0.0;
@@ -54,49 +36,39 @@ group { name: "elm/spinner/base/default";
             visible: 1;
          }
       }
-      part { name: "elm.swallow.dec_button";
-         type: SWALLOW;
+      part { name: "elm.swallow.dec_button"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
-            fixed: 1 0;
-            rel1.to: "inset";
-            rel1.offset: 1 1;
-            rel2.to: "inset";
-            rel2.offset: 1 -2;
+            rel1.offset: 4 4;
+            rel2.offset: 4 -5;
             rel2.relative: 0.0 1.0;
             align: 0.0 0.5;
-            min: 15 15;
-            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+            FIXED_SIZE(15, 15)
+            offscale;
          }
       }
-      part { name: "elm.swallow.inc_button";
-         type: SWALLOW;
+      part { name: "elm.swallow.inc_button"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
-            fixed: 1 0;
-            rel1.to: "inset";
-            rel1.offset: 1 1;
+            rel1.offset: -5 4;
+            rel2.offset: -5 -5;
             rel1.relative: 1.0 0.0;
-            rel2.to: "inset";
-            rel2.offset: 1 -2;
             align: 1.0 0.5;
-            min: 15 15;
-            aspect: 1.0 1.0; aspect_preference: VERTICAL;
+            FIXED_SIZE(15, 15)
+            offscale;
          }
       }
-      part { name: "elm.swallow.text_button";
-         type: SWALLOW;
+      part { name: "elm.swallow.text_button"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
             visible: 1;
-            rel1.to_y: "inset";
             rel1.to_x: "elm.swallow.dec_button";
             rel1.relative: 1.0 0.0;
-            rel1.offset: 1 1;
-            rel2.to_y: "inset";
+            rel1.offset: 4 4;
             rel2.to_x: "elm.swallow.inc_button";
             rel2.relative: 0.0 1.0;
-            rel2.offset: -2 -2;
+            rel2.offset: -5 -5;
+            offscale;
          }
          description { state: "inactive" 0.0;
             inherit: "default" 0.0;
@@ -109,13 +81,11 @@ group { name: "elm/spinner/base/default";
          dragable.y: 0 0 0;
          description { state: "default" 0.0;
             fixed: 1 0;
-            rel1.to: "elm.swallow.text_button";
-            rel2.to: "elm.swallow.text_button";
+            rel.to: "elm.swallow.text_button";
             color: 0 0 0 0;
          }
       }
-      part { name: "disabler";
-         type: RECT;
+      part { name: "disabler"; type: RECT;
          repeat_events: 0;
          mouse_events: 0;
          description { state: "default" 0.0;
@@ -130,50 +100,42 @@ group { name: "elm/spinner/base/default";
    }
    programs {
       program { name: "entry_active";
-         signal: "elm,state,entry,active";
-         source: "elm";
+         signal: "elm,state,entry,active"; source: "elm";
          action: STATE_SET "active" 0.0;
          target: "elm.swallow.entry";
       }
       program { name: "entry_inactive";
-         signal: "elm,state,entry,inactive";
-         source: "elm";
+         signal: "elm,state,entry,inactive"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.entry";
       }
       program { name: "text_button_active";
-         signal: "elm,state,button,active";
-         source: "elm";
+         signal: "elm,state,button,active"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "elm.swallow.text_button";
       }
       program { name: "text_button_inactive";
-         signal: "elm,state,button,inactive";
-         source: "elm";
+         signal: "elm,state,button,inactive"; source: "elm";
          action: STATE_SET "inactive" 0.0;
          target: "elm.swallow.text_button";
       }
       program { name: "access_activate";
-         signal: "elm,state,access,active";
-         source: "elm";
+         signal: "elm,state,access,active"; source: "elm";
          action:  STATE_SET "active" 0.0;
          target: "access";
       }
       program { name: "access_inactivate";
-         signal: "elm,state,access,inactive";
-         source: "elm";
+         signal: "elm,state,access,inactive"; source: "elm";
          action:  STATE_SET "default" 0.0;
          target: "access";
       }
       program { name: "disable";
-         signal: "elm,state,disabled";
-         source: "elm";
+         signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled" 0.0;
          target: "disabler";
       }
       program { name: "enable";
-         signal: "elm,state,enabled";
-         source: "elm";
+         signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "disabler";
       }
@@ -183,47 +145,44 @@ group { name: "elm/spinner/base/default";
 group { name: "elm/spinner/base/vertical";
    inherit: "elm/spinner/base/default";
    parts {
-      part { name: "elm.swallow.inc_button";
-         type: SWALLOW;
+      part { name: "elm.swallow.inc_button"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "inset";
-            rel1.offset: 1 1;
-            rel1.relative: 1.0 0.0;
-            rel2.to: "inset";
-            rel2.offset: 1 -2;
-            align: 1.0 0.5;
+            rel1.offset: 4 4;
+            rel2.offset: -5 4;
+            rel1.relative: 0.0 0.0;
+            rel2.relative: 1.0 0.0;
+            align: 0.5 0.0;
+            offscale;
          }
       }
-      part { name: "elm.swallow.text_button";
-         type: SWALLOW;
+      part { name: "elm.swallow.text_button"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
             visible: 1;
-            rel1.to_y: "inset";
-            rel1.to_x: "elm.swallow.dec_button";
-            rel1.relative: 1.0 0.0;
-            rel1.offset: 1 1;
-            rel2.to_y: "inset";
-            rel2.to_x: "elm.swallow.inc_button";
-            rel2.relative: 0.0 1.0;
-            rel2.offset: -2 -2;
+            rel1.to_x: "bg";
+            rel1.to_y: "elm.swallow.inc_button";
+            rel1.relative: 0.0 1.0;
+            rel1.offset: 5 5;
+            rel2.to_x: "bg";
+            rel2.to_y: "elm.swallow.dec_button";
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -5 -5;
+            offscale;
          }
          description { state: "active" 0.0;
             inherit: "default" 0.0;
             visible: 0;
          }
       }
-      part { name: "elm.swallow.dec_button";
-         type: SWALLOW;
+      part { name: "elm.swallow.dec_button"; type: SWALLOW;
          scale: 1;
          description { state: "default" 0.0;
-            rel1.to: "inset";
-            rel1.offset: 1 1;
-            rel2.to: "inset";
-            rel2.offset: 1 -2;
+            rel1.offset: 4 -5;
+            rel2.offset: -5 -5;
             rel2.relative: 0.0 1.0;
-            align: 0.0 0.5;
+            rel2.relative: 1.0 1.0;
+            align: 0.5 1.0;
          }
       }
       part { name: "elm.dragable.slider"; type: RECT;
@@ -232,8 +191,7 @@ group { name: "elm/spinner/base/vertical";
          dragable.y: 1 1 0;
          description { state: "default" 0.0;
             fixed: 1 0;
-            rel1.to: "elm.swallow.text_button";
-            rel2.to: "elm.swallow.text_button";
+            rel.to: "elm.swallow.text_button";
             color: 0 0 0 0;
          }
       }
