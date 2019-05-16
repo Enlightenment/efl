@@ -525,9 +525,9 @@ lib.eolian_typedecl_enum_fields_get.restype = c_void_p
 lib.eolian_typedecl_enum_field_get.argtypes = (c_void_p, c_char_p)
 lib.eolian_typedecl_enum_field_get.restype = c_void_p
 
-# EAPI Eina_Stringshare *eolian_typedecl_enum_field_c_name_get(const Eolian_Enum_Type_Field *fl);
-lib.eolian_typedecl_enum_field_c_name_get.argtypes = (c_void_p,)
-lib.eolian_typedecl_enum_field_c_name_get.restype = c_void_p  # Stringshare TO BE FREED
+# EAPI Eina_Stringshare *eolian_typedecl_enum_field_c_constant_get(const Eolian_Enum_Type_Field *fl);
+lib.eolian_typedecl_enum_field_c_constant_get.argtypes = (c_void_p,)
+lib.eolian_typedecl_enum_field_c_constant_get.restype = c_void_p  # Stringshare TO BE FREED
 
 # EAPI const Eolian_Documentation *eolian_typedecl_enum_field_documentation_get(const Eolian_Enum_Type_Field *fl);
 lib.eolian_typedecl_enum_field_documentation_get.argtypes = (c_void_p,)

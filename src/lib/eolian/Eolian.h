@@ -2469,7 +2469,7 @@ eolian_typedecl_enum_field_name_get(const Eolian_Enum_Type_Field *field)
 }
 
 /*
- * @brief Get the C name of a field of an enum type.
+ * @brief Get the C constant name used to refer to a particular enum field.
  *
  * The user of the API is responsible for the resulting stringshare.
  *
@@ -2478,7 +2478,7 @@ eolian_typedecl_enum_field_name_get(const Eolian_Enum_Type_Field *field)
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_typedecl_enum_field_c_name_get(const Eolian_Enum_Type_Field *fl);
+EAPI Eina_Stringshare *eolian_typedecl_enum_field_c_constant_get(const Eolian_Enum_Type_Field *fl);
 
 /*
  * @brief Get the documentation of a field of an enum type.

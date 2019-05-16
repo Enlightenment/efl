@@ -81,7 +81,7 @@ _type_generate(const Eolian_State *state, const Eolian_Typedecl *tp,
                 const Eolian_Expression *vale =
                    eolian_typedecl_enum_field_value_get(memb, EINA_FALSE);
                 Eina_Stringshare *membn =
-                   eolian_typedecl_enum_field_c_name_get(memb);
+                   eolian_typedecl_enum_field_c_constant_get(memb);
                 if (!vale)
                   eina_strbuf_append_printf(buf, "  %s", membn);
                 else

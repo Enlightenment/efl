@@ -1174,7 +1174,7 @@ int main(int argc, char** argv)
              , ef_end; ef != ef_end; ++ef)
           {
              auto field_name = ::eolian_typedecl_enum_field_name_get(&*ef);
-             auto field_c_name = ::eolian_typedecl_enum_field_c_name_get(&*ef);
+             auto field_c_name = ::eolian_typedecl_enum_field_c_constant_get(&*ef);
              if (!field_name || !field_c_name)
                {
                   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "Could not get enum field name";

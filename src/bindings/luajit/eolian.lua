@@ -419,7 +419,7 @@ ffi.cdef [[
     const Eolian_Type *eolian_typedecl_struct_field_type_get(const Eolian_Struct_Type_Field *fl);
     Eina_Iterator *eolian_typedecl_enum_fields_get(const Eolian_Typedecl *tp);
     const Eolian_Enum_Type_Field *eolian_typedecl_enum_field_get(const Eolian_Typedecl *tp, const char *field);
-    const char *eolian_typedecl_enum_field_c_name_get(const Eolian_Enum_Type_Field *fl);
+    const char *eolian_typedecl_enum_field_c_constant_get(const Eolian_Enum_Type_Field *fl);
     const Eolian_Documentation *eolian_typedecl_enum_field_documentation_get(const Eolian_Enum_Type_Field *fl);
     const Eolian_Expression *eolian_typedecl_enum_field_value_get(const Eolian_Enum_Type_Field *fl, Eina_Bool force);
 
@@ -979,7 +979,7 @@ ffi.metatype("Eolian_Struct_Type_Field", {
 ffi.metatype("Eolian_Enum_Type_Field", {
     __index = wrap_object {
         c_name_get = function(self)
-            local v = eolian.eolian_typedecl_enum_field_c_name_get(self)
+            local v = eolian.eolian_typedecl_enum_field_c_constant_get(self)
             if v == nil then return nil end
             return ffi_stringshare(v)
         end,

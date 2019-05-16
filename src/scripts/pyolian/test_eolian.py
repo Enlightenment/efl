@@ -512,7 +512,7 @@ class TestEolianTypedecl(unittest.TestCase):
         field = td.enum_field_get('v1_0')
         self.assertIsInstance(field, eolian.Enum_Type_Field)
         self.assertEqual(field.name, 'v1_0')
-        self.assertEqual(field.c_name, 'EFL_NET_HTTP_VERSION_V1_0')
+        self.assertEqual(field.c_constant, 'EFL_NET_HTTP_VERSION_V1_0')
         self.assertIsInstance(field.documentation, eolian.Documentation)
         self.assertIsInstance(field.value, eolian.Expression)
 
