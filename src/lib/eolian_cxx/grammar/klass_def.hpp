@@ -122,8 +122,8 @@ enum class variable_type
 
 
 struct type_def;
-bool operator==(type_def const& rhs, type_def const& lhs);
-bool operator!=(type_def const& rhs, type_def const& lhs);
+bool operator==(type_def const& lhs, type_def const& rhs);
+bool operator!=(type_def const& lhs, type_def const& rhs);
 
 enum class class_type
 {
@@ -377,8 +377,8 @@ struct type_def
    bool is_beta;
 
    type_def() = default;
-   type_def(variant_type original_type, std::string c_type, bool has_own)
-     : original_type(original_type), c_type(c_type), has_own(has_own) {}
+   type_def(variant_type original_type, std::string c_type, bool has_own, bool is_ptr, bool is_beta)
+     : original_type(original_type), c_type(c_type), has_own(has_own), is_ptr(is_ptr), is_beta(is_beta) {}
 
    type_def(Eolian_Type const* eolian_type, Eolian_Unit const* unit, Eolian_C_Type_Type ctype)
    {
@@ -422,7 +422,7 @@ inline bool operator!=(type_def const& lhs, type_def const& rhs)
   return !(lhs == rhs);
 }
 
-type_def const void_ {attributes::regular_type_def{"void", {qualifier_info::is_none, {}}, {}}, "void", false};
+type_def const void_ {attributes::regular_type_def{"void", {qualifier_info::is_none, {}}, {}}, "void", false, false, false};
 
 inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* unit, Eolian_C_Type_Type ctype)
 {
@@ -699,6 +699,7 @@ struct function_def
                function_type _type,
                bool _is_beta = false,
                bool _is_protected = false,
+               bool _is_static = false,
                Eolian_Unit const* unit = nullptr)
     : klass(_klass), return_type(_return_type), name(_name),
       parameters(_parameters), c_name(_c_name), filename(_filename),
@@ -708,6 +709,7 @@ struct function_def
       property_documentation(_property_documentation),
       type(_type),
       is_beta(_is_beta), is_protected(_is_protected),
+      is_static(_is_static),
       unit(unit) {}
 
   function_def( ::Eolian_Function const* function, Eolian_Function_Type type, Eolian_Typedecl const* tp, Eolian_Unit const* unit)
@@ -1191,7 +1193,7 @@ struct klass_def
   {
     return lhs.eolian_name == rhs.eolian_name
       && lhs.cxx_name == rhs.cxx_name
-      && lhs.filename == lhs.filename
+      && lhs.filename == rhs.filename
       && lhs.namespaces == rhs.namespaces
       && lhs.functions == rhs.functions
       && lhs.properties == rhs.properties
@@ -1223,7 +1225,8 @@ struct klass_def
             , class_type type
             , std::set<klass_name, compare_klass_name_by_name> immediate_inherits
             , std::string klass_get_name
-            , bool is_beta)
+            , bool is_beta
+            , Eolian_Unit const* unit)
     : eolian_name(eolian_name), cxx_name(cxx_name), filename(filename)
     , documentation(documentation)
     , namespaces(namespaces)
@@ -1231,6 +1234,7 @@ struct klass_def
     , immediate_inherits(immediate_inherits)
     , klass_get_name(klass_get_name)
     , is_beta(is_beta)
+    , unit(unit)
   {}
   klass_def(std::string _eolian_name, std::string _cxx_name
             , std::vector<std::string> _namespaces
