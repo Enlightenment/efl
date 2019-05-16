@@ -36,7 +36,7 @@ fi
 # Clone whole Content site
 #
 rm -rf www-content
-git clone --depth 1 git+ssh://git@git.enlightenment.org/website/www-content.git www-content
+git clone --depth 1 https://git@git.enlightenment.org/website/www-content.git www-content
 
 #
 # Copy all pages related to C# (those inside a folder called 'csharp') to the articles folder
