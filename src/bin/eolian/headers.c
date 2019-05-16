@@ -205,7 +205,7 @@ eo_gen_header_gen(const Eolian_State *state, const Eolian_Class *cl,
           }
      }
 
-   Eina_Stringshare *mname = eolian_class_c_name_get(cl);
+   Eina_Stringshare *mname = eolian_class_c_macro_get(cl);
    Eina_Stringshare *gname = eolian_class_c_get_function_name_get(cl);
    eina_strbuf_append_printf(buf, "#define %s %s()\n\n", mname, gname);
    eina_stringshare_del(mname);

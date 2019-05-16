@@ -333,7 +333,7 @@ class TestEolianClass(unittest.TestCase):
         self.assertFalse(cls.ctor_enable)
         self.assertFalse(cls.dtor_enable)
         self.assertEqual(cls.c_get_function_name, 'efl_loop_timer_class_get')
-        self.assertEqual(cls.c_name, 'EFL_LOOP_TIMER_CLASS')
+        self.assertEqual(cls.c_macro, 'EFL_LOOP_TIMER_CLASS')
         self.assertEqual(cls.c_data_type, 'Efl_Loop_Timer_Data')
         self.assertEqual([f.name for f in cls.methods], ['reset','loop_reset','delay'])
         self.assertEqual([f.name for f in cls.properties], ['interval','pending'])

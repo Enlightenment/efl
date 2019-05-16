@@ -575,9 +575,10 @@ EFL_START_TEST(eolian_simple_parsing)
    eina_stringshare_del(string);
 
    /* c name */
-   fail_if(!(string = eolian_class_c_name_get(class)));
+   fail_if(!(string = eolian_class_c_macro_get(class)));
    fail_if(strcmp(string, "CLASS_SIMPLE_CLASS"));
    eina_stringshare_del(string);
+   fail_if(strcmp(eolian_class_c_name_get(class), "Class_Simple"));
 
    /* Property */
    fail_if(!(fid = eolian_class_function_by_name_get(class, "a", EOLIAN_PROPERTY)));

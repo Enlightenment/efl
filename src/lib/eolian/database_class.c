@@ -18,6 +18,7 @@ database_class_del(Eolian_Class *cl)
 
    eina_stringshare_del(cl->base.file);
    eina_stringshare_del(cl->base.name);
+   eina_stringshare_del(cl->base.c_name);
 
    EINA_LIST_FREE(cl->implements, impl)
      database_implement_del(impl);

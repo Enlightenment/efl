@@ -636,8 +636,8 @@ class Class(Object):
         return "<eolian.Class '{0.name}', {0.type!s}>".format(self)
 
     @cached_property
-    def c_name(self):
-        s = lib.eolian_class_c_name_get(self)
+    def c_macro(self):
+        s = lib.eolian_class_c_macro_get(self)
         ret = _str_to_py(s)
         lib.eina_stringshare_del(c_void_p(s))
         return ret

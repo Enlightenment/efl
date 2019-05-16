@@ -60,6 +60,13 @@ eolian_object_name_get(const Eolian_Object *obj)
    return obj->name;
 }
 
+EAPI const char *
+eolian_object_c_name_get(const Eolian_Object *obj)
+{
+   if (!obj) return NULL;
+   return obj->c_name;
+}
+
 typedef struct _Eolian_Namespace_List
 {
    Eina_Iterator itr;

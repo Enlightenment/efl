@@ -306,9 +306,9 @@ lib.eolian_class_dtor_enable_get.restype = c_bool
 lib.eolian_class_c_get_function_name_get.argtypes = (c_void_p,)
 lib.eolian_class_c_get_function_name_get.restype = c_void_p  # Stringshare TO BE FREED
 
-# EAPI Eina_Stringshare *eolian_class_c_name_get(const Eolian_Class *klass);
-lib.eolian_class_c_name_get.argtypes = (c_void_p,)
-lib.eolian_class_c_name_get.restype = c_void_p  # Stringshare TO BE FREED
+# EAPI Eina_Stringshare *eolian_class_c_macro_get(const Eolian_Class *klass);
+lib.eolian_class_c_macro_get.argtypes = (c_void_p,)
+lib.eolian_class_c_macro_get.restype = c_void_p  # Stringshare TO BE FREED
 
 # EAPI Eina_Stringshare *eolian_class_c_data_type_get(const Eolian_Class *klass);
 lib.eolian_class_c_data_type_get.argtypes = (c_void_p,)

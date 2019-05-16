@@ -1163,14 +1163,14 @@ eo_gen_source_gen(const Eolian_Class *cl, Eina_Strbuf *buf)
         eina_strbuf_append(buf, ", NULL");
       else
         {
-           Eina_Stringshare *mname = eolian_class_c_name_get(icl);
+           Eina_Stringshare *mname = eolian_class_c_macro_get(icl);
            eina_strbuf_append_printf(buf, ", %s", mname);
            eina_stringshare_del(mname);
         }
       Eina_Iterator *itr = eolian_class_extensions_get(cl);
       EINA_ITERATOR_FOREACH(itr, icl)
         {
-           Eina_Stringshare *mname = eolian_class_c_name_get(icl);
+           Eina_Stringshare *mname = eolian_class_c_macro_get(icl);
            eina_strbuf_append_printf(buf, ", %s", mname);
            eina_stringshare_del(mname);
         }
@@ -1342,7 +1342,7 @@ _gen_proto(const Eolian_Class *cl, const Eolian_Function *fid,
      if (!strcmp(efname + strlen(efname) - sizeof("destructor") + 1, "destructor"))
        {
           Eina_Stringshare *fcn = eolian_function_full_c_name_get(fid, ftype);
-          Eina_Stringshare *mname = eolian_class_c_name_get(cl);
+          Eina_Stringshare *mname = eolian_class_c_macro_get(cl);
           eina_strbuf_append(buf, "   ");
           eina_strbuf_append(buf, fcn);
           eina_stringshare_del(fcn);
