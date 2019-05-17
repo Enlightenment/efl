@@ -36,7 +36,6 @@
 
 #ifdef _WIN32
 # include <ws2tcpip.h>
-# include <Evil.h>
 #endif
 
 #include "Ecore.h"

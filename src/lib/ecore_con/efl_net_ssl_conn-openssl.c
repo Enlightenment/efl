@@ -18,7 +18,7 @@
 #endif
 
 #ifdef _WIN32
-# include <Evil.h>
+# include <evil_private.h> /* dlsym */
 #endif
 
 #ifdef HAVE_ESCAPE
