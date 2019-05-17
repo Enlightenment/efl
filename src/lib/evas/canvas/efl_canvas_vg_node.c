@@ -60,8 +60,10 @@ _efl_canvas_vg_node_transformation_set(Eo *obj,
         pd->m = NULL;
      }
 
-   pd->flags |= EFL_GFX_CHANGE_FLAG_MATRIX;
+   /* NOTE: _node_change function is only executed
+            when pd->flags is EFL_GFX_CHANGE_FLAG_NONE to prevent duplicate calls.*/
    _node_change(obj, pd);
+   pd->flags |= EFL_GFX_CHANGE_FLAG_MATRIX;
 }
 
 const Eina_Matrix3 *
