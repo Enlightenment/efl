@@ -130,7 +130,6 @@ include Makefile_Eolian_Mono_Helper.am
 ### Efl C Sharp Binding
 
 evas_eolian_blacklisted_files = \
-lib/evas/canvas/efl_canvas_text.eo.cs \
 lib/evas/canvas/efl_canvas_scene3d.eo.cs \
 lib/evas/canvas/evas_canvas3d_camera.eo.cs \
 lib/evas/canvas/evas_canvas3d_light.eo.cs \
