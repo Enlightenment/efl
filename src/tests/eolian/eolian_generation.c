@@ -226,7 +226,7 @@ EFL_START_TEST(owning)
             eina_environment_tmp_get());
    _remove_ref(output_filepath, "eo.c");
    fail_if(0 != _eolian_gen_execute(TESTS_SRC_DIR"/data/owning.eo", "-gc", output_filepath));
-   fail_if(!_files_compare(TESTS_SRC_DIR"/data/owning.eo.c", output_filepath, "eo.c"));
+   fail_if(!_files_compare(TESTS_SRC_DIR"/data/owning_ref.c", output_filepath, "eo.c"));
 
 }
 EFL_END_TEST

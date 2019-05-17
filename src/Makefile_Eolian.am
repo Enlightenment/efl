@@ -158,7 +158,7 @@ tests/eolian/data/typedef_ref.h \
 tests/eolian/data/typedef_ref_stub.h \
 tests/eolian/data/struct_ref.h \
 tests/eolian/data/struct_ref_stub.h \
-tests/eolian/data/owning.eo.c \
+tests/eolian/data/owning_ref.c \
 tests/eolian/data/class_simple_ref.c \
 tests/eolian/data/override_ref.c \
 tests/eolian/data/class_simple_ref_eo.h \
