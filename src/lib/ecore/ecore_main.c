@@ -44,9 +44,8 @@
 #endif
 
 #ifdef _WIN32
-# include <Evil.h>
+# include <evil_private.h> /* evil_last_error_get */
 #endif
-
 #include "Ecore.h"
 #include "ecore_private.h"
 

@@ -24,7 +24,7 @@
 #endif
 
 #ifdef _WIN32
-# include <Evil.h>
+# include <evil_private.h> /* evil_init/shutdown */
 #endif
 #include <Eina.h>
 #include <Efl.h>
