@@ -503,19 +503,108 @@ EFL_START_TEST (efl_ui_active_view_view_manager_start_end)
 }
 EFL_END_TEST
 
-EFL_START_TEST (efl_ui_active_view_active_index_not_update)
+EFL_START_TEST (efl_ui_active_view_test_push1)
 {
-   efl_ui_active_view_gravity_set(container, EFL_UI_ACTIVE_VIEW_CONTAINER_GRAVITY_INDEX);
-
    for (int i = 0; i < 5; ++i)
      {
         Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
-        efl_pack(container, w);
-        ck_assert_int_eq(efl_ui_active_view_active_index_get(container), 0);
+        efl_pack_end(container, w);
      }
+    Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
+    efl_ui_active_view_push(container, w);
+    ck_assert_int_eq(efl_pack_index_get(container, w), 0);
+    ck_assert_int_eq(efl_ui_active_view_active_index_get(container), 0);
+}
+EFL_END_TEST
 
-   efl_del(efl_pack_content_get(container, 0));
-   ck_assert_int_eq(efl_ui_active_view_active_index_get(container), 0);
+EFL_START_TEST (efl_ui_active_view_test_push2)
+{
+   for (int i = 0; i < 5; ++i)
+     {
+        Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
+        efl_pack_end(container, w);
+     }
+    efl_ui_active_view_active_index_set(container, 3);
+
+    Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
+    efl_ui_active_view_push(container, w);
+    ck_assert_int_eq(efl_pack_index_get(container, w), 3);
+    ck_assert_int_eq(efl_ui_active_view_active_index_get(container), 3);
+}
+EFL_END_TEST
+
+static Eina_Value
+_then_cb(void *data, const Eina_Value v, const Eina_Future *dead_future EINA_UNUSED)
+{
+   Eo **value = data;
+
+   *value = eina_value_object_get(&v);
+
+   return EINA_VALUE_EMPTY;
+}
+
+EFL_START_TEST (efl_ui_active_view_test_pop1)
+{
+   Eo *called;
+   for (int i = 0; i < 5; ++i)
+     {
+        Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
+        efl_pack_end(container, w);
+     }
+    Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
+    efl_ui_active_view_push(container, w);
+    Eina_Future *f = efl_ui_active_view_pop(container, EINA_FALSE);
+    eina_future_then(f, _then_cb, &called);
+    for (int i = 0; i < 10; ++i)
+      {
+         efl_loop_iterate(efl_provider_find(container, EFL_LOOP_CLASS));
+      }
+    ck_assert_ptr_eq(efl_ui_widget_parent_get(w), win);
+    ck_assert_int_eq(efl_content_count(container), 5);
+    ck_assert_ptr_eq(called, w);
+    ck_assert_ptr_ne(f, NULL);
+}
+EFL_END_TEST
+
+EFL_START_TEST (efl_ui_active_view_test_pop2)
+{
+   for (int i = 0; i < 5; ++i)
+     {
+        Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
+        efl_pack_end(container, w);
+     }
+    Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
+    efl_ui_active_view_push(container, w);
+    Eina_Future *f = efl_ui_active_view_pop(container, EINA_TRUE);
+    for (int i = 0; i < 10; ++i)
+      {
+         efl_loop_iterate(efl_provider_find(container, EFL_LOOP_CLASS));
+      }
+    ck_assert_int_eq(efl_ref_count(w), 0);
+    ck_assert_int_eq(efl_content_count(container), 5);
+    ck_assert_ptr_ne(f, NULL);
+}
+EFL_END_TEST
+
+EFL_START_TEST (efl_ui_active_view_test_pop3)
+{
+   for (int i = 0; i < 5; ++i)
+     {
+        Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
+        efl_pack_end(container, w);
+     }
+    Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
+    efl_ui_active_view_active_index_set(container, 3);
+    efl_ui_active_view_push(container, w);
+    Eina_Future *f = efl_ui_active_view_pop(container, EINA_TRUE);
+    for (int i = 0; i < 10; ++i)
+      {
+         efl_loop_iterate(efl_provider_find(container, EFL_LOOP_CLASS));
+      }
+    ck_assert_int_eq(efl_ui_active_view_active_index_get(container), 3);
+    ck_assert_int_eq(efl_ref_count(w), 0);
+    ck_assert_int_eq(efl_content_count(container), 5);
+    ck_assert_ptr_ne(f, NULL);
 }
 EFL_END_TEST
 
@@ -565,5 +654,9 @@ void efl_ui_test_active_view(TCase *tc)
    tcase_add_test(tc, efl_ui_smart_indicator_calls);
    tcase_add_test(tc, efl_ui_smart_indicator_transition_calls);
    tcase_add_test(tc, efl_ui_active_view_view_manager_start_end);
-   tcase_add_test(tc, efl_ui_active_view_active_index_not_update);
+   tcase_add_test(tc, efl_ui_active_view_test_push1);
+   tcase_add_test(tc, efl_ui_active_view_test_push2);
+   tcase_add_test(tc, efl_ui_active_view_test_pop1);
+   tcase_add_test(tc, efl_ui_active_view_test_pop2);
+   tcase_add_test(tc, efl_ui_active_view_test_pop3);
 }

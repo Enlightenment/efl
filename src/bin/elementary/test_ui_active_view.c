@@ -7,13 +7,15 @@
 #include <Efl_Ui.h>
 #include <Elementary.h>
 
-typedef enum _Page_Type {
+typedef enum _View_Type
+{
    LAYOUT,
    LIST,
    BUTTON
-} Page_Type;
+} View_Type;
 
-typedef enum _Pack_Type {
+typedef enum _Pack_Type
+{
    PACK_BEGIN,
    PACK_END,
    PACK_BEFORE,
@@ -23,82 +25,90 @@ typedef enum _Pack_Type {
    CLEAR
 } Pack_Type;
 
-typedef struct _Params {
+typedef struct _Params
+{
    Evas_Object *navi;
-   Eo *active_view;
-   Eo *indicator;
-   int w, h;
-   Eina_Bool wfill, hfill;
+   Eo          *active_view;
+   Eo          *indicator;
+   int          w, h;
+   Eina_Bool    wfill, hfill;
 } Params;
 
-typedef struct _Page_Set_Params {
+typedef struct _Page_Set_Params
+{
    Eo *active_view;
    Eo *spinner;
 } Page_Set_Params;
 
-typedef struct _Pack_Params {
+typedef struct _Pack_Params
+{
    Pack_Type type;
-   Eo *active_view;
-   Eo *pack_sp;
-   Eo *unpack_sp;
-   Eo *unpack_btn;
+   Eo       *active_view;
+   Eo       *pack_sp;
+   Eo       *unpack_sp;
+   Eo       *unpack_btn;
 } Pack_Params;
 
-typedef struct _Size_Params {
-   Eo *active_view;
-   Eo *slider;
+typedef struct _Size_Params
+{
+   Eo     *active_view;
+   Eo     *slider;
    Params *params;
 } Size_Params;
 
 #define PAGE_NUM 3
 
-static Eo*
-page_add(Page_Type p, Eo *parent)
+static Eo *
+view_add(View_Type p, Eo *parent)
 {
    Eo *page;
    char buf[PATH_MAX];
    int i;
 
-   switch (p) {
-      case LAYOUT:
-         snprintf(buf, sizeof(buf), "%s/objects/test_pager.edj",
-                  elm_app_data_dir_get());
-         page = efl_add(EFL_UI_LAYOUT_CLASS, parent,
-                        efl_file_set(efl_added, buf),
-                        efl_file_key_set(efl_added, "page"),
-                        efl_file_load(efl_added),
-                        efl_text_set(efl_part(efl_added, "text"), "Layout Page"));
-         efl_gfx_hint_fill_set(page, EINA_TRUE, EINA_TRUE);
-         break;
-      case LIST:
-         page = elm_list_add(parent);
-         elm_list_select_mode_set(page, ELM_OBJECT_SELECT_MODE_ALWAYS);
-         evas_object_show(page);
-         for (i = 0; i < 20; i++) {
-            snprintf(buf, sizeof(buf), "List Page - Item #%d", i);
-            elm_list_item_append(page, buf, NULL, NULL, NULL, NULL);
-         }
-         evas_object_size_hint_weight_set(page, EVAS_HINT_EXPAND,
-                                          EVAS_HINT_EXPAND);
-         evas_object_size_hint_align_set(page, EVAS_HINT_FILL,
-                                         EVAS_HINT_FILL);
-         break;
-      case BUTTON:
-         page = efl_add(EFL_UI_BUTTON_CLASS, parent,
-                        efl_text_set(efl_added, "Button Page"));
-         efl_gfx_hint_fill_set(page, EINA_TRUE, EINA_TRUE);
-         break;
-      default:
-         snprintf(buf, sizeof(buf), "%s/objects/test_pager.edj",
-                  elm_app_data_dir_get());
-         page = efl_add(EFL_UI_LAYOUT_CLASS, parent,
-                        efl_file_set(efl_added, buf),
-                        efl_file_key_set(efl_added, "page"),
-                        efl_file_load(efl_added),
-                        efl_text_set(efl_part(efl_added, "text"), "Layout Page"));
-         efl_gfx_hint_fill_set(page, EINA_TRUE, EINA_TRUE);
-         break;
-   }
+   switch (p)
+     {
+        case LAYOUT:
+          snprintf(buf, sizeof(buf), "%s/objects/test_pager.edj",
+                   elm_app_data_dir_get());
+          page = efl_add(EFL_UI_LAYOUT_CLASS, parent,
+                         efl_file_set(efl_added, buf),
+                         efl_file_key_set(efl_added, "page"),
+                         efl_file_load(efl_added),
+                         efl_text_set(efl_part(efl_added, "text"), "Layout Page"));
+          efl_gfx_hint_fill_set(page, EINA_TRUE, EINA_TRUE);
+          break;
+
+        case LIST:
+          page = elm_list_add(parent);
+          elm_list_select_mode_set(page, ELM_OBJECT_SELECT_MODE_ALWAYS);
+          evas_object_show(page);
+          for (i = 0; i < 20; i++) {
+               snprintf(buf, sizeof(buf), "List Page - Item #%d", i);
+               elm_list_item_append(page, buf, NULL, NULL, NULL, NULL);
+            }
+          evas_object_size_hint_weight_set(page, EVAS_HINT_EXPAND,
+                                           EVAS_HINT_EXPAND);
+          evas_object_size_hint_align_set(page, EVAS_HINT_FILL,
+                                          EVAS_HINT_FILL);
+          break;
+
+        case BUTTON:
+          page = efl_add(EFL_UI_BUTTON_CLASS, parent,
+                         efl_text_set(efl_added, "Button Page"));
+          efl_gfx_hint_fill_set(page, EINA_TRUE, EINA_TRUE);
+          break;
+
+        default:
+          snprintf(buf, sizeof(buf), "%s/objects/test_pager.edj",
+                   elm_app_data_dir_get());
+          page = efl_add(EFL_UI_LAYOUT_CLASS, parent,
+                         efl_file_set(efl_added, buf),
+                         efl_file_key_set(efl_added, "page"),
+                         efl_file_load(efl_added),
+                         efl_text_set(efl_part(efl_added, "text"), "Layout Page"));
+          efl_gfx_hint_fill_set(page, EINA_TRUE, EINA_TRUE);
+          break;
+     }
 
    return page;
 }
@@ -110,7 +120,7 @@ prev_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    int active_index = efl_ui_active_view_active_index_get(active_view);
 
    if (active_index - 1 > -1)
-     efl_ui_active_view_active_index_set(active_view, active_index -1);
+     efl_ui_active_view_active_index_set(active_view, active_index - 1);
 }
 
 static void
@@ -120,7 +130,7 @@ next_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    int active_index = efl_ui_active_view_active_index_get(active_view);
 
    if (active_index + 1 < efl_content_count(active_view))
-     efl_ui_active_view_active_index_set(active_view, active_index +1);
+     efl_ui_active_view_active_index_set(active_view, active_index + 1);
 }
 
 static void
@@ -215,55 +225,67 @@ pack_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    Eo *page = NULL, *curr_page;
    int index, cnt;
 
-   if ((param->type != UNPACK_AT) && (param->type != CLEAR)) {
-      index  = efl_content_count(active_view);
+   if ((param->type != UNPACK_AT) && (param->type != CLEAR))
+     {
+        index = efl_content_count(active_view);
 
-      switch (index % 3) {
-         case 0:
-            page = page_add(LAYOUT, active_view);
-            break;
-         case 1:
-            page = page_add(LIST, active_view);
-            break;
-         case 2:
-            page = page_add(BUTTON, active_view);
-            break;
-         default:
-            page = page_add(LAYOUT, active_view);
-            break;
-      }
-   }
+        switch (index % 3)
+          {
+             case 0:
+               page = view_add(LAYOUT, active_view);
+               break;
 
-   switch (param->type) {
-      case PACK_BEGIN:
-         efl_pack_begin(active_view, page);
-         break;
-      case PACK_END:
-         efl_pack_end(active_view, page);
-         break;
-      case PACK_BEFORE:
-         index = efl_ui_active_view_active_index_get(active_view);
-         curr_page = efl_pack_content_get(active_view, index);
-         efl_pack_before(active_view, page, curr_page);
-         break;
-      case PACK_AFTER:
-         index = efl_ui_active_view_active_index_get(active_view);
-         curr_page = efl_pack_content_get(active_view, index);
-         efl_pack_after(active_view, page, curr_page);
-         break;
-      case PACK_AT:
-         index = efl_ui_range_value_get(param->pack_sp);
-         efl_pack_at(active_view, page, index);
-         break;
-      case UNPACK_AT:
-         index = efl_ui_range_value_get(param->unpack_sp);
-         page = efl_pack_unpack_at(active_view, index);
-         efl_del(page);
-         break;
-      case CLEAR:
-         efl_pack_clear(active_view);
-         break;
-   }
+             case 1:
+               page = view_add(LIST, active_view);
+               break;
+
+             case 2:
+               page = view_add(BUTTON, active_view);
+               break;
+
+             default:
+               page = view_add(LAYOUT, active_view);
+               break;
+          }
+     }
+
+   switch (param->type)
+     {
+        case PACK_BEGIN:
+          efl_pack_begin(active_view, page);
+          break;
+
+        case PACK_END:
+          efl_pack_end(active_view, page);
+          break;
+
+        case PACK_BEFORE:
+          index = efl_ui_active_view_active_index_get(active_view);
+          curr_page = efl_pack_content_get(active_view, index);
+          efl_pack_before(active_view, page, curr_page);
+          break;
+
+        case PACK_AFTER:
+          index = efl_ui_active_view_active_index_get(active_view);
+          curr_page = efl_pack_content_get(active_view, index);
+          efl_pack_after(active_view, page, curr_page);
+          break;
+
+        case PACK_AT:
+          index = efl_ui_range_value_get(param->pack_sp);
+          efl_pack_at(active_view, page, index);
+          break;
+
+        case UNPACK_AT:
+          index = efl_ui_range_value_get(param->unpack_sp);
+          page = efl_pack_unpack_at(active_view, index);
+          efl_del(page);
+          break;
+
+        case CLEAR:
+          efl_pack_clear(active_view);
+          break;
+     }
 
    cnt = efl_content_count(active_view);
 
@@ -302,7 +324,7 @@ page_set_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    Page_Set_Params *psp = data;
 
    efl_ui_active_view_active_index_set(psp->active_view,
-                                 efl_ui_range_value_get(psp->spinner));
+                                       efl_ui_range_value_get(psp->spinner));
 }
 
 static void
@@ -329,8 +351,8 @@ indicator_none_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
 static void
 active_view_size(void *data,
-                         Evas_Object *obj EINA_UNUSED,
-                         void *event_info EINA_UNUSED)
+                 Evas_Object *obj EINA_UNUSED,
+                 void *event_info EINA_UNUSED)
 {
    Params *params = data;
    Size_Params *size_params;
@@ -355,7 +377,7 @@ active_view_size(void *data,
    efl_gfx_entity_visible_set(fr, 1);
 
    inbox = efl_add(EFL_UI_BOX_CLASS, fr,
-                  efl_content_set(fr, efl_added));
+                   efl_content_set(fr, efl_added));
 
    ck = elm_check_add(inbox);
    elm_object_text_set(ck, "Fill");
@@ -396,7 +418,7 @@ active_view_size(void *data,
    efl_gfx_entity_visible_set(fr, 1);
 
    inbox = efl_add(EFL_UI_BOX_CLASS, fr,
-                  efl_content_set(fr, efl_added));
+                   efl_content_set(fr, efl_added));
 
    ck = elm_check_add(inbox);
    elm_object_text_set(ck, "Fill");
@@ -430,56 +452,6 @@ active_view_size(void *data,
 }
 
 static void
-_gravity_changed_cb(void *data, const Efl_Event *ev)
-{
-   Params *params = data;
-
-   if (efl_ui_nstate_value_get(ev->object) == 0)
-     {
-        efl_ui_active_view_gravity_set(params->active_view, EFL_UI_ACTIVE_VIEW_CONTAINER_GRAVITY_INDEX);
-     }
-   else
-     {
-        efl_ui_active_view_gravity_set(params->active_view, EFL_UI_ACTIVE_VIEW_CONTAINER_GRAVITY_CONTENT);
-     }
-}
-
-static void
-view_index_gravity_cb(void *data,
-                         Evas_Object *obj EINA_UNUSED,
-                         void *event_info EINA_UNUSED)
-{
-   Params *params = data;
-   Evas_Object *navi = params->navi;
-   Eo *btn, *box, *ck;
-
-   btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
-                 efl_text_set(efl_added, "Back"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
-                                        back_btn_cb, navi));
-
-   box = efl_add(EFL_UI_BOX_CLASS, navi,
-                 elm_naviframe_item_push(navi, "View Index Gravity", btn, NULL,
-                                         efl_added, NULL));
-
-   // Width
-
-   ck = efl_add(EFL_UI_CHECK_CLASS, box);
-   efl_event_callback_add(ck, EFL_UI_NSTATE_EVENT_CHANGED, _gravity_changed_cb, params);
-   efl_text_set(ck, "Content Index Gravity");
-   efl_pack_end(box, ck);
-   efl_gfx_entity_visible_set(ck, 1);
-   if (efl_ui_active_view_gravity_get(params->active_view) == EFL_UI_ACTIVE_VIEW_CONTAINER_GRAVITY_CONTENT)
-     {
-        efl_ui_nstate_value_set(ck, 1);
-     }
-   else
-     {
-        efl_ui_nstate_value_set(ck, 0);
-     }
-}
-
-static void
 _animation_cb(void *data, const Efl_Event *ev)
 {
    Params *params = data;
@@ -489,8 +461,8 @@ _animation_cb(void *data, const Efl_Event *ev)
 
 static void
 view_animation_cb(void *data,
-                         Evas_Object *obj EINA_UNUSED,
-                         void *event_info EINA_UNUSED)
+                  Evas_Object *obj EINA_UNUSED,
+                  void *event_info EINA_UNUSED)
 {
    Params *params = data;
    Evas_Object *navi = params->navi;
@@ -515,8 +487,8 @@ view_animation_cb(void *data,
 
 static void
 pack_cb(void *data,
-                    Evas_Object *obj EINA_UNUSED,
-                    void *event_info EINA_UNUSED)
+        Evas_Object *obj EINA_UNUSED,
+        void *event_info EINA_UNUSED)
 {
    Params *params = (Params *)data;
    Evas_Object *navi = params->navi;
@@ -695,13 +667,12 @@ pack_cb(void *data,
            efl_event_callback_add(efl_added, EFL_EVENT_DEL,
                                   pack_btn_del_cb, pack_param),
            efl_pack_end(box, efl_added));
-
 }
 
 static void
 active_index_cb(void *data,
-                            Evas_Object *obj EINA_UNUSED,
-                            void *event_info EINA_UNUSED)
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
 {
    Params *params = (Params *)data;
    Evas_Object *navi = params->navi;
@@ -717,7 +688,7 @@ active_index_cb(void *data,
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
                  efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
-     elm_naviframe_item_push(navi, "Active Index", btn, NULL,
+                 elm_naviframe_item_push(navi, "Active Index", btn, NULL,
                                          efl_added, NULL));
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
@@ -750,8 +721,8 @@ active_index_cb(void *data,
 
 static void
 indicator_cb(void *data,
-                         Evas_Object *obj EINA_UNUSED,
-                         void *event_info EINA_UNUSED)
+             Evas_Object *obj EINA_UNUSED,
+             void *event_info EINA_UNUSED)
 {
    Params *params = (Params *)data;
    Evas_Object *navi = params->navi;
@@ -780,11 +751,12 @@ indicator_cb(void *data,
            efl_pack_end(box, efl_added));
 }
 
-void test_ui_active_view_stack(void *data EINA_UNUSED,
-                                   Evas_Object *obj EINA_UNUSED,
-                                   void *event_info EINA_UNUSED)
+void
+test_ui_active_view_stack(void *data EINA_UNUSED,
+                          Evas_Object *obj EINA_UNUSED,
+                          void *event_info EINA_UNUSED)
 {
-  Eo *win, *panes, *navi, *list, *layout, *active_view, *page;
+   Eo *win, *panes, *navi, *list, *layout, *active_view, *view;
    Params *params = NULL;
    char buf[PATH_MAX];
    int i;
@@ -818,8 +790,8 @@ void test_ui_active_view_stack(void *data EINA_UNUSED,
                     efl_content_set(efl_part(panes, "second"), efl_added));
 
    active_view = efl_add(EFL_UI_ACTIVE_VIEW_CONTAINER_CLASS, layout,
-                   efl_content_set(efl_part(layout, "pager"), efl_added),
-                   efl_ui_active_view_size_set(efl_added, EINA_SIZE2D(200, 300)));
+                         efl_content_set(efl_part(layout, "pager"), efl_added),
+                         efl_ui_active_view_size_set(efl_added, EINA_SIZE2D(200, 300)));
 
    efl_ui_active_view_manager_set(active_view, efl_new(EFL_UI_ACTIVE_VIEW_VIEW_MANAGER_STACK_CLASS));
 
@@ -850,38 +822,43 @@ void test_ui_active_view_stack(void *data EINA_UNUSED,
    elm_list_item_append(list, "Pack / Unpack", NULL, NULL, pack_cb, params);
    elm_list_item_append(list, "Active Index", NULL, NULL, active_index_cb, params);
    elm_list_item_append(list, "Indicator", NULL, NULL, indicator_cb, params);
-   elm_list_item_append(list, "View Index Gravity", NULL, NULL, view_index_gravity_cb, params);
    elm_list_item_append(list, "Animation", NULL, NULL, view_animation_cb, params);
    elm_list_go(list);
 
    efl_event_callback_add(list, EFL_EVENT_DEL, list_del_cb, params);
 
-   for (i = 0; i < PAGE_NUM; i++) {
-      switch (i % 3) {
-         case 0:
-            page = page_add(LAYOUT, active_view);
-            break;
-         case 1:
-            page = page_add(LIST, active_view);
-            break;
-         case 2:
-            page = page_add(BUTTON, active_view);
-            break;
-         default:
-            page = page_add(LAYOUT, active_view);
-            break;
-      }
-      efl_pack_end(active_view, page);
-   }
+   for (i = 0; i < PAGE_NUM; i++)
+     {
+        switch (i % 3)
+          {
+           case 0:
+             view = view_add(LAYOUT, active_view);
+             break;
+
+           case 1:
+             view = view_add(LIST, active_view);
+             break;
+
+           case 2:
+             view = view_add(BUTTON, active_view);
+             break;
+
+           default:
+             view = view_add(LAYOUT, active_view);
+             break;
+          }
+        efl_pack_end(active_view, view);
+     }
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(580, 320));
 }
 
-void test_ui_active_view_plain(void *data EINA_UNUSED,
-                                   Evas_Object *obj EINA_UNUSED,
-                                   void *event_info EINA_UNUSED)
+void
+test_ui_active_view_plain(void *data EINA_UNUSED,
+                          Evas_Object *obj EINA_UNUSED,
+                          void *event_info EINA_UNUSED)
 {
-  Eo *win, *panes, *navi, *list, *layout, *active_view, *page;
+   Eo *win, *panes, *navi, *list, *layout, *active_view, *view;
    Params *params = NULL;
    char buf[PATH_MAX];
    int i;
@@ -915,8 +892,8 @@ void test_ui_active_view_plain(void *data EINA_UNUSED,
                     efl_content_set(efl_part(panes, "second"), efl_added));
 
    active_view = efl_add(EFL_UI_ACTIVE_VIEW_CONTAINER_CLASS, layout,
-                   efl_content_set(efl_part(layout, "pager"), efl_added),
-                   efl_ui_active_view_size_set(efl_added, EINA_SIZE2D(200, 300)));
+                         efl_content_set(efl_part(layout, "pager"), efl_added),
+                         efl_ui_active_view_size_set(efl_added, EINA_SIZE2D(200, 300)));
 
    efl_add(EFL_UI_BUTTON_CLASS, layout,
            efl_text_set(efl_added, "Prev"),
@@ -945,38 +922,42 @@ void test_ui_active_view_plain(void *data EINA_UNUSED,
    elm_list_item_append(list, "Pack / Unpack", NULL, NULL, pack_cb, params);
    elm_list_item_append(list, "Active Index", NULL, NULL, active_index_cb, params);
    elm_list_item_append(list, "Indicator", NULL, NULL, indicator_cb, params);
-   elm_list_item_append(list, "View Index Gravity", NULL, NULL, view_index_gravity_cb, params);
    elm_list_go(list);
 
    efl_event_callback_add(list, EFL_EVENT_DEL, list_del_cb, params);
 
-   for (i = 0; i < PAGE_NUM; i++) {
-      switch (i % 3) {
-         case 0:
-            page = page_add(LAYOUT, active_view);
-            break;
-         case 1:
-            page = page_add(LIST, active_view);
-            break;
-         case 2:
-            page = page_add(BUTTON, active_view);
-            break;
-         default:
-            page = page_add(LAYOUT, active_view);
-            break;
-      }
-      efl_pack_end(active_view, page);
-   }
+   for (i = 0; i < PAGE_NUM; i++)
+     {
+        switch (i % 3)
+          {
+           case 0:
+             view = view_add(LAYOUT, active_view);
+             break;
+
+           case 1:
+             view = view_add(LIST, active_view);
+             break;
+
+           case 2:
+             view = view_add(BUTTON, active_view);
+             break;
+
+           default:
+             view = view_add(LAYOUT, active_view);
+             break;
+          }
+        efl_pack_end(active_view, view);
+     }
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(580, 320));
 }
 
-
-void test_ui_active_view_scroll(void *data EINA_UNUSED,
-                                   Evas_Object *obj EINA_UNUSED,
-                                   void *event_info EINA_UNUSED)
+void
+test_ui_active_view_scroll(void *data EINA_UNUSED,
+                           Evas_Object *obj EINA_UNUSED,
+                           void *event_info EINA_UNUSED)
 {
-  Eo *win, *panes, *navi, *list, *layout, *active_view, *page;
+   Eo *win, *panes, *navi, *list, *layout, *active_view, *view;
    Params *params = NULL;
    char buf[PATH_MAX];
    int i;
@@ -1010,8 +991,8 @@ void test_ui_active_view_scroll(void *data EINA_UNUSED,
                     efl_content_set(efl_part(panes, "second"), efl_added));
 
    active_view = efl_add(EFL_UI_ACTIVE_VIEW_CONTAINER_CLASS, layout,
-                   efl_content_set(efl_part(layout, "pager"), efl_added),
-                   efl_ui_active_view_size_set(efl_added, EINA_SIZE2D(200, 300)));
+                         efl_content_set(efl_part(layout, "pager"), efl_added),
+                         efl_ui_active_view_size_set(efl_added, EINA_SIZE2D(200, 300)));
 
    efl_ui_active_view_manager_set(active_view, efl_new(EFL_UI_ACTIVE_VIEW_VIEW_MANAGER_SCROLL_CLASS));
 
@@ -1042,29 +1023,33 @@ void test_ui_active_view_scroll(void *data EINA_UNUSED,
    elm_list_item_append(list, "Pack / Unpack", NULL, NULL, pack_cb, params);
    elm_list_item_append(list, "Active Index", NULL, NULL, active_index_cb, params);
    elm_list_item_append(list, "Indicator", NULL, NULL, indicator_cb, params);
-   elm_list_item_append(list, "View Index Gravity", NULL, NULL, view_index_gravity_cb, params);
    elm_list_item_append(list, "Animation", NULL, NULL, view_animation_cb, params);
    elm_list_go(list);
 
    efl_event_callback_add(list, EFL_EVENT_DEL, list_del_cb, params);
 
    for (i = 0; i < PAGE_NUM; i++) {
-      switch (i % 3) {
-         case 0:
-            page = page_add(LAYOUT, active_view);
-            break;
-         case 1:
-            page = page_add(LIST, active_view);
-            break;
-         case 2:
-            page = page_add(BUTTON, active_view);
-            break;
-         default:
-            page = page_add(LAYOUT, active_view);
-            break;
-      }
-      efl_pack_end(active_view, page);
-   }
+        switch (i % 3)
+          {
+           case 0:
+             view = view_add(LAYOUT, active_view);
+             break;
+
+           case 1:
+             view = view_add(LIST, active_view);
+             break;
+
+           case 2:
+             view = view_add(BUTTON, active_view);
+             break;
+
+           default:
+             view = view_add(LAYOUT, active_view);
+             break;
+          }
+        efl_pack_end(active_view, view);
+     }
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(580, 320));
 }
+

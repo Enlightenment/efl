@@ -6,29 +6,20 @@
 #include <Elementary.h>
 
 static void _third_layout_push(void *data, const Efl_Event *ev EINA_UNUSED);
-static void _fourth_layout_push(void *data, const Efl_Event *ev EINA_UNUSED);
 
 static void
 _stack_remove(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *stack = data;
-   Eo *top_layout = efl_ui_stack_top(stack);
-   efl_ui_stack_remove(stack, top_layout);
-}
-
-static void
-_stack_double_pop(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   Eo *stack = data;
-   efl_ui_stack_pop(stack);
-   efl_ui_stack_pop(stack);
+   Eo *top_layout = efl_pack_content_get(stack, 0);
+   efl_del(top_layout);
 }
 
 static void
 _stack_pop(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *stack = data;
-   efl_ui_stack_pop(stack);
+   efl_ui_active_view_pop(stack, EINA_TRUE);
 }
 
 static void
@@ -36,14 +27,13 @@ _stack_double_push(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *stack = data;
    _third_layout_push(stack, NULL);
-   _fourth_layout_push(stack, NULL);
 }
 
 static void
 _stack_del(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *stack = data;
-   Eo *top_layout = efl_ui_stack_top(stack);
+   Eo *top_layout = efl_pack_content_get(stack, 0);
    efl_del(top_layout);
 }
 
@@ -103,31 +93,13 @@ _fifth_layout_insert(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *stack = data;
 
-   Eo *top_layout = efl_ui_stack_top(stack);
-
    Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, stack);
    efl_text_set(btn, "Press to remove top layout");
    efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _stack_remove, stack);
 
    Eo *nl = _navigation_layout_create(stack, "5th layout", btn);
 
-   efl_ui_stack_insert_after(stack, top_layout, nl);
-}
-
-static void
-_fourth_layout_push(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   Eo *stack = data;
-
-   Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, stack);
-   efl_text_set(btn, "Press to double pop");
-   efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _stack_double_pop, stack);
-
-   Eo *nl = _navigation_layout_create(stack, "4th layout", btn);
-
-   _bar_right_btn_set(nl, _fifth_layout_insert, stack);
-
-   efl_ui_stack_push(stack, nl);
+   efl_ui_active_view_push(stack, nl);
 }
 
 static void
@@ -141,9 +113,9 @@ _third_layout_push(void *data, const Efl_Event *ev EINA_UNUSED)
 
    Eo *nl = _navigation_layout_create(stack, "3rd layout", btn);
 
-   _bar_right_btn_set(nl, _fourth_layout_push, stack);
+   _bar_right_btn_set(nl, _fifth_layout_insert, stack);
 
-   efl_ui_stack_push(stack, nl);
+   efl_ui_active_view_push(stack, nl);
 }
 
 static void
@@ -159,7 +131,7 @@ _second_layout_push(void *data, const Efl_Event *ev EINA_UNUSED)
 
    _bar_right_btn_set(nl, _third_layout_push, stack);
 
-   efl_ui_stack_push(stack, nl);
+   efl_ui_active_view_push(stack, nl);
 }
 
 static void
@@ -174,35 +146,7 @@ _first_layout_push(Eo *win, Eo *stack)
    _bar_left_btn_set(nl, _win_del, win);
    _bar_right_btn_set(nl, _second_layout_push, stack);
 
-   efl_ui_stack_push(stack, nl);
-}
-
-static void
-_stack_loaded_cb(void *data EINA_UNUSED, const Efl_Event *event)
-{
-   Efl_Ui_Stack_Event_Loaded *loaded_info = event->info;
-   printf("Content(%p) is loaded to the stack.\n\n", loaded_info->content);
-}
-
-static void
-_stack_unloaded_cb(void *data EINA_UNUSED, const Efl_Event *event)
-{
-   Efl_Ui_Stack_Event_Unloaded *unloaded_info = event->info;
-   printf("Content(%p) is unloaded from the stack.\n\n", unloaded_info->content);
-}
-
-static void
-_stack_activated_cb(void *data EINA_UNUSED, const Efl_Event *event)
-{
-   Efl_Ui_Stack_Event_Activated *activated_info = event->info;
-   printf("Content(%p) is activated in the stack.\n\n", activated_info->content);
-}
-
-static void
-_stack_deactivated_cb(void *data EINA_UNUSED, const Efl_Event *event)
-{
-   Efl_Ui_Stack_Event_Deactivated *deactivated_info = event->info;
-   printf("Content(%p) is deactivated in the stack.\n\n", deactivated_info->content);
+   efl_ui_active_view_push(stack, nl);
 }
 
 void
@@ -214,15 +158,8 @@ test_ui_stack(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 500));
 
-   Eo *stack = efl_add(EFL_UI_STACK_CLASS, win);
-   efl_event_callback_add(stack, EFL_UI_STACK_EVENT_LOADED,
-                          _stack_loaded_cb, NULL);
-   efl_event_callback_add(stack, EFL_UI_STACK_EVENT_UNLOADED,
-                          _stack_unloaded_cb, NULL);
-   efl_event_callback_add(stack, EFL_UI_STACK_EVENT_ACTIVATED,
-                          _stack_activated_cb, NULL);
-   efl_event_callback_add(stack, EFL_UI_STACK_EVENT_DEACTIVATED,
-                          _stack_deactivated_cb, NULL);
+   Eo *stack = efl_ui_active_view_util_stack_gen(win);
+
    efl_content_set(win, stack);
 
    _first_layout_push(win, stack);

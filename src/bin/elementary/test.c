@@ -1119,7 +1119,7 @@ add_tests:
    ADD_TEST_EO(NULL, "Active View", "Efl.Ui.Active_View Plain", test_ui_active_view_plain);
    ADD_TEST_EO(NULL, "Active View", "Efl.Ui.Active_View Scroll", test_ui_active_view_scroll);
    ADD_TEST_EO(NULL, "Active View", "Efl.Ui.Active_View Stack", test_ui_active_view_stack);
-
+   ADD_TEST_EO(NULL, "Active View", "Navigation stack", test_ui_stack);
    //------------------------------//
    ADD_TEST(NULL, "Popups", "Ctxpopup", test_ctxpopup);
    ADD_TEST(NULL, "Popups", "Hover", test_hover);
@@ -1184,7 +1184,6 @@ add_tests:
    ADD_TEST(NULL, "Naviframe", "Naviframe 2", test_naviframe2);
    ADD_TEST(NULL, "Naviframe", "Naviframe 3", test_naviframe3);
    ADD_TEST(NULL, "Naviframe", "Naviframe: Complex", test_naviframe_complex);
-   ADD_TEST_EO(NULL, "Naviframe", "Efl.Ui.Stack", test_ui_stack);
 
    //------------------------------//
    ADD_TEST(NULL, "Geographic", "Map", test_map);

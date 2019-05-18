@@ -4,15 +4,6 @@ struct  @beta Efl.Ui.Active_View.Transition_Event {
    to : int; [[The view index to where the transition is headed, -1 if not known.]]
 }
 
-enum Efl.Ui.Active_View.Container_Gravity {
-   [[This enum controls the behavior of @Efl.Ui.Active_View.Container.active_index when indices are
-     shifted due to object addition or removal.]]
-   content = 0, [[When a view is added or removed from the container, the @Efl.Ui.Active_View.Container.active_index will
-                  be adjusted as necessary so it points to the same view as before.]]
-   index = 1,   [[When a view is added or removed from the container, the @Efl.Ui.Active_View.Container.active_index will
-                  remain the same, possibly pointing to a different view.]]
-}
-
 class @beta Efl.Ui.Active_View.Container extends Efl.Ui.Layout_Base implements Efl.Pack_Linear
 {
    [[The Active View widget is a container for other sub-widgets (views), where only one sub-widget is active at any given time.
@@ -51,25 +42,11 @@ class @beta Efl.Ui.Active_View.Container extends Efl.Ui.Layout_Base implements E
       }
       @property active_index {
          [[Currently active view among all the views added to this widget.
-         
+
            Changing this value might trigger an animation.
          ]]
          values {
             index: int; [[Index of the active view, from 0 to the number of views - 1 (@Efl.Container.content_count - 1).]]
-         }
-      }
-      @property active_view_gravity {
-         [[When a new view is added to this widget, the indices for the previous views might change (for example,
-           when adding a view at the beginning of the list with @Efl.Pack_Linear.pack_begin all previous view's indices are increased by one).
-
-           This property controls whether the Active View should remain the same view as before (@Efl.Ui.Active_View.Container_Gravity.content)
-           or if the Active View should be moved to the one with the same index as before (@Efl.Ui.Active_View.Container_Gravity.index).
-
-           For example, @Efl.Ui.Active_View.Container_Gravity.index can be used to build a Stack, where @.active_index is always 0 and new
-           views are pushed onto the stack with @Efl.Pack_Linear.pack_begin and popped from the stack with @Efl.Pack_Linear.pack_unpack_at 0.
-         ]]
-         values {
-            gravity : Efl.Ui.Active_View.Container_Gravity; [[Active View behavior when adding new views. Default is @Efl.Ui.Active_View.Container_Gravity.content.]]
          }
       }
       @property active_view_size {
@@ -78,6 +55,34 @@ class @beta Efl.Ui.Active_View.Container extends Efl.Ui.Layout_Base implements E
          values {
             size: Eina.Size2D; [[Render size for the Active View. (-1, -1) means that all available space inside the container is used.]]
          }
+      }
+      push @beta {
+         [[Packs a new view at the position indicated by @.active_index (0 by default).
+
+           This is the same behavior as a push operation on a stack.
+
+           An animation might be triggered to make the new active view come into position.
+         ]]
+         params {
+            view : Efl.Gfx.Entity; [[View to add and set to be the active view.]]
+         }
+      }
+      pop @beta {
+         [[Removes the active view from the widget.
+
+           The views behind it naturally flow down so the next one becomes the active view. This is the same behavior as a pop operation on a stack.
+           When combined with @.push you don't have to worry about @.active_index since only the first view is manipulated.
+
+           An animation might be triggered to make the new active view come into position and the old one disappear.
+
+           The removed view can be returned to the caller or deleted (depending on $delete_on_transition_end).
+         ]]
+         params {
+            deletion_on_transition_end : bool; [[ if $true, then the object will be deleted before resolving the future, and a NULL pointer is the value of the future. $false if no operation should be applied to it]]
+         }
+         return : future<Efl.Gfx.Entity>; [[ This Future gets resolved when any transition animation finishes and the popped view is ready for collection.
+                                             If there is no animation, the Future resolves immediately.
+                                             If $deletion_on_transition_end is $true then this widget will destroy the popped view and the Future will contain no Value. Otherwise, the caller becomes the owner of the view contained in the Future and must dispose of it appropriately. ]]
       }
    }
    events {

@@ -1,0 +1,11 @@
+class @beta Efl.Ui.Active_View.Util {
+  methods {
+     stack_gen @class {
+       [[Get a preconfigured stack obejct]]
+       params {
+          parent : Efl.Ui.Widget;
+       }
+       return : Efl.Ui.Active_View.Container;
+     }
+  }
+}

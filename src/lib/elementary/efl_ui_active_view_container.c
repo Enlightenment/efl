@@ -23,13 +23,16 @@ typedef struct _Efl_Ui_Active_View_Container_Data
      double last_pos;
      Eina_Bool active;
    } show_request;
+   struct {
+     Eina_Promise *transition_done;
+     Efl_Gfx_Entity *content;
+   } transition_done;
    Efl_Ui_Active_View_View_Manager *transition;
    Efl_Ui_Active_View_Indicator *indicator;
    double position;
    Eina_Bool fill_width: 1;
    Eina_Bool fill_height: 1;
    Eina_Bool prevent_transition_interaction : 1;
-   Efl_Ui_Active_View_Container_Gravity gravity;
 } Efl_Ui_Active_View_Container_Data;
 
 #define MY_CLASS EFL_UI_ACTIVE_VIEW_CONTAINER_CLASS
@@ -66,6 +69,15 @@ _transition_end(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Container_Data *pd)
    Efl_Ui_Active_View_Transition_Event ev;
 
    if (pd->prevent_transition_interaction) return;
+
+   if (pd->transition_done.content)
+     {
+        Eina_Value v = eina_value_object_init(pd->transition_done.content);
+        efl_pack_unpack(obj, pd->transition_done.content);
+        eina_promise_resolve(pd->transition_done.transition_done, v);
+        pd->transition_done.transition_done = NULL;
+        pd->transition_done.content = NULL;
+     }
 
    ev.from = pd->show_request.from;
    ev.to = pd->show_request.to;
@@ -174,7 +186,6 @@ _efl_ui_active_view_container_efl_object_constructor(Eo *obj,
    pd->fill_height = EINA_TRUE;
 
    efl_ui_active_view_size_set(obj, EINA_SIZE2D(-1, -1));
-   efl_ui_active_view_gravity_set(obj, EFL_UI_ACTIVE_VIEW_CONTAINER_GRAVITY_CONTENT);
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -255,25 +266,12 @@ _register_child(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Container_Data *pd, Efl_
    return EINA_TRUE;
 }
 
-
-EOLIAN static void
-_efl_ui_active_view_container_active_view_gravity_set(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Container_Data *pd, Efl_Ui_Active_View_Container_Gravity gravity)
-{
-   pd->gravity = gravity;
-}
-
-EOLIAN static Efl_Ui_Active_View_Container_Gravity
-_efl_ui_active_view_container_active_view_gravity_get(const Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Container_Data *pd)
-{
-   return pd->gravity;
-}
-
 static void
 _update_internals(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Container_Data *pd, Efl_Gfx_Entity *subobj EINA_UNUSED, int index)
 {
    Eina_Bool curr_page_update = EINA_FALSE;
 
-   if (pd->gravity == EFL_UI_ACTIVE_VIEW_CONTAINER_GRAVITY_CONTENT && pd->curr.page >= index)
+   if (pd->curr.page >= index)
      {
         pd->curr.page++;
         curr_page_update = EINA_TRUE;
@@ -505,7 +503,7 @@ _unpack(Eo *obj,
    pd->content_list = eina_list_remove(pd->content_list, subobj);
    _elm_widget_sub_object_redirect_to_top(obj, subobj);
 
-   if (pd->gravity == EFL_UI_ACTIVE_VIEW_CONTAINER_GRAVITY_CONTENT && index < pd->curr.page)
+   if (index < pd->curr.page)
      pd->curr.page--;
 
    if (pd->transition)
@@ -514,7 +512,7 @@ _unpack(Eo *obj,
      efl_ui_active_view_indicator_content_del(pd->indicator, subobj, index);
 
    //we deleted the current index
-   if (pd->gravity == EFL_UI_ACTIVE_VIEW_CONTAINER_GRAVITY_CONTENT && early_curr_page == index)
+   if (early_curr_page == index)
      {
         int new_curr_page = MIN(MAX(early_curr_page, 0), (int)eina_list_count(pd->content_list) - 1);
         //when we delete the active index and we are not updating the index,
@@ -650,5 +648,51 @@ _efl_ui_active_view_container_indicator_get(const Eo *obj EINA_UNUSED, Efl_Ui_Ac
 {
    return pd->indicator;
 }
+
+EOLIAN static void
+_efl_ui_active_view_container_push(Eo *obj, Efl_Ui_Active_View_Container_Data *pd EINA_UNUSED, Efl_Gfx_Entity *view)
+{
+   int old_active_index = efl_ui_active_view_active_index_get(obj);
+
+   if (old_active_index == -1)
+     old_active_index = 0;
+
+   efl_pack_at(obj, view, old_active_index);
+   efl_ui_active_view_active_index_set(obj, old_active_index);
+}
+
+static Eina_Value
+_delete_obj(void *data EINA_UNUSED, const Eina_Value value, const Eina_Future *dead_future EINA_UNUSED)
+{
+   efl_del(eina_value_object_get(&value));
+
+   return EINA_VALUE_EMPTY;
+}
+
+EOLIAN static Eina_Future*
+_efl_ui_active_view_container_pop(Eo *obj, Efl_Ui_Active_View_Container_Data *pd, Eina_Bool del)
+{
+   Eina_Future *transition_done;
+   int new_index;
+
+   if (eina_list_count(pd->content_list) < 2)
+     new_index = -1;
+
+   new_index = efl_ui_active_view_active_index_get(obj) + 1;
+   if (new_index >= (int)eina_list_count(pd->content_list))
+     new_index -= 2;
+
+   pd->transition_done.content = efl_pack_content_get(obj, efl_ui_active_view_active_index_get(obj));
+   pd->transition_done.transition_done = efl_loop_promise_new(obj);
+
+   transition_done = eina_future_new(pd->transition_done.transition_done);
+   if (del)
+     transition_done = eina_future_then(transition_done, _delete_obj, NULL);
+
+   efl_ui_active_view_active_index_set(obj, new_index);
+
+   return transition_done;
+}
+
 
 #include "efl_ui_active_view_container.eo.c"
