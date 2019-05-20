@@ -31,10 +31,6 @@
 # include <features.h>
 #endif
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include <Ecore.h>
 
 #include "Eio.h"

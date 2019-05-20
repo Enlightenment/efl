@@ -5,10 +5,6 @@
 # include <features.h>
 #endif
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #ifdef HAVE_ESCAPE
 # include <Escape.h>
 #endif

@@ -6,12 +6,14 @@
 # include <config.h>
 #endif
 
-# define WIN32_LEAN_AND_MEAN
-# include <windows.h>
-# undef WIN32_LEAN_AND_MEAN
-# include <process.h>
+#define WIN32_LEAN_AND_MEAN
+#include <windows.h>
+#undef WIN32_LEAN_AND_MEAN
+#include <process.h>
 
-# include "ecore_file_private.h"
+#include <evil_private.h> /* evil_wchar_to_char */
+
+#include "ecore_file_private.h"
 
 
 typedef struct _Ecore_File_Monitor_Win32      Ecore_File_Monitor_Win32;
@@ -191,7 +193,7 @@ _ecore_file_monitor_win32_cb(void *data, Ecore_Win32_Handler *wh EINA_UNUSED)
           else
             event = ECORE_FILE_EVENT_CREATED_FILE;
           break;
-        default: 
+        default:
           fprintf(stderr, "unknown event\n");
           event = ECORE_FILE_EVENT_NONE;
           break;

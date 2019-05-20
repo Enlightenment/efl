@@ -2,10 +2,6 @@
 # include "elementary_config.h"
 #endif
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include <Elementary.h>
 #include "elm_priv.h"
 
