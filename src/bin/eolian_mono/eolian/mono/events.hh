@@ -45,11 +45,44 @@ struct unpack_event_args_visitor
          eina::optional<std::string> name;
          std::function<std::string()> function;
       }
+      /// Sizes taken from https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/sizeof
       const match_table [] =
         {
-           {"bool", [&arg] { return arg + " != IntPtr.Zero"; }}
-           , {"int", [&arg] { return arg + ".ToInt32()"; }}
-           , {"uint", [&arg] { return "(uint)" + arg + ".ToInt32()";}}
+           {"bool", [&arg] { return "Marshal.ReadByte(" + arg + ") != 0"; }}
+
+           , {"ubyte", [&arg] { return "Marshal.ReadByte(" + arg + ")"; }}
+           , {"byte", [&arg] { return "(sbyte) Marshal.ReadByte(" + arg + ")"; }}
+
+           , {"char", [&arg] { return "(char) Marshal.ReadByte(" + arg + ")"; }}
+
+           , {"short", [&arg] { return "Marshal.ReadInt16(" + arg + ")"; }}
+           , {"ushort", [&arg] { return "(ushort) Marshal.ReadInt16(" + arg + ")"; }}
+
+           , {"int", [&arg] { return "Marshal.ReadInt32(" + arg + ")"; }}
+           , {"uint", [&arg] { return "(uint) Marshal.ReadInt32(" + arg + ")"; }}
+
+           , {"long", [&arg] { return "Marshal.ReadInt64(" + arg + ")"; }}
+           , {"ulong", [&arg] { return "(ulong) Marshal.ReadInt64(" + arg + ")"; }}
+
+           , {"llong", [&arg] { return "(long) Marshal.ReadInt64(" + arg + ")"; }}
+           , {"ullong", [&arg] { return "(ulong) Marshal.ReadInt64(" + arg + ")"; }}
+
+           , {"int8", [&arg] { return "(sbyte)Marshal.ReadByte(" + arg + ")"; }}
+           , {"uint8", [&arg] { return "Marshal.ReadByte(" + arg + ")"; }}
+
+           , {"int16", [&arg] { return "Marshal.ReadInt16(" + arg + ")"; }}
+           , {"uint16", [&arg] { return "(ushort)Marshal.ReadInt16(" + arg + ")"; }}
+
+           , {"int32", [&arg] { return "Marshal.ReadInt32(" + arg + ")"; }}
+           , {"uint32", [&arg] { return "(uint) Marshal.ReadInt32(" + arg + ")"; }}
+
+           // We don't support int128 as csharp has no similar datatype.
+           , {"int64", [&arg] { return "Marshal.ReadInt64(" + arg + ")"; }}
+           , {"uint64", [&arg] { return "(ulong) Marshal.ReadInt64(" + arg + ")"; }}
+
+           , {"float", [&arg] { return "Eina.PrimitiveConversion.PointerToManaged<float>(" + arg + ")"; }}
+           , {"double", [&arg] { return "Eina.PrimitiveConversion.PointerToManaged<double>(" + arg + ")"; }}
+
            , {"string", [&arg] { return "Eina.StringConversion.NativeUtf8ToManagedString(" + arg + ")"; }}
            , {"stringshare", [&arg] { return "Eina.StringConversion.NativeUtf8ToManagedString(" + arg + ")"; }}
            , {"Eina.Error", [&arg] { return "(Eina.Error)Marshal.PtrToStructure(" + arg + ", typeof(Eina.Error))"; }}
@@ -304,7 +337,7 @@ struct event_definition_generator
 
            auto sub_context = change_indentation(indent.inc().inc(), context);
 
-           if (!as_generator(scope_tab(6) << wrapper_args_type << " args = new " << wrapper_args_type << "();\n"
+           if (!as_generator(wrapper_args_type << " args = new " << wrapper_args_type << "();\n"
                              << scope_tab(6) << "args.arg = ").generate(arg_initializer_sink, attributes::unused, context))
              return false;
            if (!(*etype).original_type.visit(unpack_event_args_visitor<decltype(arg_initializer_sink), decltype(sub_context)>{arg_initializer_sink, &sub_context, *etype}))

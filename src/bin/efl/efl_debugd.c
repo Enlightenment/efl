@@ -25,6 +25,9 @@
 #include <fcntl.h>
 #include "eina_debug_private.h"
 
+#ifdef _WIN32
+# include <evil_private.h> /* mkdir */
+#endif
 #include <Eina.h>
 #include <Ecore.h>
 #include <Ecore_Con.h>

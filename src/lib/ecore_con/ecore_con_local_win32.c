@@ -4,7 +4,6 @@
 
 #include <process.h>
 
-#include <Evil.h>
 #include <Ecore.h>
 
 #include "Ecore_Con.h"

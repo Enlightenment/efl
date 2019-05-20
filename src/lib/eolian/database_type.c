@@ -11,6 +11,7 @@ database_type_del(Eolian_Type *tp)
    if (!tp || eolian_object_unref(&tp->base)) return;
    eina_stringshare_del(tp->base.file);
    eina_stringshare_del(tp->base.name);
+   eina_stringshare_del(tp->base.c_name);
    database_type_del(tp->base_type);
    database_type_del(tp->next_type);
    if (tp->freefunc) eina_stringshare_del(tp->freefunc);
@@ -23,6 +24,7 @@ database_typedecl_del(Eolian_Typedecl *tp)
    if (!tp || eolian_object_unref(&tp->base)) return;
    eina_stringshare_del(tp->base.file);
    eina_stringshare_del(tp->base.name);
+   eina_stringshare_del(tp->base.c_name);
    database_type_del(tp->base_type);
    if (tp->fields) eina_hash_free(tp->fields);
    if (tp->field_list) eina_list_free(tp->field_list);

@@ -32,7 +32,7 @@
 #endif
 
 #ifdef _WIN32
-# include <Evil.h>
+# include <evil_private.h>
 #endif
 
 #ifdef HAVE_ESCAPE

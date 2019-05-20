@@ -205,7 +205,7 @@ eo_gen_header_gen(const Eolian_State *state, const Eolian_Class *cl,
           }
      }
 
-   Eina_Stringshare *mname = eolian_class_c_name_get(cl);
+   Eina_Stringshare *mname = eolian_class_c_macro_get(cl);
    Eina_Stringshare *gname = eolian_class_c_get_function_name_get(cl);
    eina_strbuf_append_printf(buf, "#define %s %s()\n\n", mname, gname);
    eina_stringshare_del(mname);
@@ -248,7 +248,7 @@ events:
    itr = eolian_class_events_get(cl);
    EINA_ITERATOR_FOREACH(itr, ev)
      {
-        Eina_Stringshare *evn = eolian_event_c_name_get(ev);
+        Eina_Stringshare *evn = eolian_event_c_macro_get(ev);
         Eolian_Object_Scope evs = eolian_event_scope_get(ev);
 
         if (evs == EOLIAN_SCOPE_PRIVATE)

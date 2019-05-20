@@ -2,7 +2,13 @@ import efl_canvas_gesture_types;
 
 abstract @beta Efl.Canvas.Gesture extends Efl.Object
 {
-   [[EFL Gesture abstract class]]
+   [[EFL Gesture abstract class
+
+     A gesture class defines a method that spcific gesture event and privides information
+     about the gesture's type, state, and associated pointer information.
+
+     For cetain gesture types, additional methods are defined to provide meaningful gesture
+     information to the user.]]
    c_prefix: efl_gesture;
    methods {
       @property type {
@@ -30,7 +36,17 @@ abstract @beta Efl.Canvas.Gesture extends Efl.Object
          set {
          }
          values {
-            hotspot: Eina.Vector2;[[hotspot co-ordinate]]
+            hotspot: Eina.Position2D;[[hotspot co-ordinate]]
+         }
+      }
+      @property timestamp {
+         [[This property holds the timestamp of the current gesture.]]
+         get {
+         }
+         set {
+         }
+         values {
+            timestamp: uint;[[The timestamp]]
          }
       }
    }

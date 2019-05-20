@@ -1356,8 +1356,8 @@ _long_press_cb(void *data)
    ELM_MAP_DATA_GET(data, sd);
 
    sd->long_timer = NULL;
-   efl_event_callback_legacy_call
-     (sd->obj, EFL_UI_EVENT_LONGPRESSED, &sd->ev);
+
+   evas_object_smart_callback_call(sd->obj, "longpressed", &sd->ev);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -1376,8 +1376,8 @@ _mouse_down_cb(void *data,
    else sd->on_hold = EINA_FALSE;
 
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
-     efl_event_callback_legacy_call
-       (sd->obj, EFL_UI_EVENT_CLICKED_DOUBLE, ev);
+     evas_object_smart_callback_call
+       (sd->obj, "clicked,double", ev);
    else
      efl_event_callback_legacy_call
        (sd->obj, ELM_MAP_EVENT_PRESS, ev);
@@ -1407,8 +1407,9 @@ _mouse_up_cb(void *data,
    ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
 
    if (!sd->on_hold)
-   efl_event_callback_legacy_call
-     (sd->obj, EFL_UI_EVENT_CLICKED, ev);
+
+   evas_object_smart_callback_call
+     (sd->obj, "clicked", ev);
    sd->on_hold = EINA_FALSE;
 }
 

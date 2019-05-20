@@ -171,6 +171,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 #ifdef EFL_BETA_API_SUPPORT
 # include <elm_interface_scrollable.h>
 # include <elm_interface_scrollable.eo.h>
+#include <efl_ui_clickable.eo.h>
 #endif
 
 #include <elm_tooltip.h>

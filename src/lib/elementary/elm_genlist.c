@@ -4122,8 +4122,8 @@ _long_press_cb(void *data)
      goto end;
 
    sd->longpressed = EINA_TRUE;
-   efl_event_callback_legacy_call
-         (WIDGET(it), EFL_UI_EVENT_LONGPRESSED, EO_OBJ(it));
+   evas_object_smart_callback_call
+         (WIDGET(it), "longpressed", EO_OBJ(it));
    if ((sd->reorder_mode) && !(it->item->type & ELM_GENLIST_ITEM_GROUP))
      {
         sd->reorder_it = it;
@@ -4410,13 +4410,13 @@ _item_mouse_down_cb(void *data,
    _item_highlight(it);
    if (ev->flags & EVAS_BUTTON_DOUBLE_CLICK)
      {
-        efl_event_callback_legacy_call
-              (WIDGET(it), EFL_UI_EVENT_CLICKED_DOUBLE, eo_it);
+        evas_object_smart_callback_call
+              ( WIDGET(it), "clicked,double", eo_it);
         efl_event_callback_legacy_call
               (WIDGET(it), ELM_GENLIST_EVENT_ACTIVATED, eo_it);
      }
-   efl_event_callback_legacy_call
-         (WIDGET(it), EFL_UI_EVENT_PRESSED, eo_it);
+   evas_object_smart_callback_call
+         (WIDGET(it), "pressed", eo_it);
 }
 
 static Item_Block *
@@ -5065,8 +5065,8 @@ _item_mouse_up_cb(void *data,
         if (dx < 0) dx = -dx;
         if (dy < 0) dy = -dy;
         if ((dx < 5) && (dy < 5))
-          efl_event_callback_legacy_call
-                (WIDGET(it), EFL_UI_EVENT_CLICKED_RIGHT, EO_OBJ(it));
+          evas_object_smart_callback_call
+                ( WIDGET(it), "clicked,right", EO_OBJ(it));
         return;
      }
 

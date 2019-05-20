@@ -81,9 +81,9 @@ static const Elm_Action key_actions[] = {
    {NULL, NULL}
 };
 
-static void _ok(void *data, const Efl_Event *event);
-static void _canc(void *data, const Efl_Event *event);
-static void _on_dir_up(void *data, const Efl_Event *event);
+static void _ok(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
+static void _canc(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
+static void _on_dir_up(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 static void _populate(Evas_Object *obj, Efl_Model *model, Elm_Object_Item *parent_it, Efl_Model *selected);
 static Elm_Fileselector_Item_Data *_selected_item_data_get(Elm_Fileselector_Data *sd);
 
@@ -376,16 +376,14 @@ _elm_fileselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Fileselector_Data *sd)
 static Eina_Bool
 _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   Efl_Event event = {};
-   _ok(obj, &event);
+   _ok(obj, NULL, NULL);
    return EINA_TRUE;
 }
 
 static Eina_Bool
 _key_action_escape(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   Efl_Event event = {};
-   _canc(obj, &event);
+   _canc(obj, NULL, NULL);
    return EINA_TRUE;
 }
 
@@ -403,7 +401,7 @@ _key_action_backspace(Evas_Object *obj, const char *params EINA_UNUSED)
         efl_unref(tmp);
      }
    else
-     _on_dir_up(obj, NULL);
+     _on_dir_up(obj, NULL, NULL);
 
    return EINA_TRUE;
 }
@@ -1311,7 +1309,7 @@ _on_item_unselected(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 }
 
 static void
-_on_dir_up(void *data, const Efl_Event *event EINA_UNUSED)
+_on_dir_up(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
    Efl_Model *parent = NULL;
@@ -1342,7 +1340,7 @@ _on_dir_up(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_home(void *data, const Efl_Event *event EINA_UNUSED)
+_home(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
 
@@ -1366,7 +1364,7 @@ _current_filter_changed(void *data,
 }
 
 static void
-_ok(void *data, const Efl_Event *event EINA_UNUSED)
+_ok(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    const char *name;
    const char *selection = NULL;
@@ -1413,7 +1411,7 @@ _ok(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_canc(void *data, const Efl_Event *event EINA_UNUSED)
+_canc(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *fs = data;
 
@@ -1754,8 +1752,8 @@ _elm_fileselector_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Data *pri
    efl_ui_mirrored_automatic_set(bt, EINA_FALSE);
    elm_object_part_content_set(bt, "icon", ic);
    elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Up"));
-   efl_event_callback_add
-     (bt, EFL_UI_EVENT_CLICKED, _on_dir_up, obj);
+
+   evas_object_smart_callback_add(bt, "clicked", _on_dir_up, obj);
 
    priv->up_button = bt;
    elm_object_style_set(priv->up_button, buf);
@@ -1768,8 +1766,7 @@ _elm_fileselector_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Data *pri
    efl_ui_mirrored_automatic_set(bt, EINA_FALSE);
    elm_object_part_content_set(bt, "icon", ic);
    elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Home"));
-   efl_event_callback_add
-     (bt, EFL_UI_EVENT_CLICKED, _home, obj);
+   evas_object_smart_callback_add(bt, "clicked", _home, obj);
 
    priv->home_button = bt;
    elm_object_style_set(priv->home_button, buf);
@@ -2061,8 +2058,7 @@ _elm_fileselector_buttons_ok_cancel_set(Eo *obj, Elm_Fileselector_Data *sd, Eina
         bt = elm_button_add(obj);
         efl_ui_mirrored_automatic_set(bt, EINA_FALSE);
         elm_object_domain_translatable_text_set(bt, PACKAGE, N_("OK"));
-
-        efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _ok, obj);
+        evas_object_smart_callback_add(bt, "clicked", _ok, obj);
 
         sd->ok_button = bt;
         elm_object_part_content_set(obj, "elm.swallow.ok", sd->ok_button);
@@ -2071,9 +2067,7 @@ _elm_fileselector_buttons_ok_cancel_set(Eo *obj, Elm_Fileselector_Data *sd, Eina
         bt = elm_button_add(obj);
         efl_ui_mirrored_automatic_set(bt, EINA_FALSE);
         elm_object_domain_translatable_text_set(bt, PACKAGE, N_("Cancel"));
-
-        efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _canc, obj);
-
+        evas_object_smart_callback_add(bt, "clicked", _canc, obj);
         sd->cancel_button = bt;
         elm_object_part_content_set(obj, "elm.swallow.cancel", sd->cancel_button);
      }

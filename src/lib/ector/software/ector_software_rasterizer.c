@@ -150,16 +150,11 @@ _blend_mask_add(int count, const SW_FT_Span *spans, void *user_data)
 
    while (count--)
      {
-        memset(ttarget, 0x00, sizeof(uint32_t) * spans->len);
         uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
+        memset(ttarget, 0x00, sizeof(uint32_t) * spans->len);
         comp_func(ttarget, spans->len, color, spans->coverage);
         for (int i = 0; i < spans->len; i++)
-          {
-             double adst = A_VAL(&mtarget[i]) == 0 ? 0 : (double)(A_VAL(&mtarget[i])) / (double)255;
-             double asrc = A_VAL(&ttarget[i]) == 0 ? 0 : (double)(A_VAL(&ttarget[i])) / (double)255;
-             uint32_t aout = (int)(((adst * (1 - asrc)) + asrc) * 255);
-             mtarget[i] = (aout<<24) + (0x00FFFFFF & mtarget[i]);
-          }
+          mtarget[i] = draw_mul_256(0xFF - (ttarget[i]>>24), mtarget[i]) + ttarget[i];
         ++spans;
      }
 }
@@ -172,25 +167,19 @@ _blend_mask_sub(int count, const SW_FT_Span *spans, void *user_data)
 
    uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
    RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
-   uint32_t *mtarget = mask->pixels.u32;
+   uint32_t *mbuffer = mask->pixels.u32;
 
-   int tsize = sd->raster_buffer->generic->w * sd->raster_buffer->generic->h;
-   uint32_t *tbuffer = alloca(sizeof(uint32_t) * tsize);
-   memset(tbuffer, 0x00, sizeof(uint32_t) * tsize);
+   int tsize = sd->raster_buffer->generic->w;
+   uint32_t *ttarget = alloca(sizeof(uint32_t) * tsize);
 
    while (count--)
      {
-        uint32_t *ttarget = tbuffer + ((mask->generic->w  * spans->y) + spans->x);
+        uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
+        memset(ttarget, 0x00, sizeof(uint32_t) * spans->len);
         comp_func(ttarget, spans->len, color, spans->coverage);
+        for (int i = 0; i < spans->len; i++)
+          mtarget[i] = draw_mul_256(0xFF - (ttarget[i]>>24), mtarget[i]);
         ++spans;
-     }
-
-   for(int i = 0; i < tsize; i++)
-     {
-        double adst = A_VAL(&mtarget[i]) == 0 ? 0 : (double)(A_VAL(&mtarget[i])) / (double)255;
-        double asrc = A_VAL(&tbuffer[i]) == 0 ? 0 : (double)(A_VAL(&tbuffer[i])) / (double)255;
-        uint32_t aout = (int)((adst * (1 - asrc)) * 255);
-        mtarget[i] = (aout<<24) + (0x00FFFFFF & mtarget[i]);
      }
 }
 
@@ -203,25 +192,32 @@ _blend_mask_ins(int count, const SW_FT_Span *spans, void *user_data)
 
    uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
    RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
-   uint32_t *mtarget = mask->pixels.u32;
+   uint32_t *mbuffer = mask->pixels.u32;
 
-   int tsize = sd->raster_buffer->generic->w * sd->raster_buffer->generic->h;
-   uint32_t *tbuffer = alloca(sizeof(uint32_t) * tsize);
-   memset(tbuffer, 0x00, sizeof(uint32_t) * tsize);
+   int tsize = sd->raster_buffer->generic->w;
+   uint32_t *ttarget = alloca(sizeof(uint32_t) * tsize);
 
-   while (count--)
+   for(unsigned int y = 0; y < mask->generic->h; y++)
      {
-        uint32_t *ttarget = tbuffer + ((mask->generic->w  * spans->y) + spans->x);
-        comp_func(ttarget, spans->len, color, spans->coverage);
-        ++spans;
-     }
-
-   for(int i = 0; i < tsize; i++)
-     {
-        double adst = A_VAL(&mtarget[i]) == 0 ? 0 : (double)(A_VAL(&mtarget[i])) / (double)255;
-        double asrc = A_VAL(&tbuffer[i]) == 0 ? 0 : (double)(A_VAL(&tbuffer[i])) / (double)255;
-        uint32_t aout = (int)((adst * asrc) * 255);
-        mtarget[i] = (aout<<24) + (0x00FFFFFF & mtarget[i]);
+        for(unsigned int x = 0; x < mask->generic->w; x++)
+          {
+             if (x == (unsigned int)spans->x && x + spans->len <= mask->generic->w &&
+                 y == (unsigned int)spans->y && count > 0)
+               {
+                  memset(ttarget, 0x00, sizeof(uint32_t) * spans->len);
+                  uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
+                  comp_func(ttarget, spans->len, color, spans->coverage);
+                  for (int c = 0; c < spans->len; c++)
+                    mtarget[c] = draw_mul_256(ttarget[c]>>24, mtarget[c]);
+                  x += spans->len - 1;
+                  ++spans;
+                  --count;
+               }
+             else
+               {
+                  mbuffer[x + (mask->generic->w * y)] = (0x00FFFFFF & mbuffer[x + (mask->generic->w * y)]);
+               }
+          }
      }
 }
 
@@ -245,12 +241,7 @@ _blend_mask_diff(int count, const SW_FT_Span *spans, void *user_data)
         uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
         comp_func(ttarget, spans->len, color, spans->coverage);
         for (int i = 0; i < spans->len; i++)
-          {
-             double adst = A_VAL(&mtarget[i]) == 0 ? 0 : (double)(A_VAL(&mtarget[i])) / (double)255;
-             double asrc = A_VAL(&ttarget[i]) == 0 ? 0 : (double)(A_VAL(&ttarget[i])) / (double)255;
-             uint32_t aout = (int)((((1 - adst) * asrc) + ((1 - asrc) * adst)) * 255);
-             mtarget[i] = (aout<<24) + (0x00FFFFFF & mtarget[i]);
-          }
+          mtarget[i] = draw_mul_256(0xFF - (mtarget[i]>>24), ttarget[i]) + draw_mul_256(0xFF - (ttarget[i]>>24), mtarget[i]);
         ++spans;
      }
 }
@@ -647,10 +638,6 @@ _adjust_span_fill_methods(Span_Data *spdata)
         else //None
           spdata->unclipped_blend = NULL;
      }
-
-  //FIXME: Mask and mask case is not use clipping.
-  if (spdata->mask_op >= EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_ADD)
-     spdata->clip.enabled = EINA_FALSE;
 
    // Clipping Function
    if (spdata->clip.enabled)

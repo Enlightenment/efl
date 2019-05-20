@@ -49,7 +49,7 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-static void _on_item_back_btn_clicked(void *data, const Efl_Event *event);
+static void _on_item_back_btn_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED);
 
 static Eina_Bool _key_action_top_item_get(Evas_Object *obj, const char *params);
 static Eina_Bool _key_action_item_pop(Evas_Object *obj, const char *params);
@@ -680,8 +680,7 @@ _item_title_prev_btn_unset(Elm_Naviframe_Item_Data *it)
 
    evas_object_event_callback_del
      (content, EVAS_CALLBACK_DEL, _item_title_prev_btn_del_cb);
-   Eo* parent = efl_parent_get(content);
-   efl_event_callback_del(content, EFL_UI_EVENT_CLICKED, _on_item_back_btn_clicked, parent);
+   evas_object_smart_callback_del(content, "clicked", _on_item_back_btn_clicked);
    it->title_prev_btn = NULL;
    if (it->auto_pushed_btn) it->auto_pushed_btn = NULL;
    return content;
@@ -938,13 +937,13 @@ _elm_naviframe_elm_layout_sizing_eval(Eo *obj, Elm_Naviframe_Data *sd)
 }
 
 static void
-_on_item_back_btn_clicked(void *data, const Efl_Event *event)
+_on_item_back_btn_clicked(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    /* Since edje has the event queue, clicked event could be happened
       multiple times on some heavy environment. This callback del will
       prevent those scenario and guarantee only one clicked for it's own
       page. */
-   efl_event_callback_del(event->object, EFL_UI_EVENT_CLICKED, _on_item_back_btn_clicked, data);
+   evas_object_smart_callback_del(obj, "clicked", _on_item_back_btn_clicked);
    elm_naviframe_item_pop(data);
 }
 
@@ -957,8 +956,7 @@ _back_btn_new(Evas_Object *obj, const char *title_label)
    btn = elm_button_add(obj);
 
    if (!btn) return NULL;
-   efl_event_callback_add
-         (btn, EFL_UI_EVENT_CLICKED, _on_item_back_btn_clicked, obj);
+   evas_object_smart_callback_add(btn, "clicked", _on_item_back_btn_clicked, obj);
    snprintf
      (buf, sizeof(buf), "naviframe/back_btn/%s", elm_widget_style_get(obj));
    elm_object_style_set(btn, buf);
@@ -1744,8 +1742,7 @@ _elm_naviframe_item_pop(Eo *obj, Elm_Naviframe_Data *sd)
                      Since the item is not popped or deleted here, the deleted
                      callback of the auto pushed button should be restored. */
                   if (it->auto_pushed_btn)
-                    efl_event_callback_add
-                          (it->auto_pushed_btn, EFL_UI_EVENT_CLICKED, _on_item_back_btn_clicked, obj);
+                    evas_object_smart_callback_add(it->auto_pushed_btn, "clicked", _on_item_back_btn_clicked, obj);
                   it->popping = EINA_FALSE;
                }
              evas_object_unref(obj);

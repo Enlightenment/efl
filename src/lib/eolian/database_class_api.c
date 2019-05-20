@@ -178,7 +178,7 @@ eolian_class_c_get_function_name_get(const Eolian_Class *cl)
 }
 
 EAPI Eina_Stringshare *
-eolian_class_c_name_get(const Eolian_Class *cl)
+eolian_class_c_macro_get(const Eolian_Class *cl)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(cl, NULL);
    Eina_Stringshare *ret;

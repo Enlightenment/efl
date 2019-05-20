@@ -3,7 +3,8 @@ efl_ui_suite_behavior_test_files = files([
   'efl_test_pack.c',
   'efl_test_pack_linear.c',
   'efl_test_content.c',
-  'efl_test_gfx_arrangement.c'
+  'efl_test_gfx_arrangement.c',
+  'efl_test_clickable.c',
 ])
 
 efl_ui_suite_behavior_src = files([

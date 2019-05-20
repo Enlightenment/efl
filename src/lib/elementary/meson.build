@@ -176,6 +176,8 @@ pub_eo_files = [
   'efl_ui_caching_factory.eo',
   'efl_ui_widget_factory.eo',
   'efl_ui_relative_layout.eo',
+  'efl_ui_clickable.eo',
+  'efl_ui_clickable_util.eo',
 ]
 
 foreach eo_file : pub_eo_files
@@ -937,7 +939,9 @@ elementary_src = [
   'efl_ui_homogeneous_model.c',
   'efl_ui_exact_model.c',
   'efl_ui_average_model.c',
-  'efl_ui_relative_layout.c'
+  'efl_ui_relative_layout.c',
+  'efl_ui_clickable.c',
+  'efl_ui_clickable_util.c',
 ]
 
 elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, efreet_mime, efreet_trash, eio, atspi, dl, intl]

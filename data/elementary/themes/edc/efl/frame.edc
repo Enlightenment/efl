@@ -131,10 +131,7 @@ group { name: "efl/frame";
          transition: DECELERATE 0.3;
          after: "signal";
       }
-      program {
-         signal:  "mouse,up,1"; source:  "event";
-         action:  SIGNAL_EMIT "efl,action,click" "efl";
-      }
+      EFL_UI_CLICKABLE_PART_BIND("event")
       program {
          signal:  "efl,action,toggle"; source: "efl";
          script {

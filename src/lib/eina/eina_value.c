@@ -24,10 +24,6 @@
 #include <inttypes.h> /* PRId64 and PRIu64 */
 #include <sys/time.h> /* struct timeval */
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_alloca.h"

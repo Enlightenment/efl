@@ -94,15 +94,6 @@ extern "C" {
 #endif
 
 
-#ifndef WIN32_LEAN_AND_MEAN
-# define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
-#undef WIN32_LEAN_AND_MEAN
-
-#include <sys/stat.h> /* for mkdir in evil_macro_wrapper */
-
-
 typedef unsigned long  uid_t;
 typedef unsigned long  gid_t;
 
@@ -116,20 +107,6 @@ typedef SSIZE_T ssize_t;
 typedef unsigned short mode_t;
 # define strdup(str) _strdup(str)
 #endif
-
-
-#include "evil_macro.h"
-#include "evil_dlfcn.h"
-#include "evil_fcntl.h"
-#include "evil_langinfo.h"
-#include "evil_locale.h"
-#include "evil_main.h"
-#include "evil_stdlib.h"
-#include "evil_stdio.h"
-#include "evil_string.h"
-#include "evil_time.h"
-#include "evil_unistd.h"
-#include "evil_util.h"
 
 #ifndef S_ISDIR
 # define S_ISDIR(m) (((m) & _S_IFMT) == _S_IFDIR)
@@ -177,10 +154,7 @@ typedef unsigned short mode_t;
 #define _S_IWUSR _S_IWRITE
 #define _S_IRUSR _S_IREAD
 
-#define sigsetjmp(Env, Save) setjmp(Env)
-
-#include "evil_macro_wrapper.h"
-#include "evil_macro_pop.h"
+#include "evil_private.h"
 
 #ifdef __cplusplus
 }

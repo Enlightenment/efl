@@ -4,7 +4,6 @@ class @beta Efl.Ui.List extends Efl.Ui.Layout_Base implements
                    Efl.Ui.Scrollable_Interactive,
                    Efl.Ui.Scrollbar,
                    Efl.Pack_Linear, Efl.Pack_Layout,
-                   Efl.Ui.Clickable,
                    Efl.Ui.Selectable,
                    Efl.Ui.Multi_Selectable,
                    Efl.Gfx.Arrangement

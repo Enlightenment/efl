@@ -59,16 +59,25 @@ evas_gesture_eolian_pub_files = \
 	lib/evas/gesture/efl_canvas_gesture.eo \
 	lib/evas/gesture/efl_canvas_gesture_tap.eo \
 	lib/evas/gesture/efl_canvas_gesture_long_tap.eo \
+	lib/evas/gesture/efl_canvas_gesture_double_tap.eo \
+	lib/evas/gesture/efl_canvas_gesture_triple_tap.eo \
+	lib/evas/gesture/efl_canvas_gesture_momentum.eo \
+	lib/evas/gesture/efl_canvas_gesture_flick.eo \
+	lib/evas/gesture/efl_canvas_gesture_zoom.eo \
 	lib/evas/gesture/efl_canvas_gesture_recognizer.eo \
+	lib/evas/gesture/efl_canvas_gesture_recognizer_tap.eo \
+	lib/evas/gesture/efl_canvas_gesture_recognizer_long_tap.eo \
+	lib/evas/gesture/efl_canvas_gesture_recognizer_double_tap.eo \
+	lib/evas/gesture/efl_canvas_gesture_recognizer_triple_tap.eo \
+	lib/evas/gesture/efl_canvas_gesture_recognizer_momentum.eo \
+	lib/evas/gesture/efl_canvas_gesture_recognizer_flick.eo \
+	lib/evas/gesture/efl_canvas_gesture_recognizer_zoom.eo \
 	lib/evas/gesture/efl_canvas_gesture_manager.eo \
+	lib/evas/gesture/efl_gesture_events.eo \
 	$(NULL)
 
 evas_canvas_eolian_priv_files = \
-	lib/evas/include/evas_ector_buffer.eo
-
-evas_gesture_eolian_priv_files = \
-	lib/evas/gesture/efl_canvas_gesture_recognizer_tap.eo \
-	lib/evas/gesture/efl_canvas_gesture_recognizer_long_tap.eo
+    lib/evas/include/evas_ector_buffer.eo
 
 evas_canvas_eolian_type_files = \
     lib/evas/canvas/evas_canvas3d_types.eot \
@@ -79,9 +88,6 @@ evas_gesture_eolian_type_files = \
 
 evas_canvas_eolian_priv_c = $(evas_canvas_eolian_priv_files:%.eo=%.eo.c)
 evas_canvas_eolian_priv_h = $(evas_canvas_eolian_priv_files:%.eo=%.eo.h)
-
-evas_gesture_eolian_priv_c = $(evas_gesture_eolian_priv_files:%.eo=%.eo.c)
-evas_gesture_eolian_priv_h = $(evas_gesture_eolian_priv_files:%.eo=%.eo.h)
 
 evas_canvas_eolian_pub_c = $(evas_canvas_eolian_pub_files:%.eo=%.eo.c)
 evas_canvas_eolian_pub_h = $(evas_canvas_eolian_pub_files:%.eo=%.eo.h) \
@@ -97,13 +103,15 @@ evas_eolian_files = $(evas_canvas_eolian_pub_files) \
                     $(evas_gesture_eolian_type_files)
 
 evas_eolian_internal_files = $(evas_canvas_eolian_priv_files) \
-                             $(evas_gesture_eolian_priv_files)
+                             $(evas_eolian_legacy_files)
 
 evas_eolian_c = $(evas_canvas_eolian_pub_c) $(evas_canvas_eolian_priv_c) \
-                $(evas_gesture_eolian_pub_c) $(evas_gesture_eolian_priv_c)
+                $(evas_gesture_eolian_pub_c) \
+                $(evas_eolian_legacy_c)
 
 evas_eolian_h = $(evas_canvas_eolian_pub_h) $(evas_canvas_eolian_priv_h) \
-                $(evas_gesture_eolian_pub_h) $(evas_gesture_eolian_priv_h)
+                $(evas_gesture_eolian_pub_h) \
+                $(evas_eolian_legacy_h)
 
 BUILT_SOURCES += \
                  $(evas_eolian_c) \
@@ -319,9 +327,19 @@ lib/evas/gesture/efl_canvas_gesture_touch.c \
 lib/evas/gesture/efl_canvas_gesture.c \
 lib/evas/gesture/efl_canvas_gesture_tap.c \
 lib/evas/gesture/efl_canvas_gesture_long_tap.c \
+lib/evas/gesture/efl_canvas_gesture_double_tap.c \
+lib/evas/gesture/efl_canvas_gesture_triple_tap.c \
+lib/evas/gesture/efl_canvas_gesture_momentum.c \
+lib/evas/gesture/efl_canvas_gesture_flick.c \
+lib/evas/gesture/efl_canvas_gesture_zoom.c \
 lib/evas/gesture/efl_canvas_gesture_recognizer.c \
 lib/evas/gesture/efl_canvas_gesture_recognizer_tap.c \
 lib/evas/gesture/efl_canvas_gesture_recognizer_long_tap.c \
+lib/evas/gesture/efl_canvas_gesture_recognizer_double_tap.c \
+lib/evas/gesture/efl_canvas_gesture_recognizer_triple_tap.c \
+lib/evas/gesture/efl_canvas_gesture_recognizer_momentum.c \
+lib/evas/gesture/efl_canvas_gesture_recognizer_flick.c \
+lib/evas/gesture/efl_canvas_gesture_recognizer_zoom.c \
 lib/evas/gesture/efl_canvas_gesture_manager.c \
 lib/evas/common/region.c \
 lib/evas/common/region.h \

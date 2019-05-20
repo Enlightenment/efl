@@ -575,9 +575,10 @@ EFL_START_TEST(eolian_simple_parsing)
    eina_stringshare_del(string);
 
    /* c name */
-   fail_if(!(string = eolian_class_c_name_get(class)));
+   fail_if(!(string = eolian_class_c_macro_get(class)));
    fail_if(strcmp(string, "CLASS_SIMPLE_CLASS"));
    eina_stringshare_del(string);
+   fail_if(strcmp(eolian_class_c_name_get(class), "Class_Simple"));
 
    /* Property */
    fail_if(!(fid = eolian_class_function_by_name_get(class, "a", EOLIAN_PROPERTY)));
@@ -887,7 +888,7 @@ EFL_START_TEST(eolian_enum)
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != 15);
 
-   cname = eolian_typedecl_enum_field_c_name_get(field);
+   cname = eolian_typedecl_enum_field_c_constant_get(field);
    fail_if(strcmp(cname, "TEST_FOO"));
    eina_stringshare_del(cname);
 
@@ -914,7 +915,7 @@ EFL_START_TEST(eolian_enum)
    fail_if(!(tdl = eolian_unit_enum_by_name_get(unit, "Name.Spaced")));
    fail_if(!(field = eolian_typedecl_enum_field_get(tdl, "pants")));
 
-   cname = eolian_typedecl_enum_field_c_name_get(field);
+   cname = eolian_typedecl_enum_field_c_constant_get(field);
    fail_if(strcmp(cname, "NAME_SPACED_PANTS"));
    eina_stringshare_del(cname);
 

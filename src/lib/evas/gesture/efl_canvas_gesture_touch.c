@@ -2,29 +2,9 @@
 
 #define MY_CLASS EFL_CANVAS_GESTURE_TOUCH_CLASS
 
-typedef struct _Pointer_Data
-{
-   struct
-   {
-      Eina_Vector2 pos;
-      double timestamp;
-   } start, prev, cur;
-   Efl_Pointer_Action action;
-} Pointer_Data;
-
-typedef struct _Efl_Canvas_Gesture_Touch_Data
-{
-   Efl_Canvas_Gesture_Touch_State state;
-   Eina_Hash              *touch_points;
-   int                     touch_down;
-   Eina_Bool               multi_touch;
-   Eo                     *target;
-} Efl_Canvas_Gesture_Touch_Data;
-
-
-// This event object accumulates all the touch points
-// that are directed to a particular object from the
-// first finger down to the last finger up
+//This event object accumulates all the touch points
+//that are directed to a particular object from the
+//first finger down to the last finger up
 
 static void _hash_free_cb(Pointer_Data *point)
 {
@@ -63,40 +43,52 @@ _efl_canvas_gesture_touch_state_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gestur
 
 EOLIAN static void
 _efl_canvas_gesture_touch_point_record(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd,
-                                int id, Eina_Vector2 pos, double timestamp, Efl_Pointer_Action action)
+                                int id, Eina_Vector2 pos, unsigned int timestamp, Efl_Pointer_Action action)
 {
    Pointer_Data *point = eina_hash_find(pd->touch_points, &id);
+   Eina_Position2D _pos = { pos.x, pos.y };
 
    if (action == EFL_POINTER_ACTION_DOWN)
-     pd->touch_down++;
+     {
+        pd->touch_down++;
+        //TODO: Need to handle 2 or more case.
+        if (pd->touch_down == 2)
+          pd->multi_touch = EINA_TRUE;
+     }
    else if ((action == EFL_POINTER_ACTION_UP) ||
             (action == EFL_POINTER_ACTION_CANCEL))
-     pd->touch_down--;
-   EINA_SAFETY_ON_FALSE_GOTO(pd->touch_down >= 0, bad_fingers);
+     {
+        pd->touch_down--;
+        if (pd->multi_touch && pd->touch_down == 1)
+          pd->multi_touch = EINA_FALSE;
+     }
+
+   if (pd->touch_down < 0) goto finished_touch;
 
    if (point)
      {
-        // the point already exists. update the cur and prev point
+        //The point already exists. update the cur and prev point
         point->prev = point->cur;
-        point->cur.pos = pos;
+        point->cur.pos = _pos;
         point->cur.timestamp = timestamp;
      }
    else
      {
-        // new finger
+        //New finger
         if (!id && (action != EFL_POINTER_ACTION_DOWN))
           {
-             // discard any other event
+             //Discard any other event
              return;
           }
         point = calloc(1, sizeof(Pointer_Data));
         if (!point) return;
-        point->start.pos = point->prev.pos = point->cur.pos = pos;
+        point->start.pos = point->prev.pos = point->cur.pos = _pos;
         point->start.timestamp = point->prev.timestamp = point->cur.timestamp = timestamp;
+        point->id = id;
 
-        // add to the hash
+        //Add to the hash
         eina_hash_add(pd->touch_points, &id, point);
-        // FIXME: finger_list was broken
+        //FIXME: finger_list was broken
         if (id)
           pd->multi_touch = EINA_TRUE;
      }
@@ -106,7 +98,7 @@ _efl_canvas_gesture_touch_point_record(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_T
      {
         pd->state = EFL_GESTURE_TOUCH_BEGIN;
      }
-   else if ((action ==  EFL_POINTER_ACTION_UP) && (pd->touch_down == 0))
+   else if (action ==  EFL_POINTER_ACTION_UP)
      {
         pd->state = EFL_GESTURE_TOUCH_END;
      }
@@ -116,8 +108,7 @@ _efl_canvas_gesture_touch_point_record(Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_T
      }
    return;
 
-bad_fingers:
-   ERR("Inconsistent touch events received!");
+finished_touch:
    _touch_points_reset(pd);
 }
 
@@ -127,12 +118,12 @@ _efl_canvas_gesture_touch_multi_touch_get(const Eo *obj EINA_UNUSED, Efl_Canvas_
    return pd->multi_touch;
 }
 
-EOLIAN static Eina_Vector2
+EOLIAN static Eina_Position2D
 _efl_canvas_gesture_touch_start_point_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
 {
    int tool = 0;
    Pointer_Data *point = eina_hash_find(pd->touch_points, &tool);
-   Eina_Vector2 vec = { 0, 0 };
+   Eina_Position2D vec = { 0, 0 };
 
    if (!point)
      return vec;
@@ -140,16 +131,43 @@ _efl_canvas_gesture_touch_start_point_get(const Eo *obj EINA_UNUSED, Efl_Canvas_
    return point->start.pos;
 }
 
+EOLIAN static Eina_Position2D
+_efl_canvas_gesture_touch_cur_point_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
+{
+   int tool = 0;
+   Pointer_Data *point = eina_hash_find(pd->touch_points, &tool);
+   Eina_Position2D vec = { 0, 0 };
+
+   if (!point)
+     return vec;
+
+   return point->cur.pos;
+}
+
+EOLIAN static unsigned int
+_efl_canvas_gesture_touch_cur_timestamp_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd)
+{
+   int tool = 0;
+   Pointer_Data *point = eina_hash_find(pd->touch_points, &tool);
+
+   if (!point)
+     return 0;
+
+   return point->cur.timestamp;
+}
+
 EOLIAN static Eina_Vector2
 _efl_canvas_gesture_touch_delta(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Touch_Data *pd, int tool)
 {
    Pointer_Data *point = eina_hash_find(pd->touch_points, &tool);
    Eina_Vector2 vec = { 0, 0 };
+   Eina_Vector2 v1 = { point->cur.pos.x, point->cur.pos.y };
+   Eina_Vector2 v2 = { point->prev.pos.x, point->prev.pos.y };
 
    if (!point)
      return vec;
 
-   eina_vector2_subtract(&vec, &point->cur.pos, &point->prev.pos);
+   eina_vector2_subtract(&vec, &v1, &v2);
    return vec;
 }
 
@@ -158,11 +176,13 @@ _efl_canvas_gesture_touch_distance(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture
 {
    Pointer_Data *point = eina_hash_find(pd->touch_points, &tool);
    Eina_Vector2 vec = { 0, 0 };
+   Eina_Vector2 v1 = { point->cur.pos.x, point->cur.pos.y };
+   Eina_Vector2 v2 = { point->start.pos.x, point->start.pos.y };
 
    if (!point)
      return vec;
 
-   eina_vector2_subtract(&vec, &point->cur.pos, &point->start.pos);
+   eina_vector2_subtract(&vec, &v1, &v2);
    return vec;
 }
 

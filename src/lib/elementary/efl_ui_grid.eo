@@ -5,7 +5,6 @@ class @beta Efl.Ui.Grid extends Efl.Ui.Layout_Base implements
                    Efl.Ui.Scrollbar,
                    Efl.Pack_Linear, Efl.Pack_Layout,
                    Efl.Ui.Direction,
-                   Efl.Ui.Clickable,
                    Efl.Ui.Selectable,
                    Efl.Ui.Multi_Selectable,
                    Efl.Gfx.Arrangement

@@ -45,4 +45,7 @@ interface @beta Efl.Ui.Autorepeat {
          }
       }
    }
+   events {
+      repeated: void; [[Called when a repeated event is emitted]]
+   }
 }

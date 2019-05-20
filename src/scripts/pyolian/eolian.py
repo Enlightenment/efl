@@ -636,8 +636,8 @@ class Class(Object):
         return "<eolian.Class '{0.name}', {0.type!s}>".format(self)
 
     @cached_property
-    def c_name(self):
-        s = lib.eolian_class_c_name_get(self)
+    def c_macro(self):
+        s = lib.eolian_class_c_macro_get(self)
         ret = _str_to_py(s)
         lib.eina_stringshare_del(c_void_p(s))
         return ret
@@ -794,8 +794,8 @@ class Event(Object):
         return "<eolian.Event '{0.name}', c_name='{0.c_name}'>".format(self)
 
     @cached_property
-    def c_name(self):
-        s = lib.eolian_event_c_name_get(self)
+    def c_macro(self):
+        s = lib.eolian_event_c_macro_get(self)
         ret = _str_to_py(s)
         lib.eina_stringshare_del(c_void_p(s))
         return ret
@@ -1190,8 +1190,8 @@ class Enum_Type_Field(Object):
         return "<eolian.Enum_Type_Field '{0.name}', c_name='{0.c_name}'>".format(self)
 
     @cached_property
-    def c_name(self):
-        s = lib.eolian_typedecl_enum_field_c_name_get(self)
+    def c_constant(self):
+        s = lib.eolian_typedecl_enum_field_c_constant_get(self)
         ret = _str_to_py(s)
         lib.eina_stringshare_del(c_void_p(s))
         return ret

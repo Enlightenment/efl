@@ -86,7 +86,7 @@ eolian_typedecl_enum_field_get(const Eolian_Typedecl *tp, const char *field)
 }
 
 EAPI Eina_Stringshare *
-eolian_typedecl_enum_field_c_name_get(const Eolian_Enum_Type_Field *fl)
+eolian_typedecl_enum_field_c_constant_get(const Eolian_Enum_Type_Field *fl)
 {
    Eina_Stringshare *ret;
    Eina_Strbuf *buf;

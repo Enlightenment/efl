@@ -6,14 +6,7 @@
 #include <locale.h>
 #include <errno.h>
 
-#ifndef WIN32_LEAN_AND_MEAN
-# define WIN32_LEAN_AND_MEAN
-#endif
-#include <windows.h>
-#undef WIN32_LEAN_AND_MEAN
-
-#include "evil_macro.h"
-#include "evil_locale.h"
+#include "evil_private.h"
 
 /*
  * LOCALE_SISO639LANGNAME and LOCALE_SISO3166CTRYNAME need at least a buffer

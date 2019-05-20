@@ -96,13 +96,13 @@ _field_value_get(struct tm *tim, Efl_Ui_Clock_Type  field_type)
 }
 
 static void
-_diskselector_cb(void *data EINA_UNUSED, const Efl_Event *event)
+_diskselector_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    DiskItem_Data *disk_data;
    struct tm curr_time;
    const char *fmt;
 
-   disk_data = (DiskItem_Data *)elm_object_item_data_get(event->info);
+   disk_data = (DiskItem_Data *)elm_object_item_data_get(event_info);
    if (!disk_data || !(disk_data->ctx_mod)) return;
 
    curr_time = efl_ui_clock_time_get(disk_data->ctx_mod->mod_data.base);
@@ -167,8 +167,7 @@ _field_clicked_cb(void *data, const Efl_Event *event)
    elm_ctxpopup_hover_parent_set(ctx_mod->ctxpopup, elm_widget_top_get(event->object));
 
    diskselector = elm_diskselector_add(elm_widget_top_get(ctx_mod->mod_data.base));
-   efl_event_callback_add
-      (diskselector, EFL_UI_EVENT_CLICKED, _diskselector_cb, NULL);
+   evas_object_smart_callback_add(diskselector, "clicked", _diskselector_cb, NULL);
    elm_object_style_set(diskselector, buf);
    elm_object_content_set(ctx_mod->ctxpopup, diskselector);
 

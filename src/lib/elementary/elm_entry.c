@@ -1987,8 +1987,8 @@ _long_press_cb(void *data)
    sd->long_pressed = EINA_TRUE;
 
    sd->longpress_timer = NULL;
-   efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_LONGPRESSED, NULL);
+   evas_object_smart_callback_call
+     (data, "longpressed", NULL);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -2791,8 +2791,8 @@ _entry_mouse_clicked_signal_cb(void *data,
                                const char *emission EINA_UNUSED,
                                const char *source EINA_UNUSED)
 {
-   efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_CLICKED, NULL);
+   evas_object_smart_callback_call
+     ( data, "clicked", NULL);
 }
 
 static void
@@ -2801,8 +2801,8 @@ _entry_mouse_double_signal_cb(void *data,
                               const char *emission EINA_UNUSED,
                               const char *source EINA_UNUSED)
 {
-   efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_CLICKED_DOUBLE, NULL);
+   evas_object_smart_callback_call
+     ( data, "clicked,double", NULL);
 }
 
 static void
@@ -2811,8 +2811,8 @@ _entry_mouse_triple_signal_cb(void *data,
                               const char *emission EINA_UNUSED,
                               const char *source EINA_UNUSED)
 {
-   efl_event_callback_legacy_call
-     (data, EFL_UI_EVENT_CLICKED_TRIPLE, NULL);
+   evas_object_smart_callback_call
+     ( data, "clicked,triple", NULL);
 }
 
 static Evas_Object *
@@ -5586,8 +5586,8 @@ _activate(Evas_Object *obj)
    if (!elm_widget_disabled_get(obj) &&
        !evas_object_freeze_events_get(obj))
      {
-        efl_event_callback_legacy_call
-          (obj, EFL_UI_EVENT_CLICKED, NULL);
+        evas_object_smart_callback_call
+          ( obj, "clicked", NULL);
         if (sd->editable && sd->input_panel_enable)
           edje_object_part_text_input_panel_show(sd->entry_edje, "elm.text");
      }

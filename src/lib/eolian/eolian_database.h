@@ -85,6 +85,7 @@ struct _Eolian_Object
    Eolian_Unit *unit;
    Eina_Stringshare *file;
    Eina_Stringshare *name;
+   Eina_Stringshare *c_name;
    int line;
    int column;
    int refcount;

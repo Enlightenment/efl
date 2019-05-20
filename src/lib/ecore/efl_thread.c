@@ -6,6 +6,9 @@
 #define EFL_IO_WRITER_PROTECTED 1
 #define EFL_IO_CLOSER_PROTECTED 1
 
+#ifdef _WIN32
+# include <evil_private.h> /* pipe fcntl */
+#endif
 #include <Ecore.h>
 
 #include "ecore_private.h"

@@ -50,6 +50,5 @@ eina_cxx_suite = executable('eina_cxx_suite',
 )
 
 test('eina_cxx-suite', eina_cxx_suite,
-  timeout : 10*60,
   env : test_env
 )

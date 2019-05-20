@@ -333,7 +333,7 @@ class TestEolianClass(unittest.TestCase):
         self.assertFalse(cls.ctor_enable)
         self.assertFalse(cls.dtor_enable)
         self.assertEqual(cls.c_get_function_name, 'efl_loop_timer_class_get')
-        self.assertEqual(cls.c_name, 'EFL_LOOP_TIMER_CLASS')
+        self.assertEqual(cls.c_macro, 'EFL_LOOP_TIMER_CLASS')
         self.assertEqual(cls.c_data_type, 'Efl_Loop_Timer_Data')
         self.assertEqual([f.name for f in cls.methods], ['reset','loop_reset','delay'])
         self.assertEqual([f.name for f in cls.properties], ['interval','pending'])
@@ -413,7 +413,7 @@ class TestEolianEvent(unittest.TestCase):
         ev = cls.event_by_name_get('tick')
         self.assertIsInstance(ev, eolian.Event)
         self.assertEqual(ev.name, 'tick')
-        self.assertEqual(ev.c_name, 'EFL_LOOP_TIMER_EVENT_TIMER_TICK')
+        self.assertEqual(ev.c_macro, 'EFL_LOOP_TIMER_EVENT_TIMER_TICK')
         self.assertIsNone(ev.type)  # TODO is this correct
         self.assertIsInstance(ev.documentation, eolian.Documentation)
         self.assertEqual(ev.scope, eolian.Eolian_Object_Scope.PUBLIC)
@@ -512,7 +512,7 @@ class TestEolianTypedecl(unittest.TestCase):
         field = td.enum_field_get('v1_0')
         self.assertIsInstance(field, eolian.Enum_Type_Field)
         self.assertEqual(field.name, 'v1_0')
-        self.assertEqual(field.c_name, 'EFL_NET_HTTP_VERSION_V1_0')
+        self.assertEqual(field.c_constant, 'EFL_NET_HTTP_VERSION_V1_0')
         self.assertIsInstance(field.documentation, eolian.Documentation)
         self.assertIsInstance(field.value, eolian.Expression)
 

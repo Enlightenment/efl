@@ -379,6 +379,7 @@ check_LIBRARIES = tests/elementary_cxx/libcxx_compile_test.a
 tests_elementary_cxx_libcxx_compile_test_a_SOURCES = tests/elementary_cxx/cxx_compile_test.cc
 tests_elementary_cxx_libcxx_compile_test_a_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_builddir)/src/lib/evas/canvas/ \
+ -I$(top_builddir)/src/lib/evas/gesture/ \
 -I$(top_builddir)/src/lib/efl/interfaces/ \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/elementary_cxx\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/elementary_cxx\" \
@@ -396,6 +397,7 @@ tests/elementary_cxx/$(TESTS_ELM_CXX_OBJNAME)cxx_dummy_compile_test-cxx_dummy_co
 tests_elementary_cxx_cxx_dummy_compile_test_SOURCES = tests/elementary_cxx/cxx_dummy_compile_test.cc
 tests_elementary_cxx_cxx_dummy_compile_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
 -I$(top_builddir)/src/lib/evas/canvas/ \
+ -I$(top_builddir)/src/lib/evas/gesture/ \
 -I$(top_builddir)/src/lib/efl/interfaces/ \
 -DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/elementary_cxx\" \
 -DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/elementary_cxx\" \

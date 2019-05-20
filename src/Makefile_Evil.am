@@ -11,8 +11,6 @@ lib/evil/evil_dlfcn.h \
 lib/evil/evil_fcntl.h \
 lib/evil/evil_langinfo.h \
 lib/evil/evil_locale.h \
-lib/evil/evil_macro.h \
-lib/evil/evil_macro_pop.h \
 lib/evil/evil_macro_wrapper.h \
 lib/evil/evil_main.h \
 lib/evil/evil_stdio.h \

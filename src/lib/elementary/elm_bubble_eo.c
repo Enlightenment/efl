@@ -50,6 +50,6 @@ static const Efl_Class_Description _elm_bubble_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(elm_bubble_class_get, &_elm_bubble_class_desc, EFL_UI_LAYOUT_BASE_CLASS, EFL_UI_CLICKABLE_INTERFACE, EFL_UI_LEGACY_INTERFACE, NULL);
+EFL_DEFINE_CLASS(elm_bubble_class_get, &_elm_bubble_class_desc, EFL_UI_LAYOUT_BASE_CLASS, EFL_UI_CLICKABLE_MIXIN, EFL_UI_LEGACY_INTERFACE, NULL);
 
 #include "elm_bubble_eo.legacy.c"

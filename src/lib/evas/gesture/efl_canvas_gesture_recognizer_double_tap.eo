@@ -1,0 +1,22 @@
+class @beta Efl.Canvas.Gesture_Recognizer_Double_Tap extends Efl.Canvas.Gesture_Recognizer
+{
+   [[EFL Gesture Recognizer Double Tap class]]
+   c_prefix: efl_gesture_recognizer_double_tap;
+   methods {
+      @property timeout {
+         [[Sets the time between taps to be recognized as a double tap]]
+         set {
+         }
+         get {
+         }
+         values {
+            time: double; [[Allowed time gap value]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.destructor;
+      Efl.Canvas.Gesture_Recognizer.add;
+      Efl.Canvas.Gesture_Recognizer.recognize;
+   }
+}

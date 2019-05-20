@@ -2,10 +2,18 @@ import efl_canvas_gesture_types;
 
 abstract @beta Efl.Canvas.Gesture_Recognizer extends Efl.Object
 {
-   [[EFL Gesture Recognizer abstract class]]
+   [[EFL Gesture Recognizer abstract class
+
+     The gesture recognizer class grabs events that occur on the target
+     object that user register to see if a particluar gesture has occurred.
+
+     Uesr can adjust the config value involved in gesture recognition
+     through the method provided by the gesture recognizer.
+
+     The default config values follow the system default config value.]]
    c_prefix: efl_gesture_recognizer;
    methods {
-      create @pure_virtual {
+      add @pure_virtual {
          [[This function is called to create a new Efl.Canvas.Gesture object for the given target]]
          params {
             @in target: Efl.Object; [[The target widget]]
@@ -43,5 +51,8 @@ abstract @beta Efl.Canvas.Gesture_Recognizer extends Efl.Object
             value: any_value_ptr; [[value of the property]]
          }
       }
+   }
+   implements {
+      Efl.Object.constructor;
    }
 }

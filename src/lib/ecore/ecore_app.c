@@ -5,10 +5,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include "Ecore.h"
 #include "ecore_private.h"
 

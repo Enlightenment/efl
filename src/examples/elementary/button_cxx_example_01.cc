@@ -156,7 +156,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
           }
         cmid.hint_align_set(ax, ay);
      }, std::placeholders::_1);
-   efl::eolian::event_add(efl::ui::Clickable::repeated_event, up, btn_cursors_move);
+   efl::eolian::event_add(efl::ui::Autorepeat::repeated_event, up, btn_cursors_move);
 
    auto btn_cursors_release = std::bind(
             [wmid] ()
@@ -185,7 +185,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    left.hint_fill_set(false, true);
    left.hint_align_set(0.0, 0.5);
    box_inferior.pack_end(left);
-   efl::eolian::event_add(efl::ui::Clickable::repeated_event, left, btn_cursors_move);
+   efl::eolian::event_add(efl::ui::Autorepeat::repeated_event, left, btn_cursors_move);
    efl::eolian::event_add(efl::ui::Clickable::unpressed_event, left, btn_cursors_release);
 
    efl::ui::Image icon_left(instantiate, win);
@@ -205,7 +205,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    right.hint_fill_set(false, true);
    right.hint_align_set(0.0, 0.5);
    box_inferior.pack_end(right);
-   efl::eolian::event_add(efl::ui::Clickable::repeated_event, right, btn_cursors_move);
+   efl::eolian::event_add(efl::ui::Autorepeat::repeated_event, right, btn_cursors_move);
    efl::eolian::event_add(efl::ui::Clickable::unpressed_event, right, btn_cursors_release);
 
    efl::ui::Image icon_right(instantiate, win);
@@ -219,7 +219,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    down.hint_fill_set(true, false);
    down.hint_align_set(0.5, 0.0);
    box.pack_end(down);
-   efl::eolian::event_add(efl::ui::Clickable::repeated_event, down, btn_cursors_move);
+   efl::eolian::event_add(efl::ui::Autorepeat::repeated_event, down, btn_cursors_move);
    efl::eolian::event_add(efl::ui::Clickable::unpressed_event, down, btn_cursors_release);
 
    efl::ui::Image icon_down(instantiate, win);

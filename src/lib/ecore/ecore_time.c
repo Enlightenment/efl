@@ -7,10 +7,6 @@
 #include <stdlib.h>
 #include <sys/time.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #if defined(__APPLE__) && defined(__MACH__)
 # include <mach/mach_time.h>
 #endif

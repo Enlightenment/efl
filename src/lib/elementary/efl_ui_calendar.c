@@ -462,7 +462,7 @@ _btn_create(Eo *obj, const char *style, char *part)
                   efl_ui_autorepeat_gap_timeout_set(efl_added, INTERVAL),
                   efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
                                          _inc_dec_btn_clicked_cb, obj),
-                  efl_event_callback_add(efl_added, EFL_UI_EVENT_REPEATED,
+                  efl_event_callback_add(efl_added, EFL_UI_AUTOREPEAT_EVENT_REPEATED,
                                          _inc_dec_btn_repeated_cb, obj),
                   efl_content_set(efl_part(obj, part), efl_added));
 }

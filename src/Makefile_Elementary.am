@@ -133,6 +133,8 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_caching_factory.eo \
 	lib/elementary/efl_ui_widget_factory.eo \
 	lib/elementary/efl_ui_relative_layout.eo \
+	lib/elementary/efl_ui_clickable.eo \
+	lib/elementary/efl_ui_clickable_util.eo \
 	$(NULL)
 
 # More public files -- FIXME
@@ -1218,6 +1220,8 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_exact_model.c \
 	lib/elementary/efl_ui_average_model.c \
 	lib/elementary/efl_ui_relative_layout.c \
+	lib/elementary/efl_ui_clickable.c \
+	lib/elementary/efl_ui_clickable_util.c \
 	$(NULL)
 
 

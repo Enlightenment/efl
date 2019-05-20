@@ -566,14 +566,14 @@ _hov_dismiss_cb(void *data,
    if (dismissstr && !strcmp(dismissstr, "on"))
      {
         _hide_signals_emit(data);
-        efl_event_callback_legacy_call
-          (data, EFL_UI_EVENT_CLICKED, NULL);
+        evas_object_smart_callback_call
+          ( data, "clicked", NULL);
      }
    else
      {
         evas_object_hide(data);
-        efl_event_callback_legacy_call
-          (data, EFL_UI_EVENT_CLICKED, NULL);
+        evas_object_smart_callback_call
+          ( data, "clicked", NULL);
         efl_event_callback_legacy_call(data, ELM_HOVER_EVENT_DISMISSED, NULL);
      } // for backward compatibility
 }
@@ -616,8 +616,8 @@ _elm_hover_efl_canvas_group_group_del(Eo *obj, Elm_Hover_Data *sd)
 
    if (evas_object_visible_get(obj))
      {
-        efl_event_callback_legacy_call
-          (obj, EFL_UI_EVENT_CLICKED, NULL);
+        evas_object_smart_callback_call
+          ( obj, "clicked", NULL);
         efl_event_callback_legacy_call(obj, ELM_HOVER_EVENT_DISMISSED, NULL);
      }
 

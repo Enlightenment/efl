@@ -2,10 +2,6 @@
 #include <config.h>
 #endif
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include <Eina.h>
 #include <Evas.h>
 #include <Ecore.h>

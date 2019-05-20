@@ -11,6 +11,7 @@ database_var_del(Eolian_Variable *var)
    if (!var || eolian_object_unref(&var->base)) return;
    eina_stringshare_del(var->base.file);
    eina_stringshare_del(var->base.name);
+   eina_stringshare_del(var->base.c_name);
    if (var->base_type)
      database_type_del(var->base_type);
    if (var->value) database_expr_del(var->value);

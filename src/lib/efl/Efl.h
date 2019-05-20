@@ -104,7 +104,6 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_ui_range_interactive.eo.h"
 #include "interfaces/efl_ui_autorepeat.eo.h"
 #include "interfaces/efl_ui_draggable.eo.h"
-#include "interfaces/efl_ui_clickable.eo.h"
 #include "interfaces/efl_ui_scrollable.eo.h"
 #include "interfaces/efl_ui_scrollbar.eo.h"
 #include "interfaces/efl_ui_scrollable_interactive.eo.h"

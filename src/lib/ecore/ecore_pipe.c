@@ -26,10 +26,6 @@
 # endif
 #endif
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #ifdef HAVE_ESCAPE
 # include <Escape.h>
 #endif
@@ -51,6 +47,7 @@
 
 #ifdef _WIN32
 # include <winsock2.h>
+# include <evil_private.h> /* pipe fcntl */
 # define pipe_write(fd, buffer, size) send((fd), (char *)(buffer), size, 0)
 # define pipe_read(fd, buffer, size)  recv((fd), (char *)(buffer), size, 0)
 # define pipe_close(fd)               closesocket(fd)

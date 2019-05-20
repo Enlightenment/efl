@@ -7,8 +7,6 @@ if target_machine.system() == 'windows'
   'evil_fcntl.h',
   'evil_langinfo.h',
   'evil_locale.h',
-  'evil_macro.h',
-  'evil_macro_pop.h',
   'evil_macro_wrapper.h',
   'evil_main.h',
   'evil_stdio.h',

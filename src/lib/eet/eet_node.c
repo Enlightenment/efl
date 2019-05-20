@@ -5,10 +5,6 @@
 #include <string.h>
 #include <stdio.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif /* ifdef _WIN32 */
-
 #include <Eina.h>
 
 #include "Eet.h"

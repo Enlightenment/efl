@@ -100,7 +100,7 @@ EFL_START_TEST(eina_value_test_simple)
    fail_unless(eina_value_int64_get(value, &i64));
    fail_if(eina_value_long_get(value, &l));
    fail_unless(eina_value_long_convert(value, &l));
-   fail_unless(l == 0x0011223344556677);
+   fail_unless(l == (long)0x0011223344556677);
    fail_unless(i64 == 0x0011223344556677);
    eina_value_flush(value);
 
@@ -157,7 +157,7 @@ EFL_START_TEST(eina_value_test_simple)
    fail_unless(eina_value_uint64_get(value, &u64));
    fail_if(eina_value_ulong_get(value, &ul));
    fail_unless(eina_value_ulong_convert(value, &ul));
-   fail_unless(ul == 0x1122334455667788);
+   fail_unless(ul == (unsigned long)0x1122334455667788);
    fail_unless(u64 == 0x1122334455667788);
    eina_value_flush(value);
 

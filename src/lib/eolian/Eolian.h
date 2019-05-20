@@ -586,6 +586,7 @@ EAPI void *eolian_state_error_data_set(Eolian_State *state, void *data);
  * @see eolian_object_line_get
  * @see eolian_object_column_get
  * @see eolian_object_name_get
+ * @see eolian_object_c_name_get
  *
  * @ingroup Eolian
  */
@@ -601,6 +602,7 @@ EAPI Eolian_Object_Type eolian_object_type_get(const Eolian_Object *obj);
  * @see eolian_object_line_get
  * @see eolian_object_column_get
  * @see eolian_object_name_get
+ * @see eolian_object_c_name_get
  *
  * @ingroup Eolian
  */
@@ -617,6 +619,7 @@ EAPI const Eolian_Unit *eolian_object_unit_get(const Eolian_Object *obj);
  * @see eolian_object_line_get
  * @see eolian_object_column_get
  * @see eolian_object_name_get
+ * @see eolian_object_c_name_get
  *
  * @ingroup Eolian
  */
@@ -632,6 +635,7 @@ EAPI const char *eolian_object_file_get(const Eolian_Object *obj);
  * @see eolian_object_file_get
  * @see eolian_object_column_get
  * @see eolian_object_name_get
+ * @see eolian_object_c_name_get
  *
  * @ingroup Eolian
  */
@@ -650,6 +654,7 @@ EAPI int eolian_object_line_get(const Eolian_Object *obj);
  * @see eolian_object_file_get
  * @see eolian_object_line_get
  * @see eolian_object_name_get
+ * @see eolian_object_c_name_get
  *
  * @ingroup Eolian
  */
@@ -669,10 +674,33 @@ EAPI int eolian_object_column_get(const Eolian_Object *obj);
  * @see eolian_object_column_get
  * @see eolian_object_short_name_get
  * @see eolian_object_namespaces_get
+ * @see eolian_object_c_name_get
  *
  * @ingroup Eolian
  */
 EAPI const char *eolian_object_name_get(const Eolian_Object *obj);
+
+/*
+ * @brief Get the C name of an object.
+ *
+ * This is the full name, but for C. It is typically derived from the
+ * regular full name, with namespaces flattened to underscores, but
+ * some things may be explicitly renamed. Only classes, types (both
+ * declarations and instances) and variables have C names, as others
+ * are never referred to by name directly in C.
+ *
+ * @see eolian_object_unit_get
+ * @see eolian_object_type_get
+ * @see eolian_object_file_get
+ * @see eolian_object_line_get
+ * @see eolian_object_column_get
+ * @see eolian_object_short_name_get
+ * @see eolian_object_namespaces_get
+ * @see eolian_object_name_get
+ *
+ * @ingroup Eolian
+ */
+EAPI const char *eolian_object_c_name_get(const Eolian_Object *obj);
 
 /*
  * @brief Get the short name of an object.
@@ -1389,6 +1417,19 @@ static inline const char *
 eolian_class_name_get(const Eolian_Class *klass)
 {
    return eolian_object_name_get(EOLIAN_OBJECT(klass));
+}
+
+/*
+ * @brief A helper function to get the C name of a class.
+ *
+ * @see eolian_object_c_name_get
+ *
+ * @ingroup Eolian
+ */
+static inline const char *
+eolian_class_c_name_get(const Eolian_Class *klass)
+{
+   return eolian_object_c_name_get(EOLIAN_OBJECT(klass));
 }
 
 /*
@@ -2173,16 +2214,16 @@ EAPI Eina_Bool eolian_event_is_restart(const Eolian_Event *event);
 EAPI Eina_Iterator *eolian_class_parts_get(const Eolian_Class *klass);
 
 /*
- * @brief Returns the C name of an event
+ * @brief Returns the C macro name used to refer to an event
  *
  * @param[in] event the event handle
- * @return the event C name
+ * @return the event C macro
  *
  * You're responsible for deleting the stringshare.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_event_c_name_get(const Eolian_Event *event);
+EAPI Eina_Stringshare *eolian_event_c_macro_get(const Eolian_Event *event);
 
 /*
  * @brief A helper function to get the name of a part.
@@ -2278,12 +2319,12 @@ EAPI Eina_Bool eolian_class_dtor_enable_get(const Eolian_Class *klass);
 EAPI Eina_Stringshare *eolian_class_c_get_function_name_get(const Eolian_Class *klass);
 
 /*
- * @brief Get the C name of the class.
+ * @brief Get the C macro of the class.
  *
  * @param[in] klass the class
- * @return the C name
+ * @return the C symbol
  *
- * The C name is the name of the macro the class is accessed through, in format
+ * This is the name by which the class is accessed in C environment, in format
  * CLASS_NAME_SUFFIX where SUFFIX is CLASS, MIXIN or INTERFACE. You're responsible
  * for the stringshare afterwards.
  *
@@ -2291,7 +2332,7 @@ EAPI Eina_Stringshare *eolian_class_c_get_function_name_get(const Eolian_Class *
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_class_c_name_get(const Eolian_Class *klass);
+EAPI Eina_Stringshare *eolian_class_c_macro_get(const Eolian_Class *klass);
 
 /*
  * @brief Get the C data type of the class.
@@ -2428,7 +2469,7 @@ eolian_typedecl_enum_field_name_get(const Eolian_Enum_Type_Field *field)
 }
 
 /*
- * @brief Get the C name of a field of an enum type.
+ * @brief Get the C constant name used to refer to a particular enum field.
  *
  * The user of the API is responsible for the resulting stringshare.
  *
@@ -2437,7 +2478,7 @@ eolian_typedecl_enum_field_name_get(const Eolian_Enum_Type_Field *field)
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_typedecl_enum_field_c_name_get(const Eolian_Enum_Type_Field *fl);
+EAPI Eina_Stringshare *eolian_typedecl_enum_field_c_constant_get(const Eolian_Enum_Type_Field *fl);
 
 /*
  * @brief Get the documentation of a field of an enum type.
@@ -2557,6 +2598,19 @@ static inline const char *
 eolian_typedecl_name_get(const Eolian_Typedecl *tp)
 {
    return eolian_object_name_get(EOLIAN_OBJECT(tp));
+}
+
+/*
+ * @brief A helper function to get the C name of a typedecl.
+ *
+ * @see eolian_object_c_name_get
+ *
+ * @ingroup Eolian
+ */
+static inline const char *
+eolian_typedecl_c_name_get(const Eolian_Typedecl *tp)
+{
+   return eolian_object_c_name_get(EOLIAN_OBJECT(tp));
 }
 
 /*
@@ -2752,6 +2806,19 @@ static inline const char *
 eolian_type_name_get(const Eolian_Type *tp)
 {
    return eolian_object_name_get(EOLIAN_OBJECT(tp));
+}
+
+/*
+ * @brief A helper function to get the C name of a type.
+ *
+ * @see eolian_object_c_name_get
+ *
+ * @ingroup Eolian
+ */
+static inline const char *
+eolian_type_c_name_get(const Eolian_Type *tp)
+{
+   return eolian_object_c_name_get(EOLIAN_OBJECT(tp));
 }
 
 /*
@@ -2995,6 +3062,19 @@ static inline const char *
 eolian_variable_name_get(const Eolian_Variable *tp)
 {
    return eolian_object_name_get(EOLIAN_OBJECT(tp));
+}
+
+/*
+ * @brief A helper function to get the C name of a variable.
+ *
+ * @see eolian_object_c_name_get
+ *
+ * @ingroup Eolian
+ */
+static inline const char *
+eolian_variable_c_name_get(const Eolian_Variable *tp)
+{
+   return eolian_object_c_name_get(EOLIAN_OBJECT(tp));
 }
 
 /*

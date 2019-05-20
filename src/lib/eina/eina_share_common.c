@@ -63,10 +63,6 @@
 #include <string.h>
 #include <stddef.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include "eina_config.h"
 #include "eina_private.h"
 #include "eina_hash.h"

@@ -1041,7 +1041,7 @@ int main(int argc, char** argv)
              {
                 auto tp = eolian_event_type_get(&*first);
                 ss << "  {\n";
-                ss << "    static efl::eo::js::event_information ev_info{&constructor_from_eo, " << eolian_event_c_name_get(&*first);
+                ss << "    static efl::eo::js::event_information ev_info{&constructor_from_eo, " << eolian_event_c_macro_get(&*first);
                 ss << ", &efl::eo::js::event_callback<";
                 ss << (tp ? _eolian_type_cpp_type_named_get(tp, class_name, need_name_getter) : "void");
                 ss << ">, \"" << type_class_name(tp) << "\"};\n";
@@ -1174,7 +1174,7 @@ int main(int argc, char** argv)
              , ef_end; ef != ef_end; ++ef)
           {
              auto field_name = ::eolian_typedecl_enum_field_name_get(&*ef);
-             auto field_c_name = ::eolian_typedecl_enum_field_c_name_get(&*ef);
+             auto field_c_name = ::eolian_typedecl_enum_field_c_constant_get(&*ef);
              if (!field_name || !field_c_name)
                {
                   EINA_CXX_DOM_LOG_ERR(eolian::js::domain) << "Could not get enum field name";

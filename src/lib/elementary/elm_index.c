@@ -762,7 +762,7 @@ _sel_eval(Evas_Object *obj,
                        _elm_access_say(ret);
                     }
 
-                  if (om_closest) 
+                  if (om_closest)
                     efl_event_callback_legacy_call
                       (obj, ELM_INDEX_EVENT_CHANGED, EO_OBJ(om_closest));
                   else
@@ -861,8 +861,8 @@ _on_mouse_up(void *data,
    eo_item = elm_index_selected_item_get(data, sd->level);
    if (eo_item)
      {
-        efl_event_callback_legacy_call
-          (data, EFL_UI_EVENT_CLICKED, eo_item);
+        evas_object_smart_callback_call
+          ( data, "clicked", eo_item);
         evas_object_smart_callback_call(data, "selected", eo_item);
         eo_id_item = eo_item;
         ELM_INDEX_ITEM_DATA_GET(eo_id_item, id_item);

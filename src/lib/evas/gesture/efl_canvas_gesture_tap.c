@@ -2,9 +2,8 @@
 
 #define MY_CLASS EFL_CANVAS_GESTURE_TAP_CLASS
 
-
 EOLIAN static Efl_Object *
-_efl_canvas_gesture_tap_efl_object_constructor(Eo *obj, Efl_Canvas_Gesture_Tap_Data *pd EINA_UNUSED)
+_efl_canvas_gesture_tap_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
 {
    Efl_Canvas_Gesture_Data *gd;
 

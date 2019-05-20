@@ -972,7 +972,7 @@ _mouse_clicked_signal_cb(void *data EINA_UNUSED,
 
    if (sd->editable) elm_entry_input_panel_show(sd->entry);
 
-   efl_event_callback_legacy_call(obj, EFL_UI_EVENT_CLICKED, NULL);
+   evas_object_smart_callback_call(obj, "clicked", NULL);
 }
 
 static void

@@ -1,0 +1,24 @@
+class @beta Efl.Ui.Clickable_Util {
+  methods {
+    bind_to_theme @class {
+      [[This will listen to the standard events of a theme, and emit the events on clickable
+
+        This means, widgets themselfs do not neccessarily need to listen to the theme signals. This function does this, and calls the correct clickable functions.
+      ]]
+      params {
+        object : Efl.Canvas.Layout; [[The object to listen on]]
+        clickable : Efl.Ui.Clickable; [[The object to call the clickable events on]]
+      }
+    }
+    bind_to_object @class {
+      [[This will listen to the standard events on a object, and call the correct methods on clickable
+
+        This means, widgets themselfs do not neccessarily need to listen to the events on the object. This function does this, and calls the correct clickable functions.
+      ]]
+      params {
+        object : Efl.Input.Interface; [[The object to listen on]]
+        clickable : Efl.Ui.Clickable; [[The object to call the clickable events on]]
+      }
+    }
+  }
+}

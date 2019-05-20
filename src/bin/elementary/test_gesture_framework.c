@@ -175,25 +175,19 @@ _color_and_icon_set(infra_data *infra, char *name, int n, int max,
 static void
 finger_tap_start(void *data , Efl_Canvas_Gesture *tap)
 {
-   Eina_Vector2 pos = efl_gesture_hotspot_get(tap);
+   Eina_Position2D pos = efl_gesture_hotspot_get(tap);
 
    _color_and_icon_set(data, TAP_NAME, 1, MAX_TAP, START_COLOR);
-   printf("Tap Gesture started x,y=<%f,%f> \n", pos.x, pos.y);
-}
-
-static void
-finger_tap_update(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
-{
-   _color_and_icon_set(data, TAP_NAME, 1, MAX_TAP, UPDATE_COLOR);
+   printf("Tap Gesture started x,y=<%d,%d> \n", pos.x, pos.y);
 }
 
 static void
 finger_tap_end(void *data , Efl_Canvas_Gesture *tap)
 {
-   Eina_Vector2 pos = efl_gesture_hotspot_get(tap);
+   Eina_Position2D pos = efl_gesture_hotspot_get(tap);
 
    _color_and_icon_set(data, TAP_NAME, 1, MAX_TAP, END_COLOR);
-   printf("Tap Gesture ended x,y=<%f,%f> \n", pos.x, pos.y);
+   printf("Tap Gesture ended x,y=<%d,%d> \n", pos.x, pos.y);
 }
 
 static void
@@ -204,12 +198,147 @@ finger_tap_abort(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
 }
 
 static void
+finger_flick_start(void *data , Efl_Canvas_Gesture *tap)
+{
+   Eina_Position2D pos = efl_gesture_hotspot_get(tap);
+
+   _color_and_icon_set(data, FLICK_NAME, 1, MAX_TAP, START_COLOR);
+   printf("Flick Gesture started x,y=<%d,%d> \n", pos.x, pos.y);
+}
+
+static void
+finger_flick_end(void *data , Efl_Canvas_Gesture *tap)
+{
+   Eina_Position2D pos = efl_gesture_hotspot_get(tap);
+   double angle = efl_gesture_flick_angle_get(tap);
+
+   _color_and_icon_set(data, FLICK_NAME, 1, MAX_TAP, END_COLOR);
+   printf("Flick Gesture ended x,y=<%d,%d> angle=<%f>\n", pos.x, pos.y, angle);
+}
+
+static void
+finger_flick_abort(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
+{
+   _color_and_icon_set(data, FLICK_NAME, 1, MAX_TAP, ABORT_COLOR);
+   printf("Flick Aborted\n");
+}
+
+static void
+finger_momentum_start(void *data , Efl_Canvas_Gesture *tap)
+{
+   Eina_Position2D pos = efl_gesture_hotspot_get(tap);
+   unsigned int t = efl_gesture_timestamp_get(tap);
+
+   _color_and_icon_set(data, MOMENTUM_NAME, 1, MAX_TAP, START_COLOR);
+   printf("Momentum Gesture started x,y=<%d,%d> time=<%d>\n", pos.x, pos.y, t);
+}
+
+static void
+finger_momentum_update(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
+{
+   Eina_Position2D pos = efl_gesture_hotspot_get(tap);
+   Eina_Vector2 m = efl_gesture_momentum_get(tap);
+   unsigned int t = efl_gesture_timestamp_get(tap);
+
+   _color_and_icon_set(data, MOMENTUM_NAME, 1, MAX_TAP, UPDATE_COLOR);
+   printf("Momentum Gesture updated x,y=<%d,%d> momentum=<%f %f> time=<%d>\n",
+          pos.x, pos.y, m.x, m.y, t);
+}
+
+static void
+finger_momentum_end(void *data , Efl_Canvas_Gesture *tap)
+{
+   Eina_Position2D pos = efl_gesture_hotspot_get(tap);
+   Eina_Vector2 m = efl_gesture_momentum_get(tap);
+   unsigned int t = efl_gesture_timestamp_get(tap);
+
+   _color_and_icon_set(data, MOMENTUM_NAME, 1, MAX_TAP, END_COLOR);
+   printf("Momentum Gesture ended x,y=<%d,%d> momentum=<%f %f> time=<%d>\n",
+     pos.x, pos.y, m.x, m.y, t);
+}
+
+static void
+finger_momentum_abort(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
+{
+   _color_and_icon_set(data, MOMENTUM_NAME, 1, MAX_TAP, ABORT_COLOR);
+   printf("Momentum Aborted\n");
+}
+
+static void
+finger_triple_tap_start(void *data , Efl_Canvas_Gesture *tap)
+{
+   Eina_Position2D pos = efl_gesture_hotspot_get(tap);
+
+   _color_and_icon_set(data, TRIPLE_TAP_NAME, 1, MAX_TAP, START_COLOR);
+   printf("Triple Tap Gesture started x,y=<%d,%d> \n", pos.x, pos.y);
+}
+
+static void
+finger_triple_tap_update(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
+{
+   Eina_Position2D pos = efl_gesture_hotspot_get(tap);
+
+   _color_and_icon_set(data, TRIPLE_TAP_NAME, 1, MAX_TAP, UPDATE_COLOR);
+   printf("Triple Tap Gesture updated x,y=<%d,%d> \n", pos.x, pos.y);
+}
+
+static void
+finger_triple_tap_end(void *data , Efl_Canvas_Gesture *tap)
+{
+   Eina_Position2D pos = efl_gesture_hotspot_get(tap);
+
+   _color_and_icon_set(data, TRIPLE_TAP_NAME, 1, MAX_TAP, END_COLOR);
+   printf("Triple Tap Gesture ended x,y=<%d,%d> \n", pos.x, pos.y);
+}
+
+static void
+finger_triple_tap_abort(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
+{
+   _color_and_icon_set(data, TRIPLE_TAP_NAME, 1, MAX_TAP, ABORT_COLOR);
+   printf("Triple Tap Aborted\n");
+}
+
+static void
+finger_double_tap_start(void *data , Efl_Canvas_Gesture *tap)
+{
+   Eina_Position2D pos = efl_gesture_hotspot_get(tap);
+
+   _color_and_icon_set(data, DOUBLE_TAP_NAME, 1, MAX_TAP, START_COLOR);
+   printf("Double Tap Gesture started x,y=<%d,%d> \n", pos.x, pos.y);
+}
+
+static void
+finger_double_tap_update(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
+{
+   Eina_Position2D pos = efl_gesture_hotspot_get(tap);
+
+   _color_and_icon_set(data, DOUBLE_TAP_NAME, 1, MAX_TAP, UPDATE_COLOR);
+   printf("Double Tap Gesture updated x,y=<%d,%d> \n", pos.x, pos.y);
+}
+
+static void
+finger_double_tap_end(void *data , Efl_Canvas_Gesture *tap)
+{
+   Eina_Position2D pos = efl_gesture_hotspot_get(tap);
+
+   _color_and_icon_set(data, DOUBLE_TAP_NAME, 1, MAX_TAP, END_COLOR);
+   printf("Double Tap Gesture ended x,y=<%d,%d> \n", pos.x, pos.y);
+}
+
+static void
+finger_double_tap_abort(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
+{
+   _color_and_icon_set(data, DOUBLE_TAP_NAME, 1, MAX_TAP, ABORT_COLOR);
+   printf("Double Tap Aborted\n");
+}
+
+static void
 finger_long_tap_start(void *data , Efl_Canvas_Gesture *tap)
 {
-   Eina_Vector2 pos = efl_gesture_hotspot_get(tap);
+   Eina_Position2D pos = efl_gesture_hotspot_get(tap);
 
    _color_and_icon_set(data, LONG_TAP_NAME, 1, MAX_TAP, START_COLOR);
-   printf("Long Tap Gesture started x,y=<%f,%f> \n", pos.x, pos.y);
+   printf("Long Tap Gesture started x,y=<%d,%d> \n", pos.x, pos.y);
 }
 
 static void
@@ -222,10 +351,10 @@ finger_long_tap_update(void *data , Efl_Canvas_Gesture *tap EINA_UNUSED)
 static void
 finger_long_tap_end(void *data , Efl_Canvas_Gesture *tap)
 {
-   Eina_Vector2 pos = efl_gesture_hotspot_get(tap);
+   Eina_Position2D pos = efl_gesture_hotspot_get(tap);
 
    _color_and_icon_set(data, LONG_TAP_NAME, 1, MAX_TAP, END_COLOR);
-   printf("Long Tap Gesture ended x,y=<%f,%f> \n",pos.x, pos.y);
+   printf("Long Tap Gesture ended x,y=<%d,%d> \n",pos.x, pos.y);
 }
 
 static void
@@ -244,14 +373,100 @@ tap_gesture_cb(void *data , const Efl_Event *ev)
       case EFL_GESTURE_STARTED:
          finger_tap_start(data, g);
          break;
-      case EFL_GESTURE_UPDATED:
-         finger_tap_update(data, g);
-         break;
       case EFL_GESTURE_CANCELED:
          finger_tap_abort(data, g);
          break;
       case EFL_GESTURE_FINISHED:
          finger_tap_end(data, g);
+         break;
+      default:
+         break;
+   }
+}
+
+static void
+flick_gesture_cb(void *data , const Efl_Event *ev)
+{
+   Efl_Canvas_Gesture *g = ev->info;
+   switch(efl_gesture_state_get(g))
+   {
+      case EFL_GESTURE_STARTED:
+         finger_flick_start(data, g);
+         break;
+      case EFL_GESTURE_CANCELED:
+         finger_flick_abort(data, g);
+         break;
+      case EFL_GESTURE_FINISHED:
+         finger_flick_end(data, g);
+         break;
+      default:
+         break;
+   }
+}
+
+static void
+momentum_gesture_cb(void *data , const Efl_Event *ev)
+{
+   Efl_Canvas_Gesture *g = ev->info;
+   switch(efl_gesture_state_get(g))
+   {
+      case EFL_GESTURE_STARTED:
+         finger_momentum_start(data, g);
+         break;
+      case EFL_GESTURE_UPDATED:
+         finger_momentum_update(data, g);
+         break;
+      case EFL_GESTURE_CANCELED:
+         finger_momentum_abort(data, g);
+         break;
+      case EFL_GESTURE_FINISHED:
+         finger_momentum_end(data, g);
+         break;
+      default:
+         break;
+   }
+}
+
+static void
+triple_tap_gesture_cb(void *data , const Efl_Event *ev)
+{
+   Efl_Canvas_Gesture *g = ev->info;
+   switch(efl_gesture_state_get(g))
+   {
+      case EFL_GESTURE_STARTED:
+         finger_triple_tap_start(data, g);
+         break;
+      case EFL_GESTURE_UPDATED:
+         finger_triple_tap_update(data, g);
+         break;
+      case EFL_GESTURE_CANCELED:
+         finger_triple_tap_abort(data, g);
+         break;
+      case EFL_GESTURE_FINISHED:
+         finger_triple_tap_end(data, g);
+         break;
+      default:
+         break;
+   }
+}
+
+static void
+double_tap_gesture_cb(void *data , const Efl_Event *ev)
+{
+   Efl_Canvas_Gesture *g = ev->info;
+   switch(efl_gesture_state_get(g))
+   {
+      case EFL_GESTURE_STARTED:
+         finger_double_tap_start(data, g);
+         break;
+      case EFL_GESTURE_UPDATED:
+         finger_double_tap_update(data, g);
+         break;
+      case EFL_GESTURE_CANCELED:
+         finger_double_tap_abort(data, g);
+         break;
+      case EFL_GESTURE_FINISHED:
+         finger_double_tap_end(data, g);
          break;
       default:
          break;
@@ -314,11 +529,22 @@ create_gesture_box(Evas_Object *win, icon_properties *icons,
 }
 
 void
+_tb_resize(void *data, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   int w,h;
+
+   evas_object_geometry_get(obj, NULL, NULL, &w, &h);
+   evas_object_resize(data, w, h);
+   evas_object_color_set(data, 0, 0, 0, 0);
+   evas_object_show(data);
+}
+
+void
 test_gesture_framework(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
       void *event_info EINA_UNUSED)
 {
    Evas_Object *win, *tb, *lb, *bx;
-   Evas_Object *r; /* Gesture layer transparent object */
+   Evas_Object *r, *target; /* Gesture layer transparent object */
 
    infra_data *infra = _infra_data_alloc();
 
@@ -335,6 +561,9 @@ test_gesture_framework(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    elm_win_resize_object_add(win, bx);
    evas_object_show(tb);
    evas_object_show(bx);
+
+   target = evas_object_rectangle_add(evas_object_evas_get(win));
+   evas_object_event_callback_add(win, EVAS_CALLBACK_RESIZE, _tb_resize, target);
 
    /* Box of Tap icon and label */
    bx = create_gesture_box(win, infra->icons, 0, TAP_NAME, "Tap");
@@ -458,15 +687,13 @@ test_gesture_framework(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    evas_object_show(lb);
    /* END   - Building icons table */
 
-   r = evas_object_rectangle_add(evas_object_evas_get(win));
-   evas_object_move(r, 250, 300);
-   evas_object_color_set(r, 0, 0, 255, 255);
-   evas_object_resize(r, 70, 70);
-   evas_object_show(r);
-
-   // LISTEN FOR TAP GESTURE
-   efl_event_callback_add(r, EFL_EVENT_GESTURE_TAP, tap_gesture_cb, infra);
-   efl_event_callback_add(r, EFL_EVENT_GESTURE_LONG_TAP, long_tap_gesture_cb, infra);
+   // LISTEN FOR GESTURES
+   efl_event_callback_add(target, EFL_EVENT_GESTURE_TAP, tap_gesture_cb, infra);
+   efl_event_callback_add(target, EFL_EVENT_GESTURE_LONG_TAP, long_tap_gesture_cb, infra);
+   efl_event_callback_add(target, EFL_EVENT_GESTURE_DOUBLE_TAP, double_tap_gesture_cb, infra);
+   efl_event_callback_add(target, EFL_EVENT_GESTURE_TRIPLE_TAP, triple_tap_gesture_cb, infra);
+   efl_event_callback_add(target, EFL_EVENT_GESTURE_MOMENTUM, momentum_gesture_cb, infra);
+   efl_event_callback_add(target, EFL_EVENT_GESTURE_FLICK, flick_gesture_cb, infra);
 
    /* Update color state 20 times a second */
    infra->colortimer = ecore_timer_add(0.05, _icon_color_set_cb, infra->icons);

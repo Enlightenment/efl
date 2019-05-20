@@ -7,7 +7,6 @@ efl_eolian_legacy_files = \
 	lib/efl/interfaces/efl_gfx_frame_controller.eo \
 	lib/efl/interfaces/efl_input_device.eo \
         lib/efl/interfaces/efl_ui_draggable.eo \
-        lib/efl/interfaces/efl_ui_clickable.eo \
         lib/efl/interfaces/efl_ui_scrollable.eo \
         lib/efl/interfaces/efl_ui_scrollable_interactive.eo \
         lib/efl/interfaces/efl_ui_scrollbar.eo \

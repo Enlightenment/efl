@@ -1,0 +1,16 @@
+import eina_types;
+
+class @beta Efl.Canvas.Gesture_Momentum extends Efl.Canvas.Gesture
+{
+   [[EFL Gesture Momentum class]]
+   c_prefix: efl_gesture_momentum;
+   methods {
+      momentum_get {
+         [[Gets momentum value]]
+         return: Eina.Vector2; [[The momentum vector]]
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+   }
+}

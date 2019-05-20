@@ -1,0 +1,9 @@
+class @beta Efl.Canvas.Gesture_Triple_Tap extends Efl.Canvas.Gesture
+{
+   [[EFL Gesture Triple Tap class]]
+   data: null;
+   c_prefix: efl_gesture_triple_tap;
+   implements {
+      Efl.Object.constructor;
+   }
+}

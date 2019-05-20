@@ -306,9 +306,9 @@ lib.eolian_class_dtor_enable_get.restype = c_bool
 lib.eolian_class_c_get_function_name_get.argtypes = (c_void_p,)
 lib.eolian_class_c_get_function_name_get.restype = c_void_p  # Stringshare TO BE FREED
 
-# EAPI Eina_Stringshare *eolian_class_c_name_get(const Eolian_Class *klass);
-lib.eolian_class_c_name_get.argtypes = (c_void_p,)
-lib.eolian_class_c_name_get.restype = c_void_p  # Stringshare TO BE FREED
+# EAPI Eina_Stringshare *eolian_class_c_macro_get(const Eolian_Class *klass);
+lib.eolian_class_c_macro_get.argtypes = (c_void_p,)
+lib.eolian_class_c_macro_get.restype = c_void_p  # Stringshare TO BE FREED
 
 # EAPI Eina_Stringshare *eolian_class_c_data_type_get(const Eolian_Class *klass);
 lib.eolian_class_c_data_type_get.argtypes = (c_void_p,)
@@ -461,9 +461,9 @@ lib.eolian_constructor_is_optional.restype = c_bool
 
 ###  Eolian_Event  ############################################################
 
-# EAPI Eina_Stringshare *eolian_event_c_name_get(const Eolian_Event *event);
-lib.eolian_event_c_name_get.argtypes = (c_void_p,)
-lib.eolian_event_c_name_get.restype = c_void_p  # Stringshare TO BE FREED
+# EAPI Eina_Stringshare *eolian_event_c_macro_get(const Eolian_Event *event);
+lib.eolian_event_c_macro_get.argtypes = (c_void_p,)
+lib.eolian_event_c_macro_get.restype = c_void_p  # Stringshare TO BE FREED
 
 # EAPI const Eolian_Type *eolian_event_type_get(const Eolian_Event *event);
 lib.eolian_event_type_get.argtypes = (c_void_p,)
@@ -525,9 +525,9 @@ lib.eolian_typedecl_enum_fields_get.restype = c_void_p
 lib.eolian_typedecl_enum_field_get.argtypes = (c_void_p, c_char_p)
 lib.eolian_typedecl_enum_field_get.restype = c_void_p
 
-# EAPI Eina_Stringshare *eolian_typedecl_enum_field_c_name_get(const Eolian_Enum_Type_Field *fl);
-lib.eolian_typedecl_enum_field_c_name_get.argtypes = (c_void_p,)
-lib.eolian_typedecl_enum_field_c_name_get.restype = c_void_p  # Stringshare TO BE FREED
+# EAPI Eina_Stringshare *eolian_typedecl_enum_field_c_constant_get(const Eolian_Enum_Type_Field *fl);
+lib.eolian_typedecl_enum_field_c_constant_get.argtypes = (c_void_p,)
+lib.eolian_typedecl_enum_field_c_constant_get.restype = c_void_p  # Stringshare TO BE FREED
 
 # EAPI const Eolian_Documentation *eolian_typedecl_enum_field_documentation_get(const Eolian_Enum_Type_Field *fl);
 lib.eolian_typedecl_enum_field_documentation_get.argtypes = (c_void_p,)

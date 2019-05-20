@@ -737,13 +737,13 @@ _x11_elm_widget_xwin_get(const Evas_Object *obj)
 }
 
 static void
-_start_grab_pick_cb(void *data, const Efl_Event *event)
+_start_grab_pick_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Evas_Object *o = data;
 
    ELM_COLORSELECTOR_DATA_GET(o, sd);
 
-   elm_object_disabled_set(event->object, EINA_TRUE);
+   elm_object_disabled_set(obj, EINA_TRUE);
 
    sd->grab.mouse_motion = ecore_event_handler_add(ECORE_EVENT_MOUSE_MOVE, _mouse_grab_pixels, o);
    sd->grab.key_up = ecore_event_handler_add(ECORE_EVENT_KEY_UP, _key_up_cb, o);
@@ -937,8 +937,7 @@ _create_colorpicker(Evas_Object *obj)
         sd->button = elm_button_add(sd->picker);
         elm_object_style_set(sd->button, style);
         elm_object_text_set(sd->button, E_("Pick a color"));
-        efl_event_callback_add
-              (sd->button, EFL_UI_EVENT_CLICKED, _start_grab_pick_cb, obj);
+        evas_object_smart_callback_add(sd->button, "clicked", _start_grab_pick_cb, obj);
         elm_box_pack_end(bx, sd->button);
         evas_object_show(sd->button);
      }
@@ -1101,12 +1100,12 @@ _button_clicked_cb(void *data, const Efl_Event *event)
 }
 
 static void
-_button_repeat_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_button_repeat_cb(void *data, Evas_Object *object, void *event_info EINA_UNUSED)
 {
    Color_Bar_Data *cb_data = data;
    double x, y, step;
 
-   if (event->object == cb_data->rbt) step = 1.0 / BASE_STEP;
+   if (object == cb_data->rbt) step = 1.0 / BASE_STEP;
    else step = -1.0 / BASE_STEP;
 
    edje_object_part_drag_value_get(cb_data->colorbar, "elm.arrow", &x, &y);
@@ -1294,8 +1293,8 @@ _color_bars_add(Evas_Object *obj)
           (sd->cb_data[i]->lbt, _elm_config->longpress_timeout);
         elm_button_autorepeat_gap_timeout_set
           (sd->cb_data[i]->lbt, (1.0 / _elm_config->fps));
-        efl_event_callback_add
-          (sd->cb_data[i]->lbt, EFL_UI_EVENT_REPEATED, _button_repeat_cb, sd->cb_data[i]);
+        evas_object_smart_callback_add
+          (sd->cb_data[i]->lbt, "repeated", _button_repeat_cb, sd->cb_data[i]);
 
         /* load right button */
         if (!sd->cb_data[i]->rbt) sd->cb_data[i]->rbt = elm_button_add(sd->col_bars_area);
@@ -1312,8 +1311,8 @@ _color_bars_add(Evas_Object *obj)
           (sd->cb_data[i]->rbt, _elm_config->longpress_timeout);
         elm_button_autorepeat_gap_timeout_set
           (sd->cb_data[i]->rbt, (1.0 / _elm_config->fps));
-        efl_event_callback_add
-          (sd->cb_data[i]->rbt, EFL_UI_EVENT_REPEATED, _button_repeat_cb, sd->cb_data[i]);
+        evas_object_smart_callback_add
+          (sd->cb_data[i]->lbt, "repeated", _button_repeat_cb, sd->cb_data[i]);
      }
 }
 

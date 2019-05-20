@@ -10,10 +10,6 @@
 # include <sys/socket.h>
 #endif
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #define EFL_NET_SOCKET_SSL_PROTECTED
 
 #include "Ecore.h"
