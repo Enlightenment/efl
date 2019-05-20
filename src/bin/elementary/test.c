@@ -310,6 +310,13 @@ void test_image_prescale(void *data, Evas_Object *obj, void *event_info);
 void test_remote_image(void *data, Evas_Object *obj, void *event_info);
 void test_click_image(void *data, Evas_Object *obj, void *event_info);
 void test_load_image(void *data, Evas_Object *obj, void *event_info);
+void test_ui_image(void *data, Evas_Object *obj, void *event_info);
+void test_ui_image_scale_type(void *data, Evas_Object *obj, void *event_info);
+void test_ui_image_swallow_align(void *data, Evas_Object *obj, void *event_info);
+void test_ui_image_prescale(void *data, Evas_Object *obj, void *event_info);
+void test_remote_ui_image(void *data, Evas_Object *obj, void *event_info);
+void test_click_ui_image(void *data, Evas_Object *obj, void *event_info);
+void test_load_ui_image(void *data, Evas_Object *obj, void *event_info);
 void test_external_button(void *data, Evas_Object *obj, void *event_info);
 void test_external_slider(void *data, Evas_Object *obj, void *event_info);
 void test_external_scroller(void *data, Evas_Object *obj, void *event_info);
@@ -820,6 +827,13 @@ add_tests:
    ADD_TEST(NULL, "Images", "Image Click", test_click_image);
    ADD_TEST(NULL, "Images", "Image Async Load", test_load_image);
    ADD_TEST(NULL, "Images", "Image Prescale", test_image_prescale);
+   ADD_TEST_EO(NULL, "Images", "EFL.UI.Image", test_ui_image);
+   ADD_TEST_EO(NULL, "Images", "EFL.UI.Image Scale Type", test_ui_image_scale_type);
+   ADD_TEST_EO(NULL, "Images", "EFL.UI.Image Align", test_ui_image_swallow_align);
+   ADD_TEST_EO(NULL, "Images", "EFL.UI.Image Remote", test_remote_ui_image);
+   ADD_TEST_EO(NULL, "Images", "EFL.UI.Image Click", test_click_ui_image);
+   ADD_TEST_EO(NULL, "Images", "EFL.UI.Image Async Load", test_load_ui_image);
+   ADD_TEST_EO(NULL, "Images", "EFL.UI.Image Prescale", test_ui_image_prescale);
    ADD_TEST(NULL, "Images", "Slideshow", test_slideshow);
    ADD_TEST(NULL, "Images", "Video", test_video);
 

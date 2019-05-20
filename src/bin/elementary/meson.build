@@ -79,6 +79,7 @@ elementary_test_src = [
   'test_icon_desktops.c',
   'test_icon_animated.c',
   'test_image.c',
+  'test_ui_image.c',
   'test_index.c',
   'test_inwin.c',
   'test_label.c',
