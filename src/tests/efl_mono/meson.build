@@ -110,7 +110,7 @@ custom_target('copy_efl_mono_lib_dll',
 endif
 
 config_libs = ['eina', 'ecore', 'eo', 'efl', 'evas', 'eldbus', 'elementary']
-load_lib = ''
+load_lib = efl_mono_test_suite_path + ':'
 
 foreach config : config_libs
   lib = get_variable(config+'_lib')
