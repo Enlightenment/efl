@@ -65,7 +65,7 @@ class @beta Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.File.load;
       Efl.File.file { get; set; }
-      Efl.Orientation.orientation { get; set; }
+      Efl.Gfx.Orientable.orientation { get; set; }
       Efl.Layout.Group.group_size_min { get; }
       Efl.Layout.Group.group_size_max { get; }
      Efl.Layout.Signal.signal_callback_add;

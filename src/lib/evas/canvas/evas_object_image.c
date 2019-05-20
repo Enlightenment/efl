@@ -412,26 +412,26 @@ _evas_image_orientation_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Orient or
 }
 
 EOLIAN static void
-_efl_canvas_image_internal_efl_orientation_orientation_set(Eo *obj, Evas_Image_Data *o, Efl_Orient efl_orient)
+_efl_canvas_image_internal_efl_gfx_orientable_orientation_set(Eo *obj, Evas_Image_Data *o, Efl_Gfx_Orientation efl_orient)
 {
-   // This array takes an Efl_Orient and turns it into an Elm_Image_Orient
+   // This array takes an Efl_Gfx_Orientation and turns it into an Elm_Image_Orient
    static const Evas_Image_Orient evas_orient[16] = {
-      EVAS_IMAGE_ORIENT_NONE,     // EFL_ORIENT_NONE
-      EVAS_IMAGE_ORIENT_90,       // EFL_ORIENT_RIGHT
-      EVAS_IMAGE_ORIENT_180,      // EFL_ORIENT_DOWN
-      EVAS_IMAGE_ORIENT_270,      // EFL_ORIENT_LEFT
-      EVAS_IMAGE_FLIP_HORIZONTAL, // EFL_ORIENT_NONE  + FLIP_HOR
-      EVAS_IMAGE_FLIP_TRANSPOSE,  // EFL_ORIENT_RIGHT + FLIP_HOR
-      EVAS_IMAGE_FLIP_VERTICAL,   // EFL_ORIENT_DOWN  + FLIP_HOR
-      EVAS_IMAGE_FLIP_TRANSVERSE, // EFL_ORIENT_LEFT  + FLIP_HOR
-      EVAS_IMAGE_FLIP_VERTICAL,   // EFL_ORIENT_NONE  + FLIP_VER
-      EVAS_IMAGE_FLIP_TRANSVERSE, // EFL_ORIENT_RIGHT + FLIP_VER
-      EVAS_IMAGE_FLIP_HORIZONTAL, // EFL_ORIENT_DOWN  + FLIP_VER
-      EVAS_IMAGE_FLIP_TRANSPOSE,  // EFL_ORIENT_LEFT  + FLIP_VER
-      EVAS_IMAGE_ORIENT_180,      // EFL_ORIENT_NONE  + FLIP_HOR + FLIP_VER
-      EVAS_IMAGE_ORIENT_270,      // EFL_ORIENT_RIGHT + FLIP_HOR + FLIP_VER
-      EVAS_IMAGE_ORIENT_0,        // EFL_ORIENT_DOWN  + FLIP_HOR + FLIP_VER
-      EVAS_IMAGE_ORIENT_90        // EFL_ORIENT_LEFT  + FLIP_HOR + FLIP_VER
+      EVAS_IMAGE_ORIENT_NONE,     // EFL_GFX_ORIENTATION_NONE
+      EVAS_IMAGE_ORIENT_90,       // EFL_GFX_ORIENTATION_RIGHT
+      EVAS_IMAGE_ORIENT_180,      // EFL_GFX_ORIENTATION_DOWN
+      EVAS_IMAGE_ORIENT_270,      // EFL_GFX_ORIENTATION_LEFT
+      EVAS_IMAGE_FLIP_HORIZONTAL, // EFL_GFX_ORIENTATION_NONE  + FLIP_HOR
+      EVAS_IMAGE_FLIP_TRANSPOSE,  // EFL_GFX_ORIENTATION_RIGHT + FLIP_HOR
+      EVAS_IMAGE_FLIP_VERTICAL,   // EFL_GFX_ORIENTATION_DOWN  + FLIP_HOR
+      EVAS_IMAGE_FLIP_TRANSVERSE, // EFL_GFX_ORIENTATION_LEFT  + FLIP_HOR
+      EVAS_IMAGE_FLIP_VERTICAL,   // EFL_GFX_ORIENTATION_NONE  + FLIP_VER
+      EVAS_IMAGE_FLIP_TRANSVERSE, // EFL_GFX_ORIENTATION_RIGHT + FLIP_VER
+      EVAS_IMAGE_FLIP_HORIZONTAL, // EFL_GFX_ORIENTATION_DOWN  + FLIP_VER
+      EVAS_IMAGE_FLIP_TRANSPOSE,  // EFL_GFX_ORIENTATION_LEFT  + FLIP_VER
+      EVAS_IMAGE_ORIENT_180,      // EFL_GFX_ORIENTATION_NONE  + FLIP_HOR + FLIP_VER
+      EVAS_IMAGE_ORIENT_270,      // EFL_GFX_ORIENTATION_RIGHT + FLIP_HOR + FLIP_VER
+      EVAS_IMAGE_ORIENT_0,        // EFL_GFX_ORIENTATION_DOWN  + FLIP_HOR + FLIP_VER
+      EVAS_IMAGE_ORIENT_90        // EFL_GFX_ORIENTATION_LEFT  + FLIP_HOR + FLIP_VER
    };
    EINA_SAFETY_ON_FALSE_RETURN(efl_orient >= 0 && efl_orient < 16);
 
@@ -439,8 +439,8 @@ _efl_canvas_image_internal_efl_orientation_orientation_set(Eo *obj, Evas_Image_D
    _evas_image_orientation_set(obj, o, evas_orient[efl_orient]);
 }
 
-EOLIAN static Efl_Orient
-_efl_canvas_image_internal_efl_orientation_orientation_get(const Eo *obj EINA_UNUSED, Evas_Image_Data *o)
+EOLIAN static Efl_Gfx_Orientation
+_efl_canvas_image_internal_efl_gfx_orientable_orientation_get(const Eo *obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->orient_value;
 }

@@ -32,6 +32,7 @@
 #include "interfaces/efl_gfx_stack.eo.c"
 #include "interfaces/efl_gfx_fill.eo.c"
 #include "interfaces/efl_gfx_view.eo.c"
+#include "interfaces/efl_gfx_orientable.eo.c"
 
 #include "interfaces/efl_gfx_text_class.eo.c"
 #include "interfaces/efl_gfx_size_class.eo.c"
@@ -59,7 +60,6 @@
 #include "interfaces/efl_gfx_arrangement.eo.c"
 #include "interfaces/efl_model.eo.c"
 #include "interfaces/efl_interpolator.eo.c"
-#include "interfaces/efl_orientation.eo.c"
 #include "interfaces/efl_ui_i18n.eo.c"
 #include "interfaces/efl_ui_direction.eo.c"
 #include "interfaces/efl_ui_drag.eo.c"

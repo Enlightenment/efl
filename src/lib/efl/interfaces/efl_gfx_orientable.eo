@@ -1,6 +1,6 @@
 parse efl_ui_direction;
 
-enum @beta Efl.Orient
+enum @beta Efl.Gfx.Orientation
 {
    [[An orientation type, to rotate and flip images.
 
@@ -25,9 +25,10 @@ enum @beta Efl.Orient
    flip_bitmask = 12     [[Bitmask that can be used to isolate flipping values, that is, $flip_vertical and $flip_horizontal.]]
 }
 
-interface @beta Efl.Orientation
+interface @beta Efl.Gfx.Orientable
 {
    [[Interface for objects which can be oriented.]]
+   c_prefix: efl_gfx_orientation;
    methods {
        @property orientation {
          [[Control the orientation (rotation and flipping) of a given object.
@@ -36,7 +37,7 @@ interface @beta Efl.Orientation
            instance.
          ]]
          values {
-            dir: Efl.Orient(Efl.Orient.none); [[The rotation angle (CCW), see @Efl.Orient.]]
+            dir: Efl.Gfx.Orientation(Efl.Gfx.Orientation.none); [[The final orientation of the object.]]
          }
       }
    }

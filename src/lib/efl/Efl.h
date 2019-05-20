@@ -90,12 +90,12 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_gfx_image.eo.h"
 #include "interfaces/efl_gfx_frame_controller.eo.h"
 #include "interfaces/efl_gfx_image_load_controller.eo.h"
+#include "interfaces/efl_gfx_orientable.eo.h"
 #include "interfaces/efl_part.eo.h"
 #include "interfaces/efl_playable.eo.h"
 #include "interfaces/efl_player.eo.h"
 #include "interfaces/efl_text.eo.h"
 #include "interfaces/efl_text_types.eot.h"
-#include "interfaces/efl_orientation.eo.h"
 #include "interfaces/efl_ui_i18n.eo.h"
 #include "interfaces/efl_ui_direction.eo.h"
 #include "interfaces/efl_ui_direction_readonly.eo.h"
@@ -113,10 +113,6 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 
 #include "interfaces/efl_screen.eo.h"
 
-#define EFL_ORIENT_0   EFL_ORIENT_UP
-#define EFL_ORIENT_90  EFL_ORIENT_RIGHT
-#define EFL_ORIENT_180 EFL_ORIENT_DOWN
-#define EFL_ORIENT_270 EFL_ORIENT_LEFT
 
 /* Core interface */
 #include "interfaces/efl_interpolator.eo.h"
