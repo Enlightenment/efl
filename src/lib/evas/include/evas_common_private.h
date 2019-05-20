@@ -24,10 +24,6 @@
 #include <stdint.h>
 #include <unistd.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #ifdef HAVE_ESCAPE
 # include <Escape.h>
 #endif

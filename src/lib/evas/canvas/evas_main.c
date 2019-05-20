@@ -10,6 +10,10 @@
 
 #include "eo_internal.h"
 
+#ifdef _WIN32
+# include <evil_private.h> /* evil_init evil_shutdown */
+#endif
+
 #include <Ecore.h>
 
 #define EFL_INTERNAL_UNSTABLE

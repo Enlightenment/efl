@@ -14,6 +14,10 @@
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
 #endif
 
+#ifdef _WIN32
+# include <evil_private.h> /* dlsym */
+#endif
+
 #if defined HAVE_DLSYM
 # define EVAS_GL 1
 # define EVAS_GL_NO_GL_H_CHECK 1
