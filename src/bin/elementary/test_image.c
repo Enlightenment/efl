@@ -232,12 +232,13 @@ test_image_swallow_align(void *data EINA_UNUSED, Evas_Object *obj  EINA_UNUSED, 
 static void
 _download_start_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *win = data, *txt;
+   Evas_Object *win = data, *txt, *im;
    const char *url = NULL;
    char buf[4096] = {0};
 
    txt = evas_object_data_get(win, "txt");
-   elm_image_file_get(txt, &url, NULL);
+   im = evas_object_data_get(win, "im");
+   elm_image_file_get(im, &url, NULL);
    snprintf(buf, sizeof(buf) - 1, "Remote image download started:\n%s", url);
    elm_object_text_set(txt, buf);
    printf("%s\n", buf);
@@ -677,7 +678,7 @@ test_image_prescale(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 
    hbox = elm_box_add(win);
    elm_box_horizontal_set(hbox, EINA_TRUE);
-   evas_object_size_hint_weight_set(hbox, EVAS_HINT_EXPAND, EVAS_HINT_FILL);
+   evas_object_size_hint_weight_set(hbox, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(hbox, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    rd = elm_radio_add(win);
