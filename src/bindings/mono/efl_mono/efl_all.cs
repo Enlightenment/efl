@@ -72,8 +72,12 @@ public static class All
     {
         // Try to cleanup everything before actually shutting down.
         Eina.Log.Debug("Calling GC before shutdown");
-        System.GC.Collect();
-        System.GC.WaitForPendingFinalizers();
+        for (int i = 0; i < 3; i++)
+        {
+            System.GC.Collect();
+            System.GC.WaitForPendingFinalizers();
+            Efl.App.AppMain.Iterate();
+        }
 
         Monitor.Enter(InitLock);
         MainLoopInitialized = false;
