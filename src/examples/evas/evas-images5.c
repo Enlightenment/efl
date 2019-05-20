@@ -76,6 +76,7 @@ _on_keydown(void        *data EINA_UNUSED,
             void        *einfo)
 {
    Evas_Event_Key_Down *ev = einfo;
+   Efl_Orient orient = efl_orientation_get(d.img);
 
    if (strcmp(ev->key, "h") == 0) /* print help */
      {
@@ -109,25 +110,25 @@ _on_keydown(void        *data EINA_UNUSED,
    switch (key_val)
      {
       case 0:
-         efl_orientation_set(d.img, EFL_ORIENT_0);
+         efl_orientation_set(d.img, EFL_ORIENT_UP | (orient & EFL_ORIENT_FLIP_BITMASK));
          break;
       case 1:
-         efl_orientation_set(d.img, EFL_ORIENT_90);
+         efl_orientation_set(d.img, EFL_ORIENT_RIGHT | (orient & EFL_ORIENT_FLIP_BITMASK));
          break;
       case 2:
-         efl_orientation_set(d.img, EFL_ORIENT_180);
+         efl_orientation_set(d.img, EFL_ORIENT_DOWN | (orient & EFL_ORIENT_FLIP_BITMASK));
          break;
       case 3:
-         efl_orientation_set(d.img, EFL_ORIENT_270);
+         efl_orientation_set(d.img, EFL_ORIENT_LEFT | (orient & EFL_ORIENT_FLIP_BITMASK));
          break;
       case 4:
-         efl_orientation_flip_set(d.img, EFL_FLIP_HORIZONTAL);
+         efl_orientation_set(d.img, (orient & EFL_ORIENT_ROTATION_BITMASK) | EFL_ORIENT_FLIP_HORIZONTAL);
          break;
       case 5:
-         efl_orientation_flip_set(d.img, EFL_FLIP_VERTICAL);
+         efl_orientation_set(d.img, (orient & EFL_ORIENT_ROTATION_BITMASK) | EFL_ORIENT_FLIP_VERTICAL);
          break;
       case 6:
-         efl_orientation_flip_set(d.img, EFL_FLIP_NONE);
+         efl_orientation_set(d.img, (orient & EFL_ORIENT_ROTATION_BITMASK));
          break;
      }
 }
