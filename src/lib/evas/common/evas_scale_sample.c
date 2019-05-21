@@ -403,56 +403,19 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
           row_ptr[y] = src_data + (((((y + dst_clip_y - dst_region_y) * src_region_h) / dst_region_h)
                                     + src_region_y) * src_w);
 
-        /* scale to dst */
-        dptr = dst_ptr;
-
-        /* a scanline buffer */
-        buf = alloca(dst_clip_w * sizeof(DATA32));
-
-        /* image masking */
         if (mask_ie)
-          {
-             for (y = 0; y < dst_clip_h; y++)
-               {
-                  dst_ptr = buf;
-                  mask = mask_ie->image.data8
-                     + ((dst_clip_y - mask_y + y) * mask_ie->cache_entry.w)
-                     + (dst_clip_x - mask_x);
-
-                  for (x = 0; x < dst_clip_w; x++)
-                    {
-                       ptr = row_ptr[y] + lin_ptr[x];
-                       *dst_ptr = *ptr;
-                       dst_ptr++;
-                    }
-
-                  /* * blend here [clip_w *] buf -> dptr * */
-                  if (mul_col != 0xffffffff)
-                    func2(buf, NULL, mul_col, buf, dst_clip_w);
-                  func(buf, mask, 0, dptr, dst_clip_w);
-
-                  dptr += dst_w;
-               }
-          }
+          _evas_common_scale_rgba_sample_scale_mask(0,
+            dst_clip_x, dst_clip_y, dst_clip_w, dst_clip_h,
+            dst_w, mask_x, mask_y,
+            row_ptr, lin_ptr,
+            mask_ie, dst_ptr,
+            func, func2, mul_col);
         else
-          {
-             for (y = 0; y < dst_clip_h; y++)
-               {
-                  dst_ptr = buf;
-
-                  for (x = 0; x < dst_clip_w; x++)
-                    {
-                       ptr = row_ptr[y] + lin_ptr[x];
-                       *dst_ptr = *ptr;
-                       dst_ptr++;
-                    }
-
-                  /* * blend here [clip_w *] buf -> dptr * */
-                  func(buf, NULL, mul_col, dptr, dst_clip_w);
-
-                  dptr += dst_w;
-               }
-          }
+          _evas_common_scale_rgba_sample_scale_nomask(0,
+            dst_clip_w, dst_clip_h, dst_w,
+            row_ptr, lin_ptr,
+            dst_ptr,
+            func, mul_col);
      }
 }
 
