@@ -57,21 +57,10 @@ include Makefile_Elua_Helper.am
 
 endif
 eluaapps_files = \
-	scripts/elua/apps/lualian.lua \
-	scripts/elua/apps/gendoc.lua \
-	scripts/elua/apps/gendoc.sh \
-	scripts/elua/apps/README-docgen.md
+	scripts/elua/apps/lualian.lua
 
 EXTRA_DIST2 += $(eluaapps_files)
 
-eluadocgen_files = \
-	scripts/elua/apps/docgen/doctree.lua \
-	scripts/elua/apps/docgen/keyref.lua \
-	scripts/elua/apps/docgen/stats.lua \
-	scripts/elua/apps/docgen/util.lua \
-	scripts/elua/apps/docgen/writer.lua
-
-EXTRA_DIST2 += $(eluadocgen_files)
 eluamodules_files = \
 	scripts/elua/modules/benchmark.lua \
 	scripts/elua/modules/getopt.lua \
@@ -108,8 +97,6 @@ eluaappsdir = $(datadir)/elua/apps
 eluaapps_DATA = $(eluaapps_files)
 eluamodulesdir = $(datadir)/elua/modules
 eluamodules_DATA = $(eluamodules_files)
-eluadocgendir = $(datadir)/elua/apps/docgen
-eluadocgen_DATA = $(eluadocgen_files)
 eluaeinadir = $(eluamodulesdir)/eina
 eluaeina_DATA = $(eluaeina_files)
 eluacoredir = $(datadir)/elua/core
