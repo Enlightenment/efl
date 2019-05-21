@@ -100,31 +100,37 @@ static void
 _evas_common_scale_rgba_sample_scale_nomask(int y,
                                             int dst_clip_w, int dst_clip_h, int dst_w,
                                             DATA32 **row_ptr, int *lin_ptr,
-                                            DATA32 *dptr, RGBA_Gfx_Func func, unsigned int mul_col)
+                                            DATA32 *dptr, RGBA_Gfx_Func func, unsigned int mul_col,
+                                            DATA32 *srcptr, int src_w)
 {
-   DATA32 *buf, *dst_ptr;
+   DATA32 *buf;
    int x;
 
    /* a scanline buffer */
-   buf = alloca(dst_clip_w * sizeof(DATA32));
+   if (!srcptr)
+     buf = alloca(dst_clip_w * sizeof(DATA32));
 
    dptr = dptr + dst_w * y;
    for (; y < dst_clip_h; y++)
      {
-        dst_ptr = buf;
-        for (x = 0; x < dst_clip_w; x++)
+        if (!srcptr)
           {
-             DATA32 *ptr;
+             DATA32 *dst_ptr = buf;
+             for (x = 0; x < dst_clip_w; x++)
+               {
+                  DATA32 *ptr;
 
-             ptr = row_ptr[y] + lin_ptr[x];
-             *dst_ptr = *ptr;
-             dst_ptr++;
+                  ptr = row_ptr[y] + lin_ptr[x];
+                  *dst_ptr = *ptr;
+                  dst_ptr++;
+               }
           }
 
         /* * blend here [clip_w *] buf -> dptr * */
-        func(buf, NULL, mul_col, dptr, dst_clip_w);
+        func(srcptr ?: buf, NULL, mul_col, dptr, dst_clip_w);
 
         dptr += dst_w;
+        if (srcptr) srcptr += src_w;
      }
 }
 
@@ -135,9 +141,10 @@ _evas_common_scale_rgba_sample_scale_mask(int y,
                                           int mask_x, int mask_y,
                                           DATA32 **row_ptr, int *lin_ptr, RGBA_Image *mask_ie,
                                           DATA32 *dptr, RGBA_Gfx_Func func, RGBA_Gfx_Func func2,
-                                          unsigned int mul_col)
+                                          unsigned int mul_col,
+                                          DATA32 *srcptr, int src_w)
 {
-   DATA32 *buf, *dst_ptr;
+   DATA32 *buf;
    int x;
 
    /* clamp/map to mask geometry */
@@ -158,25 +165,34 @@ _evas_common_scale_rgba_sample_scale_mask(int y,
      {
         DATA8 *mask;
 
-        dst_ptr = buf;
         mask = mask_ie->image.data8
           + ((dst_clip_y - mask_y + y) * mask_ie->cache_entry.w)
           + (dst_clip_x - mask_x);
 
-        for (x = 0; x < dst_clip_w; x++)
+        if (!srcptr)
           {
-             DATA32 *ptr;
+             DATA32 *dst_ptr = buf;
+             for (x = 0; x < dst_clip_w; x++)
+               {
+                  DATA32 *ptr;
 
-             ptr = row_ptr[y] + lin_ptr[x];
-             *dst_ptr = *ptr;
-             dst_ptr++;
+                  ptr = row_ptr[y] + lin_ptr[x];
+                  *dst_ptr = *ptr;
+                  dst_ptr++;
+               }
           }
 
         /* * blend here [clip_w *] buf -> dptr * */
-        if (mul_col != 0xFFFFFFFF) func2(buf, NULL, mul_col, buf, dst_clip_w);
-        func(buf, mask, 0, dptr, dst_clip_w);
+        if (mul_col != 0xFFFFFFFF)
+          {
+             func2(srcptr ?: buf, NULL, mul_col, buf, dst_clip_w);
+             func(buf, mask, 0, dptr, dst_clip_w);
+          }
+        else
+          func(srcptr ?: buf, mask, 0, dptr, dst_clip_w);
 
         dptr += dst_w;
+        if (srcptr) srcptr += src_w;
      }
 }
 
@@ -185,10 +201,8 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
 {
    int      x, y;
    int     *lin_ptr;
-   DATA32  *buf, *dptr;
    DATA32 **row_ptr;
    DATA32  *ptr, *dst_ptr, *src_data, *dst_data;
-   DATA8   *mask;
    int      src_w, src_h, dst_w, dst_h;
    RGBA_Gfx_Func func, func2 = NULL;
 
@@ -353,42 +367,22 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
      {
         ptr = src_data + (((dst_clip_y - dst_region_y) + src_region_y) * src_w) + ((dst_clip_x - dst_region_x) + src_region_x);
 
-        /* image masking */
+
         if (mask_ie)
-          {
-             if (mul_col != 0xffffffff)
-               buf = alloca(dst_clip_w * sizeof(DATA32));
-
-             for (y = 0; y < dst_clip_h; y++)
-               {
-                  mask = mask_ie->image.data8
-                     + ((dst_clip_y - mask_y + y) * mask_ie->cache_entry.w)
-                     + (dst_clip_x - mask_x);
-
-                  /* * blend here [clip_w *] ptr -> dst_ptr * */
-                  if (mul_col != 0xffffffff)
-                    {
-                       func2(ptr, NULL, mul_col, buf, dst_clip_w);
-                       func(buf, mask, 0, dst_ptr, dst_clip_w);
-                    }
-                  else
-                    func(ptr, mask, 0, dst_ptr, dst_clip_w);
-
-                  ptr += src_w;
-                  dst_ptr += dst_w;
-               }
-          }
+          _evas_common_scale_rgba_sample_scale_mask(0,
+            dst_clip_x, dst_clip_y, dst_clip_w, dst_clip_h,
+            dst_w, mask_x, mask_y,
+            NULL, NULL,
+            mask_ie, dst_ptr,
+            func, func2, mul_col,
+            ptr, src_w);
         else
-          {
-             for (y = 0; y < dst_clip_h; y++)
-               {
-                  /* * blend here [clip_w *] ptr -> dst_ptr * */
-                  func(ptr, NULL, mul_col, dst_ptr, dst_clip_w);
-
-                  ptr += src_w;
-                  dst_ptr += dst_w;
-               }
-          }
+          _evas_common_scale_rgba_sample_scale_nomask(0,
+            dst_clip_w, dst_clip_h, dst_w,
+            NULL, NULL,
+            dst_ptr,
+            func, mul_col,
+            ptr, src_w);
      }
    else
      {
@@ -409,13 +403,15 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
             dst_w, mask_x, mask_y,
             row_ptr, lin_ptr,
             mask_ie, dst_ptr,
-            func, func2, mul_col);
+            func, func2, mul_col,
+            NULL, 0);
         else
           _evas_common_scale_rgba_sample_scale_nomask(0,
             dst_clip_w, dst_clip_h, dst_w,
             row_ptr, lin_ptr,
             dst_ptr,
-            func, mul_col);
+            func, mul_col,
+            NULL, 0);
      }
 }
 
@@ -730,7 +726,8 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
                                                                  dst_clip_w, dst_clip_h >> 1, dst_w,
                                                                  dc->clip.mask_x, dc->clip.mask_y,
                                                                  row_ptr, lin_ptr, dc->clip.mask,
-                                                                 dptr, func, func2, mul_col);
+                                                                 dptr, func, func2, mul_col,
+                                                                 NULL, 0);
 
                     }
                   else
@@ -738,7 +735,8 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
                        _evas_common_scale_rgba_sample_scale_nomask(0,
                                                                    dst_clip_w, dst_clip_h >> 1, dst_w,
                                                                    row_ptr, lin_ptr,
-                                                                   dptr, func, mul_col);
+                                                                   dptr, func, mul_col,
+                                                                   NULL, 0);
                     }
 
                   msg = eina_thread_queue_wait(main_queue, &ref);
@@ -756,7 +754,8 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
                                                                  dst_clip_w, dst_clip_h, dst_w,
                                                                  dc->clip.mask_x, dc->clip.mask_y,
                                                                  row_ptr, lin_ptr, dc->clip.mask,
-                                                                 dptr, func, func2, mul_col);
+                                                                 dptr, func, func2, mul_col,
+                                                                 NULL, 0);
 
                     }
                   else
@@ -764,7 +763,8 @@ scale_rgba_in_to_out_clip_sample_internal(RGBA_Image *src, RGBA_Image *dst,
                        _evas_common_scale_rgba_sample_scale_nomask(0,
                                                                    dst_clip_w, dst_clip_h, dst_w,
                                                                    row_ptr, lin_ptr,
-                                                                   dptr, func, mul_col);
+                                                                   dptr, func, mul_col,
+                                                                   NULL, 0);
                     }
                }
           }
@@ -807,13 +807,15 @@ _evas_common_scale_sample_thread(void *data EINA_UNUSED,
                                                          todo->mask_x, todo->mask_y,
                                                          todo->row_ptr, todo->lin_ptr, todo->mask8,
                                                          todo->dptr, todo->func, todo->func2,
-                                                         todo->mul_col);
+                                                         todo->mul_col,
+                                                         NULL, 0);
              else
                _evas_common_scale_rgba_sample_scale_nomask(h,
                                                            todo->dst_clip_w, todo->dst_clip_h,
                                                            todo->dst_w,
                                                            todo->row_ptr, todo->lin_ptr,
-                                                           todo->dptr, todo->func, todo->mul_col);
+                                                           todo->dptr, todo->func, todo->mul_col,
+                                                           NULL, 0);
           }
 
      end:
