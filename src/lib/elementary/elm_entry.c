@@ -925,7 +925,14 @@ _elm_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Entry_Data *sd)
    edje_object_part_text_style_user_push(sd->entry_edje, "elm.text", stl_user);
    eina_stringshare_del(stl_user);
 
-   cursor_pos = sd->cursor_pos;
+   cursor_pos = edje_object_part_text_cursor_pos_get
+                   (sd->entry_edje, "elm.text", EDJE_CURSOR_MAIN);
+
+   if (cursor_pos != sd->cursor_pos)
+     {
+        sd->cursor_pos = cursor_pos;
+        sd->cur_changed = EINA_TRUE;
+     }
 
    elm_object_text_set(obj, t);
    eina_stringshare_del(t);
