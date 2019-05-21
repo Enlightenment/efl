@@ -95,11 +95,11 @@ bench_eo_do_super(int request)
 void eo_bench_eo_do(Eina_Benchmark *bench)
 {
    eina_benchmark_register(bench, "simple",
-         EINA_BENCHMARK(bench_eo_do_simple), _EO_BENCH_TIMES(1000, 10, 500000));
+         EINA_BENCHMARK(bench_eo_do_simple), _EO_BENCH_TIMES(1000, 200, 5000));
    eina_benchmark_register(bench, "super",
-         EINA_BENCHMARK(bench_eo_do_super),  _EO_BENCH_TIMES(1000, 10, 500000));
+         EINA_BENCHMARK(bench_eo_do_super),  _EO_BENCH_TIMES(1000, 200, 5000));
    eina_benchmark_register(bench, "two_objs",
-         EINA_BENCHMARK(bench_eo_do_two_objs), _EO_BENCH_TIMES(1000, 10, 500000));
+         EINA_BENCHMARK(bench_eo_do_two_objs), _EO_BENCH_TIMES(1000, 200, 5000));
    eina_benchmark_register(bench, "two_objs_growing_stack",
-         EINA_BENCHMARK(bench_eo_do_two_objs_growing_stack), _EO_BENCH_TIMES(1000, 10, 40000));
+         EINA_BENCHMARK(bench_eo_do_two_objs_growing_stack), _EO_BENCH_TIMES(1000, 100, 4000));
 }

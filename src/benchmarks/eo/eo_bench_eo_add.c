@@ -71,11 +71,11 @@ bench_efl_add_shared_ownership_alternative(int request)
 void eo_bench_efl_add(Eina_Benchmark *bench)
 {
    eina_benchmark_register(bench, "efl_add_linear",
-         EINA_BENCHMARK(bench_efl_add_linear), _EO_BENCH_TIMES(1000, 10, 50000));
+         EINA_BENCHMARK(bench_efl_add_linear), _EO_BENCH_TIMES(1000, 50, 5000));
    eina_benchmark_register(bench, "efl_add_jump_by_2",
-         EINA_BENCHMARK(bench_efl_add_jump_by_2), _EO_BENCH_TIMES(1000, 10, 50000));
+         EINA_BENCHMARK(bench_efl_add_jump_by_2), _EO_BENCH_TIMES(1000, 50, 5000));
    eina_benchmark_register(bench, "efl_add_shared_ownership",
-         EINA_BENCHMARK(bench_efl_add_shared_ownership), _EO_BENCH_TIMES(1000, 10, 50000));
+         EINA_BENCHMARK(bench_efl_add_shared_ownership), _EO_BENCH_TIMES(1000, 50, 5000));
    eina_benchmark_register(bench, "efl_add_shared_ownership_alternative",
-         EINA_BENCHMARK(bench_efl_add_shared_ownership_alternative), _EO_BENCH_TIMES(1000, 10, 50000));
+         EINA_BENCHMARK(bench_efl_add_shared_ownership_alternative), _EO_BENCH_TIMES(1000, 50, 5000));
 }
