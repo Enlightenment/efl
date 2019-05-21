@@ -351,16 +351,6 @@ evas_common_scale_rgba_sample_draw(RGBA_Image *src, RGBA_Image *dst, int dst_cli
           }
         else
           func = evas_common_gfx_func_composite_pixel_mask_span_get(src->cache_entry.flags.alpha, src->cache_entry.flags.alpha_sparse, dst->cache_entry.flags.alpha, dst_clip_w, render_op);
-
-        /* clamp/map to mask geometry */
-        if (EINA_UNLIKELY(dst_clip_x < mask_x))
-          dst_clip_x = mask_x;
-        if (EINA_UNLIKELY(dst_clip_y < mask_y))
-          dst_clip_y = mask_y;
-        if (EINA_UNLIKELY(dst_clip_x + dst_clip_w > mask_x + (int)mask_ie->cache_entry.w))
-          dst_clip_w = mask_x + mask_ie->cache_entry.w - dst_clip_x;
-        if (EINA_UNLIKELY(dst_clip_y + dst_clip_h > mask_y + (int)mask_ie->cache_entry.h))
-          dst_clip_h = mask_y + mask_ie->cache_entry.h - dst_clip_y;
      }
 
    if ((dst_region_w == src_region_w) && (dst_region_h == src_region_h))
