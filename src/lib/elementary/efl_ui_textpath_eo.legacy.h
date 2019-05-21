@@ -18,7 +18,9 @@ typedef Eo Efl_Ui_Textpath;
 typedef enum
 {
   EFL_UI_TEXTPATH_DIRECTION_CW = 0, /**< Clockwise */
-  EFL_UI_TEXTPATH_DIRECTION_CCW /**< Counter-clockwise */
+  EFL_UI_TEXTPATH_DIRECTION_CCW, /**< Counter-clockwise */
+  EFL_UI_TEXTPATH_DIRECTION_CW_CENTER, /**< Clockwise, middle of text will be at start angle @since 1.23 */
+  EFL_UI_TEXTPATH_DIRECTION_CCW_CENTER /**< Counter-clockwise, middle of text will be at start angle @since 1.23 */
 } Efl_Ui_Textpath_Direction;
 
 
