@@ -676,7 +676,7 @@ _efl_ui_textpath_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Textpath_Data *pd, 
 {
    efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
    _path_data_get(obj, pd, EINA_FALSE);
-   _sizing_eval(pd);
+   _text_draw(pd);
 }
 
 EOLIAN static void
