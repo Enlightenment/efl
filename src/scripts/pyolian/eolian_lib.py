@@ -403,10 +403,6 @@ lib.eolian_parameter_documentation_get.restype = c_void_p
 lib.eolian_parameter_is_nonull.argtypes = (c_void_p,)
 lib.eolian_parameter_is_nonull.restype = c_bool
 
-# EAPI Eina_Bool eolian_parameter_is_nullable(const Eolian_Function_Parameter *param_desc);
-lib.eolian_parameter_is_nullable.argtypes = (c_void_p,)
-lib.eolian_parameter_is_nullable.restype = c_bool
-
 # EAPI Eina_Bool eolian_parameter_is_optional(const Eolian_Function_Parameter *param_desc);
 lib.eolian_parameter_is_optional.argtypes = (c_void_p,)
 lib.eolian_parameter_is_optional.restype = c_bool

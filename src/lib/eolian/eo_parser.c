@@ -907,7 +907,7 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
             Eina_Bool is_vals)
 {
    Eina_Bool has_nonull   = EINA_FALSE, has_optional = EINA_FALSE,
-             has_nullable = EINA_FALSE, has_owned    = EINA_FALSE;
+             has_owned    = EINA_FALSE;
    Eina_Bool cref = (ls->t.kw == KW_at_cref);
    Eolian_Function_Parameter *par = calloc(1, sizeof(Eolian_Function_Parameter));
    par->param_dir = EOLIAN_IN_PARAM;
@@ -956,8 +956,6 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
    for (;;) switch (ls->t.kw)
      {
       case KW_at_nonull:
-        if (has_nullable)
-          eo_lexer_syntax_error(ls, "both nullable and nonull specified");
         CASE_LOCK(ls, nonull, "nonull qualifier")
         par->nonull = EINA_TRUE;
         eo_lexer_get(ls);
@@ -965,13 +963,6 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
       case KW_at_optional:
         CASE_LOCK(ls, optional, "optional qualifier");
         par->optional = EINA_TRUE;
-        eo_lexer_get(ls);
-        break;
-      case KW_at_nullable:
-        if (has_nonull)
-          eo_lexer_syntax_error(ls, "both nullable and nonull specified");
-        CASE_LOCK(ls, nullable, "nullable qualifier");
-        par->nullable = EINA_TRUE;
         eo_lexer_get(ls);
         break;
       case KW_at_owned:

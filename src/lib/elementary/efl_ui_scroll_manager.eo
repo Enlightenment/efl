@@ -17,7 +17,7 @@ class @beta Efl.Ui.Scroll.Manager extends Efl.Object implements
          set {
          }
          values {
-            pan: Efl.Ui.Pan @nullable; [[Pan object]]
+            pan: Efl.Ui.Pan; [[Pan object]]
          }
       }
    }

@@ -21,7 +21,10 @@ enum Tokens
 };
 
 /* all keywords in eolian, they can still be used as names (they're TOK_VALUE)
- * they just fill in the "kw" field of the token */
+ * they just fill in the "kw" field of the token
+ *
+ * reserved for the future: @nullable
+ */
 #define KEYWORDS KW(class), KW(const), KW(enum), KW(return), KW(struct), \
     \
     KW(abstract), KW(c_prefix), KW(composite), KW(constructor), KW(constructors), \

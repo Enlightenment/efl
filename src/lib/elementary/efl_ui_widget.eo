@@ -53,8 +53,8 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
             [[Returns the current cursor name.]]
          }
          values {
-            cursor: string @nullable; [[The cursor name, defined either
-                                        by the display system or the theme.]]
+            cursor: string; [[The cursor name, defined either
+                              by the display system or the theme.]]
          }
       }
       @property cursor_style @beta {
@@ -104,7 +104,7 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
             [[Sets the new resize object for this widget.]]
          }
          values {
-            sobj: Efl.Canvas.Object @nullable;
+            sobj: Efl.Canvas.Object;
                [[A canvas object (often a @Efl.Canvas.Layout object).]]
          }
       }
@@ -216,7 +216,7 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
          get {
          }
          values {
-            parent: Efl.Ui.Widget @nullable; [[Widget parent object]]
+            parent: Efl.Ui.Widget; [[Widget parent object]]
          }
       }
 
@@ -231,7 +231,7 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
            out loud, instead $txt will be read out.
          ]]
          values {
-            txt: string @nullable; [[Accessibility text description.]]
+            txt: string; [[Accessibility text description.]]
          }
       }
       on_access_activate @protected @beta {

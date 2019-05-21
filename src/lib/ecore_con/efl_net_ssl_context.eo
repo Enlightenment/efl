@@ -122,7 +122,7 @@ class @beta Efl.Net.Ssl.Context extends Efl.Object {
               It's only used if @.hostname_verify is $true.
             ]]
             values {
-                hostname: string @nullable; [[Hostname for this socket]]
+                hostname: string; [[Hostname for this socket]]
             }
         }
     }

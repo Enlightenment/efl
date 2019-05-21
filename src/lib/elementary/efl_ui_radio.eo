@@ -33,7 +33,7 @@ class @beta Efl.Ui.Radio extends Efl.Ui.Check implements Efl.Access.Widget.Actio
             ]]
          }
          values {
-            valuep: ptr(int) @nullable; [[Pointer to the integer to modify]]
+            valuep: ptr(int); [[Pointer to the integer to modify]]
          }
       }
       @property selected_object {

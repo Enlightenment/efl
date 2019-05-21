@@ -381,7 +381,6 @@ class TestEolianFunction(unittest.TestCase):
         self.assertEqual(p.name, 'add')
         self.assertIsNone(p.default_value)
         self.assertFalse(p.is_nonull)  # TODO is correct ?? 'add' can be null?
-        self.assertFalse(p.is_nullable)
         self.assertFalse(p.is_optional)
         self.assertEqual(p.type.name, 'double')
         self.assertIsInstance(p.documentation, eolian.Documentation)

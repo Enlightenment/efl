@@ -75,7 +75,7 @@ class @beta Efl.Net.Socket_Ssl extends Efl.Loop_Consumer implements Efl.Net.Sock
               It's only used if @.hostname_verify is $true.
             ]]
             values {
-                hostname_override: string @nullable; [[Hostname for this socket]]
+                hostname_override: string; [[Hostname for this socket]]
             }
         }
     }

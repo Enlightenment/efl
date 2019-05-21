@@ -18,7 +18,7 @@ mixin @beta Efl.Ui.Format
             ]]
          }
          values {
-            func: Efl.Ui.Format_Func_Cb @nullable; [[The format function callback]]
+            func: Efl.Ui.Format_Func_Cb; [[The format function callback]]
          }
       }
       @property format_string {
@@ -35,7 +35,7 @@ mixin @beta Efl.Ui.Format
            as in $"%.0f %%".
          ]]
          values {
-            units: string @nullable; [[The format string for $obj's units label.]]
+            units: string; [[The format string for $obj's units label.]]
          }
       }
    }

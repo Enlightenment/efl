@@ -252,7 +252,6 @@ struct _Eolian_Function_Parameter
    Eolian_Documentation *doc;
    Eolian_Parameter_Dir param_dir;
    Eina_Bool nonull :1; /* True if this argument cannot be NULL - deprecated */
-   Eina_Bool nullable :1; /* True if this argument is nullable */
    Eina_Bool optional :1; /* True if this argument is optional */
 };
 

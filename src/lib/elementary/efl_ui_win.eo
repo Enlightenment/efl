@@ -303,7 +303,7 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
               type @Efl.Canvas.Image or @Efl.Ui.Image are allowed.
             ]]
             values {
-               icon: Efl.Canvas.Object @nullable;
+               icon: Efl.Canvas.Object;
                   [[The image object to use for an icon.]]
             }
          }
@@ -314,7 +314,7 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
               the object to use for the window icon.
             ]]
             values {
-               icon: const(Efl.Canvas.Object) @nullable;
+               icon: const(Efl.Canvas.Object);
                   [[The Evas image object to use for an icon.]]
             }
          }
@@ -444,7 +444,7 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
          get {
          }
          values {
-            name: string @nullable; [[Window name]]
+            name: string; [[Window name]]
          }
       }
       @property win_type @beta {
@@ -797,7 +797,7 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
          get {
          }
          values {
-            style: string @nullable; [[The name of the focus highlight style.]]
+            style: string; [[The name of the focus highlight style.]]
          }
       }
       @property focus_highlight_animate {

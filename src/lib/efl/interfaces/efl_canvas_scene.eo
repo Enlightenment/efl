@@ -235,7 +235,7 @@ interface Efl.Canvas.Scene
       object,focus,in: Efl.Input.Focus; [[Called when object got focus]]
       object,focus,out: Efl.Input.Focus; [[Called when object lost focus]]
       render,pre: void; [[Called when pre render happens]]
-      /* FIXME: event_info can be NULL, but @nullable tag does not work on events yet */
+      /* tag nullable once supported by eolian */
       render,post @beta: Efl.Gfx.Event.Render_Post; [[Called when post render happens]]
       device,changed @beta : Efl.Input.Device; [[Called when input device changed]]
       device,added @beta: Efl.Input.Device; [[Called when input device was added]]
