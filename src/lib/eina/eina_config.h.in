@@ -23,6 +23,14 @@
 # include <Exotic.h>
 #endif
 
+#ifdef __has_builtin
+# define EINA_HAS_BUILTIN(x) __has_builtin(x)
+#elif (defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)))
+# define EINA_HAS_BUILTIN(x) 1
+#else
+# define EINA_HAS_BUILTIN(x) 0  // Compatibility for the rest of the world
+#endif
+
 #ifdef EINA_MAGIC_DEBUG
 # undef EINA_MAGIC_DEBUG
 #endif
@@ -90,17 +98,23 @@
 #ifdef EINA_HAVE_BSWAP16
 # undef EINA_HAVE_BSWAP16
 #endif
-@EINA_CONFIGURE_HAVE_BSWAP16@
+#if EINA_HAS_BUILTIN(__builtin_bswap16)
+# define EINA_HAVE_BSWAP16
+#endif
 
 #ifdef EINA_HAVE_BSWAP32
 # undef EINA_HAVE_BSWAP32
 #endif
-@EINA_CONFIGURE_HAVE_BSWAP32@
+#if EINA_HAS_BUILTIN(__builtin_bswap32)
+# define EINA_HAVE_BSWAP32
+#endif
 
 #ifdef EINA_HAVE_BSWAP64
 # undef EINA_HAVE_BSWAP64
 #endif
-@EINA_CONFIGURE_HAVE_BSWAP64@
+#if EINA_HAS_BUILTIN(__builtin_bswap64)
+# define EINA_HAVE_BSWAP64
+#endif
 
 #ifdef EINA_HAVE_BYTESWAP_H
 # undef EINA_HAVE_BYTESWAP_H
