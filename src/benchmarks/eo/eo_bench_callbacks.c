@@ -78,7 +78,7 @@ bench_eo_callbacks_call(int request)
 void eo_bench_callbacks(Eina_Benchmark *bench)
 {
    eina_benchmark_register(bench, "add",
-         EINA_BENCHMARK(bench_eo_callbacks_add), _EO_BENCH_TIMES(1000, 10, 2000));
+         EINA_BENCHMARK(bench_eo_callbacks_add), _EO_BENCH_TIMES(10, 100, 10));
    eina_benchmark_register(bench, "call",
-         EINA_BENCHMARK(bench_eo_callbacks_call), _EO_BENCH_TIMES(100000, 10, 500000));
+         EINA_BENCHMARK(bench_eo_callbacks_call), _EO_BENCH_TIMES(100, 200, 100));
 }
