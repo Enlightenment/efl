@@ -123,7 +123,7 @@ out:
         return NULL;
      }
 
-   _ecore_drm2_fb_ref(fb);
+   /* _ecore_drm2_fb_ref(fb); */
    DBG("FB %d assigned to Plane %d", fb->id, pstate->obj_id);
 
    if (fb->status_handler)
@@ -192,7 +192,7 @@ ecore_drm2_plane_fb_set(Ecore_Drm2_Plane *plane, Ecore_Drm2_Fb *fb)
 
    if (_fb_atomic_flip_test(plane->output))
      {
-        _ecore_drm2_fb_ref(fb);
+        /* _ecore_drm2_fb_ref(fb); */
 
         plane->output->fbs =
           eina_list_append(plane->output->fbs, plane->fb);

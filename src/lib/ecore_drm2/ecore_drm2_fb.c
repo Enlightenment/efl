@@ -269,9 +269,6 @@ _cb_mainloop_async_timer_del(void *data)
 EAPI Eina_Bool
 ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
 {
-   Eina_Bool plane_scanout;
-   Ecore_Drm2_Fb *fb;
-
    EINA_SAFETY_ON_NULL_RETURN_VAL(output, EINA_FALSE);
 
    if (output->flip_timeout)
@@ -280,17 +277,19 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
         ecore_main_loop_thread_safe_call_async
           (_cb_mainloop_async_timer_del, output);
      }
-   if (!output->pending.fb) fprintf(stderr, "XXX--XXX eeeeek pending fb is NULL so current would become null ----------------------------------\n");
-   if (output->current.fb && (output->current.fb != output->pending.fb))
-     _ecore_drm2_fb_buffer_release(output, &output->current);
+   /* if (!output->pending.fb) fprintf(stderr, "XXX--XXX eeeeek pending fb is NULL so current would become null ----------------------------------\n"); */
+   /* if (output->current.fb && (output->current.fb != output->pending.fb)) */
+   /*   _ecore_drm2_fb_buffer_release(output, &output->current); */
 
    output->current.fb = output->pending.fb;
    output->pending.fb = NULL;
 
    if (_ecore_drm2_use_atomic)
      {
+        Ecore_Drm2_Fb *fb;
         Eina_List *l, *ll;
         Ecore_Drm2_Plane *plane;
+        Eina_Bool plane_scanout;
 
         output->current.atomic_req = output->pending.atomic_req;
         output->pending.atomic_req = NULL;
@@ -323,9 +322,9 @@ ecore_drm2_fb_flip_complete(Ecore_Drm2_Output *output)
           }
      }
 
-   EINA_LIST_FREE(output->fbs, fb)
-     _ecore_drm2_fb_deref(fb);
-   output->fbs = NULL;
+   /* EINA_LIST_FREE(output->fbs, fb) */
+   /*   _ecore_drm2_fb_deref(fb); */
+   /* output->fbs = NULL; */
 
    return !!output->next.fb;
 }
@@ -522,7 +521,7 @@ _fb_atomic_flip(Ecore_Drm2_Output *output)
           sym_drmModeAtomicCommit(output->fd, output->prep.atomic_req, flags,
                                   output);
         if (res == 0) break;
-        else ERR("DRM atomic commit failed - retry #%i", i + 1);
+        else ERR("DRM atomic commit failed: %m - retry #%i", i + 1);
         usleep(100);
      }
 
@@ -657,43 +656,43 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
 
    if (!output->enabled) return -1;
 
-   if (fb) _ecore_drm2_fb_ref(fb);
-
    if (output->pending.fb)
      {
-        if (output->next.fb)
-          _ecore_drm2_fb_buffer_release(output, &output->next);
-        output->next.fb = fb;
-        return 0;
+        if ((fb) && (output->pending.fb != fb))
+          {
+             if (output->next.fb)
+               _ecore_drm2_fb_buffer_release(output, &output->next);
+             output->next.fb = fb;
+             return 0;
+          }
+        else
+          {
+             return 0;
+          }
      }
+
    if (!fb)
      {
-        fb = output->next.fb;
-        output->next.fb = NULL;
+        if (output->next.fb)
+          {
+             fb = output->next.fb;
+             output->next.fb = NULL;
+          }
+        else
+          fb = output->current.fb;
      }
 
-   /* So we can generate a tick by flipping to the current fb */
-   if (!fb) fb = output->current.fb;
-
-   if (output->next.fb)
-     _ecore_drm2_fb_buffer_release(output, &output->next);
-
-   /* If we don't have an fb to set by now, BAIL! */
    if (!fb) return -1;
 
    output->prep.fb = fb;
+
+   _ecore_drm2_fb_ref(fb);
 
    if (_ecore_drm2_use_atomic)
      ret = _fb_atomic_flip(output);
    else
      ret = _fb_flip(output);
 
-   if (ret)
-     {
-        if (output->prep.fb != output->current.fb)
-          _ecore_drm2_fb_buffer_release(output, &output->prep);
-        return ret;
-     }
    output->pending.fb = output->prep.fb;
    output->prep.fb = NULL;
 
@@ -703,7 +702,7 @@ ecore_drm2_fb_flip(Ecore_Drm2_Fb *fb, Ecore_Drm2_Output *output)
         output->prep.atomic_req = NULL;
      }
 
-   return 0;
+   return ret; // 0
 }
 
 EAPI Eina_Bool
