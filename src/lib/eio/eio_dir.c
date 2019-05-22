@@ -95,8 +95,10 @@ _eio_file_recursiv_ls(Ecore_Thread *thread,
               if (_eio_lstat(info->path, &buffer) != 0)
 		continue;
 
+#ifndef _WIN32
               if (S_ISLNK(buffer.st_mode))
                 info->type = EINA_FILE_LNK;
+#endif
            default:
               break;
           }
