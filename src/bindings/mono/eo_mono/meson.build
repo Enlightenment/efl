@@ -3,6 +3,7 @@ mono_files += files(
   'workaround.cs',
   'FunctionWrapper.cs',
   'NativeModule.cs',
+  'EoWrapper.cs',
   'WrapperSupervisor.cs'
 )
 
