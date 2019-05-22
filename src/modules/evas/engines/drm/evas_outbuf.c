@@ -156,12 +156,18 @@ _outbuf_buffer_swap(Outbuf *ob)
           }
      }
 
-   if (!ob->priv.plane)
-     ob->priv.plane = ecore_drm2_plane_assign(ob->priv.output, ofb->fb, 0, 0);
-   else ecore_drm2_plane_fb_set(ob->priv.plane, ofb->fb);
+   if (ofb->fb)
+     {
+        if (!ob->priv.plane)
+          ob->priv.plane = ecore_drm2_plane_assign(ob->priv.output, ofb->fb, 0, 0);
+        else
+          ecore_drm2_plane_fb_set(ob->priv.plane, ofb->fb);
 
-   ecore_drm2_fb_flip(ofb->fb, ob->priv.output);
-   ofb->drawn = EINA_TRUE;
+        ecore_drm2_fb_flip(ofb->fb, ob->priv.output);
+
+        ofb->drawn = EINA_TRUE;
+     }
+
    ofb->age = 0;
 }
 
@@ -289,6 +295,8 @@ _outbuf_state_get(Outbuf *ob)
    int age;
 
    if (!ob->priv.draw) return MODE_FULL;
+
+   ecore_drm2_fb_release(ob->priv.output, EINA_FALSE);
 
    age = ob->priv.draw->age;
    if (age > 4) return MODE_FULL;
