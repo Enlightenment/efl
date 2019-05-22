@@ -9,11 +9,55 @@ namespace Efl
 namespace Eo
 {
 
+#if EFL_DEBUG
+
+public class SafeIntPtr
+{
+    private IntPtr handle;
+    private bool disposed;
+
+    private SafeIntPtr(IntPtr ptr)
+    {
+        handle = ptr;
+    }
+
+    public static implicit operator IntPtr(SafeIntPtr ptr)
+    {
+        if (ptr.disposed)
+        {
+          throw new ObjectDisposedException("Object has been disposed");
+        }
+        return ptr.handle;
+    }
+
+    public static implicit operator SafeIntPtr(IntPtr ptr)
+    {
+        return new SafeIntPtr(ptr);
+    }
+
+    public void Dispose()
+    {
+        disposed = true;
+        handle = IntPtr.Zero;
+    }
+
+    public long ToInt64()
+    {
+        return handle.ToInt64();
+    }
+}
+
+#endif
+
 public abstract class EoWrapper : IWrapper, IDisposable
 {
     protected readonly object eventLock = new object();
     protected bool inherited = false;
-    protected System.IntPtr handle = IntPtr.Zero;
+#if EFL_DEBUG
+    protected SafeIntPtr handle;
+#else
+    protected IntPtr handle;
+#endif
 
     private static Efl.EventCb ownershipUniqueDelegate = new Efl.EventCb(OwnershipUniqueCallback);
     private static Efl.EventCb ownershipSharedDelegate = new Efl.EventCb(OwnershipSharedCallback);
@@ -91,7 +135,11 @@ public abstract class EoWrapper : IWrapper, IDisposable
         if (disposing && handle != System.IntPtr.Zero)
         {
             IntPtr h = handle;
+#if EFL_DEBUG
+            handle.Dispose();
+#else
             handle = IntPtr.Zero;
+#endif
             Efl.Eo.Globals.efl_mono_native_dispose(h);
         }
         else
@@ -103,6 +151,9 @@ public abstract class EoWrapper : IWrapper, IDisposable
             }
 
             Monitor.Exit(Efl.All.InitLock);
+#if EFL_DEBUG
+            handle.Dispose();
+#endif
         }
     }
 
@@ -110,7 +161,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
     /// <returns>A string with the type and the native pointer for this object.</returns>
     public override String ToString()
     {
-        return $"{this.GetType().Name}@[0x{(UInt64)handle:x}]";
+        return $"{this.GetType().Name}@[0x{handle.ToInt64():x}]";
     }
 
     /// <summary>Releases the underlying native instance.</summary>

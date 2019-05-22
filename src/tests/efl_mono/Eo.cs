@@ -522,6 +522,10 @@ class TestObjectDeletion
         part.Del();
 
         Test.AssertNull(obj.OnePart);
+
+#if EFL_DEBUG
+        Test.AssertRaises<ObjectDisposedException>(() => part.SetParent(null));
+#endif
     }
 }
 
