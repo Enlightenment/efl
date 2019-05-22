@@ -148,6 +148,10 @@ if get_option('mono-beta')
   extra_cs_args += '-d:EFL_BETA'
 endif
 
+if get_option('buildtype') == 'debug'
+  extra_cs_args += '-d:EFL_DEBUG'
+endif
+
 efl_mono_install_dir = join_paths(dir_lib, 'efl-mono-'+version_major)
 efl_mono_xml_doc = join_paths(meson.current_build_dir(), 'efl_mono.xml')
 
