@@ -539,6 +539,8 @@ ecore_ipc_server_add(Ecore_Ipc_Type type, const char *name, int port, const void
    return NULL;
 }
 
+static Efl_Callback_Array_Item *_ecore_ipc_dialer_cbs(void);
+
 static void
 _ecore_ipc_dialer_del(Ecore_Ipc_Server *svr)
 {
@@ -564,6 +566,10 @@ _ecore_ipc_dialer_del(Ecore_Ipc_Server *svr)
 
    if (svr->dialer.dialer)
      {
+        efl_event_callback_array_del(svr->dialer.dialer, _ecore_ipc_dialer_cbs(), svr);
+        if (!efl_io_closer_closed_get(svr->dialer.dialer))
+          efl_io_closer_close(svr->dialer.dialer);
+
         efl_del(svr->dialer.dialer);
         svr->dialer.dialer = NULL;
      }
