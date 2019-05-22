@@ -17,7 +17,6 @@
 #define MY_CLASS_NAME "Efl.Ui.Textpath"
 
 #define SLICE_DEFAULT_NO 99
-
 typedef struct _Efl_Ui_Textpath_Point Efl_Ui_Textpath_Point;
 typedef struct _Efl_Ui_Textpath_Line Efl_Ui_Textpath_Line;
 typedef struct _Efl_Ui_Textpath_Segment Efl_Ui_Textpath_Segment;
@@ -75,6 +74,12 @@ struct _Efl_Ui_Textpath_Data
 
 #define EFL_UI_TEXTPATH_DATA_GET(o, sd) \
    Efl_Ui_Textpath_Data *sd = efl_data_scope_get(o, EFL_UI_TEXTPATH_CLASS)
+
+static inline double
+_rad_to_deg(double rad)
+{
+   return 180 * rad / M_PI;
+}
 
 static inline double
 _deg_to_rad(double angle)
@@ -576,6 +581,79 @@ _textpath_text_set_internal(Eo *obj, Efl_Ui_Textpath_Data *pd, const char *part,
    return ret;
 }
 
+static void
+_path_start_angle_adjust(Eo *obj, Efl_Ui_Textpath_Data *pd)
+{
+   Eina_Rect r;
+   Efl_Ui_Textpath_Segment *seg;
+   Eina_Vector2 first, last;
+   int remained_w, len;
+   double rad, t, offset_angle;
+
+   if (pd->direction != EFL_UI_TEXTPATH_DIRECTION_CW_CENTER  &&
+       pd->direction != EFL_UI_TEXTPATH_DIRECTION_CCW_CENTER)
+     return;
+
+   r = efl_gfx_entity_geometry_get(pd->text_obj);
+   remained_w = r.w;
+
+   EINA_INLIST_FOREACH(pd->segments, seg)
+     {
+        if (remained_w <= 0)
+          break;
+
+        len = seg->length;
+        if (remained_w < len)
+          {
+             t = remained_w / (double)len;
+             eina_bezier_point_at(&seg->bezier, t, &last.x, &last.y);
+          }
+
+        if (remained_w == r.w)
+          eina_bezier_point_at(&seg->bezier, 0, &first.x, &first.y);
+
+        remained_w -= len;
+     }
+
+   first.x -= (pd->circle.x + r.x);
+   first.y -= (pd->circle.y + r.y);
+   last.x -= (pd->circle.x + r.x);
+   last.y -= (pd->circle.y + r.y);
+
+   eina_vector2_normalize(&first, &first);
+   eina_vector2_normalize(&last, &last);
+   rad = acos(eina_vector2_dot_product(&first, &last));
+   if (rad == 0) return;
+
+   offset_angle = _rad_to_deg(rad);
+   if (r.w > pd->total_length / 2)
+     offset_angle = 360 - offset_angle;
+   offset_angle /= 2.0;
+
+   efl_gfx_path_reset(obj);
+   if (pd->direction == EFL_UI_TEXTPATH_DIRECTION_CW_CENTER)
+     {
+        efl_gfx_path_append_arc(obj,
+                                pd->circle.x - pd->circle.radius,
+                                pd->circle.y - pd->circle.radius,
+                                pd->circle.radius * 2,
+                                pd->circle.radius * 2,
+                                pd->circle.start_angle + offset_angle,
+                                -360);
+     }
+   else
+     {
+        efl_gfx_path_append_arc(obj,
+                                pd->circle.x - pd->circle.radius,
+                                pd->circle.y - pd->circle.radius,
+                                pd->circle.radius * 2,
+                                pd->circle.radius * 2,
+                                pd->circle.start_angle - offset_angle,
+                                360);
+     }
+   _path_data_get(obj, pd, EINA_TRUE);
+}
+
 EOLIAN static void
 _efl_ui_textpath_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd)
 {
@@ -677,7 +755,7 @@ _efl_ui_textpath_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Textpath_Data *pd, 
 {
    efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
    _path_data_get(obj, pd, EINA_FALSE);
-   _sizing_eval(pd);
+   _text_draw(pd);
 }
 
 EOLIAN static void
@@ -702,7 +780,8 @@ _efl_ui_textpath_circle_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double x, double 
    pd->direction = direction;
 
    efl_gfx_path_reset(obj);
-   if (direction == EFL_UI_TEXTPATH_DIRECTION_CW)
+   if (direction == EFL_UI_TEXTPATH_DIRECTION_CW ||
+       direction == EFL_UI_TEXTPATH_DIRECTION_CW_CENTER)
      {
         efl_gfx_path_append_arc(obj, x - radius, y - radius, radius * 2,
                                 radius * 2,  start_angle, -360);
@@ -714,6 +793,7 @@ _efl_ui_textpath_circle_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double x, double 
      }
 
    _path_data_get(obj, pd, EINA_TRUE);
+   _path_start_angle_adjust(obj, pd);
    _sizing_eval(pd);
 }
 

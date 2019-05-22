@@ -4,10 +4,6 @@
 
 #include <stdio.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include <math.h>
 
 #include "evas_common_private.h"

@@ -27,7 +27,7 @@ class @beta Efl.Ui.Pager extends Efl.Ui.Layout_Base implements Efl.Pack_Linear
             [[Set a page transition effect]]
          }
          values {
-            transition: Efl.Page.Transition @nullable; [[transition effect]]
+            transition: Efl.Page.Transition; [[transition effect]]
          }
       }
       @property indicator {
@@ -40,7 +40,7 @@ class @beta Efl.Ui.Pager extends Efl.Ui.Layout_Base implements Efl.Pack_Linear
             [[Set a page indicator]]
          }
          values {
-            indicator: Efl.Page.Indicator @nullable; [[indicator class]]
+            indicator: Efl.Page.Indicator; [[indicator class]]
          }
       }
       @property current_page {

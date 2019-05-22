@@ -64,7 +64,7 @@ pub_eo_files = [
   'efl_gfx_hint.eo',
   'efl_model.eo',
   'efl_interpolator.eo',
-  'efl_orientation.eo',
+  'efl_gfx_orientable.eo',
   'efl_container.eo',
   'efl_content.eo',
   'efl_pack.eo',

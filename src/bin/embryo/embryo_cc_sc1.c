@@ -36,10 +36,6 @@
 #include <unistd.h>
 #include <sys/stat.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include <Eina.h>
 
 #include "embryo_cc_sc.h"

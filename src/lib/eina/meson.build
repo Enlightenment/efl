@@ -326,18 +326,6 @@ if cc.has_header('byteswap.h')
    eina_config.set('EINA_HAVE_BYTESWAP_H', '1')
 endif
 
-if cc.has_header_symbol('byteswap.h', 'bswap_16')
-   eina_config.set('EINA_HAVE_BSWAP16', '1')
-endif
-
-if cc.has_header_symbol('byteswap.h', 'bswap_32')
-   eina_config.set('EINA_HAVE_BSWAP32', '1')
-endif
-
-if cc.has_header_symbol('byteswap.h', 'bswap_64')
-   eina_config.set('EINA_HAVE_BSWAP64', '1')
-endif
-
 if cc.has_header_symbol('pthread.h', 'pthread_spin_init')
    eina_config.set('EINA_HAVE_POSIX_SPINLOCK', '1')
 endif

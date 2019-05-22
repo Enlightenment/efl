@@ -115,8 +115,7 @@ struct _Evas_Image_Data
 
    Efl_Gfx_Image_Scale_Hint   scale_hint;
    Efl_Gfx_Image_Content_Hint content_hint;
-   Efl_Flip               flip_value;
-   Efl_Orient             orient_value;
+   Efl_Gfx_Orientation        orient_value;
 
    struct {
       short          w, h;

@@ -2,6 +2,10 @@
 # include <config.h>
 #endif
 
+#ifdef _WIN32
+# include <evil_private.h> /* setenv */
+#endif
+
 #include <Ecore.h>
 #include <Ecore_Ipc.h>
 

@@ -2,8 +2,9 @@
 # include <config.h>
 #endif
 
+/* TODO : have to look why sockets must be init */
 #ifdef _WIN32
-# include <Evil.h>
+# include <evil_private.h> /* evil_sockets_init|shutdown */
 #endif
 
 #include <Ecore_File.h>

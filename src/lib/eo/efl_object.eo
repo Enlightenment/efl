@@ -91,7 +91,7 @@ abstract Efl.Object
          get {
          }
          values {
-            parent: Efl.Object @nullable; [[The new parent.]]
+            parent: Efl.Object; [[The new parent.]]
          }
       }
       @property name {
@@ -108,7 +108,7 @@ abstract Efl.Object
          get {
          }
          values {
-           name: string @nullable; [[The name.]]
+           name: string; [[The name.]]
          }
       }
       @property comment {
@@ -123,7 +123,7 @@ abstract Efl.Object
          get {
          }
          values {
-           comment: string @nullable; [[The comment.]]
+           comment: string; [[The comment.]]
          }
       }
       debug_name_override {

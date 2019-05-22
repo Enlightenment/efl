@@ -13,6 +13,10 @@
 #include <libgen.h>
 #include <ctype.h>
 
+#ifdef _WIN32
+# include <evil_private.h> /* fcntl */
+#endif
+
 #include <Eina.h>
 #include <Eet.h>
 #include <Ecore.h>

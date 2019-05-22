@@ -10,10 +10,6 @@
 #include <fcntl.h>
 #include <ctype.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include <Evas.h>
 #include <Ecore.h>
 #include <Ecore_Getopt.h>

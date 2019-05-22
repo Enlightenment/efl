@@ -193,11 +193,11 @@ class @beta Efl.Net.Control.Manager extends Efl.Loop_Consumer {
         agent_reply {
             [[If event "agent_request_input" was emitted, this will reply with the requested data]]
             params {
-                name: string @nullable; [[If @Efl.Net.Control.Agent_Request_Input_Field.name was present, this should contain the network name or the 'ssid' parameter should be used.]]
-                @cref ssid: Eina.Slice @nullable; [[If @Efl.Net.Control.Agent_Request_Input_Field.ssid was present, this should contain the network SSID or the 'name' parameter should be used.]]
-                username: string @nullable; [[If @Efl.Net.Control.Agent_Request_Input_Field.username was present, this should contain the identity or username]]
-                passphrase: string @nullable; [[If @Efl.Net.Control.Agent_Request_Input_Field.passphrase was present, this should contain the password or passphrase, more details on how it should be interpreted was given in Efl.Net.Control.Agent_Request_Input.passphrase_type.]]
-                wps: string @nullable; [[If @Efl.Net.Control.Agent_Request_Input_Field.wps was present, this should contain the WPS PIN or an empty string "" to use the WPS push button instead.]]
+                name: string; [[If @Efl.Net.Control.Agent_Request_Input_Field.name was present, this should contain the network name or the 'ssid' parameter should be used.]]
+                @cref ssid: Eina.Slice; [[If @Efl.Net.Control.Agent_Request_Input_Field.ssid was present, this should contain the network SSID or the 'name' parameter should be used.]]
+                username: string; [[If @Efl.Net.Control.Agent_Request_Input_Field.username was present, this should contain the identity or username]]
+                passphrase: string; [[If @Efl.Net.Control.Agent_Request_Input_Field.passphrase was present, this should contain the password or passphrase, more details on how it should be interpreted was given in Efl.Net.Control.Agent_Request_Input.passphrase_type.]]
+                wps: string; [[If @Efl.Net.Control.Agent_Request_Input_Field.wps was present, this should contain the WPS PIN or an empty string "" to use the WPS push button instead.]]
             }
         }
     }

@@ -411,80 +411,38 @@ _evas_image_orientation_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Orient or
    evas_object_change(eo_obj, obj);
 }
 
-static Evas_Image_Orient
-_get_image_orient_from_orient_flip(Efl_Orient orient, Efl_Flip flip)
-{
-   switch (orient)
-     {
-      case EFL_ORIENT_0:
-        if (flip == EFL_FLIP_HORIZONTAL)
-          return EVAS_IMAGE_FLIP_HORIZONTAL;
-        else if (flip == EFL_FLIP_VERTICAL)
-          return EVAS_IMAGE_FLIP_VERTICAL;
-        else
-          return EVAS_IMAGE_ORIENT_0;
-
-      case EFL_ORIENT_90:
-        if (flip == EFL_FLIP_HORIZONTAL)
-          return EVAS_IMAGE_FLIP_TRANSPOSE;
-        else if (flip == EFL_FLIP_VERTICAL)
-          return EVAS_IMAGE_FLIP_TRANSVERSE;
-        else
-          return EVAS_IMAGE_ORIENT_90;
-
-      case EFL_ORIENT_180:
-        if (flip == EFL_FLIP_HORIZONTAL)
-          return EVAS_IMAGE_FLIP_VERTICAL;
-        else if (flip == EFL_FLIP_VERTICAL)
-          return EVAS_IMAGE_FLIP_HORIZONTAL;
-        else
-          return EVAS_IMAGE_ORIENT_180;
-
-      case EFL_ORIENT_270:
-        if (flip == EFL_FLIP_HORIZONTAL)
-          return EVAS_IMAGE_FLIP_TRANSVERSE;
-        else if (flip == EFL_FLIP_VERTICAL)
-          return EVAS_IMAGE_FLIP_TRANSPOSE;
-        else
-          return EVAS_IMAGE_ORIENT_270;
-
-      default:
-        return EVAS_IMAGE_ORIENT_NONE;
-     }
-}
-
 EOLIAN static void
-_efl_canvas_image_internal_efl_orientation_orientation_set(Eo *obj, Evas_Image_Data *o, Efl_Orient dir)
+_efl_canvas_image_internal_efl_gfx_orientable_orientation_set(Eo *obj, Evas_Image_Data *o, Efl_Gfx_Orientation efl_orient)
 {
-   Evas_Image_Orient orient;
+   // This array takes an Efl_Gfx_Orientation and turns it into an Elm_Image_Orient
+   static const Evas_Image_Orient evas_orient[16] = {
+      EVAS_IMAGE_ORIENT_NONE,     // EFL_GFX_ORIENTATION_NONE
+      EVAS_IMAGE_ORIENT_90,       // EFL_GFX_ORIENTATION_RIGHT
+      EVAS_IMAGE_ORIENT_180,      // EFL_GFX_ORIENTATION_DOWN
+      EVAS_IMAGE_ORIENT_270,      // EFL_GFX_ORIENTATION_LEFT
+      EVAS_IMAGE_FLIP_HORIZONTAL, // EFL_GFX_ORIENTATION_NONE  + FLIP_HOR
+      EVAS_IMAGE_FLIP_TRANSPOSE,  // EFL_GFX_ORIENTATION_RIGHT + FLIP_HOR
+      EVAS_IMAGE_FLIP_VERTICAL,   // EFL_GFX_ORIENTATION_DOWN  + FLIP_HOR
+      EVAS_IMAGE_FLIP_TRANSVERSE, // EFL_GFX_ORIENTATION_LEFT  + FLIP_HOR
+      EVAS_IMAGE_FLIP_VERTICAL,   // EFL_GFX_ORIENTATION_NONE  + FLIP_VER
+      EVAS_IMAGE_FLIP_TRANSVERSE, // EFL_GFX_ORIENTATION_RIGHT + FLIP_VER
+      EVAS_IMAGE_FLIP_HORIZONTAL, // EFL_GFX_ORIENTATION_DOWN  + FLIP_VER
+      EVAS_IMAGE_FLIP_TRANSPOSE,  // EFL_GFX_ORIENTATION_LEFT  + FLIP_VER
+      EVAS_IMAGE_ORIENT_180,      // EFL_GFX_ORIENTATION_NONE  + FLIP_HOR + FLIP_VER
+      EVAS_IMAGE_ORIENT_270,      // EFL_GFX_ORIENTATION_RIGHT + FLIP_HOR + FLIP_VER
+      EVAS_IMAGE_ORIENT_0,        // EFL_GFX_ORIENTATION_DOWN  + FLIP_HOR + FLIP_VER
+      EVAS_IMAGE_ORIENT_90        // EFL_GFX_ORIENTATION_LEFT  + FLIP_HOR + FLIP_VER
+   };
+   EINA_SAFETY_ON_FALSE_RETURN(efl_orient >= 0 && efl_orient < 16);
 
-   o->orient_value = dir;
-   orient = _get_image_orient_from_orient_flip(dir, o->flip_value);
-
-   _evas_image_orientation_set(obj, o, orient);
+   o->orient_value = efl_orient;
+   _evas_image_orientation_set(obj, o, evas_orient[efl_orient]);
 }
 
-EOLIAN static Efl_Orient
-_efl_canvas_image_internal_efl_orientation_orientation_get(const Eo *obj EINA_UNUSED, Evas_Image_Data *o)
+EOLIAN static Efl_Gfx_Orientation
+_efl_canvas_image_internal_efl_gfx_orientable_orientation_get(const Eo *obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->orient_value;
-}
-
-EOLIAN static void
-_efl_canvas_image_internal_efl_orientation_flip_set(Eo *obj, Evas_Image_Data *o, Efl_Flip flip)
-{
-   Evas_Image_Orient orient;
-
-   o->flip_value = flip;
-   orient = _get_image_orient_from_orient_flip(o->orient_value, flip);
-
-   _evas_image_orientation_set(obj, o, orient);
-}
-
-EOLIAN static Efl_Flip
-_efl_canvas_image_internal_efl_orientation_flip_get(const Eo *obj EINA_UNUSED, Evas_Image_Data *o)
-{
-   return o->flip_value;
 }
 
 EOLIAN static void

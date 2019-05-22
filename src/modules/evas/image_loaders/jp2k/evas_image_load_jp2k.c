@@ -4,10 +4,6 @@
 
 #include <stdio.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include <openjpeg.h>
 
 #include "Evas_Loader.h"

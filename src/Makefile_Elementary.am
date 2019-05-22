@@ -1364,6 +1364,7 @@ bin/elementary/test_icon.c \
 bin/elementary/test_icon_desktops.c \
 bin/elementary/test_icon_animated.c \
 bin/elementary/test_image.c \
+bin/elementary/test_ui_image.c \
 bin/elementary/test_index.c \
 bin/elementary/test_inwin.c \
 bin/elementary/test_label.c \

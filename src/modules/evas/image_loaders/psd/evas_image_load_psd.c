@@ -19,10 +19,6 @@
 # include <netinet/in.h>
 #endif
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include "evas_common_private.h"
 #include "evas_private.h"
 

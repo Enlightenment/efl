@@ -488,7 +488,6 @@ EFL_START_TEST (efl_ui_table_properties)
    double h, v;
    Eina_Bool b;
    Eina_Bool homogeneoush, homogeneousv;
-   Efl_Ui_Dir dirh, dirv;
 
    //align test
    efl_gfx_arrangement_content_align_get(layout, &h, &v);
@@ -524,20 +523,12 @@ EFL_START_TEST (efl_ui_table_properties)
    ck_assert_int_eq(b, 1);
 
    //direction test
-   efl_pack_table_direction_get(layout, &dirh, &dirv);
-   ck_assert_int_eq(dirh, EFL_UI_DIR_RIGHT);
-   ck_assert_int_eq(dirv, EFL_UI_DIR_DOWN);
+   ck_assert_int_eq(efl_ui_direction_get(layout), EFL_UI_DIR_RIGHT);
 
-   efl_pack_table_direction_set(layout, EFL_UI_DIR_VERTICAL, EFL_UI_DIR_HORIZONTAL);
-   efl_pack_table_direction_get(layout, &dirh, &dirv);
-   ck_assert_int_eq(dirh, EFL_UI_DIR_VERTICAL);
-   ck_assert_int_eq(dirv, EFL_UI_DIR_HORIZONTAL);
+   efl_ui_direction_set(layout, EFL_UI_DIR_VERTICAL);
+   ck_assert_int_eq(efl_ui_direction_get(layout), EFL_UI_DIR_VERTICAL);
 
-   efl_pack_table_direction_set(layout, EFL_UI_DIR_RIGHT, EFL_UI_DIR_RIGHT);
-   efl_pack_table_direction_get(layout, &dirh, &dirv);
-   ck_assert_int_eq(dirh, EFL_UI_DIR_RIGHT);
-   ck_assert_int_eq(dirv, EFL_UI_DIR_DOWN);
-
+   efl_ui_direction_set(layout, EFL_UI_DIR_RIGHT);
    ck_assert_int_eq(efl_ui_direction_get(layout), EFL_UI_DIR_RIGHT);
 
    efl_ui_direction_set(layout, EFL_UI_DIR_DEFAULT);

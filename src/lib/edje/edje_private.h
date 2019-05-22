@@ -1,3 +1,4 @@
+
 #ifndef _EDJE_PRIVATE_H
 #define _EDJE_PRIVATE_H
 
@@ -34,10 +35,6 @@
 #include <lualib.h>
 #include <lauxlib.h>
 #include <setjmp.h>
-
-#ifdef _WIN32
-# include <Evil.h>
-#endif
 
 // auto_unref
 #define EFL_CANVAS_OBJECT_PROTECTED

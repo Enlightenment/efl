@@ -1792,16 +1792,6 @@ EAPI const Eolian_Documentation *eolian_parameter_documentation_get(const Eolian
 EAPI Eina_Bool eolian_parameter_is_nonull(const Eolian_Function_Parameter *param_desc);
 
 /*
- * @brief Indicates if a parameter is nullable.
- *
- * @param[in] param_desc parameter handle
- * @return EINA_TRUE if nullable, EINA_FALSE otherwise
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_parameter_is_nullable(const Eolian_Function_Parameter *param_desc);
-
-/*
  * @brief Indicates if a parameter is optional.
  *
  * @param[in] param_desc parameter handle

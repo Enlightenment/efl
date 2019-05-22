@@ -11,10 +11,6 @@
 #include <ctype.h>
 #include <Ecore_Getopt.h>
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include "edje_cc.h"
 #include "edje_private.h"
 

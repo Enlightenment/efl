@@ -12,6 +12,10 @@
 
 #include <libgen.h>
 
+#ifdef _WIN32
+# include <evil_private.h> /* fcntl realpath */
+#endif
+
 #include <Eina.h>
 #include <Eet.h>
 #include <Ecore.h>

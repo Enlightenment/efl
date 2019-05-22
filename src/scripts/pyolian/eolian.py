@@ -963,7 +963,7 @@ class Function(Object):
 class Function_Parameter(Object):
     def __repr__(self):
         return "<eolian.Function_Parameter '{0.name}', type={0.type}," \
-               " optional={0.is_optional}, nullable={0.is_nullable}>".format(self)
+               " optional={0.is_optional}>".format(self)
 
     @cached_property
     def direction(self):
@@ -977,10 +977,6 @@ class Function_Parameter(Object):
     @cached_property
     def is_nonull(self):
         return bool(lib.eolian_parameter_is_nonull(self))
-
-    @cached_property
-    def is_nullable(self):
-        return bool(lib.eolian_parameter_is_nullable(self))
 
     @cached_property
     def is_optional(self):

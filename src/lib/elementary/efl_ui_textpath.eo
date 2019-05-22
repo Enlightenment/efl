@@ -1,7 +1,9 @@
 enum @beta Efl.Ui.Textpath_Direction {
     [[Textpath direction]]
     cw, [[Clockwise]]
-    ccw [[Counter-clockwise]]
+    ccw, [[Counter-clockwise]]
+    cw_center, [[Clockwise, middle of text will be at start angle @since 1.23]]
+    ccw_center [[Counter-clockwise, middle of text will be at start angle @since 1.23]]
 }
 
 class @beta Efl.Ui.Textpath extends Efl.Ui.Layout_Base implements Efl.Text, Efl.Gfx.Path

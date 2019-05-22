@@ -1010,56 +1010,6 @@ EFL_START_TEST(eolian_free_func)
 }
 EFL_END_TEST
 
-EFL_START_TEST(eolian_null)
-{
-   const Eolian_Class *class;
-   const Eolian_Function *func;
-   const Eolian_Function_Parameter *param;
-   const Eolian_Unit *unit;
-   Eina_Iterator *iter;
-
-   Eolian_State *eos = eolian_state_new();
-
-   /* Parsing */
-   fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
-   fail_if(!(unit = eolian_state_file_parse(eos, "null.eo")));
-
-   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Null")));
-   fail_if(!(func = eolian_class_function_by_name_get(class, "foo", EOLIAN_METHOD)));
-
-   fail_if(!(iter = eolian_function_parameters_get(func)));
-
-   /* no qualifiers */
-   fail_if(!(eina_iterator_next(iter, (void**)&param)));
-   fail_if(strcmp(eolian_parameter_name_get(param), "x"));
-   fail_if(eolian_parameter_is_nullable(param));
-   fail_if(eolian_parameter_is_optional(param));
-
-   /* nullable */
-   fail_if(!(eina_iterator_next(iter, (void**)&param)));
-   fail_if(strcmp(eolian_parameter_name_get(param), "y"));
-   fail_if(!eolian_parameter_is_nullable(param));
-   fail_if(eolian_parameter_is_optional(param));
-
-   /* optional */
-   fail_if(!(eina_iterator_next(iter, (void**)&param)));
-   fail_if(strcmp(eolian_parameter_name_get(param), "z"));
-   fail_if(eolian_parameter_is_nullable(param));
-   fail_if(!eolian_parameter_is_optional(param));
-
-   /* both */
-   fail_if(!(eina_iterator_next(iter, (void**)&param)));
-   fail_if(strcmp(eolian_parameter_name_get(param), "w"));
-   fail_if(!eolian_parameter_is_nullable(param));
-   fail_if(!eolian_parameter_is_optional(param));
-
-   fail_if(eina_iterator_next(iter, (void**)&param));
-   eina_iterator_free(iter);
-
-   eolian_state_free(eos);
-}
-EFL_END_TEST
-
 EFL_START_TEST(eolian_import)
 {
    const Eolian_Class *class;
@@ -1654,7 +1604,6 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_enum);
    tcase_add_test(tc, eolian_class_funcs);
    tcase_add_test(tc, eolian_free_func);
-   tcase_add_test(tc, eolian_null);
    tcase_add_test(tc, eolian_import);
    tcase_add_test(tc, eolian_docs);
    tcase_add_test(tc, eolian_function_types);

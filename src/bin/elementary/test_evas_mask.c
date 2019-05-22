@@ -93,12 +93,12 @@ _toggle_map(void *data, const Efl_Event *ev EINA_UNUSED)
 static void
 _rotate_win(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   //Efl_Orient orient;
+   //Efl_Gfx_Orientation orient;
    Eo *win = data;
 
    // FIXME: This is not implemented???
-   //orient = efl_orientation_get(win);
-   //efl_orientation_set(win, (orient + 90) % 360);
+   //orient = efl_gfx_orientation_get(win);
+   //efl_gfx_orientation_set(win, (orient + 90) % 360);
    elm_win_rotation_set(win, (elm_win_rotation_get(win) + 90) % 360);
 }
 

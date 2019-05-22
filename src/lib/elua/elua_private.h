@@ -20,10 +20,6 @@
 #include <Eina.h>
 #include <Ecore.h>
 
-#ifdef _WIN32
-#include <Evil.h>
-#endif
-
 #include <lua.h>
 #include <lualib.h>
 #include <lauxlib.h>

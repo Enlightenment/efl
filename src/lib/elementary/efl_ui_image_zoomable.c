@@ -622,8 +622,7 @@ _grid_create(Evas_Object *obj)
              g->grid[tn].img =
                evas_object_image_add(evas_object_evas_get(obj));
              evas_object_image_load_orientation_set(g->grid[tn].img, EINA_TRUE);
-             efl_orientation_set(g->grid[tn].img, sd->orient);
-             efl_orientation_flip_set(g->grid[tn].img, sd->flip);
+             efl_gfx_orientation_set(g->grid[tn].img, sd->orient);
              evas_object_image_scale_hint_set
                (g->grid[tn].img, EVAS_IMAGE_SCALE_HINT_DYNAMIC);
              evas_object_pass_events_set(g->grid[tn].img, EINA_TRUE);
@@ -1322,8 +1321,7 @@ _orient_apply(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
           }
      }
 
-   efl_orientation_set(sd->img, sd->orient);
-   efl_orientation_flip_set(sd->img, sd->flip);
+   efl_gfx_orientation_set(sd->img, sd->orient);
    evas_object_image_size_get(sd->img, &iw, &ih);
    sd->size.imw = iw;
    sd->size.imh = ih;
@@ -1333,8 +1331,8 @@ _orient_apply(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_image_zoomable_efl_orientation_orientation_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd,
-                                              Efl_Orient orient)
+_efl_ui_image_zoomable_efl_gfx_orientable_orientation_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd,
+                                                          Efl_Gfx_Orientation orient)
 {
    if (sd->orient == orient) return;
 
@@ -1342,25 +1340,10 @@ _efl_ui_image_zoomable_efl_orientation_orientation_set(Eo *obj, Efl_Ui_Image_Zoo
    _orient_apply(obj, sd);
 }
 
-EOLIAN static Efl_Orient
-_efl_ui_image_zoomable_efl_orientation_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+EOLIAN static Efl_Gfx_Orientation
+_efl_ui_image_zoomable_efl_gfx_orientable_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    return sd->orient;
-}
-
-EOLIAN static void
-_efl_ui_image_zoomable_efl_orientation_flip_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Efl_Flip flip)
-{
-   if (sd->flip == flip) return;
-
-   sd->flip = flip;
-   _orient_apply(obj, sd);
-}
-
-EOLIAN static Efl_Flip
-_efl_ui_image_zoomable_efl_orientation_flip_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
-{
-   return sd->flip;
 }
 
 static void
@@ -2073,8 +2056,7 @@ _img_proxy_set(Evas_Object *obj, Efl_Ui_Image_Zoomable_Data *sd,
    tz = sd->zoom;
    sd->zoom = 0.0;
    elm_photocam_zoom_set(obj, tz);
-   sd->orient = EFL_ORIENT_NONE;
-   sd->flip = EFL_FLIP_NONE;
+   sd->orient = EFL_GFX_ORIENTATION_NONE;
    sd->orientation_changed = EINA_FALSE;
 
    return 0;
@@ -2159,8 +2141,7 @@ _internal_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Evas_Load_Error *ret
    tz = sd->zoom;
    sd->zoom = 0.0;
    elm_photocam_zoom_set(obj, tz);
-   sd->orient = EFL_ORIENT_NONE;
-   sd->flip = EFL_FLIP_NONE;
+   sd->orient = EFL_GFX_ORIENTATION_NONE;
    sd->orientation_changed = EINA_FALSE;
 
    if (ret) *ret = evas_object_image_load_error_get(sd->img);
@@ -3191,95 +3172,54 @@ elm_photocam_add(Evas_Object *parent)
    return elm_legacy_add(EFL_UI_IMAGE_ZOOMABLE_LEGACY_CLASS, parent);
 }
 
-static inline void
-_evas_orient_to_eo_orient_flip(const Evas_Image_Orient evas_orient,
-                               Efl_Orient *orient, Efl_Flip *flip)
+static inline Efl_Gfx_Orientation
+_evas_orient_to_efl_orient(const Evas_Image_Orient evas_orient)
 {
-   switch (evas_orient) {
-      case EVAS_IMAGE_ORIENT_NONE:
-        *orient = EFL_ORIENT_NONE;
-        *flip = EFL_FLIP_NONE;
-        break;
-      case EVAS_IMAGE_ORIENT_90:
-        *orient = EFL_ORIENT_90;
-        *flip = EFL_FLIP_NONE;
-        break;
-      case EVAS_IMAGE_ORIENT_180:
-        *orient = EFL_ORIENT_180;
-        *flip = EFL_FLIP_NONE;
-        break;
-      case EVAS_IMAGE_ORIENT_270:
-        *orient = EFL_ORIENT_270;
-        *flip = EFL_FLIP_NONE;
-        break;
-      case EVAS_IMAGE_FLIP_HORIZONTAL:
-        *orient = EFL_ORIENT_NONE;
-        *flip = EFL_FLIP_HORIZONTAL;
-        break;
-      case EVAS_IMAGE_FLIP_VERTICAL:
-        *orient = EFL_ORIENT_NONE;
-        *flip = EFL_FLIP_VERTICAL;
-        break;
-      case EVAS_IMAGE_FLIP_TRANSVERSE:
-        *orient = EFL_ORIENT_270;
-        *flip = EFL_FLIP_HORIZONTAL;
-        break;
-      case EVAS_IMAGE_FLIP_TRANSPOSE:
-        *orient = EFL_ORIENT_270;
-        *flip = EFL_FLIP_VERTICAL;
-        break;
-      default:
-        *orient = EFL_ORIENT_NONE;
-        *flip = EFL_FLIP_NONE;
-        break;
-     }
+   // This array takes an Elm_Image_Orient and turns it into an Efl_Gfx_Orientation
+   static const Efl_Gfx_Orientation efl_orient[8] = {
+      EFL_GFX_ORIENTATION_NONE,
+      EFL_GFX_ORIENTATION_RIGHT,
+      EFL_GFX_ORIENTATION_DOWN,
+      EFL_GFX_ORIENTATION_LEFT,
+      EFL_GFX_ORIENTATION_FLIP_HORIZONTAL,
+      EFL_GFX_ORIENTATION_FLIP_VERTICAL,
+      EFL_GFX_ORIENTATION_LEFT | EFL_GFX_ORIENTATION_FLIP_VERTICAL,
+      EFL_GFX_ORIENTATION_RIGHT | EFL_GFX_ORIENTATION_FLIP_VERTICAL
+   };
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(evas_orient >= 0 && evas_orient < 8, EFL_GFX_ORIENTATION_NONE);
+   return efl_orient[evas_orient];
 }
 
 static inline Evas_Image_Orient
-_eo_orient_flip_to_evas_orient(Efl_Orient orient, Efl_Flip flip)
+_efl_orient_to_evas_orient(Efl_Gfx_Orientation efl_orient)
 {
-   switch (flip)
-     {
-      default:
-      case EFL_FLIP_NONE:
-        switch (orient)
-          {
-           default:
-           case EFL_ORIENT_0: return EVAS_IMAGE_ORIENT_0;
-           case EFL_ORIENT_90: return EVAS_IMAGE_ORIENT_90;
-           case EFL_ORIENT_180: return EVAS_IMAGE_ORIENT_180;
-           case EFL_ORIENT_270: return EVAS_IMAGE_ORIENT_270;
-          }
-      case EFL_FLIP_HORIZONTAL:
-        switch (orient)
-          {
-           default:
-           case EFL_ORIENT_0: return EVAS_IMAGE_FLIP_HORIZONTAL;
-           case EFL_ORIENT_90: return EVAS_IMAGE_FLIP_TRANSPOSE;
-           case EFL_ORIENT_180: return EVAS_IMAGE_FLIP_VERTICAL;
-           case EFL_ORIENT_270: return EVAS_IMAGE_FLIP_TRANSVERSE;
-          }
-      case EFL_FLIP_VERTICAL:
-        switch (orient)
-          {
-           default:
-           case EFL_ORIENT_0: return EVAS_IMAGE_FLIP_VERTICAL;
-           case EFL_ORIENT_90: return EVAS_IMAGE_FLIP_TRANSVERSE;
-           case EFL_ORIENT_180: return EVAS_IMAGE_FLIP_HORIZONTAL;
-           case EFL_ORIENT_270: return EVAS_IMAGE_FLIP_TRANSPOSE;
-          }
-     }
+   // This array takes an Efl_Gfx_Orientation and turns it into an Elm_Image_Orient
+   static const Evas_Image_Orient evas_orient[16] = {
+      EVAS_IMAGE_ORIENT_NONE,     // EFL_GFX_ORIENTATION_NONE
+      EVAS_IMAGE_ORIENT_90,       // EFL_GFX_ORIENTATION_RIGHT
+      EVAS_IMAGE_ORIENT_180,      // EFL_GFX_ORIENTATION_DOWN
+      EVAS_IMAGE_ORIENT_270,      // EFL_GFX_ORIENTATION_LEFT
+      EVAS_IMAGE_FLIP_HORIZONTAL, // EFL_GFX_ORIENTATION_NONE  + FLIP_HOR
+      EVAS_IMAGE_FLIP_TRANSPOSE,  // EFL_GFX_ORIENTATION_RIGHT + FLIP_HOR
+      EVAS_IMAGE_FLIP_VERTICAL,   // EFL_GFX_ORIENTATION_DOWN  + FLIP_HOR
+      EVAS_IMAGE_FLIP_TRANSVERSE, // EFL_GFX_ORIENTATION_LEFT  + FLIP_HOR
+      EVAS_IMAGE_FLIP_VERTICAL,   // EFL_GFX_ORIENTATION_NONE  + FLIP_VER
+      EVAS_IMAGE_FLIP_TRANSVERSE, // EFL_GFX_ORIENTATION_RIGHT + FLIP_VER
+      EVAS_IMAGE_FLIP_HORIZONTAL, // EFL_GFX_ORIENTATION_DOWN  + FLIP_VER
+      EVAS_IMAGE_FLIP_TRANSPOSE,  // EFL_GFX_ORIENTATION_LEFT  + FLIP_VER
+      EVAS_IMAGE_ORIENT_180,      // EFL_GFX_ORIENTATION_NONE  + FLIP_HOR + FLIP_VER
+      EVAS_IMAGE_ORIENT_270,      // EFL_GFX_ORIENTATION_RIGHT + FLIP_HOR + FLIP_VER
+      EVAS_IMAGE_ORIENT_0,        // EFL_GFX_ORIENTATION_DOWN  + FLIP_HOR + FLIP_VER
+      EVAS_IMAGE_ORIENT_90        // EFL_GFX_ORIENTATION_LEFT  + FLIP_HOR + FLIP_VER
+   };
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_orient >= 0 && efl_orient < 16, EVAS_IMAGE_ORIENT_NONE);
+   return evas_orient[efl_orient];
 }
 
 EAPI void
 elm_photocam_image_orient_set(Eo *obj, Evas_Image_Orient evas_orient)
 {
-   Efl_Orient orient;
-   Efl_Flip flip;
-
-   _evas_orient_to_eo_orient_flip(evas_orient, &orient, &flip);
-   efl_orientation_set(obj, orient);
-   efl_orientation_flip_set(obj, flip);
+   efl_gfx_orientation_set(obj, _evas_orient_to_efl_orient(evas_orient));
 }
 
 EAPI Evas_Image_Orient
@@ -3287,7 +3227,7 @@ elm_photocam_image_orient_get(const Eo *obj)
 {
    ELM_PHOTOCAM_CHECK(obj) EVAS_IMAGE_ORIENT_NONE;
    EFL_UI_IMAGE_ZOOMABLE_DATA_GET(obj, sd);
-   return _eo_orient_flip_to_evas_orient(sd->orient, sd->flip);
+   return _efl_orient_to_evas_orient(sd->orient);
 }
 
 EAPI Evas_Object*

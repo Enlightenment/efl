@@ -95,7 +95,7 @@ class @beta Efl.Ui.Clock extends Efl.Ui.Layout_Base
          */
          set {} get {}
          values {
-            fmt: string @nullable; [[The clock format.]]
+            fmt: string; [[The clock format.]]
          }
       }
       @property pause {

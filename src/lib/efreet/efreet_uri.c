@@ -8,10 +8,6 @@
 #define _POSIX_HOST_NAME_MAX 255
 #endif
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 /* define macros and variable for using the eina logging system  */
 #define EFREET_MODULE_LOG_DOM /* no logging in this file */
 

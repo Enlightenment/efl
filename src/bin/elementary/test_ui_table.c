@@ -648,7 +648,7 @@ test_ui_table_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    efl_gfx_entity_visible_set(f, 1);
 
    efl_pack_table_columns_set(table, 4);
-   efl_pack_table_direction_set(table, EFL_UI_DIR_RIGHT, EFL_UI_DIR_DOWN);
+   efl_ui_direction_set(table, EFL_UI_DIR_RIGHT);
    efl_gfx_hint_weight_set(table, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_object_content_set(f, table);
    efl_gfx_entity_visible_set(table, 1);

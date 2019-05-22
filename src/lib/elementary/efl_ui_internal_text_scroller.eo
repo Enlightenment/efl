@@ -38,8 +38,8 @@ class @beta Efl.Ui.Internal_Text_Scroller extends Efl.Ui.Scroller
            This should be called upon constructing the object.
          ]]
          params {
-            text_obj: Efl.Canvas.Text @nullable; [[The text object to query]]
-            text_table: Efl.Ui.Table @nullable; [[The table container of
+            text_obj: Efl.Canvas.Text; [[The text object to query]]
+            text_table: Efl.Ui.Table; [[The table container of
                the $text_obj]]
          }
       }

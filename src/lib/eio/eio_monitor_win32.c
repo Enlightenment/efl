@@ -17,6 +17,8 @@
  * if not, see <http://www.gnu.org/licenses/>.
  */
 
+#include <evil_private.h> /* evil_wchar_to_char evil_last_error_get */
+
 #include "eio_private.h"
 #include "Eio.h"
 

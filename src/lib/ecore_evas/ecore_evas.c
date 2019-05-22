@@ -18,10 +18,6 @@
 # include <sys/mman.h>
 #endif
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include <Ecore.h>
 #include "ecore_private.h"
 #include <Ecore_Input.h>

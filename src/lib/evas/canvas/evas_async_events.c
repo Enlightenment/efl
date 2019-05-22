@@ -7,7 +7,8 @@
 
 #ifdef _WIN32
 # include <winsock2.h>
-#endif /* ! _WIN32 */
+# include <evil_private.h> /* fcntl */
+#endif
 
 #include <fcntl.h>
 

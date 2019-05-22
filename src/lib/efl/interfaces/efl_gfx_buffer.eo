@@ -174,7 +174,7 @@ interface @beta Efl.Gfx.Buffer
            $slice should not be the return value of @.buffer_managed_get.
          ]]
          params {
-            @cref slice: Eina.Slice @nullable; [[If $null, allocates an empty buffer]]
+            @cref slice: Eina.Slice; [[If $null, allocates an empty buffer]]
             @in size: Eina.Size2D; [[The size in pixels.]]
             @in stride: int @optional; [[If 0, automatically guessed from the $width.]]
             @in cspace: Efl.Gfx.Colorspace @optional; [[argb8888 by default.]]
@@ -199,7 +199,7 @@ interface @beta Efl.Gfx.Buffer
            internally.
          ]]
          params {
-            @cref slice: Eina.Slice @nullable; [[If $null, detaches the previous buffer.]]
+            @cref slice: Eina.Slice; [[If $null, detaches the previous buffer.]]
             @in size: Eina.Size2D; [[The size in pixels.]]
             @in stride: int @optional; [[If 0, automatically guessed from the $width.]]
             @in cspace: Efl.Gfx.Colorspace @optional; [[argb8888 by default.]]

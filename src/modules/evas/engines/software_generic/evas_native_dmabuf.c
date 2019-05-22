@@ -4,6 +4,8 @@
 
 #if defined HAVE_DLSYM && ! defined _WIN32
 # include <dlfcn.h>      /* dlopen,dlclose,etc */
+#elif _WIN32
+# include <evil_private.h> /* dlopen dlclose dlsym */
 #else
 # warning native_dmabuf should not get compiled if dlsym is not found on the system!
 #endif

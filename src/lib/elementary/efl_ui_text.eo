@@ -360,7 +360,7 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Ui.Clickable,
    }
    events {
       changed: void; [[Called when entry changes]]
-      /* FIXME: Sometimes it can be NULL but @nullable does not work on events */
+      /* can be NULL, tag nullable once Eolian supports it */
       changed,user: Efl.Ui.Text_Change_Info;
          [[The text object has changed due to user interaction]]
       validate: Elm.Validate_Content; [[Called when validating]]

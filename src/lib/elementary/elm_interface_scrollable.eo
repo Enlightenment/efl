@@ -287,7 +287,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[Set the callback to run when the content has been moved up.]]
          }
          values {
-            scroll_up_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
+            scroll_up_cb: Elm_Interface_Scrollable_Cb; [[The callback]]
          }
       }
       @property hbar_drag_cb {
@@ -295,7 +295,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[Set the callback to run when the horizontal scrollbar is dragged.]]
          }
          values {
-            hbar_drag_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
+            hbar_drag_cb: Elm_Interface_Scrollable_Cb; [[The callback]]
          }
       }
       @property drag_start_cb {
@@ -303,7 +303,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[Set the callback to run when dragging of the contents has started.]]
          }
          values {
-            drag_start_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
+            drag_start_cb: Elm_Interface_Scrollable_Cb; [[The callback]]
          }
       }
       @property freeze {
@@ -319,7 +319,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[When the viewport is resized, the callback is called.]]
          }
          values {
-            viewport_resize_cb: Elm_Interface_Scrollable_Resize_Cb @nullable; [[The callback]]
+            viewport_resize_cb: Elm_Interface_Scrollable_Resize_Cb; [[The callback]]
          }
       }
       @property scroll_left_cb {
@@ -327,7 +327,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[Set the callback to run when the content has been moved to the left]]
          }
          values {
-            scroll_left_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
+            scroll_left_cb: Elm_Interface_Scrollable_Cb; [[The callback]]
          }
       }
       @property vbar_press_cb {
@@ -335,7 +335,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[Set the callback to run when the vertical scrollbar is pressed.]]
          }
          values {
-            vbar_press_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
+            vbar_press_cb: Elm_Interface_Scrollable_Cb; [[The callback]]
          }
       }
       @property hbar_press_cb {
@@ -343,7 +343,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[Set the callback to run when the horizontal scrollbar is pressed.]]
          }
          values {
-            hbar_press_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
+            hbar_press_cb: Elm_Interface_Scrollable_Cb; [[The callback]]
          }
       }
       @property hbar_unpress_cb {
@@ -351,7 +351,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[Set the callback to run when the horizontal scrollbar is unpressed.]]
          }
          values {
-            hbar_unpress_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
+            hbar_unpress_cb: Elm_Interface_Scrollable_Cb; [[The callback]]
          }
       }
       @property drag_stop_cb {
@@ -359,7 +359,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[Set the callback to run when dragging of the contents has stopped.]]
          }
          values {
-            drag_stop_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
+            drag_stop_cb: Elm_Interface_Scrollable_Cb; [[The callback]]
          }
       }
       @property extern_pan {
@@ -367,7 +367,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
          set {
          }
          values {
-            pan: Efl.Canvas.Object @nullable; [[Pan object]]
+            pan: Efl.Canvas.Object; [[Pan object]]
          }
       }
       @property page_change_cb {
@@ -375,7 +375,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[Set the callback to run when the visible page changes.]]
          }
          values {
-            page_change_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
+            page_change_cb: Elm_Interface_Scrollable_Cb; [[The callback]]
          }
       }
       @property hold {
@@ -391,7 +391,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[Set the callback to run when the scrolling animation has started.]]
          }
          values {
-            animate_start_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
+            animate_start_cb: Elm_Interface_Scrollable_Cb; [[The callback]]
          }
       }
       @property scroll_down_cb {
@@ -399,7 +399,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[Set the callback to run when the content has been moved down.]]
          }
          values {
-            scroll_down_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
+            scroll_down_cb: Elm_Interface_Scrollable_Cb; [[The callback]]
          }
       }
       @property page_relative {
@@ -416,7 +416,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[Set the callback to run when the content has been moved.]]
          }
          values {
-            scroll_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
+            scroll_cb: Elm_Interface_Scrollable_Cb; [[The callback]]
          }
       }
       @property animate_stop_cb {
@@ -424,7 +424,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[Set the callback to run when the scrolling animation has stopped.]]
          }
          values {
-            animate_stop_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
+            animate_stop_cb: Elm_Interface_Scrollable_Cb; [[The callback]]
          }
       }
       @property content_min_limit_cb {
@@ -432,7 +432,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
          set {
          }
          values {
-            min_limit_cb: Elm_Interface_Scrollable_Min_Limit_Cb @nullable; [[The callback]]
+            min_limit_cb: Elm_Interface_Scrollable_Min_Limit_Cb; [[The callback]]
          }
       }
       @property scroll_right_cb {
@@ -440,7 +440,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[Set the callback to run when the content has been moved to the right.]]
          }
          values {
-            scroll_right_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
+            scroll_right_cb: Elm_Interface_Scrollable_Cb; [[The callback]]
          }
       }
       @property scrollable_content {
@@ -448,7 +448,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
          set {
          }
          values {
-            content: Efl.Canvas.Object @nullable; [[Content object]]
+            content: Efl.Canvas.Object; [[Content object]]
          }
       }
       @property edge_left_cb {
@@ -456,7 +456,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[Set the callback to run when the left edge of the content has been reached.]]
          }
          values {
-            edge_left_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
+            edge_left_cb: Elm_Interface_Scrollable_Cb; [[The callback]]
          }
       }
       @property vbar_drag_cb {
@@ -464,7 +464,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[Set the callback to run when the horizontal scrollbar is dragged.]]
          }
          values {
-            vbar_drag_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
+            vbar_drag_cb: Elm_Interface_Scrollable_Cb; [[The callback]]
          }
       }
       @property vbar_unpress_cb {
@@ -472,7 +472,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[Set the callback to run when the horizontal scrollbar is unpressed.]]
          }
          values {
-            vbar_unpress_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
+            vbar_unpress_cb: Elm_Interface_Scrollable_Cb; [[The callback]]
          }
       }
       @property edge_bottom_cb {
@@ -480,7 +480,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[Set the callback to run when the bottom edge of the content has been reached.]]
          }
          values {
-            edge_bottom_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
+            edge_bottom_cb: Elm_Interface_Scrollable_Cb; [[The callback]]
          }
       }
       @property edge_right_cb {
@@ -488,7 +488,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[Set the callback to run when the right edge of the content has been reached.]]
          }
          values {
-            edge_right_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
+            edge_right_cb: Elm_Interface_Scrollable_Cb; [[The callback]]
          }
       }
       @property edge_top_cb {
@@ -496,7 +496,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
             [[Set the callback to run when the top edge of the content has been reached.]]
          }
          values {
-            edge_top_cb: Elm_Interface_Scrollable_Cb @nullable; [[The callback]]
+            edge_top_cb: Elm_Interface_Scrollable_Cb; [[The callback]]
          }
       }
       @property objects {

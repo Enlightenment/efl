@@ -51,10 +51,6 @@
 # define PATH_MAX 4096
 #endif
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include <Eina.h>
 #include <eina_safety_checks.h>
 #include <Evas.h>

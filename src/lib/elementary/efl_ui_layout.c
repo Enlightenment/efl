@@ -2614,7 +2614,7 @@ _efl_ui_layout_base_automatic_theme_rotation_get(const Eo *obj EINA_UNUSED, Efl_
 }
 
 EOLIAN static void
-_efl_ui_layout_base_theme_rotation_apply(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNUSED, Efl_Orient orientation)
+_efl_ui_layout_base_theme_rotation_apply(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNUSED, int orientation)
 {
    char prefix[4], buf[128];
 

@@ -109,7 +109,7 @@ interface @beta Efl.Net.Dialer extends Efl.Net.Socket {
     }
 
     events {
-        /* FIXME: Might be NULL, but @nullable does not work on event types */
+        /* tag nullable once supported by eolian */
         dialer,resolved: string; [[Notifies @.address_dial was resolved to
                             @Efl.Net.Socket.address_remote.
 

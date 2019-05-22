@@ -807,8 +807,7 @@ _efl_ui_image_sizing_eval(Evas_Object *obj)
    //Retained way. Nothing does, if either way hasn't been changed.
    if (!sd->edje)
      {
-        efl_orientation_set(sd->img, sd->orient);
-        efl_orientation_flip_set(sd->img, sd->flip);
+        efl_gfx_orientation_set(sd->img, sd->orient);
      }
 
    if (sd->img)
@@ -1365,7 +1364,7 @@ _efl_ui_image_efl_gfx_image_load_controller_load_size_get(const Eo *obj EINA_UNU
 }
 
 EOLIAN static void
-_efl_ui_image_efl_orientation_orientation_set(Eo *obj, Efl_Ui_Image_Data *sd, Efl_Orient orient)
+_efl_ui_image_efl_gfx_orientable_orientation_set(Eo *obj, Efl_Ui_Image_Data *sd, Efl_Gfx_Orientation orient)
 {
    if (sd->edje) return;
    if (sd->orient == orient) return;
@@ -1374,27 +1373,10 @@ _efl_ui_image_efl_orientation_orientation_set(Eo *obj, Efl_Ui_Image_Data *sd, Ef
    _efl_ui_image_sizing_eval(obj);
 }
 
-EOLIAN static Efl_Orient
-_efl_ui_image_efl_orientation_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+EOLIAN static Efl_Gfx_Orientation
+_efl_ui_image_efl_gfx_orientable_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    return sd->orient;
-}
-
-
-EOLIAN static void
-_efl_ui_image_efl_orientation_flip_set(Eo *obj, Efl_Ui_Image_Data *sd, Efl_Flip flip)
-{
-   if (sd->edje) return;
-   if (sd->flip == flip) return;
-
-   sd->flip = flip;
-   _efl_ui_image_sizing_eval(obj);
-}
-
-EOLIAN static Efl_Flip
-_efl_ui_image_efl_orientation_flip_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
-{
-   return sd->flip;
 }
 
 /**
@@ -2134,57 +2116,25 @@ elm_image_preload_disabled_set(Evas_Object *obj, Eina_Bool disable)
 }
 
 EAPI void
-elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient orient)
+elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient elm_orient)
 {
-   Efl_Orient dir;
-   Efl_Flip flip;
+   // This array takes an Elm_Image_Orient and turns it into an Efl_Gfx_Orientation
+   static const Efl_Gfx_Orientation efl_orient[8] = {
+      EFL_GFX_ORIENTATION_NONE,
+      EFL_GFX_ORIENTATION_RIGHT,
+      EFL_GFX_ORIENTATION_DOWN,
+      EFL_GFX_ORIENTATION_LEFT,
+      EFL_GFX_ORIENTATION_FLIP_HORIZONTAL,
+      EFL_GFX_ORIENTATION_FLIP_VERTICAL,
+      EFL_GFX_ORIENTATION_LEFT | EFL_GFX_ORIENTATION_FLIP_VERTICAL,
+      EFL_GFX_ORIENTATION_RIGHT | EFL_GFX_ORIENTATION_FLIP_VERTICAL
+   };
 
    EFL_UI_IMAGE_CHECK(obj);
    EFL_UI_IMAGE_DATA_GET(obj, sd);
-   sd->image_orient = orient;
-
-   switch (orient)
-     {
-      case EVAS_IMAGE_ORIENT_0:
-         dir = EFL_ORIENT_0;
-         flip = EFL_FLIP_NONE;
-         break;
-      case EVAS_IMAGE_ORIENT_90:
-         dir = EFL_ORIENT_90;
-         flip = EFL_FLIP_NONE;
-         break;
-      case EVAS_IMAGE_ORIENT_180:
-         dir = EFL_ORIENT_180;
-         flip = EFL_FLIP_NONE;
-         break;
-      case EVAS_IMAGE_ORIENT_270:
-         dir = EFL_ORIENT_270;
-         flip = EFL_FLIP_NONE;
-         break;
-      case EVAS_IMAGE_FLIP_HORIZONTAL:
-         dir = EFL_ORIENT_0;
-         flip = EFL_FLIP_HORIZONTAL;
-         break;
-      case EVAS_IMAGE_FLIP_VERTICAL:
-         dir = EFL_ORIENT_0;
-         flip = EFL_FLIP_VERTICAL;
-         break;
-      case EVAS_IMAGE_FLIP_TRANSVERSE:
-         dir = EFL_ORIENT_270;
-         flip = EFL_FLIP_HORIZONTAL;
-         break;
-      case EVAS_IMAGE_FLIP_TRANSPOSE:
-         dir = EFL_ORIENT_270;
-         flip = EFL_FLIP_VERTICAL;
-         break;
-      default:
-         dir = EFL_ORIENT_0;
-         flip = EFL_FLIP_NONE;
-         break;
-     }
-
-   efl_orientation_set(obj, dir);
-   efl_orientation_flip_set(obj, flip);
+   EINA_SAFETY_ON_FALSE_RETURN(elm_orient >= 0 && elm_orient < 8);
+   sd->image_orient = elm_orient;
+   efl_gfx_orientation_set(obj, efl_orient[elm_orient]);
 }
 
 EAPI Elm_Image_Orient

@@ -27,18 +27,10 @@
 # include <byteswap.h>
 #endif
 
-#ifdef __has_builtin
-# define EINA_HAS_BUILTIN(x) __has_builtin(x)
-#elif (defined(__GNUC__) && (__GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 8)))
-# define EINA_HAS_BUILTIN(x) 1
-#else
-# define EINA_HAS_BUILTIN(x) 0  // Compatibility for the rest of the world
-#endif
-
 static inline unsigned short
 eina_swap16(unsigned short x)
 {
-#if defined EINA_HAVE_BSWAP16 && EINA_HAS_BUILTIN(__builtin_bswap16)
+#if defined EINA_HAVE_BSWAP16
   return __builtin_bswap16(x);
 #elif defined _MSC_VER          /* Windows. Apparently in <stdlib.h>. */
   return _byteswap_ushort(x);

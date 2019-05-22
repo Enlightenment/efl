@@ -1,5 +1,4 @@
 import efl_ui;
-import efl_orientation;
 
 abstract Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container,
                      Efl.Ui.Factory_Bind,
@@ -53,7 +52,7 @@ abstract Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container,
       theme_rotation_apply  @beta {
         [[Apply a new rotation value to this object.]]
         params {
-          orientation : Efl.Orient; [[The new rotation value.]]
+          orientation : int; [[The new rotation angle, in degrees.]]
         }
       }
    }

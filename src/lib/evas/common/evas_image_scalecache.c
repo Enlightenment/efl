@@ -3,7 +3,7 @@
 #endif
 
 #ifdef _WIN32
-# include <Evil.h>
+# include <windows.h>
 #endif
 
 #include <assert.h>
@@ -32,7 +32,7 @@ struct _ScaleitemKey
    int src_x, src_y;
    unsigned int src_w, src_h;
    unsigned int dst_w, dst_h;
-   Eina_Bool smooth : 1;   
+   Eina_Bool smooth : 1;
 };
 
 struct _Scaleitem
