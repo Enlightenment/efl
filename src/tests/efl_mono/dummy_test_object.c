@@ -1,62 +1,5 @@
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
-#define EFL_PART_PROTECTED
-
-#include <Ecore.h>
-#include <Eo.h>
-
-#ifdef EOAPI
-#undef EOAPI
-#endif
-
-#ifdef EWAPI
-#undef EWAPI
-#endif
-
-#ifdef EAPI
-#undef EAPI
-#endif
-
-#define EOAPI EAPI EAPI_WEAK
-#define EWAPI EAPI EAPI_WEAK
-
-#ifdef _WIN32
-# ifdef EFL_BUILD
-#  ifdef DLL_EXPORT
-#   define EAPI __declspec(dllexport)
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI __declspec(dllimport)
-# endif
-#else
-# ifdef __GNUC__
-#  if __GNUC__ >= 4
-#   define EAPI __attribute__ ((visibility("default")))
-#  else
-#   define EAPI
-#  endif
-# else
-#  define EAPI
-# endif
-#endif
-
-#include "dummy_test_iface.eo.h"
-#include "dummy_inherit_iface.eo.h"
-#include "dummy_numberwrapper.eo.h"
-#include "dummy_test_object.eo.h"
-#include "dummy_child.eo.h"
-#include "dummy_inherit_helper.eo.h"
-#include "dummy_part_holder.eo.h"
-
-#include <interfaces/efl_part.eo.h>
-
-#define EQUAL(a, b) ((a) == (b) ? 1 : (fprintf(stderr, "NOT EQUAL! %s:%i (%s)", __FILE__, __LINE__, __FUNCTION__), fflush(stderr), 0))
-#define STR_EQUAL(a, b) (strcmp((a), (b)) == 0 ? 1 : (fprintf(stderr, "NOT EQUAL! %s:%i (%s) '%s' != '%s'", __FILE__, __LINE__, __FUNCTION__, (a), (b)), fflush(stderr), 0))
+#include "libefl_mono_native_test.h"
 
 typedef struct Dummy_Test_Object_Data
 {
@@ -74,35 +17,6 @@ typedef struct Dummy_Test_Object_Data
   Eo *provider;
   Eo *iface_provider;
 } Dummy_Test_Object_Data;
-
-typedef struct Dummy_Numberwrapper_Data
-{
-   int number;
-} Dummy_Numberwrapper_Data;
-
-typedef struct Dummy_Child_Data
-{
-  int iface_prop;
-  const char* a;
-  double b;
-  Eina_Bool iface_was_set;
-  Eina_Bool obligatory_beta_ctor_was_called;
-  Eina_Bool optional_beta_ctor_was_called;
-} Dummy_Child_Data;
-
-typedef struct Dummy_Part_Holder_Data
-{
-  Eo *one;
-  Eo *two;
-} Dummy_Part_Holder_Data;
-
-typedef struct Dummy_Inherit_Helper_Data
-{
-} Dummy_Inherit_Helper_Data;
-
-typedef struct Dummy_Inherit_Iface_Data
-{
-} Dummy_Inherit_Iface_Data;
 
 static
 void *_new_int(int v)
@@ -3684,22 +3598,6 @@ _dummy_test_object_destroy_cmp_array_objects(void)
      efl_unref(modified_seq_obj[i]);
 }
 
-
-// ################## //
-// Test.Numberwrapper //
-// ################## //
-
-
-void _dummy_numberwrapper_number_set(EINA_UNUSED Eo *obj, Dummy_Numberwrapper_Data *pd, int n)
-{
-   pd->number = n;
-}
-
-int _dummy_numberwrapper_number_get(EINA_UNUSED const Eo *obj, Dummy_Numberwrapper_Data *pd)
-{
-   return pd->number;
-}
-
 void _dummy_test_object_set_value_ptr(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd, Eina_Value *value)
 {
     if (pd->stored_value) {
@@ -3973,78 +3871,6 @@ Efl_Object *_dummy_test_object_call_find_provider_for_iface(Eo *obj, EINA_UNUSED
     return efl_provider_find(obj, DUMMY_TEST_IFACE_INTERFACE);
 }
 
-/// Dummy.Child
-
-static Efl_Object *
-_dummy_child_efl_object_constructor(Eo *obj, Dummy_Child_Data *pd)
-{
-    efl_constructor(efl_super(obj, DUMMY_CHILD_CLASS));
-
-    pd->iface_prop = 1984;
-    pd->iface_was_set = EINA_FALSE;
-    pd->obligatory_beta_ctor_was_called = EINA_FALSE;
-    pd->optional_beta_ctor_was_called = EINA_FALSE;
-    return obj;
-}
-
-void _dummy_child_dummy_test_iface_iface_prop_set(EINA_UNUSED Eo *obj, Dummy_Child_Data *pd, int value)
-{
-    pd->iface_prop = value;
-    pd->iface_was_set = EINA_TRUE;
-}
-
-int _dummy_child_dummy_test_iface_iface_prop_get(EINA_UNUSED const Eo *obj, Dummy_Child_Data *pd)
-{
-    return pd->iface_prop;
-}
-
-void _dummy_child_double_params(EINA_UNUSED Eo* obj, Dummy_Child_Data *pd, const char* a, double b)
-{
-    if (pd->a)
-      free((void*)pd->a);
-    pd->a = malloc(sizeof(char)*(strlen(a) + 1));
-    strcpy((char*)pd->a, a);
-
-    pd->b = b;
-}
-
-Eina_Bool _dummy_child_iface_was_set_get(EINA_UNUSED const Eo* obj, Dummy_Child_Data *pd)
-{
-    return pd->iface_was_set;
-}
-
-void _dummy_child_obligatory_beta_ctor(EINA_UNUSED Eo* obj, Dummy_Child_Data *pd, EINA_UNUSED int a)
-{
-    pd->obligatory_beta_ctor_was_called = EINA_TRUE;
-}
-
-void _dummy_child_optional_beta_ctor(EINA_UNUSED Eo* obj, Dummy_Child_Data *pd, EINA_UNUSED int a)
-{
-    pd->optional_beta_ctor_was_called = EINA_TRUE;
-}
-
-Eina_Bool _dummy_child_obligatory_beta_ctor_was_called_get(EINA_UNUSED const Eo* obj, Dummy_Child_Data *pd)
-{
-    return pd->obligatory_beta_ctor_was_called;
-}
-
-Eina_Bool _dummy_child_optional_beta_ctor_was_called_get(EINA_UNUSED const Eo* obj, Dummy_Child_Data *pd)
-{
-    return pd->optional_beta_ctor_was_called;
-}
-
-EOLIAN static void
-_dummy_child_class_constructor(Efl_Class *klass)
-{
-    (void)klass;
-}
-
-EOLIAN static void
-_dummy_child_class_destructor(Efl_Class *klass)
-{
-    (void)klass;
-}
-
 // Inherit
 int _dummy_inherit_helper_receive_dummy_and_call_int_out(Dummy_Test_Object *x)
 {
@@ -4058,39 +3884,5 @@ const char* _dummy_inherit_helper_receive_dummy_and_call_in_stringshare(Dummy_Te
   return dummy_inherit_iface_stringshare_test (x, eina_stringshare_add("hello world"));
 }
 
-// Part holder
-static Efl_Object*
-_dummy_part_holder_efl_object_constructor(Eo *obj, Dummy_Part_Holder_Data *pd)
-{
-   efl_constructor(efl_super(obj, DUMMY_PART_HOLDER_CLASS));
-
-   // To avoid an infinite loop calling the same constructor
-   if (!efl_parent_get(obj))
-     {
-        pd->one = efl_add(DUMMY_TEST_OBJECT_CLASS, obj, efl_name_set(efl_added, "part_one"));
-        pd->two = efl_add(DUMMY_TEST_OBJECT_CLASS, obj, efl_name_set(efl_added, "part_two"));
-     }
-
-   return obj;
-}
-
-Efl_Object *_dummy_part_holder_efl_part_part_get(EINA_UNUSED const Eo *obj, Dummy_Part_Holder_Data *pd, const char *name)
-{
-    if (!strcmp(name, "one"))
-      return pd->one;
-    else if (!strcmp(name, "two"))
-      return pd->two;
-    else
-      return NULL;
-}
-
-
-
 #include "dummy_test_object.eo.c"
-#include "dummy_numberwrapper.eo.c"
-#include "dummy_child.eo.c"
-#include "dummy_test_iface.eo.c"
-#include "dummy_inherit_helper.eo.c"
-#include "dummy_inherit_iface.eo.c"
-#include "dummy_part_holder.eo.c"
 
