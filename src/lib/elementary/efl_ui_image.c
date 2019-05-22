@@ -807,7 +807,7 @@ _efl_ui_image_sizing_eval(Evas_Object *obj)
    //Retained way. Nothing does, if either way hasn't been changed.
    if (!sd->edje)
      {
-        efl_gfx_orientation_set(sd->img, sd->orient);
+        efl_gfx_image_orientation_set(sd->img, sd->orient);
      }
 
    if (sd->img)
@@ -1364,7 +1364,7 @@ _efl_ui_image_efl_gfx_image_load_controller_load_size_get(const Eo *obj EINA_UNU
 }
 
 EOLIAN static void
-_efl_ui_image_efl_gfx_orientable_orientation_set(Eo *obj, Efl_Ui_Image_Data *sd, Efl_Gfx_Orientation orient)
+_efl_ui_image_efl_gfx_image_orientable_orientation_set(Eo *obj, Efl_Ui_Image_Data *sd, Efl_Gfx_Image_Orientation orient)
 {
    if (sd->edje) return;
    if (sd->orient == orient) return;
@@ -1373,8 +1373,8 @@ _efl_ui_image_efl_gfx_orientable_orientation_set(Eo *obj, Efl_Ui_Image_Data *sd,
    _efl_ui_image_sizing_eval(obj);
 }
 
-EOLIAN static Efl_Gfx_Orientation
-_efl_ui_image_efl_gfx_orientable_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+EOLIAN static Efl_Gfx_Image_Orientation
+_efl_ui_image_efl_gfx_image_orientable_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    return sd->orient;
 }
@@ -2118,23 +2118,23 @@ elm_image_preload_disabled_set(Evas_Object *obj, Eina_Bool disable)
 EAPI void
 elm_image_orient_set(Evas_Object *obj, Elm_Image_Orient elm_orient)
 {
-   // This array takes an Elm_Image_Orient and turns it into an Efl_Gfx_Orientation
-   static const Efl_Gfx_Orientation efl_orient[8] = {
-      EFL_GFX_ORIENTATION_NONE,
-      EFL_GFX_ORIENTATION_RIGHT,
-      EFL_GFX_ORIENTATION_DOWN,
-      EFL_GFX_ORIENTATION_LEFT,
-      EFL_GFX_ORIENTATION_FLIP_HORIZONTAL,
-      EFL_GFX_ORIENTATION_FLIP_VERTICAL,
-      EFL_GFX_ORIENTATION_LEFT | EFL_GFX_ORIENTATION_FLIP_VERTICAL,
-      EFL_GFX_ORIENTATION_RIGHT | EFL_GFX_ORIENTATION_FLIP_VERTICAL
+   // This array takes an Elm_Image_Orient and turns it into an Efl_Gfx_Image_Orientation
+   static const Efl_Gfx_Image_Orientation efl_orient[8] = {
+      EFL_GFX_IMAGE_ORIENTATION_NONE,
+      EFL_GFX_IMAGE_ORIENTATION_RIGHT,
+      EFL_GFX_IMAGE_ORIENTATION_DOWN,
+      EFL_GFX_IMAGE_ORIENTATION_LEFT,
+      EFL_GFX_IMAGE_ORIENTATION_FLIP_HORIZONTAL,
+      EFL_GFX_IMAGE_ORIENTATION_FLIP_VERTICAL,
+      EFL_GFX_IMAGE_ORIENTATION_LEFT | EFL_GFX_IMAGE_ORIENTATION_FLIP_VERTICAL,
+      EFL_GFX_IMAGE_ORIENTATION_RIGHT | EFL_GFX_IMAGE_ORIENTATION_FLIP_VERTICAL
    };
 
    EFL_UI_IMAGE_CHECK(obj);
    EFL_UI_IMAGE_DATA_GET(obj, sd);
    EINA_SAFETY_ON_FALSE_RETURN(elm_orient >= 0 && elm_orient < 8);
    sd->image_orient = elm_orient;
-   efl_gfx_orientation_set(obj, efl_orient[elm_orient]);
+   efl_gfx_image_orientation_set(obj, efl_orient[elm_orient]);
 }
 
 EAPI Elm_Image_Orient

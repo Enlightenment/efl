@@ -1,13 +1,13 @@
 // FIXME: Documentation lacks proper references due to cyclic imports.
 // FIXME: What about AnyRTL? And other strange directions?
 
-parse efl_gfx_orientable;
+parse efl_gfx_image_orientable;
 
 enum @beta Efl.Ui.Dir
 {
    [[Direction for UI objects and layouts.
 
-     Not to be confused with @Efl.Gfx.Orientation which is for images and canvases. This
+     Not to be confused with @Efl.Gfx.Image_Orientation which is for images and canvases. This
      enum is used to define how widgets should expand and orient themselves,
      not to rotate images.
 
