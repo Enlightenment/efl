@@ -236,7 +236,7 @@ ecore_hash_hash_set(Ecore_Hash *hash, Ecore_Hash *set)
                      hash->free_key(node->key);
 
                   if (hash->free_value)
-                     hash->free_key(node->value);
+                     hash->free_value(node->value);
 
                   node->key = old->key;
                   node->value = old->value;
