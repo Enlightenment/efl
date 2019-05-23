@@ -158,6 +158,8 @@ _logical_manager_change(void *data EINA_UNUSED, const Efl_Event *ev)
    if (!ev->info) return;
 
    manager = efl_ui_focus_object_focus_manager_get(ev->object);
+   /* no manager is set when object trees become unfocusable */
+   if (!manager) return;
    EINA_LIST_FOREACH(pd->current_border, n, b)
      {
         if (b == ev->object) continue;
