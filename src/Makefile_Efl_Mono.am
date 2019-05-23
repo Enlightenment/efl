@@ -390,7 +390,14 @@ if EFL_ENABLE_TESTS
 # Intermediate C test native library
 check_LTLIBRARIES += tests/efl_mono/libefl_mono_native_test.la
 
-tests_efl_mono_libefl_mono_native_test_la_SOURCES = tests/efl_mono/libefl_mono_native_test.c
+tests_efl_mono_libefl_mono_native_test_la_SOURCES = \
+	tests/efl_mono/dummy_child.c \
+	tests/efl_mono/dummy_inherit_helper.c \
+	tests/efl_mono/dummy_interfaces.c \
+	tests/efl_mono/dummy_numberwrapper.c \
+	tests/efl_mono/dummy_part_holder.c \
+	tests/efl_mono/dummy_test_object.c
+
 tests_efl_mono_libefl_mono_native_test_la_CPPFLAGS =  \
 -I$(builddir)/tests/efl_mono \
 @CHECK_CFLAGS@ @EINA_CFLAGS@ @EO_CFLAGS@ @ECORE_CFLAGS@ @ELDBUS_CFLAGS@
@@ -400,21 +407,37 @@ tests_efl_mono_libefl_mono_native_test_la_LDFLAGS = -rpath $(abs_top_builddir)/t
 tests_efl_mono_libefl_mono_native_test_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@ @USE_ELDBUS_INTERNAL_LIBS@
 tests_efl_mono_libefl_mono_native_test_la_LIBTOOLFLAGS = --tag=disable-static
 
-tests/efl_mono/libefl_mono_native_test.c: \
-	tests/efl_mono/dummy_test_object.eo.h \
-	tests/efl_mono/dummy_test_object.eo.c \
-	tests/efl_mono/dummy_test_iface.eo.h \
-	tests/efl_mono/dummy_test_iface.eo.c \
-	tests/efl_mono/dummy_child.eo.h \
+tests/efl_mono/dummy_child.c: \
 	tests/efl_mono/dummy_child.eo.c \
-	tests/efl_mono/dummy_part_holder.eo.h \
-	tests/efl_mono/dummy_part_holder.eo.c \
-	tests/efl_mono/dummy_numberwrapper.eo.h \
-	tests/efl_mono/dummy_numberwrapper.eo.c \
-	tests/efl_mono/dummy_inherit_iface.eo.h \
-	tests/efl_mono/dummy_inherit_iface.eo.c \
+	tests/efl_mono/dummy_child.eo.h \
+	tests/efl_mono/libefl_mono_native_test.h
+
+tests/efl_mono/dummy_inherit_helper.c: \
+	tests/efl_mono/dummy_inherit_helper.eo.c \
 	tests/efl_mono/dummy_inherit_helper.eo.h \
-	tests/efl_mono/dummy_inherit_helper.eo.c
+	tests/efl_mono/libefl_mono_native_test.h
+
+tests/efl_mono/dummy_interfaces.c: \
+	tests/efl_mono/dummy_test_iface.eo.c \
+	tests/efl_mono/dummy_test_iface.eo.h \
+	tests/efl_mono/dummy_inherit_iface.eo.c \
+	tests/efl_mono/dummy_inherit_iface.eo.h \
+	tests/efl_mono/libefl_mono_native_test.h
+
+tests/efl_mono/dummy_numberwrapper.c: \
+	tests/efl_mono/dummy_numberwrapper.eo.c \
+	tests/efl_mono/dummy_numberwrapper.eo.h \
+	tests/efl_mono/libefl_mono_native_test.h
+
+tests/efl_mono/dummy_part_holder.c: \
+	tests/efl_mono/dummy_part_holder.eo.c \
+	tests/efl_mono/dummy_part_holder.eo.h \
+	tests/efl_mono/libefl_mono_native_test.h
+
+tests/efl_mono/dummy_test_object.c: \
+	tests/efl_mono/dummy_test_object.eo.c \
+	tests/efl_mono/dummy_test_object.eo.h \
+	tests/efl_mono/libefl_mono_native_test.h
 
 # Intermediate C Sharp test DLL
 efl_mono_test_eolian_mono_files = tests/efl_mono/dummy_test_object.eo.cs \
