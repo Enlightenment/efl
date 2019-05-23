@@ -403,7 +403,7 @@ _text_draw(void *data)
 }
 
 static void
-_path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
+_path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
    const Efl_Gfx_Path_Command_Type *cmd;
    const double *points;
@@ -508,10 +508,6 @@ _path_data_get(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Bool set_min)
                }
              cmd++;
           }
-        if (set_min)
-          {
-             efl_gfx_hint_size_min_set(obj, rect.size);
-          }
      }
 }
 
@@ -563,7 +559,7 @@ _ellipsis_set(Efl_Ui_Textpath_Data *pd, Eo *obj)
 static void
 _efl_ui_textpath_efl_gfx_path_commit(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
-   _path_data_get(obj, pd, EINA_TRUE);
+   _path_data_get(obj, pd);
    _sizing_eval(pd);
 }
 
@@ -651,7 +647,7 @@ _path_start_angle_adjust(Eo *obj, Efl_Ui_Textpath_Data *pd)
                                 pd->circle.start_angle - offset_angle,
                                 360);
      }
-   _path_data_get(obj, pd, EINA_TRUE);
+   _path_data_get(obj, pd);
 }
 
 EOLIAN static void
@@ -753,8 +749,34 @@ _efl_ui_textpath_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Textpath_Data *pd)
 EOLIAN static void
 _efl_ui_textpath_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Textpath_Data *pd, Eina_Position2D pos)
 {
+   Eina_Position2D opos, diff;
+   Efl_Ui_Textpath_Segment *seg;
+   double sx, sy, csx, csy, cex, cey, ex, ey;
+
+   opos = efl_gfx_entity_position_get(obj);
+
+   diff.x = pos.x - opos.x;
+   diff.y = pos.y - opos.y;
+
    efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
-   _path_data_get(obj, pd, EINA_FALSE);
+
+   EINA_INLIST_FOREACH(pd->segments, seg)
+     {
+        eina_bezier_values_get(&seg->bezier, &sx, &sy, &csx, &csy,
+                                             &cex, &cey, &ex, &ey);
+        sx += diff.x;
+        sy += diff.y;
+        csx += diff.x;
+        csy += diff.y;
+        cex += diff.x;
+        cey += diff.y;
+        ex += diff.x;
+        ey += diff.y;
+
+        eina_bezier_values_set(&seg->bezier, sx, sy, csx, csy,
+                                             cex, cey, ex, ey);
+     }
+
    _text_draw(pd);
 }
 
@@ -792,9 +814,11 @@ _efl_ui_textpath_circle_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double x, double 
                                 radius * 2,  start_angle, 360);
      }
 
-   _path_data_get(obj, pd, EINA_TRUE);
+   _path_data_get(obj, pd);
    _path_start_angle_adjust(obj, pd);
    _sizing_eval(pd);
+
+   efl_gfx_hint_size_min_set(obj, EINA_SIZE2D(x * 2, y * 2));
 }
 
 EOLIAN static int
