@@ -79,7 +79,7 @@ _unrealized_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 EOLIAN static void
-_elm_widget_item_static_focus_efl_ui_focus_object_setup_order_non_recursive(Eo *obj, Elm_Widget_Item_Static_Focus_Data *pd EINA_UNUSED)
+_elm_widget_item_static_focus_efl_ui_focus_object_setup_order_non_recursive(Eo *obj, Elm_Widget_Item_Static_Focus_Data *pd)
 {
    Eo *logical_child;
    Elm_Widget_Item_Data *wpd = efl_data_scope_get(obj, ELM_WIDGET_ITEM_CLASS);
