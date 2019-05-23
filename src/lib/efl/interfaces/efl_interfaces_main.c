@@ -32,7 +32,7 @@
 #include "interfaces/efl_gfx_stack.eo.c"
 #include "interfaces/efl_gfx_fill.eo.c"
 #include "interfaces/efl_gfx_view.eo.c"
-#include "interfaces/efl_gfx_orientable.eo.c"
+#include "interfaces/efl_gfx_image_orientable.eo.c"
 
 #include "interfaces/efl_gfx_text_class.eo.c"
 #include "interfaces/efl_gfx_size_class.eo.c"

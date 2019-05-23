@@ -90,7 +90,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_gfx_image.eo.h"
 #include "interfaces/efl_gfx_frame_controller.eo.h"
 #include "interfaces/efl_gfx_image_load_controller.eo.h"
-#include "interfaces/efl_gfx_orientable.eo.h"
+#include "interfaces/efl_gfx_image_orientable.eo.h"
 #include "interfaces/efl_part.eo.h"
 #include "interfaces/efl_playable.eo.h"
 #include "interfaces/efl_player.eo.h"

@@ -2,6 +2,11 @@
 # include "config.h"
 #endif
 
+#ifdef _WIN32
+/* normally, they will never be called as it's for Wayland */
+# include <evil_private.h> /* setenv unsetenv */
+#endif
+
 #include "emotion_private.h"
 #include "../../static_libs/buildsystem/buildsystem.h"
 #include <unistd.h>

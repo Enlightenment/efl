@@ -5,15 +5,15 @@
 #include <Efl_Ui.h>
 
 static const struct {
-   Efl_Gfx_Orientation orient;
+   Efl_Gfx_Image_Orientation orient;
    const char *name;
 } images_orient[] = {
-  { EFL_GFX_ORIENTATION_NONE, "None" },
-  { EFL_GFX_ORIENTATION_RIGHT, "Rotate 90" },
-  { EFL_GFX_ORIENTATION_DOWN, "Rotate 180" },
-  { EFL_GFX_ORIENTATION_LEFT, "Rotate 270" },
-  { EFL_GFX_ORIENTATION_FLIP_HORIZONTAL, "Horizontal Flip" },
-  { EFL_GFX_ORIENTATION_FLIP_VERTICAL, "Vertical Flip" },
+  { EFL_GFX_IMAGE_ORIENTATION_NONE, "None" },
+  { EFL_GFX_IMAGE_ORIENTATION_RIGHT, "Rotate 90" },
+  { EFL_GFX_IMAGE_ORIENTATION_DOWN, "Rotate 180" },
+  { EFL_GFX_IMAGE_ORIENTATION_LEFT, "Rotate 270" },
+  { EFL_GFX_IMAGE_ORIENTATION_FLIP_HORIZONTAL, "Horizontal Flip" },
+  { EFL_GFX_IMAGE_ORIENTATION_FLIP_VERTICAL, "Vertical Flip" },
   { 0, NULL }
 };
 
@@ -51,11 +51,11 @@ my_im_ch(void *data, const Efl_Event *ev EINA_UNUSED)
    Eo *win = data;
    Eo *im = efl_key_data_get(win, "im");
    Eo *rdg = efl_key_data_get(win, "rdg");
-   Efl_Gfx_Orientation v = efl_ui_radio_state_value_get(efl_ui_radio_selected_object_get(rdg));
+   Efl_Gfx_Image_Orientation v = efl_ui_radio_state_value_get(efl_ui_radio_selected_object_get(rdg));
 
-   efl_gfx_orientation_set(im, v);
+   efl_gfx_image_orientation_set(im, v);
    fprintf(stderr, "Set %i and got %i\n",
-           v, efl_gfx_orientation_get(im));
+           v, efl_gfx_image_orientation_get(im));
 }
 
 void

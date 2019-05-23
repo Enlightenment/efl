@@ -1031,6 +1031,17 @@ _ecore_evas_new_internal(const char *device, int x, int y, int w, int h, Eina_Bo
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_evas_drm_engine_func;
    ee->engine.data = edata;
 
+   if (!ecore_drm2_vblank_supported(edata->dev))
+     {
+        ee->engine.func->fn_animator_register = NULL;
+        ee->engine.func->fn_animator_unregister = NULL;
+     }
+   else
+     {
+        ee->engine.func->fn_animator_register = _drm_animator_register;
+        ee->engine.func->fn_animator_unregister = _drm_animator_unregister;
+     }
+
    /* FIXME */
    /* if (edata->device) ee->name = strdup(edata->device); */
 

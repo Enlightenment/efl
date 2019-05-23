@@ -76,7 +76,7 @@ _on_keydown(void        *data EINA_UNUSED,
             void        *einfo)
 {
    Evas_Event_Key_Down *ev = einfo;
-   Efl_Gfx_Orientation orient = efl_gfx_orientation_get(d.img);
+   Efl_Gfx_Image_Orientation orient = efl_gfx_image_orientation_get(d.img);
 
    if (strcmp(ev->key, "h") == 0) /* print help */
      {
@@ -110,25 +110,25 @@ _on_keydown(void        *data EINA_UNUSED,
    switch (key_val)
      {
       case 0:
-         efl_gfx_orientation_set(d.img, EFL_GFX_ORIENTATION_UP | (orient & EFL_GFX_ORIENTATION_FLIP_BITMASK));
+         efl_gfx_image_orientation_set(d.img, EFL_GFX_IMAGE_ORIENTATION_UP | (orient & EFL_GFX_IMAGE_ORIENTATION_FLIP_BITMASK));
          break;
       case 1:
-         efl_gfx_orientation_set(d.img, EFL_GFX_ORIENTATION_RIGHT | (orient & EFL_GFX_ORIENTATION_FLIP_BITMASK));
+         efl_gfx_image_orientation_set(d.img, EFL_GFX_IMAGE_ORIENTATION_RIGHT | (orient & EFL_GFX_IMAGE_ORIENTATION_FLIP_BITMASK));
          break;
       case 2:
-         efl_gfx_orientation_set(d.img, EFL_GFX_ORIENTATION_DOWN | (orient & EFL_GFX_ORIENTATION_FLIP_BITMASK));
+         efl_gfx_image_orientation_set(d.img, EFL_GFX_IMAGE_ORIENTATION_DOWN | (orient & EFL_GFX_IMAGE_ORIENTATION_FLIP_BITMASK));
          break;
       case 3:
-         efl_gfx_orientation_set(d.img, EFL_GFX_ORIENTATION_LEFT | (orient & EFL_GFX_ORIENTATION_FLIP_BITMASK));
+         efl_gfx_image_orientation_set(d.img, EFL_GFX_IMAGE_ORIENTATION_LEFT | (orient & EFL_GFX_IMAGE_ORIENTATION_FLIP_BITMASK));
          break;
       case 4:
-         efl_gfx_orientation_set(d.img, (orient & EFL_GFX_ORIENTATION_ROTATION_BITMASK) | EFL_GFX_ORIENTATION_FLIP_HORIZONTAL);
+         efl_gfx_image_orientation_set(d.img, (orient & EFL_GFX_IMAGE_ORIENTATION_ROTATION_BITMASK) | EFL_GFX_IMAGE_ORIENTATION_FLIP_HORIZONTAL);
          break;
       case 5:
-         efl_gfx_orientation_set(d.img, (orient & EFL_GFX_ORIENTATION_ROTATION_BITMASK) | EFL_GFX_ORIENTATION_FLIP_VERTICAL);
+         efl_gfx_image_orientation_set(d.img, (orient & EFL_GFX_IMAGE_ORIENTATION_ROTATION_BITMASK) | EFL_GFX_IMAGE_ORIENTATION_FLIP_VERTICAL);
          break;
       case 6:
-         efl_gfx_orientation_set(d.img, (orient & EFL_GFX_ORIENTATION_ROTATION_BITMASK));
+         efl_gfx_image_orientation_set(d.img, (orient & EFL_GFX_IMAGE_ORIENTATION_ROTATION_BITMASK));
          break;
      }
 }

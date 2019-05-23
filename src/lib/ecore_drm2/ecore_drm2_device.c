@@ -891,6 +891,23 @@ ecore_drm2_device_fd_get(Ecore_Drm2_Device *device)
    return device->fd;
 }
 
+EAPI Eina_Bool
+ecore_drm2_vblank_supported(Ecore_Drm2_Device *dev)
+{
+   drmVBlank tmp;
+   int ret = 0;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(dev, EINA_FALSE);
+
+   memset(&tmp, 0, sizeof(drmVBlank));
+   tmp.request.type = DRM_VBLANK_RELATIVE;
+
+   ret = sym_drmWaitVBlank(dev->fd, &tmp);
+
+   if (ret != 0) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
 /* prevent crashing with old apps compiled against these functions */
 EAPI void ecore_drm2_device_keyboard_cached_context_set(){};
 EAPI void ecore_drm2_device_keyboard_cached_keymap_set(){};

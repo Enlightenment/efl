@@ -1,5 +1,9 @@
 #include "elua_private.h"
 
+#ifdef _WIN32
+# include <evil_private.h> /* realpath */
+#endif
+
 /* expand fname to full path name (so that PATH is ignored) plus turn
  * stuff into a command, and also verify whether the path exists */
 static char *

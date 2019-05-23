@@ -129,7 +129,7 @@ struct _Efl_Ui_Image_Zoomable_Data
    int                   frame_count;
 
    Eina_List             *grids;
-   Efl_Gfx_Orientation   orient;
+   Efl_Gfx_Image_Orientation   orient;
 
    Eina_Bool    main_load_pending : 1;
    Eina_Bool    longpressed : 1;

@@ -15,7 +15,15 @@ endforeach
 
 
 efl_mono_native_test = library('efl_mono_native_test',
-    eo_file_targets + ['libefl_mono_native_test.c'],
+    eo_file_targets + [
+        'libefl_mono_native_test.h',
+        'dummy_child.c',
+        'dummy_inherit_helper.c',
+        'dummy_interfaces.c',
+        'dummy_numberwrapper.c',
+        'dummy_part_holder.c',
+        'dummy_test_object.c',
+    ],
     dependencies : [ecore, eo, efl],
 )
 
