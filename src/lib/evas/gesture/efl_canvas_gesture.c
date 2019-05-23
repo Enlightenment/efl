@@ -47,3 +47,4 @@ _efl_canvas_gesture_timestamp_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_
 }
 
 #include "efl_canvas_gesture.eo.c"
+#include "efl_gesture_events.eo.c"
