@@ -1627,36 +1627,6 @@ modules_evas_vg_savers_eet_module_la_LIBTOOLFLAGS = --tag=disable-static
 endif
 endif
 
-if BUILD_VG_LOADER_JSON
-if EVAS_STATIC_BUILD_VG_JSON
-lib_evas_libevas_la_SOURCES += modules/evas/vg_loaders/json/evas_vg_load_json.c \
-static_libs/vg_common/vg_common_json.c \
-static_libs/vg_common/vg_common.h
-lib_evas_libevas_la_CPPFLAGS += -I$(top_srcdir)/src/static_libs/vg_common \
-@evas_vg_loader_json_cflags@
-lib_evas_libevas_la_LIBADD += @evas_vg_loader_json_libs@
-else
-vgloaderjsonpkgdir = $(libdir)/evas/modules/vg_loaders/json/$(MODULE_ARCH)
-vgloaderjsonpkg_LTLIBRARIES = modules/evas/vg_loaders/json/module.la
-
-# Workaround for broken parallel install support in automake (relink issue)
-# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
-install_vgloaderjsonpkgLTLIBRARIES = install-vgloaderjsonpkgLTLIBRARIES
-$(install_vgloaderjsonpkgLTLIBRARIES): install-libLTLIBRARIES
-
-modules_evas_vg_loaders_json_module_la_SOURCES = modules/evas/vg_loaders/json/evas_vg_load_json.c
-modules_evas_vg_loaders_json_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
--I$(top_srcdir)/src/lib/evas/include \
-@EVAS_CFLAGS@ \
-@evas_vg_loader_json_cflags@
-modules_evas_vg_loaders_json_module_la_LIBADD = \
-@USE_EVAS_LIBS@ \
-@evas_vg_loader_json_libs@
-modules_evas_vg_loaders_json_module_la_DEPENDENCIES = @USE_EVAS_INTERNAL_LIBS@
-modules_evas_vg_loaders_json_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
-modules_evas_vg_loaders_json_module_la_LIBTOOLFLAGS = --tag=disable-static
-endif
-endif
 
 if BUILD_LOADER_BMP
 if EVAS_STATIC_BUILD_BMP

@@ -206,10 +206,6 @@ EXTRA_PROGRAMS += evas/evas_vg_batman
 evas_evas_vg_batman_SOURCES = evas/evas-vg-batman.c
 evas_evas_vg_batman_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
 
-EXTRA_PROGRAMS += evas/evas_vg_json
-evas_evas_vg_json_SOURCES = evas/evas-vg-json.c
-evas_evas_vg_json_CPPFLAGS = $(ECORE_EVAS_COMMON_CPPFLAGS)
-
 EXTRA_PROGRAMS += evas/evas_aspect_hints
 evas_evas_aspect_hints_DEPS = $(srcdir)/aspect.edc
 evas_evas_aspect_hints_SOURCES = evas/evas-aspect-hints.c

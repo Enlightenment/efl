@@ -58,37 +58,6 @@ AS_IF([test "x${have_dep}" = "xyes"], [$3], [$4])
 
 ])
 
-dnl use: EVAS_CHECK_VG_LOADER_DEP_JSON(loader, want_static[, ACTION-IF-FOUND[, ACTION-IF-NOT-FOUND]])
-
-AC_DEFUN([EVAS_CHECK_VG_LOADER_DEP_JSON],
-[
-
-have_dep="no"
-evas_vg_loader_[]$1[]_cflags=""
-evas_vg_loader_[]$1[]_libs=""
-
-AC_CHECK_HEADER([rlottie_capi.h], [have_dep="yes"])
-
-if test "x${have_dep}"  = "xyes" ; then
-   AC_CHECK_LIB([rlottie],
-		[lottie_animation_from_file],
-      [
-       evas_vg_loader_[]$1[]_libs="-lrlottie"
-      ]
-   )
-fi
-
-if test "x$2" = "xstatic"  && test "x${have_dep}" = "xyes" ; then
-   requirements_libs_evas="${evas_vg_loader_[]$1[]_libs} ${requirements_libs_evas}"
-fi
-
-AC_SUBST([evas_vg_loader_$1_cflags])
-AC_SUBST([evas_vg_loader_$1_libs])
-
-AS_IF([test "x${have_dep}" = "xyes"], [$3], [$4])
-
-])
-
 dnl use: ARG_ENABLE_EVAS_IMAGE_LOADER(loader, default_value)
 
 AC_DEFUN([ARG_ENABLE_EVAS_IMAGE_LOADER],
@@ -688,12 +657,11 @@ if test "x${have_loader}" = "xyes" ; then
       want_static_loader="yes"
    else
       have_evas_vg_loader_[]DOWN="yes"
-      want_static_loader="yes"
    fi
 fi
 
 if test "x${have_loader}" = "xyes" ; then
-   AC_DEFINE(BUILD_VG_LOADER_[]UP, [1], [UP VG Loader Support])
+   AC_DEFINE(BUILD_VG_LOADER_[]UP, [1], [UP Image Loader Support])
 fi
 
 AM_CONDITIONAL(BUILD_VG_LOADER_[]UP, [test "x${have_loader}" = "xyes"])

@@ -18,5 +18,3 @@ vg_common = declare_dependency(
   include_directories: vg_common_inc_dir,
   sources: vg_common_src,
 )
-
-

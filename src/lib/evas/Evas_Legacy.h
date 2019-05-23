@@ -3618,7 +3618,7 @@ EAPI Evas_Object *evas_object_vg_add(Evas *e) EINA_WARN_UNUSED_RESULT EINA_ARG_N
  *
  * @return The number of frames. 0, if it's not animated.
  *
- * @since 1.22
+ * @since 1.23
  */
 EAPI int evas_object_vg_animated_frame_count_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 
@@ -3638,7 +3638,7 @@ EAPI int evas_object_vg_animated_frame_count_get(const Evas_Object *obj) EINA_AR
  * @return Duration in seconds.
  *
  * @see evas_object_vg_animated_frame_count_get()
- * @since 1.22
+ * @since 1.23
  */
 EAPI double evas_object_vg_animated_frame_duration_get(const Evas_Object *obj, int start_frame EINA_UNUSED, int frame_num EINA_UNUSED) EINA_ARG_NONNULL(1);
 
@@ -3657,7 +3657,7 @@ NULL, otherwise.
  *
  * @return @c EINA_TRUE if it's succeed to read file, @c EINA_FALSE otherwise.
  *
- * @since 1.22
+ * @since 1.23
  */
 EAPI Eina_Bool evas_object_vg_file_set(Evas_Object *obj, const char *file, const char *key);
 
@@ -3672,7 +3672,7 @@ EAPI Eina_Bool evas_object_vg_file_set(Evas_Object *obj, const char *file, const
  *
  * @see evas_object_vg_animated_frame_count_get()
  *
- * @since 1.22
+ * @since 1.23
  */
 EAPI Eina_Bool evas_object_vg_animated_frame_set(Evas_Object *obj, int frame_index) EINA_ARG_NONNULL(1, 2);
 
@@ -3684,7 +3684,7 @@ EAPI Eina_Bool evas_object_vg_animated_frame_set(Evas_Object *obj, int frame_ind
  * @see evas_object_vg_animated_frame_set()
  * @see evas_object_vg_animated_frame_count_get()
  *
- * @since 1.22
+ * @since 1.23
  */
 EAPI int evas_object_vg_animated_frame_get(const Evas_Object *obj) EINA_ARG_NONNULL(1);
 

@@ -26,10 +26,7 @@ EXAMPLES= evas-aspect-hints \
           evas-stacking \
           evas-table \
           evas-text \
-          evas-textblock-obstacles \
-          evas-vg-batman \
-          evas-vg-json \
-          evas-vg-simple
+          evas-textblock-obstacles
 
 all: edje examples
 edje: $(EDJE_OBJS)
