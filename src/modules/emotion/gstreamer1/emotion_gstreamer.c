@@ -1563,9 +1563,11 @@ _bus_main_handler(void *data)
 #endif
                        {
                           if (getenv("EMOTION_GSTREAMER_DOT"))
-                            GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline),
-                                                              GST_DEBUG_GRAPH_SHOW_ALL,
-                                                              getenv("EMOTION_GSTREAMER_DOT"));
+                            {
+                               GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline),
+                                                                 GST_DEBUG_GRAPH_SHOW_ALL,
+                                                                 getenv("EMOTION_GSTREAMER_DOT"));
+                            }
                        }
 
                      _emotion_open_done(ev->obj);
@@ -1701,7 +1703,12 @@ _emotion_gstreamer_cancel(void *data, Ecore_Thread *thread)
    if (getuid() == geteuid())
 #endif
      {
-        if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
+        if (getenv("EMOTION_GSTREAMER_DOT"))
+          {
+             GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline),
+                                               GST_DEBUG_GRAPH_SHOW_ALL,
+                                               getenv("EMOTION_GSTREAMER_DOT"));
+          }
      }
 
    emotion_gstreamer_unref(ev);
@@ -1723,7 +1730,12 @@ _emotion_gstreamer_end(void *data, Ecore_Thread *thread)
    if (getuid() == geteuid())
 #endif
      {
-        if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
+        if (getenv("EMOTION_GSTREAMER_DOT"))
+          {
+             GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(ev->pipeline),
+                                               GST_DEBUG_GRAPH_SHOW_ALL,
+                                               getenv("EMOTION_GSTREAMER_DOT"));
+          }
      }
 
    emotion_gstreamer_unref(ev);
@@ -1791,7 +1803,12 @@ _create_pipeline(Emotion_Gstreamer *ev,
    if (getuid() == geteuid())
 #endif
      {
-        if (getenv("EMOTION_GSTREAMER_DOT")) GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(playbin), GST_DEBUG_GRAPH_SHOW_ALL, getenv("EMOTION_GSTREAMER_DOT"));
+        if (getenv("EMOTION_GSTREAMER_DOT"))
+          {
+             GST_DEBUG_BIN_TO_DOT_FILE_WITH_TS(GST_BIN(playbin),
+                                               GST_DEBUG_GRAPH_SHOW_ALL,
+                                               getenv("EMOTION_GSTREAMER_DOT"));
+          }
      }
 
    return playbin;
