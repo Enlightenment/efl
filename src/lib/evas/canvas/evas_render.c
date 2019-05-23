@@ -1649,11 +1649,12 @@ _proxy_context_clip(Evas_Public_Data *evas, void *ctx, Evas_Proxy_Render_Data *p
    if (!proxy_render_data) return EINA_TRUE;
    if (proxy_render_data->source_clip)
      {
+        Evas_Object_Protected_Data *src_obj = proxy_render_data->src_obj;
         /* trust cache.clip since we clip like the source */
         ENFN->context_clip_clip(ENC, ctx,
-                                obj->cur->cache.clip.x + off_x,
-                                obj->cur->cache.clip.y + off_y,
-                                obj->cur->cache.clip.w, obj->cur->cache.clip.h);
+                                src_obj->cur->cache.clip.x + off_x,
+                                src_obj->cur->cache.clip.y + off_y,
+                                src_obj->cur->cache.clip.w, src_obj->cur->cache.clip.h);
         ENFN->context_clip_get(ENC, ctx, NULL, NULL, &cw, &ch);
         return ((cw > 0) && (ch > 0));
      }
@@ -2128,9 +2129,9 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                   if (obj->cur->clipper && (mapped > 1) &&
                       _evas_render_object_is_mask(obj->cur->clipper))
                     _evas_render_mapped_mask(evas, obj, obj->cur->clipper, proxy_render_data, output, ctx, off_x, off_y, level, do_async);
-                  else if (!proxy_src_clip)
+                  else if (!proxy_src_clip && proxy_render_data)
                     {
-                       if (!_proxy_context_clip(evas, ctx, proxy_render_data, obj, off_x, off_y))
+                       if (!_proxy_context_clip(evas, ctx, proxy_render_data, proxy_render_data->proxy_obj, off_x, off_y))
                          goto on_empty_clip;
                     }
 
@@ -2181,9 +2182,9 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                                                                         proxy_render_data,
                                                                         off_x, off_y);
                               }
-                            else
+                            else if (proxy_render_data)
                               {
-                                 if (!_proxy_context_clip(evas, ctx, proxy_render_data, obj, off_x, off_y))
+                                 if (!_proxy_context_clip(evas, ctx, proxy_render_data, proxy_render_data->proxy_obj, off_x, off_y))
                                    goto on_empty_clip;
                               }
                          }
@@ -2239,9 +2240,9 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
 
                        ENFN->context_clip_clip(ENC, ctx, ecx, ecy, ecw, ech);
                     }
-                  else
+                  else if (proxy_render_data)
                     {
-                       if (!_proxy_context_clip(evas, ctx, proxy_render_data, obj, off_x, off_y))
+                       if (!_proxy_context_clip(evas, ctx, proxy_render_data, proxy_render_data->proxy_obj, off_x, off_y))
                          goto on_empty_clip;
                     }
                }
