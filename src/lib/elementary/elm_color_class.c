@@ -152,14 +152,14 @@ _colorclass_changed(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 static void
-_colorclass_reset(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
+_colorclass_reset(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Colorclass_UI *cc = data;
    Colorclass color;
 
    if (!cc->current)
      {
-        efl_event_callback_stop(obj);
+        efl_event_callback_stop(event->object);
         return;
      }
    //if (cc->winid && remote_iface)
@@ -194,10 +194,10 @@ _colorclass_reset(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 }
 
 static void
-_colorclass_activate(void *data, const Efl_Event *event)
+_colorclass_activate(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    Colorclass_UI *cc = data;
-   Elm_Object_Item *it = event->info;
+   Elm_Object_Item *it = event_info;
    Edje_Color_Class *ecc;
    Colorclass *lcc;
    Eina_List *l;
@@ -742,15 +742,15 @@ elm_color_class_editor_add(Evas_Object *obj)
    elm_scroller_policy_set(gl, ELM_SCROLLER_POLICY_OFF, ELM_SCROLLER_POLICY_AUTO);
    elm_genlist_mode_set(gl, ELM_LIST_COMPRESS);
    elm_object_part_content_set(ly, "elm.swallow.list", gl);
-   efl_event_callback_add
-     (gl, EFL_UI_EVENT_ITEM_SELECTED, _colorclass_activate, cc);
+   evas_object_smart_callback_add(gl, "selected", _colorclass_activate, cc);
 
    cc->reset = bt = elm_button_add(ly);
    elm_object_style_set(bt, "colorclass");
    /* FIXME: translate */
    elm_object_text_set(bt, "Reset");
    elm_object_part_content_set(ly, "elm.swallow.reset", bt);
-   evas_object_smart_callback_add(bt, "clicked", _colorclass_reset, cc);
+   efl_event_callback_add
+     (bt, EFL_UI_EVENT_CLICKED, _colorclass_reset, cc);
 
    cc->cs = cs = elm_colorselector_add(ly);
    elm_colorselector_mode_set(cs, ELM_COLORSELECTOR_COMPONENTS);
