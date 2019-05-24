@@ -62,14 +62,17 @@ lib_efl_mono_libefl_mono_dll_sources = \
 	$(efl_eina_mono_files) \
 	$(efl_eldbus_mono_files)
 
-efl_mono_test_files = \
+efl_mono_test_eolian_files = \
 	tests/efl_mono/dummy_test_object.eo \
 	tests/efl_mono/dummy_test_iface.eo \
 	tests/efl_mono/dummy_inherit_iface.eo \
 	tests/efl_mono/dummy_inherit_helper.eo \
 	tests/efl_mono/dummy_child.eo \
 	tests/efl_mono/dummy_part_holder.eo \
-	tests/efl_mono/dummy_numberwrapper.eo \
+	tests/efl_mono/dummy_numberwrapper.eo
+
+efl_mono_test_files = \
+	$(efl_mono_test_eolian_files) \
 	tests/efl_mono/mono_test_driver.sh
 
 EXTRA_DIST2 += \
@@ -398,6 +401,9 @@ tests_efl_mono_libefl_mono_native_test_la_SOURCES = \
 	tests/efl_mono/dummy_part_holder.c \
 	tests/efl_mono/dummy_test_object.c
 
+efl_mono_test_eolian_c = $(efl_mono_test_eolian_files:%.eo=%.eo.c)
+efl_mono_test_eolian_h = $(efl_mono_test_eolian_files:%.eo=%.eo.h)
+
 tests_efl_mono_libefl_mono_native_test_la_CPPFLAGS =  \
 -I$(builddir)/tests/efl_mono \
 @CHECK_CFLAGS@ @EINA_CFLAGS@ @EO_CFLAGS@ @ECORE_CFLAGS@ @ELDBUS_CFLAGS@
@@ -408,35 +414,33 @@ tests_efl_mono_libefl_mono_native_test_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS
 tests_efl_mono_libefl_mono_native_test_la_LIBTOOLFLAGS = --tag=disable-static
 
 tests/efl_mono/dummy_child.c: \
-	tests/efl_mono/dummy_child.eo.c \
-	tests/efl_mono/dummy_child.eo.h \
+	$(efl_mono_test_eolian_c) \
+	$(efl_mono_test_eolian_h) \
 	tests/efl_mono/libefl_mono_native_test.h
 
 tests/efl_mono/dummy_inherit_helper.c: \
-	tests/efl_mono/dummy_inherit_helper.eo.c \
-	tests/efl_mono/dummy_inherit_helper.eo.h \
+	$(efl_mono_test_eolian_c) \
+	$(efl_mono_test_eolian_h) \
 	tests/efl_mono/libefl_mono_native_test.h
 
 tests/efl_mono/dummy_interfaces.c: \
-	tests/efl_mono/dummy_test_iface.eo.c \
-	tests/efl_mono/dummy_test_iface.eo.h \
-	tests/efl_mono/dummy_inherit_iface.eo.c \
-	tests/efl_mono/dummy_inherit_iface.eo.h \
+	$(efl_mono_test_eolian_c) \
+	$(efl_mono_test_eolian_h) \
 	tests/efl_mono/libefl_mono_native_test.h
 
 tests/efl_mono/dummy_numberwrapper.c: \
-	tests/efl_mono/dummy_numberwrapper.eo.c \
-	tests/efl_mono/dummy_numberwrapper.eo.h \
+	$(efl_mono_test_eolian_c) \
+	$(efl_mono_test_eolian_h) \
 	tests/efl_mono/libefl_mono_native_test.h
 
 tests/efl_mono/dummy_part_holder.c: \
-	tests/efl_mono/dummy_part_holder.eo.c \
-	tests/efl_mono/dummy_part_holder.eo.h \
+	$(efl_mono_test_eolian_c) \
+	$(efl_mono_test_eolian_h) \
 	tests/efl_mono/libefl_mono_native_test.h
 
 tests/efl_mono/dummy_test_object.c: \
-	tests/efl_mono/dummy_test_object.eo.c \
-	tests/efl_mono/dummy_test_object.eo.h \
+	$(efl_mono_test_eolian_c) \
+	$(efl_mono_test_eolian_h) \
 	tests/efl_mono/libefl_mono_native_test.h
 
 # Intermediate C Sharp test DLL
@@ -526,7 +530,7 @@ tests/efl_mono/%.eo.cs: tests/efl_mono/%.eo $(_EOLIAN_MONO_DEP)
 	$(MKDIR_P) $(dir $@); \
 	$(EOLIAN_MONO) $(EOLIAN_FLAGS) $(EOLIAN_MONO_FLAGS) --dllimport "@DLIB_PREFIX_MONO@efl_mono_native_test@DLIB_SUFFIX_MONO@" -o $@ $(ALL_EO_REFS) $<
 
-CLEANFILES += tests/efl_mono/libefl_mono_test.dll tests/efl_mono/dummy_test_object.eo.cs tests/efl_mono/dummy_child.eo.cs tests/efl_mono/dummy_numberwrapper.eo.cs tests/efl_mono/dummy_test_object.eo.c tests/efl_mono/dummy_child.eo.c tests/efl_mono/dummy_numberwrapper.eo.c tests/efl_mono/dummy_test_object.eo.h tests/efl_mono/dummy_child.eo.h tests/efl_mono/dummy_part_holder.eo.cs tests/efl_mono/dummy_part_holder.eo.c tests/efl_mono/dummy_part_holder.eo.h tests/efl_mono/dummy_numberwrapper.eo.h tests/efl_mono/efl_mono.config
+CLEANFILES += tests/efl_mono/libefl_mono_test.dll $(efl_mono_test_eolian_mono_files) $(efl_mono_test_eolian_c) $(efl_mono_test_eolian_h) tests/efl_mono/efl_mono.config
 
 endif
 
