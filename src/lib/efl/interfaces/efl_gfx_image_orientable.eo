@@ -1,4 +1,4 @@
-parse efl_ui_direction;
+parse efl_ui_layout_orientable;
 
 enum @beta Efl.Gfx.Image_Orientation
 {
@@ -10,7 +10,7 @@ enum @beta Efl.Gfx.Image_Orientation
      its roof pointing to the right if the $right orientation is used).
      Flipping values ($flip_horizontal and $flip_vertical) can be additionaly added
      to produce a mirroring in each axis.
-     Not to be confused with @Efl.Ui.Dir which is meant for widgets, rather
+     Not to be confused with @Efl.Ui.Layout_Orientation which is meant for widgets, rather
      than images and canvases. This enum is used to rotate images, videos and
      the like.
    ]]

@@ -34,20 +34,20 @@ struct _Efl_Ui_Panes_Data
       Eina_Bool move;
    } move;
 
-   Efl_Ui_Dir            dir;
-   double                left_min_relative_size;
-   double                right_min_relative_size;
-   Eina_Size2D           first_min, second_min;
-   double                first_min_split_ratio, second_min_split_ratio;
+   Efl_Ui_Layout_Orientation  dir;
+   double                     left_min_relative_size;
+   double                     right_min_relative_size;
+   Eina_Size2D                first_min, second_min;
+   double                     first_min_split_ratio, second_min_split_ratio;
 
-   Evas_Coord            left_min_size;
-   Evas_Coord            right_min_size;
-   Eina_Bool             double_clicked : 1;
-   Eina_Bool             fixed : 1;
-   Eina_Bool             left_min_size_is_relative : 1;
-   Eina_Bool             right_min_size_is_relative : 1;
-   Eina_Bool             first_hint_min_allow : 1;
-   Eina_Bool             second_hint_min_allow : 1;
+   Evas_Coord                 left_min_size;
+   Evas_Coord                 right_min_size;
+   Eina_Bool                  double_clicked : 1;
+   Eina_Bool                  fixed : 1;
+   Eina_Bool                  left_min_size_is_relative : 1;
+   Eina_Bool                  right_min_size_is_relative : 1;
+   Eina_Bool                  first_hint_min_allow : 1;
+   Eina_Bool                  second_hint_min_allow : 1;
 };
 
 /**

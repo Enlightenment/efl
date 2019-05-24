@@ -51,7 +51,7 @@ class @beta Efl.Ui.List extends Efl.Ui.Layout_Base implements
       Efl.Container.content_iterate;
       Efl.Container.content_count;
 
-      //Efl.Ui.Direction.direction { get; set; } //TODO
+      //Efl.Ui.Layout_Orientable.orientation { get; set; } //TODO
 
       //Efl.Ui.Widget
       Efl.Ui.Widget.theme_apply;

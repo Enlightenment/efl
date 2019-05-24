@@ -197,7 +197,7 @@ test_events(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_win_autodel_set(win, EINA_TRUE);
 
    bx = efl_add(EFL_UI_BOX_CLASS, win,
-                efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL));
+                efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
    efl_content_set(win, bx);
    td->win = win;
 

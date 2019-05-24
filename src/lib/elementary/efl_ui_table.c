@@ -90,7 +90,7 @@ _efl_ui_table_last_position_get(Eo * obj, Efl_Ui_Table_Data *pd, int *last_col, 
 
    efl_pack_table_size_get(obj, &req_cols, &req_rows);
 
-   if (efl_ui_dir_is_horizontal(pd->fill_dir, EINA_TRUE))
+   if (efl_ui_layout_orientation_is_horizontal(pd->fill_dir, EINA_TRUE))
      {
         EINA_INLIST_REVERSE_FOREACH(EINA_INLIST_GET(pd->items), gi)
           {
@@ -220,7 +220,7 @@ _efl_ui_table_efl_object_constructor(Eo *obj, Efl_Ui_Table_Data *pd)
    efl_access_object_access_type_set(obj, EFL_ACCESS_TYPE_SKIPPED);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_FILLER);
 
-   pd->fill_dir = EFL_UI_DIR_RIGHT;
+   pd->fill_dir = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
    pd->last_col = -1;
    pd->last_row = -1;
    pd->req_cols = 0;
@@ -619,21 +619,21 @@ _efl_ui_table_efl_pack_table_table_contents_get(Eo *obj EINA_UNUSED, Efl_Ui_Tabl
 }
 
 EOLIAN static void
-_efl_ui_table_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Ui_Dir dir)
+_efl_ui_table_efl_ui_layout_orientable_orientation_set(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Ui_Layout_Orientation dir)
 {
    if (pd->fill_dir == dir)
      return;
 
-   if (dir == EFL_UI_DIR_DEFAULT)
-     dir = EFL_UI_DIR_RIGHT;
+   if (dir == EFL_UI_LAYOUT_ORIENTATION_DEFAULT)
+     dir = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
 
    pd->fill_dir = dir;
 
    efl_pack_layout_request(obj);
 }
 
-EOLIAN static Efl_Ui_Dir
-_efl_ui_table_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd)
+EOLIAN static Efl_Ui_Layout_Orientation
+_efl_ui_table_efl_ui_layout_orientable_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Table_Data *pd)
 {
    return pd->fill_dir;
 }
@@ -728,7 +728,7 @@ _efl_ui_table_efl_pack_pack(Eo *obj, Efl_Ui_Table_Data *pd, Efl_Gfx_Entity *subo
 
    _efl_ui_table_last_position_get(obj, pd, &last_col, &last_row);
 
-   if (efl_ui_dir_is_horizontal(pd->fill_dir, EINA_TRUE))
+   if (efl_ui_layout_orientation_is_horizontal(pd->fill_dir, EINA_TRUE))
      {
         last_col++;
         if (pd->req_cols && (last_col >= pd->req_cols))

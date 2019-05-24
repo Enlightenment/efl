@@ -183,7 +183,7 @@ _efl_ui_box_efl_object_constructor(Eo *obj, Efl_Ui_Box_Data *pd)
    efl_access_object_access_type_set(obj, EFL_ACCESS_TYPE_SKIPPED);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_FILLER);
 
-   pd->dir = EFL_UI_DIR_VERTICAL;
+   pd->dir = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
    pd->align.h = 0.5;
    pd->align.v = 0.5;
 
@@ -372,34 +372,28 @@ _efl_ui_box_efl_container_content_iterate(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *
 }
 
 EOLIAN static void
-_efl_ui_box_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Ui_Dir dir)
+_efl_ui_box_efl_ui_layout_orientable_orientation_set(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Ui_Layout_Orientation dir)
 {
    if (pd->dir == dir) return;
 
    switch (dir)
      {
-      case EFL_UI_DIR_RTL:
-        // FIXME: Should be inverted!
-      case EFL_UI_DIR_HORIZONTAL:
-      case EFL_UI_DIR_LTR:
-        pd->dir = EFL_UI_DIR_HORIZONTAL;
+      case EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL:
+        pd->dir = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
         break;
 
-      case EFL_UI_DIR_UP:
-        // FIXME: Should be inverted!
-      case EFL_UI_DIR_DOWN:
-      case EFL_UI_DIR_VERTICAL:
-      case EFL_UI_DIR_DEFAULT:
+      case EFL_UI_LAYOUT_ORIENTATION_VERTICAL:
+      case EFL_UI_LAYOUT_ORIENTATION_DEFAULT:
       default:
-        pd->dir = EFL_UI_DIR_VERTICAL;
+        pd->dir = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
         break;
      }
 
    efl_pack_layout_request(obj);
 }
 
-EOLIAN static Efl_Ui_Dir
-_efl_ui_box_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd)
+EOLIAN static Efl_Ui_Layout_Orientation
+_efl_ui_box_efl_ui_layout_orientable_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Box_Data *pd)
 {
    return pd->dir;
 }

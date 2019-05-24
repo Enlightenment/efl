@@ -44,7 +44,7 @@ test_efl_ui_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
                 efl_content_set(win, efl_added));
 
    bx = efl_add(EFL_UI_BOX_CLASS, sc,
-                efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN),
+                efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
                 efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0),
                 efl_gfx_hint_align_set(efl_added, 0.5, 0),
                 efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
@@ -69,7 +69,7 @@ test_efl_ui_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
                  efl_pack(bx, efl_added));
 
    bx2 = efl_add(EFL_UI_BOX_CLASS, sc2,
-                 efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                 efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                  efl_content_set(sc2, efl_added));
 
    for (i = 0; i < 10; i++)

@@ -63,7 +63,7 @@ _create_box_contents(Evas_Object *box)
    unsigned int i;
 
    hbox = efl_add(EFL_UI_BOX_CLASS, box,
-                  efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                  efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                   efl_gfx_hint_weight_set(efl_added, 1, 1),
                   efl_pack_end(box, efl_added));
 
@@ -86,7 +86,7 @@ _create_box_contents(Evas_Object *box)
         if (!content_class[i]) continue;
 
         hbox = efl_add(EFL_UI_BOX_CLASS, box,
-                       efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                       efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                        efl_pack_end(box, efl_added));
 
         radio = efl_add(EFL_UI_RADIO_CLASS, hbox,
@@ -152,7 +152,7 @@ test_part_background(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
                   efl_content_set(win, efl_added));
 
    hbox = efl_add(EFL_UI_BOX_CLASS, vbox,
-                  efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                  efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                   efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
                   efl_pack_end(vbox, efl_added));
 

@@ -338,7 +338,7 @@ test_bg_window(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
                  efl_ui_win_alpha_set(efl_added, 1));
 
    box = efl_add(EFL_UI_BOX_CLASS, win,
-                 efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                 efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                  efl_gfx_hint_weight_set(efl_added, 1, 1),
                  efl_content_set(win, efl_added));
 
@@ -415,7 +415,7 @@ test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
            efl_content_set(win, efl_added));
 
    box = efl_add(EFL_UI_BOX_CLASS, win,
-                 efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
+                 efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
                  efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND),
                  efl_content_set(win, efl_added));
 
@@ -428,7 +428,7 @@ test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
                   efl_pack(box, efl_added));
 
    hbox = efl_add(EFL_UI_BOX_CLASS, box,
-                  efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                  efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                   efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, 0.0),
                   efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
                   efl_pack(box, efl_added));

@@ -353,7 +353,7 @@ test_remote_ui_image(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *event_i
      }
 
    box2 = o = efl_add(EFL_UI_BOX_CLASS, box);
-   efl_ui_direction_set(o, EFL_UI_DIR_RIGHT);
+   efl_ui_layout_orientation_set(o, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
    efl_gfx_hint_weight_set(o, 1.0, 0);
    efl_gfx_hint_fill_set(o, EINA_TRUE, EINA_TRUE);
 
@@ -554,7 +554,7 @@ test_load_ui_image(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *event_inf
    _create_image(win, EINA_FALSE, EINA_FALSE, EINA_FALSE);
 
    hbox = efl_add(EFL_UI_BOX_CLASS, win);
-   efl_ui_direction_set(hbox, EFL_UI_DIR_RIGHT);
+   efl_ui_layout_orientation_set(hbox, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
    efl_gfx_arrangement_content_align_set(hbox, 0, 0.5);
    efl_gfx_hint_weight_set(hbox, 1.0, 0.0);
    efl_gfx_hint_fill_set(hbox, EINA_TRUE, EINA_FALSE);
@@ -586,7 +586,7 @@ test_load_ui_image(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *event_inf
    efl_pack(box, hbox);
 
    hbox = efl_add(EFL_UI_BOX_CLASS, win);
-   efl_ui_direction_set(hbox, EFL_UI_DIR_RIGHT);
+   efl_ui_layout_orientation_set(hbox, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
    efl_gfx_arrangement_content_align_set(hbox, 0.5, 0.5);
    efl_gfx_hint_weight_set(hbox, 1.0, 0.0);
    efl_gfx_hint_fill_set(hbox, EINA_TRUE, EINA_FALSE),
@@ -635,7 +635,7 @@ test_ui_image_prescale(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_
    efl_pack(box, im);
 
    hbox = efl_add(EFL_UI_BOX_CLASS, win);
-   efl_ui_direction_set(hbox, EFL_UI_DIR_RIGHT);
+   efl_ui_layout_orientation_set(hbox, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
    efl_gfx_hint_weight_set(hbox, 1.0, 1.0);
    efl_gfx_hint_fill_set(hbox, EINA_TRUE, EINA_TRUE);
 

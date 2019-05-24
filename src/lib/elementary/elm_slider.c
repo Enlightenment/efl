@@ -71,37 +71,9 @@ _delay_change(void *data)
 }
 
 static inline Eina_Bool
-_is_horizontal(Efl_Ui_Dir dir)
+_is_horizontal(Efl_Ui_Layout_Orientation dir)
 {
-   return efl_ui_dir_is_horizontal(dir, EINA_TRUE);
-}
-
-static inline Eina_Bool
-_is_inverted(Efl_Ui_Dir dir)
-{
-   if ((dir == EFL_UI_DIR_LEFT) || (dir == EFL_UI_DIR_UP))
-     return EINA_TRUE;
-
-   return EINA_FALSE;
-}
-
-static Efl_Ui_Dir
-_direction_get(Eina_Bool horizontal, Eina_Bool inverted)
-{
-   if (horizontal)
-     {
-        if (inverted)
-          return EFL_UI_DIR_LEFT;
-        else
-          return EFL_UI_DIR_RIGHT;
-     }
-   else
-     {
-        if (inverted)
-          return EFL_UI_DIR_UP;
-        else
-          return EFL_UI_DIR_DOWN;
-     }
+   return efl_ui_layout_orientation_is_horizontal(dir, EINA_TRUE);
 }
 
 static void
@@ -330,7 +302,7 @@ _drag_up(void *data,
    EFL_UI_SLIDER_DATA_GET(data, sd);
    step = sd->step;
 
-   if (_is_inverted(sd->dir)) step *= -1.0;
+   if (efl_ui_layout_orientation_is_inverted(sd->dir)) step *= -1.0;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
    efl_ui_drag_step_move(efl_part(wd->resize_obj, "elm.dragable.slider"),
@@ -348,7 +320,7 @@ _drag_down(void *data,
    EFL_UI_SLIDER_DATA_GET(data, sd);
    step = -sd->step;
 
-   if (_is_inverted(sd->dir)) step *= -1.0;
+   if (efl_ui_layout_orientation_is_inverted(sd->dir)) step *= -1.0;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
    efl_ui_drag_step_move(efl_part(wd->resize_obj, "elm.dragable.slider"),
@@ -365,7 +337,7 @@ _key_action_drag(Evas_Object *obj, const char *params)
      {
         if (!_is_horizontal(sd->dir))
           return EINA_FALSE;
-        if (!_is_inverted(sd->dir))
+        if (!efl_ui_layout_orientation_is_inverted(sd->dir))
           _drag_down(obj, NULL, NULL, NULL);
         else _drag_up(obj, NULL, NULL, NULL);
      }
@@ -373,7 +345,7 @@ _key_action_drag(Evas_Object *obj, const char *params)
      {
         if (!_is_horizontal(sd->dir))
           return EINA_FALSE;
-        if (!_is_inverted(sd->dir))
+        if (!efl_ui_layout_orientation_is_inverted(sd->dir))
           _drag_up(obj, NULL, NULL, NULL);
         else _drag_down(obj, NULL, NULL, NULL);
      }
@@ -381,7 +353,7 @@ _key_action_drag(Evas_Object *obj, const char *params)
      {
         if (_is_horizontal(sd->dir))
           return EINA_FALSE;
-        if (_is_inverted(sd->dir))
+        if (efl_ui_layout_orientation_is_inverted(sd->dir))
           _drag_up(obj, NULL, NULL, NULL);
         else _drag_down(obj, NULL, NULL, NULL);
      }
@@ -389,7 +361,7 @@ _key_action_drag(Evas_Object *obj, const char *params)
      {
         if (_is_horizontal(sd->dir))
           return EINA_FALSE;
-        if (_is_inverted(sd->dir))
+        if (efl_ui_layout_orientation_is_inverted(sd->dir))
           _drag_down(obj, NULL, NULL, NULL);
         else _drag_up(obj, NULL, NULL, NULL);
      }
@@ -505,7 +477,7 @@ _popup_update(Evas_Object *obj, Elm_Slider_Data *sd, Evas_Object *popup)
    edje_object_scale_set(popup, efl_gfx_entity_scale_get(obj) *
                          elm_config_scale_get());
 
-   if (!_is_inverted(sd2->dir))
+   if (!efl_ui_layout_orientation_is_inverted(sd2->dir))
      edje_object_signal_emit(popup, "elm,state,inverted,off", "elm");
    else
      edje_object_signal_emit(popup, "elm,state,inverted,on", "elm");
@@ -563,7 +535,6 @@ _popup_add(Elm_Slider_Data *sd, Eo *obj, Evas_Object **popup,
 void
 _elm_slider_val_fetch(Evas_Object *obj, Elm_Slider_Data *pd, Eina_Bool user_event)
 {
-   Eina_Bool rtl;
    double posx = 0.0, posy = 0.0, pos = 0.0, val;
    double posx2 = 0.0, posy2 = 0.0, pos2 = 0.0, val2;
    Eina_Bool inverted = EINA_FALSE;
@@ -574,18 +545,15 @@ _elm_slider_val_fetch(Evas_Object *obj, Elm_Slider_Data *pd, Eina_Bool user_even
 
    efl_ui_drag_value_get(efl_part(wd->resize_obj, "elm.dragable.slider"),
                          &posx, &posy);
-   if (efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE)) pos = posx;
+   if (efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE)) pos = posx;
    else pos = posy;
 
    efl_ui_drag_value_get(efl_part(wd->resize_obj, "elm.dragable2.slider"),
                          &posx2, &posy2);
-   if (efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE)) pos2 = posx2;
+   if (efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE)) pos2 = posx2;
    else pos2 = posy2;
 
-   rtl = efl_ui_mirrored_get(obj);
-   if ((!rtl && _is_inverted(sd->dir)) ||
-       (rtl && ((sd->dir == EFL_UI_DIR_UP) ||
-                (sd->dir == EFL_UI_DIR_RIGHT))))
+   if (efl_ui_mirrored_get(obj) ^ efl_ui_layout_orientation_is_inverted(sd->dir))
      {
         pos = 1.0 - pos;
         pos2 = 1.0 - pos2;
@@ -651,7 +619,6 @@ _elm_slider_val_fetch(Evas_Object *obj, Elm_Slider_Data *pd, Eina_Bool user_even
 void
 _elm_slider_val_set(Evas_Object *obj, Elm_Slider_Data *pd EINA_UNUSED)
 {
-   Eina_Bool rtl;
    double pos, pos2;
 
    EFL_UI_SLIDER_DATA_GET(obj, sd);
@@ -677,10 +644,7 @@ _elm_slider_val_set(Evas_Object *obj, Elm_Slider_Data *pd EINA_UNUSED)
    else if (pos2 > 1.0)
      pos2 = 1.0;
 
-   rtl = efl_ui_mirrored_get(obj);
-   if ((!rtl && _is_inverted(sd->dir)) ||
-       (rtl && ((sd->dir == EFL_UI_DIR_UP) ||
-                (sd->dir == EFL_UI_DIR_RIGHT))))
+   if (efl_ui_mirrored_get(obj) ^ efl_ui_layout_orientation_is_inverted(sd->dir))
      {
         pos = 1.0 - pos;
         pos2 = 1.0 - pos2;
@@ -718,7 +682,7 @@ _elm_slider_down_knob(Evas_Object *obj, Elm_Slider_Data *pd, double button_x, do
         efl_ui_drag_value_get(efl_part(wd->resize_obj, "elm.dragable2.slider"),
                               &posx2, &posy2);
 
-        if (efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+        if (efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
           {
              diff1 = fabs(button_x - posx);
              diff2 = fabs(button_x - posx2);
@@ -836,7 +800,7 @@ _elm_slider_efl_ui_widget_theme_apply(Eo *obj, Elm_Slider_Data *sd)
    else
      elm_layout_signal_emit(obj, "elm,slider,range,disable", "elm");
 
-   if (_is_inverted(sd2->dir))
+   if (efl_ui_layout_orientation_is_inverted(sd2->dir))
      elm_layout_signal_emit(obj, "elm,state,inverted,on", "elm");
    else
      elm_layout_signal_emit(obj, "elm,state,inverted,off", "elm");
@@ -1235,12 +1199,13 @@ elm_slider_unit_format_get(const Evas_Object *obj)
 EAPI void
 elm_slider_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
-   Efl_Ui_Dir dir;
+   Efl_Ui_Layout_Orientation dir;
    EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd2);
 
-   dir = _direction_get(horizontal, _is_inverted(sd2->dir));
+   dir = horizontal ? EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL : EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
+   dir |= (sd2->dir & EFL_UI_LAYOUT_ORIENTATION_INVERTED);
 
-   efl_ui_direction_set(obj, dir);
+   efl_ui_layout_orientation_set(obj, dir);
 }
 
 EAPI Eina_Bool
@@ -1248,8 +1213,8 @@ elm_slider_horizontal_get(const Evas_Object *obj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
 
-   Efl_Ui_Dir dir;
-   dir = efl_ui_direction_get(obj);
+   Efl_Ui_Layout_Orientation dir;
+   dir = efl_ui_layout_orientation_get(obj);
 
    return _is_horizontal(dir);
 }
@@ -1281,21 +1246,22 @@ elm_slider_value_get(const Evas_Object *obj)
 EAPI void
 elm_slider_inverted_set(Evas_Object *obj, Eina_Bool inverted)
 {
-   Efl_Ui_Dir dir;
+   Efl_Ui_Layout_Orientation dir;
    EFL_UI_SLIDER_DATA_GET_OR_RETURN(obj, sd2);
 
-   dir = _direction_get(_is_horizontal(sd2->dir), inverted);
+   dir = sd2->dir & EFL_UI_LAYOUT_ORIENTATION_AXIS_BITMASK;
+   if (inverted) dir |= EFL_UI_LAYOUT_ORIENTATION_INVERTED;
 
-   efl_ui_direction_set(obj, dir);
+   efl_ui_layout_orientation_set(obj, dir);
 }
 
 EAPI Eina_Bool
 elm_slider_inverted_get(const Evas_Object *obj)
 {
-   Efl_Ui_Dir dir;
-   dir = efl_ui_direction_get(obj);
+   Efl_Ui_Layout_Orientation dir;
+   dir = efl_ui_layout_orientation_get(obj);
 
-   return _is_inverted(dir);
+   return efl_ui_layout_orientation_is_inverted(dir);
 }
 
 typedef struct

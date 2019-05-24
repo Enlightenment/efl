@@ -27,7 +27,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    win.content_set(box);
 
    efl::ui::Box box_initial(instantiate, win);
-   box_initial.direction_set(EFL_UI_DIR_HORIZONTAL);
+   box_initial.orientation_set(EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
    box_initial.hint_weight_set(EFL_GFX_HINT_EXPAND, 0.0);
    box.pack_end(box_initial);
 
@@ -78,7 +78,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    efl::eolian::event_add(efl::ui::Clickable::clicked_event, btn3, btn_options);
 
    efl::ui::Box box_gap(instantiate, win);
-   box_gap.direction_set(EFL_UI_DIR_HORIZONTAL);
+   box_gap.orientation_set(EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
    box_gap.hint_weight_set(EFL_GFX_HINT_EXPAND, 0.0);
    box.pack_end(box_gap);
 
@@ -174,7 +174,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    up.content_set(icon_up);
 
    efl::ui::Box box_inferior(instantiate, win);
-   box_inferior.direction_set(EFL_UI_DIR_HORIZONTAL);
+   box_inferior.orientation_set(EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
    box.pack_end(box_inferior);
    box_inferior.visible_set(true);
 

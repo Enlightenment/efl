@@ -155,7 +155,7 @@ test_ui_progressbar(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_inf
 
    btbx = efl_add(EFL_UI_BOX_CLASS, bx,
                   efl_pack(bx, efl_added),
-                  efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL)
+                  efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
                  );
 
    pd->btn_start = efl_add(EFL_UI_BUTTON_CLASS, btbx,

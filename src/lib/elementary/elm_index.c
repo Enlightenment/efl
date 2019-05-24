@@ -59,7 +59,7 @@ _box_custom_layout(Evas_Object *o, Evas_Object_Box_Data *priv, void *data)
    ELM_INDEX_DATA_GET(data, sd);
    Eina_Bool horizontal;
 
-   horizontal = efl_ui_dir_is_horizontal(sd->dir, EINA_FALSE);
+   horizontal = efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_FALSE);
    _els_box_layout(o, priv, horizontal, EINA_TRUE, efl_ui_mirrored_get(data));
 }
 
@@ -242,7 +242,7 @@ _index_box_auto_fill(Evas_Object *obj,
    if (sd->omit_enabled)
      {
         o = edje_object_add(evas_object_evas_get(obj));
-        if (efl_ui_dir_is_horizontal(sd->dir, EINA_FALSE))
+        if (efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_FALSE))
           {
              elm_widget_theme_object_set
                 (obj, o, "index", "item/horizontal", style);
@@ -333,7 +333,7 @@ _index_box_auto_fill(Evas_Object *obj,
         edje_object_mirrored_set(VIEW(it), rtl);
         o = VIEW(it);
 
-        if (efl_ui_dir_is_horizontal(sd->dir, EINA_FALSE))
+        if (efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_FALSE))
           {
              if (i & 0x1)
                elm_widget_theme_object_set
@@ -445,7 +445,7 @@ _elm_index_efl_ui_widget_theme_apply(Eo *obj, Elm_Index_Data *sd)
    _index_box_clear(obj, 0);
    _index_box_clear(obj, 1);
 
-   if (efl_ui_dir_is_horizontal(sd->dir, EINA_FALSE))
+   if (efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_FALSE))
      elm_widget_theme_element_set(obj, "base/horizontal");
    else
      elm_widget_theme_element_set(obj, "base/vertical");
@@ -662,7 +662,7 @@ _sel_eval(Evas_Object *obj,
                   x = (x * x) + (y * y);
                   if ((x < dist) || (!it_closest))
                     {
-                       if (efl_ui_dir_is_horizontal(sd->dir, EINA_FALSE))
+                       if (efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_FALSE))
                          cdv = (double)(xx - bx) / (double)bw;
                        else
                          cdv = (double)(yy - by) / (double)bh;
@@ -902,7 +902,7 @@ _on_mouse_move(void *data,
      (wd->resize_obj, "elm.dragable.pointer",
      (!edje_object_mirrored_get(wd->resize_obj)) ?
      x : (x - w), y);
-   if (!efl_ui_dir_is_horizontal(sd->dir, EINA_FALSE) && (sd->event_rect[1]))
+   if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_FALSE) && (sd->event_rect[1]))
      {
         if (adx > minw)
           {
@@ -1093,7 +1093,7 @@ _elm_index_efl_canvas_group_group_add(Eo *obj, Elm_Index_Data *priv)
    evas_object_show(priv->bx[0]);
 
    priv->delay_change_time = INDEX_DELAY_CHANGE_TIME;
-   priv->dir = EFL_UI_DIR_VERTICAL;
+   priv->dir = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
 
    if (edje_object_part_exists
          (wd->resize_obj, "elm.swallow.index.1"))
@@ -1191,16 +1191,16 @@ elm_index_add(Evas_Object *parent)
 
 EAPI void elm_index_horizontal_set(Evas_Object *obj, Eina_Bool horizontal)
 {
-   Efl_Ui_Dir dir = horizontal ? EFL_UI_DIR_HORIZONTAL : EFL_UI_DIR_VERTICAL;
+   Efl_Ui_Layout_Orientation dir = horizontal ? EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL : EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
 
-   efl_ui_direction_set(obj, dir);
+   efl_ui_layout_orientation_set(obj, dir);
 }
 
 EAPI Eina_Bool elm_index_horizontal_get(const Evas_Object *obj)
 {
-   Efl_Ui_Dir dir = efl_ui_direction_get(obj);
+   Efl_Ui_Layout_Orientation dir = efl_ui_layout_orientation_get(obj);
 
-   return efl_ui_dir_is_horizontal(dir, EINA_FALSE);
+   return efl_ui_layout_orientation_is_horizontal(dir, EINA_FALSE);
 }
 
 EOLIAN static Eo *
@@ -1571,21 +1571,21 @@ _elm_index_item_letter_get(const Eo *item EINA_UNUSED, Elm_Index_Item_Data *it)
 }
 
 EOLIAN static void
-_elm_index_efl_ui_direction_direction_set(Eo *obj, Elm_Index_Data *sd, Efl_Ui_Dir dir)
+_elm_index_efl_ui_layout_orientable_orientation_set(Eo *obj, Elm_Index_Data *sd, Efl_Ui_Layout_Orientation dir)
 {
    // Adjust direction to be either horizontal or vertical.
-   if (efl_ui_dir_is_horizontal(dir, EINA_FALSE))
-     dir = EFL_UI_DIR_HORIZONTAL;
+   if (efl_ui_layout_orientation_is_horizontal(dir, EINA_FALSE))
+     dir = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
    else
-     dir = EFL_UI_DIR_VERTICAL;
+     dir = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
 
    sd->dir = dir;
 
    efl_ui_widget_theme_apply(obj);
 }
 
-EOLIAN static Efl_Ui_Dir
-_elm_index_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
+EOLIAN static Efl_Ui_Layout_Orientation
+_elm_index_efl_ui_layout_orientable_orientation_get(const Eo *obj EINA_UNUSED, Elm_Index_Data *sd)
 {
    return sd->dir;
 }

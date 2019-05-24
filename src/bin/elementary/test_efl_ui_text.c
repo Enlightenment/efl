@@ -180,7 +180,7 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    bx2 = efl_add(EFL_UI_BOX_CLASS, bx);
    efl_gfx_hint_weight_set(bx2, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND);
-   efl_ui_direction_set(bx2, EFL_UI_DIR_HORIZONTAL);
+   efl_ui_layout_orientation_set(bx2, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
 
    bt = efl_add(EFL_UI_BUTTON_CLASS, bx2);
    efl_text_set(bt, "Sel");
@@ -372,7 +372,7 @@ test_ui_text_item_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
 
    bx2 = efl_add(EFL_UI_BOX_CLASS, bx);
    efl_gfx_hint_weight_set(bx2, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND);
-   efl_ui_direction_set(bx2, EFL_UI_DIR_HORIZONTAL);
+   efl_ui_layout_orientation_set(bx2, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
 
    bt = efl_add(EFL_UI_BUTTON_CLASS, bx2);
    efl_text_set(bt, "Image");

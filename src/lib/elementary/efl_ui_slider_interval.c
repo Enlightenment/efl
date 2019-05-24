@@ -45,7 +45,7 @@ _efl_ui_slider_interval_val_fetch(Evas_Object *obj, Efl_Ui_Slider_Interval_Data 
    else
      efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.dragable.slider"),
                            &posx, &posy);
-   if (efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE)) pos = posx;
+   if (efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE)) pos = posx;
    else pos = posy;
 
    if (elm_widget_is_legacy(obj))
@@ -54,7 +54,7 @@ _efl_ui_slider_interval_val_fetch(Evas_Object *obj, Efl_Ui_Slider_Interval_Data 
    else
      efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.dragable2.slider"),
                            &posx2, &posy2);
-   if (efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE)) pos2 = posx2;
+   if (efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE)) pos2 = posx2;
    else pos2 = posy2;
 
    val = (pos * (sd->val_max - sd->val_min)) + sd->val_min;
@@ -171,7 +171,7 @@ _efl_ui_slider_interval_down_knob(Evas_Object *obj, Efl_Ui_Slider_Interval_Data 
                               &posx2, &posy2);
      }
 
-   if (efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+   if (efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
      {
         diff1 = fabs(button_x - posx);
         diff2 = fabs(button_x - posx2);

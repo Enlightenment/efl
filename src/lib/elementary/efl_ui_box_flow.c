@@ -70,7 +70,7 @@ _efl_ui_box_flow_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Box_Flow_Data *pd
    Item_Calc *items, *item;
    Row_Calc *rows, *row;
    Efl_Ui_Container_Item_Hints *hints, *hint;
-   Eina_Bool axis = !efl_ui_dir_is_horizontal(bd->dir, EINA_FALSE);
+   Eina_Bool axis = !efl_ui_layout_orientation_is_horizontal(bd->dir, EINA_FALSE);
    Eina_Bool c_axis = !axis;
    int want[2] = { 0, 0 };
    int rc = 0, count, i = 0, id, item_last = 0;

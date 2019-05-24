@@ -73,8 +73,8 @@ pub_eo_files = [
   'efl_pack_table.eo',
   'efl_gfx_arrangement.eo',
   'efl_ui_i18n.eo',
-  'efl_ui_direction.eo',
-  'efl_ui_direction_readonly.eo',
+  'efl_ui_layout_orientable.eo',
+  'efl_ui_layout_orientable_readonly.eo',
   'efl_ui_drag.eo',
   'efl_ui_range_display.eo',
   'efl_ui_range_interactive.eo',
@@ -167,7 +167,7 @@ efl_src += files([
   'efl_observer.c',
   'efl_file.c',
   'efl_ui_format.c',
-  'efl_ui_direction_readonly.c',
+  'efl_ui_layout_orientable_readonly.c',
   'efl_text_markup_util.c',
 ])
 

@@ -1,5 +1,5 @@
 class @beta Efl.Ui.Box extends Efl.Ui.Widget implements Efl.Pack_Linear, Efl.Pack_Layout,
-                  Efl.Ui.Direction, Efl.Gfx.Arrangement
+                  Efl.Ui.Layout_Orientable, Efl.Gfx.Arrangement
 {
    [[The box widget.
 
@@ -35,7 +35,7 @@ class @beta Efl.Ui.Box extends Efl.Ui.Widget implements Efl.Pack_Linear, Efl.Pac
       Efl.Gfx.Entity.size { set; }
       Efl.Container.content_iterate;
       Efl.Container.content_count;
-      Efl.Ui.Direction.direction { get; set; }
+      Efl.Ui.Layout_Orientable.orientation { get; set; }
       Efl.Pack.pack_clear;
       Efl.Pack.unpack_all;
       Efl.Pack.unpack;

@@ -176,7 +176,7 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
            efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED, _radius_set, win));
 
    box = efl_add(EFL_UI_BOX_CLASS, win,
-                 efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                 efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                  efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
                  efl_pack_table(table, efl_added, 0, TABLE_SIZE + 1, TABLE_SIZE, 1));
 

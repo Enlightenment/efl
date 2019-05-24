@@ -149,7 +149,7 @@ _setter_add(Eo *vbox, Eo *btn, Options option)
    btn_text = ((to == layout) ? "parent" : (char *)efl_text_get(to));
 
    hbox = efl_add(EFL_UI_BOX_CLASS, vbox,
-                  efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                  efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                   efl_gfx_arrangement_content_padding_set(efl_added, 2, 2, EINA_TRUE),
                   efl_pack(vbox, efl_added));
 
@@ -191,13 +191,13 @@ _button_frame_add(Eo *box, Eo *btn)
                efl_pack(box, efl_added));
 
    vbox = efl_add(EFL_UI_BOX_CLASS, f,
-                  efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
+                  efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
                   efl_gfx_arrangement_content_padding_set(efl_added, 2, 2, EINA_TRUE),
                   efl_gfx_hint_margin_set(efl_added, 2, 2, 2, 2),
                   efl_content_set(f, efl_added));
 
    hbox = efl_add(EFL_UI_BOX_CLASS, vbox,
-                  efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                  efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                   efl_gfx_arrangement_content_padding_set(efl_added, 2, 2, EINA_TRUE),
                   efl_pack(vbox, efl_added));
 
@@ -230,7 +230,7 @@ _button_frame_add(Eo *box, Eo *btn)
    efl_gfx_hint_align_get(btn, &align_x, &align_y);
 
    hbox = efl_add(EFL_UI_BOX_CLASS, vbox,
-                  efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                  efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                   efl_gfx_arrangement_content_padding_set(efl_added, 2, 2, EINA_TRUE),
                   efl_pack(vbox, efl_added));
 
@@ -250,7 +250,7 @@ _button_frame_add(Eo *box, Eo *btn)
            efl_pack(hbox, efl_added));
 
    hbox = efl_add(EFL_UI_BOX_CLASS, vbox,
-                  efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                  efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                   efl_gfx_arrangement_content_padding_set(efl_added, 2, 2, EINA_TRUE),
                   efl_pack(vbox, efl_added));
 
@@ -281,7 +281,7 @@ test_ui_relative_layout(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    vbox = efl_add(EFL_UI_BOX_CLASS, win,
-                  efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
+                  efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
                   efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
                   efl_gfx_hint_margin_set(efl_added, 5, 5, 5, 5),
                   efl_content_set(win, efl_added));
@@ -293,7 +293,7 @@ test_ui_relative_layout(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
                efl_pack(vbox, efl_added));
 
    hbox = efl_add(EFL_UI_BOX_CLASS, f,
-                  efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                  efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                   efl_gfx_arrangement_content_padding_set(efl_added, 10, 0, EINA_TRUE),
                   efl_content_set(f, efl_added));
 

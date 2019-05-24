@@ -35,7 +35,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Efl_Ui_Box_Data *pd)
    Eina_Inlist *inlist = NULL;
    Item_Calc *items, *item;
    Efl_Ui_Container_Item_Hints *hints, *hint;
-   Eina_Bool axis = !efl_ui_dir_is_horizontal(pd->dir, EINA_FALSE);
+   Eina_Bool axis = !efl_ui_layout_orientation_is_horizontal(pd->dir, EINA_FALSE);
    Eina_Bool r_axis = !axis;
    int want[2] = { 0, 0 };
    int count, i = 0;

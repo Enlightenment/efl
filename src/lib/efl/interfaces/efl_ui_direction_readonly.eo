@@ -1,6 +1,0 @@
-mixin @beta Efl.Ui.Direction_Readonly extends Efl.Ui.Direction
-{
-  implements {
-    Efl.Ui.Direction.direction { set; [[This will always print and error that this is a readonly object]]}
-  }
-}

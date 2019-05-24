@@ -26,7 +26,7 @@ test_ui_timepicker(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                 efl_content_set(win, efl_added),
-                efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
+                efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
 
    efl_add(EFL_UI_TIMEPICKER_CLASS, bx,
            efl_ui_timepicker_time_set(efl_added, 11, 35),

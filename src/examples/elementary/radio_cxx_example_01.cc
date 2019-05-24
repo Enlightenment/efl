@@ -17,7 +17,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    win.autohide_set(true);
 
    efl::ui::Box bx(instantiate, win);
-   bx.direction_set(EFL_UI_DIR_HORIZONTAL);
+   bx.orientation_set(EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
    win.content_set(bx);
 
    efl::ui::Radio radio(instantiate, win);

@@ -43,7 +43,7 @@ struct _Efl_Ui_Progressbar_Data
    void                  *format_cb_data;
    Eina_Strbuf           *format_strbuf;
 
-   Efl_Ui_Dir            dir; /**< Orientation of the progressbar  */
+   Efl_Ui_Layout_Orientation dir; /**< Orientation of the progressbar  */
 
    Eina_Bool             pulse : 1; /**< Whether object is put in the pulsing mode */
    Eina_Bool             pulse_state : 1; /**< To start the pulsing animation, otherwise to stop it */

@@ -235,10 +235,10 @@ Eina_Rect _elm_toolbar_efl_ui_widget_focus_highlight_geometry_get(const Eo *obj,
 Elm_Widget_Item *_elm_toolbar_elm_widget_item_container_focused_item_get(const Eo *obj, Elm_Toolbar_Data *pd);
 
 
-void _elm_toolbar_efl_ui_direction_direction_set(Eo *obj, Elm_Toolbar_Data *pd, Efl_Ui_Dir dir);
+void _elm_toolbar_efl_ui_layout_orientable_orientation_set(Eo *obj, Elm_Toolbar_Data *pd, Efl_Ui_Layout_Orientation dir);
 
 
-Efl_Ui_Dir _elm_toolbar_efl_ui_direction_direction_get(const Eo *obj, Elm_Toolbar_Data *pd);
+Efl_Ui_Layout_Orientation _elm_toolbar_efl_ui_layout_orientable_orientation_get(const Eo *obj, Elm_Toolbar_Data *pd);
 
 
 Eina_Bool _elm_toolbar_efl_ui_widget_focus_state_apply(Eo *obj, Elm_Toolbar_Data *pd, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect);
@@ -329,8 +329,8 @@ _elm_toolbar_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_ui_widget_input_event_handler, _elm_toolbar_efl_ui_widget_widget_input_event_handler),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_focus_highlight_geometry_get, _elm_toolbar_efl_ui_widget_focus_highlight_geometry_get),
       EFL_OBJECT_OP_FUNC(elm_widget_item_container_focused_item_get, _elm_toolbar_elm_widget_item_container_focused_item_get),
-      EFL_OBJECT_OP_FUNC(efl_ui_direction_set, _elm_toolbar_efl_ui_direction_direction_set),
-      EFL_OBJECT_OP_FUNC(efl_ui_direction_get, _elm_toolbar_efl_ui_direction_direction_get),
+      EFL_OBJECT_OP_FUNC(efl_ui_layout_orientation_set, _elm_toolbar_efl_ui_layout_orientable_orientation_set),
+      EFL_OBJECT_OP_FUNC(efl_ui_layout_orientation_get, _elm_toolbar_efl_ui_layout_orientable_orientation_get),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_focus_state_apply, _elm_toolbar_efl_ui_widget_focus_state_apply),
       EFL_OBJECT_OP_FUNC(efl_access_widget_action_elm_actions_get, _elm_toolbar_efl_access_widget_action_elm_actions_get),
       EFL_OBJECT_OP_FUNC(efl_access_object_access_children_get, _elm_toolbar_efl_access_object_access_children_get),
@@ -372,6 +372,6 @@ static const Efl_Class_Description _elm_toolbar_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(elm_toolbar_class_get, &_elm_toolbar_class_desc, EFL_UI_WIDGET_CLASS, EFL_UI_FOCUS_COMPOSITION_MIXIN, ELM_INTERFACE_SCROLLABLE_MIXIN, EFL_UI_DIRECTION_INTERFACE, EFL_ACCESS_WIDGET_ACTION_MIXIN, EFL_ACCESS_SELECTION_INTERFACE, EFL_ACCESS_OBJECT_MIXIN, EFL_UI_CLICKABLE_MIXIN, EFL_UI_SELECTABLE_INTERFACE, EFL_UI_LEGACY_INTERFACE, ELM_WIDGET_ITEM_CONTAINER_INTERFACE, NULL);
+EFL_DEFINE_CLASS(elm_toolbar_class_get, &_elm_toolbar_class_desc, EFL_UI_WIDGET_CLASS, EFL_UI_FOCUS_COMPOSITION_MIXIN, ELM_INTERFACE_SCROLLABLE_MIXIN, EFL_UI_LAYOUT_ORIENTABLE_INTERFACE, EFL_ACCESS_WIDGET_ACTION_MIXIN, EFL_ACCESS_SELECTION_INTERFACE, EFL_ACCESS_OBJECT_MIXIN, EFL_UI_CLICKABLE_MIXIN, EFL_UI_SELECTABLE_INTERFACE, EFL_UI_LEGACY_INTERFACE, ELM_WIDGET_ITEM_CONTAINER_INTERFACE, NULL);
 
 #include "elm_toolbar_eo.legacy.c"

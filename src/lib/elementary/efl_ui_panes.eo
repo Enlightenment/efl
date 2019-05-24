@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Panes extends Efl.Ui.Layout_Base implements Efl.Ui.Direction,
+class @beta Efl.Ui.Panes extends Efl.Ui.Layout_Base implements Efl.Ui.Layout_Orientable,
                     Efl.Ui.Clickable
 {
    [[Elementary panes class]]
@@ -48,7 +48,7 @@ class @beta Efl.Ui.Panes extends Efl.Ui.Layout_Base implements Efl.Ui.Direction,
    implements {
       Efl.Object.constructor;
       Efl.Ui.Widget.theme_apply;
-      Efl.Ui.Direction.direction { get; set; [[Only supports $vertical and $horizontal. Default is $vertical.]] }
+      Efl.Ui.Layout_Orientable.orientation { get; set; [[Only supports $vertical and $horizontal. Default is $vertical.]] }
       Efl.Part.part_get;
    }
    events {

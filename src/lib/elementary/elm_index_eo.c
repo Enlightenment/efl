@@ -244,10 +244,10 @@ Eina_Error _elm_index_efl_ui_widget_theme_apply(Eo *obj, Elm_Index_Data *pd);
 void _elm_index_efl_ui_widget_on_access_update(Eo *obj, Elm_Index_Data *pd, Eina_Bool enable);
 
 
-void _elm_index_efl_ui_direction_direction_set(Eo *obj, Elm_Index_Data *pd, Efl_Ui_Dir dir);
+void _elm_index_efl_ui_layout_orientable_orientation_set(Eo *obj, Elm_Index_Data *pd, Efl_Ui_Layout_Orientation dir);
 
 
-Efl_Ui_Dir _elm_index_efl_ui_direction_direction_get(const Eo *obj, Elm_Index_Data *pd);
+Efl_Ui_Layout_Orientation _elm_index_efl_ui_layout_orientable_orientation_get(const Eo *obj, Elm_Index_Data *pd);
 
 
 Eina_List *_elm_index_efl_access_object_access_children_get(const Eo *obj, Elm_Index_Data *pd);
@@ -289,8 +289,8 @@ _elm_index_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_constructor, _elm_index_efl_object_constructor),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_theme_apply, _elm_index_efl_ui_widget_theme_apply),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_on_access_update, _elm_index_efl_ui_widget_on_access_update),
-      EFL_OBJECT_OP_FUNC(efl_ui_direction_set, _elm_index_efl_ui_direction_direction_set),
-      EFL_OBJECT_OP_FUNC(efl_ui_direction_get, _elm_index_efl_ui_direction_direction_get),
+      EFL_OBJECT_OP_FUNC(efl_ui_layout_orientation_set, _elm_index_efl_ui_layout_orientable_orientation_set),
+      EFL_OBJECT_OP_FUNC(efl_ui_layout_orientation_get, _elm_index_efl_ui_layout_orientable_orientation_get),
       EFL_OBJECT_OP_FUNC(efl_access_object_access_children_get, _elm_index_efl_access_object_access_children_get),
       ELM_INDEX_EXTRA_OPS
    );
@@ -322,6 +322,6 @@ static const Efl_Class_Description _elm_index_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(elm_index_class_get, &_elm_index_class_desc, EFL_UI_LAYOUT_BASE_CLASS, EFL_UI_DIRECTION_INTERFACE, EFL_UI_CLICKABLE_MIXIN, EFL_UI_SELECTABLE_INTERFACE, EFL_UI_LEGACY_INTERFACE, NULL);
+EFL_DEFINE_CLASS(elm_index_class_get, &_elm_index_class_desc, EFL_UI_LAYOUT_BASE_CLASS, EFL_UI_LAYOUT_ORIENTABLE_INTERFACE, EFL_UI_CLICKABLE_MIXIN, EFL_UI_SELECTABLE_INTERFACE, EFL_UI_LEGACY_INTERFACE, NULL);
 
 #include "elm_index_eo.legacy.c"

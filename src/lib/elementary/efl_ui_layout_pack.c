@@ -203,12 +203,12 @@ _efl_ui_layout_part_box_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUSED, Efl_
    return efl_pack_index_get(pack, subobj);
 }
 
-EOLIAN static Efl_Ui_Dir
-_efl_ui_layout_part_box_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Box_Data *pd)
+EOLIAN static Efl_Ui_Layout_Orientation
+_efl_ui_layout_part_box_efl_ui_layout_orientable_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Box_Data *pd)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_DIR_DEFAULT);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_LAYOUT_ORIENTATION_DEFAULT);
 
-   return efl_ui_direction_get(efl_part(wd->resize_obj, pd->part));
+   return efl_ui_layout_orientation_get(efl_part(wd->resize_obj, pd->part));
 }
 
 

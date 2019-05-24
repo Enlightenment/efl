@@ -82,7 +82,7 @@ test_slider_interval(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
            efl_pack(bx, efl_added));
 
    hbx = efl_add(EFL_UI_BOX_CLASS, bx,
-                 efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                 efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                  efl_pack(bx, efl_added));
 
    efl_add(EFL_UI_SLIDER_INTERVAL_CLASS, hbx,
@@ -90,7 +90,7 @@ test_slider_interval(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
            efl_ui_range_min_max_set(efl_added, 10, 145),
            efl_ui_slider_interval_value_set(efl_added, 50, 100),
            efl_ui_range_step_set(efl_added, step),
-           efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
+           efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
            efl_pack(hbx, efl_added));
 
    efl_add(EFL_UI_SLIDER_INTERVAL_CLASS, hbx,
@@ -98,7 +98,7 @@ test_slider_interval(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
            efl_ui_range_min_max_set(efl_added, 10, 145),
            efl_ui_slider_interval_value_set(efl_added, 50, 100),
            efl_ui_range_step_set(efl_added, step),
-           efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
+           efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
            elm_object_disabled_set(efl_added, EINA_TRUE),
            efl_pack(hbx, efl_added));
 

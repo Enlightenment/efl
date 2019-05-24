@@ -9,7 +9,7 @@ struct _Efl_Ui_Tab_Bar_Data
    Efl_Canvas_Object                    *bx;
    int                                   cnt;
    int                                   cur;
-   Efl_Ui_Dir                            dir;
+   Efl_Ui_Layout_Orientation             dir;
 
    Eina_List                            *tab_infos;
    Tab_Info                             *selected_tab;

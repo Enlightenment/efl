@@ -4,7 +4,7 @@ class @beta Efl.Ui.Grid extends Efl.Ui.Layout_Base implements
                    Efl.Ui.Scrollable_Interactive,
                    Efl.Ui.Scrollbar,
                    Efl.Pack_Linear, Efl.Pack_Layout,
-                   Efl.Ui.Direction,
+                   Efl.Ui.Layout_Orientable,
                    Efl.Ui.Selectable,
                    Efl.Ui.Multi_Selectable,
                    Efl.Gfx.Arrangement
@@ -60,7 +60,7 @@ class @beta Efl.Ui.Grid extends Efl.Ui.Layout_Base implements
       Efl.Container.content_iterate;
       Efl.Container.content_count;
 
-      Efl.Ui.Direction.direction { get; set; }
+      Efl.Ui.Layout_Orientable.orientation { get; set; }
 
       //Efl.Ui.Widget
       Efl.Ui.Widget.theme_apply;
