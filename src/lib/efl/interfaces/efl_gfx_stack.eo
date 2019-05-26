@@ -46,8 +46,8 @@ interface Efl.Gfx.Stack
               objects on layers below the one $obj is placed at.
 
               See also @.layer.get(), @.layer.set() and @.below.get()]]
-            return: Efl.Gfx.Stack @warn_unused; [[The @Efl.Gfx.Stack object directly below $obj, if any,
-                                                    or $null, if none.]]
+            return: Efl.Gfx.Stack @no_unused; [[The @Efl.Gfx.Stack object directly below $obj, if any,
+                                                or $null, if none.]]
          }
       }
       @property above {
@@ -58,8 +58,8 @@ interface Efl.Gfx.Stack
               objects on layers above the one $obj is placed at.
 
               See also @.layer.get(), @.layer.set() and @.below.get()]]
-            return: Efl.Gfx.Stack @warn_unused; [[The @Efl.Gfx.Stack object directly below $obj, if any,
-                                                    or $null, if none.]]
+            return: Efl.Gfx.Stack @no_unused; [[The @Efl.Gfx.Stack object directly below $obj, if any,
+                                                or $null, if none.]]
          }
       }
       stack_below {

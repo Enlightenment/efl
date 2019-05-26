@@ -60,7 +60,7 @@ mixin @beta Ector.Buffer
                                               map should try to convert the data into a new buffer]]
             @out stride: uint @optional; [[Returns the length in bytes of a mapped line]]
          }
-         return: void_ptr @warn_unused; [[Pointer to the top-left pixel data. Returns $null in case of failure]]
+         return: void_ptr @no_unused; [[Pointer to the top-left pixel data. Returns $null in case of failure]]
       }
       unmap @pure_virtual {
          [[Unmap a region of this buffer, and upload data to the GPU (if needed).]]

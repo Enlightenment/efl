@@ -854,7 +854,7 @@ typedef struct _Eo_Ret_Def
    Eolian_Type *type;
    Eolian_Documentation *doc;
    Eolian_Expression *default_ret_val;
-   Eina_Bool warn_unused: 1;
+   Eina_Bool no_unused: 1;
    Eina_Bool owned: 1;
 } Eo_Ret_Def;
 
@@ -870,7 +870,7 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void,
      ret->type = parse_type(ls, EINA_TRUE);
    ret->doc = NULL;
    ret->default_ret_val = NULL;
-   ret->warn_unused = EINA_FALSE;
+   ret->no_unused = EINA_FALSE;
    ret->owned = EINA_FALSE;
    if (allow_def && (ls->t.token == '('))
      {
@@ -881,12 +881,12 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void,
         ls->expr_mode = EINA_FALSE;
         check_match(ls, ')', '(', line, col);
      }
-   Eina_Bool has_warn_unused = EINA_FALSE, has_owned = EINA_FALSE;
+   Eina_Bool has_no_unused = EINA_FALSE, has_owned = EINA_FALSE;
    if (!is_funcptr) for (;;) switch (ls->t.kw)
      {
-      case KW_at_warn_unused:
-        CASE_LOCK(ls, warn_unused, "warn_unused qualifier");
-        ret->warn_unused = EINA_TRUE;
+      case KW_at_no_unused:
+        CASE_LOCK(ls, no_unused, "no_unused qualifier");
+        ret->no_unused = EINA_TRUE;
         eo_lexer_get(ls);
         break;
       case KW_at_owned:
@@ -1079,7 +1079,7 @@ parse_accessor:
              prop->get_ret_type = eo_lexer_type_release(ls, ret.type);
              prop->get_return_doc = ret.doc;
              prop->get_ret_val = ret.default_ret_val;
-             prop->get_return_warn_unused = ret.warn_unused;
+             prop->get_return_no_unused = ret.no_unused;
              prop->get_ret_type->owned = ret.owned;
           }
         else
@@ -1087,7 +1087,7 @@ parse_accessor:
              prop->set_ret_type = eo_lexer_type_release(ls, ret.type);
              prop->set_return_doc = ret.doc;
              prop->set_ret_val = ret.default_ret_val;
-             prop->set_return_warn_unused = ret.warn_unused;
+             prop->set_return_no_unused = ret.no_unused;
              prop->set_ret_type->owned = ret.owned;
           }
         break;
@@ -1289,7 +1289,7 @@ tags_done:
         meth->get_ret_type = eo_lexer_type_release(ls, ret.type);
         meth->get_return_doc = ret.doc;
         meth->get_ret_val = NULL;
-        meth->get_return_warn_unused = EINA_FALSE;
+        meth->get_return_no_unused = EINA_FALSE;
         break;
       case KW_params:
         CASE_LOCK(ls, params, "params definition");
@@ -1385,7 +1385,7 @@ body:
         meth->get_ret_type = eo_lexer_type_release(ls, ret.type);
         meth->get_return_doc = ret.doc;
         meth->get_ret_val = ret.default_ret_val;
-        meth->get_return_warn_unused = ret.warn_unused;
+        meth->get_return_no_unused = ret.no_unused;
         meth->get_ret_type->owned = ret.owned;
         break;
       case KW_params:

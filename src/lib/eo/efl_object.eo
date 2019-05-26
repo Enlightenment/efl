@@ -348,7 +348,7 @@ abstract Efl.Object
       }
       children_iterator_new {
          [[Get an iterator on all childrens]]
-         return: iterator<Efl.Object> @owned @warn_unused; [[Children iterator]]
+         return: iterator<Efl.Object> @owned @no_unused; [[Children iterator]]
       }
       composite_attach @beta {
            [[Make an object a composite object of another.

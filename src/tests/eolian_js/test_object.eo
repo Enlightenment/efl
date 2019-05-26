@@ -104,7 +104,7 @@ class Test.Object extends Efl.Object {
        }
        method_array_with_42_check {
            [[ tests parameters ]]
-           return: array<int> @owned @warn_unused;
+           return: array<int> @owned @no_unused;
        }
        method_array_in_array_out_check {
            [[ tests parameters ]]
@@ -157,7 +157,7 @@ class Test.Object extends Efl.Object {
        }
        method_list_with_42_check {
            [[ tests parameters ]]
-           return: list<int> @owned @warn_unused;
+           return: list<int> @owned @no_unused;
        }
        method_list_in_list_out_check {
            [[ tests parameters ]]

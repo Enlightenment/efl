@@ -1842,11 +1842,11 @@ eolian_function_return_default_value_get(const Eolian_Function *foo_id, Eolian_F
 EAPI const Eolian_Documentation *eolian_function_return_documentation_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
 
 /*
- * @brief Indicates if a function return is warn-unused.
+ * @brief Indicates if a function return should allow being unused.
  *
  * @param[in] function_id id of the function
  * @param[in] ftype type of the function
- * @return EINA_TRUE is warn-unused, EINA_FALSE otherwise.
+ * @return EINA_TRUE if it can be unused, EINA_FALSE otherwise.
  *
  * The type of the function is needed because a given function can represent a
  * property, that can be set and get functions.
@@ -1855,7 +1855,7 @@ EAPI const Eolian_Documentation *eolian_function_return_documentation_get(const 
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_function_return_is_warn_unused(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
+EAPI Eina_Bool eolian_function_return_allow_unused(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Indicates if a function object is const.

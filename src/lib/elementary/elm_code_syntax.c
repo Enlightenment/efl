@@ -100,8 +100,8 @@ static Elm_Code_Syntax _elm_code_syntax_eo =
     "abstract", "class", "data", "mixin", "import", "interface", "type", "const", "var", \
     "own", "free", "struct", "enum", "@extern", "@free", "@auto", "@empty", \
     "@private", "@protected", "@beta", "@hot", "@const", "@class", "@pure_virtual", \
-    "@property", "@nullable", "@optional", "@in", "@out", "@inout", "@warn_unused", \
-    "eo_prefix", "legacy_prefix", "methods", "events", "params", "return", "legacy", \
+    "@property", "@nullable", "@optional", "@in", "@out", "@inout", "@no_unused", \
+    "c_prefix", "methods", "events", "params", "return", \
     "implements", "constructors", "get", "set", "keys", "values", "true", "false", "null"}
 };
 

@@ -63,7 +63,7 @@ mixin @beta Efl.Access.Action
          params {
             @in id: int; [[ID for widget]]
          }
-         return: mstring @owned @warn_unused; [[Should be freed by the user.]]
+         return: mstring @owned @no_unused; [[Should be freed by the user.]]
       }
    }
 }

@@ -187,7 +187,7 @@ class @beta Efl.Net.Dialer_Http extends Efl.Loop_Consumer implements Efl.Net.Dia
 
         request_headers_get {
             [[Returns an iterator to the key-value pairs for request headers]]
-            return: iterator<ptr(Efl.Net.Http.Header)> @owned @warn_unused; [[Iterator for request headers]]
+            return: iterator<ptr(Efl.Net.Http.Header)> @owned @no_unused; [[Iterator for request headers]]
         }
 
         @property request_content_length {
@@ -250,7 +250,7 @@ class @beta Efl.Net.Dialer_Http extends Efl.Loop_Consumer implements Efl.Net.Dia
 
               This will be usable after the "headers,done" event is dispatched.
             ]]
-            return: iterator<ptr(Efl.Net.Http.Header)> @owned @warn_unused; [[Iterator for response headers]]
+            return: iterator<ptr(Efl.Net.Http.Header)> @owned @no_unused; [[Iterator for response headers]]
         }
 
         response_headers_all_get {
@@ -275,7 +275,7 @@ class @beta Efl.Net.Dialer_Http extends Efl.Loop_Consumer implements Efl.Net.Dia
 
               This will be usable after the "headers,done" event is dispatched.
             ]]
-            return: iterator<ptr(Efl.Net.Http.Header)> @owned @warn_unused; [[Iterator for all response headers]]
+            return: iterator<ptr(Efl.Net.Http.Header)> @owned @no_unused; [[Iterator for all response headers]]
         }
 
         response_headers_clear {
@@ -381,7 +381,7 @@ class @beta Efl.Net.Dialer_Http extends Efl.Loop_Consumer implements Efl.Net.Dia
             params {
                 epochtime: int64; [[UNIX Epoch time - seconds since 1/1/1970]]
             }
-            return: mstring @owned @warn_unused; [[Newly allocated null-terminated string on success or NULL on errors]]
+            return: mstring @owned @no_unused; [[Newly allocated null-terminated string on success or NULL on errors]]
         }
     }
 

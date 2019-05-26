@@ -263,28 +263,28 @@ eolian_function_return_documentation_get(const Eolian_Function *fid, Eolian_Func
 }
 
 EAPI Eina_Bool
-eolian_function_return_is_warn_unused(const Eolian_Function *fid,
+eolian_function_return_allow_unused(const Eolian_Function *fid,
       Eolian_Function_Type ftype)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_UNRESOLVED, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_PROPERTY, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_TRUE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_UNRESOLVED, EINA_TRUE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_PROPERTY, EINA_TRUE);
    switch (ftype)
      {
       case EOLIAN_METHOD:
         if (fid->type != EOLIAN_METHOD)
-          return EINA_FALSE;
-        return fid->get_return_warn_unused;
+          return EINA_TRUE;
+        return !fid->get_return_no_unused;
       case EOLIAN_PROP_GET:
         if ((fid->type != EOLIAN_PROP_GET) && (fid->type != EOLIAN_PROPERTY))
-          return EINA_FALSE;
-        return fid->get_return_warn_unused;
+          return EINA_TRUE;
+        return !fid->get_return_no_unused;
       case EOLIAN_PROP_SET:
         if ((fid->type != EOLIAN_PROP_SET) && (fid->type != EOLIAN_PROPERTY))
-          return EINA_FALSE;
-        return fid->set_return_warn_unused;
+          return EINA_TRUE;
+        return !fid->set_return_no_unused;
       default:
-        return EINA_FALSE;
+        return EINA_TRUE;
      }
 }
 

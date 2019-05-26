@@ -20,7 +20,7 @@ class @beta Ector.Cairo.Surface extends Efl.Object implements Ector.Surface
       }
       symbol_get {
    [[Lookup symbal name in cairo lib]]
-         return: void_ptr @warn_unused; [[Pointer to cairo lib with this symbol]]
+         return: void_ptr @no_unused; [[Pointer to cairo lib with this symbol]]
          params {
             @in name: string; [[Symbol name]]
          }

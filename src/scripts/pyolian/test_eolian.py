@@ -368,7 +368,7 @@ class TestEolianFunction(unittest.TestCase):
         self.assertEqual(len(list(f.getter_values)), 1)
         self.assertEqual(len(list(f.getter_values)), 1)
         self.assertEqual(len(list(f.parameters)), 1)
-        self.assertFalse(f.return_is_warn_unused(eolian.Eolian_Function_Type.METHOD))
+        self.assertTrue(f.return_allow_unused(eolian.Eolian_Function_Type.METHOD))
         self.assertFalse(f.object_is_const)
         self.assertEqual(f.class_.name, 'Efl.Loop_Timer')
         self.assertIsInstance(f.implement, eolian.Implement)

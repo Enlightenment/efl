@@ -41,7 +41,7 @@ class Constructor_Method_Class extends Efl.Object
       }
       classoutmethod1 {
          params { @in one: int; @in two: double; }
-         return: free(Constructor_Method_Class, eo_unref) @owned @warn_unused;
+         return: free(Constructor_Method_Class, eo_unref) @owned @no_unused;
       }
       classoutmethod2 {
          params { @in one: int; @in two: double; @out out_class: Constructor_Method_Class @owned; }

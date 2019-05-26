@@ -373,7 +373,7 @@ ffi.cdef [[
     const Eolian_Type *eolian_function_return_type_get(const Eolian_Function *function_id, Eolian_Function_Type ftype);
     const Eolian_Expression *eolian_function_return_default_value_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
     const Eolian_Documentation *eolian_function_return_documentation_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
-    Eina_Bool eolian_function_return_is_warn_unused(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
+    Eina_Bool eolian_function_return_allow_unused(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Bool eolian_function_object_is_const(const Eolian_Function *function_id);
     const Eolian_Class *eolian_function_class_get(const Eolian_Function *function_id);
     const Eolian_Class *eolian_implement_class_get(const Eolian_Implement *impl);
@@ -1214,8 +1214,8 @@ M.Function = ffi.metatype("Eolian_Function", {
             return v
         end,
 
-        return_is_warn_unused = function(self, ftype)
-            return eolian.eolian_function_return_is_warn_unused(self,
+        return_allow_unused = function(self, ftype)
+            return eolian.eolian_function_return_allow_unused(self,
                 ftype) ~= 0
         end,
 
