@@ -84,6 +84,9 @@ extern "C" {
 
 #ifdef EFL_BETA_API_SUPPORT
 
+/* The maximum format version supported by this version of Eolian */
+#define EOLIAN_FILE_FORMAT_VERSION 1
+
 /* State information
  *
  * Possible to cast to Eolian_Unit and use as such, as this represents

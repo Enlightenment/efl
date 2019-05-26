@@ -2300,6 +2300,8 @@ parse_chunk(Eo_Lexer *ls, Eina_Bool eot)
                eo_lexer_syntax_error(ls, "#version too low");
 
              ls->unit->version = (unsigned short)(ls->t.value.u);
+             if (ls->unit->version > EOLIAN_FILE_FORMAT_VERSION)
+               eo_lexer_syntax_error(ls, "file version too new for this version of Eolian");
              eo_lexer_get(ls);
              break;
            }
