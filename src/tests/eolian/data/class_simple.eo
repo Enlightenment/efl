@@ -1,3 +1,5 @@
+#version 1
+
 const Foo: int = 5; [[doc for constant]]
 
 var Bar: float = 10.3f; [[doc for global]]
