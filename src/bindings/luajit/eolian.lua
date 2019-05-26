@@ -290,6 +290,7 @@ ffi.cdef [[
 
     int eolian_init(void);
     int eolian_shutdown(void);
+    unsigned short eolian_file_format_version_get(void);
     Eolian_State *eolian_state_new(void);
     void eolian_state_free(Eolian_State *state);
     Eolian_Panic_Cb eolian_state_panic_cb_set(Eolian_State *state, Eolian_Panic_Cb cb);
@@ -491,6 +492,7 @@ local init = function()
     eolian = util.lib_load("eolian")
     eina = util.lib_load("eina")
     eolian.eolian_init()
+    M.file_format_version = eolian.eolian_file_format_version_get()
 end
 
 local shutdown = function()

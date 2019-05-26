@@ -486,6 +486,15 @@ EAPI int eolian_init(void);
 EAPI int eolian_shutdown(void);
 
 /*
+ * @brief Get the Eolian file format version.
+ *
+ * This is the same as the #EOLIAN_FILE_FORMAT_VERSION macro, but allows
+ * retrieval of the version at runtime, so it can be used by FFI based
+ * bindings in dynamic languages to do runtime checks and so on.
+ */
+EAPI unsigned short eolian_file_format_version_get(void);
+
+/*
  * @brief Create a new Eolian state.
  *
  * This creates a new Eolian state that consists of a "master unit" with
