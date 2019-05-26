@@ -1,6 +1,0 @@
-EXTRA_DIST2 += \
-wayland_protocol/efl-aux-hints.xml \
-wayland_protocol/efl-hints.xml \
-wayland_protocol/session-recovery.xml \
-wayland_protocol/teamwork.xml \
-wayland_protocol/www.xml
