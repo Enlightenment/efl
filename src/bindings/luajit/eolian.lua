@@ -323,6 +323,7 @@ ffi.cdef [[
     Eina_Iterator *eolian_unit_children_get(const Eolian_Unit *unit);
     const char *eolian_unit_file_get(const Eolian_Unit *unit);
     const char *eolian_unit_file_path_get(const Eolian_Unit *unit);
+    unsigned short eolian_unit_version_get(const Eolian_Unit *unit);
     const Eolian_Object *eolian_unit_object_by_name_get(const Eolian_Unit *unit, const char *name);
     Eina_Iterator *eolian_unit_objects_get(const Eolian_Unit *unit);
     const Eolian_Class *eolian_unit_class_by_name_get(const Eolian_Unit *unit, const char *class_name);
@@ -636,6 +637,10 @@ local unit_idx, wrap_unit = gen_wrap {
         local v = eolian.eolian_unit_file_path_get(cast_unit(self))
         if v == nil then return nil end
         return ffi.string(v)
+    end,
+
+    version_get = function(self)
+        return tonumber(eolian.eolian_unit_version_get(cast_unit(self)))
     end,
 
     object_by_name_get = function(self, name)
