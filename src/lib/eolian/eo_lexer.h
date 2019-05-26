@@ -39,6 +39,8 @@ enum Tokens
     KWAT(private), KWAT(property), KWAT(protected), KWAT(restart), \
     KWAT(pure_virtual), \
     \
+    KWH(version), \
+    \
     KW(byte), KW(ubyte), KW(char), KW(short), KW(ushort), KW(int), KW(uint), \
     KW(long), KW(ulong), KW(llong), KW(ullong), \
     \
@@ -71,6 +73,7 @@ enum Tokens
 /* "regular" keyword and @ prefixed keyword */
 #define KW(x) KW_##x
 #define KWAT(x) KW_at_##x
+#define KWH(x) KW_hash_##x
 
 enum Keywords
 {
@@ -80,6 +83,7 @@ enum Keywords
 
 #undef KW
 #undef KWAT
+#undef KWH
 
 enum Numbers
 {

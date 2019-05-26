@@ -45,6 +45,7 @@ struct _Eolian_Unit
    Eina_Hash     *structs;
    Eina_Hash     *enums;
    Eina_Hash     *objects;
+   unsigned short version;
 };
 
 typedef struct _Eolian_State_Area

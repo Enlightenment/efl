@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <limits.h>
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -2278,10 +2279,37 @@ found_class:
 static void
 parse_chunk(Eo_Lexer *ls, Eina_Bool eot)
 {
+   Eina_Bool parsing_header = EINA_TRUE;
+   Eina_Bool has_version = EINA_FALSE;
    while (ls->t.token >= 0)
-     /* set eot to EINA_TRUE so that we only allow parsing of one class */
-     if (parse_unit(ls, eot))
-       eot = EINA_TRUE;
+     switch (ls->t.kw)
+       {
+        case KW_hash_version:
+          {
+             CASE_LOCK(ls, version, "#version specifier");
+             if (!parsing_header)
+               eo_lexer_syntax_error(ls, "header keyword outside of unit header");
+             eo_lexer_get(ls);
+
+             check(ls, TOK_NUMBER);
+             if (ls->t.kw != NUM_INT)
+               eo_lexer_syntax_error(ls, "invalid #version value");
+             if (ls->t.value.u > USHRT_MAX)
+               eo_lexer_syntax_error(ls, "#version too high");
+             else if (ls->t.value.u < 0)
+               eo_lexer_syntax_error(ls, "#version too low");
+
+             ls->unit->version = (unsigned short)(ls->t.value.u);
+             eo_lexer_get(ls);
+             break;
+           }
+        default:
+          parsing_header = EINA_FALSE;
+          /* set eot to EINA_TRUE so that we only allow parsing of one class */
+          if (parse_unit(ls, eot))
+            eot = EINA_TRUE;
+          break;
+       }
 }
 
 Eolian_Unit *

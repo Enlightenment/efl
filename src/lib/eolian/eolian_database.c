@@ -572,6 +572,9 @@ database_unit_init(Eolian_State *state, Eolian_Unit *unit, const char *file)
    unit->structs    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    unit->enums      = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    unit->objects    = eina_hash_stringshared_new(NULL);
+
+   /* baseline version; support for higher featurelevel must be specified explicitly */
+   unit->version    = 1;
 }
 
 static void
