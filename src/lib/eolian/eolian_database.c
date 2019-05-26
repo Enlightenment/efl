@@ -1303,6 +1303,13 @@ eolian_unit_file_path_get(const Eolian_Unit *unit)
      : unit->state->filenames_eot, unit->file);
 }
 
+EAPI unsigned short
+eolian_unit_version_get(const Eolian_Unit *unit)
+{
+   if (!unit) return 0;
+   return unit->version;
+}
+
 EAPI const Eolian_Object *
 eolian_unit_object_by_name_get(const Eolian_Unit *unit, const char *name)
 {

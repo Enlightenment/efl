@@ -990,6 +990,18 @@ EAPI const char *eolian_unit_file_get(const Eolian_Unit *unit);
 EAPI const char *eolian_unit_file_path_get(const Eolian_Unit *unit);
 
 /*
+ * @brief Get the version of the unit.
+ *
+ * This is 1 by default, unless overridden. Returns 0 when an invalid
+ * unit is passed.
+ *
+ * @param[in] unit The unit.
+ *
+ * @ingroup Eolian
+ */
+EAPI unsigned short eolian_unit_version_get(const Eolian_Unit *unit);
+
+/*
  * @brief Get an object in a unit by name.
  *
  * Only objects declared directly within the file can be retrieved, i.e.
