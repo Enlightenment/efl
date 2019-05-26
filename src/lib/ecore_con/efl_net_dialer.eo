@@ -29,7 +29,7 @@ interface @beta Efl.Net.Dialer extends Efl.Net.Socket {
               dispatched.
             ]]
             params {
-                address: string @nonull; [[Remote address]]
+                address: string; [[Remote address]]
             }
             return: Eina.Error; [[0 on success, error code otherwise]]
         }

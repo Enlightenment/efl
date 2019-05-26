@@ -29,7 +29,7 @@ interface Efl.Io.Reader {
               You can understand this method as read(2) libc function.
             ]]
             params {
-               @inout rw_slice: Eina.Rw_Slice @nonull; [[Provides a pre-allocated memory to be filled up to rw_slice.len. It will be populated and the length will be set to the actually used amount of bytes, which can be smaller than the request.]]
+               @inout rw_slice: Eina.Rw_Slice; [[Provides a pre-allocated memory to be filled up to rw_slice.len. It will be populated and the length will be set to the actually used amount of bytes, which can be smaller than the request.]]
             }
             return: Eina.Error; [[0 on succeed, a mapping of errno otherwise]]
         }

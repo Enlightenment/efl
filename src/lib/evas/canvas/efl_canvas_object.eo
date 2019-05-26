@@ -135,7 +135,7 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
             ]]
          }
          values {
-            clipper: Efl.Canvas.Object @nonull; [[The object to clip $obj by.]]
+            clipper: Efl.Canvas.Object; [[The object to clip $obj by.]]
          }
       }
       @property repeat_events {
@@ -413,7 +413,7 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
          ]]
          return: bool @warn_unused; [[$true if the call succeeded, $false otherwise.]]
          params {
-            @in keyname: string @nonull; [[The key to request events for.]]
+            @in keyname: string; [[The key to request events for.]]
             @in modifiers: Efl.Input.Modifier; [[A combination of modifier
                               keys that must be present to trigger the event.]]
             @in not_modifiers: Efl.Input.Modifier; [[A combination of modifier
@@ -432,7 +432,7 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
            and the legacy API evas_focus_get.
          ]]
          params {
-            @in keyname: string @nonull; [[The key the grab is set for.]]
+            @in keyname: string; [[The key the grab is set for.]]
             @in modifiers: Efl.Input.Modifier; [[A mask of modifiers that must be
                                                  present to trigger the event.]]
             @in not_modifiers: Efl.Input.Modifier; [[A mask of modifiers that must

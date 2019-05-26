@@ -69,7 +69,7 @@ interface Efl.Ui.Focus.Manager {
             ]]
 
             values {
-                focus : Efl.Ui.Focus.Object @nonull; [[Currently focused element.]]
+                focus : Efl.Ui.Focus.Object; [[Currently focused element.]]
             }
         }
         @property redirect {
@@ -121,7 +121,7 @@ interface Efl.Ui.Focus.Manager {
             get {}
 
             values {
-                root : Efl.Ui.Focus.Object @nonull; [[Will be registered into
+                root : Efl.Ui.Focus.Object; [[Will be registered into
                     this manager object.]]
             }
         }

@@ -51,6 +51,8 @@ eo_gen_params(Eina_Iterator *itr, Eina_Strbuf *buf,
           eina_strbuf_append(buf, ", ");
         *nidx += _gen_param(buf, pr, ftype, &rpid);
 
+        /* Keep the logic for when there's a better way to emit NONNULL */
+#if 0
         if (!eolian_parameter_is_nonull(pr) || !flagbuf)
           continue;
 
@@ -61,6 +63,9 @@ eo_gen_params(Eina_Iterator *itr, Eina_Strbuf *buf,
           }
         else
           eina_strbuf_append_printf(*flagbuf, ", %d", *nidx - rpid);
+#else
+        (void)flagbuf;
+#endif
      }
    eina_iterator_free(itr);
 }

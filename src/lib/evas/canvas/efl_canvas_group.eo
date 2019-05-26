@@ -77,7 +77,7 @@ class Efl.Canvas.Group extends Efl.Canvas.Object
            See also @.group_member_is.
          ]]
          params {
-            @in sub_obj: Efl.Canvas.Object @nonull; [[The member object.]]
+            @in sub_obj: Efl.Canvas.Object; [[The member object.]]
          }
       }
       group_member_remove {

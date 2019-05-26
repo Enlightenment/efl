@@ -975,10 +975,6 @@ class Function_Parameter(Object):
         return Documentation(c_doc) if c_doc else None
 
     @cached_property
-    def is_nonull(self):
-        return bool(lib.eolian_parameter_is_nonull(self))
-
-    @cached_property
     def is_optional(self):
         return bool(lib.eolian_parameter_is_optional(self))
 

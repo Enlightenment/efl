@@ -13,12 +13,6 @@ _function_as_argument_set_cb(Eo *obj, Function_As_Argument_Data *pd, void *cb_da
 
 }
 
-EOLIAN static void
-_function_as_argument_set_nonull_cb(Eo *obj, Function_As_Argument_Data *pd, void *cb_data, VoidFunc cb, Eina_Free_Cb cb_free_cb)
-{
-
-}
-
 EOLIAN static char *
 _function_as_argument_call_cb(Eo *obj, Function_As_Argument_Data *pd, int a, double b)
 {

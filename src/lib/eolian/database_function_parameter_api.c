@@ -34,13 +34,6 @@ eolian_parameter_documentation_get(const Eolian_Function_Parameter *param)
 }
 
 EAPI Eina_Bool
-eolian_parameter_is_nonull(const Eolian_Function_Parameter *param)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(param, EINA_FALSE);
-   return param->nonull;
-}
-
-EAPI Eina_Bool
 eolian_parameter_is_optional(const Eolian_Function_Parameter *param)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(param, EINA_FALSE);

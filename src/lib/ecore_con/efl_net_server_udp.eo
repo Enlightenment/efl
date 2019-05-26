@@ -36,7 +36,7 @@ class @beta Efl.Net.Server_Udp extends Efl.Net.Server_Ip {
                  ff02::1@1 - use loopback interface (idx=1)
             ]]
             params {
-                address: string @nonull; [[Multicast group address]]
+                address: string; [[Multicast group address]]
             }
             return: Eina.Error; [[0 on success, error code otherwise]]
         }
@@ -47,7 +47,7 @@ class @beta Efl.Net.Server_Udp extends Efl.Net.Server_Ip {
               This reverses the effect of @.multicast_join.
             ]]
             params {
-                address: string @nonull; [[Multicast group address]]
+                address: string; [[Multicast group address]]
             }
             return: Eina.Error; [[0 on success, error code otherwise]]
         }

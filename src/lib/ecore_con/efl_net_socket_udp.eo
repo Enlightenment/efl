@@ -87,7 +87,7 @@ class @beta Efl.Net.Socket_Udp extends Efl.Net.Socket_Fd {
                  ff02::1@1 - use loopback interface (idx=1)
             ]]
             params {
-                address: string @nonull; [[Multicast address to join]]
+                address: string; [[Multicast address to join]]
             }
             return: Eina.Error; [[$0 on success, error code otherwise]]
         }
@@ -98,7 +98,7 @@ class @beta Efl.Net.Socket_Udp extends Efl.Net.Socket_Fd {
               This reverses the effect of @.multicast_join.
             ]]
             params {
-                address: string @nonull; [[Multicast address to leave]]
+                address: string; [[Multicast address to leave]]
             }
             return: Eina.Error; [[$0 on success, error code otherwise]]
         }
@@ -159,7 +159,7 @@ class @beta Efl.Net.Socket_Udp extends Efl.Net.Socket_Fd {
                 return: Eina.Error; [[$0 on success, error code otherwise]]
             }
             values {
-                address: string @nonull; [[Address to bind to]]
+                address: string; [[Address to bind to]]
             }
         }
 
