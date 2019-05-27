@@ -682,7 +682,9 @@ _efl_ui_textpath_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Textpath_Data *pd, 
 EOLIAN static void
 _efl_ui_textpath_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Textpath_Data *pd EINA_UNUSED, Eina_Size2D sz)
 {
+   Eina_Size2D psize = efl_gfx_entity_size_get(obj);
    efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
+   if (psize.w != sz.w || psize.h != sz.h) _text_draw(pd);
 }
 
 EOLIAN static void
