@@ -175,8 +175,8 @@ _efl_canvas_gesture_recognizer_momentum_efl_canvas_gesture_recognizer_recognize(
 		   pd->t_end = efl_gesture_touch_cur_timestamp_get(event);
            efl_gesture_hotspot_set(gesture, pd->end_line);
 
-           if ((abs(md->momentum.x) > EFL_GESTURE_MINIMUM_MOMENTUM) ||
-               (abs(md->momentum.y) > EFL_GESTURE_MINIMUM_MOMENTUM))
+           if ((fabs(md->momentum.x) > EFL_GESTURE_MINIMUM_MOMENTUM) ||
+               (fabs(md->momentum.y) > EFL_GESTURE_MINIMUM_MOMENTUM))
                 result = EFL_GESTURE_FINISH;
            else
                 result = EFL_GESTURE_CANCEL;
