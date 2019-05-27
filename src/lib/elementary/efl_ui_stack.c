@@ -675,7 +675,6 @@ _efl_ui_stack_efl_object_constructor(Eo *obj, Efl_Ui_Stack_Data *pd EINA_UNUSED)
    sh = show_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, obj);
    efl_animation_alpha_set(show_anim, 0.0, 1.0);
    efl_animation_duration_set(show_anim, 0.5);
-   efl_animation_final_state_keep_set(show_anim, EINA_TRUE);
 
    pd->show = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, obj);
    efl_animation_player_animation_set(pd->show, sh);
@@ -686,7 +685,6 @@ _efl_ui_stack_efl_object_constructor(Eo *obj, Efl_Ui_Stack_Data *pd EINA_UNUSED)
    hi = hide_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, obj);
    efl_animation_alpha_set(hide_anim, 1.0, 0.0);
    efl_animation_duration_set(hide_anim, 0.5);
-   efl_animation_final_state_keep_set(hide_anim, EINA_TRUE);
 
    pd->hide = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, obj);
    efl_animation_player_animation_set(pd->hide, hi);
