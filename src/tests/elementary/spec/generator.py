@@ -13,7 +13,7 @@ static void
 {}(TCase *tc)
 {{
   tcase_add_checked_fixture(tc, _{}_fixture, NULL);
-  tcase_add_checked_fixture(tc, _setup, _shutdown);
+  tcase_add_checked_fixture(tc, fail_on_errors_setup, fail_on_errors_teardown);
   {}(tc);
 }}
 

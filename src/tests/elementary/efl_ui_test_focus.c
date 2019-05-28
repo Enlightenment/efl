@@ -1,4 +1,5 @@
 #include "efl_ui_test_focus_common.h"
+#include "suite_helpers.h"
 
 EFL_START_TEST(focus_unregister_twice)
 {
@@ -1072,6 +1073,7 @@ EFL_END_TEST
 
 void efl_ui_test_focus(TCase *tc)
 {
+    tcase_add_checked_fixture(tc, fail_on_errors_setup, fail_on_errors_teardown);
     tcase_add_test(tc, focus_register_twice);
     tcase_add_test(tc, focus_unregister_twice);
     tcase_add_test(tc, pos_check);

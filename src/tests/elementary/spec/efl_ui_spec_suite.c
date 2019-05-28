@@ -12,24 +12,6 @@ Evas_Object *win = NULL;
 Evas_Object *widget = NULL;
 const Efl_Class *test_content_klass = NULL;
 EFL_CLASS_SIMPLE_CLASS(efl_ui_widget, "efl_ui_widget", EFL_UI_WIDGET_CLASS);
-static int tree_abort;
-static int tree_abort_level;
-
-static void
-_shutdown(void)
-{
-   eina_log_abort_on_critical_set(tree_abort);
-   eina_log_abort_on_critical_level_set(tree_abort_level);
-}
-
-static void
-_setup(void)
-{
-   tree_abort = eina_log_abort_on_critical_get();
-   tree_abort_level = eina_log_abort_on_critical_level_get();
-   eina_log_abort_on_critical_level_set(2);
-   eina_log_abort_on_critical_set(1);
-}
 
 static void
 _setup_window_and_widget(const Efl_Class *klass, const Efl_Class *content_klass)

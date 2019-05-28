@@ -7,6 +7,7 @@
 #include <Efl_Ui.h>
 #include "efl_ui_suite.h"
 #include "eo_internal.h"
+#include "suite_helpers.h"
 
 EFL_CLASS_SIMPLE_CLASS(efl_ui_widget, "efl_ui_widget", EFL_UI_WIDGET_CLASS)
 
@@ -326,25 +327,6 @@ EFL_START_TEST(efl_ui_test_widget_disabled_behaviour)
 }
 EFL_END_TEST
 
-static int tree_abort;
-static int tree_abort_level;
-
-static void
-_shutdown(void)
-{
-   eina_log_abort_on_critical_set(tree_abort);
-   eina_log_abort_on_critical_level_set(tree_abort_level);
-}
-
-static void
-_setup(void)
-{
-   tree_abort = eina_log_abort_on_critical_get();
-   tree_abort_level = eina_log_abort_on_critical_level_get();
-   eina_log_abort_on_critical_level_set(2);
-   eina_log_abort_on_critical_set(1);
-}
-
 EFL_START_TEST(efl_ui_test_widget_win_provider_find)
 {
    State s;
@@ -359,7 +341,7 @@ EFL_END_TEST
 
 void efl_ui_test_widget(TCase *tc)
 {
-   tcase_add_checked_fixture(tc, _setup, _shutdown);
+   tcase_add_checked_fixture(tc, fail_on_errors_setup, fail_on_errors_teardown);
    tcase_add_test(tc, efl_ui_test_widget_parent_iterator);
    tcase_add_test(tc, efl_ui_test_widget_widget_iterator);
    tcase_add_test(tc, efl_ui_test_widget_widget_sub_iterator);

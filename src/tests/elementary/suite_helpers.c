@@ -16,6 +16,8 @@ static Eina_Bool did_shutdown;
 static Evas_Object *global_win;
 static Eina_Bool buffer = EINA_FALSE;
 static Eina_Bool legacy_mode = EINA_FALSE;
+static int log_abort;
+static int log_abort_level;
 
 void elm_test_init(TCase *tc);
 
@@ -339,4 +341,20 @@ suite_setup(Eina_Bool legacy)
         elm_theme_group_path_find(NULL, "efl/colorselector/item/color");
      }
    return 0;
+}
+
+void
+fail_on_errors_teardown(void)
+{
+   eina_log_abort_on_critical_set(log_abort);
+   eina_log_abort_on_critical_level_set(log_abort_level);
+}
+
+void
+fail_on_errors_setup(void)
+{
+   log_abort = eina_log_abort_on_critical_get();
+   log_abort_level = eina_log_abort_on_critical_level_get();
+   eina_log_abort_on_critical_level_set(2);
+   eina_log_abort_on_critical_set(1);
 }
