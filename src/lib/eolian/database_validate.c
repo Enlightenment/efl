@@ -461,13 +461,13 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
 }
 
 static Eina_Bool
-_validate_part(Validate_State *vals, Eolian_Part *part, Eina_Hash *nhash)
+_validate_part(Validate_State *vals, Eolian_Part *part, Eina_Hash *phash)
 {
-   const Eolian_Object *oobj = eina_hash_find(nhash, &part->base.name);
+   const Eolian_Object *oobj = eina_hash_find(phash, &part->base.name);
    if (oobj)
      {
         _eo_parser_log(&part->base,
-                 "part '%s' conflicts with another symbol (at %s:%d:%d)",
+                 "part '%s' conflicts with another part (at %s:%d:%d)",
                  part->base.name, oobj->file, oobj->line, oobj->column);
         vals->warned = EINA_TRUE;
      }
@@ -476,7 +476,7 @@ _validate_part(Validate_State *vals, Eolian_Part *part, Eina_Hash *nhash)
    if (part->base.validated)
      {
         if (!oobj)
-          eina_hash_add(nhash, &part->base.name, &part->base);
+          eina_hash_add(phash, &part->base.name, &part->base);
         return EINA_TRUE;
      }
 
@@ -503,7 +503,7 @@ _validate_part(Validate_State *vals, Eolian_Part *part, Eina_Hash *nhash)
    part->klass = pcl;
 
    if (!oobj)
-     eina_hash_add(nhash, &part->base.name, &part->base);
+     eina_hash_add(phash, &part->base.name, &part->base);
 
    _reset_stable(vals, was_stable, EINA_TRUE);
    return _validate(&part->base);
@@ -1232,7 +1232,7 @@ _required_classes(Eolian_Class *mixin)
 
 static Eina_Bool
 _validate_class(Validate_State *vals, Eolian_Class *cl,
-                Eina_Hash *nhash, Eina_Hash *ehash, Eina_Hash *chash)
+                Eina_Hash *nhash, Eina_Hash *ehash, Eina_Hash *phash, Eina_Hash *chash)
 {
    Eina_List *l;
    Eolian_Function *func;
@@ -1273,7 +1273,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
              _eo_parser_log(&cl->base, "non-beta class cannot have beta parent");
              return EINA_FALSE;
           }
-        if (!_validate_class(vals, cl->parent, nhash, ehash, chash))
+        if (!_validate_class(vals, cl->parent, nhash, ehash, phash, chash))
           return EINA_FALSE;
      }
 
@@ -1305,7 +1305,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
              /* it's ok, interfaces are allowed */
              break;
           }
-        if (!_validate_class(vals, icl, nhash, ehash, chash))
+        if (!_validate_class(vals, icl, nhash, ehash, phash, chash))
           return EINA_FALSE;
      }
    if (cl->type == EOLIAN_CLASS_ABSTRACT || cl->type == EOLIAN_CLASS_REGULAR)
@@ -1350,7 +1350,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
        return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->parts, l, part)
-     if (!_validate_part(vals, part, nhash))
+     if (!_validate_part(vals, part, phash))
        return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->implements, l, impl)
@@ -1446,22 +1446,26 @@ database_validate(const Eolian_Unit *src)
    iter = eolian_unit_classes_get(src);
    Eina_Hash *nhash = eina_hash_pointer_new(NULL);
    Eina_Hash *ehash = eina_hash_pointer_new(NULL);
+   Eina_Hash *phash = eina_hash_pointer_new(NULL);
    Eina_Hash *chash = eina_hash_pointer_new(NULL);
    EINA_ITERATOR_FOREACH(iter, cl)
      {
         eina_hash_free_buckets(nhash);
         eina_hash_free_buckets(ehash);
+        eina_hash_free_buckets(phash);
         eina_hash_free_buckets(chash);
-        if (!_validate_class(&vals, cl, nhash, ehash, chash))
+        if (!_validate_class(&vals, cl, nhash, ehash, phash, chash))
           {
              eina_iterator_free(iter);
              eina_hash_free(nhash);
              eina_hash_free(ehash);
+             eina_hash_free(phash);
              eina_hash_free(chash);
              return EINA_FALSE;
           }
      }
    eina_hash_free(chash);
+   eina_hash_free(phash);
    eina_hash_free(ehash);
    eina_hash_free(nhash);
    eina_iterator_free(iter);
