@@ -1,0 +1,4 @@
+class @beta Focus_Manager_Test extends Focus.Test implements Efl.Ui.Focus.Manager_Window_Root
+{
+
+}

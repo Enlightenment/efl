@@ -152,6 +152,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 # ifdef EFL_BETA_API_SUPPORT
 EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # endif
+# include <efl_ui_focus_manager_window_root.eo.h>
 # include <efl_ui_focus_manager_calc.eo.h>
 # include <efl_ui_focus_manager_sub.eo.h>
 # include <efl_ui_focus_manager_root_focus.eo.h>
