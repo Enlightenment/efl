@@ -1,6 +1,7 @@
 priv_eo_files = [
    'focus_test.eo',
-   'focus_test_sub_main.eo'
+   'focus_test_sub_main.eo',
+   'focus_manager_test.eo'
 ]
 
 priv_eo_file_target = []
