@@ -234,7 +234,7 @@ _focus_changed_popup(void *data, const Efl_Event *ev)
 EFL_CALLBACKS_ARRAY_DEFINE(composition_cb,
    { EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _focus_changed_popup },
 )
-
+static void _on_table_del(void *data, Evas *e, Evas_Object *obj, void *event_info);
 EOLIAN static void
 _elm_popup_efl_canvas_group_group_del(Eo *obj, Elm_Popup_Data *sd)
 {
@@ -248,6 +248,9 @@ _elm_popup_efl_canvas_group_group_del(Eo *obj, Elm_Popup_Data *sd)
    evas_object_event_callback_del
      (sd->content, EVAS_CALLBACK_DEL, _on_content_del);
    evas_object_event_callback_del(obj, EVAS_CALLBACK_SHOW, _on_show);
+   if (sd->tbl)
+     evas_object_event_callback_del_full(sd->tbl, EVAS_CALLBACK_DEL,
+                                    _on_table_del, obj);
    efl_event_callback_array_del(sd->notify, composition_cb(), obj);
 
    sd->last_button_number = 0;
