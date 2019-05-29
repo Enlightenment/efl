@@ -346,6 +346,7 @@ _elm_old_clouseau_reload()
 static Eina_Bool
 _elm_clouseau_load()
 {
+   if (getenv("EFL_RUN_IN_TREE")) return EINA_FALSE;
    if (!_clouseau_info.is_init)
      {
         _clouseau_info.handle = eina_module_new(
