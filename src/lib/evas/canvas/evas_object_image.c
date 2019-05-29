@@ -2422,7 +2422,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                   Eina_Rectangle *rr;
 
                   if ((!o->cur->has_alpha) &&
-                      (evas_object_is_opaque(eo_obj, obj)) &&
+                      (evas_object_is_opaque(obj)) &&
                       (obj->cur->color.a == 255))
                     {
                        Evas_Coord x, y, w, h;
@@ -2514,7 +2514,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                        Eina_Rectangle *rr;
 
                        if ((!o->cur->has_alpha) &&
-                           (evas_object_is_opaque(eo_obj, obj)) &&
+                           (evas_object_is_opaque(obj)) &&
                            (obj->cur->color.a == 255))
                          {
                             Evas_Coord x, y, w, h;
@@ -2614,7 +2614,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
    /* it obviously didn't change - add a NO obscure - this "unupdates"  this */
    /* area so if there were updates for it they get wiped. don't do it if we */
    /* aren't fully opaque and we are visible */
-   if (evas_object_is_opaque(eo_obj, obj))
+   if (evas_object_is_opaque(obj))
      {
         Evas_Coord x, y, w, h;
 
@@ -2753,7 +2753,7 @@ evas_object_image_is_opaque(Evas_Object *eo_obj EINA_UNUSED,
              Evas_Object_Protected_Data *cur_source = efl_data_scope_get(o->cur->source, EFL_CANVAS_OBJECT_CLASS);
              EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
              {
-                state_write->opaque = evas_object_is_opaque(o->cur->source, cur_source);
+                state_write->opaque = evas_object_is_opaque(cur_source);
              }
              EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
              return o->cur->opaque; /* FIXME: Should go poke at the object */

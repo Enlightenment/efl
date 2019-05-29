@@ -702,7 +702,7 @@ _efl_canvas_vg_object_render_pre(Evas_Object *eo_obj,
    /* area so if there were updates for it they get wiped. don't do it if we */
    /* arent fully opaque and we are visible */
    if (evas_object_is_visible(obj) &&
-       evas_object_is_opaque(eo_obj, obj) &&
+       evas_object_is_opaque(obj) &&
        (!obj->clip.clipees))
      {
         Evas_Coord x, y, w, h;
