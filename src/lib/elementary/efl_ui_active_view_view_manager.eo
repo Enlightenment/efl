@@ -1,65 +1,71 @@
 abstract @beta Efl.Ui.Active_View.View_Manager extends Efl.Object {
-  [[Transition object which is used by active_view.
+  [[Manager object used by @Efl.Ui.Active_View.Container to handle rendering and animation of its views, and user interaction.
 
-    The transition object can display changes to the active view with animations.
-    This object can also implement behavior user interaction in a animation manner. For example: Mouse dragging content, to get to a new  $current_page. If this is the case, such a user interaction should terminate with a call to $current_page. The position of the content should be exposed by emitting pos_update.
+    For instance, changes to the currently active view (@Efl.Ui.Active_View.Container.active_index) can be animated with a transition.
+    This object can also handle user interaction. For example, dragging the active view to one side to get to a different view (like an Android home screen).
+    Such user interactions should end up setting a new @Efl.Ui.Active_View.Container.active_index.
+    During a transition, the evolution of the current position should be exposed by emitting $pos_update events.
   ]]
   methods {
     bind @pure_virtual {
-      [[Initial call to flush the required objects of the active view to the transition object]]
+      [[This method is called the first time an @Efl.Ui.Active_View.View_Manager is assigned to an @Efl.Ui.Active_View.Container, binding them together.
+        The manager can read the current content of the container, subscribe to events, or do any initialization it requires.
+      ]]
       params {
-        active_view : Efl.Ui.Active_View.Container;
-        group : Efl.Canvas.Group;
+        active_view : Efl.Ui.Active_View.Container; [[The container to bind the view manager to.]]
+        group : Efl.Canvas.Group; [[The graphical group where the views should be added with @Efl.Canvas.Group.group_member_add and removed with @Efl.Canvas.Group.group_member_remove.]]
       }
     }
     content_add @pure_virtual  {
-      [[Content has been added to the container passed in .bind. The $subobj is at position $index.
+      [[A $subobj has been added at position $index in the bound container.
 
-        While in the call, the $current_page property of the active_view might change.
-        If such a change is happening. No animation should be displayed, and the new state should be applied.
+        The manager should check the container's @Efl.Ui.Active_View.Container.active_index since indices might have
+        shifted due to the insertion of the new object.
       ]]
       params {
-        subobj : Efl.Gfx.Entity;
-        index : int;
+        subobj : Efl.Gfx.Entity; [[The new object that has been added to the container.]]
+        index : int; [[The index of the new object in the container's list.]]
       }
     }
     content_del @pure_virtual  {
-      [[Content has been removed from the container passed in .bind. The $subobj at position $index is now removed.
+      [[The $subobj at position $index in the bound container has been removed.
 
-        While in the call, the $current_page property of the active_view might change.
-        If such a change is happening. No animation should be displayed, and the new state should be applied.
+        The manager should check the container's @Efl.Ui.Active_View.Container.active_index since indices might have
+        shifted due to the removal of the object.
       ]]
       params {
-        subobj : Efl.Gfx.Entity;
-        index : int;
+        subobj : Efl.Gfx.Entity; [[The object being removed from the container.]]
+        index : int; [[The index this object had in the container's list.]]
       }
     }
     switch_to @pure_virtual  {
-      [[Switch from one side to another, if there has been no side before, from is -1.
-        This function should, if the transition object supports this, display a animation.
+      [[Switch from one view to another. If there was no previous view, $from might be -1.
+        This function should display an animation if the @Efl.Ui.Active_View.View_Manager supports them.
       ]]
       params {
-        from : int;
-        to : int;
+        from : int; [[Index of the starting view in the container's list. Might be -1 if unknown.]]
+        to : int; [[Index of the target view in the container's list.]]
       }
     }
     @property view_size @pure_virtual  {
-      [[Will be called whenever the page size changes]]
+      [[Will be called whenever the @Efl.Ui.Active_View.Container.active_view_size changes so the @Efl.Ui.Active_View.View_Manager can update itself.]]
       set {
-
       }
       values {
-        size : Eina.Size2D; [[The size of the page, real coordiates at any time]]
+        size : Eina.Size2D; [[The new size of the views.]]
       }
     }
     @property animation_enabled @pure_virtual {
-       [[This flag can be used to indicate that no animations should be done]]
+       [[This flag can be used to disable animations.]]
        values {
-          enable : bool; [[$true if you want animations to happen, $false if otherwise]]
+          enable : bool; [[$true if you want animations to happen, $false otherwise.]]
        }
     }
   }
   events {
-    pos_update : double; [[The absolut position where the state of the content currently is. So if there is a animation from 2 to 3 the event will go from 2.0 to 3.0. If there is a $switch_to from 2 to 3, then this event should go in one direction from 2 to 3. Not following this, will result in a event to abort the transition, and instanciating a new one.]]
+    pos_update : double; [[Index of the view currently being displayed. Fractional values indicate a position in-between views.
+                           For instance, when transitioning from view 2 to view 3, this event should be emitted with monotonically
+                           increasing values ranging from 2.0 to 3.0.
+                           Animations can perform any movement they want, but the reported $pos_update must move in the same direction.]]
   }
 }

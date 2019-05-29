@@ -1,61 +1,88 @@
 struct  @beta Efl.Ui.Active_View.Transition_Event {
-   from : int; [[The id from where the transition started, -1 if not known]]
-   to : int; [[The id from where the transition started, -1 if not known]]
+   [[Information regarding transition events.]]
+   from : int; [[The view index from where the transition started, -1 if not known.]]
+   to : int; [[The view index to where the transition is headed, -1 if not known.]]
 }
 
 enum Efl.Ui.Active_View.Container_Gravity {
-   content = 0, [[In case the internal list of content is changed, then the $active_index will always point to the same content]]
-   index = 1, [[In case the internal list of content is changed, then the $active_index will keep its value]]
+   [[This enum controls the behavior of @Efl.Ui.Active_View.Container.active_index when indices are
+     shifted due to object addition or removal.]]
+   content = 0, [[When a view is added or removed from the container, the @Efl.Ui.Active_View.Container.active_index will
+                  be adjusted as necessary so it points to the same view as before.]]
+   index = 1,   [[When a view is added or removed from the container, the @Efl.Ui.Active_View.Container.active_index will
+                  remain the same, possibly pointing to a different view.]]
 }
 
 class @beta Efl.Ui.Active_View.Container extends Efl.Ui.Layout_Base implements Efl.Pack_Linear
 {
-   [[ The active view widget can be used to display the added content in some animated way. The details of the animation and way of displaying depends on the transition object.
-      The size of the displayed content can be controlled via $active_view_size. The content with the main attraction can be setted with $active_index.
+   [[The Active View widget is a container for other sub-widgets (views), where only one sub-widget is active at any given time.
 
-      Without a transition object this widget will just display the content with the id set with $active_index. On page changes,
+     Views are added using the @Efl.Pack_Linear interface and the active view is selected using @.active_index.
+
+     The way the different views are rendered can be customized through the @.view_manager object. For example, only the active view
+     might be shown, or it might be shown in a central position whereas the other views are displayed on the sides, or grayed-out.
+     All views are displayed with the same size, selected with @.active_view_size.
+
+     Additionally, the transition from one view to another can be animated. This animation is also controlled by the @.view_manager object.
+
+     Also, an indicator widget can be used to show a visual cue of how many views are there and which one is the active one.
+
+     This class can be used to create other widgets like Pagers, Tabbed pagers or Stacks, where each view represents a "page" full
+     of other widgets. All these cases can be implemented with a different @.view_manager and use the same @Efl.Ui.Active_View.Container.
    ]]
    c_prefix: efl_ui_active_view;
    methods {
       @property view_manager {
-        [[The transition object which defines the animation and exact position of the content]]
+        [[This object defines how views are rendered and animated.
+          If it is not set, only the active view is shown and transitions are instantaneous (not animated).
+        ]]
         values {
-          transition : Efl.Ui.Active_View.View_Manager @owned;
+          view_manager : Efl.Ui.Active_View.View_Manager @owned; [[The View Manager object or $NULL.]]
         }
       }
       @property indicator {
-        [[A indicator object which can be used to display the state and position of the content in this widget
-          When this object here is set, the position of the indicator object is immidiatly called to the current position of the widget
+        [[An indicator object to use, which will display the current state of the Active View (number of views and active one).
+          When this object is set, it is immediately updated to reflect the current state of the widget.
+          Its location inside the container is controlled by the @.view_manager.
         ]]
         values {
-          indicator : Efl.Ui.Active_View.Indicator @owned;
+          indicator : Efl.Ui.Active_View.Indicator @owned; [[The Indicator object or $NULL.]]
         }
       }
       @property active_index {
-         [[Selects which is the maincontent to display by this widget. The exact positioning depends on the $transition object]]
+         [[Currently active view among all the views added to this widget.
+         
+           Changing this value might trigger an animation.
+         ]]
          values {
-            index: int;
+            index: int; [[Index of the active view, from 0 to the number of views - 1 (@Efl.Container.content_count - 1).]]
          }
       }
       @property active_view_gravity {
-         [[active_view can be used to set the currently active viewed content.
+         [[When a new view is added to this widget, the indices for the previous views might change (for example,
+           when adding a view at the beginning of the list with @Efl.Pack_Linear.pack_begin all previous view's indices are increased by one).
 
-           This property can be used to switch_to the semantic of the function. If gravity is content, then newly added content will change the index, but keep the content. If the gravity is set to index, then the index will stay when new content is added, which might show new content.
+           This property controls whether the Active View should remain the same view as before (@Efl.Ui.Active_View.Container_Gravity.content)
+           or if the Active View should be moved to the one with the same index as before (@Efl.Ui.Active_View.Container_Gravity.index).
+
+           For example, @Efl.Ui.Active_View.Container_Gravity.index can be used to build a Stack, where @.active_index is always 0 and new
+           views are pushed onto the stack with @Efl.Pack_Linear.pack_begin and popped from the stack with @Efl.Pack_Linear.pack_unpack_at 0.
          ]]
          values {
-            gravity : Efl.Ui.Active_View.Container_Gravity;
+            gravity : Efl.Ui.Active_View.Container_Gravity; [[Active View behavior when adding new views. Default is @Efl.Ui.Active_View.Container_Gravity.content.]]
          }
       }
       @property active_view_size {
-         [[The size that is give to each content when displayed]]
+         [[The size to use when displaying the Active View. This is used by the @.view_manager to perform the rendering.
+           Views other than the Active one may or may not use this size.]]
          values {
-            size: Eina.Size2D;
+            size: Eina.Size2D; [[Render size for the Active View. (-1, -1) means that all available space inside the container is used.]]
          }
       }
    }
    events {
-      transition,start : Efl.Ui.Active_View.Transition_Event;
-      transition,end : Efl.Ui.Active_View.Transition_Event;
+      transition,start : Efl.Ui.Active_View.Transition_Event; [[A transition animation has started.]]
+      transition,end : Efl.Ui.Active_View.Transition_Event; [[A transition animation has ended.]]
    }
    implements {
       Efl.Object.constructor;
