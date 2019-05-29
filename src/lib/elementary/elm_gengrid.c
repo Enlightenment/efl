@@ -162,8 +162,12 @@ _item_cache_free(Item_Cache *itc)
    if (!itc) return;
 
    evas_object_del(itc->spacer);
-   efl_wref_del(itc->base_view, &itc->base_view);
-   efl_del(itc->base_view);
+   /* does not exist if cache item has just been reused */
+   if (itc->base_view)
+     {
+        efl_wref_del(itc->base_view, &itc->base_view);
+        efl_del(itc->base_view);
+     }
    eina_stringshare_del(itc->item_style);
    EINA_LIST_FREE(itc->contents, c)
      evas_object_del(c);
