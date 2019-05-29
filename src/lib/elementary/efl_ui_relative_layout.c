@@ -177,6 +177,11 @@ _child_aspect_calc(Efl_Ui_Relative_Layout_Child *child, Eina_Bool axis)
         calc->want[0].length = calc->want[1].length * calc->aspect[0] / calc->aspect[1];
      }
    //calculate min size
+   if (calc->aspect[1] > calc->aspect[0])
+     calc->min[1] = calc->min[0] * calc->aspect[1] / calc->aspect[0];
+   else
+     calc->min[0] = calc->min[1] * calc->aspect[0] / calc->aspect[1];
+
    if (calc->want[0].length < calc->min[0])
      {
         calc->want[0].length = calc->min[0];
@@ -298,7 +303,16 @@ _child_chain_calc(Efl_Ui_Relative_Layout_Child *child, Eina_Bool axis)
         cur_pos += o->calc.space[axis].length;
         o->calc.space[axis].length -= o->calc.margin[START] + o->calc.margin[END];
         o->calc.chain_state[axis] = RELATIVE_CALC_DONE;
+        child->calc.m0[axis] += o->calc.min[axis];
      }
+
+   child->calc.mi[axis] = head->rel[START].relative * (head->calc.to[START]->calc.mj[axis] -
+                    head->calc.to[START]->calc.mi[axis]) + head->calc.to[START]->calc.mi[axis];
+   child->calc.mj[axis] = tail->rel[END].relative * (tail->calc.to[END]->calc.mj[axis] -
+                    tail->calc.to[END]->calc.mi[axis]) + tail->calc.to[END]->calc.mi[axis];
+   child->calc.m0[axis] += -child->calc.min[axis] +
+            (head->calc.to[START]->calc.m0[axis] * head->rel[START].relative) +
+            (tail->calc.to[END]->calc.m0[axis] * (1 - tail->rel[END].relative));
 
    return EINA_TRUE;
 }
@@ -355,6 +369,32 @@ _child_calc(Efl_Ui_Relative_Layout_Child *child, Eina_Bool axis)
       (calc->space[axis].length - calc->want[axis].length) * calc->align[axis];
 
    child->calc.state[axis] = RELATIVE_CALC_DONE;
+   if (child->calc.chain_state[axis] == RELATIVE_CALC_DONE)
+     return;
+
+   //calculate relative layout min
+   calc->mi[axis] = child->rel[START].relative * (calc->to[START]->calc.mj[axis] -
+                    calc->to[START]->calc.mi[axis]) + calc->to[START]->calc.mi[axis];
+   calc->mj[axis] = child->rel[END].relative * (calc->to[END]->calc.mj[axis] -
+                    calc->to[END]->calc.mi[axis]) + calc->to[END]->calc.mi[axis];
+   calc->m0[axis] = calc->to[START]->calc.m0[axis] * child->rel[START].relative;
+
+   if ((calc->to[START] == calc->to[END]) &&
+       EINA_DBL_EQ(child->rel[START].relative, child->rel[END].relative))
+     {
+        double r, a; // relative, align
+        r = calc->mi[axis] +
+           (child->rel[START].relative * (calc->mj[axis] - calc->mi[axis]));
+        a = calc->align[axis];
+        calc->m0[axis] += (calc->min[axis] + calc->margin[START] + calc->margin[END]) *
+           ((EINA_DBL_EQ(r, 0.0) || (!EINA_DBL_EQ(r, 1.0) && (a < r))) ?
+            ((1 - a) / (1 - r)) : (a / r));
+     }
+   else
+     {
+        calc->m0[axis] += calc->to[END]->calc.m0[axis] * (1 - child->rel[END].relative);
+     }
+
 }
 
 static void
@@ -386,18 +426,36 @@ _hash_clear_cb(void *data)
 
 static Eina_Bool
 _hash_child_calc_foreach_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
-                            void *data, void *fdata EINA_UNUSED)
+                            void *data, void *fdata)
 {
    Efl_Ui_Relative_Layout_Child *child = data;
+   Efl_Ui_Relative_Layout_Calc *calc = &(child->calc);
+   Efl_Ui_Relative_Layout_Data *pd = fdata;
    Eina_Rect want;
+   int axis, layout_min;
+   double min_len;
 
    _child_calc(child, 0);
    _child_calc(child, 1);
 
-   want.x = child->calc.want[0].position;
-   want.w = child->calc.want[0].length;
-   want.y = child->calc.want[1].position;
-   want.h = child->calc.want[1].length;
+   want.x = calc->want[0].position;
+   want.w = calc->want[0].length;
+   want.y = calc->want[1].position;
+   want.h = calc->want[1].length;
+
+   for (axis = 0; axis < 2; axis++)
+     {
+        layout_min = 0;
+        min_len = calc->mj[axis] - calc->mi[axis];
+        if (EINA_DBL_EQ(min_len, 0.0))
+          layout_min = calc->m0[axis];
+        else
+          layout_min = ((calc->min[axis] + calc->margin[START] +
+                   calc->margin[END] + calc->m0[axis]) / fabs(min_len)) + 0.5;
+
+        if (pd->base->calc.min[axis] < layout_min)
+          pd->base->calc.min[axis] = layout_min;
+     }
 
    efl_gfx_entity_geometry_set(child->obj, want);
    return EINA_TRUE;
@@ -437,6 +495,8 @@ _hash_child_init_foreach_cb(const Eina_Hash *hash EINA_UNUSED, const void *key E
    calc->max[1] = max.h;
    calc->min[0] = min.w;
    calc->min[1] = min.h;
+   calc->m0[0] = 0.0;
+   calc->m0[1] = 0.0;
 
    calc->want[0].position = 0;
    calc->want[0].length = 0;
@@ -477,9 +537,13 @@ _efl_ui_relative_layout_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Relative_L
    pd->base->calc.want[0].length = want.w;
    pd->base->calc.want[1].position = want.y;
    pd->base->calc.want[1].length = want.h;
+   pd->base->calc.min[0] = 0;
+   pd->base->calc.min[1] = 0;
 
    eina_hash_foreach(pd->children, _hash_child_init_foreach_cb, pd);
-   eina_hash_foreach(pd->children, _hash_child_calc_foreach_cb, NULL);
+   eina_hash_foreach(pd->children, _hash_child_calc_foreach_cb, pd);
+
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(pd->base->calc.min[0], pd->base->calc.min[1]));
 
    efl_event_callback_call(obj, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);
 }
@@ -550,6 +614,8 @@ _efl_ui_relative_layout_efl_object_constructor(Eo *obj, Efl_Ui_Relative_Layout_D
    pd->base->rel[TOP].relative = 0.0;
    pd->base->rel[BOTTOM].to = obj;
    pd->base->rel[BOTTOM].relative = 1.0;
+   pd->base->calc.mi[0] = pd->base->calc.mi[1] = 0.0;
+   pd->base->calc.mj[0] = pd->base->calc.mj[1] = 1.0;
    pd->base->calc.state[0] = RELATIVE_CALC_DONE;
    pd->base->calc.state[1] = RELATIVE_CALC_DONE;
    pd->base->calc.chain_state[0] = RELATIVE_CALC_DONE;
