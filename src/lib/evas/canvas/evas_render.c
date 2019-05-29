@@ -1236,7 +1236,7 @@ _evas_render_phase1_process(Phase1_Context *p1ctx)
 
         EINA_INLIST_FOREACH(lay->objects, obj)
           {
-             if (evas_object_is_on_plane(obj->object, obj)) continue;
+             if (evas_object_is_on_plane(obj)) continue;
              clean_them |= _evas_render_phase1_object_process
                 (p1ctx, obj, EINA_FALSE, EINA_FALSE, EINA_FALSE, 2);
           }
@@ -3147,7 +3147,7 @@ _evas_planes(Evas_Public_Data *evas)
 
                /* We also need to clean its previously drawn position
                 * but only if we're removing it */
-               if (evas_object_is_on_plane(eo_obj2, obj2))
+               if (evas_object_is_on_plane(obj2))
                  _evas_canvas_damage_rectangle_add(NULL, evas,
                                                    obj2->prev->geometry.x,
                                                    obj2->prev->geometry.y,
