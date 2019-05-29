@@ -1385,19 +1385,19 @@ _show_region_hook(void *data EINA_UNUSED, Evas_Object *obj, Eina_Rect r)
 }
 
 EOLIAN static Eina_Bool
-_elm_entry_efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Evas_Object *sobj)
+_elm_entry_efl_ui_widget_widget_sub_object_del(Eo *obj, Elm_Entry_Data *sd, Evas_Object *sobj)
 {
    Eina_Bool ret = EINA_FALSE;
    /* unfortunately entry doesn't follow the signal pattern
     * elm,state,icon,{visible,hidden}, so we have to replicate this
     * smart function */
-   if (sobj == elm_layout_content_get(obj, "elm.swallow.icon"))
+   if (sobj == edje_object_part_swallow_get(sd->scr_edje, "elm.swallow.icon"))
      {
-        elm_layout_signal_emit(obj, "elm,action,hide,icon", "elm");
+        edje_object_signal_emit(sd->scr_edje, "elm,action,hide,icon", "elm");
      }
-   else if (sobj == elm_layout_content_get(obj, "elm.swallow.end"))
+   else if (sobj == edje_object_part_swallow_get(sd->scr_edje, "elm.swallow.end"))
      {
-        elm_layout_signal_emit(obj, "elm,action,hide,end", "elm");
+        edje_object_signal_emit(sd->scr_edje, "elm,action,hide,end", "elm");
      }
 
    ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
@@ -5217,27 +5217,27 @@ _elm_entry_scrollable_get(const Eo *obj EINA_UNUSED, Elm_Entry_Data *sd)
 }
 
 EOLIAN static void
-_elm_entry_icon_visible_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool setting)
+_elm_entry_icon_visible_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool setting)
 {
-   if (!elm_layout_content_get(obj, "elm.swallow.icon")) return;
+   if (!edje_object_part_swallow_get(sd->scr_edje, "elm.swallow.icon")) return;
 
    if (setting)
-     elm_layout_signal_emit(obj, "elm,action,show,icon", "elm");
+     edje_object_signal_emit(sd->scr_edje, "elm,action,show,icon", "elm");
    else
-     elm_layout_signal_emit(obj, "elm,action,hide,icon", "elm");
+     edje_object_signal_emit(sd->scr_edje, "elm,action,hide,icon", "elm");
 
    elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static void
-_elm_entry_end_visible_set(Eo *obj, Elm_Entry_Data *_pd EINA_UNUSED, Eina_Bool setting)
+_elm_entry_end_visible_set(Eo *obj, Elm_Entry_Data *sd, Eina_Bool setting)
 {
-   if (!elm_layout_content_get(obj, "elm.swallow.end")) return;
+   if (!edje_object_part_swallow_get(sd->scr_edje, "elm.swallow.end")) return;
 
    if (setting)
-     elm_layout_signal_emit(obj, "elm,action,show,end", "elm");
+     edje_object_signal_emit(sd->scr_edje, "elm,action,show,end", "elm");
    else
-     elm_layout_signal_emit(obj, "elm,action,hide,end", "elm");
+     edje_object_signal_emit(sd->scr_edje, "elm,action,hide,end", "elm");
 
    elm_layout_sizing_eval(obj);
 }
