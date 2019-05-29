@@ -1045,6 +1045,7 @@ _elm_index_efl_canvas_group_group_add(Eo *obj, Elm_Index_Data *priv)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
+   priv->event_rect[0] = o = evas_object_rectangle_add(evas_object_evas_get(obj));
 
    if (!elm_layout_theme_set
        (obj, "index", "base/vertical", elm_widget_style_get(obj)))
@@ -1053,7 +1054,6 @@ _elm_index_efl_canvas_group_group_add(Eo *obj, Elm_Index_Data *priv)
    evas_object_event_callback_add
      (obj, EVAS_CALLBACK_RESIZE, _index_resize_cb, NULL);
 
-   priv->event_rect[0] = o = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_color_set(o, 0, 0, 0, 0);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
    evas_object_size_hint_min_set(o, minw, minh);
