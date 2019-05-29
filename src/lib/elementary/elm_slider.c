@@ -578,10 +578,13 @@ _elm_slider_val_fetch(Evas_Object *obj, Elm_Slider_Data *pd, Eina_Bool user_even
    if (efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE)) pos = posx;
    else pos = posy;
 
-   efl_ui_drag_value_get(efl_part(wd->resize_obj, "elm.dragable2.slider"),
-                         &posx2, &posy2);
-   if (efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE)) pos2 = posx2;
-   else pos2 = posy2;
+   if (pd->intvl_enable)
+     {
+        efl_ui_drag_value_get(efl_part(wd->resize_obj, "elm.dragable2.slider"),
+                              &posx2, &posy2);
+        if (efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE)) pos2 = posx2;
+        else pos2 = posy2;
+     }
 
    rtl = efl_ui_mirrored_get(obj);
    if ((!rtl && _is_inverted(sd->dir)) ||
@@ -594,10 +597,10 @@ _elm_slider_val_fetch(Evas_Object *obj, Elm_Slider_Data *pd, Eina_Bool user_even
      }
 
    val = (pos * (sd->val_max - sd->val_min)) + sd->val_min;
-   val2 = (pos2 * (sd->val_max - sd->val_min)) + sd->val_min;
 
    if (pd->intvl_enable)
      {
+        val2 = (pos2 * (sd->val_max - sd->val_min)) + sd->val_min;
         if (!inverted)
           {
              if (val > id->intvl_to)
@@ -638,7 +641,7 @@ _elm_slider_val_fetch(Evas_Object *obj, Elm_Slider_Data *pd, Eina_Bool user_even
           }
      }
 
-   if (fabs(val2 - id->intvl_to) > DBL_EPSILON)
+   if (pd->intvl_enable && fabs(val2 - id->intvl_to) > DBL_EPSILON)
      {
         id->intvl_to = val2;
         /* avoid emitting two events and setting a timer twice */
@@ -652,7 +655,7 @@ _elm_slider_val_fetch(Evas_Object *obj, Elm_Slider_Data *pd, Eina_Bool user_even
 }
 
 void
-_elm_slider_val_set(Evas_Object *obj, Elm_Slider_Data *pd EINA_UNUSED)
+_elm_slider_val_set(Evas_Object *obj, Elm_Slider_Data *pd)
 {
    Eina_Bool rtl;
    double pos, pos2;
@@ -691,8 +694,9 @@ _elm_slider_val_set(Evas_Object *obj, Elm_Slider_Data *pd EINA_UNUSED)
 
    efl_ui_drag_value_set(efl_part(wd->resize_obj, "elm.dragable.slider"),
                          pos, pos);
-   efl_ui_drag_value_set(efl_part(wd->resize_obj, "elm.dragable2.slider"),
-                         pos2, pos2);
+   if (pd->intvl_enable)
+     efl_ui_drag_value_set(efl_part(wd->resize_obj, "elm.dragable2.slider"),
+                           pos2, pos2);
 
    // emit accessibility event also if value was changed by API
    if (_elm_config->atspi_mode)
