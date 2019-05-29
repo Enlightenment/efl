@@ -3351,7 +3351,7 @@ _elm_genlist_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
    Evas_Coord ix = 0, iy = 0, iw = 0, ih = 0; // given item geometry
    Evas_Coord cx = 0, cy = 0, cw = 0, ch = 0; // candidate item geometry
    Eina_List *item_list = NULL, *l = NULL;
-   Elm_Object_Item *eo_item = NULL;
+   Elm_Object_Item *first_item, *eo_item = NULL;
    ELM_GENLIST_DATA_GET(obj, sd);
    Eina_Bool search_next = EINA_FALSE;
 
@@ -3359,19 +3359,27 @@ _elm_genlist_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
    ELM_GENLIST_ITEM_DATA_GET(eo_it, it);
 
    evas_object_geometry_get(sd->pan_obj, &vx, &vy, &vw, &vh);
-   evas_object_geometry_get(VIEW(it), &ix, &iy, &iw, &ih); // FIXME: check if the item is realized or not
 
-   if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, ix, iy, iw, ih))
+   if (it->realized)
      {
-        if (!elm_object_item_disabled_get(eo_it))
-          return eo_it;
-        else
-          search_next = EINA_TRUE;
+        evas_object_geometry_get(VIEW(it), &ix, &iy, &iw, &ih);
+
+        if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, ix, iy, iw, ih))
+          {
+             if (!elm_object_item_disabled_get(eo_it))
+               return eo_it;
+             else
+               search_next = EINA_TRUE;
+          }
      }
 
    item_list = elm_genlist_realized_items_get(obj);
+   /* if first realized item is before parameter item then parameter item is
+    * off viewport towards bottom: start at end of list */
+   first_item = eina_list_data_get(item_list);
+   ELM_GENLIST_ITEM_DATA_GET(first_item, first_it);
 
-   if ((iy < vy) || search_next)
+   if ((iy < vy) || search_next || (!first_it) || (first_it->position > it->position))
      {
         EINA_LIST_FOREACH(item_list, l, eo_item)
           {
@@ -3401,7 +3409,7 @@ _elm_genlist_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
      }
    eina_list_free(item_list);
 
-   return eo_it;
+   return it->realized ? eo_it : NULL;
 }
 
 EOLIAN static void
