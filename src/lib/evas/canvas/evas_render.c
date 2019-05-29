@@ -3133,7 +3133,7 @@ _evas_planes(Evas_Public_Data *evas)
                     _evas_object_image_plane_release(eo_obj2, obj2, output);
                  } else break;
             }
-          if (evas_object_plane_changed(eo_obj2, obj2))
+          if (evas_object_plane_changed(obj2))
             {
                /* Since we're lifting this object out of the scene graph
                 * (or putting it back), we need to force redraw of the space
