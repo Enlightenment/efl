@@ -3446,7 +3446,12 @@ _ecore_evas_free(Ecore_Evas *ee)
      }
    ee->animator_count = 0;
 
-   efl_event_callback_array_del(ee->evas, animator_watch(), ee);
+   /* not present in extn engine */
+   if (ee->evas)
+     {
+        efl_event_callback_array_del(ee->evas, animator_watch(), ee);
+        efl_event_callback_array_del(ee->evas, _ecore_evas_device_cbs(), ee);
+     }
    if (ee->anim)
      ecore_animator_del(ee->anim);
    ee->anim = NULL;
@@ -3487,7 +3492,6 @@ _ecore_evas_free(Ecore_Evas *ee)
      ecore_timer_del(ee->prop.wm_rot.manual_mode.timer);
    _ecore_evas_aux_hint_free(ee);
    ee->prop.wm_rot.manual_mode.timer = NULL;
-   efl_event_callback_array_del(ee->evas, _ecore_evas_device_cbs(), ee);
    eina_hash_free(ee->prop.cursors);
    ee->prop.cursors = NULL;
    evas_free(ee->evas);
