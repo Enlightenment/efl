@@ -814,8 +814,10 @@ _props_get_all(void *data, const Eldbus_Message *msg, Eldbus_Pending *pending)
 
    if (eldbus_message_error_get(msg, &name, &error_msg))
      {
-        WRN("Error getting all properties of %s %s, error message: %s %s",
-            proxy->obj->name, proxy->obj->path, name, error_msg);
+        /* don't print warnings for user-canceled calls */
+        if (!eina_streq(name, "org.enlightenment.DBus.Canceled"))
+          WRN("Error getting all properties of %s %s, error message: %s %s",
+              proxy->obj->name, proxy->obj->path, name, error_msg);
         return;
      }
 
