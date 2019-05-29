@@ -769,7 +769,9 @@ _efl_ui_layout_base_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Layout_Data *sd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   elm_layout_freeze(obj);
+   /* freeze edje object if it exists */
+   if (wd->resize_obj)
+     elm_layout_freeze(obj);
 
    EINA_LIST_FREE(sd->subs, sub_d)
      {
