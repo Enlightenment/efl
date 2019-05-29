@@ -168,6 +168,8 @@ EFL_START_TEST(elm_test_widget_focus_simple_widget)
    for (int i = 0; simple_widgets[i].name; ++i)
      {
         o = simple_widgets[i].constructor(win);
+        evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+        evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);
         elm_box_pack_end(box, o);
         evas_object_show(o);
 
