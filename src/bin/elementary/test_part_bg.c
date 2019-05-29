@@ -12,10 +12,10 @@ const Efl_Class *content_class[MAX_NUM_OF_CONTENT];
 static void
 _reset_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   Evas_Object *radio = data;
+   Efl_Ui_Radio_Group *radio = data;
    Evas_Object *target;
 
-   radio = efl_ui_radio_selected_object_get(radio);
+   radio = efl_ui_radio_group_selected_object_get(radio);
    target = evas_object_data_get(radio, "data");
 
    efl_gfx_color_set(efl_part(target, "background"), 0, 0, 0, 0);
@@ -25,11 +25,11 @@ _reset_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 static void
 _color_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   Evas_Object *radio = data;
+   Efl_Ui_Radio_Group *radio = data;
    Evas_Object *target;
    static Eina_Bool i;
 
-   radio = efl_ui_radio_selected_object_get(radio);
+   radio = efl_ui_radio_group_selected_object_get(radio);
    target = evas_object_data_get(radio, "data");
    i ^= EINA_TRUE;
    efl_gfx_color_set(efl_part(target, "background"), (i) ? 255 : 0, (i) ? 0 : 255, 0, 255);
@@ -38,12 +38,12 @@ _color_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 static void
 _scale_type_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   Evas_Object *radio = data;
+   Efl_Ui_Radio_Group *radio = data;
    Evas_Object *target;
    Efl_Gfx_Image_Scale_Type type;
    char buf[PATH_MAX];
 
-   radio = efl_ui_radio_selected_object_get(radio);
+   radio = efl_ui_radio_group_selected_object_get(radio);
    target = evas_object_data_get(radio, "data");
 
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
@@ -53,24 +53,28 @@ _scale_type_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_gfx_image_scale_type_set(efl_part(target, "background"), type);
 }
 
-static Evas_Object *
+static Efl_Ui_Radio_Group *
 _create_box_contents(Evas_Object *box)
 {
    Evas_Object *hbox;
    Evas_Object *radio_group, *radio;
    Evas_Object *content;
+   Efl_Ui_Radio_Group *group;
    char buf[PATH_MAX];
    unsigned int i;
+
+   group = efl_new(EFL_UI_RADIO_GROUP_IMPL_CLASS, NULL);
 
    hbox = efl_add(EFL_UI_BOX_CLASS, box,
                   efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                   efl_gfx_hint_weight_set(efl_added, 1, 1),
                   efl_pack_end(box, efl_added));
 
-   radio_group = radio = efl_add(EFL_UI_RADIO_CLASS, hbox,
-                                 efl_pack_end(hbox, efl_added),
-                                 efl_gfx_hint_weight_set(efl_added, 0, 0),
-                                 efl_ui_radio_state_value_set(efl_added, 0));
+   radio_group = radio = efl_add(EFL_UI_RADIO_CLASS, hbox);
+   efl_gfx_hint_weight_set(radio, 0, 0);
+   efl_ui_radio_state_value_set(radio, 0);
+   efl_ui_radio_group_register(group, radio);
+   efl_pack_end(hbox, radio);
 
    content = efl_add(EFL_UI_BOX_CLASS, hbox,
                      efl_pack_end(hbox, efl_added));
@@ -89,11 +93,11 @@ _create_box_contents(Evas_Object *box)
                        efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                        efl_pack_end(box, efl_added));
 
-        radio = efl_add(EFL_UI_RADIO_CLASS, hbox,
-                        efl_ui_radio_group_add(efl_added, radio_group),
-                        efl_pack_end(hbox, efl_added),
-                        efl_ui_radio_state_value_set(efl_added, i + 1),
-                        efl_gfx_hint_weight_set(efl_added, 0, 0));
+        radio = efl_add(EFL_UI_RADIO_CLASS, hbox);
+        efl_ui_radio_state_value_set(radio, i + 1);
+        efl_gfx_hint_weight_set(radio, 0, 0);
+        efl_ui_radio_group_register(group, radio);
+        efl_pack_end(hbox, radio);
 
         content = efl_add(content_class[i], hbox,
                           efl_pack_end(hbox, efl_added));
@@ -110,7 +114,7 @@ _create_box_contents(Evas_Object *box)
         evas_object_data_set(radio, "data", content);
      }
 
-   efl_ui_radio_group_value_set(radio_group, 0);
+   efl_ui_radio_group_selected_value_set(group, 0);
 
    return radio_group;
 }
@@ -121,7 +125,7 @@ test_part_background(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    Evas_Object *win;
    Evas_Object *scr;
    Evas_Object *vbox, *hbox;
-   Evas_Object *radio_group;
+   Efl_Ui_Radio_Group *radio_group;
    Evas_Object *reset_btn, *color_btn, *scale_btn;
 
    content_class[0] = EFL_UI_CALENDAR_CLASS;

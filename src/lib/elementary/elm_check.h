@@ -58,9 +58,6 @@
  *
  * @{
  */
-
-#define EFL_UI_CHECK_EVENT_CHANGED EFL_UI_NSTATE_EVENT_CHANGED
-
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "elm_check_legacy.h"
 #endif

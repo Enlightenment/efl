@@ -532,15 +532,15 @@ _tab_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                  efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
                  elm_naviframe_item_push(navi, "Tab", btn, NULL, efl_added, NULL));
 
-   label_check = efl_add(EFL_UI_CHECK_CLASS, box,
-                         efl_text_set(efl_added, "Tab Label + Page"),
-                         efl_ui_check_selected_set(efl_added, EINA_FALSE),
-                         efl_pack_end(box, efl_added));
+   label_check = efl_add(EFL_UI_CHECK_CLASS, box);
+   efl_text_set(label_check, "Tab Label + Page");
+   efl_ui_check_selected_set(label_check, EINA_FALSE);
+   efl_pack_end(box, label_check);
 
-   icon_check = efl_add(EFL_UI_CHECK_CLASS, box,
-                        efl_text_set(efl_added, "Tab Icon"),
-                        efl_ui_check_selected_set(efl_added, EINA_FALSE),
-                        efl_pack_end(box, efl_added));
+   icon_check = efl_add(EFL_UI_CHECK_CLASS, box);
+   efl_text_set(icon_check, "Tab Icon");
+   efl_ui_check_selected_set(icon_check, EINA_FALSE);
+   efl_pack_end(box, icon_check);
 
    tcd->tab_pager = tab_pager;
    tcd->label_check = label_check;

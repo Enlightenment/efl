@@ -111,17 +111,17 @@ test_ui_panel2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    box = efl_add(EFL_UI_BOX_CLASS, win,
                  efl_content_set(win, efl_added));
 
-   efl_add(EFL_UI_CHECK_CLASS, box,
-           efl_ui_check_selected_set(efl_added, elm_config_scroll_thumbscroll_enabled_get()),
-           efl_text_set(efl_added, "Enable thumb scroll (temporarily"),
-           efl_event_callback_add(efl_added, EFL_UI_NSTATE_EVENT_CHANGED, _check_changed, NULL),
-           efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0),
-           efl_pack(box, efl_added));
+   check = efl_add(EFL_UI_CHECK_CLASS, box);
+   efl_ui_check_selected_set(check, elm_config_scroll_thumbscroll_enabled_get());
+   efl_text_set(check, "Enable thumb scroll (temporarily");
+   efl_event_callback_add(check, EFL_UI_NSTATE_EVENT_CHANGED, _check_changed, NULL);
+   efl_gfx_hint_weight_set(check, EVAS_HINT_EXPAND, 0);
+   efl_pack(box, check);
 
-   check = efl_add(EFL_UI_CHECK_CLASS, box,
-                   efl_text_set(efl_added, "Reset content on toggle"),
-                   efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0),
-                   efl_pack(box, efl_added));
+   check = efl_add(EFL_UI_CHECK_CLASS, box);
+   efl_text_set(check, "Reset content on toggle");
+   efl_gfx_hint_weight_set(check, EVAS_HINT_EXPAND, 0);
+   efl_pack(box, check);
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "toggle"),

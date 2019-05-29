@@ -359,7 +359,7 @@ static void next_block_check_cb(void *data, const Efl_Event *ev)
 static void loop_radio_cb(void *data, const Efl_Event *ev)
 {
    Eo *pager = data;
-   int state = efl_ui_radio_group_value_get(ev->object);
+   int state = efl_ui_radio_group_selected_value_get(efl_ui_widget_parent_get(ev->object));
 
    efl_ui_pager_loop_mode_set(pager, state);
 }
@@ -409,8 +409,8 @@ static void page_size_cb(void *data,
    inbox = efl_add(EFL_UI_BOX_CLASS, fr,
                   efl_content_set(fr, efl_added));
 
-   ck = elm_check_add(inbox);
-   elm_object_text_set(ck, "Fill");
+   ck = efl_add(EFL_UI_CHECK_CLASS, inbox);
+   efl_text_set(ck, "Fill");
    efl_pack_end(inbox, ck);
    efl_gfx_entity_visible_set(ck, 1);
 
@@ -429,7 +429,7 @@ static void page_size_cb(void *data,
    size_params->pager = params->pager;
    size_params->params = params;
 
-   efl_event_callback_add(ck, EFL_UI_CHECK_EVENT_CHANGED, width_check_cb,
+   efl_event_callback_add(ck, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, width_check_cb,
                           size_params);
    efl_event_callback_add(ck, EFL_EVENT_DEL, check_del_cb, size_params);
 
@@ -450,8 +450,8 @@ static void page_size_cb(void *data,
    inbox = efl_add(EFL_UI_BOX_CLASS, fr,
                   efl_content_set(fr, efl_added));
 
-   ck = elm_check_add(inbox);
-   elm_object_text_set(ck, "Fill");
+   ck = efl_add(EFL_UI_CHECK_CLASS, inbox);
+   efl_text_set(ck, "Fill");
    efl_pack_end(inbox, ck);
    efl_gfx_entity_visible_set(ck, 1);
 
@@ -470,7 +470,7 @@ static void page_size_cb(void *data,
    size_params->pager = params->pager;
    size_params->params = params;
 
-   efl_event_callback_add(ck, EFL_UI_CHECK_EVENT_CHANGED, height_check_cb,
+   efl_event_callback_add(ck, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, height_check_cb,
                           size_params);
    efl_event_callback_add(ck, EFL_EVENT_DEL, check_del_cb, size_params);
 
@@ -778,7 +778,7 @@ static void scroll_block_cb(void *data,
    Params *params = (Params *)data;
    Evas_Object *navi = params->navi;
    Eo *pager = params->pager;
-   Eo *btn, *box;
+   Eo *btn, *box, *c;
    Eina_Bool prev, next;
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
@@ -793,21 +793,21 @@ static void scroll_block_cb(void *data,
 
    efl_ui_pager_scroll_block_get(pager, &prev, &next);
 
-   efl_add(EFL_UI_CHECK_CLASS, box,
-           efl_ui_widget_style_set(efl_added, "toggle"),
-           efl_text_set(efl_added, "Prev Block"),
-           efl_ui_check_selected_set(efl_added, prev),
-           efl_event_callback_add(efl_added, EFL_UI_CHECK_EVENT_CHANGED,
-                                  prev_block_check_cb, pager),
-           efl_pack_end(box, efl_added));
+   c = efl_add(EFL_UI_CHECK_CLASS, box);
+   efl_ui_widget_style_set(c, "toggle");
+   efl_text_set(c, "Prev Block");
+   efl_ui_check_selected_set(c, prev);
+   efl_event_callback_add(c, EFL_UI_CHECK_EVENT_SELECTED_CHANGED,
+                          prev_block_check_cb, pager);
+   efl_pack_end(box, c);
 
-   efl_add(EFL_UI_CHECK_CLASS, box,
-           efl_ui_widget_style_set(efl_added, "toggle"),
-           efl_text_set(efl_added, "Next Block"),
-           efl_ui_check_selected_set(efl_added, next),
-           efl_event_callback_add(efl_added, EFL_UI_CHECK_EVENT_CHANGED,
-                                  next_block_check_cb, pager),
-           efl_pack_end(box, efl_added));
+   c = efl_add(EFL_UI_CHECK_CLASS, box);
+   efl_ui_widget_style_set(c, "toggle");
+   efl_text_set(c, "Next Block");
+   efl_ui_check_selected_set(c, next);
+   efl_event_callback_add(c, EFL_UI_CHECK_EVENT_SELECTED_CHANGED,
+                          next_block_check_cb, pager);
+   efl_pack_end(box, c);
 }
 
 static void loop_cb(void *data EINA_UNUSED,
@@ -825,31 +825,30 @@ static void loop_cb(void *data EINA_UNUSED,
                  efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
                                         back_btn_cb, navi));
 
-   box = efl_add(EFL_UI_BOX_CLASS, navi,
+   box = efl_add(EFL_UI_RADIO_BOX_CLASS, navi,
                  efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
 		 elm_naviframe_item_push(navi, "Loop", btn, NULL,
                                          efl_added, NULL));
 
-   rd = efl_add(EFL_UI_RADIO_CLASS, box,
-                efl_ui_radio_state_value_set(efl_added, EFL_UI_PAGER_LOOP_DISABLED),
-                efl_text_set(efl_added, "Disabled"),
-                efl_gfx_hint_weight_set(efl_added, 1, 0),
-                efl_event_callback_add(efl_added, EFL_UI_RADIO_EVENT_CHANGED,
-                                       loop_radio_cb, pager),
-                efl_pack(box, efl_added));
+   rd = efl_add(EFL_UI_RADIO_CLASS, box);
+   efl_ui_radio_state_value_set(rd, EFL_UI_PAGER_LOOP_DISABLED);
+   efl_text_set(rd, "Disabled");
+   efl_gfx_hint_weight_set(rd, 1, 0);
+   efl_event_callback_add(rd, EFL_UI_CHECK_EVENT_SELECTED_CHANGED,
+                          loop_radio_cb, pager);
+   efl_pack(box, rd);
 
-   rd = efl_add(EFL_UI_RADIO_CLASS, box,
-                efl_ui_radio_state_value_set(efl_added, EFL_UI_PAGER_LOOP_ENABLED),
-                efl_ui_radio_group_add(efl_added, rd),
-                efl_text_set(efl_added, "Enabled"),
-                efl_gfx_hint_weight_set(efl_added, 1, 0),
-                efl_event_callback_add(efl_added, EFL_UI_RADIO_EVENT_CHANGED,
-                                       loop_radio_cb, pager),
-                efl_pack(box, efl_added));
+   rd = efl_add(EFL_UI_RADIO_CLASS, box);
+   efl_ui_radio_state_value_set(rd, EFL_UI_PAGER_LOOP_ENABLED);
+   efl_text_set(rd, "Enabled");
+   efl_gfx_hint_weight_set(rd, 1, 0);
+   efl_event_callback_add(rd, EFL_UI_CHECK_EVENT_SELECTED_CHANGED,
+                          loop_radio_cb, pager);
+   efl_pack(box, rd);
 
    loop = efl_ui_pager_loop_mode_get(pager);
 
-   efl_ui_radio_group_value_set(rd, loop);
+   efl_ui_radio_group_selected_value_set(efl_ui_radio_box_group_get(box), loop);
 
    if (loop == EFL_UI_PAGER_LOOP_DISABLED)
      {

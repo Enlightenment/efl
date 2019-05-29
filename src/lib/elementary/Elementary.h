@@ -147,10 +147,6 @@ EAPI extern Elm_Version *elm_version;
 #include <elm_focus.h>
 
 #include <Efl.h>
-/* FIXME: wtf? */
-#ifndef EFL_UI_RADIO_EVENT_CHANGED
-# define EFL_UI_RADIO_EVENT_CHANGED EFL_UI_NSTATE_EVENT_CHANGED
-#endif
 # include <efl_ui.eot.h>
 //define focus manager earlier since focus object and manager is circular
 typedef Eo Efl_Ui_Focus_Manager;

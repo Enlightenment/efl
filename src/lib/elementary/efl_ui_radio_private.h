@@ -37,8 +37,6 @@ struct _Efl_Ui_Radio_Data
 {
    int                   value;
    Group                *group;
-
-   Eina_Bool             state : 1;
 };
 
 /**

@@ -375,7 +375,7 @@ static void page_size_cb(void *data,
    size_params->pager = params->pager;
    size_params->params = params;
 
-   efl_event_callback_add(ck, EFL_UI_CHECK_EVENT_CHANGED, width_check_cb,
+   efl_event_callback_add(ck, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, width_check_cb,
                           size_params);
    efl_event_callback_add(ck, EFL_EVENT_DEL, check_del_cb, size_params);
 
@@ -416,7 +416,7 @@ static void page_size_cb(void *data,
    size_params->pager = params->pager;
    size_params->params = params;
 
-   efl_event_callback_add(ck, EFL_UI_CHECK_EVENT_CHANGED, height_check_cb,
+   efl_event_callback_add(ck, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, height_check_cb,
                           size_params);
    efl_event_callback_add(ck, EFL_EVENT_DEL, check_del_cb, size_params);
 

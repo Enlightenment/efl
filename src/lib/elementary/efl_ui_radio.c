@@ -123,21 +123,27 @@ _activate(Evas_Object *obj)
 {
    ELM_RADIO_DATA_GET(obj, sd);
 
-   if (sd->group->value == sd->value) return;
-
-   if ((!_elm_config->access_mode) ||
-       (_elm_access_2nd_click_timeout(obj)))
+   if (elm_widget_is_legacy(obj))
      {
-        sd->group->value = sd->value;
-        if (sd->group->valuep) *(sd->group->valuep) = sd->group->value;
+        //in legacy, group is handeled by the widget
+        if (sd->group->value == sd->value) return;
 
-        _state_set_all(sd, EINA_TRUE);
+        if ((!_elm_config->access_mode) ||
+            (_elm_access_2nd_click_timeout(obj)))
+          {
+             sd->group->value = sd->value;
+             if (sd->group->valuep) *(sd->group->valuep) = sd->group->value;
 
-        if (_elm_config->access_mode)
-          _elm_access_say(E_("State: On"));
-        efl_event_callback_legacy_call
-          (obj, EFL_UI_RADIO_EVENT_CHANGED, NULL);
+             _state_set_all(sd, EINA_TRUE);
 
+             if (_elm_config->access_mode)
+               _elm_access_say(E_("State: On"));
+         }
+     }
+   else
+     {
+        //in new API, we just toggle the state of the widget, rest will be automatically handled
+        efl_ui_check_selected_set(obj, !efl_ui_check_selected_get(obj));
      }
 }
 
@@ -220,8 +226,11 @@ _efl_ui_radio_efl_object_constructor(Eo *obj, Efl_Ui_Radio_Data *pd)
      elm_layout_signal_callback_add
         (obj, "efl,action,radio,toggle", "*", _radio_on_cb, obj);
 
-   pd->group = calloc(1, sizeof(Group));
-   pd->group->radios = eina_list_append(pd->group->radios, obj);
+   if (elm_widget_is_legacy(obj))
+     {
+        pd->group = calloc(1, sizeof(Group));
+        pd->group->radios = eina_list_append(pd->group->radios, obj);
+     }
 
    elm_layout_sizing_eval(obj);
 
@@ -239,95 +248,30 @@ _efl_ui_radio_efl_object_constructor(Eo *obj, Efl_Ui_Radio_Data *pd)
 EOLIAN static void
 _efl_ui_radio_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *pd)
 {
-   pd->group->radios = eina_list_remove(pd->group->radios, obj);
-   if (!pd->group->radios) free(pd->group);
+   if (elm_widget_is_legacy(obj))
+     {
+        pd->group->radios = eina_list_remove(pd->group->radios, obj);
+        if (!pd->group->radios) free(pd->group);
+     }
 
    efl_destructor(efl_super(obj, MY_CLASS));
-}
-
-EOLIAN static void
-_efl_ui_radio_group_add(Eo *obj, Efl_Ui_Radio_Data *sd, Evas_Object *group)
-{
-   ELM_RADIO_DATA_GET(group, sdg);
-
-   if (!sdg)
-     {
-        if (eina_list_count(sd->group->radios) == 1) return;
-        sd->group->radios = eina_list_remove(sd->group->radios, obj);
-        sd->group = calloc(1, sizeof(Group));
-        sd->group->radios = eina_list_append(sd->group->radios, obj);
-     }
-   else if (sd->group == sdg->group)
-     return;
-   else
-     {
-        sd->group->radios = eina_list_remove(sd->group->radios, obj);
-        if (!sd->group->radios) free(sd->group);
-        sd->group = sdg->group;
-        sd->group->radios = eina_list_append(sd->group->radios, obj);
-     }
-   if (sd->value == sd->group->value) efl_ui_check_selected_set(obj, EINA_TRUE);
-   else efl_ui_check_selected_set(obj, EINA_FALSE);
 }
 
 EOLIAN static void
 _efl_ui_radio_state_value_set(Eo *obj, Efl_Ui_Radio_Data *sd, int value)
 {
    sd->value = value;
-   if (sd->value == sd->group->value) efl_ui_check_selected_set(obj, EINA_TRUE);
-   else efl_ui_check_selected_set(obj, EINA_FALSE);
+   if (elm_widget_is_legacy(obj))
+     {
+        if (sd->value == sd->group->value) efl_ui_check_selected_set(obj, EINA_TRUE);
+        else efl_ui_check_selected_set(obj, EINA_FALSE);
+     }
 }
 
 EOLIAN static int
 _efl_ui_radio_state_value_get(const Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
 {
    return sd->value;
-}
-
-EOLIAN static void
-_efl_ui_radio_group_value_set(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd, int value)
-{
-   if (value == sd->group->value) return;
-   sd->group->value = value;
-   if (sd->group->valuep) *(sd->group->valuep) = sd->group->value;
-   _state_set_all(sd, EINA_FALSE);
-}
-
-EOLIAN static int
-_efl_ui_radio_group_value_get(const Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
-{
-   return sd->group->value;
-}
-
-EOLIAN static void
-_efl_ui_radio_value_pointer_set(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd, int *valuep)
-{
-   if (valuep)
-     {
-        sd->group->valuep = valuep;
-        if (*(sd->group->valuep) != sd->group->value)
-          {
-             sd->group->value = *(sd->group->valuep);
-             _state_set_all(sd, EINA_FALSE);
-          }
-     }
-   else sd->group->valuep = NULL;
-}
-
-EOLIAN static Evas_Object*
-_efl_ui_radio_selected_object_get(const Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
-{
-   Eina_List *l;
-   Evas_Object *child;
-
-   EINA_LIST_FOREACH(sd->group->radios, l, child)
-     {
-        ELM_RADIO_DATA_GET(child, sdc);
-
-        if (sdc->value == sd->group->value) return child;
-     }
-
-   return NULL;
 }
 
 EOLIAN static Eina_Bool
@@ -486,13 +430,86 @@ elm_radio_add(Evas_Object *parent)
 EAPI void
 elm_radio_value_set(Evas_Object *obj, int value)
 {
-   efl_ui_radio_group_value_set(obj, value);
+   EINA_SAFETY_ON_FALSE_RETURN(elm_widget_is_legacy(obj));
+   ELM_RADIO_DATA_GET(obj, sd);
+
+   if (value == sd->group->value) return;
+   sd->group->value = value;
+   if (sd->group->valuep) *(sd->group->valuep) = sd->group->value;
+   _state_set_all(sd, EINA_FALSE);
 }
 
 EAPI int
 elm_radio_value_get(const Evas_Object *obj)
 {
-   return efl_ui_radio_group_value_get(obj);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(elm_widget_is_legacy(obj), 0);
+   ELM_RADIO_DATA_GET(obj, sd);
+   return sd->group->value;
+}
+
+EAPI void
+elm_radio_value_pointer_set(Efl_Ui_Radio *obj, int *valuep)
+{
+   EINA_SAFETY_ON_FALSE_RETURN(elm_widget_is_legacy(obj));
+   ELM_RADIO_DATA_GET(obj, sd);
+
+   if (valuep)
+     {
+        sd->group->valuep = valuep;
+        if (*(sd->group->valuep) != sd->group->value)
+          {
+             sd->group->value = *(sd->group->valuep);
+             _state_set_all(sd, EINA_FALSE);
+          }
+     }
+   else sd->group->valuep = NULL;
+}
+
+EAPI Efl_Canvas_Object *
+elm_radio_selected_object_get(const Efl_Ui_Radio *obj)
+{
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(elm_widget_is_legacy(obj), NULL);
+   ELM_RADIO_DATA_GET(obj, sd);
+
+   Eina_List *l;
+   Evas_Object *child;
+
+   EINA_LIST_FOREACH(sd->group->radios, l, child)
+     {
+        ELM_RADIO_DATA_GET(child, sdc);
+
+        if (sdc->value == sd->group->value) return child;
+     }
+
+   return NULL;
+}
+
+EAPI void
+elm_radio_group_add(Efl_Ui_Radio *obj, Efl_Ui_Radio *group)
+{
+   EINA_SAFETY_ON_FALSE_RETURN(elm_widget_is_legacy(obj));
+   EINA_SAFETY_ON_FALSE_RETURN(elm_widget_is_legacy(group));
+   ELM_RADIO_DATA_GET(group, sdg);
+   ELM_RADIO_DATA_GET(obj, sd);
+
+   if (!sdg)
+     {
+        if (eina_list_count(sd->group->radios) == 1) return;
+        sd->group->radios = eina_list_remove(sd->group->radios, obj);
+        sd->group = calloc(1, sizeof(Group));
+        sd->group->radios = eina_list_append(sd->group->radios, obj);
+     }
+   else if (sd->group == sdg->group)
+     return;
+   else
+     {
+        sd->group->radios = eina_list_remove(sd->group->radios, obj);
+        if (!sd->group->radios) free(sd->group);
+        sd->group = sdg->group;
+        sd->group->radios = eina_list_append(sd->group->radios, obj);
+     }
+   if (sd->value == sd->group->value) efl_ui_check_selected_set(obj, EINA_TRUE);
+   else efl_ui_check_selected_set(obj, EINA_FALSE);
 }
 
 #include "efl_ui_radio_legacy_eo.c"

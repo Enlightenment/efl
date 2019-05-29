@@ -4,10 +4,6 @@
 #include <Efl_Config.h>
 #include <Elementary_Options.h>
 
-/* FIXME: wtf? */
-#ifndef EFL_UI_RADIO_EVENT_CHANGED
-# define EFL_UI_RADIO_EVENT_CHANGED EFL_UI_NSTATE_EVENT_CHANGED
-#endif
 /* Standard headers for standard system calls etc. */
 #include <stdio.h>
 #include <stdlib.h>

@@ -70,13 +70,13 @@ static void
 _select_radio_changed(void *data, const Efl_Event *ev)
 {
   Eo *list = data;
-  efl_ui_select_mode_set(list, efl_ui_radio_state_value_get(ev->object));
+  efl_ui_select_mode_set(list, efl_ui_radio_group_selected_value_get(ev->object));
 }
 
 static void
-_anim_radio_changed(void *data EINA_UNUSED, const Efl_Event *ev)
+_anim_radio_changed(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-  priv_d.anim = efl_ui_radio_state_value_get(ev->object);
+  priv_d.anim = efl_ui_radio_group_selected_value_get(data);
 }
 
 static void
@@ -102,7 +102,7 @@ elm_main(int argc EINA_UNUSED, char **argv)
    Eo *win, *list;
    Eo *wbox, *ibox, *bbox, *rbox;
    Eo *item, *check, *txt;
-   Eo *radio, *select_radio, *anim_radio;
+   Eo *radio;
    Eo *slider, *scrl_btn;
    int i;
    char buf[256];
@@ -229,34 +229,28 @@ elm_main(int argc EINA_UNUSED, char **argv)
    efl_text_set(txt, "Select Mode");
    efl_pack_end(wbox, txt);
 
-   bbox  = efl_add(EFL_UI_BOX_CLASS, wbox);
+   bbox  = efl_add(EFL_UI_RADIO_BOX_CLASS, wbox);
    efl_ui_layout_orientation_set(bbox, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
    efl_gfx_hint_weight_set(bbox, EFL_GFX_HINT_EXPAND, 0.05);
 
-   select_radio  = radio = efl_add(EFL_UI_RADIO_CLASS, wbox);
+   radio = efl_add(EFL_UI_RADIO_CLASS, wbox);
    efl_text_set(radio, "SINGLE");
    efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_MODE_SINGLE);
-   efl_event_callback_add(radio, EFL_UI_RADIO_EVENT_CHANGED, _select_radio_changed, list);
    efl_pack_end(bbox, radio);
    radio = efl_add(EFL_UI_RADIO_CLASS, wbox);
    efl_text_set(radio, "SINGLE_ALWAYS");
    efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_MODE_SINGLE_ALWAYS);
-   efl_ui_radio_group_add(radio, select_radio);
-   efl_event_callback_add(radio, EFL_UI_RADIO_EVENT_CHANGED, _select_radio_changed, list);
    efl_pack_end(bbox, radio);
    radio = efl_add(EFL_UI_RADIO_CLASS, wbox);
    efl_text_set(radio, "MULTI");
    efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_MODE_MULTI);
-   efl_ui_radio_group_add(radio, select_radio);
-   efl_event_callback_add(radio, EFL_UI_RADIO_EVENT_CHANGED, _select_radio_changed, list);
    efl_pack_end(bbox, radio);
    radio = efl_add(EFL_UI_RADIO_CLASS, wbox);
    efl_text_set(radio, "NONE");
    efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_MODE_NONE);
-   efl_ui_radio_group_add(radio, select_radio);
-   efl_event_callback_add(radio, EFL_UI_RADIO_EVENT_CHANGED, _select_radio_changed, list);
    efl_pack_end(bbox, radio);
    efl_pack_end(wbox, bbox);
+   efl_event_callback_add(bbox, EFL_UI_RADIO_GROUP_EVENT_VALUE_CHANGED, _select_radio_changed, list);
 
   /* scroll mode */
    txt = efl_add(EFL_UI_TEXT_CLASS, wbox);
@@ -278,23 +272,21 @@ elm_main(int argc EINA_UNUSED, char **argv)
    efl_ui_layout_orientation_set(bbox, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
    efl_gfx_hint_weight_set(bbox, EFL_GFX_HINT_EXPAND, 0.05);
 
-   rbox  = efl_add(EFL_UI_BOX_CLASS, bbox);
+   rbox  = efl_add(EFL_UI_RADIO_BOX_CLASS, bbox);
    efl_ui_layout_orientation_set(rbox, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
 
-   anim_radio  = radio = efl_add(EFL_UI_RADIO_CLASS, rbox);
+   radio = efl_add(EFL_UI_RADIO_CLASS, rbox);
    efl_gfx_hint_align_set(radio, 0.5, 0.5);
    efl_text_set(radio, "ANIMATION OFF");
    efl_ui_radio_state_value_set(radio, 0);
-   efl_event_callback_add(radio, EFL_UI_RADIO_EVENT_CHANGED, _anim_radio_changed, NULL);
    efl_pack_end(rbox, radio);
    radio = efl_add(EFL_UI_RADIO_CLASS, rbox);
    efl_gfx_hint_align_set(radio, 0.5, 0.5);
    efl_text_set(radio, "ANIMATION ON");
    efl_ui_radio_state_value_set(radio, 1);
-   efl_ui_radio_group_add(radio, anim_radio);
-   efl_event_callback_add(radio, EFL_UI_RADIO_EVENT_CHANGED, _anim_radio_changed, NULL);
    efl_pack_end(rbox, radio);
    efl_pack_end(bbox, rbox);
+   efl_event_callback_add(rbox, EFL_UI_RADIO_GROUP_EVENT_VALUE_CHANGED, _anim_radio_changed, rbox);
 
    rbox  = efl_add(EFL_UI_BOX_CLASS, bbox);
    efl_ui_layout_orientation_set(rbox, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
