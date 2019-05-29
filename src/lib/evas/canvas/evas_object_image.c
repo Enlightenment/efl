@@ -2294,7 +2294,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
    is_v = evas_object_is_visible(eo_obj, obj);
-   was_v = evas_object_was_visible(eo_obj, obj);
+   was_v = evas_object_was_visible(obj);
    if (is_v != was_v)
      {
         evas_object_render_pre_visible_change(&e->clip_changes, eo_obj, is_v, was_v);
