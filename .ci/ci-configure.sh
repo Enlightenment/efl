@@ -17,6 +17,11 @@ if [ "$BUILDSYSTEM" = "ninja" ] ; then
 
     RELEASE_READY_LINUX_COPTS=" --buildtype=release"
 
+    MINGW_COPTS="--cross-file .ci/cross_toolchain.txt -Davahi=false -Deeze=false -Dsystemd=false \
+    -Dpulseaudio=false -Dx11=false -Dopengl=none -Dlibmount=false \
+    -Devas-loaders-disabler=pdf,ps,raw,svg -Devas-modules=static -Dbindings=luajit \
+    -Dbuild-examples=false -Dbuild-tests=false"
+
     if [ "$1" = "options-enabled" ]; then
       OPTS="$OPTS $ENABLED_LINUX_COPTS $WAYLAND_LINUX_COPTS"
     fi
@@ -32,9 +37,19 @@ if [ "$BUILDSYSTEM" = "ninja" ] ; then
     if [ "$1" = "release-ready" ]; then
       OPTS="$OPTS $RELEASE_READY_LINUX_COPTS"
     fi
-    docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
+
+    if [ "$1" = "mingw" ]; then
+      OPTS="$OPTS $MINGW_COPTS"
+      docker exec $(cat $HOME/cid) sh -c '.ci/bootstrap-efl-native-for-cross.sh'
+    fi
+    if [ "$1" = "mingw" ]; then
+      docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env PKG_CONFIG_PATH="/ewpi-64-install/lib/pkgconfig/" \
+         $(cat $HOME/cid) sh -c "mkdir build && meson build $OPTS"
+    else
+      docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
         --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
         --env LD="ld.gold" $(cat $HOME/cid) sh -c "mkdir build && meson build $OPTS"
+    fi
   else
     # Prepare OSX env for build
     mkdir -p ~/Library/LaunchAgents

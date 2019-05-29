@@ -21,6 +21,8 @@ jobs:
     - os: linux
       env: DISTRO=Fedora30-mingw CI_BUILD_TYPE=mingw
     - os: linux
+      env: DISTRO=Fedora30-mingw CI_BUILD_TYPE=mingw BUILDSYSTEM=ninja
+    - os: linux
       env: DISTRO=Fedora29 CI_BUILD_TYPE=options-enabled
     - os: linux
       env: DISTRO=Fedora29 CI_BUILD_TYPE=options-disabled
