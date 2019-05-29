@@ -73,14 +73,18 @@ verify_item_iteration_api(Elm_Object_Item *parent)
      {
         it = elm_genlist_nth_item_get(genlist, i);
         if (i == 11)
+          DISABLE_ABORT_ON_CRITICAL_START;
           // item #11 do not exists
           ck_assert_int_eq(elm_genlist_item_index_get(it), -1);
+          DISABLE_ABORT_ON_CRITICAL_END;
         else
           ck_assert_int_eq(elm_genlist_item_index_get(it), i + 1);
 
         if ((i == 0) || (i == 11))
+          DISABLE_ABORT_ON_CRITICAL_START;
           // test first and item #11 (that do not exists)
           ck_assert_ptr_eq(elm_object_item_data_get(it), NULL);
+          DISABLE_ABORT_ON_CRITICAL_END;
         else
           ck_assert_ptr_eq(elm_object_item_data_get(it), (void*)(uintptr_t)i);
      }

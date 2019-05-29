@@ -50,7 +50,9 @@ EFL_START_TEST(elm_code_widget_construct_nocode)
    elm_init(1, args);
 
    win = win_add(NULL, "entry", ELM_WIN_BASIC);
+   DISABLE_ABORT_ON_CRITICAL_START;
    widget = elm_code_widget_add(win, NULL);
+   DISABLE_ABORT_ON_CRITICAL_END;
    ck_assert(!widget);
 
    elm_shutdown();
