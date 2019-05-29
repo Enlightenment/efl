@@ -11,7 +11,7 @@ class @beta Efl.Canvas.Vg.Container extends Efl.Canvas.Vg.Node
       }
       children_get {
          [[Get all children of container]]
-         return: iterator<Efl.Canvas.Vg.Node> @owned @warn_unused; [[Iterator to children]]
+         return: iterator<Efl.Canvas.Vg.Node> @owned @no_unused; [[Iterator to children]]
       }
    }
    implements {

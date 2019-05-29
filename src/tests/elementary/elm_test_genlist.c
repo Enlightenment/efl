@@ -6,6 +6,7 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #include <Elementary.h>
 #include "elm_suite.h"
+#include "suite_helpers.h"
 
 static Evas_Object *win, *genlist;
 static Elm_Gen_Item_Class itc = { .version = ELM_GENLIST_ITEM_CLASS_VERSION };
@@ -13,9 +14,6 @@ static Eo *current;
 static int counter;
 static Efl_Access_Event_Children_Changed_Data ev_data;
 Evas_Object *content;
-
-static int tree_abort_level;
-static int tree_abort;
 
 static void
 verify_item_iteration_api(Elm_Object_Item *parent)
@@ -452,8 +450,7 @@ static void
 _do_quit()
 {
    itc.func.content_get = NULL;
-   eina_log_abort_on_critical_set(tree_abort);
-   eina_log_abort_on_critical_level_set(tree_abort_level);
+   fail_on_errors_teardown();
    ecore_main_loop_quit();
 }
 
@@ -513,11 +510,7 @@ EFL_START_TEST(elm_genlist_test_tree_expand)
    evas_object_resize(genlist, 100, 10 + 10 * NUM_TREE_ITEMS);
    evas_object_show(win);
    evas_object_resize(win, 100, 10 + 10 * NUM_TREE_ITEMS);
-   tree_abort = eina_log_abort_on_critical_get();
-   tree_abort_level = eina_log_abort_on_critical_level_get();
-   /* this should never trigger errors */
-   eina_log_abort_on_critical_level_set(1);
-   eina_log_abort_on_critical_set(1);
+   fail_on_errors_setup();
    ecore_main_loop_begin();
 }
 EFL_END_TEST

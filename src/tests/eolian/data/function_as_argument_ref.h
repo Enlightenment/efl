@@ -19,8 +19,6 @@ EWAPI const Efl_Class *function_as_argument_class_get(void);
 
 EOAPI void function_as_argument_set_cb(Eo *obj, void *cb_data, SimpleFunc cb, Eina_Free_Cb cb_free_cb);
 
-EOAPI void function_as_argument_set_nonull_cb(Eo *obj, void *cb_data, VoidFunc cb, Eina_Free_Cb cb_free_cb) EINA_ARG_NONNULL(3);
-
 EOAPI char *function_as_argument_call_cb(Eo *obj, int a, double b);
 
 #endif

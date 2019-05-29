@@ -368,7 +368,7 @@ class TestEolianFunction(unittest.TestCase):
         self.assertEqual(len(list(f.getter_values)), 1)
         self.assertEqual(len(list(f.getter_values)), 1)
         self.assertEqual(len(list(f.parameters)), 1)
-        self.assertFalse(f.return_is_warn_unused(eolian.Eolian_Function_Type.METHOD))
+        self.assertTrue(f.return_allow_unused(eolian.Eolian_Function_Type.METHOD))
         self.assertFalse(f.object_is_const)
         self.assertEqual(f.class_.name, 'Efl.Loop_Timer')
         self.assertIsInstance(f.implement, eolian.Implement)
@@ -380,7 +380,6 @@ class TestEolianFunction(unittest.TestCase):
         self.assertEqual(p.direction, eolian.Eolian_Parameter_Dir.IN)
         self.assertEqual(p.name, 'add')
         self.assertIsNone(p.default_value)
-        self.assertFalse(p.is_nonull)  # TODO is correct ?? 'add' can be null?
         self.assertFalse(p.is_optional)
         self.assertEqual(p.type.name, 'double')
         self.assertIsInstance(p.documentation, eolian.Documentation)

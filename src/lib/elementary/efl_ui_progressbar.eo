@@ -1,5 +1,5 @@
 class @beta Efl.Ui.Progressbar extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Display, Efl.Ui.Format,
-                          Efl.Ui.Direction, Efl.Access.Value,
+                          Efl.Ui.Layout_Orientable, Efl.Access.Value,
                           Efl.Text, Efl.Content, Efl.Text_Markup
 {
    [[Elementary progressbar class]]
@@ -47,7 +47,7 @@ class @beta Efl.Ui.Progressbar extends Efl.Ui.Layout_Base implements Efl.Ui.Rang
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Range_Display.range_value { get; set; }
       Efl.Ui.Range_Display.range_min_max {get; set; }
-      Efl.Ui.Direction.direction { get; set; }
+      Efl.Ui.Layout_Orientable.orientation { get; set; }
       Efl.Ui.Format.format_cb { set; }
       Efl.Part.part_get;
       Efl.Access.Value.value_and_text { get; }

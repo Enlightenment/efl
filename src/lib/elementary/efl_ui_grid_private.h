@@ -12,7 +12,7 @@ typedef struct _Efl_Ui_Grid_Data
    Eo *smanager; /* Scroll Manager for support scroll with pan */
    Eina_Rect geo;
    Eina_Position2D pre_pos;
-   Efl_Ui_Dir dir;
+   Efl_Ui_Layout_Orientation dir;
 
    struct {
       Efl_Ui_Grid_Item *item; /* Scroll target item */

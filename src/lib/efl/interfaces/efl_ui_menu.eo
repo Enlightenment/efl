@@ -28,7 +28,7 @@ interface @beta Efl.Ui.Menu {
       @property items {
          get {
             [[Returns a list of the widget item.]]
-            return: iterator<Efl.Ui.Item> @owned @warn_unused; [[Iterator to widget items]]
+            return: iterator<Efl.Ui.Item> @owned @no_unused; [[Iterator to widget items]]
          }
       }
    }

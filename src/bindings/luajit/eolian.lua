@@ -290,6 +290,7 @@ ffi.cdef [[
 
     int eolian_init(void);
     int eolian_shutdown(void);
+    unsigned short eolian_file_format_version_get(void);
     Eolian_State *eolian_state_new(void);
     void eolian_state_free(Eolian_State *state);
     Eolian_Panic_Cb eolian_state_panic_cb_set(Eolian_State *state, Eolian_Panic_Cb cb);
@@ -323,6 +324,7 @@ ffi.cdef [[
     Eina_Iterator *eolian_unit_children_get(const Eolian_Unit *unit);
     const char *eolian_unit_file_get(const Eolian_Unit *unit);
     const char *eolian_unit_file_path_get(const Eolian_Unit *unit);
+    unsigned short eolian_unit_version_get(const Eolian_Unit *unit);
     const Eolian_Object *eolian_unit_object_by_name_get(const Eolian_Unit *unit, const char *name);
     Eina_Iterator *eolian_unit_objects_get(const Eolian_Unit *unit);
     const Eolian_Class *eolian_unit_class_by_name_get(const Eolian_Unit *unit, const char *class_name);
@@ -369,12 +371,11 @@ ffi.cdef [[
     const Eolian_Type *eolian_parameter_type_get(const Eolian_Function_Parameter *param);
     const Eolian_Expression *eolian_parameter_default_value_get(const Eolian_Function_Parameter *param);
     const Eolian_Documentation *eolian_parameter_documentation_get(const Eolian_Function_Parameter *param);
-    Eina_Bool eolian_parameter_is_nonull(const Eolian_Function_Parameter *param_desc);
     Eina_Bool eolian_parameter_is_optional(const Eolian_Function_Parameter *param_desc);
     const Eolian_Type *eolian_function_return_type_get(const Eolian_Function *function_id, Eolian_Function_Type ftype);
     const Eolian_Expression *eolian_function_return_default_value_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
     const Eolian_Documentation *eolian_function_return_documentation_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
-    Eina_Bool eolian_function_return_is_warn_unused(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
+    Eina_Bool eolian_function_return_allow_unused(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Bool eolian_function_object_is_const(const Eolian_Function *function_id);
     const Eolian_Class *eolian_function_class_get(const Eolian_Function *function_id);
     const Eolian_Class *eolian_implement_class_get(const Eolian_Implement *impl);
@@ -491,6 +492,7 @@ local init = function()
     eolian = util.lib_load("eolian")
     eina = util.lib_load("eina")
     eolian.eolian_init()
+    M.file_format_version = eolian.eolian_file_format_version_get()
 end
 
 local shutdown = function()
@@ -637,6 +639,10 @@ local unit_idx, wrap_unit = gen_wrap {
         local v = eolian.eolian_unit_file_path_get(cast_unit(self))
         if v == nil then return nil end
         return ffi.string(v)
+    end,
+
+    version_get = function(self)
+        return tonumber(eolian.eolian_unit_version_get(cast_unit(self)))
     end,
 
     object_by_name_get = function(self, name)
@@ -1215,8 +1221,8 @@ M.Function = ffi.metatype("Eolian_Function", {
             return v
         end,
 
-        return_is_warn_unused = function(self, ftype)
-            return eolian.eolian_function_return_is_warn_unused(self,
+        return_allow_unused = function(self, ftype)
+            return eolian.eolian_function_return_allow_unused(self,
                 ftype) ~= 0
         end,
 
@@ -1261,10 +1267,6 @@ ffi.metatype("Eolian_Function_Parameter", {
             local v = eolian.eolian_parameter_documentation_get(self)
             if v == nil then return nil end
             return v
-        end,
-
-        is_nonull = function(self)
-            return eolian.eolian_parameter_is_nonull(self) ~= 0
         end,
 
         is_optional = function(self)

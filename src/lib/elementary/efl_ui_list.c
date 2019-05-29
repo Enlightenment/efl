@@ -438,7 +438,7 @@ _efl_ui_list_efl_object_finalize(Eo *obj,
    edje_object_part_swallow(wd->resize_obj, "efl.content", pd->pan);
 
    pd->box = efl_add(EFL_UI_BOX_CLASS, obj,
-                     efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL));
+                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
    efl_ui_mirrored_set(pd->box, efl_ui_mirrored_get(obj));
    efl_content_set(pd->pan, pd->box);
 
@@ -574,24 +574,17 @@ _efl_ui_list_efl_container_content_iterate(Eo *obj EINA_UNUSED, Efl_Ui_List_Data
 
 /* FIXME: Direction is not supported yet in the list
    EOLIAN static void
-   _efl_ui_list_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_Dir dir)
+   _efl_ui_list_efl_ui_layout_orientable_orientation_set(Eo *obj, Efl_Ui_List_Data *pd, Efl_Ui_Layout_Orientation dir)
    {
    switch (dir)
      {
-      case EFL_UI_DIR_RTL:
-        // FIXME: Should be inverted!
-      case EFL_UI_DIR_HORIZONTAL:
-      case EFL_UI_DIR_LTR:
-        pd->dir = EFL_UI_DIR_HORIZONTAL;
+      case EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL:
+        pd->dir = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
         break;
-
-      case EFL_UI_DIR_UP:
-        // FIXME: Should be inverted!
-      case EFL_UI_DIR_DOWN:
-      case EFL_UI_DIR_VERTICAL:
-      case EFL_UI_DIR_DEFAULT:
+      case EFL_UI_LAYOUT_ORIENTATION_VERTICAL:
+      case EFL_UI_LAYOUT_ORIENTATION_DEFAULT:
       default:
-        pd->dir = EFL_UI_DIR_VERTICAL;
+        pd->dir = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
         break;
      }
 

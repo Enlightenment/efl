@@ -1,0 +1,52 @@
+parse efl_gfx_image_orientable;
+
+enum @beta Efl.Ui.Layout_Orientation
+{
+   [[Orientation for UI objects and layouts that can have multiple configurations.
+
+     Select among $horizontal or $vertical orientations (or use $default to let the
+     object decide). Additionally, $inverted can be added to reverse the direction
+     along the selected axis.
+
+     Not to be confused with @Efl.Gfx.Image_Orientation which is for images and canvases. This
+     enum is used to define how widgets should expand and orient themselves,
+     not to rotate images.
+
+     See also @Efl.Ui.Layout_Orientable.
+   ]]
+   default = 0,      [[Default direction. Each widget may have a different default.]]
+   horizontal = 1,   [[Horizontal direction, along the X axis. Usually left-to-right,
+                       but can be inverted.]]
+   vertical = 2,     [[Vertical direction, along the Y axis. Usually downwards but
+                       can be inverted.]]
+   axis_bitmask = 3, [[This bitmask can be used to isolate the axis value from the rest of bits.]]
+   inverted = 4      [[Add this value to make the object invert its default direction
+                       along the selected axis.]]
+}
+
+interface @beta Efl.Ui.Layout_Orientable
+{
+   [[Interface for UI objects which can have more than one orientation.
+   
+     For example, sliders, which can be horizontal or vertical, or container
+     boxes, which can arrange their elements in a horizontal or vertical fashion.
+   ]]
+   c_prefix: efl_ui_layout;
+   methods {
+       @property orientation {
+         [[Control the direction of a given widget.
+
+           Use this function to change how your widget is to be disposed:
+           vertically or horizontally or inverted vertically or inverted
+           horizontally.
+
+           Mirroring as defined in @Efl.Ui.I18n can invert the $horizontal
+           direction: it is $ltr by default, but becomes $rtl if the object
+           is mirrored.
+         ]]
+         values {
+            dir: Efl.Ui.Layout_Orientation; [[Direction of the widget.]]
+         }
+      }
+   }
+}

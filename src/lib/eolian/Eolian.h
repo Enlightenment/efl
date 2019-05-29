@@ -84,6 +84,9 @@ extern "C" {
 
 #ifdef EFL_BETA_API_SUPPORT
 
+/* The maximum format version supported by this version of Eolian */
+#define EOLIAN_FILE_FORMAT_VERSION 1
+
 /* State information
  *
  * Possible to cast to Eolian_Unit and use as such, as this represents
@@ -481,6 +484,15 @@ EAPI int eolian_init(void);
  * @ingroup Eolian
  */
 EAPI int eolian_shutdown(void);
+
+/*
+ * @brief Get the Eolian file format version.
+ *
+ * This is the same as the #EOLIAN_FILE_FORMAT_VERSION macro, but allows
+ * retrieval of the version at runtime, so it can be used by FFI based
+ * bindings in dynamic languages to do runtime checks and so on.
+ */
+EAPI unsigned short eolian_file_format_version_get(void);
 
 /*
  * @brief Create a new Eolian state.
@@ -988,6 +1000,18 @@ EAPI const char *eolian_unit_file_get(const Eolian_Unit *unit);
  * @ingroup Eolian
  */
 EAPI const char *eolian_unit_file_path_get(const Eolian_Unit *unit);
+
+/*
+ * @brief Get the version of the unit.
+ *
+ * This is 1 by default, unless overridden. Returns 0 when an invalid
+ * unit is passed.
+ *
+ * @param[in] unit The unit.
+ *
+ * @ingroup Eolian
+ */
+EAPI unsigned short eolian_unit_version_get(const Eolian_Unit *unit);
 
 /*
  * @brief Get an object in a unit by name.
@@ -1782,16 +1806,6 @@ eolian_parameter_name_get(const Eolian_Function_Parameter *param)
 EAPI const Eolian_Documentation *eolian_parameter_documentation_get(const Eolian_Function_Parameter *param);
 
 /*
- * @brief Indicates if a parameter cannot be NULL.
- *
- * @param[in] param_desc parameter handle
- * @return EINA_TRUE if cannot be NULL, EINA_FALSE otherwise
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_parameter_is_nonull(const Eolian_Function_Parameter *param_desc);
-
-/*
  * @brief Indicates if a parameter is optional.
  *
  * @param[in] param_desc parameter handle
@@ -1852,11 +1866,11 @@ eolian_function_return_default_value_get(const Eolian_Function *foo_id, Eolian_F
 EAPI const Eolian_Documentation *eolian_function_return_documentation_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
 
 /*
- * @brief Indicates if a function return is warn-unused.
+ * @brief Indicates if a function return should allow being unused.
  *
  * @param[in] function_id id of the function
  * @param[in] ftype type of the function
- * @return EINA_TRUE is warn-unused, EINA_FALSE otherwise.
+ * @return EINA_TRUE if it can be unused, EINA_FALSE otherwise.
  *
  * The type of the function is needed because a given function can represent a
  * property, that can be set and get functions.
@@ -1865,7 +1879,7 @@ EAPI const Eolian_Documentation *eolian_function_return_documentation_get(const 
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_function_return_is_warn_unused(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
+EAPI Eina_Bool eolian_function_return_allow_unused(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Indicates if a function object is const.

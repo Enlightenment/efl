@@ -339,13 +339,13 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                  efl_ui_win_autodel_set(efl_added, 1));
 
    box = efl_add(EFL_UI_BOX_CLASS, win,
-                 efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL));
+                 efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
 
    efl_content_set(win, box);
 
    {
       box2 = efl_add(EFL_UI_BOX_CLASS, win,
-                     efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                      efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
                      efl_gfx_hint_align_set(efl_added, 0.5, 0.0),
                      efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE));
@@ -384,7 +384,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    {
       box2 = efl_add(EFL_UI_BOX_CLASS, win,
-                     efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                      efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
                      efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
                      efl_gfx_arrangement_content_padding_set(efl_added, 5, 5, 1),
@@ -445,7 +445,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    }
 
    o = split = efl_add(EFL_UI_PANES_CLASS, win,
-                       efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL));
+                       efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL));
    efl_pack(box, split);
 
    {
@@ -453,7 +453,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       efl_content_set(efl_part(split, "first"), flip);
 
       box2 = efl_add(EFL_UI_BOX_STACK_CLASS, win,
-                     efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                      efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
                      efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
                      efl_gfx_arrangement_content_align_set(efl_added, 0.5, 0.5));
@@ -469,7 +469,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
       efl_pack(box2, o);
 
       o = box2 = efl_add(EFL_UI_BOX_STACK_CLASS, win,
-                         efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                         efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                          efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
                          efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
                          efl_gfx_arrangement_content_align_set(efl_added, 0.5, 0.5));

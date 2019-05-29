@@ -531,7 +531,7 @@ static void side_page_num_cb(void *data,
            efl_ui_format_string_set(efl_part(efl_added, "indicator"), "%1.0f"),
            efl_ui_range_min_max_set(efl_added, 0, 3),
            efl_ui_range_value_set(efl_added, params->side_page_num),
-           efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
+           efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
            efl_gfx_hint_weight_set(efl_added, 1, 1),
            efl_gfx_hint_align_set(efl_added, -1, -1),
            efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED,
@@ -561,7 +561,7 @@ static void pack_cb(void *data,
 
    in_box1 = efl_add(EFL_UI_BOX_CLASS, box,
                      efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
-                     efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL));
+                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL));
 
    sp1 = efl_add(EFL_UI_SPIN_BUTTON_CLASS, in_box1,
                  efl_ui_range_min_max_set(efl_added, 0,
@@ -571,7 +571,7 @@ static void pack_cb(void *data,
 
    in_box2 = efl_add(EFL_UI_BOX_CLASS, box,
                      efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
-                     efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL));
+                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL));
 
    sp2 = efl_add(EFL_UI_SPIN_BUTTON_CLASS, in_box2);
 

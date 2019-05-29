@@ -352,9 +352,9 @@ lib.eolian_function_return_default_value_get.restype = c_void_p
 lib.eolian_function_return_documentation_get.argtypes = (c_void_p, c_int)
 lib.eolian_function_return_documentation_get.restype = c_void_p
 
-# EAPI Eina_Bool eolian_function_return_is_warn_unused(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
-lib.eolian_function_return_is_warn_unused.argtypes = (c_void_p, c_int)
-lib.eolian_function_return_is_warn_unused.restype = c_bool
+# EAPI Eina_Bool eolian_function_return_allow_unused(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
+lib.eolian_function_return_allow_unused.argtypes = (c_void_p, c_int)
+lib.eolian_function_return_allow_unused.restype = c_bool
 
 # EAPI Eina_Bool eolian_function_object_is_const(const Eolian_Function *function_id);
 lib.eolian_function_object_is_const.argtypes = (c_void_p,)
@@ -398,10 +398,6 @@ lib.eolian_parameter_default_value_get.restype = c_void_p
 # EAPI const Eolian_Documentation *eolian_parameter_documentation_get(const Eolian_Function_Parameter *param);
 lib.eolian_parameter_documentation_get.argtypes = (c_void_p,)
 lib.eolian_parameter_documentation_get.restype = c_void_p
-
-# EAPI Eina_Bool eolian_parameter_is_nonull(const Eolian_Function_Parameter *param_desc);
-lib.eolian_parameter_is_nonull.argtypes = (c_void_p,)
-lib.eolian_parameter_is_nonull.restype = c_bool
 
 # EAPI Eina_Bool eolian_parameter_is_optional(const Eolian_Function_Parameter *param_desc);
 lib.eolian_parameter_is_optional.argtypes = (c_void_p,)

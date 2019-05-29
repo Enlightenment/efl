@@ -10,6 +10,7 @@
 #include <Efl_Ui.h>
 #include "efl_ui_suite.h"
 #include "focus_test.eo.h"
+#include "focus_manager_test.eo.h"
 
 #define TEST_OBJ_NEW(name, x, y, w, h) \
   Efl_Ui_Focus_Object* name; \
@@ -24,5 +25,5 @@ void focus_test_setup_cross(Efl_Ui_Focus_Object **middle,
                                 Efl_Ui_Focus_Object **east,
                                 Efl_Ui_Focus_Object **west);
 
-Efl_Ui_Focus_Manager *focus_test_manager_new(Efl_Ui_Focus_Object **middle);
+Efl_Ui_Focus_Manager *focus_test_manager_new(Efl_Ui_Focus_Object **middle, Eina_Bool);
 #endif

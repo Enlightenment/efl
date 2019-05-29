@@ -51,7 +51,7 @@ interface Efl.Canvas.Scene
            Warning: This function will only evaluate top-level objects; child
            or "sub" objects will be skipped.
          ]]
-         return: iterator<Efl.Gfx.Entity> @owned @warn_unused; [[
+         return: iterator<Efl.Gfx.Entity> @owned @no_unused; [[
             The list of objects that are over the given position in $e.
          ]]
          params {
@@ -78,7 +78,7 @@ interface Efl.Canvas.Scene
            Warning: This function will only evaluate top-level objects; child
            or "sub" objects will be skipped.
          ]]
-         return: Efl.Gfx.Entity @warn_unused; [[The canvas object that is over all other objects at the given position.]]
+         return: Efl.Gfx.Entity @no_unused; [[The canvas object that is over all other objects at the given position.]]
          params {
             @in pos: Eina.Position2D; [[The pixel position.]]
             @in include_pass_events_objects: bool; [[
@@ -103,7 +103,7 @@ interface Efl.Canvas.Scene
            Warning: This function will only evaluate top-level objects; child
            or "sub" objects will be skipped.
          ]]
-         return: iterator<Efl.Gfx.Entity> @owned @warn_unused; [[Iterator to objects]]
+         return: iterator<Efl.Gfx.Entity> @owned @no_unused; [[Iterator to objects]]
          params {
             @in rect: Eina.Rect; [[The rectangular region.]]
             @in include_pass_events_objects: bool; [[
@@ -129,7 +129,7 @@ interface Efl.Canvas.Scene
            Warning: This function will only evaluate top-level objects; child
            or "sub" objects will be skipped.
          ]]
-         return: Efl.Gfx.Entity @warn_unused; [[
+         return: Efl.Gfx.Entity @no_unused; [[
             The object that is over all other objects at the given
             rectangular region.
          ]]

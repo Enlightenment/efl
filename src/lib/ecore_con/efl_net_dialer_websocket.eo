@@ -144,7 +144,7 @@ class @beta Efl.Net.Dialer_Websocket extends Efl.Loop_Consumer implements Efl.Ne
 
         request_protocols_get {
             [[Returns an iterator to the requested WebSocket protocols]]
-            return: iterator<string> @owned @warn_unused; [[Iterator to protocols]]
+            return: iterator<string> @owned @no_unused; [[Iterator to protocols]]
         }
 
         request_protocols_clear {
@@ -153,7 +153,7 @@ class @beta Efl.Net.Dialer_Websocket extends Efl.Loop_Consumer implements Efl.Ne
 
         response_protocols_get {
             [[Returns an iterator to the server-replied (response) WebSocket protocols it supports]]
-            return: iterator<string> @owned @warn_unused; [[Iterator to server protocols]]
+            return: iterator<string> @owned @no_unused; [[Iterator to server protocols]]
         }
 
         @property streaming_mode {
@@ -260,7 +260,7 @@ class @beta Efl.Net.Dialer_Websocket extends Efl.Loop_Consumer implements Efl.Ne
 
         request_headers_get {
             [[Returns an iterator to the key-value pairs for request headers]]
-            return: iterator<ptr(Efl.Net.Http.Header)> @owned @warn_unused; [[Iterator to key value pairs]]
+            return: iterator<ptr(Efl.Net.Http.Header)> @owned @no_unused; [[Iterator to key value pairs]]
         }
 
         @property cookie_jar {

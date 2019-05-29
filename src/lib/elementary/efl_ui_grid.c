@@ -64,7 +64,7 @@ _relayout(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Eina_Position2D pan)
    Eina_Bool horiz = 0;
    Eina_Size2D min, max;
 
-   if (pd->dir == EFL_UI_DIR_HORIZONTAL) horiz = 1;
+   if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL) horiz = 1;
 
    if (!pd->linemax)
      {
@@ -218,7 +218,7 @@ _item_scroll_internal(Eo *obj,
    view = efl_ui_scrollable_viewport_geometry_get(pd->smanager);
    vpos = efl_ui_scrollable_content_pos_get(pd->smanager);
 
-   if (pd->dir == EFL_UI_DIR_HORIZONTAL)
+   if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
      {
        ipos.y = view.y;
        //ipos.h = ipos.h;
@@ -835,25 +835,18 @@ _efl_ui_grid_efl_container_content_iterate(Eo *obj, Efl_Ui_Grid_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_grid_efl_ui_direction_direction_set(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Efl_Ui_Dir dir)
+_efl_ui_grid_efl_ui_layout_orientable_orientation_set(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd, Efl_Ui_Layout_Orientation dir)
 {
    //FIXME: Currently only support horizontal and vertical mode.
    switch (dir)
      {
-      case EFL_UI_DIR_RTL:
-      // FIXME: Should be inverted!
-      case EFL_UI_DIR_HORIZONTAL:
-      case EFL_UI_DIR_LTR:
-        pd->dir = EFL_UI_DIR_HORIZONTAL;
+      case EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL:
+        pd->dir = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
         break;
-
-      case EFL_UI_DIR_UP:
-      // FIXME: Should be inverted!
-      case EFL_UI_DIR_DOWN:
-      case EFL_UI_DIR_VERTICAL:
-      case EFL_UI_DIR_DEFAULT:
+      case EFL_UI_LAYOUT_ORIENTATION_VERTICAL:
+      case EFL_UI_LAYOUT_ORIENTATION_DEFAULT:
       default:
-        pd->dir = EFL_UI_DIR_VERTICAL;
+        pd->dir = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
         break;
      }
 
@@ -861,8 +854,8 @@ _efl_ui_grid_efl_ui_direction_direction_set(Eo *obj EINA_UNUSED, Efl_Ui_Grid_Dat
    efl_pack_layout_request(obj);
 }
 
-EOLIAN static Efl_Ui_Dir
-_efl_ui_grid_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
+EOLIAN static Efl_Ui_Layout_Orientation
+_efl_ui_grid_efl_ui_layout_orientable_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Grid_Data *pd)
 {
    return pd->dir;
 }

@@ -1,0 +1,6 @@
+mixin @beta Efl.Ui.Layout_Orientable_Readonly extends Efl.Ui.Layout_Orientable
+{
+  implements {
+    Efl.Ui.Layout_Orientable.orientation { set; [[This will always print an error saying that this is a readonly object.]] }
+  }
+}

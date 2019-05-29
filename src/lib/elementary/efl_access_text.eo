@@ -64,7 +64,7 @@ interface @beta Efl.Access.Text
          }
          keys {
             granularity: Efl.Access.Text_Granularity; [[Text granularity]]
-            start_offset: ptr(int) @nonull; [[Offset indicating start of string according to given granularity.  -1 in case of error.]]
+            start_offset: ptr(int); [[Offset indicating start of string according to given granularity.  -1 in case of error.]]
             end_offset: ptr(int); [[Offset indicating end of string according to given granularity. -1 in case of error.]]
          }
          values {
@@ -101,8 +101,8 @@ interface @beta Efl.Access.Text
             return: bool; [[$true if attribute name is set, $false otherwise]]
          }
          keys {
-            name: string @nonull; [[Text attribute name]]
-            start_offset: ptr(int) @nonull; [[Position in text from which given attribute is set.]]
+            name: string; [[Text attribute name]]
+            start_offset: ptr(int); [[Position in text from which given attribute is set.]]
             end_offset: ptr(int); [[Position in text to which given attribute is set.]]
          }
          values {
@@ -114,7 +114,7 @@ interface @beta Efl.Access.Text
             [[Gets list of all text attributes.]]
          }
          keys {
-            start_offset: ptr(int) @nonull; [[Start offset]]
+            start_offset: ptr(int); [[Start offset]]
             end_offset: ptr(int); [[End offset]]
          }
          values {

@@ -280,7 +280,7 @@ EFL_START_TEST (efl_ui_table_layout_update)
    int i, max_index = (sizeof(hints) / sizeof(Hint));
 
    efl_gfx_arrangement_content_align_set(layout, 0.8, 0.2);
-   efl_ui_direction_set(layout, EFL_UI_DIR_VERTICAL);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
 
    Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, layout,
                      efl_pack_table(layout, efl_added, 0, 0, 1, 1));
@@ -299,7 +299,7 @@ EFL_START_TEST (efl_ui_table_layout_update_pack)
    Eo *btn, *btn2, *btn3;
 
    efl_gfx_arrangement_content_align_set(layout, 0.8, 0.2);
-   efl_ui_direction_set(layout, EFL_UI_DIR_VERTICAL);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
 
    max_index2 = ((sizeof(hints2) / sizeof(Hint)) / 2);
    max_index3 = ((sizeof(hints3) / sizeof(Hint)) / 3);
@@ -338,7 +338,7 @@ EFL_START_TEST (efl_ui_table_layout_update_matrix)
    Eo *btn[9];
 
    efl_gfx_arrangement_content_align_set(layout, 0.8, 0.2);
-   efl_ui_direction_set(layout, EFL_UI_DIR_VERTICAL);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
 
    efl_gfx_hint_margin_set(layout, 10, 10, 20, 20);
    efl_ui_table_homogeneous_set(layout, 0, 1);
@@ -523,19 +523,19 @@ EFL_START_TEST (efl_ui_table_properties)
    ck_assert_int_eq(b, 1);
 
    //direction test
-   ck_assert_int_eq(efl_ui_direction_get(layout), EFL_UI_DIR_RIGHT);
+   ck_assert_int_eq(efl_ui_layout_orientation_get(layout), EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
 
-   efl_ui_direction_set(layout, EFL_UI_DIR_VERTICAL);
-   ck_assert_int_eq(efl_ui_direction_get(layout), EFL_UI_DIR_VERTICAL);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
+   ck_assert_int_eq(efl_ui_layout_orientation_get(layout), EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
 
-   efl_ui_direction_set(layout, EFL_UI_DIR_RIGHT);
-   ck_assert_int_eq(efl_ui_direction_get(layout), EFL_UI_DIR_RIGHT);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
+   ck_assert_int_eq(efl_ui_layout_orientation_get(layout), EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
 
-   efl_ui_direction_set(layout, EFL_UI_DIR_DEFAULT);
-   ck_assert_int_eq(efl_ui_direction_get(layout), EFL_UI_DIR_RIGHT);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_DEFAULT);
+   ck_assert_int_eq(efl_ui_layout_orientation_get(layout), EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
 
-   efl_ui_direction_set(layout, EFL_UI_DIR_HORIZONTAL);
-   ck_assert_int_eq(efl_ui_direction_get(layout), EFL_UI_DIR_HORIZONTAL);
+   efl_ui_layout_orientation_set(layout, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
+   ck_assert_int_eq(efl_ui_layout_orientation_get(layout), EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
 
    //homogeneous test
    efl_ui_table_homogeneous_get(layout, &homogeneoush, &homogeneousv);

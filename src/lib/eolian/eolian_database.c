@@ -572,6 +572,9 @@ database_unit_init(Eolian_State *state, Eolian_Unit *unit, const char *file)
    unit->structs    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    unit->enums      = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    unit->objects    = eina_hash_stringshared_new(NULL);
+
+   /* baseline version; support for higher featurelevel must be specified explicitly */
+   unit->version    = 1;
 }
 
 static void
@@ -1298,6 +1301,13 @@ eolian_unit_file_path_get(const Eolian_Unit *unit)
    return eina_hash_find(is_eo
      ? unit->state->filenames_eo
      : unit->state->filenames_eot, unit->file);
+}
+
+EAPI unsigned short
+eolian_unit_version_get(const Eolian_Unit *unit)
+{
+   if (!unit) return 0;
+   return unit->version;
 }
 
 EAPI const Eolian_Object *

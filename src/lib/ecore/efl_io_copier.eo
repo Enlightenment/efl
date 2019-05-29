@@ -308,7 +308,7 @@ class @beta Efl.Io.Copier extends Efl.Loop_Consumer implements Efl.Io.Closer {
              which case you should wait for "done", "data" or "line"
              events and then call it to retrieve and own the data.
            ]]
-           return: ptr(Eina.Binbuf) @owned @warn_unused; [[Binbuf]]
+           return: ptr(Eina.Binbuf) @owned @no_unused; [[Binbuf]]
         }
 
         @property pending_size {

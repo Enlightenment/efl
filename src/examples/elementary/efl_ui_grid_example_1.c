@@ -19,10 +19,10 @@ typedef struct _Grid_Event_Data {
 } Grid_Event_Data;
 
 Eo *
-EoGenerate(const Efl_Class *klass, Eo *parent, Efl_Ui_Dir dir)
+EoGenerate(const Efl_Class *klass, Eo *parent, Efl_Ui_Layout_Orientation dir)
 {
    Eo* obj = efl_add(klass, parent);
-   if (dir != EFL_UI_DIR_DEFAULT) efl_ui_direction_set(obj, dir);
+   if (dir != EFL_UI_LAYOUT_ORIENTATION_DEFAULT) efl_ui_layout_orientation_set(obj, dir);
    efl_gfx_hint_weight_set(obj, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND);
    efl_gfx_hint_fill_set(obj, EINA_TRUE, EINA_TRUE);
    return obj;
@@ -43,7 +43,7 @@ elm_main(int argc, char **argv)
       efl_text_set(efl_added, "Efl.Ui.Grid"),
       efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
-   box = EoGenerate(EFL_UI_BOX_CLASS, win, EFL_UI_DIR_VERTICAL);
+   box = EoGenerate(EFL_UI_BOX_CLASS, win, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
    elm_win_resize_object_add(win, box);
 
    Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, box);
@@ -54,7 +54,7 @@ elm_main(int argc, char **argv)
 
    Eina_Bool horiz = 0;
    // TEST#1 : Create Grid
-   gd->grid = grid = EoGenerate(EFL_UI_GRID_CLASS, box, (horiz ? EFL_UI_DIR_HORIZONTAL : EFL_UI_DIR_VERTICAL));
+   gd->grid = grid = EoGenerate(EFL_UI_GRID_CLASS, box, (horiz ? EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL : EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
    efl_ui_grid_item_size_set(grid, EINA_SIZE2D(100, 120)); // 4X4
    efl_gfx_arrangement_content_padding_set(grid, 5.0, 5.0, EINA_TRUE);
    efl_gfx_arrangement_content_align_set(grid, 0.5, 0.5);

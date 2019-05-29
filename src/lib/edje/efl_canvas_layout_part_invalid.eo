@@ -1,5 +1,5 @@
 class @beta Efl.Canvas.Layout_Part_Invalid extends Efl.Canvas.Layout_Part implements Efl.Content,
-                                      Efl.Pack_Linear, Efl.Ui.Direction_Readonly,
+                                      Efl.Pack_Linear, Efl.Ui.Layout_Orientable_Readonly,
                                       Efl.Pack_Table, Efl.Text,
                                       Efl.Text_Markup, Efl.Text_Markup_Interactive
 {
@@ -58,7 +58,7 @@ class @beta Efl.Canvas.Layout_Part_Invalid extends Efl.Canvas.Layout_Part implem
       Efl.Pack_Linear.pack_content_get;
       Efl.Pack_Linear.pack_unpack_at;
       Efl.Pack_Linear.pack_index_get;
-      Efl.Ui.Direction.direction { get; [[Returns $default if unknown.]] }
+      Efl.Ui.Layout_Orientable.orientation { get; [[Returns $default if unknown.]] }
       // Efl.Canvas.Layout_Part_Table
       Efl.Pack_Table.pack_table;
       Efl.Pack_Table.table_content_get;

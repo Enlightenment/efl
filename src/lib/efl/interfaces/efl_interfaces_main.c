@@ -61,7 +61,7 @@
 #include "interfaces/efl_model.eo.c"
 #include "interfaces/efl_interpolator.eo.c"
 #include "interfaces/efl_ui_i18n.eo.c"
-#include "interfaces/efl_ui_direction.eo.c"
+#include "interfaces/efl_ui_layout_orientable.eo.c"
 #include "interfaces/efl_ui_drag.eo.c"
 #include "interfaces/efl_ui_range_display.eo.c"
 #include "interfaces/efl_ui_range_interactive.eo.c"

@@ -135,7 +135,7 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
             ]]
          }
          values {
-            clipper: Efl.Canvas.Object @nonull; [[The object to clip $obj by.]]
+            clipper: Efl.Canvas.Object; [[The object to clip $obj by.]]
          }
       }
       @property repeat_events {
@@ -354,7 +354,7 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
 
               See also @.clipper.
             ]]
-            return: iterator<Efl.Canvas.Object> @warn_unused; [[An iterator over the
+            return: iterator<Efl.Canvas.Object> @no_unused; [[An iterator over the
                                              list of objects clipped by $obj.]]
          }
       }
@@ -384,7 +384,7 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
       clipped_objects_count @const {
          [[Returns the number of objects clipped by $obj
          ]]
-         return: uint @warn_unused; [[The number of objects clipped by $obj]]
+         return: uint @no_unused; [[The number of objects clipped by $obj]]
       }
       key_grab {
          /* FIXME: can't reference Eolian object, .eo file not being installed */
@@ -411,9 +411,9 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
            Warning: Providing impossible modifier sets creates undefined
            behavior.
          ]]
-         return: bool @warn_unused; [[$true if the call succeeded, $false otherwise.]]
+         return: bool @no_unused; [[$true if the call succeeded, $false otherwise.]]
          params {
-            @in keyname: string @nonull; [[The key to request events for.]]
+            @in keyname: string; [[The key to request events for.]]
             @in modifiers: Efl.Input.Modifier; [[A combination of modifier
                               keys that must be present to trigger the event.]]
             @in not_modifiers: Efl.Input.Modifier; [[A combination of modifier
@@ -432,7 +432,7 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
            and the legacy API evas_focus_get.
          ]]
          params {
-            @in keyname: string @nonull; [[The key the grab is set for.]]
+            @in keyname: string; [[The key the grab is set for.]]
             @in modifiers: Efl.Input.Modifier; [[A mask of modifiers that must be
                                                  present to trigger the event.]]
             @in not_modifiers: Efl.Input.Modifier; [[A mask of modifiers that must

@@ -51,6 +51,8 @@ eo_gen_params(Eina_Iterator *itr, Eina_Strbuf *buf,
           eina_strbuf_append(buf, ", ");
         *nidx += _gen_param(buf, pr, ftype, &rpid);
 
+        /* Keep the logic for when there's a better way to emit NONNULL */
+#if 0
         if (!eolian_parameter_is_nonull(pr) || !flagbuf)
           continue;
 
@@ -61,6 +63,9 @@ eo_gen_params(Eina_Iterator *itr, Eina_Strbuf *buf,
           }
         else
           eina_strbuf_append_printf(*flagbuf, ", %d", *nidx - rpid);
+#else
+        (void)flagbuf;
+#endif
      }
    eina_iterator_free(itr);
 }
@@ -155,7 +160,7 @@ _gen_func(const Eolian_State *state, const Eolian_Function *fid,
      eina_strbuf_append(buf, "void");
 
    eina_strbuf_append(buf, ")");
-   if (eolian_function_return_is_warn_unused(fid, ftype))
+   if (!eolian_function_return_allow_unused(fid, ftype))
      {
         if (!flagbuf)
           flagbuf = eina_strbuf_new();

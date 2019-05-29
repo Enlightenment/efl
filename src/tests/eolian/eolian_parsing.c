@@ -1587,6 +1587,22 @@ EFL_START_TEST(eolian_class_unimpl)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eolian_version)
+{
+   Eolian_State *eos = eolian_state_new();
+   const Eolian_Unit *u1, *u2;
+
+   fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
+
+   fail_if(!(u1 = eolian_state_file_parse(eos, "class_simple.eo")));
+   fail_if(!(u2 = eolian_state_file_parse(eos, "base.eo")));
+   fail_if(eolian_unit_version_get(u1) != 1);
+   fail_if(eolian_unit_version_get(u2) != 1);
+
+   eolian_state_free(eos);
+}
+EFL_END_TEST
+
 void eolian_parsing_test(TCase *tc)
 {
    tcase_add_test(tc, eolian_simple_parsing);
@@ -1612,4 +1628,5 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_mixins_require);
    tcase_add_test(tc, eolian_class_requires_classes);
    tcase_add_test(tc, eolian_class_unimpl);
+   tcase_add_test(tc, eolian_version);
 }

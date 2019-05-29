@@ -12,7 +12,7 @@ interface Efl.Container
    methods {
       content_iterate {
          [[Begin iterating over this object's contents.]]
-         return: iterator<Efl.Gfx.Entity> @owned @warn_unused; [[Iterator on object's content.]]
+         return: iterator<Efl.Gfx.Entity> @owned @no_unused; [[Iterator on object's content.]]
       }
       content_count {
          [[Returns the number of contained sub-objects.]]

@@ -86,7 +86,7 @@ EDJE_PART_INVALID(Eina_Bool, 0, efl_pack_at, _efl_canvas_layout_part_invalid_efl
 EDJE_PART_INVALID(Efl_Gfx_Entity *, 0, efl_pack_content_get, _efl_canvas_layout_part_invalid_efl_pack_linear_pack_content_get, int index)
 EDJE_PART_INVALID(Efl_Gfx_Entity *, 0, efl_pack_unpack_at, _efl_canvas_layout_part_invalid_efl_pack_linear_pack_unpack_at, int index)
 EDJE_PART_INVALID(int, 0, efl_pack_index_get, _efl_canvas_layout_part_invalid_efl_pack_linear_pack_index_get, const Efl_Gfx_Entity *subobj)
-EDJE_PART_INVALID_CONST(Efl_Ui_Dir, 0, efl_ui_direction_get, _efl_canvas_layout_part_invalid_efl_ui_direction_direction_get)
+EDJE_PART_INVALID_CONST(Efl_Ui_Layout_Orientation, 0, efl_ui_layout_orientation_get, _efl_canvas_layout_part_invalid_efl_ui_layout_orientable_orientation_get)
 EDJE_PART_INVALID(Eina_Bool, 0, efl_pack_table, _efl_canvas_layout_part_invalid_efl_pack_table_pack_table, Efl_Gfx_Entity *subobj, int col, int row, int colspan, int rowspan)
 EDJE_PART_INVALID(Efl_Gfx_Entity *, 0, efl_pack_table_content_get, _efl_canvas_layout_part_invalid_efl_pack_table_table_content_get, int col, int row)
 EDJE_PART_INVALID(Eina_Iterator *, 0, efl_pack_table_contents_get, _efl_canvas_layout_part_invalid_efl_pack_table_table_contents_get, int col, int row, Eina_Bool below)

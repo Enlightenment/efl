@@ -158,6 +158,7 @@ elm_private_eolian_files = \
 	lib/elementary/efl_ui_focus_parent_provider_standard.eo \
 	lib/elementary/efl_ui_state_model.eo \
 	tests/elementary/focus_test.eo \
+	tests/elementary/focus_manager_test.eo \
 	tests/elementary/focus_test_sub_main.eo \
 	lib/elementary/efl_ui_selection_manager.eo \
 	lib/elementary/efl_datetime_manager.eo \

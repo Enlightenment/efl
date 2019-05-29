@@ -986,18 +986,26 @@ _##_pfx##_efl_ui_widget_widget_input_event_handler(Eo *obj, _typ *_pd EINA_UNUSE
    return EINA_TRUE; \
 }
 
-static inline Eina_Bool
-efl_ui_dir_is_horizontal(Efl_Ui_Dir dir, Eina_Bool def_val)
+static inline Efl_Ui_Layout_Orientation
+efl_ui_layout_orientation_axis_get(Efl_Ui_Layout_Orientation orient)
 {
-   switch (dir)
+   return orient & EFL_UI_LAYOUT_ORIENTATION_AXIS_BITMASK;
+}
+
+static inline Eina_Bool
+efl_ui_layout_orientation_is_inverted(Efl_Ui_Layout_Orientation orient)
+{
+   return orient & EFL_UI_LAYOUT_ORIENTATION_INVERTED;
+}
+
+static inline Eina_Bool
+efl_ui_layout_orientation_is_horizontal(Efl_Ui_Layout_Orientation orient, Eina_Bool def_val)
+{
+   switch (orient & EFL_UI_LAYOUT_ORIENTATION_AXIS_BITMASK)
      {
-      case EFL_UI_DIR_DEFAULT: return !!def_val;
-      case EFL_UI_DIR_HORIZONTAL: return EINA_TRUE;
-      case EFL_UI_DIR_VERTICAL: return EINA_FALSE;
-      case EFL_UI_DIR_LTR: return EINA_TRUE;
-      case EFL_UI_DIR_RTL: return EINA_TRUE;
-      case EFL_UI_DIR_DOWN: return EINA_FALSE;
-      case EFL_UI_DIR_UP: return EINA_FALSE;
+      case EFL_UI_LAYOUT_ORIENTATION_DEFAULT: return !!def_val;
+      case EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL: return EINA_TRUE;
+      case EFL_UI_LAYOUT_ORIENTATION_VERTICAL: return EINA_FALSE;
       default: return !!def_val;
      }
 }

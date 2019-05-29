@@ -31,10 +31,10 @@ interface Efl.File_Save {
            "quality=100 compress=9".
          ]]
          params {
-            @in file: string @nonull; [[The filename to be used to save the image (extension
-                                              obligatory).]]
+            @in file: string; [[The filename to be used to save the image (extension
+                                obligatory).]]
             @in key: string; [[The image key in the file (if an Eet one), or $null,
-                                     otherwise.]]
+                               otherwise.]]
             @in info: const(ptr(Efl.File_Save_Info)); [[The flags to be used ($null for defaults).]]
          }
          return: bool;  [[$true on success, $false otherwise]]

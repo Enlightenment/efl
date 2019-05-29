@@ -449,7 +449,7 @@ static void pack_cb(void *data,
 
    in_box1 = efl_add(EFL_UI_BOX_CLASS, box,
                      efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
-                     efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL));
+                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL));
 
    sp1 = efl_add(EFL_UI_SPIN_BUTTON_CLASS, in_box1,
                  efl_ui_range_min_max_set(efl_added, 0,
@@ -459,7 +459,7 @@ static void pack_cb(void *data,
 
    in_box2 = efl_add(EFL_UI_BOX_CLASS, box,
                      efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
-                     efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL));
+                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL));
 
    sp2 = efl_add(EFL_UI_SPIN_BUTTON_CLASS, in_box2);
 

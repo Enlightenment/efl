@@ -134,7 +134,7 @@ layout_setup()
 
    layout = efl_add(EFL_UI_BOX_STACK_CLASS, win,
                     efl_gfx_arrangement_content_align_set(efl_added, 0.8, 0.2),
-                    efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL));
+                    efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
 }
 
 static void

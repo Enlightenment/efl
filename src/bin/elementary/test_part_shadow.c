@@ -143,7 +143,7 @@ test_part_shadow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_unref(shadow);
 
    hbx = efl_add(EFL_UI_BOX_CLASS, win);
-   efl_ui_direction_set(hbx, EFL_UI_DIR_HORIZONTAL);
+   efl_ui_layout_orientation_set(hbx, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
    efl_gfx_hint_weight_set(hbx, EFL_GFX_HINT_EXPAND, 0);
    efl_pack(bx, hbx);
 
@@ -176,7 +176,7 @@ test_part_shadow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_unref(shadow);
 
    bt_bx = efl_add(EFL_UI_BOX_CLASS, win);
-   efl_ui_direction_set(bt_bx, EFL_UI_DIR_HORIZONTAL);
+   efl_ui_layout_orientation_set(bt_bx, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
    efl_gfx_hint_weight_set(bt_bx, EFL_GFX_HINT_EXPAND, 0);
    efl_pack(bx, bt_bx);
 

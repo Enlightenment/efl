@@ -59,7 +59,7 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    efl_add(EFL_UI_SLIDER_CLASS, bx,
            efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(160, 0)),
            efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0.0),
-		   efl_ui_direction_set(efl_added, EFL_UI_DIR_LEFT),
+           efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL | EFL_UI_LAYOUT_ORIENTATION_INVERTED),
            efl_pack(bx, efl_added));
 
    efl_add(EFL_UI_TEXT_CLASS, bx,
@@ -92,7 +92,7 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_pack(bx, efl_added));
 
    hbx = efl_add(EFL_UI_BOX_CLASS, bx,
-                 efl_ui_direction_set(efl_added, EFL_UI_DIR_HORIZONTAL),
+                 efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                  efl_pack(bx, efl_added));
 
    efl_add(EFL_UI_SLIDER_CLASS, hbx,
@@ -100,14 +100,14 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_ui_range_min_max_set(efl_added, 10, 145),
            efl_ui_range_step_set(efl_added, step),
            efl_ui_range_value_set(efl_added, 70),
-           efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
+           efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
            efl_pack(hbx, efl_added));
 
    efl_add(EFL_UI_SLIDER_CLASS, hbx,
            efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(0, 160)),
            efl_ui_range_min_max_set(efl_added, 10, 145),
            efl_ui_range_step_set(efl_added, step),
-           efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
+           efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
            elm_object_disabled_set(efl_added, EINA_TRUE),
            efl_pack(hbx, efl_added));
 
@@ -116,7 +116,7 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_ui_range_min_max_set(efl_added, 10, 145),
            efl_ui_range_value_set(efl_added, 35),
            efl_ui_range_step_set(efl_added, step),
-           efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN),
+           efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL | EFL_UI_LAYOUT_ORIENTATION_INVERTED),
            efl_pack(hbx, efl_added));
 
    efl_add(EFL_UI_TEXT_CLASS, bx,

@@ -113,7 +113,7 @@ interface Efl.Layout.Group
          ]]
          get { [[Returns $true if the part exists in the EDC group.]] }
          keys {
-            part: string @nonull; [[The part name to check.]]
+            part: string; [[The part name to check.]]
          }
          values {
             exists: bool; [[$true if the part exists, $false otherwise.]]

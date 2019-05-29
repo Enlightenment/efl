@@ -34,8 +34,8 @@ class @beta Efl.Ui.List extends Efl.Ui.Layout_Base implements
       }
       selected_items_get {
          [[Get the selected items iterator. The iterator sequence will be decided by selection.]]
-         return: iterator<Efl.Ui.List_Item> @owned @warn_unused; [[Iterator covered by selected items list.
-                                                                   user have to free the iterator after used.]]
+         return: iterator<Efl.Ui.List_Item> @owned @no_unused; [[Iterator covered by selected items list.
+                                                                 user have to free the iterator after used.]]
       }
    }
    implements {
@@ -51,7 +51,7 @@ class @beta Efl.Ui.List extends Efl.Ui.Layout_Base implements
       Efl.Container.content_iterate;
       Efl.Container.content_count;
 
-      //Efl.Ui.Direction.direction { get; set; } //TODO
+      //Efl.Ui.Layout_Orientable.orientation { get; set; } //TODO
 
       //Efl.Ui.Widget
       Efl.Ui.Widget.theme_apply;

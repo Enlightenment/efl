@@ -1,4 +1,5 @@
 #include <assert.h>
+#include <limits.h>
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -854,7 +855,7 @@ typedef struct _Eo_Ret_Def
    Eolian_Type *type;
    Eolian_Documentation *doc;
    Eolian_Expression *default_ret_val;
-   Eina_Bool warn_unused: 1;
+   Eina_Bool no_unused: 1;
    Eina_Bool owned: 1;
 } Eo_Ret_Def;
 
@@ -870,7 +871,7 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void,
      ret->type = parse_type(ls, EINA_TRUE);
    ret->doc = NULL;
    ret->default_ret_val = NULL;
-   ret->warn_unused = EINA_FALSE;
+   ret->no_unused = EINA_FALSE;
    ret->owned = EINA_FALSE;
    if (allow_def && (ls->t.token == '('))
      {
@@ -881,12 +882,12 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void,
         ls->expr_mode = EINA_FALSE;
         check_match(ls, ')', '(', line, col);
      }
-   Eina_Bool has_warn_unused = EINA_FALSE, has_owned = EINA_FALSE;
+   Eina_Bool has_no_unused = EINA_FALSE, has_owned = EINA_FALSE;
    if (!is_funcptr) for (;;) switch (ls->t.kw)
      {
-      case KW_at_warn_unused:
-        CASE_LOCK(ls, warn_unused, "warn_unused qualifier");
-        ret->warn_unused = EINA_TRUE;
+      case KW_at_no_unused:
+        CASE_LOCK(ls, no_unused, "no_unused qualifier");
+        ret->no_unused = EINA_TRUE;
         eo_lexer_get(ls);
         break;
       case KW_at_owned:
@@ -906,7 +907,7 @@ static void
 parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
             Eina_Bool is_vals)
 {
-   Eina_Bool has_nonull   = EINA_FALSE, has_optional = EINA_FALSE,
+   Eina_Bool has_optional = EINA_FALSE,
              has_owned    = EINA_FALSE;
    Eina_Bool cref = (ls->t.kw == KW_at_cref);
    Eolian_Function_Parameter *par = calloc(1, sizeof(Eolian_Function_Parameter));
@@ -955,11 +956,6 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
      }
    for (;;) switch (ls->t.kw)
      {
-      case KW_at_nonull:
-        CASE_LOCK(ls, nonull, "nonull qualifier")
-        par->nonull = EINA_TRUE;
-        eo_lexer_get(ls);
-        break;
       case KW_at_optional:
         CASE_LOCK(ls, optional, "optional qualifier");
         par->optional = EINA_TRUE;
@@ -1084,7 +1080,7 @@ parse_accessor:
              prop->get_ret_type = eo_lexer_type_release(ls, ret.type);
              prop->get_return_doc = ret.doc;
              prop->get_ret_val = ret.default_ret_val;
-             prop->get_return_warn_unused = ret.warn_unused;
+             prop->get_return_no_unused = ret.no_unused;
              prop->get_ret_type->owned = ret.owned;
           }
         else
@@ -1092,7 +1088,7 @@ parse_accessor:
              prop->set_ret_type = eo_lexer_type_release(ls, ret.type);
              prop->set_return_doc = ret.doc;
              prop->set_ret_val = ret.default_ret_val;
-             prop->set_return_warn_unused = ret.warn_unused;
+             prop->set_return_no_unused = ret.no_unused;
              prop->set_ret_type->owned = ret.owned;
           }
         break;
@@ -1294,7 +1290,7 @@ tags_done:
         meth->get_ret_type = eo_lexer_type_release(ls, ret.type);
         meth->get_return_doc = ret.doc;
         meth->get_ret_val = NULL;
-        meth->get_return_warn_unused = EINA_FALSE;
+        meth->get_return_no_unused = EINA_FALSE;
         break;
       case KW_params:
         CASE_LOCK(ls, params, "params definition");
@@ -1390,7 +1386,7 @@ body:
         meth->get_ret_type = eo_lexer_type_release(ls, ret.type);
         meth->get_return_doc = ret.doc;
         meth->get_ret_val = ret.default_ret_val;
-        meth->get_return_warn_unused = ret.warn_unused;
+        meth->get_return_no_unused = ret.no_unused;
         meth->get_ret_type->owned = ret.owned;
         break;
       case KW_params:
@@ -2283,10 +2279,39 @@ found_class:
 static void
 parse_chunk(Eo_Lexer *ls, Eina_Bool eot)
 {
+   Eina_Bool parsing_header = EINA_TRUE;
+   Eina_Bool has_version = EINA_FALSE;
    while (ls->t.token >= 0)
-     /* set eot to EINA_TRUE so that we only allow parsing of one class */
-     if (parse_unit(ls, eot))
-       eot = EINA_TRUE;
+     switch (ls->t.kw)
+       {
+        case KW_hash_version:
+          {
+             CASE_LOCK(ls, version, "#version specifier");
+             if (!parsing_header)
+               eo_lexer_syntax_error(ls, "header keyword outside of unit header");
+             eo_lexer_get(ls);
+
+             check(ls, TOK_NUMBER);
+             if (ls->t.kw != NUM_INT)
+               eo_lexer_syntax_error(ls, "invalid #version value");
+             if (ls->t.value.u > USHRT_MAX)
+               eo_lexer_syntax_error(ls, "#version too high");
+             else if (ls->t.value.u < 0)
+               eo_lexer_syntax_error(ls, "#version too low");
+
+             ls->unit->version = (unsigned short)(ls->t.value.u);
+             if (ls->unit->version > EOLIAN_FILE_FORMAT_VERSION)
+               eo_lexer_syntax_error(ls, "file version too new for this version of Eolian");
+             eo_lexer_get(ls);
+             break;
+           }
+        default:
+          parsing_header = EINA_FALSE;
+          /* set eot to EINA_TRUE so that we only allow parsing of one class */
+          if (parse_unit(ls, eot))
+            eot = EINA_TRUE;
+          break;
+       }
 }
 
 Eolian_Unit *

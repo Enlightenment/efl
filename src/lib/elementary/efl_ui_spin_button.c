@@ -779,7 +779,7 @@ _efl_ui_spin_button_theme_group_get(Evas_Object *obj, Efl_Ui_Spin_Button_Data *s
           }
      }
 
-   if (efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
+   if (efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
      eina_strbuf_append(new_group, "horizontal");
    else
      eina_strbuf_append(new_group, "vertical");
@@ -885,7 +885,7 @@ _efl_ui_spin_button_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_spin_button_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Spin_Button_Data *sd, Efl_Ui_Dir dir)
+_efl_ui_spin_button_efl_ui_layout_orientable_orientation_set(Eo *obj, Efl_Ui_Spin_Button_Data *sd, Efl_Ui_Layout_Orientation dir)
 {
    if (sd->dir == dir) return;
 
@@ -894,8 +894,8 @@ _efl_ui_spin_button_efl_ui_direction_direction_set(Eo *obj, Efl_Ui_Spin_Button_D
    efl_ui_widget_theme_apply(obj);
 }
 
-EOLIAN static Efl_Ui_Dir
-_efl_ui_spin_button_efl_ui_direction_direction_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd)
+EOLIAN static Efl_Ui_Layout_Orientation
+_efl_ui_spin_button_efl_ui_layout_orientable_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd)
 {
    return sd->dir;
 }

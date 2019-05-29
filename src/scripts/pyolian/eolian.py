@@ -925,8 +925,8 @@ class Function(Object):
         c_doc = lib.eolian_function_return_documentation_get(self, ftype)
         return Documentation(c_doc) if c_doc else None
 
-    def return_is_warn_unused(self, ftype):
-        return bool(lib.eolian_function_return_is_warn_unused(self, ftype))
+    def return_allow_unused(self, ftype):
+        return bool(lib.eolian_function_return_allow_unused(self, ftype))
 
     @cached_property
     def method_return_type(self):
@@ -973,10 +973,6 @@ class Function_Parameter(Object):
     def documentation(self):
         c_doc = lib.eolian_parameter_documentation_get(self)
         return Documentation(c_doc) if c_doc else None
-
-    @cached_property
-    def is_nonull(self):
-        return bool(lib.eolian_parameter_is_nonull(self))
 
     @cached_property
     def is_optional(self):

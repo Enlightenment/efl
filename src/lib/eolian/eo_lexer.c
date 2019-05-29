@@ -45,6 +45,7 @@ next_char(Eo_Lexer *ls)
 
 #define KW(x) #x
 #define KWAT(x) "@" #x
+#define KWH(x) "#" #x
 
 static const char * const tokens[] =
 {
@@ -87,6 +88,7 @@ static const char * const ctypes[] =
 
 #undef KW
 #undef KWAT
+#undef KWH
 
 #define is_newline(c) ((c) == '\n' || (c) == '\r')
 
@@ -989,10 +991,10 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
                 return TOK_NUMBER;
              }
            if (ls->current && (isalnum(ls->current)
-               || ls->current == '@' || ls->current == '_'))
+               || ls->current == '@' || ls->current == '#' || ls->current == '_'))
              {
                 int col = ls->column;
-                Eina_Bool at_kw = (ls->current == '@');
+                Eina_Bool pfx_kw = (ls->current == '@') || (ls->current == '#');
                 const char *str;
                 eina_strbuf_reset(ls->buff);
                 do
@@ -1007,7 +1009,7 @@ lex(Eo_Lexer *ls, Eo_Token *tok)
                                                         str);
                 ls->column = col + 1;
                 tok->value.s = eina_stringshare_add(str);
-                if (at_kw && tok->kw == 0)
+                if (pfx_kw && tok->kw == 0)
                   eo_lexer_syntax_error(ls, "invalid keyword");
                 return TOK_VALUE;
              }

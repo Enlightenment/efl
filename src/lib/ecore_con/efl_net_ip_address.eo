@@ -59,7 +59,7 @@ class @beta Efl.Net.Ip_Address extends Efl.Object {
               use @.create. To create from a string use @.parse.
             ]]
             params {
-                sockaddr: const(void_ptr) @nonull; [[The pointer to struct sockaddr-compatible handle as per <netinet/in.h>.]]
+                sockaddr: const(void_ptr); [[The pointer to struct sockaddr-compatible handle as per <netinet/in.h>.]]
             }
             return: Efl.Net.Ip_Address @owned; [[Newly created object or $NULL if parameter was invalid.]]
         }
@@ -104,7 +104,7 @@ class @beta Efl.Net.Ip_Address extends Efl.Object {
               and port.
             ]]
             params {
-                address: string @nonull; [[The address, such as enlightenment.org:http or enlightenment.org (port=0)]]
+                address: string; [[The address, such as enlightenment.org:http or enlightenment.org (port=0)]]
                 family: int @optional; [[Preferred family. AF_UNSPEC or 0 for both, otherwise one of AF_INET or AF_INET6]]
                 flags: int @optional; [[Flags to use with getaddrinfo(). If 0, default flags are used (AI_V4MAPPED | AI_ADDRCONFIG, if these exist in your system).]]
             }
@@ -123,7 +123,7 @@ class @beta Efl.Net.Ip_Address extends Efl.Object {
             ]]
             get { }
             values {
-                str: string @nonull; [[Numeric address as string]]
+                str: string; [[Numeric address as string]]
             }
         }
 
@@ -167,7 +167,7 @@ class @beta Efl.Net.Ip_Address extends Efl.Object {
               May only be set once. Afterwards the object does not change.
             ]]
             values {
-                sockaddr: const(void_ptr) @nonull; [[Sockaddr struct. As usual with struct sockaddr, the first field, struct sockaddr::sa_family, defines the rest of the structure and how the whole structure must be interpreted. If AF_INET is struct sockaddr_in, AF_INET6 is struct sockaddr_in6.]]
+                sockaddr: const(void_ptr); [[Sockaddr struct. As usual with struct sockaddr, the first field, struct sockaddr::sa_family, defines the rest of the structure and how the whole structure must be interpreted. If AF_INET is struct sockaddr_in, AF_INET6 is struct sockaddr_in6.]]
             }
         }
 

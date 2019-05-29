@@ -14,7 +14,7 @@ typedef struct _Efl_Ui_Box_Data Efl_Ui_Box_Data;
 
 struct _Efl_Ui_Box_Data
 {
-   Efl_Ui_Dir dir;
+   Efl_Ui_Layout_Orientation dir;
    Eo *clipper;
    Eina_List *children;
 

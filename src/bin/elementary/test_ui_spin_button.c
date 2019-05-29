@@ -35,7 +35,7 @@ test_ui_spin_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 
    bx = efl_add(EFL_UI_BOX_CLASS, win,
                 efl_content_set(win, efl_added),
-                efl_ui_direction_set(efl_added, EFL_UI_DIR_DOWN));
+                efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
 
    efl_add(EFL_UI_SPIN_BUTTON_CLASS, bx,
            efl_ui_range_min_max_set(efl_added, 0, 10),
@@ -58,7 +58,7 @@ test_ui_spin_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
            efl_ui_range_value_set(efl_added, 1),
            efl_ui_spin_button_editable_set(efl_added, EINA_FALSE),
            efl_ui_spin_special_value_set(efl_added, array),
-           efl_ui_direction_set(efl_added, EFL_UI_DIR_VERTICAL),
+           efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
            efl_pack(bx, efl_added));
    eina_array_free(array);
 
