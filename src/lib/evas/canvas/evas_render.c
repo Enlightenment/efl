@@ -289,7 +289,7 @@ static Eina_Bool
 _evas_render_is_relevant(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    return ((evas_object_is_visible(eo_obj, obj) && (!obj->cur->have_clipees)) ||
-           (evas_object_was_visible(eo_obj, obj) && (!obj->prev->have_clipees)));
+           (evas_object_was_visible(obj) && (!obj->prev->have_clipees)));
 }
 
 static Eina_Bool
@@ -791,7 +791,7 @@ _evas_render_phase1_object_mapped(Phase1_Context *p1ctx,
          (!obj->clip.clipees) &&
          ((evas_object_is_visible(eo_obj, obj) &&
            (!obj->cur->have_clipees)) ||
-          (evas_object_was_visible(eo_obj, obj) &&
+          (evas_object_was_visible(obj) &&
            (!obj->prev->have_clipees)))))
      return;
    OBJ_ARRAY_PUSH(p1ctx->render_objects, obj);
@@ -943,7 +943,7 @@ _evas_render_phase1_object_changed_normal(Phase1_Context *p1ctx,
              /* It goes to be hidden. Prev caching should be replaced
               by the current (hidden) state. */
              if (evas_object_is_visible(eo_obj, obj) !=
-                 evas_object_was_visible(eo_obj, obj))
+                 evas_object_was_visible(obj))
                evas_object_cur_prev(obj);
              RD(level, "  skip - not smart, not active or clippees or not relevant\n");
           }
@@ -1182,11 +1182,11 @@ _evas_render_phase1_object_process(Phase1_Context *p1ctx,
         RD(level, "  not changed... [%i] -> (%i %i %p %i) [%i]\n",
            evas_object_is_visible(eo_obj, obj),
            obj->cur->visible, obj->cur->cache.clip.visible, obj->smart.smart,
-           obj->cur->cache.clip.a, evas_object_was_visible(eo_obj, obj));
+           obj->cur->cache.clip.a, evas_object_was_visible(obj));
         if ((!obj->clip.clipees) &&
             (EINA_LIKELY(obj->delete_me == 0)) &&
             (_evas_render_can_render(eo_obj, obj) ||
-             (evas_object_was_visible(eo_obj, obj) &&
+             (evas_object_was_visible(obj) &&
               (!obj->prev->have_clipees))))
           {
              if (obj->is_smart)
@@ -1295,7 +1295,7 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *eo_e EINA_
                   else
                     if ((is_active) && (obj->restack) && (!obj->clip.clipees) &&
                         (_evas_render_can_render(eo_obj, obj) ||
-                         (evas_object_was_visible(eo_obj, obj) && (!obj->prev->have_clipees))))
+                         (evas_object_was_visible(obj) && (!obj->prev->have_clipees))))
                       {
                          if (!obj->render_pre && !obj->rect_del && !obj->delete_me)
                            ok = EINA_TRUE;
@@ -1303,7 +1303,7 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *eo_e EINA_
                     else
                       if (is_active && (!obj->clip.clipees) &&
                           (_evas_render_can_render(eo_obj, obj) ||
-                           (evas_object_was_visible(eo_obj, obj) && (!obj->prev->have_clipees))))
+                           (evas_object_was_visible(obj) && (!obj->prev->have_clipees))))
                         {
                            if (obj->render_pre || obj->rect_del) ok = EINA_TRUE;
                         }
@@ -1311,7 +1311,7 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *eo_e EINA_
              else
                {
                   if ((!obj->clip.clipees) && (obj->delete_me == 0) &&
-                      (!obj->cur->have_clipees || (evas_object_was_visible(eo_obj, obj) && (!obj->prev->have_clipees)))
+                      (!obj->cur->have_clipees || (evas_object_was_visible(obj) && (!obj->prev->have_clipees)))
                       && evas_object_is_opaque(eo_obj, obj) && evas_object_is_visible(eo_obj, obj))
                     {
                        if (obj->rect_del || obj->is_smart) ok = EINA_TRUE;
