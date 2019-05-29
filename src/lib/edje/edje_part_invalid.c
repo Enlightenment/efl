@@ -37,7 +37,12 @@ _efl_canvas_layout_part_invalid_efl_canvas_layout_part_state_get(const Eo *proxy
    if (val) *val = 0.0;
 }
 
-EDJE_PART_INVALID_CONST(Efl_Canvas_Layout_Part_Type, 0, efl_canvas_layout_part_type_get, _efl_canvas_layout_part_invalid_efl_canvas_layout_part_part_type_get)
+EOLIAN static Efl_Canvas_Layout_Part_Type
+_efl_canvas_layout_part_invalid_efl_canvas_layout_part_part_type_get(const Eo *proxy EINA_UNUSED, void *_pd EINA_UNUSED)
+{
+   return EFL_CANVAS_LAYOUT_PART_TYPE_NONE;
+}
+
 EDJE_PART_INVALID_CONST(Eina_Rect, EINA_RECT_ZERO(), efl_gfx_entity_geometry_get, _efl_canvas_layout_part_invalid_efl_gfx_entity_geometry_get)
 EDJE_PART_INVALID(Eina_Bool, 0, efl_ui_drag_value_set, _efl_canvas_layout_part_invalid_efl_ui_drag_drag_value_set, double dx, double dy)
 EDJE_PART_INVALID_CONST(Eina_Bool, 0, efl_ui_drag_value_get, _efl_canvas_layout_part_invalid_efl_ui_drag_drag_value_get, double *dx, double *dy)
