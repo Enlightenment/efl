@@ -784,7 +784,7 @@ _theme_data_get(Evas_Object *obj)
    ELM_DISKSELECTOR_DATA_GET(obj, sd);
 
    blank = eina_list_data_get(sd->right_blanks);
-   if (blank) return;
+   if (!blank) return;
 
    str = edje_object_data_get(blank, "len_threshold");
    if (str) sd->len_threshold = MAX(0, atoi(str));
