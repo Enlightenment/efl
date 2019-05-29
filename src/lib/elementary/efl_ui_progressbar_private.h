@@ -49,6 +49,8 @@ struct _Efl_Ui_Progressbar_Data
    Eina_Bool             pulse_state : 1; /**< To start the pulsing animation, otherwise to stop it */
    Eina_Bool             is_legacy_format_string : 1;
    Eina_Bool             is_legacy_format_cb : 1;
+   Eina_Bool             has_status_text_part : 1;
+   Eina_Bool             has_cur_progressbar_part : 1;
 };
 
 struct _Efl_Ui_Progress_Status
@@ -56,6 +58,7 @@ struct _Efl_Ui_Progress_Status
    const char           *part_name;
    double                val;
    double                val_min, val_max;
+   Eina_Bool part_exists : 1;
 };
 
 /**
