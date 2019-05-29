@@ -754,8 +754,6 @@ _efl_ui_layout_base_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Layout_Data *_pd 
    else
      edje_object_signal_callback_add
         (edje, "size,eval", "efl", _on_size_evaluate_signal, obj);
-
-   elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static void
