@@ -862,8 +862,11 @@ _elm_diskselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Diskselector_Data *sd)
           }
      }
 
-   _theme_data_get(obj);
-   _sizing_eval(obj);
+   if (efl_finalized_get(obj))
+     {
+        _theme_data_get(obj);
+        _sizing_eval(obj);
+     }
 
    evas_event_thaw(evas);
    evas_event_thaw_eval(evas);
