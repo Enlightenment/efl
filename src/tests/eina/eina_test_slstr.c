@@ -178,6 +178,36 @@ EFL_START_TEST(slstr_thread)
 }
 EFL_END_TEST
 
+#define STRL "Hello world 7"
+
+static Eina_Slstr *
+_slstr_length(unsigned int length)
+{
+   Eina_Tmpstr *str = eina_tmpstr_add(STRL);
+
+   return eina_slstr_copy_new_length(str, length);
+}
+
+EFL_START_TEST(slstr_length)
+{
+   unsigned int i;
+
+   for (i = 0; i < strlen(STRL); i++)
+     {
+        Eina_Slstr *slstr;
+        char *str;
+
+        slstr = _slstr_length(i);
+        str = eina_strndup(STRL, i);
+        ck_assert_str_eq(str, slstr);
+
+        free(str);
+     }
+
+   eina_slstr_local_clear();
+}
+EFL_END_TEST
+
 void
 eina_test_slstr(TCase *tc)
 {
@@ -189,4 +219,5 @@ eina_test_slstr(TCase *tc)
    tcase_add_test(tc, slstr_slstr_printf);
    tcase_add_test(tc, slstr_many);
    tcase_add_test(tc, slstr_thread);
+   tcase_add_test(tc, slstr_length);
 }
