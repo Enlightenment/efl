@@ -114,6 +114,31 @@ _edje_calc_params_clear(Edje_Calc_Params *p)
      }
 }
 
+static inline Eo *
+_edje_calc_get_part_object(const Edje_Real_Part *ep)
+{
+   if ((ep->type == EDJE_RP_TYPE_SWALLOW) && ep->typedata.swallow &&
+       ep->typedata.swallow->swallowed_object)
+     return ep->typedata.swallow->swallowed_object;
+   return ep->object;
+}
+
+static inline void
+_edje_calc_handle_state_clip(Edje *ed, Edje_Real_Part *ep, Edje_Calc_Params *pf)
+{
+   Edje_Real_Part *clip_part = NULL;
+   Eo *clip_obj = ed->base.clipper;
+
+   if ((pf->ext) && (pf->ext->clip_to) && (pf->ext->clip_to->object))
+     clip_part = pf->ext->clip_to;
+   else if (ep->part->clip_to_id >= 0)
+     clip_part = ed->table_parts[ep->part->clip_to_id % ed->table_parts_size];
+
+   if (clip_part)
+     clip_obj = _edje_calc_get_part_object(clip_part);
+   evas_object_clip_set(_edje_calc_get_part_object(ep), clip_obj);
+}
+
 void
 _edje_part_pos_set(Edje *ed, Edje_Real_Part *ep, int mode, FLOAT_T pos, FLOAT_T v1, FLOAT_T v2, FLOAT_T v3, FLOAT_T v4)
 {
@@ -4761,14 +4786,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 
              /* handle clip overrides */
              if (ed->has_state_clip)
-               {
-                  if ((pf->ext) && (pf->ext->clip_to) && (pf->ext->clip_to->object))
-                    evas_object_clip_set(ep->object, pf->ext->clip_to->object);
-                  else if (ep->part->clip_to_id >= 0)
-                    evas_object_clip_set(ep->object, ed->table_parts[ep->part->clip_to_id % ed->table_parts_size]->object);
-                  else
-                    evas_object_clip_set(ep->object, ed->base.clipper);
-               }
+               _edje_calc_handle_state_clip(ed, ep, pf);
              break;
 
            case EDJE_PART_TYPE_TEXT:
@@ -5026,15 +5044,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
             (ep->typedata.swallow->swallowed_object))
           {
              if (ed->has_state_clip)
-               {
-                  if ((pf->ext) && (pf->ext->clip_to) && (pf->ext->clip_to->object))
-                    evas_object_clip_set(ep->typedata.swallow->swallowed_object, pf->ext->clip_to->object);
-                  else if (ep->part->clip_to_id >= 0)
-                    evas_object_clip_set(ep->typedata.swallow->swallowed_object, ed->table_parts[ep->part->clip_to_id % ed->table_parts_size]->object);
-                  else
-                    evas_object_clip_set(ep->typedata.swallow->swallowed_object, ed->base.clipper);
-               }
-
+               _edje_calc_handle_state_clip(ed, ep, pf);
              if (pf->visible)
                {
                   Eina_Bool vis = EINA_TRUE;
