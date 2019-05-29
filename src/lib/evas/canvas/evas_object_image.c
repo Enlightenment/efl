@@ -2293,7 +2293,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
 
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
-   is_v = evas_object_is_visible(eo_obj, obj);
+   is_v = evas_object_is_visible(obj);
    was_v = evas_object_was_visible(obj);
    if (is_v != was_v)
      {
@@ -3434,7 +3434,7 @@ _evas_object_image_video_overlay_hide(Evas_Object *eo_obj)
         o->delayed.video_hide = EINA_TRUE;
         o->delayed.video_show = EINA_FALSE;
      }
-   if (evas_object_is_visible(eo_obj, obj))
+   if (evas_object_is_visible(obj))
      o->pixels->video.update_pixels(o->pixels->video.data, eo_obj, &o->pixels->video);
    o->video_visible = EINA_FALSE;
    o->created = EINA_FALSE;
