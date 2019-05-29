@@ -1255,8 +1255,7 @@ _elm_gengrid_item_unrealize(Elm_Gen_Item *it,
    if (GG_IT(it)->wsd->reorder_it == it) return;
 
    evas_event_freeze(evas_object_evas_get(WIDGET(it)));
-   if (!calc)
-     efl_event_callback_legacy_call(WIDGET(it), ELM_GENGRID_EVENT_UNREALIZED, EO_OBJ(it));
+
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
 
    _view_clear(VIEW(it), &(it->texts), NULL);
@@ -1268,6 +1267,8 @@ _elm_gengrid_item_unrealize(Elm_Gen_Item *it,
 
    it->realized = EINA_FALSE;
    it->want_unrealize = EINA_FALSE;
+   if (!calc)
+     efl_event_callback_legacy_call(WIDGET(it), ELM_GENGRID_EVENT_UNREALIZED, EO_OBJ(it));
 
    {
       ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
