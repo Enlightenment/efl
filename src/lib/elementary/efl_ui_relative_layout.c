@@ -218,7 +218,15 @@ _child_chain_calc(Efl_Ui_Relative_Layout_Child *child, Eina_Bool axis)
    // find head
    head = child;
    while (head == head->calc.to[START]->calc.to[END])
-     head = head->calc.to[START];
+     {
+        head = head->calc.to[START];
+        if (head == child)
+          {
+             ERR("%c-axis circular dependency when calculating \"%s\"(%p).",
+                 axis ? 'Y' : 'X', efl_class_name_get(child->obj), child->obj);
+             return EINA_TRUE;
+          }
+     }
 
    //calculate weight_sum
    aspect_type = !axis ? EFL_GFX_HINT_ASPECT_VERTICAL : EFL_GFX_HINT_ASPECT_HORIZONTAL;
