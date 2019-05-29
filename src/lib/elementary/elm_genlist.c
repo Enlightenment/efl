@@ -184,6 +184,14 @@ static const Elm_Action key_actions[] = {
    {NULL, NULL}
 };
 
+static inline void
+_add_calc_job(Elm_Genlist_Data *sd)
+{
+   ELM_SAFE_FREE(sd->calc_job, ecore_job_del);
+   if (!efl_alive_get(sd->obj)) return;
+   sd->calc_job = ecore_job_add(_calc_job, sd->obj);
+}
+
 static void
 _size_cache_free(void *data)
 {
@@ -321,14 +329,13 @@ _elm_genlist_pan_efl_gfx_entity_size_set(Eo *obj, Elm_Genlist_Pan_Data *psd, Ein
      }
    sd->pan_changed = EINA_TRUE;
    evas_object_smart_changed(obj);
-   ecore_job_del(sd->calc_job);
    // if the width changed we may have to resize content if scrollbar went
    // away or appeared to queue a job to deal with it. it should settle in
    // the end to a steady-state
    if (old.w != size.w)
-     sd->calc_job = ecore_job_add(_calc_job, psd->wobj);
+     _add_calc_job(sd);
    else
-     sd->calc_job = NULL;
+     ELM_SAFE_FREE(sd->calc_job, ecore_job_del);
 
 super:
    efl_gfx_entity_size_set(efl_super(obj, MY_PAN_CLASS), size);
@@ -779,8 +786,7 @@ _must_recalc_idler(void *data)
 {
    ELM_GENLIST_DATA_GET(data, sd);
 
-   ecore_job_del(sd->calc_job);
-   sd->calc_job = ecore_job_add(_calc_job, data);
+   _add_calc_job(sd);
    sd->must_recalc_idler = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
@@ -953,8 +959,7 @@ _elm_genlist_elm_layout_sizing_eval(Eo *obj, Elm_Genlist_Data *sd)
                {
                   itb->must_recalc = EINA_TRUE;
                }
-             ecore_job_del(sd->calc_job);
-             sd->calc_job = ecore_job_add(_calc_job, obj);
+             _add_calc_job(sd);
           }
         minw = vmw;
         minh = vmh;
@@ -3561,8 +3566,8 @@ _elm_genlist_efl_ui_widget_theme_apply(Eo *obj, Elm_Genlist_Data *sd)
 
         itb->changed = EINA_TRUE;
      }
-   ecore_job_del(sd->calc_job);
-   sd->calc_job = ecore_job_add(_calc_job, obj);
+   if (sd->obj)
+     _add_calc_job(sd);
    elm_layout_sizing_eval(obj);
    evas_event_thaw(e);
    evas_event_thaw_eval(e);
@@ -3684,8 +3689,7 @@ _item_block_del(Elm_Gen_Item *it)
    itb->items = eina_list_remove(itb->items, it);
    itb->count--;
    itb->changed = EINA_TRUE;
-   ecore_job_del(sd->calc_job);
-   sd->calc_job = ecore_job_add(_calc_job, sd->obj);
+   _add_calc_job(sd);
    if (itb->count < 1)
      {
         Item_Block *itbn;
@@ -3833,8 +3837,7 @@ _elm_genlist_item_del_serious(Elm_Gen_Item *it)
      sd->group_items = eina_list_remove(sd->group_items, it);
 
    ELM_SAFE_FREE(sd->state, eina_inlist_sorted_state_free);
-   ecore_job_del(sd->calc_job);
-   sd->calc_job = ecore_job_add(_calc_job, sd->obj);
+   _add_calc_job(sd);
 
    ELM_SAFE_FREE(it->item, free);
 }
@@ -4036,8 +4039,7 @@ _item_mouse_move_cb(void *data,
              else
                _item_position(it, VIEW(it), it->item->scrl_x, y_pos);
 
-             ecore_job_del(sd->calc_job);
-             sd->calc_job = ecore_job_add(_calc_job, sd->obj);
+             _add_calc_job(sd);
           }
         return;
      }
@@ -4641,8 +4643,7 @@ newblock:
    itb->count++;
    itb->changed = EINA_TRUE;
    it->item->block = itb;
-   ecore_job_del(itb->sd->calc_job);
-   itb->sd->calc_job = ecore_job_add(_calc_job, itb->sd->obj);
+   _add_calc_job(itb->sd);
 
    if (itb->count > itb->sd->max_items_per_block)
      {
@@ -4884,8 +4885,7 @@ _item_idle_enterer(void *data)
    if (wakeup)
      {
         // wake up mainloop
-        ecore_job_del(sd->calc_job);
-        sd->calc_job = ecore_job_add(_calc_job, data);
+        _add_calc_job(sd);
      }
    if (ok == ECORE_CALLBACK_CANCEL) sd->queue_idle_enterer = NULL;
 
@@ -5130,8 +5130,7 @@ _item_mouse_up_cb(void *data,
           }
         else
           {
-             ecore_job_del(sd->calc_job);
-             sd->calc_job = ecore_job_add(_calc_job, sd->obj);
+             _add_calc_job(sd);
           }
         edje_object_signal_emit(VIEW(it), SIGNAL_REORDER_DISABLED, "elm");
         if (_elm_config->atspi_mode)
@@ -5521,8 +5520,7 @@ _update_job(void *data)
      }
    if (position)
      {
-        ecore_job_del(sd->calc_job);
-        sd->calc_job = ecore_job_add(_calc_job, sd->obj);
+        _add_calc_job(sd);
      }
    evas_event_thaw(e);
    evas_event_thaw_eval(e);
@@ -7277,8 +7275,7 @@ _elm_genlist_item_coordinates_calc(Elm_Gen_Item *it,
         sd->scroll_to_type = type;
         it->item->show_me = EINA_TRUE;
 
-        ecore_job_del(sd->calc_job);
-        sd->calc_job = ecore_job_add(_calc_job, sd->obj);
+        _add_calc_job(sd);
 
         return EINA_FALSE;
      }
@@ -7887,8 +7884,7 @@ _item_filtered_get(Elm_Gen_Item *it)
         _filter_item_internal(it);
         if (it->item->block)
           it->item->block->changed = EINA_TRUE;
-        ELM_SAFE_FREE(sd->calc_job, ecore_job_del);
-        sd->calc_job = ecore_job_add(_calc_job, sd->obj);
+        _add_calc_job(sd);
    }
    if (!it->hide) return EINA_TRUE;
    return EINA_FALSE;
@@ -7947,8 +7943,7 @@ _item_filter_enterer(void *data)
    if (wakeup)
      {
         // wake up mainloop
-        ELM_SAFE_FREE(sd->calc_job, ecore_job_del);
-        sd->calc_job = ecore_job_add(_calc_job, data);
+        _add_calc_job(sd);
      }
    if (ok == ECORE_CALLBACK_CANCEL)
      {
@@ -8254,8 +8249,7 @@ _elm_genlist_decorate_mode_set(Eo *obj, Elm_Genlist_Data *sd, Eina_Bool decorate
           }
      }
 
-   ecore_job_del(sd->calc_job);
-   sd->calc_job = ecore_job_add(_calc_job, sd->obj);
+   _add_calc_job(sd);
 }
 
 EOLIAN static void
@@ -8401,8 +8395,7 @@ _flip_job(void *data)
 
    it->flipped = EINA_TRUE;
    it->item->nocache = EINA_TRUE;
-   ecore_job_del(sd->calc_job);
-   sd->calc_job = ecore_job_add(_calc_job, sd->obj);
+   _add_calc_job(sd);
 }
 
 EOLIAN static void
