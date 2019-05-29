@@ -889,6 +889,11 @@ _ecore_x_shutdown2(void)
 EAPI int
 ecore_x_shutdown(void)
 {
+   if (!_ecore_x_init_count)
+     {
+        CRI("Calling ecore_x_shutdown without init! BUG!");
+        return 0;
+     }
    if (--_ecore_x_init_count != 0)
      return _ecore_x_init_count;
    if (_ecore_x_shutdown()) return _ecore_x_init_count;
