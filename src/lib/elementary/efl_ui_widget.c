@@ -1447,6 +1447,7 @@ _efl_ui_widget_widget_parent_set(Eo *obj, Elm_Widget_Smart_Data *pd, Efl_Ui_Widg
    _mirror_disabled_state(obj, pd, disabled_delta);
    _full_eval(obj, pd);
 
+   if (!efl_alive_get(obj)) return;
    if (old_parent && _elm_config->atspi_mode)
      {
         Efl_Access_Object *aparent;
