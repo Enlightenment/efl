@@ -391,6 +391,7 @@ void test_ui_active_view_plain(void *data, Evas_Object *obj, void *event_info);
 void test_ui_active_view_scroll(void *data, Evas_Object *obj, void *event_info);
 
 void test_ui_relative_layout(void *data, Evas_Object *obj, void *event_info);
+void test_efl_ui_radio(void *data, Evas_Object *obj, void *event_info);
 
 static void _list_udpate(void);
 
@@ -1076,6 +1077,7 @@ add_tests:
    ADD_TEST(NULL, "Selectors", "DaySelector", test_dayselector);
    ADD_TEST(NULL, "Selectors", "Main menu", test_main_menu);
    ADD_TEST(NULL, "Selectors", "Combobox", test_combobox);
+   ADD_TEST_EO(NULL, "Selectors", "Efl.Ui.Radio_Box", test_efl_ui_radio);
 
    //------------------------------//
    ADD_TEST(NULL, "Cursors", "Cursor", test_cursor);

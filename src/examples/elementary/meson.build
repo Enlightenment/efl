@@ -117,7 +117,8 @@ examples = [
   'efl_canvas_layout_text',
   'efl_ui_theme_example_01',
   'efl_ui_theme_example_02',
-  'efl_ui_slideshow_example'
+  'efl_ui_slideshow_example',
+  'efl_ui_radio_example_01',
 ]
 
 foreach example : examples

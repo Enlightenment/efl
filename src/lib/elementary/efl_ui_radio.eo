@@ -19,52 +19,6 @@ class @beta Efl.Ui.Radio extends Efl.Ui.Check implements Efl.Access.Widget.Actio
             value: int; [[The value to use if this radio object is selected.]]
          }
       }
-      @property value_pointer {
-         set {
-            [[Set a convenience pointer to an integer, which changes when radio group
-              value changes.
-
-              This sets a pointer to an integer that in addition to the radio
-              object state will also be modified directly. To stop setting the
-              object pointed to, simply use NULL as the valuep argument. If
-              valuep is not NULL then when called, the radio object
-              state will also be modified to reflect the value of the integer
-              valuep points to, just like calling elm_radio_value_set().
-            ]]
-         }
-         values {
-            valuep: ptr(int); [[Pointer to the integer to modify]]
-         }
-      }
-      @property selected_object {
-         get {
-            [[Get the selected radio object.]]
-            return: Efl.Canvas.Object; [[The selected radio object]]
-         }
-      }
-      group_add {
-         [[Add this radio to a group of other radio objects
-
-           Radio objects work in groups. Each member should have a different
-           integer value assigned. In order to have them work as a group, they
-           need to know about each other. This adds the given radio object to
-           the group of which the group object indicated is a member.
-         ]]
-
-         params {
-            @in group: Efl.Ui.Radio; [[Any radio object whose group the obj is
-                                    to join.]]
-         }
-      }
-      @property group_value {
-         [[Change the value of the group.
-
-           This will enable the radio button in the group that is assosiated with this value. A value which is not assosiated with any radio button will result in every radio button beeing disabled.
-         ]]
-         values {
-            value : int; [[The value of the radio button in the group which should be enabled.]]
-         }
-      }
    }
    implements {
       Efl.Object.constructor;

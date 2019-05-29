@@ -373,6 +373,7 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX)
 
 #include "efl_ui_radio.eo.c"
+#include "efl_ui_radio_group.eo.c"
 #include "efl_ui_radio_eo.legacy.c"
 
 #include "efl_ui_radio_legacy_eo.h"
