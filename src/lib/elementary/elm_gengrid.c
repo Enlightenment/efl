@@ -5867,7 +5867,8 @@ _elm_gengrid_item_efl_ui_focus_object_setup_order_non_recursive(Eo *obj, Elm_Gen
           _elm_widget_full_eval(wid);
      }
 
-   efl_ui_focus_object_setup_order_non_recursive(efl_super(obj, ELM_GENGRID_ITEM_CLASS));
+   if (pd->realized)
+     efl_ui_focus_object_setup_order_non_recursive(efl_super(obj, ELM_GENGRID_ITEM_CLASS));
 }
 
 EOLIAN static Efl_Ui_Focus_Object*
