@@ -3592,7 +3592,7 @@ _mirrored_set(Evas_Object *obj,
 
    ELM_GENGRID_DATA_GET(obj, sd);
 
-   if (efl_finalized_get(sd->obj))
+   if (sd->obj && efl_finalized_get(sd->obj))
      _item_cache_zero(sd);
    efl_ui_mirrored_set(efl_super(obj, MY_CLASS), rtl);
 
