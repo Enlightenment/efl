@@ -144,6 +144,7 @@ _on_sub_object_size_hint_change(void *data,
                                 Evas_Object *obj EINA_UNUSED,
                                 void *event_info EINA_UNUSED)
 {
+   if (!efl_alive_get(data)) return;
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
    elm_layout_sizing_eval(data);
 }
