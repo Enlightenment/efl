@@ -1159,14 +1159,16 @@ _zoom_do(Elm_Map_Data *sd,
         ecore_timer_del(sd->zoom_timer);
         sd->zoom_timer = NULL;
      }
-   else
+   else if (sd->obj)
       efl_event_callback_legacy_call
         (sd->obj, EFL_UI_EVENT_ZOOM_START, NULL);
 
    if (sd->obj)
-     sd->zoom_timer = ecore_timer_add(0.25, _zoom_timeout_cb, sd->obj);
-   efl_event_callback_legacy_call
-     (sd->obj, EFL_UI_EVENT_ZOOM_CHANGE, NULL);
+     {
+        sd->zoom_timer = ecore_timer_add(0.25, _zoom_timeout_cb, sd->obj);
+        efl_event_callback_legacy_call
+          (sd->obj, EFL_UI_EVENT_ZOOM_CHANGE, NULL);
+     }
 
    efl_event_callback_legacy_call
      (sd->pan_obj, ELM_PAN_EVENT_CHANGED, NULL);
