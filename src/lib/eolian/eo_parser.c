@@ -2296,7 +2296,7 @@ parse_chunk(Eo_Lexer *ls, Eina_Bool eot)
                eo_lexer_syntax_error(ls, "invalid #version value");
              if (ls->t.value.u > USHRT_MAX)
                eo_lexer_syntax_error(ls, "#version too high");
-             else if (ls->t.value.u < 0)
+             else if (ls->t.value.u < 1)
                eo_lexer_syntax_error(ls, "#version too low");
 
              ls->unit->version = (unsigned short)(ls->t.value.u);
