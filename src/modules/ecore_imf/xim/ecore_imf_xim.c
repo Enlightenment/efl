@@ -130,6 +130,8 @@ static void          _ecore_imf_xim_destroy_cb(XIM xim,
                                               XPointer call_data);
 static void          _ecore_imf_xim_im_setup(XIM_Im_Info *info);
 
+static unsigned int init_count;
+
 static unsigned int
 _ecore_imf_xim_utf8_offset_to_index(const char *str, int offset)
 {
@@ -752,6 +754,7 @@ xim_imf_module_create(void)
 
    if (!ecore_x_init(NULL))
      return NULL;
+   init_count++;
    ctx = ecore_imf_context_new(&xim_class);
    DBG("ctx=%p", ctx);
    return ctx;
@@ -760,7 +763,11 @@ xim_imf_module_create(void)
 static Ecore_IMF_Context *
 xim_imf_module_exit(void)
 {
-   ecore_x_shutdown();
+   if (init_count)
+     {
+        ecore_x_shutdown();
+        init_count--;
+     }
    DBG(" ");
    return NULL;
 }
