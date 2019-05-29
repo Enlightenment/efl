@@ -521,7 +521,7 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
                }
              else if (evas_object_is_visible(obj) &&
                       ((obj->rect_del) ||
-                      (evas_object_is_opaque(eo_obj, obj))) &&
+                      (evas_object_is_opaque(obj))) &&
                       (!evas_object_is_source_invisible(eo_obj, obj)))
                {
                   RD(0, "    rect del\n");
@@ -1030,9 +1030,7 @@ _evas_render_phase1_object_no_changed_normal(Phase1_Context *p1ctx,
 #endif
                                             )
 {
-   Evas_Object *eo_obj = obj->object;
-
-   if (evas_object_is_opaque(eo_obj, obj) &&
+   if (evas_object_is_opaque(obj) &&
        evas_object_is_visible(obj))
      {
         RD(level, "  opaque + visible\n");
@@ -1310,7 +1308,7 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *eo_e EINA_
                {
                   if ((!obj->clip.clipees) && (obj->delete_me == 0) &&
                       (!obj->cur->have_clipees || (evas_object_was_visible(obj) && (!obj->prev->have_clipees)))
-                      && evas_object_is_opaque(eo_obj, obj) && evas_object_is_visible(obj))
+                      && evas_object_is_opaque(obj) && evas_object_is_visible(obj))
                     {
                        if (obj->rect_del || obj->is_smart) ok = EINA_TRUE;
                     }
@@ -1515,7 +1513,7 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj, Efl_Canva
                   break;
                }
 
-             if (evas_object_is_opaque(eo_current, current) ||
+             if (evas_object_is_opaque(current) ||
                  ((current->func->has_opaque_rect) &&
                   (current->func->has_opaque_rect(eo_current, current, current->private_data))))
                {
@@ -2623,7 +2621,7 @@ _evas_render_cutout_add(Evas_Public_Data *evas, void *context,
    Evas_Coord cox = 0, coy = 0, cow = 0, coh = 0;
 
    if (evas_object_is_source_invisible(obj->object, obj)) return;
-   if (evas_object_is_opaque(obj->object, obj))
+   if (evas_object_is_opaque(obj))
      {
         cox = obj->cur->cache.clip.x;
         coy = obj->cur->cache.clip.y;
@@ -2798,7 +2796,7 @@ _snapshot_redraw_update(Evas_Public_Data *evas, Evas_Object_Protected_Data *snap
              if (obj == snap) above = EINA_TRUE;
              continue;
           }
-        if (!obj->cur->snapshot || evas_object_is_opaque(obj->object, obj))
+        if (!obj->cur->snapshot || evas_object_is_opaque(obj))
           {
              const Eina_Rectangle cur = {
                 obj->cur->cache.clip.x - x, obj->cur->cache.clip.y - y,
@@ -2904,7 +2902,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
              OBJ_ARRAY_PUSH(&evas->temporary_objects, obj);
 
              if (above_top) continue;
-             if (obj->cur->snapshot && !evas_object_is_opaque(obj->object, obj))
+             if (obj->cur->snapshot && !evas_object_is_opaque(obj))
                continue;
 
              /* reset the background of the area if needed (using cutout and engine alpha flag to help) */
@@ -3013,7 +3011,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
                             if (obj2->cur->snapshot)
                               {
                                  if (above_top) continue;
-                                 if (!evas_object_is_opaque(obj2->object, obj2)) continue;
+                                 if (!evas_object_is_opaque(obj2)) continue;
                               }
 #if 1
                             if (
@@ -3326,7 +3324,7 @@ evas_render_updates_internal(Evas *eo_e,
         if (UNLIKELY(
                      (!obj->is_smart) &&
                      (!obj->clip.clipees) &&
-                     (evas_object_is_opaque(eo_obj, obj) || obj->cur->snapshot ||
+                     (evas_object_is_opaque(obj) || obj->cur->snapshot ||
                       ((obj->func->has_opaque_rect) &&
                        (obj->func->has_opaque_rect(eo_obj, obj, obj->private_data)))) &&
                      evas_object_is_visible(obj) &&

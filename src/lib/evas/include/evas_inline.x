@@ -98,7 +98,7 @@ evas_common_draw_context_cutouts_add(Cutout_Rects* rects,
 }
 
 static inline int
-evas_object_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_is_opaque(Evas_Object_Protected_Data *obj)
 {
    if (obj->is_smart || obj->no_render) return 0;
    if (obj->cur->render_op == EVAS_RENDER_COPY)
@@ -111,7 +111,7 @@ evas_object_is_opaque(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
             (obj->clip.mask))
           return 0;
         if (obj->func->is_opaque)
-          return obj->func->is_opaque(eo_obj, obj, obj->private_data);
+          return obj->func->is_opaque(obj->object, obj, obj->private_data);
         return 1;
      }
    return 0;
