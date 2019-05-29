@@ -52,6 +52,25 @@ EAPI Eina_Slstr *
 eina_slstr_copy_new(const char *string);
 
 /**
+ * @brief Create a new short lived string by duplicating another string.
+ *
+ * @param[in] string An existing string, it will be copied.
+ * @param[in] len How many charactere max to copy.
+ * @return A new Eina_Slstr or NULL if out of memory.
+ *
+ * Usage example:
+ * @code
+ * char local[200];
+ * sprintf(local, "Hello %d", value);
+ * return eina_slstr_copy_new_length(local, 5);
+ * @endcode
+ *
+ * @since 1.19
+ */
+EAPI Eina_Slstr *
+eina_slstr_copy_new_length(const char *string, size_t len);
+
+/**
  * @brief Create a new short lived string by taking ownership of a string.
  *
  * @param[in] string An existing string. It will not be duplicated.

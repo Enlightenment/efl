@@ -109,6 +109,23 @@ eina_slstr_copy_new(const char *string)
 }
 
 EAPI Eina_Slstr *
+eina_slstr_copy_new_length(const char *string, size_t len)
+{
+   Eina_FreeQ *fq;
+   char *copy;
+
+   if (!string) return NULL;
+
+   fq = _slstr_freeq_get(EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fq, NULL);
+
+   copy = eina_strndup(string, len);
+   if (!copy) return NULL;
+   eina_freeq_ptr_add(fq, copy, free, len);
+   return copy;
+}
+
+EAPI Eina_Slstr *
 eina_slstr_steal_new(char *string)
 {
    Eina_FreeQ *fq;
