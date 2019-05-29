@@ -538,6 +538,7 @@ _elm_slider_val_fetch(Evas_Object *obj, Elm_Slider_Data *pd, Eina_Bool user_even
    double posx = 0.0, posy = 0.0, pos = 0.0, val;
    double posx2 = 0.0, posy2 = 0.0, pos2 = 0.0, val2;
    Eina_Bool inverted = EINA_FALSE;
+   Eina_Bool evented = EINA_FALSE;
 
    EFL_UI_SLIDER_DATA_GET(obj, sd);
    EFL_UI_SLIDER_INTERVAL_DATA_GET(obj, id);
@@ -601,13 +602,15 @@ _elm_slider_val_fetch(Evas_Object *obj, Elm_Slider_Data *pd, Eina_Bool user_even
              efl_event_callback_legacy_call(obj, EFL_UI_SLIDER_EVENT_CHANGED, NULL);
              ecore_timer_del(pd->delay);
              pd->delay = ecore_timer_add(SLIDER_DELAY_CHANGED_INTERVAL, _delay_change, obj);
+             evented = EINA_TRUE;
           }
      }
 
    if (fabs(val2 - id->intvl_to) > DBL_EPSILON)
      {
         id->intvl_to = val2;
-        if (user_event)
+        /* avoid emitting two events and setting a timer twice */
+        if (user_event && (!evented))
           {
              efl_event_callback_legacy_call(obj, EFL_UI_SLIDER_EVENT_CHANGED, NULL);
              ecore_timer_del(pd->delay);
