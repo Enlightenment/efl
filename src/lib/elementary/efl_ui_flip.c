@@ -2044,7 +2044,7 @@ _flip_dir_to_efl_ui_dir(Elm_Flip_Direction dir)
 static Elm_Flip_Direction
 _efl_ui_dir_to_flip_dir(Efl_Ui_Dir dir)
 {
-   switch (dir)
+   switch ((int)dir) // The cast silences warnings about missing enum values and non-existing case labels
      {
       case EFL_UI_DIR_RIGHT:
       case EFL_UI_DIR_HORIZONTAL:
