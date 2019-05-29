@@ -821,15 +821,16 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_redirect_set(Eo *obj, Efl_Ui_Foc
 
    old_manager = pd->redirect;
 
-   if (pd->redirect)
-     efl_event_callback_del(pd->redirect, EFL_EVENT_DEL, _redirect_del, obj);
+   if (old_manager)
+     efl_event_callback_del(old_manager, EFL_EVENT_DEL, _redirect_del, obj);
 
    pd->redirect = redirect;
 
    if (pd->redirect)
      efl_event_callback_add(pd->redirect, EFL_EVENT_DEL, _redirect_del, obj);
 
-   efl_ui_focus_manager_reset_history(old_manager);
+   if (old_manager)
+     efl_ui_focus_manager_reset_history(old_manager);
 
    //adjust focus property of the most upper element
    if (_focus_manager_active_get(obj))
