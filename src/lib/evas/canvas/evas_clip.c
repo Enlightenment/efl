@@ -380,7 +380,7 @@ _efl_canvas_object_clipper_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas
    evas_object_recalc_clippees(obj);
    if ((!obj->is_smart) &&
        (!((obj->map->cur.map) && (obj->map->cur.usemap))) &&
-       evas_object_is_visible(eo_obj, obj))
+       evas_object_is_visible(obj))
      {
         _evas_canvas_event_pointer_in_rect_mouse_move_feed(obj->layer->evas,
                                                            eo_obj,
@@ -430,7 +430,7 @@ _clip_unset(Eo *eo_obj, Evas_Object_Protected_Data *obj)
 
    if ((!obj->is_smart) &&
        (!((obj->map->cur.map) && (obj->map->cur.usemap))) &&
-       evas_object_is_visible(eo_obj, obj))
+       evas_object_is_visible(obj))
      {
         _evas_canvas_event_pointer_in_rect_mouse_move_feed(obj->layer->evas,
                                                            eo_obj,

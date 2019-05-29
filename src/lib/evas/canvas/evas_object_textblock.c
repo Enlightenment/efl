@@ -15041,7 +15041,7 @@ evas_object_textblock_render_pre(Evas_Object *eo_obj,
         o->redraw = 0;
         evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
                                             eo_obj, obj);
-        is_v = evas_object_is_visible(eo_obj, obj);
+        is_v = evas_object_is_visible(obj);
         was_v = evas_object_was_visible(obj);
         goto done;
      }
@@ -15051,7 +15051,7 @@ evas_object_textblock_render_pre(Evas_Object *eo_obj,
         o->redraw = 0;
         evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
                                             eo_obj, obj);
-        is_v = evas_object_is_visible(eo_obj, obj);
+        is_v = evas_object_is_visible(obj);
         was_v = evas_object_was_visible(obj);
         goto done;
      }
@@ -15061,13 +15061,13 @@ evas_object_textblock_render_pre(Evas_Object *eo_obj,
         o->redraw = 0;
         evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes,
                                             eo_obj, obj);
-        is_v = evas_object_is_visible(eo_obj, obj);
+        is_v = evas_object_is_visible(obj);
         was_v = evas_object_was_visible(obj);
         goto done;
      }
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
-   is_v = evas_object_is_visible(eo_obj, obj);
+   is_v = evas_object_is_visible(obj);
    was_v = evas_object_was_visible(obj);
    if (is_v != was_v)
      {

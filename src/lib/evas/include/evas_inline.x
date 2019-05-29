@@ -178,7 +178,7 @@ evas_object_is_source_invisible(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pro
 }
 
 static inline int
-evas_object_is_visible(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_is_visible(Evas_Object_Protected_Data *obj)
 {
    if (EINA_UNLIKELY(!obj->cur)) return 0;
    if ((obj->cur->visible) && (!obj->no_render) &&
@@ -187,7 +187,7 @@ evas_object_is_visible(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
        || obj->cur->render_op != EVAS_RENDER_BLEND))
      {
         if (obj->func->is_visible)
-          return obj->func->is_visible(eo_obj);
+          return obj->func->is_visible(obj->object);
         return 1;
      }
    return 0;
@@ -240,7 +240,7 @@ evas_object_is_in_output_rect(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Prote
 static inline int
 evas_object_is_active(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
-   if (evas_object_is_visible(eo_obj, obj) || evas_object_was_visible(obj))
+   if (evas_object_is_visible(obj) || evas_object_was_visible(obj))
      {
         Evas_Public_Data *e = obj->layer->evas;
         int fx, fy;
