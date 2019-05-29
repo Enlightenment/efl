@@ -4340,8 +4340,11 @@ _gengrid_element_focused(void *data, const Efl_Event *ev)
    Efl_Ui_Widget *focused = efl_ui_focus_manager_focus_get(ev->object);
    Elm_Widget_Item *item = NULL, *old_item = NULL;
 
-   item = efl_ui_focus_parent_provider_gen_item_fetch(pd->provider, focused);
-   old_item = efl_ui_focus_parent_provider_gen_item_fetch(pd->provider, ev->info);
+   /* there may be no focus during widget setup */
+   if (focused)
+     item = efl_ui_focus_parent_provider_gen_item_fetch(pd->provider, focused);
+   if (ev->info)
+     old_item = efl_ui_focus_parent_provider_gen_item_fetch(pd->provider, ev->info);
 
    if (old_item)
      {
