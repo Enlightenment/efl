@@ -209,7 +209,7 @@ evas_object_clippers_is_visible(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Pro
 }
 
 static inline int
-evas_object_is_proxy_visible(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_is_proxy_visible(Evas_Object_Protected_Data *obj)
 {
    if ((obj->cur->visible) &&
        //FIXME: Check the cached clipper visible properly.
@@ -218,7 +218,7 @@ evas_object_is_proxy_visible(Evas_Object *eo_obj, Evas_Object_Protected_Data *ob
         || obj->cur->render_op != EVAS_RENDER_BLEND))
      {
         if (obj->func->is_visible)
-          return obj->func->is_visible(eo_obj);
+          return obj->func->is_visible(obj->object);
         return 1;
      }
    return 0;

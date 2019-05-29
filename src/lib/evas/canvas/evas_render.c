@@ -1879,10 +1879,10 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                     }
                }
           }
-        else if (!evas_object_is_proxy_visible(eo_obj, obj) ||
+        else if (!evas_object_is_proxy_visible(obj) ||
                  (obj->clip.clipees) || (obj->cur->have_clipees))
           {
-             IFRD(!evas_object_is_proxy_visible(eo_obj, obj), level, "  proxy not visible\n");
+             IFRD(!evas_object_is_proxy_visible(obj), level, "  proxy not visible\n");
              IFRD(obj->clip.clipees || obj->cur->have_clipees, level, "  has clippees\n");
              RD(level, "}\n");
              eina_evlog("-render_object", eo_obj, 0.0, NULL);
