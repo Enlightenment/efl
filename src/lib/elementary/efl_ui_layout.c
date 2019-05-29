@@ -576,7 +576,7 @@ _efl_ui_layout_base_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Layout_D
      }
 
    // No need to resize object during destruction
-   if (wd->resize_obj && (!efl_invalidated_get(obj)))
+   if (wd->resize_obj && efl_alive_get(obj))
      elm_layout_sizing_eval(obj);
 
    return EINA_TRUE;
