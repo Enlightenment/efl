@@ -111,7 +111,7 @@ else
     if [ "$1" = "mingw" ]; then
       OPTS="$OPTS $MINGW_COPTS"
       docker exec $(cat $HOME/cid) sh -c 'rm -f /src/config.cache'
-      docker exec $(cat $HOME/cid) sh -c '.ci/bootstrap_eolian.sh'
+      docker exec $(cat $HOME/cid) sh -c '.ci/bootstrap-efl-native-for-cross.sh'
     fi
     docker exec $(cat $HOME/cid) sh -c 'rm -f ~/.ccache/ccache.conf'
     travis_fold autoreconf autoreconf
