@@ -877,7 +877,7 @@ eina_file_open(const char *path, Eina_Bool shared)
    return n;
 
  on_error:
-   WRN("Could not open file [%s].", filename);
+   INF("Could not open file [%s].", filename);
    eina_stringshare_del(filename);
 
    if (fd >= 0) close(fd);
