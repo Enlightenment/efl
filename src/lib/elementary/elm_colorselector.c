@@ -1333,6 +1333,9 @@ _elm_colorselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Colorselector_Data *sd
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
+   /* none of the below objects are created before finalize */
+   if (!efl_finalized_get(obj)) return int_ret;
+
    if ((sd->mode == ELM_COLORSELECTOR_PALETTE) ||
        (sd->mode == ELM_COLORSELECTOR_ALL) ||
        (sd->mode == ELM_COLORSELECTOR_BOTH))
