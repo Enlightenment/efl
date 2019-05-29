@@ -321,13 +321,15 @@ ecore_timer_freeze(Ecore_Timer *timer)
 EOLIAN static void
 _efl_loop_timer_efl_object_event_freeze(Eo *obj, Efl_Loop_Timer_Data *timer)
 {
-   double now;
+   double now = 0.0;
 
    efl_event_freeze(efl_super(obj, MY_CLASS));
    // Timer already frozen
    if (timer->frozen) return;
 
-   now = efl_loop_time_get(timer->loop);
+   /* not set if timer is not finalized */
+   if (timer->loop)
+     now = efl_loop_time_get(timer->loop);
    /* only if timer interval has been set */
    if (timer->initialized)
      timer->pending = timer->at - now;
