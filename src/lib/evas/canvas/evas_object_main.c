@@ -766,7 +766,7 @@ evas_object_render_pre_effect_updates(Eina_Array *rects, Evas_Object *eo_obj, in
 
    if (obj->is_smart) goto end;
 
-   if (evas_object_is_on_plane(eo_obj, obj))
+   if (evas_object_is_on_plane(obj))
      {
         /* We need some damage to occur if only planes are being updated,
            or nothing will provoke a page flip.

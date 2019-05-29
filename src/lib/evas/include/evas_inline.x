@@ -118,10 +118,10 @@ evas_object_is_opaque(Evas_Object_Protected_Data *obj)
 }
 
 static inline int
-evas_object_is_on_plane(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+evas_object_is_on_plane(Evas_Object_Protected_Data *obj)
 {
    if (obj->func->is_on_plane)
-     return obj->func->is_on_plane(eo_obj, obj, obj->private_data);
+     return obj->func->is_on_plane(obj->object, obj, obj->private_data);
    return 0;
 }
 
