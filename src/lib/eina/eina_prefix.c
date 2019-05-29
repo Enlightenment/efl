@@ -507,7 +507,7 @@ eina_prefix_new(const char *argv0, void *symbol, const char *envprefix,
              datadir = tmp;
           }
      }
-   if (magicsharefile)
+   if (magicsharefile && (!getenv("EFL_RUN_IN_TREE")))
      {
         magic = alloca(strlen(magicsharefile) + 1);
         strcpy(magic, magicsharefile);
