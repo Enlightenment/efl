@@ -179,13 +179,22 @@ _setup_anim(Efl_Animation_Player *player, Efl_Gfx_Entity *entity)
    efl_player_start(player);
 }
 
+static Eina_Bool
+is_valid(Eo *obj, int index)
+{
+   if (index < 0) return EINA_FALSE;
+   if (index >= efl_content_count(obj)) return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
 EOLIAN static void
 _efl_ui_active_view_view_manager_stack_efl_ui_active_view_view_manager_switch_to(Eo *obj, Efl_Ui_Active_View_View_Manager_Stack_Data *pd, int from, int to)
 {
    if (efl_pack_content_get(pd->container, to) == pd->content)
      return;
 
-   if (from != -1)
+   if (is_valid(pd->container, to) && is_valid(pd->container, from))
      {
         if (pd->animation)
           {

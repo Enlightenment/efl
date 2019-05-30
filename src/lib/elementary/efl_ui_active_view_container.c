@@ -500,6 +500,7 @@ _unpack(Eo *obj,
         int index)
 {
    int early_curr_page = pd->curr.page;
+   Eina_Bool deletion_of_active = (index == pd->curr.page);
 
    pd->content_list = eina_list_remove(pd->content_list, subobj);
    _elm_widget_sub_object_redirect_to_top(obj, subobj);
@@ -516,7 +517,10 @@ _unpack(Eo *obj,
    if (pd->gravity == EFL_UI_ACTIVE_VIEW_CONTAINER_GRAVITY_CONTENT && early_curr_page == index)
      {
         int new_curr_page = MIN(MAX(early_curr_page, 0), (int)eina_list_count(pd->content_list) - 1);
-        pd->curr.page = -1;
+        //when we delete the active index and we are not updating the index,
+        // then force a update, so the same sort of animation is triggered from the right direction
+        if (deletion_of_active && new_curr_page == pd->curr.page)
+          pd->curr.page = index -1;
         if (eina_list_count(pd->content_list) > 0 && efl_alive_get(obj))
           efl_ui_active_view_active_index_set(obj, new_curr_page);
      }
