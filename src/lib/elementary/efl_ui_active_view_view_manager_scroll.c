@@ -233,6 +233,13 @@ _page_set_animation(void *data, const Efl_Event *event EINA_UNUSED)
 static void
 _animation_request_switch(Eo *obj, Efl_Ui_Active_View_View_Manager_Scroll_Data *pd, int from, int to)
 {
+   //if there is already a transition ongoing, which is no mouse transition, but goes to the same position, then do nothing
+   if (pd->transition.active && !pd->mouse_move.active && pd->transition.to == to)
+    return;
+
+   if (!pd->transition.active && !pd->mouse_move.active && from == to)
+     return;
+
    efl_event_callback_del(pd->container, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _page_set_animation, obj);
    //if there is a ongoing transition, try to guess a better time, and try copy over the position where we are right now
    if (pd->transition.active || pd->mouse_move.active)

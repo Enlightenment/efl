@@ -182,6 +182,9 @@ _setup_anim(Efl_Animation_Player *player, Efl_Gfx_Entity *entity)
 EOLIAN static void
 _efl_ui_active_view_view_manager_stack_efl_ui_active_view_view_manager_switch_to(Eo *obj, Efl_Ui_Active_View_View_Manager_Stack_Data *pd, int from, int to)
 {
+   if (efl_pack_content_get(pd->container, to) == pd->content)
+     return;
+
    if (from != -1)
      {
         if (pd->animation)
