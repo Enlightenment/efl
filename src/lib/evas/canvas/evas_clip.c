@@ -232,7 +232,6 @@ _efl_canvas_object_clipper_set_block(Eo *eo_obj, Evas_Object_Protected_Data *obj
    if (obj->delete_me) goto err_obj_deleted;
    if (!obj->layer || !clip->layer) goto err_no_layer;
    if (obj->layer->evas != clip->layer->evas) goto err_diff_evas;
-   if ((clip->type != o_rect_type) && (clip->type != o_image_type)) goto err_type;
 
    return EINA_FALSE;
 
@@ -251,10 +250,6 @@ err_no_layer:
 err_diff_evas:
    CRI("Setting object %p from Evas (%p) to another Evas (%p)",
        obj, obj->layer->evas, clip->layer->evas);
-   return EINA_TRUE;
-err_type:
-   CRI("A clipper can only be an evas rectangle or image (got %s)",
-       efl_class_name_get(eo_clip));
    return EINA_TRUE;
 }
 
@@ -344,8 +339,8 @@ _efl_canvas_object_clipper_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Evas
    /* unset cur clipper */
    _efl_canvas_object_clipper_unset_common(obj, EINA_TRUE);
 
-   /* image object clipper */
-   if (clip->type == o_image_type)
+   /* non-rect object clipper */
+   if (clip->type != o_rect_type)
      {
         EINA_COW_WRITE_BEGIN(evas_object_mask_cow, clip->mask, Evas_Object_Mask_Data, mask)
           mask->is_mask = EINA_TRUE;
