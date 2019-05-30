@@ -36,7 +36,9 @@ EFL_START_TEST(elm_progressbar_custom_unit_check)
    win = win_add(NULL, "progressbar", ELM_WIN_BASIC);
 
    progressbar = elm_progressbar_add(win);
+   DISABLE_ABORT_ON_CRITICAL_START;
    elm_progressbar_unit_format_set(progressbar, format);
+   DISABLE_ABORT_ON_CRITICAL_END;
    elm_progressbar_value_set(progressbar, .50);
    ck_assert(!strcmp(elm_object_part_text_get(progressbar, "elm.text.status"), "50 percent (50%)"));
 }
