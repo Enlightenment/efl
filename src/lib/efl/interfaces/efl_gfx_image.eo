@@ -76,6 +76,20 @@ interface @beta Efl.Gfx.Image
             ratio: double; [[The image's ratio.]]
          }
       }
+      @property content_region {
+         [[Return the relative area enclosed inside the image where content is expected.
+
+           We do expect content to be inside the limit defined by the border. If no border
+           is set, they are assumed to be zero and the full object geometry is where content
+           can be layout on top. The area size change with the object size.
+
+           The geometry of the area is expressed relative to the geometry of the object.
+         ]]
+         get { }
+         values {
+            region: Eina.Rect; [[A rectangle inside the object boundary that where content is expected.]]
+         }
+      }
       @property border {
          [[Dimensions of this image's border, a region that does not scale
            with the center area.

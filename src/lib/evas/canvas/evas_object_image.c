@@ -461,6 +461,20 @@ _efl_canvas_image_internal_efl_object_dbg_info_get(Eo *eo_obj, Evas_Image_Data *
                        (uint64_t)(uintptr_t)evas_object_image_source_get(eo_obj));
 }
 
+static Eina_Rect
+_efl_canvas_image_internal_efl_gfx_image_content_region_get(const Eo *eo_obj, Evas_Image_Data *o)
+{
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Eina_Rect r;
+
+   r.x = o->cur->border.l;
+   r.y = o->cur->border.t;
+   r.w = obj->cur->geometry.w - o->cur->border.l - o->cur->border.r;
+   r.h = obj->cur->geometry.h - o->cur->border.t - o->cur->border.b;
+
+   return r;
+}
+
 EOLIAN static void
 _efl_canvas_image_internal_efl_gfx_image_border_set(Eo *eo_obj, Evas_Image_Data *o, int l, int r, int t, int b)
 {

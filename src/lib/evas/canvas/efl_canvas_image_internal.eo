@@ -14,6 +14,7 @@ abstract @beta Efl.Canvas.Image_Internal extends Efl.Canvas.Object implements Ef
       Efl.Gfx.Image_Orientable.image_orientation { get; set; }
       Efl.Gfx.Image.smooth_scale { get; set; }
       Efl.Gfx.Image.ratio { get; }
+      Efl.Gfx.Image.content_region { get; }
       Efl.Gfx.Image.border { get; set; }
       Efl.Gfx.Image.border_scale { get; set; }
       Efl.Gfx.Image.border_center_fill { get; set; }
