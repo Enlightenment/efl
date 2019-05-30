@@ -666,6 +666,7 @@ EFL_START_TEST(evas_object_image_cached_data_comparision)
    const uint32_t *d2, *n_d2;
    const char *img_path, *img_path2;
    Evas_Object *img, *img2;
+   Eina_Rect region;
 
    Evas *e = _setup_evas();
 
@@ -727,6 +728,18 @@ EFL_START_TEST(evas_object_image_cached_data_comparision)
         fail_if(w2 != n_w2 || h2 != n_h2);
         fail_if(memcmp(d2, n_d2, w2 * h2 * 4));
      }
+
+   region = efl_gfx_image_content_region_get(img);
+   ck_assert_int_eq(region.x, 0);
+   ck_assert_int_eq(region.y, 0);
+   ck_assert_int_eq(region.w, 250);
+   ck_assert_int_eq(region.h, 250);
+   efl_gfx_image_border_set(img, 7, 14, 5, 10);
+   region = efl_gfx_image_content_region_get(img);
+   ck_assert_int_eq(region.x, 7);
+   ck_assert_int_eq(region.y, 5);
+   ck_assert_int_eq(region.w, 250 - 7 - 14);
+   ck_assert_int_eq(region.h, 250 - 5 - 10);
 }
 EFL_END_TEST
 
