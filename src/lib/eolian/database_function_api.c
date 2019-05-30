@@ -40,12 +40,10 @@ eolian_function_type_get(const Eolian_Function *fid)
 static const char *
 _get_c_prefix(const Eolian_Function *foo_id, char *buf)
 {
-    char *tmp = buf;
     if (foo_id->klass->c_prefix)
       return foo_id->klass->c_prefix;
-    strcpy(buf, foo_id->klass->base.name);
+    strcpy(buf, foo_id->klass->base.c_name);
     eina_str_tolower(&buf);
-    while ((tmp = strchr(tmp, '.'))) *tmp = '_';
     return buf;
 }
 
