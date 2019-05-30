@@ -98,20 +98,6 @@ _buf_add_suffix(Eina_Strbuf *buf, const char *suffix)
    eina_strbuf_append(buf, suffix);
 }
 
-static void
-_append_name(const Eolian_Object *obj, Eina_Strbuf *buf)
-{
-   Eina_Iterator *itr = eolian_object_namespaces_get(obj);
-   const char *sp;
-   EINA_ITERATOR_FOREACH(itr, sp)
-     {
-        eina_strbuf_append(buf, sp);
-        eina_strbuf_append_char(buf, '_');
-     }
-   eina_strbuf_append(buf, eolian_object_short_name_get(obj));
-   eina_iterator_free(itr);
-}
-
 void
 database_type_to_str(const Eolian_Type *tp,
                      Eina_Strbuf *buf, const char *name,
@@ -132,7 +118,7 @@ database_type_to_str(const Eolian_Type *tp,
         if (kw && eo_lexer_is_type_keyword(kw))
           eina_strbuf_append(buf, eo_lexer_get_c_type(kw));
         else
-          _append_name(&tp->base, buf);
+          eina_strbuf_append(buf, tp->base.c_name);
      }
    else if (tp->type == EOLIAN_TYPE_VOID)
      eina_strbuf_append(buf, "void");
@@ -158,7 +144,7 @@ static void
 _stype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 {
    eina_strbuf_append(buf, "struct ");
-   _append_name(&tp->base, buf);
+   eina_strbuf_append(buf, tp->base.c_name);
    if (tp->type == EOLIAN_TYPEDECL_STRUCT_OPAQUE)
      return;
    eina_strbuf_append(buf, " { ");
@@ -177,7 +163,7 @@ static void
 _etype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 {
    eina_strbuf_append(buf, "enum ");
-   _append_name(&tp->base, buf);
+   eina_strbuf_append(buf, tp->base.c_name);
    eina_strbuf_append(buf, " { ");
    Eina_List *l;
    Eolian_Enum_Type_Field *ef;
@@ -210,17 +196,13 @@ _atype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
         if (!strcmp(tp->base_type->base.name, "__builtin_free_cb"))
           {
              eina_strbuf_append(buf, "void (*");
-             _append_name(&tp->base, buf);
+             eina_strbuf_append(buf, tp->base.c_name);
              eina_strbuf_append(buf, ")(void *data)");
              return;
           }
      }
-
-   Eina_Strbuf *fulln = eina_strbuf_new();
-   _append_name(&tp->base, fulln);
-   database_type_to_str(tp->base_type, buf, eina_strbuf_string_get(fulln),
+   database_type_to_str(tp->base_type, buf, tp->base.c_name,
                         EOLIAN_C_TYPE_DEFAULT);
-   eina_strbuf_free(fulln);
 }
 
 void

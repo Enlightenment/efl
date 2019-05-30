@@ -331,6 +331,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
              return EINA_FALSE;
            if (tp->tdecl->freefunc && !tp->freefunc)
              tp->freefunc = eina_stringshare_ref(tp->tdecl->freefunc);
+           tp->base.c_name = eina_stringshare_ref(tp->tdecl->base.c_name);
            return _validate_ownable(tp);
         }
       case EOLIAN_TYPE_CLASS:
@@ -350,6 +351,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
              }
            if (!tp->freefunc)
              tp->freefunc = eina_stringshare_add(eo_obj_free);
+           tp->base.c_name = eina_stringshare_ref(tp->tdecl->base.c_name);
            return _validate_ownable(tp);
         }
       default:
