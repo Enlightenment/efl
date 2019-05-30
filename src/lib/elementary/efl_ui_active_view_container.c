@@ -523,7 +523,10 @@ _unpack(Eo *obj,
           pd->curr.page = index -1;
         if (eina_list_count(pd->content_list) > 0 && efl_alive_get(obj))
           efl_ui_active_view_active_index_set(obj, new_curr_page);
+        else
+          pd->curr.page = -1;
      }
+
    //position has updated
    if (early_curr_page != pd->curr.page && early_curr_page != index &&
        pd->indicator && !pd->transition)
