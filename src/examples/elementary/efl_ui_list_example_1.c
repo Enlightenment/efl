@@ -106,7 +106,7 @@ elm_main(int argc EINA_UNUSED, char **argv)
    Eo *slider, *scrl_btn;
    int i;
    char buf[256];
-   Eina_Bool emptystyle = EINA_FALSE;
+   Eina_Bool placeholder = EINA_FALSE;
 
    win = elm_win_util_standard_add("list", "list");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
@@ -119,8 +119,8 @@ elm_main(int argc EINA_UNUSED, char **argv)
    efl_gfx_hint_fill_set(wbox, EINA_TRUE, EINA_TRUE);
 
    if ((argv[1] != NULL) &&
-       (!strcmp(argv[1], "empty")))
-     emptystyle = EINA_TRUE;
+       (!strcmp(argv[1], "placeholder")))
+     placeholder = EINA_TRUE;
 
    priv_d.list = list = efl_add(EFL_UI_LIST_CLASS, wbox);
    efl_gfx_hint_weight_set(list, EFL_GFX_HINT_EXPAND, 0.9);
@@ -133,13 +133,13 @@ elm_main(int argc EINA_UNUSED, char **argv)
 
    for (i = 0; i < NUM_ITEMS; i++)
      {
-        if (emptystyle) item = efl_add(EFL_UI_LIST_EMPTY_ITEM_CLASS, list);
+        if (placeholder) item = efl_add(EFL_UI_LIST_PLACEHOLDER_ITEM_CLASS, list);
         else item = efl_add(EFL_UI_LIST_DEFAULT_ITEM_CLASS, list);
 
         /* disable case test */
         if (i == 1) efl_ui_widget_disabled_set(item, EINA_TRUE);
 
-        if (emptystyle)
+        if (placeholder)
           {
              ibox = efl_add(EFL_UI_BOX_CLASS, item);
              efl_ui_layout_orientation_set(ibox, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
@@ -148,7 +148,7 @@ elm_main(int argc EINA_UNUSED, char **argv)
              efl_gfx_hint_weight_set(txt, 0.95, EFL_GFX_HINT_EXPAND);
              efl_text_halign_set(txt, 0.2);
              efl_text_interactive_selection_allowed_set(txt, EINA_FALSE);
-             snprintf(buf, sizeof(buf), "empty style item [%d]", i);
+             snprintf(buf, sizeof(buf), "placeholder style item [%d]", i);
              efl_text_set(txt, buf);
              efl_pack_end(ibox, txt);
 

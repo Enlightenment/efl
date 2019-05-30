@@ -87,7 +87,7 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_item.eo \
 	lib/elementary/efl_ui_list_item.eo \
 	lib/elementary/efl_ui_list_default_item.eo \
-	lib/elementary/efl_ui_list_empty_item.eo \
+	lib/elementary/efl_ui_list_placeholder_item.eo \
 	lib/elementary/efl_ui_list.eo \
 	lib/elementary/efl_ui_grid_item.eo \
 	lib/elementary/efl_ui_grid_default_item.eo \
@@ -1176,7 +1176,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_item.c \
 	lib/elementary/efl_ui_list_item.c \
 	lib/elementary/efl_ui_list_default_item.c \
-	lib/elementary/efl_ui_list_empty_item.c \
+	lib/elementary/efl_ui_list_placeholder_item.c \
 	lib/elementary/efl_ui_list.c \
 	lib/elementary/efl_ui_grid_item.c \
 	lib/elementary/efl_ui_grid_default_item.c \

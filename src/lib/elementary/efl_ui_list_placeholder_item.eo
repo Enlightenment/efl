@@ -1,12 +1,12 @@
 
-class @beta Efl.Ui.List_Empty_Item extends Efl.Ui.List_Item implements Efl.Content
+class @beta Efl.Ui.List_Placeholder_Item extends Efl.Ui.List_Item implements Efl.Content
 {
-   [[List Empty Item class. This item have only one swallow space,
+   [[List Placeholder Item class. This item have only one swallow space,
      thus user can decorate item by filling the swallow with
      any kind of container.]]
    data: null;
    parts {
-     content: Efl.Ui.Item_Part_Content; [[the content part for list empty item.
+     content: Efl.Ui.Item_Part_Content; [[the content part for list placeholder item.
                                         the content part is empty slot for user customizing.
                                         fill the place with container widget such as layout, box, table.]]
    }

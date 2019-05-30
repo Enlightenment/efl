@@ -293,7 +293,7 @@ group { "efl/list_item";
    }
 }
 
-group { "efl/list_item:empty";
+group { "efl/list_item:placeholder";
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    images.image: "bevel_curved_horiz_out.png" COMP;
