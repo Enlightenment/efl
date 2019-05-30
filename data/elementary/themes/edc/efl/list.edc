@@ -99,7 +99,7 @@ group { "efl/list_item";
             rel1.to_x: "efl.icon";
             rel2.offset: -3 -3;
             rel2.relative: 0.0 1.0;
-            rel2.to_x: "efl.end";
+            rel2.to_x: "efl.extra";
             color: FN_COL_DEFAULT;
             color_class: "list_item";
             text { font: FN; size: 10;
@@ -179,7 +179,7 @@ group { "efl/list_item";
             rel2.offset: 2 -3;
          }
       }
-      swallow { "efl.end";
+      swallow { "efl.extra";
          desc { "default";
             fixed: 1 0;
             align: 1.0 0.5;

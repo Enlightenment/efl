@@ -5,6 +5,11 @@ class @beta Efl.Ui.List_Empty_Item extends Efl.Ui.List_Item implements Efl.Conte
      thus user can decorate item by filling the swallow with
      any kind of container.]]
    data: null;
+   parts {
+     content: Efl.Ui.Item_Part_Content; [[the content part for list empty item.
+                                        the content part is empty slot for user customizing.
+                                        fill the place with container widget such as layout, box, table.]]
+   }
    implements {
       //Efl.Object
       Efl.Object.finalize;

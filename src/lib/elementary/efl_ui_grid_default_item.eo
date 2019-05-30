@@ -11,8 +11,13 @@ class @beta Efl.Ui.Grid_Default_Item extends Efl.Ui.Grid_Item implements
      @Efl.Content or @Efl.Part.]]
    data: null;
    parts {
-     icon: Efl.Ui.Grid_Default_Item_Part_Icon; [[]]
-     end: Efl.Ui.Grid_Default_Item_Part_End; [[]]
+     text: Efl.Ui.Item_Part_Text; [[The text part for grid default item.
+	                                text part is the caption of grid item.]]
+     icon: Efl.Ui.Item_Part_Icon; [[The icon content part for grid default item.
+	                                 icon part is the main content of grid item.]]
+     end: Efl.Ui.Item_Part_Extra; [[The extra content part for grid default item.
+	                                extra part is the spare content of grid item.
+	                                you can swallow small badge widget such as check, radio.]]
    }
    implements {
       //Efl.Object

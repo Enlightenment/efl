@@ -9,11 +9,136 @@
 
 #include "elm_priv.h"
 #include "efl_ui_item_private.h"
+//part
+#include "efl_ui_item_part_text.eo.h"
+#include "efl_ui_item_part_icon.eo.h"
+#include "efl_ui_item_part_extra.eo.h"
+#include "efl_ui_item_part_content.eo.h"
+#include "elm_part_helper.h"
 
 #define MY_CLASS      EFL_UI_ITEM_CLASS
 #define MY_CLASS_PFX  efl_ui_item
 
 #define MY_CLASS_NAME "Efl.Ui.Item"
+
+/* Efl.Part */
+EOLIAN static void
+_efl_ui_item_part_text_efl_text_text_set(Eo *obj, void *pd EINA_UNUSED, const char *text)
+{
+   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   efl_text_set(efl_part(efl_super(wd->obj, MY_CLASS), wd->part), text);
+
+   efl_layout_signal_emit(wd->obj, "efl,state,text,set", "efl");
+   elm_layout_sizing_eval(wd->obj);
+}
+
+EOLIAN static const char*
+_efl_ui_item_part_text_efl_text_text_get(const Eo *obj, void *pd EINA_UNUSED)
+{
+   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   return efl_text_get(efl_part(efl_super(wd->obj, MY_CLASS), wd->part));
+}
+
+EOLIAN static void
+_efl_ui_item_part_text_efl_text_markup_markup_set(Eo *obj, void *pd EINA_UNUSED, const char *markup)
+{
+   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   efl_text_markup_set(efl_part(efl_super(wd->obj, MY_CLASS), wd->part), markup);
+
+   efl_layout_signal_emit(obj, "efl,state,text,set", "efl");
+   elm_layout_sizing_eval(obj);
+}
+
+EOLIAN static const char*
+_efl_ui_item_part_text_efl_text_markup_markup_get(const Eo *obj, void *pd EINA_UNUSED)
+{
+   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   return efl_text_markup_get(efl_part(efl_super(wd->obj, MY_CLASS), wd->part));
+}
+
+EOLIAN static const char *
+_efl_ui_item_part_text_efl_ui_l10n_l10n_text_get(const Eo *obj, void *_pd EINA_UNUSED, const char **domain)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   return elm_widget_part_translatable_text_get(pd->obj, pd->part, domain);
+}
+
+EOLIAN static void
+_efl_ui_item_part_text_efl_ui_l10n_l10n_text_set(Eo *obj, void *_pd EINA_UNUSED, const char *text, const char *domain)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   elm_widget_part_translatable_text_set(pd->obj, pd->part, text, domain);
+}
+#include "efl_ui_item_part_text.eo.c"
+
+/* Efl.Ui.List_Default_Item_Part_Icon */
+
+Eina_Bool
+_efl_ui_item_part_icon_efl_content_content_set(Eo *obj, void *pd EINA_UNUSED, Efl_Gfx_Entity *content)
+{
+   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   return efl_content_set(efl_part(efl_super(wd->obj, MY_CLASS), wd->part), content);
+}
+
+Efl_Gfx_Entity *
+_efl_ui_item_part_icon_efl_content_content_get(const Eo *obj, void *pd EINA_UNUSED)
+{
+   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   return efl_content_get(efl_part(efl_super(wd->obj, MY_CLASS), wd->part));
+}
+
+Efl_Gfx_Entity *
+_efl_ui_item_part_icon_efl_content_content_unset(Eo *obj, void *pd EINA_UNUSED)
+{
+   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   return efl_content_unset(efl_part(efl_super(wd->obj, MY_CLASS), wd->part));
+}
+#include "efl_ui_item_part_icon.eo.c"
+
+Eina_Bool
+_efl_ui_item_part_extra_efl_content_content_set(Eo *obj, void *pd EINA_UNUSED, Efl_Gfx_Entity *content)
+{
+   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   return efl_content_set(efl_part(efl_super(wd->obj, MY_CLASS), wd->part), content);
+}
+
+Efl_Gfx_Entity *
+_efl_ui_item_part_extra_efl_content_content_get(const Eo *obj, void *pd EINA_UNUSED)
+{
+   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   return efl_content_get(efl_part(efl_super(wd->obj, MY_CLASS), wd->part));
+}
+
+Efl_Gfx_Entity *
+_efl_ui_item_part_extra_efl_content_content_unset(Eo *obj, void *pd EINA_UNUSED)
+{
+   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   return efl_content_unset(efl_part(efl_super(wd->obj, MY_CLASS), wd->part));
+}
+#include "efl_ui_item_part_extra.eo.c"
+
+Eina_Bool
+_efl_ui_item_part_content_efl_content_content_set(Eo *obj, void *pd EINA_UNUSED, Efl_Gfx_Entity *content)
+{
+   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   return efl_content_set(efl_part(efl_super(wd->obj, MY_CLASS), wd->part), content);
+}
+
+Efl_Gfx_Entity *
+_efl_ui_item_part_content_efl_content_content_get(const Eo *obj, void *pd EINA_UNUSED)
+{
+   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   return efl_content_get(efl_part(efl_super(wd->obj, MY_CLASS), wd->part));
+}
+
+Efl_Gfx_Entity *
+_efl_ui_item_part_content_efl_content_content_unset(Eo *obj, void *pd EINA_UNUSED)
+{
+   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   return efl_content_unset(efl_part(efl_super(wd->obj, MY_CLASS), wd->part));
+}
+#include "efl_ui_item_part_content.eo.c"
+/* Efl.Part */
 
 static void
 _item_select(Eo *obj, Efl_Ui_Item_Data *pd)

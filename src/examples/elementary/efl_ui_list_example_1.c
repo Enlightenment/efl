@@ -172,7 +172,7 @@ elm_main(int argc EINA_UNUSED, char **argv)
 
              check = efl_add(EFL_UI_CHECK_CLASS, item);
              if ((i % 3) == 0)
-               efl_content_set(efl_part(item, "end"), check);
+               efl_content_set(efl_part(item, "extra"), check);
              else if ((i % 3) == 1)
                efl_content_set(efl_part(item, "icon"), check);
              else

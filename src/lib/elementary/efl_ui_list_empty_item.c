@@ -44,7 +44,7 @@ _efl_ui_list_empty_item_efl_part_part_get(const Eo *obj, void *wd EINA_UNUSED, c
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
    if (eina_streq(part, "content"))
-     return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_CONTENT_CLASS, obj, "efl.content");
+     return ELM_PART_IMPLEMENT(EFL_UI_ITEM_PART_CONTENT_CLASS, obj, "efl.content");
 
    return efl_part_get(efl_super(obj, MY_CLASS), part);
 }

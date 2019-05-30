@@ -9,6 +9,13 @@ class @beta Efl.Ui.List_Default_Item extends Efl.Ui.List_Item implements
      text and contents can be appliable by efl_text,
      efl_content or efl_part APIs.]]
    data: null;
+   parts {
+     text: Efl.Ui.Item_Part_Text; [[The text part for list default item.]]
+     icon: Efl.Ui.Item_Part_Icon; [[The icon content part for list default item.
+	                                icon part is the left-side content of list item.]]
+     extra: Efl.Ui.Item_Part_Extra; [[The extra content part for list default item.
+	                                  extra part is the right-side content of list item.]]
+   }
    implements {
       //Efl.Object
       Efl.Object.finalize;

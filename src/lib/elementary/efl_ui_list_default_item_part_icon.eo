@@ -1,9 +1,0 @@
-class @beta Efl.Ui.List_Default_Item_Part_Icon extends Efl.Ui.Layout_Part implements Efl.Content
-{
-   [[List Default Item internal content of icon part class]]
-	data: null;
-   implements {
-      Efl.Content.content { get; set; }
-      Efl.Content.content_unset;
-   }
-}

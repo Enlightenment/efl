@@ -80,16 +80,16 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_list_view.eo \
 	lib/elementary/efl_ui_list_view_model.eo \
 	lib/elementary/efl_ui_list_view_pan.eo \
+	lib/elementary/efl_ui_item_part_text.eo \
+	lib/elementary/efl_ui_item_part_icon.eo \
+	lib/elementary/efl_ui_item_part_extra.eo \
+	lib/elementary/efl_ui_item_part_content.eo \
 	lib/elementary/efl_ui_item.eo \
 	lib/elementary/efl_ui_list_item.eo \
-	lib/elementary/efl_ui_list_default_item_part_icon.eo \
-	lib/elementary/efl_ui_list_default_item_part_end.eo \
 	lib/elementary/efl_ui_list_default_item.eo \
 	lib/elementary/efl_ui_list_empty_item.eo \
 	lib/elementary/efl_ui_list.eo \
 	lib/elementary/efl_ui_grid_item.eo \
-	lib/elementary/efl_ui_grid_default_item_part_icon.eo \
-	lib/elementary/efl_ui_grid_default_item_part_end.eo \
 	lib/elementary/efl_ui_grid_default_item.eo \
 	lib/elementary/efl_ui_grid.eo \
 	lib/elementary/efl_ui_panes_part.eo \
