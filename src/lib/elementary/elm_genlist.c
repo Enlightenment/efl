@@ -7418,6 +7418,13 @@ _elm_genlist_item_fields_update(Eo *eo_item EINA_UNUSED, Elm_Gen_Item *it,
 
    if (!it->item->block) return;
 
+   if (!it->realized)
+     {
+        if (!itf || (itf & ELM_GENLIST_ITEM_FIELD_CONTENT))
+          elm_genlist_item_update(eo_item);
+        return;
+     }
+
    if ((!itf) || (itf & ELM_GENLIST_ITEM_FIELD_TEXT))
      {
         _item_text_realize(it, VIEW(it), &it->texts, parts);
