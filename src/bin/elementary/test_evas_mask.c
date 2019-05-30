@@ -61,20 +61,31 @@ _gl_del(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED)
 }
 
 static void
-_toggle_mask(void *data, const Efl_Event *ev EINA_UNUSED)
+_toggle_mask(void *data, const Efl_Event *ev)
 {
    Eo *ly = data;
+   const char *clip = efl_key_data_get(ly, "clip");
+   const char *text;
 
-   if (!efl_key_data_get(ly, "unclipped"))
+   if (eina_streq(clip, "image"))
      {
         elm_layout_signal_emit(ly, "unclip", "elm_test");
-        efl_key_data_set(ly, "unclipped", "yup");
+        efl_key_data_set(ly, "clip", NULL);
+        text = "Toggle mask (none)";
+     }
+   else if (eina_streq(clip, "smart"))
+     {
+        elm_layout_signal_emit(ly, "clip", "elm_test");
+        efl_key_data_set(ly, "clip", "image");
+        text = "Toggle mask (image)";
      }
    else
      {
-        elm_layout_signal_emit(ly, "clip", "elm_test");
-        efl_key_data_set(ly, "unclipped", NULL);
+        elm_layout_signal_emit(ly, "smartclip", "elm_test");
+        efl_key_data_set(ly, "clip", "smart");
+        text = "Toggle mask (smart)";
      }
+   efl_text_set(ev->object, text);
 }
 
 static void
@@ -101,7 +112,7 @@ _rotate_win(void *data, const Efl_Event *ev EINA_UNUSED)
 void
 test_evas_mask(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Eo *win, *box, *o, *gl, *ly, *box2;
+   Eo *win, *box, *o, *gl, *ly, *smart_mask, *box2;
    Elm_Genlist_Item_Class *itc;
    char buf[PATH_MAX];
 
@@ -121,8 +132,15 @@ test_evas_mask(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    snprintf(buf, sizeof(buf), "%s/objects/test_masking.edj", elm_app_data_dir_get());
    ly = efl_add(EFL_UI_LAYOUT_CLASS, win,
                 efl_file_set(efl_added, buf),
-                efl_file_key_set(efl_added, "masking"));
+                efl_file_key_set(efl_added, "masking"),
+                efl_key_data_set(efl_added, "clip", "image"));
    efl_pack(box, ly);
+
+   // FIXME: layout EO API
+   smart_mask = efl_add(EFL_UI_LAYOUT_CLASS, win,
+                efl_file_set(efl_added, buf),
+                efl_file_key_set(efl_added, "image"));
+   elm_object_part_content_set(ly, "mask2", smart_mask);
 
    // FIXME: No genlist in EO API
    o = gl = elm_genlist_add(win);
@@ -157,7 +175,7 @@ test_evas_mask(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
 
    // FIXME: button EO API
    efl_add(EFL_UI_BUTTON_CLASS, win,
-           efl_text_set(efl_added, "Toggle mask"),
+           efl_text_set(efl_added, "Toggle mask (image)"),
            efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _toggle_mask, ly),
            efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
            efl_pack(box2, efl_added));

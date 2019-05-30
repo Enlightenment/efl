@@ -13,6 +13,18 @@ collections {
          }
       }
    }
+   group { "image";
+     parts {
+         image { "mask";
+            desc { "default";
+               image {
+                  normal: "roundedrect.png";
+                  border: 22 22 22 22;
+               }
+            }
+         }
+     }
+   }
    group { "masking";
       parts {
          rect { "clip"; norender; }
@@ -25,9 +37,15 @@ collections {
                }
             }
          }
+         swallow { "mask2";
+            norender;
+         }
          swallow { "content";
             desc { "default";
                clip_to: "mask";
+            }
+            desc { "smartclip";
+               clip: "mask2";
             }
             desc { "unclipped";
                clip_to: "clip";
@@ -45,6 +63,12 @@ collections {
             signal: "clip";
             source: "*";
             action: STATE_SET "default";
+            target: "content";
+         }
+         program {
+            signal: "smartclip";
+            source: "*";
+            action: STATE_SET "smartclip";
             target: "content";
          }
       }
