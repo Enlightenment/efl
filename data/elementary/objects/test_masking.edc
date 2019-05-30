@@ -26,6 +26,11 @@ collections {
      }
    }
    group { "masking";
+         styles {
+           style { name: "textblock_style";
+              base: "font=Sans-Bold font_size=24 wrap=word color=#ffffffff";
+           }
+         }
       parts {
          rect { "clip"; norender; }
          image { "mask";
@@ -34,6 +39,23 @@ collections {
                image {
                   normal: "roundedrect.png";
                   border: 22 22 22 22;
+               }
+            }
+         }
+         textblock { "textmask";
+            norender;
+            desc {
+               text {
+                  style: "textblock_style";
+                  ellipsis: -1;
+                  text:
+          "Lorem ipsum dolor sit amet, consectetur adipiscing elit, "
+          "sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. "
+          "Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris "
+          "nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in "
+          "reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla "
+          "pariatur. Excepteur sint occaecat cupidatat non proident, sunt in "
+          "culpa qui officia deserunt mollit anim id est laborum.";
                }
             }
          }
@@ -46,6 +68,9 @@ collections {
             }
             desc { "smartclip";
                clip: "mask2";
+            }
+            desc { "textclip";
+               clip: "textmask";
             }
             desc { "unclipped";
                clip_to: "clip";
@@ -69,6 +94,12 @@ collections {
             signal: "smartclip";
             source: "*";
             action: STATE_SET "smartclip";
+            target: "content";
+         }
+         program {
+            signal: "textclip";
+            source: "*";
+            action: STATE_SET "textclip";
             target: "content";
          }
       }

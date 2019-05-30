@@ -79,11 +79,17 @@ _toggle_mask(void *data, const Efl_Event *ev)
         efl_key_data_set(ly, "clip", "image");
         text = "Toggle mask (image)";
      }
-   else
+   else if (eina_streq(clip, "text"))
      {
         elm_layout_signal_emit(ly, "smartclip", "elm_test");
         efl_key_data_set(ly, "clip", "smart");
         text = "Toggle mask (smart)";
+     }
+   else
+     {
+        elm_layout_signal_emit(ly, "textclip", "elm_test");
+        efl_key_data_set(ly, "clip", "text");
+        text = "Toggle mask (text)";
      }
    efl_text_set(ev->object, text);
 }
