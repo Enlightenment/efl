@@ -23,44 +23,39 @@
 # endif
 #endif /* ! _WIN32 */
 
-typedef void (*Efl_Mono_Free_GCHandle_Cb)(void *gchandle);
-typedef void (*Efl_Mono_Remove_Events_Cb)(Eo *obj, void *gchandle);
 
-static Efl_Mono_Free_GCHandle_Cb _efl_mono_free_gchandle_call = NULL;
-static Efl_Mono_Remove_Events_Cb _efl_mono_remove_events_call = NULL;
-
-EAPI void efl_mono_gchandle_callbacks_set(Efl_Mono_Free_GCHandle_Cb free_gchandle_cb, Efl_Mono_Remove_Events_Cb remove_events_cb)
+EAPI const char *efl_mono_wrapper_supervisor_key_get()
 {
-    _efl_mono_free_gchandle_call = free_gchandle_cb;
-    _efl_mono_remove_events_call = remove_events_cb;
+   return "__c#_wrapper_supervisor";
 }
 
-EAPI void efl_mono_native_dispose(Eo *obj, void* gchandle)
+EAPI void *efl_mono_wrapper_supervisor_get(Eo *eo)
 {
-   if (gchandle) _efl_mono_remove_events_call(obj, gchandle);
-   efl_unref(obj);
-   if (gchandle) _efl_mono_free_gchandle_call(gchandle);
+   return efl_key_data_get(eo, efl_mono_wrapper_supervisor_key_get());
 }
 
-typedef struct _Efl_Mono_Native_Dispose_Data
+EAPI void efl_mono_wrapper_supervisor_set(Eo *eo, void *ws)
 {
-   Eo *obj;
-   void *gchandle;
-} Efl_Mono_Native_Dispose_Data;
-
-static void _efl_mono_native_dispose_cb(void *data)
-{
-   Efl_Mono_Native_Dispose_Data *dd = data;
-   efl_mono_native_dispose(dd->obj, dd->gchandle);
-   free(dd);
+   efl_key_data_set(eo, efl_mono_wrapper_supervisor_key_get(), ws);
 }
 
-EAPI void efl_mono_thread_safe_native_dispose(Eo *obj, void* gchandle)
+typedef void (*Efl_Mono_Free_Wrapper_Supervisor_Cb)(Eo *obj);
+
+static Efl_Mono_Free_Wrapper_Supervisor_Cb _efl_mono_free_wrapper_supervisor_call = NULL;
+
+EAPI void efl_mono_wrapper_supervisor_callbacks_set(Efl_Mono_Free_Wrapper_Supervisor_Cb free_wrapper_supervisor_cb)
 {
-   Efl_Mono_Native_Dispose_Data *dd = malloc(sizeof(Efl_Mono_Native_Dispose_Data));
-   dd->obj = obj;
-   dd->gchandle = gchandle;
-   ecore_main_loop_thread_safe_call_async(_efl_mono_native_dispose_cb, dd);
+   _efl_mono_free_wrapper_supervisor_call = free_wrapper_supervisor_cb;
+}
+
+EAPI void efl_mono_native_dispose(Eo *obj)
+{
+   _efl_mono_free_wrapper_supervisor_call(obj);
+}
+
+EAPI void efl_mono_thread_safe_native_dispose(Eo *obj)
+{
+   ecore_main_loop_thread_safe_call_async((Ecore_Cb)efl_mono_native_dispose, obj);
 }
 
 static void _efl_mono_unref_cb(void *obj)

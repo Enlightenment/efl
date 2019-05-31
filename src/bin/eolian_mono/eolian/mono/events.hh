@@ -431,10 +431,9 @@ struct event_definition_generator
            << scope_tab << scope_tab << "{\n"
            << scope_tab << scope_tab << scope_tab << "lock (eventLock)\n"
            << scope_tab << scope_tab << scope_tab << "{\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << "var wRef = new WeakReference(this);\n"
            << scope_tab << scope_tab << scope_tab << scope_tab << "Efl.EventCb callerCb = (IntPtr data, ref Efl.Event.NativeStruct evt) =>\n"
            << scope_tab << scope_tab << scope_tab << scope_tab << "{\n"
-           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "var obj = wRef.Target as Efl.Eo.IWrapper;\n"
+           << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "var obj = Efl.Eo.Globals.WrapperSupervisorPtrToManaged(data).Target;\n"
            << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "if (obj != null)\n"
            << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << "{\n"
            << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << scope_tab << event_args
