@@ -1,22 +1,36 @@
 class @beta Efl.Ui.Radio extends Efl.Ui.Check implements Efl.Access.Widget.Action
 {
-   [[Elementary radio class]]
+   [[Elementary radio button class.
+
+     Radio buttons are like check boxes in that they can be either checked or unchecked.
+     However, radio buttons are always bunched together in groups, and only one button in
+     each group can be checked at any given time. Pressing a different button in the group
+     will automatically uncheck any previously checked button.
+
+     They are a common way to allow a user to select one option among a list.
+
+     To handle button grouping, you can either use an @Efl.Ui.Radio_Group object (obtained
+     through @.group_create) or use more convenient widgets like @Efl.Ui.Radio_Box.
+   ]]
    methods {
       @property state_value {
-         set {
-            [[Set the integer value that this radio object represents.
+         [[Integer value that this radio button represents.
 
-              This sets the value of the radio.
-            ]]
-         }
-         get {
-            [[Get the integer value that this radio object represents.
+           Each radio button in a group must have a unique value. The selected button in a group
+           can then be set or retrieved through the @Efl.Ui.Radio_Group.selected_value property.
+           This value is also informed through the @[Efl.Ui.Radio_Group.value,changed] event.
 
-              This gets the value of the radio.
-            ]]
-         }
+           All non-negative values are legal but keep in mind that 0 is the starting value for all new groups:
+           If no button in the group has this value, then no button in the group is initially
+           selected. -1 is the value that @Efl.Ui.Radio_Group.selected_value returns when no button
+           is selected and therefore cannot be used.
+         ]]
+         set {}
+         get {}
          values {
-            value: int; [[The value to use if this radio object is selected.]]
+            value: int; [[The value to use when this radio button is selected.
+                          Any value can be used but 0 and -1 have special meanings as described
+                          above.]]
          }
       }
    }

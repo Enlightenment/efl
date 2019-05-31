@@ -1,50 +1,62 @@
 interface @beta Efl.Ui.Radio_Group
 {
-   [[A object for organising a group of radio buttons
+   [[Interface for manually handling a group of @Efl.Ui.Radio buttons.
 
-     A group of radio buttons is a set of pair-wise different values. (Where values are the assosiated values of each radio button)
-     At any point of time only 1 or 0 buttons can be selected. If a new button is selected, the previous selected button will be unselected.
+     See the documentation of @Efl.Ui.Radio for an explanation of radio button grouping.
    ]]
    methods {
       @property selected_object {
-        [[Which object is currently selected in the group
+        [[Currently selected button in a radio button group, or $NULL if no button is selected.
 
-          $NULL if no object is selected.
+          See also @.selected_value.
         ]]
         values {
-          selected_object : Efl.Ui.Radio; [[The selected radio button in the group, $NULL for no object]]
+          selected_object : Efl.Ui.Radio; [[The currently selected radio button in the group, or $NULL.]]
         }
       }
       @property selected_value {
-        [[Each group has a selected value, representing which radio group is selected.
+        [[The value associated with the currently selected button in the group.
+          Give each radio button in the group a different value using @Efl.Ui.Radio.state_value.
 
-          A value of -1 here does represent that no button is selected.
-          Possible values here are only those that are assisiated with a registered radio button.
+          A value of -1 means that no button is selected.
+          Only values associated with the buttons in the group (and -1) can be used.
         ]]
         values {
-           selected_value : int; [[The value of the selection state]]
+           selected_value : int; [[The value of the currently selected radio button, or -1.]]
         }
       }
       register {
-        [[Register a new radio button to this group.
+        [[Register a new @Efl.Ui.Radio button to this group.
+          Keep in mind that registering to a group will only handle button grouping, you still
+          need to add the button to a layout for it to be rendered.
 
-          The assosiated value of the radio button must not collide with any other assosiated value of registered buttons.
+          If the @Efl.Ui.Radio.state_value of the new button is already used by a previous
+          button in the group, the button will not be added.
+
+          See also @.unregister.
         ]]
         params {
-          radio : Efl.Ui.Radio; [[The radio button to regsiter]]
+          radio : Efl.Ui.Radio; [[The radio button to add to the group.]]
         }
       }
       unregister {
-        [[Unregsiter a before registered button from this group.
+        [[Unregister an @Efl.Ui.Radio button from this group.
+          This will unlink the behavior of this button from the other buttons in the group,
+          but if it still belongs to a layout, it will still be rendered.
 
-          if the button was selected before, no object will be selected afterwards.
+          If the button was not registered in the group the call is ignored.
+          If the button was selected, no button will be selected in the group after this call.
+
+          See also @.register.
         ]]
         params {
-          radio : Efl.Ui.Radio; [[The radio button to unregister]]
+          radio : Efl.Ui.Radio; [[The radio button to remove from the group.]]
         }
       }
    }
    events {
-     value,changed : int; [[Emitted each time the $selected_value has changed.]]
+     value,changed : int; [[Emitted each time the $selected_value changes. The event information
+                            contains the @Efl.Ui.Radio.state_value of the newly selected button or
+                            -1 if no button is now selected.]]
    }
 }
