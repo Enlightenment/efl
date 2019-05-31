@@ -110,6 +110,20 @@ class TestEoInherit
         Efl.Object loop = new MyObject();
         Test.Assert(loop.NativeHandle != System.IntPtr.Zero);
     }
+
+    private static WeakReference CreateCollectableInherited()
+    {
+        var obj = new MyObject();
+        return new WeakReference(obj);
+    }
+
+    public static void inherited_collected()
+    {
+        var wref = CreateCollectableInherited();
+        Test.CollectAndIterate();
+
+        Test.AssertNull(wref.Target);
+    }
 }
 
 class TestEoNames

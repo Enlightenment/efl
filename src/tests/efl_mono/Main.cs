@@ -42,6 +42,9 @@ class TestMain
                 if (localTestCase == setUp || localTestCase == tearDown)
                     continue;
 
+                // Cleanup garbage collector and job queue
+                Test.CollectAndIterate(1);
+
                 Console.WriteLine("[ RUN         ] " + testCase.Name + "." + localTestCase.Name);
                 bool caseResult = true;
 
