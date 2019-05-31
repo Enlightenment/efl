@@ -655,6 +655,9 @@ _file_to_memory(const char *filename, char **result)
    return size;
 }
 
+static const Efl_Gfx_Image_Stretch_Region hsz[] = { { 8, 8 }, { 16, 555 } };
+static const Efl_Gfx_Image_Stretch_Region vsz[] = { { 8, 8 }, { 16, 512 } };
+
 EFL_START_TEST(evas_object_image_cached_data_comparision)
 {
    int i;
@@ -740,6 +743,14 @@ EFL_START_TEST(evas_object_image_cached_data_comparision)
    ck_assert_int_eq(region.y, 5);
    ck_assert_int_eq(region.w, 250 - 7 - 14);
    ck_assert_int_eq(region.h, 250 - 5 - 10);
+
+   efl_gfx_image_stretch_region_set(img, EINA_C_ARRAY_ITERATOR_NEW(hsz),
+                                    EINA_C_ARRAY_ITERATOR_NEW(vsz));
+   region = efl_gfx_image_content_region_get(img);
+   ck_assert_int_eq(region.x, 8);
+   ck_assert_int_eq(region.y, 8);
+   ck_assert_int_eq(region.w, 120);
+   ck_assert_int_eq(region.h, 77);
 }
 EFL_END_TEST
 
