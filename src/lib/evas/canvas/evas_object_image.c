@@ -14,6 +14,9 @@ static Evas_Coord   evas_object_image_figure_x_fill(Evas_Object *eo_obj, Evas_Ob
 static Evas_Coord   evas_object_image_figure_y_fill(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord start, Evas_Coord size, Evas_Coord *size_ret);
 
 static void         evas_object_image_init(Evas_Object *eo_obj);
+
+static inline uint32_t _stretch_region_accumulate(uint8_t *stretch_region, Eina_Bool mask, uint32_t *i);
+
 static void         evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
                                              void *type_private_data,
                                              void *engine, void *output, void *context, void *surface,
@@ -468,10 +471,46 @@ _efl_canvas_image_internal_efl_gfx_image_content_region_get(const Eo *eo_obj, Ev
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Eina_Rect r;
 
-   r.x = o->cur->border.l;
-   r.y = o->cur->border.t;
-   r.w = obj->cur->geometry.w - o->cur->border.l - o->cur->border.r;
-   r.h = obj->cur->geometry.h - o->cur->border.t - o->cur->border.b;
+   if (o->cur->stretch.horizontal.region &&
+       o->cur->stretch.vertical.region)
+     {
+        uint32_t acc;
+        uint32_t hi = 0;
+        uint32_t vi = 0;
+
+        r.x = _stretch_region_accumulate(o->cur->stretch.horizontal.region, 0, &hi);
+        r.w = o->cur->stretch.horizontal.stretchable + obj->cur->geometry.w - o->cur->image.w;
+
+        // Accumulate all the non stretch zone, except the first one and the last one
+        acc = 0;
+        while (o->cur->stretch.horizontal.region[hi])
+          {
+             // We are just ignoring all the stretchable zone as we know them already
+             _stretch_region_accumulate(o->cur->stretch.horizontal.region, 0x80, &hi);
+             r.w += acc;
+             acc = _stretch_region_accumulate(o->cur->stretch.horizontal.region, 0, &hi);
+          }
+
+        r.y = _stretch_region_accumulate(o->cur->stretch.vertical.region, 0, &vi);
+        r.h = o->cur->stretch.vertical.stretchable + obj->cur->geometry.h - o->cur->image.h;
+
+        // Accumulate all the stretch zone, except the last non stretching one
+        acc = 0;
+        while (o->cur->stretch.vertical.region[vi])
+          {
+             // We are just ignoring all the stretchable zone as we know them already
+             _stretch_region_accumulate(o->cur->stretch.vertical.region, 0x80, &vi);
+             r.h += acc;
+             acc = _stretch_region_accumulate(o->cur->stretch.vertical.region, 0, &vi);
+          }
+     }
+   else
+     {
+        r.x = o->cur->border.l;
+        r.y = o->cur->border.t;
+        r.w = obj->cur->geometry.w - o->cur->border.l - o->cur->border.r;
+        r.h = obj->cur->geometry.h - o->cur->border.t - o->cur->border.b;
+     }
 
    return r;
 }

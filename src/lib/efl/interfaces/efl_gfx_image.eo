@@ -90,9 +90,11 @@ interface @beta Efl.Gfx.Image
       @property content_region {
          [[Return the relative area enclosed inside the image where content is expected.
 
-           We do expect content to be inside the limit defined by the border. If no border
-           is set, they are assumed to be zero and the full object geometry is where content
-           can be layout on top. The area size change with the object size.
+           We do expect content to be inside the limit defined by the border or inside the
+           stretch region. If a stretch region is provided, the content region will encompass the
+           non strechable area that are surrounded by stretchable area. If no border and no
+           stretch region is set, they are assumed to be zero and the full object geometry is
+           where content can be layout on top. The area size change with the object size.
 
            The geometry of the area is expressed relative to the geometry of the object.
          ]]
