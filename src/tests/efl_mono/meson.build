@@ -79,7 +79,6 @@ env_mono = environment()
 env_mono.set('MONO_PATH', efl_mono_test_suite_path )
 
 if (cs_is_dotnet)
-env_mono.set('LD_LIBRARY_PATH', efl_mono_test_suite_path )
 copy_prog = find_program(['cp', 'copy'])
 
 configure_file(input : 'efl-mono-suite.runtimeconfig.json',
@@ -100,7 +99,7 @@ custom_target('copy_efl_mono_lib_dll',
 endif
 
 config_libs = ['eina', 'ecore', 'eo', 'efl', 'evas', 'eldbus', 'elementary']
-load_lib = ''
+load_lib = efl_mono_test_suite_path + ':'
 
 foreach config : config_libs
   lib = get_variable(config+'_lib')
