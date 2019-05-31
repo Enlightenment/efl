@@ -181,6 +181,7 @@ evas_image_load_file_data_wbmp(void *loader_data,
 
 static Evas_Image_Load_Func evas_image_load_wbmp_func =
 {
+   EVAS_IMAGE_LOAD_VERSION,
    evas_image_load_file_open_wbmp,
    evas_image_load_file_close_wbmp,
    evas_image_load_file_head_wbmp,

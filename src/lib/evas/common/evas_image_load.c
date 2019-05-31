@@ -183,7 +183,7 @@ _evas_image_file_header(Evas_Module *em, Image_Entry *ie, int *error)
    evas_image_load_func = em->functions;
    evas_module_use(em);
    *error = EVAS_LOAD_ERROR_NONE;
-   if (evas_image_load_func)
+   if (evas_image_load_func && evas_image_load_func->version == EVAS_IMAGE_LOAD_VERSION)
      {
         Evas_Image_Property property;
         const char *file;

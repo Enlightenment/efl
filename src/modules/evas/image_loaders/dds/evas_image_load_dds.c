@@ -529,6 +529,7 @@ on_error:
 
 Evas_Image_Load_Func evas_image_load_dds_func =
 {
+  EVAS_IMAGE_LOAD_VERSION,
   evas_image_load_file_open_dds,
   evas_image_load_file_close_dds,
   evas_image_load_file_head_dds,

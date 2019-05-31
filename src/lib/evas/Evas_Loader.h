@@ -70,7 +70,7 @@ extern "C" {
 #endif
 
 /* the module api version */
-#define EVAS_MODULE_API_VERSION 2
+#define EVAS_MODULE_API_VERSION 3
 
 /* the module types */
 typedef enum _Evas_Module_Type
@@ -186,8 +186,11 @@ typedef Emile_Colorspace Evas_Colorspace; /**< Colorspaces for pixel data suppor
 #define EVAS_COLORSPACE_RGBA_S3TC_DXT4 EMILE_COLORSPACE_RGBA_S3TC_DXT4
 #define EVAS_COLORSPACE_RGBA_S3TC_DXT5 EMILE_COLORSPACE_RGBA_S3TC_DXT5
 
+#define EVAS_IMAGE_LOAD_VERSION 1
+
 struct _Evas_Image_Load_Func
 {
+  int       version;
   void     *(*file_open) (Eina_File *f, Eina_Stringshare *key,
 			  Evas_Image_Load_Opts *opts,
 			  Evas_Image_Animated *animated,

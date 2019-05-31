@@ -2214,6 +2214,7 @@ evas_image_load_file_data_xpm(void *loader_data,
 
 static Evas_Image_Load_Func evas_image_load_xpm_func =
 {
+  EVAS_IMAGE_LOAD_VERSION,
   evas_image_load_file_open_xpm,
   evas_image_load_file_close_xpm,
   evas_image_load_file_head_xpm,

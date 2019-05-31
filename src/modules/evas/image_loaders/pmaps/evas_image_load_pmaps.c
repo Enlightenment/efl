@@ -551,6 +551,7 @@ pmaps_buffer_plain_bw_get(Pmaps_Buffer *b, DATA32 *val)
 
 /* external functions */
 Evas_Image_Load_Func evas_image_load_pmaps_func = {
+   EVAS_IMAGE_LOAD_VERSION,
    evas_image_load_file_open_pmaps,
    evas_image_load_file_close_pmaps,
    evas_image_load_file_head_pmaps,

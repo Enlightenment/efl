@@ -556,6 +556,7 @@ evas_image_load_file_data_png(void *loader_data,
 
 static Evas_Image_Load_Func evas_image_load_png_func =
 {
+  EVAS_IMAGE_LOAD_VERSION,
   evas_image_load_file_open_png,
   evas_image_load_file_close_png,
   evas_image_load_file_head_png,

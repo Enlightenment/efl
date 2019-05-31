@@ -882,6 +882,7 @@ get_compressed_channels_length(PSD_Header *head,
 }
 
 static const Evas_Image_Load_Func evas_image_load_psd_func = {
+  EVAS_IMAGE_LOAD_VERSION,
   evas_image_load_file_open_psd,
   evas_image_load_file_close_psd,
   evas_image_load_file_head_psd,

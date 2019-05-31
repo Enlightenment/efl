@@ -116,6 +116,7 @@ evas_image_load_file_data_jpeg(void *loader_data,
 
 Evas_Image_Load_Func evas_image_load_jpeg_func =
 {
+  EVAS_IMAGE_LOAD_VERSION,
   evas_image_load_file_open_jpeg,
   evas_image_load_file_close_jpeg,
   evas_image_load_file_head_jpeg,

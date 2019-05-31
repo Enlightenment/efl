@@ -462,6 +462,7 @@ evas_image_load_file_data_jp2k(void *loader_data,
 
 static Evas_Image_Load_Func evas_image_load_jp2k_func =
 {
+  EVAS_IMAGE_LOAD_VERSION,
   evas_image_load_file_open_jp2k,
   evas_image_load_file_close_jp2k,
   evas_image_load_file_head_jp2k,
