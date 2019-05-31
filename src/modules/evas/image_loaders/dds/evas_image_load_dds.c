@@ -161,7 +161,7 @@ _dword_read(const char **m)
 
 static Eina_Bool
 evas_image_load_file_head_dds(void *loader_data,
-                              Evas_Image_Property *prop,
+                              Emile_Image_Property *prop,
                               int *error)
 {
    static const unsigned int base_flags = /* 0x1007 */
@@ -313,7 +313,7 @@ on_error:
 }
 
 static Eina_Bool
-_dds_data_load(Evas_Loader_Internal *loader, Evas_Image_Property *prop,
+_dds_data_load(Evas_Loader_Internal *loader, Emile_Image_Property *prop,
                unsigned char *map, void *pixels, int *error)
 {
    const unsigned char *src;
@@ -442,7 +442,7 @@ on_error:
 
 Eina_Bool
 evas_image_load_file_data_dds(void *loader_data,
-                              Evas_Image_Property *prop,
+                              Emile_Image_Property *prop,
                               void *pixels,
                               int *error)
 {
@@ -532,8 +532,9 @@ Evas_Image_Load_Func evas_image_load_dds_func =
   EVAS_IMAGE_LOAD_VERSION,
   evas_image_load_file_open_dds,
   evas_image_load_file_close_dds,
-  evas_image_load_file_head_dds,
-  evas_image_load_file_data_dds,
+  (void*) evas_image_load_file_head_dds,
+  NULL,
+  (void*) evas_image_load_file_data_dds,
   NULL,
   EINA_TRUE,
   EINA_FALSE

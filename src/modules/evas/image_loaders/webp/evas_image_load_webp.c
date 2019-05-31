@@ -52,7 +52,7 @@ evas_image_load_file_close_webp(void *loader_data EINA_UNUSED)
 
 static Eina_Bool
 evas_image_load_file_head_webp(void *loader_data,
-			       Evas_Image_Property *prop,
+			       Emile_Image_Property *prop,
 			       int *error)
 {
    Eina_File *f = loader_data;
@@ -73,7 +73,7 @@ evas_image_load_file_head_webp(void *loader_data,
 
 static Eina_Bool
 evas_image_load_file_data_webp(void *loader_data,
-			       Evas_Image_Property *prop,
+			       Emile_Image_Property *prop,
 			       void *pixels,
 			       int *error)
 {
@@ -115,8 +115,9 @@ static Evas_Image_Load_Func evas_image_load_webp_func =
   EVAS_IMAGE_LOAD_VERSION,
   evas_image_load_file_open_webp,
   evas_image_load_file_close_webp,
-  evas_image_load_file_head_webp,
-  evas_image_load_file_data_webp,
+  (void*) evas_image_load_file_head_webp,
+  NULL,
+  (void*) evas_image_load_file_data_webp,
   NULL,
   EINA_TRUE,
   EINA_FALSE

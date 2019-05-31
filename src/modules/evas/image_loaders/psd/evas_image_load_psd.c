@@ -147,7 +147,7 @@ evas_image_load_file_close_psd(void *loader_data EINA_UNUSED)
 
 static Eina_Bool
 evas_image_load_file_head_psd(void *loader_data,
-			      Evas_Image_Property *prop,
+			      Emile_Image_Property *prop,
 			      int *error)
 {
    Eina_File *f = loader_data;
@@ -691,7 +691,7 @@ read_psd_rgb(void *pixels, PSD_Header *head, const unsigned char *map, size_t le
 }
 
 Eina_Bool
-read_psd_cmyk(Evas_Image_Property *prop, void *pixels, PSD_Header *head, const unsigned char *map, size_t length, size_t *position, int *error)
+read_psd_cmyk(Emile_Image_Property *prop, void *pixels, PSD_Header *head, const unsigned char *map, size_t length, size_t *position, int *error)
 {
    unsigned int color_mode, resource_size, misc_info, size, j, data_size;
    unsigned short compressed;
@@ -797,7 +797,7 @@ read_psd_cmyk(Evas_Image_Property *prop, void *pixels, PSD_Header *head, const u
 
 static Eina_Bool
 evas_image_load_file_data_psd(void *loader_data,
-			      Evas_Image_Property *prop,
+			      Emile_Image_Property *prop,
 			      void *pixels,
 			      int *error)
 {
@@ -885,8 +885,9 @@ static const Evas_Image_Load_Func evas_image_load_psd_func = {
   EVAS_IMAGE_LOAD_VERSION,
   evas_image_load_file_open_psd,
   evas_image_load_file_close_psd,
-  evas_image_load_file_head_psd,
-  evas_image_load_file_data_psd,
+  (void*) evas_image_load_file_head_psd,
+  NULL,
+  (void*) evas_image_load_file_data_psd,
   NULL,
   EINA_TRUE,
   EINA_FALSE

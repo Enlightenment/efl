@@ -215,17 +215,17 @@ _evas_image_file_header(Evas_Module *em, Image_Entry *ie, int *error)
              DBG("loaded file head using module '%s' (%p): %s",
                  em->definition->name, em, file);
 
-             ie->w = property.w;
-             ie->h = property.h;
-             ie->borders.l = property.borders.l;
-             ie->borders.r = property.borders.r;
-             ie->borders.t = property.borders.t;
-             ie->borders.b = property.borders.b;
-             ie->scale = property.scale;
-             ie->flags.alpha = property.alpha;
-             if (property.cspaces) ie->cspaces = property.cspaces;
-             ie->flags.rotated = property.rotated;
-             ie->flags.flipped = property.flipped;
+             ie->w = property.info.w;
+             ie->h = property.info.h;
+             ie->borders.l = property.info.borders.l;
+             ie->borders.r = property.info.borders.r;
+             ie->borders.t = property.info.borders.t;
+             ie->borders.b = property.info.borders.b;
+             ie->scale = property.info.scale;
+             ie->flags.alpha = property.info.alpha;
+             if (property.info.cspaces) ie->cspaces = property.info.cspaces;
+             ie->flags.rotated = property.info.rotated;
+             ie->flags.flipped = property.info.flipped;
              r = EINA_FALSE;
           }
         else
@@ -448,20 +448,20 @@ end:
      _timestamp_build(&(ie->tstamp), &st);
 
    memset(&property, 0, sizeof (property));
-   property.w = ie->w;
-   property.h = ie->h;
-   property.scale = ie->scale;
-   property.rotated = ie->flags.rotated;
-   property.flipped = ie->flags.flipped;
-   property.premul = EINA_FALSE;
-   property.alpha_sparse = EINA_FALSE;
-   property.cspace = ie->space;
+   property.info.w = ie->w;
+   property.info.h = ie->h;
+   property.info.scale = ie->scale;
+   property.info.rotated = ie->flags.rotated;
+   property.info.flipped = ie->flags.flipped;
+   property.info.premul = EINA_FALSE;
+   property.info.alpha_sparse = EINA_FALSE;
+   property.info.cspace = ie->space;
 
    evas_cache_image_surface_alloc(ie, ie->w, ie->h);
-   property.borders.l = ie->borders.l;
-   property.borders.r = ie->borders.r;
-   property.borders.t = ie->borders.t;
-   property.borders.b = ie->borders.b;
+   property.info.borders.l = ie->borders.l;
+   property.info.borders.r = ie->borders.r;
+   property.info.borders.t = ie->borders.t;
+   property.info.borders.b = ie->borders.b;
 
    pixels = evas_cache_image_pixels(ie);
    if (!pixels)
@@ -472,9 +472,9 @@ end:
 
    evas_image_load_func->file_data(ie->loader_data, &property, pixels, &ret);
 
-   ie->flags.alpha_sparse = property.alpha_sparse;
+   ie->flags.alpha_sparse = property.info.alpha_sparse;
 
-   if (property.premul) evas_common_image_premul(ie);
+   if (property.info.premul) evas_common_image_premul(ie);
 
    return ret;
 }

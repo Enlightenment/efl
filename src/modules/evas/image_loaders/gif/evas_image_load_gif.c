@@ -399,7 +399,7 @@ _file_read(GifFileType *gft, GifByteType *buf, int len)
 
 static Eina_Bool
 evas_image_load_file_head_gif2(void *loader_data,
-                               Evas_Image_Property *prop,
+                               Emile_Image_Property *prop,
                                int *error)
 {
    Loader_Info *loader = loader_data;
@@ -569,7 +569,7 @@ on_error: // jump here on any errors to clean up
 
 static Eina_Bool
 evas_image_load_file_data_gif2(void *loader_data,
-                               Evas_Image_Property *prop,
+                               Emile_Image_Property *prop,
                                void *pixels,
                                int *error)
 {
@@ -908,8 +908,9 @@ static Evas_Image_Load_Func evas_image_load_gif_func =
   EVAS_IMAGE_LOAD_VERSION,
   evas_image_load_file_open_gif2,
   evas_image_load_file_close_gif2,
-  evas_image_load_file_head_gif2,
-  evas_image_load_file_data_gif2,
+  (void*) evas_image_load_file_head_gif2,
+  NULL,
+  (void*) evas_image_load_file_data_gif2,
   evas_image_load_frame_duration_gif2,
   EINA_TRUE,
   EINA_FALSE

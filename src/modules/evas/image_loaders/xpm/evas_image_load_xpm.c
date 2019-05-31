@@ -1688,7 +1688,7 @@ _cmap_cmp_key_cb(const Eina_Rbtree *node, const void *key, int length EINA_UNUSE
 
 /** FIXME: clean this up and make more efficient  **/
 static Eina_Bool
-evas_image_load_file_xpm(Eina_File *f, Evas_Image_Property *prop, void *pixels, int load_data, int *error)
+evas_image_load_file_xpm(Eina_File *f, Emile_Image_Property *prop, void *pixels, int load_data, int *error)
 {
    DATA32      *ptr, *end, *head = NULL;
    const char  *map = NULL;
@@ -2193,7 +2193,7 @@ evas_image_load_file_close_xpm(void *loader_data EINA_UNUSED)
 
 static Eina_Bool
 evas_image_load_file_head_xpm(void *loader_data,
-                              Evas_Image_Property *prop,
+                              Emile_Image_Property *prop,
                               int *error)
 {
    Eina_File *f = loader_data;
@@ -2203,7 +2203,7 @@ evas_image_load_file_head_xpm(void *loader_data,
 
 static Eina_Bool
 evas_image_load_file_data_xpm(void *loader_data,
-                              Evas_Image_Property *prop,
+                              Emile_Image_Property *prop,
                               void *pixels,
                               int *error)
 {
@@ -2217,8 +2217,9 @@ static Evas_Image_Load_Func evas_image_load_xpm_func =
   EVAS_IMAGE_LOAD_VERSION,
   evas_image_load_file_open_xpm,
   evas_image_load_file_close_xpm,
-  evas_image_load_file_head_xpm,
-  evas_image_load_file_data_xpm,
+  (void*) evas_image_load_file_head_xpm,
+  NULL,
+  (void*) evas_image_load_file_data_xpm,
   NULL,
   EINA_FALSE,
   EINA_FALSE

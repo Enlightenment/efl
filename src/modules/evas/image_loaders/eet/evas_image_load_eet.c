@@ -95,7 +95,7 @@ static const Evas_Colorspace cspaces_etc2_rgba[] = {
 
 static Eina_Bool
 evas_image_load_file_head_eet(void *loader_data,
-			      Evas_Image_Property *prop,
+			      Emile_Image_Property *prop,
 			      int *error)
 {
    Evas_Loader_Internal *loader = loader_data;
@@ -163,7 +163,7 @@ evas_image_load_file_head_eet(void *loader_data,
 
 Eina_Bool
 evas_image_load_file_data_eet(void *loader_data,
-                              Evas_Image_Property *prop,
+                              Emile_Image_Property *prop,
                               void *pixels,
 			      int *error)
 {
@@ -227,8 +227,9 @@ Evas_Image_Load_Func evas_image_load_eet_func =
   EVAS_IMAGE_LOAD_VERSION,
   evas_image_load_file_open_eet,
   evas_image_load_file_close_eet,
-  evas_image_load_file_head_eet,
-  evas_image_load_file_data_eet,
+  (void*) evas_image_load_file_head_eet,
+  NULL,
+  (void*) evas_image_load_file_data_eet,
   NULL,
   EINA_TRUE,
   EINA_FALSE

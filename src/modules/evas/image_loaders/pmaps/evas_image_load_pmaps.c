@@ -67,7 +67,7 @@ evas_image_load_file_close_pmaps(void *loader_data EINA_UNUSED)
 
 static Eina_Bool
 evas_image_load_file_head_pmaps(void *loader_data,
-                                Evas_Image_Property *prop,
+                                Emile_Image_Property *prop,
                                 int *error)
 {
    Eina_File *f = loader_data;
@@ -95,7 +95,7 @@ evas_image_load_file_head_pmaps(void *loader_data,
 
 static Eina_Bool
 evas_image_load_file_data_pmaps(void *loader_data,
-				Evas_Image_Property *prop,
+				Emile_Image_Property *prop,
 				void *pixels,
 				int *error)
 {
@@ -554,8 +554,9 @@ Evas_Image_Load_Func evas_image_load_pmaps_func = {
    EVAS_IMAGE_LOAD_VERSION,
    evas_image_load_file_open_pmaps,
    evas_image_load_file_close_pmaps,
-   evas_image_load_file_head_pmaps,
-   evas_image_load_file_data_pmaps,
+   (void*) evas_image_load_file_head_pmaps,
+   NULL,
+   (void*) evas_image_load_file_data_pmaps,
    NULL,
    EINA_TRUE,
    EINA_FALSE

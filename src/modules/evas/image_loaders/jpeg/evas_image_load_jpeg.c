@@ -70,7 +70,7 @@ evas_image_load_file_close_jpeg(void *loader_data)
 
 static Eina_Bool
 evas_image_load_file_head_jpeg(void *loader_data,
-                              Evas_Image_Property *prop,
+                              Emile_Image_Property *prop,
                               int *error)
 {
    Evas_Loader_Internal *loader = loader_data;
@@ -95,7 +95,7 @@ _evas_image_load_jpeg_cancelled(void *data EINA_UNUSED,
 
 Eina_Bool
 evas_image_load_file_data_jpeg(void *loader_data,
-                              Evas_Image_Property *prop,
+                              Emile_Image_Property *prop,
                               void *pixels,
                               int *error)
 {
@@ -119,8 +119,9 @@ Evas_Image_Load_Func evas_image_load_jpeg_func =
   EVAS_IMAGE_LOAD_VERSION,
   evas_image_load_file_open_jpeg,
   evas_image_load_file_close_jpeg,
-  evas_image_load_file_head_jpeg,
-  evas_image_load_file_data_jpeg,
+  (void*) evas_image_load_file_head_jpeg,
+  NULL,
+  (void*) evas_image_load_file_data_jpeg,
   NULL,
   EINA_TRUE,
   EINA_TRUE

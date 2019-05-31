@@ -111,7 +111,7 @@ evas_image_load_file_close_ico(void *loader_data)
 
 static Eina_Bool
 evas_image_load_file_head_ico(void *loader_data,
-                              Evas_Image_Property *prop,
+                              Emile_Image_Property *prop,
                               int *error)
 {
    Evas_Loader_Internal *loader = loader_data;
@@ -340,7 +340,7 @@ evas_image_load_file_head_ico(void *loader_data,
 
 static Eina_Bool
 evas_image_load_file_data_ico(void *loader_data,
-                              Evas_Image_Property *prop,
+                              Emile_Image_Property *prop,
                               void *pixels,
                               int *error)
 {
@@ -795,8 +795,9 @@ static Evas_Image_Load_Func evas_image_load_ico_func =
   EVAS_IMAGE_LOAD_VERSION,
   evas_image_load_file_open_ico,
   evas_image_load_file_close_ico,
-  evas_image_load_file_head_ico,
-  evas_image_load_file_data_ico,
+  (void*) evas_image_load_file_head_ico,
+  NULL,
+  (void*) evas_image_load_file_data_ico,
   NULL,
   EINA_TRUE,
   EINA_FALSE

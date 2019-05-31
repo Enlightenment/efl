@@ -101,7 +101,7 @@ dotcat(char *dest, const char *src)
 
 static Eina_Bool
 _load(Eina_File *ef, const char *key,
-      Evas_Image_Property *prop,
+      Emile_Image_Property *prop,
       Evas_Image_Load_Opts *opts,
       void *pixels,
       int *error, Eina_Bool get_data)
@@ -422,7 +422,7 @@ evas_image_load_file_close_generic(void *loader_data)
 
 static Eina_Bool
 evas_image_load_file_head_generic(void *loader_data,
-                                  Evas_Image_Property *prop,
+                                  Emile_Image_Property *prop,
                                   int *error)
 {
    Evas_Loader_Internal *loader = loader_data;
@@ -432,7 +432,7 @@ evas_image_load_file_head_generic(void *loader_data,
 
 static Eina_Bool
 evas_image_load_file_data_generic(void *loader_data,
-                                  Evas_Image_Property *prop,
+                                  Emile_Image_Property *prop,
                                   void *pixels,
                                   int *error)
 {
@@ -446,8 +446,9 @@ Evas_Image_Load_Func evas_image_load_generic_func =
   EVAS_IMAGE_LOAD_VERSION,
   evas_image_load_file_open_generic,
   evas_image_load_file_close_generic,
-  evas_image_load_file_head_generic,
-  evas_image_load_file_data_generic,
+  (void*) evas_image_load_file_head_generic,
+  NULL,
+  (void*) evas_image_load_file_data_generic,
   NULL,
   EINA_TRUE,
   EINA_FALSE

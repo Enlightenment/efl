@@ -130,7 +130,14 @@ struct _Evas_Image_Load_Opts
 };
 
 typedef Emile_Image_Animated  Evas_Image_Animated;
-typedef Emile_Image_Property  Evas_Image_Property;
+typedef struct _Evas_Image_Property Evas_Image_Property;
+
+struct _Evas_Image_Property
+{
+  Emile_Image_Property info;
+  // need_data is set to True when to get accurate property, data need to be loaded
+  Eina_Bool need_data;
+};
 
 typedef struct _Evas_Image_Load_Func Evas_Image_Load_Func;
 
@@ -186,7 +193,7 @@ typedef Emile_Colorspace Evas_Colorspace; /**< Colorspaces for pixel data suppor
 #define EVAS_COLORSPACE_RGBA_S3TC_DXT4 EMILE_COLORSPACE_RGBA_S3TC_DXT4
 #define EVAS_COLORSPACE_RGBA_S3TC_DXT5 EMILE_COLORSPACE_RGBA_S3TC_DXT5
 
-#define EVAS_IMAGE_LOAD_VERSION 1
+#define EVAS_IMAGE_LOAD_VERSION 2
 
 struct _Evas_Image_Load_Func
 {
@@ -198,11 +205,14 @@ struct _Evas_Image_Load_Func
   void     (*file_close) (void *loader_data);
 
   Eina_Bool (*file_head) (void *loader_data,
-			  Evas_Image_Property *prop,
-			  int *error);
+                          Evas_Image_Property *prop,
+                          int *error);
+  Eina_Bool (*file_head_with_data) (void *loader_data,
+                                    Evas_Image_Property *prop,
+                                    void *pixels, int *error);
   Eina_Bool (*file_data) (void *loader_data,
-			  Evas_Image_Property *prop,
-			  void *pixels, int *error);
+                          Evas_Image_Property *prop,
+                          void *pixels, int *error);
   double    (*frame_duration) (void *loader_data,
 			       int start, int frame_num);
 
