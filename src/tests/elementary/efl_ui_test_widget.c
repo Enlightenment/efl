@@ -9,8 +9,6 @@
 #include "eo_internal.h"
 #include "suite_helpers.h"
 
-EFL_CLASS_SIMPLE_CLASS(efl_ui_widget, "efl_ui_widget", EFL_UI_WIDGET_CLASS)
-
 typedef struct {
    Efl_Ui_Widget *btn1, *btn2;
    Efl_Ui_Widget *box;

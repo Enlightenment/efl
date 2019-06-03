@@ -9,7 +9,7 @@
 /* spec-meta-start
       {"test-interface":"Efl.Content",
        "test-widgets": ["Efl.Ui.Button", "Efl.Ui.Frame", "Efl.Ui.Grid_Default_Item",
-                   "Efl.Ui.List_Default_Item", "Efl.Ui.List_Empty_Item",
+                   "Efl.Ui.List_Default_Item", "Efl.Ui.List_Placeholder_Item",
                    "Efl.Ui.Navigation_Layout", "Efl.Ui.Panel", "Efl.Ui.Progressbar",
                    "Efl.Ui.Radio", "Efl.Ui.Popup", "Efl.Ui.Tab_Page", "Efl.Ui.Scroller"]}
 

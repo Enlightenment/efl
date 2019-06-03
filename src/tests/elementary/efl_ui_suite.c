@@ -4,6 +4,7 @@
 
 #include "efl_ui_suite.h"
 #include "suite_helpers.h"
+#include "eo_internal.h"
 
 static const Efl_Test_Case etc[] = {
   //{ "elm_focus", elm_test_focus},
@@ -24,8 +25,11 @@ static const Efl_Test_Case etc[] = {
   { "efl_ui_layout", efl_ui_test_layout},
   { "Efl_Ui_Model", efl_ui_model },
   { "efl_ui_widget", efl_ui_test_widget },
+  { "efl_ui_active_view", efl_ui_test_active_view},
   { NULL, NULL }
 };
+
+EFL_CLASS_SIMPLE_CLASS(efl_ui_widget, "efl_ui_widget", EFL_UI_WIDGET_CLASS);
 
 int
 main(int argc, char **argv)

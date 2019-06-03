@@ -80,16 +80,16 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_list_view.eo \
 	lib/elementary/efl_ui_list_view_model.eo \
 	lib/elementary/efl_ui_list_view_pan.eo \
+	lib/elementary/efl_ui_item_part_text.eo \
+	lib/elementary/efl_ui_item_part_icon.eo \
+	lib/elementary/efl_ui_item_part_extra.eo \
+	lib/elementary/efl_ui_item_part_content.eo \
 	lib/elementary/efl_ui_item.eo \
 	lib/elementary/efl_ui_list_item.eo \
-	lib/elementary/efl_ui_list_default_item_part_icon.eo \
-	lib/elementary/efl_ui_list_default_item_part_end.eo \
 	lib/elementary/efl_ui_list_default_item.eo \
-	lib/elementary/efl_ui_list_empty_item.eo \
+	lib/elementary/efl_ui_list_placeholder_item.eo \
 	lib/elementary/efl_ui_list.eo \
 	lib/elementary/efl_ui_grid_item.eo \
-	lib/elementary/efl_ui_grid_default_item_part_icon.eo \
-	lib/elementary/efl_ui_grid_default_item_part_end.eo \
 	lib/elementary/efl_ui_grid_default_item.eo \
 	lib/elementary/efl_ui_grid.eo \
 	lib/elementary/efl_ui_panes_part.eo \
@@ -118,11 +118,13 @@ elm_public_eolian_files = \
 	lib/elementary/efl_ui_dnd.eo \
 	lib/elementary/efl_ui_dnd_container.eo \
 	lib/elementary/efl_ui_focus_manager_window_root.eo \
-	lib/elementary/efl_ui_pager.eo \
-	lib/elementary/efl_page_transition.eo \
-	lib/elementary/efl_page_transition_scroll.eo \
-	lib/elementary/efl_page_indicator.eo \
-	lib/elementary/efl_page_indicator_icon.eo \
+	lib/elementary/efl_ui_active_view_container.eo \
+	lib/elementary/efl_ui_active_view_view_manager.eo \
+	lib/elementary/efl_ui_active_view_view_manager_plain.eo \
+	lib/elementary/efl_ui_active_view_view_manager_scroll.eo \
+	lib/elementary/efl_ui_active_view_view_manager_stack.eo \
+	lib/elementary/efl_ui_active_view_indicator.eo \
+	lib/elementary/efl_ui_active_view_indicator_icon.eo \
 	lib/elementary/efl_ui_tab_pager.eo \
 	lib/elementary/efl_ui_tab_bar.eo \
 	lib/elementary/efl_ui_tab_page.eo \
@@ -761,11 +763,6 @@ includesunstable_HEADERS = \
 	lib/elementary/efl_ui_widget_pan.h \
 	lib/elementary/efl_ui_nstate_private.h \
 	lib/elementary/Efl_Ui.h \
-	lib/elementary/efl_ui_widget_pager.h \
-	lib/elementary/efl_page_transition.h \
-	lib/elementary/efl_page_transition_scroll.h \
-	lib/elementary/efl_page_indicator.h \
-	lib/elementary/efl_page_indicator_icon.h \
 	lib/elementary/efl_ui_tab_pager_private.h \
 	lib/elementary/efl_ui_tab_bar_private.h \
 	lib/elementary/efl_ui_tab_page_private.h \
@@ -1176,7 +1173,7 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/efl_ui_item.c \
 	lib/elementary/efl_ui_list_item.c \
 	lib/elementary/efl_ui_list_default_item.c \
-	lib/elementary/efl_ui_list_empty_item.c \
+	lib/elementary/efl_ui_list_placeholder_item.c \
 	lib/elementary/efl_ui_list.c \
 	lib/elementary/efl_ui_grid_item.c \
 	lib/elementary/efl_ui_grid_default_item.c \
@@ -1196,11 +1193,13 @@ lib_elementary_libelementary_la_SOURCES = \
 	lib/elementary/elm_focus_legacy.c \
 	static_libs/buildsystem/buildsystem.h \
 	static_libs/buildsystem/buildsystem_autotools.c \
-	lib/elementary/efl_ui_pager.c \
-	lib/elementary/efl_page_transition.c \
-	lib/elementary/efl_page_transition_scroll.c \
-	lib/elementary/efl_page_indicator.c \
-	lib/elementary/efl_page_indicator_icon.c \
+	lib/elementary/efl_ui_active_view_container.c \
+	lib/elementary/efl_ui_active_view_view_manager.c \
+	lib/elementary/efl_ui_active_view_view_manager_plain.c \
+	lib/elementary/efl_ui_active_view_view_manager_scroll.c \
+	lib/elementary/efl_ui_active_view_view_manager_stack.c \
+	lib/elementary/efl_ui_active_view_indicator.c \
+	lib/elementary/efl_ui_active_view_indicator_icon.c \
 	lib/elementary/efl_ui_focus_graph.h \
 	lib/elementary/efl_ui_focus_graph.c \
 	lib/elementary/efl_ui_tab_pager.c \
@@ -1433,8 +1432,7 @@ bin/elementary/test_win_stack.c \
 bin/elementary/test_win_indicator.c \
 bin/elementary/test_gesture_framework.c \
 bin/elementary/test_ui_tab_pager.c \
-bin/elementary/test_ui_pager.c \
-bin/elementary/test_ui_pager_scroll.c \
+bin/elementary/test_ui_active_view.c \
 bin/elementary/test_ui_relative_layout.c \
 bin/elementary/test.h
 
@@ -1963,6 +1961,7 @@ tests_elementary_efl_ui_suite_SOURCES = \
 	tests/elementary/efl_ui_test_image_zoomable.c \
 	tests/elementary/efl_ui_test_layout.c \
 	tests/elementary/efl_ui_test_widget.c \
+	tests/elementary/efl_ui_test_active_view.c \
 	tests/elementary/efl_ui_suite.h \
 	tests/elementary/efl_ui_model.c
 

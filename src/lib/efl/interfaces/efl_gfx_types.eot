@@ -151,15 +151,11 @@ enum @beta Efl.Gfx.Border_Fill_Mode
 enum Efl.Gfx.Change_Flag
 {
    [[What property got changed for this object @since 1.18]]
-   none    = 0x0, [[No change]]
-   matrix  = 0x1, [[matrix got changed]]
-   path    = 0x2, [[path got changes]]
-   fill    = 0x4, [[coloring or fill information changed, not geometry]]
-   all     = 0xffff [[all properties got changed]]
-}
-
-struct Efl.Gfx.Path_Change_Event {
-   what: Efl.Gfx.Change_Flag; [[Indicates what changed.]]
+   none    = 0x0, [[Nothing changed.]]
+   matrix  = 0x1, [[Matrix got changed.]]
+   path    = 0x2, [[Path got changed.]]
+   fill    = 0x4, [[Coloring or fill information changed, not geometry.]]
+   all     = 0xffff [[All properties got changed.]]
 }
 
 struct Efl.Gfx.Event.Render_Post

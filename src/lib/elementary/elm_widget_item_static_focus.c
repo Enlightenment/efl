@@ -68,7 +68,7 @@ _unrealized_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    if (pd) /* if the obect is dead pd is NULL */
      {
         //only delete the adapter when not focused, this will lead to awfull artifacts
-        if (!efl_ui_focus_object_focus_get(pd->adapter))
+        if (pd->adapter && (!efl_ui_focus_object_focus_get(pd->adapter)))
           {
              pd->in_unrealize = EINA_TRUE;
              efl_del(pd->adapter);

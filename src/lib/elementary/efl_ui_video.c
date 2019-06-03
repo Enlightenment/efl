@@ -115,17 +115,17 @@ _efl_ui_video_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Video_Data *sd)
    Evas_Coord w = 0, h = 0;
 
    evas_object_size_hint_request_get(sd->emotion, &minw, &minh);
-   evas_object_size_hint_aspect_set
-     (sd->emotion, EVAS_ASPECT_CONTROL_BOTH, minw, minh);
+   if (minw && minh)
+     evas_object_size_hint_aspect_set
+       (sd->emotion, EVAS_ASPECT_CONTROL_BOTH, minw, minh);
    edje_object_size_min_calc(wd->resize_obj, &w, &h);
 
    if (w != 0 && h != 0)
      {
         minw = w;
         minh = h;
+        evas_object_size_hint_aspect_set(obj, EVAS_ASPECT_CONTROL_BOTH, minw, minh);
      }
-
-   evas_object_size_hint_aspect_set(obj, EVAS_ASPECT_CONTROL_BOTH, minw, minh);
 }
 
 static void

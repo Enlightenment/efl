@@ -1,0 +1,9 @@
+class @beta Efl.Ui.Item_Part_Extra extends Efl.Ui.Layout_Part implements Efl.Content
+{
+   [[Item internal content of extra part class]]
+	data: null;
+   implements {
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
+   }
+}

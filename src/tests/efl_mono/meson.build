@@ -1,4 +1,13 @@
-eo_files = ['dummy_child.eo', 'dummy_numberwrapper.eo', 'dummy_test_object.eo', 'dummy_test_iface.eo', 'dummy_inherit_helper.eo', 'dummy_inherit_iface.eo', 'dummy_part_holder.eo']
+eo_files = [
+    'dummy_child.eo',
+    'dummy_numberwrapper.eo',
+    'dummy_test_object.eo',
+    'dummy_test_iface.eo',
+    'dummy_inherit_helper.eo',
+    'dummy_inherit_iface.eo',
+    'dummy_part_holder.eo',
+    'dummy_event_manager.eo',
+]
 
 eo_file_targets = []
 
@@ -23,6 +32,7 @@ efl_mono_native_test = library('efl_mono_native_test',
         'dummy_numberwrapper.c',
         'dummy_part_holder.c',
         'dummy_test_object.c',
+        'dummy_event_manager.c',
     ],
     dependencies : [ecore, eo, efl],
 )
@@ -79,7 +89,6 @@ env_mono = environment()
 env_mono.set('MONO_PATH', efl_mono_test_suite_path )
 
 if (cs_is_dotnet)
-env_mono.set('LD_LIBRARY_PATH', efl_mono_test_suite_path )
 copy_prog = find_program(['cp', 'copy'])
 
 configure_file(input : 'efl-mono-suite.runtimeconfig.json',
@@ -100,7 +109,7 @@ custom_target('copy_efl_mono_lib_dll',
 endif
 
 config_libs = ['eina', 'ecore', 'eo', 'efl', 'evas', 'eldbus', 'elementary']
-load_lib = ''
+load_lib = efl_mono_test_suite_path + ':'
 
 foreach config : config_libs
   lib = get_variable(config+'_lib')

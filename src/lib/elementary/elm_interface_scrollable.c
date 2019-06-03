@@ -1964,6 +1964,7 @@ _elm_scroll_wanted_region_set(Evas_Object *obj)
      return;
 
    sid->content_info.resized = EINA_FALSE;
+   if (!sid->pan_obj) return;
 
    /* Flip to RTL cords only if init in RTL mode */
    if (sid->is_mirrored)

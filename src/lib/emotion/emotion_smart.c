@@ -204,12 +204,12 @@ _clipper_position_size_update(Evas_Object *obj, int x, int y, int w, int h, int 
        evas_object_image_fill_set(sd->obj, 0, 0, 0, 0);
        evas_object_move(sd->obj, x, y);
        evas_object_resize(sd->obj, 0, 0);
+       if (!sd->crop.clipper) return;
        evas_object_move(sd->crop.clipper, x, y);
        evas_object_resize(sd->crop.clipper, 0, 0);
      }
    else
      {
-       evas_object_move(sd->crop.clipper, x, y);
        scale_w = (double)w / (double)(vid_w - sd->crop.l - sd->crop.r);
        scale_h = (double)h / (double)(vid_h - sd->crop.t - sd->crop.b);
 
@@ -219,6 +219,8 @@ _clipper_position_size_update(Evas_Object *obj, int x, int y, int w, int h, int 
          evas_object_image_fill_set(sd->obj, 0, 0, sd->fill.w * w, sd->fill.h * h);
        evas_object_resize(sd->obj, vid_w * scale_w, vid_h * scale_h);
        evas_object_move(sd->obj, x - sd->crop.l * scale_w, y - sd->crop.t * scale_h);
+       if (!sd->crop.clipper) return;
+       evas_object_move(sd->crop.clipper, x, y);
        evas_object_resize(sd->crop.clipper, w, h);
      }
 }

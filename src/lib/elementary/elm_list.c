@@ -751,6 +751,7 @@ _elm_list_content_min_limit_cb(Evas_Object *obj,
 
    if ((sd->mode == ELM_LIST_LIMIT) ||
        (sd->mode == ELM_LIST_EXPAND)) return;
+   if (!efl_alive_get(obj)) return;
    sd->scr_minw = !!w;
    sd->scr_minh = !!h;
 

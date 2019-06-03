@@ -1,0 +1,12 @@
+class @beta Efl.Ui.Active_View.View_Manager_Plain extends Efl.Ui.Active_View.View_Manager
+{
+   implements {
+      Efl.Ui.Active_View.View_Manager.bind;
+      Efl.Ui.Active_View.View_Manager.content_add;
+      Efl.Ui.Active_View.View_Manager.content_del;
+      Efl.Ui.Active_View.View_Manager.switch_to;
+      Efl.Ui.Active_View.View_Manager.view_size {set;}
+      Efl.Ui.Active_View.View_Manager.animation_enabled {set; get;}
+      Efl.Object.destructor;
+   }
+}

@@ -759,7 +759,8 @@ elm_hover_parent_set(Evas_Object *obj,
 {
    ELM_HOVER_CHECK(obj);
    ELM_HOVER_DATA_GET(obj, sd);
-   efl_ui_widget_sub_object_add(parent, obj);
+   if (parent)
+     efl_ui_widget_sub_object_add(parent, obj);
    _parent_setup(obj, sd, parent);
 }
 

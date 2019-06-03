@@ -346,6 +346,7 @@ _elm_old_clouseau_reload()
 static Eina_Bool
 _elm_clouseau_load()
 {
+   if (getenv("EFL_RUN_IN_TREE")) return EINA_FALSE;
    if (!_clouseau_info.is_init)
      {
         _clouseau_info.handle = eina_module_new(
@@ -586,7 +587,22 @@ elm_app_data_dir_get(void)
    if (app_data_dir) return app_data_dir;
    _prefix_check();
    if (!app_pfx) return "";
-   app_data_dir = eina_prefix_data_get(app_pfx);
+   /* only used to run inside efl src tree */
+   if (getenv("EFL_RUN_IN_TREE"))
+     {
+        /* "/some/path/to/repo/build/src" */
+        const char *path = elm_app_prefix_dir_get();
+        /* "/some/path/to/repo/build/" */
+        const char *last_sep = strrchr(path, '/');
+        Eina_Strbuf *buf = eina_strbuf_new();
+        eina_strbuf_append_length(buf, path, last_sep - path + 1);
+        eina_strbuf_append(buf, "data/elementary");
+        app_data_dir = eina_strbuf_string_steal(buf);
+        eina_strbuf_free(buf);
+        /* yes this leaks app_data_dir but it's a one time allocation who cares */
+     }
+   else
+     app_data_dir = eina_prefix_data_get(app_pfx);
    return app_data_dir;
 }
 

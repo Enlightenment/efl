@@ -144,6 +144,7 @@ _on_sub_object_size_hint_change(void *data,
                                 Evas_Object *obj EINA_UNUSED,
                                 void *event_info EINA_UNUSED)
 {
+   if (!efl_alive_get(data)) return;
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
    elm_layout_sizing_eval(data);
 }
@@ -575,7 +576,7 @@ _efl_ui_layout_base_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Layout_D
      }
 
    // No need to resize object during destruction
-   if (!efl_invalidated_get(obj))
+   if (wd->resize_obj && efl_alive_get(obj))
      elm_layout_sizing_eval(obj);
 
    return EINA_TRUE;
@@ -754,8 +755,6 @@ _efl_ui_layout_base_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Layout_Data *_pd 
    else
      edje_object_signal_callback_add
         (edje, "size,eval", "efl", _on_size_evaluate_signal, obj);
-
-   elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static void
@@ -770,7 +769,9 @@ _efl_ui_layout_base_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Layout_Data *sd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   elm_layout_freeze(obj);
+   /* freeze edje object if it exists */
+   if (wd->resize_obj)
+     elm_layout_freeze(obj);
 
    EINA_LIST_FREE(sd->subs, sub_d)
      {

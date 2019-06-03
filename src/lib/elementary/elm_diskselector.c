@@ -784,7 +784,7 @@ _theme_data_get(Evas_Object *obj)
    ELM_DISKSELECTOR_DATA_GET(obj, sd);
 
    blank = eina_list_data_get(sd->right_blanks);
-   if (blank) return;
+   if (!blank) return;
 
    str = edje_object_data_get(blank, "len_threshold");
    if (str) sd->len_threshold = MAX(0, atoi(str));
@@ -862,8 +862,11 @@ _elm_diskselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Diskselector_Data *sd)
           }
      }
 
-   _theme_data_get(obj);
-   _sizing_eval(obj);
+   if (efl_finalized_get(obj))
+     {
+        _theme_data_get(obj);
+        _sizing_eval(obj);
+     }
 
    evas_event_thaw(evas);
    evas_event_thaw_eval(evas);

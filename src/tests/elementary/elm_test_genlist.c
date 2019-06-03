@@ -73,14 +73,18 @@ verify_item_iteration_api(Elm_Object_Item *parent)
      {
         it = elm_genlist_nth_item_get(genlist, i);
         if (i == 11)
+          DISABLE_ABORT_ON_CRITICAL_START;
           // item #11 do not exists
           ck_assert_int_eq(elm_genlist_item_index_get(it), -1);
+          DISABLE_ABORT_ON_CRITICAL_END;
         else
           ck_assert_int_eq(elm_genlist_item_index_get(it), i + 1);
 
         if ((i == 0) || (i == 11))
+          DISABLE_ABORT_ON_CRITICAL_START;
           // test first and item #11 (that do not exists)
           ck_assert_ptr_eq(elm_object_item_data_get(it), NULL);
+          DISABLE_ABORT_ON_CRITICAL_END;
         else
           ck_assert_ptr_eq(elm_object_item_data_get(it), (void*)(uintptr_t)i);
      }
@@ -133,7 +137,7 @@ _item_content_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part EIN
 EFL_START_TEST(elm_genlist_test_item_content)
 {
    Elm_Genlist_Item_Class *gtc;
-   Evas_Object *content, *parent;
+   Evas_Object *end, *parent;
    Elm_Object_Item *it;
 
    gtc = elm_genlist_item_class_new();
@@ -157,12 +161,12 @@ EFL_START_TEST(elm_genlist_test_item_content)
 
    ecore_main_loop_begin();
 
-   content = elm_object_item_part_content_get(it, "elm.swallow.end");
-   parent = elm_object_parent_widget_get(content);
+   end = elm_object_item_part_content_get(it, "elm.swallow.end");
+   parent = elm_object_parent_widget_get(end);
    ck_assert_ptr_eq(parent, genlist);
 
    elm_genlist_item_all_contents_unset(it, NULL);
-   parent = elm_object_parent_widget_get(content);
+   parent = elm_object_parent_widget_get(end);
    ck_assert_ptr_eq(parent, win);
 }
 EFL_END_TEST

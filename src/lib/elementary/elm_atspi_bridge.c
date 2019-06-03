@@ -4510,7 +4510,9 @@ _screen_reader_enabled_get(void *data, const Eldbus_Message *msg, Eldbus_Pending
 
    if (eldbus_message_error_get(msg, &errname, &errmsg))
      {
-        WRN("%s %s", errname, errmsg);
+        /* don't print warnings for user-canceled calls */
+        if (!eina_streq(errname, "org.enlightenment.DBus.Canceled"))
+          WRN("%s %s", errname, errmsg);
         return;
      }
    if (!eldbus_message_arguments_get(msg, "v", &variant))

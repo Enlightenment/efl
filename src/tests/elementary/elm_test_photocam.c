@@ -52,7 +52,9 @@ EFL_START_TEST(elm_photocam_file)
    ck_assert_int_eq(elm_photocam_file_set(photocam, buf), EVAS_LOAD_ERROR_NONE);
    ck_assert_str_eq(elm_photocam_file_get(photocam), buf);
 
+   DISABLE_ABORT_ON_CRITICAL_START;
    ck_assert_int_eq(elm_photocam_file_set(photocam, "non_existing.png"), EVAS_LOAD_ERROR_DOES_NOT_EXIST);
+   DISABLE_ABORT_ON_CRITICAL_END;
    ck_assert_str_eq(elm_photocam_file_get(photocam), "non_existing.png");
 }
 EFL_END_TEST

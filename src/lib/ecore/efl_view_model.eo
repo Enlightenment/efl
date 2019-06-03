@@ -25,6 +25,34 @@ class @beta Efl.View_Model extends Efl.Composite_Model
      it and manually define your property on it via callbacks.
    ]]
    methods {
+      property_string_add {
+         [[Adds a synthetic string property, generated from a $definition string and other properties in the model.
+
+           The $definition string, similar to how $printf works, contains ${} placeholders that are replaced by the actual value of the property inside the placeholder tags when the synthetic property is retrieved.
+           For example, a numeric property $length might be strange to use as a label, since it will only display a number. However, a synthetic string can be generated with the definition "Length ${length}." which renders more nicely and does not require any more code by the user of the property.
+
+           $not_ready and $on_error strings can be given to be used when the data is not ready or there is some error, respectively. These strings do accept placeholder tags.
+
+           See @.property_string_del
+         ]]
+         params {
+            name: string; [[The name for the new synthetic property.]]
+            definition: string; [[The definition string for the new synthetic property.]]
+            not_ready: string; [[The text to be used if any of the properties used in $definition is not ready yet. If set to $null, no check against EAGAIN will be done.]]
+            on_error: string; [[The text to be used if any of the properties used in $definition is in error. It takes precedence over $not_ready. If set to $null, no error checks are performed.]]
+         }
+         return: Eina.Error;
+      }
+      property_string_del {
+         [[Delete a synthetic property previously defined by @.property_string_add.
+
+           See @.property_string_add
+         ]]
+         params {
+            name: string; [[The name of the synthetic property to delete.]]
+         }
+         return: Eina.Error;
+      }
       property_logic_add {
          [[Add callbacks that will be triggered when someone ask for the specified property name when getting or setting a property.
 

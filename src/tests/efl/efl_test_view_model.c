@@ -133,7 +133,8 @@ _properties_changed(void *data, const Efl_Event *event)
    Property_Change_Test tests[] = {
       { EINA_FALSE, "test_p_int" },
       { EINA_FALSE, "color" },
-      { EINA_FALSE, "label" }
+      { EINA_FALSE, "label" },
+      { EINA_FALSE, "output" }
    };
 
    EINA_ARRAY_ITER_NEXT(ev->changed_properties, i, property, iterator)
@@ -176,8 +177,19 @@ _efl_test_view_model_child_get(Eo *obj EINA_UNUSED,
         Eina_Value *p_color = NULL;
         Eina_Value *p_label = NULL;
         Eina_Value *p_deadend = NULL;
+        Eina_Value *p_output = NULL;
+        Eina_Value *p_broken = NULL;
+        Eina_Value *p_weird = NULL;
+        char *s_output;
+        char *s_weird;
+        char *s_broken;
+        char *color;
+        char *error;
         Eina_Error err = 0;
         int v_int = 0;
+        int vindex = 0;
+        int vindex2 = 0;
+        int rindex = 0;
 
         p_int = efl_model_property_get(child, "test_p_int");
         ck_assert(eina_value_int_get(p_int, &v_int));
@@ -185,6 +197,27 @@ _efl_test_view_model_child_get(Eo *obj EINA_UNUSED,
         p_color = efl_model_property_get(child, "color");
         p_label = efl_model_property_get(child, "label");
         p_deadend = efl_model_property_get(child, "deadend");
+        p_output = efl_model_property_get(child, "output");
+        p_weird = efl_model_property_get(child, "weird");
+        p_broken = efl_model_property_get(child, "broken");
+
+        s_output = eina_value_to_string(p_output);
+        s_weird = eina_value_to_string(p_weird);
+        s_broken = eina_value_to_string(p_broken);
+
+        sscanf(s_output, "Index %i. has #%ms for index %i", &rindex, &color, &vindex);
+        sscanf(s_broken, "%i in error with '%m[A-Za-z ]'", &vindex2, &error);
+
+        ck_assert_ptr_eq(eina_value_type_get(p_output), EINA_VALUE_TYPE_STRING);
+        ck_assert_int_eq(rindex, v_int);
+        ck_assert_int_eq(vindex2, vindex);
+        ck_assert_str_eq(error, "Value not found");
+
+        free(s_output);
+        free(s_weird);
+        free(s_broken);
+        free(color);
+        free(error);
 
         ck_assert_ptr_eq(eina_value_type_get(p_deadend), EINA_VALUE_TYPE_ERROR);
         eina_value_error_get(p_deadend, &err);
@@ -204,6 +237,7 @@ _efl_test_view_model_child_get(Eo *obj EINA_UNUSED,
         eina_value_free(p_color);
         eina_value_free(p_label);
         eina_value_free(p_deadend);
+        eina_value_free(p_output);
      }
 
    all[i] = EINA_FUTURE_SENTINEL;
@@ -302,6 +336,18 @@ EFL_START_TEST(efl_test_view_model)
                                      NULL, NULL, NULL,
                                      NULL, NULL, NULL,
                                      NULL);
+
+   efl_view_model_property_string_add(mv, "output",
+                                      "${label} has ${color} for index ${index}",
+                                      "${index} not ready",
+                                      "${index} in error");
+
+   efl_view_model_property_string_add(mv, "broken",
+                                      "${nope} has ${color} for index ${index}",
+                                      "${index} not ready",
+                                      "${index} in error with '${nope}'");
+
+   efl_view_model_property_string_add(mv, "weird", "${} % { } has ${", NULL, NULL);
 
    f = efl_model_children_slice_get(mv, 0, efl_model_children_count_get(mv));
    f = efl_future_then(mv, f, .success_type = EINA_VALUE_TYPE_ARRAY,

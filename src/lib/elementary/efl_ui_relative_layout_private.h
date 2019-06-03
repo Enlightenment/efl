@@ -36,6 +36,34 @@ struct _Efl_Ui_Relative_Layout_Calc
    double                             weight[2];
    double                             align[2];
    double                             comp_factor;
+   /*  m0 is static min size which is added to the other children min size.
+    * only if both (target, relative)[0] and (target, relative)[1] are same,
+    * it has non-zero value. it is calculated as (min * (align / relative)) if
+    * align is greater than relative, (min * ((1 - align) / (1 - relative))) otherwise.
+    *  mi, mj are transformed relative based on layout min size. they are
+    * calculated as (target.mi + (relative * (target.mj - target.mi))). for example,
+    * there are two children of relative_layout that has different target base.
+    *  |              | obj1  | obj2 |
+    *  |      min     | 100   | 100  |
+    *  |left.target   | layout| obj1 |
+    *  |left.relative | 0.0   | 0.5  |
+    *  |right.target  | layout| obj1 |
+    *  |right.relative| 0.5   | 1.0  |
+    *  |      mi      | 0.0   | 0.25 |
+    *  |      mj      | 0.5   | 0.5  |
+    *
+    * obj1.mi = layout.mi(0.0) + (obj1.relative(0.0) * (layout.mj(1.0) - layout.mi(0.0))) = 0.0
+    * obj1.mj = layout.mi(0.0) + (obj1.relative(0.5) * (layout.mj(1.0) - layout.mi(0.0))) = 0.5
+    * obj2.mi = obj1.mi(0.0) + (obj2.relative(0.5) * (obj1.mj(0.5) - obj1.mi(0.0))) = 0.25
+    * obj2.mj = obj1.mi(0.0) + (obj2.relative(1.0) * (obj1.mj(0.5) - obj1.mi(0.0))) = 0.5
+    *  layout min size is calculated as maximum of (child_min + m0) / (mj - mi).
+    * in the example, obj1 require layout min size as
+    * ((child_min(100) + m0(0)) / (mj(0.5) - mi(0.0))) = 200. obj2 require
+    * layout min size as ((100 + 0) / (0.5 - 0.25)) = 400. as a result, layout
+    * min size is max(200, 400) = 400.
+    */
+   double                             m0[2];
+   double                             mi[2], mj[2];
 
    struct {
       int position;

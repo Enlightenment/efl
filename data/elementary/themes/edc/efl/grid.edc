@@ -180,7 +180,7 @@ group { "efl/grid_item";
             rel2.to: "icon_area";
          }
       }
-      swallow { "efl.end";
+      swallow { "efl.extra";
          clip_to: "icon_area";
          desc { "default";
             fixed: 1 1;

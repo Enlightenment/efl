@@ -879,6 +879,8 @@ _focused_element(void *data, const Efl_Event *event)
    pd = efl_data_scope_get(obj, ELM_INTERFACE_SCROLLABLE_MIXIN);
 
    if (!focus) return;
+   /* no scroller content set */
+   if (!pd->pan_obj) return;
 
    geom = efl_ui_focus_object_focus_geometry_get(focus);
    pos = efl_gfx_entity_position_get(obj);

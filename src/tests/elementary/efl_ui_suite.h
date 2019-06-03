@@ -36,10 +36,14 @@ void efl_ui_test_focus_sub(TCase *tc);
 
 void efl_ui_model(TCase *tc);
 void efl_ui_test_widget(TCase *tc);
+void efl_ui_test_active_view(TCase *tc);
 
 void loop_timer_interval_set(Eo *obj, double in);
 
 #define efl_loop_timer_interval_set loop_timer_interval_set
+
+const Efl_Class* efl_ui_widget_realized_class_get(void);
+#define WIDGET_CLASS efl_ui_widget_realized_class_get()
 
 Eo *win_add();
 Eo *win_add_focused();

@@ -110,6 +110,20 @@ class TestEoInherit
         Efl.Object loop = new MyObject();
         Test.Assert(loop.NativeHandle != System.IntPtr.Zero);
     }
+
+    private static WeakReference CreateCollectableInherited()
+    {
+        var obj = new MyObject();
+        return new WeakReference(obj);
+    }
+
+    public static void inherited_collected()
+    {
+        var wref = CreateCollectableInherited();
+        Test.CollectAndIterate();
+
+        Test.AssertNull(wref.Target);
+    }
 }
 
 class TestEoNames
@@ -493,6 +507,21 @@ class TestProvider
         Test.AssertNotNull(provider, msg : "Provider of ITestIFace must not be null");
         Test.AssertEquals(provider.Name, obj.ProviderName, "Provider name does not match expected");
 
+    }
+}
+
+class TestObjectDeletion
+{
+    public static void test_object_deletion()
+    {
+        var obj = new Dummy.PartHolder();
+        var part = obj.OnePart;
+
+        Test.AssertNotNull(part);
+
+        part.Del();
+
+        Test.AssertNull(obj.OnePart);
     }
 }
 

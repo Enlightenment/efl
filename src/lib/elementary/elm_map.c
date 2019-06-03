@@ -1163,8 +1163,7 @@ _zoom_do(Elm_Map_Data *sd,
       efl_event_callback_legacy_call
         (sd->obj, EFL_UI_EVENT_ZOOM_START, NULL);
 
-   if (sd->obj)
-     sd->zoom_timer = ecore_timer_add(0.25, _zoom_timeout_cb, sd->obj);
+   sd->zoom_timer = ecore_timer_add(0.25, _zoom_timeout_cb, sd->obj);
    efl_event_callback_legacy_call
      (sd->obj, EFL_UI_EVENT_ZOOM_CHANGE, NULL);
 
@@ -4182,8 +4181,6 @@ _elm_map_efl_canvas_group_group_add(Eo *obj, Elm_Map_Data *priv)
    id_num++;
    _grid_all_create(priv);
 
-   _zoom_do(priv, 0);
-
    priv->mode = EFL_UI_ZOOM_MODE_MANUAL;
 
    if (!elm_need_efreet())
@@ -4320,6 +4317,7 @@ _elm_map_efl_object_constructor(Eo *obj, Elm_Map_Data *sd)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_IMAGE_MAP);
    legacy_object_focus_handle(obj);
+   _zoom_do(sd, 0);
 
    return obj;
 }

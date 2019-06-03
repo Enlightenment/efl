@@ -1,0 +1,8 @@
+class @beta Efl.Ui.Active_View.Indicator_Icon extends Efl.Ui.Active_View.Indicator {
+  implements {
+      Efl.Ui.Active_View.Indicator.bind;
+      Efl.Ui.Active_View.Indicator.content_del;
+      Efl.Ui.Active_View.Indicator.content_add;
+      Efl.Ui.Active_View.Indicator.position_update;
+  }
+}

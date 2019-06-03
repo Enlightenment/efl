@@ -804,17 +804,15 @@ _efl_ui_image_sizing_eval(Evas_Object *obj)
    evas_object_size_hint_min_set(obj, minw, minh);
    evas_object_size_hint_max_set(obj, maxw, maxh);
 
-   //Retained way. Nothing does, if either way hasn't been changed.
-   if (!sd->edje)
-     {
-        efl_gfx_image_orientation_set(sd->img, sd->orient);
-     }
-
    if (sd->img)
-   {
-      _image_sizing_eval(sd, sd->img);
-      if (sd->prev_img) _image_sizing_eval(sd, sd->prev_img);
-   }
+     {
+        //Retained way. Nothing does, if either way hasn't been changed.
+        if (!sd->edje)
+          efl_gfx_image_orientation_set(sd->img, sd->orient);
+
+        _image_sizing_eval(sd, sd->img);
+        if (sd->prev_img) _image_sizing_eval(sd, sd->prev_img);
+     }
 }
 
 static void

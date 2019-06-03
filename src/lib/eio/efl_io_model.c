@@ -1039,7 +1039,7 @@ _efl_io_model_efl_object_invalidate(Eo *obj , Efl_Io_Model_Data *priv)
    _efl_io_model_efl_model_monitor_del(priv);
 
    // Unlink the object from the parent
-   if (priv->info)
+   if (priv->info && priv->info->object)
      {
         efl_wref_del(priv->info->object, &priv->info->object);
         priv->info->object = NULL;

@@ -335,16 +335,16 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_slider.eo.h>
 # include <efl_ui_slider_interval.eo.h>
 # include <efl_ui_layout_factory.eo.h>
+# include <efl_ui_item_part_text.eo.h>
+# include <efl_ui_item_part_icon.eo.h>
+# include <efl_ui_item_part_extra.eo.h>
+# include <efl_ui_item_part_content.eo.h>
 # include <efl_ui_item.eo.h>
 # include <efl_ui_list_item.eo.h>
-# include <efl_ui_list_default_item_part_icon.eo.h>
-# include <efl_ui_list_default_item_part_end.eo.h>
 # include <efl_ui_list_default_item.eo.h>
-# include <efl_ui_list_empty_item.eo.h>
+# include <efl_ui_list_placeholder_item.eo.h>
 # include <efl_ui_list.eo.h>
 # include <efl_ui_grid_item.eo.h>
-# include <efl_ui_grid_default_item_part_icon.eo.h>
-# include <efl_ui_grid_default_item_part_end.eo.h>
 # include <efl_ui_grid_default_item.eo.h>
 # include <efl_ui_grid.eo.h>
 # include <efl_ui_list_view_types.eot.h>
@@ -362,18 +362,6 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_dnd_container.eo.h>
 # include <efl_ui_relative_layout.eo.h>
 # include <efl_ui_animation_view.eo.h>
-
-# ifndef _EFL_UI_PAGER_EO_CLASS_TYPE
-# define _EFL_UI_PAGER_EO_CLASS_TYPE
-typedef Eo Efl_Ui_Pager;
-# endif
-
-# include <efl_page_transition.eo.h>
-# include <efl_page_transition_scroll.eo.h>
-# include <efl_page_indicator.eo.h>
-# include <efl_page_indicator_icon.eo.h>
-# include <efl_ui_pager.eo.h>
-
 # include <efl_ui_tab_bar.eo.h>
 # include <efl_ui_tab_page.eo.h>
 # include <efl_ui_tab_page_part_tab.eo.h>

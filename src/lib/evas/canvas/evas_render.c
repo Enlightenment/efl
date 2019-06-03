@@ -286,16 +286,16 @@ _evas_render_had_map(Evas_Object_Protected_Data *obj)
 }
 
 static Eina_Bool
-_evas_render_is_relevant(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+_evas_render_is_relevant(Evas_Object_Protected_Data *obj)
 {
-   return ((evas_object_is_visible(eo_obj, obj) && (!obj->cur->have_clipees)) ||
-           (evas_object_was_visible(eo_obj, obj) && (!obj->prev->have_clipees)));
+   return ((evas_object_is_visible(obj) && (!obj->cur->have_clipees)) ||
+           (evas_object_was_visible(obj) && (!obj->prev->have_clipees)));
 }
 
 static Eina_Bool
-_evas_render_can_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
+_evas_render_can_render(Evas_Object_Protected_Data *obj)
 {
-   return (evas_object_is_visible(eo_obj, obj) && (!obj->cur->have_clipees) &&
+   return (evas_object_is_visible(obj) && (!obj->cur->have_clipees) &&
            !obj->no_render);
 }
 
@@ -519,9 +519,9 @@ _evas_render_phase1_direct(Evas_Public_Data *e,
              if (obj->is_smart)
                {
                }
-             else if (evas_object_is_visible(eo_obj, obj) &&
+             else if (evas_object_is_visible(obj) &&
                       ((obj->rect_del) ||
-                      (evas_object_is_opaque(eo_obj, obj))) &&
+                      (evas_object_is_opaque(obj))) &&
                       (!evas_object_is_source_invisible(eo_obj, obj)))
                {
                   RD(0, "    rect del\n");
@@ -789,9 +789,9 @@ _evas_render_phase1_object_mapped(Phase1_Context *p1ctx,
    _evas_render_object_map_change_update(p1ctx->e, obj, EINA_TRUE, hmap, &(p1ctx->redraw_all));
    if (!((is_active) &&
          (!obj->clip.clipees) &&
-         ((evas_object_is_visible(eo_obj, obj) &&
+         ((evas_object_is_visible(obj) &&
            (!obj->cur->have_clipees)) ||
-          (evas_object_was_visible(eo_obj, obj) &&
+          (evas_object_was_visible(obj) &&
            (!obj->prev->have_clipees)))))
      return;
    OBJ_ARRAY_PUSH(p1ctx->render_objects, obj);
@@ -923,9 +923,7 @@ _evas_render_phase1_object_changed_normal(Phase1_Context *p1ctx,
 #endif
                                          )
 {
-   Evas_Object *eo_obj = obj->object;
-
-   if ((!obj->clip.clipees) && _evas_render_is_relevant(eo_obj, obj))
+   if ((!obj->clip.clipees) && _evas_render_is_relevant(obj))
      {
         if (EINA_LIKELY(is_active))
           {
@@ -942,8 +940,8 @@ _evas_render_phase1_object_changed_normal(Phase1_Context *p1ctx,
           {
              /* It goes to be hidden. Prev caching should be replaced
               by the current (hidden) state. */
-             if (evas_object_is_visible(eo_obj, obj) !=
-                 evas_object_was_visible(eo_obj, obj))
+             if (evas_object_is_visible(obj) !=
+                 evas_object_was_visible(obj))
                evas_object_cur_prev(obj);
              RD(level, "  skip - not smart, not active or clippees or not relevant\n");
           }
@@ -1032,16 +1030,14 @@ _evas_render_phase1_object_no_changed_normal(Phase1_Context *p1ctx,
 #endif
                                             )
 {
-   Evas_Object *eo_obj = obj->object;
-
-   if (evas_object_is_opaque(eo_obj, obj) &&
-       evas_object_is_visible(eo_obj, obj))
+   if (evas_object_is_opaque(obj) &&
+       evas_object_is_visible(obj))
      {
         RD(level, "  opaque + visible\n");
         OBJ_ARRAY_PUSH(p1ctx->render_objects, obj);
         obj->rect_del = EINA_TRUE;
      }
-   else if (evas_object_is_visible(eo_obj, obj))
+   else if (evas_object_is_visible(obj))
      {
         RD(level, "  visible\n");
         OBJ_ARRAY_PUSH(p1ctx->render_objects, obj);
@@ -1122,7 +1118,7 @@ _evas_render_phase1_object_process(Phase1_Context *p1ctx,
         eina_inarray_push(p1ctx->active_objects, &ent);
      }
    if (is_active && obj->cur->snapshot && !obj->delete_me &&
-       evas_object_is_visible(eo_obj, obj))
+       evas_object_is_visible(obj))
      {
         // FIXME: Array should be clean (no need to check if already in there)
         int found = 0;
@@ -1180,13 +1176,13 @@ _evas_render_phase1_object_process(Phase1_Context *p1ctx,
      {
         /* not changed */
         RD(level, "  not changed... [%i] -> (%i %i %p %i) [%i]\n",
-           evas_object_is_visible(eo_obj, obj),
+           evas_object_is_visible(obj),
            obj->cur->visible, obj->cur->cache.clip.visible, obj->smart.smart,
-           obj->cur->cache.clip.a, evas_object_was_visible(eo_obj, obj));
+           obj->cur->cache.clip.a, evas_object_was_visible(obj));
         if ((!obj->clip.clipees) &&
             (EINA_LIKELY(obj->delete_me == 0)) &&
-            (_evas_render_can_render(eo_obj, obj) ||
-             (evas_object_was_visible(eo_obj, obj) &&
+            (_evas_render_can_render(obj) ||
+             (evas_object_was_visible(obj) &&
               (!obj->prev->have_clipees))))
           {
              if (obj->is_smart)
@@ -1240,7 +1236,7 @@ _evas_render_phase1_process(Phase1_Context *p1ctx)
 
         EINA_INLIST_FOREACH(lay->objects, obj)
           {
-             if (evas_object_is_on_plane(obj->object, obj)) continue;
+             if (evas_object_is_on_plane(obj)) continue;
              clean_them |= _evas_render_phase1_object_process
                 (p1ctx, obj, EINA_FALSE, EINA_FALSE, EINA_FALSE, 2);
           }
@@ -1294,16 +1290,16 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *eo_e EINA_
                     }
                   else
                     if ((is_active) && (obj->restack) && (!obj->clip.clipees) &&
-                        (_evas_render_can_render(eo_obj, obj) ||
-                         (evas_object_was_visible(eo_obj, obj) && (!obj->prev->have_clipees))))
+                        (_evas_render_can_render(obj) ||
+                         (evas_object_was_visible(obj) && (!obj->prev->have_clipees))))
                       {
                          if (!obj->render_pre && !obj->rect_del && !obj->delete_me)
                            ok = EINA_TRUE;
                       }
                     else
                       if (is_active && (!obj->clip.clipees) &&
-                          (_evas_render_can_render(eo_obj, obj) ||
-                           (evas_object_was_visible(eo_obj, obj) && (!obj->prev->have_clipees))))
+                          (_evas_render_can_render(obj) ||
+                           (evas_object_was_visible(obj) && (!obj->prev->have_clipees))))
                         {
                            if (obj->render_pre || obj->rect_del) ok = EINA_TRUE;
                         }
@@ -1311,8 +1307,8 @@ _evas_render_check_pending_objects(Eina_Array *pending_objects, Evas *eo_e EINA_
              else
                {
                   if ((!obj->clip.clipees) && (obj->delete_me == 0) &&
-                      (!obj->cur->have_clipees || (evas_object_was_visible(eo_obj, obj) && (!obj->prev->have_clipees)))
-                      && evas_object_is_opaque(eo_obj, obj) && evas_object_is_visible(eo_obj, obj))
+                      (!obj->cur->have_clipees || (evas_object_was_visible(obj) && (!obj->prev->have_clipees)))
+                      && evas_object_is_opaque(obj) && evas_object_is_visible(obj))
                     {
                        if (obj->rect_del || obj->is_smart) ok = EINA_TRUE;
                     }
@@ -1348,7 +1344,7 @@ pending_change(void *data, void *gdata EINA_UNUSED)
         obj->func->render_post(eo_obj, obj, obj->private_data);
         obj->pre_render_done = EINA_FALSE;
      }
-   else if (!_evas_render_can_render(eo_obj, obj) &&
+   else if (!_evas_render_can_render(obj) &&
             (!obj->is_active) && (!obj->render_pre) &&
             (!obj->rect_del))
      {
@@ -1399,7 +1395,7 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj, Efl_Canva
    if (tmp && _evas_render_has_map(tmp) && !_evas_render_can_map(tmp))
      return EINA_FALSE; /* we are mapped, we can't be an overlay */
 
-   if (!evas_object_is_visible(eo_obj, obj))
+   if (!evas_object_is_visible(obj))
      return EINA_FALSE; /* no need to update the overlay if it's not visible */
 
    /* If any recoloring of the surface is needed, n overlay to */
@@ -1502,7 +1498,7 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj, Efl_Canva
         xc2 = current->cur->cache.clip.x + current->cur->cache.clip.w;
         yc2 = current->cur->cache.clip.y + current->cur->cache.clip.h;
 
-        if (evas_object_is_visible(eo_current, current) &&
+        if (evas_object_is_visible(current) &&
             (!current->clip.clipees) &&
             (current->cur->visible) &&
             (!current->delete_me) &&
@@ -1517,7 +1513,7 @@ _evas_render_can_use_overlay(Evas_Public_Data *e, Evas_Object *eo_obj, Efl_Canva
                   break;
                }
 
-             if (evas_object_is_opaque(eo_current, current) ||
+             if (evas_object_is_opaque(current) ||
                  ((current->func->has_opaque_rect) &&
                   (current->func->has_opaque_rect(eo_current, current, current->private_data))))
                {
@@ -1846,12 +1842,12 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
           {
              if (!evas->is_frozen) /* same as "if (proxy_render_data)" */
                {
-                  if ((!evas_object_is_visible(eo_obj, obj)) || (obj->clip.clipees)
+                  if ((!evas_object_is_visible(obj)) || (obj->clip.clipees)
                       || (obj->cur->have_clipees) || (obj->no_render))
                     {
                        IFRD(obj->no_render, level, "  no_render\n");
                        IFRD(obj->clip.clipees || obj->cur->have_clipees, level, "  has clippees\n");
-                       IFRD(!evas_object_is_visible(eo_obj, obj), level, "  not visible\n");
+                       IFRD(!evas_object_is_visible(obj), level, "  not visible\n");
                        RD(level, "}\n");
                        eina_evlog("-render_object", eo_obj, 0.0, NULL);
                        return EINA_FALSE;
@@ -1881,10 +1877,10 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
                     }
                }
           }
-        else if (!evas_object_is_proxy_visible(eo_obj, obj) ||
+        else if (!evas_object_is_proxy_visible(obj) ||
                  (obj->clip.clipees) || (obj->cur->have_clipees))
           {
-             IFRD(!evas_object_is_proxy_visible(eo_obj, obj), level, "  proxy not visible\n");
+             IFRD(!evas_object_is_proxy_visible(obj), level, "  proxy not visible\n");
              IFRD(obj->clip.clipees || obj->cur->have_clipees, level, "  has clippees\n");
              RD(level, "}\n");
              eina_evlog("-render_object", eo_obj, 0.0, NULL);
@@ -1899,11 +1895,11 @@ evas_render_mapped(Evas_Public_Data *evas, Evas_Object *eo_obj,
           }
      }
    else if (!(((evas_object_is_active(eo_obj, obj) && (!obj->clip.clipees) &&
-                (_evas_render_can_render(eo_obj, obj))))
+                (_evas_render_can_render(obj))))
              ))
      {
         IFRD(!evas_object_is_active(eo_obj, obj), level, "  not active\n");
-        IFRD(!_evas_render_can_render(eo_obj, obj), level, "  can't render\n");
+        IFRD(!_evas_render_can_render(obj), level, "  can't render\n");
         IFRD(obj->clip.clipees, level, "  has clippees\n");
         RD(level, "}\n");
         eina_evlog("-render_object", eo_obj, 0.0, NULL);
@@ -2625,7 +2621,7 @@ _evas_render_cutout_add(Evas_Public_Data *evas, void *context,
    Evas_Coord cox = 0, coy = 0, cow = 0, coh = 0;
 
    if (evas_object_is_source_invisible(obj->object, obj)) return;
-   if (evas_object_is_opaque(obj->object, obj))
+   if (evas_object_is_opaque(obj))
      {
         cox = obj->cur->cache.clip.x;
         coy = obj->cur->cache.clip.y;
@@ -2758,7 +2754,7 @@ _snapshot_redraw_update(Evas_Public_Data *evas, Evas_Object_Protected_Data *snap
    // FIXME: Tiler should be inside snapshot data
    // TODO: Also list redraw regions (partial updates)
 
-   if (!evas_object_is_visible(snap->object, snap)) return;
+   if (!evas_object_is_visible(snap)) return;
 
    evas_object_clip_recalc(snap);
    snap_clip.x = snap->cur->cache.clip.x - x;
@@ -2800,7 +2796,7 @@ _snapshot_redraw_update(Evas_Public_Data *evas, Evas_Object_Protected_Data *snap
              if (obj == snap) above = EINA_TRUE;
              continue;
           }
-        if (!obj->cur->snapshot || evas_object_is_opaque(obj->object, obj))
+        if (!obj->cur->snapshot || evas_object_is_opaque(obj))
           {
              const Eina_Rectangle cur = {
                 obj->cur->cache.clip.x - x, obj->cur->cache.clip.y - y,
@@ -2906,7 +2902,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
              OBJ_ARRAY_PUSH(&evas->temporary_objects, obj);
 
              if (above_top) continue;
-             if (obj->cur->snapshot && !evas_object_is_opaque(obj->object, obj))
+             if (obj->cur->snapshot && !evas_object_is_opaque(obj))
                continue;
 
              /* reset the background of the area if needed (using cutout and engine alpha flag to help) */
@@ -3015,7 +3011,7 @@ evas_render_updates_internal_loop(Evas *eo_e, Evas_Public_Data *evas,
                             if (obj2->cur->snapshot)
                               {
                                  if (above_top) continue;
-                                 if (!evas_object_is_opaque(obj2->object, obj2)) continue;
+                                 if (!evas_object_is_opaque(obj2)) continue;
                               }
 #if 1
                             if (
@@ -3123,7 +3119,7 @@ _evas_planes(Evas_Public_Data *evas)
                break;
             }
 
-         if (evas_object_is_visible(eo_obj2, obj2))
+         if (evas_object_is_visible(obj2))
            EINA_LIST_FOREACH(evas->outputs, lo, output)
             {
                /* A video object can only be in one output at a time, check that first */
@@ -3137,7 +3133,7 @@ _evas_planes(Evas_Public_Data *evas)
                     _evas_object_image_plane_release(eo_obj2, obj2, output);
                  } else break;
             }
-          if (evas_object_plane_changed(eo_obj2, obj2))
+          if (evas_object_plane_changed(obj2))
             {
                /* Since we're lifting this object out of the scene graph
                 * (or putting it back), we need to force redraw of the space
@@ -3151,7 +3147,7 @@ _evas_planes(Evas_Public_Data *evas)
 
                /* We also need to clean its previously drawn position
                 * but only if we're removing it */
-               if (evas_object_is_on_plane(eo_obj2, obj2))
+               if (evas_object_is_on_plane(obj2))
                  _evas_canvas_damage_rectangle_add(NULL, evas,
                                                    obj2->prev->geometry.x,
                                                    obj2->prev->geometry.y,
@@ -3328,10 +3324,10 @@ evas_render_updates_internal(Evas *eo_e,
         if (UNLIKELY(
                      (!obj->is_smart) &&
                      (!obj->clip.clipees) &&
-                     (evas_object_is_opaque(eo_obj, obj) || obj->cur->snapshot ||
+                     (evas_object_is_opaque(obj) || obj->cur->snapshot ||
                       ((obj->func->has_opaque_rect) &&
                        (obj->func->has_opaque_rect(eo_obj, obj, obj->private_data)))) &&
-                     evas_object_is_visible(eo_obj, obj) &&
+                     evas_object_is_visible(obj) &&
                      (!obj->mask->is_mask) && (!obj->clip.mask) &&
                      (!obj->delete_me)))
           OBJ_ARRAY_PUSH(&e->obscuring_objects, obj);

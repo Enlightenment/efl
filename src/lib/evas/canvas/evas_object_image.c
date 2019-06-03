@@ -2293,8 +2293,8 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
 
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
-   is_v = evas_object_is_visible(eo_obj, obj);
-   was_v = evas_object_was_visible(eo_obj, obj);
+   is_v = evas_object_is_visible(obj);
+   was_v = evas_object_was_visible(obj);
    if (is_v != was_v)
      {
         evas_object_render_pre_visible_change(&e->clip_changes, eo_obj, is_v, was_v);
@@ -2422,7 +2422,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                   Eina_Rectangle *rr;
 
                   if ((!o->cur->has_alpha) &&
-                      (evas_object_is_opaque(eo_obj, obj)) &&
+                      (evas_object_is_opaque(obj)) &&
                       (obj->cur->color.a == 255))
                     {
                        Evas_Coord x, y, w, h;
@@ -2514,7 +2514,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
                        Eina_Rectangle *rr;
 
                        if ((!o->cur->has_alpha) &&
-                           (evas_object_is_opaque(eo_obj, obj)) &&
+                           (evas_object_is_opaque(obj)) &&
                            (obj->cur->color.a == 255))
                          {
                             Evas_Coord x, y, w, h;
@@ -2614,7 +2614,7 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
    /* it obviously didn't change - add a NO obscure - this "unupdates"  this */
    /* area so if there were updates for it they get wiped. don't do it if we */
    /* aren't fully opaque and we are visible */
-   if (evas_object_is_opaque(eo_obj, obj))
+   if (evas_object_is_opaque(obj))
      {
         Evas_Coord x, y, w, h;
 
@@ -2753,7 +2753,7 @@ evas_object_image_is_opaque(Evas_Object *eo_obj EINA_UNUSED,
              Evas_Object_Protected_Data *cur_source = efl_data_scope_get(o->cur->source, EFL_CANVAS_OBJECT_CLASS);
              EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
              {
-                state_write->opaque = evas_object_is_opaque(o->cur->source, cur_source);
+                state_write->opaque = evas_object_is_opaque(cur_source);
              }
              EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
              return o->cur->opaque; /* FIXME: Should go poke at the object */
@@ -3434,7 +3434,7 @@ _evas_object_image_video_overlay_hide(Evas_Object *eo_obj)
         o->delayed.video_hide = EINA_TRUE;
         o->delayed.video_show = EINA_FALSE;
      }
-   if (evas_object_is_visible(eo_obj, obj))
+   if (evas_object_is_visible(obj))
      o->pixels->video.update_pixels(o->pixels->video.data, eo_obj, &o->pixels->video);
    o->video_visible = EINA_FALSE;
    o->created = EINA_FALSE;

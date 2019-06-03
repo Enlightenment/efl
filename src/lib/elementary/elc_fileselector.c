@@ -337,6 +337,7 @@ _elm_fileselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Fileselector_Data *sd)
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
+   if (!efl_finalized_get(obj)) return int_ret;
    style = elm_widget_style_get(obj);
    _mirrored_set(obj, efl_ui_mirrored_get(obj));
 

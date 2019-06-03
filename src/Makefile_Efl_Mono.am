@@ -6,7 +6,9 @@ efl_eo_mono_files = \
 	bindings/mono/eo_mono/iwrapper.cs \
 	bindings/mono/eo_mono/FunctionWrapper.cs \
 	bindings/mono/eo_mono/NativeModule.cs \
-	bindings/mono/eo_mono/workaround.cs
+	bindings/mono/eo_mono/workaround.cs \
+	bindings/mono/eo_mono/EoWrapper.cs \
+	bindings/mono/eo_mono/WrapperSupervisor.cs
 
 if HAVE_WIN32
 
@@ -69,7 +71,8 @@ efl_mono_test_eolian_files = \
 	tests/efl_mono/dummy_inherit_helper.eo \
 	tests/efl_mono/dummy_child.eo \
 	tests/efl_mono/dummy_part_holder.eo \
-	tests/efl_mono/dummy_numberwrapper.eo
+	tests/efl_mono/dummy_numberwrapper.eo \
+	tests/efl_mono/dummy_event_manager.eo
 
 efl_mono_test_files = \
 	$(efl_mono_test_eolian_files) \
@@ -395,6 +398,7 @@ check_LTLIBRARIES += tests/efl_mono/libefl_mono_native_test.la
 
 tests_efl_mono_libefl_mono_native_test_la_SOURCES = \
 	tests/efl_mono/dummy_child.c \
+	tests/efl_mono/dummy_event_manager.c \
 	tests/efl_mono/dummy_inherit_helper.c \
 	tests/efl_mono/dummy_interfaces.c \
 	tests/efl_mono/dummy_numberwrapper.c \
@@ -414,6 +418,11 @@ tests_efl_mono_libefl_mono_native_test_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS
 tests_efl_mono_libefl_mono_native_test_la_LIBTOOLFLAGS = --tag=disable-static
 
 tests/efl_mono/dummy_child.c: \
+	$(efl_mono_test_eolian_c) \
+	$(efl_mono_test_eolian_h) \
+	tests/efl_mono/libefl_mono_native_test.h
+
+tests/efl_mono/dummy_event_manager.c: \
 	$(efl_mono_test_eolian_c) \
 	$(efl_mono_test_eolian_h) \
 	tests/efl_mono/libefl_mono_native_test.h
@@ -447,6 +456,7 @@ tests/efl_mono/dummy_test_object.c: \
 efl_mono_test_eolian_mono_files = tests/efl_mono/dummy_test_object.eo.cs \
 tests/efl_mono/dummy_test_iface.eo.cs \
 tests/efl_mono/dummy_child.eo.cs \
+tests/efl_mono/dummy_event_manager.eo.cs \
 tests/efl_mono/dummy_part_holder.eo.cs \
 tests/efl_mono/dummy_numberwrapper.eo.cs \
 tests/efl_mono/dummy_inherit_iface.eo.cs \

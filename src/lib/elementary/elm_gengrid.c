@@ -162,8 +162,12 @@ _item_cache_free(Item_Cache *itc)
    if (!itc) return;
 
    evas_object_del(itc->spacer);
-   efl_wref_del(itc->base_view, &itc->base_view);
-   efl_del(itc->base_view);
+   /* does not exist if cache item has just been reused */
+   if (itc->base_view)
+     {
+        efl_wref_del(itc->base_view, &itc->base_view);
+        efl_del(itc->base_view);
+     }
    eina_stringshare_del(itc->item_style);
    EINA_LIST_FREE(itc->contents, c)
      evas_object_del(c);
@@ -1251,8 +1255,7 @@ _elm_gengrid_item_unrealize(Elm_Gen_Item *it,
    if (GG_IT(it)->wsd->reorder_it == it) return;
 
    evas_event_freeze(evas_object_evas_get(WIDGET(it)));
-   if (!calc)
-     efl_event_callback_legacy_call(WIDGET(it), ELM_GENGRID_EVENT_UNREALIZED, EO_OBJ(it));
+
    ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
 
    _view_clear(VIEW(it), &(it->texts), NULL);
@@ -1264,6 +1267,8 @@ _elm_gengrid_item_unrealize(Elm_Gen_Item *it,
 
    it->realized = EINA_FALSE;
    it->want_unrealize = EINA_FALSE;
+   if (!calc)
+     efl_event_callback_legacy_call(WIDGET(it), ELM_GENGRID_EVENT_UNREALIZED, EO_OBJ(it));
 
    {
       ELM_GENGRID_DATA_GET_FROM_ITEM(it, sd);
@@ -3500,7 +3505,7 @@ _elm_gengrid_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
    Evas_Coord ix = 0, iy = 0, iw = 0, ih = 0; // given item geometry
    Evas_Coord cx = 0, cy = 0, cw = 0, ch = 0; // candidate item geometry
    Eina_List *item_list = NULL, *l = NULL;
-   Elm_Object_Item *eo_item = NULL;
+   Elm_Object_Item *first_item, *eo_item = NULL;
    ELM_GENGRID_DATA_GET(obj, sd);
    Eina_Bool search_next = EINA_FALSE;
 
@@ -3508,19 +3513,26 @@ _elm_gengrid_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
    ELM_GENGRID_ITEM_DATA_GET(eo_it, it);
 
    evas_object_geometry_get(sd->pan_obj, &vx, &vy, &vw, &vh);
-   evas_object_geometry_get(VIEW(it), &ix, &iy, &iw, &ih); // FIXME: check if the item is realized or not
-
-   if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, ix, iy, iw, ih))
+   if (it->realized)
      {
-        if (!elm_object_item_disabled_get(eo_it))
-          return eo_it;
-        else
-          search_next = EINA_TRUE;
+        evas_object_geometry_get(VIEW(it), &ix, &iy, &iw, &ih);
+
+        if (ELM_RECTS_INCLUDE(vx, vy, vw, vh, ix, iy, iw, ih))
+          {
+             if (!elm_object_item_disabled_get(eo_it))
+               return eo_it;
+             else
+               search_next = EINA_TRUE;
+          }
      }
 
    item_list = elm_gengrid_realized_items_get(obj);
+   /* if first realized item is before parameter item then parameter item is
+    * off viewport towards bottom: start at end of list */
+   first_item = eina_list_data_get(item_list);
+   ELM_GENGRID_ITEM_DATA_GET(first_item, first_it);
 
-   if ((iy < vy) || search_next)
+   if ((iy < vy) || search_next || (!first_it) || (first_it->position > it->position))
      {
         EINA_LIST_FOREACH(item_list, l, eo_item)
           {
@@ -3550,7 +3562,7 @@ _elm_gengrid_nearest_visible_item_get(Evas_Object *obj, Elm_Object_Item *eo_it)
      }
    eina_list_free(item_list);
 
-   return eo_it;
+   return it->realized ? eo_it : NULL;
 }
 
 EOLIAN static Eina_Rect
@@ -3588,7 +3600,7 @@ _mirrored_set(Evas_Object *obj,
 
    ELM_GENGRID_DATA_GET(obj, sd);
 
-   if (efl_finalized_get(sd->obj))
+   if (sd->obj && efl_finalized_get(sd->obj))
      _item_cache_zero(sd);
    efl_ui_mirrored_set(efl_super(obj, MY_CLASS), rtl);
 
@@ -4336,8 +4348,11 @@ _gengrid_element_focused(void *data, const Efl_Event *ev)
    Efl_Ui_Widget *focused = efl_ui_focus_manager_focus_get(ev->object);
    Elm_Widget_Item *item = NULL, *old_item = NULL;
 
-   item = efl_ui_focus_parent_provider_gen_item_fetch(pd->provider, focused);
-   old_item = efl_ui_focus_parent_provider_gen_item_fetch(pd->provider, ev->info);
+   /* there may be no focus during widget setup */
+   if (focused)
+     item = efl_ui_focus_parent_provider_gen_item_fetch(pd->provider, focused);
+   if (ev->info)
+     old_item = efl_ui_focus_parent_provider_gen_item_fetch(pd->provider, ev->info);
 
    if (old_item)
      {
@@ -5859,7 +5874,8 @@ _elm_gengrid_item_efl_ui_focus_object_setup_order_non_recursive(Eo *obj, Elm_Gen
           _elm_widget_full_eval(wid);
      }
 
-   efl_ui_focus_object_setup_order_non_recursive(efl_super(obj, ELM_GENGRID_ITEM_CLASS));
+   if (pd->realized)
+     efl_ui_focus_object_setup_order_non_recursive(efl_super(obj, ELM_GENGRID_ITEM_CLASS));
 }
 
 EOLIAN static Efl_Ui_Focus_Object*

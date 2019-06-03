@@ -713,7 +713,8 @@ _elm_code_widget_cursor_move(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd, 
      _elm_code_widget_refresh(widget, line_obj);
    else
      _elm_code_widget_fill_line(widget, pd, elm_code_file_line_get(pd->code->file, pd->cursor_line));
-   elm_layout_signal_emit(pd->cursor_rect, "elm,action,show,cursor", "elm");
+   if (pd->editable && pd->cursor_rect)
+     elm_layout_signal_emit(pd->cursor_rect, "elm,action,show,cursor", "elm");
 }
 
 

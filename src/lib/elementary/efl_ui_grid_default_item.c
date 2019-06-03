@@ -8,8 +8,6 @@
 #include <Elementary.h>
 
 #include "elm_priv.h"
-#include "efl_ui_grid_default_item_part_icon.eo.h"
-#include "efl_ui_grid_default_item_part_end.eo.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS      EFL_UI_GRID_DEFAULT_ITEM_CLASS
@@ -42,63 +40,18 @@ ELM_PART_TEXT_DEFAULT_GET(efl_ui_grid_default_item, "efl.text")
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_grid_default_item, void)
 ELM_PART_MARKUP_DEFAULT_IMPLEMENT(efl_ui_grid_default_item, void)
 ELM_PART_CONTENT_DEFAULT_GET(efl_ui_grid_default_item, "efl.icon")
-ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_grid_default_item, void
-)
-
-Eina_Bool
-_efl_ui_grid_default_item_part_icon_efl_content_content_set(Eo *obj, void *pd EINA_UNUSED, Efl_Gfx_Entity *content)
-{
-   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   return efl_content_set(efl_part(efl_super(wd->obj, MY_CLASS), wd->part), content);
-}
-
-Efl_Gfx_Entity *
-_efl_ui_grid_default_item_part_icon_efl_content_content_get(const Eo *obj, void *pd EINA_UNUSED)
-{
-   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   return efl_content_get(efl_part(efl_super(wd->obj, MY_CLASS), wd->part));
-}
-
-Efl_Gfx_Entity *
-_efl_ui_grid_default_item_part_icon_efl_content_content_unset(Eo *obj, void *pd EINA_UNUSED)
-{
-   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   return efl_content_unset(efl_part(efl_super(wd->obj, MY_CLASS), wd->part));
-}
-#include "efl_ui_grid_default_item_part_icon.eo.c"
-
-Eina_Bool
-_efl_ui_grid_default_item_part_end_efl_content_content_set(Eo *obj, void *pd EINA_UNUSED, Efl_Gfx_Entity *content)
-{
-   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   return efl_content_set(efl_part(efl_super(wd->obj, MY_CLASS), wd->part), content);
-}
-
-Efl_Gfx_Entity *
-_efl_ui_grid_default_item_part_end_efl_content_content_get(const Eo *obj, void *pd EINA_UNUSED)
-{
-   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   return efl_content_get(efl_part(efl_super(wd->obj, MY_CLASS), wd->part));
-}
-
-Efl_Gfx_Entity *
-_efl_ui_grid_default_item_part_end_efl_content_content_unset(Eo *obj, void *pd EINA_UNUSED)
-{
-   Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
-   return efl_content_unset(efl_part(efl_super(wd->obj, MY_CLASS), wd->part));
-}
-#include "efl_ui_grid_default_item_part_end.eo.c"
+ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_grid_default_item, void)
 
 EOLIAN static Efl_Object *
 _efl_ui_grid_default_item_efl_part_part_get(const Eo *obj, void *wd EINA_UNUSED, const char *part)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
    if (eina_streq(part, "text"))
-     return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_TEXT_CLASS, obj, "efl.text");
+     return ELM_PART_IMPLEMENT(EFL_UI_ITEM_PART_TEXT_CLASS, obj, "efl.text");
    else if (eina_streq(part, "icon"))
-     return ELM_PART_IMPLEMENT(EFL_UI_GRID_DEFAULT_ITEM_PART_ICON_CLASS, obj, "efl.icon");
-   else if (eina_streq(part, "end"))
-     return ELM_PART_IMPLEMENT(EFL_UI_GRID_DEFAULT_ITEM_PART_END_CLASS, obj, "efl.end");
+     return ELM_PART_IMPLEMENT(EFL_UI_ITEM_PART_ICON_CLASS, obj, "efl.icon");
+   else if (eina_streq(part, "extra"))
+     return ELM_PART_IMPLEMENT(EFL_UI_ITEM_PART_EXTRA_CLASS, obj, "efl.extra");
 
    return efl_part_get(efl_super(obj, MY_CLASS), part);
 }

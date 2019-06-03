@@ -41,8 +41,10 @@ EFL_START_TEST(elm_check_onoff_text)
    ck_assert_str_eq(elm_object_part_text_get(check, "off"), "OffText");
 
    elm_object_style_set(check, "default");
+   DISABLE_ABORT_ON_CRITICAL_START;
    ck_assert(elm_object_part_text_get(check, "on") == NULL);
    ck_assert(elm_object_part_text_get(check, "off") == NULL);
+   DISABLE_ABORT_ON_CRITICAL_END;
 
 }
 EFL_END_TEST

@@ -243,8 +243,7 @@ _elm_fileselector_button_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Bu
 EOLIAN static void
 _elm_fileselector_button_efl_canvas_group_group_del(Eo *obj, Elm_Fileselector_Button_Data *sd)
 {
-   if (sd->fsd.model)
-     efl_unref(sd->fsd.model);
+   efl_replace(&sd->fsd.model, NULL);
    eina_stringshare_del(sd->window_title);
    eina_stringshare_del(sd->fsd.path);
    if (sd->fsd.selection)
