@@ -503,7 +503,6 @@ efl_config_h.set('EFL_API_LEGACY_DEF', '#define EFL_API_LEGACY_DEF "FIXME NOT IM
 
 configure_file(
   output: 'config.h',
-  install: false,
   configuration: config_h
 )
 
