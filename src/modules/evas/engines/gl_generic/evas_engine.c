@@ -1139,7 +1139,7 @@ eng_image_orient_set(void *engine, void *image, Evas_Image_Orient orient)
 
    evas_gl_common_image_update(im->gc, im);
 
-   im_new = evas_gl_common_image_new(im->gc, im->w, im->h, im->alpha, im->cs.space);
+   im_new = evas_gl_common_image_new_from_rgbaimage(im->gc, im->im, &im->load_opts, NULL);
    if (!im_new) return im;
 
    im_new->load_opts = im->load_opts;
