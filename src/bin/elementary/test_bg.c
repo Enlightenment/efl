@@ -389,7 +389,7 @@ _cb_check_changed_scale_type(void *data, const Efl_Event *ev)
    if (efl_ui_check_selected_get(ev->object))
      efl_gfx_color_set(o_bg, 255, 128, 128, 255);
    else
-     efl_gfx_color_set(o_bg, 0, 0, 0, 0);
+     efl_gfx_color_set(o_bg, 255, 255, 255, 255);
 
    efl_gfx_color_get(o_bg, &r, &g, &b, &a);
    printf("bg color: %d %d %d %d\n", r, g, b, a);
