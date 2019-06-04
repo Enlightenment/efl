@@ -367,12 +367,6 @@ option('elementary-base-dir',
   description : 'Put the name of a base directory for elementary data'
 )
 
-option('eolian-bootstrap',
-  type : 'boolean',
-  value : false,
-  description : 'Only build efl up to eolian_gen and install eina libeolian and eolian_gen, usefull for cross compiles'
-)
-
 option('install-eo-files',
   type: 'boolean',
   value: false,
