@@ -256,7 +256,8 @@ _update_frame_duration(Efl_Ui_Animation_View_Data *pd)
    double frame_rate = round((double)frame_count / evas_object_vg_animated_frame_duration_get(pd->vg, 0, 0));
 
    pd->frame_duration = (double)(max_frame - min_frame) / frame_rate;
-   elm_transit_duration_set(pd->transit, pd->frame_duration * (1/pd->speed));
+   if (pd->transit)
+     elm_transit_duration_set(pd->transit, pd->frame_duration * (1/pd->speed));
 }
 
 static Eina_Bool
