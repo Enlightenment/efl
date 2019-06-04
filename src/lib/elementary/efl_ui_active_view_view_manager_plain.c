@@ -86,8 +86,10 @@ _content_changed(Eo *obj, Efl_Ui_Active_View_View_Manager_Plain_Data *pd)
 {
    if (efl_ui_active_view_active_index_get(pd->container) != pd->current_content)
      {
+        int old_current_content = pd->current_content;
         pd->current_content = efl_ui_active_view_active_index_get(pd->container);
-        efl_gfx_entity_visible_set(efl_pack_content_get(pd->container, pd->current_content), EINA_FALSE);
+        efl_gfx_entity_visible_set(efl_pack_content_get(pd->container, old_current_content), EINA_FALSE);
+        efl_gfx_entity_visible_set(efl_pack_content_get(pd->container, pd->current_content), EINA_TRUE);
         _geom_sync(obj, pd);
         _emit_position(obj, pd);
      }
