@@ -1540,6 +1540,35 @@ EAPI Eo *_efl_added_get(void);
 EAPI Eo * _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, Eo *parent, Eina_Bool ref, Eina_Bool is_fallback);
 
 /**
+ * @typedef Efl_Substitute_Ctor_Cb
+ * Callback to be called instead of the object constructor.
+ *
+ * Only intended for binding creators.
+ *
+ * @param data Additional data previously supplied by the user
+ * @param obj_id The object being constructed.
+ * @return The constructed object in case of success, NULL otherwise.
+ */
+typedef Eo *(*Efl_Substitute_Ctor_Cb)(void *data, Eo *obj_id);
+
+/**
+ * @brief Just like _efl_add_internal_start() but with additional options
+ *
+ * Only intended for binding creators.
+ *
+ * @param file File name of the call site, used for debug logs.
+ * @param line Line number of the call site,  used for debug logs.
+ * @param klass_id Pointer for the class being instantiated.
+ * @param ref Whether or not the object will have an additional reference if it has a parent.
+ * @param parent Object parent, can be NULL.
+ * @param is_fallback Whether or not the fallback @c efl_added behaviour is to be used.
+ * @param substitute_ctor Optional callback to replace the call for efl_constructor(), if NULL efl_constructor() will be called normally.
+ * @param sub_ctor_data Additional data to be passed to the @p substitute_ctor callback.
+ * @return An handle to the new object on success, NULL otherwise.
+ */
+EAPI Eo * _efl_add_internal_start_bindings(const char *file, int line, const Efl_Class *klass_id, Eo *parent, Eina_Bool ref, Eina_Bool is_fallback, Efl_Substitute_Ctor_Cb substitute_ctor, void *sub_ctor_data);
+
+/**
  * @brief Unrefs the object and reparents it to NULL.
  *
  * Because efl_del() unrefs and reparents to NULL, it doesn't really delete the
