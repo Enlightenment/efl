@@ -2481,20 +2481,20 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, Ecore_Window parent, i
 
    if (!(method = evas_render_method_lookup(engine_name)))
      {
-        ERR("Render method lookup failed for %s", engine_name);
+        WRN("Render method lookup failed for %s", engine_name);
         return NULL;
      }
 
    if (!ecore_wl2_init())
      {
-        ERR("Failed to initialize Ecore_Wl2");
+        WRN("Failed to initialize Ecore_Wl2");
         return NULL;
      }
 
    ewd = ecore_wl2_display_connect(disp_name);
    if (!ewd)
      {
-        ERR("Failed to connect to Wayland Display %s", disp_name);
+        WRN("Failed to connect to Wayland Display %s", disp_name);
         goto conn_err;
      }
 
