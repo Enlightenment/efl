@@ -56,9 +56,9 @@ Dummy_Numberwrapper **_new_obj_ref(int n)
    return &r;
 }
 
-// ############ //
-// Test.Testing //
-// ############ //
+// ################# //
+// Dummy.Test_Object //
+// ################# //
 
 static Efl_Object*
 _dummy_test_object_efl_object_constructor(Eo *obj, Dummy_Test_Object_Data *pd)

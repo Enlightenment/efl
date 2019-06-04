@@ -70,6 +70,7 @@ efl_mono_test_eolian_files = \
 	tests/efl_mono/dummy_inherit_iface.eo \
 	tests/efl_mono/dummy_inherit_helper.eo \
 	tests/efl_mono/dummy_child.eo \
+	tests/efl_mono/dummy_constructible_object.eo \
 	tests/efl_mono/dummy_part_holder.eo \
 	tests/efl_mono/dummy_numberwrapper.eo \
 	tests/efl_mono/dummy_event_manager.eo
@@ -403,6 +404,7 @@ tests_efl_mono_libefl_mono_native_test_la_SOURCES = \
 	tests/efl_mono/dummy_interfaces.c \
 	tests/efl_mono/dummy_numberwrapper.c \
 	tests/efl_mono/dummy_part_holder.c \
+	tests/efl_mono/dummy_constructible_object.c \
 	tests/efl_mono/dummy_test_object.c
 
 efl_mono_test_eolian_c = $(efl_mono_test_eolian_files:%.eo=%.eo.c)
@@ -447,6 +449,11 @@ tests/efl_mono/dummy_part_holder.c: \
 	$(efl_mono_test_eolian_h) \
 	tests/efl_mono/libefl_mono_native_test.h
 
+tests/efl_mono/dummy_constructible_object.c: \
+	$(efl_mono_test_eolian_c) \
+	$(efl_mono_test_eolian_h) \
+	tests/efl_mono/libefl_mono_native_test.h
+
 tests/efl_mono/dummy_test_object.c: \
 	$(efl_mono_test_eolian_c) \
 	$(efl_mono_test_eolian_h) \
@@ -455,6 +462,7 @@ tests/efl_mono/dummy_test_object.c: \
 # Intermediate C Sharp test DLL
 efl_mono_test_eolian_mono_files = tests/efl_mono/dummy_test_object.eo.cs \
 tests/efl_mono/dummy_test_iface.eo.cs \
+tests/efl_mono/dummy_constructible_object.eo.cs \
 tests/efl_mono/dummy_child.eo.cs \
 tests/efl_mono/dummy_event_manager.eo.cs \
 tests/efl_mono/dummy_part_holder.eo.cs \
@@ -509,6 +517,7 @@ tests_efl_mono_efl_mono_SOURCES = \
      tests/efl_mono/Eldbus.cs \
      tests/efl_mono/Eo.cs \
      tests/efl_mono/EoPromises.cs \
+     tests/efl_mono/EoConstruction.cs \
      tests/efl_mono/Errors.cs \
      tests/efl_mono/Events.cs \
      tests/efl_mono/FunctionPointers.cs \
