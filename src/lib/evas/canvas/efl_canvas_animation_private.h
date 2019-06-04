@@ -21,7 +21,7 @@ typedef struct _Efl_Canvas_Animation_Data
    Efl_Canvas_Animation_Data *pd = efl_data_scope_get(o, EFL_CANVAS_ANIMATION_CLASS)
 
 #define GET_STATUS(from, to, progress) \
-   ((from) + (((to) - (from)) * (progress)))
+   ((from * (1.0 - progress)) + (to * progress))
 
 #define FINAL_STATE_IS_REVERSE(anim) \
    ((efl_animation_repeat_mode_get(anim) == EFL_CANVAS_ANIMATION_REPEAT_MODE_REVERSE) && \
