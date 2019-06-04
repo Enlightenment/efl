@@ -206,6 +206,34 @@ _efl_canvas_animation_player_efl_player_start(Eo *eo_obj,
    _start(eo_obj, pd);
 }
 
+static Eina_Bool
+_is_final_state(Efl_Canvas_Animation *anim, double progress)
+{
+   if (!anim) return EINA_FALSE;
+   if ((progress != 0.0) && (progress != 1.0)) return EINA_FALSE;
+
+   if (efl_animation_repeat_mode_get(anim) == EFL_CANVAS_ANIMATION_REPEAT_MODE_REVERSE)
+     {
+        if (efl_animation_repeat_count_get(anim) & 1)
+          {
+             if (progress == 0.0)
+               return EINA_TRUE;
+          }
+        else
+          {
+             if (progress == 1.0)
+               return EINA_TRUE;
+          }
+     }
+   else
+     {
+        if (progress == 1.0)
+          return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
 EOLIAN static void
 _efl_canvas_animation_player_efl_player_stop(Eo *eo_obj,
                                       Efl_Canvas_Animation_Player_Data *pd)
@@ -219,13 +247,19 @@ _efl_canvas_animation_player_efl_player_stop(Eo *eo_obj,
    if (play)
      {
         efl_player_play_set(eo_obj, EINA_FALSE);
-        if ((efl_animation_final_state_keep_get(anim)) &&
-            (efl_animation_repeat_mode_get(anim) != EFL_CANVAS_ANIMATION_REPEAT_MODE_REVERSE) &&
-            (!(efl_animation_repeat_count_get(anim) & 1)))
+        if (efl_animation_final_state_keep_get(anim))
           {
-               pd->progress = 1.0;
-               efl_animation_apply(anim, pd->progress,
-                                   efl_animation_player_target_get(eo_obj));
+             if (_is_final_state(anim, pd->progress))
+               {
+                  /* Keep the final state only if efl_player_stop is called at
+                   * the end of _animator_cb. */
+                  efl_animation_apply(anim, pd->progress,
+                                      efl_animation_player_target_get(eo_obj));
+               }
+             else
+               {
+                  pd->progress = 0.0;
+               }
           }
         else
           {
@@ -235,7 +269,7 @@ _efl_canvas_animation_player_efl_player_stop(Eo *eo_obj,
      }
    else
      {
-         pd->progress = 0.0;
+        pd->progress = 0.0;
      }
 
    if (pd->auto_del) efl_del(eo_obj);
