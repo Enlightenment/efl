@@ -623,6 +623,62 @@ static struct {
   PP(mime_type)
 };
 
+typedef struct _Efl_Io_Model_Iterator Efl_Io_Model_Iterator;
+struct _Efl_Io_Model_Iterator
+{
+   Eina_Iterator iterator;
+   unsigned int i;
+   unsigned int end;
+};
+
+static Eina_Bool
+_efl_io_model_iterator_next(Efl_Io_Model_Iterator *it, void **data)
+{
+   const char **name = (const char **)data;
+
+   if (it->i >= it->end)
+     return EINA_FALSE;
+
+   *name = properties[it->i].name;
+   it->i++;
+
+   return EINA_TRUE;
+}
+
+static void*
+_efl_io_model_iterator_get_container(Efl_Io_Model_Iterator *it EINA_UNUSED)
+{
+   return &properties;
+}
+
+static void
+_efl_io_model_iterator_free(Efl_Io_Model_Iterator *it)
+{
+   free(it);
+}
+
+Eina_Iterator *
+_efl_io_model_properties_iterator_new(void)
+{
+   Efl_Io_Model_Iterator *it;
+
+   it = calloc(1, sizeof (Efl_Io_Model_Iterator));
+   if (!it) return NULL;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->i = 0;
+   it->end = EINA_C_ARRAY_LENGTH(properties);
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_efl_io_model_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
+      _efl_io_model_iterator_get_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_efl_io_model_iterator_free);
+
+   return &it->iterator;
+}
+
 /**
  * Interfaces impl.
  */
@@ -630,7 +686,7 @@ static Eina_Iterator *
 _efl_io_model_efl_model_properties_get(const Eo *obj EINA_UNUSED,
                                        Efl_Io_Model_Data *pd EINA_UNUSED)
 {
-   return EINA_C_ARRAY_ITERATOR_NEW(properties);
+   return _efl_io_model_properties_iterator_new();
 }
 
 static Eina_Value *
