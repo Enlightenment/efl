@@ -42,6 +42,15 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
         LOTNode *node = layer->mNodeList.ptr[i];
         if (!node) continue;
 
+        //Skip Invisible Stroke?
+        if (node->mStroke.enable && node->mStroke.width == 0)
+          {
+             char *key = _get_key_val(node);
+             Efl_Canvas_Vg_Shape *shape = efl_key_data_get(parent, key);
+             if (shape) efl_gfx_entity_visible_set(shape, EINA_FALSE);
+             continue;
+          }
+
         const float *data = node->mPath.ptPtr;
         if (!data) continue;
 
