@@ -10,6 +10,7 @@
 
 #include <Ecore.h>
 
+const Efl_Event_Description * _efl_gesture_type_get(const Eo *obj);
 void efl_gesture_manager_gesture_clean_up(Eo *obj, Eo *target, const Efl_Event_Description *type);
 
 typedef struct _Efl_Canvas_Gesture_Manager_Data                Efl_Canvas_Gesture_Manager_Data;
