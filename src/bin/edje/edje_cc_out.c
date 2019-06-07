@@ -734,6 +734,12 @@ check_program(Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
      {
         Edje_Part *part;
 
+        if (et->id >= (int) pc->parts_count)
+          {
+             ERR("Target id '%d' greater than possible index '%d'.", et->id, (int) pc->parts_count - 1);
+             exit(-1);
+          }
+
         part = pc->parts[et->id];
         /* verify existence of description in part */
         if (ep->action == EDJE_ACTION_TYPE_STATE_SET)
