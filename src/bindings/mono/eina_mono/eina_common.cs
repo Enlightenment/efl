@@ -41,6 +41,19 @@ internal static class NativeCustomExportFunctions
         efl_mono_native_efl_unref_addr_get();
 }
 
+// TODO: move all native functions to a "NativeFunctions" class
+internal static partial class NativeFunctions
+{
+    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+        eina_stringshare_add(string str);
+    [DllImport(efl.Libs.Eina)] public static extern void
+        eina_stringshare_del(IntPtr str);
+    [DllImport(efl.Libs.CustomExports)] public static extern void
+        efl_mono_native_stringshare_del_ref(IntPtr str);
+    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+        efl_mono_native_stringshare_del_addr_get();
+}
+
 /// <summary>Wrapper around native memory DllImport'd functions</summary>
 public static class MemoryNative
 {
@@ -75,6 +88,21 @@ public static class MemoryNative
         return NativeCustomExportFunctions.efl_mono_native_strdup(str);
     }
 
+    public static IntPtr AddStringShare(string str)
+    {
+        return NativeFunctions.eina_stringshare_add(str);
+    }
+
+    public static void DelStringShare(IntPtr str)
+    {
+        NativeFunctions.eina_stringshare_del(str);
+    }
+
+    public static void DelStringShareRef(IntPtr ptr)
+    {
+        NativeFunctions.efl_mono_native_stringshare_del_ref(ptr);
+    }
+
     // IntPtr's for some native functions
     public static IntPtr PtrCompareFuncPtrGet()
     {
@@ -89,6 +117,11 @@ public static class MemoryNative
     public static IntPtr FreeFuncPtrGet()
     {
         return NativeCustomExportFunctions.efl_mono_native_free_addr_get();
+    }
+
+    public static IntPtr StringShareDelFuncPtrGet()
+    {
+        return NativeFunctions.efl_mono_native_stringshare_del_addr_get();
     }
 
     public static IntPtr EflUnrefFuncPtrGet()
@@ -161,6 +194,45 @@ public enum Ownership
     Managed,
     /// <summary> The resource is owned by the unmanaged code. It won't be freed on disposal.</summary>
     Unmanaged
+}
+
+public class StringShare
+{
+    public StringShare()
+    {
+    }
+
+    public StringShare(string s)
+    {
+        Str = s;
+    }
+
+    public string Str { get; set; }
+
+    public static implicit operator string(StringShare ss)
+    {
+        return ss.Str;
+    }
+
+    public static implicit operator StringShare(string s)
+    {
+        return new StringShare(s);
+    }
+
+    public override string ToString()
+    {
+        return Str;
+    }
+
+    public void Set(string s)
+    {
+        Str = s;
+    }
+
+    public string Get()
+    {
+        return Str;
+    }
 }
 
 }
