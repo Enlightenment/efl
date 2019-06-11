@@ -1225,7 +1225,16 @@ EAPI void ecore_wl2_window_popup_input_set(Ecore_Wl2_Window *window, Ecore_Wl2_I
  */
 EAPI Eina_Bool ecore_wl2_window_shell_surface_exists(Ecore_Wl2_Window *win);
 
-/** @since 1.17 */
+/**
+ * Get which display a given window is using
+ *
+ * @param window The window to get the display of
+ *
+ * @return The Ecore_Wl2_Display that this window is using, or NULL otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
+ */
 EAPI Ecore_Wl2_Display *ecore_wl2_window_display_get(const Ecore_Wl2_Window *window);
 
 /**
