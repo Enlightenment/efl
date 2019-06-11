@@ -4825,8 +4825,8 @@ _elm_interface_scrollable_content_loop_set(Eo *obj EINA_UNUSED, Elm_Scrollable_S
 EOLIAN static void
 _elm_interface_scrollable_content_loop_get(const Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_Interface_Data *sid, Eina_Bool *loop_h, Eina_Bool *loop_v)
 {
-   *loop_h = sid->loop_h;
-   *loop_v = sid->loop_v;
+   if (loop_h) *loop_h = sid->loop_h;
+   if (loop_v) *loop_v = sid->loop_v;
 }
 
 EOLIAN static void
