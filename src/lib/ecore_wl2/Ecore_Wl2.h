@@ -1302,8 +1302,16 @@ EAPI Eina_Bool ecore_wl2_window_floating_mode_get(Ecore_Wl2_Window *window);
  * Wayland Input
  */
 
-/* TODO: doxy */
-/** @since 1.17 */
+/**
+ * Get the wl_seat that an input is using
+ *
+ * @param input The Ecore_Wl2_Input to get the seat of
+ *
+ * @return The wl_seat of this input, or NULL otherwise
+ *
+ * @ingroup Ecore_Wl2_Input_Group
+ * @since 1.17
+ */
 EAPI struct wl_seat *ecore_wl2_input_seat_get(Ecore_Wl2_Input *input);
 
 /**
