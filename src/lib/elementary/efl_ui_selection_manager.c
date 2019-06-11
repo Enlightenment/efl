@@ -2723,6 +2723,7 @@ _wl_selection_send(void *data, int type EINA_UNUSED, void *event)
    free(data_ret);
 
    close(ev->fd);
+   ecore_wl2_display_flush(ev->display);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -2763,6 +2764,7 @@ _wl_dnd_end(void *data, int type EINA_UNUSED, void *event)
 
    seat_sel->accept = EINA_FALSE;
 
+   ecore_wl2_display_flush(ev->display);
    return ECORE_CALLBACK_PASS_ON;
 }
 
@@ -2976,6 +2978,7 @@ _wl_efl_sel_manager_selection_get(const Efl_Object *request, Efl_Ui_Selection_Ma
                                                      _wl_selection_receive, sel);
 
             ecore_wl2_offer_receive(offer, (char*)sm_wl_convertion[i].translates[j]);
+            ecore_wl2_display_flush(ecore_wl2_input_display_get(input));
             return EINA_TRUE;
          }
      }
