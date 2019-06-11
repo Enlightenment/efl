@@ -30,7 +30,12 @@
 #  include <sys/wait.h>
 # endif
 # ifndef HAVE_CLEARENV
+#  if defined (__FreeBSD__) || defined (__OpenBSD__)
+#   include <dlfcn.h>
+static char ***_dl_environ;
+#  else
 extern char **environ;
+#  endif
 # endif
 #endif
 
@@ -579,7 +584,13 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
 # ifdef HAVE_CLEARENV
         clearenv();
 # else
+#  if defined (__FreeBSD__) || defined (__OpenBSD__)
+        _dl_environ = dlsym(NULL, "environ");
+        if (_dl_environ) *_dl_environ = NULL;
+        else ERR("Can't find envrion symbol");
+#  else
         environ = NULL;
+#  endif
 # endif
         itr = efl_core_env_content_get(pd->env);
 

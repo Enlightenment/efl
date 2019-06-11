@@ -1002,7 +1002,6 @@ endif
 
 c = configure_file(
   output: 'Elementary_Options.h',
-  install : true,
   install_dir : dir_package_include,
   configuration: elm_options)
 

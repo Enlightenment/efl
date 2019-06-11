@@ -11,14 +11,6 @@ abstract @beta Efl.Canvas.Gesture extends Efl.Object
      information to the user.]]
    c_prefix: efl_gesture;
    methods {
-      @property type {
-         [[This property holds the type of the gesture.]]
-         get {
-         }
-         values {
-            @cref type: Efl.Event_Description; [[gesture type]]
-         }
-      }
       @property state {
          [[This property holds the current state of the gesture.]]
          get {

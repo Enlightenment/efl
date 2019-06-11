@@ -2,9 +2,11 @@
 
 #define MY_CLASS EFL_CANVAS_GESTURE_CLASS
 
-EOLIAN static const Efl_Event_Description *
- _efl_canvas_gesture_type_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_Data *pd)
+const Efl_Event_Description *
+_efl_gesture_type_get(const Eo *obj)
 {
+   Efl_Canvas_Gesture_Data *pd = efl_data_scope_get(obj, EFL_CANVAS_GESTURE_CLASS);
+
    return pd->type;
 }
 

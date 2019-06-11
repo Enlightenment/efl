@@ -31,6 +31,9 @@ cmake_version_src = [
   'Elementary',
 ]
 
+conf = configuration_data()
+conf.set('VERSION', meson.project_version())
+
 foreach cmake_file : cmake_src
   configure_file(
     input: cmake_file+'Config.cmake.in',
@@ -38,19 +41,21 @@ foreach cmake_file : cmake_src
     install_dir: join_paths(dir_lib, 'cmake', cmake_file),
     copy: true,
   )
-endforeach
-
-conf = configuration_data()
-
-conf.set('VERSION', meson.version())
-
-foreach cmake_version_file : cmake_version_src
-  configure_file(
-    input: cmake_version_file+'ConfigVersion.cmake.in',
-    output: cmake_version_file+'ConfigVersion.cmake',
-    install_dir: join_paths(dir_lib, 'cmake', cmake_version_file),
-    configuration : conf,
-  )
+  if cmake_version_src.contains(cmake_src)
+    configure_file(
+      input: cmake_version_file+'ConfigVersion.cmake.in',
+      output: cmake_version_file+'ConfigVersion.cmake',
+      install_dir: join_paths(dir_lib, 'cmake', cmake_version_file),
+      configuration : conf,
+    )
+  else
+    configure_file(
+      input: 'EflConfigVersion.cmake.in',
+      output: cmake_file+'ConfigVersion.cmake',
+      install_dir: join_paths(dir_lib, 'cmake', cmake_file),
+      configuration : conf,
+    )
+  endif
 endforeach
 
 configure_file(

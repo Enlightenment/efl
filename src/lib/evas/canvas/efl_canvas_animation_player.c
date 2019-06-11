@@ -107,6 +107,10 @@ _animator_cb(void *data)
         pd->progress = (double)(pd->is_direction_forward);
      }
 
+   /* The previously applied map effect should be reset before applying the
+    * current map effect. Otherwise, the incrementally added map effects
+    * increase numerical error. */
+   efl_gfx_mapping_reset(efl_animation_player_target_get(eo_obj));
    efl_animation_apply(anim, pd->progress, efl_animation_player_target_get(eo_obj));
 
    Efl_Canvas_Animation_Player_Event_Running event_running;
@@ -202,35 +206,70 @@ _efl_canvas_animation_player_efl_player_start(Eo *eo_obj,
    _start(eo_obj, pd);
 }
 
+static Eina_Bool
+_is_final_state(Efl_Canvas_Animation *anim, double progress)
+{
+   if (!anim) return EINA_FALSE;
+   if ((progress != 0.0) && (progress != 1.0)) return EINA_FALSE;
+
+   if (efl_animation_repeat_mode_get(anim) == EFL_CANVAS_ANIMATION_REPEAT_MODE_REVERSE)
+     {
+        if (efl_animation_repeat_count_get(anim) & 1)
+          {
+             if (progress == 0.0)
+               return EINA_TRUE;
+          }
+        else
+          {
+             if (progress == 1.0)
+               return EINA_TRUE;
+          }
+     }
+   else
+     {
+        if (progress == 1.0)
+          return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
 EOLIAN static void
 _efl_canvas_animation_player_efl_player_stop(Eo *eo_obj,
                                       Efl_Canvas_Animation_Player_Data *pd)
 {
    EFL_ANIMATION_PLAYER_ANIMATION_GET(eo_obj, anim);
+
+   //Reset the state of the target to the initial state
+   efl_gfx_mapping_reset(efl_animation_player_target_get(eo_obj));
+
    Eina_Bool play = efl_player_play_get(eo_obj);
    if (play)
      {
         efl_player_play_set(eo_obj, EINA_FALSE);
-        //Reset the state of the target to the initial state
-        if ((efl_animation_final_state_keep_get(anim)) &&
-            (efl_animation_repeat_mode_get(anim) != EFL_CANVAS_ANIMATION_REPEAT_MODE_REVERSE) &&
-            (!(efl_animation_repeat_count_get(anim) & 1)))
+        if (efl_animation_final_state_keep_get(anim))
           {
-               pd->progress = 1.0;
-               efl_animation_apply(anim, pd->progress,
-                                   efl_animation_player_target_get(eo_obj));
+             if (_is_final_state(anim, pd->progress))
+               {
+                  /* Keep the final state only if efl_player_stop is called at
+                   * the end of _animator_cb. */
+                  efl_animation_apply(anim, pd->progress,
+                                      efl_animation_player_target_get(eo_obj));
+               }
+             else
+               {
+                  pd->progress = 0.0;
+               }
           }
         else
           {
              pd->progress = 0.0;
-             efl_gfx_mapping_reset(efl_animation_player_target_get(eo_obj));
           }
         efl_event_callback_call(eo_obj, EFL_ANIMATION_PLAYER_EVENT_ENDED, NULL);
      }
    else
      {
-         pd->progress = 0.0;
-         efl_gfx_mapping_reset(efl_animation_player_target_get(eo_obj));
+        pd->progress = 0.0;
      }
 
    if (pd->auto_del) efl_del(eo_obj);
@@ -303,6 +342,11 @@ _efl_canvas_animation_player_efl_player_pos_set(Eo *eo_obj,
    EFL_ANIMATION_PLAYER_ANIMATION_GET(eo_obj, anim);
    double length = efl_animation_duration_get(anim);
    pd->progress = sec / length;
+
+   /* The previously applied map effect should be reset before applying the
+    * current map effect. Otherwise, the incrementally added map effects
+    * increase numerical error. */
+   efl_gfx_mapping_reset(efl_animation_player_target_get(eo_obj));
    efl_animation_apply(anim, pd->progress, efl_animation_player_target_get(eo_obj));
 }
 

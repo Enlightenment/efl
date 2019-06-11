@@ -8,23 +8,6 @@ typedef struct __Translate_Property_Double
    double y;
 } _Translate_Property_Double;
 
-static _Translate_Property_Double
-_translation_get(Eo *target)
-{
-   double x1, x2, y1, y2;
-   _Translate_Property_Double translate;
-   Eina_Rect geometry;
-
-   geometry = efl_gfx_entity_geometry_get(target);
-
-   efl_gfx_mapping_coord_absolute_get(target, 0, &x1, &y1, NULL);
-   efl_gfx_mapping_coord_absolute_get(target, 2, &x2, &y2, NULL);
-   translate.x = ((x1 + x2) / 2.0) - (geometry.x + (geometry.w / 2.0));
-   translate.y = ((y1 + y2) / 2.0) - (geometry.y + (geometry.h / 2.0));
-
-   return translate;
-}
-
 EOLIAN static void
 _efl_canvas_animation_translate_translate_set(Eo *eo_obj EINA_UNUSED,
                                        Efl_Canvas_Animation_Translate_Data *pd,
@@ -115,13 +98,12 @@ _efl_canvas_animation_translate_efl_canvas_animation_animation_apply(Eo *eo_obj,
                                                        double progress,
                                                        Efl_Canvas_Object *target)
 {
-   _Translate_Property_Double prev;
    _Translate_Property_Double new;
+   Eina_Rect geometry;
 
    progress = efl_animation_apply(efl_super(eo_obj, MY_CLASS), progress, target);
    if (!target) return progress;
 
-   prev = _translation_get(target);
    if (pd->use_rel_move)
      {
         new.x = GET_STATUS(pd->from.move_x, pd->to.move_x, progress);
@@ -129,11 +111,12 @@ _efl_canvas_animation_translate_efl_canvas_animation_animation_apply(Eo *eo_obj,
      }
    else
      {
-        new.x = GET_STATUS(pd->from.x, pd->to.x, progress);
-        new.y = GET_STATUS(pd->from.y, pd->to.y, progress);
+        geometry = efl_gfx_entity_geometry_get(target);
+        new.x = GET_STATUS(pd->from.x, pd->to.x, progress) - geometry.x;
+        new.y = GET_STATUS(pd->from.y, pd->to.y, progress) - geometry.y;
      }
 
-   efl_gfx_mapping_translate(target, new.x - prev.x, new.y - prev.y, 0.0);
+   efl_gfx_mapping_translate(target, new.x, new.y, 0.0);
 
    return progress;
 }

@@ -982,7 +982,7 @@ efl_ui_layout_orientation_axis_get(Efl_Ui_Layout_Orientation orient)
 static inline Eina_Bool
 efl_ui_layout_orientation_is_inverted(Efl_Ui_Layout_Orientation orient)
 {
-   return orient & EFL_UI_LAYOUT_ORIENTATION_INVERTED;
+   return ((orient & EFL_UI_LAYOUT_ORIENTATION_INVERTED) ==  EFL_UI_LAYOUT_ORIENTATION_INVERTED) ? EINA_TRUE : EINA_FALSE;
 }
 
 static inline Eina_Bool

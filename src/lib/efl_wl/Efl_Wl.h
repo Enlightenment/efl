@@ -154,6 +154,13 @@ EAPI void efl_wl_minmax_set(Evas_Object *obj, Eina_Bool set);
  * @note The external implementation is expected to restrict access to authorized
  * clients
  * @see wl_global_create() docs
+ *
+ * @param obj The compositor widget
+ * @param interface The Wayland protocol interface struct of the protocol's global
+ * @param version The version of the global to use
+ * @param data User data to use with this interface
+ * @param bind_cb The callback which should be triggered when the global is bound by a client
+ * @return The created global (struct wl_global), or NULL on failure
  * @since 1.21
  */
 EAPI void *efl_wl_global_add(Evas_Object *obj, const void *interface, uint32_t version, void *data, void *bind_cb);

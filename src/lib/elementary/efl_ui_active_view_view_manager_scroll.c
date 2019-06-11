@@ -226,6 +226,7 @@ _page_set_animation(void *data, const Efl_Event *event EINA_UNUSED)
         efl_event_callback_del(pd->container, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK,
                                _page_set_animation, data);
         pd->transition.active = EINA_FALSE;
+        pd->transition.progress = 0.0;
      }
    _apply_box_properties(data, pd);
 }
@@ -237,8 +238,12 @@ _animation_request_switch(Eo *obj, Efl_Ui_Active_View_View_Manager_Scroll_Data *
    if (pd->transition.active && !pd->mouse_move.active && pd->transition.to == to)
     return;
 
-   if (!pd->transition.active && !pd->mouse_move.active && from == to)
-     return;
+   //In case there is no transition but from and to are the same, ensure that we reset the mouse_move state, and return.
+   if (!pd->transition.active && from == to)
+     {
+        pd->mouse_move.active = EINA_FALSE;
+        return;
+     }
 
    efl_event_callback_del(pd->container, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _page_set_animation, obj);
    //if there is a ongoing transition, try to guess a better time, and try copy over the position where we are right now
@@ -247,13 +252,14 @@ _animation_request_switch(Eo *obj, Efl_Ui_Active_View_View_Manager_Scroll_Data *
         pd->transition.from = MIN(pd->transition.from, pd->transition.to) + pd->transition.progress;
         pd->transition.max_time = MIN(MAX(fabs(pd->transition.progress), 0.2), 0.5f);
         pd->mouse_move.active = EINA_FALSE;
-        pd->transition.progress = 0.0f;
      }
    else
      {
         pd->transition.from = from;
         pd->transition.max_time = 0.5;
+        pd->transition.progress = 0.0;
      }
+
    pd->transition.start_time = ecore_loop_time_get();
    pd->transition.active = EINA_TRUE;
    pd->transition.to = to;
@@ -271,6 +277,7 @@ _efl_ui_active_view_view_manager_scroll_efl_ui_active_view_view_manager_switch_t
      {
         pd->mouse_move.active = EINA_FALSE;
         pd->transition.active = EINA_FALSE;
+        pd->transition.progress = 0.0;
         _apply_box_properties(obj, pd);
      }
 }

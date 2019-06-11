@@ -262,7 +262,7 @@ _efl_canvas_gesture_manager_recognizer_register(Eo *obj EINA_UNUSED, Efl_Canvas_
    if (!dummy)
      return;
 
-   const Efl_Event_Description *type = efl_gesture_type_get(dummy);
+   const Efl_Event_Description *type = _efl_gesture_type_get(dummy);
 
    //Add the recognizer to the m_recognizers
    eina_hash_add(pd->m_recognizers, &type, efl_ref(recognizer));
@@ -288,7 +288,7 @@ _efl_canvas_gesture_manager_recognizer_unregister(Eo *obj EINA_UNUSED, Efl_Canva
    dummy = efl_gesture_recognizer_add(recognizer, 0);
    if (!dummy)return;
 
-   type = efl_gesture_type_get(dummy);
+   type = _efl_gesture_type_get(dummy);
    efl_del(dummy);
 
    //Check if its already registered

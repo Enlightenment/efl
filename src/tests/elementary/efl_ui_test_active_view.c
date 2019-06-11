@@ -14,43 +14,6 @@ static Efl_Ui_Active_View_Container *container;
 static int tree_abort;
 static int tree_abort_level;
 
-static void
-_shutdown(void)
-{
-   eina_log_abort_on_critical_set(tree_abort);
-   eina_log_abort_on_critical_level_set(tree_abort_level);
-}
-
-static void
-_setup(void)
-{
-   tree_abort = eina_log_abort_on_critical_get();
-   tree_abort_level = eina_log_abort_on_critical_level_get();
-   eina_log_abort_on_critical_level_set(2);
-   eina_log_abort_on_critical_set(1);
-}
-static void
-active_view_setup()
-{
-   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC));
-
-   container = efl_add(EFL_UI_ACTIVE_VIEW_CONTAINER_CLASS, win,
-                       efl_content_set(win, efl_added));
-
-   efl_gfx_entity_size_set(win, EINA_SIZE2D(200, 200));
-}
-
-static void
-active_view_teardown()
-{
-   if (win)
-     {
-        efl_del(win);
-        win = NULL;
-     }
-}
-
 typedef struct {
   struct {
     int called;
@@ -555,6 +518,46 @@ EFL_START_TEST (efl_ui_active_view_active_index_not_update)
    ck_assert_int_eq(efl_ui_active_view_active_index_get(container), 0);
 }
 EFL_END_TEST
+
+static void
+_shutdown(void)
+{
+   eina_log_abort_on_critical_set(tree_abort);
+   eina_log_abort_on_critical_level_set(tree_abort_level);
+}
+
+static void
+_setup(void)
+{
+   tree_abort = eina_log_abort_on_critical_get();
+   tree_abort_level = eina_log_abort_on_critical_level_get();
+   eina_log_abort_on_critical_level_set(2);
+   eina_log_abort_on_critical_set(1);
+}
+
+static void
+active_view_setup()
+{
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC));
+
+   container = efl_add(EFL_UI_ACTIVE_VIEW_CONTAINER_CLASS, win,
+                       efl_content_set(win, efl_added));
+
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(200, 200));
+}
+
+static void
+active_view_teardown()
+{
+   if (win)
+     {
+        efl_del(win);
+        win = NULL;
+     }
+   memset(&transition_calls, 0, sizeof(transition_calls));
+   memset(&indicator_calls, 0, sizeof(indicator_calls));
+}
 
 void efl_ui_test_active_view(TCase *tc)
 {

@@ -13,7 +13,12 @@
 
 #define MY_CLASS EFL_CORE_PROC_ENV_CLASS
 
+#if defined (__FreeBSD__) || defined (__OpenBSD__)
+# include <dlfcn.h>
+static char ***_dl_environ;
+#else
 extern char **environ;
+#endif
 
 static Efl_Core_Env *env = NULL;
 
@@ -27,6 +32,7 @@ _sync(Efl_Core_Env *obj, Efl_Core_Proc_Env_Data *pd)
    Eina_List *existing_keys = NULL, *n;
    Eina_Iterator *content;
    const char *key;
+   char **env = NULL;
 
    pd->in_sync = EINA_TRUE;
    content = efl_core_env_content_get(obj);
@@ -36,11 +42,18 @@ _sync(Efl_Core_Env *obj, Efl_Core_Proc_Env_Data *pd)
         existing_keys = eina_list_append(existing_keys, key);
      }
 
-   if (environ)
+#if defined (__FreeBSD__) || defined (__OpenBSD__)
+   _dl_environ = dlsym(NULL, "environ");
+   if (_dl_environ) env = *_dl_environ;
+   else ERR("Can't find envrion symbol");
+#else
+   env = environ;
+#endif
+   if (env)
      {
         char **p;
 
-        for (p = environ; *p; p++)
+        for (p = env; *p; p++)
           {
              char **values;
 
@@ -104,7 +117,13 @@ _efl_core_proc_env_efl_core_env_clear(Eo *obj, Efl_Core_Proc_Env_Data *pd)
 #ifdef HAVE_CLEARENV
         clearenv();
 #else
+# if defined (__FreeBSD__) || defined (__OpenBSD__)
+        _dl_environ = dlsym(NULL, "environ");
+        if (_dl_environ) *_dl_environ = NULL;
+        else ERR("Can't find envrion symbol");
+# else
         environ = NULL;
+# endif
 #endif
      }
 }
