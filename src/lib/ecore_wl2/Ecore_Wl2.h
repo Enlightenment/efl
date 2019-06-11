@@ -1876,6 +1876,7 @@ EAPI void ecore_wl2_session_recovery_disable(void);
  */
 EAPI void ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush);
 
+/* TODO: doxygen if we are keeping this function public */
 EAPI void ecore_wl2_window_false_commit(Ecore_Wl2_Window *window);
 
 /**
@@ -1958,6 +1959,7 @@ EAPI Eina_Bool ecore_wl2_window_resizing_get(Ecore_Wl2_Window *window);
  */
 EAPI void ecore_wl2_window_update_begin(Ecore_Wl2_Window *window);
 
+/* TODO: doxygen if we are keeping any of the below functions public */
 EAPI void ecore_wl2_window_damage(Ecore_Wl2_Window *window, Eina_Rectangle *rects, unsigned int count);
 
 EAPI Eina_Bool ecore_wl2_buffer_init(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer_Type types);
