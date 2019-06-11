@@ -50,10 +50,12 @@ find articles/www-content/pages/develop/tutorials -name "start.md.txt" -exec rm 
 find articles/www-content/pages/develop/guides -name "start.md.txt" -exec rm {} \;
 # Remove the trailing .txt from filenames (DocFX wants only the .md)
 for f in `find articles -name "*.md.txt"`; do mv $f $(echo $f | rev | cut -c5- | rev) ; done
-# Copy all media files to the images folder
+# Copy all media files currently in use to the images folder
 rm -rf images
 mkdir images
-cp -r www-content/media/* images
+cd www-content/media
+for f in `find ../../articles -name "*.md" | xargs grep -Poh '(?<=/_media/)[^)]*'`; do cp -f --parents $f ../../images; done
+cd ../..
 # Remove git clone now that we have everything we wanted
 rm -rf www-content
 
