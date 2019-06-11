@@ -196,7 +196,10 @@ public enum Ownership
     Unmanaged
 }
 
-public class StringShare
+/// TODO: reword this \/ \/ \/ \/ \/ \/ \/
+/// Convert to a String the quickest possible.
+/// Implements Equality/Inequality methods just because they have standard System.Object implementations that would not signal a compilation fail. The intent is not to provide full string API.
+public class StringShare : IEquatable<StringShare>, IEquatable<string>
 {
     public StringShare()
     {
@@ -211,17 +214,92 @@ public class StringShare
 
     public static implicit operator string(StringShare ss)
     {
+        if (ss == null)
+        {
+            return null;
+        }
+
         return ss.Str;
     }
 
     public static implicit operator StringShare(string s)
     {
+        if (s == null)
+        {
+            return null;
+        }
+
         return new StringShare(s);
+    }
+
+    public static bool operator==(StringShare ss1, StringShare ss2)
+    {
+        return ((string)ss1) == ((string)ss2);
+    }
+
+    public static bool operator==(StringShare ss, string s)
+    {
+        return ((string)ss) == s;
+    }
+
+    public static bool operator==(string s, StringShare ss)
+    {
+        return ss == s;
+    }
+
+    public static bool operator!=(StringShare ss1, StringShare ss2)
+    {
+        return !(ss1 == ss2);
+    }
+
+    public static bool operator!=(StringShare ss, string s)
+    {
+        return !(ss == s);
+    }
+
+    public static bool operator!=(string s, StringShare ss)
+    {
+        return !(ss == s);
     }
 
     public override string ToString()
     {
         return Str;
+    }
+
+    public override int GetHashCode()
+    {
+        return Str == null ? 0 : Str.GetHashCode();
+    }
+
+    public override bool Equals(object other)
+    {
+        if (ReferenceEquals(null, other))
+        {
+            return false;
+        }
+
+        if (ReferenceEquals(this, other))
+        {
+            return true;
+        }
+
+        if (other.GetType() == typeof(string))
+        {
+            return this.Str == (string)other;
+        }
+
+        return other.GetType() == typeof(StringShare) && this == ((StringShare)other);
+    }
+
+    public bool Equals(StringShare other)
+    {
+        return this == other;
+    }
+
+    public bool Equals(string other)
+    {
+        return this.Str == other;
     }
 
     public void Set(string s)
