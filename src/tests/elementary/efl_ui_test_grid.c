@@ -23,21 +23,6 @@ grid_setup()
    efl_gfx_entity_visible_set(win, EINA_TRUE);
 }
 
-static void
-grid_teardown()
-{
-   if (grid)
-     {
-	    efl_del(grid);
-	    grid = NULL;
-	 }
-   if (win)
-     {
-	    efl_del(win);
-	    win = NULL;
-	 }
-}
-
 static Eina_Bool
 grid_item_pack(Eo *grid, int count, Eina_List **l)
 {
@@ -312,7 +297,7 @@ EFL_END_TEST
 
 void efl_ui_test_grid(TCase *tc)
 {
-   tcase_add_checked_fixture(tc, grid_setup, grid_teardown);
+   tcase_add_checked_fixture(tc, grid_setup, NULL);
    tcase_add_test(tc, efl_ui_grid_class_check);
    tcase_add_test(tc, efl_ui_grid_pack);
    tcase_add_test(tc, efl_ui_grid_unpack);

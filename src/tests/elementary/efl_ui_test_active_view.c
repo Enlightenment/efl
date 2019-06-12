@@ -550,11 +550,6 @@ active_view_setup()
 static void
 active_view_teardown()
 {
-   if (win)
-     {
-        efl_del(win);
-        win = NULL;
-     }
    memset(&transition_calls, 0, sizeof(transition_calls));
    memset(&indicator_calls, 0, sizeof(indicator_calls));
 }
