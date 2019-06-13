@@ -227,6 +227,8 @@ _efl_canvas_vg_container_efl_object_constructor(Eo *obj,
    nd->data = pd;
    nd->flags = EFL_GFX_CHANGE_FLAG_ALL;
 
+   efl_gfx_color_set(obj, 255, 255, 255, 255);
+
    return obj;
 }
 
