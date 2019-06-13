@@ -1962,6 +1962,7 @@ tests_elementary_efl_ui_suite_SOURCES = \
 	tests/elementary/efl_ui_test_layout.c \
 	tests/elementary/efl_ui_test_widget.c \
 	tests/elementary/efl_ui_test_active_view.c \
+	tests/elementary/efl_ui_test_check.c \
 	tests/elementary/efl_ui_suite.h \
 	tests/elementary/efl_ui_model.c
 

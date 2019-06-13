@@ -473,7 +473,7 @@ test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
                 efl_event_callback_add(efl_added, EFL_UI_RADIO_EVENT_CHANGED, _cb_radio_changed_scale_type, o_bg),
                 efl_pack(hbox, efl_added));
 
-   efl_ui_nstate_value_set(rdg, EFL_GFX_IMAGE_SCALE_TYPE_FILL);
+   efl_ui_radio_group_value_set(rdg, EFL_GFX_IMAGE_SCALE_TYPE_FILL);
 
    efl_add(EFL_UI_CHECK_CLASS, hbox,
                 efl_text_set(efl_added, "Bg Color"),

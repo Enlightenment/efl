@@ -27,6 +27,7 @@ typedef struct _Efl_Ui_Check_Data Efl_Ui_Check_Data;
 struct _Efl_Ui_Check_Data
 {
    Eina_Bool            *statep;
+   Eina_Bool            selected;
 };
 
 /**

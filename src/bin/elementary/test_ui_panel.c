@@ -67,7 +67,7 @@ test_ui_panel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 static void
 _check_changed(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   elm_config_scroll_thumbscroll_enabled_set(efl_ui_nstate_value_get(ev->object));
+   elm_config_scroll_thumbscroll_enabled_set(efl_ui_check_selected_get(ev->object));
 }
 
 static void
@@ -76,7 +76,7 @@ _panel_toggled(void *data, const Efl_Event *ev)
    Evas_Object *list;
    int i;
 
-   if (!efl_ui_nstate_value_get(data)) return;
+   if (!efl_ui_check_selected_get(data)) return;
 
    list = efl_content_get(ev->object);
    evas_object_del(list);

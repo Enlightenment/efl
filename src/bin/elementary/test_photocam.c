@@ -654,7 +654,7 @@ static const struct {
 static void
 _radio_changed_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   unsigned char index = efl_ui_nstate_value_get(obj);
+   unsigned char index = elm_radio_value_get(obj);
    efl_ui_image_icon_set(data, photocam_icons[index].name);
    printf("icon is %s\n", efl_ui_image_icon_get(data));
 }

@@ -286,7 +286,7 @@ _efl_ui_radio_state_value_get(const Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_radio_efl_ui_nstate_value_set(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd, int value)
+_efl_ui_radio_group_value_set(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd, int value)
 {
    if (value == sd->group->value) return;
    sd->group->value = value;
@@ -295,7 +295,7 @@ _efl_ui_radio_efl_ui_nstate_value_set(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd
 }
 
 EOLIAN static int
-_efl_ui_radio_efl_ui_nstate_value_get(const Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
+_efl_ui_radio_group_value_get(const Eo *obj EINA_UNUSED, Efl_Ui_Radio_Data *sd)
 {
    return sd->group->value;
 }
@@ -486,13 +486,13 @@ elm_radio_add(Evas_Object *parent)
 EAPI void
 elm_radio_value_set(Evas_Object *obj, int value)
 {
-   efl_ui_nstate_value_set(obj, value);
+   efl_ui_radio_group_value_set(obj, value);
 }
 
 EAPI int
 elm_radio_value_get(const Evas_Object *obj)
 {
-   return efl_ui_nstate_value_get(obj);
+   return efl_ui_radio_group_value_get(obj);
 }
 
 #include "efl_ui_radio_legacy_eo.c"

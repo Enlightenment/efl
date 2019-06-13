@@ -30,13 +30,12 @@ void efl_ui_test_image_zoomable(TCase *tc);
 void efl_ui_test_layout(TCase *tc);
 void efl_ui_test_image(TCase *tc);
 void efl_ui_test_callback(TCase *tc);
-
 void efl_ui_test_focus(TCase *tc);
 void efl_ui_test_focus_sub(TCase *tc);
-
 void efl_ui_model(TCase *tc);
 void efl_ui_test_widget(TCase *tc);
 void efl_ui_test_active_view(TCase *tc);
+void efl_ui_test_check(TCase *tc);
 
 void loop_timer_interval_set(Eo *obj, double in);
 

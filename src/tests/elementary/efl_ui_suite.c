@@ -26,6 +26,7 @@ static const Efl_Test_Case etc[] = {
   { "Efl_Ui_Model", efl_ui_model },
   { "efl_ui_widget", efl_ui_test_widget },
   { "efl_ui_active_view", efl_ui_test_active_view},
+  { "efl_ui_check", efl_ui_test_check },
   { NULL, NULL }
 };
 

@@ -31,7 +31,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    bx.pack_end(radio);
 
    auto cb_val = std::bind([] (efl::ui::Radio &obj)
-   { std::cout << "val is now: " << obj.value_get() << std::endl; },
+   { std::cout << "val is now: " << obj.group_value_get() << std::endl; },
          std::placeholders::_1);
    efl::eolian::event_add(efl::ui::Nstate::changed_event, radio, cb_val);
 

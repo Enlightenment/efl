@@ -110,7 +110,7 @@ _create_box_contents(Evas_Object *box)
         evas_object_data_set(radio, "data", content);
      }
 
-   efl_ui_nstate_value_set(radio_group, 0);
+   efl_ui_radio_group_value_set(radio_group, 0);
 
    return radio_group;
 }

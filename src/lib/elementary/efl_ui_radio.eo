@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Radio extends Efl.Ui.Check implements Efl.Access.Widget.Action, Efl.Content
+class @beta Efl.Ui.Radio extends Efl.Ui.Check implements Efl.Access.Widget.Action
 {
    [[Elementary radio class]]
    methods {
@@ -56,6 +56,15 @@ class @beta Efl.Ui.Radio extends Efl.Ui.Check implements Efl.Access.Widget.Actio
                                     to join.]]
          }
       }
+      @property group_value {
+         [[Change the value of the group.
+
+           This will enable the radio button in the group that is assosiated with this value. A value which is not assosiated with any radio button will result in every radio button beeing disabled.
+         ]]
+         values {
+            value : int; [[The value of the radio button in the group which should be enabled.]]
+         }
+      }
    }
    implements {
       Efl.Object.constructor;
@@ -65,6 +74,5 @@ class @beta Efl.Ui.Radio extends Efl.Ui.Check implements Efl.Access.Widget.Actio
       Efl.Ui.Widget.widget_input_event_handler;
       Efl.Access.Object.state_set { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Ui.Nstate.value { set; get; }
    }
 }

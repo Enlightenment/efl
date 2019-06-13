@@ -339,7 +339,7 @@ static void prev_block_check_cb(void *data, const Efl_Event *ev)
    Eo *pager = data;
    Eina_Bool prev, next;
 
-   prev = efl_ui_nstate_value_get(ev->object);
+   prev = efl_ui_check_selected_get(ev->object);
 
    efl_ui_pager_scroll_block_get(pager, NULL, &next);
    efl_ui_pager_scroll_block_set(pager, prev, next);
@@ -350,7 +350,7 @@ static void next_block_check_cb(void *data, const Efl_Event *ev)
    Eo *pager = data;
    Eina_Bool prev, next;
 
-   next = efl_ui_nstate_value_get(ev->object);
+   next = efl_ui_check_selected_get(ev->object);
 
    efl_ui_pager_scroll_block_get(pager, &prev, NULL);
    efl_ui_pager_scroll_block_set(pager, prev, next);
@@ -359,7 +359,7 @@ static void next_block_check_cb(void *data, const Efl_Event *ev)
 static void loop_radio_cb(void *data, const Efl_Event *ev)
 {
    Eo *pager = data;
-   int state = efl_ui_nstate_value_get(ev->object);
+   int state = efl_ui_radio_group_value_get(ev->object);
 
    efl_ui_pager_loop_mode_set(pager, state);
 }
@@ -796,7 +796,7 @@ static void scroll_block_cb(void *data,
    efl_add(EFL_UI_CHECK_CLASS, box,
            efl_ui_widget_style_set(efl_added, "toggle"),
            efl_text_set(efl_added, "Prev Block"),
-           efl_ui_nstate_value_set(efl_added, prev),
+           efl_ui_check_selected_set(efl_added, prev),
            efl_event_callback_add(efl_added, EFL_UI_CHECK_EVENT_CHANGED,
                                   prev_block_check_cb, pager),
            efl_pack_end(box, efl_added));
@@ -804,7 +804,7 @@ static void scroll_block_cb(void *data,
    efl_add(EFL_UI_CHECK_CLASS, box,
            efl_ui_widget_style_set(efl_added, "toggle"),
            efl_text_set(efl_added, "Next Block"),
-           efl_ui_nstate_value_set(efl_added, next),
+           efl_ui_check_selected_set(efl_added, next),
            efl_event_callback_add(efl_added, EFL_UI_CHECK_EVENT_CHANGED,
                                   next_block_check_cb, pager),
            efl_pack_end(box, efl_added));
@@ -849,7 +849,7 @@ static void loop_cb(void *data EINA_UNUSED,
 
    loop = efl_ui_pager_loop_mode_get(pager);
 
-   efl_ui_nstate_value_set(rd, loop);
+   efl_ui_radio_group_value_set(rd, loop);
 
    if (loop == EFL_UI_PAGER_LOOP_DISABLED)
      {
