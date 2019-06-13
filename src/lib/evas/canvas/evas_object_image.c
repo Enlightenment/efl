@@ -465,11 +465,76 @@ _efl_canvas_image_internal_efl_object_dbg_info_get(Eo *eo_obj, Evas_Image_Data *
                        (uint64_t)(uintptr_t)evas_object_image_source_get(eo_obj));
 }
 
+static void
+_stretch_region_load(Evas_Object_Protected_Data *obj, Evas_Image_Data *o)
+{
+   unsigned int i;
+   uint8_t *horizontal = NULL;
+   uint8_t *vertical = NULL;
+   uint32_t total, stretchable;
+
+   if (o->cur->stretch_loaded == EINA_TRUE ||
+       (o->cur->stretch.horizontal.region && o->cur->stretch.vertical.region))
+     return ;
+
+   ENFN->image_stretch_region_get(ENC, o->engine_data,
+                                &horizontal,
+                                &vertical);
+
+   EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+   {
+      state_write->stretch.horizontal.region = horizontal;
+      state_write->stretch.vertical.region = vertical;
+      state_write->free_stretch = EINA_FALSE;
+      state_write->stretch_loaded = EINA_TRUE;
+   }
+   EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+
+   if (!o->cur->stretch.horizontal.region || !o->cur->stretch.vertical.region)
+     return ;
+
+   stretchable = 0;
+   total = 0;
+   for (i = 0; o->cur->stretch.horizontal.region[i]; i++)
+     {
+        total += o->cur->stretch.horizontal.region[i] & 0x7F;
+        if (o->cur->stretch.horizontal.region[i] & 0x80)
+          stretchable += o->cur->stretch.horizontal.region[i] & 0x7F;
+     }
+
+   EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+   {
+      state_write->stretch.horizontal.stretchable = stretchable;
+      state_write->stretch.horizontal.total = total;
+   }
+   EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+
+   stretchable = 0;
+   total = 0;
+   for (i = 0; o->cur->stretch.vertical.region[i]; i++)
+     {
+        total += o->cur->stretch.vertical.region[i] & 0x7F;
+        if (o->cur->stretch.vertical.region[i] & 0x80)
+          stretchable += o->cur->stretch.vertical.region[i] & 0x7F;
+     }
+
+   EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+   {
+      state_write->stretch.vertical.stretchable = stretchable;
+      state_write->stretch.vertical.total = total;
+   }
+   EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+}
+
 static Eina_Rect
 _efl_canvas_image_internal_efl_gfx_image_content_region_get(const Eo *eo_obj, Evas_Image_Data *o)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Eina_Rect r;
+
+   if (!o->cur->stretch.horizontal.region &&
+       !o->cur->stretch.vertical.region)
+     _stretch_region_load(obj, o);
 
    if (o->cur->stretch.horizontal.region &&
        o->cur->stretch.vertical.region)
@@ -477,6 +542,15 @@ _efl_canvas_image_internal_efl_gfx_image_content_region_get(const Eo *eo_obj, Ev
         uint32_t acc;
         uint32_t hi = 0;
         uint32_t vi = 0;
+
+        // If the file come with a defined content zone, then return it
+        if (ENFN->image_content_region_get(ENC, o->engine_data, &r.rect))
+          {
+             // Correct bottom right corner coordinate to be resized with object size
+             r.w = obj->cur->geometry.w - (o->cur->image.w - r.w);
+             r.h = obj->cur->geometry.h - (o->cur->image.h - r.h);
+             return r;
+          }
 
         r.x = _stretch_region_accumulate(o->cur->stretch.horizontal.region, 0, &hi);
         r.w = o->cur->stretch.horizontal.stretchable + obj->cur->geometry.w - o->cur->image.w;
@@ -681,11 +755,14 @@ _efl_canvas_image_internal_efl_gfx_image_stretch_region_set(Eo *eo_obj, Evas_Ima
    evas_object_async_block(obj);
    EINA_COW_IMAGE_STATE_WRITE_BEGIN(pd, state_write)
    {
-      free(state_write->stretch.horizontal.region);
+      if (state_write->free_stretch) free(state_write->stretch.horizontal.region);
       state_write->stretch.horizontal.region = NULL;
 
-      free(state_write->stretch.vertical.region);
+      if (state_write->free_stretch) free(state_write->stretch.vertical.region);
       state_write->stretch.vertical.region = NULL;
+
+      state_write->free_stretch = EINA_FALSE;
+      state_write->stretch_loaded = EINA_FALSE;
    }
    EINA_COW_IMAGE_STATE_WRITE_END(pd, state_write);
 
@@ -722,6 +799,8 @@ _efl_canvas_image_internal_efl_gfx_image_stretch_region_set(Eo *eo_obj, Evas_Ima
       state_write->stretch.vertical.region = fvsz;
       state_write->stretch.vertical.stretchable = vstretch;
       state_write->stretch.vertical.total = vtotal;
+      state_write->free_stretch = EINA_TRUE;
+      state_write->stretch_loaded = EINA_TRUE;
    }
    EINA_COW_IMAGE_STATE_WRITE_END(pd, state_write);
 
@@ -794,6 +873,15 @@ _efl_canvas_image_internal_efl_gfx_image_stretch_region_get(const Eo *eo_obj,
                                                             Eina_Iterator **vertical)
 {
    Efl_Gfx_Image_Stretch_Region_Iterator *it;
+
+   if (!pd->cur->stretch.vertical.region &&
+       !pd->cur->stretch.horizontal.region)
+     {
+        Evas_Object_Protected_Data *obj;
+
+        obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+        _stretch_region_load(obj, pd);
+     }
 
    if (!horizontal) goto vertical_only;
    if (!pd->cur->stretch.horizontal.region)
@@ -1596,6 +1684,7 @@ _efl_canvas_image_internal_efl_object_destructor(Eo *eo_obj, Evas_Image_Data *o 
    if (obj->legacy.ctor)
      evas_object_image_video_surface_set(eo_obj, NULL);
    evas_object_image_free(eo_obj, obj);
+   efl_gfx_image_stretch_region_set(eo_obj, NULL, NULL);
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 
@@ -2383,6 +2472,8 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
         return;
      }
+
+   _stretch_region_load(obj, o);
 
    ENFN->image_scale_hint_set(engine, pixels, o->scale_hint);
    idx = evas_object_image_figure_x_fill(eo_obj, obj, o->cur->fill.x, o->cur->fill.w, &idw);

@@ -1051,6 +1051,48 @@ eng_image_file_colorspace_get(void *data EINA_UNUSED, void *image)
 }
 
 static Eina_Bool
+eng_image_content_region_get(void *engine EINA_UNUSED, void *image, Eina_Rectangle *content)
+{
+   RGBA_Image *im = image;
+
+   if (!im) return EINA_FALSE;
+
+   if (!im->cache_entry.need_data) return EINA_FALSE;
+
+   if (!im->image.data) evas_cache_image_load_data(&im->cache_entry);
+
+   if (!im->cache_entry.content.w ||
+       !im->cache_entry.content.h)
+     return EINA_FALSE;
+
+   if (!content) return EINA_FALSE;
+
+   memcpy(content, &im->cache_entry.content, sizeof (Eina_Rectangle));
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+eng_image_stretch_region_get(void *engine EINA_UNUSED, void *image,
+                             uint8_t **horizontal, uint8_t **vertical)
+{
+   RGBA_Image *im = image;
+
+   if (!im) return EINA_FALSE;
+
+   if (!im->cache_entry.need_data) return EINA_FALSE;
+
+   if (!im->image.data) evas_cache_image_load_data(&im->cache_entry);
+
+   if (!im->cache_entry.stretch.horizontal.region ||
+       !im->cache_entry.stretch.vertical.region)
+     return EINA_FALSE;
+
+   *horizontal = im->cache_entry.stretch.horizontal.region;
+   *vertical = im->cache_entry.stretch.vertical.region;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
 eng_image_data_direct_get(void *data EINA_UNUSED, void *image, int plane,
                           Eina_Slice *slice, Evas_Colorspace *cspace,
                           Eina_Bool load, Eina_Bool *tofree)
@@ -4611,6 +4653,8 @@ static Evas_Func func =
      eng_image_data_map,
      eng_image_data_unmap,
      eng_image_data_maps_get,
+     eng_image_content_region_get,
+     eng_image_stretch_region_get,
      eng_image_data_slice_add,
      eng_image_prepare,
      eng_image_surface_noscale_new,

@@ -135,6 +135,17 @@ typedef struct _Evas_Image_Property Evas_Image_Property;
 struct _Evas_Image_Property
 {
   Emile_Image_Property info;
+  // Stretch region are directly encoded the way Evas excpect them internally
+  // 8bits is used for each step. The lower bits indicate how long the stretch region
+  // span. Masking with 0x80 will be true if the region is stretchable. If false, it
+  // will be fixed size.
+  struct {
+     struct {
+        uint8_t *region;
+     } horizontal, vertical;
+  } stretch;
+  // Where inside the image are we supposed to overlay data
+  Eina_Rectangle content;
   // need_data is set to True when to get accurate property, data need to be loaded
   Eina_Bool need_data;
 };
@@ -252,6 +263,32 @@ EAPI Eina_Bool    evas_module_task_cancelled (void); /**< @since 1.19 */
 #define EVAS_EINA_MODULE_DEFINE(Tn, Name)	\
   EINA_MODULE_INIT(evas_##Tn##_##Name##_init);	\
   EINA_MODULE_SHUTDOWN(evas_##Tn##_##Name##_shutdown);
+
+static inline Eina_Bool
+evas_loader_helper_stretch_region_push(uint8_t **region,
+                                       uint8_t *offset,
+                                       Eina_Bool stretchable)
+{
+   uint32_t length = 0;
+   void *tmp;
+
+   if (*offset == 0) return EINA_TRUE;
+
+   while (*region && (*region)[length] != 0)
+     length++;
+
+   // +1 for termination and +1 for the region being pushed
+   tmp = realloc(*region, sizeof (uint8_t) * (length + 2));
+   if (!tmp) return EINA_FALSE;
+
+   *region = (uint8_t *) tmp;
+   (*region)[length] = (*offset) | (stretchable ? 0x80 : 0);
+   (*region)[length + 1] = 0;
+
+   *offset = 0;
+
+   return EINA_TRUE;
+}
 
 #ifdef __cplusplus
 }

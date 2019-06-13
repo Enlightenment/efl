@@ -598,6 +598,7 @@ struct _Image_Entry
 
    unsigned char          need_unload : 1;
    unsigned char          load_failed : 1;
+   unsigned char          need_data : 1;
 
    struct
      {
@@ -633,6 +634,14 @@ struct _Image_Entry
    int                    connect_num;
    int                    channel;
    Evas_Load_Error        load_error;
+
+   struct {
+      struct {
+         uint8_t *region;
+      } horizontal, vertical;
+   } stretch;
+
+   Eina_Rectangle content;
 };
 
 struct _Engine_Image_Entry
