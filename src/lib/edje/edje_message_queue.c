@@ -148,7 +148,6 @@ static void
 _edje_object_message_signal_process_do(Eo *obj EINA_UNUSED, Edje *ed)
 {
    Eina_Inlist *l, *ln;
-   Eina_Inlist *tmpq = NULL;
    Edje *lookup_ed;
    Eina_List *groups = NULL, *lg;
    Edje_Message *em;
@@ -167,39 +166,25 @@ _edje_object_message_signal_process_do(Eo *obj EINA_UNUSED, Edje *ed)
              if (em->edje == lookup_ed)
                {
                   msgq = eina_inlist_remove(msgq, &(em->inlist_main));
-                  tmpq = eina_inlist_append(tmpq, &(em->inlist_main));
+                  tmp_msgq = eina_inlist_append(tmp_msgq, &(em->inlist_main));
+                  em->in_tmp_msgq = EINA_TRUE;
                   break;
                }
           }
      }
-   /* a temporary message queue */
-   if (tmp_msgq)
-     {
-        while (tmpq)
-          {
-             l = tmpq;
-             em = INLIST_CONTAINER(Edje_Message, l, inlist_main);
-             tmpq = eina_inlist_remove(tmpq, &(em->inlist_main));
-             tmp_msgq = eina_inlist_append(tmp_msgq, &(em->inlist_main));
-          }
-     }
-   else
-     {
-        tmp_msgq = tmpq;
-        tmpq = NULL;
-     }
 
    tmp_msgq_processing++;
 again:
-   for (l = tmp_msgq; l; l = ln)
+   for (l = ed->messages; l; l = ln)
      {
         ln = l->next;
-        em = INLIST_CONTAINER(Edje_Message, l, inlist_main);
+        em = INLIST_CONTAINER(Edje_Message, l, inlist_edje);
+        if (!em->in_tmp_msgq) continue;
+        // so why this? any group edje is not the parent - skip this
         EINA_LIST_FOREACH(groups, lg, lookup_ed)
           {
              if (em->edje == lookup_ed) break;
           }
-        if (em->edje != lookup_ed) continue;
         tmp_msgq = eina_inlist_remove(tmp_msgq, &(em->inlist_main));
         em->edje->messages = eina_inlist_remove(em->edje->messages, &(em->inlist_edje));
         if (!lookup_ed->delete_me)
@@ -874,21 +859,14 @@ _edje_message_queue_process(void)
    for (i = 0; (i < 8) && (msgq); i++)
      {
         /* a temporary message queue */
-        if (tmp_msgq)
+        while (msgq)
           {
-             while (msgq)
-               {
-                  Eina_Inlist *l = msgq;
+             Eina_Inlist *l = msgq;
 
-                  em = INLIST_CONTAINER(Edje_Message, l, inlist_main);
-                  msgq = eina_inlist_remove(msgq, &(em->inlist_main));
-                  tmp_msgq = eina_inlist_append(tmp_msgq, &(em->inlist_main));
-               }
-          }
-        else
-          {
-             tmp_msgq = msgq;
-             msgq = NULL;
+             em = INLIST_CONTAINER(Edje_Message, l, inlist_main);
+             msgq = eina_inlist_remove(msgq, &(em->inlist_main));
+             tmp_msgq = eina_inlist_append(tmp_msgq, &(em->inlist_main));
+             em->in_tmp_msgq = EINA_TRUE;
           }
 
         tmp_msgq_processing++;
