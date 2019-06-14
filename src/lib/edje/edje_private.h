@@ -1747,6 +1747,8 @@ struct _Edje
    lua_State            *L;
    Eina_Inlist          *lua_objs;
 
+   Eina_Inlist          *messages;
+
    int                   lua_ref;
    int                   processing_messages;
    int                   references;
@@ -2225,6 +2227,7 @@ struct _Edje_Message_Signal
 struct _Edje_Message
 {
    Eina_Inlist        inlist_main; // msgq or tmp_msgq - mut exclusive
+   Eina_Inlist        inlist_edje;
    Edje              *edje;
    unsigned char     *msg;
    int                id;

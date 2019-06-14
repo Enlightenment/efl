@@ -201,6 +201,7 @@ again:
           }
         if (em->edje != lookup_ed) continue;
         tmp_msgq = eina_inlist_remove(tmp_msgq, &(em->inlist_main));
+        em->edje->messages = eina_inlist_remove(em->edje->messages, &(em->inlist_edje));
         if (!lookup_ed->delete_me)
           {
              lookup_ed->processing_messages++;
@@ -651,6 +652,7 @@ _edje_message_propagate_send(Edje *ed, Edje_Queue queue, Edje_Message_Type type,
 
    em->msg = msg;
    msgq = eina_inlist_append(msgq, &(em->inlist_main));
+   em->edje->messages = eina_inlist_append(em->edje->messages, &(em->inlist_edje));
 }
 
 void
@@ -898,6 +900,7 @@ _edje_message_queue_process(void)
              em = INLIST_CONTAINER(Edje_Message, l, inlist_main);
              ed = em->edje;
              tmp_msgq = eina_inlist_remove(tmp_msgq, &(em->inlist_main));
+             em->edje->messages = eina_inlist_remove(em->edje->messages, &(em->inlist_edje));
              em->edje->message.num--;
              if (!ed->delete_me)
                {
@@ -951,6 +954,7 @@ _edje_message_queue_clear(void)
         em = INLIST_CONTAINER(Edje_Message, l, inlist_main);
         msgq = eina_inlist_remove(msgq, &(em->inlist_main));
         em->edje->message.num--;
+        em->edje->messages = eina_inlist_remove(em->edje->messages, &(em->inlist_edje));
         _edje_message_free(em);
      }
    while (tmp_msgq)
@@ -959,6 +963,7 @@ _edje_message_queue_clear(void)
         em = INLIST_CONTAINER(Edje_Message, l, inlist_main);
         tmp_msgq = eina_inlist_remove(tmp_msgq, &(em->inlist_main));
         em->edje->message.num--;
+        em->edje->messages = eina_inlist_remove(em->edje->messages, &(em->inlist_edje));
         _edje_message_free(em);
      }
 }
@@ -979,6 +984,7 @@ _edje_message_del(Edje *ed)
           {
              msgq = eina_inlist_remove(msgq, &(em->inlist_main));
              em->edje->message.num--;
+             em->edje->messages = eina_inlist_remove(em->edje->messages, &(em->inlist_edje));
              _edje_message_free(em);
           }
         if (ed->message.num <= 0) return;
@@ -992,6 +998,7 @@ _edje_message_del(Edje *ed)
           {
              tmp_msgq = eina_inlist_remove(tmp_msgq, &(em->inlist_main));
              em->edje->message.num--;
+             em->edje->messages = eina_inlist_remove(em->edje->messages, &(em->inlist_edje));
              _edje_message_free(em);
           }
         if (ed->message.num <= 0) return;
