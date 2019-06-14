@@ -11,9 +11,44 @@ static Eina_Inlist *tmp_msgq = NULL;
 static int tmp_msgq_processing = 0;
 static int tmp_msgq_restart = 0;
 
+static Eina_Inlist *_edje_msg_trash = NULL;
+
 /*============================================================================*
 *                                   API                                      *
 *============================================================================*/
+
+#define INLIST_CONTAINER(container_type, list, list_entry) \
+   (container_type *)((unsigned char *)list - offsetof(container_type, list_entry))
+
+static Edje_Message *
+_edje_msg_trash_pop(void)
+{
+   Edje_Message *em;
+
+   if (!_edje_msg_trash) return NULL;
+   em = INLIST_CONTAINER(Edje_Message, _edje_msg_trash, inlist_main);
+   _edje_msg_trash = eina_inlist_remove(_edje_msg_trash, &(em->inlist_main));
+   memset(em, 0, sizeof(Edje_Message));
+   return em;
+}
+
+static void
+_edje_msg_trash_push(Edje_Message *em)
+{
+   _edje_msg_trash = eina_inlist_prepend(_edje_msg_trash, &(em->inlist_main));
+}
+
+static void
+_edje_msg_trash_clear(void)
+{
+   Edje_Message *em;
+
+   while (_edje_msg_trash)
+     {
+        em = _edje_msg_trash_pop();
+        free(em);
+     }
+}
 
 static void
 _edje_object_message_propagate_send(Evas_Object *obj, Edje_Message_Type type, int id, void *msg, Eina_Bool prop)
@@ -141,9 +176,6 @@ bad_type:
    return;
 }
 
-#define INLIST_CONTAINER(container_type, list, list_entry) \
-   (container_type *)((unsigned char *)list - offsetof(container_type, list_entry))
-
 static void
 _edje_object_message_signal_process_do(Eo *obj EINA_UNUSED, Edje *ed)
 {
@@ -259,6 +291,7 @@ _edje_job(void *data EINA_UNUSED)
    _job = NULL;
    _injob++;
    _edje_message_queue_process();
+   _edje_msg_trash_clear();
    _injob--;
 }
 
@@ -282,6 +315,7 @@ void
 _edje_message_shutdown(void)
 {
    _edje_message_queue_clear();
+   _edje_msg_trash_clear();
    if (_job_loss_timer)
      {
         ecore_timer_del(_job_loss_timer);
@@ -315,7 +349,8 @@ _edje_message_new(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id)
 {
    Edje_Message *em;
 
-   em = calloc(1, sizeof(Edje_Message));
+   em = _edje_msg_trash_pop();
+   if (!em) em = calloc(1, sizeof(Edje_Message));
    if (!em) return NULL;
    em->edje = ed;
    em->queue = queue;
@@ -448,7 +483,7 @@ _edje_message_free(Edje_Message *em)
              break;
           }
      }
-   free(em);
+   _edje_msg_trash_push(em);
 }
 
 static void
