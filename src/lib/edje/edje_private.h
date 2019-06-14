@@ -2226,9 +2226,10 @@ struct _Edje_Message
    Edje              *edje;
    unsigned char     *msg;
    int                id;
-   Eina_Bool          propagated : 1;
-   Edje_Queue         queue      : 2;
-   Edje_Message_Type  type       : 29;
+   Eina_Bool          in_tmp_msgq :  1;
+   Eina_Bool          propagated  :  1;
+   Edje_Queue         queue       :  2;
+   Edje_Message_Type  type        : 28;
 };
 
 typedef enum _Edje_Fill
