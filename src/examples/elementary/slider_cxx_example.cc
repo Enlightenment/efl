@@ -70,11 +70,11 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    { std::cout << "Changed to " << obj.range_value_get() << std::endl; }
          , std::placeholders::_1);
 
-   auto delay =  std::bind ( [] (efl::ui::Slider obj)
-   { std::cout << "Delay changed to " << obj.range_value_get() << std::endl; }
+   auto steady =  std::bind ( [] (efl::ui::Slider obj)
+   { std::cout << "Steady to " << obj.range_value_get() << std::endl; }
          , std::placeholders::_1);
 
    sl7.changed_event_cb_add(changed);
-   sl7.delay_changed_event_cb_add(delay);
+   sl7.steady_event_cb_add(steady);
 }
 EFL_MAIN()
