@@ -953,32 +953,18 @@ _edje_message_del(Edje *ed)
    Edje_Message *em;
 
    if (ed->message.num <= 0) return;
-   /* delete any messages on the main queue for this edje object */
-   for (l = msgq; l; l = ln)
+   // delete any messages on the main or tmp queue for this edje object
+   for (l = ed->messages; l; l = ln)
      {
         ln = l->next;
-        em = INLIST_CONTAINER(Edje_Message, l, inlist_main);
-        if (em->edje == ed)
-          {
-             msgq = eina_inlist_remove(msgq, &(em->inlist_main));
-             em->edje->message.num--;
-             em->edje->messages = eina_inlist_remove(em->edje->messages, &(em->inlist_edje));
-             _edje_message_free(em);
-          }
-        if (ed->message.num <= 0) return;
-     }
-   /* delete any on the processing queue */
-   for (l = tmp_msgq; l; l = ln)
-     {
-        ln = l->next;
-        em = INLIST_CONTAINER(Edje_Message, l, inlist_main);
-        if (em->edje == ed)
-          {
-             tmp_msgq = eina_inlist_remove(tmp_msgq, &(em->inlist_main));
-             em->edje->message.num--;
-             em->edje->messages = eina_inlist_remove(em->edje->messages, &(em->inlist_edje));
-             _edje_message_free(em);
-          }
+        em = INLIST_CONTAINER(Edje_Message, l, inlist_edje);
+        em->edje->message.num--;
+        if (em->in_tmp_msgq)
+          tmp_msgq = eina_inlist_remove(tmp_msgq, &(em->inlist_main));
+        else
+          msgq = eina_inlist_remove(msgq, &(em->inlist_main));
+        em->edje->messages = eina_inlist_remove(em->edje->messages, &(em->inlist_edje));
+        _edje_message_free(em);
         if (ed->message.num <= 0) return;
      }
 }
