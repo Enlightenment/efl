@@ -2224,12 +2224,13 @@ struct _Edje_Message_Signal
 
 struct _Edje_Message
 {
+   Eina_Inlist        inlist_main; // msgq or tmp_msgq - mut exclusive
    Edje              *edje;
-   Edje_Queue         queue;
-   Edje_Message_Type  type;
-   int                id;
    unsigned char     *msg;
+   int                id;
    Eina_Bool          propagated : 1;
+   Edje_Queue         queue      : 2;
+   Edje_Message_Type  type       : 29;
 };
 
 typedef enum _Edje_Fill
