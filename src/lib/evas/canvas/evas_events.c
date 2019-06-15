@@ -379,7 +379,7 @@ _evas_event_object_list_raw_in_get(Evas *eo_e, Eina_List *in,
    spaces++;
    if (ilist)
      {
-        for (obj = _EINA_INLIST_CONTAINER(obj, eina_inlist_last(ilist));
+        for (obj = _EINA_INLIST_CONTAINER(obj, ilist->last);
              obj;
              obj = _EINA_INLIST_CONTAINER(obj, EINA_INLIST_GET(obj)->prev))
           {
