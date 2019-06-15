@@ -1394,6 +1394,7 @@ static Eina_Bool
 _curve_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *instr)
 {
    Instruction_Param *param;
+   Eina_Inlist *last = NULL;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr, EINA_FALSE);
    EINA_SAFETY_ON_NULL_RETURN_VAL(instr->name, EINA_FALSE);
@@ -1404,7 +1405,8 @@ _curve_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *in
    // TODO: Allow passing an array of 256 values as points.
    // It could be easily computed from another function in the script.
    _instruction_param_seq_add(instr, "points", VT_SPECIAL, _lua_curve_points_func, NULL);
-   param = EINA_INLIST_CONTAINER_GET(eina_inlist_last(instr->params), Instruction_Param);
+   if (instr->params) last = instr->params->last;
+   param = EINA_INLIST_CONTAINER_GET(last, Instruction_Param);
    param->allow_any_string = EINA_TRUE;
 
    _instruction_param_seq_add(instr, "interpolation", VT_STRING, "linear");
