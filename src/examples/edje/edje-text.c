@@ -50,13 +50,28 @@ _on_text_change(void *data EINA_UNUSED, Evas_Object *obj, const char *part)
 static void
 _on_mouse_down(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *o, void *event_info EINA_UNUSED)
 {
+   static char envbuf[20]; // doesn't have to be static, but a good habit
    char *env;
    lang_idx = (lang_idx + 1) % (sizeof (lang) / sizeof (lang[0]));
    fprintf(stderr, "Setting lang of this edje object to '%s'\n", lang[lang_idx]);
+
+   // unfortunately dealing with env vars portably means using putenv()
+   // which has issues that lead to complexity like below. the envbuf is
+   // static because in general  it's a good habit when dealing with putenv()
+   // but in this case it doesn't need to be. it's good to show good habits
+   // at any rate. read up pn putenv() and how it takes the string pointer
+   // directly into the env and takes "ownership" (but will never actually
+   // free it if its an allocated string etc.).
    env = getenv("LANGUAGE");
-   setenv("LANGUAGE", lang[lang_idx], 1);
+   if (env) env = strdup(env);
+   snprintf(envbuf, sizeof(envbuf), "LANGUAGE=%s", lang[lang_idx]);
+   putenv(envbuf);
+
    edje_object_language_set(o, lang[lang_idx]);
-   setenv("LANGUAGE", env, 1);
+
+   snprintf(envbuf, sizeof(envbuf), "LANGUAGE=%s", env ? env : "");
+   putenv(envbuf);
+   free(env);
 }
 
 static void
