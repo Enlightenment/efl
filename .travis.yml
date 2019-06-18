@@ -76,7 +76,6 @@ script:
   - .ci/ci-configure.sh "$CI_BUILD_TYPE"
   - .ci/ci-setup-ccache.sh "$CI_BUILD_TYPE"
   - .ci/ci-make.sh "$CI_BUILD_TYPE"
-  - .ci/ci-make-checkbuild.sh "$CI_BUILD_TYPE"
   #- .ci/ci-make-examples.sh "$CI_BUILD_TYPE"
   - |
       if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CI_BUILD_TYPE" == "" ]]; then
