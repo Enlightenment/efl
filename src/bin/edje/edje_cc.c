@@ -12,6 +12,10 @@
 # include <sys/resource.h>
 #endif
 
+#ifdef _WIN32
+# include <evil_private.h> /* realpath */
+#endif
+
 #include "edje_cc.h"
 int _edje_cc_log_dom = -1;
 static void main_help(void);

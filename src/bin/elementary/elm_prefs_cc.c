@@ -7,6 +7,10 @@
 #include <limits.h>
 #include <sys/stat.h>
 
+#ifdef _WIN32
+# include <evil_private.h> /* realpath */
+#endif
+
 #include "elm_prefs_cc.h"
 
 int _elm_prefs_cc_log_dom = -1;
