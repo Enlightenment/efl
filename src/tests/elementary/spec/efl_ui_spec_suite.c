@@ -28,6 +28,14 @@ _setup_window_and_widget(const Efl_Class *klass, const Efl_Class *content_klass)
    ck_assert(widget);
 }
 
+static void
+_shutdown_fixture(void)
+{
+   //We just NULL them out, shutdown will delete them
+   win = NULL;
+   widget = NULL;
+}
+
 Eo*
 create_test_widget(void)
 {
