@@ -1,0 +1,21 @@
+if HAVE_ELM_PREFS_CC
+ELM_PREFS_CC = @elm_prefs_cc@
+else
+ELM_PREFS_CC = $(top_builddir)/src/bin/elementary/elm_prefs_cc
+endif
+
+AM_V_EPB = $(am__v_EPB_@AM_V@)
+am__v_EPB_ = $(am__v_EPB_@AM_DEFAULT_V@)
+am__v_EPB_0 = @echo "  EPB     " $@;
+
+if HAVE_ELEMENTARY_CODEGEN
+ELEMENTARY_CODEGEN = @elementary_codegen@
+else
+ELEMENTARY_CODEGEN = $(top_builddir)/src/bin/elementary/elementary_codegen
+endif
+
+AM_V_CODEGEN = $(am__v_CODEGEN_@AM_V@)
+am__v_CODEGEN_ = $(am__v_CODEGEN_@AM_DEFAULT_V@)
+am__v_CODEGEN_0 = @echo "  CODEGEN     " $@;
+
+

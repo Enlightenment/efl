@@ -1,0 +1,255 @@
+
+### Library
+
+lib_LTLIBRARIES += \
+lib/efreet/libefreet.la \
+lib/efreet/libefreet_mime.la \
+lib/efreet/libefreet_trash.la
+
+EFREET_COMMON_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/efreet\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
+-DPACKAGE_SYSCONF_DIR=\"$(sysconfdir)\" \
+-DDATA_DIR=\"$(datadir)\" \
+-DLOCALE_DIR=\"@LOCALE_DIR@\" \
+@EFREET_CFLAGS@
+
+installed_efreetmainheadersdir = $(includedir)/efreet-@VMAJ@
+dist_installed_efreetmainheaders_DATA = \
+lib/efreet/Efreet.h \
+lib/efreet/efreet_base.h \
+lib/efreet/efreet_desktop.h \
+lib/efreet/efreet_icon.h \
+lib/efreet/efreet_ini.h \
+lib/efreet/efreet_menu.h \
+lib/efreet/efreet_utils.h \
+lib/efreet/efreet_uri.h \
+lib/efreet/Efreet_Mime.h \
+lib/efreet/Efreet_Trash.h
+
+# libefreet.la
+lib_efreet_libefreet_la_SOURCES = \
+lib/efreet/efreet.c \
+lib/efreet/efreet_base.c \
+lib/efreet/efreet_icon.c \
+lib/efreet/efreet_xml.c \
+lib/efreet/efreet_ini.c \
+lib/efreet/efreet_desktop.c \
+lib/efreet/efreet_desktop_command.c \
+lib/efreet/efreet_menu.c \
+lib/efreet/efreet_utils.c \
+lib/efreet/efreet_uri.c \
+lib/efreet/efreet_cache.c \
+lib/efreet/efreet_private.h \
+lib/efreet/efreet_xml.h \
+lib/efreet/efreet_cache_private.h \
+static_libs/buildsystem/buildsystem.h \
+static_libs/buildsystem/buildsystem_autotools.c
+
+lib_efreet_libefreet_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS) -DEFL_BUILD
+lib_efreet_libefreet_la_LIBADD = @EFREET_LIBS@ @EVIL_LIBS@
+lib_efreet_libefreet_la_DEPENDENCIES = @EFREET_INTERNAL_LIBS@
+lib_efreet_libefreet_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+# libefreet_mime.la
+lib_efreet_libefreet_mime_la_SOURCES = lib/efreet/efreet_mime.c
+lib_efreet_libefreet_mime_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS) -DEFL_BUILD
+lib_efreet_libefreet_mime_la_LIBADD = @USE_EFREET_LIBS@ @EVIL_LIBS@
+lib_efreet_libefreet_mime_la_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
+lib_efreet_libefreet_mime_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+# libefreet_trash.la
+lib_efreet_libefreet_trash_la_SOURCES = lib/efreet/efreet_trash.c
+lib_efreet_libefreet_trash_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS) -DEFL_BUILD
+lib_efreet_libefreet_trash_la_LIBADD = @USE_EFREET_LIBS@ @EVIL_LIBS@
+lib_efreet_libefreet_trash_la_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
+lib_efreet_libefreet_trash_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+
+### Binary
+
+if HAVE_WIN32
+USE_EFREET_BIN_LIBS = -L$(top_builddir)/src/lib/evil @USE_EFREET_LIBS@
+else
+USE_EFREET_BIN_LIBS = @USE_EFREET_LIBS@
+endif
+
+bin_PROGRAMS += bin/efreet/efreetd
+
+bin_efreet_efreetd_SOURCES = \
+bin/efreet/efreetd.c \
+bin/efreet/efreetd.h \
+bin/efreet/efreetd_ipc.h \
+bin/efreet/efreetd_ipc.c \
+bin/efreet/efreetd_cache.h \
+bin/efreet/efreetd_cache.c
+
+bin_efreet_efreetd_CPPFLAGS = \
+  -I$(top_builddir)/src/lib/efl \
+  $(EFREET_COMMON_CPPFLAGS) \
+  @EIO_CFLAGS@
+bin_efreet_efreetd_LDADD = $(USE_EFREET_BIN_LIBS) @USE_EIO_LIBS@
+bin_efreet_efreetd_DEPENDENCIES = \
+  @USE_EFREET_INTERNAL_LIBS@ \
+  lib/eio/libeio.la \
+  lib/efreet/libefreet_mime.la \
+  lib/efreet/libefreet_trash.la
+
+efreetinternal_bindir=$(libdir)/efreet/$(MODULE_ARCH)
+efreetinternal_bin_PROGRAMS = \
+bin/efreet/efreet_desktop_cache_create \
+bin/efreet/efreet_icon_cache_create \
+bin/efreet/efreet_mime_cache_create
+
+bin_efreet_efreet_desktop_cache_create_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS)
+bin_efreet_efreet_desktop_cache_create_LDADD = $(USE_EFREET_BIN_LIBS)
+bin_efreet_efreet_desktop_cache_create_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
+bin_efreet_efreet_desktop_cache_create_SOURCES = bin/efreet/efreet_desktop_cache_create.c
+
+bin_efreet_efreet_icon_cache_create_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS)
+bin_efreet_efreet_icon_cache_create_LDADD = $(USE_EFREET_BIN_LIBS)
+bin_efreet_efreet_icon_cache_create_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
+bin_efreet_efreet_icon_cache_create_SOURCES = bin/efreet/efreet_icon_cache_create.c
+
+bin_efreet_efreet_mime_cache_create_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS)
+bin_efreet_efreet_mime_cache_create_LDADD = $(USE_EFREET_BIN_LIBS)
+bin_efreet_efreet_mime_cache_create_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
+bin_efreet_efreet_mime_cache_create_SOURCES = bin/efreet/efreet_mime_cache_create.c
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+
+noinst_PROGRAMS += \
+tests/efreet/efreet_test \
+tests/efreet/efreet_async_test \
+tests/efreet/efreet_spec_test \
+tests/efreet/efreet_cache_test \
+tests/efreet/efreet_icon_cache_dump \
+tests/efreet/efreet_user_dir \
+tests/efreet/compare/efreet_alloc \
+tests/efreet/compare/efreet_menu_alloc
+
+
+# efreet_test
+tests_efreet_efreet_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS)
+tests_efreet_efreet_test_LDADD = \
+@USE_EFREET_LIBS@ \
+lib/efreet/libefreet_mime.la
+tests_efreet_efreet_test_DEPENDENCIES = \
+@USE_EFREET_INTERNAL_LIBS@ \
+lib/efreet/libefreet_mime.la
+
+tests_efreet_efreet_test_SOURCES = \
+tests/efreet/ef_data_dirs.c \
+tests/efreet/ef_desktop.c \
+tests/efreet/ef_icon_theme.c \
+tests/efreet/ef_ini.c \
+tests/efreet/ef_locale.c \
+tests/efreet/ef_menu.c \
+tests/efreet/ef_mime.c \
+tests/efreet/ef_test.h \
+tests/efreet/ef_utils.c \
+tests/efreet/main.c
+
+# efreet_async_test
+tests_efreet_efreet_async_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS)
+tests_efreet_efreet_async_test_LDADD = \
+@USE_EFREET_LIBS@
+tests_efreet_efreet_async_test_DEPENDENCIES = \
+@USE_EFREET_INTERNAL_LIBS@
+
+tests_efreet_efreet_async_test_SOURCES = \
+tests/efreet/efreet_async_test.c
+
+# efreet_spec_test
+tests_efreet_efreet_spec_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS)
+tests_efreet_efreet_spec_test_LDADD = @USE_EFREET_LIBS@
+tests_efreet_efreet_spec_test_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
+tests_efreet_efreet_spec_test_SOURCES = tests/efreet/efreet_spec_test.c
+
+# efreet_cache_test
+tests_efreet_efreet_cache_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS)
+tests_efreet_efreet_cache_test_LDADD = @USE_EFREET_LIBS@
+tests_efreet_efreet_cache_test_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
+tests_efreet_efreet_cache_test_SOURCES = tests/efreet/ef_cache.c
+
+# efreet_icon_cache_dump
+tests_efreet_efreet_icon_cache_dump_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS)
+tests_efreet_efreet_icon_cache_dump_LDADD = @USE_EFREET_LIBS@
+tests_efreet_efreet_icon_cache_dump_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
+tests_efreet_efreet_icon_cache_dump_SOURCES = tests/efreet/efreet_icon_cache_dump.c
+
+# efreet_user_dir
+tests_efreet_efreet_user_dir_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS)
+tests_efreet_efreet_user_dir_LDADD = @USE_EFREET_LIBS@
+tests_efreet_efreet_user_dir_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
+tests_efreet_efreet_user_dir_SOURCES = tests/efreet/efreet_user_dir.c
+
+# efreet_alloc
+tests_efreet_compare_efreet_alloc_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS)
+tests_efreet_compare_efreet_alloc_LDADD = @USE_EFREET_LIBS@
+tests_efreet_compare_efreet_alloc_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
+tests_efreet_compare_efreet_alloc_SOURCES = \
+tests/efreet/compare/efreet_alloc.c \
+tests/efreet/compare/comp.h
+
+# efreet_menu_alloc
+tests_efreet_compare_efreet_menu_alloc_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS)
+tests_efreet_compare_efreet_menu_alloc_LDADD = @USE_EFREET_LIBS@
+tests_efreet_compare_efreet_menu_alloc_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
+tests_efreet_compare_efreet_menu_alloc_SOURCES = \
+tests/efreet/compare/efreet_menu_alloc.c \
+tests/efreet/compare/comp.h
+
+efreettestdir = $(datadir)/efreet/test
+efreettest_DATA = \
+tests/efreet/data/test.ini \
+tests/efreet/data/long.ini \
+tests/efreet/data/test.desktop \
+tests/efreet/data/test_type.desktop \
+tests/efreet/data/test.menu \
+tests/efreet/data/test_menu_slash_bad.menu \
+tests/efreet/data/entry.png \
+tests/efreet/data/entry \
+tests/efreet/data/preferences.menu \
+tests/efreet/data/test_garbage
+
+efreettestsubdir = $(datadir)/efreet/test/sub
+efreettestsub_DATA = \
+tests/efreet/data/sub/test.desktop
+
+check_PROGRAMS += tests/efreet/efreet_suite
+TESTS += tests/efreet/efreet_suite
+
+tests_efreet_efreet_suite_SOURCES = \
+tests/efreet/efreet_suite.c \
+tests/efreet/efreet_suite.h \
+tests/efreet/efreet_test_efreet.c \
+tests/efreet/efreet_test_efreet_cache.c
+
+tests_efreet_efreet_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl $(EFREET_COMMON_CPPFLAGS) @CHECK_CFLAGS@ \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/efreet\"
+tests_efreet_efreet_suite_LDADD = @CHECK_LIBS@ @USE_EFREET_LIBS@
+tests_efreet_efreet_suite_DEPENDENCIES = @USE_EFREET_INTERNAL_LIBS@
+
+endif
+
+EXTRA_DIST2 += \
+tests/efreet/data/entry \
+tests/efreet/data/entry.png \
+tests/efreet/data/long.ini \
+tests/efreet/data/preferences.menu \
+tests/efreet/data/sub/Makefile.am \
+tests/efreet/data/sub/test.desktop \
+tests/efreet/data/test.desktop \
+tests/efreet/data/test_garbage \
+tests/efreet/data/test.ini \
+tests/efreet/data/test.menu \
+tests/efreet/data/test_menu_bad_comment.menu \
+tests/efreet/data/test_menu_slash_bad.menu \
+tests/efreet/data/test_type.desktop

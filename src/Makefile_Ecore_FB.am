@@ -1,0 +1,23 @@
+if HAVE_ECORE_FB
+
+### Library
+
+lib_LTLIBRARIES += lib/ecore_fb/libecore_fb.la
+
+installed_ecorefbmainheadersdir = $(includedir)/ecore-fb-@VMAJ@
+dist_installed_ecorefbmainheaders_DATA = \
+lib/ecore_fb/Ecore_Fb.h
+
+lib_ecore_fb_libecore_fb_la_SOURCES = \
+lib/ecore_fb/ecore_fb.c \
+lib/ecore_fb/ecore_fb_li.c \
+lib/ecore_fb/ecore_fb_ts.c \
+lib/ecore_fb/ecore_fb_vt.c \
+lib/ecore_fb/ecore_fb_keytable.h \
+lib/ecore_fb/ecore_fb_private.h
+
+lib_ecore_fb_libecore_fb_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_FB_CFLAGS@
+lib_ecore_fb_libecore_fb_la_LIBADD = @ECORE_FB_LIBS@
+lib_ecore_fb_libecore_fb_la_DEPENDENCIES = @ECORE_FB_INTERNAL_LIBS@
+lib_ecore_fb_libecore_fb_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+endif

@@ -19,7 +19,17 @@ jobs:
     - os: osx
       env: BUILDSYSTEM=ninja
     - os: linux
+      env: DISTRO=Fedora30-mingw CI_BUILD_TYPE=mingw
+    - os: linux
       env: DISTRO=Fedora30-mingw CI_BUILD_TYPE=mingw BUILDSYSTEM=ninja
+    - os: linux
+      env: DISTRO=Fedora30 CI_BUILD_TYPE=options-enabled
+    - os: linux
+      env: DISTRO=Fedora30 CI_BUILD_TYPE=options-disabled
+    - os: linux
+      env: DISTRO=Fedora29 CI_BUILD_TYPE=wayland
+    - os: linux
+      env: DISTRO=Fedora29 CI_BUILD_TYPE=default
     - os: linux
       env: DISTRO=Fedora30 CI_BUILD_TYPE=options-enabled BUILDSYSTEM=ninja
     - os: linux
@@ -28,9 +38,23 @@ jobs:
       env: DISTRO=Fedora29 CI_BUILD_TYPE=wayland BUILDSYSTEM=ninja
     - os: linux
       env: DISTRO=Fedora29 CI_BUILD_TYPE=default BUILDSYSTEM=ninja
+    - os: osx
+      if: type = cron
+    - os: linux
+      if: type = cron
+      env: DISTRO=Fedora29 CI_BUILD_TYPE=release-ready
     - os: linux
       if: type = cron
       env: DISTRO=Fedora29 CI_BUILD_TYPE=release-ready BUILDSYSTEM=ninja
+    - os: linux
+      if: type = cron
+      env: DISTRO=Ubuntu1804
+    - os: linux
+      if: type = cron
+      env: DISTRO=Ubuntu1904
+    - os: linux
+      if: type = cron
+      env: DISTRO=Debian99
     - os: linux
       if: type = cron
       env: DISTRO=Ubuntu1804 BUILDSYSTEM=ninja

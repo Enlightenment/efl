@@ -1,0 +1,88 @@
+### Library
+
+lib_LTLIBRARIES += \
+lib/ethumb/libethumb.la
+
+installed_ethumbmainheadersdir = $(includedir)/ethumb-@VMAJ@
+dist_installed_ethumbmainheaders_DATA = \
+lib/ethumb/Ethumb.h
+
+lib_ethumb_libethumb_la_SOURCES = \
+lib/ethumb/Ethumb_Plugin.h \
+lib/ethumb/ethumb_private.h \
+lib/ethumb/md5.h \
+lib/ethumb/ethumb.c \
+lib/ethumb/md5.c \
+static_libs/buildsystem/buildsystem.h \
+static_libs/buildsystem/buildsystem_autotools.c
+
+lib_ethumb_libethumb_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/ethumb\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
+-DEFL_BUILD \
+@ETHUMB_CFLAGS@
+lib_ethumb_libethumb_la_LIBADD = @ETHUMB_LIBS@
+lib_ethumb_libethumb_la_DEPENDENCIES = @ETHUMB_INTERNAL_LIBS@
+lib_ethumb_libethumb_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+## Modules
+
+# Emotion
+if BUILD_LOADER_PNG
+ethumbmoduleemotiondir = $(libdir)/ethumb/modules/emotion/$(MODULE_ARCH)
+ethumbmoduleemotion_LTLIBRARIES = modules/ethumb/emotion/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_ethumbmoduleemotionLTLIBRARIES = install-ethumbmoduleemotionLTLIBRARIES
+$(install_ethumbmoduleemotionLTLIBRARIES): install-libLTLIBRARIES
+
+modules_ethumb_emotion_module_la_SOURCES = \
+modules/ethumb/emotion/emotion.c
+modules_ethumb_emotion_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/ethumb\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DEFL_BUILD \
+@EMOTION_CFLAGS@ \
+@ETHUMB_CFLAGS@
+modules_ethumb_emotion_module_la_LIBADD = \
+@USE_EMOTION_LIBS@ \
+@USE_ETHUMB_LIBS@
+modules_ethumb_emotion_module_la_DEPENDENCIES = \
+@USE_EMOTION_INTERNAL_LIBS@ \
+@USE_ETHUMB_INTERNAL_LIBS@
+modules_ethumb_emotion_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_ethumb_emotion_module_la_LIBTOOLFLAGS = --tag=disable-static
+
+modules/ethumb/emotion/template.edj: modules/ethumb/emotion/template.edc modules/ethumb/emotion/placeholder.png bin/edje/edje_cc${EXEEXT}
+	$(AM_V_EDJ) \
+	$(MKDIR_P) modules/ethumb/emotion; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(srcdir)/modules/ethumb/emotion $< $@
+
+ethumbmoduleemotion_DATA = modules/ethumb/emotion/template.edj
+CLEANFILES += modules/ethumb/emotion/template.edj
+endif
+
+EXTRA_DIST2 += \
+modules/ethumb/emotion/template.edc \
+modules/ethumb/emotion/placeholder.png
+
+
+### Binary
+
+bin_PROGRAMS += \
+bin/ethumb/ethumb
+
+bin_ethumb_ethumb_SOURCES = bin/ethumb/ethumb.c
+bin_ethumb_ethumb_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ETHUMB_CFLAGS@
+if HAVE_WIN32
+bin_ethumb_ethumb_LDADD = -L$(top_builddir)/src/lib/evil @USE_ETHUMB_LIBS@
+else
+bin_ethumb_ethumb_LDADD = @USE_ETHUMB_LIBS@
+endif
+bin_ethumb_ethumb_DEPENDENCIES = @USE_ETHUMB_INTERNAL_LIBS@

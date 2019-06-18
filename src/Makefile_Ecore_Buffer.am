@@ -1,0 +1,113 @@
+if HAVE_ECORE_BUFFER
+
+### Library
+
+lib_LTLIBRARIES += lib/ecore_buffer/libecore_buffer.la
+
+installed_ecorebuffermainheadersdir = $(includedir)/ecore-buffer-@VMAJ@
+dist_installed_ecorebuffermainheaders_DATA = \
+lib/ecore_buffer/Ecore_Buffer.h \
+lib/ecore_buffer/Ecore_Buffer_Queue.h
+
+lib_ecore_buffer_libecore_buffer_la_SOURCES = \
+lib/ecore_buffer/bq_mgr_protocol.c \
+lib/ecore_buffer/buffer_queue.c \
+lib/ecore_buffer/shared_buffer.c \
+lib/ecore_buffer/ecore_buffer.c \
+lib/ecore_buffer/ecore_buffer_queue_main.c \
+lib/ecore_buffer/ecore_buffer_con.c \
+lib/ecore_buffer/ecore_buffer_provider.c \
+lib/ecore_buffer/ecore_buffer_consumer.c
+
+lib_ecore_buffer_libecore_buffer_la_CPPFLAGS = \
+-I$(top_builddir)/src/lib/efl \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+@ECORE_BUFFER_CFLAGS@
+
+lib_ecore_buffer_libecore_buffer_la_LIBADD = @ECORE_BUFFER_LIBS@
+lib_ecore_buffer_libecore_buffer_la_DEPENDENCIES = @ECORE_BUFFER_INTERNAL_LIBS@
+lib_ecore_buffer_libecore_buffer_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+### Binary
+bqmgr_bindir=$(libdir)/ecore_buffer/bin/$(MODULE_ARCH)
+bqmgr_bin_PROGRAMS = bin/ecore_buffer/bq_mgr
+
+bin_ecore_buffer_bq_mgr_SOURCES = \
+bin/ecore_buffer/bq_mgr_protocol.c \
+bin/ecore_buffer/bq_mgr.c
+
+bin_ecore_buffer_bq_mgr_CPPFLAGS = \
+-I$(top_builddir)/src/lib/efl \
+@ECORE_BUFFER_CFLAGS@
+bin_ecore_buffer_bq_mgr_LDADD = @USE_ECORE_INTERNAL_LIBS@ @USE_ECORE_BUFFER_LIBS@
+bin_ecore_buffer_bq_mgr_DEPENDENCIES = @USE_ECORE_INTERNAL_LIBS@ @USE_ECORE_BUFFER_INTERNAL_LIBS@
+
+### Backends
+
+ecorebuffershmdir = $(libdir)/ecore_buffer/modules/shm/$(MODULE_ARCH)
+ecorebuffershm_LTLIBRARIES = modules/ecore_buffer/shm/module.la
+
+modules_ecore_buffer_shm_module_la_SOURCES = \
+   modules/ecore_buffer/shm/ecore_buffer_shm.c
+modules_ecore_buffer_shm_module_la_CPPFLAGS = \
+   -I$(top_builddir)/src/lib/efl \
+   @ECORE_BUFFER_CFLAGS@ \
+   -I$(top_srcdir)/src/modules/ecore_buffer/shm
+modules_ecore_buffer_shm_module_la_LIBADD = \
+   @ECORE_BUFFER_LIBS@ \
+   @USE_ECORE_BUFFER_INTERNAL_LIBS@
+modules_ecore_buffer_shm_module_la_DEPENDENCIES = \
+   @USE_ECORE_BUFFER_INTERNAL_LIBS@
+modules_ecore_buffer_shm_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_ecore_buffer_shm_module_la_LIBTOOLFLAGS = --tag=disable-static
+
+if BUILD_ECORE_BUFFER_X11_DRI2
+ecorebufferx11dri2dir = $(libdir)/ecore_buffer/modules/x11_dri2/$(MODULE_ARCH)
+ecorebufferx11dri2_LTLIBRARIES = modules/ecore_buffer/x11_dri2/module.la
+
+modules_ecore_buffer_x11_dri2_module_la_SOURCES = \
+   modules/ecore_buffer/x11_dri2/ecore_buffer_x11_dri2.c
+modules_ecore_buffer_x11_dri2_module_la_CPPFLAGS = \
+   -I$(top_builddir)/src/lib/efl \
+   @ECORE_BUFFER_CFLAGS@ \
+   @X11_DRI_COMMON_CFLAGS@ \
+   @X11_DRI2_CFLAGS@ \
+   -I$(top_srcdir)/src/modules/ecore_buffer/x11_dri2
+modules_ecore_buffer_x11_dri2_module_la_LIBADD = \
+   @ECORE_BUFFER_LIBS@ \
+   @USE_ECORE_BUFFER_INTERNAL_LIBS@ \
+   @X11_DRI_COMMON_LIBS@ \
+   @X11_DRI2_LIBS@
+modules_ecore_buffer_x11_dri2_module_la_DEPENDENCIES = \
+   @USE_ECORE_X_INTERNAL_LIBS@ \
+   @USE_ECORE_BUFFER_INTERNAL_LIBS@
+modules_ecore_buffer_x11_dri2_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_ecore_buffer_x11_dri2_module_la_LIBTOOLFLAGS = --tag=disable-static
+endif
+
+if BUILD_ECORE_BUFFER_X11_DRI3
+ecorebufferx11dri3dir = $(libdir)/ecore_buffer/modules/x11_dri3/$(MODULE_ARCH)
+ecorebufferx11dri3_LTLIBRARIES = modules/ecore_buffer/x11_dri3/module.la
+
+modules_ecore_buffer_x11_dri3_module_la_SOURCES = \
+   modules/ecore_buffer/x11_dri3/ecore_buffer_x11_dri3.c
+modules_ecore_buffer_x11_dri3_module_la_CPPFLAGS = \
+   -I$(top_builddir)/src/lib/efl \
+   @ECORE_BUFFER_CFLAGS@ \
+   @X11_DRI_COMMON_CFLAGS@ \
+   @X11_DRI3_CFLAGS@ \
+   -I$(top_srcdir)/src/modules/ecore_buffer/x11_dri3
+modules_ecore_buffer_x11_dri3_module_la_LIBADD = \
+   @ECORE_BUFFER_LIBS@ \
+   @USE_ECORE_BUFFER_INTERNAL_LIBS@ \
+   @X11_DRI_COMMON_LIBS@ \
+   @X11_DRI3_LIBS@
+modules_ecore_buffer_x11_dri3_module_la_DEPENDENCIES = \
+   @USE_ECORE_X_INTERNAL_LIBS@ \
+   @USE_ECORE_BUFFER_INTERNAL_LIBS@
+modules_ecore_buffer_x11_dri3_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_ecore_buffer_x11_dri3_module_la_LIBTOOLFLAGS = --tag=disable-static
+endif
+
+endif

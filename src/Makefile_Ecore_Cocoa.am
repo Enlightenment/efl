@@ -1,0 +1,26 @@
+if HAVE_ECORE_COCOA
+
+### Library
+
+lib_LTLIBRARIES += lib/ecore_cocoa/libecore_cocoa.la
+
+installed_ecorecocoamainheadersdir = $(includedir)/ecore-cocoa-@VMAJ@
+dist_installed_ecorecocoamainheaders_DATA = \
+lib/ecore_cocoa/Ecore_Cocoa.h
+
+lib_ecore_cocoa_libecore_cocoa_la_SOURCES = \
+lib/ecore_cocoa/ecore_cocoa.m \
+lib/ecore_cocoa/ecore_cocoa_keys.h \
+lib/ecore_cocoa/ecore_cocoa_window.h \
+lib/ecore_cocoa/ecore_cocoa_window.m \
+lib/ecore_cocoa/ecore_cocoa_cnp.m \
+lib/ecore_cocoa/ecore_cocoa_app.m \
+lib/ecore_cocoa/ecore_cocoa_app.h \
+lib/ecore_cocoa/ecore_cocoa_private.h
+
+lib_ecore_cocoa_libecore_cocoa_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_COCOA_CFLAGS@
+lib_ecore_cocoa_libecore_cocoa_la_LIBADD = @ECORE_COCOA_LIBS@
+lib_ecore_cocoa_libecore_cocoa_la_DEPENDENCIES = @ECORE_COCOA_INTERNAL_LIBS@
+lib_ecore_cocoa_libecore_cocoa_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@ @cocoa_ldflags@
+lib_ecore_cocoa_libecore_cocoa_la_LIBTOOLFLAGS = --tag=disable-static
+endif

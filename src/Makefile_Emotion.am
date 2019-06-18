@@ -1,0 +1,392 @@
+### Library
+
+emotion_eolian_files = \
+	lib/emotion/efl_canvas_video.eo
+
+emotion_eolian_c = $(emotion_eolian_files:%.eo=%.eo.c)
+emotion_eolian_h = $(emotion_eolian_files:%.eo=%.eo.h)
+
+BUILT_SOURCES += \
+                 $(emotion_eolian_c) \
+                 $(emotion_eolian_h)
+if INSTALL_EO_FILES
+emotioneolianfilesdir = $(datadir)/eolian/include/emotion-@VMAJ@
+emotioneolianfiles_DATA = \
+                          $(emotion_eolian_files)
+endif
+EXTRA_DIST2 += \
+lib/emotion/efl_canvas_video_eo.legacy.c \
+              ${emotion_eolian_files}
+
+lib_LTLIBRARIES += \
+lib/emotion/libemotion.la
+
+installed_emotionmainheadersdir = $(includedir)/emotion-@VMAJ@
+dist_installed_emotionmainheaders_DATA = lib/emotion/Emotion.h \
+                                         lib/emotion/efl_canvas_video_eo.legacy.h \
+                                         lib/emotion/Emotion_Legacy.h \
+                                         lib/emotion/Emotion_Eo.h
+
+nodist_installed_emotionmainheaders_DATA = \
+                                           $(emotion_eolian_h)
+
+# libemotion.la
+lib_emotion_libemotion_la_SOURCES = \
+lib/emotion/emotion_modules.h \
+lib/emotion/emotion_private.h \
+lib/emotion/emotion_smart.c \
+lib/emotion/emotion_webcam.c \
+lib/emotion/emotion_modules.c \
+lib/emotion/emotion_main.c \
+static_libs/buildsystem/buildsystem.h \
+static_libs/buildsystem/buildsystem_autotools.c
+
+lib_emotion_libemotion_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/emotion\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DPACKAGE_SRC_DIR=\"$(abs_top_srcdir)\" \
+-DEFL_BUILD \
+@EMOTION_CFLAGS@
+lib_emotion_libemotion_la_LIBADD = @EMOTION_LIBS@
+lib_emotion_libemotion_la_DEPENDENCIES = @EMOTION_INTERNAL_LIBS@
+lib_emotion_libemotion_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+## Modules
+
+# Xine
+EMOTION_XINE_SOURCES = \
+modules/emotion/xine/emotion_xine.h \
+modules/emotion/xine/emotion_xine.c \
+modules/emotion/xine/emotion_xine_vo_out.c
+
+if EMOTION_STATIC_BUILD_XINE
+lib_emotion_libemotion_la_SOURCES += $(EMOTION_XINE_SOURCES)
+else
+if EMOTION_BUILD_XINE
+emotionmodulexinedir = $(libdir)/emotion/modules/xine/$(MODULE_ARCH)
+emotionmodulexine_LTLIBRARIES = modules/emotion/xine/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_emotionmodulexineLTLIBRARIES = install-emotionmodulexineLTLIBRARIES
+$(install_emotionmodulexineLTLIBRARIES): install-libLTLIBRARIES
+
+modules_emotion_xine_module_la_SOURCES = $(EMOTION_XINE_SOURCES)
+modules_emotion_xine_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
+@EMOTION_CFLAGS@ \
+@EMOTION_MODULE_XINE_CFLAGS@
+modules_emotion_xine_module_la_LIBADD = \
+@USE_EMOTION_LIBS@ \
+@EMOTION_MODULE_XINE_LIBS@
+modules_emotion_xine_module_la_DEPENDENCIES = @USE_EMOTION_INTERNAL_LIBS@
+modules_emotion_xine_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_emotion_xine_module_la_LIBTOOLFLAGS = --tag=disable-static
+endif
+endif
+
+# Gstreamer 0.10
+EMOTION_GSTREAMER_SOURCES = \
+modules/emotion/gstreamer/emotion_gstreamer.h \
+modules/emotion/gstreamer/emotion_gstreamer.c \
+modules/emotion/gstreamer/emotion_alloc.c \
+modules/emotion/gstreamer/emotion_convert.c \
+modules/emotion/gstreamer/emotion_fakeeos.c \
+modules/emotion/gstreamer/emotion_sink.c
+
+if EMOTION_STATIC_BUILD_GSTREAMER
+lib_emotion_libemotion_la_SOURCES += $(EMOTION_GSTREAMER_SOURCES)
+else
+if EMOTION_BUILD_GSTREAMER
+emotionmodulegstreamerdir = $(libdir)/emotion/modules/gstreamer/$(MODULE_ARCH)
+emotionmodulegstreamer_LTLIBRARIES = modules/emotion/gstreamer/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_emotionmodulegstreamerLTLIBRARIES = install-emotionmodulegstreamerLTLIBRARIES
+$(install_emotionmodulegstreamerLTLIBRARIES): install-libLTLIBRARIES
+
+modules_emotion_gstreamer_module_la_SOURCES = $(EMOTION_GSTREAMER_SOURCES)
+modules_emotion_gstreamer_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
+@EMOTION_CFLAGS@ \
+@EMOTION_MODULE_GSTREAMER_CFLAGS@
+modules_emotion_gstreamer_module_la_LIBADD = \
+@USE_EMOTION_LIBS@ \
+@EMOTION_MODULE_GSTREAMER_LIBS@
+modules_emotion_gstreamer_module_la_DEPENDENCIES = @USE_EMOTION_INTERNAL_LIBS@
+modules_emotion_gstreamer_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_emotion_gstreamer_module_la_LIBTOOLFLAGS = --tag=disable-static
+if HAVE_ECORE_X
+modules_emotion_gstreamer_module_la_CPPFLAGS += @ECORE_X_CFLAGS@ @ECORE_EVAS_CFLAGS@
+modules_emotion_gstreamer_module_la_LIBADD += @USE_ECORE_X_LIBS@ @USE_ECORE_EVAS_LIBS@
+modules_emotion_gstreamer_module_la_DEPENDENCIES += @USE_ECORE_X_INTERNAL_LIBS@ @USE_ECORE_EVAS_INTERNAL_LIBS@
+endif
+endif
+endif
+
+# Gstreamer 1.0
+EMOTION_GSTREAMER1_SOURCES = \
+modules/emotion/gstreamer1/emotion_gstreamer.h \
+modules/emotion/gstreamer1/emotion_gstreamer.c \
+modules/emotion/gstreamer1/emotion_alloc.c \
+modules/emotion/gstreamer1/emotion_convert.c \
+modules/emotion/gstreamer1/emotion_sink.c
+
+if EMOTION_STATIC_BUILD_GSTREAMER1
+lib_emotion_libemotion_la_SOURCES += $(EMOTION_GSTREAMER1_SOURCES)
+else
+if EMOTION_BUILD_GSTREAMER1
+emotionmodulegstreamer1dir = $(libdir)/emotion/modules/gstreamer1/$(MODULE_ARCH)
+emotionmodulegstreamer1_LTLIBRARIES = modules/emotion/gstreamer1/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_emotionmodulegstreamer1LTLIBRARIES = install-emotionmodulegstreamer1LTLIBRARIES
+$(install_emotionmodulegstreamer1LTLIBRARIES): install-libLTLIBRARIES
+
+modules_emotion_gstreamer1_module_la_SOURCES = $(EMOTION_GSTREAMER1_SOURCES)
+modules_emotion_gstreamer1_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
+@EMOTION_CFLAGS@ \
+@EMOTION_MODULE_GSTREAMER1_CFLAGS@
+modules_emotion_gstreamer1_module_la_LIBADD = \
+@USE_EMOTION_LIBS@ \
+@EMOTION_MODULE_GSTREAMER1_LIBS@
+modules_emotion_gstreamer1_module_la_DEPENDENCIES = @USE_EMOTION_INTERNAL_LIBS@
+modules_emotion_gstreamer1_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_emotion_gstreamer1_module_la_LIBTOOLFLAGS = --tag=disable-static
+endif
+endif
+
+# LibVLC
+EMOTION_LIBVLC_SOURCES =\
+modules/emotion/libvlc/emotion_libvlc.c
+
+if EMOTION_STATIC_BUILD_LIBVLC
+lib_emotion_libemotion_la_SOURCES += $(EMOTION_LIBVLC_SOURCES)
+else
+if EMOTION_BUILD_LIBVLC
+emotionmodulelibvlcdir = $(libdir)/emotion/modules/libvlc/$(MODULE_ARCH)
+emotionmodulelibvlc_LTLIBRARIES = modules/emotion/libvlc/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_emotionmodulelibvlcLTLIBRARIES = install-emotionmodulelibvlcLTLIBRARIES
+$(install_emotionmodulelibvlcLTLIBRARIES): install-libLTLIBRARIES
+
+modules_emotion_libvlc_module_la_SOURCES = $(EMOTION_LIBVLC_SOURCES)
+modules_emotion_libvlc_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
+@EMOTION_CFLAGS@ \
+@EMOTION_MODULE_LIBVLC_CFLAGS@
+modules_emotion_libvlc_module_la_LIBADD = \
+@USE_EMOTION_LIBS@ \
+@EMOTION_MODULE_LIBVLC_LIBS@
+modules_emotion_libvlc_module_la_DEPENDENCIES = @USE_EMOTION_INTERNAL_LIBS@
+modules_emotion_libvlc_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_emotion_libvlc_module_la_LIBTOOLFLAGS = --tag=disable-static
+endif
+endif
+
+# Generic
+EMOTION_GENERIC_SOURCES = \
+modules/emotion/generic/emotion_generic.h \
+modules/emotion/generic/emotion_generic.c
+
+if EMOTION_STATIC_BUILD_GENERIC
+lib_emotion_libemotion_la_SOURCES += $(EMOTION_GENERIC_SOURCES)
+else
+if EMOTION_BUILD_GENERIC
+emotionmodulegenericdir = $(libdir)/emotion/modules/generic/$(MODULE_ARCH)
+emotionmodulegeneric_LTLIBRARIES = modules/emotion/generic/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_emotionmodulegenericLTLIBRARIES = install-emotionmodulegenericLTLIBRARIES
+$(install_emotionmodulegenericLTLIBRARIES): install-libLTLIBRARIES
+
+modules_emotion_generic_module_la_SOURCES = $(EMOTION_GENERIC_SOURCES)
+modules_emotion_generic_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
+@EMOTION_CFLAGS@ \
+@EMOTION_MODULE_GENERIC_CFLAGS@ \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/emotion\"
+modules_emotion_generic_module_la_LIBADD = \
+@USE_EMOTION_LIBS@ \
+@EMOTION_MODULE_GENERIC_LIBS@
+modules_emotion_generic_module_la_DEPENDENCIES = @USE_EMOTION_INTERNAL_LIBS@
+modules_emotion_generic_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+modules_emotion_generic_module_la_LIBTOOLFLAGS = --tag=disable-static
+endif
+endif
+
+if EMOTION_BUILD_GENERIC
+dist_installed_emotionmainheaders_DATA += \
+modules/emotion/generic/Emotion_Generic_Plugin.h
+endif
+
+
+# Edje_External
+emotionedjeexternaldir = $(libdir)/edje/modules/emotion/$(MODULE_ARCH)
+emotionedjeexternal_LTLIBRARIES = edje_external/emotion/module.la
+
+# Workaround for broken parallel install support in automake (relink issue)
+# http://debbugs.gnu.org/cgi/bugreport.cgi?bug=7328
+install_emotionedjeexternalLTLIBRARIES = install-emotionedjeexternalLTLIBRARIES
+$(install_emotionedjeexternalLTLIBRARIES): install-libLTLIBRARIES
+
+edje_external_emotion_module_la_SOURCES = \
+edje_external/emotion/emotion.c
+edje_external_emotion_module_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
+@EDJE_CFLAGS@ \
+@EMOTION_CFLAGS@ \
+-DPACKAGE_DATA_DIR=\"$(datadir)/emotion\"
+edje_external_emotion_module_la_LIBADD = \
+@USE_EDJE_LIBS@ \
+@USE_EMOTION_LIBS@
+edje_external_emotion_module_la_DEPENDENCIES = \
+@USE_EDJE_INTERNAL_LIBS@ \
+@USE_EMOTION_INTERNAL_LIBS@
+edje_external_emotion_module_la_LDFLAGS = -module @EFL_LTMODULE_FLAGS@
+edje_external_emotion_module_la_LIBTOOLFLAGS = --tag=disable-static
+
+### Binary
+
+### Unit tests
+
+if EFL_ENABLE_TESTS
+if BUILD_LOADER_PNG
+
+bin_PROGRAMS += tests/emotion/emotion_test
+
+tests_emotion_emotion_test_SOURCES = \
+tests/emotion/emotion_test_main.c
+
+tests_emotion_emotion_test_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/emotion\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+@EDJE_CFLAGS@ \
+@EMOTION_CFLAGS@
+
+tests_emotion_emotion_test_LDADD = @USE_EDJE_LIBS@ @USE_EMOTION_LIBS@
+tests_emotion_emotion_test_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@ @USE_EMOTION_INTERNAL_LIBS@
+
+bin_PROGRAMS += tests/emotion/emotion_test-eo
+
+tests_emotion_emotion_test_eo_SOURCES = \
+tests/emotion/emotion_test_main-eo.c
+
+tests_emotion_emotion_test_eo_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/emotion\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+@EDJE_CFLAGS@ \
+@EMOTION_CFLAGS@ \
+@EO_CFLAGS@
+
+tests_emotion_emotion_test_eo_LDADD = @USE_EDJE_LIBS@ @USE_EMOTION_LIBS@ @USE_EO_LIBS@
+tests_emotion_emotion_test_eo_DEPENDENCIES = @USE_EDJE_INTERNAL_LIBS@ @USE_EMOTION_INTERNAL_LIBS@ \
+@USE_EO_INTERNAL_LIBS@
+
+tests/emotion/data/theme.edj: tests/emotion/data/theme.edc bin/edje/edje_cc${EXEEXT}
+	$(AM_V_EDJ) \
+	$(MKDIR_P) tests/emotion/data; \
+	$(EDJE_CC) $(EDJE_CC_FLAGS) -id $(srcdir)/tests/emotion/data $< $@
+
+emotiondatafilesdir = $(datadir)/emotion/data
+emotiondatafiles_DATA = tests/emotion/data/theme.edj
+CLEANFILES += tests/emotion/data/theme.edj
+
+endif
+endif
+
+# Those probably should be in the if block, but then
+# "make distcheck" would not work
+EXTRA_DIST2 += \
+tests/emotion/data/bpause.png \
+tests/emotion/data/bplay.png \
+tests/emotion/data/bstop.png \
+tests/emotion/data/icon_pause.png \
+tests/emotion/data/icon_play.png \
+tests/emotion/data/icon_stop.png \
+tests/emotion/data/e_logo.png \
+tests/emotion/data/fr1.png \
+tests/emotion/data/fr2.png \
+tests/emotion/data/fr3.png \
+tests/emotion/data/fr4.png \
+tests/emotion/data/fr5.png \
+tests/emotion/data/fr6.png \
+tests/emotion/data/fr7.png \
+tests/emotion/data/h_slider.png \
+tests/emotion/data/icon.edc \
+tests/emotion/data/knob.png \
+tests/emotion/data/orb.png \
+tests/emotion/data/pnl.png \
+tests/emotion/data/sl.png \
+tests/emotion/data/theme.edc \
+tests/emotion/data/tiles.png \
+tests/emotion/data/video_frame_bottom.png \
+tests/emotion/data/video_frame_left.png \
+tests/emotion/data/video_frame_right.png \
+tests/emotion/data/video_frame_top.png \
+tests/emotion/data/whb.png \
+tests/emotion/data/window_inner_shadow.png \
+modules/emotion/generic/README
+
+if HAVE_LUA_BINDINGS
+
+emotion_eolian_lua = $(emotion_eolian_files:%.eo=%.eo.lua)
+
+generated_emotion_lua_all = $(emotion_eolian_lua)
+
+GENERATED_LUA_BINDINGS += $(generated_emotion_lua_all)
+
+installed_emotionluadir = $(datadir)/elua/modules/emotion
+nodist_installed_emotionlua_DATA = $(generated_emotion_lua_all)
+
+endif
+
+# TODO: gives undefined reference to emotion_object_class_get()
+if HAVE_JS
+
+generated_emotion_js_bindings = $(emotion_eolian_files:%.eo=%.eo.js.cc)
+
+GENERATED_JS_BINDINGS += $(generated_emotion_js_bindings)
+
+endif
+
+emotiongenericplayersdir = \
+$(libdir)/emotion/generic_players/$(MODULE_ARCH)
+
+emotiongenericplayers_PROGRAMS =
+
+if HAVE_GENERIC_VLC
+
+emotiongenericplayers_PROGRAMS += generic/emotion/vlc/vlc
+generic_emotion_vlc_vlc_SOURCES = generic/emotion/vlc/emotion_generic_vlc.c
+generic_emotion_vlc_vlc_CPPFLAGS = \
+-I$(top_srcdir)/src/lib/efl \
+-I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/eina \
+-I$(top_builddir)/src/lib/eina \
+-I$(top_srcdir)/src/lib/eo \
+-I$(top_srcdir)/src/lib/ecore \
+-I$(top_srcdir)/src/modules/emotion/generic \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/emotion\" \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DEMOTION_GENERIC_PLAYERS_DIR=\"$(libdir)/emotion/generic_players/$(MODULE_ARCH)\" \
+@GENERIC_VLC_CFLAGS@
+generic_emotion_vlc_vlc_LDADD = @GENERIC_VLC_LIBS@ @USE_EINA_LIBS@ @USE_ECORE_LIBS@
+generic_emotion_vlc_vlc_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@
+endif

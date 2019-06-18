@@ -1,0 +1,62 @@
+if HAVE_ECORE_X
+
+### Library
+
+lib_LTLIBRARIES += lib/ecore_x/libecore_x.la
+
+installed_ecorexmainheadersdir = $(includedir)/ecore-x-@VMAJ@
+dist_installed_ecorexmainheaders_DATA = \
+lib/ecore_x/Ecore_X.h \
+lib/ecore_x/Ecore_X_Atoms.h \
+lib/ecore_x/Ecore_X_Cursor.h
+
+lib_ecore_x_libecore_x_la_SOURCES = \
+lib/ecore_x/ecore_x_atoms_decl.h \
+lib/ecore_x/ecore_x.c \
+lib/ecore_x/ecore_x_dnd.c \
+lib/ecore_x/ecore_x_sync.c \
+lib/ecore_x/ecore_x_randr.c \
+lib/ecore_x/ecore_x_fixes.c \
+lib/ecore_x/ecore_x_damage.c \
+lib/ecore_x/ecore_x_composite.c \
+lib/ecore_x/ecore_x_error.c \
+lib/ecore_x/ecore_x_events.c \
+lib/ecore_x/ecore_x_icccm.c \
+lib/ecore_x/ecore_x_keygrab.c \
+lib/ecore_x/ecore_x_netwm.c \
+lib/ecore_x/ecore_x_mwm.c \
+lib/ecore_x/ecore_x_e.c \
+lib/ecore_x/ecore_x_selection.c \
+lib/ecore_x/ecore_x_window.c \
+lib/ecore_x/ecore_x_window_prop.c \
+lib/ecore_x/ecore_x_window_shape.c \
+lib/ecore_x/ecore_x_pixmap.c \
+lib/ecore_x/ecore_x_present.c \
+lib/ecore_x/ecore_x_gc.c \
+lib/ecore_x/ecore_x_xinerama.c \
+lib/ecore_x/ecore_x_screensaver.c \
+lib/ecore_x/ecore_x_dpms.c \
+lib/ecore_x/ecore_x_drawable.c \
+lib/ecore_x/ecore_x_cursor.c \
+lib/ecore_x/ecore_x_test.c \
+lib/ecore_x/ecore_x_atoms.c \
+lib/ecore_x/ecore_x_region.c \
+lib/ecore_x/ecore_x_image.c \
+lib/ecore_x/ecore_x_xi2.c \
+lib/ecore_x/ecore_x_vsync.c \
+lib/ecore_x/ecore_x_gesture.c \
+lib/ecore_x/ecore_x_private.h
+
+lib_ecore_x_libecore_x_la_CPPFLAGS = \
+-I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
+@ECORE_X_CFLAGS@ @ECORE_CON_CFLAGS@ \
+-DPACKAGE_BIN_DIR=\"$(bindir)\" \
+-DPACKAGE_LIB_DIR=\"$(libdir)\" \
+-DPACKAGE_DATA_DIR=\"$(datadir)/ecore_x\"
+
+lib_ecore_x_libecore_x_la_LIBADD = @ECORE_X_LIBS@ @USE_ECORE_CON_LIBS@
+lib_ecore_x_libecore_x_la_DEPENDENCIES = @ECORE_X_INTERNAL_LIBS@ @USE_ECORE_CON_INTERNAL_LIBS@
+lib_ecore_x_libecore_x_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+endif

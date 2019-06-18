@@ -1,0 +1,28 @@
+if HAVE_LUA_BINDINGS
+
+if HAVE_ELUA_BIN
+ELUA_GEN = @elua_bin@ lualian
+_ELUA_GEN_DEP = @elua_bin@
+else
+ELUA_GEN = ELUA_EOLIAN_LIBRARY_PATH=$(top_builddir)/src/lib/eolian/.libs \
+	ELUA_EINA_LIBRARY_PATH=$(top_builddir)/src/lib/eina/.libs \
+	$(top_builddir)/src/bin/elua/elua${EXEEXT} \
+	-I$(ELUA_BINDINGS_DIR) -C$(ELUA_CORE_DIR) -M$(ELUA_MODULES_DIR) \
+	-A$(ELUA_APPS_DIR) lualian
+_ELUA_GEN_DEP = bin/elua/elua${EXEEXT} scripts/elua/apps/lualian.lua \
+	scripts/elua/modules/lualian.lua \
+	scripts/elua/modules/getopt.lua scripts/elua/core/util.lua \
+	bindings/luajit/eina/log.lua bindings/luajit/eina/iterator.lua \
+	bindings/luajit/eolian.lua
+endif
+
+AM_V_ELUA = $(am__v_ELUA_@AM_V@)
+am__v_ELUA_ = $(am__v_ELUA_@AM_DEFAULT_V@)
+am__v_ELUA_0 = @echo "  ELUA    " $@;
+
+SUFFIXES += .lua
+
+%.eo.lua: %.eo ${_ELUA_GEN_DEP}
+	$(AM_V_ELUA)$(ELUA_GEN) $(EOLIAN_FLAGS) -o $@ $<
+
+endif

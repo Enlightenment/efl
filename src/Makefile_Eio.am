@@ -1,0 +1,114 @@
+
+### Library
+
+eio_eolian_files = \
+        lib/eio/efl_io_model.eo \
+        lib/eio/efl_io_manager.eo \
+        lib/eio/eio_sentry.eo
+
+eio_eolian_h =  $(eio_eolian_files:%.eo=%.eo.h)
+eio_eolian_c =  $(eio_eolian_files:%.eo=%.eo.c)
+
+BUILT_SOURCES += $(eio_eolian_c) $(eio_eolian_h)
+
+if INSTALL_EO_FILES
+eioeolianfilesdir = $(datadir)/eolian/include/eio-@VMAJ@
+eioeolianfiles_DATA = $(eio_eolian_files)
+endif
+
+lib_LTLIBRARIES += lib/eio/libeio.la
+EXTRA_DIST2 += $(eio_eolian_files)
+
+installed_eiomainheadersdir = $(includedir)/eio-@VMAJ@
+
+dist_installed_eiomainheaders_DATA = \
+lib/eio/Eio.h \
+lib/eio/Eio_Legacy.h \
+lib/eio/Eio_Eo.h \
+lib/eio/eio_inline_helper.x
+nodist_installed_eiomainheaders_DATA = $(eio_eolian_h)
+
+lib_eio_libeio_la_SOURCES = \
+lib/eio/eio_dir.c \
+lib/eio/eio_eet.c \
+lib/eio/eio_file.c \
+lib/eio/efl_io_manager.c \
+lib/eio/eio_sentry.c \
+lib/eio/eio_main.c \
+lib/eio/eio_map.c \
+lib/eio/eio_monitor.c \
+lib/eio/eio_monitor_poll.c \
+lib/eio/eio_single.c \
+lib/eio/eio_xattr.c \
+lib/eio/efl_io_model.c \
+lib/eio/efl_io_model_private.h \
+lib/eio/eio_private.h \
+lib/eio/eio_sentry_private.h
+
+if HAVE_INOTIFY
+lib_eio_libeio_la_SOURCES += lib/eio/eio_monitor_inotify.c
+else
+if HAVE_NOTIFY_WIN32
+lib_eio_libeio_la_SOURCES += lib/eio/eio_monitor_win32.c
+else
+if HAVE_NOTIFY_COCOA
+lib_eio_libeio_la_SOURCES += lib/eio/eio_monitor_cocoa.c
+else
+if HAVE_NOTIFY_KEVENT
+lib_eio_libeio_la_SOURCES += lib/eio/eio_monitor_kevent.c
+endif
+endif
+endif
+endif
+
+lib_eio_libeio_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @EIO_CFLAGS@ @EFL_CFLAGS@ -DEFL_BUILD
+lib_eio_libeio_la_LIBADD = @EIO_LIBS@ @EFL_LIBS@
+lib_eio_libeio_la_DEPENDENCIES = @EIO_INTERNAL_LIBS@ @EFL_INTERNAL_LIBS@
+lib_eio_libeio_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+if HAVE_NOTIFY_COCOA
+lib_eio_libeio_la_LDFLAGS += -framework CoreServices
+endif
+
+if EFL_ENABLE_TESTS
+
+check_PROGRAMS += tests/eio/eio_suite
+TESTS += tests/eio/eio_suite
+
+tests_eio_eio_suite_SOURCES = \
+tests/eio/eio_suite.c \
+tests/eio/efl_io_model_test_file.c \
+tests/eio/efl_io_model_test_monitor_add.c \
+tests/eio/eio_test_monitor.c \
+tests/eio/eio_test_sentry.c \
+tests/eio/eio_test_file.c \
+tests/eio/eio_test_manager.c \
+tests/eio/eio_test_manager_xattr.c \
+tests/eio/eio_test_xattr.c \
+tests/eio/eio_test_common.c \
+tests/eio/eio_test_common.h \
+tests/eio/eio_test_map.c \
+tests/eio/eio_test_eet.c \
+tests/eio/eio_suite.h
+
+tests_eio_eio_suite_CPPFLAGS = -I$(top_builddir)/src/lib/efl \
+-DPACKAGE_BUILD_DIR=\"$(abs_top_builddir)\" \
+-DTESTS_SRC_DIR=\"$(top_srcdir)/src/tests/eio\" \
+-DTESTS_BUILD_DIR=\"$(top_builddir)/src/tests/eio\" \
+@CHECK_CFLAGS@ \
+@ECORE_FILE_CFLAGS@ \
+@EIO_CFLAGS@ \
+@EFREET_CFLAGS@ \
+@EFL_CFLAGS@
+
+tests_eio_eio_suite_LDADD = \
+@CHECK_LIBS@ \
+@USE_EIO_LIBS@ \
+@USE_ECORE_FILE_LIBS@ \
+@USE_EFREET_LIBS@ \
+@USE_EFL_LIBS@
+
+tests_eio_eio_suite_DEPENDENCIES = \
+@USE_EIO_INTERNAL_LIBS@ \
+@USE_EFREET_INTERNAL_LIBS@
+
+endif

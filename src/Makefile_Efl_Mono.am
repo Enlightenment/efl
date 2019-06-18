@@ -1,0 +1,549 @@
+
+efl_custom_exports_mono_files = \
+	lib/efl_mono/efl_custom_exports_mono.c
+
+efl_eo_mono_files = \
+	bindings/mono/eo_mono/iwrapper.cs \
+	bindings/mono/eo_mono/FunctionWrapper.cs \
+	bindings/mono/eo_mono/NativeModule.cs \
+	bindings/mono/eo_mono/workaround.cs \
+	bindings/mono/eo_mono/EoWrapper.cs \
+	bindings/mono/eo_mono/WrapperSupervisor.cs
+
+if HAVE_WIN32
+
+efl_eo_mono_files += \
+	bindings/mono/eo_mono/FunctionWrapper_Windows.cs \
+	bindings/mono/eo_mono/NativeModule_Windows.cs
+
+else
+
+efl_eo_mono_files += \
+	bindings/mono/eo_mono/FunctionWrapper_Unix.cs \
+	bindings/mono/eo_mono/NativeModule_Unix.cs
+
+endif
+
+
+efl_eina_mono_files = \
+	bindings/mono/eina_mono/eina_config.cs \
+	bindings/mono/eina_mono/eina_array.cs \
+	bindings/mono/eina_mono/eina_hash.cs \
+	bindings/mono/eina_mono/eina_list.cs \
+	bindings/mono/eina_mono/eina_inarray.cs \
+	bindings/mono/eina_mono/eina_inlist.cs \
+	bindings/mono/eina_mono/eina_iterator.cs \
+	bindings/mono/eina_mono/eina_container_common.cs \
+	bindings/mono/eina_mono/eina_common.cs \
+	bindings/mono/eina_mono/eina_log.cs \
+	bindings/mono/eina_mono/eina_binbuf.cs \
+	bindings/mono/eina_mono/eina_slice.cs \
+	bindings/mono/eina_mono/eina_stringshare.cs \
+	bindings/mono/eina_mono/eina_error.cs \
+	bindings/mono/eina_mono/eina_value.cs \
+	bindings/mono/eina_mono/eina_promises.cs \
+	bindings/mono/eina_mono/eina_accessor.cs \
+	bindings/mono/eina_mono/eina_strbuf.cs
+
+efl_eldbus_mono_files = \
+	bindings/mono/eldbus_mono/eldbus_common.cs \
+	bindings/mono/eldbus_mono/eldbus_config.cs \
+	bindings/mono/eldbus_mono/eldbus_connection.cs \
+	bindings/mono/eldbus_mono/eldbus_message.cs \
+	bindings/mono/eldbus_mono/eldbus_object.cs \
+	bindings/mono/eldbus_mono/eldbus_pending.cs \
+	bindings/mono/eldbus_mono/eldbus_proxy.cs \
+	bindings/mono/eldbus_mono/eldbus_service.cs
+
+# Static C# source files don't go into a _SOURCES var as the dll target
+# is custom built instead of through _LTLIBRARIES/_LIBRARIES
+lib_efl_mono_libefl_mono_dll_sources = \
+	bindings/mono/efl_mono/efl_all.cs \
+	bindings/mono/efl_mono/efl_csharp_application.cs \
+	$(efl_eo_mono_files) \
+	$(efl_eina_mono_files) \
+	$(efl_eldbus_mono_files)
+
+efl_mono_test_eolian_files = \
+	tests/efl_mono/dummy_test_object.eo \
+	tests/efl_mono/dummy_test_iface.eo \
+	tests/efl_mono/dummy_inherit_iface.eo \
+	tests/efl_mono/dummy_inherit_helper.eo \
+	tests/efl_mono/dummy_child.eo \
+	tests/efl_mono/dummy_part_holder.eo \
+	tests/efl_mono/dummy_numberwrapper.eo \
+	tests/efl_mono/dummy_event_manager.eo
+
+efl_mono_test_files = \
+	$(efl_mono_test_eolian_files) \
+	tests/efl_mono/mono_test_driver.sh
+
+EXTRA_DIST2 += \
+	$(lib_efl_mono_libefl_mono_dll_sources) \
+	$(efl_mono_test_files) \
+	bindings/mono/efl_mono/efl_libs.cs.in \
+	bindings/mono/efl_mono/efl_libs.csv.in
+
+if HAVE_CSHARP
+
+bin_PROGRAMS += bin/eolian_mono/eolian_mono
+
+bin_eolian_mono_eolian_mono_SOURCES = \
+	bin/eolian_mono/eolian_mono.cc \
+	bin/eolian_mono/eolian/mono/alias_definition.hh \
+	bin/eolian_mono/eolian/mono/async_function_definition.hh \
+	bin/eolian_mono/eolian/mono/blacklist.hh \
+	bin/eolian_mono/eolian/mono/documentation.hh \
+	bin/eolian_mono/eolian/mono/enum_definition.hh \
+	bin/eolian_mono/eolian/mono/events.hh \
+	bin/eolian_mono/eolian/mono/function_declaration.hh \
+	bin/eolian_mono/eolian/mono/function_definition.hh \
+	bin/eolian_mono/eolian/mono/function_helpers.hh \
+	bin/eolian_mono/eolian/mono/function_pointer.hh \
+	bin/eolian_mono/eolian/mono/function_registration.hh \
+	bin/eolian_mono/eolian/mono/generation_contexts.hh \
+	bin/eolian_mono/eolian/mono/helpers.hh \
+	bin/eolian_mono/eolian/mono/klass.hh \
+	bin/eolian_mono/eolian/mono/logging.hh \
+	bin/eolian_mono/eolian/mono/marshall_annotation.hh \
+	bin/eolian_mono/eolian/mono/marshall_type.hh \
+	bin/eolian_mono/eolian/mono/marshall_type_impl.hh \
+	bin/eolian_mono/eolian/mono/name_helpers.hh \
+	bin/eolian_mono/eolian/mono/parameter.hh \
+	bin/eolian_mono/eolian/mono/part_definition.hh \
+	bin/eolian_mono/eolian/mono/struct_definition.hh \
+	bin/eolian_mono/eolian/mono/struct_fields.hh \
+	bin/eolian_mono/eolian/mono/type.hh \
+	bin/eolian_mono/eolian/mono/type_impl.hh \
+	bin/eolian_mono/eolian/mono/using_decl.hh \
+	bin/eolian_mono/eolian/mono/utils.hh \
+	bin/eolian_mono/eolian/mono/variable_definition.hh
+
+bin_eolian_mono_eolian_mono_CXXFLAGS = -I$(top_builddir)/src/lib/efl \
+-I$(top_srcdir)/src/lib/eolian_cxx/ \
+-I$(top_srcdir)/src/bin/eolian_mono/ \
+@CHECK_CFLAGS@ @EINA_CFLAGS@ @EINA_CXX_CFLAGS@ @EO_CXX_CFLAGS@ @ECORE_CXX_CFLAGS@ @EO_CFLAGS@ \
+-I$(top_srcdir)/src/bindings/cxx/eina_cxx \
+@EOLIAN_CXX_CFLAGS@ @EOLIAN_CFLAGS@
+
+bin_eolian_mono_eolian_mono_LDADD = @CHECK_LIBS@ @USE_EOLIAN_LIBS@
+
+bin_eolian_mono_eolian_mono_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
+
+# Helper for other modules using Eolian_Mono, include only after Makefile_Eolian_Helper.am
+include Makefile_Eolian_Mono_Helper.am
+
+### Efl C Sharp Binding
+
+evas_eolian_blacklisted_files = \
+lib/evas/canvas/efl_canvas_scene3d.eo.cs \
+lib/evas/canvas/evas_canvas3d_camera.eo.cs \
+lib/evas/canvas/evas_canvas3d_light.eo.cs \
+lib/evas/canvas/evas_canvas3d_material.eo.cs \
+lib/evas/canvas/evas_canvas3d_mesh.eo.cs \
+lib/evas/canvas/evas_canvas3d_node.eo.cs \
+lib/evas/canvas/evas_canvas3d_object.eo.cs \
+lib/evas/canvas/evas_canvas3d_primitive.eo.cs \
+lib/evas/canvas/evas_canvas3d_scene.eo.cs \
+lib/evas/canvas/evas_canvas3d_texture.eo.cs
+
+efl_eolian_blacklisted_files = \
+lib/efl/interfaces/efl_io_buffer.eo.cs \
+lib/efl/interfaces/efl_io_positioner.eo.cs \
+lib/efl/interfaces/efl_io_queue.eo.cs \
+lib/efl/interfaces/efl_io_sizer.eo.cs
+
+ecore_eolian_blacklisted_files = \
+lib/ecore/efl_io_closer_fd.eo.cs \
+lib/ecore/efl_io_buffered_stream.eo.cs \
+lib/ecore/efl_io_positioner_fd.eo.cs \
+lib/ecore/efl_io_reader_fd.eo.cs \
+lib/ecore/efl_io_writer_fd.eo.cs \
+lib/ecore/efl_io_copier_fd.eo.cs \
+lib/ecore/efl_io_sizer_fd.eo.cs \
+lib/ecore/efl_io_stdin.eo.cs \
+lib/ecore/efl_io_stdout.eo.cs \
+lib/ecore/efl_io_stderr.eo.cs \
+lib/ecore/efl_io_file.eo.cs \
+lib/ecore/efl_io_copier.eo.cs
+
+eo_eolian_blacklisted_files = \
+lib/eo/efl_object_override.eo.cs
+
+elementary_eolian_blacklisted_files = \
+lib/elementary/elm_web_eo.cs \
+lib/elementary/elm_map_eo.cs \
+lib/elementary/elm_combobox.eo.cs \
+lib/elementary/elm_list_eo.cs \
+lib/elementary/elm_genlist_eo.cs \
+lib/elementary/elm_view_list_eo.cs \
+lib/elementary/elm_genlist_item_eo.cs \
+lib/elementary/elm_gengrid_eo.cs \
+lib/elementary/elm_code_widget.eo.cs \
+lib/elementary/elm_multibuttonentry_part.eo.cs \
+lib/elementary/elm_atspi_bridge.eo.cs \
+lib/elementary/elm_atspi_app_object.eo.cs \
+lib/elementary/elm_glview_eo.cs
+
+efl_mono_blacklisted_files = \
+$(evas_eolian_blacklisted_files) \
+$(efl_eolian_blacklisted_files) \
+$(ecore_eolian_blacklisted_files) \
+$(eo_eolian_blacklisted_files) \
+$(elementary_eolian_blacklisted_files)
+
+efl_eolian_mono_files = \
+$(filter-out $(eo_eolian_blacklisted_files),$(eo_eolian_files:%.eo=%.eo.cs)) \
+$(filter-out $(ecore_eolian_blacklisted_files),$(ecore_eolian_files_public:%.eo=%.eo.cs)) \
+$(ecore_eolian_type_files:%.eot=%.eot.cs) \
+$(filter-out $(efl_eolian_blacklisted_files),$(efl_eolian_files:%.eo=%.eo.cs)) \
+$(filter-out $(edje_eolian_blacklisted_files),$(edje_eolian_files:%.eo=%.eo.cs)) \
+$(filter-out $(elementary_eolian_blacklisted_files),$(elm_public_eolian_files:%.eo=%.eo.cs)) \
+$(efl_eolian_type_files:%.eot=%.eot.cs) \
+$(edje_eolian_type_files:%.eot=%.eot.cs) \
+$(elm_eolian_type_files:%.eot=%.eot.cs) \
+$(filter-out $(evas_eolian_blacklisted_files),$(evas_canvas_eolian_pub_files:%.eo=%.eo.cs)) \
+$(evas_gesture_eolian_pub_files:%.eo=%.eo.cs) \
+$(evas_gesture_eolian_type_files:%.eot=%.eot.cs) \
+lib/evas/canvas/efl_canvas_image.eo.cs \
+$(evas_canvas_eolian_type_files:%.eot=%.eot.cs) \
+lib/eo/eina_types.eot.cs \
+lib/ecore/efl_loop_timer.eo.cs
+
+efl_mono_files_gen =\
+$(efl_eolian_mono_files) \
+$(builddir)/bindings/mono/efl_mono/efl_libs.cs
+
+
+installed_eflmonomainheadersdir = $(includedir)/efl-mono-@VMAJ@/
+nodist_installed_eflmonomainheaders_DATA = $(efl_eolian_files:%.eo=%.eo.cs) $(builddir)/bindings/mono/efl_mono/efl_libs.csv
+
+CLEANFILES += $(efl_mono_files_gen) $(efl_mono_blacklisted_files) \
+	      $(builddir)/lib/efl_mono/libefl_mono.dll \
+	      $(builddir)/lib/efl_mono/libefl_mono.xml \
+	      $(builddir)/lib/efl_mono/libefl_mono.dll.config
+
+if HAVE_WIN32
+
+MCSFLAGS ?=
+MCSFLAGS += -define:WIN32
+
+endif
+
+# Efl Custom Exports Mono auxiliary library
+
+lib_LTLIBRARIES += \
+lib/efl_mono/libeflcustomexportsmono.la
+
+lib_efl_mono_libeflcustomexportsmono_la_SOURCES = \
+	$(efl_custom_exports_mono_files)
+
+lib_efl_mono_libeflcustomexportsmono_la_CPPFLAGS = \
+-DEFL_BETA_API_SUPPORT \
+-I$(top_builddir)/src/lib/efl \
+-DEFL_BUILD \
+@EFL_CUSTOM_EXPORTS_MONO_CFLAGS@
+lib_efl_mono_libeflcustomexportsmono_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+lib_efl_mono_libeflcustomexportsmono_la_LIBADD = @EFL_CUSTOM_EXPORTS_MONO_LIBS@
+lib_efl_mono_libeflcustomexportsmono_la_DEPENDENCIES = @EFL_CUSTOM_EXPORTS_MONO_INTERNAL_LIBS@
+
+#Efl Mono - C Sharp binding library
+
+libefl_mono_dll_MCSFLAGS = -doc:lib/efl_mono/libefl_mono.xml
+
+lib/efl_mono/libefl_mono.dll: $(efl_mono_files_dist) lib/efl_mono/$(am__dirstamp) $(lib_efl_mono_libefl_mono_dll_sources) $(efl_mono_files_gen) lib/efl_mono/libefl_mono.dll.config
+	@rm -f lib/efl_mono/libefl_mono.dll
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) $(libefl_mono_dll_MCSFLAGS) -out:$@ -t:library $(filter %.cs, $(^))
+
+lib/efl_mono/libefl_mono.dll.config:
+	echo "<configuration>" > $@
+	echo "  <dllmap dll=\"eina\" target=\"$(abs_top_builddir)/src/lib/eina/.libs/libeina.so\"/>" >> $@
+	echo "  <dllmap dll=\"ecore\" target=\"$(abs_top_builddir)/src/lib/ecore/.libs/libecore.so\"/>" >> $@
+	echo "  <dllmap dll=\"eo\" target=\"$(abs_top_builddir)/src/lib/eo/.libs/libeo.so\"/>" >> $@
+	echo "  <dllmap dll=\"evas\" target=\"$(abs_top_builddir)/src/lib/evas/.libs/libevas.so\"/>" >> $@
+	echo "  <dllmap dll=\"eldbus\" target=\"$(abs_top_builddir)/src/lib/eldbus/.libs/libeldbus.so\"/>" >> $@
+	echo "  <dllmap dll=\"elementary\" target=\"$(abs_top_builddir)/src/lib/elementary/.libs/libelementary.so\"/>" >> $@
+	echo "</configuration>" >> $@
+
+EFL_INSTALL_EXEC_HOOK += \
+$(MKDIR_P) @eflmonodlldir@; \
+cp -f $(builddir)/lib/efl_mono/libefl_mono.dll @eflmonodlldir@/libefl_mono.dll; \
+cp -f $(builddir)/lib/efl_mono/libefl_mono.xml @eflmonodlldir@/libefl_mono.xml; \
+$(MKDIR_P) $(DESTDIR)$(datadir)/efl_mono; \
+cp -f $(builddir)/bindings/mono/efl_mono/efl_libs.csv $(DESTDIR)$(datadir)/efl_mono/efl_libs.csv;
+
+all-local: lib/efl_mono/libefl_mono.dll
+
+uninstall-local:
+	rm -rf @eflmonodlldir@/libefl_mono.dll
+	rm -rf @eflmonodlldir@/libefl_mono.xml
+	rm -rf $(DESTDIR)$(datadir)/efl_mono
+	rm -rf src/tests/efl_mono
+
+
+### MSBuild
+
+bin_PROGRAMS += bin/efl_mono_msbuild_gen/efl_mono_msbuild_gen
+
+bin_efl_mono_msbuild_gen_efl_mono_msbuild_gen_SOURCES = \
+    bin/efl_mono_msbuild_gen/main.cc
+
+bin_efl_mono_msbuild_gen_efl_mono_msbuild_gen_CXXFLAGS = \
+    -I$(top_srcdir)/src/lib/efl \
+    -I$(top_builddir)/src/lib/efl \
+    -I$(top_srcdir)/src/lib/eolian_cxx/ \
+    -I$(top_srcdir)/src/bindings/cxx/eina_cxx \
+    @EINA_CFLAGS@ @EINA_CXX_CFLAGS@ @EO_CXX_CFLAGS@ \
+    @ECORE_CXX_CFLAGS@ @EO_CFLAGS@ @EOLIAN_CXX_CFLAGS@ @EOLIAN_CFLAGS@
+
+bin_efl_mono_msbuild_gen_efl_mono_msbuild_gen_LDADD = @CHECK_LIBS@ @USE_EOLIAN_LIBS@
+
+bin_efl_mono_msbuild_gen_efl_mono_msbuild_gen_DEPENDENCIES = @USE_EOLIAN_INTERNAL_LIBS@
+
+# Helper for other modules using Efl_Mono_MSBuild_Gen
+include Makefile_Efl_Mono_MSBuild_Gen_Helper.am
+
+# Efl Mono DLL for MSBuild
+../libefl_mono.csproj: $(efl_mono_files_dist) lib/efl_mono/$(am__dirstamp) $(efl_mono_files_gen) $(_EFL_MONO_MSBUILD_GEN_DEP)
+	@rm -f $@
+	$(EFL_MONO_MSBUILD_GEN) $(MSBUILD_GEN_FLAGS) -o $@ -a libefl_mono.dll -t library $(patsubst %.cs,src/%.cs,$(filter %.cs, $(^)))
+
+CSPROJS_SUBDIRS = \
+examples/eina \
+examples/efl_mono
+
+msbuildcsprojs: ../libefl_mono.csproj
+	@for d in $(CSPROJS_SUBDIRS); do \
+	  echo "Making MSBuild C Sharp projects in $$d"; \
+	  $(MAKE) $(AM_MAKEFLAGS) -C $$d msbuildcsprojs || exit 1; \
+	done
+
+### Some hard-coded runtime dependencies for tests and examples
+TEST_PATHS = $(abs_top_builddir)/src/lib/efl_mono:$(abs_top_builddir)/src/lib/efl_mono/.libs:$(abs_top_builddir)/src/lib/eina/.libs:$(abs_top_builddir)/src/lib/ecore/.libs:$(abs_top_builddir)/src/lib/ecore_evas/.libs:$(abs_top_builddir)/src/lib/eo/.libs:$(abs_top_builddir)/src/lib/evas/.libs:$(abs_top_builddir)/src/lib/emile/.libs:$(abs_top_builddir)/src/lib/eet/.libs:$(abs_top_builddir)/src/lib/efl/.libs:$(abs_top_builddir)/src/ecore-file/.libs:$(abs_top_builddir)/src/lib/efl-input/.libs:$(abs_top_builddir)/src/lib/edje/.libs:$(abs_top_builddir)/src/lib/ethumb/.libs:$(abs_top_builddir)/src/lib/ethumb-client/.libs:$(abs_top_builddir)/src/lib/emotion/.libs:$(abs_top_builddir)/src/lib/ecore-imf/.libs:$(abs_top_builddir)/src/lib/ecore-con/.libs:$(abs_top_builddir)/src/lib/eldbus/.libs:$(abs_top_builddir)/src/lib/efreet/.libs:$(abs_top_builddir)/src/lib/efreet-mime/.libs:$(abs_top_builddir)/src/lib/efreet-trash/.libs:$(abs_top_builddir)/src/lib/eio/.libs:$(abs_top_builddir)/src/lib/elocation/.libs:$(abs_top_builddir)/src/lib/elementary/.libs:$(abs_top_builddir)/src/tests/efl_mono/.libs
+
+WIN_ADD_TEST_PATHS = $(abs_top_builddir)/src/lib/evil/.libs:$(abs_top_builddir)/src/lib/ecore_win32/.libs:$(abs_top_builddir)/src/lib/ector/.libs:$(abs_top_builddir)/src/lib/ecore_con/.libs:$(abs_top_builddir)/src/lib/ecore_imf/.libs:$(abs_top_builddir)/src/lib/ecore_file/.libs:$(abs_top_builddir)/src/lib/ecore_input/.libs:$(abs_top_builddir)/src/ethumb_client/.libs:$(abs_top_builddir)/src/tests/efl_mono/.libs
+
+
+### Rules for generating the .cs files
+
+ALL_EO_REFS = -r $(top_builddir)/src/bindings/mono/efl_mono/efl_libs.csv
+
+lib/eo/%.eo.cs: lib/eo/%.eo $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) $(EOLIAN_MONO_FLAGS) --dllimport eo -o $@ $(ALL_EO_REFS) $<
+
+lib/ecore/%.eo.cs: lib/ecore/%.eo $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) $(EOLIAN_MONO_FLAGS) --dllimport ecore -o $@ $(ALL_EO_REFS) $<
+
+lib/evas/%.eo.cs: lib/evas/%.eo $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) $(EOLIAN_MONO_FLAGS) --dllimport evas -o $@ $(ALL_EO_REFS) $<
+
+lib/efl/%.eo.cs: lib/efl/%.eo $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) $(EOLIAN_MONO_FLAGS) --dllimport efl -o $@ $(ALL_EO_REFS) $<
+
+lib/edje/%.eo.cs: lib/edje/%.eo $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) $(EOLIAN_MONO_FLAGS) --dllimport edje -o $@ $(ALL_EO_REFS) $<
+
+lib/elementary/%.eo.cs: lib/elementary/%.eo $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) $(EOLIAN_MONO_FLAGS) --dllimport elementary -o $@ $(ALL_EO_REFS) $<
+
+lib/ecore/%.eot.cs: lib/ecore/%.eot $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) $(EOLIAN_MONO_FLAGS) --dllimport ecore -o $@ $(ALL_EO_REFS) $<
+
+lib/eo/%.eot.cs: lib/eo/%.eot $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) $(EOLIAN_MONO_FLAGS) --dllimport eo -o $@ $(ALL_EO_REFS) $<
+
+lib/evas/%.eot.cs: lib/evas/%.eot $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) $(EOLIAN_MONO_FLAGS) --dllimport evas -o $@ $(ALL_EO_REFS) $<
+
+lib/efl/%.eot.cs: lib/efl/%.eot $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) $(EOLIAN_MONO_FLAGS) --dllimport efl -o $@ $(ALL_EO_REFS) $<
+
+lib/edje/%.eot.cs: lib/edje/%.eot $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) $(EOLIAN_MONO_FLAGS) --dllimport edje -o $@ $(ALL_EO_REFS) $<
+
+lib/elementary/%.eot.cs: lib/elementary/%.eot $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) $(EOLIAN_MONO_FLAGS) --dllimport elementary -o $@ $(ALL_EO_REFS) $<
+
+
+### Tests
+
+if EFL_ENABLE_TESTS
+
+# Intermediate C test native library
+check_LTLIBRARIES += tests/efl_mono/libefl_mono_native_test.la
+
+tests_efl_mono_libefl_mono_native_test_la_SOURCES = \
+	tests/efl_mono/dummy_child.c \
+	tests/efl_mono/dummy_event_manager.c \
+	tests/efl_mono/dummy_inherit_helper.c \
+	tests/efl_mono/dummy_interfaces.c \
+	tests/efl_mono/dummy_numberwrapper.c \
+	tests/efl_mono/dummy_part_holder.c \
+	tests/efl_mono/dummy_test_object.c
+
+efl_mono_test_eolian_c = $(efl_mono_test_eolian_files:%.eo=%.eo.c)
+efl_mono_test_eolian_h = $(efl_mono_test_eolian_files:%.eo=%.eo.h)
+
+tests_efl_mono_libefl_mono_native_test_la_CPPFLAGS =  \
+-I$(builddir)/tests/efl_mono \
+@CHECK_CFLAGS@ @EINA_CFLAGS@ @EO_CFLAGS@ @ECORE_CFLAGS@ @ELDBUS_CFLAGS@
+tests_efl_mono_libefl_mono_native_test_la_LIBADD = \
+@CHECK_LIBS@ @USE_EINA_LIBS@ @USE_EO_LIBS@ @USE_ECORE_LIBS@ @USE_ELDBUS_LIBS@
+tests_efl_mono_libefl_mono_native_test_la_LDFLAGS = -rpath $(abs_top_builddir)/tests/efl_mono @EFL_LTLIBRARY_FLAGS@
+tests_efl_mono_libefl_mono_native_test_la_DEPENDENCIES = @USE_EINA_INTERNAL_LIBS@ @USE_EO_INTERNAL_LIBS@ @USE_ECORE_INTERNAL_LIBS@ @USE_ELDBUS_INTERNAL_LIBS@
+tests_efl_mono_libefl_mono_native_test_la_LIBTOOLFLAGS = --tag=disable-static
+
+tests/efl_mono/dummy_child.c: \
+	$(efl_mono_test_eolian_c) \
+	$(efl_mono_test_eolian_h) \
+	tests/efl_mono/libefl_mono_native_test.h
+
+tests/efl_mono/dummy_event_manager.c: \
+	$(efl_mono_test_eolian_c) \
+	$(efl_mono_test_eolian_h) \
+	tests/efl_mono/libefl_mono_native_test.h
+
+tests/efl_mono/dummy_inherit_helper.c: \
+	$(efl_mono_test_eolian_c) \
+	$(efl_mono_test_eolian_h) \
+	tests/efl_mono/libefl_mono_native_test.h
+
+tests/efl_mono/dummy_interfaces.c: \
+	$(efl_mono_test_eolian_c) \
+	$(efl_mono_test_eolian_h) \
+	tests/efl_mono/libefl_mono_native_test.h
+
+tests/efl_mono/dummy_numberwrapper.c: \
+	$(efl_mono_test_eolian_c) \
+	$(efl_mono_test_eolian_h) \
+	tests/efl_mono/libefl_mono_native_test.h
+
+tests/efl_mono/dummy_part_holder.c: \
+	$(efl_mono_test_eolian_c) \
+	$(efl_mono_test_eolian_h) \
+	tests/efl_mono/libefl_mono_native_test.h
+
+tests/efl_mono/dummy_test_object.c: \
+	$(efl_mono_test_eolian_c) \
+	$(efl_mono_test_eolian_h) \
+	tests/efl_mono/libefl_mono_native_test.h
+
+# Intermediate C Sharp test DLL
+efl_mono_test_eolian_mono_files = tests/efl_mono/dummy_test_object.eo.cs \
+tests/efl_mono/dummy_test_iface.eo.cs \
+tests/efl_mono/dummy_child.eo.cs \
+tests/efl_mono/dummy_event_manager.eo.cs \
+tests/efl_mono/dummy_part_holder.eo.cs \
+tests/efl_mono/dummy_numberwrapper.eo.cs \
+tests/efl_mono/dummy_inherit_iface.eo.cs \
+tests/efl_mono/dummy_inherit_helper.eo.cs
+
+tests/efl_mono/libefl_mono_test.dll: $(efl_mono_test_eolian_mono_files) tests/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll tests/efl_mono/libefl_mono_native_test.la tests/efl_mono/libefl_mono_test.dll.config
+	@rm -f tests/efl_mono/libefl_mono_test.dll
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_builddir)/lib/efl_mono/libefl_mono.dll -out:$@ -t:library $(filter %.cs, $(^))
+
+tests/efl_mono/efl_mono$(EXEEXT).config:
+	echo "<configuration>" > $@
+	echo "  <dllmap dll=\"eina\" target=\"$(abs_top_builddir)/src/lib/eina/.libs/libeina.so\"/>" >> $@
+	echo "  <dllmap dll=\"ecore\" target=\"$(abs_top_builddir)/src/lib/ecore/.libs/libecore.so\"/>" >> $@
+	echo "  <dllmap dll=\"eo\" target=\"$(abs_top_builddir)/src/lib/eo/.libs/libeo.so\"/>" >> $@
+	echo "  <dllmap dll=\"efl\" target=\"$(abs_top_builddir)/src/lib/efl/.libs/libefl.so\"/>" >> $@
+	echo "  <dllmap dll=\"evas\" target=\"$(abs_top_builddir)/src/lib/evas/.libs/libevas.so\"/>" >> $@
+	echo "  <dllmap dll=\"eldbus\" target=\"$(abs_top_builddir)/src/lib/eldbus/.libs/libeldbus.so\"/>" >> $@
+	echo "  <dllmap dll=\"elementary\" target=\"$(abs_top_builddir)/src/lib/elementary/.libs/libelementary.so\"/>" >> $@
+	echo "</configuration>" >> $@
+
+tests/efl_mono/libefl_mono_test.dll.config:
+	echo "<configuration>" > $@
+	echo "  <dllmap dll=\"eina\" target=\"$(abs_top_builddir)/src/lib/eina/.libs/libeina.so\"/>" >> $@
+	echo "  <dllmap dll=\"ecore\" target=\"$(abs_top_builddir)/src/lib/ecore/.libs/libecore.so\"/>" >> $@
+	echo "  <dllmap dll=\"eo\" target=\"$(abs_top_builddir)/src/lib/eo/.libs/libeo.so\"/>" >> $@
+	echo "  <dllmap dll=\"efl\" target=\"$(abs_top_builddir)/src/lib/efl/.libs/libefl.so\"/>" >> $@
+	echo "  <dllmap dll=\"evas\" target=\"$(abs_top_builddir)/src/lib/evas/.libs/libevas.so\"/>" >> $@
+	echo "  <dllmap dll=\"eldbus\" target=\"$(abs_top_builddir)/src/lib/eldbus/.libs/libeldbus.so\"/>" >> $@
+	echo "  <dllmap dll=\"elementary\" target=\"$(abs_top_builddir)/src/lib/elementary/.libs/libelementary.so\"/>" >> $@
+	echo "</configuration>" >> $@
+
+# C Sharp test executable
+AM_TESTS_ENVIRONMENT += MONO='mono'
+AM_TESTS_ENVIRONMENT += MONO_BUILDPATH='$(abs_top_builddir)'
+AM_TESTS_ENVIRONMENT += MONO_PATH='$(TEST_PATHS)'
+AM_TESTS_ENVIRONMENT += EXEEXT='$(EXEEXT)'
+if HAVE_WIN32
+AM_TESTS_ENVIRONMENT += PATH='$(PATH):$(TEST_PATHS):$(WIN_ADD_TEST_PATHS)'
+else
+AM_TESTS_ENVIRONMENT += LD_LIBRARY_PATH='$(LD_LIBRARY_PATH):$(TEST_PATHS)'
+
+check_PROGRAMS += tests/efl_mono/efl_mono
+TESTS += tests/efl_mono/mono_test_driver.sh
+
+tests_efl_mono_efl_mono_SOURCES = \
+     tests/efl_mono/Main.cs \
+     tests/efl_mono/TestUtils.cs \
+     tests/efl_mono/BasicDirection.cs \
+     tests/efl_mono/Eina.cs \
+     tests/efl_mono/Eldbus.cs \
+     tests/efl_mono/Eo.cs \
+     tests/efl_mono/EoPromises.cs \
+     tests/efl_mono/Errors.cs \
+     tests/efl_mono/Events.cs \
+     tests/efl_mono/FunctionPointers.cs \
+     tests/efl_mono/FunctionPointerMarshalling.cs \
+     tests/efl_mono/Inheritance.cs \
+     tests/efl_mono/Parts.cs \
+     tests/efl_mono/Promises.cs \
+     tests/efl_mono/Strbuf.cs \
+     tests/efl_mono/Strings.cs \
+     tests/efl_mono/Structs.cs \
+     tests/efl_mono/Value.cs \
+     tests/efl_mono/ValueEolian.cs \
+     tests/efl_mono/EinaTestData.cs \
+     tests/efl_mono/StructHelpers.cs
+
+beta_mono_flags =
+
+if HAVE_CSHARP_BETA
+beta_mono_flags += -define:EFL_BETA
+endif
+
+tests/efl_mono/efl_mono$(EXEEXT): $(tests_efl_mono_efl_mono_SOURCES) tests/efl_mono/$(am__dirstamp) lib/efl_mono/libefl_mono.dll tests/efl_mono/libefl_mono_test.dll tests/efl_mono/efl_mono$(EXEEXT).config
+	@rm -f $@
+	$(AM_V_MCS) $(MCS) $(MCSFLAGS) -r:$(abs_top_builddir)/src/lib/efl_mono/libefl_mono.dll -r:$(abs_top_builddir)/src/tests/efl_mono/libefl_mono_test.dll -out:$@ $(filter %.cs, $(^)) $(beta_mono_flags)
+
+# Rule for generating the .cs files
+tests/efl_mono/%.eo.cs: tests/efl_mono/%.eo $(_EOLIAN_MONO_DEP)
+	$(AM_V_EOLMONO) \
+	$(MKDIR_P) $(dir $@); \
+	$(EOLIAN_MONO) $(EOLIAN_FLAGS) $(EOLIAN_MONO_FLAGS) --dllimport "@DLIB_PREFIX_MONO@efl_mono_native_test@DLIB_SUFFIX_MONO@" -o $@ $(ALL_EO_REFS) $<
+
+CLEANFILES += tests/efl_mono/libefl_mono_test.dll $(efl_mono_test_eolian_mono_files) $(efl_mono_test_eolian_c) $(efl_mono_test_eolian_h) tests/efl_mono/efl_mono.config
+
+endif
+
+
+endif
+endif

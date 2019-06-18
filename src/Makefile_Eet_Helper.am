@@ -1,0 +1,13 @@
+if HAVE_EET_EET
+EET = @eet_eet@
+else
+EET = EFL_RUN_IN_TREE=1 $(top_builddir)/src/bin/eet/eet
+endif
+EET_FLAGS_VERBOSE = $(EET_FLAGS_VERBOSE_@AM_V@)
+EET_FLAGS_VERBOSE_ = $(EET_FLAGS_VERBOSE_@AM_DEFAULT_V@)
+EET_FLAGS_VERBOSE_1 = -v
+EET_FLAGS = $(EET_FLAGS_VERBOSE)
+
+AM_V_EET = $(am__v_EET_@AM_V@)
+am__v_EET_ = $(am__v_EET_@AM_DEFAULT_V@)
+am__v_EET_0 = @echo "  EET     " $@;

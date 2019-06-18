@@ -1,0 +1,101 @@
+if HAVE_ECORE_AUDIO
+
+### Library
+
+ecore_audio_eolian_files = \
+	lib/ecore_audio/ecore_audio.eo \
+	lib/ecore_audio/ecore_audio_in.eo \
+	lib/ecore_audio/ecore_audio_out.eo \
+	lib/ecore_audio/ecore_audio_in_sndfile.eo \
+	lib/ecore_audio/ecore_audio_out_sndfile.eo \
+	lib/ecore_audio/ecore_audio_out_pulse.eo \
+	lib/ecore_audio/ecore_audio_in_tone.eo \
+	lib/ecore_audio/ecore_audio_out_wasapi.eo
+
+
+ecore_audio_eolian_c = $(ecore_audio_eolian_files:%.eo=%.eo.c)
+ecore_audio_eolian_h = $(ecore_audio_eolian_files:%.eo=%.eo.h)
+
+BUILT_SOURCES += \
+                 $(ecore_audio_eolian_c) \
+                 $(ecore_audio_eolian_h)
+
+if INSTALL_EO_FILES
+ecore_audioeolianfilesdir = $(datadir)/eolian/include/ecore-@VMAJ@
+ecore_audioeolianfiles_DATA = $(ecore_audio_eolian_files)
+endif
+
+EXTRA_DIST2 += \
+              $(ecore_audio_eolian_files)
+
+lib_LTLIBRARIES += lib/ecore_audio/libecore_audio.la
+
+installed_ecoreaudiomainheadersdir = $(includedir)/ecore-audio-@VMAJ@
+dist_installed_ecoreaudiomainheaders_DATA = \
+lib/ecore_audio/Ecore_Audio.h \
+lib/ecore_audio/ecore_audio_obj.h \
+lib/ecore_audio/ecore_audio_obj_in.h \
+lib/ecore_audio/ecore_audio_obj_out.h \
+lib/ecore_audio/ecore_audio_obj_in_tone.h \
+lib/ecore_audio/ecore_audio_protected.h \
+lib/ecore_audio/ecore_audio_obj_out_pulse.h \
+lib/ecore_audio/ecore_audio_obj_in_sndfile.h \
+lib/ecore_audio/ecore_audio_obj_out_sndfile.h \
+lib/ecore_audio/ecore_audio_obj_out_wasapi.h
+
+nodist_installed_ecoreaudiomainheaders_DATA = $(ecore_audio_eolian_h)
+
+lib_ecore_audio_libecore_audio_la_SOURCES = \
+lib/ecore_audio/ecore_audio.c \
+lib/ecore_audio/ecore_audio_obj.c \
+lib/ecore_audio/ecore_audio_obj_in.c \
+lib/ecore_audio/ecore_audio_obj_out.c \
+lib/ecore_audio/ecore_audio_obj_in_tone.c \
+lib/ecore_audio/ecore_audio_private.h
+
+lib_ecore_audio_libecore_audio_la_CPPFLAGS = -I$(top_builddir)/src/lib/efl @ECORE_AUDIO_CFLAGS@ @ECORE_AUDIO_ALSA_CFLAGS@ @ECORE_AUDIO_PULSE_CFLAGS@ @ECORE_AUDIO_SNDFILE_CFLAGS@ -DEFL_BUILD
+lib_ecore_audio_libecore_audio_la_LIBADD = @ECORE_AUDIO_LIBS@ @ECORE_AUDIO_ALSA_LIBS@
+lib_ecore_audio_libecore_audio_la_DEPENDENCIES = @ECORE_AUDIO_INTERNAL_LIBS@
+lib_ecore_audio_libecore_audio_la_LDFLAGS = @EFL_LTLIBRARY_FLAGS@
+
+if HAVE_ECORE_AUDIO_PULSE
+lib_ecore_audio_libecore_audio_la_SOURCES += \
+lib/ecore_audio/ecore_audio_pulse_ml.c \
+lib/ecore_audio/ecore_audio_obj_out_pulse.c
+endif
+
+if HAVE_WIN32
+lib_ecore_audio_libecore_audio_la_SOURCES += \
+lib/ecore_audio/ecore_audio_obj_out_wasapi.c
+endif
+
+if HAVE_ECORE_AUDIO_SNDFILE
+lib_ecore_audio_libecore_audio_la_SOURCES += \
+lib/ecore_audio/ecore_audio_obj_in_sndfile.c \
+lib/ecore_audio/ecore_audio_obj_out_sndfile.c \
+lib/ecore_audio/ecore_audio_sndfile_vio.c
+endif
+
+
+if HAVE_LUA_BINDINGS
+
+ecore_audio_eolian_lua = $(ecore_audio_eolian_files:%.eo=%.eo.lua)
+
+generated_ecore_audio_lua_all = $(ecore_audio_eolian_lua)
+
+GENERATED_LUA_BINDINGS += $(generated_ecore_audio_lua_all)
+
+installed_ecoreaudioluadir = $(datadir)/elua/modules/ecore_audio
+nodist_installed_ecoreaudiolua_DATA = $(generated_ecore_audio_lua_all)
+
+endif
+
+if HAVE_JS
+
+generated_ecore_audio_js_bindings = $(ecore_audio_eolian_files:%.eo=%.eo.js.cc)
+
+GENERATED_JS_BINDINGS += $(generated_ecore_audio_js_bindings)
+
+endif
+
+endif
