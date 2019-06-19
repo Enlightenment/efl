@@ -58,6 +58,12 @@ typedef struct _Size_Params
 
 #define PAGE_NUM 3
 
+static void
+_cb(void *data, Evas_Object *obj, Evas *e, void *event_info)
+{
+   printf("asdfasdfasdf clicked\n");
+}
+
 static Eo *
 view_add(View_Type p, Eo *parent)
 {
@@ -93,8 +99,10 @@ view_add(View_Type p, Eo *parent)
           break;
 
         case BUTTON:
-          page = efl_add(EFL_UI_BUTTON_CLASS, parent,
-                         efl_text_set(efl_added, "Button Page"));
+          //page = efl_add(EFL_UI_BUTTON_CLASS, parent,
+          //               efl_text_set(efl_added, "Button Page"));
+          page = elm_button_add(parent);
+          evas_object_smart_callback_add(page, "clicked", _cb, NULL);
           efl_gfx_hint_fill_set(page, EINA_TRUE, EINA_TRUE);
           break;
 

@@ -120,6 +120,9 @@ _mouse_move_cb(void *data,
    if (efl_input_event_flags_get(ev) & EFL_INPUT_FLAGS_PROCESSED) return;
    if (!pd->mouse_move.active) return;
 
+   if (!efl_input_processed_get(ev))
+     efl_input_processed_set(ev, EINA_TRUE);
+
    pos = efl_input_pointer_position_get(ev);
    pos_y_diff = pd->mouse_move.mouse_start.x - pos.x;
 
