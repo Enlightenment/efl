@@ -2,9 +2,6 @@
 
 set -e
 . .ci/travis.sh
-if [ "$1" = "release-ready" ] ; then
-  exit 0
-fi
 if [ "$1" = "coverity" ] ; then
   exit 0
 fi
