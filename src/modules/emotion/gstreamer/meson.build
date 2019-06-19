@@ -6,7 +6,7 @@ generic_src = files([
   'emotion_sink.c'
 ])
 
-generic_deps = [dependency('gstreamer-0.1')]
+generic_deps = [dependency('gstreamer-0.10')]
 
 shared_module(emotion_loader,
     generic_src,
