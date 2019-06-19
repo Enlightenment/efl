@@ -3,7 +3,6 @@ cache:
   directories:
     - $HOME/cachedir
     - $HOME/.ccache
-    - $HOME/autom4te.cache
 sudo: required
 dist: trusty
 
