@@ -154,6 +154,10 @@ EFL_START_TEST(pack_before2)
 
    EXPECT_ERROR_START;
    ck_assert_int_eq(efl_pack_before(widget, inv, wid[2]), EINA_FALSE);
+   //workarround for a bug, it appears that our CI is crashing in the shutdown procedure
+   //working arround this by deleting the widget earlier
+   efl_del(widget);
+   widget = NULL;
    EXPECT_ERROR_END;
 }
 EFL_END_TEST
