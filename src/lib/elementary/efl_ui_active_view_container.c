@@ -464,12 +464,10 @@ _unpack_all(Eo *obj EINA_UNUSED,
      {
         Eo *content = eina_list_data_get(pd->content_list);
 
-        _unpack(obj, pd, content, 0);
-
         if (clear)
           efl_del(content);
-
-        pd->content_list = eina_list_remove(pd->content_list, content);
+        else
+          _unpack(obj, pd, content, 0);
      }
 }
 
@@ -503,6 +501,7 @@ _unpack(Eo *obj,
    pd->content_list = eina_list_remove(pd->content_list, subobj);
    _elm_widget_sub_object_redirect_to_top(obj, subobj);
 
+   if (!efl_alive_get(obj)) return;
    if (index < pd->curr.page)
      pd->curr.page--;
 
