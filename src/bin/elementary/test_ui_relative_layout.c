@@ -171,7 +171,7 @@ _setter_add(Eo *vbox, Eo *btn, Options option)
            efl_pack(hbox, efl_added));
 
    efl_add(EFL_UI_SLIDER_CLASS, hbox,
-           efl_ui_range_min_max_set(efl_added, 0.0, 1.0),
+           efl_ui_range_limits_set(efl_added, 0.0, 1.0),
            efl_ui_range_step_set(efl_added, 0.1),
            efl_ui_range_value_set(efl_added, relative),
            efl_key_wref_set(efl_added, "btn", btn),
@@ -242,7 +242,7 @@ _button_frame_add(Eo *box, Eo *btn)
            efl_pack(hbox, efl_added));
 
    efl_add(EFL_UI_SLIDER_CLASS, hbox,
-           efl_ui_range_min_max_set(efl_added, 0.0, 1.0),
+           efl_ui_range_limits_set(efl_added, 0.0, 1.0),
            efl_ui_range_step_set(efl_added, 0.1),
            efl_ui_range_value_set(efl_added, align_x),
            efl_key_wref_set(efl_added, "btn", btn),
@@ -262,7 +262,7 @@ _button_frame_add(Eo *box, Eo *btn)
            efl_pack(hbox, efl_added));
 
    efl_add(EFL_UI_SLIDER_CLASS, hbox,
-           efl_ui_range_min_max_set(efl_added, 0.0, 1.0),
+           efl_ui_range_limits_set(efl_added, 0.0, 1.0),
            efl_ui_range_step_set(efl_added, 0.1),
            efl_ui_range_value_set(efl_added, align_y),
            efl_key_wref_set(efl_added, "btn", btn),

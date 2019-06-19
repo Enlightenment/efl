@@ -414,7 +414,7 @@ _efl_ui_progressbar_efl_object_constructor(Eo *obj, Efl_Ui_Progressbar_Data *_pd
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PROGRESS_BAR);
-   efl_ui_range_min_max_set(obj, 0.0, 1.0);
+   efl_ui_range_limits_set(obj, 0.0, 1.0);
    return obj;
 }
 
@@ -540,7 +540,7 @@ _progressbar_part_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *pa
    Eina_Bool is_cur_progressbar = !strcmp(part_name, curprogresspart[elm_widget_is_legacy(obj)]);
 
    if ((!is_cur_progressbar) || sd->has_cur_progressbar_part)
-     efl_ui_range_min_max_get(efl_part(obj, part_name), &min, &max);
+     efl_ui_range_limits_get(efl_part(obj, part_name), &min, &max);
 
    if (val < min) val = min;
    if (val > max) val = max;
@@ -666,7 +666,7 @@ _efl_ui_progressbar_pulse_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data
 }
 
 EOLIAN static void
-_efl_ui_progressbar_efl_ui_range_display_range_min_max_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, double min, double max)
+_efl_ui_progressbar_efl_ui_range_display_range_limits_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, double min, double max)
 {
   if (elm_widget_is_legacy(obj))
     _progress_part_min_max_set(obj, sd, "elm.cur.progressbar", min, max);
@@ -675,7 +675,7 @@ _efl_ui_progressbar_efl_ui_range_display_range_min_max_set(Eo *obj, Efl_Ui_Progr
 }
 
 EOLIAN static void
-_efl_ui_progressbar_efl_ui_range_display_range_min_max_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd, double *min, double *max)
+_efl_ui_progressbar_efl_ui_range_display_range_limits_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->val_min;
    if (max) *max = sd->val_max;
@@ -721,7 +721,7 @@ _efl_ui_progressbar_efl_access_value_value_and_text_get(const Eo *obj EINA_UNUSE
 }
 
 EOLIAN static void
-_efl_ui_progressbar_part_efl_ui_range_display_range_min_max_set(Eo *obj, void *_pd EINA_UNUSED, double min, double max)
+_efl_ui_progressbar_part_efl_ui_range_display_range_limits_set(Eo *obj, void *_pd EINA_UNUSED, double min, double max)
 {
   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
   Efl_Ui_Progressbar_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_PROGRESSBAR_CLASS);
@@ -730,7 +730,7 @@ _efl_ui_progressbar_part_efl_ui_range_display_range_min_max_set(Eo *obj, void *_
 }
 
 EOLIAN static void
-_efl_ui_progressbar_part_efl_ui_range_display_range_min_max_get(const Eo *obj, void *_pd EINA_UNUSED, double *min, double *max)
+_efl_ui_progressbar_part_efl_ui_range_display_range_limits_get(const Eo *obj, void *_pd EINA_UNUSED, double *min, double *max)
 {
    Efl_Ui_Progress_Status *ps;
    Eina_List *l;

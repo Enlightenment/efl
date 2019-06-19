@@ -1357,13 +1357,13 @@ elm_slider_range_get(const Evas_Object *obj, double *from, double *to)
 EAPI void
 elm_slider_min_max_set(Evas_Object *obj, double min, double max)
 {
-   efl_ui_range_min_max_set(obj, min, max);
+   efl_ui_range_limits_set(obj, min, max);
 }
 
 EAPI void
 elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max)
 {
-   efl_ui_range_min_max_get(obj, min, max);
+   efl_ui_range_limits_get(obj, min, max);
 }
 
 EAPI void

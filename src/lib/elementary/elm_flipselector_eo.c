@@ -76,10 +76,10 @@ Eina_Error _elm_flipselector_efl_ui_widget_theme_apply(Eo *obj, Elm_Flipselector
 Eina_Bool _elm_flipselector_efl_ui_widget_widget_input_event_handler(Eo *obj, Elm_Flipselector_Data *pd, const Efl_Event *eo_event, Efl_Canvas_Object *source);
 
 
-void _elm_flipselector_efl_ui_range_display_range_min_max_set(Eo *obj, Elm_Flipselector_Data *pd, double min, double max);
+void _elm_flipselector_efl_ui_range_display_range_limits_set(Eo *obj, Elm_Flipselector_Data *pd, double min, double max);
 
 
-void _elm_flipselector_efl_ui_range_display_range_min_max_get(const Eo *obj, Elm_Flipselector_Data *pd, double *min, double *max);
+void _elm_flipselector_efl_ui_range_display_range_limits_get(const Eo *obj, Elm_Flipselector_Data *pd, double *min, double *max);
 
 
 void _elm_flipselector_efl_ui_range_interactive_range_step_set(Eo *obj, Elm_Flipselector_Data *pd, double step);
@@ -122,8 +122,8 @@ _elm_flipselector_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_constructor, _elm_flipselector_efl_object_constructor),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_theme_apply, _elm_flipselector_efl_ui_widget_theme_apply),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_input_event_handler, _elm_flipselector_efl_ui_widget_widget_input_event_handler),
-      EFL_OBJECT_OP_FUNC(efl_ui_range_min_max_set, _elm_flipselector_efl_ui_range_display_range_min_max_set),
-      EFL_OBJECT_OP_FUNC(efl_ui_range_min_max_get, _elm_flipselector_efl_ui_range_display_range_min_max_get),
+      EFL_OBJECT_OP_FUNC(efl_ui_range_limits_set, _elm_flipselector_efl_ui_range_display_range_limits_set),
+      EFL_OBJECT_OP_FUNC(efl_ui_range_limits_get, _elm_flipselector_efl_ui_range_display_range_limits_get),
       EFL_OBJECT_OP_FUNC(efl_ui_range_step_set, _elm_flipselector_efl_ui_range_interactive_range_step_set),
       EFL_OBJECT_OP_FUNC(efl_ui_range_step_get, _elm_flipselector_efl_ui_range_interactive_range_step_get),
       EFL_OBJECT_OP_FUNC(efl_ui_range_value_set, _elm_flipselector_efl_ui_range_display_range_value_set),

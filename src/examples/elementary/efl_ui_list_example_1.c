@@ -271,7 +271,7 @@ elm_main(int argc EINA_UNUSED, char **argv)
    efl_gfx_hint_weight_set(slider, 0.0, 0.05);
    efl_gfx_hint_align_set(slider, 0.5, 0.5);
    efl_gfx_hint_size_min_set(slider, EINA_SIZE2D(380, 20));
-   efl_ui_range_min_max_set(slider, 0.0, 1.0);
+   efl_ui_range_limits_set(slider, 0.0, 1.0);
    efl_pack_end(wbox, slider);
 
    bbox  = efl_add(EFL_UI_BOX_CLASS, wbox);

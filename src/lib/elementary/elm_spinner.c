@@ -1372,13 +1372,13 @@ elm_spinner_add(Evas_Object *parent)
 EAPI void
 elm_spinner_min_max_set(Evas_Object *obj, double min, double max)
 {
-   efl_ui_range_min_max_set(obj, min, max);
+   efl_ui_range_limits_set(obj, min, max);
 }
 
 EAPI void
 elm_spinner_min_max_get(const Evas_Object *obj, double *min, double *max)
 {
-   efl_ui_range_min_max_get(obj, min, max);
+   efl_ui_range_limits_get(obj, min, max);
 }
 
 EAPI void
@@ -1449,7 +1449,7 @@ _elm_spinner_label_format_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd)
 }
 
 EOLIAN static void
-_elm_spinner_efl_ui_range_display_range_min_max_set(Eo *obj, Elm_Spinner_Data *sd, double min, double max)
+_elm_spinner_efl_ui_range_display_range_limits_set(Eo *obj, Elm_Spinner_Data *sd, double min, double max)
 {
    if ((sd->val_min == min) && (sd->val_max == max)) return;
 
@@ -1464,7 +1464,7 @@ _elm_spinner_efl_ui_range_display_range_min_max_set(Eo *obj, Elm_Spinner_Data *s
 }
 
 EOLIAN static void
-_elm_spinner_efl_ui_range_display_range_min_max_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *min, double *max)
+_elm_spinner_efl_ui_range_display_range_limits_get(const Eo *obj EINA_UNUSED, Elm_Spinner_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->val_min;
    if (max) *max = sd->val_max;

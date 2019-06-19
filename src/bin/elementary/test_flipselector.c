@@ -187,7 +187,7 @@ test_flipselector(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    fpd = elm_flipselector_add(bx);
    evas_object_size_hint_weight_set(fpd, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    efl_ui_range_step_set(fpd, 1.5);
-   efl_ui_range_min_max_set(fpd, 2.3, 10.1);
+   efl_ui_range_limits_set(fpd, 2.3, 10.1);
    efl_ui_range_value_set(fpd, 5.3);
    printf("Current value is %f\n", efl_ui_range_value_get(fpd));
    elm_box_pack_end(bx, fpd);

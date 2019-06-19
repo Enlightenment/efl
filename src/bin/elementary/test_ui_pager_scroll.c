@@ -296,7 +296,7 @@ static void pack_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    index = efl_ui_range_value_get(param->pack_sp);
    if (index > cnt)
      efl_ui_range_value_set(param->pack_sp, cnt);
-   efl_ui_range_min_max_set(param->pack_sp, 0, cnt);
+   efl_ui_range_limits_set(param->pack_sp, 0, cnt);
 
    if (cnt > 0)
      {
@@ -307,7 +307,7 @@ static void pack_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
         index = efl_ui_range_value_get(param->unpack_sp);
         if (index > cnt)
           efl_ui_range_value_set(param->unpack_sp, cnt);
-        efl_ui_range_min_max_set(param->unpack_sp, 0, cnt);
+        efl_ui_range_limits_set(param->unpack_sp, 0, cnt);
      }
    else
      {
@@ -415,7 +415,7 @@ static void page_size_cb(void *data,
    efl_gfx_entity_visible_set(ck, 1);
 
    sl = efl_add(EFL_UI_SLIDER_CLASS, inbox,
-                efl_ui_range_min_max_set(efl_added, 100, 200),
+                efl_ui_range_limits_set(efl_added, 100, 200),
                 efl_ui_range_value_set(efl_added, params->w),
                 efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(100, 0)),
                 efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED,
@@ -456,7 +456,7 @@ static void page_size_cb(void *data,
    efl_gfx_entity_visible_set(ck, 1);
 
    sl = efl_add(EFL_UI_SLIDER_CLASS, inbox,
-                efl_ui_range_min_max_set(efl_added, 100, 300),
+                efl_ui_range_limits_set(efl_added, 100, 300),
                 efl_ui_range_value_set(efl_added, params->h),
                 efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(100, 0)),
                 efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED,
@@ -500,7 +500,7 @@ static void padding_cb(void *data,
                                          efl_added, NULL));
 
    efl_add(EFL_UI_SLIDER_CLASS, box,
-           efl_ui_range_min_max_set(efl_added, 0, 50),
+           efl_ui_range_limits_set(efl_added, 0, 50),
            efl_ui_range_value_set(efl_added, params->padding),
            efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(100, 0)),
            efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED,
@@ -529,7 +529,7 @@ static void side_page_num_cb(void *data,
    efl_add(EFL_UI_SLIDER_CLASS, box,
            efl_text_set(efl_added, "side page num"),
            efl_ui_format_string_set(efl_part(efl_added, "indicator"), "%1.0f"),
-           efl_ui_range_min_max_set(efl_added, 0, 3),
+           efl_ui_range_limits_set(efl_added, 0, 3),
            efl_ui_range_value_set(efl_added, params->side_page_num),
            efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
            efl_gfx_hint_weight_set(efl_added, 1, 1),
@@ -564,7 +564,7 @@ static void pack_cb(void *data,
                      efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL));
 
    sp1 = efl_add(EFL_UI_SPIN_BUTTON_CLASS, in_box1,
-                 efl_ui_range_min_max_set(efl_added, 0,
+                 efl_ui_range_limits_set(efl_added, 0,
                                           efl_content_count(pager)),
                  efl_ui_range_value_set(efl_added,
                                         efl_ui_pager_current_page_get(pager)));
@@ -688,7 +688,7 @@ static void pack_cb(void *data,
 
    if (efl_content_count(pager) > 0)
      {
-        efl_ui_range_min_max_set(sp2, 0,
+        efl_ui_range_limits_set(sp2, 0,
                                  (efl_content_count(pager) - 1));
         efl_ui_range_value_set(sp2,
                                efl_ui_pager_current_page_get(pager));
@@ -753,7 +753,7 @@ static void current_page_cb(void *data,
 
    if (efl_content_count(pager) > 0)
      {
-        efl_ui_range_min_max_set(sp, 0,
+        efl_ui_range_limits_set(sp, 0,
                                  (efl_content_count(pager) - 1));
         efl_ui_range_value_set(sp,
                                efl_ui_pager_current_page_get(pager));

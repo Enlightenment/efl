@@ -718,7 +718,7 @@ _efl_ui_slider_efl_ui_layout_orientable_orientation_get(const Eo *obj EINA_UNUSE
 }
 
 EOLIAN static void
-_efl_ui_slider_efl_ui_range_display_range_min_max_set(Eo *obj, Efl_Ui_Slider_Data *sd, double min, double max)
+_efl_ui_slider_efl_ui_range_display_range_limits_set(Eo *obj, Efl_Ui_Slider_Data *sd, double min, double max)
 {
    if ((sd->val_min == min) && (sd->val_max == max)) return;
    sd->val_min = min;
@@ -730,7 +730,7 @@ _efl_ui_slider_efl_ui_range_display_range_min_max_set(Eo *obj, Efl_Ui_Slider_Dat
 }
 
 EOLIAN static void
-_efl_ui_slider_efl_ui_range_display_range_min_max_get(const Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd, double *min, double *max)
+_efl_ui_slider_efl_ui_range_display_range_limits_get(const Eo *obj EINA_UNUSED, Efl_Ui_Slider_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->val_min;
    if (max) *max = sd->val_max;

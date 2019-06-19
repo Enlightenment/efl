@@ -473,7 +473,7 @@ _items_add(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_flipselector_efl_ui_range_display_range_min_max_set(Eo *obj, Elm_Flipselector_Data *sd, double min, double max)
+_elm_flipselector_efl_ui_range_display_range_limits_set(Eo *obj, Elm_Flipselector_Data *sd, double min, double max)
 {
    if ((sd->val_min == min) && (sd->val_max == max)) return;
 
@@ -484,7 +484,7 @@ _elm_flipselector_efl_ui_range_display_range_min_max_set(Eo *obj, Elm_Flipselect
 }
 
 EOLIAN static void
-_elm_flipselector_efl_ui_range_display_range_min_max_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double *min, double *max)
+_elm_flipselector_efl_ui_range_display_range_limits_get(const Eo *obj EINA_UNUSED, Elm_Flipselector_Data *sd, double *min, double *max)
 {
    if (min) *min = sd->val_min;
    if (max) *max = sd->val_max;

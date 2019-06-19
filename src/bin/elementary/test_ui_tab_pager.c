@@ -229,7 +229,7 @@ _current_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                  elm_naviframe_item_push(navi, "Current", btn, NULL, efl_added, NULL));
 
    sp = efl_add(EFL_UI_SPIN_BUTTON_CLASS, box,
-                efl_ui_range_min_max_set(efl_added, 0, efl_content_count(tab_pager) - 1),
+                efl_ui_range_limits_set(efl_added, 0, efl_content_count(tab_pager) - 1),
                 efl_ui_range_value_set(efl_added, efl_ui_active_view_active_index_get(tab_pager)),
                 efl_pack_end(box, efl_added));
 
@@ -304,7 +304,7 @@ _pack_at_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    tab_page = tab_page_add(tsd->tab_pager);
 
    efl_pack_at(tsd->tab_pager, tab_page, elm_spinner_value_get(tsd->spinner));
-   efl_ui_range_min_max_set(tsd->spinner, 0, efl_content_count(tsd->tab_pager) - 1);
+   efl_ui_range_limits_set(tsd->spinner, 0, efl_content_count(tsd->tab_pager) - 1);
 }
 
 static void
@@ -363,7 +363,7 @@ _pack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                     efl_pack_end(box, efl_added));
 
    sp = efl_add(EFL_UI_SPIN_BUTTON_CLASS, in_box,
-                efl_ui_range_min_max_set(efl_added, 0, efl_content_count(tab_pager) - 1),
+                efl_ui_range_limits_set(efl_added, 0, efl_content_count(tab_pager) - 1),
                 efl_ui_range_value_set(efl_added, efl_ui_active_view_active_index_get(tab_pager)),
                 efl_pack_end(in_box, efl_added));
 
@@ -408,7 +408,7 @@ _unpack_at_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    Tab_Set_Data *tsd = data;
 
    efl_pack_unpack_at(tsd->tab_pager, elm_spinner_value_get(tsd->spinner));
-   efl_ui_range_min_max_set(tsd->spinner, 0, efl_content_count(tsd->tab_pager) - 1);
+   efl_ui_range_limits_set(tsd->spinner, 0, efl_content_count(tsd->tab_pager) - 1);
 }
 
 static void
@@ -463,7 +463,7 @@ _unpack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                     efl_pack_end(box, efl_added));
 
    sp = efl_add(EFL_UI_SPIN_BUTTON_CLASS, in_box,
-                efl_ui_range_min_max_set(efl_added, 0, efl_content_count(tab_pager) - 1),
+                efl_ui_range_limits_set(efl_added, 0, efl_content_count(tab_pager) - 1),
                 efl_ui_range_value_set(efl_added, efl_ui_active_view_active_index_get(tab_pager)),
                 efl_pack_end(in_box, efl_added));
 
