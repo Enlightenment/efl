@@ -12,7 +12,7 @@ ${mfunc}$
   <!--(elif exists("mcls") and mcls!= None)-->
 ${mcls}$
   <!--(else)-->
-   obj = efl_add_ref(${cls.c_name}$, parent);
+   obj = efl_add_ref(${cls.c_macro}$, parent);
    fail_if(!obj, "ERROR: Cannot init ${cls.name}$!\n");
   <!--(end)-->
 <!--(end)-->
@@ -46,6 +46,16 @@ arg_${arg.name}$_data, arg_${arg.name}$, arg_${arg.name}$_free_cb
    <!--(if arg.direction in (arg.direction.OUT, arg.direction.INOUT))-->&<!--(end)-->arg_${arg.name}$
  <!--(end)-->
 <!--(end)-->
+<!--(macro arg_self)-->
+ <!--(if not func.is_class)-->
+   obj
+ <!--(end)-->
+<!--(end)-->
+<!--(macro print_comma)-->
+ <!--(if i > 0 or not is_class)-->
+ ,
+ <!--(end)-->
+<!--(end)-->
 
 #ifdef HAVE_CONFIG_H
 # include <config.h>
@@ -69,7 +79,7 @@ static const Efl_Test_Case etc[] = {
 
 <!--(for cls in suite)-->
 
-/**************** TEST CASE ${cls.c_name}$ ****************/
+/**************** TEST CASE ${cls.c_macro}$ ****************/
 ${m_show(mshow=cls.custom)}$#!
 
 START_TEST(${cls.myfullname}$_smoke)
@@ -84,7 +94,7 @@ START_TEST(${cls.myfullname}$_${func.full_c_method_name}$)
 {
 ${args_declaration(args=func.parameters)}$${init(mcls=cls.init,mfunc=func.init)}$
 ${m_show(mshow=func.arg_init)}$#!
-   <!--(if func.method_return_type)-->${func.method_return_type.c_type_return}$ r = <!--(end)-->${func.full_c_method_name}$(obj<!--(for arg in func.parameters)-->,${print_arg(arg=arg)}$<!--(end)-->);
+   <!--(if func.method_return_type)-->${func.method_return_type.c_type_return}$ r = <!--(end)-->${func.full_c_method_name}$(${arg_self(func=func)}$<!--(for i, arg in enumerate(func.parameters))-->${print_comma(i=i, is_class=func.is_class)}$${print_arg(arg=arg)}$<!--(end)-->);
    <!--(if func.method_return_type)-->(void)r;<!--(end)-->
 ${m_show(mshow=func.arg_shutdown)}$#!
 ${shutdown(mcls=cls.shutdown,mfunc=func.shutdown)}$

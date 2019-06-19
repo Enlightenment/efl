@@ -25,7 +25,7 @@ class EKeys:
         return eotype.name
 
     def event_convert(self, event):
-        return event.c_name
+        return event.c_macro
 
     def print_arg(self, eoarg):
         return "arg_{}".format(eoarg.name)
