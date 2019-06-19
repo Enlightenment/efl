@@ -6,13 +6,32 @@ set -e
 
 if [ "$DISTRO" != "" ] ; then
   # Normal build test of all targets
-  OPTS=" -Decore-imf-loaders-disabler=scim,ibus -Davahi=false -Dbindings=luajit"
+  OPTS=" -Decore-imf-loaders-disabler=scim,ibus -Dbindings=luajit"
+  # Why do we need to disable the imf loaders here?
 
-  WAYLAND_LINUX_COPTS=" -Dwl=true -Ddrm=true -Dopengl=es-egl"
+  WAYLAND_LINUX_COPTS=" -Dwl=true -Ddrm=true -Dopengl=es-egl -Dwl-deprecated=true -Ddrm-deprecated=true"
 
-  ENABLED_LINUX_COPTS=" -Dharfbuzz=true -Dhyphen=true"
+  # TODO:
+  # - Enable C++ and mono bindings: -Dbindings=luajit,cxx,mono -Dmono-beta=true
+  # - No libelogind, Xgesture packages in fedora 30 repo
+  # - RPM fusion repo for xine and libvlc
+  ENABLED_LINUX_COPTS=" -Dfb=true -Dsdl=true -Dbuffer=true -Dbuild-id=travis-build \
+  -Ddebug-threads=true -Dg-mainloop=true -Dxpresent=true -Dxgesture=false -Dxinput22=true \
+  -Devas-loaders-disabler= -Decore-imf-loaders-disabler= -Demotion-loaders-disabler=libvlc,xine \
+  -Demotion-generic-loaders-disabler=vlc -Dharfbuzz=true -Dpixman=true -Dhyphen=true \
+  -Dvnc-server=true -Dbindings=luajit -Delogind=false -Dinstall-eo-files=true"
 
-  DISABLED_LINUX_COPTS=" -Dsystemd=false"
+  # Enabled png, jpeg evas loader for in tree edje file builds
+  DISABLED_LINUX_COPTS=" -Daudio=false -Davahi=false -Dx11=false -Dphysics=false -Deeze=false \
+  -Dopengl=none -Deina-magic-debug=false -Dbuild-examples=false -Dbuild-tests=false \
+  -Dcrypto=gnutls -Dglib=false -Dgstreamer=false -Dsystemd=false -Dpulseaudio=false \
+  -Dnetwork-backend=connman -Dxinput2=false -Dtslib=false -Devas-modules=static \
+  -Devas-loaders-disabler=gst,pdf,ps,raw,svg,xcf,bmp,dds,eet,generic,gif,ico,jp2k,pmaps,psd,tga,tgv,tiff,wbmp,webp,xpm \
+  -Decore-imf-loaders-disabler=xim,ibus,scim  -Demotion-loaders-disabler=gstreamer,gstreamer1,libvlc,xine \
+  -Demotion-generic-loaders-disabler=vlc -Dfribidi=false -Dfontconfig=false \
+  -Dedje-sound-and-video=false -Dembedded-lz4=false -Dlibmount=false -Dv4l2=false \
+  -Delua=true -Dnls=false -Dbindings= -Dlua-interpreter=luajit -Dnative-arch-optimization=false"
+  #evas_filter_parser.c:(.text+0xc59): undefined reference to `lua_getglobal' with interpreter lua
 
   RELEASE_READY_LINUX_COPTS=" --buildtype=release"
 
