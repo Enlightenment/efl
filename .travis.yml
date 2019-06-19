@@ -9,7 +9,6 @@ dist: trusty
 
 env:
   global:
-    - MAKEFLAGS="-j5 -rR"
     - EIO_MONITOR_POLL=1
     - CC="ccache gcc"
     - CXX="ccache g++"
@@ -87,7 +86,7 @@ script:
       #if [[ "$DISTRO" == "" ]] && [[ "$TRAVIS_OS_NAME" != "linux" ]] ; then
         #true
       #elif [[ "$CI_BUILD_TYPE" != "release-ready" ]] ; then
-        #docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) .ci/build-efl-app.sh
+        #docker exec --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) .ci/build-efl-app.sh
       #fi
 before_cache:
   - .ci/ci-ccache-stats.sh

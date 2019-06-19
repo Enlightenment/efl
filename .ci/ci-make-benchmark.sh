@@ -9,7 +9,7 @@ travis_fold benchmark "make benchmark"
 echo "Nothing to do here, the benchmarks don't seem to terminate"
 #else
   #if [ "$DISTRO" != "" ] ; then
-    #docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) make benchmark
+    #docker exec --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) make benchmark
   #else
     #export PATH="/usr/local/opt/ccache/libexec:$(brew --prefix gettext)/bin:$PATH"
     #make benchmark

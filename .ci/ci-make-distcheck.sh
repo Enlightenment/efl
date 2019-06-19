@@ -7,7 +7,7 @@ if [ "$1" != "release-ready" ] ; then
 fi
 travis_fold distcheck "make distcheck"
 if [ "$DISTRO" != "" ] ; then
-  docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
+  docker exec --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
     --env CXX="ccache g++" \
     --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
     --env LD="ld.gold" $(cat $HOME/cid) dbus-launch ninja -C build dist || \

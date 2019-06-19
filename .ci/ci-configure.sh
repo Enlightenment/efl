@@ -42,10 +42,10 @@ if [ "$DISTRO" != "" ] ; then
     docker exec $(cat $HOME/cid) sh -c '.ci/bootstrap-efl-native-for-cross.sh'
   fi
   if [ "$1" = "mingw" ]; then
-    docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env PKG_CONFIG_PATH="/ewpi-64-install/lib/pkgconfig/" \
+    docker exec --env EIO_MONITOR_POLL=1 --env PKG_CONFIG_PATH="/ewpi-64-install/lib/pkgconfig/" \
        $(cat $HOME/cid) sh -c "mkdir build && meson build $OPTS"
   else
-    docker exec --env MAKEFLAGS="-j5 -rR" --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
+    docker exec --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
       --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
       --env LD="ld.gold" $(cat $HOME/cid) sh -c "mkdir build && meson build $OPTS"
   fi
