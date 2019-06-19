@@ -39,19 +39,19 @@ public class Example
         int H = 30;
         Eina.Size2D size = new Eina.Size2D(W, H);
 
-        Efl.All.Init(Efl.Components.Ui);
+        Efl.All.Init(Efl.Csharp.Components.Ui);
 
         Efl.Ui.Win win = new Efl.Ui.Win(null);
         win.SetText("C# Unit Converter");
         win.SetAutohide(true);
 
         Efl.Ui.BoxFlow box = new Efl.Ui.BoxFlow(win);
-        box.SetDirection(Efl.Ui.Dir.Horizontal);
+        box.SetOrientation(Efl.Ui.LayoutOrientation.Horizontal);
 
         Efl.Ui.BoxFlow miles_box = new Efl.Ui.BoxFlow(box);
-        miles_box.SetDirection(Efl.Ui.Dir.Down);
+        miles_box.SetOrientation(Efl.Ui.LayoutOrientation.Vertical);
 
-        box.DoPack(miles_box);
+        box.Pack(miles_box);
 
         Efl.Ui.Text miles_label = new Efl.Ui.Text(miles_box);
         miles_label.SetText("Miles:");
@@ -69,15 +69,15 @@ public class Example
         miles_button.SetSize(size);
         miles_button.SetVisible(true);
 
-        miles_box.DoPack(miles_label);
-        miles_box.DoPack(miles_input);
-        miles_box.DoPack(miles_button);
+        miles_box.Pack(miles_label);
+        miles_box.Pack(miles_input);
+        miles_box.Pack(miles_button);
 
 
         Efl.Ui.BoxFlow kms_box = new Efl.Ui.BoxFlow(box);
-        kms_box.SetDirection(Efl.Ui.Dir.Down);
+        kms_box.SetOrientation(Efl.Ui.LayoutOrientation.Vertical);
 
-        box.DoPack(kms_box);
+        box.Pack(kms_box);
 
         Efl.Ui.Text kms_label = new Efl.Ui.Text(kms_box);
         kms_label.SetText("Kilometers:");
@@ -95,11 +95,11 @@ public class Example
         kms_button.SetSize(size);
         kms_button.SetVisible(true);
 
-        kms_box.DoPack(kms_label);
-        kms_box.DoPack(kms_input);
-        kms_box.DoPack(kms_button);
+        kms_box.Pack(kms_label);
+        kms_box.Pack(kms_input);
+        kms_box.Pack(kms_button);
 
-        ((Efl.Ui.Clickable)kms_button).ClickedEvt += (object sender, EventArgs e) => {
+        kms_button.ClickedEvt += (sender, e) => {
             try
             {
                 string text = kms_input.GetText();
@@ -115,7 +115,7 @@ public class Example
             }
         };
 
-        ((Efl.Ui.Clickable)miles_button).ClickedEvt += (object sender, EventArgs e) => {
+        miles_button.ClickedEvt += (sender, e) => {
             try
             {
                 string text = miles_input.GetText();

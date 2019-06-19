@@ -6,12 +6,12 @@ public class Example
     public static Efl.Ui.Button CreateButton(Efl.Object parent,
                                              string text,
                                              int w, int h,
-                                             EventHandler callback) {
+                                             EventHandler<Efl.Ui.IClickableClickedEvt_Args> callback) {
         Efl.Ui.Button button = new Efl.Ui.Button(parent);
         button.SetText(text);
         button.SetSize(new Eina.Size2D(w, h));
 
-        ((Efl.Ui.Clickable)button).ClickedEvt += callback;
+        button.ClickedEvt += callback;
 
         return button;
     }
@@ -35,7 +35,7 @@ public class Example
         int W = 120;
         int H = 30;
 
-        Efl.All.Init(Efl.Components.Ui);
+        Efl.All.Init(Efl.Csharp.Components.Ui);
 
         Efl.Ui.Win win = new Efl.Ui.Win(null);
         win.SetText("Hello, C#!!");
@@ -44,11 +44,11 @@ public class Example
         Efl.Ui.BoxFlow box = new Efl.Ui.BoxFlow(win);
 
         Efl.Ui.Button button = CreateButton(box, "Click to exit", 120, 30,
-                (object sender, EventArgs e) => {
+                (sender, e) => {
                     Efl.Ui.Config.Exit();
                 });
 
-        box.DoPack(button);
+        box.Pack(button);
 
         Efl.Ui.Progressbar bar = new Efl.Ui.Progressbar(box);
         bar.SetSize(new Eina.Size2D(W, H));
@@ -57,12 +57,12 @@ public class Example
         Efl.Ui.Slider slider = new Efl.Ui.Slider(box);
         slider.SetSize(new Eina.Size2D(W, H));
 
-        slider.ChangedEvt += (object sender, EventArgs e) => {
+        slider.ChangedEvt += (sender, e) => {
             bar.SetRangeValue(slider.GetRangeValue());
         };
 
-        box.DoPack(bar);
-        box.DoPack(slider);
+        box.Pack(bar);
+        box.Pack(slider);
 
         button.SetVisible(true);
         box.SetVisible(true);
