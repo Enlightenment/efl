@@ -16,7 +16,7 @@ fi
 
 NUM_TRIES=5
 
-travis_fold check "make check-TESTS"
+travis_fold check "ninja test"
 if [ "$DISTRO" != "" ] ; then
    # disable them for this distros, after meson 0.49 is out, this can be removed
    # https://github.com/mesonbuild/meson/commit/253c581412d7f2b09af353dd83d943454bd555be

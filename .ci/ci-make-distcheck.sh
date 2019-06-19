@@ -5,7 +5,7 @@ set -e
 if [ "$1" != "release-ready" ] ; then
   exit 0
 fi
-travis_fold distcheck "make distcheck"
+travis_fold distcheck "ninja dist"
 if [ "$DISTRO" != "" ] ; then
   docker exec --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
     --env CXX="ccache g++" \

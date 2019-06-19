@@ -58,15 +58,19 @@ if [ "$DISTRO" != "" ] ; then
 
   if [ "$1" = "mingw" ]; then
     OPTS="$OPTS $MINGW_COPTS"
+    travis_fold cross-native cross-native
     docker exec $(cat $HOME/cid) sh -c '.ci/bootstrap-efl-native-for-cross.sh'
-  fi
-  if [ "$1" = "mingw" ]; then
+    travis_endfold cross-native
+    travis_fold meson meson
     docker exec --env EIO_MONITOR_POLL=1 --env PKG_CONFIG_PATH="/ewpi-64-install/lib/pkgconfig/" \
        $(cat $HOME/cid) sh -c "mkdir build && meson build $OPTS"
+    travis_endfold meson
   else
+    travis_fold meson meson
     docker exec --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
       --env CXX="ccache g++" --env CFLAGS="-fdirectives-only" --env CXXFLAGS="-fdirectives-only" \
       --env LD="ld.gold" $(cat $HOME/cid) sh -c "mkdir build && meson build $OPTS"
+    travis_endfold meson
   fi
 else
   # Prepare OSX env for build
@@ -79,5 +83,7 @@ else
   export LDFLAGS="-L/usr/local/opt/openssl/lib $LDFLAGS"
   LIBFFI_VER=$(brew list --versions libffi|head -n1|cut -d' ' -f2)
   export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/Cellar/libffi/$LIBFFI_VER/lib/pkgconfig"
+  travis_fold meson meson
   mkdir build && meson build -Decore-imf-loaders-disabler=scim,ibus -Dx11=false -Davahi=false -Dbindings=luajit -Deeze=false -Dsystemd=false -Dnls=false -Dcocoa=true -Demotion-loaders-disabler=gstreamer,gstreamer1,libvlc,xine
+  travis_endfold meson
 fi
