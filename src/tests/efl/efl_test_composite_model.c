@@ -323,7 +323,7 @@ _count_changed(void *data, const Efl_Event *ev)
 {
    Eina_Promise *p = data;
 
-   if (efl_model_children_count_get(ev->object) != child_number) return ;
+   if (efl_model_children_count_get(ev->object) != (unsigned int)child_number) return ;
 
    efl_event_callback_del(ev->object, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED,
                           _count_changed, p);
@@ -380,8 +380,8 @@ _check_index(Eo *o EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value v)
         idx = efl_composite_model_index_get(target);
         p_original = efl_model_property_get(target, "original");
         fail_if(!eina_value_uint64_convert(p_original, &original));
-        ck_assert(original < child_number);
-        ck_assert(idx < child_number);
+        ck_assert(original < (uint64_t)child_number);
+        ck_assert(idx < (uint64_t)child_number);
 
         eina_value_free(p_original);
      }

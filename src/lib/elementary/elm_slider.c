@@ -536,7 +536,7 @@ void
 _elm_slider_val_fetch(Evas_Object *obj, Elm_Slider_Data *pd, Eina_Bool user_event)
 {
    double posx = 0.0, posy = 0.0, pos = 0.0, val;
-   double posx2 = 0.0, posy2 = 0.0, pos2 = 0.0, val2;
+   double posx2 = 0.0, posy2 = 0.0, pos2 = 0.0, val2 = 0.0;
    Eina_Bool inverted = EINA_FALSE;
    Eina_Bool evented = EINA_FALSE;
 

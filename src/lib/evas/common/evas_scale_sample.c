@@ -103,7 +103,7 @@ _evas_common_scale_rgba_sample_scale_nomask(int y,
                                             DATA32 *dptr, RGBA_Gfx_Func func, unsigned int mul_col,
                                             DATA32 *srcptr, int src_w)
 {
-   DATA32 *buf;
+   DATA32 *buf = NULL;
    int x;
 
    /* a scanline buffer */
