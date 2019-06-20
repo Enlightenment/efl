@@ -2,6 +2,8 @@
 # encoding: utf-8
 from enum import IntEnum
 
+import name_helpers
+
 
 class Function_List_Type(IntEnum):
     INHERITIS = 1
@@ -57,23 +59,25 @@ class EMonoKeys(EKeys):
             "uintptr": "System.IntPtr",
             "void_ptr": "System.IntPtr",
             "void": "System.IntPtr",  # only if is out/inout
-            "Error": "eina.Error",
+            "Error": "Eina.Error",
             "string": "System.String",
             "mstring": "System.String",
             "stringshare": "System.String",
-            "any_value": "eina.Value",
-            "any_value_ptr": "eina.Value"
+            "any_value": "Eina.Value",
+            "any_value_ptr": "Eina.Value"
             # complex Types
             ,
-            "list": "eina.List",
-            "inlist": "eina.Inlist",
-            "array": "eina.Array",
-            "inarray": "eina.Inarray",
-            "hash": "eina.Hash",
+            "list": "Eina.List",
+            "inlist": "Eina.Inlist",
+            "array": "Eina.Array",
+            "inarray": "Eina.Inarray",
+            "hash": "Eina.Hash",
             "promise": "int",
             "future": "int",
-            "iterator": "eina.Iterator",
+            "iterator": "Eina.Iterator",
             "accessor": "int",
+            "strbuf": "Eina.Strbuf",
+            "Efl.Class": "System.Type",
         }
 
         self.keywords = [
@@ -162,10 +166,11 @@ class EMonoKeys(EKeys):
             "efl_ui_spin_button_loop_get",
             "efl_ui_list_model_size_get",
             "efl_ui_list_relayout_layout_do",
+            "efl_constructor",
         ]
 
     def escape_keyword(self, key):
-        key = "kw_{}".format(key) if key.lower() in self.keywords else key
+        key = "kw_{}".format(key) if key in self.keywords else key
         return "{}Add".format(key) if key == "Finalize" else key
 
     def direction_get(self, direction):
@@ -186,12 +191,15 @@ class EMonoKeys(EKeys):
         if eotype.type == eotype.type.VOID:
             return "System.IntPtr"
 
-        new_type = self.dicttypes.get(eotype.name, self.klass_name(eotype))
+        new_type = self.dicttypes.get(
+            eotype.name, name_helpers.type_managed_name(eotype)
+        )
         if new_type != "int" and eotype.base_type:
             new_type = "{}<{}>".format(
                 new_type,
                 self.dicttypes.get(
-                    eotype.base_type.name, self.klass_name(eotype.base_type)
+                    eotype.base_type.name,
+                    name_helpers.type_managed_name(eotype.base_type),
                 ),
             )
 
@@ -228,7 +236,6 @@ class EMonoKeys(EKeys):
 
         if func.type == func.type.METHOD:
             fname = self.escape_keyword(fname)
-            fname = "Do{}".format(fname) if fname == func.class_.short_name else fname
 
         return fname
 

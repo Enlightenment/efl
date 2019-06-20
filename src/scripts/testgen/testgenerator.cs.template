@@ -3,7 +3,7 @@
 ${mshow}$#!
  <!--(end)-->
 <!--(end)-->
-<!--(macro def_obj)-->${'.'.join(param.type.namespaces)}$.I${param.type.short_name}$ arg_${param.name}$ = null;<!--(end)-->
+<!--(macro def_obj)-->${name_helpers.class_managed_name(param.type.class_)}$ arg_${param.name}$ = null;<!--(end)-->
 <!--(macro def_param)-->
  <!--(if param.type.type == param.type.type.CLASS)-->${def_obj(param=param)}$<!--(else)-->${suite.type_convert(param.type)}$ arg_${param.name}$ = default(${suite.type_convert(param.type)}$);<!--(end)-->
 <!--(end)-->
@@ -13,7 +13,7 @@ ${mshow}$#!
  <!--(end)-->
 <!--(end)-->
 <!--(macro meth_target)-->
- <!--(if func.is_class)-->${'.'.join(cls.namespaces)}$.${cls.short_name}$<!--(else)-->obj<!--(end)-->
+ <!--(if func.is_class)-->${name_helpers.class_managed_name(cls)}$<!--(else)-->obj<!--(end)-->
 <!--(end)-->
 using System;
 
@@ -25,7 +25,7 @@ namespace TestSuite
 class Test${cls.name.replace('.','')}$
 {
 
-    ${'.'.join(cls.namespaces)}$.I${cls.short_name}$ obj;
+    ${name_helpers.class_managed_name(cls)}$ obj;
 ${m_show(mshow=cls.custom)}$#!
 
     public void SetUp()
@@ -34,7 +34,7 @@ ${m_show(mshow=suite.init)}$#!
  <!--(if cls.init)-->
 ${cls.init}$
  <!--(else)-->
-        obj = new ${'.'.join(cls.namespaces)}$.${cls.short_name}$();
+        obj = new ${name_helpers.class_managed_name(cls)}$(null${suite.constructor_params(cls)}$);
  <!--(end)-->
     }
 

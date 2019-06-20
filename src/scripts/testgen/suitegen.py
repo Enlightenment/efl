@@ -2,6 +2,9 @@ import itertools
 import os
 from pyolian.eolian import Eolian_Function_Type, Eolian_Class_Type
 from .ekeys import GetKey, Function_List_Type
+from pyolian import eolian
+
+import name_helpers
 
 
 class BaseItem:
@@ -175,7 +178,36 @@ class SuiteGen(BaseItem):
         return iter(self.clslist)
 
     def type_convert(self, eotype):
+        if eotype.type == eolian.Eolian_Type_Type.CLASS:
+            return name_helpers.class_managed_name(eotype.class_)
+
+        if eotype.typedecl:
+            return name_helpers.type_managed_name(eotype)
+
         return self.keys.type_convert(eotype)
+
+    def constructor_params(self, cls):
+        ret = []
+
+        constructors = itertools.chain(
+            cls.constructors, *[base.constructors for base in cls.inherits_full]
+        )
+
+        for constructor in constructors:
+            # Skip optional constructors for now
+            if constructor.is_optional:
+                continue
+            func = constructor.function
+
+            if func.type == eolian.Eolian_Function_Type.PROPERTY:
+                first_param = list(func.setter_values)[0]
+            else:
+                first_param = list(func.parameters)[0]
+            param_type = first_param.type
+
+            ret.append("default({})".format(name_helpers.type_managed_name(param_type)))
+
+        return (", " if ret else "") + ", ".join(ret)
 
     def print_arg(self, eoarg):
         return self.keys.print_arg(eoarg)

@@ -5,6 +5,8 @@ import os
 import sys
 import datetime
 
+import name_helpers
+
 script_path = os.path.dirname(os.path.realpath(__file__))
 
 if "EFL_DIR" in os.environ:
@@ -48,6 +50,7 @@ def cleanup_db():
 
 atexit.register(cleanup_db)
 
+
 class Template(pyratemp.Template):
     def __init__(
         self,
@@ -84,6 +87,7 @@ class Template(pyratemp.Template):
         # Build the context for the template
         ctx = {}
         ctx["suite"] = suite
+        ctx["name_helpers"] = name_helpers
         # render with the augmented context
         output = self(**ctx)
 
@@ -97,8 +101,13 @@ if __name__ == "__main__":
     import argparse
 
     parser = argparse.ArgumentParser(description="Eolian Test Generator.")
-    parser.add_argument("testname", help="The Test Name used to find custom and template files. (REQUIRED)")
-    parser.add_argument("suitename", help="The Suite Name used to find custom files. (REQUIRED)")
+    parser.add_argument(
+        "testname",
+        help="The Test Name used to find custom and template files. (REQUIRED)",
+    )
+    parser.add_argument(
+        "suitename", help="The Suite Name used to find custom files. (REQUIRED)"
+    )
     parser.add_argument("filename", help="Generated test file destination. (REQUIRED)")
     parser.add_argument("eofiles", nargs="*", help="The Eolian Files to use.")
 
