@@ -105,7 +105,6 @@ widget_preview_eps = custom_target('widget_preview_prefs_epc',
 
 shot_sh = find_program('shot.sh')
 tar = find_program('tar')
-convert = find_program('convert')
 
 foreach text_filter_property : text_filter_properties
   text = text_filter_property[0]
@@ -139,6 +138,8 @@ foreach widget_preview : widget_previews
     set_variable(binary, tmp)
   endif
 endforeach
+
+#convert = find_program('convert')
 
 foreach widget_preview : widget_previews
   directory = widget_preview[0]
