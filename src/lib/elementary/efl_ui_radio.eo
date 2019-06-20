@@ -9,8 +9,7 @@ class @beta Efl.Ui.Radio extends Efl.Ui.Check implements Efl.Access.Widget.Actio
 
      They are a common way to allow a user to select one option among a list.
 
-     To handle button grouping, you can either use an @Efl.Ui.Radio_Group object (obtained
-     through @.group_create) or use more convenient widgets like @Efl.Ui.Radio_Box.
+     To handle button grouping, you can either use an @Efl.Ui.Radio_Group_Impl object or use more convenient widgets like @Efl.Ui.Radio_Box.
    ]]
    methods {
       @property state_value {
