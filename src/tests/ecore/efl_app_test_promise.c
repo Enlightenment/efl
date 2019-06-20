@@ -60,11 +60,14 @@ typedef struct _Race_Future_Ctx {
 
 #define LOG_CTX_MULTIPLE_FUNC_CTX_SET(_ctx, ...)                        \
   do {                                                                  \
+     struct Func_Ctx tmp[] = { __VA_ARGS__, {NULL, NULL}};              \
+                                                                        \
+     _ctx.func_ctx = alloca(EINA_C_ARRAY_LENGTH(tmp) * sizeof (struct Func_Ctx)); \
+     memcpy(_ctx.func_ctx, tmp, sizeof (tmp));                          \
      _ctx.level = EINA_LOG_LEVEL_ERR;                                   \
      _ctx.did = EINA_FALSE;                                             \
      _ctx.just_fmt = EINA_FALSE;                                        \
      _ctx.func_ctx_idx = 0;                                             \
-     _ctx.func_ctx = (struct Func_Ctx []){ __VA_ARGS__, {NULL, NULL}};  \
   } while(0)
 
 #define LOG_CTX_SET(_ctx, _fnc, _msg) LOG_CTX_MULTIPLE_FUNC_CTX_SET(_ctx, {_fnc, _msg})
