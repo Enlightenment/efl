@@ -245,5 +245,31 @@ _ector_software_surface_ector_surface_reference_point_set(Eo *obj EINA_UNUSED,
    pd->y = y;
 }
 
+static Eina_Bool
+_ector_software_surface_ector_surface_draw_image(Eo *obj EINA_UNUSED,
+                                                 Ector_Software_Surface_Data *pd,
+                                                 Ector_Buffer *buffer, int x, int y, int alpha)
+{
+   if (!buffer || !pd->rasterizer || !pd->rasterizer->fill_data.raster_buffer->pixels.u32)
+     return EINA_FALSE;
+
+   Ector_Software_Buffer_Base_Data *bd = efl_data_scope_get(buffer, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
+   const int pix_stride = pd->rasterizer->fill_data.raster_buffer->stride / 4;
+
+   uint32_t *src = bd->pixels.u32;
+   for (unsigned int local_y = 0; local_y <  bd->generic->h; local_y++)
+     {
+        uint32_t *dst = pd->rasterizer->fill_data.raster_buffer->pixels.u32 + (x + ((local_y + y) * pix_stride));
+        for (unsigned int local_x = 0; local_x <  bd->generic->w; local_x++)
+          {
+             *src = draw_mul_256(alpha, *src);
+             int inv_alpha = 255 - ((*src) >> 24);
+             *dst = *src + draw_mul_256(inv_alpha, *dst);
+             dst++;
+             src++;
+          }
+     }
+   return EINA_TRUE;
+}
 #include "ector_software_surface.eo.c"
 #include "ector_renderer_software.eo.c"

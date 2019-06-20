@@ -94,6 +94,10 @@ struct _Efl_Canvas_Vg_Container_Data
    //Masking feature.
    Efl_Canvas_Vg_Node *mask_src;         //Mask Source
    Vg_Mask mask;                         //Mask source data
+
+   //Layer transparency feature. This buffer is only valid when the layer has transparency.
+   Ector_Buffer *blend_buffer;
+   void *blend_pixels;
 };
 
 struct _Efl_Canvas_Vg_Gradient_Data

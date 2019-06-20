@@ -5,6 +5,7 @@
 #include "sw_ft_raster.h"
 #include "sw_ft_stroker.h"
 #include "../ector_private.h"
+#include "draw.h"
 
 typedef struct _Ector_Software_Surface_Data Ector_Software_Surface_Data;
 typedef struct _Ector_Software_Thread Ector_Software_Thread;
