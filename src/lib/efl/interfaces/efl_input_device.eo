@@ -67,14 +67,27 @@ class @beta Efl.Input.Device extends Efl.Object
          ]]
          return: iterator<const(Efl.Input.Device)> @owned; [[List of device children]]
       }
-      has_pointer_caps {
-         [[Determine whether a device has pointer capabilities.
+      @property pointer_device_count {
+         [[The number of pointer devices in this seat.
 
-           Returns 1 for Mouse, Touch, Pen, Pointer, and Wand type devices.
-
-           If a seat device is passed returns the number of pointer devices in the seat.
+           Pointer devices are the ones whose @.device_type is $mouse, $pen, $touch or $wand.
+           In case this device is not of the type $seat, -1 is returned.
          ]]
-         return: uint; [[Pointer caps]]
+         get {
+
+         }
+         values {
+            devices : int; [[The number of pointer devices.]]
+         }
+      }
+      @property is_pointer_type {
+         [[$true if @.device_type is $mouse, $pen, $touch or $wand.]]
+         get {
+
+         }
+         values {
+            pointer_type : bool; [[$true if the device has pointing capabilities.]]
+         }
       }
    }
    implements {
