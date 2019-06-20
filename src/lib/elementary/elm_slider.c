@@ -62,7 +62,7 @@ _delay_change(void *data)
    ELM_SLIDER_DATA_GET(data, sd);
 
    sd->delay = NULL;
-   efl_event_callback_legacy_call(data, EFL_UI_SLIDER_EVENT_STEADY, NULL);
+   evas_object_smart_callback_call(data, SIG_DELAY_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
      efl_access_value_changed_signal_emit(data);
