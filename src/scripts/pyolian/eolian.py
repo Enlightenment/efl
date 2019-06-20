@@ -739,6 +739,7 @@ class Class(Object):
         def do_class_recursive(cls):
             if cls.parent:
                 li.append(cls.parent)
+                do_class_recursive(cls.parent)
             for other in cls.extensions:
                 if other not in li:
                     li.append(other)
