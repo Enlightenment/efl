@@ -850,21 +850,12 @@ _evas_canvas_data_attach_get(const Eo *eo_e EINA_UNUSED, Evas_Public_Data *e)
 }
 
 static void
-_evas_canvas_focus_inout_dispatch(Eo *eo_e, Evas_Device *seat,
+_evas_canvas_focus_inout_dispatch(Eo *eo_e, Evas_Device *seat EINA_UNUSED,
                                   Eina_Bool in)
 {
-   Efl_Input_Focus_Data *ev_data;
-   Efl_Input_Focus *evt;
-
-   evt = efl_input_focus_instance_get(eo_e, (void **) &ev_data);
-   if (!evt) return;
-
-   ev_data->device = efl_ref(seat);
-   ev_data->timestamp = time(NULL);
    efl_event_callback_call(eo_e,
-                           in ? EFL_EVENT_FOCUS_IN : EFL_EVENT_FOCUS_OUT,
-                           evt);
-   efl_unref(evt);
+                           in ? EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN : EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT,
+                           NULL);
 }
 
 EOLIAN static void
