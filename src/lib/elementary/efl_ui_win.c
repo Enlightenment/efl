@@ -2178,13 +2178,13 @@ _win_event_add_cb(void *data, const Efl_Event *ev)
         else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN)
           {
              if (!(sd->event_forward.focus_in++))
-               evas_event_callback_add(sd->evas, EVAS_CALLBACK_FOCUS_IN,
+               evas_event_callback_add(sd->evas, EVAS_CALLBACK_CANVAS_FOCUS_IN,
                                        _elm_win_evas_focus_in, win);
           }
         else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT)
           {
              if (!(sd->event_forward.focus_out++))
-               evas_event_callback_add(sd->evas, EVAS_CALLBACK_FOCUS_OUT,
+               evas_event_callback_add(sd->evas, EVAS_CALLBACK_CANVAS_FOCUS_OUT,
                                        _elm_win_evas_focus_out, win);
           }
         else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN)
