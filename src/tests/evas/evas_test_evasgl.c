@@ -14,6 +14,8 @@
 
 #ifdef _WIN32
 # include <evil_private.h> /* dlopen */
+#else
+# include <dlfcn.h>
 #endif
 
 #define EFL_GFX_FILTER_BETA
