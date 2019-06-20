@@ -32,7 +32,7 @@ class @beta Efl.Input.Key extends Efl.Object implements Efl.Input.Event, Efl.Inp
             val: string; [[Visible string from key press in UTF8]]
          }
       }
-      @property compose {
+      @property compose_string {
          [[A UTF8 string if this keystroke has modified a string in the middle
            of being composed.
 
