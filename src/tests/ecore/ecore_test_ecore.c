@@ -5,6 +5,10 @@
 #include <stdio.h>
 #include <unistd.h>
 
+#ifdef _WIN32
+# include <evil_private.h> /* pipe */
+#endif
+
 #include <Eina.h>
 #include <Ecore.h>
 

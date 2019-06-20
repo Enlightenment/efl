@@ -674,7 +674,7 @@ void eio_test_sentry(TCase *tc)
    tcase_add_test(tc, eio_test_sentry_directory_file_created_notify);
    tcase_add_test(tc, eio_test_sentry_directory_file_deleted_notify);
    tcase_add_test(tc, eio_test_sentry_directory_file_modified_notify);
-#if !defined(_WIN32) && !defined(__MACH__)
+#if !defined(__MACH__)
    tcase_add_test(tc, eio_test_sentry_directory_file_closed_notify);
 #endif
    tcase_add_test(tc, eio_test_sentry_directory_directory_created_notify);
@@ -686,7 +686,7 @@ void eio_test_sentry(TCase *tc)
 
    tcase_add_test(tc, eio_test_sentry_file_file_modified_notify);
    tcase_add_test(tc, eio_test_sentry_file_file_attrib_modified_notify);
-#if !defined(_WIN32) && !defined(__MACH__)
+#if !defined(__MACH__)
    tcase_add_test(tc, eio_test_sentry_file_file_closed_notify);
 #endif
 #ifndef __MACH__

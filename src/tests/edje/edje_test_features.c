@@ -5,6 +5,10 @@
 #include <unistd.h>
 #include <stdio.h>
 
+#ifdef _WIN32
+# include <evil_private.h> /* setenv realpath */
+#endif
+
 #define EFL_GFX_FILTER_BETA
 #define EFL_CANVAS_LAYOUT_BETA
 

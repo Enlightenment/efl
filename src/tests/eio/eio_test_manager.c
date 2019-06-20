@@ -148,7 +148,10 @@ _stat_done_cb(void *data,
 
         fail_if(!eina_value_struct_get(&st, "mode", &mode));
         fail_if(S_ISDIR(mode) != *is_dir);
+        /* no symbolic link on Windows */
+#ifndef _WIN32
         fail_if(S_ISLNK(mode));
+#endif
 
         rights = mode & (S_IRWXU | S_IRWXG | S_IRWXO);
         fail_if(rights != default_rights);

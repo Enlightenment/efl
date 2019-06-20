@@ -196,6 +196,8 @@ EFL_END_TEST
 static void _null_fct(Eo *eo_obj EINA_UNUSED, void *d EINA_UNUSED) { }
 void null_fct (void) {}
 
+/* This test is not relevant for WIN32. */
+#ifndef _WIN32
 static Eina_Bool
 _null_class_initializer(Efl_Class *klass)
 {
@@ -231,6 +233,7 @@ EFL_START_TEST(eo_null_api)
 
 }
 EFL_END_TEST
+#endif
 
 static Eina_Bool
 _redefined_class_initializer(Efl_Class *klass)

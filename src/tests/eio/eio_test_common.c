@@ -8,6 +8,10 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 
+#ifdef _WIN32
+# include <evil_private.h> /* mkdir */
+#endif
+
 #include "eio_suite.h"
 #include "eio_test_common.h"
 
