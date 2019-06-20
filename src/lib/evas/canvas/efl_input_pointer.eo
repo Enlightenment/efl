@@ -102,10 +102,13 @@ class @beta Efl.Input.Pointer extends Efl.Object implements Efl.Input.Event, Efl
             pos: Eina.Position2D; [[The position of the event, in pixels.]]
          }
       }
-      @property tool {
-         [[ID of the tool (eg. pen) that triggered this event.]]
+      @property touch_id {
+         [[TThe ID associated with this pointer.
+
+           In case there are multiple pointers (for example when multiple fingers are touching the screen) this number uniquely identifies each pointer, for as long as it is present. This is, when a finger is lifted its ID can be later reused by another finger touching the screen.
+         ]]
          values {
-            id: int; [[Tool ID]]
+            id: int; [[An ID uniquely identifying this pointer among the currently present pointers.]]
          }
       }
       @property source {

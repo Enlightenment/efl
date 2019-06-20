@@ -734,7 +734,7 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
            an object of type @Efl.Input.Pointer.
 
            Each finger in a multi touch environment can then be identified
-           by the @Efl.Input.Pointer.tool property. The order of the pointers
+           by the @Efl.Input.Pointer.touch_id property. The order of the pointers
            in this iterator is not defined.
 
            Note: If the input surface supports hovering input, some pointers

@@ -283,7 +283,7 @@ _inputs_timer1_cb(void *data)
      {
         ptr = efl_add(EFL_INPUT_POINTER_CLASS, win);
         efl_input_pointer_position_set(ptr, points[0][i]);
-        efl_input_pointer_tool_set(ptr, i);
+        efl_input_pointer_touch_id_set(ptr, i);
         efl_input_pointer_button_set(ptr, 1);
 
         if (i == 0)
@@ -323,12 +323,12 @@ _inputs_timer2_cb(void *data)
 
         fail_if(!efl_input_pointer_value_has_get(ptr, EFL_INPUT_VALUE_X));
         fail_if(!efl_input_pointer_value_has_get(ptr, EFL_INPUT_VALUE_Y));
-        fail_if(!efl_input_pointer_value_has_get(ptr, EFL_INPUT_VALUE_TOOL));
+        fail_if(!efl_input_pointer_value_has_get(ptr, EFL_INPUT_VALUE_TOUCH_ID));
         fail_if(efl_input_pointer_action_get(ptr) != EFL_POINTER_ACTION_DOWN);
 
         x = efl_input_pointer_value_get(ptr, EFL_INPUT_VALUE_X);
         y = efl_input_pointer_value_get(ptr, EFL_INPUT_VALUE_Y);
-        tool = efl_input_pointer_tool_get(ptr);
+        tool = efl_input_pointer_touch_id_get(ptr);
 
         for (i = 0; i < 4; i++)
           if (tool == i)
@@ -350,7 +350,7 @@ _inputs_timer2_cb(void *data)
      {
         ptr = efl_add(EFL_INPUT_POINTER_CLASS, win);
         efl_input_pointer_position_set(ptr, points[1][i]);
-        efl_input_pointer_tool_set(ptr, i);
+        efl_input_pointer_touch_id_set(ptr, i);
         efl_input_pointer_button_set(ptr, 1);
 
         /* move first */
@@ -386,12 +386,12 @@ _inputs_timer3_cb(void *data)
 
         fail_if(!efl_input_pointer_value_has_get(ptr, EFL_INPUT_VALUE_X));
         fail_if(!efl_input_pointer_value_has_get(ptr, EFL_INPUT_VALUE_Y));
-        fail_if(!efl_input_pointer_value_has_get(ptr, EFL_INPUT_VALUE_TOOL));
+        fail_if(!efl_input_pointer_value_has_get(ptr, EFL_INPUT_VALUE_TOUCH_ID));
         fail_if(efl_input_pointer_action_get(ptr) != EFL_POINTER_ACTION_MOVE);
 
         x = efl_input_pointer_value_get(ptr, EFL_INPUT_VALUE_X);
         y = efl_input_pointer_value_get(ptr, EFL_INPUT_VALUE_Y);
-        tool = efl_input_pointer_tool_get(ptr);
+        tool = efl_input_pointer_touch_id_get(ptr);
 
         for (i = 0; i < 4; i++)
           if (tool == i)

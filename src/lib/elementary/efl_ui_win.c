@@ -2658,8 +2658,8 @@ _efl_ui_win_pointer_iterate(const Eo *obj, Efl_Ui_Win_Data *sd,
         ptr = efl_input_pointer_instance_get( (Eo *) obj, (void **) &ptrdata);
         if (!ptrdata) break;
 
-        ptrdata->tool = evas_touch_point_list_nth_id_get(sd->evas, i);
-        _efl_input_value_mark(ptrdata, EFL_INPUT_VALUE_TOOL);
+        ptrdata->touch_id = evas_touch_point_list_nth_id_get(sd->evas, i);
+        _efl_input_value_mark(ptrdata, EFL_INPUT_VALUE_TOUCH_ID);
 
         // Note that "still" maps to "down" here.
         state = evas_touch_point_list_nth_state_get(sd->evas, i);
