@@ -28,7 +28,7 @@ enum Tokens
 #define KEYWORDS KW(class), KW(const), KW(enum), KW(return), KW(struct), \
     \
     KW(abstract), KW(c_prefix), KW(composite), KW(constructor), KW(constructors), \
-    KW(data), KW(destructor), KW(event_prefix), KW(events), KW(extends), \
+    KW(data), KW(destructor), KW(error), KW(event_prefix), KW(events), KW(extends), \
     KW(free), KW(get), KW(implements), KW(import), KW(interface), \
     KW(keys), KW(legacy), KW(methods), KW(mixin), KW(params), \
     KW(parse), KW(parts), KW(ptr), KW(set), KW(type), KW(values), KW(var), KW(requires), \
@@ -294,6 +294,18 @@ eo_lexer_expr_release_ref(Eo_Lexer *ls, Eolian_Expression *expr)
 {
    eolian_object_ref(&expr->base);
    return eo_lexer_expr_release(ls, expr);
+}
+
+static inline Eolian_Error *
+eo_lexer_error_new(Eo_Lexer *ls)
+{
+   return (Eolian_Error *)eo_lexer_node_new(ls, sizeof(Eolian_Error));
+}
+
+static inline Eolian_Error *
+eo_lexer_error_release(Eo_Lexer *ls, Eolian_Error *err)
+{
+   return (Eolian_Error *)eo_lexer_node_release(ls, (Eolian_Object *)err);
 }
 
 /* "stack" management, only to protect against errors (jumps) in parsing */

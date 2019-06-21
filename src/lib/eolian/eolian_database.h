@@ -41,6 +41,7 @@ struct _Eolian_Unit
    Eina_Hash     *classes;
    Eina_Hash     *globals;
    Eina_Hash     *constants;
+   Eina_Hash     *errors;
    Eina_Hash     *aliases;
    Eina_Hash     *structs;
    Eina_Hash     *enums;
@@ -60,6 +61,7 @@ typedef struct _Eolian_State_Area
    Eina_Hash *enums_f;
    Eina_Hash *globals_f;
    Eina_Hash *constants_f;
+   Eina_Hash *errors_f;
    Eina_Hash *objects_f;
 } Eolian_State_Area;
 
@@ -267,6 +269,7 @@ struct _Eolian_Type
    {
       Eolian_Class *klass;
       Eolian_Typedecl *tdecl;
+      Eolian_Error *error;
    };
    Eina_Bool is_const  :1;
    Eina_Bool is_ptr    :1;
@@ -323,6 +326,14 @@ struct _Eolian_Event
    Eolian_Object_Scope scope;
    Eina_Bool is_hot  :1;
    Eina_Bool is_restart :1;
+};
+
+struct _Eolian_Error
+{
+   Eolian_Object base;
+   Eina_Stringshare *msg;
+   Eolian_Documentation *doc;
+   Eina_Bool is_extern :1;
 };
 
 struct _Eolian_Struct_Type_Field
@@ -447,5 +458,9 @@ void database_event_del(Eolian_Event *event);
 
 /* parts */
 void database_part_del(Eolian_Part *part);
+
+/* errors */
+void database_error_del(Eolian_Error *err);
+void database_error_add(Eolian_Unit *unit, Eolian_Error *err);
 
 #endif

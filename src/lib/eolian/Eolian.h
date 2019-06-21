@@ -170,6 +170,12 @@ typedef struct _Eolian_Expression Eolian_Expression;
  */
 typedef struct _Eolian_Variable Eolian_Variable;
 
+/* Error information
+ *
+ * @ingroup Eolian
+ */
+typedef struct _Eolian_Error Eolian_Error;
+
 /* Struct field information
  *
  * @ingroup Eolian
@@ -222,7 +228,8 @@ typedef enum
    EOLIAN_OBJECT_PART,
    EOLIAN_OBJECT_IMPLEMENT,
    EOLIAN_OBJECT_CONSTRUCTOR,
-   EOLIAN_OBJECT_DOCUMENTATION
+   EOLIAN_OBJECT_DOCUMENTATION,
+   EOLIAN_OBJECT_ERROR
 } Eolian_Object_Type;
 
 typedef enum
@@ -276,6 +283,7 @@ typedef enum
    EOLIAN_TYPE_VOID,
    EOLIAN_TYPE_REGULAR,
    EOLIAN_TYPE_CLASS,
+   EOLIAN_TYPE_ERROR,
    EOLIAN_TYPE_UNDEFINED
 } Eolian_Type_Type;
 
@@ -1079,6 +1087,16 @@ EAPI const Eolian_Variable *eolian_unit_global_by_name_get(const Eolian_Unit *un
 EAPI const Eolian_Variable *eolian_unit_constant_by_name_get(const Eolian_Unit *unit, const char *name);
 
 /*
+ * @brief Get an error declaration in a unit by name.
+ *
+ * @param[in] unit The unit.
+ * @param[in] name the name of the error
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Error *eolian_unit_error_by_name_get(const Eolian_Unit *unit, const char *name);
+
+/*
  * @brief Get an iterator to all constant variables in the Eolian database.
  *
  * @return the iterator or NULL
@@ -1099,6 +1117,17 @@ EAPI Eina_Iterator *eolian_unit_constants_get(const Eolian_Unit *unit);
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_unit_globals_get(const Eolian_Unit *unit);
+
+/*
+ * @brief Get an iterator to all error declarations in the Eolian database.
+ *
+ * @return the iterator or NULL
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_unit_errors_get(const Eolian_Unit *unit);
 
 /*
  * @brief Get an alias type declaration within a unit by name.
@@ -1266,6 +1295,19 @@ eolian_state_constant_by_name_get(const Eolian_State *state, const char *name)
 }
 
 /*
+ * @brief A helper function to get an error declaration in a state by name.
+ *
+ * @see eolian_unit_error_by_name_get
+ *
+ * @ingroup Eolian
+ */
+static inline const Eolian_Error *
+eolian_state_error_by_name_get(const Eolian_State *state, const char *name)
+{
+   return eolian_unit_error_by_name_get(EOLIAN_UNIT(state), name);
+}
+
+/*
  * @brief Get an iterator to all global variables contained in a file.
  *
  * @param[in] state The state.
@@ -1291,6 +1333,19 @@ EAPI Eina_Iterator *eolian_state_globals_by_file_get(const Eolian_State *state, 
 EAPI Eina_Iterator *eolian_state_constants_by_file_get(const Eolian_State *state, const char *file_name);
 
 /*
+ * @brief Get an iterator to all error declarations contained in a file.
+ *
+ * @param[in] state The state.
+ * @param[in] file_name The file name.
+ * @return the iterator or NULL
+ *
+ * Thanks to internal caching, this is an O(1) operation.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Iterator *eolian_state_errors_by_file_get(const Eolian_State *state, const char *file_name);
+
+/*
  * @brief A helper function to get all globals in a state.
  *
  * @see eolian_unit_globals_get
@@ -1314,6 +1369,19 @@ static inline Eina_Iterator *
 eolian_state_constants_get(const Eolian_State *state)
 {
    return eolian_unit_constants_get(EOLIAN_UNIT(state));
+}
+
+/*
+ * @brief A helper function to get all error declarations in a state.
+ *
+ * @see eolian_unit_errors_get
+ *
+ * @ingroup Eolian
+ */
+static inline Eina_Iterator *
+eolian_state_errors_get(const Eolian_State *state)
+{
+   return eolian_unit_errors_get(EOLIAN_UNIT(state));
 }
 
 /*
@@ -2704,7 +2772,8 @@ EAPI const Eolian_Type *eolian_type_base_type_get(const Eolian_Type *tp);
  *
  * The inner types of a complex type form a chain. Therefore, you first retrieve
  * the first one via eolian_type_base_type_get and then get the next one via
- * this API function called on the first inner type if necessary.
+ * this API function called on the first inner type if necessary. Another use
+ * for this is with errors, specifying error(Foo, Bar, ...) makes a chain.
  *
  * @param[in] tp the type.
  * @return the next type or NULL.
@@ -2751,6 +2820,16 @@ EAPI const Eolian_Type *eolian_type_aliased_base_get(const Eolian_Type *tp);
  * @ingroup Eolian
  */
 EAPI const Eolian_Class *eolian_type_class_get(const Eolian_Type *tp);
+
+/*
+ * @brief Get the error declaration associated with an EOLIAN_TYPE_ERROR type.
+ *
+ * @param[in] tp the type.
+ * @return the error or NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Error *eolian_type_error_get(const Eolian_Type *tp);
 
 /*
  * @brief Get whether the given type is owned.
@@ -3129,6 +3208,101 @@ eolian_variable_is_beta(const Eolian_Variable *var)
 {
    return eolian_object_is_beta(EOLIAN_OBJECT(var));
 }
+
+/*
+ * @brief Get the message of an error declaration.
+ *
+ * @param[in] err the error.
+ * @return the message or NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI const char *eolian_error_message_get(const Eolian_Error *err);
+
+/*
+ * @brief Get the documentation of an error declaration.
+ *
+ * @param[in] err the error declaration.
+ * @return the documentation or NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI const Eolian_Documentation *eolian_error_documentation_get(const Eolian_Error *err);
+
+/*
+ * @brief A helper function to get the full name of an error declaration.
+ *
+ * @see eolian_object_name_get
+ *
+ * @ingroup Eolian
+ */
+static inline const char *
+eolian_error_name_get(const Eolian_Error *err)
+{
+   return eolian_object_name_get(EOLIAN_OBJECT(err));
+}
+
+/*
+ * @brief A helper function to get the C name of an error declaration.
+ *
+ * @see eolian_object_c_name_get
+ *
+ * @ingroup Eolian
+ */
+static inline const char *
+eolian_error_c_name_get(const Eolian_Error *err)
+{
+   return eolian_object_c_name_get(EOLIAN_OBJECT(err));
+}
+
+/*
+ * @brief A helper function to get the short name of an error declaration.
+ *
+ * @see eolian_object_short_name_get
+ *
+ * @ingroup Eolian
+ */
+static inline const char *
+eolian_error_short_name_get(const Eolian_Error *err)
+{
+   return eolian_object_short_name_get(EOLIAN_OBJECT(err));
+}
+
+/*
+ * @brief A helper function to get the namespaces of an error declaration.
+ *
+ * @see eolian_object_namespaces_get
+ *
+ * @ingroup Eolian
+ */
+static inline Eina_Iterator *
+eolian_error_namespaces_get(const Eolian_Error *err)
+{
+   return eolian_object_namespaces_get(EOLIAN_OBJECT(err));
+}
+
+/*
+ * @brief Get whether an error declaration is beta.
+ *
+ * @see eolian_object_is_beta
+ *
+ * @ingroup Eolian
+ */
+static inline Eina_Bool
+eolian_error_is_beta(const Eolian_Error *err)
+{
+   return eolian_object_is_beta(EOLIAN_OBJECT(err));
+}
+
+/*
+ * @brief Check if an error declaration is extern.
+ *
+ * @param[in] err the errpr decůaratopm.
+ * @return EINA_TRUE if it's extern, EINA_FALSE otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_error_is_extern(const Eolian_Error *err);
 
 /*
  * @brief Get the summary of the documentation.
