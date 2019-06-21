@@ -676,8 +676,7 @@ _efl_ui_slider_efl_object_constructor(Eo *obj, Efl_Ui_Slider_Data *priv)
    efl_layout_signal_callback_add(obj, "drag,page", "*", obj, _drag_stop, NULL);
 
    priv->spacer = efl_add(EFL_CANVAS_RECTANGLE_CLASS, obj,
-                          efl_gfx_color_set(efl_added, 0, 0, 0, 0),
-                          efl_canvas_object_pass_events_set(efl_added, EINA_TRUE));
+                          efl_gfx_color_set(efl_added, 0, 0, 0, 0));
 
    if (elm_widget_is_legacy(obj))
      efl_content_set(efl_part(obj, "elm.swallow.bar"), priv->spacer);
