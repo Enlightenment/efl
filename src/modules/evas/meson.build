@@ -2,7 +2,7 @@
 png = dependency('libpng')
 tiff = dependency('libtiff-4')
 giflib = cc.find_library('gif')
-
+json = dependency('rlottie', required: get_option('evas-loaders-disabler').contains('json') == false)
 webp = dependency('libwebp', required: get_option('evas-loaders-disabler').contains('webp') == false)
 
 #there are a few modules that should NEVER be build as a module but rather be build as static lib and linked in later

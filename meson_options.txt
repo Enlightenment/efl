@@ -201,8 +201,8 @@ option('evas-modules',
 option('evas-loaders-disabler',
   type : 'array',
   description : 'add names here to disable the loaders',
-  choices : ['gst', 'pdf', 'ps', 'raw', 'svg', 'xcf', 'bmp', 'dds', 'eet', 'generic', 'gif', 'ico', 'jp2k', 'jpeg', 'pmaps', 'png', 'psd', 'tga', 'tgv', 'tiff', 'wbmp', 'webp', 'xpm'],
-  value : ['webp']
+  choices : ['gst', 'pdf', 'ps', 'raw', 'svg', 'xcf', 'bmp', 'dds', 'eet', 'generic', 'gif', 'ico', 'jp2k', 'jpeg', 'pmaps', 'png', 'psd', 'tga', 'tgv', 'tiff', 'wbmp', 'webp', 'xpm', 'json'],
+  value : ['webp', 'json']
 )
 
 option('ecore-imf-loaders-disabler',
