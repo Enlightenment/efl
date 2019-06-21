@@ -104,9 +104,64 @@ EFL_START_TEST(elm_slider_in_scroller)
 }
 EFL_END_TEST
 
+static unsigned int event_counter;
+
+static void
+slider_changed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   event_counter++;
+   if (event_counter == 2) ecore_main_loop_quit();
+   else evas_object_smart_callback_del(obj, "changed", slider_changed);
+}
+
+static void
+slider_change(void *data)
+{
+   int x, y, w, h;
+   int sx, sy, sw, sh;
+   Evas *e = evas_object_evas_get(data);
+
+   evas_object_geometry_get(elm_object_part_content_get(data, "elm.swallow.bar"), &x, &y, &w, &h);
+   evas_object_geometry_get(data, &sx, &sy, &sw, &sh);
+   evas_event_feed_mouse_in(e, 0, NULL);
+   evas_event_feed_mouse_move(e, x + (w / 2), y + (h / 2), 0, NULL);
+   evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
+   evas_event_feed_mouse_move(e, sx + (sw / 2), sy + (sh / 2), 0, NULL);
+   evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
+}
+
+static void
+events_norendered(void *data, Evas *e, void *event_info EINA_UNUSED)
+{
+   evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, norendered);
+   ecore_job_add(slider_change, data);
+}
+
+EFL_START_TEST(elm_slider_events)
+{
+   Evas_Object *win, *slider;
+
+   win = win_add(NULL, "slider", ELM_WIN_BASIC);
+
+   slider = elm_slider_add(win);
+   evas_object_smart_callback_add(slider, "changed", slider_changed, NULL);
+   evas_object_smart_callback_add(slider, "delay,changed", slider_changed, NULL);
+   evas_object_show(slider);
+   evas_object_show(win);
+   evas_object_resize(slider, 400, 100);
+   evas_object_resize(win, 400, 100);
+   edje_object_message_signal_process(elm_layout_edje_get(slider));
+   evas_smart_objects_calculate(evas_object_evas_get(win));
+   evas_event_callback_add(evas_object_evas_get(win), EVAS_CALLBACK_RENDER_POST, events_norendered, slider);
+   ecore_main_loop_begin();
+   ck_assert_int_eq(event_counter, 2);
+}
+EFL_END_TEST
+
 void elm_test_slider(TCase *tc)
 {
    tcase_add_test(tc, elm_slider_legacy_type_check);
    tcase_add_test(tc, elm_slider_in_scroller);
+   tcase_add_test(tc, elm_slider_events);
    tcase_add_test(tc, elm_atspi_role_get);
 }
