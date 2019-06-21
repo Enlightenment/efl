@@ -139,6 +139,7 @@ typedef struct _Evas_Canvas3D_Header_Eet       Evas_Canvas3D_Header_Eet;
 typedef struct _Evas_Canvas3D_File_Eet         Evas_Canvas3D_File_Eet;
 
 typedef struct _Vg_File_Data                   Vg_File_Data;
+typedef struct _Vg_File_Anim_Data              Vg_File_Anim_Data;
 
 struct _Evas_Canvas3D_Vec2_Eet
 {
@@ -1510,13 +1511,25 @@ struct _Evas_Image_Save_Func
   int (*image_save) (RGBA_Image *im, const char *file, const char *key, int quality, int compress, const char *encoding);
 };
 
+struct _Vg_File_Anim_Data
+{
+   unsigned int frame_num;            //current frame number
+   unsigned int frame_cnt;            //total frame count
+   float        duration;             //animation duration
+};
+
 struct _Vg_File_Data
 {
    Efl_VG            *root;
    Evas_Vg_Load_Func *loader;
-   Eina_Rectangle  view_box;
+   Eina_Rectangle     view_box;
+   Vg_File_Anim_Data *anim_data;           //only when animation supported.
    int ref;
+   int w, h;                               //default size
 
+   void           *loader_data;            //loader specific local data
+
+   Eina_Bool       no_share : 1;           //Shareable VFD through multiple file open requests.
    Eina_Bool       static_viewbox: 1;
    Eina_Bool       preserve_aspect : 1;    //Used in SVG
 };

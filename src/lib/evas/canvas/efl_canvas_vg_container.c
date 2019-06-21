@@ -124,7 +124,7 @@ _prepare_mask(Evas_Object_Protected_Data *obj,     //vector object
    if (!pd->mask.buffer) ERR("Mask Buffer is invalid");
 
    //FIXME: This code means that there is another masking container.
-   if (pd->mask.option != EFL_CANVAS_VG_NODE_BLEND_TYPE_NONE)
+   if (pd->mask.option >= EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_ADD)
      {
         Efl_Canvas_Vg_Container_Data *src_pd = pd;
         mask = pd->mask.buffer;
@@ -178,7 +178,11 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
    EFL_CANVAS_VG_COMPUTE_MATRIX(ctransform, ptransform, nd);
 
    //Container may have mask source.
-   if (pd->mask_src && !pd->mask.target)
+   //FIXME : _prepare_mask() should only work in cases with matte or main mask.
+   // This condition is valid because the main mask use same type as matte alpha.
+   if (pd->mask_src &&
+       (pd->mask.option == EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA ||
+        pd->mask.option == EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA_INV))
      {
         mask_op = pd->mask.option;
         mask = _prepare_mask(vg_pd, pd->mask_src,

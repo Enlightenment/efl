@@ -21,7 +21,8 @@ enum @beta Efl.Canvas.Vg.Fill_Mode
                   dimension of the viewport.]]
 }
 
-class @beta Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, Efl.File_Save
+class @beta Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, Efl.File_Save,
+                            Efl.Gfx.Frame_Controller
 {
    [[Efl vector graphics class]]
    methods {
@@ -67,6 +68,15 @@ class @beta Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, 
             root: Efl.Canvas.Vg.Node; [[Root node of the VG canvas.]]
          }
       }
+      @property default_size {
+         get {
+            [[Get the default vector size that specified from vector resource.
+              @since 1.22]]
+         }
+         values {
+            size: Eina.Size2D;
+         }
+      }
    }
    implements {
       Efl.Object.constructor;
@@ -76,5 +86,11 @@ class @beta Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, 
       Efl.File.unload;
       Efl.File.file { set; }
       Efl.File_Save.save;
+      Efl.Gfx.Frame_Controller.animated { get; }
+      Efl.Gfx.Frame_Controller.frame { get; set; }
+      Efl.Gfx.Frame_Controller.frame_count { get; }
+      Efl.Gfx.Frame_Controller.loop_type { get; }
+      Efl.Gfx.Frame_Controller.loop_count { get; }
+      Efl.Gfx.Frame_Controller.frame_duration { get; }
    }
 }

@@ -35,7 +35,7 @@ static const struct ext_loader_s loaders[] =
 
 static const char *loaders_name[] =
 { /* in order of most likely needed */
-  "eet", "svg"
+  "eet", "json", "svg"
 };
 
 static const struct ext_saver_s savers[] =
@@ -153,19 +153,26 @@ _evas_cache_vg_entry_free_cb(void *data)
 
         if (vg_entry->vfd->ref <= 0)
           {
-             Eina_Strbuf *hash_key = eina_strbuf_new();
-             eina_strbuf_append_printf(hash_key, "%s/%s",
-                                       eina_file_filename_get(vg_entry->file),
-                                       vg_entry->key);
-             if (!eina_hash_del(vg_cache->vfd_hash, eina_strbuf_string_get(hash_key), vg_entry->vfd))
-               ERR("Failed to delete vfd = (%p) from hash", vg_entry->vfd);
-             eina_strbuf_free(hash_key);
+             if (vg_entry->vfd->no_share)
+               vg_entry->vfd->loader->file_close(vg_entry->vfd);
+             else
+               {
+                  Eina_Strbuf *hash_key = eina_strbuf_new();
+                  eina_strbuf_append_printf(hash_key, "%s/%s",
+                                            eina_file_filename_get(vg_entry->file),
+                                            vg_entry->key);
+                  if (!eina_hash_del(vg_cache->vfd_hash, eina_strbuf_string_get(hash_key), vg_entry->vfd))
+                    ERR("Failed to delete vfd = (%p) from hash", vg_entry->vfd);
+                  eina_strbuf_free(hash_key);
+               }
           }
      }
 
    eina_stringshare_del(vg_entry->key);
    free(vg_entry->hash_key);
-   efl_unref(vg_entry->root);
+   efl_unref(vg_entry->root[0]);
+   efl_unref(vg_entry->root[1]);
+   efl_unref(vg_entry->root[2]);
    free(vg_entry);
 }
 
@@ -195,9 +202,37 @@ _vg_file_save(Vg_File_Data *vfd, const char *file, const char *key, const Efl_Fi
 }
 
 static Efl_VG*
-_cached_root_get(Vg_Cache_Entry *vg_entry)
+_cached_root_get(Vg_Cache_Entry *vg_entry, unsigned int frame_num)
 {
-   return vg_entry->root;
+   Vg_File_Data *vfd = vg_entry->vfd;
+
+   //Case 1: Animatable
+   if (vfd->anim_data)
+     {
+        //Start frame
+        if (vg_entry->root[1] && frame_num == 0)
+          {
+             return vg_entry->root[1];
+          }
+        //End frame
+        else if (vg_entry->root[2] && (frame_num == (vfd->anim_data->frame_cnt - 1)))
+          {
+             return vg_entry->root[2];
+          }
+        //Current frame
+        else if (vg_entry->root[0] && (frame_num == (vfd->anim_data->frame_num)))
+          {
+             return vg_entry->root[0];
+          }
+     }
+   //Case 2: Static
+   else
+     {
+        if (vg_entry->root[0])
+          return vg_entry->root[0];
+     }
+
+   return NULL;
 }
 
 static void
@@ -214,12 +249,34 @@ _caching_root_update(Vg_Cache_Entry *vg_entry)
         /* TODO: Yet trivial but still we may have a better solution to
            avoid this unnecessary copy. If the ector surface key is not
            to this root pointer. */
-        vg_entry->root = efl_duplicate(vfd->root);
+        vg_entry->root[0] = efl_duplicate(vfd->root);
      }
-   else if (vg_entry->root != vfd->root)
+   else if (vg_entry->root[0] != vfd->root)
      {
-        if (vg_entry->root) efl_unref(vg_entry->root);
-        vg_entry->root = efl_ref(vfd->root);
+        if (vg_entry->root[0]) efl_unref(vg_entry->root[0]);
+        vg_entry->root[0] = efl_ref(vfd->root);
+     }
+
+   //Animatable?
+   if (!vfd->anim_data) return;
+
+   //Start frame
+   if (vfd->anim_data->frame_num == 0)
+     {
+        if (vg_entry->root[1] != vfd->root)
+          {
+             if (vg_entry->root[1]) efl_unref(vg_entry->root[1]);
+             vg_entry->root[1] = efl_ref(vfd->root);
+          }
+     }
+   //End frame
+   else if (vfd->anim_data->frame_num == (vfd->anim_data->frame_cnt - 1))
+     {
+        if (vg_entry->root[2] != vfd->root)
+          {
+             if (vg_entry->root[2]) efl_unref(vg_entry->root[2]);
+             vg_entry->root[2] = efl_ref(vfd->root);
+          }
      }
 }
 
@@ -294,11 +351,12 @@ evas_cache_vg_file_open(const Eina_File *file, const char *key)
    hash_key = eina_strbuf_new();
    eina_strbuf_append_printf(hash_key, "%s/%s", eina_file_filename_get(file), key);
    vfd = eina_hash_find(vg_cache->vfd_hash, eina_strbuf_string_get(hash_key));
-   if (!vfd)
+   if (!vfd || vfd->no_share)
      {
         vfd = _vg_load_from_file(file, key);
         //File exists.
-        if (vfd) eina_hash_add(vg_cache->vfd_hash, eina_strbuf_string_get(hash_key), vfd);
+        if (vfd && !vfd->no_share)
+          eina_hash_add(vg_cache->vfd_hash, eina_strbuf_string_get(hash_key), vfd);
      }
    eina_strbuf_free(hash_key);
    return vfd;
@@ -356,8 +414,24 @@ evas_cache_vg_entry_create(const Eina_File *file,
    return vg_entry;
 }
 
+double
+evas_cache_vg_anim_duration_get(const Vg_Cache_Entry* vg_entry)
+{
+   if (!vg_entry->vfd->anim_data) return 0;
+   return vg_entry->vfd->anim_data->duration;
+}
+
+unsigned int
+evas_cache_vg_anim_frame_count_get(const Vg_Cache_Entry* vg_entry)
+{
+   if (!vg_entry) return 0;
+   Vg_File_Data *vfd = vg_entry->vfd;
+   if (!vfd || !vfd->anim_data) return 0;
+   return vfd->anim_data->frame_cnt;
+}
+
 Efl_VG*
-evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry)
+evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry, unsigned int frame_num)
 {
    if (!vg_entry) return NULL;
    if ((vg_entry->w < 1) || (vg_entry->h < 1)) return NULL;
@@ -365,7 +439,7 @@ evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry)
    Vg_File_Data *vfd = vg_entry->vfd;
    if (!vfd) return NULL;
 
-   Efl_VG *root = _cached_root_get(vg_entry);
+   Efl_VG *root = _cached_root_get(vg_entry, frame_num);
    if (root) return root;
 
    if (!vfd->static_viewbox)
@@ -374,13 +448,15 @@ evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry)
         vfd->view_box.h = vg_entry->h;
      }
 
+   if (vfd->anim_data) vfd->anim_data->frame_num = frame_num;
+
    if (!vfd->loader->file_data(vfd)) return NULL;
 
    _caching_root_update(vg_entry);
 
-   _local_transform(vg_entry->root, vg_entry->w, vg_entry->h, vfd);
+   _local_transform(vg_entry->root[0], vg_entry->w, vg_entry->h, vfd);
 
-   return vg_entry->root;
+   return vg_entry->root[0];
 }
 
 void
@@ -391,6 +467,13 @@ evas_cache_vg_entry_del(Vg_Cache_Entry *vg_entry)
    if (vg_entry->ref > 0) return;
    if (!eina_hash_del(vg_cache->vg_entry_hash, vg_entry->hash_key, vg_entry))
      ERR("Failed to delete vg_entry = (%p) from hash", vg_entry);
+}
+
+Eina_Size2D
+evas_cache_vg_entry_default_size_get(const Vg_Cache_Entry *vg_entry)
+{
+   if (!vg_entry) return EINA_SIZE2D(0, 0);
+   return EINA_SIZE2D(vg_entry->vfd->w, vg_entry->vfd->h);
 }
 
 Eina_Bool
