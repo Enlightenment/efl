@@ -49,6 +49,7 @@ examples = [
   'evas-transparent',
   'evas-vg-batman',
   'evas-vg-simple',
+  'evas-vg-json',
 ]
 
 foreach example : examples
