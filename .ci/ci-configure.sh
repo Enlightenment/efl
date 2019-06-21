@@ -17,7 +17,7 @@ if [ "$DISTRO" != "" ] ; then
   # - RPM fusion repo for xine and libvlc
   ENABLED_LINUX_COPTS=" -Dfb=true -Dsdl=true -Dbuffer=true -Dbuild-id=travis-build \
   -Ddebug-threads=true -Dg-mainloop=true -Dxpresent=true -Dxgesture=false -Dxinput22=true \
-  -Devas-loaders-disabler= -Decore-imf-loaders-disabler= -Demotion-loaders-disabler=libvlc,xine \
+  -Devas-loaders-disabler=json -Decore-imf-loaders-disabler= -Demotion-loaders-disabler=libvlc,xine \
   -Demotion-generic-loaders-disabler=vlc -Dharfbuzz=true -Dpixman=true -Dhyphen=true \
   -Dvnc-server=true -Dbindings=luajit -Delogind=false -Dinstall-eo-files=true"
 
@@ -26,7 +26,7 @@ if [ "$DISTRO" != "" ] ; then
   -Dopengl=none -Deina-magic-debug=false -Dbuild-examples=false -Dbuild-tests=false \
   -Dcrypto=gnutls -Dglib=false -Dgstreamer=false -Dsystemd=false -Dpulseaudio=false \
   -Dnetwork-backend=connman -Dxinput2=false -Dtslib=false -Devas-modules=static \
-  -Devas-loaders-disabler=gst,pdf,ps,raw,svg,xcf,bmp,dds,eet,generic,gif,ico,jp2k,pmaps,psd,tga,tgv,tiff,wbmp,webp,xpm \
+  -Devas-loaders-disabler=gst,pdf,ps,raw,svg,xcf,bmp,dds,eet,generic,gif,ico,jp2k,json,pmaps,psd,tga,tgv,tiff,wbmp,webp,xpm \
   -Decore-imf-loaders-disabler=xim,ibus,scim  -Demotion-loaders-disabler=gstreamer,gstreamer1,libvlc,xine \
   -Demotion-generic-loaders-disabler=vlc -Dfribidi=false -Dfontconfig=false \
   -Dedje-sound-and-video=false -Dembedded-lz4=false -Dlibmount=false -Dv4l2=false \
@@ -37,7 +37,7 @@ if [ "$DISTRO" != "" ] ; then
 
   MINGW_COPTS="--cross-file .ci/cross_toolchain.txt -Davahi=false -Deeze=false -Dsystemd=false \
   -Dpulseaudio=false -Dx11=false -Dopengl=none -Dlibmount=false \
-  -Devas-loaders-disabler=pdf,ps,raw,svg -Devas-modules=static -Dbindings=luajit \
+  -Devas-loaders-disabler=json,pdf,ps,raw,svg -Devas-modules=static -Dbindings=luajit \
   -Dbuild-examples=false -Dbuild-tests=false"
 
   if [ "$1" = "options-enabled" ]; then
