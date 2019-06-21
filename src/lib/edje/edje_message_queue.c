@@ -180,15 +180,13 @@ static void
 _edje_object_message_signal_process_do(Eo *obj EINA_UNUSED, Edje *ed)
 {
    Eina_Inlist *l, *ln;
-   Edje *lookup_ed;
+   Edje *lookup_ed = NULL;
    Eina_List *groups = NULL, *lg;
    Edje_Message *em;
    int gotos = 0;
 
    if (!ed) return;
-
    groups = ed->groups;
-
    if (groups)
      {
         for (l = msgq; l; l = ln)
