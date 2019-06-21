@@ -218,16 +218,6 @@ layout_setup()
    efl_gfx_entity_size_set(win, EINA_SIZE2D(200, 200));
 }
 
-static void
-layout_teardown()
-{
-   if (win)
-     {
-        efl_del(win);
-        win = NULL;
-     }
-}
-
 EFL_START_TEST (efl_ui_relative_layout_class_check)
 {
    const char *class;
@@ -375,7 +365,7 @@ EFL_END_TEST
 
 void efl_ui_test_relative_layout(TCase *tc)
 {
-   tcase_add_checked_fixture(tc, layout_setup, layout_teardown);
+   tcase_add_checked_fixture(tc, layout_setup, NULL);
    tcase_add_test(tc, efl_ui_relative_layout_class_check);
    tcase_add_test(tc, efl_ui_relative_layout_layout_update);
    tcase_add_test(tc, efl_ui_relative_layout_layout_update_chain);

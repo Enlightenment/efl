@@ -19,7 +19,7 @@ interface @beta Efl.Ui.Range_Display
             val: double; [[The range value (must be between $0.0 and 1.0)]]
          }
       }
-      @property range_min_max {
+      @property range_limits {
          set {
             [[Set the minimum and maximum values for given range widget.
 

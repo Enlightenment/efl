@@ -46,16 +46,16 @@ EAPI Eina_Bool evas_object_textblock_visible_range_get(Efl_Canvas_Text *obj, Efl
  * The inset is any applied padding on the text.
  *
  * @param[in] obj The object.
- * @param[out] l Left padding
- * @param[out] r Right padding
- * @param[out] t Top padding
- * @param[out] b Bottom padding
+ * @param[out] left The left padding
+ * @param[out] right The right padding
+ * @param[out] top The top padding
+ * @param[out] bottom The bottom padding
  *
  * @since 1.18
  *
  * @ingroup Evas_Object_Textblock_Group
  */
-EAPI void evas_object_textblock_style_insets_get(const Efl_Canvas_Text *obj, int *l, int *r, int *t, int *b);
+EAPI void evas_object_textblock_style_insets_get(const Efl_Canvas_Text *obj, int *left, int *right, int *top, int *bottom);
 
 /**
  * @brief BiDi delimiters are used for in-paragraph separation of bidi
@@ -132,14 +132,14 @@ EAPI Eina_Bool evas_object_textblock_legacy_newline_get(const Efl_Canvas_Text *o
  * 5x4.
  *
  * @param[in] obj The object.
- * @param[out] w The width of the object.
- * @param[out] h The height of the object.
+ * @param[out] width The width of the object.
+ * @param[out] height The height of the object.
  *
  * @since 1.18
  *
  * @ingroup Evas_Object_Textblock_Group
  */
-EAPI void evas_object_textblock_size_formatted_get(const Efl_Canvas_Text *obj, int *w, int *h);
+EAPI void evas_object_textblock_size_formatted_get(const Efl_Canvas_Text *obj, int *width, int *height);
 
 /**
  * @brief The native width and height.
@@ -160,14 +160,14 @@ EAPI void evas_object_textblock_size_formatted_get(const Efl_Canvas_Text *obj, i
  * 5x4.
  *
  * @param[in] obj The object.
- * @param[out] w The width returned.
- * @param[out] h The height returned.
+ * @param[out] width The width returned.
+ * @param[out] height The height returned.
  *
  * @since 1.18
  *
  * @ingroup Evas_Object_Textblock_Group
  */
-EAPI void evas_object_textblock_size_native_get(const Efl_Canvas_Text *obj, int *w, int *h);
+EAPI void evas_object_textblock_size_native_get(const Efl_Canvas_Text *obj, int *width, int *height);
 
 
 

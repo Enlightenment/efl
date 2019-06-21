@@ -213,12 +213,19 @@ _efl_input_device_children_iterate(Eo *obj, Efl_Input_Device_Data *pd)
    return &it->iterator;
 }
 
-EOLIAN static unsigned int
-_efl_input_device_has_pointer_caps(Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
+EOLIAN static int
+_efl_input_device_pointer_device_count_get(const Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
 {
    if (pd->klass == EFL_INPUT_DEVICE_TYPE_SEAT)
      return pd->pointer_count;
+   return -1;
+}
+
+EOLIAN static Eina_Bool
+_efl_input_device_is_pointer_type_get(const Eo *obj EINA_UNUSED, Efl_Input_Device_Data *pd)
+{
    return _is_pointer(pd);
 }
+
 
 #include "interfaces/efl_input_device.eo.c"

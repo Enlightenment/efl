@@ -6,6 +6,7 @@ class @beta Ector.Software.Surface extends Ector.Software.Buffer implements Ecto
    implements {
       Ector.Surface.renderer_factory_new;
       Ector.Surface.reference_point { set; }
+      Ector.Surface.draw_image;
       Efl.Object.destructor;
       Efl.Object.constructor;
    }

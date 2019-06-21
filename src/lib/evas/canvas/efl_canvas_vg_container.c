@@ -231,6 +231,8 @@ _efl_canvas_vg_container_efl_object_constructor(Eo *obj,
    nd->data = pd;
    nd->flags = EFL_GFX_CHANGE_FLAG_ALL;
 
+   efl_gfx_color_set(obj, 255, 255, 255, 255);
+
    return obj;
 }
 
@@ -238,6 +240,9 @@ static void
 _efl_canvas_vg_container_efl_object_destructor(Eo *obj,
                                                Efl_Canvas_Vg_Container_Data *pd)
 {
+   if (pd->blend_pixels) free(pd->blend_pixels);
+   if (pd->blend_buffer) efl_unref(pd->blend_buffer);
+
    //Destroy mask surface
    if (pd->mask.buffer) efl_unref(pd->mask.buffer);
    if (pd->mask.pixels) free(pd->mask.pixels);

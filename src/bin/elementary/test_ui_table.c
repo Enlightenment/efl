@@ -20,12 +20,12 @@ typedef enum {
 } Weight_Mode;
 
 static void
-weights_cb(void *data, const Efl_Event *event)
+weights_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    EFL_OPS_DEFINE(custom_layout_ops,
                   EFL_OBJECT_OP_FUNC(efl_pack_layout_update, _custom_layout_update));
 
-   Weight_Mode mode = elm_radio_state_value_get(event->object);
+   Weight_Mode mode = elm_radio_state_value_get(obj);
    Eo *table = data;
 
    if (mode != CUSTOM)
@@ -232,7 +232,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    chk = o = elm_radio_add(win);
    elm_object_text_set(o, "No weight");
-   efl_event_callback_add(o, EFL_UI_RADIO_EVENT_CHANGED, weights_cb, table);
+   evas_object_smart_callback_add(o, "changed", weights_cb, table);
    efl_gfx_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, NONE);
    efl_pack(bx, o);
@@ -240,7 +240,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "No weight + table fill");
-   efl_event_callback_add(o, EFL_UI_RADIO_EVENT_CHANGED, weights_cb, table);
+   evas_object_smart_callback_add(o, "changed", weights_cb, table);
    efl_gfx_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, NONE_BUT_FILL);
    elm_radio_group_add(o, chk);
@@ -249,7 +249,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "Equal weights");
-   efl_event_callback_add(o, EFL_UI_RADIO_EVENT_CHANGED, weights_cb, table);
+   evas_object_smart_callback_add(o, "changed", weights_cb, table);
    efl_gfx_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, EQUAL);
    elm_radio_group_add(o, chk);
@@ -258,7 +258,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "One weight only");
-   efl_event_callback_add(o, EFL_UI_RADIO_EVENT_CHANGED, weights_cb, table);
+   evas_object_smart_callback_add(o, "changed", weights_cb, table);
    efl_gfx_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, ONE);
    elm_radio_group_add(o, chk);
@@ -267,7 +267,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "Two weights");
-   efl_event_callback_add(o, EFL_UI_RADIO_EVENT_CHANGED, weights_cb, table);
+   evas_object_smart_callback_add(o, "changed", weights_cb, table);
    efl_gfx_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, TWO);
    elm_radio_group_add(o, chk);
@@ -276,7 +276,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "Custom layout");
-   efl_event_callback_add(o, EFL_UI_RADIO_EVENT_CHANGED, weights_cb, table);
+   evas_object_smart_callback_add(o, "changed", weights_cb, table);
    efl_gfx_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, CUSTOM);
    elm_radio_group_add(o, chk);

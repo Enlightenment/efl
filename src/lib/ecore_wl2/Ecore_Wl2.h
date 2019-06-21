@@ -1225,7 +1225,16 @@ EAPI void ecore_wl2_window_popup_input_set(Ecore_Wl2_Window *window, Ecore_Wl2_I
  */
 EAPI Eina_Bool ecore_wl2_window_shell_surface_exists(Ecore_Wl2_Window *win);
 
-/** @since 1.17 */
+/**
+ * Get which display a given window is using
+ *
+ * @param window The window to get the display of
+ *
+ * @return The Ecore_Wl2_Display that this window is using, or NULL otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.17
+ */
 EAPI Ecore_Wl2_Display *ecore_wl2_window_display_get(const Ecore_Wl2_Window *window);
 
 /**
@@ -1293,8 +1302,16 @@ EAPI Eina_Bool ecore_wl2_window_floating_mode_get(Ecore_Wl2_Window *window);
  * Wayland Input
  */
 
-/* TODO: doxy */
-/** @since 1.17 */
+/**
+ * Get the wl_seat that an input is using
+ *
+ * @param input The Ecore_Wl2_Input to get the seat of
+ *
+ * @return The wl_seat of this input, or NULL otherwise
+ *
+ * @ingroup Ecore_Wl2_Input_Group
+ * @since 1.17
+ */
 EAPI struct wl_seat *ecore_wl2_input_seat_get(Ecore_Wl2_Input *input);
 
 /**
@@ -1859,6 +1876,7 @@ EAPI void ecore_wl2_session_recovery_disable(void);
  */
 EAPI void ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush);
 
+/* TODO: doxygen if we are keeping this function public */
 EAPI void ecore_wl2_window_false_commit(Ecore_Wl2_Window *window);
 
 /**
@@ -1941,6 +1959,7 @@ EAPI Eina_Bool ecore_wl2_window_resizing_get(Ecore_Wl2_Window *window);
  */
 EAPI void ecore_wl2_window_update_begin(Ecore_Wl2_Window *window);
 
+/* TODO: doxygen if we are keeping any of the below functions public */
 EAPI void ecore_wl2_window_damage(Ecore_Wl2_Window *window, Eina_Rectangle *rects, unsigned int count);
 
 EAPI Eina_Bool ecore_wl2_buffer_init(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer_Type types);

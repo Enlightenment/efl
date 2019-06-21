@@ -70,7 +70,7 @@ test_slider_interval(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
    efl_add(EFL_UI_SLIDER_INTERVAL_CLASS, bx,
            efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(120, 0)),
-           efl_ui_range_min_max_set(efl_added, 10, 145),
+           efl_ui_range_limits_set(efl_added, 10, 145),
            efl_ui_slider_interval_value_set(efl_added, 50, 100),
            efl_ui_range_step_set(efl_added, step),
            elm_object_disabled_set(efl_added, EINA_TRUE),
@@ -87,7 +87,7 @@ test_slider_interval(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
    efl_add(EFL_UI_SLIDER_INTERVAL_CLASS, hbx,
            efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(0, 160)),
-           efl_ui_range_min_max_set(efl_added, 10, 145),
+           efl_ui_range_limits_set(efl_added, 10, 145),
            efl_ui_slider_interval_value_set(efl_added, 50, 100),
            efl_ui_range_step_set(efl_added, step),
            efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
@@ -95,7 +95,7 @@ test_slider_interval(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
    efl_add(EFL_UI_SLIDER_INTERVAL_CLASS, hbx,
            efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(0, 160)),
-           efl_ui_range_min_max_set(efl_added, 10, 145),
+           efl_ui_range_limits_set(efl_added, 10, 145),
            efl_ui_slider_interval_value_set(efl_added, 50, 100),
            efl_ui_range_step_set(efl_added, step),
            efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
@@ -109,7 +109,7 @@ test_slider_interval(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
    efl_add(EFL_UI_SLIDER_INTERVAL_CLASS, bx,
            efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(260, 0)),
-           efl_ui_range_min_max_set(efl_added, 0, 600),
+           efl_ui_range_limits_set(efl_added, 0, 600),
            efl_ui_slider_interval_value_set(efl_added, 100, 500),
            efl_ui_range_step_set(efl_added, step),
            efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED, _intv_slider_changed_cb, NULL),

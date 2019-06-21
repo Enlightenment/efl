@@ -5,6 +5,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
+#ifdef _WIN32
+# include <evil_private.h> /* setenv unsetenv */
+#endif
+
 #include <Eina.h>
 #include <Eolian.h>
 

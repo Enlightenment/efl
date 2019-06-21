@@ -2178,13 +2178,13 @@ _win_event_add_cb(void *data, const Efl_Event *ev)
         else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN)
           {
              if (!(sd->event_forward.focus_in++))
-               evas_event_callback_add(sd->evas, EVAS_CALLBACK_FOCUS_IN,
+               evas_event_callback_add(sd->evas, EVAS_CALLBACK_CANVAS_FOCUS_IN,
                                        _elm_win_evas_focus_in, win);
           }
         else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT)
           {
              if (!(sd->event_forward.focus_out++))
-               evas_event_callback_add(sd->evas, EVAS_CALLBACK_FOCUS_OUT,
+               evas_event_callback_add(sd->evas, EVAS_CALLBACK_CANVAS_FOCUS_OUT,
                                        _elm_win_evas_focus_out, win);
           }
         else if (array[i].desc == EFL_CANVAS_SCENE_EVENT_OBJECT_FOCUS_IN)
@@ -2658,8 +2658,8 @@ _efl_ui_win_pointer_iterate(const Eo *obj, Efl_Ui_Win_Data *sd,
         ptr = efl_input_pointer_instance_get( (Eo *) obj, (void **) &ptrdata);
         if (!ptrdata) break;
 
-        ptrdata->tool = evas_touch_point_list_nth_id_get(sd->evas, i);
-        _efl_input_value_mark(ptrdata, EFL_INPUT_VALUE_TOOL);
+        ptrdata->touch_id = evas_touch_point_list_nth_id_get(sd->evas, i);
+        _efl_input_value_mark(ptrdata, EFL_INPUT_VALUE_TOUCH_ID);
 
         // Note that "still" maps to "down" here.
         state = evas_touch_point_list_nth_state_get(sd->evas, i);

@@ -243,12 +243,6 @@ endif
 
 ecore_evas_wayland_engine_include_dir = []
 
-boot_strap_eolian = [
-  ['evil'             ,[]                    , false,  true, false, false, false, false, [], []],
-  ['eina'             ,[]                    , false,  true, false, false, false, false, [], []],
-  ['eolian'           ,[]                    , false,  true,  true, false, false, false, ['eina'], []],
-]
-
 evas_lib =         ['evas'                       ,[], false,  true, false, false,  true,  true, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']]
 evas_img_modules = ['evas'                       ,[],  true, false, false, false, false, false, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']]
 evas_engines =     [join_paths('evas', 'engines'),[],  true, false, false, false, false, false, [], []]
@@ -330,10 +324,6 @@ subdir(join_paths(local_module, 'eina'))
 test_dirs = []
 example_dirs = []
 tmp_empty = declare_dependency()
-
-if get_option('eolian-bootstrap')
-   subprojects = boot_strap_eolian
-endif
 
 foreach package : subprojects
   package_name = package[0]
@@ -434,28 +424,26 @@ foreach package : subprojects
 
 endforeach
 
-subdir('cmakeconfig')
 #build this later, as the debug services are depending on ecore
-if get_option('eolian-bootstrap') == false
-  subdir(join_paths('src', 'bin', 'efl'))
+subdir(join_paths('src', 'bin', 'efl'))
 
-  subdir(join_paths('src', 'generic', 'evas'))
-  if sys_windows == false
-    subdir(join_paths('src', 'generic', 'emotion'))
-  endif
-
-  bindings = get_option('bindings')
-  bindings_order = ['luajit', 'cxx', 'mono']
-
-  foreach binding : bindings_order
-    if bindings.contains(binding)
-      subdir(join_paths('src', 'bindings', binding))
-    endif
-  endforeach
-
-  subdir(join_paths('src', 'edje_external'))
-  subdir(join_paths('data'))
+subdir(join_paths('src', 'generic', 'evas'))
+if sys_windows == false
+  subdir(join_paths('src', 'generic', 'emotion'))
 endif
+subdir('cmakeconfig')
+
+bindings = get_option('bindings')
+bindings_order = ['luajit', 'cxx', 'mono']
+
+foreach binding : bindings_order
+  if bindings.contains(binding)
+    subdir(join_paths('src', 'bindings', binding))
+  endif
+endforeach
+
+subdir(join_paths('src', 'edje_external'))
+subdir(join_paths('data'))
 
 if get_option('build-tests')
   check = dependency('check')
@@ -484,7 +472,7 @@ endforeach
 
 doxygen = find_program('doxygen', required : false)
 
-if get_option('eolian-bootstrap') == false and doxygen.found()
+if doxygen.found()
   subdir('doc')
 endif
 

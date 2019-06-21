@@ -1752,6 +1752,8 @@ struct _Edje
    lua_State            *L;
    Eina_Inlist          *lua_objs;
 
+   Eina_Inlist          *messages;
+
    int                   lua_ref;
    int                   processing_messages;
    int                   references;
@@ -2244,12 +2246,15 @@ struct _Edje_Message_Signal
 
 struct _Edje_Message
 {
+   Eina_Inlist        inlist_main; // msgq or tmp_msgq - mut exclusive
+   Eina_Inlist        inlist_edje;
    Edje              *edje;
-   Edje_Queue         queue;
-   Edje_Message_Type  type;
-   int                id;
    unsigned char     *msg;
-   Eina_Bool          propagated : 1;
+   int                id;
+   Eina_Bool          in_tmp_msgq :  1;
+   Eina_Bool          propagated  :  1;
+   Edje_Queue         queue       :  2;
+   Edje_Message_Type  type        : 28;
 };
 
 typedef enum _Edje_Fill

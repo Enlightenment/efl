@@ -85,8 +85,8 @@ enum @beta Efl.Input.Value {
                  Prefer the method $button to read this value. Default: 0.]]
    buttons_pressed, [[32-bit bit mask (unsigned int). Prefer the
                       method $buttons_pressed to read this value. Default: 0.]]
-   tool,       [[ID of the finger or tool (eg. pen) that triggered this event.
-                 Prefer the property $tool to read this value. Default: 0.]]
+   touch_id,       [[ID of the finger or tool (eg. pen) that triggered this event.
+                     Prefer the property $touch_id to read this value. Default: 0.]]
    x,          [[Absolute X position where this event occurred, in pixels.
                  Relative to the window. Default: last known position.
                  This value may be smoothed out or even extrapolated by EFL.]]

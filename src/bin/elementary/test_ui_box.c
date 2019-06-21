@@ -20,9 +20,9 @@ typedef enum {
 } Weight_Mode;
 
 static void
-weights_cb(void *data, const Efl_Event *event)
+weights_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   Weight_Mode mode = elm_radio_state_value_get(event->object);
+   Weight_Mode mode = elm_radio_state_value_get(obj);
 
    switch (mode)
      {
@@ -138,9 +138,9 @@ alignv_btn_slider_cb(void *data, const Efl_Event *event)
 }
 
 static void
-flow_check_cb(void *data, const Efl_Event *event)
+flow_check_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   Eina_Bool chk = elm_check_selected_get(event->object);
+   Eina_Bool chk = elm_check_selected_get(obj);
    Eina_List *list = NULL;
    Eina_Iterator *it;
    Eo *box, *win, *sobj, *parent;
@@ -167,17 +167,17 @@ flow_check_cb(void *data, const Efl_Event *event)
 }
 
 static void
-horiz_check_cb(void *data, const Efl_Event *event)
+horiz_check_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   Eina_Bool chk = elm_check_selected_get(event->object);
+   Eina_Bool chk = elm_check_selected_get(obj);
    Eo *box = efl_key_wref_get(data, "box");
    efl_ui_layout_orientation_set(box, chk ? EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL : EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
 }
 
 static void
-homo_check_cb(void *data, const Efl_Event *event)
+homo_check_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
-   Eina_Bool chk = elm_check_selected_get(event->object);
+   Eina_Bool chk = elm_check_selected_get(obj);
    Eo *box = efl_key_wref_get(data, "box");
    efl_ui_box_homogeneous_set(box, chk);
 }
@@ -210,12 +210,12 @@ _custom_layout_update(Eo *pack, const void *data EINA_UNUSED)
 }
 
 static void
-custom_check_cb(void *data, const Efl_Event *event)
+custom_check_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    EFL_OPS_DEFINE(custom_layout_ops,
                   EFL_OBJECT_OP_FUNC(efl_pack_layout_update, _custom_layout_update));
 
-   Eina_Bool chk = elm_check_selected_get(event->object);
+   Eina_Bool chk = elm_check_selected_get(obj);
    Eo *box, *win = data;
 
    box = efl_key_wref_get(win, "box");
@@ -268,7 +268,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    chk = o = elm_radio_add(win);
    elm_object_text_set(o, "No weight");
-   efl_event_callback_add(o, EFL_UI_RADIO_EVENT_CHANGED, weights_cb, win);
+   evas_object_smart_callback_add(o, "changed", weights_cb, win);
    efl_gfx_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, NONE);
    efl_pack(bx, o);
@@ -276,7 +276,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "No weight + box fill");
-   efl_event_callback_add(o, EFL_UI_RADIO_EVENT_CHANGED, weights_cb, win);
+   evas_object_smart_callback_add(o, "changed", weights_cb, win);
    efl_gfx_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, NONE_BUT_FILL);
    elm_radio_group_add(o, chk);
@@ -285,7 +285,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "Equal weights");
-   efl_event_callback_add(o, EFL_UI_RADIO_EVENT_CHANGED, weights_cb, win);
+   evas_object_smart_callback_add(o, "changed", weights_cb, win);
    efl_gfx_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, EQUAL);
    elm_radio_group_add(o, chk);
@@ -294,7 +294,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "One weight only");
-   efl_event_callback_add(o, EFL_UI_RADIO_EVENT_CHANGED, weights_cb, win);
+   evas_object_smart_callback_add(o, "changed", weights_cb, win);
    efl_gfx_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, ONE);
    elm_radio_group_add(o, chk);
@@ -303,7 +303,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
 
    o = elm_radio_add(win);
    elm_object_text_set(o, "Two weights");
-   efl_event_callback_add(o, EFL_UI_RADIO_EVENT_CHANGED, weights_cb, win);
+   evas_object_smart_callback_add(o, "changed", weights_cb, win);
    efl_gfx_hint_align_set(o, 0, 0.5);
    elm_radio_state_value_set(o, TWO);
    elm_radio_group_add(o, chk);
@@ -329,7 +329,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    o = elm_check_add(win);
    elm_check_selected_set(o, 0);
    elm_object_text_set(o, "Flow");
-   efl_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, flow_check_cb, win);
+   evas_object_smart_callback_add(o, "changed", flow_check_cb, win);
    efl_gfx_hint_align_set(o, 0, 0);
    efl_pack(bx, o);
    efl_gfx_entity_visible_set(o, 1);
@@ -337,7 +337,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    o = elm_check_add(win);
    elm_check_selected_set(o, 1);
    elm_object_text_set(o, "Horizontal");
-   efl_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, horiz_check_cb, win);
+   evas_object_smart_callback_add(o, "changed", horiz_check_cb, win);
    efl_gfx_hint_align_set(o, 0, 0);
    efl_pack(bx, o);
    efl_gfx_entity_visible_set(o, 1);
@@ -345,7 +345,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    o = elm_check_add(win);
    elm_check_selected_set(o, 0);
    elm_object_text_set(o, "Homogenous");
-   efl_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, homo_check_cb, win);
+   evas_object_smart_callback_add(o, "changed", homo_check_cb, win);
    efl_gfx_hint_align_set(o, 0, 0);
    efl_pack(bx, o);
    efl_gfx_entity_visible_set(o, 1);
@@ -353,7 +353,7 @@ test_ui_box(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    o = elm_check_add(win);
    elm_check_selected_set(o, 0);
    elm_object_text_set(o, "Custom layout");
-   efl_event_callback_add(o, EFL_UI_CHECK_EVENT_CHANGED, custom_check_cb, win);
+   evas_object_smart_callback_add(o, "changed", custom_check_cb, win);
    efl_gfx_hint_align_set(o, 0, 0);
    efl_gfx_hint_weight_set(o, 0, 1);
    efl_pack(bx, o);

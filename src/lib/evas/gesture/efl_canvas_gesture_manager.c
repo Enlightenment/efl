@@ -180,7 +180,7 @@ _efl_canvas_gesture_manager_filter_event(Eo *obj, Eo *target, void *event)
                   eina_hash_add(pd->m_object_events, &gesture_type, touch_event);
                }
 
-             efl_gesture_touch_point_record(touch_event, pointer_data->tool, pointer_data->cur,
+             efl_gesture_touch_point_record(touch_event, pointer_data->touch_id, pointer_data->cur,
                                             pointer_data->timestamp, pointer_data->action);
 
              //This is for handling the case that mouse event pairs dont match.

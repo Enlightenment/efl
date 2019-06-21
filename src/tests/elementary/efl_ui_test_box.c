@@ -228,16 +228,6 @@ layout_setup()
    layout = efl_add(EFL_UI_BOX_CLASS, win);
 }
 
-static void
-layout_teardown()
-{
-   if (win)
-     {
-        efl_del(win);
-        win = NULL;
-     }
-}
-
 EFL_START_TEST (efl_ui_box_class_check)
 {
    const char *class;
@@ -565,7 +555,7 @@ EFL_END_TEST
 
 void efl_ui_test_box(TCase *tc)
 {
-   tcase_add_checked_fixture(tc, layout_setup, layout_teardown);
+   tcase_add_checked_fixture(tc, layout_setup, NULL);
    tcase_add_test(tc, efl_ui_box_class_check);
    tcase_add_test(tc, efl_ui_box_layout_update);
    tcase_add_test(tc, efl_ui_box_layout_update_pack);

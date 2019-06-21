@@ -228,16 +228,6 @@ layout_setup()
                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
 }
 
-static void
-layout_teardown()
-{
-   if (win)
-     {
-        efl_del(win);
-        win = NULL;
-     }
-}
-
 EFL_START_TEST (efl_ui_box_flow_class_check)
 {
    const char *class;
@@ -408,7 +398,7 @@ EFL_END_TEST
 
 void efl_ui_test_box_flow(TCase *tc)
 {
-   tcase_add_checked_fixture(tc, layout_setup, layout_teardown);
+   tcase_add_checked_fixture(tc, layout_setup, NULL);
    tcase_add_test(tc, efl_ui_box_flow_class_check);
    tcase_add_test(tc, efl_ui_box_flow_layout_update);
    tcase_add_test(tc, efl_ui_box_flow_layout_update_pack);

@@ -89,7 +89,7 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
         }
 
       case EFL_POINTER_ACTION_DOWN:
-        if (ev->tool == 0)
+        if (ev->touch_id == 0)
           {
              // filter out MULTI with finger 0, valid for eo, invalid for legacy
              if (type == EVAS_CALLBACK_MULTI_DOWN)
@@ -116,7 +116,7 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
           {
              TYPE_CHK(MULTI_DOWN);
              Evas_Event_Multi_Down *e = _event_alloc(ev->legacy);
-             e->device = ev->tool;
+             e->device = ev->touch_id;
              e->radius = ev->radius;
              e->radius_x = ev->radius_x;
              e->radius_y = ev->radius_y;
@@ -140,7 +140,7 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
           }
 
       case EFL_POINTER_ACTION_UP:
-        if (ev->tool == 0)
+        if (ev->touch_id == 0)
           {
              // filter out MULTI with finger 0, valid for eo, invalid for legacy
              if (type == EVAS_CALLBACK_MULTI_UP)
@@ -167,7 +167,7 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
           {
              TYPE_CHK(MULTI_UP);
              Evas_Event_Multi_Up *e = _event_alloc(ev->legacy);
-             e->device = ev->tool;
+             e->device = ev->touch_id;
              e->radius = ev->radius;
              e->radius_x = ev->radius_x;
              e->radius_y = ev->radius_y;
@@ -191,7 +191,7 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
           }
 
       case EFL_POINTER_ACTION_MOVE:
-        if (ev->tool == 0)
+        if (ev->touch_id == 0)
           {
              // filter out MULTI with finger 0, valid for eo, invalid for legacy
              if (type == EVAS_CALLBACK_MULTI_MOVE)
@@ -220,7 +220,7 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
           {
              TYPE_CHK(MULTI_MOVE);
              Evas_Event_Multi_Move *e = _event_alloc(ev->legacy);
-             e->device = ev->tool;
+             e->device = ev->touch_id;
              e->radius = ev->radius;
              e->radius_x = ev->radius_x;
              e->radius_y = ev->radius_y;
@@ -274,7 +274,7 @@ efl_input_pointer_legacy_info_fill(Evas *eo_evas, Efl_Input_Key *eo_ev, Evas_Cal
            e->dev = ev->device;
            /* FIXME: Get device id from above device object. 0 for now. */
            e->device = 0;
-           e->toolid = ev->tool;
+           e->toolid = ev->touch_id;
            e->axis = malloc(sizeof(Evas_Axis) * 11);
            e->axis[e->naxis].label = EVAS_AXIS_LABEL_WINDOW_X;
            e->axis[e->naxis].value = ev->cur.x;

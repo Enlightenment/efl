@@ -224,6 +224,43 @@ _cb_appthread_event_callback_del(void *data, const Efl_Event *event)
      }
 }
 
+static void
+_efl_thread_pipe_write(int fd, const void *buf, size_t count)
+{
+   const char *my_buf = buf;
+   ssize_t ret;
+
+   for (;;)
+     {
+        ret = write(fd, my_buf, count);
+        if (ret < 0)
+          {
+             // try again tyope errors
+             if      (errno == EINTR) continue;
+             else if (errno == EAGAIN) continue;
+             // bad errors - fatal for this kind of write
+             else if (errno == EBADF)
+               ERR("Error writing to control pipe fd: Bad fd");
+             else if (errno == EFAULT)
+               ERR("Error writing to control pipe fd: Bad buf outside address space");
+             else if (errno == EINVAL)
+               ERR("Error writing to control pipe fd: Invalid value");
+             else if (errno == EPIPE)
+               ERR("Error writing to control pipe fd: Broken Pipe");
+             else
+               ERR("Error writing to control pipe fd: Something else unexpected");
+             return;
+          }
+        // do it in multiple writes then if only part was written
+        else if (ret >= 0)
+          {
+             my_buf += ret;
+             count -= ret;
+             if (count == 0) return;
+          }
+     }
+}
+
 EFL_CALLBACKS_ARRAY_DEFINE(_appthread_event_callback_watch,
                            { EFL_EVENT_CALLBACK_ADD, _cb_appthread_event_callback_add },
                            { EFL_EVENT_CALLBACK_DEL, _cb_appthread_event_callback_del });
@@ -300,7 +337,7 @@ _efl_thread_main(void *data, Eina_Thread t)
    memset(&cmd, 0, sizeof(cmd));
    cmd.d.command = CMD_EXITED;
    cmd.d.data = real;
-   write(thdat->ctrl.in, &cmd, sizeof(Control_Data));
+   _efl_thread_pipe_write(thdat->ctrl.in, &cmd, sizeof(Control_Data));
 
    efl_unref(obj);
 
@@ -805,7 +842,7 @@ _efl_thread_efl_task_end(Eo *obj EINA_UNUSED, Efl_Thread_Data *pd)
         pd->end_sent = EINA_TRUE;
         memset(&cmd, 0, sizeof(cmd));
         cmd.d.command = CMD_EXIT;
-        write(pd->ctrl.in, &cmd, sizeof(Control_Data));
+        _efl_thread_pipe_write(pd->ctrl.in, &cmd, sizeof(Control_Data));
      }
 }
 
@@ -1010,7 +1047,7 @@ _appthread_threadio_call(Eo *obj EINA_UNUSED, Efl_Appthread_Data *pd,
    cmd.d.ptr[0] = func;
    cmd.d.ptr[1] = func_data;
    cmd.d.ptr[2] = func_free_cb;
-   write(thdat->ctrl.in, &cmd, sizeof(Control_Data));
+   _efl_thread_pipe_write(thdat->ctrl.in, &cmd, sizeof(Control_Data));
 }
 
 EOLIAN static void
@@ -1024,7 +1061,7 @@ _efl_thread_efl_threadio_call(Eo *obj EINA_UNUSED, Efl_Thread_Data *pd,
    cmd.d.ptr[0] = func;
    cmd.d.ptr[1] = func_data;
    cmd.d.ptr[2] = func_free_cb;
-   write(pd->ctrl.in, &cmd, sizeof(Control_Data));
+   _efl_thread_pipe_write(pd->ctrl.in, &cmd, sizeof(Control_Data));
 }
 
 void *
@@ -1046,7 +1083,7 @@ _appthread_threadio_call_sync(Eo *obj EINA_UNUSED, Efl_Appthread_Data *pd,
    cmd.d.ptr[3] = rep;
    rep->data = NULL;
    eina_semaphore_new(&(rep->sem), 0);
-   write(thdat->ctrl.in, &cmd, sizeof(Control_Data));
+   _efl_thread_pipe_write(thdat->ctrl.in, &cmd, sizeof(Control_Data));
    eina_semaphore_lock(&(rep->sem));
    data = rep->data;
    free(rep);
@@ -1071,7 +1108,7 @@ _efl_thread_efl_threadio_call_sync(Eo *obj EINA_UNUSED, Efl_Thread_Data *pd,
    cmd.d.ptr[3] = rep;
    rep->data = NULL;
    eina_semaphore_new(&(rep->sem), 0);
-   write(pd->ctrl.in, &cmd, sizeof(Control_Data));
+   _efl_thread_pipe_write(pd->ctrl.in, &cmd, sizeof(Control_Data));
    eina_semaphore_lock(&(rep->sem));
    data = rep->data;
    free(rep);

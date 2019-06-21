@@ -30,7 +30,7 @@ struct _Efl_Input_Pointer_Data
    unsigned int    timestamp; /* FIXME: store as double? */
    int             button;
    unsigned int    pressed_buttons;
-   int             tool; /* finger or tool ID */
+   int             touch_id; /* finger or tool ID */
    double          radius, radius_x, radius_y;
    double          pressure, distance, azimuth, tilt, twist;
    double          angle;

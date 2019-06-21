@@ -119,13 +119,13 @@ _efl_input_key_string_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
 }
 
 EOLIAN static void
-_efl_input_key_compose_set(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd, const char *val)
+_efl_input_key_compose_string_set(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd, const char *val)
 {
    eina_stringshare_replace(&pd->compose, val);
 }
 
 EOLIAN static const char *
-_efl_input_key_compose_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
+_efl_input_key_compose_string_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
 {
    return pd->compose;
 }

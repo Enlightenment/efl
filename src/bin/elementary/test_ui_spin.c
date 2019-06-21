@@ -47,7 +47,7 @@ test_ui_spin(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
                 efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
 
    sp = efl_add(EFL_UI_SPIN_CLASS, bx,
-                efl_ui_range_min_max_set(efl_added, 0, 10),
+                efl_ui_range_limits_set(efl_added, 0, 10),
                 efl_ui_range_value_set(efl_added, 6),
                 efl_ui_range_step_set(efl_added, 2),
                 efl_ui_format_string_set(efl_added, "test %d"),

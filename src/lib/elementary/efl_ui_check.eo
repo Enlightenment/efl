@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Check extends Efl.Ui.Nstate implements Efl.Access.Widget.Action
+class @beta Efl.Ui.Check extends Efl.Ui.Layout_Base implements Efl.Access.Widget.Action, Efl.Text, Efl.Content
 {
    [[Check widget
 
@@ -24,8 +24,14 @@ class @beta Efl.Ui.Check extends Efl.Ui.Nstate implements Efl.Access.Widget.Acti
       Efl.Ui.Widget.on_access_activate;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Widget.widget_input_event_handler;
-      Efl.Ui.Nstate.value { set; }
       Efl.Access.Object.state_set { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Content.content { get; set; }
+      Efl.Content.content_unset;
+      Efl.Text.text { get; set; }
+      Efl.Ui.L10n.l10n_text { get; set; }
+   }
+   events {
+      selected,changed : bool; [[Emitted each time selected has changed]]
    }
 }

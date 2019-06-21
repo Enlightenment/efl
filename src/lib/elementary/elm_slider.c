@@ -62,7 +62,7 @@ _delay_change(void *data)
    ELM_SLIDER_DATA_GET(data, sd);
 
    sd->delay = NULL;
-   efl_event_callback_legacy_call(data, EFL_UI_SLIDER_EVENT_DELAY_CHANGED, NULL);
+   evas_object_smart_callback_call(data, SIG_DELAY_CHANGED, NULL);
 
    if (_elm_config->atspi_mode)
      efl_access_value_changed_signal_emit(data);
@@ -536,7 +536,7 @@ void
 _elm_slider_val_fetch(Evas_Object *obj, Elm_Slider_Data *pd, Eina_Bool user_event)
 {
    double posx = 0.0, posy = 0.0, pos = 0.0, val;
-   double posx2 = 0.0, posy2 = 0.0, pos2 = 0.0, val2;
+   double posx2 = 0.0, posy2 = 0.0, pos2 = 0.0, val2 = 0.0;
    Eina_Bool inverted = EINA_FALSE;
    Eina_Bool evented = EINA_FALSE;
 
@@ -1357,13 +1357,13 @@ elm_slider_range_get(const Evas_Object *obj, double *from, double *to)
 EAPI void
 elm_slider_min_max_set(Evas_Object *obj, double min, double max)
 {
-   efl_ui_range_min_max_set(obj, min, max);
+   efl_ui_range_limits_set(obj, min, max);
 }
 
 EAPI void
 elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max)
 {
-   efl_ui_range_min_max_get(obj, min, max);
+   efl_ui_range_limits_get(obj, min, max);
 }
 
 EAPI void

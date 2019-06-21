@@ -50,8 +50,9 @@ my_im_ch(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *win = data;
    Eo *im = efl_key_data_get(win, "im");
-   Eo *rdg = efl_key_data_get(win, "rdg");
-   Efl_Gfx_Image_Orientation v = efl_ui_radio_state_value_get(efl_ui_radio_selected_object_get(rdg));
+
+   Efl_Gfx_Image_Orientation v = efl_ui_radio_group_selected_value_get(ev->object);
+   if (((int)v) == -1) v = 0;
 
    efl_gfx_image_orientation_set(im, v);
    fprintf(stderr, "Set %i and got %i\n",
@@ -61,17 +62,18 @@ my_im_ch(void *data, const Efl_Event *ev EINA_UNUSED)
 void
 test_ui_image(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Eo *win, *box, *im, *rd, *rdg = NULL;
+   Eo *win, *box, *im, *rd;
    int i;
 
    win = win_add("image test", "Image Test");
 
-   box = efl_add(EFL_UI_BOX_CLASS, win);
+   box = efl_add(EFL_UI_RADIO_BOX_CLASS, win);
    efl_gfx_hint_weight_set(box, 1.0, 1.0);
    efl_content_set(win, box);
+   efl_key_data_set(win, "rdg", box);
 
    im = img_add(win, "/images/logo.png");
-   efl_pack(box, im);
+   efl_content_set(win, im);
 
    for (i = 0; images_orient[i].name; ++i)
      {
@@ -81,19 +83,10 @@ test_ui_image(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *event_info EIN
         efl_ui_radio_state_value_set(rd, images_orient[i].orient);
         efl_text_set(rd, images_orient[i].name);
         efl_pack(box, rd);
-        efl_event_callback_add(rd, EFL_UI_RADIO_EVENT_CHANGED, my_im_ch, win);
-        if (!rdg)
-          {
-             rdg = rd;
-             efl_key_data_set(win, "rdg", rdg);
-          }
-        else
-          {
-             efl_ui_radio_group_add(rd, rdg);
-          }
      }
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(320, 480));
+   efl_event_callback_add(box, EFL_UI_RADIO_GROUP_EVENT_VALUE_CHANGED, my_im_ch, win);
 }
 
 
@@ -130,8 +123,8 @@ my_im_scale_ch(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *win = data;
    Eo *im = efl_key_data_get(win, "im");
-   Eo *rdg = efl_key_data_get(win, "rdg");
-   int v = efl_ui_radio_state_value_get(efl_ui_radio_selected_object_get(rdg));
+   int v = efl_ui_radio_group_selected_value_get(ev->object);
+   if (v == -1) v = 0;
 
    efl_gfx_image_scale_type_set(im, images_scale_type[v].scale_type);
    fprintf(stderr, "Set %d[%s] and got %d\n",
@@ -141,14 +134,15 @@ my_im_scale_ch(void *data, const Efl_Event *ev EINA_UNUSED)
 void
 test_ui_image_scale_type(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Eo *win, *box, *im, *rd, *rdg = NULL;
+   Eo *win, *box, *im, *rd;
    int i;
 
    win = win_add("image test scale type", "Image Test Scale Type");
 
-   box = efl_add(EFL_UI_BOX_CLASS, win);
+   box = efl_add(EFL_UI_RADIO_BOX_CLASS, win);
    efl_gfx_hint_weight_set(box, 1.0, 1.0);
    efl_content_set(win, box);
+   efl_key_data_set(win, "rdg", box);
 
    im = efl_add(EFL_UI_IMAGE_CLASS, win);
    char buf[PATH_MAX];
@@ -156,7 +150,7 @@ test_ui_image_scale_type(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *eve
    elm_image_file_set(im, buf, NULL);
    efl_gfx_hint_weight_set(im, 1.0, 1.0);
    efl_gfx_hint_fill_set(im, EINA_TRUE, EINA_TRUE);
-   efl_pack(box, im);
+   efl_content_set(win, im);
 
    efl_key_data_set(win, "im", im);
 
@@ -168,18 +162,8 @@ test_ui_image_scale_type(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *eve
         efl_ui_radio_state_value_set(rd, i);
         efl_text_set(rd, images_scale_type[i].name);
         efl_pack(box, rd);
-        efl_event_callback_add(rd, EFL_UI_RADIO_EVENT_CHANGED, my_im_scale_ch, win);
-        if (!rdg)
-          {
-             rdg = rd;
-             efl_key_data_set(win, "rdg", rdg);
-          }
-        else
-          {
-             efl_ui_radio_group_add(rd, rdg);
-          }
      }
-
+   efl_event_callback_add(box, EFL_UI_RADIO_GROUP_EVENT_VALUE_CHANGED, my_im_scale_ch, win);
    efl_gfx_entity_size_set(win, EINA_SIZE2D(320, 480));
 }
 
@@ -307,7 +291,7 @@ _url_activate_cb(void *data, Eo *obj, void *event_info EINA_UNUSED)
 void
 test_remote_ui_image(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Eo *win, *box, *im, *rd, *rdg = NULL, *box2, *o;
+   Eo *win, *box, *im, *rd, *box2, *o;
    int i;
 
    win = win_add("image test", "Image Test");
@@ -332,6 +316,12 @@ test_remote_ui_image(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *event_i
    evas_object_smart_callback_add(im, "download,done", _download_done_cb, win);
    evas_object_smart_callback_add(im, "download,error", _download_error_cb, win);
 
+   box2 = efl_add(EFL_UI_RADIO_BOX_CLASS, win);
+   efl_gfx_hint_weight_set(box2, 1.0, 1.0);
+   efl_content_set(win, box2);
+   efl_key_data_set(win, "rdg", box2);
+   efl_pack(box, box2);
+
    for (i = 0; images_orient[i].name; ++i)
      {
         rd = efl_add(EFL_UI_RADIO_CLASS, win);
@@ -339,23 +329,15 @@ test_remote_ui_image(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *event_i
         efl_gfx_hint_weight_set(rd, 1.0, 0.0);
         efl_ui_radio_state_value_set(rd, images_orient[i].orient);
         efl_text_set(rd, images_orient[i].name);
-        efl_pack(box, rd);
-        efl_event_callback_add(rd, EFL_UI_RADIO_EVENT_CHANGED, my_im_ch, win);
-        if (!rdg)
-          {
-             rdg = rd;
-             efl_key_data_set(win, "rdg", rdg);
-          }
-        else
-          {
-             efl_ui_radio_group_add(rd, rdg);
-          }
+        efl_pack(box2, rd);
      }
+   efl_event_callback_add(box2, EFL_UI_RADIO_GROUP_EVENT_VALUE_CHANGED, my_im_ch, win);
 
    box2 = o = efl_add(EFL_UI_BOX_CLASS, box);
    efl_ui_layout_orientation_set(o, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
    efl_gfx_hint_weight_set(o, 1.0, 0);
    efl_gfx_hint_fill_set(o, EINA_TRUE, EINA_TRUE);
+   efl_pack(box, box2);
 
    o = efl_add(EFL_UI_TEXT_CLASS, box2,
      efl_text_interactive_editable_set(efl_added, EINA_FALSE)
@@ -374,7 +356,6 @@ test_remote_ui_image(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *event_i
    evas_object_show(o);
    efl_pack(box2, o);
 
-   efl_pack(box, box2);
 
    // set file now
    _url_activate_cb(win, o, NULL);
@@ -567,19 +548,17 @@ test_load_ui_image(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *event_inf
       );
       efl_pack(hbox, label);
 
-      chk1 = efl_add(EFL_UI_CHECK_CLASS, hbox,
-        efl_text_set(efl_added, "Async file open"),
-        efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
-        efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE)
-      );
+      chk1 = efl_add(EFL_UI_CHECK_CLASS, hbox);
+      efl_text_set(chk1, "Async file open");
+      efl_gfx_hint_weight_set(chk1, 0.0, 0.0);
+      efl_gfx_hint_fill_set(chk1, EINA_TRUE, EINA_FALSE);
       efl_pack(hbox, chk1);
       efl_key_data_set(win, "chk1", chk1);
 
-      chk2 = efl_add(EFL_UI_CHECK_CLASS, hbox,
-        efl_text_set(efl_added, "Disable preload"),
-        efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
-        efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE)
-      );
+      chk2 = efl_add(EFL_UI_CHECK_CLASS, hbox);
+      efl_text_set(chk2, "Disable preload");
+      efl_gfx_hint_weight_set(chk2, 0.0, 0.0);
+      efl_gfx_hint_fill_set(chk2, EINA_TRUE, EINA_FALSE);
       efl_pack(hbox, chk2);
       efl_key_data_set(win, "chk2", chk2);
    }
@@ -614,7 +593,8 @@ _cb_prescale_radio_changed(void *data, const Efl_Event *ev)
 {
    Eo *o_bg = data;
    int size;
-   size = efl_ui_radio_state_value_get(efl_ui_radio_selected_object_get(ev->object));
+   size = efl_ui_radio_group_selected_value_get(ev->object);
+   if (size == -1) size = 0;
    //FIXME
    elm_image_prescale_set(o_bg, size);
 }
@@ -624,7 +604,7 @@ test_ui_image_prescale(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_
 {
    Eo *win, *im;
    Eo *box, *hbox;
-   Eo *rd, *rdg;
+   Eo *rd;
 
    win = win_add("image-prescale", "Image Prescale Test");
 
@@ -634,7 +614,7 @@ test_ui_image_prescale(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_
    im = img_add(win, "/images/plant_01.jpg");
    efl_pack(box, im);
 
-   hbox = efl_add(EFL_UI_BOX_CLASS, win);
+   hbox = efl_add(EFL_UI_RADIO_BOX_CLASS, win);
    efl_ui_layout_orientation_set(hbox, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
    efl_gfx_hint_weight_set(hbox, 1.0, 1.0);
    efl_gfx_hint_fill_set(hbox, EINA_TRUE, EINA_TRUE);
@@ -643,27 +623,22 @@ test_ui_image_prescale(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_
    efl_ui_radio_state_value_set(rd, 50);
    efl_text_set(rd, "50");
    efl_gfx_hint_weight_set(rd, 1.0, 1.0);
-   efl_event_callback_add(rd, EFL_UI_RADIO_EVENT_CHANGED, _cb_prescale_radio_changed, im);
    efl_pack(hbox, rd);
-   rdg = rd;
 
    rd = efl_add(EFL_UI_RADIO_CLASS, win);
    efl_ui_radio_state_value_set(rd, 100);
-   efl_ui_radio_group_add(rd, rdg);
    efl_text_set(rd, "100");
    efl_gfx_hint_weight_set(rd, 1.0, 1.0);
-   efl_event_callback_add(rd, EFL_UI_RADIO_EVENT_CHANGED, _cb_prescale_radio_changed, im);
    efl_pack(hbox, rd);
 
    rd = efl_add(EFL_UI_RADIO_CLASS, win);
    efl_ui_radio_state_value_set(rd, 200);
-   efl_ui_radio_group_add(rd, rdg);
    efl_text_set(rd, "200");
    efl_gfx_hint_weight_set(rd, 1.0, 1.0);
-   efl_event_callback_add(rd, EFL_UI_RADIO_EVENT_CHANGED, _cb_prescale_radio_changed, im);
    efl_pack(hbox, rd);
+   efl_event_callback_add(hbox, EFL_UI_RADIO_GROUP_EVENT_VALUE_CHANGED, _cb_prescale_radio_changed, im);
 
-   elm_radio_value_set(rdg, 200);
+   efl_ui_radio_group_selected_object_set(hbox, rd);
 
    efl_pack(box, hbox);
 

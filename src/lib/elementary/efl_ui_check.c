@@ -10,9 +10,7 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#include "efl_ui_nstate.eo.h"
 #include "efl_ui_check_private.h"
-#include "efl_ui_nstate_private.h"
 #include "elm_part_helper.h"
 
 #define MY_CLASS EFL_UI_CHECK_CLASS
@@ -25,6 +23,12 @@ static const Elm_Layout_Part_Alias_Description _text_aliases[] =
    {"default", "elm.text"},
    {"on", "elm.ontext"},
    {"off", "elm.offtext"},
+   {NULL, NULL}
+};
+
+static const Elm_Layout_Part_Alias_Description _content_aliases[] =
+{
+   {"icon", "elm.swallow.content"},
    {NULL, NULL}
 };
 
@@ -50,26 +54,21 @@ static const Elm_Action key_actions[] = {
 static void
 _activate(Evas_Object *obj)
 {
-   EFL_UI_CHECK_DATA_GET(obj, sd);
-
-   if (sd->statep) *sd->statep = !efl_ui_nstate_value_get(obj);
-
-   // state will be changed to 1 by efl_ui_nstate_activate(obj)
-   if (efl_ui_nstate_value_get(obj) == 0)
+   // state will be changed by the later call to the selected_set call
+   if (!efl_ui_check_selected_get(obj))
      {
         // FIXME: to do animation during state change , we need different signal
         // so that we can distinguish between state change by user or state change
         // by calling state_change() api. Keep both the signal for backward compatibility
         // and remove "elm,state,check,on" signal emission when we can break ABI.
+        // efl_ui_check_selected_set below will emit "elm,state,check,*" or "efl,state,check,*"
         if (elm_widget_is_legacy(obj))
           {
              elm_layout_signal_emit(obj, "elm,activate,check,on", "elm");
-             elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
           }
         else
           {
              elm_layout_signal_emit(obj, "efl,activate,check,on", "efl");
-             elm_layout_signal_emit(obj, "efl,state,check,on", "efl");
           }
 
         if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
@@ -81,27 +80,28 @@ _activate(Evas_Object *obj)
         // so that we can distinguish between state change by user or state change
         // by calling state_change() api. Keep both the signal for backward compatibility
         // and remove "elm,state,check,off" signal emission when we can break ABI.
+        // efl_ui_check_selected_set below will emit "elm,state,check,*" or "efl,state,check,*"
         if (elm_widget_is_legacy(obj))
           {
              elm_layout_signal_emit(obj, "elm,activate,check,off", "elm");
-             elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
           }
         else
           {
              elm_layout_signal_emit(obj, "efl,activate,check,off", "efl");
-             elm_layout_signal_emit(obj, "efl,state,check,off", "efl");
           }
 
         if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
              _elm_access_say(E_("State: Off"));
      }
-
-   efl_ui_nstate_activate(obj);
+   //This commit will update the theme with the correct signals
+   // "elm,state,check,on" or "elm,state,check,off" for legacy
+   // "efl,state,check,on" or "efl,state,check,off" for eo-api
+   efl_ui_check_selected_set(obj, !efl_ui_check_selected_get(obj));
 
    if (_elm_config->atspi_mode)
      efl_access_state_changed_signal_emit(obj,
                                           EFL_ACCESS_STATE_TYPE_CHECKED,
-                                          efl_ui_nstate_value_get(obj));
+                                          efl_ui_check_selected_get(obj));
 }
 
 EOLIAN static Efl_Access_State_Set
@@ -147,14 +147,14 @@ _efl_ui_check_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Check_Data *sd EINA_UNUS
 
    if (elm_widget_is_legacy(obj))
      {
-        if (efl_ui_nstate_value_get(obj) == 0)
+        if (!efl_ui_check_selected_get(obj))
           elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
         else
           elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
      }
    else
      {
-        if (efl_ui_nstate_value_get(obj) == 0)
+        if (!efl_ui_check_selected_get(obj))
           elm_layout_signal_emit(obj, "efl,state,check,off", "efl");
         else
           elm_layout_signal_emit(obj, "efl,state,check,on", "efl");
@@ -185,7 +185,7 @@ _access_state_cb(void *data, Evas_Object *obj)
 
    if (elm_widget_disabled_get(obj))
      return strdup(E_("State: Disabled"));
-   if (efl_ui_nstate_value_get(obj))
+   if (efl_ui_check_selected_get(obj))
      {
         on_text = elm_layout_text_get(data, "on");
 
@@ -213,6 +213,17 @@ _access_state_cb(void *data, Evas_Object *obj)
 }
 
 static void
+_flush_selected(Eo *obj, Eina_Bool sel)
+{
+   efl_ui_check_selected_set(obj, sel);
+
+   if (_elm_config->atspi_mode)
+     efl_access_state_changed_signal_emit(obj,
+                                          EFL_ACCESS_STATE_TYPE_CHECKED,
+                                          efl_ui_check_selected_get(obj));
+}
+
+static void
 _on_check_off(void *data,
               Evas_Object *o EINA_UNUSED,
               const char *emission EINA_UNUSED,
@@ -220,21 +231,7 @@ _on_check_off(void *data,
 {
    Evas_Object *obj = data;
 
-   EFL_UI_CHECK_DATA_GET(obj, sd);
-
-   if (sd->statep) *sd->statep = 0;
-
-   if (elm_widget_is_legacy(obj))
-     elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
-   else
-     elm_layout_signal_emit(obj, "efl,state,check,off", "efl");
-
-   efl_ui_nstate_value_set(obj, 0);
-
-   if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(data,
-                                          EFL_ACCESS_STATE_TYPE_CHECKED,
-                                          efl_ui_nstate_value_get(obj));
+   _flush_selected(obj, EINA_FALSE);
 }
 
 static void
@@ -245,21 +242,7 @@ _on_check_on(void *data,
 {
    Evas_Object *obj = data;
 
-   EFL_UI_CHECK_DATA_GET(obj, sd);
-
-   if (sd->statep) *sd->statep = 1;
-
-   if (elm_widget_is_legacy(obj))
-     elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
-   else
-     elm_layout_signal_emit(obj, "efl,state,check,on", "efl");
-
-   efl_ui_nstate_value_set(obj, 1);
-
-   if (_elm_config->atspi_mode)
-     efl_access_state_changed_signal_emit(data,
-                                          EFL_ACCESS_STATE_TYPE_CHECKED,
-                                          efl_ui_nstate_value_get(obj));
+   _flush_selected(obj, EINA_TRUE);
 }
 
 static void
@@ -272,17 +255,23 @@ _on_check_toggle(void *data,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_check_selected_get(const Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
+_efl_ui_check_selected_get(const Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *pd EINA_UNUSED)
 {
-   return !!efl_ui_nstate_value_get(obj);
+   return pd->selected;
 }
 
 EOLIAN static void
-_efl_ui_check_selected_set(Eo *obj, Efl_Ui_Check_Data *sd, Eina_Bool value)
+_efl_ui_check_selected_set(Eo *obj, Efl_Ui_Check_Data *pd, Eina_Bool value)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   if (sd->statep) *sd->statep = value;
+   if (pd->selected == value) return;
+
+   if (elm_widget_is_legacy(obj))
+     {
+        if (pd->statep)
+          *pd->statep = value;
+     }
 
    if (elm_widget_is_legacy(obj))
      {
@@ -301,16 +290,12 @@ _efl_ui_check_selected_set(Eo *obj, Efl_Ui_Check_Data *sd, Eina_Bool value)
 
    edje_object_message_signal_process(wd->resize_obj);
 
-   efl_ui_nstate_value_set(obj, value);
-}
+   pd->selected = value;
 
-EOLIAN static void
-_efl_ui_check_efl_ui_nstate_value_set(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED, int state)
-{
-   Eina_Bool _state = !!state;
-   if (_state == efl_ui_nstate_value_get(obj)) return;
-
-   efl_ui_nstate_value_set(efl_super(obj, MY_CLASS), _state);
+   if (elm_widget_is_legacy(obj))
+     evas_object_smart_callback_call(obj, "changed", NULL);
+   else
+     efl_event_callback_call(obj, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, &pd->selected);
 }
 
 EOLIAN static Eo *
@@ -360,43 +345,21 @@ EAPI void
 elm_check_state_set(Evas_Object *obj, Eina_Bool state)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   EFL_UI_NSTATE_DATA_GET_OR_RETURN(obj, nd);
    EFL_UI_CHECK_DATA_GET_OR_RETURN(obj, sd);
 
-   if (state != nd->state)
-     {
-        nd->state = state;
-        if (sd->statep) *sd->statep = state;
-
-        if (elm_widget_is_legacy(obj))
-          {
-             if (state == 1)
-               elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
-             else
-               elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
-          }
-        else
-          {
-             if (state == 1)
-               elm_layout_signal_emit(obj, "efl,state,check,on", "efl");
-             else
-               elm_layout_signal_emit(obj, "efl,state,check,off", "efl");
-          }
-        edje_object_message_signal_process(wd->resize_obj);
-     }
+   efl_ui_check_selected_set(obj, state);
 }
 
 EAPI Eina_Bool
 elm_check_state_get(const Evas_Object *obj)
 {
-   return !!efl_ui_nstate_value_get(obj);
+   return !!efl_ui_check_selected_get(obj);
 }
 
 EAPI void
 elm_check_state_pointer_set(Eo *obj, Eina_Bool *statep)
 {
    EFL_UI_CHECK_DATA_GET_OR_RETURN(obj, sd);
-   EFL_UI_NSTATE_DATA_GET_OR_RETURN(obj, nd);
 
    if (!statep)
      {
@@ -405,24 +368,9 @@ elm_check_state_pointer_set(Eo *obj, Eina_Bool *statep)
      }
 
    sd->statep = statep;
-   if (*sd->statep != nd->state)
+   if (*sd->statep != sd->selected)
      {
-        nd->state = *sd->statep;
-
-        if (elm_widget_is_legacy(obj))
-          {
-             if (nd->state == 1)
-               elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
-             else
-               elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
-          }
-        else
-          {
-             if (nd->state == 1)
-               elm_layout_signal_emit(obj, "efl,state,check,on", "efl");
-             else
-               elm_layout_signal_emit(obj, "efl,state,check,off", "efl");
-          }
+        efl_ui_check_selected_set(obj, *sd->statep);
      }
 }
 
@@ -439,13 +387,18 @@ _efl_ui_check_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED
 /* Standard widget overrides */
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_check, Efl_Ui_Check_Data)
+ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_check, Efl_Ui_Check_Data)
+ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_check, Efl_Ui_Check_Data)
+ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 /* Internal EO APIs and hidden overrides */
 
 ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_CHECK_EXTRA_OPS \
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
    ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX)
+
 
 #include "efl_ui_check.eo.c"
 #include "efl_ui_check_eo.legacy.c"

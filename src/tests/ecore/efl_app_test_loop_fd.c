@@ -4,6 +4,11 @@
 
 #include <stdio.h>
 #include <unistd.h>
+
+#ifdef _WIN32
+# include <evil_private.h> /* pipe */
+#endif
+
 #define EFL_NOLEGACY_API_SUPPORT
 #include <Efl_Core.h>
 #include "efl_app_suite.h"

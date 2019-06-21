@@ -120,6 +120,7 @@ efl_ui_suite_src = [
   'suite_helpers.c',
   'suite_helpers.h',
   'elm_test_init.c',
+  'efl_ui_test_win.c',
   'efl_ui_test_atspi.c',
   'efl_ui_test_callback.c',
   'efl_ui_test_focus_common.c',
@@ -139,6 +140,8 @@ efl_ui_suite_src = [
   'efl_ui_model.c',
   'efl_ui_test_widget.c',
   'efl_ui_test_active_view.c',
+  'efl_ui_test_check.c',
+  'efl_ui_test_radio_group.c',
 ]
 
 efl_ui_suite = executable('efl_ui_suite',

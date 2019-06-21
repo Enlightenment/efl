@@ -43,12 +43,12 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    bx.pack_end(sl3);
 
    efl::ui::Slider sl4(instantiate, win);
-   sl4.range_min_max_set(0, 100);
+   sl4.range_limits_set(0, 100);
    sl4.hint_fill_set(true, false);
    bx.pack_end(sl4);
 
    efl::ui::Slider sl5(instantiate, win);
-   sl5.range_min_max_set(0, 100);
+   sl5.range_limits_set(0, 100);
    sl5.range_step_set(1);
    sl5.orientation_set((Efl_Ui_Layout_Orientation)(EFL_UI_LAYOUT_ORIENTATION_VERTICAL | EFL_UI_LAYOUT_ORIENTATION_INVERTED));
    sl5.hint_fill_set(true, false);
@@ -57,7 +57,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
    efl::ui::Slider sl6(instantiate, win);
    sl6.orientation_set(EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
-   sl6.range_min_max_set(0, 10);
+   sl6.range_limits_set(0, 10);
    sl6.hint_fill_set(false, true);
    sl6.hint_weight_set(0, EFL_GFX_HINT_EXPAND);
    bx.pack_end(sl6);
@@ -70,11 +70,11 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    { std::cout << "Changed to " << obj.range_value_get() << std::endl; }
          , std::placeholders::_1);
 
-   auto delay =  std::bind ( [] (efl::ui::Slider obj)
-   { std::cout << "Delay changed to " << obj.range_value_get() << std::endl; }
+   auto steady =  std::bind ( [] (efl::ui::Slider obj)
+   { std::cout << "Steady to " << obj.range_value_get() << std::endl; }
          , std::placeholders::_1);
 
    sl7.changed_event_cb_add(changed);
-   sl7.delay_changed_event_cb_add(delay);
+   sl7.steady_event_cb_add(steady);
 }
 EFL_MAIN()

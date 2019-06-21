@@ -4,10 +4,6 @@
 #include <Efl_Config.h>
 #include <Elementary_Options.h>
 
-/* FIXME: wtf? */
-#ifndef EFL_UI_RADIO_EVENT_CHANGED
-# define EFL_UI_RADIO_EVENT_CHANGED EFL_UI_NSTATE_EVENT_CHANGED
-#endif
 /* Standard headers for standard system calls etc. */
 #include <stdio.h>
 #include <stdlib.h>
@@ -242,12 +238,12 @@ typedef Eo Efl_Ui_Active_View_Indicator;
 # include <efl_ui_active_view_indicator_icon.eo.h>
 # include <efl_ui_active_view_view_manager_scroll.eo.h>
 # include <efl_ui_active_view_view_manager_stack.eo.h>
+# include <efl_ui_active_view_util.eo.h>
 
 # include <efl_ui_navigation_bar.eo.h>
 # include <efl_ui_navigation_bar_part.eo.h>
 # include <efl_ui_navigation_bar_part_back_button.eo.h>
 # include <efl_ui_navigation_layout.eo.h>
-# include <efl_ui_stack.eo.h>
 # include <efl_ui_clickable.eo.h>
 # include <efl_ui_clickable_util.eo.h>
 

@@ -229,7 +229,7 @@ _current_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                  elm_naviframe_item_push(navi, "Current", btn, NULL, efl_added, NULL));
 
    sp = efl_add(EFL_UI_SPIN_BUTTON_CLASS, box,
-                efl_ui_range_min_max_set(efl_added, 0, efl_content_count(tab_pager) - 1),
+                efl_ui_range_limits_set(efl_added, 0, efl_content_count(tab_pager) - 1),
                 efl_ui_range_value_set(efl_added, efl_ui_active_view_active_index_get(tab_pager)),
                 efl_pack_end(box, efl_added));
 
@@ -304,7 +304,7 @@ _pack_at_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    tab_page = tab_page_add(tsd->tab_pager);
 
    efl_pack_at(tsd->tab_pager, tab_page, elm_spinner_value_get(tsd->spinner));
-   efl_ui_range_min_max_set(tsd->spinner, 0, efl_content_count(tsd->tab_pager) - 1);
+   efl_ui_range_limits_set(tsd->spinner, 0, efl_content_count(tsd->tab_pager) - 1);
 }
 
 static void
@@ -363,7 +363,7 @@ _pack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                     efl_pack_end(box, efl_added));
 
    sp = efl_add(EFL_UI_SPIN_BUTTON_CLASS, in_box,
-                efl_ui_range_min_max_set(efl_added, 0, efl_content_count(tab_pager) - 1),
+                efl_ui_range_limits_set(efl_added, 0, efl_content_count(tab_pager) - 1),
                 efl_ui_range_value_set(efl_added, efl_ui_active_view_active_index_get(tab_pager)),
                 efl_pack_end(in_box, efl_added));
 
@@ -408,7 +408,7 @@ _unpack_at_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    Tab_Set_Data *tsd = data;
 
    efl_pack_unpack_at(tsd->tab_pager, elm_spinner_value_get(tsd->spinner));
-   efl_ui_range_min_max_set(tsd->spinner, 0, efl_content_count(tsd->tab_pager) - 1);
+   efl_ui_range_limits_set(tsd->spinner, 0, efl_content_count(tsd->tab_pager) - 1);
 }
 
 static void
@@ -463,7 +463,7 @@ _unpack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                     efl_pack_end(box, efl_added));
 
    sp = efl_add(EFL_UI_SPIN_BUTTON_CLASS, in_box,
-                efl_ui_range_min_max_set(efl_added, 0, efl_content_count(tab_pager) - 1),
+                efl_ui_range_limits_set(efl_added, 0, efl_content_count(tab_pager) - 1),
                 efl_ui_range_value_set(efl_added, efl_ui_active_view_active_index_get(tab_pager)),
                 efl_pack_end(in_box, efl_added));
 
@@ -491,7 +491,7 @@ _change_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    cur = efl_ui_active_view_active_index_get(tcd->tab_pager);
    tab_page = efl_pack_content_get(tcd->tab_pager, cur);
 
-   if (efl_ui_nstate_value_get(tcd->label_check))
+   if (efl_ui_check_selected_get(tcd->label_check))
    {
       label = tab_label_get();
       efl_text_set(efl_part(tab_page, "tab"), label);
@@ -499,7 +499,7 @@ _change_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
       efl_content_set(tab_page, content);
    }
 
-   if (efl_ui_nstate_value_get(tcd->icon_check))
+   if (efl_ui_check_selected_get(tcd->icon_check))
    {
       icon = tab_icon_get();
       efl_ui_tab_page_part_tab_icon_set(efl_part(tab_page, "tab"), icon);
@@ -532,15 +532,15 @@ _tab_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                  efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
                  elm_naviframe_item_push(navi, "Tab", btn, NULL, efl_added, NULL));
 
-   label_check = efl_add(EFL_UI_CHECK_CLASS, box,
-                         efl_text_set(efl_added, "Tab Label + Page"),
-                         efl_ui_nstate_value_set(efl_added, EINA_FALSE),
-                         efl_pack_end(box, efl_added));
+   label_check = efl_add(EFL_UI_CHECK_CLASS, box);
+   efl_text_set(label_check, "Tab Label + Page");
+   efl_ui_check_selected_set(label_check, EINA_FALSE);
+   efl_pack_end(box, label_check);
 
-   icon_check = efl_add(EFL_UI_CHECK_CLASS, box,
-                        efl_text_set(efl_added, "Tab Icon"),
-                        efl_ui_nstate_value_set(efl_added, EINA_FALSE),
-                        efl_pack_end(box, efl_added));
+   icon_check = efl_add(EFL_UI_CHECK_CLASS, box);
+   efl_text_set(icon_check, "Tab Icon");
+   efl_ui_check_selected_set(icon_check, EINA_FALSE);
+   efl_pack_end(box, icon_check);
 
    tcd->tab_pager = tab_pager;
    tcd->label_check = label_check;
