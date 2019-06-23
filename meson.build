@@ -46,7 +46,7 @@ endif
 
 windows = ['windows', 'cygwin']
 #bsd for meson 0.46 and 0.47
-bsd = ['bsd', 'freebsd', 'dragonfly', 'netbsd']
+bsd = ['bsd', 'freebsd', 'dragonfly', 'netbsd', 'openbsd']
 linux = ['linux']
 osx = ['darwin']
 
