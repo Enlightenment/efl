@@ -38,9 +38,24 @@ _on_mouse_out(void *data,
    efl_ui_clickable_button_state_reset(data, 1);
 }
 
+static void
+_theme_unpress_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Efl_Input_Pointer *pointer = ev->info;
+
+   if (efl_input_processed_get(pointer))
+     efl_ui_clickable_button_state_reset(data, 1);
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(bind_to_theme_callbacks,
+  {EFL_EVENT_POINTER_UP, _theme_unpress_cb},
+)
+
 EOLIAN static void
 _efl_ui_clickable_util_bind_to_theme(Efl_Canvas_Layout *object, Efl_Ui_Clickable *clickable)
 {
+   efl_event_callback_array_add(object, bind_to_theme_callbacks(), clickable);
+
    efl_layout_signal_callback_add(object, "efl,action,press", "*", clickable, _on_press_cb, NULL);
    efl_layout_signal_callback_add(object, "efl,action,unpress", "*", clickable, _on_unpress_cb, NULL);
    efl_layout_signal_callback_add(object, "efl,action,mouse_out", "*", clickable, _on_mouse_out, NULL);
@@ -84,7 +99,7 @@ _unpress_cb(void *data, const Efl_Event *ev EINA_UNUSED)
      }
 }
 
-EFL_CALLBACKS_ARRAY_DEFINE(bind_to_theme_callbacks,
+EFL_CALLBACKS_ARRAY_DEFINE(bind_to_object_callbacks,
   {EFL_EVENT_POINTER_DOWN, _press_cb},
   {EFL_EVENT_POINTER_UP, _unpress_cb},
 )
@@ -92,7 +107,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(bind_to_theme_callbacks,
 EOLIAN static void
 _efl_ui_clickable_util_bind_to_object(Efl_Input_Interface *object, Efl_Ui_Clickable *clickable)
 {
-   efl_event_callback_array_add(object, bind_to_theme_callbacks(), clickable);
+   efl_event_callback_array_add(object, bind_to_object_callbacks(), clickable);
 }
 
 
