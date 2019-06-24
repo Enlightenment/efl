@@ -20,6 +20,7 @@ typedef struct {
       Eina_Bool active;
       int from;
       Eina_Position2D mouse_start;
+      Eina_Bool moved;
    } mouse_move;
    Eina_Bool animation;
 } Efl_Ui_Active_View_View_Manager_Scroll_Data;
@@ -105,6 +106,7 @@ _mouse_down_cb(void *data,
    pd->mouse_move.active = EINA_TRUE;
    pd->mouse_move.from = efl_ui_active_view_active_index_get(pd->container);
    pd->mouse_move.mouse_start = efl_input_pointer_position_get(ev);
+   pd->mouse_move.moved = EINA_FALSE;
 }
 
 static void
@@ -122,6 +124,11 @@ _mouse_move_cb(void *data,
 
    pos = efl_input_pointer_position_get(ev);
    pos_y_diff = pd->mouse_move.mouse_start.x - pos.x;
+
+   pd->mouse_move.moved = EINA_TRUE;
+   //Set input processed not to cause clicked event to content button.
+   if (!efl_input_processed_get(ev))
+     efl_input_processed_set(ev, EINA_TRUE);
 
    pd->transition.active = EINA_TRUE;
    pd->transition.from = pd->mouse_move.from;
@@ -143,6 +150,12 @@ _mouse_up_cb(void *data,
 
    if (efl_input_event_flags_get(ev) & EFL_INPUT_FLAGS_PROCESSED) return;
    if (!pd->mouse_move.active) return;
+
+   //Set input processed not to cause clicked event to content button.
+   if (pd->mouse_move.moved && efl_input_processed_get(ev))
+     efl_input_processed_set(ev, EINA_FALSE);
+
+   pd->mouse_move.moved = EINA_FALSE;
 
    double absolut_current_position = (double)pd->transition.from + pd->transition.progress;
    int result = round(absolut_current_position);
