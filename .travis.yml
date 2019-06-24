@@ -6,6 +6,36 @@ cache:
 sudo: required
 dist: trusty
 
+osx_image: xcode10.2
+
+addons:
+  homebrew:
+    packages:
+      - gettext
+      - check
+      - bullet
+      - dbus
+      - fontconfig
+      - freetype
+      - fribidi
+      - gst-plugins-good
+      - gstreamer
+      - luajit
+      - openssl
+      - webp
+      - libsndfile
+      - glib
+      - libspectre
+      - libraw
+      - librsvg
+      - poppler
+      - lz4
+      - pulseaudio
+      - ccache
+      - ninja
+      - python3
+      - libffi
+
 env:
   global:
     - EIO_MONITOR_POLL=1
@@ -47,7 +77,7 @@ before_install:
         rm -rf $HOME/Library/Caches/Homebrew
         rm -rf $HOME/cachedir/Homebrew/Homebrew
         mv $HOME/cachedir/Homebrew $HOME/Library/Caches/Homebrew
-        .ci/ci-osx-deps.sh
+        pip3 install meson
       fi
 
 before_script:
