@@ -366,6 +366,42 @@ EFL_START_TEST(efl_ui_win_test_efl_input_interface_pointer_wheel)
    ck_assert_int_eq(pointer_wheel, EINA_TRUE);
 }
 EFL_END_TEST
+
+#if 0
+static void
+_check_ptr_cancel_event(void *data, const Efl_Event *ev)
+{
+   Eina_Bool *called = data;
+   ck_assert_int_eq(efl_input_timestamp_get(ev->info), TIMESTAMP);
+   ck_assert_int_eq(efl_input_pointer_wheel_delta_get(ev->info), 0);
+   ck_assert_int_eq(efl_input_pointer_wheel_horizontal_get(ev->info), 0);
+   ck_assert_int_eq(efl_input_pointer_double_click_get(ev->info), 0);
+   ck_assert_int_eq(efl_input_pointer_triple_click_get(ev->info), EINA_TRUE);
+   ck_assert_int_eq(efl_input_pointer_button_flags_get(ev->info), EVAS_BUTTON_TRIPLE_CLICK);
+   ck_assert_int_eq(efl_input_pointer_touch_id_get(ev->info), 0);
+   position_eq(efl_input_pointer_position_get(ev->info), EINA_POSITION2D(20, 20));
+   ck_assert_int_eq(efl_input_pointer_button_get(ev->info), 1);
+   ck_assert_int_eq(efl_input_pointer_action_get(ev->info), EFL_POINTER_ACTION_UP);
+   *called = EINA_TRUE;
+}
+#endif
+
+EFL_START_TEST(efl_ui_win_test_efl_input_interface_pointer_cancel)
+{
+#if 0
+   Efl_Ui_Win *win;
+   Eina_Bool called = EINA_FALSE;
+   Efl_Canvas_Object *rect;
+   create_environment(&win, &rect);
+
+   evas_event_feed_mouse_move(evas_object_evas_get(win), 20, 20, TIMESTAMP - 1, NULL);
+   evas_event_feed_mouse_down(evas_object_evas_get(win), 1, EVAS_BUTTON_TRIPLE_CLICK, TIMESTAMP, NULL);
+   efl_event_callback_add(rect, EFL_EVENT_POINTER_CANCEL, _check_ptr_cancel_event, &called);
+   evas_event_feed_mouse_cancel(evas_object_evas_get(win), TIMESTAMP, NULL);
+   ck_assert_int_eq(called, EINA_TRUE);
+#endif
+}
+EFL_END_TEST
 void
 efl_ui_test_win(TCase *tc)
 {
@@ -379,4 +415,5 @@ efl_ui_test_win(TCase *tc)
    tcase_add_test(tc, efl_ui_win_test_efl_input_interface_pointer_up);
    tcase_add_test(tc, efl_ui_win_test_efl_input_interface_pointer_in_out);
    tcase_add_test(tc, efl_ui_win_test_efl_input_interface_pointer_wheel);
+   tcase_add_test(tc, efl_ui_win_test_efl_input_interface_pointer_cancel);
 }
