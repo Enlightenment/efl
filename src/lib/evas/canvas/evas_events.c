@@ -3462,8 +3462,10 @@ _canvas_event_feed_key_legacy(Eo *eo_e, Evas_Public_Data *e,
    ev->compose = compose;
    ev->timestamp = timestamp;
    ev->keycode = keycode;
+   ev->pressed = down;
    ev->no_stringshare = EINA_TRUE;
    ev->device = efl_ref(_evas_event_legacy_device_get(e->evas, EINA_FALSE));
+
 
    if (down)
      _canvas_event_feed_key_down_internal(e, ev);
