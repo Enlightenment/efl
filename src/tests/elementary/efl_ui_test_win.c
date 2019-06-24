@@ -358,6 +358,81 @@ EFL_START_TEST(efl_ui_win_test_efl_input_interface_pointer_wheel)
    ck_assert_int_eq(pointer_wheel, EINA_TRUE);
 }
 EFL_END_TEST
+
+
+static void
+_check_ptr_cancel_down_event(void *data, const Efl_Event *ev)
+{
+   Eina_Bool *called = data;
+   ck_assert_int_eq(efl_input_timestamp_get(ev->info), TIMESTAMP);
+   ck_assert_int_eq(efl_input_pointer_wheel_delta_get(ev->info), 0);
+   ck_assert_int_eq(efl_input_pointer_wheel_horizontal_get(ev->info), 0);
+   ck_assert_int_eq(efl_input_pointer_double_click_get(ev->info), 0);
+   ck_assert_int_eq(efl_input_pointer_triple_click_get(ev->info), 0);
+   ck_assert_int_eq(efl_input_pointer_button_flags_get(ev->info), 0);
+   ck_assert_int_eq(efl_input_pointer_touch_id_get(ev->info), 0);
+   position_eq(efl_input_pointer_position_get(ev->info), EINA_POSITION2D(20, 20));
+   ck_assert_int_eq(efl_input_pointer_button_get(ev->info), 1);
+   ck_assert_int_eq(efl_input_pointer_action_get(ev->info), EFL_POINTER_ACTION_DOWN);
+   *called = EINA_TRUE;
+}
+
+static void
+_check_ptr_cancel_event(void *data, const Efl_Event *ev)
+{
+   int *called = data;
+   ck_assert_int_eq(efl_input_timestamp_get(ev->info), TIMESTAMP);
+   ck_assert_int_eq(efl_input_pointer_wheel_delta_get(ev->info), 0);
+   ck_assert_int_eq(efl_input_pointer_wheel_horizontal_get(ev->info), 0);
+   ck_assert_int_eq(efl_input_pointer_double_click_get(ev->info), 0);
+   ck_assert_int_eq(efl_input_pointer_triple_click_get(ev->info), 0);
+   ck_assert_int_eq(efl_input_pointer_button_flags_get(ev->info), 0);
+   ck_assert_int_eq(efl_input_pointer_touch_id_get(ev->info), 0);
+   position_eq(efl_input_pointer_position_get(ev->info), EINA_POSITION2D(20, 20));
+   ck_assert_int_eq(efl_input_pointer_button_get(ev->info), 1);
+   ck_assert_int_eq(efl_input_pointer_action_get(ev->info), EFL_POINTER_ACTION_CANCEL );
+   ck_assert_int_eq(*called, 0);
+   *called = 1;
+}
+
+static void
+_check_ptr_cancel_up_event(void *data, const Efl_Event *ev)
+{
+   Eina_Bool *called = data;
+   ck_assert_int_eq(efl_input_timestamp_get(ev->info), TIMESTAMP);
+   ck_assert_int_eq(efl_input_pointer_wheel_delta_get(ev->info), 0);
+   ck_assert_int_eq(efl_input_pointer_wheel_horizontal_get(ev->info), 0);
+   ck_assert_int_eq(efl_input_pointer_double_click_get(ev->info), 0);
+   ck_assert_int_eq(efl_input_pointer_triple_click_get(ev->info), 0);
+   ck_assert_int_eq(efl_input_pointer_button_flags_get(ev->info), 0);
+   ck_assert_int_eq(efl_input_pointer_touch_id_get(ev->info), 0);
+   position_eq(efl_input_pointer_position_get(ev->info), EINA_POSITION2D(20, 20));
+   ck_assert_int_eq(efl_input_pointer_button_get(ev->info), 1);
+   ck_assert_int_eq(efl_input_pointer_action_get(ev->info), EFL_POINTER_ACTION_UP);
+   ck_assert_int_eq(*called, 1);
+   *called = 2;
+}
+
+EFL_START_TEST(efl_ui_win_test_efl_input_interface_pointer_cancel)
+{
+   Efl_Ui_Win *win;
+   Eina_Bool called_down = EINA_FALSE;
+   int called;
+   Efl_Canvas_Object *rect;
+   create_environment(&win, &rect);
+
+   evas_event_feed_mouse_move(evas_object_evas_get(win), 20, 20, TIMESTAMP - 1, NULL);
+   efl_event_callback_add(rect, EFL_EVENT_POINTER_DOWN, _check_ptr_cancel_down_event, &called_down);
+   evas_event_feed_mouse_down(evas_object_evas_get(win), 1, 0, TIMESTAMP, NULL);
+   ck_assert_int_eq(called_down, EINA_TRUE);
+   called = EINA_FALSE;
+
+   efl_event_callback_add(rect, EFL_EVENT_POINTER_CANCEL, _check_ptr_cancel_event, &called);
+   efl_event_callback_add(rect, EFL_EVENT_POINTER_UP, _check_ptr_cancel_up_event, &called);
+   evas_event_feed_mouse_cancel(evas_object_evas_get(win), TIMESTAMP, NULL);
+   ck_assert_int_eq(called, 2);
+}
+EFL_END_TEST
 void
 efl_ui_test_win(TCase *tc)
 {
@@ -371,4 +446,5 @@ efl_ui_test_win(TCase *tc)
    tcase_add_test(tc, efl_ui_win_test_efl_input_interface_pointer_up);
    tcase_add_test(tc, efl_ui_win_test_efl_input_interface_pointer_in_out);
    tcase_add_test(tc, efl_ui_win_test_efl_input_interface_pointer_wheel);
+   tcase_add_test(tc, efl_ui_win_test_efl_input_interface_pointer_cancel);
 }
