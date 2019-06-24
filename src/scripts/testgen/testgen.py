@@ -5,7 +5,7 @@ import os
 import sys
 import datetime
 
-import name_helpers
+from testgen import name_helpers
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 

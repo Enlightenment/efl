@@ -2,7 +2,7 @@
 # encoding: utf-8
 from enum import IntEnum
 
-import name_helpers
+from testgen import name_helpers
 
 
 class Function_List_Type(IntEnum):
