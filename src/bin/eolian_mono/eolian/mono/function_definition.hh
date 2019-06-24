@@ -85,10 +85,11 @@ struct native_function_definition_generator
       return false;
 
     std::string klass_cast_name;
-    if (klass->type != attributes::class_type::interface_)
-      klass_cast_name = name_helpers::klass_inherit_name(*klass);
-    else
+    if ((klass->type == attributes::class_type::interface_) ||
+        ((klass->type == attributes::class_type::mixin) && !f.is_static))
       klass_cast_name = name_helpers::klass_interface_name(*klass);
+    else
+      klass_cast_name = name_helpers::klass_inherit_name(*klass);
 
     std::string self = "Efl.Eo.Globals.efl_super(obj, Efl.Eo.Globals.efl_class_get(obj))";
 
