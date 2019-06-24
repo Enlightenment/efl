@@ -647,6 +647,14 @@ enum class function_type
   function_pointer
 };
 
+enum class member_scope
+{
+   scope_unknown,
+   scope_public,
+   scope_private,
+   scope_protected,
+};
+
 struct function_def
 {
   klass_name klass; // Klass information for function_def as method
@@ -660,6 +668,7 @@ struct function_def
   documentation_def return_documentation;
   documentation_def property_documentation;
   function_type type;
+  member_scope scope;
   bool is_beta;
   bool is_protected;
   bool is_static;
@@ -678,6 +687,7 @@ struct function_def
       && lhs.return_documentation == rhs.return_documentation
       && lhs.property_documentation == rhs.property_documentation
       && lhs.type == rhs.type
+      && lhs.scope == rhs.scope
       && lhs.is_beta == rhs.is_beta
       && lhs.is_protected == rhs.is_protected
       && lhs.is_static == rhs.is_static;
@@ -697,6 +707,7 @@ struct function_def
                documentation_def _return_documentation,
                documentation_def _property_documentation,
                function_type _type,
+               member_scope _scope,
                bool _is_beta = false,
                bool _is_protected = false,
                bool _is_static = false,
@@ -708,6 +719,7 @@ struct function_def
       return_documentation(_return_documentation),
       property_documentation(_property_documentation),
       type(_type),
+      scope(_scope),
       is_beta(_is_beta), is_protected(_is_protected),
       is_static(_is_static),
       unit(unit) {}
@@ -718,6 +730,7 @@ struct function_def
     Eolian_Type const* r_type = ::eolian_function_return_type_get(function, type);
     name = ::eolian_function_name_get(function);
     return_documentation = eolian_function_return_documentation_get(function, type);
+    scope = static_cast<member_scope>(eolian_function_scope_get(function, type));
     if(r_type)
       return_type.set(r_type, unit, EOLIAN_C_TYPE_RETURN);
      if(type == EOLIAN_METHOD || type == EOLIAN_FUNCTION_POINTER)
