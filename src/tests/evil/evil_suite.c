@@ -23,9 +23,10 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <windows.h> /* putenv */
+
 #include "evil_suite.h"
 #include "../efl_check.h"
-#include <Evil.h>
 
 static const Efl_Test_Case etc[] = {
    { "Dlfcn", evil_test_dlfcn },

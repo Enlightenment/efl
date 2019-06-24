@@ -19,10 +19,6 @@
 # include <arpa/inet.h>
 #endif
 
-#ifdef _WIN32
-# include <Evil.h>
-#endif
-
 #include <ctype.h>
 
 #include "ecore_con_suite.h"
