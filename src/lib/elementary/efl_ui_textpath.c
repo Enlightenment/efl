@@ -563,20 +563,6 @@ _efl_ui_textpath_efl_gfx_path_commit(Eo *obj, Efl_Ui_Textpath_Data *pd)
    _sizing_eval(pd);
 }
 
-static Eina_Bool
-_textpath_text_set_internal(Eo *obj, Efl_Ui_Textpath_Data *pd, const char *part, const char *text)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
-   Eina_Bool ret = EINA_TRUE;
-
-   if (!text) text = "";
-   ret = edje_object_part_text_set(pd->text_obj, part, text);
-   _ellipsis_set(pd, obj);
-   _sizing_eval(pd);
-
-   return ret;
-}
-
 static void
 _path_start_angle_adjust(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
@@ -648,6 +634,21 @@ _path_start_angle_adjust(Eo *obj, Efl_Ui_Textpath_Data *pd)
                                 360);
      }
    _path_data_get(obj, pd);
+}
+
+static Eina_Bool
+_textpath_text_set_internal(Eo *obj, Efl_Ui_Textpath_Data *pd, const char *part, const char *text)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+   Eina_Bool ret = EINA_TRUE;
+
+   if (!text) text = "";
+   ret = edje_object_part_text_set(pd->text_obj, part, text);
+   _ellipsis_set(pd, obj);
+   _path_start_angle_adjust(obj, pd);
+   _sizing_eval(pd);
+
+   return ret;
 }
 
 EOLIAN static void
