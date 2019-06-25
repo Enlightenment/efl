@@ -18,9 +18,17 @@ sys.path.insert(0, os.path.join(root_path, "src", "scripts"))
 
 from pyolian import eolian
 
+
 def remove_underlines(name):
     """Removes underlines from name"""
     return name.replace("_", "")
+
+
+def managed_name(name):
+    """Replaces underlines and capitalize first letter of each word"""
+
+    words = name.split("_")
+    return "".join(word[0].upper() + word[1:] for word in words)
 
 
 def managed_namespaces(namespaces):
@@ -40,10 +48,11 @@ def class_managed_name(cls):
 
     ret += remove_underlines(cls.short_name)
 
-    if ret == 'Efl.Class':
-        return 'System.Type'
+    if ret == "Efl.Class":
+        return "System.Type"
 
     return ret
+
 
 def type_managed_name(type):
     """Gets the full managed name of a given type."""
@@ -58,3 +67,26 @@ def type_managed_name(type):
     ret += remove_underlines(type.short_name)
 
     return ret
+
+
+# Need to pass the class as it is not accessible from Event in Pyolian
+def event_args_managed_name(event, cls):
+    """Gets the full managed name of the event arguments struct"""
+    if event.type is None:
+        return "System.EventArgs"
+
+    ret = class_managed_name(cls)
+
+    return ret + managed_name(event.myname) + "Evt_Args"
+
+
+def event_managed_short_name(event):
+    """Gets the managed short name of an event"""
+
+    return managed_name(event.name.replace(",", "_")) + "Evt"
+
+
+def enum_field_managed_name(field):
+    """Gets the managed name of an Enum field"""
+
+    return managed_name(field.name)
