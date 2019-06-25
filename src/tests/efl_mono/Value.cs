@@ -146,6 +146,31 @@ public static class TestEinaValue {
         }
     }
 
+    public static void TestObjectSimple()
+    {
+        using (Eina.Value v = new Eina.Value(Eina.ValueType.Object))
+        {
+            var obj = new Dummy.TestObject();
+            Test.Assert(v.Set(obj));
+            Efl.Object target;
+            Test.Assert(v.Get(out target));
+            Test.AssertEquals(target, obj);
+        }
+    }
+
+    // Efl.Object conversions are made explicit to avoid ambiguity between
+    // Set(Efl.Object) and Set(Value) when dealing with classes derived from
+    // Efl.Object.
+    public static void TestObjectImplicit()
+    {
+        var obj = new Dummy.TestObject();
+        var v = (Eina.Value)obj;
+        Test.AssertEquals(v.GetValueType(), Eina.ValueType.Object);
+        Efl.Object target = (Efl.Object)v;
+
+        Test.AssertEquals(target, obj);
+    }
+
     public static void TestSetWrongType()
     {
         using (Eina.Value v = new Eina.Value(Eina.ValueType.String)) {
@@ -259,6 +284,37 @@ public static class TestEinaValue {
             Test.AssertEquals(expected, actual);
         }
     }
+
+    public static void TestValueOptionalObject()
+    {
+        using (Eina.Value a = new Eina.Value(Eina.ValueType.Object)) {
+            Test.Assert(!a.Optional);
+            BoolRet dummy = () => a.OptionalEmpty;
+            Test.AssertRaises<Eina.InvalidValueTypeException>(() => dummy());
+        }
+
+        using (Eina.Value a = new Eina.Value(Eina.ValueType.Optional)) {
+            Test.Assert(a.Optional);
+            Test.Assert(a.OptionalEmpty); // By default, optional values are empty
+
+            // Sets expectation
+            Efl.Object expected = new Dummy.TestObject();
+            Test.Assert(a.Set(expected));
+            Test.Assert(a.Optional);
+            Test.Assert(!a.OptionalEmpty);
+
+            Test.Assert(a.Reset());
+            Test.Assert(a.OptionalEmpty);
+
+            Test.Assert(a.Set(expected));
+            Test.Assert(!a.OptionalEmpty);
+
+            Efl.Object received = null;
+            Test.Assert(a.Get(out received));
+            Test.AssertEquals(expected, received);
+        }
+    }
+
     public static void TestValueOptionalArrays()
     {
         using (Eina.Value a = new Eina.Value(Eina.ValueType.Optional))
@@ -762,6 +818,30 @@ public static class TestEinaValue {
             Test.AssertEquals((string)array[1], "rocks");
         }
     }
+
+    public static void TestValueArrayOfObjects()
+    {
+
+        using(Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Object)) {
+
+            var a = new Dummy.TestObject();
+            var b = new Dummy.TestObject();
+
+            Test.Assert(array.Append(a));
+            Test.Assert(array.Append(b));
+
+            Test.AssertEquals((Efl.Object)array[0], a);
+            Test.AssertEquals((Efl.Object)array[1], b);
+
+            var c = new Dummy.TestObject();
+            array[0] = c;
+            array[1] = b;
+
+            Test.AssertEquals((Efl.Object)array[0], c);
+            Test.AssertEquals((Efl.Object)array[1], b);
+        }
+    }
+
 
     public static void TestArrayOutOfBounds() {
         using(Eina.Value array = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int32)) {
