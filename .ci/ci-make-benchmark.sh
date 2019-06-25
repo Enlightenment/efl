@@ -5,6 +5,9 @@ set -e
 if [ "$1" = "release-ready" ] ; then
   exit 0
 fi
+if [ "$1" = "coverity" ] ; then
+  exit 0
+fi
 travis_fold benchmark "ninja benchmark"
 echo "Nothing to do here, the benchmarks don't seem to terminate"
 #else

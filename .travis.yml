@@ -67,6 +67,9 @@ jobs:
     - os: linux
       if: type = cron
       env: DISTRO=Debian96
+    - os: linux
+      if: type = cron
+      env: DISTRO=Fedora30 CI_BUILD_TYPE=coverity
 
 services:
   - docker

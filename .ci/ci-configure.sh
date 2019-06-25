@@ -56,6 +56,17 @@ if [ "$DISTRO" != "" ] ; then
     OPTS="$OPTS $RELEASE_READY_LINUX_COPTS"
   fi
 
+  if [ "$1" = "coverity" ]; then
+    if [ $(date +%A) != "Saturday" ]; then
+      echo "Not Saturday so we are not running our weekly Coverity scan build."
+      exit 0
+    fi
+    OPTS="$OPTS $WAYLAND_LINUX_COPTS"
+    travis_fold cov-download cov-download
+    docker exec --env COVERITY_SCAN_TOKEN=$COVERITY_SCAN_TOKEN $(cat $HOME/cid) sh -c '.ci/coverity-tools-install.sh'
+    travis_endfold cov-download
+  fi
+
   if [ "$1" = "mingw" ]; then
     OPTS="$OPTS $MINGW_COPTS"
     travis_fold cross-native cross-native
@@ -64,6 +75,11 @@ if [ "$DISTRO" != "" ] ; then
     travis_fold meson meson
     docker exec --env EIO_MONITOR_POLL=1 --env PKG_CONFIG_PATH="/ewpi-64-install/lib/pkgconfig/" \
        $(cat $HOME/cid) sh -c "mkdir build && meson build $OPTS"
+    travis_endfold meson
+  elif [ "$1" = "coverity" ]; then
+    travis_fold meson meson
+    docker exec --env EIO_MONITOR_POLL=1 --env CFLAGS="-fdirectives-only"  --env CC="gcc" --env CXX="g++"\
+    --env CXXFLAGS="-fdirectives-only" $(cat $HOME/cid) sh -c "mkdir build && meson build $OPTS"
     travis_endfold meson
   else
     travis_fold meson meson

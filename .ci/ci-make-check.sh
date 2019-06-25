@@ -9,6 +9,10 @@ if [ "$1" = "mingw" ] ; then
   exit 0
 fi
 
+if [ "$1" = "coverity" ] ; then
+  exit 0
+fi
+
 #T7151
 if [ "$1" = "options-enabled" ] || [ "$1" = "options-disabled" ] ; then
   exit 0

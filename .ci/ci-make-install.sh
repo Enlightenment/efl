@@ -5,6 +5,9 @@ set -e
 if [ "$1" = "release-ready" ] ; then
   exit 0
 fi
+if [ "$1" = "coverity" ] ; then
+  exit 0
+fi
 travis_fold install "ninja install"
 if [ "$DISTRO" != "" ] ; then
   docker exec --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) ninja -C build install
