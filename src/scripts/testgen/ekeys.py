@@ -169,15 +169,38 @@ class EMonoKeys(EKeys):
             "efl_constructor",
         ]
 
+        self.struct_blacklist = [
+            "Efl.Event_Description",
+            "Eina.Binbuf",
+            "Eina.Strbuf",
+            "Eina.Slice",
+            "Eina.Rw_Slice",
+            "Eina.Promise",
+            "Eina.Value",
+            "Eina.Value_Type",
+            "Eina.Future",
+        ]
+
     def escape_keyword(self, key):
         key = "kw_{}".format(key) if key in self.keywords else key
         return "{}Add".format(key) if key == "Finalize" else key
 
-    def direction_get(self, direction):
+    def direction_get(self, param):
+        direction = param.direction
+
         if direction == direction.INOUT:
             return "ref"
-        if direction == direction.OUT:
-            return "out"
+        elif direction != direction.IN:
+            if param.type.name in ("Eina.Slice", "Eina.Rw_Slice"):
+                return "ref"
+            else:
+                return "out"
+        elif (direction == direction.IN) and param.type.is_ptr:
+            if param.type.typedecl and (
+                param.type.typedecl.type == param.type.typedecl.type.STRUCT
+            ):
+                return "ref" if param.type.name not in self.struct_blacklist else None
+
         return None
 
     def klass_name(self, eotype):
@@ -210,19 +233,7 @@ class EMonoKeys(EKeys):
 
     def print_arg(self, eoarg):
         r = super().print_arg(eoarg)
-        prefix = self.direction_get(eoarg.direction) or None
-
-        if prefix == "out" and (eoarg.type.name in ("Eina.Slice", "Eina.Rw_Slice")):
-            prefix = "ref"
-
-        if (
-            not prefix
-            and eoarg.type.is_ptr
-            and eoarg.type.type == eoarg.type.type.REGULAR
-            and eoarg.type.typedecl
-            and eoarg.type.typedecl.type == eoarg.type.typedecl.type.STRUCT
-        ):
-            prefix = "ref"
+        prefix = self.direction_get(eoarg) or None
 
         return " ".join([prefix, r]) if prefix else r
 
