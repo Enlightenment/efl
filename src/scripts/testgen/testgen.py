@@ -5,7 +5,6 @@ import os
 import sys
 import datetime
 
-from testgen import name_helpers
 
 script_path = os.path.dirname(os.path.realpath(__file__))
 
@@ -19,6 +18,7 @@ sys.path.insert(0, os.path.join(root_path, "src", "scripts"))
 from pyolian import eolian
 from pyolian import pyratemp
 from testgen.suitegen import SuiteGen
+from testgen import name_helpers
 
 # Use .eo files from the source tree (not the installed ones)
 SCAN_FOLDER = os.path.join(root_path, "src", "lib")
