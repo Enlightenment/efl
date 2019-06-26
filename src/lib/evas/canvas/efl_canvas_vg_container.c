@@ -399,7 +399,6 @@ _efl_canvas_vg_container_efl_duplicate_duplicate(const Eo *obj,
 
    container = efl_duplicate(efl_super(obj, MY_CLASS));
    efl_event_callback_add(container, EFL_EVENT_INVALIDATE, _invalidate_cb, NULL);
-   efl_parent_set(container, efl_parent_get(obj));
 
    //Copy Mask
    if (pd->mask_src)
