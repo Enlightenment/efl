@@ -5,7 +5,6 @@
 #include <Efl_Ui.h>
 #include "efl_ui_suite.h"
 #include "eo_internal.h"
-#include "suite_helpers.h"
 
 EFL_CLASS_SIMPLE_CLASS(efl_ui_active_view_view_manager, "efl_ui_active_view_view_manager", EFL_UI_ACTIVE_VIEW_VIEW_MANAGER_CLASS);
 EFL_CLASS_SIMPLE_CLASS(efl_ui_active_view_indicator, "efl_ui_active_view_indicator", EFL_UI_ACTIVE_VIEW_INDICATOR_CLASS);

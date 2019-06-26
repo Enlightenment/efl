@@ -7,7 +7,6 @@
 #include <Efl_Ui.h>
 #include "efl_ui_suite.h"
 #include "eo_internal.h"
-#include "suite_helpers.h"
 
 typedef struct {
    Efl_Ui_Widget *btn1, *btn2;

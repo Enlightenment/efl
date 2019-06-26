@@ -4,7 +4,6 @@
 
 #include <Efl_Ui.h>
 #include "efl_ui_suite.h"
-#include "suite_helpers.h"
 
 static Eo *win, *radio_group;
 
