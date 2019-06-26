@@ -94,9 +94,43 @@ EFL_START_TEST(efl_ui_win_test_object_focus)
 }
 EFL_END_TEST
 
+static void
+create_environment(Eo **win, Eo **rect)
+{
+   *win = efl_new(EFL_UI_WIN_CLASS);
+   *rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas_object_evas_get(*win));
+   efl_canvas_object_seat_focus_add(*rect, NULL);
+}
+
+EFL_START_TEST(efl_ui_win_test_efl_input_interface_focus)
+{
+   Efl_Ui_Win *win;
+   Efl_Canvas_Object *rect, *focus_in = NULL, *focus_out = NULL;
+   create_environment(&win, &rect);
+   efl_canvas_object_seat_focus_del(rect, NULL);
+
+   efl_event_callback_add(rect, EFL_EVENT_FOCUS_IN , _check_focus_event, &focus_in);
+   efl_event_callback_add(rect, EFL_EVENT_FOCUS_OUT, _check_focus_event, &focus_out);
+
+   efl_canvas_object_seat_focus_add(rect, NULL);
+   ck_assert_ptr_eq(focus_out, NULL);
+   ck_assert_ptr_eq(focus_in, rect);
+   focus_out = NULL;
+   focus_in = NULL;
+
+   efl_canvas_object_seat_focus_del(rect, NULL);
+   ck_assert_ptr_eq(focus_out, rect);
+   ck_assert_ptr_eq(focus_in, NULL);
+   focus_out = NULL;
+   focus_in = NULL;
+}
+EFL_END_TEST
+
 void
 efl_ui_test_win(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_win_test_scene_focus);
    tcase_add_test(tc, efl_ui_win_test_object_focus);
+   tcase_add_test(tc, efl_ui_win_test_object_focus);
+   tcase_add_test(tc, efl_ui_win_test_efl_input_interface_focus);
 }
