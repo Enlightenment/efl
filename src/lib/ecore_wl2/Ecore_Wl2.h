@@ -1765,6 +1765,7 @@ EAPI Ecore_Wl2_Drag_Action ecore_wl2_offer_action_get(Ecore_Wl2_Offer *offer);
  * @return a eina array of strdup´ed strings, this array must NOT be changed or freed
  *
  * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.19
  */
 EAPI Eina_Array* ecore_wl2_offer_mimes_get(Ecore_Wl2_Offer *offer);
 
