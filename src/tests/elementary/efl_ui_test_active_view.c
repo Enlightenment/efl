@@ -5,14 +5,13 @@
 #include <Efl_Ui.h>
 #include "efl_ui_suite.h"
 #include "eo_internal.h"
+#include "suite_helpers.h"
 
 EFL_CLASS_SIMPLE_CLASS(efl_ui_active_view_view_manager, "efl_ui_active_view_view_manager", EFL_UI_ACTIVE_VIEW_VIEW_MANAGER_CLASS);
 EFL_CLASS_SIMPLE_CLASS(efl_ui_active_view_indicator, "efl_ui_active_view_indicator", EFL_UI_ACTIVE_VIEW_INDICATOR_CLASS);
 
 static Efl_Ui_Win *win;
 static Efl_Ui_Active_View_Container *container;
-static int tree_abort;
-static int tree_abort_level;
 
 typedef struct {
   struct {
@@ -609,22 +608,6 @@ EFL_START_TEST (efl_ui_active_view_test_pop3)
 EFL_END_TEST
 
 static void
-_shutdown(void)
-{
-   eina_log_abort_on_critical_set(tree_abort);
-   eina_log_abort_on_critical_level_set(tree_abort_level);
-}
-
-static void
-_setup(void)
-{
-   tree_abort = eina_log_abort_on_critical_get();
-   tree_abort_level = eina_log_abort_on_critical_level_get();
-   eina_log_abort_on_critical_level_set(2);
-   eina_log_abort_on_critical_set(1);
-}
-
-static void
 active_view_setup()
 {
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
@@ -645,7 +628,7 @@ active_view_teardown()
 
 void efl_ui_test_active_view(TCase *tc)
 {
-   tcase_add_checked_fixture(tc, _setup, _shutdown);
+   tcase_add_checked_fixture(tc, fail_on_errors_setup, fail_on_errors_teardown);
    tcase_add_checked_fixture(tc, active_view_setup, active_view_teardown);
    tcase_add_test(tc, efl_ui_active_view_init);
    tcase_add_test(tc, efl_ui_active_view_active_index);
