@@ -768,8 +768,10 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr)
                     def->base_type = eo_lexer_type_release(ls, parse_type_void(ls, EINA_TRUE));
                   else
                     def->base_type = eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE));
-                  if ((def->base_type->owned = (ls->t.kw == KW_at_owned)))
-                    eo_lexer_get(ls);
+                  /* view-only types are not allowed to own the contents */
+                  if (tpid == KW_array || tpid == KW_hash || tpid == KW_list || tpid == KW_future)
+                    if ((def->base_type->owned = (ls->t.kw == KW_at_owned)))
+                      eo_lexer_get(ls);
                   if (tpid == KW_hash)
                     {
                        check_next(ls, ',');
