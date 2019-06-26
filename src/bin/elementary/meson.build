@@ -94,7 +94,6 @@ elementary_test_src = [
   'test_naviframe.c',
   'test_naviframe_complex.c',
   'test_notify.c',
-  'test_nstate.c',
   'test_panel.c',
   'test_panes.c',
   'test_ui_panes.c',

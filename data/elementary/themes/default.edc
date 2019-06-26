@@ -173,7 +173,6 @@ collections {
 #include "edc/efl/calendar.edc"
 #include "edc/efl/navigation_bar.edc"
 #include "edc/efl/navigation_layout.edc"
-#include "edc/efl/nstate.edc"
 // XXX: mobile mode needs invisible scrollers... make signals that do this
 #include "edc/efl/scroller.edc"
 #include "edc/efl/list.edc"
