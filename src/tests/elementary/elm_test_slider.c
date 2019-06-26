@@ -133,7 +133,7 @@ slider_change(void *data)
 static void
 events_norendered(void *data, Evas *e, void *event_info EINA_UNUSED)
 {
-   evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, norendered);
+   evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, events_norendered);
    ecore_job_add(slider_change, data);
 }
 
