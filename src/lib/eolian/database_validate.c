@@ -351,8 +351,28 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
              }
            if (!tp->freefunc)
              tp->freefunc = eina_stringshare_add(eo_obj_free);
-           tp->base.c_name = eina_stringshare_ref(tp->tdecl->base.c_name);
+           tp->base.c_name = eina_stringshare_ref(tp->klass->base.c_name);
            return _validate_ownable(tp);
+        }
+      case EOLIAN_TYPE_ERROR:
+        {
+           tp->error = (Eolian_Error *)eolian_unit_error_by_name_get(src, tp->base.name);
+           if (!tp->error)
+             {
+                _eo_parser_log(&tp->base, "undefined error %s "
+                         "(likely wrong namespacing)", tp->base.name);
+                return EINA_FALSE;
+             }
+           else if (vals->stable && tp->error->base.is_beta)
+             {
+                _eo_parser_log(&tp->base, "beta error '%s' used in stable context",
+                               tp->error->base.name);
+                return EINA_FALSE;
+             }
+           tp->base.c_name = eina_stringshare_ref(tp->error->base.c_name);
+           if (tp->next_type && !_validate_type(vals, tp->next_type))
+             return EINA_FALSE;
+           return _validate(&tp->base);
         }
       default:
         return EINA_FALSE;

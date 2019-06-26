@@ -5,10 +5,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-#ifdef _WIN32
-#include "Evil.h"
-#endif
-
 #include <Eina.h>
 #include <Eolian.h>
 

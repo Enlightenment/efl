@@ -843,6 +843,53 @@ EFL_START_TEST(eolian_var)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eolian_error)
+{
+   const Eolian_Unit *unit;
+   const Eolian_Class *class;
+   const Eolian_Function *f1, *f2;
+   const Eolian_Type *rtp1, *rtp2;
+   const Eolian_Error *err1, *err2;
+
+   Eolian_State *eos = eolian_state_new();
+
+   fail_if(!eolian_state_directory_add(eos, TESTS_SRC_DIR"/data"));
+   fail_if(!(unit = eolian_state_file_parse(eos, "error.eo")));
+
+   fail_if(!(class = eolian_unit_class_by_name_get(unit, "Error")));
+   fail_if(!(f1 = eolian_class_function_by_name_get(class, "foo", EOLIAN_METHOD)));
+   fail_if(!(f2 = eolian_class_function_by_name_get(class, "bar", EOLIAN_METHOD)));
+
+   fail_if(!(rtp1 = eolian_function_return_type_get(f1, EOLIAN_METHOD)));
+   fail_if(!(rtp2 = eolian_function_return_type_get(f2, EOLIAN_METHOD)));
+
+   /* single error */
+   fail_if(eolian_type_type_get(rtp1) != EOLIAN_TYPE_ERROR);
+   fail_if(eolian_type_next_type_get(rtp1) != NULL);
+   fail_if(strcmp(eolian_type_name_get(rtp1), "Foo"));
+   fail_if(!(err1 = eolian_type_error_get(rtp1)));
+   fail_if(strcmp(eolian_error_message_get(err1), "something bad happened"));
+
+   /* error range */
+   fail_if(eolian_type_type_get(rtp2) != EOLIAN_TYPE_ERROR);
+   fail_if(!(rtp1 = eolian_type_next_type_get(rtp2)));
+   fail_if(strcmp(eolian_type_name_get(rtp2), "Foo"));
+   fail_if(strcmp(eolian_type_name_get(rtp1), "Bar"));
+   /* it's the same Foo here */
+   fail_if(eolian_type_error_get(rtp2) != err1);
+   fail_if(!(err2 = eolian_type_error_get(rtp1)));
+   fail_if(strcmp(eolian_error_message_get(err1), "something bad happened"));
+   fail_if(strcmp(eolian_error_message_get(err2), "another bad thing happened"));
+
+   fail_if(!eolian_error_documentation_get(err1));
+   fail_if(!eolian_error_documentation_get(err2));
+   fail_if(eolian_error_is_beta(err1));
+   fail_if(!eolian_error_is_beta(err2));
+
+   eolian_state_free(eos);
+}
+EFL_END_TEST
+
 EFL_START_TEST(eolian_enum)
 {
    const Eolian_Enum_Type_Field *field = NULL;
@@ -1621,6 +1668,7 @@ void eolian_parsing_test(TCase *tc)
    tcase_add_test(tc, eolian_struct);
    tcase_add_test(tc, eolian_extern);
    tcase_add_test(tc, eolian_var);
+   tcase_add_test(tc, eolian_error);
    tcase_add_test(tc, eolian_enum);
    tcase_add_test(tc, eolian_class_funcs);
    tcase_add_test(tc, eolian_free_func);

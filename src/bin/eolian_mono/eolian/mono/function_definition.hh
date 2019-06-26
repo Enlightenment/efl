@@ -85,10 +85,11 @@ struct native_function_definition_generator
       return false;
 
     std::string klass_cast_name;
-    if (klass->type != attributes::class_type::interface_)
-      klass_cast_name = name_helpers::klass_inherit_name(*klass);
-    else
+    if ((klass->type == attributes::class_type::interface_) ||
+        ((klass->type == attributes::class_type::mixin) && !f.is_static))
       klass_cast_name = name_helpers::klass_interface_name(*klass);
+    else
+      klass_cast_name = name_helpers::klass_inherit_name(*klass);
 
     std::string self = "Efl.Eo.Globals.efl_super(obj, Efl.Eo.Globals.efl_class_get(obj))";
 
@@ -159,7 +160,7 @@ struct function_definition_generator
   function_definition_generator(bool do_super = false)
     : do_super(do_super)
   {}
-  
+
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
@@ -184,7 +185,7 @@ struct function_definition_generator
       self = "";
 
     if(!as_generator
-       (scope_tab << ((do_super && !f.is_static) ? "virtual " : "") << "public " << (f.is_static ? "static " : "") << return_type << " " << string << "(" << (parameter % ", ")
+       (scope_tab << ((do_super && !f.is_static) ? "virtual " : "") << eolian_mono::function_scope_get(f) << (f.is_static ? "static " : "") << return_type << " " << string << "(" << (parameter % ", ")
         << ") {\n "
         << eolian_mono::function_definition_preamble()
         << klass_full_native_inherit_name(f.klass) << "." << string << "_ptr.Value.Delegate("
@@ -267,19 +268,51 @@ struct property_wrapper_definition_generator
 
       std::string managed_name = name_helpers::property_managed_name(property);
 
+      std::string scope = "public ";
+      std::string get_scope = property.getter.is_engaged() ? eolian_mono::function_scope_get(*property.getter) : "";
+      std::string set_scope = property.setter.is_engaged() ? eolian_mono::function_scope_get(*property.setter) : "";
+      if (interface)
+        {
+           scope = "";
+           get_scope = "";
+           set_scope = "";
+        }
+      else if ((property.klass.type == attributes::class_type::mixin) ||
+               (property.klass.type == attributes::class_type::interface_))
+        {
+           get_scope = "";
+           set_scope = "";
+        }
+      else if ((get_scope != "") && (get_scope == set_scope))
+        {
+           scope = get_scope;
+           get_scope = "";
+           set_scope = "";
+        }
+      else if (!property.setter.is_engaged() || (get_scope == scope))
+        {
+           scope = get_scope;
+           get_scope = "";
+        }
+      else if (!property.getter.is_engaged() || (set_scope == scope))
+        {
+           scope = set_scope;
+           set_scope = "";
+        }
+
       if (!as_generator(
                   documentation(1)
-                  << scope_tab << (interface ? "" : "public ") << (is_static ? "static " : "") << type(true) << " " << managed_name << " {\n"
+                  << scope_tab << scope << (is_static ? "static " : "") << type(true) << " " << managed_name << " {\n"
             ).generate(sink, std::make_tuple(property, prop_type), context))
         return false;
 
       if (property.getter.is_engaged())
-        if (!as_generator(scope_tab << scope_tab << "get " << (interface ? ";" : "{ return " + name_helpers::managed_method_name(*property.getter) + "(); }") << "\n"
+        if (!as_generator(scope_tab << scope_tab << get_scope << "get " << (interface ? ";" : "{ return " + name_helpers::managed_method_name(*property.getter) + "(); }") << "\n"
             ).generate(sink, attributes::unused, context))
           return false;
 
       if (property.setter.is_engaged())
-        if (!as_generator(scope_tab << scope_tab << "set " << (interface ? ";" : "{ " + name_helpers::managed_method_name(*property.setter) + "(" + dir_mod + "value); }") << "\n"
+        if (!as_generator(scope_tab << scope_tab << set_scope <<  "set " << (interface ? ";" : "{ " + name_helpers::managed_method_name(*property.setter) + "(" + dir_mod + "value); }") << "\n"
             ).generate(sink, attributes::unused, context))
           return false;
 

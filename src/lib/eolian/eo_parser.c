@@ -646,6 +646,29 @@ parse_enum(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
    return def;
 }
 
+/* error(Error1, Error2, Error3, ...) */
+static Eolian_Type *
+parse_type_error(Eo_Lexer *ls)
+{
+   Eolian_Type *def = eo_lexer_type_new(ls);
+   Eina_Strbuf *buf = eina_strbuf_new();
+   eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), buf);
+   for (Eolian_Type *cdef = def;; cdef = cdef->next_type)
+     {
+        FILL_BASE(cdef->base, ls, ls->line_number, ls->column, TYPE);
+        parse_name(ls, buf);
+        cdef->type = EOLIAN_TYPE_ERROR;
+        cdef->base.name = eina_stringshare_add(eina_strbuf_string_get(buf));
+        eina_strbuf_reset(buf);
+        if (ls->t.token != ',')
+          break;
+        eo_lexer_get(ls);
+        cdef->next_type = eo_lexer_type_release(ls, eo_lexer_type_new(ls));
+     }
+   eo_lexer_dtor_pop(ls);
+   return def;
+}
+
 static Eolian_Type *
 parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr)
 {
@@ -695,6 +718,17 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr)
            def->freefunc = eina_stringshare_ref(ls->t.value.s);
            eo_lexer_get(ls);
            FILL_BASE(def->base, ls, line, col, TYPE);
+           check_match(ls, ')', '(', pline, pcolumn);
+           return def;
+        }
+      case KW_error:
+        {
+           int pline, pcolumn;
+           eo_lexer_get(ls);
+           pline = ls->line_number;
+           pcolumn = ls->column;
+           check_next(ls, '(');
+           def = parse_type_error(ls);
            check_match(ls, ')', '(', pline, pcolumn);
            return def;
         }
@@ -904,6 +938,71 @@ tags_done:
         ls->expr_mode = EINA_FALSE;
         eo_lexer_expr_release_ref(ls, def->value);
      }
+   check_next(ls, ';');
+   FILL_DOC(ls, def, doc);
+   eo_lexer_dtor_pop(ls);
+   return def;
+}
+
+static Eolian_Error *
+parse_error(Eo_Lexer *ls)
+{
+   Eolian_Error *def = eo_lexer_error_new(ls);
+   Eina_Strbuf *buf;
+   eo_lexer_get(ls);
+   Eina_Stringshare *cname = NULL;
+   Eina_Bool has_extern = EINA_FALSE, has_beta = EINA_FALSE, has_c_name = EINA_FALSE;
+   for (;;) switch (ls->t.kw)
+     {
+      case KW_at_extern:
+        CASE_LOCK(ls, extern, "extern qualifier");
+        def->is_extern = EINA_TRUE;
+        eo_lexer_get(ls);
+        break;
+      case KW_at_beta:
+        CASE_LOCK(ls, beta, "beta qualifier");
+        def->base.is_beta = EINA_TRUE;
+        eo_lexer_get(ls);
+        break;
+      case KW_at_c_name:
+        CASE_LOCK(ls, c_name, "@c_name specifier");
+        cname = parse_c_name(ls);
+        eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_stringshare_del), (void *)cname);
+        break;
+      default:
+        goto tags_done;
+     }
+tags_done:
+   buf = eina_strbuf_new();
+   eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), buf);
+   eo_lexer_context_push(ls);
+   FILL_BASE(def->base, ls, ls->line_number, ls->column, ERROR);
+   parse_name(ls, buf);
+   def->base.name = eina_stringshare_add(eina_strbuf_string_get(buf));
+   if (cname)
+     {
+        def->base.c_name = cname;
+        eo_lexer_dtor_pop(ls);
+     }
+   else
+     def->base.c_name = make_c_name(def->base.name);
+   Eolian_Object *decl = _eolian_decl_get(ls, def->base.name);
+   if (decl)
+     {
+        eo_lexer_context_restore(ls);
+        redef_error(ls, decl, &def->base);
+     }
+   eo_lexer_context_pop(ls);
+   check(ls, '=');
+   /* we need to parse a string so switch to exprmode */
+   ls->expr_mode = EINA_TRUE;
+   /* consume = to get string */
+   eo_lexer_get(ls);
+   /* verify and switch back to plain syntax mode */
+   check(ls, TOK_STRING);
+   ls->expr_mode = EINA_FALSE;
+   def->msg = eina_stringshare_ref(ls->t.value.s);
+   eo_lexer_get(ls);
    check_next(ls, ';');
    FILL_DOC(ls, def, doc);
    eo_lexer_dtor_pop(ls);
@@ -2273,6 +2372,9 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
              parse_variable(ls, ls->t.kw == KW_var)));
            break;
         }
+      case KW_error:
+        database_error_add(ls->unit, eo_lexer_error_release(ls, parse_error(ls)));
+        break;
       case KW_struct:
       case KW_enum:
         {

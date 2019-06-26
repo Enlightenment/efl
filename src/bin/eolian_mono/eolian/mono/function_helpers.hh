@@ -163,6 +163,26 @@ function_definition_epilogue_generator const as_generator(function_definition_ep
     return function_definition_epilogue_generator{};
 }
 
+inline std::string function_scope_get(attributes::function_def const& f)
+{
+  if ((f.klass.type == attributes::class_type::mixin) ||
+      (f.klass.type == attributes::class_type::interface_))
+    return "public ";
+
+  switch (f.scope)
+    {
+     case attributes::member_scope::scope_public:
+       return "public ";
+     case attributes::member_scope::scope_private:
+       return "private ";
+     case attributes::member_scope::scope_protected:
+       return "protected ";
+     case attributes::member_scope::scope_unknown:
+       return " ";
+    }
+  return " ";
+}
+
 } // namespace eolian_mono
 
 namespace efl { namespace eolian { namespace grammar {

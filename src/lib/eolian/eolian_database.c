@@ -568,6 +568,7 @@ database_unit_init(Eolian_State *state, Eolian_Unit *unit, const char *file)
    unit->classes    = eina_hash_stringshared_new(EINA_FREE_CB(database_class_del));
    unit->globals    = eina_hash_stringshared_new(EINA_FREE_CB(database_var_del));
    unit->constants  = eina_hash_stringshared_new(EINA_FREE_CB(database_var_del));
+   unit->errors     = eina_hash_stringshared_new(EINA_FREE_CB(database_error_del));
    unit->aliases    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    unit->structs    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    unit->enums      = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
@@ -585,6 +586,7 @@ _unit_contents_del(Eolian_Unit *unit)
    eina_hash_free(unit->classes);
    eina_hash_free(unit->globals);
    eina_hash_free(unit->constants);
+   eina_hash_free(unit->errors);
    eina_hash_free(unit->aliases);
    eina_hash_free(unit->structs);
    eina_hash_free(unit->enums);
@@ -637,6 +639,7 @@ _state_area_init(Eolian_State *state, Eolian_State_Area *a)
    a->enums_f     = eina_hash_stringshared_new(NULL);
    a->globals_f   = eina_hash_stringshared_new(NULL);
    a->constants_f = eina_hash_stringshared_new(NULL);
+   a->errors_f    = eina_hash_stringshared_new(NULL);
    a->objects_f   = eina_hash_stringshared_new(NULL);
 }
 
@@ -663,6 +666,7 @@ _state_area_contents_del(Eolian_State_Area *a)
    _hashlist_free(a->enums_f);
    _hashlist_free(a->globals_f);
    _hashlist_free(a->constants_f);
+   _hashlist_free(a->errors_f);
    _hashlist_free(a->objects_f);
 }
 
@@ -1240,6 +1244,17 @@ eolian_state_constants_by_file_get(const Eolian_State *state, const char *file_n
 }
 
 EAPI Eina_Iterator *
+eolian_state_errors_by_file_get(const Eolian_State *state, const char *file_name)
+{
+   if (!state) return NULL;
+   Eina_Stringshare *shr = eina_stringshare_add(file_name);
+   Eina_List *l = eina_hash_find(state->main.errors_f, shr);
+   eina_stringshare_del(shr);
+   if (!l) return NULL;
+   return eina_list_iterator_new(l);
+}
+
+EAPI Eina_Iterator *
 eolian_state_aliases_by_file_get(const Eolian_State *state, const char *file_name)
 {
    if (!state) return NULL;
@@ -1361,6 +1376,16 @@ eolian_unit_constant_by_name_get(const Eolian_Unit *unit, const char *name)
    return v;
 }
 
+EAPI const Eolian_Error *
+eolian_unit_error_by_name_get(const Eolian_Unit *unit, const char *name)
+{
+   if (!unit) return NULL;
+   Eina_Stringshare *shr = eina_stringshare_add(name);
+   Eolian_Error *v = eina_hash_find(unit->errors, shr);
+   eina_stringshare_del(shr);
+   return v;
+}
+
 EAPI Eina_Iterator *
 eolian_unit_constants_get(const Eolian_Unit *unit)
 {
@@ -1371,6 +1396,12 @@ EAPI Eina_Iterator *
 eolian_unit_globals_get(const Eolian_Unit *unit)
 {
    return (unit ? eina_hash_iterator_data_new(unit->globals) : NULL);
+}
+
+EAPI Eina_Iterator *
+eolian_unit_errors_get(const Eolian_Unit *unit)
+{
+   return (unit ? eina_hash_iterator_data_new(unit->errors) : NULL);
 }
 
 EAPI const Eolian_Typedecl *
@@ -1422,6 +1453,45 @@ EAPI Eina_Iterator *
 eolian_unit_enums_get(const Eolian_Unit *unit)
 {
    return (unit ? eina_hash_iterator_data_new(unit->enums) : NULL);
+}
+
+EAPI const char *
+eolian_error_message_get(const Eolian_Error *err)
+{
+   if (!err) return NULL;
+   return err->msg;
+}
+
+EAPI Eina_Bool
+eolian_error_is_extern(const Eolian_Error *err)
+{
+   if (!err) return EINA_FALSE;
+   return err->is_extern;
+}
+
+EAPI const Eolian_Documentation *
+eolian_error_documentation_get(const Eolian_Error *err)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(err, NULL);
+   return err->doc;
+}
+
+void
+database_error_del(Eolian_Error *err)
+{
+   if (!err || eolian_object_unref(&err->base)) return;
+   eina_stringshare_del(err->msg);
+   free(err);
+}
+
+void
+database_error_add(Eolian_Unit *unit, Eolian_Error *err)
+{
+   EOLIAN_OBJECT_ADD(unit, err->base.name, err, errors);
+   eina_hash_set(unit->state->staging.errors_f, err->base.file, eina_list_append
+                ((Eina_List*)eina_hash_find(unit->state->staging.errors_f, err->base.file),
+                err));
+   database_object_add(unit, &err->base);
 }
 
 char *

@@ -27,7 +27,7 @@
 # include <winsock2.h>
 # undef WIN32_LEAN_AND_MEAN
 
-#include <Evil.h>
+#include <evil_private.h>
 
 #include "evil_suite.h"
 

@@ -1,4 +1,5 @@
 if get_option('native-arch-optimization')
+  check_native_header = true
   if host_machine.cpu_family() == 'x86' or host_machine.cpu_family() == 'x86_64'
     native_header = 'immintrin.h'
   elif host_machine.cpu_family() == 'arm'
@@ -7,13 +8,17 @@ if get_option('native-arch-optimization')
     native_header = 'arm_neon.h'
   elif host_machine.cpu_family() == 'ppc' or host_machine.cpu_family() == 'ppc64'
     native_header = 'altivec.h'
+  else
+    check_native_header = false
   endif
 
-  if cc.has_header(native_header) == false
-    error('Error, header '+native_header+' is required')
-  endif
+  if check_native_header
+    if cc.has_header(native_header) == false
+      error('Error, header '+native_header+' is required')
+    endif
 
-  config_h.set10('HAVE_'+native_header.underscorify().to_upper(), true)
+    config_h.set10('HAVE_'+native_header.underscorify().to_upper(), true)
+  endif
 endif
 
 header_checks = [

@@ -857,8 +857,8 @@ err_klass:
    return EINA_FALSE;
 }
 
-EAPI Eo *
-_efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, Eo *parent_id, Eina_Bool ref, Eina_Bool is_fallback)
+static Eo *
+_efl_add_internal_start_do(const char *file, int line, const Efl_Class *klass_id, Eo *parent_id, Eina_Bool ref, Eina_Bool is_fallback, Efl_Substitute_Ctor_Cb substitute_ctor, void *sub_ctor_data)
 {
    const char *func_name = __FUNCTION__;
    _Eo_Object *obj;
@@ -918,7 +918,8 @@ _efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, E
    if (parent_id) efl_parent_set(eo_id, parent_id);
 
    /* eo_id can change here. Freeing is done on the resolved object. */
-   eo_id = efl_constructor(eo_id);
+   if (!substitute_ctor) eo_id = efl_constructor(eo_id);
+   else eo_id = substitute_ctor(sub_ctor_data, eo_id);
    // not likely so use goto to alleviate l1 instruction cache of rare code
    if (!eo_id) goto err_noid;
    // not likely so use goto to alleviate l1 instruction cache of rare code
@@ -960,6 +961,17 @@ err_klass:
    _EO_POINTER_ERR(klass_id, "in %s:%d: Class (%p) is an invalid ref.", file, line, klass_id);
 err_parent:
    return NULL;
+}
+
+EAPI Eo *
+_efl_add_internal_start(const char *file, int line, const Efl_Class *klass_id, Eo *parent_id, Eina_Bool ref, Eina_Bool is_fallback)
+{
+   return _efl_add_internal_start_do(file, line, klass_id, parent_id, ref, is_fallback, NULL, NULL);
+}
+
+EAPI Eo * _efl_add_internal_start_bindings(const char *file, int line, const Efl_Class *klass_id, Eo *parent_id, Eina_Bool ref, Eina_Bool is_fallback, Efl_Substitute_Ctor_Cb substitute_ctor, void *sub_ctor_data)
+{
+   return _efl_add_internal_start_do(file, line, klass_id, parent_id, ref, is_fallback, substitute_ctor, sub_ctor_data);
 }
 
 static Eo *

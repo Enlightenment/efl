@@ -197,6 +197,15 @@ eolian_type_class_get(const Eolian_Type *tp)
    return tp->klass;
 }
 
+EAPI const Eolian_Error *
+eolian_type_error_get(const Eolian_Type *tp)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
+   if (eolian_type_type_get(tp) != EOLIAN_TYPE_ERROR)
+     return NULL;
+   return tp->error;
+}
+
 EAPI Eina_Bool
 eolian_type_is_owned(const Eolian_Type *tp)
 {

@@ -24,7 +24,7 @@
 #include <stdio.h>
 #include <direct.h>
 
-#include <Evil.h>
+#include <evil_private.h>
 
 #include "evil_suite.h"
 

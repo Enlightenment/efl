@@ -43,12 +43,9 @@ check_setup()
 static void
 check_teardown()
 {
-   efl_unref(radio_group);
-   if (win)
-     {
-        efl_del(win);
-        win = NULL;
-     }
+   radio_group = NULL;
+   win = NULL;
+   state_values = 0;
 }
 
 static Eo*

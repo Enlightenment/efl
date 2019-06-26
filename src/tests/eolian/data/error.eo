@@ -1,0 +1,13 @@
+error Foo = "something bad happened"; [[Error doc]]
+error @beta Bar = "another bad thing happened"; [[Another error doc]]
+
+class @beta Error {
+   methods {
+      foo {
+         return: error(Foo);
+      }
+      bar {
+        return: error(Foo, Bar);
+      }
+   }
+}
