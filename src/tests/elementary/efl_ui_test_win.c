@@ -126,6 +126,40 @@ EFL_START_TEST(efl_ui_win_test_efl_input_interface_focus)
 }
 EFL_END_TEST
 
+#define TIMESTAMP 1337
+
+static void
+_check_key_event(void *data, const Efl_Event *ev)
+{
+   Eina_Bool *pressed = data;
+
+   ck_assert_int_eq(efl_input_timestamp_get(ev->info), TIMESTAMP);
+   ck_assert_str_eq(efl_input_key_name_get(ev->info), "odiaeresis");
+   ck_assert_str_eq(efl_input_key_get(ev->info), "ö");
+   ck_assert_str_eq(efl_input_key_string_get(ev->info), "Ö");
+   ck_assert_str_eq(efl_input_key_compose_string_get(ev->info), "Ö");
+   ck_assert_int_eq(efl_input_key_code_get(ev->info), 0xffe1);
+   *pressed = efl_input_key_pressed_get(ev->info);
+}
+
+EFL_START_TEST(efl_ui_win_test_efl_input_interface_key_down)
+{
+   Efl_Ui_Win *win;
+   Eina_Bool pressed = EINA_FALSE;
+   Efl_Canvas_Object *rect;
+   create_environment(&win, &rect);
+
+   efl_event_callback_add(rect, EFL_EVENT_KEY_DOWN , _check_key_event, &pressed);
+   efl_event_callback_add(rect, EFL_EVENT_KEY_UP, _check_key_event, &pressed);
+
+   evas_event_feed_key_down_with_keycode(evas_object_evas_get(win), "odiaeresis", "ö", "Ö", "Ö", TIMESTAMP, NULL, 0xffe1);
+   ck_assert_int_eq(pressed, EINA_TRUE);
+
+   evas_event_feed_key_up_with_keycode(evas_object_evas_get(win), "odiaeresis", "ö", "Ö", "Ö", TIMESTAMP, NULL, 0xffe1);
+   ck_assert_int_eq(pressed, EINA_FALSE);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_win(TCase *tc)
 {
@@ -133,4 +167,5 @@ efl_ui_test_win(TCase *tc)
    tcase_add_test(tc, efl_ui_win_test_object_focus);
    tcase_add_test(tc, efl_ui_win_test_object_focus);
    tcase_add_test(tc, efl_ui_win_test_efl_input_interface_focus);
+   tcase_add_test(tc, efl_ui_win_test_efl_input_interface_key_down);
 }
