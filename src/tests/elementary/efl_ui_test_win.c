@@ -96,13 +96,6 @@ EFL_END_TEST
 
 
 static void
-prepare_window_norendered(void *data EINA_UNUSED, Evas *e, void *event_info EINA_UNUSED)
-{
-   efl_task_end(efl_app_main_get());
-   evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, prepare_window_norendered);
-}
-
-static void
 create_environment(Eo **win, Eo **rect)
 {
    *win = efl_new(EFL_UI_WIN_CLASS);
@@ -110,8 +103,7 @@ create_environment(Eo **win, Eo **rect)
    efl_canvas_object_seat_focus_add(*rect, NULL);
    efl_gfx_entity_geometry_set(*win, EINA_RECT(0, 0, 200, 200));
    efl_gfx_entity_geometry_set(*rect, EINA_RECT(0, 0, 200, 200));
-   evas_event_callback_add(evas_object_evas_get(*win), EVAS_CALLBACK_RENDER_POST, prepare_window_norendered, NULL);
-   efl_loop_begin(efl_main_loop_get());
+   get_me_to_those_events(evas_object_evas_get(*win));
 }
 
 EFL_START_TEST(efl_ui_win_test_efl_input_interface_focus)
