@@ -8,4 +8,5 @@ void _elm2_suite_init(void);
 void _elm_suite_shutdown(void);
 void *real_timer_add(double in, Ecore_Task_Cb cb, void *data);
 
+void get_me_to_those_events(Eo *obj);
 #endif
