@@ -203,23 +203,22 @@ _efl_canvas_vg_shape_efl_duplicate_duplicate(const Eo *obj, Efl_Canvas_Vg_Shape_
    node = efl_duplicate(efl_super(obj, MY_CLASS));
    sd = efl_data_scope_get(node, MY_CLASS);
 
-   //FIXME: These fill, markers couldn't allow node as parent...
    if (pd->fill)
      {
         sd->fill = efl_duplicate(pd->fill);
-        efl_parent_set(sd->fill, node);
+        efl_parent_set(sd->fill, efl_parent_get(node));
      }
 
    if (pd->stroke.fill)
      {
         sd->stroke.fill = efl_duplicate(pd->stroke.fill);
-        efl_parent_set(sd->stroke.fill, node);
+        efl_parent_set(sd->stroke.fill, efl_parent_get(node));
      }
 
    if (pd->stroke.marker)
      {
         sd->stroke.marker = efl_duplicate(pd->stroke.marker);
-        efl_parent_set(sd->stroke.marker, node);
+        efl_parent_set(sd->stroke.marker, efl_parent_get(node));
      }
 
    efl_gfx_path_copy_from(node, obj);
