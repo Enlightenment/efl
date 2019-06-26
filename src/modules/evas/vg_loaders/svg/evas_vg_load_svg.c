@@ -995,9 +995,9 @@ _create_node(Svg_Node *parent, Svg_Node_Type type)
    // update the default value of stroke and fill
    //https://www.w3.org/TR/SVGTiny12/painting.html#SpecifyingPaint
    // default fill color is black
-   node->style->fill.paint.r = 0;
-   node->style->fill.paint.g = 0;
-   node->style->fill.paint.b = 0;
+   //node->style->fill.paint.r = 0;
+   //node->style->fill.paint.g = 0;
+   //node->style->fill.paint.b = 0;
    node->style->fill.paint.none = EINA_FALSE;
    // default fill opacity is 1
    node->style->fill.opacity = 255;
