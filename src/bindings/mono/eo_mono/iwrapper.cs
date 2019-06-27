@@ -530,8 +530,10 @@ public class Globals
                 }
                 else
                 {
-                    // Will mark the returned task below as completed.
-                    tcs.SetResult(received);
+                    // Async receiver methods may consume the value C# wrapper, like when awaiting in the start of an
+                    // using block. In order to continue to forward the value correctly to the next futures
+                    // in the chain, we give the Async wrapper a copy of the received wrapper.
+                    tcs.SetResult(new Eina.Value(received));
                 }
 
                 fulfilled = true;

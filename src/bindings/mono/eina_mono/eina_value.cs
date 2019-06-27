@@ -47,6 +47,9 @@ static internal class UnsafeNativeMethods
     internal static extern void eina_value_free(IntPtr type);
 
     [DllImport(efl.Libs.Eina)]
+    internal static extern IntPtr eina_value_type_name_get(IntPtr type);
+
+    [DllImport(efl.Libs.Eina)]
     [return: MarshalAsAttribute(UnmanagedType.U1)]
     internal static extern bool eina_value_convert(IntPtr handle, IntPtr convert);
 
@@ -725,7 +728,16 @@ static class ValueTypeBridge
             LoadTypes();
         }
 
-        return NativeToManaged[native];
+        try
+        {
+            return NativeToManaged[native];
+        }
+        catch (KeyNotFoundException ex)
+        {
+            var name_ptr = eina_value_type_name_get(native);
+            var name = Marshal.PtrToStringAnsi(name_ptr);
+            throw new Efl.EflException($"Unknown native eina value Type: 0x{native.ToInt64():x} with name {name}");
+        }
     }
 
     public static IntPtr GetNative(ValueType valueType)
@@ -978,8 +990,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                 // free(), avoiding a call to eina_value_flush that would wipe the underlying value contents
                 // for pointer types like string.
                 tmp = MemoryNative.Alloc(Marshal.SizeOf(typeof(ValueNative)));
-                Marshal.StructureToPtr(value, tmp, false); // Can't get the address of a struct directly.
-                this.Handle = Alloc();
+                Marshal.StructureToPtr<ValueNative>(value, tmp, false); // Can't get the address of a struct directly.
 
                 // Copy is used to deep copy the pointed payload (e.g. strings) inside this struct, so we can own this value.
                 if (!eina_value_copy(tmp, this.Handle))
@@ -1482,7 +1493,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         {
             if (Disposed)
             {
-                throw new ObjectDisposedException(base.GetType().Name);
+                throw new ObjectDisposedException($"Value at 0x{this.Handle.ToInt64():x}");
             }
 
             return this.Handle;
@@ -1494,7 +1505,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         if (Disposed)
         {
-            throw new ObjectDisposedException(base.GetType().Name);
+            throw new ObjectDisposedException($"Value at 0x{this.Handle.ToInt64():x}");
         }
 
         // Can't call setup with Empty value type (would give an eina error)
@@ -1540,7 +1551,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     {
         if (Disposed)
         {
-            throw new ObjectDisposedException(GetType().Name);
+            throw new ObjectDisposedException($"Value at 0x{this.Handle.ToInt64():x}");
         }
     }
 
@@ -1591,6 +1602,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// <summary>Get a ValueNative struct with the *value* pointed by this Eina.Value.</summary>
     public ValueNative GetNative()
     {
+        SanityChecks();
         ValueNative value = (ValueNative)Marshal.PtrToStructure(this.Handle, typeof(ValueNative));
         return value;
     }
