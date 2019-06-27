@@ -3129,14 +3129,12 @@ class TestEinaIterator
         var itr = arr.GetIterator();
 
         Test.Assert(itr.Own);
-        Test.Assert(!itr.OwnContent);
         Test.Assert(arr.Own);
         Test.Assert(arr.OwnContent);
 
         Test.Assert(t.EinaIteratorIntIn(itr));
 
         Test.Assert(itr.Own);
-        Test.Assert(!itr.OwnContent);
         Test.Assert(arr.Own);
         Test.Assert(arr.OwnContent);
 
@@ -3150,20 +3148,18 @@ class TestEinaIterator
         var arr = new Eina.Array<int>();
         arr.Append(base_seq_int);
         var itr = arr.GetIterator();
-        arr.OwnContent = false;
-        itr.OwnContent = true;
 
         Test.Assert(itr.Own);
-        Test.Assert(itr.OwnContent);
         Test.Assert(arr.Own);
-        Test.Assert(!arr.OwnContent);
+        Test.Assert(arr.OwnContent);
 
+        // Will take ownership of the Iterator
         Test.Assert(t.EinaIteratorIntInOwn(itr));
 
         Test.Assert(!itr.Own);
-        Test.Assert(!itr.OwnContent);
         Test.Assert(arr.Own);
-        Test.Assert(!arr.OwnContent);
+        // Content must continue to be owned by the array
+        Test.Assert(arr.OwnContent);
 
         itr.Dispose();
         arr.Dispose();
@@ -3178,9 +3174,7 @@ class TestEinaIterator
 
         Test.Assert(t.EinaIteratorIntOut(out itr));
 
-
         Test.Assert(!itr.Own);
-        Test.Assert(!itr.OwnContent);
 
         int idx = 0;
         foreach (int e in itr)
@@ -3203,7 +3197,6 @@ class TestEinaIterator
         Test.Assert(t.EinaIteratorIntOutOwn(out itr));
 
         Test.Assert(itr.Own);
-        Test.Assert(itr.OwnContent);
 
         int idx = 0;
         foreach (int e in itr)
@@ -3223,7 +3216,6 @@ class TestEinaIterator
         var itr = t.EinaIteratorIntReturn();
 
         Test.Assert(!itr.Own);
-        Test.Assert(!itr.OwnContent);
 
         int idx = 0;
         foreach (int e in itr)
@@ -3245,7 +3237,6 @@ class TestEinaIterator
         var itr = t.EinaIteratorIntReturnOwn();
 
         Test.Assert(itr.Own);
-        Test.Assert(itr.OwnContent);
 
         int idx = 0;
         foreach (int e in itr)
@@ -3268,14 +3259,12 @@ class TestEinaIterator
         var itr = arr.GetIterator();
 
         Test.Assert(itr.Own);
-        Test.Assert(!itr.OwnContent);
         Test.Assert(arr.Own);
         Test.Assert(arr.OwnContent);
 
         Test.Assert(t.EinaIteratorStrIn(itr));
 
         Test.Assert(itr.Own);
-        Test.Assert(!itr.OwnContent);
         Test.Assert(arr.Own);
         Test.Assert(arr.OwnContent);
 
@@ -3289,24 +3278,16 @@ class TestEinaIterator
         var arr = new Eina.Array<string>();
         arr.Append(base_seq_str);
         var itr = arr.GetIterator();
-        arr.OwnContent = false;
-        itr.OwnContent = true;
 
         Test.Assert(itr.Own);
-        Test.Assert(itr.OwnContent);
         Test.Assert(arr.Own);
-        Test.Assert(!arr.OwnContent);
+        Test.Assert(arr.OwnContent);
 
         Test.Assert(t.EinaIteratorStrInOwn(itr));
 
         Test.Assert(!itr.Own);
-        Test.Assert(!itr.OwnContent);
-        Test.Assert(!itr.Own);
-        Test.Assert(!itr.OwnContent);
         Test.Assert(arr.Own);
-        Test.Assert(!arr.OwnContent);
-        Test.Assert(arr.Own);
-        Test.Assert(!arr.OwnContent);
+        Test.Assert(arr.OwnContent);
 
         itr.Dispose();
         arr.Dispose();
@@ -3322,7 +3303,6 @@ class TestEinaIterator
         Test.Assert(t.EinaIteratorStrOut(out itr));
 
         Test.Assert(!itr.Own);
-        Test.Assert(!itr.OwnContent);
 
         int idx = 0;
         foreach (string e in itr)
@@ -3345,7 +3325,6 @@ class TestEinaIterator
         Test.Assert(t.EinaIteratorStrOutOwn(out itr));
 
         Test.Assert(itr.Own);
-        Test.Assert(itr.OwnContent);
 
         int idx = 0;
         foreach (string e in itr)
@@ -3365,7 +3344,6 @@ class TestEinaIterator
         var itr = t.EinaIteratorStrReturn();
 
         Test.Assert(!itr.Own);
-        Test.Assert(!itr.OwnContent);
 
         int idx = 0;
         foreach (string e in itr)
@@ -3387,7 +3365,6 @@ class TestEinaIterator
         var itr = t.EinaIteratorStrReturnOwn();
 
         Test.Assert(itr.Own);
-        Test.Assert(itr.OwnContent);
 
         int idx = 0;
         foreach (string e in itr)
@@ -3410,14 +3387,12 @@ class TestEinaIterator
         var itr = arr.GetIterator();
 
         Test.Assert(itr.Own);
-        Test.Assert(!itr.OwnContent);
         Test.Assert(arr.Own);
         Test.Assert(arr.OwnContent);
 
         Test.Assert(t.EinaIteratorObjIn(itr));
 
         Test.Assert(itr.Own);
-        Test.Assert(!itr.OwnContent);
         Test.Assert(arr.Own);
         Test.Assert(arr.OwnContent);
 
@@ -3431,20 +3406,16 @@ class TestEinaIterator
         var arr = new Eina.Array<Dummy.Numberwrapper>();
         arr.Append(BaseSeqObj());
         var itr = arr.GetIterator();
-        arr.OwnContent = false;
-        itr.OwnContent = true;
 
         Test.Assert(itr.Own);
-        Test.Assert(itr.OwnContent);
         Test.Assert(arr.Own);
-        Test.Assert(!arr.OwnContent);
+        Test.Assert(arr.OwnContent);
 
         Test.Assert(t.EinaIteratorObjInOwn(itr));
 
         Test.Assert(!itr.Own);
-        Test.Assert(!itr.OwnContent);
         Test.Assert(arr.Own);
-        Test.Assert(!arr.OwnContent);
+        Test.Assert(arr.OwnContent);
 
         itr.Dispose();
         arr.Dispose();
@@ -3460,7 +3431,6 @@ class TestEinaIterator
         Test.Assert(t.EinaIteratorObjOut(out itr));
 
         Test.Assert(!itr.Own);
-        Test.Assert(!itr.OwnContent);
 
         var base_seq_obj = BaseSeqObj();
 
@@ -3485,7 +3455,6 @@ class TestEinaIterator
         Test.Assert(t.EinaIteratorObjOutOwn(out itr));
 
         Test.Assert(itr.Own);
-        Test.Assert(itr.OwnContent);
 
         var base_seq_obj = BaseSeqObj();
 
@@ -3507,7 +3476,6 @@ class TestEinaIterator
         var itr = t.EinaIteratorObjReturn();
 
         Test.Assert(!itr.Own);
-        Test.Assert(!itr.OwnContent);
 
         var base_seq_obj = BaseSeqObj();
 
@@ -3531,7 +3499,6 @@ class TestEinaIterator
         var itr = t.EinaIteratorObjReturnOwn();
 
         Test.Assert(itr.Own);
-        Test.Assert(itr.OwnContent);
 
         var base_seq_obj = BaseSeqObj();
 

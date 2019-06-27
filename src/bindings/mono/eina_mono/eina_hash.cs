@@ -485,12 +485,12 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
 
     public Eina.Iterator<TKey> Keys()
     {
-        return new Eina.Iterator<TKey>(EinaHashIteratorKeyNew<TKey>(Handle), true, false);
+        return new Eina.Iterator<TKey>(EinaHashIteratorKeyNew<TKey>(Handle), true);
     }
 
     public Eina.Iterator<TValue> Values()
     {
-        return new Eina.Iterator<TValue>(eina_hash_iterator_data_new(Handle), true, false);
+        return new Eina.Iterator<TValue>(eina_hash_iterator_data_new(Handle), true);
     }
 
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()

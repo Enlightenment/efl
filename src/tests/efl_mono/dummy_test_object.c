@@ -16,6 +16,9 @@ typedef struct Dummy_Test_Object_Data
   int iface_prop;
   Eo *provider;
   Eo *iface_provider;
+
+  // Containers passed to C# as iterator/accessors
+  Eina_Array *out_array;
 } Dummy_Test_Object_Data;
 
 static
@@ -96,6 +99,9 @@ _dummy_test_object_efl_object_destructor(Eo *obj, Dummy_Test_Object_Data *pd)
         eina_list_free(pd->list_for_accessor);
         pd->list_for_accessor = NULL;
      }
+
+   if (pd->out_array)
+     eina_array_free(pd->out_array);
 
    efl_destructor(efl_super(obj, DUMMY_TEST_OBJECT_CLASS));
 }
@@ -2695,7 +2701,7 @@ static Eina_Iterator *_iterator_int_in_own_to_check = NULL;
 
 Eina_Bool _dummy_test_object_eina_iterator_int_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Iterator *itr)
 {
-   Eina_Bool r = _iterator_int_equal(itr, base_seq_int, base_seq_int_size, EINA_TRUE);
+   Eina_Bool r = _iterator_int_equal(itr, base_seq_int, base_seq_int_size, EINA_FALSE);
    _iterator_int_in_own_to_check = itr;
    return r;
 }
@@ -2746,9 +2752,12 @@ Eina_Bool _dummy_test_object_eina_iterator_int_out_own(EINA_UNUSED Eo *obj, EINA
 {
    if (!itr) return EINA_FALSE;
 
-   Eina_Array *arr = _iterator_int_eina_array_new();
+   if (pd->out_array)
+     eina_array_free(pd->out_array);
 
-   *itr = eina_array_iterator_new(arr);
+   pd->out_array = _iterator_int_eina_array_new();
+
+   *itr = eina_array_iterator_new(pd->out_array);
 
    return EINA_TRUE;
 }
@@ -2786,8 +2795,11 @@ Eina_Bool _dummy_test_object_check_eina_iterator_int_return(EINA_UNUSED Eo *obj,
 
 Eina_Iterator *_dummy_test_object_eina_iterator_int_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
-   Eina_Array *arr = _iterator_int_eina_array_new();
-   return eina_array_iterator_new(arr);
+   if (pd->out_array)
+     eina_array_free(pd->out_array);
+
+   pd->out_array = _iterator_int_eina_array_new();
+   return eina_array_iterator_new(pd->out_array);
 }
 
 // String //
@@ -2853,7 +2865,7 @@ static Eina_Iterator *_iterator_str_in_own_to_check = NULL;
 
 Eina_Bool _dummy_test_object_eina_iterator_str_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Iterator *itr)
 {
-   Eina_Bool r = _iterator_str_equal(itr, base_seq_str, base_seq_str_size, EINA_TRUE);
+   Eina_Bool r = _iterator_str_equal(itr, base_seq_str, base_seq_str_size, EINA_FALSE);
    _iterator_str_in_own_to_check = itr;
    return r;
 }
@@ -2904,9 +2916,12 @@ Eina_Bool _dummy_test_object_eina_iterator_str_out_own(EINA_UNUSED Eo *obj, EINA
 {
    if (!itr) return EINA_FALSE;
 
-   Eina_Array *arr = _iterator_str_eina_array_new();
+   if (pd->out_array)
+     eina_array_free(pd->out_array);
 
-   *itr = eina_array_iterator_new(arr);
+   pd->out_array = _iterator_str_eina_array_new();
+
+   *itr = eina_array_iterator_new(pd->out_array);
 
    return EINA_TRUE;
 }
@@ -2944,8 +2959,11 @@ Eina_Bool _dummy_test_object_check_eina_iterator_str_return(EINA_UNUSED Eo *obj,
 
 Eina_Iterator *_dummy_test_object_eina_iterator_str_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
-   Eina_Array *arr = _iterator_str_eina_array_new();
-   return eina_array_iterator_new(arr);
+   if (pd->out_array)
+     eina_array_free(pd->out_array);
+
+   pd->out_array = _iterator_str_eina_array_new();
+   return eina_array_iterator_new(pd->out_array);
 }
 
 // Object //
@@ -3015,7 +3033,7 @@ static Eina_Iterator *_iterator_obj_in_own_to_check = NULL;
 
 Eina_Bool _dummy_test_object_eina_iterator_obj_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Iterator *itr)
 {
-   Eina_Bool r = _iterator_obj_equal(itr, base_seq_obj, base_seq_obj_size, EINA_TRUE);
+   Eina_Bool r = _iterator_obj_equal(itr, base_seq_obj, base_seq_obj_size, EINA_FALSE);
    _iterator_obj_in_own_to_check = itr;
    return r;
 }
@@ -3066,9 +3084,12 @@ Eina_Bool _dummy_test_object_eina_iterator_obj_out_own(EINA_UNUSED Eo *obj, EINA
 {
    if (!itr) return EINA_FALSE;
 
-   Eina_Array *arr = _iterator_obj_eina_array_new();
+   if (pd->out_array)
+     eina_array_free(pd->out_array);
 
-   *itr = eina_array_iterator_new(arr);
+   pd->out_array = _iterator_obj_eina_array_new();
+
+   *itr = eina_array_iterator_new(pd->out_array);
 
    return EINA_TRUE;
 }
@@ -3106,8 +3127,11 @@ Eina_Bool _dummy_test_object_check_eina_iterator_obj_return(EINA_UNUSED Eo *obj,
 
 Eina_Iterator *_dummy_test_object_eina_iterator_obj_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
-   Eina_Array *arr = _iterator_obj_eina_array_new();
-   return eina_array_iterator_new(arr);
+   if (pd->out_array)
+     eina_array_free(pd->out_array);
+
+   pd->out_array = _iterator_obj_eina_array_new();
+   return eina_array_iterator_new(pd->out_array);
 }
 
 //                                 //

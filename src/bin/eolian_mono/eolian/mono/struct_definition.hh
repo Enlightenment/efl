@@ -171,8 +171,7 @@ struct to_external_field_convert_generator
              return false;
         }
       else if (complex && (complex->outer.base_type == "array"
-                        || complex->outer.base_type == "list"
-                        || complex->outer.base_type == "iterator"))
+                        || complex->outer.base_type == "list"))
         {
            // Always assumes pointer
            if (!as_generator(
@@ -184,6 +183,13 @@ struct to_external_field_convert_generator
         {
            if (!as_generator(
                  indent << scope_tab << scope_tab << "_external_struct." << string << " = new " << type << "(_internal_struct." << string << ", false, false, false);\n")
+               .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
+             return false;
+        }
+      else if (complex && complex->outer.base_type == "iterator")
+        {
+           if (!as_generator(
+                 indent << scope_tab << scope_tab << "_external_struct." << string << " = new " << type << "(_internal_struct." << string << ", false);\n")
                .generate(sink, std::make_tuple(field_name, field.type, field_name), context))
              return false;
         }
