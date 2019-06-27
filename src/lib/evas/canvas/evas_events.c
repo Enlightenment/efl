@@ -4247,22 +4247,20 @@ _evas_canvas_event_key_cb(void *data, const Efl_Event *event)
 static void
 _evas_canvas_event_focus_cb(void *data, const Efl_Event *event)
 {
-   Efl_Input_Device *seat = efl_input_device_get(event->info);
+   Efl_Input_Device *seat = efl_canvas_scene_seat_default_get(event->object);
    Evas_Public_Data *e = data;
 
-   if (event->desc == EFL_EVENT_FOCUS_IN)
+   EINA_SAFETY_ON_NULL_RETURN(seat);
+
+   if (event->desc == EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN)
      {
         if (eina_list_data_find(e->focused_by, seat)) return;
         e->focused_by = eina_list_append(e->focused_by, seat);
-        evas_event_callback_call(e->evas, EVAS_CALLBACK_CANVAS_FOCUS_IN,
-                                 event->info);
      }
    else
      {
         if (!eina_list_data_find(e->focused_by, seat)) return;
         e->focused_by = eina_list_remove(e->focused_by, seat);
-        evas_event_callback_call(e->evas, EVAS_CALLBACK_CANVAS_FOCUS_OUT,
-                                 event->info);
      }
 }
 
@@ -4281,8 +4279,8 @@ EFL_CALLBACKS_ARRAY_DEFINE(_evas_canvas_event_pointer_callbacks,
 { EFL_EVENT_FINGER_UP, _evas_canvas_event_pointer_cb },
 { EFL_EVENT_KEY_DOWN, _evas_canvas_event_key_cb },
 { EFL_EVENT_KEY_UP, _evas_canvas_event_key_cb },
-{ EFL_EVENT_FOCUS_IN, _evas_canvas_event_focus_cb },
-{ EFL_EVENT_FOCUS_OUT, _evas_canvas_event_focus_cb })
+{ EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN, _evas_canvas_event_focus_cb },
+{ EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT, _evas_canvas_event_focus_cb })
 
 void
 _evas_canvas_event_init(Evas *eo_e, Evas_Public_Data *e)

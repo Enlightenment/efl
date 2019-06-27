@@ -4,6 +4,7 @@
 #include <check.h>
 #include "../efl_check.h"
 void evas_test_init(TCase *tc);
+void evas_test_focus(TCase *tc);
 void evas_test_new(TCase *tc);
 void evas_test_object(TCase *tc);
 void evas_test_textblock(TCase *tc);

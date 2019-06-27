@@ -853,9 +853,9 @@ static void
 _evas_canvas_focus_inout_dispatch(Eo *eo_e, Evas_Device *seat EINA_UNUSED,
                                   Eina_Bool in)
 {
-   efl_event_callback_call(eo_e,
-                           in ? EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN : EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT,
-                           NULL);
+   efl_event_callback_legacy_call(eo_e,
+                                  in ? EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_IN : EFL_CANVAS_SCENE_EVENT_SCENE_FOCUS_OUT,
+                                  NULL);
 }
 
 EOLIAN static void
