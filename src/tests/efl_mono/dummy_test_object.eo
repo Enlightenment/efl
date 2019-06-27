@@ -876,7 +876,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_iterator_int_in_own {
          params {
-            @in itr: iterator<free(ptr(int),free) @owned> @owned;
+            @in itr: iterator<free(ptr(int),free)> @owned;
          }
          return: bool;
       }
@@ -896,7 +896,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_iterator_int_out_own {
          params {
-            @out itr: iterator<free(ptr(int),free) @owned> @owned;
+            @out itr: iterator<free(ptr(int),free)> @owned;
          }
          return: bool;
       }
@@ -909,7 +909,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       eina_iterator_int_return_own {
-         return: iterator<free(ptr(int),free) @owned> @owned;
+         return: iterator<free(ptr(int),free)> @owned;
       }
 
       /* String */
@@ -922,7 +922,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_iterator_str_in_own {
          params {
-            @in itr: iterator<mstring @owned> @owned;
+            @in itr: iterator<mstring> @owned;
          }
          return: bool;
       }
@@ -942,7 +942,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_iterator_str_out_own {
          params {
-            @out itr: iterator<mstring @owned> @owned;
+            @out itr: iterator<mstring> @owned;
          }
          return: bool;
       }
@@ -955,7 +955,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       eina_iterator_str_return_own {
-         return: iterator<mstring @owned> @owned;
+         return: iterator<mstring> @owned;
       }
 
       /* Object */
@@ -968,7 +968,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_iterator_obj_in_own {
          params {
-            @in itr: iterator<Dummy.Numberwrapper @owned> @owned;
+            @in itr: iterator<Dummy.Numberwrapper> @owned;
          }
          return: bool;
       }
@@ -988,7 +988,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_iterator_obj_out_own {
          params {
-            @out itr: iterator<Dummy.Numberwrapper @owned> @owned;
+            @out itr: iterator<Dummy.Numberwrapper> @owned;
          }
          return: bool;
       }
@@ -1001,7 +1001,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       eina_iterator_obj_return_own {
-         return: iterator<Dummy.Numberwrapper @owned> @owned;
+         return: iterator<Dummy.Numberwrapper> @owned;
       }
 
      /* Function Pointer */
