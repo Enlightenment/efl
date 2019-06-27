@@ -102,7 +102,13 @@ struct unpack_event_args_visitor
       if (eina::optional<bool> b = call_match(match_table, filter_func, accept_func))
         return *b;
       else
-        return as_generator("default(" + arg_type + ")").generate(sink, attributes::unused, *context);
+        {
+           // Type defined in Eo is passed here. (e.g. enum type defined in Eo)
+           // Uses conversion from IntPtr with type casting to the given type.
+           return as_generator(
+                " (" << arg_type << ")evt.Info"
+              ).generate(sink, attributes::unused, *context);
+        }
    }
    bool operator()(grammar::attributes::klass_name const& cls) const
    {
