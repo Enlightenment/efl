@@ -183,6 +183,8 @@ _eet_for_style_property(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "r", r, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "g", g, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "b", b, EET_T_INT);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "opacity", opacity, EET_T_INT);
+
    // for fill
    EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "fill.flags", fill.flags, EET_T_INT);
    EET_DATA_DESCRIPTOR_ADD_BASIC(eet, Svg_Style_Property, "fill.paint.r", fill.paint.r, EET_T_INT);
@@ -731,6 +733,15 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
                           style->fill.paint.b, style->fill.opacity);
      }
 
+   //apply node opacity
+   if (style->opacity < 255)
+     {
+        int r, g, b, a;
+        efl_gfx_color_get(vg, &r, &g, &b, &a);
+        float fa = ((float) style->opacity / 255);
+        efl_gfx_color_set(vg, ((float) r) * fa, ((float) g) * fa, ((float) b) * fa, ((float) a) * fa);
+     }
+
    efl_gfx_shape_stroke_width_set(vg, style->stroke.width);
    efl_gfx_shape_stroke_cap_set(vg, style->stroke.cap);
    efl_gfx_shape_stroke_join_set(vg, style->stroke.join);
@@ -906,6 +917,7 @@ _create_node(Svg_Node *parent, Svg_Node_Type type)
    // default line join is miter
    node->style->stroke.join = EFL_GFX_JOIN_MITER;
    node->style->stroke.scale = 1.0;
+   node->style->opacity = 255;
 
    node->parent = parent;
    node->type = type;
