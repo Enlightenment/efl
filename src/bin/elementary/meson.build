@@ -158,6 +158,7 @@ elementary_test_src = [
   'test_ui_relative_layout.c',
   'test_ui_item_container.c',
   'test_ui_items.c',
+  'test_ui_frame.c',
   'test.h'
 ]
 
