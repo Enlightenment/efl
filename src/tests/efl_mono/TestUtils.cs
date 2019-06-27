@@ -37,46 +37,46 @@ public static class Test
             throw new AssertionException($"Assertion failed: {file}:{line} ({member}) {msg}");
     }
 
-    /// <summary> Asserts if expected is equal to actual, using expected.Equals(actual).</summary>
-    public static void AssertEquals<T>(T expected, T actual, String msg = null,
+    /// <summary> Asserts if lhs is equal to rhs, using lhs.Equals(rhs).</summary>
+    public static void AssertEquals<T>(T lhs, T rhs, String msg = null,
                               [CallerLineNumber] int line = 0,
                               [CallerFilePath] string file = null,
                               [CallerMemberName] string member = null)
     {
-        if (expected == null && actual == null)
+        if (lhs == null && rhs == null)
             return;
-        if (expected == null || !expected.Equals(actual))
+        if (lhs == null || !lhs.Equals(rhs))
         {
             if (file == null)
                 file = "(unknown file)";
             if (member == null)
                 member = "(unknown member)";
             if (msg == null || msg.Length == 0)
-                msg = $"Expected \"{expected}\", actual \"{actual}\"";
+                msg = $"Left hand side \"{lhs}\", right hand side \"{rhs}\"";
             throw new AssertionException($"{file}:{line} ({member}) {msg}");
         }
     }
 
-    /// <summary> Asserts if expected is not equal to actual, using !expected.Equals(actual).</summary>
-    public static void AssertNotEquals<T>(T expected, T actual, String msg = null,
+    /// <summary> Asserts if lhs is not equal to rhs, using !lhs.Equals(rhs).</summary>
+    public static void AssertNotEquals<T>(T lhs, T rhs, String msg = null,
                               [CallerLineNumber] int line = 0,
                               [CallerFilePath] string file = null,
                               [CallerMemberName] string member = null)
     {
-        if (expected == null ? actual == null : expected.Equals(actual))
+        if (lhs == null ? rhs == null : lhs.Equals(rhs))
         {
             if (file == null)
                 file = "(unknown file)";
             if (member == null)
                 member = "(unknown member)";
             if (msg == null || msg.Length == 0)
-                msg = $"Expected \"{expected}\" shouldn't be equal to actual \"{actual}\"";
+                msg = $"Left hand side \"{lhs}\" shouldn't be equal to right hand side \"{rhs}\"";
             throw new AssertionException($"{file}:{line} ({member}) {msg}");
         }
     }
 
-    /// <summary> Asserts if actual is near enough of expected, using the optional tolerance (default 0.00001).</summary>
-    public static void AssertAlmostEquals(double expected, double actual, double tolerance=0.00001,
+    /// <summary> Asserts if rhs is near enough of lhs, using the optional tolerance (default 0.00001).</summary>
+    public static void AssertAlmostEquals(double lhs, double rhs, double tolerance=0.00001,
                               String msg = null,
                               [CallerLineNumber] int line = 0,
                               [CallerFilePath] string file = null,
@@ -86,10 +86,10 @@ public static class Test
             file = "(unknown file)";
         if (member == null)
             member = "(unknown member)";
-        double difference = Math.Abs(expected - actual);
+        double difference = Math.Abs(lhs - rhs);
         if (difference > tolerance) {
             if (msg == null || msg.Length == 0)
-                msg = $"Expected \"{expected}\". Difference: \"{difference}\"";
+                msg = $"Left hand side \"{lhs}\". Difference: \"{difference}\"";
             throw new AssertionException($"{file}:{line} ({member}) {msg}");
         }
     }
