@@ -1367,7 +1367,7 @@ struct native_convert_return_generator
 
            // Iterators and Accessors can't own their content.
            if (ret_type.c_type != "Eina_Iterator *" && ret_type.c_type != "const Eina_Iterator *"
-               || ret_type.c_type != "Eina_Accessor *" && ret_type.c_type != "const Eina_Accessor *"
+               && ret_type.c_type != "Eina_Accessor *" && ret_type.c_type != "const Eina_Accessor *"
               )
              {
                 if (complex->subtypes.front().has_own && !as_generator("_ret_var.OwnContent = false; ")
