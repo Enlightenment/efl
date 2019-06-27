@@ -271,6 +271,7 @@ struct _Svg_Style_Property
    int                r;
    int                g;
    int                b;
+   int                opacity;
 };
 
 struct _Svg_Node
