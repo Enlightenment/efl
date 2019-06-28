@@ -69,7 +69,7 @@ _dummy_constructible_object_internal_object_get(const Eo *obj EINA_UNUSED, Dummy
 
 
 EOLIAN static int
-_dummy_constructible_object_multiply_integer_value(const Eo *obj EINA_UNUSED, Dummy_Constructible_Object_Data *pd, int v)
+_dummy_constructible_object_multiply_integer_value(const Eo *obj EINA_UNUSED, Dummy_Constructible_Object_Data *pd EINA_UNUSED, int v)
 {
    return 2 * v;
 }

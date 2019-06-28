@@ -732,7 +732,7 @@ static class ValueTypeBridge
         {
             return NativeToManaged[native];
         }
-        catch (KeyNotFoundException ex)
+        catch (KeyNotFoundException)
         {
             var name_ptr = eina_value_type_name_get(native);
             var name = Marshal.PtrToStringAnsi(name_ptr);
