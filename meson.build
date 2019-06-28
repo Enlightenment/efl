@@ -8,11 +8,6 @@ if host_machine.system() == 'darwin'
   add_languages('objc')
 endif
 
-clean_check = run_command('meson/clean_check.sh')
-if clean_check.returncode() == 0
-  error('Meson build requires a clean source tree')
-endif
-
 pkgconfig = import('pkgconfig')
 
 test_env = environment()
