@@ -12,9 +12,9 @@ namespace Eo
 
 public abstract class EoWrapper : IWrapper, IDisposable
 {
-    protected readonly object eventLock = new object();
-    protected bool inherited = false;
-    protected System.IntPtr handle = IntPtr.Zero;
+    protected readonly object eflBindingEventLock = new object();
+    private bool generated = true;
+    private System.IntPtr handle = IntPtr.Zero;
 
     private static Efl.EventCb ownershipUniqueDelegate = new Efl.EventCb(OwnershipUniqueCallback);
     private static Efl.EventCb ownershipSharedDelegate = new Efl.EventCb(OwnershipSharedCallback);
@@ -32,7 +32,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
     /// <param name="ch">Tag struct storing the native handle of the object being constructed.</param>
     protected EoWrapper(ConstructingHandle ch)
     {
-        inherited = true;
+        generated = false;
         handle = Efl.Eo.Globals.efl_constructor(Efl.Eo.Globals.efl_super(ch.NativeHandle, Efl.Eo.Globals.efl_class_get(ch.NativeHandle)));
         if (handle == IntPtr.Zero)
         {
@@ -47,11 +47,12 @@ public abstract class EoWrapper : IWrapper, IDisposable
     }
 
     /// <summary>Initializes a new instance of the <see cref="Object"/> class.
-    /// Internal usage: Constructs an instance from a native pointer. This is used when interacting with C code and should not be used directly.</summary>
+    /// Internal usage: Constructs an instance from a native pointer. This is used when interacting with C code and should not be used directly.
+    /// Do not implement this constructor.</summary>
     /// <param name="raw">The native pointer to be wrapped.</param>
-    protected EoWrapper(System.IntPtr raw)
+    protected EoWrapper(Efl.Eo.Globals.WrappingHandle wh)
     {
-        handle = raw;
+        handle = wh.NativeHandle;
         AddWrapperSupervisor();
     }
 
@@ -67,9 +68,9 @@ public abstract class EoWrapper : IWrapper, IDisposable
                         [CallerFilePath] string file = null,
                         [CallerLineNumber] int line = 0)
     {
-        inherited = ((object)this).GetType() != managedType;
+        generated = ((object)this).GetType() == managedType;
         IntPtr actual_klass = baseKlass;
-        if (inherited)
+        if (!generated)
         {
             actual_klass = Efl.Eo.ClassRegister.GetInheritKlassOrRegister(baseKlass, ((object)this).GetType());
         }
@@ -82,7 +83,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
             parent_ptr = parent.NativeHandle;
         }
 
-        if (!inherited)
+        if (generated)
         {
             handle = Efl.Eo.Globals._efl_add_internal_start(file, line, actual_klass, parent_ptr, 1, 0);
         }
@@ -121,6 +122,11 @@ public abstract class EoWrapper : IWrapper, IDisposable
     public abstract System.IntPtr NativeClass
     {
         get;
+    }
+
+    protected bool IsGeneratedBindingClass
+    {
+        get { return generated; }
     }
 
     /// <summary>Releases the underlying native instance.</summary>
@@ -292,7 +298,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
             NativeHandle = h;
         }
 
-        public IntPtr NativeHandle { get; set; }
+        public IntPtr NativeHandle { get; private set; }
     }
 
     public abstract class NativeMethods : Efl.Eo.NativeClass
