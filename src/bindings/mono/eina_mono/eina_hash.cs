@@ -363,7 +363,9 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
 
     private static bool ForceRefKey<T>()
     {
-        return (!typeof(T).IsValueType) && (typeof(T) != typeof(string));
+        return (!typeof(T).IsValueType)
+               && (typeof(T) != typeof(string))
+               && (typeof(T) != typeof(Eina.Stringshare));
     }
 
     private static IntPtr CopyNativeObject<T>(T value, bool forceRef)
@@ -439,7 +441,7 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         IntPtr old = eina_hash_set(Handle, nk, nv);
         FreeNativeIndirection<TKey>(gchnk, ForceRefKey<TKey>());
         FreeNativeIndirection<TValue>(gchnv, false);
-        if (OwnValue || old != IntPtr.Zero)
+        if (OwnValue && old != IntPtr.Zero)
         {
             NativeFree<TValue>(old);
         }

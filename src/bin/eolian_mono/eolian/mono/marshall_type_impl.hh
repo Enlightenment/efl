@@ -25,6 +25,7 @@ struct marshall_type_visitor_generate
    bool is_out;
    bool is_return;
    bool is_ptr;
+   bool is_special_subtype;
 
    typedef marshall_type_visitor_generate<OutputIterator, Context> visitor_type;
    typedef bool result_type;
@@ -70,12 +71,16 @@ struct marshall_type_visitor_generate
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
+                if (is_special_subtype)
+                  return replace_base_type(r, "Eina.Stringshare");
                 return replace_base_type(r, "System.String");
               }}
            , {"stringshare", false, [&]
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
+                if (is_special_subtype)
+                  return replace_base_type(r, "Eina.Stringshare");
                 return replace_base_type(r, "System.String");
               }}
            , {"strbuf", nullptr, [&]
@@ -171,16 +176,40 @@ struct marshall_type_visitor_generate
            regular_type_def r = regular;
            r.base_type = "System.IntPtr";
            r.namespaces.clear();
-           return visitor_generate<OutputIterator, Context>{sink, context, c_type, is_out, is_return, is_ptr}(r);
+           return visitor_generate<OutputIterator, Context>{
+             sink
+             , context
+             , c_type
+             , is_out
+             , is_return
+             , is_ptr
+             , is_special_subtype
+           }(r);
         }
       else
         {
-          return visitor_generate<OutputIterator, Context>{sink, context, c_type, is_out, is_return, is_ptr}(regular);
+          return visitor_generate<OutputIterator, Context>{
+            sink
+            , context
+            , c_type
+            , is_out
+            , is_return
+            , is_ptr
+            , is_special_subtype
+          }(regular);
         }
    }
    bool operator()(attributes::klass_name klass_name) const
    {
-     return visitor_generate<OutputIterator, Context>{sink, context, c_type, is_out, is_return, is_ptr}(klass_name);
+     return visitor_generate<OutputIterator, Context>{
+       sink
+       , context
+       , c_type
+       , is_out
+       , is_return
+       , is_ptr
+       , is_special_subtype
+     }(klass_name);
    }
    bool operator()(attributes::complex_type_def const& complex) const
    {
@@ -225,7 +254,7 @@ struct marshall_type_visitor_generate
         {
           regular_type_def no_pointer_regular = complex.outer;
           return visitor_type{sink, context, c_type, false}(no_pointer_regular)
-            && as_generator("<" << (type % ", ") << ">").generate(sink, complex.subtypes, *context);
+            && as_generator("<" << (type(false, false, true) % ", ") << ">").generate(sink, complex.subtypes, *context);
         };
 
       if(eina::optional<bool> b = call_match
@@ -250,7 +279,15 @@ struct marshall_type_visitor_generate
            return *b;
         }
 
-     return visitor_generate<OutputIterator, Context>{sink, context, c_type, is_out, is_return, is_ptr}(complex);
+     return visitor_generate<OutputIterator, Context>{
+       sink
+       , context
+       , c_type
+       , is_out
+       , is_return
+       , is_ptr
+       , is_special_subtype
+     }(complex);
    }
 };
 } }

@@ -494,7 +494,7 @@ public class Globals
     {
         foreach (IntPtr ptr in dict.Values)
         {
-            Eina.Stringshare.eina_stringshare_del(ptr);
+            Eina.NativeMethods.eina_stringshare_del(ptr);
         }
     }
 
@@ -1148,13 +1148,13 @@ public class StringsharePassOwnershipMarshaler : ICustomMarshaler
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
         var ret = Eina.StringConversion.NativeUtf8ToManagedString(pNativeData);
-        Eina.Stringshare.eina_stringshare_del(pNativeData);
+        Eina.NativeMethods.eina_stringshare_del(pNativeData);
         return ret;
     }
 
     public IntPtr MarshalManagedToNative(object managedObj)
     {
-        return Eina.Stringshare.eina_stringshare_add((string)managedObj);
+        return Eina.MemoryNative.AddStringshare((string)managedObj);
     }
 
     public void CleanUpNativeData(IntPtr pNativeData)
@@ -1193,7 +1193,7 @@ public class StringshareKeepOwnershipMarshaler : ICustomMarshaler
 
     public IntPtr MarshalManagedToNative(object managedObj)
     {
-        return Eina.Stringshare.eina_stringshare_add((string)managedObj);
+        return Eina.MemoryNative.AddStringshare((string)managedObj);
     }
 
     public void CleanUpNativeData(IntPtr pNativeData)

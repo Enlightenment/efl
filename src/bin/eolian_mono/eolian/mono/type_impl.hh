@@ -99,6 +99,7 @@ struct visitor_generate
    bool is_return;
    bool is_ptr;
    mutable bool is_optional;
+   bool is_special_subtype;
 
    typedef visitor_generate<OutputIterator, Context> visitor_type;
    typedef bool result_type;
@@ -205,6 +206,8 @@ struct visitor_generate
               {
                 regular_type_def r = regular;
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
+                if (is_special_subtype)
+                  return replace_base_type(r, "Eina.Stringshare");
                 return replace_base_type(r, "System.String");
               }}
            , {"strbuf", nullptr, [&]
@@ -400,7 +403,7 @@ struct visitor_generate
           // if(is_out)
           //   pointers.push_back({{attributes::qualifier_info::is_none, {}}, true});
           return visitor_type{sink, context, c_type, false}(no_pointer_regular)
-            && as_generator("<" << (type % ", ") << ">").generate(sink, complex.subtypes, *context)
+            && as_generator("<" << (type(false, false, true) % ", ") << ">").generate(sink, complex.subtypes, *context)
           ;
             // && detail::generate_pointers(sink, pointers, *context, false);
         };

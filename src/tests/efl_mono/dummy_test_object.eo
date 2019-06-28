@@ -468,6 +468,52 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: array<mstring @owned> @owned;
       }
 
+      /* Eina_Stringshare */
+      eina_array_strshare_in {
+         params {
+            @in arr: array<stringshare>;
+         }
+         return: bool;
+      }
+
+      eina_array_strshare_in_own {
+         params {
+            @in arr: array<stringshare @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_array_strshare_in_own {
+         return: bool;
+      }
+
+      eina_array_strshare_out {
+         params {
+            @out arr: array<stringshare>;
+         }
+         return: bool;
+      }
+      check_eina_array_strshare_out {
+         return: bool;
+      }
+
+      eina_array_strshare_out_own {
+         params {
+            @out arr: array<stringshare @owned> @owned;
+         }
+         return: bool;
+      }
+
+      eina_array_strshare_return {
+         return: array<stringshare>;
+      }
+      check_eina_array_strshare_return {
+         return: bool;
+      }
+
+      eina_array_strshare_return_own {
+         return: array<stringshare @owned> @owned;
+      }
+
       /* Object */
       eina_array_obj_in {
          params {
@@ -613,6 +659,52 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_list_str_return_own {
          return: list<mstring @owned> @owned;
+      }
+
+      /* Eina_Stringshare */
+      eina_list_strshare_in {
+         params {
+            @in lst: list<stringshare>;
+         }
+         return: bool;
+      }
+
+      eina_list_strshare_in_own {
+         params {
+            @in lst: list<stringshare @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_list_strshare_in_own {
+         return: bool;
+      }
+
+      eina_list_strshare_out {
+         params {
+            @out lst: list<stringshare>;
+         }
+         return: bool;
+      }
+      check_eina_list_strshare_out {
+         return: bool;
+      }
+
+      eina_list_strshare_out_own {
+         params {
+            @out lst: list<stringshare @owned> @owned;
+         }
+         return: bool;
+      }
+
+      eina_list_strshare_return {
+         return: list<stringshare>;
+      }
+      check_eina_list_strshare_return {
+         return: bool;
+      }
+
+      eina_list_strshare_return_own {
+         return: list<stringshare @owned> @owned;
       }
 
       /* Object */
@@ -771,6 +863,58 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: hash<string, mstring @owned> @owned;
       }
       check_eina_hash_str_return_own {
+         return: bool;
+      }
+
+      // Eina_Stringshare //
+      eina_hash_strshare_in {
+         params {
+            @in hsh: hash<stringshare, stringshare>;
+         }
+         return: bool;
+      }
+
+      eina_hash_strshare_in_own {
+         params {
+            @in hsh: hash<stringshare, stringshare @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_hash_strshare_in_own {
+         return: bool;
+      }
+
+      eina_hash_strshare_out {
+         params {
+            @out hsh: hash<stringshare, stringshare>;
+         }
+         return: bool;
+      }
+      check_eina_hash_strshare_out {
+         return: bool;
+      }
+
+      eina_hash_strshare_out_own {
+         params {
+            @out hsh: hash<stringshare, stringshare @owned> @owned;
+         }
+         return: bool;
+      }
+      check_eina_hash_strshare_out_own {
+         return: bool;
+      }
+
+      eina_hash_strshare_return {
+         return: hash<stringshare, stringshare>;
+      }
+      check_eina_hash_strshare_return {
+         return: bool;
+      }
+
+      eina_hash_strshare_return_own {
+         return: hash<stringshare, stringshare @owned> @owned;
+      }
+      check_eina_hash_strshare_return_own {
          return: bool;
       }
 
@@ -956,6 +1100,52 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_iterator_str_return_own {
          return: iterator<mstring> @owned;
+      }
+
+      /* Eina_Stringshare */
+      eina_iterator_strshare_in {
+         params {
+            @in itr: iterator<stringshare>;
+         }
+         return: bool;
+      }
+
+      eina_iterator_strshare_in_own {
+         params {
+            @in itr: iterator<stringshare> @owned;
+         }
+         return: bool;
+      }
+      check_eina_iterator_strshare_in_own {
+         return: bool;
+      }
+
+      eina_iterator_strshare_out {
+         params {
+            @out itr: iterator<stringshare>;
+         }
+         return: bool;
+      }
+      check_eina_iterator_strshare_out {
+         return: bool;
+      }
+
+      eina_iterator_strshare_out_own {
+         params {
+            @out itr: iterator<stringshare> @owned;
+         }
+         return: bool;
+      }
+
+      eina_iterator_strshare_return {
+         return: iterator<stringshare>;
+      }
+      check_eina_iterator_strshare_return {
+         return: bool;
+      }
+
+      eina_iterator_strshare_return_own {
+         return: iterator<stringshare> @owned;
       }
 
       /* Object */

@@ -26,23 +26,41 @@ struct marshall_annotation_visitor_generate;
  */
 struct marshall_type_generator
 {
-   marshall_type_generator(bool is_return = false)
-     : is_return(is_return) {}
-  
+   marshall_type_generator(bool is_return = false, bool is_special_subtype = false)
+     : is_return(is_return)
+     , is_special_subtype(is_special_subtype)
+   {}
+
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::type_def const& type, Context const& context) const
    {
-      return type.original_type.visit(detail::marshall_type_visitor_generate<OutputIterator, Context>{sink, &context, type.c_type, false, is_return, type.is_ptr });
+      return type.original_type.visit(detail::marshall_type_visitor_generate<OutputIterator, Context>{
+        sink
+        , &context
+        , type.c_type
+        , false
+        , is_return
+        , type.is_ptr
+        , is_special_subtype
+      });
    }
    /* Some types may require a different conversion when they are in @out parameters. */
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-      return param.type.original_type.visit(detail::marshall_type_visitor_generate<OutputIterator, Context>{sink, &context, param.type.c_type
-            , param.direction != attributes::parameter_direction::in, false, param.type.is_ptr});
+      return param.type.original_type.visit(detail::marshall_type_visitor_generate<OutputIterator, Context>{
+        sink
+        , &context
+        , param.type.c_type
+        , param.direction != attributes::parameter_direction::in
+        , false
+        , param.type.is_ptr
+        , is_special_subtype
+      });
    }
 
    bool is_return;
+   bool is_special_subtype;
 };
 
 /*
@@ -73,9 +91,9 @@ struct marshall_annotation_generator
 
 struct marshall_type_terminal
 {
-  marshall_type_generator const operator()(bool is_return) const
+  marshall_type_generator const operator()(bool is_return, bool is_special_subtype = false) const
   {
-    return marshall_type_generator(is_return);
+    return marshall_type_generator(is_return, is_special_subtype);
   }
 } const marshall_type = {};
 

@@ -88,7 +88,7 @@ struct to_internal_field_convert_generator
       else if (regular && regular->base_type == "stringshare")
         {
            if (!as_generator(
-                 indent << scope_tab << scope_tab << "_internal_struct." << string << " = Eina.Stringshare.eina_stringshare_add(_external_struct." << string << ");\n")
+                 indent << scope_tab << scope_tab << "_internal_struct." << string << " = Eina.MemoryNative.AddStringshare(_external_struct." << string << ");\n")
                .generate(sink, std::make_tuple(field_name, field_name), context))
              return false;
         }

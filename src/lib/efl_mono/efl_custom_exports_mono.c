@@ -125,6 +125,12 @@ EAPI void efl_mono_native_free_ref(void **ptr)
    free(*ptr);
 }
 
+EAPI void efl_mono_native_stringshare_del_ref(void **str)
+{
+   if (!str) return;
+   eina_stringshare_del(*str);
+}
+
 EAPI void *efl_mono_native_alloc_copy(const void *val, unsigned int size)
 {
     if (!val) return NULL;
@@ -159,6 +165,11 @@ EAPI Eina_Compare_Cb efl_mono_native_str_compare_addr_get()
 EAPI Eina_Free_Cb efl_mono_native_free_addr_get()
 {
     return (Eina_Free_Cb)free;
+}
+
+EAPI Eina_Free_Cb efl_mono_native_stringshare_del_addr_get()
+{
+    return (Eina_Free_Cb)eina_stringshare_del;
 }
 
 EAPI Eina_Free_Cb efl_mono_native_efl_unref_addr_get()
