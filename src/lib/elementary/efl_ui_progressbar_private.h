@@ -51,6 +51,7 @@ struct _Efl_Ui_Progressbar_Data
    Eina_Bool             is_legacy_format_cb : 1;
    Eina_Bool             has_status_text_part : 1;
    Eina_Bool             has_cur_progressbar_part : 1;
+   Eina_Bool             show_progress_label : 1; /**< Show a progress text label besides the progressbar */
 };
 
 struct _Efl_Ui_Progress_Status

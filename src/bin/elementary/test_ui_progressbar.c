@@ -9,6 +9,10 @@ typedef struct _pbdata
    Eo *win;
    Eo *pb1;
    Eo *pb2;
+   Eo *pb3;
+   Eo *pb4;
+   Eo *pb5;
+   Eo *check;
    Eo *btn_start;
    Eo *btn_stop;
    Eo *btn_reset;
@@ -45,6 +49,9 @@ _pb_timer_cb(void *d)
      {
         progress_val += 1;
         efl_ui_range_value_set(pd->pb2, progress_val);
+        efl_ui_range_value_set(pd->pb3, progress_val);
+        efl_ui_range_value_set(pd->pb4, progress_val);
+        efl_ui_range_value_set(pd->pb5, progress_val);
      }
 
    if (!_set_progress_val(pd->pb1, 0.5))
@@ -97,6 +104,9 @@ _reset_btn_clicked_cb(void *d, const Efl_Event *ev EINA_UNUSED)
 
    efl_ui_range_value_set(pd->pb1, 0.0);
    efl_ui_range_value_set(pd->pb2, 0.0);
+   efl_ui_range_value_set(pd->pb3, 0.0);
+   efl_ui_range_value_set(pd->pb4, 0.0);
+   efl_ui_range_value_set(pd->pb5, 0.0);
 }
 
 static void
@@ -107,6 +117,28 @@ _win_delete_req_cb(void *d, const Efl_Event *ev EINA_UNUSED)
    if (pd->timer) ecore_timer_del(pd->timer);
    efl_unref(pd->win);
    free(pd);
+}
+
+static void
+_custom_format_cb(void *data EINA_UNUSED, Eina_Strbuf *str, const Eina_Value value)
+{
+   double v;
+   eina_value_get(&value, &v);
+   if (v < 25.f) eina_strbuf_append_printf(str, "Starting up...");
+   else if (v < 50.f) eina_strbuf_append_printf(str, "Working...");
+   else if (v < 75.f) eina_strbuf_append_printf(str, "Getting there...");
+   else if (v < 100.f) eina_strbuf_append_printf(str, "Almost done...");
+   else eina_strbuf_append_printf(str, "Done!");
+}
+
+static void
+_toggle_progress_label(void *data, const Efl_Event *ev)
+{
+   Efl_Ui_Check *check = ev->object;
+   Efl_Ui_Progressbar *pb3 = data;
+   Eina_Bool state = efl_ui_check_selected_get(check);
+
+   efl_ui_progressbar_show_progress_label_set(pb3, state);
 }
 
 void
@@ -151,6 +183,37 @@ test_ui_progressbar(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_inf
                      efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(250, 20)),
                      efl_ui_range_limits_set(efl_added, 10, 100),
                      efl_ui_range_value_set(efl_added, 10)
+                    );
+
+   pd->pb3 = efl_add(EFL_UI_PROGRESSBAR_CLASS, bx,
+                     efl_pack(bx, efl_added),
+                     efl_text_set(efl_added, "Toggle progress label"),
+                     efl_ui_range_limits_set(efl_added, 0, 100),
+                     efl_ui_progressbar_show_progress_label_set(efl_added, EINA_FALSE),
+                     efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(250, 20))
+                    );
+   pd->check = efl_add(EFL_UI_CHECK_CLASS, bx,
+                       efl_pack(bx, efl_added),
+                       efl_event_callback_add(efl_added, EFL_UI_CHECK_EVENT_SELECTED_CHANGED,
+                                              _toggle_progress_label, pd->pb3),
+                       efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(250, 20))
+                      );
+   efl_text_set(pd->check, "Show progress label of above progressbar"),
+
+   pd->pb4 = efl_add(EFL_UI_PROGRESSBAR_CLASS, bx,
+                     efl_pack(bx, efl_added),
+                     efl_text_set(efl_added, "Custom string"),
+                     efl_ui_range_limits_set(efl_added, 0, 100),
+                     efl_ui_format_string_set(efl_added, "%d rabbits"),
+                     efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(250, 20))
+                    );
+
+   pd->pb5 = efl_add(EFL_UI_PROGRESSBAR_CLASS, bx,
+                     efl_pack(bx, efl_added),
+                     efl_text_set(efl_added, "Custom func"),
+                     efl_ui_range_limits_set(efl_added, 0, 100),
+                     efl_ui_format_cb_set(efl_added, NULL, _custom_format_cb, NULL),
+                     efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(250, 20))
                     );
 
    btbx = efl_add(EFL_UI_BOX_CLASS, bx,

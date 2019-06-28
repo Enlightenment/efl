@@ -73,7 +73,7 @@ _units_set(Evas_Object *obj)
 {
    EFL_UI_PROGRESSBAR_DATA_GET(obj, sd);
 
-   if (sd->format_cb)
+   if (sd->show_progress_label && sd->format_cb)
      {
         Eina_Value val;
 
@@ -240,7 +240,7 @@ _efl_ui_progressbar_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *
         if (sd->pulse_state)
           elm_layout_signal_emit(obj, "elm,state,pulse,start", "elm");
 
-        if (sd->format_cb && (!sd->pulse))
+        if (sd->show_progress_label && (!sd->pulse))
           elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
      }
    else
@@ -253,7 +253,7 @@ _efl_ui_progressbar_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *
         if (sd->pulse_state)
           elm_layout_signal_emit(obj, "efl,state,pulse,start", "efl");
 
-        if (sd->format_cb && (!sd->pulse))
+        if (sd->show_progress_label && (!sd->pulse))
           elm_layout_signal_emit(obj, "efl,state,units,visible", "efl");
      }
    sd->has_status_text_part = edje_object_part_exists(obj, statuspart[elm_widget_is_legacy(obj)]);
@@ -415,6 +415,7 @@ _efl_ui_progressbar_efl_object_constructor(Eo *obj, Efl_Ui_Progressbar_Data *_pd
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_PROGRESS_BAR);
    efl_ui_range_limits_set(obj, 0.0, 1.0);
+   efl_ui_progressbar_show_progress_label_set(obj, EINA_TRUE);
    return obj;
 }
 
@@ -747,6 +748,29 @@ _efl_ui_progressbar_part_efl_ui_range_display_range_limits_get(const Eo *obj, vo
              break;
           }
      }
+}
+
+EOLIAN static void
+_efl_ui_progressbar_show_progress_label_set(Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *pd, Eina_Bool show)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   char signal_name[32];
+   const char *ns = elm_widget_is_legacy(obj) ? "elm" : "efl";
+
+   pd->show_progress_label = show;
+
+   snprintf(signal_name, sizeof(signal_name), "%s,state,units,%s", ns,
+            show ? "visible" : "hidden");
+   elm_layout_signal_emit(obj, signal_name, ns);
+   edje_object_message_signal_process(wd->resize_obj);
+   _units_set(obj);
+   elm_layout_sizing_eval(obj);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_progressbar_show_progress_label_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *pd)
+{
+   return pd->show_progress_label;
 }
 
 #include "efl_ui_progressbar_part.eo.c"

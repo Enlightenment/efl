@@ -41,6 +41,16 @@ class @beta Efl.Ui.Progressbar extends Efl.Ui.Layout_Base implements Efl.Ui.Rang
            state: bool; [[$true, to start the pulsing animation, $false to stop it]]
          }
       }
+      @property show_progress_label {
+         [[Whether a textual progress label is shown alongside the progressbar to give an exact
+           numerical indication of the current progress.
+
+           Not to be confused with the widget label set through @Efl.Text.text.
+         ]]
+         values {
+           show: bool; [[$true to show the progress label.]]
+         }
+      }
    }
    implements {
       Efl.Object.constructor;

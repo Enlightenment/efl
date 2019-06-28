@@ -142,6 +142,7 @@ efl_ui_suite_src = [
   'efl_ui_test_active_view.c',
   'efl_ui_test_check.c',
   'efl_ui_test_radio_group.c',
+  'efl_ui_test_progressbar.c',
 ]
 
 efl_ui_suite = executable('efl_ui_suite',
