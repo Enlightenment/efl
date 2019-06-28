@@ -58,6 +58,12 @@ typedef struct _Size_Params
 
 #define PAGE_NUM 3
 
+static void
+page_clicked_cb(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
+{
+   printf("Button Page is clicked!\n");
+}
+
 static Eo *
 view_add(View_Type p, Eo *parent)
 {
@@ -95,6 +101,7 @@ view_add(View_Type p, Eo *parent)
         case BUTTON:
           page = efl_add(EFL_UI_BUTTON_CLASS, parent,
                          efl_text_set(efl_added, "Button Page"));
+          efl_event_callback_add(page, EFL_UI_EVENT_CLICKED, page_clicked_cb, NULL);
           efl_gfx_hint_fill_set(page, EINA_TRUE, EINA_TRUE);
           break;
 

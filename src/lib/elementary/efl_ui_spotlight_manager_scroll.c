@@ -127,6 +127,10 @@ _mouse_move_cb(void *data,
    pos = efl_input_pointer_position_get(ev);
    pos_y_diff = pd->mouse_move.mouse_start.x - pos.x;
 
+   //Set input processed not to cause clicked event to content button.
+   if (!efl_input_processed_get(ev))
+     efl_input_processed_set(ev, EINA_TRUE);
+
    pd->transition.active = EINA_TRUE;
    pd->transition.progress = (double)pos_y_diff / (double)pd->page_size.w;
 
