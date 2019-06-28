@@ -166,6 +166,16 @@ EAPI Eina_Free_Cb efl_mono_native_efl_unref_addr_get()
     return (Eina_Free_Cb)efl_mono_thread_safe_efl_unref;
 }
 
+static Eo *_efl_mono_avoid_top_level_constructor_cb(void *data EINA_UNUSED, Eo *obj)
+{
+   return efl_constructor(efl_super(obj, efl_class_get(obj)));
+}
+
+EAPI Efl_Substitute_Ctor_Cb efl_mono_avoid_top_level_constructor_callback_addr_get()
+{
+   return &_efl_mono_avoid_top_level_constructor_cb;
+}
+
 // Iterator Wrapper //
 
 typedef struct _Eina_Iterator_Wrapper_Mono

@@ -1,0 +1,53 @@
+class Dummy.Constructible_Object extends Efl.Object {
+   methods {
+      construct_type_and_store {
+         params {
+            @in type: const(Efl.Class);
+         }
+         return: Efl.Object;
+      }
+      increment_default_construction_count {
+      }
+      increment_special_construction_count {
+      }
+      @property native_construction_count {
+         get {
+         }
+         values {
+           value: int;
+         }
+      }
+      @property default_construction_count {
+         get {
+         }
+         values {
+           value: int;
+         }
+      }
+      @property special_construction_count {
+         get {
+         }
+         values {
+           value: int;
+         }
+      }
+      @property internal_object {
+         get {
+         }
+         values {
+           value: Efl.Object;
+         }
+      }
+      multiply_integer_value @const {
+         params {
+            v: int;
+         }
+         return: int;
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+   }
+}
+
