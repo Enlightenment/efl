@@ -1,0 +1,17 @@
+class @beta Efl.Ui.Grid_Position_Manager extends Efl.Object implements Efl.Ui.Item_Position_Manager
+{
+   [[Implementation of @Efl.Ui.Item_Position_Manager for two-dimensional grids.
+
+     Every item in the grid has the same size, which is the biggest minimum size of all items.
+   ]]
+   implements {
+      Efl.Ui.Item_Position_Manager.data_access {set;}
+      Efl.Ui.Item_Position_Manager.viewport {set;}
+      Efl.Ui.Item_Position_Manager.scroll_position {set;}
+      Efl.Ui.Item_Position_Manager.item_added;
+      Efl.Ui.Item_Position_Manager.item_removed;
+      Efl.Ui.Item_Position_Manager.position_single_item;
+      Efl.Ui.Item_Position_Manager.item_size_changed;
+      Efl.Ui.Layout_Orientable.orientation {set; get;}
+   }
+}

@@ -181,6 +181,10 @@ pub_eo_files = [
   'efl_ui_clickable.eo',
   'efl_ui_clickable_util.eo',
   'efl_ui_format.eo',
+  'efl_ui_item_container.eo',
+  'efl_ui_item_position_manager.eo',
+  'efl_ui_list_position_manager.eo',
+  'efl_ui_grid_position_manager.eo',
 ]
 
 foreach eo_file : pub_eo_files
@@ -938,6 +942,10 @@ elementary_src = [
   'efl_ui_clickable_util.c',
   'efl_ui_format.c',
   'efl_ui_scroll_util.c',
+  'efl_ui_item_container.c',
+  'efl_ui_item_position_manager.c',
+  'efl_ui_list_position_manager.c',
+  'efl_ui_grid_position_manager.c',
 ]
 
 elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, efreet_mime, efreet_trash, eio, atspi, dl, intl]

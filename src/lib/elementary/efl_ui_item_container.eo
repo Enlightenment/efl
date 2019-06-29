@@ -1,0 +1,94 @@
+class @beta Efl.Ui.Item_Container extends Efl.Ui.Layout_Base implements
+                   Efl.Ui.Scrollable_Interactive,
+                   Efl.Ui.Scrollbar,
+                   Efl.Pack_Linear, Efl.Pack_Layout,
+                   Efl.Ui.Layout_Orientable,
+                   Efl.Ui.Selectable,
+                   Efl.Ui.Multi_Selectable,
+                   Efl.Ui.Focus.Manager_Sub,
+                   Efl.Ui.Widget_Focus_Manager
+{
+   [[This widget displays a list of items in an arrangement controlled by an external $position_manager object. By using different $position_manager objects this widget can show lists of items or two-dimensional grids of items, for example.
+
+    Items inside this widget can be selected according to the $select_mode policy, and retrieved with $selected_items_get.
+   ]]
+   event_prefix:efl_ui;
+   methods {
+      item_scroll {
+         [[Bring the passed item into the viewport.]]
+         params {
+            @in item: Efl.Ui.Item; [[The target to move in.]]
+            @in animation: bool; [[If you want to have an animation or not.]]
+         }
+      }
+      item_scroll_align {
+         [[Bring the passed item into the viewport, place the item accordingly to align in the viewport.
+
+         $align selects the final position of the object inside the viewport. 0.0 will move the object to the first visible position inside the viewport, 1.0 will move it to the last visible position, and values in between will move it accordingly to positions in between, along the scrolling axis.
+         ]]
+         params {
+            @in item: Efl.Ui.Item; [[The target to move in.]]
+            @in align: double; [[0.0 to have this item at the upper or left side of the viewport, 1.0 to have this item at the lower or right side of the viewport]]
+            @in animation: bool; [[If you want to have an animation or not.]]
+         }
+      }
+      @property last_selected_item {
+         [[The item that was selected most recently.
+         ]]
+         get {}
+         values {
+            item: Efl.Ui.Item; [[The latest selected item.]]
+         }
+      }
+      selected_items_get {
+         [[Get the selected items iterator. The iterator sequence will be decided by selection.]]
+         return: iterator<Efl.Ui.Item> @owned @no_unused; [[User has to free the iterator after usage.]]
+      }
+      @property position_manager {
+         [[Position manager object that handles placement of items.]]
+         values {
+            position_manager : Efl.Ui.Item_Position_Manager @owned; [[The objects ownership is passed to the item container.]]
+         }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.finalize;
+      Efl.Object.destructor;
+      Efl.Object.invalidate;
+      Efl.Container.content_iterate;
+      Efl.Container.content_count;
+      Efl.Ui.Layout_Orientable.orientation { get; set; }
+      Efl.Ui.Widget.theme_apply;
+      Efl.Pack.pack_clear;
+      Efl.Pack.unpack_all;
+      Efl.Pack.unpack;
+      Efl.Pack.pack;
+      Efl.Pack_Linear.pack_end;
+      Efl.Pack_Linear.pack_begin;
+      Efl.Pack_Linear.pack_before;
+      Efl.Pack_Linear.pack_after;
+      Efl.Pack_Linear.pack_at;
+      Efl.Pack_Linear.pack_unpack_at;
+      Efl.Pack_Linear.pack_index_get;
+      Efl.Pack_Linear.pack_content_get;
+      Efl.Ui.Scrollable_Interactive.match_content { set; }
+      Efl.Ui.Multi_Selectable.select_mode {get; set;}
+      Efl.Ui.Widget_Focus_Manager.focus_manager_create;
+      Efl.Ui.Widget.focus_state_apply;
+      Efl.Ui.Focus.Manager.move;
+   }
+   events {
+      item,pressed : Efl.Ui.Item; [[A $press event occurred over an item.]]
+      item,unpressed : Efl.Ui.Item; [[A $unpress event occurred over an item.]]
+      item,longpressed : Efl.Ui.Item; [[A $longpressed event occurred over an item.]]
+      item,clicked : Efl.Ui.Item; [[A $clicked event occurred over an item.]]
+      item,clicked,any : Efl.Ui.Item; [[A $clicked,any event occurred over an item.]]
+   }
+   composite {
+      Efl.Ui.Scrollable_Interactive;
+      Efl.Ui.Scrollbar;
+      Efl.Ui.Focus.Manager;
+   }
+}
+

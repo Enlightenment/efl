@@ -250,6 +250,15 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_spin.eo.h>
 # include <efl_ui_spin_button.eo.h>
 # include <efl_ui_slider.eo.h>
+# include <efl_ui_item.eo.h>
+# include <efl_ui_item_position_manager.eo.h>
+# include <efl_ui_item_container.eo.h>
+# include <efl_ui_list_position_manager.eo.h>
+# include <efl_ui_grid_position_manager.eo.h>
+# include <efl_ui_list_item.eo.h>
+# include <efl_ui_list_default_item.eo.h>
+# include <efl_ui_grid_item.eo.h>
+# include <efl_ui_grid_default_item.eo.h>
 
 /**
  * Initialize Elementary
