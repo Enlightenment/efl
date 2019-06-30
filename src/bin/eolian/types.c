@@ -1,3 +1,5 @@
+#include <ctype.h>
+
 #include "main.h"
 #include "headers.h"
 #include "docs.h"
@@ -214,6 +216,40 @@ _var_generate(const Eolian_State *state, const Eolian_Variable *vr)
    return buf;
 }
 
+static Eina_Strbuf *
+_err_generate(const Eolian_State *state, const Eolian_Error *err)
+{
+   char *fn = strdup(eolian_error_name_get(err));
+   char *p = strrchr(fn, '.');
+   if (p) *p = '\0';
+   Eina_Strbuf *buf = eo_gen_docs_full_gen(state, eolian_error_documentation_get(err),
+                                           fn, 0);
+   if (p)
+     {
+        *p = '_';
+        while ((p = strchr(fn, '.')))
+          *p = '_';
+     }
+   eina_str_tolower(&fn);
+   if (!buf) buf = eina_strbuf_new();
+   else eina_strbuf_append_char(buf, '\n');
+
+   eina_strbuf_prepend_printf(buf, "EWAPI extern Eina_Error %s_get(void);\n\n", fn);
+
+   char *ufn = strdup(fn);
+   eina_str_toupper(&ufn);
+   eina_strbuf_append_printf(buf, "#define %s %s_get()", ufn, fn);
+   free(ufn);
+   free(fn);
+
+   if (eolian_error_is_beta(err))
+     {
+        eina_strbuf_prepend(buf, "#ifdef EFL_BETA_API_SUPPORT\n");
+        eina_strbuf_append(buf, "\n#endif /* EFL_BETA_API_SUPPORT */");
+     }
+   return buf;
+}
+
 void eo_gen_types_header_gen(const Eolian_State *state,
                              Eina_Iterator *itr, Eina_Strbuf *buf,
                              Eina_Bool full)
@@ -235,6 +271,21 @@ void eo_gen_types_header_gen(const Eolian_State *state,
                   eina_strbuf_append(buf, eina_strbuf_string_get(vbuf));
                   eina_strbuf_append(buf, "\n\n");
                   eina_strbuf_free(vbuf);
+               }
+             continue;
+          }
+        else if (dt == EOLIAN_OBJECT_ERROR)
+          {
+             const Eolian_Error *err = (const Eolian_Error *)decl;
+             if (!err || eolian_error_is_extern(err))
+               continue;
+
+             Eina_Strbuf *ebuf = _err_generate(state, err);
+             if (ebuf)
+               {
+                  eina_strbuf_append(buf, eina_strbuf_string_get(ebuf));
+                  eina_strbuf_append(buf, "\n\n");
+                  eina_strbuf_free(ebuf);
                }
              continue;
           }
@@ -270,6 +321,95 @@ void eo_gen_types_header_gen(const Eolian_State *state,
    eina_iterator_free(itr);
 }
 
+static void
+_source_gen_error(Eina_Strbuf *buf, const Eolian_Error *err)
+{
+   if (eolian_error_is_extern(err))
+     return;
+
+   char *fn = strdup(eolian_error_name_get(err));
+   for (char *p = strchr(fn, '.'); p; p = strchr(p, '.'))
+     *p = '_';
+   eina_str_tolower(&fn);
+
+   eina_strbuf_append_printf(buf, "EWAPI %s_get(void)\n{\n", fn);
+   free(fn);
+
+   const char *msg = eolian_error_message_get(err);
+   eina_strbuf_append(buf, "   static Eina_Error err = eina_error_msg_static_register(\"");
+   for (const char *p = msg; *p; ++p)
+     switch (*p)
+       {
+        case '\\':
+        case '\'':
+        case '\"':
+          {
+             eina_strbuf_append_char(buf, '\\');
+             eina_strbuf_append_char(buf, *p);
+             continue;
+          }
+        case '\n':
+          {
+             eina_strbuf_append_char(buf, '\\');
+             eina_strbuf_append_char(buf, 'n');
+             continue;
+          }
+        case '\t':
+          {
+             eina_strbuf_append_char(buf, '\\');
+             eina_strbuf_append_char(buf, 't');
+             continue;
+          }
+        default:
+          {
+             if (isprint(*p))
+               eina_strbuf_append_char(buf, *p);
+             else
+               eina_strbuf_append_printf(buf, "\\x%2X", (unsigned int)*p);
+             continue;
+          }
+       }
+   eina_strbuf_append(buf, "\");\n");
+   eina_strbuf_append(buf, "   return err;\n}\n\n");
+}
+
+static void
+_source_gen_var(Eina_Strbuf *buf, const Eolian_Variable *vr)
+{
+   if (eolian_variable_is_extern(vr))
+     return;
+
+   if (eolian_variable_type_get(vr) == EOLIAN_VAR_CONSTANT)
+     return;
+
+   const Eolian_Expression *vv = eolian_variable_value_get(vr);
+   if (!vv)
+     return;
+
+   char *fn = strdup(eolian_variable_name_get(vr));
+   for (char *p = strchr(fn, '.'); p; p = strchr(p, '.'))
+     *p = '_';
+   eina_str_toupper(&fn);
+
+   const Eolian_Type *vt = eolian_variable_base_type_get(vr);
+   Eina_Stringshare *ct = eolian_type_c_type_get(vt, EOLIAN_C_TYPE_DEFAULT);
+   eina_strbuf_append_printf(buf, "EWAPI %s %s = ", ct, fn);
+   eina_stringshare_del(ct);
+   free(fn);
+
+   Eolian_Value val = eolian_expression_eval_type(vv, vt);
+   Eina_Stringshare *lit = eolian_expression_value_to_literal(&val);
+   eina_strbuf_append(buf, lit);
+   eina_strbuf_append_char(buf, ';');
+   Eina_Stringshare *exp = eolian_expression_serialize(vv);
+   if (exp && strcmp(lit, exp))
+     eina_strbuf_append_printf(buf, " /* %s */", exp);
+   eina_stringshare_del(lit);
+   eina_stringshare_del(exp);
+
+   eina_strbuf_append(buf, "\n");
+}
+
 void eo_gen_types_source_gen(Eina_Iterator *itr, Eina_Strbuf *buf)
 {
    const Eolian_Object *decl;
@@ -277,42 +417,10 @@ void eo_gen_types_source_gen(Eina_Iterator *itr, Eina_Strbuf *buf)
      {
         Eolian_Object_Type dt = eolian_object_type_get(decl);
 
-        if (dt != EOLIAN_OBJECT_VARIABLE)
-          continue;
-
-        const Eolian_Variable *vr = (const Eolian_Variable *)decl;
-        if (eolian_variable_is_extern(vr))
-          continue;
-
-        if (eolian_variable_type_get(vr) == EOLIAN_VAR_CONSTANT)
-          continue;
-
-        const Eolian_Expression *vv = eolian_variable_value_get(vr);
-        if (!vv)
-          continue;
-
-        char *fn = strdup(eolian_variable_name_get(vr));
-        for (char *p = strchr(fn, '.'); p; p = strchr(p, '.'))
-          *p = '_';
-        eina_str_toupper(&fn);
-
-        const Eolian_Type *vt = eolian_variable_base_type_get(vr);
-        Eina_Stringshare *ct = eolian_type_c_type_get(vt, EOLIAN_C_TYPE_DEFAULT);
-        eina_strbuf_append_printf(buf, "EWAPI %s %s = ", ct, fn);
-        eina_stringshare_del(ct);
-        free(fn);
-
-        Eolian_Value val = eolian_expression_eval_type(vv, vt);
-        Eina_Stringshare *lit = eolian_expression_value_to_literal(&val);
-        eina_strbuf_append(buf, lit);
-        eina_strbuf_append_char(buf, ';');
-        Eina_Stringshare *exp = eolian_expression_serialize(vv);
-        if (exp && strcmp(lit, exp))
-          eina_strbuf_append_printf(buf, " /* %s */", exp);
-        eina_stringshare_del(lit);
-        eina_stringshare_del(exp);
-
-        eina_strbuf_append(buf, "\n");
+        if (dt == EOLIAN_OBJECT_ERROR)
+          _source_gen_error(buf, (const Eolian_Error *)decl);
+        else if (dt == EOLIAN_OBJECT_VARIABLE)
+          _source_gen_var(buf, (const Eolian_Variable *)decl);
      }
    eina_iterator_free(itr);
 }
