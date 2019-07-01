@@ -179,6 +179,7 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_layout_part_content.eo.h>
 # include <efl_ui_layout_part_text.eo.h>
 # include <efl_ui_layout_part_table.eo.h>
+# include <efl_ui_item.eo.h>
 # include <efl_ui_win_part.eo.h>
 # include <efl_ui_bg.eo.h>
 # include <efl_ui_box.eo.h>
@@ -207,7 +208,6 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_clock.h>
 # include <efl_ui_image_factory.eo.h>
 # include <efl_ui_video.h>
-# include <efl_ui_nstate.h>
 # include <efl_ui_calendar.h>
 # include <efl_ui_button_eo.h>
 

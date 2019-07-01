@@ -8,11 +8,6 @@ if host_machine.system() == 'darwin'
   add_languages('objc')
 endif
 
-clean_check = run_command('meson/clean_check.sh')
-if clean_check.returncode() == 0
-  error('Meson build requires a clean source tree')
-endif
-
 pkgconfig = import('pkgconfig')
 
 test_env = environment()
@@ -223,6 +218,11 @@ if (get_option('crypto') == 'gnutls')
 elif (get_option('crypto') == 'openssl')
   crypto = dependency('openssl')
   config_h.set('HAVE_OPENSSL', '1')
+endif
+
+if get_option('crypto') != ''
+  config_h.set('HAVE_CIPHER', '1')
+  config_h.set('HAVE_SIGNATURE', '1')
 endif
 
 config_h.set_quoted('SHARED_LIB_SUFFIX', '.'+sys_lib_extension)

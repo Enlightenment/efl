@@ -16,6 +16,10 @@ typedef struct Dummy_Test_Object_Data
   int iface_prop;
   Eo *provider;
   Eo *iface_provider;
+
+  // Containers passed to C# as iterator/accessors
+  Eina_Array *out_array;
+  Eina_Free_Cb out_array_free_element_cb;
 } Dummy_Test_Object_Data;
 
 static
@@ -56,9 +60,9 @@ Dummy_Numberwrapper **_new_obj_ref(int n)
    return &r;
 }
 
-// ############ //
-// Test.Testing //
-// ############ //
+// ################# //
+// Dummy.Test_Object //
+// ################# //
 
 static Efl_Object*
 _dummy_test_object_efl_object_constructor(Eo *obj, Dummy_Test_Object_Data *pd)
@@ -95,6 +99,17 @@ _dummy_test_object_efl_object_destructor(Eo *obj, Dummy_Test_Object_Data *pd)
      {
         eina_list_free(pd->list_for_accessor);
         pd->list_for_accessor = NULL;
+     }
+
+   if (pd->out_array)
+     {
+        if (pd->out_array_free_element_cb)
+        {
+           unsigned n = eina_array_count(pd->out_array);
+           for (unsigned i = 0; i < n; ++i)
+             pd->out_array_free_element_cb(eina_array_data_get(pd->out_array, i));
+        }
+        eina_array_free(pd->out_array);
      }
 
    efl_destructor(efl_super(obj, DUMMY_TEST_OBJECT_CLASS));
@@ -719,6 +734,139 @@ Eina_Array *_dummy_test_object_eina_array_str_return_own(EINA_UNUSED Eo *obj, EI
    eina_array_push(arr, strdup("0x0"));
    eina_array_push(arr, strdup("0x2A"));
    eina_array_push(arr, strdup("0x42"));
+   return arr;
+}
+
+// Eina_Stringshare
+
+Eina_Bool _array_strshare_equal(const Eina_Array *arr, const char * const base[], unsigned int len)
+{
+   Eina_Bool result = EINA_TRUE;
+   if (eina_array_count(arr) != len)
+     return EINA_FALSE;
+   for (unsigned int i = 0; i < len && result; ++i)
+     {
+        Eina_Stringshare *ssa = eina_array_data_get(arr, i);
+        Eina_Stringshare *sse = eina_stringshare_add(base[i]);
+        result = (ssa == sse);
+        if (!result)
+          fprintf(stderr, "Unexpected stringshare value. Expected: \"%s\" [%p]; Actual: \"%s\" [%p].\n", sse, sse, ssa, ssa);
+        eina_stringshare_del(sse);
+     }
+   return result;
+}
+
+Eina_Bool _dummy_test_object_eina_array_strshare_in(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Array *arr)
+{
+   Eina_Bool r = _array_strshare_equal(arr, base_seq_str, base_seq_str_size);
+   eina_array_push(arr, eina_stringshare_add("42"));
+   eina_array_push(arr, eina_stringshare_add("43"));
+   eina_array_push(arr, eina_stringshare_add("33"));
+   return r;
+}
+
+static Eina_Array *_array_strshare_in_own_to_check = NULL;
+
+Eina_Bool _dummy_test_object_eina_array_strshare_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Array *arr)
+{
+   Eina_Bool r = _array_strshare_equal(arr, base_seq_str, base_seq_str_size);
+   eina_array_push(arr, eina_stringshare_add("42"));
+   eina_array_push(arr, eina_stringshare_add("43"));
+   eina_array_push(arr, eina_stringshare_add("33"));
+   _array_strshare_in_own_to_check = arr;
+   return r;
+}
+
+Eina_Bool _dummy_test_object_check_eina_array_strshare_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   if (!_array_strshare_in_own_to_check) return EINA_FALSE;
+
+   Eina_Bool r = _array_strshare_equal(_array_strshare_in_own_to_check, modified_seq_str, modified_seq_str_size);
+
+   unsigned int i;
+   Eina_Stringshare *ele;
+   Eina_Array_Iterator it;
+   EINA_ARRAY_ITER_NEXT(_array_strshare_in_own_to_check, i, ele, it)
+     eina_stringshare_del(ele);
+
+   eina_array_free(_array_strshare_in_own_to_check);
+   _array_strshare_in_own_to_check = NULL;
+   return r;
+}
+
+Eina_Array *_array_strshare_out_to_check = NULL;
+
+Eina_Bool _dummy_test_object_eina_array_strshare_out(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Array **arr)
+{
+   if (!arr) return EINA_FALSE;
+   *arr = eina_array_new(default_step);
+   eina_array_push(*arr, eina_stringshare_add("0x0"));
+   eina_array_push(*arr, eina_stringshare_add("0x2A"));
+   eina_array_push(*arr, eina_stringshare_add("0x42"));
+   _array_strshare_out_to_check = *arr;
+   return EINA_TRUE;
+}
+Eina_Bool _dummy_test_object_check_eina_array_strshare_out(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   if (!_array_strshare_out_to_check) return EINA_FALSE;
+
+   Eina_Bool r = _array_strshare_equal(_array_strshare_out_to_check, modified_seq_str, modified_seq_str_size);
+
+   unsigned int i;
+   Eina_Stringshare *ele;
+   Eina_Array_Iterator it;
+   EINA_ARRAY_ITER_NEXT(_array_strshare_out_to_check, i, ele, it)
+     eina_stringshare_del(ele);
+
+   eina_array_free(_array_strshare_out_to_check);
+   _array_strshare_out_to_check = NULL;
+   return r;
+}
+
+Eina_Bool _dummy_test_object_eina_array_strshare_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Array **arr)
+{
+   if (!arr) return EINA_FALSE;
+   *arr = eina_array_new(default_step);
+   eina_array_push(*arr, eina_stringshare_add("0x0"));
+   eina_array_push(*arr, eina_stringshare_add("0x2A"));
+   eina_array_push(*arr, eina_stringshare_add("0x42"));
+   return EINA_TRUE;
+}
+
+Eina_Array *_array_strshare_return_to_check = NULL;
+
+Eina_Array *_dummy_test_object_eina_array_strshare_return(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   Eina_Array *arr = eina_array_new(default_step);
+   eina_array_push(arr, eina_stringshare_add("0x0"));
+   eina_array_push(arr, eina_stringshare_add("0x2A"));
+   eina_array_push(arr, eina_stringshare_add("0x42"));
+   _array_strshare_return_to_check = arr;
+   return arr;
+}
+Eina_Bool _dummy_test_object_check_eina_array_strshare_return(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   if (!_array_strshare_return_to_check) return EINA_FALSE;
+
+   Eina_Bool r = _array_strshare_equal(_array_strshare_return_to_check, modified_seq_str, modified_seq_str_size);
+
+   unsigned int i;
+   Eina_Stringshare *ele;
+   Eina_Array_Iterator it;
+   EINA_ARRAY_ITER_NEXT(_array_strshare_return_to_check, i, ele, it)
+     eina_stringshare_del(ele);
+
+   eina_array_free(_array_strshare_return_to_check);
+   _array_strshare_return_to_check = NULL;
+   return r;
+}
+
+Eina_Array *_dummy_test_object_eina_array_strshare_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   Eina_Array *arr = eina_array_new(default_step);
+   eina_array_push(arr, eina_stringshare_add("0x0"));
+   eina_array_push(arr, eina_stringshare_add("0x2A"));
+   eina_array_push(arr, eina_stringshare_add("0x42"));
    return arr;
 }
 
@@ -1482,6 +1630,136 @@ Eina_List *_dummy_test_object_eina_list_str_return_own(EINA_UNUSED Eo *obj, EINA
    return lst;
 }
 
+// Eina_Stringshare
+
+Eina_Bool _list_strshare_equal(const Eina_List *lst, const char * const base[], unsigned int len)
+{
+   if (eina_list_count(lst) != len)
+     return EINA_FALSE;
+
+   const Eina_List *l;
+   Eina_Stringshare *data;
+   int i = 0;
+   EINA_LIST_FOREACH(lst, l, data)
+     {
+        Eina_Stringshare *ssa = data;
+        Eina_Stringshare *sse = eina_stringshare_add(base[i]);
+        if (ssa != sse)
+          {
+             fprintf(stderr, "Unexpected stringshare value. Expected: \"%s\" [%p]; Actual: \"%s\" [%p].\n", sse, sse, ssa, ssa);
+             eina_stringshare_del(sse);
+             return EINA_FALSE;
+          }
+        eina_stringshare_del(sse);
+        ++i;
+     }
+   return EINA_TRUE;
+}
+
+Eina_Bool _dummy_test_object_eina_list_strshare_in(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_List *lst)
+{
+   Eina_Bool r = _list_strshare_equal(lst, base_seq_str, base_seq_str_size);
+   return r;
+}
+
+static Eina_List *_list_strshare_in_own_to_check = NULL;
+
+Eina_Bool _dummy_test_object_eina_list_strshare_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_List *lst)
+{
+   Eina_Bool r = _list_strshare_equal(lst, base_seq_str, base_seq_str_size);
+   if (!r) return r;
+   lst = eina_list_append(lst, eina_stringshare_add("42"));
+   lst = eina_list_append(lst, eina_stringshare_add("43"));
+   lst = eina_list_append(lst, eina_stringshare_add("33"));
+   _list_strshare_in_own_to_check = lst;
+   return r;
+}
+
+Eina_Bool _dummy_test_object_check_eina_list_strshare_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   if (!_list_strshare_in_own_to_check) return EINA_FALSE;
+
+   Eina_Bool r = _list_strshare_equal(_list_strshare_in_own_to_check, modified_seq_str, modified_seq_str_size);
+   if (!r) return r;
+
+   Eina_Stringshare *ele;
+   EINA_LIST_FREE(_list_strshare_in_own_to_check, ele)
+     eina_stringshare_del(ele);
+
+   _list_strshare_in_own_to_check = NULL;
+   return r;
+}
+
+Eina_List *_list_strshare_out_to_check = NULL;
+
+Eina_Bool _dummy_test_object_eina_list_strshare_out(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_List **lst)
+{
+   if (!lst) return EINA_FALSE;
+   *lst = eina_list_append(*lst, eina_stringshare_add("0x0"));
+   *lst = eina_list_append(*lst, eina_stringshare_add("0x2A"));
+   *lst = eina_list_append(*lst, eina_stringshare_add("0x42"));
+   _list_strshare_out_to_check = *lst;
+   return EINA_TRUE;
+}
+Eina_Bool _dummy_test_object_check_eina_list_strshare_out(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   if (!_list_strshare_out_to_check) return EINA_FALSE;
+
+   Eina_Bool r = _list_strshare_equal(_list_strshare_out_to_check, base_seq_str, base_seq_str_size);
+   if (!r) return r;
+
+   Eina_Stringshare *ele;
+   EINA_LIST_FREE(_list_strshare_out_to_check, ele)
+     eina_stringshare_del(ele);
+
+   _list_strshare_out_to_check = NULL;
+   return r;
+}
+
+Eina_Bool _dummy_test_object_eina_list_strshare_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_List **lst)
+{
+   if (!lst) return EINA_FALSE;
+   *lst = eina_list_append(*lst, eina_stringshare_add("0x0"));
+   *lst = eina_list_append(*lst, eina_stringshare_add("0x2A"));
+   *lst = eina_list_append(*lst, eina_stringshare_add("0x42"));
+   return EINA_TRUE;
+}
+
+Eina_List *_list_strshare_return_to_check = NULL;
+
+Eina_List *_dummy_test_object_eina_list_strshare_return(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   Eina_List *lst = NULL;
+   lst = eina_list_append(lst, eina_stringshare_add("0x0"));
+   lst = eina_list_append(lst, eina_stringshare_add("0x2A"));
+   lst = eina_list_append(lst, eina_stringshare_add("0x42"));
+   _list_strshare_return_to_check = lst;
+   return lst;
+}
+Eina_Bool _dummy_test_object_check_eina_list_strshare_return(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   if (!_list_strshare_return_to_check) return EINA_FALSE;
+
+   Eina_Bool r = _list_strshare_equal(_list_strshare_return_to_check, base_seq_str, base_seq_str_size);
+   if (!r) return r;
+
+   Eina_Stringshare *ele;
+   EINA_LIST_FREE(_list_strshare_return_to_check, ele)
+     eina_stringshare_del(ele);
+
+   _list_strshare_return_to_check = NULL;
+   return r;
+}
+
+Eina_List *_dummy_test_object_eina_list_strshare_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   Eina_List *lst = NULL;
+   lst = eina_list_append(lst, eina_stringshare_add("0x0"));
+   lst = eina_list_append(lst, eina_stringshare_add("0x2A"));
+   lst = eina_list_append(lst, eina_stringshare_add("0x42"));
+   return lst;
+}
+
 // Object
 
 Eina_Bool _list_obj_equal(const Eina_List *lst, const Dummy_Numberwrapper * const base[], unsigned int len)
@@ -1914,6 +2192,164 @@ Eina_Inlist *_dummy_test_object_eina_inlist_str_return_own(EINA_UNUSED Eo *obj, 
    lst = eina_inlist_append(lst, _new_inlist_str("0x0"));
    lst = eina_inlist_append(lst, _new_inlist_str("0x2A"));
    lst = eina_inlist_append(lst, _new_inlist_str("0x42"));
+   return lst;
+}
+
+// Eina_Stringshare
+
+typedef struct _Dummy_Inlist_Node_Strshare
+{
+   EINA_INLIST;
+   Eina_Stringshare *val;
+} Dummy_Inlist_Node_Strshare;
+
+
+Eina_Inlist *_new_inlist_strshare(const char *v)
+{
+   Dummy_Inlist_Node_Strshare *node = malloc(sizeof(Dummy_Inlist_Node_Strshare));
+   node->val = eina_stringshare_add(v);
+   return EINA_INLIST_GET(node);
+}
+
+Eina_Bool _inlist_strshare_equal(const Eina_Inlist *lst, const char * const base[], unsigned int len)
+{
+   if (eina_inlist_count(lst) != len)
+     return EINA_FALSE;
+
+   const Dummy_Inlist_Node_Strshare *node;
+   int i = 0;
+   EINA_INLIST_FOREACH(lst, node)
+     {
+        Eina_Stringshare *ssa = node->val;
+        Eina_Stringshare *sse = eina_stringshare_add(base[i]);
+        if (ssa != sse)
+          {
+             fprintf(stderr, "Unexpected stringshare value. Expected: \"%s\" [%p]; Actual: \"%s\" [%p].\n", sse, sse, ssa, ssa);
+             eina_stringshare_del(sse);
+             return EINA_FALSE;
+          }
+        eina_stringshare_del(sse);
+        ++i;
+     }
+   return EINA_TRUE;
+}
+
+Eina_Bool _dummy_test_object_eina_inlist_strshare_in(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Inlist *lst)
+{
+   Eina_Bool r = _inlist_strshare_equal(lst, base_seq_str, base_seq_str_size);
+   return r;
+}
+
+static Eina_Inlist *_inlist_strshare_in_own_to_check = NULL;
+
+Eina_Bool _dummy_test_object_eina_inlist_strshare_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Inlist *lst)
+{
+   Eina_Bool r = _inlist_strshare_equal(lst, base_seq_str, base_seq_str_size);
+   if (!r) return r;
+   lst = eina_inlist_append(lst, _new_inlist_strshare("42"));
+   lst = eina_inlist_append(lst, _new_inlist_strshare("43"));
+   lst = eina_inlist_append(lst, _new_inlist_strshare("33"));
+   _inlist_strshare_in_own_to_check = lst;
+   return r;
+}
+
+Eina_Bool _dummy_test_object_check_eina_inlist_strshare_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   Eina_Inlist *lst = _inlist_strshare_in_own_to_check;
+   if (!lst) return EINA_FALSE;
+   _inlist_strshare_in_own_to_check = NULL;
+
+   Eina_Bool r = _inlist_strshare_equal(lst, modified_seq_str, modified_seq_str_size);
+   if (!r) return r;
+
+   Dummy_Inlist_Node_Strshare *node;
+   EINA_INLIST_FREE(lst, node)
+     {
+        lst = eina_inlist_remove(lst, EINA_INLIST_GET(node));
+        eina_stringshare_del(node->val);
+        free(node);
+     }
+
+   return r;
+}
+
+Eina_Inlist *_inlist_strshare_out_to_check = NULL;
+
+Eina_Bool _dummy_test_object_eina_inlist_strshare_out(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Inlist **lst)
+{
+   if (!lst) return EINA_FALSE;
+   *lst = eina_inlist_append(*lst, _new_inlist_strshare("0x0"));
+   *lst = eina_inlist_append(*lst, _new_inlist_strshare("0x2A"));
+   *lst = eina_inlist_append(*lst, _new_inlist_strshare("0x42"));
+   _inlist_strshare_out_to_check = *lst;
+   return EINA_TRUE;
+}
+Eina_Bool _dummy_test_object_check_eina_inlist_strshare_out(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   Eina_Inlist *lst = _inlist_strshare_out_to_check;
+   if (!lst) return EINA_FALSE;
+   _inlist_strshare_out_to_check = NULL;
+
+   Eina_Bool r = _inlist_strshare_equal(lst, base_seq_str, base_seq_str_size);
+   if (!r) return r;
+
+   Dummy_Inlist_Node_Strshare *node;
+   EINA_INLIST_FREE(lst, node)
+     {
+        lst = eina_inlist_remove(lst, EINA_INLIST_GET(node));
+        eina_stringshare_del(node->val);
+        free(node);
+     }
+
+   return r;
+}
+
+Eina_Bool _dummy_test_object_eina_inlist_strshare_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Inlist **lst)
+{
+   if (!lst) return EINA_FALSE;
+   *lst = eina_inlist_append(*lst, _new_inlist_strshare("0x0"));
+   *lst = eina_inlist_append(*lst, _new_inlist_strshare("0x2A"));
+   *lst = eina_inlist_append(*lst, _new_inlist_strshare("0x42"));
+   return EINA_TRUE;
+}
+
+Eina_Inlist *_inlist_strshare_return_to_check = NULL;
+
+Eina_Inlist *_dummy_test_object_eina_inlist_strshare_return(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   Eina_Inlist *lst = NULL;
+   lst = eina_inlist_append(lst, _new_inlist_strshare("0x0"));
+   lst = eina_inlist_append(lst, _new_inlist_strshare("0x2A"));
+   lst = eina_inlist_append(lst, _new_inlist_strshare("0x42"));
+   _inlist_strshare_return_to_check = lst;
+   return lst;
+}
+Eina_Bool _dummy_test_object_check_eina_inlist_strshare_return(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   Eina_Inlist *lst = _inlist_strshare_return_to_check;
+   if (!lst) return EINA_FALSE;
+   _inlist_strshare_return_to_check = NULL;
+
+   Eina_Bool r = _inlist_strshare_equal(lst, base_seq_str, base_seq_str_size);
+   if (!r) return r;
+
+   Dummy_Inlist_Node_Strshare *node;
+   EINA_INLIST_FREE(lst, node)
+     {
+        lst = eina_inlist_remove(lst, EINA_INLIST_GET(node));
+        eina_stringshare_del(node->val);
+        free(node);
+     }
+
+   return r;
+}
+
+Eina_Inlist *_dummy_test_object_eina_inlist_strshare_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   Eina_Inlist *lst = NULL;
+   lst = eina_inlist_append(lst, _new_inlist_strshare("0x0"));
+   lst = eina_inlist_append(lst, _new_inlist_strshare("0x2A"));
+   lst = eina_inlist_append(lst, _new_inlist_strshare("0x42"));
    return lst;
 }
 
@@ -2438,6 +2874,194 @@ Eina_Bool _dummy_test_object_check_eina_hash_str_return_own(EINA_UNUSED Eo *obj,
 }
 
 
+// Eina_Stringshare //
+
+Eina_Bool _hash_strshare_check(const Eina_Hash *hsh, const char *key, const char *expected_val)
+{
+   Eina_Stringshare *ssk = eina_stringshare_add(key);
+   Eina_Stringshare *sse = eina_stringshare_add(expected_val);
+   Eina_Stringshare *ssa = eina_hash_find(hsh, ssk);
+   Eina_Bool result = (ssa == sse);
+   if (!result)
+     fprintf(stderr, "Unexpected stringshare value. Expected: \"%s\" [%p]; Actual: \"%s\" [%p].\n", sse, sse, ssa, ssa);
+   eina_stringshare_del(ssk);
+   eina_stringshare_del(sse);
+   return result;
+}
+
+static inline Eina_Bool _hash_strshare_add(Eina_Hash *hsh, const char *key, const char *val)
+{
+   return eina_hash_add(hsh, eina_stringshare_add(key), eina_stringshare_add(val));
+}
+
+
+// strshare in
+
+Eina_Bool _dummy_test_object_eina_hash_strshare_in(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Hash *hsh)
+{
+   if (!_hash_strshare_check(hsh, "aa", "aaa"))
+     return EINA_FALSE;
+
+   return _hash_strshare_add(hsh, "bb", "bbb");
+}
+
+
+// strshare in own
+
+static Eina_Bool _hash_strshare_in_own_free_flag = EINA_FALSE;
+static void _hash_strshare_in_own_free_cb(void *data)
+{
+   _hash_strshare_in_own_free_flag = EINA_TRUE;
+   eina_stringshare_del(data);
+}
+static Eina_Hash *_hash_strshare_in_own_to_check = NULL;
+
+Eina_Bool _dummy_test_object_eina_hash_strshare_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Hash *hsh)
+{
+   eina_hash_free_cb_set(hsh, _hash_strshare_in_own_free_cb);
+
+   if (!_hash_strshare_check(hsh, "aa", "aaa"))
+     return EINA_FALSE;
+
+   _hash_strshare_in_own_to_check = hsh;
+
+   return _hash_strshare_add(hsh, "bb", "bbb");
+}
+Eina_Bool _dummy_test_object_check_eina_hash_strshare_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   if (!_hash_strshare_in_own_to_check) return EINA_FALSE;
+
+   Eina_Hash *hsh = _hash_strshare_in_own_to_check;
+
+   if (!_hash_strshare_check(hsh, "aa", "aaa")
+       || !_hash_strshare_check(hsh, "bb", "bbb")
+       || !_hash_strshare_check(hsh, "cc", "ccc"))
+     return EINA_FALSE;
+
+   eina_hash_free(hsh);
+
+   return _hash_strshare_in_own_free_flag;
+}
+
+
+// strshare out
+
+static Eina_Bool _hash_strshare_out_free_flag = EINA_FALSE;
+static void _hash_strshare_out_free_cb(void *data)
+{
+   _hash_strshare_out_free_flag = EINA_TRUE;
+   eina_stringshare_del(data);
+}
+Eina_Hash *_hash_strshare_out_to_check = NULL;
+
+Eina_Bool _dummy_test_object_eina_hash_strshare_out(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Hash **hsh)
+{
+   if (!hsh) return EINA_FALSE;
+
+   *hsh = eina_hash_string_superfast_new(_hash_strshare_out_free_cb);
+
+   _hash_strshare_out_to_check = *hsh;
+
+   return _hash_strshare_add(*hsh, "aa", "aaa");
+}
+Eina_Bool _dummy_test_object_check_eina_hash_strshare_out(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   if (!_hash_strshare_out_to_check) return EINA_FALSE;
+
+   Eina_Hash *hsh = _hash_strshare_out_to_check;
+
+   if (!_hash_strshare_check(hsh, "aa", "aaa")
+       || !_hash_strshare_check(hsh, "bb", "bbb"))
+     return EINA_FALSE;
+
+   eina_hash_free(hsh);
+
+   _hash_strshare_out_to_check = NULL;
+   return _hash_strshare_out_free_flag;
+}
+
+
+// strshare out own
+
+static Eina_Bool _hash_strshare_out_own_free_flag = EINA_FALSE;
+static void _hash_strshare_out_own_free_cb(void *data)
+{
+   _hash_strshare_out_own_free_flag = EINA_TRUE;
+   eina_stringshare_del(data);
+}
+Eina_Bool _dummy_test_object_eina_hash_strshare_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Hash **hsh)
+{
+   if (!hsh) return EINA_FALSE;
+
+   *hsh = eina_hash_string_superfast_new(_hash_strshare_out_own_free_cb);
+
+   return _hash_strshare_add(*hsh, "aa", "aaa");
+}
+Eina_Bool _dummy_test_object_check_eina_hash_strshare_out_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   return !_hash_strshare_out_own_free_flag;
+}
+
+
+// strshare return
+
+static Eina_Bool _hash_strshare_return_free_flag = EINA_FALSE;
+static void _hash_strshare_return_free_cb(void *data)
+{
+   _hash_strshare_return_free_flag = EINA_TRUE;
+   eina_stringshare_del(data);
+}
+Eina_Hash *_hash_strshare_return_to_check = NULL;
+
+Eina_Hash *_dummy_test_object_eina_hash_strshare_return(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   Eina_Hash *hsh = eina_hash_string_superfast_new(_hash_strshare_return_free_cb);
+
+   _hash_strshare_add(hsh, "aa", "aaa");
+
+   _hash_strshare_return_to_check = hsh;
+
+   return hsh;
+}
+Eina_Bool _dummy_test_object_check_eina_hash_strshare_return(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   if (!_hash_strshare_return_to_check) return EINA_FALSE;
+
+   Eina_Hash *hsh = _hash_strshare_return_to_check;
+
+   if (!_hash_strshare_check(hsh, "aa", "aaa")
+       || !_hash_strshare_check(hsh, "bb", "bbb"))
+     return EINA_FALSE;
+
+   eina_hash_free(hsh);
+
+   _hash_strshare_return_to_check = NULL;
+   return _hash_strshare_return_free_flag;
+}
+
+
+// strshare return own
+
+static Eina_Bool _hash_strshare_return_own_free_flag = EINA_FALSE;
+static void _hash_strshare_return_own_free_cb(void *data)
+{
+   _hash_strshare_return_own_free_flag = EINA_TRUE;
+   eina_stringshare_del(data);
+}
+Eina_Hash *_dummy_test_object_eina_hash_strshare_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   Eina_Hash *hsh = eina_hash_string_superfast_new(_hash_strshare_return_own_free_cb);
+
+   _hash_strshare_add(hsh, "aa", "aaa");
+
+   return hsh;
+}
+Eina_Bool _dummy_test_object_check_eina_hash_strshare_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   return !_hash_strshare_return_own_free_flag;
+}
+
+
 // Object //
 
 Eina_Bool _hash_obj_check(const Eina_Hash *hsh, Dummy_Numberwrapper *key, Dummy_Numberwrapper *expected_val, int knum, int vnum)
@@ -2695,7 +3319,7 @@ static Eina_Iterator *_iterator_int_in_own_to_check = NULL;
 
 Eina_Bool _dummy_test_object_eina_iterator_int_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Iterator *itr)
 {
-   Eina_Bool r = _iterator_int_equal(itr, base_seq_int, base_seq_int_size, EINA_TRUE);
+   Eina_Bool r = _iterator_int_equal(itr, base_seq_int, base_seq_int_size, EINA_FALSE);
    _iterator_int_in_own_to_check = itr;
    return r;
 }
@@ -2746,9 +3370,12 @@ Eina_Bool _dummy_test_object_eina_iterator_int_out_own(EINA_UNUSED Eo *obj, EINA
 {
    if (!itr) return EINA_FALSE;
 
-   Eina_Array *arr = _iterator_int_eina_array_new();
+   if (pd->out_array)
+     eina_array_free(pd->out_array);
 
-   *itr = eina_array_iterator_new(arr);
+   pd->out_array = _iterator_int_eina_array_new();
+
+   *itr = eina_array_iterator_new(pd->out_array);
 
    return EINA_TRUE;
 }
@@ -2786,8 +3413,11 @@ Eina_Bool _dummy_test_object_check_eina_iterator_int_return(EINA_UNUSED Eo *obj,
 
 Eina_Iterator *_dummy_test_object_eina_iterator_int_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
-   Eina_Array *arr = _iterator_int_eina_array_new();
-   return eina_array_iterator_new(arr);
+   if (pd->out_array)
+     eina_array_free(pd->out_array);
+
+   pd->out_array = _iterator_int_eina_array_new();
+   return eina_array_iterator_new(pd->out_array);
 }
 
 // String //
@@ -2853,7 +3483,7 @@ static Eina_Iterator *_iterator_str_in_own_to_check = NULL;
 
 Eina_Bool _dummy_test_object_eina_iterator_str_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Iterator *itr)
 {
-   Eina_Bool r = _iterator_str_equal(itr, base_seq_str, base_seq_str_size, EINA_TRUE);
+   Eina_Bool r = _iterator_str_equal(itr, base_seq_str, base_seq_str_size, EINA_FALSE);
    _iterator_str_in_own_to_check = itr;
    return r;
 }
@@ -2904,9 +3534,12 @@ Eina_Bool _dummy_test_object_eina_iterator_str_out_own(EINA_UNUSED Eo *obj, EINA
 {
    if (!itr) return EINA_FALSE;
 
-   Eina_Array *arr = _iterator_str_eina_array_new();
+   if (pd->out_array)
+     eina_array_free(pd->out_array);
 
-   *itr = eina_array_iterator_new(arr);
+   pd->out_array = _iterator_str_eina_array_new();
+
+   *itr = eina_array_iterator_new(pd->out_array);
 
    return EINA_TRUE;
 }
@@ -2944,8 +3577,179 @@ Eina_Bool _dummy_test_object_check_eina_iterator_str_return(EINA_UNUSED Eo *obj,
 
 Eina_Iterator *_dummy_test_object_eina_iterator_str_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
-   Eina_Array *arr = _iterator_str_eina_array_new();
-   return eina_array_iterator_new(arr);
+   if (pd->out_array)
+     eina_array_free(pd->out_array);
+
+   pd->out_array = _iterator_str_eina_array_new();
+   return eina_array_iterator_new(pd->out_array);
+}
+
+// Eina_Stringshare //
+
+Eina_Bool _iterator_strshare_equal(Eina_Iterator *itr, const char * const base[], unsigned int len, Eina_Bool release)
+{
+   Eina_Stringshare *ssa;
+   unsigned i = 0;
+   EINA_ITERATOR_FOREACH(itr, ssa)
+     {
+        Eina_Stringshare *sse = eina_stringshare_add(base[i]);
+        if (ssa != sse)
+          {
+             fprintf(stderr, "Unexpected stringshare value. Expected: \"%s\" [%p]; Actual: \"%s\" [%p].\n", sse, sse, ssa, ssa);
+             eina_stringshare_del(sse);
+             return EINA_FALSE;
+          }
+        eina_stringshare_del(sse);
+        if (release)
+          eina_stringshare_del(ssa);
+        ++i;
+     }
+
+   if (i != len)
+     return EINA_FALSE;
+
+   return EINA_TRUE;
+}
+
+Eina_Array *_iterator_strshare_eina_array_new()
+{
+   Eina_Array *arr = eina_array_new(32);
+   for (unsigned i = 0; i < base_seq_str_size; ++i)
+     {
+        eina_array_push(arr, eina_stringshare_add(base_seq_str[i]));
+     }
+   return arr;
+}
+
+Eina_Bool _iterator_strshare_test_array(Eina_Array *arr)
+{
+   if (eina_array_count(arr) != base_seq_str_size)
+     return EINA_FALSE;
+
+   for (unsigned i = 0; i < base_seq_str_size; ++i)
+     {
+        Eina_Stringshare *ssa = eina_array_data_get(arr, i);
+        Eina_Stringshare *sse = eina_stringshare_add(base_seq_str[i]);
+        if (ssa != sse)
+          return EINA_FALSE;
+        eina_stringshare_del(ssa);
+        eina_stringshare_del(sse);
+     }
+
+   eina_array_free(arr);
+
+   return EINA_TRUE;
+}
+
+// <strshare> in
+
+Eina_Bool _dummy_test_object_eina_iterator_strshare_in(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Iterator *itr)
+{
+   Eina_Bool r = _iterator_strshare_equal(itr, base_seq_str, base_seq_str_size, EINA_FALSE);
+   return r;
+}
+
+// <strshare> in own
+
+static Eina_Iterator *_iterator_strshare_in_own_to_check = NULL;
+
+Eina_Bool _dummy_test_object_eina_iterator_strshare_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Iterator *itr)
+{
+   Eina_Bool r = _iterator_strshare_equal(itr, base_seq_str, base_seq_str_size, EINA_FALSE);
+   _iterator_strshare_in_own_to_check = itr;
+   return r;
+}
+Eina_Bool _dummy_test_object_check_eina_iterator_strshare_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   eina_iterator_free(_iterator_strshare_in_own_to_check);
+   _iterator_strshare_in_own_to_check = NULL;
+   return EINA_TRUE;
+}
+
+// <strshare> out
+
+Eina_Iterator *_iterator_strshare_out_to_check = NULL;
+Eina_Array *_iterator_strshare_out_array = NULL;
+
+Eina_Bool _dummy_test_object_eina_iterator_strshare_out(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Iterator **itr)
+{
+   if (!itr) return EINA_FALSE;
+
+   _iterator_strshare_out_array = _iterator_strshare_eina_array_new();
+
+   *itr = eina_array_iterator_new(_iterator_strshare_out_array);
+   _iterator_strshare_out_to_check = *itr;
+
+   return EINA_TRUE;
+}
+Eina_Bool _dummy_test_object_check_eina_iterator_strshare_out(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   Eina_Iterator *itr = _iterator_strshare_out_to_check;
+   if (!itr) return EINA_FALSE;
+   _iterator_strshare_out_to_check = NULL;
+
+   Eina_Array *arr = _iterator_strshare_out_array;
+   if (!arr) return EINA_FALSE;
+   _iterator_strshare_out_array = NULL;
+
+   Eina_Bool r = _iterator_strshare_test_array(arr);
+   if (!r) return r;
+
+   eina_iterator_free(itr);
+
+   return r;
+}
+
+// <strshare> out own
+
+Eina_Bool _dummy_test_object_eina_iterator_strshare_out_own(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd, Eina_Iterator **itr)
+{
+   if (!itr) return EINA_FALSE;
+
+   pd->out_array = _iterator_strshare_eina_array_new();
+   pd->out_array_free_element_cb = (Eina_Free_Cb) eina_stringshare_del;
+
+   *itr = eina_array_iterator_new(pd->out_array);
+
+   return EINA_TRUE;
+}
+
+// <strshare> return
+
+Eina_Iterator *_iterator_strshare_return_to_check = NULL;
+Eina_Array *_iterator_strshare_return_array = NULL;
+
+Eina_Iterator *_dummy_test_object_eina_iterator_strshare_return(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   _iterator_strshare_return_array = _iterator_strshare_eina_array_new();
+   _iterator_strshare_return_to_check = eina_array_iterator_new(_iterator_strshare_return_array);
+   return _iterator_strshare_return_to_check;
+}
+Eina_Bool _dummy_test_object_check_eina_iterator_strshare_return(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
+{
+   Eina_Iterator *itr = _iterator_strshare_return_to_check;
+   if (!itr) return EINA_FALSE;
+   _iterator_strshare_return_to_check = NULL;
+
+   Eina_Array *arr = _iterator_strshare_return_array;
+   if (!arr) return EINA_FALSE;
+   _iterator_strshare_return_array = NULL;
+
+   Eina_Bool r = _iterator_strshare_test_array(arr);
+   if (!r) return r;
+
+   eina_iterator_free(itr);
+
+   return r;
+}
+
+// <strshare> return own
+
+Eina_Iterator *_dummy_test_object_eina_iterator_strshare_return_own(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd)
+{
+   pd->out_array = _iterator_strshare_eina_array_new();
+   pd->out_array_free_element_cb = (Eina_Free_Cb) eina_stringshare_del;
+   return eina_array_iterator_new(pd->out_array);
 }
 
 // Object //
@@ -3015,7 +3819,7 @@ static Eina_Iterator *_iterator_obj_in_own_to_check = NULL;
 
 Eina_Bool _dummy_test_object_eina_iterator_obj_in_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Iterator *itr)
 {
-   Eina_Bool r = _iterator_obj_equal(itr, base_seq_obj, base_seq_obj_size, EINA_TRUE);
+   Eina_Bool r = _iterator_obj_equal(itr, base_seq_obj, base_seq_obj_size, EINA_FALSE);
    _iterator_obj_in_own_to_check = itr;
    return r;
 }
@@ -3066,9 +3870,12 @@ Eina_Bool _dummy_test_object_eina_iterator_obj_out_own(EINA_UNUSED Eo *obj, EINA
 {
    if (!itr) return EINA_FALSE;
 
-   Eina_Array *arr = _iterator_obj_eina_array_new();
+   if (pd->out_array)
+     eina_array_free(pd->out_array);
 
-   *itr = eina_array_iterator_new(arr);
+   pd->out_array = _iterator_obj_eina_array_new();
+
+   *itr = eina_array_iterator_new(pd->out_array);
 
    return EINA_TRUE;
 }
@@ -3106,8 +3913,11 @@ Eina_Bool _dummy_test_object_check_eina_iterator_obj_return(EINA_UNUSED Eo *obj,
 
 Eina_Iterator *_dummy_test_object_eina_iterator_obj_return_own(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
-   Eina_Array *arr = _iterator_obj_eina_array_new();
-   return eina_array_iterator_new(arr);
+   if (pd->out_array)
+     eina_array_free(pd->out_array);
+
+   pd->out_array = _iterator_obj_eina_array_new();
+   return eina_array_iterator_new(pd->out_array);
 }
 
 //                                 //

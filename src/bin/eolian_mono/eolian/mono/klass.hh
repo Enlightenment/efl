@@ -198,6 +198,17 @@ struct klass
 
          if (!as_generator
             (
+             scope_tab << "/// <summary>Constructor to be used when objects are expected to be constructed from native code.</summary>\n"
+             << scope_tab << "/// <param name=\"ch\">Tag struct storing the native handle of the object being constructed.</param>\n"
+             << scope_tab << "private " << concrete_name << "(ConstructingHandle ch) : base(ch)\n"
+             << scope_tab << "{\n"
+             << scope_tab << "}\n\n"
+            )
+            .generate(sink, attributes::unused, concrete_cxt))
+           return false;
+
+         if (!as_generator
+            (
              scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(concrete_cxt).actual_library_name(cls.filename)
              << ")] internal static extern System.IntPtr\n"
              << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n"
@@ -246,7 +257,7 @@ struct klass
            ).generate(sink, attributes::unused, concrete_cxt))
            return false;
 
-         if(!generate_native_inherit_class(sink, cls, change_indentation(indent.inc(), context)))
+         if(!generate_native_inherit_class(sink, cls, change_indentation(indent.inc(), concrete_cxt)))
            return true;
 
          if(!as_generator("}\n").generate(sink, attributes::unused, concrete_cxt)) return false;
@@ -318,7 +329,7 @@ struct klass
            ).generate(sink, attributes::unused, inherit_cxt))
            return false;
 
-         if(!generate_native_inherit_class(sink, cls, change_indentation(indent.inc(), context)))
+         if(!generate_native_inherit_class(sink, cls, change_indentation(indent.inc(), inherit_cxt)))
            return true;
 
          if(!as_generator("}\n").generate(sink, attributes::unused, inherit_cxt)) return false;
@@ -357,7 +368,7 @@ struct klass
             (
              indent << lit("/// <summary>Wrapper for native methods and virtual method delegates.\n")
              << indent << "/// For internal use by generated code only.</summary>\n"
-             << indent << "public " << (root ? "" : "new " ) << "class " << native_inherit_name << " " << (root ? " : Efl.Eo.NativeClass" : (": " + base_name)) <<"\n"
+             << indent << "public new class " << native_inherit_name << " : " << (root ? "Efl.Eo.EoWrapper.NativeMethods" : base_name) << "\n"
              << indent << "{\n"
             ).generate(sink, attributes::unused, inative_cxt))
            return false;
@@ -396,7 +407,7 @@ struct klass
                 ).generate(sink,  attributes::unused, inative_cxt))
              return false;
 
-         if(!root)
+         if (!root || context_find_tag<class_context>(context).current_wrapper_kind != class_context::concrete)
            if(!as_generator(indent << scope_tab << scope_tab << "descs.AddRange(base.GetEoOps(type));\n").generate(sink, attributes::unused, inative_cxt))
              return false;
 
@@ -491,6 +502,11 @@ struct klass
                      << scope_tab << "{\n"
                      << (*(scope_tab << scope_tab << constructor_invocation << "\n"))
                      << scope_tab << scope_tab << "FinishInstantiation();\n"
+                     << scope_tab << "}\n\n"
+                     << scope_tab << "/// <summary>Constructor to be used when objects are expected to be constructed from native code.</summary>\n"
+                     << scope_tab << "/// <param name=\"ch\">Tag struct storing the native handle of the object being constructed.</param>\n"
+                     << scope_tab << "protected " << inherit_name << "(ConstructingHandle ch) : base(ch)\n"
+                     << scope_tab << "{\n"
                      << scope_tab << "}\n\n"
                      << scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << inherit_name << "\"/> class.\n"
                      << scope_tab << "/// Internal usage: Constructs an instance from a native pointer. This is used when interacting with C code and should not be used directly.</summary>\n"

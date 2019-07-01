@@ -1765,6 +1765,7 @@ EAPI Ecore_Wl2_Drag_Action ecore_wl2_offer_action_get(Ecore_Wl2_Offer *offer);
  * @return a eina array of strdup´ed strings, this array must NOT be changed or freed
  *
  * @ingroup Ecore_Wl2_Dnd_Group
+ * @since 1.19
  */
 EAPI Eina_Array* ecore_wl2_offer_mimes_get(Ecore_Wl2_Offer *offer);
 
@@ -1942,6 +1943,16 @@ EAPI void ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, void *buffer, in
  */
 EAPI void ecore_wl2_display_flush(Ecore_Wl2_Display *display);
 
+/**
+ * Get if a given window is resizing
+ *
+ * @param window
+ *
+ * @return EINA_TRUE if resizing, EINA_FALSE otherwise
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.21
+ */
 EAPI Eina_Bool ecore_wl2_window_resizing_get(Ecore_Wl2_Window *window);
 
 /**

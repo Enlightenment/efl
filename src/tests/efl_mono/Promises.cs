@@ -42,6 +42,31 @@ class TestPromises
         Test.AssertEquals(received_value, reference_value);
     }
 
+    public static void test_simple_with_object()
+    {
+        bool callbackCalled = false;
+        Eina.Value receivedValue = null;
+
+        Efl.Loop loop = Efl.App.AppMain;
+        Eina.Promise promise = new Eina.Promise();
+        Eina.Future future = new Eina.Future(promise);
+
+        future = future.Then((Eina.Value value) => {
+            callbackCalled = true;
+            receivedValue = new Eina.Value(value);
+            return value;
+        });
+
+        Eina.Value referenceValue = new Eina.Value(Eina.ValueType.Array, Eina.ValueType.Int32);
+        referenceValue.Append(32);
+        promise.Resolve(new Eina.Value(referenceValue));
+
+        loop.Iterate();
+
+        Test.Assert(callbackCalled, "Future callback should have been called.");
+        Test.AssertEquals(receivedValue, referenceValue);
+    }
+
     public static void test_simple_reject()
     {
         bool callbackCalled = false;

@@ -1,5 +1,4 @@
 #include "efl_ui_test_focus_common.h"
-#include "suite_helpers.h"
 
 EFL_START_TEST(focus_unregister_twice)
 {

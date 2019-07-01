@@ -105,6 +105,10 @@ _mouse_down_cb(void *data,
    pd->mouse_move.active = EINA_TRUE;
    pd->mouse_move.from = efl_ui_active_view_active_index_get(pd->container);
    pd->mouse_move.mouse_start = efl_input_pointer_position_get(ev);
+
+   pd->transition.from = pd->mouse_move.from;
+   pd->transition.to = pd->transition.from + 1;
+   pd->transition.progress = 0.0;
 }
 
 static void
@@ -124,9 +128,7 @@ _mouse_move_cb(void *data,
    pos_y_diff = pd->mouse_move.mouse_start.x - pos.x;
 
    pd->transition.active = EINA_TRUE;
-   pd->transition.from = pd->mouse_move.from;
    pd->transition.progress = (double)pos_y_diff / (double)pd->page_size.w;
-   pd->transition.to = pd->transition.from + 1;
 
    _propagate_progress(data, pd->transition.from + pd->transition.progress);
 

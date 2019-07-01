@@ -15,9 +15,7 @@ class Owning {
      test2 {
        params {
          test1 : list<ptr(Test.A) @owned> @owned;
-         test2 : iterator<ptr(Test.A) @owned> @owned;
-         test3 : hash<string, ptr(Test.A) @owned> @owned;
-         test4 : accessor<ptr(Test.A) @owned> @owned;
+         test2 : hash<string, ptr(Test.A) @owned> @owned;
        }
      }
 

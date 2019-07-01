@@ -250,7 +250,6 @@ typedef Eo Efl_Ui_Focus_Manager;
 #include <elm_mirroring.h>
 #include <elm_need.h>
 #include <elm_notify.h>
-#include <efl_ui_nstate.h>
 #include <elm_object.h>
 
 #include <elm_panel.h>

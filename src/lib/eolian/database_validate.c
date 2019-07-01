@@ -273,7 +273,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                   {
                      if (!_validate_type(vals, itp))
                        return EINA_FALSE;
-                     if ((kwid >= KW_accessor) && (kwid <= KW_list) && (kwid != KW_future))
+                     if (kwid == KW_array || kwid == KW_hash || kwid == KW_list)
                        {
                           if (!database_type_is_ownable(src, itp, EINA_TRUE))
                             {

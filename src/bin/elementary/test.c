@@ -55,7 +55,6 @@ void test_clock_pause(void *data, Evas_Object *obj, void *event_info);
 void test_combobox(void *data, Evas_Object *obj, void *event_info);
 void test_check(void *data, Evas_Object *obj, void *event_info);
 void test_check_toggle(void *data, Evas_Object *obj, void *event_info);
-void test_nstate(void *data, Evas_Object *obj, void *event_info);
 void test_radio(void *data, Evas_Object *obj, void *event_info);
 void test_layout(void *data, Evas_Object *obj, void *event_info);
 void test_layout2(void *data, Evas_Object *obj, void *event_info);
@@ -1109,7 +1108,6 @@ add_tests:
    ADD_TEST(NULL, "Range Values", "Progressbar", test_progressbar);
    ADD_TEST(NULL, "Range Values", "Progressbar 2", test_progressbar2);
    ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Progressbar", test_ui_progressbar);
-   ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Nstate", test_nstate);
    ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Slider", test_ui_slider);
    ADD_TEST_EO(NULL, "Range Values", "Efl.Ui.Slider_Interval", test_slider_interval);
 

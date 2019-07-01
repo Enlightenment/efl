@@ -358,3 +358,28 @@ fail_on_errors_setup(void)
    eina_log_abort_on_critical_level_set(2);
    eina_log_abort_on_critical_set(1);
 }
+
+static void
+next_event_job()
+{
+   ecore_main_loop_quit();
+}
+
+static void
+events_norendered(void *data EINA_UNUSED, Evas *e, void *event_info EINA_UNUSED)
+{
+   evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, events_norendered);
+   ecore_job_add(next_event_job, NULL);
+}
+
+void
+get_me_to_those_events(Eo *obj)
+{
+   Evas *e = obj;
+
+   if (!efl_isa(obj, EFL_CANVAS_SCENE_INTERFACE))
+     e = evas_object_evas_get(obj);
+   evas_smart_objects_calculate(e);
+   evas_event_callback_add(e, EVAS_CALLBACK_RENDER_POST, events_norendered, NULL);
+   ecore_main_loop_begin();
+}

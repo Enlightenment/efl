@@ -24,6 +24,10 @@ public static class BaseData
     public static readonly string[] append_seq_str = {"42","43","33"};
     public static readonly string[] modified_seq_str = {"0x0","0x2A","0x42","42","43","33"};
 
+    public static readonly Eina.Stringshare[] base_seq_strshare = {"0x0","0x2A","0x42"};
+    public static readonly Eina.Stringshare[] append_seq_strshare = {"42","43","33"};
+    public static readonly Eina.Stringshare[] modified_seq_strshare = {"0x0","0x2A","0x42","42","43","33"};
+
     public static Dummy.Numberwrapper NW(int n)
     {
         var nw = new Dummy.Numberwrapper();

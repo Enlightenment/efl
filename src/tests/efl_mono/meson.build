@@ -7,6 +7,7 @@ eo_files = [
     'dummy_inherit_iface.eo',
     'dummy_part_holder.eo',
     'dummy_event_manager.eo',
+    'dummy_constructible_object.eo',
 ]
 
 eo_file_targets = []
@@ -33,6 +34,7 @@ efl_mono_native_test = library('efl_mono_native_test',
         'dummy_part_holder.c',
         'dummy_test_object.c',
         'dummy_event_manager.c',
+        'dummy_constructible_object.c',
     ],
     dependencies : [ecore, eo, efl],
 )
@@ -65,6 +67,7 @@ efl_mono_src = [
      'Eldbus.cs',
      'Eo.cs',
      'EoPromises.cs',
+     'EoConstruction.cs',
      'Errors.cs',
      'Events.cs',
      'FunctionPointers.cs',

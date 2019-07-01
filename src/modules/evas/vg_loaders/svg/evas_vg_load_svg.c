@@ -888,6 +888,12 @@ _handle_fill_rule_attr(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node* node, cons
 }
 
 static void
+_handle_opacity_attr(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node* node, const char *value)
+{
+   node->style->opacity = _to_opacity(value);
+}
+
+static void
 _handle_fill_opacity_attr(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node* node, const char *value)
 {
    node->style->fill.flags |= SVG_FILL_FLAGS_OPACITY;
@@ -915,6 +921,7 @@ static const struct {
   STYLE_DEF(fill, fill),
   STYLE_DEF(fill-rule, fill_rule),
   STYLE_DEF(fill-opacity, fill_opacity),
+  STYLE_DEF(opacity, opacity),
   STYLE_DEF(stroke, stroke),
   STYLE_DEF(stroke-width, stroke_width),
   STYLE_DEF(stroke-linejoin, stroke_linejoin),
@@ -995,12 +1002,13 @@ _create_node(Svg_Node *parent, Svg_Node_Type type)
    // update the default value of stroke and fill
    //https://www.w3.org/TR/SVGTiny12/painting.html#SpecifyingPaint
    // default fill color is black
-   node->style->fill.paint.r = 0;
-   node->style->fill.paint.g = 0;
-   node->style->fill.paint.b = 0;
+   //node->style->fill.paint.r = 0;
+   //node->style->fill.paint.g = 0;
+   //node->style->fill.paint.b = 0;
    node->style->fill.paint.none = EINA_FALSE;
    // default fill opacity is 1
    node->style->fill.opacity = 255;
+   node->style->opacity = 255;
 
    // default fill rule is nonzero
    node->style->fill.fill_rule = EFL_GFX_FILL_RULE_WINDING;

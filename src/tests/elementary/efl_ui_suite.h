@@ -6,6 +6,7 @@
 #define EFL_NOLEGACY_API_SUPPORT
 #include <Efl_Ui.h>
 #include "../efl_check.h"
+#include "suite_helpers.h"
 
 #define ck_assert_strn_eq(s1, s2, len)          \
   {                                             \

@@ -400,29 +400,14 @@ end_test()
    return EINA_FALSE;
 }
 
-static void
-mag_job(void *e)
-{
-   evas_event_feed_mouse_out(e, 0, NULL);
-   evas_event_feed_mouse_in(e, 0, NULL);
-   evas_event_feed_mouse_move(e, 200, 100, 0, NULL);
-   evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
-   real_timer_add(elm_config_longpress_timeout_get() + 0.1, end_test, NULL);
-}
-
-static void
-norendered(void *data EINA_UNUSED, Evas *e, void *event_info EINA_UNUSED)
-{
-   ecore_job_add(mag_job, e);
-   evas_event_callback_del(e, EVAS_CALLBACK_RENDER_POST, norendered);
-}
-
 EFL_START_TEST(elm_entry_magnifier)
 {
    Evas_Object *win, *entry;
+   Evas *e;
    char buf[4096];
 
    win = win_add_focused(NULL, "entry", ELM_WIN_BASIC);
+   e = evas_object_evas_get(win);
    evas_object_size_hint_weight_set(win, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 
    entry = elm_entry_add(win);
@@ -466,9 +451,13 @@ EFL_START_TEST(elm_entry_magnifier)
    evas_object_show(win);
    evas_object_resize(entry, 600, 400);
    evas_object_resize(win, 600, 400);
-   evas_smart_objects_calculate(evas_object_evas_get(win));
-   evas_event_callback_add(evas_object_evas_get(win), EVAS_CALLBACK_RENDER_POST, norendered, NULL);
-   ecore_main_loop_begin();
+   get_me_to_those_events(e);
+
+   evas_event_feed_mouse_out(e, 0, NULL);
+   evas_event_feed_mouse_in(e, 0, NULL);
+   evas_event_feed_mouse_move(e, 200, 100, 0, NULL);
+   evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
+   real_timer_add(elm_config_longpress_timeout_get() + 0.1, end_test, NULL);
 }
 EFL_END_TEST
 

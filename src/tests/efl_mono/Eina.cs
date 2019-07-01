@@ -492,6 +492,14 @@ class TestEinaArray
         Test.AssertEquals("test string §éΨبÿツ", a[0]);
     }
 
+    public static void push_stringshare()
+    {
+        var a = new Eina.Array<Eina.Stringshare>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Push("test string §éΨبÿツ"));
+        Test.AssertEquals("test string §éΨبÿツ", a[0].Str);
+    }
+
     public static void push_obj()
     {
         var a = new Eina.Array<Dummy.Numberwrapper>();
@@ -515,6 +523,15 @@ class TestEinaArray
     public static void pop_string()
     {
         var a = new Eina.Array<string>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Push("test string"));
+        Test.Assert(a.Pop() == "test string");
+        Test.Assert(a.Count() == 0);
+    }
+
+    public static void pop_stringshare()
+    {
+        var a = new Eina.Array<Eina.Stringshare>();
         Test.Assert(a.Handle != IntPtr.Zero);
         Test.Assert(a.Push("test string"));
         Test.Assert(a.Pop() == "test string");
@@ -549,6 +566,18 @@ class TestEinaArray
     public static void data_set_string()
     {
         var a = new Eina.Array<string>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Push("test string"));
+        Test.Assert(a[0] == "test string");
+        a.DataSet(0, "other string");
+        Test.Assert(a[0] == "other string");
+        a[0] = "abc";
+        Test.Assert(a[0] == "abc");
+    }
+
+    public static void data_set_stringshare()
+    {
+        var a = new Eina.Array<Eina.Stringshare>();
         Test.Assert(a.Handle != IntPtr.Zero);
         Test.Assert(a.Push("test string"));
         Test.Assert(a[0] == "test string");
@@ -604,6 +633,22 @@ class TestEinaArray
     public static void count_string()
     {
         var a = new Eina.Array<string>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Count() == 0);
+        Test.Assert(a.Push("a"));
+        Test.Assert(a[0] == "a");
+        Test.Assert(a.Count() == 1);
+        Test.Assert(a.Push("b"));
+        Test.Assert(a[1] == "b");
+        Test.Assert(a.Count() == 2);
+        Test.Assert(a.Push("c"));
+        Test.Assert(a[2] == "c");
+        Test.Assert(a.Count() == 3);
+    }
+
+    public static void count_stringshare()
+    {
+        var a = new Eina.Array<Eina.Stringshare>();
         Test.Assert(a.Handle != IntPtr.Zero);
         Test.Assert(a.Count() == 0);
         Test.Assert(a.Push("a"));
@@ -678,6 +723,22 @@ class TestEinaArray
         Test.Assert(a.Length == 3);
     }
 
+    public static void length_stringshare()
+    {
+        var a = new Eina.Array<Eina.Stringshare>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Length == 0);
+        Test.Assert(a.Push("a"));
+        Test.Assert(a[0] == "a");
+        Test.Assert(a.Length == 1);
+        Test.Assert(a.Push("b"));
+        Test.Assert(a[1] == "b");
+        Test.Assert(a.Length == 2);
+        Test.Assert(a.Push("c"));
+        Test.Assert(a[2] == "c");
+        Test.Assert(a.Length == 3);
+    }
+
     public static void eina_array_as_ienumerable_int()
     {
         var a = new Eina.Array<int>();
@@ -697,6 +758,22 @@ class TestEinaArray
     public static void eina_array_as_ienumerable_string()
     {
         var a = new Eina.Array<string>();
+        Test.Assert(a.Handle != IntPtr.Zero);
+        Test.Assert(a.Push("X"));
+        Test.Assert(a.Push("XX"));
+        Test.Assert(a.Push("XXX"));
+
+        string cmp = "X";
+        foreach (string e in a)
+        {
+            Test.AssertEquals(cmp, e);
+            cmp = cmp + "X";
+        }
+    }
+
+    public static void eina_array_as_ienumerable_stringshare()
+    {
+        var a = new Eina.Array<Eina.Stringshare>();
         Test.Assert(a.Handle != IntPtr.Zero);
         Test.Assert(a.Push("X"));
         Test.Assert(a.Push("XX"));
@@ -884,6 +961,80 @@ class TestEinaArray
         Test.Assert(arr.Own);
         Test.Assert(arr.ToArray().SequenceEqual(base_seq_str));
         Test.Assert(arr.Append(append_seq_str));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+
+    // Eina.Stringshare //
+    public static void test_eina_array_strshare_in()
+    {
+        var t = new Dummy.TestObject();
+        var arr = new Eina.Array<Eina.Stringshare>();
+        arr.Append(base_seq_strshare);
+        Test.Assert(t.EinaArrayStrshareIn(arr));
+        Test.Assert(arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(modified_seq_strshare));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_array_strshare_in_own()
+    {
+        var t = new Dummy.TestObject();
+        var arr = new Eina.Array<Eina.Stringshare>();
+        arr.Append(base_seq_strshare);
+        Test.Assert(t.EinaArrayStrshareInOwn(arr));
+        Test.Assert(!arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(modified_seq_strshare));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.CheckEinaArrayStrshareInOwn());
+    }
+
+    public static void test_eina_array_strshare_out()
+    {
+        var t = new Dummy.TestObject();
+        Eina.Array<Eina.Stringshare> arr;
+        Test.Assert(t.EinaArrayStrshareOut(out arr));
+        Test.Assert(!arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(base_seq_strshare));
+        Test.Assert(arr.Append(append_seq_strshare));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.CheckEinaArrayStrshareOut());
+    }
+
+    public static void test_eina_array_strshare_out_own()
+    {
+        var t = new Dummy.TestObject();
+        Eina.Array<Eina.Stringshare> arr;
+        Test.Assert(t.EinaArrayStrshareOutOwn(out arr));
+        Test.Assert(arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(base_seq_strshare));
+        Test.Assert(arr.Append(append_seq_strshare));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_array_strshare_return()
+    {
+        var t = new Dummy.TestObject();
+        var arr = t.EinaArrayStrshareReturn();
+        Test.Assert(!arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(base_seq_strshare));
+        Test.Assert(arr.Append(append_seq_strshare));
+        arr.Dispose();
+        Test.Assert(arr.Handle == IntPtr.Zero);
+        Test.Assert(t.CheckEinaArrayStrshareReturn());
+    }
+
+    public static void test_eina_array_strshare_return_own()
+    {
+        var t = new Dummy.TestObject();
+        var arr = t.EinaArrayStrshareReturnOwn();
+        Test.Assert(arr.Own);
+        Test.Assert(arr.ToArray().SequenceEqual(base_seq_strshare));
+        Test.Assert(arr.Append(append_seq_strshare));
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
     }
@@ -1315,6 +1466,17 @@ class TestEinaList
         Test.Assert(lst[0] == "abc");
     }
 
+    public static void data_set_stringshare()
+    {
+        var lst = new Eina.List<Eina.Stringshare>();
+        lst.Append("test string");
+        Test.Assert(lst[0] == "test string");
+        lst.DataSet(0, "other string");
+        Test.Assert(lst[0] == "other string");
+        lst[0] = "abc";
+        Test.Assert(lst[0] == "abc");
+    }
+
     public static void data_set_obj()
     {
         var lst = new Eina.List<Dummy.Numberwrapper>();
@@ -1359,6 +1521,21 @@ class TestEinaList
     public static void append_count_string()
     {
         var lst = new Eina.List<string>();
+        Test.Assert(lst.Count() == 0);
+        lst.Append("a");
+        Test.Assert(lst[0] == "a");
+        Test.Assert(lst.Count() == 1);
+        lst.Append("b");
+        Test.Assert(lst[1] == "b");
+        Test.Assert(lst.Count() == 2);
+        lst.Append("c");
+        Test.Assert(lst[2] == "c");
+        Test.Assert(lst.Count() == 3);
+    }
+
+    public static void append_count_stringshare()
+    {
+        var lst = new Eina.List<Eina.Stringshare>();
         Test.Assert(lst.Count() == 0);
         lst.Append("a");
         Test.Assert(lst[0] == "a");
@@ -1429,6 +1606,21 @@ class TestEinaList
         Test.Assert(lst.Length == 3);
     }
 
+    public static void length_stringshare()
+    {
+        var lst = new Eina.List<Eina.Stringshare>();
+        Test.Assert(lst.Length == 0);
+        lst.Append("a");
+        Test.Assert(lst[0] == "a");
+        Test.Assert(lst.Length == 1);
+        lst.Append("b");
+        Test.Assert(lst[1] == "b");
+        Test.Assert(lst.Length == 2);
+        lst.Append("c");
+        Test.Assert(lst[2] == "c");
+        Test.Assert(lst.Length == 3);
+    }
+
     public static void prepend_count_int()
     {
         var lst = new Eina.List<int>();
@@ -1447,6 +1639,21 @@ class TestEinaList
     public static void prepend_count_string()
     {
         var lst = new Eina.List<string>();
+        Test.Assert(lst.Count() == 0);
+        lst.Prepend("a");
+        Test.Assert(lst[0] == "a");
+        Test.Assert(lst.Count() == 1);
+        lst.Prepend("b");
+        Test.Assert(lst[0] == "b");
+        Test.Assert(lst.Count() == 2);
+        lst.Prepend("c");
+        Test.Assert(lst[0] == "c");
+        Test.Assert(lst.Count() == 3);
+    }
+
+    public static void prepend_count_stringshare()
+    {
+        var lst = new Eina.List<Eina.Stringshare>();
         Test.Assert(lst.Count() == 0);
         lst.Prepend("a");
         Test.Assert(lst[0] == "a");
@@ -1511,6 +1718,18 @@ class TestEinaList
 
     }
 
+    public static void sorted_insert_stringshare()
+    {
+        var lst = new Eina.List<Eina.Stringshare>();
+        lst.SortedInsert("c");
+        Test.Assert(lst.ToArray().SequenceEqual(new Eina.Stringshare[]{"c"}));
+        lst.SortedInsert("a");
+        Test.Assert(lst.ToArray().SequenceEqual(new Eina.Stringshare[]{"a","c"}));
+        lst.SortedInsert("b");
+        Test.Assert(lst.ToArray().SequenceEqual(new Eina.Stringshare[]{"a","b","c"}));
+
+    }
+
     public static void sort_int()
     {
         var lst = new Eina.List<int>();
@@ -1536,6 +1755,18 @@ class TestEinaList
         Test.Assert(lst.ToArray().SequenceEqual(new string[]{"a","b","c","d"}));
     }
 
+    public static void sort_stringshare()
+    {
+        var lst = new Eina.List<Eina.Stringshare>();
+        lst.Append("d");
+        lst.Append("b");
+        lst.Append("a");
+        lst.Append("c");
+        Test.Assert(lst.ToArray().SequenceEqual(new Eina.Stringshare[]{"d","b","a","c"}));
+        lst.Sort();
+        Test.Assert(lst.ToArray().SequenceEqual(new Eina.Stringshare[]{"a","b","c","d"}));
+    }
+
     public static void reverse_int()
     {
         var lst = new Eina.List<int>();
@@ -1559,6 +1790,17 @@ class TestEinaList
         Test.Assert(lst.ToArray().SequenceEqual(new string[]{"c","b","a"}));
     }
 
+    public static void reverse_stringshare()
+    {
+        var lst = new Eina.List<Eina.Stringshare>();
+        lst.Append("a");
+        lst.Append("b");
+        lst.Append("c");
+        Test.Assert(lst.ToArray().SequenceEqual(new Eina.Stringshare[]{"a","b","c"}));
+        lst.Reverse();
+        Test.Assert(lst.ToArray().SequenceEqual(new Eina.Stringshare[]{"c","b","a"}));
+    }
+
     public static void eina_list_as_ienumerable_int()
     {
         var lst = new Eina.List<int>();
@@ -1577,6 +1819,21 @@ class TestEinaList
     public static void eina_list_as_ienumerable_string()
     {
         var lst = new Eina.List<string>();
+        lst.Append("X");
+        lst.Append("XX");
+        lst.Append("XXX");
+
+        string cmp = "X";
+        foreach (string e in lst)
+        {
+            Test.AssertEquals(cmp, e);
+            cmp = cmp + "X";
+        }
+    }
+
+    public static void eina_list_as_ienumerable_stringshare()
+    {
+        var lst = new Eina.List<Eina.Stringshare>();
         lst.Append("X");
         lst.Append("XX");
         lst.Append("XXX");
@@ -1756,6 +2013,77 @@ class TestEinaList
         Test.Assert(lst.Own);
         Test.Assert(lst.ToArray().SequenceEqual(base_seq_str));
         lst.AppendArray(append_seq_str);
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+    }
+
+    // Eina.Stringshare //
+    public static void test_eina_list_strshare_in()
+    {
+        var t = new Dummy.TestObject();
+        var lst = new Eina.List<Eina.Stringshare>();
+        lst.AppendArray(base_seq_strshare);
+        Test.Assert(t.EinaListStrshareIn(lst));
+        Test.Assert(lst.Own);
+        Test.Assert(lst.ToArray().SequenceEqual(base_seq_strshare));
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_list_strshare_in_own()
+    {
+        var t = new Dummy.TestObject();
+        var lst = new Eina.List<Eina.Stringshare>();
+        lst.AppendArray(base_seq_strshare);
+        Test.Assert(t.EinaListStrshareInOwn(lst));
+        Test.Assert(!lst.Own);
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+        Test.Assert(t.CheckEinaListStrshareInOwn());
+    }
+
+    public static void test_eina_list_strshare_out()
+    {
+        var t = new Dummy.TestObject();
+        Eina.List<Eina.Stringshare> lst;
+        Test.Assert(t.EinaListStrshareOut(out lst));
+        Test.Assert(!lst.Own);
+        Test.Assert(lst.ToArray().SequenceEqual(base_seq_strshare));
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+        Test.Assert(t.CheckEinaListStrshareOut());
+    }
+
+    public static void test_eina_list_strshare_out_own()
+    {
+        var t = new Dummy.TestObject();
+        Eina.List<Eina.Stringshare> lst;
+        Test.Assert(t.EinaListStrshareOutOwn(out lst));
+        Test.Assert(lst.Own);
+        Test.Assert(lst.ToArray().SequenceEqual(base_seq_strshare));
+        lst.AppendArray(append_seq_strshare);
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_list_strshare_return()
+    {
+        var t = new Dummy.TestObject();
+        var lst = t.EinaListStrshareReturn();
+        Test.Assert(!lst.Own);
+        Test.Assert(lst.ToArray().SequenceEqual(base_seq_strshare));
+        lst.Dispose();
+        Test.Assert(lst.Handle == IntPtr.Zero);
+        Test.Assert(t.CheckEinaListStrshareReturn());
+    }
+
+    public static void test_eina_list_strshare_return_own()
+    {
+        var t = new Dummy.TestObject();
+        var lst = t.EinaListStrshareReturnOwn();
+        Test.Assert(lst.Own);
+        Test.Assert(lst.ToArray().SequenceEqual(base_seq_strshare));
+        lst.AppendArray(append_seq_strshare);
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
     }
@@ -2149,6 +2477,26 @@ class TestEinaHash
         hsh.Dispose();
     }
 
+    public static void data_set_strshare()
+    {
+        var hsh = new Eina.Hash<Eina.Stringshare, Eina.Stringshare>();
+        Test.Assert(hsh.Count == 0);
+
+        hsh["aa"] = "aaa";
+        Test.Assert(hsh["aa"] == "aaa");
+        Test.Assert(hsh.Count == 1);
+
+        hsh["bb"] = "bbb";
+        Test.Assert(hsh["bb"] == "bbb");
+        Test.Assert(hsh.Count == 2);
+
+        hsh["cc"] = "ccc";
+        Test.Assert(hsh["cc"] == "ccc");
+        Test.Assert(hsh.Count == 3);
+
+        hsh.Dispose();
+    }
+
     public static void data_set_obj()
     {
         var hsh = new Eina.Hash<Dummy.Numberwrapper, Dummy.Numberwrapper>();
@@ -2224,6 +2572,34 @@ class TestEinaHash
         int count = 0;
 
         foreach (KeyValuePair<string, string> kvp in hsh)
+        {
+            Test.Assert(dct[kvp.Key] == kvp.Value);
+            dct.Remove(kvp.Key);
+            ++count;
+        }
+
+        Test.AssertEquals(count, 3);
+        Test.AssertEquals(dct.Count, 0);
+
+        hsh.Dispose();
+    }
+
+    public static void eina_hash_as_ienumerable_strshare()
+    {
+        var hsh = new Eina.Hash<Eina.Stringshare, Eina.Stringshare>();
+        var dct = new Dictionary<Eina.Stringshare, Eina.Stringshare>();
+
+        hsh["aa"] = "aaa";
+        hsh["bb"] = "bbb";
+        hsh["cc"] = "ccc";
+
+        dct["aa"] = "aaa";
+        dct["bb"] = "bbb";
+        dct["cc"] = "ccc";
+
+        int count = 0;
+
+        foreach (KeyValuePair<Eina.Stringshare, Eina.Stringshare> kvp in hsh)
         {
             Test.Assert(dct[kvp.Key] == kvp.Value);
             dct.Remove(kvp.Key);
@@ -2444,6 +2820,90 @@ class TestEinaHash
         Test.Assert(t.CheckEinaHashStrReturnOwn());
     }
 
+    // Eina.Stringshare //
+
+    /*public static void test_eina_hash_strshare_in()
+    {
+        var t = new Dummy.TestObject();
+        var hsh = new Eina.Hash<Eina.Stringshare, Eina.Stringshare>();
+        hsh["aa"] = "aaa";
+        Test.Assert(t.EinaHashStrshareIn(hsh));
+        Test.Assert(hsh.Own);
+        Test.Assert(hsh["aa"] == "aaa");
+        Test.Assert(hsh["bb"] == "bbb");
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+    }
+
+    public static void test_eina_hash_strshare_in_own()
+    {
+        var t = new Dummy.TestObject();
+        var hsh = new Eina.Hash<Eina.Stringshare, Eina.Stringshare>();
+        hsh["aa"] = "aaa";
+        Test.Assert(t.EinaHashStrshareInOwn(hsh));
+        Test.Assert(!hsh.Own);
+        Test.Assert(hsh["aa"] == "aaa");
+        Test.Assert(hsh["bb"] == "bbb");
+        hsh["cc"] = "ccc";
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+        Test.Assert(t.CheckEinaHashStrshareInOwn());
+    }
+
+    public static void test_eina_hash_strshare_out()
+    {
+        var t = new Dummy.TestObject();
+        Eina.Hash<string,string> hsh;
+        Test.Assert(t.EinaHashStrshareOut(out hsh));
+        Test.Assert(!hsh.Own);
+        Test.Assert(hsh["aa"] == "aaa");
+        hsh["bb"] = "bbb";
+        Test.Assert(hsh["bb"] == "bbb");
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+        Test.Assert(t.CheckEinaHashStrshareOut());
+    }
+
+    public static void test_eina_hash_strshare_out_own()
+    {
+        var t = new Dummy.TestObject();
+        Eina.Hash<string,string> hsh;
+        Test.Assert(t.EinaHashStrshareOutOwn(out hsh));
+        Test.Assert(hsh.Own);
+        Test.Assert(hsh["aa"] == "aaa");
+        hsh["bb"] = "bbb";
+        Test.Assert(hsh["bb"] == "bbb");
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+        Test.Assert(t.CheckEinaHashStrshareOutOwn());
+    }
+
+    public static void test_eina_hash_strshare_return()
+    {
+        var t = new Dummy.TestObject();
+        var hsh = t.EinaHashStrshareReturn();
+        Test.Assert(!hsh.Own);
+        Test.Assert(hsh["aa"] == "aaa");
+        hsh["bb"] = "bbb";
+        Test.Assert(hsh["bb"] == "bbb");
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+        Test.Assert(t.CheckEinaHashStrshareReturn());
+    }
+
+    public static void test_eina_hash_strshare_return_own()
+    {
+        var t = new Dummy.TestObject();
+        var hsh = t.EinaHashStrshareReturnOwn();
+        Test.Assert(hsh.Own);
+        Test.Assert(hsh["aa"] == "aaa");
+        hsh["bb"] = "bbb";
+        Test.Assert(hsh["bb"] == "bbb");
+        hsh.Dispose();
+        Test.Assert(hsh.Handle == IntPtr.Zero);
+        Test.Assert(t.CheckEinaHashStrshareReturnOwn());
+    }*/
+
     // Object //
 
     public static void test_eina_hash_obj_in()
@@ -2643,6 +3103,38 @@ class TestEinaIterator
         arr.Dispose();
     }
 
+    public static void eina_array_strshare_empty_iterator()
+    {
+        var arr = new Eina.Array<Eina.Stringshare>();
+        var itr = arr.GetIterator();
+        int idx = 0;
+        foreach (string e in itr)
+        {
+            ++idx;
+        }
+        Test.AssertEquals(idx, 0);
+
+        itr.Dispose();
+        arr.Dispose();
+    }
+
+    public static void eina_array_strshare_filled_iterator()
+    {
+        var arr = new Eina.Array<Eina.Stringshare>();
+        arr.Append(base_seq_strshare);
+        var itr = arr.GetIterator();
+        int idx = 0;
+        foreach (string e in itr)
+        {
+            Test.Assert(e == base_seq_strshare[idx]);
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_strshare.Length);
+
+        itr.Dispose();
+        arr.Dispose();
+    }
+
     public static void eina_array_obj_empty_iterator()
     {
         var arr = new Eina.Array<Dummy.Numberwrapper>();
@@ -2772,6 +3264,38 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, base_seq_str.Length);
+
+        itr.Dispose();
+        lst.Dispose();
+    }
+
+    public static void eina_list_strshare_empty_iterator()
+    {
+        var lst = new Eina.List<Eina.Stringshare>();
+        var itr = lst.GetIterator();
+        int idx = 0;
+        foreach (string e in itr)
+        {
+            ++idx;
+        }
+        Test.AssertEquals(idx, 0);
+
+        itr.Dispose();
+        lst.Dispose();
+    }
+
+    public static void eina_list_strshare_filled_iterator()
+    {
+        var lst = new Eina.List<Eina.Stringshare>();
+        lst.AppendArray(base_seq_strshare);
+        var itr = lst.GetIterator();
+        int idx = 0;
+        foreach (string e in itr)
+        {
+            Test.Assert(e == base_seq_strshare[idx]);
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_strshare.Length);
 
         itr.Dispose();
         lst.Dispose();
@@ -3015,6 +3539,92 @@ class TestEinaIterator
         hsh.Dispose();
     }
 
+/*
+    public static void eina_hash_keys_strshare_empty_iterator()
+    {
+        var hsh = new Eina.Hash<Eina.Stringshare, Eina.Stringshare>();
+        var itr = hsh.Keys();
+        bool entered = false;
+        foreach (string e in itr)
+        {
+            entered = true;
+        }
+        Test.Assert(!entered);
+
+        itr.Dispose();
+        hsh.Dispose();
+    }
+
+    public static void eina_hash_values_strshare_empty_iterator()
+    {
+        var hsh = new Eina.Hash<Eina.Stringshare, Eina.Stringshare>();
+        var itr = hsh.Values();
+        bool entered = false;
+        foreach (string e in itr)
+        {
+            entered = true;
+        }
+        Test.Assert(!entered);
+
+        itr.Dispose();
+        hsh.Dispose();
+    }
+
+    public static void eina_hash_keys_strshare_filled_iterator()
+    {
+        var hsh = new Eina.Hash<Eina.Stringshare, Eina.Stringshare>();
+        var dct = new Dictionary<Eina.Stringshare, bool>();
+        hsh["aa"] = "aaa";
+        hsh["bb"] = "bbb";
+        hsh["cc"] = "ccc";
+        dct["aa"] = true;
+        dct["bb"] = true;
+        dct["cc"] = true;
+
+        var itr = hsh.Keys();
+
+        int idx = 0;
+        foreach (string e in itr)
+        {
+            Test.Assert(dct[e]);
+            dct.Remove(e);
+            ++idx;
+        }
+        Test.AssertEquals(dct.Count, 0);
+        Test.AssertEquals(idx, 3);
+
+        itr.Dispose();
+        hsh.Dispose();
+    }
+
+    public static void eina_hash_values_strshare_filled_iterator()
+    {
+        var hsh = new Eina.Hash<Eina.Stringshare, Eina.Stringshare>();
+        var dct = new Dictionary<Eina.Stringshare, bool>();
+        hsh["aa"] = "aaa";
+        hsh["bb"] = "bbb";
+        hsh["cc"] = "ccc";
+        dct["aaa"] = true;
+        dct["bbb"] = true;
+        dct["ccc"] = true;
+
+        var itr = hsh.Values();
+
+        int idx = 0;
+        foreach (string e in itr)
+        {
+            Test.Assert(dct[e]);
+            dct.Remove(e);
+            ++idx;
+        }
+        Test.AssertEquals(dct.Count, 0);
+        Test.AssertEquals(idx, 3);
+
+        itr.Dispose();
+        hsh.Dispose();
+    }
+*/
+
     public static void eina_hash_keys_obj_empty_iterator()
     {
         var hsh = new Eina.Hash<Dummy.Numberwrapper, Dummy.Numberwrapper>();
@@ -3129,14 +3739,12 @@ class TestEinaIterator
         var itr = arr.GetIterator();
 
         Test.Assert(itr.Own);
-        Test.Assert(!itr.OwnContent);
         Test.Assert(arr.Own);
         Test.Assert(arr.OwnContent);
 
         Test.Assert(t.EinaIteratorIntIn(itr));
 
         Test.Assert(itr.Own);
-        Test.Assert(!itr.OwnContent);
         Test.Assert(arr.Own);
         Test.Assert(arr.OwnContent);
 
@@ -3150,20 +3758,18 @@ class TestEinaIterator
         var arr = new Eina.Array<int>();
         arr.Append(base_seq_int);
         var itr = arr.GetIterator();
-        arr.OwnContent = false;
-        itr.OwnContent = true;
 
         Test.Assert(itr.Own);
-        Test.Assert(itr.OwnContent);
         Test.Assert(arr.Own);
-        Test.Assert(!arr.OwnContent);
+        Test.Assert(arr.OwnContent);
 
+        // Will take ownership of the Iterator
         Test.Assert(t.EinaIteratorIntInOwn(itr));
 
         Test.Assert(!itr.Own);
-        Test.Assert(!itr.OwnContent);
         Test.Assert(arr.Own);
-        Test.Assert(!arr.OwnContent);
+        // Content must continue to be owned by the array
+        Test.Assert(arr.OwnContent);
 
         itr.Dispose();
         arr.Dispose();
@@ -3178,9 +3784,7 @@ class TestEinaIterator
 
         Test.Assert(t.EinaIteratorIntOut(out itr));
 
-
         Test.Assert(!itr.Own);
-        Test.Assert(!itr.OwnContent);
 
         int idx = 0;
         foreach (int e in itr)
@@ -3203,7 +3807,6 @@ class TestEinaIterator
         Test.Assert(t.EinaIteratorIntOutOwn(out itr));
 
         Test.Assert(itr.Own);
-        Test.Assert(itr.OwnContent);
 
         int idx = 0;
         foreach (int e in itr)
@@ -3223,7 +3826,6 @@ class TestEinaIterator
         var itr = t.EinaIteratorIntReturn();
 
         Test.Assert(!itr.Own);
-        Test.Assert(!itr.OwnContent);
 
         int idx = 0;
         foreach (int e in itr)
@@ -3245,7 +3847,6 @@ class TestEinaIterator
         var itr = t.EinaIteratorIntReturnOwn();
 
         Test.Assert(itr.Own);
-        Test.Assert(itr.OwnContent);
 
         int idx = 0;
         foreach (int e in itr)
@@ -3268,14 +3869,12 @@ class TestEinaIterator
         var itr = arr.GetIterator();
 
         Test.Assert(itr.Own);
-        Test.Assert(!itr.OwnContent);
         Test.Assert(arr.Own);
         Test.Assert(arr.OwnContent);
 
         Test.Assert(t.EinaIteratorStrIn(itr));
 
         Test.Assert(itr.Own);
-        Test.Assert(!itr.OwnContent);
         Test.Assert(arr.Own);
         Test.Assert(arr.OwnContent);
 
@@ -3289,24 +3888,16 @@ class TestEinaIterator
         var arr = new Eina.Array<string>();
         arr.Append(base_seq_str);
         var itr = arr.GetIterator();
-        arr.OwnContent = false;
-        itr.OwnContent = true;
 
         Test.Assert(itr.Own);
-        Test.Assert(itr.OwnContent);
         Test.Assert(arr.Own);
-        Test.Assert(!arr.OwnContent);
+        Test.Assert(arr.OwnContent);
 
         Test.Assert(t.EinaIteratorStrInOwn(itr));
 
         Test.Assert(!itr.Own);
-        Test.Assert(!itr.OwnContent);
-        Test.Assert(!itr.Own);
-        Test.Assert(!itr.OwnContent);
         Test.Assert(arr.Own);
-        Test.Assert(!arr.OwnContent);
-        Test.Assert(arr.Own);
-        Test.Assert(!arr.OwnContent);
+        Test.Assert(arr.OwnContent);
 
         itr.Dispose();
         arr.Dispose();
@@ -3322,7 +3913,6 @@ class TestEinaIterator
         Test.Assert(t.EinaIteratorStrOut(out itr));
 
         Test.Assert(!itr.Own);
-        Test.Assert(!itr.OwnContent);
 
         int idx = 0;
         foreach (string e in itr)
@@ -3345,7 +3935,6 @@ class TestEinaIterator
         Test.Assert(t.EinaIteratorStrOutOwn(out itr));
 
         Test.Assert(itr.Own);
-        Test.Assert(itr.OwnContent);
 
         int idx = 0;
         foreach (string e in itr)
@@ -3365,7 +3954,6 @@ class TestEinaIterator
         var itr = t.EinaIteratorStrReturn();
 
         Test.Assert(!itr.Own);
-        Test.Assert(!itr.OwnContent);
 
         int idx = 0;
         foreach (string e in itr)
@@ -3387,7 +3975,6 @@ class TestEinaIterator
         var itr = t.EinaIteratorStrReturnOwn();
 
         Test.Assert(itr.Own);
-        Test.Assert(itr.OwnContent);
 
         int idx = 0;
         foreach (string e in itr)
@@ -3396,6 +3983,134 @@ class TestEinaIterator
             ++idx;
         }
         Test.AssertEquals(idx, base_seq_str.Length);
+
+        itr.Dispose();
+    }
+
+    // Eina.Stringshare //
+
+    public static void test_eina_iterator_strshare_in()
+    {
+        var t = new Dummy.TestObject();
+        var arr = new Eina.Array<Eina.Stringshare>();
+        arr.Append(base_seq_strshare);
+        var itr = arr.GetIterator();
+
+        Test.Assert(itr.Own);
+        Test.Assert(arr.Own);
+        Test.Assert(arr.OwnContent);
+
+        Test.Assert(t.EinaIteratorStrshareIn(itr));
+
+        Test.Assert(itr.Own);
+        Test.Assert(arr.Own);
+        Test.Assert(arr.OwnContent);
+
+        itr.Dispose();
+        arr.Dispose();
+    }
+
+    public static void test_eina_iterator_strshare_in_own()
+    {
+        var t = new Dummy.TestObject();
+        var arr = new Eina.Array<Eina.Stringshare>();
+        arr.Append(base_seq_strshare);
+        var itr = arr.GetIterator();
+
+        Test.Assert(itr.Own);
+        Test.Assert(arr.Own);
+        Test.Assert(arr.OwnContent);
+
+        Test.Assert(t.EinaIteratorStrshareInOwn(itr));
+
+        Test.Assert(!itr.Own);
+        Test.Assert(arr.Own);
+        Test.Assert(arr.OwnContent);
+
+        itr.Dispose();
+        arr.Dispose();
+
+        Test.Assert(t.CheckEinaIteratorStrshareInOwn());
+    }
+
+    public static void test_eina_iterator_strshare_out()
+    {
+        var t = new Dummy.TestObject();
+        Eina.Iterator<Eina.Stringshare> itr;
+
+        Test.Assert(t.EinaIteratorStrshareOut(out itr));
+
+        Test.Assert(!itr.Own);
+
+        int idx = 0;
+        foreach (Eina.Stringshare e in itr)
+        {
+            Test.AssertEquals(e, base_seq_strshare[idx]);
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_strshare.Length);
+
+        itr.Dispose();
+
+        Test.Assert(t.CheckEinaIteratorStrshareOut());
+    }
+
+    public static void test_eina_iterator_strshare_out_own()
+    {
+        var t = new Dummy.TestObject();
+        Eina.Iterator<Eina.Stringshare> itr;
+
+        Test.Assert(t.EinaIteratorStrshareOutOwn(out itr));
+
+        Test.Assert(itr.Own);
+
+        int idx = 0;
+        foreach (Eina.Stringshare e in itr)
+        {
+            Test.AssertEquals(e, base_seq_strshare[idx]);
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_strshare.Length);
+
+        itr.Dispose();
+    }
+
+    public static void test_eina_iterator_strshare_return()
+    {
+        var t = new Dummy.TestObject();
+
+        var itr = t.EinaIteratorStrshareReturn();
+
+        Test.Assert(!itr.Own);
+
+        int idx = 0;
+        foreach (Eina.Stringshare e in itr)
+        {
+            Test.AssertEquals(e, base_seq_strshare[idx]);
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_strshare.Length);
+
+        itr.Dispose();
+
+        Test.Assert(t.CheckEinaIteratorStrshareReturn());
+    }
+
+    public static void test_eina_iterator_strshare_return_own()
+    {
+        var t = new Dummy.TestObject();
+
+        var itr = t.EinaIteratorStrshareReturnOwn();
+
+        Test.Assert(itr.Own);
+
+        int idx = 0;
+        foreach (Eina.Stringshare e in itr)
+        {
+            Test.AssertEquals(e, base_seq_strshare[idx]);
+            ++idx;
+        }
+        Test.AssertEquals(idx, base_seq_strshare.Length);
 
         itr.Dispose();
     }
@@ -3410,14 +4125,12 @@ class TestEinaIterator
         var itr = arr.GetIterator();
 
         Test.Assert(itr.Own);
-        Test.Assert(!itr.OwnContent);
         Test.Assert(arr.Own);
         Test.Assert(arr.OwnContent);
 
         Test.Assert(t.EinaIteratorObjIn(itr));
 
         Test.Assert(itr.Own);
-        Test.Assert(!itr.OwnContent);
         Test.Assert(arr.Own);
         Test.Assert(arr.OwnContent);
 
@@ -3431,20 +4144,16 @@ class TestEinaIterator
         var arr = new Eina.Array<Dummy.Numberwrapper>();
         arr.Append(BaseSeqObj());
         var itr = arr.GetIterator();
-        arr.OwnContent = false;
-        itr.OwnContent = true;
 
         Test.Assert(itr.Own);
-        Test.Assert(itr.OwnContent);
         Test.Assert(arr.Own);
-        Test.Assert(!arr.OwnContent);
+        Test.Assert(arr.OwnContent);
 
         Test.Assert(t.EinaIteratorObjInOwn(itr));
 
         Test.Assert(!itr.Own);
-        Test.Assert(!itr.OwnContent);
         Test.Assert(arr.Own);
-        Test.Assert(!arr.OwnContent);
+        Test.Assert(arr.OwnContent);
 
         itr.Dispose();
         arr.Dispose();
@@ -3460,7 +4169,6 @@ class TestEinaIterator
         Test.Assert(t.EinaIteratorObjOut(out itr));
 
         Test.Assert(!itr.Own);
-        Test.Assert(!itr.OwnContent);
 
         var base_seq_obj = BaseSeqObj();
 
@@ -3485,7 +4193,6 @@ class TestEinaIterator
         Test.Assert(t.EinaIteratorObjOutOwn(out itr));
 
         Test.Assert(itr.Own);
-        Test.Assert(itr.OwnContent);
 
         var base_seq_obj = BaseSeqObj();
 
@@ -3507,7 +4214,6 @@ class TestEinaIterator
         var itr = t.EinaIteratorObjReturn();
 
         Test.Assert(!itr.Own);
-        Test.Assert(!itr.OwnContent);
 
         var base_seq_obj = BaseSeqObj();
 
@@ -3531,7 +4237,6 @@ class TestEinaIterator
         var itr = t.EinaIteratorObjReturnOwn();
 
         Test.Assert(itr.Own);
-        Test.Assert(itr.OwnContent);
 
         var base_seq_obj = BaseSeqObj();
 

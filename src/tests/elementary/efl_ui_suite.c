@@ -3,7 +3,6 @@
 #endif
 
 #include "efl_ui_suite.h"
-#include "suite_helpers.h"
 #include "eo_internal.h"
 
 static const Efl_Test_Case etc[] = {
