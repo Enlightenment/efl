@@ -97,9 +97,46 @@ EFL_START_TEST(elm_test_radio_selection)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_test_radio_callback)
+{
+   radio_change_count = 0;
+   Evas_Object *rd, *rdg;
+   Evas_Object *win = win_add(NULL, "radio", ELM_WIN_BASIC);
+   evas_object_resize(win, 100, 100);
+
+   // radio 1
+   rd = elm_radio_add(win);
+   evas_object_resize(rd, 100, 100);
+
+   // rdg radio group
+   rdg = rd;
+   evas_object_smart_callback_add(rdg, "changed", _rdg_changed_cb, NULL);
+
+   elm_radio_state_value_set(rd, 1);
+   elm_object_text_set(rd, "Radio Group Test #1");
+   evas_object_show(rd);
+
+
+   // radio 2
+   rd = elm_radio_add(win);
+   evas_object_resize(rd, 100, 100);
+   elm_radio_state_value_set(rd, 2);
+   elm_object_text_set(rd, "Radio Group Test #2");
+   elm_radio_group_add(rd, rdg);
+   evas_object_show(rd);
+   evas_object_show(win);
+
+   elm_radio_value_set(rdg, 2);
+   elm_radio_value_set(rdg, 1);
+   elm_radio_value_set(rdg, 2);
+   ck_assert_int_eq(radio_change_count, 0);
+}
+EFL_END_TEST
+
 void elm_test_radio(TCase *tc)
 {
    tcase_add_test(tc, elm_radio_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
    tcase_add_test(tc, elm_test_radio_selection);
+   tcase_add_test(tc, elm_test_radio_callback);
 }
