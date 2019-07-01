@@ -38,7 +38,7 @@ if [ "$DISTRO" != "" ] ; then
   MINGW_COPTS="--cross-file .ci/cross_toolchain.txt -Davahi=false -Deeze=false -Dsystemd=false \
   -Dpulseaudio=false -Dx11=false -Dopengl=none -Dlibmount=false \
   -Devas-loaders-disabler=json,pdf,ps,raw,svg -Devas-modules=static -Dbindings=luajit \
-  -Dharfbuzz=true -Dpixman=true -Dembedded-lz4=false -Dbuild-examples=false "
+  -Dharfbuzz=true -Dpixman=true -Dembedded-lz4=false "
 
   if [ "$1" = "options-enabled" ]; then
     OPTS="$OPTS $ENABLED_LINUX_COPTS $WAYLAND_LINUX_COPTS"
