@@ -6,6 +6,7 @@
 #define EFL_ACCESS_VALUE_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
+#define EFL_UI_FORMAT_PROTECTED
 
 #include <Elementary.h>
 
@@ -50,29 +51,20 @@ EFL_CALLBACKS_ARRAY_DEFINE(_inc_dec_button_cb,
 static void
 _entry_show(Evas_Object *obj)
 {
-   Efl_Ui_Spin_Special_Value *sv;
-   Eina_Array_Iterator iterator;
-   unsigned int i;
    char buf[32], fmt[32] = "%0.f";
 
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
 
-   EINA_ARRAY_ITER_NEXT(pd->special_values, i, sv, iterator)
-     {
-        if (sv->value == pd->val)
-          {
-             snprintf(buf, sizeof(buf), "%s", sv->label);
-             elm_object_text_set(sd->ent, buf);
-          }
-     }
+   const char *format_string;
+   efl_ui_format_string_get(obj, &format_string, NULL);
 
    /* try to construct just the format from given label
     * completely ignoring pre/post words
     */
-   if (pd->templates)
+   if (format_string)
      {
-        const char *start = strchr(pd->templates, '%');
+        const char *start = strchr(format_string, '%');
         while (start)
           {
              /* handle %% */
@@ -103,10 +95,7 @@ _entry_show(Evas_Object *obj)
           }
      }
 
-   if (pd->format_type == SPIN_FORMAT_INT)
-     snprintf(buf, sizeof(buf), fmt, (int)pd->val);
-   else
-     snprintf(buf, sizeof(buf), fmt, pd->val);
+   snprintf(buf, sizeof(buf), fmt, pd->val);
 
    elm_object_text_set(sd->ent, buf);
 }
@@ -115,20 +104,16 @@ static void
 _label_write(Evas_Object *obj)
 {
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
-
    Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
 
-   if (pd->templates)
-     {
-        efl_text_set(sd->text_button, pd->templates);
-     }
-   else
-     {
-        char buf[1024];
+   Eina_Strbuf *strbuf = eina_strbuf_new();
+   Eina_Value val = eina_value_double_init(pd->val);
+   efl_ui_format_formatted_value_get(obj, strbuf, val);
 
-        snprintf(buf, sizeof(buf), "%.0f", pd->val);
-        efl_text_set(sd->text_button, buf);
-     }
+   efl_text_set(sd->text_button, eina_strbuf_string_get(strbuf));
+
+   eina_value_flush(&val);
+   eina_strbuf_free(strbuf);
 }
 
 static Eina_Bool
@@ -182,9 +167,6 @@ _entry_hide(Evas_Object *obj)
 static void
 _entry_value_apply(Evas_Object *obj)
 {
-   Efl_Ui_Spin_Special_Value *sv;
-   Eina_Array_Iterator iterator;
-   unsigned int i;
    const char *str;
    double val;
    char *end;
@@ -199,10 +181,6 @@ _entry_value_apply(Evas_Object *obj)
    _entry_hide(obj);
    str = elm_object_text_get(sd->ent);
    if (!str) return;
-
-   EINA_ARRAY_ITER_NEXT(pd->special_values, i, sv, iterator)
-      if (sv->value == pd->val)
-        if (!strcmp(sv->label, str)) return;
 
    val = strtod(str, &end);
    if (((*end != '\0') && (!isspace(*end))) || (fabs(val - pd->val) < DBL_EPSILON)) return;
@@ -267,14 +245,14 @@ static void
 _entry_accept_filter_add(Evas_Object *obj)
 {
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
-   Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
    static Elm_Entry_Filter_Accept_Set digits_filter_data;
+   int decimal_places = efl_ui_format_decimal_places_get(obj);
 
    if (!sd->ent) return;
 
    elm_entry_markup_filter_remove(sd->ent, elm_entry_filter_accept_set, &digits_filter_data);
 
-   if (pd->decimal_points > 0)
+   if (decimal_places > 0)
      digits_filter_data.accepted = "-.0123456789";
    else
      digits_filter_data.accepted = "-0123456789";
@@ -307,6 +285,7 @@ _min_max_validity_filter(void *data, Evas_Object *obj, char **text)
    char *insert, *new_str = NULL;
    double val;
    int max_len = 0, len;
+   int decimal_places = efl_ui_format_decimal_places_get(data);
 
    EINA_SAFETY_ON_NULL_RETURN(data);
    EINA_SAFETY_ON_NULL_RETURN(obj);
@@ -322,12 +301,12 @@ _min_max_validity_filter(void *data, Evas_Object *obj, char **text)
    if (!new_str) return;
    if (strchr(new_str, '-')) max_len++;
 
-   if (pd->format_type == SPIN_FORMAT_FLOAT)
+   if (decimal_places > 0)
      {
         point = strchr(new_str, '.');
         if (point)
           {
-             if ((int) strlen(point + 1) > pd->decimal_points)
+             if ((int) strlen(point + 1) > decimal_places)
                {
                   *insert = 0;
                   goto end;

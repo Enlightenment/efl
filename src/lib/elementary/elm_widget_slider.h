@@ -35,12 +35,12 @@ struct _Elm_Slider_Data
 
    Evas_Coord            size;
 
-   Efl_Ui_Format_Func_Cb format_cb;
+   Efl_Ui_Format_Func    format_cb;
    Eina_Free_Cb          format_free_cb;
    void                  *format_cb_data;
    Eina_Strbuf           *format_strbuf;
 
-   Efl_Ui_Format_Func_Cb indi_format_cb;
+   Efl_Ui_Format_Func    indi_format_cb;
    Eina_Free_Cb          indi_format_free_cb;
    void                  *indi_format_cb_data;
    Eina_Strbuf           *indi_format_strbuf;

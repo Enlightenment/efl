@@ -119,7 +119,7 @@ _win_delete_req_cb(void *d, const Efl_Event *ev EINA_UNUSED)
    free(pd);
 }
 
-static void
+static Eina_Bool
 _custom_format_cb(void *data EINA_UNUSED, Eina_Strbuf *str, const Eina_Value value)
 {
    double v;
@@ -129,6 +129,7 @@ _custom_format_cb(void *data EINA_UNUSED, Eina_Strbuf *str, const Eina_Value val
    else if (v < 75.f) eina_strbuf_append_printf(str, "Getting there...");
    else if (v < 100.f) eina_strbuf_append_printf(str, "Almost done...");
    else eina_strbuf_append_printf(str, "Done!");
+   return EINA_TRUE;
 }
 
 static void
@@ -204,7 +205,7 @@ test_ui_progressbar(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_inf
                      efl_pack(bx, efl_added),
                      efl_text_set(efl_added, "Custom string"),
                      efl_ui_range_limits_set(efl_added, 0, 100),
-                     efl_ui_format_string_set(efl_added, "%d rabbits"),
+                     efl_ui_format_string_set(efl_added, "%d rabbits", EFL_UI_FORMAT_STRING_TYPE_SIMPLE),
                      efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(250, 20))
                     );
 
@@ -212,7 +213,7 @@ test_ui_progressbar(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_inf
                      efl_pack(bx, efl_added),
                      efl_text_set(efl_added, "Custom func"),
                      efl_ui_range_limits_set(efl_added, 0, 100),
-                     efl_ui_format_cb_set(efl_added, NULL, _custom_format_cb, NULL),
+                     efl_ui_format_func_set(efl_added, NULL, _custom_format_cb, NULL),
                      efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(250, 20))
                     );
 

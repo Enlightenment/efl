@@ -47,7 +47,7 @@ class @beta Efl.Ui.Tags extends Efl.Ui.Layout_Base implements Efl.Text, Efl.Ui.F
       Efl.Object.destructor;
       Efl.Ui.Widget.widget_input_event_handler;
       Efl.Text.text { get; set; }
-      Efl.Ui.Format.format_cb { set; }
+      Efl.Ui.Format.apply_formatted_value;
    }
    events {
       /* FIXME: Returning a basic type is not future-proof, better return a struct */

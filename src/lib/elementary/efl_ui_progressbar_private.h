@@ -38,9 +38,6 @@ struct _Efl_Ui_Progressbar_Data
 
    Eina_List            *progress_status; /**< The list of _Elm_Progress_Status. To save the progress value(in percentage) each part of given progress bar */
 
-   Efl_Ui_Format_Func_Cb format_cb;
-   Eina_Free_Cb          format_free_cb;
-   void                  *format_cb_data;
    Eina_Strbuf           *format_strbuf;
 
    Efl_Ui_Layout_Orientation dir; /**< Orientation of the progressbar  */

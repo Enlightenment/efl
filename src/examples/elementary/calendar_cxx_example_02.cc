@@ -26,17 +26,19 @@ struct appData
       auto wcal(cal._get_wref());
 
       // FIXME: How does one figure out the argument types for the function?
-      auto cb_a = std::bind([=](
+      auto cb_a = std::bind([](
                             efl::eina::strbuf_wrapper& sb,
-                            efl::eina::value_view const& value) {
+                            efl::eina::value_view const& value) -> bool {
            try {
               sb.append_strftime("%b. %y", efl::eina::get<tm>(value));
            } catch (std::system_error const&)  {
               sb.append(value.to_string());
            }
            std::cout << "Month: " << std::string(sb) << std::endl;
+           return true;
         }, _1, _2);
-      cal.format_cb_set(cb_a);
+      // FIXME XAR: I broke this and I do not know how to fix it
+      // cal.format_func_set(cb_a);
    }
 
    void destroy() {

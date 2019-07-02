@@ -58,7 +58,7 @@ class @beta Efl.Ui.Progressbar extends Efl.Ui.Layout_Base implements Efl.Ui.Rang
       Efl.Ui.Range_Display.range_value { get; set; }
       Efl.Ui.Range_Display.range_limits {get; set; }
       Efl.Ui.Layout_Orientable.orientation { get; set; }
-      Efl.Ui.Format.format_cb { set; }
+      Efl.Ui.Format.apply_formatted_value;
       Efl.Part.part_get;
       Efl.Access.Value.value_and_text { get; }
       Efl.Text.text { get; set; }

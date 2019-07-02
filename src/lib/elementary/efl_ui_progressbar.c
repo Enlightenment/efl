@@ -6,6 +6,7 @@
 #define ELM_LAYOUT_PROTECTED
 #define EFL_ACCESS_VALUE_PROTECTED
 #define EFL_PART_PROTECTED
+#define EFL_UI_FORMAT_PROTECTED
 
 #include <Elementary.h>
 
@@ -73,7 +74,7 @@ _units_set(Evas_Object *obj)
 {
    EFL_UI_PROGRESSBAR_DATA_GET(obj, sd);
 
-   if (sd->show_progress_label && sd->format_cb)
+   if (sd->show_progress_label)
      {
         Eina_Value val;
 
@@ -84,8 +85,8 @@ _units_set(Evas_Object *obj)
         if (sd->is_legacy_format_string && !sd->is_legacy_format_cb)
           eina_value_set(&val, 100 * sd->val);
 
-        eina_strbuf_reset(sd->format_strbuf);
-        sd->format_cb(sd->format_cb_data, sd->format_strbuf, val);
+        if (!sd->format_strbuf) sd->format_strbuf = eina_strbuf_new();
+        efl_ui_format_formatted_value_get(obj, sd->format_strbuf, val);
 
         eina_value_flush(&val);
 
@@ -361,7 +362,7 @@ _efl_ui_progressbar_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Progressbar_Data 
 
    free(group);
 
-   efl_ui_format_string_set(obj, "%.0f%%");
+   efl_ui_format_string_set(obj, "%.0f%%", EFL_UI_FORMAT_STRING_TYPE_SIMPLE);
 
    priv->spacer = evas_object_rectangle_add(evas_object_evas_get(obj));
    evas_object_color_set(priv->spacer, 0, 0, 0, 0);
@@ -402,8 +403,8 @@ _efl_ui_progressbar_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Progressbar_Data 
            }
       }
 
-   efl_ui_format_cb_set(obj, NULL, NULL, NULL);
    eina_strbuf_free(sd->format_strbuf);
+   sd->format_strbuf = NULL;
 
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
@@ -611,32 +612,6 @@ _efl_ui_progressbar_efl_ui_range_display_range_value_get(const Eo *obj, Efl_Ui_P
 }
 
 EOLIAN static void
-_efl_ui_progressbar_efl_ui_format_format_cb_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, void *func_data, Efl_Ui_Format_Func_Cb func, Eina_Free_Cb func_free_cb)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   if (sd->format_cb_data == func_data && sd->format_cb == func)
-     return;
-
-   if (sd->format_cb_data && sd->format_free_cb)
-     sd->format_free_cb(sd->format_cb_data);
-
-   sd->format_cb = func;
-   sd->format_cb_data = func_data;
-   sd->format_free_cb = func_free_cb;
-   if (!sd->format_strbuf) sd->format_strbuf = eina_strbuf_new();
-
-   if (elm_widget_is_legacy(obj))
-     elm_layout_signal_emit(obj, "elm,state,units,visible", "elm");
-   else
-     elm_layout_signal_emit(obj, "efl,state,units,visible", "efl");
-   edje_object_message_signal_process(wd->resize_obj);
-
-   _units_set(obj);
-   elm_layout_sizing_eval(obj);
-}
-
-EOLIAN static void
 _efl_ui_progressbar_pulse_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Eina_Bool state)
 {
    state = !!state;
@@ -771,6 +746,12 @@ EOLIAN static Eina_Bool
 _efl_ui_progressbar_show_progress_label_get(const Eo *obj EINA_UNUSED, Efl_Ui_Progressbar_Data *pd)
 {
    return pd->show_progress_label;
+}
+
+EOLIAN static void
+_efl_ui_progressbar_efl_ui_format_apply_formatted_value(Eo *obj, Efl_Ui_Progressbar_Data *pd EINA_UNUSED)
+{
+   _units_set(obj);
 }
 
 #include "efl_ui_progressbar_part.eo.c"
@@ -982,7 +963,7 @@ typedef struct
    progressbar_freefunc_type format_free_cb;
 } Pb_Format_Wrapper_Data;
 
-static void
+static Eina_Bool
 _format_legacy_to_format_eo_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
 {
    Pb_Format_Wrapper_Data *pfwd = data;
@@ -998,6 +979,8 @@ _format_legacy_to_format_eo_cb(void *data, Eina_Strbuf *str, const Eina_Value va
    if (buf)
      eina_strbuf_append(str, buf);
    if (pfwd->format_free_cb) pfwd->format_free_cb(buf);
+
+   return EINA_TRUE;
 }
 
 static void
@@ -1018,8 +1001,8 @@ elm_progressbar_unit_format_function_set(Evas_Object *obj, progressbar_func_type
    pfwd->format_free_cb = free_func;
    sd->is_legacy_format_cb = EINA_TRUE;
 
-   efl_ui_format_cb_set(obj, pfwd, _format_legacy_to_format_eo_cb,
-                        _format_legacy_to_format_eo_free_cb);
+   efl_ui_format_func_set(obj, pfwd, _format_legacy_to_format_eo_cb,
+                          _format_legacy_to_format_eo_free_cb);
 }
 
 EAPI void
@@ -1042,13 +1025,15 @@ elm_progressbar_unit_format_set(Evas_Object *obj, const char *units)
    EFL_UI_PROGRESSBAR_DATA_GET_OR_RETURN(obj, sd);
 
    sd->is_legacy_format_string = EINA_TRUE;
-   efl_ui_format_string_set(obj, units);
+   efl_ui_format_string_set(obj, units, EFL_UI_FORMAT_STRING_TYPE_SIMPLE);
 }
 
 EAPI const char *
 elm_progressbar_unit_format_get(const Evas_Object *obj)
 {
-   return efl_ui_format_string_get(obj);
+   const char *fmt;
+   efl_ui_format_string_get(obj, &fmt, NULL);
+   return fmt;
 }
 
 EAPI void

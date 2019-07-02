@@ -5,6 +5,7 @@
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 #define EFL_UI_FOCUS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
+#define EFL_UI_FORMAT_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -167,37 +168,17 @@ _disable(Efl_Ui_Calendar_Data *sd,
 static void
 _set_month_year(Efl_Ui_Calendar_Data *sd)
 {
+   Eina_Strbuf *strbuf = eina_strbuf_new();
+   Eina_Value val;
 
    sd->filling = EINA_TRUE;
 
-   if (sd->format_cb)
-     {
-        Eina_Value val;
-        const char *buf;
-
-		eina_value_setup(&val, EINA_VALUE_TYPE_TM);
-        eina_value_set(&val, sd->shown_date);
-        eina_strbuf_reset(sd->format_strbuf);
-        sd->format_cb(sd->format_cb_data, sd->format_strbuf, val);
-        buf = eina_strbuf_string_get(sd->format_strbuf);
-		eina_value_flush(&val);
-
-        if (buf)
-          elm_layout_text_set(sd->obj, "month_text", buf);
-        else
-          elm_layout_text_set(sd->obj, "month_text", "");
-     }
-   else
-     {
-        char *buf;
-        buf = eina_strftime(E_("%B %Y"), &sd->shown_date);
-        if (buf)
-          {
-             elm_layout_text_set(sd->obj, "month_text", buf);
-             free(buf);
-          }
-        else elm_layout_text_set(sd->obj, "month_text", "");
-     }
+   eina_value_setup(&val, EINA_VALUE_TYPE_TM);
+   eina_value_set(&val, sd->shown_date);
+   efl_ui_format_formatted_value_get(sd->obj, strbuf, val);
+   elm_layout_text_set(sd->obj, "month_text", eina_strbuf_string_get(strbuf));
+   eina_value_flush(&val);
+   eina_strbuf_free(strbuf);
 
    sd->filling = EINA_FALSE;
 }
@@ -841,9 +822,6 @@ _efl_ui_calendar_efl_object_destructor(Eo *obj, Efl_Ui_Calendar_Data *sd)
 
    ecore_timer_del(sd->update_timer);
 
-   efl_ui_format_cb_set(obj, NULL, NULL, NULL);
-   eina_strbuf_free(sd->format_strbuf);
-
    for (i = 0; i < ELM_DAY_LAST; i++)
      eina_stringshare_del(sd->weekdays[i]);
 
@@ -919,7 +897,6 @@ _efl_ui_calendar_constructor_internal(Eo *obj, Efl_Ui_Calendar_Data *priv)
    priv->today_it = -1;
    priv->selected_it = -1;
    priv->first_day_it = -1;
-   priv->format_cb = NULL;
 
    edje_object_signal_callback_add
      (wd->resize_obj, "efl,action,selected", "*",
@@ -1146,62 +1123,9 @@ _efl_ui_calendar_date_get(const Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_calendar_efl_ui_format_format_cb_set(Eo *obj, Efl_Ui_Calendar_Data *sd, void *func_data, Efl_Ui_Format_Func_Cb func, Eina_Free_Cb func_free_cb)
+_efl_ui_calendar_efl_ui_format_apply_formatted_value(Eo *obj, Efl_Ui_Calendar_Data *pd EINA_UNUSED)
 {
-   if ((sd->format_cb_data == func_data) && (sd->format_cb == func))
-     return;
-
-   if (sd->format_cb_data && sd->format_free_cb)
-     sd->format_free_cb(sd->format_cb_data);
-
-   sd->format_cb = func;
-   sd->format_cb_data = func_data;
-   sd->format_free_cb = func_free_cb;
-   if (!sd->format_strbuf) sd->format_strbuf = eina_strbuf_new();
-
    evas_object_smart_changed(obj);
-}
-
-static void
-_calendar_format_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
-{
-   Efl_Ui_Calendar_Data *sd = data;
-   const Eina_Value_Type *type = eina_value_type_get(&value);
-   struct tm v;
-
-   if (type == EINA_VALUE_TYPE_TM)
-     {
-        eina_value_get(&value, &v);
-        eina_strbuf_append_strftime(str, sd->format_template, &v);
-     }
-}
-
-static void
-_calendar_format_free_cb(void *data)
-{
-   Efl_Ui_Calendar_Data *sd = data;
-
-   if (sd && sd->format_template)
-     {
-        eina_stringshare_del(sd->format_template);
-        sd->format_template = NULL;
-     }
-}
-
-EOLIAN static void
-_efl_ui_calendar_efl_ui_format_format_string_set(Eo *obj, Efl_Ui_Calendar_Data *sd, const char *template)
-{
-   if (!template) return;
-
-   eina_stringshare_replace(&sd->format_template, template);
-
-   efl_ui_format_cb_set(obj, sd, _calendar_format_cb, _calendar_format_free_cb);
-}
-
-EOLIAN static const char *
-_efl_ui_calendar_efl_ui_format_format_string_get(const Eo *obj EINA_UNUSED, Efl_Ui_Calendar_Data *sd)
-{
-   return sd->format_template;
 }
 
 EOLIAN static void

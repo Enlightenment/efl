@@ -27,3 +27,4 @@ Just add your widget name to the "test-widgets" array and recompile. Next run of
 == Adding a new test ==
 
 To add a new test you need to create the .c file and include the metadata comment at the top.
+Remember to add the new .c file to the meson.build file.

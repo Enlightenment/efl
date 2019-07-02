@@ -94,7 +94,6 @@ pub_eo_files = [
   'efl_observer.eo',
   'efl_observable.eo',
   'efl_ui_autorepeat.eo',
-  'efl_ui_format.eo',
   'efl_gfx_color_class.eo',
   'efl_gfx_text_class.eo',
   'efl_gfx_size_class.eo',
@@ -166,7 +165,6 @@ efl_src += files([
   'efl_io_queue.c',
   'efl_observer.c',
   'efl_file.c',
-  'efl_ui_format.c',
   'efl_ui_layout_orientable_readonly.c',
   'efl_text_markup_util.c',
 ])

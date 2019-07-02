@@ -78,7 +78,7 @@ test_ui_tags(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
                   efl_event_callback_add(efl_added, EFL_UI_TAGS_EVENT_ITEM_ADDED, _item_added_cb, array),
                   efl_event_callback_add(efl_added, EFL_UI_TAGS_EVENT_ITEM_DELETED, _item_deleted_cb, array),
                   efl_text_set(efl_added, "To :"),
-                  efl_ui_format_string_set(efl_added, "+ %d items"),
+                  efl_ui_format_string_set(efl_added, "+ %d items", EFL_UI_FORMAT_STRING_TYPE_SIMPLE),
                   elm_object_part_content_set(layout, "multibuttonentry", efl_added));
 
    efl_add(EFL_UI_BUTTON_CLASS, layout,
