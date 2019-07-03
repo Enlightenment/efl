@@ -165,8 +165,6 @@ _validate_typedecl(Validate_State *vals, Eolian_Typedecl *tp)
       case EOLIAN_TYPEDECL_ALIAS:
         if (!_validate_type(vals, tp->base_type))
           return _reset_stable(vals, was_stable, EINA_FALSE);
-        if (!tp->freefunc && tp->base_type->freefunc)
-          tp->freefunc = eina_stringshare_ref(tp->base_type->freefunc);
         if (tp->base_type->ownable)
           tp->ownable = EINA_TRUE;
         _reset_stable(vals, was_stable, EINA_TRUE);
@@ -311,8 +309,6 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
              }
            if (!_validate_typedecl(vals, tp->tdecl))
              return EINA_FALSE;
-           if (tp->tdecl->freefunc && !tp->freefunc)
-             tp->freefunc = eina_stringshare_ref(tp->tdecl->freefunc);
            if (tp->tdecl->ownable || tp->freefunc)
              tp->ownable = EINA_TRUE;
            tp->base.c_name = eina_stringshare_ref(tp->tdecl->base.c_name);

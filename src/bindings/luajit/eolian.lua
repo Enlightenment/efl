@@ -449,8 +449,6 @@ ffi.cdef [[
 
     const char *eolian_type_c_type_get(const Eolian_Type *tp, Eolian_C_Type_Type ctype);
     const char *eolian_typedecl_c_type_get(const Eolian_Typedecl *tp);
-
-    const char *eolian_type_free_func_get(const Eolian_Type *tp);
     const char *eolian_typedecl_free_func_get(const Eolian_Typedecl *tp);
 
     const Eolian_Function *eolian_typedecl_function_pointer_get(const Eolian_Typedecl *tp);
@@ -1168,12 +1166,6 @@ M.Type = ffi.metatype("Eolian_Type", {
             local v = eolian.eolian_type_c_type_get(self, ctype)
             if v == nil then return nil end
             return ffi_stringshare(v)
-        end,
-
-        free_func_get = function(self)
-            local v = eolian.eolian_type_free_func_get(self)
-            if v == nil then return nil end
-            return ffi.string(v)
         end
     }
 })

@@ -183,7 +183,7 @@ _free_func_get(const Eolian_Type *type)
         if (eolian_type_type_get(ab) == EOLIAN_TYPE_CLASS)
           return "efl_del";
         else
-          return eolian_type_free_func_get(ab);
+          return eolian_typedecl_free_func_get(eolian_type_typedecl_get(ab));
       /* no free func */
       default:
         return NULL;
