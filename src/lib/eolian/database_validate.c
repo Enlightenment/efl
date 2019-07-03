@@ -167,6 +167,8 @@ _validate_typedecl(Validate_State *vals, Eolian_Typedecl *tp)
           return _reset_stable(vals, was_stable, EINA_FALSE);
         if (!tp->freefunc && tp->base_type->freefunc)
           tp->freefunc = eina_stringshare_ref(tp->base_type->freefunc);
+        if (tp->base_type->ownable)
+          tp->ownable = EINA_TRUE;
         _reset_stable(vals, was_stable, EINA_TRUE);
         return _validate(&tp->base);
       case EOLIAN_TYPEDECL_STRUCT:
@@ -203,25 +205,12 @@ _validate_typedecl(Validate_State *vals, Eolian_Typedecl *tp)
    return EINA_FALSE;
 }
 
-static const char * const eo_complex_frees[] =
-{
-   "eina_accessor_free", "eina_array_free", "(void)", /* future */
-   "eina_iterator_free", "eina_hash_free",
-   "eina_list_free"
-};
-
-static const char *eo_obj_free = "efl_del";
-static const char *eo_str_free = "free";
-static const char *eo_strshare_free = "eina_stringshare_del";
-static const char *eo_value_free = "eina_value_flush";
-static const char *eo_value_ptr_free = "eina_value_free";
-
 static Eina_Bool
 _validate_ownable(Eolian_Type *tp)
 {
    if (tp->btype == EOLIAN_TYPE_BUILTIN_FUTURE)
      return EINA_TRUE;
-   if (tp->owned && !tp->freefunc)
+   if (tp->owned && !tp->ownable)
      {
         _eo_parser_log(&tp->base, "type '%s' is not ownable", tp->base.name);
         return EINA_FALSE;
@@ -262,13 +251,10 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
            if (tp->base_type)
              {
                 int kwid = eo_lexer_keyword_str_to_id(tp->base.name);
-                if (!tp->freefunc && kwid > KW_void)
-                  {
-                     tp->freefunc = eina_stringshare_add(eo_complex_frees[
-                       kwid - KW_accessor]);
-                  }
+                if (kwid > KW_void)
+                  tp->ownable = EINA_TRUE;
                 Eolian_Type *itp = tp->base_type;
-                /* validate types in brackets so freefuncs get written... */
+                /* validate types in brackets so transitive fields get written */
                 while (itp)
                   {
                      if (!_validate_type(vals, itp))
@@ -293,24 +279,20 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
              {
                 if (!eo_lexer_is_type_keyword(id))
                   return EINA_FALSE;
-                if (!tp->freefunc)
-                  switch (id)
-                    {
-                     case KW_mstring:
-                       tp->freefunc = eina_stringshare_add(eo_str_free);
-                       break;
-                     case KW_stringshare:
-                       tp->freefunc = eina_stringshare_add(eo_strshare_free);
-                       break;
-                     case KW_any_value:
-                       tp->freefunc = eina_stringshare_add(eo_value_free);
-                       break;
-                     case KW_any_value_ptr:
-                       tp->freefunc = eina_stringshare_add(eo_value_ptr_free);
-                       break;
-                     default:
-                       break;
-                    }
+                switch (id)
+                  {
+                   case KW_mstring:
+                   case KW_stringshare:
+                   case KW_any_value:
+                   case KW_any_value_ptr:
+                     tp->ownable = EINA_TRUE;
+                     break;
+                   default:
+                     break;
+                  }
+                /* FIXME: remove this after c++/c# has fixed their stuff */
+                if (tp->freefunc)
+                  tp->ownable = EINA_TRUE;
                 return _validate_ownable(tp);
              }
            /* user defined */
@@ -331,6 +313,8 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
              return EINA_FALSE;
            if (tp->tdecl->freefunc && !tp->freefunc)
              tp->freefunc = eina_stringshare_ref(tp->tdecl->freefunc);
+           if (tp->tdecl->ownable || tp->freefunc)
+             tp->ownable = EINA_TRUE;
            tp->base.c_name = eina_stringshare_ref(tp->tdecl->base.c_name);
            return _validate_ownable(tp);
         }
@@ -349,8 +333,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                                tp->klass->base.name);
                 return EINA_FALSE;
              }
-           if (!tp->freefunc)
-             tp->freefunc = eina_stringshare_add(eo_obj_free);
+           tp->ownable = EINA_TRUE;
            tp->base.c_name = eina_stringshare_ref(tp->klass->base.c_name);
            return _validate_ownable(tp);
         }
