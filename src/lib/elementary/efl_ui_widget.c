@@ -303,13 +303,16 @@ static void _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd);
 static void
 _manager_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
+   if (!efl_alive_get(data))
+     return;
+
    ELM_WIDGET_DATA_GET(data, pd);
 
    _full_eval(data, pd);
 }
 
 static Efl_Ui_Focus_Object*
-_focus_manager_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
+_focus_manager_eval(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool want, Eina_Bool should)
 {
    Evas_Object *provider = NULL;
    Evas_Object *parent;
@@ -326,7 +329,7 @@ _focus_manager_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
         provider = parent;
      }
 
-   if (new != pd->manager.manager )
+   if (new != pd->manager.manager)
      {
         old = pd->manager.manager;
 
@@ -335,8 +338,12 @@ _focus_manager_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 
         pd->manager.manager = new;
         pd->manager.provider = provider;
-
-        if (pd->manager.provider)
+     }
+   if (pd->manager.provider)
+     {
+        if (!want && !should)
+          efl_event_callback_del(pd->manager.provider, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, _manager_changed_cb, obj);
+        else
           efl_event_callback_add(pd->manager.provider, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, _manager_changed_cb, obj);
      }
 
@@ -457,7 +464,7 @@ _focus_state_eval(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool should, Eina_Boo
 }
 
 static Efl_Ui_Focus_Object*
-_logical_parent_eval(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Eina_Bool should)
+_logical_parent_eval(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Eina_Bool should, Eina_Bool *state_change_to_parent)
 {
    Efl_Ui_Widget *parent;
    Efl_Ui_Focus_Parent_Provider *provider;
@@ -494,6 +501,10 @@ _logical_parent_eval(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Eina_Bool s
                {
                   ELM_WIDGET_DATA_GET_OR_RETURN(parent, parent_wd, NULL);
                   parent_wd->logical.child_count ++;
+                  if (parent_wd->logical.child_count == 1)
+                    {
+                      *state_change_to_parent = EINA_TRUE;
+                    }
                }
              pd->logical.parent = parent;
              efl_weak_ref(&pd->logical.parent);
@@ -508,12 +519,11 @@ _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 {
    Efl_Ui_Focus_Object *old_parent;
    Efl_Ui_Focus_Object *old_registered_parent, *old_registered_manager;
-   Eina_Bool should, want_full;
-
+   Eina_Bool should, want_full, state_change_to_parent = EINA_FALSE;
 
    _eval_registration_candidate(obj, pd, &should, &want_full);
 
-   old_parent = _logical_parent_eval(obj, pd, should);
+   old_parent = _logical_parent_eval(obj, pd, should, &state_change_to_parent);
 
    if (efl_isa(old_parent, EFL_UI_WIDGET_CLASS))
      {
@@ -522,13 +532,13 @@ _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
         _full_eval(old_parent, old_pd);
      }
 
-   if (efl_isa(pd->logical.parent, EFL_UI_WIDGET_CLASS))
+   if (state_change_to_parent && efl_isa(pd->logical.parent, EFL_UI_WIDGET_CLASS))
      {
         ELM_WIDGET_DATA_GET(pd->logical.parent, new_pd);
         _full_eval(pd->logical.parent, new_pd);
      }
 
-   _focus_manager_eval(obj, pd);
+   _focus_manager_eval(obj, pd, want_full, should);
 
    old_registered_parent = pd->focus.parent;
    old_registered_manager = pd->focus.manager;
