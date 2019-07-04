@@ -1,0 +1,8 @@
+class @beta Efl.Ui.Spotlight.Indicator_Icon extends Efl.Ui.Spotlight.Indicator {
+  implements {
+      Efl.Ui.Spotlight.Indicator.bind;
+      Efl.Ui.Spotlight.Indicator.content_del;
+      Efl.Ui.Spotlight.Indicator.content_add;
+      Efl.Ui.Spotlight.Indicator.position_update;
+  }
+}

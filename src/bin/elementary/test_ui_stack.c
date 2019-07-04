@@ -19,7 +19,7 @@ static void
 _stack_pop(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *stack = data;
-   efl_ui_active_view_pop(stack, EINA_TRUE);
+   efl_ui_spotlight_pop(stack, EINA_TRUE);
 }
 
 static void
@@ -99,7 +99,7 @@ _fifth_layout_insert(void *data, const Efl_Event *ev EINA_UNUSED)
 
    Eo *nl = _navigation_layout_create(stack, "5th layout", btn);
 
-   efl_ui_active_view_push(stack, nl);
+   efl_ui_spotlight_push(stack, nl);
 }
 
 static void
@@ -115,7 +115,7 @@ _third_layout_push(void *data, const Efl_Event *ev EINA_UNUSED)
 
    _bar_right_btn_set(nl, _fifth_layout_insert, stack);
 
-   efl_ui_active_view_push(stack, nl);
+   efl_ui_spotlight_push(stack, nl);
 }
 
 static void
@@ -131,7 +131,7 @@ _second_layout_push(void *data, const Efl_Event *ev EINA_UNUSED)
 
    _bar_right_btn_set(nl, _third_layout_push, stack);
 
-   efl_ui_active_view_push(stack, nl);
+   efl_ui_spotlight_push(stack, nl);
 }
 
 static void
@@ -146,7 +146,7 @@ _first_layout_push(Eo *win, Eo *stack)
    _bar_left_btn_set(nl, _win_del, win);
    _bar_right_btn_set(nl, _second_layout_push, stack);
 
-   efl_ui_active_view_push(stack, nl);
+   efl_ui_spotlight_push(stack, nl);
 }
 
 void
@@ -158,7 +158,7 @@ test_ui_stack(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 500));
 
-   Eo *stack = efl_ui_active_view_util_stack_gen(win);
+   Eo *stack = efl_ui_spotlight_util_stack_gen(win);
 
    efl_content_set(win, stack);
 

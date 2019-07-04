@@ -2,7 +2,7 @@
 
 #include <Elementary.h>
 
-static Efl_Ui_Active_View_Container *container;
+static Efl_Ui_Spotlight_Container *container;
 static Eina_Bool play_state = EINA_FALSE;
 static Efl_Loop_Timer *show_timer = NULL;
 
@@ -25,9 +25,9 @@ _show_next(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    efl_del(show_timer);
    show_timer = NULL;
 
-   int current_index = efl_ui_active_view_active_index_get(container);
+   int current_index = efl_ui_spotlight_active_index_get(container);
    int new_index = (current_index + 1) % efl_content_count(container);
-   efl_ui_active_view_active_index_set(container, new_index);
+   efl_ui_spotlight_active_index_set(container, new_index);
 }
 
 static void
@@ -90,11 +90,11 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    table = efl_add(EFL_UI_TABLE_CLASS, win);
    efl_content_set(win, table);
 
-   container = efl_add(EFL_UI_ACTIVE_VIEW_CONTAINER_CLASS, win,
-                       efl_event_callback_add(efl_added, EFL_UI_ACTIVE_VIEW_EVENT_TRANSITION_END, _container_end, NULL),
+   container = efl_add(EFL_UI_SPOTLIGHT_CONTAINER_CLASS, win,
+                       efl_event_callback_add(efl_added, EFL_UI_SPOTLIGHT_EVENT_TRANSITION_END, _container_end, NULL),
                        efl_pack_table(table, efl_added, 0, 0, 1, 1));
-   efl_ui_active_view_indicator_set(container, efl_new(EFL_UI_ACTIVE_VIEW_INDICATOR_ICON_CLASS));
-   efl_ui_active_view_manager_set(container, efl_new(EFL_UI_ACTIVE_VIEW_VIEW_MANAGER_STACK_CLASS));
+   efl_ui_spotlight_indicator_set(container, efl_new(EFL_UI_SPOTLIGHT_INDICATOR_ICON_CLASS));
+   efl_ui_spotlight_manager_set(container, efl_new(EFL_UI_SPOTLIGHT_MANAGER_STACK_CLASS));
 
    for (int i = 0; i < IMG_NUM; i++)
      {

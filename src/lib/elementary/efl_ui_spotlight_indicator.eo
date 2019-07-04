@@ -1,25 +1,25 @@
-abstract @beta Efl.Ui.Active_View.Indicator extends Efl.Object {
-  [[Object used by @Efl.Ui.Active_View.Container to render an indication of the active view's position among
-    the rest of the container's views.
+abstract @beta Efl.Ui.Spotlight.Indicator extends Efl.Object {
+  [[Object used by @Efl.Ui.Spotlight.Container to render an indication of the active widgets's position among
+    the rest of the container's widgets.
     
     An example would be Android's little dots in the home screen.
   ]]
   methods {
     bind @pure_virtual {
-      [[This method is called the first time an @Efl.Ui.Active_View.Indicator is assigned to an @Efl.Ui.Active_View.Container, binding them together.
+      [[This method is called the first time an @Efl.Ui.Spotlight.Indicator is assigned to an @Efl.Ui.Spotlight.Container, binding them together.
 
-        This call can be used to setup the indicator part of the $active_view.
+        This call can be used to setup the indicator part of the $spotlight.
 
         The Active View of the container (if there is any) will be informed to the indicator by a later call to @.position_update.
       ]]
       params {
-        active_view : Efl.Ui.Active_View.Container; [[The container to bind this indicator to.]]
+        spotlight : Efl.Ui.Spotlight.Container; [[The container to bind this indicator to.]]
       }
     }
     content_add @pure_virtual  {
       [[A $subobj has been added at position $index in the bound container.
 
-        The manager should check the container's @Efl.Ui.Active_View.Container.active_index since indices might have
+        The manager should check the container's @Efl.Ui.Spotlight.Container.active_index since indices might have
         shifted due to the insertion of the new object.
       ]]
       params {
@@ -30,7 +30,7 @@ abstract @beta Efl.Ui.Active_View.Indicator extends Efl.Object {
     content_del @pure_virtual  {
       [[The $subobj at position $index in the bound container has been removed.
 
-        The manager should check the container's @Efl.Ui.Active_View.Container.active_index since indices might have
+        The manager should check the container's @Efl.Ui.Spotlight.Container.active_index since indices might have
         shifted due to the removal of the object.
       ]]
       params {
@@ -39,7 +39,7 @@ abstract @beta Efl.Ui.Active_View.Indicator extends Efl.Object {
       }
     }
     position_update @pure_virtual {
-      [[This method tells the indicator that @Efl.Ui.Active_View.Container.active_index has changed in the bound container.
+      [[This method tells the indicator that @Efl.Ui.Spotlight.Container.active_index has changed in the bound container.
 
         $position ranges from -1 to the number of views in the bound container (@Efl.Container.content_count).
         Notice this allows moving to a position before the first view or past the last view, which might happen if the view

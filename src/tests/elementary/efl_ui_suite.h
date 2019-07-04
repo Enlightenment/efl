@@ -35,7 +35,7 @@ void efl_ui_test_focus(TCase *tc);
 void efl_ui_test_focus_sub(TCase *tc);
 void efl_ui_model(TCase *tc);
 void efl_ui_test_widget(TCase *tc);
-void efl_ui_test_active_view(TCase *tc);
+void efl_ui_test_spotlight(TCase *tc);
 void efl_ui_test_check(TCase *tc);
 void efl_ui_test_progressbar(TCase *tc);
 void efl_ui_test_radio_group(TCase *tc);

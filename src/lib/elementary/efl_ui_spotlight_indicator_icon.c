@@ -9,9 +9,9 @@
 
 typedef struct {
    Efl_Ui_Box *indicator;
-   Efl_Ui_Active_View_Container *container;
+   Efl_Ui_Spotlight_Container *container;
    double last_position;
-} Efl_Ui_Active_View_Indicator_Icon_Data;
+} Efl_Ui_Spotlight_Indicator_Icon_Data;
 
 static void
 _flush_state(Eo *item, double val)
@@ -22,7 +22,7 @@ _flush_state(Eo *item, double val)
 }
 
 static void
-_add_item(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Indicator_Icon_Data *pd)
+_add_item(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Indicator_Icon_Data *pd)
 {
    Efl_Canvas_Layout *item;
 
@@ -37,7 +37,7 @@ _add_item(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Indicator_Icon_Data *pd)
 }
 
 static void
-_flush_position(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Indicator_Icon_Data *pd)
+_flush_position(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Indicator_Icon_Data *pd)
 {
    int next = -1, closer;
    double closer_val;
@@ -71,12 +71,12 @@ _flush_position(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Indicator_Icon_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_active_view_indicator_icon_efl_ui_active_view_indicator_bind(Eo *obj, Efl_Ui_Active_View_Indicator_Icon_Data *pd, Efl_Ui_Active_View_Container *active_view)
+_efl_ui_spotlight_indicator_icon_efl_ui_spotlight_indicator_bind(Eo *obj, Efl_Ui_Spotlight_Indicator_Icon_Data *pd, Efl_Ui_Spotlight_Container *spotlight)
 {
-   if (active_view)
+   if (spotlight)
      {
-        pd->container = active_view;
-        pd->indicator = efl_add(EFL_UI_BOX_CLASS, active_view);
+        pd->container = spotlight;
+        pd->indicator = efl_add(EFL_UI_BOX_CLASS, spotlight);
         efl_ui_widget_internal_set(pd->indicator, EINA_TRUE);
         efl_content_set(efl_part(pd->container, "efl.indicator"), pd->indicator);
         efl_gfx_entity_visible_set(pd->indicator, EINA_TRUE);
@@ -91,24 +91,24 @@ _efl_ui_active_view_indicator_icon_efl_ui_active_view_indicator_bind(Eo *obj, Ef
 }
 
 EOLIAN static void
-_efl_ui_active_view_indicator_icon_efl_ui_active_view_indicator_content_add(Eo *obj, Efl_Ui_Active_View_Indicator_Icon_Data *pd, Efl_Gfx_Entity *subobj EINA_UNUSED, int index EINA_UNUSED)
+_efl_ui_spotlight_indicator_icon_efl_ui_spotlight_indicator_content_add(Eo *obj, Efl_Ui_Spotlight_Indicator_Icon_Data *pd, Efl_Gfx_Entity *subobj EINA_UNUSED, int index EINA_UNUSED)
 {
    _add_item(obj, pd);
    _flush_position(obj, pd);
 }
 
 EOLIAN static void
-_efl_ui_active_view_indicator_icon_efl_ui_active_view_indicator_content_del(Eo *obj, Efl_Ui_Active_View_Indicator_Icon_Data *pd, Efl_Gfx_Entity *subobj EINA_UNUSED, int index EINA_UNUSED)
+_efl_ui_spotlight_indicator_icon_efl_ui_spotlight_indicator_content_del(Eo *obj, Efl_Ui_Spotlight_Indicator_Icon_Data *pd, Efl_Gfx_Entity *subobj EINA_UNUSED, int index EINA_UNUSED)
 {
    efl_del(efl_pack_content_get(pd->indicator, 0));
    _flush_position(obj, pd);
 }
 
 EOLIAN static void
-_efl_ui_active_view_indicator_icon_efl_ui_active_view_indicator_position_update(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Indicator_Icon_Data *pd, double position)
+_efl_ui_spotlight_indicator_icon_efl_ui_spotlight_indicator_position_update(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Indicator_Icon_Data *pd, double position)
 {
    pd->last_position = position;
    _flush_position(obj, pd);
 }
 
-#include "efl_ui_active_view_indicator_icon.eo.c"
+#include "efl_ui_spotlight_indicator_icon.eo.c"

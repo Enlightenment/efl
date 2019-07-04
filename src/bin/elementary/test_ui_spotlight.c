@@ -28,7 +28,7 @@ typedef enum _Pack_Type
 typedef struct _Params
 {
    Evas_Object *navi;
-   Eo          *active_view;
+   Eo          *spotlight;
    Eo          *indicator;
    int          w, h;
    Eina_Bool    wfill, hfill;
@@ -36,14 +36,14 @@ typedef struct _Params
 
 typedef struct _Page_Set_Params
 {
-   Eo *active_view;
+   Eo *spotlight;
    Eo *spinner;
 } Page_Set_Params;
 
 typedef struct _Pack_Params
 {
    Pack_Type type;
-   Eo       *active_view;
+   Eo       *spotlight;
    Eo       *pack_sp;
    Eo       *unpack_sp;
    Eo       *unpack_btn;
@@ -51,7 +51,7 @@ typedef struct _Pack_Params
 
 typedef struct _Size_Params
 {
-   Eo     *active_view;
+   Eo     *spotlight;
    Eo     *slider;
    Params *params;
 } Size_Params;
@@ -116,21 +116,21 @@ view_add(View_Type p, Eo *parent)
 static void
 prev_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   Eo *active_view = data;
-   int active_index = efl_ui_active_view_active_index_get(active_view);
+   Eo *spotlight = data;
+   int active_index = efl_ui_spotlight_active_index_get(spotlight);
 
    if (active_index - 1 > -1)
-     efl_ui_active_view_active_index_set(active_view, active_index - 1);
+     efl_ui_spotlight_active_index_set(spotlight, active_index - 1);
 }
 
 static void
 next_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   Eo *active_view = data;
-   int active_index = efl_ui_active_view_active_index_get(active_view);
+   Eo *spotlight = data;
+   int active_index = efl_ui_spotlight_active_index_get(spotlight);
 
-   if (active_index + 1 < efl_content_count(active_view))
-     efl_ui_active_view_active_index_set(active_view, active_index + 1);
+   if (active_index + 1 < efl_content_count(spotlight))
+     efl_ui_spotlight_active_index_set(spotlight, active_index + 1);
 }
 
 static void
@@ -155,7 +155,7 @@ width_slider_cb(void *data, const Efl_Event *ev)
    else h = params->h;
 
    params->w = efl_ui_range_value_get(ev->object);
-   efl_ui_active_view_size_set(params->active_view, EINA_SIZE2D(params->w, h));
+   efl_ui_spotlight_size_set(params->spotlight, EINA_SIZE2D(params->w, h));
 }
 
 static void
@@ -168,7 +168,7 @@ height_slider_cb(void *data, const Efl_Event *ev)
    else w = params->w;
 
    params->h = efl_ui_range_value_get(ev->object);
-   efl_ui_active_view_size_set(params->active_view, EINA_SIZE2D(w, params->h));
+   efl_ui_spotlight_size_set(params->spotlight, EINA_SIZE2D(w, params->h));
 }
 
 static void
@@ -188,7 +188,7 @@ width_check_cb(void *data, const Efl_Event *ev)
    if (params->params->hfill) h = -1;
    else h = params->params->h;
 
-   efl_ui_active_view_size_set(params->active_view, EINA_SIZE2D(w, h));
+   efl_ui_spotlight_size_set(params->spotlight, EINA_SIZE2D(w, h));
 }
 
 static void
@@ -208,7 +208,7 @@ height_check_cb(void *data, const Efl_Event *ev)
    if (params->params->hfill) h = -1;
    else h = params->params->h;
 
-   efl_ui_active_view_size_set(params->active_view, EINA_SIZE2D(w, h));
+   efl_ui_spotlight_size_set(params->spotlight, EINA_SIZE2D(w, h));
 }
 
 static void
@@ -221,30 +221,30 @@ static void
 pack_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Pack_Params *param = data;
-   Eo *active_view = param->active_view;
+   Eo *spotlight = param->spotlight;
    Eo *page = NULL, *curr_page;
    int index, cnt;
 
    if ((param->type != UNPACK_AT) && (param->type != CLEAR))
      {
-        index = efl_content_count(active_view);
+        index = efl_content_count(spotlight);
 
         switch (index % 3)
           {
              case 0:
-               page = view_add(LAYOUT, active_view);
+               page = view_add(LAYOUT, spotlight);
                break;
 
              case 1:
-               page = view_add(LIST, active_view);
+               page = view_add(LIST, spotlight);
                break;
 
              case 2:
-               page = view_add(BUTTON, active_view);
+               page = view_add(BUTTON, spotlight);
                break;
 
              default:
-               page = view_add(LAYOUT, active_view);
+               page = view_add(LAYOUT, spotlight);
                break;
           }
      }
@@ -252,42 +252,42 @@ pack_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    switch (param->type)
      {
         case PACK_BEGIN:
-          efl_pack_begin(active_view, page);
+          efl_pack_begin(spotlight, page);
           break;
 
         case PACK_END:
-          efl_pack_end(active_view, page);
+          efl_pack_end(spotlight, page);
           break;
 
         case PACK_BEFORE:
-          index = efl_ui_active_view_active_index_get(active_view);
-          curr_page = efl_pack_content_get(active_view, index);
-          efl_pack_before(active_view, page, curr_page);
+          index = efl_ui_spotlight_active_index_get(spotlight);
+          curr_page = efl_pack_content_get(spotlight, index);
+          efl_pack_before(spotlight, page, curr_page);
           break;
 
         case PACK_AFTER:
-          index = efl_ui_active_view_active_index_get(active_view);
-          curr_page = efl_pack_content_get(active_view, index);
-          efl_pack_after(active_view, page, curr_page);
+          index = efl_ui_spotlight_active_index_get(spotlight);
+          curr_page = efl_pack_content_get(spotlight, index);
+          efl_pack_after(spotlight, page, curr_page);
           break;
 
         case PACK_AT:
           index = efl_ui_range_value_get(param->pack_sp);
-          efl_pack_at(active_view, page, index);
+          efl_pack_at(spotlight, page, index);
           break;
 
         case UNPACK_AT:
           index = efl_ui_range_value_get(param->unpack_sp);
-          page = efl_pack_unpack_at(active_view, index);
+          page = efl_pack_unpack_at(spotlight, index);
           efl_del(page);
           break;
 
         case CLEAR:
-          efl_pack_clear(active_view);
+          efl_pack_clear(spotlight);
           break;
      }
 
-   cnt = efl_content_count(active_view);
+   cnt = efl_content_count(spotlight);
 
    index = efl_ui_range_value_get(param->pack_sp);
    if (index > cnt)
@@ -323,7 +323,7 @@ page_set_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Page_Set_Params *psp = data;
 
-   efl_ui_active_view_active_index_set(psp->active_view,
+   efl_ui_spotlight_active_index_set(psp->spotlight,
                                        efl_ui_range_value_get(psp->spinner));
 }
 
@@ -338,19 +338,19 @@ indicator_icon_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Params *params = data;
 
-   params->indicator = efl_add(EFL_UI_ACTIVE_VIEW_INDICATOR_ICON_CLASS, params->active_view);
-   efl_ui_active_view_indicator_set(params->active_view, params->indicator);
+   params->indicator = efl_add(EFL_UI_SPOTLIGHT_INDICATOR_ICON_CLASS, params->spotlight);
+   efl_ui_spotlight_indicator_set(params->spotlight, params->indicator);
 }
 
 static void
 indicator_none_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Params *params = data;
-   efl_ui_active_view_indicator_set(params->active_view, NULL);
+   efl_ui_spotlight_indicator_set(params->spotlight, NULL);
 }
 
 static void
-active_view_size(void *data,
+spotlight_size(void *data,
                  Evas_Object *obj EINA_UNUSED,
                  void *event_info EINA_UNUSED)
 {
@@ -396,7 +396,7 @@ active_view_size(void *data,
    if (!size_params) return;
 
    size_params->slider = sl;
-   size_params->active_view = params->active_view;
+   size_params->spotlight = params->spotlight;
    size_params->params = params;
 
    efl_event_callback_add(ck, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, width_check_cb,
@@ -437,7 +437,7 @@ active_view_size(void *data,
    if (!size_params) return;
 
    size_params->slider = sl;
-   size_params->active_view = params->active_view;
+   size_params->spotlight = params->spotlight;
    size_params->params = params;
 
    efl_event_callback_add(ck, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, height_check_cb,
@@ -456,7 +456,7 @@ _animation_cb(void *data, const Efl_Event *ev)
 {
    Params *params = data;
 
-   efl_ui_active_view_view_manager_animation_enabled_set(efl_ui_active_view_manager_get(params->active_view), efl_ui_check_selected_get(ev->object));
+   efl_ui_spotlight_manager_animation_enabled_set(efl_ui_spotlight_manager_get(params->spotlight), efl_ui_check_selected_get(ev->object));
 }
 
 static void
@@ -479,7 +479,7 @@ view_animation_cb(void *data,
 
    ck = efl_add(EFL_UI_CHECK_CLASS, box);
    efl_event_callback_add(ck, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _animation_cb, params);
-   efl_ui_check_selected_set(ck, efl_ui_active_view_view_manager_animation_enabled_get(efl_ui_active_view_manager_get(params->active_view)));
+   efl_ui_check_selected_set(ck, efl_ui_spotlight_manager_animation_enabled_get(efl_ui_spotlight_manager_get(params->spotlight)));
    efl_text_set(ck, "Animation");
    efl_pack_end(box, ck);
    efl_gfx_entity_visible_set(ck, 1);
@@ -492,7 +492,7 @@ pack_cb(void *data,
 {
    Params *params = (Params *)data;
    Evas_Object *navi = params->navi;
-   Eo *active_view = params->active_view;
+   Eo *spotlight = params->spotlight;
    Eo *btn, *box, *in_box1, *in_box2, *sp1, *sp2;
    Pack_Params *pack_param;
 
@@ -512,9 +512,9 @@ pack_cb(void *data,
 
    sp1 = efl_add(EFL_UI_SPIN_BUTTON_CLASS, in_box1,
                  efl_ui_range_limits_set(efl_added, 0,
-                                          efl_content_count(active_view)),
+                                          efl_content_count(spotlight)),
                  efl_ui_range_value_set(efl_added,
-                                        efl_ui_active_view_active_index_get(active_view)));
+                                        efl_ui_spotlight_active_index_get(spotlight)));
 
    in_box2 = efl_add(EFL_UI_BOX_CLASS, box,
                      efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
@@ -529,7 +529,7 @@ pack_cb(void *data,
    pack_param = calloc(1, sizeof(Pack_Params));
    if (!pack_param) return;
 
-   pack_param->active_view = active_view;
+   pack_param->spotlight = spotlight;
    pack_param->pack_sp = sp1;
    pack_param->unpack_sp = sp2;
    pack_param->unpack_btn = btn;
@@ -547,7 +547,7 @@ pack_cb(void *data,
    pack_param = calloc(1, sizeof(Pack_Params));
    if (!pack_param) return;
 
-   pack_param->active_view = active_view;
+   pack_param->spotlight = spotlight;
    pack_param->pack_sp = sp1;
    pack_param->unpack_sp = sp2;
    pack_param->unpack_btn = btn;
@@ -565,7 +565,7 @@ pack_cb(void *data,
    pack_param = calloc(1, sizeof(Pack_Params));
    if (!pack_param) return;
 
-   pack_param->active_view = active_view;
+   pack_param->spotlight = spotlight;
    pack_param->pack_sp = sp1;
    pack_param->unpack_sp = sp2;
    pack_param->unpack_btn = btn;
@@ -583,7 +583,7 @@ pack_cb(void *data,
    pack_param = calloc(1, sizeof(Pack_Params));
    if (!pack_param) return;
 
-   pack_param->active_view = active_view;
+   pack_param->spotlight = spotlight;
    pack_param->pack_sp = sp1;
    pack_param->unpack_sp = sp2;
    pack_param->unpack_btn = btn;
@@ -601,7 +601,7 @@ pack_cb(void *data,
    pack_param = calloc(1, sizeof(Pack_Params));
    if (!pack_param) return;
 
-   pack_param->active_view = active_view;
+   pack_param->spotlight = spotlight;
    pack_param->pack_sp = sp1;
    pack_param->unpack_sp = sp2;
    pack_param->unpack_btn = btn;
@@ -622,7 +622,7 @@ pack_cb(void *data,
    pack_param = calloc(1, sizeof(Pack_Params));
    if (!pack_param) return;
 
-   pack_param->active_view = active_view;
+   pack_param->spotlight = spotlight;
    pack_param->pack_sp = sp1;
    pack_param->unpack_sp = sp2;
    pack_param->unpack_btn = btn;
@@ -633,12 +633,12 @@ pack_cb(void *data,
    efl_event_callback_add(btn, EFL_EVENT_DEL,
                           pack_btn_del_cb, pack_param);
 
-   if (efl_content_count(active_view) > 0)
+   if (efl_content_count(spotlight) > 0)
      {
         efl_ui_range_limits_set(sp2, 0,
-                                 (efl_content_count(active_view) - 1));
+                                 (efl_content_count(spotlight) - 1));
         efl_ui_range_value_set(sp2,
-                               efl_ui_active_view_active_index_get(active_view));
+                               efl_ui_spotlight_active_index_get(spotlight));
      }
    else
      {
@@ -654,7 +654,7 @@ pack_cb(void *data,
    pack_param = calloc(1, sizeof(Pack_Params));
    if (!pack_param) return;
 
-   pack_param->active_view = active_view;
+   pack_param->spotlight = spotlight;
    pack_param->pack_sp = sp1;
    pack_param->unpack_sp = sp2;
    pack_param->unpack_btn = btn;
@@ -676,7 +676,7 @@ active_index_cb(void *data,
 {
    Params *params = (Params *)data;
    Evas_Object *navi = params->navi;
-   Eo *active_view = params->active_view;
+   Eo *spotlight = params->spotlight;
    Eo *btn, *box, *sp;
    Page_Set_Params *psp = calloc(1, sizeof(Page_Set_Params));
    if (!psp) return;
@@ -699,12 +699,12 @@ active_index_cb(void *data,
                 efl_gfx_hint_align_set(efl_added, -1, -1),
                 efl_pack_end(box, efl_added));
 
-   if (efl_content_count(active_view) > 0)
+   if (efl_content_count(spotlight) > 0)
      {
         efl_ui_range_limits_set(sp, 0,
-                                 (efl_content_count(active_view) - 1));
+                                 (efl_content_count(spotlight) - 1));
         efl_ui_range_value_set(sp,
-                               efl_ui_active_view_active_index_get(active_view));
+                               efl_ui_spotlight_active_index_get(spotlight));
      }
    else
      {
@@ -712,7 +712,7 @@ active_index_cb(void *data,
         elm_object_disabled_set(sp, EINA_TRUE);
      }
 
-   psp->active_view = active_view;
+   psp->spotlight = spotlight;
    psp->spinner = sp;
 
    efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, page_set_btn_cb, psp);
@@ -752,18 +752,18 @@ indicator_cb(void *data,
 }
 
 void
-test_ui_active_view_stack(void *data EINA_UNUSED,
+test_ui_spotlight_stack(void *data EINA_UNUSED,
                           Evas_Object *obj EINA_UNUSED,
                           void *event_info EINA_UNUSED)
 {
-   Eo *win, *panes, *navi, *list, *layout, *active_view, *view;
+   Eo *win, *panes, *navi, *list, *layout, *spotlight, *view;
    Params *params = NULL;
    char buf[PATH_MAX];
    int i;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Efl.Ui.Active_View Stack"),
+                 efl_text_set(efl_added, "Efl.Ui.Spotlight Stack"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    panes = efl_add(EFL_UI_PANES_CLASS, win,
@@ -789,36 +789,36 @@ test_ui_active_view_stack(void *data EINA_UNUSED,
                     efl_file_load(efl_added),
                     efl_content_set(efl_part(panes, "second"), efl_added));
 
-   active_view = efl_add(EFL_UI_ACTIVE_VIEW_CONTAINER_CLASS, layout,
+   spotlight = efl_add(EFL_UI_SPOTLIGHT_CONTAINER_CLASS, layout,
                          efl_content_set(efl_part(layout, "pager"), efl_added),
-                         efl_ui_active_view_size_set(efl_added, EINA_SIZE2D(200, 300)));
+                         efl_ui_spotlight_size_set(efl_added, EINA_SIZE2D(200, 300)));
 
-   efl_ui_active_view_manager_set(active_view, efl_new(EFL_UI_ACTIVE_VIEW_VIEW_MANAGER_STACK_CLASS));
+   efl_ui_spotlight_manager_set(spotlight, efl_new(EFL_UI_SPOTLIGHT_MANAGER_STACK_CLASS));
 
    efl_add(EFL_UI_BUTTON_CLASS, layout,
            efl_text_set(efl_added, "Prev"),
            efl_event_callback_add(efl_added,
-                                  EFL_UI_EVENT_CLICKED, prev_btn_cb, active_view),
+                                  EFL_UI_EVENT_CLICKED, prev_btn_cb, spotlight),
            efl_content_set(efl_part(layout, "prev_btn"), efl_added));
 
    efl_add(EFL_UI_BUTTON_CLASS, layout,
            efl_text_set(efl_added, "Next"),
            efl_event_callback_add(efl_added,
-                                  EFL_UI_EVENT_CLICKED, next_btn_cb, active_view),
+                                  EFL_UI_EVENT_CLICKED, next_btn_cb, spotlight),
            efl_content_set(efl_part(layout, "next_btn"), efl_added));
 
    params = calloc(1, sizeof(Params));
    if (!params) return;
 
    params->navi = navi;
-   params->active_view = active_view;
+   params->spotlight = spotlight;
    params->indicator = NULL;
    params->w = 200;
    params->h = 300;
    params->wfill = EINA_FALSE;
    params->hfill = EINA_FALSE;
 
-   elm_list_item_append(list, "View Size", NULL, NULL, active_view_size, params);
+   elm_list_item_append(list, "View Size", NULL, NULL, spotlight_size, params);
    elm_list_item_append(list, "Pack / Unpack", NULL, NULL, pack_cb, params);
    elm_list_item_append(list, "Active Index", NULL, NULL, active_index_cb, params);
    elm_list_item_append(list, "Indicator", NULL, NULL, indicator_cb, params);
@@ -832,40 +832,40 @@ test_ui_active_view_stack(void *data EINA_UNUSED,
         switch (i % 3)
           {
            case 0:
-             view = view_add(LAYOUT, active_view);
+             view = view_add(LAYOUT, spotlight);
              break;
 
            case 1:
-             view = view_add(LIST, active_view);
+             view = view_add(LIST, spotlight);
              break;
 
            case 2:
-             view = view_add(BUTTON, active_view);
+             view = view_add(BUTTON, spotlight);
              break;
 
            default:
-             view = view_add(LAYOUT, active_view);
+             view = view_add(LAYOUT, spotlight);
              break;
           }
-        efl_pack_end(active_view, view);
+        efl_pack_end(spotlight, view);
      }
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(580, 320));
 }
 
 void
-test_ui_active_view_plain(void *data EINA_UNUSED,
+test_ui_spotlight_plain(void *data EINA_UNUSED,
                           Evas_Object *obj EINA_UNUSED,
                           void *event_info EINA_UNUSED)
 {
-   Eo *win, *panes, *navi, *list, *layout, *active_view, *view;
+   Eo *win, *panes, *navi, *list, *layout, *spotlight, *view;
    Params *params = NULL;
    char buf[PATH_MAX];
    int i;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Efl.Ui.Active_View Plain"),
+                 efl_text_set(efl_added, "Efl.Ui.Spotlight Plain"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    panes = efl_add(EFL_UI_PANES_CLASS, win,
@@ -891,34 +891,34 @@ test_ui_active_view_plain(void *data EINA_UNUSED,
                     efl_file_load(efl_added),
                     efl_content_set(efl_part(panes, "second"), efl_added));
 
-   active_view = efl_add(EFL_UI_ACTIVE_VIEW_CONTAINER_CLASS, layout,
+   spotlight = efl_add(EFL_UI_SPOTLIGHT_CONTAINER_CLASS, layout,
                          efl_content_set(efl_part(layout, "pager"), efl_added),
-                         efl_ui_active_view_size_set(efl_added, EINA_SIZE2D(200, 300)));
+                         efl_ui_spotlight_size_set(efl_added, EINA_SIZE2D(200, 300)));
 
    efl_add(EFL_UI_BUTTON_CLASS, layout,
            efl_text_set(efl_added, "Prev"),
            efl_event_callback_add(efl_added,
-                                  EFL_UI_EVENT_CLICKED, prev_btn_cb, active_view),
+                                  EFL_UI_EVENT_CLICKED, prev_btn_cb, spotlight),
            efl_content_set(efl_part(layout, "prev_btn"), efl_added));
 
    efl_add(EFL_UI_BUTTON_CLASS, layout,
            efl_text_set(efl_added, "Next"),
            efl_event_callback_add(efl_added,
-                                  EFL_UI_EVENT_CLICKED, next_btn_cb, active_view),
+                                  EFL_UI_EVENT_CLICKED, next_btn_cb, spotlight),
            efl_content_set(efl_part(layout, "next_btn"), efl_added));
 
    params = calloc(1, sizeof(Params));
    if (!params) return;
 
    params->navi = navi;
-   params->active_view = active_view;
+   params->spotlight = spotlight;
    params->indicator = NULL;
    params->w = 200;
    params->h = 300;
    params->wfill = EINA_FALSE;
    params->hfill = EINA_FALSE;
 
-   elm_list_item_append(list, "View Size", NULL, NULL, active_view_size, params);
+   elm_list_item_append(list, "View Size", NULL, NULL, spotlight_size, params);
    elm_list_item_append(list, "Pack / Unpack", NULL, NULL, pack_cb, params);
    elm_list_item_append(list, "Active Index", NULL, NULL, active_index_cb, params);
    elm_list_item_append(list, "Indicator", NULL, NULL, indicator_cb, params);
@@ -931,40 +931,40 @@ test_ui_active_view_plain(void *data EINA_UNUSED,
         switch (i % 3)
           {
            case 0:
-             view = view_add(LAYOUT, active_view);
+             view = view_add(LAYOUT, spotlight);
              break;
 
            case 1:
-             view = view_add(LIST, active_view);
+             view = view_add(LIST, spotlight);
              break;
 
            case 2:
-             view = view_add(BUTTON, active_view);
+             view = view_add(BUTTON, spotlight);
              break;
 
            default:
-             view = view_add(LAYOUT, active_view);
+             view = view_add(LAYOUT, spotlight);
              break;
           }
-        efl_pack_end(active_view, view);
+        efl_pack_end(spotlight, view);
      }
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(580, 320));
 }
 
 void
-test_ui_active_view_scroll(void *data EINA_UNUSED,
+test_ui_spotlight_scroll(void *data EINA_UNUSED,
                            Evas_Object *obj EINA_UNUSED,
                            void *event_info EINA_UNUSED)
 {
-   Eo *win, *panes, *navi, *list, *layout, *active_view, *view;
+   Eo *win, *panes, *navi, *list, *layout, *spotlight, *view;
    Params *params = NULL;
    char buf[PATH_MAX];
    int i;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Efl.Ui.Active_View Scroll"),
+                 efl_text_set(efl_added, "Efl.Ui.Spotlight Scroll"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    panes = efl_add(EFL_UI_PANES_CLASS, win,
@@ -990,36 +990,36 @@ test_ui_active_view_scroll(void *data EINA_UNUSED,
                     efl_file_load(efl_added),
                     efl_content_set(efl_part(panes, "second"), efl_added));
 
-   active_view = efl_add(EFL_UI_ACTIVE_VIEW_CONTAINER_CLASS, layout,
+   spotlight = efl_add(EFL_UI_SPOTLIGHT_CONTAINER_CLASS, layout,
                          efl_content_set(efl_part(layout, "pager"), efl_added),
-                         efl_ui_active_view_size_set(efl_added, EINA_SIZE2D(200, 300)));
+                         efl_ui_spotlight_size_set(efl_added, EINA_SIZE2D(200, 300)));
 
-   efl_ui_active_view_manager_set(active_view, efl_new(EFL_UI_ACTIVE_VIEW_VIEW_MANAGER_SCROLL_CLASS));
+   efl_ui_spotlight_manager_set(spotlight, efl_new(EFL_UI_SPOTLIGHT_MANAGER_SCROLL_CLASS));
 
    efl_add(EFL_UI_BUTTON_CLASS, layout,
            efl_text_set(efl_added, "Prev"),
            efl_event_callback_add(efl_added,
-                                  EFL_UI_EVENT_CLICKED, prev_btn_cb, active_view),
+                                  EFL_UI_EVENT_CLICKED, prev_btn_cb, spotlight),
            efl_content_set(efl_part(layout, "prev_btn"), efl_added));
 
    efl_add(EFL_UI_BUTTON_CLASS, layout,
            efl_text_set(efl_added, "Next"),
            efl_event_callback_add(efl_added,
-                                  EFL_UI_EVENT_CLICKED, next_btn_cb, active_view),
+                                  EFL_UI_EVENT_CLICKED, next_btn_cb, spotlight),
            efl_content_set(efl_part(layout, "next_btn"), efl_added));
 
    params = calloc(1, sizeof(Params));
    if (!params) return;
 
    params->navi = navi;
-   params->active_view = active_view;
+   params->spotlight = spotlight;
    params->indicator = NULL;
    params->w = 200;
    params->h = 300;
    params->wfill = EINA_FALSE;
    params->hfill = EINA_FALSE;
 
-   elm_list_item_append(list, "View Size", NULL, NULL, active_view_size, params);
+   elm_list_item_append(list, "View Size", NULL, NULL, spotlight_size, params);
    elm_list_item_append(list, "Pack / Unpack", NULL, NULL, pack_cb, params);
    elm_list_item_append(list, "Active Index", NULL, NULL, active_index_cb, params);
    elm_list_item_append(list, "Indicator", NULL, NULL, indicator_cb, params);
@@ -1032,22 +1032,22 @@ test_ui_active_view_scroll(void *data EINA_UNUSED,
         switch (i % 3)
           {
            case 0:
-             view = view_add(LAYOUT, active_view);
+             view = view_add(LAYOUT, spotlight);
              break;
 
            case 1:
-             view = view_add(LIST, active_view);
+             view = view_add(LIST, spotlight);
              break;
 
            case 2:
-             view = view_add(BUTTON, active_view);
+             view = view_add(BUTTON, spotlight);
              break;
 
            default:
-             view = view_add(LAYOUT, active_view);
+             view = view_add(LAYOUT, spotlight);
              break;
           }
-        efl_pack_end(active_view, view);
+        efl_pack_end(spotlight, view);
      }
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(580, 320));

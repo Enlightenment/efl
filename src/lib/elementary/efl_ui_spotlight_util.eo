@@ -1,11 +1,11 @@
-class @beta Efl.Ui.Active_View.Util {
+class @beta Efl.Ui.Spotlight.Util {
   methods {
      stack_gen @class {
        [[Get a preconfigured stack obejct]]
        params {
           parent : Efl.Ui.Widget;
        }
-       return : Efl.Ui.Active_View.Container;
+       return : Efl.Ui.Spotlight.Container;
      }
   }
 }

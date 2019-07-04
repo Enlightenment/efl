@@ -25,8 +25,8 @@ static void
 _tab_select_cb(void *data, const Efl_Event *event)
 {
    int index = efl_ui_tab_bar_current_tab_get(event->object);
-   if (efl_ui_active_view_active_index_get(data) != index)
-     efl_ui_active_view_active_index_set(data, index);
+   if (efl_ui_spotlight_active_index_get(data) != index)
+     efl_ui_spotlight_active_index_set(data, index);
 }
 
 static void
@@ -77,9 +77,9 @@ _efl_ui_tab_pager_tab_bar_get(const Eo *obj EINA_UNUSED, Efl_Ui_Tab_Pager_Data *
 }
 
 EOLIAN static void
-_efl_ui_tab_pager_efl_ui_active_view_container_active_index_set(Eo *obj, Efl_Ui_Tab_Pager_Data *sd EINA_UNUSED, int index)
+_efl_ui_tab_pager_efl_ui_spotlight_container_active_index_set(Eo *obj, Efl_Ui_Tab_Pager_Data *sd EINA_UNUSED, int index)
 {
-   efl_ui_active_view_active_index_set(efl_super(obj, MY_CLASS), index);
+   efl_ui_spotlight_active_index_set(efl_super(obj, MY_CLASS), index);
    _select(obj, index);
 }
 
