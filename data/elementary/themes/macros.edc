@@ -40,7 +40,7 @@
    image.border_scale_by: 0.5; \
    image.middle: 0; \
    rel1.offset: -10 -7; \
-   rel2.offset: 9 13; \
+   rel2.offset: 9 10; \
    fill.smooth: 0; \
    offscale
 #define WIN_SHADOW_SPACER \
