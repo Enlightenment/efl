@@ -438,17 +438,10 @@ _entry_activated_cb(void *data, const Efl_Event *event EINA_UNUSED)
 static void
 _entry_focus_changed_cb(void *data, const Efl_Event *event)
 {
-   if (!efl_ui_focus_object_focus_get(event->object))
-     _toggle_entry(data);
-}
-
-static void
-_text_button_clicked_cb(void *data, const Efl_Event *event EINA_UNUSED)
-{
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(data, MY_CLASS);
 
-   if (sd->entry_visible) return;
-   _toggle_entry(data);
+   if (efl_ui_focus_object_focus_get(event->object) && sd->entry_visible) return;
+     _toggle_entry(data);
 }
 
 static Eina_Bool
@@ -743,8 +736,6 @@ _efl_ui_spin_button_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
 
    sd->text_button = efl_add(EFL_UI_BUTTON_CLASS, obj,
                              elm_widget_element_update(obj, efl_added, PART_NAME_TEXT_BUTTON),
-                             efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
-                                                    _text_button_clicked_cb, obj),
                              efl_event_callback_add(efl_added, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED,
                                                     _text_button_focus_changed_cb, obj),
                              efl_content_set(efl_part(obj, "efl.text_button"), efl_added));
