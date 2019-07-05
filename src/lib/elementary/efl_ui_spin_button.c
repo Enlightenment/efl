@@ -31,10 +31,6 @@ _inc_dec_button_clicked_cb(void *data, const Efl_Event *event);
 static void
 _inc_dec_button_pressed_cb(void *data, const Efl_Event *event);
 static void
-_inc_dec_button_unpressed_cb(void *data, const Efl_Event *event);
-static void
-_inc_dec_button_mouse_move_cb(void *data, const Efl_Event *event);
-static void
 _entry_activated_cb(void *data, const Efl_Event *event);
 static void
 _entry_focus_changed_cb(void *data, const Efl_Event *event);
@@ -43,9 +39,8 @@ _access_increment_decrement_info_say(Evas_Object *obj, Eina_Bool is_incremented)
 
 EFL_CALLBACKS_ARRAY_DEFINE(_inc_dec_button_cb,
                            { EFL_UI_EVENT_CLICKED, _inc_dec_button_clicked_cb},
-                           { EFL_UI_EVENT_PRESSED, _inc_dec_button_pressed_cb},
-                           { EFL_UI_EVENT_UNPRESSED, _inc_dec_button_unpressed_cb},
-                           { EFL_EVENT_POINTER_MOVE, _inc_dec_button_mouse_move_cb }
+                           { EFL_UI_AUTOREPEAT_EVENT_REPEATED, _inc_dec_button_clicked_cb},
+                           { EFL_UI_EVENT_PRESSED, _inc_dec_button_pressed_cb}
                           );
 
 static void
@@ -417,37 +412,10 @@ _spin_value(void *data)
 }
 
 static void
-_spin_stop(Evas_Object *obj)
-{
-   Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
-
-   ELM_SAFE_FREE(sd->spin_timer, ecore_timer_del);
-
-   elm_widget_scroll_freeze_pop(obj);
-}
-
-static Eina_Bool
-_inc_dec_button_press_start(void *data)
-{
-   Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(data, MY_CLASS);
-
-   sd->interval = sd->first_interval;
-   sd->longpress_timer = NULL;
-   ecore_timer_del(sd->spin_timer);
-   sd->spin_timer = ecore_timer_add(sd->interval, _spin_value, data);
-   _spin_value(data);
-
-   elm_widget_scroll_freeze_push(data);
-
-   return ECORE_CALLBACK_CANCEL;
-}
-
-static void
 _inc_dec_button_clicked_cb(void *data, const Efl_Event *event)
 {
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(data, MY_CLASS);
 
-   _spin_stop(data);
    sd->inc_val = sd->inc_button == event->object ? EINA_TRUE : EINA_FALSE;
    _spin_value(data);
 
@@ -463,40 +431,7 @@ _inc_dec_button_pressed_cb(void *data, const Efl_Event *event)
 
    sd->inc_val = sd->inc_button == event->object ? EINA_TRUE : EINA_FALSE;
 
-   if (sd->longpress_timer) ecore_timer_del(sd->longpress_timer);
-
-   sd->longpress_timer = ecore_timer_add
-                           (_elm_config->longpress_timeout,
-                            _inc_dec_button_press_start, data);
-
    if (sd->entry_visible) _entry_value_apply(data);
-}
-
-static void
-_inc_dec_button_unpressed_cb(void *data, const Efl_Event *event EINA_UNUSED)
-{
-   Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(data, MY_CLASS);
-
-   if (sd->longpress_timer)
-     {
-        ecore_timer_del(sd->longpress_timer);
-        sd->longpress_timer = NULL;
-     }
-
-   _spin_stop(data);
-}
-
-static void
-_inc_dec_button_mouse_move_cb(void *data, const Efl_Event *event)
-{
-   Efl_Input_Pointer *ev = event->info;
-   Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(data, MY_CLASS);
-
-   if (efl_input_processed_get(ev) && sd->longpress_timer)
-     {
-        ecore_timer_del(sd->longpress_timer);
-        sd->longpress_timer = NULL;
-     }
 }
 
 static void
@@ -533,8 +468,7 @@ _key_action_toggle(Evas_Object *obj, const char *params EINA_UNUSED)
 {
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
 
-   if (sd->spin_timer) _spin_stop(obj);
-   else if (sd->entry_visible) _entry_toggle_cb(NULL, obj, NULL, NULL);
+   if (sd->entry_visible) _entry_toggle_cb(NULL, obj, NULL, NULL);
 
    return EINA_FALSE;
 }
@@ -547,13 +481,11 @@ _efl_ui_spin_button_efl_ui_widget_widget_input_event_handler(Eo *obj, Efl_Ui_Spi
    if (efl_input_processed_get(ev)) return EINA_FALSE;
    if (eo_event->desc == EFL_EVENT_KEY_DOWN)
      {
-        if (sd->spin_timer) _spin_stop(obj);
-        else return EINA_FALSE;
+        return EINA_FALSE;
      }
    else if (eo_event->desc == EFL_EVENT_KEY_UP)
      {
-        if (sd->spin_timer) _spin_stop(obj);
-        else return EINA_FALSE;
+        return EINA_FALSE;
      }
    else if (eo_event->desc == EFL_EVENT_POINTER_WHEEL)
      {
@@ -582,8 +514,6 @@ _efl_ui_spin_button_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Spin_But
    if (!efl_ui_focus_object_focus_get(obj))
      {
         ELM_SAFE_FREE(sd->delay_change_timer, ecore_timer_del);
-        ELM_SAFE_FREE(sd->spin_timer, ecore_timer_del);
-        ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
      }
    else
      {
@@ -830,6 +760,9 @@ _efl_ui_spin_button_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
    sd->first_interval = 0.85;
 
    sd->inc_button = efl_add(EFL_UI_BUTTON_CLASS, obj,
+                            efl_ui_autorepeat_enabled_set(efl_added, EINA_TRUE),
+                            efl_ui_autorepeat_initial_timeout_set(efl_added, _elm_config->longpress_timeout),
+                            efl_ui_autorepeat_gap_timeout_set(efl_added, sd->first_interval),
                             elm_widget_element_update(obj, efl_added, PART_NAME_INC_BUTTON),
                             efl_event_callback_array_add(efl_added, _inc_dec_button_cb(), obj),
                             efl_content_set(efl_part(obj, "efl.inc_button"), efl_added));
@@ -843,6 +776,9 @@ _efl_ui_spin_button_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
                              efl_content_set(efl_part(obj, "efl.text_button"), efl_added));
 
    sd->dec_button = efl_add(EFL_UI_BUTTON_CLASS, obj,
+                            efl_ui_autorepeat_enabled_set(efl_added, EINA_TRUE),
+                            efl_ui_autorepeat_initial_timeout_set(efl_added, _elm_config->longpress_timeout),
+                            efl_ui_autorepeat_gap_timeout_set(efl_added, sd->first_interval),
                             elm_widget_element_update(obj, efl_added, PART_NAME_DEC_BUTTON),
                             efl_event_callback_array_add(efl_added, _inc_dec_button_cb(), obj),
                             efl_content_set(efl_part(obj, "efl.dec_button"), efl_added));
