@@ -2,12 +2,7 @@
 
 {{>partials/class.header}}
 {{#children}}
-<h3 id="{{id}}">
-  <a href="#collapsible-{{id}}" class="expander collapsed" data-toggle="collapse">
-    {{>partials/classSubtitle}}
-  </a>
-</h3>
-<div id="collapsible-{{id}}" class="collapse">
+<h3 id="{{id}}">{{>partials/classSubtitle}}</h3>
 {{#children}}
 {{^_disableContribution}}
 {{#docurl}}
@@ -195,11 +190,9 @@
 </div>
 {{/seealso.0}}
 {{/children}}
-</div>
 {{/children}}
 {{#implements.0}}
-<h3><a href="#collapsible-implements" class="expander collapsed" data-toggle="collapse">{{__global.implements}}</a></h3>
-<div id="collapsible-implements" class="collapse">
+<h3 id="implements">{{__global.implements}}</h3>
 {{/implements.0}}
 {{#implements}}
 <div>
@@ -211,7 +204,6 @@
   {{/definition}}
 </div>
 {{/implements}}
-</div>
 {{#extensionMethods.0}}
 <h3 id="extensionmethods">{{__global.extensionMethods}}</h3>
 {{/extensionMethods.0}}
