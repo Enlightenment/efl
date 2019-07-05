@@ -1,0 +1,7 @@
+class @beta Efl.Ui.Collection_View_Focus_Manager extends Efl.Ui.Focus.Manager_Calc {
+  [[Internal class which implements collection specific behaviour, cannot be used outside of collection]]
+  implements {
+      Efl.Ui.Focus.Manager.manager_focus { set; }
+      Efl.Ui.Focus.Manager.request_move;
+  }
+}
