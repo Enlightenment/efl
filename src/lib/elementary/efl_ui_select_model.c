@@ -501,7 +501,6 @@ _efl_ui_select_model_efl_ui_multi_selectable_async_select_mode_set(Eo *obj,
    switch (mode)
      {
       case EFL_UI_SELECT_MODE_SINGLE:
-      case EFL_UI_SELECT_MODE_SINGLE_ALWAYS:
          mode = EFL_UI_SELECT_MODE_SINGLE;
          if (pd->selection == EFL_UI_SELECT_MODE_MULTI)
            efl_ui_multi_selectable_async_unselect_all(obj);

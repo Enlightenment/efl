@@ -208,6 +208,17 @@ _efl_ui_item_item_parent_get(const Eo *obj EINA_UNUSED, Efl_Ui_Item_Data *pd)
    return pd->parent;
 }
 
+EOLIAN static void
+_efl_ui_item_efl_canvas_group_group_need_recalculate_set(Eo *obj, Efl_Ui_Item_Data *pd EINA_UNUSED, Eina_Bool value)
+{
+   // Prevent recalc when the item are stored in the cache
+   // As due to async behavior, we can still have text updated from future that just finished after
+   // we have left the releasing stage of factories. This is the simplest way to prevent those later
+   // update.
+   if (efl_key_data_get(obj, "efl.ui.widget.factory.cached")) return;
+   efl_canvas_group_need_recalculate_set(efl_super(obj, EFL_UI_ITEM_CLASS), value);
+}
+
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_item, Efl_Ui_Item_Data)
 
 #include "efl_ui_item.eo.c"

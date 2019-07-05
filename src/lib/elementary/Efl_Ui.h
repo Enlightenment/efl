@@ -154,6 +154,7 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_focus_manager_calc.eo.h>
 # include <efl_ui_focus_manager_sub.eo.h>
 # include <efl_ui_focus_manager_root_focus.eo.h>
+# include <efl_ui_widget_focus_manager.eo.h>
 # include <efl_ui_focus_util.eo.h>
 # include <efl_ui_textpath.eo.h>
 # include <efl_ui_l10n.eo.h>
@@ -168,6 +169,9 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_access_editable_text.eo.h>
 # include <efl_access_selection.eo.h>
 # include <efl_access_value.eo.h>
+# include <efl_access_selection.eo.h>
+# include <efl_access_object.eo.h>
+# include <efl_access_widget_action.eo.h>
 
 # include <efl_ui_theme.eo.h>
 # include <efl_config_global.eo.h>
@@ -280,6 +284,8 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_multi_selectable_async.eo.h>
 # include <efl_ui_select_model.eo.h>
 # include <efl_ui_view_model.eo.h>
+# include <efl_ui_collection_view.eo.h>
+
 /**
  * Initialize Elementary
  *

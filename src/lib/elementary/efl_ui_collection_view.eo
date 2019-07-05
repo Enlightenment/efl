@@ -1,0 +1,45 @@
+class @beta Efl.Ui.Collection_View extends Efl.Ui.Layout_Base implements
+                Efl.Ui.Scrollable_Interactive,
+                Efl.Ui.Scrollbar,
+                Efl.Ui.Layout_Orientable,
+                Efl.Ui.Selectable,
+                Efl.Ui.Multi_Selectable_Async,
+                Efl.Ui.Focus.Manager_Sub,
+		Efl.Ui.Widget_Focus_Manager,
+		Efl.Ui.Collection_Events
+    composite Efl.Ui.Scrollable_Interactive, Efl.Ui.Scrollbar, Efl.Ui.Multi_Selectable_Async
+
+{
+   methods {
+      @property factory {
+         [[Define the factory used to create all the items.]]
+         get {}
+         set {}
+         values {
+            factory: Efl.Ui.Factory; [[The factory.]]
+         }
+      }
+      @property position_manager {
+        [[Position manager object that handles placement of items.]]
+        values {
+           position_manager : Efl.Ui.Position_Manager.Entity @move; [[The objects ownership is passed to the item container.]]
+        }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.invalidate;
+
+      Efl.Ui.Layout_Orientable.orientation { get; set; }
+
+      Efl.Ui.Widget.theme_apply;
+
+      Efl.Ui.Scrollable_Interactive.match_content { set; }
+      Efl.Ui.Widget_Focus_Manager.focus_manager_create;
+      Efl.Ui.Focus.Manager.move;
+   }
+   events {
+      item,realized : Efl.Ui.Item;
+      item,unrealized : Efl.Ui.Item;
+   }
+}

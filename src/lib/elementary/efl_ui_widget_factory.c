@@ -95,6 +95,9 @@ _efl_ui_widget_factory_constructing(void *data EINA_UNUSED, const Efl_Event *ev)
 
    model = efl_ui_view_model_get(ui_view);
 
+   // Enable recalculate in case we do not know the size of the item
+   efl_canvas_group_need_recalculate_set(ui_view, EINA_TRUE);
+
    // Fetch min size from model if available to avoid recalculcating it
    width = efl_model_property_get(model, "self.width");
    height = efl_model_property_get(model, "self.height");
@@ -109,6 +112,7 @@ _efl_ui_widget_factory_constructing(void *data EINA_UNUSED, const Efl_Event *ev)
         /* efl_event_freeze(ui_view); */
         efl_key_data_set(ui_view, "efl.ui.widget.factory.size_set", (void*)EINA_TRUE);
         efl_gfx_hint_size_min_set(ui_view, s);
+        efl_canvas_group_need_recalculate_set(ui_view, EINA_FALSE);
      }
    eina_value_free(width);
    eina_value_free(height);
@@ -121,7 +125,7 @@ _efl_ui_widget_factory_building(void *data, const Efl_Event *ev)
    Efl_Gfx_Entity *ui_view = ev->info;
    Efl_Ui_Widget_Factory_Data *pd = data;
    const Efl_Model *model;
-   Eina_Value *property, *width, *height;
+   Eina_Value *property;
    Efl_Ui_Bind_Part_Data *bpd;
    Eina_Iterator *it;
    char *style;
@@ -146,22 +150,6 @@ _efl_ui_widget_factory_building(void *data, const Efl_Event *ev)
      }
    eina_iterator_free(it);
 
-   // Fetch min size from model if available to avoid recalculcating it
-   width = efl_model_property_get(model, "self.width");
-   height = efl_model_property_get(model, "self.height");
-   if (eina_value_type_get(width) != EINA_VALUE_TYPE_ERROR &&
-       eina_value_type_get(height) != EINA_VALUE_TYPE_ERROR)
-     {
-        Eina_Size2D s;
-
-        if (!eina_value_int_convert(width, &s.w)) s.w = 0;
-        if (!eina_value_int_convert(height, &s.h)) s.h = 0;
-
-        efl_gfx_hint_size_min_set(ui_view, s);
-     }
-   eina_value_free(width);
-   eina_value_free(height);
-
    // As we have already waited for the property to be ready, we should get the right style now
    if (!pd->style) return ;
 
@@ -173,6 +161,8 @@ _efl_ui_widget_factory_building(void *data, const Efl_Event *ev)
    free(style);
 
    eina_value_free(property);
+
+   efl_key_data_set(ui_view, "efl.ui.widget.factory.cached", NULL);
 }
 
 static void
@@ -185,6 +175,7 @@ _efl_ui_widget_factory_releasing(void *data, const Efl_Event *ev)
 
    efl_key_data_set(ui_view, "efl.ui.widget.factory.size_set", NULL);
    efl_key_data_set(ui_view, "efl.ui.widget.factory.size_check", NULL);
+   efl_key_data_set(ui_view, "efl.ui.widget.factory.cached", (void*) EINA_TRUE);
 
    // Bind all property before the object is finalize
    it = eina_hash_iterator_data_new(pd->parts);
@@ -200,6 +191,9 @@ _efl_ui_widget_factory_releasing(void *data, const Efl_Event *ev)
    eina_iterator_free(it);
 
    efl_ui_view_model_set(ui_view, NULL);
+
+   // Prevent any recalc to happen when an object is in the cache or during shutdown of the object
+   efl_canvas_group_need_recalculate_set(ui_view, EINA_FALSE);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(item_callbacks,
