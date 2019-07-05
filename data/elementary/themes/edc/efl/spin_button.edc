@@ -202,7 +202,7 @@ group { "efl/spin_button/vertical";
    }
 }
 
-group { "efl/spin_button/inc_button";
+group { "efl/spin_button/horizontal/inc_button";
    images.image: "sym_right_light_normal.png" COMP;
    images.image: "sym_right_glow_normal.png" COMP;
    images.image: "sym_right_dark_normal.png" COMP;
@@ -352,13 +352,13 @@ group { "efl/spin_button/inc_button";
    }
 }
 
-group { "efl/spin_button/entry";
+group { "efl/spin_button/horizontal/entry";
    alias: "efl/spin_button/vertical/entry";
    inherit: "efl/text";
 }
 
-group { "efl/spin_button/dec_button";
-   inherit: "efl/spin_button/inc_button";
+group { "efl/spin_button/horizontal/dec_button";
+   inherit: "efl/spin_button/horizontal/inc_button";
    images.image: "sym_left_light_normal.png" COMP;
    images.image: "sym_left_glow_normal.png" COMP;
    images.image: "sym_left_dark_normal.png" COMP;
@@ -382,7 +382,7 @@ group { "efl/spin_button/dec_button";
    }
 }
 
-group { "efl/spin_button/text_button";
+group { "efl/spin_button/horizontal/text_button";
    alias: "efl/spin_button/vertical/text_button";
    parts {
       part { name: "bg";
@@ -460,7 +460,7 @@ group { "efl/spin_button/text_button";
 }
 
 group { "efl/spin_button/vertical/inc_button";
-   inherit: "efl/spin_button/inc_button";
+   inherit: "efl/spin_button/horizontal/inc_button";
    images.image: "sym_up_light_normal.png" COMP;
    images.image: "sym_up_glow_normal.png" COMP;
    images.image: "sym_up_dark_normal.png" COMP;
@@ -485,7 +485,7 @@ group { "efl/spin_button/vertical/inc_button";
 }
 
 group { "efl/spin_button/vertical/dec_button";
-   inherit: "efl/spin_button/dec_button";
+   inherit: "efl/spin_button/horizontal/dec_button";
    images.image: "sym_down_light_normal.png" COMP;
    images.image: "sym_down_glow_normal.png" COMP;
    images.image: "sym_down_dark_normal.png" COMP;
