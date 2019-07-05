@@ -21,6 +21,11 @@
 
 #define EFL_UI_SPIN_BUTTON_DELAY_CHANGE_TIME 0.2
 
+//when a item is pressed but not released, this time passes by
+//until another step is added or removed from the current value.
+//given in seconds
+#define REPEAT_INTERVAL 0.85
+
 static const char PART_NAME_ENTRY[] = "entry";
 static const char PART_NAME_DEC_BUTTON[] = "dec_button";
 static const char PART_NAME_TEXT_BUTTON[] = "text_button";
@@ -394,18 +399,15 @@ _entry_toggle_cb(void *data EINA_UNUSED,
    _toggle_entry(obj);
 }
 
-static Eina_Bool
-_spin_value(void *data)
+static void
+_spin_value(Efl_Ui_Spin *obj, Eina_Bool inc)
 {
-   Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(data, MY_CLASS);
-   Efl_Ui_Spin_Data *pd = efl_data_scope_get(data, EFL_UI_SPIN_CLASS);
+   Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
 
-   int absolut_value = pd->val + (sd->inc_val ? pd->step : -pd->step);
+   int absolut_value = efl_ui_range_value_get(obj) + (inc ? pd->step : -pd->step);
 
-   if (_value_set(data, MIN(MAX(absolut_value, pd->val_min), pd->val_max)))
-     _label_write(data);
-
-   return ECORE_CALLBACK_RENEW;
+   if (_value_set(obj, MIN(MAX(absolut_value, pd->val_min), pd->val_max)))
+     _label_write(obj);
 }
 
 static void
@@ -415,8 +417,7 @@ _inc_dec_button_clicked_cb(void *data, const Efl_Event *event)
 
    if (sd->entry_visible) _entry_value_apply(data);
 
-   sd->inc_val = sd->inc_button == event->object ? EINA_TRUE : EINA_FALSE;
-   _spin_value(data);
+   _spin_value(data, sd->inc_button == event->object);
 
    if (_elm_config->access_mode)
      _access_increment_decrement_info_say(data, EINA_TRUE);
@@ -460,23 +461,9 @@ _efl_ui_spin_button_efl_ui_widget_widget_input_event_handler(Eo *obj, Efl_Ui_Spi
    Eo *ev = eo_event->info;
 
    if (efl_input_processed_get(ev)) return EINA_FALSE;
-   if (eo_event->desc == EFL_EVENT_KEY_DOWN)
+   if (eo_event->desc == EFL_EVENT_POINTER_WHEEL)
      {
-        return EINA_FALSE;
-     }
-   else if (eo_event->desc == EFL_EVENT_KEY_UP)
-     {
-        return EINA_FALSE;
-     }
-   else if (eo_event->desc == EFL_EVENT_POINTER_WHEEL)
-     {
-        sd->interval = sd->first_interval;
-        if (efl_input_pointer_wheel_delta_get(ev) < 0)
-          sd->inc_val = EINA_TRUE;
-        else
-          sd->inc_val = EINA_FALSE;
-
-	    _spin_value(obj);
+        _spin_value(obj, efl_input_pointer_wheel_delta_get(ev) < 0);
      }
    else return EINA_FALSE;
 
@@ -724,12 +711,10 @@ _efl_ui_spin_button_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
 
    free(group);
 
-   sd->first_interval = 0.85;
-
    sd->inc_button = efl_add(EFL_UI_BUTTON_CLASS, obj,
                             efl_ui_autorepeat_enabled_set(efl_added, EINA_TRUE),
                             efl_ui_autorepeat_initial_timeout_set(efl_added, _elm_config->longpress_timeout),
-                            efl_ui_autorepeat_gap_timeout_set(efl_added, sd->first_interval),
+                            efl_ui_autorepeat_gap_timeout_set(efl_added, REPEAT_INTERVAL),
                             elm_widget_element_update(obj, efl_added, PART_NAME_INC_BUTTON),
                             efl_event_callback_array_add(efl_added, _inc_dec_button_cb(), obj),
                             efl_content_set(efl_part(obj, "efl.inc_button"), efl_added));
@@ -743,7 +728,7 @@ _efl_ui_spin_button_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
    sd->dec_button = efl_add(EFL_UI_BUTTON_CLASS, obj,
                             efl_ui_autorepeat_enabled_set(efl_added, EINA_TRUE),
                             efl_ui_autorepeat_initial_timeout_set(efl_added, _elm_config->longpress_timeout),
-                            efl_ui_autorepeat_gap_timeout_set(efl_added, sd->first_interval),
+                            efl_ui_autorepeat_gap_timeout_set(efl_added, REPEAT_INTERVAL),
                             elm_widget_element_update(obj, efl_added, PART_NAME_DEC_BUTTON),
                             efl_event_callback_array_add(efl_added, _inc_dec_button_cb(), obj),
                             efl_content_set(efl_part(obj, "efl.dec_button"), efl_added));
