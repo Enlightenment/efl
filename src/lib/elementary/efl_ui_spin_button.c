@@ -528,20 +528,6 @@ _efl_ui_spin_button_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Spin_But
    return EINA_TRUE;
 }
 
-EOLIAN static void
-_efl_ui_spin_button_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Spin_Button_Data *_pd EINA_UNUSED)
-{
-   Evas_Coord minw = -1, minh = -1;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
-}
-
 static char *
 _access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
@@ -915,8 +901,5 @@ _efl_ui_spin_button_efl_access_object_i18n_name_get(const Eo *obj, Efl_Ui_Spin_B
 }
 
 // A11Y Accessibility - END
-
-#define EFL_UI_SPIN_BUTTON_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_spin_button), \
 
 #include "efl_ui_spin_button.eo.c"
