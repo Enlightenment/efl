@@ -40,6 +40,7 @@ void efl_ui_test_check(TCase *tc);
 void efl_ui_test_progressbar(TCase *tc);
 void efl_ui_test_radio_group(TCase *tc);
 void efl_ui_test_win(TCase *tc);
+void efl_ui_test_spin(TCase *tc);
 
 void loop_timer_interval_set(Eo *obj, double in);
 
