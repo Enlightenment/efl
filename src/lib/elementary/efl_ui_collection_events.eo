@@ -1,6 +1,6 @@
 interface @beta Efl.Ui.Collection_Events
 {
-   [[Shared sets of events between @Efl.Ui.Collection and Efl.Ui.Collection_View.]]
+   [[Shared sets of events between @Efl.Ui.Collection and @Efl.Ui.Collection_View.]]
    event_prefix: efl_ui;
    events {
       item,pressed : Efl.Ui.Item; [[A $press event occurred over an item.]]

@@ -11,6 +11,7 @@ typedef struct _Efl_Ui_Item_Data
 
    // Boolean Data
    Eina_Bool  selected : 1; /* State for item selected */
+   Eina_Bool  locked : 1;
 } Efl_Ui_Item_Data;
 
 

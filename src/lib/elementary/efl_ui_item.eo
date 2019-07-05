@@ -54,6 +54,17 @@ abstract Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Selectable, Ef
             parent : Efl.Ui.Item;
          }
       }
+      @property calc_locked {
+         [[If the item has its calc locked it will not trigger @Efl.Canvas.Group.group_need_recalculate.set done.
+
+           This is done automatically by @Efl.Ui.Widget_Factory, but you can use this information to meaningfully set the hint when items are not @.calc_locked.
+         ]]
+         set {}
+         get {}
+         values {
+            locked: bool; [[If set to $true, no more @Efl.Canvas.Group.group_need_recalculate.set]]
+         }
+      }
    }
    implements {
       Efl.Object.constructor;
@@ -61,5 +72,6 @@ abstract Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Selectable, Ef
       Efl.Object.destructor;
       Efl.Ui.Selectable.selected {get; set;}
       Efl.Ui.Widget.widget_input_event_handler;
+      Efl.Canvas.Group.group_need_recalculate { set; }
    }
 }
