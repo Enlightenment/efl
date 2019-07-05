@@ -29,8 +29,6 @@ static const char PART_NAME_INC_BUTTON[] = "inc_button";
 static void
 _inc_dec_button_clicked_cb(void *data, const Efl_Event *event);
 static void
-_inc_dec_button_pressed_cb(void *data, const Efl_Event *event);
-static void
 _entry_activated_cb(void *data, const Efl_Event *event);
 static void
 _entry_focus_changed_cb(void *data, const Efl_Event *event);
@@ -40,7 +38,6 @@ _access_increment_decrement_info_say(Evas_Object *obj, Eina_Bool is_incremented)
 EFL_CALLBACKS_ARRAY_DEFINE(_inc_dec_button_cb,
                            { EFL_UI_EVENT_CLICKED, _inc_dec_button_clicked_cb},
                            { EFL_UI_AUTOREPEAT_EVENT_REPEATED, _inc_dec_button_clicked_cb},
-                           { EFL_UI_EVENT_PRESSED, _inc_dec_button_pressed_cb}
                           );
 
 static void
@@ -416,22 +413,13 @@ _inc_dec_button_clicked_cb(void *data, const Efl_Event *event)
 {
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(data, MY_CLASS);
 
+   if (sd->entry_visible) _entry_value_apply(data);
+
    sd->inc_val = sd->inc_button == event->object ? EINA_TRUE : EINA_FALSE;
    _spin_value(data);
 
    if (_elm_config->access_mode)
      _access_increment_decrement_info_say(data, EINA_TRUE);
-}
-
-
-static void
-_inc_dec_button_pressed_cb(void *data, const Efl_Event *event)
-{
-   Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(data, MY_CLASS);
-
-   sd->inc_val = sd->inc_button == event->object ? EINA_TRUE : EINA_FALSE;
-
-   if (sd->entry_visible) _entry_value_apply(data);
 }
 
 static void
