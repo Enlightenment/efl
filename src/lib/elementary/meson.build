@@ -184,6 +184,8 @@ pub_eo_files = [
   'efl_ui_tab_bar_default_item.eo',
   'efl_ui_select_model.eo',
   'efl_ui_view_model.eo',
+  'efl_ui_collection_view.eo',
+  'efl_ui_collection_view_focus_manager.eo',
 ]
 
 foreach eo_file : pub_eo_files
@@ -944,6 +946,7 @@ elementary_src = [
   'efl_ui_tab_bar_default_item.c',
   'efl_ui_select_model.c',
   'efl_ui_view_model.c',
+  'efl_ui_collection_view.c',
 ]
 
 elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, efreet_mime, efreet_trash, eio, atspi, dl, intl]
