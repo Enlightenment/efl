@@ -138,6 +138,12 @@ _value_set(Evas_Object *obj,
         else if (new_val > pd->val_max)
           new_val = pd->val_min;
      }
+   else
+     {
+        new_val = MIN(pd->val_max, MAX(pd->val_min, new_val));
+     }
+
+   if (EINA_DBL_EQ(new_val, efl_ui_range_value_get(obj))) return EINA_TRUE;
 
    efl_ui_range_value_set(obj, new_val);
    ecore_timer_del(sd->delay_change_timer);
@@ -165,12 +171,10 @@ static void
 _entry_value_apply(Evas_Object *obj)
 {
    const char *str;
-   double val, val_min, val_max;
+   double val;
    char *end;
 
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
-   Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
-
    if (!sd->entry_visible) return;
 
    efl_event_callback_del(sd->ent, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED,
@@ -180,15 +184,7 @@ _entry_value_apply(Evas_Object *obj)
    if (!str) return;
 
    val = strtod(str, &end);
-   if (((*end != '\0') && (!isspace(*end))) || (fabs(val - pd->val) < DBL_EPSILON)) return;
-   efl_ui_range_limits_get(obj, &val_min, &val_max);
-   val = MIN(val_max, MAX(val_min, val));
-   efl_ui_range_value_set(obj, val);
-
-   efl_event_callback_call(obj, EFL_UI_SPIN_EVENT_CHANGED, NULL);
-   ecore_timer_del(sd->delay_change_timer);
-   sd->delay_change_timer = ecore_timer_add(EFL_UI_SPIN_BUTTON_DELAY_CHANGE_TIME,
-                                            _delay_change_timer_cb, obj);
+   _value_set(obj, val);
 }
 
 static void
@@ -403,8 +399,7 @@ _spin_value(Efl_Ui_Spin *obj, Eina_Bool inc)
 
    int absolut_value = efl_ui_range_value_get(obj) + (inc ? pd->step : -pd->step);
 
-   if (_value_set(obj, MIN(MAX(absolut_value, pd->val_min), pd->val_max)))
-     _label_write(obj);
+   _value_set(obj, absolut_value);
 }
 
 static void
@@ -476,11 +471,7 @@ _efl_ui_spin_button_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Spin_But
    int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
-   if (!efl_ui_focus_object_focus_get(obj))
-     {
-        ELM_SAFE_FREE(sd->delay_change_timer, ecore_timer_del);
-     }
-   else
+   if (efl_ui_focus_object_focus_get(obj))
      {
         if (sd->entry_reactivate)
           {
