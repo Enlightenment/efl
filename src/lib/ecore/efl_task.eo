@@ -1,60 +1,62 @@
 enum Efl.Task_Priority {
-   [[
+   [[How much processor time will this task get compared to other tasks running on
+     the same processor.
      @since 1.22
    ]]
-   normal,
-   background,
-   low,
-   high,
-   ultra
+   normal,     [[Neither above nor below average priority. This is the default.]]
+   background, [[Far below average priority.]]
+   low,        [[Below average priority.]]
+   high,       [[Above average priority.]]
+   ultra       [[Far above average priority.]]
 }
 
 enum Efl.Task_Flags {
-   [[
+   [[Flags to further customize task's behavior.
      @since 1.22
    ]]
-   none               = 0,
-   use_stdin          = 1,
-   use_stdout         = 2,
-   no_exit_code_error = 4,
+   none               = 0, [[No special flags.]]
+   use_stdin          = 1, [[Task will require console input.]]
+   use_stdout         = 2, [[Task will require console output.]]
+   no_exit_code_error = 4, [[Task will not produce an exit code upon termination.]]
 }
 
 abstract Efl.Task extends Efl.Loop_Consumer
 {
-   [[
+   [[EFL's abstraction for a task (process).
      @since 1.22
-   ]]
+   ]] // TODO: This needs more detail.
    methods {
       @property priority {
-         [[ The priority of this task. ]]
+         [[The priority of this task.]]
          get { }
          set { }
          values {
-            priority: Efl.Task_Priority; [[ ]]
+            priority: Efl.Task_Priority; [[Desired priority.]]
          }
       }
       @property exit_code {
-         [[ The final exit code of this task. ]]
+         [[The final exit code of this task. This is the code that will be produced upon task completion.]]
          get { }
          values {
-            code: int; [[ ]]
+            code: int; [[The exit code.]]
          }
       }
       @property flags {
+         [[Flags to further customize task's behavior.]]
          set { }
          get { }
          values {
-            flags: Efl.Task_Flags; [[ ]]
+            flags: Efl.Task_Flags; [[Desired task flags.]]
          }
       }
       run @pure_virtual {
-         [[ Actually run the task ]]
-         return: future<void> @owned; [[ A future triggered when task exits and is passed int exit code ]]
+         [[Actually run the task.]]
+         return: future<void> @owned; [[A future triggered when task exits and is passed int exit code.]]
       }
       end @pure_virtual {
-         [[ Request the task end (may send a signal or interrupt
-            signal resulting in a terminate event being tiggered in the
-            target task loop) ]]
+         [[Request the task end (may send a signal or interrupt
+           signal resulting in a terminate event being tiggered in the
+           target task loop).]]
       }
    }
    events {

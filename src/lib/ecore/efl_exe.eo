@@ -1,59 +1,62 @@
 enum @beta Efl.Exe_Signal {
-   [[ ]]
-   int,
-   quit,
-   term,
-   kill,
-   cont,
-   stop,
-   hup,
-   usr1,
-   usr2
+   [[Signal is a notification, a message sent by either operating system or some application to our program.
+     Signals are a mechanism for one-way asynchronous notifications. A signal may be sent from the kernel to
+     a process, from a process to another process, or from a process to itself. Signal typically alert a
+     process to some event, such as a segmentation fault, or the user pressing Ctrl-C.]]
+   int,  [[Terminal interrupt.]]
+   quit, [[Terminal quit.]]
+   term, [[Termination.]]
+   kill, [[Kill(can't be caught or ignored).]]
+   cont, [[Continue executing, if stopped.]]
+   stop, [[Stop executing(can't be caught or ignored).]]
+   hup,  [[Hangup.]]
+   usr1, [[User defined signal 1.]]
+   usr2  [[User defined signal 2.]]
 }
 
 enum @beta Efl.Exe_Flags {
-   [[ ]]
-   none             = 0,
-   group_leader     = 1,
-   exit_with_parent = 2,
-   hide_io          = 4
+   [[Flags to customize task behavior.]] // TODO: This needs more detail.
+   none             = 0, [[No special flags.]]
+   group_leader     = 1, [[Process will be executed in its own session.]]
+   exit_with_parent = 2, [[Exit process when parent process exits.]]
+   hide_io          = 4  [[All console IO will be hidden.]]
 }
 
 class @beta Efl.Exe extends Efl.Task implements Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Efl.Core.Command_Line
 {
-   [[ ]]
+   [[Further customization of @Efl.Task, including signals and environment control.]] // TODO: This needs more detail
    methods {
       signal {
+         [[Send a signal to this task.]]
          params {
-            sig: Efl.Exe_Signal; [[ Send this signal to the task ]]
+            sig: Efl.Exe_Signal; [[Signal number to send.]]
          }
       }
       @property exe_flags {
+        [[Customize the task's behavior.]]
         set { }
         get { }
         values {
-          flags: Efl.Exe_Flags; [[ ]]
+          flags: Efl.Exe_Flags; [[Flags.]]
         }
       }
       @property exit_signal {
-         [[ The final exit signal of this task. ]]
+         [[The final exit signal of this task.]]
          get { }
          values {
-            sig: int; [[ The exit signal, or -1 if no exit signal happened ]]
+            sig: int; [[The exit signal, or -1 if no exit signal happened.]]
          }
       }
       @property env {
-         [[ If $env is $null then the process created by this object is
-            going to inherit the environment of this process.
+         [[If $env is $null then the process created by this object is
+           going to inherit the environment of this process.
 
-            In case $env is not $null then the environment variables declared
-            in this object will represent the environment passed to the new process.
+           In case $env is not $null then the environment variables declared
+           in this object will represent the environment passed to the new process.
          ]]
          get {
-            [[ Get the object assosiated with this object ]]
          }
          set {
-            [[ Set the object assosiated with this object ]]
          }
          values {
             env : Efl.Core.Env; [[$env will be referenced until this object does not need it anymore.]]

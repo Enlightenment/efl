@@ -52,6 +52,7 @@ function @beta Efl.Ui.Selection_Data_Ready {
 
 struct @beta Efl.Ui.Selection_Changed
 {
+   [[Selection-changed specific information.]] // TODO: This needs to be filled in.
    type: Efl.Ui.Selection_Type; [[Selection type]]
    seat: int; [[The seat on which the selection changed, or NULL for "default"]]
    display: void_ptr; [[The display connection object, NULL under X11]]

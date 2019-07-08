@@ -1,13 +1,13 @@
 enum @beta Efl.Canvas.Layout_Part_Text_Expand
 {
-   [[Text layout policy to enforce. If none is set, min/max descriptions
-     are taken in considerations solely.
+   [[Text layout policy to enforce. If none is set, only min/max descriptions
+     are taken into account.
    ]]
-   none = 0, [[No policy. Use default description parameters.]]
-   min_x = 1,
-   min_y  = 1 << 1,
-   max_x  = 1 << 2,
-   max_y  = 1 << 3,
+   none = 0,        [[No policy. Use default description parameters.]]
+   min_x = 1,       [[Text is tied to the left side of the container.]]
+   min_y = 1 << 1,  [[Text is tied to the top side of the container.]]
+   max_x = 1 << 2,  [[Text is tied to the right side of the container.]]
+   max_y = 1 << 3,  [[Text is tied to the bottom side of the container.]]
 }
 
 class @beta Efl.Canvas.Layout_Part_Text extends Efl.Canvas.Layout_Part implements Efl.Text,
@@ -27,7 +27,7 @@ Efl.Text_Markup, Efl.Text_Markup_Interactive, Efl.Text_Format, Efl.Text_Font, Ef
             line-wrapping etc.
            ]]
            values {
-              type: Efl.Canvas.Layout_Part_Text_Expand;
+              type: Efl.Canvas.Layout_Part_Text_Expand; [[Desired sizing policy.]]
            }
         }
 

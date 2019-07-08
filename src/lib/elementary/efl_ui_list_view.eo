@@ -2,9 +2,10 @@ import elm_general;
 
 struct @beta Efl.Ui.List_View_Item_Event
 {
-   layout: Efl.Ui.Layout;
-   child: Efl.Model;
-   index: int;
+   [[Information related to item events.]] // TODO: This needs to be filled in.
+   layout: Efl.Ui.Layout; [[TBD]]
+   child: Efl.Model; [[TBD]]
+   index: int; [[TBD]]
 }
 class @beta Efl.Ui.List_View extends Efl.Ui.Layout_Base implements Efl.Ui.Scrollable_Interactive, Efl.Ui.Scrollbar,
                 Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Ui.Focus.Composition, Efl.Ui.Focus.Manager_Sub,
@@ -12,15 +13,14 @@ class @beta Efl.Ui.List_View extends Efl.Ui.Layout_Base implements Efl.Ui.Scroll
 {
    methods {
       @property homogeneous {
+         [[When in homogeneous mode, all items have the same height and width. Otherwise, each item's size is respected.
+         ]]
          get {
-           [[Get whether the homogeneous mode is enabled.]]
          }
          set {
-           [[Enable/disable homogeneous mode.]]
          }
          values {
-            homogeneous: bool; [[Assume the items within the genlist are of
-                                 the same height and width. Default is $false.]]
+            homogeneous: bool; [[Homogeneous mode setting. Default is $false.]]
          }
       }
       @property select_mode {
@@ -32,8 +32,9 @@ class @beta Efl.Ui.List_View extends Efl.Ui.Layout_Base implements Efl.Ui.Scroll
          }
       }
       @property default_style {
+         [[TBD]] // TODO: This needs to be filled in. Does not seem to be in use.
          values {
-            style: stringshare;
+            style: stringshare; [[TBD]]
          }
       }
       @property layout_factory {
