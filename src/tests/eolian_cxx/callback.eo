@@ -1,7 +1,7 @@
 struct Callback_Event
 {
   field1: int;
-  field2: list<int*>;
+  field2: list<string>;
 }
 
 class Callback extends Efl.Object
@@ -11,7 +11,7 @@ class Callback extends Efl.Object
      prefix,event1: void;
      prefix,event2: Callback;
      prefix,event3: int;
-     prefix,event4: const(array<ptr(int)>);
+     prefix,event4: const(array<string>);
      prefix,event5: Callback_Event;
    }
 }

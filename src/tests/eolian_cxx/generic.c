@@ -114,16 +114,16 @@ static void _generic_call_event3(Eo *obj, Generic_Data* pd EINA_UNUSED)
 }
 static void _generic_call_event4(Eo *obj, Generic_Data* pd EINA_UNUSED)
 {
-  int i = 42;
+  static const char *s = "42";
   Eina_Array* p = eina_array_new(1);
-  ck_assert(eina_array_push(p, &i));
+  ck_assert(eina_array_push(p, s));
   efl_event_callback_call(obj, GENERIC_EVENT_PREFIX_EVENT4, p);
   eina_array_free(p);
 }
 static void _generic_call_event5(Eo *obj, Generic_Data* pd EINA_UNUSED)
 {
-  int i = 42;
-  Eina_List* p = eina_list_append(NULL, &i);
+  const char *s = "42";
+  Eina_List* p = eina_list_append(NULL, s);
 
   Generic_Event e = {.field1 = 42, .field2 = p};
   efl_event_callback_call(obj, GENERIC_EVENT_PREFIX_EVENT5, &e);

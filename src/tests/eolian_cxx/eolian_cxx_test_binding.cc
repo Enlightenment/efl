@@ -85,15 +85,8 @@ EFL_START_TEST(eolian_cxx_test_type_generation_in)
 
   name1::name2::Type_Generation g(efl::eo::instantiate);
 
-  int v = 42;
-  g.inrefint(v);
-  g.inrefintown(42);
-  g.inrefintownfree(42);
   g.invoidptr(nullptr);
   g.inint(42);
-  g.inintptr(42);
-  g.inintptrown(42);
-  g.inintptrownfree(42);
   g.instring("foobar");
   g.instringown("foobar");
 }
@@ -106,24 +99,12 @@ EFL_START_TEST(eolian_cxx_test_type_generation_return)
   name1::name2::Type_Generation g(efl::eo::instantiate);
 
   {
-    int&i = g.returnrefint();
-    ck_assert(i == 42);
-  }
-  {
     int i = g.returnint();
     ck_assert(i == 42);
   }
   {
     void* p = g.returnvoidptr();
     ck_assert(*(int*)p == 42);
-  }
-  {
-    int& p = g.returnintptr();
-    ck_assert(p == 42);
-  }
-  {
-    efl::eina::unique_malloc_ptr<int> p = g.returnintptrown();
-    ck_assert(*p == 42);
   }
   {
     efl::eina::string_view string = g.returnstring();
@@ -152,33 +133,10 @@ EFL_START_TEST(eolian_cxx_test_type_generation_optional)
   g.optionalinint(nullptr);
   g.optionalinint(i);
 
-  g.optionalinintptr(i);
-  g.optionalinintptr(nullptr);
-
-  g.optionalinintptrown(i);
-  g.optionalinintptrown(nullptr);
-
-  g.optionalinintptrownfree(i);
-  g.optionalinintptrownfree(nullptr);
-  
   i = 0;
   g.optionaloutint(&i);
   ck_assert(i == 42);
   g.optionaloutint(nullptr);
-
-  i = 0;
-  int* j = nullptr;
-  g.optionaloutintptr(&j);
-  ck_assert(j != nullptr);
-  ck_assert(*j == 42);
-  g.optionaloutintptr(nullptr);
-
-  i = 0;
-  efl::eina::unique_malloc_ptr<int> k = nullptr;
-  g.optionaloutintptrown(k);
-  ck_assert(!!k);
-  ck_assert(*k == 42);
-  g.optionaloutintptrown(nullptr);
 }
 EFL_END_TEST
 
@@ -203,11 +161,12 @@ EFL_START_TEST(eolian_cxx_test_type_callback)
                            event3 = true;
                            ck_assert(v == 42);
                          });
-  efl::eolian::event_add(g.prefix_event4_event, g, [&] (nonamespace::Generic, efl::eina::range_array<const int &> e)
+  efl::eolian::event_add(g.prefix_event4_event, g, [&] (nonamespace::Generic, efl::eina::range_array<::efl::eina::string_view> e)
                          {
                            event4 = true;
                            ck_assert(e.size() == 1);
-                           ck_assert(*e.begin() == 42);
+                           // FIXME eina::range_array is incompatible with eina::string_view
+                           //ck_assert(*e.begin() == efl::eina::string_view{"42"});
                          });
   efl::eolian::event_add(g.prefix_event5_event, g, [&] (nonamespace::Generic, Generic_Event)
                          {

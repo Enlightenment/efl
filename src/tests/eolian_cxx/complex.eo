@@ -5,7 +5,7 @@ class Complex extends Efl.Object
       // container test
       inptrcont {
          params {
-           l: list<ptr(int)>;
+           l: list<string>;
          }
       }
       inclasscont {
@@ -15,22 +15,22 @@ class Complex extends Efl.Object
       }
       incontcont {
          params {
-           l: list<list<ptr(int)>>;
+           l: list<list<string>>;
          }
       }
       incontcontown {
          params {
-           l: list<list<ptr(int)>> @owned;
+           l: list<list<string>> @owned;
          }
       }
       incontowncontown {
          params {
-           l: list<list<ptr(int)> @owned> @owned;
+           l: list<list<string> @owned> @owned;
          }
       }
       incontowncont {
          params {
-           l: list<list<ptr(int)> @owned>;
+           l: list<list<string> @owned>;
          }
       }
       instringcont {
@@ -50,42 +50,42 @@ class Complex extends Efl.Object
       }
       inarray {
          params {
-           l: array<ptr(int)>;
+           l: array<string>;
          }
       }
       inarrayown {
          params {
-           l: array<ptr(int)> @owned;
+           l: array<string> @owned;
          }
       }
       inhash {
          params {
-           l: hash<ptr(int), ptr(int)>;
+           l: hash<string, string>;
          }
       }
       inhashown {
          params {
-           l: hash<ptr(int), ptr(int)> @owned;
+           l: hash<string, string> @owned;
          }
       }
       initerator {
          params {
-           l: iterator<ptr(int)>;
+           l: iterator<int>;
          }
       }
       initeratorown {
          params {
-           l: iterator<ptr(int)> @owned;
+           l: iterator<int> @owned;
          }
       }
       inaccessor {
          params {
-           l: accessor<ptr(int)>;
+           l: accessor<int>;
          }
       }
       inaccessorown {
          params {
-           l: accessor<ptr(int)> @owned;
+           l: accessor<int> @owned;
          }
       }
       // out
@@ -96,22 +96,22 @@ class Complex extends Efl.Object
       }
       outcontcont {
          params {
-           @out l: list<list<ptr(int)>>;
+           @out l: list<list<string>>;
          }
       }
       outcontcontown {
          params {
-           @out l: list<list<ptr(int)>> @owned;
+           @out l: list<list<string>> @owned;
          }
       }
       outcontowncontown {
          params {
-           @out l: list<list<ptr(int)> @owned> @owned;
+           @out l: list<list<string> @owned> @owned;
          }
       }
       outcontowncont {
          params {
-           @out l: list<list<ptr(int)> @owned>;
+           @out l: list<list<string> @owned>;
          }
       }
       outstringcont {
@@ -131,51 +131,51 @@ class Complex extends Efl.Object
       }
       outarray {
          params {
-           @out l: array<ptr(int)>;
+           @out l: array<string>;
          }
       }
       outarrayown {
          params {
-           @out l: array<ptr(int)> @owned;
+           @out l: array<string> @owned;
          }
       }
       outhash {
          params {
-           @out l: hash<ptr(int), ptr(int)>;
+           @out l: hash<string, string>;
          }
       }
       outhashown {
          params {
-           @out l: hash<ptr(int), ptr(int)> @owned;
+           @out l: hash<string, string> @owned;
          }
       }
       outiterator {
          params {
-           @out l: iterator<ptr(int)>;
+           @out l: iterator<int>;
          }
       }
       outiteratorown {
          params {
-           @out l: iterator<ptr(int)> @owned;
+           @out l: iterator<int> @owned;
          }
       }
       outaccessor {
          params {
-           @out l: accessor<ptr(int)>;
+           @out l: accessor<int>;
          }
       }
       outaccessorown {
          params {
-           @out l: accessor<ptr(int)> @owned;
+           @out l: accessor<int> @owned;
          }
       }
       foo {
          params {
-            l: list<ptr(int)>;
+            l: list<string>;
          }
       }
       bar {
-         return: array<ptr(int)>;
+         return: array<string>;
       }
       wrapper_r {
          return: Complex;

@@ -2,22 +2,6 @@ class Name1.Name2.Type_Generation extends Efl.Object
 {
    data: Type_Generation_Data;
    methods {
-     // inref
-     inrefint {
-       params {
-         @in v: ptr(int);
-       }
-     }
-     inrefintown {
-       params {
-         @in v: free(ptr(int),free) @owned;
-       }
-     }
-     inrefintownfree {
-       params {
-         @in v: free(ptr(int), free) @owned;
-       }
-     }
      // in void ptr
      invoidptr {
        params {
@@ -27,21 +11,6 @@ class Name1.Name2.Type_Generation extends Efl.Object
      inint {
        params {
          @in v: int;
-       }
-     }
-     inintptr {
-       params {
-         @in v: ptr(int);
-       }
-     }
-     inintptrown {
-       params {
-         @in v: free(ptr(int),free) @owned;
-       }
-     }
-     inintptrownfree {
-       params {
-         @in v: free(ptr(int), free) @owned;
        }
      }
      instring {
@@ -65,25 +34,11 @@ class Name1.Name2.Type_Generation extends Efl.Object
        }
      }
      // return
-     returnrefint {
-       return: ptr(int);
-     }
      returnvoidptr {
         return: void_ptr;
      }
      returnint {
        return: int;
-     }
-     returnintptr {
-       return: ptr(int);
-     }
-     returnintptrown {
-       return: free(ptr(int),free) @owned;
-     }
-     returnintptrownfree {
-       params {
-         @in v: free(ptr(int), free) @owned;
-       }
      }
      returnstring {
        return: string;
@@ -106,21 +61,6 @@ class Name1.Name2.Type_Generation extends Efl.Object
      outint {
        params {
          @out v: int;
-       }
-     }
-     outintptr {
-       params {
-         @out v: ptr(int);
-       }
-     }
-     outintptrown {
-       params {
-         @out v: free(ptr(int),free) @owned;
-       }
-     }
-     outintptrownfree {
-       params {
-         @out v: free(ptr(int), free) @owned;
        }
      }
      outstringshare {
@@ -159,21 +99,6 @@ class Name1.Name2.Type_Generation extends Efl.Object
          @in v: int @optional;
        }
      }
-     optionalinintptr {
-       params {
-         @in v: ptr(int) @optional;
-       }
-     }
-     optionalinintptrown {
-       params {
-         @in v: free(ptr(int),free) @owned @optional;
-       }
-     }
-     optionalinintptrownfree {
-       params {
-         @in v: free(ptr(int), free) @owned @optional;
-       }
-     }
      optionaloutvoidptr {
        params {
          @out v: void_ptr @optional;
@@ -182,21 +107,6 @@ class Name1.Name2.Type_Generation extends Efl.Object
      optionaloutint {
        params {
          @out v: int @optional;
-       }
-     }
-     optionaloutintptr {
-       params {
-         @out v: ptr(int) @optional;
-       }
-     }
-     optionaloutintptrown {
-       params {
-         @out v: free(ptr(int),free) @owned @optional;
-       }
-     }
-     optionaloutintptrownfree {
-       params {
-         @out v: free(ptr(int), free) @owned @optional;
        }
      }
      optionalinclassname {
