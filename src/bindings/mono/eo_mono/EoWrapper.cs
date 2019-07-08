@@ -10,8 +10,15 @@ namespace Efl
 namespace Eo
 {
 
+/// <summary>
+/// Abstract class that delivers base level binding to Efl Objects.
+///
+/// Most of it is protected functionalities to serve the generated
+/// binding classes that inherit from it.
+/// </summary>
 public abstract class EoWrapper : IWrapper, IDisposable
 {
+    /// <summary>Object used to synchronize access to EFL events.</summary>
     protected readonly object eflBindingEventLock = new object();
     private bool generated = true;
     private System.IntPtr handle = IntPtr.Zero;
@@ -49,7 +56,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
     /// <summary>Initializes a new instance of the <see cref="Object"/> class.
     /// Internal usage: Constructs an instance from a native pointer. This is used when interacting with C code and should not be used directly.
     /// Do not implement this constructor.</summary>
-    /// <param name="raw">The native pointer to be wrapped.</param>
+    /// <param name="wh">The native pointer to be wrapped.</param>
     protected EoWrapper(Efl.Eo.Globals.WrappingHandle wh)
     {
         handle = wh.NativeHandle;
@@ -124,6 +131,15 @@ public abstract class EoWrapper : IWrapper, IDisposable
         get;
     }
 
+    /// <summary>
+    /// Whether this object type is one of the generated binding classes or a custom
+    /// class defined by the user and that inherit from one of the generated ones.
+    /// </summary>
+    /// <returns>
+    /// True if this object type is one of the generated binding classes,
+    /// false if it is class that is manually defined and that inherits from
+    /// one of the generated ones, including user defined classes.
+    /// </returns>
     protected bool IsGeneratedBindingClass
     {
         get { return generated; }
@@ -269,7 +285,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
         ws.MakeShared();
     }
 
-    /// <sumary>Create and set to the internal native state a C# supervisor for this Eo wrapper. For internal use only.</sumary>
+    /// <summary>Create and set to the internal native state a C# supervisor for this Eo wrapper. For internal use only.</summary>
     private void AddWrapperSupervisor()
     {
         var ws = new Efl.Eo.WrapperSupervisor(this);
@@ -291,16 +307,24 @@ public abstract class EoWrapper : IWrapper, IDisposable
         Eina.Error.RaiseIfUnhandledException();
     }
 
+    /// <summary>
+    /// Struct to be used when constructing objects from native code.
+    /// Wraps the pointer handle to the native object instance.
+    /// </summary>
     protected struct ConstructingHandle
     {
+        /// <summary>Constructor for wrapping the native handle.</summary>
         public ConstructingHandle(IntPtr h)
         {
             NativeHandle = h;
         }
 
+        /// <summary>Pointer to the native instance.</summary>
         public IntPtr NativeHandle { get; private set; }
     }
 
+    /// <summary>Wrapper for native methods and virtual method delegates.
+    /// For internal use by generated code only.</summary>
     public abstract class NativeMethods : Efl.Eo.NativeClass
     {
         private static EflConstructorDelegate csharpEflConstructorStaticDelegate = new EflConstructorDelegate(Constructor);
@@ -308,6 +332,8 @@ public abstract class EoWrapper : IWrapper, IDisposable
 
         private delegate IntPtr EflConstructorDelegate(IntPtr obj, IntPtr pd);
 
+        /// <summary>Gets the list of Eo operations to override.</summary>
+        /// <returns>The list of Eo operations to be overload.</returns>
         public override System.Collections.Generic.List<Efl_Op_Description> GetEoOps(Type type)
         {
             var descs = new System.Collections.Generic.List<Efl_Op_Description>();
