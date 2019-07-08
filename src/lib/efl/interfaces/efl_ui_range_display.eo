@@ -4,19 +4,19 @@ interface @beta Efl.Ui.Range_Display
    c_prefix: efl_ui_range;
    methods {
       @property range_value {
-         [[Control the range value (in percentage) on a given range widget
-
-           Use this call to set range levels.
+         [[Control the range value of a widget.
 
            Note: If you pass a value out of the specified interval for
-           $val, it will be interpreted as the closest of the boundary
-           values in the interval.]]
+           $val, there will be an error. An exception to this are implementations that support clamping or modulos.
+         ]]
          set {
+           [[Set the new value to the widget.]]
          }
          get {
+           [[The value that is currently displayed.]]
          }
          values {
-            val: double; [[The range value (must be between $0.0 and 1.0)]]
+            val: double; [[The range value (must be between $min and $max)]]
          }
       }
       @property range_limits {
@@ -31,8 +31,7 @@ interface @beta Efl.Ui.Range_Display
 
               The minimum and maximum values may be different for each class.
 
-              Warning: maximum must be greater than minimum, otherwise behavior
-              is undefined.
+              Warning: maximum must be greater than minimum, otherwise an error is raised.
             ]]
          }
          get {

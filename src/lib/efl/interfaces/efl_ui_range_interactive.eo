@@ -13,11 +13,8 @@ interface @beta Efl.Ui.Range_Interactive extends Efl.Ui.Range_Display
 
            By default step value is equal to 1.
 
-           Warning: The step value should be bigger than 0.]]
-         set {
-         }
-         get {
-         }
+           Warning: The step value should be bigger than 0.0.
+         ]]
          values {
            step: double; [[The step value.]]
          }
