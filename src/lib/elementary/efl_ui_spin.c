@@ -108,10 +108,13 @@ _efl_ui_spin_efl_ui_range_display_range_limits_set(Eo *obj, Efl_Ui_Spin_Data *sd
 {
    if (max < min)
      {
-        ERR("Wrong params. min(%lf) is bigger than max(%lf). It will swaped.", min, max);
-        double t = min;
-        min = max;
-        max = t;
+        ERR("Wrong params. min(%lf) is greater than max(%lf).", min, max);
+        return;
+     }
+   if (EINA_DBL_EQ(max, min))
+     {
+        ERR("min and max must have a different value");
+        return;
      }
    if ((EINA_DBL_EQ(sd->val_min, min)) && (EINA_DBL_EQ(sd->val_max, max))) return;
 
@@ -153,9 +156,16 @@ EOLIAN static void
 _efl_ui_spin_efl_ui_range_display_range_value_set(Eo *obj, Efl_Ui_Spin_Data *sd, double val)
 {
    if (val < sd->val_min)
-     val = sd->val_min;
-   else if (val > sd->val_max)
-     val = sd->val_max;
+     {
+        ERR("Error, value is less than minimum");
+        return;
+     }
+
+   if (val > sd->val_max)
+     {
+        ERR("Error, value is greater than maximum");
+        return;
+     }
 
    if (EINA_DBL_EQ(val, sd->val)) return;
 

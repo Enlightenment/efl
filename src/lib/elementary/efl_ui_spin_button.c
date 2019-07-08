@@ -168,7 +168,7 @@ static void
 _entry_value_apply(Evas_Object *obj)
 {
    const char *str;
-   double val;
+   double val, val_min, val_max;
    char *end;
 
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
@@ -184,6 +184,8 @@ _entry_value_apply(Evas_Object *obj)
 
    val = strtod(str, &end);
    if (((*end != '\0') && (!isspace(*end))) || (fabs(val - pd->val) < DBL_EPSILON)) return;
+   efl_ui_range_limits_get(obj, &val_min, &val_max);
+   val = MIN(val_max, MAX(val_min, val));
    efl_ui_range_value_set(obj, val);
 
    efl_event_callback_call(obj, EFL_UI_SPIN_EVENT_CHANGED, NULL);
@@ -406,7 +408,9 @@ _spin_value(void *data)
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(data, MY_CLASS);
    Efl_Ui_Spin_Data *pd = efl_data_scope_get(data, EFL_UI_SPIN_CLASS);
 
-   if (_value_set(data, pd->val + (sd->inc_val ? pd->step : -pd->step)))
+   int absolut_value = pd->val + (sd->inc_val ? pd->step : -pd->step);
+
+   if (_value_set(data, MIN(MAX(absolut_value, pd->val_min), pd->val_max)))
      _label_write(data);
 
    return ECORE_CALLBACK_RENEW;
