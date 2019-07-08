@@ -1,28 +1,26 @@
-# French translation for Efl.
+# French translation for EFL.
 # Copyright (C) 2012, 2013 Enlightenment development team
 # This file is put in the public domain.
 # batden <batden@orange.fr>, 2009.
 # dazibao <dazibao@sfr.fr>, 2011.
 # Jerome Pinot <ngc891@gmail.com>, 2012.
 # Chidambar Zinnoury <illogict@online.fr>, 2013.
+# similar <similar@orange.fr>, 2019.
 #
-#: src/lib/elementary/elm_config.c:4135
 msgid ""
 msgstr ""
 "Project-Id-Version: Elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2019-04-15 12:03+0100\n"
-"PO-Revision-Date: 2014-05-25 20:18+0000\n"
-"Last-Translator: Eliovir <Unknown>\n"
-"Language-Team: French <sansgourou@gmail.com>\n"
+"PO-Revision-Date: 2019-06-27 11:57+0200\n"
+"Last-Translator: Philippe Jean Guillaumie <similar@orange.fr>\n"
+"Language-Team: French>\n"
 "Language: fr\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "X-Launchpad-Export-Date: 2014-05-26 05:37+0000\n"
-"X-Generator: Launchpad (build 17017)\n"
-"X-Poedit-Country: FRANCE\n"
-"X-Poedit-Language: French\n"
+"X-Generator: Poedit 2.0.6\n"
 "X-Poedit-SourceCharset: utf-8\n"
 
 #: src/lib/ecore/ecore_getopt.c:89
@@ -72,7 +70,7 @@ msgstr "Options :\n"
 
 #: src/lib/ecore/ecore_getopt.c:780
 msgid "Positional arguments:\n"
-msgstr ""
+msgstr "Paramètres positionnels :\n"
 
 #: src/lib/ecore/ecore_getopt.c:847
 #, c-format
@@ -166,12 +164,12 @@ msgstr "ERREUR : l’option -%c requiert un argument !\n"
 #: src/lib/ecore/ecore_getopt.c:1892
 #, c-format
 msgid "ERROR: missing required positional argument %s.\n"
-msgstr ""
+msgstr "ERREUR : paramètre positionnel requis manquant %s.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1924
 #, c-format
 msgid "ERROR: unsupported action type %d for positional argument %s\n"
-msgstr ""
+msgstr "ERREUR : type d'action non pris en charge %d pour le paramètre positionnel %s\n"
 
 #: src/lib/ecore/ecore_getopt.c:2045 src/lib/ecore/ecore_getopt.c:2111
 msgid "ERROR: no parser provided.\n"
@@ -201,7 +199,7 @@ msgstr " Voir -%c.\n"
 
 #: src/lib/ecore/ecore_getopt.c:2151
 msgid "ERROR: invalid positional arguments found."
-msgstr ""
+msgstr "ERREUR : paramètres positionnels non valides détectées."
 
 #: src/lib/ecore/ecore_getopt.c:2186
 #, c-format
@@ -255,7 +253,7 @@ msgstr "Home"
 
 #: src/lib/elementary/elc_fileselector.c:1738
 msgid "Search"
-msgstr ""
+msgstr "Rechercher"
 
 #: src/lib/elementary/elc_fileselector.c:2012
 msgid "OK"
@@ -277,19 +275,19 @@ msgstr "État : désactivé"
 
 #: src/lib/elementary/elc_hoversel.c:652
 msgid "Hoversel"
-msgstr ""
+msgstr "Hoversel"
 
 #: src/lib/elementary/elc_multibuttonentry.c:682
 msgid "multi button entry label"
-msgstr ""
+msgstr "étiquette d'entrée à plusieurs boutons"
 
 #: src/lib/elementary/elc_multibuttonentry.c:704
 msgid "multi button entry item"
-msgstr ""
+msgstr "élément d'entrée à plusieurs boutons"
 
 #: src/lib/elementary/elc_multibuttonentry.c:1586
 msgid "multi button entry"
-msgstr ""
+msgstr "entrée à plusieurs boutons"
 
 #: src/lib/elementary/elc_naviframe.c:408
 #: src/lib/elementary/elc_naviframe.c:436
@@ -297,9 +295,8 @@ msgid "Title"
 msgstr "Titre"
 
 #: src/lib/elementary/elc_naviframe.c:415
-#, fuzzy
 msgid "Subtitle"
-msgstr "Titre"
+msgstr "Sous-titre"
 
 #: src/lib/elementary/elc_naviframe.c:968
 #: src/lib/elementary/elc_naviframe.c:1186
@@ -312,15 +309,15 @@ msgstr "Suivant"
 
 #: src/lib/elementary/elc_popup.c:320 src/lib/elementary/elc_popup.c:984
 msgid "Popup Title"
-msgstr "Titre du Popup"
+msgstr "Titre du pop-up"
 
 #: src/lib/elementary/elc_popup.c:330 src/lib/elementary/elc_popup.c:1060
 msgid "Popup Body Text"
-msgstr "Corps du texte du Popup"
+msgstr "Corps du texte du pop-up"
 
 #: src/lib/elementary/elc_popup.c:1836
 msgid "Alert"
-msgstr ""
+msgstr "Alerte"
 
 #: src/lib/elementary/elm_bubble.c:163
 msgid "Bubble"
@@ -355,29 +352,29 @@ msgstr "élément du calendrier"
 #: src/lib/elementary/elm_calendar.c:391
 #: src/lib/elementary/efl_ui_calendar.c:267
 msgid "calendar decrement month button"
-msgstr "bouton du mois précédent"
+msgstr "bouton de passage au mois précédent"
 
 #: src/lib/elementary/elm_calendar.c:397
 msgid "calendar decrement year button"
-msgstr "bouton de l'année précédente"
+msgstr "bouton de passage à l'année précédente"
 
 #: src/lib/elementary/elm_calendar.c:403
 #: src/lib/elementary/efl_ui_calendar.c:273
 msgid "calendar increment month button"
-msgstr "bouton du mois suivant"
+msgstr "bouton de passage au mois suivant"
 
 #: src/lib/elementary/elm_calendar.c:409
 msgid "calendar increment year button"
-msgstr "bouton de l'année suivante"
+msgstr "bouton de passage à l'année suivante"
 
 #: src/lib/elementary/elm_calendar.c:414
 #: src/lib/elementary/efl_ui_calendar.c:278
 msgid "calendar month"
-msgstr "Mois du calendrier"
+msgstr "mois du calendrier"
 
 #: src/lib/elementary/elm_calendar.c:419
 msgid "calendar year"
-msgstr "Année du calendrier"
+msgstr "année du calendrier"
 
 #: src/lib/elementary/efl_ui_check.c:76 src/lib/elementary/efl_ui_check.c:200
 #: src/lib/elementary/efl_ui_radio.c:136 src/lib/elementary/efl_ui_radio.c:202
@@ -399,11 +396,11 @@ msgstr "À cocher"
 
 #: src/lib/elementary/elm_clock.c:309
 msgid "clock increment button for am,pm"
-msgstr "Bouton d'incrémentation pour matin, après-midi"
+msgstr "bouton d'incrémentation pour matin (am), après-midi (pm)"
 
 #: src/lib/elementary/elm_clock.c:317
 msgid "clock decrement button for am,pm"
-msgstr "Bouton de décrémentation pour matin, après-midi"
+msgstr "bouton de décrémentation pour matin (am), après-midi (pm)"
 
 #: src/lib/elementary/elm_clock.c:714
 msgid "State: Editable"
@@ -415,27 +412,27 @@ msgstr "Horloge"
 
 #: src/lib/elementary/elm_colorselector.c:939
 msgid "Pick a color"
-msgstr ""
+msgstr "Choisir une couleur"
 
 #: src/lib/elementary/elm_colorselector.c:977
 msgid "R:"
-msgstr ""
+msgstr "R (rouge) :"
 
 #: src/lib/elementary/elm_colorselector.c:979
 msgid "G:"
-msgstr ""
+msgstr "G (vert) :"
 
 #: src/lib/elementary/elm_colorselector.c:981
 msgid "B:"
-msgstr ""
+msgstr "B (bleu) :"
 
 #: src/lib/elementary/elm_colorselector.c:983
 msgid "A:"
-msgstr ""
+msgstr "A (alpha)"
 
 #: src/lib/elementary/elm_colorselector.c:1707
 msgid "color selector palette item"
-msgstr "élément de palette de choix de couleur"
+msgstr "élément du sélecteur de couleur"
 
 #. TRANSLATORS: This string is special and defines if the language
 #. by default is a Left To Right or Right To Left language. Most
@@ -445,15 +442,15 @@ msgstr "élément de palette de choix de couleur"
 #.
 #: src/lib/elementary/elm_config.c:4158
 msgid "default:LTR"
-msgstr "default:LTR"
+msgstr "par défaut : LTR (de gauche à droite)"
 
 #: src/lib/elementary/elm_dayselector.c:437
 msgid "day selector item"
-msgstr "élement de choix de date"
+msgstr "élément du sélecteur du jour"
 
 #: src/lib/elementary/elm_diskselector.c:701
 msgid "diskselector item"
-msgstr "élément de choix de disque"
+msgstr "élément du sélecteur de disque"
 
 #: src/lib/elementary/elm_entry.c:1749
 msgid "Cut"
@@ -481,7 +478,7 @@ msgstr "Index"
 
 #: src/lib/elementary/elm_index.c:123
 msgid "Index Item"
-msgstr ""
+msgstr "Élément de l'index"
 
 #: src/lib/elementary/elm_label.c:403
 msgid "Label"
@@ -497,11 +494,11 @@ msgstr "état : fermé"
 
 #: src/lib/elementary/elm_panel.c:127
 msgid "A panel is open"
-msgstr ""
+msgstr "Un panneau est ouvert"
 
 #: src/lib/elementary/elm_panel.c:129
 msgid "Double tap to close panel menu"
-msgstr ""
+msgstr "Appuyer deux fois pour fermer le menu du panneau"
 
 #: src/lib/elementary/elm_panel.c:181
 msgid "panel button"
@@ -534,28 +531,27 @@ msgstr "curseur"
 
 #: src/lib/elementary/elm_spinner.c:1071
 msgid "incremented"
-msgstr ""
+msgstr "augmenté"
 
 #: src/lib/elementary/elm_spinner.c:1077
 msgid "decremented"
-msgstr ""
+msgstr "diminué"
 
 #: src/lib/elementary/elm_spinner.c:1110 src/lib/elementary/elm_spinner.c:1177
 msgid "spinner"
-msgstr "bouton fléché"
+msgstr "spinner"
 
 #: src/lib/elementary/elm_spinner.c:1119 src/lib/elementary/elm_spinner.c:1160
 msgid "spinner increment button"
-msgstr "bouton fléché d'incrémentation"
+msgstr "bouton d'incrémentation du spinner"
 
 #: src/lib/elementary/elm_spinner.c:1122 src/lib/elementary/elm_spinner.c:1169
 msgid "spinner decrement button"
-msgstr "bouton fléché de décrémentation"
+msgstr "bouton de décrémentation du spinner"
 
 #: src/lib/elementary/elm_spinner.c:1124
-#, fuzzy
 msgid "spinner text"
-msgstr "bouton fléché"
+msgstr "texte du spinner"
 
 #: src/lib/elementary/elm_toolbar.c:1753 src/lib/elementary/elm_toolbar.c:2355
 msgid "Selected"
@@ -571,7 +567,7 @@ msgstr "Possède un menu"
 
 #: src/lib/elementary/elm_toolbar.c:2350
 msgid "Unselected"
-msgstr "Désélectionné"
+msgstr "Non sélectionné"
 
 #: src/lib/elementary/elm_toolbar.c:2367
 msgid "Toolbar Item"
