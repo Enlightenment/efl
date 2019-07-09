@@ -96,6 +96,8 @@ _activate(Evas_Object *obj)
    // "elm,state,check,on" or "elm,state,check,off" for legacy
    // "efl,state,check,on" or "efl,state,check,off" for eo-api
    efl_ui_check_selected_set(obj, !efl_ui_check_selected_get(obj));
+   if (elm_widget_is_legacy(obj))
+     evas_object_smart_callback_call(obj, "changed", NULL);
 
    if (_elm_config->atspi_mode)
      efl_access_state_changed_signal_emit(obj,
@@ -291,9 +293,7 @@ _efl_ui_check_selected_set(Eo *obj, Efl_Ui_Check_Data *pd, Eina_Bool value)
 
    pd->selected = value;
 
-   if (elm_widget_is_legacy(obj))
-     evas_object_smart_callback_call(obj, "changed", NULL);
-   else
+   if (!elm_widget_is_legacy(obj))
      efl_event_callback_call(obj, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, &pd->selected);
 }
 

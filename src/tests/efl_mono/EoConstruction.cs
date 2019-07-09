@@ -27,9 +27,10 @@ class InheritedConstructibleObject : Dummy.ConstructibleObject
     public int DefaultConstrutorCallCount { get; set; } = 0;
     public int SpecialConstrutorCallCount { get; set; } = 0;
 
-    public bool InheritedFlag
+    /// <summary>Pointer to the native class description.</summary>
+    public bool IsInheritedClass
     {
-        get { return inherited; }
+        get { return !this.IsGeneratedBindingClass; }
     }
 
     public override int MultiplyIntegerValue(int v)
@@ -56,7 +57,7 @@ class TestEoConstruction
     public static void TestInheritedEoDirectConstruction()
     {
         var obj = new InheritedConstructibleObject();
-        Test.AssertEquals(obj.InheritedFlag, true);
+        Test.AssertEquals(obj.IsInheritedClass, true);
         Test.AssertEquals(obj.NativeConstructionCount, 1);
         Test.AssertEquals(obj.DefaultConstructionCount, 1);
         Test.AssertEquals(obj.SpecialConstructionCount, 0);
@@ -75,7 +76,7 @@ class TestEoConstruction
         Test.AssertEquals(obj.MultiplyIntegerValue(21), 42);
 
         var obj2 = (InheritedConstructibleObject) obj.ConstructTypeAndStore(typeof(InheritedConstructibleObject));
-        Test.AssertEquals(obj2.InheritedFlag, true);
+        Test.AssertEquals(obj2.IsInheritedClass, true);
         Test.AssertEquals(obj2.NativeConstructionCount, 1);
         Test.AssertEquals(obj2.DefaultConstructionCount, 0);
         Test.AssertEquals(obj2.SpecialConstructionCount, 1);

@@ -8,6 +8,8 @@
 
 #include <Efl.h>
 
+#define ERR(...) EINA_LOG_DOM_ERR(EINA_LOG_DOMAIN_DEFAULT, __VA_ARGS__)
+
 #define MY_CLASS EFL_GFX_SHAPE_MIXIN
 
 typedef struct _Efl_Gfx_Shape_Data
@@ -142,6 +144,17 @@ EOLIAN static void
 _efl_gfx_shape_stroke_color_set(Eo *obj EINA_UNUSED, Efl_Gfx_Shape_Data *pd,
                                 int r, int g, int b, int a)
 {
+   Eina_Bool err = EINA_FALSE;
+   if (a > 255) { a = 255; err = EINA_TRUE; }
+   if (a < 0) { a = 0; err = EINA_TRUE; }
+   if (r > a) { r = a; err = EINA_TRUE; }
+   if (r < 0) { r = 0; err = EINA_TRUE; }
+   if (g > a) { g = a; err = EINA_TRUE; }
+   if (g < 0) { g = 0; err = EINA_TRUE; }
+   if (b > a) { b = a; err = EINA_TRUE; }
+   if (b < 0) { b = 0; err = EINA_TRUE; }
+   if (err)
+     ERR("Only handles premultiplied colors (0 <= R,G,B <= A <= 255)");
    pd->public.stroke.color.r = r;
    pd->public.stroke.color.g = g;
    pd->public.stroke.color.b = b;

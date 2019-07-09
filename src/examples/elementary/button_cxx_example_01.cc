@@ -1,7 +1,9 @@
 // g++ -g `pkg-config --cflags --libs elementary-cxx efl-cxx eina-cxx eo-cxx ecore-cxx evas-cxx edje-cxx` button_cxx_example_01.cc -o button_cxx_example_01
 
 #define EFL_CXXPERIMENTAL
+#ifndef EFL_BETA_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
+#endif
 #include <Efl_Ui.hh>
 
 using efl::eo::instantiate;

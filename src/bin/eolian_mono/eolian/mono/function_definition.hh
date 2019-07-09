@@ -178,9 +178,10 @@ struct function_definition_generator
 
     std::string self = "this.NativeHandle";
 
-    // inherited is set in the constructor, true if this instance is from a pure C# class (not generated).
+    // IsGeneratedBindingClass is set in the constructor, true if this
+    // instance is from a pure C# class (not generated).
     if (do_super && !f.is_static)
-      self = "(inherited ? Efl.Eo.Globals.efl_super(" + self + ", this.NativeClass) : " + self + ")";
+      self = "(IsGeneratedBindingClass ? " + self + " : Efl.Eo.Globals.efl_super(" + self + ", this.NativeClass))";
     else if (f.is_static)
       self = "";
 

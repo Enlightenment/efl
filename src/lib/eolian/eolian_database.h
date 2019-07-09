@@ -274,6 +274,7 @@ struct _Eolian_Type
    Eina_Bool is_const  :1;
    Eina_Bool is_ptr    :1;
    Eina_Bool owned     :1;
+   Eina_Bool ownable   :1;
 };
 
 struct _Eolian_Typedecl
@@ -288,6 +289,7 @@ struct _Eolian_Typedecl
    Eina_Stringshare *legacy;
    Eina_Stringshare *freefunc;
    Eina_Bool is_extern :1;
+   Eina_Bool ownable :1;
 };
 
 struct _Eolian_Implement

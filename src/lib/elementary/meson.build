@@ -155,13 +155,13 @@ pub_eo_files = [
   'efl_ui_dnd.eo',
   'efl_ui_dnd_container.eo',
   'efl_ui_focus_manager_window_root.eo',
-  'efl_ui_active_view_container.eo',
-  'efl_ui_active_view_view_manager.eo',
-  'efl_ui_active_view_view_manager_scroll.eo',
-  'efl_ui_active_view_view_manager_stack.eo',
-  'efl_ui_active_view_indicator.eo',
-  'efl_ui_active_view_indicator_icon.eo',
-  'efl_ui_active_view_util.eo',
+  'efl_ui_spotlight_container.eo',
+  'efl_ui_spotlight_manager.eo',
+  'efl_ui_spotlight_manager_scroll.eo',
+  'efl_ui_spotlight_manager_stack.eo',
+  'efl_ui_spotlight_indicator.eo',
+  'efl_ui_spotlight_indicator_icon.eo',
+  'efl_ui_spotlight_util.eo',
   'efl_ui_tab_pager.eo',
   'efl_ui_tab_bar.eo',
   'efl_ui_tab_page.eo',
@@ -181,6 +181,7 @@ pub_eo_files = [
   'efl_ui_relative_layout.eo',
   'efl_ui_clickable.eo',
   'efl_ui_clickable_util.eo',
+  'efl_ui_format.eo',
 ]
 
 foreach eo_file : pub_eo_files
@@ -234,7 +235,7 @@ priv_eo_files = [
   'efl_ui_homogeneous_model.eo',
   'efl_ui_exact_model.eo',
   'efl_ui_average_model.eo',
-  'efl_ui_active_view_view_manager_plain.eo',
+  'efl_ui_spotlight_manager_plain.eo',
 ]
 
 priv_eo_file_target = []
@@ -918,14 +919,14 @@ elementary_src = [
   'efl_datetime_manager.c',
   'efl_ui_dnd.c',
   'elm_focus_legacy.c',
-  'efl_ui_active_view_container.c',
-  'efl_ui_active_view_view_manager.c',
-  'efl_ui_active_view_view_manager_plain.c',
-  'efl_ui_active_view_view_manager_scroll.c',
-  'efl_ui_active_view_view_manager_stack.c',
-  'efl_ui_active_view_indicator.c',
-  'efl_ui_active_view_indicator_icon.c',
-  'efl_ui_active_view_util.c',
+  'efl_ui_spotlight_container.c',
+  'efl_ui_spotlight_manager.c',
+  'efl_ui_spotlight_manager_plain.c',
+  'efl_ui_spotlight_manager_scroll.c',
+  'efl_ui_spotlight_manager_stack.c',
+  'efl_ui_spotlight_indicator.c',
+  'efl_ui_spotlight_indicator_icon.c',
+  'efl_ui_spotlight_util.c',
   'efl_ui_focus_graph.h',
   'efl_ui_focus_graph.c',
   'efl_ui_tab_pager.c',
@@ -941,6 +942,7 @@ elementary_src = [
   'efl_ui_relative_layout.c',
   'efl_ui_clickable.c',
   'efl_ui_clickable_util.c',
+  'efl_ui_format.c',
 ]
 
 elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, efreet_mime, efreet_trash, eio, atspi, dl, intl]

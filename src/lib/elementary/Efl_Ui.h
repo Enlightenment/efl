@@ -227,18 +227,18 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_panes_eo.h>
 # include <efl_ui_panes_part.eo.h>
 
-#define _EFL_UI_ACTIVE_VIEW_VIEW_MANAGEREO_CLASS_TYPE
-typedef Eo Efl_Ui_Active_View_View_Manager;
-#define _EFL_UI_ACTIVE_VIEW_INDICATOR_EO_CLASS_TYPE
-typedef Eo Efl_Ui_Active_View_Indicator;
+#define _EFL_UI_SPOTLIGHT_MANAGEREO_EO_CLASS_TYPE
+typedef Eo Efl_Ui_Spotlight_Manager;
+#define _EFL_UI_SPOTLIGHT_INDICATOR_EO_CLASS_TYPE
+typedef Eo Efl_Ui_Spotlight_Indicator;
 
-# include <efl_ui_active_view_container.eo.h>
-# include <efl_ui_active_view_view_manager.eo.h>
-# include <efl_ui_active_view_indicator.eo.h>
-# include <efl_ui_active_view_indicator_icon.eo.h>
-# include <efl_ui_active_view_view_manager_scroll.eo.h>
-# include <efl_ui_active_view_view_manager_stack.eo.h>
-# include <efl_ui_active_view_util.eo.h>
+# include <efl_ui_spotlight_container.eo.h>
+# include <efl_ui_spotlight_manager.eo.h>
+# include <efl_ui_spotlight_indicator.eo.h>
+# include <efl_ui_spotlight_indicator_icon.eo.h>
+# include <efl_ui_spotlight_manager_scroll.eo.h>
+# include <efl_ui_spotlight_manager_stack.eo.h>
+# include <efl_ui_spotlight_util.eo.h>
 
 # include <efl_ui_navigation_bar.eo.h>
 # include <efl_ui_navigation_bar_part.eo.h>
@@ -246,6 +246,9 @@ typedef Eo Efl_Ui_Active_View_Indicator;
 # include <efl_ui_navigation_layout.eo.h>
 # include <efl_ui_clickable.eo.h>
 # include <efl_ui_clickable_util.eo.h>
+# include <efl_ui_format.eo.h>
+# include <efl_ui_spin.eo.h>
+# include <efl_ui_spin_button.eo.h>
 
 /**
  * Initialize Elementary

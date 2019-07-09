@@ -45,6 +45,7 @@ struct @beta Efl.Dnd.Drag_Accept {
 }
 
 struct @beta Efl.Dnd.Drag_Pos {
+   [[Dragging position information.]]
    pos: Eina.Position2D; [[Evas Coordinate]]
    action: Efl.Ui.Selection_Action; [[The drag action]]
    format: Efl.Ui.Selection_Format; [[The drag format]]
@@ -52,6 +53,7 @@ struct @beta Efl.Dnd.Drag_Pos {
 }
 
 struct @beta Efl.Dnd.Drag_Item_Container_Drop {
+   [[Drop information for a drag&drop operation.]]
    item: Efl.Canvas.Object; [[The item object]]
    data: Efl.Ui.Selection_Data; [[The selection data]]
    pos: Eina.Position2D; [[Position relative to item (left (-1), middle (0), right (1)]]

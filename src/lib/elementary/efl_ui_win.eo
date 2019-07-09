@@ -35,10 +35,10 @@ enum @beta Efl.Ui.Win_Type
                    a new E-Mail received.]]
    combo, [[A window holding the contents of a combo box. Not usually used in
             the EFL.]]
-   dnd,
-   inlined_image,
-   socket_image,
-   fake,
+   dnd, [[Internal use.]]
+   inlined_image, [[Internal use.]]
+   socket_image, [[Internal use.]]
+   fake, [[Internal use.]]
    /* Some types have been removed from EO. Skipping to 17. */
    naviframe_basic = 17 [[Used for naviframe style replacement with a back
                           button instead of a close button.

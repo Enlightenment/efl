@@ -1081,6 +1081,7 @@ eolian_state_file_parse(Eolian_State *state, const char *filename)
 EAPI const Eolian_Unit *
 eolian_state_file_path_parse(Eolian_State *state, const char *filepath)
 {
+   const Eolian_Unit *unit;
    if (!state)
      return NULL;
 
@@ -1103,10 +1104,13 @@ eolian_state_file_path_parse(Eolian_State *state, const char *filepath)
 
    if (!eolian_state_directory_add(state, toscan))
      {
+        free(mpath);
         eolian_state_log(state, "could not scan directory '%s'", toscan);
         return NULL;
      }
-   return eolian_state_file_parse(state, fname);
+   unit = eolian_state_file_parse(state, fname);
+   free(mpath);
+   return unit;
 }
 
 typedef struct _Parse_Data

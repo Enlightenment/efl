@@ -5,8 +5,7 @@
 <div class="markdown level0 conceptual">{{{conceptual}}}</div>
 {{#inClass}}
 <div class="inheritance">
-  <h5><a href="#collapsible-inheritance" class="expander collapsed" data-toggle="collapse">{{__global.inheritance}}</a></h5>
-  <div id="collapsible-inheritance" class="collapse">
+  <h5>{{__global.inheritance}}</h5>
   {{#inheritance}}
   <div class="level{{index}}"><xref uid="{{uid}}" text="{{fullName.0.value}}"/></div>
   {{/inheritance}}
@@ -14,7 +13,6 @@
   {{#derivedClasses}}
     <div class="level{{index}}"><xref uid="{{uid}}" text="{{fullName.0.value}}"/></div>
   {{/derivedClasses}}
-  </div>
 </div>
 {{/inClass}}
 

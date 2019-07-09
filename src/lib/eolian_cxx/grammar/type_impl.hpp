@@ -329,6 +329,16 @@ struct visitor_generate
              (complex, regular_type_def{" ::efl::eina::accessor", complex.outer.base_qualifier, {}});
            }           
           }
+        , {"slice", nullptr, nullptr, [&]
+           {
+             return regular_type_def{" Eina_Slice", complex.outer.base_qualifier, {}};
+           }
+          }
+        , {"rw_slice", nullptr, nullptr, [&]
+           {
+             return regular_type_def{" Eina_Rw_Slice", complex.outer.base_qualifier, {}};
+           }
+          }
       };
 
       auto default_match = [&] (attributes::complex_type_def const& complex)

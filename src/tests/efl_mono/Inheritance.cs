@@ -54,7 +54,7 @@ class TestInheritance
 
     internal class Inherit3Child : Dummy.TestObject
     {
-        Inherit3Parent parent;
+        //Inherit3Parent parent;
         public Inherit3Child(Inherit3Parent parent) : base(parent)
         {
             // WARNING: Uncommenting the line below causes the parent-child cycle to leak.

@@ -150,10 +150,50 @@ _append_defval(Eina_Strbuf *buf, const Eolian_Expression *exp, const Eolian_Type
    eina_strbuf_append(buf, "0");
 }
 
+static const char *
+_free_func_get(const Eolian_Type *type)
+{
+   const Eolian_Type *ab = eolian_type_aliased_base_get(type);
+   switch (eolian_type_builtin_type_get(ab))
+     {
+      /* simple types */
+      case EOLIAN_TYPE_BUILTIN_MSTRING:
+        return "free";
+      case EOLIAN_TYPE_BUILTIN_STRINGSHARE:
+        return "eina_stringshare_del";
+      case EOLIAN_TYPE_BUILTIN_ANY_VALUE:
+        return "eina_value_flush";
+      case EOLIAN_TYPE_BUILTIN_ANY_VALUE_PTR:
+        return "eina_value_free";
+      /* complex types */
+      case EOLIAN_TYPE_BUILTIN_ACCESSOR:
+        return "eina_accessor_free";
+      case EOLIAN_TYPE_BUILTIN_ARRAY:
+        return "eina_array_free";
+      case EOLIAN_TYPE_BUILTIN_FUTURE:
+        return "(void)";
+      case EOLIAN_TYPE_BUILTIN_ITERATOR:
+        return "eina_iterator_free";
+      case EOLIAN_TYPE_BUILTIN_HASH:
+        return "eina_hash_free";
+      case EOLIAN_TYPE_BUILTIN_LIST:
+        return "eina_list_free";
+      /* class and user types */
+      case EOLIAN_TYPE_BUILTIN_INVALID:
+        if (eolian_type_type_get(ab) == EOLIAN_TYPE_CLASS)
+          return "efl_del";
+        else
+          return eolian_typedecl_free_func_get(eolian_type_typedecl_get(ab));
+      /* no free func */
+      default:
+        return NULL;
+     }
+}
+
 static void
 _generate_normal_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eina_Strbuf *parameter, const char *additional_intention)
 {
-   const char *free_func = eolian_type_free_func_get(type);
+   const char *free_func = _free_func_get(type);
    if (!free_func)
      {
         printf("No free type %s\n", eolian_type_short_name_get(type));
@@ -230,7 +270,7 @@ _generate_iterative_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eolia
      {
         eina_strbuf_append_printf(*buf,"   eina_hash_free_cb_set(");
         eina_strbuf_append_buffer(*buf, param);
-        eina_strbuf_append_printf(*buf, ",%s);\n",eolian_type_free_func_get(inner_type));
+        eina_strbuf_append_printf(*buf, ",%s);\n",_free_func_get(inner_type));
         eina_strbuf_append_printf(*buf,"   eina_hash_free(");
         eina_strbuf_append_buffer(*buf, param);
         eina_strbuf_append(*buf, ");\n");

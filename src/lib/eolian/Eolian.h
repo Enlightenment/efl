@@ -2931,20 +2931,6 @@ eolian_type_namespaces_get(const Eolian_Type *tp)
 }
 
 /*
- * @brief Get the name of the function used to free this type.
- *
- * @param[in] tp the type.
- * @return the free func name.
- *
- * For types that translate to C pointers, this is the function used to
- * free them. For other types, this is the function to free a pointer to
- * those types.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_type_free_func_get(const Eolian_Type *tp);
-
-/*
  * @brief Evaluate an Eolian expression.
  *
  * @param[in] expr the expression.

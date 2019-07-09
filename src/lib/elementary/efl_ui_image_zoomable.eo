@@ -1,6 +1,6 @@
-/* FIXME: Define these structs in EO, or they are useless to bindings */
-struct @extern Elm.Photocam.Error;
-struct @extern Elm.Photocam.Progress;
+/* TODO: Define these structs in EO, or they are useless to bindings */
+struct @extern Elm.Photocam.Error; [[Photocam error information.]]
+struct @extern Elm.Photocam.Progress; [[Photocam progress information.]]
 
 class @beta Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
                              Efl.Ui.Scrollable_Interactive,

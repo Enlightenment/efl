@@ -50,7 +50,7 @@ test_ui_spin(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
                 efl_ui_range_limits_set(efl_added, 0, 10),
                 efl_ui_range_value_set(efl_added, 6),
                 efl_ui_range_step_set(efl_added, 2),
-                efl_ui_format_string_set(efl_added, "test %d"),
+                efl_ui_format_string_set(efl_added, "test %d", EFL_UI_FORMAT_STRING_TYPE_SIMPLE),
                 efl_event_callback_add(efl_added, EFL_UI_SPIN_EVENT_CHANGED,_spin_changed_cb, NULL),
                 efl_event_callback_add(efl_added, EFL_UI_SPIN_EVENT_MIN_REACHED,_spin_min_reached_cb, NULL),
                 efl_event_callback_add(efl_added, EFL_UI_SPIN_EVENT_MAX_REACHED,_spin_max_reached_cb, NULL),

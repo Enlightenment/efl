@@ -9,7 +9,7 @@
 
 typedef struct {
 
-} Efl_Ui_Active_View_Indicator_Data;
+} Efl_Ui_Spotlight_Manager_Data;
 
 
-#include "efl_ui_active_view_indicator.eo.c"
+#include "efl_ui_spotlight_manager.eo.c"

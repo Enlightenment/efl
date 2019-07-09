@@ -566,7 +566,6 @@ class TestEolianType(unittest.TestCase):
         self.assertFalse(t.is_const)
         self.assertFalse(t.is_ptr)
         self.assertEqual(list(t.namespaces), [])
-        self.assertIsNone(t.free_func)
         self.assertIsNone(t.class_)
         self.assertEqual(t, t.aliased_base)  # TODO find a better test
 
@@ -586,7 +585,6 @@ class TestEolianType(unittest.TestCase):
         self.assertEqual(t.builtin_type, eolian.Eolian_Type_Builtin_Type.INVALID)
         self.assertEqual(t.file, 'efl_gfx_entity.eo')  # TODO is this correct ?
         self.assertEqual(list(t.namespaces), ['Eina'])
-        self.assertEqual(t.free_func, 'eina_rectangle_free')
         self.assertIsNone(t.class_)
         self.assertEqual(t, t.aliased_base)
 
@@ -610,7 +608,6 @@ class TestEolianType(unittest.TestCase):
         self.assertEqual(t.builtin_type, eolian.Eolian_Type_Builtin_Type.INVALID)
         self.assertEqual(t.file, 'efl_content.eo')  # TODO is this correct ?
         self.assertEqual(list(t.namespaces), ['Efl', 'Gfx'])
-        self.assertEqual(t.free_func, 'efl_del')
         self.assertEqual(t, t.aliased_base)
 
         self.assertEqual(t.c_type_default, 'Efl_Gfx_Entity *')  # TODO find a better test

@@ -47,29 +47,29 @@ public static partial class NativeMethods
 /// </remarks>
 public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
 {
-    /// <sumary>
+    /// <summary>
     /// Main constructor. Wrap the given string.
     /// Have private acess to avoid wrapping a null reference,
     /// use convertion or the factory method to create a new instance.
-    /// <see cref="Stringshare.Create(string s)"/>
-    /// <see cref="Stringshare.operator Stringshare(string s)"/>
-    /// </sumary>
+    /// <see cref="Create(string)"/>
+    /// <see cref="implicit operator Stringshare(string)"/>
+    /// </summary>
     private Stringshare(string s)
     {
         Str = s;
     }
 
-    /// <sumary>
+    /// <summary>
     /// Auto-implemented property that holds the wrapped string value.
-    /// </sumary>
+    /// </summary>
     public string Str { get; private set; }
 
-    /// <sumary>
+    /// <summary>
     /// Factory method to instantiate a new object.
     /// Get a wrappper for the given string or a null reference if the given
     /// string reference is also null.
-    /// <seealso cref="Stringshare.operator Stringshare(string s)"/>
-    /// </sumary>
+    /// <seealso cref="implicit operator Stringshare(string)"/>
+    /// </summary>
     /// <returns>
     /// A new instance wrapping the given string, or a null reference if
     /// the given string reference is also null.
@@ -84,9 +84,9 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
         return new Stringshare(s);
     }
 
-    /// <sumary>
+    /// <summary>
     /// Implicit convertion to string.
-    /// </sumary>
+    /// </summary>
     public static implicit operator string(Stringshare ss)
     {
         if (ReferenceEquals(null, ss))
@@ -97,13 +97,13 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
         return ss.Str;
     }
 
-    /// <sumary>
+    /// <summary>
     /// Implicit convertion from string to Stringshare.
-    /// </sumary>
+    /// </summary>
     /// <remarks>
     /// Note that this method can be used to create an instance of this class,
     /// either via an explicit cast or an implicit convertion.
-    /// <seealso cref="Stringshare.Create(string s)"/>
+    /// <seealso cref="Create(string)"/>
     /// </remarks>
     public static implicit operator Stringshare(string s)
     {
@@ -115,9 +115,9 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
         return new Stringshare(s);
     }
 
-    /// <sumary>
+    /// <summary>
     /// Check two Stringshare objects for equality.
-    /// </sumary>
+    /// </summary>
     /// <returns>
     /// True if both wrapped strings have the same content or if both
     /// references are null, false otherwise.
@@ -128,9 +128,9 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
     }
 
 
-    /// <sumary>
+    /// <summary>
     /// Check two Stringshare objects for inequality.
-    /// </sumary>
+    /// </summary>
     /// <returns>
     /// True if the wrapped strings have different content or if one reference is null
     /// and the other is not, false otherwise.
@@ -140,20 +140,20 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
         return !(ss1 == ss2);
     }
 
-    /// <sumary>
+    /// <summary>
     /// Returns the wrapped string.
-    /// <seealso cref="Stringshare.Str"/>
-    /// <seealso cref="Stringshare.Get()"/>
-    /// </sumary>
+    /// <seealso cref="Str"/>
+    /// <seealso cref="Get()"/>
+    /// </summary>
     /// <returns>The wrapped string. Same as the property Str.</returns>
     public override string ToString()
     {
         return Str;
     }
 
-    /// <sumary>
+    /// <summary>
     /// Override of GetHashCode for consistency with user-defined equality methods.
-    /// </sumary>
+    /// </summary>
     /// <returns>
     /// The wrapped string hash code.
     /// </returns>
@@ -162,9 +162,9 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
         return Str.GetHashCode();
     }
 
-    /// <sumary>
+    /// <summary>
     /// Check the given object for equality.
-    /// </sumary>
+    /// </summary>
     /// <returns>
     /// True if the given object is the same object or if it is another Stringshare object
     /// and both wrapped strings are equal or if it is a string object and its content
@@ -191,9 +191,9 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
         return other.GetType() == typeof(Stringshare) && this == ((Stringshare)other);
     }
 
-    /// <sumary>
+    /// <summary>
     /// Check the given Stringshare for equality.
-    /// </sumary>
+    /// </summary>
     /// <returns>
     /// True if the given Stringshare object is not null and its wrapped string
     /// have the same content of this.Str, false otherwise.
@@ -203,9 +203,9 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
         return this == other;
     }
 
-    /// <sumary>
+    /// <summary>
     /// Check the given Stringshare for equality.
-    /// </sumary>
+    /// </summary>
     /// <returns>
     /// True if the given string is not null and the wrapped string have the same
     /// content of the given string, false otherwise.
@@ -215,11 +215,11 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
         return this.Str == other;
     }
 
-    /// <sumary>
+    /// <summary>
     /// Get the wrapped string.
-    /// <seealso cref="Stringshare.Str"/>
-    /// <seealso cref="Stringshare.ToString()"/>
-    /// </sumary>
+    /// <seealso cref="Str"/>
+    /// <seealso cref="ToString()"/>
+    /// </summary>
     /// <returns>The wrapped string. Same as the property Str.</returns>
     public string Get()
     {

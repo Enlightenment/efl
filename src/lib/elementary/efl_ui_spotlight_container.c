@@ -4,9 +4,9 @@
 
 #include <Efl_Ui.h>
 #include "elm_priv.h"
-#include "efl_ui_active_view_view_manager_plain.eo.h"
+#include "efl_ui_spotlight_manager_plain.eo.h"
 
-typedef struct _Efl_Ui_Active_View_Container_Data
+typedef struct _Efl_Ui_Spotlight_Container_Data
 {
    Eina_List *content_list;
    Eo *page_root, *event;
@@ -27,21 +27,21 @@ typedef struct _Efl_Ui_Active_View_Container_Data
      Eina_Promise *transition_done;
      Efl_Gfx_Entity *content;
    } transition_done;
-   Efl_Ui_Active_View_View_Manager *transition;
-   Efl_Ui_Active_View_Indicator *indicator;
+   Efl_Ui_Spotlight_Manager *transition;
+   Efl_Ui_Spotlight_Indicator *indicator;
    double position;
    Eina_Bool fill_width: 1;
    Eina_Bool fill_height: 1;
    Eina_Bool prevent_transition_interaction : 1;
-} Efl_Ui_Active_View_Container_Data;
+} Efl_Ui_Spotlight_Container_Data;
 
-#define MY_CLASS EFL_UI_ACTIVE_VIEW_CONTAINER_CLASS
+#define MY_CLASS EFL_UI_SPOTLIGHT_CONTAINER_CLASS
 
-static void _unpack(Eo *obj, Efl_Ui_Active_View_Container_Data *pd, Efl_Gfx_Entity *subobj, int index);
-static void _unpack_all(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Container_Data *pd, Eina_Bool clear);
+static void _unpack(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd, Efl_Gfx_Entity *subobj, int index);
+static void _unpack_all(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data *pd, Eina_Bool clear);
 
 static int
-clamp_index(Efl_Ui_Active_View_Container_Data *pd, int index)
+clamp_index(Efl_Ui_Spotlight_Container_Data *pd, int index)
 {
    if (index < ((int)eina_list_count(pd->content_list)) * -1)
      return -1;
@@ -51,7 +51,7 @@ clamp_index(Efl_Ui_Active_View_Container_Data *pd, int index)
 }
 
 static int
-index_rollover(Efl_Ui_Active_View_Container_Data *pd, int index)
+index_rollover(Efl_Ui_Spotlight_Container_Data *pd, int index)
 {
    int c = eina_list_count(pd->content_list);
    if (index < c * -1)
@@ -64,9 +64,9 @@ index_rollover(Efl_Ui_Active_View_Container_Data *pd, int index)
 }
 
 static void
-_transition_end(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Container_Data *pd)
+_transition_end(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data *pd)
 {
-   Efl_Ui_Active_View_Transition_Event ev;
+   Efl_Ui_Spotlight_Transition_Event ev;
 
    if (pd->prevent_transition_interaction) return;
 
@@ -81,16 +81,16 @@ _transition_end(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Container_Data *pd)
 
    ev.from = pd->show_request.from;
    ev.to = pd->show_request.to;
-   efl_event_callback_call(obj, EFL_UI_ACTIVE_VIEW_EVENT_TRANSITION_END, &ev);
+   efl_event_callback_call(obj, EFL_UI_SPOTLIGHT_EVENT_TRANSITION_END, &ev);
    pd->show_request.active = EINA_FALSE;
    pd->show_request.from = -1;
    pd->show_request.to = -1;
 }
 
 static void
-_transition_start(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Container_Data *pd, int from, int to, double progress)
+_transition_start(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data *pd, int from, int to, double progress)
 {
-   Efl_Ui_Active_View_Transition_Event ev;
+   Efl_Ui_Spotlight_Transition_Event ev;
 
    if (pd->prevent_transition_interaction) return;
 
@@ -103,23 +103,23 @@ _transition_start(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Container_Data *pd, in
    pd->show_request.last_pos = progress;
    ev.from = pd->show_request.from;
    ev.to = pd->show_request.to;
-   efl_event_callback_call(obj, EFL_UI_ACTIVE_VIEW_EVENT_TRANSITION_START, &ev);
+   efl_event_callback_call(obj, EFL_UI_SPOTLIGHT_EVENT_TRANSITION_START, &ev);
 }
 
 static void
-_position_set(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Container_Data *pd, double progress)
+_position_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data *pd, double progress)
 {
    if (progress < -1.0) progress = -1.0;
    if (progress > eina_list_count(pd->content_list)) progress = eina_list_count(pd->content_list);
    if (pd->indicator)
      {
-        efl_ui_active_view_indicator_position_update(pd->indicator, progress);
+        efl_ui_spotlight_indicator_position_update(pd->indicator, progress);
      }
    pd->position = progress;
 }
 
 static void
-_transition_event_emission(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Container_Data *pd)
+_transition_event_emission(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data *pd)
 {
    if (pd->show_request.active)
      {
@@ -146,7 +146,7 @@ _transition_event_emission(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Container_Dat
 static void
 _resize_cb(void *data, const Efl_Event *ev)
 {
-   Efl_Ui_Active_View_Container_Data *pd = data;
+   Efl_Ui_Spotlight_Container_Data *pd = data;
    Eina_Size2D sz;
 
    sz = efl_gfx_entity_size_get(ev->object);
@@ -155,12 +155,12 @@ _resize_cb(void *data, const Efl_Event *ev)
    if (pd->fill_height) pd->page_spec.sz.h = sz.h;
 
    if (pd->transition)
-     efl_ui_active_view_view_manager_view_size_set(pd->transition, pd->page_spec.sz);
+     efl_ui_spotlight_manager_size_set(pd->transition, pd->page_spec.sz);
 }
 
 EOLIAN static Eo *
-_efl_ui_active_view_container_efl_object_constructor(Eo *obj,
-                                     Efl_Ui_Active_View_Container_Data *pd)
+_efl_ui_spotlight_container_efl_object_constructor(Eo *obj,
+                                     Efl_Ui_Spotlight_Container_Data *pd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
@@ -185,7 +185,7 @@ _efl_ui_active_view_container_efl_object_constructor(Eo *obj,
    pd->fill_width = EINA_TRUE;
    pd->fill_height = EINA_TRUE;
 
-   efl_ui_active_view_size_set(obj, EINA_SIZE2D(-1, -1));
+   efl_ui_spotlight_size_set(obj, EINA_SIZE2D(-1, -1));
 
    elm_widget_can_focus_set(obj, EINA_FALSE);
 
@@ -204,39 +204,39 @@ _efl_ui_active_view_container_efl_object_constructor(Eo *obj,
 }
 
 EOLIAN static Efl_Object*
-_efl_ui_active_view_container_efl_object_finalize(Eo *obj, Efl_Ui_Active_View_Container_Data *pd EINA_UNUSED)
+_efl_ui_spotlight_container_efl_object_finalize(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd EINA_UNUSED)
 {
-   Efl_Ui_Active_View_View_Manager *manager;
+   Efl_Ui_Spotlight_Manager *manager;
 
    obj = efl_finalize(efl_super(obj, MY_CLASS));
 
-   manager = efl_ui_active_view_manager_get(obj);
+   manager = efl_ui_spotlight_manager_get(obj);
    //set a view manager in case nothing is here
    if (!manager)
      {
         Eo *plain;
-        plain = efl_add(EFL_UI_ACTIVE_VIEW_VIEW_MANAGER_PLAIN_CLASS, obj);
-        efl_ui_active_view_manager_set(obj, plain);
+        plain = efl_add(EFL_UI_SPOTLIGHT_MANAGER_PLAIN_CLASS, obj);
+        efl_ui_spotlight_manager_set(obj, plain);
      }
    else
      {
-        efl_ui_active_view_view_manager_animation_enabled_set(manager, EINA_TRUE);
+        efl_ui_spotlight_manager_animation_enabled_set(manager, EINA_TRUE);
      }
 
    return obj;
 }
 
 EOLIAN static void
-_efl_ui_active_view_container_efl_object_invalidate(Eo *obj,
-                                    Efl_Ui_Active_View_Container_Data *pd)
+_efl_ui_spotlight_container_efl_object_invalidate(Eo *obj,
+                                    Efl_Ui_Spotlight_Container_Data *pd)
 {
    _unpack_all(obj, pd, EINA_TRUE);
    efl_invalidate(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static int
-_efl_ui_active_view_container_efl_container_content_count(Eo *obj EINA_UNUSED,
-                                          Efl_Ui_Active_View_Container_Data *pd)
+_efl_ui_spotlight_container_efl_container_content_count(Eo *obj EINA_UNUSED,
+                                          Efl_Ui_Spotlight_Container_Data *pd)
 {
    return eina_list_count(pd->content_list);
 }
@@ -244,13 +244,13 @@ _efl_ui_active_view_container_efl_container_content_count(Eo *obj EINA_UNUSED,
 static void
 _child_inv(void *data, const Efl_Event *ev)
 {
-   Efl_Ui_Active_View_Container_Data *pd = efl_data_scope_get(data, MY_CLASS);
+   Efl_Ui_Spotlight_Container_Data *pd = efl_data_scope_get(data, MY_CLASS);
    int index = eina_list_data_idx(pd->content_list, ev->object);
    _unpack(data, pd, ev->object, index);
 }
 
 static Eina_Bool
-_register_child(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Container_Data *pd, Efl_Gfx_Entity *subobj)
+_register_child(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data *pd, Efl_Gfx_Entity *subobj)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(subobj, EINA_FALSE);
    if (eina_list_data_find(pd->content_list, subobj))
@@ -267,7 +267,7 @@ _register_child(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Container_Data *pd, Efl_
 }
 
 static void
-_update_internals(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Container_Data *pd, Efl_Gfx_Entity *subobj EINA_UNUSED, int index)
+_update_internals(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data *pd, Efl_Gfx_Entity *subobj EINA_UNUSED, int index)
 {
    Eina_Bool curr_page_update = EINA_FALSE;
 
@@ -279,19 +279,19 @@ _update_internals(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Container_Data *pd, Ef
 
    pd->prevent_transition_interaction = EINA_TRUE;
    if (pd->transition)
-     efl_ui_active_view_view_manager_content_add(pd->transition, subobj, index);
+     efl_ui_spotlight_manager_content_add(pd->transition, subobj, index);
    if (pd->indicator)
-     efl_ui_active_view_indicator_content_add(pd->indicator, subobj, index);
+     efl_ui_spotlight_indicator_content_add(pd->indicator, subobj, index);
    if (curr_page_update && !pd->transition && eina_list_count(pd->content_list) != 1)
      _position_set(obj, pd, pd->curr.page);
    pd->prevent_transition_interaction = EINA_FALSE;
    if (eina_list_count(pd->content_list) == 1)
-     efl_ui_active_view_active_index_set(obj, 0);
+     efl_ui_spotlight_active_index_set(obj, 0);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_active_view_container_efl_pack_linear_pack_begin(Eo *obj EINA_UNUSED,
-                                         Efl_Ui_Active_View_Container_Data *pd,
+_efl_ui_spotlight_container_efl_pack_linear_pack_begin(Eo *obj EINA_UNUSED,
+                                         Efl_Ui_Spotlight_Container_Data *pd,
                                          Efl_Gfx_Entity *subobj)
 {
    if (!_register_child(obj, pd, subobj)) return EINA_FALSE;
@@ -301,8 +301,8 @@ _efl_ui_active_view_container_efl_pack_linear_pack_begin(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_active_view_container_efl_pack_linear_pack_end(Eo *obj EINA_UNUSED,
-                                       Efl_Ui_Active_View_Container_Data *pd,
+_efl_ui_spotlight_container_efl_pack_linear_pack_end(Eo *obj EINA_UNUSED,
+                                       Efl_Ui_Spotlight_Container_Data *pd,
                                        Efl_Gfx_Entity *subobj)
 {
    if (!_register_child(obj, pd, subobj)) return EINA_FALSE;
@@ -312,8 +312,8 @@ _efl_ui_active_view_container_efl_pack_linear_pack_end(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_active_view_container_efl_pack_linear_pack_before(Eo *obj EINA_UNUSED,
-                                          Efl_Ui_Active_View_Container_Data *pd,
+_efl_ui_spotlight_container_efl_pack_linear_pack_before(Eo *obj EINA_UNUSED,
+                                          Efl_Ui_Spotlight_Container_Data *pd,
                                           Efl_Gfx_Entity *subobj,
                                           const Efl_Gfx_Entity *existing)
 {
@@ -326,8 +326,8 @@ _efl_ui_active_view_container_efl_pack_linear_pack_before(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_active_view_container_efl_pack_linear_pack_after(Eo *obj EINA_UNUSED,
-                                         Efl_Ui_Active_View_Container_Data *pd,
+_efl_ui_spotlight_container_efl_pack_linear_pack_after(Eo *obj EINA_UNUSED,
+                                         Efl_Ui_Spotlight_Container_Data *pd,
                                          Efl_Gfx_Entity *subobj,
                                          const Efl_Gfx_Entity *existing)
 {
@@ -340,8 +340,8 @@ _efl_ui_active_view_container_efl_pack_linear_pack_after(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_active_view_container_efl_pack_linear_pack_at(Eo *obj,
-                                      Efl_Ui_Active_View_Container_Data *pd,
+_efl_ui_spotlight_container_efl_pack_linear_pack_at(Eo *obj,
+                                      Efl_Ui_Spotlight_Container_Data *pd,
                                       Efl_Gfx_Entity *subobj,
                                       int index)
 {
@@ -372,24 +372,24 @@ _efl_ui_active_view_container_efl_pack_linear_pack_at(Eo *obj,
 }
 
 EOLIAN static Efl_Gfx_Entity *
-_efl_ui_active_view_container_efl_pack_linear_pack_content_get(Eo *obj EINA_UNUSED,
-                                               Efl_Ui_Active_View_Container_Data *pd,
+_efl_ui_spotlight_container_efl_pack_linear_pack_content_get(Eo *obj EINA_UNUSED,
+                                               Efl_Ui_Spotlight_Container_Data *pd,
                                                int index)
 {
    return eina_list_nth(pd->content_list, index_rollover(pd, index));
 }
 
 EOLIAN static int
-_efl_ui_active_view_container_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUSED,
-                                             Efl_Ui_Active_View_Container_Data *pd,
+_efl_ui_spotlight_container_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUSED,
+                                             Efl_Ui_Spotlight_Container_Data *pd,
                                              const Efl_Gfx_Entity *subobj)
 {
    return eina_list_data_idx(pd->content_list, (void *)subobj);
 }
 
 EOLIAN static void
-_efl_ui_active_view_container_active_index_set(Eo *obj EINA_UNUSED,
-                               Efl_Ui_Active_View_Container_Data *pd,
+_efl_ui_spotlight_container_active_index_set(Eo *obj EINA_UNUSED,
+                               Efl_Ui_Spotlight_Container_Data *pd,
                                int index)
 {
    int before;
@@ -414,26 +414,26 @@ _efl_ui_active_view_container_active_index_set(Eo *obj EINA_UNUSED,
 
    int old_curr_page = pd->curr.page;
    pd->curr.page = index;
-   efl_ui_active_view_view_manager_switch_to(pd->transition, old_curr_page, pd->curr.page);
+   efl_ui_spotlight_manager_switch_to(pd->transition, old_curr_page, pd->curr.page);
 }
 
 EOLIAN static int
-_efl_ui_active_view_container_active_index_get(const Eo *obj EINA_UNUSED,
-                               Efl_Ui_Active_View_Container_Data *pd)
+_efl_ui_spotlight_container_active_index_get(const Eo *obj EINA_UNUSED,
+                               Efl_Ui_Spotlight_Container_Data *pd)
 {
    return pd->curr.page;
 }
 
 EOLIAN Eina_Size2D
-_efl_ui_active_view_container_active_view_size_get(const Eo *obj EINA_UNUSED,
-                            Efl_Ui_Active_View_Container_Data *pd)
+_efl_ui_spotlight_container_spotlight_size_get(const Eo *obj EINA_UNUSED,
+                            Efl_Ui_Spotlight_Container_Data *pd)
 {
    return pd->page_spec.sz;
 }
 
 EOLIAN static void
-_efl_ui_active_view_container_active_view_size_set(Eo *obj,
-                            Efl_Ui_Active_View_Container_Data *pd,
+_efl_ui_spotlight_container_spotlight_size_set(Eo *obj,
+                            Efl_Ui_Spotlight_Container_Data *pd,
                             Eina_Size2D sz)
 {
    Eina_Size2D size;
@@ -450,12 +450,12 @@ _efl_ui_active_view_container_active_view_size_set(Eo *obj,
      pd->page_spec.sz.w = size.w;
 
    if (pd->transition)
-     efl_ui_active_view_view_manager_view_size_set(pd->transition, pd->page_spec.sz);
+     efl_ui_spotlight_manager_size_set(pd->transition, pd->page_spec.sz);
 }
 
 static void
 _unpack_all(Eo *obj EINA_UNUSED,
-            Efl_Ui_Active_View_Container_Data *pd,
+            Efl_Ui_Spotlight_Container_Data *pd,
             Eina_Bool clear)
 {
    pd->curr.page = -1;
@@ -472,8 +472,8 @@ _unpack_all(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_active_view_container_efl_pack_pack_clear(Eo *obj EINA_UNUSED,
-                                  Efl_Ui_Active_View_Container_Data *pd)
+_efl_ui_spotlight_container_efl_pack_pack_clear(Eo *obj EINA_UNUSED,
+                                  Efl_Ui_Spotlight_Container_Data *pd)
 {
    _unpack_all(obj, pd, EINA_TRUE);
 
@@ -481,8 +481,8 @@ _efl_ui_active_view_container_efl_pack_pack_clear(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_active_view_container_efl_pack_unpack_all(Eo *obj EINA_UNUSED,
-                                  Efl_Ui_Active_View_Container_Data *pd)
+_efl_ui_spotlight_container_efl_pack_unpack_all(Eo *obj EINA_UNUSED,
+                                  Efl_Ui_Spotlight_Container_Data *pd)
 {
    _unpack_all(obj, pd, EINA_FALSE);
 
@@ -491,7 +491,7 @@ _efl_ui_active_view_container_efl_pack_unpack_all(Eo *obj EINA_UNUSED,
 
 static void
 _unpack(Eo *obj,
-        Efl_Ui_Active_View_Container_Data *pd,
+        Efl_Ui_Spotlight_Container_Data *pd,
         Efl_Gfx_Entity *subobj,
         int index)
 {
@@ -506,9 +506,9 @@ _unpack(Eo *obj,
      pd->curr.page--;
 
    if (pd->transition)
-     efl_ui_active_view_view_manager_content_del(pd->transition, subobj, index);
+     efl_ui_spotlight_manager_content_del(pd->transition, subobj, index);
    if (pd->indicator)
-     efl_ui_active_view_indicator_content_del(pd->indicator, subobj, index);
+     efl_ui_spotlight_indicator_content_del(pd->indicator, subobj, index);
 
    //we deleted the current index
    if (early_curr_page == index)
@@ -519,7 +519,7 @@ _unpack(Eo *obj,
         if (deletion_of_active && new_curr_page == pd->curr.page)
           pd->curr.page = index -1;
         if (eina_list_count(pd->content_list) > 0 && efl_alive_get(obj))
-          efl_ui_active_view_active_index_set(obj, new_curr_page);
+          efl_ui_spotlight_active_index_set(obj, new_curr_page);
         else
           pd->curr.page = -1;
      }
@@ -527,14 +527,14 @@ _unpack(Eo *obj,
    //position has updated
    if (early_curr_page != pd->curr.page && early_curr_page != index &&
        pd->indicator && !pd->transition)
-     efl_ui_active_view_indicator_position_update(pd->indicator, pd->curr.page);
+     efl_ui_spotlight_indicator_position_update(pd->indicator, pd->curr.page);
 
    efl_event_callback_del(subobj, EFL_EVENT_INVALIDATE, _child_inv, obj);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_active_view_container_efl_pack_unpack(Eo *obj,
-                              Efl_Ui_Active_View_Container_Data *pd,
+_efl_ui_spotlight_container_efl_pack_unpack(Eo *obj,
+                              Efl_Ui_Spotlight_Container_Data *pd,
                               Efl_Gfx_Entity *subobj)
 {
    if (!subobj) return EINA_FALSE;
@@ -552,8 +552,8 @@ _efl_ui_active_view_container_efl_pack_unpack(Eo *obj,
 }
 
 EOLIAN static Efl_Gfx_Entity *
-_efl_ui_active_view_container_efl_pack_linear_pack_unpack_at(Eo *obj,
-                                             Efl_Ui_Active_View_Container_Data *pd,
+_efl_ui_spotlight_container_efl_pack_linear_pack_unpack_at(Eo *obj,
+                                             Efl_Ui_Spotlight_Container_Data *pd,
                                              int index)
 {
    Efl_Gfx_Entity *subobj = eina_list_nth(pd->content_list, index_rollover(pd, index_rollover(pd, index)));
@@ -564,13 +564,13 @@ _efl_ui_active_view_container_efl_pack_linear_pack_unpack_at(Eo *obj,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_active_view_container_efl_pack_pack(Eo *obj, Efl_Ui_Active_View_Container_Data *pd EINA_UNUSED, Efl_Gfx_Entity *subobj)
+_efl_ui_spotlight_container_efl_pack_pack(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd EINA_UNUSED, Efl_Gfx_Entity *subobj)
 {
    return efl_pack_begin(obj, subobj);
 }
 
 EOLIAN static Eina_Iterator*
-_efl_ui_active_view_container_efl_container_content_iterate(Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Container_Data *pd)
+_efl_ui_spotlight_container_efl_container_content_iterate(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data *pd)
 {
   return eina_list_iterator_new(pd->content_list);
 }
@@ -578,7 +578,7 @@ _efl_ui_active_view_container_efl_container_content_iterate(Eo *obj EINA_UNUSED,
 static void
 _pos_updated(void *data, const Efl_Event *event)
 {
-   Efl_Ui_Active_View_Container_Data *pd = efl_data_scope_get(data, MY_CLASS);
+   Efl_Ui_Spotlight_Container_Data *pd = efl_data_scope_get(data, MY_CLASS);
    double progress = *((double*)event->info);
    //ignore this here, this could result in unintendet transition,start / end calls
    if (EINA_DBL_EQ(progress, pd->position))
@@ -588,16 +588,16 @@ _pos_updated(void *data, const Efl_Event *event)
 }
 
 EOLIAN static void
-_efl_ui_active_view_container_view_manager_set(Eo *obj, Efl_Ui_Active_View_Container_Data *pd, Efl_Ui_Active_View_View_Manager *transition)
+_efl_ui_spotlight_container_spotlight_manager_set(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd, Efl_Ui_Spotlight_Manager *transition)
 {
    if (!transition)
-     pd->transition = efl_add(EFL_UI_ACTIVE_VIEW_VIEW_MANAGER_PLAIN_CLASS, obj);
+     pd->transition = efl_add(EFL_UI_SPOTLIGHT_MANAGER_PLAIN_CLASS, obj);
    else
-     EINA_SAFETY_ON_FALSE_RETURN(efl_isa(transition, EFL_UI_ACTIVE_VIEW_VIEW_MANAGER_CLASS));
+     EINA_SAFETY_ON_FALSE_RETURN(efl_isa(transition, EFL_UI_SPOTLIGHT_MANAGER_CLASS));
 
    if (pd->transition)
      {
-        efl_ui_active_view_view_manager_bind(pd->transition, NULL, NULL);
+        efl_ui_spotlight_manager_bind(pd->transition, NULL, NULL);
         efl_del(pd->transition);
      }
 
@@ -607,57 +607,57 @@ _efl_ui_active_view_container_view_manager_set(Eo *obj, Efl_Ui_Active_View_Conta
      {
         efl_parent_set(pd->transition, obj);
         //disable animation when not finalized yet, this help reducing the overhead of scheduling a animation that will not be displayed
-        efl_ui_active_view_view_manager_animation_enabled_set(pd->transition, efl_finalized_get(obj));
-        efl_ui_active_view_view_manager_bind(pd->transition, obj,
+        efl_ui_spotlight_manager_animation_enabled_set(pd->transition, efl_finalized_get(obj));
+        efl_ui_spotlight_manager_bind(pd->transition, obj,
           pd->page_root);
-        efl_ui_active_view_view_manager_view_size_set(pd->transition, pd->page_spec.sz);
-        efl_event_callback_add(pd->transition, EFL_UI_ACTIVE_VIEW_VIEW_MANAGER_EVENT_POS_UPDATE, _pos_updated, obj);
+        efl_ui_spotlight_manager_size_set(pd->transition, pd->page_spec.sz);
+        efl_event_callback_add(pd->transition, EFL_UI_SPOTLIGHT_MANAGER_EVENT_POS_UPDATE, _pos_updated, obj);
      }
 
 }
 
-EOLIAN static Efl_Ui_Active_View_View_Manager*
-_efl_ui_active_view_container_view_manager_get(const Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Container_Data *pd)
+EOLIAN static Efl_Ui_Spotlight_Manager*
+_efl_ui_spotlight_container_spotlight_manager_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data *pd)
 {
-   if (efl_isa(pd->transition, EFL_UI_ACTIVE_VIEW_VIEW_MANAGER_PLAIN_CLASS))
+   if (efl_isa(pd->transition, EFL_UI_SPOTLIGHT_MANAGER_PLAIN_CLASS))
      return NULL;
    else
      return pd->transition;
 }
 
 EOLIAN static void
-_efl_ui_active_view_container_indicator_set(Eo *obj, Efl_Ui_Active_View_Container_Data *pd, Efl_Ui_Active_View_Indicator *indicator)
+_efl_ui_spotlight_container_indicator_set(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd, Efl_Ui_Spotlight_Indicator *indicator)
 {
    if (pd->indicator)
      {
-        efl_ui_active_view_indicator_bind(pd->indicator, obj);
+        efl_ui_spotlight_indicator_bind(pd->indicator, obj);
         efl_del(pd->indicator);
      }
    pd->indicator = indicator;
    if (pd->indicator)
      {
-        efl_ui_active_view_indicator_bind(pd->indicator, obj);
+        efl_ui_spotlight_indicator_bind(pd->indicator, obj);
         if (pd->position != -1)
-          efl_ui_active_view_indicator_position_update(pd->indicator, pd->position);
+          efl_ui_spotlight_indicator_position_update(pd->indicator, pd->position);
      }
 }
 
-EOLIAN static Efl_Ui_Active_View_Indicator*
-_efl_ui_active_view_container_indicator_get(const Eo *obj EINA_UNUSED, Efl_Ui_Active_View_Container_Data *pd)
+EOLIAN static Efl_Ui_Spotlight_Indicator*
+_efl_ui_spotlight_container_indicator_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data *pd)
 {
    return pd->indicator;
 }
 
 EOLIAN static void
-_efl_ui_active_view_container_push(Eo *obj, Efl_Ui_Active_View_Container_Data *pd EINA_UNUSED, Efl_Gfx_Entity *view)
+_efl_ui_spotlight_container_push(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd EINA_UNUSED, Efl_Gfx_Entity *view)
 {
-   int old_active_index = efl_ui_active_view_active_index_get(obj);
+   int old_active_index = efl_ui_spotlight_active_index_get(obj);
 
    if (old_active_index == -1)
      old_active_index = 0;
 
    efl_pack_at(obj, view, old_active_index);
-   efl_ui_active_view_active_index_set(obj, old_active_index);
+   efl_ui_spotlight_active_index_set(obj, old_active_index);
 }
 
 static Eina_Value
@@ -669,7 +669,7 @@ _delete_obj(void *data EINA_UNUSED, const Eina_Value value, const Eina_Future *d
 }
 
 EOLIAN static Eina_Future*
-_efl_ui_active_view_container_pop(Eo *obj, Efl_Ui_Active_View_Container_Data *pd, Eina_Bool del)
+_efl_ui_spotlight_container_pop(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd, Eina_Bool del)
 {
    Eina_Future *transition_done;
    int new_index;
@@ -677,21 +677,21 @@ _efl_ui_active_view_container_pop(Eo *obj, Efl_Ui_Active_View_Container_Data *pd
    if (eina_list_count(pd->content_list) < 2)
      new_index = -1;
 
-   new_index = efl_ui_active_view_active_index_get(obj) + 1;
+   new_index = efl_ui_spotlight_active_index_get(obj) + 1;
    if (new_index >= (int)eina_list_count(pd->content_list))
      new_index -= 2;
 
-   pd->transition_done.content = efl_pack_content_get(obj, efl_ui_active_view_active_index_get(obj));
+   pd->transition_done.content = efl_pack_content_get(obj, efl_ui_spotlight_active_index_get(obj));
    pd->transition_done.transition_done = efl_loop_promise_new(obj);
 
    transition_done = eina_future_new(pd->transition_done.transition_done);
    if (del)
      transition_done = eina_future_then(transition_done, _delete_obj, NULL);
 
-   efl_ui_active_view_active_index_set(obj, new_index);
+   efl_ui_spotlight_active_index_set(obj, new_index);
 
    return transition_done;
 }
 
 
-#include "efl_ui_active_view_container.eo.c"
+#include "efl_ui_spotlight_container.eo.c"

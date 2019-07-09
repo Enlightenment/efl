@@ -1044,10 +1044,6 @@ class Type(Object):
         return "<eolian.Type '{0.name}', type={0.type!s}>".format(self)
 
     @cached_property
-    def free_func(self):
-        return _str_to_py(lib.eolian_type_free_func_get(self))
-
-    @cached_property
     def type(self):
         return Eolian_Type_Type(lib.eolian_type_type_get(self))
 

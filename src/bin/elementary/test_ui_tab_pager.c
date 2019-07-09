@@ -165,7 +165,7 @@ test_ui_tab_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
       efl_pack_end(tp, page);
    }
 
-   efl_ui_active_view_active_index_set(tp, 0);
+   efl_ui_spotlight_active_index_set(tp, 0);
 
    ad = (App_Data*)calloc(1, sizeof(App_Data));
    ad->navi = navi;
@@ -199,7 +199,7 @@ static void
 _tab_set_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Tab_Set_Data *tsd = data;
-   efl_ui_active_view_active_index_set(tsd->tab_pager, elm_spinner_value_get(tsd->spinner));
+   efl_ui_spotlight_active_index_set(tsd->tab_pager, elm_spinner_value_get(tsd->spinner));
 }
 
 static void
@@ -230,7 +230,7 @@ _current_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    sp = efl_add(EFL_UI_SPIN_BUTTON_CLASS, box,
                 efl_ui_range_limits_set(efl_added, 0, efl_content_count(tab_pager) - 1),
-                efl_ui_range_value_set(efl_added, efl_ui_active_view_active_index_get(tab_pager)),
+                efl_ui_range_value_set(efl_added, efl_ui_spotlight_active_index_get(tab_pager)),
                 efl_pack_end(box, efl_added));
 
    tsd->tab_pager = tab_pager;
@@ -272,7 +272,7 @@ _pack_before_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    Eo *tab_page, *cur_tab_page;
    int index;
 
-   index = efl_ui_active_view_active_index_get(tab_pager);
+   index = efl_ui_spotlight_active_index_get(tab_pager);
    cur_tab_page = efl_pack_content_get(tab_pager, index);
 
    tab_page = tab_page_add(tab_pager);
@@ -287,7 +287,7 @@ _pack_after_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    Eo *tab_page, *cur_tab_page;
    int index;
 
-   index = efl_ui_active_view_active_index_get(tab_pager);
+   index = efl_ui_spotlight_active_index_get(tab_pager);
    cur_tab_page = efl_pack_content_get(tab_pager, index);
 
    tab_page = tab_page_add(tab_pager);
@@ -364,7 +364,7 @@ _pack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    sp = efl_add(EFL_UI_SPIN_BUTTON_CLASS, in_box,
                 efl_ui_range_limits_set(efl_added, 0, efl_content_count(tab_pager) - 1),
-                efl_ui_range_value_set(efl_added, efl_ui_active_view_active_index_get(tab_pager)),
+                efl_ui_range_value_set(efl_added, efl_ui_spotlight_active_index_get(tab_pager)),
                 efl_pack_end(in_box, efl_added));
 
    tsd->tab_pager = tab_pager;
@@ -389,7 +389,7 @@ static void
 _unpack_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *tab_pager = data;
-   int index = efl_ui_active_view_active_index_get(tab_pager);
+   int index = efl_ui_spotlight_active_index_get(tab_pager);
    Eo *tab_page = efl_pack_content_get(tab_pager, index);
    efl_pack_unpack(tab_pager, tab_page);
    efl_del(tab_page);
@@ -464,7 +464,7 @@ _unpack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    sp = efl_add(EFL_UI_SPIN_BUTTON_CLASS, in_box,
                 efl_ui_range_limits_set(efl_added, 0, efl_content_count(tab_pager) - 1),
-                efl_ui_range_value_set(efl_added, efl_ui_active_view_active_index_get(tab_pager)),
+                efl_ui_range_value_set(efl_added, efl_ui_spotlight_active_index_get(tab_pager)),
                 efl_pack_end(in_box, efl_added));
 
    tsd->tab_pager = tab_pager;
@@ -488,7 +488,7 @@ _change_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    char *label = NULL;
    char *icon = NULL;
    int cur;
-   cur = efl_ui_active_view_active_index_get(tcd->tab_pager);
+   cur = efl_ui_spotlight_active_index_get(tcd->tab_pager);
    tab_page = efl_pack_content_get(tcd->tab_pager, cur);
 
    if (efl_ui_check_selected_get(tcd->label_check))
@@ -556,23 +556,23 @@ _tab_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 static void
 _tran_set_btn_scroll_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   Efl_Ui_Active_View_View_Manager_Scroll *scroll = efl_new(EFL_UI_ACTIVE_VIEW_VIEW_MANAGER_SCROLL_CLASS);
-   efl_ui_active_view_manager_set(data, scroll);
+   Efl_Ui_Spotlight_Manager_Scroll *scroll = efl_new(EFL_UI_SPOTLIGHT_MANAGER_SCROLL_CLASS);
+   efl_ui_spotlight_manager_set(data, scroll);
    efl_unref(scroll);
 }
 
 static void
 _tran_set_btn_stack_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   Efl_Ui_Active_View_View_Manager_Scroll *stack = efl_new(EFL_UI_ACTIVE_VIEW_VIEW_MANAGER_STACK_CLASS);
-   efl_ui_active_view_manager_set(data, stack);
+   Efl_Ui_Spotlight_Manager_Scroll *stack = efl_new(EFL_UI_SPOTLIGHT_MANAGER_STACK_CLASS);
+   efl_ui_spotlight_manager_set(data, stack);
    efl_unref(stack);
 }
 
 static void
 _tran_unset_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   efl_ui_active_view_manager_set(data, NULL);
+   efl_ui_spotlight_manager_set(data, NULL);
 }
 
 static void

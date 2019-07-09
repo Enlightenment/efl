@@ -1,5 +1,7 @@
 #define EFL_CXXPERIMENTAL // for background part
+#ifndef EFL_BETA_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
+#endif
 #include <Efl_Ui.hh>
 
 using efl::eo::instantiate;

@@ -19,14 +19,14 @@ _back_button_clicked_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *navigation_bar = data;
 
-   Eo *active_view = efl_provider_find(navigation_bar, EFL_UI_ACTIVE_VIEW_CONTAINER_CLASS);
-   if (!active_view)
+   Eo *spotlight = efl_provider_find(navigation_bar, EFL_UI_SPOTLIGHT_CONTAINER_CLASS);
+   if (!spotlight)
      {
-        ERR("Cannot find EFL_UI_ACTIVE_VIEW_CONTAINER_CLASS instance!");
+        ERR("Cannot find EFL_UI_SPOTLIGHT_CONTAINER_CLASS instance!");
         return;
      }
 
-   efl_ui_active_view_pop(active_view, EINA_TRUE);
+   efl_ui_spotlight_pop(spotlight, EINA_TRUE);
 }
 
 EOLIAN static Eo *

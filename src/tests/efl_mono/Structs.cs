@@ -20,11 +20,13 @@ internal class TestStructs
         checkZeroedStructSimple(simple);
     }
 
+#if EFL_BETA
     private static void complex_default_instantiation()
     {
         var complex = new Dummy.StructComplex();
         checkZeroedStructComplex(complex);
     }
+#endif
 
     public static void parameter_initialization()
     {
@@ -47,6 +49,7 @@ internal class TestStructs
         Test.Assert(r, "Function returned false");
     }
 
+    /*
     public static void simple_ptr_in()
     {
         var simple = structSimpleWithValues();
@@ -68,6 +71,7 @@ internal class TestStructs
         Test.AssertEquals(-original, result.Fint);
         Test.AssertEquals("nwO nI rtP tcurtS", result.Fmstring);
     }
+    */
 
     public static void simple_out()
     {
@@ -78,6 +82,7 @@ internal class TestStructs
         checkStructSimple(simple);
     }
 
+    /*
     public static void simple_ptr_out()
     {
         Dummy.StructSimple simple;
@@ -95,6 +100,7 @@ internal class TestStructs
         Test.AssertEquals(result.Fint, simple.Fint);
         Test.AssertEquals(simple.Fstring, "Ptr Out Own");
     }
+    */
 
     public static void simple_return()
     {
@@ -103,6 +109,7 @@ internal class TestStructs
         checkStructSimple(simple);
     }
 
+    /*
     public static void simple_ptr_return()
     {
         var t = new Dummy.TestObject();
@@ -116,6 +123,7 @@ internal class TestStructs
         var simple = t.StructSimplePtrReturnOwn();
         Test.AssertEquals(simple.Fstring, "Ret Ptr Own");
     }
+    */
 
     public class StructReturner : Dummy.TestObject
     {
@@ -136,6 +144,7 @@ internal class TestStructs
             return true;
         }
 
+        /*
         public override bool StructSimplePtrIn(ref Dummy.StructSimple simple)
         {
             called = true;
@@ -149,6 +158,7 @@ internal class TestStructs
             received = simple;
             return received;
         }
+        */
 
         public override bool StructSimpleOut(out Dummy.StructSimple simple) {
             called = true;
@@ -157,6 +167,7 @@ internal class TestStructs
             return true;
         }
 
+        /*
         public override Dummy.StructSimple StructSimplePtrOut(out Dummy.StructSimple simple) {
             called = true;
             // No way to explicitly define the ownership of the parameter.
@@ -172,6 +183,7 @@ internal class TestStructs
             simple.Fstring = "Virtual Struct Ptr Out Own";
             return simple;
         }
+        */
 
         public override Dummy.StructSimple StructSimpleReturn()
         {
@@ -181,6 +193,7 @@ internal class TestStructs
             return simple;
         }
 
+        /*
         public override Dummy.StructSimple StructSimplePtrReturn()
         {
             called = true;
@@ -196,6 +209,7 @@ internal class TestStructs
             simple.Fstring = "Virtual Struct Ptr Return Own";
             return simple;
         }
+        */
     }
 
     public static void simple_in_virtual()
@@ -209,6 +223,7 @@ internal class TestStructs
         Test.AssertEquals(simple.Fstring, t.received.Fstring);
     }
 
+    /*
     public static void simple_ptr_in_virtual()
     {
         StructReturner t = new StructReturner();
@@ -230,6 +245,7 @@ internal class TestStructs
         Test.Assert(t.called);
         Test.AssertEquals(t.received.Fstring, simple.Fstring);
     }
+    */
 
     public static void simple_out_virtual()
     {
@@ -240,6 +256,7 @@ internal class TestStructs
         Test.AssertEquals("Virtual Struct Out", simple.Fstring);
     }
 
+    /*
     public static void simple_ptr_out_virtual()
     {
         StructReturner t = new StructReturner();
@@ -257,6 +274,7 @@ internal class TestStructs
         Test.Assert(t.called, "override was not called");
         Test.AssertEquals("Virtual Struct Ptr Out Own", simple.Fstring);
     }
+    */
 
     public static void simple_return_virtual()
     {
@@ -266,6 +284,7 @@ internal class TestStructs
         Test.AssertEquals("Virtual Struct Return", simple.Fstring);
     }
 
+    /*
     public static void simple_ptr_return_virtual()
     {
         StructReturner t = new StructReturner();
@@ -281,8 +300,10 @@ internal class TestStructs
         Test.Assert(t.called, "override was not called");
         Test.AssertEquals("Virtual Struct Ptr Return Own", simple.Fstring);
     }
+    */
 
     // Complex Structs
+#if EFL_BETA
     public static void complex_in()
     {
         var complex = structComplexWithValues();
@@ -330,6 +351,7 @@ internal class TestStructs
     // public static void complex_ptr_return_own()
     // {
     // }
+#endif
 }
 
 }

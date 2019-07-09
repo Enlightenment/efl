@@ -16,23 +16,6 @@ typedef struct _Type_Generation_Data Type_Generation_Data;
 
 #include "name1_name2_type_generation.eo.h"
 
-void _name1_name2_type_generation_inrefint(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int* v EINA_UNUSED)
-{
-  ck_assert(*v == 42);
-}
-
-void _name1_name2_type_generation_inrefintown(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int* v EINA_UNUSED)
-{
-  ck_assert(*v == 42);
-  free(v);
-}
-
-void _name1_name2_type_generation_inrefintownfree(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int* v EINA_UNUSED)
-{
-  ck_assert(*v == 42);
-  free(v);
-}
-
 void _name1_name2_type_generation_invoidptr(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, void *v)
 {
   ck_assert(v == NULL);
@@ -41,36 +24,6 @@ void _name1_name2_type_generation_invoidptr(Eo *obj EINA_UNUSED, Type_Generation
 void _name1_name2_type_generation_inint(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int v EINA_UNUSED)
 {
   ck_assert(v == 42);
-}
-
-void _name1_name2_type_generation_inintptr(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int *v EINA_UNUSED)
-{
-  ck_assert(*v == 42);
-}
-
-void _name1_name2_type_generation_inintptrown(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int *v EINA_UNUSED)
-{
-  ck_assert(*v == 42);
-}
-
-void _name1_name2_type_generation_inintptrownptr(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int **v EINA_UNUSED)
-{
-  ck_assert(**v == 42);
-}
-
-void _name1_name2_type_generation_inintptrownptrptr(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int ***v EINA_UNUSED)
-{
-  ck_assert(***v == 42);
-}
-
-void _name1_name2_type_generation_inintptrptrownptr(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int ***v EINA_UNUSED)
-{
-  ck_assert(***v == 42);
-}
-
-void _name1_name2_type_generation_inintptrownfree(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int *v EINA_UNUSED)
-{
-  ck_assert(*v == 42);
 }
 
 void * _name1_name2_type_generation_returnvoidptr(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED)
@@ -126,46 +79,9 @@ void _name1_name2_type_generation_instringownptr(Eo *obj EINA_UNUSED, Type_Gener
   free(v);
 }
 
-int* _name1_name2_type_generation_returnrefint(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED)
-{
-  static int i = 42;
-  return &i;
-}
 int _name1_name2_type_generation_returnint(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED)
 {
   return 42;
-}
-
-int * _name1_name2_type_generation_returnintptr(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED)
-{
-  static int i = 42;
-  return &i;
-}
-
-int * _name1_name2_type_generation_returnintptrown(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED)
-{
-  int* i = malloc(sizeof(int));
-  *i = 42;
-  return i;
-}
-
-int ** _name1_name2_type_generation_returnintptrownptr(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED)
-{
-  return NULL;
-}
-
-int *** _name1_name2_type_generation_returnintptrownptrptr(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED)
-{
-  return NULL;
-}
-
-int *** _name1_name2_type_generation_returnintptrptrownptr(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED)
-{
-  return NULL;
-}
-
-void _name1_name2_type_generation_returnintptrownfree(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int *v EINA_UNUSED)
-{
 }
 
 const char * _name1_name2_type_generation_returnstring(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED)
@@ -216,18 +132,6 @@ void _name1_name2_type_generation_outint(Eo *obj EINA_UNUSED, Type_Generation_Da
 {
 }
 
-void _name1_name2_type_generation_outintptr(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int **v EINA_UNUSED)
-{
-}
-
-void _name1_name2_type_generation_outintptrown(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int **v EINA_UNUSED)
-{
-}
-
-void _name1_name2_type_generation_outintptrownfree(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int **v EINA_UNUSED)
-{
-}
-
 void _name1_name2_type_generation_outstringshare(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, Eina_Stringshare** v)
 {
   *v = eina_stringshare_add("foobar");
@@ -258,18 +162,6 @@ void _name1_name2_type_generation_optionalinint(Eo *obj EINA_UNUSED, Type_Genera
 {
 }
 
-void _name1_name2_type_generation_optionalinintptr(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int *v EINA_UNUSED)
-{
-}
-
-void _name1_name2_type_generation_optionalinintptrown(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int *v EINA_UNUSED)
-{
-}
-
-void _name1_name2_type_generation_optionalinintptrownfree(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int *v EINA_UNUSED)
-{
-}
-
 void _name1_name2_type_generation_optionaloutvoidptr(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, void **v EINA_UNUSED)
 {
 }
@@ -278,27 +170,6 @@ void _name1_name2_type_generation_optionaloutint(Eo *obj EINA_UNUSED, Type_Gener
 {
   if(v)
     *v = 42;
-}
-
-void _name1_name2_type_generation_optionaloutintptr(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int **v EINA_UNUSED)
-{
-  static int i = 42;
-  if(v)
-    *v = &i;
-}
-
-void _name1_name2_type_generation_optionaloutintptrown(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int **v EINA_UNUSED)
-{
-  int* i = malloc(sizeof(int));
-  *i = 42;
-  if(v) *v = i;
-}
-
-void _name1_name2_type_generation_optionaloutintptrownfree(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, int **v EINA_UNUSED)
-{
-  int* i = malloc(sizeof(int));
-  *i = 42;
-  if(v) *v = i;
 }
 
 void _name1_name2_type_generation_optionalinclassname(Eo *obj EINA_UNUSED, Type_Generation_Data *pd EINA_UNUSED, Name1_Name2_Type_Generation *v EINA_UNUSED)

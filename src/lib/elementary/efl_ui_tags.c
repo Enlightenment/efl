@@ -2,6 +2,8 @@
 # include "elementary_config.h"
 #endif
 
+#define EFL_UI_FORMAT_PROTECTED
+
 #include <Elementary.h>
 #include "elm_priv.h"
 #include "efl_ui_tags_private.h"
@@ -75,7 +77,6 @@ _shrink_mode_set(Eo *obj,
 
         EINA_LIST_FOREACH(sd->layouts, l, layout)
           {
-             char buf[32];
              Evas_Coord w_label_count = 0, h = 0;
 
              elm_box_pack_end(sd->box, layout);
@@ -92,19 +93,12 @@ _shrink_mode_set(Eo *obj,
 
              if (count > 0)
                {
-                  if (sd->format_cb)
-                    {
-                       eina_strbuf_reset(sd->format_strbuf);
-                       eina_value_set(&val, count);
-                       sd->format_cb(sd->format_cb_data, sd->format_strbuf, val);
-                       edje_object_part_text_escaped_set(sd->end, "efl.text",
-                                                         eina_strbuf_string_get(sd->format_strbuf));
-                    }
-                  else
-                    {
-                       snprintf(buf, sizeof(buf), "+ %d", count);
-                       edje_object_part_text_escaped_set(sd->end, "efl.text", buf);
-                    }
+                  Eina_Strbuf *strbuf = eina_strbuf_new();
+                  eina_value_set(&val, count);
+                  efl_ui_format_formatted_value_get(obj, strbuf, val);
+                  edje_object_part_text_escaped_set(sd->end, "efl.text",
+                                                    eina_strbuf_string_get(strbuf));
+                  eina_strbuf_free(strbuf);
 
                   edje_object_size_min_calc(sd->end, &w_label_count, NULL);
                   elm_coords_finger_size_adjust(1, &w_label_count, 1, NULL);
@@ -112,23 +106,16 @@ _shrink_mode_set(Eo *obj,
 
              if ((w < 0) || (w < w_label_count))
                {
+                  Eina_Strbuf *strbuf = eina_strbuf_new();
                   elm_box_unpack(sd->box, layout);
                   evas_object_hide(layout);
                   count++;
 
-                  if (sd->format_cb)
-                    {
-                       eina_strbuf_reset(sd->format_strbuf);
-                       eina_value_set(&val, count);
-                       sd->format_cb(sd->format_cb_data, sd->format_strbuf, val);
-                       edje_object_part_text_escaped_set(sd->end, "efl.text",
-                                                         eina_strbuf_string_get(sd->format_strbuf));
-                    }
-                  else
-                    {
-                       snprintf(buf, sizeof(buf), "+ %d", count);
-                       edje_object_part_text_escaped_set(sd->end, "efl.text", buf);
-                    }
+                  eina_value_set(&val, count);
+                  efl_ui_format_formatted_value_get(obj, strbuf, val);
+                  edje_object_part_text_escaped_set(sd->end, "efl.text",
+                                                    eina_strbuf_string_get(strbuf));
+                  eina_strbuf_free(strbuf);
 
                   edje_object_size_min_calc(sd->end, &w_label_count, &h);
                   elm_coords_finger_size_adjust(1, &w_label_count, 1, &h);
@@ -1021,7 +1008,6 @@ _efl_ui_tags_efl_object_constructor(Eo *obj, Efl_Ui_Tags_Data *sd)
    sd->last_it_select = EINA_TRUE;
    sd->editable = EINA_TRUE;
    sd->parent = obj;
-   sd->format_cb = NULL;
    sd->it_array = eina_array_new(4);
 
    _view_init(obj, sd);
@@ -1054,9 +1040,6 @@ _efl_ui_tags_efl_object_destructor(Eo *obj, Efl_Ui_Tags_Data *sd)
    evas_object_del(sd->end);
    ecore_timer_del(sd->longpress_timer);
 
-   efl_ui_format_cb_set(obj, NULL, NULL, NULL);
-   eina_strbuf_free(sd->format_strbuf);
-
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
@@ -1070,23 +1053,6 @@ EOLIAN static const char *
 _efl_ui_tags_efl_text_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Tags_Data *sd)
 {
    return (sd->label_str ? sd->label_str : NULL);
-}
-
-EOLIAN static void
-_efl_ui_tags_efl_ui_format_format_cb_set(Eo *obj EINA_UNUSED, Efl_Ui_Tags_Data *sd, void *func_data, Efl_Ui_Format_Func_Cb func, Eina_Free_Cb func_free_cb)
-{
-   if ((sd->format_cb_data == func_data) && (sd->format_cb == func))
-     return;
-
-   if (sd->format_cb_data && sd->format_free_cb)
-     sd->format_free_cb(sd->format_cb_data);
-
-   sd->format_cb = func;
-   sd->format_cb_data = func_data;
-   sd->format_free_cb = func_free_cb;
-   if (!sd->format_strbuf) sd->format_strbuf = eina_strbuf_new();
-
-   _view_update(sd);
 }
 
 EOLIAN static Eina_Bool
@@ -1170,6 +1136,11 @@ _efl_ui_tags_items_get(const Eo *obj EINA_UNUSED, Efl_Ui_Tags_Data *sd)
        eina_array_push(sd->it_array, elm_object_part_text_get(layout, "efl.btn.text"));
 
    return sd->it_array;
+}
+EOLIAN static void
+_efl_ui_tags_efl_ui_format_apply_formatted_value(Eo *obj EINA_UNUSED, Efl_Ui_Tags_Data *pd)
+{
+   _view_update(pd);
 }
 
 #define EFL_UI_TAGS_EXTRA_OPS \

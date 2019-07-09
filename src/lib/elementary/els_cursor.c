@@ -698,9 +698,6 @@ elm_object_cursor_unset(Evas_Object *obj)
 {
    ELM_CURSOR_GET_OR_RETURN(cur, obj);
 
-   if (cur->hotupdate_job) ecore_job_del(cur->hotupdate_job);
-   cur->hotupdate_job = NULL;
-
    eina_stringshare_del(cur->cursor_name);
    cur->cursor_name = NULL;
    eina_stringshare_del(cur->style);
@@ -754,6 +751,10 @@ elm_object_cursor_unset(Evas_Object *obj)
    evas_object_event_callback_del_full(obj, EVAS_CALLBACK_DEL,
                                        _elm_cursor_del, cur);
    evas_object_data_del(obj, _cursor_key);
+
+   if (cur->hotupdate_job) ecore_job_del(cur->hotupdate_job);
+   cur->hotupdate_job = NULL;
+
    free(cur);
 }
 

@@ -6,6 +6,7 @@
 #define EFL_ACCESS_VALUE_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
+#define EFL_UI_FORMAT_PROTECTED
 
 #include <Elementary.h>
 
@@ -20,6 +21,11 @@
 
 #define EFL_UI_SPIN_BUTTON_DELAY_CHANGE_TIME 0.2
 
+//when a item is pressed but not released, this time passes by
+//until another step is added or removed from the current value.
+//given in seconds
+#define REPEAT_INTERVAL 0.85
+
 static const char PART_NAME_ENTRY[] = "entry";
 static const char PART_NAME_DEC_BUTTON[] = "dec_button";
 static const char PART_NAME_TEXT_BUTTON[] = "text_button";
@@ -27,12 +33,6 @@ static const char PART_NAME_INC_BUTTON[] = "inc_button";
 
 static void
 _inc_dec_button_clicked_cb(void *data, const Efl_Event *event);
-static void
-_inc_dec_button_pressed_cb(void *data, const Efl_Event *event);
-static void
-_inc_dec_button_unpressed_cb(void *data, const Efl_Event *event);
-static void
-_inc_dec_button_mouse_move_cb(void *data, const Efl_Event *event);
 static void
 _entry_activated_cb(void *data, const Efl_Event *event);
 static void
@@ -42,37 +42,26 @@ _access_increment_decrement_info_say(Evas_Object *obj, Eina_Bool is_incremented)
 
 EFL_CALLBACKS_ARRAY_DEFINE(_inc_dec_button_cb,
                            { EFL_UI_EVENT_CLICKED, _inc_dec_button_clicked_cb},
-                           { EFL_UI_EVENT_PRESSED, _inc_dec_button_pressed_cb},
-                           { EFL_UI_EVENT_UNPRESSED, _inc_dec_button_unpressed_cb},
-                           { EFL_EVENT_POINTER_MOVE, _inc_dec_button_mouse_move_cb }
+                           { EFL_UI_AUTOREPEAT_EVENT_REPEATED, _inc_dec_button_clicked_cb},
                           );
 
 static void
 _entry_show(Evas_Object *obj)
 {
-   Efl_Ui_Spin_Special_Value *sv;
-   Eina_Array_Iterator iterator;
-   unsigned int i;
    char buf[32], fmt[32] = "%0.f";
 
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
 
-   EINA_ARRAY_ITER_NEXT(pd->special_values, i, sv, iterator)
-     {
-        if (sv->value == pd->val)
-          {
-             snprintf(buf, sizeof(buf), "%s", sv->label);
-             elm_object_text_set(sd->ent, buf);
-          }
-     }
+   const char *format_string;
+   efl_ui_format_string_get(obj, &format_string, NULL);
 
    /* try to construct just the format from given label
     * completely ignoring pre/post words
     */
-   if (pd->templates)
+   if (format_string)
      {
-        const char *start = strchr(pd->templates, '%');
+        const char *start = strchr(format_string, '%');
         while (start)
           {
              /* handle %% */
@@ -103,10 +92,7 @@ _entry_show(Evas_Object *obj)
           }
      }
 
-   if (pd->format_type == SPIN_FORMAT_INT)
-     snprintf(buf, sizeof(buf), fmt, (int)pd->val);
-   else
-     snprintf(buf, sizeof(buf), fmt, pd->val);
+   snprintf(buf, sizeof(buf), fmt, pd->val);
 
    elm_object_text_set(sd->ent, buf);
 }
@@ -115,20 +101,16 @@ static void
 _label_write(Evas_Object *obj)
 {
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
-
    Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
 
-   if (pd->templates)
-     {
-        efl_text_set(sd->text_button, pd->templates);
-     }
-   else
-     {
-        char buf[1024];
+   Eina_Strbuf *strbuf = eina_strbuf_new();
+   Eina_Value val = eina_value_double_init(pd->val);
+   efl_ui_format_formatted_value_get(obj, strbuf, val);
 
-        snprintf(buf, sizeof(buf), "%.0f", pd->val);
-        efl_text_set(sd->text_button, buf);
-     }
+   efl_text_set(sd->text_button, eina_strbuf_string_get(strbuf));
+
+   eina_value_flush(&val);
+   eina_strbuf_free(strbuf);
 }
 
 static Eina_Bool
@@ -156,6 +138,12 @@ _value_set(Evas_Object *obj,
         else if (new_val > pd->val_max)
           new_val = pd->val_min;
      }
+   else
+     {
+        new_val = MIN(pd->val_max, MAX(pd->val_min, new_val));
+     }
+
+   if (EINA_DBL_EQ(new_val, efl_ui_range_value_get(obj))) return EINA_TRUE;
 
    efl_ui_range_value_set(obj, new_val);
    ecore_timer_del(sd->delay_change_timer);
@@ -182,16 +170,11 @@ _entry_hide(Evas_Object *obj)
 static void
 _entry_value_apply(Evas_Object *obj)
 {
-   Efl_Ui_Spin_Special_Value *sv;
-   Eina_Array_Iterator iterator;
-   unsigned int i;
    const char *str;
    double val;
    char *end;
 
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
-   Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
-
    if (!sd->entry_visible) return;
 
    efl_event_callback_del(sd->ent, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED,
@@ -200,18 +183,8 @@ _entry_value_apply(Evas_Object *obj)
    str = elm_object_text_get(sd->ent);
    if (!str) return;
 
-   EINA_ARRAY_ITER_NEXT(pd->special_values, i, sv, iterator)
-      if (sv->value == pd->val)
-        if (!strcmp(sv->label, str)) return;
-
    val = strtod(str, &end);
-   if (((*end != '\0') && (!isspace(*end))) || (fabs(val - pd->val) < DBL_EPSILON)) return;
-   efl_ui_range_value_set(obj, val);
-
-   efl_event_callback_call(obj, EFL_UI_SPIN_EVENT_CHANGED, NULL);
-   ecore_timer_del(sd->delay_change_timer);
-   sd->delay_change_timer = ecore_timer_add(EFL_UI_SPIN_BUTTON_DELAY_CHANGE_TIME,
-                                            _delay_change_timer_cb, obj);
+   _value_set(obj, val);
 }
 
 static void
@@ -267,14 +240,14 @@ static void
 _entry_accept_filter_add(Evas_Object *obj)
 {
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
-   Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
    static Elm_Entry_Filter_Accept_Set digits_filter_data;
+   int decimal_places = efl_ui_format_decimal_places_get(obj);
 
    if (!sd->ent) return;
 
    elm_entry_markup_filter_remove(sd->ent, elm_entry_filter_accept_set, &digits_filter_data);
 
-   if (pd->decimal_points > 0)
+   if (decimal_places > 0)
      digits_filter_data.accepted = "-.0123456789";
    else
      digits_filter_data.accepted = "-0123456789";
@@ -307,6 +280,7 @@ _min_max_validity_filter(void *data, Evas_Object *obj, char **text)
    char *insert, *new_str = NULL;
    double val;
    int max_len = 0, len;
+   int decimal_places = efl_ui_format_decimal_places_get(data);
 
    EINA_SAFETY_ON_NULL_RETURN(data);
    EINA_SAFETY_ON_NULL_RETURN(obj);
@@ -322,12 +296,12 @@ _min_max_validity_filter(void *data, Evas_Object *obj, char **text)
    if (!new_str) return;
    if (strchr(new_str, '-')) max_len++;
 
-   if (pd->format_type == SPIN_FORMAT_FLOAT)
+   if (decimal_places > 0)
      {
         point = strchr(new_str, '.');
         if (point)
           {
-             if ((int) strlen(point + 1) > pd->decimal_points)
+             if ((int) strlen(point + 1) > decimal_places)
                {
                   *insert = 0;
                   goto end;
@@ -379,10 +353,6 @@ _toggle_entry(Evas_Object *obj)
              //       filter feature implemented.
              //       (Current efl_ui_text has missed filter feature.)
              sd->ent = elm_entry_add(obj);
-             Eina_Strbuf *buf = eina_strbuf_new();
-             eina_strbuf_append_printf(buf, "spinner/%s", elm_widget_style_get(obj));
-             elm_widget_style_set(sd->ent, eina_strbuf_string_get(buf));
-             eina_strbuf_free(buf);
              evas_object_event_callback_add
                (sd->ent, EVAS_CALLBACK_SHOW, _entry_show_cb, obj);
              elm_entry_single_line_set(sd->ent, EINA_TRUE);
@@ -393,6 +363,7 @@ _toggle_entry(Evas_Object *obj)
                elm_entry_markup_filter_append(sd->ent, _min_max_validity_filter, obj);
              efl_event_callback_add(sd->ent, ELM_ENTRY_EVENT_ACTIVATED,
                                     _entry_activated_cb, obj);
+             elm_widget_element_update(obj, sd->ent, "entry");
           }
 
         efl_event_callback_add(sd->ent, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED,
@@ -421,42 +392,14 @@ _entry_toggle_cb(void *data EINA_UNUSED,
    _toggle_entry(obj);
 }
 
-static Eina_Bool
-_spin_value(void *data)
-{
-   Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(data, MY_CLASS);
-   Efl_Ui_Spin_Data *pd = efl_data_scope_get(data, EFL_UI_SPIN_CLASS);
-
-   if (_value_set(data, pd->val + (sd->inc_val ? pd->step : -pd->step)))
-     _label_write(data);
-
-   return ECORE_CALLBACK_RENEW;
-}
-
 static void
-_spin_stop(Evas_Object *obj)
+_spin_value(Efl_Ui_Spin *obj, Eina_Bool inc)
 {
-   Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
+   Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
 
-   ELM_SAFE_FREE(sd->spin_timer, ecore_timer_del);
+   int absolut_value = efl_ui_range_value_get(obj) + (inc ? pd->step : -pd->step);
 
-   elm_widget_scroll_freeze_pop(obj);
-}
-
-static Eina_Bool
-_inc_dec_button_press_start(void *data)
-{
-   Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(data, MY_CLASS);
-
-   sd->interval = sd->first_interval;
-   sd->longpress_timer = NULL;
-   ecore_timer_del(sd->spin_timer);
-   sd->spin_timer = ecore_timer_add(sd->interval, _spin_value, data);
-   _spin_value(data);
-
-   elm_widget_scroll_freeze_push(data);
-
-   return ECORE_CALLBACK_CANCEL;
+   _value_set(obj, absolut_value);
 }
 
 static void
@@ -464,56 +407,12 @@ _inc_dec_button_clicked_cb(void *data, const Efl_Event *event)
 {
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(data, MY_CLASS);
 
-   _spin_stop(data);
-   sd->inc_val = sd->inc_button == event->object ? EINA_TRUE : EINA_FALSE;
-   _spin_value(data);
+   if (sd->entry_visible) _entry_value_apply(data);
+
+   _spin_value(data, sd->inc_button == event->object);
 
    if (_elm_config->access_mode)
      _access_increment_decrement_info_say(data, EINA_TRUE);
-}
-
-
-static void
-_inc_dec_button_pressed_cb(void *data, const Efl_Event *event)
-{
-   Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(data, MY_CLASS);
-
-   sd->inc_val = sd->inc_button == event->object ? EINA_TRUE : EINA_FALSE;
-
-   if (sd->longpress_timer) ecore_timer_del(sd->longpress_timer);
-
-   sd->longpress_timer = ecore_timer_add
-                           (_elm_config->longpress_timeout,
-                            _inc_dec_button_press_start, data);
-
-   if (sd->entry_visible) _entry_value_apply(data);
-}
-
-static void
-_inc_dec_button_unpressed_cb(void *data, const Efl_Event *event EINA_UNUSED)
-{
-   Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(data, MY_CLASS);
-
-   if (sd->longpress_timer)
-     {
-        ecore_timer_del(sd->longpress_timer);
-        sd->longpress_timer = NULL;
-     }
-
-   _spin_stop(data);
-}
-
-static void
-_inc_dec_button_mouse_move_cb(void *data, const Efl_Event *event)
-{
-   Efl_Input_Pointer *ev = event->info;
-   Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(data, MY_CLASS);
-
-   if (efl_input_processed_get(ev) && sd->longpress_timer)
-     {
-        ecore_timer_del(sd->longpress_timer);
-        sd->longpress_timer = NULL;
-     }
 }
 
 static void
@@ -532,17 +431,10 @@ _entry_activated_cb(void *data, const Efl_Event *event EINA_UNUSED)
 static void
 _entry_focus_changed_cb(void *data, const Efl_Event *event)
 {
-   if (!efl_ui_focus_object_focus_get(event->object))
-     _toggle_entry(data);
-}
-
-static void
-_text_button_clicked_cb(void *data, const Efl_Event *event EINA_UNUSED)
-{
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(data, MY_CLASS);
 
-   if (sd->entry_visible) return;
-   _toggle_entry(data);
+   if (efl_ui_focus_object_focus_get(event->object) && sd->entry_visible) return;
+     _toggle_entry(data);
 }
 
 static Eina_Bool
@@ -550,8 +442,7 @@ _key_action_toggle(Evas_Object *obj, const char *params EINA_UNUSED)
 {
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
 
-   if (sd->spin_timer) _spin_stop(obj);
-   else if (sd->entry_visible) _entry_toggle_cb(NULL, obj, NULL, NULL);
+   if (sd->entry_visible) _entry_toggle_cb(NULL, obj, NULL, NULL);
 
    return EINA_FALSE;
 }
@@ -562,25 +453,9 @@ _efl_ui_spin_button_efl_ui_widget_widget_input_event_handler(Eo *obj, Efl_Ui_Spi
    Eo *ev = eo_event->info;
 
    if (efl_input_processed_get(ev)) return EINA_FALSE;
-   if (eo_event->desc == EFL_EVENT_KEY_DOWN)
+   if (eo_event->desc == EFL_EVENT_POINTER_WHEEL)
      {
-        if (sd->spin_timer) _spin_stop(obj);
-        else return EINA_FALSE;
-     }
-   else if (eo_event->desc == EFL_EVENT_KEY_UP)
-     {
-        if (sd->spin_timer) _spin_stop(obj);
-        else return EINA_FALSE;
-     }
-   else if (eo_event->desc == EFL_EVENT_POINTER_WHEEL)
-     {
-        sd->interval = sd->first_interval;
-        if (efl_input_pointer_wheel_delta_get(ev) < 0)
-          sd->inc_val = EINA_TRUE;
-        else
-          sd->inc_val = EINA_FALSE;
-
-	    _spin_value(obj);
+        _spin_value(obj, efl_input_pointer_wheel_delta_get(ev) < 0);
      }
    else return EINA_FALSE;
 
@@ -596,13 +471,7 @@ _efl_ui_spin_button_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Spin_But
    int_ret = efl_ui_focus_object_on_focus_update(efl_super(obj, MY_CLASS));
    if (!int_ret) return EINA_FALSE;
 
-   if (!efl_ui_focus_object_focus_get(obj))
-     {
-        ELM_SAFE_FREE(sd->delay_change_timer, ecore_timer_del);
-        ELM_SAFE_FREE(sd->spin_timer, ecore_timer_del);
-        ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
-     }
-   else
+   if (efl_ui_focus_object_focus_get(obj))
      {
         if (sd->entry_reactivate)
           {
@@ -613,20 +482,6 @@ _efl_ui_spin_button_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Spin_But
      }
 
    return EINA_TRUE;
-}
-
-EOLIAN static void
-_efl_ui_spin_button_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Spin_Button_Data *_pd EINA_UNUSED)
-{
-   Evas_Coord minw = -1, minh = -1;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
 }
 
 static char *
@@ -735,71 +590,21 @@ _access_spinner_register(Evas_Object *obj, Eina_Bool is_access)
      }
 }
 
-static const char *
-_theme_group_modify_pos_get(const char *cur_group, const char *search, size_t len)
+static void
+_sync_widget_theme_klass(Eo *obj, Efl_Ui_Spin_Button_Data *pd)
 {
-   const char *pos = NULL;
-   const char *temp_str = NULL;
-
-   temp_str = cur_group + len - strlen(search);
-   if (temp_str >= cur_group)
-     {
-        if (!strcmp(temp_str, search))
-          pos = temp_str;
-     }
-
-   return pos;
-}
-
-static char *
-_efl_ui_spin_button_theme_group_get(Evas_Object *obj, Efl_Ui_Spin_Button_Data *sd)
-{
-   const char *pos = NULL;
-   const char *cur_group = elm_widget_theme_element_get(obj);
-   Eina_Strbuf *new_group = eina_strbuf_new();
-   size_t len = 0;
-
-   if (cur_group)
-     {
-        len = strlen(cur_group);
-        pos = _theme_group_modify_pos_get(cur_group, "horizontal", len);
-        if (!pos)
-          pos = _theme_group_modify_pos_get(cur_group, "vertical", len);
-
-        // TODO: change separator when it is decided.
-        //       can skip when prev_group == cur_group
-        if (!pos)
-          {
-             eina_strbuf_append(new_group, cur_group);
-             eina_strbuf_append(new_group, "/");
-          }
-        else
-          {
-             eina_strbuf_append_length(new_group, cur_group, pos - cur_group);
-          }
-     }
-
-   if (efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
-     eina_strbuf_append(new_group, "horizontal");
+   if (efl_ui_layout_orientation_is_horizontal(pd->dir, EINA_TRUE))
+     elm_widget_theme_klass_set(obj, "spin_button/horizontal");
    else
-     eina_strbuf_append(new_group, "vertical");
-
-   return eina_strbuf_release(new_group);
+     elm_widget_theme_klass_set(obj, "spin_button/vertical");
 }
-
 
 EOLIAN static Eina_Error
 _efl_ui_spin_button_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
 {
    Eina_Error int_ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
-   char *group;
 
-   group = _efl_ui_spin_button_theme_group_get(obj, sd);
-   if (group)
-     {
-        elm_widget_theme_element_set(obj, group);
-        free(group);
-     }
+   _sync_widget_theme_klass(obj, sd);
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
@@ -827,39 +632,37 @@ _efl_ui_spin_button_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Spin_Button_Data *
 EOLIAN static Eo *
 _efl_ui_spin_button_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
 {
-   char *group;
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   elm_widget_theme_klass_set(obj, "spin_button");
+   _sync_widget_theme_klass(obj, sd);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
-   group = _efl_ui_spin_button_theme_group_get(obj, sd);
    if (elm_widget_theme_object_set(obj, wd->resize_obj,
                                        elm_widget_theme_klass_get(obj),
-                                       group,
+                                       elm_widget_theme_element_get(obj),
                                        elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
 
 
-   free(group);
-
-   sd->first_interval = 0.85;
-
    sd->inc_button = efl_add(EFL_UI_BUTTON_CLASS, obj,
+                            efl_ui_autorepeat_enabled_set(efl_added, EINA_TRUE),
+                            efl_ui_autorepeat_initial_timeout_set(efl_added, _elm_config->longpress_timeout),
+                            efl_ui_autorepeat_gap_timeout_set(efl_added, REPEAT_INTERVAL),
                             elm_widget_element_update(obj, efl_added, PART_NAME_INC_BUTTON),
                             efl_event_callback_array_add(efl_added, _inc_dec_button_cb(), obj),
                             efl_content_set(efl_part(obj, "efl.inc_button"), efl_added));
 
    sd->text_button = efl_add(EFL_UI_BUTTON_CLASS, obj,
                              elm_widget_element_update(obj, efl_added, PART_NAME_TEXT_BUTTON),
-                             efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
-                                                    _text_button_clicked_cb, obj),
                              efl_event_callback_add(efl_added, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED,
                                                     _text_button_focus_changed_cb, obj),
                              efl_content_set(efl_part(obj, "efl.text_button"), efl_added));
 
    sd->dec_button = efl_add(EFL_UI_BUTTON_CLASS, obj,
+                            efl_ui_autorepeat_enabled_set(efl_added, EINA_TRUE),
+                            efl_ui_autorepeat_initial_timeout_set(efl_added, _elm_config->longpress_timeout),
+                            efl_ui_autorepeat_gap_timeout_set(efl_added, REPEAT_INTERVAL),
                             elm_widget_element_update(obj, efl_added, PART_NAME_DEC_BUTTON),
                             efl_event_callback_array_add(efl_added, _inc_dec_button_cb(), obj),
                             efl_content_set(efl_part(obj, "efl.dec_button"), efl_added));
@@ -996,8 +799,5 @@ _efl_ui_spin_button_efl_access_object_i18n_name_get(const Eo *obj, Efl_Ui_Spin_B
 }
 
 // A11Y Accessibility - END
-
-#define EFL_UI_SPIN_BUTTON_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_spin_button), \
 
 #include "efl_ui_spin_button.eo.c"

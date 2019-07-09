@@ -475,7 +475,10 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
    def->type = EOLIAN_TYPEDECL_STRUCT;
    def->fields = eina_hash_string_small_new(EINA_FREE_CB(_struct_field_free));
    if (freefunc)
-     def->freefunc = eina_stringshare_ref(freefunc);
+     {
+        def->freefunc = eina_stringshare_ref(freefunc);
+        def->ownable = EINA_TRUE;
+     }
    if (cname)
      {
         def->base.c_name = cname;
@@ -2449,7 +2452,10 @@ postparams:
                 def->base.is_beta = has_beta;
                 def->type = EOLIAN_TYPEDECL_STRUCT_OPAQUE;
                 if (freefunc)
-                  def->freefunc = eina_stringshare_ref(freefunc);
+                  {
+                     def->freefunc = eina_stringshare_ref(freefunc);
+                     def->ownable = EINA_TRUE;
+                  }
                 def->base.name = name;
                 if (cname)
                   def->base.c_name = cname;

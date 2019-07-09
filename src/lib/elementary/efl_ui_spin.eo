@@ -1,36 +1,11 @@
-struct @beta Efl.Ui.Spin_Special_Value
-{
-   [[Special value]]
-   value: double; [[Target value]]
-   label: string; [[String to replace]]
-}
-
 class @beta Efl.Ui.Spin extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Interactive, Efl.Ui.Format,
                    Efl.Access.Value, Efl.Access.Widget.Action
 {
    [[A Spin.
 
-     This is a widget which allows the user to increase or decrease numeric values
-     using user interactions. It's a basic type of widget for choosing and displaying values.
+     This is a widget which allows the user to increase or decrease a numeric value
+     using arrow buttons. It's a basic type of widget for choosing and displaying values.
    ]]
-   methods {
-      @property special_value {
-         [[Control special string to display in the place of the numerical value.
-
-           It's useful for cases when a user should select an item that is
-           better indicated by a label than a value. For example, weekdays or months.
-
-           Note: If another label was previously set to $value, it will be replaced
-           by the new label.]]
-         set {
-         }
-         get {
-         }
-         values {
-            values: const(array<ptr(Efl.Ui.Spin_Special_Value)>); [[The array of special values, or NULL if none]]
-         }
-      }
-   }
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
@@ -38,7 +13,7 @@ class @beta Efl.Ui.Spin extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Inter
       Efl.Ui.Range_Display.range_limits { get; set; }
       Efl.Ui.Range_Interactive.range_step { get; set; }
       Efl.Ui.Range_Display.range_value { get; set; }
-      Efl.Ui.Format.format_cb { set; }
+      Efl.Ui.Format.apply_formatted_value;
    }
    events {
       changed: void; [[Called when spin changed]]

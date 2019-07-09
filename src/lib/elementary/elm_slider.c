@@ -7,6 +7,7 @@
 #define EFL_ACCESS_VALUE_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_PART_PROTECTED
+#define EFL_UI_FORMAT_PROTECTED
 
 #include <Elementary.h>
 
@@ -953,7 +954,7 @@ _elm_slider_efl_object_constructor(Eo *obj, Elm_Slider_Data *priv)
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   efl_ui_format_string_set(efl_part(obj, "indicator"), "%0.2f");
+   efl_ui_format_string_set(efl_part(obj, "indicator"), "%0.2f", EFL_UI_FORMAT_STRING_TYPE_SIMPLE);
 
    evas_object_event_callback_add
      (sd->spacer, EVAS_CALLBACK_MOUSE_DOWN, _spacer_down_cb, obj);
@@ -976,7 +977,7 @@ _elm_slider_efl_object_destructor(Eo *obj,
    ELM_SAFE_FREE(sd->indi_template, eina_stringshare_del);
    eina_strbuf_free(sd->indi_format_strbuf);
 
-   efl_ui_format_cb_set(obj, NULL, NULL, NULL);
+   efl_ui_format_func_set(obj, NULL, NULL, NULL);
    eina_strbuf_free(sd->format_strbuf);
 
    efl_destructor(efl_super(obj, MY_CLASS));
@@ -1004,7 +1005,7 @@ _elm_slider_class_constructor(Efl_Class *klass)
 }
 
 EOLIAN static void
-_elm_slider_efl_ui_format_format_cb_set(Eo *obj, Elm_Slider_Data *sd, void *func_data, Efl_Ui_Format_Func_Cb func, Eina_Free_Cb func_free_cb)
+_elm_slider_efl_ui_format_format_cb_set(Eo *obj, Elm_Slider_Data *sd, void *func_data, Efl_Ui_Format_Func func, Eina_Free_Cb func_free_cb)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -1076,7 +1077,7 @@ _elm_slider_efl_part_part_get(const Eo *obj, Elm_Slider_Data *sd EINA_UNUSED, co
 }
 
 EOLIAN static void
-_elm_slider_part_indicator_efl_ui_format_format_cb_set(Eo *obj, void *_pd EINA_UNUSED, void *func_data, Efl_Ui_Format_Func_Cb func, Eina_Free_Cb func_free_cb)
+_elm_slider_part_indicator_efl_ui_format_format_cb_set(Eo *obj, void *_pd EINA_UNUSED, void *func_data, Efl_Ui_Format_Func func, Eina_Free_Cb func_free_cb)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Elm_Slider_Data *sd = efl_data_scope_get(pd->obj, ELM_SLIDER_CLASS);
@@ -1095,17 +1096,19 @@ _elm_slider_part_indicator_efl_ui_format_format_cb_set(Eo *obj, void *_pd EINA_U
    efl_canvas_group_change(pd->obj);
 }
 
-static void
+static Eina_Bool
 _indi_default_format_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
 {
    const Eina_Value_Type *type = eina_value_type_get(&value);
    Elm_Slider_Data *sd = efl_data_scope_get(data, ELM_SLIDER_CLASS);
    double v;
 
-   if (type != EINA_VALUE_TYPE_DOUBLE) return;
+   if (type != EINA_VALUE_TYPE_DOUBLE) return EINA_FALSE;
 
    eina_value_get(&value, &v);
    eina_strbuf_append_printf(str, sd->indi_template, v);
+
+   return EINA_TRUE;
 }
 
 static void
@@ -1129,7 +1132,7 @@ _elm_slider_part_indicator_efl_ui_format_format_string_set(Eo *obj, void *_pd EI
    if (!template) return;
    eina_stringshare_replace(&sd->indi_template, template);
 
-   efl_ui_format_cb_set(efl_part(pd->obj, "indicator"), pd->obj, _indi_default_format_cb, _indi_default_format_free_cb);
+   efl_ui_format_func_set(efl_part(pd->obj, "indicator"), pd->obj, _indi_default_format_cb, _indi_default_format_free_cb);
 }
 
 EOLIAN static const char *
@@ -1164,6 +1167,10 @@ _elm_slider_part_indicator_visible_mode_get(const Eo *obj, void *_pd EINA_UNUSED
    return sd->indicator_visible_mode;
 }
 
+void _elm_slider_part_indicator_efl_ui_format_apply_formatted_value(Eo *obj EINA_UNUSED, Elm_Part_Data *pd EINA_UNUSED)
+{
+}
+
 #include "elm_slider_part_indicator_eo.c"
 
 /* Efl.Part end */
@@ -1194,13 +1201,15 @@ elm_slider_span_size_get(const Evas_Object *obj)
 EAPI void
 elm_slider_unit_format_set(Evas_Object *obj, const char *units)
 {
-   efl_ui_format_string_set(obj, units);
+   efl_ui_format_string_set(obj, units, EFL_UI_FORMAT_STRING_TYPE_SIMPLE);
 }
 
 EAPI const char *
 elm_slider_unit_format_get(const Evas_Object *obj)
 {
-   return efl_ui_format_string_get(obj);
+   const char* fmt;
+   efl_ui_format_string_get(obj, &fmt, NULL);
+   return fmt;
 }
 
 EAPI void
@@ -1277,7 +1286,7 @@ typedef struct
    slider_freefunc_type format_free_cb;
 } Slider_Format_Wrapper_Data;
 
-static void
+static Eina_Bool
 _format_legacy_to_format_eo_cb(void *data, Eina_Strbuf *str, const Eina_Value value)
 {
    Slider_Format_Wrapper_Data *sfwd = data;
@@ -1293,6 +1302,8 @@ _format_legacy_to_format_eo_cb(void *data, Eina_Strbuf *str, const Eina_Value va
    if (buf)
      eina_strbuf_append(str, buf);
    if (sfwd->format_free_cb) sfwd->format_free_cb(buf);
+
+   return EINA_TRUE;
 }
 
 static void
@@ -1310,7 +1321,7 @@ elm_slider_units_format_function_set(Evas_Object *obj, slider_func_type func, sl
    sfwd->format_cb = func;
    sfwd->format_free_cb = free_func;
 
-   efl_ui_format_cb_set(obj, sfwd, _format_legacy_to_format_eo_cb, _format_legacy_to_format_eo_free_cb);
+   efl_ui_format_func_set(obj, sfwd, _format_legacy_to_format_eo_cb, _format_legacy_to_format_eo_free_cb);
 }
 
 EAPI void
@@ -1369,13 +1380,15 @@ elm_slider_min_max_get(const Evas_Object *obj, double *min, double *max)
 EAPI void
 elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator)
 {
-   efl_ui_format_string_set(efl_part(obj, "indicator"), indicator);
+   efl_ui_format_string_set(efl_part(obj, "indicator"), indicator, EFL_UI_FORMAT_STRING_TYPE_SIMPLE);
 }
 
 EAPI const char *
 elm_slider_indicator_format_get(const Evas *obj)
 {
-   return efl_ui_format_string_get(efl_part(obj, "indicator"));
+   const char *fmt;
+   efl_ui_format_string_get(efl_part(obj, "indicator"), &fmt, NULL);
+   return fmt;
 }
 
 EAPI void
@@ -1386,9 +1399,9 @@ elm_slider_indicator_format_function_set(Evas_Object *obj, slider_func_type func
    sfwd->format_cb = func;
    sfwd->format_free_cb = free_func;
 
-   efl_ui_format_cb_set(efl_part(obj, "indicator"), sfwd,
-                        _format_legacy_to_format_eo_cb,
-                        _format_legacy_to_format_eo_free_cb);
+   efl_ui_format_func_set(efl_part(obj, "indicator"), sfwd,
+                          _format_legacy_to_format_eo_cb,
+                          _format_legacy_to_format_eo_free_cb);
 }
 
 EAPI void
@@ -1450,6 +1463,10 @@ EAPI Elm_Slider_Indicator_Visible_Mode
 elm_slider_indicator_visible_mode_get(const Evas_Object *obj)
 {
    return elm_slider_part_indicator_visible_mode_get(efl_part(obj, "indicator"));
+}
+
+void _elm_slider_efl_ui_format_apply_formatted_value(Eo *obj EINA_UNUSED, Elm_Slider_Data *pd EINA_UNUSED)
+{
 }
 
 /* Internal EO APIs and hidden overrides */

@@ -347,6 +347,7 @@ Eina_Rw_Slice _dummy_test_object_eina_rw_slice_return(EINA_UNUSED Eo *obj, EINA_
   return slc;
 }
 
+#if 0
 Eina_Bool _dummy_test_object_eina_binbuf_in(EINA_UNUSED Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Eina_Binbuf *binbuf)
 {
   Eina_Bool r = (0 == memcmp(eina_binbuf_string_get(binbuf), base_seq, eina_binbuf_length_get(binbuf)));
@@ -458,6 +459,7 @@ Eina_Binbuf *_dummy_test_object_call_eina_binbuf_return_own(Eo *obj, EINA_UNUSED
 {
   return dummy_test_object_eina_binbuf_return_own(obj);
 }
+#endif
 
 
 static const int base_seq_int[] = {0x0,0x2A,0x42};
@@ -4095,9 +4097,9 @@ static
 void struct_complex_with_values(Dummy_StructComplex *complex)
 {
    complex->farray = eina_array_new(4);
-   eina_array_push(complex->farray, _new_int(0x0));
-   eina_array_push(complex->farray, _new_int(0x2A));
-   eina_array_push(complex->farray, _new_int(0x42));
+   eina_array_push(complex->farray, strdup("0x0"));
+   eina_array_push(complex->farray, strdup("0x2A"));
+   eina_array_push(complex->farray, strdup("0x42"));
 
    complex->flist = eina_list_append(complex->flist, strdup("0x0"));
    complex->flist = eina_list_append(complex->flist, strdup("0x2A"));
@@ -4116,8 +4118,8 @@ void struct_complex_with_values(Dummy_StructComplex *complex)
    complex->fany_value_ptr = eina_value_new(EINA_VALUE_TYPE_STRING);
    eina_value_set(complex->fany_value_ptr, "abc");
 
-   complex->fbinbuf = eina_binbuf_new();
-   eina_binbuf_append_char(complex->fbinbuf, 126);
+   //complex->fbinbuf = eina_binbuf_new();
+   //eina_binbuf_append_char(complex->fbinbuf, 126);
 
    complex->fslice.len = 1;
    complex->fslice.mem = malloc(1);
@@ -4129,7 +4131,7 @@ void struct_complex_with_values(Dummy_StructComplex *complex)
 static
 Eina_Bool check_and_modify_struct_complex(Dummy_StructComplex *complex)
 {
-   if (!_array_int_equal(complex->farray, base_seq_int, base_seq_int_size))
+   if (!_array_str_equal(complex->farray, base_seq_str, base_seq_str_size))
      return EINA_FALSE;
 
    if (!_list_str_equal(complex->flist, base_seq_str, base_seq_str_size))
@@ -4140,7 +4142,7 @@ Eina_Bool check_and_modify_struct_complex(Dummy_StructComplex *complex)
        || !_hash_str_check(complex->fhash, "cc", "ccc"))
      return EINA_FALSE;
 
-   if (!_iterator_int_equal(complex->fiterator, base_seq_int, base_seq_int_size, EINA_FALSE))
+   if (!_iterator_str_equal(complex->fiterator, base_seq_str, base_seq_str_size, EINA_FALSE))
      return EINA_FALSE;
 
    double double_val = 0;
@@ -4151,8 +4153,10 @@ Eina_Bool check_and_modify_struct_complex(Dummy_StructComplex *complex)
    if (!eina_value_get(complex->fany_value_ptr, &str_val) || strcmp(str_val, "abc") != 0)
      return EINA_FALSE;
 
+   /*
    if (eina_binbuf_length_get(complex->fbinbuf) != 1 || eina_binbuf_string_get(complex->fbinbuf)[0] != 126)
      return EINA_FALSE;
+   */
 
    if (complex->fslice.len != 1 || *(char*)complex->fslice.mem != 125)
      return EINA_FALSE;
@@ -4263,6 +4267,7 @@ void _dummy_test_object_call_struct_simple_in(Eo *obj, EINA_UNUSED Dummy_Test_Ob
     dummy_test_object_struct_simple_in(obj, simple);
 }
 
+/*
 EOLIAN
 void _dummy_test_object_call_struct_simple_ptr_in(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Dummy_StructSimple *simple)
 {
@@ -4274,6 +4279,7 @@ void _dummy_test_object_call_struct_simple_ptr_in_own(Eo *obj, EINA_UNUSED Dummy
 {
     dummy_test_object_struct_simple_ptr_in_own(obj, simple);
 }
+*/
 
 EOLIAN
 void _dummy_test_object_call_struct_simple_out(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Dummy_StructSimple *simple)
@@ -4281,6 +4287,7 @@ void _dummy_test_object_call_struct_simple_out(Eo *obj, EINA_UNUSED Dummy_Test_O
     dummy_test_object_struct_simple_out(obj, simple);
 }
 
+/*
 EOLIAN
 void _dummy_test_object_call_struct_simple_ptr_out(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, Dummy_StructSimple **simple)
 {
@@ -4292,6 +4299,7 @@ void _dummy_test_object_call_struct_simple_ptr_out_own(Eo *obj, EINA_UNUSED Dumm
 {
     dummy_test_object_struct_simple_ptr_out_own(obj, simple);
 }
+*/
 
 EOLIAN
 Dummy_StructSimple _dummy_test_object_call_struct_simple_return(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
@@ -4299,6 +4307,7 @@ Dummy_StructSimple _dummy_test_object_call_struct_simple_return(Eo *obj, EINA_UN
     return dummy_test_object_struct_simple_return(obj);
 }
 
+/*
 EOLIAN
 Dummy_StructSimple *_dummy_test_object_call_struct_simple_ptr_return(Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd)
 {
@@ -4310,6 +4319,7 @@ Dummy_StructSimple *_dummy_test_object_call_struct_simple_ptr_return_own(Eo *obj
 {
     return dummy_test_object_struct_simple_ptr_return_own(obj);
 }
+*/
 
 // with complex types
 

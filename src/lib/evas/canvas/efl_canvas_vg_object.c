@@ -441,8 +441,16 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
           }
         else
           {
-             if (cd->blend_pixels) free(cd->blend_pixels);
-             if (cd->blend_buffer) efl_unref(cd->blend_buffer);
+             if (cd->blend_pixels)
+               {
+                  free(cd->blend_pixels);
+                  cd->blend_pixels = NULL;
+               }
+             if (cd->blend_buffer)
+               {
+                  efl_unref(cd->blend_buffer);
+                  cd->blend_buffer = NULL;
+               }
              EINA_LIST_FOREACH(cd->children, l, child)
                 _evas_vg_render(obj, pd, engine, output, context, child, clips, w, h, ector, do_async);
           }

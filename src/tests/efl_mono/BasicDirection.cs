@@ -18,6 +18,7 @@ class TestIntDirections
         Test.AssertEquals(-original, received);
     }
 
+    /*
     public static void simple_ptr_out()
     {
         int original = 1984;
@@ -28,6 +29,7 @@ class TestIntDirections
 
         Test.AssertEquals(original*2, received);
     }
+    */
 }
 
 }

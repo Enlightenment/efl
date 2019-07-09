@@ -155,7 +155,7 @@ efl_mono = library('efl_mono',
     mono_generator_target + mono_files + [efl_src],
     install : true,
     install_dir : efl_mono_install_dir,
-    cs_args : extra_cs_args + ['-doc:' + efl_mono_xml_doc]
+    cs_args : extra_cs_args + ['-doc:' + efl_mono_xml_doc, '-warnaserror+']
 )
 
 meson.add_install_script(join_paths(meson.source_root(), 'meson', 'meson_csharp_docs.sh'),

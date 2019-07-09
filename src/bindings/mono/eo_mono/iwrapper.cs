@@ -624,14 +624,15 @@ public class Globals
             try
             {
                 var flags = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
-                constructor = managedType.GetConstructor(flags, null, new Type[1] { typeof(System.IntPtr) }, null);
+                constructor = managedType.GetConstructor(flags, null, new Type[1] { typeof(WrappingHandle) }, null);
             }
             catch (InvalidOperationException)
             {
                 throw new InvalidOperationException($"Can't get constructor for type {managedType}");
             }
 
-            var ret = (Efl.Eo.IWrapper) constructor.Invoke(new object[1] { handle });
+            WrappingHandle wh = new WrappingHandle(handle);
+            var ret = (Efl.Eo.IWrapper) constructor.Invoke(new object[1] { wh });
 
             if (ret == null)
             {
@@ -713,6 +714,21 @@ public class Globals
             efl_mono_thread_safe_free_cb_exec(cbPtr, handlePtr);
         }
         Monitor.Exit(Efl.All.InitLock);
+    }
+
+    /// <summary>
+    /// Internal struct used by the binding to pass the native handle pointer
+    /// to the managed object wrapping constructor.
+    /// Internal usage only: do not use this class in inherited classes.
+    /// </summary>
+    public struct WrappingHandle
+    {
+        public WrappingHandle(IntPtr h)
+        {
+            NativeHandle = h;
+        }
+
+        public IntPtr NativeHandle { get; private set; }
     }
 
 } // Globals

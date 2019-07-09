@@ -6,7 +6,9 @@
  */
 
 #define EFL_CXXPERIMENTAL
+#ifndef EFL_BETA_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
+#endif
 
 #include <Efl_Ui.hh>
 

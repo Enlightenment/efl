@@ -34,11 +34,6 @@ struct _Efl_Ui_Tags_Data
    Evas_Coord                          w_box, h_box;
    int                                 shrink;
 
-   Efl_Ui_Format_Func_Cb               format_cb;
-   Eina_Free_Cb                        format_free_cb;
-   void                               *format_cb_data;
-   Eina_Strbuf                        *format_strbuf;
-
    Eina_Bool                           last_it_select : 1;
    Eina_Bool                           editable : 1;
    Eina_Bool                           focused : 1;

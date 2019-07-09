@@ -2,7 +2,7 @@
 struct Generic.Event
 {
   field1: int;
-  field2: list<ptr(int)>;
+  field2: list<string>;
 }
 
 class Generic extends Efl.Object implements Generic_Interface
@@ -108,7 +108,7 @@ class Generic extends Efl.Object implements Generic_Interface
      prefix,event1: void;
      prefix,event2: Generic;
      prefix,event3: int;
-     prefix,event4: const(array<ptr(int)>);
+     prefix,event4: const(array<string>);
      prefix,event5: Generic.Event;
      protected,event1 @protected: void;
      beta,event1 @beta: void;
