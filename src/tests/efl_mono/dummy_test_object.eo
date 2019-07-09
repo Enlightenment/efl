@@ -75,13 +75,13 @@ struct @free(free) Dummy.StructSimple
 }
 
 struct @beta @free(free) Dummy.StructComplex {
-   farray: array<ptr(int)>;
+   farray: array<string>;
    flist: list<string>;
    fhash: hash<string, string>;
-   fiterator: iterator<ptr(int)>;
+   fiterator: iterator<string>;
    fany_value: any_value;
    fany_value_ptr: any_value_ptr;
-   fbinbuf: ptr(Eina.Binbuf);
+   // fbinbuf: ptr(Eina.Binbuf);
    fslice: slice<ubyte>;
    // fslice: ptr(Eina.Slice); // TODO
    fobj: Dummy.Numberwrapper;
@@ -122,12 +122,14 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
       }
 
+      /*
       int_ptr_out {
          params {
             @in x: int;
             @out y: ptr(int);
          }
       }
+      */
 
       in_stringshare {
          params {
@@ -296,6 +298,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
       */
 
+      /*
       eina_binbuf_in @beta {
          params {
             @in binbuf: ptr(Eina.Binbuf);
@@ -373,10 +376,12 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       call_eina_binbuf_return_own @beta {
          return: ptr(Eina.Binbuf) @owned;
       }
+      */
 
       /* Eina Array */
 
       /* Integer */
+      /*
       eina_array_int_in {
          params {
             @in arr: array<ptr(int)>;
@@ -421,6 +426,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       eina_array_int_return_own {
          return: array<free(ptr(int),free) @owned> @owned;
       }
+      */
 
       /* String */
       eina_array_str_in {
@@ -570,6 +576,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       /* Eina List */
 
       /* Integer */
+      /*
       eina_list_int_in {
          params {
             @in lst: list<ptr(int)>;
@@ -614,6 +621,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       eina_list_int_return_own {
          return: list<free(ptr(int),free) @owned> @owned;
       }
+      */
 
       /* String */
       eina_list_str_in {
@@ -763,6 +771,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       // Eina Hash //
 
       // Integer //
+      /*
       eina_hash_int_in {
          params {
             @in hsh: hash<ptr(int), ptr(int)>;
@@ -813,6 +822,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       check_eina_hash_int_return_own {
          return: bool;
       }
+      */
 
       // String //
       eina_hash_str_in {
@@ -1305,6 +1315,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
+      /*
       struct_simple_ptr_in {
          params {
             @in simple: ptr(Dummy.StructSimple);
@@ -1318,6 +1329,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
          return: Dummy.StructSimple;
       }
+      */
 
       struct_simple_out {
          params {
@@ -1326,6 +1338,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
+      /*
       struct_simple_ptr_out {
          params {
             @out simple: ptr(Dummy.StructSimple);
@@ -1339,11 +1352,13 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
          return: Dummy.StructSimple;
       }
+      */
 
       struct_simple_return {
          return: Dummy.StructSimple;
       }
 
+      /*
       struct_simple_ptr_return {
          return: ptr(Dummy.StructSimple);
       }
@@ -1351,6 +1366,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       struct_simple_ptr_return_own {
          return: ptr(Dummy.StructSimple) @owned;
       }
+      */
 
       call_struct_simple_in {
          params {
@@ -1358,6 +1374,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
       }
 
+      /*
       call_struct_simple_ptr_in {
          params {
             @in simple: ptr(Dummy.StructSimple);
@@ -1369,6 +1386,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
             @in simple: ptr(Dummy.StructSimple) @owned;
          }
       }
+      */
 
       call_struct_simple_out {
          params {
@@ -1376,6 +1394,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
       }
 
+      /*
       call_struct_simple_ptr_out {
          params {
             @out simple: ptr(Dummy.StructSimple);
@@ -1387,11 +1406,13 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
             @out simple: ptr(Dummy.StructSimple) @owned;
          }
       }
+      */
 
       call_struct_simple_return {
          return: Dummy.StructSimple;
       }
 
+      /*
       call_struct_simple_ptr_return {
          return: ptr(Dummy.StructSimple);
       }
@@ -1399,6 +1420,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       call_struct_simple_ptr_return_own {
          return: ptr(Dummy.StructSimple) @owned;
       }
+      */
 
       struct_complex_in @beta {
          params {
@@ -1407,6 +1429,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
+      /*
       struct_complex_ptr_in @beta {
          params {
             @in complex: ptr(Dummy.StructComplex);
@@ -1420,6 +1443,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
          return: bool;
       }
+      */
 
       struct_complex_out @beta {
          params {

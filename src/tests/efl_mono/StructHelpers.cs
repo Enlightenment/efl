@@ -125,10 +125,10 @@ internal class StructHelpers
     {
         var complex = new Dummy.StructComplex();
 
-        complex.Farray = new Eina.Array<int>();
-        complex.Farray.Push(0x0);
-        complex.Farray.Push(0x2A);
-        complex.Farray.Push(0x42);
+        complex.Farray = new Eina.Array<string>();
+        complex.Farray.Push("0x0");
+        complex.Farray.Push("0x2A");
+        complex.Farray.Push("0x42");
 
         complex.Flist = new Eina.List<string>();
         complex.Flist.Append("0x0");
@@ -148,8 +148,8 @@ internal class StructHelpers
         complex.Fany_value_ptr = new Eina.Value(Eina.ValueType.String);
         complex.Fany_value_ptr.Set("abc");
 
-        complex.Fbinbuf = new Eina.Binbuf();
-        complex.Fbinbuf.Append(126);
+        //complex.Fbinbuf = new Eina.Binbuf();
+        //complex.Fbinbuf.Append(126);
 
         complex.Fslice.Length = 1;
         complex.Fslice.Mem = Eina.MemoryNative.Alloc(1);
@@ -163,7 +163,7 @@ internal class StructHelpers
 
     internal static void checkStructComplex(Dummy.StructComplex complex)
     {
-        Test.Assert(complex.Farray.ToArray().SequenceEqual(base_seq_int));
+        Test.Assert(complex.Farray.ToArray().SequenceEqual(base_seq_str));
 
         Test.Assert(complex.Flist.ToArray().SequenceEqual(base_seq_str));
 
@@ -172,11 +172,12 @@ internal class StructHelpers
         Test.Assert(complex.Fhash["cc"] == "ccc");
 
         int idx = 0;
-        foreach (int e in complex.Fiterator)
+        foreach (string e in complex.Fiterator)
         {
-            Test.Assert(e == base_seq_int[idx]);
+            Test.Assert(e == base_seq_str[idx]);
             ++idx;
         }
+        Test.AssertEquals(idx, base_seq_str.Length);
 
         double double_val = 0;
         Test.Assert(complex.Fany_value.Get(out double_val));
@@ -186,8 +187,8 @@ internal class StructHelpers
         Test.Assert(complex.Fany_value_ptr.Get(out str_val));
         Test.Assert(str_val == "abc");
 
-        Test.Assert(complex.Fbinbuf.Length == 1);
-        Test.Assert(complex.Fbinbuf.GetBytes()[0] == 126);
+        //Test.Assert(complex.Fbinbuf.Length == 1);
+        //Test.Assert(complex.Fbinbuf.GetBytes()[0] == 126);
 
         Test.Assert(complex.Fslice.Length == 1);
         Test.Assert(complex.Fslice.GetBytes()[0] == 125);
@@ -205,7 +206,7 @@ internal class StructHelpers
         Test.Assert(complex.Fiterator == null);
         Test.Assert(complex.Fany_value == null);
         Test.Assert(complex.Fany_value_ptr == null);
-        Test.Assert(complex.Fbinbuf == null);
+        //Test.Assert(complex.Fbinbuf == null);
 
         Test.Assert(complex.Fslice.Length == 0);
         Test.Assert(complex.Fslice.Mem == IntPtr.Zero);

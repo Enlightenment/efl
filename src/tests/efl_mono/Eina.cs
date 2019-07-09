@@ -12,6 +12,7 @@ namespace TestSuite
 
 #if EFL_BETA
 
+/*
 class TestEinaBinbuf
 {
     private static readonly byte[] test_string = System.Text.Encoding.UTF8.GetBytes("0123456789ABCDEF");
@@ -308,6 +309,7 @@ class TestEinaBinbuf
         Test.Assert(t.binbuf_return_own_no_longer_own());
     }
 }
+*/
 
 #endif
 
@@ -826,6 +828,7 @@ class TestEinaArray
 
     // Integer //
 
+    /*
     public static void test_eina_array_int_in()
     {
         var t = new Dummy.TestObject();
@@ -898,6 +901,7 @@ class TestEinaArray
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
     }
+    */
 
     // String //
     public static void test_eina_array_str_in()
@@ -1884,6 +1888,7 @@ class TestEinaList
 
     // Integer //
 
+    /*
     public static void test_eina_list_int_in()
     {
         var t = new Dummy.TestObject();
@@ -1953,6 +1958,7 @@ class TestEinaList
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
     }
+    */
 
     // String //
     public static void test_eina_list_str_in()
@@ -2662,6 +2668,7 @@ class TestEinaHash
 
     // Integer //
 
+    /*
     public static void test_eina_hash_int_in()
     {
         var t = new Dummy.TestObject();
@@ -2743,6 +2750,7 @@ class TestEinaHash
         Test.Assert(hsh.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaHashIntReturnOwn());
     }
+    */
 
     // String //
 
