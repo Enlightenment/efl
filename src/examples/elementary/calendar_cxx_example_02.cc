@@ -39,6 +39,7 @@ struct appData
         }, _1, _2);
       // FIXME XAR: I broke this and I do not know how to fix it
       // cal.format_func_set(cb_a);
+      (void)cb_a;
    }
 
    void destroy() {
