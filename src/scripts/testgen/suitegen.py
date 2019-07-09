@@ -104,8 +104,18 @@ class ClassItem(ComItem):
             and not os.path.isfile(os.path.join(self.path, f.name))
         )
 
+        def get_all_inherited(leaf, getter):
+            print("Getting all items for leaf", leaf)
+            for item in getter(leaf):
+                yield item
+
+            for inherit in leaf.inherits_full:
+                for item in getter(inherit):
+                    yield item
+
         self.methods = [
-            FuncItem(m, self.path, keys) for m in filter(mfilter, self.comp.methods)
+            FuncItem(m, self.path, keys)
+            for m in filter(mfilter, get_all_inherited(self.comp, lambda x: x.methods))
         ]
         self._properties = [
             FuncItem(p, self.path, keys) for p in filter(mfilter, self.comp.properties)
