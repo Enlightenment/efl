@@ -363,8 +363,7 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
 #endif
 
         //Set Container's alpha color
-        if (clayer->mAlpha < 255)
-           efl_gfx_color_set(ctree, clayer->mAlpha, clayer->mAlpha, clayer->mAlpha, clayer->mAlpha);
+        efl_gfx_color_set(ctree, clayer->mAlpha, clayer->mAlpha, clayer->mAlpha, clayer->mAlpha);
 
         _update_vg_tree(ctree, clayer, depth+1);
 
@@ -443,8 +442,7 @@ vg_common_json_create_vg_node(Vg_File_Data *vfd)
         efl_key_data_set(root, _get_key_val((void *) tree), tree);
         vfd->root = root;
      }
-   if (tree->mAlpha < 255)
-      efl_gfx_color_set(root, tree->mAlpha, tree->mAlpha, tree->mAlpha, tree->mAlpha);
+   efl_gfx_color_set(root, tree->mAlpha, tree->mAlpha, tree->mAlpha, tree->mAlpha);
 
    _update_vg_tree(root, tree, 1);
 #else
