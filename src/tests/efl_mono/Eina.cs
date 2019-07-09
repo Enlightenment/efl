@@ -10,6 +10,8 @@ using static EinaTestData.BaseData;
 namespace TestSuite
 {
 
+#if EFL_BETA
+
 class TestEinaBinbuf
 {
     private static readonly byte[] test_string = System.Text.Encoding.UTF8.GetBytes("0123456789ABCDEF");
@@ -307,12 +309,15 @@ class TestEinaBinbuf
     }
 }
 
+#endif
+
 class TestEinaSlice
 {
     private static readonly byte[] base_seq = BaseSequence.Values();
     private static readonly GCHandle pinnedData = GCHandle.Alloc(base_seq, GCHandleType.Pinned);
     private static readonly IntPtr pinnedPtr = pinnedData.AddrOfPinnedObject();
 
+#if EFL_BETA
     public static void eina_slice_marshalling()
     {
         var binbuf = new Eina.Binbuf(base_seq);
@@ -323,6 +328,7 @@ class TestEinaSlice
         Test.Assert(slc.GetBytes().SequenceEqual(base_seq));
         Test.Assert(base_seq.Length == (int)(slc.Len));
     }
+#endif
 
     public static void eina_slice_size()
     {
@@ -330,12 +336,14 @@ class TestEinaSlice
         Test.Assert(Marshal.SizeOf(typeof(Eina.RwSlice)) == Marshal.SizeOf(typeof(UIntPtr)) + Marshal.SizeOf(typeof(IntPtr)));
     }
 
+#if EFL_BETA
     public static void pinned_data_set()
     {
         var binbuf = new Eina.Binbuf();
         binbuf.Append(new Eina.Slice().PinnedDataSet(pinnedPtr, (UIntPtr)3));
         Test.Assert(binbuf.GetBytes().SequenceEqual(base_seq));
     }
+#endif
 
     public static void test_eina_slice_in()
     {

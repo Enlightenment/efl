@@ -393,6 +393,16 @@ struct visitor_generate
              return c;
            }           
           }
+        , {"slice", nullptr, nullptr, [&]
+           {
+             return regular_type_def{" Eina.Slice", complex.outer.base_qualifier, {}};
+           }
+          }
+        , {"rw_slice", nullptr, nullptr, [&]
+           {
+             return regular_type_def{" Eina.RwSlice", complex.outer.base_qualifier, {}};
+           }
+          }
       };
 
       auto default_match = [&] (attributes::complex_type_def const& complex)

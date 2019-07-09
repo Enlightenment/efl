@@ -74,7 +74,7 @@ struct @free(free) Dummy.StructSimple
    fmyint: Dummy.MyInt;
 }
 
-struct @free(free) Dummy.StructComplex {
+struct @beta @free(free) Dummy.StructComplex {
    farray: array<ptr(int)>;
    flist: list<string>;
    fhash: hash<string, string>;
@@ -82,7 +82,7 @@ struct @free(free) Dummy.StructComplex {
    fany_value: any_value;
    fany_value_ptr: any_value_ptr;
    fbinbuf: ptr(Eina.Binbuf);
-   fslice: Eina.Slice;
+   fslice: slice<ubyte>;
    // fslice: ptr(Eina.Slice); // TODO
    fobj: Dummy.Numberwrapper;
 }
@@ -253,71 +253,71 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_slice_in {
          params {
-            @in slice: Eina.Slice;
+            @in slice: slice<ubyte>;
          }
          return: bool;
       }
 
       eina_rw_slice_in {
          params {
-            @in slice: Eina.Rw_Slice;
+            @in slice: rw_slice<ubyte>;
          }
          return: bool;
       }
 
       eina_slice_out {
          params {
-            @out slice: Eina.Slice;
+            @out slice: slice<ubyte>;
          }
          return: bool;
       }
 
       eina_rw_slice_out {
          params {
-            @out slice: Eina.Rw_Slice;
+            @out slice: rw_slice<ubyte>;
          }
          return: bool;
       }
 
       eina_rw_slice_inout {
          params {
-            @inout slice: Eina.Rw_Slice;
+            @inout slice: rw_slice<ubyte>;
          }
          return: bool;
       }
 
       /*
       eina_slice_return {
-         return: Eina.Slice;
+         return: slice<ubyte>;
       }
 
       eina_rw_slice_return {
-         return: Eina.Rw_Slice;
+         return: rw_slice<ubyte>;
       }
       */
 
-      eina_binbuf_in {
+      eina_binbuf_in @beta {
          params {
             @in binbuf: ptr(Eina.Binbuf);
          }
          return: bool;
       }
 
-      call_eina_binbuf_in {
+      call_eina_binbuf_in @beta {
          params {
             @in binbuf: ptr(Eina.Binbuf);
          }
          return: bool;
       }
 
-      eina_binbuf_in_own {
+      eina_binbuf_in_own @beta {
          params {
             @in binbuf: ptr(Eina.Binbuf) @owned;
          }
          return: bool;
       }
 
-      call_eina_binbuf_in_own {
+      call_eina_binbuf_in_own @beta {
         params {
             @in str: ptr(Eina.Binbuf) @owned;
         }
@@ -328,14 +328,14 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_binbuf_out {
+      eina_binbuf_out @beta {
          params {
             @out binbuf: ptr(Eina.Binbuf);
          }
          return: bool;
       }
 
-      call_eina_binbuf_out {
+      call_eina_binbuf_out @beta {
          return: ptr(Eina.Binbuf);
       }
 
@@ -343,22 +343,22 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_binbuf_out_own {
+      eina_binbuf_out_own @beta {
          params {
             @out binbuf: ptr(Eina.Binbuf) @owned;
          }
          return: bool;
       }
 
-      call_eina_binbuf_out_own {
+      call_eina_binbuf_out_own @beta {
          return: ptr(Eina.Binbuf) @owned;
       }
 
-      eina_binbuf_return {
+      eina_binbuf_return @beta {
          return: ptr(Eina.Binbuf);
       }
 
-      call_eina_binbuf_return {
+      call_eina_binbuf_return @beta {
          return: ptr(Eina.Binbuf);
       }
 
@@ -366,11 +366,11 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_binbuf_return_own {
+      eina_binbuf_return_own @beta {
          return: ptr(Eina.Binbuf) @owned;
       }
 
-      call_eina_binbuf_return_own {
+      call_eina_binbuf_return_own @beta {
          return: ptr(Eina.Binbuf) @owned;
       }
 
@@ -1400,57 +1400,57 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: ptr(Dummy.StructSimple) @owned;
       }
 
-      struct_complex_in {
+      struct_complex_in @beta {
          params {
             @in complex: Dummy.StructComplex;
          }
          return: bool;
       }
 
-      struct_complex_ptr_in {
+      struct_complex_ptr_in @beta {
          params {
             @in complex: ptr(Dummy.StructComplex);
          }
          return: bool;
       }
 
-      struct_complex_ptr_in_own {
+      struct_complex_ptr_in_own @beta {
          params {
             @in complex: ptr(Dummy.StructComplex) @owned;
          }
          return: bool;
       }
 
-      struct_complex_out {
+      struct_complex_out @beta {
          params {
             @out complex: Dummy.StructComplex;
          }
          return: bool;
       }
 
-      // struct_complex_ptr_out {
+      // struct_complex_ptr_out @beta {
       //    params {
       //       @out complex: ptr(Dummy.StructComplex);
       //    }
       //    return: bool;
       // }
       //
-      // struct_complex_ptr_out_own {
+      // struct_complex_ptr_out_own @beta {
       //    params {
       //       @out complex: ptr(Dummy.StructComplex) @owned;
       //    }
       //    return: bool;
       // }
 
-      struct_complex_return {
+      struct_complex_return @beta {
          return: Dummy.StructComplex;
       }
 
-      // struct_complex_ptr_return {
+      // struct_complex_ptr_return @beta {
       //    return: ptr(Dummy.StructComplex);
       // }
       //
-      // struct_complex_ptr_return_own {
+      // struct_complex_ptr_return_own @beta {
       //    return: ptr(Dummy.StructComplex) @owned;
       // }
 
@@ -1502,7 +1502,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
       }
 
-      emit_event_with_struct_complex {
+      emit_event_with_struct_complex @beta {
          params {
             @in data: Dummy.StructComplex;
          }
@@ -1627,7 +1627,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       evt,with,obj @hot: Dummy.Test_Object;
       evt,with,error @hot: Eina.Error;
       evt,with,struct @hot: Dummy.StructSimple;
-      evt,with,struct,complex @hot: Dummy.StructComplex;
+      evt,with,struct,complex @beta @hot: Dummy.StructComplex;
       evt,with,array @hot: const(array<string>);
       evt_with,under @hot: void;
 

@@ -152,6 +152,7 @@ class NativeInheritImpl : Dummy.TestObject
 
     // //
     //
+#if EFL_BETA
     override public bool EinaBinbufIn(Eina.Binbuf binbuf)
     {
         binbuf_in_flag = true;
@@ -280,6 +281,7 @@ class NativeInheritImpl : Dummy.TestObject
         binbuf_return_own_binbuf = null;
         return r;
     }
+#endif
 }
 
 } // EinaTestData

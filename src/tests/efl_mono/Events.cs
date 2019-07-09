@@ -176,6 +176,7 @@ class TestEoEvents
         Test.AssertEquals(sent_struct.Fstring, received_struct.Fstring);
     }
 
+#if EFL_BETA
     public static void event_with_struct_complex_payload()
     {
         var obj = new Dummy.TestObject();
@@ -191,6 +192,7 @@ class TestEoEvents
 
         Test.AssertEquals(sent_struct.Fobj, received_struct.Fobj);
     }
+#endif
 
     public static void event_with_array_payload()
     {
