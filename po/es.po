@@ -3,21 +3,20 @@
 # This file is put in the public domain.
 # Aníbal Garrido <khany@member.trisquel.info>, 2012.
 # Adrián Arévalo <adri58@gmail.com>, 2015.
-# Roy W. Reese <waterbearer54@gmx.com> 2015.
-#: src/lib/elementary/elm_config.c:4135
+# Roy W. Reese <waterbearer54@gmx.com>, 2019.
 msgid ""
 msgstr ""
 "Project-Id-Version: elementary\n"
 "Report-Msgid-Bugs-To: enlightenment-devel@lists.sourceforge.net\n"
 "POT-Creation-Date: 2019-04-15 12:03+0100\n"
-"PO-Revision-Date: 2015-05-03 18:19+0100\n"
-"Last-Translator: Adrián Arévalo <adri58@gmail.com>\n"
+"PO-Revision-Date: 2019-07-09 10:28+0200\n"
+"Last-Translator: Roy W. Reese <waterbearer54@gmx.com>\n"
 "Language-Team: Enlightenment Team\n"
 "Language: es\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 1.7.5\n"
+"X-Generator: Poedit 2.0.2\n"
 
 #: src/lib/ecore/ecore_getopt.c:89
 msgid "Version:"
@@ -92,7 +91,7 @@ msgstr "ERROR: "
 #: src/lib/ecore/ecore_getopt.c:1300 src/lib/ecore/ecore_getopt.c:1347
 #: src/lib/ecore/ecore_getopt.c:1467 src/lib/ecore/ecore_getopt.c:1508
 msgid "value has no pointer set.\n"
-msgstr "no se definió el valor.\n"
+msgstr "valor sin puntero establecido.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1144 src/lib/ecore/ecore_getopt.c:1367
 #, c-format
@@ -107,15 +106,15 @@ msgstr "formato numérico inválido %s\n"
 #: src/lib/ecore/ecore_getopt.c:1313
 #, c-format
 msgid "invalid choice \"%s\". Valid values are: "
-msgstr "Elección inválida \"%s\". Los valores válidos son:"
+msgstr "elección inválida \"%s\". Los valores válidos son:"
 
 #: src/lib/ecore/ecore_getopt.c:1341
 msgid "missing parameter to append.\n"
-msgstr "falta parámetro a añadir.\n"
+msgstr "falta parámetro a anexionar.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1445
 msgid "could not parse value.\n"
-msgstr "incapaz de procesar el valor.\n"
+msgstr "incapaz de analizar el valor.\n"
 
 #: src/lib/ecore/ecore_getopt.c:1502
 msgid "missing parameter.\n"
@@ -270,8 +269,9 @@ msgid "State: Disabled"
 msgstr "Estado: Desactivado"
 
 #: src/lib/elementary/elc_hoversel.c:652
+#, fuzzy
 msgid "Hoversel"
-msgstr ""
+msgstr "Hoversel"
 
 #: src/lib/elementary/elc_multibuttonentry.c:682
 msgid "multi button entry label"
@@ -291,9 +291,8 @@ msgid "Title"
 msgstr "Título"
 
 #: src/lib/elementary/elc_naviframe.c:415
-#, fuzzy
 msgid "Subtitle"
-msgstr "Título"
+msgstr "Subtítulo"
 
 #: src/lib/elementary/elc_naviframe.c:968
 #: src/lib/elementary/elc_naviframe.c:1186
@@ -305,18 +304,16 @@ msgid "Next"
 msgstr "Siguiente"
 
 #: src/lib/elementary/elc_popup.c:320 src/lib/elementary/elc_popup.c:984
-#, fuzzy
 msgid "Popup Title"
-msgstr "Nombre emergente"
+msgstr "Título del cuadro emergente"
 
 #: src/lib/elementary/elc_popup.c:330 src/lib/elementary/elc_popup.c:1060
-#, fuzzy
 msgid "Popup Body Text"
-msgstr "Texto emergente"
+msgstr "Texto del cuadro emergente"
 
 #: src/lib/elementary/elc_popup.c:1836
 msgid "Alert"
-msgstr ""
+msgstr "Alerta"
 
 #: src/lib/elementary/elm_bubble.c:163
 msgid "Bubble"
@@ -376,16 +373,17 @@ msgstr "mes del calendario"
 msgid "calendar year"
 msgstr "año del calendario"
 
-# RR: Traducción italiana usa ativado/desactivado. No sé a que refiere la cadena.
+# RR: antiguamente "conectado"
 #: src/lib/elementary/efl_ui_check.c:76 src/lib/elementary/efl_ui_check.c:200
 #: src/lib/elementary/efl_ui_radio.c:136 src/lib/elementary/efl_ui_radio.c:202
 msgid "State: On"
-msgstr "Estado: Conectado"
+msgstr "Estado: Habilitado"
 
+# RR: antinguamente "desconectado"
 #: src/lib/elementary/efl_ui_check.c:96 src/lib/elementary/efl_ui_check.c:212
 #: src/lib/elementary/efl_ui_radio.c:204
 msgid "State: Off"
-msgstr "Estado: Desconectado"
+msgstr "Estado: Deshabilitado"
 
 #: src/lib/elementary/efl_ui_check.c:196 src/lib/elementary/efl_ui_check.c:209
 msgid "State"
@@ -411,30 +409,31 @@ msgstr "Estado: Editable"
 msgid "Clock"
 msgstr "Reloj"
 
+# RR: Siguentes colores usan las letras initiales del inglés
 #: src/lib/elementary/elm_colorselector.c:939
 msgid "Pick a color"
-msgstr ""
+msgstr "Elija un color"
 
 #: src/lib/elementary/elm_colorselector.c:977
 msgid "R:"
-msgstr ""
+msgstr "R:"
 
 #: src/lib/elementary/elm_colorselector.c:979
 msgid "G:"
-msgstr ""
+msgstr "G:"
 
 #: src/lib/elementary/elm_colorselector.c:981
 msgid "B:"
-msgstr ""
+msgstr "B:"
 
 #: src/lib/elementary/elm_colorselector.c:983
 msgid "A:"
-msgstr ""
+msgstr "A:"
 
 # RR: Antiguamente - "Paleta de selección de color", pero creo que refiere a un selector como en las cadenas más abajo.
 #: src/lib/elementary/elm_colorselector.c:1707
 msgid "color selector palette item"
-msgstr "Selector de color de paleta"
+msgstr "selector de color de paleta"
 
 #. TRANSLATORS: This string is special and defines if the language
 #. by default is a Left To Right or Right To Left language. Most
@@ -448,11 +447,11 @@ msgstr "default:LTR"
 
 #: src/lib/elementary/elm_dayselector.c:437
 msgid "day selector item"
-msgstr "Selector de día"
+msgstr "selector de día"
 
 #: src/lib/elementary/elm_diskselector.c:701
 msgid "diskselector item"
-msgstr "Selector de disco"
+msgstr "selector de disco"
 
 #: src/lib/elementary/elm_entry.c:1749
 msgid "Cut"
@@ -533,11 +532,11 @@ msgstr "deslizador"
 
 #: src/lib/elementary/elm_spinner.c:1071
 msgid "incremented"
-msgstr ""
+msgstr "incrementado"
 
 #: src/lib/elementary/elm_spinner.c:1077
 msgid "decremented"
-msgstr ""
+msgstr "decrementado"
 
 #: src/lib/elementary/elm_spinner.c:1110 src/lib/elementary/elm_spinner.c:1177
 msgid "spinner"
@@ -552,9 +551,8 @@ msgid "spinner decrement button"
 msgstr "botón de decremento del spinner"
 
 #: src/lib/elementary/elm_spinner.c:1124
-#, fuzzy
 msgid "spinner text"
-msgstr "spinner"
+msgstr "text del spinner"
 
 #: src/lib/elementary/elm_toolbar.c:1753 src/lib/elementary/elm_toolbar.c:2355
 msgid "Selected"
