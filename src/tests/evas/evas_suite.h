@@ -22,5 +22,6 @@ void evas_test_mask(TCase *tc);
 void evas_test_evasgl(TCase *tc);
 void evas_test_object_smart(TCase *tc);
 void evas_test_matrix(TCase *tc);
+void evas_test_events(TCase *tc);
 
 #endif /* _EVAS_SUITE_H */
