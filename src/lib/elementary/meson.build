@@ -937,6 +937,7 @@ elementary_src = [
   'efl_ui_clickable.c',
   'efl_ui_clickable_util.c',
   'efl_ui_format.c',
+  'efl_ui_scroll_util.c',
 ]
 
 elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, efreet_mime, efreet_trash, eio, atspi, dl, intl]
