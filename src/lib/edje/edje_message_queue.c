@@ -354,13 +354,14 @@ _edje_message_new(Edje *ed, Edje_Queue queue, Edje_Message_Type type, int id)
    Edje_Message *em;
 
    em = _edje_msg_trash_pop();
-   if (!em) em = calloc(1, sizeof(Edje_Message));
+   if (em) memset(em, 0, sizeof(Edje_Message));
+   else em = calloc(1, sizeof(Edje_Message));
    if (!em) return NULL;
    em->edje = ed;
+   em->edje->message.num++;
    em->queue = queue;
    em->type = type;
    em->id = id;
-   em->edje->message.num++;
    return em;
 }
 
