@@ -804,6 +804,11 @@ _evas_render_phase1_object_mapped(Phase1_Context *p1ctx,
         _evas_render_phase1_object_process(p1ctx, obj2, obj->restack,
                                            EINA_TRUE, src_changed, level + 1);
      }
+
+   /* Restacked mapped object should be used as a redraw rect.
+      The "phase 2. force updates for restack" will use restack_objects. */
+   if (EINA_UNLIKELY(obj->restack))
+     OBJ_ARRAY_PUSH(p1ctx->restack_objects, obj);
 }
 
 static void
