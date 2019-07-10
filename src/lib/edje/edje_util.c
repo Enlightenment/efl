@@ -2004,24 +2004,6 @@ _edje_object_part_text_raw_set(Edje *ed, Evas_Object *obj, Edje_Real_Part *rp, c
 }
 
 Edje_User_Defined *
-_edje_user_definition_fetch(Edje *ed,
-                             const char *part, Edje_User_Defined_Type type)
-{
-   Edje_User_Defined *eud;
-   Eina_List *l;
-
-   EINA_LIST_FOREACH(ed->user_defined, l, eud)
-     {
-        if (eud->type == type && !strcmp(eud->part, part))
-          {
-             return eud;
-          }
-     }
-   eud = _edje_user_definition_new(type, part, ed);
-   return eud;
-}
-
-Edje_User_Defined *
 _edje_user_text_style_definition_fetch(Edje *ed, const char *part)
 {
    Edje_User_Defined *eud;
