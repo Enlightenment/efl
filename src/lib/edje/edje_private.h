@@ -1738,7 +1738,7 @@ struct _Edje
 #endif
    double                duration_scale;
    double                paused_at;
-   Eina_List            *user_defined;
+   Eina_Hash            *user_defined;
    lua_State            *L;
    Eina_Inlist          *lua_objs;
 

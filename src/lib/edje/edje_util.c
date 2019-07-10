@@ -61,10 +61,47 @@ static void      _edje_child_remove(Edje *ed, Edje_Real_Part *rp, Evas_Object *c
 
 Edje_Real_Part  *_edje_real_part_recursive_get_helper(Edje **ed, char **path);
 
+static void
+_edje_user_definition_free_internal(Edje_User_Defined *eud)
+{
+   Evas_Object *child = NULL;
+   switch (eud->type)
+     {
+      case EDJE_USER_SWALLOW:
+        child = eud->u.swallow.child;
+        break;
+
+      case EDJE_USER_BOX_PACK:
+        child = eud->u.box.child;
+        break;
+
+      case EDJE_USER_TABLE_PACK:
+        child = eud->u.table.child;
+        break;
+
+      default: break;
+     }
+   if (child) evas_object_event_callback_del_full(child, EVAS_CALLBACK_DEL, _edje_user_def_del_cb, eud);
+   eina_stringshare_del(eud->part);
+   free(eud);
+}
+
+static void
+_edje_user_definition_list_free_internal(Eina_List *l)
+{
+   Edje_User_Defined *eud;
+   EINA_LIST_FREE(l, eud)
+     _edje_user_definition_free_internal(eud);
+}
+
 static Edje_User_Defined *
 _edje_user_definition_new(Edje_User_Defined_Type type, const char *part, Edje *ed)
 {
    Edje_User_Defined *eud;
+
+   if (!ed->user_defined)
+     ed->user_defined = eina_hash_string_superfast_new((Eina_Free_Cb)_edje_user_definition_list_free_internal);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(ed->user_defined, NULL);
 
    eud = malloc(sizeof (Edje_User_Defined));
    if (!eud) return NULL;
@@ -72,33 +109,19 @@ _edje_user_definition_new(Edje_User_Defined_Type type, const char *part, Edje *e
    eud->type = type;
    eud->part = eina_stringshare_add(part);
    eud->ed = ed;
-   ed->user_defined = eina_list_append(ed->user_defined, eud);
+   eina_hash_list_direct_append(ed->user_defined, eud->part, eud);
 
    return eud;
 }
 
 void
-_edje_user_definition_remove(Edje_User_Defined *eud, Evas_Object *child)
-{
-   eud->ed->user_defined = eina_list_remove(eud->ed->user_defined, eud);
-
-   if (child) evas_object_event_callback_del_full(child, EVAS_CALLBACK_DEL, _edje_user_def_del_cb, eud);
-   eina_stringshare_del(eud->part);
-   free(eud);
-}
-
-void
 _edje_user_definition_free(Edje_User_Defined *eud)
 {
-   Evas_Object *child = NULL;
    Edje_Real_Part *rp;
-
-   eud->ed->user_defined = eina_list_remove(eud->ed->user_defined, eud);
 
    switch (eud->type)
      {
       case EDJE_USER_SWALLOW:
-        child = eud->u.swallow.child;
         rp = _edje_real_part_recursive_get(&eud->ed, eud->part);
         if (rp)
           {
@@ -125,15 +148,13 @@ _edje_user_definition_free(Edje_User_Defined *eud)
         break;
 
       case EDJE_USER_BOX_PACK:
-        child = eud->u.box.child;
         rp = _edje_real_part_recursive_get(&eud->ed, eud->part);
-        if (rp) _edje_child_remove(eud->ed, rp, child);
+        if (rp) _edje_child_remove(eud->ed, rp, eud->u.box.child);
         break;
 
       case EDJE_USER_TABLE_PACK:
-        child = eud->u.table.child;
         rp = _edje_real_part_recursive_get(&eud->ed, eud->part);
-        if (rp) _edje_child_remove(eud->ed, rp, child);
+        if (rp) _edje_child_remove(eud->ed, rp, eud->u.table.child);
         break;
 
       case EDJE_USER_TEXT_STYLE:
@@ -155,7 +176,8 @@ _edje_user_definition_free(Edje_User_Defined *eud)
         break;
      }
 
-   _edje_user_definition_remove(eud, child);
+   eina_hash_list_remove(eud->ed->user_defined, eud->part, eud);
+   _edje_user_definition_free_internal(eud);
 }
 
 static void
@@ -2007,15 +2029,11 @@ Edje_User_Defined *
 _edje_user_text_style_definition_fetch(Edje *ed, const char *part)
 {
    Edje_User_Defined *eud;
-   Eina_List *l;
+   Eina_List *l, *ll;
 
-   EINA_LIST_FOREACH(ed->user_defined, l, eud)
-     {
-        if (eud->type == EDJE_USER_TEXT_STYLE && !strcmp(eud->part, part))
-          {
-             break;
-          }
-     }
+   l = eina_hash_find(ed->user_defined, part);
+   EINA_LIST_FOREACH(l, ll, eud)
+     if (eud->type == EDJE_USER_TEXT_STYLE) break;
 
    if (!eud)
      {
@@ -2032,15 +2050,11 @@ Edje_User_Defined *
 _edje_user_text_expand_definition_fetch(Edje *ed, const char *part)
 {
    Edje_User_Defined *eud;
-   Eina_List *l;
+   Eina_List *l, *ll;
 
-   EINA_LIST_FOREACH(ed->user_defined, l, eud)
-     {
-        if (eud->type == EDJE_USER_TEXT_EXPAND && !strcmp(eud->part, part))
-          {
-             break;
-          }
-     }
+   l = eina_hash_find(ed->user_defined, part);
+   EINA_LIST_FOREACH(l, ll, eud)
+     if (eud->type == EDJE_USER_TEXT_EXPAND) break;
 
    if (!eud)
      {
@@ -2059,10 +2073,11 @@ _edje_user_define_string(Edje *ed, const char *part, const char *raw_text, Edje_
       rp. So on edje_object_file_set, we should first ref it, before destroying the old
       layout. */
    Edje_User_Defined *eud;
-   Eina_List *l;
+   Eina_List *l, *ll;
 
-   EINA_LIST_FOREACH(ed->user_defined, l, eud)
-     if (eud->type == EDJE_USER_STRING && !strcmp(eud->part, part))
+   l = eina_hash_find(ed->user_defined, part);
+   EINA_LIST_FOREACH(l, ll, eud)
+     if (eud->type == EDJE_USER_STRING)
        {
           if (!raw_text)
             {
@@ -3349,18 +3364,24 @@ _efl_canvas_layout_content_remove(Eo *obj EINA_UNUSED, Edje *ed, Evas_Object *ob
 {
    Edje_Real_Part *rp;
    Edje_User_Defined *eud;
-   Eina_List *l;
+   Eina_Iterator *it;
+   Eina_List *l, *ll;
 
    rp = _swallow_real_part_get(obj_swallow);
    if (!rp) return EINA_FALSE;
 
-   EINA_LIST_FOREACH(ed->user_defined, l, eud)
-     if ((eud->type == EDJE_USER_SWALLOW) && (eud->u.swallow.child == obj_swallow))
-       {
-          _edje_user_definition_free(eud);
-          return EINA_TRUE;
-       }
-
+   it = eina_hash_iterator_data_new(ed->user_defined);
+   EINA_ITERATOR_FOREACH(it, l)
+     {
+        EINA_LIST_FOREACH(l, ll, eud)
+          if ((eud->type == EDJE_USER_SWALLOW) && (eud->u.swallow.child == obj_swallow))
+            {
+               _edje_user_definition_free(eud);
+               eina_iterator_free(it);
+               return EINA_TRUE;
+            }
+     }
+   eina_iterator_free(it);
    _edje_real_part_swallow_clear(ed, rp);
    rp->typedata.swallow->swallowed_object = NULL;
    rp->typedata.swallow->swallow_params.min.w = 0;
@@ -3899,15 +3920,16 @@ _edje_object_part_drag_value_set(Edje *ed, const char *part, double dx, double d
 {
    Edje_Real_Part *rp;
    Edje_User_Defined *eud;
-   Eina_List *l;
+   Eina_List *l, *ll;
 
    if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return EINA_FALSE;
    if (!rp->drag) return EINA_FALSE;
 
-   EINA_LIST_FOREACH(ed->user_defined, l, eud)
-     if (eud->type == EDJE_USER_DRAG_VALUE && !strcmp(part, eud->part))
+   l = eina_hash_find(ed->user_defined, part);
+   EINA_LIST_FOREACH(l, ll, eud)
+     if (eud->type == EDJE_USER_DRAG_VALUE)
        {
           eud->u.drag_position.x = dx;
           eud->u.drag_position.y = dy;
@@ -3984,15 +4006,16 @@ _edje_object_part_drag_size_set(Edje *ed, const char *part, double dw, double dh
 {
    Edje_Real_Part *rp;
    Edje_User_Defined *eud;
-   Eina_List *l;
+   Eina_List *l, *ll;
 
    if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return EINA_FALSE;
    if (!rp->drag) return EINA_FALSE;
 
-   EINA_LIST_FOREACH(ed->user_defined, l, eud)
-     if (eud->type == EDJE_USER_DRAG_SIZE && !strcmp(part, eud->part))
+   l = eina_hash_find(ed->user_defined, part);
+   EINA_LIST_FOREACH(l, ll, eud)
+     if (eud->type == EDJE_USER_DRAG_SIZE)
        {
           eud->u.drag_size.w = dw;
           eud->u.drag_size.h = dh;
@@ -4063,15 +4086,16 @@ _edje_object_part_drag_step_set(Edje *ed, const char *part, double dx, double dy
 {
    Edje_Real_Part *rp;
    Edje_User_Defined *eud;
-   Eina_List *l;
+   Eina_List *l, *ll;
 
    if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return EINA_FALSE;
    if (!rp->drag) return EINA_FALSE;
 
-   EINA_LIST_FOREACH(ed->user_defined, l, eud)
-     if (eud->type == EDJE_USER_DRAG_STEP && !strcmp(part, eud->part))
+   l = eina_hash_find(ed->user_defined, part);
+   EINA_LIST_FOREACH(l, ll, eud)
+     if (eud->type == EDJE_USER_DRAG_STEP)
        {
           eud->u.drag_position.x = dx;
           eud->u.drag_position.y = dy;
@@ -4135,15 +4159,16 @@ _edje_object_part_drag_page_set(Edje *ed, const char *part, double dx, double dy
 {
    Edje_Real_Part *rp;
    Edje_User_Defined *eud;
-   Eina_List *l;
+   Eina_List *l, *ll;
 
    if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return EINA_FALSE;
    if (!rp->drag) return EINA_FALSE;
 
-   EINA_LIST_FOREACH(ed->user_defined, l, eud)
-     if (eud->type == EDJE_USER_DRAG_PAGE && !strcmp(part, eud->part))
+   l = eina_hash_find(ed->user_defined, part);
+   EINA_LIST_FOREACH(l, ll, eud)
+     if (eud->type == EDJE_USER_DRAG_PAGE)
        {
           eud->u.drag_position.x = dx;
           eud->u.drag_position.y = dy;
@@ -4208,15 +4233,16 @@ _edje_object_part_drag_step(Edje *ed, const char *part, double dx, double dy)
    Edje_Real_Part *rp;
    FLOAT_T px, py;
    Edje_User_Defined *eud;
-   Eina_List *l;
+   Eina_List *l, *ll;
 
    if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return EINA_FALSE;
    if (!rp->drag) return EINA_FALSE;
 
-   EINA_LIST_FOREACH(ed->user_defined, l, eud)
-     if (eud->type == EDJE_USER_DRAG_STEP && !strcmp(part, eud->part))
+   l = eina_hash_find(ed->user_defined, part);
+   EINA_LIST_FOREACH(l, ll, eud)
+     if (eud->type == EDJE_USER_DRAG_STEP)
        {
           eud->u.drag_position.x = dx;
           eud->u.drag_position.y = dy;
@@ -4259,15 +4285,16 @@ _edje_object_part_drag_page(Edje *ed, const char *part, double dx, double dy)
    Edje_Real_Part *rp;
    FLOAT_T px, py;
    Edje_User_Defined *eud;
-   Eina_List *l;
+   Eina_List *l, *ll;
 
    if ((!ed) || (!part)) return EINA_FALSE;
    rp = _edje_real_part_recursive_get(&ed, part);
    if (!rp) return EINA_FALSE;
    if (!rp->drag) return EINA_FALSE;
 
-   EINA_LIST_FOREACH(ed->user_defined, l, eud)
-     if (eud->type == EDJE_USER_DRAG_PAGE && !strcmp(part, eud->part))
+   l = eina_hash_find(ed->user_defined, part);
+   EINA_LIST_FOREACH(l, ll, eud)
+     if (eud->type == EDJE_USER_DRAG_PAGE)
        {
           eud->u.drag_position.x = dx;
           eud->u.drag_position.y = dy;
@@ -4459,6 +4486,21 @@ _edje_part_box_insert_at(Edje *ed, const char *part, Evas_Object *child, unsigne
    return ret;
 }
 
+static void
+_edje_part_box_remove_user_definition(Edje *ed, Eina_Stringshare *part, Evas_Object *child)
+{
+   Edje_User_Defined *eud;
+   Eina_List *l, *ll;
+
+   l = eina_hash_find(ed->user_defined, part);
+   EINA_LIST_FOREACH(l, ll, eud)
+     if (eud->type == EDJE_USER_BOX_PACK && eud->u.box.child == child)
+       {
+          _edje_user_definition_free(eud);
+          return;
+       }
+}
+
 Evas_Object *
 _edje_part_box_remove(Edje *ed, const char *part, Evas_Object *child)
 {
@@ -4473,18 +4515,7 @@ _edje_part_box_remove(Edje *ed, const char *part, Evas_Object *child)
 
    r = _edje_real_part_box_remove(ed, rp, child);
 
-   if (r)
-     {
-        Edje_User_Defined *eud;
-        Eina_List *l;
-
-        EINA_LIST_FOREACH(ed->user_defined, l, eud)
-          if (eud->type == EDJE_USER_BOX_PACK && eud->u.box.child == child && !strcmp(eud->part, part))
-            {
-               _edje_user_definition_free(eud);
-               return r;
-            }
-     }
+   if (r) _edje_part_box_remove_user_definition(ed, part, r);
    return r;
 }
 
@@ -4502,18 +4533,7 @@ _edje_part_box_remove_at(Edje *ed, const char *part, unsigned int pos)
 
    r = _edje_real_part_box_remove_at(ed, rp, pos);
 
-   if (r)
-     {
-        Edje_User_Defined *eud;
-        Eina_List *l;
-
-        EINA_LIST_FOREACH(ed->user_defined, l, eud)
-          if (eud->type == EDJE_USER_BOX_PACK && eud->u.box.child == r && !strcmp(eud->part, part))
-            {
-               _edje_user_definition_free(eud);
-               return r;
-            }
-     }
+   if (r) _edje_part_box_remove_user_definition(ed, part, r);
    return r;
 }
 
@@ -4549,15 +4569,7 @@ _edje_part_box_remove_all(Edje *ed, const char *part, Eina_Bool clear)
    if (_edje_real_part_box_remove_all(ed, rp, clear))
      {
         ret = EINA_TRUE;
-        Edje_User_Defined *eud;
-        Eina_List *ll, *l;
-
-        EINA_LIST_FOREACH_SAFE(ed->user_defined, l, ll, eud)
-          if (eud->type == EDJE_USER_BOX_PACK && !strcmp(eud->part, part))
-            {
-               _edje_user_definition_free(eud);
-               return ret;
-            }
+        eina_hash_del_by_key(ed->user_defined, part);
      }
 
    return ret;
@@ -4642,16 +4654,16 @@ _edje_child_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *child, void *ei
 {
    Edje_Real_Part *rp = data;
    Edje_User_Defined *eud;
-   Eina_List *l;
+   Eina_List *l, *ll;
    Edje *ed = evas_object_data_get(child, ".edje");
 
    if (!ed) return;
-   EINA_LIST_FOREACH(ed->user_defined, l, eud)
+   l = eina_hash_find(ed->user_defined, rp->part->name);
+   EINA_LIST_FOREACH(l, ll, eud)
      if (rp->part->type == EDJE_PART_TYPE_BOX)
        {
           if (eud->type == EDJE_USER_BOX_PACK &&
-              eud->u.box.child == child &&
-              !strcmp(rp->part->name, eud->part))
+              eud->u.box.child == child)
             {
                _edje_user_definition_free(eud);
                break;
@@ -4660,8 +4672,7 @@ _edje_child_del_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *child, void *ei
      else if (rp->part->type == EDJE_PART_TYPE_TABLE)
        {
           if (eud->type == EDJE_USER_TABLE_PACK &&
-              eud->u.table.child == child &&
-              !strcmp(rp->part->name, eud->part))
+              eud->u.table.child == child)
             {
                _edje_user_definition_free(eud);
                break;
@@ -4952,12 +4963,12 @@ _edje_part_table_unpack(Edje *ed, const char *part, Evas_Object *child_obj)
      {
         ret = EINA_TRUE;
         Edje_User_Defined *eud;
-        Eina_List *l;
+        Eina_List *l, *ll;
 
-        EINA_LIST_FOREACH(ed->user_defined, l, eud)
+        l = eina_hash_find(ed->user_defined, part);
+        EINA_LIST_FOREACH(l, ll, eud)
           if (eud->type == EDJE_USER_TABLE_PACK &&
-              eud->u.table.child == child_obj &&
-              !strcmp(part, eud->part))
+              eud->u.table.child == child_obj)
             {
                _edje_user_definition_free(eud);
                break;
@@ -5881,18 +5892,24 @@ void
 _edje_object_part_swallow_free_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
 {
    Edje_User_Defined *eud;
-   Eina_List *l;
+   Eina_List *l, *ll;
+   Eina_Iterator *it;
    Edje *ed;
    Edje_Real_Part *rp;
 
    ed = evas_object_data_get(obj, ".edje");
    if (!ed) return;
-   EINA_LIST_FOREACH(ed->user_defined, l, eud)
-     if (eud->type == EDJE_USER_SWALLOW && eud->u.swallow.child == obj)
-       {
-          _edje_user_definition_free(eud);
-          break;
-       }
+   it = eina_hash_iterator_data_new(ed->user_defined);
+   EINA_ITERATOR_FOREACH(it, l)
+     {
+        EINA_LIST_FOREACH(l, ll, eud)
+          if (eud->type == EDJE_USER_SWALLOW && eud->u.swallow.child == obj)
+            {
+               _edje_user_definition_free(eud);
+               goto out;
+            }
+     }
+out:
    rp = evas_object_data_get(obj, "\377 edje.swallowing_part");
    if (rp && (rp->part->type == EDJE_PART_TYPE_SWALLOW))
      edje_object_part_unswallow(ed->obj, obj);
