@@ -1,4 +1,4 @@
-enum @beta Efl.Input.Device_Type
+enum Efl.Input.Device_Type
 {
    [[General type of input device.
 
@@ -19,7 +19,7 @@ enum @beta Efl.Input.Device_Type
   @property canvas { values { canvas: Efl.Canvas; } }
 */
 
-class @beta Efl.Input.Device extends Efl.Object
+class Efl.Input.Device extends Efl.Object
 {
    [[Represents a pointing device such as a touch finger, pen or mouse.
    ]]

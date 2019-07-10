@@ -1,4 +1,4 @@
-struct Efl.Ui.Clickable_Clicked {
+struct @beta Efl.Ui.Clickable_Clicked {
    [[A struct that expresses a click in elementary.]]
    repeated : int; [[The amount of how often the clicked event was repeated in a certain amount of time]]
    button : int; [[The Button that is pressed]]

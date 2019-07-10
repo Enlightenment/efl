@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Box extends Efl.Ui.Widget implements Efl.Pack_Linear, Efl.Pack_Layout,
+class Efl.Ui.Box extends Efl.Ui.Widget implements Efl.Pack_Linear, Efl.Pack_Layout,
                   Efl.Ui.Layout_Orientable, Efl.Gfx.Arrangement
 {
    [[A container that arranges children widgets in a vertical or horizontal fashion.

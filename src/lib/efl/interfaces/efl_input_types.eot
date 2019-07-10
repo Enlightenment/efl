@@ -1,4 +1,4 @@
-enum @beta Efl.Pointer.Action
+enum Efl.Pointer.Action
 {
    [[Pointer event type. Represents which kind of event this is.
 
@@ -18,7 +18,7 @@ enum @beta Efl.Pointer.Action
    axis,   [[Axis event (pen, stick, ...).]]
 }
 
-enum @beta Efl.Pointer.Flags
+enum Efl.Pointer.Flags
 {
    [[Pointer flags indicating whether a double or triple click is under way.
 
@@ -29,7 +29,7 @@ enum @beta Efl.Pointer.Flags
    triple_click = (1 << 1), [[This mouse button press was the 3rd press of a triple click]]
 }
 
-enum @beta Efl.Input.Flags
+enum Efl.Input.Flags
 {
    [[Special flags set during an input event propagation.
 
@@ -74,7 +74,7 @@ enum @beta Efl.Input.Object_Pointer_Mode {
                             ]]
 }
 
-enum @beta Efl.Input.Value {
+enum @beta Efl.Input.Value  {
    [[Keys for the generic values of all events.
 
      @since 1.19

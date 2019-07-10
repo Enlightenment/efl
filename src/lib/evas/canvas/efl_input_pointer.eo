@@ -1,6 +1,6 @@
 import efl_input_types;
 
-class @beta Efl.Input.Pointer extends Efl.Object implements Efl.Input.Event, Efl.Input.State
+class Efl.Input.Pointer extends Efl.Object implements Efl.Input.Event, Efl.Input.State
 {
    [[Event data carried over with any pointer event (mouse, touch, pen, ...)
    ]]
@@ -11,7 +11,7 @@ class @beta Efl.Input.Pointer extends Efl.Object implements Efl.Input.Event, Efl
             act: Efl.Pointer.Action; [[Event action]]
          }
       }
-      @property value_has {
+      @property value_has @beta {
          [[$true if this event carries a valid value for the specified $key.]]
          get {}
          keys {
@@ -21,7 +21,7 @@ class @beta Efl.Input.Pointer extends Efl.Object implements Efl.Input.Event, Efl
             has: bool; [[$true if input value is valid, $false otherwise]]
          }
       }
-      @property value {
+      @property value @beta  {
          [[Represents a generic value for this event.
 
            Refer to the documentation of @Efl.Input.Value for each value's
