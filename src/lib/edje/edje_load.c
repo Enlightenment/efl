@@ -1621,11 +1621,23 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                                       child = eud->u.table.child;
                                       break;
                                     case EDJE_USER_STRING:
+                                      eina_stringshare_del(eud->u.string.text);
+                                      /* string has extra ref in this case */
+                                      if (!had_file)
+                                        eina_stringshare_del(eud->u.string.text);
+                                      break;
                                     case EDJE_USER_DRAG_STEP:
                                     case EDJE_USER_DRAG_PAGE:
                                     case EDJE_USER_DRAG_VALUE:
                                     case EDJE_USER_DRAG_SIZE:
+                                      break;
                                     case EDJE_USER_TEXT_STYLE:
+                                      {
+                                         Edje_Part_Text_Prop *prop;
+                                         EINA_LIST_FREE(eud->u.text_style.props, prop)
+                                           free(prop);
+                                      }
+                                    break;
                                     case EDJE_USER_TEXT_EXPAND:
                                     default:
                                       break;
