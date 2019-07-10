@@ -779,6 +779,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
    int group_path_started = 0;
    Evas_Object *nested_smart = NULL;
    char lang[PATH_MAX];
+   Eina_Bool had_file;
    Eina_Hash *part_match = NULL;
 
    /* Get data pointer of top-of-stack */
@@ -793,6 +794,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
      {
         return 0;
      }
+   had_file = !!ed->file;
 
    tev = evas_object_evas_get(obj);
    evas_event_freeze(tev);
@@ -1696,6 +1698,9 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                                            break;
                                         }
                                       eina_stringshare_del(eud->u.string.text);
+                                      /* string has extra ref in this case */
+                                      if (!had_file)
+                                        eina_stringshare_del(eud->u.string.text);
                                       break;
 
                                     case EDJE_USER_TEXT_STYLE:
