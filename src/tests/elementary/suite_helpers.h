@@ -11,4 +11,5 @@ void fail_on_errors_teardown(void);
 void fail_on_errors_setup(void);
 
 void get_me_to_those_events(Eo *obj);
+void click_object(Eo *obj);
 #endif
