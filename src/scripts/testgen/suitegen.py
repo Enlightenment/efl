@@ -116,14 +116,13 @@ class ClassItem(ComItem):
                 print("Inherit", inherit)
                 for item in getter(inherit):
                     print("Checking item", item.full_c_method_name)
-                    if (item.full_c_method_name not in names):
+                    if item.full_c_method_name not in names:
                         print("Adding item", item.full_c_method_name)
                         names.add(item.full_c_method_name)
                         yield item
 
         self.methods = [
-            FuncItem(m, self.path, keys)
-            for m in filter(mfilter, get_all_inherited(self.comp, lambda x: x.methods))
+            FuncItem(m, self.path, keys) for m in filter(mfilter, self.comp.methods)
         ]
         self._properties = [
             FuncItem(p, self.path, keys) for p in filter(mfilter, self.comp.properties)
@@ -131,24 +130,27 @@ class ClassItem(ComItem):
         self.events = [EventItem(s, self.path, keys) for s in self.comp.events]
 
         if self.keys.funclist in (
-            Function_List_Type.INHERITIS,
-            Function_List_Type.INHERITIS_FULL,
+            Function_List_Type.INHERITS,
+            Function_List_Type.INHERITS_FULL,
         ):
             for eoclass in (
-                eoclass.inherits
-                if self.keys.funclist == Function_List_Type.INHERITIS
-                else eoclass.inherits_full
+                self.comp.inherits
+                if self.keys.funclist == Function_List_Type.INHERITS
+                else self.comp.inherits_full
             ):
                 for f in filter(mfilter, eoclass.methods):
                     self.methods.append(FuncItem(f, self.path, keys))
                 for f in filter(mfilter, eoclass.properties):
                     self._properties.append(FuncItem(f, self.path, keys))
         elif self.keys.funclist == Function_List_Type.CLASS_IMPLEMENTS:
-            for imp in filter(
-                lambda i: not i.namespace == self.name
-                and not i.short_name.lower() in self.keys.implementsbl,
-                comp.implements,
-            ):  # FIXME implements list
+            for imp in comp.implements:
+
+                if (
+                    imp.namespace == self.name
+                    or imp.short_name.lower() in self.keys.implementsbl
+                ):
+                    continue
+
                 f = imp.function
                 if f.type == Eolian_Function_Type.METHOD and mfilter(f):
                     self.methods.append(FuncItem(f, self.path, keys))

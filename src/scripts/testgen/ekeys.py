@@ -6,8 +6,8 @@ from testgen import name_helpers
 
 
 class Function_List_Type(IntEnum):
-    INHERITIS = 1
-    INHERITIS_FULL = 2
+    INHERITS = 1
+    INHERITS_FULL = 2
     CLASS_IMPLEMENTS = 3
     CLASS_ONLY = 4
 
@@ -39,6 +39,7 @@ class EKeys:
 class EMonoKeys(EKeys):
     def __init__(self, ext):
         super().__init__(ext)
+        self.funclist = Function_List_Type.INHERITS_FULL
         self.dicttypes = {
             "byte": "sbyte",
             "llong": "long",
@@ -140,6 +141,7 @@ class EMonoKeys(EKeys):
 
         self.blacklist = [
             "efl_event_callback_array_priority_add",
+            "efl_event_callback_forwarder_priority_add",
             "efl_player_position_get",
             "efl_text_font_source",
             "efl_ui_focus_manager_focus_get",
