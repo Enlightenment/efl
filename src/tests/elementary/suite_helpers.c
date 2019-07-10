@@ -400,3 +400,15 @@ click_object(Eo *obj)
    evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
    evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
 }
+
+void
+click_part(Eo *obj, const char *part)
+{
+   Efl_Part *part_obj = efl_ref(efl_part(obj, part));
+   Eo *content = efl_content_get(part_obj);
+   click_object(content);
+   if (efl_isa(content, EFL_LAYOUT_SIGNAL_INTERFACE))
+     edje_object_message_signal_process(content);
+   edje_object_message_signal_process(obj);
+   efl_unref(part_obj);
+}

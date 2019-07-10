@@ -40,14 +40,10 @@ _set_flag_quit(void *data, const Efl_Event *ev)
 }
 
 static void
-click_spin_part(Efl_Part *obj)
+click_spin_part(Eo *obj, const char *part)
 {
    get_me_to_those_events(spin);
-   efl_ref(obj);
-   click_object(obj);
-   edje_object_message_signal_process(obj);
-   efl_unref(obj);
-   edje_object_message_signal_process(spin);
+   click_part(obj, part);
 }
 
 EFL_START_TEST (spin_value_events)
@@ -131,7 +127,7 @@ EFL_START_TEST (spin_value_inc)
    efl_event_callback_add(spin, EFL_UI_SPIN_EVENT_MAX_REACHED, _set_flag, &max_reached);
    efl_event_callback_add(spin, EFL_UI_SPIN_BUTTON_EVENT_DELAY_CHANGED, _set_flag_quit, &delay_changed);
 
-   click_spin_part(efl_content_get(efl_part(spin, "efl.inc_button")));
+   click_spin_part(spin, "efl.inc_button");
 
    ck_assert_int_eq(changed, EINA_TRUE);
    ck_assert_int_eq(min_reached, EINA_FALSE);
@@ -156,7 +152,7 @@ EFL_START_TEST (spin_value_inc_max)
    efl_event_callback_add(spin, EFL_UI_SPIN_EVENT_MAX_REACHED, _set_flag, &max_reached);
    efl_event_callback_add(spin, EFL_UI_SPIN_BUTTON_EVENT_DELAY_CHANGED, _set_flag_quit, &delay_changed);
 
-   click_spin_part(efl_content_get(efl_part(spin, "efl.inc_button")));
+   click_spin_part(spin, "efl.inc_button");
 
    ck_assert_int_eq(changed, EINA_TRUE);
    ck_assert_int_eq(min_reached, EINA_FALSE);
@@ -181,7 +177,7 @@ EFL_START_TEST (spin_value_dec_min)
    efl_event_callback_add(spin, EFL_UI_SPIN_EVENT_MAX_REACHED, _set_flag, &max_reached);
    efl_event_callback_add(spin, EFL_UI_SPIN_BUTTON_EVENT_DELAY_CHANGED, _set_flag_quit, &delay_changed);
 
-   click_spin_part(efl_content_get(efl_part(spin, "efl.dec_button")));
+   click_spin_part(spin, "efl.dec_button");
 
    ck_assert_int_eq(changed, EINA_TRUE);
    ck_assert_int_eq(min_reached, EINA_TRUE);
