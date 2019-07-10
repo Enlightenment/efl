@@ -18,7 +18,7 @@ class EKeys:
         self.dicttypes = {}
         self.keywords = []
         self.verbs = []
-        self.blacklist = []
+        self.blacklist = ['efl_constructor']
         self.keyloads = ["init", "shutdown", "custom"]
         self.implementsbl = ["construtor", "destructor", "finalize"]
         self.funclist = Function_List_Type.CLASS_IMPLEMENTS

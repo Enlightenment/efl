@@ -106,12 +106,20 @@ class ClassItem(ComItem):
 
         def get_all_inherited(leaf, getter):
             print("Getting all items for leaf", leaf)
+            names = set()
             for item in getter(leaf):
+                print("Adding item", item.full_c_method_name)
+                names.add(item.full_c_method_name)
                 yield item
 
             for inherit in leaf.inherits_full:
+                print("Inherit", inherit)
                 for item in getter(inherit):
-                    yield item
+                    print("Checking item", item.full_c_method_name)
+                    if (item.full_c_method_name not in names):
+                        print("Adding item", item.full_c_method_name)
+                        names.add(item.full_c_method_name)
+                        yield item
 
         self.methods = [
             FuncItem(m, self.path, keys)
