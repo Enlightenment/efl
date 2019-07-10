@@ -7,7 +7,6 @@ typedef struct _Efl_Ui_List_Item_Data
 {
    // Eo Objects
    Eo *obj; /* Self-Object */
-   Eo *parent; /* Parent Widget */
    Eina_Bool  needs_size_calc : 1; /* Flag for Size calculation */
 } Efl_Ui_List_Item_Data;
 

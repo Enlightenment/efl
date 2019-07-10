@@ -18,6 +18,15 @@ abstract @beta Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Selectab
             select: bool;
          }
       }
+      @property container {
+         [[The container this object is part of.
+
+           You should never use this property yourself, the container will set it. Unsetting this while the item is packed into a container does not have an impact on its state in the container.
+         ]]
+         values {
+            container : Efl.Ui.Widget; [[The container this item is in.]]
+         }
+      }
    }
    implements {
       //Efl.Object

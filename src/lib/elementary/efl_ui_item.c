@@ -380,6 +380,19 @@ _efl_ui_item_selected_get(const Eo *obj EINA_UNUSED, Efl_Ui_Item_Data *pd)
    return pd->selected;
 }
 
+EOLIAN static void
+_efl_ui_item_container_set(Eo *obj EINA_UNUSED, Efl_Ui_Item_Data *pd, Efl_Ui_Widget *container)
+{
+   pd->parent = container;
+}
+
+EOLIAN static Efl_Ui_Widget*
+_efl_ui_item_container_get(const Eo *obj EINA_UNUSED, Efl_Ui_Item_Data *pd)
+{
+   return pd->parent;
+}
+
+
 /* Internal EO APIs and hidden overrides */
 
 #define EFL_UI_ITEM_EXTRA_OPS \
