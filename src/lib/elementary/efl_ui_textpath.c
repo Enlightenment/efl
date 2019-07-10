@@ -644,7 +644,11 @@ _textpath_text_set_internal(Eo *obj, Efl_Ui_Textpath_Data *pd, const char *part,
    if (!text) text = "";
    ret = edje_object_part_text_set(pd->text_obj, part, text);
    _ellipsis_set(pd, obj);
-   _path_start_angle_adjust(obj, pd);
+
+   //Only if circlular textpath
+   if (pd->circle.radius > 0)
+     _path_start_angle_adjust(obj, pd);
+
    _sizing_eval(pd);
 
    return ret;
