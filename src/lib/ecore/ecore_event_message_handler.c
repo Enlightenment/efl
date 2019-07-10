@@ -147,7 +147,7 @@ _ecore_event_message_handler_handler_add(Eo *obj EINA_UNUSED, Ecore_Event_Messag
 {
    Handler *h;
 
-   EINA_SAFETY_ON_TRUE_RETURN_VAL((type < 0) || (type > pd->event_type_count) || (!func), NULL);
+   EINA_SAFETY_ON_TRUE_RETURN_VAL((type <= 0) || (type > pd->event_type_count) || (!func), NULL);
    h = calloc(1, sizeof(Handler));
    if (!h) return NULL;
    h->func = func;
