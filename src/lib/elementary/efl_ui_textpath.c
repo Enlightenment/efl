@@ -351,7 +351,6 @@ _text_draw(void *data)
         return;
      }
    map = evas_map_new(map_point_no);
-   evas_map_util_object_move_sync_set(map, EINA_TRUE);
 
 #ifdef EFL_UI_TEXTPATH_LINE_DEBUG
    Evas_Object *line;
