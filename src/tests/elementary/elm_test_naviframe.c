@@ -6,9 +6,6 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
-static int prev_abort;
-static int prev_abort_level;
-
 EFL_START_TEST(elm_naviframe_test_legacy_type_check)
 {
    Evas_Object *win, *naviframe;
@@ -84,10 +81,7 @@ EFL_START_TEST(elm_naviframe_test_content_preserve_on_pop)
 
    win = win_add(NULL, "naviframe", ELM_WIN_BASIC);
 
-   prev_abort = eina_log_abort_on_critical_get();
-   prev_abort_level = eina_log_abort_on_critical_level_get();
-   eina_log_abort_on_critical_set(1);
-   eina_log_abort_on_critical_level_set(1);
+   fail_on_errors_setup();
 
    naviframe = elm_naviframe_add(win);
    elm_naviframe_content_preserve_on_pop_set(naviframe, EINA_TRUE);
@@ -115,8 +109,7 @@ EFL_START_TEST(elm_naviframe_test_content_preserve_on_pop)
    elm_object_signal_emit(button, "elm,action,click", "elm");
 
    ecore_main_loop_begin();
-   eina_log_abort_on_critical_set(prev_abort);
-   eina_log_abort_on_critical_level_set(prev_abort_level);
+   fail_on_errors_teardown();
 }
 EFL_END_TEST
 
