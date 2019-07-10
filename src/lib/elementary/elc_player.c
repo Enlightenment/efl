@@ -617,7 +617,6 @@ _elm_player_efl_canvas_group_group_add(Eo *obj, Elm_Player_Data *priv)
      (priv->slider, _double_to_time, _str_free);
    elm_slider_units_format_function_set
      (priv->slider, _double_to_time, _str_free);
-   elm_slider_min_max_set(priv->slider, 0, 0);
    elm_slider_value_set(priv->slider, 0);
    elm_object_disabled_set(priv->slider, EINA_TRUE);
    evas_object_size_hint_align_set(priv->slider, EVAS_HINT_FILL, 0.5);
