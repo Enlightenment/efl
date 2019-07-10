@@ -176,7 +176,8 @@ _edje_user_definition_free(Edje_User_Defined *eud)
         break;
      }
 
-   eina_hash_list_remove(eud->ed->user_defined, eud->part, eud);
+   /* edje may be destructing */
+   if (eud->ed->user_defined) eina_hash_list_remove(eud->ed->user_defined, eud->part, eud);
    _edje_user_definition_free_internal(eud);
 }
 
