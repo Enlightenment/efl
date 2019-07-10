@@ -2085,6 +2085,7 @@ struct _Edje_Signal_Callback
 typedef enum
 {
    EDJE_TEXT_TYPE_NORMAL,
+   EDJE_TEXT_TYPE_MARKUP,
    EDJE_TEXT_TYPE_ESCAPED,
    EDJE_TEXT_TYPE_UNESCAPED
 } Edje_Text_Type;

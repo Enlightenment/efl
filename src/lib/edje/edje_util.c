@@ -2114,7 +2114,8 @@ _edje_efl_text_text_set(Eo *obj, Edje *ed, const char *part, const char *text,
      }
    int_ret = _edje_object_part_text_raw_generic_set(ed, obj, rp, part, text,
                                                     set_markup, legacy);
-   _edje_user_define_string(ed, part, rp->typedata.text->text, EDJE_TEXT_TYPE_NORMAL);
+   _edje_user_define_string(ed, part, rp->typedata.text->text,
+     set_markup ? EDJE_TEXT_TYPE_MARKUP : EDJE_TEXT_TYPE_NORMAL);
    return int_ret;
 }
 
