@@ -3046,7 +3046,6 @@ Eina_Bool _edje_multisense_internal_vibration_sample_play(Edje *ed, const char *
 
 void _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *state);
 
-Edje_User_Defined * _edje_user_definition_fetch(Edje *ed, const char *part, Edje_User_Defined_Type type);
 Edje_User_Defined * _edje_user_text_style_definition_fetch(Edje *ed, const char *part);
 Edje_User_Defined * _edje_user_text_expand_definition_fetch(Edje *ed, const char *part);
 void _edje_user_definition_remove(Edje_User_Defined *eud, Evas_Object *child);
