@@ -66,7 +66,7 @@ _already_added(Efl_Io_Model_Data *pd, const char *path)
 
    EINA_LIST_FOREACH(pd->files, node, mi)
      {
-        if (!strcmp(mi->path, path))
+        if (eina_streq(mi->path, path))
           return EINA_TRUE;
      }
    return EINA_FALSE;
@@ -99,7 +99,7 @@ _efl_model_evt_added_ecore_cb(void *data, int type, void *event)
    obj = pd->self;
 
    path = ecore_file_dir_get(ev->filename);
-   if (strcmp(pd->path, path) != 0)
+   if (!eina_streq(pd->path, path))
      goto end;
 
    spath = eina_stringshare_add(ev->filename);
@@ -698,7 +698,7 @@ _efl_io_model_efl_model_property_get(const Eo *obj, Efl_Io_Model_Data *pd, const
 
    for (i = 0; i < EINA_C_ARRAY_LENGTH(properties); ++i)
      if (property == properties[i].name ||
-         !strcmp(property, properties[i].name))
+         eina_streq(property, properties[i].name))
        return properties[i].cb(obj, pd);
 
    return efl_model_property_get(efl_super(obj, EFL_IO_MODEL_CLASS), property);
@@ -718,7 +718,7 @@ _efl_io_model_efl_model_property_set(Eo *obj,
    if (!property) goto on_error;
 
    err = EFL_MODEL_ERROR_NOT_SUPPORTED;
-   if (strcmp(property, "path") != 0) goto on_error;
+   if (!eina_streq(property, "path")) goto on_error;
 
    if (finalized && pd->request.move) goto on_error;
 

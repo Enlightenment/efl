@@ -46,25 +46,25 @@ _efl_ui_homogeneous_model_efl_model_property_set(Eo *obj,
 {
    if (pd->parent)
      {
-        if (!strcmp(property, _efl_model_property_selfw))
+        if (eina_streq(property, _efl_model_property_selfw))
           return _efl_ui_homogeneous_model_property_set(obj, value,
                                                         &pd->parent->item.defined.width,
                                                         &pd->parent->item.width);
-        if (!strcmp(property, _efl_model_property_selfh))
+        if (eina_streq(property, _efl_model_property_selfh))
           return _efl_ui_homogeneous_model_property_set(obj, value,
                                                         &pd->parent->item.defined.height,
                                                         &pd->parent->item.height);
-        if (!strcmp(property, _efl_model_property_totalw) ||
-            !strcmp(property, _efl_model_property_totalh))
+        if (eina_streq(property, _efl_model_property_totalw) ||
+            eina_streq(property, _efl_model_property_totalh))
           return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_READ_ONLY);
      }
-   if (!strcmp(property, _efl_model_property_itemw))
+   if (eina_streq(property, _efl_model_property_itemw))
      {
         return _efl_ui_homogeneous_model_property_set(obj, value,
                                                       &pd->item.defined.width,
                                                       &pd->item.width);
      }
-   if (!strcmp(property, _efl_model_property_itemh))
+   if (eina_streq(property, _efl_model_property_itemh))
      {
         return _efl_ui_homogeneous_model_property_set(obj, value,
                                                       &pd->item.defined.height,
@@ -82,39 +82,39 @@ _efl_ui_homogeneous_model_efl_model_property_get(const Eo *obj,
 {
    if (pd->parent)
      {
-        if (!strcmp(property, _efl_model_property_selfw))
+        if (eina_streq(property, _efl_model_property_selfw))
           {
              if (pd->parent->item.defined.width)
                return eina_value_uint_new(pd->parent->item.width);
              goto not_ready;
           }
-        if (!strcmp(property, _efl_model_property_selfh))
+        if (eina_streq(property, _efl_model_property_selfh))
           {
              if (pd->parent->item.defined.height)
                return eina_value_uint_new(pd->parent->item.height);
              goto not_ready;
           }
      }
-   if (!strcmp(property, _efl_model_property_itemw))
+   if (eina_streq(property, _efl_model_property_itemw))
      {
         if (pd->item.defined.width)
           return eina_value_uint_new(pd->item.width);
         goto not_ready;
      }
-   if (!strcmp(property, _efl_model_property_itemh))
+   if (eina_streq(property, _efl_model_property_itemh))
      {
         if (pd->item.defined.height)
           return eina_value_uint_new(pd->item.height);
         goto not_ready;
      }
-   if (!strcmp(property, _efl_model_property_totalh))
+   if (eina_streq(property, _efl_model_property_totalh))
      {
         if (pd->item.defined.height)
           return eina_value_uint_new(pd->item.height *
                                      efl_model_children_count_get(obj));
         goto not_ready;
      }
-   if (!strcmp(property, _efl_model_property_totalw))
+   if (eina_streq(property, _efl_model_property_totalw))
      {
         if (pd->item.defined.width)
           // We only handle vertical list at this point, so total width is the width of one item.

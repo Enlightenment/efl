@@ -551,7 +551,7 @@ static Eina_Value *
 _efl_filter_model_efl_model_property_get(const Eo *obj, Efl_Filter_Model_Data *pd,
                                          const char *property)
 {
-   if (pd->self && !strcmp(property, EFL_COMPOSITE_MODEL_CHILD_INDEX))
+   if (pd->self && eina_streq(property, EFL_COMPOSITE_MODEL_CHILD_INDEX))
      {
         return eina_value_uint64_new(pd->self->mapped);
      }

@@ -115,14 +115,14 @@ _efl_ui_average_model_efl_model_property_set(Eo *obj, Efl_Ui_Average_Model_Data 
    if (!pd->parent) goto end;
 
    // In vertical list mode we do not need to compute the average width size
-   /* if (!strcmp(property, _efl_model_property_selfw)) */
+   /* if (eina_streq(property, _efl_model_property_selfw)) */
    /*   { */
    /*      f = _efl_ui_average_model_prepare(obj, &pd->parent->total.width, */
    /*                                        pd->wseen ? NULL : &pd->parent->total.wseen, */
    /*                                        property, value, EINA_TRUE); */
    /*      pd->wseen = EINA_TRUE; */
    /*   } */
-   if (!strcmp(property, _efl_model_property_selfh))
+   if (eina_streq(property, _efl_model_property_selfh))
      {
         f = _efl_ui_average_model_prepare(obj, &pd->parent->total.height,
                                           pd->hseen ? NULL : &pd->parent->total.hseen,
@@ -167,10 +167,10 @@ _efl_ui_average_model_efl_model_property_get(const Eo *obj, Efl_Ui_Average_Model
    t = eina_value_type_get(r);
    if (t == EINA_VALUE_TYPE_UINT)
      {
-        if (!strcmp(property, _efl_model_property_totalh))
+        if (eina_streq(property, _efl_model_property_totalh))
           r = _efl_ui_average_model_compute(obj, r, pd->total.height, pd->total.hseen);
         // We do not need to average the width in vertical list mode as this is done by the parent class
-        /* if (!strcmp(property, _efl_model_property_totalw)) */
+        /* if (eina_streq(property, _efl_model_property_totalw)) */
         /*   r = _efl_ui_average_model_compute(obj, r, pd->total.width, pd->total.wseen); */
      }
 

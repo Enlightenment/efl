@@ -258,7 +258,7 @@ _efl_select_model_efl_model_property_set(Eo *obj,
 {
    Eina_Value vf = EINA_VALUE_EMPTY;
 
-   if (!strcmp("single_selection", property))
+   if (eina_streq("single_selection", property))
      {
         Eina_Bool single_selection = pd->single_selection;
         Eina_Bool changed;
@@ -275,7 +275,7 @@ _efl_select_model_efl_model_property_set(Eo *obj,
         return efl_loop_future_resolved(obj, vf);
      }
 
-   if (!strcmp("child.selected", property))
+   if (eina_streq("child.selected", property))
      {
         unsigned long l = 0;
 
@@ -288,7 +288,7 @@ _efl_select_model_efl_model_property_set(Eo *obj,
                                .free = _clear_child);
      }
 
-   if (pd->parent && !strcmp("self.selected", property))
+   if (pd->parent && eina_streq("self.selected", property))
      {
         Eina_Bool prevflag = EINA_FALSE, newflag = EINA_FALSE;
         Eina_Bool single_selection = EINA_FALSE;
@@ -364,10 +364,10 @@ _efl_select_model_efl_model_property_set(Eo *obj,
 static Eina_Value *
 _efl_select_model_efl_model_property_get(const Eo *obj, Efl_Select_Model_Data *pd, const char *property)
 {
-   if (!strcmp("single_selection", property))
+   if (eina_streq("single_selection", property))
      return eina_value_bool_new(pd->single_selection);
    // Last selected child
-   if (!strcmp("child.selected", property))
+   if (eina_streq("child.selected", property))
      {
         if (pd->none)
           return eina_value_error_new(EFL_MODEL_ERROR_INCORRECT_VALUE);
@@ -375,7 +375,7 @@ _efl_select_model_efl_model_property_get(const Eo *obj, Efl_Select_Model_Data *p
           return eina_value_ulong_new(pd->last);
      }
    // Redirect to are we ourself selected
-   if (pd->parent && !strcmp("self.selected", property))
+   if (pd->parent && eina_streq("self.selected", property))
      {
         return efl_model_property_get(efl_super(obj, EFL_SELECT_MODEL_CLASS), "selected");
      }
