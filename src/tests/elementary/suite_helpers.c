@@ -9,6 +9,7 @@
 #include "elm_widget.h"
 #include "ecore_private.h"
 #include "ecore_evas_private.h"
+#include "suite_helpers.h"
 
 
 static int main_pid = -1;
@@ -18,6 +19,8 @@ static Eina_Bool buffer = EINA_FALSE;
 static Eina_Bool legacy_mode = EINA_FALSE;
 static int log_abort;
 static int log_abort_level;
+
+Eina_Bool abort_on_warnings = EINA_FALSE;
 
 void elm_test_init(TCase *tc);
 
@@ -34,6 +37,8 @@ _elm2_suite_init(void)
 
    if (getpid() != main_pid)
      {
+        if (abort_on_warnings)
+          fail_on_errors_setup();
         ecore_fork_reset();
         return;
      }
@@ -44,6 +49,8 @@ _elm2_suite_init(void)
         did_shutdown = 1;
      }
    ck_assert_int_eq(elm_init(1, args), 1);
+   if (abort_on_warnings)
+     fail_on_errors_setup();
 }
 
 void

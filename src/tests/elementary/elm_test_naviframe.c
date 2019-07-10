@@ -81,8 +81,6 @@ EFL_START_TEST(elm_naviframe_test_content_preserve_on_pop)
 
    win = win_add(NULL, "naviframe", ELM_WIN_BASIC);
 
-   fail_on_errors_setup();
-
    naviframe = elm_naviframe_add(win);
    elm_naviframe_content_preserve_on_pop_set(naviframe, EINA_TRUE);
 
@@ -109,7 +107,6 @@ EFL_START_TEST(elm_naviframe_test_content_preserve_on_pop)
    elm_object_signal_emit(button, "elm,action,click", "elm");
 
    ecore_main_loop_begin();
-   fail_on_errors_teardown();
 }
 EFL_END_TEST
 
