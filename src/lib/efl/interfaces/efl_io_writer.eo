@@ -29,8 +29,8 @@ interface Efl.Io.Writer {
               You can understand this method as write(2) libc function.
             ]]
             params {
-                @inout slice: Eina.Slice; [[Provides a pre-populated memory to be used up to slice.len. The returned slice will be adapted as length will be set to the actually used amount of bytes, which can be smaller than the request.]]
-                @out remaining: Eina.Slice @optional; [[Convenience to output the remaining parts of slice that was not written. If the full slice was written, this will be a slice of zero-length.]]
+                @inout slice: slice<ubyte>; [[Provides a pre-populated memory to be used up to slice.len. The returned slice will be adapted as length will be set to the actually used amount of bytes, which can be smaller than the request.]]
+                @out remaining: slice<ubyte> @optional; [[Convenience to output the remaining parts of slice that was not written. If the full slice was written, this will be a slice of zero-length.]]
             }
             return: Eina.Error; [[0 on succeed, a mapping of errno otherwise]]
         }
