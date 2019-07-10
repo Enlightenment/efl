@@ -17,8 +17,6 @@ class @beta Efl.Select_Model extends Efl.Boolean_Model
 
            If disable with $false, it will have the behavior of a multi select mode.
          ]]
-         set { }
-         get { }
          values {
             enable: bool; [[$true will enable the exclusive mode.]]
          }
