@@ -5512,9 +5512,12 @@ _efl_ui_selection_manager_efl_object_destructor(Eo *obj, Efl_Ui_Selection_Manage
    ecore_event_handler_del(pd->clear_handler);
 #endif
 #ifdef HAVE_ELEMENTARY_WL2
-   ecore_event_handler_del(pd->send_handler);
-   ecore_event_handler_del(pd->changed_handler);
-   ecore_event_handler_del(pd->end_handler);
+   if (_elm_wl_display)
+     {
+        ecore_event_handler_del(pd->send_handler);
+        ecore_event_handler_del(pd->changed_handler);
+        ecore_event_handler_del(pd->end_handler);
+     }
 #endif
    free(pd->atom_list);
    EINA_LIST_FREE(pd->seat_list, seat_sel)
