@@ -9,7 +9,6 @@ typedef struct _Efl_Ui_Item_Data
    Eo *obj; /* Self-Object */
    Eo *parent; /* Parent Widget */
 
-   Efl_Ui_Select_Mode  *select_mode; /* Select Mdoe of parent widget */
    Ecore_Timer *longpress_timer; /* Timer for longpress handle */
 
    // Boolean Data

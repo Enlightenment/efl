@@ -671,10 +671,6 @@ _list_item_process(Eo *obj, Efl_Ui_List_Data *pd, EINA_UNUSED Efl_Ui_List_Item *
 {
    EFL_UI_LIST_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
 
-   //FIXME: This is tricky workaround for set select mode and parent value.
-   EFL_UI_LIST_ITEM_DATA_GET_OR_RETURN(it, ld, EINA_FALSE);
-   EFL_UI_ITEM_DATA_GET_OR_RETURN(it, id, EINA_FALSE);
-   id->select_mode = &(pd->select_mode);
    efl_ui_item_container_set(it, obj);
    efl_ui_mirrored_set(it, efl_ui_mirrored_get(obj));
 
@@ -691,9 +687,6 @@ static void
 _list_item_clear(Eo *obj, Efl_Ui_List_Data *pd EINA_UNUSED, EINA_UNUSED Efl_Ui_List_Item *it)
 {
    EFL_UI_LIST_ITEM_CHECK_OR_RETURN(it);
-   EFL_UI_LIST_ITEM_DATA_GET_OR_RETURN(it, ld);
-   EFL_UI_ITEM_DATA_GET_OR_RETURN(it, id);
-   id->select_mode = NULL;
    efl_ui_item_container_set(it, NULL);
 
    efl_event_callback_del(it, EFL_UI_EVENT_PRESSED, _list_item_pressed, obj);

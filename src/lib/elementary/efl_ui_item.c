@@ -143,10 +143,12 @@ _efl_ui_item_part_content_efl_content_content_unset(Eo *obj, void *pd EINA_UNUSE
 static void
 _item_select(Eo *obj, Efl_Ui_Item_Data *pd)
 {
-   if (pd->selected &&
-       (*(pd->select_mode) != EFL_UI_SELECT_MODE_SINGLE_ALWAYS))
+   Efl_Ui_Select_Mode m;
+   if (!pd->parent)
      return;
-   if (*(pd->select_mode) == EFL_UI_SELECT_MODE_NONE) return;
+   m = efl_ui_select_mode_get(pd->parent);
+   if (m == EFL_UI_SELECT_MODE_NONE || (pd->selected && m != EFL_UI_SELECT_MODE_SINGLE_ALWAYS))
+     return;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -206,6 +208,10 @@ _item_mouse_up(void *data,
 {
    Evas_Event_Mouse_Up *ev = event_info;
    Eo *item = data;
+   Efl_Ui_Select_Mode m;
+
+   if (!efl_ui_item_container_get(item))
+     return;
    EFL_UI_ITEM_DATA_GET_OR_RETURN(item, pd);
    ELM_WIDGET_DATA_GET_OR_RETURN(item, wd);
    if (wd->disabled) return;
@@ -226,9 +232,10 @@ _item_mouse_up(void *data,
    edje_object_signal_emit(wd->resize_obj, "efl,state,unpressed", "efl");
    efl_event_callback_call(item, EFL_UI_EVENT_UNPRESSED, NULL);
 
-   if ((*(pd->select_mode) != EFL_UI_SELECT_MODE_SINGLE_ALWAYS) && (pd->selected))
+   m = efl_ui_select_mode_get(efl_ui_item_container_get(item));
+   if ((m != EFL_UI_SELECT_MODE_SINGLE_ALWAYS) && (pd->selected))
      _item_unselect(item, pd);
-   else if (*(pd->select_mode) != EFL_UI_SELECT_MODE_NONE)
+   else if (m != EFL_UI_SELECT_MODE_NONE)
      _item_select(item, pd);
 }
 
