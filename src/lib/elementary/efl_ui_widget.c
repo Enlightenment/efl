@@ -5362,8 +5362,8 @@ _efl_ui_widget_efl_object_provider_find(const Eo *obj, Elm_Widget_Smart_Data *pd
    if (pd->provider_lookup) return NULL;
    pd->provider_lookup = EINA_TRUE;
 
-   if (pd->parent_obj) lookup = efl_provider_find(pd->parent_obj, klass);
-   if (!lookup) lookup = efl_provider_find(efl_super(obj, MY_CLASS), klass);
+   lookup = efl_provider_find(efl_super(obj, MY_CLASS), klass);
+   if (!lookup && pd->parent_obj) lookup = efl_provider_find(pd->parent_obj, klass);
 
    pd->provider_lookup = EINA_FALSE;
 
