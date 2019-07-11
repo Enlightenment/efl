@@ -276,7 +276,7 @@ _efl_loop_efl_object_constructor(Eo *obj, Efl_Loop_Data *pd)
    pd->epoll_fd = -1;
    pd->timer_fd = -1;
    pd->future_message_handler = efl_add(EFL_LOOP_MESSAGE_FUTURE_HANDLER_CLASS, obj);
-   efl_loop_register(obj, EFL_LOOP_MESSAGE_FUTURE_HANDLER_CLASS, pd->future_message_handler);
+   efl_provider_register(obj, EFL_LOOP_MESSAGE_FUTURE_HANDLER_CLASS, pd->future_message_handler);
 
    return obj;
 }
