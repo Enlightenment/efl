@@ -388,6 +388,7 @@ typedef struct _Elm_Widget_Smart_Data
       Efl_Model *model;
       Eina_Hash *model_lookup;
       Eina_Hash *view_lookup;
+      Eina_Bool  registered : 1;
    } properties;
    Eina_Bool                     scroll_x_locked : 1;
    Eina_Bool                     scroll_y_locked : 1;

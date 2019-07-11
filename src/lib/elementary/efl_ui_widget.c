@@ -5775,6 +5775,47 @@ _efl_ui_view_property_bind_changed(void *data, const Efl_Event *event)
      }
 }
 
+static void
+_efl_ui_widget_model_update(Efl_Ui_Widget_Data *pd)
+{
+   Efl_Ui_Property_Bound *property;
+   Eina_Iterator *it;
+
+   it = eina_hash_iterator_data_new(pd->properties.model_lookup);
+   EINA_ITERATOR_FOREACH(it, property)
+     _efl_ui_property_bind_get(pd, property);
+}
+
+static void
+_efl_ui_widget_model_register(Eo *obj, Efl_Ui_Widget_Data *pd)
+{
+   if (pd->properties.registered) return ;
+   if (pd->properties.model_lookup)
+     {
+        if (!pd->properties.model) return ;
+
+        efl_event_callback_add(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_model_property_bind_changed, pd);
+        efl_event_callback_add(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_view_property_bind_changed, pd);
+        pd->properties.registered = EINA_TRUE;
+     }
+}
+
+static void
+_efl_ui_widget_model_unregister(Eo *obj, Efl_Ui_Widget_Data *pd)
+{
+   if (pd->properties.registered)
+     {
+        // Remove any existing handler that might exist for any reason
+        efl_event_callback_del(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_model_property_bind_changed, pd);
+        efl_event_callback_del(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
+                               _efl_ui_view_property_bind_changed, pd);
+
+        pd->properties.registered = EINA_FALSE;
+     }
+}
 static Eina_Error
 _efl_ui_widget_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Widget_Data *pd,
                                                   const char *key, const char *property)
@@ -5788,14 +5829,8 @@ _efl_ui_widget_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Widget_Data *p
      {
         pd->properties.model_lookup = eina_hash_stringshared_new(_efl_ui_property_bind_free);
         pd->properties.view_lookup = eina_hash_stringshared_new(NULL);
-        if (pd->properties.model)
-          {
-             efl_event_callback_add(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
-                                    _efl_ui_model_property_bind_changed, pd);
-             efl_event_callback_add(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
-                                    _efl_ui_view_property_bind_changed, pd);
-          }
      }
+   _efl_ui_widget_model_register(obj, pd);
 
    prop = calloc(1, sizeof (Efl_Ui_Property_Bound));
    if (!prop) return ENOMEM;
@@ -5817,25 +5852,24 @@ _efl_ui_widget_efl_ui_view_model_set(Eo *obj,
                                      Efl_Ui_Widget_Data *pd,
                                      Efl_Model *model)
 {
-   if (pd->properties.model)
-     {
-        // Remove any existing handler that might exist for any reason
-        efl_event_callback_del(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
-                               _efl_ui_model_property_bind_changed, pd);
-        efl_event_callback_del(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
-                               _efl_ui_view_property_bind_changed, pd);
-     }
+   Efl_Model_Changed_Event ev;
+
+   ev.current = efl_ref(model);
+   ev.previous = efl_ref(pd->properties.model);
+
+   _efl_ui_widget_model_unregister(obj, pd);
 
    efl_replace(&pd->properties.model, model);
 
-   if (pd->properties.model && pd->properties.model_lookup)
-     {
-        // Set the properties handler just in case
-        efl_event_callback_add(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
-                               _efl_ui_model_property_bind_changed, pd);
-        efl_event_callback_add(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
-                               _efl_ui_view_property_bind_changed, pd);
-     }
+   // Set the properties handler just in case
+   _efl_ui_widget_model_register(obj, pd);
+
+   efl_event_callback_call(obj, EFL_UI_VIEW_EVENT_MODEL_CHANGED, &ev);
+
+   if (pd->properties.model) _efl_ui_widget_model_update(pd);
+
+   efl_unref(ev.current);
+   efl_unref(ev.previous);
 }
 
 static Efl_Model *
@@ -5849,14 +5883,9 @@ _efl_ui_widget_efl_object_invalidate(Eo *obj, Efl_Ui_Widget_Data *pd)
 {
    efl_invalidate(efl_super(obj, EFL_UI_WIDGET_CLASS));
 
-   if (pd->properties.model)
-     {
-        efl_event_callback_del(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
-                               _efl_ui_model_property_bind_changed, pd);
-        efl_event_callback_del(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
-                               _efl_ui_view_property_bind_changed, pd);
-        efl_replace(&pd->properties.model, NULL);
-     }
+   _efl_ui_widget_model_unregister(obj, pd);
+   efl_replace(&pd->properties.model, NULL);
+
    if (pd->properties.view_lookup) eina_hash_free(pd->properties.view_lookup);
    pd->properties.view_lookup = NULL;
    if (pd->properties.model_lookup) eina_hash_free(pd->properties.model_lookup);
