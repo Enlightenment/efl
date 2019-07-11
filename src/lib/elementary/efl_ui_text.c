@@ -1427,7 +1427,6 @@ _long_press_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    sd->long_pressed = EINA_TRUE;
 
    sd->longpress_timer = NULL;
-   efl_event_callback_call(data, EFL_UI_EVENT_LONGPRESSED, NULL);
 }
 
 static void
