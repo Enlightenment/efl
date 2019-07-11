@@ -87,19 +87,6 @@ efl_exit(int exit_code)
    efl_loop_quit(efl_main_loop_get(), v);
 }
 
-EOLIAN static Efl_Object *
-_efl_loop_efl_object_provider_find(const Eo *obj, Efl_Loop_Data *pd, const Efl_Object *klass)
-{
-   Efl_Object *r;
-
-   if (klass == EFL_LOOP_CLASS) return (Efl_Object *) obj;
-
-   r = eina_hash_find(pd->providers, &klass);
-   if (r) return r;
-
-   return efl_provider_find(efl_super(obj, EFL_LOOP_CLASS), klass);
-}
-
 EAPI int
 efl_loop_exit_code_process(Eina_Value *value)
 {
@@ -286,7 +273,6 @@ _efl_loop_efl_object_constructor(Eo *obj, Efl_Loop_Data *pd)
    efl_event_callback_array_add(obj, event_catcher_watch(), pd);
 
    pd->loop_time = ecore_time_get();
-   pd->providers = eina_hash_pointer_new(EINA_FREE_CB(efl_unref));
    pd->epoll_fd = -1;
    pd->timer_fd = -1;
    pd->future_message_handler = efl_add(EFL_LOOP_MESSAGE_FUTURE_HANDLER_CLASS, obj);
@@ -301,10 +287,6 @@ _efl_loop_efl_object_invalidate(Eo *obj, Efl_Loop_Data *pd)
    efl_invalidate(efl_super(obj, EFL_LOOP_CLASS));
 
    _ecore_main_content_clear(obj, pd);
-
-   // Even if we are just refcounting provider, efl_provider_find won't reach them after invalidate
-   eina_hash_free(pd->providers);
-   pd->providers = NULL;
 
    pd->poll_low = NULL;
    pd->poll_medium = NULL;
@@ -517,20 +499,17 @@ timer_error:
 }
 
 static Eina_Bool
-_efl_loop_register(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, const Efl_Class *klass, const Efl_Object *provider)
+_efl_loop_register(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED,
+                   const Efl_Class *klass, const Efl_Object *provider)
 {
-   // The passed object does not provide that said class.
-   if (!efl_isa(provider, klass)) return EINA_FALSE;
-
-   // Note: I would prefer to use efl_xref here, but I can't figure a nice way to
-   // call efl_xunref on hash destruction.
-   return eina_hash_add(pd->providers, &klass, efl_ref(provider));
+   return efl_provider_register(obj, klass, provider);
 }
 
 static Eina_Bool
-_efl_loop_unregister(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, const Efl_Class *klass, const Efl_Object *provider)
+_efl_loop_unregister(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED,
+                     const Efl_Class *klass, const Efl_Object *provider)
 {
-   return eina_hash_del(pd->providers, &klass, provider);
+   return efl_provider_unregister(obj, klass, provider);
 }
 
 void

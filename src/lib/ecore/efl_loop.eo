@@ -133,7 +133,6 @@ abstract Efl.Loop extends Efl.Task
       Efl.Object.constructor;
       Efl.Object.invalidate;
       Efl.Object.destructor;
-      Efl.Object.provider_find;
       Efl.Task.run;
       Efl.Task.end;
    }

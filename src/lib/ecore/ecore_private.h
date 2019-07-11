@@ -116,7 +116,6 @@ struct _Efl_Loop_Future_Scheduler
 struct _Efl_Loop_Data
 {
    double               loop_time;
-   Eina_Hash           *providers;
 
    Efl_Loop_Future_Scheduler future_scheduler;
 
