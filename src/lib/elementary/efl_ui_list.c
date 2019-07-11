@@ -674,7 +674,7 @@ _list_item_unselected(void *data, const Efl_Event *event)
 }
 
 static Eina_Bool
-_list_item_process(Eo *obj, Efl_Ui_List_Data *pd, EINA_UNUSED Efl_Ui_List_Item *it)
+_list_item_process(Eo *obj, Efl_Ui_List_Data *pd EINA_UNUSED, Efl_Ui_List_Item *it)
 {
    EFL_UI_LIST_ITEM_CHECK_OR_RETURN(it, EINA_FALSE);
 
