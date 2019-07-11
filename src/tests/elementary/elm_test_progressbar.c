@@ -59,9 +59,20 @@ EFL_START_TEST(elm_atspi_role_get)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_progressbar_unit_format_get_n)
+{
+   const char *fmt;
+
+   fmt = elm_progressbar_unit_format_get(NULL);
+
+   ck_assert(fmt == NULL);
+}
+EFL_END_TEST
+
 void elm_test_progressbar(TCase *tc)
 {
    tcase_add_test(tc, elm_progressbar_legacy_type_check);
    tcase_add_test(tc, elm_progressbar_custom_unit_check);
    tcase_add_test(tc, elm_atspi_role_get);
+   tcase_add_test(tc, elm_progressbar_unit_format_get_n);
 }

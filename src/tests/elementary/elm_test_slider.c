@@ -135,10 +135,48 @@ EFL_START_TEST(elm_slider_events)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_slider_indicator_format_set_get_p)
+{
+   Evas_Object *win, *slider;
+   const char *fmt;
+
+   win = win_add(NULL, "slider", ELM_WIN_BASIC);
+   slider = elm_slider_add(win);
+   elm_slider_indicator_format_set(slider, "%1.0f");
+   fmt = elm_slider_indicator_format_get(slider);
+
+   ck_assert(fmt != NULL);
+   ck_assert(!strcmp(fmt, "%1.0f"));
+}
+EFL_END_TEST
+
+EFL_START_TEST(elm_slider_indicator_format_get_n)
+{
+   const char *fmt;
+
+   fmt = elm_slider_indicator_format_get(NULL);
+
+   ck_assert(fmt == NULL);
+}
+EFL_END_TEST
+
+EFL_START_TEST(elm_slider_unit_format_get_n)
+{
+   const char *fmt;
+
+   fmt = elm_slider_unit_format_get(NULL);
+
+   ck_assert(fmt == NULL);
+}
+EFL_END_TEST
+
 void elm_test_slider(TCase *tc)
 {
    tcase_add_test(tc, elm_slider_legacy_type_check);
    tcase_add_test(tc, elm_slider_in_scroller);
    tcase_add_test(tc, elm_slider_events);
    tcase_add_test(tc, elm_atspi_role_get);
+   tcase_add_test(tc, elm_slider_indicator_format_set_get_p);
+   tcase_add_test(tc, elm_slider_indicator_format_get_n);
+   tcase_add_test(tc, elm_slider_unit_format_get_n);
 }
