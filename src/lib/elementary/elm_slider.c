@@ -1124,7 +1124,7 @@ _indi_default_format_free_cb(void *data)
 }
 
 EOLIAN static void
-_elm_slider_part_indicator_efl_ui_format_format_string_set(Eo *obj, void *_pd EINA_UNUSED, const char *template)
+_elm_slider_part_indicator_efl_ui_format_format_string_set(Eo *obj, void *_pd EINA_UNUSED, const char *template, Efl_Ui_Format_String_Type type EINA_UNUSED)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Elm_Slider_Data *sd = efl_data_scope_get(pd->obj, ELM_SLIDER_CLASS);
@@ -1135,13 +1135,13 @@ _elm_slider_part_indicator_efl_ui_format_format_string_set(Eo *obj, void *_pd EI
    efl_ui_format_func_set(efl_part(pd->obj, "indicator"), pd->obj, _indi_default_format_cb, _indi_default_format_free_cb);
 }
 
-EOLIAN static const char *
-_elm_slider_part_indicator_efl_ui_format_format_string_get(const Eo *obj, void *_pd EINA_UNUSED)
+EOLIAN static void
+_elm_slider_part_indicator_efl_ui_format_format_string_get(const Eo *obj, void *_pd EINA_UNUSED, const char **template, Efl_Ui_Format_String_Type *type EINA_UNUSED)
 {
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Elm_Slider_Data *sd = efl_data_scope_get(pd->obj, ELM_SLIDER_CLASS);
 
-   return sd->indi_template;
+   if (template) *template = sd->indi_template;
 }
 
 EOLIAN static void
@@ -1207,7 +1207,7 @@ elm_slider_unit_format_set(Evas_Object *obj, const char *units)
 EAPI const char *
 elm_slider_unit_format_get(const Evas_Object *obj)
 {
-   const char* fmt;
+   const char* fmt = NULL;
    efl_ui_format_string_get(obj, &fmt, NULL);
    return fmt;
 }
@@ -1386,7 +1386,7 @@ elm_slider_indicator_format_set(Evas_Object *obj, const char *indicator)
 EAPI const char *
 elm_slider_indicator_format_get(const Evas *obj)
 {
-   const char *fmt;
+   const char *fmt = NULL;
    efl_ui_format_string_get(efl_part(obj, "indicator"), &fmt, NULL);
    return fmt;
 }

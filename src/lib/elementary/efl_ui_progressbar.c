@@ -1053,7 +1053,7 @@ elm_progressbar_unit_format_set(Evas_Object *obj, const char *units)
 EAPI const char *
 elm_progressbar_unit_format_get(const Evas_Object *obj)
 {
-   const char *fmt;
+   const char *fmt = NULL;
    efl_ui_format_string_get(obj, &fmt, NULL);
    return fmt;
 }

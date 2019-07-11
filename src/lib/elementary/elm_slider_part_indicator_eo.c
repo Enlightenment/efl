@@ -9,11 +9,9 @@ EOAPI EFL_FUNC_BODY_CONST(elm_slider_part_indicator_visible_mode_get, Elm_Slider
 
 void _elm_slider_part_indicator_efl_ui_format_format_cb_set(Eo *obj, void *pd, void *func_data, Efl_Ui_Format_Func func, Eina_Free_Cb func_free_cb);
 
+void _elm_slider_part_indicator_efl_ui_format_format_string_set(Eo *obj, void *_pd, const char *template, Efl_Ui_Format_String_Type type);
 
-void _elm_slider_part_indicator_efl_ui_format_format_string_set(Eo *obj, void *pd, const char *units);
-
-
-const char *_elm_slider_part_indicator_efl_ui_format_format_string_get(const Eo *obj, void *pd);
+void _elm_slider_part_indicator_efl_ui_format_format_string_get (const Eo *obj, void *_pd, const char **template, Efl_Ui_Format_String_Type *type);
 
 void _elm_slider_part_indicator_efl_ui_format_apply_formatted_value(Eo *obj, Elm_Part_Data *pd);
 
