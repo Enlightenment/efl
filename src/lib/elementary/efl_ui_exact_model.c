@@ -237,7 +237,7 @@ _efl_ui_exact_model_efl_model_property_set(Eo *obj, Efl_Ui_Exact_Model_Data *pd,
 {
    if (pd->parent)
     {
-       if (!strcmp(property, _efl_model_property_selfw))
+       if (eina_streq(property, _efl_model_property_selfw))
          {
             unsigned int index;
             unsigned char found;
@@ -251,7 +251,7 @@ _efl_ui_exact_model_efl_model_property_set(Eo *obj, Efl_Ui_Exact_Model_Data *pd,
               pd->parent->total_size.width = pd->parent->slot[found].width[index % EFL_UI_EXACT_MODEL_CONTENT];
             return efl_loop_future_resolved(obj, eina_value_uint_init(pd->parent->slot[found].width[index % EFL_UI_EXACT_MODEL_CONTENT]));
          }
-       if (!strcmp(property, _efl_model_property_selfh))
+       if (eina_streq(property, _efl_model_property_selfh))
          {
             unsigned int old_value;
             unsigned int index;
@@ -267,23 +267,23 @@ _efl_ui_exact_model_efl_model_property_set(Eo *obj, Efl_Ui_Exact_Model_Data *pd,
             return efl_loop_future_resolved(obj, eina_value_uint_init(pd->parent->slot[found].height[index % EFL_UI_EXACT_MODEL_CONTENT]));
          }
        // The following property are calculated by the model and so READ_ONLY
-       if (!strcmp(property, _efl_model_property_totalh))
+       if (eina_streq(property, _efl_model_property_totalh))
          {
             return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_READ_ONLY);
          }
-       if (!strcmp(property, _efl_model_property_totalw))
+       if (eina_streq(property, _efl_model_property_totalw))
          {
             return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_READ_ONLY);
          }
     }
 
-   if (!strcmp(property, _efl_model_property_itemw))
+   if (eina_streq(property, _efl_model_property_itemw))
      {
         // The exact model can not guess a general item size if asked
         // and should refuse to remember anything like that.
         return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_READ_ONLY);
      }
-   if (!strcmp(property, _efl_model_property_itemh))
+   if (eina_streq(property, _efl_model_property_itemh))
      {
         // The exact model can not guess a general item size if asked
         // and should refuse to remember anything like that.
@@ -299,7 +299,7 @@ _efl_ui_exact_model_efl_model_property_get(const Eo *obj, Efl_Ui_Exact_Model_Dat
 {
    if (pd->parent)
      {
-        if (!strcmp(property, _efl_model_property_selfw))
+        if (eina_streq(property, _efl_model_property_selfw))
           {
              unsigned int index;
              unsigned char found;
@@ -308,7 +308,7 @@ _efl_ui_exact_model_efl_model_property_get(const Eo *obj, Efl_Ui_Exact_Model_Dat
              found = _efl_ui_exact_model_slot_find(pd, index, EINA_TRUE, EINA_FALSE);
              return eina_value_uint_new(pd->parent->slot[found].width[index % EFL_UI_EXACT_MODEL_CONTENT]);
           }
-        if (!strcmp(property, _efl_model_property_selfh))
+        if (eina_streq(property, _efl_model_property_selfh))
           {
              unsigned int index;
              unsigned char found;
@@ -318,20 +318,20 @@ _efl_ui_exact_model_efl_model_property_get(const Eo *obj, Efl_Ui_Exact_Model_Dat
              return eina_value_uint_new(pd->parent->slot[found].height[index % EFL_UI_EXACT_MODEL_CONTENT]);
           }
      }
-   if (!strcmp(property, _efl_model_property_totalh))
+   if (eina_streq(property, _efl_model_property_totalh))
      {
         return eina_value_uint_new(pd->total_size.height);
      }
-   if (!strcmp(property, _efl_model_property_totalw))
+   if (eina_streq(property, _efl_model_property_totalw))
      {
         return eina_value_uint_new(pd->total_size.width);
      }
-   if (!strcmp(property, _efl_model_property_itemw))
+   if (eina_streq(property, _efl_model_property_itemw))
      {
         // The exact model can not guess a general item size if asked.
         return eina_value_error_new(EAGAIN);
      }
-   if (!strcmp(property, _efl_model_property_itemh))
+   if (eina_streq(property, _efl_model_property_itemh))
      {
         // The exact model can not guess a general item size if asked.
         return eina_value_error_new(EAGAIN);

@@ -844,7 +844,6 @@ _evas_event_source_mouse_up_events(Evas_Object *eo_obj, Evas *eo_e,
         Evas_Object_Pointer_Data *obj_pdata;
         Evas_Object_Pointer_Mode pointer_mode;
 
-        if (src->delete_me) break;
         child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
         obj_pdata = _evas_object_pointer_data_get(pdata, child);
         if (!obj_pdata)

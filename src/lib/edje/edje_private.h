@@ -1748,7 +1748,7 @@ struct _Edje
 #endif
    double                duration_scale;
    double                paused_at;
-   Eina_List            *user_defined;
+   Eina_Hash            *user_defined;
    lua_State            *L;
    Eina_Inlist          *lua_objs;
 
@@ -2110,6 +2110,7 @@ struct _Edje_Signal_Callback
 typedef enum
 {
    EDJE_TEXT_TYPE_NORMAL,
+   EDJE_TEXT_TYPE_MARKUP,
    EDJE_TEXT_TYPE_ESCAPED,
    EDJE_TEXT_TYPE_UNESCAPED
 } Edje_Text_Type;
@@ -3071,7 +3072,6 @@ Eina_Bool _edje_multisense_internal_vibration_sample_play(Edje *ed, const char *
 
 void _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *state);
 
-Edje_User_Defined * _edje_user_definition_fetch(Edje *ed, const char *part, Edje_User_Defined_Type type);
 Edje_User_Defined * _edje_user_text_style_definition_fetch(Edje *ed, const char *part);
 Edje_User_Defined * _edje_user_text_expand_definition_fetch(Edje *ed, const char *part);
 void _edje_user_definition_remove(Edje_User_Defined *eud, Evas_Object *child);

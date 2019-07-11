@@ -161,6 +161,8 @@ EFL_START_TEST(efl_test_select_model)
    Eina_Value v = { 0 };
    Efl_Select_Model *model;
    Eina_Future *future;
+   Eina_Iterator *it;
+   uint64_t *index;
 
    eina_value_setup(&v, EINA_VALUE_TYPE_INT);
 
@@ -186,6 +188,16 @@ EFL_START_TEST(efl_test_select_model)
    eina_future_then(future, _selection_children_slice_get_then, NULL, NULL);
 
    ecore_main_loop_begin();
+
+   it = efl_select_model_selected_get(model);
+   EINA_ITERATOR_FOREACH(it, index)
+     fail_if(*index != 2);
+   eina_iterator_free(it);
+
+   it = efl_select_model_unselected_get(model);
+   EINA_ITERATOR_FOREACH(it, index)
+     fail_if(*index == 2);
+   eina_iterator_free(it);
 }
 EFL_END_TEST
 

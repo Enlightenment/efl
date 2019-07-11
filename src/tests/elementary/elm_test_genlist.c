@@ -454,7 +454,6 @@ static void
 _do_quit()
 {
    itc.func.content_get = NULL;
-   fail_on_errors_teardown();
    ecore_main_loop_quit();
 }
 
@@ -514,7 +513,6 @@ EFL_START_TEST(elm_genlist_test_tree_expand)
    evas_object_resize(genlist, 100, 10 + 10 * NUM_TREE_ITEMS);
    evas_object_show(win);
    evas_object_resize(win, 100, 10 + 10 * NUM_TREE_ITEMS);
-   fail_on_errors_setup();
    ecore_main_loop_begin();
 }
 EFL_END_TEST

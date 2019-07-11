@@ -351,7 +351,6 @@ _text_draw(void *data)
         return;
      }
    map = evas_map_new(map_point_no);
-   evas_map_util_object_move_sync_set(map, EINA_TRUE);
 
 #ifdef EFL_UI_TEXTPATH_LINE_DEBUG
    Evas_Object *line;
@@ -645,7 +644,11 @@ _textpath_text_set_internal(Eo *obj, Efl_Ui_Textpath_Data *pd, const char *part,
    if (!text) text = "";
    ret = edje_object_part_text_set(pd->text_obj, part, text);
    _ellipsis_set(pd, obj);
-   _path_start_angle_adjust(obj, pd);
+
+   //Only if circlular textpath
+   if (pd->circle.radius > 0)
+     _path_start_angle_adjust(obj, pd);
+
    _sizing_eval(pd);
 
    return ret;
@@ -792,6 +795,8 @@ _efl_ui_textpath_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Textpath_Data *pd EINA_
 EOLIAN static void
 _efl_ui_textpath_circle_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double x, double y, double radius, double start_angle, Efl_Ui_Textpath_Direction direction)
 {
+   double sweep_length;
+
    if (pd->circle.x == x && pd->circle.y == y &&
        pd->circle.radius == radius &&
        pd->circle.start_angle == start_angle &&
@@ -805,17 +810,15 @@ _efl_ui_textpath_circle_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double x, double 
    pd->direction = direction;
 
    efl_gfx_path_reset(obj);
+
    if (direction == EFL_UI_TEXTPATH_DIRECTION_CW ||
        direction == EFL_UI_TEXTPATH_DIRECTION_CW_CENTER)
-     {
-        efl_gfx_path_append_arc(obj, x - radius, y - radius, radius * 2,
-                                radius * 2,  start_angle, -360);
-     }
+     sweep_length = -360;
    else
-     {
-        efl_gfx_path_append_arc(obj, x - radius, y - radius, radius * 2,
-                                radius * 2,  start_angle, 360);
-     }
+     sweep_length = 360;
+
+   efl_gfx_path_append_arc(obj, x - radius, y - radius, radius * 2,
+                           radius * 2,  start_angle, sweep_length);
 
    _path_data_get(obj, pd);
    _path_start_angle_adjust(obj, pd);

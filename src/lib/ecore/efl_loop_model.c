@@ -40,7 +40,7 @@ _propagate_future(void *data, const Efl_Event *event)
    Efl_Loop_Model_Watcher_Data *wd = data;
 
    EINA_ARRAY_ITER_NEXT(ev->changed_properties, i, property, it)
-     if (property == wd->property || !strcmp(property, wd->property))
+     if (property == wd->property || eina_streq(property, wd->property))
        {
           Eina_Value *v = efl_model_property_get(wd->obj, wd->property);
 

@@ -1025,5 +1025,19 @@ void _efl_ui_focus_event_redirector(Efl_Ui_Focus_Object *obj, Efl_Ui_Focus_Objec
 void efl_ui_widget_internal_set(Eo *obj, Eina_Bool internal);
 Eina_Bool efl_ui_widget_internal_get(Eo *obj);
 
+/**
+ * Connect the default scrollable theme signals with the object events and vice versa
+ *
+ * @param obj The object where to listen for theme signals
+ * @param manager The scroll manager object where to listen for events
+ */
+void efl_ui_scroll_connector_bind(Eo *obj, Eo *manager);
+
+/**
+ * Connect the default scrollable theme signals with the object events and vice versa
+ *
+ * @param obj The object where we are listening for events
+ */
+void efl_ui_scroll_connector_unbind(Eo *obj);
 
 #endif

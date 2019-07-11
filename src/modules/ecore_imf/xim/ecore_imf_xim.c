@@ -383,7 +383,6 @@ _ecore_imf_context_xim_reset(Ecore_IMF_Context *ctx)
         free(imf_context_data->preedit_chars);
         imf_context_data->preedit_chars = NULL;
 
-        ecore_imf_context_preedit_changed_event_add(ctx);
         ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
      }
 
@@ -392,7 +391,6 @@ _ecore_imf_context_xim_reset(Ecore_IMF_Context *ctx)
         char *result_utf8 = strdup(result);
         if (result_utf8)
           {
-             ecore_imf_context_commit_event_add(ctx, result_utf8);
              ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_COMMIT, result_utf8);
              free(result_utf8);
           }
@@ -695,7 +693,6 @@ _ecore_imf_context_xim_filter_event(Ecore_IMF_Context *ctx,
              if (!unicode) abort();
              if (unicode[0] >= 0x20 && unicode[0] != 0x7f)
                {
-                  ecore_imf_context_commit_event_add(ctx, compose);
                   ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_COMMIT, compose);
                   result = EINA_TRUE;
                }
@@ -882,10 +879,7 @@ _ecore_imf_xim_preedit_start_call(XIC xic EINA_UNUSED,
    EINA_SAFETY_ON_NULL_RETURN(imf_context_data);
 
    if (imf_context_data->finalizing == EINA_FALSE)
-     {
-        ecore_imf_context_preedit_start_event_add(ctx);
-        ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_PREEDIT_START, NULL);
-     }
+     ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_PREEDIT_START, NULL);
 }
 
 static void
@@ -904,15 +898,11 @@ _ecore_imf_xim_preedit_done_call(XIC xic EINA_UNUSED,
         imf_context_data->preedit_length = 0;
         free(imf_context_data->preedit_chars);
         imf_context_data->preedit_chars = NULL;
-        ecore_imf_context_preedit_changed_event_add(ctx);
         ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
      }
 
    if (imf_context_data->finalizing == EINA_FALSE)
-     {
-        ecore_imf_context_preedit_end_event_add(ctx);
-        ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_PREEDIT_END, NULL);
-     }
+     ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_PREEDIT_END, NULL);
 }
 
 /* FIXME */
@@ -1049,7 +1039,6 @@ done:
                }
           }
 
-        ecore_imf_context_preedit_changed_event_add(ctx);
         ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
      }
 
@@ -1072,10 +1061,7 @@ _ecore_imf_xim_preedit_caret_call(XIC xic EINA_UNUSED,
      {
         imf_context_data->preedit_cursor = call_data->position;
         if (imf_context_data->finalizing == EINA_FALSE)
-          {
-             ecore_imf_context_preedit_changed_event_add(ctx);
-             ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
-          }
+          ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
      }
 }
 
@@ -1257,7 +1243,6 @@ _ecore_imf_xim_ic_reinitialize(Ecore_IMF_Context *ctx)
              imf_context_data->preedit_length = 0;
              free(imf_context_data->preedit_chars);
              imf_context_data->preedit_chars = NULL;
-             ecore_imf_context_preedit_changed_event_add(ctx);
              ecore_imf_context_event_callback_call(ctx, ECORE_IMF_CALLBACK_PREEDIT_CHANGED, NULL);
           }
      }

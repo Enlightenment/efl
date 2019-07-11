@@ -5475,12 +5475,15 @@ _efl_ui_selection_manager_efl_object_constructor(Eo *obj, Efl_Ui_Selection_Manag
    pd->text_uri = eina_stringshare_add("text/uri-list");
 
 #ifdef HAVE_ELEMENTARY_WL2
-   pd->send_handler = ecore_event_handler_add(ECORE_WL2_EVENT_DATA_SOURCE_SEND,
-                           _wl_selection_send, pd);
-   pd->changed_handler = ecore_event_handler_add(ECORE_WL2_EVENT_SEAT_SELECTION,
-                           _wl_selection_changed, pd);
-   pd->end_handler = ecore_event_handler_add(ECORE_WL2_EVENT_DATA_SOURCE_END,
-                                             _wl_dnd_end, pd);
+   if (_elm_wl_display)
+     {
+        pd->send_handler = ecore_event_handler_add(ECORE_WL2_EVENT_DATA_SOURCE_SEND,
+                                _wl_selection_send, pd);
+        pd->changed_handler = ecore_event_handler_add(ECORE_WL2_EVENT_SEAT_SELECTION,
+                                _wl_selection_changed, pd);
+        pd->end_handler = ecore_event_handler_add(ECORE_WL2_EVENT_DATA_SOURCE_END,
+                                                  _wl_dnd_end, pd);
+     }
 #endif
    managers = eina_list_append(managers, obj);
    return obj;

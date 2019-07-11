@@ -1,29 +1,37 @@
 class @beta Efl.Ui.Box extends Efl.Ui.Widget implements Efl.Pack_Linear, Efl.Pack_Layout,
                   Efl.Ui.Layout_Orientable, Efl.Gfx.Arrangement
 {
-   [[The box widget.
+   [[A container that arranges children widgets in a vertical or horizontal fashion.
 
-     A box arranges objects in a linear fashion, governed by a layout function
-     that defines the details of this arrangement.
+     The Box widget is the most basic (and the most used) of the container widgets.
+     Other widgets are added to the Box through the @Efl.Pack_Linear interface, and the
+     layout direction (either vertical or horizontal) is controlled through the
+     @Efl.Ui.Layout_Orientable.orientation property.
 
-     By default, the box will use an internal function to set the layout to
-     a single row, either vertical or horizontal. This layout is affected
-     by a number of parameters. The values given by @Efl.Gfx.Arrangement.content_padding.set
-     and @Efl.Gfx.Arrangement.content_align.set and the hints set to each object in the box.
+     The Box widget itself is invisible, as are most container widgets: Their purpose is
+     to handle the position and size of all their children so you don't have to.
 
-     FIXME:
-     THIS CLASS NEEDS GOOD UP TO DATE DOCUMENTATION. LEGACY BOX AND UI BOX
-     BEHAVE SLIGHTLY DIFFERENTLY AND USE VASTLY DIFFERENT APIS.
+     All widgets inside a vertical Box container will have the same width as the container,
+     and their heights will be automatically chosen so that they cover the whole surface of
+     the container from top to bottom (Imagine a stack of pizza boxes neatly fitting inside
+     your oven). The @Efl.Ui.Box.homogeneous property then controls whether all widgets have
+     the same height (homogeneous) or not.
+
+     A horizontal Box container example would be the button toolbar at the top of most word
+     processing programs.
+
+     Precise layout can be further customized through the @Efl.Gfx.Arrangement interface on
+     the Box itself, or through the @Efl.Gfx.Hint interface on each of the children widgets.
    ]]
    methods {
       @property homogeneous {
-         [[Control homogeneous mode.
-
-           This will enable the homogeneous mode where children are of the same
-           weight and of the same min size which is determined by maximum min
-           size of children.]]
+         [[In homogeneous mode all children of a vertical Box have the same height, equal to
+           the height of the tallest widget. Children of a horizontal Box have the same width,
+           equal to the width of the widest widget. Otherwise, individual widget sizes are not
+           modified.
+         ]]
          values {
-            homogeneous: bool; [[$true if the box is homogeneous, $false otherwise]]
+            homogeneous: bool; [[$true if the Box is homogeneous, $false otherwise.]]
          }
       }
    }

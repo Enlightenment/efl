@@ -197,7 +197,7 @@ _efl_composite_model_efl_ui_view_model_set(Eo *obj EINA_UNUSED, Efl_Composite_Mo
    properties = efl_model_properties_get(pd->source);
    EINA_ITERATOR_FOREACH(properties, property)
      {
-        if (!strcmp(property, EFL_COMPOSITE_MODEL_CHILD_INDEX))
+        if (eina_streq(property, EFL_COMPOSITE_MODEL_CHILD_INDEX))
           {
              pd->need_index = EINA_FALSE;
              break;
@@ -216,7 +216,7 @@ static Eina_Future *
 _efl_composite_model_efl_model_property_set(Eo *obj, Efl_Composite_Model_Data *pd,
                                             const char *property, Eina_Value *value)
 {
-   if (pd->need_index && !strcmp(property, EFL_COMPOSITE_MODEL_CHILD_INDEX))
+   if (pd->need_index && eina_streq(property, EFL_COMPOSITE_MODEL_CHILD_INDEX))
      {
         if (pd->set_index || !pd->source)
           return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_READ_ONLY);
@@ -233,7 +233,7 @@ _efl_composite_model_efl_model_property_get(const Eo *obj EINA_UNUSED, Efl_Compo
                                             const char *property)
 {
    Eina_Value *try;
-   if (pd->need_index && !strcmp(property, EFL_COMPOSITE_MODEL_CHILD_INDEX))
+   if (pd->need_index && eina_streq(property, EFL_COMPOSITE_MODEL_CHILD_INDEX))
      {
         if (pd->set_index)
           return eina_value_uint_new(pd->index);

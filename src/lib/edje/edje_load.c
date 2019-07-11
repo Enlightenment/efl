@@ -153,7 +153,7 @@ static Eina_Bool  _edje_collection_free_prog_cache_matches_free_cb(const Eina_Ha
 static void       _edje_object_pack_item_hints_set(Evas_Object *obj, Edje_Pack_Element *it);
 static void       _cb_signal_repeat(void *data, Evas_Object *obj, const char *signal, const char *source);
 
-static Eina_List *_edje_object_collect(Edje *ed);
+static Eina_Hash *_edje_object_collect(Edje *ed);
 
 static int        _sort_defined_boxes(const void *a, const void *b);
 
@@ -773,12 +773,13 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
    Eina_List *textblocks = NULL;
    Eina_List *sources = NULL;
    Eina_List *externals = NULL;
-   Eina_List *collect = NULL;
+   Eina_Hash *collect = NULL;
    unsigned int n;
    Eina_Array parts;
    int group_path_started = 0;
    Evas_Object *nested_smart = NULL;
    char lang[PATH_MAX];
+   Eina_Bool had_file;
    Eina_Hash *part_match = NULL;
 
    /* Get data pointer of top-of-stack */
@@ -793,6 +794,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
      {
         return 0;
      }
+   had_file = !!ed->file;
 
    tev = evas_object_evas_get(obj);
    evas_event_freeze(tev);
@@ -1599,132 +1601,156 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                {
                   Edje_User_Defined *eud;
                   Eina_List *boxes = NULL;
+                  Eina_Iterator *it;
+                  Eina_List *l, *ll;
 
-                  EINA_LIST_FREE(collect, eud)
+                  it = eina_hash_iterator_data_new(collect);
+                  /* the eud structs get manually freed below */
+                  eina_hash_free_cb_set(collect, (void*)eina_list_free);
+                  EINA_ITERATOR_FOREACH(it, l)
                     {
-                       Evas_Object *child = NULL;
-
-                       if (!eina_hash_find(part_match, eud->part))
+                       EINA_LIST_FOREACH(l, ll, eud)
                          {
-                            /* part no longer exists */
-                            switch (eud->type)
+                            Evas_Object *child = NULL;
+
+                            if (!eina_hash_find(part_match, eud->part))
                               {
-                               case EDJE_USER_SWALLOW:
-                                 child = eud->u.swallow.child;
-                                 break;
-                               case EDJE_USER_BOX_PACK:
-                                 child = eud->u.box.child;
-                                 break;
-                               case EDJE_USER_TABLE_PACK:
-                                 child = eud->u.table.child;
-                                 break;
-                               case EDJE_USER_STRING:
-                               case EDJE_USER_DRAG_STEP:
-                               case EDJE_USER_DRAG_PAGE:
-                               case EDJE_USER_DRAG_VALUE:
-                               case EDJE_USER_DRAG_SIZE:
-                               case EDJE_USER_TEXT_STYLE:
-                               case EDJE_USER_TEXT_EXPAND:
-                               default:
-                                 break;
-                              }
-                            if (child)
-                              {
-                                 WRN("Container part '%s' no longer exists, hiding previously-contained child object", eud->part);
-                                 evas_object_hide(child);
-                              }
-                         }
-                       else
-                         {
-                            switch (eud->type)
-                              {
-                               case EDJE_USER_SWALLOW:
-                                 edje_object_part_swallow(obj, eud->part, eud->u.swallow.child);
-                                 child = eud->u.swallow.child;
-                                 break;
-
-                               case EDJE_USER_BOX_PACK:
-                                 boxes = eina_list_append(boxes, eud);
-                                 eud = NULL;
-                                 break;
-
-                               case EDJE_USER_TABLE_PACK:
-                                 edje_object_part_table_pack(obj, eud->part, eud->u.table.child,
-                                                             eud->u.table.col, eud->u.table.row,
-                                                             eud->u.table.colspan, eud->u.table.rowspan);
-                                 child = eud->u.table.child;
-                                 break;
-
-                               case EDJE_USER_DRAG_STEP:
-                                 edje_object_part_drag_step_set(obj, eud->part,
-                                                                eud->u.drag_position.x,
-                                                                eud->u.drag_position.y);
-                                 break;
-
-                               case EDJE_USER_DRAG_PAGE:
-                                 edje_object_part_drag_page_set(obj, eud->part,
-                                                                eud->u.drag_position.x,
-                                                                eud->u.drag_position.y);
-                                 break;
-
-                               case EDJE_USER_DRAG_VALUE:
-                                 edje_object_part_drag_value_set(obj, eud->part,
-                                                                 eud->u.drag_position.x,
-                                                                 eud->u.drag_position.y);
-                                 break;
-
-                               case EDJE_USER_DRAG_SIZE:
-                                 edje_object_part_drag_size_set(obj, eud->part,
-                                                                eud->u.drag_size.w,
-                                                                eud->u.drag_size.h);
-                                 break;
-
-                               case EDJE_USER_STRING:
-                                 switch (eud->u.string.type)
+                                 /* part no longer exists */
+                                 switch (eud->type)
                                    {
-                                    case EDJE_TEXT_TYPE_NORMAL:
-                                      edje_object_part_text_set(obj, eud->part, eud->u.string.text);
+                                    case EDJE_USER_SWALLOW:
+                                      child = eud->u.swallow.child;
                                       break;
-                                    case EDJE_TEXT_TYPE_ESCAPED:
-                                      edje_object_part_text_escaped_set(obj, eud->part, eud->u.string.text);
+                                    case EDJE_USER_BOX_PACK:
+                                      child = eud->u.box.child;
                                       break;
-                                    case EDJE_TEXT_TYPE_UNESCAPED:
-                                      edje_object_part_text_unescaped_set(obj, eud->part, eud->u.string.text);
+                                    case EDJE_USER_TABLE_PACK:
+                                      child = eud->u.table.child;
                                       break;
-                                   }
-                                 eina_stringshare_del(eud->u.string.text);
-                                 break;
-
-                               case EDJE_USER_TEXT_STYLE:
-                                   {
-                                      Edje_Part_Text_Prop *prop;
-                                      EINA_LIST_FREE(eud->u.text_style.props, prop)
-                                        {
-                                           _canvas_layout_user_text_apply(eud, obj,
-                                                 prop);
+                                    case EDJE_USER_STRING:
+                                      eina_stringshare_del(eud->u.string.text);
+                                      /* string has extra ref in this case */
+                                      if (!had_file)
+                                        eina_stringshare_del(eud->u.string.text);
+                                      break;
+                                    case EDJE_USER_DRAG_STEP:
+                                    case EDJE_USER_DRAG_PAGE:
+                                    case EDJE_USER_DRAG_VALUE:
+                                    case EDJE_USER_DRAG_SIZE:
+                                      break;
+                                    case EDJE_USER_TEXT_STYLE:
+                                      {
+                                         Edje_Part_Text_Prop *prop;
+                                         EINA_LIST_FREE(eud->u.text_style.props, prop)
                                            free(prop);
-                                        }
+                                      }
+                                    break;
+                                    case EDJE_USER_TEXT_EXPAND:
+                                    default:
+                                      break;
                                    }
-                                 break;
-                               case EDJE_USER_TEXT_EXPAND:
+                                 if (child)
                                    {
-                                      efl_canvas_layout_part_text_expand_set(
-                                            efl_part(obj, eud->part),
-                                            eud->u.text_expand.expand);
+                                      WRN("Container part '%s' no longer exists, hiding previously-contained child object", eud->part);
+                                      evas_object_hide(child);
                                    }
-                                 break;
+                              }
+                            else
+                              {
+                                 switch (eud->type)
+                                   {
+                                    case EDJE_USER_SWALLOW:
+                                      edje_object_part_swallow(obj, eud->part, eud->u.swallow.child);
+                                      child = eud->u.swallow.child;
+                                      break;
+
+                                    case EDJE_USER_BOX_PACK:
+                                      boxes = eina_list_append(boxes, eud);
+                                      eud = NULL;
+                                      break;
+
+                                    case EDJE_USER_TABLE_PACK:
+                                      edje_object_part_table_pack(obj, eud->part, eud->u.table.child,
+                                                                  eud->u.table.col, eud->u.table.row,
+                                                                  eud->u.table.colspan, eud->u.table.rowspan);
+                                      child = eud->u.table.child;
+                                      break;
+
+                                    case EDJE_USER_DRAG_STEP:
+                                      edje_object_part_drag_step_set(obj, eud->part,
+                                                                     eud->u.drag_position.x,
+                                                                     eud->u.drag_position.y);
+                                      break;
+
+                                    case EDJE_USER_DRAG_PAGE:
+                                      edje_object_part_drag_page_set(obj, eud->part,
+                                                                     eud->u.drag_position.x,
+                                                                     eud->u.drag_position.y);
+                                      break;
+
+                                    case EDJE_USER_DRAG_VALUE:
+                                      edje_object_part_drag_value_set(obj, eud->part,
+                                                                      eud->u.drag_position.x,
+                                                                      eud->u.drag_position.y);
+                                      break;
+
+                                    case EDJE_USER_DRAG_SIZE:
+                                      edje_object_part_drag_size_set(obj, eud->part,
+                                                                     eud->u.drag_size.w,
+                                                                     eud->u.drag_size.h);
+                                      break;
+
+                                    case EDJE_USER_STRING:
+                                      switch (eud->u.string.type)
+                                        {
+                                         case EDJE_TEXT_TYPE_NORMAL:
+                                           efl_text_set(efl_part(obj, eud->part), eud->u.string.text);
+                                           break;
+                                         case EDJE_TEXT_TYPE_MARKUP:
+                                           efl_text_markup_set(efl_part(obj, eud->part), eud->u.string.text);
+                                           break;
+                                         case EDJE_TEXT_TYPE_ESCAPED:
+                                           edje_object_part_text_escaped_set(obj, eud->part, eud->u.string.text);
+                                           break;
+                                         case EDJE_TEXT_TYPE_UNESCAPED:
+                                           edje_object_part_text_unescaped_set(obj, eud->part, eud->u.string.text);
+                                           break;
+                                        }
+                                      eina_stringshare_del(eud->u.string.text);
+                                      /* string has extra ref in this case */
+                                      if (!had_file)
+                                        eina_stringshare_del(eud->u.string.text);
+                                      break;
+
+                                    case EDJE_USER_TEXT_STYLE:
+                                        {
+                                           Edje_Part_Text_Prop *prop;
+                                           EINA_LIST_FREE(eud->u.text_style.props, prop)
+                                             {
+                                                _canvas_layout_user_text_apply(eud, obj,
+                                                      prop);
+                                                free(prop);
+                                             }
+                                        }
+                                      break;
+                                    case EDJE_USER_TEXT_EXPAND:
+                                        {
+                                           efl_canvas_layout_part_text_expand_set(
+                                                 efl_part(obj, eud->part),
+                                                 eud->u.text_expand.expand);
+                                        }
+                                      break;
+                                   }
                               }
                          }
-                       if (eud) _edje_user_definition_remove(eud, child);
                     }
+                  eina_iterator_free(it);
 
                   boxes = eina_list_sort(boxes, -1, _sort_defined_boxes);
                   EINA_LIST_FREE(boxes, eud)
-                    {
-                       edje_object_part_box_append(obj, eud->part, eud->u.box.child);
-                       _edje_user_definition_remove(eud, eud->u.box.child);
-                    }
+                    edje_object_part_box_append(obj, eud->part, eud->u.box.child);
                   eina_hash_free(part_match);
+                  eina_hash_free(collect);
                }
              if (_edje_language)
                snprintf(lang, sizeof(lang), "edje,language,%s", _edje_language);
@@ -1840,88 +1866,94 @@ _sort_defined_boxes(const void *a, const void *b)
    return euda->u.box.index - eudb->u.box.index;
 }
 
-static Eina_List *
+static Eina_Hash *
 _edje_object_collect(Edje *ed)
 {
    Edje_User_Defined *eud;
-   Eina_List *collect;
-   Eina_List *l;
+   Eina_Hash *collect;
+   Eina_List *l, *ll;
+   Eina_Iterator *it;
 
    collect = ed->user_defined;
    ed->user_defined = NULL;
 
-   EINA_LIST_FOREACH(collect, l, eud)
+   it = eina_hash_iterator_data_new(collect);
+   EINA_ITERATOR_FOREACH(it, l)
      {
-        switch (eud->type)
+        EINA_LIST_FOREACH(l, ll, eud)
           {
-           case EDJE_USER_STRING:
-             eud->u.string.text = eina_stringshare_ref(eud->u.string.text);
-             break;
-
-           case EDJE_USER_BOX_PACK:
-             if (eud->u.box.index == -1)
+             switch (eud->type)
                {
-                  Edje_User_Defined *search;
-                  Edje_Real_Part *rp;
-                  Eina_List *children;
-                  Eina_List *ls;
-                  Evas_Object *child;
-                  int idx = 0;
+                case EDJE_USER_STRING:
+                  eud->u.string.text = eina_stringshare_ref(eud->u.string.text);
+                  break;
 
-                  rp = _edje_real_part_recursive_get(&ed, eud->part);
-                  if (rp)
+                case EDJE_USER_BOX_PACK:
+                  if (eud->u.box.index == -1)
                     {
-                       if (rp->part->type != EDJE_PART_TYPE_BOX) continue;
+                       Edje_User_Defined *search;
+                       Edje_Real_Part *rp;
+                       Eina_List *children;
+                       Eina_List *ls;
+                       Evas_Object *child;
+                       int idx = 0;
 
-                       children = evas_object_box_children_get(rp->object);
-                       EINA_LIST_FREE(children, child)
-                         if (!evas_object_data_get(child, "\377 edje.box_item"))
-                           {
-                              EINA_LIST_FOREACH(l, ls, search)
+                       rp = _edje_real_part_recursive_get(&ed, eud->part);
+                       if (rp)
+                         {
+                            if (rp->part->type != EDJE_PART_TYPE_BOX) continue;
+
+                            children = evas_object_box_children_get(rp->object);
+                            EINA_LIST_FREE(children, child)
+                              if (!evas_object_data_get(child, "\377 edje.box_item"))
                                 {
-                                   if (search->type == EDJE_USER_BOX_PACK &&
-                                       search->u.box.child == child &&
-                                       search->part == eud->part /* beauty of stringshare ! */)
+                                   EINA_LIST_FOREACH(l, ls, search)
                                      {
-                                        search->u.box.index = idx++;
-                                        break;
+                                        if (search->type == EDJE_USER_BOX_PACK &&
+                                            search->u.box.child == child &&
+                                            search->part == eud->part /* beauty of stringshare ! */)
+                                          {
+                                             search->u.box.index = idx++;
+                                             break;
+                                          }
                                      }
+                                   _edje_real_part_box_remove(eud->ed, rp, child);
                                 }
-                              _edje_real_part_box_remove(eud->ed, rp, child);
-                           }
+                         }
                     }
-               }
-             break;
+                  break;
 
-           case EDJE_USER_TABLE_PACK:
-           {
-              Edje_Real_Part *rp;
-
-              rp = _edje_real_part_recursive_get(&ed, eud->part);
-              if (rp)
+                case EDJE_USER_TABLE_PACK:
                 {
-                   if (rp->part->type != EDJE_PART_TYPE_TABLE) continue;
-                   _edje_real_part_table_unpack(eud->ed, rp, eud->u.table.child);
+                   Edje_Real_Part *rp;
+
+                   rp = _edje_real_part_recursive_get(&ed, eud->part);
+                   if (rp)
+                     {
+                        if (rp->part->type != EDJE_PART_TYPE_TABLE) continue;
+                        _edje_real_part_table_unpack(eud->ed, rp, eud->u.table.child);
+                     }
+                   break;
                 }
-              break;
-           }
 
-           case EDJE_USER_SWALLOW:
-             edje_object_part_unswallow(NULL, eud->u.swallow.child);
-             break;
+                case EDJE_USER_SWALLOW:
+                  edje_object_part_unswallow(NULL, eud->u.swallow.child);
+                  break;
 
-           case EDJE_USER_TEXT_STYLE:
-             _canvas_layout_user_text_collect(ed, eud);
-             break;
+                case EDJE_USER_TEXT_STYLE:
+                  _canvas_layout_user_text_collect(ed, eud);
+                  break;
 
-           case EDJE_USER_DRAG_STEP:
-           case EDJE_USER_DRAG_PAGE:
-           case EDJE_USER_DRAG_VALUE:
-           case EDJE_USER_DRAG_SIZE:
-           case EDJE_USER_TEXT_EXPAND:
-             break;
+                case EDJE_USER_DRAG_STEP:
+                case EDJE_USER_DRAG_PAGE:
+                case EDJE_USER_DRAG_VALUE:
+                case EDJE_USER_DRAG_SIZE:
+                case EDJE_USER_TEXT_EXPAND:
+                  break;
+               }
           }
      }
+   eina_iterator_free(it);
 
    return collect;
 }
@@ -1945,7 +1977,6 @@ _edje_file_callbacks_del(Edje *ed, Evas *e)
 void
 _edje_file_del(Edje *ed)
 {
-   Edje_User_Defined *eud;
    Evas *tev = NULL;
 
    if (ed->obj && (!efl_invalidated_get(ed->obj)))
@@ -1979,11 +2010,8 @@ _edje_file_del(Edje *ed)
         return;
      }
 
-   while (ed->user_defined)
-     {
-        eud = eina_list_data_get(ed->user_defined);
-        _edje_user_definition_free(eud);
-     }
+   eina_hash_free(ed->user_defined);
+   ed->user_defined = NULL;
 
    if (ed->table_parts)
      {

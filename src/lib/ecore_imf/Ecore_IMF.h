@@ -1035,16 +1035,20 @@ EAPI void                         *ecore_imf_context_client_canvas_get(Ecore_IMF
  * @brief Asks the Input Method Context to show itself.
  *
  * @param ctx An #Ecore_IMF_Context.
+ *
+ * @deprecated use ecore_imf_context_input_panel_show() instead.
  */
-EAPI void                          ecore_imf_context_show(Ecore_IMF_Context *ctx);
+EINA_DEPRECATED EAPI void          ecore_imf_context_show(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
  * @brief Asks the Input Method Context to hide itself.
  *
  * @param ctx An #Ecore_IMF_Context.
+ *
+ * @deprecated use ecore_imf_context_input_panel_hide() instead.
  */
-EAPI void                          ecore_imf_context_hide(Ecore_IMF_Context *ctx);
+EINA_DEPRECATED EAPI void          ecore_imf_context_hide(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1426,8 +1430,10 @@ EAPI Eina_Bool                     ecore_imf_context_selection_get(Ecore_IMF_Con
  * ecore_imf_context_event_callback_call() can be used as synchronous method.
  *
  * @param ctx An #Ecore_IMF_Context.
+ *
+ * @deprecated use ecore_imf_context_event_callback_call() instead.
  */
-EAPI void                          ecore_imf_context_preedit_start_event_add(Ecore_IMF_Context *ctx);
+EINA_DEPRECATED EAPI void          ecore_imf_context_preedit_start_event_add(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Module_Group
@@ -1438,8 +1444,10 @@ EAPI void                          ecore_imf_context_preedit_start_event_add(Eco
  * ecore_imf_context_event_callback_call() can be used as synchronous method.
  *
  * @param ctx An #Ecore_IMF_Context.
+ *
+ * @deprecated use ecore_imf_context_event_callback_call() instead.
  */
-EAPI void                          ecore_imf_context_preedit_end_event_add(Ecore_IMF_Context *ctx);
+EINA_DEPRECATED EAPI void          ecore_imf_context_preedit_end_event_add(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Module_Group
@@ -1449,8 +1457,10 @@ EAPI void                          ecore_imf_context_preedit_end_event_add(Ecore
  * ecore_imf_context_event_callback_call() can be used as synchronous method.
  *
  * @param ctx An #Ecore_IMF_Context.
+ *
+ * @deprecated use ecore_imf_context_event_callback_call() instead.
  */
-EAPI void                          ecore_imf_context_preedit_changed_event_add(Ecore_IMF_Context *ctx);
+EINA_DEPRECATED EAPI void          ecore_imf_context_preedit_changed_event_add(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Module_Group
@@ -1461,8 +1471,10 @@ EAPI void                          ecore_imf_context_preedit_changed_event_add(E
  *
  * @param ctx An #Ecore_IMF_Context.
  * @param str The committed string.
+ *
+ * @deprecated use ecore_imf_context_event_callback_call() instead.
  */
-EAPI void                          ecore_imf_context_commit_event_add(Ecore_IMF_Context *ctx, const char *str);
+EINA_DEPRECATED EAPI void          ecore_imf_context_commit_event_add(Ecore_IMF_Context *ctx, const char *str);
 
 /**
  * @ingroup Ecore_IMF_Context_Module_Group
@@ -1478,8 +1490,10 @@ EAPI void                          ecore_imf_context_commit_event_add(Ecore_IMF_
  * @param ctx An #Ecore_IMF_Context.
  * @param offset The start offset of surrounding to be deleted.
  * @param n_chars The number of characters to be deleted.
+ *
+ * @deprecated use ecore_imf_context_event_callback_call() instead.
  */
-EAPI void                          ecore_imf_context_delete_surrounding_event_add(Ecore_IMF_Context *ctx, int offset, int n_chars);
+EINA_DEPRECATED EAPI void          ecore_imf_context_delete_surrounding_event_add(Ecore_IMF_Context *ctx, int offset, int n_chars);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1653,7 +1667,7 @@ EAPI Ecore_IMF_Input_Hints         ecore_imf_context_input_hint_get(Ecore_IMF_Co
  * @param ctx An #Ecore_IMF_Context.
  * @since 1.1.0
  */
-EAPI void                          ecore_imf_context_control_panel_show(Ecore_IMF_Context *ctx);
+EINA_DEPRECATED EAPI void          ecore_imf_context_control_panel_show(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group
@@ -1662,7 +1676,7 @@ EAPI void                          ecore_imf_context_control_panel_show(Ecore_IM
  * @param ctx An #Ecore_IMF_Context.
  * @since 1.1.0
  */
-EAPI void                          ecore_imf_context_control_panel_hide(Ecore_IMF_Context *ctx);
+EINA_DEPRECATED EAPI void          ecore_imf_context_control_panel_hide(Ecore_IMF_Context *ctx);
 
 /**
  * @ingroup Ecore_IMF_Context_Group

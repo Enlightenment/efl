@@ -15,6 +15,7 @@ evas_suite_src = [
   'evas_test_evasgl.c',
   'evas_test_matrix.c',
   'evas_test_focus.c',
+  'evas_test_events.c',
   'evas_tests_helpers.h',
   'evas_suite.h'
 ]
