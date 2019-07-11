@@ -505,12 +505,16 @@ _efl_loop_register(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED,
    return efl_provider_register(obj, klass, provider);
 }
 
+EFL_FUNC_BODYV(efl_loop_register, Eina_Bool, EINA_FALSE, EFL_FUNC_CALL(klass, provider), const Efl_Class *klass, const Efl_Object *provider);
+
 static Eina_Bool
 _efl_loop_unregister(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED,
                      const Efl_Class *klass, const Efl_Object *provider)
 {
    return efl_provider_unregister(obj, klass, provider);
 }
+
+EFL_FUNC_BODYV(efl_loop_unregister, Eina_Bool, EINA_FALSE, EFL_FUNC_CALL(klass, provider), const Efl_Class *klass, const Efl_Object *provider);
 
 void
 _efl_loop_messages_filter(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, void *handler_pd)
@@ -672,7 +676,9 @@ efl_loop_future_scheduler_get(const Eo *obj)
    return NULL;
 }
 
-#define EFL_LOOP_EXTRA_OPS \
-  EFL_OBJECT_OP_FUNC(efl_loop_message_process, _efl_loop_message_process)
+#define EFL_LOOP_EXTRA_OPS                                              \
+  EFL_OBJECT_OP_FUNC(efl_loop_message_process, _efl_loop_message_process), \
+  EFL_OBJECT_OP_FUNC(efl_loop_register, _efl_loop_register),          \
+  EFL_OBJECT_OP_FUNC(efl_loop_unregister, _efl_loop_unregister)
 
 #include "efl_loop.eo.c"

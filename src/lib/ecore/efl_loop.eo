@@ -102,22 +102,6 @@ abstract Efl.Loop extends Efl.Task
          }
          return: future<void> @owned; [[The future handle.]]
       }
-      register {
-         [[Will register a manager of a specific class to be answered by eo.provider_find.]]
-         params {
-            @in klass: const(Efl.Class); [[The class provided by the registered provider.]]
-            @in provider: const(Efl.Object); [[The provider for the newly registered class that has to provide that said Efl.Class.]]
-         }
-         return: bool; [[$true if successfully register, $false otherwise.]]
-      }
-      unregister {
-         [[Will unregister a manager of a specific class that was previously registered and answered by eo.provider_find.]]
-         params {
-            @in klass: const(Efl.Class); [[The class provided by the provider to unregister for.]]
-            @in provider: const(Efl.Object); [[The provider for the registered class to unregister.]]
-         }
-         return: bool; [[$true if successfully unregistered, $false otherwise.]]
-      }
    }
    events {
       idle,enter @restart: void; [[Event occurs once the main loop enters the idle state.]]
