@@ -299,7 +299,8 @@ pack_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    index = efl_ui_range_value_get(param->pack_sp);
    if (index > cnt)
      efl_ui_range_value_set(param->pack_sp, cnt);
-   efl_ui_range_limits_set(param->pack_sp, 0, cnt);
+   if (cnt > 0)
+     efl_ui_range_limits_set(param->pack_sp, 0, cnt);
 
    if (cnt > 0)
      {
@@ -310,7 +311,8 @@ pack_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
         index = efl_ui_range_value_get(param->unpack_sp);
         if (index > cnt)
           efl_ui_range_value_set(param->unpack_sp, cnt);
-        efl_ui_range_limits_set(param->unpack_sp, 0, cnt);
+        if (cnt > 0)
+          efl_ui_range_limits_set(param->unpack_sp, 0, cnt);
      }
    else
      {
@@ -502,6 +504,7 @@ pack_cb(void *data,
    Eo *spotlight = params->spotlight;
    Eo *btn, *box, *in_box1, *in_box2, *sp1, *sp2;
    Pack_Params *pack_param;
+   int num;
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
                  efl_text_set(efl_added, "Back"),
@@ -517,11 +520,13 @@ pack_cb(void *data,
                      efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
                      efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL));
 
-   sp1 = efl_add(EFL_UI_SPIN_BUTTON_CLASS, in_box1,
-                 efl_ui_range_limits_set(efl_added, 0,
-                                          efl_content_count(spotlight)),
-                 efl_ui_range_value_set(efl_added,
-                                        efl_ui_spotlight_active_index_get(spotlight)));
+   sp1 = efl_add(EFL_UI_SPIN_BUTTON_CLASS, in_box1);
+   num = efl_content_count(spotlight);
+   if (num)
+     efl_ui_range_limits_set(sp1, 0, num);
+   num = efl_ui_spotlight_active_index_get(spotlight);
+   if (num >= 0)
+     efl_ui_range_value_set(sp1, num);
 
    in_box2 = efl_add(EFL_UI_BOX_CLASS, box,
                      efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
