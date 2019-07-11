@@ -2225,24 +2225,34 @@ _efl_ui_layout_connect_hash(Efl_Ui_Layout_Data *pd)
    pd->connect.factories = eina_hash_stringshared_new(EINA_FREE_CB(_efl_ui_layout_factory_free)); // Hash of property triggering a content creation
 }
 
-EOLIAN static void
-_efl_ui_layout_base_efl_ui_view_model_set(Eo *obj, Efl_Ui_Layout_Data *pd, Efl_Model *model)
+
+static void
+_efl_ui_layout_base_model_unregister(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd,
+                                     Efl_Model *model)
+{
+   if (!model) return ;
+   if (!pd->model_bound) return ;
+
+   efl_event_callback_del(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                          _efl_model_properties_changed_cb, pd);
+
+   pd->model_bound = EINA_FALSE;
+}
+
+static void
+_efl_ui_layout_base_model_register(Eo *obj, Efl_Ui_Layout_Data *pd,
+                                   Efl_Model *model)
 {
    Eina_Stringshare *key;
    Eina_Hash_Tuple *tuple;
    Eina_Iterator *it;
-   Efl_Model *setted;
 
-   setted = efl_ui_view_model_get(obj);
-   if (setted)
-     efl_event_callback_del(setted, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
-                            _efl_model_properties_changed_cb, pd);
+   if (!model) return ;
+   if (pd->model_bound) return;
+   pd->model_bound = EINA_TRUE;
 
-   efl_ui_view_model_set(efl_super(obj, EFL_UI_LAYOUT_BASE_CLASS), model);
-
-   if (model)
-     efl_event_callback_add(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
-                            _efl_model_properties_changed_cb, pd);
+   efl_event_callback_add(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                          _efl_model_properties_changed_cb, pd);
 
    _efl_ui_layout_connect_hash(pd);
 
@@ -2279,6 +2289,31 @@ _efl_ui_layout_base_efl_ui_view_model_set(Eo *obj, Efl_Ui_Layout_Data *pd, Efl_M
    _efl_ui_layout_view_model_update(pd);
 }
 
+static void
+_efl_ui_layout_base_model_update(void *data, const Efl_Event *event)
+{
+   Efl_Ui_Layout_Data *pd = data;
+   Efl_Model_Changed_Event *ev = event->info;
+
+   _efl_ui_layout_base_model_unregister(event->object, pd, ev->previous);
+   _efl_ui_layout_base_model_register(event->object, pd, ev->current);
+}
+
+static void
+_efl_ui_layout_base_model_watch(Eo *obj, Efl_Ui_Layout_Data *pd)
+{
+   Efl_Model *model;
+
+   if (pd->model_watch) return ;
+   pd->model_watch = EINA_TRUE;
+
+   efl_event_callback_add(obj, EFL_UI_VIEW_EVENT_MODEL_CHANGED,
+                          _efl_ui_layout_base_model_update, pd);
+   model = efl_ui_view_model_get(obj);
+   if (!model) return ;
+   _efl_ui_layout_base_model_register(obj, pd, model);
+}
+
 EOLIAN static Eina_Error
 _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Layout_Data *pd, const char *key, const char *property)
 {
@@ -2297,6 +2332,9 @@ _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Layout_Da
    // Before trying to bind on the part of this object.
    if (!_elm_layout_part_aliasing_eval(obj, &key, EINA_TRUE))
      return EFL_PROPERTY_ERROR_INVALID_KEY;
+
+   // Check if there is a model and register it
+   _efl_ui_layout_base_model_watch(obj, pd);
 
    _efl_ui_layout_connect_hash(pd);
 
@@ -2353,6 +2391,9 @@ _efl_ui_layout_base_efl_ui_factory_bind_factory_bind(Eo *obj EINA_UNUSED, Efl_Ui
 
    if (!_elm_layout_part_aliasing_eval(obj, &key, EINA_TRUE))
      return;
+
+   // Check if there is a model and register it
+   _efl_ui_layout_base_model_watch(obj, pd);
 
    if (!pd->connect.factories)
      pd->connect.factories = eina_hash_stringshared_new(EINA_FREE_CB(_efl_ui_layout_factory_free));
@@ -2419,6 +2460,27 @@ _efl_ui_layout_base_efl_object_finalize(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNU
      efl_file_load(wd->resize_obj);
 
    return eo;
+}
+
+static void
+_efl_ui_layout_base_efl_object_invalidate(Eo *obj, Efl_Ui_Layout_Data *pd)
+{
+   if (pd->model_watch)
+     {
+        Efl_Model *model;
+
+        pd->model_watch = EINA_FALSE;
+        efl_event_callback_del(obj, EFL_UI_VIEW_EVENT_MODEL_CHANGED,
+                               _efl_ui_layout_base_model_update, pd);
+
+        model = efl_ui_view_model_get(obj);
+        if (!model)
+          {
+             _efl_ui_layout_base_model_unregister(obj, pd, model);
+          }
+     }
+
+   efl_invalidate(efl_super(obj, EFL_UI_LAYOUT_BASE_CLASS));
 }
 
 EOLIAN static void

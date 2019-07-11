@@ -60,6 +60,7 @@ abstract Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container,
       class.constructor;
       Efl.Object.constructor;
       Efl.Object.finalize;
+      Efl.Object.invalidate;
       Efl.Canvas.Group.group_calculate;
       Efl.Layout.Calc.calc_freeze;
       Efl.Layout.Calc.calc_thaw;
@@ -86,7 +87,6 @@ abstract Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container,
       Efl.Part.part_get;
       Efl.Ui.Property_Bind.property_bind;
       Efl.Ui.Factory_Bind.factory_bind;
-      Efl.Ui.View.model { set; }
    }
    events {
       theme,changed: void; [[Called when theme changed]]
