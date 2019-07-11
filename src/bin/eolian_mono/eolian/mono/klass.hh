@@ -36,7 +36,7 @@ template<typename Context>
 static std::size_t
 get_implementable_function_count(grammar::attributes::klass_def const& cls, Context context)
 {
-   auto methods = helpers::get_all_implementable_methods(cls);
+   auto methods = helpers::get_all_implementable_methods(cls, context);
    return std::count_if(methods.cbegin(), methods.cend(), [&context](grammar::attributes::function_def const& func)
      {
         return !blacklist::is_function_blacklisted(func, context) && !func.is_static;
@@ -230,7 +230,7 @@ struct klass
             .generate(sink, cls.parts, concrete_cxt)) return false;
 
          // Concrete function definitions
-         auto implemented_methods = helpers::get_all_implementable_methods(cls);
+         auto implemented_methods = helpers::get_all_implementable_methods(cls, concrete_cxt);
          if(!as_generator(*(function_definition))
             .generate(sink, implemented_methods, concrete_cxt)) return false;
 
@@ -302,7 +302,7 @@ struct klass
             .generate(sink, cls.parts, inherit_cxt)) return false;
 
          // Inherit function definitions
-         auto implemented_methods = helpers::get_all_implementable_methods(cls);
+         auto implemented_methods = helpers::get_all_implementable_methods(cls, inherit_cxt);
          if(!as_generator(*(function_definition(true)))
             .generate(sink, implemented_methods, inherit_cxt)) return false;
 
@@ -354,7 +354,7 @@ struct klass
                                             context);
          auto native_inherit_name = name_helpers::klass_native_inherit_name(cls);
          auto inherit_name = name_helpers::klass_inherit_name(cls);
-         auto implementable_methods = helpers::get_all_implementable_methods(cls);
+         auto implementable_methods = helpers::get_all_implementable_methods(cls, context);
          bool root = !helpers::has_regular_ancestor(cls);
          auto const& indent = current_indentation(inative_cxt);
 
