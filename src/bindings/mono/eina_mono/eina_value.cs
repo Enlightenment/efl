@@ -916,7 +916,86 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     private Value()
     {
         this.Handle = Alloc();
+
+        if (this.Handle == IntPtr.Zero)
+        {
+            throw new OutOfMemoryException("Failed to allocate memory for Eina.Value");
+        }
+
         this.Ownership = Ownership.Managed;
+        MemoryNative.Memset(this.Handle, 0, eina_value_sizeof());
+    }
+
+    /// <summary>Creates a new Value from the given C# value.</summary>
+    /// <param name="obj">The object to be wrapped.</param>
+    public Value(object obj) : this()
+    {
+        var objType = obj.GetType();
+
+        if (objType == typeof(sbyte))
+        {
+            Setup(ValueType.SByte);
+            Set((sbyte)obj);
+        }
+        else if (objType == typeof(byte))
+        {
+            Setup(ValueType.Byte);
+            Set((byte)obj);
+        }
+        else if (objType == typeof(short))
+        {
+            Setup(ValueType.Short);
+            Set((short)obj);
+        }
+        else if (objType == typeof(ushort))
+        {
+            Setup(ValueType.UShort);
+            Set((ushort)obj);
+        }
+        else if (objType == typeof(int))
+        {
+            Setup(ValueType.Int32);
+            Set((int)obj);
+        }
+        else if (objType == typeof(uint))
+        {
+            Setup(ValueType.UInt32);
+            Set((uint)obj);
+        }
+        else if (objType == typeof(long))
+        {
+            Setup(ValueType.Int64);
+            Set((long)obj);
+        }
+        else if (objType == typeof(ulong))
+        {
+            Setup(ValueType.UInt64);
+            Set((ulong)obj);
+        }
+        else if (objType == typeof(float))
+        {
+            Setup(ValueType.Float);
+            Set((float)obj);
+        }
+        else if (objType == typeof(double))
+        {
+            Setup(ValueType.Double);
+            Set((double)obj);
+        }
+        else if (objType == typeof(string))
+        {
+            Setup(ValueType.String);
+            Set(obj as string);
+        }
+        else if (typeof(Efl.Object).IsAssignableFrom(objType))
+        {
+            Setup(ValueType.Object);
+            Set(obj as Efl.Object);
+        }
+        else
+        {
+            throw new ArgumentException($"Unsupported type for direct construction: {objType}");
+        }
     }
 
     public Value(IntPtr handle, Ownership ownership = Ownership.Managed)
@@ -1390,6 +1469,95 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return b;
     }
 
+    /// <summary>Unwrap the value into its underlying C# value.
+    ///
+    /// <para>Useful for methods like <see crev="PropertyInfo.SetValue(object, object)" />
+    /// as it will unpack the value to it correct C# type.</para>
+    /// </summary>
+    /// <returns>The C# value wrapped by this value.</returns>
+    public object Unwrap()
+    {
+        switch (GetValueType())
+        {
+            case ValueType.SByte:
+                {
+                    sbyte o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.Byte:
+                {
+                    byte o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.Short:
+                {
+                    short o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.UShort:
+                {
+                    ushort o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.Int32:
+                {
+                    int o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.UInt32:
+                {
+                    uint o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.Int64:
+            case ValueType.Long:
+                {
+                    long o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.UInt64:
+            case ValueType.ULong:
+                {
+                    ulong o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.Float:
+                {
+                    float o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.Double:
+                {
+                    double o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.String:
+                {
+                    string o;
+                    Get(out o);
+                    return o;
+                }
+            case ValueType.Object:
+                {
+                    Efl.Object o;
+                    Get(out o);
+                    return o;
+                }
+            default:
+                throw new InvalidOperationException($"Unsupported value type to unwrap: {GetValueType()}");
+        }
+    }
+
     // Efl.Object conversions are made explicit to avoid ambiguity between
     // Set(Efl.Object) and Set(Value) when dealing with classes derived from
     // Efl.Object.
@@ -1828,7 +1996,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         if (!GetValueType().IsString())
         {
             throw (new ArgumentException(
-                        "Trying to set non-string value on a string Eina.Value"));
+                        "Trying to set string value on a non-string Eina.Value"));
         }
 
         // No need to worry about ownership as eina_value_set will copy the passed string.

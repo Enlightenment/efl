@@ -1029,5 +1029,76 @@ public static class TestEinaValue {
     /*     Test.Assert(false, "Implement me."); */
     /* } */
 }
+
+public static class TestValueFromObject
+{
+
+    private class Holder
+    {
+        public int Number { get; set; }
+        public double Factor { get; set; }
+        public string Name { get; set; }
+        public Efl.Object Obj { get; set; }
+    }
+
+    public static void TestConversionFromToObject()
+    {
+        var source = new Holder {
+            Number = 1984,
+            Factor = 3.14,
+            Name = "Orwell",
+            Obj = new Dummy.TestObject(),
+        };
+
+        {
+            var prop = source.GetType().GetProperty("Name");
+            var v = new Eina.Value(prop.GetValue(source));
+
+            Test.AssertEquals(v.GetValueType(), Eina.ValueType.String);
+            Test.AssertEquals((string)v, prop.GetValue(source));
+
+            Test.Assert(v.Set("New value"));
+            prop.SetValue(source, v.Unwrap());
+            Test.AssertEquals(prop.GetValue(source), "New value");
+        }
+
+        {
+            var prop = source.GetType().GetProperty("Factor");
+            var v = new Eina.Value(prop.GetValue(source));
+
+            Test.AssertEquals(v.GetValueType(), Eina.ValueType.Double);
+            Test.AssertAlmostEquals((double)v, (double)prop.GetValue(source));
+
+            Test.Assert(v.Set(2.78));
+            prop.SetValue(source, v.Unwrap());
+            Test.AssertEquals(prop.GetValue(source), 2.78);
+        }
+
+        {
+            var prop = source.GetType().GetProperty("Number");
+            var v = new Eina.Value(prop.GetValue(source));
+
+            Test.AssertEquals(v.GetValueType(), Eina.ValueType.Int32);
+            Test.AssertEquals((int)v, prop.GetValue(source));
+
+            Test.Assert(v.Set(2012));
+            prop.SetValue(source, v.Unwrap());
+            Test.AssertEquals(prop.GetValue(source), 2012);
+        }
+
+        {
+            var prop = source.GetType().GetProperty("Obj");
+            var v = new Eina.Value(prop.GetValue(source));
+
+            Test.AssertEquals(v.GetValueType(), Eina.ValueType.Object);
+            Test.AssertEquals((Efl.Object)v, prop.GetValue(source));
+
+            var newObj = new Dummy.TestObject();
+            Test.Assert(v.Set(newObj));
+            prop.SetValue(source, v.Unwrap());
+            Test.AssertEquals(prop.GetValue(source), newObj);
+        }
+    }
+}
 #pragma warning restore 1591
 }
