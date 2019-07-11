@@ -72,7 +72,7 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
         //0: Path
         efl_gfx_path_reserve(shape, node->mPath.elmCount, node->mPath.ptCount);
 
-        for (int i = 0; i < node->mPath.elmCount; i++)
+        for (size_t i = 0; i < node->mPath.elmCount; i++)
           {
              switch (node->mPath.elmPtr[i])
                {
@@ -236,7 +236,7 @@ _construct_mask_nodes(Efl_Canvas_Vg_Container *parent, LOTMask *mask, int depth 
 
    efl_gfx_path_reserve(shape, mask->mPath.elmCount, mask->mPath.ptCount);
 
-   for (int i = 0; i < mask->mPath.elmCount; i++)
+   for (size_t i = 0; i < mask->mPath.elmCount; i++)
      {
         switch (mask->mPath.elmPtr[i])
           {
