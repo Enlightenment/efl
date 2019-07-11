@@ -3,6 +3,7 @@
 #define CODE_ANALYSIS
 
 using System;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
 using System.Security.Permissions;
@@ -719,6 +720,8 @@ static class ValueTypeBridge
 {
     private static Dictionary<ValueType, IntPtr> ManagedToNative = new Dictionary<ValueType, IntPtr>();
     private static Dictionary<IntPtr, ValueType> NativeToManaged = new Dictionary<IntPtr, ValueType>();
+    private static Dictionary<System.Type, ValueType> StandardToManaged = new Dictionary<System.Type, ValueType>();
+    private static Dictionary<ValueType, System.Type> ManagedToStandard = new Dictionary<ValueType, System.Type>();
     private static bool TypesLoaded; // CLR defaults to false;
 
     public static ValueType GetManaged(IntPtr native)
@@ -750,48 +753,106 @@ static class ValueTypeBridge
         return ManagedToNative[valueType];
     }
 
+    /// <summary>Returns the Eina.Value type associated with the given C# type.</summary>
+    public static ValueType GetManaged(System.Type type)
+    {
+        ValueType v;
+        if (StandardToManaged.TryGetValue(type, out v))
+        {
+            return v;
+        }
+        else
+        {
+            if (typeof(Efl.Object).IsAssignableFrom(type))
+            {
+                return ValueType.Object;
+            }
+            throw new Efl.EflException($"Unknown value type mapping for C# type {type}");
+        }
+    }
+
+    /// <summary>Returns the System.Type associated with the given Eina.Value type.</summary>
+    /// <param name="valueType">The intermediate type as returned by <see cref="Eina.Value.GetValueType()" />.</param>
+    /// <returns>The associated C# type with this value type.</returns>
+    public static System.Type GetStandard(ValueType valueType)
+    {
+        System.Type ret = null;
+        if (ManagedToStandard.TryGetValue(valueType, out ret))
+        {
+            return ret;
+        }
+        else
+        {
+            throw new Efl.EflException($"Unknown C# type mapping for value type {valueType}");
+        }
+    }
+
     private static void LoadTypes()
     {
         Eina.Config.Init(); // Make sure eina is initialized.
 
         ManagedToNative.Add(ValueType.SByte, type_sbyte());
         NativeToManaged.Add(type_sbyte(), ValueType.SByte);
+        StandardToManaged.Add(typeof(sbyte), ValueType.SByte);
+        ManagedToStandard.Add(ValueType.SByte, typeof(sbyte));
 
         ManagedToNative.Add(ValueType.Byte, type_byte());
         NativeToManaged.Add(type_byte(), ValueType.Byte);
+        StandardToManaged.Add(typeof(byte), ValueType.Byte);
+        ManagedToStandard.Add(ValueType.Byte, typeof(byte));
 
         ManagedToNative.Add(ValueType.Short, type_short());
         NativeToManaged.Add(type_short(), ValueType.Short);
+        StandardToManaged.Add(typeof(short), ValueType.Short);
+        ManagedToStandard.Add(ValueType.Short, typeof(short));
 
         ManagedToNative.Add(ValueType.UShort, type_ushort());
         NativeToManaged.Add(type_ushort(), ValueType.UShort);
+        StandardToManaged.Add(typeof(ushort), ValueType.UShort);
+        ManagedToStandard.Add(ValueType.UShort, typeof(ushort));
 
         ManagedToNative.Add(ValueType.Int32, type_int32());
         NativeToManaged.Add(type_int32(), ValueType.Int32);
+        StandardToManaged.Add(typeof(int), ValueType.Int32);
+        ManagedToStandard.Add(ValueType.Int32, typeof(int));
 
         ManagedToNative.Add(ValueType.UInt32, type_uint32());
         NativeToManaged.Add(type_uint32(), ValueType.UInt32);
+        StandardToManaged.Add(typeof(uint), ValueType.UInt32);
+        ManagedToStandard.Add(ValueType.UInt32, typeof(uint));
 
         ManagedToNative.Add(ValueType.Long, type_long());
         NativeToManaged.Add(type_long(), ValueType.Long);
+        ManagedToStandard.Add(ValueType.Long, typeof(long));
 
         ManagedToNative.Add(ValueType.ULong, type_ulong());
         NativeToManaged.Add(type_ulong(), ValueType.ULong);
+        ManagedToStandard.Add(ValueType.ULong, typeof(ulong));
 
         ManagedToNative.Add(ValueType.Int64, type_int64());
         NativeToManaged.Add(type_int64(), ValueType.Int64);
+        StandardToManaged.Add(typeof(long), ValueType.Int64);
+        ManagedToStandard.Add(ValueType.Int64, typeof(long));
 
         ManagedToNative.Add(ValueType.UInt64, type_uint64());
         NativeToManaged.Add(type_uint64(), ValueType.UInt64);
+        StandardToManaged.Add(typeof(ulong), ValueType.UInt64);
+        ManagedToStandard.Add(ValueType.UInt64, typeof(ulong));
 
         ManagedToNative.Add(ValueType.Float, type_float());
         NativeToManaged.Add(type_float(), ValueType.Float);
+        StandardToManaged.Add(typeof(float), ValueType.Float);
+        ManagedToStandard.Add(ValueType.Float, typeof(float));
 
         ManagedToNative.Add(ValueType.Double, type_double());
         NativeToManaged.Add(type_double(), ValueType.Double);
+        StandardToManaged.Add(typeof(double), ValueType.Double);
+        ManagedToStandard.Add(ValueType.Double, typeof(double));
 
         ManagedToNative.Add(ValueType.String, type_string());
         NativeToManaged.Add(type_string(), ValueType.String);
+        StandardToManaged.Add(typeof(string), ValueType.String);
+        ManagedToStandard.Add(ValueType.String, typeof(string));
 
         ManagedToNative.Add(ValueType.Array, type_array());
         NativeToManaged.Add(type_array(), ValueType.Array);
@@ -804,9 +865,15 @@ static class ValueTypeBridge
 
         ManagedToNative.Add(ValueType.Error, type_error());
         NativeToManaged.Add(type_error(), ValueType.Error);
+        StandardToManaged.Add(typeof(Eina.Error), ValueType.Error);
+        ManagedToStandard.Add(ValueType.Error, typeof(Eina.Error));
 
         ManagedToNative.Add(ValueType.Object, type_object());
         NativeToManaged.Add(type_object(), ValueType.Object);
+        // We don't use `typeof(Efl.Object)` directly in the StandartToManaged dictionary as typeof(myobj) may
+        // return a different type. For ManagedToStandard, we make use of C# generics covariance to create
+        // an collection of Efl.Objects when unwrapping.
+        ManagedToStandard.Add(ValueType.Object, typeof(Efl.Object));
 
         ManagedToNative.Add(ValueType.Empty, IntPtr.Zero);
         NativeToManaged.Add(IntPtr.Zero, ValueType.Empty);
@@ -994,7 +1061,29 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         }
         else
         {
-            throw new ArgumentException($"Unsupported type for direct construction: {objType}");
+            // Container type conversion is supported only from IEnumerable<T>
+            if (!obj.GetType().GetInterfaces().Any(x => x.IsGenericType && x.GetGenericTypeDefinition() == typeof(IEnumerable<>)))
+            {
+                throw new ArgumentException($"Unsupported type for direct construction: {objType}");
+            }
+
+            Type[] genericArguments = objType.GetGenericArguments();
+            if (genericArguments.Count() != 1)
+            {
+                throw new ArgumentException($"Unsupported type for direct construction: {objType}");
+            }
+
+            var genericArg = genericArguments[0];
+
+            var argValueType = ValueTypeBridge.GetManaged(genericArg);
+
+            Setup(ValueType.Array, argValueType);
+
+            foreach (var item in obj as System.Collections.IEnumerable)
+            {
+                Append(item);
+            }
+
         }
     }
 
@@ -1552,6 +1641,32 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
                     Efl.Object o;
                     Get(out o);
                     return o;
+                }
+            case ValueType.Array:
+            case ValueType.List:
+                {
+                    // Eina Array and Lists will be unwrapped into a System.Collections.Generic.List<T>
+                    // usually to be handled as IEnumerable<T> through LINQ.
+                    var genericType = ValueTypeBridge.GetStandard(GetValueSubType());
+                    Type[] typeArgs = { genericType };
+                    var containerType = typeof(System.Collections.Generic.List<>);
+                    var retType = containerType.MakeGenericType(typeArgs);
+                    object ret = Activator.CreateInstance(retType);
+
+                    var addMeth = retType.GetMethod("Add");
+
+                    if (addMeth == null)
+                    {
+                        throw new InvalidOperationException("Failed to get Add() method of container to wrap value");
+                    }
+
+                    for (int i = 0; i < Count(); i++)
+                    {
+                        object[] args = new object[]{ this[i] };
+                        addMeth.Invoke(ret, args);
+                    }
+
+                    return ret;
                 }
             default:
                 throw new InvalidOperationException($"Unsupported value type to unwrap: {GetValueType()}");

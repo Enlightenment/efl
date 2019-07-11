@@ -3,7 +3,9 @@
 #pragma warning disable 1591
 
 using System;
+using System.Linq;
 using System.Diagnostics.CodeAnalysis;
+using System.Collections.Generic;
 
 namespace TestSuite {
 
@@ -1098,6 +1100,81 @@ public static class TestValueFromObject
             prop.SetValue(source, v.Unwrap());
             Test.AssertEquals(prop.GetValue(source), newObj);
         }
+    }
+
+    private class ComplexHolder
+    {
+        public IEnumerable<int> Bag { get; set; }
+        public IEnumerable<Efl.Object> BagOfObjects { get; set; }
+    }
+
+    public static void TestContainerFromToObject()
+    {
+        var initialBag = new Eina.Array<int>();
+        initialBag.Push(2);
+        initialBag.Push(4);
+        initialBag.Push(6);
+
+        var source = new ComplexHolder { Bag = initialBag };
+        var prop = source.GetType().GetProperty("Bag");
+        var v = new Eina.Value(prop.GetValue(source));
+        Test.AssertEquals(prop.GetValue(source), initialBag);
+
+        Test.AssertEquals(v.GetValueType(), Eina.ValueType.Array);
+        Test.AssertEquals(v.GetValueSubType(), Eina.ValueType.Int32);
+
+        Test.AssertEquals(v[0], initialBag[0]);
+        Test.AssertEquals(v[1], initialBag[1]);
+        Test.AssertEquals(v[2], initialBag[2]);
+
+        v[0] = 100;
+        v[1] = 200;
+        v[2] = 300;
+
+        prop.SetValue(source, v.Unwrap());
+
+        IEnumerable<int> newVal = prop.GetValue(source) as IEnumerable<int>;
+        var toCheck = newVal.ToList();
+
+        Test.AssertEquals(toCheck[0], 100);
+        Test.AssertEquals(toCheck[1], 200);
+        Test.AssertEquals(toCheck[2], 300);
+    }
+
+    public static void TestObjectContainerFromToObject()
+    {
+        var initialBag = new Eina.Array<Efl.Object>();
+        initialBag.Push(new Dummy.TestObject());
+        initialBag.Push(new Dummy.TestObject());
+        initialBag.Push(new Dummy.TestObject());
+
+        var source = new ComplexHolder { BagOfObjects = initialBag };
+        var prop = source.GetType().GetProperty("BagOfObjects");
+        var v = new Eina.Value(prop.GetValue(source));
+        Test.AssertEquals(prop.GetValue(source), initialBag);
+
+        Test.AssertEquals(v.GetValueType(), Eina.ValueType.Array);
+        Test.AssertEquals(v.GetValueSubType(), Eina.ValueType.Object);
+
+        Test.AssertEquals(v[0], initialBag[0]);
+        Test.AssertEquals(v[1], initialBag[1]);
+        Test.AssertEquals(v[2], initialBag[2]);
+
+        var first = new Dummy.TestObject();
+        var second = new Dummy.TestObject();
+        var third = new Dummy.TestObject();
+        v[0] = first;
+        v[1] = second;
+        v[2] = third;
+
+        prop.SetValue(source, v.Unwrap());
+
+        IEnumerable<Efl.Object> newVal = prop.GetValue(source) as IEnumerable<Efl.Object>;
+        var toCheck = newVal.ToList();
+
+        Test.AssertEquals(toCheck[0], first);
+        Test.AssertEquals(toCheck[1], second);
+        Test.AssertEquals(toCheck[2], third);
     }
 }
 #pragma warning restore 1591
