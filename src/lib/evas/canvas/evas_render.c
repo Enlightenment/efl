@@ -3629,11 +3629,16 @@ evas_render_updates_internal(Evas *eo_e,
         obj = eina_array_data_get(&e->pending_objects, i);
         if (obj->smart.parent)
           {
+             /* these are all objects which could not be rendered because they were
+              * added to their smart parent in this cycle and the parent was not changed
+              */
              Evas_Object_Protected_Data *smart_parent;
 
              smart_parent = efl_data_scope_get(obj->smart.parent,
                                               EFL_CANVAS_OBJECT_CLASS);
              evas_object_change(obj->smart.parent, smart_parent);
+             /* render cache must be invalidated to correctly render subobj on next pass */
+             evas_object_smart_render_cache_clear(obj->smart.parent);
           }
         obj->changed = EINA_TRUE;
      }
