@@ -115,6 +115,9 @@ struct klass
        for(auto first = std::begin(cls.immediate_inherits)
              , last = std::end(cls.immediate_inherits); first != last; ++first)
          {
+            if (!context_find_tag<options_context>(iface_cxt).want_beta && first->is_beta)
+              continue;
+
             if(first->type != attributes::class_type::regular && first->type != attributes::class_type::abstract_)
               if(!as_generator("\n" << scope_tab << string << " ,").generate(sink, name_helpers::klass_full_interface_name(*first), iface_cxt))
                 return false;
