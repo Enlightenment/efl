@@ -775,6 +775,22 @@ public class PrivateNativeClass : NativeClass
     }
 }
 
+[System.AttributeUsage(System.AttributeTargets.Class |
+                       System.AttributeTargets.Interface |
+                       System.AttributeTargets.Enum |
+                       System.AttributeTargets.Delegate |
+                       System.AttributeTargets.Struct,
+                       AllowMultiple = false,
+                       Inherited = false)
+]
+public class BindingEntity: System.Attribute
+{
+    public static bool IsBindingEntity(System.Type t)
+    {
+        return Attribute.GetCustomAttribute(t, typeof(BindingEntity), false) != null;
+    }
+}
+
 public interface IWrapper
 {
     /// <summary>Pointer to internal Eo instance.</summary>

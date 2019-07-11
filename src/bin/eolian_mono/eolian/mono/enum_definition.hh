@@ -25,6 +25,7 @@ struct enum_definition_generator
 
      if(!as_generator
         (
+         "[Efl.Eo.BindingEntity]\n"
          "public enum " << string << "\n{\n"
          )
         .generate(sink, name_helpers::typedecl_managed_name(enum_), context))

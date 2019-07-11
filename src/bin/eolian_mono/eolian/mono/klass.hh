@@ -106,6 +106,9 @@ struct klass
           .generate(sink, attributes::unused, iface_cxt))
          return false;
 
+       if(!as_generator("[Efl.Eo.BindingEntity]\n").generate(sink, attributes::unused, iface_cxt))
+         return false;
+
        if(!as_generator
         (
          "public " /*<< class_type*/ "interface" /*<<*/ " " << string << " : "
@@ -279,6 +282,7 @@ struct klass
             (
              documentation
              << "[" << name_helpers::klass_full_native_inherit_name(cls) << "]\n"
+             << "[Efl.Eo.BindingEntity]\n"
              << "public " << class_type << " " << name_helpers::klass_concrete_name(cls) << " : "
              << (klass_full_concrete_or_interface_name % ",") // classes
              << (root ? "Efl.Eo.EoWrapper" : "") // ... or root
@@ -502,7 +506,7 @@ struct klass
                      // For constructors with arguments, the parent is also required, as optional parameters can't come before non-optional paramenters.
                      << scope_tab << "public " << inherit_name << "(Efl.Object parent" << ((constructors.size() > 0) ? "" : "= null") << "\n"
                      << scope_tab << scope_tab << scope_tab << *(", " << constructor_param ) << ") : "
-                             << "base(" << name_helpers::klass_get_name(cls) <<  "(), typeof(" << inherit_name << "), parent)\n"
+                             << "base(" << name_helpers::klass_get_name(cls) <<  "(), parent)\n"
                      << scope_tab << "{\n"
                      << (*(scope_tab << scope_tab << constructor_invocation << "\n"))
                      << scope_tab << scope_tab << "FinishInstantiation();\n"
@@ -542,9 +546,8 @@ struct klass
                  scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << inherit_name << "\"/> class.\n"
                  << scope_tab << "/// Internal usage: Constructor to forward the wrapper initialization to the root class that interfaces with native code. Should not be used directly.</summary>\n"
                  << scope_tab << "/// <param name=\"baseKlass\">The pointer to the base native Eo class.</param>\n"
-                 << scope_tab << "/// <param name=\"managedType\">The managed type of the public constructor that originated this call.</param>\n"
                  << scope_tab << "/// <param name=\"parent\">The Efl.Object parent of this instance.</param>\n"
-                 << scope_tab << "protected " << inherit_name << "(IntPtr baseKlass, System.Type managedType, Efl.Object parent) : base(baseKlass, managedType, parent)\n"
+                 << scope_tab << "protected " << inherit_name << "(IntPtr baseKlass, Efl.Object parent) : base(baseKlass, parent)\n"
                  << scope_tab << "{\n"
                  << scope_tab << "}\n\n"
               ).generate(sink, attributes::unused, context);

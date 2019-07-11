@@ -67,15 +67,14 @@ public abstract class EoWrapper : IWrapper, IDisposable
     /// Internal usage: Constructor to actually call the native library constructors. C# subclasses
     /// must use the public constructor only.</summary>
     /// <param name="baseKlass">The pointer to the base native Eo class.</param>
-    /// <param name="managedType">The managed type of the public constructor that originated this call.</param>
     /// <param name="parent">The Efl.Object parent of this instance.</param>
     /// <param name="file">Name of the file from where the constructor is called.</param>
     /// <param name="line">Number of the line from where the constructor is called.</param>
-    protected EoWrapper(IntPtr baseKlass, System.Type managedType, Efl.Object parent,
+    protected EoWrapper(IntPtr baseKlass, Efl.Object parent,
                         [CallerFilePath] string file = null,
                         [CallerLineNumber] int line = 0)
     {
-        generated = ((object)this).GetType() == managedType;
+        generated = Efl.Eo.BindingEntity.IsBindingEntity(((object)this).GetType());
         IntPtr actual_klass = baseKlass;
         if (!generated)
         {
