@@ -39,6 +39,7 @@ typedef struct
    Eo                        *composite_parent;
    Eina_Inlist               *generic_data;
    Eo                      ***wrefs;
+   Eina_Hash                 *providers;
 } Efl_Object_Extension;
 
 struct _Efl_Object_Data
@@ -125,10 +126,45 @@ _efl_pending_futures_clear(Efl_Object_Data *pd)
      }
 }
 
+static inline void
+_efl_object_extension_free(Efl_Object_Extension *ext)
+{
+   eina_freeq_ptr_main_add(ext, free, sizeof(*ext));
+}
+
+static inline Efl_Object_Extension *
+_efl_object_extension_need(Efl_Object_Data *pd)
+{
+   if (!pd->ext) pd->ext = calloc(1, sizeof(Efl_Object_Extension));
+   return pd->ext;
+}
+
+static inline void
+_efl_object_extension_noneed(Efl_Object_Data *pd)
+{
+   Efl_Object_Extension *ext = pd->ext;
+   if ((!ext) ||
+       (ext->name) ||
+       (ext->comment) ||
+       (ext->generic_data) ||
+       (ext->wrefs) ||
+       (ext->composite_parent) ||
+       (ext->providers)) return;
+   _efl_object_extension_free(pd->ext);
+   pd->ext = NULL;
+}
+
 static void
 _efl_object_invalidate(Eo *obj_id, Efl_Object_Data *pd)
 {
    _efl_pending_futures_clear(pd);
+
+   if (pd->ext && pd->ext->providers)
+     {
+        eina_hash_free(pd->ext->providers);
+        pd->ext->providers = NULL;
+        _efl_object_extension_noneed(pd);
+     }
 
    EO_OBJ_POINTER_RETURN(obj_id, obj);
 
@@ -183,33 +219,6 @@ _efl_invalidate(_Eo_Object *obj)
    eina_array_flush(&stash);
 
    obj->invalidate = EINA_TRUE;
-}
-
-static inline void
-_efl_object_extension_free(Efl_Object_Extension *ext)
-{
-   eina_freeq_ptr_main_add(ext, free, sizeof(*ext));
-}
-
-static inline Efl_Object_Extension *
-_efl_object_extension_need(Efl_Object_Data *pd)
-{
-   if (!pd->ext) pd->ext = calloc(1, sizeof(Efl_Object_Extension));
-   return pd->ext;
-}
-
-static inline void
-_efl_object_extension_noneed(Efl_Object_Data *pd)
-{
-   Efl_Object_Extension *ext = pd->ext;
-   if ((!ext) ||
-       (ext->name) ||
-       (ext->comment) ||
-       (ext->generic_data) ||
-       (ext->wrefs) ||
-       (ext->composite_parent)) return;
-   _efl_object_extension_free(pd->ext);
-   pd->ext = NULL;
 }
 
 static void _key_generic_cb_del(void *data, const Efl_Event *event);
@@ -832,6 +841,7 @@ EOLIAN static Efl_Object *
 _efl_object_provider_find(const Eo *obj, Efl_Object_Data *pd, const Efl_Object *klass)
 {
    Eina_Bool invalidate;
+   Efl_Object *r = NULL;
 
    invalidate = _efl_object_invalidated_get((Eo*) obj, NULL);
    if (invalidate)
@@ -839,8 +849,48 @@ _efl_object_provider_find(const Eo *obj, Efl_Object_Data *pd, const Efl_Object *
         ERR("Calling efl_provider_find(%p) after the object was invalidated.", obj);
         return NULL;
      }
+
+   if (efl_isa(obj, klass)) return (Eo *) obj;
+
+   if (pd->ext) r = eina_hash_find(pd->ext->providers, &klass);
+   if (r) return r;
+
    if (pd->parent) return efl_provider_find(pd->parent, klass);
    return NULL;
+}
+
+static Eina_Bool
+_efl_object_provider_register(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const Efl_Class *klass, const Efl_Object *provider)
+{
+   // The passed object does not provide that said class.
+   if (!efl_isa(provider, klass)) return EINA_FALSE;
+
+   _efl_object_extension_need(pd);
+   if (!pd->ext) return EINA_FALSE;
+   if (!pd->ext->providers) pd->ext->providers = eina_hash_pointer_new(EINA_FREE_CB(efl_unref));
+
+   // Prevent double insertion for the same class
+   if (eina_hash_find(pd->ext->providers, &klass)) return EINA_FALSE;
+
+   // Note: I would prefer to use efl_xref here, but I can't figure a nice way to
+   // call efl_xunref on hash destruction.
+   return eina_hash_add(pd->ext->providers, &klass, efl_ref(provider));
+}
+
+static Eina_Bool
+_efl_object_provider_unregister(Eo *obj EINA_UNUSED, Efl_Object_Data *pd, const Efl_Class *klass, const Efl_Object *provider)
+{
+   Eina_Bool r;
+
+   if (!pd->ext) return EINA_FALSE;
+   r = eina_hash_del(pd->ext->providers, &klass, provider);
+
+   if (eina_hash_population(pd->ext->providers) != 0) return r;
+   eina_hash_free(pd->ext->providers);
+   pd->ext->providers = NULL;
+   _efl_object_extension_noneed(pd);
+
+   return r;
 }
 
 /* Children accessor */
