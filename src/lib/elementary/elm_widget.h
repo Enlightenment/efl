@@ -386,6 +386,7 @@ typedef struct _Elm_Widget_Smart_Data
    } legacy_focus;
    struct {
       Efl_Model *model;
+      Efl_Model_Provider *provider;
       Eina_Hash *model_lookup;
       Eina_Hash *view_lookup;
       Eina_Bool  registered : 1;

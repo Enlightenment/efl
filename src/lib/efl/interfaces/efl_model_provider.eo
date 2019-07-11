@@ -1,0 +1,12 @@
+class @beta Efl.Model_Provider extends Efl.Object implements Efl.Ui.View
+{
+   [[EFL object that provide a model to all.
+
+   You can use this when you would otherwise have to call @Efl.Ui.View.model.set
+   on multiple widgets by registering this object using @Efl.Object.provider_register
+   on a parent that they all depends on.
+   ]]
+   implements {
+      Efl.Ui.View.model { get; set; }
+   }
+}

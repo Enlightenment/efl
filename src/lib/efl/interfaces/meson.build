@@ -63,6 +63,7 @@ pub_eo_files = [
   'efl_gfx_blur.eo',
   'efl_gfx_hint.eo',
   'efl_model.eo',
+  'efl_model_provider.eo',
   'efl_interpolator.eo',
   'efl_gfx_image_orientable.eo',
   'efl_container.eo',
@@ -167,6 +168,7 @@ efl_src += files([
   'efl_file.c',
   'efl_ui_layout_orientable_readonly.c',
   'efl_text_markup_util.c',
+  'efl_model_provider.c',
 ])
 
 #efl_header_src += files([

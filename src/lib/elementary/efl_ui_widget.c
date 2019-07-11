@@ -5786,20 +5786,71 @@ _efl_ui_widget_model_update(Efl_Ui_Widget_Data *pd)
      _efl_ui_property_bind_get(pd, property);
 }
 
+static void _efl_ui_widget_model_provider_model_change(void *data, const Efl_Event *event EINA_UNUSED);
+static void _efl_ui_widget_model_provider_invalidate(void *data, const Efl_Event *event EINA_UNUSED);
+
+EFL_CALLBACKS_ARRAY_DEFINE(efl_ui_widget_model_provider_callbacks,
+                           { EFL_EVENT_INVALIDATE, _efl_ui_widget_model_provider_invalidate },
+                           { EFL_UI_VIEW_EVENT_MODEL_CHANGED, _efl_ui_widget_model_provider_model_change });
+
+static void
+_efl_ui_widget_model_provider_model_change(void *data, const Efl_Event *event)
+{
+   Efl_Ui_Widget_Data *pd = data;
+
+   efl_replace(&pd->properties.model,
+               efl_ui_view_model_get(pd->properties.provider));
+   _efl_ui_widget_model_update(pd);
+
+   efl_event_callback_call(pd->obj, EFL_UI_VIEW_EVENT_MODEL_CHANGED, event->info);
+}
+
+static void
+_efl_ui_widget_model_provider_invalidate(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Efl_Ui_Widget_Data *pd = data;
+
+   efl_event_callback_array_del(pd->properties.provider,
+                                efl_ui_widget_model_provider_callbacks(),
+                                pd);
+   efl_replace(&pd->properties.provider, NULL);
+   efl_replace(&pd->properties.model, NULL);
+}
+
 static void
 _efl_ui_widget_model_register(Eo *obj, Efl_Ui_Widget_Data *pd)
 {
    if (pd->properties.registered) return ;
-   if (pd->properties.model_lookup)
+
+   if (!pd->properties.model)
      {
+        Efl_Model_Changed_Event ev;
+
+        efl_replace(&pd->properties.provider,
+                    efl_provider_find(obj, EFL_MODEL_PROVIDER_CLASS));
+        if (!pd->properties.provider) return ;
+        efl_event_callback_array_add(pd->properties.provider,
+                                     efl_ui_widget_model_provider_callbacks(),
+                                     pd);
+
+        efl_replace(&pd->properties.model,
+                    efl_ui_view_model_get(pd->properties.provider));
+
         if (!pd->properties.model) return ;
 
-        efl_event_callback_add(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
-                               _efl_ui_model_property_bind_changed, pd);
-        efl_event_callback_add(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
-                               _efl_ui_view_property_bind_changed, pd);
-        pd->properties.registered = EINA_TRUE;
+        ev.current = pd->properties.model;
+        ev.previous = NULL;
+        efl_event_callback_call(obj, EFL_UI_VIEW_EVENT_MODEL_CHANGED, &ev);
      }
+
+   if (!pd->properties.model) return ;
+   if (!pd->properties.model_lookup) return ;
+
+   efl_event_callback_add(pd->properties.model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                          _efl_ui_model_property_bind_changed, pd);
+   efl_event_callback_add(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTIES_CHANGED,
+                          _efl_ui_view_property_bind_changed, pd);
+   pd->properties.registered = EINA_TRUE;
 }
 
 static void
@@ -5815,12 +5866,20 @@ _efl_ui_widget_model_unregister(Eo *obj, Efl_Ui_Widget_Data *pd)
 
         pd->properties.registered = EINA_FALSE;
      }
+   // Invalidate must be called before setting a new model and even if no model is registered
+   if (pd->properties.provider)
+     _efl_ui_widget_model_provider_invalidate(pd, NULL);
 }
 static Eina_Error
 _efl_ui_widget_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Widget_Data *pd,
                                                   const char *key, const char *property)
 {
    Efl_Ui_Property_Bound *prop;
+
+   // Always check for a model and fetch a provider in case a binded property
+   // is provided by a class down the hierarchy, but they still need to be notified
+   // when a model change
+   _efl_ui_widget_model_register(obj, pd);
 
    // Check if the property is available from the reflection table of the object.
    if (!efl_property_reflection_exist(obj, key)) return EFL_PROPERTY_ERROR_INVALID_KEY;
@@ -5830,7 +5889,6 @@ _efl_ui_widget_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Widget_Data *p
         pd->properties.model_lookup = eina_hash_stringshared_new(_efl_ui_property_bind_free);
         pd->properties.view_lookup = eina_hash_stringshared_new(NULL);
      }
-   _efl_ui_widget_model_register(obj, pd);
 
    prop = calloc(1, sizeof (Efl_Ui_Property_Bound));
    if (!prop) return ENOMEM;
@@ -5864,7 +5922,10 @@ _efl_ui_widget_efl_ui_view_model_set(Eo *obj,
    // Set the properties handler just in case
    _efl_ui_widget_model_register(obj, pd);
 
-   efl_event_callback_call(obj, EFL_UI_VIEW_EVENT_MODEL_CHANGED, &ev);
+   // In case the model set was NULL, but we did found a model provider
+   // we shouldn't emit a second event. Otherwise we should.
+   if (ev.current == pd->properties.model)
+     efl_event_callback_call(obj, EFL_UI_VIEW_EVENT_MODEL_CHANGED, &ev);
 
    if (pd->properties.model) _efl_ui_widget_model_update(pd);
 
