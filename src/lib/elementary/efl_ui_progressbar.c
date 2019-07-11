@@ -593,23 +593,24 @@ _progressbar_part_value_get(Efl_Ui_Progressbar_Data *sd, const char* part)
 EOLIAN static void
 _efl_ui_progressbar_efl_ui_range_display_range_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, double val)
 {
-   if (val < sd->val_min)
-     {
-        ERR("Error, value is less than minimum");
-        return;
-     }
-
-   if (val > sd->val_max)
-     {
-        ERR("Error, value is greater than maximum");
-        return;
-     }
    if (EINA_DBL_EQ(sd->val, val)) return;
 
    if (elm_widget_is_legacy(obj))
      _progressbar_part_value_set(obj, sd, "elm.cur.progressbar", val);
    else
-     _progressbar_part_value_set(obj, sd, "efl.cur.progressbar", val);
+     {
+        if (val < sd->val_min)
+          {
+             ERR("Error, value is less than minimum");
+             return;
+          }
+        if (val > sd->val_max)
+          {
+             ERR("Error, value is greater than maximum");
+             return;
+          }
+        _progressbar_part_value_set(obj, sd, "efl.cur.progressbar", val);
+     }
 }
 
 EOLIAN static double
