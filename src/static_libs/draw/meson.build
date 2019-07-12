@@ -9,7 +9,7 @@ draw_src = [
 
 draw_opt_lib = [ ]
 
-if cpu_sse3 == true and sys_windows == false
+if cpu_sse3 == true
   draw_opt = static_library('draw_opt',
     sources: [ 'draw_main_sse2.c' ],
     include_directories: config_dir + [include_directories(join_paths('..', '..', 'lib'))],
