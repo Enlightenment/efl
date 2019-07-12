@@ -637,6 +637,10 @@ _efl_ui_spotlight_container_indicator_set(Eo *obj, Efl_Ui_Spotlight_Container_Da
    pd->indicator = indicator;
    if (pd->indicator)
      {
+        EINA_SAFETY_ON_FALSE_RETURN(efl_ownable_get(pd->indicator));
+        efl_parent_set(pd->indicator, obj);
+        //the api indicates that the caller passes ownership to this function, so we need to unref here
+        efl_unref(pd->indicator);
         efl_ui_spotlight_indicator_bind(pd->indicator, obj);
         if (pd->position != -1)
           efl_ui_spotlight_indicator_position_update(pd->indicator, pd->position);
