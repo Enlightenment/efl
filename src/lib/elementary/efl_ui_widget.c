@@ -5554,6 +5554,24 @@ _efl_ui_widget_part_efl_object_destructor(Eo *obj, Elm_Part_Data *pd)
    efl_destructor(efl_super(obj, EFL_UI_WIDGET_PART_CLASS));
 }
 
+static Efl_Canvas_Layout_Part_Type
+_efl_ui_widget_part_efl_canvas_layout_part_type_get(const Eo *obj EINA_UNUSED, Elm_Part_Data *pd)
+{
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(pd->obj, MY_CLASS);
+   return efl_canvas_layout_part_type_get(efl_part(sd->resize_obj, pd->part));
+}
+
+static Eina_Rect
+_efl_ui_widget_part_efl_gfx_entity_geometry_get(const Eo *obj EINA_UNUSED, Elm_Part_Data *pd)
+{
+   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(pd->obj, MY_CLASS);
+   return efl_gfx_entity_geometry_get(efl_part(sd->resize_obj, pd->part));
+}
+
+#define EFL_UI_WIDGET_PART_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_canvas_layout_part_type_get, _efl_ui_widget_part_efl_canvas_layout_part_type_get), \
+   EFL_OBJECT_OP_FUNC(efl_gfx_entity_geometry_get, _efl_ui_widget_part_efl_gfx_entity_geometry_get)
+
 #include "efl_ui_widget_part.eo.c"
 
 /* Efl.Part end */
