@@ -1,6 +1,6 @@
 import itertools
 import os
-from pyolian.eolian import Eolian_Function_Type, Eolian_Class_Type
+from pyolian.eolian import Eolian_Function_Type, Eolian_Class_Type, Eolian_Object_Scope
 from .ekeys import GetKey, Function_List_Type
 from pyolian import eolian
 
@@ -99,10 +99,17 @@ class ClassItem(ComItem):
         self.myname = os.path.splitext(comp.file)[0]
         super().__init__(comp, os.path.join(path, self.myname), keys)
 
-        mfilter = (
-            lambda f: f.full_c_method_name not in self.keys.blacklist
-            and not os.path.isfile(os.path.join(self.path, f.name))
-        )
+        def mfilter(f):
+            if f.full_c_method_name in self.keys.blacklist:
+                return False
+
+            if os.path.isfile(os.path.join(self.path, f.name)):
+                return False
+
+            if f.method_scope != Eolian_Object_Scope.PUBLIC:
+                return False
+
+            return True
 
         def get_all_inherited(leaf, getter):
             print("Getting all items for leaf", leaf)
