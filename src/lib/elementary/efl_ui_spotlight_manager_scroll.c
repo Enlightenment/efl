@@ -316,7 +316,7 @@ _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_animation_enabled_get(
 
 
 EOLIAN static void
-_efl_ui_spotlight_manager_scroll_efl_object_destructor(Eo *obj, Efl_Ui_Spotlight_Manager_Scroll_Data *pd EINA_UNUSED)
+_efl_ui_spotlight_manager_scroll_efl_object_invalidate(Eo *obj, Efl_Ui_Spotlight_Manager_Scroll_Data *pd EINA_UNUSED)
 {
    efl_event_callback_del(pd->group, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _resize_cb, obj);
    efl_event_callback_del(pd->group, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _move_cb, obj);
@@ -329,7 +329,7 @@ _efl_ui_spotlight_manager_scroll_efl_object_destructor(Eo *obj, Efl_Ui_Spotlight
         efl_canvas_object_clipper_set(efl_pack_content_get(pd->container, i), NULL);
      }
 
-   efl_destructor(efl_super(obj, MY_CLASS));
+   efl_invalidate(efl_super(obj, MY_CLASS));
 }
 
 
