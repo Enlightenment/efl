@@ -42,11 +42,13 @@ class FuncItem(ComItem):
         self.has_getter = (
             comp.type in (Eolian_Function_Type.PROP_GET, Eolian_Function_Type.PROPERTY)
             and comp.full_c_getter_name not in keys.blacklist
+            and comp.getter_scope == Eolian_Object_Scope.PUBLIC
             and not os.path.isfile("{}_get".format(os.path.join(path, comp.name)))
         )
         self.has_setter = (
             comp.type in (Eolian_Function_Type.PROP_SET, Eolian_Function_Type.PROPERTY)
             and comp.full_c_setter_name not in keys.blacklist
+            and comp.setter_scope == Eolian_Object_Scope.PUBLIC
             and not os.path.isfile("{}_set".format(os.path.join(path, comp.name)))
         )
 
@@ -106,7 +108,15 @@ class ClassItem(ComItem):
             if os.path.isfile(os.path.join(self.path, f.name)):
                 return False
 
-            if f.method_scope != Eolian_Object_Scope.PUBLIC:
+            if f.type == Eolian_Function_Type.PROPERTY:
+                if f.getter_scope != Eolian_Object_Scope.PUBLIC:
+                    scope = f.setter_scope
+                else:
+                    scope = f.getter_scope
+            else:
+                scope = f.scope_get(f.type)
+
+            if scope != Eolian_Object_Scope.PUBLIC:
                 return False
 
             return True

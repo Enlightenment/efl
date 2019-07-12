@@ -18,7 +18,7 @@ class EKeys:
         self.dicttypes = {}
         self.keywords = []
         self.verbs = []
-        self.blacklist = ['efl_constructor']
+        self.blacklist = ["efl_constructor"]
         self.keyloads = ["init", "shutdown", "custom"]
         self.implementsbl = ["construtor", "destructor", "finalize"]
         self.funclist = Function_List_Type.CLASS_IMPLEMENTS
@@ -76,7 +76,7 @@ class EMonoKeys(EKeys):
             "promise": "int",
             "future": "int",
             "iterator": "Eina.Iterator",
-            "accessor": "int",
+            "accessor": "Eina.Accessor",
             "strbuf": "Eina.Strbuf",
             "Efl.Class": "System.Type",
         }
@@ -220,13 +220,19 @@ class EMonoKeys(EKeys):
             eotype.name, name_helpers.type_managed_name(eotype)
         )
         if new_type != "int" and eotype.base_type:
-            new_type = "{}<{}>".format(
-                new_type,
-                self.dicttypes.get(
+            # Stringshare is a special case where its C# type differs if inside or outside
+            # a container:
+            # - Non-contained stringshares are directly converted to strings.
+            # - Contained stringshares are kept as the container parameter as a tag to
+            #   marshal the value correctly whem adding/removing items from the container.
+            if eotype.base_type.name == "stringshare":
+                base_type = "Eina.Stringshare"
+            else:
+                base_type = self.dicttypes.get(
                     eotype.base_type.name,
                     name_helpers.type_managed_name(eotype.base_type),
-                ),
-            )
+                )
+            new_type = "{}<{}>".format(new_type, base_type)
 
         return new_type
 
