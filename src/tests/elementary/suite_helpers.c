@@ -405,7 +405,12 @@ void
 click_part(Eo *obj, const char *part)
 {
    Efl_Part *part_obj = efl_ref(efl_part(obj, part));
-   Eo *content = efl_content_get(part_obj);
+   Eo *content;
+
+   if (efl_canvas_layout_part_type_get(part_obj) == EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW)
+     content = efl_content_get(part_obj);
+   else
+     content = part_obj;
    click_object(content);
    if (efl_isa(content, EFL_LAYOUT_SIGNAL_INTERFACE))
      edje_object_message_signal_process(content);
