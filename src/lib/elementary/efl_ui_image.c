@@ -1362,7 +1362,7 @@ _efl_ui_image_efl_gfx_image_load_controller_load_size_get(const Eo *obj EINA_UNU
 }
 
 EOLIAN static void
-_efl_ui_image_efl_gfx_image_orientable_orientation_set(Eo *obj, Efl_Ui_Image_Data *sd, Efl_Gfx_Image_Orientation orient)
+_efl_ui_image_efl_gfx_image_orientable_image_orientation_set(Eo *obj, Efl_Ui_Image_Data *sd, Efl_Gfx_Image_Orientation orient)
 {
    if (sd->edje) return;
    if (sd->orient == orient) return;
@@ -1372,7 +1372,7 @@ _efl_ui_image_efl_gfx_image_orientable_orientation_set(Eo *obj, Efl_Ui_Image_Dat
 }
 
 EOLIAN static Efl_Gfx_Image_Orientation
-_efl_ui_image_efl_gfx_image_orientable_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_gfx_image_orientable_image_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    return sd->orient;
 }

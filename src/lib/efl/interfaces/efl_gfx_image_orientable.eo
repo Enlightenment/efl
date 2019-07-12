@@ -28,9 +28,9 @@ enum Efl.Gfx.Image_Orientation
 interface Efl.Gfx.Image_Orientable
 {
    [[Interface for objects which can be oriented.]]
-   c_prefix: efl_gfx_image;
+   c_prefix: efl_gfx;
    methods {
-       @property orientation {
+       @property image_orientation {
          [[Control the orientation (rotation and flipping) of a visual object.
 
            This can be used to set the rotation on an image or a window, for

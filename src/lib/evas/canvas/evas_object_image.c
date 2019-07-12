@@ -412,7 +412,7 @@ _evas_image_orientation_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Orient or
 }
 
 EOLIAN static void
-_efl_canvas_image_internal_efl_gfx_image_orientable_orientation_set(Eo *obj, Evas_Image_Data *o, Efl_Gfx_Image_Orientation efl_orient)
+_efl_canvas_image_internal_efl_gfx_image_orientable_image_orientation_set(Eo *obj, Evas_Image_Data *o, Efl_Gfx_Image_Orientation efl_orient)
 {
    // This array takes an Efl_Gfx_Image_Orientation and turns it into an Elm_Image_Orient
    static const Evas_Image_Orient evas_orient[16] = {
@@ -440,7 +440,7 @@ _efl_canvas_image_internal_efl_gfx_image_orientable_orientation_set(Eo *obj, Eva
 }
 
 EOLIAN static Efl_Gfx_Image_Orientation
-_efl_canvas_image_internal_efl_gfx_image_orientable_orientation_get(const Eo *obj EINA_UNUSED, Evas_Image_Data *o)
+_efl_canvas_image_internal_efl_gfx_image_orientable_image_orientation_get(const Eo *obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->orient_value;
 }

@@ -1331,7 +1331,7 @@ _orient_apply(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_image_zoomable_efl_gfx_image_orientable_orientation_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd,
+_efl_ui_image_zoomable_efl_gfx_image_orientable_image_orientation_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd,
                                                           Efl_Gfx_Image_Orientation orient)
 {
    if (sd->orient == orient) return;
@@ -1341,7 +1341,7 @@ _efl_ui_image_zoomable_efl_gfx_image_orientable_orientation_set(Eo *obj, Efl_Ui_
 }
 
 EOLIAN static Efl_Gfx_Image_Orientation
-_efl_ui_image_zoomable_efl_gfx_image_orientable_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+_efl_ui_image_zoomable_efl_gfx_image_orientable_image_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    return sd->orient;
 }

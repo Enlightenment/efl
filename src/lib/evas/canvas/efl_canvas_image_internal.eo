@@ -11,7 +11,7 @@ abstract @beta Efl.Canvas.Image_Internal extends Efl.Canvas.Object implements Ef
       Efl.Object.finalize;
       Efl.Object.debug_name_override;
       Efl.File_Save.save;
-      Efl.Gfx.Image_Orientable.orientation { get; set; }
+      Efl.Gfx.Image_Orientable.image_orientation { get; set; }
       Efl.Gfx.Image.smooth_scale { get; set; }
       Efl.Gfx.Image.ratio { get; }
       Efl.Gfx.Image.border { get; set; }
