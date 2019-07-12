@@ -18,6 +18,7 @@ struct _Layout_Model_Data
 {
    Eo *fileview;
    Eo *model;
+   Eo *provider;
    Evas_Object *label;
    Evas_Object *entry;
    Evas_Object *img;
@@ -55,10 +56,7 @@ _list_selected_cb(void *data EINA_UNUSED, const Efl_Event *event)
    Eo *child = event->info;
 
    printf("LIST selected model\n");
-   efl_ui_view_model_set(priv->label, child);
-   efl_ui_view_model_set(priv->entry, child);
-   efl_ui_view_model_set(priv->img, child);
-   efl_ui_view_model_set(priv->bt, child);
+   efl_ui_view_model_set(priv->provider, child);
 }
 
 static void
@@ -140,13 +138,16 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    _widget_init(bxr);
    elm_object_part_content_set(panes, "right", bxr);
 
+   priv->provider = efl_add(EFL_MODEL_PROVIDER_CLASS, win);
+   efl_provider_register(bxr, EFL_MODEL_PROVIDER_CLASS, priv->provider);
+
    /*Label widget */
     _label_init(win, bxr, "FILENAME:");
    priv->label = _label_init(win, bxr, "");
    efl_ui_property_bind(priv->label, "default", "path"); //connect "default" to "filename" property
 
    /* Entry widget */
-   priv->entry = elm_entry_add(win);
+   priv->entry = elm_entry_add(bxr);
    efl_ui_property_bind(priv->entry, "elm.text", "path"); //connect "elm.text" to "path" property
    elm_entry_single_line_set(priv->entry, EINA_TRUE);
    elm_box_pack_end(bxr, priv->entry);
@@ -155,7 +156,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    evas_object_show(priv->entry);
 
    /* Button widget */
-   priv->bt = elm_button_add(win);
+   priv->bt = elm_button_add(bxr);
    elm_box_pack_end(bxr, priv->bt);
    elm_object_text_set(priv->bt, "update model");
    evas_object_smart_callback_add(priv->bt, "clicked", _update_cb, priv);
@@ -164,11 +165,11 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    evas_object_show(priv->bt);
 
    /* Image widget */
-   img_factory = efl_add(EFL_UI_IMAGE_FACTORY_CLASS, win);
+   img_factory = efl_add(EFL_UI_IMAGE_FACTORY_CLASS, bxr);
    efl_ui_property_bind(img_factory, "", "path"); //connect to "path" property
    efl_ui_factory_bind(priv->bt, "icon", img_factory);
 
-   efl_future_then(win, efl_ui_factory_create(img_factory, NULL, win),
+   efl_future_then(win, efl_ui_factory_create(img_factory, NULL, bxr),
                    .success = _wait_for_image,
                    .data = priv);
 
