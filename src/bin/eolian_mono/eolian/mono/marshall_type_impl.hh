@@ -183,6 +183,7 @@ struct marshall_type_visitor_generate
              , is_out
              , is_return
              , is_ptr
+             , false
              , is_special_subtype
            }(r);
         }
@@ -195,6 +196,7 @@ struct marshall_type_visitor_generate
             , is_out
             , is_return
             , is_ptr
+            , false
             , is_special_subtype
           }(regular);
         }
@@ -208,6 +210,7 @@ struct marshall_type_visitor_generate
        , is_out
        , is_return
        , is_ptr
+       , false
        , is_special_subtype
      }(klass_name);
    }
@@ -253,7 +256,7 @@ struct marshall_type_visitor_generate
       auto default_match = [&] (attributes::complex_type_def const& complex)
         {
           regular_type_def no_pointer_regular = complex.outer;
-          return visitor_type{sink, context, c_type, false}(no_pointer_regular)
+          return visitor_type{sink, context, c_type, false, false, false, false}(no_pointer_regular)
             && as_generator("<" << (type(false, false, true) % ", ") << ">").generate(sink, complex.subtypes, *context);
         };
 
@@ -286,6 +289,7 @@ struct marshall_type_visitor_generate
        , is_out
        , is_return
        , is_ptr
+       , false
        , is_special_subtype
      }(complex);
    }

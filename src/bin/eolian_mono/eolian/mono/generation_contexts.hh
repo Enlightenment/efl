@@ -21,6 +21,16 @@ struct class_context
     };
     wrapper_kind current_wrapper_kind;
     std::string name;
+
+    class_context(wrapper_kind current_wrapper_kind)
+      :  current_wrapper_kind(current_wrapper_kind)
+      , name()
+    {}
+
+    class_context(wrapper_kind current_wrapper_kind, std::string const& name)
+      :  current_wrapper_kind(current_wrapper_kind)
+      , name(name)
+    {}
 };
 
 struct indentation_context

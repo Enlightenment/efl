@@ -1,5 +1,5 @@
 #ifndef EOLIAN_MONO_EVENTS_HH
-#define EOLINA_MONO_EVENTS_HH
+#define EOLIAN_MONO_EVENTS_HH
 
 #include <iterator>
 

@@ -385,7 +385,7 @@ EFL_START_TEST(eina_cxx_ptrlist_constructors)
     efl::eina::list<wrapper> list2(10, w1);
     ck_assert(list2.size() == 10);
     ck_assert(std::find_if(list2.begin(), list2.end()
-                           , [&list2, w2] (wrapper i)
+                           , [w2] (wrapper i)
                            {
                              return  i == w2;
                            }

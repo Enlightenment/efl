@@ -14,7 +14,7 @@ void call_async(efl::eina::mutex& mutex, efl::eina::condition_variable& cond, in
 {
   efl::ecore::main_loop_thread_safe_call_async
     (
-     [&mutex,&cond,&done]
+     [&mutex,&done]
      {
        std::cout << "yeah" << std::endl;
        efl::eina::unique_lock<efl::eina::mutex> l(mutex);

@@ -9,7 +9,10 @@ namespace efl { namespace eolian { namespace grammar {
 
 namespace attributes {
 
-struct unused_type {};
+struct unused_type {
+  unused_type() = default;
+  unused_type(std::nullptr_t) {}
+};
 unused_type const unused = {};
         
 template <int N, typename Tuple, typename Enable = void>

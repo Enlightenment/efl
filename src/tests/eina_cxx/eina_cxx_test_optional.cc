@@ -102,7 +102,14 @@ EFL_START_TEST(eina_cxx_optional_assignment)
 
   assert(!a); assert(b); assert(c); assert(d);
 
+  // NOTE: resistance to self assignment is exactly what is being tested here,
+  // so this compilation warning can be suppressed.
+#pragma GCC diagnostic push
+#ifdef __clang__
+#pragma GCC diagnostic ignored "-Wself-assign-overloaded"
+#endif
   a = a;
+#pragma GCC diagnostic pop
   ck_assert(a == a);
   ck_assert(!a);
 

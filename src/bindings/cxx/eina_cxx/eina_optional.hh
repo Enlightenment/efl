@@ -387,7 +387,15 @@ private:
    void _construct(U&& object)
    {
       assert(!is_engaged());
+      // NOTE: the buffer memory is intended to be in an
+      // uninitialized state here.
+      // So this warning can be disabled.
+#pragma GCC diagnostic push
+#ifndef __clang__
+#pragma GCC diagnostic ignored "-Wmaybe-uninitialized"
+#endif
       new (&buffer) T(std::forward<U>(object));
+#pragma GCC diagnostic pop
       engaged = true;
    }
 
