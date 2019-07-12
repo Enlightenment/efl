@@ -797,6 +797,7 @@ _edje_edd_init(void)
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.id_persp", map.id_persp, EET_T_INT);                           \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.id_light", map.id_light, EET_T_INT);                           \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.id_center", map.rot.id_center, EET_T_INT);                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.zoom.id_center", map.zoom.id_center, EET_T_INT);               \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.x", map.rot.x, EDJE_T_FLOAT);                              \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.y", map.rot.y, EDJE_T_FLOAT);                              \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.z", map.rot.z, EDJE_T_FLOAT);                              \
@@ -891,6 +892,7 @@ _edje_edd_init(void)
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.id_persp", Dec.map.id_persp, EET_T_INT);                           \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.id_light", Dec.map.id_light, EET_T_INT);                           \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.id_center", Dec.map.rot.id_center, EET_T_INT);                 \
+  EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.zoom.id_center", Dec.map.zoom.id_center, EET_T_INT);               \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.x", Dec.map.rot.x, EDJE_T_FLOAT);                              \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.y", Dec.map.rot.y, EDJE_T_FLOAT);                              \
   EET_DATA_DESCRIPTOR_ADD_BASIC(Edd, Type, "map.rot.z", Dec.map.rot.z, EDJE_T_FLOAT);                              \

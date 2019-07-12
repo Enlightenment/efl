@@ -1302,6 +1302,7 @@ struct _Edje_Part_Description_Common
       } rot;
       struct {
          FLOAT_T x, y;
+         int id_center;
       } zoom;
       Edje_Map_Color **colors;    /* List of the Edje_Map_Color */
       unsigned int colors_count;
@@ -1802,6 +1803,9 @@ struct _Edje_Calc_Params_Map
    struct {
       int x, y, z;
    } center; // 12
+   struct {
+      int x, y;
+   } zoom_center; // 12
    struct {
       FLOAT_T x, y, z;
    } rotation; // 24

@@ -8,8 +8,11 @@ static void                          _edje_part_make_rtl(Edje_Part_Description_C
 static Edje_Part_Description_Common *_edje_get_description_by_orientation(Edje *ed, Edje_Part_Description_Common *src, Edje_Part_Description_Common **dst, unsigned char type);
 
 static void                          _edje_part_recalc_single(Edje *ed, Edje_Real_Part *ep,
-                                                              Edje_Part_Description_Common *desc, Edje_Part_Description_Common *chosen_desc,
-                                                              Edje_Real_Part *center, Edje_Real_Part *light, Edje_Real_Part *persp,
+                                                              Edje_Part_Description_Common *desc,
+                                                              Edje_Part_Description_Common *chosen_desc,
+                                                              Edje_Real_Part *center,
+                                                              Edje_Real_Part *zoom_center,
+                                                              Edje_Real_Part *light, Edje_Real_Part *persp,
                                                               Edje_Real_Part *rel1_to_x, Edje_Real_Part *rel1_to_y,
                                                               Edje_Real_Part *rel2_to_x, Edje_Real_Part *rel2_to_y,
                                                               Edje_Real_Part *clip_to,
@@ -2279,6 +2282,7 @@ static void
 _edje_part_recalc_single_map(Edje *ed,
                              Edje_Real_Part *ep EINA_UNUSED,
                              Edje_Real_Part *center,
+                             Edje_Real_Part *zoom_center,
                              Edje_Real_Part *light,
                              Edje_Real_Part *persp,
                              Edje_Part_Description_Common *desc,
@@ -2293,6 +2297,7 @@ _edje_part_recalc_single_map(Edje *ed,
 
    EINA_COW_CALC_MAP_BEGIN(params, params_write)
    {
+      //rotation center
       if (center)
         {
            params_write->center.x = ed->x + center->x + (center->w / 2);
@@ -2304,6 +2309,17 @@ _edje_part_recalc_single_map(Edje *ed,
            params_write->center.y = ed->y + params->final.y + (params->final.h / 2);
         }
       params_write->center.z = 0;
+      //zoom center
+      if (zoom_center)
+        {
+           params_write->zoom_center.x = ed->x + zoom_center->x + (zoom_center->w / 2);
+           params_write->zoom_center.y = ed->y + zoom_center->y + (zoom_center->h / 2);
+        }
+      else
+        {
+           params_write->zoom_center.x = ed->x + params->final.x + (params->final.w / 2);
+           params_write->zoom_center.y = ed->y + params->final.y + (params->final.h / 2);
+        }
 
       params_write->rotation.x = desc->map.rot.x;
       params_write->rotation.y = desc->map.rot.y;
@@ -2680,6 +2696,7 @@ _edje_part_recalc_single(Edje *ed,
                          Edje_Part_Description_Common *desc,
                          Edje_Part_Description_Common *chosen_desc,
                          Edje_Real_Part *center,
+                         Edje_Real_Part *zoom_center,
                          Edje_Real_Part *light,
                          Edje_Real_Part *persp,
                          Edje_Real_Part *rel1_to_x,
@@ -3056,7 +3073,7 @@ _edje_part_recalc_single(Edje *ed,
         EINA_COW_CALC_PHYSICS_END(params, params_write);
      }
 #endif
-   _edje_part_recalc_single_map(ed, ep, center, light, persp, desc, chosen_desc, params);
+   _edje_part_recalc_single_map(ed, ep, center, zoom_center, light, persp, desc, chosen_desc, params);
 }
 
 static void
@@ -3616,7 +3633,7 @@ _edje_map_prop_set(Evas_Map *map, const Edje_Calc_Params *pf,
    //zoom
    evas_map_util_zoom(map,
                       pf->ext->map->zoom.x, pf->ext->map->zoom.y,
-                      pf->ext->map->center.x, pf->ext->map->center.y);
+                      pf->ext->map->zoom_center.x, pf->ext->map->zoom_center.y);
 
    //rotate
    evas_map_util_3d_rotate(map,
@@ -3853,6 +3870,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
    int statep2 = -1;
    int statecl = -1;
    Edje_Real_Part *center[2] = { NULL, NULL };
+   Edje_Real_Part *zoom_center[2] = { NULL, NULL };
    Edje_Real_Part *light[2] = { NULL, NULL };
    Edje_Real_Part *persp[2] = { NULL, NULL };
    Edje_Real_Part *rp1[4] = { NULL, NULL, NULL, NULL };
@@ -4172,6 +4190,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
    if (ep->param1.description->map.on)
      {
         center[0] = _edje_real_part_state_get(ed, ep, flags, ep->param1.description->map.rot.id_center, &statec1);
+        zoom_center[0] = _edje_real_part_state_get(ed, ep, flags, ep->param1.description->map.zoom.id_center, &statec1);
         light[0] = _edje_real_part_state_get(ed, ep, flags, ep->param1.description->map.id_light, &statel1);
 
         if (chosen_desc->map.persp_on)
@@ -4183,6 +4202,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
    if (ep->param2 && ep->param2->description->map.on)
      {
         center[1] = _edje_real_part_state_get(ed, ep, flags, ep->param2->description->map.rot.id_center, &statec2);
+        zoom_center[1] = _edje_real_part_state_get(ed, ep, flags, ep->param2->description->map.zoom.id_center, &statec2);
         light[1] = _edje_real_part_state_get(ed, ep, flags, ep->param2->description->map.id_light, &statel2);
 
         if (chosen_desc->map.persp_on)
@@ -4218,7 +4238,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 #endif
         {
            _edje_part_recalc_single(ed, ep, ep->param1.description,
-                                    chosen_desc, center[0], light[0],
+                                    chosen_desc, center[0], zoom_center[0], light[0],
                                     persp[0], rp1[Rel1X], rp1[Rel1Y],
                                     rp1[Rel2X], rp1[Rel2Y], clip1, confine_to,
                                     threshold, p1, mmw, mmh,
@@ -4264,7 +4284,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
 #endif
         {
            _edje_part_recalc_single(ed, ep, ep->param2->description,
-                                    chosen_desc, center[1], light[1],
+                                    chosen_desc, center[1], zoom_center[1], light[1],
                                     persp[1], rp2[Rel1X], rp2[Rel1Y],
                                     rp2[Rel2X], rp2[Rel2Y], clip2, confine_to,
                                     threshold, p2, mmw, mmh,
@@ -4549,6 +4569,8 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
                 p3_write->center.x = INTP(p1->ext->map->center.x, p2->ext->map->center.x, pos);
                 p3_write->center.y = INTP(p1->ext->map->center.y, p2->ext->map->center.y, pos);
                 p3_write->center.z = INTP(p1->ext->map->center.z, p2->ext->map->center.z, pos);
+                p3_write->zoom_center.x = INTP(p1->ext->map->zoom_center.x, p2->ext->map->zoom_center.x, pos);
+                p3_write->zoom_center.y = INTP(p1->ext->map->zoom_center.y, p2->ext->map->zoom_center.y, pos);
                 p3_write->rotation.x = FFP(p1->ext->map->rotation.x, p2->ext->map->rotation.x, pos);
                 p3_write->rotation.y = FFP(p1->ext->map->rotation.y, p2->ext->map->rotation.y, pos);
                 p3_write->rotation.z = FFP(p1->ext->map->rotation.z, p2->ext->map->rotation.z, pos);

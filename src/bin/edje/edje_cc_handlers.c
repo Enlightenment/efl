@@ -497,6 +497,7 @@ static void       st_collections_group_parts_part_description_map_perspective_on
 static void       st_collections_group_parts_part_description_map_color(void);
 static void       st_collections_group_parts_part_description_map_zoom_x(void);
 static void       st_collections_group_parts_part_description_map_zoom_y(void);
+static void       st_collections_group_parts_part_description_map_zoom_center(void);
 static void       st_collections_group_parts_part_description_perspective_zplane(void);
 static void       st_collections_group_parts_part_description_perspective_focal(void);
 static void       st_collections_group_parts_part_api(void);
@@ -1029,6 +1030,7 @@ New_Statement_Handler statement_handlers[] =
    {"collections.group.parts.part.description.map.color", st_collections_group_parts_part_description_map_color},
    {"collections.group.parts.part.description.map.zoom.x", st_collections_group_parts_part_description_map_zoom_x},
    {"collections.group.parts.part.description.map.zoom.y", st_collections_group_parts_part_description_map_zoom_y},
+   {"collections.group.parts.part.description.map.zoom.center", st_collections_group_parts_part_description_map_zoom_center},
    {"collections.group.parts.part.description.perspective.zplane", st_collections_group_parts_part_description_perspective_zplane},
    {"collections.group.parts.part.description.perspective.focal", st_collections_group_parts_part_description_perspective_focal},
    {"collections.group.parts.part.description.params.int", st_collections_group_parts_part_description_params_int},
@@ -6447,6 +6449,7 @@ _part_desc_free(Edje_Part_Collection *pc,
    part_lookup_del(pc, &(ed->map.id_persp));
    part_lookup_del(pc, &(ed->map.id_light));
    part_lookup_del(pc, &(ed->map.rot.id_center));
+   part_lookup_del(pc, &(ed->map.zoom.id_center));
 
    switch (ep->type)
      {
@@ -8600,6 +8603,7 @@ ob_collections_group_parts_part_description(void)
   ed->map.id_persp = -1;
   ed->map.id_light = -1;
   ed->map.rot.id_center = -1;
+  ed->map.zoom.id_center = -1;
   ed->map.rot.x = FROM_DOUBLE(0.0);
   ed->map.rot.y = FROM_DOUBLE(0.0);
   ed->map.rot.z = FROM_DOUBLE(0.0);
@@ -8759,6 +8763,7 @@ st_collections_group_parts_part_description_inherit(void)
    data_queue_copied_part_lookup(pc, &parent->map.id_persp, &ed->map.id_persp);
    data_queue_copied_part_lookup(pc, &parent->map.id_light, &ed->map.id_light);
    data_queue_copied_part_lookup(pc, &parent->map.rot.id_center, &ed->map.rot.id_center);
+   data_queue_copied_part_lookup(pc, &parent->map.zoom.id_center, &ed->map.zoom.id_center);
 
    /* make sure all the allocated memory is getting copied, not just
     * referenced
@@ -14290,6 +14295,57 @@ st_collections_group_parts_part_description_map_light(void)
 
       name = parse_str(0);
       data_queue_part_lookup(pc, name, &(current_desc->map.id_light));
+      free(name);
+   }
+}
+
+/** @edcsubsection{collections_group_parts_description_map_zoom,
+ *                 Group.Parts.Part.Description.Map.Zoom} */
+
+/**
+    @page edcref
+    @block
+        rotation
+    @context
+    map {
+        ..
+        zoom {
+            center: "name";
+            x: 1.0;
+            y: 1.0;
+        }
+        ..
+    }
+    @description
+        Zooms the part, optionally from the center on another part.
+    @endblock
+
+    @property
+        center
+    @parameters
+        [another part's name]
+    @effect
+        This sets the part that is used as the center of zoom when
+        zooming the part with this description. The part's center point
+        is used as the zoom center when applying zoom from the
+        x and y axes. If no center is given, the parts original center
+        itself is used for the zoom center.
+    @endproperty
+*/
+static void
+st_collections_group_parts_part_description_map_zoom_center(void)
+{
+   Edje_Part_Collection *pc;
+
+   check_arg_count(1);
+
+   pc = eina_list_data_get(eina_list_last(edje_collections));
+
+   {
+      char *name;
+
+      name = parse_str(0);
+      data_queue_part_lookup(pc, name, &(current_desc->map.zoom.id_center));
       free(name);
    }
 }

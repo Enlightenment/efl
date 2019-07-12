@@ -16,7 +16,7 @@ Eina_Cow *_edje_calc_params_physics_cow = NULL;
 Edje_Global *_edje_global_obj = NULL;
 
 static const Edje_Calc_Params_Map default_calc_map = {
-   { 0, 0, 0 }, { 0.0, 0.0, 0.0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0.0, 0.0 }, NULL, 0
+   { 0, 0, 0 }, { 0, 0 }, { 0.0, 0.0, 0.0 }, { 0, 0, 0, 0, 0, 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0.0, 0.0 }, NULL, 0
 };
 
 static const Edje_Calc_Params_Physics default_calc_physics = {
