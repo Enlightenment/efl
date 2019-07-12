@@ -391,14 +391,42 @@ get_me_to_those_events(Eo *obj)
    ecore_main_loop_begin();
 }
 
+enum
+{
+   NONE = 0,
+   LEFT = 1 << 0,
+   RIGHT = 1 << 1,
+   TOP = 1 << 2,
+   BOTTOM = 1 << 3,
+};
+
+static void
+click_object_internal(Eo *obj, int dir)
+{
+   int x, y;
+   Evas *e = evas_object_evas_get(obj);
+   Eina_Rect r = efl_gfx_entity_geometry_get(obj);
+   if (dir & LEFT)
+     x = r.x + (.1 * r.w);
+   else if (dir & RIGHT)
+     x = r.x + (.9 * r.w);
+   else
+     x = r.x + r.w / 2;
+   if (dir & TOP)
+     y = r.y + (.1 * r.h);
+   else if (dir & BOTTOM)
+     y = r.y + (.9 * r.h);
+   else
+     y = r.y + r.h / 2;
+   evas_event_feed_mouse_move(e, x, y, 0, NULL);
+   evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
+   evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
+}
+
 void
 click_object(Eo *obj)
 {
-   Evas *e = evas_object_evas_get(obj);
-   Eina_Rect r = efl_gfx_entity_geometry_get(obj);
-   evas_event_feed_mouse_move(e, r.x + r.w / 2, r.y + r.h / 2, 0, NULL);
-   evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
-   evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
+   click_object_internal(obj, NONE);
 }
 
 void
@@ -406,12 +434,23 @@ click_part(Eo *obj, const char *part)
 {
    Efl_Part *part_obj = efl_ref(efl_part(obj, part));
    Eo *content;
+   int dir = 0;
 
    if (efl_canvas_layout_part_type_get(part_obj) == EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW)
      content = efl_content_get(part_obj);
    else
-     content = part_obj;
-   click_object(content);
+     {
+        content = part_obj;
+        if (strstr(part, "left"))
+          dir |= LEFT;
+        else if (strstr(part, "right"))
+          dir |= RIGHT;
+        if (strstr(part, "top"))
+          dir |= TOP;
+        else if (strstr(part, "bottom"))
+          dir |= BOTTOM;
+     }
+   click_object_internal(content, dir);
    if (efl_isa(content, EFL_LAYOUT_SIGNAL_INTERFACE))
      edje_object_message_signal_process(content);
    edje_object_message_signal_process(obj);
