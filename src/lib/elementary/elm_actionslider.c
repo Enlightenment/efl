@@ -237,7 +237,7 @@ _button_animator(void *data)
 
         _text_get(obj, &left, &right, &center);
 
-        if ((!EINA_DBL_EQ(sd->final_position, 0)) &&
+        if ((EINA_DBL_EQ(sd->final_position, 0)) &&
             (sd->enabled_position & ELM_ACTIONSLIDER_LEFT))
           evas_object_smart_callback_call(obj, "selected",(char *)left);
         else if ((EINA_DBL_EQ(sd->final_position, 0.5)) &&
