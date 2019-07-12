@@ -558,7 +558,6 @@ _tran_set_btn_scroll_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Efl_Ui_Spotlight_Manager_Scroll *scroll = efl_new(EFL_UI_SPOTLIGHT_MANAGER_SCROLL_CLASS);
    efl_ui_spotlight_manager_set(data, scroll);
-   efl_unref(scroll);
 }
 
 static void
@@ -566,7 +565,6 @@ _tran_set_btn_stack_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Efl_Ui_Spotlight_Manager_Scroll *stack = efl_new(EFL_UI_SPOTLIGHT_MANAGER_STACK_CLASS);
    efl_ui_spotlight_manager_set(data, stack);
-   efl_unref(stack);
 }
 
 static void
