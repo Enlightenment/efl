@@ -120,7 +120,7 @@ class TestEoInherit
     public static void inherited_collected()
     {
         var wref = CreateCollectableInherited();
-        Test.CollectAndIterate();
+        Test.CollectAndIterate(300, 10);
 
         Test.AssertNull(wref.Target);
     }

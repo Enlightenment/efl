@@ -200,14 +200,17 @@ public static class Test
     /// <summary>Runs a number of garbage collections and iterate the main loop.
     /// The iteration is needed to make sure objects collected in the GC thread
     /// are efl_unref'd in the main thread.</summary>
-    public static void CollectAndIterate(int iterations=1000)
+    public static void CollectAndIterate(int iterations=1000, int global_iterations=1)
     {
-        for (int i = 0; i < iterations; i++)
+        for (int g = 0; g < global_iterations; ++g)
         {
-            System.GC.Collect();
+            for (int i = 0; i < iterations; ++i)
+            {
+                System.GC.Collect();
+            }
+            System.GC.WaitForPendingFinalizers();
+            Efl.App.AppMain.Iterate();
         }
-        System.GC.WaitForPendingFinalizers();
-        Efl.App.AppMain.Iterate();
     }
 
 }

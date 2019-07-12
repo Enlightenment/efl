@@ -171,9 +171,7 @@ class TestFunctionPointers
         // Should release the handle to the wrapper allocated when calling set_callback from C.
         obj.SetCallback(twice);
 
-        GC.Collect();
-        GC.WaitForPendingFinalizers();
-        Efl.App.AppMain.Iterate();
+        Test.CollectAndIterate(300, 10);
 
         Test.Assert(obj.set_called, "set_callback override must have been called");
         Test.Assert(!obj.invoke_called, "invoke_callback must not have been called");
