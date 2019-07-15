@@ -231,8 +231,6 @@ EAPI Eina_Future *efl_ui_view_factory_create_with_event(Efl_Ui_Factory *factory,
 #include "interfaces/efl_text_types.eot.h"
 #endif
 
-typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
-
 #endif
 
 /* work-around bug in gcc --as-needed link optimization */
