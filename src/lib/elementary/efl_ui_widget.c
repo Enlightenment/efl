@@ -300,17 +300,6 @@ _candidacy_exam(Eo *obj)
 
 static void _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd);
 
-static void
-_manager_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
-{
-   if (!efl_alive_get(data))
-     return;
-
-   ELM_WIDGET_DATA_GET(data, pd);
-
-   _full_eval(data, pd);
-}
-
 static Efl_Ui_Focus_Object*
 _focus_manager_eval(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool want, Eina_Bool should)
 {
@@ -333,18 +322,8 @@ _focus_manager_eval(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool want, Eina_Boo
      {
         old = pd->manager.manager;
 
-        if (pd->manager.provider)
-          efl_event_callback_del(pd->manager.provider, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, _manager_changed_cb, obj);
-
         pd->manager.manager = new;
         pd->manager.provider = provider;
-     }
-   if (pd->manager.provider)
-     {
-        if (!want && !should)
-          efl_event_callback_del(pd->manager.provider, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, _manager_changed_cb, obj);
-        else
-          efl_event_callback_add(pd->manager.provider, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, _manager_changed_cb, obj);
      }
 
    return old;
@@ -561,6 +540,7 @@ _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 
    if (old_registered_manager != pd->focus.manager)
      {
+        _elm_widget_full_eval_children(obj, pd);
         efl_event_callback_call(obj,
              EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, old_registered_manager);
      }
@@ -4794,7 +4774,6 @@ _efl_ui_widget_efl_object_destructor(Eo *obj, Elm_Widget_Smart_Data *sd)
 {
    if (sd->manager.provider)
      {
-        efl_event_callback_del(sd->manager.provider, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_MANAGER_CHANGED, _manager_changed_cb, obj);
         sd->manager.provider = NULL;
      }
    efl_access_object_attributes_clear(obj);
