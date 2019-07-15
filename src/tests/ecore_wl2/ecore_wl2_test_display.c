@@ -75,6 +75,17 @@ EFL_START_TEST(wl2_display_disconnect)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_display_registry_get)
+{
+   Ecore_Wl2_Display *disp;
+
+   disp = ECORE_WL2_TEST_DISPLAY_CONNECT();
+   ck_assert(disp != NULL);
+
+   ck_assert(ecore_wl2_display_registry_get(disp) != NULL);
+}
+EFL_END_TEST
+
 EFL_START_TEST(wl2_display_shm_get)
 {
    Ecore_Wl2_Display *disp;
@@ -157,6 +168,7 @@ ecore_wl2_test_display(TCase *tc)
         printf("Wayland Compositor detected. Testing client-side functions\n");
         tcase_add_test(tc, wl2_display_connect);
         tcase_add_test(tc, wl2_display_disconnect);
+        tcase_add_test(tc, wl2_display_registry_get);
         tcase_add_test(tc, wl2_display_shm_get);
         tcase_add_test(tc, wl2_display_dmabuf_get);
         tcase_add_test(tc, wl2_display_globals_get);
