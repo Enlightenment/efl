@@ -271,6 +271,9 @@ class SuiteGen(BaseItem):
     def print_arg(self, eoarg):
         return self.keys.print_arg(eoarg)
 
+    def intersect(self, a, b):
+        return list(set(a) & set(b))
+
     def loadFiles(self, eolian_db, eofiles):
         self.clslist.clear()
         for eofile in eofiles:
