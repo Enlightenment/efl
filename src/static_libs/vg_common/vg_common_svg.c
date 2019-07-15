@@ -618,10 +618,18 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_F
              int min = (r.h > r.w) ? r.w : r.h;
              radius = sqrt(pow(min, 2) + pow(min, 2)) / sqrt(2.0);
           }
+        if (g->use_percentage)
+          {
+             g->radial->cx = g->radial->cx * r.w + r.x;
+             g->radial->cy = g->radial->cy * r.h + r.y;
+             g->radial->r = g->radial->r * radius;
+             g->radial->fx = g->radial->fx * r.w + r.x;
+             g->radial->fy = g->radial->fy * r.h + r.y;
+          }
         grad_obj = efl_add(EFL_CANVAS_VG_GRADIENT_RADIAL_CLASS, parent);
-        efl_gfx_gradient_radial_center_set(grad_obj, g->radial->cx * r.w + r.x, g->radial->cy * r.h + r.y);
-        efl_gfx_gradient_radial_radius_set(grad_obj, g->radial->r * radius);
-        efl_gfx_gradient_radial_focal_set(grad_obj, g->radial->fx * r.w + r.x, g->radial->fy * r.h + r.y);
+        efl_gfx_gradient_radial_center_set(grad_obj, g->radial->cx, g->radial->cy);
+        efl_gfx_gradient_radial_radius_set(grad_obj, g->radial->r);
+        efl_gfx_gradient_radial_focal_set(grad_obj, g->radial->fx, g->radial->fy);
 
         /* in case of objectBoundingBox it need proper scaling */
         if (!g->user_space)
@@ -955,7 +963,6 @@ _create_gradient_node(Efl_VG *vg)
         if (!grad->linear) goto oom_error;
         efl_gfx_gradient_linear_start_get(vg, &grad->linear->x1, &grad->linear->y1);
         efl_gfx_gradient_linear_end_get(vg, &grad->linear->x2, &grad->linear->y2);
-        grad->use_percentage = EINA_FALSE;
      }
    else
      {
@@ -966,6 +973,7 @@ _create_gradient_node(Efl_VG *vg)
         efl_gfx_gradient_radial_focal_get(vg, &grad->radial->fx, &grad->radial->fy);
         grad->radial->r = efl_gfx_gradient_radial_radius_get(vg);
      }
+   grad->use_percentage = EINA_FALSE;
 
    return grad;
 
