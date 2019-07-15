@@ -10,6 +10,7 @@ static const Efl_Test_Case etc[] =
 {
 #if HAVE_ECORE_WL2
    { "Ecore_Wl2", ecore_wl2_test_init },
+   { "Display", ecore_wl2_test_display },
 #endif
    { NULL, NULL }
 };

@@ -5,5 +5,6 @@
 # include "../efl_check.h"
 
 void ecore_wl2_test_init(TCase *tc);
+void ecore_wl2_test_display(TCase *tc);
 
 #endif
