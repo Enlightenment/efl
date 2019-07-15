@@ -733,6 +733,23 @@ class Class(Object):
         return Iterator(Class, lib.eolian_class_extensions_get(self))
 
     @cached_property
+    def extensions_hierarchy(self):
+        visited = set()
+        queue = [ext for ext in self.extensions]
+
+        while queue:
+            current = queue.pop()
+
+            if current in visited:
+                continue
+
+            visited.add(current)
+
+            queue.extend(current.extensions)
+
+        return visited
+
+    @cached_property
     def inherits_full(self):
         li = []
 
