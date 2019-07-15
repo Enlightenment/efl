@@ -158,13 +158,13 @@ option('xgesture',
 option('xinput2',
   type : 'boolean',
   value : true,
-  description : 'xi2 support'
+  description : 'xinpput 2.0+ support'
 )
 
 option('xinput22',
   type : 'boolean',
-  value : false,
-  description : 'xi22 support'
+  value : true,
+  description : 'xiinput 2.2+ support'
 )
 
 option('tslib',
