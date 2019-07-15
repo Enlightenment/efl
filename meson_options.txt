@@ -228,14 +228,14 @@ option('emotion-generic-loaders-disabler',
 
 option('harfbuzz',
   type : 'boolean',
-  value : false,
-  description : 'harfbuzz support'
+  value : true,
+  description : 'harfbuzz (complex text layout library) support'
 )
 
 option('fribidi',
   type : 'boolean',
   value : true,
-  description : 'fribidi support'
+  description : 'fribidi (right to left text layout library) support'
 )
 
 option('fontconfig',
