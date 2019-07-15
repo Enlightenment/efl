@@ -165,7 +165,7 @@ EFL_END_TEST
 void
 ecore_wl2_test_display(TCase *tc)
 {
-   if (!getenv("WAYLAND_DISPLAY"))
+   if ((!getenv("WAYLAND_DISPLAY")) && (getenv("XDG_RUNTIME_DIR")))
      {
         /* tests here are for server-side functions */
         printf("No Wayland Compositor detected. Testing server-side functions\n");
