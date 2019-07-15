@@ -490,6 +490,10 @@ _logical_parent_eval(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Eina_Bool s
                {
                   ELM_WIDGET_DATA_GET_OR_RETURN(pd->logical.parent, logical_wd, NULL);
                   logical_wd->logical.child_count --;
+                  if (logical_wd->logical.child_count == 0)
+                    {
+                      *state_change_to_parent = EINA_TRUE;
+                    }
                }
              old = pd->logical.parent;
              efl_weak_unref(&pd->logical.parent);
@@ -525,18 +529,22 @@ _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 
    old_parent = _logical_parent_eval(obj, pd, should, &state_change_to_parent);
 
-   if (efl_isa(old_parent, EFL_UI_WIDGET_CLASS))
+   if (state_change_to_parent)
      {
-        //emit signal and focus eval old and new
-        ELM_WIDGET_DATA_GET(old_parent, old_pd);
-        _full_eval(old_parent, old_pd);
+        if (efl_isa(old_parent, EFL_UI_WIDGET_CLASS))
+          {
+             //emit signal and focus eval old and new
+             ELM_WIDGET_DATA_GET(old_parent, old_pd);
+             _full_eval(old_parent, old_pd);
+          }
+
+        if (efl_isa(pd->logical.parent, EFL_UI_WIDGET_CLASS))
+          {
+             ELM_WIDGET_DATA_GET(pd->logical.parent, new_pd);
+             _full_eval(pd->logical.parent, new_pd);
+          }
      }
 
-   if (state_change_to_parent && efl_isa(pd->logical.parent, EFL_UI_WIDGET_CLASS))
-     {
-        ELM_WIDGET_DATA_GET(pd->logical.parent, new_pd);
-        _full_eval(pd->logical.parent, new_pd);
-     }
 
    _focus_manager_eval(obj, pd, want_full, should);
 
