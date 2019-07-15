@@ -75,6 +75,19 @@ EFL_START_TEST(wl2_display_disconnect)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_display_shm_get)
+{
+   Ecore_Wl2_Display *disp;
+   struct wl_shm *shm;
+
+   disp = ECORE_WL2_TEST_DISPLAY_CONNECT();
+   ck_assert(disp != NULL);
+
+   shm = ecore_wl2_display_shm_get(disp);
+   ck_assert(shm != NULL);
+}
+EFL_END_TEST
+
 void
 ecore_wl2_test_display(TCase *tc)
 {
@@ -92,5 +105,6 @@ ecore_wl2_test_display(TCase *tc)
         /* tests here are for client-side functions */
         tcase_add_test(tc, wl2_display_connect);
         tcase_add_test(tc, wl2_display_disconnect);
+        tcase_add_test(tc, wl2_display_shm_get);
      }
 }
