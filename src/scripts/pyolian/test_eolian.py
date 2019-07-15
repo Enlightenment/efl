@@ -704,3 +704,11 @@ class TestEolianInherits(object):
     def test_inherits_full(self, eolian_db):
         cls = eolian_db.class_by_name_get('Efl.Ui.Widget')
         assert 'Efl.Object' in cls.inherits_full
+
+    def test_extensions_hierarchy(self, eolian_db):
+        cls = eolian_db.class_by_name_get('Efl.Ui.Widget')
+
+        # inherited extension
+        assert any(x.name == 'Efl.Gfx.Stack' for x in cls.extensions_hierarchy)
+        # direct extension
+        assert any(x.name == 'Efl.Access.Object' for x in cls.extensions_hierarchy)
