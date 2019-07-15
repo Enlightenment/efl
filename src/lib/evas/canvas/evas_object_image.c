@@ -14,6 +14,9 @@ static Evas_Coord   evas_object_image_figure_x_fill(Evas_Object *eo_obj, Evas_Ob
 static Evas_Coord   evas_object_image_figure_y_fill(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas_Coord start, Evas_Coord size, Evas_Coord *size_ret);
 
 static void         evas_object_image_init(Evas_Object *eo_obj);
+
+static inline uint32_t _stretch_region_accumulate(uint8_t *stretch_region, Eina_Bool mask, uint32_t *i);
+
 static void         evas_object_image_render(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj,
                                              void *type_private_data,
                                              void *engine, void *output, void *context, void *surface,
@@ -92,6 +95,7 @@ static const Evas_Object_Image_State default_state = {
    { 0, 0, 0, 0 }, // fill
    { 0, 0, 0 }, // image
    { 1.0, 0, 0, 0, 0, 1 }, // border
+   { { NULL, 0, 0 }, { NULL, 0, 0 } },
    NULL, NULL, NULL, //source, defmap, scene
    NULL, //f
    NULL, //key
@@ -412,7 +416,7 @@ _evas_image_orientation_set(Eo *eo_obj, Evas_Image_Data *o, Evas_Image_Orient or
 }
 
 EOLIAN static void
-_efl_canvas_image_internal_efl_gfx_image_orientable_orientation_set(Eo *obj, Evas_Image_Data *o, Efl_Gfx_Image_Orientation efl_orient)
+_efl_canvas_image_internal_efl_gfx_image_orientable_image_orientation_set(Eo *obj, Evas_Image_Data *o, Efl_Gfx_Image_Orientation efl_orient)
 {
    // This array takes an Efl_Gfx_Image_Orientation and turns it into an Elm_Image_Orient
    static const Evas_Image_Orient evas_orient[16] = {
@@ -440,7 +444,7 @@ _efl_canvas_image_internal_efl_gfx_image_orientable_orientation_set(Eo *obj, Eva
 }
 
 EOLIAN static Efl_Gfx_Image_Orientation
-_efl_canvas_image_internal_efl_gfx_image_orientable_orientation_get(const Eo *obj EINA_UNUSED, Evas_Image_Data *o)
+_efl_canvas_image_internal_efl_gfx_image_orientable_image_orientation_get(const Eo *obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->orient_value;
 }
@@ -459,6 +463,130 @@ _efl_canvas_image_internal_efl_object_dbg_info_get(Eo *eo_obj, Evas_Image_Data *
    EFL_DBG_INFO_APPEND(group, "Key", EINA_VALUE_TYPE_STRING, key);
    EFL_DBG_INFO_APPEND(group, "Source", EINA_VALUE_TYPE_UINT64,
                        (uint64_t)(uintptr_t)evas_object_image_source_get(eo_obj));
+}
+
+static void
+_stretch_region_load(Evas_Object_Protected_Data *obj, Evas_Image_Data *o)
+{
+   unsigned int i;
+   uint8_t *horizontal = NULL;
+   uint8_t *vertical = NULL;
+   uint32_t total, stretchable;
+
+   if (o->cur->stretch_loaded == EINA_TRUE ||
+       (o->cur->stretch.horizontal.region && o->cur->stretch.vertical.region))
+     return ;
+
+   ENFN->image_stretch_region_get(ENC, o->engine_data,
+                                &horizontal,
+                                &vertical);
+
+   EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+   {
+      state_write->stretch.horizontal.region = horizontal;
+      state_write->stretch.vertical.region = vertical;
+      state_write->free_stretch = EINA_FALSE;
+      state_write->stretch_loaded = EINA_TRUE;
+   }
+   EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+
+   if (!o->cur->stretch.horizontal.region || !o->cur->stretch.vertical.region)
+     return ;
+
+   stretchable = 0;
+   total = 0;
+   for (i = 0; o->cur->stretch.horizontal.region[i]; i++)
+     {
+        total += o->cur->stretch.horizontal.region[i] & 0x7F;
+        if (o->cur->stretch.horizontal.region[i] & 0x80)
+          stretchable += o->cur->stretch.horizontal.region[i] & 0x7F;
+     }
+
+   EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+   {
+      state_write->stretch.horizontal.stretchable = stretchable;
+      state_write->stretch.horizontal.total = total;
+   }
+   EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+
+   stretchable = 0;
+   total = 0;
+   for (i = 0; o->cur->stretch.vertical.region[i]; i++)
+     {
+        total += o->cur->stretch.vertical.region[i] & 0x7F;
+        if (o->cur->stretch.vertical.region[i] & 0x80)
+          stretchable += o->cur->stretch.vertical.region[i] & 0x7F;
+     }
+
+   EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+   {
+      state_write->stretch.vertical.stretchable = stretchable;
+      state_write->stretch.vertical.total = total;
+   }
+   EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+}
+
+static Eina_Rect
+_efl_canvas_image_internal_efl_gfx_image_content_region_get(const Eo *eo_obj, Evas_Image_Data *o)
+{
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   Eina_Rect r;
+
+   if (!o->cur->stretch.horizontal.region &&
+       !o->cur->stretch.vertical.region)
+     _stretch_region_load(obj, o);
+
+   if (o->cur->stretch.horizontal.region &&
+       o->cur->stretch.vertical.region)
+     {
+        uint32_t acc;
+        uint32_t hi = 0;
+        uint32_t vi = 0;
+
+        // If the file come with a defined content zone, then return it
+        if (ENFN->image_content_region_get(ENC, o->engine_data, &r.rect))
+          {
+             // Correct bottom right corner coordinate to be resized with object size
+             r.w = obj->cur->geometry.w - (o->cur->image.w - r.w);
+             r.h = obj->cur->geometry.h - (o->cur->image.h - r.h);
+             return r;
+          }
+
+        r.x = _stretch_region_accumulate(o->cur->stretch.horizontal.region, 0, &hi);
+        r.w = o->cur->stretch.horizontal.stretchable + obj->cur->geometry.w - o->cur->image.w;
+
+        // Accumulate all the non stretch zone, except the first one and the last one
+        acc = 0;
+        while (o->cur->stretch.horizontal.region[hi])
+          {
+             // We are just ignoring all the stretchable zone as we know them already
+             _stretch_region_accumulate(o->cur->stretch.horizontal.region, 0x80, &hi);
+             r.w += acc;
+             acc = _stretch_region_accumulate(o->cur->stretch.horizontal.region, 0, &hi);
+          }
+
+        r.y = _stretch_region_accumulate(o->cur->stretch.vertical.region, 0, &vi);
+        r.h = o->cur->stretch.vertical.stretchable + obj->cur->geometry.h - o->cur->image.h;
+
+        // Accumulate all the stretch zone, except the last non stretching one
+        acc = 0;
+        while (o->cur->stretch.vertical.region[vi])
+          {
+             // We are just ignoring all the stretchable zone as we know them already
+             _stretch_region_accumulate(o->cur->stretch.vertical.region, 0x80, &vi);
+             r.h += acc;
+             acc = _stretch_region_accumulate(o->cur->stretch.vertical.region, 0, &vi);
+          }
+     }
+   else
+     {
+        r.x = o->cur->border.l;
+        r.y = o->cur->border.t;
+        r.w = obj->cur->geometry.w - o->cur->border.l - o->cur->border.r;
+        r.h = obj->cur->geometry.h - o->cur->border.t - o->cur->border.b;
+     }
+
+   return r;
 }
 
 EOLIAN static void
@@ -529,6 +657,276 @@ _toggle_fill_listener(Eo *eo_obj, Evas_Image_Data *o)
      evas_object_event_callback_add(eo_obj, EVAS_CALLBACK_RESIZE,
                                     evas_object_image_filled_resize_listener,
                                     NULL);
+}
+
+static inline Eina_Bool
+_efl_canvas_image_internal_stretch_region_push(uint8_t **stretch_region,
+                                               uint32_t *stretch_region_length,
+                                               const uint8_t region)
+{
+   uint8_t *tmp;
+
+   tmp = realloc(*stretch_region, (*stretch_region_length + 1) * sizeof (uint8_t));
+   if (!tmp) return EINA_FALSE;
+   *stretch_region = tmp;
+   (*stretch_region)[*stretch_region_length] = region;
+   (*stretch_region_length) += 1;
+
+   return EINA_TRUE;
+}
+
+static inline Eina_Error
+_efl_canvas_image_internal_stretch_region_build(uint8_t **stretch_region,
+                                                uint32_t *stretch_region_length,
+                                                uint32_t value, uint8_t mask)
+{
+   while (value > 0x7F)
+     {
+        if (!_efl_canvas_image_internal_stretch_region_push(stretch_region,
+                                                          stretch_region_length,
+                                                          mask | 0x7F))
+          {
+             free(*stretch_region);
+             return ENOMEM;
+          }
+
+        value -= 0x7F;
+     }
+
+   if (!value) return 0;
+
+   if (!_efl_canvas_image_internal_stretch_region_push(stretch_region,
+                                                     stretch_region_length,
+                                                     mask | value))
+     {
+        free(*stretch_region);
+        return ENOMEM;
+     }
+
+   return 0;
+}
+
+static inline uint8_t *
+_efl_canvas_image_internal_stretch_region_iterate(Eina_Iterator *it)
+{
+   Efl_Gfx_Image_Stretch_Region sz;
+   uint8_t *stretch_region = NULL;
+   uint32_t stretch_region_length = 0;
+
+   EINA_ITERATOR_FOREACH(it, sz)
+     {
+        if (_efl_canvas_image_internal_stretch_region_build(&stretch_region,
+                                                          &stretch_region_length,
+                                                          sz.offset, 0))
+          return NULL;
+
+        // The upper bit means stretchable region if set
+        if (_efl_canvas_image_internal_stretch_region_build(&stretch_region,
+                                                          &stretch_region_length,
+                                                          sz.length, 0x80))
+          return NULL;
+     }
+
+   if (!_efl_canvas_image_internal_stretch_region_push(&stretch_region,
+                                                     &stretch_region_length,
+                                                     0))
+     {
+        free(stretch_region);
+        return NULL;
+     }
+
+   return stretch_region;
+}
+
+static Eina_Error
+_efl_canvas_image_internal_efl_gfx_image_stretch_region_set(Eo *eo_obj, Evas_Image_Data *pd,
+                                                            Eina_Iterator *horizontal,
+                                                            Eina_Iterator *vertical)
+{
+   uint8_t *fhsz = NULL, *fvsz = NULL, *walk;
+   uint32_t hstretch = 0, vstretch = 0;
+   uint32_t htotal = 0, vtotal = 0;
+   Eina_Error err = EINVAL;
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+
+   // We do not duplicate the stretch region in memory, just move pointer. So when
+   // we do change it, we have to make sure nobody is accessing them anymore by
+   // blocking rendering.
+   evas_object_async_block(obj);
+   EINA_COW_IMAGE_STATE_WRITE_BEGIN(pd, state_write)
+   {
+      if (state_write->free_stretch) free(state_write->stretch.horizontal.region);
+      state_write->stretch.horizontal.region = NULL;
+
+      if (state_write->free_stretch) free(state_write->stretch.vertical.region);
+      state_write->stretch.vertical.region = NULL;
+
+      state_write->free_stretch = EINA_FALSE;
+      state_write->stretch_loaded = EINA_FALSE;
+   }
+   EINA_COW_IMAGE_STATE_WRITE_END(pd, state_write);
+
+   if (!horizontal && !vertical) return 0;
+   if (!horizontal || !vertical) goto on_error;
+
+   err = ENOMEM;
+
+   fhsz = _efl_canvas_image_internal_stretch_region_iterate(horizontal);
+   if (!fhsz) goto on_error;
+   fvsz = _efl_canvas_image_internal_stretch_region_iterate(vertical);
+   if (!fvsz) goto on_error;
+
+   for (walk = fhsz; *walk; walk++)
+     {
+        if ((*walk & 0x80)) hstretch += *walk & 0x7F;
+        htotal += *walk & 0x7F;
+     }
+
+   for (walk = fvsz; *walk; walk++)
+     {
+        if ((*walk & 0x80)) vstretch += *walk & 0x7F;
+        vtotal += *walk & 0x7F;
+     }
+
+   eina_iterator_free(horizontal);
+   eina_iterator_free(vertical);
+
+   EINA_COW_IMAGE_STATE_WRITE_BEGIN(pd, state_write)
+   {
+      state_write->stretch.horizontal.region = fhsz;
+      state_write->stretch.horizontal.stretchable = hstretch;
+      state_write->stretch.horizontal.total = htotal;
+      state_write->stretch.vertical.region = fvsz;
+      state_write->stretch.vertical.stretchable = vstretch;
+      state_write->stretch.vertical.total = vtotal;
+      state_write->free_stretch = EINA_TRUE;
+      state_write->stretch_loaded = EINA_TRUE;
+   }
+   EINA_COW_IMAGE_STATE_WRITE_END(pd, state_write);
+
+   return 0;
+
+ on_error:
+   eina_iterator_free(horizontal);
+   eina_iterator_free(vertical);
+   free(fhsz);
+   free(fvsz);
+
+   return err;
+}
+
+typedef struct _Efl_Gfx_Image_Stretch_Region_Iterator Efl_Gfx_Image_Stretch_Region_Iterator;
+struct _Efl_Gfx_Image_Stretch_Region_Iterator
+{
+   Eina_Iterator iterator;
+
+   Efl_Gfx_Image_Stretch_Region sz;
+
+   uint8_t *stretch_region;
+   unsigned int next;
+};
+
+static Eina_Bool
+_efl_gfx_image_stretch_region_iterator_next(Eina_Iterator *iterator, void **data)
+{
+   Efl_Gfx_Image_Stretch_Region_Iterator *it = (Efl_Gfx_Image_Stretch_Region_Iterator*) iterator;
+
+   *data = &it->sz;
+   if (!it->stretch_region[it->next]) return EINA_FALSE;
+
+   it->sz.offset = 0;
+   it->sz.length = 0;
+
+   // Count offset before next stretch region
+   while (!(it->stretch_region[it->next] & 0x80) && it->stretch_region[it->next])
+     {
+        it->sz.offset += it->stretch_region[it->next] & 0x7F;
+        it->next++;
+     }
+
+   // Count length of the stretch region
+   while ((it->stretch_region[it->next] & 0x80) && it->stretch_region[it->next])
+     {
+        it->sz.length += it->stretch_region[it->next] & 0x7F;
+        it->next++;
+     }
+
+   return EINA_TRUE;
+}
+
+static void *
+_efl_gfx_image_stretch_region_iterator_container(Eina_Iterator *it EINA_UNUSED)
+{
+   return NULL;
+}
+
+static void
+_efl_gfx_image_stretch_region_iterator_free(Eina_Iterator *it)
+{
+   free(it);
+}
+
+static void
+_efl_canvas_image_internal_efl_gfx_image_stretch_region_get(const Eo *eo_obj,
+                                                            Evas_Image_Data *pd,
+                                                            Eina_Iterator **horizontal,
+                                                            Eina_Iterator **vertical)
+{
+   Efl_Gfx_Image_Stretch_Region_Iterator *it;
+
+   if (!pd->cur->stretch.vertical.region &&
+       !pd->cur->stretch.horizontal.region)
+     {
+        Evas_Object_Protected_Data *obj;
+
+        obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+        _stretch_region_load(obj, pd);
+     }
+
+   if (!horizontal) goto vertical_only;
+   if (!pd->cur->stretch.horizontal.region)
+     {
+        *horizontal = NULL;
+        goto vertical_only;
+     }
+
+   it = calloc(1, sizeof (Efl_Gfx_Image_Stretch_Region_Iterator));
+   if (!it) return;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->stretch_region = pd->cur->stretch.horizontal.region;
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_efl_gfx_image_stretch_region_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
+       _efl_gfx_image_stretch_region_iterator_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_efl_gfx_image_stretch_region_iterator_free);
+
+   *horizontal = &it->iterator;
+
+ vertical_only:
+   if (!vertical) return;
+   if (!pd->cur->stretch.vertical.region)
+     {
+        *vertical = NULL;
+        return;
+     }
+
+   it = calloc(1, sizeof (Efl_Gfx_Image_Stretch_Region_Iterator));
+   if (!it) return;
+
+   EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+   it->stretch_region = pd->cur->stretch.vertical.region;
+
+   it->iterator.version = EINA_ITERATOR_VERSION;
+   it->iterator.next = FUNC_ITERATOR_NEXT(_efl_gfx_image_stretch_region_iterator_next);
+   it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
+       _efl_gfx_image_stretch_region_iterator_container);
+   it->iterator.free = FUNC_ITERATOR_FREE(_efl_gfx_image_stretch_region_iterator_free);
+
+   *vertical = &it->iterator;
 }
 
 EOLIAN static void
@@ -1286,6 +1684,7 @@ _efl_canvas_image_internal_efl_object_destructor(Eo *eo_obj, Evas_Image_Data *o 
    if (obj->legacy.ctor)
      evas_object_image_video_surface_set(eo_obj, NULL);
    evas_object_image_free(eo_obj, obj);
+   efl_gfx_image_stretch_region_set(eo_obj, NULL, NULL);
    efl_destructor(efl_super(eo_obj, MY_CLASS));
 }
 
@@ -1966,6 +2365,84 @@ _evas_image_pixels_get(Eo *eo_obj, Evas_Object_Protected_Data *obj,
    return pixels;
 }
 
+static inline uint32_t
+_stretch_region_accumulate(uint8_t *stretch_region, Eina_Bool mask, uint32_t *i)
+{
+   uint32_t acc;
+
+   for (acc = 0;
+        ((stretch_region[*i] & 0x80) == mask) && stretch_region[*i];
+        (*i)++)
+     acc += stretch_region[*i] & 0x7F;
+
+   return acc;
+}
+
+static void
+_evas_image_render_hband(Evas_Object_Protected_Data *obj, Evas_Image_Data *o,
+                         void *engine, void *output, void *context,
+                         void *surface, void *pixels,
+                         const int *imw, const int *imh EINA_UNUSED,
+                         int stretchw, int stretchh EINA_UNUSED,
+                         int *inx, int *iny, int *inw, int *inh,
+                         int *outx, int *outy, int *outw, int *outh,
+                         Eina_Bool do_async)
+{
+   uint32_t hacc;
+   uint32_t hi;
+
+   if (*inh == 0 || *outh == 0) goto end;
+
+   hi = 0;
+   while (o->cur->stretch.horizontal.region[hi])
+     {
+        // Not stretched horizontal
+        hacc = _stretch_region_accumulate(o->cur->stretch.horizontal.region,
+                                        0, &hi);
+        *inw = hacc;
+        *outw = hacc;
+
+        if (*inw && *outw)
+          _draw_image(obj, engine, output, context, surface, pixels,
+                      *inx, *iny, *inw, *inh,
+                      *outx, *outy, *outw, *outh,
+                      o->cur->smooth_scale, do_async);
+
+        // We always step before starting the new region
+        *inx += *inw;
+        *outx += *outw;
+
+        // Horizontal stretched
+        hacc = _stretch_region_accumulate(o->cur->stretch.horizontal.region,
+                                        0x80, &hi);
+        *inw = hacc;
+        *outw = hacc * stretchw / o->cur->stretch.horizontal.stretchable;
+
+        if (*inw)
+          _draw_image(obj, engine, output, context, surface, pixels,
+                      *inx, *iny, *inw, *inh,
+                      *outx, *outy, *outw, *outh,
+                      o->cur->smooth_scale, do_async);
+
+        // We always step before starting the new region
+        *inx += *inw;
+        *outx += *outw;
+     }
+   // Finish end of image, not horizontally stretched
+   *inw = *imw - *inx;
+   *outw = *inw; // If my math are correct, this should be equal
+
+   if (*inw)
+     _draw_image(obj, engine, output, context, surface, pixels,
+                 *inx, *iny, *inw, *inh,
+                 *outx, *outy, *outw, *outh,
+                 o->cur->smooth_scale, do_async);
+
+ end:
+   *iny += *inh; // We always step before starting the next region
+   *outy += *outh;
+}
+
 static void
 _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                    void *engine, void *output, void *context, void *surface, int x, int y,
@@ -1995,6 +2472,8 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
         return;
      }
+
+   _stretch_region_load(obj, o);
 
    ENFN->image_scale_hint_set(engine, pixels, o->scale_hint);
    idx = evas_object_image_figure_x_fill(eo_obj, obj, o->cur->fill.x, o->cur->fill.w, &idw);
@@ -2050,7 +2529,82 @@ _evas_image_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
                   if (ih <= 0) break;
                }
 
-             if ((o->cur->border.l == 0) && (o->cur->border.r == 0) &&
+             if (o->cur->stretch.horizontal.region &&
+                 o->cur->stretch.vertical.region)
+               {
+                  int inx, iny, inw, inh, outx, outy, outw, outh;
+                  int ox, oy;
+                  int imw, imh;
+                  int stretchh, stretchw;
+                  uint32_t vacc;
+                  uint32_t vi;
+
+                  imw = imagew;
+                  imh = imageh;
+                  ox = offx + ix;
+                  oy = offy + iy;
+                  iny = 0;
+                  outy = oy;
+
+                  // Check that the image is something we can deal with
+                  if (imw < (int) o->cur->stretch.horizontal.total ||
+                      imh < (int) o->cur->stretch.vertical.total)
+                    break;
+
+                  // Calculate the amount to stretch, by removing from the targetted size
+                  // the amount that should not stretch from the source image
+                  stretchw = iw - (imw - o->cur->stretch.horizontal.stretchable);
+                  stretchh = ih - (imh - o->cur->stretch.vertical.stretchable);
+
+                  // Check we have room to stretch
+                  if (stretchh < 0) stretchh = 0;
+                  if (stretchw < 0) stretchw = 0;
+
+                  for (vi = 0; o->cur->stretch.vertical.region[vi]; )
+                    {
+                       vacc = _stretch_region_accumulate(o->cur->stretch.vertical.region, 0, &vi);
+                       inx = 0;
+                       outx = ox;
+
+                       // Not stretching vertically step
+                       inh = vacc;
+                       outh = vacc;
+
+                       _evas_image_render_hband(obj, o, engine, output, context,
+                                                surface, pixels,
+                                                &imw, &imh, stretchw, stretchh,
+                                                &inx, &iny, &inw, &inh,
+                                                &outx, &outy, &outw, &outh,
+                                                do_async);
+
+                       // Stretching vertically step
+                       vacc = _stretch_region_accumulate(o->cur->stretch.vertical.region, 0x80, &vi);
+                       inx = 0;
+                       outx = ox;
+                       inh = vacc;
+                       outh = vacc * stretchh / o->cur->stretch.vertical.stretchable;
+
+                       _evas_image_render_hband(obj, o, engine, output, context,
+                                                surface, pixels,
+                                                &imw, &imh, stretchw, stretchh,
+                                                &inx, &iny, &inw, &inh,
+                                                &outx, &outy, &outw, &outh,
+                                                do_async);
+                    }
+                  // Finish end of image, not stretched vertical, not stretched horizontal
+                  inx = 0;
+                  outx = ox;
+                  inh = imh - iny;
+                  outh = inh; // Again, if my math are correct, this should be the same
+
+                  _evas_image_render_hband(obj, o, engine, output, context,
+                                           surface, pixels,
+                                           &imw, &imh, stretchw, stretchh,
+                                           &inx, &iny, &inw, &inh,
+                                           &outx, &outy, &outw, &outh,
+                                           do_async);
+               }
+             else if ((o->cur->border.l == 0) && (o->cur->border.r == 0) &&
                  (o->cur->border.t == 0) && (o->cur->border.b == 0) &&
                  (o->cur->border.fill != 0))
                {

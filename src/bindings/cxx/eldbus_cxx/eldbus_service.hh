@@ -293,11 +293,23 @@ void _create_methods_specification_impl(Method const& method, Eldbus_Method2& el
 
   eldbus::_fill_methods(*out_params, method.outs);
 
+  // NOTE: C pointer magic performed under the hood requires this conversion
+  // between incompatible function pointer types.
+  // C++ always raises a warning for such conversions, so this warning
+  // can be disabled just here.
+#pragma GCC diagnostic push
+#ifndef __clang__
+#pragma GCC diagnostic ignored "-Wcast-function-type"
+#endif
+  Eldbus_Method_Cb method_cb =
+    reinterpret_cast<Eldbus_Method_Cb>
+      (static_cast<Eldbus_Method_Data_Cb>
+        (&_method_callback<typename Method::function_type
+                           , typename Method::ins_type, typename Method::outs_type>));
+#pragma GCC diagnostic pop
+
   eldbus_method = {{method.name, &(*in_params)[0], &(*out_params)[0]
-                   , reinterpret_cast<Eldbus_Method_Cb>
-                    (static_cast<Eldbus_Method_Data_Cb>
-                     (&_method_callback<typename Method::function_type
-                      , typename Method::ins_type, typename Method::outs_type>))
+                   , method_cb
                    , ELDBUS_METHOD_FLAG_HAS_DATA}
                    , new std::tuple<typename Method::function_type
                    , typename Method::ins_type, typename Method::outs_type

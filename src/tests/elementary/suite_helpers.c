@@ -390,3 +390,25 @@ get_me_to_those_events(Eo *obj)
    evas_event_callback_add(e, EVAS_CALLBACK_RENDER_POST, events_norendered, NULL);
    ecore_main_loop_begin();
 }
+
+void
+click_object(Eo *obj)
+{
+   Evas *e = evas_object_evas_get(obj);
+   Eina_Rect r = efl_gfx_entity_geometry_get(obj);
+   evas_event_feed_mouse_move(e, r.x + r.w / 2, r.y + r.h / 2, 0, NULL);
+   evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
+   evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
+}
+
+void
+click_part(Eo *obj, const char *part)
+{
+   Efl_Part *part_obj = efl_ref(efl_part(obj, part));
+   Eo *content = efl_content_get(part_obj);
+   click_object(content);
+   if (efl_isa(content, EFL_LAYOUT_SIGNAL_INTERFACE))
+     edje_object_message_signal_process(content);
+   edje_object_message_signal_process(obj);
+   efl_unref(part_obj);
+}

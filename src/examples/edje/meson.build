@@ -44,6 +44,7 @@ edc_files = [
   'textblock-hyphen.edc',
   'toggle_using_filter.edc',
   'multisense.edc',
+  'center_zoom.edc',
 ]
 
 if (get_option('physics'))

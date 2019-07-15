@@ -11,6 +11,8 @@
 
 #include <Eina.h>
 
+static const std::string BETA_REF_SUFFIX = " (object still in beta stage)";
+
 namespace eolian_mono {
 
 struct documentation_generator
@@ -128,32 +130,38 @@ struct documentation_generator
    }
 
    // Turns an Eolian reference like @Efl.Input.Pointer.tool into a <see> tag
-   static std::string ref_conversion(const ::Eolian_Doc_Token *token, const Eolian_State *state, std::string name_tail)
+   static std::string ref_conversion(const ::Eolian_Doc_Token *token, const Eolian_State *state, std::string name_tail,
+                                     bool want_beta)
    {
       const Eolian_Object *data, *data2;
       ::Eolian_Object_Type type =
         ::eolian_doc_token_ref_resolve(token, state, &data, &data2);
       std::string ref;
+      bool is_beta = false;
       switch(type)
       {
          case ::EOLIAN_OBJECT_STRUCT_FIELD:
            ref = name_helpers::managed_namespace(::eolian_object_name_get(data));
            ref += ".";
            ref += ::eolian_object_name_get(data2);
+           is_beta = eolian_object_is_beta(data) || eolian_object_is_beta(data2);
            if (blacklist::is_struct_blacklisted(ref)) return "";
            break;
          case ::EOLIAN_OBJECT_EVENT:
            ref = object_ref_conversion(data);
            ref += ".";
            ref += name_helpers::managed_event_name(::eolian_object_name_get(data2));
+           is_beta = eolian_object_is_beta(data) || eolian_object_is_beta(data2);
            break;
          case ::EOLIAN_OBJECT_ENUM_FIELD:
            ref = name_helpers::managed_namespace(::eolian_object_name_get(data));
            ref += ".";
            ref += name_helpers::enum_field_managed_name(::eolian_object_name_get(data2));
+           is_beta = eolian_object_is_beta(data) || eolian_object_is_beta(data2);
            break;
          case ::EOLIAN_OBJECT_FUNCTION:
            ref += function_conversion(data, (const ::Eolian_Function *)data2, name_tail);
+           is_beta = eolian_object_is_beta(data) || eolian_object_is_beta(data2);
            break;
          case ::EOLIAN_OBJECT_VARIABLE:
            if (::eolian_variable_type_get((::Eolian_Variable *)data) == ::EOLIAN_VAR_CONSTANT)
@@ -173,16 +181,21 @@ struct documentation_generator
            break;
          case ::EOLIAN_OBJECT_CLASS:
            ref = object_ref_conversion(data);
+           is_beta = eolian_object_is_beta(data);
            break;
          default:
            ref = name_helpers::managed_namespace(::eolian_object_name_get(data));
+           is_beta = eolian_object_is_beta(data);
            break;
       }
+
+      if (!ref.empty() && !want_beta && is_beta)
+        ref += BETA_REF_SUFFIX;
       return ref;
    }
 
    // Turns EO documentation syntax into C# triple-slash XML comment syntax
-   static std::string syntax_conversion(std::string text, const Eolian_State *state)
+   static std::string syntax_conversion(std::string text, const Eolian_State *state, bool want_beta)
    {
       std::string new_text, ref;
       ::Eolian_Doc_Token token;
@@ -213,9 +226,14 @@ struct documentation_generator
                 new_text += token_text;
                 break;
               case ::EOLIAN_DOC_TOKEN_REF:
-                ref = ref_conversion(&token, state, name_tail);
+                ref = ref_conversion(&token, state, name_tail, want_beta);
                 if (ref != "")
-                  new_text += "<see cref=\"" + ref + "\"/>";
+                  {
+                     if (utils::ends_with(ref, BETA_REF_SUFFIX))
+                       new_text += "<span class=\"text-muted\">" + ref + "</span>";
+                     else
+                       new_text += "<see cref=\"" + ref + "\"/>";
+                  }
                 else
                   // Unresolved references are passed through.
                   // They will appear in the docs as plain text, without link,
@@ -264,7 +282,8 @@ struct documentation_generator
       std::string new_text;
       if (!as_generator(html_escaped_string).generate(std::back_inserter(new_text), text, context))
         return false;
-      new_text = syntax_conversion( new_text, context_find_tag<eolian_state_context>(context).state );
+      auto options = context_find_tag<options_context>(context);
+      new_text = syntax_conversion( new_text, context_find_tag<eolian_state_context>(context).state, options.want_beta);
 
       std::string tabs;
       as_generator(scope_tab(scope_size) << "/// ").generate (std::back_inserter(tabs), attributes::unused, context);
@@ -486,8 +505,18 @@ struct documentation_generator
 
       for (auto &&param : ctor.function.parameters)
         {
+          auto ref = function_conversion(func);
+
+          if (!context_find_tag<options_context>(context).want_beta && func.is_beta)
+            {
+               ref += BETA_REF_SUFFIX;
+               ref = "<span class=\"text-muted\">" + ref + "</span>";
+            }
+          else
+            ref = "<see cref=\"" + ref + "\" />";
+
           if (!as_generator(
-                      scope_tab << "/// <param name=\"" << constructor_parameter_name(ctor) << "\">" << summary << " See <see cref=\"" << function_conversion(func) << "\"/></param>\n"
+                      scope_tab << "/// <param name=\"" << constructor_parameter_name(ctor) << "\">" << summary << " See " << ref <<  "</param>\n"
                       ).generate(sink, param, context))
             return false;
         }

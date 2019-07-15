@@ -1,4 +1,4 @@
-interface @beta Efl.Pack_Linear extends Efl.Pack
+interface Efl.Pack_Linear extends Efl.Pack
 {
    [[Common interface for objects (containers) with multiple contents
      (sub-objects) which can be added and removed at runtime in a linear fashion.

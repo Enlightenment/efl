@@ -748,16 +748,18 @@ _efl_ui_slider_efl_ui_range_display_range_limits_get(const Eo *obj EINA_UNUSED, 
 EOLIAN static void
 _efl_ui_slider_efl_ui_range_display_range_value_set(Eo *obj, Efl_Ui_Slider_Data *sd, double val)
 {
-   if (val < sd->val_min)
+   if (!elm_widget_is_legacy(obj))
      {
-        ERR("Error, value is less than minimum");
-        return;
-     }
-
-   if (val > sd->val_max)
-     {
-        ERR("Error, value is greater than maximum");
-        return;
+        if (val < sd->val_min)
+          {
+             ERR("Error, value is less than minimum");
+             return;
+          }
+        if (val > sd->val_max)
+          {
+             ERR("Error, value is greater than maximum");
+             return;
+          }
      }
 
    if (EINA_DBL_EQ(val, sd->val)) return;

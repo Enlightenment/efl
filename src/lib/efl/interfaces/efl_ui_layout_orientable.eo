@@ -1,6 +1,6 @@
 parse efl_gfx_image_orientable;
 
-enum @beta Efl.Ui.Layout_Orientation
+enum Efl.Ui.Layout_Orientation
 {
    [[Orientation for UI objects and layouts that can have multiple configurations.
 
@@ -24,10 +24,10 @@ enum @beta Efl.Ui.Layout_Orientation
                        along the selected axis.]]
 }
 
-interface @beta Efl.Ui.Layout_Orientable
+interface Efl.Ui.Layout_Orientable
 {
    [[Interface for UI objects which can have more than one orientation.
-   
+
      For example, sliders, which can be horizontal or vertical, or container
      boxes, which can arrange their elements in a horizontal or vertical fashion.
    ]]

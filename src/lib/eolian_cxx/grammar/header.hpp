@@ -11,6 +11,7 @@
 #include "class_definition.hpp"
 #include "class_declaration.hpp"
 #include "implementation_include_directive.hpp"
+#include "ignore_warning.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -27,11 +28,13 @@ auto class_header =
     << *class_declaration          // sequence<class> | class
     << *class_forward_declaration          // sequence<class> | class
     <<  string                   // extra header <string>
+    << ignore_warning_begin
     << "\nnamespace eo_cxx {\n"
     << *base_class_definition      // sequence<class> | class
     << "}\n"
     << *class_definition           // sequence<class> | class
     // << *implementation_include_directive
+    << ignore_warning_end
   ]
   ;
 

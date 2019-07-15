@@ -75,6 +75,13 @@ struct _Evas_Object_Image_State
       short         l, r, t, b;
       unsigned char fill;
    } border;
+   struct {
+      struct {
+         uint8_t   *region;
+         uint32_t   stretchable;
+         uint32_t   total;
+      } horizontal, vertical;
+   } stretch;
 
    Evas_Object   *source;
    Evas_Map      *defmap;
@@ -91,6 +98,9 @@ struct _Evas_Object_Image_State
    Eina_Bool      has_alpha :1;
    Eina_Bool      opaque_valid : 1;
    Eina_Bool      opaque : 1;
+
+   Eina_Bool      free_stretch : 1; // Should we free stretch region?
+   Eina_Bool      stretch_loaded : 1; // Is the stretch region loaded from file?
 };
 
 #define EVAS_IMAGE_PRELOAD_NONE 0x00

@@ -1,8 +1,8 @@
-class @beta Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pack_Layout,
+class Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pack_Layout,
                    Efl.Ui.Layout_Orientable, Efl.Gfx.Arrangement
 {
    [[Widget container that arranges its elements in a grid.
-   
+
      The amount of rows and columns can be controlled with @Efl.Pack_Table.table_rows
      and @Efl.Pack_Table.table_columns, and elements can be manually positioned with
      @Efl.Pack_Table.pack_table.

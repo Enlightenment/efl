@@ -396,6 +396,7 @@ struct struct_definition_generator
      if(!as_generator
         (
             indent << "[StructLayout(LayoutKind.Sequential)]\n"
+         << indent << "[Efl.Eo.BindingEntity]\n"
          << indent << "public struct " << string << "\n"
          << indent << "{\n"
          )

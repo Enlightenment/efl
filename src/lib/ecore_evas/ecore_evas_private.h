@@ -385,6 +385,8 @@ struct _Ecore_Evas
    unsigned char animator_ticked : 1;
    unsigned char animator_ran : 1;
    unsigned char first_frame : 1;
+   unsigned char self_del : 1;
+   unsigned char evas_dying : 1;
 };
 
 struct _Ecore_Evas_Aux_Hint

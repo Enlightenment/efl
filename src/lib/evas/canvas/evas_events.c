@@ -1851,6 +1851,38 @@ _canvas_event_feed_mouse_up_internal(Evas_Public_Data *e, Efl_Input_Pointer_Data
                _evas_event_source_mouse_up_events(eo_obj, eo_e, evt, pdata, event_id, cancel);
              if (e->delete_me) break;
           }
+        else if (evas_event_freezes_through(eo_obj, obj) &&
+                 (obj->proxy->is_proxy) && (obj->proxy->src_events))
+          {
+             Evas_Object *eo_src = _evas_object_image_source_get(eo_obj);
+             Evas_Object_Protected_Data *src = efl_data_scope_get(eo_src, EFL_CANVAS_OBJECT_CLASS);
+             Evas_Object_Protected_Data *child;
+             Evas_Object *eo_child;
+             Eina_List *copy_events;
+
+             if (src->delete_me) continue;
+             copy_events = evas_event_list_copy(src->proxy->src_event_in);
+             EINA_LIST_FREE(copy_events, eo_child)
+               {
+                  Evas_Object_Pointer_Data *obj_pdata;
+
+                  child = efl_data_scope_get(eo_child, EFL_CANVAS_OBJECT_CLASS);
+                  obj_pdata = _evas_object_pointer_data_get(pdata, child);
+                  if (!obj_pdata)
+                    {
+                       ERR("Could not find the object pointer data for device %p",
+                           ev->device);
+                       continue;
+                    }
+                  if (((obj_pdata->pointer_mode == EVAS_OBJECT_POINTER_MODE_AUTOGRAB) ||
+                       (obj_pdata->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)) &&
+                      (obj_pdata->mouse_grabbed > 0))
+                    {
+                       obj_pdata->mouse_grabbed--;
+                       pdata->seat->mouse_grabbed--;
+                    }
+                }
+          }
         if (pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN)
           {
              if ((!cancel) && (pdata->seat->nogrep > 0)) pdata->seat->nogrep--;

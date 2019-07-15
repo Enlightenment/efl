@@ -48,7 +48,8 @@ edje/swallow.edc \
 edje/table.edc \
 edje/text.edc \
 edje/textblock-hyphen.edc \
-edje/toggle_using_filter.edc
+edje/toggle_using_filter.edc \
+edje/center_zoom.edc
 
 MULTISENSE_EDCS = edje/multisense.edc
 if ENABLE_MULTISENSE

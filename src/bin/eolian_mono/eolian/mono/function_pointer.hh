@@ -44,6 +44,7 @@ struct function_pointer {
 
       // C# visible delegate
       if (!as_generator(documentation
+                  << "[Efl.Eo.BindingEntity]\n"
                   << "public delegate " << type << " " << string
                   << "(" << (parameter % ", ") << ");\n")
               .generate(sink, std::make_tuple(f, f.return_type, f_name, f.parameters), funcptr_ctx))

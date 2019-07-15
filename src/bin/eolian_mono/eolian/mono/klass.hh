@@ -36,7 +36,7 @@ template<typename Context>
 static std::size_t
 get_implementable_function_count(grammar::attributes::klass_def const& cls, Context context)
 {
-   auto methods = helpers::get_all_implementable_methods(cls);
+   auto methods = helpers::get_all_implementable_methods(cls, context);
    return std::count_if(methods.cbegin(), methods.cend(), [&context](grammar::attributes::function_def const& func)
      {
         return !blacklist::is_function_blacklisted(func, context) && !func.is_static;
@@ -106,6 +106,9 @@ struct klass
           .generate(sink, attributes::unused, iface_cxt))
          return false;
 
+       if(!as_generator("[Efl.Eo.BindingEntity]\n").generate(sink, attributes::unused, iface_cxt))
+         return false;
+
        if(!as_generator
         (
          "public " /*<< class_type*/ "interface" /*<<*/ " " << string << " : "
@@ -115,6 +118,9 @@ struct klass
        for(auto first = std::begin(cls.immediate_inherits)
              , last = std::end(cls.immediate_inherits); first != last; ++first)
          {
+            if (!context_find_tag<options_context>(iface_cxt).want_beta && first->is_beta)
+              continue;
+
             if(first->type != attributes::class_type::regular && first->type != attributes::class_type::abstract_)
               if(!as_generator("\n" << scope_tab << string << " ,").generate(sink, name_helpers::klass_full_interface_name(*first), iface_cxt))
                 return false;
@@ -230,7 +236,7 @@ struct klass
             .generate(sink, cls.parts, concrete_cxt)) return false;
 
          // Concrete function definitions
-         auto implemented_methods = helpers::get_all_implementable_methods(cls);
+         auto implemented_methods = helpers::get_all_implementable_methods(cls, concrete_cxt);
          if(!as_generator(*(function_definition))
             .generate(sink, implemented_methods, concrete_cxt)) return false;
 
@@ -276,6 +282,7 @@ struct klass
             (
              documentation
              << "[" << name_helpers::klass_full_native_inherit_name(cls) << "]\n"
+             << "[Efl.Eo.BindingEntity]\n"
              << "public " << class_type << " " << name_helpers::klass_concrete_name(cls) << " : "
              << (klass_full_concrete_or_interface_name % ",") // classes
              << (root ? "Efl.Eo.EoWrapper" : "") // ... or root
@@ -302,7 +309,7 @@ struct klass
             .generate(sink, cls.parts, inherit_cxt)) return false;
 
          // Inherit function definitions
-         auto implemented_methods = helpers::get_all_implementable_methods(cls);
+         auto implemented_methods = helpers::get_all_implementable_methods(cls, inherit_cxt);
          if(!as_generator(*(function_definition(true)))
             .generate(sink, implemented_methods, inherit_cxt)) return false;
 
@@ -354,7 +361,7 @@ struct klass
                                             context);
          auto native_inherit_name = name_helpers::klass_native_inherit_name(cls);
          auto inherit_name = name_helpers::klass_inherit_name(cls);
-         auto implementable_methods = helpers::get_all_implementable_methods(cls);
+         auto implementable_methods = helpers::get_all_implementable_methods(cls, context);
          bool root = !helpers::has_regular_ancestor(cls);
          auto const& indent = current_indentation(inative_cxt);
 
@@ -499,7 +506,7 @@ struct klass
                      // For constructors with arguments, the parent is also required, as optional parameters can't come before non-optional paramenters.
                      << scope_tab << "public " << inherit_name << "(Efl.Object parent" << ((constructors.size() > 0) ? "" : "= null") << "\n"
                      << scope_tab << scope_tab << scope_tab << *(", " << constructor_param ) << ") : "
-                             << "base(" << name_helpers::klass_get_name(cls) <<  "(), typeof(" << inherit_name << "), parent)\n"
+                             << "base(" << name_helpers::klass_get_name(cls) <<  "(), parent)\n"
                      << scope_tab << "{\n"
                      << (*(scope_tab << scope_tab << constructor_invocation << "\n"))
                      << scope_tab << scope_tab << "FinishInstantiation();\n"
@@ -539,9 +546,8 @@ struct klass
                  scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << inherit_name << "\"/> class.\n"
                  << scope_tab << "/// Internal usage: Constructor to forward the wrapper initialization to the root class that interfaces with native code. Should not be used directly.</summary>\n"
                  << scope_tab << "/// <param name=\"baseKlass\">The pointer to the base native Eo class.</param>\n"
-                 << scope_tab << "/// <param name=\"managedType\">The managed type of the public constructor that originated this call.</param>\n"
                  << scope_tab << "/// <param name=\"parent\">The Efl.Object parent of this instance.</param>\n"
-                 << scope_tab << "protected " << inherit_name << "(IntPtr baseKlass, System.Type managedType, Efl.Object parent) : base(baseKlass, managedType, parent)\n"
+                 << scope_tab << "protected " << inherit_name << "(IntPtr baseKlass, Efl.Object parent) : base(baseKlass, parent)\n"
                  << scope_tab << "{\n"
                  << scope_tab << "}\n\n"
               ).generate(sink, attributes::unused, context);

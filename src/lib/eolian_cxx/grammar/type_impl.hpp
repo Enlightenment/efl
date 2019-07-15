@@ -348,7 +348,7 @@ struct visitor_generate
           // pointers.swap(no_pointer_regular.pointers);
           // if(is_out)
           //   pointers.push_back({{attributes::qualifier_info::is_none, {}}, true});
-          return visitor_type{sink, context, c_type, false}(no_pointer_regular)
+          return visitor_type{sink, context, c_type, false, false}(no_pointer_regular)
             && as_generator("<" << (type % ", ") << ">").generate(sink, complex.subtypes, *context)
           ;
             // && detail::generate_pointers(sink, pointers, *context, false);

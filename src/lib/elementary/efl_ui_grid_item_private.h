@@ -7,7 +7,6 @@ typedef struct _Efl_Ui_Grid_Item_Data
 {
    // Eo Objects
    Eo *obj; /* Self-Object */
-   Eo *parent; /* Parent Widget */
    Eina_Rect  geo;
    int index;
    struct {

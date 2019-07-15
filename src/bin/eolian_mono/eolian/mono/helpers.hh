@@ -3,6 +3,7 @@
 
 #include "grammar/klass_def.hpp"
 #include "blacklist.hh"
+#include "generation_contexts.hh"
 #include "name_helpers.hh"
 
 namespace eolian_mono {
@@ -165,11 +166,19 @@ bool has_regular_ancestor(attributes::klass_def const& cls)
 /*
  * Gets all methods that this class should implement (i.e. that come from an unimplemented interface/mixin and the class itself)
  */
-std::vector<attributes::function_def> get_all_implementable_methods(attributes::klass_def const& cls)
+template<typename Context>
+std::vector<attributes::function_def> get_all_implementable_methods(attributes::klass_def const& cls, Context const& context)
 {
+   bool want_beta = efl::eolian::grammar::context_find_tag<options_context>(context).want_beta;
    std::vector<attributes::function_def> ret;
+   auto filter_beta = [&want_beta](attributes::function_def const& func) {
+       if (!want_beta)
+         return !func.is_beta;
+       else
+         return true;
+   };
 
-   std::copy(cls.functions.begin(), cls.functions.end(), std::back_inserter(ret));
+   std::copy_if(cls.functions.begin(), cls.functions.end(), std::back_inserter(ret), filter_beta);
 
    // Non implemented interfaces
    std::set<attributes::klass_name, attributes::compare_klass_name_by_name> implemented_interfaces;
@@ -206,7 +215,7 @@ std::vector<attributes::function_def> get_all_implementable_methods(attributes::
     for (auto&& inherit : interfaces)
     {
         attributes::klass_def klass(get_klass(inherit, cls.unit), cls.unit);
-        std::copy(klass.functions.cbegin(), klass.functions.cend(), std::back_inserter(ret));
+        std::copy_if(klass.functions.cbegin(), klass.functions.cend(), std::back_inserter(ret), filter_beta);
     }
 
   return ret;

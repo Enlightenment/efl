@@ -15,6 +15,7 @@
 #include "grammar/type_impl.hpp"
 #include "grammar/attribute_reorder.hpp"
 #include "grammar/part_implementation.hpp"
+#include "grammar/ignore_warning.hpp"
 
 namespace efl { namespace eolian { namespace grammar {
 
@@ -40,6 +41,9 @@ struct class_implementation_generator
 
      if(!as_generator("\n#include \"" << *(string << "_") << string << ".eo.hh\"\n\n")
         .generate(sink, std::make_tuple(cls.namespaces, cls.cxx_name), add_lower_case_context(ctx)))
+       return false;
+
+     if(!as_generator(ignore_warning_begin).generate(sink, nullptr, ctx))
        return false;
 
 #ifndef USE_EOCXX_INHERIT_ONLY
@@ -69,6 +73,9 @@ struct class_implementation_generator
          ]
          << "}\n"
          )).generate(sink, std::make_tuple(cls.namespaces, cls.functions, cpp_namespaces, cls.cxx_name, cls.parts), ctx))
+       return false;
+
+     if(!as_generator(ignore_warning_end).generate(sink, nullptr, ctx))
        return false;
 
      if(!as_generator("#endif\n").generate(sink, std::make_tuple(), ctx))

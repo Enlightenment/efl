@@ -1354,6 +1354,8 @@ struct _Evas_Func
    Eina_Bool (*image_data_map)             (void *engine, void **image, Eina_Rw_Slice *slice, int *stride, int x, int y, int w, int h, Evas_Colorspace cspace, Efl_Gfx_Buffer_Access_Mode mode, int plane);
    Eina_Bool (*image_data_unmap)           (void *engine, void *image, const Eina_Rw_Slice *slice);
    int (*image_data_maps_get)              (void *engine, const void *image, const Eina_Rw_Slice **slices);
+   Eina_Bool (*image_content_region_get)   (void *engine, void *image, Eina_Rectangle *content);
+   Eina_Bool (*image_stretch_region_get)   (void *engine, void *image, uint8_t **horizontal, uint8_t **vertical);
 
    /* new api for direct data set (not put) */
    void *(*image_data_slice_add)           (void *engine, void *image, const Eina_Slice *slice, Eina_Bool copy, int w, int h, int stride, Evas_Colorspace space, int plane, Eina_Bool alpha);
