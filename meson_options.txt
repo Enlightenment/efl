@@ -1,227 +1,228 @@
 option('audio',
   type : 'boolean',
   value : true,
-  description : 'Flag for handling audio support in efl'
+  description : 'Audio support in efl'
 )
 
 option('avahi',
   type : 'boolean',
   value : true,
-  description : 'Flag for handling avahi support in efl'
+  description : 'Avahi (zeroconf) support in efl'
 )
 
 option('x11',
   type : 'boolean',
   value : true,
-  description : 'Flag for handling x11 support in efl'
+  description : 'X11 support in efl'
 )
 
 option('fb',
   type : 'boolean',
   value : false,
-  description : 'Flag for handling frame buffer support in efl'
+  description : 'Framebuffer (/dev/fb / fbocon) support in efl'
 )
 
 option('sdl',
   type : 'boolean',
   value : false,
-  description : 'Flag for handling sdl support in efl'
+  description : 'SDL support in efl'
 )
 
 option('wl',
   type : 'boolean',
   value : false,
-  description : 'Flag for handling wayland support in efl'
+  description : 'Wayland client support in efl'
 )
 
 option('buffer',
   type : 'boolean',
   value : false,
-  description : 'Flag for handling buffer support in efl'
+  description : 'Generic graphics buffer API support in efl'
 )
 
 option('drm',
   type : 'boolean',
   value : false,
-  description : 'Flag for handling drm support in efl'
+  description : 'DRM/KMS advanced framebuffer/console support in efl'
 )
 
 option('cocoa',
   type : 'boolean',
   value : false,
-  description : 'Flag for handling apple cocoa support in efl'
+  description : 'Apple MacOS cocoa support in efl'
 )
 
 option('physics',
   type : 'boolean',
   value : true,
-  description : 'Flag for handling the internal physics engine in efl'
+  description : 'Physics engine (bullet) in efl'
 )
 
 option('eeze',
   type : 'boolean',
   value : true,
-  description : 'Flag for handling the device abstraction layer in efl'
+  description : 'Device abstraction (udev wrapper) in efl'
 )
 
 option('opengl',
   type : 'combo',
   choices : ['full', 'es-egl', 'none'],
   value : 'full',
-  description : 'build efl with a special opengl support'
+  description : 'Type of OpenGL support in efl'
 )
 
 option('build-id',
   type : 'string',
   value : 'none',
-  description : 'The build id to attach to the efl build')
+  description : 'The build id string for efl set as the EFL_BUILD_ID define')
 
 option('eina-magic-debug',
   type : 'boolean',
   value : true,
-  description : 'magic debug of eina structure'
+  description : 'Magic number checking of eina structures in efl'
 )
 
 option('debug-threads',
   type : 'boolean',
   value : false,
-  description : 'thread debugging'
+  description : 'Thread debugging in efl'
 )
 
 option('build-examples',
   type : 'boolean',
   value : true,
-  description : 'build examples'
+  description : 'Compile examples'
 )
 
 option('build-tests',
   type : 'boolean',
   value : true,
-  description : 'build tests'
+  description : 'Compile tests'
 )
 
 option('crypto',
   type : 'combo',
   choices : ['gnutls', 'openssl'],
-  value : 'openssl'
+  value : 'openssl',
+  description : 'Which SSL Crypto library used in efl'
 )
 
 option('glib',
   type : 'boolean',
   value : true,
-  description : 'use glib or not'
+  description : 'Main loop integration for glib in efl'
 )
 
 option('g-mainloop',
   type : 'boolean',
   value : false,
-  description : 'use glib mainloop or not'
+  description : 'Use glib to run the main loop in efl'
 )
 
 option('gstreamer',
   type : 'boolean',
   value : true,
-  description : 'use gstreamer 1.0 support'
+  description : 'GStreamer 1.0+ support in efl'
 )
 
 option('systemd',
   type : 'boolean',
   value : true,
-  description : 'use systemd support'
+  description : 'Systemd support in efl'
 )
 
 option('pulseaudio',
   type : 'boolean',
   value : true,
-  description : 'pulseaudio support'
+  description : 'Pulseaudio support for audio API'
 )
 
 option('network-backend',
   type : 'combo',
   choices : ['connman', 'none'],
   value : 'none',
-  description : 'connman support'
+  description : 'Connman support in efl'
 )
 
 option('xpresent',
   type : 'boolean',
   value : false,
-  description : 'xpresent support'
+  description : 'X11 XPresent extension support in efl'
 )
 
 option('xgesture',
   type : 'boolean',
   value : false,
-  description : 'xgesture support'
+  description : 'X11 XGesture support in efl'
 )
 
 option('xinput2',
   type : 'boolean',
   value : true,
-  description : 'xinpput 2.0+ support'
+  description : 'X11 XInput 2.0+ support in efl'
 )
 
 option('xinput22',
   type : 'boolean',
   value : true,
-  description : 'xiinput 2.2+ support'
+  description : 'X11 XInput 2.2+ support in efl'
 )
 
 option('tslib',
   type : 'boolean',
   value : true,
-  description : 'tslib support'
+  description : 'Framebuffer (/dev/fb / fbcon) touchscreen tslib support in efl'
 )
 
 option('eject-path',
   type : 'string',
   value : 'detect',
-  description : 'path to use as eject binary, if "detect" internal eeze bins are used'
+  description : 'Path to the eject binary, if "detect" internal eeze bins are used'
 )
 
 option('mount-path',
   type : 'string',
   value : 'detect',
-  description : 'path to use as eject binary, if "detect" internal eeze bins are used'
+  description : 'Path to the mount binary, if "detect" internal eeze bins are used'
 )
 
 option('unmount-path',
   type : 'string',
   value : 'detect',
-  description : 'path to use as eject binary, if "detect" internal eeze bins are used'
+  description : 'Path to the unmount binary, if "detect" internal eeze bins are used'
 )
 
 option('evas-modules',
   type : 'combo',
   choices : ['shared', 'static'],
   value : 'shared',
-  description : 'how to build the evas modules'
+  description : 'Should modules be shared or statically inlined'
 )
 
 option('evas-loaders-disabler',
   type : 'array',
-  description : 'add names here to disable the loaders',
+  description : 'List of modular image loaders to disable in efl',
   choices : ['gst', 'pdf', 'ps', 'raw', 'svg', 'xcf', 'bmp', 'dds', 'eet', 'generic', 'gif', 'ico', 'jp2k', 'jpeg', 'pmaps', 'png', 'psd', 'tga', 'tgv', 'tiff', 'wbmp', 'webp', 'xpm', 'json'],
   value : ['webp', 'json']
 )
 
 option('ecore-imf-loaders-disabler',
   type : 'array',
-  description : 'add names here to disable the loaders',
+  description : 'List of input methods to disable in efl',
   choices : ['xim', 'ibus', 'scim'],
   value : ['scim']
 )
 
 option('emotion-loaders-disabler',
   type : 'array',
-  description : 'add names here to disable the loaders',
+  description : 'List of video back-ends to disable in efl',
   choices : ['gstreamer', 'gstreamer1', 'libvlc', 'xine'],
   value : ['gstreamer', 'libvlc', 'xine']
 )
 
 option('emotion-generic-loaders-disabler',
   type : 'array',
-  description : 'add names here to disable the loaders',
+  description : 'List of out-of-process generic binary video loaders to disable in efl',
   choices : ['vlc'],
   value : ['vlc']
 )
@@ -229,19 +230,19 @@ option('emotion-generic-loaders-disabler',
 option('harfbuzz',
   type : 'boolean',
   value : true,
-  description : 'harfbuzz (complex text layout library) support'
+  description : 'Harfbuzz (complex text layout library) support in efl'
 )
 
 option('fribidi',
   type : 'boolean',
   value : true,
-  description : 'fribidi (right to left text layout library) support'
+  description : 'Fribidi (right to left text layout library) support in efl'
 )
 
 option('fontconfig',
   type : 'boolean',
   value : true,
-  description : 'fontconfig support'
+  description : 'Fontconfig (system font database) support in efl'
 )
 
 option('edje-sound-and-video',
@@ -253,122 +254,122 @@ option('edje-sound-and-video',
 option('pixman',
   type : 'boolean',
   value : false,
-  description : 'Enable pixman support in evas'
+  description : 'Pixman software renderer support in efl'
 )
 
 option('hyphen',
   type : 'boolean',
   value : false,
-  description : 'Enable hyphen support in evas'
+  description : 'Hyphen text layout support in efl'
 )
 
 option('embedded-lz4',
   type : 'boolean',
   value : true,
-  description : 'do not use the system lz4, but rather the embedded r131 release'
+  description : 'Use the embedded in-tree zlib r131 release instead of system zlib'
 )
 
 option('libmount',
   type : 'boolean',
   value : true,
-  description : 'use libmount support or not'
+  description : 'Libmount support for device mounting in efl'
 )
 
 option('vnc-server',
   type : 'boolean',
   value : false,
-  description : 'enable building a vnc-server for multiseat testing'
+  description : 'VNS server support in efl for multiseat testing'
 )
 
 option('v4l2',
   type : 'boolean',
   value : true,
-  description : 'add v4l2 support'
+  description : 'Video v4l2 support'
 )
 
 option('elua',
   type : 'boolean',
   value : true,
-  description : 'Flag for handling elua support in efl'
+  description : 'Lua launcher binary support in efl'
 )
 
 option('wl-deprecated',
   type : 'boolean',
   value : false,
-  description : 'Flag for handling deprecated wayland support in efl'
+  description : 'Deprecated wayland support in efl'
 )
 
 option('drm-deprecated',
   type : 'boolean',
   value : false,
-  description : 'Flag for handling deprecated drm support in efl'
+  description : 'Deprecated DRM/KMS support in efl'
 )
 
 option('nls',
   type: 'boolean',
   value: true,
-  description: 'enable localization: (default=true)'
+  description: 'Localization'
 )
 
 option('bindings',
   type : 'array',
   choices : ['luajit', 'cxx', 'mono'],
   value : ['luajit', 'cxx'],
-  description : 'Add values here to enable the bindings',
+  description : 'Which auto-generated language bindings for efl to enable',
 )
 
 option('mono-beta',
   type: 'boolean',
   value: false,
-  description: 'Flag for enabling @beta Eo methods in the api'
+  description: 'Mono/C# @beta Eo methods enabled in the efl'
 )
 
 option('mono-examples-dir',
   type: 'string',
   value: '',
-  description: 'Directory where eolian_mono will search for examples to embed into the documentation'
+  description: 'Where eolian_mono will search for examples to embed into the documentation'
 )
 
 option('lua-interpreter',
   type: 'combo',
   choices: ['luajit', 'lua'],
   value: 'luajit',
-  description: 'Select a type of lua interpreter to use it for edje and evas'
+  description: 'Which Lua back-end library to use in efl'
 )
 
 option('native-arch-optimization',
   type: 'boolean',
   value: true,
-  description: 'Flag for enabling architecture native optimizations'
+  description: 'Enable architecture native optimizations in efl'
 )
 
 option('elogind',
   type : 'boolean',
   value : false,
-  description : 'use elogind support'
+  description : 'elogind support in efl (subset of systemd)'
 )
 
 option('windows-version',
   type : 'combo',
   choices : ['vista', 'win7', 'win8', 'win81', 'win10'],
   value : 'win7',
-  description : 'When host_machine is windows, compile the efl with the specified version of Windows'
+  description : 'When on Windows, compile efl with the specified Windows version'
 )
 
 option('dictionaries-hyphen-dir',
   type : 'string',
   value : '/usr/share/hyphen/',
-  description : 'Put the path to hyphen dictionaries directory'
+  description : 'The path to the hyphen dictionaries directory'
 )
 
 option('elementary-base-dir',
   type : 'string',
   value : '.elementary',
-  description : 'Put the name of a base directory for elementary data'
+  description : 'The name of the directory for user supplied elementary data files like themes, config files'
 )
 
 option('install-eo-files',
   type: 'boolean',
   value: false,
-  description : 'Set this to false to not install any eo file'
+  description : 'Install any eo file'
 )
