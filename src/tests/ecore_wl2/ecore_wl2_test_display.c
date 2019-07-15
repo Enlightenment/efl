@@ -88,6 +88,19 @@ EFL_START_TEST(wl2_display_shm_get)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_display_dmabuf_get)
+{
+   Ecore_Wl2_Display *disp;
+   void *dma;
+
+   disp = ECORE_WL2_TEST_DISPLAY_CONNECT();
+   ck_assert(disp != NULL);
+
+   dma = ecore_wl2_display_dmabuf_get(disp);
+   ck_assert(dma != NULL);
+}
+EFL_END_TEST
+
 void
 ecore_wl2_test_display(TCase *tc)
 {
@@ -106,5 +119,6 @@ ecore_wl2_test_display(TCase *tc)
         tcase_add_test(tc, wl2_display_connect);
         tcase_add_test(tc, wl2_display_disconnect);
         tcase_add_test(tc, wl2_display_shm_get);
+        tcase_add_test(tc, wl2_display_dmabuf_get);
      }
 }
