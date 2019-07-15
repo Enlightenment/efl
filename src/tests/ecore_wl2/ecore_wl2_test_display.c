@@ -107,6 +107,7 @@ ecore_wl2_test_display(TCase *tc)
    if (!getenv("WAYLAND_DISPLAY"))
      {
         /* tests here are for server-side functions */
+        printf("No Wayland Compositor detected. Testing server-side functions\n");
         tcase_add_test(tc, wl2_display_create);
         tcase_add_test(tc, wl2_display_destroy);
         tcase_add_test(tc, wl2_display_get);
@@ -116,6 +117,7 @@ ecore_wl2_test_display(TCase *tc)
    if (getenv("WAYLAND_DISPLAY"))
      {
         /* tests here are for client-side functions */
+        printf("Wayland Compositor detected. Testing client-side functions\n");
         tcase_add_test(tc, wl2_display_connect);
         tcase_add_test(tc, wl2_display_disconnect);
         tcase_add_test(tc, wl2_display_shm_get);
