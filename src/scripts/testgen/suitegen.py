@@ -121,45 +121,26 @@ class ClassItem(ComItem):
 
             return True
 
-        def get_all_inherited(leaf, getter):
-            print("Getting all items for leaf", leaf)
-            names = set()
-            for item in getter(leaf):
-                print("Adding item", item.full_c_method_name)
-                names.add(item.full_c_method_name)
-                yield item
+        if self.keys.funclist & Function_List_Type.OWN:
+            self._methods = {
+                m.name: FuncItem(m, self.path, keys)
+                for m in self.comp.methods
+                if mfilter(m)
+            }
+            self._properties = {
+                p.name: FuncItem(p, self.path, keys)
+                for p in self.comp.properties
+                if mfilter(p)
+            }
+            self._events = {
+                e.name: EventItem(e, self.path, keys) for e in self.comp.events
+            }
+        else:
+            self._methods = {}
+            self._properties = {}
+            self._events = {}
 
-            for inherit in leaf.inherits_full:
-                print("Inherit", inherit)
-                for item in getter(inherit):
-                    print("Checking item", item.full_c_method_name)
-                    if item.full_c_method_name not in names:
-                        print("Adding item", item.full_c_method_name)
-                        names.add(item.full_c_method_name)
-                        yield item
-
-        self.methods = [
-            FuncItem(m, self.path, keys) for m in filter(mfilter, self.comp.methods)
-        ]
-        self._properties = [
-            FuncItem(p, self.path, keys) for p in filter(mfilter, self.comp.properties)
-        ]
-        self.events = [EventItem(s, self.path, keys) for s in self.comp.events]
-
-        if self.keys.funclist in (
-            Function_List_Type.INHERITS,
-            Function_List_Type.INHERITS_FULL,
-        ):
-            for eoclass in (
-                self.comp.inherits
-                if self.keys.funclist == Function_List_Type.INHERITS
-                else self.comp.inherits_full
-            ):
-                for f in filter(mfilter, eoclass.methods):
-                    self.methods.append(FuncItem(f, self.path, keys))
-                for f in filter(mfilter, eoclass.properties):
-                    self._properties.append(FuncItem(f, self.path, keys))
-        elif self.keys.funclist == Function_List_Type.CLASS_IMPLEMENTS:
+        if self.keys.funclist & Function_List_Type.IMPLEMENTS:
             for imp in comp.implements:
 
                 if (
@@ -169,26 +150,67 @@ class ClassItem(ComItem):
                     continue
 
                 f = imp.function
-                if f.type == Eolian_Function_Type.METHOD and mfilter(f):
-                    self.methods.append(FuncItem(f, self.path, keys))
-                if f.type in (
+
+                if not mfilter(f):
+                    continue
+
+                if f.type == Eolian_Function_Type.METHOD:
+                    if f.name in self._methods:
+                        continue
+                    self._methods[f.name] = FuncItem(f, self.path, keys)
+                elif f.type in (
                     Eolian_Function_Type.PROPERTY,
                     Eolian_Function_Type.PROP_GET,
                     Eolian_Function_Type.PROP_SET,
-                ) and mfilter(f):
-                    self._properties.append(FuncItem(f, self.path, keys))
+                ):
+                    if f.name in self._properties:
+                        continue
+                    self._properties[f.name] = FuncItem(f, self.path, keys)
+
+        parents = []
+
+        if self.keys.funclist & Function_List_Type.INHERITS_FULL:
+            # Use inherits full to get inherited interfaces too
+            parents = self.comp.inherits_full
+        else:
+            if self.keys.funclist & Function_List_Type.EXTENSIONS:
+                parents = self.comp.extensions_hierarchy
+
+            if self.keys.funclist & Function_List_Type.INHERITED:
+                if parents:
+                    parents = itertools.chain(self.comp.hierarchy, parents)
+                else:
+                    parents = self.comp.hierarchy
+
+        for eoclass in parents:
+            for f in filter(mfilter, eoclass.methods):
+                if f.name in self._methods:
+                    continue
+                self._methods[f.name] = FuncItem(f, self.path, keys)
+            for f in filter(mfilter, eoclass.properties):
+                if f.name in self._properties:
+                    continue
+                self._properties[f.name] = FuncItem(f, self.path, keys)
 
     @property
     def properties(self):
-        return filter(lambda p: p.has_setter or p.has_getter, self._properties)
+        return filter(lambda p: p.has_setter or p.has_getter, self._properties.values())
 
     @property
     def properties_get(self):
-        return filter(lambda p: p.has_getter, self._properties)
+        return filter(lambda p: p.has_getter, self._properties.values())
 
     @property
     def properties_set(self):
-        return filter(lambda p: p.has_setter, self._properties)
+        return filter(lambda p: p.has_setter, self._properties.values())
+
+    @property
+    def methods(self):
+        return self._methods.values()
+
+    @property
+    def events(self):
+        return self._events.values()
 
     def __iter__(self):
         return itertools.chain(self.methods, self.properties)

@@ -1,15 +1,16 @@
 #!/usr/bin/env python3
 # encoding: utf-8
-from enum import IntEnum
+from enum import IntEnum, IntFlag
 
 from testgen import name_helpers
 
 
-class Function_List_Type(IntEnum):
-    INHERITS = 1
-    INHERITS_FULL = 2
-    CLASS_IMPLEMENTS = 3
-    CLASS_ONLY = 4
+class Function_List_Type(IntFlag):
+    OWN = 1
+    IMPLEMENTS = 2  # Overrides
+    EXTENSIONS = 4  # Interfaces/Mixins
+    INHERITED = 8  # Inherited but not overriden methods and classes
+    INHERITS_FULL = 4 & 8
 
 
 class EKeys:
@@ -21,7 +22,7 @@ class EKeys:
         self.blacklist = ["efl_constructor"]
         self.keyloads = ["init", "shutdown", "custom"]
         self.implementsbl = ["construtor", "destructor", "finalize"]
-        self.funclist = Function_List_Type.CLASS_IMPLEMENTS
+        self.funclist = Function_List_Type.OWN | Function_List_Type.IMPLEMENTS
 
     def type_convert(self, eotype):
         return eotype.name
@@ -39,7 +40,11 @@ class EKeys:
 class EMonoKeys(EKeys):
     def __init__(self, ext):
         super().__init__(ext)
-        self.funclist = Function_List_Type.INHERITS_FULL
+        self.funclist = (
+            Function_List_Type.OWN
+            | Function_List_Type.IMPLEMENTS
+            | Function_List_Type.EXTENSIONS
+        )
         self.dicttypes = {
             "byte": "sbyte",
             "llong": "long",
