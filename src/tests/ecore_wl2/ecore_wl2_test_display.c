@@ -101,6 +101,29 @@ EFL_START_TEST(wl2_display_dmabuf_get)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_display_globals_get)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Global *global;
+   Eina_Iterator *itr;
+   void *data;
+
+   disp = ECORE_WL2_TEST_DISPLAY_CONNECT();
+   ck_assert(disp != NULL);
+
+   itr = ecore_wl2_display_globals_get(disp);
+   ck_assert(itr != NULL);
+
+   EINA_ITERATOR_FOREACH(itr, data)
+     {
+        global = (Ecore_Wl2_Global *)data;
+        printf("Interface: <%s>\n", global->interface);
+     }
+
+   eina_iterator_free(itr);
+}
+EFL_END_TEST
+
 void
 ecore_wl2_test_display(TCase *tc)
 {
@@ -122,5 +145,6 @@ ecore_wl2_test_display(TCase *tc)
         tcase_add_test(tc, wl2_display_disconnect);
         tcase_add_test(tc, wl2_display_shm_get);
         tcase_add_test(tc, wl2_display_dmabuf_get);
+        tcase_add_test(tc, wl2_display_globals_get);
      }
 }
