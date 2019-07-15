@@ -55,11 +55,42 @@ EFL_START_TEST(wl2_display_name_get)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_display_connect)
+{
+   Ecore_Wl2_Display *disp;
+
+   disp = ECORE_WL2_TEST_DISPLAY_CONNECT();
+   ck_assert(disp != NULL);
+}
+EFL_END_TEST
+
+EFL_START_TEST(wl2_display_disconnect)
+{
+   Ecore_Wl2_Display *disp;
+
+   disp = ECORE_WL2_TEST_DISPLAY_CONNECT();
+   ck_assert(disp != NULL);
+
+   ecore_wl2_display_disconnect(disp);
+}
+EFL_END_TEST
+
 void
 ecore_wl2_test_display(TCase *tc)
 {
-   tcase_add_test(tc, wl2_display_create);
-   tcase_add_test(tc, wl2_display_destroy);
-   tcase_add_test(tc, wl2_display_get);
-   tcase_add_test(tc, wl2_display_name_get);
+   if (!getenv("WAYLAND_DISPLAY"))
+     {
+        /* tests here are for server-side functions */
+        tcase_add_test(tc, wl2_display_create);
+        tcase_add_test(tc, wl2_display_destroy);
+        tcase_add_test(tc, wl2_display_get);
+        tcase_add_test(tc, wl2_display_name_get);
+     }
+
+   if (getenv("WAYLAND_DISPLAY"))
+     {
+        /* tests here are for client-side functions */
+        tcase_add_test(tc, wl2_display_connect);
+        tcase_add_test(tc, wl2_display_disconnect);
+     }
 }
