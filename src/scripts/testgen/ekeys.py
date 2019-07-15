@@ -84,6 +84,8 @@ class EMonoKeys(EKeys):
             "accessor": "Eina.Accessor",
             "strbuf": "Eina.Strbuf",
             "Efl.Class": "System.Type",
+            "rw_slice": "Eina.RwSlice",
+            "slice": "Eina.Slice",
         }
 
         self.keywords = [
@@ -198,7 +200,7 @@ class EMonoKeys(EKeys):
         if direction == direction.INOUT:
             return "ref"
         elif direction != direction.IN:
-            if param.type.name in ("Eina.Slice", "Eina.Rw_Slice"):
+            if param.type.name in ("slice", "rw_slice"):
                 return "ref"
             else:
                 return "out"
@@ -224,7 +226,7 @@ class EMonoKeys(EKeys):
         new_type = self.dicttypes.get(
             eotype.name, name_helpers.type_managed_name(eotype)
         )
-        if new_type != "int" and eotype.base_type:
+        if new_type not in ("Eina.RwSlice", "Eina.Slice") and eotype.base_type:
             # Stringshare is a special case where its C# type differs if inside or outside
             # a container:
             # - Non-contained stringshares are directly converted to strings.
