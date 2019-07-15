@@ -35,7 +35,8 @@ struct _Evas_SVG_Loader
    Eina_Array *stack;
    Svg_Node *doc;
    Svg_Node *def;
-   Svg_Style_Gradient *gradient;
+   Eina_List *gradients;
+   Svg_Style_Gradient *latest_gradient; //for stops
    Evas_SVG_Parser *svg_parse;
    int level;
    Eina_Bool result:1;
@@ -2158,11 +2159,21 @@ _evas_svg_loader_xml_open_parser(Evas_SVG_Loader *loader,
      {
         Svg_Style_Gradient *gradient;
         gradient = gradient_method(loader, attrs, attrs_length);
+        /*FIXME: The current parsing structure does not distinguish end tags.
+                 There is no way to know if the currently parsed gradient is in defs.
+                 If a gradient is declared outside of defs after defs is set, it is included in the gradients of defs.
+                 But finally, the loader has a gradient style list regardless of defs.
+                 This is only to support this when multiple gradients are declared, even if no defs are declared.
+                 refer to: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs */
         if (loader->doc->node.doc.defs)
           {
              loader->def->node.defs.gradients = eina_list_append(loader->def->node.defs.gradients, gradient);
           }
-        loader->gradient = gradient;
+        else
+          {
+             loader->gradients = eina_list_append(loader->gradients, gradient);
+          }
+        loader->latest_gradient = gradient;
      }
    else if (!strcmp(tag_name, "stop"))
      {
@@ -2172,8 +2183,10 @@ _evas_svg_loader_xml_open_parser(Evas_SVG_Loader *loader,
         stop->a = 255;
         eina_simple_xml_attributes_parse(attrs, attrs_length,
                                     _attr_parse_stops, loader);
-        if (loader->gradient)
-          loader->gradient->stops = eina_list_append(loader->gradient->stops, stop);
+        if (loader->latest_gradient)
+          {
+             loader->latest_gradient->stops = eina_list_append(loader->latest_gradient->stops, stop);
+          }
      }
 
 }
@@ -2415,9 +2428,9 @@ evas_vg_load_file_open_svg(Eina_File *file,
           _update_gradient(loader.doc, defs->node.defs.gradients);
         else
           {
-             if (loader.gradient)
+             if (loader.gradients)
                {
-                  Eina_List* gradient_list = eina_list_append(NULL, loader.gradient);
+                  Eina_List* gradient_list = loader.gradients;
                   _update_gradient(loader.doc, gradient_list);
                   eina_list_free(gradient_list);
                }
