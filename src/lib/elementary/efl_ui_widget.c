@@ -1406,6 +1406,11 @@ _efl_ui_widget_widget_parent_set(Eo *obj, Elm_Widget_Smart_Data *pd, Efl_Ui_Widg
      {
         ELM_WIDGET_DATA_GET_OR_RETURN(parent, ppd);
         EINA_SAFETY_ON_FALSE_RETURN(eina_list_data_find(ppd->subobjs, obj));
+        if (ppd->parent_obj == parent)
+          {
+             CRI("ATTEMPTING TO SET CHILD OF PARENT AS PARENT OF ITS OWN PARENT. THIS IS A BUG.");
+             return;
+          }
      }
 
    /* NOTE: In the following two lines, 'obj' is correct. Do not change it.
@@ -1495,6 +1500,12 @@ _efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Widget_Smart_Data *sd, Evas_Ob
    if (parent == obj) return EINA_TRUE;
    if (parent)
      {
+        if (sd->parent_obj == sobj)
+          {
+             CRI("ATTEMPTING TO SET CHILD OF PARENT AS PARENT OF ITS OWN PARENT. THIS IS A BUG.");
+             return EINA_FALSE;
+          }
+
         if (!efl_ui_widget_sub_object_del(parent, sobj))
           return EINA_FALSE;
      }
