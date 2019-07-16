@@ -3718,3 +3718,17 @@ efl_class_type_get(const Efl_Class *klass_id)
 
    return klass->desc->type;
 }
+
+
+EAPI Eina_Bool
+efl_ownable_get(const Eo *obj)
+{
+   int ref = efl_ref_count(obj);
+
+   if (efl_parent_get(obj))
+     ref --;
+
+   if (ref <= 0)
+     ERR("There is no free reference to pass this object. Please check that this object is really owned by you.");
+   return (ref > 0);
+}
