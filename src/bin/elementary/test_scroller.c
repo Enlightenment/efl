@@ -691,6 +691,64 @@ test_scroller2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
      }
 }
 
+static void
+_scroll_anim_start(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   int x, y;
+   elm_scroller_region_get(obj, &x, &y, NULL, NULL);
+   printf("scroll start: %p x: %d y: %d\n", obj, x, y);
+}
+
+static void
+_scroll_anim_stop(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   int x, y;
+   elm_scroller_region_get(obj, &x, &y, NULL, NULL);
+   printf("scroll stop: %p x: %d y: %d\n", obj, x, y);
+}
+
+void
+test_scroller_simple(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *bt, *bx, *sc;
+   int i;
+
+
+   win = elm_win_util_standard_add("scroller2", "Scroller Simple");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   bx = elm_box_add(win);
+   evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(bx, 0.5, 0);
+
+   /* { */
+   sc = elm_scroller_add(win);
+   evas_object_smart_callback_add(sc, "scroll,anim,start", _scroll_anim_start, NULL);
+   evas_object_smart_callback_add(sc, "scroll,anim,stop", _scroll_anim_stop, NULL);
+   evas_object_size_hint_weight_set(sc, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_align_set(sc, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   elm_scroller_bounce_set(sc, EINA_TRUE, EINA_TRUE);
+   evas_object_show(sc);
+   evas_object_show(bx);
+
+   elm_object_content_set(sc, bx);
+   elm_win_resize_object_add(win, sc);
+   /* } */
+
+   for (i = 0; i < 2000; i++)
+     {
+        bt = elm_button_add(win);
+        elm_object_text_set(bt, "Vertical");
+        evas_object_smart_callback_add(bt, "clicked", _click_through, NULL);
+        evas_object_size_hint_weight_set(bt, EVAS_HINT_EXPAND, 0.0);
+        evas_object_size_hint_align_set(bt, EVAS_HINT_FILL, 0.5);
+        elm_box_pack_end(bx, bt);
+        evas_object_show(bt);
+     }
+   evas_object_resize(win, 320, 400);
+   evas_object_show(win);
+}
+
 static Ecore_Timer *_timer = NULL;
 static int _append = 0;
 static int _count = 0;
