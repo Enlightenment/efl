@@ -2219,7 +2219,7 @@ _efl_ui_text_efl_object_finalize(Eo *obj,
    efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
          _text_size_changed_cb, obj);
 
-   elm_widget_can_focus_set(obj, EINA_TRUE);
+   efl_ui_widget_focus_allow_set(obj, sd->editable);
 
    efl_ui_text_input_panel_layout_set(obj, ELM_INPUT_PANEL_LAYOUT_NORMAL);
    efl_ui_text_input_panel_enabled_set(obj, EINA_TRUE);
@@ -2396,6 +2396,7 @@ _efl_ui_text_efl_text_interactive_editable_set(Eo *obj, Efl_Ui_Text_Data *sd, Ei
    if (sd->editable == editable) return;
    sd->editable = editable;
    efl_ui_widget_theme_apply(obj);
+   efl_ui_widget_focus_allow_set(obj, editable);
 
    elm_drop_target_del(obj, sd->drop_format,
                        _dnd_enter_cb, NULL,
