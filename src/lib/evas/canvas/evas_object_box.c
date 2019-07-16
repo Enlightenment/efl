@@ -443,10 +443,16 @@ _evas_box_efl_gfx_entity_size_set(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED, 
 EOLIAN static void
 _evas_box_efl_gfx_entity_position_set(Eo *o, Evas_Object_Box_Data *_pd EINA_UNUSED, Eina_Position2D pos)
 {
+   Evas_Object_Smart_Clipped_Data *cso = evas_object_smart_data_get(o);
    if (_evas_object_intercept_call(o, EVAS_OBJECT_INTERCEPT_CB_MOVE , 0, pos.x, pos.y))
      return;
 
-   efl_gfx_entity_position_set(efl_super(o, MY_CLASS), pos);
+   efl_gfx_entity_position_set(cso->clipper, pos);
+   /* this skips the call to _evas_object_smart_clipped_smart_move_internal
+    * since box internals will automatically recalc all the child positions
+    * at a later point
+    */
+   efl_gfx_entity_position_set(efl_super(o, EFL_CANVAS_GROUP_CLASS), pos);
    evas_object_smart_changed(o);
 }
 
