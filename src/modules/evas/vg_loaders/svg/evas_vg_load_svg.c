@@ -35,7 +35,8 @@ struct _Evas_SVG_Loader
    Eina_Array *stack;
    Svg_Node *doc;
    Svg_Node *def;
-   Svg_Style_Gradient *gradient;
+   Eina_List *gradients;
+   Svg_Style_Gradient *latest_gradient; //for stops
    Evas_SVG_Parser *svg_parse;
    int level;
    Eina_Bool result:1;
@@ -1758,15 +1759,63 @@ _handle_radial_r_attr(Evas_SVG_Loader *loader, Svg_Radial_Gradient* radial, cons
    radial->r = _gradient_to_double(loader->svg_parse, value, SVG_PARSER_LENGTH_OTHER);
 }
 
+static void
+_recalc_radial_cx_attr(Evas_SVG_Loader *loader, Svg_Radial_Gradient* radial, Eina_Bool user_space)
+{
+   if (!user_space)
+     {
+        radial->cx = radial->cx * loader->svg_parse->global.width;
+     }
+}
+
+static void
+_recalc_radial_cy_attr(Evas_SVG_Loader *loader, Svg_Radial_Gradient* radial, Eina_Bool user_space)
+{
+   if (!user_space)
+     {
+        radial->cy = radial->cy * loader->svg_parse->global.height;
+     }
+}
+
+static void
+_recalc_radial_fx_attr(Evas_SVG_Loader *loader, Svg_Radial_Gradient* radial, Eina_Bool user_space)
+{
+   if (!user_space)
+     {
+        radial->fx = radial->fx * loader->svg_parse->global.width;
+     }
+}
+
+static void
+_recalc_radial_fy_attr(Evas_SVG_Loader *loader, Svg_Radial_Gradient* radial, Eina_Bool user_space)
+{
+   if (!user_space)
+     {
+        radial->fy = radial->fy * loader->svg_parse->global.height;
+     }
+}
+
+static void
+_recalc_radial_r_attr(Evas_SVG_Loader *loader, Svg_Radial_Gradient* radial, Eina_Bool user_space)
+{
+   if (!user_space)
+     {
+        radial->r = radial->r * (sqrt(pow(loader->svg_parse->global.height, 2) + pow(loader->svg_parse->global.width, 2)) / sqrt(2.0));
+     }
+}
+
+
 typedef void (*Radial_Method)(Evas_SVG_Loader *loader, Svg_Radial_Gradient *radial, const char *value);
+typedef void (*Radial_Method_Recalc)(Evas_SVG_Loader *loader, Svg_Radial_Gradient *radial, Eina_Bool user_space);
 
 #define RADIAL_DEF(Name)       \
-  { #Name, sizeof (#Name), _handle_radial_##Name##_attr}
+  { #Name, sizeof (#Name), _handle_radial_##Name##_attr, _recalc_radial_##Name##_attr}
 
 static const struct {
    const char *tag;
    int sz;
    Radial_Method tag_handler;;
+   Radial_Method_Recalc tag_recalc;
 } radial_tags[] = {
   RADIAL_DEF(cx),
   RADIAL_DEF(cy),
@@ -1814,6 +1863,7 @@ _attr_parse_radial_gradient_node(void *data, const char *key, const char *value)
 static Svg_Style_Gradient *
 _create_radialGradient(Evas_SVG_Loader *loader, const char *buf, unsigned buflen)
 {
+   unsigned int i = 0;
    Svg_Style_Gradient *grad = calloc(1, sizeof(Svg_Style_Gradient));
    loader->svg_parse->style_grad = grad;
 
@@ -1833,6 +1883,11 @@ _create_radialGradient(Evas_SVG_Loader *loader, const char *buf, unsigned buflen
    loader->svg_parse->gradient.fy_parsed = EINA_FALSE;
    eina_simple_xml_attributes_parse(buf, buflen,
                                     _attr_parse_radial_gradient_node, loader);
+
+   for (i = 0; i < sizeof (radial_tags) / sizeof(radial_tags[0]); i++)
+     radial_tags[i].tag_recalc(loader, grad->radial, grad->user_space);
+
+   grad->use_percentage = EINA_TRUE;
 
    return loader->svg_parse->style_grad;
 }
@@ -2104,11 +2159,21 @@ _evas_svg_loader_xml_open_parser(Evas_SVG_Loader *loader,
      {
         Svg_Style_Gradient *gradient;
         gradient = gradient_method(loader, attrs, attrs_length);
+        /*FIXME: The current parsing structure does not distinguish end tags.
+                 There is no way to know if the currently parsed gradient is in defs.
+                 If a gradient is declared outside of defs after defs is set, it is included in the gradients of defs.
+                 But finally, the loader has a gradient style list regardless of defs.
+                 This is only to support this when multiple gradients are declared, even if no defs are declared.
+                 refer to: https://developer.mozilla.org/en-US/docs/Web/SVG/Element/defs */
         if (loader->doc->node.doc.defs)
           {
              loader->def->node.defs.gradients = eina_list_append(loader->def->node.defs.gradients, gradient);
           }
-        loader->gradient = gradient;
+        else
+          {
+             loader->gradients = eina_list_append(loader->gradients, gradient);
+          }
+        loader->latest_gradient = gradient;
      }
    else if (!strcmp(tag_name, "stop"))
      {
@@ -2118,8 +2183,10 @@ _evas_svg_loader_xml_open_parser(Evas_SVG_Loader *loader,
         stop->a = 255;
         eina_simple_xml_attributes_parse(attrs, attrs_length,
                                     _attr_parse_stops, loader);
-        if (loader->gradient)
-          loader->gradient->stops = eina_list_append(loader->gradient->stops, stop);
+        if (loader->latest_gradient)
+          {
+             loader->latest_gradient->stops = eina_list_append(loader->latest_gradient->stops, stop);
+          }
      }
 
 }
@@ -2361,9 +2428,9 @@ evas_vg_load_file_open_svg(Eina_File *file,
           _update_gradient(loader.doc, defs->node.defs.gradients);
         else
           {
-             if (loader.gradient)
+             if (loader.gradients)
                {
-                  Eina_List* gradient_list = eina_list_append(NULL, loader.gradient);
+                  Eina_List* gradient_list = loader.gradients;
                   _update_gradient(loader.doc, gradient_list);
                   eina_list_free(gradient_list);
                }

@@ -42,9 +42,9 @@ struct @extern Eina.Matrix3 {
    zz: double; [[ZZ matrix value]]
 }
 
-type @extern Eina.Unicode: uint32; [[Eina unicode type]]
+type @extern @beta Eina.Unicode: uint32; [[Eina unicode type]]
 
-struct @extern Eina.File_Direct_Info; [[Eina file direct information data structure]]
+struct @extern @beta Eina.File_Direct_Info; [[Eina file direct information data structure]]
 /*{
    path_lenght:    size_t;              [[Size of the whole path]]
    name_length:    size_t;              [[Size of the filename/basename component]]
@@ -53,7 +53,7 @@ struct @extern Eina.File_Direct_Info; [[Eina file direct information data struct
    path:           char[EINA_PATH_MAX]; [[The path]]
 };*/
 
-enum @extern Eina.Xattr.Flags {
+enum @extern @beta Eina.Xattr.Flags {
   [[Eina file extended attributes flags]]
   insert, [[This is the default behaviour, it will either create or replace the extended attribute]]
   replace, [[This will only succeed if the extended attribute previously existed]]
@@ -62,25 +62,25 @@ enum @extern Eina.Xattr.Flags {
 
 type @extern Eina.Error: int; [[Eina error type]]
 
-struct @extern @free(eina_binbuf_free) Eina.Binbuf; [[Eina binbuf data structure]]
-struct @extern @free(eina_strbuf_free) Eina.Strbuf; [[Eina strbuf data structure]]
+struct @extern @beta @free(eina_binbuf_free) Eina.Binbuf; [[Eina binbuf data structure]]
+struct @extern @beta @free(eina_strbuf_free) Eina.Strbuf; [[Eina strbuf data structure]]
 
-struct @extern Eina.Slice {
+struct @extern @beta Eina.Slice {
     [[A linear, read-only, memory segment]]
     len: size; [[Length of the memory segment]]
     mem: const(void_ptr); [[Pointer to memory segment]]
 }
 
-struct @extern Eina.Rw_Slice {
+struct @extern @beta Eina.Rw_Slice {
     [[A linear, read-write, memory segment]]
     len: size; [[Length of the memory segment]]
     mem: void_ptr; [[Pointer to memory segment]]
 }
 
-struct @extern Eina.Value; [[Eina value placeholder so it can be referenced from docs.]]
-struct @extern Eina.Value_Type; [[Eina value type]]
+struct @extern @beta Eina.Value; [[Eina value placeholder so it can be referenced from docs.]]
+struct @extern @beta Eina.Value_Type; [[Eina value type]]
 
-struct @extern Eina.Stat {
+struct @extern @beta Eina.Stat {
     [[The structure to store some file statistics.]]
     dev      : ulong; [[The device where this file is located]]
     ino      : ulong; [[The inode]]
@@ -103,5 +103,5 @@ struct @extern Eina.Stat {
 struct @extern @free(eina_promise_free) Eina.Promise; [[Eina promise type]]
 
 /* FIXME: This definitely shouldn't be here. */
-type Efl.Event_Cb: __undefined_type; [[Efl event callback type]]
+type @beta Efl.Event_Cb: __undefined_type; [[Efl event callback type]]
 

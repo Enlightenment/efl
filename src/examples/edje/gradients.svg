@@ -1,0 +1,62 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient
+       id="linearGradient1"
+       x1="0"
+       y1="0"
+       x2="0.2"
+       y2="0.2"
+       spreadMethod="reflect">
+      <stop
+         style="stop-color:#FF0000;stop-opacity:1;"
+         offset="0"/>
+      <stop
+         style="stop-color:#0000FF;stop-opacity:1;"
+         offset="1"/>
+    </linearGradient>
+    <radialGradient
+       id="radialGradient1"
+       r="0.2"
+       cx="0.3"
+       cy="0.3"
+       spreadMethod="reflect">
+      <stop
+         style="stop-color:#FFFF00;stop-opacity:1;"
+         offset="0"/>
+      <stop
+         style="stop-color:#00FFFF;stop-opacity:1;"
+         offset="1"/>
+    </radialGradient>
+   </defs>
+    <linearGradient
+       id="linearGradient2"
+       x1="0"
+       y1="0"
+       x2="0.2"
+       y2="0.2"
+       spreadMethod="reflect">
+      <stop
+         style="stop-color:#0F00F0;stop-opacity:1;"
+         offset="0"/>
+      <stop
+         style="stop-color:#0F000F;stop-opacity:1;"
+         offset="1"/>
+    </linearGradient>
+    <radialGradient
+       id="radialGradient2"
+       r="0.2"
+       cx="0.3"
+       cy="0.3"
+       spreadMethod="reflect">
+      <stop
+         style="stop-color:#00FF00;stop-opacity:1;"
+         offset="0"/>
+      <stop
+         style="stop-color:#FF00FF;stop-opacity:1;"
+         offset="1"/>
+    </radialGradient>
+  <rect x="0" y="0" width="50" height="50" fill="url(#linearGradient1)"/>
+  <rect x="50" y="0" width="50" height="50" fill="url(#radialGradient1)"/>
+  <rect x="0" y="50" width="50" height="50" fill="url(#linearGradient2)"/>
+  <rect x="50" y="50" width="50" height="50" fill="url(#radialGradient2)"/>
+</svg>
