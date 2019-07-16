@@ -44,14 +44,6 @@ EFL_END_TEST
 static const char *test_val;
 
 static void
-test_pos_changed_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   int *called = data;
-
-   (*called)++;
-}
-
-static void
 test_selected_cb(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info)
 {
    /* if the test crashes with a crazy stack trace, this assert failed */
@@ -80,7 +72,7 @@ EFL_START_TEST(elm_actionslider_test_callbacks)
    elm_actionslider_enabled_pos_set(as, ELM_ACTIONSLIDER_LEFT |
                                     ELM_ACTIONSLIDER_CENTER | ELM_ACTIONSLIDER_RIGHT);
    evas_object_smart_callback_add(as, "pos_changed",
-                                  test_pos_changed_cb, &called);
+                                  event_callback_that_is_called_exactly_one_time_and_sets_a_single_int_data_pointer_when_called, &called);
    evas_object_smart_callback_add(as, "selected", test_selected_cb, &called);
 
    get_me_to_those_events(as);

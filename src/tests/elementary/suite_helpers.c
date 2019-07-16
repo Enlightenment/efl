@@ -456,3 +456,12 @@ click_part(Eo *obj, const char *part)
    edje_object_message_signal_process(obj);
    efl_unref(part_obj);
 }
+
+void
+event_callback_that_is_called_exactly_one_time_and_sets_a_single_int_data_pointer_when_called(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   int *called = data;
+
+   ck_assert_int_eq(*called, 0);
+   *called = 1;
+}
