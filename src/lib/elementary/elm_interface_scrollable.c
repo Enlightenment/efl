@@ -1285,7 +1285,10 @@ _elm_interface_scrollable_content_viewport_geometry_get(const Eo *obj EINA_UNUSE
 {
    if (!sid->pan_obj || !sid->edje_obj) return;
 
-   edje_object_calc_force(sid->edje_obj);
+   /* we want to trigger any pending edje recalcs here but we don't strictly need to
+    * trigger one if it isn't necessary
+    */
+   efl_canvas_group_calculate(sid->edje_obj);
    evas_object_geometry_get(sid->pan_obj, x, y, w, h);
 }
 
