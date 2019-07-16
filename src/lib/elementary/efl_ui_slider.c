@@ -220,6 +220,7 @@ _drag_up(void *data,
    else
      efl_ui_drag_step_move(efl_part(wd->resize_obj, "efl.dragable.slider"),
                            relative_step, relative_step);
+   _slider_update(data, EINA_TRUE);
 }
 
 static void
@@ -244,6 +245,7 @@ _drag_down(void *data,
    else
      efl_ui_drag_step_move(efl_part(wd->resize_obj, "efl.dragable.slider"),
                            relative_step, relative_step);
+   _slider_update(data, EINA_TRUE);
 }
 
 static Eina_Bool
@@ -251,6 +253,9 @@ _key_action_drag(Evas_Object *obj, const char *params)
 {
    EFL_UI_SLIDER_DATA_GET(obj, sd);
    const char *dir = params;
+   double old_value, new_value;
+
+   old_value = efl_ui_range_value_get(obj);
 
    if (!strcmp(dir, "left"))
      {
@@ -286,7 +291,8 @@ _key_action_drag(Evas_Object *obj, const char *params)
      }
    else return EINA_FALSE;
 
-   return EINA_TRUE;
+   new_value = efl_ui_range_value_get(obj);
+   return !EINA_DBL_EQ(new_value, old_value);
 }
 
 // _slider_efl_ui_widget_widget_input_event_handler
