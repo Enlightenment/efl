@@ -205,6 +205,7 @@ _drag_up(void *data,
          const char *source EINA_UNUSED)
 {
    double step;
+   double relative_step;
 
    EFL_UI_SLIDER_DATA_GET(data, sd);
    step = sd->step;
@@ -212,12 +213,13 @@ _drag_up(void *data,
    if (efl_ui_layout_orientation_is_inverted(sd->dir)) step *= -1.0;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
+   relative_step = step/(sd->val_max - sd->val_min);
    if (elm_widget_is_legacy(obj))
      efl_ui_drag_step_move(efl_part(wd->resize_obj, "elm.dragable.slider"),
                            step, step);
    else
      efl_ui_drag_step_move(efl_part(wd->resize_obj, "efl.dragable.slider"),
-                           step, step);
+                           relative_step, relative_step);
 }
 
 static void
@@ -227,6 +229,7 @@ _drag_down(void *data,
            const char *source EINA_UNUSED)
 {
    double step;
+   double relative_step;
 
    EFL_UI_SLIDER_DATA_GET(data, sd);
    step = -sd->step;
@@ -234,12 +237,13 @@ _drag_down(void *data,
    if (efl_ui_layout_orientation_is_inverted(sd->dir)) step *= -1.0;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
+   relative_step = step/(sd->val_max - sd->val_min);
    if (elm_widget_is_legacy(obj))
      efl_ui_drag_step_move(efl_part(wd->resize_obj, "elm.dragable.slider"),
                            step, step);
    else
      efl_ui_drag_step_move(efl_part(wd->resize_obj, "efl.dragable.slider"),
-                           step, step);
+                           relative_step, relative_step);
 }
 
 static Eina_Bool
