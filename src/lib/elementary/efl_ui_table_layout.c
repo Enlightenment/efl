@@ -228,6 +228,7 @@ _efl_ui_table_custom_layout(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd)
    int (*_efl_ui_table_item_pos_get[2])(Table_Calc *, Item_Calc *, Eina_Bool);
    int (*_efl_ui_table_item_size_get[2])(Table_Calc *, Item_Calc *, Eina_Bool);
    Table_Calc table_calc;
+   Eina_Bool do_free;
 
    count = pd->count;
 
@@ -250,7 +251,17 @@ _efl_ui_table_custom_layout(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd)
    memset(table_calc.cell_calc[0], 0, cols * sizeof(Cell_Calc));
    memset(table_calc.cell_calc[1], 0, rows * sizeof(Cell_Calc));
 
-   items = alloca(count * sizeof(*items));
+   /* Item_Calc struct is currently 152 bytes.
+    * this is pretty big to be allocating a huge number of, and we don't want to explode the stack
+    */
+   do_free = count >= 500;
+   if (do_free)
+     {
+        items = malloc(count * sizeof(*items));
+        EINA_SAFETY_ON_NULL_RETURN(items);
+     }
+   else
+     items = alloca(count * sizeof(*items));
 #ifdef DEBUG
    memset(items, 0, count * sizeof(*items));
 #endif
@@ -384,4 +395,5 @@ _efl_ui_table_custom_layout(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd)
                                         EINA_SIZE2D(table_calc.want[0],
                                                     table_calc.want[1]));
    efl_event_callback_call(ui_table, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);
+   if (do_free) free(items);
 }
