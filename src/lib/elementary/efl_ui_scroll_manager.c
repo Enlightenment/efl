@@ -1558,10 +1558,11 @@ _scroll_manager_scrollto_y_animator_del(Efl_Ui_Scroll_Manager_Data *sd)
 static void
 _scroll_manager_scrollto_animator_add(Efl_Ui_Scroll_Manager_Data *sd, Evas_Coord sx, Evas_Coord sy, Evas_Coord x, Evas_Coord y, double tx, double ty, InterpType interp)
 {
-   _scroll_manager_scrollto_animator_del(sd);
-
-   if (!sd->pan_obj) return;
-   if (sd->freeze) return;
+   if (!sd->pan_obj || sd->freeze)
+     {
+        _scroll_manager_scrollto_animator_del(sd);
+        return;
+     }
    _scroll_manager_scrollto_x_animator_add(sd, sx, x, tx, interp);
    _scroll_manager_scrollto_y_animator_add(sd, sy, y, ty, interp);
 }
