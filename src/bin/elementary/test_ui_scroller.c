@@ -131,7 +131,7 @@ test_efl_ui_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 }
 
 void
-test_efl_ui_scroller2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+test_efl_ui_scroller_simple(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Eo *win, *sc, *bx;
    int i;
