@@ -27,6 +27,28 @@ _weight_sort_cb(const void *l1, const void *l2)
    return it2->weight_factor <= it1->weight_factor ? -1 : 1;
 }
 
+/* this function performs a simplified layout when the box has changed position
+ * but no other changes have occurred, e.g., when a box is being scrolled
+ */
+static void
+_efl_ui_box_layout_simple(Efl_Ui_Box *ui_box, Efl_Ui_Box_Data *pd)
+{
+   Eo *child;
+   Eina_List *l;
+   Eina_Position2D pos = efl_gfx_entity_position_get(ui_box);
+
+   EINA_LIST_FOREACH(pd->children, l, child)
+     {
+        Eina_Position2D child_pos = efl_gfx_entity_position_get(child);
+
+        efl_gfx_entity_position_set(child,
+          EINA_POSITION2D(pos.x - pd->last_pos.x + child_pos.x,
+                          pos.y - pd->last_pos.y + child_pos.y));
+     }
+   pd->last_pos = pos;
+   efl_event_callback_call(ui_box, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);
+}
+
 void
 _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Efl_Ui_Box_Data *pd)
 {
@@ -49,8 +71,14 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Efl_Ui_Box_Data *pd)
         efl_gfx_hint_size_restricted_min_set(ui_box, EINA_SIZE2D(0, 0));
         return;
      }
-
+   if (!pd->full_recalc)
+     {
+        _efl_ui_box_layout_simple(ui_box, pd);
+        return;
+     }
    _efl_ui_container_layout_init(ui_box, box_calc);
+   pd->last_pos.x = box_calc[0].pos - box_calc[0].margin[0];
+   pd->last_pos.y = box_calc[1].pos - box_calc[1].margin[0];
 
    /* Item_Calc struct is currently 152 bytes.
     * this is pretty big to be allocating a huge number of, and we don't want to explode the stack
@@ -207,6 +235,7 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Efl_Ui_Box_Data *pd)
    want[1] += (box_calc[1].margin[0] + box_calc[1].margin[1]) +
               (box_calc[1].pad * (count - 1));
 
+   pd->full_recalc = EINA_FALSE;
    efl_gfx_hint_size_restricted_min_set(ui_box, EINA_SIZE2D(want[0], want[1]));
 
    efl_event_callback_call(ui_box, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);

@@ -27,7 +27,10 @@ struct _Efl_Ui_Box_Data
       double h, v;
    } align;
 
+   Eina_Position2D last_pos;
+
    Eina_Bool homogeneous : 1;
+   Eina_Bool full_recalc : 1; //whether to force full recalc
 };
 
 #endif
