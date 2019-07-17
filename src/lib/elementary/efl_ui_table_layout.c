@@ -381,4 +381,5 @@ _efl_ui_table_custom_layout(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd)
    efl_gfx_hint_size_restricted_min_set(ui_table,
                                         EINA_SIZE2D(table_calc.want[0],
                                                     table_calc.want[1]));
+   efl_event_callback_call(ui_table, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);
 }
