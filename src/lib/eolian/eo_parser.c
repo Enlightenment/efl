@@ -708,22 +708,6 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr)
            check_match(ls, ')', '(', pline, pcol);
            return def;
         }
-      case KW_free:
-        {
-           int pline, pcolumn;
-           eo_lexer_get(ls);
-           pline = ls->line_number;
-           pcolumn = ls->column;
-           check_next(ls, '(');
-           def = parse_type_void(ls, allow_ptr);
-           check_next(ls, ',');
-           check(ls, TOK_VALUE);
-           def->freefunc = eina_stringshare_ref(ls->t.value.s);
-           eo_lexer_get(ls);
-           FILL_BASE(def->base, ls, line, col, TYPE);
-           check_match(ls, ')', '(', pline, pcolumn);
-           return def;
-        }
       case KW_error:
         {
            int pline, pcolumn;

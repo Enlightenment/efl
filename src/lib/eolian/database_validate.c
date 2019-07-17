@@ -289,9 +289,6 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                    default:
                      break;
                   }
-                /* FIXME: remove this after c++/c# has fixed their stuff */
-                if (tp->freefunc)
-                  tp->ownable = EINA_TRUE;
                 return _validate_ownable(tp);
              }
            /* user defined */
@@ -310,7 +307,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
              }
            if (!_validate_typedecl(vals, tp->tdecl))
              return EINA_FALSE;
-           if (tp->tdecl->ownable || tp->freefunc)
+           if (tp->tdecl->ownable)
              tp->ownable = EINA_TRUE;
            tp->base.c_name = eina_stringshare_ref(tp->tdecl->base.c_name);
            return _validate_ownable(tp);

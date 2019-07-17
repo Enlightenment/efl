@@ -264,7 +264,6 @@ struct _Eolian_Type
    Eolian_Type_Builtin_Type btype;
    Eolian_Type *base_type;
    Eolian_Type *next_type;
-   Eina_Stringshare *freefunc;
    union
    {
       Eolian_Class *klass;
