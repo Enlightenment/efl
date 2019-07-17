@@ -422,7 +422,7 @@ abstract Efl.Object
    }
 }
 
-struct Efl.Event {
+struct @extern Efl.Event {
     [[A parameter passed in event callbacks holding extra event parameters.
 
       This is the full event information passed to callbacks in C.
