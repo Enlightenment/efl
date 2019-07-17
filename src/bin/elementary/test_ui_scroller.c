@@ -165,3 +165,45 @@ test_efl_ui_scroller_simple(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED
                 efl_pack(bx, efl_added));
       }
 }
+
+void
+test_efl_ui_scroller_simple2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Eo *win, *sc, *tb;
+   int i;
+
+   win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
+                 efl_text_set(efl_added, "Efl Ui Scroller Simple2"),
+                 efl_ui_win_autodel_set(efl_added, EINA_TRUE));
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(320, 400));
+
+   sc = efl_add(EFL_UI_SCROLLER_CLASS, win,
+                efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
+                efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_START, _scroll_start_cb, NULL),
+                efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_STOP, _scroll_stop_cb, NULL),
+                efl_content_set(win, efl_added));
+
+   tb = efl_add(EFL_UI_TABLE_CLASS, sc,
+                efl_pack_table_columns_set(efl_added, 2),
+                efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0),
+                efl_gfx_hint_align_set(efl_added, 0.5, 0),
+                efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
+                efl_content_set(sc, efl_added));
+
+   for (i = 0; i < 1000; i++)
+      {
+        efl_add(EFL_UI_BUTTON_CLASS, tb,
+                efl_text_set(efl_added, "Vertical"),
+                efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0.0),
+                efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
+                efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _bt_clicked, NULL),
+                efl_pack_table(tb, efl_added, 0, i, 1, 1));
+        efl_add(EFL_UI_BUTTON_CLASS, tb,
+                efl_text_set(efl_added, "Horizontal"),
+                efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0.0),
+                efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
+                efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _bt_clicked, NULL),
+                efl_pack_table(tb, efl_added, 1, i, 1, 1));
+      }
+}

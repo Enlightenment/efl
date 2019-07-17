@@ -184,6 +184,7 @@ void test_scroller7(void *data, Evas_Object *obj, void *event_info);
 void test_scroller_simple(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_scroller(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_scroller_simple(void *data, Evas_Object *obj, void *event_info);
+void test_efl_ui_scroller_simple2(void *data, Evas_Object *obj, void *event_info);
 void test_spinner(void *data, Evas_Object *obj, void *event_info);
 void test_ui_spin(void *data, Evas_Object *obj, void *event_info);
 void test_ui_spin_button(void *data, Evas_Object *obj, void *event_info);
@@ -1097,6 +1098,7 @@ add_tests:
    ADD_TEST(NULL, "Scroller", "Scroller Simple", test_scroller_simple);
    ADD_TEST_EO(NULL, "Scroller", "Efl.Ui.Scroller", test_efl_ui_scroller);
    ADD_TEST_EO(NULL, "Scroller", "Efl.Ui.Scroller Simple", test_efl_ui_scroller_simple);
+   ADD_TEST_EO(NULL, "Scroller", "Efl.Ui.Scroller Simple2", test_efl_ui_scroller_simple2);
 
    //------------------------------//
    // FIXME: add frame test
