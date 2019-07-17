@@ -218,6 +218,27 @@ _efl_ui_table_regular_item_size_get(Table_Calc *table_calc, Item_Calc *item, Ein
           - item->hints[axis].margin[0] - item->hints[axis].margin[1];
 }
 
+/* this function performs a simplified layout when the table has changed position
+ * but no other changes have occurred, e.g., when a table is being scrolled
+ */
+static void
+_efl_ui_table_layout_simple(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd)
+{
+   Table_Item *ti;
+   Eina_Position2D pos = efl_gfx_entity_position_get(ui_table);
+
+   EINA_INLIST_FOREACH(EINA_INLIST_GET(pd->items), ti)
+     {
+        Eina_Position2D child_pos = efl_gfx_entity_position_get(ti->object);
+
+        efl_gfx_entity_position_set(ti->object,
+          EINA_POSITION2D(pos.x - pd->last_pos.x + child_pos.x,
+                          pos.y - pd->last_pos.y + child_pos.y));
+     }
+   pd->last_pos = pos;
+   efl_event_callback_call(ui_table, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);
+}
+
 void
 _efl_ui_table_custom_layout(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd)
 {
@@ -231,14 +252,19 @@ _efl_ui_table_custom_layout(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd)
    Eina_Bool do_free;
 
    count = pd->count;
-
    if (!count)
      {
         efl_gfx_hint_size_restricted_min_set(ui_table, EINA_SIZE2D(0, 0));
         return;
      }
-
+   if (!pd->full_recalc)
+     {
+        _efl_ui_table_layout_simple(ui_table, pd);
+        return;
+     }
    _efl_ui_container_layout_init(ui_table, table_calc.layout_calc);
+   pd->last_pos.x = table_calc.layout_calc[0].pos - table_calc.layout_calc[0].margin[0];
+   pd->last_pos.y = table_calc.layout_calc[1].pos - table_calc.layout_calc[1].margin[0];
 
    table_calc.want[0] = table_calc.want[1] = 0;
    table_calc.weight_sum[0] = table_calc.weight_sum[1] = 0;
@@ -391,6 +417,7 @@ _efl_ui_table_custom_layout(Efl_Ui_Table *ui_table, Efl_Ui_Table_Data *pd)
                          + (table_calc.layout_calc[1].pad *
                             table_calc.cell_calc[1][rows - 1].index);
 
+   pd->full_recalc = EINA_FALSE;
    efl_gfx_hint_size_restricted_min_set(ui_table,
                                         EINA_SIZE2D(table_calc.want[0],
                                                     table_calc.want[1]));

@@ -44,11 +44,13 @@ struct _Efl_Ui_Table_Data
    struct {
       double h, v;
    } align;
+   Eina_Position2D last_pos;
    Eina_Bool cols_recalc : 1;
    Eina_Bool rows_recalc : 1;
    Eina_Bool linear_recalc : 1;
    Eina_Bool homogeneoush : 1;
    Eina_Bool homogeneousv : 1;
+   Eina_Bool full_recalc : 1; //whether to force full recalc
 };
 
 struct _Table_Item_Iterator
