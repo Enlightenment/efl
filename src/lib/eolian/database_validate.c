@@ -283,6 +283,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                    case KW_stringshare:
                    case KW_any_value:
                    case KW_any_value_ptr:
+                   case KW_binbuf:
                      tp->ownable = EINA_TRUE;
                      break;
                    default:
