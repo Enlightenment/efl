@@ -138,7 +138,7 @@ EOLIAN static void
 _efl_ui_box_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Box_Data *_pd EINA_UNUSED, Eina_Size2D sz)
 {
    efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
-   efl_canvas_group_change(obj);
+   efl_pack_layout_request(obj);
 }
 
 EOLIAN static void
@@ -186,6 +186,7 @@ _efl_ui_box_efl_object_constructor(Eo *obj, Efl_Ui_Box_Data *pd)
    pd->dir = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
    pd->align.h = 0.5;
    pd->align.v = 0.5;
+   pd->full_recalc = EINA_TRUE;
 
    return obj;
 }
@@ -360,8 +361,9 @@ _efl_ui_box_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUSED, Efl_Ui_Box_Data 
 }
 
 EOLIAN static void
-_efl_ui_box_efl_pack_layout_layout_request(Eo *obj, Efl_Ui_Box_Data *pd EINA_UNUSED)
+_efl_ui_box_efl_pack_layout_layout_request(Eo *obj, Efl_Ui_Box_Data *pd)
 {
+   pd->full_recalc = EINA_TRUE;
    efl_canvas_group_need_recalculate_set(obj, EINA_TRUE);
 }
 
