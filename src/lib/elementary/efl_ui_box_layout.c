@@ -52,7 +52,16 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Efl_Ui_Box_Data *pd)
 
    _efl_ui_container_layout_init(ui_box, box_calc);
 
-   items = alloca(count * sizeof(*items));
+   /* Item_Calc struct is currently 152 bytes.
+    * this is pretty big to be allocating a huge number of, and we don't want to explode the stack
+    */
+   if (count >= 500)
+     {
+        items = malloc(count * sizeof(*items));
+        EINA_SAFETY_ON_NULL_RETURN(items);
+     }
+   else
+     items = alloca(count * sizeof(*items));
 #ifdef DEBUG
    memset(items, 0, count * sizeof(*items));
 #endif
@@ -201,4 +210,5 @@ _efl_ui_box_custom_layout(Efl_Ui_Box *ui_box, Efl_Ui_Box_Data *pd)
    efl_gfx_hint_size_restricted_min_set(ui_box, EINA_SIZE2D(want[0], want[1]));
 
    efl_event_callback_call(ui_box, EFL_PACK_EVENT_LAYOUT_UPDATED, NULL);
+   if (count >= 500) free(items);
 }
