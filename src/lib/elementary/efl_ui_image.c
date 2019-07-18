@@ -53,6 +53,7 @@ void _efl_ui_image_sizing_eval(Evas_Object *obj);
 static void _efl_ui_image_model_properties_changed_cb(void *data, const Efl_Event *event);
 static void _on_size_hints_changed(void *data, const Efl_Event *e);
 static Eina_Bool _efl_ui_image_download(Eo *obj, Efl_Ui_Image_Data *sd, const char *url);
+static void _update_viewmodel(Eo *obj, Efl_Ui_Image_Data *pd);
 
 static const Elm_Action key_actions[] = {
    {"activate", _key_action_activate},
@@ -848,6 +849,21 @@ _on_size_hints_changed(void *data EINA_UNUSED, const Efl_Event *ev)
    _efl_ui_image_sizing_eval(ev->object);
 }
 
+static void
+_efl_ui_image_model_changed(void *data, const Efl_Event *event)
+{
+   Efl_Model_Changed_Event *ev = event->info;
+
+   if (ev->previous)
+     efl_event_callback_del(ev->previous, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                            _efl_ui_image_model_properties_changed_cb, event->object);
+   if (ev->current)
+     efl_event_callback_add(ev->current, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                            _efl_ui_image_model_properties_changed_cb, event->object);
+
+   _update_viewmodel(event->object, data);
+}
+
 EOLIAN static Eo *
 _efl_ui_image_efl_object_constructor(Eo *obj, Efl_Ui_Image_Data *pd)
 {
@@ -859,6 +875,22 @@ _efl_ui_image_efl_object_constructor(Eo *obj, Efl_Ui_Image_Data *pd)
    pd->self = obj;
 
    return obj;
+}
+
+EOLIAN static void
+_efl_ui_image_efl_object_invalidate(Eo *obj, Efl_Ui_Image_Data *pd EINA_UNUSED)
+{
+   Efl_Model *model;
+
+   if (pd->property_watch)
+     efl_event_callback_del(obj, EFL_UI_VIEW_EVENT_MODEL_CHANGED,
+                            _efl_ui_image_model_changed, pd);
+
+   model = efl_ui_view_model_get(obj);
+   if (model)
+     efl_event_callback_del(model, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
+                            _efl_ui_image_model_properties_changed_cb, obj);
+   efl_invalidate(efl_super(obj, EFL_UI_IMAGE_CLASS));
 }
 
 static const Eina_Slice remote_uri[] = {
@@ -1829,6 +1861,15 @@ _update_viewmodel(Eo *obj, Efl_Ui_Image_Data *pd)
    char *key = NULL;
    Efl_Model *model;
 
+   if (!pd->property.file) return ;
+
+   if (!pd->property_watch)
+     {
+        efl_event_callback_add(obj, EFL_UI_VIEW_EVENT_MODEL_CHANGED,
+                               _efl_ui_image_model_changed, pd);
+        pd->property_watch = EINA_TRUE;
+     }
+
    model = efl_ui_view_model_get(obj);
    if (!model) return ;
 
@@ -1903,34 +1944,13 @@ _efl_ui_image_model_properties_changed_cb(void *data, const Efl_Event *event)
    if (refresh) _update_viewmodel(obj, pd);
 }
 
-EOLIAN static void
-_efl_ui_image_efl_ui_view_model_set(Eo *obj, Efl_Ui_Image_Data *pd, Efl_Model *model)
-{
-   Efl_Model *setted;
-
-   setted = efl_ui_view_model_get(obj);
-   if (setted)
-     {
-        efl_event_callback_del(setted, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
-                               _efl_ui_image_model_properties_changed_cb, obj);
-     }
-
-   efl_ui_view_model_set(efl_super(obj, EFL_UI_IMAGE_CLASS), model);
-
-   setted = efl_ui_view_model_get(obj);
-   if (setted)
-     {
-        efl_event_callback_add(setted, EFL_MODEL_EVENT_PROPERTIES_CHANGED,
-                               _efl_ui_image_model_properties_changed_cb, obj);
-     }
-
-   _update_viewmodel(obj, pd);
-}
-
 EOLIAN static Eina_Error
 _efl_ui_image_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Image_Data *pd, const char *key, const char *property)
 {
    Eina_Stringshare *sk;
+
+   if (efl_ui_property_bind(efl_super(obj, EFL_UI_IMAGE_CLASS), key, property) == 0)
+     return 0;
 
    if (strcmp(key, "filename") == 0)
      {
@@ -1949,7 +1969,7 @@ _efl_ui_image_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Image_Data *pd,
      }
    else
      {
-        return efl_ui_property_bind(efl_super(obj, EFL_UI_IMAGE_CLASS), key, property);
+        return EFL_PROPERTY_ERROR_INVALID_KEY;
      }
 
    _update_viewmodel(obj, pd);

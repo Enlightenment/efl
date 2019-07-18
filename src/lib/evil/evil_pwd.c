@@ -67,10 +67,3 @@ getpwnam(const char *n)
 
    return &pw;
 }
-
-struct passwd *
-getpwuid(uid_t uid)
-{
-   return getpwnam(getlogin());
-   (void)uid;
-}

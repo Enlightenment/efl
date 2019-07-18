@@ -72,21 +72,6 @@ struct passwd {
  */
 EAPI struct passwd *getpwnam(const char *n);
 
-/**
- * @brief Return a passwd structure.
- *
- * @param uid The User ID.
- * @return A stacally allocated passwd structure.
- *
- * This function fills a static buffer @ref passwd with @p uid and the
- * user name.
- *
- * Conformity: None.
- *
- * Supported OS: Windows XP.
- */
-EAPI struct passwd *getpwuid (uid_t uid);
-
 
 #ifdef __cplusplus
 }

@@ -1,3 +1,9 @@
+struct @beta Efl.Model_Changed_Event {
+     [[Every time the model is changed on the object.]]
+     current: Efl.Model; [[The newly set model.]]
+     previous: Efl.Model; [[The previously set model.]]
+}
+
 interface @beta Efl.Ui.View
 {
    [[Efl UI view interface]]
@@ -9,5 +15,8 @@ interface @beta Efl.Ui.View
             model: Efl.Model; [[Efl model]]
          }
       }
+   }
+   events {
+      model,changed: Efl.Model_Changed_Event; [[Event dispatched when a new model is set.]]
    }
 }

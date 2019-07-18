@@ -237,7 +237,7 @@ _button_animator(void *data)
 
         _text_get(obj, &left, &right, &center);
 
-        if ((!EINA_DBL_EQ(sd->final_position, 0)) &&
+        if ((EINA_DBL_EQ(sd->final_position, 0)) &&
             (sd->enabled_position & ELM_ACTIONSLIDER_LEFT))
           evas_object_smart_callback_call(obj, "selected",(char *)left);
         else if ((EINA_DBL_EQ(sd->final_position, 0.5)) &&
@@ -548,7 +548,7 @@ _elm_actionslider_efl_object_constructor(Eo *obj, Elm_Actionslider_Data *_pd EIN
 }
 
 EOLIAN static void
-_elm_actionslider_indicator_pos_set(Eo *obj, Elm_Actionslider_Data *_pd EINA_UNUSED, Elm_Actionslider_Pos pos)
+_elm_actionslider_indicator_pos_set(Eo *obj, Elm_Actionslider_Data *sd, Elm_Actionslider_Pos pos)
 {
    double position = 0.0;
 
@@ -559,6 +559,7 @@ _elm_actionslider_indicator_pos_set(Eo *obj, Elm_Actionslider_Data *_pd EINA_UNU
    if (pos == ELM_ACTIONSLIDER_CENTER) position = 0.5;
    else if (pos == ELM_ACTIONSLIDER_RIGHT)
      position = 1.0;
+   sd->final_position = position;
 
    edje_object_part_drag_value_set
      (wd->resize_obj, "elm.drag_button_base", position, 0.5);

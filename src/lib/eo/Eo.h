@@ -214,6 +214,34 @@ typedef void (*Efl_Del_Intercept) (Eo *obj_id);
 
 #include "efl_object_override.eo.h"
 #include "efl_object.eo.h"
+
+/**
+ * @brief A parameter passed in event callbacks holding extra event parameters.
+ *
+ * This is the full event information passed to callbacks in C.
+ *
+ * @since 1.22
+ *
+ * @ingroup Efl
+ */
+typedef struct _Efl_Event
+{
+  Efl_Object *object; /**< The object the callback was called on.
+                       *
+                       * @since 1.22 */
+  const Efl_Event_Description *desc; /**< The event description.
+                                      *
+                                      * @since 1.22 */
+  void *info; /**< Extra event information passed by the event caller. Must be
+               * cast to the event type declared in the EO file. Keep in mind
+               * that: 1) Objects are passed as a normal Eo*. Event subscribers
+               * can call functions on these objects. 2) Structs, built-in
+               * types and containers are passed as const pointers, with one
+               * level of indirection.
+               *
+               * @since 1.22 */
+} Efl_Event;
+
 #define EO_CLASS EFL_OBJECT_CLASS
 
 /** An event callback prototype. */

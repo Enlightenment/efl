@@ -683,13 +683,16 @@ _apply_gradient_property(Svg_Style_Gradient *g, Efl_VG *vg, Efl_VG *parent, Vg_F
    stop_count = eina_list_count(g->stops);
    if (stop_count)
      {
+        double opacity;
         stops = calloc(stop_count, sizeof(Efl_Gfx_Gradient_Stop));
         i = 0;
         EINA_LIST_FOREACH(g->stops, l, stop)
           {
-             stops[i].r = stop->r;
-             stops[i].g = stop->g;
-             stops[i].b = stop->b;
+             // Use premultiplied color
+             opacity = (double)stop->a / 255;
+             stops[i].r = stop->r * opacity;
+             stops[i].g = stop->g * opacity;
+             stops[i].b = stop->b * opacity;
              stops[i].a = stop->a;
              stops[i].offset = stop->offset;
              i++;

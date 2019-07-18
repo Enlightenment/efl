@@ -54,7 +54,7 @@ static Eina_Hash *_eina_value_inner_mps = NULL;
 static Eina_Lock _eina_value_inner_mps_lock;
 static char *_eina_value_mp_choice = NULL;
 static int _eina_value_log_dom = -1;
-static const Eina_Value _eina_value_empty = EINA_VALUE_EMPTY;
+static Eina_Value _eina_value_empty;
 
 #ifdef ERR
 #undef ERR
@@ -5400,6 +5400,7 @@ eina_value_inner_free(size_t size, void *mem)
 Eina_Bool
 eina_value_init(void)
 {
+   const Eina_Value empty = EINA_VALUE_EMPTY;
    const char *choice, *tmp;
 
    _eina_value_log_dom = eina_log_domain_register("eina_value",
@@ -5485,6 +5486,8 @@ eina_value_init(void)
    EINA_VALUE_TYPE_VALUE = &_EINA_VALUE_TYPE_VALUE;
 
    EINA_ERROR_VALUE_FAILED = eina_error_msg_static_register("Eina_Value failed to copy/convert.");
+
+   memcpy(&_eina_value_empty, &empty, sizeof (empty));
 
    return EINA_TRUE;
 

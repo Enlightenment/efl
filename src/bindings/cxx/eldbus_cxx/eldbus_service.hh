@@ -298,7 +298,7 @@ void _create_methods_specification_impl(Method const& method, Eldbus_Method2& el
   // C++ always raises a warning for such conversions, so this warning
   // can be disabled just here.
 #pragma GCC diagnostic push
-#ifndef __clang__
+#if !defined(__clang__) && __GNUC__ >= 8
 #pragma GCC diagnostic ignored "-Wcast-function-type"
 #endif
   Eldbus_Method_Cb method_cb =

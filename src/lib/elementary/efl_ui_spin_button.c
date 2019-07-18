@@ -113,15 +113,20 @@ _label_write(Evas_Object *obj)
    eina_strbuf_free(strbuf);
 }
 
-static Eina_Bool
-_delay_change_timer_cb(void *data)
+static Eina_Value
+_delay_change_timer_cb(Eo *o, void *data EINA_UNUSED, const Eina_Value v)
 {
-   Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(data, MY_CLASS);
+   efl_event_callback_call(o, EFL_UI_SPIN_BUTTON_EVENT_DELAY_CHANGED, NULL);
+
+   return v;
+}
+
+static void
+_delay_change_timer_cleanup(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
+{
+   Efl_Ui_Spin_Button_Data *sd = data;
 
    sd->delay_change_timer = NULL;
-   efl_event_callback_call(data, EFL_UI_SPIN_BUTTON_EVENT_DELAY_CHANGED, NULL);
-
-   return ECORE_CALLBACK_CANCEL;
 }
 
 static Eina_Bool
@@ -130,6 +135,7 @@ _value_set(Evas_Object *obj,
 {
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
+   Eina_Future *f;
 
    if (sd->circulate)
      {
@@ -146,9 +152,12 @@ _value_set(Evas_Object *obj,
    if (EINA_DBL_EQ(new_val, efl_ui_range_value_get(obj))) return EINA_TRUE;
 
    efl_ui_range_value_set(obj, new_val);
-   ecore_timer_del(sd->delay_change_timer);
-   sd->delay_change_timer = ecore_timer_add(EFL_UI_SPIN_BUTTON_DELAY_CHANGE_TIME,
-                                            _delay_change_timer_cb, obj);
+   if (sd->delay_change_timer) eina_future_cancel(sd->delay_change_timer);
+   f = efl_loop_timeout(efl_loop_get(obj), EFL_UI_SPIN_BUTTON_DELAY_CHANGE_TIME);
+   sd->delay_change_timer = efl_future_then(obj, f,
+                                            .success = _delay_change_timer_cb,
+                                            .free = _delay_change_timer_cleanup,
+                                            .data = sd);
 
    return EINA_TRUE;
 }

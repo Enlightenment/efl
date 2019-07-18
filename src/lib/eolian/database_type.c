@@ -14,7 +14,6 @@ database_type_del(Eolian_Type *tp)
    eina_stringshare_del(tp->base.c_name);
    database_type_del(tp->base_type);
    database_type_del(tp->next_type);
-   if (tp->freefunc) eina_stringshare_del(tp->freefunc);
    free(tp);
 }
 
