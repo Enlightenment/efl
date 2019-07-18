@@ -1,6 +1,6 @@
 /*
  * TODO:
- * * Test different font lodaing mechanisms.
+ * * Test different font loading mechanisms.
  */
 
 #ifdef HAVE_CONFIG_H
@@ -4129,6 +4129,22 @@ EFL_START_TEST(evas_textblock_obstacle)
 }
 EFL_END_TEST;
 
+EFL_START_TEST(evas_textblock_variation_sequence)
+{
+   START_TB_TEST();
+   const char *str1 = "8&#xfe0f;&#x1f603;&#xfe0f;";
+   const char *str2 = "8&#xfe0e;&#x1f603;&#xfe0e;";
+   Evas_Coord fw, fh,fw_new, fh_new;
+   evas_object_textblock_text_markup_set(tb, str1);
+   evas_object_textblock_size_formatted_get(tb, &fw, &fh);
+   evas_object_textblock_text_markup_set(tb, str2);
+   evas_object_textblock_size_formatted_get(tb, &fw_new, &fh_new);
+   fail_if(fw_new == fw && fh_new == fh);
+
+   END_TB_TEST();
+}
+EFL_END_TEST;
+
 #ifdef HAVE_HYPHEN
 static void
 _hyphenation_width_stress(Evas_Object *tb, Evas_Textblock_Cursor *cur)
@@ -4677,6 +4693,7 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_items);
    tcase_add_test(tc, evas_textblock_delete);
    tcase_add_test(tc, evas_textblock_obstacle);
+   tcase_add_test(tc, evas_textblock_variation_sequence);
 #ifdef HAVE_HYPHEN
    tcase_add_test(tc, evas_textblock_hyphenation);
 #endif
