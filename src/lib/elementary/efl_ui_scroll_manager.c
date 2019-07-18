@@ -1232,7 +1232,8 @@ static inline double
 _scroll_manager_animation_duration_get(Evas_Coord dx, Evas_Coord dy)
 {
   double dist = 0.0, vel = 0.0, dur = 0.0;
-  dist = sqrt(dx * dx + dy *dy);
+  uint64_t x = abs(dx), y = abs(dy);
+  dist = sqrt(x * x + y * y);
   vel = _elm_config->thumbscroll_friction_standard / _elm_config->thumbscroll_friction;
   dur = dist / vel;
   dur = (dur > _elm_config->thumbscroll_friction) ? _elm_config->thumbscroll_friction : dur;
