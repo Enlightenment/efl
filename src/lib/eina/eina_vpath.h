@@ -81,12 +81,14 @@
  *
  * @since 1.21
  *
+ * @note on Windows, vpath like ~bob/foo is not supported.
+ *
  */
 typedef const char * Eina_Vpath;
 
 /**
  * Translate a virtual path into a normal path.
- * 
+ *
  * The return string is a string allocated by malloc and should be freed with
  * free() when no longer needed.
  *
