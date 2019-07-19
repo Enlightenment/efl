@@ -161,7 +161,7 @@ EFL_START_TEST(elm_genlist_test_item_content)
    evas_object_show(genlist);
    evas_object_show(win);
 
-   ecore_main_loop_begin();
+   get_me_to_those_events(win);
 
    end = elm_object_item_part_content_get(it, "elm.swallow.end");
    parent = elm_object_parent_widget_get(end);

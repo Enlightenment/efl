@@ -157,7 +157,6 @@ EFL_START_TEST(elm_test_widget_focus_simple_widget)
 
    box = elm_box_add(win);
    elm_win_resize_object_add(win, box);
-   evas_object_show(win);
    evas_object_show(box);
 
    resettor = o = elm_button_add(win);
@@ -177,13 +176,9 @@ EFL_START_TEST(elm_test_widget_focus_simple_widget)
       }
    evas_object_resize(win, 200, 200);
 
-   //I have no idea why this is needed - but if this here is not done,
-   // then elements that are part of a layout will NOT be shown even if
-   // the window and layout is shown
-   evas_object_hide(win);
    evas_object_show(win);
 
-   ecore_main_loop_begin();
+   get_me_to_those_events(win);
 
    for (int i = 0; simple_widgets[i].name; ++i)
       {
