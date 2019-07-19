@@ -164,6 +164,7 @@ struct _Efl_Loop_Data
 
    int                  idlers;
    int                  in_loop;
+   unsigned int         loop_active;
 
    struct {
       int               high;
