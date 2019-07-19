@@ -359,7 +359,7 @@ get_me_to_those_events(Eo *obj)
 {
    Evas *e = obj;
 
-   if (!efl_isa(obj, EFL_CANVAS_SCENE_INTERFACE))
+   if ((!efl_isa(obj, EFL_CANVAS_SCENE_INTERFACE)) || efl_isa(obj, EFL_UI_WIN_CLASS))
      e = evas_object_evas_get(obj);
    evas_smart_objects_calculate(e);
    evas_event_callback_add(e, EVAS_CALLBACK_RENDER_POST, events_norendered, NULL);
