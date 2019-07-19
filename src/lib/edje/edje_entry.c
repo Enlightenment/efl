@@ -3014,9 +3014,9 @@ _edje_entry_real_part_init(Edje *ed, Edje_Real_Part *rp)
 
    if (rp->part->entry_mode >= EDJE_ENTRY_EDIT_MODE_EDITABLE)
      {
-        evas_object_show(en->cursor_bg);
-        evas_object_show(en->cursor_fg);
-        evas_object_show(en->cursor_fg2);
+        if (en->cursor_bg) evas_object_show(en->cursor_bg);
+        if (en->cursor_fg) evas_object_show(en->cursor_fg);
+        if (en->cursor_fg2) evas_object_show(en->cursor_fg2);
         en->input_panel_enable = EINA_TRUE;
 
 #ifdef HAVE_ECORE_IMF

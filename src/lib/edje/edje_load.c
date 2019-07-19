@@ -1356,7 +1356,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
              for (i = 0; i < ed->table_parts_size; i++)
                {
                   rp = ed->table_parts[i];
-                  evas_object_show(rp->object);
+                  /* SPACER parts do not have objects */
+                  if (rp->object) evas_object_show(rp->object);
                   if (_edje_block_break(ed)) break;
                   if (rp->drag)
                     {
