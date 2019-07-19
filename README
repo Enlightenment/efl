@@ -422,7 +422,7 @@ libc calls not in Mingw32 that EFL needs.
 COMPILING AND INSTALLING
 ------------------------
 
-See the INSTALL file : https://git.enlightenment.org/core/efl.git/tree/INSTALL
+See the INSTALL file: https://git.enlightenment.org/core/efl.git/tree/INSTALL
 
 
 REQUIREMENTS
