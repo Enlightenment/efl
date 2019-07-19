@@ -427,8 +427,6 @@ EFL_START_TEST(utc_eldbus_signal_handler_free_cb_add_del_p)
 
    eldbus_signal_handler_unref(signal_handler);
 
-   ecore_main_loop_begin();
-
    ck_assert_msg(is_success_cb, "Callback is not called");
 
    signal_handler = _signal_handler_get(conn);
