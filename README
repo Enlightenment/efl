@@ -422,15 +422,7 @@ libc calls not in Mingw32 that EFL needs.
 COMPILING AND INSTALLING
 ------------------------
 
-    ./configure
-    make
-    sudo make install
-
-If you have doxygen, then you can build documentation with:
-
-    make doc
-
-You will find documentation in the doc/ directory.
+See the INSTALL file : https://git.enlightenment.org/core/efl.git/tree/INSTALL
 
 
 REQUIREMENTS
