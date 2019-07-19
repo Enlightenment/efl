@@ -2864,7 +2864,7 @@ evas_render_pre(Evas *eo_e, Evas_Public_Data *evas)
 EAPI void
 evas_render_pending_objects_flush(Evas *eo_e)
 {
-   Evas_Public_Data *evas = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
+   Evas_Public_Data *evas = efl_data_scope_safe_get(eo_e, EVAS_CANVAS_CLASS);
    EINA_SAFETY_ON_NULL_RETURN(evas);
    evas_render_pre(eo_e, evas);
 }
