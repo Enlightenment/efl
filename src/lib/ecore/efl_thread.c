@@ -1035,11 +1035,9 @@ _efl_thread_efl_io_writer_can_write_get(const Eo *obj EINA_UNUSED, Efl_Thread_Da
    return pd->fd.can_write;
 }
 
-void
-_appthread_threadio_call(Eo *obj EINA_UNUSED, Efl_Appthread_Data *pd,
-                         void *func_data, EFlThreadIOCall func, Eina_Free_Cb func_free_cb)
+static void
+_threadio_call(int fd, void *func_data, EFlThreadIOCall func, Eina_Free_Cb func_free_cb)
 {
-   Thread_Data *thdat = pd->thdat;
    Control_Data cmd;
 
    memset(&cmd, 0, sizeof(cmd));
@@ -1047,21 +1045,41 @@ _appthread_threadio_call(Eo *obj EINA_UNUSED, Efl_Appthread_Data *pd,
    cmd.d.ptr[0] = func;
    cmd.d.ptr[1] = func_data;
    cmd.d.ptr[2] = func_free_cb;
-   _efl_thread_pipe_write(thdat->ctrl.in, &cmd, sizeof(Control_Data));
+   _efl_thread_pipe_write(fd, &cmd, sizeof(Control_Data));
+}
+
+void
+_appthread_threadio_call(Eo *obj EINA_UNUSED, Efl_Appthread_Data *pd,
+                         void *func_data, EFlThreadIOCall func, Eina_Free_Cb func_free_cb)
+{
+   Thread_Data *thdat = pd->thdat;
+   _threadio_call(thdat->ctrl.in, func_data, func, func_free_cb);
 }
 
 EOLIAN static void
 _efl_thread_efl_threadio_call(Eo *obj EINA_UNUSED, Efl_Thread_Data *pd,
                               void *func_data, EFlThreadIOCall func, Eina_Free_Cb func_free_cb)
 {
+   _threadio_call(pd->ctrl.in, func_data, func, func_free_cb);
+}
+
+static void *
+_threadio_call_sync(int fd, void *func_data, EFlThreadIOCallSync func, Eina_Free_Cb func_free_cb)
+{
    Control_Data cmd;
+   Control_Reply rep;
 
    memset(&cmd, 0, sizeof(cmd));
-   cmd.d.command = CMD_CALL;
+   cmd.d.command = CMD_CALL_SYNC;
    cmd.d.ptr[0] = func;
    cmd.d.ptr[1] = func_data;
    cmd.d.ptr[2] = func_free_cb;
-   _efl_thread_pipe_write(pd->ctrl.in, &cmd, sizeof(Control_Data));
+   cmd.d.ptr[3] = &rep;
+   rep.data = NULL;
+   eina_semaphore_new(&(rep.sem), 0);
+   _efl_thread_pipe_write(fd, &cmd, sizeof(Control_Data));
+   eina_semaphore_lock(&(rep.sem));
+   return rep.data;
 }
 
 void *
@@ -1069,50 +1087,14 @@ _appthread_threadio_call_sync(Eo *obj EINA_UNUSED, Efl_Appthread_Data *pd,
                               void *func_data, EFlThreadIOCallSync func, Eina_Free_Cb func_free_cb)
 {
    Thread_Data *thdat = pd->thdat;
-   Control_Data cmd;
-   Control_Reply *rep;
-   void *data;
-
-   memset(&cmd, 0, sizeof(cmd));
-   cmd.d.command = CMD_CALL_SYNC;
-   cmd.d.ptr[0] = func;
-   cmd.d.ptr[1] = func_data;
-   cmd.d.ptr[2] = func_free_cb;
-   rep = malloc(sizeof(Control_Reply));
-   if (!rep) return NULL;
-   cmd.d.ptr[3] = rep;
-   rep->data = NULL;
-   eina_semaphore_new(&(rep->sem), 0);
-   _efl_thread_pipe_write(thdat->ctrl.in, &cmd, sizeof(Control_Data));
-   eina_semaphore_lock(&(rep->sem));
-   data = rep->data;
-   free(rep);
-   return data;
+   return _threadio_call_sync(thdat->ctrl.in, func_data, func, func_free_cb);
 }
 
 EOLIAN static void *
 _efl_thread_efl_threadio_call_sync(Eo *obj EINA_UNUSED, Efl_Thread_Data *pd,
                                    void *func_data, EFlThreadIOCallSync func, Eina_Free_Cb func_free_cb)
 {
-   Control_Data cmd;
-   Control_Reply *rep;
-   void *data;
-
-   memset(&cmd, 0, sizeof(cmd));
-   cmd.d.command = CMD_CALL_SYNC;
-   cmd.d.ptr[0] = func;
-   cmd.d.ptr[1] = func_data;
-   cmd.d.ptr[2] = func_free_cb;
-   rep = malloc(sizeof(Control_Reply));
-   if (!rep) return NULL;
-   cmd.d.ptr[3] = rep;
-   rep->data = NULL;
-   eina_semaphore_new(&(rep->sem), 0);
-   _efl_thread_pipe_write(pd->ctrl.in, &cmd, sizeof(Control_Data));
-   eina_semaphore_lock(&(rep->sem));
-   data = rep->data;
-   free(rep);
-   return data;
+   return _threadio_call_sync(pd->ctrl.in, func_data, func, func_free_cb);
 }
 
 //////////////////////////////////////////////////////////////////////////
