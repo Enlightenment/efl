@@ -605,6 +605,22 @@ _efl_thread_efl_object_parent_set(Eo *obj, Efl_Thread_Data *pd, Efl_Object *pare
    pd->loop = efl_provider_find(parent, EFL_LOOP_CLASS);
 }
 
+static void
+_task_run_pipe_fail_clear(Thread_Data *thdat, Efl_Thread_Data *pd)
+{
+   efl_del(pd->fd.in_handler);
+   efl_del(pd->fd.out_handler);
+   close(thdat->fd.in);
+   close(thdat->fd.out);
+   close(pd->fd.in);
+   close(pd->fd.out);
+   pd->fd.in_handler = NULL;
+   pd->fd.out_handler = NULL;
+   pd->fd.in = -1;
+   pd->fd.out = -1;
+   free(thdat);
+}
+
 EOLIAN static Eina_Future *
 _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
 {
@@ -689,35 +705,15 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
    if (pipe(pipe_to_thread) != 0)
      {
         ERR("Can't create to_thread control pipe");
-        efl_del(pd->fd.in_handler);
-        efl_del(pd->fd.out_handler);
-        close(thdat->fd.in);
-        close(thdat->fd.out);
-        close(pd->fd.in);
-        close(pd->fd.out);
-        pd->fd.in_handler = NULL;
-        pd->fd.out_handler = NULL;
-        pd->fd.in = -1;
-        pd->fd.out = -1;
-        free(thdat);
+        _task_run_pipe_fail_clear(thdat, pd);
         return NULL;
      }
    if (pipe(pipe_from_thread) != 0)
      {
         ERR("Can't create from_thread control pipe");
-        efl_del(pd->fd.in_handler);
-        efl_del(pd->fd.out_handler);
+        _task_run_pipe_fail_clear(thdat, pd);
         close(pipe_to_thread[0]);
         close(pipe_to_thread[1]);
-        close(thdat->fd.in);
-        close(thdat->fd.out);
-        close(pd->fd.in);
-        close(pd->fd.out);
-        pd->fd.in_handler = NULL;
-        pd->fd.out_handler = NULL;
-        pd->fd.in = -1;
-        pd->fd.out = -1;
-        free(thdat);
         return NULL;
      }
    thdat->ctrl.in  = pipe_from_thread[1]; // write - input to parent
