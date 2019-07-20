@@ -872,6 +872,15 @@ _efl_thread_efl_io_closer_closed_get(const Eo *obj EINA_UNUSED, Efl_Thread_Data 
    return EINA_FALSE;
 }
 
+static void
+_io_reader_read_fd_out_clear(Efl_Thread_Data *pd)
+{
+   close(pd->fd.out);
+   pd->fd.out = -1;
+   efl_del(pd->fd.out_handler);
+   pd->fd.out_handler = NULL;
+}
+
 EOLIAN static Eina_Error
 _efl_thread_efl_io_reader_read(Eo *obj, Efl_Thread_Data *pd, Eina_Rw_Slice *rw_slice)
 {
@@ -897,22 +906,14 @@ _efl_thread_efl_io_reader_read(Eo *obj, Efl_Thread_Data *pd, Eina_Rw_Slice *rw_s
      {
         efl_io_reader_can_read_set(obj, EINA_FALSE);
         efl_io_reader_eos_set(obj, EINA_TRUE);
-        close(pd->fd.out);
-        pd->fd.out = -1;
-        efl_del(pd->fd.out_handler);
-        pd->fd.out_handler = NULL;
+        _io_reader_read_fd_out_clear(pd);
         _thread_exit_eval(obj, pd);
         return EPIPE;
      }
    return 0;
 err:
    if ((pd->fd.out != -1) && (errno != EAGAIN))
-     {
-        close(pd->fd.out);
-        pd->fd.out = -1;
-        efl_del(pd->fd.out_handler);
-        pd->fd.out_handler = NULL;
-     }
+     _io_reader_read_fd_out_clear(pd);
    rw_slice->len = 0;
    rw_slice->mem = NULL;
    efl_io_reader_can_read_set(obj, EINA_FALSE);
