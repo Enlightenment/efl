@@ -960,6 +960,15 @@ _efl_thread_efl_io_reader_eos_get(const Eo *obj EINA_UNUSED, Efl_Thread_Data *pd
    return pd->fd.eos_read;
 }
 
+static void
+_io_writer_write_fd_in_clear(Efl_Thread_Data *pd)
+{
+   close(pd->fd.in);
+   pd->fd.in = -1;
+   efl_del(pd->fd.in_handler);
+   pd->fd.in_handler = NULL;
+}
+
 EOLIAN static Eina_Error
 _efl_thread_efl_io_writer_write(Eo *obj, Efl_Thread_Data *pd, Eina_Slice *slice, Eina_Slice *remaining)
 {
@@ -991,22 +1000,14 @@ _efl_thread_efl_io_writer_write(Eo *obj, Efl_Thread_Data *pd, Eina_Slice *slice,
      efl_io_writer_can_write_set(obj, EINA_FALSE);
    if (r == 0)
      {
-        close(pd->fd.in);
-        pd->fd.in = -1;
-        efl_del(pd->fd.in_handler);
-        pd->fd.in_handler = NULL;
+        _io_writer_write_fd_in_clear(pd);
         _thread_exit_eval(obj, pd);
         return EPIPE;
      }
    return 0;
 err:
    if ((pd->fd.in != -1) && (errno != EAGAIN))
-     {
-        close(pd->fd.in);
-        pd->fd.in = -1;
-        efl_del(pd->fd.in_handler);
-        pd->fd.in_handler = NULL;
-     }
+     _io_writer_write_fd_in_clear(pd);
    if (remaining) *remaining = *slice;
    slice->len = 0;
    slice->mem = NULL;
