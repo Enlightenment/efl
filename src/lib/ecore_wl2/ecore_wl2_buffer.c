@@ -595,12 +595,17 @@ ecore_wl2_buffer_init(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer_Type types)
    if (!getenv("EVAS_WAYLAND_SHM_DISABLE_DMABUF") && dmabuf)
      {
         fd = open("/dev/dri/renderD128", O_RDWR | O_CLOEXEC);
-        if (fd < 0) goto err_drm;
+        if (fd < 0)
+          {
+             ERR("Tried to use dmabufs, but can't find /dev/dri/renderD128 . Falling back to regular SHM");
+             goto fallback_shm;
+          }
 
         success = _intel_buffer_manager_setup(fd);
         if (!success) success = _exynos_buffer_manager_setup(fd);
         if (!success) success = _vc4_buffer_manager_setup(fd);
      }
+fallback_shm:
    if (!success) success = shm && _wl_shm_buffer_manager_setup(0);
    if (!success) goto err_bm;
 
@@ -610,7 +615,6 @@ ecore_wl2_buffer_init(Ecore_Wl2_Display *ewd, Ecore_Wl2_Buffer_Type types)
 
 err_bm:
    if (fd >= 0) close(fd);
-err_drm:
    free(buffer_manager);
    buffer_manager = NULL;
 err_alloc:
