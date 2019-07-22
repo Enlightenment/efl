@@ -92,6 +92,23 @@ EFL_START_TEST(wl2_window_rotation_get)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_window_output_find)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   Ecore_Wl2_Output *out;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   out = ecore_wl2_window_output_find(win);
+   ck_assert(out != NULL);
+}
+EFL_END_TEST
+
 void
 ecore_wl2_test_window(TCase *tc)
 {
@@ -102,5 +119,6 @@ ecore_wl2_test_window(TCase *tc)
         tcase_add_test(tc, wl2_window_surface_get);
         tcase_add_test(tc, wl2_window_surface_id_get);
         tcase_add_test(tc, wl2_window_rotation_get);
+        tcase_add_test(tc, wl2_window_output_find);
      }
 }
