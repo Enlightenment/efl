@@ -42,6 +42,31 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
         LOTNode *node = layer->mNodeList.ptr[i];
         if (!node) continue;
 
+        //Image object
+        if (node->mImageInfo.data)
+          {
+             char *key = _get_key_val(node);
+             Efl_Canvas_Vg_Image *image = efl_key_data_get(parent, key);
+             if (!image)
+               {
+                  image = efl_add(EFL_CANVAS_VG_IMAGE_CLASS, parent);
+                  efl_key_data_set(parent, key, image);
+               }
+             efl_gfx_entity_visible_set(image, EINA_TRUE);
+
+             Eina_Matrix3 m;
+             eina_matrix3_identity(&m);
+             eina_matrix3_values_set( &m,
+                                      node->mImageInfo.mMatrix.m11,  node->mImageInfo.mMatrix.m12, node->mImageInfo.mMatrix.m13,
+                                      node->mImageInfo.mMatrix.m21,  node->mImageInfo.mMatrix.m22, node->mImageInfo.mMatrix.m23,
+                                      node->mImageInfo.mMatrix.m31,  node->mImageInfo.mMatrix.m32, node->mImageInfo.mMatrix.m33);
+             efl_canvas_vg_node_transformation_set(image, &m);
+
+             efl_canvas_vg_image_data_set(image, node->mImageInfo.data, node->mImageInfo.width, node->mImageInfo.height);
+
+             continue;
+          }
+
         //Skip Invisible Stroke?
         if (node->mStroke.enable && node->mStroke.width == 0)
           {
@@ -64,7 +89,7 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
         else
           efl_gfx_path_reset(shape);
 
-         efl_gfx_entity_visible_set(shape, EINA_TRUE);
+        efl_gfx_entity_visible_set(shape, EINA_TRUE);
 #if DEBUG
         for (int i = 0; i < depth; i++) printf("    ");
         printf("%s (%p)\n", efl_class_name_get(efl_class_get(shape)), shape);
