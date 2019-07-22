@@ -49,6 +49,16 @@ _is_horizontal(Efl_Ui_Layout_Orientation dir)
 }
 
 static void
+_emit_events(Eo *obj, Efl_Ui_Slider_Data *sd)
+{
+   efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_CHANGED, NULL);
+   if (sd->val == sd->val_min)
+     efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_MIN_REACHED, NULL);
+   if (sd->val == sd->val_max)
+     efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_MAX_REACHED, NULL);
+}
+
+static void
 _efl_ui_slider_val_fetch(Evas_Object *obj, Efl_Ui_Slider_Data *sd,  Eina_Bool user_event)
 {
    double posx = 0.0, posy = 0.0, pos = 0.0, val;
@@ -76,7 +86,7 @@ _efl_ui_slider_val_fetch(Evas_Object *obj, Efl_Ui_Slider_Data *sd,  Eina_Bool us
         sd->val = val;
         if (user_event)
           {
-             efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_CHANGED, NULL);
+             _emit_events(obj, sd);
              efl_event_callback_legacy_call(obj, EFL_UI_RANGE_EVENT_CHANGED, NULL);
              ecore_timer_del(sd->delay);
              sd->delay = ecore_timer_add(SLIDER_DELAY_CHANGED_INTERVAL, _delay_change, obj);
@@ -765,6 +775,7 @@ _efl_ui_slider_efl_ui_range_display_range_value_set(Eo *obj, Efl_Ui_Slider_Data 
    if (sd->val < sd->val_min) sd->val = sd->val_min;
    if (sd->val > sd->val_max) sd->val = sd->val_max;
 
+   _emit_events(obj, sd);
    efl_ui_slider_val_set(obj);
 }
 
