@@ -173,6 +173,19 @@ _efl_ui_radio_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Radio_Data *sd)
    return int_ret;
 }
 
+EOLIAN static void
+_efl_ui_radio_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Radio_Data *_pd EINA_UNUSED)
+{
+   Evas_Coord minw = -1, minh = -1;
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
+   edje_object_size_min_restricted_calc
+     (wd->resize_obj, &minw, &minh, minw, minh);
+   evas_object_size_hint_min_set(obj, minw, minh);
+   evas_object_size_hint_max_set(obj, -1, -1);
+}
+
 static void
 _radio_on_cb(void *data,
              Evas_Object *obj EINA_UNUSED,
@@ -370,7 +383,8 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_radio, Efl_Ui_Radio_Data)
 ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_RADIO_EXTRA_OPS \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX)
+   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
+   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_radio)
 
 #include "efl_ui_radio.eo.c"
 #include "efl_ui_radio_eo.legacy.c"
