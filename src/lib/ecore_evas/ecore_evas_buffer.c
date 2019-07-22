@@ -176,14 +176,17 @@ _ecore_evas_buffer_prepare(Ecore_Evas *ee)
         evas_object_image_size_get(bdata->image, &w, &h);
         if ((w != ee->w) || (h != ee->h))
           _ecore_evas_resize(ee, w, h);
-        bdata->pixels = evas_object_image_data_get(bdata->image, 1);
+        if (evas_changed_get(ee->evas) && !bdata->lock_data)
+          {
+             bdata->pixels = evas_object_image_data_get(bdata->image, 1);
+             bdata->lock_data = EINA_TRUE;
+          }
      }
    else if (bdata->resized)
      {
         if (ee->func.fn_resize) ee->func.fn_resize(ee);
         bdata->resized = 0;
      }
-
    return EINA_TRUE;
 }
 
@@ -200,6 +203,8 @@ _ecore_evas_buffer_update_image(void *data, Evas *e EINA_UNUSED, void *event_inf
    EINA_LIST_FOREACH(post->updated_area, l, r)
      evas_object_image_data_update_add(bdata->image,
                                        r->x, r->y, r->w, r->h);
+
+   bdata->lock_data = EINA_FALSE;
 }
 
 EAPI int
