@@ -2445,7 +2445,7 @@ _efl_ui_layout_base_efl_object_constructor(Eo *obj, Efl_Ui_Layout_Data *sd)
 }
 
 EOLIAN static Efl_Object*
-_efl_ui_layout_base_efl_object_finalize(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNUSED)
+_efl_ui_layout_base_efl_object_finalize(Eo *obj, Efl_Ui_Layout_Data *pd)
 {
    Eo *eo, *win;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
@@ -2458,6 +2458,8 @@ _efl_ui_layout_base_efl_object_finalize(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNU
 
    if (efl_file_get(wd->resize_obj) || efl_file_mmap_get(wd->resize_obj))
      efl_file_load(wd->resize_obj);
+
+   pd->needs_size_calc = EINA_TRUE;
 
    return eo;
 }
