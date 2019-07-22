@@ -28,7 +28,6 @@ _efl_ui_item_part_text_efl_text_text_set(Eo *obj, void *pd EINA_UNUSED, const ch
    Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    efl_text_set(efl_part(efl_super(wd->obj, MY_CLASS), wd->part), text);
 
-   efl_layout_signal_emit(wd->obj, "efl,state,text,set", "efl");
    elm_layout_sizing_eval(wd->obj);
 }
 
@@ -45,7 +44,6 @@ _efl_ui_item_part_text_efl_text_markup_markup_set(Eo *obj, void *pd EINA_UNUSED,
    Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    efl_text_markup_set(efl_part(efl_super(wd->obj, MY_CLASS), wd->part), markup);
 
-   efl_layout_signal_emit(obj, "efl,state,text,set", "efl");
    elm_layout_sizing_eval(obj);
 }
 
