@@ -301,7 +301,7 @@ _candidacy_exam(Eo *obj)
 static void _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd);
 
 static Efl_Ui_Focus_Object*
-_focus_manager_eval(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool want, Eina_Bool should)
+_focus_manager_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
 {
    Evas_Object *provider = NULL;
    Evas_Object *parent;
@@ -525,7 +525,7 @@ _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd)
      }
 
 
-   _focus_manager_eval(obj, pd, want_full, should);
+   _focus_manager_eval(obj, pd);
 
    old_registered_parent = pd->focus.parent;
    old_registered_manager = pd->focus.manager;
