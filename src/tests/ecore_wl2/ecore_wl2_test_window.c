@@ -58,6 +58,23 @@ EFL_START_TEST(wl2_window_surface_get)
 }
 EFL_END_TEST
 
+EFL_START_TEST(wl2_window_surface_id_get)
+{
+   Ecore_Wl2_Display *disp;
+   Ecore_Wl2_Window *win;
+   int id = -1;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
+
+   win = _window_create(disp);
+   ck_assert(win != NULL);
+
+   id = ecore_wl2_window_surface_id_get(win);
+   ck_assert_int_lt(id, 0);
+}
+EFL_END_TEST
+
 void
 ecore_wl2_test_window(TCase *tc)
 {
@@ -66,5 +83,6 @@ ecore_wl2_test_window(TCase *tc)
         /* window tests can only run if there is an existing compositor */
         tcase_add_test(tc, wl2_window_new);
         tcase_add_test(tc, wl2_window_surface_get);
+        tcase_add_test(tc, wl2_window_surface_id_get);
      }
 }
