@@ -8,8 +8,7 @@ class @beta Efl.Canvas.Vg.Image extends Efl.Canvas.Vg.Node implements Efl.Gfx.Im
          }
          values {
             pixels: void_ptr; [[Image pixels data. The pixel data type is 32bit RGBA]]
-            w : int;
-            h : int;
+            size: Eina.Size2D; [[The size in pixels.]]
          }
       }
    }

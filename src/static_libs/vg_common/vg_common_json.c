@@ -62,7 +62,7 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
                                       node->mImageInfo.mMatrix.m31,  node->mImageInfo.mMatrix.m32, node->mImageInfo.mMatrix.m33);
              efl_canvas_vg_node_transformation_set(image, &m);
 
-             efl_canvas_vg_image_data_set(image, node->mImageInfo.data, node->mImageInfo.width, node->mImageInfo.height);
+             efl_canvas_vg_image_data_set(image, node->mImageInfo.data, EINA_SIZE2D(node->mImageInfo.width, node->mImageInfo.height));
 
              continue;
           }

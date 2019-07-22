@@ -95,20 +95,20 @@ _efl_canvas_vg_image_efl_object_destructor(Eo *obj, Efl_Canvas_Vg_Image_Data *pd
 }
 
 static void
-_efl_canvas_vg_image_data_set(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Image_Data *pd, void *data, int w, int h)
+_efl_canvas_vg_image_data_set(Eo *obj EINA_UNUSED, Efl_Canvas_Vg_Image_Data *pd, void *data, Eina_Size2D size)
 {
-   if (!data || w <= 0 || h <= 0)
+   if (!data || size.w <= 0 || size.h <= 0)
      return;
 
-   if ((pd->image != data || pd->w != w || pd->h != h) && pd->buffer)
+   if ((pd->image != data || pd->w != size.w || pd->h != size.h) && pd->buffer)
      {
         efl_unref(pd->buffer);
         pd->buffer= NULL;
      }
 
    pd->image = data;
-   pd->w = w;
-   pd->h = h;
+   pd->w = size.w;
+   pd->h = size.h;
 }
 
 #include "efl_canvas_vg_image.eo.c"
