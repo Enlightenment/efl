@@ -756,7 +756,9 @@ _scroll_wheel_post_event_go(Efl_Ui_Scroll_Manager_Data *sd, int x, int y)
    else
      {
         cur =  efl_ui_pan_position_get(sd->pan_obj);
-        _scroll_manager_scrollto_animator_add(sd, cur.x, cur.y, x, y, 0.5, 0.5, INTERP_LINEAR);
+        _scroll_manager_scrollto_animator_add(sd, cur.x, cur.y, x, y,
+          _elm_config->bring_in_scroll_friction,
+          _elm_config->bring_in_scroll_friction, INTERP_DECEL);
      }
 }
 
