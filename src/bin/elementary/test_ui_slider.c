@@ -115,6 +115,6 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
            efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(260, 0)),
            efl_ui_range_limits_set(efl_added, 0, 150),
            efl_ui_range_step_set(efl_added, 9),
-           efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED, _slider_changed_cb, NULL),
+           efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED, _slider_changed_cb, NULL),
            efl_pack(bx, efl_added));
 }

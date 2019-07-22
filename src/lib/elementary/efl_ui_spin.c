@@ -156,11 +156,11 @@ _efl_ui_spin_efl_ui_range_display_range_value_set(Eo *obj, Efl_Ui_Spin_Data *sd,
    sd->val = val;
 
    if (EINA_DBL_EQ(sd->val, sd->val_min))
-     efl_event_callback_call(obj, EFL_UI_SPIN_EVENT_MIN_REACHED, NULL);
+     efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_MIN_REACHED, NULL);
    else if (EINA_DBL_EQ(sd->val, sd->val_max))
-     efl_event_callback_call(obj, EFL_UI_SPIN_EVENT_MAX_REACHED, NULL);
+     efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_MAX_REACHED, NULL);
 
-   efl_event_callback_call(obj, EFL_UI_SPIN_EVENT_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_CHANGED, NULL);
 
    _label_write(obj, sd);
 }

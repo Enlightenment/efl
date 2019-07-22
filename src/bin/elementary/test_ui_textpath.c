@@ -152,7 +152,7 @@ test_ui_textpath(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_gfx_hint_align_set(sld, 0.5, EVAS_HINT_FILL);
    efl_gfx_hint_weight_set(sld, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND);
    efl_gfx_hint_size_min_set(sld, EINA_SIZE2D(150, 0));
-   efl_event_callback_add(sld, EFL_UI_SLIDER_EVENT_CHANGED, _angle_changed_cb, txtpath);
+   efl_event_callback_add(sld, EFL_UI_RANGE_EVENT_CHANGED, _angle_changed_cb, txtpath);
    elm_box_pack_end(hbox, sld);
    efl_gfx_entity_visible_set(sld, EINA_TRUE);
    angle_sld = sld;
@@ -164,7 +164,7 @@ test_ui_textpath(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_gfx_hint_align_set(sld, 0.5, EVAS_HINT_FILL);
    efl_gfx_hint_weight_set(sld, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND);
    efl_gfx_hint_size_min_set(sld, EINA_SIZE2D(150, 0));
-   efl_event_callback_add(sld, EFL_UI_SLIDER_EVENT_CHANGED, _slice_no_changed_cb, txtpath);
+   efl_event_callback_add(sld, EFL_UI_RANGE_EVENT_CHANGED, _slice_no_changed_cb, txtpath);
    elm_box_pack_end(hbox, sld);
    efl_gfx_entity_visible_set(sld, EINA_TRUE);
    slice_sld = sld;

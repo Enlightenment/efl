@@ -76,8 +76,8 @@ _efl_ui_slider_val_fetch(Evas_Object *obj, Efl_Ui_Slider_Data *sd,  Eina_Bool us
         sd->val = val;
         if (user_event)
           {
-             efl_event_callback_call(obj, EFL_UI_SLIDER_EVENT_CHANGED, NULL);
-             efl_event_callback_legacy_call(obj, EFL_UI_SLIDER_EVENT_CHANGED, NULL);
+             efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_CHANGED, NULL);
+             efl_event_callback_legacy_call(obj, EFL_UI_RANGE_EVENT_CHANGED, NULL);
              ecore_timer_del(sd->delay);
              sd->delay = ecore_timer_add(SLIDER_DELAY_CHANGED_INTERVAL, _delay_change, obj);
           }
