@@ -15,9 +15,4 @@ class @beta Efl.Ui.Spin extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Inter
       Efl.Ui.Range_Display.range_value { get; set; }
       Efl.Ui.Format.apply_formatted_value;
    }
-   events {
-      changed: void; [[Called when spin changed]]
-      min,reached: void; [[Called when spin value reached min]]
-      max,reached: void; [[Called when spin value reached max]]
-   }
 }

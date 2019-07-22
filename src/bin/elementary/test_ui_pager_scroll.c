@@ -418,7 +418,7 @@ static void page_size_cb(void *data,
                 efl_ui_range_limits_set(efl_added, 100, 200),
                 efl_ui_range_value_set(efl_added, params->w),
                 efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(100, 0)),
-                efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED,
+                efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED,
                                        width_slider_cb, params),
                 efl_pack_end(inbox, efl_added));
 
@@ -459,7 +459,7 @@ static void page_size_cb(void *data,
                 efl_ui_range_limits_set(efl_added, 100, 300),
                 efl_ui_range_value_set(efl_added, params->h),
                 efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(100, 0)),
-                efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED,
+                efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED,
                                        height_slider_cb, params),
                 efl_pack_end(inbox, efl_added));
 
@@ -503,7 +503,7 @@ static void padding_cb(void *data,
            efl_ui_range_limits_set(efl_added, 0, 50),
            efl_ui_range_value_set(efl_added, params->padding),
            efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(100, 0)),
-           efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED,
+           efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED,
                                   padding_slider_cb, params),
            efl_pack_end(box, efl_added));
 }
@@ -534,7 +534,7 @@ static void side_page_num_cb(void *data,
            efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
            efl_gfx_hint_weight_set(efl_added, 1, 1),
            efl_gfx_hint_align_set(efl_added, -1, -1),
-           efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED,
+           efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED,
                                   side_page_num_slider_cb, params),
            efl_pack_end(box, efl_added));
 }
