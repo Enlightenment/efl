@@ -123,6 +123,7 @@ efl_ui_suite_src = [
   'efl_ui_test_win.c',
   'efl_ui_test_atspi.c',
   'efl_ui_test_callback.c',
+  'efl_ui_test_config.c',
   'efl_ui_test_focus_common.c',
   'efl_ui_test_focus_common.h',
   'efl_ui_test_focus.c',
