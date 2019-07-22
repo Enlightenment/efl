@@ -657,6 +657,7 @@ struct _Evas_Object_Textblock
    } gfx_filter;
    Eina_Bool                           redraw : 1;
    Eina_Bool                           changed : 1;
+   Eina_Bool                           pause_change : 1;
    Eina_Bool                           obstacle_changed : 1;
    Eina_Bool                           content_changed : 1;
    Eina_Bool                           format_changed : 1;
@@ -8075,6 +8076,10 @@ _evas_object_textblock_text_markup_prepend(Eo *eo_obj,
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    TB_HEAD();
+
+   /* Stop calls for _evas_textblock_changed for each cursor_text_append or cursor_format_append
+    * this should be done once, when markup_prepend finished */
+   o->pause_change = EINA_TRUE;
    if (text)
      {
         char *s, *p;
@@ -8189,6 +8194,7 @@ _evas_object_textblock_text_markup_prepend(Eo *eo_obj,
              p++;
           }
      }
+   o->pause_change = EINA_FALSE;
    _evas_textblock_changed(o, eo_obj);
 }
 
@@ -10996,7 +11002,8 @@ _evas_textblock_cursor_text_append(Efl_Text_Cursor_Cursor *cur, const char *_tex
    /* Update all the cursors after our position. */
    _evas_textblock_cursors_update_offset(cur, cur->node, cur->pos, len);
 
-   _evas_textblock_changed(o, cur->obj);
+   if (!o->pause_change)
+     _evas_textblock_changed(o, cur->obj);
    n->dirty = EINA_TRUE;
    free(text);
 
@@ -11342,7 +11349,8 @@ _evas_textblock_cursor_format_append(Efl_Text_Cursor_Cursor *cur,
         o->format_changed = EINA_TRUE;
      }
 
-   _evas_textblock_changed(o, cur->obj);
+   if (!o->pause_change)
+     _evas_textblock_changed(o, cur->obj);
 
    Efl_Text_Cursor_Cursor *ocur = o->cursor;
    if (!ocur->node)
