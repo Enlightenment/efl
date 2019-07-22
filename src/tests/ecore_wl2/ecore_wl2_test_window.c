@@ -10,13 +10,12 @@
 
 #include "ecore_wl2_suite.h"
 
-static Ecore_Wl2_Display *disp;
-
 static Ecore_Wl2_Display *
 _display_connect(void)
 {
+   Ecore_Wl2_Display *disp;
+
    disp = ecore_wl2_display_connect(NULL);
-   ck_assert(disp != NULL);
    return disp;
 }
 
@@ -31,7 +30,11 @@ _window_create(Ecore_Wl2_Display *disp)
 
 EFL_START_TEST(wl2_window_new)
 {
+   Ecore_Wl2_Display *disp;
    Ecore_Wl2_Window *win;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
 
    win = _window_create(disp);
    ck_assert(win != NULL);
@@ -40,9 +43,13 @@ EFL_END_TEST
 
 EFL_START_TEST(wl2_window_surface_test)
 {
+   Ecore_Wl2_Display *disp;
    Ecore_Wl2_Window *win;
    struct wl_surface *surf;
    int id = -1;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
 
    win = _window_create(disp);
    ck_assert(win != NULL);
@@ -59,8 +66,12 @@ EFL_END_TEST
 
 EFL_START_TEST(wl2_window_rotation_get)
 {
+   Ecore_Wl2_Display *disp;
    Ecore_Wl2_Window *win;
    int rot = -1;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
 
    win = _window_create(disp);
    ck_assert(win != NULL);
@@ -72,8 +83,12 @@ EFL_END_TEST
 
 EFL_START_TEST(wl2_window_output_find)
 {
+   Ecore_Wl2_Display *disp;
    Ecore_Wl2_Window *win;
    Ecore_Wl2_Output *out;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
 
    win = _window_create(disp);
    ck_assert(win != NULL);
@@ -85,8 +100,12 @@ EFL_END_TEST
 
 EFL_START_TEST(wl2_window_aux_hints_supported_get)
 {
+   Ecore_Wl2_Display *disp;
    Ecore_Wl2_Window *win;
    Eina_List *l;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
 
    win = _window_create(disp);
    ck_assert(win != NULL);
@@ -98,7 +117,11 @@ EFL_END_TEST
 
 EFL_START_TEST(wl2_window_display_get)
 {
+   Ecore_Wl2_Display *disp;
    Ecore_Wl2_Window *win;
+
+   disp = _display_connect();
+   ck_assert(disp != NULL);
 
    win = _window_create(disp);
    ck_assert(win != NULL);
@@ -112,8 +135,6 @@ ecore_wl2_test_window(TCase *tc)
 {
    if (getenv("WAYLAND_DISPLAY"))
      {
-        disp = _display_connect();
-
         /* window tests can only run if there is an existing compositor */
         tcase_add_test(tc, wl2_window_new);
         tcase_add_test(tc, wl2_window_surface_test);
@@ -121,7 +142,5 @@ ecore_wl2_test_window(TCase *tc)
         tcase_add_test(tc, wl2_window_output_find);
         tcase_add_test(tc, wl2_window_aux_hints_supported_get);
         tcase_add_test(tc, wl2_window_display_get);
-
-        ecore_wl2_display_disconnect(disp);
      }
 }
