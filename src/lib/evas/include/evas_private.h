@@ -517,7 +517,19 @@ OPAQUE_TYPE(Evas_Font_Instance); /* General type for RGBA_Font_Int */
 #define MAGIC_MAP                  0x7575177d
 #define MAGIC_DEV                  0x7d773738
 
+#define EVAS_TYPE_CHECK(obj, ...) \
+  do { \
+    if (!efl_isa((obj), EVAS_CANVAS_CLASS)) \
+      { \
+         CRI("non-Evas passed to %s", __func__); \
+         return __VA_ARGS__; \
+      } \
+  } \
+  while (0)
+
 #ifdef EINA_MAGIC_DEBUG
+
+
 # define MAGIC_CHECK_FAILED(o, t, m) \
 {evas_debug_error(); \
  if (!o) evas_debug_input_null(); \

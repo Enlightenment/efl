@@ -249,6 +249,7 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_format.eo.h>
 # include <efl_ui_spin.eo.h>
 # include <efl_ui_spin_button.eo.h>
+# include <efl_ui_slider.eo.h>
 
 /**
  * Initialize Elementary

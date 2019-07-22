@@ -2318,6 +2318,7 @@ efl_alive_get(const Eo *obj)
 {
   return efl_finalized_get(obj) && !efl_invalidating_get(obj) && !efl_invalidated_get(obj);
 }
+
 #endif /* EFL_BETA_API_SUPPORT */
 
 /**
@@ -2359,6 +2360,15 @@ EAPI Eina_Iterator *eo_classes_iterator_new(void);
  */
 EAPI Eina_Iterator *eo_objects_iterator_new(void);
 
+/**
+ * @brief Check if a object can be owned
+ *
+ * This API checks if the passed object has at least one free reference that is not taken by the parent relation.
+ * If this is not the case, a ERR will be printed.
+ *
+ * @return EINA_TRUE if the object is ownable. EINA_FALSE if not.
+ */
+EAPI Eina_Bool efl_ownable_get(const Eo *obj);
 /**
  * @}
  */

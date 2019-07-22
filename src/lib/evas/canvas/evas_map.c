@@ -739,10 +739,7 @@ evas_map_dup(const Evas_Map *m)
 EAPI void
 evas_map_free(Evas_Map *m)
 {
-   MAGIC_CHECK(m, Evas_Map, MAGIC_MAP);
-   return;
-   MAGIC_CHECK_END();
-
+   if (!m) return;
    _evas_map_free(NULL, m);
 }
 

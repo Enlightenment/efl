@@ -1177,6 +1177,7 @@ _ecore_main_loop_iterate_may_block(Eo *obj, Efl_Loop_Data *pd, int may_block)
 void
 _ecore_main_loop_begin(Eo *obj, Efl_Loop_Data *pd)
 {
+   pd->loop_active++;
    if (obj == ML_OBJ)
      {
 #ifdef HAVE_SYSTEMD
@@ -1240,11 +1241,13 @@ _ecore_main_loop_begin(Eo *obj, Efl_Loop_Data *pd)
         pd->do_quit = 0;
 #endif
      }
+   pd->loop_active--;
 }
 
 void
 _ecore_main_loop_quit(Eo *obj, Efl_Loop_Data *pd)
 {
+   if (!pd->loop_active) return;
    pd->do_quit = 1;
    if (obj != ML_OBJ) return;
 #ifdef USE_G_MAIN_LOOP
