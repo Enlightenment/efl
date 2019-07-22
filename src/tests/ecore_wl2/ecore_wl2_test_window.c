@@ -41,11 +41,12 @@ EFL_START_TEST(wl2_window_new)
 }
 EFL_END_TEST
 
-EFL_START_TEST(wl2_window_surface_get)
+EFL_START_TEST(wl2_window_surface_test)
 {
    Ecore_Wl2_Display *disp;
    Ecore_Wl2_Window *win;
    struct wl_surface *surf;
+   int id = -1;
 
    disp = _display_connect();
    ck_assert(disp != NULL);
@@ -55,23 +56,11 @@ EFL_START_TEST(wl2_window_surface_get)
 
    surf = ecore_wl2_window_surface_get(win);
    ck_assert(surf != NULL);
-}
-EFL_END_TEST
-
-EFL_START_TEST(wl2_window_surface_id_get)
-{
-   Ecore_Wl2_Display *disp;
-   Ecore_Wl2_Window *win;
-   int id = -1;
-
-   disp = _display_connect();
-   ck_assert(disp != NULL);
-
-   win = _window_create(disp);
-   ck_assert(win != NULL);
 
    id = ecore_wl2_window_surface_id_get(win);
    ck_assert_int_lt(id, 0);
+
+   ck_assert_int_eq(wl_proxy_get_id((struct wl_proxy *)surf), id);
 }
 EFL_END_TEST
 
@@ -148,8 +137,7 @@ ecore_wl2_test_window(TCase *tc)
      {
         /* window tests can only run if there is an existing compositor */
         tcase_add_test(tc, wl2_window_new);
-        tcase_add_test(tc, wl2_window_surface_get);
-        tcase_add_test(tc, wl2_window_surface_id_get);
+        tcase_add_test(tc, wl2_window_surface_test);
         tcase_add_test(tc, wl2_window_rotation_get);
         tcase_add_test(tc, wl2_window_output_find);
         tcase_add_test(tc, wl2_window_aux_hints_supported_get);
