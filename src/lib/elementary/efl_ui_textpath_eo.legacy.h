@@ -36,9 +36,25 @@ typedef enum
  * @param[in] start_angle Start angle of the circle
  * @param[in] direction Textpath direction
  *
+ * @see elm_textpath_circluar_set()
+ *
  * @ingroup Elm_Textpath_Group
  */
 EAPI void elm_textpath_circle_set(Efl_Ui_Textpath *obj, double x, double y, double radius, double start_angle, Efl_Ui_Textpath_Direction direction);
+
+/**
+ * @brief Set a circle with given radius, and start angle.
+ *        The circle center will be decided by the object center position.
+ *
+ * @param[in] obj The object.
+ * @param[in] radius Radius of the circle
+ * @param[in] start_angle Start angle of the circle
+ * @param[in] direction Textpath direction
+ *
+ * @since 1.23
+ * @ingroup Elm_Textpath_Group
+ */
+EAPI void elm_textpath_circular_set(Efl_Ui_Textpath *obj, double radius, double start_angle, Efl_Ui_Textpath_Direction direction);
 
 /**
  * @brief The number of slices. The larger the number of slice_num is, The
