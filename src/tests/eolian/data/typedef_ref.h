@@ -43,6 +43,6 @@ typedef enum
 
 EWAPI const Efl_Class *typedef_class_get(void);
 
-EOAPI char *typedef_foo(Eo *obj, int idx);
+EOAPI char *typedef_foo(Eo *obj, int idx) EFL_TRANSFER_OWNERSHIP;
 
 #endif

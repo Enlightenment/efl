@@ -212,6 +212,19 @@ EAPI extern unsigned int _efl_object_init_generation;
  */
 typedef void (*Efl_Del_Intercept) (Eo *obj_id);
 
+/**
+ * This is a no-operation. Its presence behind a function parameter indicates that
+ * ownership of the parameter is transferred to the callee.
+ * When present after a method, it indicates that the return value of the method is
+ * transferred to the caller.
+ * For objects, ownership transfer means that exactly one reference is transferred.
+ * If you transfer ownership without owning a reference in the first place, you will
+ * get unexpected behavior.
+ * For non-Objects, ownership transfer means that the responsibility of freeing a
+ * segment of memory is passed on.
+ */
+#define EFL_TRANSFER_OWNERSHIP
+
 #include "efl_object_override.eo.h"
 #include "efl_object.eo.h"
 
@@ -2369,6 +2382,7 @@ EAPI Eina_Iterator *eo_objects_iterator_new(void);
  * @return EINA_TRUE if the object is ownable. EINA_FALSE if not.
  */
 EAPI Eina_Bool efl_ownable_get(const Eo *obj);
+
 /**
  * @}
  */
