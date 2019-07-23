@@ -12,6 +12,7 @@
 #include <Eina.h>
 
 static const std::string BETA_REF_SUFFIX = " (object still in beta stage)";
+static const std::string BETA_SUMMARY_REMARKS = "This is a \\<b\\>BETA\\</b\\> class. It can be modified or removed in the future. Do not use it for product development.";
 
 namespace eolian_mono {
 
@@ -389,6 +390,11 @@ struct documentation_generator
    bool generate(OutputIterator sink, attributes::klass_def const& klass, Context const& context) const
    {
        if (!generate(sink, klass.documentation, context)) return false;
+
+       if (klass.is_beta)
+         {
+            if (!generate_tag(sink, "remarks", BETA_SUMMARY_REMARKS, context)) return false;
+         }
 
        std::string klass_name = name_helpers::klass_full_concrete_or_interface_name(klass);
        return generate_tag_example(sink, klass_name, context);

@@ -995,3 +995,9 @@ div.embeddedvideo iframe {
 
 .mainContainer[dir='rtl'] main ul[role="tablist"] {
   margin: 0; }
+
+.remarks {
+  background-color: #c0c0ff;
+  border-radius: 6px;
+  padding: 6px;
+}
