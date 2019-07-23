@@ -12,7 +12,9 @@
 #include <Eina.h>
 
 static const std::string BETA_REF_SUFFIX = " (object still in beta stage)";
-static const std::string BETA_SUMMARY_REMARKS = "This is a \\<b\\>BETA\\</b\\> class. It can be modified or removed in the future. Do not use it for product development.";
+static const std::string BETA_CLASS_REMARK = "This is a \\<b\\>BETA\\</b\\> class. It can be modified or removed in the future. Do not use it for product development.";
+static const std::string BETA_PROPERTY_REMARK = "\n\n\\<b\\>This is a BETA property\\</b\\>. It can be modified or removed in the future. Do not use it for product development.";
+static const std::string BETA_METHOD_REMARK = "\n\n\\<b\\>This is a BETA method\\</b\\>. It can be modified or removed in the future. Do not use it for product development.";
 
 namespace eolian_mono {
 
@@ -393,7 +395,7 @@ struct documentation_generator
 
        if (klass.is_beta)
          {
-            if (!generate_tag(sink, "remarks", BETA_SUMMARY_REMARKS, context)) return false;
+            if (!generate_tag(sink, "remarks", BETA_CLASS_REMARK, context)) return false;
          }
 
        std::string klass_name = name_helpers::klass_full_concrete_or_interface_name(klass);
@@ -403,7 +405,17 @@ struct documentation_generator
    template<typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::property_def const& prop, Context const& context) const
    {
-       if (!generate(sink, prop.documentation, context))
+       std::string tail_text = "";
+
+       if (!prop.klass.is_beta)
+         {
+            if ((prop.setter.is_engaged() && prop.setter->is_beta) ||
+                (prop.getter.is_engaged() && prop.getter->is_beta))
+              {
+                 tail_text = BETA_PROPERTY_REMARK;
+              }
+         }
+       if (!generate(sink, prop.documentation, context, tail_text))
          return false;
 
        std::string text;
@@ -434,16 +446,21 @@ struct documentation_generator
    template<typename OutputIterator, typename Context>
    bool generate_property(OutputIterator sink, attributes::function_def const& func, Context const& context) const
    {
+       std::string tail_text = "";
+       if (!func.klass.is_beta && func.is_beta)
+         {
+            tail_text = BETA_METHOD_REMARK;
+         }
 
        // First, try the get/set specific documentation
        if (!func.documentation.summary.empty())
          {
-            if (!generate(sink, func.documentation, context))
+            if (!generate(sink, func.documentation, context, tail_text))
               return false;
          }
        else // fallback to common property documentation
          {
-            if (!generate(sink, func.property_documentation, context))
+            if (!generate(sink, func.property_documentation, context, tail_text))
               return false;
          }
 
@@ -463,7 +480,13 @@ struct documentation_generator
    template<typename OutputIterator, typename Context>
    bool generate_function(OutputIterator sink, attributes::function_def const& func, Context const& context) const
    {
-       if (!generate(sink, func.documentation, context))
+       std::string tail_text = "";
+       if (!func.klass.is_beta && func.is_beta)
+         {
+            tail_text = BETA_METHOD_REMARK;
+         }
+
+       if (!generate(sink, func.documentation, context, tail_text))
          return false;
 
        for (auto&& param : func.parameters)
@@ -486,11 +509,12 @@ struct documentation_generator
    }
 
    template<typename OutputIterator, typename Context>
-   bool generate(OutputIterator sink, attributes::documentation_def const& doc, Context const& context) const
+   bool generate(OutputIterator sink, attributes::documentation_def const& doc, Context const& context, std::string tail_text = "") const
    {
       std::string str = doc.full_text;
       if (!doc.since.empty())
         str += "\n(Since EFL " + doc.since + ")";
+      str += tail_text;
       return generate_tag_summary(sink, str, context);
    }
 
