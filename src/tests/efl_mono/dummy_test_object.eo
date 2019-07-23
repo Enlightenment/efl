@@ -81,7 +81,7 @@ struct @beta @free(free) Dummy.StructComplex {
    fiterator: iterator<string>;
    fany_value: any_value;
    fany_value_ptr: any_value_ptr;
-   // fbinbuf: ptr(Eina.Binbuf);
+   fbinbuf: binbuf;
    fslice: slice<ubyte>;
    // fslice: ptr(Eina.Slice); // TODO
    fobj: Dummy.Numberwrapper;
@@ -298,31 +298,30 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
       */
 
-      /*
       eina_binbuf_in @beta {
          params {
-            @in binbuf: ptr(Eina.Binbuf);
+            @in binbuf: binbuf;
          }
          return: bool;
       }
 
       call_eina_binbuf_in @beta {
          params {
-            @in binbuf: ptr(Eina.Binbuf);
+            @in binbuf: binbuf;
          }
          return: bool;
       }
 
       eina_binbuf_in_own @beta {
          params {
-            @in binbuf: ptr(Eina.Binbuf) @owned;
+            @in binbuf: binbuf @owned;
          }
          return: bool;
       }
 
       call_eina_binbuf_in_own @beta {
         params {
-            @in str: ptr(Eina.Binbuf) @owned;
+            @in str: binbuf @owned;
         }
         return: bool;
       }
@@ -333,13 +332,13 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_binbuf_out @beta {
          params {
-            @out binbuf: ptr(Eina.Binbuf);
+            @out binbuf: binbuf;
          }
          return: bool;
       }
 
       call_eina_binbuf_out @beta {
-         return: ptr(Eina.Binbuf);
+         return: binbuf;
       }
 
       check_binbuf_out {
@@ -348,21 +347,21 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_binbuf_out_own @beta {
          params {
-            @out binbuf: ptr(Eina.Binbuf) @owned;
+            @out binbuf: binbuf @owned;
          }
          return: bool;
       }
 
       call_eina_binbuf_out_own @beta {
-         return: ptr(Eina.Binbuf) @owned;
+         return: binbuf @owned;
       }
 
       eina_binbuf_return @beta {
-         return: ptr(Eina.Binbuf);
+         return: binbuf;
       }
 
       call_eina_binbuf_return @beta {
-         return: ptr(Eina.Binbuf);
+         return: binbuf;
       }
 
       check_binbuf_return {
@@ -370,13 +369,12 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       eina_binbuf_return_own @beta {
-         return: ptr(Eina.Binbuf) @owned;
+         return: binbuf @owned;
       }
 
       call_eina_binbuf_return_own @beta {
-         return: ptr(Eina.Binbuf) @owned;
+         return: binbuf @owned;
       }
-      */
 
       /* Eina Array */
 

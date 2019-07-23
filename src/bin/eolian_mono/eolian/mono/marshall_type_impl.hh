@@ -103,6 +103,20 @@ struct marshall_type_visitor_generate
                 r.namespaces.clear();
                 return r;
               }}
+           , {"binbuf", nullptr, [&]
+              {
+                regular_type_def r = regular;
+                r.base_type = "System.IntPtr";
+                r.namespaces.clear();
+                return r;
+              }}
+           , {"event", nullptr, [&]
+              {
+                regular_type_def r = regular;
+                r.base_type = "Efl.Event.NativeStruct";
+                r.namespaces.clear();
+                return r;
+              }}
            , {"any_value", true, [&]
                {
                 regular_type_def r = regular;

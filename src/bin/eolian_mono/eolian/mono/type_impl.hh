@@ -214,6 +214,14 @@ struct visitor_generate
               {
                 return regular_type_def{"Eina.Strbuf", regular.base_qualifier, {}};
               }}
+           , {"binbuf", nullptr, [&]
+              {
+                return regular_type_def{"Eina.Binbuf", regular.base_qualifier, {}};
+              }}
+           , {"event", nullptr, [&]
+              {
+                return regular_type_def{"Efl.Event", regular.base_qualifier, {}};
+              }}
            , {"any_value", true, [&]
               { return regular_type_def{"Eina.Value", regular.base_qualifier, {}};
               }}
