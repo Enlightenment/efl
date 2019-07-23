@@ -39,6 +39,16 @@ public static class TestParts
     }
 }
 
+public static class TestMVVMParts
+{
+    public static void mvvm_dynamic_parts()
+    {
+        var factory = new Efl.Ui.ItemFactory<Efl.Ui.ListDefaultItem>();
+        var bindablePart = factory.TextPart();
+        bindablePart.Bind("text", "name");
+    }
+}
+
 #endif
 
 }

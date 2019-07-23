@@ -353,9 +353,10 @@ struct klass
          <<"public static class " << (string % "_") << name_helpers::klass_inherit_name(cls)
          << "_ExtensionMethods {\n"
          << *((scope_tab << property_extension_method_definition(cls)) << "\n")
+         << *((scope_tab << part_extension_method_definition(cls)) << "\n")
          << "}\n"
          << lit("#pragma warning restore CS1591\n"))
-        .generate(sink, std::make_tuple(cls.namespaces, cls.properties), context))
+        .generate(sink, std::make_tuple(cls.namespaces, cls.properties, cls.parts), context))
      return false;
 
      return true;

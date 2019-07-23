@@ -35,6 +35,37 @@ struct part_definition_generator
 
 } const part_definition {};
 
+struct part_extension_method_definition_generator
+{
+   template<typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::part_def const& part, Context context) const
+   {
+      if (blacklist::is_class_blacklisted(part.klass, context))
+        return true;
+
+      auto part_klass_name = name_helpers::klass_full_concrete_or_interface_name(part.klass);
+      /* auto unit = (const Eolian_Unit*) context_find_tag<eolian_state_context>(context).state; */
+      /* auto klass = get_klass(part.klass, unit); */
+
+      if (!as_generator(
+                scope_tab << "public static Efl.BindablePart<" << part_klass_name << "> " << name_helpers::managed_part_name(part) << "<T>(this Efl.Ui.ItemFactory<T> fac) where T : " << name_helpers::klass_full_concrete_or_interface_name(cls) << "\n"
+                << scope_tab << "{\n"
+                << scope_tab << scope_tab << "return new Efl.BindablePart<" << part_klass_name << ">(fac);\n"
+                << scope_tab << "}\n"
+            ).generate(sink, attributes::unused, context))
+        return false;
+
+      return true;
+   }
+
+   grammar::attributes::klass_def const& cls;
+};
+
+part_extension_method_definition_generator part_extension_method_definition (grammar::attributes::klass_def const& cls)
+{
+  return {cls};
+}
+
 }
 
 namespace efl { namespace eolian { namespace grammar {
@@ -44,10 +75,17 @@ struct is_eager_generator< ::eolian_mono::part_definition_generator> : std::true
 template <>
 struct is_generator< ::eolian_mono::part_definition_generator> : std::true_type {};
 
+template <>
+struct is_eager_generator< ::eolian_mono::part_extension_method_definition_generator> : std::true_type {};
+template <>
+struct is_generator< ::eolian_mono::part_extension_method_definition_generator> : std::true_type {};
+
 namespace type_traits {
 template <>
 struct attributes_needed< ::eolian_mono::part_definition_generator> : std::integral_constant<int, 1> {};
 
+template <>
+struct attributes_needed< ::eolian_mono::part_extension_method_definition_generator> : std::integral_constant<int, 1> {};
 }
 } } }
 

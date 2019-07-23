@@ -8,7 +8,7 @@ using System.ComponentModel;
 
 namespace Efl {
 
-/// <summary>Representas a bindable property as used by <see cref="Efl.Ui.ItemFactory&lt;T&gt;" /> instances.
+/// <summary>Represents a bindable property as used by <see cref="Efl.Ui.ItemFactory&lt;T&gt;" /> instances.
 ///
 /// <para>It is internally instantiated and returned by generated extension methods.</para>
 /// </summary>
@@ -21,14 +21,35 @@ public class Bindable<T>
         this.binder = binder;
     }
 
-    /// <summary>Binds the model property <c>model_property</c> to the property <c>name</c> set in the constructor.</summary>
-    public void Bind(string model_property)
+    /// <summary>Binds the model property <c>modelProperty</c> to the property <c>name</c> set in the constructor.</summary>
+    public void Bind(string modelProperty)
     {
-        binder.PropertyBind(name, model_property);
+        binder.PropertyBind(name, modelProperty);
     }
 
     string name;
     Efl.Ui.IPropertyBind binder;
+}
+
+/// <summary>Represents bindable parts as used by <see cref="Efl.Ui.ItemFactory&lt;T&gt;" /> instances.
+///
+/// <para>It is internally instantiated and returned by generated extension methods.</para>
+/// </summary>
+public class BindablePart<T>
+{
+    /// <summary>Creates a new bindable property with the binder <c>binder</c>.</summary>
+    public BindablePart(Efl.Ui.IPropertyBind binder)
+    {
+        this.binder = binder;
+    }
+
+    /// <summary>Binds the model property <c>modelProperty</c> to the part property <c>name</c> set in the constructor.</summary>
+    public void Bind(string partProperty, string modelProperty)
+    {
+        binder.PropertyBind(partProperty, modelProperty);
+    }
+
+    private Efl.Ui.IPropertyBind binder;
 }
 
 }
