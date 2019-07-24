@@ -357,7 +357,6 @@ elementary_headers_unstable = [
   'efl_ui_list_item_private.h',
   'efl_ui_list_private.h',
   'efl_ui_grid_item_private.h',
-  'efl_ui_grid_private.h',
   'efl_ui_list_view_private.h',
   'efl_ui_list_view_seg_array.h',
   'elm_widget_web.h',

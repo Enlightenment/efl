@@ -17,7 +17,6 @@ grid_setup()
 
    grid = efl_add(EFL_UI_GRID_CLASS, win);
 
-   efl_ui_grid_item_size_set(grid, EINA_SIZE2D(100, 100));
    efl_gfx_entity_size_set(grid, EINA_SIZE2D(500, 50));
    efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 50));
    efl_gfx_entity_visible_set(win, EINA_TRUE);
@@ -31,6 +30,7 @@ grid_item_pack(Eo *grid, int count, Eina_List **l)
 	for (i = 0; i < count; i++)
 	  {
 		  item = efl_add(EFL_UI_GRID_DEFAULT_ITEM_CLASS, grid);
+        efl_gfx_hint_size_min_set(item, EINA_SIZE2D(100, 100));
 		  if (!item) return EINA_FALSE;
 		  if (l) *l = eina_list_append(*l, item);
 		  efl_pack(grid, item);
@@ -282,14 +282,14 @@ EFL_START_TEST(efl_ui_grid_scroll)
    ck_assert(grid_item_pack(grid, 100, NULL) != EINA_FALSE);
    item = efl_pack_content_get(grid, 50);
 
-   timer = efl_add(EFL_LOOP_TIMER_CLASS, efl_main_loop_get(), 
+   timer = efl_add(EFL_LOOP_TIMER_CLASS, efl_main_loop_get(),
                    efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TIMER_TICK, grid_timer_cb, NULL),
                    efl_loop_timer_loop_reset(efl_added),
                    efl_loop_timer_interval_set(efl_added, 3.0));
 
    efl_event_callback_array_add(grid, grid_scroll_callbacks(), timer);
    /*FIXME: efl_ui_scroll_interface only emit scroll event when animation exist */
-   efl_ui_grid_item_scroll(grid, item, EINA_TRUE);
+   efl_ui_item_container_item_scroll(grid, item, EINA_TRUE);
    ecore_main_loop_begin();
 }
 EFL_END_TEST
