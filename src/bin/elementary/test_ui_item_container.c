@@ -20,7 +20,7 @@ _scroll_to_animated_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    EINA_SAFETY_ON_NULL_RETURN(element_1154);
 
-   efl_ui_item_container_item_scroll(data, element_1154, EINA_TRUE);
+   efl_ui_collection_item_scroll(data, element_1154, EINA_TRUE);
 }
 
 static void
@@ -30,7 +30,7 @@ _scroll_to_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    EINA_SAFETY_ON_NULL_RETURN(element_10);
 
-   efl_ui_item_container_item_scroll(data, element_10, EINA_FALSE);
+   efl_ui_collection_item_scroll(data, element_10, EINA_FALSE);
 }
 
 static void
@@ -54,7 +54,7 @@ _change_min_size_cb(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
 typedef struct {
   Efl_Ui_Check *v, *h;
-  Efl_Ui_Item_Container *c;
+  Efl_Ui_Collection *c;
 } Match_Content_Ctx;
 
 static void
@@ -76,7 +76,7 @@ _widget_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 static void
-_add_item(Efl_Ui_Item_Container *c)
+_add_item(Efl_Ui_Collection *c)
 {
    Efl_Class *itc = efl_key_data_get(c, "__item_class");
    char buf[PATH_MAX];
@@ -143,7 +143,7 @@ _add_thousend_items(void *data, const Efl_Event *ev EINA_UNUSED)
 static void
 _select_value_cb(void *data, const Efl_Event *ev)
 {
-   Efl_Ui_Item_Container *c = data;
+   Efl_Ui_Collection *c = data;
 
    efl_ui_select_mode_set(c, efl_ui_radio_group_selected_value_get(ev->object));
 }
@@ -160,8 +160,8 @@ void create_item_container_ui(Efl_Ui_Position_Manager_Entity *manager, const Efl
    tbl = efl_add(EFL_UI_TABLE_CLASS, win);
    efl_content_set(win, tbl);
 
-   item_container = o = efl_add(EFL_UI_ITEM_CONTAINER_CLASS, win,
-                 efl_ui_item_container_position_manager_set(efl_added, manager));
+   item_container = o = efl_add(EFL_UI_COLLECTION_CLASS, win,
+                 efl_ui_collection_position_manager_set(efl_added, manager));
    efl_key_data_set(o, "__item_class", item);
    efl_event_callback_add(o, EFL_EVENT_DEL, _widget_del_cb, ctx);
    for (int i = 0; i < 2000; ++i)
@@ -257,14 +257,14 @@ void create_item_container_ui(Efl_Ui_Position_Manager_Entity *manager, const Efl
    efl_pack_end(bx, o);
 }
 
-void test_efl_ui_item_container_grid(void *data EINA_UNUSED,
+void test_efl_ui_collection_grid(void *data EINA_UNUSED,
                                    Evas_Object *obj EINA_UNUSED,
                                    void *event_info EINA_UNUSED)
 {
    create_item_container_ui(efl_new(EFL_UI_POSITION_MANAGER_GRID_CLASS), EFL_UI_GRID_DEFAULT_ITEM_CLASS, "Efl.Ui.Item_Container Grid");
 }
 
-void test_efl_ui_item_container_list(void *data EINA_UNUSED,
+void test_efl_ui_collection_list(void *data EINA_UNUSED,
                                    Evas_Object *obj EINA_UNUSED,
                                    void *event_info EINA_UNUSED)
 {

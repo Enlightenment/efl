@@ -13,7 +13,7 @@ EOLIAN static Efl_Object*
 _test_efl_ui_item_container_list_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
 {
    efl_constructor(efl_super(obj, TEST_EFL_UI_ITEM_CONTAINER_LIST_CLASS));
-   efl_ui_item_container_position_manager_set(obj, efl_new(EFL_UI_POSITION_MANAGER_LIST_CLASS));
+   efl_ui_collection_position_manager_set(obj, efl_new(EFL_UI_POSITION_MANAGER_LIST_CLASS));
 
    return obj;
 }

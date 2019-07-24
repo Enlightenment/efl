@@ -32,7 +32,7 @@ static const Efl_Test_Case etc[] = {
   { "efl_ui_win", efl_ui_test_win },
   { "efl_ui_spin", efl_ui_test_spin },
   { "efl_ui_spin_button", efl_ui_test_spin_button },
-  { "efl_ui_item_container", efl_ui_test_item_container },
+  { "efl_ui_collection", efl_ui_test_item_container },
   { "efl_ui_grid_container", efl_ui_test_grid_container },
   { "efl_ui_list_container", efl_ui_test_list_container },
   { NULL, NULL }

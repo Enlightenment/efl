@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Grid extends Efl.Ui.Item_Container
+class @beta Efl.Ui.Grid extends Efl.Ui.Collection
 {
    [[Simple grid widget with Pack interface.]]
 
