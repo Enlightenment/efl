@@ -405,7 +405,7 @@ static void _list_udpate(void);
 
 static Evas_Object *win, *tbx, *entry; // TODO: refactoring
 static void *tt;
-static Eina_List *tests;
+static Eina_List *tests, *cur_test;;
 static Eina_Bool hide_legacy = EINA_FALSE;
 static Eina_Bool hide_beta = EINA_FALSE;
 
@@ -641,6 +641,32 @@ _space_removed_string_get(const char *name)
      }
 
    return ret;
+}
+
+static Eina_Bool
+_my_win_key_up(void *d EINA_UNUSED, int type EINA_UNUSED, Ecore_Event_Key *ev)
+{
+   struct elm_test *t;
+
+   if (eina_streq(ev->key, "comma") && (ev->modifiers & ECORE_EVENT_MODIFIER_ALT))
+     {
+        if (cur_test)
+          cur_test = eina_list_prev(cur_test);
+        if (!cur_test)
+          cur_test = eina_list_last(tests);
+        t = eina_list_data_get(cur_test);
+        t->cb(NULL, NULL, NULL);
+     }
+   else if (eina_streq(ev->key, "period") && (ev->modifiers & ECORE_EVENT_MODIFIER_ALT))
+     {
+        if (cur_test)
+          cur_test = eina_list_next(cur_test);
+        if (!cur_test)
+          cur_test = tests;
+        t = eina_list_data_get(cur_test);
+        t->cb(NULL, NULL, NULL);
+     }
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void
@@ -1300,7 +1326,10 @@ add_tests:
      }
 
    if (tests)
-     _menu_create(NULL);
+     {
+        _menu_create(NULL);
+        ecore_event_handler_add(ECORE_EVENT_KEY_UP, (Ecore_Event_Handler_Cb)_my_win_key_up, NULL);
+     }
 
    /* bring in autorun frame */
    if (autorun)
