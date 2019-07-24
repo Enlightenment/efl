@@ -12,6 +12,139 @@
 #include "elm_widget.h"
 #include "elm_priv.h"
 
+typedef struct {
+   Eina_Accessor acc;
+   unsigned int last_index;
+   const Eina_List *current;
+   Eina_List **items;
+} Fast_Accessor;
+
+static Eina_Bool
+_fast_accessor_get_at(Fast_Accessor *accessor, unsigned int idx, void **data)
+{
+   const Eina_List *over;
+   unsigned int middle;
+   unsigned int i;
+
+   if (idx >= eina_list_count(*accessor->items))
+     return EINA_FALSE;
+
+   if (accessor->last_index == idx)
+     over = accessor->current;
+   else if (idx > accessor->last_index)
+     {
+        /* After current position. */
+        middle = ((eina_list_count(*accessor->items) - accessor->last_index))/2;
+
+        if (idx > middle)
+          /* Go backward from the end. */
+          for (i = eina_list_count(*accessor->items) - 1,
+               over = eina_list_last(*accessor->items);
+               i > idx && over;
+               --i, over = eina_list_prev(over))
+            ;
+        else
+          /* Go forward from current. */
+          for (i = accessor->last_index, over = accessor->current;
+               i < idx && over;
+               ++i, over = eina_list_next(over))
+            ;
+     }
+   else
+     {
+        /* Before current position. */
+        middle = accessor->last_index/2;
+
+        if (idx > middle)
+          /* Go backward from current. */
+          for (i = accessor->last_index, over = accessor->current;
+               i > idx && over;
+               --i, over = eina_list_prev(over))
+            ;
+        else
+          /* Go forward from start. */
+          for (i = 0, over = *accessor->items;
+               i < idx && over;
+               ++i, over = eina_list_next(over))
+            ;
+     }
+
+   if (!over)
+     return EINA_FALSE;
+
+   accessor->last_index = idx;
+   accessor->current = over;
+
+   *data = eina_list_data_get(over);
+   return EINA_TRUE;
+}
+
+
+static Eina_Accessor*
+_fast_accessor_clone(Fast_Accessor *accessor)
+{
+   return eina_list_accessor_new(*accessor->items);
+}
+
+static Eina_List *
+_fast_accessor_get_container(Fast_Accessor *accessor EINA_UNUSED)
+{
+   ERR("Not allowed to get a container!");
+   return NULL;
+}
+
+static void
+_fast_accessor_free(Fast_Accessor *accessor EINA_UNUSED)
+{
+   ERR("Freeing this accessor is not supported");
+}
+
+static void
+_fast_accessor_init(Fast_Accessor *accessor, Eina_List **items)
+{
+   //this is the accessor for accessing the items
+   //we have to workarround here the problem that
+   //no accessor can be created for a not yet created list.
+   accessor->acc.version = EINA_ACCESSOR_VERSION;
+   accessor->acc.get_at = FUNC_ACCESSOR_GET_AT(_fast_accessor_get_at);
+   accessor->acc.clone = FUNC_ACCESSOR_CLONE(_fast_accessor_clone);
+   accessor->acc.get_container = FUNC_ACCESSOR_GET_CONTAINER(_fast_accessor_get_container);
+   accessor->acc.free = FUNC_ACCESSOR_FREE(_fast_accessor_free);
+   EINA_MAGIC_SET(&accessor->acc, EINA_MAGIC_ACCESSOR);
+   accessor->items = items;
+}
+
+static void
+_fast_accessor_remove(Fast_Accessor *accessor, const Eina_List *removed_elem)
+{
+   if (accessor->current == removed_elem)
+     {
+        Eina_List *next;
+        Eina_List *prev;
+
+        next = eina_list_next(removed_elem);
+        prev = eina_list_prev(removed_elem);
+        if (next)
+          {
+             accessor->current = next;
+             accessor->last_index ++;
+          }
+        else if (prev)
+          {
+             accessor->current = prev;
+             accessor->last_index --;
+          }
+        else
+          {
+             //everything >= length is invalid, and we need that.
+             accessor->last_index = eina_list_count(*accessor->items);
+             accessor->current = NULL;
+          }
+
+     }
+
+}
+
 #define MY_CLASS      EFL_UI_ITEM_CONTAINER_CLASS
 
 #define MY_DATA_GET(obj, pd) \
@@ -27,15 +160,11 @@ typedef struct {
    Eina_Size2D content_min_size;
    Efl_Ui_Position_Manager_Entity *pos_man;
    struct {
-      Eina_Accessor pass_on;
-      unsigned int last_index;
-      const Eina_List *current;
-   } obj_accessor;
-   struct {
       Eina_Bool w;
       Eina_Bool h;
    } match_content;
-   Eina_Accessor size_accessor;
+   Fast_Accessor obj_accessor;
+   Fast_Accessor size_accessor;
    Efl_Gfx_Entity *sizer;
 } Efl_Ui_Item_Container_Data;
 
@@ -77,138 +206,6 @@ index_adjust(Efl_Ui_Item_Container_Data *pd, int index)
    else if (index < 0)
      return index + c;
    return index;
-}
-
-static Eina_Bool
-_obj_accessor_get_at(Eina_Accessor *accessor, unsigned int idx, void **data)
-{
-   ptrdiff_t offset = offsetof(Efl_Ui_Item_Container_Data, obj_accessor);
-   Efl_Ui_Item_Container_Data *pd = (void*)accessor - offset;
-   const Eina_List *over;
-   unsigned int middle;
-   unsigned int i;
-
-   if (idx >= eina_list_count(pd->items))
-     return EINA_FALSE;
-
-   if (pd->obj_accessor.last_index == idx)
-     over = pd->obj_accessor.current;
-   else if (idx > pd->obj_accessor.last_index)
-     {
-        /* After current position. */
-        middle = ((eina_list_count(pd->items) - pd->obj_accessor.last_index))/2;
-
-        if (idx > middle)
-          /* Go backward from the end. */
-          for (i = eina_list_count(pd->items) - 1,
-               over = eina_list_last(pd->items);
-               i > idx && over;
-               --i, over = eina_list_prev(over))
-            ;
-        else
-          /* Go forward from current. */
-          for (i = pd->obj_accessor.last_index, over = pd->obj_accessor.current;
-               i < idx && over;
-               ++i, over = eina_list_next(over))
-            ;
-     }
-   else
-     {
-        /* Before current position. */
-        middle = pd->obj_accessor.last_index/2;
-
-        if (idx > middle)
-          /* Go backward from current. */
-          for (i = pd->obj_accessor.last_index, over = pd->obj_accessor.current;
-               i > idx && over;
-               --i, over = eina_list_prev(over))
-            ;
-        else
-          /* Go forward from start. */
-          for (i = 0, over = pd->items;
-               i < idx && over;
-               ++i, over = eina_list_next(over))
-            ;
-     }
-
-   if (!over)
-     return EINA_FALSE;
-
-   pd->obj_accessor.last_index = idx;
-   pd->obj_accessor.current = over;
-
-   *data = eina_list_data_get(over);
-   return EINA_TRUE;
-}
-
-static Eina_Accessor*
-_obj_clone(Eina_Accessor *accessor)
-{
-   ptrdiff_t offset = offsetof(Efl_Ui_Item_Container_Data, obj_accessor);
-   Efl_Ui_Item_Container_Data *pd = (void*)accessor - offset;
-
-   return eina_list_accessor_new(pd->items);
-}
-
-static Eina_List *
-_null_container(Eina_Accessor *accessor EINA_UNUSED)
-{
-   ERR("Not allowed to get a container!");
-   return NULL;
-}
-
-static void
-_free(Eina_Accessor *accessor EINA_UNUSED)
-{
-   ERR("Freeing this accessor is not supported");
-}
-
-static void
-_obj_accessor_init(Eina_Accessor *accessor)
-{
-   //this is the accessor for accessing the items
-   //we have to workarround here the problem that
-   //no accessor can be created for a not yet created list.
-   accessor->version = EINA_ACCESSOR_VERSION;
-   accessor->get_at = FUNC_ACCESSOR_GET_AT(_obj_accessor_get_at);
-   accessor->clone = FUNC_ACCESSOR_CLONE(_obj_clone);
-   accessor->get_container = FUNC_ACCESSOR_GET_CONTAINER(_null_container);
-   accessor->free = FUNC_ACCESSOR_FREE(_free);
-   EINA_MAGIC_SET(accessor, EINA_MAGIC_ACCESSOR);
-}
-
-static Eina_Bool
-_size_accessor_get_at(Eina_Accessor *accessor, unsigned int idx, void **data)
-{
-   Eina_Size2D *size = (Eina_Size2D*)data;
-   ptrdiff_t offset = offsetof(Efl_Ui_Item_Container_Data, size_accessor);
-   Efl_Ui_Item_Container_Data *pd = (void*)accessor - offset;
-
-   if (idx > eina_list_count(pd->items))
-     return EINA_FALSE;
-
-   Eo *subobj = eina_list_nth(pd->items, idx);
-
-   *size = efl_gfx_hint_size_combined_min_get(subobj);
-
-   return EINA_TRUE;
-}
-
-static Eina_Accessor*
-_size_clone(Eina_Accessor *accessor EINA_UNUSED)
-{
-   return NULL;
-}
-
-static void
-_size_accessor_init(Eina_Accessor *accessor)
-{
-   accessor->version = EINA_ACCESSOR_VERSION;
-   accessor->get_at = FUNC_ACCESSOR_GET_AT(_size_accessor_get_at);
-   accessor->clone = FUNC_ACCESSOR_CLONE(_size_clone);
-   accessor->get_container = FUNC_ACCESSOR_GET_CONTAINER(_null_container);
-   accessor->free = FUNC_ACCESSOR_FREE(_free);
-   EINA_MAGIC_SET(accessor, EINA_MAGIC_ACCESSOR);
 }
 
 static void
@@ -288,6 +285,23 @@ _efl_ui_item_container_selected_items_get(Eo *obj EINA_UNUSED, Efl_Ui_Item_Conta
    return eina_list_iterator_new(pd->selected);
 }
 
+static Eina_Bool
+_size_accessor_get_at(Fast_Accessor *accessor, unsigned int idx, void **data)
+{
+   Eina_Bool res = EINA_FALSE;
+   Efl_Gfx_Entity *geom;
+   Eina_Size2D *size = (void*)data;
+
+   res = _fast_accessor_get_at(accessor, idx,(void*) &geom);
+
+   if (!res) return EINA_FALSE;
+
+   *size = efl_gfx_hint_size_min_get(geom);
+
+   return res;
+}
+
+
 EOLIAN static Efl_Object*
 _efl_ui_item_container_efl_object_constructor(Eo *obj, Efl_Ui_Item_Container_Data *pd EINA_UNUSED)
 {
@@ -295,8 +309,9 @@ _efl_ui_item_container_efl_object_constructor(Eo *obj, Efl_Ui_Item_Container_Dat
 
    pd->dir = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
 
-   _obj_accessor_init(&pd->obj_accessor.pass_on);
-   _size_accessor_init(&pd->size_accessor);
+   _fast_accessor_init(&pd->obj_accessor, &pd->items);
+   _fast_accessor_init(&pd->size_accessor, &pd->items);
+   pd->size_accessor.acc.get_at = FUNC_ACCESSOR_GET_AT(_size_accessor_get_at);
 
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "item_container");
@@ -553,25 +568,9 @@ unregister_item(Eo *obj, Efl_Ui_Item_Container_Data *pd, Efl_Ui_Item *item)
      return EINA_FALSE;
 
    unsigned int id = eina_list_data_idx(pd->items, item);
-   if (pd->obj_accessor.last_index == id)
-     {
-        if (eina_list_next(elem))
-          {
-             pd->obj_accessor.current = eina_list_next(elem);
-          }
-        else if (eina_list_prev(elem))
-          {
-             pd->obj_accessor.last_index = id-1;
-             pd->obj_accessor.current = eina_list_prev(elem);
-          }
-        else
-          {
-             //everything >= length is invalid, and we need that.
-             pd->obj_accessor.last_index = eina_list_count(pd->items);
-             pd->obj_accessor.current = NULL;
-          }
 
-     }
+   _fast_accessor_remove(&pd->obj_accessor, elem);
+   _fast_accessor_remove(&pd->size_accessor, elem);
 
    pd->items = eina_list_remove(pd->items, item);
    pd->selected = eina_list_remove(pd->selected, item);
@@ -589,6 +588,8 @@ update_pos_man(Eo *obj EINA_UNUSED, Efl_Ui_Item_Container_Data *pd, Efl_Gfx_Enti
      {
         pd->obj_accessor.last_index = id;
         pd->obj_accessor.current = pd->items;
+        pd->size_accessor.last_index = id;
+        pd->size_accessor.current = pd->items;
      }
    efl_ui_position_manager_entity_item_added(pd->pos_man, id, subobj);
 }
@@ -765,7 +766,7 @@ _efl_ui_item_container_position_manager_set(Eo *obj, Efl_Ui_Item_Container_Data 
      {
         efl_parent_set(pd->pos_man, obj);
         efl_event_callback_array_add(pd->pos_man, pos_manager_cbs(), obj);
-        efl_ui_position_manager_entity_data_access_set(pd->pos_man, &pd->obj_accessor.pass_on, &pd->size_accessor, eina_list_count(pd->items));
+        efl_ui_position_manager_entity_data_access_set(pd->pos_man, &pd->obj_accessor.acc, &pd->size_accessor.acc, eina_list_count(pd->items));
         efl_ui_position_manager_entity_viewport_set(pd->pos_man, efl_ui_scrollable_viewport_geometry_get(obj));
         efl_ui_layout_orientation_set(pd->pos_man, pd->dir);
      }
