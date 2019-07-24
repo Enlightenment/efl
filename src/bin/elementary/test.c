@@ -409,6 +409,7 @@ static void *tt;
 static Eina_List *tests, *cur_test;;
 static Eina_Bool hide_legacy = EINA_FALSE;
 static Eina_Bool hide_beta = EINA_FALSE;
+static Eina_Bool all_tests = EINA_FALSE;
 
 struct elm_test
 {
@@ -580,6 +581,7 @@ _menu_create(const char *option_str)
           }
         pcat = t->category;
         if (t == tt) tt = cfr;
+        if (all_tests) t->cb(NULL, NULL, NULL);
      }
 }
 
@@ -1444,6 +1446,8 @@ efl_main(void *data EINA_UNUSED,
                {
                   test_win_only = EINA_TRUE;
                }
+             else if (eina_streq(arg, "--all") || eina_streq(arg, "-a"))
+               all_tests = EINA_TRUE;
              else if ((i == eina_array_count(arge->argv) - 1) && (arg[0] != '-'))
                autorun = arg;
 
