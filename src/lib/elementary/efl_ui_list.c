@@ -24,7 +24,7 @@ _efl_ui_list_efl_object_constructor(Eo *obj, Efl_Ui_List_Data *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   efl_ui_item_container_position_manager_set(obj, efl_new(EFL_UI_POSITION_MANAGER_LIST_CLASS));
+   efl_ui_collection_position_manager_set(obj, efl_new(EFL_UI_POSITION_MANAGER_LIST_CLASS));
 
    return obj;
 }

@@ -289,7 +289,7 @@ EFL_START_TEST(efl_ui_grid_scroll)
 
    efl_event_callback_array_add(grid, grid_scroll_callbacks(), timer);
    /*FIXME: efl_ui_scroll_interface only emit scroll event when animation exist */
-   efl_ui_item_container_item_scroll(grid, item, EINA_TRUE);
+   efl_ui_collection_item_scroll(grid, item, EINA_TRUE);
    ecore_main_loop_begin();
 }
 EFL_END_TEST

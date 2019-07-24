@@ -14,8 +14,8 @@ item_container_setup()
    Eo * list = efl_new(EFL_UI_POSITION_MANAGER_LIST_CLASS);
    position_manager = efl_new(EFL_UI_POSITION_MANAGER_LIST_CLASS);
    win = win_add();
-   item_container = efl_add(EFL_UI_ITEM_CONTAINER_CLASS, win,
-      efl_ui_item_container_position_manager_set(efl_added, list));
+   item_container = efl_add(EFL_UI_COLLECTION_CLASS, win,
+      efl_ui_collection_position_manager_set(efl_added, list));
 
 }
 
