@@ -971,6 +971,7 @@ elm_textpath_circle_set(Eo *obj, double x, double y, double radius, double start
    double sweep_length;
 
    EFL_UI_TEXTPATH_DATA_GET(obj, pd);
+   if (!pd) return;
 
    if (pd->circle.x == x && pd->circle.y == y &&
        pd->circle.radius == radius &&
