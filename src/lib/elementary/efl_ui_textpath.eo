@@ -10,11 +10,10 @@ class @beta Efl.Ui.Textpath extends Efl.Ui.Layout_Base implements Efl.Text, Efl.
 {
    [[Efl Ui Textpath class]]
    methods {
-      circle_set {
-         [[Set a circle with given center, radius, and start angle.]]
+      circular_set {
+         [[Set a circle with given radius and start angle.
+           The center of the circle will be decided by the object center position.]]
          params {
-            @in x: double; [[X coordinate of center]]
-            @in y: double; [[Y coordinate of center]]
             @in radius: double; [[Radius of the circle]]
             @in start_angle: double; [[Start angle of the circle]]
             @in direction: Efl.Ui.Textpath_Direction; [[Textpath direction]]

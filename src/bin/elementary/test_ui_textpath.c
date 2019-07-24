@@ -6,8 +6,6 @@
 #include <Efl_Ui.h>
 #include <Elementary.h>
 
-#define CX 180
-#define CY 150
 #define CR 100
 
 #define TEST_UI_TEXTPATH_LONG_TEXT "This text follows the path which you defined. This is a &lt;long&gt; text designed to make it ellipsis."
@@ -31,7 +29,7 @@ _direction_changed_cb(void *data, const Efl_Event *event)
    Eina_Bool val = elm_check_selected_get(event->object);
    Efl_Ui_Textpath_Direction dir = val ? EFL_UI_TEXTPATH_DIRECTION_CW :
                                          EFL_UI_TEXTPATH_DIRECTION_CCW;
-   efl_ui_textpath_circle_set(txtpath, CX, CY, CR, angle, dir);
+   efl_ui_textpath_circular_set(txtpath, CR, angle, dir);
 }
 
 static void
@@ -43,7 +41,7 @@ _angle_changed_cb(void *data, const Efl_Event *event)
    Eina_Bool val = elm_check_selected_get(dir_chk);
    Efl_Ui_Textpath_Direction dir = val ? EFL_UI_TEXTPATH_DIRECTION_CW :
                                          EFL_UI_TEXTPATH_DIRECTION_CCW;
-   efl_ui_textpath_circle_set(txtpath, CX, CY, CR, angle, dir);
+   efl_ui_textpath_circular_set(txtpath, CR, angle, dir);
 }
 
 static void
@@ -76,7 +74,7 @@ _change_shape_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA
         Eina_Bool val = elm_check_selected_get(dir_chk);
         Efl_Ui_Textpath_Direction dir = val ? EFL_UI_TEXTPATH_DIRECTION_CW :
                                               EFL_UI_TEXTPATH_DIRECTION_CCW;
-        efl_ui_textpath_circle_set(txtpath, CX, CY, CR, angle, dir);
+   efl_ui_textpath_circular_set(txtpath, CR, angle, dir);
      }
 }
 
@@ -109,7 +107,7 @@ test_ui_textpath(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    efl_text_set(txtpath, TEST_UI_TEXTPATH_LONG_TEXT);
 
-   efl_ui_textpath_circle_set(txtpath, CX, CY, CR, 0, EFL_UI_TEXTPATH_DIRECTION_CCW);
+   efl_ui_textpath_circular_set(txtpath, CR, 0, EFL_UI_TEXTPATH_DIRECTION_CCW);
    efl_gfx_entity_visible_set(txtpath, EINA_TRUE);
    path_type = 0;
 

@@ -204,6 +204,8 @@ _ector_software_surface_ector_surface_renderer_factory_new(Eo *obj,
 {
    if (type == ECTOR_RENDERER_SHAPE_MIXIN)
      return efl_add_ref(ECTOR_RENDERER_SOFTWARE_SHAPE_CLASS, NULL, ector_renderer_surface_set(efl_added, obj));
+   else if (type == ECTOR_RENDERER_IMAGE_MIXIN)
+     return efl_add_ref(ECTOR_RENDERER_SOFTWARE_IMAGE_CLASS, NULL, ector_renderer_surface_set(efl_added, obj));
    else if (type == ECTOR_RENDERER_GRADIENT_LINEAR_MIXIN)
      return efl_add_ref(ECTOR_RENDERER_SOFTWARE_GRADIENT_LINEAR_CLASS, NULL, ector_renderer_surface_set(efl_added, obj));
    else if (type == ECTOR_RENDERER_GRADIENT_RADIAL_MIXIN)

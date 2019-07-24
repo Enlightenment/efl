@@ -3,6 +3,7 @@ ector_src += files([
   'ector_renderer_software_gradient_linear.c',
   'ector_renderer_software_gradient_radial.c',
   'ector_renderer_software_shape.c',
+  'ector_renderer_software_image.c',
   'ector_software_gradient.c',
   'ector_software_rasterizer.c',
   'ector_software_surface.c',
@@ -16,6 +17,7 @@ pub_eo_files = [
   'ector_software_buffer_base.eo',
   'ector_renderer_software.eo',
   'ector_renderer_software_shape.eo',
+  'ector_renderer_software_image.eo',
   'ector_renderer_software_gradient_radial.eo',
   'ector_renderer_software_gradient_linear.eo',
 ]

@@ -47,6 +47,7 @@ typedef struct _Ector_Renderer_Gradient_Data Ector_Renderer_Gradient_Data;
 typedef struct _Ector_Renderer_Gradient_Linear_Data Ector_Renderer_Gradient_Linear_Data;
 typedef struct _Ector_Renderer_Gradient_Radial_Data Ector_Renderer_Gradient_Radial_Data;
 typedef struct _Ector_Renderer_Shape_Data Ector_Renderer_Shape_Data;
+typedef struct _Ector_Renderer_Image_Data Ector_Renderer_Image_Data;
 typedef struct _Ector_Renderer_Buffer_Data Ector_Renderer_Buffer_Data;
 
 struct _Ector_Renderer_Data
@@ -97,6 +98,11 @@ struct _Ector_Renderer_Shape_Data
       Ector_Renderer *fill;
       Ector_Renderer *marker;
    } stroke;
+};
+
+struct _Ector_Renderer_Image_Data
+{
+   Ector_Buffer *buffer;
 };
 
 struct _Ector_Renderer_Buffer_Data

@@ -30,9 +30,9 @@
 #include "evas-common.h"
 
 #define WIDTH  400
-#define HEIGHT 400
+#define HEIGHT 600
 
-static Eo *gvg[4];
+static Eo *gvg[5];
 
 static void
 running_cb(void *data EINA_UNUSED, const Efl_Event *event)
@@ -41,7 +41,7 @@ running_cb(void *data EINA_UNUSED, const Efl_Event *event)
    double progress = event_running->progress;
 
    int i;
-   for (i = 0; i < 4; i++)
+   for (i = 0; i < 5; i++)
      {
         double frameCnt = (double) (efl_gfx_frame_controller_frame_count_get(gvg[i]) - 1);
         int frame = (int) (frameCnt * progress);
@@ -58,6 +58,9 @@ _on_delete(Ecore_Evas *ee EINA_UNUSED)
 int
 main(void)
 {
+   //Cairo backend is not supported.
+   setenv("ECTOR_BACKEND", "default", 1);
+
    if (!ecore_evas_init())
      return EXIT_FAILURE;
 
@@ -108,6 +111,14 @@ main(void)
    efl_gfx_entity_position_set(vg4, EINA_POSITION2D(200, 0));
    efl_gfx_entity_size_set(vg4, EINA_SIZE2D(200, 200));
    efl_gfx_entity_visible_set(vg4, EINA_TRUE);
+
+   //5
+   Eo* vg5 = gvg[4] = efl_add(EFL_CANVAS_VG_OBJECT_CLASS, evas);
+   snprintf(buf, sizeof(buf), "%s/image_embedded.json", PACKAGE_EXAMPLES_DIR EVAS_VG_FOLDER);
+   efl_file_simple_load(vg5, buf, NULL);
+   efl_gfx_entity_position_set(vg5, EINA_POSITION2D(0, 400));
+   efl_gfx_entity_size_set(vg5, EINA_SIZE2D(200, 200));
+   efl_gfx_entity_visible_set(vg5, EINA_TRUE);
 
    //Play custom animation
    Eo *anim = efl_add(EFL_CANVAS_ANIMATION_CLASS, evas);

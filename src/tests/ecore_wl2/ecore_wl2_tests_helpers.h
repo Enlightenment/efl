@@ -3,11 +3,8 @@
 
 # include <Ecore_Wl2.h>
 
-# define ECORE_WL2_TEST_DISPLAY_SETUP() _setup_display()
-# define ECORE_WL2_TEST_DISPLAY_CONNECT() _connect_display()
-
 static Ecore_Wl2_Display *
-_setup_display(void)
+_display_setup(void)
 {
    Ecore_Wl2_Display *disp;
 
@@ -16,7 +13,7 @@ _setup_display(void)
 }
 
 static Ecore_Wl2_Display *
-_connect_display(void)
+_display_connect(void)
 {
    Ecore_Wl2_Display *disp;
 

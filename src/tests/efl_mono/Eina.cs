@@ -12,7 +12,6 @@ namespace TestSuite
 
 #if EFL_BETA
 
-/*
 class TestEinaBinbuf
 {
     private static readonly byte[] test_string = System.Text.Encoding.UTF8.GetBytes("0123456789ABCDEF");
@@ -309,7 +308,6 @@ class TestEinaBinbuf
         Test.Assert(t.binbuf_return_own_no_longer_own());
     }
 }
-*/
 
 #endif
 

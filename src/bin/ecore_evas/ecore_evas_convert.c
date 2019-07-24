@@ -30,6 +30,7 @@ const Ecore_Getopt optdesc = {
     ECORE_GETOPT_STORE_INT('q', "quality", "define encoding quality in percent."),
     ECORE_GETOPT_STORE_TRUE('c', "compress", "define if data should be compressed."),
     ECORE_GETOPT_STORE_STR('e', "encoding", "define the codec (for TGV files: 'etc1', 'etc2', 'etc1+alpha')"),
+    ECORE_GETOPT_STORE_STR('m', "max-geometry", "define the max size in pixels (WidthxHeight) of any converted image, splitting the image as necessary in a grid pattern ('_XxY' will be appended to the file name)"),
     ECORE_GETOPT_LICENSE('L', "license"),
     ECORE_GETOPT_COPYRIGHT('C', "copyright"),
     ECORE_GETOPT_VERSION('V', "version"),
@@ -40,24 +41,50 @@ const Ecore_Getopt optdesc = {
 
 typedef struct _Save_Job {
    const char *output;
+   const char *extension;
    const char *flags;
    Evas_Object *im;
    int ret;
 } Save_Job;
 
-static Save_Job job = { NULL, NULL, NULL, -1 };
+static Save_Job job = { NULL, NULL, NULL, NULL, -1 };
+static unsigned int width = 0, height = 0;
+static unsigned int x = 0, y = 0;
+static int image_w, image_h;
 
 static void
 _save_do(void *data EINA_UNUSED)
 {
+   const char *output = job.output;
+
    job.ret = 0;
-   if (!evas_object_image_save(job.im, job.output, NULL, job.flags))
+   if (width || height)
+     {
+        Eina_Slstr *str;
+
+        str = eina_slstr_printf("%s_%ux%u.%s", output, x / width, y / height, job.extension);
+        output = str;
+
+        evas_object_image_load_region_set(job.im, x, y, width, height);
+        x += width;
+
+        if ((int)x > image_w)
+          {
+             y += height;
+             x = 0;
+          }
+
+     }
+
+   fprintf(stderr, "Saving image '%s'\n", output);
+   if (!evas_object_image_save(job.im, output, NULL, job.flags))
      {
         EINA_LOG_ERR("Could not convert file to '%s'.", job.output);
         job.ret = 1;
      }
 
-   ecore_main_loop_quit();
+   if (!width || ((int)y > image_h)) ecore_main_loop_quit();
+   else ecore_job_add(_save_do, NULL);
 }
 
 #ifndef NO_SIGNAL
@@ -81,6 +108,7 @@ main(int argc, char *argv[])
    int quality = -1;
    int r = -1;
    char *encoding = NULL;
+   char *maxgeometry = NULL;
    Eina_Bool compress = 1;
    Eina_Bool quit_option = EINA_FALSE;
    Eina_Strbuf *flags = NULL;
@@ -89,6 +117,7 @@ main(int argc, char *argv[])
      ECORE_GETOPT_VALUE_INT(quality),
      ECORE_GETOPT_VALUE_BOOL(compress),
      ECORE_GETOPT_VALUE_STR(encoding),
+     ECORE_GETOPT_VALUE_STR(maxgeometry),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
      ECORE_GETOPT_VALUE_BOOL(quit_option),
@@ -114,6 +143,20 @@ main(int argc, char *argv[])
      {
         EINA_LOG_ERR("File not correctly specified.");
         goto end;
+     }
+
+   if (maxgeometry)
+     {
+        if (sscanf(maxgeometry, "%ux%u", &width, &height) != 2)
+          {
+             EINA_LOG_ERR("max-geometry should be specified as WidthxHeight, like 1920x1280.");
+             goto end;
+          }
+        if (width == 0 || height == 0)
+          {
+             EINA_LOG_ERR("max-geometry width and height must be greater than 0.");
+             goto end;
+          }
      }
 
    ee = ecore_evas_buffer_new(1, 1);
@@ -142,10 +185,21 @@ main(int argc, char *argv[])
         goto end;
      }
 
+   evas_object_image_size_get(im, &image_w, &image_h);
+
 #ifndef NO_SIGNAL
    // Brutal way of
    signal(SIGINT, _sigint);
 #endif
+
+   // Find the extension and remove it
+   if (width || height)
+     {
+        char *tmp = strrchr(argv[arg_index + 1], '.');
+
+        if (tmp) *tmp = '\0';
+        if (tmp) job.extension = tmp + 1;
+     }
 
    job.output = argv[arg_index + 1];
    job.flags = eina_strbuf_string_get(flags);
