@@ -15,12 +15,8 @@
 
 #define MY_CLASS_NAME "Efl.Ui.List"
 
-typedef struct {
-
-} Efl_Ui_List_Data;
-
-EOLIAN static Eo *
-_efl_ui_list_efl_object_constructor(Eo *obj, Efl_Ui_List_Data *pd EINA_UNUSED)
+static Eo *
+_efl_ui_list_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 

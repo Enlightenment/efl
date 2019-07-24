@@ -1,7 +1,7 @@
 class @beta Efl.Ui.Grid extends Efl.Ui.Collection
 {
    [[Simple grid widget with Pack interface.]]
-
+   data: null;
    implements {
       Efl.Object.constructor;
    }

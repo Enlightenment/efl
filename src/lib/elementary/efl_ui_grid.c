@@ -15,12 +15,8 @@
 
 #define MY_CLASS_NAME "Efl.Ui.Grid"
 
-typedef struct {
-
-} Efl_Ui_Grid_Data;
-
 EOLIAN static Eo *
-_efl_ui_grid_efl_object_constructor(Eo *obj, Efl_Ui_Grid_Data *pd EINA_UNUSED)
+_efl_ui_grid_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 

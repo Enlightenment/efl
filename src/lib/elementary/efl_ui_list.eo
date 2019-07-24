@@ -1,6 +1,7 @@
 class @beta Efl.Ui.List extends Efl.Ui.Collection
 {
    [[Simple list widget with Pack interface.]]
+   data: null;
    implements {
       Efl.Object.constructor;
    }
