@@ -1,5 +1,5 @@
 
-class @beta Efl.Ui.List_Placeholder_Item extends Efl.Ui.List_Item implements Efl.Content
+class @beta Efl.Ui.List_Placeholder_Item extends Efl.Ui.Item implements Efl.Content
 {
    [[List Placeholder Item class. This item have only one swallow space,
      thus user can decorate item by filling the swallow with

@@ -8,7 +8,6 @@
 
 #include <Efl_Ui.h>
 #include "elm_priv.h"
-#include "efl_ui_list_item_private.h"
 #include "efl_ui_item_private.h"
 
 #define MY_CLASS      EFL_UI_LIST_CLASS

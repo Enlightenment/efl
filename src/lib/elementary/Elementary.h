@@ -334,7 +334,6 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_item_part_extra.eo.h>
 # include <efl_ui_item_part_content.eo.h>
 # include <efl_ui_item.eo.h>
-# include <efl_ui_list_item.eo.h>
 # include <efl_ui_list_default_item.eo.h>
 # include <efl_ui_list_placeholder_item.eo.h>
 # include <efl_ui_list.eo.h>
