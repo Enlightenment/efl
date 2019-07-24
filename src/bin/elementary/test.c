@@ -1387,33 +1387,39 @@ efl_main(void *data EINA_UNUSED,
    /* if called with a single argument try to autorun a test with
     * the same name as the given param
     * ex:  elementary_test "Box Vert 2" */
-   if (eina_array_count(arge->argv) == 2)
+   if (eina_array_count(arge->argv) >= 2)
      {
-        if ((!strcmp(eina_array_data_get(arge->argv, 1), "--help")) ||
-            (!strcmp(eina_array_data_get(arge->argv, 1), "-help")) ||
-            (!strcmp(eina_array_data_get(arge->argv, 1), "-h")))
+        unsigned int i;
+        for (i = 1; i < eina_array_count(arge->argv); i++)
           {
-             efl_loop_quit(ev->object,
-                           eina_value_string_init("Usages:\n"
-                                                  "$ elementary_test\n"
-                                                  "$ elementary_test --test-win-only [TEST_NAME]\n"
-                                                  "$ elementary_test -to [TEST_NAME]\n\n"
-                                                  "Examples:\n"
-                                                  "$ elementary_test -to Button\n\n"));
-             return ;
+             char *arg = eina_array_data_get(arge->argv, i);
+             if ((!strcmp(arg, "--help")) ||
+                 (!strcmp(arg, "-help")) ||
+                 (!strcmp(arg, "-h")))
+               {
+                  efl_loop_quit(ev->object,
+                                eina_value_string_init("Usages:\n"
+                                                       "$ elementary_test\n"
+                                                       "$ elementary_test --test-win-only [TEST_NAME]\n"
+                                                       "$ elementary_test -to [TEST_NAME]\n\n"
+                                                       "Examples:\n"
+                                                       "$ elementary_test -to Button\n\n"));
+                  return ;
+               }
+             /* Just a workaround to make the shot module more
+              * useful with elementary test. */
+             if ((!strcmp(arg, "--test-win-only")) ||
+                 (!strcmp(arg, "-to")))
+               {
+                  test_win_only = EINA_TRUE;
+               }
+             else if ((i == eina_array_count(arge->argv) - 1) && (arg[0] != '-'))
+               autorun = arg;
+
           }
-        autorun = eina_array_data_get(arge->argv, 1);
      }
    else if (eina_array_count(arge->argv) == 3)
      {
-        /* Just a workaround to make the shot module more
-         * useful with elementary test. */
-        if ((!strcmp(eina_array_data_get(arge->argv, 1), "--test-win-only")) ||
-            (!strcmp(eina_array_data_get(arge->argv, 1), "-to")))
-          {
-             test_win_only = EINA_TRUE;
-             autorun = eina_array_data_get(arge->argv, 2);
-          }
      }
 
    my_win_main(autorun, test_win_only); /* create main window */
