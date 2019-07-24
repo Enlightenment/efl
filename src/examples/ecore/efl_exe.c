@@ -1,5 +1,3 @@
-#define EFL_BETA_API_SUPPORT
-
 #include <stdio.h>
 #include <string.h>
 
@@ -62,7 +60,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev)
    efl_unref(env);
 
    char *buf2 = "sample-input\n";
-   Eina_Slice slice = { strlen(buf2), buf2 };
+   Eina_Slice slice = { strlen(buf2), .mem = buf2 };
    Eina_Error err = efl_io_writer_write(obj, &slice, NULL);
    if (!err) printf("--- WRITE [%p] [%s] ok %i bytes\n", obj, efl_core_command_line_command_get(obj), (int)slice.len);
 }
