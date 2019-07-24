@@ -22,8 +22,8 @@ item_container_teardown()
 
 EFL_START_TEST(finalizer_check)
 {
-   Eo *grid = efl_new(EFL_UI_GRID_POSITION_MANAGER_CLASS);
-   Eo *list = efl_new(EFL_UI_GRID_POSITION_MANAGER_CLASS);
+   Eo *grid = efl_new(EFL_UI_POSITION_MANAGER_GRID_CLASS);
+   Eo *list = efl_new(EFL_UI_POSITION_MANAGER_GRID_CLASS);
    Eo *random_obj = efl_add(EFL_UI_BUTTON_CLASS, win);
    Eo *o;
 

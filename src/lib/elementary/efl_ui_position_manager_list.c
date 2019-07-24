@@ -8,9 +8,9 @@
 #include "elm_widget.h"
 #include "elm_priv.h"
 
-#define MY_CLASS      EFL_UI_LIST_POSITION_MANAGER_CLASS
+#define MY_CLASS      EFL_UI_POSITION_MANAGER_LIST_CLASS
 #define MY_DATA_GET(obj, pd) \
-  Efl_Ui_List_Position_Manager_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+  Efl_Ui_Position_Manager_List_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
 typedef struct {
    Eina_Accessor *content_acc, *size_acc;
@@ -26,7 +26,7 @@ typedef struct {
    struct {
       unsigned int start_id, end_id;
    } prev_run;
-} Efl_Ui_List_Position_Manager_Data;
+} Efl_Ui_Position_Manager_List_Data;
 
 /*
  * The here used cache is a sum map
@@ -37,7 +37,7 @@ typedef struct {
  */
 
 static void
-cache_require(Eo *obj EINA_UNUSED, Efl_Ui_List_Position_Manager_Data *pd)
+cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
 {
    unsigned int i;
 
@@ -78,7 +78,7 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_List_Position_Manager_Data *pd)
 }
 
 static void
-cache_invalidate(Eo *obj EINA_UNUSED, Efl_Ui_List_Position_Manager_Data *pd)
+cache_invalidate(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
 {
    if (pd->size_cache)
      free(pd->size_cache);
@@ -86,14 +86,14 @@ cache_invalidate(Eo *obj EINA_UNUSED, Efl_Ui_List_Position_Manager_Data *pd)
 }
 
 static inline int
-cache_access(Eo *obj EINA_UNUSED, Efl_Ui_List_Position_Manager_Data *pd, unsigned int idx)
+cache_access(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, unsigned int idx)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(idx <= pd->size, 0);
    return pd->size_cache[idx];
 }
 
 static void
-recalc_absolut_size(Eo *obj, Efl_Ui_List_Position_Manager_Data *pd)
+recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
 {
    Eina_Size2D min_size = EINA_SIZE2D(-1, -1);
    cache_require(obj, pd);
@@ -108,7 +108,7 @@ recalc_absolut_size(Eo *obj, Efl_Ui_List_Position_Manager_Data *pd)
           pd->abs_size.w = MAX(cache_access(obj, pd, pd->size), pd->abs_size.w);
      }
 
-   efl_event_callback_call(obj, EFL_UI_ITEM_POSITION_MANAGER_EVENT_CONTENT_SIZE_CHANGED, &pd->abs_size);
+   efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_SIZE_CHANGED, &pd->abs_size);
 
    if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
      {
@@ -119,11 +119,11 @@ recalc_absolut_size(Eo *obj, Efl_Ui_List_Position_Manager_Data *pd)
         min_size.h = pd->maximum_min_size;
      }
 
-   efl_event_callback_call(obj, EFL_UI_ITEM_POSITION_MANAGER_EVENT_CONTENT_MIN_SIZE_CHANGED, &min_size);
+   efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_MIN_SIZE_CHANGED, &min_size);
 }
 
 static inline void
-vis_change_segment(Efl_Ui_List_Position_Manager_Data *pd, int a, int b, Eina_Bool flag)
+vis_change_segment(Efl_Ui_Position_Manager_List_Data *pd, int a, int b, Eina_Bool flag)
 {
    for (int i = MIN(a, b); i < MAX(a, b); ++i)
      {
@@ -138,7 +138,7 @@ vis_change_segment(Efl_Ui_List_Position_Manager_Data *pd, int a, int b, Eina_Boo
 }
 
 static void
-position_content(Eo *obj EINA_UNUSED, Efl_Ui_List_Position_Manager_Data *pd)
+position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
 {
    Eina_Rect geom;
    Eina_Size2D space_size;
@@ -244,7 +244,7 @@ _rebuild_job_cb(void *data, Eina_Value v EINA_UNUSED, const Eina_Future *f EINA_
 }
 
 static void
-schedule_recalc_absolut_size(Eo *obj, Efl_Ui_List_Position_Manager_Data *pd)
+schedule_recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
 {
    if (pd->rebuild_absolut_size) return;
 
@@ -253,7 +253,7 @@ schedule_recalc_absolut_size(Eo *obj, Efl_Ui_List_Position_Manager_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_list_position_manager_efl_ui_item_position_manager_data_access_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Position_Manager_Data *pd, Eina_Accessor *content_access, Eina_Accessor *size_access, int size)
+_efl_ui_position_manager_list_efl_ui_position_manager_entity_data_access_set(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Eina_Accessor *content_access, Eina_Accessor *size_access, int size)
 {
    cache_invalidate(obj, pd);
    pd->content_acc = content_access;
@@ -262,7 +262,7 @@ _efl_ui_list_position_manager_efl_ui_item_position_manager_data_access_set(Eo *o
 }
 
 EOLIAN static void
-_efl_ui_list_position_manager_efl_ui_item_position_manager_viewport_set(Eo *obj, Efl_Ui_List_Position_Manager_Data *pd, Eina_Rect size)
+_efl_ui_position_manager_list_efl_ui_position_manager_entity_viewport_set(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, Eina_Rect size)
 {
    pd->viewport = size;
 
@@ -271,7 +271,7 @@ _efl_ui_list_position_manager_efl_ui_item_position_manager_viewport_set(Eo *obj,
 }
 
 EOLIAN static void
-_efl_ui_list_position_manager_efl_ui_item_position_manager_scroll_position_set(Eo *obj, Efl_Ui_List_Position_Manager_Data *pd, double x, double y)
+_efl_ui_position_manager_list_efl_ui_position_manager_entity_scroll_position_set(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, double x, double y)
 {
    pd->scroll_position.x = x;
    pd->scroll_position.y = y;
@@ -279,7 +279,7 @@ _efl_ui_list_position_manager_efl_ui_item_position_manager_scroll_position_set(E
 }
 
 EOLIAN static void
-_efl_ui_list_position_manager_efl_ui_item_position_manager_item_added(Eo *obj EINA_UNUSED, Efl_Ui_List_Position_Manager_Data *pd, int added_index EINA_UNUSED, Efl_Gfx_Entity *subobj)
+_efl_ui_position_manager_list_efl_ui_position_manager_entity_item_added(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, int added_index EINA_UNUSED, Efl_Gfx_Entity *subobj)
 {
    if (pd->size == 0)
      {
@@ -296,7 +296,7 @@ _efl_ui_list_position_manager_efl_ui_item_position_manager_item_added(Eo *obj EI
 }
 
 EOLIAN static void
-_efl_ui_list_position_manager_efl_ui_item_position_manager_item_removed(Eo *obj EINA_UNUSED, Efl_Ui_List_Position_Manager_Data *pd, int removed_index EINA_UNUSED, Efl_Gfx_Entity *subobj)
+_efl_ui_position_manager_list_efl_ui_position_manager_entity_item_removed(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, int removed_index EINA_UNUSED, Efl_Gfx_Entity *subobj)
 {
    pd->size --;
    if (subobj)
@@ -308,7 +308,7 @@ _efl_ui_list_position_manager_efl_ui_item_position_manager_item_removed(Eo *obj 
 }
 
 EOLIAN static Eina_Rect
-_efl_ui_list_position_manager_efl_ui_item_position_manager_position_single_item(Eo *obj, Efl_Ui_List_Position_Manager_Data *pd, int idx)
+_efl_ui_position_manager_list_efl_ui_position_manager_entity_position_single_item(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, int idx)
 {
    Eina_Rect geom;
    Eina_Size2D space_size;
@@ -349,14 +349,14 @@ _efl_ui_list_position_manager_efl_ui_item_position_manager_position_single_item(
 }
 
 EOLIAN static void
-_efl_ui_list_position_manager_efl_ui_item_position_manager_item_size_changed(Eo *obj, Efl_Ui_List_Position_Manager_Data *pd, int start_id EINA_UNUSED, int end_id EINA_UNUSED)
+_efl_ui_position_manager_list_efl_ui_position_manager_entity_item_size_changed(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, int start_id EINA_UNUSED, int end_id EINA_UNUSED)
 {
    cache_invalidate(obj, pd);
    schedule_recalc_absolut_size(obj, pd);
 }
 
 EOLIAN static void
-_efl_ui_list_position_manager_efl_ui_layout_orientable_orientation_set(Eo *obj EINA_UNUSED, Efl_Ui_List_Position_Manager_Data *pd, Efl_Ui_Layout_Orientation dir)
+_efl_ui_position_manager_list_efl_ui_layout_orientable_orientation_set(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Efl_Ui_Layout_Orientation dir)
 {
    pd->dir = dir;
    //in order to reset the state of the visible items, just hide everything and set the old segment accordingly
@@ -371,13 +371,13 @@ _efl_ui_list_position_manager_efl_ui_layout_orientable_orientation_set(Eo *obj E
 }
 
 EOLIAN static Efl_Ui_Layout_Orientation
-_efl_ui_list_position_manager_efl_ui_layout_orientable_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_List_Position_Manager_Data *pd)
+_efl_ui_position_manager_list_efl_ui_layout_orientable_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
 {
    return pd->dir;
 }
 
 EOLIAN static void
-_efl_ui_list_position_manager_efl_object_destructor(Eo *obj, Efl_Ui_List_Position_Manager_Data *pd)
+_efl_ui_position_manager_list_efl_object_destructor(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
 {
    if (pd->rebuild_absolut_size)
      eina_future_cancel(pd->rebuild_absolut_size);
@@ -386,4 +386,4 @@ _efl_ui_list_position_manager_efl_object_destructor(Eo *obj, Efl_Ui_List_Positio
 }
 
 
-#include "efl_ui_list_position_manager.eo.c"
+#include "efl_ui_position_manager_list.eo.c"

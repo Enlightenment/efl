@@ -47,7 +47,7 @@ class @beta Efl.Ui.Item_Container extends Efl.Ui.Layout_Base implements
       @property position_manager {
          [[Position manager object that handles placement of items.]]
          values {
-            position_manager : Efl.Ui.Item_Position_Manager @owned; [[The objects ownership is passed to the item container.]]
+            position_manager : Efl.Ui.Position_Manager.Entity @owned; [[The objects ownership is passed to the item container.]]
          }
       }
    }

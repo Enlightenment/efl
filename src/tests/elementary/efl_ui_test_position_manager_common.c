@@ -71,7 +71,7 @@ _initial_setup(void)
    inner_size_acc.lock = _lock_cb;
    inner_size_acc.clone = _clone_cb;
 
-   efl_ui_item_position_manager_data_access_set(position_manager,
+   efl_ui_position_manager_entity_data_access_set(position_manager,
       eina_array_accessor_new(arr_obj),
       &inner_size_acc, 0);
 }
@@ -87,7 +87,7 @@ _add_item(Eo *obj, Eina_Size2D size)
    eina_inarray_push(arr_size, &size);
 
 
-   efl_ui_item_position_manager_item_added(position_manager, idx, obj);
+   efl_ui_position_manager_entity_item_added(position_manager, idx, obj);
 
    return idx;
 }
@@ -122,15 +122,15 @@ EFL_START_TEST(no_crash1)
    _initial_setup();
 
    //try to resize the viewport while we have no item
-   efl_ui_item_position_manager_viewport_set(position_manager, EINA_RECT(20, 20, 200, 200));
+   efl_ui_position_manager_entity_viewport_set(position_manager, EINA_RECT(20, 20, 200, 200));
    _iterate_a_few();
-   efl_ui_item_position_manager_viewport_set(position_manager, EINA_RECT(20, 20, 0, 0));
+   efl_ui_position_manager_entity_viewport_set(position_manager, EINA_RECT(20, 20, 0, 0));
    _iterate_a_few();
    _add_item(efl_add(EFL_UI_GRID_DEFAULT_ITEM_CLASS, win), EINA_SIZE2D(20, 20));
    _iterate_a_few();
-   efl_ui_item_position_manager_viewport_set(position_manager, EINA_RECT(20, 20, 200, 200));
+   efl_ui_position_manager_entity_viewport_set(position_manager, EINA_RECT(20, 20, 200, 200));
    _iterate_a_few();
-   efl_ui_item_position_manager_viewport_set(position_manager, EINA_RECT(20, 20, 0, 0));
+   efl_ui_position_manager_entity_viewport_set(position_manager, EINA_RECT(20, 20, 0, 0));
    _iterate_a_few();
 }
 EFL_END_TEST
@@ -140,15 +140,15 @@ EFL_START_TEST(no_crash2)
    _initial_setup();
 
    //try to resize the viewport while we have no item
-   efl_ui_item_position_manager_viewport_set(position_manager, EINA_RECT(20, 20, 200, 200));
+   efl_ui_position_manager_entity_viewport_set(position_manager, EINA_RECT(20, 20, 200, 200));
    _iterate_a_few();
-   efl_ui_item_position_manager_viewport_set(position_manager, EINA_RECT(20, 20, 0, 0));
+   efl_ui_position_manager_entity_viewport_set(position_manager, EINA_RECT(20, 20, 0, 0));
    _iterate_a_few();
    _add_item(NULL, EINA_SIZE2D(20, 20));
    _iterate_a_few();
-   efl_ui_item_position_manager_viewport_set(position_manager, EINA_RECT(20, 20, 0, 0));
+   efl_ui_position_manager_entity_viewport_set(position_manager, EINA_RECT(20, 20, 0, 0));
    _iterate_a_few();
-   efl_ui_item_position_manager_viewport_set(position_manager, EINA_RECT(20, 20, 200, 200));
+   efl_ui_position_manager_entity_viewport_set(position_manager, EINA_RECT(20, 20, 200, 200));
    _iterate_a_few();
    _update_item(0, efl_add(EFL_UI_GRID_DEFAULT_ITEM_CLASS, win), EINA_SIZE2D(20, 20));
    _iterate_a_few();
@@ -166,14 +166,14 @@ EFL_START_TEST(viewport_newsize_event_result)
 {
    Eina_Size2D size = EINA_SIZE2D(-2, -2), min_size = EINA_SIZE2D(-2, -2);
    efl_event_callback_add(position_manager,
-      EFL_UI_ITEM_POSITION_MANAGER_EVENT_CONTENT_SIZE_CHANGED, _content_size_cb, &size);
+      EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_SIZE_CHANGED, _content_size_cb, &size);
    efl_event_callback_add(position_manager,
-      EFL_UI_ITEM_POSITION_MANAGER_EVENT_CONTENT_MIN_SIZE_CHANGED, _content_size_cb, &min_size);
+      EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_MIN_SIZE_CHANGED, _content_size_cb, &min_size);
    _initial_setup();
    _add_item(efl_add(EFL_UI_GRID_DEFAULT_ITEM_CLASS, win), EINA_SIZE2D(20, 20));
    _add_item(efl_add(EFL_UI_GRID_DEFAULT_ITEM_CLASS, win), EINA_SIZE2D(20, 30));
 
-   efl_ui_item_position_manager_viewport_set(position_manager, EINA_RECT(0, 0, 200, 200));
+   efl_ui_position_manager_entity_viewport_set(position_manager, EINA_RECT(0, 0, 200, 200));
    _iterate_a_few();
 
    ck_assert_int_ne(size.w, -2);

@@ -1,5 +1,5 @@
 
-interface @beta Efl.Ui.Item_Position_Manager extends Efl.Ui.Layout_Orientable
+interface @beta Efl.Ui.Position_Manager.Entity extends Efl.Ui.Layout_Orientable
 {
    [[
      This abstracts the basic placement of items in a not defined form under a viewport.

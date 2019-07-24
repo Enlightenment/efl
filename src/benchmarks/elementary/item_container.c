@@ -71,7 +71,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE)
                 );
 
-   list = efl_new(EFL_UI_LIST_POSITION_MANAGER_CLASS);
+   list = efl_new(EFL_UI_POSITION_MANAGER_LIST_CLASS);
    item_container = efl_add(EFL_UI_ITEM_CONTAINER_CLASS, win,
                       efl_ui_item_container_position_manager_set(efl_added, list));
    efl_content_set(win, item_container);

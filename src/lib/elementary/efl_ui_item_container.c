@@ -25,7 +25,7 @@ typedef struct {
    Efl_Ui_Select_Mode mode;
    Efl_Ui_Layout_Orientation dir;
    Eina_Size2D content_min_size;
-   Efl_Ui_Item_Position_Manager *pos_man;
+   Efl_Ui_Position_Manager_Entity *pos_man;
    struct {
       Eina_Accessor pass_on;
       unsigned int last_index;
@@ -217,7 +217,7 @@ _pan_viewport_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    MY_DATA_GET(data, pd);
    Eina_Rect rect = efl_ui_scrollable_viewport_geometry_get(data);
 
-   efl_ui_item_position_manager_viewport_set(pd->pos_man, rect);
+   efl_ui_position_manager_entity_viewport_set(pd->pos_man, rect);
 }
 
 static void
@@ -233,7 +233,7 @@ _pan_position_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    if (max.y > 0.0)
      rpos.y = (double)pos.y/(double)max.y;
 
-   efl_ui_item_position_manager_scroll_position_set(pd->pos_man, rpos.x, rpos.y);
+   efl_ui_position_manager_entity_scroll_position_set(pd->pos_man, rpos.x, rpos.y);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(pan_events_cb,
@@ -253,7 +253,7 @@ _item_scroll_internal(Eo *obj EINA_UNUSED,
 
    if (!pd->smanager) return;
 
-   ipos = efl_ui_item_position_manager_position_single_item(pd->pos_man, eina_list_data_idx(pd->items, item));
+   ipos = efl_ui_position_manager_entity_position_single_item(pd->pos_man, eina_list_data_idx(pd->items, item));
    view = efl_ui_scrollable_viewport_geometry_get(pd->smanager);
    vpos = efl_ui_scrollable_content_pos_get(pd->smanager);
 
@@ -492,7 +492,7 @@ _hints_changed_cb(void *data, const Efl_Event *ev)
    MY_DATA_GET(obj, pd);
    int idx = eina_list_data_idx(pd->items, ev->object);
 
-   efl_ui_item_position_manager_item_size_changed(pd->pos_man, idx, idx);
+   efl_ui_position_manager_entity_item_size_changed(pd->pos_man, idx, idx);
 }
 
 static void
@@ -576,7 +576,7 @@ unregister_item(Eo *obj, Efl_Ui_Item_Container_Data *pd, Efl_Ui_Item *item)
    pd->items = eina_list_remove(pd->items, item);
    pd->selected = eina_list_remove(pd->selected, item);
    efl_event_callback_array_del(item, active_item(), obj);
-   efl_ui_item_position_manager_item_removed(pd->pos_man, id, item);
+   efl_ui_position_manager_entity_item_removed(pd->pos_man, id, item);
 
    return EINA_TRUE;
 }
@@ -590,7 +590,7 @@ update_pos_man(Eo *obj EINA_UNUSED, Efl_Ui_Item_Container_Data *pd, Efl_Gfx_Enti
         pd->obj_accessor.last_index = id;
         pd->obj_accessor.current = pd->items;
      }
-   efl_ui_item_position_manager_item_added(pd->pos_man, id, subobj);
+   efl_ui_position_manager_entity_item_added(pd->pos_man, id, subobj);
 }
 
 EOLIAN static Eina_Bool
@@ -744,20 +744,20 @@ _pos_content_min_size_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(pos_manager_cbs,
-  {EFL_UI_ITEM_POSITION_MANAGER_EVENT_CONTENT_SIZE_CHANGED, _pos_content_size_changed_cb},
-  {EFL_UI_ITEM_POSITION_MANAGER_EVENT_CONTENT_MIN_SIZE_CHANGED, _pos_content_min_size_changed_cb},
+  {EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_SIZE_CHANGED, _pos_content_size_changed_cb},
+  {EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_MIN_SIZE_CHANGED, _pos_content_min_size_changed_cb},
 )
 
 EOLIAN static void
-_efl_ui_item_container_position_manager_set(Eo *obj, Efl_Ui_Item_Container_Data *pd, Efl_Ui_Item_Position_Manager *layouter)
+_efl_ui_item_container_position_manager_set(Eo *obj, Efl_Ui_Item_Container_Data *pd, Efl_Ui_Position_Manager_Entity *layouter)
 {
    if (layouter)
-     EINA_SAFETY_ON_FALSE_RETURN(efl_isa(layouter, EFL_UI_ITEM_POSITION_MANAGER_INTERFACE));
+     EINA_SAFETY_ON_FALSE_RETURN(efl_isa(layouter, EFL_UI_POSITION_MANAGER_ENTITY_INTERFACE));
 
    if (pd->pos_man)
      {
         efl_event_callback_array_del(pd->pos_man, pos_manager_cbs(), obj);
-        efl_ui_item_position_manager_data_access_set(pd->pos_man, NULL, NULL, 0);
+        efl_ui_position_manager_entity_data_access_set(pd->pos_man, NULL, NULL, 0);
         efl_del(pd->pos_man);
      }
    pd->pos_man = layouter;
@@ -765,13 +765,13 @@ _efl_ui_item_container_position_manager_set(Eo *obj, Efl_Ui_Item_Container_Data 
      {
         efl_parent_set(pd->pos_man, obj);
         efl_event_callback_array_add(pd->pos_man, pos_manager_cbs(), obj);
-        efl_ui_item_position_manager_data_access_set(pd->pos_man, &pd->obj_accessor.pass_on, &pd->size_accessor, eina_list_count(pd->items));
-        efl_ui_item_position_manager_viewport_set(pd->pos_man, efl_ui_scrollable_viewport_geometry_get(obj));
+        efl_ui_position_manager_entity_data_access_set(pd->pos_man, &pd->obj_accessor.pass_on, &pd->size_accessor, eina_list_count(pd->items));
+        efl_ui_position_manager_entity_viewport_set(pd->pos_man, efl_ui_scrollable_viewport_geometry_get(obj));
         efl_ui_layout_orientation_set(pd->pos_man, pd->dir);
      }
 }
 
-EOLIAN static Efl_Ui_Item_Position_Manager*
+EOLIAN static Efl_Ui_Position_Manager_Entity*
 _efl_ui_item_container_position_manager_get(const Eo *obj EINA_UNUSED, Efl_Ui_Item_Container_Data *pd)
 {
   return pd->pos_man;
