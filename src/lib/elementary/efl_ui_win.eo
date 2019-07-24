@@ -1,6 +1,6 @@
 enum @beta Efl.Ui.Win_Type
 {
-   [[Defines the types of window that can be created
+   [[Defines the types of window that can be created.
 
      These are hints set on a window so that a running Window Manager knows
      how the window should be handled and/or what kind of decorations it
@@ -9,7 +9,7 @@ enum @beta Efl.Ui.Win_Type
      Currently, only the X11 backed engines use them.
    ]]
 
-   unknown = -1, [[Default, unknown, type]]
+   unknown = -1, [[Default, unknown type.]]
    basic, [[A normal window. Indicates a normal, top-level window. Almost every
             window will be created with this type.]]
    dialog_basic, [[Used for simple dialog windows.]]
@@ -17,23 +17,23 @@ enum @beta Efl.Ui.Win_Type
               desktop icons.]]
    dock, [[The window is used as a dock or panel. Usually would be kept on top
            of any other window by the Window Manager.]]
-   toolbar, [[The window is used to hold a floating toolbar, or similar.]]
-   menu, [[Similar to @.toolbar.]]
+   toolbar, [[The window is used to hold a floating toolbar or similar.]]
+   menu, [[Similar to @Efl.Ui.Win_Type.toolbar.]]
    utility, [[A persistent utility window, like a toolbox or palette.]]
    splash, [[Splash window for a starting up application.]]
    dropdown_menu, [[The window is a dropdown menu, as when an  entry in a
-                    menubar is clicked.
-                    This hint exists for completion only, as the EFL way of
+                    menu bar is clicked.
+                    This hint exists for completeness' sake, as the EFL way of
                     implementing a menu would not normally use a separate
                     window for its contents.]]
-   popup_menu, [[Like @.dropdown_menu, but for the menu triggered by
+   popup_menu, [[Like @Efl.Ui.Win_Type.dropdown_menu, but for the menu triggered by
                  right-clicking an object.]]
    tooltip, [[The window is a tooltip. A short piece of explanatory text that
               typically appear after the mouse cursor hovers over an object
-              for a while. Typically not very commonly used in the EFL.]]
+              for a while. Not commonly used in the EFL.]]
    notification, [[A notification window, like a warning about battery life or
                    a new E-Mail received.]]
-   combo, [[A window holding the contents of a combo box. Not usually used in
+   combo, [[A window holding the contents of a combo box. Not commonly used in
             the EFL.]]
    dnd, [[Internal use.]]
    inlined_image, [[Internal use.]]
@@ -73,27 +73,27 @@ enum @beta Efl.Ui.Win_Keyboard_Mode
 
 enum Efl.Ui.Win_Indicator_Mode
 {
-   [[Defines the type indicator that can be shown
+   [[Defines the type indicator that can be shown.
 
       @since 1.22
    ]]
-   off, [[Request to deactivate the indicator]]
+   off, [[Request to deactivate the indicator.]]
    bg_opaque, [[The indicator icon is opaque, as is the indicator background.
                 The content of window is located at the end of the indicator.
-                The area of indicator and window content are not overlapped]]
+                The area of indicator and window content are not overlapped.]]
    bg_transparent, [[The icon of indicator is opaque, but the background is transparent.
                      The content of window is located under the indicator in Z-order.
-                     The area of indicator and window content are overlapped]]
+                     The area of indicator and window content are overlapped.]]
    hidden [[The indicator is hidden so user can see only the content of window such as in video mode.
             If user flicks the upper side of window, the indicator is shown temporarily.]]
 }
 
 enum @beta Efl.Ui.Win_Modal_Mode
 {
-   [[Defines the mode of a modal window]]
+   [[Defines the mode of a modal window.]]
 
-   none, [[The window is not modal window.]]
-   modal [[The window is modal window.]]
+   none, [[The window is not a modal window.]]
+   modal [[The window is a modal window.]]
 }
 
 enum @beta Efl.Ui.Win_Urgent_Mode
@@ -106,7 +106,7 @@ enum @beta Efl.Ui.Win_Urgent_Mode
 
 enum Efl.Ui.Win_Move_Resize_Mode
 {
-   [[Define the move or resize mode of window.
+   [[Define the move or resize mode of a window.
 
      The user can request the display server to start moving or resizing
      the window by combining these modes. However only limited combinations
@@ -140,7 +140,7 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
                   Efl.Text, Efl.Config,
                   Efl.Ui.Widget_Focus_Manager, Efl.Ui.Focus.Manager_Window_Root
 {
-   [[Efl UI window class
+   [[Efl UI window class.
 
      @since 1.22
    ]]
