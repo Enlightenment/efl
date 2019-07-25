@@ -1,7 +1,3 @@
-priv_eo_files = [
-   'test_efl_ui_item_container_list.eo',
-]
-
 efl_ui_suite_behavior_test_files = files([
   'efl_test_pack.c',
   'efl_test_pack_linear.c',
@@ -23,20 +19,6 @@ efl_ui_suite_behavior_src = files([
 ]) + efl_ui_suite_behavior_test_files
 
 test_generator = find_program('generator.py')
-
-
-priv_eo_file_target = []
-foreach eo_file : priv_eo_files
-  priv_eo_file_target += custom_target('eolian_gen_' + eo_file,
-    input : eo_file,
-    output : [eo_file + '.h'],
-    depfile : eo_file + '.d',
-    command : eolian_gen + [ '-I', meson.current_source_dir(), eolian_include_directories,
-                           '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
-                           '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
-                           '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
-                           '-gchd', '@INPUT@'])
-endforeach
 
 generated_test_parts = custom_target('generate_test_suite',
   input: efl_ui_suite_behavior_test_files,
