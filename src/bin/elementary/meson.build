@@ -156,6 +156,7 @@ elementary_test_src = [
   'test_gesture_framework.c',
   'test_ui_tab_pager.c',
   'test_ui_relative_layout.c',
+  'test_ui_item_container.c',
   'test.h'
 ]
 

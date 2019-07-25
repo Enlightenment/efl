@@ -86,4 +86,13 @@ foreach example : examples
   )
 endforeach
 
+examples = [
+  'efl_exe',
+  'efl_thread',
+]
+
+foreach example : examples
+  executable(example, example + '.c', dependencies: [eina, ecore, ecore_con])
+endforeach
+
 #  'ecore_imf_example',

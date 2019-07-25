@@ -119,6 +119,7 @@ examples = [
   'efl_ui_theme_example_02',
   'efl_ui_slideshow_example',
   'efl_ui_radio_example_01',
+  'efl_ui_grid_example_1'
 ]
 
 foreach example : examples

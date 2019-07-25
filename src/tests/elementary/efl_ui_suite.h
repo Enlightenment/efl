@@ -43,6 +43,9 @@ void efl_ui_test_slider(TCase *tc);
 void efl_ui_test_win(TCase *tc);
 void efl_ui_test_spin(TCase *tc);
 void efl_ui_test_spin_button(TCase *tc);
+void efl_ui_test_item_container(TCase *tc);
+void efl_ui_test_list_container(TCase *tc);
+void efl_ui_test_grid_container(TCase *tc);
 
 void loop_timer_interval_set(Eo *obj, double in);
 

@@ -1,0 +1,6 @@
+class @beta Test.Efl.Ui.Item_Container_List extends Efl.Ui.Item_Container {
+  data: null;
+  implements {
+    Efl.Object.constructor;
+  }
+}

@@ -1,0 +1,3 @@
+group { "efl/item_container";
+   inherit: "efl/scroller";
+}

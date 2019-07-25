@@ -207,4 +207,5 @@ collections {
 #include "edc/efl/tab_pager.edc"
 #include "edc/efl/tab_bar.edc"
 #include "edc/efl/tab_page.edc"
+#include "edc/efl/item_container.edc"
 }

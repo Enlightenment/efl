@@ -1,5 +1,3 @@
-#define EFL_BETA_API_SUPPORT
-
 #include <stdio.h>
 #include <string.h>
 
@@ -15,7 +13,7 @@ static Eina_Value _task_exit(void *data, Eina_Value v, const Eina_Future *dead E
 ////////////////////////////////////////////////////////////////////////////
 //// thread side of code
 static void
-_th_timeout(void *data EINA_UNUSED, const Efl_Event *ev)
+_th_timeout(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *obj = data;
 
@@ -41,7 +39,7 @@ _th_read_change(void *data EINA_UNUSED, const Efl_Event *ev)
              printf("--- TH READ [%p] [%s] ok %i bytes '%s'\n", obj, efl_core_command_line_command_get(obj), (int)rw_slice.len, buf);
 
              char *buf2 = "yes-im-here ";
-             Eina_Slice slice = { strlen(buf2), buf2 };
+             Eina_Slice slice = { strlen(buf2), .mem = buf2 };
              Eina_Error err = efl_io_writer_write(obj, &slice, NULL);
              if (!err)
                {
@@ -73,7 +71,7 @@ _th_main(void *data EINA_UNUSED, const Efl_Event *ev)
    void *s = "", *ss = "";
    eina_accessor_data_get(args_access, 0, &s);
    eina_accessor_data_get(args_access, 1, &ss);
-   printf("--- TH main %p, '%s' '%s' indata=%p\n", obj, s, ss, efl_threadio_indata_get(obj));
+   printf("--- TH main %p, '%s' '%s' indata=%p\n", obj, (char *)s, (char *)ss, efl_threadio_indata_get(obj));
    efl_event_callback_add
      (obj, EFL_IO_READER_EVENT_CAN_READ_CHANGED, _th_read_change, NULL);
    if (!strcmp(s, "one"))
@@ -91,7 +89,7 @@ _th_main(void *data EINA_UNUSED, const Efl_Event *ev)
                           );
 
         char *buf2 = "hello-out-there2 ";
-        Eina_Slice slice = { strlen(buf2), buf2 };
+        Eina_Slice slice = { strlen(buf2), .mem = buf2 };
         Eina_Error err = efl_io_writer_write(obj2, &slice, NULL);
         if (!err) printf("--- WRITE [%p] [%s] ok %i bytes\n", obj2, efl_core_command_line_command_get(obj), (int)slice.len);
      }
@@ -184,7 +182,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev)
                          );
 
         char *buf2 = "hello-out-there ";
-        Eina_Slice slice = { strlen(buf2), buf2 };
+        Eina_Slice slice = { strlen(buf2), .mem = buf2 };
         Eina_Error err = efl_io_writer_write(obj, &slice, NULL);
         if (!err) printf("--- WRITE [%p] [%s] ok %i bytes\n", obj, efl_core_command_line_command_get(obj), (int)slice.len);
      }

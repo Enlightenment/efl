@@ -30,7 +30,7 @@ _list_selected(void *data EINA_UNUSED, const Efl_Event *ev)
   Eo *item = ev->info, *tmp;
   printf("list item [%p:%d] is %s\n", item, efl_ui_item_index_get(item), (efl_ui_item_selected_get(item)? "selected" : "unselected"));
 
-  Eina_Iterator *selects = efl_ui_list_selected_items_get(list);
+  Eina_Iterator *selects = efl_ui_item_container_selected_items_get(list);
 
   EINA_ITERATOR_FOREACH(selects, tmp)
      printf("selected [%p:%d] ", tmp, efl_ui_item_index_get(tmp));
@@ -82,18 +82,18 @@ _anim_radio_changed(void *data, const Efl_Event *ev EINA_UNUSED)
 static void
 _scrl_btn_clicked(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
-  Efl_Ui_List_Item *item = efl_ui_list_last_selected_item_get(priv_d.list);
+  Efl_Ui_List_Item *item = efl_ui_item_container_last_selected_item_get(priv_d.list);
   printf("show [%d:%p] [%d]\n", efl_ui_item_index_get(item), item, priv_d.anim);
-  efl_ui_list_item_scroll(priv_d.list, item, priv_d.anim);
+  efl_ui_item_container_item_scroll(priv_d.list, item, priv_d.anim);
 }
 
 static void
 _scrl_align_btn_clicked(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
-  Efl_Ui_List_Item *item = efl_ui_list_last_selected_item_get(priv_d.list);
+  Efl_Ui_List_Item *item = efl_ui_item_container_last_selected_item_get(priv_d.list);
   double align = efl_ui_range_value_get(priv_d.slider);
   printf("show [%d:%p] [%.2lf], [%d]\n", efl_ui_item_index_get(item), item, align, priv_d.anim);
-  efl_ui_list_item_scroll_align(priv_d.list, item, align, priv_d.anim);
+  efl_ui_item_container_item_scroll_align(priv_d.list, item, align, priv_d.anim);
 }
 
 EAPI_MAIN int
@@ -108,10 +108,12 @@ elm_main(int argc EINA_UNUSED, char **argv)
    char buf[256];
    Eina_Bool placeholder = EINA_FALSE;
 
-   win = elm_win_util_standard_add("list", "list");
-   elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
-   elm_win_autodel_set(win, EINA_TRUE);
-   efl_gfx_entity_size_set(win, EINA_SIZE2D(400, 800));
+
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
+                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
+                 efl_text_set(efl_added, "Efl.Ui.List"),
+                 efl_ui_win_autodel_set(efl_added, EINA_TRUE));
+
 
    wbox = efl_add(EFL_UI_BOX_CLASS, win);
    efl_ui_layout_orientation_set(wbox, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
@@ -286,7 +288,9 @@ elm_main(int argc EINA_UNUSED, char **argv)
    efl_ui_radio_state_value_set(radio, 1);
    efl_pack_end(rbox, radio);
    efl_pack_end(bbox, rbox);
+   efl_ui_radio_group_selected_value_set(rbox, 0);
    efl_event_callback_add(rbox, EFL_UI_RADIO_GROUP_EVENT_VALUE_CHANGED, _anim_radio_changed, rbox);
+
 
    rbox  = efl_add(EFL_UI_BOX_CLASS, bbox);
    efl_ui_layout_orientation_set(rbox, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);

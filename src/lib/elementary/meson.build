@@ -182,6 +182,10 @@ pub_eo_files = [
   'efl_ui_clickable.eo',
   'efl_ui_clickable_util.eo',
   'efl_ui_format.eo',
+  'efl_ui_item_container.eo',
+  'efl_ui_position_manager_entity.eo',
+  'efl_ui_position_manager_list.eo',
+  'efl_ui_position_manager_grid.eo',
 ]
 
 foreach eo_file : pub_eo_files
@@ -353,9 +357,7 @@ elementary_headers_unstable = [
   'efl_ui_video_private.h',
   'efl_ui_item_private.h',
   'efl_ui_list_item_private.h',
-  'efl_ui_list_private.h',
   'efl_ui_grid_item_private.h',
-  'efl_ui_grid_private.h',
   'efl_ui_list_view_private.h',
   'efl_ui_list_view_seg_array.h',
   'elm_widget_web.h',
@@ -944,6 +946,10 @@ elementary_src = [
   'efl_ui_clickable_util.c',
   'efl_ui_format.c',
   'efl_ui_scroll_util.c',
+  'efl_ui_item_container.c',
+  'efl_ui_position_manager_entity.c',
+  'efl_ui_position_manager_list.c',
+  'efl_ui_position_manager_grid.c',
 ]
 
 elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, efreet_mime, efreet_trash, eio, atspi, dl, intl]

@@ -4,6 +4,12 @@ apiRules:
 - exclude:
     uidRegex: ^.*NativeStruct$
 - exclude:
+    uidRegex: ^.*ConstructingHandle.*$
+- exclude:
+    uidRegex: ^.*WrappingHandle.*$
+- exclude:
+    uidRegex: ^.*#ctor\(IntPtr.*$
+- exclude:
     uidRegex: ^.*Concrete$
 - include:
     uidRegex: ^Efl
