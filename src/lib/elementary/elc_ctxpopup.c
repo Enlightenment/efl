@@ -862,7 +862,9 @@ _elm_ctxpopup_item_elm_widget_item_del_pre(Eo *eo_ctxpopup_it EINA_UNUSED,
 {
    if (ctxpopup_it->list_item)
      {
-        elm_object_item_del(ctxpopup_it->list_item);
+        Elm_Ctxpopup_Data *sd = efl_data_scope_safe_get(WIDGET(ctxpopup_it), MY_CLASS);
+        if (sd->list)
+          elm_object_item_del(ctxpopup_it->list_item);
         ctxpopup_it->list_item = NULL;
      }
 }
