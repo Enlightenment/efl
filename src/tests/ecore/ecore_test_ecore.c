@@ -39,6 +39,8 @@ EFL_START_TEST(ecore_test_ecore_main_loop)
    timer = ecore_timer_add(0.0, _quit_cb, &did);
    fail_if(timer == NULL);
 
+   /* ensure that this does not auto-cancel main loop */
+   ecore_main_loop_quit();
    ecore_main_loop_begin();
 
    fail_if(did == EINA_FALSE);
