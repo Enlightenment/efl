@@ -4,7 +4,7 @@
 
 #include <Efl_Ui.h>
 #include "efl_ui_suite.h"
-#include "efl_ui_test_item_container_common.h"
+#include "efl_ui_test_collection_common.h"
 
 static Eo *win;
 

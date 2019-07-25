@@ -146,10 +146,10 @@ efl_ui_suite_src = [
   'efl_ui_test_spin.c',
   'efl_ui_test_spin_button.c',
   'efl_ui_test_slider.c',
-  'efl_ui_test_item_container_common.c',
-  'efl_ui_test_item_container.c',
-  'efl_ui_test_list_container.c',
-  'efl_ui_test_grid_container.c',
+  'efl_ui_test_collection_common.c',
+  'efl_ui_test_collection.c',
+  'efl_ui_test_list_collection.c',
+  'efl_ui_test_grid_collection.c',
   'efl_ui_test_position_manager_common.c',
 ]
 
