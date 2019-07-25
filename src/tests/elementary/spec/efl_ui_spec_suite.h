@@ -5,7 +5,6 @@
 
 #define EFL_NOLEGACY_API_SUPPORT
 #include <Efl_Ui.h>
-#include "test_efl_ui_item_container_list.eo.h"
 #include "../efl_check.h"
 
 extern Evas_Object *win;
