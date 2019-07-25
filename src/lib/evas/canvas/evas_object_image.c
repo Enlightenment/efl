@@ -1604,8 +1604,9 @@ _efl_canvas_image_internal_efl_canvas_filter_internal_filter_dirty(Eo *eo_obj, E
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
-   o->changed = 1;
+   o->changed = EINA_TRUE;
    evas_object_change(eo_obj, obj);
+   o->changed_filter = EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
@@ -2403,6 +2404,11 @@ evas_object_image_render_pre(Evas_Object *eo_obj,
      }
    if (o->changed)
      {
+        if (o->changed_filter)
+          {
+             evas_object_render_pre_prev_cur_add(&e->clip_changes, eo_obj, obj);
+             goto done;
+          }
         if (((o->cur->f) && (!o->prev->f)) ||
             ((!o->cur->f) && (o->prev->f)) ||
             ((o->cur->key) && (!o->prev->key)) ||
@@ -2728,6 +2734,7 @@ done:
           }
      }
    o->changed = EINA_FALSE;
+   o->changed_filter = EINA_FALSE;
 }
 
 static void
