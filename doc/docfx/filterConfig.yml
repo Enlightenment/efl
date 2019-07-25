@@ -4,7 +4,7 @@ apiRules:
 - exclude:
     uidRegex: ^.*NativeStruct$
 - exclude:
-    uidRegex: ^.*ConstructingHandle.*$
+    uidRegex: ^.*NativeClass$
 - exclude:
     uidRegex: ^.*WrappingHandle.*$
 - exclude:
