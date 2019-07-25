@@ -59,7 +59,7 @@ _field_value_update(Eo *obj)
 
    if (!pd->is_24hour)
      {
-        if (pd->cur_time[TIMEPICKER_HOUR] >= 12)
+        if (pd->cur_time[TIMEPICKER_HOUR] > 12)
           {
              //TODO: gets text from strftime.
              efl_text_set(pd->ampm, "PM");
@@ -68,7 +68,7 @@ _field_value_update(Eo *obj)
         else
           {
              efl_text_set(pd->ampm, "AM");
-             efl_ui_range_value_set(pd->hour, pd->cur_time[TIMEPICKER_HOUR] + 12);
+             efl_ui_range_value_set(pd->hour, pd->cur_time[TIMEPICKER_HOUR]);
           }
      }
 
