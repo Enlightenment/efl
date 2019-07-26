@@ -292,6 +292,8 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                 switch (id)
                   {
                    case KW_void_ptr:
+                   case KW___undefined_type:
+                   case KW___builtin_free_cb:
                      if (vals->stable)
                        {
                           _eo_parser_log(&tp->base,
