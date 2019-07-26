@@ -3506,7 +3506,11 @@ _ecore_evas_free(Ecore_Evas *ee)
    ee->prop.wm_rot.manual_mode.timer = NULL;
    eina_hash_free(ee->prop.cursors);
    ee->prop.cursors = NULL;
-   if (!ee->evas_dying) evas_free(ee->evas);
+   if (!ee->evas_dying)
+     {
+        ee->evas_dying = EINA_TRUE;
+        evas_free(ee->evas);
+     }
    ee->evas = NULL;
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_NONE);
    ee->driver = NULL;
@@ -5280,6 +5284,7 @@ static void
 _ecore_evas_event_del(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
+   if (ee->evas_dying) return;
 
    ee->evas_dying = EINA_TRUE;
    ecore_evas_free(ee);
