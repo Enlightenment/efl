@@ -13,10 +13,10 @@ Twitter = require('twitter');
 user_acount = 'EnlightenmentKo'
 
 var twit = new Twitter({
-  consumer_key: 'ZbSM93w5Sp2cyZ2SG0XuCvoHV',
-  consumer_secret: 'g8N7EEQLpdKPnAsS9hWuQV29FYjBkhH62jhZzXyYymDw87DKye',
-  access_token_key: '222611263-pPhKKjYh59uuNLP0b86sP7aAtLhdecjVQaEsCDCv',
-  access_token_secret: 'l7ccNKXTVv6cymfSD1gQH61tmfixkdna2QmOjPtpVxSHD'
+  consumer_key: '', // replace with consumer_key
+  consumer_secret: '', // replace with consumer_secret
+  access_token_key: '', // replace with access_token_key
+  access_token_secret: '' // replace with access_token_secret
 });
 
 win = new efl.Efl.Ui.Win(null, "Efl JS Example", efl.Efl.Ui.Win.Type.BASIC, "hw");
