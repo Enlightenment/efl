@@ -174,7 +174,7 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
            makes sure other widgets will not also process this input event.
          ]]
          params {
-            @cref eo_event: Efl.Event;
+            @in eo_event: const(event);
                [[EO event struct with an Efl.Input.Event as info.]]
             @in source: Efl.Canvas.Object;
                [[Source object where the event originated. Often same as this.]]
