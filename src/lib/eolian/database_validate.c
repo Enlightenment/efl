@@ -257,16 +257,6 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                   {
                      if (!_validate_type(vals, itp))
                        return EINA_FALSE;
-                     if (kwid == KW_array || kwid == KW_hash || kwid == KW_list)
-                       {
-                          if (!database_type_is_ownable(src, itp, EINA_TRUE))
-                            {
-                               _eo_parser_log(&itp->base,
-                                        "%s cannot contain value types (%s)",
-                                        tp->base.name, itp->base.name);
-                               return EINA_FALSE;
-                            }
-                       }
                      itp = itp->next_type;
                   }
                 return _validate_ownable(tp);
