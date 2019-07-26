@@ -289,6 +289,17 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                    default:
                      break;
                   }
+                switch (id)
+                  {
+                   case KW_void_ptr:
+                     if (vals->stable)
+                       {
+                          _eo_parser_log(&tp->base,
+                            "deprecated builtin type '%s' not allowed in stable context",
+                            tp->base.name);
+                          return EINA_FALSE;
+                       }
+                  }
                 return _validate_ownable(tp);
              }
            /* user defined */

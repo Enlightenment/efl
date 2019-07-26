@@ -212,7 +212,25 @@ typedef void (*Eldbus_Signal_Cb)(void *data, const Eldbus_Message *msg);
  * @}
  */
 
-#include "eldbus_types.eot.h"
+/* FIXME: these are duplicated as @extern in eldbus_types.eot */
+
+/** Represents a client object bound to an interface
+ *
+ * @ingroup Eldbus
+ */
+typedef struct _Eldbus_Proxy Eldbus_Proxy;
+
+/** Represents a connection of one the type of connection with the DBus daemon.
+ *
+ * @ingroup Eldbus
+ */
+typedef struct _Eldbus_Connection Eldbus_Connection;
+
+/** Represents an object path already attached with bus name or unique id
+ *
+ * @ingroup Eldbus
+ */
+typedef struct _Eldbus_Object Eldbus_Object;
 
 #include "eldbus_connection.h"
 #include "eldbus_message.h"
