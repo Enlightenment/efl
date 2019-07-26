@@ -361,7 +361,7 @@ _efl_ui_popup_part_backwall_efl_file_load(Eo *obj, void *_pd EINA_UNUSED)
 
    if (efl_file_loaded_get(obj)) return 0;
 
-   err = efl_file_load(efl_super(obj, MY_CLASS));
+   err = efl_file_load(efl_super(obj, EFL_UI_POPUP_PART_BACKWALL_CLASS));
    if (err) return err;
 
    Eo *prev_obj = edje_object_part_swallow_get(sd->backwall, "efl.content");
