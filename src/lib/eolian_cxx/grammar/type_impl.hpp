@@ -140,6 +140,30 @@ struct visitor_generate
                 r.base_qualifier.qualifier ^= qualifier_info::is_ref;
                 return replace_base_type(r, " ::efl::eina::strbuf");
               }}
+           , {"event", nullptr, nullptr, nullptr, [&]
+              {
+                regular_type_def r = regular;
+                r.base_qualifier.qualifier ^= qualifier_info::is_ref;
+                if (r.base_qualifier.qualifier & qualifier_info::is_const)
+                {
+                  r.base_qualifier.qualifier ^= qualifier_info::is_const;
+                  return replace_base_type(r, " Efl_Event*");
+                }
+                else
+                  return replace_base_type(r, " Efl_Event const*");
+              }}
+           , {"binbuf", nullptr, nullptr, nullptr, [&]
+              {
+                regular_type_def r = regular;
+                r.base_qualifier.qualifier ^= qualifier_info::is_ref;
+                if (r.base_qualifier.qualifier & qualifier_info::is_const)
+                {
+                  r.base_qualifier.qualifier ^= qualifier_info::is_const;
+                  return replace_base_type(r, " Eina_Binbuf*");
+                }
+                else
+                  return replace_base_type(r, " Eina_Binbuf const*");
+              }}
            /* FIXME: handle any_value_ptr */
            , {"any_value", true, nullptr, nullptr, [&]
               {
