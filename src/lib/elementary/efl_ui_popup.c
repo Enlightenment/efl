@@ -96,8 +96,18 @@ _parent_geom_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 EOLIAN static void
-_efl_ui_popup_efl_ui_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eo *parent EINA_UNUSED)
+_efl_ui_popup_efl_ui_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eo *parent)
 {
+   if (!parent)
+     {
+        /* unsetting parent, probably before deletion */
+        if (pd->win_parent)
+          {
+             efl_event_callback_del(pd->win_parent, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _parent_geom_cb, obj);
+             efl_event_callback_del(pd->win_parent, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _parent_geom_cb, obj);
+          }
+        goto end;
+     }
    pd->win_parent = efl_provider_find(obj, EFL_UI_WIN_CLASS);
    if (!pd->win_parent)
      {
@@ -112,7 +122,7 @@ _efl_ui_popup_efl_ui_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EIN
 
    efl_event_callback_add(pd->win_parent, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _parent_geom_cb, obj);
    efl_event_callback_add(pd->win_parent, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _parent_geom_cb, obj);
-
+end:
    efl_ui_widget_parent_set(efl_super(obj, MY_CLASS), parent);
 }
 
