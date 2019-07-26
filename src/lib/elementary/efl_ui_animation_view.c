@@ -71,7 +71,7 @@ _transit_go_facade(Efl_Ui_Animation_View_Data *pd)
    else
      pd->state = EFL_UI_ANIMATION_VIEW_STATE_PLAY;
    evas_object_smart_callback_call(pd->obj, SIG_PLAY_START, NULL);
-   elm_transit_go(pd->transit);
+   if (pd->transit) elm_transit_go(pd->transit);
 }
 
 static Eina_Bool
