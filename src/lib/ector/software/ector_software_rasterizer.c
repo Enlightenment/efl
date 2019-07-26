@@ -54,6 +54,7 @@ _blend_alpha(int count, const SW_FT_Span *spans, void *user_data)
    Span_Data *sd = user_data;
    const int pix_stride = sd->raster_buffer->stride / 4;
    Ector_Software_Buffer_Base_Data *mask = sd->mask;
+   if (!mask || !mask->pixels.u32) return;
 
    // multiply the color with mul_col if any
    uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
@@ -97,6 +98,7 @@ _blend_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
    Span_Data *sd = user_data;
    const int pix_stride = sd->raster_buffer->stride / 4;
    Ector_Software_Buffer_Base_Data *mask = sd->mask;
+   if (!mask || !mask->pixels.u32) return;
 
    // multiply the color with mul_col if any
    uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
@@ -140,6 +142,7 @@ _blend_mask_add(int count, const SW_FT_Span *spans, void *user_data)
 {
    Span_Data *sd = user_data;
    Ector_Software_Buffer_Base_Data *mask = sd->mask;
+   if (!mask || !mask->pixels.u32) return;
 
    uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
    RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
@@ -164,6 +167,7 @@ _blend_mask_sub(int count, const SW_FT_Span *spans, void *user_data)
 {
    Span_Data *sd = user_data;
    Ector_Software_Buffer_Base_Data *mask = sd->mask;
+   if (!mask || !mask->pixels.u32) return;
 
    uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
    RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
@@ -189,6 +193,7 @@ _blend_mask_ins(int count, const SW_FT_Span *spans, void *user_data)
 {
    Span_Data *sd = user_data;
    Ector_Software_Buffer_Base_Data *mask = sd->mask;
+   if (!mask || !mask->pixels.u32) return;
 
    uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
    RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
@@ -227,6 +232,7 @@ _blend_mask_diff(int count, const SW_FT_Span *spans, void *user_data)
 {
    Span_Data *sd = user_data;
    Ector_Software_Buffer_Base_Data *mask = sd->mask;
+   if (!mask || !mask->pixels.u32) return;
 
    uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
    RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
@@ -905,6 +911,7 @@ ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,
                                         int mask_op)
 {
    if (!rle) return;
+   if (!rasterizer->fill_data.raster_buffer->pixels.u32) return;
 
    rasterizer->fill_data.offx = x;
    rasterizer->fill_data.offy = y;
