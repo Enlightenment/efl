@@ -41,7 +41,6 @@ internal class StructHelpers
         simple.Ffloat = -16777216.0f;
         simple.Fdouble = -9007199254740992.0;
         simple.Fbool = true;
-        simple.Fvoid_ptr = (IntPtr) 0xFE;
         simple.Fenum = Dummy.SampleEnum.V2;
         simple.Fstring = "test/string";
         simple.Fmstring = "test/mstring";
@@ -78,7 +77,6 @@ internal class StructHelpers
         Test.Assert(simple.Ffloat == -16777216.0f);
         Test.Assert(simple.Fdouble == -9007199254740992.0);
         Test.Assert(simple.Fbool == true);
-        Test.Assert(simple.Fvoid_ptr == (IntPtr) 0xFE);
         Test.Assert(simple.Fenum == Dummy.SampleEnum.V2);
         Test.Assert(simple.Fstring == "test/string");
         Test.Assert(simple.Fmstring == "test/mstring");
@@ -113,7 +111,6 @@ internal class StructHelpers
         Test.Assert(simple.Ffloat == 0);
         Test.Assert(simple.Fdouble == 0);
         Test.Assert(simple.Fbool == false);
-        Test.Assert(simple.Fvoid_ptr == IntPtr.Zero);
         Test.Assert(simple.Fenum == Dummy.SampleEnum.V0);
         Test.Assert(simple.Fstring == null);
         Test.Assert(simple.Fmstring == null);
