@@ -802,18 +802,27 @@ eina_file_open(const char *path, Eina_Bool shared)
    if (!filename) return NULL;
 
    if (shared)
+     {
 #ifdef HAVE_SHM_OPEN
-     fd = shm_open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
+        fd = shm_open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
+        if ((fd != -1)  && (!eina_file_close_on_exec(fd, EINA_TRUE)))
+          goto on_error;
 #else
-     goto on_error;
+        goto on_error;
 #endif
+     }
    else
-     fd = open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
+     {
+#ifdef HAVE_OPEN_CLOEXEC
+        fd = open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO | O_CLOEXEC);
+#else
+        fd = open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
+        if ((fd != -1)  && (!eina_file_close_on_exec(fd, EINA_TRUE)))
+          goto on_error;
+#endif
+     }
 
    if (fd < 0) goto on_error;
-
-   if (!eina_file_close_on_exec(fd, EINA_TRUE))
-     goto on_error;
 
    if (fstat(fd, &file_stat))
      goto on_error;

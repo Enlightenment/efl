@@ -123,6 +123,20 @@ function_checks = [
   ['dladdr', ['dlfcn.h'],                               ['dl'],  '-D_GNU_SOURCE=1']
 ]
 
+open_cloexec = cc.run('''#include <sys/types.h>
+                      #include <sys/stat.h>
+                      #include <fcntl.h>
+                      int main(int argc, char **argv) {
+                        int res = open(argv[0], O_RDONLY | O_CLOEXEC);
+                        if (res < 0) return 1;
+                        return 0;
+                      }
+                      ''',
+                      name : 'open works with O_CLOEXEC')
+if open_cloexec.compiled() and open_cloexec.returncode() == 0
+  config_h.set10('HAVE_OPEN_CLOEXEC', true)
+endif
+
 strerror_r_char_p = cc.compiles('''#define _GNU_SOURCE
                   #include <string.h>
                   int func (void)
