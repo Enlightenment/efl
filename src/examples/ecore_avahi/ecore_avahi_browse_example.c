@@ -151,8 +151,9 @@ _ecore_avahi_client_cb(AvahiClient *c, AvahiClientState state, void * userdata)
 
             ecore_main_loop_quit();
 
-            break;
          }
+       break;
+
     case AVAHI_CLIENT_CONNECTING:
        FREE_CLEAN(example->sb, avahi_service_browser_free);
        break;
