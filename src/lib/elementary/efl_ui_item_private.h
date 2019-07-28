@@ -10,7 +10,6 @@ typedef struct _Efl_Ui_Item_Data
 
    // Boolean Data
    Eina_Bool  selected : 1; /* State for item selected */
-   Eina_Bool  needs_size_calc : 1; /* Flag for Size calculation */
 } Efl_Ui_Item_Data;
 
 
