@@ -94,7 +94,7 @@ void test_efl_ui_radio(void *data EINA_UNUSED,
    Efl_Ui_Box *bx;
    Eina_Array *arr;
    Efl_Ui_Button *o;
-   Efl_Ui_Radio *uk;
+   Efl_Ui_Radio *uk = NULL;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
                  efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
