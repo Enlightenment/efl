@@ -394,6 +394,9 @@ EAPI Eio_File *eio_file_chmod(const char *path,
  *
  * This function will change the owner of a path, setting it to the user and
  * group passed as argument. It's equivalent to the chown shell command.
+ *
+ * @note Some platforms (including Windows) do not support chown(). In that
+ * case, this function returns @c NULL.
  */
 EAPI Eio_File *eio_file_chown(const char *path,
                               const char *user,

@@ -204,16 +204,10 @@ _eio_file_chmod(void *data, Ecore_Thread *thread)
      eio_file_thread_error(&ch->common, thread);
 }
 
+#if defined(HAVE_CHOWN) && defined(HAVE_GETPWENT)
 static void
 _eio_file_chown(void *data, Ecore_Thread *thread)
 {
-#ifdef _WIN32
-  /* FIXME:
-   * look at http://wwwthep.physik.uni-mainz.de/~frink/chown/readme.html
-   */
-  (void)data;
-  (void)thread;
-#else
    Eio_File_Chown *own = data;
    char *tmp;
    uid_t owner = -1;
@@ -266,7 +260,6 @@ _eio_file_chown(void *data, Ecore_Thread *thread)
  on_error:
    ecore_thread_cancel(thread);
    return;
-#endif
 }
 
 static void
@@ -297,6 +290,7 @@ _eio_file_chown_error(void *data, Ecore_Thread *thread EINA_UNUSED)
    eio_file_error(&ch->common);
    _eio_chown_free(ch);
 }
+#endif
 
 /**
  * @endcond
@@ -585,6 +579,7 @@ eio_file_chown(const char *path,
 	       Eio_Error_Cb error_cb,
 	       const void *data)
 {
+#if defined(HAVE_CHOWN) && defined(HAVE_GETPWENT)
    Eio_File_Chown *c = NULL;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
@@ -601,11 +596,20 @@ eio_file_chown(const char *path,
    if (!eio_file_set(&c->common,
 		     done_cb,
 		     error_cb,
-		      data,
+		     data,
 		     _eio_file_chown,
 		     _eio_file_chown_done,
 		     _eio_file_chown_error))
      return NULL;
 
    return &c->common;
+#else
+   EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
+   error_cb(data, NULL, EINVAL);
+   return NULL;
+   (void)path;
+   (void)user;
+   (void)group;
+   (void)done_cb;
+#endif
 }

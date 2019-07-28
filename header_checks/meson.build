@@ -78,6 +78,7 @@ function_checks = [
   ['alloca', ['alloca.h']],
   ['backtrace', ['execinfo.h']],
   ['backtrace_symbols', ['execinfo.h']],
+  ['chown', ['unistd.h']],
   ['clock_gettime', ['time.h']],
   ['dirfd', ['dirent.h sys/types.h']],
   ['fchmod', ['sys/stat.h']],
