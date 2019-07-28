@@ -543,7 +543,7 @@ append_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_text_set(o, btn_text("appended"));
    efl_gfx_hint_weight_set(o, 0, 0);
    efl_gfx_hint_fill_set(o, EINA_FALSE, EINA_FALSE);
-   efl_event_callback_add(o, EFL_UI_EVENT_CLICKED, remove_cb, NULL);
+   efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, remove_cb, NULL);
    elm_object_tooltip_text_set(o, "Click to unpack");
    efl_pack(table, o);
    efl_gfx_entity_visible_set(o, 1);
@@ -597,7 +597,7 @@ test_ui_table_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    o = elm_button_add(win);
    elm_object_content_set(o, ico);
    elm_object_text_set(o, "Append");
-   efl_event_callback_add(o, EFL_UI_EVENT_CLICKED, append_cb, table);
+   efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, append_cb, table);
    efl_pack(hbox, o);
    efl_gfx_entity_visible_set(o, 1);
 
@@ -606,7 +606,7 @@ test_ui_table_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    o = elm_button_add(win);
    elm_object_content_set(o, ico);
    elm_object_text_set(o, "Clear");
-   efl_event_callback_add(o, EFL_UI_EVENT_CLICKED, clear_cb, table);
+   efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, clear_cb, table);
    efl_pack(hbox, o);
    efl_gfx_entity_visible_set(o, 1);
 
@@ -657,7 +657,7 @@ test_ui_table_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    efl_text_set(o, btn_text(NULL));
    efl_gfx_hint_weight_set(o, 0, 0);
    efl_gfx_hint_fill_set(o, EINA_FALSE, EINA_FALSE);
-   efl_event_callback_add(o, EFL_UI_EVENT_CLICKED, remove_cb, NULL);
+   efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, remove_cb, NULL);
    efl_pack(table, o);
    efl_gfx_entity_visible_set(o, 1);
 
@@ -665,7 +665,7 @@ test_ui_table_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    efl_text_set(o, btn_text(NULL));
    efl_gfx_hint_weight_set(o, 0, 0);
    efl_gfx_hint_fill_set(o, EINA_FALSE, EINA_FALSE);
-   efl_event_callback_add(o, EFL_UI_EVENT_CLICKED, remove_cb, NULL);
+   efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, remove_cb, NULL);
    efl_pack(table, o);
    efl_gfx_entity_visible_set(o, 1);
 
@@ -673,7 +673,7 @@ test_ui_table_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    efl_text_set(o, btn_text(NULL));
    efl_gfx_hint_weight_set(o, 0, 0);
    efl_gfx_hint_fill_set(o, EINA_FALSE, EINA_FALSE);
-   efl_event_callback_add(o, EFL_UI_EVENT_CLICKED, remove_cb, NULL);
+   efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, remove_cb, NULL);
    efl_pack(table, o);
    efl_gfx_entity_visible_set(o, 1);
 

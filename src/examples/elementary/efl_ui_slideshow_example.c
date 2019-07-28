@@ -110,7 +110,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
            efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
            efl_pack_table(table, efl_added, 0, 1, 1, 1),
            efl_text_set(efl_added, "Play"),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _play_toggle, NULL));
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _play_toggle, NULL));
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(200, 200));
 }

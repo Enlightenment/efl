@@ -175,7 +175,7 @@ _item_longpressed(void *data)
 
    pd->longpress_timer = NULL;
 
-   efl_event_callback_call(item, EFL_UI_EVENT_LONGPRESSED, NULL);
+   efl_event_callback_call(item, EFL_INPUT_EVENT_LONGPRESSED, NULL);
    return ECORE_CALLBACK_CANCEL;
 }
 
@@ -195,7 +195,7 @@ _item_mouse_down(void *data,
    edje_object_signal_emit(wd->resize_obj, "efl,state,pressed", "efl");
 
    pd->longpress_timer = ecore_timer_add(_elm_config->longpress_timeout, _item_longpressed, item);
-   efl_event_callback_call(item, EFL_UI_EVENT_PRESSED, NULL);
+   efl_event_callback_call(item, EFL_INPUT_EVENT_PRESSED, NULL);
 }
 
 static void
@@ -217,7 +217,7 @@ _item_mouse_up(void *data,
      {
         //FIXME: should we send this message to fallback?
         edje_object_signal_emit(wd->resize_obj, "efl,state,unpressed", "efl");
-        //efl_event_callback_call(item, EFL_UI_EVENT_UNPRESSED, NULL);
+        //efl_event_callback_call(item, EFL_INPUT_EVENT_UNPRESSED, NULL);
         return;
      }
 
@@ -228,7 +228,7 @@ _item_mouse_up(void *data,
      }
 
    edje_object_signal_emit(wd->resize_obj, "efl,state,unpressed", "efl");
-   efl_event_callback_call(item, EFL_UI_EVENT_UNPRESSED, NULL);
+   efl_event_callback_call(item, EFL_INPUT_EVENT_UNPRESSED, NULL);
 
    m = efl_ui_select_mode_get(efl_ui_item_container_get(item));
    if ((m != EFL_UI_SELECT_MODE_SINGLE_ALWAYS) && (pd->selected))

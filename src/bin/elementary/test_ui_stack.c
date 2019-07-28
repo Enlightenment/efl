@@ -70,7 +70,7 @@ _bar_left_btn_set(Eo *navigation_layout, Efl_Event_Cb clicked_cb, void *data)
    efl_text_set(left_btn, "Prev");
    efl_content_set(efl_part(bn, "left_content"), left_btn);
 
-   efl_event_callback_add(left_btn, EFL_UI_EVENT_CLICKED, clicked_cb, data);
+   efl_event_callback_add(left_btn, EFL_INPUT_EVENT_CLICKED, clicked_cb, data);
 
    //Positions of "left_content" and "back_button" are the same.
    efl_gfx_entity_visible_set(efl_part(bn, "back_button"), EINA_FALSE);
@@ -85,7 +85,7 @@ _bar_right_btn_set(Eo *navigation_layout, Efl_Event_Cb clicked_cb, void *data)
    efl_text_set(right_btn, "Next");
    efl_content_set(efl_part(bn, "right_content"), right_btn);
 
-   efl_event_callback_add(right_btn, EFL_UI_EVENT_CLICKED, clicked_cb, data);
+   efl_event_callback_add(right_btn, EFL_INPUT_EVENT_CLICKED, clicked_cb, data);
 }
 
 static void
@@ -95,7 +95,7 @@ _fifth_layout_insert(void *data, const Efl_Event *ev EINA_UNUSED)
 
    Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, stack);
    efl_text_set(btn, "Press to remove top layout");
-   efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _stack_remove, stack);
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _stack_remove, stack);
 
    Eo *nl = _navigation_layout_create(stack, "5th layout", btn);
 
@@ -109,7 +109,7 @@ _third_layout_push(void *data, const Efl_Event *ev EINA_UNUSED)
 
    Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, stack);
    efl_text_set(btn, "Press to pop");
-   efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _stack_pop, stack);
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _stack_pop, stack);
 
    Eo *nl = _navigation_layout_create(stack, "3rd layout", btn);
 
@@ -125,7 +125,7 @@ _second_layout_push(void *data, const Efl_Event *ev EINA_UNUSED)
 
    Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, stack);
    efl_text_set(btn, "Press to double push");
-   efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _stack_double_push, stack);
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _stack_double_push, stack);
 
    Eo *nl = _navigation_layout_create(stack, "2nd layout", btn);
 
@@ -139,7 +139,7 @@ _first_layout_push(Eo *win, Eo *stack)
 {
    Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, stack);
    efl_text_set(btn, "Press to delete stack");
-   efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _stack_del, stack);
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _stack_del, stack);
 
    Eo *nl = _navigation_layout_create(stack, "1st layout", btn);
 

@@ -136,7 +136,7 @@ _fields_init(Eo *obj)
                      efl_event_callback_add(efl_added, EFL_UI_SPIN_EVENT_CHANGED,_field_changed_cb, obj));
 
    pd->ampm = efl_add(EFL_UI_BUTTON_CLASS, obj,
-                      efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _field_changed_cb, obj),
+                      efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _field_changed_cb, obj),
                       elm_widget_element_update(obj, efl_added, "button"));
 
    pd->dt_manager = efl_add(EFL_DATETIME_MANAGER_CLASS, obj);

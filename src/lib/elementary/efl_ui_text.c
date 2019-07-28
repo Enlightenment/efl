@@ -7,7 +7,7 @@
 #define EFL_ACCESS_EDITABLE_TEXT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_PART_PROTECTED
-#define EFL_UI_CLICKABLE_PROTECTED
+#define EFL_INPUT_CLICKABLE_PROTECTED
 
 #include <Elementary.h>
 #include <Elementary_Cursor.h>
@@ -2118,7 +2118,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "text");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_event_callback_add(obj, EFL_UI_EVENT_LONGPRESSED, _long_press_cb, obj);
+   efl_event_callback_add(obj, EFL_INPUT_EVENT_LONGPRESSED, _long_press_cb, obj);
 
    text_obj = efl_add(EFL_UI_INTERNAL_TEXT_INTERACTIVE_CLASS, obj);
    efl_event_callback_forwarder_add(text_obj, EFL_UI_TEXT_EVENT_CHANGED_USER, obj);
@@ -2822,7 +2822,7 @@ _efl_ui_text_efl_ui_widget_on_access_activate(Eo *obj, Efl_Ui_Text_Data *_pd EIN
    if (!elm_widget_disabled_get(obj) &&
        !evas_object_freeze_events_get(obj))
      {
-        efl_event_callback_call(obj, EFL_UI_EVENT_CLICKED, NULL);
+        efl_event_callback_call(obj, EFL_INPUT_EVENT_CLICKED, NULL);
         if (sd->editable && sd->input_panel_enable)
           edje_object_part_text_input_panel_show(sd->entry_edje, "efl.text");
      }

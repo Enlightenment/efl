@@ -154,7 +154,7 @@ test_ui_panel2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    efl_content_set(panel, list);
 
    efl_event_callback_add(panel, EFL_UI_PANEL_EVENT_TOGGLED, _panel_toggled, check);
-   efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _btn_clicked, panel);
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _btn_clicked, panel);
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(320, 400));
 }

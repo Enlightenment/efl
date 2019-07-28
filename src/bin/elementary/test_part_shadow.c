@@ -181,12 +181,12 @@ test_part_shadow(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    efl_pack(bx, bt_bx);
 
    bt = efl_add(EFL_UI_BUTTON_CLASS, win, efl_text_set(efl_added, "Start"));
-   efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, pulse_start, td);
+   efl_event_callback_add(bt, EFL_INPUT_EVENT_CLICKED, pulse_start, td);
    efl_pack(bt_bx, bt);
    td->btn_start = bt;
 
    bt = efl_add(EFL_UI_BUTTON_CLASS, win, efl_text_set(efl_added, "Stop"));
-   efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, pulse_stop, td);
+   efl_event_callback_add(bt, EFL_INPUT_EVENT_CLICKED, pulse_stop, td);
    efl_ui_widget_disabled_set(bt, EINA_TRUE);
    efl_pack(bt_bx, bt);
    td->btn_stop = bt;

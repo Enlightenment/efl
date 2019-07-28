@@ -119,18 +119,18 @@ void test_efl_ui_radio(void *data EINA_UNUSED,
    o = efl_add(EFL_UI_BUTTON_CLASS, table);
    efl_pack_table(table, o, 1, 0, 1, 1);
    efl_text_set(o, "Selected France check");
-   efl_event_callback_add(o, EFL_UI_EVENT_CLICKED, _select_btn_clicked, eina_array_data_get(arr, 2));
+   efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _select_btn_clicked, eina_array_data_get(arr, 2));
 
    o = efl_add(EFL_UI_BUTTON_CLASS, table);
    efl_pack_table(table, o, 1, 1, 1, 1);
    efl_text_set(o, "Set value for Germany");
-   efl_event_callback_add(o, EFL_UI_EVENT_CLICKED, _set_selected_btn_clicked, bx);
+   efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _set_selected_btn_clicked, bx);
 
    o = efl_add(EFL_UI_BUTTON_CLASS, table);
    efl_pack_table(table, o, 1, 2, 1, 1);
    efl_text_set(o, "Set object for UK");
    efl_key_data_set(o, "uk", uk);
-   efl_event_callback_add(o, EFL_UI_EVENT_CLICKED, _set_selected_object_btn_clicked, bx);
+   efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _set_selected_object_btn_clicked, bx);
 
    eina_array_free(arr);
 }

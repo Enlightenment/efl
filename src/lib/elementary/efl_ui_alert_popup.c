@@ -154,15 +154,15 @@ _efl_ui_alert_popup_button_set(Eo *obj, Efl_Ui_Alert_Popup_Data *pd, Efl_Ui_Aler
         switch (type)
           {
             case EFL_UI_ALERT_POPUP_BUTTON_POSITIVE:
-              efl_event_callback_add(pd->button[type], EFL_UI_EVENT_CLICKED,
+              efl_event_callback_add(pd->button[type], EFL_INPUT_EVENT_CLICKED,
                                      _positive_button_clicked_cb, obj);
               break;
             case EFL_UI_ALERT_POPUP_BUTTON_NEGATIVE:
-              efl_event_callback_add(pd->button[type], EFL_UI_EVENT_CLICKED,
+              efl_event_callback_add(pd->button[type], EFL_INPUT_EVENT_CLICKED,
                                      _negative_button_clicked_cb, obj);
               break;
             case EFL_UI_ALERT_POPUP_BUTTON_USER:
-              efl_event_callback_add(pd->button[type], EFL_UI_EVENT_CLICKED,
+              efl_event_callback_add(pd->button[type], EFL_INPUT_EVENT_CLICKED,
                                      _user_button_clicked_cb, obj);
               break;
             default:

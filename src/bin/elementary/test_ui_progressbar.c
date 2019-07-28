@@ -224,20 +224,20 @@ test_ui_progressbar(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_inf
 
    pd->btn_start = efl_add(EFL_UI_BUTTON_CLASS, btbx,
                            efl_text_set(efl_added, "start"),
-                           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
+                           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED,
                                                   _start_btn_clicked_cb, pd),
                            efl_pack(btbx, efl_added)
                           );
 
    pd->btn_stop = efl_add(EFL_UI_BUTTON_CLASS, btbx,
                           efl_text_set(efl_added, "stop"),
-                          efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
+                          efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED,
                                                  _stop_btn_clicked_cb, pd),
                           efl_pack(btbx, efl_added)
                          );
    pd->btn_reset = efl_add(EFL_UI_BUTTON_CLASS, btbx,
                            efl_text_set(efl_added, "reset"),
-                           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
+                           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED,
                                                   _reset_btn_clicked_cb, pd),
                            efl_pack(btbx, efl_added)
                           );

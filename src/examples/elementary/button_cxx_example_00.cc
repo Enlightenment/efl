@@ -29,7 +29,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    auto cb(std::bind([wbt]() {
         std::cout << wbt->text_get() << std::endl;
      }));
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, bt, cb);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, bt, cb);
 
    efl::ui::Button bt2(instantiate, win);
    bt2.text_set("Click to quit");
@@ -39,7 +39,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    auto cb2(std::bind([wwin]() {
         ::efl_del(wwin->_eo_ptr()); // FIXME: No proper C++ API to delete win
      }));
-   efl::eolian::event_add(efl::ui::Clickable::clicked_event, bt2, cb2);
+   efl::eolian::event_add(efl::input::Clickable::clicked_event, bt2, cb2);
 
    win.size_set({320,160});
 }
