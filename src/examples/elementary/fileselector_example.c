@@ -10,6 +10,7 @@
  */
 
 #include <Elementary.h>
+#include <locale.h>
 
 /* 'done' cb */
 static void
