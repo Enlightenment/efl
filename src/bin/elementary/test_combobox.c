@@ -2,6 +2,11 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+
+#ifdef _WIN32
+# include <evil_private.h> /* strcasestr */
+#endif
+
 #include <Elementary.h>
 
 static void

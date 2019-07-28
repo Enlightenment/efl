@@ -3,6 +3,10 @@
 # include "elementary_config.h"
 #endif
 
+#ifdef _WIN32
+# include <evil_private.h> /* mkdir */
+#endif
+
 #include <Elementary.h>
 
 struct _api_data

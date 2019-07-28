@@ -27,7 +27,9 @@
 #ifdef ELM_DIRENT_H
 #include <dirent.h>
 #endif
-#include <pwd.h>
+#ifndef _WIN32
+# include <pwd.h>
+#endif
 #include <errno.h>
 
 #ifdef ELM_UNIX

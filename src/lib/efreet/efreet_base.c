@@ -8,10 +8,11 @@
 #include <unistd.h>
 #include <ctype.h>
 #include <sys/types.h>
-#include <pwd.h>
 
 #ifdef _WIN32
 # include <winsock2.h>
+#else
+# include <pwd.h>
 #endif
 
 #include <Ecore_File.h>

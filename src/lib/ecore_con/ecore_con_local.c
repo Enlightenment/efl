@@ -10,7 +10,11 @@
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <pwd.h>
+#ifdef _WIN32
+# include <evil_private.h> /* mkdir */
+#else
+# include <pwd.h>
+#endif
 #include <libgen.h>
 
 #ifdef HAVE_SYSTEMD

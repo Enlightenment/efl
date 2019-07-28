@@ -16,7 +16,6 @@ if target_machine.system() == 'windows'
   'evil_unistd.h',
   'evil_util.h',
   'dirent.h',
-  'pwd.h',
   ]
   evil_header_sys_src = [join_paths('sys','mman.h')]
 
@@ -27,7 +26,6 @@ if target_machine.system() == 'windows'
   'evil_locale.c',
   'evil_main.c',
   'evil_mman.c',
-  'evil_pwd.c',
   'evil_stdio.c',
   'evil_stdlib.c',
   'evil_string.c',

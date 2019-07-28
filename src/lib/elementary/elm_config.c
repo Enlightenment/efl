@@ -4,7 +4,6 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#include <pwd.h>
 
 #include "efl_config_global.eo.h"
 

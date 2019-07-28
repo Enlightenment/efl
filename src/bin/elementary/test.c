@@ -3,6 +3,11 @@
 #endif
 
 #include <string.h>
+
+#ifdef _WIN32
+# include <evil_private.h> /* strcasestr */
+#endif
+
 #include <Efl_Ui.h>
 #include <Elementary.h>
 #include "test.h"

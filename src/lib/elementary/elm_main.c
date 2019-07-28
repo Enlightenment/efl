@@ -12,6 +12,7 @@
 
 #ifdef _WIN32
 # include <direct.h> /* getcwd */
+# include <evil_private.h> /* dlopen,dlclose,etc */
 #endif
 
 #include <Emotion.h>
