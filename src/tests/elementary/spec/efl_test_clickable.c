@@ -3,12 +3,14 @@
 #endif
 
 #include <Efl_Ui.h>
+#include <Elementary.h>
 #include "efl_ui_spec_suite.h"
 #include "suite_helpers.h"
-
+#include "eo_internal.h"
+#include "elm_widget.h"
 /* spec-meta-start
       {"test-interface":"Efl.Ui.Clickable",
-       "test-widgets": ["Efl.Ui.Button", "Efl.Ui.Image", "Efl.Ui.Panes", "Efl.Ui.Frame"]
+       "test-widgets": ["Efl.Ui.Button", "Efl.Ui.Image", "Efl.Ui.Panes", "Efl.Ui.Frame", "Efl.Ui.Item.Realized"]
        }
    spec-meta-end
  */
@@ -57,6 +59,15 @@ prepare_window(void)
         efl_text_set(widget, "Test, here has to be text in order to make the frame y > 0");
         pos->x = 30;
         pos->y = 10;
+     }
+   else if (efl_isa(widget, EFL_UI_ITEM_CLASS))
+     {
+        elm_widget_theme_klass_set(widget, "grid_item");
+        elm_widget_theme_element_set(widget, NULL);
+        elm_widget_theme_style_set(widget, NULL);
+        efl_ui_widget_theme_apply(widget);
+        pos->x = 30;
+        pos->y = 30;
      }
 
    evas_smart_objects_calculate(evas_object_evas_get(win));

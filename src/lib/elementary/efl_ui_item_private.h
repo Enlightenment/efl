@@ -8,8 +8,6 @@ typedef struct _Efl_Ui_Item_Data
    // Eo Objects
    Eo *parent; /* Parent Widget */
 
-   Ecore_Timer *longpress_timer; /* Timer for longpress handle */
-
    // Boolean Data
    Eina_Bool  selected : 1; /* State for item selected */
    Eina_Bool  needs_size_calc : 1; /* Flag for Size calculation */

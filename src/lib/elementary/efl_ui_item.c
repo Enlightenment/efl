@@ -167,134 +167,39 @@ _item_unselect(Eo *obj, Efl_Ui_Item_Data *pd)
 }
 
 /* Mouse Controls */
-static Eina_Bool
-_item_longpressed(void *data)
+static void
+_item_pressed(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   Efl_Ui_Item *item = data;
-   EFL_UI_ITEM_DATA_GET_OR_RETURN(item, pd, ECORE_CALLBACK_CANCEL);
+   Efl_Ui_Item *obj = data;
+   if (efl_ui_widget_disabled_get(obj)) return;
 
-   pd->longpress_timer = NULL;
-
-   efl_event_callback_call(item, EFL_INPUT_EVENT_LONGPRESSED, NULL);
-   return ECORE_CALLBACK_CANCEL;
+   efl_layout_signal_emit(obj, "efl,state,pressed", "efl");
 }
 
 static void
-_item_mouse_down(void *data,
-                 Evas *evas EINA_UNUSED,
-                 Evas_Object *obj EINA_UNUSED,
-                 void *event_info)
+_item_unpressed(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   Evas_Event_Mouse_Down *ev = event_info;
-   Eo *item = data;
-   EFL_UI_ITEM_DATA_GET_OR_RETURN(item, pd);
-   ELM_WIDGET_DATA_GET_OR_RETURN(item, wd);
-   if (wd->disabled) return;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-
-   edje_object_signal_emit(wd->resize_obj, "efl,state,pressed", "efl");
-
-   pd->longpress_timer = ecore_timer_add(_elm_config->longpress_timeout, _item_longpressed, item);
-   efl_event_callback_call(item, EFL_INPUT_EVENT_PRESSED, NULL);
-}
-
-static void
-_item_mouse_up(void *data,
-               Evas *evas EINA_UNUSED,
-               Evas_Object *obj EINA_UNUSED,
-               void *event_info)
-{
-   Evas_Event_Mouse_Up *ev = event_info;
-   Eo *item = data;
+   Efl_Ui_Item *obj = data;
    Efl_Ui_Select_Mode m;
+   EFL_UI_ITEM_DATA_GET_OR_RETURN(obj, pd);
 
-   if (!efl_ui_item_container_get(item))
-     return;
-   EFL_UI_ITEM_DATA_GET_OR_RETURN(item, pd);
-   ELM_WIDGET_DATA_GET_OR_RETURN(item, wd);
-   if (wd->disabled) return;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
-     {
-        //FIXME: should we send this message to fallback?
-        edje_object_signal_emit(wd->resize_obj, "efl,state,unpressed", "efl");
-        //efl_event_callback_call(item, EFL_INPUT_EVENT_UNPRESSED, NULL);
-        return;
-     }
+   if (efl_ui_widget_disabled_get(obj)) return;
+   if (!efl_ui_item_container_get(obj)) return;
 
-   if (pd->longpress_timer)
-     {
-        ecore_timer_del(pd->longpress_timer);
-        pd->longpress_timer = NULL;
-     }
+   efl_layout_signal_emit(obj, "efl,state,unpressed", "efl");
+   m = efl_ui_select_mode_get(efl_ui_item_container_get(obj));
 
-   edje_object_signal_emit(wd->resize_obj, "efl,state,unpressed", "efl");
-   efl_event_callback_call(item, EFL_INPUT_EVENT_UNPRESSED, NULL);
-
-   m = efl_ui_select_mode_get(efl_ui_item_container_get(item));
    if ((m != EFL_UI_SELECT_MODE_SINGLE_ALWAYS) && (pd->selected))
-     _item_unselect(item, pd);
+     _item_unselect(obj, pd);
    else if (m != EFL_UI_SELECT_MODE_NONE)
-     _item_select(item, pd);
+     _item_select(obj, pd);
 }
 
-static void
-_item_mouse_move(void *data EINA_UNUSED,
-                 Evas *evas EINA_UNUSED,
-                 Evas_Object *obj EINA_UNUSED,
-                 void *event_info)
-{
-   Evas_Event_Mouse_Move *ev = event_info;
-   Eo *item = data;
-   EFL_UI_ITEM_DATA_GET_OR_RETURN(item, pd);
-   ELM_WIDGET_DATA_GET_OR_RETURN(item, wd);
-   if (wd->disabled) return;
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
-     {
-        edje_object_signal_emit(wd->resize_obj, "efl,state,unpressed", "efl");
-        return;
-     }
-}
+EFL_CALLBACKS_ARRAY_DEFINE(self_listening,
+  {EFL_INPUT_EVENT_PRESSED, _item_pressed},
+  {EFL_INPUT_EVENT_UNPRESSED, _item_unpressed},
+)
 
-static void
-_item_mouse_in(void *data EINA_UNUSED,
-               Evas *evas EINA_UNUSED,
-               Evas_Object *obj EINA_UNUSED,
-               void *event_info)
-{
-   Evas_Event_Mouse_In *ev = event_info;
-   Eo *item = data;
-   EFL_UI_ITEM_DATA_GET_OR_RETURN(item, pd);
-   ELM_WIDGET_DATA_GET_OR_RETURN(item, wd);
-   if (wd->disabled) return;
-
-   if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD) return;
-}
-
-static void
-_item_mouse_callback_add(Eo *obj, void *data)
-{
-   evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_MOUSE_DOWN, _item_mouse_down, data);
-   evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_MOUSE_UP, _item_mouse_up, data);
-   evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_MOUSE_MOVE, _item_mouse_move, data);
-   evas_object_event_callback_add
-     (obj, EVAS_CALLBACK_MOUSE_IN, _item_mouse_in, data);
-}
-
-static void
-_item_mouse_callback_del(Eo *obj, void *data)
-{
-   evas_object_event_callback_del_full
-     (obj, EVAS_CALLBACK_MOUSE_DOWN, _item_mouse_down, data);
-   evas_object_event_callback_del_full
-     (obj, EVAS_CALLBACK_MOUSE_UP, _item_mouse_up, data);
-   evas_object_event_callback_del_full
-     (obj, EVAS_CALLBACK_MOUSE_MOVE, _item_mouse_move, data);
-   evas_object_event_callback_del_full
-     (obj, EVAS_CALLBACK_MOUSE_IN, _item_mouse_in, data);
-}
 /* Mouse Controls ends */
 
 static void
@@ -335,6 +240,8 @@ _efl_ui_item_efl_object_constructor(Eo *obj, Efl_Ui_Item_Data *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
+   efl_event_callback_array_add(obj, self_listening(), obj);
+
    return obj;
 }
 
@@ -348,7 +255,7 @@ _efl_ui_item_efl_object_finalize(Eo *obj, Efl_Ui_Item_Data *pd EINA_UNUSED)
    /* Support Item Focus Feature */
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   _item_mouse_callback_add(wd->resize_obj, eo);
+   efl_ui_clickable_util_bind_to_object(wd->resize_obj, obj);
    return eo;
 }
 
@@ -357,7 +264,6 @@ _efl_ui_item_efl_object_destructor(Eo *obj, Efl_Ui_Item_Data *pd EINA_UNUSED)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   _item_mouse_callback_del(wd->resize_obj, obj);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
@@ -395,7 +301,6 @@ _efl_ui_item_container_get(const Eo *obj EINA_UNUSED, Efl_Ui_Item_Data *pd)
 {
    return pd->parent;
 }
-
 
 /* Internal EO APIs and hidden overrides */
 
