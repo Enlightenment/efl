@@ -769,6 +769,38 @@ EAPI Eina_Bool eina_file_close_on_exec(int fd, Eina_Bool on);
 #include "eina_inline_file.x"
 
 /**
+ * @typedef Eina_Statgen
+ * @brief Stat Generation count state with it being 0 when disabled or some other value that is comparable (== or !=) to a stored value and if it is not equal, then do the actual stat i/o work
+ * @since 1.23
+ */
+typedef unsigned int Eina_Statgen;
+
+/**
+ * @brief Force the stat generation counter to tick over so any following i/o does real i/o and stat calls
+ * @since 1.23
+ */
+EAPI void         eina_file_statgen_next(void);
+
+/**
+ * @brief Get the current stat generation counter value
+ * @return 0 if you should always do stat calls and compare, or some other value that changes like a generation counter
+ * @since 1.23
+ */
+EAPI Eina_Statgen eina_file_statgen_get(void);
+
+/**
+ * @brief Enable stat generation count optimiziing to only stat/do file i/o between generation counts changing
+ * @since 1.23
+ */
+EAPI void         eina_file_statgen_enable(void);
+
+/**
+ * @brief Disable stat generation count optimiziing to only stat/do file i/o between generation counts changing
+ * @since 1.23
+ */
+EAPI void         eina_file_statgen_bisable(void);
+
+/**
  * @}
  */
 
