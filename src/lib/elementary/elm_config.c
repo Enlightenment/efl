@@ -34,6 +34,7 @@ Eina_Bool _config_profile_lock = EINA_FALSE;
 static Ecore_Timer *_config_change_delay_timer = NULL;
 static Ecore_Timer *_config_profile_change_delay_timer = NULL;
 static Ecore_Event_Handler *_monitor_file_created_handler = NULL;
+static Ecore_Event_Handler *_monitor_file_modified_handler = NULL;
 static Ecore_Event_Handler *_monitor_directory_created_handler = NULL;
 static Eio_Monitor *_eio_config_monitor = NULL;
 static Eio_Monitor *_eio_profile_monitor = NULL;
@@ -4196,6 +4197,7 @@ _elm_config_sub_shutdown(void)
    ELM_SAFE_FREE(_config_change_delay_timer, ecore_timer_del);
    ELM_SAFE_FREE(_config_profile_change_delay_timer, ecore_timer_del);
    ELM_SAFE_FREE(_monitor_file_created_handler, ecore_event_handler_del);
+   ELM_SAFE_FREE(_monitor_file_modified_handler, ecore_event_handler_del);
    ELM_SAFE_FREE(_monitor_directory_created_handler, ecore_event_handler_del);
 }
 
@@ -4226,7 +4228,7 @@ _config_change_delay_cb(void *data EINA_UNUSED)
 
 static Eina_Bool
 _elm_config_file_monitor_cb(void *data EINA_UNUSED,
-                            int type EINA_UNUSED,
+                            int type,
                             void *event)
 {
    Eio_Monitor_Event *ev = event;
@@ -4234,7 +4236,7 @@ _elm_config_file_monitor_cb(void *data EINA_UNUSED,
 
    if (ev->monitor == _eio_config_monitor)
      {
-        if (type == EIO_MONITOR_FILE_CREATED)
+        if ((type == EIO_MONITOR_FILE_CREATED) || (type == EIO_MONITOR_FILE_MODIFIED))
           {
              if (!strcmp(file, "base.cfg"))
                {
@@ -4246,7 +4248,7 @@ _elm_config_file_monitor_cb(void *data EINA_UNUSED,
      }
    if (ev->monitor == _eio_profile_monitor)
      {
-        if (type == EIO_MONITOR_FILE_CREATED)
+        if ((type == EIO_MONITOR_FILE_CREATED) || (type == EIO_MONITOR_FILE_MODIFIED))
           {
              if ((!_config_profile_lock) && (!strcmp(file, "profile.cfg")))
                {
@@ -4299,6 +4301,8 @@ _elm_config_sub_init(void)
    _eio_profile_monitor = eio_monitor_add(buf);
    _monitor_file_created_handler = ecore_event_handler_add
      (EIO_MONITOR_FILE_CREATED, _elm_config_file_monitor_cb, NULL);
+   _monitor_file_modified_handler = ecore_event_handler_add
+     (EIO_MONITOR_FILE_MODIFIED, _elm_config_file_monitor_cb, NULL);
    _monitor_directory_created_handler = ecore_event_handler_add
      (EIO_MONITOR_DIRECTORY_CREATED, _elm_config_file_monitor_cb, NULL);
 
