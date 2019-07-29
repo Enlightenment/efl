@@ -7931,6 +7931,8 @@ _prepend_escaped_char(Efl_Text_Cursor_Cursor *cur_obj, const char *s,
    escape = _escaped_char_get(s, s_end);
    if (escape)
      evas_textblock_cursor_text_prepend(cur_obj, escape);
+   else /* Use same text input if no escape was found */
+     _prepend_text_run(cur_obj, s, s_end);
 }
 
 
