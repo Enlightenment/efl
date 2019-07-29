@@ -455,34 +455,38 @@ _evas_text_efl_text_font_font_set(Eo *eo_obj, Evas_Text_Data *o, const char *fon
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Font_Description *fdesc;
 
-   if ((!font) || (size <= 0)) return;
+   if (!font && size <= 0) return;
 
    evas_object_async_block(obj);
    if ((size == o->cur.size) &&
        (o->cur.font && !strcmp(font, o->cur.font))) return;
 
-   /* We can't assume the given font is same with current fdesc by comparing string.
-      Since Evas starts to supporting "auto" for language,
-      the given font string should be parsed once before comparing it. */
-   fdesc = evas_font_desc_new();
-
-   /* Set default language according to locale. */
-   eina_stringshare_replace(&(fdesc->lang), evas_font_lang_normalize("auto"));
-   evas_font_name_parse(fdesc, font);
-
-   if (o->cur.fdesc && !evas_font_desc_cmp(fdesc, o->cur.fdesc) &&
-       (size == o->cur.size))
+   if (font)
      {
-        evas_font_desc_unref(fdesc);
-        return;
+        /* We can't assume the given font is same with current fdesc by comparing string.
+           Since Evas starts to supporting "auto" for language,
+           the given font string should be parsed once before comparing it. */
+        fdesc = evas_font_desc_new();
+
+        /* Set default language according to locale. */
+        eina_stringshare_replace(&(fdesc->lang), evas_font_lang_normalize("auto"));
+        evas_font_name_parse(fdesc, font);
+
+        if (o->cur.fdesc && !evas_font_desc_cmp(fdesc, o->cur.fdesc) &&
+            (size == o->cur.size))
+          {
+             evas_font_desc_unref(fdesc);
+             return;
+          }
+
+        if (o->cur.fdesc) evas_font_desc_unref(o->cur.fdesc);
+        o->cur.fdesc = fdesc;
+        eina_stringshare_replace(&o->cur.font, font);
+        o->prev.font = NULL;
      }
 
-   if (o->cur.fdesc) evas_font_desc_unref(o->cur.fdesc);
-   o->cur.fdesc = fdesc;
-
-   o->cur.size = size;
-   eina_stringshare_replace(&o->cur.font, font);
-   o->prev.font = NULL;
+   if ( size > 0 )
+      o->cur.size = size;
 
    _evas_text_font_reload(eo_obj, o);
 }

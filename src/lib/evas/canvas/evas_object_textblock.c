@@ -15808,13 +15808,13 @@ _efl_canvas_text_efl_text_font_font_set(Eo *obj EINA_UNUSED, Efl_Canvas_Text_Dat
 
    Eina_Stringshare *nfont;
 
-   if (o->default_format.info.size != size)
+   if (size > 0 && o->default_format.info.size != size)
      {
         o->default_format.info.size = size;
         changed = EINA_TRUE;
      }
 
-   if (o->default_format.info.font != font)
+   if (font && o->default_format.info.font != font)
      {
         nfont = eina_stringshare_add(font);
         if (nfont == _FMT_INFO(font))
