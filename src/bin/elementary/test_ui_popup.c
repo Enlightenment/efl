@@ -1009,7 +1009,7 @@ test_ui_anchor_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
    Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, win);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
-   efl_file_simple_load(layout, buf, "efl_ui_anchor_popup_layout");
+   efl_file_simple_load(layout, buf, "efl_ui_popup_anchor_layout");
    efl_gfx_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    efl_content_set(win, layout);
 
