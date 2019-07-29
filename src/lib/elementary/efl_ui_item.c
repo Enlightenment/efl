@@ -302,7 +302,7 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Item_Data *pd)
 {
    Evas_Coord minh = -1, minw = -1;
    Evas_Coord rest_w = 0, rest_h = 0;
-   ELM_WIDGET_DATA_GET_OR_RETURN(pd->obj, wd);
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    edje_object_size_min_restricted_calc(wd->resize_obj, &minw, &minh,
                                         rest_w, rest_h);
@@ -331,9 +331,8 @@ _efl_ui_item_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Item_Data *pd)
 }
 
 EOLIAN static Eo *
-_efl_ui_item_efl_object_constructor(Eo *obj, Efl_Ui_Item_Data *pd)
+_efl_ui_item_efl_object_constructor(Eo *obj, Efl_Ui_Item_Data *pd EINA_UNUSED)
 {
-   pd->obj = obj;
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    return obj;

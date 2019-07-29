@@ -6,7 +6,6 @@
 typedef struct _Efl_Ui_Item_Data
 {
    // Eo Objects
-   Eo *obj; /* Self-Object */
    Eo *parent; /* Parent Widget */
 
    Ecore_Timer *longpress_timer; /* Timer for longpress handle */
