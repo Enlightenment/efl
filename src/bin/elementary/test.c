@@ -402,6 +402,8 @@ void test_ui_relative_layout(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_radio(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_collection_list(void *data, Evas_Object *obj, void *event_info );
 void test_efl_ui_collection_grid(void *data, Evas_Object *obj, void *event_info);
+void test_efl_ui_item(void *data, Evas_Object *obj, void *event_info);
+
 static void _list_udpate(void);
 
 static Evas_Object *win, *tbx, *entry; // TODO: refactoring
@@ -905,6 +907,7 @@ add_tests:
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Relative_Layout", test_ui_relative_layout);
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Collection List", test_efl_ui_collection_list);
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Collection Grid", test_efl_ui_collection_grid);
+   ADD_TEST_EO(NULL, "Containers", "Items", test_efl_ui_item);
 
    //------------------------------//
    ADD_TEST_EO(NULL, "Events", "Event Refeed", test_events);
