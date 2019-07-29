@@ -27,6 +27,11 @@ test_win_modal(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
 {
    Evas_Object *parent_win, *win, *bg, *txt, *bx, *bt;
 
+   if (!obj)
+     {
+        fprintf(stderr, "The modal win test can only be run by clicking the button for it in the main elementary_test window.\n");
+        return;
+     }
    parent_win = _parent_win_get(obj);
 
    win = elm_win_add(parent_win, "modal", ELM_WIN_BASIC);
