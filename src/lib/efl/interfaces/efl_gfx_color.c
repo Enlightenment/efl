@@ -106,7 +106,7 @@ _efl_gfx_color_class_color_class_code_set(Eo *obj, void *_pd EINA_UNUSED, const 
    int len;
    unsigned char r, g, b, a;
 
-   len = _format_clean_param(colorcode);
+   len = (size_t) strlen(colorcode);
 
    _format_color_parse(colorcode, len, &r, &g, &b, &a);
    return efl_gfx_color_class_set(obj, color_class, layer, r, g, b, a);
