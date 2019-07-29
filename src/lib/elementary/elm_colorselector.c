@@ -1287,7 +1287,7 @@ _color_bars_add(Evas_Object *obj)
         edje_object_part_swallow
           (sd->cb_data[i]->colorbar, "elm.l_button", sd->cb_data[i]->lbt);
         efl_event_callback_add
-          (sd->cb_data[i]->lbt, EFL_UI_EVENT_CLICKED, _button_clicked_cb, sd->cb_data[i]);
+          (sd->cb_data[i]->lbt, EFL_INPUT_EVENT_CLICKED, _button_clicked_cb, sd->cb_data[i]);
         elm_button_autorepeat_set(sd->cb_data[i]->lbt, EINA_TRUE);
         elm_button_autorepeat_initial_timeout_set
           (sd->cb_data[i]->lbt, _elm_config->longpress_timeout);
@@ -1305,7 +1305,7 @@ _color_bars_add(Evas_Object *obj)
         edje_object_part_swallow
           (sd->cb_data[i]->colorbar, "elm.r_button", sd->cb_data[i]->rbt);
         efl_event_callback_add
-          (sd->cb_data[i]->rbt, EFL_UI_EVENT_CLICKED, _button_clicked_cb, sd->cb_data[i]);
+          (sd->cb_data[i]->rbt, EFL_INPUT_EVENT_CLICKED, _button_clicked_cb, sd->cb_data[i]);
         elm_button_autorepeat_set(sd->cb_data[i]->rbt, EINA_TRUE);
         elm_button_autorepeat_initial_timeout_set
           (sd->cb_data[i]->rbt, _elm_config->longpress_timeout);

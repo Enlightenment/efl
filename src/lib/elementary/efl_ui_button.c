@@ -6,7 +6,7 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_PART_PROTECTED
-#define EFL_UI_CLICKABLE_PROTECTED
+#define EFL_INPUT_CLICKABLE_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -77,8 +77,8 @@ _activate(Evas_Object *obj)
                evas_object_smart_callback_call(obj, "clicked", NULL);
              else
                {
-                  efl_ui_clickable_press(obj, 1);
-                  efl_ui_clickable_unpress(obj, 1);
+                  efl_input_clickable_press(obj, 1);
+                  efl_input_clickable_unpress(obj, 1);
                }
           }
      }
@@ -107,8 +107,8 @@ _efl_ui_button_efl_ui_widget_on_access_activate(Eo *obj, Efl_Ui_Button_Data *_pd
      evas_object_smart_callback_call(obj, "clicked", NULL);
    else
      {
-        efl_ui_clickable_press(obj, 1);
-        efl_ui_clickable_unpress(obj, 1);
+        efl_input_clickable_press(obj, 1);
+        efl_input_clickable_unpress(obj, 1);
      }
 
    if (elm_widget_is_legacy(obj))

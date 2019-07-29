@@ -133,7 +133,7 @@ test_ui_table_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Next API function");
-   efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _api_bt_clicked, api);
+   efl_event_callback_add(bt, EFL_INPUT_EVENT_CLICKED, _api_bt_clicked, api);
    efl_pack_table(table, bt, 30, 0, 40, 10);
    elm_object_disabled_set(bt, api->state == API_STATE_LAST);
    efl_gfx_entity_visible_set(bt, 1);
@@ -162,7 +162,7 @@ test_ui_table_static(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    bt = elm_button_add(win);
    elm_object_text_set(bt, "Change");
    efl_pack_table(table, bt, 40, 40, 20, 20);
-   efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _ch_table, table);
+   efl_event_callback_add(bt, EFL_INPUT_EVENT_CLICKED, _ch_table, table);
    efl_gfx_entity_visible_set(bt, 1);
 
    rc = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);

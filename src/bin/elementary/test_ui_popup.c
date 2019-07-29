@@ -251,7 +251,7 @@ test_ui_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    efl_gfx_entity_position_set(repeat_test_btn, EINA_POSITION2D(0, 0));
    efl_gfx_entity_size_set(repeat_test_btn, EINA_SIZE2D(100, 100));
    efl_text_set(repeat_test_btn, "Repeat Event Test");
-   efl_event_callback_add(repeat_test_btn, EFL_UI_EVENT_CLICKED, _repeat_test_cb, NULL);
+   efl_event_callback_add(repeat_test_btn, EFL_INPUT_EVENT_CLICKED, _repeat_test_cb, NULL);
    efl_gfx_entity_visible_set(repeat_test_btn, EINA_FALSE);
 
    p_data->win = win;
@@ -263,73 +263,73 @@ test_ui_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    efl_text_set(create_btn, "Create Popup");
    efl_gfx_entity_position_set(create_btn, EINA_POSITION2D(0, 0));
    efl_gfx_entity_size_set(create_btn, EINA_SIZE2D(150, 50));
-   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _create_cb, p_data);
+   efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _create_cb, p_data);
 
    Eo *delete_btn = efl_add(EFL_UI_BUTTON_CLASS, panel_win);
    efl_text_set(delete_btn, "Delete Popup");
    efl_gfx_entity_position_set(delete_btn, EINA_POSITION2D(150, 0));
    efl_gfx_entity_size_set(delete_btn, EINA_SIZE2D(150, 50));
-   efl_event_callback_add(delete_btn, EFL_UI_EVENT_CLICKED, _delete_cb, p_data);
+   efl_event_callback_add(delete_btn, EFL_INPUT_EVENT_CLICKED, _delete_cb, p_data);
 
    Eo *repeat_event_btn = efl_add(EFL_UI_BUTTON_CLASS, panel_win);
    efl_text_set(repeat_event_btn, "Repeat Event Set");
    efl_gfx_entity_position_set(repeat_event_btn, EINA_POSITION2D(0, 50));
    efl_gfx_entity_size_set(repeat_event_btn, EINA_SIZE2D(150, 50));
-   efl_event_callback_add(repeat_event_btn, EFL_UI_EVENT_CLICKED, _repeat_event_cb, p_data);
+   efl_event_callback_add(repeat_event_btn, EFL_INPUT_EVENT_CLICKED, _repeat_event_cb, p_data);
 
    Eo *dummy_btn = efl_add(EFL_UI_BUTTON_CLASS, panel_win);
    efl_text_set(dummy_btn, "Show Dummy Button");
    efl_gfx_entity_position_set(dummy_btn, EINA_POSITION2D(150, 50));
    efl_gfx_entity_size_set(dummy_btn, EINA_SIZE2D(150, 50));
-   efl_event_callback_add(dummy_btn, EFL_UI_EVENT_CLICKED, _dummy_cb, p_data);
+   efl_event_callback_add(dummy_btn, EFL_INPUT_EVENT_CLICKED, _dummy_cb, p_data);
 
    Eo *backwall_btn = efl_add(EFL_UI_BUTTON_CLASS, panel_win);
    efl_gfx_entity_position_set(backwall_btn, EINA_POSITION2D(0, 100));
    efl_gfx_entity_size_set(backwall_btn, EINA_SIZE2D(150, 50));
    efl_text_set(backwall_btn, "Backwall Set");
-   efl_event_callback_add(backwall_btn, EFL_UI_EVENT_CLICKED, _backwall_cb, p_data);
+   efl_event_callback_add(backwall_btn, EFL_INPUT_EVENT_CLICKED, _backwall_cb, p_data);
 
    Eo *timeout_btn = efl_add(EFL_UI_BUTTON_CLASS, panel_win);
    efl_text_set(timeout_btn, "Timeout Set");
    efl_gfx_entity_position_set(timeout_btn, EINA_POSITION2D(150, 100));
    efl_gfx_entity_size_set(timeout_btn, EINA_SIZE2D(150, 50));
-   efl_event_callback_add(timeout_btn, EFL_UI_EVENT_CLICKED, _timeout_set_cb, p_data);
+   efl_event_callback_add(timeout_btn, EFL_INPUT_EVENT_CLICKED, _timeout_set_cb, p_data);
 
    Eo *center_btn = efl_add(EFL_UI_BUTTON_CLASS, panel_win);
    efl_text_set(center_btn, "Center Align");
    efl_gfx_entity_position_set(center_btn, EINA_POSITION2D(0, 150));
    efl_gfx_entity_size_set(center_btn, EINA_SIZE2D(150, 50));
-   efl_event_callback_add(center_btn, EFL_UI_EVENT_CLICKED, _center_align_cb, p_data);
+   efl_event_callback_add(center_btn, EFL_INPUT_EVENT_CLICKED, _center_align_cb, p_data);
 
    Eo *top_btn = efl_add(EFL_UI_BUTTON_CLASS, panel_win);
    efl_text_set(top_btn, "Top Align");
    efl_gfx_entity_position_set(top_btn, EINA_POSITION2D(150, 150));
    efl_gfx_entity_size_set(top_btn, EINA_SIZE2D(150, 50));
-   efl_event_callback_add(top_btn, EFL_UI_EVENT_CLICKED, _top_align_cb, p_data);
+   efl_event_callback_add(top_btn, EFL_INPUT_EVENT_CLICKED, _top_align_cb, p_data);
 
    Eo *left_btn = efl_add(EFL_UI_BUTTON_CLASS, panel_win);
    efl_text_set(left_btn, "Left Align");
    efl_gfx_entity_position_set(left_btn, EINA_POSITION2D(0, 200));
    efl_gfx_entity_size_set(left_btn, EINA_SIZE2D(150, 50));
-   efl_event_callback_add(left_btn, EFL_UI_EVENT_CLICKED, _left_align_cb, p_data);
+   efl_event_callback_add(left_btn, EFL_INPUT_EVENT_CLICKED, _left_align_cb, p_data);
 
    Eo *right_btn = efl_add(EFL_UI_BUTTON_CLASS, panel_win);
    efl_text_set(right_btn, "Right Align");
    efl_gfx_entity_position_set(right_btn, EINA_POSITION2D(150, 200));
    efl_gfx_entity_size_set(right_btn, EINA_SIZE2D(150, 50));
-   efl_event_callback_add(right_btn, EFL_UI_EVENT_CLICKED, _right_align_cb, p_data);
+   efl_event_callback_add(right_btn, EFL_INPUT_EVENT_CLICKED, _right_align_cb, p_data);
 
    Eo *bottom_btn = efl_add(EFL_UI_BUTTON_CLASS, panel_win);
    efl_text_set(bottom_btn, "Bottom Align");
    efl_gfx_entity_position_set(bottom_btn, EINA_POSITION2D(0, 250));
    efl_gfx_entity_size_set(bottom_btn, EINA_SIZE2D(150, 50));
-   efl_event_callback_add(bottom_btn, EFL_UI_EVENT_CLICKED, _bottom_align_cb, p_data);
+   efl_event_callback_add(bottom_btn, EFL_INPUT_EVENT_CLICKED, _bottom_align_cb, p_data);
 
    Eo *position_btn = efl_add(EFL_UI_BUTTON_CLASS, panel_win);
    efl_text_set(position_btn, "Position Set (x:0, y:0)");
    efl_gfx_entity_position_set(position_btn, EINA_POSITION2D(150, 250));
    efl_gfx_entity_size_set(position_btn, EINA_SIZE2D(150, 50));
-   efl_event_callback_add(position_btn, EFL_UI_EVENT_CLICKED, _position_set_cb, p_data);
+   efl_event_callback_add(position_btn, EFL_INPUT_EVENT_CLICKED, _position_set_cb, p_data);
 }
 
 static void
@@ -517,31 +517,31 @@ test_ui_scroll_alert_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    efl_text_set(create_btn, "1. size(160,160), content(200, 200), expand(-1, -1)");
    efl_gfx_entity_position_set(create_btn, EINA_POSITION2D(0, 0));
    efl_gfx_entity_size_set(create_btn, EINA_SIZE2D(500, 50));
-   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_scroll_case1_cb, win);
+   efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _alert_scroll_case1_cb, win);
 
    create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(create_btn, "2. size(160,160), content(200, 200), expand(320, -1)");
    efl_gfx_entity_position_set(create_btn, EINA_POSITION2D(0, 50));
    efl_gfx_entity_size_set(create_btn, EINA_SIZE2D(500, 50));
-   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_scroll_case2_cb, win);
+   efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _alert_scroll_case2_cb, win);
 
    create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(create_btn, "3. size(160,160), content(200, 200), expand(-1, 320)");
    efl_gfx_entity_position_set(create_btn, EINA_POSITION2D(0, 100));
    efl_gfx_entity_size_set(create_btn, EINA_SIZE2D(500, 50));
-   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_scroll_case3_cb, win);
+   efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _alert_scroll_case3_cb, win);
 
    create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(create_btn, "4. size(160,160), content(200, 200), expand(320, 320)");
    efl_gfx_entity_position_set(create_btn, EINA_POSITION2D(0, 150));
    efl_gfx_entity_size_set(create_btn, EINA_SIZE2D(500, 50));
-   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_scroll_case4_cb, win);
+   efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _alert_scroll_case4_cb, win);
 
    create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(create_btn, "5. size(160,160), content(200, 200), expand(80, 80)");
    efl_gfx_entity_position_set(create_btn, EINA_POSITION2D(0, 200));
    efl_gfx_entity_size_set(create_btn, EINA_SIZE2D(500, 50));
-   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_scroll_case5_cb, win);
+   efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _alert_scroll_case5_cb, win);
 }
 
 static void
@@ -900,85 +900,85 @@ test_ui_text_alert_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
    efl_text_set(create_btn, "1. size(200,200), text(short), expand(-1,-1)");
    efl_gfx_entity_position_set(create_btn, EINA_POSITION2D(0, 0));
    efl_gfx_entity_size_set(create_btn, EINA_SIZE2D(500, 50));
-   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case1_cb, win);
+   efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _alert_text_case1_cb, win);
 
    create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(create_btn, "2. size(200,200), text(long), expand(-1,-1)");
    efl_gfx_entity_position_set(create_btn, EINA_POSITION2D(0, 50));
    efl_gfx_entity_size_set(create_btn, EINA_SIZE2D(500, 50));
-   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case2_cb, win);
+   efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _alert_text_case2_cb, win);
 
    create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(create_btn, "3. size(200,200), text(short), expand(300,300)");
    efl_gfx_entity_position_set(create_btn, EINA_POSITION2D(0, 100));
    efl_gfx_entity_size_set(create_btn, EINA_SIZE2D(500, 50));
-   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case3_cb, win);
+   efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _alert_text_case3_cb, win);
 
    create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(create_btn, "4. size(200,200), text(short), expand(300,-1)");
    efl_gfx_entity_position_set(create_btn, EINA_POSITION2D(0, 150));
    efl_gfx_entity_size_set(create_btn, EINA_SIZE2D(500, 50));
-   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case4_cb, win);
+   efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _alert_text_case4_cb, win);
 
    create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(create_btn, "5. size(200,200), text(short), expand(-1,300)");
    efl_gfx_entity_position_set(create_btn, EINA_POSITION2D(0, 200));
    efl_gfx_entity_size_set(create_btn, EINA_SIZE2D(500, 50));
-   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case5_cb, win);
+   efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _alert_text_case5_cb, win);
 
    create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(create_btn, "6. size(200,200), text(long), expand(300,300)");
    efl_gfx_entity_position_set(create_btn, EINA_POSITION2D(0, 250));
    efl_gfx_entity_size_set(create_btn, EINA_SIZE2D(500, 50));
-   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case6_cb, win);
+   efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _alert_text_case6_cb, win);
 
    create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(create_btn, "7. size(200,200), text(long), expand(300,-1)");
    efl_gfx_entity_position_set(create_btn, EINA_POSITION2D(0, 300));
    efl_gfx_entity_size_set(create_btn, EINA_SIZE2D(500, 50));
-   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case7_cb, win);
+   efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _alert_text_case7_cb, win);
 
    create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(create_btn, "8. size(200,200), text(long), expand(-1,300)");
    efl_gfx_entity_position_set(create_btn, EINA_POSITION2D(0, 350));
    efl_gfx_entity_size_set(create_btn, EINA_SIZE2D(500, 50));
-   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case8_cb, win);
+   efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _alert_text_case8_cb, win);
 
    create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(create_btn, "9. size(200,200), text(long), expand(10, 10)");
    efl_gfx_entity_position_set(create_btn, EINA_POSITION2D(0, 400));
    efl_gfx_entity_size_set(create_btn, EINA_SIZE2D(500, 50));
-   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case9_cb, win);
+   efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _alert_text_case9_cb, win);
 
    create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(create_btn, "10. size(200,200), text(long), expand(150,150)");
    efl_gfx_entity_position_set(create_btn, EINA_POSITION2D(0, 450));
    efl_gfx_entity_size_set(create_btn, EINA_SIZE2D(500, 50));
-   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case10_cb, win);
+   efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _alert_text_case10_cb, win);
 
    create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(create_btn, "11. size(200,200), text(long), expand(150,-1)");
    efl_gfx_entity_position_set(create_btn, EINA_POSITION2D(0, 500));
    efl_gfx_entity_size_set(create_btn, EINA_SIZE2D(500, 50));
-   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case11_cb, win);
+   efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _alert_text_case11_cb, win);
 
    create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(create_btn, "12. size(200,200), text(long), expand(300,-1)");
    efl_gfx_entity_position_set(create_btn, EINA_POSITION2D(0, 550));
    efl_gfx_entity_size_set(create_btn, EINA_SIZE2D(500, 50));
-   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case12_cb, win);
+   efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _alert_text_case12_cb, win);
 
    create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(create_btn, "13. size(200,200), text(long), expand(-1,150)");
    efl_gfx_entity_position_set(create_btn, EINA_POSITION2D(0, 600));
    efl_gfx_entity_size_set(create_btn, EINA_SIZE2D(500, 50));
-   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case13_cb, win);
+   efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _alert_text_case13_cb, win);
 
    create_btn = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(create_btn, "14. size(200,200), text(long), expand(-1,300)");
    efl_gfx_entity_position_set(create_btn, EINA_POSITION2D(0, 650));
    efl_gfx_entity_size_set(create_btn, EINA_SIZE2D(500, 50));
-   efl_event_callback_add(create_btn, EFL_UI_EVENT_CLICKED, _alert_text_case14_cb, win);
+   efl_event_callback_add(create_btn, EFL_INPUT_EVENT_CLICKED, _alert_text_case14_cb, win);
 }
 
 static void
@@ -1036,7 +1036,7 @@ test_ui_anchor_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
         btn = efl_add(EFL_UI_BUTTON_CLASS, win);
         efl_text_set(btn, "anchor");
         efl_gfx_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-        efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _anchor_set_cb, efl_ui_popup);
+        efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _anchor_set_cb, efl_ui_popup);
 
         snprintf(buf, sizeof(buf), "anchor%d", i+1);
         efl_content_set(efl_part(layout, buf), btn);
@@ -1045,7 +1045,7 @@ test_ui_anchor_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    btn = efl_add(EFL_UI_BUTTON_CLASS, win);
    efl_text_set(btn, "anchor none");
    efl_gfx_hint_weight_set(btn, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _anchor_unset_cb, efl_ui_popup);
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _anchor_unset_cb, efl_ui_popup);
    efl_content_set(efl_part(layout, "anchor_none"), btn);
 
    Eo *table = efl_add(EFL_UI_TABLE_CLASS, efl_ui_popup);
@@ -1054,43 +1054,43 @@ test_ui_anchor_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
    efl_text_set(btn, "Center Align");
    efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(70, 35));
-   efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _center_align_cb, p_data);
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _center_align_cb, p_data);
    efl_pack_table(table, btn, 0, 0, 2, 1);
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
    efl_text_set(btn, "Top Align");
    efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(70, 35));
-   efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _top_align_cb, p_data);
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _top_align_cb, p_data);
    efl_pack_table(table, btn, 2, 0, 2, 1);
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
    efl_text_set(btn, "Bottom Align");
    efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(70, 35));
-   efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _bottom_align_cb, p_data);
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _bottom_align_cb, p_data);
    efl_pack_table(table, btn, 4, 0, 2, 1);
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
    efl_text_set(btn, "Left Align");
    efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(100, 35));
-   efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _left_align_cb, p_data);
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _left_align_cb, p_data);
    efl_pack_table(table, btn, 0, 1, 3, 1);
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
    efl_text_set(btn, "Right Align");
    efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(100, 35));
-   efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _right_align_cb, p_data);
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _right_align_cb, p_data);
    efl_pack_table(table, btn, 3, 1, 3, 1);
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
    efl_text_set(btn, "Position Set");
    efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(100, 35));
-   efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _position_set_cb, p_data);
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _position_set_cb, p_data);
    efl_pack_table(table, btn, 0, 2, 3, 1);
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, efl_ui_popup);
    efl_text_set(btn, "Resize");
    efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(100, 35));
-   efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, _popup_resize_cb, p_data);
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _popup_resize_cb, p_data);
    efl_pack_table(table, btn, 3, 2, 3, 1);
 
    efl_content_set(efl_ui_popup, table);

@@ -74,9 +74,9 @@ static void
 _inc_dec_button_unpressed_cb(void *data, const Efl_Event *event EINA_UNUSED);
 
 EFL_CALLBACKS_ARRAY_DEFINE( _inc_dec_button_cb,
-   { EFL_UI_EVENT_CLICKED, _inc_dec_button_clicked_cb},
-   { EFL_UI_EVENT_PRESSED, _inc_dec_button_pressed_cb},
-   { EFL_UI_EVENT_UNPRESSED, _inc_dec_button_unpressed_cb}
+   { EFL_INPUT_EVENT_CLICKED, _inc_dec_button_clicked_cb},
+   { EFL_INPUT_EVENT_PRESSED, _inc_dec_button_pressed_cb},
+   { EFL_INPUT_EVENT_UNPRESSED, _inc_dec_button_unpressed_cb}
 );
 
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);

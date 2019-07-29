@@ -7,7 +7,7 @@
 #define EFL_ACCESS_COMPONENT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 #define EFL_LAYOUT_CALC_PROTECTED
-#define EFL_UI_CLICKABLE_PROTECTED
+#define EFL_INPUT_CLICKABLE_PROTECTED
 
 #include <Elementary.h>
 
@@ -747,7 +747,7 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
    if (elm_widget_is_legacy(obj))
      evas_object_smart_callback_call(obj, "clicked", NULL);
    else
-     efl_event_callback_call(obj, EFL_UI_EVENT_CLICKED, NULL);
+     efl_event_callback_call(obj, EFL_INPUT_EVENT_CLICKED, NULL);
    return EINA_TRUE;
 }
 

@@ -83,7 +83,7 @@ test_ui_tags(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
 
    efl_add(EFL_UI_BUTTON_CLASS, layout,
            efl_text_set(efl_added, "Change mode"),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _clicked, tags),
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _clicked, tags),
            elm_object_part_content_set(layout, "box", efl_added));
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(320, 480));

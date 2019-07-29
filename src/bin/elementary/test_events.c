@@ -227,9 +227,9 @@ test_events(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    o = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win);
    efl_pack(bx, o);
 
-   efl_event_callback_add(td->button, EFL_UI_EVENT_CLICKED, _clicked_button1, td);
+   efl_event_callback_add(td->button, EFL_INPUT_EVENT_CLICKED, _clicked_button1, td);
    efl_event_callback_array_add(td->button, button_pointer_callbacks(), (void*)(intptr_t)0x1);
-   efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _clicked_button2, td);
+   efl_event_callback_add(bt, EFL_INPUT_EVENT_CLICKED, _clicked_button2, td);
    efl_event_callback_add(win, EFL_EVENT_DEL, _win_del, td);
    efl_event_callback_array_add(o, rect_pointer_callbacks(), td);
    efl_event_callback_array_add(win, win_key_callbacks(), td);

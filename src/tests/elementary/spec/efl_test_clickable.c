@@ -69,9 +69,9 @@ prepare_window(void)
  */
 
 typedef struct {
-   Efl_Ui_Clickable_Clicked clicked_params;
+   Efl_Input_Clickable_Clicked clicked_params;
    unsigned int clicked;
-   Efl_Ui_Clickable_Clicked clicked_all_params;
+   Efl_Input_Clickable_Clicked clicked_all_params;
    unsigned int clicked_all;
    unsigned int pressed;
    unsigned int unpressed;
@@ -84,23 +84,23 @@ Clickable_Event_Register event_caller = { 0 };
 static void
 _event_register(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-#define EVENT_CHECK(e,f)   if (ev->desc == EFL_UI_EVENT_ ##e ) event_caller.f ++
+#define EVENT_CHECK(e,f)   if (ev->desc == EFL_INPUT_EVENT_ ##e ) event_caller.f ++
   EVENT_CHECK(CLICKED, clicked);
   EVENT_CHECK(CLICKED_ANY, clicked_all);
   EVENT_CHECK(PRESSED, pressed);
   EVENT_CHECK(UNPRESSED, unpressed);
   EVENT_CHECK(LONGPRESSED, long_pressed);
 
-  if (ev->desc == EFL_UI_EVENT_CLICKED)
+  if (ev->desc == EFL_INPUT_EVENT_CLICKED)
     {
-       Efl_Ui_Clickable_Clicked *clicked = ev->info;
+       Efl_Input_Clickable_Clicked *clicked = ev->info;
 
        event_caller.clicked_params.repeated = clicked->repeated;
        event_caller.clicked_params.button = clicked->button;
     }
-  if (ev->desc == EFL_UI_EVENT_CLICKED_ANY)
+  if (ev->desc == EFL_INPUT_EVENT_CLICKED_ANY)
     {
-       Efl_Ui_Clickable_Clicked *clicked = ev->info;
+       Efl_Input_Clickable_Clicked *clicked = ev->info;
 
        event_caller.clicked_all_params.repeated = clicked->repeated;
        event_caller.clicked_all_params.button = clicked->button;
@@ -108,11 +108,11 @@ _event_register(void *data EINA_UNUSED, const Efl_Event *ev)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(clickable,
-  {EFL_UI_EVENT_CLICKED, _event_register},
-  {EFL_UI_EVENT_CLICKED_ANY, _event_register},
-  {EFL_UI_EVENT_PRESSED, _event_register},
-  {EFL_UI_EVENT_UNPRESSED, _event_register},
-  {EFL_UI_EVENT_LONGPRESSED, _event_register},
+  {EFL_INPUT_EVENT_CLICKED, _event_register},
+  {EFL_INPUT_EVENT_CLICKED_ANY, _event_register},
+  {EFL_INPUT_EVENT_PRESSED, _event_register},
+  {EFL_INPUT_EVENT_UNPRESSED, _event_register},
+  {EFL_INPUT_EVENT_LONGPRESSED, _event_register},
 )
 
 static void

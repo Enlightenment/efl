@@ -6,7 +6,7 @@
 #define ELM_LAYOUT_PROTECTED
 #define EFL_GFX_HINT_PROTECTED
 #define EFL_PART_PROTECTED
-#define EFL_UI_CLICKABLE_PROTECTED
+#define EFL_INPUT_CLICKABLE_PROTECTED
 
 #include <Elementary.h>
 
@@ -184,7 +184,7 @@ _on_pressed(void *data,
             const char *source EINA_UNUSED)
 {
    efl_event_callback_legacy_call(data, ELM_PANES_EVENT_PRESS, NULL);
-   efl_ui_clickable_press(data, 1);
+   efl_input_clickable_press(data, 1);
 }
 
 static void
@@ -195,7 +195,7 @@ _on_unpressed(void *data,
 {
    EFL_UI_PANES_DATA_GET(data, sd);
    efl_event_callback_legacy_call(data, ELM_PANES_EVENT_UNPRESS, NULL);
-   efl_ui_clickable_unpress(data, 1);
+   efl_input_clickable_unpress(data, 1);
    if (sd->double_clicked)
      {
         evas_object_smart_callback_call(data, "clicked,double", NULL);

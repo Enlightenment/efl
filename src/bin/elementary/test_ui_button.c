@@ -42,18 +42,18 @@ test_ui_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    efl_add(EFL_UI_BUTTON_CLASS, bx,
            efl_text_set(efl_added, "Text"),
            efl_pack(bx, efl_added),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _clicked, NULL),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_PRESSED, _pressed, NULL),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_UNPRESSED, _unpressed, NULL)
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _clicked, NULL),
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_PRESSED, _pressed, NULL),
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_UNPRESSED, _unpressed, NULL)
           );
 
    // Icon Only Button
    snprintf(buf, sizeof(buf), "%s/images/logo_small.png", elm_app_data_dir_get());
    btn = efl_add(EFL_UI_BUTTON_CLASS, bx,
                  efl_pack(bx, efl_added),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _clicked, NULL),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_PRESSED, _pressed, NULL),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_UNPRESSED, _unpressed, NULL)
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _clicked, NULL),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_PRESSED, _pressed, NULL),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_UNPRESSED, _unpressed, NULL)
                 );
    efl_add(EFL_UI_IMAGE_CLASS, btn,
            efl_file_set(efl_added, buf),
@@ -65,9 +65,9 @@ test_ui_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    btn = efl_add(EFL_UI_BUTTON_CLASS, bx,
                  efl_text_set(efl_added, "Text + Icon"),
                  efl_pack(bx, efl_added),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _clicked, NULL),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_PRESSED, _pressed, NULL),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_UNPRESSED, _unpressed, NULL)
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _clicked, NULL),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_PRESSED, _pressed, NULL),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_UNPRESSED, _unpressed, NULL)
                 );
    efl_add(EFL_UI_IMAGE_CLASS, btn,
            efl_file_set(efl_added, buf),

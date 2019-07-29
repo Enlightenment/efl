@@ -337,7 +337,7 @@ static void page_size_cb(void *data,
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
                  efl_text_set(efl_added, "Back"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED,
                                         back_btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
@@ -439,7 +439,7 @@ static void pack_cb(void *data,
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
                  efl_text_set(efl_added, "Back"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED,
                                         back_btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
@@ -478,7 +478,7 @@ static void pack_cb(void *data,
 
    efl_add(EFL_UI_BUTTON_CLASS, box,
            efl_text_set(efl_added, "Pack Begin"),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED,
                                   pack_btn_cb, pack_param),
            efl_event_callback_add(efl_added, EFL_EVENT_DEL,
                                   pack_btn_del_cb, pack_param),
@@ -496,7 +496,7 @@ static void pack_cb(void *data,
 
    efl_add(EFL_UI_BUTTON_CLASS, box,
            efl_text_set(efl_added, "Pack End"),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED,
                                   pack_btn_cb, pack_param),
            efl_event_callback_add(efl_added, EFL_EVENT_DEL,
                                   pack_btn_del_cb, pack_param),
@@ -514,7 +514,7 @@ static void pack_cb(void *data,
 
    efl_add(EFL_UI_BUTTON_CLASS, box,
            efl_text_set(efl_added, "Pack Before Current Page"),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED,
                                   pack_btn_cb, pack_param),
            efl_event_callback_add(efl_added, EFL_EVENT_DEL,
                                   pack_btn_del_cb, pack_param),
@@ -532,7 +532,7 @@ static void pack_cb(void *data,
 
    efl_add(EFL_UI_BUTTON_CLASS, box,
            efl_text_set(efl_added, "Pack After Current Page"),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED,
                                   pack_btn_cb, pack_param),
            efl_event_callback_add(efl_added, EFL_EVENT_DEL,
                                   pack_btn_del_cb, pack_param),
@@ -550,7 +550,7 @@ static void pack_cb(void *data,
 
    efl_add(EFL_UI_BUTTON_CLASS, in_box1,
            efl_text_set(efl_added, "Pack At"),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED,
                                   pack_btn_cb, pack_param),
            efl_event_callback_add(efl_added, EFL_EVENT_DEL,
                                   pack_btn_del_cb, pack_param),
@@ -569,7 +569,7 @@ static void pack_cb(void *data,
    pack_param->unpack_btn = btn;
    pack_param->type = UNPACK_AT;
 
-   efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED,
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED,
                           pack_btn_cb, pack_param);
    efl_event_callback_add(btn, EFL_EVENT_DEL,
                           pack_btn_del_cb, pack_param);
@@ -603,7 +603,7 @@ static void pack_cb(void *data,
 
    efl_add(EFL_UI_BUTTON_CLASS, box,
            efl_text_set(efl_added, "Clear"),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED,
                                   pack_btn_cb, pack_param),
            efl_event_callback_add(efl_added, EFL_EVENT_DEL,
                                   pack_btn_del_cb, pack_param),
@@ -624,7 +624,7 @@ static void current_page_cb(void *data,
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
                  efl_text_set(efl_added, "Back"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED,
                                         back_btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
@@ -656,7 +656,7 @@ static void current_page_cb(void *data,
    psp->pager = pager;
    psp->spinner = sp;
 
-   efl_event_callback_add(btn, EFL_UI_EVENT_CLICKED, page_set_btn_cb, psp);
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, page_set_btn_cb, psp);
    efl_event_callback_add(btn, EFL_EVENT_DEL, page_set_btn_del_cb, psp);
 }
 
@@ -670,7 +670,7 @@ static void indicator_cb(void *data,
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
                  efl_text_set(efl_added, "Back"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED,
                                         back_btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
@@ -680,13 +680,13 @@ static void indicator_cb(void *data,
 
    efl_add(EFL_UI_BUTTON_CLASS, box,
            efl_text_set(efl_added, "Icon Type"),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED,
                                   indicator_icon_btn_cb, params),
            efl_pack_end(box, efl_added));
 
    efl_add(EFL_UI_BUTTON_CLASS, box,
            efl_text_set(efl_added, "None"),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED,
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED,
                                   indicator_none_btn_cb, params),
            efl_pack_end(box, efl_added));
 }
@@ -735,13 +735,13 @@ void test_ui_pager(void *data EINA_UNUSED,
    efl_add(EFL_UI_BUTTON_CLASS, layout,
            efl_text_set(efl_added, "Prev"),
            efl_event_callback_add(efl_added,
-                                  EFL_UI_EVENT_CLICKED, prev_btn_cb, pager),
+                                  EFL_INPUT_EVENT_CLICKED, prev_btn_cb, pager),
            efl_content_set(efl_part(layout, "prev_btn"), efl_added));
 
    efl_add(EFL_UI_BUTTON_CLASS, layout,
            efl_text_set(efl_added, "Next"),
            efl_event_callback_add(efl_added,
-                                  EFL_UI_EVENT_CLICKED, next_btn_cb, pager),
+                                  EFL_INPUT_EVENT_CLICKED, next_btn_cb, pager),
            efl_content_set(efl_part(layout, "next_btn"), efl_added));
 
    params = calloc(1, sizeof(Params));

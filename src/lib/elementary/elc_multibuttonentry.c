@@ -67,7 +67,7 @@ static void _entry_clicked_cb(void *data, const Efl_Event *event);
 EFL_CALLBACKS_ARRAY_DEFINE(_multi_buttonentry_cb,
    { ELM_ENTRY_EVENT_CHANGED, _entry_changed_cb },
    { EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED , _entry_focus_changed_cb },
-   { EFL_UI_EVENT_CLICKED, _entry_clicked_cb }
+   { EFL_INPUT_EVENT_CLICKED, _entry_clicked_cb }
 );
 
 EOLIAN static void

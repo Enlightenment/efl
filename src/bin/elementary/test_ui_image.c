@@ -573,13 +573,13 @@ test_load_ui_image(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *event_inf
    {
       bt = efl_add(EFL_UI_BUTTON_CLASS, win,
         efl_text_set(efl_added, "Image Reload"),
-        efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _reload_clicked, win)
+        efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _reload_clicked, win)
       );
       efl_pack(hbox, bt);
 
       bt = efl_add(EFL_UI_BUTTON_CLASS, win,
         efl_text_set(efl_added, "Image Switch"),
-        efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _switch_clicked, win)
+        efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _switch_clicked, win)
       );
       efl_pack(hbox, bt);
    }
