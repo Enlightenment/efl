@@ -51,7 +51,7 @@ evas_vg_load_file_open_json(Eina_File *file,
 
    if (!lot_anim)
      {
-        ERR("Failed lottie_animation_from_file");
+        WRN("Failed lottie_animation_from_file()");
         goto err;
      }
 
