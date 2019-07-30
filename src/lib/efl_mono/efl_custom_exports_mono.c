@@ -421,6 +421,9 @@ EAPI const Eina_Value_Type *type_array() {
 EAPI const Eina_Value_Type *type_list() {
    return EINA_VALUE_TYPE_LIST;
 }
+EAPI const Eina_Value_Type *type_hash() {
+   return EINA_VALUE_TYPE_HASH;
+}
 EAPI const Eina_Value_Type *type_error() {
    return EINA_VALUE_TYPE_ERROR;
 }

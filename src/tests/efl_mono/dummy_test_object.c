@@ -4685,6 +4685,11 @@ Efl_Object *_dummy_test_object_call_find_provider_for_iface(Eo *obj, EINA_UNUSED
     return efl_provider_find(obj, DUMMY_TEST_IFACE_INTERFACE);
 }
 
+const Eina_Value_Type *_dummy_test_object_mirror_value_type(EINA_UNUSED const Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, const Eina_Value_Type *type)
+{
+    return type;
+}
+
 // Inherit
 int _dummy_inherit_helper_receive_dummy_and_call_int_out(Dummy_Test_Object *x)
 {

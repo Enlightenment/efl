@@ -82,6 +82,9 @@ struct marshall_annotation_visitor_generate
           {"strbuf", false, [&] {
                 return "[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StrbufKeepOwnershipMarshaler))]";
           }},
+          {"Value_Type", false, [&] {
+                return "[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Eina.ValueTypeMarshaler))]";
+          }},
         };
       match const return_match_table[] =
         {
@@ -116,6 +119,9 @@ struct marshall_annotation_visitor_generate
           }},
           {"strbuf", false, [&] {
                 return "[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StrbufKeepOwnershipMarshaler))]";
+          }},
+          {"Value_Type", false, [&] {
+                return "[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Eina.ValueTypeMarshaler))]";
           }},
         };
 

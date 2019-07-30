@@ -160,6 +160,17 @@ public static class TestEinaValueEolian {
         Test.AssertEquals(expected, received);
         Test.AssertEquals(Eina.ValueType.Int32, received.GetValueType());
     }
+
+    public static void TestEolianEinaValueTypeMarshalling()
+    {
+        var obj = new Dummy.TestObject();
+
+        var values = Enum.GetValues(typeof(Eina.ValueType));
+        foreach (Eina.ValueType type in values)
+        {
+            Test.AssertEquals(type, obj.MirrorValueType(type));
+        }
+    }
 }
 #pragma warning restore 1591
 }
