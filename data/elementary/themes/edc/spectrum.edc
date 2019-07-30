@@ -1,9 +1,25 @@
 group { name: "e/widgets/spectrum";
+   images.image: "diagonal_stripes.png" COMP;
    parts {
       part { name: "bg"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
-            rel.to: "e.swallow.content";
-            color: DARK_GREY_BG_COLOR;;
+            rel1.offset: 2 2;
+            rel2.offset: -3 -3;
+            color: DARK_GREY_BG_COLOR;
+            offscale;
+         }
+      }
+      part { name: "pat";
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "bg";
+            rel1.offset: 2 2;
+            rel2.offset: -3 -3;
+            image.normal: "diagonal_stripes.png";
+            color: 255 255 255 64;
+            TILED_PATTERN(240, 240)
+            offscale;
          }
       }
       part { name: "clipper"; type: RECT;
@@ -17,11 +33,8 @@ group { name: "e/widgets/spectrum";
       }
       part { name: "e.swallow.content"; type: SWALLOW;
          clip_to: "clipper";
-         scale: 1;
          description { state: "default" 0.0;
-            rel1.offset: 4 4;
-            rel2.offset: -5 -5;
-            offscale;
+            rel.to: "pat";
          }
       }
       part { name: "e.dragable.cursor"; type: RECT;

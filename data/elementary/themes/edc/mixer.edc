@@ -4,7 +4,6 @@ group { name: "e/modules/mixer/main";
    images.image: "speaker.png" COMP;
    images.image: "speaker_clip.png" COMP;
    images.image: "speaker_vol.png" COMP;
-   images.image: "led_dot_white.png" COMP;
    max: 160 160;
    min: 16 16;
    script {
