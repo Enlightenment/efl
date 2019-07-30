@@ -191,10 +191,13 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd, Elm_Layout_Data *ld)
    if (minh > rest_h)
      rest_h = minh;
 
-   if (sd->restricted_calc_w)
-     rest_w = wd->w;
-   if (sd->restricted_calc_h)
-     rest_h = wd->h;
+   if (ld)
+     {
+        if (ld->restricted_calc_w)
+          rest_w = MIN(wd->w, rest_w);
+        if (ld->restricted_calc_h)
+          rest_h = MIN(wd->h, rest_w);
+     }
 
    edje_object_size_min_restricted_calc(wd->resize_obj, &minw, &minh,
                                         rest_w, rest_h);
@@ -210,9 +213,9 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd, Elm_Layout_Data *ld)
 
    if (ld)
      {
+        ld->restricted_calc_w = ld->restricted_calc_h = EINA_FALSE;
         efl_gfx_hint_size_min_set(obj, EINA_SIZE2D(minw, minh));
      }
-   sd->restricted_calc_w = sd->restricted_calc_h = EINA_FALSE;
 }
 
 void
@@ -1811,11 +1814,11 @@ _elm_layout_sizing_eval(Eo *obj, Elm_Layout_Data *ld)
 EAPI void
 elm_layout_sizing_restricted_eval(Eo *obj, Eina_Bool w, Eina_Bool h)
 {
-   Efl_Ui_Layout_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   Elm_Layout_Data *ld = efl_data_scope_safe_get(obj, ELM_LAYOUT_MIXIN);
 
-   if (!sd) return;
-   sd->restricted_calc_w = !!w;
-   sd->restricted_calc_h = !!h;
+   EINA_SAFETY_ON_NULL_RETURN(ld);
+   ld->restricted_calc_w = !!w;
+   ld->restricted_calc_h = !!h;
 
    efl_canvas_group_change(obj);
 }
