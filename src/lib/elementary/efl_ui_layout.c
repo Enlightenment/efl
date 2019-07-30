@@ -160,7 +160,7 @@ _part_cursor_free(Efl_Ui_Layout_Sub_Object_Cursor *pc)
 }
 
 static void
-_sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd, Eina_Bool finger)
+_sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd)
 {
    int minh = 0, minw = 0;
    int rest_w = 0, rest_h = 0;
@@ -169,8 +169,8 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd, Eina_Bool finger)
 
    if (!efl_alive_get(obj)) return;
 
-   if (finger)
-     elm_coords_finger_size_adjust(1, &rest_w, 1, &rest_h);
+   elm_coords_finger_size_adjust(sd->finger_size_multiplier_x, &rest_w,
+                                 sd->finger_size_multiplier_y, &rest_h);
    if (elm_widget_is_legacy(obj))
      sz = efl_gfx_hint_size_combined_min_get(obj);
    else
@@ -190,6 +190,13 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd, Eina_Bool finger)
 
    edje_object_size_min_restricted_calc(wd->resize_obj, &minw, &minh,
                                         rest_w, rest_h);
+   /* if desired, scale layout by finger size */
+   if (sd->finger_size_multiplier_x)
+     elm_coords_finger_size_adjust(sd->finger_size_multiplier_x, &minw,
+                                   sd->finger_size_multiplier_y, NULL);
+   if (sd->finger_size_multiplier_y)
+     elm_coords_finger_size_adjust(sd->finger_size_multiplier_x, NULL,
+                                   sd->finger_size_multiplier_y, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
 
    sd->restricted_calc_w = sd->restricted_calc_h = EINA_FALSE;
@@ -854,9 +861,29 @@ _efl_ui_layout_base_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Layout_Data
    Eina_Bool legacy = elm_widget_is_legacy(obj);
    efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    if ((!legacy) || sd->needs_size_calc)
-     /* don't add finger size if this is an actual elm_layout object */
-     _sizing_eval(obj, sd, !legacy);
+     _sizing_eval(obj, sd);
    sd->needs_size_calc = EINA_FALSE;
+}
+
+EOLIAN static void
+_efl_ui_layout_base_finger_size_multiplier_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *sd, unsigned int *mult_x, unsigned int *mult_y)
+{
+   if (mult_x)
+     *mult_x = sd->finger_size_multiplier_x;
+   if (mult_y)
+     *mult_y = sd->finger_size_multiplier_y;
+}
+
+EOLIAN static void
+_efl_ui_layout_base_finger_size_multiplier_set(Eo *obj, Efl_Ui_Layout_Data *sd, unsigned int mult_x, unsigned int mult_y)
+{
+   if ((sd->finger_size_multiplier_x == mult_x) &&
+       (sd->finger_size_multiplier_y == mult_y))
+     return;
+   sd->finger_size_multiplier_x = mult_x;
+   sd->finger_size_multiplier_y = mult_y;
+   if (efl_alive_get(obj))
+     efl_canvas_group_change(obj);
 }
 
 static Efl_Ui_Layout_Sub_Object_Cursor *
@@ -2458,9 +2485,22 @@ _efl_ui_layout_base_efl_ui_factory_bind_factory_bind(Eo *obj EINA_UNUSED, Efl_Ui
 }
 
 EOLIAN static Eo *
+_efl_ui_layout_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_LAYOUT_CLASS));
+   Efl_Ui_Layout_Data *sd = efl_data_scope_get(obj, MY_CLASS);
+
+   /* basic layouts should not obey finger size */
+   sd->finger_size_multiplier_x = sd->finger_size_multiplier_y = 0;
+
+   return obj;
+}
+
+EOLIAN static Eo *
 _efl_ui_layout_base_efl_object_constructor(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
    sd->obj = obj;
+   sd->finger_size_multiplier_x = sd->finger_size_multiplier_y = 1;
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_FILLER);

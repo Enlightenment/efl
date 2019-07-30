@@ -64,6 +64,8 @@ typedef struct _Elm_Layout_Smart_Data
 
    int                   frozen; /**< Layout freeze counter */
 
+   unsigned int          finger_size_multiplier_x, finger_size_multiplier_y; /**< multipliers for finger_size during group_calc */
+
    Eina_Bool             needs_size_calc : 1; /**< This flag is set true when the layout sizing eval is already requested. This defers sizing evaluation until smart calculation to avoid unnecessary calculation. */
    Eina_Bool             restricted_calc_w : 1; /**< This is a flag to support edje restricted_calc in w axis. */
    Eina_Bool             restricted_calc_h : 1; /**< This is a flag to support edje restricted_calc in y axis. */
