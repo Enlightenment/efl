@@ -202,13 +202,14 @@ _on_unpressed(void *data,
 }
 
 EOLIAN static void
-_efl_ui_panes_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panes_Data *sd)
+_efl_ui_panes_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Panes_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    Eo *first_content, *second_content;
    Eina_Size2D min;
 
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    if (elm_widget_is_legacy(obj))
      {
         first_content = efl_content_get(efl_part(obj, "elm.swallow.left"));
@@ -698,8 +699,7 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_panes)
 
 #define EFL_UI_PANES_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_panes), \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_panes), \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_panes)
+   ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_panes)
 
 #include "efl_ui_panes.eo.c"
 #include "efl_ui_panes_eo.legacy.c"

@@ -532,7 +532,7 @@ _elm_ctxpopup_efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Ctxpopup_Data *_p
 }
 
 EOLIAN static void
-_elm_ctxpopup_elm_layout_sizing_eval(Eo *obj, Elm_Ctxpopup_Data *sd)
+_elm_ctxpopup_efl_canvas_group_calculate(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
    Eina_Rectangle rect = { 0, 0, 1, 1 };
    Evas_Coord_Point list_size = { 0, 0 }, parent_size = {0, 0};
@@ -1552,7 +1552,7 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_ctxpopup, ELM_CTXPOPUP, Elm_Ctxpopup_Data)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_CTXPOPUP_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_ctxpopup), \
+   EFL_CANVAS_GROUP_CALC_OPS(elm_ctxpopup), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_ctxpopup)
 
 #include "elm_ctxpopup_item_eo.c"

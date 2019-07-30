@@ -46,6 +46,7 @@ static const Elm_Action key_actions[] = {
 EOLIAN static void
 _efl_ui_list_view_pan_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Efl_Ui_List_View_Pan_Data *psd)
 {
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    evas_object_smart_changed(psd->wobj);
 }
 

@@ -464,21 +464,6 @@ _efl_ui_tags_efl_ui_widget_widget_input_event_handler(Eo *obj EINA_UNUSED, Efl_U
    return EINA_FALSE;
 }
 
-EOLIAN static void
-_efl_ui_tags_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Tags_Data *sd EINA_UNUSED)
-{
-   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc
-	      (wd->resize_obj, &minw, &minh, minw, minh);
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   efl_gfx_hint_size_min_set(obj, EINA_SIZE2D(minw, minh));
-   efl_gfx_hint_size_max_set(obj, EINA_SIZE2D(maxw, maxh));
-}
-
 static void
 _mouse_clicked_signal_cb(void *data EINA_UNUSED,
                          Evas_Object *obj,
@@ -1141,8 +1126,5 @@ _efl_ui_tags_efl_ui_format_apply_formatted_value(Eo *obj EINA_UNUSED, Efl_Ui_Tag
 {
    _view_update(pd);
 }
-
-#define EFL_UI_TAGS_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_tags), \
 
 #include "efl_ui_tags.eo.c"

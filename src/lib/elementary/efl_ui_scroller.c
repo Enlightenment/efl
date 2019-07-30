@@ -289,13 +289,14 @@ _efl_ui_scroller_efl_object_destructor(Eo *obj,
 }
 
 EOLIAN static void
-_efl_ui_scroller_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Scroller_Data *sd)
+_efl_ui_scroller_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Scroller_Data *sd)
 {
    Eina_Size2D min = {0, 0}, max = {0, 0}, size = {-1, -1};
    Eina_Rect view = {};
    Evas_Coord vmw = 0, vmh = 0;
    double xw = 0.0, yw = 0.0;
 
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->content)
@@ -391,8 +392,5 @@ _efl_ui_scroller_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj, Efl_U
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_scroller, Efl_Ui_Scroller_Data)
 
 /* Internal EO APIs and hidden overrides */
-
-#define EFL_UI_SCROLLER_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_scroller)
 
 #include "efl_ui_scroller.eo.c"

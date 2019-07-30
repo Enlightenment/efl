@@ -70,22 +70,6 @@ static int _days_in_month[2][12] =
 
 static Eina_Bool _efl_ui_calendar_smart_focus_next_enable = EINA_FALSE;
 
-EOLIAN static void
-_efl_ui_calendar_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Calendar_Data *_pd EINA_UNUSED)
-{
-   Evas_Coord minw = -1, minh = -1;
-   EFL_UI_CALENDAR_DATA_GET(obj, sd);
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   if (sd->filling) return;
-   // 7x8 (1 month+year, days, 6 dates.)
-   elm_coords_finger_size_adjust(7, &minw, 8, &minh);
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
-}
-
 // Get the max day number for each month
 static inline int
 _maxdays_get(struct tm *date, int month_offset)
@@ -807,12 +791,11 @@ _efl_ui_calendar_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Calendar_Da
 EOLIAN static void
 _efl_ui_calendar_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Calendar_Data *_pd EINA_UNUSED)
 {
-   elm_layout_freeze(obj);
-
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    _set_headers(obj);
    _populate(obj);
 
-   elm_layout_thaw(obj);
+   efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -944,6 +927,8 @@ _efl_ui_calendar_efl_object_constructor(Eo *obj, Efl_Ui_Calendar_Data *sd)
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_DATE_EDITOR);
 
    obj = _efl_ui_calendar_constructor_internal(obj, sd);
+   // 7x8 (1 month+year, days, 6 dates.)
+   efl_ui_layout_finger_size_multiplier_set(obj, 7, 8);
 
    return obj;
 }
@@ -1167,11 +1152,6 @@ _efl_ui_calendar_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNU
 /* Standard widget overrides */
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_calendar, Efl_Ui_Calendar_Data)
-
-/* Internal EO APIs and hidden overrides */
-
-#define EFL_UI_CALENDAR_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_calendar)
 
 #include "efl_ui_calendar.eo.c"
 

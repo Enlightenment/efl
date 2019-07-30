@@ -206,7 +206,7 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd)
      elm_coords_finger_size_adjust(sd->finger_size_multiplier_x, NULL,
                                    sd->finger_size_multiplier_y, &minh);
    evas_object_size_hint_min_set(obj, minw, minh);
-
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
    sd->restricted_calc_w = sd->restricted_calc_h = EINA_FALSE;
 }
 
@@ -528,6 +528,11 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
    if ((theme_apply_ret == EFL_UI_THEME_APPLY_ERROR_DEFAULT) ||
        (theme_apply_internal_ret == EFL_UI_THEME_APPLY_ERROR_DEFAULT))
      return EFL_UI_THEME_APPLY_ERROR_DEFAULT;
+
+   /* unset existing size hints to force accurate recalc */
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(0, 0));
+   if (elm_widget_is_legacy(obj))
+     efl_gfx_hint_size_min_set(obj, EINA_SIZE2D(0, 0));
 
    return EFL_UI_THEME_APPLY_ERROR_NONE;
 }
@@ -2531,6 +2536,7 @@ _efl_ui_layout_base_efl_object_finalize(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNU
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    eo = efl_finalize(efl_super(obj, MY_CLASS));
    efl_ui_widget_theme_apply(eo);
+   efl_canvas_group_change(obj);
 
    win = elm_widget_top_get(obj);
    if (efl_isa(win, EFL_UI_WIN_CLASS))

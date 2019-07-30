@@ -908,7 +908,7 @@ _elm_naviframe_item_elm_widget_item_signal_emit(Eo *eo_it EINA_UNUSED,
 }
 
 EOLIAN static void
-_elm_naviframe_elm_layout_sizing_eval(Eo *obj, Elm_Naviframe_Data *sd)
+_elm_naviframe_efl_canvas_group_calculate(Eo *obj, Elm_Naviframe_Data *sd)
 {
    Evas_Coord minw = 0, minh = 0;
    Elm_Naviframe_Item_Data *it, *top;
@@ -2047,7 +2047,7 @@ ELM_PART_OVERRIDE_TEXT_GET(elm_naviframe, ELM_NAVIFRAME, Elm_Naviframe_Data)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_NAVIFRAME_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_naviframe), \
+   EFL_CANVAS_GROUP_CALC_OPS(elm_naviframe), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_naviframe)
 
 #include "elm_naviframe_item_eo.c"

@@ -315,7 +315,7 @@ _elm_hover_efl_ui_widget_theme_apply(Eo *obj, Elm_Hover_Data *sd)
 }
 
 EOLIAN static void
-_elm_hover_elm_layout_sizing_eval(Eo *obj, Elm_Hover_Data *sd)
+_elm_hover_efl_canvas_group_calculate(Eo *obj, Elm_Hover_Data *sd)
 {
    Evas_Coord ofs_x, x = 0, y = 0, w = 0, h = 0, x2 = 0,
               y2 = 0, w2 = 0, h2 = 0;
@@ -877,7 +877,7 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_hover, ELM_HOVER, Elm_Hover_Data)
 
 #define ELM_HOVER_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_hover), \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_hover), \
+   EFL_CANVAS_GROUP_CALC_OPS(elm_hover), \
    _ELM_LAYOUT_ALIASES_OPS(elm_hover, content)
 
 #include "elm_hover_eo.c"

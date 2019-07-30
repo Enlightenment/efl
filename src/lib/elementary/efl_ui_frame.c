@@ -95,14 +95,9 @@ _on_frame_clicked(void *data,
 EOLIAN static void
 _efl_ui_frame_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Frame_Data *sd)
 {
-   EFL_UI_LAYOUT_DATA_GET(obj, ld);
-
-   if (ld->needs_size_calc)
-     {
-        /* calling OWN sizing evaluate code here */
-        _sizing_eval(obj, sd);
-        ld->needs_size_calc = EINA_FALSE;
-     }
+   /* calling OWN sizing evaluate code here */
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
+   _sizing_eval(obj, sd);
 }
 
 static void

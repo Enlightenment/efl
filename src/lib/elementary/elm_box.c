@@ -306,6 +306,7 @@ _elm_box_efl_canvas_group_group_calculate(Eo *obj, Elm_Box_Data *_pd EINA_UNUSED
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    elm_box_recalculate(obj);
 }
 

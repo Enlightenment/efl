@@ -373,6 +373,7 @@ _efl_ui_image_zoomable_pan_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Imag
    Eina_List *l;
    Evas_Coord ox, oy, ow, oh;
 
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    ELM_WIDGET_DATA_GET_OR_RETURN(psd->wobj, wd);
 
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);

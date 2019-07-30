@@ -666,8 +666,9 @@ _textpath_text_set_internal(Eo *obj, Efl_Ui_Textpath_Data *pd, const char *part,
 }
 
 EOLIAN static void
-_efl_ui_textpath_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd)
+_efl_ui_textpath_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    _sizing_eval(pd);
 }
 

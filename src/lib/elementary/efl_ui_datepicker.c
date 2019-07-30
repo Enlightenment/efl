@@ -222,20 +222,6 @@ _fields_init(Eo *obj)
      }
 }
 
-EOLIAN static void
-_efl_ui_datepicker_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Datepicker_Data *_pd EINA_UNUSED)
-{
-    Evas_Coord minw = -1, minh = -1;
-    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-    edje_object_size_min_restricted_calc
-    (wd->resize_obj, &minw, &minh, minw, minh);
-    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-    evas_object_size_hint_min_set(obj, minw, minh);
-    evas_object_size_hint_max_set(obj, -1, -1);
-}
-
 EOLIAN static Eo *
 _efl_ui_datepicker_efl_object_constructor(Eo *obj, Efl_Ui_Datepicker_Data *pd)
 {
@@ -341,8 +327,5 @@ _efl_ui_datepicker_date_get(const Eo *obj EINA_UNUSED, Efl_Ui_Datepicker_Data *p
    *month = pd->cur_date[DATEPICKER_MONTH];
    *day = pd->cur_date[DATEPICKER_DAY];
 }
-
-#define EFL_UI_DATEPICKER_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_datepicker), \
 
 #include "efl_ui_datepicker.eo.c"

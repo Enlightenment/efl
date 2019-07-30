@@ -456,19 +456,6 @@ _efl_ui_slider_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
    return int_ret;
 }
 
-EOLIAN static void
-_efl_ui_slider_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Slider_Data *_pd EINA_UNUSED)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   Evas_Coord minw = -1, minh = -1;
-
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
-   efl_gfx_hint_size_max_set(obj, EINA_SIZE2D(-1, -1));
-}
-
 static void
 _spacer_down_cb(void *data,
                 Evas *e EINA_UNUSED,
@@ -880,7 +867,6 @@ EFL_VOID_FUNC_BODYV(efl_ui_slider_down_knob, EFL_FUNC_CALL(button_x, button_y), 
 EFL_VOID_FUNC_BODYV(efl_ui_slider_move_knob, EFL_FUNC_CALL(button_x, button_y), double button_x, double button_y)
 
 #define EFL_UI_SLIDER_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_slider), \
    EFL_UI_SLIDER_VAL_FETCH_OPS(efl_ui_slider), \
    EFL_UI_SLIDER_VAL_SET_OPS(efl_ui_slider), \
    EFL_UI_SLIDER_DOWN_KNOB_OPS(efl_ui_slider), \

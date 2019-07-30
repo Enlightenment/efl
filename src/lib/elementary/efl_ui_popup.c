@@ -89,11 +89,7 @@ _parent_geom_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    EFL_UI_POPUP_DATA_GET_OR_RETURN(obj, pd);
 
-   //Add align calc only
-   Eina_Bool needs_size_calc = pd->needs_size_calc;
    efl_canvas_group_change(obj);
-   efl_canvas_group_calculate(obj);
-   pd->needs_size_calc = needs_size_calc;
 }
 
 EOLIAN static void
@@ -132,11 +128,7 @@ _efl_ui_popup_align_set(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd, Efl_Ui_Popup
 {
    pd->align = type;
 
-   //Add align calc only
-   Eina_Bool needs_size_calc = pd->needs_size_calc;
    efl_canvas_group_change(obj);
-   efl_canvas_group_calculate(obj);
-   pd->needs_size_calc = needs_size_calc;
 }
 
 EOLIAN static Efl_Ui_Popup_Align
@@ -265,40 +257,19 @@ _efl_ui_popup_efl_object_destructor(Eo *obj, Efl_Ui_Popup_Data *pd)
 static void
 _sizing_eval(Eo *obj)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   Evas_Coord minw = -1, minh = -1;
+   Eina_Size2D min;
 
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc
-      (wd->resize_obj, &minw, &minh, minw, minh);
-   efl_gfx_hint_size_min_set(obj, EINA_SIZE2D(minw, minh));
+   /* trigger layout calc */
+   efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
+   min = efl_gfx_hint_size_restricted_min_get(obj);
 
    Eina_Size2D size = efl_gfx_entity_size_get(obj);
 
    Eina_Size2D new_size;
-   new_size.w = (minw > size.w ? minw : size.w);
-   new_size.h = (minh > size.h ? minh : size.h);
+   new_size.w = (min.w > size.w ? min.w : size.w);
+   new_size.h = (min.h > size.h ? min.h : size.h);
    efl_gfx_entity_size_set(obj, new_size);
-}
-
-EOLIAN static void
-_efl_ui_popup_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Data *pd)
-{
-   if (pd->needs_group_calc) return;
-   pd->needs_group_calc = EINA_TRUE;
-
-   /* These flags can be modified by sub classes not to calculate size or align
-    * their super classes.
-    * e.g. Efl.Ui.Popup.Alert.Scroll class sets the flag as follows not to
-    *      calculate size by its super class.
-    *
-    *      ppd->needs_size_calc = EINA_FALSE;
-    *      efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
-    */
-   pd->needs_size_calc = EINA_TRUE;
-   pd->needs_align_calc = EINA_TRUE;
-
-   evas_object_smart_changed(obj);
+   efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -308,26 +279,14 @@ _efl_ui_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popup_Data *pd)
     * calculation.
     * The actual size calculation is done here when the object is rendered to
     * avoid duplicate size calculations. */
-   if (pd->needs_group_calc)
-     {
-        if (pd->needs_size_calc)
-          {
-             _sizing_eval(obj);
-             pd->needs_size_calc = EINA_FALSE;
-          }
-        if (pd->needs_align_calc)
-          {
-             _calc_align(obj);
-             pd->needs_align_calc = EINA_FALSE;
-          }
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
+    _sizing_eval(obj);
+   _calc_align(obj);
 
-        Eina_Rect p_geom = efl_gfx_entity_geometry_get(pd->win_parent);
+   Eina_Rect p_geom = efl_gfx_entity_geometry_get(pd->win_parent);
 
-        efl_gfx_entity_position_set(pd->backwall, EINA_POSITION2D(0, 0));
-        efl_gfx_entity_size_set(pd->backwall, EINA_SIZE2D(p_geom.w, p_geom.h));
-
-        pd->needs_group_calc = EINA_FALSE;
-     }
+   efl_gfx_entity_position_set(pd->backwall, EINA_POSITION2D(0, 0));
+   efl_gfx_entity_size_set(pd->backwall, EINA_SIZE2D(p_geom.w, p_geom.h));
 }
 
 /* Standard widget overrides */
@@ -423,10 +382,5 @@ _efl_ui_popup_part_backwall_efl_file_load(Eo *obj, void *_pd EINA_UNUSED)
 #include "efl_ui_popup_part_backwall.eo.c"
 
 /* Efl.Part end */
-
-/* Internal EO APIs and hidden overrides */
-
-#define EFL_UI_POPUP_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_popup)
 
 #include "efl_ui_popup.eo.c"

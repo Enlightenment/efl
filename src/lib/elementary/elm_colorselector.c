@@ -1500,7 +1500,7 @@ _picker_sizing_eval(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_colorselector_elm_layout_sizing_eval(Eo *obj, Elm_Colorselector_Data *sd)
+_elm_colorselector_efl_canvas_group_calculate(Eo *obj, Elm_Colorselector_Data *sd)
 {
    Evas_Coord minw = -1, minh = -1;
 
@@ -2747,7 +2747,7 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_colorselector, Elm_Colorselector_Data)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_COLORSELECTOR_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_colorselector), \
+   EFL_CANVAS_GROUP_CALC_OPS(elm_colorselector), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_colorselector)
 
 #include "elm_colorselector_eo.c"

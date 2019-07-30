@@ -33,18 +33,6 @@ _elm_separator_efl_ui_widget_theme_apply(Eo *obj, Elm_Separator_Data *sd EINA_UN
 }
 
 EOLIAN static void
-_elm_separator_elm_layout_sizing_eval(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
-{
-   Evas_Coord minw = -1, minh = -1;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
-   evas_object_size_hint_align_set(obj, EVAS_HINT_FILL, EVAS_HINT_FILL);
-}
-
-EOLIAN static void
 _elm_separator_efl_canvas_group_group_add(Eo *obj, Elm_Separator_Data *sd EINA_UNUSED)
 {
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
@@ -70,6 +58,8 @@ _elm_separator_efl_object_constructor(Eo *obj, Elm_Separator_Data *sd EINA_UNUSE
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_SEPARATOR);
+   efl_ui_layout_finger_size_multiplier_set(obj, 0, 0);
+   evas_object_size_hint_align_set(obj, EVAS_HINT_FILL, EVAS_HINT_FILL);
 
    return obj;
 }
@@ -100,7 +90,6 @@ _elm_separator_class_constructor(Efl_Class *klass)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_SEPARATOR_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_separator), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_separator)
 
 #include "elm_separator_eo.c"

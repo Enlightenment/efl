@@ -4006,6 +4006,7 @@ _elm_toolbar_efl_access_selection_child_deselect(Eo *obj EINA_UNUSED, Elm_Toolba
 EOLIAN void
 _elm_toolbar_efl_canvas_group_group_calculate(Eo *obj, Elm_Toolbar_Data *pd EINA_UNUSED)
 {
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    _sizing_eval(obj);
 }
 

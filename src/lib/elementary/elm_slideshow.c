@@ -74,17 +74,6 @@ _key_action_pause(Evas_Object *obj, const char *params EINA_UNUSED)
    return EINA_TRUE;
 }
 
-EOLIAN static void
-_elm_slideshow_elm_layout_sizing_eval(Eo *obj, Elm_Slideshow_Data *_pd EINA_UNUSED)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   Evas_Coord minw = -1, minh = -1;
-
-   edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, minw, minh);
-}
-
 static Elm_Slideshow_Item_Data *
 _item_prev_get(Elm_Slideshow_Item_Data *item)
 {
@@ -310,6 +299,7 @@ _elm_slideshow_efl_canvas_group_group_add(Eo *obj, Elm_Slideshow_Data *priv)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
+   efl_ui_layout_finger_size_multiplier_set(obj, 0, 0);
 
    priv->count_item_pre_before = 2;
    priv->count_item_pre_after = 2;
@@ -713,7 +703,6 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_slideshow, Elm_Slideshow_Data)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_SLIDESHOW_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_slideshow), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_slideshow)
 
 #include "elm_slideshow_item_eo.c"

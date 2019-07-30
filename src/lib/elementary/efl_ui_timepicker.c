@@ -195,20 +195,6 @@ _fields_init(Eo *obj)
      }
 }
 
-EOLIAN static void
-_efl_ui_timepicker_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Timepicker_Data *_pd EINA_UNUSED)
-{
-    Evas_Coord minw = -1, minh = -1;
-    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-    edje_object_size_min_restricted_calc
-    (wd->resize_obj, &minw, &minh, minw, minh);
-    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-    evas_object_size_hint_min_set(obj, minw, minh);
-    evas_object_size_hint_max_set(obj, -1, -1);
-}
-
 EOLIAN static Eo *
 _efl_ui_timepicker_efl_object_constructor(Eo *obj, Efl_Ui_Timepicker_Data *pd EINA_UNUSED)
 {
@@ -276,8 +262,5 @@ _efl_ui_timepicker_ampm_get(const Eo *obj EINA_UNUSED, Efl_Ui_Timepicker_Data *p
 {
    return pd->is_24hour;
 }
-
-#define EFL_UI_TIMEPICKER_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_timepicker), \
 
 #include "efl_ui_timepicker.eo.c"

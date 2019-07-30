@@ -405,6 +405,7 @@ _reload_format(Evas_Object *obj)
         if (field->fmt_exist && field->visible)
           sd->enabled_field_count++;
      }
+   efl_ui_layout_finger_size_multiplier_set(obj, sd->enabled_field_count, 1);
 
    // assign locations to disabled fields for uniform usage
    for (idx = 0; idx < EFL_UI_CLOCK_TYPE_COUNT; idx++)
@@ -501,21 +502,11 @@ _efl_ui_clock_efl_ui_focus_object_on_focus_update(Eo *obj, Efl_Ui_Clock_Data *sd
 }
 
 EOLIAN static void
-_efl_ui_clock_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Clock_Data *sd)
+_efl_ui_clock_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Clock_Data *sd)
 {
-   Evas_Coord minw = -1, minh = -1;
-
-   if (sd->freeze_sizing) return;
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   if (sd->enabled_field_count)
-     elm_coords_finger_size_adjust(sd->enabled_field_count, &minw, 1, &minh);
-
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
+   /* FIXME: this seems dumb */
+   if (!sd->freeze_sizing)
+     efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Eina_Error
@@ -1041,6 +1032,7 @@ _efl_ui_clock_field_visible_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Ui_Clock_Typ
         evas_object_hide(elm_layout_content_unset(obj, buf));
      }
    sd->freeze_sizing = EINA_FALSE;
+   efl_ui_layout_finger_size_multiplier_set(obj, sd->enabled_field_count, 1);
 
    efl_canvas_group_change(obj);
 
@@ -1165,7 +1157,6 @@ _efl_ui_clock_time_max_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Time maxtime)
 /* Internal EO APIs and hidden overrides */
 
 #define EFL_UI_CLOCK_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_clock), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_clock)
 
 #include "efl_ui_clock.eo.c"

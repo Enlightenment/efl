@@ -856,11 +856,13 @@ _cursor_geometry_recalc(Evas_Object *obj)
 #define SIZE2D_EQ(X, Y) (((X).w == (Y).w) && ((X).h == (Y).h))
 
 EOLIAN static void
-_efl_ui_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Text_Data *sd)
+_efl_ui_text_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Text_Data *sd)
 {
    Eina_Size2D min = EINA_SIZE2D(0, 0);
    Eina_Size2D edmin = EINA_SIZE2D(0, 0);
    Eina_Size2D sz = EINA_SIZE2D(0, 0);
+
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    sz = efl_gfx_entity_size_get(obj);
@@ -4073,9 +4075,6 @@ ELM_PART_OVERRIDE_TEXT_GET(efl_ui_text, EFL_UI_TEXT, Efl_Ui_Text_Data)
 /* Internal EO APIs and hidden overrides */
 
 //ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
-
-#define EFL_UI_TEXT_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_text)
 
 #include "efl_ui_text.eo.c"
 

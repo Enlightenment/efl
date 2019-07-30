@@ -63,13 +63,14 @@ _efl_ui_internal_text_scroller_efl_object_constructor(Eo *obj,
 }
 
 EOLIAN static void
-_efl_ui_internal_text_scroller_elm_layout_sizing_eval(Eo *obj,
+_efl_ui_internal_text_scroller_efl_canvas_group_group_calculate(Eo *obj,
       Efl_Ui_Internal_Text_Scroller_Data *sd)
 {
    Eina_Size2D size = {-1, -1};
    Eina_Rect view = EINA_RECT(0, 0, 0, 0);
    Evas_Coord vmw = 0, vmh = 0;
 
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    EFL_UI_SCROLLER_DATA_GET(obj, psd);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -186,8 +187,5 @@ _efl_ui_internal_text_scroller_viewport_clip_get(const Eo *obj,
 }
 
 /* Internal EO APIs and hidden overrides */
-
-#define EFL_UI_INTERNAL_TEXT_SCROLLER_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_internal_text_scroller)
 
 #include "efl_ui_internal_text_scroller.eo.c"

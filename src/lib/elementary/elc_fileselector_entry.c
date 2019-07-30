@@ -120,18 +120,6 @@ _ACTIVATED_fwd(void *data, const Efl_Event *event)
      (data, ELM_FILESELECTOR_ENTRY_EVENT_ACTIVATED, event->info);
 }
 
-EOLIAN static void
-_elm_fileselector_entry_elm_layout_sizing_eval(Eo *obj, Elm_Fileselector_Entry_Data *sd EINA_UNUSED)
-{
-   Evas_Coord minw = -1, minh = -1;
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   edje_object_size_min_calc(wd->resize_obj, &minw, &minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
-}
-
 EOLIAN static Eina_Error
 _elm_fileselector_entry_efl_ui_widget_theme_apply(Eo *obj, Elm_Fileselector_Entry_Data *sd)
 {
@@ -233,6 +221,7 @@ _elm_fileselector_entry_efl_canvas_group_group_add(Eo *obj, Elm_Fileselector_Ent
    efl_ui_mirrored_set(priv->button, efl_ui_mirrored_get(obj));
    elm_widget_style_set(priv->button, "fileselector_entry/default");
    efl_composite_attach(obj, priv->button);
+   efl_ui_layout_finger_size_multiplier_set(obj, 0, 0);
 
    elm_fileselector_expandable_set
      (priv->button, _elm_config->fileselector_expand_enable);
@@ -586,7 +575,6 @@ ELM_PART_CONTENT_DEFAULT_GET(elm_fileselector_entry, "button icon")
 
 #define ELM_FILESELECTOR_ENTRY_EXTRA_OPS \
    ELM_PART_CONTENT_DEFAULT_OPS(elm_fileselector_entry), \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_fileselector_entry), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_fileselector_entry)
 
 #include "elm_fileselector_entry_eo.c"

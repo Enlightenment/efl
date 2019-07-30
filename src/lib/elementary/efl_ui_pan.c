@@ -213,6 +213,7 @@ _efl_ui_pan_efl_content_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *pd)
 EOLIAN static void
 _efl_ui_pan_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *psd)
 {
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    efl_gfx_entity_position_set(psd->content, EINA_POSITION2D(psd->x - psd->px, psd->y - psd->py));
 }
 #include "efl_ui_pan.eo.c"

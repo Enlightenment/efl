@@ -98,6 +98,7 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd,
         elm_scroller_content_min_limit(pd->scroller, min_limit_w, min_limit_h);
         efl_gfx_entity_size_set(obj, new_size);
      }
+   efl_canvas_group_calculate(pd->scroller);
 
    efl_gfx_hint_size_min_set(obj, new_min);
 }
@@ -112,6 +113,7 @@ _sizing_eval(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd)
    //Calculate popup's min size including scroller's min size
      {
         elm_scroller_content_min_limit(pd->scroller, EINA_TRUE, EINA_TRUE);
+        efl_canvas_group_calculate(pd->scroller);
 
         elm_coords_finger_size_adjust(1, &scr_minw, 1, &scr_minh);
         edje_object_size_min_restricted_calc
@@ -121,6 +123,7 @@ _sizing_eval(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd)
    //Calculate popup's min size except scroller's min size
      {
         elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
+        efl_canvas_group_calculate(pd->scroller);
 
         elm_coords_finger_size_adjust(1, &obj_minw, 1, &obj_minh);
         edje_object_size_min_restricted_calc
@@ -137,17 +140,12 @@ _efl_ui_scroll_alert_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Scro
     * calculation.
     * The actual size calculation is done here when the object is rendered to
     * avoid duplicate size calculations. */
-   EFL_UI_POPUP_DATA_GET_OR_RETURN(obj, ppd);
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
 
-   if (ppd->needs_group_calc)
-     {
-        if (ppd->needs_size_calc)
-          _sizing_eval(obj, pd);
+   _sizing_eval(obj, pd);
 
-        //Not to calculate size by super class
-        ppd->needs_size_calc = EINA_FALSE;
-        efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
-     }
+   //Not to calculate size by super class
+   efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
 }
 
 static Eina_Bool

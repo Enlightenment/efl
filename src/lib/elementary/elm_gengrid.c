@@ -2196,6 +2196,7 @@ _elm_gengrid_pan_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Elm_Gengr
 
    Elm_Gengrid_Data *sd = psd->wsd;
 
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    if (!sd->nmax) return;
 
    sd->reorder_item_changed = EINA_FALSE;
@@ -4055,7 +4056,7 @@ _elm_gengrid_item_new(Elm_Gengrid_Data *sd,
 }
 
 EOLIAN static void
-_elm_gengrid_elm_layout_sizing_eval(Eo *obj, Elm_Gengrid_Data *sd)
+_elm_gengrid_efl_canvas_group_calculate(Eo *obj, Elm_Gengrid_Data *sd)
 {
    Evas_Coord minw = 0, minh = 0, maxw = -1, maxh = -1, vw = 0, vh = 0;
 
@@ -5892,7 +5893,7 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_gengrid, Elm_Gengrid_Data)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_GENGRID_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_gengrid), \
+   EFL_CANVAS_GROUP_CALC_OPS(elm_gengrid), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_gengrid)
 
 #include "elm_gengrid_eo.c"
