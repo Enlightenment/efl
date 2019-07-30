@@ -44,4 +44,4 @@ static const Efl_Class_Description _efl_ui_button_legacy_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(efl_ui_button_legacy_class_get, &_efl_ui_button_legacy_class_desc, EFL_UI_BUTTON_CLASS, EFL_UI_LEGACY_INTERFACE, NULL);
+EFL_DEFINE_CLASS(efl_ui_button_legacy_class_get, &_efl_ui_button_legacy_class_desc, EFL_UI_BUTTON_CLASS, ELM_LAYOUT_MIXIN, EFL_UI_LEGACY_INTERFACE, NULL);

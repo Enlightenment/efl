@@ -220,6 +220,6 @@ static const Efl_Class_Description _elm_ctxpopup_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(elm_ctxpopup_class_get, &_elm_ctxpopup_class_desc, EFL_UI_LAYOUT_BASE_CLASS, EFL_UI_FOCUS_LAYER_MIXIN, EFL_ACCESS_WIDGET_ACTION_MIXIN, EFL_UI_LEGACY_INTERFACE, ELM_WIDGET_ITEM_CONTAINER_INTERFACE, NULL);
+EFL_DEFINE_CLASS(elm_ctxpopup_class_get, &_elm_ctxpopup_class_desc, EFL_UI_LAYOUT_BASE_CLASS, EFL_UI_FOCUS_LAYER_MIXIN, EFL_ACCESS_WIDGET_ACTION_MIXIN, ELM_LAYOUT_MIXIN, EFL_UI_LEGACY_INTERFACE, ELM_WIDGET_ITEM_CONTAINER_INTERFACE, NULL);
 
 #include "elm_ctxpopup_eo.legacy.c"

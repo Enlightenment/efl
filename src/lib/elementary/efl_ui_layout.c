@@ -160,7 +160,7 @@ _part_cursor_free(Efl_Ui_Layout_Sub_Object_Cursor *pc)
 }
 
 static void
-_sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd)
+_sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd, Elm_Layout_Data *ld)
 {
    int minh = 0, minw = 0;
    int rest_w = 0, rest_h = 0;
@@ -179,7 +179,7 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd)
      }
    elm_coords_finger_size_adjust(sd->finger_size_multiplier_x, &rest_w,
                                  sd->finger_size_multiplier_y, &rest_h);
-   if (elm_widget_is_legacy(obj))
+   if (ld)
      sz = efl_gfx_hint_size_combined_min_get(obj);
    else
      sz = efl_gfx_hint_size_min_get(obj);
@@ -205,8 +205,13 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd)
    if (sd->finger_size_multiplier_y)
      elm_coords_finger_size_adjust(sd->finger_size_multiplier_x, NULL,
                                    sd->finger_size_multiplier_y, &minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
+
    efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
+
+   if (ld)
+     {
+        efl_gfx_hint_size_min_set(obj, EINA_SIZE2D(minw, minh));
+     }
    sd->restricted_calc_w = sd->restricted_calc_h = EINA_FALSE;
 }
 
@@ -879,11 +884,11 @@ _efl_ui_layout_efl_canvas_group_group_calculate(Eo *obj, void *_pd EINA_UNUSED)
 EOLIAN static void
 _efl_ui_layout_base_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
-   Eina_Bool legacy = elm_widget_is_legacy(obj);
+   Elm_Layout_Data *ld = efl_data_scope_safe_get(obj, ELM_LAYOUT_MIXIN);
    efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
-   if ((!legacy) || sd->needs_size_calc)
-     _sizing_eval(obj, sd);
-   sd->needs_size_calc = EINA_FALSE;
+   if ((!ld) || ld->needs_size_calc)
+     _sizing_eval(obj, sd, ld);
+   if (ld) ld->needs_size_calc = EINA_FALSE;
 }
 
 EOLIAN static void
@@ -1781,19 +1786,26 @@ _efl_ui_layout_base_efl_layout_group_part_exist_get(const Eo *obj, Efl_Ui_Layout
    return efl_layout_group_part_exist_get(wd->resize_obj, part);
 }
 
+EOLIAN static void
+_elm_layout_efl_canvas_group_change(Eo *obj, Elm_Layout_Data *ld)
+{
+   Efl_Ui_Layout_Data *sd;
+
+   if (!efl_finalized_get(obj)) return;
+   sd = efl_data_scope_safe_get(obj, EFL_UI_LAYOUT_BASE_CLASS);
+   if (sd->frozen) return;
+   ld->needs_size_calc = EINA_TRUE;
+   efl_canvas_group_change(efl_super(obj, ELM_LAYOUT_MIXIN));
+}
+
 /* layout's sizing evaluation is deferred. evaluation requests are
  * queued up and only flag the object as 'changed'. when it comes to
  * Evas's rendering phase, it will be addressed, finally (see
  * _efl_ui_layout_smart_calculate()). */
-static void
-_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Layout_Data *sd)
+EOLIAN static void
+_elm_layout_sizing_eval(Eo *obj, Elm_Layout_Data *ld)
 {
-   if (!efl_finalized_get(obj)) return;
-   if (sd->frozen) return;
-   if (sd->needs_size_calc) return;
-   sd->needs_size_calc = EINA_TRUE;
-
-   evas_object_smart_changed(obj);
+   _elm_layout_efl_canvas_group_change(obj, ld);
 }
 
 EAPI void
@@ -2538,6 +2550,13 @@ _efl_ui_layout_base_efl_object_finalize(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNU
    efl_ui_widget_theme_apply(eo);
    efl_canvas_group_change(obj);
 
+   Elm_Layout_Data *ld = efl_data_scope_safe_get(obj, ELM_LAYOUT_MIXIN);
+   /* need to explicitly set this here to permit group_calc since efl_canvas_group_change
+    * blocks non-finalized objects and the object will not be finalized until after this
+    * function returns
+    */
+   if (ld) ld->needs_size_calc = EINA_TRUE;
+
    win = elm_widget_top_get(obj);
    if (efl_isa(win, EFL_UI_WIN_CLASS))
      efl_ui_layout_theme_rotation_apply(obj, efl_ui_win_rotation_get(win));
@@ -2788,7 +2807,6 @@ _efl_ui_layout_base_theme_rotation_apply(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UN
 
 /* Internal EO APIs and hidden overrides */
 
-EAPI EFL_VOID_FUNC_BODY(elm_layout_sizing_eval)
 EFL_FUNC_BODY_CONST(elm_layout_text_aliases_get, const Elm_Layout_Part_Alias_Description *, NULL)
 EFL_FUNC_BODY_CONST(elm_layout_content_aliases_get, const Elm_Layout_Part_Alias_Description *, NULL)
 
@@ -2801,8 +2819,8 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_PART_TEXT_DEFAULT_OPS(efl_ui_layout_base), \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
    ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
-   EFL_OBJECT_OP_FUNC(elm_layout_sizing_eval, _elm_layout_sizing_eval), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_ui_layout_base_efl_object_dbg_info_get)
+
 
 #include "efl_ui_layout_base.eo.c"
 #include "efl_ui_layout.eo.c"
