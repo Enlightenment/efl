@@ -162,11 +162,24 @@ _part_cursor_free(Efl_Ui_Layout_Sub_Object_Cursor *pc)
 static void
 _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd)
 {
-   Evas_Coord minh = -1, minw = -1;
-   Evas_Coord rest_w = 0, rest_h = 0;
+   int minh = 0, minw = 0;
+   int rest_w = 0, rest_h = 0;
+   Eina_Size2D sz;
    ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
    if (!efl_alive_get(obj)) return;
+
+   if (elm_widget_is_legacy(obj))
+     sz = efl_gfx_hint_size_combined_min_get(obj);
+   else
+     sz = efl_gfx_hint_size_min_get(obj);
+   minw = sz.w;
+   minh = sz.h;
+
+   if (minw > rest_w)
+     rest_w = minw;
+   if (minh > rest_h)
+     rest_h = minh;
 
    if (sd->restricted_calc_w)
      rest_w = wd->w;
