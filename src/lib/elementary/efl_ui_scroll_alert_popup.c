@@ -100,7 +100,7 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd,
      }
    efl_canvas_group_calculate(pd->scroller);
 
-   efl_gfx_hint_size_min_set(obj, new_min);
+   efl_gfx_hint_size_restricted_min_set(obj, new_min);
 }
 
 static void

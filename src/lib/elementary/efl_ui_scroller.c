@@ -340,7 +340,7 @@ _efl_ui_scroller_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Scroller_Data 
    if ((max.w > 0) && (size.w > max.w)) size.w = max.w;
    if ((max.h > 0) && (size.h > max.h)) size.h = max.h;
 
-   efl_gfx_hint_size_min_set(obj, size);
+   efl_gfx_hint_size_restricted_min_set(obj, size);
 }
 
 EOLIAN static Eina_Error

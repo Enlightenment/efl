@@ -883,7 +883,7 @@ _efl_ui_textpath_circular_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double radius, 
    _path_start_angle_adjust(obj, pd);
    _sizing_eval(pd);
 
-   efl_gfx_hint_size_min_set(obj, EINA_SIZE2D((radius * 2) + text_size.h, (radius * 2) + text_size.h));
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D((radius * 2) + text_size.h, (radius * 2) + text_size.h));
 }
 
 EOLIAN static int
@@ -1003,7 +1003,7 @@ elm_textpath_circle_set(Eo *obj, double x, double y, double radius, double start
    _path_start_angle_adjust(obj, pd);
    _sizing_eval(pd);
 
-   efl_gfx_hint_size_min_set(obj, EINA_SIZE2D(x * 2, y * 2));
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(x * 2, y * 2));
 }
 
 #include "efl_ui_textpath_legacy_eo.c"
