@@ -331,6 +331,7 @@ _ecore_main_uv_poll_cb(uv_poll_t *handle, int status, int events)
      {
         DBG("not IDLE anymore");
         _ecore_main_uv_idling = EINA_FALSE;
+        eina_file_statgen_next();
         efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
         _ecore_animator_run_reset();
      }
@@ -794,6 +795,7 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
    if (ecore_idling && events_ready)
      {
         _ecore_animator_run_reset();
+        eina_file_statgen_next();
         efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
         ecore_idling = 0;
      }
@@ -808,6 +810,7 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
         if (ecore_fds_ready || events_ready || timers_ready)
           {
              _ecore_animator_run_reset();
+             eina_file_statgen_next();
              efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
              ecore_idling = 0;
           }
@@ -867,6 +870,7 @@ _ecore_main_loop_timer_run(uv_timer_t *timer EINA_UNUSED)
    if (_ecore_main_uv_idling)
      {
         _ecore_main_uv_idling = EINA_FALSE;
+        eina_file_statgen_next();
         efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
         _ecore_animator_run_reset();
      }
@@ -2243,6 +2247,7 @@ _ecore_main_loop_uv_prepare(uv_prepare_t *handle EINA_UNUSED)
 
         if (_ecore_main_uv_idling)
           {
+             eina_file_statgen_next();
              efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
              _ecore_animator_run_reset();
              _ecore_main_uv_idling = EINA_FALSE;
@@ -2473,6 +2478,7 @@ process_all: //-*********************************************************
    if (!once_only)
      {
         _ecore_animator_run_reset(); // XXX:
+        eina_file_statgen_next();
         efl_event_callback_call(obj, EFL_LOOP_EVENT_IDLE_EXIT, NULL);
      }
    // call the fd handler per fd that became alive...

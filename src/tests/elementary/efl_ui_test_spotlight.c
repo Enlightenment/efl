@@ -81,7 +81,7 @@ _create_indicator(void)
 {
    Eo *obj;
 
-   obj = efl_add(efl_ui_spotlight_indicator_realized_class_get(), win);
+   obj = efl_new(efl_ui_spotlight_indicator_realized_class_get());
    efl_object_override(obj, &indicator_tracker);
 
    return obj;
@@ -209,7 +209,7 @@ _create_transition(void)
 {
    Eo *obj;
 
-   obj = efl_add(efl_ui_spotlight_manager_realized_class_get(), win);
+   obj = efl_new(efl_ui_spotlight_manager_realized_class_get());
    efl_object_override(obj, &transition_tracker);
 
    return obj;

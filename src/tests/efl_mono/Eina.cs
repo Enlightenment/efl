@@ -826,7 +826,6 @@ class TestEinaArray
 
     // Integer //
 
-    /*
     public static void test_eina_array_int_in()
     {
         var t = new Dummy.TestObject();
@@ -839,6 +838,7 @@ class TestEinaArray
         Test.Assert(arr.Handle == IntPtr.Zero);
     }
 
+    /*
     public static void test_eina_array_int_in_own()
     {
         var t = new Dummy.TestObject();
@@ -851,6 +851,7 @@ class TestEinaArray
         Test.Assert(arr.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaArrayIntInOwn());
     }
+    */
 
     public static void test_eina_array_int_out()
     {
@@ -865,6 +866,7 @@ class TestEinaArray
         Test.Assert(t.CheckEinaArrayIntOut());
     }
 
+    /*
     public static void test_eina_array_int_out_own()
     {
         var t = new Dummy.TestObject();
@@ -876,6 +878,7 @@ class TestEinaArray
         arr.Dispose();
         Test.Assert(arr.Handle == IntPtr.Zero);
     }
+    */
 
     public static void test_eina_array_int_return()
     {
@@ -889,6 +892,7 @@ class TestEinaArray
         Test.Assert(t.CheckEinaArrayIntReturn());
     }
 
+    /*
     public static void test_eina_array_int_return_own()
     {
         var t = new Dummy.TestObject();
@@ -1886,7 +1890,6 @@ class TestEinaList
 
     // Integer //
 
-    /*
     public static void test_eina_list_int_in()
     {
         var t = new Dummy.TestObject();
@@ -1899,6 +1902,7 @@ class TestEinaList
         Test.Assert(lst.Handle == IntPtr.Zero);
     }
 
+    /*
     public static void test_eina_list_int_in_own()
     {
         var t = new Dummy.TestObject();
@@ -1910,6 +1914,7 @@ class TestEinaList
         Test.Assert(lst.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaListIntInOwn());
     }
+    */
 
     public static void test_eina_list_int_out()
     {
@@ -1923,6 +1928,7 @@ class TestEinaList
         Test.Assert(t.CheckEinaListIntOut());
     }
 
+    /*
     public static void test_eina_list_int_out_own()
     {
         var t = new Dummy.TestObject();
@@ -1934,6 +1940,7 @@ class TestEinaList
         lst.Dispose();
         Test.Assert(lst.Handle == IntPtr.Zero);
     }
+    */
 
     public static void test_eina_list_int_return()
     {
@@ -1946,6 +1953,7 @@ class TestEinaList
         Test.Assert(t.CheckEinaListIntReturn());
     }
 
+    /*
     public static void test_eina_list_int_return_own()
     {
         var t = new Dummy.TestObject();
@@ -2666,7 +2674,6 @@ class TestEinaHash
 
     // Integer //
 
-    /*
     public static void test_eina_hash_int_in()
     {
         var t = new Dummy.TestObject();
@@ -2680,6 +2687,7 @@ class TestEinaHash
         Test.Assert(hsh.Handle == IntPtr.Zero);
     }
 
+    /*
     public static void test_eina_hash_int_in_own()
     {
         var t = new Dummy.TestObject();
@@ -2694,6 +2702,7 @@ class TestEinaHash
         Test.Assert(hsh.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaHashIntInOwn());
     }
+    */
 
     public static void test_eina_hash_int_out()
     {
@@ -2709,6 +2718,7 @@ class TestEinaHash
         Test.Assert(t.CheckEinaHashIntOut());
     }
 
+    /*
     public static void test_eina_hash_int_out_own()
     {
         var t = new Dummy.TestObject();
@@ -2722,6 +2732,7 @@ class TestEinaHash
         Test.Assert(hsh.Handle == IntPtr.Zero);
         Test.Assert(t.CheckEinaHashIntOutOwn());
     }
+    */
 
     public static void test_eina_hash_int_return()
     {
@@ -2736,6 +2747,7 @@ class TestEinaHash
         Test.Assert(t.CheckEinaHashIntReturn());
     }
 
+    /*
     public static void test_eina_hash_int_return_own()
     {
         var t = new Dummy.TestObject();

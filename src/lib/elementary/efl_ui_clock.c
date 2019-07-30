@@ -2,6 +2,10 @@
 # include "elementary_config.h"
 #endif
 
+#ifdef _WIN32
+# include <evil_private.h> /* nl_langinfo */
+#endif
+
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_UI_L10N_PROTECTED
 

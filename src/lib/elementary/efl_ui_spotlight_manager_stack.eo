@@ -7,6 +7,6 @@ class @beta Efl.Ui.Spotlight.Manager_Stack extends Efl.Ui.Spotlight.Manager
       Efl.Ui.Spotlight.Manager.switch_to;
       Efl.Ui.Spotlight.Manager.size {set;}
       Efl.Ui.Spotlight.Manager.animation_enabled {set; get;}
-      Efl.Object.destructor;
+      Efl.Object.invalidate;
    }
 }

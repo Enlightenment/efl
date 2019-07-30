@@ -3,6 +3,11 @@
 #endif
 
 #include <string.h>
+
+#ifdef _WIN32
+# include <evil_private.h> /* strcasestr */
+#endif
+
 #include <Efl_Ui.h>
 #include <Elementary.h>
 #include "test.h"
@@ -238,6 +243,7 @@ void test_label_wrap(void *data, Evas_Object *obj, void *event_info);
 void test_label_ellipsis(void *data, Evas_Object *obj, void *event_info);
 void test_label_colors(void *data, Evas_Object *obj, void *event_info);
 void test_label_emoji(void *data, Evas_Object *obj, void *event_info);
+void test_label_variation_sequence(void *data, Evas_Object *obj, void *event_info);
 void test_conformant(void *data, Evas_Object *obj, void *event_info);
 void test_conformant2(void *data, Evas_Object *obj, void *event_info);
 void test_conformant_indicator(void *data, Evas_Object *obj, void *event_info);
@@ -394,15 +400,18 @@ void test_ui_spotlight_scroll(void *data, Evas_Object *obj, void *event_info);
 
 void test_ui_relative_layout(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_radio(void *data, Evas_Object *obj, void *event_info);
-void test_efl_ui_item_container_list(void *data, Evas_Object *obj, void *event_info );
-void test_efl_ui_item_container_grid(void *data, Evas_Object *obj, void *event_info);
+void test_efl_ui_collection_list(void *data, Evas_Object *obj, void *event_info );
+void test_efl_ui_collection_grid(void *data, Evas_Object *obj, void *event_info);
+void test_efl_ui_item(void *data, Evas_Object *obj, void *event_info);
+
 static void _list_udpate(void);
 
 static Evas_Object *win, *tbx, *entry; // TODO: refactoring
 static void *tt;
-static Eina_List *tests;
+static Eina_List *tests, *cur_test;;
 static Eina_Bool hide_legacy = EINA_FALSE;
 static Eina_Bool hide_beta = EINA_FALSE;
+static Eina_Bool all_tests = EINA_FALSE;
 
 struct elm_test
 {
@@ -574,6 +583,7 @@ _menu_create(const char *option_str)
           }
         pcat = t->category;
         if (t == tt) tt = cfr;
+        if (all_tests) t->cb(NULL, NULL, NULL);
      }
 }
 
@@ -636,6 +646,32 @@ _space_removed_string_get(const char *name)
      }
 
    return ret;
+}
+
+static Eina_Bool
+_my_win_key_up(void *d EINA_UNUSED, int type EINA_UNUSED, Ecore_Event_Key *ev)
+{
+   struct elm_test *t;
+
+   if (eina_streq(ev->key, "comma") && (ev->modifiers & ECORE_EVENT_MODIFIER_ALT))
+     {
+        if (cur_test)
+          cur_test = eina_list_prev(cur_test);
+        if (!cur_test)
+          cur_test = eina_list_last(tests);
+        t = eina_list_data_get(cur_test);
+        t->cb(NULL, NULL, NULL);
+     }
+   else if (eina_streq(ev->key, "period") && (ev->modifiers & ECORE_EVENT_MODIFIER_ALT))
+     {
+        if (cur_test)
+          cur_test = eina_list_next(cur_test);
+        if (!cur_test)
+          cur_test = tests;
+        t = eina_list_data_get(cur_test);
+        t->cb(NULL, NULL, NULL);
+     }
+   return ECORE_CALLBACK_RENEW;
 }
 
 static void
@@ -869,8 +905,9 @@ add_tests:
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Table (Linear API)", test_ui_table_linear);
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Table_Static", test_ui_table_static);
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Relative_Layout", test_ui_relative_layout);
-   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Item_Container List", test_efl_ui_item_container_list);
-   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Item_Container Grid", test_efl_ui_item_container_grid);
+   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Collection List", test_efl_ui_collection_list);
+   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Collection Grid", test_efl_ui_collection_grid);
+   ADD_TEST_EO(NULL, "Containers", "Items", test_efl_ui_item);
 
    //------------------------------//
    ADD_TEST_EO(NULL, "Events", "Event Refeed", test_events);
@@ -1167,6 +1204,7 @@ add_tests:
    ADD_TEST(NULL, "Text", "Label Ellipsis", test_label_ellipsis);
    ADD_TEST(NULL, "Text", "Label Colors", test_label_colors);
    ADD_TEST(NULL, "Text", "Label Emoji", test_label_emoji);
+   ADD_TEST(NULL, "Text", "Label Variation Sequnece", test_label_variation_sequence);
    ADD_TEST_EO(NULL, "Text", "Efl.Ui.Textpath", test_ui_textpath);
 
    //------------------------------//
@@ -1295,7 +1333,10 @@ add_tests:
      }
 
    if (tests)
-     _menu_create(NULL);
+     {
+        _menu_create(NULL);
+        ecore_event_handler_add(ECORE_EVENT_KEY_UP, (Ecore_Event_Handler_Cb)_my_win_key_up, NULL);
+     }
 
    /* bring in autorun frame */
    if (autorun)
@@ -1382,33 +1423,41 @@ efl_main(void *data EINA_UNUSED,
    /* if called with a single argument try to autorun a test with
     * the same name as the given param
     * ex:  elementary_test "Box Vert 2" */
-   if (eina_array_count(arge->argv) == 2)
+   if (eina_array_count(arge->argv) >= 2)
      {
-        if ((!strcmp(eina_array_data_get(arge->argv, 1), "--help")) ||
-            (!strcmp(eina_array_data_get(arge->argv, 1), "-help")) ||
-            (!strcmp(eina_array_data_get(arge->argv, 1), "-h")))
+        unsigned int i;
+        for (i = 1; i < eina_array_count(arge->argv); i++)
           {
-             efl_loop_quit(ev->object,
-                           eina_value_string_init("Usages:\n"
-                                                  "$ elementary_test\n"
-                                                  "$ elementary_test --test-win-only [TEST_NAME]\n"
-                                                  "$ elementary_test -to [TEST_NAME]\n\n"
-                                                  "Examples:\n"
-                                                  "$ elementary_test -to Button\n\n"));
-             return ;
+             char *arg = eina_array_data_get(arge->argv, i);
+             if ((!strcmp(arg, "--help")) ||
+                 (!strcmp(arg, "-help")) ||
+                 (!strcmp(arg, "-h")))
+               {
+                  efl_loop_quit(ev->object,
+                                eina_value_string_init("Usages:\n"
+                                                       "$ elementary_test\n"
+                                                       "$ elementary_test --test-win-only [TEST_NAME]\n"
+                                                       "$ elementary_test -to [TEST_NAME]\n\n"
+                                                       "Examples:\n"
+                                                       "$ elementary_test -to Button\n\n"));
+                  return ;
+               }
+             /* Just a workaround to make the shot module more
+              * useful with elementary test. */
+             if ((!strcmp(arg, "--test-win-only")) ||
+                 (!strcmp(arg, "-to")))
+               {
+                  test_win_only = EINA_TRUE;
+               }
+             else if (eina_streq(arg, "--all") || eina_streq(arg, "-a"))
+               all_tests = EINA_TRUE;
+             else if ((i == eina_array_count(arge->argv) - 1) && (arg[0] != '-'))
+               autorun = arg;
+
           }
-        autorun = eina_array_data_get(arge->argv, 1);
      }
    else if (eina_array_count(arge->argv) == 3)
      {
-        /* Just a workaround to make the shot module more
-         * useful with elementary test. */
-        if ((!strcmp(eina_array_data_get(arge->argv, 1), "--test-win-only")) ||
-            (!strcmp(eina_array_data_get(arge->argv, 1), "-to")))
-          {
-             test_win_only = EINA_TRUE;
-             autorun = eina_array_data_get(arge->argv, 2);
-          }
      }
 
    my_win_main(autorun, test_win_only); /* create main window */

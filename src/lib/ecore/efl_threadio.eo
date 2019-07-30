@@ -3,14 +3,14 @@ import efl_object;
 function @beta EFlThreadIOCall {
    [[ A Function to call on the "other end" of a thread obvject ]]
    params {
-      @cref event: Efl.Event; [[ ]]
+      @in event: const(event); [[ ]]
    }
 };
 
 function @beta EFlThreadIOCallSync {
    [[ A Function to call on the "other end" of a thread obvject ]]
    params {
-      @cref event: Efl.Event; [[ ]]
+      @in event: const(event); [[ ]]
    }
    return: void_ptr; [[ ]]
 };

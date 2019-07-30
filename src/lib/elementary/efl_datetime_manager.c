@@ -5,6 +5,10 @@
 # include <langinfo.h>
 #endif
 
+#ifdef _WIN32
+# include <evil_private.h> /* nl_langinfo */
+#endif
+
 #include <Elementary.h>
 #include "elm_priv.h"
 

@@ -60,9 +60,9 @@ static void
 _entry_activated_cb(void *data, const Efl_Event *event);
 
 EFL_CALLBACKS_ARRAY_DEFINE(_inc_dec_button_cb,
-   { EFL_UI_EVENT_CLICKED, _inc_dec_button_clicked_cb},
-   { EFL_UI_EVENT_PRESSED, _inc_dec_button_pressed_cb},
-   { EFL_UI_EVENT_UNPRESSED, _inc_dec_button_unpressed_cb},
+   { EFL_INPUT_EVENT_CLICKED, _inc_dec_button_clicked_cb},
+   { EFL_INPUT_EVENT_PRESSED, _inc_dec_button_pressed_cb},
+   { EFL_INPUT_EVENT_UNPRESSED, _inc_dec_button_unpressed_cb},
    { EFL_EVENT_POINTER_MOVE, _inc_dec_button_mouse_move_cb }
 );
 
@@ -1222,7 +1222,7 @@ _elm_spinner_efl_canvas_group_group_add(Eo *obj, Elm_Spinner_Data *priv)
         elm_widget_can_focus_set(priv->text_button, _elm_config->access_mode);
 
         efl_event_callback_add
-          (priv->text_button, EFL_UI_EVENT_CLICKED, _text_button_clicked_cb, obj);
+          (priv->text_button, EFL_INPUT_EVENT_CLICKED, _text_button_clicked_cb, obj);
 
         efl_event_callback_add
           (priv->text_button, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED, _text_button_focus_change, obj);

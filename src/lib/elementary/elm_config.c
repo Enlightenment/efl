@@ -4,8 +4,8 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#include <pwd.h>
 
+#include "../../static_libs/buildsystem/buildsystem.h"
 #include "efl_config_global.eo.h"
 
 EAPI int ELM_EVENT_CONFIG_ALL_CHANGED = 0;
@@ -35,6 +35,7 @@ Eina_Bool _config_profile_lock = EINA_FALSE;
 static Ecore_Timer *_config_change_delay_timer = NULL;
 static Ecore_Timer *_config_profile_change_delay_timer = NULL;
 static Ecore_Event_Handler *_monitor_file_created_handler = NULL;
+static Ecore_Event_Handler *_monitor_file_modified_handler = NULL;
 static Ecore_Event_Handler *_monitor_directory_created_handler = NULL;
 static Eio_Monitor *_eio_config_monitor = NULL;
 static Eio_Monitor *_eio_profile_monitor = NULL;
@@ -964,7 +965,8 @@ _elm_config_profile_dir_get(const char *prof,
    if (!is_user)
      goto not_user;
 
-   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s", prof);
+   if ((!_use_build_config) || (!bs_data_path_get(buf, sizeof(buf), "elementary/config", prof)))
+     _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s", prof);
 
    // See elm_config_profile_dir_free: always use strdup+free
    if (ecore_file_is_dir(buf))
@@ -973,7 +975,8 @@ _elm_config_profile_dir_get(const char *prof,
    return NULL;
 
 not_user:
-   snprintf(buf, sizeof(buf), "%s/config/%s", _elm_data_dir, prof);
+   if ((!_use_build_config) || (!bs_data_path_get(buf, sizeof(buf), "elementary/config", prof)))
+     snprintf(buf, sizeof(buf), "%s/config/%s", _elm_data_dir, prof);
 
    // See elm_config_profile_dir_free: always use strdup+free
    if (ecore_file_is_dir(buf))
@@ -1355,9 +1358,15 @@ _elm_config_profiles_list(Eina_Bool hide_profiles)
    Eina_Iterator *file_it;
    char buf[PATH_MAX];
    const char *dir;
-   size_t len;
+   size_t len = 0;
 
-   len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "config");
+   if (_use_build_config)
+     {
+        len = bs_data_path_get(buf, sizeof(buf), "elementary", "config");
+        if (len) len = strlen(buf);
+     }
+   if (!len)
+     len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "config");
 
    file_it = eina_file_stat_ls(buf);
    if (!file_it) goto sys;
@@ -2082,7 +2091,7 @@ _elm_config_profile_save(const char *profile)
    Eet_File *ef;
    size_t len;
 
-   if ((s = getenv("ELM_PROFILE_NOSAVE")) && atoi(s))
+   if (_use_build_config || ((s = getenv("ELM_PROFILE_NOSAVE")) && atoi(s)))
      return EINA_TRUE;
 
    len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
@@ -3001,6 +3010,11 @@ elm_config_profile_exists(const char *profile)
 
    if (!profile) return EINA_FALSE;
 
+   if (_use_build_config)
+     {
+        if (!bs_data_path_get(buf, sizeof(buf), "elementary/config", profile)) return EINA_FALSE;
+        return ecore_file_exists(buf);
+     }
    _elm_config_user_dir_snprintf(buf, sizeof(buf),
                                  "config/%s/base.cfg", profile);
    if (ecore_file_exists(buf)) return EINA_TRUE;
@@ -4093,6 +4107,7 @@ elm_config_all_flush(void)
    int ok = 0;
    size_t len;
 
+   if (_use_build_config) return;
    len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "themes/");
    if (len + 1 >= sizeof(buf))
      return;
@@ -4197,7 +4212,9 @@ _elm_config_sub_shutdown(void)
    ELM_SAFE_FREE(_config_change_delay_timer, ecore_timer_del);
    ELM_SAFE_FREE(_config_profile_change_delay_timer, ecore_timer_del);
    ELM_SAFE_FREE(_monitor_file_created_handler, ecore_event_handler_del);
+   ELM_SAFE_FREE(_monitor_file_modified_handler, ecore_event_handler_del);
    ELM_SAFE_FREE(_monitor_directory_created_handler, ecore_event_handler_del);
+   _use_build_config = EINA_FALSE;
 }
 
 static Eina_Bool
@@ -4227,7 +4244,7 @@ _config_change_delay_cb(void *data EINA_UNUSED)
 
 static Eina_Bool
 _elm_config_file_monitor_cb(void *data EINA_UNUSED,
-                            int type EINA_UNUSED,
+                            int type,
                             void *event)
 {
    Eio_Monitor_Event *ev = event;
@@ -4235,7 +4252,7 @@ _elm_config_file_monitor_cb(void *data EINA_UNUSED,
 
    if (ev->monitor == _eio_config_monitor)
      {
-        if (type == EIO_MONITOR_FILE_CREATED)
+        if ((type == EIO_MONITOR_FILE_CREATED) || (type == EIO_MONITOR_FILE_MODIFIED))
           {
              if (!strcmp(file, "base.cfg"))
                {
@@ -4247,7 +4264,7 @@ _elm_config_file_monitor_cb(void *data EINA_UNUSED,
      }
    if (ev->monitor == _eio_profile_monitor)
      {
-        if (type == EIO_MONITOR_FILE_CREATED)
+        if ((type == EIO_MONITOR_FILE_CREATED) || (type == EIO_MONITOR_FILE_MODIFIED))
           {
              if ((!_config_profile_lock) && (!strcmp(file, "profile.cfg")))
                {
@@ -4289,8 +4306,13 @@ _elm_config_sub_init(void)
    char buf[PATH_MAX];
    int ok = 0;
 
-   _elm_config_user_dir_snprintf(buf, sizeof(buf), "config");
-   ok = ecore_file_mkpath(buf);
+   if (_use_build_config)
+     ok = bs_data_path_get(buf, sizeof(buf), "elementary", "config");
+   else
+     {
+        _elm_config_user_dir_snprintf(buf, sizeof(buf), "config");
+        ok = ecore_file_mkpath(buf);
+     }
    if (!ok)
      {
         ERR("Problem accessing Elementary's user configuration directory: %s",
@@ -4300,6 +4322,8 @@ _elm_config_sub_init(void)
    _eio_profile_monitor = eio_monitor_add(buf);
    _monitor_file_created_handler = ecore_event_handler_add
      (EIO_MONITOR_FILE_CREATED, _elm_config_file_monitor_cb, NULL);
+   _monitor_file_modified_handler = ecore_event_handler_add
+     (EIO_MONITOR_FILE_MODIFIED, _elm_config_file_monitor_cb, NULL);
    _monitor_directory_created_handler = ecore_event_handler_add
      (EIO_MONITOR_DIRECTORY_CREATED, _elm_config_file_monitor_cb, NULL);
 

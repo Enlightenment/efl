@@ -96,8 +96,18 @@ _parent_geom_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 EOLIAN static void
-_efl_ui_popup_efl_ui_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eo *parent EINA_UNUSED)
+_efl_ui_popup_efl_ui_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eo *parent)
 {
+   if (!parent)
+     {
+        /* unsetting parent, probably before deletion */
+        if (pd->win_parent)
+          {
+             efl_event_callback_del(pd->win_parent, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _parent_geom_cb, obj);
+             efl_event_callback_del(pd->win_parent, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _parent_geom_cb, obj);
+          }
+        goto end;
+     }
    pd->win_parent = efl_provider_find(obj, EFL_UI_WIN_CLASS);
    if (!pd->win_parent)
      {
@@ -112,7 +122,7 @@ _efl_ui_popup_efl_ui_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EIN
 
    efl_event_callback_add(pd->win_parent, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _parent_geom_cb, obj);
    efl_event_callback_add(pd->win_parent, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _parent_geom_cb, obj);
-
+end:
    efl_ui_widget_parent_set(efl_super(obj, MY_CLASS), parent);
 }
 
@@ -351,6 +361,22 @@ _efl_ui_popup_part_backwall_repeat_events_get(const Eo *obj, void *_pd EINA_UNUS
    return efl_canvas_object_repeat_events_get(sd->backwall);
 }
 
+EOLIAN static void
+_efl_ui_popup_part_backwall_efl_file_unload(Eo *obj, void *_pd EINA_UNUSED)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Popup_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_POPUP_CLASS);
+
+   efl_file_unload(efl_super(obj, EFL_UI_POPUP_PART_BACKWALL_CLASS));
+   Eo *prev_obj = edje_object_part_swallow_get(sd->backwall, "efl.content");
+   if (prev_obj)
+     {
+        edje_object_signal_emit(sd->backwall, "efl,state,content,unset", "efl");
+        edje_object_part_unswallow(sd->backwall, prev_obj);
+        efl_del(prev_obj);
+     }
+}
+
 EOLIAN static Eina_Error
 _efl_ui_popup_part_backwall_efl_file_load(Eo *obj, void *_pd EINA_UNUSED)
 {
@@ -361,7 +387,7 @@ _efl_ui_popup_part_backwall_efl_file_load(Eo *obj, void *_pd EINA_UNUSED)
 
    if (efl_file_loaded_get(obj)) return 0;
 
-   err = efl_file_load(efl_super(obj, MY_CLASS));
+   err = efl_file_load(efl_super(obj, EFL_UI_POPUP_PART_BACKWALL_CLASS));
    if (err) return err;
 
    Eo *prev_obj = edje_object_part_swallow_get(sd->backwall, "efl.content");

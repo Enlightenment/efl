@@ -62,7 +62,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 
    efl_add(EFL_UI_BUTTON_CLASS, box,
            efl_text_set(efl_added, "Unload extension"),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _btn_extension_clicked_cb, NULL),
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _btn_extension_clicked_cb, NULL),
            efl_pack_end(box, efl_added));
 
    efl_add(EFL_UI_BUTTON_CLASS, box,

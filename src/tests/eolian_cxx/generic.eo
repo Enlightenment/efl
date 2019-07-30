@@ -94,6 +94,26 @@ class Generic extends Efl.Object implements Generic_Interface
       }
       protected_beta_method1 @protected @beta {
       }
+      event_param {
+         params {
+           value: event;
+         }
+      }
+      const_event_param {
+         params {
+           value: const(event);
+         }
+      }
+      binbuf_param {
+         params {
+           value: binbuf;
+         }
+      }
+      const_binbuf_param {
+         params {
+           value: const(binbuf);
+         }
+      }
    }
    constructors {
       .required_ctor_a;

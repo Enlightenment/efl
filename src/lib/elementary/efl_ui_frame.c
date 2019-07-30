@@ -5,7 +5,7 @@
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define ELM_LAYOUT_PROTECTED
 #define EFL_PART_PROTECTED
-#define EFL_UI_CLICKABLE_PROTECTED
+#define EFL_INPUT_CLICKABLE_PROTECTED
 
 #include <Elementary.h>
 #include "elm_priv.h"
@@ -148,7 +148,7 @@ _efl_ui_frame_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Frame_Data *_pd EINA_UN
            (wd->resize_obj, "efl,anim,done", "efl",
             _on_recalc_done, obj);
         efl_ui_clickable_util_bind_to_theme(wd->resize_obj, obj);
-        efl_event_callback_add(obj, EFL_UI_EVENT_CLICKED, _clicked_cb, obj);
+        efl_event_callback_add(obj, EFL_INPUT_EVENT_CLICKED, _clicked_cb, obj);
      }
 
    elm_widget_can_focus_set(obj, EINA_FALSE);

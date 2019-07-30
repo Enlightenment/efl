@@ -4,18 +4,18 @@
 
 #include <Efl_Ui.h>
 #include "efl_ui_suite.h"
-#include "efl_ui_test_item_container_common.h"
+#include "efl_ui_test_collection_common.h"
 
 static Eo *win;
 
 static void
 item_container_setup()
 {
-   Eo * list = efl_new(EFL_UI_POSITION_MANAGER_LIST_CLASS);
-   position_manager = efl_new(EFL_UI_POSITION_MANAGER_LIST_CLASS);
+   Eo * list = efl_new(EFL_UI_POSITION_MANAGER_GRID_CLASS);
+   position_manager = efl_new(EFL_UI_POSITION_MANAGER_GRID_CLASS);
    win = win_add();
-   item_container = efl_add(EFL_UI_ITEM_CONTAINER_CLASS, win,
-      efl_ui_item_container_position_manager_set(efl_added, list));
+   item_container = efl_add(EFL_UI_COLLECTION_CLASS, win,
+      efl_ui_collection_position_manager_set(efl_added, list));
 
 }
 
@@ -27,7 +27,7 @@ item_container_teardown()
    win = NULL;
 }
 
-void efl_ui_test_list_container(TCase *tc)
+void efl_ui_test_grid_container(TCase *tc)
 {
    tcase_add_checked_fixture(tc, fail_on_errors_setup, fail_on_errors_teardown);
    tcase_add_checked_fixture(tc, item_container_setup, item_container_teardown);

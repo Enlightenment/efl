@@ -138,5 +138,20 @@ static void _generic_protected_beta_method1(Eo *obj EINA_UNUSED, Generic_Data* p
 static void _generic_beta_method1(Eo *obj EINA_UNUSED, Generic_Data* pd EINA_UNUSED)
 {
 }
+void _generic_event_param(Eo *obj EINA_UNUSED, Generic_Data *pd EINA_UNUSED, Efl_Event *value EINA_UNUSED)
+{
+}
+void _generic_const_event_param(Eo *obj EINA_UNUSED, Generic_Data *pd EINA_UNUSED, const Efl_Event *value EINA_UNUSED)
+{
+}
+void _generic_binbuf_param(Eo *obj EINA_UNUSED, Generic_Data *pd EINA_UNUSED, Eina_Binbuf *value EINA_UNUSED)
+{
+}
+void _generic_const_binbuf_param(Eo *obj EINA_UNUSED, Generic_Data *pd EINA_UNUSED, const Eina_Binbuf *value EINA_UNUSED)
+{
+}
+
+
+
 #include "generic.eo.c"
 #include "generic_interface.eo.c"

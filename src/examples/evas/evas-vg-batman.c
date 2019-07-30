@@ -104,7 +104,7 @@ main(void)
 
    if (!ecore_evas_init())
      return -1;
-   //setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
+   //putenv("ECORE_EVAS_ENGINE=opengl_x11");
    ee = ecore_evas_new(NULL, 0, 0, WIDTH, HEIGHT, NULL);
    if (!ee) return -1;
 

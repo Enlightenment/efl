@@ -78,6 +78,7 @@ function_checks = [
   ['alloca', ['alloca.h']],
   ['backtrace', ['execinfo.h']],
   ['backtrace_symbols', ['execinfo.h']],
+  ['chown', ['unistd.h']],
   ['clock_gettime', ['time.h']],
   ['dirfd', ['dirent.h sys/types.h']],
   ['fchmod', ['sys/stat.h']],
@@ -122,6 +123,20 @@ function_checks = [
   ['sched_getcpu', ['sched.h'],                         [],      '-D_GNU_SOURCE=1'],
   ['dladdr', ['dlfcn.h'],                               ['dl'],  '-D_GNU_SOURCE=1']
 ]
+
+open_cloexec = cc.compiles('''#include <sys/types.h>
+                              #include <sys/stat.h>
+                              #include <fcntl.h>
+                              int main(int argc, char **argv) {
+                                int res = open(argv[0], O_RDONLY | O_CLOEXEC);
+                                if (res < 0) return 1;
+                                return 0;
+                              }
+                           ''',
+                           name : 'open works with O_CLOEXEC')
+if open_cloexec
+  config_h.set10('HAVE_OPEN_CLOEXEC', true)
+endif
 
 strerror_r_char_p = cc.compiles('''#define _GNU_SOURCE
                   #include <string.h>

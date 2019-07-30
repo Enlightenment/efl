@@ -5,7 +5,9 @@
 #include <Eina.h>
 #include <check.h>
 #include "eina_suite.h"
-#include <pwd.h>
+#ifndef _WIN32
+# include <pwd.h>
+#endif
 
 EFL_START_TEST(eina_test_vpath_valid)
 {

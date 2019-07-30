@@ -317,7 +317,7 @@ field_create(Efl_Ui_Clock_Module_Data *module_data, Efl_Ui_Clock_Type  field_typ
      {
         field_obj = elm_button_add(ctx_mod->mod_data.base);
         efl_event_callback_add
-           (field_obj, EFL_UI_EVENT_CLICKED, _ampm_clicked_cb, ctx_mod);
+           (field_obj, EFL_INPUT_EVENT_CLICKED, _ampm_clicked_cb, ctx_mod);
      }
    else
      {
@@ -327,7 +327,7 @@ field_create(Efl_Ui_Clock_Module_Data *module_data, Efl_Ui_Clock_Type  field_typ
         elm_entry_input_panel_enabled_set(field_obj, EINA_FALSE);
         elm_entry_context_menu_disabled_set(field_obj, EINA_TRUE);
         efl_event_callback_add
-           (field_obj, EFL_UI_EVENT_CLICKED, _field_clicked_cb, ctx_mod);
+           (field_obj, EFL_INPUT_EVENT_CLICKED, _field_clicked_cb, ctx_mod);
      }
    evas_object_data_set(field_obj, "_field_type", (void *)field_type);
 

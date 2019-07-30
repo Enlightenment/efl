@@ -2,6 +2,10 @@
 # include "elementary_config.h"
 #endif
 
+#ifdef _WIN32
+# include <evil_private.h> /* setenv */
+#endif
+
 #include <Elementary.h>
 #include <Ecore_Input_Evas.h>
 #include "elm_widget.h"

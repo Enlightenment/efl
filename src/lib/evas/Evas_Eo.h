@@ -464,3 +464,4 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
 #include "canvas/efl_input_hold.eo.h"
 #include "canvas/efl_input_interface.eo.h"
 #include "canvas/efl_input_focus.eo.h"
+#include "canvas/efl_input_clickable.eo.h"

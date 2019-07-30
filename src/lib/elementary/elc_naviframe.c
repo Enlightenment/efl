@@ -1499,7 +1499,7 @@ _key_action_top_item_get(Evas_Object *obj, const char *params EINA_UNUSED)
    ///Leave for compatibility.
    ELM_NAVIFRAME_ITEM_DATA_GET(eo_item, it);
    if (it->title_prev_btn)
-     efl_event_callback_legacy_call(it->title_prev_btn, EFL_UI_EVENT_CLICKED, NULL);
+     efl_event_callback_legacy_call(it->title_prev_btn, EFL_INPUT_EVENT_CLICKED, NULL);
 
    return EINA_TRUE;
 }

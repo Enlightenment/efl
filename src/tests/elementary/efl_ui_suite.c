@@ -11,6 +11,7 @@ static const Efl_Test_Case etc[] = {
   //{ "elm_widget_focus", elm_test_widget_focus},
   { "efl_ui_atspi", efl_ui_test_atspi},
   { "efl_ui_callback", efl_ui_test_callback},
+  { "efl_ui_config", efl_ui_test_config},
   { "efl_ui_focus", efl_ui_test_focus},
   { "efl_ui_focus_sub", efl_ui_test_focus_sub},
   { "efl_ui_box", efl_ui_test_box},
@@ -32,7 +33,7 @@ static const Efl_Test_Case etc[] = {
   { "efl_ui_win", efl_ui_test_win },
   { "efl_ui_spin", efl_ui_test_spin },
   { "efl_ui_spin_button", efl_ui_test_spin_button },
-  { "efl_ui_item_container", efl_ui_test_item_container },
+  { "efl_ui_collection", efl_ui_test_item_container },
   { "efl_ui_grid_container", efl_ui_test_grid_container },
   { "efl_ui_list_container", efl_ui_test_list_container },
   { NULL, NULL }

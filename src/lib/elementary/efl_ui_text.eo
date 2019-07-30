@@ -1,28 +1,24 @@
 /* FIXME - Text object must stop using elm_general! */
 import elm_general;
 
-class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Ui.Clickable,
+class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickable,
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.File,
                  Efl.Ui.Selectable, Efl.Text_Interactive, Efl.Text_Markup
 {
-   [[Efl UI text class]]
+   [[A flexible text widget which can be static (as a label) or editable by
+     the user (as a text entry). It provides all sorts of editing facilities
+     like automatic scrollbars, virtual keyboard, clipboard, configurable
+     context menus, password mode or autocapitalization, for example.]]
    methods {
       @property scrollable {
-         set {
-            [[Enable or disable scrolling in entry
+         [[Enable or disable scrolling in the widget.
 
-              Normally the entry is not scrollable unless you enable it with this call.
-            ]]
-         }
-         get {
-            [[Get the scrollable state of the entry
-
-              Normally the entry is not scrollable. This gets the scrollable state
-              of the entry.
-            ]]
-         }
+           When scrolling is enabled scrollbars will appear if the text does
+           not fit the widget size.]]
+         set {}
+         get {}
          values {
-            scroll: bool; [[$true if it is to be scrollable, $false otherwise.]]
+            scroll: bool; [[$true to enable scrolling. Default is $false.]]
          }
       }
       @property input_panel_show_on_demand {

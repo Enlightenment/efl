@@ -60,7 +60,7 @@ test_efl_ui_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
                 efl_text_set(efl_added, "Vertical"),
                 efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0.0),
                 efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
-                efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _bt_clicked, NULL),
+                efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _bt_clicked, NULL),
                 efl_pack(bx, efl_added));
       }
 
@@ -76,7 +76,7 @@ test_efl_ui_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
       {
         efl_add(EFL_UI_BUTTON_CLASS, bx2,
                 efl_text_set(efl_added, "... Horizontal scrolling ..."),
-                efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _bt_clicked, NULL),
+                efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _bt_clicked, NULL),
                 efl_pack(bx2, efl_added));
       }
 
@@ -86,7 +86,7 @@ test_efl_ui_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
                 efl_text_set(efl_added, "Vertical"),
                 efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0.0),
                 efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
-                efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _bt_clicked, NULL),
+                efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _bt_clicked, NULL),
                 efl_pack(bx, efl_added));
       }
 
@@ -114,7 +114,7 @@ test_efl_ui_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
           {
              efl_add(EFL_UI_BUTTON_CLASS, win,
                      efl_text_set(efl_added, "Both"),
-                     efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _bt_clicked, NULL),
+                     efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _bt_clicked, NULL),
                      efl_pack_table(gd2, efl_added, i, j, 1, 1));
           }
      }
@@ -125,7 +125,7 @@ test_efl_ui_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
                 efl_text_set(efl_added, "Vertical"),
                 efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0.0),
                 efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
-                efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _bt_clicked, NULL),
+                efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _bt_clicked, NULL),
                 efl_pack(bx, efl_added));
       }
 }
@@ -161,7 +161,7 @@ test_efl_ui_scroller_simple(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED
                 efl_text_set(efl_added, "Vertical"),
                 efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0.0),
                 efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
-                efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _bt_clicked, NULL),
+                efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _bt_clicked, NULL),
                 efl_pack(bx, efl_added));
       }
 }
@@ -197,13 +197,13 @@ test_efl_ui_scroller_simple2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
                 efl_text_set(efl_added, "Vertical"),
                 efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0.0),
                 efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
-                efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _bt_clicked, NULL),
+                efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _bt_clicked, NULL),
                 efl_pack_table(tb, efl_added, 0, i, 1, 1));
         efl_add(EFL_UI_BUTTON_CLASS, tb,
                 efl_text_set(efl_added, "Horizontal"),
                 efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0.0),
                 efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
-                efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _bt_clicked, NULL),
+                efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _bt_clicked, NULL),
                 efl_pack_table(tb, efl_added, 1, i, 1, 1));
       }
 }

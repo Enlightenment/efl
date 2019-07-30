@@ -26,7 +26,7 @@ static Eina_Bool
 grid_item_pack(Eo *grid, int count, Eina_List **l)
 {
 	int i;
-	Efl_Ui_Grid_Item *item;
+	Efl_Ui_Grid_Default_Item *item;
 	for (i = 0; i < count; i++)
 	  {
 		  item = efl_add(EFL_UI_GRID_DEFAULT_ITEM_CLASS, grid);
@@ -51,7 +51,7 @@ EFL_END_TEST
 
 EFL_START_TEST(efl_ui_grid_pack)
 {
-   Efl_Ui_Grid_Item *item;
+   Efl_Ui_Grid_Default_Item *item;
    int count;
 
    item = efl_add(EFL_UI_GRID_DEFAULT_ITEM_CLASS, grid);
@@ -65,7 +65,7 @@ EFL_END_TEST
 
 EFL_START_TEST(efl_ui_grid_unpack)
 {
-   Efl_Ui_Grid_Item *item;
+   Efl_Ui_Grid_Default_Item *item;
    int count;
 
    item = efl_add(EFL_UI_GRID_DEFAULT_ITEM_CLASS, grid);
@@ -82,7 +82,7 @@ EFL_END_TEST
 
 EFL_START_TEST(efl_ui_grid_unpack_all)
 {
-   Efl_Ui_Grid_Item *item;
+   Efl_Ui_Grid_Default_Item *item;
    int count_before = 10;
    int count;
    Eina_Iterator *itor;
@@ -119,7 +119,7 @@ EFL_END_TEST
 
 EFL_START_TEST(efl_ui_grid_pack_end)
 {
-   Efl_Ui_Grid_Item *item, *compare;
+   Efl_Ui_Grid_Default_Item *item, *compare;
    int count_before = 10;
    int count;
 
@@ -140,7 +140,7 @@ EFL_END_TEST
 
 EFL_START_TEST(efl_ui_grid_pack_begin)
 {
-   Efl_Ui_Grid_Item *item, *compare;
+   Efl_Ui_Grid_Default_Item *item, *compare;
    int count_before = 10;
    int count;
 
@@ -161,7 +161,7 @@ EFL_END_TEST
 
 EFL_START_TEST(efl_ui_grid_pack_after)
 {
-   Efl_Ui_Grid_Item *item, *after, *compare;
+   Efl_Ui_Grid_Default_Item *item, *after, *compare;
    int count_before = 10;
    int count;
    int index = 5;
@@ -186,7 +186,7 @@ EFL_END_TEST
 
 EFL_START_TEST(efl_ui_grid_pack_before)
 {
-   Efl_Ui_Grid_Item *item, *before, *compare;
+   Efl_Ui_Grid_Default_Item *item, *before, *compare;
    int count_before = 10;
    int count;
    int index = 5;
@@ -224,7 +224,7 @@ EFL_END_TEST
 EFL_START_TEST(efl_ui_grid_content_iterate)
 {
    int count = 10;
-   Efl_Ui_Grid_Item *item;
+   Efl_Ui_Grid_Default_Item *item;
    Eina_List *item_list = NULL;
    Eina_Iterator *item_itr;
 
@@ -276,7 +276,7 @@ EFL_CALLBACKS_ARRAY_DEFINE(grid_scroll_callbacks,
 
 EFL_START_TEST(efl_ui_grid_scroll)
 {
-   Efl_Ui_Grid_Item *item;
+   Efl_Ui_Grid_Default_Item *item;
    Efl_Loop_Timer *timer;
 
    ck_assert(grid_item_pack(grid, 100, NULL) != EINA_FALSE);
@@ -289,7 +289,7 @@ EFL_START_TEST(efl_ui_grid_scroll)
 
    efl_event_callback_array_add(grid, grid_scroll_callbacks(), timer);
    /*FIXME: efl_ui_scroll_interface only emit scroll event when animation exist */
-   efl_ui_item_container_item_scroll(grid, item, EINA_TRUE);
+   efl_ui_collection_item_scroll(grid, item, EINA_TRUE);
    ecore_main_loop_begin();
 }
 EFL_END_TEST

@@ -1,5 +1,5 @@
 class @beta Efl.Ui.Panes extends Efl.Ui.Layout_Base implements Efl.Ui.Layout_Orientable,
-                    Efl.Ui.Clickable
+                    Efl.Input.Clickable
 {
    [[Elementary panes class]]
    event_prefix: elm_panes;

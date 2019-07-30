@@ -184,14 +184,14 @@ test_efl_ui_text(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
    bt = efl_add(EFL_UI_BUTTON_CLASS, bx2);
    efl_text_set(bt, "Sel");
-   efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _on_bt3_clicked, en);
+   efl_event_callback_add(bt, EFL_INPUT_EVENT_CLICKED, _on_bt3_clicked, en);
    efl_gfx_hint_weight_set(bt, EFL_GFX_HINT_EXPAND, 0.0);
    efl_pack(bx2, bt);
    elm_object_focus_allow_set(bt, EINA_FALSE);
 
    bt = efl_add(EFL_UI_BUTTON_CLASS, bx2);
    efl_text_set(bt, "Wr");
-   efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _on_bt6_clicked, en);
+   efl_event_callback_add(bt, EFL_INPUT_EVENT_CLICKED, _on_bt6_clicked, en);
    efl_gfx_hint_weight_set(bt, EFL_GFX_HINT_EXPAND, 0.0);
    efl_pack(bx2, bt);
    elm_object_focus_allow_set(bt, EINA_FALSE);
@@ -376,21 +376,21 @@ test_ui_text_item_factory(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, 
 
    bt = efl_add(EFL_UI_BUTTON_CLASS, bx2);
    efl_text_set(bt, "Image");
-   efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _on_factory_bt_image_clicked, en);
+   efl_event_callback_add(bt, EFL_INPUT_EVENT_CLICKED, _on_factory_bt_image_clicked, en);
    efl_gfx_hint_weight_set(bt, EFL_GFX_HINT_EXPAND, 0.0);
    efl_pack(bx2, bt);
    elm_object_focus_allow_set(bt, EINA_FALSE);
 
    bt = efl_add(EFL_UI_BUTTON_CLASS, bx2);
    efl_text_set(bt, "Emoticon");
-   efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _on_factory_bt_emoticon_clicked, en);
+   efl_event_callback_add(bt, EFL_INPUT_EVENT_CLICKED, _on_factory_bt_emoticon_clicked, en);
    efl_gfx_hint_weight_set(bt, EFL_GFX_HINT_EXPAND, 0.0);
    efl_pack(bx2, bt);
    elm_object_focus_allow_set(bt, EINA_FALSE);
 
    bt = efl_add(EFL_UI_BUTTON_CLASS, bx2);
    efl_text_set(bt, "Factory");
-   efl_event_callback_add(bt, EFL_UI_EVENT_CLICKED, _on_factory_bt_factory_clicked, en);
+   efl_event_callback_add(bt, EFL_INPUT_EVENT_CLICKED, _on_factory_bt_factory_clicked, en);
    efl_gfx_hint_weight_set(bt, EFL_GFX_HINT_EXPAND, 0.0);
    efl_pack(bx2, bt);
    elm_object_focus_allow_set(bt, EINA_FALSE);

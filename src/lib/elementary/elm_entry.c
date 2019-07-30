@@ -2665,7 +2665,7 @@ _entry_hover_anchor_clicked_do(Evas_Object *obj,
 
    efl_event_callback_legacy_call(obj, ELM_ENTRY_EVENT_ANCHOR_HOVER_OPENED, &ei);
    efl_event_callback_add
-     (sd->anchor_hover.hover, EFL_UI_EVENT_CLICKED, _anchor_hover_clicked_cb, obj);
+     (sd->anchor_hover.hover, EFL_INPUT_EVENT_CLICKED, _anchor_hover_clicked_cb, obj);
 
    /* FIXME: Should just check if there's any callback registered to
     * the smart events instead.  This is used to determine if anyone

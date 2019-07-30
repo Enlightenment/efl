@@ -827,7 +827,7 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
                       efl_file_set(efl_added, buf),
                       efl_file_load(efl_added),
                       efl_pack(bx, efl_added),
-                      efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _zoomable_clicked_cb, NULL)
+                      efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _zoomable_clicked_cb, NULL)
                      );
 
    if (efl_player_playable_get(zoomable))

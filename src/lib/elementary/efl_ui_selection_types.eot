@@ -11,7 +11,7 @@ enum @beta Efl.Ui.Selection_Format
 {
    [[Selection format]]
    targets = -1, [[For matching every possible atom]]
-   none = 0x0, [[Content is from outside of Elementary]]
+   none = 0x0, [[Content is from outside of EFL]]
    text = 0x01, [[Plain unformatted text: Used for things that don't want rich markup]]
    markup = 0x2, [[Edje textblock markup, including inline images]]
    image = 0x4, [[Images]]

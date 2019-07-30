@@ -3,7 +3,11 @@
 #endif
 
 #include <sys/types.h>
-#include <pwd.h>
+#ifdef _WIN32
+# include <evil_private.h> /* mkdir */
+#else
+# include <pwd.h>
+#endif
 
 #include <Eina.h>
 

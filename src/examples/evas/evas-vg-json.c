@@ -59,7 +59,7 @@ int
 main(void)
 {
    //Cairo backend is not supported.
-   setenv("ECTOR_BACKEND", "default", 1);
+   putenv("ECTOR_BACKEND=default");
 
    if (!ecore_evas_init())
      return EXIT_FAILURE;

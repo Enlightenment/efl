@@ -795,37 +795,51 @@ eina_file_open(const char *path, Eina_Bool shared)
    Eina_Stringshare *filename;
    struct stat file_stat;
    int fd = -1;
+   Eina_Statgen statgen;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
 
    filename = eina_file_sanitize(path);
    if (!filename) return NULL;
 
-   if (shared)
-#ifdef HAVE_SHM_OPEN
-     fd = shm_open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
-#else
-     goto on_error;
-#endif
-   else
-     fd = open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
-
-   if (fd < 0) goto on_error;
-
-   if (!eina_file_close_on_exec(fd, EINA_TRUE))
-     goto on_error;
-
-   if (fstat(fd, &file_stat))
-     goto on_error;
-
+   statgen = eina_file_statgen_get();
    eina_lock_take(&_eina_file_lock_cache);
-
    file = eina_hash_find(_eina_file_cache, filename);
-   if ((file) && !_eina_file_timestamp_compare(file, &file_stat))
+   statgen = eina_file_statgen_get();
+   if ((!file) || (file->statgen != statgen) || (statgen == 0))
      {
-        file->delete_me = EINA_TRUE;
-        eina_hash_del(_eina_file_cache, file->filename, file);
-        file = NULL;
+        if (shared)
+          {
+#ifdef HAVE_SHM_OPEN
+             fd = shm_open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
+             if ((fd != -1)  && (!eina_file_close_on_exec(fd, EINA_TRUE)))
+               goto on_error;
+#else
+             goto on_error;
+#endif
+          }
+        else
+          {
+#ifdef HAVE_OPEN_CLOEXEC
+             fd = open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO | O_CLOEXEC);
+#else
+             fd = open(filename, O_RDONLY, S_IRWXU | S_IRWXG | S_IRWXO);
+             if ((fd != -1)  && (!eina_file_close_on_exec(fd, EINA_TRUE)))
+               goto on_error;
+#endif
+          }
+        if (fd < 0) goto on_error;
+
+        if (fstat(fd, &file_stat))
+          goto on_error;
+        if (file) file->statgen = statgen;
+
+        if ((file) && !_eina_file_timestamp_compare(file, &file_stat))
+          {
+             file->delete_me = EINA_TRUE;
+             eina_hash_del(_eina_file_cache, file->filename, file);
+             file = NULL;
+          }
      }
 
    if (!file)
@@ -865,7 +879,7 @@ eina_file_open(const char *path, Eina_Bool shared)
      }
    else
      {
-        close(fd);
+        if (fd >= 0) close(fd);
         n = file;
      }
    eina_lock_take(&n->lock);
@@ -877,6 +891,7 @@ eina_file_open(const char *path, Eina_Bool shared)
    return n;
 
  on_error:
+   eina_lock_release(&_eina_file_lock_cache);
    INF("Could not open file [%s].", filename);
    eina_stringshare_del(filename);
 

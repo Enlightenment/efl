@@ -32,6 +32,9 @@ evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi
              (evas_common_language_char_script_get(*base_char) != script) ;
              base_char++)
            ;
+        /* If counter reach variation sequence it is safe to pick default font */
+        if(VAR_SEQ(*base_char) || (base_char != run_end && VAR_SEQ(*(base_char+1)))) goto get_top_font;
+
         if (base_char == run_end) base_char = text;
 
         /* Find the first renderable char */
@@ -40,7 +43,7 @@ evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi
              /* 0x1F is the last ASCII contral char, just a hack in
               * the meanwhile. */
              if ((*base_char > 0x1F) &&
-                   evas_common_font_glyph_search(fn, &fi, *base_char))
+                   evas_common_font_glyph_search(fn, &fi, *base_char, 0, EVAS_FONT_SEARCH_OPTION_NONE))
                 break;
              base_char++;
           }
@@ -49,7 +52,8 @@ evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi
         /* If everything else fails, at least try to find a font for the
          * replacement char */
         if (base_char == run_end)
-           evas_common_font_glyph_search(fn, &fi, REPLACEMENT_CHAR);
+           evas_common_font_glyph_search(fn, &fi, REPLACEMENT_CHAR, 0, EVAS_FONT_SEARCH_OPTION_NONE);
+get_top_font:
 
         if (!fi)
            fi = fn->fonts->data;
@@ -80,15 +84,17 @@ evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi
              if (evas_common_language_char_script_get(*itr) == EVAS_SCRIPT_INHERITED)
                 continue;
 
+             Eina_Unicode variation_sequence =  VAR_SEQ(*(itr+1));
+
              /* Break if either it's not in the font, or if it is in the
               * script's font. */
-             if (!evas_common_get_char_index(fi, *itr))
-                break;
+             if (!evas_common_get_char_index(fi, *itr, variation_sequence))
+               break;
 
              if (fi != *script_fi)
                {
-                  if (evas_common_get_char_index(*script_fi, *itr))
-                     break;
+                  if (evas_common_get_char_index(*script_fi, *itr, variation_sequence))
+                    break;
                }
           }
 
@@ -102,8 +108,23 @@ evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi
              /* If we can find a font, use it. Otherwise, find the first
               * char the run of chars that can't be rendered until the first
               * one that can. */
-             if (evas_common_font_glyph_search(fn, &tmp_fi, *itr))
+             Eina_Unicode variation_sequence =  VAR_SEQ(*(itr+1));
+             if (evas_common_font_glyph_search(fn, &tmp_fi, *itr, variation_sequence, EVAS_FONT_SEARCH_OPTION_NONE))
                {
+                  fi = tmp_fi;
+               }
+             else if ( (variation_sequence == VARIATION_TEXT_PRESENTATION) && evas_common_font_glyph_search(fn, &tmp_fi, *itr, 0, EVAS_FONT_SEARCH_OPTION_SKIP_COLOR))
+               {
+                   /* If we can not find unicode with variation sequence, then we will
+                      Search and find for non color glyph because variation sequence is Text
+                   */
+                  fi = tmp_fi;
+               }
+             else if ( variation_sequence && evas_common_font_glyph_search(fn, &tmp_fi, *itr, 0, EVAS_FONT_SEARCH_OPTION_NONE))
+               {
+                   /* If we can not find unicode with variation sequence, then we will
+                      Search and find glyph without the variation sequence
+                   */
                   fi = tmp_fi;
                }
              else
@@ -113,9 +134,13 @@ evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi
                    * font */
                   for ( ; itr < run_end ; itr++)
                     {
+                       if(VAR_SEQ(*itr))
+                          continue;
+
+                       Eina_Unicode variation_sequence =  VAR_SEQ(*(itr+1));
                        tmp_fi = fi;
-                       if (evas_common_get_char_index(fi, *itr) ||
-                             evas_common_font_glyph_search(fn, &tmp_fi, *itr))
+                       if (evas_common_get_char_index(fi, *itr, variation_sequence) ||
+                             evas_common_font_glyph_search(fn, &tmp_fi, *itr, variation_sequence, EVAS_FONT_SEARCH_OPTION_NONE))
                          {
                             fi = tmp_fi;
                             break;
@@ -127,9 +152,9 @@ evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi
                    * find a font most suitable for the replacement char and
                    * break */
                   if ((itr == run_end) ||
-                        !evas_common_get_char_index(fi, REPLACEMENT_CHAR))
+                        !evas_common_get_char_index(fi, REPLACEMENT_CHAR, 0))
                     {
-                       evas_common_font_glyph_search(fn, &fi, REPLACEMENT_CHAR);
+                       evas_common_font_glyph_search(fn, &fi, REPLACEMENT_CHAR, 0, EVAS_FONT_SEARCH_OPTION_NONE);
                        break;
                     }
                }
@@ -140,8 +165,11 @@ evas_common_font_query_run_font_end_get(RGBA_Font *fn, RGBA_Font_Int **script_fi
              /* If this char is not renderable by any font, but the replacement
               * char can be rendered using the currentfont, continue this
               * run. */
-             if (!evas_common_font_glyph_search(fn, &tmp_fi, *itr) &&
-                   evas_common_get_char_index(fi, REPLACEMENT_CHAR))
+             Eina_Unicode variation_sequence =  VAR_SEQ(*(itr+1));
+
+             if (!evas_common_font_glyph_search(fn, &tmp_fi, *itr, variation_sequence, EVAS_FONT_SEARCH_OPTION_NONE) &&
+                 (variation_sequence ? !evas_common_font_glyph_search(fn, &tmp_fi, *itr, 0, EVAS_FONT_SEARCH_OPTION_NONE) : 1) &&
+                 evas_common_get_char_index(fi, REPLACEMENT_CHAR, 0))
                {
                   itr++;
                }

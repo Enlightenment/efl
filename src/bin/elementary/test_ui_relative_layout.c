@@ -167,7 +167,7 @@ _setter_add(Eo *vbox, Eo *btn, Options option)
            efl_key_wref_set(efl_added, "to", to),
            efl_key_wref_set(efl_added, "btn", btn),
            efl_gfx_hint_weight_set(efl_added, 0, EFL_GFX_HINT_EXPAND),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _btn_clicked_to_cb, (void *)option),
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _btn_clicked_to_cb, (void *)option),
            efl_pack(hbox, efl_added));
 
    efl_add(EFL_UI_SLIDER_CLASS, hbox,
@@ -308,7 +308,7 @@ test_ui_relative_layout(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, vo
    btn1 = efl_add(EFL_UI_BUTTON_CLASS, layout,
                   efl_text_set(efl_added, "button1"),
                   efl_gfx_hint_align_set(efl_added, 0.0, 0.0),
-                  efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _btn_color_clicked_cb, layout),
+                  efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _btn_color_clicked_cb, layout),
                   efl_ui_relative_layout_relation_right_set(layout, efl_added, layout, 0.0),
                   efl_ui_relative_layout_relation_bottom_set(layout, efl_added, layout, 0.0));
 

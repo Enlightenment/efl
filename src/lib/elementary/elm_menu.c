@@ -780,13 +780,13 @@ _elm_menu_menu_bar_set(Eo *obj, Eina_Bool menu_bar)
         if (menu_bar)
           {
              efl_event_callback_add
-               (item->submenu.hv, EFL_UI_EVENT_CLICKED, _hover_dismissed_cb, WIDGET(item));
+               (item->submenu.hv, EFL_INPUT_EVENT_CLICKED, _hover_dismissed_cb, WIDGET(item));
              snprintf(style, sizeof(style), "main_menu_submenu//%s", elm_widget_style_get(obj));
              elm_object_style_set(item->submenu.hv, style);
           }
         else
           {
-             efl_event_callback_del(item->submenu.hv, EFL_UI_EVENT_CLICKED, _hover_dismissed_cb, WIDGET(item));
+             efl_event_callback_del(item->submenu.hv, EFL_INPUT_EVENT_CLICKED, _hover_dismissed_cb, WIDGET(item));
              snprintf(style, sizeof(style), "submenu/%s", elm_widget_style_get(obj));
              elm_object_style_set(item->submenu.hv, style);
           }

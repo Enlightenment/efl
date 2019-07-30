@@ -106,18 +106,18 @@ test_win_indicator(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Indicator Off"),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _off_clicked, win),
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _off_clicked, win),
            efl_pack(bx, efl_added));
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Bg Opaque"),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _opaque_clicked, win),
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _opaque_clicked, win),
            efl_pack(bx, efl_added));
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Bg Transparent"),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _transparent_clicked, win),
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _transparent_clicked, win),
            efl_pack(bx, efl_added));
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Hidden"),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _hidden_clicked, win),
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _hidden_clicked, win),
            efl_pack(bx, efl_added));
 }

@@ -2,6 +2,10 @@
 # include "elementary_config.h"
 #endif
 
+#ifdef _WIN32
+# include <evil_private.h> /* setlocale strptime */
+#endif
+
 #define EFL_UI_FORMAT_PROTECTED /* To access internal methods */
 
 #include <Efl_Ui.h>

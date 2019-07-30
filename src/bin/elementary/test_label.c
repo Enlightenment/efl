@@ -1,6 +1,11 @@
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
+
+#ifdef _WIN32
+# include <evil_private.h> /* strcasestr */
+#endif
+
 #include <Elementary.h>
 
 enum _slide_style
@@ -388,6 +393,30 @@ test_label_colors(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    elm_object_text_set(lb,
                        "<color=red>this is red color line(color = red)<color><br>"
                        "<color=#0000FF>this is blue color line (color = #0000FF)<color><br>"
+                       );
+   evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, lb);
+   evas_object_show(lb);
+
+   evas_object_show(win);
+}
+
+/*** Label variation sequence **************************************************************/
+void
+test_label_variation_sequence(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   Evas_Object *win, *lb;
+
+   win = elm_win_util_standard_add("label-variation sequence", "Label variation sequnece");
+   elm_win_autodel_set(win, EINA_TRUE);
+
+   lb = elm_label_add(win);
+   elm_object_text_set(lb,
+                       "You need to have at least on font contains variation sequence<br>"
+                       "Three different 8 glyphs : <br>"
+                       "8<tab>8&#xfe0f;<tab>8&#xfe0f;&#x20E3;<br>"
+                       "line with 3 variation glyphs : <br>"
+                       "8&#xfe0f;&#x20E3;&#x262a;&#xfe0f;AAA&#x262a;&#xfe0E;1234567&#xfe0f;&#x20E3;"
                        );
    evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, lb);

@@ -222,7 +222,7 @@ _current_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
                  efl_text_set(efl_added, "Back"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _btn_cb, navi));
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
                  efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
@@ -238,7 +238,7 @@ _current_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Current Tab Page Set"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _tab_set_btn_cb, tsd),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _tab_set_btn_cb, tsd),
                  efl_event_callback_add(efl_added, EFL_EVENT_DEL, _tab_set_btn_del_cb, tsd),
                  efl_pack_end(box, efl_added));
 }
@@ -327,7 +327,7 @@ _pack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
                  efl_text_set(efl_added, "Back"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _btn_cb, navi));
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
                  efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
@@ -336,25 +336,25 @@ _pack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    /* Pack Begin */
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Pack Begin"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _pack_begin_btn_cb, tab_pager),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _pack_begin_btn_cb, tab_pager),
                  efl_pack_end(box, efl_added));
 
    /* Pack End */
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Pack End"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _pack_end_btn_cb, tab_pager),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _pack_end_btn_cb, tab_pager),
                  efl_pack_end(box, efl_added));
 
    /* Pack Before */
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Pack Before Current Tab Page"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _pack_before_btn_cb, tab_pager),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _pack_before_btn_cb, tab_pager),
                  efl_pack_end(box, efl_added));
 
    /* Pack After */
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Pack After Current Tab Page"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _pack_after_btn_cb, tab_pager),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _pack_after_btn_cb, tab_pager),
                  efl_pack_end(box, efl_added));
 
    in_box = efl_add(EFL_UI_BOX_CLASS, box,
@@ -373,7 +373,7 @@ _pack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    /* Pack At */
    btn = efl_add(EFL_UI_BUTTON_CLASS, in_box,
                  efl_text_set(efl_added, "Pack At"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _pack_at_btn_cb, tsd),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _pack_at_btn_cb, tsd),
                  efl_event_callback_add(efl_added, EFL_EVENT_DEL, _pack_at_btn_del_cb, tsd),
                  efl_pack_end(in_box, efl_added));
 }
@@ -431,7 +431,7 @@ _unpack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
                  efl_text_set(efl_added, "Back"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _btn_cb, navi));
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
                  efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
@@ -440,20 +440,20 @@ _unpack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    /* Clear */
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Clear"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _clear_btn_cb, tab_pager),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _clear_btn_cb, tab_pager),
                  efl_ui_widget_disabled_set(efl_added, EINA_TRUE), //Soon to be implemented
                  efl_pack_end(box, efl_added));
 
    /* Unpack */
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Unpack"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _unpack_btn_cb, tab_pager),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _unpack_btn_cb, tab_pager),
                  efl_pack_end(box, efl_added));
 
    /* Unpack All */
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Unpack All"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _unpack_all_btn_cb, tab_pager),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _unpack_all_btn_cb, tab_pager),
                  efl_ui_widget_disabled_set(efl_added, EINA_TRUE), //Soon to be implemented
                  efl_pack_end(box, efl_added));
 
@@ -473,7 +473,7 @@ _unpack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
    /* Unpack At */
    btn = efl_add(EFL_UI_BUTTON_CLASS, in_box,
                  efl_text_set(efl_added, "Unpack At"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _unpack_at_btn_cb, tsd),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _unpack_at_btn_cb, tsd),
                  efl_event_callback_add(efl_added, EFL_EVENT_DEL, _unpack_at_btn_del_cb, tsd),
                  efl_ui_widget_disabled_set(efl_added, EINA_TRUE), //Soon to be implemented
                  efl_pack_end(in_box, efl_added));
@@ -526,7 +526,7 @@ _tab_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
                  efl_text_set(efl_added, "Back"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _btn_cb, navi));
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
                  efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
@@ -548,7 +548,7 @@ _tab_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Change"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _change_btn_cb, tcd),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _change_btn_cb, tcd),
                  efl_event_callback_add(efl_added, EFL_EVENT_DEL, _change_btn_del_cb, tcd),
                  efl_pack_end(box, efl_added));
 }
@@ -558,7 +558,6 @@ _tran_set_btn_scroll_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Efl_Ui_Spotlight_Manager_Scroll *scroll = efl_new(EFL_UI_SPOTLIGHT_MANAGER_SCROLL_CLASS);
    efl_ui_spotlight_manager_set(data, scroll);
-   efl_unref(scroll);
 }
 
 static void
@@ -566,7 +565,6 @@ _tran_set_btn_stack_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Efl_Ui_Spotlight_Manager_Scroll *stack = efl_new(EFL_UI_SPOTLIGHT_MANAGER_STACK_CLASS);
    efl_ui_spotlight_manager_set(data, stack);
-   efl_unref(stack);
 }
 
 static void
@@ -588,7 +586,7 @@ _transition_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
                  efl_text_set(efl_added, "Back"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _btn_cb, navi));
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
                  efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
@@ -596,15 +594,15 @@ _transition_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Scroll"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _tran_set_btn_scroll_cb, tab_pager),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _tran_set_btn_scroll_cb, tab_pager),
                  efl_pack_end(box, efl_added));
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Stack"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _tran_set_btn_stack_cb, tab_pager),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _tran_set_btn_stack_cb, tab_pager),
                  efl_pack_end(box, efl_added));
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,
                  efl_text_set(efl_added, "Unset"),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _tran_unset_btn_cb, tab_pager),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _tran_unset_btn_cb, tab_pager),
                  efl_pack_end(box, efl_added));
 }

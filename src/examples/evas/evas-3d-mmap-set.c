@@ -165,7 +165,7 @@ main(void)
    Eina_File *obj_file, *ply_file, *eet_file, *md2_file;
 
    // Unless Evas 3D supports Software renderer, we force use of the gl backend.
-   setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
+   putenv("ECORE_EVAS_ENGINE=opengl_x11");
 
    if (!ecore_evas_init()) return 0;
 

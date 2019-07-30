@@ -51,7 +51,6 @@ struct @free(free) Dummy.StructSimple
    ffloat: float;
    fdouble: double;
    fbool: bool;
-   fvoid_ptr: void_ptr;
    fenum: Dummy.SampleEnum;
    // fboolptr: ptr(bool); // TODO
    // fbyteptr: ptr(byte);
@@ -379,27 +378,28 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       /* Eina Array */
 
       /* Integer */
-      /*
       eina_array_int_in {
          params {
-            @in arr: array<ptr(int)>;
+            @in arr: array<int>;
          }
          return: bool;
       }
 
+      /*
       eina_array_int_in_own {
          params {
-            @in arr: array<free(ptr(int),free) @owned> @owned;
+            @in arr: array<int> @owned; // <int @owned>
          }
          return: bool;
       }
       check_eina_array_int_in_own {
          return: bool;
       }
+      */
 
       eina_array_int_out {
          params {
-            @out arr: array<ptr(int)>;
+            @out arr: array<int>;
          }
          return: bool;
       }
@@ -407,22 +407,25 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
+      /*
       eina_array_int_out_own {
          params {
-            @out arr: array<free(ptr(int),free) @owned> @owned;
+            @out arr: array<int> @owned; // <int @owned>
          }
          return: bool;
       }
+      */
 
       eina_array_int_return {
-         return: array<ptr(int)>;
+         return: array<int>;
       }
       check_eina_array_int_return {
          return: bool;
       }
 
+      /*
       eina_array_int_return_own {
-         return: array<free(ptr(int),free) @owned> @owned;
+         return: array<int> @owned; // <int @owned>
       }
       */
 
@@ -574,27 +577,28 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       /* Eina List */
 
       /* Integer */
-      /*
       eina_list_int_in {
          params {
-            @in lst: list<ptr(int)>;
+            @in lst: list<int>;
          }
          return: bool;
       }
 
+      /*
       eina_list_int_in_own {
          params {
-            @in lst: list<free(ptr(int),free) @owned> @owned;
+            @in lst: list<int> @owned; // <int @owned>
          }
          return: bool;
       }
       check_eina_list_int_in_own {
          return: bool;
       }
+      */
 
       eina_list_int_out {
          params {
-            @out lst: list<ptr(int)>;
+            @out lst: list<int>;
          }
          return: bool;
       }
@@ -602,22 +606,25 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
+      /*
       eina_list_int_out_own {
          params {
-            @out lst: list<free(ptr(int),free) @owned> @owned;
+            @out lst: list<int> @owned; // <int @owned>
          }
          return: bool;
       }
+      */
 
       eina_list_int_return {
-         return: list<ptr(int)>;
+         return: list<int>;
       }
       check_eina_list_int_return {
          return: bool;
       }
 
+      /*
       eina_list_int_return_own {
-         return: list<free(ptr(int),free) @owned> @owned;
+         return: list<int> @owned; // <int @owned>
       }
       */
 
@@ -769,27 +776,28 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       // Eina Hash //
 
       // Integer //
-      /*
       eina_hash_int_in {
          params {
-            @in hsh: hash<ptr(int), ptr(int)>;
+            @in hsh: hash<int, int>;
          }
          return: bool;
       }
 
+      /*
       eina_hash_int_in_own {
          params {
-            @in hsh: hash<ptr(int), free(ptr(int),free) @owned> @owned;
+            @in hsh: hash<int, int> @owned; // <, int @owned>
          }
          return: bool;
       }
       check_eina_hash_int_in_own {
          return: bool;
       }
+      */
 
       eina_hash_int_out {
          params {
-            @out hsh: hash<ptr(int), ptr(int)>;
+            @out hsh: hash<int, int>;
          }
          return: bool;
       }
@@ -797,25 +805,28 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
+      /*
       eina_hash_int_out_own {
          params {
-            @out hsh: hash<ptr(int), free(ptr(int),free) @owned> @owned;
+            @out hsh: hash<int, int> @owned; // <, int @owned>
          }
          return: bool;
       }
       check_eina_hash_int_out_own {
          return: bool;
       }
+      */
 
       eina_hash_int_return {
-         return: hash<ptr(int), ptr(int)>;
+         return: hash<int, int>;
       }
       check_eina_hash_int_return {
          return: bool;
       }
 
+      /*
       eina_hash_int_return_own {
-         return: hash<ptr(int), free(ptr(int),free) @owned> @owned;
+         return: hash<int, int> @owned; // <, int @owned>
       }
       check_eina_hash_int_return_own {
          return: bool;

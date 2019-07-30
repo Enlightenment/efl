@@ -89,6 +89,7 @@ struct _Eina_File
 
    int refcount;        /**< Keeps track of references to #map. */
    int global_refcount; /**< Keeps track of references to #global_map. */
+   Eina_Statgen statgen;/**< For inexact stats a stat gen count to rate limit syscalls to stat file */
 
 #ifndef _WIN32
    int fd; /**< The file descriptor. */

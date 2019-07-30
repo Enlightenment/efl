@@ -102,6 +102,6 @@ test_ui_clock(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    efl_add(EFL_UI_BUTTON_CLASS, win,
            efl_text_set(efl_added, "Back to the future..."),
-           efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _bt_clicked, NULL),
+           efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _bt_clicked, NULL),
            efl_pack(bx, efl_added));
 }

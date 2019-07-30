@@ -18,7 +18,7 @@
      Efl_Time t = efl_datetime_manager_value_get(pd->dt_manager);    \
      pd->cur_date[DATEPICKER_YEAR] = t.tm_year + 1900;               \
      pd->cur_date[DATEPICKER_MONTH] = t.tm_mon + 1;                  \
-     pd->cur_date[DATEPICKER_DAY] = t.tm_mday;                       \
+     pd->cur_date[DATEPICKER_DAY] = t.tm_mday + 1;                   \
    } while (0)
 
 #define DATE_SET()                                                   \
@@ -26,7 +26,7 @@
      Efl_Time t;                                                     \
      t.tm_year = pd->cur_date[DATEPICKER_YEAR] - 1900;               \
      t.tm_mon = pd->cur_date[DATEPICKER_MONTH] - 1;                  \
-     t.tm_mday = pd->cur_date[DATEPICKER_DAY];                       \
+     t.tm_mday = pd->cur_date[DATEPICKER_DAY]  - 1;                  \
      t.tm_sec = 0;                                                   \
      efl_datetime_manager_value_set(pd->dt_manager, t);              \
    } while (0)
@@ -160,7 +160,7 @@ _fields_init(Eo *obj)
 
    //Field create.
    pd->year = efl_add(EFL_UI_SPIN_BUTTON_CLASS, obj,
-                      efl_ui_range_limits_set(efl_added, 1970, 2037),
+                      efl_ui_range_limits_set(efl_added, 1900, 2037),
                       efl_ui_spin_button_circulate_set(efl_added, EINA_TRUE),
                       efl_ui_spin_button_editable_set(efl_added, EINA_TRUE),
                       efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),

@@ -28,7 +28,7 @@ static void _entry_clicked_cb(void *data, const Efl_Event *event);
 EFL_CALLBACKS_ARRAY_DEFINE(_tags_cb,
    { ELM_ENTRY_EVENT_CHANGED, _entry_changed_cb },
    { EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED , _entry_focus_changed_cb },
-   { EFL_UI_EVENT_CLICKED, _entry_clicked_cb }
+   { EFL_INPUT_EVENT_CLICKED, _entry_clicked_cb }
 );
 
 static void
@@ -489,7 +489,7 @@ _mouse_clicked_signal_cb(void *data EINA_UNUSED,
 
    if (sd->editable) efl_ui_text_input_panel_show(sd->entry);
 
-   efl_event_callback_call(obj, EFL_UI_EVENT_CLICKED, NULL);
+   efl_event_callback_call(obj, EFL_INPUT_EVENT_CLICKED, NULL);
 }
 
 static void

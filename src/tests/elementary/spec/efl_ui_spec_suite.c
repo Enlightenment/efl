@@ -8,20 +8,12 @@
 #include "suite_helpers.h"
 #include "eo_internal.h"
 
-//helper functions for custom widget intialization
-EOLIAN static Efl_Object*
-_test_efl_ui_item_container_list_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
-{
-   efl_constructor(efl_super(obj, TEST_EFL_UI_ITEM_CONTAINER_LIST_CLASS));
-   efl_ui_item_container_position_manager_set(obj, efl_new(EFL_UI_POSITION_MANAGER_LIST_CLASS));
-
-   return obj;
-}
-
 Evas_Object *win = NULL;
 Evas_Object *widget = NULL;
 const Efl_Class *test_content_klass = NULL;
 EFL_CLASS_SIMPLE_CLASS(efl_ui_widget, "efl_ui_widget", EFL_UI_WIDGET_CLASS);
+EFL_CLASS_SIMPLE_CLASS(efl_ui_item, "efl_ui_item", EFL_UI_ITEM_CLASS);
+#define EFL_UI_ITEM_REALIZED_CLASS efl_ui_item_realized_class_get()
 
 static void
 _setup_window_and_widget(const Efl_Class *klass, const Efl_Class *content_klass)
@@ -73,5 +65,3 @@ main(int argc, char **argv)
 
    return (failed_count == 0) ? 0 : 255;
 }
-
-#include "test_efl_ui_item_container_list.eo.c"

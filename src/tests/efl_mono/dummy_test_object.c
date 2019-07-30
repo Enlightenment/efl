@@ -4040,7 +4040,6 @@ void struct_simple_with_values(Dummy_StructSimple *simple)
    simple->ffloat = -16777216.0;
    simple->fdouble = -9007199254740992.0;
    simple->fbool = EINA_TRUE;
-   simple->fvoid_ptr = (void*) 0xFE;
    simple->fenum = DUMMY_SAMPLEENUM_V2;
    simple->fstring = "test/string";
    simple->fmstring = strdup("test/mstring");
@@ -4077,7 +4076,6 @@ Eina_Bool check_and_modify_struct_simple(Dummy_StructSimple *simple)
      && EQUAL(simple->ffloat, -16777216.0)
      && EQUAL(simple->fdouble, -9007199254740992.0)
      && EQUAL(simple->fbool, EINA_TRUE)
-     && EQUAL(simple->fvoid_ptr, (void*) 0xFE)
      && EQUAL(simple->fenum, DUMMY_SAMPLEENUM_V2)
      && STR_EQUAL(simple->fstring, "test/string")
      && STR_EQUAL(simple->fmstring, "test/mstring")

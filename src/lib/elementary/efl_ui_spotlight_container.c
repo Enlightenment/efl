@@ -214,9 +214,7 @@ _efl_ui_spotlight_container_efl_object_finalize(Eo *obj, Efl_Ui_Spotlight_Contai
    //set a view manager in case nothing is here
    if (!manager)
      {
-        Eo *plain;
-        plain = efl_add(EFL_UI_SPOTLIGHT_MANAGER_PLAIN_CLASS, obj);
-        efl_ui_spotlight_manager_set(obj, plain);
+         efl_ui_spotlight_manager_set(obj, efl_new(EFL_UI_SPOTLIGHT_MANAGER_PLAIN_CLASS));
      }
    else
      {
@@ -605,7 +603,10 @@ _efl_ui_spotlight_container_spotlight_manager_set(Eo *obj, Efl_Ui_Spotlight_Cont
 
    if (pd->transition)
      {
+        EINA_SAFETY_ON_FALSE_RETURN(efl_ownable_get(pd->transition));
         efl_parent_set(pd->transition, obj);
+        //the api indicates that the caller passes ownership to this function, so we need to unref here
+        efl_unref(pd->transition);
         //disable animation when not finalized yet, this help reducing the overhead of scheduling a animation that will not be displayed
         efl_ui_spotlight_manager_animation_enabled_set(pd->transition, efl_finalized_get(obj));
         efl_ui_spotlight_manager_bind(pd->transition, obj,
@@ -636,6 +637,10 @@ _efl_ui_spotlight_container_indicator_set(Eo *obj, Efl_Ui_Spotlight_Container_Da
    pd->indicator = indicator;
    if (pd->indicator)
      {
+        EINA_SAFETY_ON_FALSE_RETURN(efl_ownable_get(pd->indicator));
+        efl_parent_set(pd->indicator, obj);
+        //the api indicates that the caller passes ownership to this function, so we need to unref here
+        efl_unref(pd->indicator);
         efl_ui_spotlight_indicator_bind(pd->indicator, obj);
         if (pd->position != -1)
           efl_ui_spotlight_indicator_position_update(pd->indicator, pd->position);

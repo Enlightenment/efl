@@ -204,7 +204,8 @@ struct klass
 
          if (!as_generator
             (
-             scope_tab << "/// <summary>Constructor to be used when objects are expected to be constructed from native code.</summary>\n"
+             scope_tab << "/// <summary>Subclasses should override this constructor if they are expected to be instantiated from native code.\n"
+             << scope_tab << "/// Do not call this constructor directly.</summary>\n"
              << scope_tab << "/// <param name=\"ch\">Tag struct storing the native handle of the object being constructed.</param>\n"
              << scope_tab << "private " << concrete_name << "(ConstructingHandle ch) : base(ch)\n"
              << scope_tab << "{\n"
@@ -511,7 +512,8 @@ struct klass
                      << (*(scope_tab << scope_tab << constructor_invocation << "\n"))
                      << scope_tab << scope_tab << "FinishInstantiation();\n"
                      << scope_tab << "}\n\n"
-                     << scope_tab << "/// <summary>Constructor to be used when objects are expected to be constructed from native code.</summary>\n"
+                     << scope_tab << "/// <summary>Subclasses should override this constructor if they are expected to be instantiated from native code.\n"
+                     << scope_tab << "/// Do not call this constructor directly.</summary>\n"
                      << scope_tab << "/// <param name=\"ch\">Tag struct storing the native handle of the object being constructed.</param>\n"
                      << scope_tab << "protected " << inherit_name << "(ConstructingHandle ch) : base(ch)\n"
                      << scope_tab << "{\n"

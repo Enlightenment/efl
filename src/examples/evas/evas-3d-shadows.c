@@ -626,7 +626,7 @@ main(void)
    Eina_List *nodes1 = NULL, *nodes2 = NULL;
 
    // Unless Evas 3D supports Software renderer, we force use of the gl backend.
-   setenv("ECORE_EVAS_ENGINE", "opengl_x11", 1);
+   putenv("ECORE_EVAS_ENGINE=opengl_x11");
    if (!ecore_evas_init()) return 0;
 
    ecore_evas = ecore_evas_new(NULL, 10, 10, WIDTH, HEIGHT, NULL);

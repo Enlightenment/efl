@@ -40,7 +40,7 @@ enum @beta Efl.Gfx.Image_Scale_Type
    none         [[Not scale the image]]
 }
 
-struct Efl.Gfx.Image.Stretch_Region
+struct Efl.Gfx.Image_Stretch_Region
 {
    [[This struct holds the description of a stretchable region in one dimension (vertical or horizontal).
    Used when scaling an image.
@@ -183,8 +183,8 @@ interface @beta Efl.Gfx.Image
          }
          get {}
          values {
-            horizontal: iterator<ptr(Efl.Gfx.Image.Stretch_Region)>; [[Representation of area that are stretchable in the image horizontal space.]]
-            vertical: iterator<ptr(Efl.Gfx.Image.Stretch_Region)>; [[Representation of area that are stretchable in the image vertical space.]]
+            horizontal: iterator<ptr(Efl.Gfx.Image_Stretch_Region)>; [[Representation of area that are stretchable in the image horizontal space.]]
+            vertical: iterator<ptr(Efl.Gfx.Image_Stretch_Region)>; [[Representation of area that are stretchable in the image vertical space.]]
          }
       }
       @property image_size {

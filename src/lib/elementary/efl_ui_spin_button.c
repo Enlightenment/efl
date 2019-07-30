@@ -41,7 +41,7 @@ static void
 _access_increment_decrement_info_say(Evas_Object *obj, Eina_Bool is_incremented);
 
 EFL_CALLBACKS_ARRAY_DEFINE(_inc_dec_button_cb,
-                           { EFL_UI_EVENT_CLICKED, _inc_dec_button_clicked_cb},
+                           { EFL_INPUT_EVENT_CLICKED, _inc_dec_button_clicked_cb},
                            { EFL_UI_AUTOREPEAT_EVENT_REPEATED, _inc_dec_button_clicked_cb},
                           );
 

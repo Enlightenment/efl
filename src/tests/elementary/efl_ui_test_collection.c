@@ -4,7 +4,7 @@
 
 #include <Efl_Ui.h>
 #include "efl_ui_suite.h"
-#include "efl_ui_test_item_container_common.h"
+#include "efl_ui_test_collection_common.h"
 
 static Eo* win;
 
@@ -28,18 +28,18 @@ EFL_START_TEST(finalizer_check)
    Eo *o;
 
    EXPECT_ERROR_START;
-   ck_assert_ptr_eq(efl_add(EFL_UI_ITEM_CONTAINER_CLASS, win), NULL);
+   ck_assert_ptr_eq(efl_add(EFL_UI_COLLECTION_CLASS, win), NULL);
    EXPECT_ERROR_END;
 
    EXPECT_ERROR_START;
-   ck_assert_ptr_eq(efl_add(EFL_UI_ITEM_CONTAINER_CLASS, win, efl_ui_item_container_position_manager_set(efl_added, random_obj)), NULL);
+   ck_assert_ptr_eq(efl_add(EFL_UI_COLLECTION_CLASS, win, efl_ui_collection_position_manager_set(efl_added, random_obj)), NULL);
    EXPECT_ERROR_END;
 
-   o = efl_add(EFL_UI_ITEM_CONTAINER_CLASS, win, efl_ui_item_container_position_manager_set(efl_added, grid));
+   o = efl_add(EFL_UI_COLLECTION_CLASS, win, efl_ui_collection_position_manager_set(efl_added, grid));
    ck_assert_ptr_ne(o, NULL);
    ck_assert_ptr_eq(efl_parent_get(grid), o);
    efl_del(o);
-   o = efl_add(EFL_UI_ITEM_CONTAINER_CLASS, win, efl_ui_item_container_position_manager_set(efl_added, list));
+   o = efl_add(EFL_UI_COLLECTION_CLASS, win, efl_ui_collection_position_manager_set(efl_added, list));
    ck_assert_ptr_ne(o, NULL);
    ck_assert_ptr_eq(efl_parent_get(list), o);
    efl_del(o);

@@ -8,9 +8,9 @@ type Evas.Coord3: Evas.Coord2;
 
 type @extern Evas.Pants: float; /* not generated */
 
-type Undef: __undefined_type; /* not generated */
+type @beta Undef: __undefined_type; /* not generated */
 
-type Free: __builtin_free_cb; /* specially generated */
+type @beta Free: __builtin_free_cb; /* specially generated */
 
 enum Enum.Bar
 {

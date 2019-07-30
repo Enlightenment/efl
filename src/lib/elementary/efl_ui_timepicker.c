@@ -59,7 +59,7 @@ _field_value_update(Eo *obj)
 
    if (!pd->is_24hour)
      {
-        if (pd->cur_time[TIMEPICKER_HOUR] >= 12)
+        if (pd->cur_time[TIMEPICKER_HOUR] > 12)
           {
              //TODO: gets text from strftime.
              efl_text_set(pd->ampm, "PM");
@@ -68,7 +68,7 @@ _field_value_update(Eo *obj)
         else
           {
              efl_text_set(pd->ampm, "AM");
-             efl_ui_range_value_set(pd->hour, pd->cur_time[TIMEPICKER_HOUR] + 12);
+             efl_ui_range_value_set(pd->hour, pd->cur_time[TIMEPICKER_HOUR]);
           }
      }
 
@@ -136,7 +136,7 @@ _fields_init(Eo *obj)
                      efl_event_callback_add(efl_added, EFL_UI_SPIN_EVENT_CHANGED,_field_changed_cb, obj));
 
    pd->ampm = efl_add(EFL_UI_BUTTON_CLASS, obj,
-                      efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _field_changed_cb, obj),
+                      efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _field_changed_cb, obj),
                       elm_widget_element_update(obj, efl_added, "button"));
 
    pd->dt_manager = efl_add(EFL_DATETIME_MANAGER_CLASS, obj);

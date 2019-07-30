@@ -75,11 +75,8 @@
  * @li @ref Evil_Dlfcn
  * @li @ref Evil_Langinfo_Group
  * @li @ref Evil_Locale_Group
- * @li @ref Evil_Pwd_Group
  * @li @ref Evil_Stdio_Group
  * @li @ref Evil_Main_Group
- * @li @ref Evil_Inet_Group
- * @li @ref Evil_Dirent_Group
  * @li @ref Evil_String_Group
  * @li @ref Evil_Stdlib_Group
  * @li @ref Evil_Time_Group
@@ -93,9 +90,6 @@
 extern "C" {
 #endif
 
-
-typedef unsigned long  uid_t;
-typedef unsigned long  gid_t;
 
 #ifdef _MSC_VER
 # ifdef _WIN64

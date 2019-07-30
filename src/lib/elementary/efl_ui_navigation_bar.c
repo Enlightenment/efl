@@ -48,7 +48,7 @@ _efl_ui_navigation_bar_efl_object_constructor(Eo *obj, Efl_Ui_Navigation_Bar_Dat
 
    Eo *back_button = efl_add(EFL_UI_BUTTON_CLASS, obj,
                              elm_widget_element_update(obj, efl_added, "back_button"),
-                             efl_event_callback_add(efl_added, EFL_UI_EVENT_CLICKED, _back_button_clicked_cb, obj),
+                             efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _back_button_clicked_cb, obj),
                              efl_gfx_entity_visible_set(efl_added, EINA_FALSE));
 
    pd->back_button = back_button;
@@ -182,7 +182,7 @@ _efl_ui_navigation_bar_part_back_button_efl_content_content_set(Eo *obj, void *_
 
    if (content == ppd->back_button) return EINA_FALSE;
 
-   efl_event_callback_add(content, EFL_UI_EVENT_CLICKED, _back_button_clicked_cb, pd->obj);
+   efl_event_callback_add(content, EFL_INPUT_EVENT_CLICKED, _back_button_clicked_cb, pd->obj);
    ppd->back_button = content;
 
    return _efl_ui_navigation_bar_content_set(pd->obj, ppd, pd->part, content);
@@ -203,7 +203,7 @@ _efl_ui_navigation_bar_part_back_button_efl_content_content_unset(Eo *obj, void 
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    EFL_UI_NAVIGATION_BAR_DATA_GET_OR_RETURN(pd->obj, ppd, NULL);
 
-   efl_event_callback_del(ppd->back_button, EFL_UI_EVENT_CLICKED, _back_button_clicked_cb, pd->obj);
+   efl_event_callback_del(ppd->back_button, EFL_INPUT_EVENT_CLICKED, _back_button_clicked_cb, pd->obj);
    ppd->back_button = NULL;
 
    return _efl_ui_navigation_bar_content_unset(pd->obj, ppd, pd->part);

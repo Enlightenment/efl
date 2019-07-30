@@ -30,7 +30,7 @@ _list_selected(void *data EINA_UNUSED, const Efl_Event *ev)
   Eo *item = ev->info, *tmp;
   printf("list item [%p:%d] is %s\n", item, efl_ui_item_index_get(item), (efl_ui_item_selected_get(item)? "selected" : "unselected"));
 
-  Eina_Iterator *selects = efl_ui_item_container_selected_items_get(list);
+  Eina_Iterator *selects = efl_ui_collection_selected_items_get(list);
 
   EINA_ITERATOR_FOREACH(selects, tmp)
      printf("selected [%p:%d] ", tmp, efl_ui_item_index_get(tmp));
@@ -82,18 +82,18 @@ _anim_radio_changed(void *data, const Efl_Event *ev EINA_UNUSED)
 static void
 _scrl_btn_clicked(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
-  Efl_Ui_List_Item *item = efl_ui_item_container_last_selected_item_get(priv_d.list);
+  Efl_Ui_List_Default_Item *item = efl_ui_collection_last_selected_item_get(priv_d.list);
   printf("show [%d:%p] [%d]\n", efl_ui_item_index_get(item), item, priv_d.anim);
-  efl_ui_item_container_item_scroll(priv_d.list, item, priv_d.anim);
+  efl_ui_collection_item_scroll(priv_d.list, item, priv_d.anim);
 }
 
 static void
 _scrl_align_btn_clicked(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
-  Efl_Ui_List_Item *item = efl_ui_item_container_last_selected_item_get(priv_d.list);
+  Efl_Ui_List_Default_Item *item = efl_ui_collection_last_selected_item_get(priv_d.list);
   double align = efl_ui_range_value_get(priv_d.slider);
   printf("show [%d:%p] [%.2lf], [%d]\n", efl_ui_item_index_get(item), item, align, priv_d.anim);
-  efl_ui_item_container_item_scroll_align(priv_d.list, item, align, priv_d.anim);
+  efl_ui_collection_item_scroll_align(priv_d.list, item, align, priv_d.anim);
 }
 
 EAPI_MAIN int
@@ -129,9 +129,9 @@ elm_main(int argc EINA_UNUSED, char **argv)
 
    efl_event_callback_add(list, EFL_UI_EVENT_ITEM_SELECTED, _list_selected, NULL);
    efl_event_callback_add(list, EFL_UI_EVENT_ITEM_UNSELECTED, _list_unselected, NULL);
-   efl_event_callback_add(list, EFL_UI_EVENT_PRESSED, _list_pressed, NULL);
-   efl_event_callback_add(list, EFL_UI_EVENT_UNPRESSED, _list_unpressed, NULL);
-   efl_event_callback_add(list, EFL_UI_EVENT_LONGPRESSED, _list_longpressed, NULL);
+   efl_event_callback_add(list, EFL_INPUT_EVENT_PRESSED, _list_pressed, NULL);
+   efl_event_callback_add(list, EFL_INPUT_EVENT_UNPRESSED, _list_unpressed, NULL);
+   efl_event_callback_add(list, EFL_INPUT_EVENT_LONGPRESSED, _list_longpressed, NULL);
 
    for (i = 0; i < NUM_ITEMS; i++)
      {
@@ -299,14 +299,14 @@ elm_main(int argc EINA_UNUSED, char **argv)
    efl_text_set(scrl_btn, "Scroll Item");
    efl_gfx_hint_align_set(scrl_btn, 0.5, 0.5);
    efl_gfx_hint_size_min_set(scrl_btn, EINA_SIZE2D(200, 25));
-   efl_event_callback_add(scrl_btn, EFL_UI_EVENT_CLICKED, _scrl_btn_clicked, NULL);
+   efl_event_callback_add(scrl_btn, EFL_INPUT_EVENT_CLICKED, _scrl_btn_clicked, NULL);
    efl_pack_end(rbox, scrl_btn);
 
    scrl_btn  = efl_add(EFL_UI_BUTTON_CLASS, rbox);
    efl_text_set(scrl_btn, "Scroll Item Align");
    efl_gfx_hint_align_set(scrl_btn, 0.5, 0.5);
    efl_gfx_hint_size_min_set(scrl_btn, EINA_SIZE2D(200, 25));
-   efl_event_callback_add(scrl_btn, EFL_UI_EVENT_CLICKED, _scrl_align_btn_clicked, NULL);
+   efl_event_callback_add(scrl_btn, EFL_INPUT_EVENT_CLICKED, _scrl_align_btn_clicked, NULL);
    efl_pack_end(rbox, scrl_btn);
 
    efl_pack_end(bbox, rbox);

@@ -1,27 +1,50 @@
-abstract @beta Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Selectable, Efl.Ui.Clickable
+abstract @beta Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Selectable, Efl.Input.Clickable
 {
-   [[Item abstract class for pack widget. All item have to be inherited from this class.]]
+   [[Selectable Item abstraction.
+
+     This class serves as the basis to create widgets acting as selectable items inside containers
+     like @Efl.Ui.List or @Efl.Ui.Grid, for example.
+     @Efl.Ui.Item provides user interaction through the @Efl.Input.Clickable mixin.
+     Items can be pressed, long-pressed, etc, and appropriate events are generated.
+     @Efl.Ui.Item also implements the @Efl.Ui.Selectable interface, meaning that "selected" and
+     "unselected" events are automatically generated.
+
+     Classes inheriting from this one only need to deal with the visual representation of the widget.
+     See for example @Efl.Ui.Grid_Default_Item and @Efl.Ui.List_Default_Item.
+
+     Some events are converted to edje signals so the theme can react to them:
+       @[Efl.Input.Clickable.pressed] -> "efl,state,pressed",
+       @[Efl.Input.Clickable.unpressed] -> "efl,state,unpressed",
+       @[Efl.Ui.Selectable.item,selected] -> "efl,state,selected",
+       @[Efl.Ui.Selectable.item,unselected] -> "efl,state,unselected".
+   ]]
    methods {
       @property index {
-         [[index number of item from their parent object.]]
+         [[The index of this item inside its container.
+
+           The container must be set through the @Efl.Ui.Item.container property.]]
          get {}
          values {
-            index : int;
+            index : int; [[The index where to find this item in its $container.]]
          }
       }
       @property selected {
-         [[Select property for item object.
-           Item can be selected by user mouse/key input also]]
-         set {}
-         get {}
+         [[Item selected state.
+
+           The visual representation of the item will be adjusted accordingly to the new state.
+           This property is also automatically modified in response to user actions.
+         ]]
          values {
-            select: bool;
+            select: bool; [[Whether this item is selected or not.]]
          }
       }
       @property container {
          [[The container this object is part of.
 
-           You should never use this property yourself, the container will set it. Unsetting this while the item is packed into a container does not have an impact on its state in the container.
+           You should never use this property directly, the container will set it when the
+           item is added.
+           Unsetting this while the item is packed inside a container does not remove the item
+           from the container.
          ]]
          values {
             container : Efl.Ui.Widget; [[The container this item is in.]]
@@ -29,11 +52,9 @@ abstract @beta Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Selectab
       }
    }
    implements {
-      //Efl.Object
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
-      //Efl.Canvas
       Efl.Canvas.Group.group_calculate;
    }
 }

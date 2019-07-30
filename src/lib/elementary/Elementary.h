@@ -27,7 +27,9 @@
 #ifdef ELM_DIRENT_H
 #include <dirent.h>
 #endif
-#include <pwd.h>
+#ifndef _WIN32
+# include <pwd.h>
+#endif
 #include <errno.h>
 
 #ifdef ELM_UNIX
@@ -167,7 +169,6 @@ typedef Eo Efl_Ui_Focus_Manager;
 #ifdef EFL_BETA_API_SUPPORT
 # include <elm_interface_scrollable.h>
 # include <elm_interface_scrollable.eo.h>
-#include <efl_ui_clickable.eo.h>
 #endif
 
 #include <elm_tooltip.h>
@@ -335,11 +336,9 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_item_part_extra.eo.h>
 # include <efl_ui_item_part_content.eo.h>
 # include <efl_ui_item.eo.h>
-# include <efl_ui_list_item.eo.h>
 # include <efl_ui_list_default_item.eo.h>
 # include <efl_ui_list_placeholder_item.eo.h>
 # include <efl_ui_list.eo.h>
-# include <efl_ui_grid_item.eo.h>
 # include <efl_ui_grid_default_item.eo.h>
 # include <efl_ui_grid.eo.h>
 # include <efl_ui_list_view_types.eot.h>

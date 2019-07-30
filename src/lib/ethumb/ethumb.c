@@ -41,7 +41,9 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <ctype.h>
-#include <pwd.h>
+#ifndef _WIN32
+# include <pwd.h>
+#endif
 
 #ifdef HAVE_XATTR
 # include <sys/xattr.h>

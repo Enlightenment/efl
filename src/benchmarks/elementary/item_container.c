@@ -10,11 +10,11 @@ _timer_tick(void *data, const Efl_Event *ev)
 {
    if (timer % 2 == 0)
      {
-         efl_ui_item_container_item_scroll(data, last, EINA_TRUE);
+         efl_ui_collection_item_scroll(data, last, EINA_TRUE);
      }
    else
      {
-         efl_ui_item_container_item_scroll(data, first, EINA_TRUE);
+         efl_ui_collection_item_scroll(data, first, EINA_TRUE);
      }
 
    timer--;
@@ -51,7 +51,7 @@ _started_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 static void
 _first_frame_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   efl_ui_item_container_item_scroll(data, middle, EINA_FALSE);
+   efl_ui_collection_item_scroll(data, middle, EINA_FALSE);
    //give time to stabelize
    efl_add(EFL_LOOP_TIMER_CLASS, efl_main_loop_get(),
       efl_loop_timer_interval_set(efl_added, 15.0),
@@ -72,8 +72,8 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
                 );
 
    list = efl_new(EFL_UI_POSITION_MANAGER_LIST_CLASS);
-   item_container = efl_add(EFL_UI_ITEM_CONTAINER_CLASS, win,
-                      efl_ui_item_container_position_manager_set(efl_added, list));
+   item_container = efl_add(EFL_UI_COLLECTION_CLASS, win,
+                      efl_ui_collection_position_manager_set(efl_added, list));
    efl_content_set(win, item_container);
 
    printf("Building 5000 objects\n");

@@ -2,24 +2,6 @@
 #include "Efl.h"
 
 static int
-_format_clean_param(Eina_Tmpstr *s)
-{
-   Eina_Tmpstr *ss;
-   char *ds;
-   int len = 0;
-
-   ds = (char*) s;
-   for (ss = s; *ss; ss++, ds++, len++)
-     {
-        if ((*ss == '\\') && *(ss + 1)) ss++;
-        if (ds != ss) *ds = *ss;
-     }
-   *ds = 0;
-
-   return len;
-}
-
-static int
 _hex_string_get(char ch, Eina_Bool *ok)
 {
    if ((ch >= '0') && (ch <= '9')) return (ch - '0');
@@ -102,7 +84,7 @@ _efl_gfx_color_color_code_set(Eo *obj, void *_pd EINA_UNUSED, const char *colorc
     int len;
     unsigned char r, g, b, a;
 
-    len = _format_clean_param(colorcode);
+    len = (size_t) strlen(colorcode);
 
     _format_color_parse(colorcode, len, &r, &g, &b, &a);
     efl_gfx_color_set(obj, r, g, b, a);
@@ -124,7 +106,7 @@ _efl_gfx_color_class_color_class_code_set(Eo *obj, void *_pd EINA_UNUSED, const 
    int len;
    unsigned char r, g, b, a;
 
-   len = _format_clean_param(colorcode);
+   len = (size_t) strlen(colorcode);
 
    _format_color_parse(colorcode, len, &r, &g, &b, &a);
    return efl_gfx_color_class_set(obj, color_class, layer, r, g, b, a);

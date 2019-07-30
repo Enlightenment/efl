@@ -181,9 +181,9 @@ test_part_background(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
    radio_group = _create_box_contents(vbox);
 
-   efl_event_callback_add(reset_btn, EFL_UI_EVENT_CLICKED, _reset_cb, radio_group);
-   efl_event_callback_add(color_btn, EFL_UI_EVENT_CLICKED, _color_cb, radio_group);
-   efl_event_callback_add(scale_btn, EFL_UI_EVENT_CLICKED, _scale_type_cb, radio_group);
+   efl_event_callback_add(reset_btn, EFL_INPUT_EVENT_CLICKED, _reset_cb, radio_group);
+   efl_event_callback_add(color_btn, EFL_INPUT_EVENT_CLICKED, _color_cb, radio_group);
+   efl_event_callback_add(scale_btn, EFL_INPUT_EVENT_CLICKED, _scale_type_cb, radio_group);
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(300, 200));
 }

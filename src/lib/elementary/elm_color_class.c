@@ -750,7 +750,7 @@ elm_color_class_editor_add(Evas_Object *obj)
    elm_object_text_set(bt, "Reset");
    elm_object_part_content_set(ly, "elm.swallow.reset", bt);
    efl_event_callback_add
-     (bt, EFL_UI_EVENT_CLICKED, _colorclass_reset, cc);
+     (bt, EFL_INPUT_EVENT_CLICKED, _colorclass_reset, cc);
 
    cc->cs = cs = elm_colorselector_add(ly);
    elm_colorselector_mode_set(cs, ELM_COLORSELECTOR_COMPONENTS);

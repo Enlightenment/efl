@@ -2,6 +2,10 @@
 # include "elementary_config.h"
 #endif
 
+#ifdef _WIN32
+# include <evil_private.h> /* strsep evil_path_absolute */
+#endif
+
 #define EFL_ACCESS_OBJECT_PROTECTED
 
 #include <Elementary.h>
