@@ -28,7 +28,7 @@ _efl_ui_item_part_text_efl_text_text_set(Eo *obj, void *pd EINA_UNUSED, const ch
    Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    efl_text_set(efl_part(efl_super(wd->obj, MY_CLASS), wd->part), text);
 
-   elm_layout_sizing_eval(wd->obj);
+   efl_canvas_group_change(wd->obj);
 }
 
 EOLIAN static const char*
@@ -44,7 +44,7 @@ _efl_ui_item_part_text_efl_text_markup_markup_set(Eo *obj, void *pd EINA_UNUSED,
    Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    efl_text_markup_set(efl_part(efl_super(wd->obj, MY_CLASS), wd->part), markup);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static const char*

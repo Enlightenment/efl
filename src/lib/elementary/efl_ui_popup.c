@@ -79,7 +79,7 @@ _efl_ui_popup_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED
 {
    efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), size);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 static void
@@ -91,7 +91,8 @@ _parent_geom_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    //Add align calc only
    Eina_Bool needs_size_calc = pd->needs_size_calc;
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
+   efl_canvas_group_calculate(obj);
    pd->needs_size_calc = needs_size_calc;
 }
 
@@ -133,7 +134,8 @@ _efl_ui_popup_align_set(Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd, Efl_Ui_Popup
 
    //Add align calc only
    Eina_Bool needs_size_calc = pd->needs_size_calc;
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
+   efl_canvas_group_calculate(obj);
    pd->needs_size_calc = needs_size_calc;
 }
 
@@ -302,7 +304,7 @@ _efl_ui_popup_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Popup_Data *pd)
 EOLIAN static void
 _efl_ui_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popup_Data *pd)
 {
-   /* When elm_layout_sizing_eval() is called, just flag is set instead of size
+   /* When efl_canvas_group_change() is called, just flag is set instead of size
     * calculation.
     * The actual size calculation is done here when the object is rendered to
     * avoid duplicate size calculations. */

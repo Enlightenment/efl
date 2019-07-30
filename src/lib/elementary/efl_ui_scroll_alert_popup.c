@@ -133,7 +133,7 @@ _sizing_eval(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd)
 EOLIAN static void
 _efl_ui_scroll_alert_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd)
 {
-   /* When elm_layout_sizing_eval() is called, just flag is set instead of size
+   /* When efl_canvas_group_change() is called, just flag is set instead of size
     * calculation.
     * The actual size calculation is done here when the object is rendered to
     * avoid duplicate size calculations. */
@@ -236,7 +236,7 @@ _efl_ui_scroll_alert_popup_expandable_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Ale
 
    pd->max_size = max_size;
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 static Eina_Size2D
@@ -252,7 +252,7 @@ _efl_ui_scroll_alert_popup_efl_ui_popup_popup_size_set(Eo *obj, Efl_Ui_Scroll_Al
 
    efl_gfx_entity_size_set(obj, size);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static Eo *

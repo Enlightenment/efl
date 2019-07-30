@@ -291,7 +291,7 @@ _field_list_arrange(Evas_Object *obj)
      }
    sd->freeze_sizing = freeze;
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
    _field_list_display(obj);
 }
 
@@ -571,7 +571,6 @@ _efl_ui_clock_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Clock_Data *sd)
      }
 
    edje_object_message_signal_process(wd->resize_obj);
-   elm_layout_sizing_eval(obj);
 
    return int_ret;
 }
@@ -903,7 +902,6 @@ _efl_ui_clock_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Clock_Data *priv)
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
    priv->freeze_sizing = EINA_FALSE;
-   elm_layout_sizing_eval(obj);
 
    // ACCESS
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
@@ -1044,7 +1042,7 @@ _efl_ui_clock_field_visible_set(Eo *obj, Efl_Ui_Clock_Data *sd, Efl_Ui_Clock_Typ
      }
    sd->freeze_sizing = EINA_FALSE;
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    if (!visible) return;
    {

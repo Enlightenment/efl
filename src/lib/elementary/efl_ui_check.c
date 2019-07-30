@@ -176,8 +176,6 @@ _efl_ui_check_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Check_Data *sd EINA_UNUS
 
    edje_object_message_signal_process(wd->resize_obj);
 
-   elm_layout_sizing_eval(obj);
-
    return int_ret;
 }
 
@@ -453,7 +451,7 @@ _icon_signal_emit(Evas_Object *obj)
    elm_layout_signal_emit(obj, buf, "elm");
    edje_object_message_signal_process(wd->resize_obj);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 /* FIXME: replicated from elm_layout just because check's icon spot

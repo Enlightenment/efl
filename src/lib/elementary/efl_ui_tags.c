@@ -522,8 +522,7 @@ _box_resize_cb(void *data,
      {
         EINA_LIST_FOREACH (sd->layouts, l, layout)
           {
-             elm_layout_sizing_eval(layout);
-             evas_object_smart_calculate(layout);
+             efl_canvas_group_calculate(layout);
 
              min = efl_gfx_hint_size_combined_min_get(layout);
 

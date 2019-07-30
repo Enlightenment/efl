@@ -134,7 +134,7 @@ _on_size_hints_changed(void *data EINA_UNUSED,
                        Evas_Object *obj,
                        void *event_info EINA_UNUSED)
 {
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 static void
@@ -173,7 +173,7 @@ _on_playback_finished(void *data, const Efl_Event *event EINA_UNUSED)
 static void
 _on_aspect_ratio_updated(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   elm_layout_sizing_eval(data);
+   efl_canvas_group_change(data);
 }
 
 static void

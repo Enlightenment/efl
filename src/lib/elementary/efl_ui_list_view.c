@@ -626,8 +626,6 @@ _efl_ui_list_view_efl_canvas_group_group_add(Eo *obj, Efl_Ui_List_View_Data *pd)
                           _efl_ui_list_view_bar_hide_cb, obj);
 
    _efl_ui_list_view_edje_object_attach(obj);
-
-   elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static void

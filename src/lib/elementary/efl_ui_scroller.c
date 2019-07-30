@@ -184,7 +184,7 @@ _efl_ui_scroller_efl_content_content_set(Eo *obj,
 
    efl_content_set(sd->pan_obj, content);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return EINA_TRUE;
 }
@@ -214,7 +214,7 @@ _efl_ui_scroller_efl_content_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Scroller_
 static void
 _efl_ui_scroller_pan_resized_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   elm_layout_sizing_eval(data);
+   efl_canvas_group_change(data);
 }
 
 static void
@@ -351,8 +351,6 @@ _efl_ui_scroller_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Scroller_Data *sd)
 
    efl_ui_mirrored_set(sd->smanager, efl_ui_mirrored_get(obj));
 
-   elm_layout_sizing_eval(obj);
-
    return int_ret;
 }
 
@@ -367,7 +365,7 @@ _efl_ui_scroller_efl_ui_scrollable_interactive_match_content_set(Eo *obj EINA_UN
 
    efl_ui_scrollable_match_content_set(sd->smanager, match_content_w, match_content_h);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static Eina_Bool

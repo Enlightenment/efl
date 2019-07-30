@@ -113,7 +113,7 @@ _efl_ui_text_alert_popup_efl_ui_popup_popup_size_set(Eo *obj, Efl_Ui_Text_Alert_
 
    efl_gfx_entity_size_set(obj, size);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 static void
@@ -153,7 +153,7 @@ _sizing_eval(Eo *obj, Efl_Ui_Text_Alert_Popup_Data *pd)
 EOLIAN static void
 _efl_ui_text_alert_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Text_Alert_Popup_Data *pd)
 {
-   /* When elm_layout_sizing_eval() is called, just flag is set instead of size
+   /* When efl_canvas_group_change() is called, just flag is set instead of size
     * calculation.
     * The actual size calculation is done here when the object is rendered to
     * avoid duplicate size calculations. */
@@ -203,7 +203,7 @@ _efl_ui_text_alert_popup_text_set(Eo *obj, Efl_Ui_Text_Alert_Popup_Data *pd, con
              efl_content_set(pd->scroller, pd->message);
           }
         elm_object_text_set(pd->message, label);
-        elm_layout_sizing_eval(obj);
+        efl_canvas_group_change(obj);
      }
    else
      efl_text_set(efl_part(efl_super(obj, MY_CLASS), part), label);
@@ -260,7 +260,7 @@ _efl_ui_text_alert_popup_expandable_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Alert_P
 
    pd->max_size = max_size;
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static Eo *

@@ -239,9 +239,6 @@ _efl_ui_panel_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Panel_Data *sd)
           efl_content_set(efl_part(efl_super(obj, MY_CLASS), "efl.swallow.event"), sd->event);
      }
 
-   if (efl_finalized_get(obj))
-     elm_layout_sizing_eval(obj);
-
    return int_ret;
 }
 
@@ -740,8 +737,7 @@ _efl_ui_panel_efl_content_content_set(Eo *obj, Efl_Ui_Panel_Data *sd, Efl_Gfx_En
           elm_widget_sub_object_add(sd->scr_ly, sd->content);
      }
    efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, content);
-   if (efl_alive_get(obj))
-     elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return EINA_TRUE;
 }
@@ -790,8 +786,7 @@ _scrollable_layout_resize(Eo *obj, Efl_Ui_Panel_Data *sd, Evas_Coord w, Evas_Coo
          evas_object_size_hint_min_set(sd->scr_event, w, h);
          break;
      }
-   if (efl_finalized_get(obj))
-     elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static void
@@ -950,8 +945,7 @@ _efl_ui_panel_orient_set(Eo *obj, Efl_Ui_Panel_Data *sd, Efl_Ui_Panel_Orient ori
    else
      _orient_set_do(obj);
 
-   if (efl_finalized_get(obj))
-     elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static Efl_Ui_Panel_Orient

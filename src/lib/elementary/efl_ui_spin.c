@@ -85,8 +85,6 @@ _efl_ui_spin_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Data *sd)
    _label_write(obj, sd);
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   elm_layout_sizing_eval(obj);
-
    return obj;
 }
 
@@ -100,7 +98,7 @@ EOLIAN static void
 _efl_ui_spin_efl_ui_format_apply_formatted_value(Eo *obj, Efl_Ui_Spin_Data *sd EINA_UNUSED)
 {
    _label_write(obj, sd);
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static void

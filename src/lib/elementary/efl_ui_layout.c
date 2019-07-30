@@ -146,7 +146,7 @@ _on_sub_object_size_hint_change(void *data,
 {
    if (!efl_alive_get(data)) return;
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
-   elm_layout_sizing_eval(data);
+   efl_canvas_group_change(data);
 }
 
 static void
@@ -437,7 +437,7 @@ _visuals_refresh(Evas_Object *obj,
    _efl_ui_layout_highlight_in_theme(obj);
    _flush_mirrored_state(obj);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return EINA_TRUE;
 }
@@ -577,7 +577,7 @@ _efl_ui_layout_base_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Layout_D
 
    // No need to resize object during destruction
    if (wd->resize_obj && efl_alive_get(obj))
-     elm_layout_sizing_eval(obj);
+     efl_canvas_group_change(obj);
 
    return EINA_TRUE;
 }
@@ -733,7 +733,8 @@ _on_size_evaluate_signal(void *data,
                          const char *emission EINA_UNUSED,
                          const char *source EINA_UNUSED)
 {
-   elm_layout_sizing_eval(data);
+   efl_canvas_group_change(data);
+   efl_canvas_group_calculate(data);
 }
 
 EOLIAN static void
@@ -1062,7 +1063,7 @@ _efl_ui_layout_content_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Ev
         _icon_signal_emit(sd, sub_d, EINA_TRUE);
      }
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
 end:
    return EINA_TRUE;
@@ -1262,7 +1263,7 @@ _efl_ui_layout_text_generic_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *par
                   edje_object_part_text_escaped_set
                     (wd->resize_obj, part, NULL);
                   sd->subs = eina_list_remove_list(sd->subs, l);
-                  elm_layout_sizing_eval(obj);
+                  efl_canvas_group_change(obj);
                   return EINA_TRUE;
                }
              else
@@ -1298,7 +1299,7 @@ _efl_ui_layout_text_generic_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *par
 
    _text_signal_emit(sd, sub_d, EINA_TRUE);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON &&
        sd->can_access && !(sub_d->obj))
@@ -1397,7 +1398,7 @@ _efl_ui_layout_box_append(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Eva
    sub_d->type = BOX_APPEND;
    _layout_box_subobj_init(sd, sub_d, part, child);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return EINA_TRUE;
 }
@@ -1434,7 +1435,7 @@ _efl_ui_layout_box_prepend(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Ev
    sub_d->type = BOX_PREPEND;
    _layout_box_subobj_init(sd, sub_d, part, child);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return EINA_TRUE;
 }
@@ -1476,7 +1477,7 @@ _efl_ui_layout_box_insert_before(Eo *obj, Efl_Ui_Layout_Data *sd, const char *pa
    evas_object_event_callback_add
      ((Evas_Object *)reference, EVAS_CALLBACK_DEL, _box_reference_del, sub_d);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return EINA_TRUE;
 }
@@ -1514,7 +1515,7 @@ _efl_ui_layout_box_insert_at(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, 
    sub_d->p.box.pos = pos;
    _layout_box_subobj_init(sd, sub_d, part, child);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return EINA_TRUE;
 }
@@ -1612,7 +1613,7 @@ _efl_ui_layout_table_pack(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Eva
    sd->subs = eina_list_append(sd->subs, sub_d);
    efl_parent_set(child, obj);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return EINA_TRUE;
 }
@@ -1733,7 +1734,7 @@ elm_layout_sizing_restricted_eval(Eo *obj, Eina_Bool w, Eina_Bool h)
    sd->restricted_calc_w = !!w;
    sd->restricted_calc_h = !!h;
 
-   evas_object_smart_changed(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static int
@@ -1757,7 +1758,7 @@ _efl_ui_layout_base_efl_layout_calc_calc_thaw(Eo *obj, Efl_Ui_Layout_Data *sd)
 
    edje_object_thaw(wd->resize_obj);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return 0;
 }

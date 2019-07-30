@@ -891,7 +891,7 @@ _efl_ui_text_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Text_Data *sd)
 
           }
 
-        elm_layout_sizing_eval(sd->scroller);
+        efl_canvas_group_calculate(sd->scroller);
         min = efl_gfx_hint_size_min_get(sd->scroller);
         if (sd->single_line)
           {
@@ -2225,7 +2225,6 @@ _efl_ui_text_efl_object_finalize(Eo *obj,
    _create_text_cursors(obj, sd);
 
    sd->calc_force = EINA_TRUE;
-   elm_layout_sizing_eval(obj);
 
    return obj;
 
@@ -2347,7 +2346,7 @@ _efl_ui_text_calc_force(Eo *obj, Efl_Ui_Text_Data *sd)
 {
    sd->calc_force = EINA_TRUE;
    edje_object_calc_force(sd->entry_edje);
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_calculate(obj);
 }
 
 static const char*
@@ -2380,7 +2379,7 @@ _efl_ui_text_entry_insert(Eo *obj, Efl_Ui_Text_Data *sd, const char *entry)
    Efl_Text_Cursor_Cursor *cur_obj = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_TYPE_MAIN);
    efl_text_cursor_text_insert(obj, cur_obj, entry);
    sd->text_changed = EINA_TRUE;
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static void
@@ -2611,7 +2610,7 @@ _efl_ui_text_scrollable_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd, Eina_Bool
         efl_del(sd->scroller);
         sd->scroller = NULL;
      }
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static Eina_Bool
@@ -3909,7 +3908,7 @@ _efl_ui_text_changed_cb(void *data, const Efl_Event *event)
    sd->cursor_update = EINA_TRUE;
    _update_guide_text(data, sd);
    efl_event_callback_call(event->object, EFL_UI_TEXT_EVENT_CHANGED, NULL);
-   elm_layout_sizing_eval(data);
+   efl_canvas_group_change(data);
    _decoration_defer(data);
 }
 
@@ -3922,7 +3921,7 @@ _efl_ui_text_changed_user_cb(void *data, const Efl_Event *event)
    EFL_UI_TEXT_DATA_GET(obj, sd);
    sd->text_changed = EINA_TRUE;
    _update_guide_text(data, sd);
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
    _decoration_defer_all(obj);
 }
 

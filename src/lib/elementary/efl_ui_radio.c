@@ -176,8 +176,6 @@ _efl_ui_radio_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Radio_Data *sd EINA_UNUS
 
    edje_object_message_signal_process(wd->resize_obj);
 
-   elm_layout_sizing_eval(obj);
-
    return int_ret;
 }
 
@@ -232,8 +230,6 @@ _efl_ui_radio_efl_object_constructor(Eo *obj, Efl_Ui_Radio_Data *pd)
         pd->group = calloc(1, sizeof(Group));
         pd->group->radios = eina_list_append(pd->group->radios, obj);
      }
-
-   elm_layout_sizing_eval(obj);
 
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_RADIO_BUTTON);
    _elm_access_text_set
@@ -357,7 +353,7 @@ _icon_signal_emit(Evas_Object *obj)
 
    elm_layout_signal_emit(obj, buf, "elm");
    edje_object_message_signal_process(edje);
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static Eina_Error

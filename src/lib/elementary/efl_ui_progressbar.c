@@ -296,8 +296,6 @@ _efl_ui_progressbar_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *
 
    edje_object_message_signal_process(wd->resize_obj);
 
-   elm_layout_sizing_eval(obj);
-
    return int_ret;
 }
 
@@ -375,8 +373,6 @@ _efl_ui_progressbar_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Progressbar_Data 
 
    _units_set(obj);
    _val_set(obj);
-
-   elm_layout_sizing_eval(obj);
 
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      elm_widget_can_focus_set(obj, EINA_TRUE);
@@ -469,7 +465,7 @@ _progressbar_span_size_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Evas_Coord size
        (sd->spacer, 1, (double)sd->size * efl_gfx_entity_scale_get(obj) *
        elm_config_scale_get());
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 static void
@@ -761,7 +757,7 @@ _efl_ui_progressbar_show_progress_label_set(Eo *obj EINA_UNUSED, Efl_Ui_Progress
    elm_layout_signal_emit(obj, signal_name, ns);
    edje_object_message_signal_process(wd->resize_obj);
    _units_set(obj);
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static Eina_Bool
@@ -828,7 +824,7 @@ _icon_signal_emit(Evas_Object *obj)
 
    elm_layout_signal_emit(obj, buf, "elm");
    edje_object_message_signal_process(elm_layout_edje_get(obj));
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 /* FIXME: replicated from elm_layout just because progressbar's icon spot

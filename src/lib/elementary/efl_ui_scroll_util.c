@@ -214,14 +214,14 @@ static void
 _scroll_connector_resized_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Scroll_Connector_Context *ctx = data;
-   elm_layout_sizing_eval(ctx->obj);
+   efl_canvas_group_change(ctx->obj);
 }
 
 static void
 _scroll_connector_size_hint_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Scroll_Connector_Context *ctx = data;
-   elm_layout_sizing_eval(ctx->obj);
+   efl_canvas_group_change(ctx->obj);
 }
 
 void

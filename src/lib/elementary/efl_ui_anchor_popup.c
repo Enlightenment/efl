@@ -211,7 +211,8 @@ _anchor_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    pd->anchor = NULL;
    //Add align calc only
    Eina_Bool needs_size_calc = ppd->needs_size_calc;
-   elm_layout_sizing_eval(data);
+   efl_canvas_group_change(data);
+   efl_canvas_group_calculate(data);
    ppd->needs_size_calc = needs_size_calc;
 }
 
@@ -247,7 +248,8 @@ _efl_ui_anchor_popup_anchor_set(Eo *obj, Efl_Ui_Anchor_Popup_Data *pd, Eo *ancho
 
    //Add align/anchor calc only
    Eina_Bool needs_size_calc = ppd->needs_size_calc;
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
+   efl_canvas_group_calculate(obj);
    ppd->needs_size_calc = needs_size_calc;
 }
 
@@ -303,7 +305,7 @@ EOLIAN static void
 _efl_ui_anchor_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Anchor_Popup_Data *pd)
 {
    EFL_UI_POPUP_DATA_GET_OR_RETURN(obj, ppd);
-   /* When elm_layout_sizing_eval() is called, just flag is set instead of size
+   /* When efl_canvas_group_change() is called, just flag is set instead of size
     * calculation.
     * The actual size calculation is done here when the object is rendered to
     * avoid duplicate size calculations. */

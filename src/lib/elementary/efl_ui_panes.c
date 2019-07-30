@@ -150,8 +150,6 @@ _efl_ui_panes_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Panes_Data *sd)
           elm_layout_signal_emit(obj, "efl,panes,fixed", "efl");
      }
 
-   elm_layout_sizing_eval(obj);
-
    elm_panes_content_left_size_set(obj, size);
 
    return int_ret;
@@ -486,8 +484,6 @@ _efl_ui_panes_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UN
           }
      }
    elm_widget_sub_object_add(obj, sd->event);
-
-   elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static Eo *
@@ -628,13 +624,13 @@ _efl_ui_panes_part_hint_min_allow_set(Eo *obj, void *_pd EINA_UNUSED, Eina_Bool 
      {
         if (sd->first_hint_min_allow == allow) return;
         sd->first_hint_min_allow = allow;
-        elm_layout_sizing_eval(pd->obj);
+        efl_canvas_group_change(pd->obj);
      }
    else if (!strcmp(pd->part, "second"))
      {
         if (sd->second_hint_min_allow == allow) return;
         sd->second_hint_min_allow = allow;
-        elm_layout_sizing_eval(pd->obj);
+        efl_canvas_group_change(pd->obj);
      }
 }
 
