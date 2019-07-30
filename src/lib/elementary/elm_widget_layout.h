@@ -75,6 +75,7 @@ typedef struct _Elm_Layout_Smart_Data
    Eina_Bool             automatic_orientation_apply : 1;
    Eina_Bool             model_bound : 1; /**< Set to true once we are watching over a model*/
    Eina_Bool             model_watch : 1; /**< Set to true once we do watch for model change*/
+   Eina_Bool             calc_subobjs : 1; /**< Set to true if group_calc should also handle subobjs during manual calc */
 } Efl_Ui_Layout_Data;
 
 /**
@@ -87,5 +88,7 @@ typedef struct _Elm_Layout_Smart_Data
 #define EFL_UI_LAYOUT_CHECK(obj) \
   if (EINA_UNLIKELY(!efl_isa(obj, EFL_UI_LAYOUT_BASE_CLASS))) \
     return
+
+void _efl_ui_layout_subobjs_calc_set(Eo *obj, Eina_Bool set);
 
 #endif

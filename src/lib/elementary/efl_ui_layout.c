@@ -169,6 +169,14 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd)
 
    if (!efl_alive_get(obj)) return;
 
+   if (sd->calc_subobjs && !evas_smart_objects_calculating_get(evas_object_evas_get(obj)))
+     {
+        Eina_List *l;
+        Eo *subobj;
+        /* user has manually triggered a smart calc and wants subobjs to also calc */
+        EINA_LIST_FOREACH(wd->subobjs, l, subobj)
+          efl_canvas_group_calculate(subobj);
+     }
    elm_coords_finger_size_adjust(sd->finger_size_multiplier_x, &rest_w,
                                  sd->finger_size_multiplier_y, &rest_h);
    if (elm_widget_is_legacy(obj))
@@ -200,6 +208,14 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd)
    evas_object_size_hint_min_set(obj, minw, minh);
 
    sd->restricted_calc_w = sd->restricted_calc_h = EINA_FALSE;
+}
+
+void
+_efl_ui_layout_subobjs_calc_set(Eo *obj, Eina_Bool set)
+{
+   Efl_Ui_Layout_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+   sd->calc_subobjs = !!set;
 }
 
 /* common content cases for layout objects: icon and text */
