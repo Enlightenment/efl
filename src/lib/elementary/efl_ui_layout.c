@@ -160,7 +160,7 @@ _part_cursor_free(Efl_Ui_Layout_Sub_Object_Cursor *pc)
 }
 
 static void
-_sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd)
+_sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd, Eina_Bool finger)
 {
    int minh = 0, minw = 0;
    int rest_w = 0, rest_h = 0;
@@ -169,6 +169,8 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd)
 
    if (!efl_alive_get(obj)) return;
 
+   if (finger)
+     elm_coords_finger_size_adjust(1, &rest_w, 1, &rest_h);
    if (elm_widget_is_legacy(obj))
      sz = efl_gfx_hint_size_combined_min_get(obj);
    else
@@ -837,16 +839,24 @@ _efl_ui_layout_base_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Layout_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
+EOLIAN static void
+_efl_ui_layout_efl_canvas_group_group_calculate(Eo *obj, void *_pd EINA_UNUSED)
+{
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
+   _sizing_eval(obj, efl_data_scope_get(obj, MY_CLASS), NULL);
+}
+
 /* rewrite or extend this one on your derived class as to suit your
  * needs */
 EOLIAN static void
 _efl_ui_layout_base_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
-   if (sd->needs_size_calc)
-     {
-        _sizing_eval(obj, sd);
-        sd->needs_size_calc = EINA_FALSE;
-     }
+   Eina_Bool legacy = elm_widget_is_legacy(obj);
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
+   if ((!legacy) || sd->needs_size_calc)
+     /* don't add finger size if this is an actual elm_layout object */
+     _sizing_eval(obj, sd, !legacy);
+   sd->needs_size_calc = EINA_FALSE;
 }
 
 static Efl_Ui_Layout_Sub_Object_Cursor *
