@@ -186,10 +186,8 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd, Elm_Layout_Data *ld)
    minw = sz.w;
    minh = sz.h;
 
-   if (minw > rest_w)
-     rest_w = minw;
-   if (minh > rest_h)
-     rest_h = minh;
+   rest_w = MAX(minw, rest_w);
+   rest_h = MAX(minh, rest_h);
 
    if (ld)
      {
