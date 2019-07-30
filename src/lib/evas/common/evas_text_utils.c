@@ -1066,7 +1066,7 @@ _content_create_ot(RGBA_Font_Int *fi, const Eina_Unicode *text,
         /* If we got a malformed index, show the replacement char instead */
         if (gl_itr->index == 0)
           {
-             gl_itr->index = evas_common_get_char_index(fi, REPLACEMENT_CHAR, 0);
+             gl_itr->index = evas_common_get_char_index(fi, REPLACEMENT_CHAR);
              is_replacement = EINA_TRUE;
           }
         idx = gl_itr->index;
@@ -1172,10 +1172,10 @@ _content_create_regular(RGBA_Font_Int *fi, const Eina_Unicode *text,
         _gl = *text;
         if (_gl == 0) break;
 
-        idx = evas_common_get_char_index(fi, _gl, 0);
+        idx = evas_common_get_char_index(fi, _gl);
         if (idx == 0)
           {
-             idx = evas_common_get_char_index(fi, REPLACEMENT_CHAR, 0);
+             idx = evas_common_get_char_index(fi, REPLACEMENT_CHAR);
           }
 
         fg = evas_common_font_int_cache_glyph_get(fi, idx);
