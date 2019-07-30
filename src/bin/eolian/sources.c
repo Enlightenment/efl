@@ -165,6 +165,10 @@ _free_func_get(const Eolian_Type *type)
         return "eina_value_flush";
       case EOLIAN_TYPE_BUILTIN_ANY_VALUE_PTR:
         return "eina_value_free";
+      case EOLIAN_TYPE_BUILTIN_STRBUF:
+        return "eina_strbuf_free";
+      case EOLIAN_TYPE_BUILTIN_BINBUF:
+        return "eina_binbuf_free";
       /* complex types */
       case EOLIAN_TYPE_BUILTIN_ACCESSOR:
         return "eina_accessor_free";
