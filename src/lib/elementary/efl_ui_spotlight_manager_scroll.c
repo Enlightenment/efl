@@ -22,6 +22,7 @@ typedef struct {
       Eina_Position2D mouse_start;
    } mouse_move;
    Eina_Bool animation;
+   Eina_Bool scroll_block;
 } Efl_Ui_Spotlight_Manager_Scroll_Data;
 
 #define MY_CLASS EFL_UI_SPOTLIGHT_MANAGER_SCROLL_CLASS
@@ -100,6 +101,8 @@ _mouse_down_cb(void *data,
 
    if (efl_content_count(pd->container) == 0) return;
 
+   if (pd->scroll_block) return;
+
    efl_event_callback_del(pd->container, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _page_set_animation, obj);
 
    pd->mouse_move.active = EINA_TRUE;
@@ -123,6 +126,7 @@ _mouse_move_cb(void *data,
 
    if (efl_input_event_flags_get(ev) & EFL_INPUT_FLAGS_PROCESSED) return;
    if (!pd->mouse_move.active) return;
+   if (pd->scroll_block) return;
 
    pos = efl_input_pointer_position_get(ev);
    pos_y_diff = pd->mouse_move.mouse_start.x - pos.x;
@@ -149,6 +153,7 @@ _mouse_up_cb(void *data,
 
    if (efl_input_event_flags_get(ev) & EFL_INPUT_FLAGS_PROCESSED) return;
    if (!pd->mouse_move.active) return;
+   if (pd->scroll_block) return;
 
    double absolut_current_position = (double)pd->transition.from + pd->transition.progress;
    int result = round(absolut_current_position);
@@ -332,5 +337,25 @@ _efl_ui_spotlight_manager_scroll_efl_object_invalidate(Eo *obj, Efl_Ui_Spotlight
    efl_invalidate(efl_super(obj, MY_CLASS));
 }
 
+EOLIAN static void
+_efl_ui_spotlight_manager_scroll_scroll_block_set(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Scroll_Data *pd, Eina_Bool scroll_block)
+{
+   if (pd->scroll_block == scroll_block) return;
+
+   pd->scroll_block = scroll_block;
+   if (scroll_block && pd->mouse_move.active)
+     {
+        pd->mouse_move.active = EINA_FALSE;
+        pd->transition.active = EINA_FALSE;
+        pd->transition.progress = 0.0;
+        _apply_box_properties(obj, pd);
+     }
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_spotlight_manager_scroll_scroll_block_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Scroll_Data *pd)
+{
+   return pd->scroll_block;
+}
 
 #include "efl_ui_spotlight_manager_scroll.eo.c"

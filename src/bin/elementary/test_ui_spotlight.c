@@ -495,6 +495,40 @@ view_animation_cb(void *data,
 }
 
 static void
+_scroll_block_check_cb(void *data, const Efl_Event *ev)
+{
+   Params *params = data;
+
+   efl_ui_spotlight_manager_scroll_block_set(efl_ui_spotlight_manager_get(params->spotlight), efl_ui_check_selected_get(ev->object));
+}
+
+static void
+scroll_block_cb(void *data,
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
+{
+   Params *params = data;
+   Evas_Object *navi = params->navi;
+   Eo *btn, *box, *ck;
+
+   btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
+                 efl_text_set(efl_added, "Back"),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED,
+                                        back_btn_cb, navi));
+
+   box = efl_add(EFL_UI_BOX_CLASS, navi,
+                 elm_naviframe_item_push(navi, "Scroll Block", btn, NULL,
+                                         efl_added, NULL));
+
+   ck = efl_add(EFL_UI_CHECK_CLASS, box);
+   efl_event_callback_add(ck, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _scroll_block_check_cb, params);
+   efl_ui_check_selected_set(ck, efl_ui_spotlight_manager_scroll_block_get(efl_ui_spotlight_manager_get(params->spotlight)));
+   efl_text_set(ck, "Scroll Block");
+   efl_pack_end(box, ck);
+   efl_gfx_entity_visible_set(ck, 1);
+}
+
+static void
 pack_cb(void *data,
         Evas_Object *obj EINA_UNUSED,
         void *event_info EINA_UNUSED)
@@ -835,6 +869,7 @@ test_ui_spotlight_stack(void *data EINA_UNUSED,
    elm_list_item_append(list, "Active Index", NULL, NULL, active_index_cb, params);
    elm_list_item_append(list, "Indicator", NULL, NULL, indicator_cb, params);
    elm_list_item_append(list, "Animation", NULL, NULL, view_animation_cb, params);
+   elm_list_item_append(list, "Scroll Block", NULL, NULL, scroll_block_cb, params);
    elm_list_go(list);
 
    efl_event_callback_add(list, EFL_EVENT_DEL, list_del_cb, params);
@@ -1036,6 +1071,7 @@ test_ui_spotlight_scroll(void *data EINA_UNUSED,
    elm_list_item_append(list, "Active Index", NULL, NULL, active_index_cb, params);
    elm_list_item_append(list, "Indicator", NULL, NULL, indicator_cb, params);
    elm_list_item_append(list, "Animation", NULL, NULL, view_animation_cb, params);
+   elm_list_item_append(list, "Scroll Block", NULL, NULL, scroll_block_cb, params);
    elm_list_go(list);
 
    efl_event_callback_add(list, EFL_EVENT_DEL, list_del_cb, params);
