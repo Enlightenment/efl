@@ -104,9 +104,13 @@ completion_cb(void *data EINA_UNUSED, const char *file EINA_UNUSED, int status)
 }
 
 void
-err_completion_cb(void *data EINA_UNUSED, const char *file EINA_UNUSED, int status)
+err_completion_cb(void *data, const char *file EINA_UNUSED, int status)
 {
+   if (data)
+     *((int*) data) = status;
    fail_if(status != 1);
+   // NOP if called from outside main loop. Keep it here if abort fails and
+   // we get called from there.
    ecore_main_loop_quit();
 }
 
@@ -521,12 +525,15 @@ EFL_START_TEST(ecore_test_ecore_file_download)
                              progress_cb, NULL, &job);
    fail_if(res != EINA_FALSE);
 
+   int status = 0;
    res = ecore_file_download(download_url, dest_name, err_completion_cb,
-                             progress_cb, NULL, &job);
+                             progress_cb, &status, &job);
    fail_if(res != EINA_TRUE);
    fail_if(!job);
    ecore_file_download_abort(job);
-   ecore_main_loop_begin();
+   fail_if(status != 1);
+   if (!status)
+     ecore_main_loop_begin();
    if (timeout_reached) goto end;
    res = ecore_file_remove(dest_name);
    fail_if(res != EINA_TRUE);
