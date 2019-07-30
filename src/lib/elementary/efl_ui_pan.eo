@@ -1,39 +1,55 @@
 class @beta Efl.Ui.Pan extends Efl.Canvas.Group implements Efl.Content
 {
-   [[Elementary pan class]]
+   [[Pan widget class.
+
+     This widget positions its contents (set using @Efl.Content.content) relative to the widget itself.
+     This is particularly useful for large content which does not fit inside its container. In this case
+     only a portion is shown.
+
+     The position of this "window" into the content can be changed using @Efl.Ui.Pan.pan_position.
+     This widget does not provide means for a user to change the content's position (like scroll bars).
+     This widget is meant to be used internally by other clases like @Efl.Ui.Scroll.Manager.
+   ]]
    methods {
       @property pan_position {
-    [[Position]]
-         set {
-         }
-         get {
-         }
+         [[Position of the content inside the Pan widget.
+
+           Setting the position to @Efl.Ui.Pan.pan_position_min makes the upper left corner of the content visible.
+           Setting the position to @Efl.Ui.Pan.pan_position_max makes the lower right corner of the content visible.
+           Values outside this range are valid and make the background show.
+         ]]
          values {
-            position: Eina.Position2D;
+            position: Eina.Position2D;  [[Content position.]]
          }
       }
       @property content_size {
-    [[Content size]]
+         [[Size of the content currently set through @Efl.Content.content.
+           This is a convenience proxy.
+         ]]
          get {
          }
          values {
-       size: Eina.Size2D;
+            size: Eina.Size2D; [[The size of the content.]]
          }
       }
       @property pan_position_min {
-    [[The minimal position to scroll]]
+         [[Position you can set to @Efl.Ui.Pan.pan_position so that the content's upper left corner is visible.
+           Always (0, 0).
+         ]]
          get {
          }
          values {
-       pos: Eina.Position2D;
+            pos: Eina.Position2D; [[Content's upper left corner position.]]
          }
       }
       @property pan_position_max {
-    [[The maximal position to scroll]]
+         [[Position you can set to @Efl.Ui.Pan.pan_position so that the content's lower right corner is visible.
+           It depends both on the content's size and this widget's size.
+         ]]
          get {
          }
          values {
-       pos: Eina.Position2D;
+            pos: Eina.Position2D; [[Content's lower right corner position.]]
          }
       }
    }
@@ -48,8 +64,8 @@ class @beta Efl.Ui.Pan extends Efl.Canvas.Group implements Efl.Content
       Efl.Canvas.Group.group_calculate;
    }
    events {
-      pan,content,changed: void; [[Called when pan content changed]]
-      pan,viewport,changed: void; [[Called when pan viewport changed]]
-      pan,position,changed: void; [[Called when pan position changed]]
+      pan,content,changed: void; [[The content has changed.]]
+      pan,viewport,changed: void; [[This widget's position or size has changed.]]
+      pan,position,changed: void; [[The content's position has changed.]]
    }
 }
