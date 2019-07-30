@@ -12,8 +12,7 @@ static Eo* win;
 
 static Eina_Array *arr_obj;
 static Eina_Inarray *arr_size;
-static Eina_Accessor inner_size_acc;
-static Eina_Accessor *size_acc;
+
 static void
 item_container_setup()
 {
@@ -26,54 +25,44 @@ item_container_teardown()
    win = NULL;
 }
 
-static Eina_Bool
-_get_at(Eina_Accessor *it EINA_UNUSED, unsigned int idx, void **data)
+static int
+_size_accessor_get_at(void *data EINA_UNUSED, int start_id, Eina_Rw_Slice memory)
 {
-   Eina_Size2D *result_ptr = (void*)data;
-   Eina_Size2D *inner_result;
+   int i;
 
-   if (!eina_accessor_data_get(size_acc, idx, (void*)&inner_result))
-     return EINA_FALSE;
-   *result_ptr = *inner_result;
-   return EINA_TRUE;
+   for (i = start_id; i < (int)(MIN(start_id + memory.len, eina_inarray_count(arr_size))); ++i)
+     {
+         Eina_Size2D *size = eina_inarray_nth(arr_size, i);
+
+         ((Eina_Size2D*)memory.mem)[i - start_id] = *size;
+     }
+   return i - start_id;
 }
 
-static void
-_free_cb(Eina_Accessor *it EINA_UNUSED)
+static int
+_obj_accessor_get_at(void *data EINA_UNUSED, int start_id, Eina_Rw_Slice memory)
 {
-   eina_accessor_free(size_acc);
+   int i;
+
+   for (i = start_id; i < (int)(MIN(start_id + memory.len, eina_array_count(arr_obj))); ++i)
+     {
+         Efl_Gfx_Entity *geom = eina_array_data_get(arr_obj, i);
+
+         ((Efl_Gfx_Entity**)memory.mem)[i - start_id] = geom;
+     }
+
+   return i - start_id;
 }
-
-static Eina_Bool
-_lock_cb(Eina_Accessor *it EINA_UNUSED)
-{
-   return eina_accessor_lock(size_acc);
-}
-
-static Eina_Accessor*
-_clone_cb(Eina_Accessor *it EINA_UNUSED)
-{
-   return eina_accessor_clone(size_acc);
-}
-
-
 static void
 _initial_setup(void)
 {
    arr_obj = eina_array_new(10);
    arr_size = eina_inarray_new(sizeof(Eina_Size2D), 10);
-   size_acc = eina_inarray_accessor_new(arr_size);
-
-   inner_size_acc.version = EINA_ACCESSOR_VERSION;
-   EINA_MAGIC_SET(&inner_size_acc, EINA_MAGIC_ACCESSOR);
-   inner_size_acc.get_at = _get_at;
-   inner_size_acc.free = _free_cb;
-   inner_size_acc.lock = _lock_cb;
-   inner_size_acc.clone = _clone_cb;
 
    efl_ui_position_manager_entity_data_access_set(position_manager,
-      eina_array_accessor_new(arr_obj),
-      &inner_size_acc, 0);
+      NULL, _obj_accessor_get_at, NULL,
+      NULL, _size_accessor_get_at, NULL,
+      0);
 }
 
 static int

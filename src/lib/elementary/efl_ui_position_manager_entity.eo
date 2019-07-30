@@ -1,4 +1,22 @@
 
+function Efl.Ui.Position_Manager.Batch_Access_Entity {
+   [[ Function callback for getting a batch of items]]
+   params {
+      start_id : int; [[The id of the first item to fetch]]
+      memory : rw_slice<Efl.Gfx.Entity>; [[The slice to fill the information in, the full slice will be filled if there are enough items]]
+   }
+   return: int; [[The number of filled elements in the slice]]
+};
+
+function Efl.Ui.Position_Manager.Batch_Access_Size {
+   [[ Function callback for getting sizes of a batch of items]]
+   params {
+      start_id : int; [[The id of the first item to fetch]]
+      memory : rw_slice<Efl.Gfx.Entity>; [[The slice to fill the information in, the full slice will be filled if there are enough items]]
+   }
+   return: int; [[The number of filled elements in the slice]]
+};
+
 interface @beta Efl.Ui.Position_Manager.Entity extends Efl.Ui.Layout_Orientable
 {
    [[
@@ -15,14 +33,16 @@ interface @beta Efl.Ui.Position_Manager.Entity extends Efl.Ui.Layout_Orientable
 
           $size_access gives access to the 2D sizes for the items to manage. All sizes will always be valid, and might change over time (indicated through the @.item_size_changed method).
           The whole range might need to be traversed in order to calculate the position of all items in some arrangements.
+
+          You can access a batch of objects or sizes by calling the here passed function callbacks. Further details can be found at the function definitions.
          ]]
          set {
 
          }
          values {
-           obj_access : accessor<Efl.Gfx.Entity>; [[The accessor for canvas obejcts, even if the id is valid, the returned object may be NULL]]
-           size_access : accessor<Eina.Size2D>; [[Accessor for the size, returned values are always valid, but might be changed / updated]]
-           size : int; [[valid size for accessors, 0 <= i < size]]
+           obj_access : Efl.Ui.Position_Manager.Batch_Access_Entity; [[Function callback for canvas objects, even if the start_id is valid, the returned objects may be NULL]]
+           size_access : Efl.Ui.Position_Manager.Batch_Access_Size; [[Function callback for the size, returned values are always valid, but might be changed / updated]]
+           size : int; [[valid size for start_id, 0 <= i < size]]
          }
       }
       @property viewport {

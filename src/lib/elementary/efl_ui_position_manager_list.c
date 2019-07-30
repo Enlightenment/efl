@@ -7,13 +7,14 @@
 #include <Elementary.h>
 #include "elm_widget.h"
 #include "elm_priv.h"
+#include "efl_ui_position_manager_common.h"
 
 #define MY_CLASS      EFL_UI_POSITION_MANAGER_LIST_CLASS
 #define MY_DATA_GET(obj, pd) \
   Efl_Ui_Position_Manager_List_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
 typedef struct {
-   Eina_Accessor *content_acc, *size_acc;
+   Api_Callback min_size, object;
    unsigned int size;
    Eina_Future *rebuild_absolut_size;
    Eina_Rect viewport;
@@ -40,6 +41,9 @@ static void
 cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
 {
    unsigned int i;
+   const int len = 100;
+   Eina_Size2D size_buffer[100];
+
 
    if (pd->size_cache) return;
 
@@ -59,8 +63,14 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
         Eina_Size2D size;
         int step;
         int min;
+        int buffer_id = i % len;
 
-        eina_accessor_data_get(pd->size_acc, i, (void**) &size);
+        if (buffer_id == 0)
+          {
+             EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->min_size, i, len, size_buffer) > 0);
+          }
+       size = size_buffer[buffer_id];
+
         if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
           {
              step = size.h;
@@ -122,21 +132,6 @@ recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
    efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_MIN_SIZE_CHANGED, &min_size);
 }
 
-static inline void
-vis_change_segment(Efl_Ui_Position_Manager_List_Data *pd, int a, int b, Eina_Bool flag)
-{
-   for (int i = MIN(a, b); i < MAX(a, b); ++i)
-     {
-        Efl_Gfx_Entity *ent = NULL;
-
-        eina_accessor_data_get(pd->content_acc, i, (void**) &ent);
-        if (ent && !efl_ui_focus_object_focus_get(ent))
-          {
-             efl_gfx_entity_visible_set(ent, flag);
-          }
-     }
-}
-
 static void
 position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
 {
@@ -144,6 +139,9 @@ position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
    Eina_Size2D space_size;
    unsigned int start_id = 0, end_id = 0, i;
    int relevant_space_size, relevant_viewport;
+   const int len = 100;
+   Eina_Size2D size_buffer[len];
+   Efl_Gfx_Entity *obj_buffer[len];
 
    if (!pd->size) return;
    if (pd->average_item_size <= 0) return;
@@ -189,13 +187,13 @@ position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
      {
         //it is important to first make the segment visible here, and then hide the rest
         //otherwise we get a state where item_container has 0 subchildren, which triggers a lot of focus logic.
-        vis_change_segment(pd, start_id, end_id, EINA_TRUE);
-        vis_change_segment(pd, pd->prev_run.start_id, pd->prev_run.end_id, EINA_FALSE);
+        vis_change_segment(&pd->object, start_id, end_id, EINA_TRUE);
+        vis_change_segment(&pd->object, pd->prev_run.start_id, pd->prev_run.end_id, EINA_FALSE);
      }
    else
      {
-        vis_change_segment(pd, pd->prev_run.start_id, start_id, (pd->prev_run.start_id > start_id));
-        vis_change_segment(pd, pd->prev_run.end_id, end_id, (pd->prev_run.end_id < end_id));
+        vis_change_segment(&pd->object, pd->prev_run.start_id, start_id, (pd->prev_run.start_id > start_id));
+        vis_change_segment(&pd->object, pd->prev_run.end_id, end_id, (pd->prev_run.end_id < end_id));
      }
 
    geom = pd->viewport;
@@ -209,9 +207,20 @@ position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
      {
         Eina_Size2D size;
         Efl_Gfx_Entity *ent = NULL;
+        int buffer_id = (i-start_id) % len;
 
-        EINA_SAFETY_ON_FALSE_RETURN(eina_accessor_data_get(pd->size_acc, i, (void**) &size));
-        EINA_SAFETY_ON_FALSE_RETURN(eina_accessor_data_get(pd->content_acc, i, (void**) &ent));
+        if (buffer_id == 0)
+          {
+             int res1, res2;
+
+             res1 = _fill_buffer(&pd->object, i, len, obj_buffer);
+             res2 = _fill_buffer(&pd->min_size, i, len, size_buffer);
+             EINA_SAFETY_ON_FALSE_RETURN(res1 == res2);
+             EINA_SAFETY_ON_FALSE_RETURN(res2 > 0);
+          }
+
+        size = size_buffer[buffer_id];
+        ent = obj_buffer[buffer_id];
 
         if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
           geom.h = size.h;
@@ -253,11 +262,15 @@ schedule_recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_position_manager_list_efl_ui_position_manager_entity_data_access_set(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Eina_Accessor *content_access, Eina_Accessor *size_access, int size)
+_efl_ui_position_manager_list_efl_ui_position_manager_entity_data_access_set(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, void *obj_access_data, Efl_Ui_Position_Manager_Batch_Access_Entity obj_access, Eina_Free_Cb obj_access_free_cb, void *size_access_data, Efl_Ui_Position_Manager_Batch_Access_Size size_access, Eina_Free_Cb size_access_free_cb, int size)
 {
    cache_invalidate(obj, pd);
-   pd->content_acc = content_access;
-   pd->size_acc = size_access;
+   pd->object.data = obj_access_data;
+   pd->object.access = obj_access;
+   pd->object.free_cb = obj_access_free_cb;
+   pd->min_size.data = size_access_data;
+   pd->min_size.access = size_access;
+   pd->min_size.free_cb = size_access_free_cb;
    pd->size = size;
 }
 
@@ -314,6 +327,7 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_position_single_ite
    Eina_Size2D space_size;
    int relevant_space_size;
    Eina_Size2D size;
+   Eina_Size2D size_buffer[1];
 
    if (!pd->size) return EINA_RECT(0,0,0,0);
 
@@ -333,7 +347,9 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_position_single_ite
 
    geom = pd->viewport;
 
-   eina_accessor_data_get(pd->size_acc, idx, (void**)&size);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(_fill_buffer(&pd->min_size, idx, 1, size_buffer) == 1, EINA_RECT_EMPTY());
+
+   size = size_buffer[0];
 
    if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
      {
@@ -360,7 +376,7 @@ _efl_ui_position_manager_list_efl_ui_layout_orientable_orientation_set(Eo *obj E
 {
    pd->dir = dir;
    //in order to reset the state of the visible items, just hide everything and set the old segment accordingly
-   vis_change_segment(pd, pd->prev_run.start_id, pd->prev_run.end_id, EINA_FALSE);
+   vis_change_segment(&pd->object, pd->prev_run.start_id, pd->prev_run.end_id, EINA_FALSE);
    pd->prev_run.start_id = 0;
    pd->prev_run.end_id = 0;
 
