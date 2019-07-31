@@ -79,6 +79,27 @@ collections {
 #include "edc/elm/slider.edc"
 
 
+// widgets
+#include "edc/menu.edc"
+#include "edc/button.edc"
+#include "edc/check.edc"
+#include "edc/radio.edc"
+#include "edc/label.edc"
+#include "edc/frame.edc"
+#include "edc/slider.edc"
+#include "edc/scrollframe.edc"
+#include "edc/textblock.edc"
+#include "edc/ilist.edc"
+#include "edc/toolbar.edc"
+#include "edc/preview.edc"
+#include "edc/deskpreview.edc"
+#include "edc/entry.edc"
+#include "edc/fileman.edc"
+#include "edc/colorwell.edc"
+#include "edc/fontpreview.edc"
+#include "edc/cslider.edc"
+#include "edc/spectrum.edc"
+
 // desktop in general
 #include "edc/wallpaper.edc"
 #include "edc/comp.edc"
@@ -102,27 +123,6 @@ collections {
 #include "edc/about-e.edc"
 #include "edc/about-theme.edc"
 #include "edc/transitions.edc"
-
-// widgets
-#include "edc/menu.edc"
-#include "edc/button.edc"
-#include "edc/check.edc"
-#include "edc/radio.edc"
-#include "edc/label.edc"
-#include "edc/frame.edc"
-#include "edc/slider.edc"
-#include "edc/scrollframe.edc"
-#include "edc/textblock.edc"
-#include "edc/ilist.edc"
-#include "edc/toolbar.edc"
-#include "edc/preview.edc"
-#include "edc/deskpreview.edc"
-#include "edc/entry.edc"
-#include "edc/fileman.edc"
-#include "edc/colorwell.edc"
-#include "edc/fontpreview.edc"
-#include "edc/cslider.edc"
-#include "edc/spectrum.edc"
 
 // modules
 #include "edc/start.edc"

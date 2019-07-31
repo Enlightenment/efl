@@ -1,5 +1,4 @@
 group { name: "e/widgets/scrollframe";
-
    script {
       public loop_x, loop_y;
 
