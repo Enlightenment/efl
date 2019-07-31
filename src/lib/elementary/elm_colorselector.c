@@ -604,8 +604,8 @@ _update_hsla_from_colorbar(Evas_Object *obj, Color_Type type, double x)
    _update_colorbars(sd);
    if ((sd->mode == ELM_COLORSELECTOR_ALL) || (sd->mode == ELM_COLORSELECTOR_PICKER))
      _color_picker_init(sd);
-   efl_event_callback_legacy_call(obj, ELM_COLORSELECTOR_EVENT_CHANGED, NULL);
-   efl_event_callback_legacy_call(obj, ELM_COLORSELECTOR_EVENT_CHANGED_USER, NULL);
+   evas_object_smart_callback_call(obj, "changed", NULL);
+   evas_object_smart_callback_call(obj, "changed,user", NULL);
 }
 
 static void
@@ -662,7 +662,7 @@ _colors_set(Evas_Object *obj,
    if ((sd->mode == ELM_COLORSELECTOR_ALL) || (sd->mode == ELM_COLORSELECTOR_PICKER))
      _color_picker_init(sd);
    if (!mode_change)
-     efl_event_callback_legacy_call(obj, ELM_COLORSELECTOR_EVENT_CHANGED, NULL);
+     evas_object_smart_callback_call(obj, "changed", NULL);
 }
 
 static void
@@ -707,7 +707,7 @@ _spinner_changed_cb(void *data, const Efl_Event *event)
          break;
      }
    evas_object_data_del(event->object, "_changed");
-   efl_event_callback_legacy_call(parent, ELM_COLORSELECTOR_EVENT_CHANGED_USER, NULL);
+   evas_object_smart_callback_call(parent, "changed,user", NULL);
 }
 
 #ifdef HAVE_ELEMENTARY_X
@@ -795,7 +795,7 @@ _mouse_up_cb(void *data, int type EINA_UNUSED, void *event EINA_UNUSED)
 
    _unselect_selected_item(sd);
    _colors_set(o, r, g, b, 0xFF, EINA_FALSE);
-   efl_event_callback_legacy_call(o, ELM_COLORSELECTOR_EVENT_CHANGED_USER, NULL);
+   evas_object_smart_callback_call(o, "changed,user", NULL);
 
    return EINA_TRUE;
 }
@@ -1570,8 +1570,7 @@ _on_color_long_press(void *data)
 
    sd->longpress_timer = NULL;
 
-   efl_event_callback_legacy_call
-     (WIDGET(item), ELM_COLORSELECTOR_EVENT_COLOR_ITEM_LONGPRESSED, EO_OBJ(item));
+   evas_object_smart_callback_call(WIDGET(item), "color,item,longpressed", EO_OBJ(item));
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -1645,8 +1644,7 @@ _on_color_released(void *data,
    elm_object_signal_emit(VIEW(item), "elm,state,selected", "elm");
    elm_colorselector_color_set(WIDGET(item), item->color->r, item->color->g,
                                item->color->b, item->color->a);
-   efl_event_callback_legacy_call
-     (WIDGET(item), ELM_COLORSELECTOR_EVENT_COLOR_ITEM_SELECTED, EO_OBJ(item));
+   evas_object_smart_callback_call(WIDGET(item), "color,item,selected", EO_OBJ(item));
 
    eo_temp_item = eina_list_data_get(sd->selected);
    if (eo_temp_item && (eo_temp_item != EO_OBJ(item)))
@@ -2541,8 +2539,7 @@ _elm_color_item_selected_set(Eo *eo_item,
           if (eo_item == eo_temp_item) sd->selected = l;
 
         elm_object_signal_emit(VIEW(item), "elm,anim,activate", "elm");
-        efl_event_callback_legacy_call
-          (WIDGET(item), ELM_COLORSELECTOR_EVENT_COLOR_ITEM_SELECTED, eo_item);
+        evas_object_smart_callback_call(WIDGET(item), "color,item,selected", EO_OBJ(item));
      }
 }
 
