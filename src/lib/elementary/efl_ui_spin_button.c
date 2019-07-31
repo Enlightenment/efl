@@ -116,7 +116,7 @@ _label_write(Evas_Object *obj)
 static Eina_Value
 _delay_change_timer_cb(Eo *o, void *data EINA_UNUSED, const Eina_Value v)
 {
-   efl_event_callback_call(o, EFL_UI_SPIN_BUTTON_EVENT_DELAY_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_UI_RANGE_EVENT_STEADY, NULL);
 
    return v;
 }

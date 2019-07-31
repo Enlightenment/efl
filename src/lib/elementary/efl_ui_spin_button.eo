@@ -73,7 +73,4 @@ class @beta Efl.Ui.Spin_Button extends Efl.Ui.Spin implements Efl.Ui.Focus.Compo
       Efl.Access.Value.increment { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
    }
-   events {
-      delay,changed: void; [[Called when spin delay is changed.]]
-   }
 }

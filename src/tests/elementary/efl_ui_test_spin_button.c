@@ -89,7 +89,7 @@ EFL_START_TEST (spin_value_inc)
    efl_event_callback_add(spin, EFL_UI_RANGE_EVENT_CHANGED, _set_flag, &changed);
    efl_event_callback_add(spin, EFL_UI_RANGE_EVENT_MIN_REACHED, _set_flag, &min_reached);
    efl_event_callback_add(spin, EFL_UI_RANGE_EVENT_MAX_REACHED, _set_flag, &max_reached);
-   efl_event_callback_add(spin, EFL_UI_SPIN_BUTTON_EVENT_DELAY_CHANGED, _set_flag_quit, &delay_changed);
+   efl_event_callback_add(spin, EFL_UI_RANGE_EVENT_STEADY, _set_flag_quit, &delay_changed);
 
    click_spin_part(spin, "efl.inc_button");
 
@@ -114,7 +114,7 @@ EFL_START_TEST (spin_value_inc_max)
    efl_event_callback_add(spin, EFL_UI_RANGE_EVENT_CHANGED, _set_flag, &changed);
    efl_event_callback_add(spin, EFL_UI_RANGE_EVENT_MIN_REACHED, _set_flag, &min_reached);
    efl_event_callback_add(spin, EFL_UI_RANGE_EVENT_MAX_REACHED, _set_flag, &max_reached);
-   efl_event_callback_add(spin, EFL_UI_SPIN_BUTTON_EVENT_DELAY_CHANGED, _set_flag_quit, &delay_changed);
+   efl_event_callback_add(spin, EFL_UI_RANGE_EVENT_STEADY, _set_flag_quit, &delay_changed);
 
    click_spin_part(spin, "efl.inc_button");
 
@@ -139,7 +139,7 @@ EFL_START_TEST (spin_value_dec_min)
    efl_event_callback_add(spin, EFL_UI_RANGE_EVENT_CHANGED, _set_flag, &changed);
    efl_event_callback_add(spin, EFL_UI_RANGE_EVENT_MIN_REACHED, _set_flag, &min_reached);
    efl_event_callback_add(spin, EFL_UI_RANGE_EVENT_MAX_REACHED, _set_flag, &max_reached);
-   efl_event_callback_add(spin, EFL_UI_SPIN_BUTTON_EVENT_DELAY_CHANGED, _set_flag_quit, &delay_changed);
+   efl_event_callback_add(spin, EFL_UI_RANGE_EVENT_STEADY, _set_flag_quit, &delay_changed);
 
    click_spin_part(spin, "efl.dec_button");
 
