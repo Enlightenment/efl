@@ -184,7 +184,7 @@ _efl_ui_scroller_efl_content_content_set(Eo *obj,
 
    efl_content_set(sd->pan_obj, content);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return EINA_TRUE;
 }
@@ -214,7 +214,7 @@ _efl_ui_scroller_efl_content_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Scroller_
 static void
 _efl_ui_scroller_pan_resized_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   elm_layout_sizing_eval(data);
+   efl_canvas_group_change(data);
 }
 
 static void
@@ -289,13 +289,14 @@ _efl_ui_scroller_efl_object_destructor(Eo *obj,
 }
 
 EOLIAN static void
-_efl_ui_scroller_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Scroller_Data *sd)
+_efl_ui_scroller_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Scroller_Data *sd)
 {
    Eina_Size2D min = {0, 0}, max = {0, 0}, size = {-1, -1};
    Eina_Rect view = {};
    Evas_Coord vmw = 0, vmh = 0;
    double xw = 0.0, yw = 0.0;
 
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->content)
@@ -339,7 +340,7 @@ _efl_ui_scroller_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Scroller_Data *sd)
    if ((max.w > 0) && (size.w > max.w)) size.w = max.w;
    if ((max.h > 0) && (size.h > max.h)) size.h = max.h;
 
-   efl_gfx_hint_size_min_set(obj, size);
+   efl_gfx_hint_size_restricted_min_set(obj, size);
 }
 
 EOLIAN static Eina_Error
@@ -350,8 +351,6 @@ _efl_ui_scroller_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Scroller_Data *sd)
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
    efl_ui_mirrored_set(sd->smanager, efl_ui_mirrored_get(obj));
-
-   elm_layout_sizing_eval(obj);
 
    return int_ret;
 }
@@ -367,7 +366,7 @@ _efl_ui_scroller_efl_ui_scrollable_interactive_match_content_set(Eo *obj EINA_UN
 
    efl_ui_scrollable_match_content_set(sd->smanager, match_content_w, match_content_h);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static Eina_Bool
@@ -393,8 +392,5 @@ _efl_ui_scroller_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj, Efl_U
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_scroller, Efl_Ui_Scroller_Data)
 
 /* Internal EO APIs and hidden overrides */
-
-#define EFL_UI_SCROLLER_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_scroller)
 
 #include "efl_ui_scroller.eo.c"

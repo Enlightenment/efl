@@ -961,6 +961,7 @@ EOLIAN static void
 _efl_ui_widget_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *_pd EINA_UNUSED)
 {
    /* a NO-OP, on the base */
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
 }
 
 EOLIAN static void

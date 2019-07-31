@@ -24,4 +24,4 @@ static const Efl_Class_Description _elm_code_widget_legacy_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(elm_code_widget_legacy_class_get, &_elm_code_widget_legacy_class_desc, ELM_CODE_WIDGET_CLASS, EFL_UI_LEGACY_INTERFACE, NULL);
+EFL_DEFINE_CLASS(elm_code_widget_legacy_class_get, &_elm_code_widget_legacy_class_desc, ELM_CODE_WIDGET_CLASS, ELM_LAYOUT_MIXIN, EFL_UI_LEGACY_INTERFACE, NULL);

@@ -47,6 +47,7 @@ class @beta Efl.Ui.Panes extends Efl.Ui.Layout_Base implements Efl.Ui.Layout_Ori
    }
    implements {
       Efl.Object.constructor;
+      Efl.Canvas.Group.group_calculate;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Layout_Orientable.orientation { get; set; [[Only supports $vertical and $horizontal. Default is $vertical.]] }
       Efl.Part.part_get;

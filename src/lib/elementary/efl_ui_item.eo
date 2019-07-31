@@ -55,6 +55,5 @@ abstract @beta Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Selectab
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
-      Efl.Canvas.Group.group_calculate;
    }
 }

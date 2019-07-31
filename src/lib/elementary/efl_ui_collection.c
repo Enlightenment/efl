@@ -182,7 +182,7 @@ flush_min_size(Eo *obj, Efl_Ui_Collection_Data *pd)
    if (!pd->match_content.h)
      tmp.h = -1;
 
-   efl_gfx_hint_size_min_set(obj, tmp);
+   efl_gfx_hint_size_restricted_min_set(obj, tmp);
 }
 
 static int

@@ -317,8 +317,10 @@ EAPI void ecore_main_loop_begin(void);
  * Quits the main loop once all the events currently on the queue have
  * been processed.
  *
- * This function returns immediately, but will mark the ecore_main_loop_begin()
- * function to return at the end of the current main loop iteration.
+ * This function returns immediately, but if called inside the main loop
+ * it will mark the ecore_main_loop_begin() function to return at the
+ * end of the current main loop iteration.
+ *
  */
 EAPI void ecore_main_loop_quit(void);
 

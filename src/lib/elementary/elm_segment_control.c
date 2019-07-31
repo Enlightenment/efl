@@ -39,29 +39,6 @@ _elm_segment_control_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_Seg
    efl_ui_l10n_translation_update(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static void
-_elm_segment_control_elm_layout_sizing_eval(Eo *obj, Elm_Segment_Control_Data *sd)
-{
-   Evas_Coord minw = -1, minh = -1;
-   Evas_Coord w, h;
-   int item_count;
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   item_count = eina_list_count(sd->items);
-
-   elm_coords_finger_size_adjust(item_count, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-
-   evas_object_size_hint_combined_min_get(obj, &w, &h);
-
-   if (w > minw) minw = w;
-   if (h > minh) minh = h;
-
-   evas_object_size_hint_min_set(obj, minw, minh);
-}
-
 static void
 _item_free(Elm_Segment_Control_Item_Data *it)
 {
@@ -142,6 +119,7 @@ _update_list(Elm_Segment_Control_Data *sd)
    _position_items(sd);
 
    item_count = eina_list_count(sd->items);
+   efl_ui_layout_finger_size_multiplier_set(sd->obj, item_count, 1);
 
    if (item_count == 1)
      {
@@ -825,7 +803,6 @@ _elm_segment_control_item_efl_ui_focus_object_focus_parent_get(const Eo *obj EIN
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_SEGMENT_CONTROL_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_segment_control), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_segment_control)
 
 #include "elm_segment_control_item_eo.c"

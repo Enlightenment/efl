@@ -163,6 +163,7 @@
 # include "efl_ui_homogeneous_model.eo.h"
 # include "efl_ui_exact_model.eo.h"
 # include "efl_ui_average_model.eo.h"
+#include "efl_ui_layout_legacy_eo.h"
 
 extern const char *_efl_model_property_itemw;
 extern const char *_efl_model_property_itemh;
@@ -956,8 +957,8 @@ void efl_ui_slider_move_knob(Evas_Object *obj, double button_x, double button_y)
 # define ELM_LAYOUT_CONTENT_ALIASES_OPS(_pfx) _ELM_LAYOUT_ALIASES_OPS(_pfx, content)
 # define ELM_LAYOUT_TEXT_ALIASES_OPS(_pfx) _ELM_LAYOUT_ALIASES_OPS(_pfx, text)
 
-# define ELM_LAYOUT_SIZING_EVAL_OPS(_pfx) \
-   EFL_OBJECT_OP_FUNC(elm_layout_sizing_eval, _##_pfx##_elm_layout_sizing_eval)
+# define EFL_CANVAS_GROUP_CALC_OPS(_pfx) \
+   EFL_OBJECT_OP_FUNC(efl_canvas_group_calculate, _##_pfx##_efl_canvas_group_calculate)
 
 # define ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(_pfx, _typ) \
 EOLIAN static Eina_Bool \

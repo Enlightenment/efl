@@ -84,18 +84,6 @@ _activate(Evas_Object *obj)
      }
 }
 
-EOLIAN static void
-_efl_ui_button_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Button_Data *_pd EINA_UNUSED)
-{
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   Evas_Coord minw = -1, minh = -1;
-
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-}
-
 EOLIAN static Eina_Bool
 _efl_ui_button_efl_ui_widget_on_access_activate(Eo *obj, Efl_Ui_Button_Data *_pd EINA_UNUSED, Efl_Ui_Activate act)
 {
@@ -390,7 +378,6 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_BUTTON_EXTRA_OPS \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_button), \
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_button)
 
 #include "efl_ui_button.eo.c"
@@ -422,7 +409,7 @@ _icon_signal_emit(Evas_Object *obj)
 
    elm_layout_signal_emit(obj, buf, "elm");
    edje_object_message_signal_process(elm_layout_edje_get(obj));
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 /* FIXME: replicated from elm_layout just because button's icon spot

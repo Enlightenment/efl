@@ -28,7 +28,7 @@ _efl_ui_item_part_text_efl_text_text_set(Eo *obj, void *pd EINA_UNUSED, const ch
    Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    efl_text_set(efl_part(efl_super(wd->obj, MY_CLASS), wd->part), text);
 
-   elm_layout_sizing_eval(wd->obj);
+   efl_canvas_group_change(wd->obj);
 }
 
 EOLIAN static const char*
@@ -44,7 +44,7 @@ _efl_ui_item_part_text_efl_text_markup_markup_set(Eo *obj, void *pd EINA_UNUSED,
    Elm_Part_Data *wd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    efl_text_markup_set(efl_part(efl_super(wd->obj, MY_CLASS), wd->part), markup);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static const char*
@@ -202,43 +202,11 @@ EFL_CALLBACKS_ARRAY_DEFINE(self_listening,
 
 /* Mouse Controls ends */
 
-static void
-_sizing_eval(Evas_Object *obj, Efl_Ui_Item_Data *pd)
-{
-   Evas_Coord minh = -1, minw = -1;
-   Evas_Coord rest_w = 0, rest_h = 0;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   edje_object_size_min_restricted_calc(wd->resize_obj, &minw, &minh,
-                                        rest_w, rest_h);
-   evas_object_size_hint_min_set(obj, minw, minh);
-
-   pd->needs_size_calc = EINA_FALSE;
-}
-
-static void
-_efl_ui_item_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Item_Data *pd)
-{
-   if (pd->needs_size_calc) return;
-   pd->needs_size_calc = EINA_TRUE;
-
-   efl_canvas_group_change(obj);
-}
-
-EOLIAN static void
-_efl_ui_item_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Item_Data *pd)
-{
-   if (pd->needs_size_calc)
-     {
-        _sizing_eval(obj, pd);
-        pd->needs_size_calc = EINA_FALSE;
-     }
-}
-
 EOLIAN static Eo *
 _efl_ui_item_efl_object_constructor(Eo *obj, Efl_Ui_Item_Data *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_ui_layout_finger_size_multiplier_set(obj, 0, 0);
 
    efl_event_callback_array_add(obj, self_listening(), obj);
 
@@ -301,10 +269,5 @@ _efl_ui_item_container_get(const Eo *obj EINA_UNUSED, Efl_Ui_Item_Data *pd)
 {
    return pd->parent;
 }
-
-/* Internal EO APIs and hidden overrides */
-
-#define EFL_UI_ITEM_EXTRA_OPS \
-  ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_item)
 
 #include "efl_ui_item.eo.c"

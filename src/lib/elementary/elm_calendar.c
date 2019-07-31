@@ -125,22 +125,6 @@ _mark_free(Elm_Calendar_Mark *mark)
    free(mark);
 }
 
-EOLIAN static void
-_elm_calendar_elm_layout_sizing_eval(Eo *obj, Elm_Calendar_Data *_pd EINA_UNUSED)
-{
-   Evas_Coord minw = -1, minh = -1;
-   ELM_CALENDAR_DATA_GET(obj, sd);
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   if (sd->filling) return;
-   // 7x8 (1 month+year, days, 6 dates.)
-   elm_coords_finger_size_adjust(7, &minw, 8, &minh);
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
-}
-
 static inline int
 _maxdays_get(struct tm *selected_time, int month_offset)
 {
@@ -1304,12 +1288,10 @@ _elm_calendar_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Calendar_Data *sd
 EOLIAN static void
 _elm_calendar_efl_canvas_group_group_calculate(Eo *obj, Elm_Calendar_Data *_pd EINA_UNUSED)
 {
-   elm_layout_freeze(obj);
-
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    _set_headers(obj);
    _populate(obj);
-
-   elm_layout_thaw(obj);
+   efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
 }
 
 static void
@@ -1390,6 +1372,9 @@ _elm_calendar_efl_canvas_group_group_add(Eo *obj, Elm_Calendar_Data *priv)
      CRI("Failed to set layout!");
 
    _spinner_buttons_add(obj, priv);
+
+   // 7x8 (1 month+year, days, 6 dates.)
+   efl_ui_layout_finger_size_multiplier_set(obj, 7, 8);
 
    evas_object_smart_changed(obj);
 
@@ -1925,7 +1910,6 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_calendar, Elm_Calendar_Data)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_CALENDAR_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_calendar), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_calendar)
 
 #include "elm_calendar_eo.c"

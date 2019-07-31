@@ -3937,6 +3937,7 @@ _elm_map_pan_efl_canvas_group_group_calculate(Eo *obj, Elm_Map_Pan_Data *psd)
 {
    Evas_Coord w, h;
 
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    evas_object_geometry_get(obj, NULL, NULL, &w, &h);
    if (w <= 0 || h <= 0) return;
 

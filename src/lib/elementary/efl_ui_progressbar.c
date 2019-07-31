@@ -134,18 +134,6 @@ _val_set(Evas_Object *obj)
      }
 }
 
-EOLIAN static void
-_efl_ui_progressbar_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Progressbar_Data *_pd EINA_UNUSED)
-{
-   Evas_Coord minw = -1, minh = -1;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
-}
-
 //TODO: efl_ui_slider also use this.
 static const char *
 _theme_group_modify_pos_get(const char *cur_group, const char *search, size_t len, Eina_Bool is_legacy)
@@ -296,8 +284,6 @@ _efl_ui_progressbar_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *
 
    edje_object_message_signal_process(wd->resize_obj);
 
-   elm_layout_sizing_eval(obj);
-
    return int_ret;
 }
 
@@ -350,6 +336,8 @@ _efl_ui_progressbar_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Progressbar_Data 
      elm_widget_theme_klass_set(obj, "progressbar");
    efl_canvas_group_add(efl_super(obj, MY_CLASS));
 
+   efl_ui_layout_finger_size_multiplier_set(obj, 0, 0);
+
    priv->dir = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
    priv->val = MIN_RATIO_LVL;
    priv->val_max = 1.0;
@@ -375,8 +363,6 @@ _efl_ui_progressbar_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Progressbar_Data 
 
    _units_set(obj);
    _val_set(obj);
-
-   elm_layout_sizing_eval(obj);
 
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON)
      elm_widget_can_focus_set(obj, EINA_TRUE);
@@ -469,7 +455,7 @@ _progressbar_span_size_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Evas_Coord size
        (sd->spacer, 1, (double)sd->size * efl_gfx_entity_scale_get(obj) *
        elm_config_scale_get());
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 static void
@@ -761,7 +747,7 @@ _efl_ui_progressbar_show_progress_label_set(Eo *obj EINA_UNUSED, Efl_Ui_Progress
    elm_layout_signal_emit(obj, signal_name, ns);
    edje_object_message_signal_process(wd->resize_obj);
    _units_set(obj);
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static Eina_Bool
@@ -789,7 +775,6 @@ ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_progressbar)
 
 #define EFL_UI_PROGRESSBAR_EXTRA_OPS \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_progressbar), \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_progressbar), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_progressbar)
 
 #include "efl_ui_progressbar.eo.c"
@@ -828,7 +813,7 @@ _icon_signal_emit(Evas_Object *obj)
 
    elm_layout_signal_emit(obj, buf, "elm");
    edje_object_message_signal_process(elm_layout_edje_get(obj));
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 /* FIXME: replicated from elm_layout just because progressbar's icon spot

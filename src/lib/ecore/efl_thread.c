@@ -115,7 +115,7 @@ _cb_thread_ctrl_out(void *data, const Efl_Event *event EINA_UNUSED)
           }
         else if (cmd.d.command == CMD_CALL)
           {
-             EFlThreadIOCall func = cmd.d.ptr[0];
+             EflThreadIOCall func = cmd.d.ptr[0];
              void *data = cmd.d.ptr[1];
              Eina_Free_Cb free_func = cmd.d.ptr[2];
              if (func)
@@ -128,7 +128,7 @@ _cb_thread_ctrl_out(void *data, const Efl_Event *event EINA_UNUSED)
           }
         else if (cmd.d.command == CMD_CALL_SYNC)
           {
-             EFlThreadIOCallSync func = cmd.d.ptr[0];
+             EflThreadIOCallSync func = cmd.d.ptr[0];
              void *data = cmd.d.ptr[1];
              Eina_Free_Cb free_func = cmd.d.ptr[2];
              Control_Reply *rep = cmd.d.ptr[3];
@@ -416,7 +416,7 @@ _cb_thread_parent_ctrl_out(void *data, const Efl_Event *event EINA_UNUSED)
           }
         else if (cmd.d.command == CMD_CALL)
           {
-             EFlThreadIOCall func = cmd.d.ptr[0];
+             EflThreadIOCall func = cmd.d.ptr[0];
              void *data = cmd.d.ptr[1];
              Eina_Free_Cb free_func = cmd.d.ptr[2];
              if (func)
@@ -429,7 +429,7 @@ _cb_thread_parent_ctrl_out(void *data, const Efl_Event *event EINA_UNUSED)
           }
         else if (cmd.d.command == CMD_CALL_SYNC)
           {
-             EFlThreadIOCallSync func = cmd.d.ptr[0];
+             EflThreadIOCallSync func = cmd.d.ptr[0];
              void *data = cmd.d.ptr[1];
              Eina_Free_Cb free_func = cmd.d.ptr[2];
              Control_Reply *rep = cmd.d.ptr[3];
@@ -1034,7 +1034,7 @@ _efl_thread_efl_io_writer_can_write_get(const Eo *obj EINA_UNUSED, Efl_Thread_Da
 }
 
 static void
-_threadio_call(int fd, void *func_data, EFlThreadIOCall func, Eina_Free_Cb func_free_cb)
+_threadio_call(int fd, void *func_data, EflThreadIOCall func, Eina_Free_Cb func_free_cb)
 {
    Control_Data cmd;
 
@@ -1048,7 +1048,7 @@ _threadio_call(int fd, void *func_data, EFlThreadIOCall func, Eina_Free_Cb func_
 
 void
 _appthread_threadio_call(Eo *obj EINA_UNUSED, Efl_Appthread_Data *pd,
-                         void *func_data, EFlThreadIOCall func, Eina_Free_Cb func_free_cb)
+                         void *func_data, EflThreadIOCall func, Eina_Free_Cb func_free_cb)
 {
    Thread_Data *thdat = pd->thdat;
    _threadio_call(thdat->ctrl.in, func_data, func, func_free_cb);
@@ -1056,13 +1056,13 @@ _appthread_threadio_call(Eo *obj EINA_UNUSED, Efl_Appthread_Data *pd,
 
 EOLIAN static void
 _efl_thread_efl_threadio_call(Eo *obj EINA_UNUSED, Efl_Thread_Data *pd,
-                              void *func_data, EFlThreadIOCall func, Eina_Free_Cb func_free_cb)
+                              void *func_data, EflThreadIOCall func, Eina_Free_Cb func_free_cb)
 {
    _threadio_call(pd->ctrl.in, func_data, func, func_free_cb);
 }
 
 static void *
-_threadio_call_sync(int fd, void *func_data, EFlThreadIOCallSync func, Eina_Free_Cb func_free_cb)
+_threadio_call_sync(int fd, void *func_data, EflThreadIOCallSync func, Eina_Free_Cb func_free_cb)
 {
    Control_Data cmd;
    Control_Reply rep;
@@ -1082,7 +1082,7 @@ _threadio_call_sync(int fd, void *func_data, EFlThreadIOCallSync func, Eina_Free
 
 void *
 _appthread_threadio_call_sync(Eo *obj EINA_UNUSED, Efl_Appthread_Data *pd,
-                              void *func_data, EFlThreadIOCallSync func, Eina_Free_Cb func_free_cb)
+                              void *func_data, EflThreadIOCallSync func, Eina_Free_Cb func_free_cb)
 {
    Thread_Data *thdat = pd->thdat;
    return _threadio_call_sync(thdat->ctrl.in, func_data, func, func_free_cb);
@@ -1090,7 +1090,7 @@ _appthread_threadio_call_sync(Eo *obj EINA_UNUSED, Efl_Appthread_Data *pd,
 
 EOLIAN static void *
 _efl_thread_efl_threadio_call_sync(Eo *obj EINA_UNUSED, Efl_Thread_Data *pd,
-                                   void *func_data, EFlThreadIOCallSync func, Eina_Free_Cb func_free_cb)
+                                   void *func_data, EflThreadIOCallSync func, Eina_Free_Cb func_free_cb)
 {
    return _threadio_call_sync(pd->ctrl.in, func_data, func, func_free_cb);
 }

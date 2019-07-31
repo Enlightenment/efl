@@ -19,8 +19,10 @@ typedef Eo Efl_Ui_Layout_Legacy;
  * @ingroup Efl_Ui_Layout_Legacy
  */
 #define EFL_UI_LAYOUT_LEGACY_CLASS efl_ui_layout_legacy_class_get()
+#define ELM_LAYOUT_MIXIN elm_layout_mixin_get()
 
 EWAPI const Efl_Class *efl_ui_layout_legacy_class_get(void);
+EWAPI const Efl_Class *elm_layout_mixin_get(void);
 #endif /* EFL_BETA_API_SUPPORT */
 
 #endif

@@ -1135,7 +1135,7 @@ _deferred_recalc_job(void *data)
 }
 
 EOLIAN static void
-_elm_entry_elm_layout_sizing_eval(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_efl_canvas_group_calculate(Eo *obj, Elm_Entry_Data *sd)
 {
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord resw, resh;
@@ -6261,6 +6261,6 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_entry), \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
    ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_entry)
+   EFL_CANVAS_GROUP_CALC_OPS(elm_entry)
 
 #include "elm_entry_eo.c"

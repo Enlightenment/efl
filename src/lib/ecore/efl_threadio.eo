@@ -1,13 +1,13 @@
 import efl_object;
 
-function @beta EFlThreadIOCall {
+function @beta EflThreadIOCall {
    [[ A Function to call on the "other end" of a thread obvject ]]
    params {
       @in event: const(event); [[ ]]
    }
 };
 
-function @beta EFlThreadIOCallSync {
+function @beta EflThreadIOCallSync {
    [[ A Function to call on the "other end" of a thread obvject ]]
    params {
       @in event: const(event); [[ ]]
@@ -35,12 +35,12 @@ mixin @beta Efl.ThreadIO
       }
       call {
          params {
-            func: EFlThreadIOCall; [[ ]]
+            func: EflThreadIOCall; [[ ]]
          }
       }
       call_sync {
          params {
-            func: EFlThreadIOCallSync; [[ ]]
+            func: EflThreadIOCallSync; [[ ]]
          }
          return: void_ptr; [[ ]]
       }

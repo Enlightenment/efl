@@ -36,18 +36,6 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-EOLIAN static void
-_elm_dayselector_elm_layout_sizing_eval(Eo *obj, Elm_Dayselector_Data *sd EINA_UNUSED)
-{
-   Evas_Coord min_w = -1, min_h = -1;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   elm_coords_finger_size_adjust(ELM_DAYSELECTOR_MAX, &min_w, 1, &min_h);
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &min_w, &min_h, min_w, min_h);
-   evas_object_size_hint_min_set(obj, min_w, min_h);
-}
-
 static void
 _dayselector_resize(void *data,
                     Evas *e EINA_UNUSED,
@@ -452,6 +440,7 @@ _elm_dayselector_efl_canvas_group_group_add(Eo *obj, Elm_Dayselector_Data *priv)
    priv->week_start = _elm_config->week_start;
    priv->weekend_start = _elm_config->weekend_start;
    priv->weekend_len = _elm_config->weekend_len;
+   efl_ui_layout_finger_size_multiplier_set(obj, ELM_DAYSELECTOR_MAX, 1);
    _items_create(obj);
 
    evas_object_event_callback_add
@@ -648,7 +637,6 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_dayselector, ELM_DAYSELECTOR, Elm_Dayselecto
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_DAYSELECTOR_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_dayselector), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_dayselector)
 
 #include "elm_dayselector_eo.c"

@@ -894,8 +894,9 @@ _spacer_up_cb(void *data,
 EOLIAN static void
 _elm_slider_efl_canvas_group_group_calculate(Eo *obj, Elm_Slider_Data *sd)
 {
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
+   edje_object_freeze(obj);
    EFL_UI_SLIDER_DATA_GET(obj, sd2);
-   elm_layout_freeze(obj);
 
    if (_is_horizontal(sd2->dir))
      evas_object_size_hint_min_set
@@ -910,7 +911,8 @@ _elm_slider_efl_canvas_group_group_calculate(Eo *obj, Elm_Slider_Data *sd)
    _units_set(obj);
    _indicator_set(obj);
 
-   elm_layout_thaw(obj);
+   edje_object_thaw(obj);
+   efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
 }
 
 static void

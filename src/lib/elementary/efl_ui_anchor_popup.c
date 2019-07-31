@@ -20,6 +20,8 @@ _anchor_calc(Eo *obj)
    EFL_UI_POPUP_DATA_GET_OR_RETURN(obj, ppd);
    EFL_UI_ANCHOR_POPUP_DATA_GET(obj, pd);
 
+   if (!pd->anchor) return;
+
    Eina_Position2D pos = {0, 0};
 
    Eina_Rect a_geom = efl_gfx_entity_geometry_get(pd->anchor);
@@ -209,10 +211,7 @@ _anchor_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_event_callback_del(ppd->win_parent, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _anchor_geom_cb, data);
 
    pd->anchor = NULL;
-   //Add align calc only
-   Eina_Bool needs_size_calc = ppd->needs_size_calc;
-   elm_layout_sizing_eval(data);
-   ppd->needs_size_calc = needs_size_calc;
+   _anchor_calc(data);
 }
 
 static void
@@ -245,10 +244,7 @@ _efl_ui_anchor_popup_anchor_set(Eo *obj, Efl_Ui_Anchor_Popup_Data *pd, Eo *ancho
         efl_event_callback_add(anchor, EFL_EVENT_DEL, _anchor_del_cb, obj);
      }
 
-   //Add align/anchor calc only
-   Eina_Bool needs_size_calc = ppd->needs_size_calc;
-   elm_layout_sizing_eval(obj);
-   ppd->needs_size_calc = needs_size_calc;
+   _anchor_calc(obj);
 }
 
 EOLIAN static Efl_Object *
@@ -300,23 +296,13 @@ _efl_ui_anchor_popup_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Anchor_Popup_Da
 }
 
 EOLIAN static void
-_efl_ui_anchor_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Anchor_Popup_Data *pd)
+_efl_ui_anchor_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Anchor_Popup_Data *pd EINA_UNUSED)
 {
-   EFL_UI_POPUP_DATA_GET_OR_RETURN(obj, ppd);
-   /* When elm_layout_sizing_eval() is called, just flag is set instead of size
-    * calculation.
-    * The actual size calculation is done here when the object is rendered to
-    * avoid duplicate size calculations. */
-   if (ppd->needs_group_calc)
-     {
-        if (pd->anchor)
-          ppd->needs_align_calc = EINA_FALSE;
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
 
-        efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
+   efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
 
-        if (pd->anchor)
-          _anchor_calc(obj);
-     }
+   _anchor_calc(obj);
 }
 
 EOLIAN static Eo *

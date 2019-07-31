@@ -56,10 +56,8 @@ _mirrored_set(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_panel_elm_layout_sizing_eval(Eo *obj, Elm_Panel_Data *sd)
+_elm_panel_efl_canvas_group_calculate(Eo *obj, Elm_Panel_Data *sd)
 {
-   Evas_Coord mw = 0, mh = 0;
-
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->delete_me) return;
@@ -70,10 +68,7 @@ _elm_panel_elm_layout_sizing_eval(Eo *obj, Elm_Panel_Data *sd)
         else _drawer_open(obj, wd->w, wd->h, EINA_FALSE);
      }
 
-   evas_object_smart_calculate(sd->bx);
-   edje_object_size_min_calc(wd->resize_obj, &mw, &mh);
-   evas_object_size_hint_min_set(obj, mw, mh);
-   evas_object_size_hint_max_set(obj, -1, -1);
+   efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
 }
 
 static char *
@@ -854,6 +849,9 @@ _elm_panel_efl_canvas_group_group_add(Eo *obj, Elm_Panel_Data *priv)
    else
      {
         efl_content_set(efl_part(efl_super(obj, MY_CLASS), "elm.swallow.content"), priv->bx);
+        /* trigger box recalc on manual panel calc */
+        _efl_ui_layout_subobjs_calc_set(obj, EINA_TRUE);
+        efl_ui_layout_finger_size_multiplier_set(obj, 0, 0);
 
         if (edje_object_part_exists
             (wd->resize_obj, "elm.swallow.event"))
@@ -1524,7 +1522,7 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_panel, ELM_PANEL, Elm_Panel_Data)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_PANEL_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_panel), \
+   EFL_CANVAS_GROUP_CALC_OPS(elm_panel), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_panel)
 
 #include "elm_panel_eo.c"

@@ -160,6 +160,21 @@ public static class TestEinaValueEolian {
         Test.AssertEquals(expected, received);
         Test.AssertEquals(Eina.ValueType.Int32, received.GetValueType());
     }
+
+// ValueType in eolian context is beta, so not allowed.
+// Value does not have this problem as it is used as any_value/any_value_ptr
+#if EFL_BETA
+    public static void TestEolianEinaValueTypeMarshalling()
+    {
+        var obj = new Dummy.TestObject();
+
+        var values = Enum.GetValues(typeof(Eina.ValueType));
+        foreach (Eina.ValueType type in values)
+        {
+            Test.AssertEquals(type, obj.MirrorValueType(type));
+        }
+    }
+#endif
 }
 #pragma warning restore 1591
 }

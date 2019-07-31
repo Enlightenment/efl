@@ -922,20 +922,6 @@ _inc_dec_button_mouse_move_cb(void *data, const Efl_Event *event)
      }
 }
 
-EOLIAN static void
-_elm_spinner_elm_layout_sizing_eval(Eo *obj, Elm_Spinner_Data *_pd EINA_UNUSED)
-{
-   Evas_Coord minw = -1, minh = -1;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
-}
-
 EOLIAN static Eina_Bool
 _elm_spinner_efl_ui_focus_object_on_focus_update(Eo *obj, Elm_Spinner_Data *sd)
 {
@@ -1718,7 +1704,6 @@ _elm_spinner_efl_access_object_i18n_name_get(const Eo *obj, Elm_Spinner_Data *sd
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_SPINNER_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_spinner), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_spinner)
 
 #include "elm_spinner_eo.c"

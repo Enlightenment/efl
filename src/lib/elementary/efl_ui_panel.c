@@ -53,10 +53,8 @@ _mirrored_set(Evas_Object *obj,
 }
 
 EOLIAN static void
-_efl_ui_panel_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panel_Data *sd)
+_efl_ui_panel_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Panel_Data *sd)
 {
-   Evas_Coord mw = 0, mh = 0;
-
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    if (sd->delete_me) return;
@@ -67,10 +65,7 @@ _efl_ui_panel_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Panel_Data *sd)
         else _drawer_open(obj, wd->w, wd->h, EINA_FALSE);
      }
 
-   evas_object_smart_calculate(sd->bx);
-   edje_object_size_min_calc(wd->resize_obj, &mw, &mh);
-   evas_object_size_hint_min_set(obj, mw, mh);
-   evas_object_size_hint_max_set(obj, -1, -1);
+   efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
 }
 
 static char *
@@ -238,9 +233,6 @@ _efl_ui_panel_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Panel_Data *sd)
         if (edje_object_part_exists(wd->resize_obj, "efl.swallow.event"))
           efl_content_set(efl_part(efl_super(obj, MY_CLASS), "efl.swallow.event"), sd->event);
      }
-
-   if (efl_finalized_get(obj))
-     elm_layout_sizing_eval(obj);
 
    return int_ret;
 }
@@ -740,8 +732,7 @@ _efl_ui_panel_efl_content_content_set(Eo *obj, Efl_Ui_Panel_Data *sd, Efl_Gfx_En
           elm_widget_sub_object_add(sd->scr_ly, sd->content);
      }
    efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, content);
-   if (efl_alive_get(obj))
-     elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return EINA_TRUE;
 }
@@ -790,8 +781,7 @@ _scrollable_layout_resize(Eo *obj, Efl_Ui_Panel_Data *sd, Evas_Coord w, Evas_Coo
          evas_object_size_hint_min_set(sd->scr_event, w, h);
          break;
      }
-   if (efl_finalized_get(obj))
-     elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static void
@@ -868,6 +858,9 @@ _efl_ui_panel_efl_object_constructor(Eo *obj, Efl_Ui_Panel_Data *_pd)
    else
      {
         elm_layout_content_set(obj, "efl.content", _pd->bx);
+        /* trigger box recalc on manual panel calc */
+        _efl_ui_layout_subobjs_calc_set(obj, EINA_TRUE);
+        efl_ui_layout_finger_size_multiplier_set(obj, 0, 0);
 
         if (edje_object_part_exists
             (wd->resize_obj, "efl.swallow.event"))
@@ -950,8 +943,7 @@ _efl_ui_panel_orient_set(Eo *obj, Efl_Ui_Panel_Data *sd, Efl_Ui_Panel_Orient ori
    else
      _orient_set_do(obj);
 
-   if (efl_finalized_get(obj))
-     elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static Efl_Ui_Panel_Orient
@@ -1409,8 +1401,5 @@ _efl_ui_panel_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED
 }
 
 /* Internal EO APIs and hidden overrides */
-
-#define EFL_UI_PANEL_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_panel)
 
 #include "efl_ui_panel.eo.c"

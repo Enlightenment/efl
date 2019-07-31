@@ -167,6 +167,7 @@ _efl_ui_table_efl_pack_layout_layout_update(Eo *obj, Efl_Ui_Table_Data *pd)
 EOLIAN void
 _efl_ui_table_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Table_Data *_pd EINA_UNUSED)
 {
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    efl_pack_layout_update(obj);
 }
 

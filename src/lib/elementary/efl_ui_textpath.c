@@ -666,8 +666,9 @@ _textpath_text_set_internal(Eo *obj, Efl_Ui_Textpath_Data *pd, const char *part,
 }
 
 EOLIAN static void
-_efl_ui_textpath_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Efl_Ui_Textpath_Data *pd)
+_efl_ui_textpath_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    _sizing_eval(pd);
 }
 
@@ -882,7 +883,7 @@ _efl_ui_textpath_circular_set(Eo *obj, Efl_Ui_Textpath_Data *pd, double radius, 
    _path_start_angle_adjust(obj, pd);
    _sizing_eval(pd);
 
-   efl_gfx_hint_size_min_set(obj, EINA_SIZE2D((radius * 2) + text_size.h, (radius * 2) + text_size.h));
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D((radius * 2) + text_size.h, (radius * 2) + text_size.h));
 }
 
 EOLIAN static int
@@ -1002,7 +1003,7 @@ elm_textpath_circle_set(Eo *obj, double x, double y, double radius, double start
    _path_start_angle_adjust(obj, pd);
    _sizing_eval(pd);
 
-   efl_gfx_hint_size_min_set(obj, EINA_SIZE2D(x * 2, y * 2));
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(x * 2, y * 2));
 }
 
 #include "efl_ui_textpath_legacy_eo.c"

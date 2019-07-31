@@ -146,7 +146,7 @@ _on_sub_object_size_hint_change(void *data,
 {
    if (!efl_alive_get(data)) return;
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
-   elm_layout_sizing_eval(data);
+   efl_canvas_group_change(data);
 }
 
 static void
@@ -160,24 +160,68 @@ _part_cursor_free(Efl_Ui_Layout_Sub_Object_Cursor *pc)
 }
 
 static void
-_sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd)
+_sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd, Elm_Layout_Data *ld)
 {
-   Evas_Coord minh = -1, minw = -1;
-   Evas_Coord rest_w = 0, rest_h = 0;
+   int minh = 0, minw = 0;
+   int rest_w = 0, rest_h = 0;
+   Eina_Size2D sz;
    ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
    if (!efl_alive_get(obj)) return;
 
-   if (sd->restricted_calc_w)
-     rest_w = wd->w;
-   if (sd->restricted_calc_h)
-     rest_h = wd->h;
+   if (sd->calc_subobjs && !evas_smart_objects_calculating_get(evas_object_evas_get(obj)))
+     {
+        Eina_List *l;
+        Eo *subobj;
+        /* user has manually triggered a smart calc and wants subobjs to also calc */
+        EINA_LIST_FOREACH(wd->subobjs, l, subobj)
+          efl_canvas_group_calculate(subobj);
+     }
+   elm_coords_finger_size_adjust(sd->finger_size_multiplier_x, &rest_w,
+                                 sd->finger_size_multiplier_y, &rest_h);
+   if (ld)
+     sz = efl_gfx_hint_size_combined_min_get(obj);
+   else
+     sz = efl_gfx_hint_size_min_get(obj);
+   minw = sz.w;
+   minh = sz.h;
+
+   rest_w = MAX(minw, rest_w);
+   rest_h = MAX(minh, rest_h);
+
+   if (ld)
+     {
+        if (ld->restricted_calc_w)
+          rest_w = MIN(wd->w, rest_w);
+        if (ld->restricted_calc_h)
+          rest_h = MIN(wd->h, rest_w);
+     }
 
    edje_object_size_min_restricted_calc(wd->resize_obj, &minw, &minh,
                                         rest_w, rest_h);
-   evas_object_size_hint_min_set(obj, minw, minh);
+   /* if desired, scale layout by finger size */
+   if (sd->finger_size_multiplier_x)
+     elm_coords_finger_size_adjust(sd->finger_size_multiplier_x, &minw,
+                                   sd->finger_size_multiplier_y, NULL);
+   if (sd->finger_size_multiplier_y)
+     elm_coords_finger_size_adjust(sd->finger_size_multiplier_x, NULL,
+                                   sd->finger_size_multiplier_y, &minh);
 
-   sd->restricted_calc_w = sd->restricted_calc_h = EINA_FALSE;
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
+
+   if (ld)
+     {
+        ld->restricted_calc_w = ld->restricted_calc_h = EINA_FALSE;
+        efl_gfx_hint_size_min_set(obj, EINA_SIZE2D(minw, minh));
+     }
+}
+
+void
+_efl_ui_layout_subobjs_calc_set(Eo *obj, Eina_Bool set)
+{
+   Efl_Ui_Layout_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(sd);
+   sd->calc_subobjs = !!set;
 }
 
 /* common content cases for layout objects: icon and text */
@@ -437,7 +481,7 @@ _visuals_refresh(Evas_Object *obj,
    _efl_ui_layout_highlight_in_theme(obj);
    _flush_mirrored_state(obj);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return EINA_TRUE;
 }
@@ -490,6 +534,11 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
    if ((theme_apply_ret == EFL_UI_THEME_APPLY_ERROR_DEFAULT) ||
        (theme_apply_internal_ret == EFL_UI_THEME_APPLY_ERROR_DEFAULT))
      return EFL_UI_THEME_APPLY_ERROR_DEFAULT;
+
+   /* unset existing size hints to force accurate recalc */
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(0, 0));
+   if (elm_widget_is_legacy(obj))
+     efl_gfx_hint_size_min_set(obj, EINA_SIZE2D(0, 0));
 
    return EFL_UI_THEME_APPLY_ERROR_NONE;
 }
@@ -577,7 +626,7 @@ _efl_ui_layout_base_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Layout_D
 
    // No need to resize object during destruction
    if (wd->resize_obj && efl_alive_get(obj))
-     elm_layout_sizing_eval(obj);
+     efl_canvas_group_change(obj);
 
    return EINA_TRUE;
 }
@@ -733,7 +782,8 @@ _on_size_evaluate_signal(void *data,
                          const char *emission EINA_UNUSED,
                          const char *source EINA_UNUSED)
 {
-   elm_layout_sizing_eval(data);
+   efl_canvas_group_change(data);
+   efl_canvas_group_calculate(data);
 }
 
 EOLIAN static void
@@ -823,16 +873,44 @@ _efl_ui_layout_base_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Layout_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
+EOLIAN static void
+_efl_ui_layout_efl_canvas_group_group_calculate(Eo *obj, void *_pd EINA_UNUSED)
+{
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
+   _sizing_eval(obj, efl_data_scope_get(obj, MY_CLASS), NULL);
+}
+
 /* rewrite or extend this one on your derived class as to suit your
  * needs */
 EOLIAN static void
 _efl_ui_layout_base_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
-   if (sd->needs_size_calc)
-     {
-        _sizing_eval(obj, sd);
-        sd->needs_size_calc = EINA_FALSE;
-     }
+   Elm_Layout_Data *ld = efl_data_scope_safe_get(obj, ELM_LAYOUT_MIXIN);
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
+   if ((!ld) || ld->needs_size_calc)
+     _sizing_eval(obj, sd, ld);
+   if (ld) ld->needs_size_calc = EINA_FALSE;
+}
+
+EOLIAN static void
+_efl_ui_layout_base_finger_size_multiplier_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *sd, unsigned int *mult_x, unsigned int *mult_y)
+{
+   if (mult_x)
+     *mult_x = sd->finger_size_multiplier_x;
+   if (mult_y)
+     *mult_y = sd->finger_size_multiplier_y;
+}
+
+EOLIAN static void
+_efl_ui_layout_base_finger_size_multiplier_set(Eo *obj, Efl_Ui_Layout_Data *sd, unsigned int mult_x, unsigned int mult_y)
+{
+   if ((sd->finger_size_multiplier_x == mult_x) &&
+       (sd->finger_size_multiplier_y == mult_y))
+     return;
+   sd->finger_size_multiplier_x = mult_x;
+   sd->finger_size_multiplier_y = mult_y;
+   if (efl_alive_get(obj))
+     efl_canvas_group_change(obj);
 }
 
 static Efl_Ui_Layout_Sub_Object_Cursor *
@@ -1062,7 +1140,7 @@ _efl_ui_layout_content_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Ev
         _icon_signal_emit(sd, sub_d, EINA_TRUE);
      }
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
 end:
    return EINA_TRUE;
@@ -1262,7 +1340,7 @@ _efl_ui_layout_text_generic_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *par
                   edje_object_part_text_escaped_set
                     (wd->resize_obj, part, NULL);
                   sd->subs = eina_list_remove_list(sd->subs, l);
-                  elm_layout_sizing_eval(obj);
+                  efl_canvas_group_change(obj);
                   return EINA_TRUE;
                }
              else
@@ -1298,7 +1376,7 @@ _efl_ui_layout_text_generic_set(Eo *obj, Efl_Ui_Layout_Data *sd, const char *par
 
    _text_signal_emit(sd, sub_d, EINA_TRUE);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    if (_elm_config->access_mode == ELM_ACCESS_MODE_ON &&
        sd->can_access && !(sub_d->obj))
@@ -1397,7 +1475,7 @@ _efl_ui_layout_box_append(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Eva
    sub_d->type = BOX_APPEND;
    _layout_box_subobj_init(sd, sub_d, part, child);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return EINA_TRUE;
 }
@@ -1434,7 +1512,7 @@ _efl_ui_layout_box_prepend(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Ev
    sub_d->type = BOX_PREPEND;
    _layout_box_subobj_init(sd, sub_d, part, child);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return EINA_TRUE;
 }
@@ -1476,7 +1554,7 @@ _efl_ui_layout_box_insert_before(Eo *obj, Efl_Ui_Layout_Data *sd, const char *pa
    evas_object_event_callback_add
      ((Evas_Object *)reference, EVAS_CALLBACK_DEL, _box_reference_del, sub_d);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return EINA_TRUE;
 }
@@ -1514,7 +1592,7 @@ _efl_ui_layout_box_insert_at(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, 
    sub_d->p.box.pos = pos;
    _layout_box_subobj_init(sd, sub_d, part, child);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return EINA_TRUE;
 }
@@ -1612,7 +1690,7 @@ _efl_ui_layout_table_pack(Eo *obj, Efl_Ui_Layout_Data *sd, const char *part, Eva
    sd->subs = eina_list_append(sd->subs, sub_d);
    efl_parent_set(child, obj);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return EINA_TRUE;
 }
@@ -1709,31 +1787,38 @@ _efl_ui_layout_base_efl_layout_group_part_exist_get(const Eo *obj, Efl_Ui_Layout
    return efl_layout_group_part_exist_get(wd->resize_obj, part);
 }
 
+EOLIAN static void
+_elm_layout_efl_canvas_group_change(Eo *obj, Elm_Layout_Data *ld)
+{
+   Efl_Ui_Layout_Data *sd;
+
+   if (!efl_finalized_get(obj)) return;
+   sd = efl_data_scope_safe_get(obj, EFL_UI_LAYOUT_BASE_CLASS);
+   if (sd->frozen) return;
+   ld->needs_size_calc = EINA_TRUE;
+   efl_canvas_group_change(efl_super(obj, ELM_LAYOUT_MIXIN));
+}
+
 /* layout's sizing evaluation is deferred. evaluation requests are
  * queued up and only flag the object as 'changed'. when it comes to
  * Evas's rendering phase, it will be addressed, finally (see
  * _efl_ui_layout_smart_calculate()). */
-static void
-_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Layout_Data *sd)
+EOLIAN static void
+_elm_layout_sizing_eval(Eo *obj, Elm_Layout_Data *ld)
 {
-   if (!efl_finalized_get(obj)) return;
-   if (sd->frozen) return;
-   if (sd->needs_size_calc) return;
-   sd->needs_size_calc = EINA_TRUE;
-
-   evas_object_smart_changed(obj);
+   _elm_layout_efl_canvas_group_change(obj, ld);
 }
 
 EAPI void
 elm_layout_sizing_restricted_eval(Eo *obj, Eina_Bool w, Eina_Bool h)
 {
-   Efl_Ui_Layout_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
+   Elm_Layout_Data *ld = efl_data_scope_safe_get(obj, ELM_LAYOUT_MIXIN);
 
-   if (!sd) return;
-   sd->restricted_calc_w = !!w;
-   sd->restricted_calc_h = !!h;
+   EINA_SAFETY_ON_NULL_RETURN(ld);
+   ld->restricted_calc_w = !!w;
+   ld->restricted_calc_h = !!h;
 
-   evas_object_smart_changed(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static int
@@ -1757,7 +1842,7 @@ _efl_ui_layout_base_efl_layout_calc_calc_thaw(Eo *obj, Efl_Ui_Layout_Data *sd)
 
    edje_object_thaw(wd->resize_obj);
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return 0;
 }
@@ -2434,9 +2519,22 @@ _efl_ui_layout_base_efl_ui_factory_bind_factory_bind(Eo *obj EINA_UNUSED, Efl_Ui
 }
 
 EOLIAN static Eo *
+_efl_ui_layout_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
+{
+   obj = efl_constructor(efl_super(obj, EFL_UI_LAYOUT_CLASS));
+   Efl_Ui_Layout_Data *sd = efl_data_scope_get(obj, MY_CLASS);
+
+   /* basic layouts should not obey finger size */
+   sd->finger_size_multiplier_x = sd->finger_size_multiplier_y = 0;
+
+   return obj;
+}
+
+EOLIAN static Eo *
 _efl_ui_layout_base_efl_object_constructor(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
    sd->obj = obj;
+   sd->finger_size_multiplier_x = sd->finger_size_multiplier_y = 1;
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_FILLER);
@@ -2451,6 +2549,14 @@ _efl_ui_layout_base_efl_object_finalize(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UNU
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
    eo = efl_finalize(efl_super(obj, MY_CLASS));
    efl_ui_widget_theme_apply(eo);
+   efl_canvas_group_change(obj);
+
+   Elm_Layout_Data *ld = efl_data_scope_safe_get(obj, ELM_LAYOUT_MIXIN);
+   /* need to explicitly set this here to permit group_calc since efl_canvas_group_change
+    * blocks non-finalized objects and the object will not be finalized until after this
+    * function returns
+    */
+   if (ld) ld->needs_size_calc = EINA_TRUE;
 
    win = elm_widget_top_get(obj);
    if (efl_isa(win, EFL_UI_WIN_CLASS))
@@ -2702,7 +2808,6 @@ _efl_ui_layout_base_theme_rotation_apply(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UN
 
 /* Internal EO APIs and hidden overrides */
 
-EAPI EFL_VOID_FUNC_BODY(elm_layout_sizing_eval)
 EFL_FUNC_BODY_CONST(elm_layout_text_aliases_get, const Elm_Layout_Part_Alias_Description *, NULL)
 EFL_FUNC_BODY_CONST(elm_layout_content_aliases_get, const Elm_Layout_Part_Alias_Description *, NULL)
 
@@ -2715,8 +2820,8 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_PART_TEXT_DEFAULT_OPS(efl_ui_layout_base), \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
    ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
-   EFL_OBJECT_OP_FUNC(elm_layout_sizing_eval, _elm_layout_sizing_eval), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_ui_layout_base_efl_object_dbg_info_get)
+
 
 #include "efl_ui_layout_base.eo.c"
 #include "efl_ui_layout.eo.c"

@@ -208,7 +208,7 @@ _elm_label_efl_ui_widget_theme_apply(Eo *obj, Elm_Label_Data *sd)
 }
 
 EOLIAN static void
-_elm_label_elm_layout_sizing_eval(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
+_elm_label_efl_canvas_group_calculate(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
 {
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord resw, resh;
@@ -627,7 +627,7 @@ ELM_PART_OVERRIDE_TEXT_SET(elm_label, ELM_LABEL, Elm_Label_Data)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_LABEL_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_label), \
+   EFL_CANVAS_GROUP_CALC_OPS(elm_label), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_label)
 
 #include "elm_label_eo.c"

@@ -161,6 +161,13 @@ struct marshall_type_visitor_generate
                     r.base_type = "void";
                 return r;
                }}
+           , {"Value_Type", nullptr, [&]
+               {
+                regular_type_def r = regular;
+                r.namespaces.clear();
+                r.base_type = "Eina.ValueTypeBox";
+                return r;
+               }}
         };
 
         if (regular.is_struct() && !blacklist::is_struct_blacklisted(regular) && !(bool)(regular.base_qualifier & qualifier_info::is_own))

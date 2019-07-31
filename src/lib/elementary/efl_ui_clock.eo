@@ -223,6 +223,7 @@ class @beta Efl.Ui.Clock extends Efl.Ui.Layout_Base
    }
    implements {
       Efl.Object.constructor;
+      Efl.Canvas.Group.group_calculate;
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.L10n.translation_update;

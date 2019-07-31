@@ -154,6 +154,6 @@ static const Efl_Class_Description _elm_flipselector_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(elm_flipselector_class_get, &_elm_flipselector_class_desc, EFL_UI_LAYOUT_BASE_CLASS, EFL_UI_RANGE_INTERACTIVE_INTERFACE, EFL_ACCESS_WIDGET_ACTION_MIXIN, EFL_UI_SELECTABLE_INTERFACE, EFL_UI_LEGACY_INTERFACE, NULL);
+EFL_DEFINE_CLASS(elm_flipselector_class_get, &_elm_flipselector_class_desc, EFL_UI_LAYOUT_BASE_CLASS, EFL_UI_RANGE_INTERACTIVE_INTERFACE, EFL_ACCESS_WIDGET_ACTION_MIXIN, EFL_UI_SELECTABLE_INTERFACE, ELM_LAYOUT_MIXIN, EFL_UI_LEGACY_INTERFACE, NULL);
 
 #include "elm_flipselector_eo.legacy.c"

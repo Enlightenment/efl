@@ -41,7 +41,7 @@ _efl_ui_alert_popup_text_set(Eo *obj, Efl_Ui_Alert_Popup_Data *pd, const char *p
 
              ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
              edje_object_message_signal_process(wd->resize_obj);
-             elm_layout_sizing_eval(obj);
+             efl_canvas_group_change(obj);
           }
      }
    else
@@ -228,7 +228,7 @@ _efl_ui_alert_popup_button_set(Eo *obj, Efl_Ui_Alert_Popup_Data *pd, Efl_Ui_Aler
         edje_object_message_signal_process(wd->resize_obj);
      }
 
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static Eo *

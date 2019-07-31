@@ -211,18 +211,6 @@ _elm_player_efl_ui_widget_theme_apply(Eo *obj, Elm_Player_Data *sd)
    return int_ret;
 }
 
-EOLIAN static void
-_elm_player_elm_layout_sizing_eval(Eo *obj, Elm_Player_Data *sd EINA_UNUSED)
-{
-   Evas_Coord w, h;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   edje_object_size_min_get(wd->resize_obj, &w, &h);
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &w, &h, w, h);
-   evas_object_size_hint_min_set(obj, w, h);
-}
-
 static void
 _update_slider(void *data, const Efl_Event *event EINA_UNUSED)
 {
@@ -596,6 +584,7 @@ _elm_player_efl_canvas_group_group_add(Eo *obj, Elm_Player_Data *priv)
    if (!elm_layout_theme_set(obj, "player", "base", elm_widget_style_get(obj)))
      CRI("Failed to set layout!");
 
+   efl_ui_layout_finger_size_multiplier_set(obj, 0, 0);
    priv->forward = _player_button_add(obj, "forward", _forward);
    priv->info = _player_button_add(obj, "info", _info);
    priv->next = _player_button_add(obj, "next", _next);
@@ -706,7 +695,6 @@ ELM_PART_CONTENT_DEFAULT_GET(elm_player, "video")
 
 #define ELM_PLAYER_EXTRA_OPS \
    ELM_PART_CONTENT_DEFAULT_OPS(elm_player), \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_player), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_player)
 
 #include "elm_player_eo.c"

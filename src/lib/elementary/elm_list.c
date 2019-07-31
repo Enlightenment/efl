@@ -691,7 +691,7 @@ _elm_list_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
 }
 
 EOLIAN static void
-_elm_list_elm_layout_sizing_eval(Eo *obj, Elm_List_Data *sd)
+_elm_list_efl_canvas_group_calculate(Eo *obj, Elm_List_Data *sd)
 {
    Evas_Coord vw = 0, vh = 0;
    Evas_Coord minw = 0, minh = 0, maxw = 0, maxh = 0, w = 0, h = 0, vmw = 0, vmh = 0;
@@ -699,6 +699,9 @@ _elm_list_elm_layout_sizing_eval(Eo *obj, Elm_List_Data *sd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    if (!efl_finalized_get(obj)) return; //not constructed yet
+
+   if (efl_canvas_group_need_recalculate_get(sd->box))
+     efl_canvas_group_calculate(sd->box);
 
    evas_object_size_hint_combined_min_get(sd->box, &minw, &minh);
    evas_object_size_hint_max_get(sd->box, &maxw, &maxh);
@@ -836,6 +839,7 @@ _items_fix(Evas_Object *obj)
    Evas_Coord mw, mh;
    int i, redo = 0;
    Eina_Array walk;
+   Eina_Bool hints_changed = EINA_FALSE;
 
    const char *style;
    const char *it_odd;
@@ -999,6 +1003,12 @@ _items_fix(Evas_Object *obj)
                   mw = mw > ew ? mw : ew;
                   mh = mh > eh ? mh : eh;
                   */
+                  {
+                     int pmw, pmh;
+                     /* if size changed, flag box for recalc to pull in new sizes */
+                     evas_object_size_hint_min_get(VIEW(it), &pmw, &pmh);
+                     hints_changed |= pmw != mh || pmh != mh;
+                  }
                   evas_object_size_hint_min_set(VIEW(it), mw, mh);
                   evas_object_show(VIEW(it));
                }
@@ -1044,6 +1054,8 @@ _items_fix(Evas_Object *obj)
 
    sd->fixing_now = EINA_FALSE;
    _elm_list_unwalk(obj, sd);
+   if (hints_changed)
+     efl_canvas_group_need_recalculate_set(sd->box, 1);
 
    //focus highlight in_theme is set by list item theme.
    _elm_widget_item_highlight_in_theme(
@@ -3211,7 +3223,7 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_list, Elm_List_Data)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_LIST_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_list), \
+   EFL_CANVAS_GROUP_CALC_OPS(elm_list), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_list)
 
 #include "elm_list_eo.c"

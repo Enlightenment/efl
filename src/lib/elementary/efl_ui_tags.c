@@ -119,7 +119,7 @@ _shrink_mode_set(Eo *obj,
 
                   edje_object_size_min_calc(sd->end, &w_label_count, &h);
                   elm_coords_finger_size_adjust(1, &w_label_count, 1, &h);
-                  efl_gfx_hint_size_min_set(sd->end, EINA_SIZE2D(w_label_count, h));
+                  efl_gfx_hint_size_restricted_min_set(sd->end, EINA_SIZE2D(w_label_count, h));
                   elm_box_pack_end(sd->box, sd->end);
                   evas_object_show(sd->end);
 
@@ -425,7 +425,7 @@ _item_new(Efl_Ui_Tags_Data *sd,
    if (sd->w_box && min.w > r.w)
      {
         elm_coords_finger_size_adjust(1, &r.w, 1, &min.h);
-        efl_gfx_hint_size_min_set(layout, EINA_SIZE2D(r.w, min.h));
+        efl_gfx_hint_size_restricted_min_set(layout, EINA_SIZE2D(r.w, min.h));
         efl_gfx_entity_size_set(layout, EINA_SIZE2D(r.w, min.h));
      }
 
@@ -462,21 +462,6 @@ _efl_ui_tags_efl_ui_widget_widget_input_event_handler(Eo *obj EINA_UNUSED, Efl_U
 {
    //lets stop eating all events
    return EINA_FALSE;
-}
-
-EOLIAN static void
-_efl_ui_tags_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Tags_Data *sd EINA_UNUSED)
-{
-   Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
-
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc
-	      (wd->resize_obj, &minw, &minh, minw, minh);
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   efl_gfx_hint_size_min_set(obj, EINA_SIZE2D(minw, minh));
-   efl_gfx_hint_size_max_set(obj, EINA_SIZE2D(maxw, maxh));
 }
 
 static void
@@ -522,15 +507,14 @@ _box_resize_cb(void *data,
      {
         EINA_LIST_FOREACH (sd->layouts, l, layout)
           {
-             elm_layout_sizing_eval(layout);
-             evas_object_smart_calculate(layout);
+             efl_canvas_group_calculate(layout);
 
              min = efl_gfx_hint_size_combined_min_get(layout);
 
              if (min.w > r.w - hpad)
                {
                   min.w = r.w - hpad;
-                  efl_gfx_hint_size_min_set(layout, EINA_SIZE2D(min.w, min.h));
+                  efl_gfx_hint_size_restricted_min_set(layout, EINA_SIZE2D(min.w, min.h));
                   efl_gfx_entity_size_set(layout, EINA_SIZE2D(min.w, min.h));
                }
           }
@@ -780,7 +764,7 @@ _box_min_size_calculate(Evas_Object *box,
      }
    box_min.h = lineh * line_num + (line_num - 1) * priv->pad.v;
 
-   efl_gfx_hint_size_min_set(box, EINA_SIZE2D(box_min.w, box_min.h));
+   efl_gfx_hint_size_restricted_min_set(box, EINA_SIZE2D(box_min.w, box_min.h));
    *line_height = lineh;
 
    return EINA_TRUE;
@@ -927,7 +911,7 @@ _view_init(Evas_Object *obj, Efl_Ui_Tags_Data *sd)
                        efl_text_interactive_editable_set(efl_added, EINA_TRUE),
                        efl_composite_attach(obj, efl_added));
 
-   efl_gfx_hint_size_min_set(sd->entry, EINA_SIZE2D(MIN_W_ENTRY, 0));
+   efl_gfx_hint_size_restricted_min_set(sd->entry, EINA_SIZE2D(MIN_W_ENTRY, 0));
    evas_object_size_hint_weight_set
      (sd->entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    efl_gfx_hint_fill_set(sd->entry, EINA_TRUE, EINA_TRUE);
@@ -945,7 +929,7 @@ _view_init(Evas_Object *obj, Efl_Ui_Tags_Data *sd)
 
         edje_object_size_min_calc(sd->end, &button_min_width, &button_min_height);
         elm_coords_finger_size_adjust(1, &button_min_width, 1, &button_min_height);
-        efl_gfx_hint_size_min_set(sd->end, EINA_SIZE2D(button_min_width, button_min_height));
+        efl_gfx_hint_size_restricted_min_set(sd->end, EINA_SIZE2D(button_min_width, button_min_height));
         elm_widget_sub_object_add(obj, sd->end);
      }
 }
@@ -1142,8 +1126,5 @@ _efl_ui_tags_efl_ui_format_apply_formatted_value(Eo *obj EINA_UNUSED, Efl_Ui_Tag
 {
    _view_update(pd);
 }
-
-#define EFL_UI_TAGS_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_tags), \
 
 #include "efl_ui_tags.eo.c"

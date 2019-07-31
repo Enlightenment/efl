@@ -47,7 +47,7 @@
 /**
  * Base widget smart data extended with layout instance data.
  */
-typedef struct _Elm_Layout_Smart_Data
+typedef struct _Efl_Ui_Layout_Data
 {
    Evas_Object          *obj; /**< The object itself */
    Eina_List            *subs; /**< List of Elm_Layout_Sub_Object_Data structs, to hold the actual sub objects such as text, content and the children of box and table. */
@@ -64,16 +64,23 @@ typedef struct _Elm_Layout_Smart_Data
 
    int                   frozen; /**< Layout freeze counter */
 
-   Eina_Bool             needs_size_calc : 1; /**< This flag is set true when the layout sizing eval is already requested. This defers sizing evaluation until smart calculation to avoid unnecessary calculation. */
-   Eina_Bool             restricted_calc_w : 1; /**< This is a flag to support edje restricted_calc in w axis. */
-   Eina_Bool             restricted_calc_h : 1; /**< This is a flag to support edje restricted_calc in y axis. */
+   unsigned int          finger_size_multiplier_x, finger_size_multiplier_y; /**< multipliers for finger_size during group_calc */
+
    Eina_Bool             can_access : 1; /**< This is true when all text(including textblock) parts can be accessible by accessibility. */
    Eina_Bool             destructed_is : 1; /**< This flag indicates if Efl.Ui.Layout destructor was called. This is needed to avoid unnecessary calculation of subobject deletion during layout object's deletion. */
    Eina_Bool             file_set : 1; /**< This flag indicates if Efl.Ui.Layout source is set from a file*/
    Eina_Bool             automatic_orientation_apply : 1;
    Eina_Bool             model_bound : 1; /**< Set to true once we are watching over a model*/
    Eina_Bool             model_watch : 1; /**< Set to true once we do watch for model change*/
+   Eina_Bool             calc_subobjs : 1; /**< Set to true if group_calc should also handle subobjs during manual calc */
 } Efl_Ui_Layout_Data;
+
+typedef struct _Elm_Layout_Data
+{
+   Eina_Bool             needs_size_calc : 1; /**< This flag is set true when the layout sizing eval is already requested. This defers sizing evaluation until smart calculation to avoid unnecessary calculation. */
+   Eina_Bool             restricted_calc_w : 1; /**< This is a flag to support edje restricted_calc in w axis. */
+   Eina_Bool             restricted_calc_h : 1; /**< This is a flag to support edje restricted_calc in y axis. */
+} Elm_Layout_Data;
 
 /**
  * @}
@@ -85,5 +92,7 @@ typedef struct _Elm_Layout_Smart_Data
 #define EFL_UI_LAYOUT_CHECK(obj) \
   if (EINA_UNLIKELY(!efl_isa(obj, EFL_UI_LAYOUT_BASE_CLASS))) \
     return
+
+void _efl_ui_layout_subobjs_calc_set(Eo *obj, Eina_Bool set);
 
 #endif

@@ -107,13 +107,14 @@ _key_action_play(Evas_Object *obj, const char *params EINA_UNUSED)
 }
 
 EOLIAN static void
-_efl_ui_video_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Video_Data *sd)
+_efl_ui_video_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Video_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    Evas_Coord minw = 0, minh = 0;
    Evas_Coord w = 0, h = 0;
 
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    evas_object_size_hint_request_get(sd->emotion, &minw, &minh);
    if (minw && minh)
      evas_object_size_hint_aspect_set
@@ -134,7 +135,7 @@ _on_size_hints_changed(void *data EINA_UNUSED,
                        Evas_Object *obj,
                        void *event_info EINA_UNUSED)
 {
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 static void
@@ -173,7 +174,7 @@ _on_playback_finished(void *data, const Efl_Event *event EINA_UNUSED)
 static void
 _on_aspect_ratio_updated(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   elm_layout_sizing_eval(data);
+   efl_canvas_group_change(data);
 }
 
 static void
@@ -416,7 +417,6 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_video, Efl_Ui_Video_Data)
 /* Internal EO APIs and hidden overrides */
 
 #define EFL_UI_VIDEO_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_video), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_video)
 
 #include "efl_ui_video.eo.c"

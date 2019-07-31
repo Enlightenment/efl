@@ -29,20 +29,6 @@ _label_write(Evas_Object *obj, Efl_Ui_Spin_Data *sd)
    eina_strbuf_free(strbuf);
 }
 
-EOLIAN static void
-_efl_ui_spin_elm_layout_sizing_eval(Eo *obj, Efl_Ui_Spin_Data *_pd EINA_UNUSED)
-{
-   Evas_Coord minw = -1, minh = -1;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
-}
-
 EOLIAN static Eina_Bool
 _efl_ui_spin_efl_ui_widget_widget_input_event_handler(Eo *obj, Efl_Ui_Spin_Data *sd, const Efl_Event *eo_event, Evas_Object *src EINA_UNUSED)
 {
@@ -85,8 +71,6 @@ _efl_ui_spin_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Data *sd)
    _label_write(obj, sd);
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   elm_layout_sizing_eval(obj);
-
    return obj;
 }
 
@@ -100,7 +84,7 @@ EOLIAN static void
 _efl_ui_spin_efl_ui_format_apply_formatted_value(Eo *obj, Efl_Ui_Spin_Data *sd EINA_UNUSED)
 {
    _label_write(obj, sd);
-   elm_layout_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static void
@@ -186,8 +170,5 @@ _efl_ui_spin_efl_ui_range_display_range_value_get(const Eo *obj EINA_UNUSED, Efl
 {
    return sd->val;
 }
-
-#define EFL_UI_SPIN_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(efl_ui_spin), \
 
 #include "efl_ui_spin.eo.c"

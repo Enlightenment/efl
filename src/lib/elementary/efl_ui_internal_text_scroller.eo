@@ -48,5 +48,6 @@ class @beta Efl.Ui.Internal_Text_Scroller extends Efl.Ui.Scroller
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
+      Efl.Canvas.Group.group_calculate;
    }
 }

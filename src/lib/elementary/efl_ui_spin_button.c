@@ -634,7 +634,6 @@ _efl_ui_spin_button_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Spin_Button_Data *
      _access_spinner_register(obj, EINA_TRUE);
 
    _label_write(obj);
-   elm_layout_sizing_eval(obj);
    return EFL_UI_THEME_APPLY_ERROR_NONE;
 }
 

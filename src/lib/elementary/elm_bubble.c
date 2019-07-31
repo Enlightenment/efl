@@ -53,19 +53,6 @@ static const char *corner_string[] =
    "bottom_right"
 };
 
-EOLIAN static void
-_elm_bubble_elm_layout_sizing_eval(Eo *obj, Elm_Bubble_Data *_pd EINA_UNUSED)
-{
-   Evas_Coord minw = -1, minh = -1;
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
-   elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   edje_object_size_min_restricted_calc
-     (wd->resize_obj, &minw, &minh, minw, minh);
-   evas_object_size_hint_min_set(obj, minw, minh);
-   evas_object_size_hint_max_set(obj, -1, -1);
-}
-
 static void
 _on_mouse_up(void *data,
              Evas *e EINA_UNUSED,
@@ -242,7 +229,6 @@ ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 #define ELM_BUBBLE_EXTRA_OPS \
    ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
    ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_bubble), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_bubble)
 
 #include "elm_bubble_eo.c"

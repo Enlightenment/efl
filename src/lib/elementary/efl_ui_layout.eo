@@ -8,6 +8,9 @@ class Efl.Ui.Layout extends Efl.Ui.Layout_Base implements Efl.File
      the group that the data belongs to, in case it's an EET file
      (including Edje files).
 
+     By default, layouts do not apply the finger_size global configuration value
+     when calculating their geometries.
+
      @since 1.22
    ]]
    data: null;
@@ -16,5 +19,7 @@ class Efl.Ui.Layout extends Efl.Ui.Layout_Base implements Efl.File
       Efl.File.key { get; set; }
       Efl.File.mmap { get; set; }
       Efl.File.load;
+      Efl.Object.constructor;
+      Efl.Canvas.Group.group_calculate;
    }
 }

@@ -458,7 +458,7 @@ _item_sizing_eval(Elm_Popup_Item_Data *it)
 }
 
 EOLIAN static void
-_elm_popup_elm_layout_sizing_eval(Eo *obj, Elm_Popup_Data *sd)
+_elm_popup_efl_canvas_group_calculate(Eo *obj, Elm_Popup_Data *sd)
 {
    Eina_List *elist;
    Elm_Popup_Item_Data *it;
@@ -1868,7 +1868,7 @@ ELM_PART_OVERRIDE_TEXT_GET(elm_popup, ELM_POPUP, Elm_Popup_Data)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_POPUP_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_popup), \
+   EFL_CANVAS_GROUP_CALC_OPS(elm_popup), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_popup)
 
 #include "elm_popup_eo.c"

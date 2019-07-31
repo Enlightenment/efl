@@ -1281,7 +1281,7 @@ _efl_ui_image_efl_layout_calc_calc_thaw(Eo *obj, Efl_Ui_Image_Data *sd)
    if (sd->edje)
      {
         int ret = edje_object_thaw(sd->img);
-        elm_layout_sizing_eval(obj);
+        efl_canvas_group_calculate(obj);
         return ret;
      }
    return 0;

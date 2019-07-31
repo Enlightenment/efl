@@ -1642,6 +1642,13 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       call_find_provider_for_iface {
          return: Efl.Object;
       }
+
+      mirror_value_type @beta @const {
+         params {
+            @in type: const(ptr(Eina.Value_Type));
+         }
+         return: const(ptr(Eina.Value_Type));
+      }
    }
    implements {
       Efl.Object.constructor;

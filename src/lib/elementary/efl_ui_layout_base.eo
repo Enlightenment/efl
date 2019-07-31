@@ -12,6 +12,26 @@ abstract Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container,
    c_prefix: efl_ui_layout;
    data: Efl_Ui_Layout_Data;
    methods {
+      @property finger_size_multiplier {
+         [[Set a multiplier for applying finger size to the layout.
+
+           By default, any widget which inherits from this class will apply
+           the finger_size global config value with a 1:1 width:height ratio during sizing
+           calculations. This will cause the widget to scale its size based on the finger_size
+           config value.
+
+           To disable finger_size in a layout's sizing calculations, set the multipliers for both
+           axes to 0.
+
+           @since 1.23
+         ]]
+         set {}
+         get {}
+         values {
+            multiplier_x: uint; [[Multiplier for X axis.]]
+            multiplier_y: uint; [[Multiplier for Y axis.]]
+         }
+      }
       @property theme {
          [[The theme of this widget, defines which edje group will be used.
 

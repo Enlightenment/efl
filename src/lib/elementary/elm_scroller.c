@@ -326,7 +326,7 @@ _elm_scroller_efl_ui_widget_on_access_activate(Eo *obj, Elm_Scroller_Data *_pd E
 }
 
 EOLIAN static void
-_elm_scroller_elm_layout_sizing_eval(Eo *obj, Elm_Scroller_Data *sd)
+_elm_scroller_efl_canvas_group_calculate(Eo *obj, Elm_Scroller_Data *sd)
 {
    Evas_Coord vw = 0, vh = 0, minw = 0, minh = 0, maxw = 0, maxh = 0, w, h,
               vmw, vmh;
@@ -1402,7 +1402,7 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_scroller, ELM_SCROLLER, Elm_Scroller_Data)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_SCROLLER_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_scroller), \
+   EFL_CANVAS_GROUP_CALC_OPS(elm_scroller), \
    EFL_CANVAS_GROUP_ADD_OPS(elm_scroller)
 
 #include "elm_scroller_eo.c"

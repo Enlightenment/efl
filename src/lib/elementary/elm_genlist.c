@@ -925,7 +925,7 @@ _calc_job(void *data)
 }
 
 EOLIAN static void
-_elm_genlist_elm_layout_sizing_eval(Eo *obj, Elm_Genlist_Data *sd)
+_elm_genlist_efl_canvas_group_calculate(Eo *obj, Elm_Genlist_Data *sd)
 {
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    Evas_Coord vmw = 0, vmh = 0;
@@ -2617,6 +2617,7 @@ _elm_genlist_pan_efl_canvas_group_group_calculate(Eo *obj, Elm_Genlist_Pan_Data 
 
    Elm_Genlist_Data *sd = psd->wsd;
 
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
    evas_event_freeze(e);
 
    if (sd->pan_changed)
@@ -8958,7 +8959,7 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(elm_genlist, Elm_Genlist_Data)
 /* Internal EO APIs and hidden overrides */
 
 #define ELM_GENLIST_EXTRA_OPS \
-   ELM_LAYOUT_SIZING_EVAL_OPS(elm_genlist), \
+   EFL_CANVAS_GROUP_CALC_OPS(elm_genlist), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_genlist)
 
 #define ELM_GENLIST_PAN_EXTRA_OPS \

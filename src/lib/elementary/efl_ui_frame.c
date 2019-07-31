@@ -45,7 +45,7 @@ _sizing_eval(Evas_Object *obj,
 static void
 _recalc(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   elm_layout_sizing_eval(data);
+   efl_canvas_group_calculate(data);
 }
 
 static void
@@ -61,7 +61,7 @@ _on_recalc_done(void *data,
      (wd->resize_obj, EFL_LAYOUT_EVENT_RECALC, _recalc, data);
    sd->anim = EINA_FALSE;
 
-   elm_layout_sizing_eval(data);
+   efl_canvas_group_calculate(data);
 }
 
 static void
@@ -95,14 +95,9 @@ _on_frame_clicked(void *data,
 EOLIAN static void
 _efl_ui_frame_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Frame_Data *sd)
 {
-   EFL_UI_LAYOUT_DATA_GET(obj, ld);
-
-   if (ld->needs_size_calc)
-     {
-        /* calling OWN sizing evaluate code here */
-        _sizing_eval(obj, sd);
-        ld->needs_size_calc = EINA_FALSE;
-     }
+   /* calling OWN sizing evaluate code here */
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
+   _sizing_eval(obj, sd);
 }
 
 static void
@@ -158,8 +153,6 @@ _efl_ui_frame_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Frame_Data *_pd EINA_UN
                                        elm_widget_theme_element_get(obj),
                                        elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      CRI("Failed to set layout!");
-
-   elm_layout_sizing_eval(obj);
 }
 
 EOLIAN static Eo *
