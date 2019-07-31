@@ -231,7 +231,7 @@ ecore_wl2_shutdown(void)
 {
    if (_ecore_wl2_init_count < 1)
      {
-        ERR("Ecore_Wl2 shutdown called without Ecore_Wl2 Init");
+        EINA_LOG_ERR("Ecore_Wl2 shutdown called without Ecore_Wl2 Init");
         return 0;
      }
 
