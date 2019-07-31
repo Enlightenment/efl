@@ -142,6 +142,7 @@ position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
    const int len = 100;
    Eina_Size2D size_buffer[len];
    Efl_Gfx_Entity *obj_buffer[len];
+   Efl_Ui_Position_Manager_Range_Update ev;
 
    if (!pd->size) return;
    if (pd->average_item_size <= 0) return;
@@ -233,8 +234,13 @@ position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
         else
           geom.x += size.w;
      }
-   pd->prev_run.start_id = start_id;
-   pd->prev_run.end_id = end_id;
+   if (pd->prev_run.start_id != start_id || pd->prev_run.end_id != end_id)
+     {
+        ev.start_id = pd->prev_run.start_id = start_id;
+        ev.end_id = pd->prev_run.end_id = end_id;
+        efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_VISIBLE_RANGE_CHANGED, &ev);
+     }
+
 }
 
 static Eina_Value

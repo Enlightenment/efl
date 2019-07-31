@@ -17,6 +17,12 @@ function Efl.Ui.Position_Manager.Batch_Access_Size {
    return: int; [[The number of filled elements in the slice]]
 };
 
+struct Efl.Ui.Position_Manager.Range_Update {
+   [[A struct containing the the updated range of visible items in this position manger]]
+   start_id : uint; [[The first item that is visible]]
+   end_id : uint; [[The last item that is visible]]
+}
+
 interface @beta Efl.Ui.Position_Manager.Entity extends Efl.Ui.Layout_Orientable
 {
    [[
@@ -112,5 +118,6 @@ interface @beta Efl.Ui.Position_Manager.Entity extends Efl.Ui.Layout_Orientable
    events {
      content_size,changed : Eina.Size2D; [[Emitted when the aggregate size of all items has changed. This can be used to resize an enclosing Pan object.]]
      content_min_size,changed : Eina.Size2D; [[Emitted when the minimum size of all items has changed. The minimum size is the size, that this position_manager needs at *least* to display a single item.]]
+     visible_range,changed : Efl.Ui.Position_Manager.Range_Update;
    }
 }

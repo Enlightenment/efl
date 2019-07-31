@@ -38,6 +38,7 @@ _reposition_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
    unsigned int start_id, end_id, step;
    const int len = 100;
    Efl_Gfx_Entity *obj_buffer[len];
+   Efl_Ui_Position_Manager_Range_Update ev;
 
    if (!pd->size) return;
    if (pd->max_min_size.w <= 0 || pd->max_min_size.h <= 0) return;
@@ -111,8 +112,12 @@ _reposition_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
         //printf(">%d (%d, %d, %d, %d) %p\n", i, geom.x, geom.y, geom.w, geom.h, ent);
         efl_gfx_entity_geometry_set(ent, geom);
      }
-   pd->prev_run.start_id = start_id;
-   pd->prev_run.end_id = end_id;
+   if (pd->prev_run.start_id != start_id || pd->prev_run.end_id != end_id)
+     {
+        ev.start_id = pd->prev_run.start_id = start_id;
+        ev.end_id = pd->prev_run.end_id = end_id;
+        efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_VISIBLE_RANGE_CHANGED, &ev);
+     }
 }
 
 static inline void
