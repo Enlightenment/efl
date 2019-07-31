@@ -50,12 +50,12 @@ _shrink_mode_set(Eo *obj,
    if (shrink == EINA_TRUE)
      {
         Evas_Coord w = 0;
-        Evas_Coord box_inner_item_width_padding = 0;
+        double box_inner_item_width_padding = 0;
         Eina_Value val;
 
-        elm_box_padding_get(sd->box, &box_inner_item_width_padding, NULL);
+        efl_gfx_arrangement_content_padding_get(sd->box, &box_inner_item_width_padding, NULL, NULL);
         // unpack all items and entry
-        elm_box_unpack_all(sd->box);
+        efl_pack_unpack_all(sd->box);
         EINA_LIST_FOREACH(sd->layouts, l, layout)
           {
              evas_object_hide(layout);
@@ -65,7 +65,7 @@ _shrink_mode_set(Eo *obj,
 
         if (sd->label && sd->label_packed)
           {
-             elm_box_pack_end(sd->box, sd->label);
+             efl_pack(sd->box, sd->label);
              Eina_Size2D label_min =
                 efl_gfx_hint_size_combined_min_get(sd->label);
              w -= label_min.w;
@@ -79,7 +79,7 @@ _shrink_mode_set(Eo *obj,
           {
              Evas_Coord w_label_count = 0, h = 0;
 
-             elm_box_pack_end(sd->box, layout);
+             efl_pack(sd->box, layout);
              evas_object_show(layout);
 
              Eina_Size2D item_min =
@@ -107,7 +107,7 @@ _shrink_mode_set(Eo *obj,
              if ((w < 0) || (w < w_label_count))
                {
                   Eina_Strbuf *strbuf = eina_strbuf_new();
-                  elm_box_unpack(sd->box, layout);
+                  efl_pack_unpack(sd->box, layout);
                   evas_object_hide(layout);
                   count++;
 
@@ -120,7 +120,7 @@ _shrink_mode_set(Eo *obj,
                   edje_object_size_min_calc(sd->end, &w_label_count, &h);
                   elm_coords_finger_size_adjust(1, &w_label_count, 1, &h);
                   efl_gfx_hint_size_restricted_min_set(sd->end, EINA_SIZE2D(w_label_count, h));
-                  elm_box_pack_end(sd->box, sd->end);
+                  efl_pack(sd->box, sd->end);
                   evas_object_show(sd->end);
 
                   break;
@@ -139,7 +139,7 @@ _shrink_mode_set(Eo *obj,
    else
      {
         // unpack all items and entry
-        elm_box_unpack_all(sd->box);
+        efl_pack_unpack_all(sd->box);
         EINA_LIST_FOREACH(sd->layouts, l, layout)
           {
              evas_object_hide(layout);
@@ -148,13 +148,13 @@ _shrink_mode_set(Eo *obj,
 
         // pack buttons only 1line
 
-        if (sd->label && sd->label_packed) elm_box_pack_end(sd->box, sd->label);
+        if (sd->label && sd->label_packed) efl_pack(sd->box, sd->label);
 
         // pack remain btns
         layout = NULL;
         EINA_LIST_FOREACH(sd->layouts, l, layout)
           {
-             elm_box_pack_end(sd->box, layout);
+             efl_pack(sd->box, layout);
              evas_object_show(layout);
           }
 
@@ -338,7 +338,7 @@ _on_item_deleted(void *data,
         if (item == obj)
           {
              sd->layouts = eina_list_remove(sd->layouts, item);
-             elm_box_unpack(sd->box, item);
+             efl_pack_unpack(sd->box, item);
 
              if (sd->selected_it == item)
                sd->selected_it = NULL;
@@ -440,9 +440,9 @@ _item_new(Efl_Ui_Tags_Data *sd,
    else
      {
         if (sd->editable)
-          elm_box_pack_before(sd->box, layout, sd->entry);
+          efl_pack_before(sd->box, layout, sd->entry);
         else
-          elm_box_pack_end(sd->box, layout);
+          efl_pack(sd->box, layout);
      }
 
    if (!efl_ui_focus_object_focus_get(obj) && sd->view_state == TAGS_VIEW_SHRINK && sd->w_box)
@@ -487,14 +487,14 @@ _box_resize_cb(void *data,
    Eina_Rect r;
    Eina_List *l;
    Eo *layout;
-   int hpad;
+   double hpad;
 
    Efl_Ui_Tags_Data *sd = efl_data_scope_get(data, EFL_UI_TAGS_CLASS);
 
    r = efl_gfx_entity_geometry_get(sd->box);
    if ((r.w <= elm_config_finger_size_get()) || (r.h <= elm_config_finger_size_get())) return;
 
-   elm_box_padding_get(obj, &hpad, NULL);
+   efl_gfx_arrangement_content_padding_get(obj, &hpad, NULL, NULL);
 
    if (sd->h_box < r.h)
      efl_event_callback_call
@@ -710,180 +710,35 @@ _label_set(Evas_Object *obj,
    if (!strlen(str))
      {
         sd->label_packed = EINA_FALSE;
-        elm_box_unpack(sd->box, sd->label);
+        efl_pack_unpack(sd->box, sd->label);
         evas_object_hide(sd->label);
      }
    else
      {
         if (sd->label_packed)
-          elm_box_unpack(sd->box, sd->label);
+          efl_pack_unpack(sd->box, sd->label);
         sd->label_packed = EINA_TRUE;
         edje_object_size_min_calc(sd->label, &width, &height);
         evas_object_size_hint_min_set(sd->label, width, height);
-        elm_box_pack_start(sd->box, sd->label);
+        efl_pack_begin(sd->box, sd->label);
         evas_object_show(sd->label);
      }
 
    _view_update(sd);
 }
 
-static Eina_Bool
-_box_min_size_calculate(Evas_Object *box,
-                        Evas_Object_Box_Data *priv,
-                        int *line_height,
-                        void *data EINA_UNUSED)
-{
-   Evas_Coord w, linew = 0, lineh = 0;
-   Eina_Size2D box_min;
-   Eina_Size2D min;
-   int line_num;
-   Eina_List *l;
-   Evas_Object_Box_Option *opt;
-
-   evas_object_geometry_get(box, NULL, NULL, &w, NULL);
-   box_min = efl_gfx_hint_size_combined_min_get(box);
-
-   if (!w) return EINA_FALSE;
-
-   line_num = 1;
-   EINA_LIST_FOREACH(priv->children, l, opt)
-     {
-        min = efl_gfx_hint_size_combined_min_get(opt->obj);
-
-        linew += min.w;
-        if (lineh < min.h) lineh = min.h;
-
-        if (linew > w)
-          {
-             linew = min.w;
-             line_num++;
-          }
-
-        if ((linew != 0) && (l != eina_list_last(priv->children)))
-          linew += priv->pad.h;
-     }
-   box_min.h = lineh * line_num + (line_num - 1) * priv->pad.v;
-
-   efl_gfx_hint_size_restricted_min_set(box, EINA_SIZE2D(box_min.w, box_min.h));
-   *line_height = lineh;
-
-   return EINA_TRUE;
-}
-
-static void
-_box_layout_cb(Evas_Object *o,
-               Evas_Object_Box_Data *priv,
-               void *data)
-{
-   Evas_Coord xx, yy;
-   Eina_Rect r;
-   Evas_Coord linew = 0, lineh = 0;
-   Eina_Size2D min;
-   Evas_Object_Box_Option *opt;
-   const Eina_List *l, *l_next;
-   Evas_Object *obj;
-   double ax, ay;
-   Eina_Bool rtl;
-
-   if (!_box_min_size_calculate(o, priv, &lineh, data)) return;
-
-   r = efl_gfx_entity_geometry_get(o);
-
-   min = efl_gfx_hint_size_combined_min_get(o);
-   efl_gfx_hint_align_get(o, &ax, &ay);
-
-   rtl = efl_ui_mirrored_get(data);
-   if (rtl) ax = 1.0 - ax;
-
-   if (r.w < min.w)
-     {
-        r.x = r.x + ((r.w - min.w) * (1.0 - ax));
-        r.w = min.w;
-     }
-   if (r.h < min.h)
-     {
-        r.y = r.y + ((r.h - min.h) * (1.0 - ay));
-        r.h = min.h;
-     }
-
-   xx = r.x;
-   yy = r.y;
-
-   EINA_LIST_FOREACH_SAFE(priv->children, l, l_next, opt)
-     {
-        Eina_Size2D obj_min;
-        Evas_Coord ww, hh, ow, oh;
-        double wx, wy;
-        Eina_Bool fx, fy;
-
-        obj = opt->obj;
-        evas_object_size_hint_align_get(obj, &ax, &ay);
-        evas_object_size_hint_weight_get(obj, &wx, &wy);
-        efl_gfx_hint_fill_get(obj, &fx, &fy);
-        obj_min = efl_gfx_hint_size_combined_min_get(obj);
-
-        if (EINA_DBL_EQ(ax, -1)) { fx = 1; ax = 0.5; }
-        else if (ax < 0) { ax = 0.0; }
-        if (EINA_DBL_EQ(ay, -1)) { fy = 1; ay = 0.5; }
-        else if (ay < 0) { ay = 0.0; }
-        if (rtl) ax = 1.0 - ax;
-
-        ww = obj_min.w;
-        if (!EINA_DBL_EQ(wx, 0))
-          {
-             if (ww <= r.w - linew) ww = r.w - linew;
-             else ww = r.w;
-          }
-        hh = lineh;
-
-        ow = obj_min.w;
-        if (fx) ow = ww;
-        oh = obj_min.h;
-        if (fy) oh = hh;
-
-        linew += ww;
-        if (linew > r.w && l != priv->children)
-          {
-             xx = r.x;
-             yy += hh;
-             yy += priv->pad.v;
-             linew = ww;
-          }
-
-        evas_object_geometry_set(obj,
-                                 ((!rtl) ? (xx) : (r.x + (r.w - (xx - r.x) - ww)))
-                                 + (Evas_Coord)(((double)(ww - ow)) * ax),
-                                 yy + (Evas_Coord)(((double)(hh - oh)) * ay),
-                                 ow, oh);
-        xx += ww;
-        xx += priv->pad.h;
-
-        if (linew > r.w)
-          {
-             opt = eina_list_data_get(l_next);
-             if (opt && opt->obj && efl_isa(opt->obj, ELM_ENTRY_CLASS))
-               {
-                  xx = r.x;
-                  yy += hh;
-                  yy += priv->pad.v;
-                  linew = 0;
-               }
-          }
-        if ((linew != 0) && (l != eina_list_last(priv->children)))
-          linew += priv->pad.h;
-     }
-}
-
 static void
 _view_init(Evas_Object *obj, Efl_Ui_Tags_Data *sd)
 {
    const char *str;
-   double pad_scale;
    int hpad = 0, vpad = 0;
 
    //FIXME: efl_ui_box doesn't support box_layout customizing.
    //       So i use legacy box here.
-   sd->box = elm_box_add(obj);
+   sd->box = efl_add(EFL_UI_BOX_FLOW_CLASS, obj,
+     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
+     efl_gfx_arrangement_content_align_set(efl_added, 0, 0),
+     efl_gfx_hint_align_set(efl_added, 0, 0));
 
    if (!sd->box) return;
 
@@ -891,13 +746,9 @@ _view_init(Evas_Object *obj, Efl_Ui_Tags_Data *sd)
    if (str) hpad = atoi(str);
    str = elm_layout_data_get(obj, "vertical_pad");
    if (str) vpad = atoi(str);
-   pad_scale = efl_gfx_entity_scale_get(obj) * elm_config_scale_get()
-      / edje_object_base_scale_get(elm_layout_edje_get(obj));
-   elm_box_padding_set(sd->box, (hpad * pad_scale), (vpad * pad_scale));
+   efl_gfx_arrangement_content_padding_set(sd->box, hpad, vpad, EINA_TRUE);
 
-   elm_box_layout_set(sd->box, _box_layout_cb, obj, NULL);
-   elm_box_homogeneous_set(sd->box, EINA_FALSE);
-   elm_layout_content_set(obj, "efl.box", sd->box);
+   efl_content_set(efl_part(obj, "efl.box"), sd->box);
 
    sd->label = edje_object_add(evas_object_evas_get(obj));
    if (!sd->label) return;
@@ -912,11 +763,10 @@ _view_init(Evas_Object *obj, Efl_Ui_Tags_Data *sd)
                        efl_composite_attach(obj, efl_added));
 
    efl_gfx_hint_size_restricted_min_set(sd->entry, EINA_SIZE2D(MIN_W_ENTRY, 0));
-   evas_object_size_hint_weight_set
-     (sd->entry, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   efl_gfx_hint_fill_set(sd->entry, EINA_TRUE, EINA_TRUE);
+   efl_gfx_hint_weight_set(sd->entry, EFL_GFX_HINT_EXPAND, 0);
+   efl_gfx_hint_fill_set(sd->entry, EINA_TRUE, EINA_FALSE);
 
-   elm_box_pack_end(sd->box, sd->entry);
+   efl_pack(sd->box, sd->entry);
 
    sd->view_state = TAGS_VIEW_ENTRY;
 
@@ -1067,12 +917,12 @@ _efl_ui_tags_editable_set(Eo *obj EINA_UNUSED, Efl_Ui_Tags_Data *sd, Eina_Bool e
 
    if (sd->editable && (sd->view_state != TAGS_VIEW_SHRINK))
      {
-        elm_box_pack_end(sd->box, sd->entry);
+        efl_pack(sd->box, sd->entry);
         evas_object_show(sd->entry);
      }
    else
      {
-        elm_box_unpack(sd->box, sd->entry);
+        efl_pack_unpack(sd->box, sd->entry);
         evas_object_hide(sd->entry);
      }
 }
