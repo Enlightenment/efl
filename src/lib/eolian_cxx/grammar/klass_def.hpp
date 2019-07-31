@@ -872,7 +872,7 @@ struct function_def
                char typenam[2] = { 0, };
                typenam[0] = template_typename++;
                std::string statement = "auto fw_" + param.param_name + " = new ::efl::eolian::function_wrapper<";
-               statement += param.type.c_type + ", " + typenam + ">(" + param.param_name + ");";
+               statement += param.type.c_type + ", " + typenam + ", ::efl::eolian::" + param.type.c_type + "__function_tag>(" + param.param_name + ");";
                statements.push_back(statement);
             }
        }
