@@ -10,7 +10,7 @@
 #include "elm_widget.h"
 /* spec-meta-start
       {"test-interface":"Efl.Ui.Clickable",
-       "test-widgets": ["Efl.Ui.Button", "Efl.Ui.Image", "Efl.Ui.Panes", "Efl.Ui.Frame", "Efl.Ui.Item.Realized"]
+       "test-widgets": ["Efl.Ui.Button", "Efl.Ui.Image", "Efl.Ui.Panes", "Efl.Ui.Frame", "Efl.Ui.Item.Realized", "Efl.Ui.Radio", "Efl.Ui.Check"]
        }
    spec-meta-end
  */

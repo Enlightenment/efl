@@ -218,12 +218,11 @@ _efl_ui_radio_efl_object_constructor(Eo *obj, Efl_Ui_Radio_Data *pd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
+   /* in newer APIs the toggle is toggeled in check via the clickable interface */
    if (elm_widget_is_legacy(obj))
      elm_layout_signal_callback_add
         (obj, "elm,action,radio,toggle", "*", _radio_on_cb, obj);
-   else
-     elm_layout_signal_callback_add
-        (obj, "efl,action,radio,toggle", "*", _radio_on_cb, obj);
+
 
    if (elm_widget_is_legacy(obj))
      {

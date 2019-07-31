@@ -222,10 +222,7 @@ group { "efl/radio";
       }
    }
    programs {
-      program {
-         signal: "mouse,clicked,1"; source: "event";
-         action: SIGNAL_EMIT "efl,action,radio,toggle" "efl";
-      }
+      EFL_UI_CLICKABLE_PART_BIND(event)
       program {
          signal: "efl,state,radio,on"; source: "efl";
          action:  STATE_SET "selected" 0.0;
