@@ -41,7 +41,7 @@ test_ui_spin_button(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
            efl_ui_range_limits_set(efl_added, 0, 10),
            efl_ui_range_value_set(efl_added, 6),
            efl_ui_range_step_set(efl_added, 2),
-           efl_ui_spin_button_circulate_set(efl_added, EINA_TRUE),
+           efl_ui_spin_button_wraparound_set(efl_added, EINA_TRUE),
            efl_ui_spin_button_editable_set(efl_added, EINA_TRUE),
            efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_STEADY,_spin_delay_changed_cb, NULL),
            efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED, _spin_changed_cb, NULL),

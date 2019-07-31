@@ -8,7 +8,7 @@ class @beta Efl.Ui.Spin_Button extends Efl.Ui.Spin implements Efl.Ui.Focus.Compo
      over them and inputting new ones.
    ]]
    methods {
-      @property circulate {
+      @property wraparound {
          [[Control whether the spin should circulate value when it reaches its minimum or maximum value.
 
            Disabled by default. If disabled, when the user tries to increment the

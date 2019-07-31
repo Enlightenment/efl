@@ -123,14 +123,14 @@ _fields_init(Eo *obj)
    //Field create.
    pd->hour = efl_add(EFL_UI_SPIN_BUTTON_CLASS, obj,
                       efl_ui_range_limits_set(efl_added, 1, 12),
-                      efl_ui_spin_button_circulate_set(efl_added, EINA_TRUE),
+                      efl_ui_spin_button_wraparound_set(efl_added, EINA_TRUE),
                       efl_ui_spin_button_editable_set(efl_added, EINA_TRUE),
                       efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
                       efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED,_field_changed_cb, obj));
 
    pd->min = efl_add(EFL_UI_SPIN_BUTTON_CLASS, obj,
                      efl_ui_range_limits_set(efl_added, 0, 59),
-                     efl_ui_spin_button_circulate_set(efl_added, EINA_TRUE),
+                     efl_ui_spin_button_wraparound_set(efl_added, EINA_TRUE),
                      efl_ui_spin_button_editable_set(efl_added, EINA_TRUE),
                      efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL),
                      efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED,_field_changed_cb, obj));
