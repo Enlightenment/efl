@@ -4612,18 +4612,30 @@ _elm_win_frame_add(Efl_Ui_Win_Data *sd, const char *element, const char *style)
    else
      {
         Eina_Bool set = EINA_FALSE;
+        Eina_Bool legacy = elm_widget_is_legacy(sd->obj);
 
-        sd->icon = elm_icon_add(sd->obj);
+        if (legacy)
+          sd->icon = elm_icon_add(sd->obj);
+        else
+          sd->icon = efl_add(EFL_UI_IMAGE_CLASS, sd->obj);
 
         if (sd->icon_name)
-          set = elm_icon_standard_set(sd->icon, sd->icon_name);
+          {
+             if (legacy)
+               set = elm_icon_standard_set(sd->icon, sd->icon_name);
+             else
+               set = efl_ui_image_icon_set(sd->icon, sd->icon_name);
+          }
         if (((!sd->icon_name) || (!set)) && _elm_appname)
           {
              Efreet_Desktop *d;
              d = efreet_util_desktop_exec_find(_elm_appname);
              if (d)
                {
-                  elm_icon_standard_set(sd->icon, d->icon);
+                  if (legacy)
+                    elm_icon_standard_set(sd->icon, d->icon);
+                  else
+                    efl_ui_image_icon_set(sd->icon, d->icon);
                   efreet_desktop_free(d);
                }
           }
