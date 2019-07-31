@@ -25,4 +25,22 @@ repository and adapt them to the DocFX syntax.
 Finally, run the `gendoc.sh` script (also from this folder) to produce the HTML
 files. First run can take a long time (from 10' to 1h), subsequent runs use
 cached results and take about 5 minutes.
+The result can be found in the _site folder.
 
+DEPLOYMENT
+----------
+
+This is the manual deployment process currently in use. It could certainly
+be improved and automated.
+The HTML files produced by DocFX are currently hosted using GitHub pages.
+The Enlightenment site's content is hosted in the www-content repository:
+https://git.enlightenment.org/website/www-content.git/
+This repo is mirrored at GitHub:
+https://github.com/Enlightenment/www-content
+The GitHub mirror has a branch called "gh-pages" which has a "gh-pages"
+folder at the root.
+
+Whenever new documentation is generated, just copy the _site folder from
+/doc/docfx in the EFL repo to /gh-pages/api/csharp in the www-content repo
+(gh-pages branch!) and push to the GitHub mirror.
+Changes should be visible almost instantly, since they are static pages.
