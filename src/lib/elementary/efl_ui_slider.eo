@@ -20,11 +20,6 @@ class @beta Efl.Ui.Slider extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Int
       Efl.Access.Widget.Action.elm_actions { get; }
    }
    events {
-      steady: void; [[Called when the slider position has changed and has remained unchanged for 0.2s.
-                      This allows filtering out unwanted "noise" from the slider signal if you are only
-                      interested in the final position of the slider.
-                      Use this signal instead of @[Efl.Ui.Range_Display.changed] if you are going to perform a costly operation
-                      on its handler.]]
       slider,drag,start: void; [[Called when a slider drag operation has started. This means a $press event
                                  has been received on the slider thumb but not the $unpress.]]
       slider,drag,stop: void; [[Called when a slider drag operation has finished. This means an $unpress event

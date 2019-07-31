@@ -34,7 +34,7 @@ _delay_change(void *data)
    EFL_UI_SLIDER_DATA_GET(data, sd);
 
    sd->delay = NULL;
-   efl_event_callback_call(data, EFL_UI_SLIDER_EVENT_STEADY, NULL);
+   efl_event_callback_call(data, EFL_UI_RANGE_EVENT_STEADY, NULL);
 
    if (_elm_config->atspi_mode)
      efl_access_value_changed_signal_emit(data);
