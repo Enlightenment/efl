@@ -140,6 +140,57 @@ next_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
      efl_ui_spotlight_active_index_set(spotlight, active_index + 1);
 }
 
+static Eina_Value
+future_then_cb(void *data EINA_UNUSED, const Eina_Value value, const Eina_Future *dead_future EINA_UNUSED)
+{
+   /* If efl_ui_spotlight_pop is called with EINA_FALSE, then the content is not
+    * deleted and the value contains the content. */
+   Eo *content = eina_value_object_get(&value);
+   if (content)
+     efl_gfx_entity_visible_set(content, EINA_FALSE);
+
+   return EINA_VALUE_EMPTY;
+}
+
+static void
+pop_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *spotlight = data;
+
+   if (efl_content_count(spotlight) == 0) return;
+
+   Eina_Future *future = efl_ui_spotlight_pop(spotlight, EINA_TRUE);
+   eina_future_then(future, future_then_cb, NULL);
+}
+
+static void
+push_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *spotlight = data;
+   Eo *view;
+   int count = efl_content_count(spotlight);
+
+   switch (count % 3)
+     {
+        case 0:
+          view = view_add(BUTTON, spotlight);
+          break;
+
+        case 1:
+          view = view_add(LIST, spotlight);
+          break;
+
+        case 2:
+          view = view_add(LAYOUT, spotlight);
+          break;
+
+        default:
+          view = view_add(LAYOUT, spotlight);
+          break;
+     }
+   efl_ui_spotlight_push(spotlight, view);
+}
+
 static void
 back_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
@@ -842,15 +893,15 @@ test_ui_spotlight_stack(void *data EINA_UNUSED,
    efl_ui_spotlight_manager_set(spotlight, efl_new(EFL_UI_SPOTLIGHT_MANAGER_STACK_CLASS));
 
    efl_add(EFL_UI_BUTTON_CLASS, layout,
-           efl_text_set(efl_added, "Prev"),
+           efl_text_set(efl_added, "Pop"),
            efl_event_callback_add(efl_added,
-                                  EFL_INPUT_EVENT_CLICKED, prev_btn_cb, spotlight),
+                                  EFL_INPUT_EVENT_CLICKED, pop_btn_cb, spotlight),
            efl_content_set(efl_part(layout, "prev_btn"), efl_added));
 
    efl_add(EFL_UI_BUTTON_CLASS, layout,
-           efl_text_set(efl_added, "Next"),
+           efl_text_set(efl_added, "Push"),
            efl_event_callback_add(efl_added,
-                                  EFL_INPUT_EVENT_CLICKED, next_btn_cb, spotlight),
+                                  EFL_INPUT_EVENT_CLICKED, push_btn_cb, spotlight),
            efl_content_set(efl_part(layout, "next_btn"), efl_added));
 
    params = calloc(1, sizeof(Params));

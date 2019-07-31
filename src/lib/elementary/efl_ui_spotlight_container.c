@@ -677,16 +677,40 @@ EOLIAN static Eina_Future*
 _efl_ui_spotlight_container_pop(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd, Eina_Bool del)
 {
    Eina_Future *transition_done;
+   Eina_Value v;
    int new_index;
+   int count;
+   Eo *content;
 
-   if (eina_list_count(pd->content_list) < 2)
-     new_index = -1;
+   count = (int)eina_list_count(pd->content_list);
+
+   if (count == 0) return NULL;
+
+   content = efl_pack_content_get(obj, efl_ui_spotlight_active_index_get(obj));
+
+   //pop() unpacks content without transition if there is one content.
+   if (count == 1)
+     {
+        efl_pack_unpack(obj, content);
+        pd->curr.page = -1;
+
+        if (del)
+          {
+             efl_del(content);
+             v = EINA_VALUE_EMPTY;
+          }
+        else
+          {
+             v = eina_value_object_init(content);
+          }
+        return efl_loop_future_resolved(obj, v);
+     }
 
    new_index = efl_ui_spotlight_active_index_get(obj) + 1;
-   if (new_index >= (int)eina_list_count(pd->content_list))
+   if (new_index >= count)
      new_index -= 2;
 
-   pd->transition_done.content = efl_pack_content_get(obj, efl_ui_spotlight_active_index_get(obj));
+   pd->transition_done.content = content;
    pd->transition_done.transition_done = efl_loop_promise_new(obj);
 
    transition_done = eina_future_new(pd->transition_done.transition_done);
