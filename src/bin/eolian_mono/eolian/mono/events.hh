@@ -247,12 +247,12 @@ struct event_argument_wrapper_generator
 
       std::string evt_name = name_helpers::managed_event_name(evt.name);
 
-      return as_generator("///<summary>Event argument wrapper for event <see cref=\""
+      return as_generator("/// <summary>Event argument wrapper for event <see cref=\""
                           << join_namespaces(evt.klass.namespaces, '.', managed_namespace)
                           << klass_interface_name(evt.klass) << "." << evt_name << "\"/>.</summary>\n"
                           << "[Efl.Eo.BindingEntity]\n"
                           << "public class " << name_helpers::managed_event_args_short_name(evt) << " : EventArgs {\n"
-                          << scope_tab << "///<summary>Actual event payload.</summary>\n"
+                          << scope_tab << "/// <summary>Actual event payload.</summary>\n"
                           << scope_tab << "public " << type << " arg { get; set; }\n"
                           << "}\n"
                  ).generate(sink, *etype, context);
@@ -404,7 +404,7 @@ struct event_definition_generator
       auto library_name = context_find_tag<library_context>(context).actual_library_name(klass.filename);
       std::string upper_c_name = utils::to_uppercase(evt.c_name);
       if (!as_generator(
-            scope_tab << "///<summary>Method to raise event "<< event_name << ".</summary>\n"
+            scope_tab << "/// <summary>Method to raise event "<< event_name << ".</summary>\n"
             << scope_tab << "public void On" << event_name << "(" << event_args_type << " e)\n"
             << scope_tab << "{\n"
             << scope_tab << scope_tab << "var key = \"_" << upper_c_name << "\";\n"

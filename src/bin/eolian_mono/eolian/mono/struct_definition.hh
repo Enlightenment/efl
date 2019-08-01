@@ -274,7 +274,7 @@ struct struct_internal_definition_generator
      if (!as_generator
          (
           indent << "#pragma warning disable CS1591\n\n"
-          << indent << "///<summary>Internal wrapper for struct " << string << ".</summary>\n"
+          << indent << "/// <summary>Internal wrapper for struct " << string << ".</summary>\n"
           << indent << "[StructLayout(LayoutKind.Sequential)]\n"
           << indent << "public struct " << string << "\n"
           << indent << "{\n"
@@ -295,7 +295,7 @@ struct struct_internal_definition_generator
                               || regular->base_type == "stringshare"
                               || regular->base_type == "any_value_ptr")))
             {
-               if (!as_generator(indent << scope_tab << "///<summary>Internal wrapper for field " << field_name << "</summary>\n"
+               if (!as_generator(indent << scope_tab << "/// <summary>Internal wrapper for field " << field_name << "</summary>\n"
                                  << indent << scope_tab << "public System.IntPtr " << field_name << ";\n")
                    .generate(sink, nullptr, context))
                  return false;
@@ -303,7 +303,7 @@ struct struct_internal_definition_generator
           else if (regular && !(regular->base_qualifier & efl::eolian::grammar::attributes::qualifier_info::is_ref)
                    && regular->base_type == "bool")
             {
-               if (!as_generator(indent << scope_tab << "///<summary>Internal wrapper for field " << field_name << "</summary>\n"
+               if (!as_generator(indent << scope_tab << "/// <summary>Internal wrapper for field " << field_name << "</summary>\n"
                                  << indent << scope_tab << "public System.Byte " << field_name << ";\n")
                    .generate(sink, nullptr, context))
                  return false;
@@ -311,7 +311,7 @@ struct struct_internal_definition_generator
           else if (regular && !(regular->base_qualifier & efl::eolian::grammar::attributes::qualifier_info::is_ref)
                    && regular->base_type == "char")
             {
-               if (!as_generator(indent << scope_tab << "///<summary>Internal wrapper for field " << field_name << "</summary>\n"
+               if (!as_generator(indent << scope_tab << "/// <summary>Internal wrapper for field " << field_name << "</summary>\n"
                                  << indent << scope_tab << "public System.Byte " << field_name << ";\n")
                    .generate(sink, nullptr, context))
                  return false;
@@ -337,7 +337,7 @@ struct struct_internal_definition_generator
 
      // to internal
      if (!as_generator(
-           indent << scope_tab << "///<summary>Implicit conversion to the internal/marshalling representation.</summary>\n"
+           indent << scope_tab << "/// <summary>Implicit conversion to the internal/marshalling representation.</summary>\n"
            << indent << scope_tab << "public static implicit operator " << string << "(" << string << " _external_struct)\n"
            << indent << scope_tab << "{\n"
            << indent << scope_tab << scope_tab << "var _internal_struct = new " << string << "();\n"
@@ -356,7 +356,7 @@ struct struct_internal_definition_generator
 
      // to managed
      if (!as_generator(
-           indent << scope_tab << "///<summary>Implicit conversion to the managed representation.</summary>\n"
+           indent << scope_tab << "/// <summary>Implicit conversion to the managed representation.</summary>\n"
            << indent << scope_tab << "public static implicit operator " << string << "(" << string << " _internal_struct)\n"
            << indent << scope_tab << "{\n"
            << indent << scope_tab << scope_tab << "var _external_struct = new " << string << "();\n"
@@ -425,7 +425,7 @@ struct struct_definition_generator
      // those 'mini-amd64.c condition fields not met' crashes.
      if (struct_.fields.size() == 0)
        {
-           if (!as_generator(indent << scope_tab << "///<summary>Placeholder field</summary>\n"
+           if (!as_generator(indent << scope_tab << "/// <summary>Placeholder field</summary>\n"
                              << indent << scope_tab << "public IntPtr field;\n").generate(sink, nullptr, context))
              return false;
        }
@@ -433,7 +433,7 @@ struct struct_definition_generator
        {
           // Constructor with default parameters for easy struct initialization
           if(!as_generator(
-                      indent << scope_tab << "///<summary>Constructor for " << string << ".</summary>\n"
+                      indent << scope_tab << "/// <summary>Constructor for " << string << ".</summary>\n"
                       << indent << scope_tab << "public " << string << "(\n"
                       << ((indent << scope_tab << scope_tab << field_argument_default) % ",\n")
                       << indent << scope_tab << ")\n"
@@ -445,8 +445,8 @@ struct struct_definition_generator
        }
 
      if(!as_generator(
-            indent << scope_tab << "///<summary>Implicit conversion to the managed representation from a native pointer.</summary>\n"
-            << indent << scope_tab << "///<param name=\"ptr\">Native pointer to be converted.</param>\n"
+            indent << scope_tab << "/// <summary>Implicit conversion to the managed representation from a native pointer.</summary>\n"
+            << indent << scope_tab << "/// <param name=\"ptr\">Native pointer to be converted.</param>\n"
             << indent << scope_tab << "public static implicit operator " << struct_name << "(IntPtr ptr)\n"
             << indent << scope_tab << "{\n"
             << indent << scope_tab << scope_tab << "var tmp = (" << struct_name << ".NativeStruct)Marshal.PtrToStructure(ptr, typeof(" << struct_name << ".NativeStruct));\n"
