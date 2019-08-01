@@ -805,6 +805,13 @@ _efl_ui_spin_button_efl_access_object_i18n_name_get(const Eo *obj, Efl_Ui_Spin_B
    return ret;
 }
 
+EOLIAN static void
+_efl_ui_spin_button_efl_ui_format_apply_formatted_value(Eo *obj, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
+{
+   _label_write(obj);
+   efl_canvas_group_change(obj);
+}
+
 // A11Y Accessibility - END
 
 #include "efl_ui_spin_button.eo.c"
