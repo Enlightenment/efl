@@ -2,6 +2,8 @@
 # include "elementary_config.h"
 #endif
 
+#define EFL_INPUT_CLICKABLE_PROTECTED 1
+
 #include <Efl_Ui.h>
 #include <Elementary.h>
 #include "efl_ui_spec_suite.h"
