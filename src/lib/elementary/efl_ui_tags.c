@@ -764,7 +764,7 @@ _view_init(Evas_Object *obj, Efl_Ui_Tags_Data *sd)
 
    efl_gfx_hint_size_min_set(sd->entry, EINA_SIZE2D(MIN_W_ENTRY, 0));
    efl_gfx_hint_weight_set(sd->entry, EFL_GFX_HINT_EXPAND, 0);
-   efl_gfx_hint_fill_set(sd->entry, EINA_TRUE, EINA_FALSE);
+   efl_gfx_hint_fill_set(sd->entry, EINA_TRUE, EINA_TRUE);
 
    efl_pack(sd->box, sd->entry);
 
