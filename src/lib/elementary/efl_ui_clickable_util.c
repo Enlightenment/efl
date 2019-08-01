@@ -68,7 +68,6 @@ _press_cb(void *data, const Efl_Event *ev)
    if (!efl_input_processed_get(pointer))
      {
         efl_input_clickable_press(data, 1);
-        efl_input_processed_set(pointer, EINA_TRUE);
      }
 }
 
@@ -89,13 +88,11 @@ _unpress_cb(void *data, const Efl_Event *ev EINA_UNUSED)
         if (efl_canvas_object_pointer_mode_get(data) == EFL_INPUT_OBJECT_POINTER_MODE_AUTO_GRAB)
           {
              efl_input_clickable_unpress(data, 1);
-             efl_input_processed_set(pointer, EINA_TRUE);
           }
      }
    else
      {
         efl_input_clickable_unpress(data, 1);
-        efl_input_processed_set(pointer, EINA_TRUE);
      }
 }
 
