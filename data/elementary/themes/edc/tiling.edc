@@ -42,12 +42,12 @@ group { name: "e/modules/tiling/main";
       part { name: "base";
          description { state: "default" 0.0;
             aspect: 1.0 1.0; aspect_preference: BOTH;
-            image.normal: "tiling-horiz.png";
+            image.normal: "tiling-vert.png";
             color: 160 160 160 255;
          }
          description { state: "vertical" 0.0;
             inherit: "default" 0.0;
-            image.normal: "tiling-vert.png";
+            image.normal: "tiling-horiz.png";
          }
          description { state: "floating" 0.0;
             inherit: "default" 0.0;
