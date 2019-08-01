@@ -772,8 +772,7 @@ _efl_ui_spin_button_efl_access_value_value_and_text_set(Eo *obj, Efl_Ui_Spin_But
    if (pd->val_min > value) return EINA_FALSE;
    if (pd->val_max < value) return EINA_FALSE;
 
-   pd->val = value;
-   efl_ui_range_value_set(efl_super(obj, MY_CLASS), value);
+   efl_ui_range_value_set(obj, value);
 
    return EINA_TRUE;
 }
