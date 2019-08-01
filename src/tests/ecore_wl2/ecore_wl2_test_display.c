@@ -174,8 +174,7 @@ ecore_wl2_test_display(TCase *tc)
         tcase_add_test(tc, wl2_display_get);
         tcase_add_test(tc, wl2_display_name_get);
      }
-
-   if (getenv("WAYLAND_DISPLAY"))
+   else if (getenv("WAYLAND_DISPLAY"))
      {
         /* tests here are for client-side functions */
         printf("Wayland Compositor detected. Testing client-side functions\n");
