@@ -80,20 +80,16 @@ struct _Ecore_Evas_Engine_Data_X11 {
    Ecore_X_XRegion *damages;
    Ecore_Timer     *outdelay;
    Ecore_X_Event_Mouse_Out out_ev;
-   Ecore_X_Sync_Counter sync_counter;
    Ecore_X_Window leader;
    Ecore_X_Sync_Counter netwm_sync_counter;
    int            configure_reqs;
    int            netwm_sync_val_hi;
    unsigned int   netwm_sync_val_lo;
-   int            sync_val; // bigger! this will screw up at 2 billion fram~
    int            screen_num;
    int            px, py, pw, ph;
    unsigned char  direct_resize : 1;
    unsigned char  using_bg_pixmap : 1;
    unsigned char  managed : 1;
-   unsigned char  sync_began : 1;
-   unsigned char  sync_cancel : 1;
    unsigned char  netwm_sync_set : 1;
    unsigned char  configure_coming : 1;
    struct {
@@ -249,44 +245,6 @@ _ecore_evas_x_protocols_set(Ecore_Evas *ee)
    ecore_x_window_prop_card32_set(ee->prop.window,
                                   ECORE_X_ATOM_E_DEICONIFY_APPROVE,
                                   &tmp, 1);
-}
-
-static void
-_ecore_evas_x_sync_set(Ecore_Evas *ee)
-{
-   Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
-   Ecore_X_Sync_Counter sync_counter = edata->sync_counter;
-
-   if (ee->deleted) return;
-   if (((ee->should_be_visible) || (ee->visible)) &&
-       ((ecore_x_e_comp_sync_supported_get(edata->win_root)) &&
-           (!ee->no_comp_sync) && (_ecore_evas_app_comp_sync)))
-     {
-        if (!edata->sync_counter)
-           edata->sync_counter = ecore_x_sync_counter_new(0);
-     }
-   else
-     {
-        if (edata->sync_counter)
-          {
-           ecore_x_sync_counter_free(edata->sync_counter);
-             edata->sync_val = 0;
-          }
-        edata->sync_counter = 0;
-     }
-   if ((!edata->destroyed) && (sync_counter != edata->sync_counter))
-     ecore_x_e_comp_sync_counter_set(ee->prop.window, edata->sync_counter);
-}
-
-static void
-_ecore_evas_x_sync_clear(Ecore_Evas *ee)
-{
-   Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
-
-   if (!edata->sync_counter) return;
-   ecore_x_sync_counter_free(edata->sync_counter);
-   edata->sync_val = 0;
-   edata->sync_counter = 0;
 }
 
 static void
@@ -766,12 +724,6 @@ static int
 _ecore_evas_x_render(Ecore_Evas *ee)
 {
    int rend = 0;
-   Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
-
-   if ((!ee->no_comp_sync) && (_ecore_evas_app_comp_sync) &&
-       (edata->sync_counter) && (!edata->sync_began) &&
-       (!edata->sync_cancel))
-     return 0;
 
    if (ee->in_async_render)
      {
@@ -1090,43 +1042,8 @@ _ecore_evas_x_event_client_message(void *data EINA_UNUSED, int type EINA_UNUSED,
 
    e = event;
    if (e->format != 32) return ECORE_CALLBACK_PASS_ON;
-   if (e->message_type == ECORE_X_ATOM_E_COMP_SYNC_BEGIN)
-     {
-        ee = ecore_event_window_match(e->data.l[0]);
-        if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
-        edata = ee->engine.data;
-        if (e->data.l[0] != (long)ee->prop.window)
-          return ECORE_CALLBACK_PASS_ON;
-        if (!edata->sync_began)
-          {
-             // qeue a damage + draw. work around an event re-ordering thing.
-             evas_damage_rectangle_add(ee->evas, 0, 0, ee->w, ee->h);
-          }
-        edata->sync_began = 1;
-        edata->sync_cancel = 0;
-     }
-   else if (e->message_type == ECORE_X_ATOM_E_COMP_SYNC_END)
-     {
-        ee = ecore_event_window_match(e->data.l[0]);
-        if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
-        edata = ee->engine.data;
-        if (e->data.l[0] != (long)ee->prop.window)
-          return ECORE_CALLBACK_PASS_ON;
-        edata->sync_began = 0;
-        edata->sync_cancel = 0;
-     }
-   else if (e->message_type == ECORE_X_ATOM_E_COMP_SYNC_CANCEL)
-     {
-        ee = ecore_event_window_match(e->data.l[0]);
-        if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
-        edata = ee->engine.data;
-        if (e->data.l[0] != (long)ee->prop.window)
-          return ECORE_CALLBACK_PASS_ON;
-        edata->sync_began = 0;
-        edata->sync_cancel = 1;
-     }
-   else if ((e->message_type == ECORE_X_ATOM_WM_PROTOCOLS) &&
-            (e->data.l[0] == (int)ECORE_X_ATOM_NET_WM_SYNC_REQUEST))
+   if ((e->message_type == ECORE_X_ATOM_WM_PROTOCOLS) &&
+       (e->data.l[0] == (int)ECORE_X_ATOM_NET_WM_SYNC_REQUEST))
      {
         ee = ecore_event_window_match(e->win);
         if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
@@ -1594,7 +1511,6 @@ _ecore_evas_x_event_window_destroy(void *data EINA_UNUSED, int type EINA_UNUSED,
    edata = ee->engine.data;
    if (ee->func.fn_destroy) ee->func.fn_destroy(ee);
    edata->destroyed = 1;
-   _ecore_evas_x_sync_clear(ee);
    ecore_evas_free(ee);
    return ECORE_CALLBACK_PASS_ON;
 }
@@ -1778,15 +1694,6 @@ _ecore_evas_x_event_window_show(void *data EINA_UNUSED, int type EINA_UNUSED, vo
    ee = ecore_event_window_match(e->win);
    if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-
-   if (ee->gl_sync_draw_done < 0)
-     {
-        char *sync = getenv("ECORE_EVAS_GL_SYNC_DRAW_DONE");
-        if (sync && (atoi(sync) == 1))
-          ee->gl_sync_draw_done = 1;
-        else
-          ee->gl_sync_draw_done = 0;
-     }
 
    if (first_map_bug < 0)
      {
@@ -2081,8 +1988,6 @@ _ecore_evas_x_free(Ecore_Evas *ee)
      }
 
    _ecore_evas_x_group_leader_unset(ee);
-   if (edata->sync_counter)
-     ecore_x_sync_counter_free(edata->sync_counter);
    if (edata->netwm_sync_counter)
      ecore_x_sync_counter_free(edata->netwm_sync_counter);
    if (edata->win_shaped_input)
@@ -2123,7 +2028,6 @@ _ecore_evas_x_callback_delete_request_set(Ecore_Evas *ee, Ecore_Evas_Event_Cb fu
 {
    ee->func.fn_delete_request = func;
    _ecore_evas_x_protocols_set(ee);
-   _ecore_evas_x_sync_set(ee);
 }
 
 static void
@@ -2702,7 +2606,6 @@ _alpha_do(Ecore_Evas *ee, int alpha)
 
    ee->shaped = 0;
    ee->alpha = alpha;
-   _ecore_evas_x_sync_clear(ee);
    ecore_x_window_free(ee->prop.window);
    ecore_event_window_unregister(ee->prop.window);
    if (ee->alpha)
@@ -2772,7 +2675,6 @@ _alpha_do(Ecore_Evas *ee, int alpha)
    _ecore_evas_x_wm_rotation_protocol_set(ee);
    _ecore_evas_x_aux_hints_supported_update(ee);
    _ecore_evas_x_aux_hints_update(ee);
-   _ecore_evas_x_sync_set(ee);
    _ecore_evas_x_size_pos_hints_update(ee);
 #endif /* BUILD_ECORE_EVAS_SOFTWARE_X11 */
    if ((id = getenv("DESKTOP_STARTUP_ID")))
@@ -2822,7 +2724,6 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
 
         ee->shaped = 0;
         ee->alpha = alpha;
-        _ecore_evas_x_sync_clear(ee);
         prev_win = ee->prop.window;
         ee->prop.window = 0;
 
@@ -2928,7 +2829,6 @@ _ecore_evas_x_alpha_set(Ecore_Evas *ee, int alpha)
         _ecore_evas_x_wm_rotation_protocol_set(ee);
         _ecore_evas_x_aux_hints_supported_update(ee);
         _ecore_evas_x_aux_hints_update(ee);
-        _ecore_evas_x_sync_set(ee);
         _ecore_evas_x_size_pos_hints_update(ee);
 #endif /* BUILD_ECORE_EVAS_OPENGL_X11 */
         if ((id = getenv("DESKTOP_STARTUP_ID")))
@@ -3074,7 +2974,6 @@ _ecore_evas_x_show(Ecore_Evas *ee)
    ee->should_be_visible = 1;
    if (ee->prop.avoid_damage)
      _ecore_evas_x_render(ee);
-   _ecore_evas_x_sync_set(ee);
    _ecore_evas_x_window_profile_set(ee);
    if (!ee->prop.withdrawn) _ecore_evas_x_hints_update(ee);
    else
@@ -3092,7 +2991,6 @@ _ecore_evas_x_hide(Ecore_Evas *ee)
 {
    ecore_x_window_hide(ee->prop.window);
    ee->should_be_visible = 0;
-   _ecore_evas_x_sync_set(ee);
 }
 
 static void
@@ -3913,26 +3811,6 @@ _ecore_evas_x_render_pre(void *data, Evas *e EINA_UNUSED, void *event_info EINA_
 }
 
 static void
-_ecore_evas_x_flush_pre(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
-{
-   Ecore_Evas *ee = data;
-   Ecore_Evas_Engine_Data_X11 *edata = ee->engine.data;
-
-   if (ee->no_comp_sync) return;
-   if (!_ecore_evas_app_comp_sync) return;
-   if (!edata->sync_counter) return;
-   if (!edata->sync_began) return;
-
-   edata->sync_val++;
-   if (!edata->sync_cancel)
-     {
-        if (!ee->semi_sync)
-          ecore_x_sync_counter_val_wait(edata->sync_counter,
-                                        edata->sync_val);
-     }
-}
-
-static void
 _ecore_evas_x_flush_post(void *data, Evas *e EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Ecore_Evas *ee = data;
@@ -3998,24 +3876,6 @@ _ecore_evas_x_flush_post(void *data, Evas *e EINA_UNUSED, void *event_info EINA_
           }
      }
 
-   if ((!ee->no_comp_sync) && (_ecore_evas_app_comp_sync) &&
-       (ee->gl_sync_draw_done != 1))
-     {
-        if (edata->sync_counter)
-          {
-             if (edata->sync_began)
-               {
-                  if (!edata->sync_cancel)
-                    {
-                       if (ee->prop.window)
-                         {
-                            ecore_x_e_comp_sync_draw_size_done_send
-                              (edata->win_root, ee->prop.window, ee->w, ee->h);
-                         }
-                    }
-               }
-          }
-     }
    if (edata->netwm_sync_set)
      {
         ecore_x_sync_counter_2_set(edata->netwm_sync_counter,
@@ -4119,8 +3979,6 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
         return NULL;
      }
 
-   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
-                           _ecore_evas_x_flush_pre, ee);
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_POST,
                            _ecore_evas_x_flush_post, ee);
    if (ee->can_async_render)
@@ -4239,7 +4097,6 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
    _ecore_evas_x_wm_rotation_protocol_set(ee);
    _ecore_evas_x_aux_hints_supported_update(ee);
    _ecore_evas_x_aux_hints_update(ee);
-   _ecore_evas_x_sync_set(ee);
 
    ee->engine.func->fn_render = _ecore_evas_x_render;
    ee->draw_block = EINA_TRUE;
@@ -4321,8 +4178,6 @@ ecore_evas_software_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Windo
         return NULL;
      }
 
-   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
-                           _ecore_evas_x_flush_pre, ee);
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_POST,
                            _ecore_evas_x_flush_post, ee);
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_PRE,
@@ -4454,7 +4309,6 @@ ecore_evas_software_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Windo
    /* ecore_x_window_defaults_set(ee->prop.window); */
    /* _ecore_evas_x_protocols_set(ee); */
    /* _ecore_evas_x_window_profile_protocol_set(ee); */
-   /* _ecore_evas_x_sync_set(ee); */
 
    ee->engine.func->fn_render = _ecore_evas_x_render;
    _ecore_evas_register(ee);
@@ -4599,20 +4453,11 @@ ecore_evas_gl_x11_options_new_internal(const char *disp_name, Ecore_X_Window par
 
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
 
-   ee->gl_sync_draw_done = -1;
-
    _ecore_evas_x_init();
 
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_x_engine_func;
 
    ee->driver = "opengl_x11";
-#if 1
-   ee->semi_sync = 0; // gl engine doesn't need to sync - its whole swaps
-#else
-   if (!getenv("ECORE_EVAS_COMP_NOSEMISYNC"))
-      ee->semi_sync = 1; // gl engine doesn't need to sync - its whole swaps
-//   ee->no_comp_sync = 1; // gl engine doesn't need to sync - its whole swaps
-#endif
    if (disp_name) ee->name = strdup(disp_name);
 
    if (w < 1) w = 1;
@@ -4641,7 +4486,6 @@ ecore_evas_gl_x11_options_new_internal(const char *disp_name, Ecore_X_Window par
         ecore_evas_free(ee);
         return NULL;
      }
-   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE, _ecore_evas_x_flush_pre, ee);
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_POST, _ecore_evas_x_flush_post, ee);
    evas_output_method_set(ee->evas, rmethod);
 
@@ -4687,7 +4531,6 @@ ecore_evas_gl_x11_options_new_internal(const char *disp_name, Ecore_X_Window par
    _ecore_evas_x_wm_rotation_protocol_set(ee);
    _ecore_evas_x_aux_hints_supported_update(ee);
    _ecore_evas_x_aux_hints_update(ee);
-   _ecore_evas_x_sync_set(ee);
 
    ee->draw_block = 1;
 
@@ -4740,20 +4583,11 @@ ecore_evas_gl_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Window pare
 
    ECORE_MAGIC_SET(ee, ECORE_MAGIC_EVAS);
 
-   ee->gl_sync_draw_done = -1;
-
    _ecore_evas_x_init();
 
    ee->engine.func = (Ecore_Evas_Engine_Func *)&_ecore_x_engine_func;
 
    ee->driver = "opengl_x11";
-#if 1
-   ee->semi_sync = 0; // gl engine doesn't need to sync - its whole swaps
-#else
-   if (!getenv("ECORE_EVAS_COMP_NOSEMISYNC"))
-      ee->semi_sync = 1; // gl engine doesn't need to sync - its whole swaps
-//   ee->no_comp_sync = 1; // gl engine doesn't need to sync - its whole swaps
-#endif
    if (disp_name) ee->name = strdup(disp_name);
 
    if (w < 1) w = 1;
@@ -4781,8 +4615,6 @@ ecore_evas_gl_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Window pare
         ecore_evas_free(ee);
         return NULL;
      }
-   evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_PRE,
-                           _ecore_evas_x_flush_pre, ee);
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_FLUSH_POST,
                            _ecore_evas_x_flush_post, ee);
    evas_event_callback_add(ee->evas, EVAS_CALLBACK_RENDER_PRE,
@@ -4884,7 +4716,6 @@ ecore_evas_gl_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Window pare
    /* ecore_x_window_defaults_set(ee->prop.window); */
    /* _ecore_evas_x_protocols_set(ee); */
    /* _ecore_evas_x_window_profile_protocol_set(ee); */
-   /* _ecore_evas_x_sync_set(ee); */
 
    ee->engine.func->fn_render = _ecore_evas_x_render;
    _ecore_evas_register(ee);
