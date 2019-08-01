@@ -406,15 +406,16 @@ struct struct_definition_generator
      // iterate struct fields
      for (auto const& field : struct_.fields)
        {
-          auto field_name = field.name;
-          field_name[0] = std::toupper(field_name[0]); // Hack to allow 'static' as a field name
-          if (!as_generator
-              (
-               documentation(indent.n + 1)
-               << indent << scope_tab << "/// <value>" << string << "</value>\n"
-               << indent << scope_tab << "public " << type << " " << string << ";\n"
-              )
-              .generate(sink, std::make_tuple(field, field.type.doc_summary, field.type, name_helpers::to_field_name(field.name)), context))
+          if (!as_generator(documentation(indent.n + 1)).generate(sink, field, context))
+            return false;
+
+          if (!field.type.doc_summary.empty())
+            {
+               if (!as_generator(indent << scope_tab << "/// <value>" << field.type.doc_summary << "</value>\n").generate(sink, attributes::unused, context))
+                 return false;
+            }
+
+          if (!as_generator(indent << scope_tab << "public " << type << " " << name_helpers::to_field_name(field.name) << ";\n").generate(sink, field.type, context))
             return false;
        }
 
