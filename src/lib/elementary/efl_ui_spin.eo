@@ -1,5 +1,5 @@
-class @beta Efl.Ui.Spin extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Interactive, Efl.Ui.Format,
-                   Efl.Access.Value, Efl.Access.Widget.Action
+class @beta Efl.Ui.Spin extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Display,
+Efl.Ui.Format, Efl.Access.Value, Efl.Access.Widget.Action
 {
    [[A Spin.
 
@@ -10,7 +10,6 @@ class @beta Efl.Ui.Spin extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Inter
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Ui.Range_Display.range_limits { get; set; }
-      Efl.Ui.Range_Interactive.range_step { get; set; }
       Efl.Ui.Range_Display.range_value { get; set; }
       Efl.Ui.Format.apply_formatted_value;
    }

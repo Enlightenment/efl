@@ -404,7 +404,7 @@ _entry_toggle_cb(void *data EINA_UNUSED,
 static void
 _spin_value(Efl_Ui_Spin *obj, Eina_Bool inc)
 {
-   Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
+   Efl_Ui_Spin_Button_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_BUTTON_CLASS);
 
    int absolut_value = efl_ui_range_value_get(obj) + (inc ? pd->step : -pd->step);
 
@@ -643,6 +643,7 @@ _efl_ui_spin_button_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    _sync_widget_theme_klass(obj, sd);
+   sd->step = 1.0;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
@@ -788,10 +789,8 @@ _efl_ui_spin_button_efl_access_value_range_get(const Eo *obj EINA_UNUSED, Efl_Ui
 }
 
 EOLIAN static double
-_efl_ui_spin_button_efl_access_value_increment_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd EINA_UNUSED)
+_efl_ui_spin_button_efl_access_value_increment_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *pd)
 {
-   Efl_Ui_Spin_Data *pd = efl_data_scope_get(obj, EFL_UI_SPIN_CLASS);
-
    return pd->step;
 }
 
@@ -810,6 +809,24 @@ _efl_ui_spin_button_efl_ui_format_apply_formatted_value(Eo *obj, Efl_Ui_Spin_But
 {
    _label_write(obj);
    efl_canvas_group_change(obj);
+}
+
+EOLIAN static void
+_efl_ui_spin_button_efl_ui_range_interactive_range_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd, double step)
+{
+   if (step <= 0)
+     {
+        ERR("Wrong param. The step(%lf) should be bigger than 0.0", step);
+        return;
+     }
+
+   sd->step = step;
+}
+
+EOLIAN static double
+_efl_ui_spin_button_efl_ui_range_interactive_range_step_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd)
+{
+   return sd->step;
 }
 
 // A11Y Accessibility - END
