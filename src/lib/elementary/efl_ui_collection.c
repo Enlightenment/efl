@@ -214,7 +214,7 @@ static void
 _item_scroll_internal(Eo *obj EINA_UNUSED,
                       Efl_Ui_Collection_Data *pd,
                       Efl_Ui_Item *item,
-                      double align,
+                      double align EINA_UNUSED,
                       Eina_Bool anim)
 {
    Eina_Rect ipos, view;
