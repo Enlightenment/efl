@@ -411,9 +411,10 @@ struct struct_definition_generator
           if (!as_generator
               (
                documentation(indent.n + 1)
+               << indent << scope_tab << "/// <value>" << string << "</value>\n"
                << indent << scope_tab << "public " << type << " " << string << ";\n"
               )
-              .generate(sink, std::make_tuple(field, field.type, name_helpers::to_field_name(field.name)), context))
+              .generate(sink, std::make_tuple(field, field.type.doc_summary, field.type, name_helpers::to_field_name(field.name)), context))
             return false;
        }
 
@@ -434,13 +435,14 @@ struct struct_definition_generator
           // Constructor with default parameters for easy struct initialization
           if(!as_generator(
                       indent << scope_tab << "/// <summary>Constructor for " << string << ".</summary>\n"
+                      << *(indent << scope_tab << field_argument_docs << ";\n")
                       << indent << scope_tab << "public " << string << "(\n"
                       << ((indent << scope_tab << scope_tab << field_argument_default) % ",\n")
                       << indent << scope_tab << ")\n"
                       << indent << scope_tab << "{\n"
                       << *(indent << scope_tab << scope_tab << field_argument_assignment << ";\n")
                       << indent << scope_tab << "}\n\n")
-             .generate(sink, std::make_tuple(struct_name, struct_name, struct_.fields, struct_.fields), context))
+             .generate(sink, std::make_tuple(struct_name, struct_.fields, struct_name, struct_.fields, struct_.fields), context))
               return false;
        }
 

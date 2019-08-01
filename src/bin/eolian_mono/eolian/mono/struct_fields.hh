@@ -37,6 +37,18 @@ struct field_argument_assignment_generator
    }
 } const field_argument_assignment {};
 
+struct field_argument_docs_generator
+{
+   template<typename OutputIterator, typename Context>
+   bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
+   {
+       if (!as_generator("/// <param name=\"" << string << "\">" << string << "</param>")
+               .generate(sink, std::make_tuple(name_helpers::to_field_name(field.name), field.documentation.summary), context))
+           return false;
+       return true;
+   }
+} const field_argument_docs {};
+
 }
 
 namespace efl { namespace eolian { namespace grammar {
@@ -51,6 +63,11 @@ struct is_eager_generator< ::eolian_mono::field_argument_assignment_generator> :
 template<>
 struct is_generator< ::eolian_mono::field_argument_assignment_generator> : std::true_type {};
 
+template<>
+struct is_eager_generator< ::eolian_mono::field_argument_docs_generator> : std::true_type {};
+template<>
+struct is_generator< ::eolian_mono::field_argument_docs_generator> : std::true_type {};
+
 namespace type_traits {
 
 template <>
@@ -58,6 +75,9 @@ struct attributes_needed< ::eolian_mono::field_argument_default_generator> : std
 
 template <>
 struct attributes_needed< ::eolian_mono::field_argument_assignment_generator> : std::integral_constant<int, 1> {};
+
+template <>
+struct attributes_needed< ::eolian_mono::field_argument_docs_generator> : std::integral_constant<int, 1> {};
 
 }
 

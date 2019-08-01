@@ -375,10 +375,11 @@ struct type_def
    bool has_own;
    bool is_ptr;
    bool is_beta;
+   std::string doc_summary;
 
    type_def() = default;
-   type_def(variant_type original_type, std::string c_type, bool has_own, bool is_ptr, bool is_beta)
-     : original_type(original_type), c_type(c_type), has_own(has_own), is_ptr(is_ptr), is_beta(is_beta) {}
+   type_def(variant_type original_type, std::string c_type, bool has_own, bool is_ptr, bool is_beta, std::string doc_summary)
+     : original_type(original_type), c_type(c_type), has_own(has_own), is_ptr(is_ptr), is_beta(is_beta), doc_summary(doc_summary) {}
 
    type_def(Eolian_Type const* eolian_type, Eolian_Unit const* unit, Eolian_C_Type_Type ctype)
    {
@@ -422,7 +423,7 @@ inline bool operator!=(type_def const& lhs, type_def const& rhs)
   return !(lhs == rhs);
 }
 
-type_def const void_ {attributes::regular_type_def{"void", {qualifier_info::is_none, {}}, {}}, "void", false, false, false};
+type_def const void_ {attributes::regular_type_def{"void", {qualifier_info::is_none, {}}, {}}, "void", false, false, false, ""};
 
 inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* unit, Eolian_C_Type_Type ctype)
 {
@@ -434,6 +435,11 @@ inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* uni
 
    Eolian_Typedecl const* decl = eolian_type_typedecl_get(eolian_type);
    is_beta = decl && eolian_object_is_beta(EOLIAN_OBJECT(decl));
+   if (decl)
+     {
+        documentation_def documentation = eolian_typedecl_documentation_get(decl);
+        doc_summary = documentation.summary;
+     }
    switch( ::eolian_type_type_get(eolian_type))
      {
      case EOLIAN_TYPE_VOID:
