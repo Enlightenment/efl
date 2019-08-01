@@ -13,7 +13,7 @@ _item_label_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_
 {
    time_t t = (time_t)ecore_time_unix_get();
    char buf[256];
-   int i = (int)(long)data;
+   int i = (int)(uintptr_t)data;
    if (i % 2)
      {
         int n;
@@ -90,7 +90,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win, *box, *hbox;
    Evas_Object *list, *btn;
-   int i;
+   unsigned int i;
 
    win = elm_win_util_standard_add("genlist", "Genlist - simple");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
@@ -151,7 +151,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    for (i = 0; i < N_ITEMS; i++)
      {
         elm_genlist_item_append(list, _itc,
-                                (void *)(long)i, NULL,
+                                (void *)(uintptr_t)i, NULL,
                                 ELM_GENLIST_ITEM_NONE,
                                 _item_sel_cb, NULL);
      }

@@ -11,7 +11,7 @@ static char *
 _item_label_get(void *data, Evas_Object *obj EINA_UNUSED, const char *part EINA_UNUSED)
 {
    char buf[256];
-   snprintf(buf, sizeof(buf), "Item # %i", (int)(long)data);
+   snprintf(buf, sizeof(buf), "Item # %i", (int)(uintptr_t)data);
    return strdup(buf);
 }
 
@@ -39,7 +39,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
 {
    Evas_Object *win;
    Evas_Object *list;
-   int i;
+   unsigned int i;
 
    win = elm_win_util_standard_add("genlist", "Genlist");
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
@@ -60,7 +60,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    for (i = 0; i < N_ITEMS; i++)
      {
         elm_genlist_item_append(list, _itc,
-                                (void *)(long)i, NULL,
+                                (void *)(uintptr_t)i, NULL,
                                 ELM_GENLIST_ITEM_NONE,
                                 _item_sel_cb, NULL);
      }
