@@ -58,7 +58,7 @@ EFL_START_TEST(wl2_window_surface_test)
    ck_assert(surf != NULL);
 
    id = ecore_wl2_window_surface_id_get(win);
-   ck_assert_int_lt(id, 0);
+   ck_assert_int_gt(id, 0);
 
    ck_assert_int_eq(wl_proxy_get_id((struct wl_proxy *)surf), id);
 }
@@ -77,7 +77,7 @@ EFL_START_TEST(wl2_window_rotation_get)
    ck_assert(win != NULL);
 
    rot = ecore_wl2_window_rotation_get(win);
-   ck_assert_int_lt(rot, 0);
+   ck_assert_int_ge(rot, 0);
 }
 EFL_END_TEST
 
