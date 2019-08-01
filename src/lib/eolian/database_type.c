@@ -189,17 +189,6 @@ static void
 _atype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 {
    eina_strbuf_append(buf, "typedef ");
-
-   if (tp->base_type->type == EOLIAN_TYPE_REGULAR)
-     {
-        if (!strcmp(tp->base_type->base.name, "__builtin_free_cb"))
-          {
-             eina_strbuf_append(buf, "void (*");
-             eina_strbuf_append(buf, tp->base.c_name);
-             eina_strbuf_append(buf, ")(void *data)");
-             return;
-          }
-     }
    database_type_to_str(tp->base_type, buf, tp->base.c_name,
                         EOLIAN_C_TYPE_DEFAULT);
 }
