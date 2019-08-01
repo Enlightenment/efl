@@ -18,10 +18,10 @@ void _owning_test2(Eo *obj, Owning_Data *pd, Eina_List *test1, Eina_Hash *test2)
 static void
 _owning_test2_ownership_fallback(Eina_List *test1, Eina_Hash *test2)
 {
-   Test_A *test1_iter;
+   Eina_Array *test1_iter;
    EINA_LIST_FREE(test1,test1_iter)
      {
-        free_a(test1_iter);
+        eina_array_free(test1_iter);
      }
    eina_hash_free_cb_set(test2,NULL);
    eina_hash_free(test2);

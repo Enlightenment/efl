@@ -1,10 +1,8 @@
-struct @free(efl_del) @extern Eo;
-
 class Complex_Type {
    methods {
       @property a {
          set {
-            return: list<array<ptr(Eo) @owned> > @owned;
+            return: list<array<strbuf @owned> > @owned;
          }
          get {
          }
