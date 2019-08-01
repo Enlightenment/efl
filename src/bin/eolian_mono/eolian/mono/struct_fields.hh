@@ -42,7 +42,7 @@ struct field_argument_docs_generator
    template<typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::struct_field_def const& field, Context const& context) const
    {
-       if (!as_generator("/// <param name=\"" << string << "\">" << string << "</param>")
+       if (!as_generator("/// <param name=\"" << string << "\">" << documentation_string << "</param>")
                .generate(sink, std::make_tuple(name_helpers::to_field_name(field.name), field.documentation.summary), context))
            return false;
        return true;
