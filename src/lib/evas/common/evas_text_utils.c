@@ -1299,7 +1299,7 @@ _hex_string_get(char ch, Eina_Bool *ok)
  *
  * @param source source buffer
  * @param dest destination buffer
- * @param max maximum number of chars to be copyed
+ * @param max maximum number of chars to be copied
  * @return number of spaces removed
  */
 
@@ -1323,6 +1323,36 @@ size_t remove_spaces_lowercase(const char* source,char * dest,size_t max)
   return spaces;
 }
 
+/**
+ * @internal
+ * read color component from string
+ *
+ * @param source source string
+ * @param[out] next position after the color compnent
+ * @param byte store color value read from string
+ * @return if read success
+ */
+
+Eina_Bool read_byte_color_component(const char* source,char ** next,unsigned char * byte)
+{
+  const char *p_start = source;
+  char *p_stop = NULL;
+  Eina_Bool b_ret = EINA_TRUE;
+  long value = 0;
+  value = strtol(p_start, &p_stop, 10);
+  if ( value > 255 || value < 0 || p_start == p_stop )
+    {
+       b_ret = EINA_FALSE;
+    }
+
+   if (next)
+     *next = p_stop;
+   if (byte)
+     *byte = (unsigned char) value;
+
+   return b_ret;
+}
+
 
 /**
  * @internal
@@ -1332,12 +1362,11 @@ size_t remove_spaces_lowercase(const char* source,char * dest,size_t max)
  * 3. "#RGB"
  * 4. "#RGBA"
  * 5. "color names"
+ * 6. "rgb(r,g,b)"
+ * 7. "rgba(r,g,b,a)"
  * TODO (we may use specific color parser)
- * 6. "rgb(RR,GG,BB)"
- * 7. "rgba(RR,GG,BB,AA)"
- * 8. "rgb(%R,%G,%B)"
- * 9. "rgba(%R,%G,%B,%A)"
- * 10."hsv(HH,SS,VV)"
+ * 8. "hsl(H,S,L)"
+ * 9. "hsla(H,S,L,A)"
  * To the rgba values.
  *
  * @param[in] str The string to parse - NOT NULL.
@@ -1393,24 +1422,61 @@ evas_common_format_color_parse(const char *str, int slen,
           }
         else v = EINA_FALSE;
       }
-    else
+    else if (slen <= 21)/* search for rgb(),hsv(),colorname, 20 is length of rgba(255,255,255,255) */
       {
          /*remove spaces and convert name to lowercase*/
          char color_name[0xFF] = {0};
          slen = slen - (int) remove_spaces_lowercase(str,color_name,0xFF);
-         static size_t color_array_length = sizeof(color_name_value_sorted)/sizeof(Color_Name_Value);
-         Color_Name_Value* pcolor = (Color_Name_Value*) bsearch(color_name, color_name_value_sorted, color_array_length, sizeof(Color_Name_Value),_color_name_search);
-         if (pcolor)
+
+         if ((strncmp(color_name,"rgb(",4) == 0) && color_name[slen-1] == ')'&& slen >= 10 && slen <=16) /* rgb() */
            {
-              *r = pcolor->r;
-              *g = pcolor->g;
-              *b = pcolor->b;
-              *a = 0xff;
+              char * p_color = &color_name[3]; 
+
+              if (
+                  (!read_byte_color_component(++p_color,&p_color,r)  || !p_color   || *p_color != ',') ||
+                  (!read_byte_color_component(++p_color,&p_color,g)  || !p_color   || *p_color != ',') ||
+                  (!read_byte_color_component(++p_color,&p_color,b)  || !p_color   || *p_color != ')')
+                 )
+                {
+                   *r = *g = *b = *a = 0;
+                   v = EINA_FALSE;
+                }
+              else
+                {
+                   *a = 0xff;
+                }
+           }
+         else if ((strncmp(color_name,"rgba(",4) == 0) && color_name[slen-1] == ')'&& slen >= 13 && slen <=21) /* rgba() */
+           {
+              char * p_color = &color_name[4]; 
+
+              if (
+                  (!read_byte_color_component(++p_color,&p_color,r)  || !p_color   || *p_color != ',') ||
+                  (!read_byte_color_component(++p_color,&p_color,g)  || !p_color   || *p_color != ',') ||
+                  (!read_byte_color_component(++p_color,&p_color,b)  || !p_color   || *p_color != ',') ||
+                  (!read_byte_color_component(++p_color,&p_color,a)  || !p_color   || *p_color != ')')
+                 )
+                {
+                   *r = *g = *b = *a = 0;
+                   v = EINA_FALSE;
+                }
            }
          else
            {
-              v = EINA_FALSE;
-           }
+              static size_t color_array_length = sizeof(color_name_value_sorted)/sizeof(Color_Name_Value);
+              Color_Name_Value* pcolor = (Color_Name_Value*) bsearch(color_name, color_name_value_sorted, color_array_length, sizeof(Color_Name_Value),_color_name_search);
+              if (pcolor)
+                {
+                   *r = pcolor->r;
+                   *g = pcolor->g;
+                   *b = pcolor->b;
+                   *a = 0xff;
+                }
+              else
+                {
+                   v = EINA_FALSE;
+                }
+            }
       }
 
    if(*a != 0xFF)

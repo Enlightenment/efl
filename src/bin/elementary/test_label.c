@@ -393,6 +393,8 @@ test_label_colors(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
    elm_object_text_set(lb,
                        "<color=red>this is red color line(color = red)<color><br>"
                        "<color=#0000FF>this is blue color line (color = #0000FF)<color><br>"
+                       "<color=rgb(0,255,0)>this is green color line (color = rgb(0,255,0))<color><br>"
+                       "<color=rgba(0,255,0,255)>this is blue color line (color = rgba(0,255,0,255))<color><br>"
                        );
    evas_object_size_hint_weight_set(lb, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_win_resize_object_add(win, lb);

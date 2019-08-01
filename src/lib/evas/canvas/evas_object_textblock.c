@@ -1953,6 +1953,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * @li "#RRGGBBAA"
       * @li "#RGB"
       * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
       * @li "color_name"  like "red"
       * @code
       * color=<color>
@@ -1972,6 +1974,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * @li "#RRGGBBAA"
       * @li "#RGB"
       * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
       * @li "color_name"  like "red"
       * @code
       * underline_color=<color>
@@ -1992,6 +1996,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * @li "#RRGGBBAA"
       * @li "#RGB"
       * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
       * @li "color_name"  like "red"
       * @code
       * underline2_color=<color>
@@ -2011,6 +2017,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * @li "#RRGGBBAA"
       * @li "#RGB"
       * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
       * @li "color_name"  like "red"
       * @code
       * underline_dash_color=<color>
@@ -2031,6 +2039,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * @li "#RRGGBBAA"
       * @li "#RGB"
       * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
       * @li "color_name"  like "red"
       * @code
       * outline_color=<color>
@@ -2051,6 +2061,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * @li "#RRGGBBAA"
       * @li "#RGB"
       * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
       * @li "color_name"  like "red"
       * @code
       * shadow_color=<color>
@@ -2071,6 +2083,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * @li "#RRGGBBAA"
       * @li "#RGB"
       * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
       * @li "color_name"  like "red"
       * @code
       * glow_color=<color>
@@ -2091,6 +2105,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * @li "#RRGGBBAA"
       * @li "#RGB"
       * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
       * @li "color_name"  like "red"
       * @code
       * glow2_color=<color>
@@ -2111,6 +2127,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * @li "#RRGGBBAA"
       * @li "#RGB"
       * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
       * @li "color_name"  like "red"
       * @code
       * backing_color=<color>
@@ -2131,6 +2149,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * @li "#RRGGBBAA"
       * @li "#RGB"
       * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
       * @li "color_name"  like "red"
       * @code
       * strikethrough_color=<color>
