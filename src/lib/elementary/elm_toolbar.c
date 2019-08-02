@@ -1256,6 +1256,41 @@ _item_shrink_signal_emit(Evas_Object *view, Elm_Toolbar_Shrink_Mode shrink_mode)
 }
 
 static void
+_item_fill_align_set(Elm_Toolbar_Data *sd, Elm_Toolbar_Item_Data *it)
+{
+   if (sd->shrink_mode != ELM_TOOLBAR_SHRINK_EXPAND)
+     {
+        if (it->separator)
+          {
+             if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
+               evas_object_size_hint_weight_set(VIEW(it), -1.0, 0.0);
+             else
+               evas_object_size_hint_weight_set(VIEW(it), 0.0, -1.0);
+          }
+        else
+          {
+             if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
+               evas_object_size_hint_weight_set(VIEW(it), EVAS_HINT_EXPAND, 0.0);
+             else
+               evas_object_size_hint_weight_set(VIEW(it), 0.0, EVAS_HINT_EXPAND);
+          }
+     }
+   else
+     {
+        if (it->separator)
+          {
+             if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
+               evas_object_size_hint_weight_set(VIEW(it), -1.0, 0.0);
+             else
+               evas_object_size_hint_weight_set(VIEW(it), 0.0, -1.0);
+          }
+        else
+          evas_object_size_hint_weight_set(VIEW(it), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+     }
+   evas_object_size_hint_align_set(VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
+}
+
+static void
 _item_theme_hook(Evas_Object *obj,
                  Elm_Toolbar_Item_Data *it,
                  double scale,
@@ -1324,33 +1359,12 @@ _item_theme_hook(Evas_Object *obj,
    else
      elm_layout_signal_emit(view, "elm,orient,horizontal", "elm");
 
-    edje_object_message_signal_process(elm_layout_edje_get(view));
-    if (!it->separator && !it->object)
-      elm_coords_finger_size_adjust(1, &mw, 1, &mh);
-    if (sd->shrink_mode != ELM_TOOLBAR_SHRINK_EXPAND)
-      {
-         if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
-           {
-              evas_object_size_hint_weight_set(view, EVAS_HINT_EXPAND, -1.0);
-              evas_object_size_hint_align_set
-                (view, EVAS_HINT_FILL, EVAS_HINT_FILL);
-           }
-         else
-           {
-              evas_object_size_hint_weight_set(VIEW(it), -1.0, EVAS_HINT_EXPAND);
-              evas_object_size_hint_align_set
-                (view, EVAS_HINT_FILL, EVAS_HINT_FILL);
-           }
-      }
-    else
-      {
-         evas_object_size_hint_weight_set
-           (VIEW(it), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-         evas_object_size_hint_align_set
-           (VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
-      }
-    _resizing_eval_item(it);
-    evas_object_smart_need_recalculate_set(obj, EINA_TRUE);
+   edje_object_message_signal_process(elm_layout_edje_get(view));
+   if (!it->separator && !it->object)
+     elm_coords_finger_size_adjust(1, &mw, 1, &mh);
+   _item_fill_align_set(sd, it);
+   _resizing_eval_item(it);
+   evas_object_smart_need_recalculate_set(obj, EINA_TRUE);
 }
 
 static void
@@ -2485,28 +2499,8 @@ _item_new(Evas_Object *obj,
 
    edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
 
-    if (sd->shrink_mode != ELM_TOOLBAR_SHRINK_EXPAND)
-      {
-         if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
-           {
-              evas_object_size_hint_weight_set(VIEW(it), EVAS_HINT_EXPAND, -1.0);
-              evas_object_size_hint_align_set
-                (VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
-           }
-         else
-           {
-              evas_object_size_hint_weight_set(VIEW(it), -1.0, EVAS_HINT_EXPAND);
-              evas_object_size_hint_align_set
-                (VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
-           }
-      }
-    else
-      {
-         evas_object_size_hint_weight_set
-           (VIEW(it), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-         evas_object_size_hint_align_set
-           (VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
-      }
+   _item_fill_align_set(sd, it);
+
    efl_ui_focus_composition_dirty(obj);
 
    evas_object_event_callback_add
@@ -3373,7 +3367,7 @@ _elm_toolbar_item_separator_set(Eo *eo_item EINA_UNUSED, Elm_Toolbar_Item_Data *
    item->separator = separator;
    scale = (efl_gfx_entity_scale_get(obj) * elm_config_scale_get());
    _item_theme_hook(obj, item, scale, sd->icon_size);
-   evas_object_size_hint_min_set(VIEW(item), -1, -1);
+   _item_fill_align_set(sd, item);
    if (separator) sd->separator_count++;
    else sd->separator_count--;
 }
