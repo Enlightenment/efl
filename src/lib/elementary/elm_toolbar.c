@@ -595,8 +595,8 @@ _resize_job(void *data)
              (VIEW(it) == eina_list_nth(list, eina_list_count(list) - 1))))
           {
              evas_object_box_remove(sd->bx_more, VIEW(it));
-             evas_object_move(VIEW(it), -9999, -9999);
              evas_object_hide(VIEW(it));
+             evas_object_move(VIEW(it), -9999, -9999);
           }
      }
    eina_list_free(list);
@@ -608,8 +608,8 @@ _resize_job(void *data)
              (VIEW(it) == eina_list_nth(list, eina_list_count(list) - 1))))
           {
              evas_object_box_remove(sd->bx_more2, VIEW(it));
-             evas_object_move(VIEW(it), -9999, -9999);
              evas_object_hide(VIEW(it));
+             evas_object_move(VIEW(it), -9999, -9999);
           }
      }
    eina_list_free(list);
@@ -2485,6 +2485,28 @@ _item_new(Evas_Object *obj,
 
    edje_object_message_signal_process(elm_layout_edje_get(VIEW(it)));
 
+    if (sd->shrink_mode != ELM_TOOLBAR_SHRINK_EXPAND)
+      {
+         if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
+           {
+              evas_object_size_hint_weight_set(VIEW(it), EVAS_HINT_EXPAND, -1.0);
+              evas_object_size_hint_align_set
+                (VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
+           }
+         else
+           {
+              evas_object_size_hint_weight_set(VIEW(it), -1.0, EVAS_HINT_EXPAND);
+              evas_object_size_hint_align_set
+                (VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
+           }
+      }
+    else
+      {
+         evas_object_size_hint_weight_set
+           (VIEW(it), EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+         evas_object_size_hint_align_set
+           (VIEW(it), EVAS_HINT_FILL, EVAS_HINT_FILL);
+      }
    efl_ui_focus_composition_dirty(obj);
 
    evas_object_event_callback_add
@@ -3080,6 +3102,7 @@ _elm_toolbar_item_insert_before(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *
        (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(_before));
    evas_object_box_insert_before(sd->bx, VIEW(it), VIEW(_before));
    _item_theme_hook(obj, it, scale, sd->icon_size);
+   evas_object_show(VIEW(it));
    sd->item_count++;
 
    _elm_toolbar_item_order_signal_emit(sd, it, prev_list, EINA_FALSE);
@@ -3109,6 +3132,7 @@ _elm_toolbar_item_insert_after(Eo *obj, Elm_Toolbar_Data *sd, Elm_Object_Item *e
        (sd->items, EINA_INLIST_GET(it), EINA_INLIST_GET(_after));
    evas_object_box_insert_after(sd->bx, VIEW(it), VIEW(_after));
    _item_theme_hook(obj, it, scale, sd->icon_size);
+   evas_object_show(VIEW(it));
    sd->item_count++;
 
    _elm_toolbar_item_order_signal_emit(sd, it, prev_list, EINA_FALSE);
