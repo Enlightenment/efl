@@ -253,10 +253,10 @@ struct event_argument_wrapper_generator
                           << "[Efl.Eo.BindingEntity]\n"
                           << "public class " << name_helpers::managed_event_args_short_name(evt) << " : EventArgs {\n"
                           << scope_tab << "/// <summary>Actual event payload.</summary>\n"
-                          << scope_tab << "/// <value>" << evt.documentation.summary << "</value>\n"
+                          << scope_tab << "/// <value>" << documentation_string << "</value>\n"
                           << scope_tab << "public " << type << " arg { get; set; }\n"
                           << "}\n"
-                 ).generate(sink, *etype, context);
+                 ).generate(sink, std::make_tuple(evt.documentation.summary, *etype), context);
    }
 } const event_argument_wrapper {};
 
