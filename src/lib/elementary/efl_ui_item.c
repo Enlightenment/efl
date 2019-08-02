@@ -223,7 +223,7 @@ _efl_ui_item_efl_object_finalize(Eo *obj, Efl_Ui_Item_Data *pd EINA_UNUSED)
    /* Support Item Focus Feature */
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   efl_ui_clickable_util_bind_to_object(wd->resize_obj, obj);
+   efl_ui_action_connector_bind_clickable_to_object(wd->resize_obj, obj);
    return eo;
 }
 

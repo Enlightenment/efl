@@ -438,7 +438,7 @@ _efl_ui_panes_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UN
      }
    else
      {
-        efl_ui_clickable_util_bind_to_theme(wd->resize_obj, obj);
+        efl_ui_action_connector_bind_clickable_to_theme(wd->resize_obj, obj);
      }
    evas_object_event_callback_add
      (wd->resize_obj, EVAS_CALLBACK_RESIZE,

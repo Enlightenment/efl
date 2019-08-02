@@ -2189,7 +2189,7 @@ _efl_ui_text_efl_object_finalize(Eo *obj,
      (sd->entry_edje, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, obj);
    evas_object_event_callback_add
      (sd->entry_edje, EVAS_CALLBACK_MOUSE_MOVE, _mouse_move_cb, obj);
-   efl_ui_clickable_util_bind_to_object(sd->entry_edje, obj);
+   efl_ui_action_connector_bind_clickable_to_object(sd->entry_edje, obj);
 
    efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
          _text_size_changed_cb, obj);

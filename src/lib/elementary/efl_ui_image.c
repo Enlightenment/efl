@@ -584,7 +584,7 @@ _efl_ui_image_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Data *priv)
      }
    else
      {
-        efl_ui_clickable_util_bind_to_object(priv->hit_rect, obj);
+        efl_ui_action_connector_bind_clickable_to_object(priv->hit_rect, obj);
      }
 
    priv->smooth = EINA_TRUE;
