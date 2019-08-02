@@ -13,13 +13,13 @@
 #define MY_CLASS EFL_INPUT_HOLD_CLASS
 
 EOLIAN static void
-_efl_input_hold_hold_set(Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd, Eina_Bool val)
+_efl_input_hold_input_hold_set(Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd, Eina_Bool val)
 {
    pd->hold = !!val;
 }
 
 EOLIAN static Eina_Bool
-_efl_input_hold_hold_get(const Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
+_efl_input_hold_input_hold_get(const Eo *obj EINA_UNUSED, Efl_Input_Hold_Data *pd)
 {
    return pd->hold;
 }
