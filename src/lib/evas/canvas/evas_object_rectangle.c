@@ -234,6 +234,10 @@ evas_object_rectangle_render_pre(Evas_Object *eo_obj,
        (obj->cur->geometry.w != obj->prev->geometry.w) ||
        (obj->cur->geometry.h != obj->prev->geometry.h))
      {
+        evas_object_render_pre_prev_cur_add(&obj->layer->evas->clip_changes, eo_obj, obj);
+
+//This Performance is not so good ...!
+#if 0
         evas_rects_return_difference_rects(&obj->layer->evas->clip_changes,
                                            obj->cur->geometry.x,
                                            obj->cur->geometry.y,
@@ -243,15 +247,7 @@ evas_object_rectangle_render_pre(Evas_Object *eo_obj,
                                            obj->prev->geometry.y,
                                            obj->prev->geometry.w,
                                            obj->prev->geometry.h);
-        ////	rl = evas_rects_return_difference_rects(obj->cur->cache.geometry.x,
-        ////						obj->cur->cache.geometry.y,
-        ////						obj->cur->cache.geometry.w,
-        ////						obj->cur->cache.geometry.h,
-        ////						obj->prev->cache.geometry.x,
-        ////						obj->prev->cache.geometry.y,
-        ////						obj->prev->cache.geometry.w,
-        ////						obj->prev->cache.geometry.h);
-        goto done;
+#endif
      }
 done:
    evas_object_render_pre_effect_updates(&obj->layer->evas->clip_changes, eo_obj, is_v, was_v);
