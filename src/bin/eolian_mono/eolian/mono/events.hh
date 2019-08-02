@@ -367,6 +367,10 @@ struct event_definition_generator
 
       if(!as_generator(documentation(1)).generate(sink, evt, context))
         return false;
+      if (etype.is_engaged())
+        if (!as_generator(
+                scope_tab << "/// <value><see cref=\"" << wrapper_args_type << "\"/></value>\n"
+             ).generate(sink, evt, context)) return false;
 
       // Visible event declaration. Either a regular class member or an explicit interface implementation.
       if (klass.type == attributes::class_type::interface_ || klass.type == attributes::class_type::mixin)
