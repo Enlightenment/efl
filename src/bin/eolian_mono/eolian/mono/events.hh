@@ -279,9 +279,15 @@ struct event_declaration_generator
         wrapper_args_type = "<" + name_helpers::managed_event_args_name(evt) + ">";
 
       if (!as_generator(
-                documentation(1)
-                << scope_tab << "event EventHandler" << wrapper_args_type << " " << evt_name << ";\n"
-             ).generate(sink, evt, context))
+              documentation(1)
+           ).generate(sink, evt, context)) return false;
+      if (evt.type.is_engaged())
+        if (!as_generator(
+                scope_tab << scope_tab << "/// <value><see cref=\"" << name_helpers::managed_event_args_name(evt) << "\"/></value>\n"
+             ).generate(sink, evt, context)) return false;
+      if (!as_generator(
+              scope_tab << "event EventHandler" << wrapper_args_type << " " << evt_name << ";\n"
+           ).generate(sink, evt, context))
         return false;
 
       return true;
