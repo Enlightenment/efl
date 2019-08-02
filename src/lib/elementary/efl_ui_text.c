@@ -47,7 +47,6 @@ struct _Efl_Ui_Text_Data
    Evas_Object                          *start_handler;
    Evas_Object                          *end_handler;
    Ecore_Job                            *deferred_decoration_job;
-   Ecore_Timer                          *longpress_timer;
    Ecore_Timer                          *delay_write;
    /* for deferred appending */
    Ecore_Idler                          *append_text_idler;
@@ -1427,8 +1426,6 @@ _long_press_cb(void *data, const Efl_Event *ev EINA_UNUSED)
      _menu_call(data);
 
    sd->long_pressed = EINA_TRUE;
-
-   sd->longpress_timer = NULL;
 }
 
 static void
@@ -1522,7 +1519,8 @@ _mouse_up_cb(void *data,
    if (sd->disabled) return;
    if (ev->button == 1)
      {
-        ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
+        efl_input_clickable_longpress_abort(data, 1);
+
         /* Since context menu disabled flag was checked at long press start while mouse
          * down, hence the same should be checked at mouse up from a long press
          * as well */
@@ -1563,6 +1561,7 @@ _mouse_move_cb(void *data,
                void *event_info)
 {
    Evas_Event_Mouse_Move *ev = event_info;
+   Evas_Coord dx, dy;
 
    EFL_UI_TEXT_DATA_GET(data, sd);
 
@@ -1592,38 +1591,18 @@ _mouse_move_cb(void *data,
      {
         if (ev->event_flags & EVAS_EVENT_FLAG_ON_HOLD)
           {
-             ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
-          }
-        else if (sd->longpress_timer)
-          {
-             Evas_Coord dx, dy;
-
-             dx = sd->downx - ev->cur.canvas.x;
-             dx *= dx;
-             dy = sd->downy - ev->cur.canvas.y;
-             dy *= dy;
-             if ((dx + dy) >
-                 ((_elm_config->finger_size / 2) *
-                  (_elm_config->finger_size / 2)))
-               {
-                  ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
-               }
+             efl_input_clickable_longpress_abort(data, 1);
           }
      }
-   else if (sd->longpress_timer)
-     {
-        Evas_Coord dx, dy;
 
-        dx = sd->downx - ev->cur.canvas.x;
-        dx *= dx;
-        dy = sd->downy - ev->cur.canvas.y;
-        dy *= dy;
-        if ((dx + dy) >
-            ((_elm_config->finger_size / 2) *
-             (_elm_config->finger_size / 2)))
-          {
-             ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
-          }
+   dx = sd->downx - ev->cur.canvas.x;
+   dx *= dx;
+   dy = sd->downy - ev->cur.canvas.y;
+   dy *= dy;
+   if ((dx + dy) > ((_elm_config->finger_size / 2) *
+                    (_elm_config->finger_size / 2)))
+     {
+        efl_input_clickable_longpress_abort(data, 1);
      }
 }
 
@@ -1716,7 +1695,7 @@ _selection_handlers_offset_calc(Evas_Object *obj, Evas_Object *handler)
         sd->oy = pos.y + cy + (ch / 2);
      }
 
-   ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
+   efl_input_clickable_longpress_abort(obj, 1);
    sd->long_pressed = EINA_FALSE;
 }
 
@@ -1799,7 +1778,7 @@ _start_handler_mouse_move_cb(void *data,
    efl_text_cursor_position_set(sd->text_obj,
          efl_text_cursor_get(sd->text_obj, EFL_TEXT_CURSOR_GET_TYPE_MAIN), pos);
 
-   ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
+   efl_input_clickable_longpress_abort(data, 1);
    sd->long_pressed = EINA_FALSE;
 }
 
@@ -1879,7 +1858,7 @@ _end_handler_mouse_move_cb(void *data,
    pos = efl_text_cursor_position_get(sd->text_obj, sd->sel_handler_cursor);
    /* Set the main cursor. */
    efl_text_cursor_position_set(sd->text_obj, efl_text_cursor_get(data, EFL_TEXT_CURSOR_GET_TYPE_MAIN), pos);
-   ELM_SAFE_FREE(sd->longpress_timer, ecore_timer_del);
+   efl_input_clickable_longpress_abort(data, 1);
    sd->long_pressed = EINA_FALSE;
 }
 
@@ -2266,7 +2245,6 @@ _efl_ui_text_efl_object_destructor(Eo *obj, Efl_Ui_Text_Data *sd)
         ELM_SAFE_FREE(sd->append_text_left, free);
         sd->append_text_idler = NULL;
      }
-   ecore_timer_del(sd->longpress_timer);
    EINA_LIST_FREE(sd->items, it)
      {
         eina_stringshare_del(it->label);

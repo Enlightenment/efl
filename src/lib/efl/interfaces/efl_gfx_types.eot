@@ -161,8 +161,8 @@ enum Efl.Gfx.Change_Flag
 struct Efl.Gfx.Event.Render_Post
 {
    [[Data sent along a "render,post" event, after a frame has been rendered.]]
-   updated_area: list<ptr(Eina.Rect)>; [[A list of rectangles that were
-                                         updated in the canvas.]]
+   updated_area: list<Eina.Rect>; [[A list of rectangles that were
+                                    updated in the canvas.]]
 }
 
 enum Efl.Gfx.Hint_Aspect

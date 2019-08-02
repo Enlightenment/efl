@@ -175,7 +175,7 @@ _setter_add(Eo *vbox, Eo *btn, Options option)
            efl_ui_range_step_set(efl_added, 0.1),
            efl_ui_range_value_set(efl_added, relative),
            efl_key_wref_set(efl_added, "btn", btn),
-           efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED, _slider_changed_relative_cb, (void *)option),
+           efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED, _slider_changed_relative_cb, (void *)option),
            efl_pack(hbox, efl_added));
 }
 
@@ -246,7 +246,7 @@ _button_frame_add(Eo *box, Eo *btn)
            efl_ui_range_step_set(efl_added, 0.1),
            efl_ui_range_value_set(efl_added, align_x),
            efl_key_wref_set(efl_added, "btn", btn),
-           efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED, _slider_changed_align_cb, (void *)'x'),
+           efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED, _slider_changed_align_cb, (void *)'x'),
            efl_pack(hbox, efl_added));
 
    hbox = efl_add(EFL_UI_BOX_CLASS, vbox,
@@ -266,7 +266,7 @@ _button_frame_add(Eo *box, Eo *btn)
            efl_ui_range_step_set(efl_added, 0.1),
            efl_ui_range_value_set(efl_added, align_y),
            efl_key_wref_set(efl_added, "btn", btn),
-           efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED, _slider_changed_align_cb, (void *)'y'),
+           efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED, _slider_changed_align_cb, (void *)'y'),
            efl_pack(hbox, efl_added));
 }
 

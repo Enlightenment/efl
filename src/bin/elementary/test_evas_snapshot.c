@@ -173,7 +173,7 @@ test_evas_snapshot(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
            elm_slider_unit_format_set(efl_added, "%.0f px"),
            efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
            efl_pack_table(table, efl_added, 0, TABLE_SIZE, TABLE_SIZE, 1),
-           efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED, _radius_set, win));
+           efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED, _radius_set, win));
 
    box = efl_add(EFL_UI_BOX_CLASS, win,
                  efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),

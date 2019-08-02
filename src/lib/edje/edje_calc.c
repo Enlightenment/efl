@@ -3018,9 +3018,7 @@ _edje_part_recalc_single(Edje *ed,
    params->req.x = TO_INT(params->eval.x);
    params->req.y = TO_INT(params->eval.y);
    params->req.w = TO_INT(params->eval.w);
-   if (params->req.w < 0) params->req.w = 0;
    params->req.h = TO_INT(params->eval.h);
-   if (params->req.h < 0) params->req.h = 0;
 
    /* adjust for min size */
    _edje_part_recalc_single_min(desc, params, minw, minh, apref);

@@ -118,4 +118,19 @@ _efl_input_clickable_button_state_reset(Eo *obj EINA_UNUSED, Efl_Input_Clickable
    state->pressed = EINA_FALSE;
 }
 
+EOLIAN static void
+_efl_input_clickable_longpress_abort(Eo *obj EINA_UNUSED, Efl_Input_Clickable_Data *pd, unsigned int button)
+{
+   Button_State *state;
+   EINA_SAFETY_ON_FALSE_RETURN(button < 3);
+
+   state = &pd->state[button];
+   EINA_SAFETY_ON_NULL_RETURN(state);
+
+   INF("Widget %s,%p - longpress is aborted(%d)", efl_class_name_get(obj), obj, button);
+
+   if (state->timer)
+     efl_del(state->timer);
+   state->timer = NULL;
+}
 #include "efl_input_clickable.eo.c"

@@ -48,4 +48,9 @@ interface @beta Efl.Ui.Range_Display
          }
       }
    }
+   events {
+      changed: void; [[Emitted when the $range_value is getting changed]]
+      min,reached: void; [[Emitted when the $range_value has reached the minimum of $range_limits]]
+      max,reached: void; [[Emitted when the $range_value has reached the maximum of $range_limits]]
+   }
 }

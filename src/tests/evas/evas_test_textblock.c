@@ -4654,6 +4654,35 @@ EFL_START_TEST(efl_canvas_text_markup)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_text_font)
+{
+   START_EFL_CANVAS_TEXT_TEST();
+
+   efl_text_set(txt, "\n\n\n");
+
+   const char * font;
+   int font_size;
+   efl_text_font_set(txt, "Sans", 20);
+   efl_text_font_set(txt, NULL, 0);
+
+   efl_text_font_get(txt, &font, &font_size);
+   fail_if(20 != font_size);
+   fail_if(strcmp(font,"Sans"));
+
+   efl_text_font_set(txt, NULL, 30);
+   efl_text_font_get(txt, &font, &font_size);
+   fail_if(30 != font_size);
+   fail_if(strcmp(font,"Sans"));
+
+   efl_text_font_set(txt, "arial", 0);
+   efl_text_font_get(txt, &font, &font_size);
+   fail_if(30 != font_size);
+   fail_if(strcmp(font,"arial"));
+
+   END_EFL_CANVAS_TEXT_TEST();
+}
+EFL_END_TEST
+
 void evas_test_textblock(TCase *tc)
 {
    tcase_add_test(tc, evas_textblock_simple);
@@ -4686,5 +4715,6 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, efl_text);
    tcase_add_test(tc, efl_canvas_text_cursor);
    tcase_add_test(tc, efl_canvas_text_markup);
+   tcase_add_test(tc, efl_text_font);
 }
 

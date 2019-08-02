@@ -558,8 +558,17 @@ _progressbar_part_value_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, const char *pa
 
    _val_set(obj);
    _units_set(obj);
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_PROGRESSBAR_EVENT_CHANGED, NULL);
+   if (elm_widget_is_legacy(obj))
+     efl_event_callback_legacy_call
+       (obj, EFL_UI_RANGE_EVENT_CHANGED, NULL);
+   else
+     {
+        efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_CHANGED, NULL);
+        if (sd->val == min)
+          efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_MIN_REACHED, NULL);
+        if (sd->val == max)
+          efl_event_callback_call(obj, EFL_UI_RANGE_EVENT_MAX_REACHED, NULL);
+     }
 }
 
 static double

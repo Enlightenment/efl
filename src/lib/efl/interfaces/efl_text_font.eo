@@ -63,6 +63,9 @@ interface @beta Efl.Text_Font {
               to get an idea). Alternatively, youe can use the full path to a font
               file.
 
+              To skip changing font family pass null as font family.
+              To skip changing font size pass 0 as font size.
+
               See also @.font.get, @.font_source.get.
             ]]
          }

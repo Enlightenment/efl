@@ -64,7 +64,6 @@ enum Tokens
     KW(mstring), KW(string), KW(stringshare), KW(strbuf), \
     \
     KW(void_ptr), \
-    KW(__builtin_free_cb), \
     KW(function), \
     KW(__undefined_type), \
     \

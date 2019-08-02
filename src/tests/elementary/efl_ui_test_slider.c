@@ -13,7 +13,7 @@ slider_changed(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    event_counter++;
    if (event_counter == 1)
-     efl_event_callback_del(ev->object, EFL_UI_SLIDER_EVENT_CHANGED, slider_changed, NULL);
+     efl_event_callback_del(ev->object, EFL_UI_RANGE_EVENT_CHANGED, slider_changed, NULL);
    else if (event_counter == 2)
      ecore_main_loop_quit();
 }
@@ -26,8 +26,8 @@ EFL_START_TEST(efl_ui_test_slider_events)
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(400, 100));
    slider = efl_add(EFL_UI_SLIDER_CLASS, win,
-                efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED, slider_changed, NULL),
-                efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_STEADY, slider_changed, NULL),
+                efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED, slider_changed, NULL),
+                efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_STEADY, slider_changed, NULL),
                 efl_gfx_entity_size_set(efl_added, EINA_SIZE2D(400, 100))
                 );
 
@@ -60,8 +60,8 @@ EFL_START_TEST(efl_ui_test_slider_step)
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(400, 100));
    slider = efl_add(EFL_UI_SLIDER_CLASS, win,
-                efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED, slider_changed, NULL),
-                efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_STEADY, slider_changed, NULL),
+                efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED, slider_changed, NULL),
+                efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_STEADY, slider_changed, NULL),
                 efl_gfx_entity_size_set(efl_added, EINA_SIZE2D(400, 100))
                 );
    efl_ui_range_limits_set(slider, 0, 100);

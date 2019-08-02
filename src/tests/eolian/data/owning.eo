@@ -1,7 +1,3 @@
-struct @free(free_a) Test.A {
-   t : int;
-}
-
 class Owning {
    methods {
      test1 {
@@ -14,8 +10,8 @@ class Owning {
      }
      test2 {
        params {
-         test1 : list<ptr(Test.A) @owned> @owned;
-         test2 : hash<string, ptr(Test.A) @owned> @owned;
+         test1 : list<array<int> @owned> @owned;
+         test2 : hash<string, array<int> @owned> @owned;
        }
      }
 

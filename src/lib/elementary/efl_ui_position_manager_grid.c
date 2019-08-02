@@ -6,13 +6,14 @@
 #include <Elementary.h>
 #include "elm_widget.h"
 #include "elm_priv.h"
+#include "efl_ui_position_manager_common.h"
 
 #define MY_CLASS      EFL_UI_POSITION_MANAGER_GRID_CLASS
 #define MY_DATA_GET(obj, pd) \
   Efl_Ui_Position_Manager_Grid_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
 typedef struct {
-   Eina_Accessor *content_acc, *size_acc;
+   Api_Callback min_size, object;
    unsigned int size;
    Eina_Rect viewport;
    Eina_Vector2 scroll_position;
@@ -29,27 +30,15 @@ typedef struct {
    } current_display_table;
 } Efl_Ui_Position_Manager_Grid_Data;
 
-static inline void
-vis_change_segment(Efl_Ui_Position_Manager_Grid_Data *pd, int a, int b, Eina_Bool flag)
-{
-   for (int i = MIN(a, b); i < MAX(a, b); ++i)
-     {
-        Efl_Gfx_Entity *ent;
-
-        EINA_SAFETY_ON_FALSE_RETURN(eina_accessor_data_get(pd->content_acc, i, (void**) &ent));
-        if (ent && !efl_ui_focus_object_focus_get(ent))
-          {
-             efl_gfx_entity_visible_set(ent, flag);
-          }
-     }
-}
-
 static void
 _reposition_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
 {
    Eina_Size2D space_size;
    int relevant_space_size, relevant_viewport;
    unsigned int start_id, end_id, step;
+   const int len = 100;
+   Efl_Gfx_Entity *obj_buffer[len];
+   Efl_Ui_Position_Manager_Range_Update ev;
 
    if (!pd->size) return;
    if (pd->max_min_size.w <= 0 || pd->max_min_size.h <= 0) return;
@@ -83,21 +72,27 @@ _reposition_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
      {
         //it is important to first make the segment visible here, and then hide the rest
         //otherwise we get a state where item_container has 0 subchildren, which triggers a lot of focus logic.
-        vis_change_segment(pd, start_id, end_id, EINA_TRUE);
-        vis_change_segment(pd, pd->prev_run.start_id, pd->prev_run.end_id, EINA_FALSE);
+        vis_change_segment(&pd->object, start_id, end_id, EINA_TRUE);
+        vis_change_segment(&pd->object, pd->prev_run.start_id, pd->prev_run.end_id, EINA_FALSE);
      }
    else
      {
-        vis_change_segment(pd, pd->prev_run.start_id, start_id, (pd->prev_run.start_id > start_id));
-        vis_change_segment(pd, pd->prev_run.end_id, end_id, (pd->prev_run.end_id < end_id));
+        vis_change_segment(&pd->object, pd->prev_run.start_id, start_id, (pd->prev_run.start_id > start_id));
+        vis_change_segment(&pd->object, pd->prev_run.end_id, end_id, (pd->prev_run.end_id < end_id));
      }
 
    for (unsigned int i = start_id; i < end_id; ++i)
      {
         Eina_Rect geom;
         Efl_Gfx_Entity *ent;
+        int buffer_id = (i-start_id) % len;
         geom.size = pd->max_min_size;
         geom.pos = pd->viewport.pos;
+
+        if (buffer_id == 0)
+          {
+             EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->object, i, len, obj_buffer) > 0);
+          }
 
         if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
           {
@@ -112,12 +107,17 @@ _reposition_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
              geom.x -= (relevant_space_size);
           }
 
-        EINA_SAFETY_ON_FALSE_RETURN(eina_accessor_data_get(pd->content_acc, i, (void**) &ent));
+        ent = ((Efl_Gfx_Entity**)obj_buffer)[buffer_id];
+
         //printf(">%d (%d, %d, %d, %d) %p\n", i, geom.x, geom.y, geom.w, geom.h, ent);
         efl_gfx_entity_geometry_set(ent, geom);
      }
-   pd->prev_run.start_id = start_id;
-   pd->prev_run.end_id = end_id;
+   if (pd->prev_run.start_id != start_id || pd->prev_run.end_id != end_id)
+     {
+        ev.start_id = pd->prev_run.start_id = start_id;
+        ev.end_id = pd->prev_run.end_id = end_id;
+        efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_VISIBLE_RANGE_CHANGED, &ev);
+     }
 }
 
 static inline void
@@ -170,13 +170,10 @@ _flush_abs_size(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd)
 }
 
 static inline void
-_update_min_size(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd, int added_index)
+_update_min_size(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd, int added_index EINA_UNUSED, Eina_Size2D min_size)
 {
-   Eina_Size2D elemsize;
-
-   EINA_SAFETY_ON_FALSE_RETURN(eina_accessor_data_get(pd->size_acc, added_index, (void*)&elemsize));
-   pd->max_min_size.w = MAX(pd->max_min_size.w, elemsize.w);
-   pd->max_min_size.h = MAX(pd->max_min_size.h, elemsize.h);
+   pd->max_min_size.w = MAX(pd->max_min_size.w, min_size.w);
+   pd->max_min_size.h = MAX(pd->max_min_size.h, min_size.h);
 }
 
 static inline void
@@ -197,10 +194,14 @@ _flush_min_size(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_position_manager_grid_efl_ui_position_manager_entity_data_access_set(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd, Eina_Accessor *obj_access, Eina_Accessor *size_access, int size)
+_efl_ui_position_manager_grid_efl_ui_position_manager_entity_data_access_set(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd, void *obj_access_data, Efl_Ui_Position_Manager_Batch_Access_Entity obj_access, Eina_Free_Cb obj_access_free_cb, void *size_access_data, Efl_Ui_Position_Manager_Batch_Access_Size size_access, Eina_Free_Cb size_access_free_cb, int size)
 {
-   pd->size_acc = size_access;
-   pd->content_acc = obj_access;
+   pd->object.data = obj_access_data;
+   pd->object.access = obj_access;
+   pd->object.free_cb = obj_access_free_cb;
+   pd->min_size.data = size_access_data;
+   pd->min_size.access = size_access;
+   pd->min_size.free_cb = size_access_free_cb;
    pd->size = size;
 }
 
@@ -223,10 +224,12 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_entity_scroll_position_set
 EOLIAN static void
 _efl_ui_position_manager_grid_efl_ui_position_manager_entity_item_added(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd, int added_index, Efl_Gfx_Entity *subobj EINA_UNUSED)
 {
+   Eina_Size2D size[1];
    pd->size ++;
 
    efl_gfx_entity_visible_set(subobj, EINA_FALSE);
-   _update_min_size(obj, pd, added_index);
+   EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->min_size, added_index, 1, &size) == 1);
+   _update_min_size(obj, pd, added_index, size[0]);
    _flush_min_size(obj, pd);
    _flush_abs_size(obj, pd);
    _reposition_content(obj, pd); //FIXME we might can skip that
@@ -249,9 +252,17 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_entity_item_removed(Eo *ob
 EOLIAN static void
 _efl_ui_position_manager_grid_efl_ui_position_manager_entity_item_size_changed(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd, int start_id, int end_id)
 {
+   const int len = 50;
+   Eina_Size2D data[len];
+
    for (int i = start_id; i <= end_id; ++i)
      {
-        _update_min_size(obj, pd, i);
+        int buffer_id = (i-start_id) % len;
+        if (buffer_id == 0)
+          {
+             EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->min_size, start_id, len, data) >= 0);
+          }
+        _update_min_size(obj, pd, i, data[i-start_id]);
      }
 
    _flush_min_size(obj, pd);

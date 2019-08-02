@@ -255,6 +255,13 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                 /* validate types in brackets so transitive fields get written */
                 while (itp)
                   {
+                     if (vals->stable && itp->is_ptr)
+                       {
+                          _eo_parser_log(&itp->base,
+                                         "pointer types not allowed in '%s' in stable context",
+                                         tp->base.name);
+                          return EINA_FALSE;
+                       }
                      if (!_validate_type(vals, itp))
                        return EINA_FALSE;
                      itp = itp->next_type;
@@ -284,7 +291,6 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                   {
                    case KW_void_ptr:
                    case KW___undefined_type:
-                   case KW___builtin_free_cb:
                      if (vals->stable)
                        {
                           _eo_parser_log(&tp->base,

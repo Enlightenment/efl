@@ -1,7 +1,5 @@
-struct @extern Eo;
-
 type Evas.Coord: int; /* Simple type definition */
-type List_Objects: list<ptr(Eo)>; /* A little more complex */
+type List_Objects: list<Typedef>; /* A little more complex */
 
 type Evas.Coord2: Evas.Coord;
 type Evas.Coord3: Evas.Coord2;
@@ -9,8 +7,6 @@ type Evas.Coord3: Evas.Coord2;
 type @extern Evas.Pants: float; /* not generated */
 
 type @beta Undef: __undefined_type; /* not generated */
-
-type @beta Free: __builtin_free_cb; /* specially generated */
 
 enum Enum.Bar
 {

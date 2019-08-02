@@ -253,6 +253,12 @@ _on_check_toggle(void *data,
    _activate(data);
 }
 
+static void
+_clicked_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   _activate(data);
+}
+
 EOLIAN static Eina_Bool
 _efl_ui_check_selected_get(const Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *pd EINA_UNUSED)
 {
@@ -304,7 +310,7 @@ _efl_ui_check_efl_object_constructor(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
-
+   efl_ui_clickable_util_bind_to_theme(wd->resize_obj, obj);
    if (elm_widget_is_legacy(obj))
      {
         efl_layout_signal_callback_add
@@ -320,8 +326,7 @@ _efl_ui_check_efl_object_constructor(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
           (wd->resize_obj, "efl,action,check,on", "*", obj, _on_check_on, NULL);
         efl_layout_signal_callback_add
           (wd->resize_obj, "efl,action,check,off", "*", obj, _on_check_off, NULL);
-        efl_layout_signal_callback_add
-          (wd->resize_obj, "efl,action,check,toggle", "*", obj, _on_check_toggle, NULL);
+        efl_event_callback_add(obj, EFL_INPUT_EVENT_CLICKED, _clicked_cb, obj);
      }
 
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_CHECK_BOX);

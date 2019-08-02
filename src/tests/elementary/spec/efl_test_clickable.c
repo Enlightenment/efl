@@ -2,6 +2,8 @@
 # include "elementary_config.h"
 #endif
 
+#define EFL_INPUT_CLICKABLE_PROTECTED 1
+
 #include <Efl_Ui.h>
 #include <Elementary.h>
 #include "efl_ui_spec_suite.h"
@@ -10,7 +12,7 @@
 #include "elm_widget.h"
 /* spec-meta-start
       {"test-interface":"Efl.Ui.Clickable",
-       "test-widgets": ["Efl.Ui.Button", "Efl.Ui.Image", "Efl.Ui.Panes", "Efl.Ui.Frame", "Efl.Ui.Item.Realized"]
+       "test-widgets": ["Efl.Ui.Button", "Efl.Ui.Image", "Efl.Ui.Panes", "Efl.Ui.Frame", "Efl.Ui.Item.Realized", "Efl.Ui.Radio", "Efl.Ui.Check"]
        }
    spec-meta-end
  */
@@ -220,6 +222,33 @@ EFL_START_TEST(long_press_event)
 }
 EFL_END_TEST
 
+EFL_START_TEST(long_press_abort)
+{
+   efl_event_callback_array_add(widget, clickable(), NULL);
+   down(1);
+   iterate_mainloop(0.1);
+   ck_assert_int_eq(event_caller.pressed, 1);
+   event_caller.pressed = 0;
+   assert_event_empty();
+   efl_input_clickable_longpress_abort(widget, 1);
+   iterate_mainloop(2.0);
+   assert_event_empty();
+   up(1);
+   iterate_mainloop(0.1);
+   ck_assert_int_eq(event_caller.clicked, 1);
+   event_caller.clicked = 0;
+   ck_assert_int_eq(event_caller.clicked_params.repeated, 0);
+   ck_assert_int_eq(event_caller.clicked_params.button, 1);
+   ck_assert_int_eq(event_caller.clicked_all, 1);
+   event_caller.clicked_all = 0;
+   ck_assert_int_eq(event_caller.clicked_all_params.repeated, 0);
+   ck_assert_int_eq(event_caller.clicked_all_params.button, 1);
+   ck_assert_int_eq(event_caller.unpressed, 1);
+   event_caller.unpressed = 0;
+   assert_event_empty();
+}
+EFL_END_TEST
+
 EFL_START_TEST(repeated_event)
 {
    efl_event_callback_array_add(widget, clickable(), NULL);
@@ -254,5 +283,6 @@ efl_ui_clickable_behavior_test(TCase *tc)
    tcase_add_checked_fixture(tc, prepare_window, NULL);
    tcase_add_test(tc, simple_left_down_up);
    tcase_add_test(tc, long_press_event);
+   tcase_add_test(tc, long_press_abort);
    tcase_add_test(tc, repeated_event);
 }

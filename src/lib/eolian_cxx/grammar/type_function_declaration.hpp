@@ -37,9 +37,9 @@ struct type_function_declaration_generator {
 
       if (!as_generator(
              "template <typename F>\n"
-             "struct function_wrapper<" << string << ", F> {\n"
+             "struct function_wrapper<" << string << ", F, struct " << string << "__function_tag> {\n"
              << scope_tab << "function_wrapper(F cxx_func) : _cxx_func(cxx_func) {}\n"
-             ).generate(sink, f.c_name, ctx))
+             ).generate(sink, std::make_tuple(f.c_name, f.c_name), ctx))
         return false;
 
       if (!as_generator(
@@ -49,9 +49,9 @@ struct type_function_declaration_generator {
              << "private:\n"
              << scope_tab << "F _cxx_func;\n"
              << scope_tab << "static void deleter(void *data) {\n"
-             << scope_tab << scope_tab << "delete static_cast<function_wrapper<" << string << ", F>*>(data);\n"
+             << scope_tab << scope_tab << "delete static_cast<function_wrapper<" << string << ", F, ::efl::eolian::" << string << "__function_tag>*>(data);\n"
              << scope_tab << "}\n"
-             ).generate(sink, std::make_tuple(f.c_name, f.c_name), ctx))
+             ).generate(sink, std::make_tuple(f.c_name, f.c_name, f.c_name), ctx))
         return false;
 
       std::vector<std::string> c_args;
@@ -61,8 +61,8 @@ struct type_function_declaration_generator {
              scope_tab << "static " << string << " caller(void *cxx_call_data"
              << *(string) << ") {\n"
              << scope_tab << scope_tab << "auto fw = static_cast<function_wrapper<"
-             << string << ", F>*>(cxx_call_data);\n"
-             ).generate(sink, std::make_tuple(f.return_type.c_type, c_args, f.c_name), ctx))
+             << string << ", F, ::efl::eolian::" << string << "__function_tag>*>(cxx_call_data);\n"
+             ).generate(sink, std::make_tuple(f.return_type.c_type, c_args, f.c_name, f.c_name), ctx))
         return false;
 
       if (f.return_type != attributes::void_

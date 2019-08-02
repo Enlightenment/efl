@@ -169,8 +169,7 @@ ffi.cdef [[
         EOLIAN_TYPE_BUILTIN_STRINGSHARE,
         EOLIAN_TYPE_BUILTIN_STRBUF,
 
-        EOLIAN_TYPE_BUILTIN_VOID_PTR,
-        EOLIAN_TYPE_BUILTIN_FREE_CB
+        EOLIAN_TYPE_BUILTIN_VOID_PTR
     } Eolian_Type_Builtin_Type;
 
     typedef enum {
@@ -973,8 +972,7 @@ M.type_builtin_type = {
    STRINGSHARE   = 46,
    STRBUF        = 47,
 
-   VOID_PTR      = 48,
-   FREE_CB       = 49
+   VOID_PTR      = 48
 }
 
 M.typedecl_type = {

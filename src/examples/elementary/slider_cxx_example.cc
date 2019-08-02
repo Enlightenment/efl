@@ -68,15 +68,15 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    sl7.hint_fill_set(true, false);
    bx.pack_end(sl7);
 
-   auto changed = std::bind ( [] (efl::ui::Slider obj)
+   auto changed = std::bind ( [] (efl::ui::Range_Display obj)
    { std::cout << "Changed to " << obj.range_value_get() << std::endl; }
          , std::placeholders::_1);
 
-   auto steady =  std::bind ( [] (efl::ui::Slider obj)
+   auto steady =  std::bind ( [] (efl::ui::Range_Interactive obj)
    { std::cout << "Steady to " << obj.range_value_get() << std::endl; }
          , std::placeholders::_1);
 
-   sl7.changed_event_cb_add(changed);
-   sl7.steady_event_cb_add(steady);
+   efl::eo::downcast<efl::ui::Range_Display>(sl7).changed_event_cb_add(changed);
+   efl::eo::downcast<efl::ui::Range_Interactive>(sl7).steady_event_cb_add(steady);
 }
 EFL_MAIN()

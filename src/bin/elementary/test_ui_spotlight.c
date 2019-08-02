@@ -140,6 +140,57 @@ next_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
      efl_ui_spotlight_active_index_set(spotlight, active_index + 1);
 }
 
+static Eina_Value
+future_then_cb(void *data EINA_UNUSED, const Eina_Value value, const Eina_Future *dead_future EINA_UNUSED)
+{
+   /* If efl_ui_spotlight_pop is called with EINA_FALSE, then the content is not
+    * deleted and the value contains the content. */
+   Eo *content = eina_value_object_get(&value);
+   if (content)
+     efl_gfx_entity_visible_set(content, EINA_FALSE);
+
+   return EINA_VALUE_EMPTY;
+}
+
+static void
+pop_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *spotlight = data;
+
+   if (efl_content_count(spotlight) == 0) return;
+
+   Eina_Future *future = efl_ui_spotlight_pop(spotlight, EINA_TRUE);
+   eina_future_then(future, future_then_cb, NULL);
+}
+
+static void
+push_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Eo *spotlight = data;
+   Eo *view;
+   int count = efl_content_count(spotlight);
+
+   switch (count % 3)
+     {
+        case 0:
+          view = view_add(BUTTON, spotlight);
+          break;
+
+        case 1:
+          view = view_add(LIST, spotlight);
+          break;
+
+        case 2:
+          view = view_add(LAYOUT, spotlight);
+          break;
+
+        default:
+          view = view_add(LAYOUT, spotlight);
+          break;
+     }
+   efl_ui_spotlight_push(spotlight, view);
+}
+
 static void
 back_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
@@ -397,7 +448,7 @@ spotlight_size(void *data,
                 efl_ui_range_limits_set(efl_added, 100, 200),
                 efl_ui_range_value_set(efl_added, params->w),
                 efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(100, 0)),
-                efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED,
+                efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED,
                                        width_slider_cb, params),
                 efl_pack_end(inbox, efl_added));
 
@@ -438,7 +489,7 @@ spotlight_size(void *data,
                 efl_ui_range_limits_set(efl_added, 100, 300),
                 efl_ui_range_value_set(efl_added, params->h),
                 efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(100, 0)),
-                efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED,
+                efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED,
                                        height_slider_cb, params),
                 efl_pack_end(inbox, efl_added));
 
@@ -490,6 +541,40 @@ view_animation_cb(void *data,
    efl_event_callback_add(ck, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _animation_cb, params);
    efl_ui_check_selected_set(ck, efl_ui_spotlight_manager_animation_enabled_get(efl_ui_spotlight_manager_get(params->spotlight)));
    efl_text_set(ck, "Animation");
+   efl_pack_end(box, ck);
+   efl_gfx_entity_visible_set(ck, 1);
+}
+
+static void
+_scroll_block_check_cb(void *data, const Efl_Event *ev)
+{
+   Params *params = data;
+
+   efl_ui_spotlight_manager_scroll_block_set(efl_ui_spotlight_manager_get(params->spotlight), efl_ui_check_selected_get(ev->object));
+}
+
+static void
+scroll_block_cb(void *data,
+                Evas_Object *obj EINA_UNUSED,
+                void *event_info EINA_UNUSED)
+{
+   Params *params = data;
+   Evas_Object *navi = params->navi;
+   Eo *btn, *box, *ck;
+
+   btn = efl_add(EFL_UI_BUTTON_CLASS, navi,
+                 efl_text_set(efl_added, "Back"),
+                 efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED,
+                                        back_btn_cb, navi));
+
+   box = efl_add(EFL_UI_BOX_CLASS, navi,
+                 elm_naviframe_item_push(navi, "Scroll Block", btn, NULL,
+                                         efl_added, NULL));
+
+   ck = efl_add(EFL_UI_CHECK_CLASS, box);
+   efl_event_callback_add(ck, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _scroll_block_check_cb, params);
+   efl_ui_check_selected_set(ck, efl_ui_spotlight_manager_scroll_block_get(efl_ui_spotlight_manager_get(params->spotlight)));
+   efl_text_set(ck, "Scroll Block");
    efl_pack_end(box, ck);
    efl_gfx_entity_visible_set(ck, 1);
 }
@@ -808,15 +893,15 @@ test_ui_spotlight_stack(void *data EINA_UNUSED,
    efl_ui_spotlight_manager_set(spotlight, efl_new(EFL_UI_SPOTLIGHT_MANAGER_STACK_CLASS));
 
    efl_add(EFL_UI_BUTTON_CLASS, layout,
-           efl_text_set(efl_added, "Prev"),
+           efl_text_set(efl_added, "Pop"),
            efl_event_callback_add(efl_added,
-                                  EFL_INPUT_EVENT_CLICKED, prev_btn_cb, spotlight),
+                                  EFL_INPUT_EVENT_CLICKED, pop_btn_cb, spotlight),
            efl_content_set(efl_part(layout, "prev_btn"), efl_added));
 
    efl_add(EFL_UI_BUTTON_CLASS, layout,
-           efl_text_set(efl_added, "Next"),
+           efl_text_set(efl_added, "Push"),
            efl_event_callback_add(efl_added,
-                                  EFL_INPUT_EVENT_CLICKED, next_btn_cb, spotlight),
+                                  EFL_INPUT_EVENT_CLICKED, push_btn_cb, spotlight),
            efl_content_set(efl_part(layout, "next_btn"), efl_added));
 
    params = calloc(1, sizeof(Params));
@@ -835,6 +920,7 @@ test_ui_spotlight_stack(void *data EINA_UNUSED,
    elm_list_item_append(list, "Active Index", NULL, NULL, active_index_cb, params);
    elm_list_item_append(list, "Indicator", NULL, NULL, indicator_cb, params);
    elm_list_item_append(list, "Animation", NULL, NULL, view_animation_cb, params);
+   elm_list_item_append(list, "Scroll Block", NULL, NULL, scroll_block_cb, params);
    elm_list_go(list);
 
    efl_event_callback_add(list, EFL_EVENT_DEL, list_del_cb, params);
@@ -1036,6 +1122,7 @@ test_ui_spotlight_scroll(void *data EINA_UNUSED,
    elm_list_item_append(list, "Active Index", NULL, NULL, active_index_cb, params);
    elm_list_item_append(list, "Indicator", NULL, NULL, indicator_cb, params);
    elm_list_item_append(list, "Animation", NULL, NULL, view_animation_cb, params);
+   elm_list_item_append(list, "Scroll Block", NULL, NULL, scroll_block_cb, params);
    elm_list_go(list);
 
    efl_event_callback_add(list, EFL_EVENT_DEL, list_del_cb, params);

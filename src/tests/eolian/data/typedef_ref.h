@@ -19,10 +19,6 @@ typedef Evas_Coord Evas_Coord2;
 
 typedef Evas_Coord2 Evas_Coord3;
 
-#ifdef EFL_BETA_API_SUPPORT
-typedef void (*Free)(void *data);
-#endif /* EFL_BETA_API_SUPPORT */
-
 typedef enum
 {
   BAR_FIRST_ITEM = 0,

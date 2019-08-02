@@ -305,7 +305,26 @@ run(options_type const& opts)
          }
        else
          {
-           std::abort();
+           if (!types_generate(base, opts, cpp_types_header))
+             {
+               EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
+                 << "Error generating: " << ::eolian_class_short_name_get(klass)
+                 << std::endl;
+               assert(false && "error generating class");
+             }
+           else
+             {
+               std::ofstream header_decl;
+               header_decl.open(opts.out_file);
+               if (!header_decl.good())
+               {
+                 EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
+                   << "Can't open output file: " << opts.out_file << std::endl;
+                 assert(false && "error opening file");
+               }
+               std::copy (cpp_types_header.begin(), cpp_types_header.end()
+                          , std::ostream_iterator<char>(header_decl));
+             }
          }
      }
    else
@@ -336,6 +355,10 @@ run(options_type const& opts)
                headers.insert(filename + std::string(".hh"));
                eo_files.insert(filename);
              }
+           else
+           {
+             headers.insert (base + std::string(".hh"));
+           }
          }
 
        using efl::eolian::grammar::header_include_directive;

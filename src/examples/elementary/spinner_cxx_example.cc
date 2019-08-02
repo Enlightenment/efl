@@ -1,19 +1,20 @@
 // g++ -g `pkg-config --cflags --libs elementary-cxx efl-cxx eina-cxx eo-cxx ecore-cxx evas-cxx edje-cxx` spinner_cxx_example.cc -o spinner_cxx_example
 
-#define ELM_WIDGET_PROTECTED
-
+#define EFL_CXXPERIMENTAL
+#ifndef EFL_BETA_API_SUPPORT
+#define EFL_BETA_API_SUPPORT
+#endif
 #include <Efl_Ui.hh>
 #include <iostream>
 
-#warning FIXME: This example requires proper EO API usage (not legacy spinner)
-
+using namespace std::placeholders;
 using efl::eo::instantiate;
+
+static efl::ui::Win win;
 
 static void
 efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
-#if 0
-
    efl::ui::Win win(instantiate);
    win.text_set("Spinner Example");
    win.autohide_set(true);
@@ -22,67 +23,73 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    efl::ui::Box bx(instantiate, win);
    win.content_set(bx);
 
-   elm::Spinner sp(instantiate, win);
+   efl::ui::Spin_Button sp(instantiate, win);
    sp.hint_fill_set(true, false);
+   sp.range_step_set(1.0);
+   sp.range_limits_set(0.0, 10.0);
+   sp.wraparound_set(true);
    bx.pack_end(sp);
 
-   elm::Spinner sp2(instantiate, win);
-   sp2.label_format_set("Percentage %%%1.2f something");
+   efl::ui::Spin_Button sp2(instantiate, win);
+   sp2.format_string_set("Percentage %%%1.2f something", EFL_UI_FORMAT_STRING_TYPE_SIMPLE);
    sp2.hint_fill_set(true, false);
    bx.pack_end(sp2);
 
-   elm::Spinner sp3(instantiate, win);
-   sp3.label_format_set("%1.1f units");
-   sp3.step_set(1.5);
-   sp3.wrap_set(true);
-   sp3.min_max_set(-50.0, 250.0);
+   efl::ui::Spin_Button sp3(instantiate, win);
+   sp3.format_string_set("%1.1f units", EFL_UI_FORMAT_STRING_TYPE_SIMPLE);
+   sp3.range_step_set(1.5);
+   sp3.range_limits_set(-50.0, 250.0);
    sp3.hint_fill_set(true, false);
    bx.pack_end(sp3);
 
-   elm::Spinner sp4(instantiate, win);
-   sp4.style_set("vertical");
-   sp4.interval_set(0.2);
+   efl::ui::Spin_Button sp4(instantiate, win);
+   //FIXME setting the style is propetected...
+   //sp4.style_set("vertical");
+   sp4.range_step_set(0.2);
    sp4.hint_fill_set(true, false);
    bx.pack_end(sp4);
 
-   elm::Spinner sp5(instantiate, win);
+   efl::ui::Spin_Button sp5(instantiate, win);
    sp5.editable_set(false);
    sp5.hint_fill_set(true, false);
    bx.pack_end(sp5);
 
-   elm::Spinner sp6(instantiate, win);
+   Efl_Ui_Format_Value values[] = {
+     {1, "January"},
+     {2, "February"},
+     {3, "March"},
+     {4, "April"},
+     {5, "May"},
+     {6, "June"},
+     {7, "July"},
+     {8, "August"},
+     {9, "September"},
+     {10, "October"},
+     {11, "November"},
+     {12, "December"}
+   };
+   efl::eina::accessor<Efl_Ui_Format_Value> values_acc(EINA_C_ARRAY_ACCESSOR_NEW(values));
+   efl::ui::Spin_Button sp6(instantiate, win);
    sp6.editable_set(false);
-   sp6.min_max_set(1, 12);
-   sp6.special_value_add(1, "January");
-   sp6.special_value_add(2, "February");
-   sp6.special_value_add(3, "March");
-   sp6.special_value_add(4, "April");
-   sp6.special_value_add(5, "May");
-   sp6.special_value_add(6, "June");
-   sp6.special_value_add(7, "July");
-   sp6.special_value_add(8, "August");
-   sp6.special_value_add(9, "September");
-   sp6.special_value_add(10, "October");
-   sp6.special_value_add(11, "November");
-   sp6.special_value_add(12, "December");
+   sp6.range_limits_set(1, 12);
+   //sp6.format_values_set(values_acc);
    sp6.hint_fill_set(true, false);
    bx.pack_end(sp6);
 
-   elm::Spinner sp7(instantiate, win);
+   efl::ui::Spin_Button sp7(instantiate, win);
    sp7.hint_fill_set(true, false);
    bx.pack_end(sp7);
    sp7.editable_set(true);
 
-   auto changed = std::bind([] (elm::Spinner &spinner)
-   { std::cout << "Value changed to " << spinner.value_get() << std::endl; },
-         std::placeholders::_1);
-   efl::eolian::event_add(elm::Spinner::changed_event, sp7, changed);
+   auto changed = std::bind ( [] (efl::ui::Range_Display obj)
+   { std::cout << "Changed to " << obj.range_value_get() << std::endl; }
+         , std::placeholders::_1);
+   efl::eo::downcast<efl::ui::Range_Display>(sp7).changed_event_cb_add(changed);
 
-   auto delay = std::bind([] (elm::Spinner &spinner)
-   { std::cout << "Value changed to " << spinner.value_get() << "" << std::endl; },
-         std::placeholders::_1);
-   efl::eolian::event_add(elm::Spinner::delay_changed_event, sp7, delay);
+   auto steady =  std::bind ( [] (efl::ui::Range_Interactive obj)
+   { std::cout << "Steady to " << obj.range_value_get() << std::endl; }
+         , std::placeholders::_1);
+   efl::eo::downcast<efl::ui::Range_Interactive>(sp7).steady_event_cb_add(steady);
 
-#endif
 }
 EFL_MAIN()

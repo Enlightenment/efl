@@ -459,7 +459,7 @@ struct klass
      auto inherit_name = name_helpers::klass_concrete_name(cls);
 
      if(!as_generator(
-                scope_tab << "///<summary>Pointer to the native class description.</summary>\n"
+                scope_tab << "/// <summary>Pointer to the native class description.</summary>\n"
                 << scope_tab << "public override System.IntPtr NativeClass\n"
                 << scope_tab << "{\n"
                 << scope_tab << scope_tab << "get\n"

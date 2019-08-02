@@ -112,6 +112,6 @@ test_slider_interval(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
            efl_ui_range_limits_set(efl_added, 0, 600),
            efl_ui_slider_interval_value_set(efl_added, 100, 500),
            efl_ui_range_step_set(efl_added, step),
-           efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_CHANGED, _intv_slider_changed_cb, NULL),
+           efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED, _intv_slider_changed_cb, NULL),
            efl_pack(bx, efl_added));
 }

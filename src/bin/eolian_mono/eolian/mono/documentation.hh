@@ -567,6 +567,26 @@ documentation_generator as_generator(documentation_terminal)
     return documentation_generator(0);
 }
 
+/// Escape a single string, HTML-escaping and converting the syntax
+struct documentation_string_generator
+{
+  template<typename OutputIterator, typename Context>
+  bool generate(OutputIterator sink, std::string const& text, Context const& context) const
+  {
+      std::string escaped;
+      if (!as_generator(html_escaped_string).generate(std::back_inserter(escaped), text, context))
+        return false;
+
+      auto options = context_find_tag<options_context>(context);
+      auto state = context_find_tag<eolian_state_context>(context).state;
+      if (!as_generator(string).generate(sink, documentation_generator::syntax_conversion(escaped, state, options.want_beta), context))
+        return false;
+
+      return true;
+  }
+
+} const documentation_string {};
+
 } // namespace eolian_mono
 
 
@@ -578,6 +598,11 @@ template<>
 struct is_generator<::eolian_mono::documentation_generator> : std::true_type {};
 
 template<>
+struct is_eager_generator<::eolian_mono::documentation_string_generator> : std::true_type {};
+template<>
+struct is_generator<::eolian_mono::documentation_string_generator> : std::true_type {};
+
+template<>
 struct is_generator<::eolian_mono::documentation_terminal> : std::true_type {};
 
 namespace type_traits {
@@ -585,6 +610,8 @@ template<>
 struct attributes_needed<struct ::eolian_mono::documentation_generator> : std::integral_constant<int, 1> {};
 template<>
 struct attributes_needed<struct ::eolian_mono::documentation_terminal> : std::integral_constant<int, 1> {};
+template<>
+struct attributes_needed<struct ::eolian_mono::documentation_string_generator> : std::integral_constant<int, 1> {};
 }
 } } }
 

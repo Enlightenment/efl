@@ -36,6 +36,15 @@ mixin @beta Efl.Input.Clickable
             button : uint;
          }
       }
+      longpress_abort @protected {
+         [[This aborts ongoing longpress event.
+
+           That is, this will stop the timer for longpress.
+         ]]
+         params {
+            button : uint;
+         }
+      }
    }
    events {
       clicked: Efl.Input.Clickable_Clicked; [[Called when object is in sequence pressed and unpressed, by the primary button]]

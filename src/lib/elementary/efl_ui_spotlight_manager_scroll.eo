@@ -1,5 +1,22 @@
 class @beta Efl.Ui.Spotlight.Manager_Scroll extends Efl.Ui.Spotlight.Manager
 {
+   methods {
+      @property scroll_block {
+         [[Blocking of scrolling
+
+           This function will block scrolling movement (by input of a user).
+           You can disable scrolling movement. The default value is $false,
+           where the scrolling movement is allowed.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            scroll_block: bool; [[$true if block scrolling movement, $false otherwise]]
+         }
+      }
+   }
    implements {
       Efl.Ui.Spotlight.Manager.bind;
       Efl.Ui.Spotlight.Manager.content_add;

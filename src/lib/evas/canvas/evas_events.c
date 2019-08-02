@@ -2250,6 +2250,8 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
         copy = evas_event_list_copy(pdata->seat->object.in);
         EINA_LIST_FOREACH(copy, l, eo_obj)
           {
+             Eina_Bool check_nogrep = EINA_FALSE;
+
              obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
              obj_pdata = _evas_object_pointer_data_get(pdata, obj);
              if (!obj_pdata)
@@ -2258,6 +2260,9 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
                       ev->device);
                   continue;
                }
+             if ((obj_pdata->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN) &&
+                 (pdata->seat->nogrep > 0))
+               check_nogrep = EINA_TRUE;
              if ((!e->is_frozen) &&
                  _evas_event_object_pointer_allow(eo_obj, obj, obj_pdata) &&
                  (!evas_object_is_source_invisible(eo_obj, obj) ||
@@ -2275,8 +2280,7 @@ _canvas_event_feed_mouse_move_internal(Evas_Public_Data *e, Efl_Input_Pointer_Da
                }
              else
                 outs = eina_list_append(outs, eo_obj);
-             if ((obj_pdata->pointer_mode == EVAS_OBJECT_POINTER_MODE_NOGRAB_NO_REPEAT_UPDOWN) &&
-                 (pdata->seat->nogrep > 0))
+             if (check_nogrep)
                {
                   eina_list_free(copy);
                   eina_list_free(outs);

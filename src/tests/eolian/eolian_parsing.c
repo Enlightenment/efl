@@ -383,7 +383,7 @@ EFL_START_TEST(eolian_typedef)
    fail_if(!(type = eolian_type_base_type_get(type)));
    fail_if(!!eolian_type_next_type_get(type));
    fail_if(!(type_name = eolian_type_c_type_get(type, EOLIAN_C_TYPE_DEFAULT)));
-   fail_if(strcmp(type_name, "Eo *"));
+   fail_if(strcmp(type_name, "Typedef *"));
    fail_if(eolian_type_is_owned(type));
    eina_stringshare_del(type_name);
 
@@ -401,8 +401,6 @@ EFL_START_TEST(eolian_typedef)
    /* not generated extern, skip */
    fail_if(!eina_iterator_next(iter, (void**)&tdl));
    /* not generated undefined type, skip */
-   fail_if(!eina_iterator_next(iter, (void**)&tdl));
-   /* free cb, tested by generation tests */
    fail_if(!eina_iterator_next(iter, (void**)&tdl));
    fail_if(eina_iterator_next(iter, (void**)&tdl));
 
@@ -446,7 +444,7 @@ EFL_START_TEST(eolian_complex_type)
    fail_if(!!eolian_type_next_type_get(type));
    fail_if(!(type_name = eolian_type_c_type_get(type, EOLIAN_C_TYPE_DEFAULT)));
    fail_if(!eolian_type_is_owned(type));
-   fail_if(strcmp(type_name, "Eo *"));
+   fail_if(strcmp(type_name, "Eina_Strbuf *"));
    eina_stringshare_del(type_name);
    /* Properties parameter type */
    fail_if(!(iter = eolian_property_values_get(fid, EOLIAN_PROP_GET)));
