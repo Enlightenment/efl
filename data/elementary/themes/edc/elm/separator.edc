@@ -1,12 +1,14 @@
 group { name: "elm/separator/horizontal/default";
    parts {
       rect { name: "base";
+         scale: 1;
          description { state: "default" 0.0;
             min: 1 1;
             max: 99999 1;
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
             color: 72 72 72 255;
+            offscale;
          }
       }
    }

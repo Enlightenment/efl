@@ -1239,15 +1239,16 @@ group { name: "elm/toolbar/item/item_horizontal";
 
 // === separator
 group { name: "elm/toolbar/separator/default";
-   images.image: "bevel_dark_in.png" COMP;
    parts {
       part { name: "base"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
             min: 1 1;
             max: 1 99999;
-            rel1.offset: 2 2;
-            rel2.offset: -3 -3;
+            rel1.offset: 4 4;
+            rel2.offset: -5 -5;
             color: 72 72 72 255;
+            offscale;
          }
          description { state: "vert" 0.0;
             inherit: "default" 0.0;
@@ -1282,9 +1283,11 @@ group { name: "elm/toolbar/object/default";
          }
       }
       part { name: "elm.swallow.object"; type: SWALLOW;
+         scale: 1;
          description { state: "default" 0.0;
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
+            offscale;
          }
       }
    }
