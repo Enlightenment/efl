@@ -8144,6 +8144,12 @@ _evas_object_textblock_text_markup_prepend(Eo *eo_obj,
                        _prepend_escaped_char(cur, esc_start, esc_end + 1);
                        esc_start = esc_end = NULL;
                     }
+                  else if (*p == 0 && esc_start) /* escape start with no end, append it as text */
+                    {
+                       _prepend_text_run(cur, esc_start, p);
+                       esc_start = esc_end = NULL;
+                       s = NULL;
+                    }
                   else if (*p == 0)
                     {
                        _prepend_text_run(cur, s, p);
@@ -8154,6 +8160,12 @@ _evas_object_textblock_text_markup_prepend(Eo *eo_obj,
                }
              if (*p == '<')
                {
+                  if (esc_start) /* escape start with no end, append it as text */
+                    {
+                       _prepend_text_run(cur, esc_start, p);
+                       esc_start = esc_end = NULL;
+                       s = NULL;
+                    }
                   if (!esc_start)
                     {
                        /* Append the text prior to this to the textblock and mark
@@ -8174,6 +8186,12 @@ _evas_object_textblock_text_markup_prepend(Eo *eo_obj,
                }
              else if (*p == '&')
                {
+                  if (esc_start) /* escape start with no end, append it as text */
+                    {
+                       _prepend_text_run(cur, esc_start, p);
+                       esc_start = esc_end = NULL;
+                       s = NULL;
+                    }
                   if (!tag_start)
                     {
                        /* Append the text prior to this to the textblock and mark
