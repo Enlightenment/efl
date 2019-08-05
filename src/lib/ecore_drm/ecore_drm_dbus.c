@@ -176,9 +176,11 @@ _ecore_drm_dbus_session_take(void)
    if (eldbus_message_error_get(reply, &errname, &errmsg))
      {
         ERR("Eldbus Message Error: %s %s", errname, errmsg);
+        eldbus_message_unref(reply);
         return EINA_FALSE;
      }
 
+   eldbus_message_unref(reply);
    return EINA_TRUE;
 }
 
@@ -207,9 +209,11 @@ _ecore_drm_dbus_session_release(void)
    if (eldbus_message_error_get(reply, &errname, &errmsg))
      {
         ERR("Eldbus Message Error: %s %s", errname, errmsg);
+        eldbus_message_unref(reply);
         return EINA_FALSE;
      }
 
+   eldbus_message_unref(reply);
    return EINA_TRUE;
 }
 
@@ -319,12 +323,17 @@ _ecore_drm_dbus_device_take_no_pending(uint32_t major, uint32_t minor, Eina_Bool
    if (eldbus_message_error_get(reply, &errname, &errmsg))
      {
         ERR("Eldbus Message Error: %s %s", errname, errmsg);
+        eldbus_message_unref(reply);
         return -1;
      }
 
    if (!eldbus_message_arguments_get(reply, "hb", &fd, &b))
-     return -1;
+     {
+        eldbus_message_unref(reply);
+        return -1;
+     }
 
+   eldbus_message_unref(reply);
    if (paused_out) *paused_out = b;
    return fd;
 }
