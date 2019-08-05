@@ -6,22 +6,37 @@ class Efl.Input.Key extends Efl.Object implements Efl.Input.Event, Efl.Input.Sta
       @property pressed {
          [[$true if the key is down, $false if it is released.]]
          values {
-            val: bool; [[$true if the key is pressed, $false otherwise]]
+            val: bool; [[$true if the key is pressed, $false otherwise.]]
          }
       }
       @property key_name {
-         [[Name string of the key.]]
+         [[Name string of the physical key that produced this event.
+
+           This typically matches what is printed on the key. For example, "1"
+           or "a". Note that both "a" and "A" are obtained with the same
+           physical key, so both events will have the same @.key_name "a" but
+           different @.key_sym.
+
+           Commonly used in keyboard remapping menus to uniquely identify a
+           physical key.
+         ]]
          values {
-            val: string; [[Key name]]
+            val: string; [[Name of the key that produced this event.]]
          }
       }
       @property key_sym {
-         [[Logical key.
+         [[Name of the symbol produced by this key event.
 
-           Eg. Shift + 1 = exclamation
+           For example, "a", "A", "1" or "exclam". The same physical key can
+           produce different symbols when combined with other keys like "shift"
+           or "alt gr". For example, "a" and "A" have different @.key_sym but
+           the same @.key_name "a".
+
+           This is the field you typically use to uniquely identify a keyboard
+           symbol, in keyboard shortcuts for example.
          ]]
          values {
-            val: string; [[Logical key name]]
+            val: string; [[Symbol name produced by key event.]]
          }
       }
       @property string {
@@ -29,23 +44,29 @@ class Efl.Input.Key extends Efl.Object implements Efl.Input.Event, Efl.Input.Sta
            added.
          ]]
          values {
-            val: string; [[Visible string from key press in UTF8]]
+            val: string; [[Visible string produced by this key event, in UTF8.]]
          }
       }
       @property compose_string {
          [[A UTF8 string if this keystroke has modified a string in the middle
            of being composed.
 
-           Note: This string replaces the previous one
+           Note: This string replaces the previous one.
          ]]
          values {
-            val: string; [[Composed key string in UTF8]]
+            val: string; [[Composed string in UTF8.]]
          }
       }
       @property key_code {
-         [[Key scan code numeric value.]]
+         [[Keyboard scan code of the physical key that produced this event.
+
+           You typically do not need to use this field, because the system maps scan
+           codes to the more convenient @.key_name.
+           Us this in keyboard remapping applications or when trying to use a keyboard
+           unknown to your operating system.
+         ]]
          values {
-            val: int; [[Key scan code]]
+            val: int; [[Keyboard scan code.]]
          }
       }
    }
