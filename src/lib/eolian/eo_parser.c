@@ -217,6 +217,7 @@ parse_c_name(Eo_Lexer *ls)
      {
         eina_stringshare_del(cname);
         check_match(ls, ')', '(', pline, pcol);
+        return NULL; /* unreachable */
      }
    return cname;
 }
