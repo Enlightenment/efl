@@ -385,7 +385,6 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      /*
       eina_array_int_in_own {
          params {
             @in arr: array<int> @owned; // <int @owned>
@@ -395,7 +394,6 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       check_eina_array_int_in_own {
          return: bool;
       }
-      */
 
       eina_array_int_out {
          params {
@@ -407,14 +405,12 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      /*
       eina_array_int_out_own {
          params {
             @out arr: array<int> @owned; // <int @owned>
          }
          return: bool;
       }
-      */
 
       eina_array_int_return {
          return: array<int>;
@@ -423,11 +419,9 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      /*
       eina_array_int_return_own {
          return: array<int> @owned; // <int @owned>
       }
-      */
 
       /* String */
       eina_array_str_in {
@@ -584,7 +578,6 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      /*
       eina_list_int_in_own {
          params {
             @in lst: list<int> @owned; // <int @owned>
@@ -594,7 +587,6 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       check_eina_list_int_in_own {
          return: bool;
       }
-      */
 
       eina_list_int_out {
          params {
@@ -606,14 +598,12 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      /*
       eina_list_int_out_own {
          params {
             @out lst: list<int> @owned; // <int @owned>
          }
          return: bool;
       }
-      */
 
       eina_list_int_return {
          return: list<int>;
@@ -622,11 +612,9 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      /*
       eina_list_int_return_own {
          return: list<int> @owned; // <int @owned>
       }
-      */
 
       /* String */
       eina_list_str_in {

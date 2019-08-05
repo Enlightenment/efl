@@ -376,6 +376,7 @@ struct type_def
    bool is_ptr;
    bool is_beta;
    std::string doc_summary;
+   bool is_value_type;
 
    type_def() = default;
    type_def(variant_type original_type, std::string c_type, bool has_own, bool is_ptr, bool is_beta, std::string doc_summary)
@@ -428,6 +429,7 @@ type_def const void_ {attributes::regular_type_def{"void", {qualifier_info::is_n
 inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* unit, Eolian_C_Type_Type ctype)
 {
    c_type = ::eolian_type_c_type_get(eolian_type, ctype);
+   is_value_type = ('*' != c_type.back());
    // ::eina_stringshare_del(stringshare); // this crashes
    Eolian_Type const* stp = eolian_type_base_type_get(eolian_type);
    has_own = !!::eolian_type_is_owned(eolian_type);
