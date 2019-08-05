@@ -1130,7 +1130,7 @@ eo_lexer_node_release(Eo_Lexer *ls, Eolian_Object *obj)
 {
    /* just for debug */
    assert(eina_hash_find(ls->nodes, &obj) && (obj->refcount >= 1));
-   eolian_object_unref(obj);
+   (void)eolian_object_unref(obj);
    eina_hash_set(ls->nodes, &obj, NULL);
    return obj;
 }
