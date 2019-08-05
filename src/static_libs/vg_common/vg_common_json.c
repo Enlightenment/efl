@@ -466,7 +466,7 @@ vg_common_json_create_vg_node(Vg_File_Data *vfd)
         root = efl_add_ref(EFL_CANVAS_VG_CONTAINER_CLASS, NULL);
         if (!root) return EINA_FALSE;
         efl_key_data_set(root, _get_key_val((void *) tree), tree);
-        if (tree->name) efl_key_data_set(root, "_lot_node_name", tree->name);
+        if (tree->keypath) efl_key_data_set(root, "_lot_node_name", tree->keypath);
         vfd->root = root;
      }
    efl_gfx_color_set(root, tree->mAlpha, tree->mAlpha, tree->mAlpha, tree->mAlpha);
