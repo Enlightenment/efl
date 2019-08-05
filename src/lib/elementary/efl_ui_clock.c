@@ -97,26 +97,6 @@ static void _part_name_snprintf(char *buffer, int buffer_size,
 }
 
 static void
-_field_value_set(struct tm *tim, Efl_Ui_Clock_Type  field_type, int val)
-{
-   if (field_type >= (CLOCK_FIELD_COUNT - 1)) return;
-
-   int *timearr[]= { &tim->tm_year, &tim->tm_mon, &tim->tm_mday, &tim->tm_hour,
-                     &tim->tm_min, &tim->tm_sec, &tim->tm_wday };
-   *timearr[field_type] = val;
-}
-
-static int
-_field_value_get(struct tm *tim, Efl_Ui_Clock_Type  field_type)
-{
-   if (field_type >= (CLOCK_FIELD_COUNT - 1)) return -1;
-
-   int *timearr[]= { &tim->tm_year, &tim->tm_mon, &tim->tm_mday, &tim->tm_hour,
-                     &tim->tm_min, &tim->tm_sec, &tim->tm_wday };
-   return (*timearr[field_type]);
-}
-
-static void
 _ampm_clicked_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    struct tm curr_time;
@@ -746,47 +726,6 @@ _apply_range_restrictions(struct tm *tim)
         else if (val > max)
           *timearr[idx] = max;
      }
-}
-
-static void
-_field_limit_get(Evas_Object *obj,
-                 Efl_Ui_Clock_Type field_type,
-                 int *range_min,
-                 int *range_max)
-{
-   int min, max, max_days;
-   Clock_Field *field;
-   unsigned int idx;
-
-   if (field_type > EFL_UI_CLOCK_TYPE_DAY) return;
-
-   EFL_UI_CLOCK_DATA_GET(obj, sd);
-
-   field = sd->field_list + field_type;
-
-   min = field->min;
-   max = field->max;
-
-   CLOCK_TM_ARRAY(curr_timearr, &sd->curr_time);
-   CLOCK_TM_ARRAY(min_timearr, &sd->min_limit);
-   CLOCK_TM_ARRAY(max_timearr, &sd->max_limit);
-
-   for (idx = 0; idx < field->type; idx++)
-     if (*curr_timearr[idx] > *min_timearr[idx]) break;
-   if ((idx == field_type) && (min < *min_timearr[field_type]))
-     min = *min_timearr[field_type];
-   if (field_type == EFL_UI_CLOCK_TYPE_DATE)
-     {
-        max_days = _max_days_get(sd->curr_time.tm_year, sd->curr_time.tm_mon);
-        if (max > max_days) max = max_days;
-     }
-   for (idx = 0; idx < field->type; idx++)
-     if (*curr_timearr[idx] < *max_timearr[idx]) break;
-   if ((idx == field_type) && (max > *max_timearr[field_type]))
-     max = *max_timearr[field_type];
-
-   *range_min = min;
-   *range_max = max;
 }
 
 static void
