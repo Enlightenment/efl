@@ -249,6 +249,7 @@ static void _clear_text_selection(Efl_Ui_Text_Data *sd);
 static void _anchors_free(Efl_Ui_Text_Data *sd);
 static void _selection_defer(Eo *obj, Efl_Ui_Text_Data *sd);
 static Eina_Position2D _decoration_calc_offset(Efl_Ui_Text_Data *sd);
+static void _update_text_theme(Eo *obj, Efl_Ui_Text_Data *sd);
 
 static char *
 _file_load(Eo *obj)
@@ -729,6 +730,7 @@ _efl_ui_text_efl_ui_widget_disabled_set(Eo *obj, Efl_Ui_Text_Data *sd, Eina_Bool
                             _dnd_pos_cb, NULL,
                             _dnd_drop_cb, NULL);
      }
+   _update_text_theme(obj, sd);
 }
 
 /* we can't issue the layout's theming code here, cause it assumes an
@@ -2054,12 +2056,14 @@ _update_text_theme(Eo *obj, Efl_Ui_Text_Data *sd)
 {
    const char *font_name;
    const char *font_size;
-   const char *colorcode;
+   const char *colorcode = NULL;
+   Eina_Bool disabled;
 
    int font_size_n;
    unsigned char r, g, b, a;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   disabled = efl_ui_widget_disabled_get(obj);
 
    // Main Text
    // font_set
@@ -2069,7 +2073,10 @@ _update_text_theme(Eo *obj, Efl_Ui_Text_Data *sd)
    efl_text_font_set(sd->text_obj, font_name, font_size_n);
 
    // color
-   colorcode = edje_object_data_get(wd->resize_obj, "style.color");
+   if (disabled)
+     colorcode = edje_object_data_get(wd->resize_obj, "style.color_disabled");
+   if (!colorcode)
+     colorcode = edje_object_data_get(wd->resize_obj, "style.color");
    if (colorcode && _format_color_parse(colorcode, strlen(colorcode), &r, &g, &b, &a))
      {
         efl_text_normal_color_set(sd->text_obj, r, g, b, a);
@@ -2081,8 +2088,12 @@ _update_text_theme(Eo *obj, Efl_Ui_Text_Data *sd)
    font_size_n = font_size ? atoi(font_size) : 0;
    efl_text_font_set(sd->text_guide_obj, font_name, font_size_n);
 
+   colorcode = NULL;
    // color
-   colorcode = edje_object_data_get(wd->resize_obj, "guide.style.color");
+   if (disabled)
+     colorcode = edje_object_data_get(wd->resize_obj, "guide.style.color_disabled");
+   if (!colorcode)
+     colorcode = edje_object_data_get(wd->resize_obj, "guide.style.color");
    if (colorcode && _format_color_parse(colorcode, strlen(colorcode), &r, &g, &b, &a))
      {
         efl_text_normal_color_set(sd->text_guide_obj, r, g, b, a);

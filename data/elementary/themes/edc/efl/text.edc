@@ -522,6 +522,7 @@ group { "efl/text";
       item: "font.name" "Sans";
       item: "font.size" "10";
       item: "style.color" "#fff";
+      item: "style.color_disabled" "#151515";
 
       item: "guide.font.name" "Sans";
       item: "guide.font.size" "10";
