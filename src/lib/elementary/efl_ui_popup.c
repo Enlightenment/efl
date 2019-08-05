@@ -361,6 +361,26 @@ _efl_ui_popup_part_backwall_repeat_events_get(const Eo *obj, void *_pd EINA_UNUS
    return efl_canvas_object_repeat_events_get(sd->backwall);
 }
 
+EOLIAN static Eina_Stringshare *
+_efl_ui_popup_part_backwall_efl_file_file_get(const Eo *obj, void *_pd EINA_UNUSED)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Popup_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_POPUP_CLASS);
+
+   Eo *content = edje_object_part_swallow_get(sd->backwall, "efl.content");
+   return content ? efl_file_get(content) : NULL;
+}
+
+EOLIAN static Eina_Stringshare *
+_efl_ui_popup_part_backwall_efl_file_key_get(const Eo *obj, void *_pd EINA_UNUSED)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Popup_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_POPUP_CLASS);
+
+   Eo *content = edje_object_part_swallow_get(sd->backwall, "efl.content");
+   return content ? efl_file_key_get(content) : NULL;
+}
+
 EOLIAN static void
 _efl_ui_popup_part_backwall_efl_file_unload(Eo *obj, void *_pd EINA_UNUSED)
 {
