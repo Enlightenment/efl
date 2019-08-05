@@ -71,6 +71,8 @@ extern "C" {
 #define MAP_SHARED  0x0001
 #define MAP_PRIVATE 0x0002
 #define MAP_FIXED   0x0010
+#define MAP_ANON    0x0020
+#define MAP_ANONYMOUS MAP_ANON
 
 #define MAP_FAILED	((void *)-1)
 
@@ -153,6 +155,26 @@ EAPI void *mmap(void   *addr,
  */
 EAPI int   munmap(void  *addr,
                   size_t len);
+
+/**
+ * Changes protection for the calling process' address.
+ *
+ * @param addr Pointer to the base address.
+ * @param len  Length of the memory.
+ * @param New protection.
+ * @return 0 on success, -1 otherwise.
+ *
+ * Changes protection for the calling process' memory page.
+ * @p addr must be a valid adress in the user space. @p prot
+ * must be compatible with the old protection.
+ *
+ * Conformity: None.
+ *
+ * Supported OS: Windows Vista
+ *
+ * @ingroup Evil_Mman
+ */
+EAPI int mprotect(void *addr, size_t len, int prot);
 
 
 #ifdef __cplusplus
