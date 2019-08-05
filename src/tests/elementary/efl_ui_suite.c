@@ -27,6 +27,7 @@ static const Efl_Test_Case etc[] = {
   { "efl_ui_widget", efl_ui_test_widget },
   { "efl_ui_spotlight", efl_ui_test_spotlight},
   { "efl_ui_check", efl_ui_test_check },
+  { "efl_ui_popup", efl_ui_test_popup },
   { "efl_ui_progressbar", efl_ui_test_progressbar },
   { "efl_ui_radio_group", efl_ui_test_radio_group },
   { "efl_ui_slider", efl_ui_test_slider },
