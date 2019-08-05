@@ -1126,7 +1126,9 @@ ecore_evas_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED,
 EAPI Ecore_Evas *
 ecore_evas_gl_drm_new_internal(const char *device, unsigned int parent EINA_UNUSED, int x, int y, int w, int h)
 {
-   dlopen("libglapi.so.0", RTLD_LAZY | RTLD_GLOBAL);
+   static void *libglapi = NULL;
+
+   if (!libglapi) libglapi = dlopen("libglapi.so.0", RTLD_LAZY | RTLD_GLOBAL);
    if (dlerror()) return NULL;
 
    return _ecore_evas_new_internal(device, x, y, w, h, EINA_TRUE);
