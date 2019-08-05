@@ -25,6 +25,8 @@ class @beta Efl.Ui.Popup_Part_Backwall extends Efl.Ui.Layout_Part implements Efl
       }
    }
    implements {
+      Efl.File.file { get; }
+      Efl.File.key { get; }
       Efl.File.load;
       Efl.File.unload;
    }
