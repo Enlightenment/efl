@@ -719,7 +719,7 @@ _label_set(Evas_Object *obj,
           efl_pack_unpack(sd->box, sd->label);
         sd->label_packed = EINA_TRUE;
         edje_object_size_min_calc(sd->label, &width, &height);
-        evas_object_size_hint_min_set(sd->label, width, height);
+        efl_gfx_hint_size_min_set(sd->label, EINA_SIZE2D(width, height));
         efl_pack_begin(sd->box, sd->label);
         evas_object_show(sd->label);
      }

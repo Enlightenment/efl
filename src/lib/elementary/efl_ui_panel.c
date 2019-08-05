@@ -228,7 +228,7 @@ _efl_ui_panel_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Panel_Data *sd)
 
         evas_object_hide(sd->event);
         elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-        evas_object_size_hint_min_set(sd->event, minw, minh);
+        efl_gfx_hint_size_min_set(sd->event, EINA_SIZE2D(minw, minh));
 
         if (edje_object_part_exists(wd->resize_obj, "efl.swallow.event"))
           efl_content_set(efl_part(efl_super(obj, MY_CLASS), "efl.swallow.event"), sd->event);
@@ -770,15 +770,15 @@ _scrollable_layout_resize(Eo *obj, Efl_Ui_Panel_Data *sd, Evas_Coord w, Evas_Coo
       case EFL_UI_PANEL_ORIENT_BOTTOM:
          // vertical
          evas_object_resize(sd->scr_ly, w, (1 + sd->content_size_ratio) * h);
-         evas_object_size_hint_min_set(sd->scr_panel, w, (sd->content_size_ratio * h));
-         evas_object_size_hint_min_set(sd->scr_event, w, h);
+         efl_gfx_hint_size_min_set(sd->scr_panel, EINA_SIZE2D(w, (sd->content_size_ratio * h)));
+         efl_gfx_hint_size_min_set(sd->scr_event, EINA_SIZE2D(w, h));
          break;
       case EFL_UI_PANEL_ORIENT_LEFT:
       case EFL_UI_PANEL_ORIENT_RIGHT:
          // horizontal
          evas_object_resize(sd->scr_ly, (1 + sd->content_size_ratio) * w, h);
-         evas_object_size_hint_min_set(sd->scr_panel, (sd->content_size_ratio * w), h);
-         evas_object_size_hint_min_set(sd->scr_event, w, h);
+         efl_gfx_hint_size_min_set(sd->scr_panel, EINA_SIZE2D((sd->content_size_ratio * w), h));
+         efl_gfx_hint_size_min_set(sd->scr_event, EINA_SIZE2D(w, h));
          break;
      }
    efl_canvas_group_change(obj);
@@ -868,7 +868,7 @@ _efl_ui_panel_efl_object_constructor(Eo *obj, Efl_Ui_Panel_Data *_pd)
              Evas_Coord minw = 0, minh = 0;
 
              elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-             evas_object_size_hint_min_set(_pd->event, minw, minh);
+             efl_gfx_hint_size_min_set(_pd->event, EINA_SIZE2D(minw, minh));
              efl_content_set(efl_part(efl_super(obj, MY_CLASS), "efl.swallow.event"), _pd->event);
           }
      }
