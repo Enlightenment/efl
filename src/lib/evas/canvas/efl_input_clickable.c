@@ -21,7 +21,7 @@ typedef struct {
 
 #define MY_CLASS EFL_INPUT_CLICKABLE_MIXIN
 
-#define DOUBLE_CLICK_TIME ((double)0.1) //in seconds
+#define DOUBLE_CLICK_TIME ((double)0.25) //in seconds
 #define LONGPRESS_TIMEOUT ((double)1.0) //in seconds
 
 static void

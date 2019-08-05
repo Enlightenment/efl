@@ -5,9 +5,10 @@
 #include <Elementary.h>
 
 static void
-_clicked(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
+_clicked(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   printf("Button is clicked!!!\n");
+   Efl_Input_Clickable_Clicked *clicked = ev->info;
+   printf("Button is clicked!!! repeated(%d) button(%d)\n", clicked->repeated, clicked->button);
 }
 
 static void

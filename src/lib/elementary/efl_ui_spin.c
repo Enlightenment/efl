@@ -39,7 +39,6 @@ _efl_ui_spin_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Data *sd)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
    sd->val_max = 100.0;
-   sd->step = 1.0;
 
    if (elm_widget_theme_object_set(obj, wd->resize_obj,
                                        elm_widget_theme_klass_get(obj),
@@ -95,24 +94,6 @@ _efl_ui_spin_efl_ui_range_display_range_limits_get(const Eo *obj EINA_UNUSED, Ef
 {
    if (min) *min = sd->val_min;
    if (max) *max = sd->val_max;
-}
-
-EOLIAN static void
-_efl_ui_spin_efl_ui_range_interactive_range_step_set(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd, double step)
-{
-   if (step <= 0)
-     {
-        ERR("Wrong param. The step(%lf) should be bigger than 0.0", step);
-        return;
-     }
-
-   sd->step = step;
-}
-
-EOLIAN static double
-_efl_ui_spin_efl_ui_range_interactive_range_step_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Data *sd)
-{
-   return sd->step;
 }
 
 EOLIAN static void

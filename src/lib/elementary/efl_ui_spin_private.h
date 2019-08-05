@@ -7,7 +7,6 @@ typedef struct _Efl_Ui_Spin_Data    Efl_Ui_Spin_Data;
 struct _Efl_Ui_Spin_Data
 {
    double                val, val_min, val_max;
-   double                step; /**< step for the value change. 1 by default. */
 };
 
 #endif

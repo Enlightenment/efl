@@ -8,7 +8,7 @@ struct _Efl_Ui_Spin_Button_Data
    Eina_Future          *delay_change_timer; /**< a timer for a delay,changed smart callback */
 
    Efl_Ui_Layout_Orientation dir;
-
+   double                step;
    Eina_Bool             entry_visible : 1;
    Eina_Bool             entry_reactivate : 1;
    Eina_Bool             editable : 1;

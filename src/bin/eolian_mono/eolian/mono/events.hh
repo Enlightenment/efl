@@ -253,9 +253,10 @@ struct event_argument_wrapper_generator
                           << "[Efl.Eo.BindingEntity]\n"
                           << "public class " << name_helpers::managed_event_args_short_name(evt) << " : EventArgs {\n"
                           << scope_tab << "/// <summary>Actual event payload.</summary>\n"
+                          << scope_tab << "/// <value>" << documentation_string << "</value>\n"
                           << scope_tab << "public " << type << " arg { get; set; }\n"
                           << "}\n"
-                 ).generate(sink, *etype, context);
+                 ).generate(sink, std::make_tuple(evt.documentation.summary, *etype), context);
    }
 } const event_argument_wrapper {};
 
@@ -279,9 +280,15 @@ struct event_declaration_generator
         wrapper_args_type = "<" + name_helpers::managed_event_args_name(evt) + ">";
 
       if (!as_generator(
-                documentation(1)
-                << scope_tab << "event EventHandler" << wrapper_args_type << " " << evt_name << ";\n"
-             ).generate(sink, evt, context))
+              documentation(1)
+           ).generate(sink, evt, context)) return false;
+      if (evt.type.is_engaged())
+        if (!as_generator(
+                scope_tab << "/// <value><see cref=\"" << name_helpers::managed_event_args_name(evt) << "\"/></value>\n"
+             ).generate(sink, evt, context)) return false;
+      if (!as_generator(
+              scope_tab << "event EventHandler" << wrapper_args_type << " " << evt_name << ";\n"
+           ).generate(sink, evt, context))
         return false;
 
       return true;
@@ -360,6 +367,10 @@ struct event_definition_generator
 
       if(!as_generator(documentation(1)).generate(sink, evt, context))
         return false;
+      if (etype.is_engaged())
+        if (!as_generator(
+                scope_tab << "/// <value><see cref=\"" << wrapper_args_type << "\"/></value>\n"
+             ).generate(sink, evt, context)) return false;
 
       // Visible event declaration. Either a regular class member or an explicit interface implementation.
       if (klass.type == attributes::class_type::interface_ || klass.type == attributes::class_type::mixin)

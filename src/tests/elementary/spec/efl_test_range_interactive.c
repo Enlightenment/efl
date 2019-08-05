@@ -10,7 +10,7 @@
 
 /* spec-meta-start
       {"test-interface":"Efl.Ui.Range_Display_Interactive",
-       "test-widgets": ["Efl.Ui.Spin", "Efl.Ui.Slider", "Efl.Ui.Spin_Button"]}
+       "test-widgets": ["Efl.Ui.Slider", "Efl.Ui.Spin_Button"]}
    spec-meta-end */
 
 EFL_START_TEST(step_setting)
@@ -51,8 +51,6 @@ EFL_START_TEST(steady_event)
 {
    Evas *e;
    int count = 0;
-
-   if (efl_isa(widget, EFL_UI_SPIN_CLASS)) return;
 
    efl_event_callback_add(widget, EFL_UI_RANGE_EVENT_STEADY, _steady_cb, &count),
    efl_ui_range_limits_set(widget, 0, 100);
