@@ -1046,7 +1046,7 @@ _ethumb_file_generate_path(Ethumb *e)
           {
              ERR("fdo_format but size %d is not NORMAL (%d) or LARGE (%d)?",
                  e->tw, THUMB_SIZE_NORMAL, THUMB_SIZE_LARGE);
-             category = "unknown";
+             category = eina_stringshare_add("unknown");
           }
      }
 
