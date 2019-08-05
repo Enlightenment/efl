@@ -20,13 +20,11 @@ internal class TestStructs
         checkZeroedStructSimple(simple);
     }
 
-#if EFL_BETA
     private static void complex_default_instantiation()
     {
         var complex = new Dummy.StructComplex();
         checkZeroedStructComplex(complex);
     }
-#endif
 
     public static void parameter_initialization()
     {
@@ -303,7 +301,6 @@ internal class TestStructs
     */
 
     // Complex Structs
-#if EFL_BETA
     public static void complex_in()
     {
         var complex = structComplexWithValues();
@@ -351,7 +348,6 @@ internal class TestStructs
     // public static void complex_ptr_return_own()
     // {
     // }
-#endif
 }
 
 }
