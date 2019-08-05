@@ -389,7 +389,7 @@ _cb_check_changed_scale_type(void *data, const Efl_Event *ev)
    Evas_Object *o_bg = data;
    int r, g, b, a;
 
-   if (efl_ui_check_selected_get(ev->object))
+   if (efl_ui_selectable_selected_get(ev->object))
      efl_gfx_color_set(o_bg, 255, 128, 128, 255);
    else
      efl_gfx_color_set(o_bg, 255, 255, 255, 255);
@@ -440,35 +440,35 @@ test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    efl_ui_radio_state_value_set(rd, EFL_GFX_IMAGE_SCALE_TYPE_FILL);
    efl_text_set(rd, "Fill");
    efl_gfx_hint_weight_set(rd, EFL_GFX_HINT_EXPAND, 0.0);
-   efl_event_callback_add(rd, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _cb_radio_changed_scale_type, o_bg);
+   efl_event_callback_add(rd, EFL_UI_EVENT_SELECTED_CHANGED, _cb_radio_changed_scale_type, o_bg);
    efl_pack(hbox, rd);
 
    rd = efl_add(EFL_UI_RADIO_CLASS, hbox);
    efl_ui_radio_state_value_set(rd, EFL_GFX_IMAGE_SCALE_TYPE_FIT_INSIDE);
    efl_text_set(rd, "Fit Inside");
    efl_gfx_hint_weight_set(rd, EFL_GFX_HINT_EXPAND, 0.0);
-   efl_event_callback_add(rd, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _cb_radio_changed_scale_type, o_bg);
+   efl_event_callback_add(rd, EFL_UI_EVENT_SELECTED_CHANGED, _cb_radio_changed_scale_type, o_bg);
    efl_pack(hbox, rd);
 
    rd = efl_add(EFL_UI_RADIO_CLASS, hbox);
    efl_ui_radio_state_value_set(rd, EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE);
    efl_text_set(rd, "Fit Outside");
    efl_gfx_hint_weight_set(rd, EFL_GFX_HINT_EXPAND, 0.0);
-   efl_event_callback_add(rd, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _cb_radio_changed_scale_type, o_bg);
+   efl_event_callback_add(rd, EFL_UI_EVENT_SELECTED_CHANGED, _cb_radio_changed_scale_type, o_bg);
    efl_pack(hbox, rd);
 
    rd = efl_add(EFL_UI_RADIO_CLASS, hbox);
    efl_ui_radio_state_value_set(rd, EFL_GFX_IMAGE_SCALE_TYPE_NONE);
    efl_text_set(rd, "None");
    efl_gfx_hint_weight_set(rd, EFL_GFX_HINT_EXPAND, 0.0);
-   efl_event_callback_add(rd, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _cb_radio_changed_scale_type, o_bg);
+   efl_event_callback_add(rd, EFL_UI_EVENT_SELECTED_CHANGED, _cb_radio_changed_scale_type, o_bg);
    efl_pack(hbox, rd);
 
    rd = efl_add(EFL_UI_RADIO_CLASS, hbox);
    efl_ui_radio_state_value_set(rd, EFL_GFX_IMAGE_SCALE_TYPE_TILE);
    efl_text_set(rd, "Tile");
    efl_gfx_hint_weight_set(rd, EFL_GFX_HINT_EXPAND, 0.0);
-   efl_event_callback_add(rd, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _cb_radio_changed_scale_type, o_bg);
+   efl_event_callback_add(rd, EFL_UI_EVENT_SELECTED_CHANGED, _cb_radio_changed_scale_type, o_bg);
    efl_pack(hbox, rd);
 
    efl_ui_radio_group_selected_value_set(hbox, EFL_GFX_IMAGE_SCALE_TYPE_FILL);
@@ -476,7 +476,7 @@ test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
    c = efl_add(EFL_UI_CHECK_CLASS, box);
    efl_text_set(c, "Bg Color");
    efl_gfx_hint_weight_set(c, EFL_GFX_HINT_EXPAND, 0.0);
-   efl_event_callback_add(c, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _cb_check_changed_scale_type, o_bg);
+   efl_event_callback_add(c, EFL_UI_EVENT_SELECTED_CHANGED, _cb_check_changed_scale_type, o_bg);
    efl_pack(box, c);
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(300, 200));

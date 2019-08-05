@@ -20,7 +20,7 @@ const char *countries[] =
 static void
 _check_button_selection_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   if (efl_ui_check_selected_get(ev->object))
+   if (efl_ui_selectable_selected_get(ev->object))
      printf("Object %p is now selected\n", ev->object);
    else
      printf("Object %p is now unselected\n", ev->object);
@@ -36,7 +36,7 @@ create_radios(Efl_Ui_Win *win)
         Efl_Ui_Radio *rbtn = efl_add(EFL_UI_RADIO_CLASS, win);
         efl_ui_radio_state_value_set(rbtn, i);
         efl_text_set(rbtn, countries[i]);
-        efl_event_callback_add(rbtn, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _check_button_selection_changed_cb, NULL);
+        efl_event_callback_add(rbtn, EFL_UI_EVENT_SELECTED_CHANGED, _check_button_selection_changed_cb, NULL);
         eina_array_push(arr, rbtn);
      }
 
@@ -65,7 +65,7 @@ _select_btn_clicked(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Efl_Ui_Check *c = data;
 
-   efl_ui_check_selected_set(c, EINA_TRUE);
+   efl_ui_selectable_selected_set(c, EINA_TRUE);
 }
 
 static void

@@ -137,7 +137,7 @@ _toggle_progress_label(void *data, const Efl_Event *ev)
 {
    Efl_Ui_Check *check = ev->object;
    Efl_Ui_Progressbar *pb3 = data;
-   Eina_Bool state = efl_ui_check_selected_get(check);
+   Eina_Bool state = efl_ui_selectable_selected_get(check);
 
    efl_ui_progressbar_show_progress_label_set(pb3, state);
 }
@@ -195,7 +195,7 @@ test_ui_progressbar(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_inf
                     );
    pd->check = efl_add(EFL_UI_CHECK_CLASS, bx,
                        efl_pack(bx, efl_added),
-                       efl_event_callback_add(efl_added, EFL_UI_CHECK_EVENT_SELECTED_CHANGED,
+                       efl_event_callback_add(efl_added, EFL_UI_EVENT_SELECTED_CHANGED,
                                               _toggle_progress_label, pd->pb3),
                        efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(250, 20))
                       );

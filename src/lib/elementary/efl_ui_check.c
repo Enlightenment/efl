@@ -54,13 +54,13 @@ static void
 _activate(Evas_Object *obj)
 {
    // state will be changed by the later call to the selected_set call
-   if (!efl_ui_check_selected_get(obj))
+   if (!efl_ui_selectable_selected_get(obj))
      {
         // FIXME: to do animation during state change , we need different signal
         // so that we can distinguish between state change by user or state change
         // by calling state_change() api. Keep both the signal for backward compatibility
         // and remove "elm,state,check,on" signal emission when we can break ABI.
-        // efl_ui_check_selected_set below will emit "elm,state,check,*" or "efl,state,check,*"
+        // efl_ui_selectable_selected_set below will emit "elm,state,check,*" or "efl,state,check,*"
         if (elm_widget_is_legacy(obj))
           {
              elm_layout_signal_emit(obj, "elm,activate,check,on", "elm");
@@ -79,7 +79,7 @@ _activate(Evas_Object *obj)
         // so that we can distinguish between state change by user or state change
         // by calling state_change() api. Keep both the signal for backward compatibility
         // and remove "elm,state,check,off" signal emission when we can break ABI.
-        // efl_ui_check_selected_set below will emit "elm,state,check,*" or "efl,state,check,*"
+        // efl_ui_selectable_selected_set below will emit "elm,state,check,*" or "efl,state,check,*"
         if (elm_widget_is_legacy(obj))
           {
              elm_layout_signal_emit(obj, "elm,activate,check,off", "elm");
@@ -95,14 +95,14 @@ _activate(Evas_Object *obj)
    //This commit will update the theme with the correct signals
    // "elm,state,check,on" or "elm,state,check,off" for legacy
    // "efl,state,check,on" or "efl,state,check,off" for eo-api
-   efl_ui_check_selected_set(obj, !efl_ui_check_selected_get(obj));
+   efl_ui_selectable_selected_set(obj, !efl_ui_selectable_selected_get(obj));
    if (elm_widget_is_legacy(obj))
      evas_object_smart_callback_call(obj, "changed", NULL);
 
    if (_elm_config->atspi_mode)
      efl_access_state_changed_signal_emit(obj,
                                           EFL_ACCESS_STATE_TYPE_CHECKED,
-                                          efl_ui_check_selected_get(obj));
+                                          efl_ui_selectable_selected_get(obj));
 }
 
 EOLIAN static Efl_Access_State_Set
@@ -148,14 +148,14 @@ _efl_ui_check_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Check_Data *sd EINA_UNUS
 
    if (elm_widget_is_legacy(obj))
      {
-        if (!efl_ui_check_selected_get(obj))
+        if (!efl_ui_selectable_selected_get(obj))
           elm_layout_signal_emit(obj, "elm,state,check,off", "elm");
         else
           elm_layout_signal_emit(obj, "elm,state,check,on", "elm");
      }
    else
      {
-        if (!efl_ui_check_selected_get(obj))
+        if (!efl_ui_selectable_selected_get(obj))
           elm_layout_signal_emit(obj, "efl,state,check,off", "efl");
         else
           elm_layout_signal_emit(obj, "efl,state,check,on", "efl");
@@ -184,7 +184,7 @@ _access_state_cb(void *data, Evas_Object *obj)
 
    if (elm_widget_disabled_get(obj))
      return strdup(E_("State: Disabled"));
-   if (efl_ui_check_selected_get(obj))
+   if (efl_ui_selectable_selected_get(obj))
      {
         on_text = elm_layout_text_get(data, "on");
 
@@ -214,12 +214,12 @@ _access_state_cb(void *data, Evas_Object *obj)
 static void
 _flush_selected(Eo *obj, Eina_Bool sel)
 {
-   efl_ui_check_selected_set(obj, sel);
+   efl_ui_selectable_selected_set(obj, sel);
 
    if (_elm_config->atspi_mode)
      efl_access_state_changed_signal_emit(obj,
                                           EFL_ACCESS_STATE_TYPE_CHECKED,
-                                          efl_ui_check_selected_get(obj));
+                                          efl_ui_selectable_selected_get(obj));
 }
 
 static void
@@ -260,13 +260,13 @@ _clicked_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_check_selected_get(const Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *pd EINA_UNUSED)
+_efl_ui_check_efl_ui_selectable_selected_get(const Eo *obj EINA_UNUSED, Efl_Ui_Check_Data *pd EINA_UNUSED)
 {
    return pd->selected;
 }
 
 EOLIAN static void
-_efl_ui_check_selected_set(Eo *obj, Efl_Ui_Check_Data *pd, Eina_Bool value)
+_efl_ui_check_efl_ui_selectable_selected_set(Eo *obj, Efl_Ui_Check_Data *pd, Eina_Bool value)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -298,7 +298,7 @@ _efl_ui_check_selected_set(Eo *obj, Efl_Ui_Check_Data *pd, Eina_Bool value)
    pd->selected = value;
 
    if (!elm_widget_is_legacy(obj))
-     efl_event_callback_call(obj, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, &pd->selected);
+     efl_event_callback_call(obj, EFL_UI_EVENT_SELECTED_CHANGED, &pd->selected);
 }
 
 EOLIAN static Eo *
@@ -349,13 +349,13 @@ elm_check_state_set(Evas_Object *obj, Eina_Bool state)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    EFL_UI_CHECK_DATA_GET_OR_RETURN(obj, sd);
 
-   efl_ui_check_selected_set(obj, state);
+   efl_ui_selectable_selected_set(obj, state);
 }
 
 EAPI Eina_Bool
 elm_check_state_get(const Evas_Object *obj)
 {
-   return !!efl_ui_check_selected_get(obj);
+   return !!efl_ui_selectable_selected_get(obj);
 }
 
 EAPI void
@@ -372,7 +372,7 @@ elm_check_state_pointer_set(Eo *obj, Eina_Bool *statep)
    sd->statep = statep;
    if (*sd->statep != sd->selected)
      {
-        efl_ui_check_selected_set(obj, *sd->statep);
+        efl_ui_selectable_selected_set(obj, *sd->statep);
      }
 }
 

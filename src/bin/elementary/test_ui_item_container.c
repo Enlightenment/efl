@@ -7,7 +7,7 @@
 static void
 _selection_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   if (efl_ui_check_selected_get(ev->object))
+   if (efl_ui_selectable_selected_get(ev->object))
      efl_ui_layout_orientation_set(data, EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
    else
      efl_ui_layout_orientation_set(data, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
@@ -73,8 +73,8 @@ _selection_changed_match_content_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    Match_Content_Ctx *c = data;
    Eina_Bool v,h;
 
-   v = efl_ui_check_selected_get(c->v);
-   h = efl_ui_check_selected_get(c->h);
+   v = efl_ui_selectable_selected_get(c->v);
+   h = efl_ui_selectable_selected_get(c->h);
 
    efl_ui_scrollable_match_content_set(c->c, v, h);
 }
@@ -213,15 +213,15 @@ void create_item_container_ui(Efl_Ui_Position_Manager_Entity *manager, const Efl
            efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
            efl_gfx_hint_align_set(efl_added, 0, 0.5));
    efl_text_set(o, "Vertical");
-   efl_event_callback_add(o, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _selection_changed_cb, item_container);
-   efl_ui_check_selected_set(o, EINA_TRUE);
+   efl_event_callback_add(o, EFL_UI_EVENT_SELECTED_CHANGED, _selection_changed_cb, item_container);
+   efl_ui_selectable_selected_set(o, EINA_TRUE);
    efl_pack_table(tbl, o, 0, 5, 1, 1);
 
    o = efl_add(EFL_UI_CHECK_CLASS, tbl,
            efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
            efl_gfx_hint_align_set(efl_added, 0, 0.5));
    efl_text_set(o, "Match Vertical");
-   efl_event_callback_add(o, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _selection_changed_match_content_cb, ctx);
+   efl_event_callback_add(o, EFL_UI_EVENT_SELECTED_CHANGED, _selection_changed_match_content_cb, ctx);
    efl_pack_table(tbl, o, 0, 6, 1, 1);
    ctx->v = o;
 
@@ -229,7 +229,7 @@ void create_item_container_ui(Efl_Ui_Position_Manager_Entity *manager, const Efl
            efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
            efl_gfx_hint_align_set(efl_added, 0, 0.5));
    efl_text_set(o, "Match Horizontal");
-   efl_event_callback_add(o, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _selection_changed_match_content_cb, ctx);
+   efl_event_callback_add(o, EFL_UI_EVENT_SELECTED_CHANGED, _selection_changed_match_content_cb, ctx);
    efl_pack_table(tbl, o, 0, 7, 1, 1);
    efl_gfx_entity_size_set(win, EINA_SIZE2D(260, 200));
    ctx->h = o;
