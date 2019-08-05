@@ -142,6 +142,7 @@ static void
 _item_select(Eo *obj, Efl_Ui_Item_Data *pd)
 {
    Efl_Ui_Select_Mode m;
+
    if (!pd->parent)
      return;
    m = efl_ui_select_mode_get(pd->parent);
@@ -150,9 +151,9 @@ _item_select(Eo *obj, Efl_Ui_Item_Data *pd)
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   pd->selected = EINA_TRUE;
+   Eina_Bool tmp = pd->selected = EINA_TRUE;
    edje_object_signal_emit(wd->resize_obj, "efl,state,selected", "efl");
-   efl_event_callback_call(obj, EFL_UI_EVENT_ITEM_SELECTED, NULL);
+   efl_event_callback_call(obj, EFL_UI_EVENT_SELECTED_CHANGED, &tmp);
 }
 
 static void
@@ -161,9 +162,9 @@ _item_unselect(Eo *obj, Efl_Ui_Item_Data *pd)
    if (!pd->selected) return;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   pd->selected = EINA_FALSE;
+   Eina_Bool tmp = pd->selected =EINA_FALSE;
    edje_object_signal_emit(wd->resize_obj, "efl,state,unselected", "efl");
-   efl_event_callback_call(obj, EFL_UI_EVENT_ITEM_UNSELECTED, NULL);
+   efl_event_callback_call(obj, EFL_UI_EVENT_SELECTED_CHANGED, &tmp);
 }
 
 /* Mouse Controls */
@@ -242,7 +243,7 @@ _efl_ui_item_index_get(const Eo *obj, Efl_Ui_Item_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_item_selected_set(Eo *obj, Efl_Ui_Item_Data *pd, Eina_Bool select)
+_efl_ui_item_efl_ui_selectable_selected_set(Eo *obj, Efl_Ui_Item_Data *pd, Eina_Bool select)
 {
    Eina_Bool selected = !!select;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
@@ -253,7 +254,7 @@ _efl_ui_item_selected_set(Eo *obj, Efl_Ui_Item_Data *pd, Eina_Bool select)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_item_selected_get(const Eo *obj EINA_UNUSED, Efl_Ui_Item_Data *pd)
+_efl_ui_item_efl_ui_selectable_selected_get(const Eo *obj EINA_UNUSED, Efl_Ui_Item_Data *pd)
 {
    return pd->selected;
 }
@@ -271,3 +272,4 @@ _efl_ui_item_container_get(const Eo *obj EINA_UNUSED, Efl_Ui_Item_Data *pd)
 }
 
 #include "efl_ui_item.eo.c"
+#include "efl_ui_selectable.eo.c"

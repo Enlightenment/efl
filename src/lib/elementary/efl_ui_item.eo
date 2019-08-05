@@ -1,4 +1,4 @@
-abstract @beta Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Container_Selectable, Efl.Input.Clickable
+abstract @beta Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Selectable, Efl.Input.Clickable
 {
    [[Selectable Item abstraction.
 
@@ -6,7 +6,7 @@ abstract @beta Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Containe
      like @Efl.Ui.List or @Efl.Ui.Grid, for example.
      @Efl.Ui.Item provides user interaction through the @Efl.Input.Clickable mixin.
      Items can be pressed, long-pressed, etc, and appropriate events are generated.
-     @Efl.Ui.Item also implements the @Efl.Ui.Container_Selectable interface, meaning that "selected" and
+     @Efl.Ui.Item also implements the @Efl.Ui.Selectable interface, meaning that "selected" and
      "unselected" events are automatically generated.
 
      Classes inheriting from this one only need to deal with the visual representation of the widget.
@@ -15,8 +15,8 @@ abstract @beta Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Containe
      Some events are converted to edje signals so the theme can react to them:
        @[Efl.Input.Clickable.pressed] -> "efl,state,pressed",
        @[Efl.Input.Clickable.unpressed] -> "efl,state,unpressed",
-       @[Efl.Ui.Container_Selectable.item,selected] -> "efl,state,selected",
-       @[Efl.Ui.Container_Selectable.item,unselected] -> "efl,state,unselected".
+       @[Efl.Ui.Selectable.selected,changed] (true) -> "efl,state,selected",
+       @[Efl.Ui.Selectable.selected,changed] (false) -> "efl,state,unselected".
    ]]
    methods {
       @property index {
@@ -26,16 +26,6 @@ abstract @beta Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Containe
          get {}
          values {
             index : int; [[The index where to find this item in its $container.]]
-         }
-      }
-      @property selected {
-         [[Item selected state.
-
-           The visual representation of the item will be adjusted accordingly to the new state.
-           This property is also automatically modified in response to user actions.
-         ]]
-         values {
-            select: bool; [[Whether this item is selected or not.]]
          }
       }
       @property container {
@@ -55,5 +45,6 @@ abstract @beta Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Containe
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
+      Efl.Ui.Selectable.selected {get; set;}
    }
 }
