@@ -467,6 +467,12 @@ event_callback_that_is_called_exactly_one_time_and_sets_a_single_int_data_pointe
 }
 
 void
+event_callback_that_quits_the_main_loop_when_called()
+{
+   ecore_main_loop_quit();
+}
+
+void
 click_object_at(Eo *obj, int x, int y)
 {
    Evas *e = evas_object_evas_get(obj);
