@@ -1,6 +1,5 @@
 mods = [
   'access_output',
-  'clock_input_ctxpopup',
   'prefs',
   'test_entry',
   'test_map',

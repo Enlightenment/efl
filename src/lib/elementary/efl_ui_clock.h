@@ -97,8 +97,6 @@
  * the corresponding user format.
  *
  * Clock supports six fields: Year, Month, Date, Hour, Minute, AM/PM.
- * Depending on the Clock module that is loaded, the user can see
- * different UI to select the individual field values.
  *
  * The individual fields of Clock can be arranged in any order according to the format
  * set by application.
@@ -116,63 +114,6 @@
  *
  * The whole widget is left aligned and its size grows horizontally depending
  * on the current format and each field's visible/disabled state.
- *
- * Clock individual field selection is implemented in a modular style.
- * Module can be implemented as a Ctxpopup based selection or an ISE based
- * selection or even a spinner like selection etc.
- *
- * <b>Clock Module design:</b>
- *
- * The following functions are expected to be implemented in a Clock module:
- *
- * <b>Field creation:</b>
- * <pre>
- *
- *  __________                                            __________
- * |          |----- obj_hook() ---------------------->>>|          |
- * |          |<<<----------------returns Mod_data ------|          |
- * |  Clock   |_______                                   |          |
- * |  widget  |       |Assign module call backs          |  Module  |
- * |   base   |<<<____|                                  |          |
- * |          |                                          |          |
- * |          |----- field_create() ------------------>>>|          |
- * |__________|<<<----------------returns field_obj -----|__________|
- *
- * </pre>
- *
- * <b>Field value setting:</b>
- * <pre>
- *
- *  __________                                          __________
- * |          |                                        |          |
- * |  Clock   |<<<----------efl_ui_clock_time_set()----|          |
- * |  widget  |                                        |  Module  |
- * |   base   |----display_field_value()------------>>>|          |
- * |__________|                                        |__________|
- *
- * </pre>
- *
- * <b>del_hook:</b>
- * <pre>
- *  __________                                          __________
- * |          |                                        |          |
- * |   Clock  |----obj_unhook()-------------------->>>>|          |
- * |  widget  |                                        |  Module  |
- * |   base   |         <<<-----frees mod_data---------|          |
- * |__________|                                        |__________|
- *
- * </pre>
- *
- *
- * Any module can use the following shared functions that are implemented in efl_ui_clock.c :
- *
- * <b>field_format_get()</b> - gives the field format.
- *
- * <b>field_limit_get()</b>  - gives the field minimum, maximum limits.
- *
- * To enable a module, set the ELM_MODULES environment variable as shown:
- *
- * <b>export ELM_MODULES="clock_input_ctxpopup>clock/api"</b>
  *
  * This widget inherits from the @ref Layout one, so that all the
  * functions acting on it also work for Clock objects.
