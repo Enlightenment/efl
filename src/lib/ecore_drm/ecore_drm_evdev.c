@@ -367,7 +367,7 @@ _device_handle_key(struct libinput_device *device, struct libinput_event_keyboar
 
    e = calloc(1, sizeof(Ecore_Event_Key) + strlen(key) + strlen(keyname) +
               ((compose[0] != '\0') ? strlen(compose) : 0) + 3);
-   if (!e) return;
+   if (!e) goto err;
 
    e->keyname = (char *)(e + 1);
    e->key = e->keyname + strlen(keyname) + 1;
@@ -394,6 +394,7 @@ _device_handle_key(struct libinput_device *device, struct libinput_event_keyboar
    else
      ecore_event_add(ECORE_EVENT_KEY_UP, e, NULL, NULL);
 
+err:
    if (tmp) free(tmp);
 }
 
