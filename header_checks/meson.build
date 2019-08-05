@@ -205,10 +205,6 @@ if (cc.has_header_symbol('sys/stat.h', 'fstatat'))
   config_h.set10('HAVE_ATFILE_SOURCE', true)
 endif
 
-if (cc.has_header('sys/mman.h'))
-  config_h.set10('HAVE_MMAN_H', true)
-endif
-
 if sys_linux and config_h.has('HAVE_LISTXATTR') and config_h.has('HAVE_SETXATTR') and config_h.has('HAVE_GETXATTR')
   config_h.set10('HAVE_XATTR', true)
 endif
