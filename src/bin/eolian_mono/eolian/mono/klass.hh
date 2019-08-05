@@ -348,6 +348,16 @@ struct klass
      if(!name_helpers::close_namespaces(sink, cls.namespaces, context))
        return false;
 
+     if(!as_generator
+        (lit("#pragma warning disable CS1591\n") // Disabling warnings as DocFx will hide these classes
+         <<"public static class " << (string % "_") << name_helpers::klass_inherit_name(cls)
+         << "_ExtensionMethods {\n"
+         << *((scope_tab << property_extension_method_definition(cls)) << "\n")
+         << "}\n"
+         << lit("#pragma warning restore CS1591\n"))
+        .generate(sink, std::make_tuple(cls.namespaces, cls.properties), context))
+     return false;
+
      return true;
    }
 

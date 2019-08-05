@@ -15,7 +15,7 @@ class TestMain
 
     static int Main(string[] args)
     {
-        Efl.All.Init();
+        Efl.All.Init(Efl.Csharp.Components.Ui);
 
         bool pass = true;
 
