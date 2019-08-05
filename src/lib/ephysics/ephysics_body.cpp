@@ -764,7 +764,6 @@ ephysics_body_collision_group_del(EPhysics_Body *body, const char *group)
 
    body->collision_groups = eina_list_remove(body->collision_groups, group_str);
    eina_stringshare_del(group_str);
-   eina_stringshare_del(group_str);
    ephysics_world_lock_release(body->world);
    return EINA_TRUE;
 }
