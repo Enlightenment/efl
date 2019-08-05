@@ -881,7 +881,7 @@ evas_image_load_file_open_gif2(Eina_File *f,
         *error = EVAS_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
         return NULL;
      }
-   loader->f = f;
+   loader->f = eina_file_dup(f);
    loader->opts = opts;
    loader->animated = animated;
    return loader;
@@ -899,6 +899,7 @@ evas_image_load_file_close_gif2(void *loader_data)
 #endif
    if ((loader->fi.map) && (loader->f))
      eina_file_map_free(loader->f, loader->fi.map);
+   if (loader->f) eina_file_close(loader->f);
    free(loader);
 }
 
