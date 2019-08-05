@@ -381,7 +381,7 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
           {
              ctree = efl_add(EFL_CANVAS_VG_CONTAINER_CLASS, root);
              efl_key_data_set(root, key, ctree);
-             if (clayer->name) efl_key_data_set(ctree, "_lot_node_name", clayer->name);
+             if (clayer->keypath) efl_key_data_set(ctree, "_lot_node_name", clayer->keypath);
           }
 #if DEBUG
         for (int i = 0; i < depth; i++) printf("    ");
