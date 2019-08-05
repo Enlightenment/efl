@@ -1891,7 +1891,7 @@ _elm_code_widget_efl_ui_widget_widget_input_event_handler(Eo *obj EINA_UNUSED, E
    if (eo_event->desc != EFL_EVENT_KEY_DOWN) return EINA_FALSE;
 
    // FIXME: This should use key bindings and the standard implementation!
-   if (eina_streq(efl_input_key_get(ev), "BackSpace"))
+   if (eina_streq(efl_input_key_sym_get(ev), "BackSpace"))
      {
         efl_input_processed_set(ev, EINA_TRUE);
         return EINA_TRUE;

@@ -15,7 +15,7 @@ class Efl.Input.Key extends Efl.Object implements Efl.Input.Event, Efl.Input.Sta
             val: string; [[Key name]]
          }
       }
-      @property key {
+      @property key_sym {
          [[Logical key.
 
            Eg. Shift + 1 = exclamation

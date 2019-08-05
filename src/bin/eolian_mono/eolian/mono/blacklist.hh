@@ -114,8 +114,7 @@ inline bool is_alias_blacklisted(attributes::alias_def const& alias)
 
 inline bool is_property_blacklisted(std::string const& name)
 {
-    return name == "Efl.Input.Key.Key"
-        || name == "Efl.Input.Hold.Hold"
+    return name == "Efl.Input.Hold.Hold"
         || name == "Efl.IText.Text";
 }
 
@@ -135,17 +134,9 @@ inline bool is_property_blacklisted(attributes::property_def const& property, Co
 
 template<typename Context>
 inline bool is_property_blacklisted(attributes::property_def const& property,
-                                    attributes::klass_def const& implementing_class,
+                                    EINA_UNUSED attributes::klass_def const& implementing_class,
                                     Context const& context)
 {
-   std::string property_name = name_helpers::property_managed_name(property);
-   std::string klass_name = name_helpers::klass_concrete_or_interface_name(implementing_class);
-
-   // This property wrapper is invalidated as it would clash with the implementing
-   // class constructor. CS
-   if (property_name == klass_name)
-     return true;
-
    return is_property_blacklisted(property, context);
 }
 

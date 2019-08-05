@@ -139,7 +139,7 @@ _check_key_event(void *data, const Efl_Event *ev)
 
    ck_assert_int_eq(efl_input_timestamp_get(ev->info), TIMESTAMP);
    ck_assert_str_eq(efl_input_key_name_get(ev->info), "odiaeresis");
-   ck_assert_str_eq(efl_input_key_get(ev->info), "ö");
+   ck_assert_str_eq(efl_input_key_sym_get(ev->info), "ö");
    ck_assert_str_eq(efl_input_key_string_get(ev->info), "Ö");
    ck_assert_str_eq(efl_input_key_compose_string_get(ev->info), "Ö");
    ck_assert_int_eq(efl_input_key_code_get(ev->info), 0xffe1);
