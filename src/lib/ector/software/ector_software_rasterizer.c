@@ -664,7 +664,7 @@ void ector_software_thread_init(Ector_Software_Thread *thread)
 
    SW_FT_Stroker_New(&thread->stroker);
    SW_FT_Stroker_Set(thread->stroker, 1 << 6,
-                     SW_FT_STROKER_LINECAP_BUTT, SW_FT_STROKER_LINEJOIN_MITER, 0);
+                     SW_FT_STROKER_LINECAP_BUTT, SW_FT_STROKER_LINEJOIN_MITER, 0x4<<16);
 }
 
 void ector_software_rasterizer_init(Software_Rasterizer *rasterizer)
@@ -692,6 +692,10 @@ void ector_software_rasterizer_stroke_set(Ector_Software_Thread *thread,
    SW_FT_Stroker_LineJoin join;
    int stroke_width;
    double scale_factor = 1.0;
+
+   //TODO: The interface to change the value of the miter_limit is not yet ready.
+   SW_FT_Fixed miter_limit = 0x4<<16;
+
    if (m)
      {
         // get the minimum scale factor from matrix
@@ -728,7 +732,7 @@ void ector_software_rasterizer_stroke_set(Ector_Software_Thread *thread,
           join = SW_FT_STROKER_LINEJOIN_MITER;
           break;
      }
-   SW_FT_Stroker_Set(thread->stroker, stroke_width, cap, join, 0);
+   SW_FT_Stroker_Set(thread->stroker, stroke_width, cap, join, miter_limit);
 }
 
 static void
