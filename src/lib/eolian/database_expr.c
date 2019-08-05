@@ -120,8 +120,11 @@ static Eina_Bool
 promote(Eolian_Expression *a, Eolian_Expression *b)
 {
 #define CONVERT_CASE(id, dtp, expr, field, fnm) \
-   case EOLIAN_EXPR_##id: \
-     expr->value.field = (dtp)(expr->value.fnm); break;
+   case EOLIAN_EXPR_##id: { \
+      dtp nv = (dtp)(expr->value.fnm); \
+      expr->value.field = nv; \
+      break; \
+   }
 
 #define CONVERT(dtp, expr, field) \
    switch (expr->type) \
