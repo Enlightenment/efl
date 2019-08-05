@@ -3,7 +3,7 @@ import elm_general;
 
 class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickable,
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.File,
-                 Efl.Ui.Selectable, Efl.Text_Interactive, Efl.Text_Markup
+                 Efl.Ui.Text_Selectable, Efl.Text_Interactive, Efl.Text_Markup
 {
    [[A flexible text widget which can be static (as a label) or editable by
      the user (as a text entry). It provides all sorts of editing facilities

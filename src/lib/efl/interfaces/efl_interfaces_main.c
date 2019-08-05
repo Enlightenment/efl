@@ -75,7 +75,8 @@
 #include "interfaces/efl_ui_scrollable.eo.c"
 #include "interfaces/efl_ui_scrollable_interactive.eo.c"
 #include "interfaces/efl_ui_scrollbar.eo.c"
-#include "interfaces/efl_ui_selectable.eo.c"
+#include "interfaces/efl_ui_container_selectable.eo.c"
+#include "interfaces/efl_ui_text_selectable.eo.c"
 #include "interfaces/efl_ui_multi_selectable.eo.c"
 #include "interfaces/efl_ui_zoom.eo.c"
 

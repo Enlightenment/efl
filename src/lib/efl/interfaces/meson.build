@@ -11,7 +11,8 @@ pub_legacy_eo_files = [
   'efl_ui_scrollable.eo',
   'efl_ui_scrollable_interactive.eo',
   'efl_ui_scrollbar.eo',
-  'efl_ui_selectable.eo',
+  'efl_ui_container_selectable.eo',
+  'efl_ui_text_selectable.eo',
   'efl_ui_zoom.eo',
 ]
 

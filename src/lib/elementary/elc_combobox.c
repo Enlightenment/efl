@@ -631,7 +631,7 @@ static const Efl_Class_Description _elm_combobox_class_desc = {
    NULL
 };
 
-EFL_DEFINE_CLASS(elm_combobox_class_get, &_elm_combobox_class_desc, EFL_UI_BUTTON_CLASS, EFL_UI_SELECTABLE_INTERFACE, EFL_ACCESS_WIDGET_ACTION_MIXIN, ELM_ENTRY_CLASS, ELM_GENLIST_CLASS, ELM_HOVER_CLASS, EFL_UI_LEGACY_INTERFACE, NULL);
+EFL_DEFINE_CLASS(elm_combobox_class_get, &_elm_combobox_class_desc, EFL_UI_BUTTON_CLASS, EFL_ACCESS_WIDGET_ACTION_MIXIN, ELM_ENTRY_CLASS, ELM_GENLIST_CLASS, ELM_HOVER_CLASS, EFL_UI_LEGACY_INTERFACE, NULL);
 
 EAPI Eina_Bool
 elm_combobox_expanded_get(const Elm_Combobox *obj)
