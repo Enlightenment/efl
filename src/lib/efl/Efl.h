@@ -109,7 +109,6 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_ui_scrollable_interactive.eo.h"
 #include "interfaces/efl_ui_text_selectable.eo.h"
 #include "interfaces/efl_ui_container_selectable.eo.h"
-#include "interfaces/efl_ui_multi_selectable.eo.h"
 #include "interfaces/efl_ui_zoom.eo.h"
 
 #include "interfaces/efl_screen.eo.h"

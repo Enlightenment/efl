@@ -84,7 +84,6 @@ pub_eo_files = [
   'efl_ui_property_bind.eo',
   'efl_ui_factory.eo',
   'efl_ui_factory_bind.eo',
-  'efl_ui_multi_selectable.eo',
   'efl_screen.eo',
   'efl_io_closer.eo',
   'efl_io_positioner.eo',

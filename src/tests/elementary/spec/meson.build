@@ -8,6 +8,8 @@ efl_ui_suite_behavior_test_files = files([
   'efl_test_range_display.c',
   'efl_test_range_interactive.c',
   'efl_test_ui_view.c',
+  'efl_test_single_selectable.c',
+  'efl_test_multi_selectable.c',
 ])
 
 efl_ui_suite_behavior_src = files([

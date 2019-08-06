@@ -183,6 +183,8 @@ pub_eo_files = [
   'efl_ui_position_manager_list.eo',
   'efl_ui_position_manager_grid.eo',
   'efl_ui_selectable.eo',
+  'efl_ui_multi_selectable.eo',
+  'efl_ui_single_selectable.eo',
 ]
 
 foreach eo_file : pub_eo_files

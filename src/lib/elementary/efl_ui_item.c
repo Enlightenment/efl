@@ -273,3 +273,5 @@ _efl_ui_item_container_get(const Eo *obj EINA_UNUSED, Efl_Ui_Item_Data *pd)
 
 #include "efl_ui_item.eo.c"
 #include "efl_ui_selectable.eo.c"
+#include "efl_ui_multi_selectable.eo.c"
+#include "efl_ui_single_selectable.eo.c"

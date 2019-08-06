@@ -251,14 +251,14 @@ _efl_ui_collection_item_scroll_align(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Ui
    _item_scroll_internal(obj, pd, item, align, animation);
 }
 
-EOLIAN static Efl_Ui_Item*
-_efl_ui_collection_last_selected_item_get(const Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
+EOLIAN static Efl_Ui_Selectable*
+_efl_ui_collection_efl_ui_single_selectable_last_selected_get(const Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
 {
    return eina_list_last_data_get(pd->selected);
 }
 
 EOLIAN static Eina_Iterator*
-_efl_ui_collection_selected_items_get(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
+_efl_ui_collection_efl_ui_multi_selectable_selected_items_get(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
 {
    return eina_list_iterator_new(pd->selected);
 }
