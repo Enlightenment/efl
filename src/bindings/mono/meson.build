@@ -135,6 +135,19 @@ efl_mono_dll_config = configure_file(input : 'efl_mono.dll.config.in',
                                  output : 'efl_mono.dll.config',
                                  configuration : efl_mono_conf_data)
 
+nuget_conf_data = configuration_data()
+
+nuget_conf_data.set('EFL_VERSION', meson.project_version())
+
+nuget_nuspec = configure_file(input : 'efl_mono.dll.nuspec.in',
+                              output : 'efl_mono.dll.nuspec',
+                              configuration : nuget_conf_data)
+
+run_target('nuget_pack',
+    command: ['nuget', 'pack', '-OutputDirectory', meson.current_build_dir(),
+              join_paths(meson.current_build_dir(), 'efl_mono.dll.nuspec')]
+)
+
 extra_cs_args = runtime_assemblies
 
 if get_option('mono-beta')
