@@ -1,7 +1,7 @@
 generic_loaders = ['gst', 'pdf',
 'ps',
 'raw',
-'svg',
+'rsvg',
 'xcf']
 
 generic_src = []
