@@ -1868,9 +1868,6 @@ EAPI void ecore_wl2_session_recovery_disable(void);
  */
 EAPI void ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush);
 
-/* TODO: doxygen if we are keeping this function public */
-EAPI void ecore_wl2_window_false_commit(Ecore_Wl2_Window *window);
-
 /**
  * Check if a wayland window's surface is in the pending state.
  *
