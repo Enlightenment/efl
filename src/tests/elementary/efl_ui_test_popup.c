@@ -174,10 +174,79 @@ EFL_START_TEST(efl_ui_test_popup_backwall_img)
 }
 EFL_END_TEST
 
+static void
+_popup_button_click(void *data, const Efl_Event *ev)
+{
+   Efl_Ui_Alert_Popup_Button_Clicked_Event *event = ev->info;
+   int *called = data;
+
+   *called = event->button_type;
+}
+
+EFL_START_TEST(efl_ui_test_popup_alert)
+{
+   Eo *win, *popup;
+   char buf[PATH_MAX];
+   Eina_Size2D layout_sz_min;
+   int called;
+
+   win = win_add();
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(WIN_SIZE, WIN_SIZE));
+
+   popup = efl_add(EFL_UI_ALERT_POPUP_CLASS, win);
+   efl_text_set(efl_part(popup, "title"), "title");
+
+   efl_gfx_entity_size_set(popup, EINA_SIZE2D(160, 160));
+
+   Eo *layout = efl_add(EFL_UI_LAYOUT_CLASS, popup);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
+   ck_assert(efl_file_simple_load(layout, buf, "efl_ui_popup_scroll_content"));
+   efl_canvas_group_calculate(layout);
+
+   layout_sz_min = efl_gfx_hint_size_combined_min_get(layout);
+
+   efl_content_set(popup, layout);
+   efl_ui_alert_popup_button_set(popup, EFL_UI_ALERT_POPUP_BUTTON_POSITIVE, "Yes", NULL);
+   efl_ui_alert_popup_button_set(popup, EFL_UI_ALERT_POPUP_BUTTON_NEGATIVE, "No", NULL);
+   efl_ui_alert_popup_button_set(popup, EFL_UI_ALERT_POPUP_BUTTON_USER, "Cancel", NULL);
+
+   efl_event_callback_add(popup, EFL_UI_ALERT_POPUP_EVENT_BUTTON_CLICKED, _popup_button_click, &called);
+
+   get_me_to_those_events(popup);
+   {
+      /* the layout should currently be the size of its calculated (edje) min size */
+      Eina_Size2D layout_sz = efl_gfx_entity_size_get(layout);
+      ck_assert_int_eq(layout_sz.w, layout_sz_min.w);
+      ck_assert_int_eq(layout_sz.h, layout_sz_min.h);
+   }
+
+   Eo *btn_layout = efl_content_get(efl_part(popup, "efl.buttons"));
+   /* verify button events work as expected using the layout set above:
+
+      Cancel | Yes | No
+    */
+   called = -1;
+   click_part(btn_layout, "efl.button1");
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(called, EFL_UI_ALERT_POPUP_BUTTON_USER);
+
+   called = -1;
+   click_part(btn_layout, "efl.button2");
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(called, EFL_UI_ALERT_POPUP_BUTTON_POSITIVE);
+
+   called = -1;
+   click_part(btn_layout, "efl.button3");
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(called, EFL_UI_ALERT_POPUP_BUTTON_NEGATIVE);
+}
+EFL_END_TEST
+
 void efl_ui_test_popup(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_test_popup_events);
    tcase_add_test(tc, efl_ui_test_popup_basic_sizing);
    tcase_add_test(tc, efl_ui_test_popup_basic_align);
    tcase_add_test(tc, efl_ui_test_popup_backwall_img);
+   tcase_add_test(tc, efl_ui_test_popup_alert);
 }
