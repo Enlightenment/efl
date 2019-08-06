@@ -15,8 +15,8 @@ abstract @beta Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Selectab
      Some events are converted to edje signals so the theme can react to them:
        @[Efl.Input.Clickable.pressed] -> "efl,state,pressed",
        @[Efl.Input.Clickable.unpressed] -> "efl,state,unpressed",
-       @[Efl.Ui.Selectable.item,selected] -> "efl,state,selected",
-       @[Efl.Ui.Selectable.item,unselected] -> "efl,state,unselected".
+       @[Efl.Ui.Selectable.selected,changed] (true) -> "efl,state,selected",
+       @[Efl.Ui.Selectable.selected,changed] (false) -> "efl,state,unselected".
    ]]
    methods {
       @property index {
@@ -26,16 +26,6 @@ abstract @beta Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Selectab
          get {}
          values {
             index : int; [[The index where to find this item in its $container.]]
-         }
-      }
-      @property selected {
-         [[Item selected state.
-
-           The visual representation of the item will be adjusted accordingly to the new state.
-           This property is also automatically modified in response to user actions.
-         ]]
-         values {
-            select: bool; [[Whether this item is selected or not.]]
          }
       }
       @property container {
@@ -55,5 +45,6 @@ abstract @beta Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Selectab
       Efl.Object.constructor;
       Efl.Object.finalize;
       Efl.Object.destructor;
+      Efl.Ui.Selectable.selected {get; set;}
    }
 }

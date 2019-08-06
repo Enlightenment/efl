@@ -95,13 +95,13 @@ _efl_input_key_key_name_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
 }
 
 EOLIAN static void
-_efl_input_key_key_set(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd, const char *val)
+_efl_input_key_key_sym_set(Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd, const char *val)
 {
    eina_stringshare_replace(&pd->key, val);
 }
 
 EOLIAN static const char *
-_efl_input_key_key_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
+_efl_input_key_key_sym_get(const Eo *obj EINA_UNUSED, Efl_Input_Key_Data *pd)
 {
    return pd->key;
 }

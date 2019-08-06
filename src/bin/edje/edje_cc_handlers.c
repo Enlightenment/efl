@@ -14511,7 +14511,7 @@ static void
 st_collections_group_parts_part_description_map_color(void)
 {
    Edje_Map_Color *color;
-   Edje_Map_Color tmp;
+   Edje_Map_Color tmp = { 0 };
    int i;
 
    check_min_arg_count(2);

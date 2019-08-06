@@ -310,7 +310,7 @@ _efl_ui_check_efl_object_constructor(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
-   efl_ui_clickable_util_bind_to_theme(wd->resize_obj, obj);
+   efl_ui_action_connector_bind_clickable_to_theme(wd->resize_obj, obj);
    if (elm_widget_is_legacy(obj))
      {
         efl_layout_signal_callback_add

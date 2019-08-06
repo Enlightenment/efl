@@ -167,8 +167,8 @@ _entry_hide(Evas_Object *obj)
 {
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
 
-   elm_layout_signal_emit(obj, "efl,state,button,active", "efl");
-   elm_layout_signal_emit(obj, "efl,state,entry,inactive", "efl");
+   efl_layout_signal_emit(obj, "efl,state,button,active", "efl");
+   efl_layout_signal_emit(obj, "efl,state,entry,inactive", "efl");
 
    if (sd->entry_visible && !evas_focus_state_get(evas_object_evas_get(obj)))
      sd->entry_reactivate = EINA_TRUE;
@@ -343,7 +343,7 @@ _entry_show_cb(void *data,
    elm_object_focus_set(obj, EINA_TRUE);
    elm_entry_select_all(obj);
    sd->entry_visible = EINA_TRUE;
-   elm_layout_signal_emit(data, "efl,state,button,inactive", "efl");
+   efl_layout_signal_emit(data, "efl,state,button,inactive", "efl");
 }
 
 static void
@@ -351,7 +351,7 @@ _toggle_entry(Evas_Object *obj)
 {
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
 
-   if (elm_widget_disabled_get(obj)) return;
+   if (efl_ui_widget_disabled_get(obj)) return;
    if (!sd->editable) return;
    if (sd->entry_visible) _entry_value_apply(obj);
    else
@@ -378,7 +378,7 @@ _toggle_entry(Evas_Object *obj)
         efl_event_callback_add(sd->ent, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED,
                                _entry_focus_changed_cb, obj);
         sd->entry_visible = EINA_TRUE;
-        elm_layout_signal_emit(obj, "efl,state,entry,active", "efl");
+        efl_layout_signal_emit(obj, "efl,state,entry,active", "efl");
         {
            Eina_List *items = NULL;
 
@@ -512,7 +512,7 @@ _access_info_cb(void *data, Evas_Object *obj EINA_UNUSED)
 static char *
 _access_state_cb(void *data, Evas_Object *obj EINA_UNUSED)
 {
-   if (elm_widget_disabled_get(data))
+   if (efl_ui_widget_disabled_get(data))
      return strdup(E_("State: Disabled"));
 
    return NULL;
@@ -525,7 +525,7 @@ _access_activate_spin_button_cb(void *data,
 {
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(data, MY_CLASS);
 
-   if (elm_widget_disabled_get(data)) return;
+   if (efl_ui_widget_disabled_get(data)) return;
    if (!sd->entry_visible)
      _toggle_entry(data);
 }
@@ -572,10 +572,10 @@ _access_spinner_register(Evas_Object *obj, Eina_Bool is_access)
         /* unregister access */
         _elm_access_edje_object_part_object_unregister
            (obj, elm_layout_edje_get(obj), "access");
-        elm_layout_signal_emit(obj, "efl,state,access,inactive", "efl");
+        efl_layout_signal_emit(obj, "efl,state,access,inactive", "efl");
         return;
      }
-   elm_layout_signal_emit(obj, "efl,state,access,active", "efl");
+   efl_layout_signal_emit(obj, "efl,state,access,active", "efl");
    ao = _elm_access_edje_object_part_object_register
       (obj, elm_layout_edje_get(obj), "access");
 
@@ -585,7 +585,7 @@ _access_spinner_register(Evas_Object *obj, Eina_Bool is_access)
    _elm_access_activate_callback_set(ai, _access_activate_spin_button_cb, obj);
 
    /*Do not register spinner buttons if widget is disabled*/
-   if (!elm_widget_disabled_get(obj))
+   if (!efl_ui_widget_disabled_get(obj))
      {
         ai = _elm_access_info_get(sd->inc_button);
         _elm_access_text_set(ai, ELM_ACCESS_TYPE,
@@ -686,10 +686,11 @@ _efl_ui_spin_button_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Button_Data *sd)
         efl_ui_focus_composition_elements_set(obj, items);
      }
 
-   elm_layout_signal_callback_add
-      (obj, "efl,action,entry,toggle", "*", _entry_toggle_cb, NULL);
 
-   elm_widget_can_focus_set(obj, EINA_TRUE);
+   efl_layout_signal_callback_add
+      (obj, "efl,action,entry,toggle", "*", _entry_toggle_cb, NULL, NULL);
+
+   efl_ui_widget_focus_allow_set(obj, EINA_TRUE);
 
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_SPIN_BUTTON);
 

@@ -651,7 +651,11 @@ elm_theme_overlay_mmap_add(Elm_Theme *th, const Eina_File *f)
    Eina_File *file = eina_file_dup(f);
 
    if (!th) th = theme_default;
-   if (!th) return;
+   if (!th)
+     {
+        eina_file_close(file);
+        return;
+     }
    th->overlay_items = eina_list_free(th->overlay_items);
    _elm_theme_item_finalize(&th->overlay, eina_file_filename_get(file), file, EINA_TRUE, EINA_FALSE);
    elm_theme_flush(th);

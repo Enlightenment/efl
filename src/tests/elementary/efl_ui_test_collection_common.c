@@ -55,25 +55,25 @@ EFL_START_TEST(test_multi_select)
    efl_event_callback_add(item_container, EFL_UI_EVENT_ITEM_UNSELECTED, _set_pointer_quit, &unselected);
    fill_items(EFL_UI_LIST_DEFAULT_ITEM_CLASS);
 
-   efl_ui_item_selected_set(efl_pack_content_get(item_container, 0), EINA_TRUE);
+   efl_ui_selectable_selected_set(efl_pack_content_get(item_container, 0), EINA_TRUE);
    ck_assert_ptr_eq(selected, efl_pack_content_get(item_container, 0));
    ck_assert_ptr_eq(unselected, NULL);
    selected = NULL;
    unselected = NULL;
-   efl_ui_item_selected_set(efl_pack_content_get(item_container, 2), EINA_TRUE);
+   efl_ui_selectable_selected_set(efl_pack_content_get(item_container, 2), EINA_TRUE);
    ck_assert_ptr_eq(selected, efl_pack_content_get(item_container, 2));
    ck_assert_ptr_eq(unselected, NULL);
    selected = NULL;
    unselected = NULL;
-   ck_assert_int_eq(efl_ui_item_selected_get(efl_pack_content_get(item_container, 0)), EINA_TRUE);
-   ck_assert_int_eq(efl_ui_item_selected_get(efl_pack_content_get(item_container, 2)), EINA_TRUE);
+   ck_assert_int_eq(efl_ui_selectable_selected_get(efl_pack_content_get(item_container, 0)), EINA_TRUE);
+   ck_assert_int_eq(efl_ui_selectable_selected_get(efl_pack_content_get(item_container, 2)), EINA_TRUE);
    ck_assert_ptr_eq(efl_ui_collection_last_selected_item_get(item_container), efl_pack_content_get(item_container, 2));
    _iterator_to_array(&arr_selected, efl_ui_collection_selected_items_get(item_container));
    ck_assert_int_eq(eina_array_count(arr_selected), 2);
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 0), efl_pack_content_get(item_container, 0));
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 1), efl_pack_content_get(item_container, 2));
 
-   efl_ui_item_selected_set(efl_pack_content_get(item_container, 2), EINA_TRUE);
+   efl_ui_selectable_selected_set(efl_pack_content_get(item_container, 2), EINA_TRUE);
    ck_assert_ptr_eq(selected, NULL);
    ck_assert_ptr_eq(unselected, NULL);
    selected = NULL;
@@ -93,17 +93,17 @@ EFL_START_TEST(test_multi_select_removal)
    efl_event_callback_add(item_container, EFL_UI_EVENT_ITEM_UNSELECTED, _set_pointer_quit, &unselected);
    fill_items(EFL_UI_LIST_DEFAULT_ITEM_CLASS);
 
-   efl_ui_item_selected_set(efl_pack_content_get(item_container, 0), EINA_TRUE);
+   efl_ui_selectable_selected_set(efl_pack_content_get(item_container, 0), EINA_TRUE);
    selected = NULL;//No need to ckeck the flag, we asserted in the tcase before
-   efl_ui_item_selected_set(efl_pack_content_get(item_container, 2), EINA_TRUE);
+   efl_ui_selectable_selected_set(efl_pack_content_get(item_container, 2), EINA_TRUE);
    selected = NULL;//No need to ckeck the flag, we asserted in the tcase before
    unselected = NULL;
-   efl_ui_item_selected_set(efl_pack_content_get(item_container, 0), EINA_FALSE);
+   efl_ui_selectable_selected_set(efl_pack_content_get(item_container, 0), EINA_FALSE);
    ck_assert_ptr_eq(selected, NULL);
    ck_assert_ptr_eq(unselected, efl_pack_content_get(item_container, 0));
    selected = NULL;
    unselected = NULL;
-   efl_ui_item_selected_set(efl_pack_content_get(item_container, 2), EINA_FALSE);
+   efl_ui_selectable_selected_set(efl_pack_content_get(item_container, 2), EINA_FALSE);
    ck_assert_ptr_eq(selected, NULL);
    ck_assert_ptr_eq(unselected, efl_pack_content_get(item_container, 2));
    selected = NULL;
@@ -128,24 +128,24 @@ EFL_START_TEST(test_single_select)
    efl_event_callback_add(item_container, EFL_UI_EVENT_ITEM_UNSELECTED, _set_pointer_quit, &unselected);
    fill_items(EFL_UI_LIST_DEFAULT_ITEM_CLASS);
 
-   efl_ui_item_selected_set(efl_pack_content_get(item_container, 0), EINA_TRUE);
+   efl_ui_selectable_selected_set(efl_pack_content_get(item_container, 0), EINA_TRUE);
    ck_assert_ptr_eq(selected, efl_pack_content_get(item_container, 0));
    ck_assert_ptr_eq(unselected, NULL);
    selected = NULL;
    unselected = NULL;
-   efl_ui_item_selected_set(efl_pack_content_get(item_container, 2), EINA_TRUE);
+   efl_ui_selectable_selected_set(efl_pack_content_get(item_container, 2), EINA_TRUE);
    ck_assert_ptr_eq(selected, efl_pack_content_get(item_container, 2));
    ck_assert_ptr_eq(unselected, efl_pack_content_get(item_container, 0));
    selected = NULL;
    unselected = NULL;
-   ck_assert_int_eq(efl_ui_item_selected_get(efl_pack_content_get(item_container, 0)), EINA_FALSE);
-   ck_assert_int_eq(efl_ui_item_selected_get(efl_pack_content_get(item_container, 2)), EINA_TRUE);
+   ck_assert_int_eq(efl_ui_selectable_selected_get(efl_pack_content_get(item_container, 0)), EINA_FALSE);
+   ck_assert_int_eq(efl_ui_selectable_selected_get(efl_pack_content_get(item_container, 2)), EINA_TRUE);
    ck_assert_ptr_eq(efl_ui_collection_last_selected_item_get(item_container), efl_pack_content_get(item_container, 2));
    _iterator_to_array(&arr_selected, efl_ui_collection_selected_items_get(item_container));
    ck_assert_int_eq(eina_array_count(arr_selected), 1);
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 0), efl_pack_content_get(item_container, 2));
 
-   efl_ui_item_selected_set(efl_pack_content_get(item_container, 2), EINA_TRUE);
+   efl_ui_selectable_selected_set(efl_pack_content_get(item_container, 2), EINA_TRUE);
    ck_assert_ptr_eq(selected, NULL);
    ck_assert_ptr_eq(unselected, NULL);
    selected = NULL;
@@ -166,23 +166,23 @@ EFL_START_TEST(test_single_select_always)
    efl_event_callback_add(item_container, EFL_UI_EVENT_ITEM_UNSELECTED, _set_pointer_quit, &unselected);
    fill_items(EFL_UI_LIST_DEFAULT_ITEM_CLASS);
 
-   efl_ui_item_selected_set(efl_pack_content_get(item_container, 0), EINA_TRUE);
+   efl_ui_selectable_selected_set(efl_pack_content_get(item_container, 0), EINA_TRUE);
    ck_assert_ptr_eq(selected, efl_pack_content_get(item_container, 0));
    ck_assert_ptr_eq(unselected, NULL);
    selected = NULL;
    unselected = NULL;
-   efl_ui_item_selected_set(efl_pack_content_get(item_container, 2), EINA_TRUE);
+   efl_ui_selectable_selected_set(efl_pack_content_get(item_container, 2), EINA_TRUE);
    ck_assert_ptr_eq(selected, efl_pack_content_get(item_container, 2));
    ck_assert_ptr_eq(unselected, efl_pack_content_get(item_container, 0));
    selected = NULL;
    unselected = NULL;
-   efl_ui_item_selected_set(efl_pack_content_get(item_container, 2), EINA_TRUE);
+   efl_ui_selectable_selected_set(efl_pack_content_get(item_container, 2), EINA_TRUE);
    ck_assert_ptr_eq(selected, efl_pack_content_get(item_container, 2));
    ck_assert_ptr_eq(unselected, NULL);
    selected = NULL;
    unselected = NULL;
-   ck_assert_int_eq(efl_ui_item_selected_get(efl_pack_content_get(item_container, 0)), EINA_FALSE);
-   ck_assert_int_eq(efl_ui_item_selected_get(efl_pack_content_get(item_container, 2)), EINA_TRUE);
+   ck_assert_int_eq(efl_ui_selectable_selected_get(efl_pack_content_get(item_container, 0)), EINA_FALSE);
+   ck_assert_int_eq(efl_ui_selectable_selected_get(efl_pack_content_get(item_container, 2)), EINA_TRUE);
    ck_assert_ptr_eq(efl_ui_collection_last_selected_item_get(item_container), efl_pack_content_get(item_container, 2));
    _iterator_to_array(&arr_selected, efl_ui_collection_selected_items_get(item_container));
    ck_assert_int_eq(eina_array_count(arr_selected), 1);
@@ -203,18 +203,18 @@ EFL_START_TEST(test_none_select)
    efl_event_callback_add(item_container, EFL_UI_EVENT_ITEM_UNSELECTED, _set_pointer_quit, &unselected);
    fill_items(EFL_UI_LIST_DEFAULT_ITEM_CLASS);
 
-   efl_ui_item_selected_set(efl_pack_content_get(item_container, 0), EINA_TRUE);
+   efl_ui_selectable_selected_set(efl_pack_content_get(item_container, 0), EINA_TRUE);
    ck_assert_ptr_eq(selected, NULL);
    ck_assert_ptr_eq(unselected, NULL);
    selected = NULL;
    unselected = NULL;
-   efl_ui_item_selected_set(efl_pack_content_get(item_container, 2), EINA_TRUE);
+   efl_ui_selectable_selected_set(efl_pack_content_get(item_container, 2), EINA_TRUE);
    ck_assert_ptr_eq(selected, NULL);
    ck_assert_ptr_eq(unselected, NULL);
    selected = NULL;
    unselected = NULL;
-   ck_assert_int_eq(efl_ui_item_selected_get(efl_pack_content_get(item_container, 0)), EINA_FALSE);
-   ck_assert_int_eq(efl_ui_item_selected_get(efl_pack_content_get(item_container, 2)), EINA_FALSE);
+   ck_assert_int_eq(efl_ui_selectable_selected_get(efl_pack_content_get(item_container, 0)), EINA_FALSE);
+   ck_assert_int_eq(efl_ui_selectable_selected_get(efl_pack_content_get(item_container, 2)), EINA_FALSE);
    ck_assert_ptr_eq(efl_ui_collection_last_selected_item_get(item_container), NULL);
    _iterator_to_array(&arr_selected, efl_ui_collection_selected_items_get(item_container));
    ck_assert_int_eq(eina_array_count(arr_selected), 0);

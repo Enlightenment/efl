@@ -23,7 +23,7 @@ _label_write(Evas_Object *obj, Efl_Ui_Spin_Data *sd)
    Eina_Value val = eina_value_double_init(sd->val);
    efl_ui_format_formatted_value_get(obj, strbuf, val);
 
-   elm_layout_text_set(obj, "efl.text", eina_strbuf_string_get(strbuf));
+   efl_text_set(efl_part(obj, "efl.text"), eina_strbuf_string_get(strbuf));
 
    eina_value_flush(&val);
    eina_strbuf_free(strbuf);
@@ -47,7 +47,7 @@ _efl_ui_spin_efl_object_constructor(Eo *obj, Efl_Ui_Spin_Data *sd)
      CRI("Failed to set layout!");
 
    _label_write(obj, sd);
-   elm_widget_can_focus_set(obj, EINA_TRUE);
+   efl_ui_widget_focus_allow_set(obj, EINA_TRUE);
 
    return obj;
 }

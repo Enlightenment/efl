@@ -181,7 +181,11 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
    FREESTRC(ie->cache_key);
    FREESTRC(ie->file);
    FREESTRC(ie->key);
-   if (ie->f && ie->flags.given_mmap) eina_file_close(ie->f);
+   if (ie->f && ie->flags.given_mmap)
+     {
+        eina_file_close(ie->f);
+        ie->f = NULL;
+     }
    ie->cache = NULL;
    if ((cache) && (cache->func.surface_delete)) cache->func.surface_delete(ie);
 

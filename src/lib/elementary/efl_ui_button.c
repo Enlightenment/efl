@@ -247,7 +247,7 @@ _efl_ui_button_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Button_Data *_pd EINA_
         edje_object_signal_callback_add
            (wd->resize_obj, "efl,action,unpress", "*",
             _on_unpressed_signal, obj);
-        efl_ui_clickable_util_bind_to_theme(wd->resize_obj, obj);
+        efl_ui_action_connector_bind_clickable_to_theme(wd->resize_obj, obj);
      }
 
    _elm_access_object_register(obj, wd->resize_obj);

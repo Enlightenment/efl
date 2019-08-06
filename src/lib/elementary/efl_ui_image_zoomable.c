@@ -1849,7 +1849,7 @@ _efl_ui_image_zoomable_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Zoomable
      (priv->img, EVAS_CALLBACK_MOUSE_DOWN, _mouse_down_cb, obj);
    evas_object_event_callback_add
      (priv->img, EVAS_CALLBACK_MOUSE_UP, _mouse_up_cb, obj);
-   efl_ui_clickable_util_bind_to_object(priv->img, obj);
+   efl_ui_action_connector_bind_clickable_to_object(priv->img, obj);
    evas_object_image_scale_hint_set(priv->img, EVAS_IMAGE_SCALE_HINT_STATIC);
 
    /* XXX: mmm... */

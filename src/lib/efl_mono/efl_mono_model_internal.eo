@@ -1,0 +1,19 @@
+class @beta Efl.Mono_Model_Internal extends Efl.Loop_Consumer implements Efl.Model
+{
+  methods {
+    add_property {
+      params {
+        @in name: string;
+        @in type: ptr(const(Eina.Value_Type));
+      }
+    }
+  }
+  implements {
+    Efl.Object.constructor;
+    Efl.Object.destructor;
+    Efl.Model.properties { get; }
+    Efl.Model.child_add;
+    Efl.Model.children_count { get; }
+    Efl.Model.children_slice_get;
+  }
+}

@@ -72,6 +72,7 @@ efl_mono_src = [
      'Events.cs',
      'FunctionPointers.cs',
      'FunctionPointerMarshalling.cs',
+     'Model.cs',
      'Parts.cs',
      'Promises.cs',
      'Strbuf.cs',
@@ -111,7 +112,7 @@ custom_target('copy_efl_mono_lib_dll',
               command : [copy_prog, '@INPUT@', '@OUTPUT@'])
 endif
 
-config_libs = ['eina', 'ecore', 'eo', 'efl', 'evas', 'eldbus', 'elementary']
+config_libs = ['eina', 'ecore', 'eo', 'efl', 'evas', 'eldbus', 'elementary', 'efl_mono']
 load_lib = efl_mono_test_suite_path + ':'
 
 foreach config : config_libs

@@ -145,7 +145,7 @@ evas_image_load_file_close_dds(void *loader_data)
 {
    Evas_Loader_Internal *loader = loader_data;
 
-   eina_file_close(loader->f);
+   if (loader->f) eina_file_close(loader->f);
    free(loader);
 }
 

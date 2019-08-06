@@ -73,7 +73,7 @@ struct @free(free) Dummy.StructSimple
    fmyint: Dummy.MyInt;
 }
 
-struct @beta @free(free) Dummy.StructComplex {
+struct @free(free) Dummy.StructComplex {
    farray: array<string>;
    flist: list<string>;
    fhash: hash<string, string>;
@@ -297,28 +297,28 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
       */
 
-      eina_binbuf_in @beta {
+      eina_binbuf_in {
          params {
             @in binbuf: binbuf;
          }
          return: bool;
       }
 
-      call_eina_binbuf_in @beta {
+      call_eina_binbuf_in {
          params {
             @in binbuf: binbuf;
          }
          return: bool;
       }
 
-      eina_binbuf_in_own @beta {
+      eina_binbuf_in_own {
          params {
             @in binbuf: binbuf @owned;
          }
          return: bool;
       }
 
-      call_eina_binbuf_in_own @beta {
+      call_eina_binbuf_in_own {
         params {
             @in str: binbuf @owned;
         }
@@ -329,14 +329,14 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_binbuf_out @beta {
+      eina_binbuf_out {
          params {
             @out binbuf: binbuf;
          }
          return: bool;
       }
 
-      call_eina_binbuf_out @beta {
+      call_eina_binbuf_out {
          return: binbuf;
       }
 
@@ -344,22 +344,22 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_binbuf_out_own @beta {
+      eina_binbuf_out_own {
          params {
             @out binbuf: binbuf @owned;
          }
          return: bool;
       }
 
-      call_eina_binbuf_out_own @beta {
+      call_eina_binbuf_out_own {
          return: binbuf @owned;
       }
 
-      eina_binbuf_return @beta {
+      eina_binbuf_return {
          return: binbuf;
       }
 
-      call_eina_binbuf_return @beta {
+      call_eina_binbuf_return {
          return: binbuf;
       }
 
@@ -367,11 +367,11 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_binbuf_return_own @beta {
+      eina_binbuf_return_own {
          return: binbuf @owned;
       }
 
-      call_eina_binbuf_return_own @beta {
+      call_eina_binbuf_return_own {
          return: binbuf @owned;
       }
 
@@ -385,7 +385,6 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      /*
       eina_array_int_in_own {
          params {
             @in arr: array<int> @owned; // <int @owned>
@@ -395,7 +394,6 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       check_eina_array_int_in_own {
          return: bool;
       }
-      */
 
       eina_array_int_out {
          params {
@@ -407,14 +405,12 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      /*
       eina_array_int_out_own {
          params {
             @out arr: array<int> @owned; // <int @owned>
          }
          return: bool;
       }
-      */
 
       eina_array_int_return {
          return: array<int>;
@@ -423,11 +419,9 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      /*
       eina_array_int_return_own {
          return: array<int> @owned; // <int @owned>
       }
-      */
 
       /* String */
       eina_array_str_in {
@@ -584,7 +578,6 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      /*
       eina_list_int_in_own {
          params {
             @in lst: list<int> @owned; // <int @owned>
@@ -594,7 +587,6 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       check_eina_list_int_in_own {
          return: bool;
       }
-      */
 
       eina_list_int_out {
          params {
@@ -606,14 +598,12 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      /*
       eina_list_int_out_own {
          params {
             @out lst: list<int> @owned; // <int @owned>
          }
          return: bool;
       }
-      */
 
       eina_list_int_return {
          return: list<int>;
@@ -622,11 +612,9 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      /*
       eina_list_int_return_own {
          return: list<int> @owned; // <int @owned>
       }
-      */
 
       /* String */
       eina_list_str_in {
@@ -1431,7 +1419,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
       */
 
-      struct_complex_in @beta {
+      struct_complex_in {
          params {
             @in complex: Dummy.StructComplex;
          }
@@ -1439,14 +1427,14 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       /*
-      struct_complex_ptr_in @beta {
+      struct_complex_ptr_in {
          params {
             @in complex: ptr(Dummy.StructComplex);
          }
          return: bool;
       }
 
-      struct_complex_ptr_in_own @beta {
+      struct_complex_ptr_in_own {
          params {
             @in complex: ptr(Dummy.StructComplex) @owned;
          }
@@ -1454,36 +1442,36 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
       */
 
-      struct_complex_out @beta {
+      struct_complex_out {
          params {
             @out complex: Dummy.StructComplex;
          }
          return: bool;
       }
 
-      // struct_complex_ptr_out @beta {
+      // struct_complex_ptr_out {
       //    params {
       //       @out complex: ptr(Dummy.StructComplex);
       //    }
       //    return: bool;
       // }
       //
-      // struct_complex_ptr_out_own @beta {
+      // struct_complex_ptr_out_own {
       //    params {
       //       @out complex: ptr(Dummy.StructComplex) @owned;
       //    }
       //    return: bool;
       // }
 
-      struct_complex_return @beta {
+      struct_complex_return {
          return: Dummy.StructComplex;
       }
 
-      // struct_complex_ptr_return @beta {
+      // struct_complex_ptr_return {
       //    return: ptr(Dummy.StructComplex);
       // }
       //
-      // struct_complex_ptr_return_own @beta {
+      // struct_complex_ptr_return_own {
       //    return: ptr(Dummy.StructComplex) @owned;
       // }
 
@@ -1535,7 +1523,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
       }
 
-      emit_event_with_struct_complex @beta {
+      emit_event_with_struct_complex {
          params {
             @in data: Dummy.StructComplex;
          }
@@ -1667,7 +1655,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       evt,with,obj @hot: Dummy.Test_Object;
       evt,with,error @hot: Eina.Error;
       evt,with,struct @hot: Dummy.StructSimple;
-      evt,with,struct,complex @beta @hot: Dummy.StructComplex;
+      evt,with,struct,complex @hot: Dummy.StructComplex;
       evt,with,array @hot: const(array<string>);
       evt_with,under @hot: void;
 

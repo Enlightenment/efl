@@ -82,13 +82,6 @@ blacklisted_files = [
   'elm_atspi_app_object.eo',
 ]
 
-efl_mono_lib = library('eflcustomexportsmono',
-    join_paths('..', '..', 'lib', 'efl_mono', 'efl_custom_exports_mono.c'),
-    install : true,
-    dependencies : [eo, eina, ecore],
-    version : meson.project_version()
-)
-
 beta_option = []
 if (get_option('mono-beta'))
    beta_option = '-b'

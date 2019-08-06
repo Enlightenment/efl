@@ -6,11 +6,41 @@
 #include <stdio.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <errno.h>
 
 #include <io.h>
 
 #include "sys/mman.h"
 #include "evil_private.h"
+
+/*
+ * Possible values
+ * PAGE_EXECUTE_READ (equivalent to PAGE_EXECUTE_WRITECOPY)
+ * PAGE_EXECUTE_READWRITE
+ * PAGE_READONLY (equivalent to PAGE_WRITECOPY)
+ * PAGE_READWRITE
+ */
+static DWORD
+_evil_mmap_protection_get(int prot)
+{
+   if (prot & ~(PROT_READ | PROT_WRITE | PROT_EXEC))
+     return 0xffffffff;
+
+   if (prot & PROT_WRITE)
+     {
+        if (prot & PROT_EXEC)
+          return PAGE_EXECUTE_READWRITE;
+        else
+          return PAGE_READWRITE;
+     }
+   else
+     {
+        if (prot & PROT_EXEC)
+          return PAGE_EXECUTE_READ;
+        else
+          return PAGE_READONLY;
+     }
+}
 
 
 /***** API *****/
@@ -25,51 +55,39 @@ mmap(void  *addr EVIL_UNUSED,
      off_t  offset)
 {
    HANDLE fm;
-   DWORD  protect = PAGE_NOACCESS;
+   DWORD  protect;
    DWORD  acs = 0;
    HANDLE handle;
    void  *data;
 
-   /* support only MAP_SHARED */
-   if (!(flags & MAP_SHARED))
+   /* get protection */
+   protect = _evil_mmap_protection_get(prot);
+   if (protect == 0xffffffff)
      return MAP_FAILED;
 
-   if (prot & PROT_EXEC)
+   /* check if the mapping is backed by a file or not */
+   if (fd == -1)
      {
-        if (prot & PROT_READ)
-          {
-             if (prot & PROT_WRITE)
-               protect = PAGE_EXECUTE_READWRITE;
-             else
-               protect = PAGE_EXECUTE_READ;
-          }
-        else
-          {
-             if (prot & PROT_WRITE)
-               protect = PAGE_EXECUTE_WRITECOPY;
-             else
-               protect = PAGE_EXECUTE;
-          }
+        /* shared memory */
+        if (!(flags & MAP_ANON) || offset)
+          return MAP_FAILED;
      }
    else
      {
-        if (prot & PROT_READ)
-          {
-             if (prot & PROT_WRITE)
-               protect = PAGE_READWRITE;
-             else
-               protect = PAGE_READONLY;
-          }
-        else if (prot & PROT_WRITE)
-          protect = PAGE_WRITECOPY;
+        if (flags & MAP_ANON)
+          return MAP_FAILED;
      }
 
-   handle = (HANDLE)_get_osfhandle(fd);
-   if (handle == INVALID_HANDLE_VALUE)
+   if (fd == -1)
+     handle = INVALID_HANDLE_VALUE;
+   else
      {
-        fprintf(stderr, "[Evil] [mmap] _get_osfhandle failed\n");
-
-        return MAP_FAILED;
+        handle = (HANDLE)_get_osfhandle(fd);
+        if ((errno == EBADF) && (handle == INVALID_HANDLE_VALUE))
+          {
+             fprintf(stderr, "[Evil] [mmap] _get_osfhandle failed\n");
+             return MAP_FAILED;
+          }
      }
 
    fm = CreateFileMapping(handle, NULL, protect, 0, 0, NULL);
@@ -80,21 +98,14 @@ mmap(void  *addr EVIL_UNUSED,
         return MAP_FAILED;
      }
 
-   if ((protect & PAGE_READWRITE) == PAGE_READWRITE)
-     acs = FILE_MAP_ALL_ACCESS;
-   else if ((protect & PAGE_WRITECOPY) == PAGE_WRITECOPY)
-     acs = FILE_MAP_COPY;
-#if 0
-   if (protect & (PAGE_EXECUTE_READWRITE | PAGE_EXECUTE_READ))
-     acs = FILE_MAP_EXECUTE;
-#endif
-   else if (protect & (PAGE_READWRITE | PAGE_READONLY))
-     acs = FILE_MAP_READ;
+   if (prot & PROT_WRITE)
+     acs = FILE_MAP_WRITE;
    else
-     {
-        if ((protect & PAGE_WRITECOPY) == PAGE_WRITECOPY)
-          acs = FILE_MAP_WRITE;
-     }
+     acs = FILE_MAP_READ;
+   if (prot & PROT_EXEC)
+     acs |= FILE_MAP_EXECUTE;
+   if (prot & MAP_PRIVATE)
+     acs |= FILE_MAP_COPY;
 
    data = MapViewOfFile(fm,
                         acs,
@@ -125,4 +136,11 @@ munmap(void  *addr,
              evil_last_error_get());
 
    return (res == 0) ? -1 : 0;
+}
+
+int
+mprotect(void *addr, size_t len, int prot)
+{
+   DWORD old;
+   return VirtualProtect(addr, len, _evil_mmap_protection_get(prot), &old) ? 0 : -1;
 }

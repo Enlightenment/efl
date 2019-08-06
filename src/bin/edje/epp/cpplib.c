@@ -7115,7 +7115,6 @@ read_token_list(cpp_reader * pfile, int *error_flag)
 	memcpy(temp->name, (char *)(pfile->token_buffer + name_written),
 	       length);
 	temp->name[length] = 0;
-	temp->next = token_ptrs;
 	token_ptrs = temp;
 	temp->length = length;
 
@@ -7125,8 +7124,10 @@ read_token_list(cpp_reader * pfile, int *error_flag)
 	  {			/* FIXME */
 	     cpp_error(pfile,
 		       "unterminated token sequence following  `#' operator");
+             free(temp);
 	     return 0;
 	  }
+	temp->next = token_ptrs;
      }
 
    /* We accumulated the names in reverse order.

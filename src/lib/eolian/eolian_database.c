@@ -1104,8 +1104,8 @@ eolian_state_file_path_parse(Eolian_State *state, const char *filepath)
 
    if (!eolian_state_directory_add(state, toscan))
      {
-        free(mpath);
         eolian_state_log(state, "could not scan directory '%s'", toscan);
+        free(mpath);
         return NULL;
      }
    unit = eolian_state_file_parse(state, fname);

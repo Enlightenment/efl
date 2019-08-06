@@ -1,10 +1,10 @@
-class @beta Efl.Ui.Clickable_Util {
-  [[Helper class that connects theme signals or object events to the @Efl.Input.Clickable interface.
+class @beta Efl.Ui.Action_Connector {
+  [[Helper class that connects theme signals or object events to the interfaces which are for actions.
 
-    This simplifies creating widgets that implement the @Efl.Input.Clickable interface.
+    For example, this simplifies creating widgets that implement the @Efl.Input.Clickable interface.
   ]]
   methods {
-    bind_to_theme @class {
+    bind_clickable_to_theme @class {
       [[This will listen to the standard "click" events on a theme and emit the appropriate
         events through the @Efl.Input.Clickable interface.
 
@@ -19,7 +19,7 @@ class @beta Efl.Ui.Clickable_Util {
         clickable : Efl.Input.Clickable; [[The object to call the clickable methods on.]]
       }
     }
-    bind_to_object @class {
+    bind_clickable_to_object @class {
       [[This will listen to the standard "click" events on an object, and emit the appropriate
         events through the @Efl.Input.Clickable interface.
 

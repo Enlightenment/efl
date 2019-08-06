@@ -929,7 +929,7 @@ _ethumb_generate_hash(const char *file)
    EINA_SAFETY_ON_NULL_RETURN_VAL(file, NULL);
 
    uri = alloca(3 * strlen(file) + 9);
-   memcpy(uri, "file://", sizeof("file://") - 1);
+   memcpy(uri, "file://", sizeof("file://"));
    t = uri + sizeof("file://") - 1;
 
    for (c = (const unsigned char *)file; *c != '\0'; c++)
@@ -1046,7 +1046,7 @@ _ethumb_file_generate_path(Ethumb *e)
           {
              ERR("fdo_format but size %d is not NORMAL (%d) or LARGE (%d)?",
                  e->tw, THUMB_SIZE_NORMAL, THUMB_SIZE_LARGE);
-             category = "unknown";
+             category = eina_stringshare_add("unknown");
           }
      }
 

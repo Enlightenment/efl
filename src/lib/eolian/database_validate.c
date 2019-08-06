@@ -362,9 +362,9 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
            return _validate(&tp->base);
         }
       default:
-        return EINA_FALSE;
+        break;
      }
-   return _validate_ownable(tp);
+   return EINA_FALSE;
 }
 
 static Eina_Bool

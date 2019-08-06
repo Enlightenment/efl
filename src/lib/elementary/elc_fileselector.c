@@ -1537,7 +1537,7 @@ _files_key_down(void *data, const Efl_Event *event)
 
      if (!searchbar) return;
 
-     key = efl_input_key_get(ev);
+     key = efl_input_key_sym_get(ev);
      string = efl_input_key_string_get(ev);
      if (string && *(string) && (isalpha(*string) || isdigit(*string)))
        {

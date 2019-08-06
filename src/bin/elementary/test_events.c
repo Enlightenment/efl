@@ -56,7 +56,7 @@ _key_down(void *data, const Efl_Event *ev)
    // 2. ecore_evas -> evas -> focused obj (elm_win) -> here
 
    sprintf(str, "key=%s keyname=%s string=%s compose=%s",
-           efl_input_key_get(ev->info),
+           efl_input_key_sym_get(ev->info),
            efl_input_key_name_get(ev->info),
            efl_input_key_string_get(ev->info),
            efl_input_key_compose_string_get(ev->info));

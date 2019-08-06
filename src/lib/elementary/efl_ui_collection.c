@@ -371,7 +371,7 @@ deselect_all(Efl_Ui_Collection_Data *pd)
    while(pd->selected)
      {
         Eo *item = eina_list_data_get(pd->selected);
-        efl_ui_item_selected_set(item, EINA_FALSE);
+        efl_ui_selectable_selected_set(item, EINA_FALSE);
         EINA_SAFETY_ON_TRUE_RETURN(eina_list_data_get(pd->selected) == item);
      }
 }
@@ -456,41 +456,40 @@ _efl_ui_collection_efl_ui_multi_selectable_select_mode_get(const Eo *obj EINA_UN
 }
 
 static void
-_selected_cb(void *data, const Efl_Event *ev)
+_selection_changed(void *data, const Efl_Event *ev)
 {
+   Eina_Bool selection = *((Eina_Bool*) ev->info);
    Eo *obj = data;
    MY_DATA_GET(obj, pd);
 
-   if (pd->mode == EFL_UI_SELECT_MODE_SINGLE_ALWAYS || pd->mode == EFL_UI_SELECT_MODE_SINGLE)
+   if (selection)
      {
-        //we might get the situation that the item is already in the list and selected again, so just free the list, it will be rebuild below
-        if (eina_list_data_get(pd->selected) == ev->object)
+        if (pd->mode == EFL_UI_SELECT_MODE_SINGLE_ALWAYS || pd->mode == EFL_UI_SELECT_MODE_SINGLE)
           {
-            pd->selected = eina_list_free(pd->selected);
-          }
-        else
-          {
-             deselect_all(pd);
-          }
+             //we might get the situation that the item is already in the list and selected again, so just free the list, it will be rebuild below
+             if (eina_list_data_get(pd->selected) == ev->object)
+               {
+                 pd->selected = eina_list_free(pd->selected);
+               }
+             else
+               {
+                  deselect_all(pd);
+               }
 
+          }
+        else if (pd->mode == EFL_UI_SELECT_MODE_NONE)
+          {
+             ERR("Selection while mode is NONE, uncaught state!");
+             return;
+          }
+        pd->selected = eina_list_append(pd->selected, ev->object);
+        efl_event_callback_call(obj, EFL_UI_EVENT_ITEM_SELECTED, ev->object);
      }
-   else if (pd->mode == EFL_UI_SELECT_MODE_NONE)
+   else
      {
-        ERR("Selection while mode is NONE, uncaught state!");
-        return;
+        pd->selected = eina_list_remove(pd->selected, ev->object);
+        efl_event_callback_call(obj, EFL_UI_EVENT_ITEM_UNSELECTED, ev->object);
      }
-   pd->selected = eina_list_append(pd->selected, ev->object);
-   efl_event_callback_call(obj, EFL_UI_EVENT_ITEM_SELECTED, ev->object);
-}
-
-static void
-_unselected_cb(void *data, const Efl_Event *ev)
-{
-   Eo *obj = data;
-   MY_DATA_GET(obj, pd);
-
-   pd->selected = eina_list_remove(pd->selected, ev->object);
-   efl_event_callback_call(obj, EFL_UI_EVENT_ITEM_UNSELECTED, ev->object);
 }
 
 static void
@@ -529,8 +528,7 @@ _redirect_cb(void *data, const Efl_Event *ev)
 
 EFL_CALLBACKS_ARRAY_DEFINE(active_item,
   {EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _hints_changed_cb},
-  {EFL_UI_EVENT_ITEM_SELECTED, _selected_cb},
-  {EFL_UI_EVENT_ITEM_UNSELECTED, _unselected_cb},
+  {EFL_UI_EVENT_SELECTED_CHANGED, _selection_changed},
   {EFL_INPUT_EVENT_PRESSED, _redirect_cb},
   {EFL_INPUT_EVENT_UNPRESSED, _redirect_cb},
   {EFL_INPUT_EVENT_LONGPRESSED, _redirect_cb},

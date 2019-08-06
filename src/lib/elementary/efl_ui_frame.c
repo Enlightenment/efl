@@ -142,7 +142,7 @@ _efl_ui_frame_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Frame_Data *_pd EINA_UN
         edje_object_signal_callback_add
            (wd->resize_obj, "efl,anim,done", "efl",
             _on_recalc_done, obj);
-        efl_ui_clickable_util_bind_to_theme(wd->resize_obj, obj);
+        efl_ui_action_connector_bind_clickable_to_theme(wd->resize_obj, obj);
         efl_event_callback_add(obj, EFL_INPUT_EVENT_CLICKED, _clicked_cb, obj);
      }
 

@@ -612,7 +612,7 @@ struct native_convert_in_variable_generator
           return as_generator(
                "var " << string << " = new " << type << "(" << escape_keyword(param.param_name)
                << ", " << (param.type.has_own ? "true" : "false")
-               << ", " << (complex->subtypes.front().has_own ? "true" : "false")
+               << ", " << (complex->subtypes.front().is_value_type || complex->subtypes.front().has_own ? "true" : "false")
                << ");\n"
             ).generate(sink, std::make_tuple(in_variable_name(param.param_name), param.type), context);
        }
@@ -724,7 +724,8 @@ struct convert_in_variable_generator
               )
              return true;
 
-           if (complex->subtypes.front().has_own && !as_generator(
+           if (!complex->subtypes.front().is_value_type && complex->subtypes.front().has_own
+               && !as_generator(
                      escape_keyword(param.param_name) << ".OwnContent = false;\n"
                   ).generate(sink, attributes::unused, context))
              return false;
@@ -963,7 +964,7 @@ struct convert_out_assign_generator
            return as_generator(
                string << " = new " << type << "(" << string
                << ", " << (param.type.has_own ? "true" : "false")
-               << ", " << (complex->subtypes.front().has_own ? "true" : "false")
+               << ", " << (complex->subtypes.front().is_value_type || complex->subtypes.front().has_own ? "true" : "false")
                << ");\n"
              ).generate(sink, std::make_tuple(escape_keyword(param.param_name), param.type, out_variable_name(param.param_name)), context);
         }
@@ -1092,7 +1093,7 @@ struct convert_return_generator
            if (!complex)
              return false;
            if (!as_generator("return new " << type << "(_ret_var, " << std::string{ret_type.has_own ? "true" : "false"}
-                   << ", " << (complex->subtypes.front().has_own ? "true" : "false")
+                   << ", " << (complex->subtypes.front().is_value_type || complex->subtypes.front().has_own ? "true" : "false")
                    << ");\n")
              .generate(sink, ret_type, context))
              return false;
@@ -1244,7 +1245,8 @@ struct native_convert_out_assign_generator
               )
              return true;
 
-           if (complex->subtypes.front().has_own && !as_generator(
+           if (!complex->subtypes.front().is_value_type && complex->subtypes.front().has_own
+               && !as_generator(
                  string << ".OwnContent = false;\n"
                ).generate(sink, outvar, context))
              return false;
@@ -1370,7 +1372,8 @@ struct native_convert_return_generator
                && ret_type.c_type != "Eina_Accessor *" && ret_type.c_type != "const Eina_Accessor *"
               )
              {
-                if (complex->subtypes.front().has_own && !as_generator("_ret_var.OwnContent = false; ")
+                if (!complex->subtypes.front().is_value_type && complex->subtypes.front().has_own
+                    && !as_generator("_ret_var.OwnContent = false; ")
                    .generate(sink, attributes::unused, context))
                   return false;
              }
