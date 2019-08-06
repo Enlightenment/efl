@@ -6,6 +6,7 @@
 # include "Ecore_Input.h"
 # include <xkbcommon/xkbcommon-compose.h>
 # include "www-client-protocol.h"
+# include "ecore_wl2_internal.h"
 
 # define EFL_TEAMWORK_VERSION 2
 # include "teamwork-client-protocol.h"

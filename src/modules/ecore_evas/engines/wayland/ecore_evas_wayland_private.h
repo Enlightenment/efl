@@ -26,6 +26,7 @@
 #  include <Ecore_Evas.h>
 # endif
 
+# include "ecore_wl2_internal.h"
 # include "ecore_wl2_private.h"
 # include "ecore_private.h"
 # include "ecore_evas_private.h"
