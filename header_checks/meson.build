@@ -34,7 +34,6 @@ header_checks = [
   'netinet/udp.h',
   'net/if.h',
   'stdlib.h',
-  'mman.h',
   'sys/auxv.h',
   'sys/inotify.h',
   'sys/ioctl.h',
