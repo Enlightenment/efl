@@ -11,6 +11,11 @@
 #include <Elementary.h>
 #include "elm_widget.h"
 #include "elm_priv.h"
+#include "efl_ui_collection_focus_manager.eo.h"
+
+typedef struct {
+   Eo *collection;
+} Efl_Ui_Collection_Focus_Manager_Data;
 
 typedef struct {
    unsigned int last_index;
@@ -138,6 +143,7 @@ typedef struct {
    Fast_Accessor obj_accessor;
    Fast_Accessor size_accessor;
    Efl_Gfx_Entity *sizer;
+   unsigned int start_id, end_id;
 } Efl_Ui_Collection_Data;
 
 static Eina_Bool register_item(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Ui_Item *item);
@@ -745,9 +751,20 @@ _pos_content_min_size_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
    flush_min_size(data, pd);
 }
 
+static void
+_visible_range_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   Efl_Ui_Position_Manager_Range_Update *info = ev->info;
+   MY_DATA_GET(data, pd);
+
+   pd->start_id = info->start_id;
+   pd->end_id = info->end_id;
+}
+
 EFL_CALLBACKS_ARRAY_DEFINE(pos_manager_cbs,
   {EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_SIZE_CHANGED, _pos_content_size_changed_cb},
   {EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_MIN_SIZE_CHANGED, _pos_content_min_size_changed_cb},
+  {EFL_UI_POSITION_MANAGER_ENTITY_EVENT_VISIBLE_RANGE_CHANGED, _visible_range_changed_cb}
 )
 
 EOLIAN static void
@@ -786,14 +803,30 @@ _efl_ui_collection_position_manager_get(const Eo *obj EINA_UNUSED, Efl_Ui_Collec
 EOLIAN static Efl_Ui_Focus_Manager*
 _efl_ui_collection_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj, Efl_Ui_Collection_Data *pd EINA_UNUSED, Efl_Ui_Focus_Object *root)
 {
-   return efl_add(EFL_UI_FOCUS_MANAGER_CALC_CLASS, obj,
-    efl_ui_focus_manager_root_set(efl_added, root));
+   Eo *man = efl_add(EFL_UI_COLLECTION_FOCUS_MANAGER_CLASS, obj,
+                 efl_ui_focus_manager_root_set(efl_added, root));
+   Efl_Ui_Collection_Focus_Manager_Data *fm_pd = efl_data_scope_safe_get(man, EFL_UI_COLLECTION_FOCUS_MANAGER_CLASS);
+   fm_pd->collection = obj;
+   return man;
 }
 
 EOLIAN static Eina_Bool
 _efl_ui_collection_efl_ui_widget_focus_state_apply(Eo *obj, Efl_Ui_Collection_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect EINA_UNUSED)
 {
    return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
+}
+
+static Efl_Ui_Item *
+_find_item(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd EINA_UNUSED, Eo *focused_element)
+{
+   if (!focused_element) return NULL;
+
+   while (focused_element && !efl_isa(focused_element, EFL_UI_ITEM_CLASS))
+     {
+        focused_element = efl_ui_widget_parent_get(focused_element);
+     }
+
+   return focused_element;
 }
 
 EOLIAN static Efl_Ui_Focus_Object*
@@ -803,7 +836,10 @@ _efl_ui_collection_efl_ui_focus_manager_move(Eo *obj, Efl_Ui_Collection_Data *pd
    Eina_Size2D step;
 
    focus = efl_ui_focus_manager_focus_get(obj);
-   if (focus)
+   new_obj = efl_ui_focus_manager_move(efl_super(obj, MY_CLASS), direction);
+   step = efl_gfx_hint_size_combined_min_get(focus);
+
+   if (new_obj)
      {
         /* if this is outside the viewport, then we must bring that in first */
         Eina_Rect viewport;
@@ -817,8 +853,7 @@ _efl_ui_collection_efl_ui_focus_manager_move(Eo *obj, Efl_Ui_Collection_Data *pd
              return focus;
           }
      }
-   new_obj = efl_ui_focus_manager_move(efl_super(obj, MY_CLASS), direction);
-   step = efl_gfx_hint_size_min_get(focus);
+
    if (!new_obj)
      {
         Eina_Rect pos = efl_gfx_entity_geometry_get(focus);
@@ -875,3 +910,83 @@ _efl_ui_collection_efl_ui_focus_manager_move(Eo *obj, Efl_Ui_Collection_Data *pd
 }
 
 #include "efl_ui_collection.eo.c"
+
+#define ITEM_IS_OUTSIDE_VISIBLE(id) id < collection_pd->start_id || id > collection_pd->end_id
+
+static inline void
+_assert_item_available(Eo *item, int new_id, Efl_Ui_Collection_Data *pd)
+{
+   efl_gfx_entity_visible_set(item, EINA_TRUE);
+   efl_gfx_entity_geometry_set(item, efl_ui_position_manager_entity_position_single_item(pd->pos_man, new_id));
+}
+
+EOLIAN static Efl_Ui_Focus_Object*
+_efl_ui_collection_focus_manager_efl_ui_focus_manager_request_move(Eo *obj, Efl_Ui_Collection_Focus_Manager_Data *pd, Efl_Ui_Focus_Direction direction, Efl_Ui_Focus_Object *child, Eina_Bool logical)
+{
+   MY_DATA_GET(pd->collection, collection_pd);
+   Efl_Ui_Item *new_item, *item;
+   unsigned int item_id;
+
+   if (!child)
+     child = efl_ui_focus_manager_focus_get(obj);
+
+   item = _find_item(obj, collection_pd, child);
+
+   //if this is NULL then we are before finalize, we cannot serve any sane value here
+   if (!collection_pd->pos_man) return NULL;
+   EINA_SAFETY_ON_NULL_RETURN_VAL(item, NULL);
+
+   item_id = efl_ui_item_index_get(item);
+
+   if (ITEM_IS_OUTSIDE_VISIBLE(item_id))
+     {
+        int new_id = efl_ui_position_manager_entity_relative_item(collection_pd->pos_man, efl_ui_item_index_get(item), direction);
+        if (new_id == -1)
+          {
+             new_item = NULL;
+          }
+        else
+          {
+             new_item = eina_list_nth(collection_pd->items, new_id);;
+             _assert_item_available(new_item, new_id, collection_pd);
+          }
+     }
+   else
+     {
+        new_item = efl_ui_focus_manager_request_move(efl_super(obj, EFL_UI_COLLECTION_FOCUS_MANAGER_CLASS), direction, child, logical);
+     }
+
+   return new_item;
+}
+
+
+EOLIAN static void
+_efl_ui_collection_focus_manager_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_Ui_Collection_Focus_Manager_Data *pd, Efl_Ui_Focus_Object *focus)
+{
+   MY_DATA_GET(pd->collection, collection_pd);
+   Efl_Ui_Item *item;
+   unsigned int item_id;
+
+   if (focus == efl_ui_focus_manager_root_get(obj))
+     {
+        item = eina_list_data_get(collection_pd->items);
+     }
+   else
+     {
+        item = _find_item(obj, collection_pd, focus);
+     }
+
+   //if this is NULL then we are before finalize, we cannot serve any sane value here
+   if (!collection_pd->pos_man) return;
+   EINA_SAFETY_ON_NULL_RETURN(item);
+
+   item_id = efl_ui_item_index_get(item);
+
+   if (ITEM_IS_OUTSIDE_VISIBLE(item_id))
+     {
+        _assert_item_available(item, item_id, collection_pd);
+     }
+   efl_ui_focus_manager_focus_set(efl_super(obj, EFL_UI_COLLECTION_FOCUS_MANAGER_CLASS), focus);
+}
+
+#include "efl_ui_collection_focus_manager.eo.c"

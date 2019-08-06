@@ -14,6 +14,16 @@ _selection_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 static void
+_focus_item_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Efl_Ui_Widget *element_0 = efl_pack_content_get(data, 0);
+
+   EINA_SAFETY_ON_NULL_RETURN(element_0);
+
+   efl_ui_focus_manager_focus_set(data, element_0);
+}
+
+static void
 _scroll_to_animated_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Efl_Ui_Widget *element_1154 = efl_pack_content_get(data, 1154);
@@ -168,29 +178,36 @@ void create_item_container_ui(Efl_Ui_Position_Manager_Entity *manager, const Efl
      {
         _add_item(o);
      }
-   efl_pack_table(tbl, o, 1, 0, 1, 11);
+   efl_pack_table(tbl, o, 1, 0, 1, 12);
    ctx->c = o;
+
+   o = efl_add(EFL_UI_BUTTON_CLASS, tbl,
+           efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
+           efl_gfx_hint_align_set(efl_added, 0, 0.5));
+   efl_text_set(o, "Focus item 0");
+   efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _focus_item_cb, item_container);
+   efl_pack_table(tbl, o, 0, 1, 1, 1);
 
    o = efl_add(EFL_UI_BUTTON_CLASS, tbl,
            efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
            efl_gfx_hint_align_set(efl_added, 0, 0.5));
    efl_text_set(o, "Scroll to 1154 ANIMATED");
    efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _scroll_to_animated_cb, item_container);
-   efl_pack_table(tbl, o, 0, 1, 1, 1);
+   efl_pack_table(tbl, o, 0, 2, 1, 1);
 
    o = efl_add(EFL_UI_BUTTON_CLASS, tbl,
            efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
            efl_gfx_hint_align_set(efl_added, 0, 0.5));
    efl_text_set(o, "Scroll to 10");
    efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _scroll_to_cb, item_container);
-   efl_pack_table(tbl, o, 0, 2, 1, 1);
+   efl_pack_table(tbl, o, 0, 3, 1, 1);
 
    o = efl_add(EFL_UI_BUTTON_CLASS, tbl,
            efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
            efl_gfx_hint_align_set(efl_added, 0, 0.5));
    efl_text_set(o, "Change min size of 0");
    efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _change_min_size_cb, item_container);
-   efl_pack_table(tbl, o, 0, 3, 1, 1);
+   efl_pack_table(tbl, o, 0, 4, 1, 1);
 
    o = efl_add(EFL_UI_CHECK_CLASS, tbl,
            efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
@@ -198,14 +215,14 @@ void create_item_container_ui(Efl_Ui_Position_Manager_Entity *manager, const Efl
    efl_text_set(o, "Vertical");
    efl_event_callback_add(o, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _selection_changed_cb, item_container);
    efl_ui_check_selected_set(o, EINA_TRUE);
-   efl_pack_table(tbl, o, 0, 4, 1, 1);
+   efl_pack_table(tbl, o, 0, 5, 1, 1);
 
    o = efl_add(EFL_UI_CHECK_CLASS, tbl,
            efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
            efl_gfx_hint_align_set(efl_added, 0, 0.5));
    efl_text_set(o, "Match Vertical");
    efl_event_callback_add(o, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _selection_changed_match_content_cb, ctx);
-   efl_pack_table(tbl, o, 0, 5, 1, 1);
+   efl_pack_table(tbl, o, 0, 6, 1, 1);
    ctx->v = o;
 
    o = efl_add(EFL_UI_CHECK_CLASS, tbl,
@@ -213,7 +230,7 @@ void create_item_container_ui(Efl_Ui_Position_Manager_Entity *manager, const Efl
            efl_gfx_hint_align_set(efl_added, 0, 0.5));
    efl_text_set(o, "Match Horizontal");
    efl_event_callback_add(o, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _selection_changed_match_content_cb, ctx);
-   efl_pack_table(tbl, o, 0, 6, 1, 1);
+   efl_pack_table(tbl, o, 0, 7, 1, 1);
    efl_gfx_entity_size_set(win, EINA_SIZE2D(260, 200));
    ctx->h = o;
 
@@ -222,27 +239,27 @@ void create_item_container_ui(Efl_Ui_Position_Manager_Entity *manager, const Efl
            efl_gfx_hint_align_set(efl_added, 0, 0.5));
    efl_text_set(o, "Remove all items");
    efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _remove_all_cb, item_container);
-   efl_pack_table(tbl, o, 0, 7, 1, 1);
+   efl_pack_table(tbl, o, 0, 8, 1, 1);
 
    o = efl_add(EFL_UI_BUTTON_CLASS, tbl,
            efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
            efl_gfx_hint_align_set(efl_added, 0, 0.5));
    efl_text_set(o, "Add 1 item");
    efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _add_one_item, item_container);
-   efl_pack_table(tbl, o, 0, 8, 1, 1);
+   efl_pack_table(tbl, o, 0, 9, 1, 1);
 
    o = efl_add(EFL_UI_BUTTON_CLASS, tbl,
            efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
            efl_gfx_hint_align_set(efl_added, 0, 0.5));
    efl_text_set(o, "Add 1000 item");
    efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _add_thousend_items, item_container);
-   efl_pack_table(tbl, o, 0, 9, 1, 1);
+   efl_pack_table(tbl, o, 0, 10, 1, 1);
 
    bx = efl_add(EFL_UI_RADIO_BOX_CLASS, tbl,
            efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
            efl_gfx_hint_align_set(efl_added, 0, 0.5));
    efl_event_callback_add(bx, EFL_UI_RADIO_GROUP_EVENT_VALUE_CHANGED, _select_value_cb, item_container);
-   efl_pack_table(tbl, bx, 0, 10, 1, 1);
+   efl_pack_table(tbl, bx, 0, 11, 1, 1);
    o = efl_add(EFL_UI_RADIO_CLASS, bx,
            efl_ui_radio_state_value_set(efl_added, EFL_UI_SELECT_MODE_SINGLE));
    efl_text_set(o, "Singleselect");

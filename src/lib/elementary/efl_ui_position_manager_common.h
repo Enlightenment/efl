@@ -39,6 +39,11 @@ vis_change_segment(Api_Callback *cb, int a, int b, Eina_Bool flag)
              EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(cb, MIN(a,b), len, data) >= 0);
           }
         ent = data[i - MIN(a,b)];
+        if (ent && !flag && (efl_ui_focus_object_focus_get(ent) || efl_ui_focus_object_child_focus_get(ent)))
+          {
+             //we should not make focused object invisible, rather move it to some parking lot
+             efl_gfx_entity_position_set(ent, EINA_POSITION2D(-9999,-9999));
+          }
         if (ent && !efl_ui_focus_object_focus_get(ent))
           {
              efl_gfx_entity_visible_set(ent, flag);

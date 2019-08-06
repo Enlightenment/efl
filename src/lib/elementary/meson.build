@@ -237,6 +237,7 @@ priv_eo_files = [
   'efl_ui_exact_model.eo',
   'efl_ui_average_model.eo',
   'efl_ui_spotlight_manager_plain.eo',
+  'efl_ui_collection_focus_manager.eo',
 ]
 
 priv_eo_file_target = []
