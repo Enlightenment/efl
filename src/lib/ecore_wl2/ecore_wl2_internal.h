@@ -38,6 +38,7 @@ EAPI void ecore_wl2_window_rotation_change_request_send(Ecore_Wl2_Window *window
 EAPI void ecore_wl2_window_rotation_change_done_send(Ecore_Wl2_Window *window, int rot, int w, int h);
 
 EAPI void ecore_wl2_window_false_commit(Ecore_Wl2_Window *window);
+EAPI Eina_Bool ecore_wl2_buffer_fit(Ecore_Wl2_Buffer *b, int w, int h);
 
 # undef EAPI
 # define EAPI
