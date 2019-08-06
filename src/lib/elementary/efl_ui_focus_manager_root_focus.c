@@ -19,7 +19,21 @@ typedef struct {
    Eina_Bool rect_registered;
 
    Eina_List *iterator_list;
+   Eina_Future *focus_transfer;
 } Efl_Ui_Focus_Manager_Root_Focus_Data;
+
+static Eina_Value
+_unregister_rect(Eo *obj, void *data EINA_UNUSED, const Eina_Value v EINA_UNUSED)
+{
+   Efl_Ui_Focus_Manager_Root_Focus_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+
+   efl_ui_focus_manager_calc_unregister(obj, pd->rect);
+   pd->rect_registered = EINA_FALSE;
+   efl_ui_focus_composition_adapter_focus_manager_parent_set(pd->rect, NULL);
+   efl_ui_focus_composition_adapter_focus_manager_object_set(pd->rect, NULL);
+   pd->focus_transfer = NULL;
+   return EINA_VALUE_EMPTY;
+}
 
 static Efl_Ui_Focus_Object*
 _trap(Efl_Ui_Focus_Manager_Root_Focus_Data *pd, Efl_Ui_Focus_Object *obj)
@@ -46,14 +60,16 @@ _state_eval(Eo *obj, Efl_Ui_Focus_Manager_Root_Focus_Data *pd)
 
    if (sub && pd->rect_registered)
      {
-        efl_ui_focus_manager_calc_unregister(obj, pd->rect);
-        pd->rect_registered = EINA_FALSE;
-        efl_ui_focus_composition_adapter_focus_manager_parent_set(pd->rect, NULL);
-        efl_ui_focus_composition_adapter_focus_manager_object_set(pd->rect, NULL);
+        pd->focus_transfer = efl_loop_job(efl_main_loop_get());
+        efl_future_then(obj, pd->focus_transfer, _unregister_rect);
      }
    else if (!sub && !pd->rect_registered)
      {
         Efl_Ui_Focus_Object *root;
+
+        if (pd->focus_transfer)
+          eina_future_cancel(pd->focus_transfer);
+        pd->focus_transfer = NULL;
 
         root = efl_ui_focus_manager_root_get(obj);
         efl_ui_focus_manager_calc_register(obj, pd->rect, root, NULL);
