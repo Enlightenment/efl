@@ -76,7 +76,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
                       efl_ui_collection_position_manager_set(efl_added, list));
    efl_content_set(win, item_container);
 
-   printf("Building 5000 objects\n");
+   printf("Building 5000 objects %d\n", getpid());
    for (int i = 0; i < 5000; ++i)
      {
         Eo *il = efl_add(EFL_UI_LIST_DEFAULT_ITEM_CLASS, item_container);
