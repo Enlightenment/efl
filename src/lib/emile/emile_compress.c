@@ -106,10 +106,11 @@ emile_expand(const Eina_Binbuf *in, Eina_Binbuf *out, Emile_Compressor_Type t)
       {
          int ret;
 
-         ret = LZ4_decompress_fast((const char *)eina_binbuf_string_get(in),
+         ret = LZ4_decompress_safe((const char *)eina_binbuf_string_get(in),
                                    (char *)eina_binbuf_string_get(out),
+                                   eina_binbuf_length_get(in),
                                    eina_binbuf_length_get(out));
-         if ((unsigned int)ret != eina_binbuf_length_get(in))
+         if ((unsigned int)ret != eina_binbuf_length_get(out))
            return EINA_FALSE;
          break;
       }
