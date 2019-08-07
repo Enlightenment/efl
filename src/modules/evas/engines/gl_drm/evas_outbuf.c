@@ -279,6 +279,8 @@ _evas_outbuf_egl_setup(Outbuf *ob)
           }
      }
 
+   if (ob->egl.surface != EGL_NO_SURFACE)
+     eglDestroySurface(ob->egl.disp, ob->egl.surface);
    ob->egl.surface = EGL_NO_SURFACE;
 #ifdef EGL_MESA_platform_gbm
    if (dlsym_eglCreatePlatformWindowSurfaceEXT)
