@@ -188,7 +188,6 @@ _elm_scrollable_is(const Evas_Object *obj)
 static void
 _on_sub_obj_del(void *data, const Efl_Event *event);
 static void _propagate_event(void *data, const Efl_Event *eo_event);
-static void _elm_widget_focus_tree_unfocusable_handle(Eo *obj);
 static void _elm_widget_shadow_update(Efl_Ui_Widget *obj);
 
 EFL_CALLBACKS_ARRAY_DEFINE(elm_widget_subitems_callbacks,
@@ -277,7 +276,10 @@ _candidacy_exam(Eo *obj)
    Elm_Widget_Smart_Data *wid_pd;
 
    wid_pd = efl_data_scope_get(wid, MY_CLASS);
-   do {
+
+   if (wid_pd->disabled > 0) return EINA_TRUE;
+   if (wid_pd->tree_unfocusable > 0) return EINA_TRUE;
+/*   do {
 
      if (wid_pd->disabled) return EINA_TRUE;
      if (wid_pd->tree_unfocusable) return EINA_TRUE;
@@ -297,9 +299,9 @@ _candidacy_exam(Eo *obj)
             }
        }
 
-   } while (1);
+   } while (1);*/
 
-   return !efl_isa(top, EFL_UI_WIN_CLASS);
+   return EINA_FALSE;
 }
 
 static void _full_eval(Eo *obj, Elm_Widget_Smart_Data *pd);
@@ -1700,6 +1702,15 @@ elm_widget_child_can_focus_get(const Eo *obj)
    return sd->logical.child_count > 0;
 }
 
+
+static int
+_tree_unfocusable_counter_get(Eo *widget)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(widget, pd, -1);
+
+   return pd->tree_unfocusable;
+}
+
 /**
  * @internal
  *
@@ -1718,16 +1729,33 @@ elm_widget_child_can_focus_get(const Eo *obj)
 EAPI void
 elm_widget_tree_unfocusable_set(Eo *obj, Eina_Bool tree_unfocusable)
 {
-   Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
-   if (!sd) return;
+   Efl_Ui_Widget *subs;
+   Eina_List *n;
+   Elm_Widget_Smart_Data *pd = efl_data_scope_safe_get(obj, MY_CLASS);
+   if (!pd) return;
+   int distance, parent_counter = (pd->parent_obj ? _tree_unfocusable_counter_get(pd->parent_obj) : 0);
 
-   tree_unfocusable = !!tree_unfocusable;
-   if (sd->tree_unfocusable == tree_unfocusable) return;
-   sd->tree_unfocusable = tree_unfocusable;
-   _elm_widget_focus_tree_unfocusable_handle(obj);
+   if (tree_unfocusable)
+     pd->tree_unfocusable ++;
+   else
+     pd->tree_unfocusable --;
+
+   distance = pd->disabled - parent_counter;
+
+   if ((distance < 0) || (distance > 1))
+     {
+        distance = MAX(MIN(tree_unfocusable, 1), 0);
+        pd->disabled = parent_counter + distance;
+     }
+
+   EINA_LIST_FOREACH(pd->subobjs, n, subs)
+     {
+        if (efl_isa(subs, EFL_UI_WIDGET_CLASS))
+          efl_ui_widget_disabled_set(subs, elm_widget_tree_unfocusable_get(obj));
+     }
 
    //focus state eval on all children
-   _elm_widget_full_eval_children(obj, sd);
+   _elm_widget_full_eval_children(obj, pd);
 }
 
 /**
@@ -2933,12 +2961,6 @@ elm_widget_focus_mouse_up_handle(Eo *obj)
      {
         efl_ui_focus_util_focus(obj);
      }
-}
-
-static void
-_elm_widget_focus_tree_unfocusable_handle(Eo *obj EINA_UNUSED)
-{
-   //FIXME
 }
 
 /*
