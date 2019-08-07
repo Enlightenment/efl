@@ -339,6 +339,8 @@ eng_window_resurf(Outbuf *gw)
           gw->win = wl_egl_window_create(wls, gw->h, gw->w);
      }
 
+   if (gw->egl_surface != EGL_NO_SURFACE)
+     eglDestroySurface(gw->egl_disp, gw->egl_surface);
    gw->egl_surface =
      eglCreateWindowSurface(gw->egl_disp, gw->egl_config,
                             (EGLNativeWindowType)gw->win, NULL);

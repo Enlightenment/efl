@@ -502,6 +502,8 @@ evas_outbuf_resurf(Outbuf *ob)
    if (ob->surf) return;
    if (getenv("EVAS_GL_INFO")) printf("resurf %p\n", ob);
 
+   if (ob->egl.surface != EGL_NO_SURFACE)
+     eglDestroySurface(ob->egl.disp, ob->egl.surface);
    ob->egl.surface =
      eglCreateWindowSurface(ob->egl.disp, ob->egl.config,
                             (EGLNativeWindowType)ob->surface, NULL);

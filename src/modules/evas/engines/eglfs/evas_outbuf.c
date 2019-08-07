@@ -296,6 +296,8 @@ _evas_outbuf_egl_setup(Outbuf *ob)
    ob->egl.config = cfgs[0];
 
    EGLNativeWindowType win = create_hwcomposernativewindow();
+   if (ob->egl.surface[0] != EGL_NO_SURFACE)
+     eglDestroySurface(ob->egl.disp, ob->egl.surface[0]);
    ob->egl.surface[0] =
      eglCreateWindowSurface(ob->egl.disp, ob->egl.config,
                             (EGLNativeWindowType)win, NULL);
