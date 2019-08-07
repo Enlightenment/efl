@@ -21,22 +21,27 @@ _popup_layout_create(Eo *popup)
    return layout;
 }
 
-static Eina_Size2D
-_popup_scroll_alert_setup(Eo **popup_ret, Eo **layout_ret)
+static Eo *
+_popup_alert_setup(const Efl_Class *klass)
 {
    Eo *win, *popup;
-   Eina_Size2D layout_sz_min;
 
    win = win_add();
    efl_gfx_entity_size_set(win, EINA_SIZE2D(WIN_SIZE, WIN_SIZE));
 
-   *popup_ret = popup = efl_add(EFL_UI_SCROLL_ALERT_POPUP_CLASS, win);
+   popup = efl_add(klass, win);
    efl_text_set(efl_part(popup, "title"), "title");
    efl_ui_alert_popup_button_set(popup, EFL_UI_ALERT_POPUP_BUTTON_POSITIVE, "Yes", NULL);
    efl_ui_alert_popup_button_set(popup, EFL_UI_ALERT_POPUP_BUTTON_NEGATIVE, "No", NULL);
    efl_ui_alert_popup_button_set(popup, EFL_UI_ALERT_POPUP_BUTTON_USER, "Cancel", NULL);
+   return popup;
+}
 
-
+static Eina_Size2D
+_popup_scroll_alert_setup(Eo **popup_ret, Eo **layout_ret)
+{
+   Eina_Size2D layout_sz_min;
+   Eo *popup = *popup_ret = _popup_alert_setup(EFL_UI_SCROLL_ALERT_POPUP_CLASS);
    Eo *layout = *layout_ret = _popup_layout_create(popup);
 
    /* should be 200x200 */
@@ -430,6 +435,111 @@ EFL_START_TEST(efl_ui_test_popup_scroll_alert_expand)
 }
 EFL_END_TEST
 
+
+
+EFL_START_TEST(efl_ui_test_popup_text_alert)
+{
+   Eo *popup = _popup_alert_setup(EFL_UI_TEXT_ALERT_POPUP_CLASS);
+   char test_string[] = "This is Text Popup";
+   unsigned int string_counts[] =
+   {
+    1, 50, 1, 1, 1, 50, 50, 50, 50, 50, 50, 50, 50, 50
+   };
+   Eina_Size2D test_expands[] =
+   {
+      EINA_SIZE2D(-1, -1),
+      EINA_SIZE2D(-1, -1),
+      EINA_SIZE2D(POPUP_SIZE_EXPAND, POPUP_SIZE_EXPAND),
+      EINA_SIZE2D(POPUP_SIZE_EXPAND, -1),
+      EINA_SIZE2D(-1, POPUP_SIZE_EXPAND),
+      EINA_SIZE2D(POPUP_SIZE_EXPAND, POPUP_SIZE_EXPAND),
+      EINA_SIZE2D(POPUP_SIZE_EXPAND, -1),
+      EINA_SIZE2D(-1, POPUP_SIZE_EXPAND),
+      EINA_SIZE2D(10, 10),
+      EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE),
+      EINA_SIZE2D(POPUP_SIZE, -1),
+      EINA_SIZE2D(POPUP_SIZE_EXPAND, -1),
+      EINA_SIZE2D(-1, POPUP_SIZE),
+      EINA_SIZE2D(-1, POPUP_SIZE_EXPAND),
+   };
+   Eina_Size2D expected_sizes[] =
+   {
+      /* -1 is MAX(POPUP_SIZE, min_size)
+       * 0 is min_size
+       * POPUP_SIZE_EXPAND on height is MIN(POPUP_SIZE_EXPAND, label_min)
+       */
+      EINA_SIZE2D(-1, -1),
+      EINA_SIZE2D(-1, -1),
+      EINA_SIZE2D(-1, 0),
+      EINA_SIZE2D(-1, -1),
+      EINA_SIZE2D(-1, 0),
+      EINA_SIZE2D(POPUP_SIZE_EXPAND, POPUP_SIZE_EXPAND),
+      EINA_SIZE2D(POPUP_SIZE_EXPAND, POPUP_SIZE),
+      EINA_SIZE2D(-1, 0),
+      EINA_SIZE2D(-1, 0),
+      EINA_SIZE2D(-1, POPUP_SIZE),
+      EINA_SIZE2D(-1, POPUP_SIZE),
+      EINA_SIZE2D(POPUP_SIZE_EXPAND, POPUP_SIZE),
+      EINA_SIZE2D(-1, POPUP_SIZE),
+      EINA_SIZE2D(-1, POPUP_SIZE_EXPAND),
+   };
+   unsigned int num_tests = EINA_C_ARRAY_LENGTH(string_counts);
+   unsigned int i;
+   Eina_Size2D popup_sz_min1;
+
+   /* ensure future modifications don't break the test */
+   ck_assert_int_eq(EINA_C_ARRAY_LENGTH(string_counts), EINA_C_ARRAY_LENGTH(test_expands));
+
+   get_me_to_those_events(popup);
+   popup_sz_min1 = efl_gfx_hint_size_combined_min_get(popup);
+
+   for (i = 0; i < num_tests; i++)
+     {
+        unsigned int j;
+        Eina_Size2D popup_sz_min, popup_sz, label_sz_min;
+        Eina_Strbuf *buf = eina_strbuf_new();
+        Eo *label;
+
+        for (j = 0; j < string_counts[i]; j++)
+          eina_strbuf_append(buf, test_string);
+
+        efl_text_set(popup, eina_strbuf_string_get(buf));
+        efl_ui_text_alert_popup_expandable_set(popup, test_expands[i]);
+        efl_ui_popup_size_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
+        efl_canvas_group_calculate(popup);
+
+        /* get internal label object: VERY illegal */
+        label = efl_content_get(efl_content_get(efl_part(efl_super(popup, efl_ui_text_alert_popup_class_get()), "efl.content")));
+
+        label_sz_min = efl_gfx_hint_size_combined_min_get(label);
+        popup_sz_min = efl_gfx_hint_size_combined_min_get(popup);
+        popup_sz = efl_gfx_entity_size_get(popup);
+        if (expected_sizes[i].w == -1)
+          ck_assert_int_eq(popup_sz.w, MAX(POPUP_SIZE, popup_sz_min.w));
+        else if (expected_sizes[i].w == 0)
+          ck_assert_int_eq(popup_sz.w, popup_sz_min.w);
+        else
+          ck_assert_int_eq(popup_sz.w, expected_sizes[i].w);
+        if (expected_sizes[i].h == -1)
+          ck_assert_int_eq(popup_sz.h, MAX(POPUP_SIZE, popup_sz_min.h));
+        else if (expected_sizes[i].h == 0)
+          {
+             if ((test_expands[i].h >= label_sz_min.h) && (label_sz_min.h > popup_sz_min1.h))
+               ck_assert_int_eq(popup_sz.h, popup_sz_min.h);
+             else
+               ck_assert_int_eq(popup_sz.h, popup_sz_min1.h);
+          }
+        else if (expected_sizes[i].h == POPUP_SIZE_EXPAND)
+          ck_assert_int_eq(popup_sz.h, MIN(POPUP_SIZE_EXPAND, label_sz_min.h));
+        else
+          ck_assert_int_eq(popup_sz.h, expected_sizes[i].h);
+
+        eina_strbuf_free(buf);
+     }
+
+}
+EFL_END_TEST
+
 void efl_ui_test_popup(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_test_popup_events);
@@ -439,4 +549,5 @@ void efl_ui_test_popup(TCase *tc)
    tcase_add_test(tc, efl_ui_test_popup_alert);
    tcase_add_test(tc, efl_ui_test_popup_scroll_alert);
    tcase_add_test(tc, efl_ui_test_popup_scroll_alert_expand);
+   tcase_add_test(tc, efl_ui_test_popup_text_alert);
 }
