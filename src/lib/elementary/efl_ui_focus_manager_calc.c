@@ -68,6 +68,7 @@ struct _Node{
   } graph;
 
   Eina_Bool on_list : 1;
+  Eina_Bool unused : 1;
 };
 
 #define T(n) (n->tree)
@@ -237,42 +238,49 @@ node_item_free(Node *item)
    /*cleanup graph parts*/
 
    //add all neighbors of the node to the dirty list
-   for(int i = EFL_UI_FOCUS_DIRECTION_UP; i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
+   if (!item->unused)
      {
-        Node *partner;
+        for(int i = EFL_UI_FOCUS_DIRECTION_UP; i < EFL_UI_FOCUS_DIRECTION_LAST; i++)
+          {
+             Node *partner;
 
 #define MAKE_LIST_DIRTY(node, field) \
-        EINA_LIST_FOREACH(DIRECTION_ACCESS(node, i).field, l, partner) \
-          { \
-             if (partner->type != NODE_TYPE_ONLY_LOGICAL) \
+             EINA_LIST_FOREACH(DIRECTION_ACCESS(node, i).field, l, partner) \
                { \
-                  dirty_add(obj, pd, partner); \
-                  dirty_added = EINA_TRUE; \
-               } \
+                  if (partner->type != NODE_TYPE_ONLY_LOGICAL) \
+                    { \
+                       dirty_add(obj, pd, partner); \
+                       dirty_added = EINA_TRUE; \
+                    } \
+               }
+
+             MAKE_LIST_DIRTY(item, one_direction)
+             MAKE_LIST_DIRTY(item, cleanup_nodes)
+
+             border_onedirection_cleanup(item, i);
+             border_onedirection_set(item, i, NULL);
           }
 
-        MAKE_LIST_DIRTY(item, one_direction)
-        MAKE_LIST_DIRTY(item, cleanup_nodes)
-
-        border_onedirection_cleanup(item, i);
-        border_onedirection_set(item, i, NULL);
      }
 
    //the unregistering of a item should ever result in atleast a coords_dirty call
-   if (!dirty_added)
+   if (dirty_added)
      efl_event_callback_call(obj, EFL_UI_FOCUS_MANAGER_EVENT_COORDS_DIRTY, NULL);
 
    /*cleanup manager householdings*/
 
    //remove from the focus stack
-   pd->focus_stack = eina_list_remove(pd->focus_stack, item);
+
+   if (!item->unused)
+     pd->focus_stack = eina_list_remove(pd->focus_stack, item);
 
    //if this is the entry for redirect, NULL them out!
    if (pd->redirect_entry == item->focusable)
      pd->redirect_entry = NULL;
 
    //remove from the dirty parts
-   pd->dirty = eina_list_remove(pd->dirty, item);
+   if (item->on_list)
+     pd->dirty = eina_list_remove(pd->dirty, item);
    item->on_list = EINA_FALSE;
 
    /*merge tree items*/
@@ -375,7 +383,7 @@ dirty_flush_node(Efl_Ui_Focus_Manager *obj EINA_UNUSED, Efl_Ui_Focus_Manager_Cal
    Efl_Ui_Focus_Graph_Calc_Result result;
 
    efl_ui_focus_graph_calc(&pd->graph_ctx, eina_iterator_filter_new(eina_hash_iterator_data_new(pd->node_hash), _no_logical, NULL, NULL) ,  (Opaque_Graph_Member*) node, &result);
-
+   node->unused = EINA_FALSE;
    for (int i = 0; i < 4; ++i)
      {
         Efl_Ui_Focus_Direction direction = -1;
@@ -506,7 +514,7 @@ _register(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Efl_Ui_Focus_Object *chil
 
    node = node_new(child, obj);
    eina_hash_add(pd->node_hash, &child, node);
-
+   node->unused = EINA_TRUE;
    //add the parent
    if (parent)
      {
@@ -1460,6 +1468,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
    node = node_get(obj, pd, focus);
    if (!node) return;
 
+   node->unused = EINA_FALSE;
    if (node->type == NODE_TYPE_ONLY_LOGICAL && !node->redirect_manager)
      {
         Node *target = NULL;
