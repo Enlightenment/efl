@@ -28,6 +28,6 @@ mixin @beta Efl.Ui.Focus.Layer requires Efl.Ui.Widget extends Efl.Ui.Widget_Focu
       Efl.Ui.Focus.Object.focus_manager { get; }
       Efl.Ui.Focus.Object.focus_parent { get; }
       Efl.Object.constructor;
-      Efl.Object.destructor;
+      Efl.Object.invalidate;
    }
 }

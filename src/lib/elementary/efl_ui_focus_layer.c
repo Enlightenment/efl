@@ -55,10 +55,10 @@ _efl_ui_focus_layer_efl_ui_focus_manager_move(Eo *obj, Efl_Ui_Focus_Layer_Data *
 }
 
 EOLIAN static void
-_efl_ui_focus_layer_efl_object_destructor(Eo *obj, Efl_Ui_Focus_Layer_Data *pd EINA_UNUSED)
+_efl_ui_focus_layer_efl_object_invalidate(Eo *obj, Efl_Ui_Focus_Layer_Data *pd EINA_UNUSED)
 {
    efl_ui_focus_layer_enable_set(obj, EINA_FALSE);
-   efl_destructor(efl_super(obj, MY_CLASS));
+   efl_invalidate(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static Efl_Ui_Focus_Manager*
