@@ -1237,7 +1237,7 @@ eina_log_domain_register_unlocked(const char *name, const char *color)
 
         if (!_log_domains)
            // special case for init, eina itself will allocate a dozen of domains
-           size = 24;
+           size = 64;
         else
            // grow 8 buckets to minimize reallocs
            size = _log_domains_allocated + 8;
