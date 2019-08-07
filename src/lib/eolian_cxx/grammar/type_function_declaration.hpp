@@ -56,10 +56,15 @@ struct type_function_declaration_generator {
 
       std::vector<std::string> c_args;
       for (auto itr : f.parameters)
-        c_args.push_back(", " + itr.type.c_type + " " + itr.param_name);
+        {
+           std::string arg;
+           if (!as_generator(grammar::c_type << " " << string).generate(std::back_inserter(arg), std::make_tuple(itr, itr.param_name), ctx))
+             return false;
+           c_args.push_back(arg);
+        }
       if (!as_generator(
              scope_tab << "static " << string << " caller(void *cxx_call_data"
-             << *(string) << ") {\n"
+             << *(", " << string) << ") {\n"
              << scope_tab << scope_tab << "auto fw = static_cast<function_wrapper<"
              << string << ", F, ::efl::eolian::" << string << "__function_tag>*>(cxx_call_data);\n"
              ).generate(sink, std::make_tuple(f.return_type.c_type, c_args, f.c_name, f.c_name), ctx))
