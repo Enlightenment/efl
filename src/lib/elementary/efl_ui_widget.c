@@ -53,6 +53,10 @@ typedef struct _Elm_Event_Cb_Data         Elm_Event_Cb_Data;
 typedef struct _Elm_Label_Data            Elm_Label_Data;
 typedef struct _Elm_Translate_String_Data Elm_Translate_String_Data;
 
+static Eina_Error _efl_ui_property_bind(Eo *widget, Eo *target, Efl_Ui_Widget_Data *pd,
+                                        const char *part,
+                                        const char *key, const char *property);
+
 struct _Elm_Event_Cb_Data
 {
    Elm_Event_Cb func;
@@ -5567,6 +5571,19 @@ _efl_ui_widget_part_efl_gfx_entity_geometry_get(const Eo *obj EINA_UNUSED, Elm_P
    return efl_gfx_entity_geometry_get(efl_part(sd->resize_obj, pd->part));
 }
 
+static Eina_Error
+_efl_ui_widget_part_efl_ui_property_bind_property_bind(Eo *obj, Elm_Part_Data *ppd,
+                                                       const char *key, const char *property)
+{
+   Efl_Ui_Widget_Data *pd;
+   Eo *widget;
+
+   widget = efl_parent_get(obj);
+   pd = efl_data_scope_get(widget, EFL_UI_WIDGET_CLASS);
+
+   return _efl_ui_property_bind(widget, obj, pd, ppd->part, key, property);
+}
+
 #define EFL_UI_WIDGET_PART_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_canvas_layout_part_type_get, _efl_ui_widget_part_efl_canvas_layout_part_type_get), \
    EFL_OBJECT_OP_FUNC(efl_gfx_entity_geometry_get, _efl_ui_widget_part_efl_gfx_entity_geometry_get)
@@ -5695,6 +5712,7 @@ _efl_ui_widget_part_bg_efl_gfx_image_scale_type_get(const Eo *obj, void *pd EINA
 typedef struct _Efl_Ui_Property_Bound Efl_Ui_Property_Bound;
 struct _Efl_Ui_Property_Bound
 {
+   Eina_Stringshare *part; // Optional part to apply the property on
    Eina_Stringshare *key; // Local object property
    Eina_Stringshare *property; // Model property
    Eina_Future *f;
@@ -5705,6 +5723,7 @@ _efl_ui_property_bind_free(void *data)
 {
    Efl_Ui_Property_Bound *prop = data;
 
+   eina_stringshare_del(prop->part);
    eina_stringshare_del(prop->key);
    eina_stringshare_del(prop->property);
    free(prop);
@@ -5723,11 +5742,20 @@ _efl_ui_property_bind_clean(Eo *obj EINA_UNUSED,
 static void
 _efl_ui_property_bind_get(Efl_Ui_Widget_Data *pd, Efl_Ui_Property_Bound *prop)
 {
-   Eina_Value *value = efl_model_property_get(pd->properties.model, prop->property);
+   Eina_Value *value;
    Eina_Future *f;
    Eina_Error err;
+   Eo *target;
 
-   err = efl_property_reflection_set(pd->obj, prop->key, eina_value_reference_copy(value));
+   // If there is no model set yet, no need to try anything
+   if (!pd->properties.model) return ;
+
+   value = efl_model_property_get(pd->properties.model, prop->property);
+   target = prop->part ? efl_part(pd->obj, prop->part) : pd->obj;
+
+   fprintf(stderr, "setting: %s for %s from %s\n",
+           eina_value_to_string(value), prop->property, efl_debug_name_get(pd->properties.model));
+   err = efl_property_reflection_set(target, prop->key, eina_value_reference_copy(value));
    eina_value_free(value);
 
    if (!err) return ;
@@ -5742,8 +5770,12 @@ _efl_ui_property_bind_get(Efl_Ui_Widget_Data *pd, Efl_Ui_Property_Bound *prop)
 static void
 _efl_ui_property_bind_set(Efl_Ui_Widget_Data *pd, Efl_Ui_Property_Bound *prop)
 {
-   Eina_Value value = efl_property_reflection_get(pd->obj, prop->key);
+   Eina_Value value;
    Eina_Future *f;
+   Eo *target;
+
+   target = prop->part ? efl_part(pd->obj, prop->part) : pd->obj;
+   value = efl_property_reflection_get(target, prop->key);
 
    if (prop->f) eina_future_cancel(prop->f);
    f = efl_model_property_set(pd->properties.model, prop->property, eina_value_dup(&value));
@@ -5796,6 +5828,7 @@ _efl_ui_widget_model_update(Efl_Ui_Widget_Data *pd)
    it = eina_hash_iterator_data_new(pd->properties.model_lookup);
    EINA_ITERATOR_FOREACH(it, property)
      _efl_ui_property_bind_get(pd, property);
+   eina_iterator_free(it);
 }
 
 static void _efl_ui_widget_model_provider_model_change(void *data, const Efl_Event *event EINA_UNUSED);
@@ -5882,19 +5915,20 @@ _efl_ui_widget_model_unregister(Eo *obj, Efl_Ui_Widget_Data *pd)
    if (pd->properties.provider)
      _efl_ui_widget_model_provider_invalidate(pd, NULL);
 }
+
 static Eina_Error
-_efl_ui_widget_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Widget_Data *pd,
-                                                  const char *key, const char *property)
+_efl_ui_property_bind(Eo *widget, Eo *target, Efl_Ui_Widget_Data *pd,
+                      const char *part, const char *key, const char *property)
 {
    Efl_Ui_Property_Bound *prop;
 
    // Always check for a model and fetch a provider in case a binded property
    // is provided by a class down the hierarchy, but they still need to be notified
    // when a model change
-   _efl_ui_widget_model_register(obj, pd);
+   _efl_ui_widget_model_register(widget, pd);
 
    // Check if the property is available from the reflection table of the object.
-   if (!efl_property_reflection_exist(obj, key)) return EFL_PROPERTY_ERROR_INVALID_KEY;
+   if (!efl_property_reflection_exist(target, key)) return EFL_PROPERTY_ERROR_INVALID_KEY;
 
    if (!pd->properties.model_lookup)
      {
@@ -5904,6 +5938,7 @@ _efl_ui_widget_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Widget_Data *p
 
    prop = calloc(1, sizeof (Efl_Ui_Property_Bound));
    if (!prop) return ENOMEM;
+   prop->part = eina_stringshare_add(part);
    prop->key = eina_stringshare_add(key);
    prop->property = eina_stringshare_add(property);
 
@@ -5912,9 +5947,19 @@ _efl_ui_widget_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Widget_Data *p
 
    _efl_ui_property_bind_get(pd, prop);
 
-   efl_event_callback_call(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTY_BOUND, (void*) prop->key);
+   efl_event_callback_call(widget, EFL_UI_PROPERTY_BIND_EVENT_PROPERTY_BOUND, (void*) prop->key);
+   // In case of part, we emit it also on the part so that the part too can act on it
+   if (target)
+     efl_event_callback_call(target, EFL_UI_PROPERTY_BIND_EVENT_PROPERTY_BOUND, (void*) prop->key);
 
    return 0;
+}
+
+static Eina_Error
+_efl_ui_widget_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Widget_Data *pd,
+                                                  const char *key, const char *property)
+{
+   return _efl_ui_property_bind(obj, obj, pd, NULL, key, property);
 }
 
 static void
