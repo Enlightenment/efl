@@ -403,6 +403,24 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
 
         if (alpha < 255)
           {
+             //Replace with a new size.
+             if (cd->blend_buffer)
+               {
+                  int w2, h2;
+                  ector_buffer_size_get(cd->blend_buffer, &w2, &h2);
+
+                  if (w2 != w || h2 != h)
+                    {
+                       if (cd->blend_pixels)
+                         {
+                            free(cd->blend_pixels);
+                            cd->blend_pixels = NULL;
+                         }
+                       efl_unref(cd->blend_buffer);
+                       cd->blend_buffer = NULL;
+                    }
+               }
+
              // Reuse buffer
              if (!cd->blend_pixels)
                cd->blend_pixels = calloc(w * h, sizeof(uint32_t*));
