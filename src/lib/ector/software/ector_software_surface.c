@@ -259,6 +259,8 @@ _ector_software_surface_ector_surface_draw_image(Eo *obj EINA_UNUSED,
    const int pix_stride = pd->rasterizer->fill_data.raster_buffer->stride / 4;
 
    uint32_t *src = bd->pixels.u32;
+   if (!src) return EINA_FALSE;
+
    for (unsigned int local_y = 0; local_y <  bd->generic->h; local_y++)
      {
         uint32_t *dst = pd->rasterizer->fill_data.raster_buffer->pixels.u32 + (x + ((local_y + y) * pix_stride));
