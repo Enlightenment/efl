@@ -3632,13 +3632,13 @@ static const Efl_Object_Property_Reflection*
 _efl_class_reflection_find(const _Efl_Class *klass, const char *property_name)
 {
    const _Efl_Class **klass_iter = klass->extensions;
-   const Efl_Object_Property_Reflection_Ops *ref = klass->reflection;
+   const Efl_Object_Property_Reflection_Ops *ref_ops = klass->reflection;
    unsigned int i;
 
-   for (i = 0; ref && i < ref->count; ++i)
+   for (i = 0; ref_ops && i < ref_ops->count; ++i)
      {
-        if (eina_streq(property_name, ref->table[i].property_name))
-          return &ref->table[i];
+        if (eina_streq(property_name, ref_ops->table[i].property_name))
+          return &ref_ops->table[i];
      }
 
    if (klass->parent)
