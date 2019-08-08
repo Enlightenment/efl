@@ -10,6 +10,12 @@
 #define POPUP_SIZE 160
 #define POPUP_SIZE_EXPAND POPUP_SIZE * 2
 
+#define POPUP_ANCHOR_BUTTON_SIZE_VERT 35
+/* top row */
+#define POPUP_ANCHOR_BUTTON_SIZE_HORIZ1 70
+/* middle and bottom row */
+#define POPUP_ANCHOR_BUTTON_SIZE_HORIZ2 100
+
 static Eo *
 _popup_layout_create(Eo *popup)
 {
@@ -540,6 +546,342 @@ EFL_START_TEST(efl_ui_test_popup_text_alert)
 }
 EFL_END_TEST
 
+static void
+_align_cb(void *data, const Efl_Event *ev)
+{
+   Efl_Ui_Popup_Align align = (uintptr_t)data;
+   Eo *popup  = efl_ui_widget_parent_get(efl_ui_widget_parent_get(ev->object));
+   efl_ui_popup_align_set(popup, align);
+}
+
+typedef enum
+{
+   ALIGN_CENTER = 0,
+   ALIGN_TOP,
+   ALIGN_BOTTOM,
+   ALIGN_LEFT,
+   ALIGN_RIGHT,
+   ALIGN_POSITION,
+   ALIGN_RESIZE,
+} Align;
+
+static inline Align
+popup_prio_to_align(Efl_Ui_Popup_Align pa)
+{
+   switch (pa)
+     {
+      case EFL_UI_POPUP_ALIGN_CENTER:
+        return ALIGN_CENTER;
+      case EFL_UI_POPUP_ALIGN_LEFT:
+        return ALIGN_LEFT;
+      case EFL_UI_POPUP_ALIGN_RIGHT:
+        return ALIGN_RIGHT;
+      case EFL_UI_POPUP_ALIGN_TOP:
+        return ALIGN_TOP;
+      case EFL_UI_POPUP_ALIGN_BOTTOM:
+        return ALIGN_BOTTOM;
+      default: break;
+     }
+   printf("FAIL\n");
+   abort();
+}
+
+static Eina_Bool
+can_move_x(Align align)
+{
+   if (align == ALIGN_LEFT) return EINA_FALSE;
+   if (align == ALIGN_RIGHT) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+can_move_y(Align align)
+{
+   if (align == ALIGN_TOP) return EINA_FALSE;
+   if (align == ALIGN_BOTTOM) return EINA_FALSE;
+   return EINA_TRUE;
+}
+
+#undef COORDS_INSIDE
+#define COORDS_INSIDE(x, y, xx, yy, ww, hh) \
+  (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && ((x) >= (xx)) && ((y) >= (yy)))
+#define CONTAINS(x, y, w, h, xx, yy, ww, hh) \
+  (((xx) >= (x)) && (((x) + (w)) >= ((xx) + (ww))) && ((yy) >= (y)) && (((y) + (h)) >= ((yy) + (hh))))
+#define INTERSECTS(x, y, w, h, xx, yy, ww, hh) \
+  (((x) < ((xx) + (ww))) && ((y) < ((yy) + (hh))) && (((x) + (w)) > (xx)) && (((y) + (h)) > (yy)))
+
+#define OFF_LEFT(x) \
+  ((x) < 0)
+#define OFF_TOP(y) \
+  ((y) < 0)
+#define OFF_RIGHT(x, w, ww) \
+  ((x) + (w) > (ww))
+#define OFF_BOTTOM(y, h, hh) \
+  ((y) + (h) > (hh))
+
+static void
+verify_anchor(Eo *popup, Eo **align_buttons, Align align, Eina_Size2D *popup_sz)
+{
+   Eo *anchor = efl_ui_anchor_popup_anchor_get(popup);
+   Eo *win = efl_provider_find(popup, EFL_UI_WIN_CLASS);
+   Eina_Rect anchor_geom;
+   Efl_Ui_Popup_Align cur_prio;
+
+   Eina_Rect win_geom = efl_gfx_entity_geometry_get(win);
+
+   if (anchor)
+     anchor_geom = efl_gfx_entity_geometry_get(anchor);
+   else
+     anchor_geom = win_geom;
+
+   Evas_Coord x, y;
+
+   /* click the button to trigger changing the align on the popup
+    * this could be done manually, but we're trying to copy the elm_test case
+    */
+   click_object(align_buttons[align]);
+   /* spin main loop to ensure edje signal and event propagation */
+   ecore_main_loop_iterate();
+   /* manually calc popup to verify */
+   efl_canvas_group_calculate(popup);
+
+   cur_prio = efl_ui_popup_align_get(popup);
+
+   Efl_Ui_Popup_Align prio[] =
+   {
+      cur_prio,
+      EFL_UI_POPUP_ALIGN_TOP,
+      EFL_UI_POPUP_ALIGN_BOTTOM,
+      EFL_UI_POPUP_ALIGN_LEFT,
+      EFL_UI_POPUP_ALIGN_RIGHT,
+      EFL_UI_POPUP_ALIGN_CENTER
+   };
+   unsigned int i;
+
+   /* popup anchor (currently) attempts to apply an align using the existing anchor
+    * constraint checking fails in two cases:
+    * - popup is outside the window
+    * - popup is not exactly aligned to anchor
+    *
+    * if either of these cases occur, the next priority in the priority list will be used
+    * UNLESS the align is CENTER, in which case the popup may be adjusted
+    */
+   for (i = 0; i < EINA_C_ARRAY_LENGTH(prio); i++)
+     {
+        if (i && (prio[i] == cur_prio)) continue;
+        Align cur_align = popup_prio_to_align(prio[i]);
+        switch (cur_align)
+          {
+           /* allow x/y adjust, permit covering anchor */
+           case ALIGN_CENTER:
+             x = anchor_geom.x + ((anchor_geom.w - popup_sz->w) / 2);
+             y = anchor_geom.y + ((anchor_geom.h - popup_sz->h) / 2);
+             break;
+
+           /* allow x adjust, do not permit covering anchor */
+           case ALIGN_TOP:
+             x = anchor_geom.x + ((anchor_geom.w - popup_sz->w) / 2);
+             y = anchor_geom.y - popup_sz->h;
+             break;
+           /* allow x adjust, do not permit covering anchor */
+           case ALIGN_BOTTOM:
+             x = anchor_geom.x + ((anchor_geom.w - popup_sz->w) / 2);
+             y = anchor_geom.y + anchor_geom.h;
+             break;
+           /* allow y adjust, do not permit covering anchor */
+           case ALIGN_LEFT:
+             x = anchor_geom.x - popup_sz->w;
+             y = anchor_geom.y + ((anchor_geom.h - popup_sz->h) / 2);
+             break;
+           /* allow y adjust, do not permit covering anchor */
+           case ALIGN_RIGHT:
+             x = anchor_geom.x + anchor_geom.w;
+             y = anchor_geom.y + ((anchor_geom.h - popup_sz->h) / 2);
+             break;
+           default: break;
+          }
+        if ((!anchor) || can_move_x(cur_align))
+          {
+             /* verify that popups not anchored to the win object are inside the window;
+              * clamp to window if necessary
+              */
+             if (!CONTAINS(0, 0, win_geom.w, win_geom.h, x, y, popup_sz->w, popup_sz->h))
+               { if (OFF_LEFT(x)) x = 0; }
+             if (!CONTAINS(0, 0, win_geom.w, win_geom.h, x, y, popup_sz->w, popup_sz->h))
+               { if (OFF_RIGHT(x, popup_sz->w, win_geom.w)) x = win_geom.w - popup_sz->w; }
+          }
+        if ((!anchor) || can_move_y(cur_align))
+          {
+             /* verify that popups not anchored to the win object are inside the window;
+              * clamp to window if necessary
+              */
+             if (!CONTAINS(0, 0, win_geom.w, win_geom.h, x, y, popup_sz->w, popup_sz->h))
+               { if (OFF_TOP(y)) y = 0; }
+             if (!CONTAINS(0, 0, win_geom.w, win_geom.h, x, y, popup_sz->w, popup_sz->h))
+               { if (OFF_BOTTOM(y, popup_sz->h, win_geom.h)) y = win_geom.h - popup_sz->h; }
+          }
+        /* if the popup is not allowed to be clamped on a given axis, try a different align */
+        if (!CONTAINS(0, 0, win_geom.w, win_geom.h, x, y, popup_sz->w, popup_sz->h)) continue;
+        /* no further clamping for center aligns since this permits popups to be placed over the anchor */
+        if (align == ALIGN_CENTER) break;
+        /* no further clamping if the anchor is the win object since the popup will always be placed in the window */
+        if (!anchor) break;
+        /* verify clamping on X-axis */
+        if (can_move_x(cur_align))
+          {
+             if ((x > anchor_geom.x + anchor_geom.w) || (x + popup_sz->w < anchor_geom.x)) continue;
+          }
+        /* verify clamping on Y-axis */
+        if (can_move_y(cur_align))
+          {
+             if ((y > anchor_geom.y + anchor_geom.h) || (y + popup_sz->h < anchor_geom.y)) continue;
+          }
+        break;
+     }
+
+   Eina_Position2D popup_pos = efl_gfx_entity_position_get(popup);
+   ck_assert_int_eq(x, popup_pos.x);
+   ck_assert_int_eq(y, popup_pos.y);
+}
+
+EFL_START_TEST(efl_ui_test_popup_text_anchor)
+{
+   Eo *win, *popup, *layout;
+   char buf[PATH_MAX];
+   int i, num_anchors = 6;
+
+   win = win_add();
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(WIN_SIZE, WIN_SIZE));
+
+   layout = efl_add(EFL_UI_LAYOUT_CLASS, win);
+   snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
+   ck_assert(efl_file_simple_load(layout, buf, "efl_ui_popup_anchor_layout"));
+   efl_content_set(win, layout);
+
+   popup = efl_add(EFL_UI_ANCHOR_POPUP_CLASS, win);
+   efl_ui_popup_part_backwall_repeat_events_set(efl_part(popup, "backwall"), EINA_TRUE);
+   //Default align priority order is top, left, right, bottom, center.
+   efl_ui_anchor_popup_align_priority_set(popup, EFL_UI_POPUP_ALIGN_TOP,
+                                          EFL_UI_POPUP_ALIGN_BOTTOM,
+                                          EFL_UI_POPUP_ALIGN_LEFT,
+                                          EFL_UI_POPUP_ALIGN_RIGHT,
+                                          EFL_UI_POPUP_ALIGN_CENTER);
+
+   Eo *btn, *bganchors[num_anchors], *aligns[7];
+   for (i = 0; i < num_anchors; i++)
+     {
+        btn = bganchors[i] = efl_add(EFL_UI_BUTTON_CLASS, win);
+        efl_text_set(btn, "anchor");
+        //efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _anchor_set_cb, popup);
+
+        snprintf(buf, sizeof(buf), "anchor%d", i+1);
+        efl_content_set(efl_part(layout, buf), btn);
+     }
+
+   btn = efl_add(EFL_UI_BUTTON_CLASS, win);
+   efl_text_set(btn, "anchor none");
+   //efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _anchor_unset_cb, popup);
+   efl_content_set(efl_part(layout, "anchor_none"), btn);
+
+   Eo *table = efl_add(EFL_UI_TABLE_CLASS, popup);
+   efl_gfx_hint_weight_set(table, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+
+   i = 0;
+
+   aligns[i++] = btn = efl_add(EFL_UI_BUTTON_CLASS, popup);
+   efl_text_set(btn, "Center Align");
+   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(POPUP_ANCHOR_BUTTON_SIZE_HORIZ1, POPUP_ANCHOR_BUTTON_SIZE_VERT));
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _align_cb, (intptr_t*)EFL_UI_POPUP_ALIGN_CENTER);
+   efl_pack_table(table, btn, 0, 0, 2, 1);
+
+   aligns[i++] = btn = efl_add(EFL_UI_BUTTON_CLASS, popup);
+   efl_text_set(btn, "Top Align");
+   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(POPUP_ANCHOR_BUTTON_SIZE_HORIZ1, POPUP_ANCHOR_BUTTON_SIZE_VERT));
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _align_cb, (intptr_t*)EFL_UI_POPUP_ALIGN_TOP);
+   efl_pack_table(table, btn, 2, 0, 2, 1);
+
+   aligns[i++] = btn = efl_add(EFL_UI_BUTTON_CLASS, popup);
+   efl_text_set(btn, "Bottom Align");
+   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(POPUP_ANCHOR_BUTTON_SIZE_HORIZ1, POPUP_ANCHOR_BUTTON_SIZE_VERT));
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _align_cb, (intptr_t*)EFL_UI_POPUP_ALIGN_BOTTOM);
+   efl_pack_table(table, btn, 4, 0, 2, 1);
+
+   aligns[i++] = btn = efl_add(EFL_UI_BUTTON_CLASS, popup);
+   efl_text_set(btn, "Left Align");
+   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(POPUP_ANCHOR_BUTTON_SIZE_HORIZ2, POPUP_ANCHOR_BUTTON_SIZE_VERT));
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _align_cb, (intptr_t*)EFL_UI_POPUP_ALIGN_LEFT);
+   efl_pack_table(table, btn, 0, 1, 3, 1);
+
+   aligns[i++] = btn = efl_add(EFL_UI_BUTTON_CLASS, popup);
+   efl_text_set(btn, "Right Align");
+   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(POPUP_ANCHOR_BUTTON_SIZE_HORIZ2, POPUP_ANCHOR_BUTTON_SIZE_VERT));
+   efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _align_cb, (intptr_t*)EFL_UI_POPUP_ALIGN_RIGHT);
+   efl_pack_table(table, btn, 3, 1, 3, 1);
+
+   aligns[i++] = btn = efl_add(EFL_UI_BUTTON_CLASS, popup);
+   efl_text_set(btn, "Position Set");
+   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(POPUP_ANCHOR_BUTTON_SIZE_HORIZ2, POPUP_ANCHOR_BUTTON_SIZE_VERT));
+   /* this is done manually */
+   //efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _position_set_cb, popup);
+   efl_pack_table(table, btn, 0, 2, 3, 1);
+
+   aligns[i++] = btn = efl_add(EFL_UI_BUTTON_CLASS, popup);
+   efl_text_set(btn, "Resize");
+   efl_gfx_hint_size_min_set(btn, EINA_SIZE2D(POPUP_ANCHOR_BUTTON_SIZE_HORIZ2, POPUP_ANCHOR_BUTTON_SIZE_VERT));
+   /* this is done manually */
+   //efl_event_callback_add(btn, EFL_INPUT_EVENT_CLICKED, _popup_resize_cb, popup);
+   efl_pack_table(table, btn, 3, 2, 3, 1);
+
+   efl_content_set(popup, table);
+
+   get_me_to_those_events(popup);
+
+   Eina_Size2D popup_sz = efl_gfx_entity_size_get(popup);
+   /* popup should be at least the size of the table, which is the size of the buttons */
+   ck_assert_int_ge(popup_sz.w, 2 * POPUP_ANCHOR_BUTTON_SIZE_HORIZ2);
+   ck_assert_int_ge(popup_sz.h, 3 * POPUP_ANCHOR_BUTTON_SIZE_VERT);
+
+   for (unsigned int sizes = 0; sizes < 2; sizes++)
+     {
+        if (sizes > 0)
+          {
+             /* increase size of buttons to make popup larger and test different constrain codepaths */
+             for (unsigned int j = 0; j < ALIGN_RESIZE; j++)
+               {
+                  Eina_Size2D min_sz = efl_gfx_hint_size_min_get(aligns[j]);
+                  min_sz.w += min_sz.w / 2;
+                  min_sz.h += min_sz.h / 2;
+                  efl_gfx_hint_size_min_set(aligns[j], min_sz);
+               }
+             efl_canvas_group_calculate(table);
+             efl_canvas_group_calculate(popup);
+
+             popup_sz = efl_gfx_entity_size_get(popup);
+             /* popup should be at least the size of the table, which is the size of the buttons */
+             ck_assert_int_ge(popup_sz.w, 2 * (POPUP_ANCHOR_BUTTON_SIZE_HORIZ2 + sizes * (POPUP_ANCHOR_BUTTON_SIZE_HORIZ2 / 2)));
+             ck_assert_int_ge(popup_sz.h, 3 * (POPUP_ANCHOR_BUTTON_SIZE_VERT + sizes * (POPUP_ANCHOR_BUTTON_SIZE_VERT / 2)));
+          }
+        for (i = -1; i < num_anchors; i++)
+          {
+             if (i >= 0) efl_ui_anchor_popup_anchor_set(popup, bganchors[i]);
+             /* -1 is anchored to win object */
+             else efl_ui_anchor_popup_anchor_set(popup, NULL);
+             for (unsigned int j = 0; j < ALIGN_RESIZE; j++)
+               {
+                  verify_anchor(popup, aligns, j, &popup_sz);
+               }
+          }
+     }
+   /* this should unset the anchor completely */
+   efl_gfx_entity_position_set(popup, EINA_POSITION2D(0, 0));
+   efl_canvas_group_calculate(popup);
+   /* verify that the popup doesn't reuse its previous anchor */
+   Eina_Position2D popup_pos = efl_gfx_entity_position_get(popup);
+   ck_assert_int_eq(popup_pos.x, 0);
+   ck_assert_int_eq(popup_pos.y, 0);
+}
+EFL_END_TEST
+
 void efl_ui_test_popup(TCase *tc)
 {
    tcase_add_test(tc, efl_ui_test_popup_events);
@@ -550,4 +892,5 @@ void efl_ui_test_popup(TCase *tc)
    tcase_add_test(tc, efl_ui_test_popup_scroll_alert);
    tcase_add_test(tc, efl_ui_test_popup_scroll_alert_expand);
    tcase_add_test(tc, efl_ui_test_popup_text_alert);
+   tcase_add_test(tc, efl_ui_test_popup_text_anchor);
 }
