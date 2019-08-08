@@ -175,6 +175,7 @@ pub_eo_files = [
   'efl_ui_text_part.eo',
   'efl_ui_caching_factory.eo',
   'efl_ui_widget_factory.eo',
+  'efl_ui_property_bind_part.eo',
   'efl_ui_relative_layout.eo',
   'efl_ui_action_connector.eo',
   'efl_ui_format.eo',

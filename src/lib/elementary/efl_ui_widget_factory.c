@@ -3,16 +3,35 @@
 #endif
 
 #define EFL_UI_WIDGET_PROTECTED
+#define EFL_PART_PROTECTED
 
-#include <Elementary.h>
+#include <Efl_Ui.h>
 #include "elm_priv.h"
+#include "efl_ui_property_bind_part.eo.h"
 
 typedef struct _Efl_Ui_Widget_Factory_Data Efl_Ui_Widget_Factory_Data;
 typedef struct _Efl_Ui_Widget_Factory_Request Efl_Ui_Widget_Factory_Request;
+typedef struct _Efl_Ui_Bind_Part_Data Efl_Ui_Bind_Part_Data;
+typedef struct _Efl_Ui_Property_Bind_Data Efl_Ui_Property_Bind_Data;
+
+struct _Efl_Ui_Property_Bind_Data
+{
+   Eina_Stringshare *part_property;
+   Eina_Stringshare *model_property;
+};
+
+struct _Efl_Ui_Bind_Part_Data
+{
+   Eina_Stringshare *part;
+
+   Eina_List *properties;
+};
 
 struct _Efl_Ui_Widget_Factory_Data
 {
    const Efl_Class *klass;
+
+   Eina_Hash *parts;
 
    Eina_Stringshare *style;
 };
@@ -61,6 +80,26 @@ _efl_ui_widget_factory_create_then(Eo *obj EINA_UNUSED, void *data, const Eina_V
    w = efl_add(r->pd->klass, r->parent,
                efl_ui_widget_style_set(efl_added, string),
                efl_ui_view_model_set(efl_added, r->model));
+
+   if (r->pd->parts)
+     {
+        Efl_Ui_Bind_Part_Data *bpd;
+        Eina_Iterator *it;
+
+        it = eina_hash_iterator_data_new(r->pd->parts);
+
+        EINA_ITERATOR_FOREACH(it, bpd)
+          {
+             Efl_Ui_Property_Bind_Data *bppd;
+             Eina_List *l;
+
+             EINA_LIST_FOREACH(bpd->properties, l, bppd)
+               efl_ui_property_bind(efl_part(w, bpd->part),
+                                    bppd->part_property,
+                                    bppd->model_property);
+          }
+        eina_iterator_free(it);
+     }
 
    return eina_value_object_init(w);
 }
@@ -128,7 +167,76 @@ _efl_ui_widget_factory_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Widget
         return 0;
      }
 
-   return efl_ui_property_bind(efl_super(obj, EFL_UI_WIDGET_FACTORY_CLASS), target, property);
+   return EINVAL;
 }
 
+
+typedef struct _Efl_Ui_Property_Bind_Part_Data Efl_Ui_Property_Bind_Part_Data;
+struct _Efl_Ui_Property_Bind_Part_Data
+{
+   Efl_Ui_Widget_Factory_Data *pd;
+   Eina_Stringshare *name;
+};
+
+static Efl_Object *
+_efl_ui_widget_factory_efl_part_part_get(const Eo *obj,
+                                         Efl_Ui_Widget_Factory_Data *pd,
+                                         const char *name)
+{
+   Efl_Ui_Property_Bind_Part_Data *ppd;
+   Efl_Object *part;
+
+   part = efl_add(EFL_UI_PROPERTY_BIND_PART_CLASS, (Eo*) obj);
+   if (!part) return NULL;
+
+   ppd = efl_data_scope_get(obj, EFL_UI_PROPERTY_BIND_PART_CLASS);
+   ppd->name = eina_stringshare_add(name);
+   ppd->pd = pd;
+
+   return part;
+}
+
+static void
+_efl_ui_property_bind_part_efl_object_destructor(Eo *obj, Efl_Ui_Property_Bind_Part_Data *pd)
+{
+   eina_stringshare_replace(&pd->name, NULL);
+
+   efl_destructor(efl_super(obj, EFL_UI_PROPERTY_BIND_PART_CLASS));
+}
+
+static Eina_Error
+_efl_ui_property_bind_part_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSED,
+                                                              Efl_Ui_Property_Bind_Part_Data *pd,
+                                                              const char *key,
+                                                              const char *property)
+{
+   Efl_Ui_Bind_Part_Data *bpd;
+   Efl_Ui_Property_Bind_Data *bppd;
+
+   if (!pd->pd->parts)
+     pd->pd->parts = eina_hash_stringshared_new(NULL);
+
+   bpd = eina_hash_find(pd->pd->parts, pd->name);
+   if (!bpd)
+     {
+        bpd = calloc(1, sizeof (Efl_Ui_Bind_Part_Data));
+        if (!bpd) return ENOMEM;
+
+        bpd->part = eina_stringshare_ref(pd->name);
+
+        eina_hash_direct_add(pd->pd->parts, bpd->part, bpd);
+     }
+
+   bppd = calloc(1, sizeof (Efl_Ui_Property_Bind_Data));
+   if (bppd) return ENOMEM;
+
+   bppd->part_property = eina_stringshare_add(key);
+   bppd->model_property = eina_stringshare_add(property);
+
+   bpd->properties = eina_list_append(bpd->properties, bppd);
+
+   return 0;
+}
+
+#include "efl_ui_property_bind_part.eo.c"
 #include "efl_ui_widget_factory.eo.c"
