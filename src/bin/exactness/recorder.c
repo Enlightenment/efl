@@ -209,7 +209,7 @@ _event_key_cb(void *data, const Efl_Event *event)
      {  /* Construct duplicate strings, free them when list if freed */
         Exactness_Action_Key_Down_Up t;
         t.keyname = eina_stringshare_add(key);
-        t.key = eina_stringshare_add(efl_input_key_get(evk));
+        t.key = eina_stringshare_add(efl_input_key_sym_get(evk));
         t.string = eina_stringshare_add(efl_input_key_string_get(evk));
         t.compose = eina_stringshare_add(efl_input_key_compose_string_get(evk));
         t.keycode = efl_input_key_code_get(evk);

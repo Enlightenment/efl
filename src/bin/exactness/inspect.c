@@ -13,6 +13,7 @@
 #include <Ecore_Evas.h>
 #include <Elementary.h>
 #include <Exactness.h>
+#include <Efl_Ui.h>
 
 #include "exactness_private.h"
 
