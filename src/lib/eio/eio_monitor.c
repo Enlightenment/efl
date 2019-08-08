@@ -371,7 +371,14 @@ eio_monitor_stringshared_add(const char *path)
 
    EINA_REFCOUNT_INIT(monitor);
 
-   if (getenv("EIO_MONITOR_POLL"))
+   static signed char monpoll = -1;
+
+   if (monpoll == -1)
+     {
+        if (getenv("EIO_MONITOR_POLL")) monpoll = 1;
+        else monpoll = 0;
+     }
+   if (monpoll)
      eio_monitor_fallback_add(monitor);
    else
      eio_monitor_backend_add(monitor);

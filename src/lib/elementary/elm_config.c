@@ -634,6 +634,35 @@ end:
    return off;
 }
 
+static Eina_Hash *_getenv_once_envs = NULL;
+static const char *_getenv_once_empty = "";
+
+static const char *
+_getenv_once(const char *env)
+{
+   const char *s;
+
+   if (_getenv_once_envs)
+     {
+        s = eina_hash_find(_getenv_once_envs, env);
+        if (s == _getenv_once_empty) return NULL;
+        if (s) return s;
+     }
+   else _getenv_once_envs = eina_hash_string_superfast_new(NULL);
+   s = getenv(env);
+   if (s)
+     {
+        s = eina_stringshare_add(s);
+        eina_hash_add(_getenv_once_envs, env, s);
+        return s;
+     }
+   else
+     {
+        eina_hash_add(_getenv_once_envs, env, _getenv_once_empty);
+     }
+   return NULL;
+}
+
 size_t
 _elm_config_user_dir_snprintf(char       *dst,
                               size_t      size,
@@ -647,7 +676,7 @@ _elm_config_user_dir_snprintf(char       *dst,
 
    if (use_xdg_config == -1)
      {
-        if (getenv("ELM_CONFIG_DIR_XDG")) use_xdg_config = 1;
+        if (_getenv_once("ELM_CONFIG_DIR_XDG")) use_xdg_config = 1;
         else use_xdg_config = 0;
      }
    if (use_xdg_config)
@@ -1443,12 +1472,13 @@ list_free:
 static void
 _profile_fetch_from_conf(void)
 {
-   char buf[PATH_MAX], *p, *s;
+   char buf[PATH_MAX], *p;
+   const char *s;
    Eet_File *ef = NULL;
    int len = 0, i;
 
    // if env var - use profile without question
-   s = getenv("ELM_PROFILE");
+   s = _getenv_once("ELM_PROFILE");
    if (s)
      {
         _elm_profile = strdup(s);
@@ -2091,7 +2121,7 @@ _elm_config_profile_save(const char *profile)
    Eet_File *ef;
    size_t len;
 
-   if (_use_build_config || ((s = getenv("ELM_PROFILE_NOSAVE")) && atoi(s)))
+   if (_use_build_config || ((s = _getenv_once("ELM_PROFILE_NOSAVE")) && atoi(s)))
      return EINA_TRUE;
 
    len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
@@ -2404,10 +2434,10 @@ _config_update(void)
 static void
 _env_get(void)
 {
-   char *s;
+   const char *s;
    double friction;
 
-   s = getenv("ELM_ENGINE");
+   s = _getenv_once("ELM_ENGINE");
    if (s)
      {
         if ((!strcasecmp(s, "x11")) ||
@@ -2464,47 +2494,47 @@ _env_get(void)
           eina_stringshare_replace(&_elm_preferred_engine, _elm_config->engine);
      }
 
-   s = getenv("ELM_VSYNC");
+   s = _getenv_once("ELM_VSYNC");
    if (s) _elm_config->vsync = !!atoi(s);
 
-   s = getenv("ELM_THUMBSCROLL_ENABLE");
+   s = _getenv_once("ELM_THUMBSCROLL_ENABLE");
    if (s) _elm_config->thumbscroll_enable = !!atoi(s);
-   s = getenv("ELM_THUMBSCROLL_THRESHOLD");
+   s = _getenv_once("ELM_THUMBSCROLL_THRESHOLD");
    if (s) _elm_config->thumbscroll_threshold = atoi(s);
-   s = getenv("ELM_THUMBSCROLL_HOLD_THRESHOLD");
+   s = _getenv_once("ELM_THUMBSCROLL_HOLD_THRESHOLD");
    if (s) _elm_config->thumbscroll_hold_threshold = atoi(s);
    // FIXME: floatformat locale issues here 1.0 vs 1,0 - should just be 1.0
-   s = getenv("ELM_THUMBSCROLL_MOMENTUM_THRESHOLD");
+   s = _getenv_once("ELM_THUMBSCROLL_MOMENTUM_THRESHOLD");
    if (s) _elm_config->thumbscroll_momentum_threshold = _elm_atof(s);
-   s = getenv("ELM_THUMBSCROLL_FLICK_DISTANCE_TOLERANCE");
+   s = _getenv_once("ELM_THUMBSCROLL_FLICK_DISTANCE_TOLERANCE");
    if (s) _elm_config->thumbscroll_flick_distance_tolerance = atoi(s);
-   s = getenv("ELM_THUMBSCROLL_MOMENTUM_DISTANCE_MAX");
+   s = _getenv_once("ELM_THUMBSCROLL_MOMENTUM_DISTANCE_MAX");
    if (s) _elm_config->thumbscroll_momentum_distance_max = atoi(s);
-   s = getenv("ELM_THUMBSCROLL_FRICTION");
+   s = _getenv_once("ELM_THUMBSCROLL_FRICTION");
    if (s) _elm_config->thumbscroll_friction = _elm_atof(s);
-   s = getenv("ELM_THUMBSCROLL_MOMENTUM_FRICTION");
+   s = _getenv_once("ELM_THUMBSCROLL_MOMENTUM_FRICTION");
    if (s) _elm_config->thumbscroll_momentum_friction = _elm_atof(s);
-   s = getenv("ELM_THUMBSCROLL_MIN_FRICTION");
+   s = _getenv_once("ELM_THUMBSCROLL_MIN_FRICTION");
    if (s) _elm_config->thumbscroll_min_friction = _elm_atof(s);
-   s = getenv("ELM_THUMBSCROLL_FRICTION_STANDARD");
+   s = _getenv_once("ELM_THUMBSCROLL_FRICTION_STANDARD");
    if (s) _elm_config->thumbscroll_friction_standard = _elm_atof(s);
-   s = getenv("ELM_THUMBSCROLL_BOUNCE_ENABLE");
+   s = _getenv_once("ELM_THUMBSCROLL_BOUNCE_ENABLE");
    if (s) _elm_config->thumbscroll_bounce_enable = !!atoi(s);
-   s = getenv("ELM_THUMBSCROLL_BOUNCE_FRICTION");
+   s = _getenv_once("ELM_THUMBSCROLL_BOUNCE_FRICTION");
    if (s) _elm_config->thumbscroll_bounce_friction = _elm_atof(s);
-   s = getenv("ELM_THUMBSCROLL_ACCELERATION_THRESHOLD");
+   s = _getenv_once("ELM_THUMBSCROLL_ACCELERATION_THRESHOLD");
    if (s) _elm_config->thumbscroll_acceleration_threshold = _elm_atof(s);
-   s = getenv("ELM_THUMBSCROLL_ACCELERATION_TIME_LIMIT");
+   s = _getenv_once("ELM_THUMBSCROLL_ACCELERATION_TIME_LIMIT");
    if (s) _elm_config->thumbscroll_acceleration_time_limit = _elm_atof(s);
-   s = getenv("ELM_THUMBSCROLL_ACCELERATION_WEIGHT");
+   s = _getenv_once("ELM_THUMBSCROLL_ACCELERATION_WEIGHT");
    if (s) _elm_config->thumbscroll_acceleration_weight = _elm_atof(s);
-   s = getenv("ELM_PAGE_SCROLL_FRICTION");
+   s = _getenv_once("ELM_PAGE_SCROLL_FRICTION");
    if (s) _elm_config->page_scroll_friction = _elm_atof(s);
-   s = getenv("ELM_BRING_IN_SCROLL_FRICTION");
+   s = _getenv_once("ELM_BRING_IN_SCROLL_FRICTION");
    if (s) _elm_config->bring_in_scroll_friction = _elm_atof(s);
-   s = getenv("ELM_ZOOM_FRICTION");
+   s = _getenv_once("ELM_ZOOM_FRICTION");
    if (s) _elm_config->zoom_friction = _elm_atof(s);
-   s = getenv("ELM_THUMBSCROLL_BORDER_FRICTION");
+   s = _getenv_once("ELM_THUMBSCROLL_BORDER_FRICTION");
    if (s)
      {
         friction = _elm_atof(s);
@@ -2516,7 +2546,7 @@ _env_get(void)
 
         _elm_config->thumbscroll_border_friction = friction;
      }
-   s = getenv("ELM_THUMBSCROLL_SENSITIVITY_FRICTION");
+   s = _getenv_once("ELM_THUMBSCROLL_SENSITIVITY_FRICTION");
    if (s)
      {
         friction = _elm_atof(s);
@@ -2528,23 +2558,23 @@ _env_get(void)
 
         _elm_config->thumbscroll_sensitivity_friction = friction;
      }
-   s = getenv("ELM_SCROLL_SMOOTH_START_ENABLE");
+   s = _getenv_once("ELM_SCROLL_SMOOTH_START_ENABLE");
    if (s) _elm_config->scroll_smooth_start_enable = !!atoi(s);
-   s = getenv("ELM_SCROLL_ANIMATION_DISABLE");
+   s = _getenv_once("ELM_SCROLL_ANIMATION_DISABLE");
    if (s) _elm_config->scroll_animation_disable = !!atoi(s);
-   s = getenv("ELM_SCROLL_ACCEL_FACTOR");
+   s = _getenv_once("ELM_SCROLL_ACCEL_FACTOR");
    if (s) _elm_config->scroll_accel_factor = atof(s);
-//   s = getenv("ELM_SCROLL_SMOOTH_TIME_INTERVAL"); // not used anymore
+//   s = _getenv_once("ELM_SCROLL_SMOOTH_TIME_INTERVAL"); // not used anymore
 //   if (s) _elm_config->scroll_smooth_time_interval = atof(s); // not used anymore
-   s = getenv("ELM_SCROLL_SMOOTH_AMOUNT");
+   s = _getenv_once("ELM_SCROLL_SMOOTH_AMOUNT");
    if (s) _elm_config->scroll_smooth_amount = _elm_atof(s);
-//   s = getenv("ELM_SCROLL_SMOOTH_HISTORY_WEIGHT"); // not used anymore
+//   s = _getenv_once("ELM_SCROLL_SMOOTH_HISTORY_WEIGHT"); // not used anymore
 //   if (s) _elm_config->scroll_smooth_history_weight = _elm_atof(s); // not used anymore
-//   s = getenv("ELM_SCROLL_SMOOTH_FUTURE_TIME"); // not used anymore
+//   s = _getenv_once("ELM_SCROLL_SMOOTH_FUTURE_TIME"); // not used anymore
 //   if (s) _elm_config->scroll_smooth_future_time = _elm_atof(s); // not used anymore
-   s = getenv("ELM_SCROLL_SMOOTH_TIME_WINDOW");
+   s = _getenv_once("ELM_SCROLL_SMOOTH_TIME_WINDOW");
    if (s) _elm_config->scroll_smooth_time_window = _elm_atof(s);
-   s = getenv("ELM_FOCUS_AUTOSCROLL_MODE");
+   s = _getenv_once("ELM_FOCUS_AUTOSCROLL_MODE");
    if (s)
      {
         if (!strcmp(s, "ELM_FOCUS_AUTOSCROLL_MODE_NONE"))
@@ -2554,7 +2584,7 @@ _env_get(void)
         else
           _elm_config->focus_autoscroll_mode = ELM_FOCUS_AUTOSCROLL_MODE_SHOW;
      }
-   s = getenv("ELM_SLIDER_INDICATOR_VISIBLE_MODE");
+   s = _getenv_once("ELM_SLIDER_INDICATOR_VISIBLE_MODE");
    if (s)
      {
         if (!strcmp(s, "ELM_SLIDER_INDICATOR_VISIBLE_MODE_DEFAULT"))
@@ -2566,10 +2596,10 @@ _env_get(void)
         else
           _elm_config->slider_indicator_visible_mode = ELM_SLIDER_INDICATOR_VISIBLE_MODE_NONE;
      }
-   s = getenv("ELM_THEME");
+   s = _getenv_once("ELM_THEME");
    if (s) eina_stringshare_replace(&_elm_config->theme, s);
 
-   s = getenv("ELM_FONT_HINTING");
+   s = _getenv_once("ELM_FONT_HINTING");
    if (s)
      {
         if      (!strcasecmp(s, "none")) _elm_config->font_hinting = 0;
@@ -2579,7 +2609,7 @@ _env_get(void)
           _elm_config->font_hinting = 2;
      }
 
-   s = getenv("ELM_FONT_PATH");
+   s = _getenv_once("ELM_FONT_PATH");
    if (s)
      {
         const char *p, *pp;
@@ -2617,22 +2647,22 @@ _env_get(void)
           }
      }
 
-   s = getenv("ELM_IMAGE_CACHE");
+   s = _getenv_once("ELM_IMAGE_CACHE");
    if (s) _elm_config->image_cache = atoi(s);
 
-   s = getenv("ELM_FONT_CACHE");
+   s = _getenv_once("ELM_FONT_CACHE");
    if (s) _elm_config->font_cache = atoi(s);
 
-   s = getenv("ELM_SCALE");
+   s = _getenv_once("ELM_SCALE");
    if (s) _elm_config->scale = _elm_atof(s);
 
-   s = getenv("ELM_FINGER_SIZE");
+   s = _getenv_once("ELM_FINGER_SIZE");
    if (s) _elm_config->finger_size = atoi(s);
 
-   s = getenv("ELM_PASSWORD_SHOW_LAST");
+   s = _getenv_once("ELM_PASSWORD_SHOW_LAST");
    if (s) _elm_config->password_show_last = !!atoi(s);
 
-   s = getenv("ELM_PASSWORD_SHOW_LAST_TIMEOUT");
+   s = _getenv_once("ELM_PASSWORD_SHOW_LAST_TIMEOUT");
    if (s)
      {
         double pw_show_last_timeout = _elm_atof(s);
@@ -2640,14 +2670,14 @@ _env_get(void)
           _elm_config->password_show_last_timeout = pw_show_last_timeout;
      }
 
-   s = getenv("ELM_FPS");
+   s = _getenv_once("ELM_FPS");
    if (s) _elm_config->fps = _elm_atof(s);
    if (_elm_config->fps < 1.0) _elm_config->fps = 1.0;
 
-   s = getenv("ELM_MODULES");
+   s = _getenv_once("ELM_MODULES");
    if (s) eina_stringshare_replace(&_elm_config->modules, s);
 
-   s = getenv("ELM_TOOLTIP_DELAY");
+   s = _getenv_once("ELM_TOOLTIP_DELAY");
    if (s)
      {
         double delay = _elm_atof(s);
@@ -2655,113 +2685,113 @@ _env_get(void)
           _elm_config->tooltip_delay = delay;
      }
 
-   s = getenv("ELM_CURSOR_ENGINE_ONLY");
+   s = _getenv_once("ELM_CURSOR_ENGINE_ONLY");
    if (s) _elm_config->cursor_engine_only = !!atoi(s);
 
-   s = getenv("ELM_FOCUS_HIGHLIGHT_ENABLE");
+   s = _getenv_once("ELM_FOCUS_HIGHLIGHT_ENABLE");
    if (s) _elm_config->focus_highlight_enable = !!atoi(s);
 
-   s = getenv("ELM_FOCUS_HIGHLIGHT_ANIMATE");
+   s = _getenv_once("ELM_FOCUS_HIGHLIGHT_ANIMATE");
    if (s) _elm_config->focus_highlight_animate = !!atoi(s);
 
-   s = getenv("ELM_FOCUS_HIGHLIGHT_CLIP_DISABLE");
+   s = _getenv_once("ELM_FOCUS_HIGHLIGHT_CLIP_DISABLE");
    if (s) _elm_config->focus_highlight_clip_disable = !!atoi(s);
 
-   s = getenv("ELM_FOCUS_MOVE_POLICY");
+   s = _getenv_once("ELM_FOCUS_MOVE_POLICY");
    if (s) _elm_config->focus_move_policy = !!atoi(s);
 
-   s = getenv("ELM_ITEM_SELECT_ON_FOCUS_DISABLE");
+   s = _getenv_once("ELM_ITEM_SELECT_ON_FOCUS_DISABLE");
    if (s) _elm_config->item_select_on_focus_disable = !!atoi(s);
 
-   s = getenv("ELM_FIRST_ITEM_FOCUS_ON_FIRST_FOCUS_IN");
+   s = _getenv_once("ELM_FIRST_ITEM_FOCUS_ON_FIRST_FOCUS_IN");
    if (s) _elm_config->first_item_focus_on_first_focus_in = !!atoi(s);
 
-   s = getenv("ELM_TOOLBAR_SHRINK_MODE");
+   s = _getenv_once("ELM_TOOLBAR_SHRINK_MODE");
    if (s) _elm_config->toolbar_shrink_mode = atoi(s);
 
-   s = getenv("ELM_FILESELECTOR_EXPAND_ENABLE");
+   s = _getenv_once("ELM_FILESELECTOR_EXPAND_ENABLE");
    if (s) _elm_config->fileselector_expand_enable = !!atoi(s);
 
-   s = getenv("ELM_FILESELECTOR_DOUBLE_TAP_NAVIGATION_ENABLE");
+   s = _getenv_once("ELM_FILESELECTOR_DOUBLE_TAP_NAVIGATION_ENABLE");
    if (s) _elm_config->fileselector_double_tap_navigation_enable = !!atoi(s);
 
-   s = getenv("ELM_INWIN_DIALOGS_ENABLE");
+   s = _getenv_once("ELM_INWIN_DIALOGS_ENABLE");
    if (s) _elm_config->inwin_dialogs_enable = !!atoi(s);
 
-   s = getenv("ELM_ICON_SIZE");
+   s = _getenv_once("ELM_ICON_SIZE");
    if (s) _elm_config->icon_size = atoi(s);
 
-   s = getenv("ELM_CONTEXT_MENU_DISABLED");
+   s = _getenv_once("ELM_CONTEXT_MENU_DISABLED");
    if (s) _elm_config->context_menu_disabled = !!atoi(s);
 
-   s = getenv("ELM_LONGPRESS_TIMEOUT");
+   s = _getenv_once("ELM_LONGPRESS_TIMEOUT");
    if (s) _elm_config->longpress_timeout = _elm_atof(s);
    if (_elm_config->longpress_timeout < 0.0)
      _elm_config->longpress_timeout = 0.0;
 
-   s = getenv("ELM_EFFECT_ENABLE");
+   s = _getenv_once("ELM_EFFECT_ENABLE");
    if (s) _elm_config->effect_enable = !!atoi(s);
 
-   s = getenv("ELM_DESKTOP_ENTRY");
+   s = _getenv_once("ELM_DESKTOP_ENTRY");
    if (s) _elm_config->desktop_entry = !!atoi(s);
-   s = getenv("ELM_ACCESS_MODE");
+   s = _getenv_once("ELM_ACCESS_MODE");
    if (s) _elm_config->access_mode = ELM_ACCESS_MODE_ON;
 
-   s = getenv("ELM_SELECTION_CLEAR_ENABLE");
+   s = _getenv_once("ELM_SELECTION_CLEAR_ENABLE");
    if (s) _elm_config->selection_clear_enable = !!atoi(s);
 
-   s = getenv("ELM_AUTO_THROTTLE");
+   s = _getenv_once("ELM_AUTO_THROTTLE");
    if (s) _elm_config->auto_throttle = EINA_TRUE;
-   s = getenv("ELM_AUTO_THROTTLE_AMOUNT");
+   s = _getenv_once("ELM_AUTO_THROTTLE_AMOUNT");
    if (s) _elm_config->auto_throttle_amount = _elm_atof(s);
-   s = getenv("ELM_AUTO_NORENDER_WITHDRAWN");
+   s = _getenv_once("ELM_AUTO_NORENDER_WITHDRAWN");
    if (s) _elm_config->auto_norender_withdrawn = EINA_TRUE;
-   s = getenv("ELM_AUTO_NORENDER_ICONIFIED_SAME_AS_WITHDRAWN");
+   s = _getenv_once("ELM_AUTO_NORENDER_ICONIFIED_SAME_AS_WITHDRAWN");
    if (s) _elm_config->auto_norender_iconified_same_as_withdrawn = EINA_TRUE;
-   s = getenv("ELM_AUTO_FLUSH_WITHDRAWN");
+   s = _getenv_once("ELM_AUTO_FLUSH_WITHDRAWN");
    if (s) _elm_config->auto_flush_withdrawn = EINA_TRUE;
-   s = getenv("ELM_AUTO_DUMP_WIDTHDRAWN");
+   s = _getenv_once("ELM_AUTO_DUMP_WIDTHDRAWN");
    if (s) _elm_config->auto_dump_withdrawn = EINA_TRUE;
 
-   s = getenv("ELM_INDICATOR_SERVICE_0");
+   s = _getenv_once("ELM_INDICATOR_SERVICE_0");
    if (s) eina_stringshare_replace(&_elm_config->indicator_service_0, s);
-   s = getenv("ELM_INDICATOR_SERVICE_90");
+   s = _getenv_once("ELM_INDICATOR_SERVICE_90");
    if (s) eina_stringshare_replace(&_elm_config->indicator_service_90, s);
-   s = getenv("ELM_INDICATOR_SERVICE_180");
+   s = _getenv_once("ELM_INDICATOR_SERVICE_180");
    if (s) eina_stringshare_replace(&_elm_config->indicator_service_180, s);
-   s = getenv("ELM_INDICATOR_SERVICE_270");
+   s = _getenv_once("ELM_INDICATOR_SERVICE_270");
    if (s) eina_stringshare_replace(&_elm_config->indicator_service_270, s);
-   s = getenv("ELM_DISABLE_EXTERNAL_MENU");
+   s = _getenv_once("ELM_DISABLE_EXTERNAL_MENU");
    if (s) _elm_config->disable_external_menu = !!atoi(s);
 
-   s = getenv("ELM_CLOUSEAU");
+   s = _getenv_once("ELM_CLOUSEAU");
    if (s) _elm_config->clouseau_enable = atoi(s);
-   s = getenv("ELM_MAGNIFIER_ENABLE");
+   s = _getenv_once("ELM_MAGNIFIER_ENABLE");
    if (s) _elm_config->magnifier_enable = !!atoi(s);
-   s = getenv("ELM_MAGNIFIER_SCALE");
+   s = _getenv_once("ELM_MAGNIFIER_SCALE");
    if (s) _elm_config->magnifier_scale = _elm_atof(s);
-   s = getenv("ELM_ATSPI_MODE");
+   s = _getenv_once("ELM_ATSPI_MODE");
    if (s) _elm_config->atspi_mode = ELM_ATSPI_MODE_ON;
-   s = getenv("ELM_SPINNER_MIN_MAX_FILTER_ENABLE");
+   s = _getenv_once("ELM_SPINNER_MIN_MAX_FILTER_ENABLE");
    if (s) _elm_config->spinner_min_max_filter_enable = !!atoi(s);
 
-   s = getenv("ELM_TRANSITION_DURATION_FACTOR");
+   s = _getenv_once("ELM_TRANSITION_DURATION_FACTOR");
    if (s) _elm_config->transition_duration_factor = atof(s);
 
-   s = getenv("ELM_POPUP_HORIZONTAL_ALIGN");
+   s = _getenv_once("ELM_POPUP_HORIZONTAL_ALIGN");
    if (s) _elm_config->popup_horizontal_align = _elm_atof(s);
-   s = getenv("ELM_POPUP_VERTICAL_ALIGN");
+   s = _getenv_once("ELM_POPUP_VERTICAL_ALIGN");
    if (s) _elm_config->popup_vertical_align = _elm_atof(s);
-   s = getenv("ELM_POPUP_SCROLLABLE");
+   s = _getenv_once("ELM_POPUP_SCROLLABLE");
    if (s) _elm_config->popup_scrollable = atoi(s);
 
-   s = getenv("ELM_GLAYER_TAP_FINGER_SIZE");
+   s = _getenv_once("ELM_GLAYER_TAP_FINGER_SIZE");
    if (s) _elm_config->glayer_tap_finger_size = atoi(s);
 
-   s = getenv("EFL_UI_DND_DRAG_ANIM_DURATION");
+   s = _getenv_once("EFL_UI_DND_DRAG_ANIM_DURATION");
    if (s) _elm_config->drag_anim_duration = _elm_atof(s);
 
-   s = getenv("ELM_WIN_NO_BORDER");
+   s = _getenv_once("ELM_WIN_NO_BORDER");
    if (s) _elm_config->win_no_border = EINA_TRUE;
 }
 

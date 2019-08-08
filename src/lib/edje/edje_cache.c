@@ -104,7 +104,14 @@ _edje_programs_patterns_init(Edje_Part_Collection *edc)
    if (ssp->signals_patterns)
      return;
 
-   if (getenv("EDJE_DUMP_PROGRAMS"))
+   static signed char dump_programs = -1;
+
+   if (dump_programs == -1)
+     {
+        if (getenv("EDJE_DUMP_PROGRAMS")) dump_programs = 1;
+        else dump_programs = 0;
+     }
+   if (dump_programs == 1)
      {
         INF("Group '%s' programs:", edc->part);
 #define EDJE_DUMP_PROGRAM(Section)                    \
