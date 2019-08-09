@@ -180,7 +180,14 @@ evas_gl_common_gl_format_to_colorspace(GLuint f)
 static void
 _print_tex_count(void)
 {
-   if (getenv("EVAS_GL_MEMINFO"))
+   static signed char printit = -1;
+
+   if (printit == -1)
+     {
+        if (getenv("EVAS_GL_MEMINFO")) printit = 1;
+        else printit = 0;
+     }
+   if (printit == 1)
      {
         fprintf(stderr,
                 "T: c:%i/%ik | a:%i/%ik | v:%i/%ik | r:%i/%ik | n:%i/%ik | d:%i/%ik\n",

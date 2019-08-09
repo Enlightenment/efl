@@ -2831,6 +2831,7 @@ _normal_gles3_api_get(Evas_GL_API *funcs, int minor_version)
         ORD(glTexBuffer);
         ORD(glTexBufferRange);
         ORD(glTexStorage3DMultisample);
+        EINA_FALLTHROUGH;
       case 1:
         ORD(glDispatchCompute);
         ORD(glDispatchComputeIndirect);
@@ -2900,6 +2901,7 @@ _normal_gles3_api_get(Evas_GL_API *funcs, int minor_version)
         ORD(glVertexAttribIFormat);
         ORD(glVertexAttribBinding);
         ORD(glVertexBindingDivisor);
+        EINA_FALLTHROUGH;
       case 0:
         ORD(glBeginQuery);
         ORD(glBeginTransformFeedback);
@@ -3209,6 +3211,7 @@ _debug_gles3_api_get(Evas_GL_API *funcs, int minor_version)
         ORD(glTexBuffer);
         ORD(glTexBufferRange);
         ORD(glTexStorage3DMultisample);
+        EINA_FALLTHROUGH;
       case 1:
         ORD(glDispatchCompute);
         ORD(glDispatchComputeIndirect);
@@ -3278,6 +3281,7 @@ _debug_gles3_api_get(Evas_GL_API *funcs, int minor_version)
         ORD(glVertexAttribIFormat);
         ORD(glVertexAttribBinding);
         ORD(glVertexBindingDivisor);
+        EINA_FALLTHROUGH;
       case 0:
         ORD(glBeginQuery);
         ORD(glBeginTransformFeedback);
@@ -3455,6 +3459,7 @@ _evgl_load_gles3_apis(void *dl_handle, Evas_GL_API *funcs, int minor_version,
         ORD(glTexBuffer);
         ORD(glTexBufferRange);
         ORD(glTexStorage3DMultisample);
+        EINA_FALLTHROUGH;
       case 1:
         ORD(glDispatchCompute);
         ORD(glDispatchComputeIndirect);
@@ -3524,6 +3529,7 @@ _evgl_load_gles3_apis(void *dl_handle, Evas_GL_API *funcs, int minor_version,
         ORD(glVertexAttribIFormat);
         ORD(glVertexAttribBinding);
         ORD(glVertexBindingDivisor);
+        EINA_FALLTHROUGH;
       case 0:
         ORD(glBeginQuery);
         ORD(glBeginTransformFeedback);

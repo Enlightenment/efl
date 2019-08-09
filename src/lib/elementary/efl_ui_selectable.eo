@@ -1,4 +1,4 @@
-interface Efl.Ui.Selectable {
+interface @beta Efl.Ui.Selectable {
   [[Selectable interface for ui objects
 
     A object implementing this can be selected. When the selected property of this object changes, the selected,changed event is emitted.

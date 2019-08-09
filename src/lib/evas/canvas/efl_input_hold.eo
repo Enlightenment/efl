@@ -2,7 +2,7 @@ class Efl.Input.Hold extends Efl.Object implements Efl.Input.Event
 {
    [[Event data sent when inputs are put on hold or resumed.]]
    methods {
-      @property hold {
+      @property input_hold {
          [[Property to show if inputs are now on hold.]]
          values {
             val: bool; [[$true if inputs are on hold, $false otherwise]]

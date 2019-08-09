@@ -9,6 +9,7 @@ ecore_wl2_header_src = [
 ]
 
 ecore_wl2_src = [
+  'ecore_wl2_internal.h',
   'ecore_wl2_subsurf.c',
   'ecore_wl2_dnd.c',
   'ecore_wl2_window.c',

@@ -32,7 +32,7 @@ _sync(Efl_Core_Env *obj, Efl_Core_Proc_Env_Data *pd)
    Eina_List *existing_keys = NULL, *n;
    Eina_Iterator *content;
    const char *key;
-   char **env = NULL;
+   char **loc_env = NULL;
 
    pd->in_sync = EINA_TRUE;
    content = efl_core_env_content_get(obj);
@@ -44,16 +44,16 @@ _sync(Efl_Core_Env *obj, Efl_Core_Proc_Env_Data *pd)
 
 #if defined (__FreeBSD__) || defined (__OpenBSD__)
    _dl_environ = dlsym(NULL, "environ");
-   if (_dl_environ) env = *_dl_environ;
+   if (_dl_environ) loc_env = *_dl_environ;
    else ERR("Can't find envrion symbol");
 #else
-   env = environ;
+   loc_env = environ;
 #endif
-   if (env)
+   if (loc_env)
      {
         char **p;
 
-        for (p = env; *p; p++)
+        for (p = loc_env; *p; p++)
           {
              char **values;
 

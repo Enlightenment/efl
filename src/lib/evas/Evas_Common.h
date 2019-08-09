@@ -368,14 +368,12 @@ typedef enum _Evas_Aspect_Control
    EVAS_ASPECT_CONTROL_BOTH = 4 /**< Use all horizontal @b and vertical container spaces to place an object (never growing it out of those bounds), using the given aspect */
 } Evas_Aspect_Control; /**< Aspect types/policies for scaling size hints, used for evas_object_size_hint_aspect_set() */
 
-typedef enum _Evas_BiDi_Direction
-{
-   EVAS_BIDI_DIRECTION_NATURAL,
-   EVAS_BIDI_DIRECTION_NEUTRAL = EVAS_BIDI_DIRECTION_NATURAL,
-   EVAS_BIDI_DIRECTION_LTR,
-   EVAS_BIDI_DIRECTION_RTL,
-   EVAS_BIDI_DIRECTION_INHERIT
-} Evas_BiDi_Direction;
+typedef Efl_Text_Bidirectional_Type Evas_BiDi_Direction;
+#define EVAS_BIDI_DIRECTION_NEUTRAL EFL_TEXT_BIDIRECTIONAL_TYPE_NEUTRAL
+#define EVAS_BIDI_DIRECTION_NATURAL EFL_TEXT_BIDIRECTIONAL_TYPE_NATURAL
+#define EVAS_BIDI_DIRECTION_LTR     EFL_TEXT_BIDIRECTIONAL_TYPE_LTR
+#define EVAS_BIDI_DIRECTION_RTL     EFL_TEXT_BIDIRECTIONAL_TYPE_RTL
+#define EVAS_BIDI_DIRECTION_INHERIT EFL_TEXT_BIDIRECTIONAL_TYPE_INHERIT
 
 /**
  * How the mouse pointer should be handled by Evas.

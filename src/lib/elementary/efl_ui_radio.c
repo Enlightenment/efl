@@ -53,7 +53,7 @@ _radio_widget_signal_emit(Evas_Object *obj, const char *middle_term)
    else
      source = "efl";
 
-   if (efl_ui_check_selected_get(obj))
+   if (efl_ui_selectable_selected_get(obj))
      state = "on";
    else
      state = "off";
@@ -63,16 +63,16 @@ _radio_widget_signal_emit(Evas_Object *obj, const char *middle_term)
 }
 
 static void
-_efl_ui_radio_efl_ui_check_selected_set(Eo *obj, Efl_Ui_Radio_Data *pd EINA_UNUSED, Eina_Bool value)
+_efl_ui_radio_efl_ui_selectable_selected_set(Eo *obj, Efl_Ui_Radio_Data *pd EINA_UNUSED, Eina_Bool value)
 {
-   if (value == efl_ui_check_selected_get(obj)) return;
-   efl_ui_check_selected_set(efl_super(obj, MY_CLASS), value);
+   if (value == efl_ui_selectable_selected_get(obj)) return;
+   efl_ui_selectable_selected_set(efl_super(obj, MY_CLASS), value);
 
    _radio_widget_signal_emit(obj, "state,radio");
 
    if (_elm_config->atspi_mode)
      {
-        if (efl_ui_check_selected_get(obj))
+        if (efl_ui_selectable_selected_get(obj))
           {
              efl_access_state_changed_signal_emit(obj, EFL_ACCESS_STATE_TYPE_CHECKED, EINA_TRUE);
           }
@@ -97,24 +97,24 @@ _state_set_all(Efl_Ui_Radio_Data *sd, Eina_Bool activate)
      {
         ELM_RADIO_DATA_GET(child, sdc);
 
-        if (efl_ui_check_selected_get(child)) selected = child;
+        if (efl_ui_selectable_selected_get(child)) selected = child;
         if (sdc->value == sd->group->value)
           {
              if (activate) _activate_state_emit(child);
-             efl_ui_check_selected_set(child, EINA_TRUE);
-             if (!efl_ui_check_selected_get(child)) disabled = EINA_TRUE;
+             efl_ui_selectable_selected_set(child, EINA_TRUE);
+             if (!efl_ui_selectable_selected_get(child)) disabled = EINA_TRUE;
           }
         else
           {
              if (activate) _activate_state_emit(child);
-             efl_ui_check_selected_set(child, EINA_FALSE);
+             efl_ui_selectable_selected_set(child, EINA_FALSE);
           }
      }
 
    if ((disabled) && (selected))
      {
         if (activate) _activate_state_emit(selected);
-        efl_ui_check_selected_set(selected, EINA_TRUE);
+        efl_ui_selectable_selected_set(selected, EINA_TRUE);
      }
 }
 
@@ -144,7 +144,7 @@ _activate(Evas_Object *obj)
    else
      {
         //in new API, we just toggle the state of the widget, rest will be automatically handled
-        efl_ui_check_selected_set(obj, !efl_ui_check_selected_get(obj));
+        efl_ui_selectable_selected_set(obj, !efl_ui_selectable_selected_get(obj));
      }
 }
 
@@ -165,12 +165,12 @@ _efl_ui_radio_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Radio_Data *sd EINA_UNUS
 
    if (elm_widget_is_legacy(obj))
      {
-        if (efl_ui_check_selected_get(obj)) elm_layout_signal_emit(obj, "elm,state,radio,on", "elm");
+        if (efl_ui_selectable_selected_get(obj)) elm_layout_signal_emit(obj, "elm,state,radio,on", "elm");
         else elm_layout_signal_emit(obj, "elm,state,radio,off", "elm");
      }
    else
      {
-        if (efl_ui_check_selected_get(obj)) elm_layout_signal_emit(obj, "efl,state,radio,on", "efl");
+        if (efl_ui_selectable_selected_get(obj)) elm_layout_signal_emit(obj, "efl,state,radio,on", "efl");
         else elm_layout_signal_emit(obj, "efl,state,radio,off", "efl");
      }
 
@@ -203,7 +203,7 @@ static char *
 _access_state_cb(void *data EINA_UNUSED, Evas_Object *obj)
 {
    if (elm_widget_disabled_get(obj)) return strdup(E_("State: Disabled"));
-   if (efl_ui_check_selected_get(obj)) return strdup(E_("State: On"));
+   if (efl_ui_selectable_selected_get(obj)) return strdup(E_("State: On"));
 
    return strdup(E_("State: Off"));
 }
@@ -259,8 +259,8 @@ _efl_ui_radio_state_value_set(Eo *obj, Efl_Ui_Radio_Data *sd, int value)
    sd->value = value;
    if (elm_widget_is_legacy(obj))
      {
-        if (sd->value == sd->group->value) efl_ui_check_selected_set(obj, EINA_TRUE);
-        else efl_ui_check_selected_set(obj, EINA_FALSE);
+        if (sd->value == sd->group->value) efl_ui_selectable_selected_set(obj, EINA_TRUE);
+        else efl_ui_selectable_selected_set(obj, EINA_FALSE);
      }
 }
 
@@ -504,8 +504,8 @@ elm_radio_group_add(Efl_Ui_Radio *obj, Efl_Ui_Radio *group)
         sd->group = sdg->group;
         sd->group->radios = eina_list_append(sd->group->radios, obj);
      }
-   if (sd->value == sd->group->value) efl_ui_check_selected_set(obj, EINA_TRUE);
-   else efl_ui_check_selected_set(obj, EINA_FALSE);
+   if (sd->value == sd->group->value) efl_ui_selectable_selected_set(obj, EINA_TRUE);
+   else efl_ui_selectable_selected_set(obj, EINA_FALSE);
 }
 
 #include "efl_ui_radio_legacy_eo.c"

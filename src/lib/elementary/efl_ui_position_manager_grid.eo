@@ -12,6 +12,7 @@ class @beta Efl.Ui.Position_Manager.Grid extends Efl.Object implements Efl.Ui.Po
       Efl.Ui.Position_Manager.Entity.item_removed;
       Efl.Ui.Position_Manager.Entity.position_single_item;
       Efl.Ui.Position_Manager.Entity.item_size_changed;
+      Efl.Ui.Position_Manager.Entity.relative_item;
       Efl.Ui.Layout_Orientable.orientation {set; get;}
    }
 }

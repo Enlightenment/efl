@@ -1728,13 +1728,13 @@ _format_command_shutdown(void)
  * @param[in] src the source string - Should not be NULL.
  */
 static int
-_format_clean_param(Eina_Tmpstr *s)
+_format_clean_param(char *s)
 {
-   Eina_Tmpstr *ss;
+   char *ss;
    char *ds;
    int len = 0;
 
-   ds = (char*) s;
+   ds = s;
    for (ss = s; *ss; ss++, ds++, len++)
      {
         if ((*ss == '\\') && *(ss + 1)) ss++;
@@ -1752,10 +1752,10 @@ _format_clean_param(Eina_Tmpstr *s)
  * @param obj the evas object - should not be NULL.
  * @param fmt The format to populate - should not be NULL.
  * @param[in] cmd the command to process, should be stringshared.
- * @param[in] param the parameter of the command.
+ * @param[in] param the parameter of the command. may modify the string.
  */
 static void
-_format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const char *cmd, Eina_Tmpstr *param)
+_format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const char *cmd, char *param)
 {
    int len;
 
@@ -2847,6 +2847,77 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
      }
 }
 
+/* 
+ * @internal
+ * just to create a constant without using marco
+ * 2 cacheline is enough for the string we parse
+ * usually color or color_class strings.
+ * reduce it if  this number is too high.
+ */
+enum _Internal{ ALLOCATOR_SIZE = 120 };
+
+/* 
+ * @internal
+ * A simple stack allocator which first
+ * tries to create a string in the stack (buffer
+ * it holds). if the string size is bigger than its
+ * buffer capacity it will fall back to creating the 
+ * string on heap.
+ * USAGE :
+ * Allocator a;
+ * _allocator_init(&a);
+ * _allocator_make_string(&a, "hello world", 11);
+ * ... //use the string
+ * ._allocator_reset(&a);
+ * Always call _allocator_reset() after
+ * you done with the string.
+ */
+typedef struct _Allocator
+{
+   char       stack[ALLOCATOR_SIZE];
+   char      *heap;
+} Allocator;
+
+static inline void
+_allocator_init(Allocator* allocator)
+{
+   if (allocator) allocator->heap = NULL;
+}
+
+static inline void
+_allocator_reset(Allocator* allocator)
+{
+   if (allocator && allocator->heap)
+     {
+        free(allocator->heap);
+        allocator->heap = NULL;
+     }
+}
+
+static char *
+_allocator_make_string(Allocator* allocator, const char* str, size_t size)
+{
+   if (!allocator) return NULL;
+   if (!size) return NULL;
+
+   if (size + 1 < ALLOCATOR_SIZE)
+     {
+        memcpy(allocator->stack, str, size);
+        allocator->stack[size] = '\0';
+        return allocator->stack;
+     }
+   //fallback to heap
+   if (allocator->heap) free(allocator->heap);
+
+   allocator->heap = malloc(size + 1);
+
+   if (!allocator->heap) return NULL;
+
+   memcpy(allocator->heap, str, size);
+   allocator->heap[size] = '\0';
+   return allocator->heap;
+}
+
 /**
  * @internal
  * Returns @c EINA_TRUE if the item is a format parameter, @c EINA_FALSE
@@ -2872,15 +2943,15 @@ _format_is_param(const char *item)
  * @param[out] key where to store the key at - Not NULL.
  * @param[out] val where to store the value at - Not NULL.
  */
-static void
-_format_param_parse(const char *item, const char **key, Eina_Tmpstr **val)
+static Eina_Bool
+_format_param_parse(const char *item, const char **key, char **val, Allocator *allocator)
 {
    const char *start, *end;
    char *tmp, *s, *d;
    size_t len;
 
    start = strchr(item, '=');
-   if (!start) return ;
+   if (!start) return EINA_FALSE;
    *key = eina_stringshare_add_length(item, start - item);
    start++; /* Advance after the '=' */
    /* If we can find a quote as the first non-space char,
@@ -2906,7 +2977,7 @@ _format_param_parse(const char *item, const char **key, Eina_Tmpstr **val)
    if (end) len = end - start;
    else len = strlen(start);
 
-   tmp = (char*) eina_tmpstr_add_length(start, len);
+   tmp = _allocator_make_string(allocator, start, len);
    if (!tmp) goto end;
 
    for (d = tmp, s = tmp; *s; s++)
@@ -2921,6 +2992,8 @@ _format_param_parse(const char *item, const char **key, Eina_Tmpstr **val)
 
 end:
    *val = tmp;
+
+   return EINA_TRUE;
 }
 
 /**
@@ -2989,22 +3062,23 @@ _format_fill(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const char 
    /* get rid of any spaces at the start of the string */
    while (*s == ' ') s++;
 
+   Allocator allocator;
+   _allocator_init(&allocator);
+
    while ((item = _format_parse(&s)))
      {
-        if (_format_is_param(item))
+        const char *key = NULL;
+        char *val = NULL;
+        if (_format_param_parse(item, &key, &val, &allocator))
           {
-             const char *key = NULL;
-             Eina_Tmpstr *val = NULL;
-
-             _format_param_parse(item, &key, &val);
              if ((key) && (val)) _format_command(eo_obj, fmt, key, val);
              eina_stringshare_del(key);
-             eina_tmpstr_del(val);
           }
         else
           {
              /* immediate - not handled here */
           }
+        _allocator_reset(&allocator);
      }
 }
 
@@ -3715,12 +3789,17 @@ static void
 _layout_format_value_handle(Ctxt *c, Evas_Object_Textblock_Format *fmt, const char *item)
 {
    const char *key = NULL;
-   Eina_Tmpstr *val = NULL;
+   char *val = NULL;
+   
+   Allocator allocator;
+   _allocator_init(&allocator);
 
-   _format_param_parse(item, &key, &val);
+   _format_param_parse(item, &key, &val, &allocator);
    if ((key) && (val)) _format_command(c->obj, fmt, key, val);
    if (key) eina_stringshare_del(key);
-   if (val) eina_tmpstr_del(val);
+
+   _allocator_reset(&allocator);
+
    c->align = fmt->halign;
    c->align_auto = fmt->halign_auto;
    c->marginl = fmt->margin.l;
@@ -15244,11 +15323,11 @@ _efl_canvas_text_efl_canvas_object_paragraph_direction_set(Eo *eo_obj,
 #ifdef BIDI_SUPPORT
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
-   if ((!(o->inherit_paragraph_direction) && (o->paragraph_direction == (Evas_BiDi_Direction)dir)) ||
-       (o->inherit_paragraph_direction && ((Evas_BiDi_Direction)dir == EVAS_BIDI_DIRECTION_INHERIT)))
+   if ((!(o->inherit_paragraph_direction) && (o->paragraph_direction == dir)) ||
+       (o->inherit_paragraph_direction && (dir == EVAS_BIDI_DIRECTION_INHERIT)))
      return;
 
-   if (dir == (Efl_Text_Bidirectional_Type)EVAS_BIDI_DIRECTION_INHERIT)
+   if (dir == EVAS_BIDI_DIRECTION_INHERIT)
      {
         o->inherit_paragraph_direction = EINA_TRUE;
         Evas_BiDi_Direction parent_dir = EVAS_BIDI_DIRECTION_NEUTRAL;

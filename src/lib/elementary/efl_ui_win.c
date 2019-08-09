@@ -5024,7 +5024,7 @@ _indicator_resized(void *data, const Efl_Event *event)
    ELM_WIN_DATA_GET_OR_RETURN(data, sd);
    Evas_Object *indicator = event->object;
    Evas_Coord_Size *size = (Evas_Coord_Size *)event->info;
-   efl_gfx_hint_size_restricted_min_set(indicator, EINA_SIZE2D(size->w, size->h));
+   efl_gfx_hint_size_min_set(indicator, EINA_SIZE2D(size->w, size->h));
    _elm_win_frame_obj_update(sd, 0);
 }
 

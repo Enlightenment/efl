@@ -804,15 +804,15 @@ evas_image_load_file_data_png(void *loader_data,
                   //general case: 4 bytes pixel.
                   if (pack_offset == sizeof(DATA32))
                     {
-                       DATA32 *dst_ptr = (DATA32 *) surface;
+                       DATA32 *dst_ptr2 = (DATA32 *) surface;
                        DATA32 *src_ptr2 = (DATA32 *) src_ptr;
 
                        for (i = 0; i < h; i++)
                          {
                             for (j = 0; j < w; j++)
                               {
-                                 *dst_ptr = *src_ptr2;
-                                 ++dst_ptr;
+                                 *dst_ptr2 = *src_ptr2;
+                                 ++dst_ptr2;
                                  src_ptr2 += scale_ratio;
                               }
                             src_ptr2 += scale_ratio * image_w;
@@ -820,15 +820,15 @@ evas_image_load_file_data_png(void *loader_data,
                     }
                   else
                     {
-                       unsigned char *dst_ptr = surface;
+                       unsigned char *dst_ptr2 = surface;
 
                        for (i = 0; i < h; i++)
                          {
                             for (j = 0; j < w; j++)
                               {
                                  for (k = 0; k < (int)pack_offset; k++)
-                                   dst_ptr[k] = src_ptr[k + scale_ratio * j * pack_offset];
-                                 dst_ptr += pack_offset;
+                                   dst_ptr2[k] = src_ptr[k + scale_ratio * j * pack_offset];
+                                 dst_ptr2 += pack_offset;
                               }
                             src_ptr += scale_ratio * image_w * pack_offset;
                          }

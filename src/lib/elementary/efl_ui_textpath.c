@@ -552,7 +552,7 @@ _ellipsis_set(Efl_Ui_Textpath_Data *pd, Eo *obj)
      tb = edje_object_part_object_get(pd->text_obj, "efl.text");
 
    evas_object_textblock_size_native_get(tb, &w, &h);
-   evas_object_size_hint_min_set(pd->text_obj, w, h);
+   efl_gfx_hint_size_restricted_min_set(pd->text_obj, EINA_SIZE2D(w, h));
    if (pd->ellipsis)
      {
         if (w > pd->total_length)
@@ -719,6 +719,8 @@ _efl_ui_textpath_efl_object_destructor(Eo *obj, Efl_Ui_Textpath_Data *pd)
    EINA_LIST_FREE(pd->lines, line)
       evas_object_del(line);
 #endif
+
+   efl_gfx_path_reset(obj);
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }

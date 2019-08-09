@@ -412,10 +412,6 @@ EAPI extern int ECORE_WL2_EVENT_SEAT_KEYBOARD_REPEAT_CHANGED; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_SEAT_SELECTION; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_OUTPUT_TRANSFORM; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATE; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_PREPARE_DONE; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_REQUEST; /** @since 1.20 */
-EAPI extern int ECORE_WL2_EVENT_WINDOW_ROTATION_CHANGE_DONE; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_AUX_HINT_ALLOWED; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_AUX_HINT_SUPPORTED; /** @since 1.20 */
 EAPI extern int ECORE_WL2_EVENT_AUX_MESSAGE; /** @since 1.20 */
@@ -1136,11 +1132,6 @@ EAPI void ecore_wl2_window_available_rotations_set(Ecore_Wl2_Window *window, con
  * @since 1.20
  */
 EAPI Eina_Bool ecore_wl2_window_available_rotations_get(Ecore_Wl2_Window *window, int **rots, unsigned int *count);
-
-EAPI void ecore_wl2_window_rotation_change_prepare_send(Ecore_Wl2_Window *window, int rot, int w, int h, Eina_Bool resize);
-EAPI void ecore_wl2_window_rotation_change_prepare_done_send(Ecore_Wl2_Window *window, int rot);
-EAPI void ecore_wl2_window_rotation_change_request_send(Ecore_Wl2_Window *window, int rot);
-EAPI void ecore_wl2_window_rotation_change_done_send(Ecore_Wl2_Window *window, int rot, int w, int h);
 
 /**
  * Get list of supported auxiliary window hints
@@ -1877,9 +1868,6 @@ EAPI void ecore_wl2_session_recovery_disable(void);
  */
 EAPI void ecore_wl2_window_commit(Ecore_Wl2_Window *window, Eina_Bool flush);
 
-/* TODO: doxygen if we are keeping this function public */
-EAPI void ecore_wl2_window_false_commit(Ecore_Wl2_Window *window);
-
 /**
  * Check if a wayland window's surface is in the pending state.
  *
@@ -1988,7 +1976,6 @@ EAPI void ecore_wl2_buffer_busy_set(Ecore_Wl2_Buffer *buffer);
 EAPI int ecore_wl2_buffer_age_get(Ecore_Wl2_Buffer *buffer);
 EAPI void ecore_wl2_buffer_age_set(Ecore_Wl2_Buffer *buffer, int age);
 EAPI void ecore_wl2_buffer_age_inc(Ecore_Wl2_Buffer *buffer);
-EAPI Eina_Bool ecore_wl2_buffer_fit(Ecore_Wl2_Buffer *b, int w, int h);
 
 EAPI Ecore_Wl2_Surface *ecore_wl2_surface_create(Ecore_Wl2_Window *win, Eina_Bool alpha);
 EAPI void ecore_wl2_surface_destroy(Ecore_Wl2_Surface *surface);

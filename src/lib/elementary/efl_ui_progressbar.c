@@ -249,13 +249,13 @@ _efl_ui_progressbar_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Progressbar_Data *
    sd->has_cur_progressbar_part = edje_object_part_exists(obj, curprogresspart[elm_widget_is_legacy(obj)]);
 
    if (_is_horizontal(sd->dir))
-     evas_object_size_hint_min_set
-       (sd->spacer, (double)sd->size * efl_gfx_entity_scale_get(obj) *
-       elm_config_scale_get(), 1);
+     efl_gfx_hint_size_min_set
+       (sd->spacer, EINA_SIZE2D((double)sd->size * efl_gfx_entity_scale_get(obj) *
+       elm_config_scale_get(), 1));
    else
-     evas_object_size_hint_min_set
-       (sd->spacer, 1, (double)sd->size * efl_gfx_entity_scale_get(obj) *
-       elm_config_scale_get());
+     efl_gfx_hint_size_min_set
+       (sd->spacer, EINA_SIZE2D(1, (double)sd->size * efl_gfx_entity_scale_get(obj) *
+       elm_config_scale_get()));
 
    if (elm_widget_is_legacy(obj))
      {
@@ -447,13 +447,13 @@ _progressbar_span_size_set(Eo *obj, Efl_Ui_Progressbar_Data *sd, Evas_Coord size
    sd->size = size;
 
    if (_is_horizontal(sd->dir))
-     evas_object_size_hint_min_set
-       (sd->spacer, (double)sd->size * efl_gfx_entity_scale_get(obj) *
-       elm_config_scale_get(), 1);
+     efl_gfx_hint_size_min_set
+       (sd->spacer, EINA_SIZE2D((double)sd->size * efl_gfx_entity_scale_get(obj) *
+       elm_config_scale_get(), 1));
    else
-     evas_object_size_hint_min_set
-       (sd->spacer, 1, (double)sd->size * efl_gfx_entity_scale_get(obj) *
-       elm_config_scale_get());
+     efl_gfx_hint_size_min_set
+       (sd->spacer, EINA_SIZE2D(1, (double)sd->size * efl_gfx_entity_scale_get(obj) *
+       elm_config_scale_get()));
 
    efl_canvas_group_change(obj);
 }

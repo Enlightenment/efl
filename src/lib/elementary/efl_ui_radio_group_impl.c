@@ -28,11 +28,11 @@ _efl_ui_radio_group_impl_efl_ui_radio_group_selected_object_set(Eo *obj EINA_UNU
    //it is essential to *first* set pd->selected to the new state before calling this
    //otherwise this here will be called again, and the event will get emitted twice
    if (old_selected && efl_alive_get(old_selected))
-    efl_ui_check_selected_set(old_selected, EINA_FALSE);
+    efl_ui_selectable_selected_set(old_selected, EINA_FALSE);
 
    if (pd->selected)
      {
-        efl_ui_check_selected_set(pd->selected, EINA_TRUE);
+        efl_ui_selectable_selected_set(pd->selected, EINA_TRUE);
         new_value = efl_ui_radio_state_value_get(pd->selected);
      }
    efl_event_callback_call(obj, EFL_UI_RADIO_GROUP_EVENT_VALUE_CHANGED, &new_value);
@@ -70,7 +70,7 @@ _efl_ui_radio_group_impl_efl_ui_radio_group_selected_value_get(const Eo *obj EIN
 static void
 _selected_cb(void *data, const Efl_Event *ev)
 {
-   if (efl_ui_check_selected_get(ev->object))
+   if (efl_ui_selectable_selected_get(ev->object))
      {
         efl_ui_radio_group_selected_object_set(data, ev->object);
      }
@@ -91,7 +91,7 @@ _invalidate_cb(void *data, const Efl_Event *ev)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(radio_btn_cb,
-  {EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _selected_cb},
+  {EFL_UI_EVENT_SELECTED_CHANGED, _selected_cb},
   {EFL_EVENT_INVALIDATE, _invalidate_cb},
 )
 

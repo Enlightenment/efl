@@ -8,10 +8,11 @@ enum @beta Efl.Ui.Select_Mode {
    none [[Last value of select mode. child cannot be selected at all.]]
 }
 
-interface @beta Efl.Ui.Multi_Selectable
+interface @beta Efl.Ui.Multi_Selectable extends Efl.Ui.Single_Selectable
 {
-   [[Efl UI Multi selectable interface.
-     The container have to control select property of multiple chidren.]]
+   [[Interface for getting access to a range of selected items.
+
+     The implementor of this interface provides the possibility to select multiple Selectables. (If not, only Efl.Ui.Single_Selectable should be implemented)]]
    c_prefix: efl_ui;
    methods
    {
@@ -22,6 +23,10 @@ interface @beta Efl.Ui.Multi_Selectable
          values {
             mode: Efl.Ui.Select_Mode; [[Type of selection of children]]
          }
+      }
+      selected_items_get {
+         [[Get the selected items in a iterator. The iterator sequence will be decided by selection.]]
+         return: iterator<Efl.Ui.Selectable> @owned @no_unused; [[User has to free the iterator after usage.]]
       }
    }
 }

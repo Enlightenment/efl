@@ -264,10 +264,10 @@ _efl_ui_format_formatted_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Format_Data *pd, 
    if (pd->format_values)
      {
         /* Search in the format_values array if we have one */
-        Efl_Ui_Format_Value v = { 0 };
+        Efl_Ui_Format_Value val = { 0 };
         int ndx;
-        eina_value_int_convert(&value, &v.value);
-        ndx = eina_inarray_search_sorted(pd->format_values, &v, (Eina_Compare_Cb)_value_compare);
+        eina_value_int_convert(&value, &val.value);
+        ndx = eina_inarray_search_sorted(pd->format_values, &val, (Eina_Compare_Cb)_value_compare);
         if (ndx > -1) {
           Efl_Ui_Format_Value *entry = eina_inarray_nth(pd->format_values, ndx);
           eina_strbuf_append(str, entry->text);

@@ -18,14 +18,14 @@ typedef enum {
 static void
 _btn_color_clicked_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   Eo *layout = data;
+   Eo *l = data;
 
    static Eina_Bool changed = EINA_TRUE;
 
    if (changed)
-     efl_gfx_color_set(layout, 0, 88, 204, 255);
+     efl_gfx_color_set(l, 0, 88, 204, 255);
    else
-     efl_gfx_color_set(layout, 255, 255, 255, 255);
+     efl_gfx_color_set(l, 255, 255, 255, 255);
 
    changed = !changed;
 }

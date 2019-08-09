@@ -477,8 +477,8 @@ _reload_clicked(void *data, const Efl_Event *ev EINA_UNUSED)
    Eo *im = efl_key_data_get(win, "im");
    Eo *chk1 = efl_key_data_get(win, "chk1");
    Eo *chk2 = efl_key_data_get(win, "chk2");
-   Eina_Bool async = efl_ui_check_selected_get(chk1);
-   Eina_Bool preload = efl_ui_check_selected_get(chk2);
+   Eina_Bool async = efl_ui_selectable_selected_get(chk1);
+   Eina_Bool preload = efl_ui_selectable_selected_get(chk2);
    Eina_Bool logo = EINA_FALSE;
    const char *file = NULL;
 
@@ -496,8 +496,8 @@ _switch_clicked(void *data, const Efl_Event *ev EINA_UNUSED)
    Eo *im = efl_key_data_get(win, "im");
    Eo *chk1 = efl_key_data_get(win, "chk1");
    Eo *chk2 = efl_key_data_get(win, "chk2");
-   Eina_Bool async = efl_ui_check_selected_get(chk1);
-   Eina_Bool preload = efl_ui_check_selected_get(chk2);
+   Eina_Bool async = efl_ui_selectable_selected_get(chk1);
+   Eina_Bool preload = efl_ui_selectable_selected_get(chk2);
    char buf[PATH_MAX] = {0};
    Eina_Bool logo = EINA_FALSE;
    const char *file = NULL;

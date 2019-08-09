@@ -339,7 +339,7 @@ static void prev_block_check_cb(void *data, const Efl_Event *ev)
    Eo *pager = data;
    Eina_Bool prev, next;
 
-   prev = efl_ui_check_selected_get(ev->object);
+   prev = efl_ui_selectable_selected_get(ev->object);
 
    efl_ui_pager_scroll_block_get(pager, NULL, &next);
    efl_ui_pager_scroll_block_set(pager, prev, next);
@@ -350,7 +350,7 @@ static void next_block_check_cb(void *data, const Efl_Event *ev)
    Eo *pager = data;
    Eina_Bool prev, next;
 
-   next = efl_ui_check_selected_get(ev->object);
+   next = efl_ui_selectable_selected_get(ev->object);
 
    efl_ui_pager_scroll_block_get(pager, &prev, NULL);
    efl_ui_pager_scroll_block_set(pager, prev, next);
@@ -429,7 +429,7 @@ static void page_size_cb(void *data,
    size_params->pager = params->pager;
    size_params->params = params;
 
-   efl_event_callback_add(ck, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, width_check_cb,
+   efl_event_callback_add(ck, EFL_UI_EVENT_SELECTED_CHANGED, width_check_cb,
                           size_params);
    efl_event_callback_add(ck, EFL_EVENT_DEL, check_del_cb, size_params);
 
@@ -470,7 +470,7 @@ static void page_size_cb(void *data,
    size_params->pager = params->pager;
    size_params->params = params;
 
-   efl_event_callback_add(ck, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, height_check_cb,
+   efl_event_callback_add(ck, EFL_UI_EVENT_SELECTED_CHANGED, height_check_cb,
                           size_params);
    efl_event_callback_add(ck, EFL_EVENT_DEL, check_del_cb, size_params);
 
@@ -796,16 +796,16 @@ static void scroll_block_cb(void *data,
    c = efl_add(EFL_UI_CHECK_CLASS, box);
    efl_ui_widget_style_set(c, "toggle");
    efl_text_set(c, "Prev Block");
-   efl_ui_check_selected_set(c, prev);
-   efl_event_callback_add(c, EFL_UI_CHECK_EVENT_SELECTED_CHANGED,
+   efl_ui_selectable_selected_set(c, prev);
+   efl_event_callback_add(c, EFL_UI_EVENT_SELECTED_CHANGED,
                           prev_block_check_cb, pager);
    efl_pack_end(box, c);
 
    c = efl_add(EFL_UI_CHECK_CLASS, box);
    efl_ui_widget_style_set(c, "toggle");
    efl_text_set(c, "Next Block");
-   efl_ui_check_selected_set(c, next);
-   efl_event_callback_add(c, EFL_UI_CHECK_EVENT_SELECTED_CHANGED,
+   efl_ui_selectable_selected_set(c, next);
+   efl_event_callback_add(c, EFL_UI_EVENT_SELECTED_CHANGED,
                           next_block_check_cb, pager);
    efl_pack_end(box, c);
 }
@@ -834,7 +834,7 @@ static void loop_cb(void *data EINA_UNUSED,
    efl_ui_radio_state_value_set(rd, EFL_UI_PAGER_LOOP_DISABLED);
    efl_text_set(rd, "Disabled");
    efl_gfx_hint_weight_set(rd, 1, 0);
-   efl_event_callback_add(rd, EFL_UI_CHECK_EVENT_SELECTED_CHANGED,
+   efl_event_callback_add(rd, EFL_UI_EVENT_SELECTED_CHANGED,
                           loop_radio_cb, pager);
    efl_pack(box, rd);
 
@@ -842,7 +842,7 @@ static void loop_cb(void *data EINA_UNUSED,
    efl_ui_radio_state_value_set(rd, EFL_UI_PAGER_LOOP_ENABLED);
    efl_text_set(rd, "Enabled");
    efl_gfx_hint_weight_set(rd, 1, 0);
-   efl_event_callback_add(rd, EFL_UI_CHECK_EVENT_SELECTED_CHANGED,
+   efl_event_callback_add(rd, EFL_UI_EVENT_SELECTED_CHANGED,
                           loop_radio_cb, pager);
    efl_pack(box, rd);
 

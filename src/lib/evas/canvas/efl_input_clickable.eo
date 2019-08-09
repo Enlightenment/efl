@@ -1,7 +1,7 @@
 struct @beta Efl.Input.Clickable_Clicked {
    [[A struct that expresses a click in elementary.]]
-   repeated : int; [[The amount of how often the clicked event was repeated in a certain amount of time]]
-   button : int; [[The Button that is pressed]]
+   repeated : uint; [[The amount of how often the clicked event was repeated in a certain amount of time]]
+   button : uint; [[The Button that is pressed]]
 }
 
 mixin @beta Efl.Input.Clickable

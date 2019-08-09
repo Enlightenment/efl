@@ -36,16 +36,16 @@ EFL_END_TEST
 
 EFL_START_TEST(check_selection_state)
 {
-   efl_ui_check_selected_set(check, EINA_TRUE);
-   ck_assert_int_eq(efl_ui_check_selected_get(check), EINA_TRUE);
-   efl_ui_check_selected_set(check, EINA_TRUE);
-   ck_assert_int_eq(efl_ui_check_selected_get(check), EINA_TRUE);
+   efl_ui_selectable_selected_set(check, EINA_TRUE);
+   ck_assert_int_eq(efl_ui_selectable_selected_get(check), EINA_TRUE);
+   efl_ui_selectable_selected_set(check, EINA_TRUE);
+   ck_assert_int_eq(efl_ui_selectable_selected_get(check), EINA_TRUE);
    //TODO verify that signals can be emitted
 
-   efl_ui_check_selected_set(check, EINA_FALSE);
-   ck_assert_int_eq(efl_ui_check_selected_get(check), EINA_FALSE);
-   efl_ui_check_selected_set(check, EINA_FALSE);
-   ck_assert_int_eq(efl_ui_check_selected_get(check), EINA_FALSE);
+   efl_ui_selectable_selected_set(check, EINA_FALSE);
+   ck_assert_int_eq(efl_ui_selectable_selected_get(check), EINA_FALSE);
+   efl_ui_selectable_selected_set(check, EINA_FALSE);
+   ck_assert_int_eq(efl_ui_selectable_selected_get(check), EINA_FALSE);
    //TODO verify that signals can be emitted
 }
 EFL_END_TEST
@@ -62,10 +62,10 @@ EFL_START_TEST(check_selection_events)
 {
    Eina_Bool bool_event_info = EINA_FALSE;
 
-   efl_event_callback_add(check, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _check, &bool_event_info);
-   efl_ui_check_selected_set(check, EINA_TRUE);
+   efl_event_callback_add(check, EFL_UI_EVENT_SELECTED_CHANGED, _check, &bool_event_info);
+   efl_ui_selectable_selected_set(check, EINA_TRUE);
    ck_assert_int_eq(bool_event_info, EINA_TRUE);
-   efl_ui_check_selected_set(check, EINA_FALSE);
+   efl_ui_selectable_selected_set(check, EINA_FALSE);
    ck_assert_int_eq(bool_event_info, EINA_FALSE);
 }
 EFL_END_TEST

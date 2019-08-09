@@ -491,7 +491,7 @@ _change_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    cur = efl_ui_spotlight_active_index_get(tcd->tab_pager);
    tab_page = efl_pack_content_get(tcd->tab_pager, cur);
 
-   if (efl_ui_check_selected_get(tcd->label_check))
+   if (efl_ui_selectable_selected_get(tcd->label_check))
    {
       label = tab_label_get();
       efl_text_set(efl_part(tab_page, "tab"), label);
@@ -499,7 +499,7 @@ _change_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
       efl_content_set(tab_page, content);
    }
 
-   if (efl_ui_check_selected_get(tcd->icon_check))
+   if (efl_ui_selectable_selected_get(tcd->icon_check))
    {
       icon = tab_icon_get();
       efl_ui_tab_page_part_tab_icon_set(efl_part(tab_page, "tab"), icon);
@@ -534,12 +534,12 @@ _tab_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
 
    label_check = efl_add(EFL_UI_CHECK_CLASS, box);
    efl_text_set(label_check, "Tab Label + Page");
-   efl_ui_check_selected_set(label_check, EINA_FALSE);
+   efl_ui_selectable_selected_set(label_check, EINA_FALSE);
    efl_pack_end(box, label_check);
 
    icon_check = efl_add(EFL_UI_CHECK_CLASS, box);
    efl_text_set(icon_check, "Tab Icon");
-   efl_ui_check_selected_set(icon_check, EINA_FALSE);
+   efl_ui_selectable_selected_set(icon_check, EINA_FALSE);
    efl_pack_end(box, icon_check);
 
    tcd->tab_pager = tab_pager;

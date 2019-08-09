@@ -1084,6 +1084,7 @@ struct _Evas_Object_Protected_State
    Eina_Bool             anti_alias : 1;
    Eina_Bool             valid_bounding_box : 1;
    Eina_Bool             snapshot : 1;
+   Eina_Bool             has_fixed_size : 1;
 };
 
 struct _Evas_Object_Pointer_Data {

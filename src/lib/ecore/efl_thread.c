@@ -120,25 +120,25 @@ _cb_thread_ctrl_out(void *data, const Efl_Event *event EINA_UNUSED)
              Eina_Free_Cb free_func = cmd.d.ptr[2];
              if (func)
                {
-                  Efl_Event event = { obj, NULL, NULL };
+                  Efl_Event ev = { obj, NULL, NULL };
 
-                  func(data, &event);
+                  func(data, &ev);
                }
              if (free_func) free_func(data);
           }
         else if (cmd.d.command == CMD_CALL_SYNC)
           {
              EflThreadIOCallSync func = cmd.d.ptr[0];
-             void *data = cmd.d.ptr[1];
+             void *d = cmd.d.ptr[1];
              Eina_Free_Cb free_func = cmd.d.ptr[2];
              Control_Reply *rep = cmd.d.ptr[3];
              if (func)
                {
-                  Efl_Event event = { obj, NULL, NULL };
+                  Efl_Event ev = { obj, NULL, NULL };
 
-                  rep->data = func(data, &event);
+                  rep->data = func(d, &ev);
                }
-             if (free_func) free_func(data);
+             if (free_func) free_func(d);
              eina_semaphore_release(&(rep->sem), 1);
           }
      }

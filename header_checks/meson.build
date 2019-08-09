@@ -34,7 +34,6 @@ header_checks = [
   'netinet/udp.h',
   'net/if.h',
   'stdlib.h',
-  'mman.h',
   'sys/auxv.h',
   'sys/inotify.h',
   'sys/ioctl.h',
@@ -203,10 +202,6 @@ endforeach
 # The next checks are manually for now due to the fact that some names are not within the default pattern
 if (cc.has_header_symbol('sys/stat.h', 'fstatat'))
   config_h.set10('HAVE_ATFILE_SOURCE', true)
-endif
-
-if (cc.has_header('sys/mman.h'))
-  config_h.set10('HAVE_MMAN_H', true)
 endif
 
 if sys_linux and config_h.has('HAVE_LISTXATTR') and config_h.has('HAVE_SETXATTR') and config_h.has('HAVE_GETXATTR')

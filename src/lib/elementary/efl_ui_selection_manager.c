@@ -4,7 +4,7 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#ifdef HAVE_MMAN_H
+#ifdef HAVE_SYS_MMAN_H
 # include <sys/mman.h>
 #endif
 
@@ -257,7 +257,7 @@ _update_sel_lost_list(Efl_Object *obj, Efl_Ui_Selection_Type type,
 static Tmp_Info *
 _tempfile_new(int size)
 {
-#ifdef HAVE_MMAN_H
+#ifdef HAVE_MMAP
    Tmp_Info *info;
    const char *tmppath = NULL;
    mode_t cur_umask;

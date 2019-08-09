@@ -129,7 +129,7 @@ _efl_ui_panes_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Panes_Data *sd)
 
    evas_object_hide(sd->event);
    elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-   evas_object_size_hint_min_set(sd->event, minw, minh);
+   efl_gfx_hint_size_min_set(sd->event, EINA_SIZE2D(minw, minh));
 
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
@@ -468,7 +468,7 @@ _efl_ui_panes_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UN
              Evas_Coord minw = 0, minh = 0;
 
              elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-             evas_object_size_hint_min_set(sd->event, minw, minh);
+             efl_gfx_hint_size_min_set(sd->event, EINA_SIZE2D(minw, minh));
              elm_layout_content_set(obj, "elm.swallow.event", sd->event);
           }
      }
@@ -480,7 +480,7 @@ _efl_ui_panes_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Panes_Data *_pd EINA_UN
              Evas_Coord minw = 0, minh = 0;
 
              elm_coords_finger_size_adjust(1, &minw, 1, &minh);
-             evas_object_size_hint_min_set(sd->event, minw, minh);
+             efl_gfx_hint_size_min_set(sd->event, EINA_SIZE2D(minw, minh));
              elm_layout_content_set(obj, "efl.event", sd->event);
           }
      }

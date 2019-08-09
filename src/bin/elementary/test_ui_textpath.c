@@ -121,20 +121,20 @@ test_ui_textpath(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
    chk = efl_add(EFL_UI_CHECK_CLASS, win);
    efl_text_set(chk, "Ellipsis");
    elm_check_state_set(chk, efl_ui_textpath_ellipsis_get(txtpath));
-   efl_event_callback_add(chk, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _ellipsis_changed_cb, txtpath);
+   efl_event_callback_add(chk, EFL_UI_EVENT_SELECTED_CHANGED, _ellipsis_changed_cb, txtpath);
    elm_box_pack_end(hbox, chk);
    efl_gfx_entity_visible_set(chk, EINA_TRUE);
 
    chk = efl_add(EFL_UI_CHECK_CLASS, win);
    efl_text_set(chk, "Clockwise");
-   efl_event_callback_add(chk, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _direction_changed_cb, txtpath);
+   efl_event_callback_add(chk, EFL_UI_EVENT_SELECTED_CHANGED, _direction_changed_cb, txtpath);
    elm_box_pack_end(hbox, chk);
    efl_gfx_entity_visible_set(chk, EINA_TRUE);
    dir_chk = chk;
 
    chk = efl_add(EFL_UI_CHECK_CLASS, win);
    efl_text_set(chk, "Short text");
-   efl_event_callback_add(chk, EFL_UI_CHECK_EVENT_SELECTED_CHANGED, _short_text_changed_cb, txtpath);
+   efl_event_callback_add(chk, EFL_UI_EVENT_SELECTED_CHANGED, _short_text_changed_cb, txtpath);
    elm_box_pack_end(hbox, chk);
    efl_gfx_entity_visible_set(chk, EINA_TRUE);
 

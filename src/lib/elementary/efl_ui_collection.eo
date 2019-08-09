@@ -32,18 +32,6 @@ class @beta Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
             @in animation: bool; [[If you want to have an animation or not.]]
          }
       }
-      @property last_selected_item {
-         [[The item that was selected most recently.
-         ]]
-         get {}
-         values {
-            item: Efl.Ui.Item; [[The latest selected item.]]
-         }
-      }
-      selected_items_get {
-         [[Get the selected items iterator. The iterator sequence will be decided by selection.]]
-         return: iterator<Efl.Ui.Item> @owned @no_unused; [[User has to free the iterator after usage.]]
-      }
       @property position_manager {
          [[Position manager object that handles placement of items.]]
          values {
@@ -73,10 +61,12 @@ class @beta Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
       Efl.Pack_Linear.pack_index_get;
       Efl.Pack_Linear.pack_content_get;
       Efl.Ui.Scrollable_Interactive.match_content { set; }
-      Efl.Ui.Multi_Selectable.select_mode {get; set;}
       Efl.Ui.Widget_Focus_Manager.focus_manager_create;
       Efl.Ui.Widget.focus_state_apply;
       Efl.Ui.Focus.Manager.move;
+      Efl.Ui.Single_Selectable.last_selected { get; }
+      Efl.Ui.Multi_Selectable.selected_items_get;
+      Efl.Ui.Multi_Selectable.select_mode {get; set;}
    }
    events {
       item,pressed : Efl.Ui.Item; [[A $press event occurred over an item.]]

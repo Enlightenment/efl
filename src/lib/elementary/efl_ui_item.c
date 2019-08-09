@@ -143,11 +143,17 @@ _item_select(Eo *obj, Efl_Ui_Item_Data *pd)
 {
    Efl_Ui_Select_Mode m;
 
-   if (!pd->parent)
-     return;
-   m = efl_ui_select_mode_get(pd->parent);
-   if (m == EFL_UI_SELECT_MODE_NONE || (pd->selected && m != EFL_UI_SELECT_MODE_SINGLE_ALWAYS))
-     return;
+   if (pd->parent)
+     {
+        m = efl_ui_select_mode_get(pd->parent);
+        if (m == EFL_UI_SELECT_MODE_NONE || (pd->selected && m != EFL_UI_SELECT_MODE_SINGLE_ALWAYS))
+          return;
+     }
+   else
+     {
+        if (pd->selected)
+          return;
+     }
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
@@ -191,9 +197,9 @@ _item_unpressed(void *data, const Efl_Event *ev EINA_UNUSED)
    m = efl_ui_select_mode_get(efl_ui_item_container_get(obj));
 
    if ((m != EFL_UI_SELECT_MODE_SINGLE_ALWAYS) && (pd->selected))
-     _item_unselect(obj, pd);
+     efl_ui_selectable_selected_set(obj, EINA_FALSE);
    else if (m != EFL_UI_SELECT_MODE_NONE)
-     _item_select(obj, pd);
+     efl_ui_selectable_selected_set(obj, EINA_TRUE);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(self_listening,
@@ -273,3 +279,5 @@ _efl_ui_item_container_get(const Eo *obj EINA_UNUSED, Efl_Ui_Item_Data *pd)
 
 #include "efl_ui_item.eo.c"
 #include "efl_ui_selectable.eo.c"
+#include "efl_ui_multi_selectable.eo.c"
+#include "efl_ui_single_selectable.eo.c"

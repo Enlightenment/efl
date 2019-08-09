@@ -1301,6 +1301,18 @@ _efl_canvas_object_efl_gfx_entity_size_set(Eo *eo_obj, Evas_Object_Protected_Dat
    Eina_Bool source_invisible = EINA_FALSE;
    Eina_List *was = NULL;
 
+   if (obj->cur->have_clipees)
+     {
+        const Eina_List *l;
+        Evas_Object_Protected_Data *clipee;
+
+        EINA_LIST_FOREACH(obj->clip.clipees, l, clipee)
+          {
+             if (clipee->cur->has_fixed_size)
+               ERR("resizing static clipper! this is a bug!!!!");
+          }
+     }
+
    if (sz.w < 0) sz.w = 0;
    if (sz.h < 0) sz.h = 0;
 

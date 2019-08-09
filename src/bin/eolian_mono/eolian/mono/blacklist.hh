@@ -114,8 +114,7 @@ inline bool is_alias_blacklisted(attributes::alias_def const& alias)
 
 inline bool is_property_blacklisted(std::string const& name)
 {
-    return name == "Efl.Input.Hold.Hold"
-        || name == "Efl.IText.Text";
+    return name == "Efl.IText.Text";
 }
 
 template<typename Context>

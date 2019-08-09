@@ -1,3 +1,4 @@
+import efl_ui;
 
 function Efl.Ui.Position_Manager.Batch_Access_Entity {
    [[ Function callback for getting a batch of items]]
@@ -113,6 +114,14 @@ interface @beta Efl.Ui.Position_Manager.Entity extends Efl.Ui.Layout_Orientable
           start_id : int; [[The first item that has a new size]]
           end_id : int; [[The last item that has a new size]]
         }
+      }
+      relative_item {
+        [[translate the current_id, into a new id which is oriented in the $direction of $current_id. In case that there is no item, -1 is returned]]
+        params {
+          current_id : uint; [[The id where the direction is oriented at]]
+          direction : Efl.Ui.Focus.Direction; [[The direction where the new id is]]
+        }
+        return : int; [[The id of the item in that direction, or -1 if there is no item in that direction]]
       }
    }
    events {

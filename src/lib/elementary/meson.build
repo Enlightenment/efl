@@ -185,6 +185,8 @@ pub_eo_files = [
   'efl_ui_position_manager_list.eo',
   'efl_ui_position_manager_grid.eo',
   'efl_ui_selectable.eo',
+  'efl_ui_multi_selectable.eo',
+  'efl_ui_single_selectable.eo',
 ]
 
 foreach eo_file : pub_eo_files
@@ -239,6 +241,7 @@ priv_eo_files = [
   'efl_ui_exact_model.eo',
   'efl_ui_average_model.eo',
   'efl_ui_spotlight_manager_plain.eo',
+  'efl_ui_collection_focus_manager.eo',
 ]
 
 priv_eo_file_target = []
