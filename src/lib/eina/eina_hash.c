@@ -1077,6 +1077,9 @@ eina_hash_find(const Eina_Hash *hash, const void *key)
    EINA_SAFETY_ON_NULL_RETURN_VAL(key, NULL);
    EINA_MAGIC_CHECK_HASH(hash);
 
+   if (hash->population == 0)
+     return NULL;
+
    _eina_hash_compute(hash, key, &key_length, &key_hash);
 
    return eina_hash_find_by_hash(hash, key, key_length, key_hash);
