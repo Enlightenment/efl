@@ -65,6 +65,10 @@ interface Efl.Gfx.Hint
            Note: Smart objects (such as elementary) can have their own
            hint policy. So calling this API may or may not affect
            the size of smart objects.
+
+           Note: It is an error for the @.hint_size_max to be smaller in either axis
+           than @.hint_size_min. In this scenario, the max size hint will be
+           prioritized over the user min size hint.
          ]]
          values {
             sz: Eina.Size2D; [[Maximum size (hint) in pixels, (-1, -1) by
@@ -85,6 +89,10 @@ interface Efl.Gfx.Hint
            Note: This property is meant to be set by applications and not by
            EFL itself. Use this to request a specific size (treated as minimum
            size).
+
+           Note: It is an error for the @.hint_size_max to be smaller in either axis
+           than @.hint_size_min. In this scenario, the max size hint will be
+           prioritized over the user min size hint.
          ]]
          values {
             sz: Eina.Size2D; [[Minimum size (hint) in pixels.]]
