@@ -5651,6 +5651,8 @@ _edje_color_class_recursive_find_helper(const Edje *ed, Eina_Hash *hash, const c
    Edje_Color_Tree_Node *ctn = NULL;
    const char *parent;
 
+   if (!eina_hash_population(hash)) return NULL;
+
    cc = _edje_hash_find_helper(hash, color_class);
    if (cc) return cc;
    else if (ed->file)
