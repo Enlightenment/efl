@@ -21,13 +21,13 @@ static void
 _scroller_sizing_eval(Eo *obj, Efl_Ui_Text_Alert_Popup_Data *pd, Eina_Size2D obj_min, Eina_Size2D text_min)
 {
    Eina_Size2D max_size, min_size;
-   max_size.w = -1;
-   max_size.h = -1;
 
-   if (pd->max_size.w != -1)
-     max_size.w = (obj_min.w > pd->max_size.w) ? obj_min.w : pd->max_size.w;
-   if (pd->max_size.h != -1)
-     max_size.h = (obj_min.h > pd->max_size.h) ? obj_min.h : pd->max_size.h;
+   max_size = efl_gfx_hint_size_max_get(obj);
+
+   if (max_size.w != -1)
+     max_size.w = (obj_min.w > max_size.w) ? obj_min.w : max_size.w;
+   if (max_size.h != -1)
+     max_size.h = (obj_min.h > max_size.h) ? obj_min.h : max_size.h;
 
   min_size = efl_gfx_hint_size_min_get(obj);
 
@@ -231,32 +231,6 @@ _efl_ui_text_alert_popup_efl_text_text_get(const Eo *obj, Efl_Ui_Text_Alert_Popu
    return _efl_ui_text_alert_popup_text_get(obj, pd, "efl.text");
 }
 
-static void
-_efl_ui_text_alert_popup_expandable_set(Eo *obj EINA_UNUSED, Efl_Ui_Text_Alert_Popup_Data *pd, Eina_Size2D max_size)
-{
-   Eina_Bool valid_max_w = EINA_FALSE;
-   Eina_Bool valid_max_h = EINA_FALSE;
-
-   if ((max_size.w == -1) || (max_size.w >= 0))
-     valid_max_w = EINA_TRUE;
-
-   if ((max_size.h == -1) || (max_size.h >= 0))
-     valid_max_h = EINA_TRUE;
-
-   if (!valid_max_w || !valid_max_h)
-     {
-        ERR("Invalid max size(%d, %d)!"
-            "The max size should be equal to or bigger than 0. "
-            "To disable expandable property, set -1 to the max size.",
-            max_size.w, max_size.h);
-        return;
-     }
-
-   pd->max_size = max_size;
-
-   efl_canvas_group_change(obj);
-}
-
 EOLIAN static Eo *
 _efl_ui_text_alert_popup_efl_object_constructor(Eo *obj,
                                                 Efl_Ui_Text_Alert_Popup_Data *pd)
@@ -275,8 +249,6 @@ _efl_ui_text_alert_popup_efl_object_constructor(Eo *obj,
 
    efl_content_set(efl_part(efl_super(obj, MY_CLASS), "efl.content"),
                    pd->scroller);
-
-   pd->max_size = EINA_SIZE2D(-1, -1);
 
    return obj;
 }

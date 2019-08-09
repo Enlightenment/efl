@@ -332,7 +332,7 @@ EFL_START_TEST(efl_ui_test_popup_scroll_alert_expand)
    popup_sz_min = popup_sz_min1 = efl_gfx_hint_size_combined_min_get(popup);
 
    /* first test horizontal expand */
-   efl_ui_scroll_alert_popup_expandable_set(popup, EINA_SIZE2D(POPUP_SIZE_EXPAND, -1));
+   efl_gfx_hint_size_max_set(popup, EINA_SIZE2D(POPUP_SIZE_EXPAND, -1));
    efl_gfx_hint_size_min_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
    efl_canvas_group_calculate(popup);
 
@@ -358,7 +358,7 @@ EFL_START_TEST(efl_ui_test_popup_scroll_alert_expand)
    }
 
    /* now expand vertically */
-   efl_ui_scroll_alert_popup_expandable_set(popup, EINA_SIZE2D(-1, POPUP_SIZE_EXPAND));
+   efl_gfx_hint_size_max_set(popup, EINA_SIZE2D(-1, POPUP_SIZE_EXPAND));
    efl_gfx_hint_size_min_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
    efl_canvas_group_calculate(popup);
 
@@ -385,7 +385,7 @@ EFL_START_TEST(efl_ui_test_popup_scroll_alert_expand)
    }
 
    /* now both */
-   efl_ui_scroll_alert_popup_expandable_set(popup, EINA_SIZE2D(POPUP_SIZE_EXPAND, POPUP_SIZE_EXPAND));
+   efl_gfx_hint_size_max_set(popup, EINA_SIZE2D(POPUP_SIZE_EXPAND, POPUP_SIZE_EXPAND));
    efl_gfx_hint_size_min_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
    efl_canvas_group_calculate(popup);
 
@@ -417,7 +417,7 @@ EFL_START_TEST(efl_ui_test_popup_scroll_alert_expand)
    }
 
    /* now use a confining expand which ignores content min size */
-   efl_ui_scroll_alert_popup_expandable_set(popup, EINA_SIZE2D(POPUP_SIZE / 2, POPUP_SIZE / 2));
+   efl_gfx_hint_size_max_set(popup, EINA_SIZE2D(POPUP_SIZE / 2, POPUP_SIZE / 2));
    efl_gfx_hint_size_min_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
    efl_canvas_group_calculate(popup);
 
@@ -511,7 +511,7 @@ EFL_START_TEST(efl_ui_test_popup_text_alert)
           eina_strbuf_append(buf, test_string);
 
         efl_text_set(popup, eina_strbuf_string_get(buf));
-        efl_ui_text_alert_popup_expandable_set(popup, test_expands[i]);
+        efl_gfx_hint_size_max_set(popup, test_expands[i]);
         efl_canvas_group_calculate(popup);
 
         /* get internal label object: VERY illegal */
