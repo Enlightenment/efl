@@ -214,8 +214,12 @@ static void
 _win_del(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    efl_ui_popup_data *p_data = data;
-   efl_unref(p_data->panel_win);
-   free(p_data);
+   Eo *win = p_data->panel_win;
+   p_data->panel_win = NULL;
+   /* only free pointer if the other window has already been freed */
+   if (!p_data->win)
+     free(p_data);
+   efl_unref(win);
    printf("window is deleted\n");
 }
 
@@ -223,8 +227,12 @@ static void
 _panel_win_del(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    efl_ui_popup_data *p_data = data;
-   efl_unref(p_data->win);
-   free(p_data);
+   Eo *win = p_data->win;
+   p_data->win = NULL;
+   /* only free pointer if the other window has already been freed */
+   if (!p_data->win)
+     free(p_data);
+   efl_unref(win);
    printf("window is deleted\n");
 }
 
