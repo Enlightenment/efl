@@ -262,7 +262,7 @@ _sizing_eval(Eo *obj)
 
    /* trigger layout calc */
    efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
-   min = efl_gfx_hint_size_restricted_min_get(obj);
+   min = efl_gfx_hint_size_combined_min_get(obj);
 
    Eina_Size2D size = efl_gfx_entity_size_get(obj);
 
