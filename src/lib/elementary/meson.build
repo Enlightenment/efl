@@ -39,6 +39,7 @@ endforeach
 pub_eo_files = [
   'efl_ui_widget.eo',
   'efl_ui_animation_view.eo',
+  'efl_ui_animation_view_part.eo',
   'efl_ui_bg.eo',
   'efl_ui_button.eo',
   'efl_ui_calendar.eo',

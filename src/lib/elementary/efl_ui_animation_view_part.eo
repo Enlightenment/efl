@@ -1,0 +1,9 @@
+class @beta Efl.Ui.Animation_View_Part extends Efl.Ui.Widget_Part implements Efl.Content
+{
+   [[Efl UI Animation_View internal part class]]
+   data: null;
+   implements {
+      Efl.Content.content { set; get; }
+      Efl.Content.content_unset;
+   }
+}

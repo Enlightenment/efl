@@ -3,16 +3,24 @@
 #endif
 
 #define EFL_ACCESS_OBJECT_PROTECTED
+#define EFL_PART_PROTECTED
 
 #include <Elementary.h>
 
 #include "elm_priv.h"
 #include "efl_ui_animation_view_private.h"
+#include "efl_ui_animation_view_part.eo.h"
+#include "elm_part_helper.h"
 
 #define MY_CLASS EFL_UI_ANIMATION_VIEW_CLASS
 
 #define MY_CLASS_NAME "Efl_Ui_Animation_View"
 #define MY_CLASS_NAME_LEGACY "efl_ui_animation_view"
+
+#define T_SEGMENT_N 60
+#define C_SEGMENT_N 60
+#define QUEUE_SIZE 500
+
 
 static const char SIG_FOCUSED[] = "focused";
 static const char SIG_UNFOCUSED[] = "unfocused";
@@ -37,6 +45,324 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {SIG_PLAY_STOP, ""},
    {NULL, NULL}
 };
+
+#if 0
+typedef struct
+{
+   float x1, x2;
+   float y;
+
+} Span_Data;
+
+typedef struct
+{
+   float x, y;
+} Point;
+
+static Point queue[QUEUE_SIZE];
+static Eo *proxy_obj[T_SEGMENT_N][T_SEGMENT_N];
+
+Eina_Bool
+map_content(Efl_VG *node, const char *id, int off_x, int off_y, Eo* target)
+{
+   if (!node) return EINA_FALSE;
+
+   if (!efl_isa(node, EFL_CANVAS_VG_CONTAINER_CLASS)) return EINA_FALSE;
+
+   char *name = efl_key_data_get(node, "_lot_node_name");
+
+   //Find the target recursively
+   if (!name || strcmp(name, id))
+     {
+        Eina_Iterator *itr = efl_canvas_vg_container_children_get(node);
+        Efl_VG *child;
+
+        EINA_ITERATOR_FOREACH(itr, child)
+          {
+             if (efl_isa(child, EFL_CANVAS_VG_CONTAINER_CLASS))
+               {
+                  if (map_content(child, id, off_x, off_y, target)) break;
+               }
+          }
+        return EINA_FALSE;
+     }
+printf("name = %s\n", name);
+   //Find Shape
+   Eina_Iterator *itr = efl_canvas_vg_container_children_get(node);
+   Efl_VG *child;
+
+   EINA_ITERATOR_FOREACH(itr, child)
+     {
+        //Filter out unacceptable types
+        if (!efl_isa(child, EFL_CANVAS_VG_SHAPE_CLASS)) continue;
+        if (efl_gfx_shape_stroke_width_get(child) > 0) continue;
+
+        const Efl_Gfx_Path_Command_Type *cmd;
+        const double *points;
+
+        efl_gfx_path_get(child, &cmd, NULL);
+        if (!cmd) continue;
+
+        //Fast Path? Shape outlines by consisted of lines.
+        int pt_cnt = 0;
+        Eina_Bool fast_path = EINA_TRUE;
+
+        if (*cmd != EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO) fast_path = EINA_FALSE;
+        else
+          {
+             ++cmd;
+
+             while (*cmd == EFL_GFX_PATH_COMMAND_TYPE_LINE_TO)
+               {
+                  ++cmd;
+                  if (++pt_cnt > 4)
+                    {
+                       fast_path = EINA_FALSE;
+                       break;
+                    }
+               }
+
+             if (((*cmd) != EFL_GFX_PATH_COMMAND_TYPE_END) && ((*cmd) != EFL_GFX_PATH_COMMAND_TYPE_CLOSE))
+               fast_path = EINA_FALSE;
+          }
+
+        efl_gfx_path_get(child, &cmd, &points);
+
+        int rgba;
+        efl_gfx_color_get(child, NULL, NULL, NULL, &rgba);
+
+        int pt_idx = 0;
+        double x, y;
+
+        //Case 1. Rectangle Mapping
+        if (fast_path)
+          {
+             int map_idx = 1;
+             Evas_Map *map = evas_map_new(pt_cnt);
+
+             for (int i = 0; i < pt_cnt; ++i)
+               {
+                  x = points[pt_idx++] + off_x;
+                  y = points[pt_idx++] + off_y;
+                  evas_map_point_coord_set(map, map_idx, x, y, 0);
+                  evas_map_point_color_set(map, map_idx++, rgba, rgba, rgba, rgba);
+                  map_idx %= pt_cnt;
+               }
+
+             //Texture Coordinates
+             Eina_Rect geom = efl_gfx_entity_geometry_get(target);
+             evas_map_point_image_uv_set(map, 0, 0, 0);
+             evas_map_point_image_uv_set(map, 1, geom.w, 0);
+             evas_map_point_image_uv_set(map, 2, geom.w, geom.h);
+             evas_map_point_image_uv_set(map, 3, 0, geom.h);
+
+             evas_object_map_set(target, map);
+             evas_object_map_enable_set(target, EINA_TRUE);
+
+             return EINA_TRUE;
+          }
+
+        //Case 2. Arbitrary Geometry mapping
+
+        Eina_Bezier bezier;
+        float min_y = 999999, max_y = -1;
+        double begin_x, begin_y;
+        double end_x, end_y;
+        double ctrl[4];
+        double inv_segment = (1 / (double) C_SEGMENT_N);
+        int queue_idx = 0;
+        int i;
+        float t;
+
+        //end 0, move 1, line 2, cubic 3, close 4
+        while (*cmd != EFL_GFX_PATH_COMMAND_TYPE_END)
+          {
+             if (*cmd == EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO)
+               {
+                  begin_x = points[pt_idx++] + off_x;
+                  begin_y = points[pt_idx++] + off_y;
+                  if (begin_y < min_y) min_y = begin_y;
+                  if (begin_y > max_y) max_y = begin_y;
+                  ++cmd;
+                  continue;
+               }
+             else if (*cmd == EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO)
+               {
+
+                  ctrl[0] = points[pt_idx++] + off_x;
+                  ctrl[1] = points[pt_idx++] + off_y;
+                  ctrl[2] = points[pt_idx++] + off_x;
+                  ctrl[3] = points[pt_idx++] + off_y;
+                  end_x = points[pt_idx++] + off_x;
+                  end_y = points[pt_idx++] + off_y;
+
+                  eina_bezier_values_set(&bezier,
+                                         begin_x, begin_y,
+                                         ctrl[0], ctrl[1], ctrl[2], ctrl[3],
+                                         end_x, end_y);
+
+                  for (i = 0; i < C_SEGMENT_N; ++i)
+                    {
+                       t = inv_segment * (double) i;
+                       eina_bezier_point_at(&bezier, t, &x, &y);
+                       queue[queue_idx].x = x;
+                       queue[queue_idx].y = y;
+
+                       if (y < min_y) min_y = y;
+                       if (y > max_y) max_y = y;
+
+                       ++queue_idx;
+                    }
+               }
+             else if (*cmd == EFL_GFX_PATH_COMMAND_TYPE_LINE_TO)
+               {
+                  end_x = points[pt_idx++] + off_x;
+                  end_y = points[pt_idx++] + off_y;
+
+                  for (i = 0; i < C_SEGMENT_N; ++i)
+                    {
+                       t = inv_segment * (double) i;
+                       queue[queue_idx].x = begin_x + ((double) (end_x - begin_x)) * t;
+                       queue[queue_idx].y = begin_y + ((double) (end_y - begin_y)) * t;
+                       ++queue_idx;
+                    }
+               }
+
+             begin_x = end_x;
+             begin_y = end_y;
+
+             if (end_y < min_y) min_y = end_y;
+             if (end_y > max_y) max_y = end_y;
+
+             ++cmd;
+          }
+
+        queue[queue_idx].x = queue[0].x;
+        queue[queue_idx].y = queue[0].y;
+
+        float y_segment = (max_y - min_y) * inv_segment;
+        Span_Data spans[T_SEGMENT_N + 1];
+        float min_x, max_x;
+        float a, b;
+
+        static Eo *lines[T_SEGMENT_N + 1];
+
+        y = min_y;
+
+        for (int i = 0; i <= T_SEGMENT_N; ++i)
+          {
+             min_x = 999999;
+             max_x = -1;
+
+             for (int j = 0; j < queue_idx; ++j)
+               {
+                  //Horizontal Line
+                  if ((fabs(y  - queue[j].y) < 0.5) &&
+                      (fabs(queue[j].y - queue[j + 1].y) < 0.5))
+                    {
+                       if (queue[j].x < min_x) min_x = queue[j].x;
+                       if (queue[j].x > max_x) max_x = queue[j].x;
+                       if (queue[j + 1].x < min_x) min_x = queue[j + 1].x;
+                       if (queue[j + 1].x > max_x) max_x = queue[j + 1].x;
+                       continue;
+                    }
+
+                  //Out of Y range
+                  if (((y < queue[j].y) && (y < queue[j + 1].y)) ||
+                      ((y > queue[j].y) && (y > queue[j + 1].y)))
+                    continue;
+
+                  //Vertical Line
+                  if (fabs(queue[j + 1].x - queue[j + 1].x) < 0.5)
+                    x = queue[j].x;
+                  //Diagonal Line
+                  else
+                    {
+                       a = (queue[j + 1].y - queue[j].y) / (queue[j + 1].x - queue[j].x);
+                       b = queue[j].y - (a * queue[j].x);
+                       x = (y - b) / a;
+                    }
+
+                  if (x < min_x) min_x = x;
+                  if (x > max_x) max_x = x;
+               }
+             spans[i].x1 = min_x;
+             spans[i].x2 = max_x;
+             spans[i].y = y;
+             y += y_segment;
+#if 0
+             if (!lines[i]) lines[i] = evas_object_line_add(evas_object_evas_get(target));
+             evas_object_color_set(lines[i], 255, 0, 0, 255);
+             evas_object_resize(lines[i], 1000, 1000);
+             evas_object_line_xy_set(lines[i], spans[i].x1, spans[i].y, spans[i].x2, spans[i].y);
+             evas_object_show(lines[i]);
+#endif
+          }
+
+        Evas *evas = evas_object_evas_get(target);
+        int w, h;
+        evas_object_geometry_get(target, NULL, NULL, &w, &h);
+
+        float u_segment = ((float) w) / ((float) T_SEGMENT_N);
+        float v_segment = ((float) h) / ((float) T_SEGMENT_N);
+
+        for (int i = 0; i < T_SEGMENT_N; ++i)
+          {
+             float x1_segment = (spans[i].x2 - spans[i].x1) / ((float) T_SEGMENT_N);
+             float x2_segment = (spans[i + 1].x2 - spans[i + 1].x1) / ((float) T_SEGMENT_N);
+
+             for (int j = 0; j < T_SEGMENT_N; ++j)
+               {
+                  if (!proxy_obj[i][j])
+                    {
+                       proxy_obj[i][j] = evas_object_image_filled_add(evas);
+                       evas_object_image_source_set(proxy_obj[i][j], target);
+                       evas_object_image_source_events_set(proxy_obj[i][j], EINA_TRUE);
+                       evas_object_move(proxy_obj[i][j], -1000, -1000);
+                       evas_object_resize(proxy_obj[i][j], w, h);
+                       evas_object_show(proxy_obj[i][j]);
+                    }
+
+                  Evas_Map *map = evas_map_new(4);
+
+                  evas_map_point_coord_set(map, 0, spans[i].x1 + ((float) j) * x1_segment, spans[i].y, 0);
+                  evas_map_point_coord_set(map, 1, spans[i].x1 + ((float) j + 1) * x1_segment, spans[i].y, 0);
+                  evas_map_point_coord_set(map, 2, spans[i + 1].x1 + ((float) j + 1) * x2_segment, spans[i + 1].y, 0);
+                  evas_map_point_coord_set(map, 3, spans[i + 1].x1 + ((float) j) * x2_segment, spans[i + 1].y, 0);
+
+                  evas_map_point_image_uv_set(map, 0, ((float) j) * u_segment, ((float) i) * v_segment);
+                  evas_map_point_image_uv_set(map, 1, ((float) j + 1) * u_segment, ((float) i) * v_segment);
+                  evas_map_point_image_uv_set(map, 2, ((float) j + 1) * u_segment, ((float) i + 1) * v_segment);
+                  evas_map_point_image_uv_set(map, 3, ((float) j) * u_segment, ((float) i + 1) * v_segment);
+
+                  evas_map_point_color_set(map, 0, rgba, rgba, rgba, rgba);
+                  evas_map_point_color_set(map, 1, rgba, rgba, rgba, rgba);
+                  evas_map_point_color_set(map, 2, rgba, rgba, rgba, rgba);
+                  evas_map_point_color_set(map, 3, rgba, rgba, rgba, rgba);
+
+                  evas_object_map_enable_set(proxy_obj[i][j], EINA_TRUE);
+                  evas_object_map_set(proxy_obj[i][j], map);
+               }
+          }
+
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+static void
+_update_map_content(Eo *vg)
+{
+   Efl_VG *root = evas_object_vg_root_node_get(vg);
+   if (!root) return;
+   int x, y;
+   evas_object_geometry_get(vg, &x, &y, 0, 0);
+   map_content(root, "tizen_mi_obj", x, y, map_obj);
+   map_content(root, "tizen_mi_obj2", x, y, map_obj2);
+}
+
+#endif
+
 
 static void
 _sizing_eval(void *data)
@@ -676,6 +1002,12 @@ _efl_ui_animation_view_max_frame_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation
    return pd->max_progress * (evas_object_vg_animated_frame_count_get(pd->vg) - 1);
 }
 
+EOLIAN static Efl_Object *
+_efl_ui_animation_view_efl_part_part_get(const Eo* obj, Efl_Ui_Animation_View_Data *pd, const char *part)
+{
+   return ELM_PART_IMPLEMENT(EFL_UI_ANIMATION_VIEW_PART_CLASS, obj, part);
+}
+
 EAPI Elm_Animation_View*
 elm_animation_view_add(Evas_Object *parent)
 {
@@ -694,6 +1026,31 @@ elm_animation_view_state_get(Elm_Animation_View *obj)
 {
    return efl_ui_animation_view_state_get(obj);
 }
+
+static Eina_Bool
+_efl_ui_animation_view_content_set(Eo *obj, Efl_Ui_Animation_View_Data *pd, const char *part, Efl_Gfx_Entity *content)
+{
+   return EINA_FALSE;
+}
+
+static Efl_Gfx_Entity *
+_efl_ui_animation_view_content_get(const Eo *obj, Efl_Ui_Animation_View_Data *pd, const char *part)
+{
+   return NULL;
+}
+
+static Efl_Gfx_Entity *
+_efl_ui_animation_view_content_unset(Eo *obj, Efl_Ui_Animation_View_Data *pd, const char *part)
+{
+   return NULL;
+}
+
+/* Efl.Part begin */
+ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_animation_view, EFL_UI_ANIMATION_VIEW, Efl_Ui_Animation_View_Data)
+ELM_PART_OVERRIDE_CONTENT_GET(efl_ui_animation_view, EFL_UI_ANIMATION_VIEW, Efl_Ui_Animation_View_Data)
+ELM_PART_OVERRIDE_CONTENT_UNSET(efl_ui_animation_view, EFL_UI_ANIMATION_VIEW, Efl_Ui_Animation_View_Data)
+#include "efl_ui_animation_view_part.eo.c"
+/* Efl.Part end */
 
 /* Internal EO APIs and hidden overrides */
 

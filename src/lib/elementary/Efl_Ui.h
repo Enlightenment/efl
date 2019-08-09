@@ -207,6 +207,8 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_text_async.eo.h>
 # endif
 
+# include <efl_ui_animation_view.h>
+# include <efl_ui_animation_view_part.eo.h>
 # include <efl_ui_clock.h>
 # include <efl_ui_image_factory.eo.h>
 # include <efl_ui_video.h>
