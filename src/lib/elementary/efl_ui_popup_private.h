@@ -9,6 +9,7 @@ struct _Efl_Ui_Popup_Data
    Efl_Ui_Popup_Align align;
    Ecore_Timer       *timer;
    double             timeout;
+   Eina_Bool          in_calc : 1;
 };
 
 #define EFL_UI_POPUP_DATA_GET_OR_RETURN(o, ptr, ...) \

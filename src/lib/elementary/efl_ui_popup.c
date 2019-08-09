@@ -75,11 +75,12 @@ _calc_align(Eo *obj)
 }
 
 EOLIAN static void
-_efl_ui_popup_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eina_Size2D size)
+_efl_ui_popup_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Popup_Data *pd, Eina_Size2D size)
 {
    efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), size);
 
-   efl_canvas_group_change(obj);
+   if (!pd->in_calc)
+     efl_canvas_group_change(obj);
 }
 
 static void
@@ -269,7 +270,6 @@ _sizing_eval(Eo *obj)
    new_size.w = (min.w > size.w ? min.w : size.w);
    new_size.h = (min.h > size.h ? min.h : size.h);
    efl_gfx_entity_size_set(obj, new_size);
-   efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static void
@@ -280,7 +280,12 @@ _efl_ui_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popup_Data *pd)
     * The actual size calculation is done here when the object is rendered to
     * avoid duplicate size calculations. */
    efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
-    _sizing_eval(obj);
+   if (!pd->in_calc)
+     {
+        pd->in_calc = EINA_TRUE;
+        _sizing_eval(obj);
+        pd->in_calc = EINA_FALSE;
+     }
    _calc_align(obj);
 
    Eina_Rect p_geom = efl_gfx_entity_geometry_get(pd->win_parent);
