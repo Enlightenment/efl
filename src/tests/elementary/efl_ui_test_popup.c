@@ -66,7 +66,7 @@ EFL_START_TEST(efl_ui_test_popup_basic_align)
    efl_gfx_entity_size_set(win, EINA_SIZE2D(WIN_SIZE, WIN_SIZE));
 
    popup = efl_add(EFL_UI_POPUP_CLASS, win);
-   efl_ui_popup_size_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
+   efl_gfx_hint_size_min_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
 
    Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, popup);
    efl_text_set(btn, "Efl.Ui.Popup");
@@ -150,7 +150,7 @@ EFL_START_TEST(efl_ui_test_popup_basic_sizing)
    efl_gfx_entity_size_set(win, EINA_SIZE2D(WIN_SIZE, WIN_SIZE));
 
    popup = efl_add(EFL_UI_POPUP_CLASS, win);
-   efl_ui_popup_size_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
+   efl_gfx_hint_size_min_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
 
    Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, popup);
    efl_text_set(btn, "Efl.Ui.Popup");
@@ -179,7 +179,7 @@ EFL_START_TEST(efl_ui_test_popup_events)
    efl_event_callback_add(popup, EFL_UI_POPUP_EVENT_BACKWALL_CLICKED,
      (void*)event_callback_that_is_called_exactly_one_time_and_sets_a_single_int_data_pointer_when_called, &called);
    efl_event_callback_add(popup, EFL_UI_POPUP_EVENT_TIMEOUT, event_callback_that_quits_the_main_loop_when_called, NULL);
-   efl_ui_popup_size_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
+   efl_gfx_hint_size_min_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
 
    Eo *btn = efl_add(EFL_UI_BUTTON_CLASS, popup);
    efl_text_set(btn, "Efl.Ui.Popup");
@@ -294,7 +294,7 @@ EFL_START_TEST(efl_ui_test_popup_scroll_alert)
    Eina_Size2D popup_sz_min;
    Eina_Size2D layout_sz_min = _popup_scroll_alert_setup(&popup, &layout);
 
-   efl_ui_popup_size_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
+   efl_gfx_hint_size_min_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
    get_me_to_those_events(popup);
 
    /* base popup size without content */
@@ -333,7 +333,7 @@ EFL_START_TEST(efl_ui_test_popup_scroll_alert_expand)
 
    /* first test horizontal expand */
    efl_ui_scroll_alert_popup_expandable_set(popup, EINA_SIZE2D(POPUP_SIZE_EXPAND, -1));
-   efl_ui_popup_size_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
+   efl_gfx_hint_size_min_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
    efl_canvas_group_calculate(popup);
 
 
@@ -359,7 +359,7 @@ EFL_START_TEST(efl_ui_test_popup_scroll_alert_expand)
 
    /* now expand vertically */
    efl_ui_scroll_alert_popup_expandable_set(popup, EINA_SIZE2D(-1, POPUP_SIZE_EXPAND));
-   efl_ui_popup_size_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
+   efl_gfx_hint_size_min_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
    efl_canvas_group_calculate(popup);
 
    /* base popup size without content */
@@ -386,7 +386,7 @@ EFL_START_TEST(efl_ui_test_popup_scroll_alert_expand)
 
    /* now both */
    efl_ui_scroll_alert_popup_expandable_set(popup, EINA_SIZE2D(POPUP_SIZE_EXPAND, POPUP_SIZE_EXPAND));
-   efl_ui_popup_size_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
+   efl_gfx_hint_size_min_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
    efl_canvas_group_calculate(popup);
 
    /* base popup size without content */
@@ -418,7 +418,7 @@ EFL_START_TEST(efl_ui_test_popup_scroll_alert_expand)
 
    /* now use a confining expand which ignores content min size */
    efl_ui_scroll_alert_popup_expandable_set(popup, EINA_SIZE2D(POPUP_SIZE / 2, POPUP_SIZE / 2));
-   efl_ui_popup_size_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
+   efl_gfx_hint_size_min_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
    efl_canvas_group_calculate(popup);
 
    {
@@ -498,6 +498,7 @@ EFL_START_TEST(efl_ui_test_popup_text_alert)
 
    get_me_to_those_events(popup);
    popup_sz_min1 = efl_gfx_hint_size_combined_min_get(popup);
+   efl_gfx_hint_size_min_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
 
    for (i = 0; i < num_tests; i++)
      {
@@ -511,7 +512,6 @@ EFL_START_TEST(efl_ui_test_popup_text_alert)
 
         efl_text_set(popup, eina_strbuf_string_get(buf));
         efl_ui_text_alert_popup_expandable_set(popup, test_expands[i]);
-        efl_ui_popup_size_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
         efl_canvas_group_calculate(popup);
 
         /* get internal label object: VERY illegal */

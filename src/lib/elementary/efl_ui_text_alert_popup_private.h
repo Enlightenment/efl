@@ -8,7 +8,6 @@ struct _Efl_Ui_Text_Alert_Popup_Data
 {
    Eo *scroller;
    Eo *message;
-   Eina_Size2D size;
    Eina_Size2D max_size;
 };
 

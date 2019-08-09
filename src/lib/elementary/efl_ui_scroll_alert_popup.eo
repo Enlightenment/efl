@@ -28,6 +28,5 @@ class @beta Efl.Ui.Scroll_Alert_Popup extends Efl.Ui.Alert_Popup
       Efl.Object.constructor;
       Efl.Canvas.Group.group_calculate;
       Efl.Part.part_get;
-      Efl.Ui.Popup.popup_size { set;}
    }
 }

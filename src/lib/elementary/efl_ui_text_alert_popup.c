@@ -20,7 +20,7 @@
 static void
 _scroller_sizing_eval(Eo *obj, Efl_Ui_Text_Alert_Popup_Data *pd, Eina_Size2D obj_min, Eina_Size2D text_min)
 {
-   Eina_Size2D max_size;
+   Eina_Size2D max_size, min_size;
    max_size.w = -1;
    max_size.h = -1;
 
@@ -29,9 +29,11 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Text_Alert_Popup_Data *pd, Eina_Size2D obj
    if (pd->max_size.h != -1)
      max_size.h = (obj_min.h > pd->max_size.h) ? obj_min.h : pd->max_size.h;
 
+  min_size = efl_gfx_hint_size_min_get(obj);
+
   Eina_Size2D size;
-  size.w = (obj_min.w > pd->size.w) ? obj_min.w : pd->size.w;
-  size.h = (obj_min.h > pd->size.h) ? obj_min.h : pd->size.h;
+  size.w = (obj_min.w > min_size.w) ? obj_min.w : min_size.w;
+  size.h = (obj_min.h > min_size.h) ? obj_min.h : min_size.h;
 
   text_min.w = (obj_min.w > text_min.w) ? obj_min.w : text_min.w;
   text_min.h = (obj_min.h > text_min.h) ? obj_min.h : text_min.h;
@@ -105,16 +107,6 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Text_Alert_Popup_Data *pd, Eina_Size2D obj
     efl_canvas_group_calculate(pd->scroller);
 
     efl_gfx_hint_size_restricted_min_set(obj, new_min);
-}
-
-EOLIAN static void
-_efl_ui_text_alert_popup_efl_ui_popup_popup_size_set(Eo *obj, Efl_Ui_Text_Alert_Popup_Data *pd, Eina_Size2D size)
-{
-   pd->size = size;
-
-   efl_gfx_entity_size_set(obj, size);
-
-   efl_canvas_group_change(obj);
 }
 
 static void
@@ -284,7 +276,6 @@ _efl_ui_text_alert_popup_efl_object_constructor(Eo *obj,
    efl_content_set(efl_part(efl_super(obj, MY_CLASS), "efl.content"),
                    pd->scroller);
 
-   pd->size = EINA_SIZE2D(0, 0);
    pd->max_size = EINA_SIZE2D(-1, -1);
 
    return obj;

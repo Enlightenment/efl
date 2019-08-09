@@ -21,7 +21,6 @@ class @beta Efl.Ui.Text_Alert_Popup extends Efl.Ui.Alert_Popup implements Efl.Te
    implements {
       Efl.Object.constructor;
       Efl.Canvas.Group.group_calculate;
-      Efl.Ui.Popup.popup_size { set;}
       Efl.Text.text { get; set; }
       Efl.Part.part_get;
    }
