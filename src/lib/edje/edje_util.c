@@ -3612,7 +3612,7 @@ _efl_canvas_layout_efl_layout_calc_calc_force(Eo *obj EINA_UNUSED, Edje *ed)
    _edje_util_freeze_val = pf2;
 }
 
-EOLIAN Eina_Rectangle
+EOLIAN Eina_Rect
 _efl_canvas_layout_efl_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Edje *ed)
 {
    Evas_Coord xx1 = INT_MAX, yy1 = INT_MAX;
@@ -3649,7 +3649,7 @@ _efl_canvas_layout_efl_layout_calc_calc_parts_extends(Eo *obj EINA_UNUSED, Edje 
    if ((xx2 - xx1) > 0) w = xx2 - xx1;
    if ((yy2 - yy1) > 0) h = yy2 - yy1;
 
-   return (Eina_Rectangle) { xx1, yy1, w, h };
+   return (Eina_Rect) { (Eina_Rectangle) { xx1, yy1, w, h } };
 }
 
 EOLIAN Eina_Size2D
