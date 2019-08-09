@@ -720,6 +720,8 @@ _efl_ui_textpath_efl_object_destructor(Eo *obj, Efl_Ui_Textpath_Data *pd)
       evas_object_del(line);
 #endif
 
+   efl_gfx_path_reset(obj);
+
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
