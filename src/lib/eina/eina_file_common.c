@@ -1113,8 +1113,10 @@ eina_file_init(void)
         return EINA_FALSE;
      }
 
-   if (getenv("EINA_STATGEN")) _eina_statgen = 1;
    eina_spinlock_new(&_eina_statgen_lock);
+   eina_spinlock_take(&_eina_statgen_lock);
+   if (getenv("EINA_STATGEN")) _eina_statgen = 1;
+   eina_spinlock_release(&_eina_statgen_lock);
    eina_lock_recursive_new(&_eina_file_lock_cache);
    eina_magic_string_set(EINA_FILE_MAGIC, "Eina_File");
 
