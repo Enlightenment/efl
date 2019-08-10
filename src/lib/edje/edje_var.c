@@ -376,7 +376,8 @@ _edje_var_var_float_get(Edje *ed EINA_UNUSED, Edje_Var *var)
      }
    else if (var->type == EDJE_VAR_INT)
      {
-        var->data.f.v = (double)(var->data.i.v);
+        double tmp = (double)(var->data.i.v);
+        var->data.f.v = tmp;
         var->type = EDJE_VAR_FLOAT;
      }
    else if (var->type == EDJE_VAR_NONE)
