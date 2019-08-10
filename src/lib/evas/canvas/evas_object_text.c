@@ -459,7 +459,7 @@ _evas_text_efl_text_font_font_set(Eo *eo_obj, Evas_Text_Data *o, const char *fon
 
    evas_object_async_block(obj);
    if ((size == o->cur.size) &&
-       (o->cur.font && !strcmp(font, o->cur.font))) return;
+       (o->cur.font && font && !strcmp(font, o->cur.font))) return;
 
    if (font)
      {
