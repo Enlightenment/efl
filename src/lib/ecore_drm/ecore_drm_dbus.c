@@ -310,7 +310,10 @@ _ecore_drm_dbus_device_take_no_pending(uint32_t major, uint32_t minor, Eina_Bool
      }
 
    if (!eldbus_message_arguments_append(msg, "uu", major, minor))
-     return -1;
+     {
+        eldbus_message_unref(msg);
+        return -1;
+     }
 
    reply = eldbus_proxy_send_and_block(proxy, msg, timeout);
    if (eldbus_message_error_get(reply, &errname, &errmsg))
