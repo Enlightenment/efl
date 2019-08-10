@@ -660,8 +660,11 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
         if (pipe(pipe_from_thread) != 0)
           {
              ERR("Can't create from_thread pipe");
-             close(pipe_to_thread[0]);
-             close(pipe_to_thread[1]);
+             if (td->flags & EFL_TASK_FLAGS_USE_STDIN)
+               {
+                  close(pipe_to_thread[0]);
+                  close(pipe_to_thread[1]);
+               }
              free(thdat);
              return NULL;
           }
