@@ -88,13 +88,12 @@ _efl_generic_model_efl_model_property_set(Eo *obj, Efl_Generic_Model_Data *pd, c
       free(e);
    }
 
-   eina_stringshare_del(prop);
-
    evt.changed_properties = eina_array_new(1);
    eina_array_push(evt.changed_properties, prop);
 
    efl_event_callback_call(obj, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &evt);
 
+   eina_stringshare_del(prop);
    eina_array_free(evt.changed_properties);
 
    return efl_loop_future_resolved(obj,
