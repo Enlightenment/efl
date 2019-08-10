@@ -1262,14 +1262,14 @@ _item_fill_align_set(Elm_Toolbar_Data *sd, Elm_Toolbar_Item_Data *it)
      {
         if (it->separator)
           {
-             if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
+             if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
                evas_object_size_hint_weight_set(VIEW(it), -1.0, 0.0);
              else
                evas_object_size_hint_weight_set(VIEW(it), 0.0, -1.0);
           }
         else
           {
-             if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
+             if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
                evas_object_size_hint_weight_set(VIEW(it), EVAS_HINT_EXPAND, 0.0);
              else
                evas_object_size_hint_weight_set(VIEW(it), 0.0, EVAS_HINT_EXPAND);
@@ -1279,7 +1279,7 @@ _item_fill_align_set(Elm_Toolbar_Data *sd, Elm_Toolbar_Item_Data *it)
      {
         if (it->separator)
           {
-             if (!efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
+             if (!efl_ui_dir_is_horizontal(sd->dir, EINA_TRUE))
                evas_object_size_hint_weight_set(VIEW(it), -1.0, 0.0);
              else
                evas_object_size_hint_weight_set(VIEW(it), 0.0, -1.0);
