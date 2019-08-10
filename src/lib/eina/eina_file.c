@@ -832,10 +832,7 @@ eina_file_open(const char *path, Eina_Bool shared)
      {
         n = malloc(sizeof(Eina_File));
         if (!n)
-	  {
-             eina_lock_release(&_eina_file_lock_cache);
-             goto on_error;
-	  }
+          goto on_error;
 
         memset(n, 0, sizeof(Eina_File));
         n->filename = filename;
