@@ -13,7 +13,7 @@
 static void
 _mouse_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   intptr_t *val = data;
+   int *val = data;
    ck_assert_int_eq(*val, 0);
    *val = 1;
 }
