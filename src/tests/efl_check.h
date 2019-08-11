@@ -249,6 +249,8 @@ _timing_end(void)
 
 #endif
 
+static char srunner_xml_buf[4096];
+
 static int
 _efl_suite_run_end(SRunner *sr, const char *name)
 {
@@ -257,7 +259,7 @@ _efl_suite_run_end(SRunner *sr, const char *name)
    if (name)
      {
         char *n = strdup(name);
-        char buf[4096], *p;
+        char *p;
 
         for (p = n; p[0]; p++)
           {
@@ -271,8 +273,8 @@ _efl_suite_run_end(SRunner *sr, const char *name)
                   break;
                }
           }
-        snprintf(buf, sizeof(buf), TESTS_BUILD_DIR "/check-results-%s.xml", n);
-        srunner_set_xml(sr, buf);
+        snprintf(srunner_xml_buf, sizeof(srunner_xml_buf), TESTS_BUILD_DIR "/check-results-%s.xml", n);
+        srunner_set_xml(sr, srunner_xml_buf);
         free(n);
      }
    else
