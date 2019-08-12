@@ -100,6 +100,11 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
                {
                   if (tag_ret)
                     (*tag_ret)->text_class = eina_stringshare_add(val);
+
+                  // no need to add text_class tag to style
+                  // as evas_textblock_style has no idea about
+                  // text_class tag.
+                  continue;
                }
              else if (!strcmp(key, "font_size"))
                {
