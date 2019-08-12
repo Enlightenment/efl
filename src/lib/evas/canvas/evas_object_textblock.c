@@ -307,8 +307,8 @@ typedef struct _Text_Item_Filter Text_Item_Filter;
 
 struct _Evas_Object_Style_Tag_Base
 {
-   char *tag;  /**< Format Identifier: b=Bold, i=Italic etc. */
-   char *replace;  /**< Replacement string. "font_weight=Bold", "font_style=Italic" etc. */
+   const char *tag;  /**< Format Identifier: b=Bold, i=Italic etc. */
+   const char *replace;  /**< Replacement string. "font_weight=Bold", "font_style=Italic" etc. */
    size_t tag_len;  /**< Strlen of tag. */
 };
 
@@ -552,7 +552,7 @@ struct _Evas_Object_Textblock_Format
 struct _Efl_Canvas_Text_Style
 {
    const char            *style_text;
-   char                  *default_tag;
+   const char            *default_tag;
    Evas_Object_Style_Tag *tags;
    Eina_List             *objects;
    Eina_Bool              delete_me : 1;
@@ -874,15 +874,15 @@ static void
 _style_replace(Evas_Textblock_Style *ts, const char *style_text)
 {
    eina_stringshare_replace(&ts->style_text, style_text);
-   if (ts->default_tag) free(ts->default_tag);
+   if (ts->default_tag) eina_stringshare_del(ts->default_tag);
    while (ts->tags)
      {
         Evas_Object_Style_Tag *tag;
 
         tag = (Evas_Object_Style_Tag *)ts->tags;
         ts->tags = (Evas_Object_Style_Tag *)eina_inlist_remove(EINA_INLIST_GET(ts->tags), EINA_INLIST_GET(tag));
-        free(tag->tag.tag);
-        free(tag->tag.replace);
+        eina_stringshare_del(tag->tag.tag);
+        eina_stringshare_del(tag->tag.replace);
         free(tag);
      }
    ts->default_tag = NULL;
@@ -7319,6 +7319,7 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
 
         key_start = key_stop = val_start = NULL;
         p = ts->style_text;
+        Eina_Strbuf *tag_value_buf = eina_strbuf_new();
         while (*p)
           {
              if (!key_start)
@@ -7344,12 +7345,13 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
                }
              if ((key_start) && (key_stop) && (val_start))
                {
-                  char *tags, *replaces = NULL;
+                  const char *tag_value = NULL;
                   Evas_Object_Style_Tag *tag;
                   const char *val_stop = NULL;
+
+                  eina_strbuf_reset(tag_value_buf);
                   size_t tag_len;
                     {
-                       Eina_Strbuf *buf = eina_strbuf_new();
                        val_stop = val_start;
                        while(*p)
                          {
@@ -7358,72 +7360,53 @@ evas_textblock_style_set(Evas_Textblock_Style *ts, const char *text)
                                  /* Break if we found the tag end */
                                  if (p[-1] != '\\')
                                    {
-                                      eina_strbuf_append_length(buf, val_stop,
+                                      eina_strbuf_append_length(tag_value_buf, val_stop,
                                             p - val_stop);
                                       break;
                                    }
                                  else
                                    {
-                                      eina_strbuf_append_length(buf, val_stop,
+                                      eina_strbuf_append_length(tag_value_buf, val_stop,
                                             p - val_stop - 1);
-                                      eina_strbuf_append_char(buf, '\'');
+                                      eina_strbuf_append_char(tag_value_buf, '\'');
                                       val_stop = p + 1;
                                    }
                               }
                             p++;
                          }
-                       replaces = eina_strbuf_string_steal(buf);
-                       eina_strbuf_free(buf);
                     }
                   /* If we didn't find an end, just aboart. */
                   if (!*p)
                     {
-                       if (replaces) free(replaces);
                        break;
                     }
 
                   tag_len = key_stop - key_start;
 
-                  tags = malloc(tag_len + 1);
-                  if (tags)
+                  tag_value = eina_strbuf_string_get(tag_value_buf);
+                  if (tag_len && (tag_value))
                     {
-                       memcpy(tags, key_start, tag_len);
-                       tags[tag_len] = 0;
-                    }
-
-                  if ((tags) && (replaces))
-                    {
-                       if (!strcmp(tags, "DEFAULT"))
+                       if (!strncmp(key_start, "DEFAULT", tag_len))
                          {
-                            ts->default_tag = replaces;
-                            free(tags);
+                            ts->default_tag = eina_stringshare_add(tag_value);
                          }
                        else
                          {
                             tag = calloc(1, sizeof(Evas_Object_Style_Tag));
                             if (tag)
                               {
-                                 tag->tag.tag = tags;
-                                 tag->tag.replace = replaces;
+                                 tag->tag.tag = eina_stringshare_add_length(key_start, tag_len);
+                                 tag->tag.replace = eina_stringshare_add(tag_value);
                                  tag->tag.tag_len = tag_len;
                                  ts->tags = (Evas_Object_Style_Tag *)eina_inlist_append(EINA_INLIST_GET(ts->tags), EINA_INLIST_GET(tag));
                               }
-                            else
-                              {
-                                 free(tags);
-                                 free(replaces);
-                              }
                          }
-                    }
-                  else
-                    {
-                       if (tags) free(tags);
-                       if (replaces) free(replaces);
                     }
                   key_start = key_stop = val_start = NULL;
                }
              p++;
           }
+          eina_strbuf_free(tag_value_buf);
      }
 
    EINA_LIST_FOREACH(ts->objects, l, eo_obj)
