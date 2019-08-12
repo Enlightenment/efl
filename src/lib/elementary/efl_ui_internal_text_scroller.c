@@ -119,7 +119,6 @@ _efl_ui_internal_text_scroller_efl_canvas_group_group_calculate(Eo *obj,
 
         efl_gfx_entity_size_set(sd->text_table, fsz);
         efl_gfx_hint_size_restricted_min_set(obj, size);
-        efl_gfx_hint_size_max_set(obj, EINA_SIZE2D(-1, size.h));
      }
 }
 
