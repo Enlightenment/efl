@@ -111,13 +111,12 @@ _photocam_image_file_set(Evas_Object *obj, Efl_Ui_Image_Zoomable_Data *sd)
 static void
 _sizing_eval(Evas_Object *obj)
 {
-   Evas_Coord minw = 0, minh = 0, maxw = -1, maxh = -1;
+   Evas_Coord minw = 0, minh = 0;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   Eina_Size2D max = efl_gfx_hint_size_combined_max_get(wd->resize_obj);
 
-   evas_object_size_hint_max_get
-     (wd->resize_obj, &maxw, &maxh);
    efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
-   evas_object_size_hint_max_set(obj, maxw, maxh);
+   efl_gfx_hint_size_restricted_max_set(obj, max);
 }
 
 static void

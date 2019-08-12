@@ -963,7 +963,7 @@ _elm_win_size_hints_update(Efl_Ui_Win *win, Efl_Ui_Win_Data *sd)
    Eina_Size2D min, max;
 
    min = efl_gfx_hint_size_combined_min_get(win);
-   max = efl_gfx_hint_size_max_get(win);
+   max = efl_gfx_hint_size_combined_max_get(win);
    if (max.w < 1) max.w = -1;
    if (max.h < 1) max.h = -1;
 
@@ -1637,7 +1637,7 @@ _win_rotate(Evas_Object *obj, Efl_Ui_Win_Data *sd, int rotation, Eina_Bool resiz
    if (resize) TRAP(sd, rotation_with_resize_set, rotation);
    else TRAP(sd, rotation_set, rotation);
    efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(-1, -1));
-   efl_gfx_hint_size_max_set(obj, EINA_SIZE2D(-1, -1));
+   efl_gfx_hint_size_restricted_max_set(obj, EINA_SIZE2D(-1, -1));
    _elm_win_resize_objects_eval(obj, EINA_FALSE);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
@@ -3701,6 +3701,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
    evas_object_size_hint_combined_min_get(sd->legacy.edje, &minw, &minh);
    if ((!minw) && (!minh) && (!sd->deferred_resize_job)) return;
 
+   efl_gfx_hint_size_restricted_max_set(obj, EINA_SIZE2D(-1, -1));
    // If content has a weight, make resizable
    efl_gfx_hint_weight_get(sd->legacy.edje, &wx, &wy);
 
@@ -3722,6 +3723,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
    if (maxh > 32767) maxh = 32767;
 
    unresizable = ((minw == maxw) && (minh == maxh));
+
    if (sd->csd.need_unresizable != unresizable)
      {
         sd->csd.need_unresizable = unresizable;
@@ -3741,7 +3743,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
 
    sd->tmp_updating_hints = 1;
    efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
-   efl_gfx_hint_size_max_set(obj, EINA_SIZE2D(maxw, maxh));
+   efl_gfx_hint_size_restricted_max_set(obj, EINA_SIZE2D(maxw, maxh));
    sd->tmp_updating_hints = 0;
    _elm_win_size_hints_update(obj, sd);
 

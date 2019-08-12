@@ -53,7 +53,7 @@ _efl_ui_container_layout_item_init(Eo* o, Efl_Ui_Container_Item_Hints *item)
    efl_gfx_hint_margin_get(o, &item[0].margin[0], &item[0].margin[1],
                                    &item[1].margin[0], &item[1].margin[1]);
    efl_gfx_hint_fill_get(o, &item[0].fill, &item[1].fill);
-   max = efl_gfx_hint_size_max_get(o);
+   max = efl_gfx_hint_size_combined_max_get(o);
    min = efl_gfx_hint_size_combined_min_get(o);
    efl_gfx_hint_aspect_get(o, &aspect_type, &aspect);
    item[0].aspect = aspect.w;

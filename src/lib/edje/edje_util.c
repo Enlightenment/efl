@@ -6021,7 +6021,7 @@ _edje_real_part_swallow_hints_update(Edje_Real_Part *rp)
       Evas_Aspect_Control am = EVAS_ASPECT_CONTROL_NONE;
 
       evas_object_size_hint_combined_min_get(rp->typedata.swallow->swallowed_object, &w1, &h1);
-      evas_object_size_hint_max_get(rp->typedata.swallow->swallowed_object, &w2, &h2);
+      evas_object_size_hint_combined_max_get(rp->typedata.swallow->swallowed_object, &w2, &h2);
       evas_object_size_hint_aspect_get(rp->typedata.swallow->swallowed_object, &am, &aw, &ah);
       rp->typedata.swallow->swallow_params.min.w = w1;
       rp->typedata.swallow->swallow_params.min.h = h1;

@@ -540,7 +540,9 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
       Efl.Gfx.Hint.hint_aspect { get; set; }
       Efl.Gfx.Hint.hint_align { get; set; }
       Efl.Gfx.Hint.hint_size_combined_min { get; }
+      Efl.Gfx.Hint.hint_size_combined_max { get; }
       Efl.Gfx.Hint.hint_size_restricted_min { get; set; }
+      Efl.Gfx.Hint.hint_size_restricted_max { get; set; }
       Efl.Gfx.Hint.hint_size_min { get; set; }
       Efl.Gfx.Hint.hint_size_max { get; set; }
       Efl.Gfx.Hint.hint_margin { get; set; }
