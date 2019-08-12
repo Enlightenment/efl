@@ -572,6 +572,7 @@ struct _Edje_File
    unsigned int                    requires_count;
 
    Eina_List                      *styles;
+   Eina_Hash                      *style_hash;
 
    Eina_List                      *color_tree;
    Eina_Hash                      *color_tree_hash;

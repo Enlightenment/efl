@@ -240,19 +240,9 @@ _edje_textblock_style_all_update(Edje *ed)
 static inline Edje_Style *
 _edje_textblock_style_search(Edje *ed, const char *style)
 {
-   Edje_Style *stl = NULL;
-   Eina_List *l;
-
    if (!style) return NULL;
 
-   EINA_LIST_FOREACH(ed->file->styles, l, stl)
-     {
-        if ((stl->name) &&
-            (stl->name == style || !strcmp(stl->name, style))) break;
-        stl = NULL;
-     }
-
-   return stl;
+   return eina_hash_find(ed->file->style_hash, style);
 }
 
 static inline void
@@ -316,16 +306,9 @@ _edje_textblock_styles_del(Edje *ed, Edje_Part *pt)
 
    desc = (Edje_Part_Description_Text *)pt->default_desc;
    style = edje_string_get(&desc->text.style);
-   if (style)
-     {
-        Eina_List *l;
 
-        EINA_LIST_FOREACH(ed->file->styles, l, stl)
-          {
-             if ((stl->name) && (!strcmp(stl->name, style))) break;
-             stl = NULL;
-          }
-     }
+   stl = _edje_textblock_style_search(ed, style);
+
    if (stl)
      {
         Edje_Style_Tag *tag;
@@ -342,16 +325,7 @@ _edje_textblock_styles_del(Edje *ed, Edje_Part *pt)
      {
         desc = (Edje_Part_Description_Text *)pt->other.desc[i];
         style = edje_string_get(&desc->text.style);
-        if (style)
-          {
-             Eina_List *l;
-
-             EINA_LIST_FOREACH(ed->file->styles, l, stl)
-               {
-                  if ((stl->name) && (!strcmp(stl->name, style))) break;
-                  stl = NULL;
-               }
-          }
+        stl = _edje_textblock_style_search(ed, style);
         if (stl)
           {
              Edje_Style_Tag *tag;
