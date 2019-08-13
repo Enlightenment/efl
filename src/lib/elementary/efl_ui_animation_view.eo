@@ -1,11 +1,11 @@
 
 enum Efl.Ui.Animation_View_State
 {
-   not_ready, [[Animation is not ready to play. (Probably, it didn't file set yet or failed to read file. @since 1.23]]
-   play, [[Animation is on playing. see @Efl.Ui.Animation_View.play @since 1.23]]
-   play_back, [[Animation is on playing back (rewinding). see @Efl.Ui.Animation_View.play_back @since 1.23]]
-   pause, [[Animation has been paused. To continue animation, call @Efl.Ui.Animation_View.resume. see @Efl.Ui.Animation_View.pause @since 1.23]]
-   stop [[Animation view successfully loaded a file then readied for playing. Otherwise after finished animation or stopped forcely by request. see @Efl.Ui.Animation_View.stop @since 1.23]]
+   not_ready, [[Animation is not ready to play. (Probably, it didn't file set yet or failed to read file.]]
+   play, [[Animation is on playing. see @Efl.Ui.Animation_View.play]]
+   play_back, [[Animation is on playing back (rewinding). see @Efl.Ui.Animation_View.play_back]]
+   pause, [[Animation has been paused. To continue animation, call @Efl.Ui.Animation_View.resume. see @Efl.Ui.Animation_View.pause]]
+   stop [[Animation view successfully loaded a file then readied for playing. Otherwise after finished animation or stopped forcely by request. see @Efl.Ui.Animation_View.stop]]
 }
 
 class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View, Efl.File, Efl.Part
@@ -20,8 +20,6 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
      animation infomation. Currently approved vector data file format is svg, json and eet.
      Only json(known for Lottie file as well) and eet could contains animation infomation,
      currently Animation_View is supporting.
-
-     @since 1.23
    ]]
    event_prefix: efl_ui_animation_view;
    methods {
@@ -38,8 +36,6 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
 
            Warning: This auto play will be only affected to the next animation source.
            So must be called before setting animation file.
-
-           @since 1.23
          ]]
          set {
          }
@@ -56,8 +52,6 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
            end. This auto repeat mode is valid to both play and play_back cases.
 
            $true Enable auto play mode, disable otherwise.
-
-           @since 1.23
          ]]
          set {
          }
@@ -77,8 +71,6 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
            $true when it's successful. $false otherwise.
 
            Warning: speed must be greater than zero.
-
-           @since 1.23
          ]]
          set {
             return: bool;
@@ -94,8 +86,6 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
 
            This API returns total duration time of current animation in the seconds.
            If current animation source isn't animatable, it returns zero.
-
-           @since 1.23
          ]]
          get {
          }
@@ -110,8 +100,6 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
            you can change current position by using this API.
 
            Warning: The range of progress is 0 ~ 1.
-
-           @since 1.23
          ]]
          set {
          }
@@ -125,8 +113,6 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
          [[Number of current frame.
 
            Ranges from 0 to @.frame_count - 1.
-
-           @since 1.23
          ]]
          set {
          }
@@ -144,8 +130,6 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
 
            Warning: Play request will be ignored if animation source is not set yet or
            animation is paused state or it's already on playing.
-
-           @since 1.23
          ]]
 
          return: bool; [[$true when it's successful. $false otherwise.]]
@@ -158,8 +142,6 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
 
            Warning: Play back request will be ignored if animation source is not set yet or
            animation is paused state or it's already on playing back.
-
-           @since 1.23
          ]]
 
          return: bool; [[$true when it's successful. $false otherwise.]]
@@ -170,8 +152,6 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
            Once animation is paused, animation view must get resume to play continue again.
 
            Warning: Animation must be on playing or playing back status.
-
-           @since 1.23
          ]]
 
          return: bool; [[$true when it's successful. $false otherwise.]]
@@ -180,8 +160,6 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
          [[Resume paused animation to continue animation.
 
            Warning: This resume must be called on animation paused status.
-
-           @since 1.23
          ]]
 
          return: bool; [[$true when it's successful. $false otherwise.]]
@@ -192,16 +170,12 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
            Stop animation instatly regardless of it's status and reset to
            show first frame of animation. Even though current animation is paused,
            the animation status will be stopped.
-
-           @since 1.23
          ]]
 
          return: bool; [[$true when it's successful. $false otherwise.]]
       }
-      @property default_size {
+      @property default_view_size {
          [[The default view size that specified from vector resource.
-
-           @since 1.23
          ]]
          get {
          }
@@ -212,8 +186,6 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
       @property state {
          [[Current animation view state.
            see @Efl.Ui.Animation_View_State
-
-           @since 1.23
          ]]
          get{
          }
@@ -224,77 +196,65 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
       is_playing_back {
          [[Returns the status whether current animation is on playing forward or backward.
            warning: If animation view is not on playing, it will return $false.
-
-           @since 1.23
          ]]
          return: bool; [[$true, if animation on playing back, $false otherwise.]]
       }
       @property frame_count {
          [[The index of end frame of the animation view, if it's animated.
            note : frame number starts with 0.
-
-           @since 1.23
          ]]
          get {
          }
          values {
-            frame_count: int; [[ The number of frames. 0, if it's not animated.]]
+            frame_count: int; [[The number of frames. 0, if it's not animated.]]
          }
       }
       @property min_progress {
          [[The start progress of the play.
            Default value is 0.
-
-           @since 1.23
          ]]
          set {
          }
          get {
          }
          values {
-            min_progress: double; [[ The minimum progress. Value must be 0 ~ 1. ]]
+            min_progress: double; [[The minimum progress. Value must be 0 ~ 1.]]
          }
       }
       @property max_progress {
          [[The last progress of the play.
            Default value is 1.
-
-           since 1.23
          ]]
          set {
          }
          get {
          }
          values {
-            max_progress: double; [[ The maximum progress. Value must be 0 ~ 1. ]]
+            max_progress: double; [[The maximum progress. Value must be 0 ~ 1.]]
          }
       }
       @property min_frame {
          [[The start frame of the play.
            Default value is 0.
-
-           @since 1.23
          ]]
          set {
          }
          get {
          }
          values {
-            min_frame: int; [[ The minimum frame for play. Value must be 0 ~ @.max_frame ]]
+            min_frame: int; [[The minimum frame for play. Value must be 0 ~ @.max_frame]]
          }
       }
       @property max_frame {
          [[The last frame of the play.
            Default value is @.frame_count - 1
-
-           @since 1.23
          ]]
          set {
          }
          get {
          }
          values {
-            max_frame: int; [[ The maximum frame for play. Value must be @.min_frame ~ (@.frame_count - 1) ]]
+            max_frame: int; [[The maximum frame for play. Value must be @.min_frame ~ (@.frame_count - 1)]]
          }
       }
 
@@ -307,6 +267,7 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
       Efl.Gfx.Entity.visible { set; }
       Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set; }
+      Efl.Gfx.View.view_size { set; get; }
       Efl.Part.part_get;
       Efl.Ui.Widget.widget_sub_object_add;
       Efl.Ui.Widget.widget_sub_object_del;

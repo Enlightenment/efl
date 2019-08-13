@@ -15,7 +15,6 @@ struct _Efl_Ui_Animation_View_Sub_Obj_Data
 
 struct _Efl_Ui_Animation_View_Data
 {
-   Eo* obj;                           //Efl_Ui_Animation_View Object
    Eo* vg;                            //Evas_Object_Vg
    Efl_Ui_Animation_View_State state;
    Elm_Transit *transit;
@@ -36,7 +35,7 @@ struct _Efl_Ui_Animation_View_Data
 };
 
 #define EFL_UI_ANIMATION_VIEW_DATA_GET(o, sd) \
-  Efl_Ui_Animation_View_Data * sd = efl_data_scope_get(o, EFL_UI_ANIMATION_VIEW_CLASS)
+  Efl_Ui_Animation_View_Data * sd = efl_data_scope_safe_get(o, EFL_UI_ANIMATION_VIEW_CLASS)
 
 #define EFL_UI_ANIMATION_VIEW_DATA_GET_OR_RETURN(o, ptr)   \
   EFL_UI_ANIMATION_VIEW_DATA_GET(o, ptr);                  \

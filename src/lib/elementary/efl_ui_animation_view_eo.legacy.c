@@ -98,7 +98,7 @@ elm_animation_view_stop(Efl_Ui_Animation_View *obj)
 EAPI Eina_Size2D
 elm_animation_view_default_size_get(const Efl_Ui_Animation_View *obj)
 {
-   return efl_ui_animation_view_default_size_get(obj);
+   return efl_ui_animation_view_default_view_size_get(obj);
 }
 
 EAPI Eina_Bool
