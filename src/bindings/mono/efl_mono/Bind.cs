@@ -40,8 +40,7 @@ public class BindableProperty<T>
         }
         else
         {
-            // FIXME Part binding goes here
-            Eina.Log.Error($"Binding part {partName}.{propertyName} to {modelProperty}");
+            ((Efl.Ui.IPropertyBind)((Efl.IPart)this.binder).GetPart (this.partName)).PropertyBind (this.propertyName, modelProperty);
         }
     }
 
