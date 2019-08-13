@@ -211,7 +211,7 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
       }
       @property state {
          [[Current animation view state.
-           see @.State
+           see @Efl.Ui.Animation_View_State
 
            @since 1.23
          ]]
