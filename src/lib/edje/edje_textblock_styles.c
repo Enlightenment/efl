@@ -168,7 +168,6 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl, Eina_Bool force)
    Eina_Strbuf *txt = NULL;
    Edje_Style_Tag *tag;
    Edje_Text_Class *tc;
-   int found = 0;
    char *fontset = NULL, *fontsource = NULL;
 
    if (!ed->file) return;
@@ -176,21 +175,12 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl, Eina_Bool force)
    /* Make sure the style is already defined */
    if (!stl->style) return;
 
+   /* we are sure it dosen't have any text_class */
+   if (stl->readonly) return;
+
    /* No need to compute it again and again and again */
    if (!force && stl->cache) return;
 
-   /* Make sure the style contains a text_class */
-   EINA_LIST_FOREACH(stl->tags, l, tag)
-     {
-        if (tag->text_class)
-          {
-             found = 1;
-             break;
-          }
-     }
-
-   /* No text classes , goto next style */
-   if (!found) return;
    if (!txt)
      txt = eina_strbuf_new();
 
@@ -430,7 +420,8 @@ _edje_textblock_styles_cache_free(Edje *ed, const char *text_class)
    EINA_LIST_FOREACH(ed->file->styles, l, stl)
      {
         Edje_Style_Tag *tag;
-        Eina_Bool found = EINA_FALSE;
+
+        if (stl->readonly) continue;
 
         EINA_LIST_FOREACH(stl->tags, ll, tag)
           {
@@ -438,12 +429,10 @@ _edje_textblock_styles_cache_free(Edje *ed, const char *text_class)
 
              if (!strcmp(tag->text_class, text_class))
                {
-                  found = EINA_TRUE;
+                  stl->cache = EINA_FALSE;
                   break;
                }
           }
-        if (found)
-          stl->cache = EINA_FALSE;
      }
 }
 
@@ -466,6 +455,8 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
         char *fontset = NULL, *fontsource = NULL, *ts;
 
         if (stl->style) break;
+
+        stl->readonly = EINA_TRUE;
 
         if (!txt)
           txt = eina_strbuf_new();
@@ -516,6 +507,8 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
                     }
                }
              eina_strbuf_append(txt, "'");
+
+             if (tag->text_class) stl->readonly = EINA_FALSE;
           }
         if (fontset) free(fontset);
         if (fontsource) free(fontsource);

@@ -627,7 +627,12 @@ struct _Edje_Style
    Eina_List                      *tags;
    Evas_Textblock_Style           *style;
 
-   Eina_Bool                       cache;
+   Eina_Bool                       cache : 1;
+   /* * read only * true if no text_class and no color_class exits in the style.
+    * added for performace as we don't have to check all tags to decide if we need to update
+    * this style or not.
+    */
+   Eina_Bool                       readonly : 1;
 };
 
 struct _Edje_Style_Tag
