@@ -1,5 +1,5 @@
 
-enum Efl.Ui.Animation_View.State
+enum Efl.Ui.Animation_View_State
 {
    not_ready, [[Animation is not ready to play. (Probably, it didn't file set yet or failed to read file. @since 1.23]]
    play, [[Animation is on playing. see @Efl.Ui.Animation_View.play @since 1.23]]
@@ -218,7 +218,7 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
          get{
          }
          values {
-            state: Efl.Ui.Animation_View.State; [[Current animation view state]]
+            state: Efl.Ui.Animation_View_State; [[Current animation view state]]
          }
       }
       is_playing_back {
