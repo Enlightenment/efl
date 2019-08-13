@@ -5,13 +5,6 @@
 #include "efl_ui_animation_view.eo.h"
 
 typedef struct _Efl_Ui_Animation_View_Data Efl_Ui_Animation_View_Data;
-typedef struct _Efl_Ui_Animation_View_Sub_Obj_Data Efl_Ui_Animation_View_Sub_Obj_Data;
-
-struct _Efl_Ui_Animation_View_Sub_Obj_Data
-{
-   Eina_Stringshare *part;
-   Eo *obj;
-};
 
 struct _Efl_Ui_Animation_View_Data
 {

@@ -17,10 +17,9 @@
 #define MY_CLASS_NAME "Efl_Ui_Animation_View"
 #define MY_CLASS_NAME_LEGACY "efl_ui_animation_view"
 
-#define T_SEGMENT_N 60
-#define C_SEGMENT_N 60
-#define QUEUE_SIZE 500
-
+#define T_SEGMENT_N 20
+#define C_SEGMENT_N 20
+#define DEFAULT_QUEUE_SIZE 300
 
 static const char SIG_FOCUSED[] = "focused";
 static const char SIG_UNFOCUSED[] = "unfocused";
@@ -46,27 +45,29 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
    {NULL, NULL}
 };
 
-#if 0
+typedef struct
+{
+   Eina_Stringshare *part;
+   Eo *obj;
+} Efl_Ui_Animation_View_Sub_Obj_Data;
+
 typedef struct
 {
    float x1, x2;
    float y;
-
-} Span_Data;
+} Efl_Ui_Animation_View_Span_Data;
 
 typedef struct
 {
    float x, y;
-} Point;
+} Efl_Ui_Animation_View_Point;
 
-static Point queue[QUEUE_SIZE];
 static Eo *proxy_obj[T_SEGMENT_N][T_SEGMENT_N];
 
 Eina_Bool
-map_content(Efl_VG *node, const char *id, int off_x, int off_y, Eo* target)
+_map_content(Efl_VG *node, const char *id, int off_x, int off_y, Eo* target)
 {
    if (!node) return EINA_FALSE;
-
    if (!efl_isa(node, EFL_CANVAS_VG_CONTAINER_CLASS)) return EINA_FALSE;
 
    char *name = efl_key_data_get(node, "_lot_node_name");
@@ -81,12 +82,12 @@ map_content(Efl_VG *node, const char *id, int off_x, int off_y, Eo* target)
           {
              if (efl_isa(child, EFL_CANVAS_VG_CONTAINER_CLASS))
                {
-                  if (map_content(child, id, off_x, off_y, target)) break;
+                  if (_map_content(child, id, off_x, off_y, target)) break;
                }
           }
         return EINA_FALSE;
      }
-printf("name = %s\n", name);
+
    //Find Shape
    Eina_Iterator *itr = efl_canvas_vg_container_children_get(node);
    Efl_VG *child;
@@ -166,13 +167,18 @@ printf("name = %s\n", name);
 
         Eina_Bezier bezier;
         float min_y = 999999, max_y = -1;
-        double begin_x, begin_y;
-        double end_x, end_y;
+        double begin_x = 0, begin_y = 0;
+        double end_x = 0, end_y  = 0;
         double ctrl[4];
         double inv_segment = (1 / (double) C_SEGMENT_N);
-        int queue_idx = 0;
         int i;
         float t;
+
+        Eina_Inarray *inarray = eina_inarray_new(sizeof(Efl_Ui_Animation_View_Point), 20);
+        if (!inarray) return EINA_FALSE;
+        eina_inarray_resize(inarray, DEFAULT_QUEUE_SIZE);
+        int inarray_idx = 0;
+        Efl_Ui_Animation_View_Point *pt, *pt2;
 
         //end 0, move 1, line 2, cubic 3, close 4
         while (*cmd != EFL_GFX_PATH_COMMAND_TYPE_END)
@@ -205,13 +211,14 @@ printf("name = %s\n", name);
                     {
                        t = inv_segment * (double) i;
                        eina_bezier_point_at(&bezier, t, &x, &y);
-                       queue[queue_idx].x = x;
-                       queue[queue_idx].y = y;
+                       pt = eina_inarray_nth(inarray, inarray_idx);
+                       pt->x = x;
+                       pt->y = y;
 
                        if (y < min_y) min_y = y;
                        if (y > max_y) max_y = y;
 
-                       ++queue_idx;
+                       ++inarray_idx;
                     }
                }
              else if (*cmd == EFL_GFX_PATH_COMMAND_TYPE_LINE_TO)
@@ -222,9 +229,10 @@ printf("name = %s\n", name);
                   for (i = 0; i < C_SEGMENT_N; ++i)
                     {
                        t = inv_segment * (double) i;
-                       queue[queue_idx].x = begin_x + ((double) (end_x - begin_x)) * t;
-                       queue[queue_idx].y = begin_y + ((double) (end_y - begin_y)) * t;
-                       ++queue_idx;
+                       pt = eina_inarray_nth(inarray, inarray_idx);
+                       pt->x = begin_x + ((double) (end_x - begin_x)) * t;
+                       pt->y = begin_y + ((double) (end_y - begin_y)) * t;
+                       ++inarray_idx;
                     }
                }
 
@@ -237,15 +245,15 @@ printf("name = %s\n", name);
              ++cmd;
           }
 
-        queue[queue_idx].x = queue[0].x;
-        queue[queue_idx].y = queue[0].y;
+        pt = eina_inarray_nth(inarray, inarray_idx);
+        pt2 = eina_inarray_nth(inarray, 0);
+        pt->x = pt2->x;
+        pt->y = pt2->y;
 
         float y_segment = (max_y - min_y) * inv_segment;
-        Span_Data spans[T_SEGMENT_N + 1];
+        Efl_Ui_Animation_View_Span_Data spans[T_SEGMENT_N + 1];
         float min_x, max_x;
         float a, b;
-
-        static Eo *lines[T_SEGMENT_N + 1];
 
         y = min_y;
 
@@ -254,32 +262,36 @@ printf("name = %s\n", name);
              min_x = 999999;
              max_x = -1;
 
-             for (int j = 0; j < queue_idx; ++j)
+             for (int j = 0; j < inarray_idx; ++j)
+               //EINA_INARRAY_FOREACH(inarray, pt)
                {
+                  pt = eina_inarray_nth(inarray, j);
+                  pt2 = eina_inarray_nth(inarray, j + 1);
+
                   //Horizontal Line
-                  if ((fabs(y  - queue[j].y) < 0.5) &&
-                      (fabs(queue[j].y - queue[j + 1].y) < 0.5))
+                  if ((fabs(y  - pt->y) < 0.5) &&
+                      (fabs(pt->y - pt2->y) < 0.5))
                     {
-                       if (queue[j].x < min_x) min_x = queue[j].x;
-                       if (queue[j].x > max_x) max_x = queue[j].x;
-                       if (queue[j + 1].x < min_x) min_x = queue[j + 1].x;
-                       if (queue[j + 1].x > max_x) max_x = queue[j + 1].x;
+                       if (pt->x < min_x) min_x = pt->x;
+                       if (pt->x > max_x) max_x = pt->x;
+                       if (pt2->x < min_x) min_x = pt2->x;
+                       if (pt2->x > max_x) max_x = pt2->x;
                        continue;
                     }
 
                   //Out of Y range
-                  if (((y < queue[j].y) && (y < queue[j + 1].y)) ||
-                      ((y > queue[j].y) && (y > queue[j + 1].y)))
+                  if (((y < pt->y) && (y < pt2->y)) ||
+                      ((y > pt->y) && (y > pt2->y)))
                     continue;
 
                   //Vertical Line
-                  if (fabs(queue[j + 1].x - queue[j + 1].x) < 0.5)
-                    x = queue[j].x;
+                  if (fabs(pt2->x - pt2->x) < 0.5)
+                    x = pt->x;
                   //Diagonal Line
                   else
                     {
-                       a = (queue[j + 1].y - queue[j].y) / (queue[j + 1].x - queue[j].x);
-                       b = queue[j].y - (a * queue[j].x);
+                       a = (pt2->y - pt->y) / (pt2->x - pt->x);
+                       b = pt->y - (a * pt->x);
                        x = (y - b) / a;
                     }
 
@@ -291,6 +303,7 @@ printf("name = %s\n", name);
              spans[i].y = y;
              y += y_segment;
 #if 0
+             static Eo *lines[T_SEGMENT_N + 1];
              if (!lines[i]) lines[i] = evas_object_line_add(evas_object_evas_get(target));
              evas_object_color_set(lines[i], 255, 0, 0, 255);
              evas_object_resize(lines[i], 1000, 1000);
@@ -344,24 +357,28 @@ printf("name = %s\n", name);
                   evas_object_map_set(proxy_obj[i][j], map);
                }
           }
-
+        eina_inarray_free(inarray);
         return EINA_TRUE;
      }
    return EINA_FALSE;
 }
 
 static void
-_update_map_content(Eo *vg)
+_update_part_contents(Efl_Ui_Animation_View_Data *pd)
 {
-   Efl_VG *root = evas_object_vg_root_node_get(vg);
+   if (!pd->subs || !pd->vg) return;
+
+   Efl_VG *root = evas_object_vg_root_node_get(pd->vg);
    if (!root) return;
-   int x, y;
-   evas_object_geometry_get(vg, &x, &y, 0, 0);
-   map_content(root, "tizen_mi_obj", x, y, map_obj);
-   map_content(root, "tizen_mi_obj2", x, y, map_obj2);
+
+   Eina_Position2D pos = efl_gfx_entity_position_get(pd->vg);
+   Eina_List *l;
+   Efl_Ui_Animation_View_Sub_Obj_Data *sub_d;
+
+   EINA_LIST_FOREACH(pd->subs, l, sub_d)
+     _map_content(root, sub_d->part, pos.x, pos.y, sub_d->obj);
 }
 
-#endif
 static void
 _eo_unparent_helper(Eo *child, Eo *parent)
 {
@@ -539,7 +556,10 @@ _transit_cb(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
    //transit_cb is always called with a progress value 0 ~ 1.
    //SIG_PLAY_UPDATE callback is called only when there is a real change.
    if (update_frame != current_frame)
-     evas_object_smart_callback_call(obj, SIG_PLAY_UPDATE, NULL);
+     {
+        _update_part_contents(pd);
+        evas_object_smart_callback_call(obj, SIG_PLAY_UPDATE, NULL);
+     }
 }
 
 EOLIAN static void
