@@ -251,8 +251,26 @@ struct property_extension_method_definition_generator
       if (property.setter.is_engaged())
         {
           attributes::type_def prop_type = property.setter->parameters[0].type;
-          if (!as_generator("public static Efl.Bindable<" << type(true) << "> " << managed_name << "<T>(this Efl.Ui.ItemFactory<T> fac) where T : " << name_helpers::klass_full_concrete_or_interface_name(cls) <<  " {\n"
-                            << scope_tab << scope_tab << "return new Efl.Bindable<" << type(true) << ">(\"" << property.name << "\", fac);\n"
+          if (!as_generator("public static Efl.BindableProperty<" << type(true) << "> " << managed_name << "<T>(this Efl.Ui.ItemFactory<T> fac, Efl.Csharp.ExtensionTag<"
+                                        << name_helpers::klass_full_concrete_or_interface_name(cls)
+                                        << ", T>magic = null) where T : " << name_helpers::klass_full_concrete_or_interface_name(cls) <<  " {\n"
+                            << scope_tab << scope_tab << "return new Efl.BindableProperty<" << type(true) << ">(\"" << property.name << "\", fac);\n"
+                            << scope_tab << "}\n"
+                            ).generate(sink, std::make_tuple(prop_type, prop_type), context))
+            return false;
+        }
+
+      // Do we need BindablePart extensions for this class?
+      if (!helpers::inherits_from(cls, "Efl.Ui.LayoutPart"))
+        return true;
+
+      if (property.setter.is_engaged())
+        {
+          attributes::type_def prop_type = property.setter->parameters[0].type;
+          if (!as_generator("public static Efl.BindableProperty<" << type(true) << "> " << managed_name << "<T>(this Efl.BindablePart<T> part, Efl.Csharp.ExtensionTag<"
+                                        << name_helpers::klass_full_concrete_or_interface_name(cls)
+                                        << ", T>magic = null) where T : " << name_helpers::klass_full_concrete_or_interface_name(cls) <<  " {\n"
+                            << scope_tab << scope_tab << "return new Efl.BindableProperty<" << type(true) << ">(part.PartName, \"" << property.name << "\", part.Binder);\n"
                             << scope_tab << "}\n"
                             ).generate(sink, std::make_tuple(prop_type, prop_type), context))
             return false;
