@@ -515,22 +515,6 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
                        eina_strbuf_append(txt, fontsource);
                     }
                }
-             if (tag->font_size > 0)
-               {
-                  char font_size[32];
-
-                  snprintf(font_size, sizeof(font_size), "%f", tag->font_size);
-                  eina_strbuf_append(txt, " ");
-                  eina_strbuf_append(txt, "font_size=");
-                  eina_strbuf_append(txt, font_size);
-               }
-             /* Add font name last to save evas from multiple loads */
-             if (tag->font)
-               {
-                  eina_strbuf_append(txt, " ");
-                  eina_strbuf_append(txt, "font=");
-                  eina_strbuf_append_escaped(txt, tag->font);
-               }
              eina_strbuf_append(txt, "'");
           }
         if (fontset) free(fontset);
