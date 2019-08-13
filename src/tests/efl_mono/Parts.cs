@@ -45,7 +45,7 @@ public static class TestMVVMParts
     {
         var factory = new Efl.Ui.ItemFactory<Efl.Ui.ListDefaultItem>();
         var bindablePart = factory.TextPart();
-        bindablePart.Bind("text", "name");
+        bindablePart.Markup().Bind("name");
     }
 }
 
