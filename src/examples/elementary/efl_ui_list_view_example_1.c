@@ -61,7 +61,7 @@ _make_model(Evas_Object *win)
 
         snprintf(buf, sizeof(buf), "Item # %i", i);
         eina_value_set(&vtext, buf);
-        efl_model_property_set(child, "name", &vtext);
+        efl_model_property_set(child, "title", &vtext);
      }
 
    eina_value_flush(&vtext);
@@ -90,7 +90,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    efl_ui_widget_factory_item_class_set(factory, EFL_UI_LIST_DEFAULT_ITEM_CLASS);
    efl_ui_property_bind(factory, "signal/efl,state,%v", "odd_style");
    efl_ui_property_bind(factory, "signal/efl,state,%{selected;unselected}", "selected");
-   efl_ui_property_bind(factory, "efl.text", "name");
+   efl_ui_property_bind(factory, "efl.text", "title");
 
    li = efl_add(EFL_UI_LIST_VIEW_CLASS, win
      , efl_ui_list_view_layout_factory_set(efl_added, factory)
