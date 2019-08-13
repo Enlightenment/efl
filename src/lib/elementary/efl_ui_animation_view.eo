@@ -308,5 +308,7 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
       Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set; }
       Efl.Part.part_get;
+      Efl.Ui.Widget.widget_sub_object_add;
+      Efl.Ui.Widget.widget_sub_object_del;
    }
 }

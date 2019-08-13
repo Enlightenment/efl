@@ -362,7 +362,23 @@ _update_map_content(Eo *vg)
 }
 
 #endif
+static void
+_eo_unparent_helper(Eo *child, Eo *parent)
+{
+   if (efl_parent_get(child) == parent)
+     efl_parent_set(child, evas_object_evas_get(parent));
+}
 
+static void
+_on_sub_object_size_hint_change(void *data,
+                                Evas *e EINA_UNUSED,
+                                Evas_Object *obj EINA_UNUSED,
+                                void *event_info EINA_UNUSED)
+{
+   if (!efl_alive_get(data)) return;
+   ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
+   efl_canvas_group_change(data);
+}
 
 static void
 _sizing_eval(void *data)
@@ -1003,9 +1019,59 @@ _efl_ui_animation_view_max_frame_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation
 }
 
 EOLIAN static Efl_Object *
-_efl_ui_animation_view_efl_part_part_get(const Eo* obj, Efl_Ui_Animation_View_Data *pd, const char *part)
+_efl_ui_animation_view_efl_part_part_get(const Eo* obj, Efl_Ui_Animation_View_Data *pd EINA_UNUSED, const char *part)
 {
    return ELM_PART_IMPLEMENT(EFL_UI_ANIMATION_VIEW_PART_CLASS, obj, part);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_animation_view_efl_ui_widget_widget_sub_object_add(Eo *obj, Efl_Ui_Animation_View_Data *pd EINA_UNUSED, Evas_Object *sobj)
+{
+   Eina_Bool int_ret = EINA_FALSE;
+
+   if (evas_object_data_get(sobj, "elm-parent") == obj) return EINA_TRUE;
+
+   int_ret = elm_widget_sub_object_add(efl_super(obj, MY_CLASS), sobj);
+   if (!int_ret) return EINA_FALSE;
+
+   evas_object_event_callback_add
+         (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+          _on_sub_object_size_hint_change, obj);
+
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_animation_view_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Animation_View_Data *pd, Evas_Object *sobj)
+{
+   Eina_List *l;
+   Efl_Ui_Animation_View_Sub_Obj_Data *sub_d;
+   Eina_Bool int_ret = EINA_FALSE;
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
+
+   evas_object_event_callback_del_full
+     (sobj, EVAS_CALLBACK_CHANGED_SIZE_HINTS,
+     _on_sub_object_size_hint_change, obj);
+
+   int_ret = elm_widget_sub_object_del(efl_super(obj, MY_CLASS), sobj);
+   if (!int_ret) return EINA_FALSE;
+//   if (pd->destructed_is) return EINA_TRUE;
+
+   EINA_LIST_FOREACH(pd->subs, l, sub_d)
+     {
+        if (sub_d->obj != sobj) continue;
+        pd->subs = eina_list_remove_list(pd->subs, l);
+        eina_stringshare_del(sub_d->part);
+        free(sub_d);
+        break;
+     }
+
+   // No need to resize object during destruction
+   if (wd->resize_obj && efl_alive_get(obj))
+     efl_canvas_group_change(obj);
+
+   return EINA_TRUE;
 }
 
 EAPI Elm_Animation_View*
@@ -1030,18 +1096,103 @@ elm_animation_view_state_get(Elm_Animation_View *obj)
 static Eina_Bool
 _efl_ui_animation_view_content_set(Eo *obj, Efl_Ui_Animation_View_Data *pd, const char *part, Efl_Gfx_Entity *content)
 {
-   return EINA_FALSE;
+   Efl_Ui_Animation_View_Sub_Obj_Data *sub_d;
+   Eina_List *l;
+
+   EINA_LIST_FOREACH(pd->subs, l, sub_d)
+     {
+        if (!strcmp(part, sub_d->part))
+          {
+             if (content == sub_d->obj) goto end;
+             if (efl_alive_get(sub_d->obj))
+               {
+                  _eo_unparent_helper(sub_d->obj, obj);
+                  evas_object_del(sub_d->obj);
+               }
+             break;
+          }
+        else if (content == sub_d->obj)
+          {
+             pd->subs = eina_list_remove_list(pd->subs, l);
+             eina_stringshare_del(sub_d->part);
+             free(sub_d);
+             _elm_widget_sub_object_redirect_to_top(obj, content);
+             break;
+          }
+     }
+
+   if (content)
+     {
+        if (!elm_widget_sub_object_add(obj, content)) return EINA_FALSE;
+
+        sub_d = ELM_NEW(Efl_Ui_Animation_View_Sub_Obj_Data);
+        if (!sub_d)
+          {
+             ERR("failed to allocate memory!");
+             _elm_widget_sub_object_redirect_to_top(obj, content);
+             return EINA_FALSE;
+          }
+        sub_d->part = eina_stringshare_add(part);
+        sub_d->obj = content;
+        pd->subs = eina_list_append(pd->subs, sub_d);
+        efl_parent_set(content, obj);
+     }
+
+   efl_canvas_group_change(obj);
+
+end:
+   return EINA_TRUE;
 }
 
 static Efl_Gfx_Entity *
-_efl_ui_animation_view_content_get(const Eo *obj, Efl_Ui_Animation_View_Data *pd, const char *part)
+_efl_ui_animation_view_content_get(const Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, const char *part)
 {
+   const Eina_List *l;
+   Efl_Ui_Animation_View_Sub_Obj_Data *sub_d;
+
+   EINA_LIST_FOREACH(pd->subs, l, sub_d)
+     {
+        if (strcmp(part, sub_d->part)) continue;
+        return sub_d->obj;
+     }
+
    return NULL;
 }
 
 static Efl_Gfx_Entity *
 _efl_ui_animation_view_content_unset(Eo *obj, Efl_Ui_Animation_View_Data *pd, const char *part)
 {
+   Efl_Ui_Animation_View_Sub_Obj_Data *sub_d;
+   Eina_List *l;
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
+
+   EINA_LIST_FOREACH(pd->subs, l, sub_d)
+     {
+        if (!strcmp(part, sub_d->part))
+          {
+             Evas_Object *content;
+
+             if (!sub_d->obj)
+               {
+                  ERR("Sub Object Data doens't have valid object, Something wrong....");
+                  return NULL;
+               }
+
+             content = sub_d->obj;
+
+             /* sub_d will die in _widget_sub_object_del */
+             if (!_elm_widget_sub_object_redirect_to_top(obj, content))
+               {
+                  ERR("could not remove sub object %p from %p", content, obj);
+                  return NULL;
+               }
+             _eo_unparent_helper(content, obj);
+
+             return content;
+          }
+     }
+
    return NULL;
 }
 
