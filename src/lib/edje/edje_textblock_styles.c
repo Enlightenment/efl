@@ -100,6 +100,11 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
                {
                   if (tag_ret)
                     (*tag_ret)->text_class = eina_stringshare_add(val);
+
+                  // no need to add text_class tag to style
+                  // as evas_textblock_style has no idea about
+                  // text_class tag.
+                  continue;
                }
              else if (!strcmp(key, "font_size"))
                {
@@ -509,22 +514,6 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
                        eina_strbuf_append(txt, "font_source=");
                        eina_strbuf_append(txt, fontsource);
                     }
-               }
-             if (tag->font_size > 0)
-               {
-                  char font_size[32];
-
-                  snprintf(font_size, sizeof(font_size), "%f", tag->font_size);
-                  eina_strbuf_append(txt, " ");
-                  eina_strbuf_append(txt, "font_size=");
-                  eina_strbuf_append(txt, font_size);
-               }
-             /* Add font name last to save evas from multiple loads */
-             if (tag->font)
-               {
-                  eina_strbuf_append(txt, " ");
-                  eina_strbuf_append(txt, "font=");
-                  eina_strbuf_append_escaped(txt, tag->font);
                }
              eina_strbuf_append(txt, "'");
           }

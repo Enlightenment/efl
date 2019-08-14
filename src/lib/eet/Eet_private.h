@@ -227,15 +227,31 @@ Eet_Dictionary *
  eet_dictionary_add(void);
 void
  eet_dictionary_free(Eet_Dictionary *ed);
+void
+ eet_dictionary_lock_read(const Eet_Dictionary *ed);
+void
+ eet_dictionary_lock_write(Eet_Dictionary *ed);
+void
+ eet_dictionary_unlock(const Eet_Dictionary *ed);
 int
  eet_dictionary_string_add(Eet_Dictionary *ed,
                           const char *string);
 int
+eet_dictionary_string_get_size_unlocked(const Eet_Dictionary *ed,
+                                        int index);
+int
 eet_dictionary_string_get_size(const Eet_Dictionary *ed,
                                int index);
 const char *
+eet_dictionary_string_get_char_unlocked(const Eet_Dictionary *ed,
+                                        int index);
+const char *
 eet_dictionary_string_get_char(const Eet_Dictionary *ed,
                                int index);
+Eina_Bool
+eet_dictionary_string_get_float_unlocked(const Eet_Dictionary *ed,
+                                         int index,
+                                         float *result);
 Eina_Bool
 eet_dictionary_string_get_float(const Eet_Dictionary *ed,
                                 int index,
@@ -245,9 +261,20 @@ eet_dictionary_string_get_double(const Eet_Dictionary *ed,
                                  int index,
                                  double *result);
 Eina_Bool
+eet_dictionary_string_get_double_unlocked(const Eet_Dictionary *ed,
+                                          int index,
+                                          double *result);
+Eina_Bool
 eet_dictionary_string_get_fp(const Eet_Dictionary *ed,
                              int index,
                              Eina_F32p32 *result);
+Eina_Bool
+eet_dictionary_string_get_fp_unlocked(const Eet_Dictionary *ed,
+                                      int index,
+                                      Eina_F32p32 *result);
+int
+eet_dictionary_string_get_hash_unlocked(const Eet_Dictionary *ed,
+                                        int index);
 int
 eet_dictionary_string_get_hash(const Eet_Dictionary *ed,
                                int index);

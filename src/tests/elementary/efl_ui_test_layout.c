@@ -23,8 +23,9 @@ EFL_START_TEST(efl_ui_layout_test_property_bind)
    char buf[PATH_MAX];
    Evas_Object *win, *ly;
    Efl_Generic_Model *model;
-   Eina_Value v;
-   Eina_Future *f;
+   Eina_Value vt, vs;
+   Eina_Future *f, *f1, *f2;
+   int r = 0, g = 0, b = 0, a = 0;
    const char *part_text;
    const char text_value[] = "A random string for elm_layout_property_bind test";
 
@@ -32,24 +33,33 @@ EFL_START_TEST(efl_ui_layout_test_property_bind)
 
    ly = efl_add(EFL_UI_LAYOUT_CLASS, win);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
-   efl_file_simple_load(ly, buf, "layout");
-   efl_gfx_entity_visible_set(ly, EINA_TRUE);
+   ck_assert(efl_file_simple_load(ly, buf, "layout"));
 
    model = efl_add(EFL_GENERIC_MODEL_CLASS, win);
-   ck_assert(!!eina_value_setup(&v, EINA_VALUE_TYPE_STRING));
-   ck_assert(!!eina_value_set(&v, text_value));
-   f = efl_model_property_set(model, "text_property", &v);
+
+   vt = eina_value_string_init(text_value);
+   f1 = efl_model_property_set(model, "text_property", &vt);
+
+   vs = eina_value_string_init("#0A0D0EFF");
+   f2 = efl_model_property_set(model, "background_color", &vs);
+
+   f = eina_future_all(f1, f2);
    eina_future_then(f, _propagated_cb, NULL, NULL);
 
    efl_ui_property_bind(ly, "text", "text_property");
+   efl_ui_property_bind(efl_part(ly, "background"), "color_code", "background_color");
    efl_ui_view_model_set(ly, model);
 
    ecore_main_loop_begin();
 
    part_text = efl_text_get(efl_part(ly, "text"));
-
    ck_assert_str_eq(part_text, text_value);
 
+   efl_gfx_color_get(efl_part(ly, "background"), &r, &g, &b, &a);
+   ck_assert_int_eq(r, 0xA);
+   ck_assert_int_eq(g, 0xD);
+   ck_assert_int_eq(b, 0xE);
+   ck_assert_int_eq(a, 0xFF);
 }
 EFL_END_TEST
 
@@ -59,8 +69,9 @@ EFL_START_TEST(efl_ui_layout_test_property_bind_provider)
    Evas_Object *win, *ly;
    Efl_Generic_Model *model;
    Efl_Model_Provider *provider;
-   Eina_Value v;
-   Eina_Future *f;
+   Eina_Value vt, vs;
+   Eina_Future *f, *f1, *f2;
+   int r = 0, g = 0, b = 0, a = 0;
    const char *part_text;
    const char text_value[] = "A random string for elm_layout_property_bind test";
 
@@ -71,24 +82,33 @@ EFL_START_TEST(efl_ui_layout_test_property_bind_provider)
 
    ly = efl_add(EFL_UI_LAYOUT_CLASS, win);
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", ELM_TEST_DATA_DIR);
-   efl_file_simple_load(ly, buf, "layout");
-   efl_gfx_entity_visible_set(ly, EINA_TRUE);
+   ck_assert(efl_file_simple_load(ly, buf, "layout"));
 
    model = efl_add(EFL_GENERIC_MODEL_CLASS, win);
-   ck_assert(!!eina_value_setup(&v, EINA_VALUE_TYPE_STRING));
-   ck_assert(!!eina_value_set(&v, text_value));
-   f = efl_model_property_set(model, "text_property", &v);
+
+   vt = eina_value_string_init(text_value);
+   f1 = efl_model_property_set(model, "text_property", &vt);
+
+   vs = eina_value_string_init("#0A0D0EFF");
+   f2 = efl_model_property_set(model, "background_color", &vs);
+
+   f = eina_future_all(f1, f2);
    eina_future_then(f, _propagated_cb, NULL, NULL);
 
    efl_ui_property_bind(ly, "text", "text_property");
+   efl_ui_property_bind(efl_part(ly, "background"), "color_code", "background_color");
    efl_ui_view_model_set(provider, model);
 
    ecore_main_loop_begin();
 
    part_text = efl_text_get(efl_part(ly, "text"));
-
    ck_assert_str_eq(part_text, text_value);
 
+   efl_gfx_color_get(efl_part(ly, "background"), &r, &g, &b, &a);
+   ck_assert_int_eq(r, 0xA);
+   ck_assert_int_eq(g, 0xD);
+   ck_assert_int_eq(b, 0xE);
+   ck_assert_int_eq(a, 0xFF);
 }
 EFL_END_TEST
 

@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Widget_Part extends Efl.Object
+class @beta Efl.Ui.Widget_Part extends Efl.Object implements Efl.Ui.Property_Bind
 {
    [[This is the base class for all "Part" handles in Efl.Ui widgets.
 
@@ -9,5 +9,6 @@ class @beta Efl.Ui.Widget_Part extends Efl.Object
    data: Elm_Part_Data;
    implements {
       Efl.Object.destructor;
+      Efl.Ui.Property_Bind.property_bind;
    }
 }

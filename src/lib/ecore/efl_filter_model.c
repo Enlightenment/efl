@@ -362,7 +362,7 @@ _efl_filter_model_efl_model_children_slice_get(Eo *obj, Efl_Filter_Model_Data *p
    if (count == 0)
      return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
 
-   r = malloc((count + 1) * sizeof (Eina_Future *));
+   r = calloc(1, (count + 1) * sizeof (Eina_Future *));
    if (!r) return efl_loop_future_rejected(obj, ENOMEM);
 
    mapping = calloc(count, sizeof (Efl_Filter_Model_Mapping *));
@@ -385,7 +385,7 @@ _efl_filter_model_efl_model_children_slice_get(Eo *obj, Efl_Filter_Model_Data *p
         r[i] = efl_future_then(obj, r[i], .success_type = EINA_VALUE_TYPE_ARRAY,
                                .success = _filter_remove_array,
                                .data = mapping[i]);
-        if (!r) goto on_error;
+        if (!r[i]) goto on_error;
      }
    r[i] = EINA_FUTURE_SENTINEL;
 

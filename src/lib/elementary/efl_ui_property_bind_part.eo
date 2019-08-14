@@ -1,0 +1,11 @@
+class @beta Efl.Ui.Property_Bind_Part extends Efl.Object implements Efl.Ui.Property_Bind
+{
+   [[Every part returned by an @Efl.Ui.Widget_Factory will enable the @Efl.Ui.Factory to
+     remember what part to call @Efl.Ui.Property_Bind.property_bind on when an item is created
+     enabling to propagate binding model property to item object property.
+   ]]
+   implements {
+      Efl.Ui.Property_Bind.property_bind;
+      Efl.Object.destructor;
+   }
+}

@@ -122,10 +122,10 @@ _ipc_launch(void)
    else
      snprintf(buf, sizeof(buf), PACKAGE_BIN_DIR "/efreetd");
    ecore_exe_run(buf, NULL);
-   while ((!ipc) && (num < 500))
+   while ((!ipc) && (num < 200))
      {
         num++;
-        usleep(1000);
+        usleep(10000);
         ipc = ecore_ipc_server_connect(ECORE_IPC_LOCAL_USER, "efreetd", 0, NULL);
      }
 }

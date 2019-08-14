@@ -400,6 +400,7 @@ evas_image_load_file_head_with_data_png(void *loader_data,
    if (nine_patch && pack_offset != sizeof (DATA32))
      {
         *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+        free(pixels2);
         goto close_file;
      }
 
@@ -502,12 +503,14 @@ evas_image_load_file_head_with_data_png(void *loader_data,
         if (prop->content.x == 0 || prop->content.y == 0)
           {
              *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+             free(pixels2);
              goto close_file;
           }
         if ((prop->content.x + prop->content.w >= image_w - 1) &&
             (prop->content.y + prop->content.h >= image_h - 1))
           {
              *error = EVAS_LOAD_ERROR_CORRUPT_FILE;
+             free(pixels2);
              goto close_file;
           }
 

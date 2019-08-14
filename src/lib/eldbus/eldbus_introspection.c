@@ -39,6 +39,7 @@ eldbus_introspection_parse(const char *xml)
    xml_root = eina_simple_xml_node_load(xml, strlen(xml), EINA_TRUE);
    if (xml_root && xml_root->children) last = xml_root->children->last;
    xml_node = (Eina_Simple_XML_Node *)last;
+   if (!xml_node) goto free_root;
    EINA_SAFETY_ON_FALSE_GOTO(EINA_SIMPLE_XML_NODE_TAG == xml_node->type, free_root);
 
    node = (Eldbus_Introspection_Node*)_eldbus_introspection_parse_node((Eina_Simple_XML_Node_Tag*)xml_node);

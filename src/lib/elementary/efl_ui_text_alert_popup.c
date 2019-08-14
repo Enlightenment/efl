@@ -158,6 +158,8 @@ _sizing_eval(Eo *obj, Efl_Ui_Text_Alert_Popup_Data *pd)
 EOLIAN static void
 _efl_ui_text_alert_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Text_Alert_Popup_Data *pd)
 {
+   EFL_UI_POPUP_DATA_GET_OR_RETURN(obj, ppd);
+   ppd->in_calc = EINA_TRUE;
    /* When efl_canvas_group_change() is called, just flag is set instead of size
     * calculation.
     * The actual size calculation is done here when the object is rendered to
@@ -167,6 +169,7 @@ _efl_ui_text_alert_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Text_A
    _sizing_eval(obj, pd);
 
    efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
+   ppd->in_calc = EINA_FALSE;
 }
 
 static Eina_Bool
