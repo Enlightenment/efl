@@ -79,8 +79,6 @@ _proxy_create(Eo *source)
    efl_gfx_entity_visible_set(proxy, EINA_FALSE);
    efl_gfx_entity_visible_set(source, EINA_FALSE);
 
-   efl_gfx_hint_size_min_set(proxy, efl_gfx_hint_size_combined_min_get(source));
-
    return proxy;
 }
 
@@ -129,7 +127,7 @@ _node_get(Efl_VG *node, const char *part)
 }
 
 static Eina_Bool
-_part_draw(const Efl_VG *node, int off_x, int off_y, Eo* target)
+_part_draw(Efl_Ui_Animation_View_Sub_Obj_Data *sub_d, Eina_Position2D offset)
 {
    const Efl_Gfx_Path_Command_Type *cmd, *tcmd;
    const double *points;
@@ -143,24 +141,26 @@ _part_draw(const Efl_VG *node, int off_x, int off_y, Eo* target)
    double inv_segment = (1 / (double) C_SEGMENT_N);
    Eina_Inarray *inarray;
    Efl_Ui_Animation_View_Point *pt, *pt2;
+   Eo *target = sub_d->proxy;
    Eina_Bool fast_path = EINA_TRUE;
 
-   efl_gfx_path_get(node, &cmd, &points);
+   efl_gfx_path_get(sub_d->node, &cmd, &points);
    if (!cmd) return EINA_FALSE;
 
    efl_gfx_entity_visible_set(target, EINA_TRUE);
-   efl_gfx_path_bounds_get(node, &tbound);
-   efl_gfx_color_get(node, NULL, NULL, NULL, &alpha);
+   efl_gfx_path_bounds_get(sub_d->node, &tbound);
+   efl_gfx_color_get(sub_d->node, NULL, NULL, NULL, &alpha);
    efl_gfx_entity_geometry_set(target, tbound);
 
-   //Fast Path? Shape outlines by consisted of lines.
-   tcmd = cmd;
+   //TODO: Optimize it, scalable or not?
+   efl_gfx_entity_geometry_set(sub_d->obj, tbound);
 
+   //Fast Path? Shape outlines by consisted of straight lines.
+   tcmd = cmd;
    if (*tcmd != EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO) fast_path = EINA_FALSE;
    else
      {
         ++tcmd;
-
         while (*tcmd == EFL_GFX_PATH_COMMAND_TYPE_LINE_TO)
           {
              ++tcmd;
@@ -171,35 +171,36 @@ _part_draw(const Efl_VG *node, int off_x, int off_y, Eo* target)
                }
           }
 
-        if (((*tcmd) != EFL_GFX_PATH_COMMAND_TYPE_END) && ((*tcmd) != EFL_GFX_PATH_COMMAND_TYPE_CLOSE))
+        if ((pt_cnt != 4) ||
+            (((*tcmd) != EFL_GFX_PATH_COMMAND_TYPE_END) && ((*tcmd) != EFL_GFX_PATH_COMMAND_TYPE_CLOSE)))
           fast_path = EINA_FALSE;
      }
 
    pt_idx = 0;
 
-   //Case 1. Rectangle Mapping
+   //Fast Path: Rectangle Mapping
    if (fast_path)
      {
-        int map_idx = 1;
-        Evas_Map *map = evas_map_new(pt_cnt);
+        efl_gfx_mapping_reset(target);
+        efl_gfx_mapping_point_count_set(target, pt_cnt);
 
-        for (int i = 0; i < pt_cnt; ++i)
-          {
-             x = points[pt_idx++] + off_x;
-             y = points[pt_idx++] + off_y;
-             evas_map_point_coord_set(map, map_idx, x, y, 0);
-             evas_map_point_color_set(map, map_idx++, alpha, alpha, alpha, alpha);
-             map_idx %= pt_cnt;
-          }
+        //Point
+        efl_gfx_mapping_coord_absolute_set(target, 1, points[0] + offset.x, points[1] + offset.y, 0);
+        efl_gfx_mapping_coord_absolute_set(target, 2, points[2] + offset.x, points[3] + offset.y, 0);
+        efl_gfx_mapping_coord_absolute_set(target, 3, points[4] + offset.x, points[5] + offset.y, 0);
+        efl_gfx_mapping_coord_absolute_set(target, 0, points[6] + offset.x, points[7] + offset.y, 0);
 
-        //Texture Coordinates
-        evas_map_point_image_uv_set(map, 0, 0, 0);
-        evas_map_point_image_uv_set(map, 1, tbound.w, 0);
-        evas_map_point_image_uv_set(map, 2, tbound.w, tbound.h);
-        evas_map_point_image_uv_set(map, 3, 0, tbound.h);
+        //Color
+        efl_gfx_mapping_color_set(target, 0, alpha, alpha, alpha, alpha);
+        efl_gfx_mapping_color_set(target, 1, alpha, alpha, alpha, alpha);
+        efl_gfx_mapping_color_set(target, 2, alpha, alpha, alpha, alpha);
+        efl_gfx_mapping_color_set(target, 3, alpha, alpha, alpha, alpha);
 
-        evas_object_map_set(target, map);
-        evas_object_map_enable_set(target, EINA_TRUE);
+        //UV
+        efl_gfx_mapping_uv_set(target, 0, 0, 0);
+        efl_gfx_mapping_uv_set(target, 1, tbound.w, 0);
+        efl_gfx_mapping_uv_set(target, 2, tbound.w, tbound.h);
+        efl_gfx_mapping_uv_set(target, 3, 0, tbound.h);
 
         return EINA_TRUE;
      }
@@ -215,8 +216,8 @@ _part_draw(const Efl_VG *node, int off_x, int off_y, Eo* target)
      {
         if (*cmd == EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO)
           {
-             begin_x = points[pt_idx++] + off_x;
-             begin_y = points[pt_idx++] + off_y;
+             begin_x = points[pt_idx++] + offset.x;
+             begin_y = points[pt_idx++] + offset.y;
              if (begin_y < min_y) min_y = begin_y;
              if (begin_y > max_y) max_y = begin_y;
              ++cmd;
@@ -225,12 +226,12 @@ _part_draw(const Efl_VG *node, int off_x, int off_y, Eo* target)
         else if (*cmd == EFL_GFX_PATH_COMMAND_TYPE_CUBIC_TO)
           {
 
-             ctrl[0] = points[pt_idx++] + off_x;
-             ctrl[1] = points[pt_idx++] + off_y;
-             ctrl[2] = points[pt_idx++] + off_x;
-             ctrl[3] = points[pt_idx++] + off_y;
-             end_x = points[pt_idx++] + off_x;
-             end_y = points[pt_idx++] + off_y;
+             ctrl[0] = points[pt_idx++] + offset.x;
+             ctrl[1] = points[pt_idx++] + offset.y;
+             ctrl[2] = points[pt_idx++] + offset.x;
+             ctrl[3] = points[pt_idx++] + offset.y;
+             end_x = points[pt_idx++] + offset.x;
+             end_y = points[pt_idx++] + offset.y;
 
              eina_bezier_values_set(&bezier,
                                     begin_x, begin_y,
@@ -253,8 +254,8 @@ _part_draw(const Efl_VG *node, int off_x, int off_y, Eo* target)
           }
         else if (*cmd == EFL_GFX_PATH_COMMAND_TYPE_LINE_TO)
           {
-             end_x = points[pt_idx++] + off_x;
-             end_y = points[pt_idx++] + off_y;
+             end_x = points[pt_idx++] + offset.x;
+             end_y = points[pt_idx++] + offset.y;
 
              for (i = 0; i < C_SEGMENT_N; ++i)
                {
@@ -409,7 +410,7 @@ _update_part_contents(Eo *obj, Efl_Ui_Animation_View_Data *pd)
           sub_d->node = _node_get(root, sub_d->part);
 
         if (sub_d->node)
-          _part_draw(sub_d->node, pos.x, pos.y, sub_d->proxy);
+          _part_draw(sub_d, pos);
         else
           ERR("part(%s) is invalid in Efl_Ui_Animation_View(%p)", sub_d->part, obj);
      }
