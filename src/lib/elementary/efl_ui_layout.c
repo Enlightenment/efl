@@ -2515,6 +2515,34 @@ _efl_ui_layout_base_efl_ui_factory_bind_factory_bind(Eo *obj EINA_UNUSED, Efl_Ui
    _efl_ui_layout_view_model_content_update(pd, tracking, ss_key);
 }
 
+EOLIAN void
+_efl_ui_layout_base_efl_ui_i18n_language_set(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const char *locale)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   efl_ui_language_set(wd->resize_obj, locale);
+}
+
+EOLIAN const char *
+_efl_ui_layout_base_efl_ui_i18n_language_get(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
+   return efl_ui_language_get(wd->resize_obj);
+}
+
+EOLIAN static void
+_efl_ui_layout_base_efl_ui_l10n_l10n_text_set(Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const char *label, const char *domain)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   efl_ui_l10n_text_set(efl_part(obj, efl_ui_widget_default_text_part_get(obj)), label, domain);
+}
+
+EOLIAN static const char *
+_efl_ui_layout_base_efl_ui_l10n_l10n_text_get(const Eo *obj, Efl_Ui_Layout_Data *sd EINA_UNUSED, const char **domain)
+{
+  ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
+  return efl_ui_l10n_text_get(efl_part(obj, efl_ui_widget_default_text_part_get(obj)), domain);
+}
+
 EOLIAN static Eo *
 _efl_ui_layout_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
 {
