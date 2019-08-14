@@ -210,10 +210,7 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd, Elm_Layout_Data *ld)
    efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
 
    if (ld)
-     {
-        ld->restricted_calc_w = ld->restricted_calc_h = EINA_FALSE;
-        efl_gfx_hint_size_min_set(obj, EINA_SIZE2D(minw, minh));
-     }
+     ld->restricted_calc_w = ld->restricted_calc_h = EINA_FALSE;
 }
 
 void
