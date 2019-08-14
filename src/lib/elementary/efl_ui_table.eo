@@ -53,5 +53,7 @@ class Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pack_Lay
       Efl.Pack_Table.table_rows { get; set; }
       Efl.Pack_Layout.layout_update;
       Efl.Pack_Layout.layout_request;
+      @empty Efl.Ui.L10n.l10n_text { get; set; }
+      @empty Efl.Ui.I18n.language { get; set; }
    }
 }
