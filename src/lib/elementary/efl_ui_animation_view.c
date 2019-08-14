@@ -131,24 +131,39 @@ _node_get(Efl_VG *node, const char *part)
 static Eina_Bool
 _part_draw(const Efl_VG *node, int off_x, int off_y, Eo* target)
 {
-   const Efl_Gfx_Path_Command_Type *cmd;
+   const Efl_Gfx_Path_Command_Type *cmd, *tcmd;
    const double *points;
-
-   efl_gfx_path_get(node, &cmd, NULL);
-   if (!cmd) return EINA_FALSE;
-
-   //Fast Path? Shape outlines by consisted of lines.
-   int pt_cnt = 0;
+   int alpha, inarray_idx, i, pt_idx = 0, pt_cnt = 0;
+   double x, y;
+   Eina_Rect tbound;
+   Eina_Bezier bezier;
+   float t, min_y = 99999999, max_y = -1;
+   double begin_x = 0, begin_y = 0, end_x = 0, end_y  = 0;
+   double ctrl[4];
+   double inv_segment = (1 / (double) C_SEGMENT_N);
+   Eina_Inarray *inarray;
+   Efl_Ui_Animation_View_Point *pt, *pt2;
    Eina_Bool fast_path = EINA_TRUE;
 
-   if (*cmd != EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO) fast_path = EINA_FALSE;
+   efl_gfx_path_get(node, &cmd, &points);
+   if (!cmd) return EINA_FALSE;
+
+   efl_gfx_entity_visible_set(target, EINA_TRUE);
+   efl_gfx_path_bounds_get(node, &tbound);
+   efl_gfx_color_get(node, NULL, NULL, NULL, &alpha);
+   efl_gfx_entity_geometry_set(target, tbound);
+
+   //Fast Path? Shape outlines by consisted of lines.
+   tcmd = cmd;
+
+   if (*tcmd != EFL_GFX_PATH_COMMAND_TYPE_MOVE_TO) fast_path = EINA_FALSE;
    else
      {
-        ++cmd;
+        ++tcmd;
 
-        while (*cmd == EFL_GFX_PATH_COMMAND_TYPE_LINE_TO)
+        while (*tcmd == EFL_GFX_PATH_COMMAND_TYPE_LINE_TO)
           {
-             ++cmd;
+             ++tcmd;
              if (++pt_cnt > 4)
                {
                   fast_path = EINA_FALSE;
@@ -156,18 +171,11 @@ _part_draw(const Efl_VG *node, int off_x, int off_y, Eo* target)
                }
           }
 
-        if (((*cmd) != EFL_GFX_PATH_COMMAND_TYPE_END) && ((*cmd) != EFL_GFX_PATH_COMMAND_TYPE_CLOSE))
+        if (((*tcmd) != EFL_GFX_PATH_COMMAND_TYPE_END) && ((*tcmd) != EFL_GFX_PATH_COMMAND_TYPE_CLOSE))
           fast_path = EINA_FALSE;
      }
 
-   efl_gfx_path_get(node, &cmd, &points);
-
-   int alpha;
-   efl_gfx_color_get(node, NULL, NULL, NULL, &alpha);
-
-   int pt_idx = 0;
-   double x, y;
-   Eina_Size2D tsize = efl_gfx_entity_size_get(target);
+   pt_idx = 0;
 
    //Case 1. Rectangle Mapping
    if (fast_path)
@@ -186,9 +194,9 @@ _part_draw(const Efl_VG *node, int off_x, int off_y, Eo* target)
 
         //Texture Coordinates
         evas_map_point_image_uv_set(map, 0, 0, 0);
-        evas_map_point_image_uv_set(map, 1, tsize.w, 0);
-        evas_map_point_image_uv_set(map, 2, tsize.w, tsize.h);
-        evas_map_point_image_uv_set(map, 3, 0, tsize.h);
+        evas_map_point_image_uv_set(map, 1, tbound.w, 0);
+        evas_map_point_image_uv_set(map, 2, tbound.w, tbound.h);
+        evas_map_point_image_uv_set(map, 3, 0, tbound.h);
 
         evas_object_map_set(target, map);
         evas_object_map_enable_set(target, EINA_TRUE);
@@ -197,21 +205,10 @@ _part_draw(const Efl_VG *node, int off_x, int off_y, Eo* target)
      }
 
    //Case 2. Arbitrary Geometry mapping
-
-   Eina_Bezier bezier;
-   float min_y = 999999, max_y = -1;
-   double begin_x = 0, begin_y = 0;
-   double end_x = 0, end_y  = 0;
-   double ctrl[4];
-   double inv_segment = (1 / (double) C_SEGMENT_N);
-   int i;
-   float t;
-
-   Eina_Inarray *inarray = eina_inarray_new(sizeof(Efl_Ui_Animation_View_Point), 20);
+   inarray = eina_inarray_new(sizeof(Efl_Ui_Animation_View_Point), 20);
    if (!inarray) return EINA_FALSE;
    eina_inarray_resize(inarray, DEFAULT_QUEUE_SIZE);
-   int inarray_idx = 0;
-   Efl_Ui_Animation_View_Point *pt, *pt2;
+   inarray_idx = 0;
 
    //end 0, move 1, line 2, cubic 3, close 4
    while (*cmd != EFL_GFX_PATH_COMMAND_TYPE_END)
@@ -345,8 +342,8 @@ _part_draw(const Efl_VG *node, int off_x, int off_y, Eo* target)
      }
 
    Evas *evas = evas_object_evas_get(target);
-   float u_segment = ((float) tsize.w) / ((float) T_SEGMENT_N);
-   float v_segment = ((float) tsize.h) / ((float) T_SEGMENT_N);
+   float u_segment = ((float) tbound.w) / ((float) T_SEGMENT_N);
+   float v_segment = ((float) tbound.h) / ((float) T_SEGMENT_N);
 
    for (int i = 0; i < T_SEGMENT_N; ++i)
      {
@@ -361,7 +358,7 @@ _part_draw(const Efl_VG *node, int off_x, int off_y, Eo* target)
                   evas_object_image_source_set(proxy_obj[i][j], target);
                   evas_object_image_source_events_set(proxy_obj[i][j], EINA_TRUE);
                   evas_object_move(proxy_obj[i][j], -1000, -1000);
-                  evas_object_resize(proxy_obj[i][j], tsize.w, tsize.h);
+                  evas_object_resize(proxy_obj[i][j], tbound.w, tbound.h);
                   evas_object_show(proxy_obj[i][j]);
                }
 
@@ -393,7 +390,7 @@ _part_draw(const Efl_VG *node, int off_x, int off_y, Eo* target)
 }
 
 static void
-_update_part_contents(Efl_Ui_Animation_View_Data *pd)
+_update_part_contents(Eo *obj, Efl_Ui_Animation_View_Data *pd)
 {
    if (!pd->subs) return;
 
@@ -413,15 +410,17 @@ _update_part_contents(Efl_Ui_Animation_View_Data *pd)
 
         if (sub_d->node)
           _part_draw(sub_d->node, pos.x, pos.y, sub_d->proxy);
+        else
+          ERR("part(%s) is invalid in Efl_Ui_Animation_View(%p)", sub_d->part, obj);
      }
 }
 
 static void
-_frame_set_facade(Efl_Ui_Animation_View_Data *pd, int frame)
+_frame_set_facade(Eo *obj, Efl_Ui_Animation_View_Data *pd, int frame)
 {
    int pframe = evas_object_vg_animated_frame_get(pd->vg);
    evas_object_vg_animated_frame_set(pd->vg, frame);
-   if (pframe != frame) _update_part_contents(pd);
+   if (pframe != frame) _update_part_contents(obj, pd);
 }
 
 static void
@@ -587,7 +586,7 @@ _transit_cb(Elm_Transit_Effect *effect, Elm_Transit *transit, double progress)
 
    int update_frame = (int)((maxframe - minframe) * progress) + minframe;
    int current_frame = evas_object_vg_animated_frame_get(pd->vg);
-   _frame_set_facade(pd, update_frame);
+   _frame_set_facade(obj, pd, update_frame);
 
    if (pd->auto_repeat)
      {
@@ -678,7 +677,7 @@ _ready_play(Eo *obj, Efl_Ui_Animation_View_Data *pd)
 
    pd->frame_cnt = (double) evas_object_vg_animated_frame_count_get(pd->vg);
    pd->frame_duration = evas_object_vg_animated_frame_duration_get(pd->vg, 0, 0);
-   _frame_set_facade(pd, 0);
+   _frame_set_facade(obj, pd, 0);
 
    if (pd->frame_duration > 0)
      {
@@ -895,7 +894,7 @@ _efl_ui_animation_view_stop(Eo *obj, Efl_Ui_Animation_View_Data *pd)
        (pd->state == EFL_UI_ANIMATION_VIEW_STATE_STOP))
      return EINA_FALSE;
 
-   _frame_set_facade(pd, 0);
+   _frame_set_facade(obj, pd, 0);
 
    pd->progress = 0;
    pd->state = EFL_UI_ANIMATION_VIEW_STATE_STOP;
@@ -992,7 +991,7 @@ _efl_ui_animation_view_progress_set(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_D
    pd->progress = progress;
 
    if (pd->frame_cnt > 0)
-     _frame_set_facade(pd, (int) ((pd->frame_cnt - 1) * progress));
+     _frame_set_facade(obj, pd, (int) ((pd->frame_cnt - 1) * progress));
 
    if (pd->transit)
      {
@@ -1215,8 +1214,6 @@ _efl_ui_animation_view_content_set(Eo *obj, Efl_Ui_Animation_View_Data *pd, cons
 
    if (!efl_file_loaded_get(obj)) return EINA_FALSE;
 
-   //TODO: Get current supported parts??
-
    EINA_LIST_FOREACH(pd->subs, l, sub_d)
      {
         if (!strcmp(part, sub_d->part))
@@ -1261,7 +1258,7 @@ _efl_ui_animation_view_content_set(Eo *obj, Efl_Ui_Animation_View_Data *pd, cons
 
    efl_canvas_group_change(obj);
 
-   _update_part_contents(pd);
+   _update_part_contents(obj, pd);
 
 end:
    return EINA_TRUE;
