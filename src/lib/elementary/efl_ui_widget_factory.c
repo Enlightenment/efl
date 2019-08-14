@@ -189,7 +189,7 @@ _efl_ui_widget_factory_efl_part_part_get(const Eo *obj,
    part = efl_add(EFL_UI_PROPERTY_BIND_PART_CLASS, (Eo*) obj);
    if (!part) return NULL;
 
-   ppd = efl_data_scope_get(obj, EFL_UI_PROPERTY_BIND_PART_CLASS);
+   ppd = efl_data_scope_get(part, EFL_UI_PROPERTY_BIND_PART_CLASS);
    ppd->name = eina_stringshare_add(name);
    ppd->pd = pd;
 
@@ -213,6 +213,12 @@ _efl_ui_property_bind_part_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSE
    Efl_Ui_Bind_Part_Data *bpd;
    Efl_Ui_Property_Bind_Data *bppd;
 
+   if (!pd->pd)
+     {
+        EINA_LOG_ERR("Trying to bind part property without specifying which part");
+        return ENOENT;
+     }
+
    if (!pd->pd->parts)
      pd->pd->parts = eina_hash_stringshared_new(NULL);
 
@@ -228,12 +234,14 @@ _efl_ui_property_bind_part_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSE
      }
 
    bppd = calloc(1, sizeof (Efl_Ui_Property_Bind_Data));
-   if (bppd) return ENOMEM;
+   if (!bppd) return ENOMEM;
 
    bppd->part_property = eina_stringshare_add(key);
    bppd->model_property = eina_stringshare_add(property);
 
    bpd->properties = eina_list_append(bpd->properties, bppd);
+
+   efl_event_callback_call(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTY_BOUND, (void*) key);
 
    return 0;
 }
