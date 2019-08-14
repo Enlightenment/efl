@@ -116,10 +116,7 @@ _sizing_eval(Evas_Object *obj)
 
    evas_object_size_hint_max_get
      (wd->resize_obj, &maxw, &maxh);
-   if (elm_widget_is_legacy(obj))
-     evas_object_size_hint_min_set(obj, minw, minh);
-   else
-     efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
    evas_object_size_hint_max_set(obj, maxw, maxh);
 }
 
@@ -1864,10 +1861,7 @@ _efl_ui_image_zoomable_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Zoomable
      (priv->img, EVAS_CALLBACK_IMAGE_PRELOADED, _main_img_preloaded_cb, obj);
 
    edje_object_size_min_calc(edje, &minw, &minh);
-   if (elm_widget_is_legacy(obj))
-     evas_object_size_hint_min_set(obj, minw, minh);
-   else
-     efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
 
    _efl_ui_image_zoomable_edje_object_attach(obj);
 

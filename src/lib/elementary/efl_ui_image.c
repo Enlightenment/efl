@@ -802,10 +802,7 @@ _efl_ui_image_sizing_eval(Evas_Object *obj)
           }
      }
 
-   if (elm_widget_is_legacy(obj))
-     evas_object_size_hint_min_set(obj, minw, minh);
-   else
-     efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
    evas_object_size_hint_max_set(obj, maxw, maxh);
 
    if (sd->img)
