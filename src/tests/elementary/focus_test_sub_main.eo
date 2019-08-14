@@ -1,4 +1,4 @@
-class Focus.Test.Sub.Main
+class @beta Focus.Test.Sub.Main
     extends Efl.Object
     implements Efl.Ui.Focus.Object, Efl.Ui.Focus.Manager_Sub, Efl.Gfx.Entity
 {
