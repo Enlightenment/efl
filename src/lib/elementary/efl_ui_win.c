@@ -2694,6 +2694,12 @@ _efl_ui_win_efl_canvas_scene_group_objects_calculate(Eo *obj EINA_UNUSED, Efl_Ui
    evas_smart_objects_calculate(sd->evas);
 }
 
+EOLIAN static Eina_Bool
+_efl_ui_win_efl_canvas_scene_group_objects_calculating_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+{
+   return efl_canvas_scene_group_objects_calculating_get(sd->evas);
+}
+
 EOLIAN static Eina_Iterator *
 _efl_ui_win_efl_canvas_scene_objects_at_xy_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Position2D pos, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
@@ -5976,6 +5982,33 @@ _efl_ui_win_efl_text_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
    return sd->title;
 }
 
+EOLIAN void
+_efl_ui_win_efl_ui_i18n_language_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *locale)
+{
+   if (sd->frame_obj)
+     efl_ui_language_set(sd->frame_obj, locale);
+}
+
+EOLIAN const char *
+_efl_ui_win_efl_ui_i18n_language_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+{
+   return sd->frame_obj ? efl_ui_language_get(sd->frame_obj) : NULL;
+}
+
+EOLIAN static void
+_efl_ui_win_efl_ui_l10n_l10n_text_set(Eo *obj, Efl_Ui_Win_Data *sd, const char *label, const char *domain)
+{
+   if (sd->frame_obj)
+     efl_ui_l10n_text_set(efl_part(obj, "efl.text.title"), label, domain);
+}
+
+EOLIAN static const char *
+_efl_ui_win_efl_ui_l10n_l10n_text_get(const Eo *obj, Efl_Ui_Win_Data *sd, const char **domain)
+{
+  return sd->frame_obj ?
+    efl_ui_l10n_text_get(efl_part(obj, "efl.text.title"), domain) : NULL;
+}
+
 EOLIAN static void
 _efl_ui_win_win_type_set(Eo *obj, Efl_Ui_Win_Data *sd, Efl_Ui_Win_Type type)
 {
@@ -6966,8 +6999,15 @@ _efl_ui_win_efl_screen_screen_rotation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win
 {
    //TODO: query to wm about device's rotation
    (void)sd;
-
+   WRN("Not yet implemented");
    return 0;
+}
+
+EOLIAN static float
+_efl_ui_win_efl_screen_screen_scale_factor_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
+{
+   WRN("Not yet implemented");
+   return 1.0;
 }
 
 EOLIAN static void
