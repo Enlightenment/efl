@@ -66,7 +66,25 @@ typedef struct
 
 static Eo *proxy_obj[T_SEGMENT_N][T_SEGMENT_N];
 
-Efl_VG *
+static Eo *
+_proxy_create(Eo *source)
+{
+   Eo *proxy = efl_add(EFL_CANVAS_PROXY_CLASS, source);
+   if (!proxy) return NULL;
+
+   efl_gfx_fill_auto_set(proxy, EINA_TRUE);
+   efl_canvas_proxy_source_clip_set(proxy, EINA_FALSE);
+   efl_canvas_proxy_source_set(proxy, source);
+
+   efl_gfx_entity_visible_set(proxy, EINA_FALSE);
+   efl_gfx_entity_visible_set(source, EINA_FALSE);
+
+   efl_gfx_hint_size_min_set(proxy, efl_gfx_hint_size_combined_min_get(source));
+
+   return proxy;
+}
+
+static Efl_VG *
 _node_get(Efl_VG *node, const char *part)
 {
    if (!node) return NULL;
@@ -110,7 +128,7 @@ _node_get(Efl_VG *node, const char *part)
    return NULL;
 }
 
-Eina_Bool
+static Eina_Bool
 _part_draw(const Efl_VG *node, int off_x, int off_y, Eo* target)
 {
    const Efl_Gfx_Path_Command_Type *cmd;
@@ -394,7 +412,7 @@ _update_part_contents(Efl_Ui_Animation_View_Data *pd)
           sub_d->node = _node_get(root, sub_d->part);
 
         if (sub_d->node)
-          _part_draw(sub_d->node, pos.x, pos.y, sub_d->obj);
+          _part_draw(sub_d->node, pos.x, pos.y, sub_d->proxy);
      }
 }
 
@@ -688,6 +706,24 @@ _efl_ui_animation_view_efl_file_unload(Eo *obj EINA_UNUSED, Efl_Ui_Animation_Vie
    pd->frame_cnt = 0;
    pd->frame_duration = 0;
    if (pd->transit) elm_transit_del(pd->transit);
+
+   //Remove all part exising contents
+   Efl_Ui_Animation_View_Sub_Obj_Data *sub_d;
+   Eo *content;
+   Eina_List *l, *ll;
+
+   EINA_LIST_FOREACH_SAFE(pd->subs, l, ll, sub_d)
+     {
+        content = sub_d->obj;
+
+        /* sub_d will die in _widget_sub_object_del */
+        if (!_elm_widget_sub_object_redirect_to_top(obj, content))
+          {
+             ERR("could not remove sub object %p from %p", content, obj);
+             continue;
+          }
+        _eo_unparent_helper(content, obj);
+     }
 }
 
 EOLIAN static Eina_Error
@@ -1177,6 +1213,10 @@ _efl_ui_animation_view_content_set(Eo *obj, Efl_Ui_Animation_View_Data *pd, cons
    Efl_Ui_Animation_View_Sub_Obj_Data *sub_d;
    Eina_List *l;
 
+   if (!efl_file_loaded_get(obj)) return EINA_FALSE;
+
+   //TODO: Get current supported parts??
+
    EINA_LIST_FOREACH(pd->subs, l, sub_d)
      {
         if (!strcmp(part, sub_d->part))
@@ -1184,8 +1224,9 @@ _efl_ui_animation_view_content_set(Eo *obj, Efl_Ui_Animation_View_Data *pd, cons
              if (content == sub_d->obj) goto end;
              if (efl_alive_get(sub_d->obj))
                {
+                  if (sub_d->proxy) efl_del(sub_d->proxy);
                   _eo_unparent_helper(sub_d->obj, obj);
-                  evas_object_del(sub_d->obj);
+                  efl_del(sub_d->obj);
                }
              break;
           }
@@ -1193,6 +1234,7 @@ _efl_ui_animation_view_content_set(Eo *obj, Efl_Ui_Animation_View_Data *pd, cons
           {
              pd->subs = eina_list_remove_list(pd->subs, l);
              eina_stringshare_del(sub_d->part);
+             if (sub_d->proxy) efl_del(sub_d->proxy);
              free(sub_d);
              _elm_widget_sub_object_redirect_to_top(obj, content);
              break;
@@ -1212,6 +1254,7 @@ _efl_ui_animation_view_content_set(Eo *obj, Efl_Ui_Animation_View_Data *pd, cons
           }
         sub_d->part = eina_stringshare_add(part);
         sub_d->obj = content;
+        sub_d->proxy = _proxy_create(sub_d->obj);
         pd->subs = eina_list_append(pd->subs, sub_d);
         efl_parent_set(content, obj);
      }
@@ -1244,6 +1287,7 @@ _efl_ui_animation_view_content_unset(Eo *obj, Efl_Ui_Animation_View_Data *pd, co
 {
    Efl_Ui_Animation_View_Sub_Obj_Data *sub_d;
    Eina_List *l;
+   Eo *content;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
@@ -1251,8 +1295,6 @@ _efl_ui_animation_view_content_unset(Eo *obj, Efl_Ui_Animation_View_Data *pd, co
      {
         if (!strcmp(part, sub_d->part))
           {
-             Evas_Object *content;
-
              if (!sub_d->obj)
                {
                   ERR("Sub Object Data doens't have valid object, Something wrong....");
