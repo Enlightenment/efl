@@ -260,7 +260,8 @@ struct documentation_def
         since = str;
       }
 
-      efl::eina::ptr_list<const char> l(eolian_documentation_string_split(description.c_str()));
+      efl::eina::ptr_list<const char, efl::eina::malloc_clone_allocator>
+        l(eolian_documentation_string_split(description.c_str()));
       for (auto&& i : l)
         desc_paragraphs.push_back({&i});
    }
