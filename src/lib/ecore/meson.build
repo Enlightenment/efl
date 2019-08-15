@@ -195,11 +195,6 @@ if get_option('g-mainloop') == true
   config_h.set('USE_G_MAIN_LOOP', '1')
 endif
 
-if get_option('gstreamer') == true
-  gstreamer = dependency('gstreamer-1.0')
-  ecore_deps += gstreamer
-endif
-
 if get_option('systemd') == true
   ecore_deps += systemd
 endif
