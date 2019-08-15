@@ -913,7 +913,7 @@ _ethumb_generate_hash(const char *file)
      {
         char *tmp;
 
-        tmp = alloca(length);
+        tmp = alloca(length + 1);
         length = getxattr(file, "user.e.md5", tmp, length);
 
         /* check if we have at least something that look like a md5 hash */
