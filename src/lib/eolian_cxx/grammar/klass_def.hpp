@@ -811,7 +811,7 @@ struct function_def
             }
        }
      is_protected = eolian_function_scope_get(function, type) == EOLIAN_SCOPE_PROTECTED;
-     is_static = eolian_function_is_class(function);
+     is_static = eolian_function_is_static(function);
 
      Eolian_Implement const* implement = eolian_function_implement_get(function);
      if (!implement)

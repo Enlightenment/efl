@@ -1741,14 +1741,14 @@ EAPI const Eolian_Function *eolian_class_function_by_name_get(const Eolian_Class
 EAPI const Eolian_Implement *eolian_function_implement_get(const Eolian_Function *function_id);
 
 /*
- * @brief Get whether a function is a class method/property.
+ * @brief Get whether a function is a static method/property.
  *
  * @param[in] function_id Id of the function
  * @return EINA_TRUE and EINA_FALSE respectively
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_function_is_class(const Eolian_Function *function_id);
+EAPI Eina_Bool eolian_function_is_static(const Eolian_Function *function_id);
 
 /*
  * @brief Get whether a function is beta.

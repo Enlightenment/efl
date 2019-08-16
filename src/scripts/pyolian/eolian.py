@@ -865,8 +865,8 @@ class Function(Object):
         return self.scope_get(Eolian_Function_Type.PROP_SET)
 
     @cached_property
-    def is_class(self):
-        return bool(lib.eolian_function_is_class(self))
+    def is_static(self):
+        return bool(lib.eolian_function_is_static(self))
 
     @cached_property
     def object_is_const(self):

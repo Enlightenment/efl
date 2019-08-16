@@ -374,7 +374,7 @@ class TestEolianFunction(unittest.TestCase):
         self.assertIsNone(f.method_return_type)  # TODO correct ?
         self.assertIsNone(f.setter_return_type)  # TODO correct ?
         self.assertIsNone(f.getter_return_type)  # TODO correct ?
-        self.assertFalse(f.is_class)
+        self.assertFalse(f.is_static)
         self.assertFalse(f.is_beta)
         self.assertFalse(f.is_constructor(cls))
         #  # #assert f.is_function_pointer == False  # TODO broken somehow
