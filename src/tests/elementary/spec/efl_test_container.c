@@ -6,6 +6,21 @@
 #include "efl_ui_spec_suite.h"
 #include "suite_helpers.h"
 
+
+Efl_Ui_Widget*
+efl_test_parent_get(Eo *obj)
+{
+   if (efl_isa(widget, EFL_UI_GROUP_ITEM_CLASS))
+     {
+        return efl_ui_item_parent_get(obj);
+     }
+   else
+     {
+        return efl_ui_widget_parent_get(obj);
+     }
+}
+
+
 void
 efl_test_container_content_equal(Efl_Ui_Widget **wid, unsigned int len)
 {

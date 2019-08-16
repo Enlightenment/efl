@@ -40,6 +40,15 @@ abstract @beta Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Selectab
             container : Efl.Ui.Widget; [[The container this item is in.]]
          }
       }
+      @property item_parent {
+         [[The parent of the item.
+
+           This property expresses a tree structure of items. If the parent is NULL the item is added in the root level of the content. The item parent can only be set once, when the object is invalidated, the item parent is set to NULL and still cannot be reset.
+         ]]
+         values {
+            parent : Efl.Ui.Item;
+         }
+      }
    }
    implements {
       Efl.Object.constructor;
