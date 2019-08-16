@@ -16,6 +16,7 @@ class @beta Efl.Ui.Layout_Factory extends Efl.Ui.Caching_Factory
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Ui.Factory.create;
+      Efl.Ui.Factory.building;
       Efl.Ui.Property_Bind.property_bind;
       Efl.Ui.Factory_Bind.factory_bind;
    }

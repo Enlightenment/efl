@@ -22,6 +22,14 @@ interface @beta Efl.Ui.Factory extends Efl.Ui.Property_Bind, Efl.Ui.Factory_Bind
             ui_view: Efl.Gfx.Entity; [[Efl canvas]]
          }
       }
+      building @const {
+         [[This function is called during the creation of an UI object between the @Efl.Object.constructor and @Efl.Object.finalize call.
+
+         Note: if the @Efl.Ui.Factory does keep a cache of object, this won't be called when object are pulled out of the cache.]]
+         params {
+            ui_view: Efl.Gfx.Entity; [[The UI object being created.]]
+         }
+      }
    }
    events {
       created: Efl.Ui.Factory_Item_Created_Event; [[Event triggered when an item has been successfully created.]]

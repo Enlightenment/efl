@@ -77,8 +77,6 @@ _efl_ui_layout_factory_bind(Eo *obj EINA_UNUSED, void *data, const Eina_Value va
 
    EINA_VALUE_ARRAY_FOREACH(&value, len, i, layout)
      {
-        efl_ui_layout_theme_set(layout, pd->klass, pd->group, pd->style);
-
         eina_hash_foreach(pd->bind.properties, _property_bind, layout);
         eina_hash_foreach(pd->bind.factories, _factory_bind, layout);
 
@@ -87,6 +85,14 @@ _efl_ui_layout_factory_bind(Eo *obj EINA_UNUSED, void *data, const Eina_Value va
      }
 
    return value;
+}
+
+static void
+_efl_ui_layout_factory_efl_ui_factory_building(const Eo *obj, Efl_Ui_Layout_Factory_Data *pd, Efl_Gfx_Entity *ui_view)
+{
+   efl_ui_layout_theme_set(ui_view, pd->klass, pd->group, pd->style);
+
+   efl_ui_factory_building(efl_super(obj, EFL_UI_LAYOUT_FACTORY_CLASS), ui_view);
 }
 
 EOLIAN static Eina_Future *
