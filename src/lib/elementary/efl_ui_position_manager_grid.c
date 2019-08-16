@@ -37,7 +37,7 @@ _reposition_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
    int relevant_space_size, relevant_viewport;
    unsigned int start_id, end_id, step;
    const int len = 100;
-   Efl_Gfx_Entity *obj_buffer[len];
+   Efl_Ui_Position_Manager_Batch_Entity_Access obj_buffer[len];
    Efl_Ui_Position_Manager_Range_Update ev;
 
    if (!pd->size) return;
@@ -91,7 +91,7 @@ _reposition_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
 
         if (buffer_id == 0)
           {
-             EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->object, i, len, obj_buffer) > 0);
+             EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->object, i, len, NULL, obj_buffer) > 0);
           }
 
         if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
@@ -107,7 +107,7 @@ _reposition_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
              geom.x -= (relevant_space_size);
           }
 
-        ent = ((Efl_Gfx_Entity**)obj_buffer)[buffer_id];
+        ent = obj_buffer[buffer_id].entity;
 
         //printf(">%d (%d, %d, %d, %d) %p\n", i, geom.x, geom.y, geom.w, geom.h, ent);
         efl_gfx_entity_geometry_set(ent, geom);
@@ -224,12 +224,12 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_entity_scroll_position_set
 EOLIAN static void
 _efl_ui_position_manager_grid_efl_ui_position_manager_entity_item_added(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd, int added_index, Efl_Gfx_Entity *subobj EINA_UNUSED)
 {
-   Eina_Size2D size[1];
+   Efl_Ui_Position_Manager_Batch_Size_Access size[1];
    pd->size ++;
 
    efl_gfx_entity_visible_set(subobj, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->min_size, added_index, 1, &size) == 1);
-   _update_min_size(obj, pd, added_index, size[0]);
+   EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->min_size, added_index, 1, NULL, &size) == 1);
+   _update_min_size(obj, pd, added_index, size[0].size);
    _flush_min_size(obj, pd);
    _flush_abs_size(obj, pd);
    _reposition_content(obj, pd); //FIXME we might can skip that
@@ -253,16 +253,16 @@ EOLIAN static void
 _efl_ui_position_manager_grid_efl_ui_position_manager_entity_item_size_changed(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd, int start_id, int end_id)
 {
    const int len = 50;
-   Eina_Size2D data[len];
+   Efl_Ui_Position_Manager_Batch_Size_Access data[len];
 
    for (int i = start_id; i <= end_id; ++i)
      {
         int buffer_id = (i-start_id) % len;
         if (buffer_id == 0)
           {
-             EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->min_size, start_id, len, data) >= 0);
+             EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->min_size, start_id, len, NULL, data) >= 0);
           }
-        _update_min_size(obj, pd, i, data[i-start_id]);
+        _update_min_size(obj, pd, i, data[i-start_id].size);
      }
 
    _flush_min_size(obj, pd);
