@@ -17,9 +17,11 @@
 #define MY_CLASS_NAME "Efl_Ui_Animation_View"
 #define MY_CLASS_NAME_LEGACY "efl_ui_animation_view"
 
-#define T_SEGMENT_N 40
-#define C_SEGMENT_N 40
-#define DEFAULT_QUEUE_SIZE 300
+#define GROW_SIZE 50
+#define QUEUE_SIZE 350
+#define T_SEGMENT_N 30
+#define C_SEGMENT_N 30
+
 
 static const char SIG_FOCUSED[] = "focused";
 static const char SIG_UNFOCUSED[] = "unfocused";
@@ -64,8 +66,6 @@ typedef struct
    float x, y;
 } Efl_Ui_Animation_View_Point;
 
-static Eo *proxy_obj[T_SEGMENT_N][T_SEGMENT_N];
-
 static Eo *
 _proxy_create(Eo *source)
 {
@@ -80,6 +80,23 @@ _proxy_create(Eo *source)
    efl_gfx_entity_visible_set(source, EINA_FALSE);
 
    return proxy;
+}
+
+static void
+_proxy_map_disable(Efl_Ui_Animation_View_Data *pd)
+{
+   Eina_List *l;
+   Efl_Ui_Animation_View_Sub_Obj_Data *sub_d;
+
+   EINA_LIST_FOREACH(pd->subs, l, sub_d)
+     {
+        if (!sub_d->proxy) continue;
+        if (efl_gfx_mapping_has(sub_d->proxy))
+          efl_gfx_mapping_reset(sub_d->proxy);
+
+        //TODO: remove this call
+        evas_object_map_enable_set(sub_d->proxy, EINA_FALSE);
+     }
 }
 
 static Efl_VG *
@@ -127,18 +144,18 @@ _node_get(Efl_VG *node, const char *part)
 }
 
 static Eina_Bool
-_part_draw(Efl_Ui_Animation_View_Sub_Obj_Data *sub_d, Eina_Position2D offset)
+_part_draw(Efl_Ui_Animation_View_Sub_Obj_Data *sub_d, Eina_Position2D offset, Eina_Size2D tsize)
 {
    const Efl_Gfx_Path_Command_Type *cmd, *tcmd;
    const double *points;
-   int alpha, inarray_idx, i, pt_idx = 0, pt_cnt = 0;
+   int alpha, inarray_idx, inarray_size, i, pt_idx = 0, pt_cnt = 0;
    double x, y;
-   Eina_Rect tbound;
    Eina_Bezier bezier;
    float t, min_y = 99999999, max_y = -1;
+   float inv_segment = (1 / (float) C_SEGMENT_N);
+   float u_segment, v_segment, x1_segment, x2_segment;
    double begin_x = 0, begin_y = 0, end_x = 0, end_y  = 0;
    double ctrl[4];
-   double inv_segment = (1 / (double) C_SEGMENT_N);
    Eina_Inarray *inarray;
    Efl_Ui_Animation_View_Point *pt, *pt2;
    Eo *target = sub_d->proxy;
@@ -148,12 +165,12 @@ _part_draw(Efl_Ui_Animation_View_Sub_Obj_Data *sub_d, Eina_Position2D offset)
    if (!cmd) return EINA_FALSE;
 
    efl_gfx_entity_visible_set(target, EINA_TRUE);
-   efl_gfx_path_bounds_get(sub_d->node, &tbound);
+//   efl_gfx_path_bounds_get(sub_d->node, &tbound);
    efl_gfx_color_get(sub_d->node, NULL, NULL, NULL, &alpha);
-   efl_gfx_entity_geometry_set(target, tbound);
+   efl_gfx_entity_size_set(target, tsize);
 
    //TODO: Optimize it, scalable or not?
-   efl_gfx_entity_geometry_set(sub_d->obj, tbound);
+   efl_gfx_entity_size_set(sub_d->obj, tsize);
 
    //Fast Path? Shape outlines by consisted of straight lines.
    tcmd = cmd;
@@ -181,7 +198,6 @@ _part_draw(Efl_Ui_Animation_View_Sub_Obj_Data *sub_d, Eina_Position2D offset)
    //Fast Path: Rectangle Mapping
    if (fast_path)
      {
-        efl_gfx_mapping_reset(target);
         efl_gfx_mapping_point_count_set(target, pt_cnt);
 
         //Point
@@ -198,17 +214,18 @@ _part_draw(Efl_Ui_Animation_View_Sub_Obj_Data *sub_d, Eina_Position2D offset)
 
         //UV
         efl_gfx_mapping_uv_set(target, 0, 0, 0);
-        efl_gfx_mapping_uv_set(target, 1, tbound.w, 0);
-        efl_gfx_mapping_uv_set(target, 2, tbound.w, tbound.h);
-        efl_gfx_mapping_uv_set(target, 3, 0, tbound.h);
+        efl_gfx_mapping_uv_set(target, 1, tsize.w, 0);
+        efl_gfx_mapping_uv_set(target, 2, tsize.w, tsize.h);
+        efl_gfx_mapping_uv_set(target, 3, 0, tsize.h);
 
         return EINA_TRUE;
      }
 
    //Case 2. Arbitrary Geometry mapping
-   inarray = eina_inarray_new(sizeof(Efl_Ui_Animation_View_Point), 20);
+   inarray = eina_inarray_new(sizeof(Efl_Ui_Animation_View_Point), GROW_SIZE);
    if (!inarray) return EINA_FALSE;
-   eina_inarray_resize(inarray, DEFAULT_QUEUE_SIZE);
+   eina_inarray_resize(inarray, QUEUE_SIZE);
+   inarray_size = QUEUE_SIZE;
    inarray_idx = 0;
 
    //end 0, move 1, line 2, cubic 3, close 4
@@ -240,7 +257,13 @@ _part_draw(Efl_Ui_Animation_View_Sub_Obj_Data *sub_d, Eina_Position2D offset)
 
              for (i = 0; i < C_SEGMENT_N; ++i)
                {
-                  t = inv_segment * (double) i;
+                  if (inarray_idx >= inarray_size)
+                    {
+                       inarray_size += GROW_SIZE;
+                       eina_inarray_grow(inarray, inarray_size);
+                    }
+
+                  t = inv_segment * (float) i;
                   eina_bezier_point_at(&bezier, t, &x, &y);
                   pt = eina_inarray_nth(inarray, inarray_idx);
                   pt->x = x;
@@ -259,7 +282,13 @@ _part_draw(Efl_Ui_Animation_View_Sub_Obj_Data *sub_d, Eina_Position2D offset)
 
              for (i = 0; i < C_SEGMENT_N; ++i)
                {
-                  t = inv_segment * (double) i;
+                  if (inarray_idx >= inarray_size)
+                    {
+                       inarray_size += GROW_SIZE;
+                       eina_inarray_grow(inarray, inarray_size);
+                    }
+
+                  t = inv_segment * (float) i;
                   pt = eina_inarray_nth(inarray, inarray_idx);
                   pt->x = begin_x + ((double) (end_x - begin_x)) * t;
                   pt->y = begin_y + ((double) (end_y - begin_y)) * t;
@@ -276,6 +305,11 @@ _part_draw(Efl_Ui_Animation_View_Sub_Obj_Data *sub_d, Eina_Position2D offset)
         ++cmd;
      }
 
+   if (inarray_idx >= inarray_size)
+     {
+        inarray_size += 1;
+        eina_inarray_grow(inarray, inarray_size);
+     }
    pt = eina_inarray_nth(inarray, inarray_idx);
    pt2 = eina_inarray_nth(inarray, 0);
    pt->x = pt2->x;
@@ -335,56 +369,68 @@ _part_draw(Efl_Ui_Animation_View_Sub_Obj_Data *sub_d, Eina_Position2D offset)
 #if 0
         static Eo *lines[T_SEGMENT_N + 1];
         if (!lines[i]) lines[i] = evas_object_line_add(evas_object_evas_get(target));
-        evas_object_color_set(lines[i], 255, 0, 0, 255);
+        evas_object_color_set(lines[i], 255, 255, 255, 255);
         evas_object_resize(lines[i], 1000, 1000);
         evas_object_line_xy_set(lines[i], spans[i].x1, spans[i].y, spans[i].x2, spans[i].y);
         evas_object_show(lines[i]);
 #endif
      }
 
-   Evas *evas = evas_object_evas_get(target);
-   float u_segment = ((float) tbound.w) / ((float) T_SEGMENT_N);
-   float v_segment = ((float) tbound.h) / ((float) T_SEGMENT_N);
+   u_segment = ((float) tsize.w) / ((float) T_SEGMENT_N);
+   v_segment = ((float) tsize.h) / ((float) T_SEGMENT_N);
+
+   Evas_Map *map = evas_map_new(T_SEGMENT_N * T_SEGMENT_N * 4);
+   pt_idx = 0;
+//   efl_gfx_mapping_point_count_set(target, (4 * T_SEGMENT_N * T_SEGMENT_N));
 
    for (int i = 0; i < T_SEGMENT_N; ++i)
      {
-        float x1_segment = (spans[i].x2 - spans[i].x1) / ((float) T_SEGMENT_N);
-        float x2_segment = (spans[i + 1].x2 - spans[i + 1].x1) / ((float) T_SEGMENT_N);
+        x1_segment = (spans[i].x2 - spans[i].x1) / ((float) T_SEGMENT_N);
+        x2_segment = (spans[i + 1].x2 - spans[i + 1].x1) / ((float) T_SEGMENT_N);
 
         for (int j = 0; j < T_SEGMENT_N; ++j)
           {
-             if (!proxy_obj[i][j])
-               {
-                  proxy_obj[i][j] = evas_object_image_filled_add(evas);
-                  evas_object_image_source_set(proxy_obj[i][j], target);
-                  evas_object_image_source_events_set(proxy_obj[i][j], EINA_TRUE);
-                  evas_object_move(proxy_obj[i][j], -1000, -1000);
-                  evas_object_resize(proxy_obj[i][j], tbound.w, tbound.h);
-                  evas_object_show(proxy_obj[i][j]);
-               }
+#if 0
+             //Point
+             efl_gfx_mapping_coord_absolute_set(target, pt_idx + 0, spans[i].x1 + ((float) j) * x1_segment, spans[i].y, 0);
+             efl_gfx_mapping_coord_absolute_set(target, pt_idx + 1, spans[i].x1 + ((float) j + 1) * x1_segment, spans[i].y, 0);
+             efl_gfx_mapping_coord_absolute_set(target, pt_idx + 2, spans[i + 1].x1 + ((float) j + 1) * x2_segment, spans[i + 1].y, 0);
+             efl_gfx_mapping_coord_absolute_set(target, pt_idx + 3, spans[i + 1].x1 + ((float) j) * x2_segment, spans[i + 1].y, 0);
 
-             Evas_Map *map = evas_map_new(4);
+             //UV
+             efl_gfx_mapping_uv_set(target, pt_idx + 0, ((float) j) * u_segment, ((float) i) * v_segment);
+             efl_gfx_mapping_uv_set(target, pt_idx + 1, ((float) j + 1) * u_segment, ((float) i) * v_segment);
+             efl_gfx_mapping_uv_set(target, pt_idx + 2, ((float) j + 1) * u_segment, ((float) i + 1) * v_segment);
+             efl_gfx_mapping_uv_set(target, pt_idx + 3, ((float) j) * u_segment, ((float) i + 1) * v_segment);
 
-             evas_map_point_coord_set(map, 0, spans[i].x1 + ((float) j) * x1_segment, spans[i].y, 0);
-             evas_map_point_coord_set(map, 1, spans[i].x1 + ((float) j + 1) * x1_segment, spans[i].y, 0);
-             evas_map_point_coord_set(map, 2, spans[i + 1].x1 + ((float) j + 1) * x2_segment, spans[i + 1].y, 0);
-             evas_map_point_coord_set(map, 3, spans[i + 1].x1 + ((float) j) * x2_segment, spans[i + 1].y, 0);
+             //Color
+             efl_gfx_mapping_color_set(target, pt_idx + 0, alpha, alpha, alpha, alpha);
+             efl_gfx_mapping_color_set(target, pt_idx + 1, alpha, alpha, alpha, alpha);
+             efl_gfx_mapping_color_set(target, pt_idx + 2, alpha, alpha, alpha, alpha);
+             efl_gfx_mapping_color_set(target, pt_idx + 3, alpha, alpha, alpha, alpha);
+#endif
+             evas_map_point_coord_set(map, pt_idx + 0, spans[i].x1 + ((float) j) * x1_segment, spans[i].y, 0);
+             evas_map_point_coord_set(map, pt_idx + 1, spans[i].x1 + ((float) j + 1) * x1_segment, spans[i].y, 0);
+             evas_map_point_coord_set(map, pt_idx + 2, spans[i + 1].x1 + ((float) j + 1) * x2_segment, spans[i + 1].y, 0);
+             evas_map_point_coord_set(map, pt_idx + 3, spans[i + 1].x1 + ((float) j) * x2_segment, spans[i + 1].y, 0);
 
-             evas_map_point_image_uv_set(map, 0, ((float) j) * u_segment, ((float) i) * v_segment);
-             evas_map_point_image_uv_set(map, 1, ((float) j + 1) * u_segment, ((float) i) * v_segment);
-             evas_map_point_image_uv_set(map, 2, ((float) j + 1) * u_segment, ((float) i + 1) * v_segment);
-             evas_map_point_image_uv_set(map, 3, ((float) j) * u_segment, ((float) i + 1) * v_segment);
+             evas_map_point_image_uv_set(map, pt_idx + 0, ((float) j) * u_segment, ((float) i) * v_segment);
+             evas_map_point_image_uv_set(map, pt_idx + 1, ((float) j + 1) * u_segment, ((float) i) * v_segment);
+             evas_map_point_image_uv_set(map, pt_idx + 2, ((float) j + 1) * u_segment, ((float) i + 1) * v_segment);
+             evas_map_point_image_uv_set(map, pt_idx + 3, ((float) j) * u_segment, ((float) i + 1) * v_segment);
 
-             evas_map_point_color_set(map, 0, alpha, alpha, alpha, alpha);
-             evas_map_point_color_set(map, 1, alpha, alpha, alpha, alpha);
-             evas_map_point_color_set(map, 2, alpha, alpha, alpha, alpha);
-             evas_map_point_color_set(map, 3, alpha, alpha, alpha, alpha);
+             evas_map_point_color_set(map, pt_idx + 0, alpha, alpha, alpha, alpha);
+             evas_map_point_color_set(map, pt_idx + 1, alpha, alpha, alpha, alpha);
+             evas_map_point_color_set(map, pt_idx + 2, alpha, alpha, alpha, alpha);
+             evas_map_point_color_set(map, pt_idx + 3, alpha, alpha, alpha, alpha);
 
-             evas_object_map_enable_set(proxy_obj[i][j], EINA_TRUE);
-             evas_object_map_set(proxy_obj[i][j], map);
+             pt_idx += 4;
           }
      }
+   evas_object_map_enable_set(target, EINA_TRUE);
+   evas_object_map_set(target, map);
 
+   evas_map_free(map);
    eina_inarray_free(inarray);
 
    return EINA_TRUE;
@@ -403,6 +449,7 @@ _update_part_contents(Eo *obj, Efl_Ui_Animation_View_Data *pd)
    Eina_List *l;
    Eina_Position2D pos = efl_gfx_entity_position_get(pd->vg);
    Efl_Ui_Animation_View_Sub_Obj_Data *sub_d;
+   Eina_Size2D tsize = efl_gfx_entity_size_get(obj);
 
    EINA_LIST_FOREACH(pd->subs, l, sub_d)
      {
@@ -410,7 +457,7 @@ _update_part_contents(Eo *obj, Efl_Ui_Animation_View_Data *pd)
           sub_d->node = _node_get(root, sub_d->part);
 
         if (sub_d->node)
-          _part_draw(sub_d, pos);
+          _part_draw(sub_d, pos, tsize);
         else
           ERR("part(%s) is invalid in Efl_Ui_Animation_View(%p)", sub_d->part, obj);
      }
@@ -772,14 +819,16 @@ _efl_ui_animation_view_efl_file_load(Eo *obj, Efl_Ui_Animation_View_Data *pd)
 EOLIAN static void
 _efl_ui_animation_view_efl_gfx_entity_position_set(Eo *obj,
                                                 Efl_Ui_Animation_View_Data *pd,
-                                                Eina_Position2D pos EINA_UNUSED)
+                                                Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
    efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
 
-   _auto_play(obj, pd, _visible_check(obj));
+   Eina_Bool vis = _visible_check(obj);
+   if (!vis) _proxy_map_disable(pd);
+   _auto_play(obj, pd, vis);
 }
 
 EOLIAN static void
@@ -807,7 +856,9 @@ _efl_ui_animation_view_efl_gfx_entity_visible_set(Eo *obj,
 
    efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), vis);
 
-   _auto_play(obj, pd, _visible_check(obj));
+   vis = _visible_check(obj);
+   if (!vis) _proxy_map_disable(pd);
+   _auto_play(obj, pd, vis);
 }
 
 EOLIAN static void
@@ -827,6 +878,7 @@ EOLIAN Eina_Size2D
 _efl_ui_animation_view_efl_gfx_view_view_size_get(const Eo *obj EINA_UNUSED,
                                                   Efl_Ui_Animation_View_Data *pd)
 {
+
    Eina_Rect viewbox = efl_canvas_vg_object_viewbox_get(pd->vg);
 
    return EINA_SIZE2D(viewbox.w, viewbox.h);
@@ -1315,6 +1367,12 @@ _efl_ui_animation_view_content_unset(Eo *obj, Efl_Ui_Animation_View_Data *pd, co
 
    return NULL;
 }
+
+#undef GROW_SIZE
+#undef QUEUE_SIZE
+#undef T_SEGMENT_N
+#undef C_SEGMENT_N
+
 
 /* Efl.Part begin */
 ELM_PART_OVERRIDE_CONTENT_SET(efl_ui_animation_view, EFL_UI_ANIMATION_VIEW, Efl_Ui_Animation_View_Data)
