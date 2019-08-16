@@ -13,11 +13,11 @@ abstract @beta Efl.Ui.Default_Item extends Efl.Ui.Item implements
    ]]
    data: null;
    parts {
-     text: Efl.Ui.Item_Part_Text; [[The text part for default item.
+     text: Efl.Ui.Layout_Part_Text; [[The text part for default item.
                                   text part is the caption of the item.]]
-     icon: Efl.Ui.Item_Part_Icon; [[The icon content part for default item.
+     icon: Efl.Ui.Layout_Part_Content; [[The icon content part for default item.
                                    icon part is the main content of item.]]
-     extra : Efl.Ui.Item_Part_Extra; [[The extra content part for default item.]]
+     extra : Efl.Ui.Layout_Part_Content; [[The extra content part for default item.]]
    }
    implements {
       Efl.Text.text { get; set; }
