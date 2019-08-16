@@ -2184,15 +2184,17 @@ _content_created(Eo *obj, void *data, const Eina_Value value)
    Efl_Ui_Layout_Factory_Request *request = data;
    Efl_Gfx_Entity *content = NULL;
    Efl_Gfx_Entity *old_content;
+   int len, i;
 
-   eina_value_get(&value, &content);
+   EINA_VALUE_ARRAY_FOREACH(&value, len, i, content)
+     {
+        // Recycle old content
+        old_content = efl_content_get(efl_part(obj, request->key));
+        if (old_content) efl_ui_factory_release(request->factory, old_content);
 
-   // Recycle old content
-   old_content = efl_content_get(efl_part(obj, request->key));
-   if (old_content) efl_ui_factory_release(request->factory, old_content);
-
-   // Set new content
-   efl_content_set(efl_part(obj, request->key), content);
+        // Set new content
+        efl_content_set(efl_part(obj, request->key), content);
+     }
 
    return value;
 }
@@ -2211,10 +2213,11 @@ _clean_request(Eo *obj EINA_UNUSED, void *data, const Eina_Future *dead_future E
 static void
 _efl_ui_layout_view_model_content_update(Efl_Ui_Layout_Data *pd, Efl_Ui_Layout_Factory_Tracking *tracking, const char *key)
 {
-   Efl_Ui_Layout_Factory_Request *request = calloc(1, sizeof (Efl_Ui_Layout_Factory_Request));
+   Efl_Ui_Layout_Factory_Request *request;
    Eina_Future *f;
-   Efl_Model *model;
+   Efl_Model *models[1];
 
+   request = calloc(1, sizeof (Efl_Ui_Layout_Factory_Request));
    if (!request) return ;
 
    if (tracking->in_flight) eina_future_cancel(tracking->in_flight);
@@ -2224,11 +2227,13 @@ _efl_ui_layout_view_model_content_update(Efl_Ui_Layout_Data *pd, Efl_Ui_Layout_F
    request->factory = efl_ref(tracking->factory);
    request->tracking = tracking;
 
-   model = efl_ui_view_model_get(pd->obj);
-   f = efl_ui_view_factory_create_with_event(tracking->factory, model, pd->obj);
+   models[0] = efl_ui_view_model_get(pd->obj);
+   f = efl_ui_view_factory_create_with_event(tracking->factory,
+                                             EINA_C_ARRAY_ITERATOR_NEW(models),
+                                             pd->obj);
    f = efl_future_then(pd->obj, f,
                        .success = _content_created,
-                       .success_type = EINA_VALUE_TYPE_OBJECT,
+                       .success_type = EINA_VALUE_TYPE_ARRAY,
                        .data = request,
                        .free = _clean_request);
 }

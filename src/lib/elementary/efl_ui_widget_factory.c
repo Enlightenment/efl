@@ -40,7 +40,6 @@ struct _Efl_Ui_Widget_Factory_Request
 {
    Efl_Ui_Widget_Factory_Data *pd;
    Eo *parent;
-   Efl_Model *model;
 };
 
 static void
@@ -67,8 +66,38 @@ _efl_ui_widget_factory_item_class_get(const Eo *obj EINA_UNUSED,
    return pd->klass;
 }
 
+static Efl_Ui_Widget *
+_efl_ui_widget_create(const Efl_Class *klass, Eo *parent,
+                      const char *style, Efl_Model *model,
+                      const Eina_Hash *parts)
+{
+   Efl_Ui_Bind_Part_Data *bpd;
+   Eina_Iterator *it;
+   Efl_Ui_Widget *w;
+
+   w = efl_add(klass, parent,
+               style ? efl_ui_widget_style_set(efl_added, style) : (void) 0,
+               efl_ui_view_model_set(efl_added, model));
+   if (!parts) return w;
+
+   it = eina_hash_iterator_data_new(parts);
+   EINA_ITERATOR_FOREACH(it, bpd)
+     {
+        Efl_Ui_Property_Bind_Data *bppd;
+        Eina_List *l;
+
+        EINA_LIST_FOREACH(bpd->properties, l, bppd)
+          efl_ui_property_bind(efl_part(w, bpd->part),
+                               bppd->part_property,
+                               bppd->model_property);
+     }
+   eina_iterator_free(it);
+
+   return w;
+}
+
 static Eina_Value
-_efl_ui_widget_factory_create_then(Eo *obj EINA_UNUSED, void *data, const Eina_Value v)
+_efl_ui_widget_factory_create_then(Eo *model, void *data, const Eina_Value v)
 {
    Efl_Ui_Widget_Factory_Request *r = data;
    Efl_Ui_Widget *w;
@@ -77,31 +106,15 @@ _efl_ui_widget_factory_create_then(Eo *obj EINA_UNUSED, void *data, const Eina_V
    if (!eina_value_string_get(&v, &string))
      return eina_value_error_init(EFL_MODEL_ERROR_NOT_SUPPORTED);
 
-   w = efl_add(r->pd->klass, r->parent,
-               efl_ui_widget_style_set(efl_added, string),
-               efl_ui_view_model_set(efl_added, r->model));
-
-   if (r->pd->parts)
-     {
-        Efl_Ui_Bind_Part_Data *bpd;
-        Eina_Iterator *it;
-
-        it = eina_hash_iterator_data_new(r->pd->parts);
-
-        EINA_ITERATOR_FOREACH(it, bpd)
-          {
-             Efl_Ui_Property_Bind_Data *bppd;
-             Eina_List *l;
-
-             EINA_LIST_FOREACH(bpd->properties, l, bppd)
-               efl_ui_property_bind(efl_part(w, bpd->part),
-                                    bppd->part_property,
-                                    bppd->model_property);
-          }
-        eina_iterator_free(it);
-     }
-
+   w = _efl_ui_widget_create(r->pd->klass, r->parent, string, model, r->pd->parts);
+   if (!w) return eina_value_error_init(ENOMEM);
    return eina_value_object_init(w);
+}
+
+static void
+_efl_ui_widget_factory_single_cleanup(Eo *model, void *data EINA_UNUSED, const Eina_Future *dead_future EINA_UNUSED)
+{
+   efl_unref(model);
 }
 
 static void
@@ -109,16 +122,18 @@ _efl_ui_widget_factory_create_cleanup(Eo *o EINA_UNUSED, void *data, const Eina_
 {
    Efl_Ui_Widget_Factory_Request *r = data;
 
-   efl_unref(r->model);
    efl_unref(r->parent);
    free(r);
 }
 
 static Eina_Future *
 _efl_ui_widget_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Widget_Factory_Data *pd,
-                                             Efl_Model *model, Efl_Gfx_Entity *parent)
+                                             Eina_Iterator *models, Efl_Gfx_Entity *parent)
 {
    Efl_Ui_Widget_Factory_Request *r;
+   Eina_Future **f;
+   Efl_Model *model;
+   int count = 0;
 
    if (!pd->klass)
      return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
@@ -126,10 +141,20 @@ _efl_ui_widget_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Widget_Factory_Data
    if (!pd->style)
      {
         Efl_Ui_Widget *w;
+        Eina_Value r;
 
-        w = efl_add(pd->klass, parent,
-                    efl_ui_view_model_set(efl_added, model));
-        return efl_loop_future_resolved(obj, eina_value_object_init(w));
+        eina_value_array_setup(&r, EINA_VALUE_TYPE_OBJECT, 4);
+
+        EINA_ITERATOR_FOREACH(models, model)
+          {
+             w = _efl_ui_widget_create(pd->klass, parent, NULL, model, pd->parts);
+
+             if (!w) return efl_loop_future_rejected(obj, ENOMEM);
+             eina_value_array_append(&r, w);
+          }
+        eina_iterator_free(models);
+
+        return efl_loop_future_resolved(obj, r);
      }
 
    r = calloc(1, sizeof (Efl_Ui_Widget_Factory_Request));
@@ -137,10 +162,24 @@ _efl_ui_widget_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Widget_Factory_Data
 
    r->pd = pd;
    r->parent = efl_ref(parent);
-   r->model = efl_ref(model);
 
-   return efl_future_then(obj, efl_model_property_ready_get(obj, pd->style),
-                          .success = _efl_ui_widget_factory_create_then,
+   f = calloc(count + 1, sizeof (Eina_Future *));
+   if (!f) return efl_loop_future_rejected(obj, ENOMEM);
+
+   EINA_ITERATOR_FOREACH(models, model)
+     {
+        f[count++] = efl_future_then(efl_ref(model), efl_model_property_ready_get(model, pd->style),
+                                     .success = _efl_ui_widget_factory_create_then,
+                                     .free = _efl_ui_widget_factory_single_cleanup);
+
+        f = realloc(f, (count + 1) * sizeof (Eina_Future *));
+        if (!f) return efl_loop_future_rejected(obj, ENOMEM);
+     }
+   eina_iterator_free(models);
+
+   f[count] = EINA_FUTURE_SENTINEL;
+
+   return efl_future_then(obj, eina_future_all_array(f),
                           .data = r,
                           .free = _efl_ui_widget_factory_create_cleanup);
 }

@@ -36,28 +36,29 @@ _efl_ui_image_factory_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Ui_Image_Fa
 static Eina_Value
 _efl_ui_image_factory_bind(Eo *obj EINA_UNUSED, void *data, const Eina_Value value)
 {
-   Efl_Gfx_Entity *entity = NULL;
    Efl_Ui_Image_Factory_Data *pd = data;
+   Efl_Gfx_Entity *entity;
+   int len, i;
 
-   eina_value_pget(&value, &entity);
-
-   efl_ui_property_bind(entity, "filename", pd->property);
+   EINA_VALUE_ARRAY_FOREACH(&value, len, i, entity)
+     efl_ui_property_bind(entity, "filename", pd->property);
 
    return value;
 }
 
 EOLIAN static Eina_Future *
-_efl_ui_image_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Image_Factory_Data *pd, Efl_Model *model, Efl_Gfx_Entity *parent)
+_efl_ui_image_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Image_Factory_Data *pd,
+                                            Eina_Iterator *models, Efl_Gfx_Entity *parent)
 {
    Eina_Future *f;
 
    if (!parent) return efl_loop_future_rejected(obj, EFL_FACTORY_ERROR_NOT_SUPPORTED);
    if (!pd->property) return efl_loop_future_rejected(obj, EFL_FACTORY_ERROR_NOT_SUPPORTED);
 
-   f = efl_ui_factory_create(efl_super(obj, EFL_UI_IMAGE_FACTORY_CLASS), model, parent);
+   f = efl_ui_factory_create(efl_super(obj, EFL_UI_IMAGE_FACTORY_CLASS), models, parent);
 
    return efl_future_then(obj, f,
-                          .success_type = EINA_VALUE_TYPE_OBJECT,
+                          .success_type = EINA_VALUE_TYPE_ARRAY,
                           .success = _efl_ui_image_factory_bind,
                           .data = pd);
 }

@@ -7,6 +7,7 @@
 
 typedef struct _Efl_Ui_Caching_Factory_Data Efl_Ui_Caching_Factory_Data;
 typedef struct _Efl_Ui_Caching_Factory_Request Efl_Ui_Caching_Factory_Request;
+typedef struct _Efl_Ui_Caching_Factory_Group_Request Efl_Ui_Caching_Factory_Group_Request;
 
 struct _Efl_Ui_Caching_Factory_Data
 {
@@ -31,8 +32,13 @@ struct _Efl_Ui_Caching_Factory_Request
 {
    Efl_Ui_Caching_Factory_Data *pd;
 
+   Efl_Ui_Caching_Factory *factory;
    Eo *parent;
-   Efl_Model *model;
+};
+
+struct _Efl_Ui_Caching_Factory_Group_Request
+{
+   Eina_Value done;
 };
 
 // Clear the cache until it meet the constraint
@@ -84,88 +90,179 @@ _efl_ui_caching_factory_flush(Eo *obj, Efl_Ui_Caching_Factory_Data *pd)
 }
 
 static Eina_Value
-_efl_ui_caching_factory_create_then(Eo *obj EINA_UNUSED, void *data, const Eina_Value v)
+_efl_ui_caching_factory_uncap_then(Eo *model EINA_UNUSED,
+                                   void *data EINA_UNUSED,
+                                   const Eina_Value v)
+{
+   Efl_Ui_Widget *widget = NULL;
+
+   if (eina_value_array_count(&v) != 1) return eina_value_error_init(EINVAL);
+
+   eina_value_array_get(&v, 0, &widget);
+
+   return eina_value_object_init(widget);
+}
+
+static Eina_Value
+_efl_ui_caching_factory_create_then(Eo *model, void *data, const Eina_Value v)
 {
    Efl_Ui_Caching_Factory_Request *r = data;
    Efl_Ui_Widget *w;
-   const char *string = NULL;
+   const char *style = NULL;
 
-   if (!eina_value_string_get(&v, &string))
+   if (!eina_value_string_get(&v, &style))
      return eina_value_error_init(EFL_MODEL_ERROR_NOT_SUPPORTED);
 
-   w = eina_hash_find(r->pd->lookup, string);
+   w = eina_hash_find(r->pd->lookup, style);
    if (!w)
      {
         Eina_Future *f;
+        Eo *models[1] = { model };
 
         // No object of that style in the cache, need to create a new one
-        f = efl_ui_factory_create(efl_super(obj, EFL_UI_CACHING_FACTORY_CLASS),
-                                  r->model, r->parent);
+        // This is not ideal, we would want to gather all the request in one swoop here,
+        // left for later improvement.
+        f = efl_ui_factory_create(efl_super(r->factory, EFL_UI_CACHING_FACTORY_CLASS),
+                                  EINA_C_ARRAY_ITERATOR_NEW(models), r->parent);
+        f = efl_future_then(r->factory, f,
+                            .success = _efl_ui_caching_factory_uncap_then,
+                            .success_type = EINA_VALUE_TYPE_ARRAY);
         return eina_future_as_value(f);
      }
 
-   eina_hash_del(r->pd->lookup, string, w);
-   _efl_ui_caching_factory_remove(r->pd, r->pd->cache, w);
+   eina_hash_del(r->pd->lookup, style, w);
+   _efl_ui_caching_factory_remove(r->pd, eina_list_data_find(r->pd->cache, w), w);
 
    efl_parent_set(w, r->parent);
-   efl_ui_view_model_set(w, r->model);
+   efl_ui_view_model_set(w, model);
 
    return eina_value_object_init(w);
 }
 
 static void
-_efl_ui_caching_factory_create_cleanup(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
+_efl_ui_caching_factory_cleanup(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
 {
    Efl_Ui_Caching_Factory_Request *r = data;
 
-   efl_unref(r->model);
+   efl_unref(r->factory);
    efl_unref(r->parent);
    free(r);
+}
+
+static Eina_Value
+_efl_ui_caching_factory_group_create_then(Eo *obj EINA_UNUSED,
+                                          void *data,
+                                          const Eina_Value v)
+{
+   Efl_Ui_Caching_Factory_Group_Request *gr = data;
+   int len, i;
+   Efl_Ui_Widget *widget;
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, widget)
+     eina_value_array_append(&gr->done, widget);
+
+   return eina_value_reference_copy(&gr->done);
+}
+
+static void
+_efl_ui_caching_factory_group_cleanup(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
+{
+   Efl_Ui_Caching_Factory_Group_Request *gr = data;
+
+   eina_value_flush(&gr->done);
+   free(gr);
 }
 
 static Eina_Future *
 _efl_ui_caching_factory_efl_ui_factory_create(Eo *obj,
                                               Efl_Ui_Caching_Factory_Data *pd,
-                                              Efl_Model *model, Efl_Gfx_Entity *parent)
+                                              Eina_Iterator *models, Efl_Gfx_Entity *parent)
 {
+   Efl_Ui_Caching_Factory_Group_Request *gr;
    Efl_Gfx_Entity *w = NULL;
+   Efl_Model *model;
+   Eina_Future *f;
 
-   if (pd->cache)
+   if (pd->cache && pd->style && !pd->klass)
      {
-        if (pd->style && !pd->klass)
+        Efl_Ui_Caching_Factory_Request *r;
+        Eina_Future **all;
+        int count = 0;
+
+        r = calloc(1, sizeof (Efl_Ui_Caching_Factory_Request));
+        if (!r) return efl_loop_future_rejected(obj, ENOMEM);
+
+        r->pd = pd;
+        r->parent = efl_ref(parent);
+        r->factory = efl_ref(obj);
+
+        all = calloc(1, sizeof (Eina_Future *));
+        if (!all) return efl_loop_future_rejected(obj, ENOMEM);
+
+        EINA_ITERATOR_FOREACH(models, model)
           {
-             Efl_Ui_Caching_Factory_Request *r;
+             all[count++] = efl_future_then(model,
+                                            efl_model_property_ready_get(model, pd->style),
+                                            .success = _efl_ui_caching_factory_create_then,
+                                            .data = r);
 
-             r = calloc(1, sizeof (Efl_Ui_Caching_Factory_Request));
-             if (!r) return efl_loop_future_rejected(obj, ENOMEM);
+             all = realloc(all, (count + 1) * sizeof (Eina_Future *));
+             if (!all) return efl_loop_future_rejected(obj, ENOMEM);
+          }
+        eina_iterator_free(models);
 
-             r->pd = pd;
-             r->parent = efl_ref(parent);
-             r->model = efl_ref(model);
+        all[count] = EINA_FUTURE_SENTINEL;
 
-             return efl_future_then(obj, efl_model_property_ready_get(obj, pd->style),
-                                    .success = _efl_ui_caching_factory_create_then,
-                                    .data = r,
-                                    .free = _efl_ui_caching_factory_create_cleanup);
+        return efl_future_then(obj, eina_future_all_array(all),
+                               .data = r,
+                               .free = _efl_ui_caching_factory_cleanup);
+     }
+
+   gr = calloc(1, sizeof (Efl_Ui_Caching_Factory_Group_Request));
+   if (!gr) return efl_loop_future_rejected(obj, ENOMEM);
+
+   eina_value_array_setup(&gr->done, EINA_VALUE_TYPE_OBJECT, 4);
+
+   // First get as much object from the cache as possible
+   if (pd->cache)
+     EINA_ITERATOR_FOREACH(models, model)
+       {
+          w = eina_list_data_get(pd->cache);
+          _efl_ui_caching_factory_remove(pd, pd->cache, w);
+          efl_parent_set(w, parent);
+
+          efl_ui_view_model_set(w, model);
+
+          eina_value_array_append(&gr->done, w);
+
+          if (!pd->cache) break;
+       }
+
+   // Now create object on the fly that are missing from the cache
+   if (pd->klass)
+     {
+        EINA_ITERATOR_FOREACH(models, model)
+          {
+             w = efl_add(pd->klass, parent,
+                         efl_ui_view_model_set(efl_added, model));
+             eina_value_array_append(&gr->done, w);
           }
 
-        w = eina_list_data_get(pd->cache);
+        f = efl_loop_future_resolved(obj, gr->done);
 
-        _efl_ui_caching_factory_remove(pd, pd->cache, w);
+        eina_value_flush(&gr->done);
+        free(gr);
 
-        efl_parent_set(w, parent);
+        return f;
      }
 
-   if (!w)
-     {
-        if (pd->klass) w = efl_add(pd->klass, parent);
-        else return efl_ui_factory_create(efl_super(obj, EFL_UI_CACHING_FACTORY_CLASS),
-                                          model, parent);
-     }
-
-   efl_ui_view_model_set(w, model);
-
-   return efl_loop_future_resolved(obj, eina_value_object_init(w));
+   f = efl_ui_factory_create(efl_super(obj, EFL_UI_CACHING_FACTORY_CLASS),
+                             models, parent);
+   return efl_future_then(obj, f,
+                          .success = _efl_ui_caching_factory_group_create_then,
+                          .success_type = EINA_VALUE_TYPE_ARRAY,
+                          .data = gr,
+                          .free = _efl_ui_caching_factory_group_cleanup);
 }
 
 static void

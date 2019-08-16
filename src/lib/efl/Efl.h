@@ -211,13 +211,13 @@ EAPI Efl_Object *efl_part(const Eo *obj, const char *name);
  * @param[in] parent The parent of the newly created item
  * @return A future that will resolve with the newly created item.
  *
- * @since 1.22
+ * @since 1.23
  * @note This exists as we always want to trigger the event once all the logic
  * of every factory in the chain has done what it planned to do. Basically we
  * want the inverse of inheritance call like efl_super. So we do setup the future
  * in this way.
  */
-EAPI Eina_Future *efl_ui_view_factory_create_with_event(Efl_Ui_Factory *factory, Efl_Model *model, Efl_Gfx_Entity *parent);
+EAPI Eina_Future *efl_ui_view_factory_create_with_event(Efl_Ui_Factory *factory, Eina_Iterator *models, Efl_Gfx_Entity *parent);
 
 #else
 
