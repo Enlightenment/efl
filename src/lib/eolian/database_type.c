@@ -26,7 +26,8 @@ database_typedecl_del(Eolian_Typedecl *tp)
    database_type_del(tp->base_type);
    if (tp->fields) eina_hash_free(tp->fields);
    if (tp->field_list) eina_list_free(tp->field_list);
-   if (tp->freefunc) eina_stringshare_del(tp->freefunc);
+   database_function_del(tp->function_pointer);
+   eina_stringshare_del(tp->freefunc);
    database_doc_del(tp->doc);
    free(tp);
 }
