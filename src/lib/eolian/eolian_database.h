@@ -230,7 +230,7 @@ struct _Eolian_Function
    Eina_Bool obj_is_const :1; /* True if the object has to be const. Useful for a few methods. */
    Eina_Bool get_return_no_unused :1; /* also used for methods */
    Eina_Bool set_return_no_unused :1;
-   Eina_Bool is_class :1;
+   Eina_Bool is_static :1;
    Eina_List *ctor_of;
    Eolian_Class *klass;
 };

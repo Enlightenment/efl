@@ -4,7 +4,7 @@ class @beta Efl.Ui.Theme extends Efl.Object
    c_prefix: efl_ui_theme;
    data: Efl_Ui_Theme_Data;
    methods {
-      @property default @class {
+      @property default @static {
          [[This is the default theme.
 
            All widgets use the default theme implicitly unless a specific theme

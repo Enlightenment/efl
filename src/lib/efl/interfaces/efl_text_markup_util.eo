@@ -3,7 +3,7 @@ class @beta Efl.Text_Markup_Util {
    ]]
    data: null;
    methods {
-      text_to_markup @class {
+      text_to_markup @static {
          [[Converts a given (UTF-8) text to a markup-compatible string.
            This is used mainly to set a plain text with the $.markup_set
            property.
@@ -13,7 +13,7 @@ class @beta Efl.Text_Markup_Util {
          }
          return: mstring @owned; [[The markup representation of given text]]
       }
-      markup_to_text @class {
+      markup_to_text @static {
          [[Converts a given (UTF-8) text to a markup-compatible string.
            This is used mainly to set a plain text with the $.markup_set
            property.
