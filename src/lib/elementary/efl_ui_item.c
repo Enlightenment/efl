@@ -17,9 +17,9 @@ _item_select(Eo *obj, Efl_Ui_Item_Data *pd)
 {
    Efl_Ui_Select_Mode m;
 
-   if (pd->parent)
+   if (pd->container)
      {
-        m = efl_ui_select_mode_get(pd->parent);
+        m = efl_ui_select_mode_get(pd->container);
         if (m == EFL_UI_SELECT_MODE_NONE || (pd->selected && m != EFL_UI_SELECT_MODE_SINGLE_ALWAYS))
           return;
      }
@@ -119,7 +119,7 @@ _efl_ui_item_efl_object_destructor(Eo *obj, Efl_Ui_Item_Data *pd EINA_UNUSED)
 EOLIAN static int
 _efl_ui_item_index_get(const Eo *obj, Efl_Ui_Item_Data *pd)
 {
-   return efl_pack_index_get(pd->parent, obj);
+   return efl_pack_index_get(pd->container, obj);
 }
 
 EOLIAN static void
@@ -142,14 +142,47 @@ _efl_ui_item_efl_ui_selectable_selected_get(const Eo *obj EINA_UNUSED, Efl_Ui_It
 EOLIAN static void
 _efl_ui_item_container_set(Eo *obj EINA_UNUSED, Efl_Ui_Item_Data *pd, Efl_Ui_Widget *container)
 {
-   pd->parent = container;
+   pd->container = container;
+   if (!pd->container)
+     {
+        pd->parent = NULL;
+     }
 }
 
 EOLIAN static Efl_Ui_Widget*
 _efl_ui_item_container_get(const Eo *obj EINA_UNUSED, Efl_Ui_Item_Data *pd)
 {
+   return pd->container;
+}
+
+EOLIAN static void
+_efl_ui_item_item_parent_set(Eo *obj, Efl_Ui_Item_Data *pd, Efl_Ui_Item *parent)
+{
+   if (pd->parent)
+     {
+        ERR("Parent is already set on object %p", obj);
+        return;
+     }
+   if (efl_invalidated_get(obj) || efl_invalidating_get(obj))
+     {
+        ERR("Parent cannot be set during invalidate");
+        return;
+     }
+   if (pd->container)
+     {
+        ERR("Parent must be set before adding the object to the container");
+        return;
+     }
+   pd->parent = parent;
+}
+
+
+EOLIAN static Efl_Ui_Item*
+_efl_ui_item_item_parent_get(const Eo *obj EINA_UNUSED, Efl_Ui_Item_Data *pd)
+{
    return pd->parent;
 }
+
 
 #include "efl_ui_item.eo.c"
 #include "efl_ui_selectable.eo.c"

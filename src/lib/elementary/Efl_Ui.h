@@ -183,6 +183,7 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_layout_part_table.eo.h>
 # include <efl_ui_item.eo.h>
 # include <efl_ui_default_item.eo.h>
+# include <efl_ui_group_item.eo.h>
 # include <efl_ui_win_part.eo.h>
 # include <efl_ui_bg.eo.h>
 # include <efl_ui_box.eo.h>
@@ -269,7 +270,8 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_text_alert_popup.eo.h>
 # include <efl_ui_anchor_popup.eo.h>
 # include <efl_ui_popup_part_backwall.eo.h>
-
+# include <efl_ui_grid.eo.h>
+# include <efl_ui_list.eo.h>
 /**
  * Initialize Elementary
  *
