@@ -26,11 +26,11 @@ _efl_ui_default_item_efl_part_part_get(const Eo *obj, void *pd EINA_UNUSED, cons
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(part, NULL);
    if (eina_streq(part, "text"))
-     return ELM_PART_IMPLEMENT(EFL_UI_ITEM_PART_TEXT_CLASS, obj, "efl.text");
+     return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_TEXT_CLASS, obj, "efl.text");
    else if (eina_streq(part, "icon"))
-     return ELM_PART_IMPLEMENT(EFL_UI_ITEM_PART_ICON_CLASS, obj, "efl.icon");
+     return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_CONTENT_CLASS, obj, "efl.icon");
    else if (eina_streq(part, "extra"))
-     return ELM_PART_IMPLEMENT(EFL_UI_ITEM_PART_EXTRA_CLASS, obj, "efl.extra");
+     return ELM_PART_IMPLEMENT(EFL_UI_LAYOUT_PART_CONTENT_CLASS, obj, "efl.extra");
 
    return efl_part_get(efl_super(obj, MY_CLASS), part);
 }

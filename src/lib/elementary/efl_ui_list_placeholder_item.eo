@@ -6,7 +6,7 @@ class @beta Efl.Ui.List_Placeholder_Item extends Efl.Ui.Item implements Efl.Cont
      any kind of container.]]
    data: null;
    parts {
-     content: Efl.Ui.Item_Part_Content; [[the content part for list placeholder item.
+     content: Efl.Ui.Layout_Part_Content; [[the content part for list placeholder item.
                                         the content part is empty slot for user customizing.
                                         fill the place with container widget such as layout, box, table.]]
    }
