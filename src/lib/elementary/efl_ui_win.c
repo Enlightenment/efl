@@ -963,7 +963,7 @@ _elm_win_size_hints_update(Efl_Ui_Win *win, Efl_Ui_Win_Data *sd)
    Eina_Size2D min, max;
 
    min = efl_gfx_hint_size_combined_min_get(win);
-   max = efl_gfx_hint_size_max_get(win);
+   max = efl_gfx_hint_size_combined_max_get(win);
    if (max.w < 1) max.w = -1;
    if (max.h < 1) max.h = -1;
 
@@ -1637,7 +1637,7 @@ _win_rotate(Evas_Object *obj, Efl_Ui_Win_Data *sd, int rotation, Eina_Bool resiz
    if (resize) TRAP(sd, rotation_with_resize_set, rotation);
    else TRAP(sd, rotation_set, rotation);
    efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(-1, -1));
-   efl_gfx_hint_size_max_set(obj, EINA_SIZE2D(-1, -1));
+   efl_gfx_hint_size_restricted_max_set(obj, EINA_SIZE2D(-1, -1));
    _elm_win_resize_objects_eval(obj, EINA_FALSE);
 #ifdef HAVE_ELEMENTARY_X
    _elm_win_xwin_update(sd);
@@ -2694,6 +2694,12 @@ _efl_ui_win_efl_canvas_scene_group_objects_calculate(Eo *obj EINA_UNUSED, Efl_Ui
    evas_smart_objects_calculate(sd->evas);
 }
 
+EOLIAN static Eina_Bool
+_efl_ui_win_efl_canvas_scene_group_objects_calculating_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+{
+   return efl_canvas_scene_group_objects_calculating_get(sd->evas);
+}
+
 EOLIAN static Eina_Iterator *
 _efl_ui_win_efl_canvas_scene_objects_at_xy_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eina_Position2D pos, Eina_Bool include_pass_events_objects, Eina_Bool include_hidden_objects)
 {
@@ -3695,6 +3701,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
    evas_object_size_hint_combined_min_get(sd->legacy.edje, &minw, &minh);
    if ((!minw) && (!minh) && (!sd->deferred_resize_job)) return;
 
+   efl_gfx_hint_size_restricted_max_set(obj, EINA_SIZE2D(-1, -1));
    // If content has a weight, make resizable
    efl_gfx_hint_weight_get(sd->legacy.edje, &wx, &wy);
 
@@ -3716,6 +3723,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
    if (maxh > 32767) maxh = 32767;
 
    unresizable = ((minw == maxw) && (minh == maxh));
+
    if (sd->csd.need_unresizable != unresizable)
      {
         sd->csd.need_unresizable = unresizable;
@@ -3735,7 +3743,7 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
 
    sd->tmp_updating_hints = 1;
    efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
-   efl_gfx_hint_size_max_set(obj, EINA_SIZE2D(maxw, maxh));
+   efl_gfx_hint_size_restricted_max_set(obj, EINA_SIZE2D(maxw, maxh));
    sd->tmp_updating_hints = 0;
    _elm_win_size_hints_update(obj, sd);
 
@@ -5976,6 +5984,33 @@ _efl_ui_win_efl_text_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
    return sd->title;
 }
 
+EOLIAN void
+_efl_ui_win_efl_ui_i18n_language_set(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char *locale)
+{
+   if (sd->frame_obj)
+     efl_ui_language_set(sd->frame_obj, locale);
+}
+
+EOLIAN const char *
+_efl_ui_win_efl_ui_i18n_language_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd)
+{
+   return sd->frame_obj ? efl_ui_language_get(sd->frame_obj) : NULL;
+}
+
+EOLIAN static void
+_efl_ui_win_efl_ui_l10n_l10n_text_set(Eo *obj, Efl_Ui_Win_Data *sd, const char *label, const char *domain)
+{
+   if (sd->frame_obj)
+     efl_ui_l10n_text_set(efl_part(obj, "efl.text.title"), label, domain);
+}
+
+EOLIAN static const char *
+_efl_ui_win_efl_ui_l10n_l10n_text_get(const Eo *obj, Efl_Ui_Win_Data *sd, const char **domain)
+{
+  return sd->frame_obj ?
+    efl_ui_l10n_text_get(efl_part(obj, "efl.text.title"), domain) : NULL;
+}
+
 EOLIAN static void
 _efl_ui_win_win_type_set(Eo *obj, Efl_Ui_Win_Data *sd, Efl_Ui_Win_Type type)
 {
@@ -6966,8 +7001,15 @@ _efl_ui_win_efl_screen_screen_rotation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win
 {
    //TODO: query to wm about device's rotation
    (void)sd;
-
+   WRN("Not yet implemented");
    return 0;
+}
+
+EOLIAN static float
+_efl_ui_win_efl_screen_screen_scale_factor_get(const Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd EINA_UNUSED)
+{
+   WRN("Not yet implemented");
+   return 1.0;
 }
 
 EOLIAN static void

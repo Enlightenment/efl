@@ -107,6 +107,8 @@ abstract Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container,
       Efl.Part.part_get;
       Efl.Ui.Property_Bind.property_bind;
       Efl.Ui.Factory_Bind.factory_bind;
+      Efl.Ui.L10n.l10n_text { get; set; }
+      Efl.Ui.I18n.language { get; set; }
    }
    events {
       theme,changed: void; [[Called when theme changed]]

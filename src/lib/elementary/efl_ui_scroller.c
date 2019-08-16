@@ -302,7 +302,7 @@ _efl_ui_scroller_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Scroller_Data 
    if (sd->content)
      {
         min = efl_gfx_hint_size_combined_min_get(sd->content);
-        max = efl_gfx_hint_size_max_get(sd->content);
+        max = efl_gfx_hint_size_combined_max_get(sd->content);
         efl_gfx_hint_weight_get(sd->content, &xw, &yw);
      }
 

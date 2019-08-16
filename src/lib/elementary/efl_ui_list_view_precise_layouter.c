@@ -65,7 +65,7 @@ _item_size_calc(Efl_Ui_List_View_Precise_Layouter_Data *pd, Efl_Ui_List_View_Lay
    efl_gfx_hint_margin_get(pd->modeler, &boxl, &boxr, &boxt, &boxb);
    efl_gfx_hint_align_get(item->layout, &align[0], &align[1]);
    efl_gfx_hint_fill_get(item->layout, &fill[0], &fill[1]);
-   max = efl_gfx_hint_size_max_get(item->layout);
+   max = efl_gfx_hint_size_combined_max_get(item->layout);
 
    // box outer margin
    boxw -= boxl + boxr;

@@ -3,7 +3,10 @@ mod_src = files([
   'wayland_imcontext.c',
   'wayland_imcontext.h'
 ])
-mod_deps = [ecore, ecore_imf, ecore_wl2, wayland_protocol, ecore_evas, ecore_input]
+
+libxkbcommon = dependency('xkbcommon', version : ['>=0.3.0'])
+
+mod_deps = [ecore, ecore_imf, ecore_wl2, wayland_protocol, ecore_evas, ecore_input, libxkbcommon]
 
 shared_module(mod_name,
     mod_src,

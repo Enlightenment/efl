@@ -138,18 +138,6 @@ _efl_ui_popup_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
    return pd->align;
 }
 
-EOLIAN static void
-_efl_ui_popup_popup_size_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eina_Size2D size)
-{
-   efl_gfx_entity_size_set(obj, size);
-}
-
-EOLIAN static Eina_Size2D
-_efl_ui_popup_popup_size_get(const Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED)
-{
-   return efl_gfx_entity_size_get(obj);
-}
-
 static Eina_Bool
 _timer_cb(void *data)
 {

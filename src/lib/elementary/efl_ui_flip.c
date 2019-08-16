@@ -67,8 +67,8 @@ static void
 _sizing_eval(Evas_Object *obj)
 {
    Evas_Coord minw = -1, minh = -1, minw2 = -1, minh2 = -1;
-   Evas_Coord maxw = -1, maxh = -1, maxw2 = -1, maxh2 = -1;
    int fingx = 0, fingy = 0;
+   Eina_Size2D max = EINA_SIZE2D(-1, -1), max2 = EINA_SIZE2D(-1, -1);
 
    EFL_UI_FLIP_DATA_GET(obj, sd);
 
@@ -77,14 +77,14 @@ _sizing_eval(Evas_Object *obj)
    if (sd->back.content)
      evas_object_size_hint_combined_min_get(sd->back.content, &minw2, &minh2);
    if (sd->front.content)
-     evas_object_size_hint_max_get(sd->front.content, &maxw, &maxh);
+     max = efl_gfx_hint_size_combined_max_get(sd->front.content);
    if (sd->back.content)
-     evas_object_size_hint_max_get(sd->back.content, &maxw2, &maxh2);
+     max2 = efl_gfx_hint_size_combined_max_get(sd->back.content);
 
    if (minw2 > minw) minw = minw2;
    if (minh2 > minh) minh = minh2;
-   if ((maxw2 >= 0) && (maxw2 < maxw)) maxw = maxw2;
-   if ((maxh2 >= 0) && (maxh2 < maxh)) maxh = maxh2;
+   if ((max2.w >= 0) && (max2.w < max.w)) max.w = max2.w;
+   if ((max2.h >= 0) && (max2.h < max.h)) max.h = max2.h;
 
    if (sd->dir_enabled[ELM_FLIP_DIRECTION_UP]) fingy++;
    if (sd->dir_enabled[ELM_FLIP_DIRECTION_DOWN]) fingy++;
@@ -93,11 +93,8 @@ _sizing_eval(Evas_Object *obj)
 
    elm_coords_finger_size_adjust(fingx, &minw, fingy, &minh);
 
-   if (elm_widget_is_legacy(obj))
-     evas_object_size_hint_min_set(obj, minw, minh);
-   else
-     efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
-   evas_object_size_hint_max_set(obj, maxw, maxh);
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
+   efl_gfx_hint_size_restricted_max_set(obj, max);
 }
 
 EOLIAN static Eina_Error

@@ -848,15 +848,19 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
       Efl.Screen.screen_dpi { get; }
       Efl.Screen.screen_rotation { get; }
       Efl.Screen.screen_size_in_pixels { get; }
+      Efl.Screen.screen_scale_factor { get; }
       Efl.Gfx.Hint.hint_aspect { set; }
       Efl.Gfx.Hint.hint_weight { set; }
       Efl.Gfx.Hint.hint_size_max { set; }
       Efl.Text.text { get; set; }
+      Efl.Ui.L10n.l10n_text { get; set; }
+      Efl.Ui.I18n.language { get; set; }
       Efl.Canvas.Scene.seat_default { get; }
       Efl.Canvas.Scene.pointer_position { get; }
       Efl.Canvas.Pointer.pointer_inside { get; }
       Efl.Canvas.Scene.image_max_size { get; }
       Efl.Canvas.Scene.group_objects_calculate;
+      Efl.Canvas.Scene.group_objects_calculating { get; }
       Efl.Canvas.Scene.objects_at_xy_get;
       Efl.Canvas.Scene.object_top_at_xy_get;
       Efl.Canvas.Scene.objects_in_rectangle_get;

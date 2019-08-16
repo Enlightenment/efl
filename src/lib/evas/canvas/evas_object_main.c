@@ -1405,6 +1405,8 @@ _evas_object_size_hint_alloc(Evas_Object *eo_obj EINA_UNUSED, Evas_Object_Protec
    obj->size_hints = EVAS_MEMPOOL_ALLOC(_mp_sh, Evas_Size_Hints);
    if (!obj->size_hints) return;
    EVAS_MEMPOOL_PREP(_mp_sh, obj->size_hints, Evas_Size_Hints);
+   obj->size_hints->user_max.w = -1;
+   obj->size_hints->user_max.h = -1;
    obj->size_hints->max.w = -1;
    obj->size_hints->max.h = -1;
    obj->size_hints->align.x = 0.5;
@@ -1444,6 +1446,37 @@ evas_object_size_hint_display_mode_set(Eo *eo_obj, Evas_Display_Mode dispmode)
 }
 
 EOLIAN static Eina_Size2D
+_efl_canvas_object_efl_gfx_hint_hint_size_restricted_max_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+{
+   if ((!obj->size_hints) || obj->delete_me)
+     return EINA_SIZE2D(0, 0);
+
+   return obj->size_hints->max;
+}
+
+EOLIAN static void
+_efl_canvas_object_efl_gfx_hint_hint_size_restricted_max_set(Eo *eo_obj, Evas_Object_Protected_Data *obj, Eina_Size2D sz)
+{
+   if (obj->delete_me)
+     return;
+
+   EVAS_OBJECT_DATA_VALID_CHECK(obj);
+   evas_object_async_block(obj);
+   if (EINA_UNLIKELY(!obj->size_hints))
+     {
+        if (!sz.w && !sz.h) return;
+        _evas_object_size_hint_alloc(eo_obj, obj);
+     }
+   if ((obj->size_hints->max.w == sz.w) && (obj->size_hints->max.h == sz.h)) return;
+   obj->size_hints->max = sz;
+   if ((obj->size_hints->max.w != -1) && (obj->size_hints->max.w < obj->size_hints->min.w))
+     ERR("restricted max width hint is now smaller than restricted min width hint! (%d < %d)", obj->size_hints->max.w, obj->size_hints->min.w);
+   if ((obj->size_hints->max.h != -1) && (obj->size_hints->max.h < obj->size_hints->min.h))
+     ERR("restricted max height hint is now smaller than restricted min height hint! (%d < %d)", obj->size_hints->max.h, obj->size_hints->min.h);
+   evas_object_inform_call_changed_size_hints(eo_obj, obj);
+}
+
+EOLIAN static Eina_Size2D
 _efl_canvas_object_efl_gfx_hint_hint_size_restricted_min_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
    if ((!obj->size_hints) || obj->delete_me)
@@ -1467,7 +1500,10 @@ _efl_canvas_object_efl_gfx_hint_hint_size_restricted_min_set(Eo *eo_obj, Evas_Ob
      }
    if ((obj->size_hints->min.w == sz.w) && (obj->size_hints->min.h == sz.h)) return;
    obj->size_hints->min = sz;
-
+   if ((obj->size_hints->max.w != -1) && (obj->size_hints->max.w < obj->size_hints->min.w))
+     ERR("restricted max width hint is now smaller than restricted min width hint! (%d < %d)", obj->size_hints->max.w, obj->size_hints->min.w);
+   if ((obj->size_hints->max.h != -1) && (obj->size_hints->max.h < obj->size_hints->min.h))
+     ERR("restricted max height hint is now smaller than restricted min height hint! (%d < %d)", obj->size_hints->max.h, obj->size_hints->min.h);
    evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
 
@@ -1479,8 +1515,50 @@ _efl_canvas_object_efl_gfx_hint_hint_size_combined_min_get(const Eo *eo_obj EINA
    if ((!obj->size_hints) || obj->delete_me)
      return sz;
 
-   sz.w = MAX(obj->size_hints->min.w, obj->size_hints->user_min.w);
-   sz.h = MAX(obj->size_hints->min.h, obj->size_hints->user_min.h);
+   sz.w = obj->size_hints->user_min.w;
+   if (obj->size_hints->max.w != -1)
+     sz.w = obj->size_hints->max.w;
+   sz.h = obj->size_hints->user_min.h;
+   if (obj->size_hints->max.h != -1)
+     sz.h = obj->size_hints->max.h;
+
+   /* clamp user min to restricted max here */
+   sz.w = MAX(obj->size_hints->min.w, MIN(sz.w, obj->size_hints->user_min.w));
+   sz.h = MAX(obj->size_hints->min.h, MIN(sz.h, obj->size_hints->user_min.h));
+   return sz;
+}
+
+EOLIAN static Eina_Size2D
+_efl_canvas_object_efl_gfx_hint_hint_size_combined_max_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
+{
+   Eina_Size2D sz = { -1, -1 };
+
+   if ((!obj->size_hints) || obj->delete_me)
+     return sz;
+
+   sz.w = obj->size_hints->user_max.w;
+   sz.h = obj->size_hints->user_max.h;
+
+   /* clamp user max to restricted max here */
+   if (obj->size_hints->max.w != -1)
+     {
+        if (sz.w == -1)
+          sz.w = obj->size_hints->max.w;
+        else
+          sz.w = MIN(obj->size_hints->max.w, sz.w);
+     }
+   if (obj->size_hints->max.h != -1)
+     {
+        if (sz.h == -1)
+          sz.h = obj->size_hints->max.h;
+        else
+          sz.h = MIN(obj->size_hints->max.h, sz.h);
+     }
+   /* then clamp to restricted min */
+   if ((sz.w != -1) && obj->size_hints->min.w > 0)
+     sz.w = MAX(sz.w, obj->size_hints->min.w);
+   if ((sz.h != -1) && obj->size_hints->min.h > 0)
+     sz.h = MAX(sz.h, obj->size_hints->min.h);
    return sz;
 }
 
@@ -1490,7 +1568,7 @@ _efl_canvas_object_efl_gfx_hint_hint_size_max_get(const Eo *eo_obj EINA_UNUSED, 
    if ((!obj->size_hints) || obj->delete_me)
      return EINA_SIZE2D(-1, -1);
 
-   return obj->size_hints->max;
+   return obj->size_hints->user_max;
 }
 
 EOLIAN static void
@@ -1506,9 +1584,13 @@ _efl_canvas_object_efl_gfx_hint_hint_size_max_set(Eo *eo_obj, Evas_Object_Protec
         if ((sz.w == -1) && (sz.h == -1)) return;
         _evas_object_size_hint_alloc(eo_obj, obj);
      }
-   if ((obj->size_hints->max.w == sz.w) && (obj->size_hints->max.h == sz.h)) return;
-   obj->size_hints->max.w = sz.w;
-   obj->size_hints->max.h = sz.h;
+   if ((obj->size_hints->user_max.w == sz.w) && (obj->size_hints->user_max.h == sz.h)) return;
+   obj->size_hints->user_max.w = sz.w;
+   obj->size_hints->user_max.h = sz.h;
+   if ((obj->size_hints->user_max.w != -1) && (obj->size_hints->user_max.w < obj->size_hints->user_min.w))
+     ERR("user_max width hint is now smaller than user_min width hint! (%d < %d)", obj->size_hints->user_max.w, obj->size_hints->user_min.w);
+   if ((obj->size_hints->user_max.h != -1) && (obj->size_hints->user_max.h < obj->size_hints->user_min.h))
+     ERR("user_max height hint is now smaller than user_min height hint! (%d < %d)", obj->size_hints->user_max.h, obj->size_hints->user_min.h);
 
    evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
@@ -1572,7 +1654,10 @@ _efl_canvas_object_efl_gfx_hint_hint_size_min_set(Eo *eo_obj, Evas_Object_Protec
      }
    if ((obj->size_hints->user_min.w == sz.w) && (obj->size_hints->user_min.h == sz.h)) return;
    obj->size_hints->user_min = sz;
-
+   if ((obj->size_hints->user_max.w != -1) && (obj->size_hints->max.w < obj->size_hints->user_min.w))
+     ERR("max width hint is now smaller than min width hint! (%d < %d)", obj->size_hints->user_max.w, obj->size_hints->user_min.w);
+   if ((obj->size_hints->user_max.h != -1) && (obj->size_hints->max.h < obj->size_hints->user_min.h))
+     ERR("max height hint is now smaller than min height hint! (%d < %d)", obj->size_hints->user_max.h, obj->size_hints->user_min.h);
    evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
 

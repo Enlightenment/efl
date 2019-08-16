@@ -38,11 +38,11 @@ _sizing_eval(Evas_Object *obj,
    evas_object_size_hint_min_get(obj, &cminw, &cminh);
    if ((minw == cminw) && (minh == cminh)) return;
 
+   efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
    if (elm_widget_is_legacy(obj))
-     evas_object_size_hint_min_set(obj, minw, minh);
+     evas_object_size_hint_max_set(obj, -1, -1);
    else
      efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
-   evas_object_size_hint_max_set(obj, -1, -1);
 }
 
 static void

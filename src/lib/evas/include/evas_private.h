@@ -959,7 +959,7 @@ struct _Evas_Double_Pair
 struct _Evas_Size_Hints
 {
    Evas_Size request;
-   Eina_Size2D min, user_min, max;
+   Eina_Size2D min, user_min, max, user_max;
    Evas_Aspect aspect;
    Evas_Double_Pair align, weight;
    Evas_Border padding;

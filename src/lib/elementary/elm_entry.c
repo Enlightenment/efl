@@ -730,6 +730,16 @@ _selection_data_cb(void *data EINA_UNUSED,
      }
    else
      {
+        if (!(sel_data->format & ELM_SEL_FORMAT_MARKUP))
+          {
+             char *txt = _elm_util_text_to_mkup(buf);
+             if (txt)
+               {
+                  _edje_entry_user_insert(obj, txt);
+                  free(txt);
+               }
+          }
+        else
         _edje_entry_user_insert(obj, buf);
      }
    free(buf);

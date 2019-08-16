@@ -17,7 +17,7 @@ struct Efl.Ui.Widget_Focus_State {
 
 abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
                         Efl.Access.Component, Efl.Part, Efl.Ui.Focus.Object,
-                        Efl.Ui.L10n,
+                        Efl.Ui.I18n, Efl.Ui.L10n,
                         Efl.Ui.Selection, Efl.Ui.Dnd,
                         Efl.Ui.Property_Bind, Efl.Ui.View
 {

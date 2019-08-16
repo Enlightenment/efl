@@ -4999,6 +4999,7 @@ _efl_ui_selection_manager_drop_target_del(Eo *obj EINA_UNUSED, Efl_Ui_Selection_
 {
    Sel_Manager_Dropable *dropable = NULL;
    Sel_Manager_Seat_Selection *seat_sel;
+   Eina_Bool remove_handler = EINA_FALSE;
 
    dropable = efl_key_data_get(target_obj, "__elm_dropable");
    if (dropable)
@@ -5040,14 +5041,21 @@ _efl_ui_selection_manager_drop_target_del(Eo *obj EINA_UNUSED, Efl_Ui_Selection_
                   break;
                }
           }
-        if (!have_drop_list) ecore_x_dnd_aware_set(xwin, EINA_FALSE);
+        if (!have_drop_list)
+          {
+             ecore_x_dnd_aware_set(xwin, EINA_FALSE);
+             remove_handler = EINA_TRUE;
+          }
      }
 #endif
-   seat_sel = _sel_manager_seat_selection_init(pd, seat);
-   ELM_SAFE_FREE(seat_sel->pos_handler, ecore_event_handler_del);
-   ELM_SAFE_FREE(seat_sel->drop_handler, ecore_event_handler_del);
-   ELM_SAFE_FREE(seat_sel->enter_handler, ecore_event_handler_del);
-   ELM_SAFE_FREE(seat_sel->leave_handler, ecore_event_handler_del);
+   if (remove_handler)
+     {
+        seat_sel = _sel_manager_seat_selection_init(pd, seat);
+        ELM_SAFE_FREE(seat_sel->pos_handler, ecore_event_handler_del);
+        ELM_SAFE_FREE(seat_sel->drop_handler, ecore_event_handler_del);
+        ELM_SAFE_FREE(seat_sel->enter_handler, ecore_event_handler_del);
+        ELM_SAFE_FREE(seat_sel->leave_handler, ecore_event_handler_del);
+     }
 }
 
 EOLIAN static void

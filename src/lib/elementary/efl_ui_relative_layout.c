@@ -497,7 +497,7 @@ _hash_child_init_foreach_cb(const Eina_Hash *hash EINA_UNUSED, const void *key E
    calc->aspect[1] = aspect.h;
    efl_gfx_hint_margin_get(child->obj, &calc->margin[LEFT], &calc->margin[RIGHT],
                            &calc->margin[TOP], &calc->margin[BOTTOM]);
-   max = efl_gfx_hint_size_max_get(child->obj);
+   max = efl_gfx_hint_size_combined_max_get(child->obj);
    min = efl_gfx_hint_size_combined_min_get(child->obj);
    calc->max[0] = max.w;
    calc->max[1] = max.h;

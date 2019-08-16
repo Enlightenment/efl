@@ -36,17 +36,6 @@ class @beta Efl.Ui.Popup extends Efl.Ui.Layout_Base implements Efl.Content, Efl.
              time: double; [[Timeout in seconds]]
          }
       }
-      @property popup_size {
-         set {
-            [[Set the popup size.]]
-         }
-         get {
-            [[get the current popup size.]]
-         }
-         values {
-            size: Eina.Size2D;
-         }
-      }
    }
    parts {
       backwall: Efl.Ui.Popup_Part_Backwall; [[A backwall behind the popup.]]

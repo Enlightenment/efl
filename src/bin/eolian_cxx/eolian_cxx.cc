@@ -287,10 +287,10 @@ run(options_type const& opts)
      {
        const Eolian_Class *klass = nullptr;
        char* dup = strdup(opts.in_files[0].c_str());
-       char* base = basename(dup);
+       std::string base (basename(dup));
        std::string cpp_types_header;
        opts.unit = (Eolian_Unit*)opts.state;
-       klass = ::eolian_state_class_by_file_get(opts.state, base);
+       klass = ::eolian_state_class_by_file_get(opts.state, base.c_str());
        free(dup);
        if (klass)
          {
@@ -346,8 +346,8 @@ run(options_type const& opts)
                  opts.unit = unit;
              }
            char* dup = strdup(name.c_str());
-           char* base = basename(dup);
-           Eolian_Class const* klass = ::eolian_state_class_by_file_get(opts.state, base);
+           std::string base(basename(dup));
+           Eolian_Class const* klass = ::eolian_state_class_by_file_get(opts.state, base.c_str());
            free(dup);
            if (klass)
              {
