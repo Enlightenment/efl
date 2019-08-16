@@ -907,7 +907,7 @@ _content_created(Eo *obj, void *data, const Eina_Value value)
    if (eina_value_array_count(&value) != 1) return eina_value_error_init(EINVAL);
    eina_value_array_get(&value, 0, &item->layout);
 
-   evas_object_smart_member_add(item->layout, tracking->pd->pan_obj);
+   efl_canvas_group_member_add(tracking->pd->pan_obj, item->layout);
    evas_object_event_callback_add(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item);
 
    if (_elm_config->atspi_mode)
@@ -1000,8 +1000,8 @@ _efl_ui_list_view_efl_ui_list_view_model_unrealize(Eo *obj, Efl_Ui_List_View_Dat
    evt.index = efl_ui_list_view_item_index_get(item);
    efl_event_callback_call(obj, EFL_UI_LIST_VIEW_EVENT_ITEM_UNREALIZED, &evt);
 
+   efl_canvas_group_member_remove(obj, pd->pan_obj);
    efl_ui_factory_release(pd->factory, item->layout);
-   evas_object_smart_member_del(item->layout);
    item->layout = NULL;
 }
 
