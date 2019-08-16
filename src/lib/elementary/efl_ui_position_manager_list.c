@@ -13,6 +13,11 @@
 #define MY_DATA_GET(obj, pd) \
   Efl_Ui_Position_Manager_List_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
+
+typedef struct {
+   unsigned int start_id, end_id;
+} Vis_Segment;
+
 typedef struct {
    Api_Callback min_size, object;
    unsigned int size;
@@ -24,9 +29,8 @@ typedef struct {
    int *size_cache;
    int average_item_size;
    int maximum_min_size;
-   struct {
-      unsigned int start_id, end_id;
-   } prev_run;
+   Vis_Segment prev_run;
+   Efl_Gfx_Entity *last_group;
 } Efl_Ui_Position_Manager_List_Data;
 
 /*
@@ -132,16 +136,174 @@ recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
    efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_MIN_SIZE_CHANGED, &min_size);
 }
 
-static void
-position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
+static inline Vis_Segment
+_search_visual_segment(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, int relevant_space_size, int relevant_viewport)
 {
+   Vis_Segment cur;
+   //based on the average item size, we jump somewhere into the sum cache.
+   //After beeing in there, we are walking back, until we have less space then viewport size
+   cur.start_id = MIN((unsigned int)(relevant_space_size / pd->average_item_size), pd->size);
+   for (; cache_access(obj, pd, cur.start_id) >= relevant_space_size && cur.start_id > 0; cur.start_id --) { }
+
+   //starting on the start id, we are walking down until the sum of elements is bigger than the lower part of the viewport.
+   cur.end_id = cur.start_id;
+   for (; cur.end_id <= pd->size && cache_access(obj, pd, cur.end_id) <= relevant_space_size + relevant_viewport ; cur.end_id ++) { }
+   cur.end_id = MAX(cur.end_id, cur.start_id + 1);
+   cur.end_id = MIN(cur.end_id, pd->size);
+
+   #ifdef DEBUG
+   printf("space_size %d : starting point : %d : cached_space_starting_point %d end point : %d cache_space_end_point %d\n", space_size.h, cur.start_id, pd->size_cache[cur.start_id], cur.end_id, pd->size_cache[cur.end_id]);
+   #endif
+   if (relevant_space_size > 0)
+     EINA_SAFETY_ON_FALSE_GOTO(cache_access(obj, pd, cur.start_id) <= relevant_space_size, err);
+   if (cur.end_id != pd->size)
+     EINA_SAFETY_ON_FALSE_GOTO(cache_access(obj, pd, cur.end_id) >= relevant_space_size + relevant_viewport, err);
+   EINA_SAFETY_ON_FALSE_GOTO(cur.start_id <= cur.end_id, err);
+
+   return cur;
+
+err:
+   cur.start_id = cur.end_id = 0;
+
+   return cur;
+}
+
+static inline void
+_visual_segment_swap(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_Segment new, Vis_Segment old)
+{
+   if (new.end_id <= old.start_id || new.start_id >= old.end_id)
+     {
+        //it is important to first make the segment visible here, and then hide the rest
+        //otherwise we get a state where item_container has 0 subchildren, which triggers a lot of focus logic.
+        vis_change_segment(&pd->object, new.start_id, new.end_id, EINA_TRUE);
+        vis_change_segment(&pd->object, old.start_id, old.end_id, EINA_FALSE);
+     }
+   else
+     {
+        vis_change_segment(&pd->object, old.start_id, new.start_id, (old.start_id > new.start_id));
+        vis_change_segment(&pd->object, old.end_id, new.end_id, (old.end_id < new.end_id));
+     }
+}
+
+static inline void
+_position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_Segment new, int relevant_space_size)
+{
+   int group_id = -1;
+   Efl_Gfx_Entity *first_group = NULL, *first_fully_visual_group = NULL;
+   Eina_Size2D first_group_size;
    Eina_Rect geom;
-   Eina_Size2D space_size;
-   unsigned int start_id = 0, end_id = 0, i;
-   int relevant_space_size, relevant_viewport;
    const int len = 100;
    Efl_Ui_Position_Manager_Batch_Size_Access size_buffer[len];
    Efl_Ui_Position_Manager_Batch_Entity_Access obj_buffer[len];
+   unsigned int i;
+
+   //placement of the plain items
+   geom = pd->viewport;
+
+   if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
+     geom.y -= (relevant_space_size - cache_access(obj, pd, new.start_id));
+   else
+     geom.x -= (relevant_space_size - cache_access(obj, pd, new.start_id));
+
+   for (i = new.start_id; i < new.end_id; ++i)
+     {
+        Eina_Size2D size;
+        Efl_Gfx_Entity *ent = NULL;
+        int buffer_id = (i-new.start_id) % len;
+
+        if (buffer_id == 0)
+          {
+             int tmp_group;
+             int res1, res2;
+
+             res1 = _fill_buffer(&pd->object, i, len, &tmp_group, obj_buffer);
+             res2 = _fill_buffer(&pd->min_size, i, len, NULL, size_buffer);
+             EINA_SAFETY_ON_FALSE_RETURN(res1 == res2);
+             EINA_SAFETY_ON_FALSE_RETURN(res2 > 0);
+
+             if (i == new.start_id)
+               {
+                  if (tmp_group > 0)
+                    group_id = tmp_group;
+                  else if (obj_buffer[0].group ==  EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_GROUP)
+                    group_id = i;
+               }
+          }
+
+        size = size_buffer[buffer_id].size;
+        ent = obj_buffer[buffer_id].entity;
+
+        if (ent == pd->last_group)
+          {
+             pd->last_group = NULL;
+          }
+
+        if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
+          geom.h = size.h;
+        else
+          geom.w = size.w;
+
+        if (!first_fully_visual_group && obj_buffer[buffer_id].group == EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_GROUP &&
+             eina_spans_intersect(geom.x, geom.w, pd->viewport.x, pd->viewport.w) &&
+             eina_spans_intersect(geom.y, geom.h, pd->viewport.y, pd->viewport.h))
+          {
+             first_fully_visual_group = obj_buffer[buffer_id].entity;
+          }
+
+        if (ent)
+          efl_gfx_entity_geometry_set(ent, geom);
+        if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
+          geom.y += size.h;
+        else
+          geom.x += size.w;
+     }
+   //Now place group items
+
+   if (group_id > 0)
+     {
+        EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->object, group_id, 1, NULL, obj_buffer) == 1);
+        EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->min_size, group_id, 1, NULL, size_buffer) == 1);
+        first_group = obj_buffer[0].entity;
+        first_group_size = size_buffer[0].size;
+     }
+   if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
+     first_group_size.w = pd->viewport.w;
+   else
+     first_group_size.h = pd->viewport.h;
+
+   //if there is a new group item, display the new one, and hide the old one
+   if (first_group != pd->last_group)
+     {
+        efl_gfx_entity_visible_set(pd->last_group, EINA_FALSE);
+        efl_gfx_stack_raise_to_top(first_group);
+        pd->last_group = first_group;
+     }
+   //we have to set the visibility again here, as changing the visual segments might overwrite our visibility state
+   efl_gfx_entity_visible_set(first_group, EINA_TRUE);
+
+   //in case there is another group item coming in, the new group item (which is placed as normal item) moves the group item to the top
+   Eina_Position2D first_group_pos = EINA_POSITION2D(pd->viewport.x, pd->viewport.y);
+   if (first_fully_visual_group && first_fully_visual_group != first_group)
+     {
+        Eina_Position2D first_visual_group;
+        first_visual_group = efl_gfx_entity_position_get(first_fully_visual_group);
+        if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
+          first_group_pos.y = MIN(first_group_pos.y, first_visual_group.y - first_group_size.h);
+        else
+          first_group_pos.x = MIN(first_group_pos.x, first_visual_group.x - first_group_size.w);
+     }
+
+   efl_gfx_entity_position_set(first_group, first_group_pos);
+   efl_gfx_entity_size_set(first_group, first_group_size);
+}
+
+
+static void
+position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
+{
+   Eina_Size2D space_size;
+   Vis_Segment cur;
+   int relevant_space_size, relevant_viewport;
    Efl_Ui_Position_Manager_Range_Update ev;
 
    if (!pd->size) return;
@@ -162,82 +324,17 @@ position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
         relevant_viewport = pd->viewport.w;
      }
 
-   //based on the average item size, we jump somewhere into the sum cache.
-   //After beeing in there, we are walking back, until we have less space then viewport size
-   start_id = MIN((unsigned int)(relevant_space_size / pd->average_item_size), pd->size);
-   for (; cache_access(obj, pd, start_id) >= relevant_space_size && start_id > 0; start_id --) { }
-
-   //starting on the start id, we are walking down until the sum of elements is bigger than the lower part of the viewport.
-   end_id = start_id;
-   for (; end_id <= pd->size && cache_access(obj, pd, end_id) <= relevant_space_size + relevant_viewport ; end_id ++) { }
-   end_id = MAX(end_id, start_id + 1);
-   end_id = MIN(end_id, pd->size);
-
-   #ifdef DEBUG
-   printf("space_size %d : starting point : %d : cached_space_starting_point %d end point : %d cache_space_end_point %d\n", space_size.h, start_id, pd->size_cache[start_id], end_id, pd->size_cache[end_id]);
-   #endif
-   if (relevant_space_size > 0)
-     EINA_SAFETY_ON_FALSE_RETURN(cache_access(obj, pd, start_id) <= relevant_space_size);
-   if (end_id != pd->size)
-     EINA_SAFETY_ON_FALSE_RETURN(cache_access(obj, pd, end_id) >= relevant_space_size + relevant_viewport);
-   EINA_SAFETY_ON_FALSE_RETURN(start_id <= end_id);
-
+   cur = _search_visual_segment(obj, pd, relevant_space_size, relevant_viewport);
    //to performance optimize the whole widget, we are setting the objects that are outside the viewport to visibility false
    //The code below ensures that things outside the viewport are always hidden, and things inside the viewport are visible
-   if (end_id <= pd->prev_run.start_id || start_id >= pd->prev_run.end_id)
+   _visual_segment_swap(obj, pd, cur, pd->prev_run);
+
+   _position_items(obj, pd, cur, relevant_space_size);
+
+   if (pd->prev_run.start_id != cur.start_id || pd->prev_run.end_id != cur.end_id)
      {
-        //it is important to first make the segment visible here, and then hide the rest
-        //otherwise we get a state where item_container has 0 subchildren, which triggers a lot of focus logic.
-        vis_change_segment(&pd->object, start_id, end_id, EINA_TRUE);
-        vis_change_segment(&pd->object, pd->prev_run.start_id, pd->prev_run.end_id, EINA_FALSE);
-     }
-   else
-     {
-        vis_change_segment(&pd->object, pd->prev_run.start_id, start_id, (pd->prev_run.start_id > start_id));
-        vis_change_segment(&pd->object, pd->prev_run.end_id, end_id, (pd->prev_run.end_id < end_id));
-     }
-
-   geom = pd->viewport;
-
-   if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
-     geom.y -= (relevant_space_size - cache_access(obj, pd, start_id));
-   else
-     geom.x -= (relevant_space_size - cache_access(obj, pd, start_id));
-
-   for (i = start_id; i < end_id; ++i)
-     {
-        Eina_Size2D size;
-        Efl_Gfx_Entity *ent = NULL;
-        int buffer_id = (i-start_id) % len;
-
-        if (buffer_id == 0)
-          {
-             int res1, res2;
-
-             res1 = _fill_buffer(&pd->object, i, len, NULL, obj_buffer);
-             res2 = _fill_buffer(&pd->min_size, i, len, NULL, size_buffer);
-             EINA_SAFETY_ON_FALSE_RETURN(res1 == res2);
-             EINA_SAFETY_ON_FALSE_RETURN(res2 > 0);
-          }
-
-        size = size_buffer[buffer_id].size;
-        ent = obj_buffer[buffer_id].entity;
-
-        if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
-          geom.h = size.h;
-        else
-          geom.w = size.w;
-        if (ent)
-          efl_gfx_entity_geometry_set(ent, geom);
-        if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
-          geom.y += size.h;
-        else
-          geom.x += size.w;
-     }
-   if (pd->prev_run.start_id != start_id || pd->prev_run.end_id != end_id)
-     {
-        ev.start_id = pd->prev_run.start_id = start_id;
-        ev.end_id = pd->prev_run.end_id = end_id;
+        ev.start_id = pd->prev_run.start_id = cur.start_id;
+        ev.end_id = pd->prev_run.end_id = cur.end_id;
         efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_VISIBLE_RANGE_CHANGED, &ev);
      }
 
