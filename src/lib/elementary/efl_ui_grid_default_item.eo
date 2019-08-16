@@ -1,33 +1,9 @@
 
-class @beta Efl.Ui.Grid_Default_Item extends Efl.Ui.Item implements
-                                Efl.Text,
-                                Efl.Text_Markup,
-                                Efl.Ui.L10n,
-                                Efl.Content
+class @beta Efl.Ui.Grid_Default_Item extends Efl.Ui.Default_Item
 {
-   [[Grid Default Item class.
-     This class need to be sub object of list widget.
-     Text and contents can be set using @Efl.Text,
-     @Efl.Content or @Efl.Part.]]
+   [[Grid Default Item class.]]
    data: null;
-   parts {
-     text: Efl.Ui.Item_Part_Text; [[The text part for grid default item.
-	                                text part is the caption of grid item.]]
-     icon: Efl.Ui.Item_Part_Icon; [[The icon content part for grid default item.
-	                                 icon part is the main content of grid item.]]
-     end: Efl.Ui.Item_Part_Extra; [[The extra content part for grid default item.
-	                                extra part is the spare content of grid item.
-	                                you can swallow small badge widget such as check, radio.]]
-   }
    implements {
-      //Efl.Object
-      Efl.Object.finalize;
-      Efl.Object.destructor;
-      Efl.Text.text { get; set; }
-      Efl.Text_Markup.markup { get; set; }
-      Efl.Ui.L10n.l10n_text { get; set; }
-      Efl.Content.content { get; set; }
-      Efl.Content.content_unset;
-      Efl.Part.part_get;
+      Efl.Object.constructor;
    }
 }
