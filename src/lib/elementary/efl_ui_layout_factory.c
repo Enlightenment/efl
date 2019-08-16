@@ -90,7 +90,8 @@ _efl_ui_layout_factory_bind(Eo *obj EINA_UNUSED, void *data, const Eina_Value va
 static void
 _efl_ui_layout_factory_efl_ui_factory_building(const Eo *obj, Efl_Ui_Layout_Factory_Data *pd, Efl_Gfx_Entity *ui_view)
 {
-   efl_ui_layout_theme_set(ui_view, pd->klass, pd->group, pd->style);
+   if (pd->klass || pd->group || pd->style)
+     efl_ui_layout_theme_set(ui_view, pd->klass, pd->group, pd->style);
 
    efl_ui_factory_building(efl_super(obj, EFL_UI_LAYOUT_FACTORY_CLASS), ui_view);
 }
