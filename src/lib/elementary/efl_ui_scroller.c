@@ -214,7 +214,10 @@ _efl_ui_scroller_efl_content_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Scroller_
 static void
 _efl_ui_scroller_pan_resized_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   efl_canvas_group_change(data);
+   if (efl_canvas_scene_group_objects_calculating_get(evas_object_evas_get(data)))
+     efl_canvas_group_calculate(data);
+   else
+     efl_canvas_group_change(data);
 }
 
 static void
