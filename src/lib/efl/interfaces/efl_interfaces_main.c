@@ -67,8 +67,8 @@
 #include "interfaces/efl_ui_range_interactive.eo.c"
 #include "interfaces/efl_ui_autorepeat.eo.c"
 #include "interfaces/efl_ui_view.eo.c"
-#include "interfaces/efl_ui_property_bind.eo.c"
 #include "interfaces/efl_ui_factory.eo.c"
+#include "interfaces/efl_ui_property_bind.eo.c"
 #include "interfaces/efl_ui_factory_bind.eo.c"
 
 #include "interfaces/efl_ui_draggable.eo.c"
@@ -131,10 +131,12 @@ _efl_ui_view_factory_item_created(Eo *factory, void *data EINA_UNUSED, const Ein
    return v;
 }
 
-EAPI Eina_Future *
-efl_ui_view_factory_create_with_event(Efl_Ui_Factory *factory, Eina_Iterator *models, Efl_Gfx_Entity *parent)
+static Eina_Future *
+_efl_ui_view_factory_create_with_event(Efl_Ui_Factory *factory, Eina_Iterator *models, Efl_Gfx_Entity *parent)
 {
    return efl_future_then(factory, efl_ui_factory_create(factory, models, parent),
                           .success_type = EINA_VALUE_TYPE_ARRAY,
                           .success = _efl_ui_view_factory_item_created);
 }
+
+#include "efl_ui_view_factory.eo.c"
