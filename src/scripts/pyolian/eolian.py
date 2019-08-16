@@ -131,14 +131,16 @@ class Eolian_Type_Builtin_Type(IntEnum):
 
     ANY_VALUE = 40
     ANY_VALUE_PTR = 41
+    BINBUF = 42
+    EVENT = 43
 
-    MSTRING = 42
-    STRING = 43
-    STRINGSHARE = 44
-    STRBUF = 45
+    MSTRING = 44
+    STRING = 45
+    STRINGSHARE = 46
+    STRBUF = 47
 
-    VOID_PTR = 46
-    FREE_CB = 47
+    VOID_PTR = 48
+    FREE_CB = 49
 
 class Eolian_C_Type_Type(IntEnum):
     DEFAULT = 0
