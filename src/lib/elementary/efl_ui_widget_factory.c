@@ -4,6 +4,7 @@
 
 #define EFL_UI_WIDGET_PROTECTED
 #define EFL_PART_PROTECTED
+#define EFL_UI_FACTORY_PROTECTED
 
 #include <Efl_Ui.h>
 #include "elm_priv.h"

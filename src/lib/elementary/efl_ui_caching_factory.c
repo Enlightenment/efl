@@ -2,6 +2,8 @@
 # include <config.h>
 #endif
 
+#define EFL_UI_FACTORY_PROTECTED
+
 #include <Elementary.h>
 #include "elm_priv.h"
 

@@ -4,6 +4,7 @@
 
 #define EFL_UI_SCROLLBAR_PROTECTED
 #define EFL_PART_PROTECTED
+#define EFL_UI_FACTORY_PROTECTED
 
 #include "eo_internal.h"
 
