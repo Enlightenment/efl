@@ -212,7 +212,14 @@ _evas_image_load_file_internal_head_png(Evas_Loader_Internal *loader,
         prop->info.w = (int) epi->w32;
         prop->info.h = (int) epi->h32;
      }
-   if (png_get_valid(epi->png_ptr, epi->info_ptr, PNG_INFO_tRNS)) epi->hasa = 1;
+
+   if (png_get_valid(epi->png_ptr, epi->info_ptr, PNG_INFO_tRNS))
+     {
+        /* expand transparency entry -> alpha channel if present */
+        if (!close_file) png_set_tRNS_to_alpha(epi->png_ptr);
+        epi->hasa = 1;
+     }
+
    switch (epi->color_type)
      {
       case PNG_COLOR_TYPE_RGB_ALPHA:
