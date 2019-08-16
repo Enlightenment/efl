@@ -1,25 +1,51 @@
 import efl_ui;
 
+enum Efl.Ui.Position_Manager.Batch_Group_State{
+  [[Enum expressing the group related state of a item.]]
+  no_group = 0, [[This item is not a group item and is not part of any group.]]
+  group = 1, [[This item is a group item.]]
+  part_of_group = 2 [[This item is part of a group.]]
+}
+
+struct Efl.Ui.Position_Manager.Batch_Entity_Access{
+  [[Struct that is getting filled by the object function callback.]]
+  entity : Efl.Gfx.Entity; [[The canvas object.]]
+  group : Efl.Ui.Position_Manager.Batch_Group_State; [[If this is a group item.]]
+}
+
+struct Efl.Ui.Position_Manager.Batch_Size_Access{
+  [[Struct that is getting filled by the size function callback.]]
+  size : Eina.Size2D; [[The size of the element.]]
+  group : Efl.Ui.Position_Manager.Batch_Group_State; [[If this is a group item.]]
+}
+
+struct Efl.Ui.Position_Manager.Batch_Result {
+   [[Struct that is returned by the function callbacks.]]
+   group_id : int; [[The group of the first item. If the first item is a group, or the first item does not have a group, -1 will be the id]]
+   filled_items : int; [[The number of items that are filled into the slice]]
+}
+
 function Efl.Ui.Position_Manager.Batch_Access_Entity {
-   [[ Function callback for getting a batch of items]]
+   [[ Function callback for getting a batch of items.]]
    params {
       start_id : int; [[The id of the first item to fetch]]
-      memory : rw_slice<Efl.Gfx.Entity>; [[The slice to fill the information in, the full slice will be filled if there are enough items]]
+      memory : rw_slice<Efl.Ui.Position_Manager.Batch_Entity_Access>; [[The slice to fill the information in, the full slice will be filled if there are enough items]]
    }
-   return: int; [[The number of filled elements in the slice]]
+   return: Efl.Ui.Position_Manager.Batch_Result; [[The returned stats of this function call.]]
 };
+
 
 function Efl.Ui.Position_Manager.Batch_Access_Size {
    [[ Function callback for getting sizes of a batch of items]]
    params {
       start_id : int; [[The id of the first item to fetch]]
-      memory : rw_slice<Efl.Gfx.Entity>; [[The slice to fill the information in, the full slice will be filled if there are enough items]]
+      memory : rw_slice<Efl.Ui.Position_Manager.Batch_Size_Access>; [[The slice to fill the information in, the full slice will be filled if there are enough items]]
    }
-   return: int; [[The number of filled elements in the slice]]
+   return: Efl.Ui.Position_Manager.Batch_Result; [[The returned stats of this function call]]
 };
 
 struct Efl.Ui.Position_Manager.Range_Update {
-   [[A struct containing the the updated range of visible items in this position manger]]
+   [[A struct containing the the updated range of visible items in this position manger.]]
    start_id : uint; [[The first item that is visible]]
    end_id : uint; [[The last item that is visible]]
 }

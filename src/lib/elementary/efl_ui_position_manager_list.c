@@ -42,7 +42,7 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
 {
    unsigned int i;
    const int len = 100;
-   Eina_Size2D size_buffer[100];
+   Efl_Ui_Position_Manager_Batch_Size_Access size_buffer[100];
 
 
    if (pd->size_cache) return;
@@ -67,9 +67,9 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
 
         if (buffer_id == 0)
           {
-             EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->min_size, i, len, size_buffer) > 0);
+             EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->min_size, i, len, NULL, size_buffer) > 0);
           }
-       size = size_buffer[buffer_id];
+       size = size_buffer[buffer_id].size;
 
         if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
           {
@@ -140,8 +140,8 @@ position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
    unsigned int start_id = 0, end_id = 0, i;
    int relevant_space_size, relevant_viewport;
    const int len = 100;
-   Eina_Size2D size_buffer[len];
-   Efl_Gfx_Entity *obj_buffer[len];
+   Efl_Ui_Position_Manager_Batch_Size_Access size_buffer[len];
+   Efl_Ui_Position_Manager_Batch_Entity_Access obj_buffer[len];
    Efl_Ui_Position_Manager_Range_Update ev;
 
    if (!pd->size) return;
@@ -214,14 +214,14 @@ position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
           {
              int res1, res2;
 
-             res1 = _fill_buffer(&pd->object, i, len, obj_buffer);
-             res2 = _fill_buffer(&pd->min_size, i, len, size_buffer);
+             res1 = _fill_buffer(&pd->object, i, len, NULL, obj_buffer);
+             res2 = _fill_buffer(&pd->min_size, i, len, NULL, size_buffer);
              EINA_SAFETY_ON_FALSE_RETURN(res1 == res2);
              EINA_SAFETY_ON_FALSE_RETURN(res2 > 0);
           }
 
-        size = size_buffer[buffer_id];
-        ent = obj_buffer[buffer_id];
+        size = size_buffer[buffer_id].size;
+        ent = obj_buffer[buffer_id].entity;
 
         if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
           geom.h = size.h;
@@ -333,7 +333,7 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_position_single_ite
    Eina_Size2D space_size;
    int relevant_space_size;
    Eina_Size2D size;
-   Eina_Size2D size_buffer[1];
+   Efl_Ui_Position_Manager_Batch_Size_Access size_buffer[1];
 
    if (!pd->size) return EINA_RECT(0,0,0,0);
 
@@ -353,9 +353,9 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_position_single_ite
 
    geom = pd->viewport;
 
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(_fill_buffer(&pd->min_size, idx, 1, size_buffer) == 1, EINA_RECT_EMPTY());
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(_fill_buffer(&pd->min_size, idx, 1, NULL, size_buffer) == 1, EINA_RECT_EMPTY());
 
-   size = size_buffer[0];
+   size = size_buffer[0].size;
 
    if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
      {

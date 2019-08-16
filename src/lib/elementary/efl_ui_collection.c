@@ -263,21 +263,40 @@ _efl_ui_collection_efl_ui_multi_selectable_selected_items_get(Eo *obj EINA_UNUSE
    return eina_list_iterator_new(pd->selected);
 }
 
-static int
+static inline void
+_fill_group_flag(Eo *item, Efl_Ui_Position_Manager_Batch_Group_State *flag)
+{
+   if (efl_isa(item, EFL_UI_GROUP_ITEM_CLASS))
+     *flag = EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_GROUP;
+   else if (efl_ui_item_parent_get(item))
+     *flag = EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_PART_OF_GROUP;
+   else
+     *flag = EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_NO_GROUP;
+}
+
+static Efl_Ui_Position_Manager_Batch_Result
 _size_accessor_get_at(void *data, int start_id, Eina_Rw_Slice memory)
 {
    Fast_Accessor *accessor = data;
    size_t i;
    const Eina_List *lst = _fast_accessor_get_at(accessor, start_id);
+   Efl_Ui_Position_Manager_Batch_Size_Access *sizes = memory.mem;
+   Efl_Ui_Position_Manager_Batch_Result result = {-1, 0};
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(lst, -1);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(lst, result);
 
    for (i = 0; i < memory.len; ++i)
      {
-         Efl_Gfx_Entity *geom = eina_list_data_get(lst);
+         Efl_Gfx_Entity *geom = eina_list_data_get(lst), *parent;
          Eina_Size2D size = efl_gfx_hint_size_min_get(geom);
 
-         ((Eina_Size2D*)memory.mem)[i] = size;
+         parent = efl_ui_item_parent_get(geom);
+         sizes[i].size = size;
+         _fill_group_flag(geom, &sizes[i].group);
+         if (i == 0 && sizes[0].group != EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_GROUP && parent)
+           {
+              result.group_id = efl_pack_index_get(efl_ui_item_container_get(parent), parent);
+           }
          lst = eina_list_next(lst);
          if (!lst)
            {
@@ -285,22 +304,32 @@ _size_accessor_get_at(void *data, int start_id, Eina_Rw_Slice memory)
               break;
            }
      }
+   result.filled_items = i;
 
-   return i;
+   return result;
 }
 
-static int
+static Efl_Ui_Position_Manager_Batch_Result
 _obj_accessor_get_at(void *data, int start_id, Eina_Rw_Slice memory)
 {
    Fast_Accessor *accessor = data;
    size_t i;
    const Eina_List *lst = _fast_accessor_get_at(accessor, start_id);
+   Efl_Ui_Position_Manager_Batch_Entity_Access *objs = memory.mem;
+   Efl_Ui_Position_Manager_Batch_Result result = {-1, 0};
 
    for (i = 0; i < memory.len; ++i)
      {
-         Efl_Gfx_Entity *geom = eina_list_data_get(lst);
+         Efl_Gfx_Entity *geom = eina_list_data_get(lst), *parent;
 
-         ((Efl_Gfx_Entity**)memory.mem)[i] = geom;
+         parent = efl_ui_item_parent_get(geom);
+         objs[i].entity = geom;
+         _fill_group_flag(geom, &objs[i].group);
+         if (i == 0 && objs[0].group != EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_GROUP && parent)
+           {
+              result.group_id = efl_pack_index_get(efl_ui_item_container_get(parent), parent);
+           }
+
          lst = eina_list_next(lst);
          if (!lst)
            {
@@ -308,7 +337,9 @@ _obj_accessor_get_at(void *data, int start_id, Eina_Rw_Slice memory)
               break;
            }
      }
-   return i;
+   result.filled_items = i;
+
+   return result;
 }
 
 EOLIAN static Efl_Object*
