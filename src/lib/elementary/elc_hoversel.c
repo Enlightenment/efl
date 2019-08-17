@@ -605,6 +605,7 @@ _elm_hoversel_item_efl_object_destructor(Eo *eo_item, Elm_Hoversel_Item_Data *it
 {
    ELM_HOVERSEL_DATA_GET_OR_RETURN(WIDGET(item), sd);
 
+   evas_object_event_callback_del_full(sd->hover, EVAS_CALLBACK_DEL, _auto_update, eo_item);
    elm_hoversel_hover_end(WIDGET(item));
    sd->items = eina_list_remove(sd->items, eo_item);
    eina_stringshare_del(item->label);
@@ -660,6 +661,7 @@ _elm_hoversel_efl_canvas_group_group_del(Eo *obj, Elm_Hoversel_Data *sd)
 {
    Elm_Object_Item *eo_item;
 
+   evas_object_event_callback_del(sd->hover, EVAS_CALLBACK_DEL, _auto_update);
    EINA_LIST_FREE(sd->items, eo_item)
      {
         ELM_HOVERSEL_ITEM_DATA_GET(eo_item, it);
@@ -807,9 +809,9 @@ EOLIAN static void
 _elm_hoversel_clear(Eo *obj EINA_UNUSED, Elm_Hoversel_Data *sd)
 {
    Elm_Object_Item *it;
-   Eina_List *l, *ll;
 
-   EINA_LIST_FOREACH_SAFE(sd->items, l, ll, it)
+   evas_object_event_callback_del(sd->hover, EVAS_CALLBACK_DEL, _auto_update);
+   EINA_LIST_FREE(sd->items, it)
      {
         efl_del(it);
      }
