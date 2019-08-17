@@ -44,7 +44,7 @@ vis_change_segment(Api_Callback *cb, int a, int b, Eina_Bool flag)
           {
              EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(cb, MIN(a,b), len, NULL, data) >= 0);
           }
-        ent = data[i - MIN(a,b)].entity;
+        ent = data[buffer_id].entity;
         if (ent && !flag && (efl_ui_focus_object_focus_get(ent) || efl_ui_focus_object_child_focus_get(ent)))
           {
              //we should not make focused object invisible, rather move it to some parking lot
