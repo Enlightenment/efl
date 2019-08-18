@@ -13,10 +13,6 @@
   Efl_Ui_Position_Manager_Grid_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
 typedef struct {
-   unsigned int start_id, end_id;
-} Vis_Segment;
-
-typedef struct {
    Api_Callback min_size, object;
    unsigned int size;
    unsigned int groups;
@@ -460,18 +456,7 @@ _reposition_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
 
    //to performance optimize the whole widget, we are setting the objects that are outside the viewport to visibility false
    //The code below ensures that things outside the viewport are always hidden, and things inside the viewport are visible
-   if (cur.end_id < pd->prev_run.start_id || cur.start_id > pd->prev_run.end_id)
-     {
-        //it is important to first make the segment visible here, and then hide the rest
-        //otherwise we get a state where item_container has 0 subchildren, which triggers a lot of focus logic.
-        vis_change_segment(&pd->object, cur.start_id, cur.end_id, EINA_TRUE);
-        vis_change_segment(&pd->object, pd->prev_run.start_id, pd->prev_run.end_id, EINA_FALSE);
-     }
-   else
-     {
-        vis_change_segment(&pd->object, pd->prev_run.start_id, cur.start_id, (pd->prev_run.start_id > cur.start_id));
-        vis_change_segment(&pd->object, pd->prev_run.end_id, cur.end_id, (pd->prev_run.end_id < cur.end_id));
-     }
+   vis_segment_swap(&pd->object, cur, pd->prev_run);
 
    ctx.new = cur;
    ctx.consumed_space = consumed_space;
