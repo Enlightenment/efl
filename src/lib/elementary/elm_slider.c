@@ -61,6 +61,7 @@ _delay_change(void *data)
 {
    ELM_SLIDER_DATA_GET(data, sd);
 
+   if (!sd) return ECORE_CALLBACK_CANCEL;
    sd->delay = NULL;
    efl_event_callback_legacy_call(data, EFL_UI_SLIDER_EVENT_DELAY_CHANGED, NULL);
 
@@ -1005,15 +1006,16 @@ EOLIAN static void
 _elm_slider_efl_object_destructor(Eo *obj,
                                   Elm_Slider_Data *sd)
 {
-   ecore_timer_del(sd->wheel_indicator_timer);
-   evas_object_del(sd->popup);
-   evas_object_del(sd->popup2);
+   ELM_SAFE_FREE(sd->delay, ecore_timer_del);
+   ELM_SAFE_FREE(sd->wheel_indicator_timer, ecore_timer_del);
+   ELM_SAFE_FREE(sd->popup, evas_object_del);
+   ELM_SAFE_FREE(sd->popup2, evas_object_del);
 
    ELM_SAFE_FREE(sd->indi_template, eina_stringshare_del);
-   eina_strbuf_free(sd->indi_format_strbuf);
+   ELM_SAFE_FREE(sd->indi_format_strbuf, eina_strbuf_free);
 
    efl_ui_format_cb_set(obj, NULL, NULL, NULL);
-   eina_strbuf_free(sd->format_strbuf);
+   ELM_SAFE_FREE(sd->format_strbuf, eina_strbuf_free);
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }
