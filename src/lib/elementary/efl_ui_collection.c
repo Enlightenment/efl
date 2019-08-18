@@ -21,65 +21,26 @@ typedef struct {
    unsigned int last_index;
    const Eina_List *current;
    Eina_List **items;
+   Eina_Array *cache;
 } Fast_Accessor;
 
 static const Eina_List*
 _fast_accessor_get_at(Fast_Accessor *accessor, unsigned int idx)
 {
-   const Eina_List *over;
-   unsigned int middle;
-   unsigned int i;
-
-   if (idx >= eina_list_count(*accessor->items))
-     return NULL;
-
-   if (accessor->last_index == idx)
-     over = accessor->current;
-   else if (idx > accessor->last_index)
+   if (!accessor->cache)
      {
-        /* After current position. */
-        middle = ((eina_list_count(*accessor->items) - accessor->last_index))/2;
+        Eina_List *n;
+        Eo *o;
 
-        if (idx > middle)
-          /* Go backward from the end. */
-          for (i = eina_list_count(*accessor->items) - 1,
-               over = eina_list_last(*accessor->items);
-               i > idx && over;
-               --i, over = eina_list_prev(over))
-            ;
-        else
-          /* Go forward from current. */
-          for (i = accessor->last_index, over = accessor->current;
-               i < idx && over;
-               ++i, over = eina_list_next(over))
-            ;
+        accessor->cache = eina_array_new(100);
+
+        EINA_LIST_FOREACH(*accessor->items, n, o)
+          {
+             eina_array_push(accessor->cache, n);
+             printf("%p\n", o);
+          }
      }
-   else
-     {
-        /* Before current position. */
-        middle = accessor->last_index/2;
-
-        if (idx > middle)
-          /* Go backward from current. */
-          for (i = accessor->last_index, over = accessor->current;
-               i > idx && over;
-               --i, over = eina_list_prev(over))
-            ;
-        else
-          /* Go forward from start. */
-          for (i = 0, over = *accessor->items;
-               i < idx && over;
-               ++i, over = eina_list_next(over))
-            ;
-     }
-
-   if (!over)
-     return NULL;
-
-   accessor->last_index = idx;
-   accessor->current = over;
-
-   return over;
+   return eina_array_data_get(accessor->cache, idx);
 }
 
 static void
@@ -94,32 +55,9 @@ _fast_accessor_init(Fast_Accessor *accessor, Eina_List **items)
 static void
 _fast_accessor_remove(Fast_Accessor *accessor, const Eina_List *removed_elem)
 {
-   if (accessor->current == removed_elem)
-     {
-        Eina_List *next;
-        Eina_List *prev;
-
-        next = eina_list_next(removed_elem);
-        prev = eina_list_prev(removed_elem);
-        if (next)
-          {
-             accessor->current = next;
-             accessor->last_index ++;
-          }
-        else if (prev)
-          {
-             accessor->current = prev;
-             accessor->last_index --;
-          }
-        else
-          {
-             //everything >= length is invalid, and we need that.
-             accessor->last_index = eina_list_count(*accessor->items);
-             accessor->current = NULL;
-          }
-
-     }
-
+   if (accessor->cache)
+     eina_array_free(accessor->cache);
+   accessor->cache = NULL;
 }
 
 #define MY_CLASS      EFL_UI_COLLECTION_CLASS
@@ -587,6 +525,8 @@ register_item(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Ui_Item *item)
    efl_canvas_group_member_add(pd->pan, item);
    efl_event_callback_array_add(item, active_item(), obj);
    efl_ui_mirrored_set(item, efl_ui_mirrored_get(obj));
+   _fast_accessor_remove(&pd->obj_accessor, NULL);
+   _fast_accessor_remove(&pd->size_accessor, NULL);
 
    return EINA_TRUE;
 }
