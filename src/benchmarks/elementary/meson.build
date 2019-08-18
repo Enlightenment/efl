@@ -7,8 +7,8 @@ benchmark('focus_widget_tree', focus_widget_tree_bench,
   args: ['5'],
 )
 
-item_container = executable('item_container',
-  'item_container.c',
+item_container = executable('collection',
+  'collection.c',
   dependencies: [elementary, ecore_input_evas, eio],
 )
 
