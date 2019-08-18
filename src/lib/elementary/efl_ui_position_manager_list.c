@@ -13,11 +13,6 @@
 #define MY_DATA_GET(obj, pd) \
   Efl_Ui_Position_Manager_List_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
-
-typedef struct {
-   unsigned int start_id, end_id;
-} Vis_Segment;
-
 typedef struct {
    Api_Callback min_size, object;
    unsigned int size;
@@ -169,23 +164,6 @@ err:
 }
 
 static inline void
-_visual_segment_swap(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_Segment new, Vis_Segment old)
-{
-   if (new.end_id <= old.start_id || new.start_id >= old.end_id)
-     {
-        //it is important to first make the segment visible here, and then hide the rest
-        //otherwise we get a state where item_container has 0 subchildren, which triggers a lot of focus logic.
-        vis_change_segment(&pd->object, new.start_id, new.end_id, EINA_TRUE);
-        vis_change_segment(&pd->object, old.start_id, old.end_id, EINA_FALSE);
-     }
-   else
-     {
-        vis_change_segment(&pd->object, old.start_id, new.start_id, (old.start_id > new.start_id));
-        vis_change_segment(&pd->object, old.end_id, new.end_id, (old.end_id < new.end_id));
-     }
-}
-
-static inline void
 _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_Segment new, int relevant_space_size)
 {
    int group_id = -1;
@@ -327,7 +305,7 @@ position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
    cur = _search_visual_segment(obj, pd, relevant_space_size, relevant_viewport);
    //to performance optimize the whole widget, we are setting the objects that are outside the viewport to visibility false
    //The code below ensures that things outside the viewport are always hidden, and things inside the viewport are visible
-   _visual_segment_swap(obj, pd, cur, pd->prev_run);
+   vis_segment_swap(&pd->object, cur, pd->prev_run);
 
    _position_items(obj, pd, cur, relevant_space_size);
 
