@@ -1,27 +1,10 @@
 #include "edje_private.h"
 
 static int
-_edje_font_is_embedded(Edje_File *edf, char *font)
+_edje_font_is_embedded(Edje_File *edf, const char *font)
 {
    if (!eina_hash_find(edf->fonts, font)) return 0;
    return 1;
-}
-
-static void
-_edje_format_param_parse(char *item, char **key, char **val)
-{
-   char *p, *k, *v;
-
-   p = strchr(item, '=');
-   if (!p) return;
-
-   k = malloc(p - item + 1);
-   strncpy(k, item, p - item);
-   k[p - item] = 0;
-   *key = k;
-   p++;
-   v = strdup(p);
-   *val = v;
 }
 
 static char *
@@ -69,13 +52,6 @@ _edje_format_parse(const char **s)
    return NULL;
 }
 
-static int
-_edje_format_is_param(char *item)
-{
-   if (strchr(item, '=')) return 1;
-   return 0;
-}
-
 static char *
 _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
 {
@@ -87,16 +63,18 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
    s = str;
    while ((item = _edje_format_parse(&s)))
      {
-        if (_edje_format_is_param(item))
+        const char *pos = strchr(item, '=');
+        if (pos)
           {
-             char *key = NULL, *val = NULL;
+             size_t key_len = pos - item;
+             const char *key = item;
+             const char *val = pos + 1;
 
-             _edje_format_param_parse(item, &key, &val);
-             if (!strcmp(key, "font_source"))
+             if (!strncmp(key, "font_source", key_len))
                {
                   /* dont allow font sources */
                }
-             else if (!strcmp(key, "text_class"))
+             else if (!strncmp(key, "text_class", key_len))
                {
                   if (tag_ret)
                     (*tag_ret)->text_class = eina_stringshare_add(val);
@@ -106,12 +84,12 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
                   // text_class tag.
                   continue;
                }
-             else if (!strcmp(key, "font_size"))
+             else if (!strncmp(key, "font_size", key_len))
                {
                   if (tag_ret)
                     (*tag_ret)->font_size = atof(val);
                }
-             else if (!strcmp(key, "font")) /* Fix fonts */
+             else if (!strncmp(key, "font", key_len)) /* Fix fonts */
                {
                   if (tag_ret)
                     {
@@ -137,8 +115,6 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag **tag_ret)
                   eina_strbuf_append(txt, s2);
                   free(s2);
                }
-             free(key);
-             free(val);
           }
         else
           {
