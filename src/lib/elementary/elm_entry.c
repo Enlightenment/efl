@@ -1437,6 +1437,8 @@ _hoversel_position(Evas_Object *obj)
      edje_object_part_text_cursor_geometry_get
        (sd->entry_edje, "elm.text", &cx, &cy, &cw, &ch);
 
+   if (efl_canvas_group_need_recalculate_get(sd->hoversel))
+     efl_canvas_group_calculate(sd->hoversel);
    evas_object_size_hint_combined_min_get(sd->hoversel, &mw, &mh);
    if (cx + mw > w)
      cx = w - mw;
