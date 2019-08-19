@@ -88,6 +88,33 @@ typedef struct {
 } Efl_Ui_Focus_Manager_Calc_Data;
 
 
+static Eina_Array *node_trasher;
+
+static Node*
+node_mem_get(void)
+{
+   Node *result;
+
+   if (!eina_array_count(node_trasher))
+     result = calloc(1, sizeof(Node));
+   else
+     result = eina_array_pop(node_trasher);
+
+   return result;
+}
+
+static void
+node_mem_free(Node *n)
+{
+   if (eina_array_count(node_trasher) == 20)
+     eina_freeq_ptr_main_add(n, free, sizeof(Node));
+   else
+     {
+        eina_array_push(node_trasher, n);
+        memset(n, 0, sizeof(Node));
+     }
+}
+
 static Node* _request_subchild(Node *node);
 static void dirty_add(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *dirty);
 static Node* _next(Node *node);
@@ -197,7 +224,7 @@ node_new(Efl_Ui_Focus_Object *focusable, Efl_Ui_Focus_Manager *manager)
 {
     Node *node;
 
-    node = calloc(1, sizeof(Node));
+    node = node_mem_get();
 
     node->focusable = focusable;
     node->manager = manager;
@@ -316,7 +343,7 @@ node_item_free(Node *item)
    //free the safed order
    ELM_SAFE_FREE(T(item).saved_order, eina_list_free);
 
-   free(item);
+   node_mem_free(item);
 }
 //FOCUS-STACK HELPERS
 
@@ -1845,6 +1872,7 @@ EOLIAN static void
 _efl_ui_focus_manager_calc_class_constructor(Efl_Class *c EINA_UNUSED)
 {
    _focus_log_domain = eina_log_domain_register("elementary-focus", EINA_COLOR_CYAN);
+   node_trasher = eina_array_new(10);
 }
 
 EOLIAN static void
