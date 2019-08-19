@@ -800,9 +800,20 @@ _efl_ui_widget_efl_gfx_entity_position_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
+   if (sd->x == pos.x && sd->y == pos.y)
+     return;
+
    sd->x = pos.x;
    sd->y = pos.y;
-   _smart_reconfigure(sd);
+   if (sd->resize_obj)
+     efl_gfx_entity_position_set(sd->resize_obj, pos);
+   if (sd->hover_obj)
+     efl_gfx_entity_position_set(sd->hover_obj, pos);
+   if (sd->bg)
+     efl_gfx_entity_position_set(sd->bg, pos);
+
+   if (sd->has_shadow)
+     _elm_widget_shadow_update(sd->obj);
 
    efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
 }
@@ -813,9 +824,20 @@ _efl_ui_widget_efl_gfx_entity_size_set(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Dat
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
+   if (sd->w == sz.w && sd->h == sz.h)
+     return;
+
    sd->w = sz.w;
    sd->h = sz.h;
-   _smart_reconfigure(sd);
+   if (sd->resize_obj)
+     efl_gfx_entity_size_set(sd->resize_obj, sz);
+   if (sd->hover_obj)
+     efl_gfx_entity_size_set(sd->hover_obj, sz);
+   if (sd->bg)
+     efl_gfx_entity_size_set(sd->bg, sz);
+
+   if (sd->has_shadow)
+     _elm_widget_shadow_update(sd->obj);
 
    efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
 }
