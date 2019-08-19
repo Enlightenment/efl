@@ -678,7 +678,8 @@ _elm_hoversel_efl_gfx_entity_visible_set(Eo *obj, Elm_Hoversel_Data *sd, Eina_Bo
      return;
 
    efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), vis);
-   efl_gfx_entity_visible_set(sd->hover, vis);
+   if (sd->hover)
+     efl_gfx_entity_visible_set(sd->hover, vis);
 }
 
 EOLIAN static void
