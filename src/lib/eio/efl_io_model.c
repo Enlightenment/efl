@@ -755,63 +755,6 @@ _efl_io_model_efl_model_property_set(Eo *obj,
    return efl_loop_future_rejected(obj, err);
 }
 
-static void
-_efl_io_model_children_list(void *data, Eina_Array *entries)
-{
-   Eina_File_Direct_Info *info;
-   Efl_Model *obj = data;
-   Efl_Io_Model_Data *pd;
-   Efl_Model_Children_Event cevt = { 0 };
-   Eina_Array_Iterator iterator;
-   unsigned int i;
-
-   pd = efl_data_scope_get(obj, EFL_IO_MODEL_CLASS);
-   if (!pd) return ;
-
-   EINA_ARRAY_ITER_NEXT(entries, i, info, iterator)
-     {
-        Efl_Io_Model_Info *mi;
-
-        if (_already_added(pd, info->path)) continue;
-
-        if (pd->filter.cb)
-          {
-             if (!pd->filter.cb(pd->filter.data, obj, info))
-               continue ;
-          }
-
-        mi = calloc(1, sizeof (Efl_Io_Model_Info));
-        if (!mi) continue ;
-
-        mi->path_length = info->path_length;
-        mi->path = eina_stringshare_add(info->path);
-
-        mi->name_start = info->name_start;
-        mi->name_length = info->name_length;
-        mi->type = _efl_io_model_info_type_get(info, NULL);
-        mi->parent_ref = EINA_FALSE;
-        mi->child_ref = EINA_TRUE;
-
-        cevt.index = eina_list_count(pd->files);
-        cevt.child = NULL;
-
-        pd->files = eina_list_append(pd->files, mi);
-
-        efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILD_ADDED, &cevt);
-     }
-
-   efl_event_callback_call(obj, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, NULL);
-}
-
-static void
-_efl_io_model_children_list_cleanup(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
-{
-   Efl_Io_Model_Data *pd = data;
-
-   pd->request.listing = NULL;
-   pd->listed = EINA_TRUE;
-}
-
 /**
  * Children Count Get
  */
@@ -827,30 +770,6 @@ _efl_io_model_efl_model_children_count_get(const Eo *obj, Efl_Io_Model_Data *pd)
    else if (!pd->info)
      {
         _eio_build_st(obj, pd);
-     }
-   else if (!pd->listed &&
-            !pd->request.listing &&
-            pd->info->type == EINA_FILE_DIR)
-     {
-        Efl_Io_Manager *iom;
-        Eina_Future *f;
-
-        iom = efl_provider_find(obj, EFL_IO_MANAGER_CLASS);
-        if (!iom)
-          {
-             ERR("Could not find an Efl.Io.Manager on %p.", obj);
-             return 0;
-          }
-
-        f = efl_io_manager_direct_ls(iom, pd->path, EINA_FALSE,
-                                     (void*) obj, _efl_io_model_children_list, NULL);
-
-        //start monitoring before listing is done
-        //we will filter later on if we already published a file or not
-        _efl_io_model_efl_model_monitor_add(pd);
-        pd->request.listing = efl_future_then(obj, f,
-                                              .free = _efl_io_model_children_list_cleanup,
-                                              .data = pd);
      }
 
    return eina_list_count(pd->files);
