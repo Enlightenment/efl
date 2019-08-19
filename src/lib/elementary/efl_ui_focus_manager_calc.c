@@ -87,6 +87,19 @@ typedef struct {
     Node *root;
 } Efl_Ui_Focus_Manager_Calc_Data;
 
+static Eina_Mempool *_node_mempool;
+
+static Node*
+node_mem_get(void)
+{
+   return eina_mempool_calloc(_node_mempool, sizeof(Node));
+}
+
+static void
+node_mem_free(Node *n)
+{
+   eina_mempool_free(_node_mempool, n);
+}
 
 static Node* _request_subchild(Node *node);
 static void dirty_add(Eo *obj, Efl_Ui_Focus_Manager_Calc_Data *pd, Node *dirty);
@@ -197,7 +210,7 @@ node_new(Efl_Ui_Focus_Object *focusable, Efl_Ui_Focus_Manager *manager)
 {
     Node *node;
 
-    node = calloc(1, sizeof(Node));
+    node = node_mem_get();
 
     node->focusable = focusable;
     node->manager = manager;
@@ -316,7 +329,7 @@ node_item_free(Node *item)
    //free the safed order
    ELM_SAFE_FREE(T(item).saved_order, eina_list_free);
 
-   free(item);
+   node_mem_free(item);
 }
 //FOCUS-STACK HELPERS
 
@@ -1844,6 +1857,20 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_fetch(Eo *obj, Efl_Ui_Focus_Mana
 EOLIAN static void
 _efl_ui_focus_manager_calc_class_constructor(Efl_Class *c EINA_UNUSED)
 {
+   const char *choice, *tmp;
+
+#ifdef EINA_DEFAULT_MEMPOOL
+   choice = "pass_through";
+#else
+   choice = "chained_mempool";
+#endif
+   tmp = getenv("EINA_MEMPOOL");
+   if (tmp && tmp[0])
+     choice = tmp;
+
+   _node_mempool = eina_mempool_add
+      (choice, "Focus-Node mempool", NULL, sizeof(Node), 20);
+
    _focus_log_domain = eina_log_domain_register("elementary-focus", EINA_COLOR_CYAN);
 }
 
