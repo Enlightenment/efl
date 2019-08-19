@@ -570,7 +570,7 @@ eo_gen_docs_func_gen(const Eolian_State *state, const Eolian_Function *fid,
           }
      }
 
-   if (!eolian_function_is_class(fid))
+   if (!eolian_function_is_static(fid))
      {
         _indent_line(buf, indent);
         eina_strbuf_append(buf, " * @param[in] obj The object.\n");

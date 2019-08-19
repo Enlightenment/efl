@@ -358,7 +358,7 @@ mixin @beta Efl.Access.Object requires Efl.Object
             states: Efl.Access.State_Set; [[Accessible state set]]
          }
       }
-      event_handler_add @class @protected @beta {
+      event_handler_add @static @protected @beta {
          [[Register accessibility event listener]]
          params {
               @in cb: Efl.Event_Cb; [[Callback]]
@@ -366,13 +366,13 @@ mixin @beta Efl.Access.Object requires Efl.Object
          }
          return: ptr(Efl.Access.Event.Handler); [[Event handler]]
       }
-      event_handler_del @class @protected @beta {
+      event_handler_del @static @protected @beta {
          [[Deregister accessibility event listener]]
          params {
               @in handler: ptr(Efl.Access.Event.Handler); [[Event handler]]
          }
       }
-      event_emit @class @protected @beta {
+      event_emit @static @protected @beta {
           [[Emit event]]
          params {
             @in accessible: Efl.Access.Object; [[Accessibility object.]]
@@ -445,7 +445,7 @@ mixin @beta Efl.Access.Object requires Efl.Object
       relationships_clear @beta {
          [[Removes all relationships in accessible object.]]
       }
-      @property access_root @class @beta {
+      @property access_root @static @beta {
          get {
             [[Get root object of accessible object hierarchy]]
             values {

@@ -37,7 +37,7 @@ class @beta Efl.Net.Ip_Address extends Efl.Object {
     ]]
 
     methods {
-        create @class {
+        create @static {
             [[Creates an object given family, port and address.
 
               This is a convenience to create an object in a single
@@ -51,7 +51,7 @@ class @beta Efl.Net.Ip_Address extends Efl.Object {
             return: Efl.Net.Ip_Address @owned; [[Newly created object or $NULL if parameters were invalid.]]
         }
 
-        create_sockaddr @class {
+        create_sockaddr @static {
             [[Creates an object given sockaddr
 
               This is a convenient way to create an object in a single call.
@@ -64,7 +64,7 @@ class @beta Efl.Net.Ip_Address extends Efl.Object {
             return: Efl.Net.Ip_Address @owned; [[Newly created object or $NULL if parameter was invalid.]]
         }
 
-        parse @class {
+        parse @static {
             [[Parses a numeric address and return an object representing it.
 
               This parses a numeric IPv4 or IPv6 address and optional
@@ -88,7 +88,7 @@ class @beta Efl.Net.Ip_Address extends Efl.Object {
             return: Efl.Net.Ip_Address @owned; [[The new IP address object or NULL if it failed to parse]]
         }
 
-        resolve @class {
+        resolve @static {
             [[Asynchronously resolves host and port names.
 
               This will resolve the host and port names, returning the

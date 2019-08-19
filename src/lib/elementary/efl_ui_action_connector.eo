@@ -4,7 +4,7 @@ class @beta Efl.Ui.Action_Connector {
     For example, this simplifies creating widgets that implement the @Efl.Input.Clickable interface.
   ]]
   methods {
-    bind_clickable_to_theme @class {
+    bind_clickable_to_theme @static {
       [[This will listen to the standard "click" events on a theme and emit the appropriate
         events through the @Efl.Input.Clickable interface.
 
@@ -19,7 +19,7 @@ class @beta Efl.Ui.Action_Connector {
         clickable : Efl.Input.Clickable; [[The object to call the clickable methods on.]]
       }
     }
-    bind_clickable_to_object @class {
+    bind_clickable_to_object @static {
       [[This will listen to the standard "click" events on an object, and emit the appropriate
         events through the @Efl.Input.Clickable interface.
 

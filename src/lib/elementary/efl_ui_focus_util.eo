@@ -1,20 +1,20 @@
 class @beta Efl.Ui.Focus.Util extends Efl.Object  {
    [[EFL UI Focus Util class]]
    methods {
-      focus @class {
+      focus @static {
          [[Focus helper method]]
          params {
             focus_elem : Efl.Ui.Focus.Object; [[Focus element]]
          }
       }
-      active_manager @class {
+      active_manager @static {
          [[Get the highest manager in the redirect property]]
          params {
             manager : Efl.Ui.Focus.Manager;
          }
          return: Efl.Ui.Focus.Manager;
       }
-      direction_complement @class {
+      direction_complement @static {
          params {
             dir : Efl.Ui.Focus.Direction;
          }

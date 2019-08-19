@@ -1318,9 +1318,9 @@ parse_property(Eo_Lexer *ls)
         prop->get_scope = prop->set_scope = EOLIAN_SCOPE_PROTECTED;
         eo_lexer_get(ls);
         break;
-      case KW_at_class:
+      case KW_at_static:
         CASE_LOCK(ls, class, "class qualifier");
-        prop->is_class = EINA_TRUE;
+        prop->is_static = EINA_TRUE;
         eo_lexer_get(ls);
         break;
       case KW_at_beta:
@@ -1514,9 +1514,9 @@ parse_method(Eo_Lexer *ls)
         meth->obj_is_const = EINA_TRUE;
         eo_lexer_get(ls);
         break;
-      case KW_at_class:
+      case KW_at_static:
         CASE_LOCK(ls, class, "class qualifier");
-        meth->is_class = EINA_TRUE;
+        meth->is_static = EINA_TRUE;
         eo_lexer_get(ls);
         break;
       case KW_at_beta:

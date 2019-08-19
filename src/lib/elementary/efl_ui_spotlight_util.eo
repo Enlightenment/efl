@@ -1,6 +1,6 @@
 class @beta Efl.Ui.Spotlight.Util {
   methods {
-     stack_gen @class {
+     stack_gen @static {
        [[Get a preconfigured stack obejct]]
        params {
           parent : Efl.Ui.Widget;

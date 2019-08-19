@@ -7,6 +7,7 @@
 
 static const Efl_Test_Case etc[] = {
    { NULL, NULL }
+   , { NULL, NULL }
 };
 
 int

@@ -129,13 +129,13 @@ _gen_func(const Eolian_State *state, const Eolian_Function *fid,
    eina_stringshare_del(fcn);
 
    Eina_Strbuf *flagbuf = NULL;
-   int nidx = !eolian_function_is_class(fid);
+   int nidx = !eolian_function_is_static(fid);
 
    eina_strbuf_append_char(buf, '(');
    if (nidx)
      {
         if ((ftype == EOLIAN_PROP_GET) || eolian_function_object_is_const(fid)
-            || eolian_function_is_class(fid))
+            || eolian_function_is_static(fid))
           {
              eina_strbuf_append(buf, "const ");
           }

@@ -15,7 +15,7 @@ class @beta Efl.Net.Ssl.Context extends Efl.Object {
     ]]
 
     methods {
-        @property default_dialer @class {
+        @property default_dialer @static {
             [[The default context for dialers.
 
               It will start with:

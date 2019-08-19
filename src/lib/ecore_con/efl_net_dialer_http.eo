@@ -361,7 +361,7 @@ class @beta Efl.Net.Dialer_Http extends Efl.Loop_Consumer implements Efl.Net.Dia
             }
         }
 
-        date_parse @class {
+        date_parse @static {
             [[Parses the given string as time in seconds since 1/1/1970.
 
               This method is useful to parse header values such as
@@ -373,7 +373,7 @@ class @beta Efl.Net.Dialer_Http extends Efl.Loop_Consumer implements Efl.Net.Dia
             return: int64; [[Seconds since 1/1/1970]]
         }
 
-        date_serialize @class {
+        date_serialize @static {
             [[Serializes the given GMT time in seconds since 1/1/1970.
 
               The timezone must be GMT (ie: gmtime()).

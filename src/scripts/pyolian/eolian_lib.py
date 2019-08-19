@@ -332,9 +332,9 @@ lib.eolian_function_full_c_name_get.restype = c_void_p  # Stringshare TO BE FREE
 lib.eolian_function_implement_get.argtypes = (c_void_p,)
 lib.eolian_function_implement_get.restype = c_void_p
 
-# EAPI Eina_Bool eolian_function_is_class(const Eolian_Function *function_id);
-lib.eolian_function_is_class.argtypes = (c_void_p,)
-lib.eolian_function_is_class.restype = c_bool
+# EAPI Eina_Bool eolian_function_is_static(const Eolian_Function *function_id);
+lib.eolian_function_is_static.argtypes = (c_void_p,)
+lib.eolian_function_is_static.restype = c_bool
 
 # EAPI Eina_Bool eolian_function_is_constructor(const Eolian_Function *function_id, const Eolian_Class *klass);
 lib.eolian_function_is_constructor.argtypes = (c_void_p,c_void_p,)

@@ -8,7 +8,7 @@ abstract Efl.App extends Efl.Loop implements Efl.Core.Command_Line
    ]]
    data: null;
    methods {
-      @property app_main @class {
+      @property app_main @static {
          [[ Returns the app object that is representing this process
 
             Note: This function call only works in the main loop thread of the process.

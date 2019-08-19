@@ -260,7 +260,8 @@ struct documentation_def
         since = str;
       }
 
-      efl::eina::ptr_list<const char> l(eolian_documentation_string_split(description.c_str()));
+      efl::eina::ptr_list<const char, efl::eina::malloc_clone_allocator>
+        l(eolian_documentation_string_split(description.c_str()));
       for (auto&& i : l)
         desc_paragraphs.push_back({&i});
    }
@@ -810,7 +811,7 @@ struct function_def
             }
        }
      is_protected = eolian_function_scope_get(function, type) == EOLIAN_SCOPE_PROTECTED;
-     is_static = eolian_function_is_class(function);
+     is_static = eolian_function_is_static(function);
 
      Eolian_Implement const* implement = eolian_function_implement_get(function);
      if (!implement)

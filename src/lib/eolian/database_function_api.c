@@ -117,10 +117,10 @@ eolian_function_implement_get(const Eolian_Function *fid)
 }
 
 EAPI Eina_Bool
-eolian_function_is_class(const Eolian_Function *fid)
+eolian_function_is_static(const Eolian_Function *fid)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
-   return fid->is_class;
+   return fid->is_static;
 }
 
 EAPI Eina_Bool

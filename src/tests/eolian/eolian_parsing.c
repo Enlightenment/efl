@@ -1005,22 +1005,22 @@ EFL_START_TEST(eolian_class_funcs)
    /* Class properties */
    fail_if(eolian_class_function_by_name_get(class, "a", EOLIAN_PROPERTY));
    fail_if(!(fid = eolian_class_function_by_name_get(class, "a", EOLIAN_PROP_GET)));
-   fail_if(!eolian_function_is_class(fid));
+   fail_if(!eolian_function_is_static(fid));
    fail_if(!(fid = eolian_class_function_by_name_get(class, "b", EOLIAN_PROP_GET)));
-   fail_if(eolian_function_is_class(fid));
+   fail_if(eolian_function_is_static(fid));
 
    /* Class methods */
    fail_if(!(fid = eolian_class_function_by_name_get(class, "foo", EOLIAN_METHOD)));
-   fail_if(!eolian_function_is_class(fid));
+   fail_if(!eolian_function_is_static(fid));
    fail_if(eolian_function_scope_get(fid, EOLIAN_METHOD) != EOLIAN_SCOPE_PUBLIC);
    fail_if(!(fid = eolian_class_function_by_name_get(class, "bar", EOLIAN_METHOD)));
-   fail_if(eolian_function_is_class(fid));
+   fail_if(eolian_function_is_static(fid));
    fail_if(eolian_function_scope_get(fid, EOLIAN_METHOD) != EOLIAN_SCOPE_PUBLIC);
    fail_if(!(fid = eolian_class_function_by_name_get(class, "baz", EOLIAN_METHOD)));
-   fail_if(!eolian_function_is_class(fid));
+   fail_if(!eolian_function_is_static(fid));
    fail_if(eolian_function_scope_get(fid, EOLIAN_METHOD) != EOLIAN_SCOPE_PROTECTED);
    fail_if(!(fid = eolian_class_function_by_name_get(class, "bah", EOLIAN_METHOD)));
-   fail_if(eolian_function_is_class(fid));
+   fail_if(eolian_function_is_static(fid));
    fail_if(eolian_function_scope_get(fid, EOLIAN_METHOD) != EOLIAN_SCOPE_PROTECTED);
 
    eolian_state_free(eos);

@@ -33,11 +33,11 @@ enum Tokens
     KW(keys), KW(legacy), KW(methods), KW(mixin), KW(params), \
     KW(parse), KW(parts), KW(ptr), KW(set), KW(type), KW(values), KW(var), KW(requires), \
     \
-    KWAT(auto), KWAT(beta), KWAT(c_name), KWAT(class), KWAT(const), KWAT(cref), \
+    KWAT(auto), KWAT(beta), KWAT(c_name), KWAT(const), KWAT(cref), \
     KWAT(empty), KWAT(extern), KWAT(free), KWAT(hot), KWAT(in), KWAT(inout), \
     KWAT(no_unused), KWAT(nullable), KWAT(optional), KWAT(out), KWAT(owned), \
     KWAT(private), KWAT(property), KWAT(protected), KWAT(restart), \
-    KWAT(pure_virtual), \
+    KWAT(pure_virtual), KWAT(static), \
     \
     KWH(version), \
     \

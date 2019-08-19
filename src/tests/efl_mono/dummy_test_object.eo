@@ -1569,7 +1569,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: Dummy.MyInt;
       }
 
-      @property klass_prop @class {
+      @property klass_prop @static {
          get {}
          set {}
          values {
@@ -1577,10 +1577,10 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
       }
 
-      create_cmp_array_objects @class {
+      create_cmp_array_objects @static {
       }
 
-      destroy_cmp_array_objects @class {
+      destroy_cmp_array_objects @static {
       }
 
       /* Futures */
