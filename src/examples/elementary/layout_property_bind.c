@@ -169,7 +169,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    efl_ui_property_bind(img_factory, "", "path"); //connect to "path" property
    efl_ui_factory_bind(priv->bt, "icon", img_factory);
 
-   efl_future_then(win, efl_ui_factory_create(img_factory, NULL, bxr),
+   efl_future_then(win, efl_ui_view_factory_create_with_event(img_factory, NULL, bxr),
                    .success = _wait_for_image,
                    .data = priv);
 
