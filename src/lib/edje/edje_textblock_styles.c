@@ -208,44 +208,36 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl, Eina_Bool force)
           {
              if (fontset)
                {
-                  eina_strbuf_append(txt, " ");
-                  eina_strbuf_append(txt, "font_fallbacks=");
+                  eina_strbuf_append(txt, " font_fallbacks=");
                   eina_strbuf_append(txt, fontset);
                }
              if (fontsource)
                {
-                  eina_strbuf_append(txt, " ");
-                  eina_strbuf_append(txt, "font_source=");
+                  eina_strbuf_append(txt, " font_source=");
                   eina_strbuf_append(txt, fontsource);
                }
           }
-        if (!EINA_DBL_EQ(tag->font_size, 0))
+        if (tc && tc->size && !EINA_DBL_EQ(tag->font_size, 0))
           {
-             char font_size[32];
+             double new_size = _edje_text_size_calc(tag->font_size, tc);
+             if (!EINA_DBL_EQ(tag->font_size, new_size))
+               {
+                  char buffer[32];
 
-             if (tc && tc->size)
-               snprintf(font_size, sizeof(font_size), "%f",
-                        (double)_edje_text_size_calc(tag->font_size, tc));
-             else
-               snprintf(font_size, sizeof(font_size), "%f",
-                        tag->font_size);
-
-             eina_strbuf_append(txt, " ");
-             eina_strbuf_append(txt, "font_size=");
-             eina_strbuf_append(txt, font_size);
+                  snprintf(buffer, sizeof(buffer), "%.1f", new_size);
+                  eina_strbuf_append(txt, " font_size=");
+                  eina_strbuf_append(txt, buffer);
+               }
           }
         /* Add font name last to save evas from multiple loads */
-        if (tag->font)
+        if (tc && tc->font && tag->font)
           {
              const char *f;
              char *sfont = NULL;
 
-             eina_strbuf_append(txt, " ");
-             eina_strbuf_append(txt, "font=");
+             eina_strbuf_append(txt, " font=");
 
-             if (tc) f = _edje_text_font_get(tag->font, tc->font, &sfont);
-             else f = tag->font;
-
+             f = _edje_text_font_get(tag->font, tc->font, &sfont);
              eina_strbuf_append_escaped(txt, f);
 
              if (sfont) free(sfont);
