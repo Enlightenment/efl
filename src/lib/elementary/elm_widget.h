@@ -355,7 +355,6 @@ typedef struct _Elm_Widget_Smart_Data
    int                           child_drag_x_locked;
    int                           child_drag_y_locked;
    int                           disabled;
-   int                           tree_unfocusable;
 
    Eina_Inlist                  *translate_strings;
    Eina_List                    *focus_chain;
@@ -398,6 +397,7 @@ typedef struct _Elm_Widget_Smart_Data
    Eina_Bool                     can_focus : 1;
    Eina_Bool                     focused : 1;
    Eina_Bool                     top_win_focused : 1;
+   Eina_Bool                     tree_unfocusable : 1;
    Eina_Bool                     focus_move_policy_auto_mode : 1; /* This is TRUE by default */
    Eina_Bool                     highlight_ignore : 1;
    Eina_Bool                     highlight_in_theme : 1;
