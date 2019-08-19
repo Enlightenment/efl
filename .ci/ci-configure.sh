@@ -69,7 +69,13 @@ if [ "$DISTRO" != "" ] ; then
     travis_endfold cov-download
   fi
 
-  if [ "$1" = "mingw" ]; then
+  if [ "$1" = "asan" ]; then
+    travis_fold meson meson
+    docker exec --env EIO_MONITOR_POLL=1 --env CC="ccache gcc" \
+      --env CXX="ccache g++" --env CFLAGS="-O0 -g" --env CXXFLAGS="-O0 -g" \
+      --env LD="ld.gold" $(cat $HOME/cid) sh -c "mkdir build && meson build $OPTS -Db_sanitize=address"
+    travis_endfold meson
+  elif [ "$1" = "mingw" ]; then
     OPTS="$OPTS $MINGW_COPTS"
     travis_fold cross-native cross-native
     docker exec $(cat $HOME/cid) sh -c '.ci/bootstrap-efl-native-for-cross.sh'
