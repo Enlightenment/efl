@@ -443,6 +443,7 @@ edje_object_mmap_set(Edje_Object *obj, const Eina_File *file, const char *group)
 EAPI Eina_Bool
 edje_object_file_set(Edje_Object *obj, const char *file, const char *group)
 {
+   efl_file_unload(obj);
    return efl_file_simple_load(obj, file, group);
 }
 
