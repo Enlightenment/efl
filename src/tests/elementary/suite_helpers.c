@@ -400,11 +400,10 @@ enum
    BOTTOM = 1 << 3,
 };
 
-static void
-click_object_internal(Eo *obj, int dir)
+static Eina_Position2D
+attempt_to_find_the_right_point_for_mouse_positioning(Eo *obj, int dir)
 {
    int x, y;
-   Evas *e = evas_object_evas_get(obj);
    Eina_Rect r = efl_gfx_entity_geometry_get(obj);
    if (dir & LEFT)
      x = r.x + (.1 * r.w);
@@ -418,7 +417,15 @@ click_object_internal(Eo *obj, int dir)
      y = r.y + (.9 * r.h);
    else
      y = r.y + r.h / 2;
-   evas_event_feed_mouse_move(e, x, y, 0, NULL);
+   return EINA_POSITION2D(x, y);
+}
+
+static void
+click_object_internal(Eo *obj, int dir)
+{
+   Evas *e = evas_object_evas_get(obj);
+   Eina_Position2D pos = attempt_to_find_the_right_point_for_mouse_positioning(obj, dir);
+   evas_event_feed_mouse_move(e, pos.x, pos.y, 0, NULL);
    evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
    evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
 }
@@ -457,6 +464,47 @@ click_part(Eo *obj, const char *part)
    efl_unref(part_obj);
 }
 
+static void
+wheel_object_internal(Eo *obj, int dir, Eina_Bool horiz, Eina_Bool down)
+{
+   Eina_Position2D pos = attempt_to_find_the_right_point_for_mouse_positioning(obj, dir);
+   wheel_object_at(obj, pos.x, pos.y, horiz, down);
+}
+
+void
+wheel_object(Eo *obj, Eina_Bool horiz, Eina_Bool down)
+{
+   wheel_object_internal(obj, NONE, horiz, down);
+}
+
+void
+wheel_part(Eo *obj, const char *part, Eina_Bool horiz, Eina_Bool down)
+{
+   Efl_Part *part_obj = efl_ref(efl_part(obj, part));
+   Eo *content;
+   int dir = 0;
+
+   if (efl_canvas_layout_part_type_get(part_obj) == EFL_CANVAS_LAYOUT_PART_TYPE_SWALLOW)
+     content = efl_content_get(part_obj);
+   else
+     {
+        content = part_obj;
+        if (strstr(part, "left"))
+          dir |= LEFT;
+        else if (strstr(part, "right"))
+          dir |= RIGHT;
+        if (strstr(part, "top"))
+          dir |= TOP;
+        else if (strstr(part, "bottom"))
+          dir |= BOTTOM;
+     }
+   wheel_object_internal(content, dir, horiz, down);
+   if (efl_isa(content, EFL_LAYOUT_SIGNAL_INTERFACE))
+     edje_object_message_signal_process(content);
+   edje_object_message_signal_process(obj);
+   efl_unref(part_obj);
+}
+
 void
 event_callback_that_is_called_exactly_one_time_and_sets_a_single_int_data_pointer_when_called(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -479,4 +527,12 @@ click_object_at(Eo *obj, int x, int y)
    evas_event_feed_mouse_move(e, x, y, 0, NULL);
    evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
    evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
+}
+
+void
+wheel_object_at(Eo *obj, int x, int y, Eina_Bool horiz, Eina_Bool down)
+{
+   Evas *e = evas_object_evas_get(obj);
+   evas_event_feed_mouse_move(e, x, y, 0, NULL);
+   evas_event_feed_mouse_wheel(e, horiz, down, 0, NULL);
 }
