@@ -2457,6 +2457,7 @@ EAPI extern Eet_Data_Descriptor *_edje_edd_edje_part_collection;
 extern Eina_Inlist     *_edje_edjes;
 
 extern char            *_edje_fontset_append;
+extern char            *_edje_fontset_append_escaped;
 extern FLOAT_T          _edje_scale;
 extern int              _edje_util_freeze_val;
 extern int              _edje_util_freeze_calc_count;

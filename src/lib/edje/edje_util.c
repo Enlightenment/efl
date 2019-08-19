@@ -27,6 +27,7 @@ Efl_Observable *_edje_size_class_member = NULL;
 static Eina_Rbtree *_edje_box_layout_registry = NULL;
 
 char *_edje_fontset_append = NULL;
+char *_edje_fontset_append_escaped = NULL;
 FLOAT_T _edje_scale = ZERO;
 Eina_Bool _edje_password_show_last = EINA_FALSE;
 double _edje_password_show_last_timeout = 0;
@@ -357,8 +358,12 @@ EAPI void
 edje_fontset_append_set(const char *fonts)
 {
    if (_edje_fontset_append)
-     free(_edje_fontset_append);
+     {
+        free(_edje_fontset_append);
+        free(_edje_fontset_append_escaped);
+     }
    _edje_fontset_append = fonts ? strdup(fonts) : NULL;
+   _edje_fontset_append_escaped = fonts ? eina_str_escape(fonts) : NULL;
 }
 
 EAPI const char *
