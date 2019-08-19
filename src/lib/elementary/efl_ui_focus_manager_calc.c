@@ -69,6 +69,7 @@ struct _Node{
 
   Eina_Bool on_list : 1;
   Eina_Bool unused : 1;
+  Eina_Bool this_is_root : 1;
 };
 
 #define T(n) (n->tree)
@@ -886,14 +887,13 @@ static void
 _free_node(void *data)
 {
    Node *node = data;
-   FOCUS_DATA(node->manager);
 
    if (node->type == NODE_TYPE_ONLY_LOGICAL)
      efl_event_callback_array_del(node->focusable, logical_node(), node->manager);
    else
      efl_event_callback_array_del(node->focusable, regular_node(), node->manager);
 
-   if (pd->root != data)
+   if (!node->this_is_root)
      {
         node_item_free(node);
      }
@@ -1746,6 +1746,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_root_set(Eo *obj EINA_UNUSED, Ef
    node = _register(obj, pd, root, NULL, NODE_TYPE_ONLY_LOGICAL, NULL);
 
    pd->root = node;
+   pd->root->this_is_root = 1;
 
    return EINA_TRUE;
 }
