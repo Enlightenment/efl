@@ -1811,8 +1811,8 @@ _menu_call(Evas_Object *obj)
         if (sd->hoversel)
           {
              _hoversel_position(obj);
-             evas_object_show(sd->hoversel);
              elm_hoversel_hover_begin(sd->hoversel);
+             evas_object_show(sd->hoversel);
           }
 
         if (!_elm_config->desktop_entry)
