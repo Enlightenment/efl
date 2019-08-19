@@ -784,6 +784,15 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
         efl_gfx_shape_stroke_color_set(vg, style->stroke.paint.r, style->stroke.paint.g,
                                        style->stroke.paint.b, style->stroke.opacity);
      }
+
+   //apply node opacity to stroke color
+   if (style->opacity < 255)
+     {
+        int r, g, b, a;
+        efl_gfx_shape_stroke_color_get(vg, &r, &g, &b, &a);
+        float fa = ((float) style->opacity / 255);
+        efl_gfx_shape_stroke_color_set(vg, ((float) r) * fa, ((float) g) * fa, ((float) b) * fa, ((float) a) * fa);
+     }
 }
 
 static void
