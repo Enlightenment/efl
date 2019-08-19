@@ -9,7 +9,11 @@
 #include <unistd.h>
 
 #ifdef HAVE_SIGNATURE
-# include <sys/mman.h>
+# ifdef _WIN32
+#  include <evil_private.h> /* mmap */
+# else
+#  include <sys/mman.h>
+# endif
 # ifdef HAVE_GNUTLS
 #  include <gnutls/gnutls.h>
 #  include <gnutls/x509.h>

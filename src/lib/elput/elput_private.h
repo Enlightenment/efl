@@ -13,7 +13,6 @@
 # include <Elput.h>
 
 # include <ctype.h>
-# include <sys/mman.h>
 # include <fcntl.h>
 # include <unistd.h>
 # include <linux/vt.h>

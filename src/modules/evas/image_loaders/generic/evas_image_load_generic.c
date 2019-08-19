@@ -7,10 +7,15 @@
 
 #include <stdio.h>
 #include <sys/types.h>
-#include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <ctype.h>
+
+#ifdef _WIN32
+# include <evil_private.h> /* mmap */
+#else
+# include <sys/mman.h>
+#endif
 
 #ifndef O_BINARY
 # define O_BINARY 0

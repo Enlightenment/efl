@@ -1,9 +1,12 @@
 #include <assert.h>
-#ifdef HAVE_MMAP
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <sys/mman.h>
+
+#ifdef _WIN32
+# include <evil_private.h> /* mmap mprotect */
+#else
+# include <sys/mman.h>
 #endif
 
 #ifdef HAVE_VALGRIND

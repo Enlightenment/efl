@@ -4,7 +4,10 @@
 
 #include <Elementary.h>
 #include "elm_priv.h"
-#ifdef HAVE_SYS_MMAN_H
+
+#ifdef _WIN32
+# include <evil_private.h> /* mmap */
+#else
 # include <sys/mman.h>
 #endif
 

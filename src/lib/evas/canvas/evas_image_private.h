@@ -12,9 +12,6 @@
 
 #include <sys/types.h>
 #include <unistd.h>
-#ifdef HAVE_SYS_MMAN_H
-# include <sys/mman.h>
-#endif
 #include <math.h>
 
 #include "evas_private.h"

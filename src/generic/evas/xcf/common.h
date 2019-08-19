@@ -14,7 +14,6 @@
 # include <netinet/in.h>
 #endif
 #include <time.h>
-#include <sys/mman.h>
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>

@@ -214,7 +214,11 @@ int main(int argc, char **argv)
           {
              printf("size %d %d\n", width, height);
              printf("alpha 1\n");
+#ifdef _WIN32
+             if (shm_fd) printf("shmfile %s\n", shmfile);
+#else
              if (shm_fd >= 0) printf("shmfile %s\n", shmfile);
+#endif
              else
                {
                   printf("data\n");
