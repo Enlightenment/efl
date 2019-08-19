@@ -694,6 +694,10 @@ _parse_transformation_matrix(const char *value)
           }
         else if (state == SVG_MATRIX_ROTATE)
           {
+             //Transform to signed.
+             points[0] = fmod(points[0], 360);
+             if (points[0] < 0) points[0] += 360;
+
              if (pt_count == 1)
                {
                   eina_matrix3_rotate(matrix, points[0] * (M_PI/180.0));
