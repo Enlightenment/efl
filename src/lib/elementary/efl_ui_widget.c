@@ -4768,12 +4768,8 @@ EOLIAN static Eo *
 _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
    sd->on_create = EINA_TRUE;
+
    sd->window = efl_provider_find(efl_parent_get(obj), EFL_UI_WIN_CLASS);
-   _efl_ui_focus_event_redirector(obj, obj);
-   efl_canvas_group_clipped_set(obj, EINA_FALSE);
-   obj = efl_constructor(efl_super(obj, MY_CLASS));
-   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
-   evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    if (!efl_isa(obj, EFL_UI_WIN_CLASS))
      {
         Eo *parent = efl_parent_get(obj);
@@ -4783,13 +4779,26 @@ _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UN
                  "Elementary widget's parent should be an elementary widget.",
                  parent, evas_object_type_get(parent));
           }
-
+        ELM_WIDGET_DATA_GET(parent, parent_sd);
+        sd->shared_win_data = parent_sd->shared_win_data;
         efl_ui_widget_sub_object_add(parent, obj);
      }
+   else
+     {
+        sd->shared_win_data = efl_ui_win_shared_data_get(obj);
+     }
+
+   _efl_ui_focus_event_redirector(obj, obj);
+   efl_canvas_group_clipped_set(obj, EINA_FALSE);
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
+   efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
+   evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
 
    sd->on_create = EINA_FALSE;
 
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_UNKNOWN);
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(sd->shared_win_data, NULL);
 
    return obj;
 }
