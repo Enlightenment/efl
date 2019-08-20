@@ -36,12 +36,6 @@ _evas_font_image_new(RGBA_Font_Glyph *fg, int alpha, Evas_Colorspace cspace)
 }
 
 static void
-_evas_font_image_free(void *image)
-{
-   evas_cache_image_drop(image);
-}
-
-static void
 _evas_font_image_draw(void *context, void *surface, void *image, RGBA_Font_Glyph *fg, int x, int y, int w, int h, int smooth)
 {
    RGBA_Image *im;
@@ -123,19 +117,21 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
              fg->ext_dat_free = dc->font_ext.func.gl_free;
           }
 
-        if ((!fg->ext_dat) && FT_HAS_COLOR(fg->fi->src->ft.face))
+        if (dc->font_ext.func.gl_image_new)
           {
-             if (dc->font_ext.func.gl_image_new)
+             if ((!fg->ext_dat) && FT_HAS_COLOR(fg->fi->src->ft.face))
                {
                   /* extension calls */
                   fg->ext_dat = dc->font_ext.func.gl_image_new
                     (dc->font_ext.data, fg, EINA_TRUE, EVAS_COLORSPACE_ARGB8888);
                   fg->ext_dat_free = dc->font_ext.func.gl_image_free;
                }
-             else
+          }
+        else
+          {
+             if ((!fg->col_dat) && FT_HAS_COLOR(fg->fi->src->ft.face))
                {
-                  fg->ext_dat = _evas_font_image_new(fg, EINA_TRUE, EVAS_COLORSPACE_ARGB8888);
-                  fg->ext_dat_free = _evas_font_image_free;
+                  fg->col_dat = _evas_font_image_new(fg, EINA_TRUE, EVAS_COLORSPACE_ARGB8888);
                }
           }
 
@@ -158,15 +154,15 @@ evas_common_font_rgba_draw(RGBA_Image *dst, RGBA_Draw_Context *dc, int x, int y,
                                                      ext_x, ext_y,
                                                      ext_w, ext_h);
                     }
-                  else if ((fg->ext_dat) && FT_HAS_COLOR(fg->fi->src->ft.face))
+                  else if (FT_HAS_COLOR(fg->fi->src->ft.face))
                     {
-                       if (dc->font_ext.func.gl_image_draw)
+                       if ((fg->ext_dat) && (dc->font_ext.func.gl_image_draw))
                          dc->font_ext.func.gl_image_draw
                            (dc->font_ext.data, fg->ext_dat,
                             chr_x, y - (chr_y - y), w, h, EINA_TRUE);
-                       else
+                       else if (fg->col_dat)
                          _evas_font_image_draw
-                           (dc, dst, fg->ext_dat, fg,
+                           (dc, dst, fg->col_dat, fg,
                             chr_x, y - (chr_y - y), w, h, EINA_TRUE);
                     }
                }

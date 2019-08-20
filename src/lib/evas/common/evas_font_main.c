@@ -435,6 +435,7 @@ _glyph_free(RGBA_Font_Glyph *fg)
    FT_Done_Glyph(fg->glyph);
    /* extension calls */
    if (fg->ext_dat_free) fg->ext_dat_free(fg->ext_dat);
+   if (fg->col_dat) evas_cache_image_drop(fg->col_dat);
    free(fg);
 }
 
