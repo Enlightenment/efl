@@ -2,6 +2,7 @@
 # include "config.h"
 #endif
 
+#include "evas_common_private.h"
 #include <assert.h>
 #include "evas_font_ot.h"
 
@@ -996,6 +997,8 @@ _font_int_ext_clear(RGBA_Font_Int *fi)
                                       fg->ext_dat = NULL;
                                       fg->ext_dat_free = NULL;
                                    }
+                                 if (fg->col_dat) evas_cache_image_drop(fg->col_dat);
+                                 fg->col_dat = NULL;
                               }
                          }
                     }

@@ -315,6 +315,7 @@ struct _RGBA_Font_Glyph
    Evas_Coord      y_bear;
    FT_Glyph        glyph;
    RGBA_Font_Glyph_Out *glyph_out;
+   void           *col_dat;
    /* this is a problem - only 1 engine at a time can extend such a font... grrr */
    void           *ext_dat;
    void           (*ext_dat_free) (void *ext_dat);
