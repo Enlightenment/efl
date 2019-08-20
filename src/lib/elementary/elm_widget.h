@@ -348,8 +348,6 @@ typedef struct _Elm_Widget_Smart_Data
    const char                   *style;
    const char                   *access_info;
    const char                   *accessible_name;
-   unsigned int                  focus_order;
-   Eina_Bool                     focus_order_on_calc;
 
    int                           child_drag_x_locked;
    int                           child_drag_y_locked;
@@ -357,7 +355,6 @@ typedef struct _Elm_Widget_Smart_Data
    int                           tree_unfocusable;
 
    Eina_Inlist                  *translate_strings;
-   Eina_List                    *focus_chain;
    Eina_List                    *event_cb;
    /* this is a hook to be set on-the-fly on widgets. this is code
     * handling the request of showing a specific region from an inner
