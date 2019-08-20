@@ -503,9 +503,9 @@ EFL_START_TEST(efl_ui_test_popup_text_alert)
    for (i = 0; i < num_tests; i++)
      {
         unsigned int j;
-        Eina_Size2D popup_sz_min, popup_sz, label_sz_min;
+        Eina_Size2D popup_sz_min, popup_sz, label_sz_min, label_sz, scroller_sz;
         Eina_Strbuf *buf = eina_strbuf_new();
-        Eo *label;
+        Eo *label, *scroller;
 
         for (j = 0; j < string_counts[i]; j++)
           eina_strbuf_append(buf, test_string);
@@ -515,7 +515,15 @@ EFL_START_TEST(efl_ui_test_popup_text_alert)
         efl_canvas_group_calculate(popup);
 
         /* get internal label object: VERY illegal */
-        label = efl_content_get(efl_content_get(efl_part(efl_super(popup, efl_ui_text_alert_popup_class_get()), "efl.content")));
+        scroller = efl_content_get(efl_part(efl_super(popup, efl_ui_text_alert_popup_class_get()), "efl.content"));
+        label = efl_content_get(scroller);
+
+        /* label should never be larger than scroller horizontally
+         * ...but we give it an extra pixel because that's how it's always been
+         */
+        label_sz = efl_gfx_entity_size_get(label);
+        scroller_sz = efl_gfx_entity_size_get(scroller);
+        ck_assert_int_le(label_sz.w, scroller_sz.w + 1);
 
         label_sz_min = efl_gfx_hint_size_combined_min_get(label);
         popup_sz_min = efl_gfx_hint_size_combined_min_get(popup);
