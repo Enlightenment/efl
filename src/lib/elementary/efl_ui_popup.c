@@ -93,6 +93,15 @@ _parent_geom_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_canvas_group_change(obj);
 }
 
+static void
+_hints_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Efl_Ui_Popup_Data *pd = data;
+
+   if (!pd->in_calc)
+     efl_canvas_group_change(ev->object);
+}
+
 EOLIAN static void
 _efl_ui_popup_efl_ui_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eo *parent)
 {
@@ -209,6 +218,7 @@ _efl_ui_popup_efl_object_constructor(Eo *obj, Efl_Ui_Popup_Data *pd)
      elm_widget_theme_klass_set(obj, "popup");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _hints_changed_cb, pd);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
    if (elm_widget_theme_object_set(obj, wd->resize_obj,
