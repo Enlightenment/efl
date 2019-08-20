@@ -283,6 +283,7 @@ struct _Svg_Node
    Eina_Stringshare    *id;
    Svg_Style_Property  *style;
    Eina_Matrix3        *transform;
+   Eina_Bool           display;
    union
      {
         Svg_G_Node   g;
