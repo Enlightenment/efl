@@ -257,7 +257,7 @@ _evas_image_init_set(const Eina_File *f, const char *key,
       state_write->f = NULL;
 
       if (f) state_write->f = eina_file_dup(f);
-      eina_file_close(tmp);
+      eina_file_close(tmp); // close matching open (dup above) OK
 
       eina_stringshare_replace(&state_write->key, key);
       state_write->opaque_valid = 0;
@@ -1354,10 +1354,34 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
    Eina_Rectangle *r;
 
    /* free obj */
-   eina_file_close(o->cur->f);
-   if (o->cur->key) eina_stringshare_del(o->cur->key);
-   if (o->cur->source) _evas_image_proxy_unset(eo_obj, obj, o);
-   if (o->cur->scene) _evas_image_3d_unset(eo_obj, obj, o);
+   if (o->cur->key)
+     {
+        eina_stringshare_del(o->cur->key);
+        EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+        state_write->key = NULL;
+        EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+     }
+   if (o->cur->source)
+     {
+        if (o->cur->source) _evas_image_proxy_unset(eo_obj, obj, o);
+        EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+        state_write->source = NULL;
+        EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+     }
+   if (o->cur->scene)
+     {
+        if (o->cur->scene) _evas_image_3d_unset(eo_obj, obj, o);
+        EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+        state_write->scene = NULL;
+        EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+     }
+   if (o->cur->f)
+     {
+        eina_file_close(o->cur->f); // close matching open (dup in _evas_image_init_set) OK
+        EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
+        state_write->f = NULL;
+        EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
+     }
    if (obj->layer && obj->layer->evas)
      {
         if (o->engine_data && ENC)

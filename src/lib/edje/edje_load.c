@@ -272,7 +272,7 @@ edje_file_collection_list(const char *file)
 
    lst = edje_mmap_collection_list(f);
 
-   eina_file_close(f);
+   eina_file_close(f); // close matching open OK
 err:
    free(tmp);
    return lst;
@@ -447,7 +447,7 @@ edje_file_group_exists(const char *file, const char *glob)
 
    result = edje_mmap_group_exists(f, glob);
 
-   eina_file_close(f);
+   eina_file_close(f); // close matching open OK
 err:
    free(tmp);
 
@@ -484,14 +484,14 @@ edje_file_data_get(const char *file, const char *key)
    if (!key) return NULL;
 
    tmp = eina_vpath_resolve(file);
-   f = eina_file_open(file, EINA_FALSE);
+   f = eina_file_open(tmp, EINA_FALSE);
    if (!f)
      {
         ERR("File [%s] can not be opened.", file);
         goto err;
      }
    str = edje_mmap_data_get(f, key);
-   eina_file_close(f);
+   eina_file_close(f); // close matching open OK
 err:
    free(tmp);
 
@@ -2341,7 +2341,7 @@ _edje_file_free(Edje_File *edf)
    if (edf->free_strings) eina_stringshare_del(edf->id);
    _edje_textblock_style_cleanup(edf);
    if (edf->ef) eet_close(edf->ef);
-   if (edf->f) eina_file_close(edf->f);
+   if (edf->f) eina_file_close(edf->f);  // close matching open (in _edje_file_open) OK
    free(edf);
 }
 

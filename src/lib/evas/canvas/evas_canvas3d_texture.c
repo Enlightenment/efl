@@ -334,7 +334,8 @@ _evas_canvas3d_texture_efl_object_constructor(Eo *obj, Evas_Canvas3D_Texture_Dat
 EOLIAN static void
 _evas_canvas3d_texture_efl_object_destructor(Eo *obj, Evas_Canvas3D_Texture_Data *pd)
 {
-   eina_file_close(pd->f);
+   eina_file_close(pd->f); // close matching open (matches open in _evas_canvas3d_texture_efl_file_load) OK
+   pd->f = NULL;
    _texture_fini(obj);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
