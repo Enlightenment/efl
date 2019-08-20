@@ -60,7 +60,11 @@ _elm_theme_item_finalize(Eina_Inlist **files,
         char *version;
         int v;
 
-        if (!(version = edje_mmap_data_get(f, "version"))) return;
+        if (!(version = edje_mmap_data_get(f, "version")))
+          {
+             eina_file_close(f);
+             return;
+          }
         v = atoi(version);
         if (v < 110) // bump this version number when we need to
           {
@@ -702,11 +706,12 @@ elm_theme_extension_del(Elm_Theme *th, const char *item)
 EAPI void
 elm_theme_extension_mmap_add(Elm_Theme *th, const Eina_File *f)
 {
-   Eina_File *file = eina_file_dup(f);
+   Eina_File *file;
 
    if (!f) return;
    if (!th) th = theme_default;
    if (!th) return;
+   file = eina_file_dup(f);
    th->extension_items = eina_list_free(th->extension_items);
    _elm_theme_item_finalize(&th->extension, eina_file_filename_get(file), file, EINA_FALSE, EINA_FALSE);
    elm_theme_flush(th);
