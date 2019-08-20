@@ -529,6 +529,20 @@ _apply_fallback(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
      }
 }
 
+static inline void
+_single_selection_behaviour(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd, Efl_Ui_Selectable *new_selection)
+{
+   //we might get the situation that the item is already in the list and selected again, so just free the list, it will be rebuild below
+   if (eina_list_data_get(pd->selected) == new_selection)
+     {
+       pd->selected = eina_list_free(pd->selected);
+     }
+   else
+     {
+        deselect_all(pd);
+     }
+}
+
 static void
 _selection_changed(void *data, const Efl_Event *ev)
 {
@@ -546,16 +560,14 @@ _selection_changed(void *data, const Efl_Event *ev)
      {
         if (pd->mode == EFL_UI_SELECT_MODE_SINGLE_ALWAYS || pd->mode == EFL_UI_SELECT_MODE_SINGLE)
           {
-             //we might get the situation that the item is already in the list and selected again, so just free the list, it will be rebuild below
-             if (eina_list_data_get(pd->selected) == ev->object)
-               {
-                 pd->selected = eina_list_free(pd->selected);
-               }
-             else
-               {
-                  deselect_all(pd);
-               }
-
+             _single_selection_behaviour(obj, pd, ev->object);
+          }
+        else if (pd->mode == EFL_UI_SELECT_MODE_MULTI && _elm_config->desktop_entry)
+          {
+             const Evas_Modifier *mod = evas_key_modifier_get(evas_object_evas_get(ev->object));
+             if (!(efl_input_clickable_interaction_get(ev->object)
+                   && evas_key_modifier_is_set(mod, "Control")))
+               _single_selection_behaviour(obj, pd, ev->object);
           }
         else if (pd->mode == EFL_UI_SELECT_MODE_NONE)
           {
