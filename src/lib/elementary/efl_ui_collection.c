@@ -940,6 +940,76 @@ _efl_ui_collection_efl_ui_focus_manager_move(Eo *obj, Efl_Ui_Collection_Data *pd
    return new_obj;
 }
 
+static void
+_selectable_range_apply(Eina_List *start, Eina_Bool flag)
+{
+   Efl_Ui_Selectable *sel;
+   Eina_List *n;
+
+   EINA_LIST_FOREACH(start, n, sel)
+     {
+        efl_ui_selectable_selected_set(sel, flag);
+     }
+}
+
+EOLIAN static void
+_efl_ui_collection_efl_ui_multi_selectable_select_all(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
+{
+   _selectable_range_apply(pd->items, EINA_TRUE);
+}
+
+EOLIAN static void
+_efl_ui_collection_efl_ui_multi_selectable_unselect_all(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
+{
+   _selectable_range_apply(pd->items, EINA_FALSE);
+}
+
+static void
+_range_selection_find(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Ui_Selectable *a, Efl_Ui_Selectable *b, Eina_Bool flag)
+{
+   Eina_List *n;
+   Efl_Ui_Selectable *c;
+   Eina_List *start = NULL, *end = NULL;
+
+   EINA_SAFETY_ON_FALSE_RETURN(efl_ui_widget_parent_get(a) == obj);
+   EINA_SAFETY_ON_FALSE_RETURN(efl_ui_widget_parent_get(b) == obj);
+
+   EINA_LIST_FOREACH(pd->items, n, c)
+     {
+        if (!start)
+          {
+             if (c == a)
+               start = n;
+             else if (c == b)
+               start = n;
+          }
+        else if (!end)
+          {
+             if (c == a)
+               end = n;
+             else if (c == b)
+               end = n;
+          }
+        /* if we have found the first element, start applying the flag */
+        if (start)
+          efl_ui_selectable_selected_set(c, flag);
+        if (end)
+          break;
+     }
+}
+
+EOLIAN static void
+_efl_ui_collection_efl_ui_multi_selectable_select_range(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Ui_Selectable *a, Efl_Ui_Selectable *b)
+{
+   _range_selection_find(obj, pd, a, b, EINA_TRUE);
+}
+
+EOLIAN static void
+_efl_ui_collection_efl_ui_multi_selectable_unselect_range(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Ui_Selectable *a, Efl_Ui_Selectable *b)
+{
+   _range_selection_find(obj, pd, a, b, EINA_FALSE);
+}
+
 #include "efl_ui_collection.eo.c"
 
 #define ITEM_IS_OUTSIDE_VISIBLE(id) id < collection_pd->start_id || id > collection_pd->end_id

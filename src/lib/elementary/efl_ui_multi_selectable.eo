@@ -28,5 +28,38 @@ interface @beta Efl.Ui.Multi_Selectable extends Efl.Ui.Single_Selectable
          [[Get the selected items in a iterator. The iterator sequence will be decided by selection.]]
          return: iterator<Efl.Ui.Selectable> @owned @no_unused; [[User has to free the iterator after usage.]]
       }
+      select_range {
+         [[Select a range of @Efl.Ui.Selectable.
+
+           This will select the range of selectables from a to b or from b to a depending on which one comes first.
+           If a or b are not part of the widget, a error is returned, and no change is applied.
+           $null is not allowed as either of the parameters.
+           Both of the passed values will also be selected.
+         ]]
+         params {
+           a : Efl.Ui.Selectable; [[One side of the range.]]
+           b : Efl.Ui.Selectable; [[The other side of the range.]]
+         }
+      }
+      unselect_range {
+         [[Unselect a range of @Efl.Ui.Selectable.
+
+           This will unselect the range of selectables from a to b or from b to a depending on which one comes first.
+           If a or b are not part of the widget, a error is returned, and no change is applied.
+           $null is not allowed as either of the parameters.
+           Both of the passed values will also be unselected.
+         ]]
+         params {
+           a : Efl.Ui.Selectable; [[One side of the range.]]
+           b : Efl.Ui.Selectable; [[The other side of the range.]]
+         }
+      }
+      select_all {
+         [[Select all @Efl.Ui.Selectable]]
+      }
+      unselect_all {
+         [[Unselect all @Efl.Ui.Selectable]]
+      }
+
    }
 }
