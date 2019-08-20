@@ -39,6 +39,19 @@ public static class TestParts
     }
 }
 
+public static class TestMVVMParts
+{
+    public static void mvvm_dynamic_parts()
+    {
+        var factory = new Efl.Ui.ItemFactory<Efl.Ui.ListDefaultItem>();
+
+        var bindablePart = factory.TextPart();
+        var error = bindablePart.Markup().Bind("name");
+
+        Test.AssertEquals(error, Eina.Error.NO_ERROR);
+    }
+}
+
 #endif
 
 }
