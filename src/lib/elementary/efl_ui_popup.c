@@ -372,15 +372,15 @@ _efl_ui_popup_part_backwall_efl_file_load(Eo *obj, void *_pd EINA_UNUSED)
         efl_del(prev_obj);
      }
 
-   Eo *image = elm_image_add(pd->obj);
+   Eo *image = efl_add(EFL_UI_IMAGE_CLASS, pd->obj);
    Eina_Bool ret;
    const Eina_File *f;
 
    f = efl_file_mmap_get(obj);
    if (f)
-     ret = elm_image_mmap_set(image, f, efl_file_key_get(obj));
+     ret = efl_file_simple_mmap_load(image, f, efl_file_key_get(obj));
    else
-     ret = elm_image_file_set(image, efl_file_get(obj), efl_file_key_get(obj));
+     ret = efl_file_simple_load(image, efl_file_get(obj), efl_file_key_get(obj));
    if (!ret)
      {
         efl_del(image);
