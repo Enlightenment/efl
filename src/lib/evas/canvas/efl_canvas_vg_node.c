@@ -141,29 +141,32 @@ _efl_canvas_vg_node_efl_gfx_color_color_set(Eo *obj,
                                             Efl_Canvas_Vg_Node_Data *pd,
                                             int r, int g, int b, int a)
 {
-   if (r > 255) r = 255;
+   Eina_Bool perr = EINA_FALSE;
+
+   //Exception Handling.
    if (r < 0) r = 0;
-   if (g > 255) g = 255;
    if (g < 0) g = 0;
-   if (b > 255) b = 255;
    if (b < 0) b = 0;
    if (a > 255) a = 255;
-   if (a < 0) a = 0;
+   else if (a < 0) a = 0;
+
    if (r > a)
      {
         r = a;
-        ERR("Evas only handles pre multiplied colors!");
+        perr = EINA_TRUE;
      }
    if (g > a)
      {
         g = a;
-        ERR("Evas only handles pre multiplied colors!");
+        perr = EINA_TRUE;
      }
    if (b > a)
      {
         b = a;
-        ERR("Evas only handles pre multiplied colors!");
+        perr = EINA_TRUE;
      }
+
+   if (perr) ERR("Evas only handles pre-multiplied color!");
 
    pd->r = r;
    pd->g = g;
