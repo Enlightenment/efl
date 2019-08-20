@@ -15,7 +15,7 @@ struct @beta Efl.Ui.Panel_Scroll_Info
    rel_y: double; [[content scrolled position (0.0 ~ 1.0) in the panel]]
 }
 
-class @beta Efl.Ui.Panel extends Efl.Ui.Layout_Base implements Efl.Ui.Focus.Layer, Elm.Interface_Scrollable, Efl.Content,
+class @beta Efl.Ui.Panel extends Efl.Ui.Layout_Base implements Efl.Ui.Focus.Layer, Efl.Ui.Scrollable_Interactive, Efl.Content,
                     Efl.Access.Widget.Action
 {
    [[Elementary panel class]]
@@ -76,7 +76,6 @@ class @beta Efl.Ui.Panel extends Efl.Ui.Layout_Base implements Efl.Ui.Focus.Laye
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set; }
       Efl.Canvas.Group.group_member_add;
       Efl.Canvas.Group.group_calculate;
@@ -92,5 +91,8 @@ class @beta Efl.Ui.Panel extends Efl.Ui.Layout_Base implements Efl.Ui.Focus.Laye
    }
    events {
       toggled: void; [[Called when the hidden state was toggled]]
+   }
+   composite {
+      Efl.Ui.Scrollable_Interactive;
    }
 }
