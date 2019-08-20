@@ -1,3 +1,5 @@
+import ector_types;
+
 mixin @beta Ector.Renderer.Gradient requires Efl.Object extends Efl.Gfx.Gradient
 {
    [[Ector gradient renderer mixin]]

@@ -172,6 +172,8 @@
 /* This include has been added to support Eo in Evas */
 #include <Efl.h>
 
+#include <Ector.h>
+
 #include <Evas_Loader.h>
 
 #ifdef EAPI

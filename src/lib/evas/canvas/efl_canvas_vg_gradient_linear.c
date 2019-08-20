@@ -64,8 +64,8 @@ _efl_canvas_vg_gradient_linear_render_pre(Evas_Object_Protected_Data *vg_pd EINA
                                           void *context EINA_UNUSED,
                                           Ector_Surface *surface,
                                           Eina_Matrix3 *ptransform,
-                                          Ector_Buffer *mask,
-                                          int mask_op,
+                                          Ector_Buffer *comp,
+                                          Ector_Renderer_Composite_Method comp_method,
                                           void *data)
 {
    Efl_Canvas_Vg_Gradient_Linear_Data *pd = data;
@@ -94,7 +94,7 @@ _efl_canvas_vg_gradient_linear_render_pre(Evas_Object_Protected_Data *vg_pd EINA
    efl_gfx_gradient_linear_start_set(nd->renderer, pd->start.x, pd->start.y);
    efl_gfx_gradient_linear_end_set(nd->renderer, pd->end.x, pd->end.y);
    ector_renderer_prepare(nd->renderer);
-   ector_renderer_mask_set(nd->renderer, mask, mask_op);
+   ector_renderer_comp_method_set(nd->renderer, comp, comp_method);
 }
 
 static Eo *
