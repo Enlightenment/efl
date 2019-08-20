@@ -26,10 +26,18 @@
 typedef struct _Elm_Slider_Data Elm_Slider_Data;
 struct _Elm_Slider_Data
 {
-   Evas_Object          *popup, *popup2, *track, *track2;
+   Evas_Object          *popup, *popup2, *track, *track2, *spacer;
+
+   double                val, val_min, val_max, step;
+   double                intvl_from, intvl_to;
+   double                wheel_indicator_duration;
+   int                   intvl_flag;
+
+   Evas_Coord                  downx, downy;
+   Efl_Ui_Layout_Orientation   dir;
 
    Ecore_Timer           *wheel_indicator_timer, *delay;
-   double                wheel_indicator_duration;
+
    Elm_Slider_Indicator_Visible_Mode indicator_visible_mode; /**< indicator_visible_mode of the slider.
                                                                 This indicates when to show an indicator */
 
@@ -52,6 +60,7 @@ struct _Elm_Slider_Data
    Eina_Bool             popup_visible : 1;
    Eina_Bool             intvl_enable : 1;
    Eina_Bool             spacer_down : 1;
+   Eina_Bool             frozen : 1;
 };
 
 /**
