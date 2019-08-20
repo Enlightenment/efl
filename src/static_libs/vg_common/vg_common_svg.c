@@ -710,17 +710,16 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
    Svg_Style_Property *style = node->style;
 
    // update the vg name
-   if (node->id)
-     efl_name_set(vg, node->id);
+   if (node->id) efl_name_set(vg, node->id);
 
    // apply the transformation
-   if (node->transform)
-     efl_canvas_vg_node_transformation_set(vg, node->transform);
+   if (node->transform) efl_canvas_vg_node_transformation_set(vg, node->transform);
 
    if ((node->type == SVG_NODE_G) || (node->type == SVG_NODE_DOC)) return;
 
    // apply the fill style property
    efl_gfx_shape_fill_rule_set(vg, style->fill.fill_rule);
+
    // if fill property is NULL then do nothing
    if (style->fill.paint.none)
      {
@@ -734,14 +733,16 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
    else if (style->fill.paint.cur_color)
      {
         // apply the current style color
-        efl_gfx_color_set(vg, style->r, style->g,
-                          style->b, style->fill.opacity);
+        float fa = ((float) style->fill.opacity / 255);
+        efl_gfx_color_set(vg, ((float) style->r) * fa, ((float) style->g) * fa, ((float) style->b) * fa,
+                          style->fill.opacity);
      }
    else
      {
         // apply the fill color
-        efl_gfx_color_set(vg, style->fill.paint.r, style->fill.paint.g,
-                          style->fill.paint.b, style->fill.opacity);
+        float fa = ((float) style->fill.opacity / 255);
+        efl_gfx_color_set(vg, ((float) style->fill.paint.r) * fa, ((float) style->fill.paint.g) * fa,
+                          ((float) style->fill.paint.b) * fa, style->fill.opacity);
      }
 
    //apply node opacity
