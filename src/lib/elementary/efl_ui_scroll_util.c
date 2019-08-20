@@ -180,6 +180,16 @@ _scroll_connector_bar_pos_changed_cb(void *data, const Efl_Event *event EINA_UNU
    ELM_WIDGET_DATA_GET_OR_RETURN(ctx->obj, wd);
 
    double posx = 0.0, posy = 0.0;
+   Eina_Size2D cs;
+   Eina_Position2D step;
+
+   step = efl_ui_scrollable_step_size_get(ctx->smanager);
+   cs = efl_ui_scrollable_content_size_get(ctx->smanager);
+
+   edje_object_part_drag_step_set(wd->resize_obj, "efl.dragable.hbar",
+                                  (double)step.x / cs.w, 0.0);
+   edje_object_part_drag_step_set(wd->resize_obj, "efl.dragable.vbar",
+                                  0.0, (double)step.y / cs.h);
 
    efl_ui_scrollbar_bar_position_get(ctx->smanager, &posx, &posy);
    edje_object_part_drag_value_set(wd->resize_obj, "efl.dragable.hbar", posx, 0.0);
