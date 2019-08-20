@@ -262,16 +262,18 @@ EAPI Eina_List *
 edje_file_collection_list(const char *file)
 {
    Eina_File *f;
-   Eina_List *lst;
+   Eina_List *lst = NULL;
    char *tmp;
 
    if ((!file) || (!*file)) return NULL;
    tmp = eina_vpath_resolve(file);
    f = eina_file_open(tmp, EINA_FALSE);
+   if (!f) goto err;
 
    lst = edje_mmap_collection_list(f);
 
    eina_file_close(f);
+err:
    free(tmp);
    return lst;
 }
@@ -433,17 +435,21 @@ EAPI Eina_Bool
 edje_file_group_exists(const char *file, const char *glob)
 {
    Eina_File *f;
-   Eina_Bool result;
+   Eina_Bool result = EINA_FALSE;
+   char *tmp;
 
    if ((!file) || (!*file) || (!glob))
      return EINA_FALSE;
 
-   f = eina_file_open(file, EINA_FALSE);
-   if (!f) return EINA_FALSE;
+   tmp = eina_vpath_resolve(file);
+   f = eina_file_open(tmp, EINA_FALSE);
+   if (!f) goto err;
 
    result = edje_mmap_group_exists(f, glob);
 
    eina_file_close(f);
+err:
+   free(tmp);
 
    return result;
 }
@@ -473,20 +479,21 @@ EAPI char *
 edje_file_data_get(const char *file, const char *key)
 {
    Eina_File *f;
-   char *str;
+   char *str = NULL, *tmp;
 
    if (!key) return NULL;
 
+   tmp = eina_vpath_resolve(file);
    f = eina_file_open(file, EINA_FALSE);
    if (!f)
      {
         ERR("File [%s] can not be opened.", file);
-        return NULL;
+        goto err;
      }
-
    str = edje_mmap_data_get(f, key);
-
    eina_file_close(f);
+err:
+   free(tmp);
 
    return str;
 }
