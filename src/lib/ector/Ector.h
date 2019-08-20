@@ -86,8 +86,6 @@ extern "C" {
 
 #ifdef EFL_BETA_API_SUPPORT
 
-#include "ector_types.eot.h"
-
 /**
  * @typedef Ector_Surface
  * The base type to render content into.

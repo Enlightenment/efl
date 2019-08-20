@@ -38,8 +38,8 @@ struct _Ector_Renderer_Software_Shape_Data
    Shape_Rle_Data              *shape_data;
    Shape_Rle_Data              *outline_data;
 
-   Ector_Buffer                *comp;
-   Ector_Renderer_Composite_Method comp_method;
+   Ector_Buffer                *mask;
+   int                          mask_op;
 
    Ector_Software_Shape_Task   *task;
 
@@ -674,8 +674,8 @@ _ector_renderer_software_shape_ector_renderer_draw(Eo *obj,
         ector_software_rasterizer_draw_rle_data(pd->surface->rasterizer,
                                                 x, y, mul_col, op,
                                                 pd->shape_data,
-                                                pd->comp,
-                                                pd->comp_method);
+                                                pd->mask,
+                                                pd->mask_op);
      }
    else
      {
@@ -689,8 +689,8 @@ _ector_renderer_software_shape_ector_renderer_draw(Eo *obj,
              ector_software_rasterizer_draw_rle_data(pd->surface->rasterizer,
                                                      x, y, mul_col, op,
                                                      pd->shape_data,
-                                                     pd->comp,
-                                                     pd->comp_method);
+                                                     pd->mask,
+                                                     pd->mask_op);
           }
      }
 
@@ -702,8 +702,8 @@ _ector_renderer_software_shape_ector_renderer_draw(Eo *obj,
         ector_software_rasterizer_draw_rle_data(pd->surface->rasterizer,
                                                 x, y, mul_col, op,
                                                 pd->outline_data,
-                                                pd->comp,
-                                                pd->comp_method);
+                                                pd->mask,
+                                                pd->mask_op);
      }
    else
      {
@@ -717,8 +717,8 @@ _ector_renderer_software_shape_ector_renderer_draw(Eo *obj,
              ector_software_rasterizer_draw_rle_data(pd->surface->rasterizer,
                                                      x, y, mul_col, op,
                                                      pd->outline_data,
-                                                     pd->comp,
-                                                     pd->comp_method);
+                                                     pd->mask,
+                                                     pd->mask_op);
           }
      }
 
@@ -828,14 +828,14 @@ _ector_renderer_software_shape_ector_renderer_crc_get(const Eo *obj,
 }
 
 static void
-_ector_renderer_software_shape_ector_renderer_comp_method_set(Eo *obj EINA_UNUSED,
-                                                              Ector_Renderer_Software_Shape_Data *pd,
-                                                              Ector_Buffer *comp,
-                                                              Ector_Renderer_Composite_Method method)
+_ector_renderer_software_shape_ector_renderer_mask_set(Eo *obj EINA_UNUSED,
+                                                       Ector_Renderer_Software_Shape_Data *pd,
+                                                       Ector_Buffer *mask,
+                                                       int op)
 {
    //Use ref/unref.
-   pd->comp = comp;
-   pd->comp_method = method;
+   pd->mask = mask;
+   pd->mask_op = op;
 }
 
 #include "ector_renderer_software_shape.eo.c"

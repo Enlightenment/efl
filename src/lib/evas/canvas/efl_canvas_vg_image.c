@@ -21,8 +21,8 @@ _efl_canvas_vg_image_render_pre(Evas_Object_Protected_Data *vg_pd,
                                 void *engine EINA_UNUSED, void *output EINA_UNUSED, void *context EINA_UNUSED,
                                 Ector_Surface *surface,
                                 Eina_Matrix3 *ptransform,
-                                Ector_Buffer *comp,
-                                Ector_Renderer_Composite_Method comp_method,
+                                Ector_Buffer *mask,
+                                int mask_op,
                                 void *data)
 {
    Efl_Canvas_Vg_Image_Data *pd = data;
@@ -63,7 +63,7 @@ _efl_canvas_vg_image_render_pre(Evas_Object_Protected_Data *vg_pd,
    ector_renderer_color_set(nd->renderer, nd->r, nd->g, nd->b, nd->a);
    ector_renderer_visibility_set(nd->renderer, nd->visibility);
 
-   ector_renderer_comp_method_set(nd->renderer, comp, comp_method);
+   ector_renderer_mask_set(nd->renderer, mask, mask_op);
    ector_renderer_prepare(nd->renderer);
 }
 

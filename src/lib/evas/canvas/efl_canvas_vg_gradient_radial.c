@@ -80,8 +80,8 @@ _efl_canvas_vg_gradient_radial_render_pre(Evas_Object_Protected_Data *vg_pd EINA
                                           void *context EINA_UNUSED,
                                           Ector_Surface *surface,
                                           Eina_Matrix3 *ptransform,
-                                          Ector_Buffer *comp,
-                                          Ector_Renderer_Composite_Method comp_method,
+                                          Ector_Buffer *mask,
+                                          int mask_op,
                                           void *data)
 {
    Efl_Canvas_Vg_Gradient_Radial_Data *pd = data;
@@ -111,7 +111,7 @@ _efl_canvas_vg_gradient_radial_render_pre(Evas_Object_Protected_Data *vg_pd EINA
    efl_gfx_gradient_radial_focal_set(nd->renderer, pd->focal.x, pd->focal.y);
    efl_gfx_gradient_radial_radius_set(nd->renderer, pd->radius);
    ector_renderer_prepare(nd->renderer);
-   ector_renderer_comp_method_set(nd->renderer, comp, comp_method);
+   ector_renderer_mask_set(nd->renderer, mask, mask_op);
 }
 
 static Eo *

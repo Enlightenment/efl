@@ -1,12 +1,2 @@
 type @extern GLshort: short; [[GLshort type]] /* FIXME: We should not expose this in the API but probably redefine it. */
 
-enum @beta Ector.Renderer.Composite_Method
-{
-   none,
-   matte_alpha,
-   matte_alpha_inverse,
-   mask_add,
-   mask_substract,
-   mask_intersect,
-   mask_difference
-}
