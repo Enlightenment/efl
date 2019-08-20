@@ -522,7 +522,7 @@ _evas_common_rgba_image_delete(Image_Entry *ie)
      }
    if (ie->f && !ie->flags.given_mmap)
      {
-        eina_file_close(ie->f);
+        eina_file_close(ie->f); // close matching open (dup in _evas_image_file_header) OK
         ie->f = NULL;
      }
    eina_freeq_ptr_add(eina_freeq_main_get(), im, free, sizeof(*im));

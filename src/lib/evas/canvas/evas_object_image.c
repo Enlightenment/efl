@@ -261,7 +261,7 @@ _evas_image_init_set(const Eina_File *f, const char *key,
       state_write->f = NULL;
 
       if (f) state_write->f = eina_file_dup(f);
-      eina_file_close(tmp);
+      eina_file_close(tmp); // close matching open (dup above) OK
 
       eina_stringshare_replace(&state_write->key, key);
       state_write->opaque_valid = 0;
@@ -1734,7 +1734,7 @@ evas_object_image_free(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
      }
    if (o->cur->f)
      {
-        eina_file_close(o->cur->f);
+        eina_file_close(o->cur->f); // close matching open (dup in _evas_image_init_set) OK
         EINA_COW_IMAGE_STATE_WRITE_BEGIN(o, state_write)
         state_write->f = NULL;
         EINA_COW_IMAGE_STATE_WRITE_END(o, state_write);
