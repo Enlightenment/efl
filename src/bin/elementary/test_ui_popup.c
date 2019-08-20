@@ -389,7 +389,7 @@ _alert_scroll_case1_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    char buf[PATH_MAX];
    Eo *win = data;
-   Eo *efl_ui_popup= efl_add(EFL_UI_SCROLL_ALERT_POPUP_CLASS, win);
+   Eo *efl_ui_popup= efl_add(EFL_UI_ALERT_POPUP_CLASS, win);
 
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
 
@@ -397,7 +397,7 @@ _alert_scroll_case1_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    efl_file_simple_load(layout, buf, "efl_ui_popup_scroll_content");
 
-   efl_content_set(efl_ui_popup, layout);
+   efl_ui_widget_scrollable_content_set(efl_ui_popup, layout);
 
    efl_ui_alert_popup_button_set(efl_ui_popup, EFL_UI_ALERT_POPUP_BUTTON_POSITIVE, "Yes", NULL);
    efl_ui_alert_popup_button_set(efl_ui_popup, EFL_UI_ALERT_POPUP_BUTTON_NEGATIVE, "No", NULL);
@@ -413,7 +413,7 @@ _alert_scroll_case2_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    char buf[PATH_MAX];
    Eo *win = data;
-   Eo *efl_ui_popup= efl_add(EFL_UI_SCROLL_ALERT_POPUP_CLASS, win);
+   Eo *efl_ui_popup= efl_add(EFL_UI_ALERT_POPUP_CLASS, win);
 
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
 
@@ -421,7 +421,7 @@ _alert_scroll_case2_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    efl_file_simple_load(layout, buf, "efl_ui_popup_scroll_content");
 
-   efl_content_set(efl_ui_popup, layout);
+   efl_ui_widget_scrollable_content_set(efl_ui_popup, layout);
 
    efl_ui_alert_popup_button_set(efl_ui_popup, EFL_UI_ALERT_POPUP_BUTTON_POSITIVE, "Yes", NULL);
    efl_ui_alert_popup_button_set(efl_ui_popup, EFL_UI_ALERT_POPUP_BUTTON_NEGATIVE, "No", NULL);
@@ -439,7 +439,7 @@ _alert_scroll_case3_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    char buf[PATH_MAX];
    Eo *win = data;
-   Eo *efl_ui_popup= efl_add(EFL_UI_SCROLL_ALERT_POPUP_CLASS, win);
+   Eo *efl_ui_popup= efl_add(EFL_UI_ALERT_POPUP_CLASS, win);
 
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
 
@@ -447,7 +447,7 @@ _alert_scroll_case3_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    efl_file_simple_load(layout, buf, "efl_ui_popup_scroll_content");
 
-   efl_content_set(efl_ui_popup, layout);
+   efl_ui_widget_scrollable_content_set(efl_ui_popup, layout);
 
    efl_ui_alert_popup_button_set(efl_ui_popup, EFL_UI_ALERT_POPUP_BUTTON_POSITIVE, "Yes", NULL);
    efl_ui_alert_popup_button_set(efl_ui_popup, EFL_UI_ALERT_POPUP_BUTTON_NEGATIVE, "No", NULL);
@@ -465,7 +465,7 @@ _alert_scroll_case4_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    char buf[PATH_MAX];
    Eo *win = data;
-   Eo *efl_ui_popup= efl_add(EFL_UI_SCROLL_ALERT_POPUP_CLASS, win);
+   Eo *efl_ui_popup= efl_add(EFL_UI_ALERT_POPUP_CLASS, win);
 
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
 
@@ -473,7 +473,7 @@ _alert_scroll_case4_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    efl_file_simple_load(layout, buf, "efl_ui_popup_scroll_content");
 
-   efl_content_set(efl_ui_popup, layout);
+   efl_ui_widget_scrollable_content_set(efl_ui_popup, layout);
 
    efl_ui_alert_popup_button_set(efl_ui_popup, EFL_UI_ALERT_POPUP_BUTTON_POSITIVE, "Yes", NULL);
    efl_ui_alert_popup_button_set(efl_ui_popup, EFL_UI_ALERT_POPUP_BUTTON_NEGATIVE, "No", NULL);
@@ -491,7 +491,7 @@ _alert_scroll_case5_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    char buf[PATH_MAX];
    Eo *win = data;
-   Eo *efl_ui_popup= efl_add(EFL_UI_SCROLL_ALERT_POPUP_CLASS, win);
+   Eo *efl_ui_popup= efl_add(EFL_UI_ALERT_POPUP_CLASS, win);
 
    efl_text_set(efl_part(efl_ui_popup, "title"), "title");
 
@@ -499,7 +499,7 @@ _alert_scroll_case5_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    snprintf(buf, sizeof(buf), "%s/objects/test.edj", elm_app_data_dir_get());
    efl_file_simple_load(layout, buf, "efl_ui_popup_scroll_content");
 
-   efl_content_set(efl_ui_popup, layout);
+   efl_ui_widget_scrollable_content_set(efl_ui_popup, layout);
 
    efl_ui_alert_popup_button_set(efl_ui_popup, EFL_UI_ALERT_POPUP_BUTTON_POSITIVE, "Yes", NULL);
    efl_ui_alert_popup_button_set(efl_ui_popup, EFL_UI_ALERT_POPUP_BUTTON_NEGATIVE, "No", NULL);

@@ -47,14 +47,14 @@ static Eina_Size2D
 _popup_scroll_alert_setup(Eo **popup_ret, Eo **layout_ret)
 {
    Eina_Size2D layout_sz_min;
-   Eo *popup = *popup_ret = _popup_alert_setup(EFL_UI_SCROLL_ALERT_POPUP_CLASS);
+   Eo *popup = *popup_ret = _popup_alert_setup(EFL_UI_ALERT_POPUP_CLASS);
    Eo *layout = *layout_ret = _popup_layout_create(popup);
 
    /* should be 200x200 */
    layout_sz_min = efl_gfx_hint_size_combined_min_get(layout);
    efl_gfx_entity_size_set(layout, layout_sz_min);
 
-   efl_content_set(popup, layout);
+   efl_ui_widget_scrollable_content_set(popup, layout);
    return layout_sz_min;
 }
 
