@@ -38,6 +38,7 @@ endforeach
 
 pub_eo_files = [
   'efl_ui_widget.eo',
+  'efl_ui_widget_scrollable_content.eo',
   'efl_ui_animation_view.eo',
   'efl_ui_bg.eo',
   'efl_ui_button.eo',
@@ -851,6 +852,7 @@ elementary_src = [
   'elm_view_form.c',
   'elm_web2.c',
   'efl_ui_widget.c',
+  'efl_ui_widget_scrollable_content.c',
   'efl_ui_widget_common.c',
   'efl_ui_win.c',
   'efl_ui_win_inlined.c',
