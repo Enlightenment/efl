@@ -2815,8 +2815,8 @@ _edje_part_recalc_single_physics(Edje_Calc_Params *params,
 #endif
 
 static void
-_edje_part_calc_single_fixed_info(Edje *ed, Edje_Real_Part *ep,
-                                  Eina_Bool fixedw, Eina_Bool fixedh)
+_edje_part_recalc_single_fixed_info(Edje *ed, Edje_Real_Part *ep,
+                                    Eina_Bool fixedw, Eina_Bool fixedh)
 {
    INF("file %s, group %s has a non-fixed part '%s'. You should add "
        "'fixed: %d %d'. But in order to optimize the edje calc, we "
@@ -2825,10 +2825,10 @@ _edje_part_calc_single_fixed_info(Edje *ed, Edje_Real_Part *ep,
 }
 
 static void
-_edje_part_calc_single_image0(Edje *ed, Edje_Real_Part *ep,
-                              Edje_Calc_Params *params,
-                              Edje_Part_Description_Image *img_desc,
-                              FLOAT_T pos)
+_edje_part_recalc_single_image0(Edje *ed, Edje_Real_Part *ep,
+                                Edje_Calc_Params *params,
+                                Edje_Part_Description_Image *img_desc,
+                                FLOAT_T pos)
 {
    Edje_Real_Part_Set *set;
 
@@ -2857,9 +2857,9 @@ _edje_part_calc_single_image0(Edje *ed, Edje_Real_Part *ep,
 }
 
 static void
-_edje_part_calc_single_text0(Edje_Calc_Params *params,
-                             Edje_Part_Description_Text *text_desc,
-                             Edje_Color_Class *cc)
+_edje_part_recalc_single_text0(Edje_Calc_Params *params,
+                               Edje_Part_Description_Text *text_desc,
+                               Edje_Color_Class *cc)
 {
    _edje_calc_params_need_type_text(params);
    /* text.align */
@@ -2893,8 +2893,8 @@ _edje_part_calc_single_text0(Edje_Calc_Params *params,
 }
 
 static void
-_edje_part_calc_single_light0(Edje_Calc_Params *params,
-                             Edje_Part_Description_Light *light_desc)
+_edje_part_recalc_single_light0(Edje_Calc_Params *params,
+                                Edje_Part_Description_Light *light_desc)
 {
    _edje_calc_params_need_type_node(params);
    params->type.node->data[0] = light_desc->light.orientation.data[0];
@@ -2904,8 +2904,8 @@ _edje_part_calc_single_light0(Edje_Calc_Params *params,
 }
 
 static void
-_edje_part_calc_single_camera0(Edje_Calc_Params *params,
-                               Edje_Part_Description_Camera *camera_desc)
+_edje_part_recalc_single_camera0(Edje_Calc_Params *params,
+                                 Edje_Part_Description_Camera *camera_desc)
 {
    _edje_calc_params_need_type_node(params);
    params->type.node->data[0] = camera_desc->camera.orientation.data[0];
@@ -2915,8 +2915,8 @@ _edje_part_calc_single_camera0(Edje_Calc_Params *params,
 }
 
 static void
-_edje_part_calc_single_mesh0(Edje_Calc_Params *params,
-                             Edje_Part_Description_Mesh_Node *mesh_desc)
+_edje_part_recalc_single_mesh0(Edje_Calc_Params *params,
+                               Edje_Part_Description_Mesh_Node *mesh_desc)
 {
    _edje_calc_params_need_type_node(params);
    params->type.node->frame = mesh_desc->mesh_node.mesh.frame;
@@ -2986,7 +2986,7 @@ _edje_part_recalc_single(Edje *ed,
         fixedh = EINA_TRUE;
      }
    if (fixedw || fixedh)
-     _edje_part_calc_single_fixed_info(ed, ep, fixedw, fixedh);
+     _edje_part_recalc_single_fixed_info(ed, ep, fixedw, fixedh);
 
    /* colors */
    if (ep->part->type != EDJE_PART_TYPE_SPACER)
@@ -3034,63 +3034,33 @@ _edje_part_recalc_single(Edje *ed,
    // set parameters, some are required for recalc_single_text[block]
    switch (ep->part->type)
      {
-      case EDJE_PART_TYPE_IMAGE:
-        _edje_part_calc_single_image0(ed, ep, params, (Edje_Part_Description_Image *)desc, pos);
-        break;
       case EDJE_PART_TYPE_TEXT:
-      case EDJE_PART_TYPE_TEXTBLOCK:
-        _edje_part_calc_single_text0(params, (Edje_Part_Description_Text *)desc, cc);
-        break;
-      case EDJE_PART_TYPE_SPACER:
-      case EDJE_PART_TYPE_RECTANGLE:
-      case EDJE_PART_TYPE_BOX:
-      case EDJE_PART_TYPE_TABLE:
-      case EDJE_PART_TYPE_SWALLOW:
-      case EDJE_PART_TYPE_GROUP:
-      case EDJE_PART_TYPE_PROXY:
-      case EDJE_PART_TYPE_SNAPSHOT:
-      case EDJE_PART_TYPE_VECTOR:
-        break;
-      case EDJE_PART_TYPE_LIGHT:
-        _edje_part_calc_single_light0(params, (Edje_Part_Description_Light *)desc);
-        break;
-      case EDJE_PART_TYPE_CAMERA:
-        _edje_part_calc_single_camera0(params, (Edje_Part_Description_Camera *)desc);
-        break;
-      case EDJE_PART_TYPE_MESH_NODE:
-        _edje_part_calc_single_mesh0(params, (Edje_Part_Description_Mesh_Node *)desc);
-        break;
-      case EDJE_PART_TYPE_GRADIENT:
-        // FIXME: THIS ONE SHOULD NEVER BE TRIGGERED
-        break;
-      default:
-        break;
-     }
-
-   // limit size if needed
-   switch (ep->part->type)
-     {
-      // if we have text that wants to make the min size the text size...
-      case EDJE_PART_TYPE_TEXTBLOCK:
-        _edje_part_recalc_single_textblock(sc, ed, ep, (Edje_Part_Description_Text *)chosen_desc, params, &minw, &minh, &maxw, &maxh);
-        break;
-      case EDJE_PART_TYPE_TEXT:
+        _edje_part_recalc_single_text0(params, (Edje_Part_Description_Text *)desc, cc);
+        // limit size if needed
         _edje_part_recalc_single_text(sc, ed, ep, (Edje_Part_Description_Text *)desc, (Edje_Part_Description_Text *)chosen_desc, params, &minw, &minh, &maxw, &maxh);
         _edje_part_recalc_single_filter(ed, ep, desc, chosen_desc, pos);
         break;
+      case EDJE_PART_TYPE_TEXTBLOCK:
+        _edje_part_recalc_single_text0(params, (Edje_Part_Description_Text *)desc, cc);
+        // limit size if needed
+        _edje_part_recalc_single_textblock(sc, ed, ep, (Edje_Part_Description_Text *)chosen_desc, params, &minw, &minh, &maxw, &maxh);
+        break;
       // or table/box containers that want to do the same
       case EDJE_PART_TYPE_TABLE:
+        // limit size if needed
         if (((((Edje_Part_Description_Table *)chosen_desc)->table.min.h) ||
              (((Edje_Part_Description_Table *)chosen_desc)->table.min.v)))
           _edje_part_recalc_single_table(ep, chosen_desc, &minw, &minh);
         break;
       case EDJE_PART_TYPE_BOX:
+        // limit size if needed
         if ((((Edje_Part_Description_Box *)chosen_desc)->box.min.h) ||
             (((Edje_Part_Description_Box *)chosen_desc)->box.min.v))
           _edje_part_recalc_single_box(ep, chosen_desc, &minw, &minh);
         break;
-      // or an image that also wants to do this
       case EDJE_PART_TYPE_IMAGE:
+        _edje_part_recalc_single_image0(ed, ep, params, (Edje_Part_Description_Image *)desc, pos);
+        // limit size if needed
         if (chosen_desc->min.limit || chosen_desc->max.limit)
           _edje_part_recalc_single_image(ed, ep, chosen_desc, pos, &minw, &minh, &maxw, &maxh);
         EINA_FALLTHROUGH;
@@ -3099,6 +3069,21 @@ _edje_part_recalc_single(Edje *ed,
         // image. proxy, snapshot share this filter recalc, so fall through
         _edje_part_recalc_single_filter(ed, ep, desc, chosen_desc, pos);
         break;
+      case EDJE_PART_TYPE_LIGHT:
+        _edje_part_recalc_single_light0(params, (Edje_Part_Description_Light *)desc);
+        break;
+      case EDJE_PART_TYPE_CAMERA:
+        _edje_part_recalc_single_camera0(params, (Edje_Part_Description_Camera *)desc);
+        break;
+      case EDJE_PART_TYPE_MESH_NODE:
+        _edje_part_recalc_single_mesh0(params, (Edje_Part_Description_Mesh_Node *)desc);
+        break;
+      case EDJE_PART_TYPE_SPACER:
+      case EDJE_PART_TYPE_RECTANGLE:
+      case EDJE_PART_TYPE_SWALLOW:
+      case EDJE_PART_TYPE_GROUP:
+      case EDJE_PART_TYPE_VECTOR:
+      case EDJE_PART_TYPE_GRADIENT: // FIXME: THIS ONE SHOULD NEVER BE TRIGGERED
       default:
         break;
      }
