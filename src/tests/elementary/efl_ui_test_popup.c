@@ -177,7 +177,7 @@ EFL_START_TEST(efl_ui_test_popup_events)
    popup = efl_add(EFL_UI_POPUP_CLASS, win);
 
    efl_event_callback_add(popup, EFL_UI_POPUP_EVENT_BACKWALL_CLICKED,
-     (void*)event_callback_that_is_called_exactly_one_time_and_sets_a_single_int_data_pointer_when_called, &called);
+     (void*)event_callback_single_call_int_data, &called);
    efl_event_callback_add(popup, EFL_UI_POPUP_EVENT_TIMEOUT, event_callback_that_quits_the_main_loop_when_called, NULL);
    efl_gfx_hint_size_min_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
 
@@ -199,7 +199,7 @@ EFL_START_TEST(efl_ui_test_popup_events)
    efl_gfx_entity_size_set(repeat_test_btn, EINA_SIZE2D(100, 100));
    efl_text_set(repeat_test_btn, "Repeat Event Test");
    efl_event_callback_add(repeat_test_btn, EFL_INPUT_EVENT_CLICKED,
-     (void*)event_callback_that_is_called_exactly_one_time_and_sets_a_single_int_data_pointer_when_called, &called);
+     (void*)event_callback_single_call_int_data, &called);
    efl_ui_popup_part_backwall_repeat_events_set(efl_part(popup, "backwall"), EINA_TRUE);
    click_object(repeat_test_btn);
 

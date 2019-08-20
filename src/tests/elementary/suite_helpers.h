@@ -17,6 +17,6 @@ void click_object_at(Eo *obj, int x, int y);
 void wheel_object(Eo *obj, Eina_Bool horiz, Eina_Bool down);
 void wheel_part(Eo *obj, const char *part, Eina_Bool horiz, Eina_Bool down);
 void wheel_object_at(Eo *obj, int x, int y, Eina_Bool horiz, Eina_Bool down);
-void event_callback_that_is_called_exactly_one_time_and_sets_a_single_int_data_pointer_when_called(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
+void event_callback_single_call_int_data(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 void event_callback_that_quits_the_main_loop_when_called();
 #endif
