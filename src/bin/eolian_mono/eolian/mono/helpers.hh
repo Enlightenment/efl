@@ -164,6 +164,18 @@ bool has_regular_ancestor(attributes::klass_def const& cls)
 }
 
 /*
+ * Sugar for checking if a given class in in the inheritance tree
+ */
+bool inherits_from(attributes::klass_def const& cls, std::string const& name)
+{
+   return std::any_of(cls.inherits.begin(), cls.inherits.end(),
+           [&](attributes::klass_name const& inherit)
+           {
+                return name_helpers::klass_full_concrete_or_interface_name(inherit) == name;
+           });
+}
+
+/*
  * Gets all methods that this class should implement (i.e. that come from an unimplemented interface/mixin and the class itself)
  */
 template<typename Context>

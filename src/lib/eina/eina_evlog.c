@@ -36,9 +36,11 @@
 #include <time.h>
 #include <unistd.h>
 
-# ifdef HAVE_MMAP
-#  include <sys/mman.h>
-# endif
+#ifdef _WIN32
+# include <evil_private.h> /* mmap */
+#else
+# include <sys/mman.h>
+#endif
 
 #if __BYTE_ORDER == __LITTLE_ENDIAN
 #define SWAP_64(x) x

@@ -10,9 +10,14 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/mman.h>
 #include <fcntl.h>
 #include <inttypes.h>
+
+#ifdef _WIN32
+# include <evil_private.h> /* mmap */
+#else
+# include <sys/mman.h>
+#endif
 
 #include "eina_config.h"
 #include "eina_private.h"

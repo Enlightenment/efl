@@ -3,25 +3,6 @@
 
 #include <sys/types.h>
 
-#ifdef EAPI
-# undef EAPI
-#endif
-
-#ifdef EFL_BUILD
-# ifdef DLL_EXPORT
-#  define EAPI __declspec(dllexport)
-# else
-#  define EAPI
-# endif
-#else
-# define EAPI __declspec(dllimport)
-#endif
-
-
-#ifdef __cplusplus
-extern "C" {
-#endif
-
 
 /**
  * @def PROT_NONE
@@ -175,15 +156,6 @@ EAPI int   munmap(void  *addr,
  * @ingroup Evil_Mman
  */
 EAPI int mprotect(void *addr, size_t len, int prot);
-
-
-#ifdef __cplusplus
-}
-#endif
-
-
-#undef EAPI
-#define EAPI
 
 
 #endif /* __EVIL_SYS_MMAN_H__ */

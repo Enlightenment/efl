@@ -14,9 +14,13 @@
 #include <unistd.h>
 #include <math.h>
 #include <time.h>
-#ifdef HAVE_SYS_MMAN_H
+
+#ifdef _WIN32
+# include <evil_private.h> /* mmap */
+#else
 # include <sys/mman.h>
 #endif
+
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>

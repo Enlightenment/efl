@@ -911,8 +911,17 @@ _efl_ui_text_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Text_Data *sd)
      }
    else
      {
+        Eina_Size2D text_sz = efl_gfx_entity_size_get(sd->text_obj);
         edje_object_size_min_calc(wd->resize_obj, &edmin.w, &edmin.h);
-        efl_canvas_text_size_formatted_get(sd->text_obj, &min.w, &min.h);
+        efl_event_freeze(sd->text_obj);
+        efl_gfx_entity_size_set(sd->text_obj, EINA_SIZE2D(sz.w, 0));
+        /* ignore current object size for single-line since we always need to know the actual size */
+        if (sd->single_line)
+          efl_canvas_text_size_native_get(sd->text_obj, &min.w, &min.h);
+        else
+          efl_canvas_text_size_formatted_get(sd->text_obj, &min.w, &min.h);
+        efl_gfx_entity_size_set(sd->text_obj, text_sz);
+        efl_event_thaw(sd->text_obj);
         min.w += edmin.w;
         min.h += edmin.h;
         efl_gfx_hint_size_restricted_min_set(obj, min);

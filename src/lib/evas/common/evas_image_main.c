@@ -2,7 +2,9 @@
 # include "config.h"  /* so that EAPI in Eet.h is correctly defined */
 #endif
 
-#ifdef HAVE_SYS_MMAN_H
+#ifdef _WIN32
+# include <evil_private.h> /* mmap */
+#else
 # include <sys/mman.h>
 #endif
 

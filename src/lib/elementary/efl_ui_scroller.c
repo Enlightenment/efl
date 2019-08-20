@@ -214,7 +214,10 @@ _efl_ui_scroller_efl_content_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Scroller_
 static void
 _efl_ui_scroller_pan_resized_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   efl_canvas_group_change(data);
+   if (efl_canvas_scene_group_objects_calculating_get(evas_object_evas_get(data)))
+     efl_canvas_group_calculate(data);
+   else
+     efl_canvas_group_change(data);
 }
 
 static void
@@ -238,11 +241,17 @@ _focused_element(void *data, const Efl_Event *event)
 
 EOLIAN static Eo *
 _efl_ui_scroller_efl_object_constructor(Eo *obj,
-                                        Efl_Ui_Scroller_Data *sd EINA_UNUSED)
+                                        Efl_Ui_Scroller_Data *sd)
 {
    if (!elm_widget_theme_klass_get(obj))
      elm_widget_theme_klass_set(obj, "scroller");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
+
+   sd->smanager = efl_add(EFL_UI_SCROLL_MANAGER_CLASS, obj);
+   efl_ui_mirrored_set(sd->smanager, efl_ui_mirrored_get(obj));
+   efl_composite_attach(obj, sd->smanager);
+
+   efl_ui_scroll_connector_bind(obj, sd->smanager);
 
    return obj;
 }
@@ -255,10 +264,6 @@ _efl_ui_scroller_efl_object_finalize(Eo *obj,
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, NULL);
 
-   sd->smanager = efl_add(EFL_UI_SCROLL_MANAGER_CLASS, obj);
-   efl_ui_mirrored_set(sd->smanager, efl_ui_mirrored_get(obj));
-   efl_composite_attach(obj, sd->smanager);
-
    sd->pan_obj = efl_add(EFL_UI_PAN_CLASS, obj);
 
    efl_ui_scroll_manager_pan_set(sd->smanager, sd->pan_obj);
@@ -266,7 +271,6 @@ _efl_ui_scroller_efl_object_finalize(Eo *obj,
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
 
-   efl_ui_scroll_connector_bind(obj, sd->smanager);
    efl_event_callback_add(sd->pan_obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
                           _efl_ui_scroller_pan_resized_cb, obj);
 

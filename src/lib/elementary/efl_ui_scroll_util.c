@@ -210,19 +210,6 @@ _scroll_connector_bar_hide_cb(void *data, const Efl_Event *event)
    else if (type == EFL_UI_SCROLLBAR_DIRECTION_VERTICAL)
      efl_layout_signal_emit(wd->resize_obj, "efl,action,hide,vbar", "efl");
 }
-static void
-_scroll_connector_resized_cb(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   Scroll_Connector_Context *ctx = data;
-   efl_canvas_group_change(ctx->obj);
-}
-
-static void
-_scroll_connector_size_hint_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
-{
-   Scroll_Connector_Context *ctx = data;
-   efl_canvas_group_change(ctx->obj);
-}
 
 void
 efl_ui_scroll_connector_bind(Eo *obj, Eo *manager)
@@ -276,10 +263,6 @@ efl_ui_scroll_connector_bind(Eo *obj, Eo *manager)
                           _scroll_connector_bar_show_cb, ctx);
    efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_HIDE,
                           _scroll_connector_bar_hide_cb, ctx);
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED,
-                          _scroll_connector_resized_cb, ctx);
-   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED,
-                          _scroll_connector_size_hint_changed_cb, ctx);
 }
 
 void

@@ -15,9 +15,7 @@ if target_machine.system() == 'windows'
   'evil_time.h',
   'evil_unistd.h',
   'evil_util.h',
-  'dirent.h',
   ]
-  evil_header_sys_src = [join_paths('sys','mman.h')]
 
   evil_src = [
   'evil_dlfcn.c',

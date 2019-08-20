@@ -10,7 +10,6 @@
 
 #include <io.h>
 
-#include "sys/mman.h"
 #include "evil_private.h"
 
 /*

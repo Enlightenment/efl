@@ -1437,6 +1437,8 @@ _hoversel_position(Evas_Object *obj)
      edje_object_part_text_cursor_geometry_get
        (sd->entry_edje, "elm.text", &cx, &cy, &cw, &ch);
 
+   if (efl_canvas_group_need_recalculate_get(sd->hoversel))
+     efl_canvas_group_calculate(sd->hoversel);
    evas_object_size_hint_combined_min_get(sd->hoversel, &mw, &mh);
    if (cx + mw > w)
      cx = w - mw;
@@ -1811,8 +1813,8 @@ _menu_call(Evas_Object *obj)
         if (sd->hoversel)
           {
              _hoversel_position(obj);
-             evas_object_show(sd->hoversel);
              elm_hoversel_hover_begin(sd->hoversel);
+             evas_object_show(sd->hoversel);
           }
 
         if (!_elm_config->desktop_entry)

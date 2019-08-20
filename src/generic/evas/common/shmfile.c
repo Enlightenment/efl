@@ -11,16 +11,19 @@
 # include <netinet/in.h>
 #endif
 #include <time.h>
-#ifdef HAVE_SHM_OPEN
-# include <sys/mman.h>
-#endif
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <string.h>
 #include <zlib.h>
 
 #ifdef _WIN32
+# ifndef WIN32_LEAN_AND_MEAN
+#  define WIN32_LEAN_AND_MEAN
+# endif
 # include <windows.h>
+# undef WIN32_LEAN_AND_MEAN
+#else
+# include <sys/mman.h>
 #endif
 
 #ifdef __cplusplus

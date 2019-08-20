@@ -14,7 +14,9 @@
 #include <fcntl.h>
 #include <unistd.h>
 
-#if defined(HAVE_SYS_MMAN_H) || defined(_WIN32)
+#ifdef _WIN32
+# include <evil_private.h> /* mmap */
+#else
 # include <sys/mman.h>
 #endif
 

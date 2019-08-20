@@ -657,6 +657,7 @@ struct _Evas_Object_Textblock
    } gfx_filter;
    Eina_Bool                           redraw : 1;
    Eina_Bool                           changed : 1;
+   Eina_Bool                           pause_change : 1;
    Eina_Bool                           obstacle_changed : 1;
    Eina_Bool                           content_changed : 1;
    Eina_Bool                           format_changed : 1;
@@ -1952,6 +1953,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * @li "#RRGGBBAA"
       * @li "#RGB"
       * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
       * @li "color_name"  like "red"
       * @code
       * color=<color>
@@ -1971,6 +1974,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * @li "#RRGGBBAA"
       * @li "#RGB"
       * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
       * @li "color_name"  like "red"
       * @code
       * underline_color=<color>
@@ -1991,6 +1996,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * @li "#RRGGBBAA"
       * @li "#RGB"
       * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
       * @li "color_name"  like "red"
       * @code
       * underline2_color=<color>
@@ -2010,6 +2017,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * @li "#RRGGBBAA"
       * @li "#RGB"
       * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
       * @li "color_name"  like "red"
       * @code
       * underline_dash_color=<color>
@@ -2030,6 +2039,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * @li "#RRGGBBAA"
       * @li "#RGB"
       * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
       * @li "color_name"  like "red"
       * @code
       * outline_color=<color>
@@ -2050,6 +2061,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * @li "#RRGGBBAA"
       * @li "#RGB"
       * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
       * @li "color_name"  like "red"
       * @code
       * shadow_color=<color>
@@ -2070,6 +2083,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * @li "#RRGGBBAA"
       * @li "#RGB"
       * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
       * @li "color_name"  like "red"
       * @code
       * glow_color=<color>
@@ -2090,6 +2105,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * @li "#RRGGBBAA"
       * @li "#RGB"
       * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
       * @li "color_name"  like "red"
       * @code
       * glow2_color=<color>
@@ -2110,6 +2127,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * @li "#RRGGBBAA"
       * @li "#RGB"
       * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
       * @li "color_name"  like "red"
       * @code
       * backing_color=<color>
@@ -2130,6 +2149,8 @@ _format_command(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const ch
       * @li "#RRGGBBAA"
       * @li "#RGB"
       * @li "#RGBA"
+      * @li "rgb(r,g,b)"
+      * @li "rgba(r,g,b,a)"
       * @li "color_name"  like "red"
       * @code
       * strikethrough_color=<color>
@@ -8075,6 +8096,10 @@ _evas_object_textblock_text_markup_prepend(Eo *eo_obj,
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    TB_HEAD();
+
+   /* Stop calls for _evas_textblock_changed for each cursor_text_append or cursor_format_append
+    * this should be done once, when markup_prepend finished */
+   o->pause_change = EINA_TRUE;
    if (text)
      {
         char *s, *p;
@@ -8119,6 +8144,12 @@ _evas_object_textblock_text_markup_prepend(Eo *eo_obj,
                        _prepend_escaped_char(cur, esc_start, esc_end + 1);
                        esc_start = esc_end = NULL;
                     }
+                  else if (*p == 0 && esc_start) /* escape start with no end, append it as text */
+                    {
+                       _prepend_text_run(cur, esc_start, p);
+                       esc_start = esc_end = NULL;
+                       s = NULL;
+                    }
                   else if (*p == 0)
                     {
                        _prepend_text_run(cur, s, p);
@@ -8129,6 +8160,12 @@ _evas_object_textblock_text_markup_prepend(Eo *eo_obj,
                }
              if (*p == '<')
                {
+                  if (esc_start) /* escape start with no end, append it as text */
+                    {
+                       _prepend_text_run(cur, esc_start, p);
+                       esc_start = esc_end = NULL;
+                       s = NULL;
+                    }
                   if (!esc_start)
                     {
                        /* Append the text prior to this to the textblock and mark
@@ -8149,6 +8186,12 @@ _evas_object_textblock_text_markup_prepend(Eo *eo_obj,
                }
              else if (*p == '&')
                {
+                  if (esc_start) /* escape start with no end, append it as text */
+                    {
+                       _prepend_text_run(cur, esc_start, p);
+                       esc_start = esc_end = NULL;
+                       s = NULL;
+                    }
                   if (!tag_start)
                     {
                        /* Append the text prior to this to the textblock and mark
@@ -8189,6 +8232,7 @@ _evas_object_textblock_text_markup_prepend(Eo *eo_obj,
              p++;
           }
      }
+   o->pause_change = EINA_FALSE;
    _evas_textblock_changed(o, eo_obj);
 }
 
@@ -10996,7 +11040,8 @@ _evas_textblock_cursor_text_append(Efl_Text_Cursor_Cursor *cur, const char *_tex
    /* Update all the cursors after our position. */
    _evas_textblock_cursors_update_offset(cur, cur->node, cur->pos, len);
 
-   _evas_textblock_changed(o, cur->obj);
+   if (!o->pause_change)
+     _evas_textblock_changed(o, cur->obj);
    n->dirty = EINA_TRUE;
    free(text);
 
@@ -11342,7 +11387,8 @@ _evas_textblock_cursor_format_append(Efl_Text_Cursor_Cursor *cur,
         o->format_changed = EINA_TRUE;
      }
 
-   _evas_textblock_changed(o, cur->obj);
+   if (!o->pause_change)
+     _evas_textblock_changed(o, cur->obj);
 
    Efl_Text_Cursor_Cursor *ocur = o->cursor;
    if (!ocur->node)

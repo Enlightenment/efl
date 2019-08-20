@@ -4654,6 +4654,29 @@ EFL_START_TEST(efl_canvas_text_markup)
 }
 EFL_END_TEST
 
+EFL_START_TEST(efl_canvas_text_markup_invalid_escape)
+{
+   START_EFL_CANVAS_TEXT_TEST();
+
+   char * text1 = "Hello";
+   char * text2 = "Hello&123";
+   char * text3 = "Hello&123&456";
+   Evas_Coord fw1, fw2, fw3;
+
+   efl_text_markup_set(txt,text1);
+   efl_canvas_text_size_native_get(txt, &fw1, NULL);
+   efl_text_markup_set(txt,text2);
+   efl_canvas_text_size_native_get(txt, &fw2, NULL);
+   fail_if(fw2 <= fw1);
+   efl_text_markup_set(txt,text3);
+   efl_canvas_text_size_native_get(txt, &fw3, NULL);
+   fail_if(fw3 <= fw2);
+
+   END_EFL_CANVAS_TEXT_TEST();
+}
+EFL_END_TEST
+
+
 EFL_START_TEST(efl_text_font)
 {
    START_EFL_CANVAS_TEXT_TEST();
@@ -4715,6 +4738,7 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, efl_text);
    tcase_add_test(tc, efl_canvas_text_cursor);
    tcase_add_test(tc, efl_canvas_text_markup);
+   tcase_add_test(tc, efl_canvas_text_markup_invalid_escape);
    tcase_add_test(tc, efl_text_font);
 }
 

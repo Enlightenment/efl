@@ -49,6 +49,7 @@ extern "C" {
 #include "evil_langinfo.h"
 #include "evil_locale.h"
 #include "evil_main.h"
+#include "evil_mman.h"
 #include "evil_stdlib.h"
 #include "evil_stdio.h"
 #include "evil_string.h"

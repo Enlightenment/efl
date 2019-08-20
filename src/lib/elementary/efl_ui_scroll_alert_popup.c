@@ -37,20 +37,20 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd,
 
    if ((max_size.w == -1) && (max_size.h == -1))
      {
-        elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
+        efl_ui_scrollable_match_content_set(pd->scroller, EINA_FALSE, EINA_FALSE);
         efl_gfx_entity_size_set(obj, size);
      }
    else if ((max_size.w == -1) && (max_size.h != -1))
      {
         if (max_size.h < scr_min.h)
           {
-             elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
+             efl_ui_scrollable_match_content_set(pd->scroller, EINA_FALSE, EINA_FALSE);
              efl_gfx_entity_size_set(obj, EINA_SIZE2D(size.w, max_size.h));
           }
         else
           {
              new_min.h = scr_min.h;
-             elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_TRUE);
+             efl_ui_scrollable_match_content_set(pd->scroller, EINA_FALSE, EINA_TRUE);
              efl_gfx_entity_size_set(obj, EINA_SIZE2D(size.w, scr_min.h));
           }
      }
@@ -58,13 +58,13 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd,
      {
         if (max_size.w < scr_min.w)
           {
-             elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
+             efl_ui_scrollable_match_content_set(pd->scroller, EINA_FALSE, EINA_FALSE);
              efl_gfx_entity_size_set(obj, EINA_SIZE2D(max_size.w, size.h));
           }
         else
           {
              new_min.w = scr_min.w;
-             elm_scroller_content_min_limit(pd->scroller, EINA_TRUE, EINA_FALSE);
+             efl_ui_scrollable_match_content_set(pd->scroller, EINA_TRUE, EINA_FALSE);
              efl_gfx_entity_size_set(obj, EINA_SIZE2D(scr_min.w, size.h));
           }
      }
@@ -96,7 +96,7 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd,
              new_size.h = scr_min.h;
           }
 
-        elm_scroller_content_min_limit(pd->scroller, min_limit_w, min_limit_h);
+        efl_ui_scrollable_match_content_set(pd->scroller, min_limit_w, min_limit_h);
         efl_gfx_entity_size_set(obj, new_size);
      }
    efl_canvas_group_calculate(pd->scroller);
@@ -113,7 +113,7 @@ _sizing_eval(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd)
 
    //Calculate popup's min size including scroller's min size
      {
-        elm_scroller_content_min_limit(pd->scroller, EINA_TRUE, EINA_TRUE);
+        efl_ui_scrollable_match_content_set(pd->scroller, EINA_TRUE, EINA_TRUE);
         efl_canvas_group_calculate(pd->scroller);
 
         elm_coords_finger_size_adjust(1, &scr_minw, 1, &scr_minh);
@@ -123,14 +123,13 @@ _sizing_eval(Eo *obj, Efl_Ui_Scroll_Alert_Popup_Data *pd)
 
    //Calculate popup's min size except scroller's min size
      {
-        elm_scroller_content_min_limit(pd->scroller, EINA_FALSE, EINA_FALSE);
+        efl_ui_scrollable_match_content_set(pd->scroller, EINA_FALSE, EINA_FALSE);
         efl_canvas_group_calculate(pd->scroller);
 
         elm_coords_finger_size_adjust(1, &obj_minw, 1, &obj_minh);
         edje_object_size_min_restricted_calc
            (wd->resize_obj, &obj_minw, &obj_minh, obj_minw, obj_minh);
      }
-
    _scroller_sizing_eval(obj, pd, EINA_SIZE2D(obj_minw, obj_minh), EINA_SIZE2D(scr_minw, scr_minh));
 }
 
@@ -139,13 +138,10 @@ _efl_ui_scroll_alert_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Scro
 {
    EFL_UI_POPUP_DATA_GET_OR_RETURN(obj, ppd);
    ppd->in_calc = EINA_TRUE;
-   /* When efl_canvas_group_change() is called, just flag is set instead of size
-    * calculation.
-    * The actual size calculation is done here when the object is rendered to
-    * avoid duplicate size calculations. */
-   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
 
    _sizing_eval(obj, pd);
+   efl_canvas_group_need_recalculate_set(pd->scroller, EINA_FALSE);
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
 
    //Not to calculate size by super class
    efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
@@ -226,10 +222,9 @@ _efl_ui_scroll_alert_popup_efl_object_constructor(Eo *obj,
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
 
-   pd->scroller = elm_scroller_add(obj);
-   elm_object_style_set(pd->scroller, "popup/no_inset_shadow");
-   elm_scroller_policy_set(pd->scroller, ELM_SCROLLER_POLICY_AUTO,
-                           ELM_SCROLLER_POLICY_AUTO);
+   pd->scroller = efl_add(EFL_UI_SCROLLER_CLASS, obj,
+     efl_ui_widget_style_set(efl_added, "popup/no_inset_shadow"),
+     efl_ui_scrollbar_bar_mode_set(efl_added, EFL_UI_SCROLLBAR_MODE_AUTO, EFL_UI_SCROLLBAR_MODE_AUTO));
 
    efl_content_set(efl_part(efl_super(obj, MY_CLASS), "efl.content"),
                    pd->scroller);

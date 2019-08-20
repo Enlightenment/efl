@@ -501,6 +501,7 @@ _activate(Evas_Object *obj)
      {
         ELM_HOVERSEL_ITEM_DATA_GET(eo_item, item);
         evas_object_show(VIEW(item));
+        efl_canvas_group_calculate(VIEW(item));
         elm_box_pack_end(sd->bx, VIEW(item));
      }
 
@@ -678,7 +679,8 @@ _elm_hoversel_efl_gfx_entity_visible_set(Eo *obj, Elm_Hoversel_Data *sd, Eina_Bo
      return;
 
    efl_gfx_entity_visible_set(efl_super(obj, MY_CLASS), vis);
-   efl_gfx_entity_visible_set(sd->hover, vis);
+   if (sd->hover)
+     efl_gfx_entity_visible_set(sd->hover, vis);
 }
 
 EOLIAN static void

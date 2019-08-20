@@ -1281,6 +1281,22 @@ group { name: "efl/scroller:noclip";
    }
 }
 
+group { name: "efl/scroller:popup/no_inset_shadow";
+   inherit: "efl/scroller";
+   parts {
+      part { name: "inset";
+         description { state: "default" 0.0;
+            visible: 0;
+         }
+      }
+      part { name: "shadow";
+         description { state: "default" 0.0;
+            visible: 0;
+         }
+      }
+   }
+}
+
 group { name: "efl/scroller/contents";
    parts {
       part { name: "efl.content";
