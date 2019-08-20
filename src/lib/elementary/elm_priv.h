@@ -1043,7 +1043,7 @@ void efl_ui_scroll_connector_unbind(Eo *obj);
 
 typedef struct
 {
-
+   Eina_Bool custom_parent_provider;
 } Efl_Ui_Shared_Win_Data;
 
 Efl_Ui_Shared_Win_Data* efl_ui_win_shared_data_get(Efl_Ui_Win *win);
