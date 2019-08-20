@@ -269,7 +269,7 @@ _efl_ui_widget_focus_highlight_object_get(const Evas_Object *obj)
 }
 
 static Eina_Bool
-_candidacy_exam(Eo *obj)
+_legacy_focus_eval(Eo *obj)
 {
    Eina_List *lst;
    Efl_Ui_Widget *wid = obj, *top;
@@ -278,8 +278,6 @@ _candidacy_exam(Eo *obj)
    wid_pd = efl_data_scope_get(wid, MY_CLASS);
    do {
 
-     if (wid_pd->disabled) return EINA_TRUE;
-     if (wid_pd->tree_unfocusable) return EINA_TRUE;
      top = wid;
 
      wid = elm_widget_parent_get(wid);
@@ -394,8 +392,15 @@ _eval_registration_candidate(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool *shou
     //can focus can be overridden by the following properties
     if ((!pd->parent_obj) ||
         (!evas_object_visible_get(obj)) ||
-        (_candidacy_exam(obj)))
+        pd->disabled > 0 ||
+        pd->tree_unfocusable > 0)
       return;
+
+    if (((Efl_Ui_Shared_Win_Data*)pd->shared_win_data)->legacy_focus_api_used)
+      {
+         if (_legacy_focus_eval(obj))
+           return;
+      }
 
     if (pd->can_focus)
       {
