@@ -191,10 +191,11 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd, Elm_Layout_Data *ld)
 
    if (ld)
      {
+        Eina_Size2D size = efl_gfx_entity_size_get(sd->obj);
         if (ld->restricted_calc_w)
-          rest_w = MIN(wd->w, rest_w);
+          rest_w = MIN(size.w, rest_w);
         if (ld->restricted_calc_h)
-          rest_h = MIN(wd->h, rest_h);
+          rest_h = MIN(size.h, rest_h);
      }
 
    edje_object_size_min_restricted_calc(wd->resize_obj, &minw, &minh,

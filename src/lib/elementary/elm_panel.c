@@ -58,14 +58,13 @@ _mirrored_set(Evas_Object *obj,
 EOLIAN static void
 _elm_panel_efl_canvas_group_calculate(Eo *obj, Elm_Panel_Data *sd)
 {
-   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-
    if (sd->delete_me) return;
 
    if (sd->scrollable)
      {
-        if (sd->hidden) _drawer_close(obj, wd->w, wd->h, EINA_FALSE);
-        else _drawer_open(obj, wd->w, wd->h, EINA_FALSE);
+        Eina_Size2D size = efl_gfx_entity_size_get(obj);
+        if (sd->hidden) _drawer_close(obj, size.w, size.h, EINA_FALSE);
+        else _drawer_open(obj, size.w, size.h, EINA_FALSE);
      }
 
    efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
