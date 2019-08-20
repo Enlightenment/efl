@@ -6,7 +6,7 @@ class @beta Ector.Renderer.Software.Shape extends Ector.Renderer.Software implem
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
       Ector.Renderer.Software.op_fill;
-      Ector.Renderer.mask { set; }
+      Ector.Renderer.comp_method { set; }
       Ector.Renderer.crc { get; }
       Efl.Gfx.Path.commit;
       Efl.Object.constructor;
