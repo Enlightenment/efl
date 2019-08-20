@@ -132,10 +132,12 @@ typedef struct {
    Efl_Ui_Pan *pan;
    Eina_List *selected;
    Eina_List *items;
+   Efl_Ui_Selection *fallback;
    Efl_Ui_Select_Mode mode;
    Efl_Ui_Layout_Orientation dir;
    Eina_Size2D content_min_size;
    Efl_Ui_Position_Manager_Entity *pos_man;
+   Eina_Future *selection_changed_job;
    struct {
       Eina_Bool w;
       Eina_Bool h;
@@ -418,6 +420,8 @@ _efl_ui_collection_efl_object_invalidate(Eo *obj, Efl_Ui_Collection_Data *pd EIN
 {
    efl_ui_collection_position_manager_set(obj, NULL);
 
+   efl_ui_single_selectable_fallback_selection_set(obj, NULL);
+
    deselect_all(pd);
 
    while(pd->items)
@@ -492,12 +496,51 @@ _efl_ui_collection_efl_ui_multi_selectable_select_mode_get(const Eo *obj EINA_UN
    return pd->mode;
 }
 
+static Eina_Value
+_schedule_selection_job_cb(Eo *o, void *data EINA_UNUSED, const Eina_Value value EINA_UNUSED)
+{
+   MY_DATA_GET(o, pd);
+
+   pd->selection_changed_job = NULL;
+
+   efl_event_callback_call(o, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, NULL);
+
+   return EINA_VALUE_EMPTY;
+}
+
+static void
+_schedule_selection_changed(Eo *obj, Efl_Ui_Collection_Data *pd)
+{
+   Eina_Future *f;
+
+   if (pd->selection_changed_job) return;
+
+   f = efl_loop_job(efl_main_loop_get());
+   pd->selection_changed_job = efl_future_then(obj, f, _schedule_selection_job_cb);
+
+}
+
+static void
+_apply_fallback(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
+{
+   if (pd->fallback && !pd->selected)
+     {
+        efl_ui_selectable_selected_set(pd->fallback, EINA_TRUE);
+     }
+}
+
 static void
 _selection_changed(void *data, const Efl_Event *ev)
 {
    Eina_Bool selection = *((Eina_Bool*) ev->info);
    Eo *obj = data;
    MY_DATA_GET(obj, pd);
+   Efl_Ui_Selection *fallback;
+
+   //if this is the highest call in the tree of selection changes, safe the fallback and apply it later
+   //this way we ensure that we are not accidently adding fallback even if we just want to have a empty selection list
+   fallback = pd->fallback;
+   pd->fallback = NULL;
 
    if (selection)
      {
@@ -520,13 +563,15 @@ _selection_changed(void *data, const Efl_Event *ev)
              return;
           }
         pd->selected = eina_list_append(pd->selected, ev->object);
-        efl_event_callback_call(obj, EFL_UI_EVENT_ITEM_SELECTED, ev->object);
      }
    else
      {
         pd->selected = eina_list_remove(pd->selected, ev->object);
-        efl_event_callback_call(obj, EFL_UI_EVENT_ITEM_UNSELECTED, ev->object);
      }
+
+   pd->fallback = fallback;
+   _apply_fallback(obj, pd);
+   _schedule_selection_changed(obj, pd);
 }
 
 static void
@@ -1010,6 +1055,19 @@ _efl_ui_collection_efl_ui_multi_selectable_unselect_range(Eo *obj, Efl_Ui_Collec
    _range_selection_find(obj, pd, a, b, EINA_FALSE);
 }
 
+EOLIAN static void
+_efl_ui_collection_efl_ui_single_selectable_fallback_selection_set(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd, Efl_Ui_Selectable *fallback)
+{
+   pd->fallback = fallback;
+   _apply_fallback(obj, pd);
+}
+
+EOLIAN static Efl_Ui_Selectable*
+_efl_ui_collection_efl_ui_single_selectable_fallback_selection_get(const Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
+{
+   return pd->fallback;
+}
+
 #include "efl_ui_collection.eo.c"
 
 #define ITEM_IS_OUTSIDE_VISIBLE(id) id < collection_pd->start_id || id > collection_pd->end_id
@@ -1089,5 +1147,6 @@ _efl_ui_collection_focus_manager_efl_ui_focus_manager_manager_focus_set(Eo *obj,
      }
    efl_ui_focus_manager_focus_set(efl_super(obj, EFL_UI_COLLECTION_FOCUS_MANAGER_CLASS), focus);
 }
+
 
 #include "efl_ui_collection_focus_manager.eo.c"

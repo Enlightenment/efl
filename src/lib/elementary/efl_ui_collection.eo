@@ -3,7 +3,6 @@ class @beta Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
                    Efl.Ui.Scrollbar,
                    Efl.Pack_Linear, Efl.Pack_Layout,
                    Efl.Ui.Layout_Orientable,
-                   Efl.Ui.Container_Selectable,
                    Efl.Ui.Multi_Selectable,
                    Efl.Ui.Focus.Manager_Sub,
                    Efl.Ui.Widget_Focus_Manager
@@ -71,6 +70,7 @@ class @beta Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
       Efl.Ui.Multi_Selectable.unselect_all;
       Efl.Ui.Multi_Selectable.select_range;
       Efl.Ui.Multi_Selectable.unselect_range;
+      Efl.Ui.Single_Selectable.fallback_selection {get; set;}
    }
    events {
       item,pressed : Efl.Ui.Item; [[A $press event occurred over an item.]]
