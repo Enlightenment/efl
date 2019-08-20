@@ -2788,7 +2788,7 @@ void          _edje_message_del             (Edje *ed);
 
 void _edje_textblock_styles_add(Edje *ed, Edje_Real_Part *ep);
 void _edje_textblock_styles_del(Edje *ed, Edje_Part *pt);
-void _edje_textblock_styles_cache_free(Edje *ed, const char *text_class);
+void _edje_textblock_style_all_update_text_class(Edje *ed, const char *text_class);
 void _edje_textblock_style_all_update(Edje *ed);
 void _edje_textblock_style_parse_and_fix(Edje_File *edf);
 void _edje_textblock_style_cleanup(Edje_File *edf);

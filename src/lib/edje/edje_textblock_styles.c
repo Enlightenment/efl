@@ -366,8 +366,12 @@ _edje_textblock_styles_del(Edje *ed, Edje_Part *pt)
      }
 }
 
+/*
+ * Finds all the styles having text class tag as text_class and
+ * updates them.
+ */
 void
-_edje_textblock_styles_cache_free(Edje *ed, const char *text_class)
+_edje_textblock_style_all_update_text_class(Edje *ed, const char *text_class)
 {
    Eina_List *l, *ll;
    Edje_Style *stl;
@@ -387,7 +391,7 @@ _edje_textblock_styles_cache_free(Edje *ed, const char *text_class)
 
              if (!strcmp(tag->text_class, text_class))
                {
-                  stl->cache = EINA_FALSE;
+                  _edje_textblock_style_update(ed, stl, EINA_TRUE);
                   break;
                }
           }
