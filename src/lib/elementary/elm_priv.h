@@ -1041,4 +1041,11 @@ void efl_ui_scroll_connector_bind(Eo *obj, Eo *manager);
  */
 void efl_ui_scroll_connector_unbind(Eo *obj);
 
+typedef struct
+{
+
+} Efl_Ui_Shared_Win_Data;
+
+Efl_Ui_Shared_Win_Data* efl_ui_win_shared_data_get(Efl_Ui_Win *win);
+
 #endif
