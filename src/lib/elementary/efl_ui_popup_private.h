@@ -7,6 +7,9 @@ struct _Efl_Ui_Popup_Data
    Eo                *win_parent;
    Eo                *backwall;
    Efl_Ui_Popup_Align align;
+   Eo                 *anchor;
+   Efl_Ui_Popup_Align  priority[5];
+   Efl_Ui_Popup_Align  used_align;
    Ecore_Timer       *timer;
    double             timeout;
    Eina_Bool          in_calc : 1;

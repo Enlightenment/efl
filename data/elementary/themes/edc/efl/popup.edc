@@ -121,15 +121,10 @@ group { "efl/alert_popup";
    }
 }
 
-group { "efl/anchor_popup";
-   inherit: "efl/popup";
-}
-
 group { "efl/popup/backwall";
    alias: "efl/alert_popup/backwall";
    alias: "efl/scroll_alert_popup/backwall";
    alias: "efl/text_alert_popup/backwall";
-   alias: "efl/anchor_popup/backwall";
    parts {
       rect { "base";
          desc { "default";
