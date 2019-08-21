@@ -1603,7 +1603,7 @@ _efl_ui_image_scalable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, Ein
 }
 
 EOLIAN static void
-_efl_ui_image_align_set(Eo *obj, Efl_Ui_Image_Data *sd, double align_x, double align_y)
+_efl_ui_image_efl_gfx_arrangement_content_align_set(Eo *obj, Efl_Ui_Image_Data *sd, double align_x, double align_y)
 {
    if (align_x > 1.0)
      align_x = 1.0;
@@ -1624,7 +1624,7 @@ _efl_ui_image_align_set(Eo *obj, Efl_Ui_Image_Data *sd, double align_x, double a
 }
 
 EOLIAN static void
-_efl_ui_image_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, double *align_x, double *align_y)
+_efl_ui_image_efl_gfx_arrangement_content_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, double *align_x, double *align_y)
 {
    if (align_x) *align_x = sd->align_x;
    if (align_y) *align_y = sd->align_y;
