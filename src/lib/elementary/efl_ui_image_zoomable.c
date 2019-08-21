@@ -377,15 +377,15 @@ _efl_ui_image_zoomable_pan_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Imag
 
    evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
    _image_place(
-       wd->obj, psd->wsd->pan_x, psd->wsd->pan_y,
+       psd->wobj, psd->wsd->pan_x, psd->wsd->pan_y,
        ox - psd->wsd->g_layer_zoom.imx, oy - psd->wsd->g_layer_zoom.imy, ow,
        oh);
 
    EINA_LIST_FOREACH(psd->wsd->grids, l, g)
      {
-        _grid_load(wd->obj, g);
+        _grid_load(psd->wobj, g);
         _grid_place(
-              wd->obj, g, psd->wsd->pan_x,
+              psd->wobj, g, psd->wsd->pan_x,
              psd->wsd->pan_y, ox - psd->wsd->g_layer_zoom.imx,
              oy - psd->wsd->g_layer_zoom.imy, ow, oh);
      }
@@ -536,7 +536,7 @@ _tile_preloaded_cb(void *data,
                    "efl");
 
              efl_event_callback_legacy_call
-               (wd->obj, EFL_UI_IMAGE_ZOOMABLE_EVENT_LOADED_DETAIL, NULL);
+               (git->obj, EFL_UI_IMAGE_ZOOMABLE_EVENT_LOADED_DETAIL, NULL);
           }
      }
 }
