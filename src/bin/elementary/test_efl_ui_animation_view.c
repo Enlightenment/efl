@@ -313,12 +313,12 @@ test_efl_ui_animation_view(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
            efl_pack(box, efl_added));
 
    //Create Vector object.
-   snprintf(buf, sizeof(buf), "%s/images/ubuntu.svg", elm_app_data_dir_get());
+   snprintf(buf, sizeof(buf), "%s/images/tiger.svg", elm_app_data_dir_get());
    efl_add(EFL_CANVAS_VG_OBJECT_CLASS, win,
            efl_gfx_hint_weight_set(efl_added, EFL_GFX_HINT_EXPAND, EFL_GFX_HINT_EXPAND),
            efl_gfx_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),
            efl_gfx_entity_size_set(efl_added, EINA_SIZE2D(600, 600)),
-           efl_file_set(efl_added, buf),
+           efl_file_simple_load(efl_added, buf, NULL),
            efl_gfx_entity_visible_set(efl_added, EINA_TRUE),
            efl_pack(box, efl_added));
 
