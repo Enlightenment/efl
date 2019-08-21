@@ -1,6 +1,7 @@
 
 enum Efl.Ui.Animation_View_State
 {
+   [[State of animation view]]
    not_ready, [[Animation is not ready to play. (Probably, it didn't file set yet or failed to read file.]]
    play, [[Animation is on playing. see @Efl.Ui.Animation_View.play]]
    play_back, [[Animation is on playing back (rewinding). see @Efl.Ui.Animation_View.play_back]]
