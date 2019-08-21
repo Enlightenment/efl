@@ -150,7 +150,7 @@ _sizing_eval(Eo *obj, Efl_Ui_Widget_Scrollable_Content_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_widget_scrollable_content_efl_canvas_group_calculate(Eo *obj, Efl_Ui_Widget_Scrollable_Content_Data *pd)
+_efl_ui_widget_scrollable_content_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Widget_Scrollable_Content_Data *pd)
 {
    pd->did_group_calc = EINA_FALSE;
    if (!pd->scroller)

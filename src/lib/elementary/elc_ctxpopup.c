@@ -532,7 +532,7 @@ _elm_ctxpopup_efl_ui_widget_widget_sub_object_add(Eo *obj, Elm_Ctxpopup_Data *_p
 }
 
 EOLIAN static void
-_elm_ctxpopup_efl_canvas_group_calculate(Eo *obj, Elm_Ctxpopup_Data *sd)
+_elm_ctxpopup_efl_canvas_group_group_calculate(Eo *obj, Elm_Ctxpopup_Data *sd)
 {
    Eina_Rectangle rect = { 0, 0, 1, 1 };
    Evas_Coord_Point list_size = { 0, 0 }, parent_size = {0, 0};

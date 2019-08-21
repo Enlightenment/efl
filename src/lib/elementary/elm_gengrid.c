@@ -4056,7 +4056,7 @@ _elm_gengrid_item_new(Elm_Gengrid_Data *sd,
 }
 
 EOLIAN static void
-_elm_gengrid_efl_canvas_group_calculate(Eo *obj, Elm_Gengrid_Data *sd)
+_elm_gengrid_efl_canvas_group_group_calculate(Eo *obj, Elm_Gengrid_Data *sd)
 {
    Evas_Coord minw = 0, minh = 0, maxw = -1, maxh = -1, vw = 0, vh = 0;
 

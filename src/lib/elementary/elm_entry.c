@@ -1145,7 +1145,7 @@ _deferred_recalc_job(void *data)
 }
 
 EOLIAN static void
-_elm_entry_efl_canvas_group_calculate(Eo *obj, Elm_Entry_Data *sd)
+_elm_entry_efl_canvas_group_group_calculate(Eo *obj, Elm_Entry_Data *sd)
 {
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord resw, resh;

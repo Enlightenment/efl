@@ -315,7 +315,7 @@ _elm_hover_efl_ui_widget_theme_apply(Eo *obj, Elm_Hover_Data *sd)
 }
 
 EOLIAN static void
-_elm_hover_efl_canvas_group_calculate(Eo *obj, Elm_Hover_Data *sd)
+_elm_hover_efl_canvas_group_group_calculate(Eo *obj, Elm_Hover_Data *sd)
 {
    Evas_Coord ofs_x, x = 0, y = 0, w = 0, h = 0, x2 = 0,
               y2 = 0, w2 = 0, h2 = 0;

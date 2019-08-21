@@ -908,7 +908,7 @@ _elm_naviframe_item_elm_widget_item_signal_emit(Eo *eo_it EINA_UNUSED,
 }
 
 EOLIAN static void
-_elm_naviframe_efl_canvas_group_calculate(Eo *obj, Elm_Naviframe_Data *sd)
+_elm_naviframe_efl_canvas_group_group_calculate(Eo *obj, Elm_Naviframe_Data *sd)
 {
    Evas_Coord minw = 0, minh = 0;
    Elm_Naviframe_Item_Data *it, *top;

@@ -458,7 +458,7 @@ _item_sizing_eval(Elm_Popup_Item_Data *it)
 }
 
 EOLIAN static void
-_elm_popup_efl_canvas_group_calculate(Eo *obj, Elm_Popup_Data *sd)
+_elm_popup_efl_canvas_group_group_calculate(Eo *obj, Elm_Popup_Data *sd)
 {
    Eina_List *elist;
    Elm_Popup_Item_Data *it;
