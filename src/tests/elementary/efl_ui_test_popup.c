@@ -445,7 +445,7 @@ EFL_END_TEST
 
 EFL_START_TEST(efl_ui_test_popup_text_alert)
 {
-   Eo *popup = _popup_alert_setup(EFL_UI_TEXT_ALERT_POPUP_CLASS);
+   Eo *popup = _popup_alert_setup(EFL_UI_ALERT_POPUP_CLASS);
    char test_string[] = "This is Text Popup";
    unsigned int string_counts[] =
    {
@@ -510,12 +510,12 @@ EFL_START_TEST(efl_ui_test_popup_text_alert)
         for (j = 0; j < string_counts[i]; j++)
           eina_strbuf_append(buf, test_string);
 
-        efl_text_set(popup, eina_strbuf_string_get(buf));
+        efl_ui_widget_scrollable_text_set(popup, eina_strbuf_string_get(buf));
         efl_gfx_hint_size_max_set(popup, test_expands[i]);
         efl_canvas_group_calculate(popup);
 
         /* get internal label object: VERY illegal */
-        scroller = efl_content_get(efl_part(efl_super(popup, efl_ui_text_alert_popup_class_get()), "efl.content"));
+        scroller = efl_content_get(efl_part(efl_super(popup, EFL_UI_ALERT_POPUP_CLASS), "efl.content"));
         label = efl_content_get(scroller);
 
         /* label should never be larger than scroller horizontally
