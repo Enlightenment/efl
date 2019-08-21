@@ -11,6 +11,7 @@
 typedef struct Efl_Ui_Widget_Scrollable_Content_Data
 {
    Eo *scroller;
+   Eo *label;
    Eina_Bool did_group_calc : 1;
 } Efl_Ui_Widget_Scrollable_Content_Data;
 
@@ -30,6 +31,12 @@ _scroller_sizing_eval(Eo *obj, Efl_Ui_Widget_Scrollable_Content_Data *pd,
 
    size.w = (obj_min.w > min_size.w) ? obj_min.w : min_size.w;
    size.h = (obj_min.h > min_size.h) ? obj_min.h : min_size.h;
+
+   if (pd->label)
+     {
+       scr_min.w = (obj_min.w > scr_min.w) ? obj_min.w : scr_min.w;
+       scr_min.h = (obj_min.h > scr_min.h) ? obj_min.h : scr_min.h;
+     }
 
    Eina_Size2D new_min = obj_min;
 
@@ -107,10 +114,20 @@ _sizing_eval(Eo *obj, Efl_Ui_Widget_Scrollable_Content_Data *pd)
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
    Evas_Coord obj_minw = -1, obj_minh = -1;
    Evas_Coord scr_minw = -1, scr_minh = -1;
+   Eina_Size2D text_min;
 
    //Calculate popup's min size including scroller's min size
      {
-        efl_ui_scrollable_match_content_set(pd->scroller, EINA_TRUE, EINA_TRUE);
+        if (pd->label)
+          {
+             elm_label_line_wrap_set(pd->label, ELM_WRAP_NONE);
+             efl_canvas_group_calculate(pd->label);
+             text_min = efl_gfx_hint_size_combined_min_get(pd->label);
+             elm_label_line_wrap_set(pd->label, ELM_WRAP_MIXED);
+             efl_canvas_group_calculate(pd->label);
+          }
+
+        efl_ui_scrollable_match_content_set(pd->scroller, !pd->label, EINA_TRUE);
         efl_canvas_group_calculate(pd->scroller);
 
         elm_coords_finger_size_adjust(1, &scr_minw, 1, &scr_minh);
@@ -127,6 +144,8 @@ _sizing_eval(Eo *obj, Efl_Ui_Widget_Scrollable_Content_Data *pd)
         edje_object_size_min_restricted_calc
            (wd->resize_obj, &obj_minw, &obj_minh, obj_minw, obj_minh);
      }
+   if (pd->label)
+     scr_minw = text_min.w;
    _scroller_sizing_eval(obj, pd, EINA_SIZE2D(obj_minw, obj_minh), EINA_SIZE2D(scr_minw, scr_minh));
 }
 
@@ -155,6 +174,17 @@ _scroller_setup(Eo *obj, Efl_Ui_Widget_Scrollable_Content_Data *pd)
    efl_content_set(obj, pd->scroller);
 }
 
+static void
+_label_setup(Eo *obj EINA_UNUSED, Efl_Ui_Widget_Scrollable_Content_Data *pd)
+{
+   // TODO: Change internal component to Efl.Ui.Widget
+   pd->label = elm_label_add(pd->scroller);
+   //elm_widget_element_update(obj, pd->label, PART_NAME_TEXT);
+   efl_gfx_hint_weight_set(pd->label, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   efl_wref_add(pd->label, &pd->label);
+   efl_content_set(pd->scroller, pd->label);
+}
+
 EOLIAN static Eina_Bool
 _efl_ui_widget_scrollable_content_scrollable_content_did_group_calc_get(const Eo *obj EINA_UNUSED, Efl_Ui_Widget_Scrollable_Content_Data *pd)
 {
@@ -177,6 +207,25 @@ EOLIAN static Eo *
 _efl_ui_widget_scrollable_content_scrollable_content_get(const Eo *obj EINA_UNUSED, Efl_Ui_Widget_Scrollable_Content_Data *pd)
 {
    return efl_content_get(pd->scroller);
+}
+
+EOLIAN static void
+_efl_ui_widget_scrollable_content_scrollable_text_set(Eo *obj, Efl_Ui_Widget_Scrollable_Content_Data *pd, const char *text)
+{
+   if (!pd->scroller)
+     _scroller_setup(obj, pd);
+   if (!pd->label)
+     _label_setup(obj, pd);
+   elm_object_text_set(pd->label, text);
+   //efl_text_set(pd->label, text);
+   efl_canvas_group_change(obj);
+}
+
+EOLIAN static const char *
+_efl_ui_widget_scrollable_content_scrollable_text_get(const Eo *obj EINA_UNUSED, Efl_Ui_Widget_Scrollable_Content_Data *pd)
+{
+   return elm_object_text_get(pd->label);
+   //return efl_text_get(pd->label);
 }
 
 EOLIAN static void

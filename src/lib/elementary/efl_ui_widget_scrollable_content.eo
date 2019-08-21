@@ -18,11 +18,11 @@ mixin @beta Efl.Ui.Widget.Scrollable_Content requires Efl.Object
            implementation after the super call to determine whether the internal scroller
            has performed sizing calculations.
 
-           The @.optimal_size,calc event will have been emitted during the super call if
+           The optimal_size,calc event will have been emitted during the super call if
            this method returns $true.
 
            In the case that this returns $true, it's likely that the widget should be completing
-           its internal sizing calculations from the @.optimal_size,calc callback using
+           its internal sizing calculations from the optimal_size,calc callback using
 
            `efl_canvas_group_calculate(efl_super(ev->object, EFL_UI_WIDGET_SCROLLABLE_CONTENT_MIXIN));`
 
@@ -42,6 +42,28 @@ mixin @beta Efl.Ui.Widget.Scrollable_Content requires Efl.Object
          get {}
          values {
             content: Efl.Canvas.Object; [[The content object.]]
+         }
+      }
+      @property scrollable_text {
+         set {
+            [[Sets the text string to be displayed by the given text object.
+              The text will be scrollable depending on its size relative to the
+              object's geometry.
+
+              See also @.scrollable_text.get.
+            ]]
+         }
+         get {
+            [[Retrieves the text string currently being displayed by the given
+              text object.
+
+              Do not free() the return value.
+
+              See also @.scrollable_text.set.
+            ]]
+         }
+         values {
+            text: string; [[Text string to display on it.]]
          }
       }
    }
