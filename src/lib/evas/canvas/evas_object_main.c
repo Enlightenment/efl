@@ -1587,10 +1587,6 @@ _efl_canvas_object_efl_gfx_hint_hint_size_max_set(Eo *eo_obj, Evas_Object_Protec
    if ((obj->size_hints->user_max.w == sz.w) && (obj->size_hints->user_max.h == sz.h)) return;
    obj->size_hints->user_max.w = sz.w;
    obj->size_hints->user_max.h = sz.h;
-   if ((obj->size_hints->user_max.w != -1) && (obj->size_hints->user_max.w < obj->size_hints->user_min.w))
-     ERR("user_max width hint is now smaller than user_min width hint! (%d < %d)", obj->size_hints->user_max.w, obj->size_hints->user_min.w);
-   if ((obj->size_hints->user_max.h != -1) && (obj->size_hints->user_max.h < obj->size_hints->user_min.h))
-     ERR("user_max height hint is now smaller than user_min height hint! (%d < %d)", obj->size_hints->user_max.h, obj->size_hints->user_min.h);
 
    evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
@@ -1654,10 +1650,6 @@ _efl_canvas_object_efl_gfx_hint_hint_size_min_set(Eo *eo_obj, Evas_Object_Protec
      }
    if ((obj->size_hints->user_min.w == sz.w) && (obj->size_hints->user_min.h == sz.h)) return;
    obj->size_hints->user_min = sz;
-   if ((obj->size_hints->user_max.w != -1) && (obj->size_hints->max.w < obj->size_hints->user_min.w))
-     ERR("max width hint is now smaller than min width hint! (%d < %d)", obj->size_hints->user_max.w, obj->size_hints->user_min.w);
-   if ((obj->size_hints->user_max.h != -1) && (obj->size_hints->max.h < obj->size_hints->user_min.h))
-     ERR("max height hint is now smaller than min height hint! (%d < %d)", obj->size_hints->user_max.h, obj->size_hints->user_min.h);
    evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
 
