@@ -1776,7 +1776,7 @@ elm_widget_tree_unfocusable_get(const Eo *obj)
    Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    if (!sd) return EINA_FALSE;
 
-   return sd->tree_unfocusable;
+   return !!sd->tree_unfocusable;
 }
 
 /**
