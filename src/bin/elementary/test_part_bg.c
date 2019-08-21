@@ -57,23 +57,23 @@ static Efl_Ui_Radio_Group *
 _create_box_contents(Evas_Object *box)
 {
    Evas_Object *hbox;
-   Evas_Object *radio_group, *radio;
+   Evas_Object *radio;
    Evas_Object *content;
-   Efl_Ui_Radio_Group *group;
+   Efl_Ui_Radio_Group *radio_group;
    char buf[PATH_MAX];
    unsigned int i;
 
-   group = efl_new(EFL_UI_RADIO_GROUP_IMPL_CLASS, NULL);
+   radio_group = efl_new(EFL_UI_RADIO_GROUP_IMPL_CLASS, NULL);
 
    hbox = efl_add(EFL_UI_BOX_CLASS, box,
                   efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                   efl_gfx_hint_weight_set(efl_added, 1, 1),
                   efl_pack_end(box, efl_added));
 
-   radio_group = radio = efl_add(EFL_UI_RADIO_CLASS, hbox);
+   radio = efl_add(EFL_UI_RADIO_CLASS, hbox);
    efl_gfx_hint_weight_set(radio, 0, 0);
    efl_ui_radio_state_value_set(radio, 0);
-   efl_ui_radio_group_register(group, radio);
+   efl_ui_radio_group_register(radio_group, radio);
    efl_pack_end(hbox, radio);
 
    content = efl_add(EFL_UI_BOX_CLASS, hbox,
@@ -96,7 +96,7 @@ _create_box_contents(Evas_Object *box)
         radio = efl_add(EFL_UI_RADIO_CLASS, hbox);
         efl_ui_radio_state_value_set(radio, i + 1);
         efl_gfx_hint_weight_set(radio, 0, 0);
-        efl_ui_radio_group_register(group, radio);
+        efl_ui_radio_group_register(radio_group, radio);
         efl_pack_end(hbox, radio);
 
         content = efl_add(content_class[i], hbox,
@@ -114,7 +114,7 @@ _create_box_contents(Evas_Object *box)
         evas_object_data_set(radio, "data", content);
      }
 
-   efl_ui_radio_group_selected_value_set(group, 0);
+   efl_ui_radio_group_selected_value_set(radio_group, 0);
 
    return radio_group;
 }
