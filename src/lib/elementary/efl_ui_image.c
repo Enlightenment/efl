@@ -164,16 +164,18 @@ _img_new(Evas_Object *obj)
 }
 
 static void
-_image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
+_image_sizing_eval(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *img)
 {
    Evas_Coord x = 0, y = 0, w = 1, h = 1;
+   int ox, oy, ow, oh;
 
+   evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
    if (efl_isa(img, EFL_CANVAS_LAYOUT_CLASS))
      {
-        x = sd->img_x;
-        y = sd->img_y;
-        w = sd->img_w;
-        h = sd->img_h;
+        x = ox;
+        y = oy;
+        w = ow;
+        h = oh;
         goto done;
      }
    else
@@ -185,7 +187,7 @@ _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
         evas_object_image_size_get(img, &iw, &ih);
 
         //Exception Case
-        if ((iw == 0) || (ih == 0) || (sd->img_w == 0) || (sd->img_h == 0))
+        if ((iw == 0) || (ih == 0) || (ow == 0) || (oh == 0))
           {
              evas_object_resize(img, 0, 0);
              evas_object_resize(sd->hit_rect, 0, 0);
@@ -199,7 +201,7 @@ _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
         if (ih < 1) ih = 1;
 
         //2. Calculate internal image size (w x h)
-        //   according to (iw x ih), (sd->img_w x sd->img_h), and scale_type
+        //   according to (iw x ih), (ow x oh), and scale_type
         switch (sd->scale_type)
           {
            case EFL_GFX_IMAGE_SCALE_TYPE_NONE:
@@ -207,16 +209,16 @@ _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
               h = ih;
               break;
            case EFL_GFX_IMAGE_SCALE_TYPE_FILL:
-              w = sd->img_w;
-              h = sd->img_h;
+              w = ow;
+              h = oh;
               break;
            case EFL_GFX_IMAGE_SCALE_TYPE_FIT_INSIDE:
-              w = sd->img_w;
+              w = ow;
               h = ((double)ih * w) / (double)iw;
 
-              if (h > sd->img_h)
+              if (h > oh)
                 {
-                   h = sd->img_h;
+                   h = oh;
                    w = ((double)iw * h) / (double)ih;
                 }
 
@@ -228,11 +230,11 @@ _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
                 }
               break;
            case EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE:
-              w = sd->img_w;
+              w = ow;
               h = ((double)ih * w) / (double)iw;
-              if (h < sd->img_h)
+              if (h < oh)
                 {
-                   h = sd->img_h;
+                   h = oh;
                    w = ((double)iw * h) / (double)ih;
                 }
 
@@ -244,10 +246,7 @@ _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
                 }
               break;
            case EFL_GFX_IMAGE_SCALE_TYPE_TILE:
-              x = sd->img_x;
-              y = sd->img_y;
-              w = sd->img_w;
-              h = sd->img_h;
+              evas_object_geometry_get(obj, &x, &y, &w, &h);
               evas_object_image_fill_set(img, x, y, iw, ih);
               goto done;
           }
@@ -255,8 +254,8 @@ _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
         //3. Calculate offset according to align value
         if (!elm_widget_is_legacy(sd->self))
           {
-             offset_x = ((sd->img_w - w) * sd->align_x);
-             offset_y = ((sd->img_h - h) * sd->align_y);
+             offset_x = ((ow - w) * sd->align_x);
+             offset_y = ((oh - h) * sd->align_y);
           }
         else
           {
@@ -264,12 +263,12 @@ _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
              if (EINA_DBL_EQ(alignh, EVAS_HINT_FILL)) alignh = 0.5;
              if (EINA_DBL_EQ(alignv, EVAS_HINT_FILL)) alignv = 0.5;
 
-             offset_x = ((sd->img_w - w) * alignh);
-             offset_y = ((sd->img_h - h) * alignv);
+             offset_x = ((ow - w) * alignh);
+             offset_y = ((oh - h) * alignv);
           }
 
-        x = sd->img_x + offset_x;
-        y = sd->img_y + offset_y;
+        x = ox + offset_x;
+        y = oy + offset_y;
 
         //4. Fill, move, resize
         if (offset_x >= 0) offset_x = 0;
@@ -279,13 +278,13 @@ _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
 
         if (offset_x < 0)
           {
-             x = sd->img_x;
-             w = sd->img_w;
+             x = ox;
+             w = ow;
           }
         if (offset_y < 0)
           {
-             y = sd->img_y;
-             h = sd->img_h;
+             y = oy;
+             h = oh;
           }
      }
 done:
@@ -625,38 +624,26 @@ _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
+/* this function exists solely to call efl_canvas_group_change */
 EOLIAN static void
-_efl_ui_image_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Position2D pos)
+_efl_ui_image_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Image_Data *sd EINA_UNUSED, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
    efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
-
-   if ((sd->img_x == pos.x) && (sd->img_y == pos.y)) return;
-   sd->img_x = pos.x;
-   sd->img_y = pos.y;
-
-   /* takes care of moving */
    efl_canvas_group_change(obj);
 }
 
+/* this function exists solely to call efl_canvas_group_change */
 EOLIAN static void
-_efl_ui_image_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Size2D sz)
+_efl_ui_image_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Image_Data *sd EINA_UNUSED, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   if ((sd->img_w == sz.w) && (sd->img_h == sz.h)) goto super;
-
-   sd->img_w = sz.w;
-   sd->img_h = sz.h;
-
-   /* takes care of resizing */
-   efl_canvas_group_change(obj);
-
-super:
    efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_canvas_group_change(obj);
 }
 
 static void
@@ -809,8 +796,8 @@ _efl_ui_image_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Image_Data *sd)
         if (!sd->edje)
           efl_gfx_image_orientation_set(sd->img, sd->orient);
 
-        _image_sizing_eval(sd, sd->img);
-        if (sd->prev_img) _image_sizing_eval(sd, sd->prev_img);
+        _image_sizing_eval(obj, sd, sd->img);
+        if (sd->prev_img) _image_sizing_eval(obj, sd, sd->prev_img);
      }
    sd->in_calc = EINA_FALSE;
 }

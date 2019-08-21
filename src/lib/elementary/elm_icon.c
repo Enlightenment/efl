@@ -361,7 +361,7 @@ _elm_icon_efl_file_load(Eo *obj, Elm_Icon_Data *sd)
         return err;
      }
 
-   evas_object_geometry_set(id->img, id->img_x, id->img_y, id->img_w, id->img_h);
+   efl_gfx_entity_geometry_set(id->img, efl_gfx_entity_geometry_get(obj));
 
    return 0;
 }
