@@ -112,8 +112,10 @@ static const struct {
 } images_scale_type[] = {
   { EFL_GFX_IMAGE_SCALE_TYPE_NONE, "None" },
   { EFL_GFX_IMAGE_SCALE_TYPE_FILL, "Fill" },
-  { EFL_GFX_IMAGE_SCALE_TYPE_FIT_INSIDE, "Fit Inside" },
-  { EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE, "Fit Outside" },
+  { EFL_GFX_IMAGE_SCALE_TYPE_FIT, "Fit" },
+  { EFL_GFX_IMAGE_SCALE_TYPE_FIT_WIDTH, "Fit Horizontally" },
+  { EFL_GFX_IMAGE_SCALE_TYPE_FIT_HEIGHT, "Fit Vertically" },
+  { EFL_GFX_IMAGE_SCALE_TYPE_EXPAND, "Expand" },
   { EFL_GFX_IMAGE_SCALE_TYPE_TILE, "Tile" },
   { 0, NULL }
 };

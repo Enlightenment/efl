@@ -212,7 +212,7 @@ _image_sizing_eval(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *img)
               w = ow;
               h = oh;
               break;
-           case EFL_GFX_IMAGE_SCALE_TYPE_FIT_INSIDE:
+           case EFL_GFX_IMAGE_SCALE_TYPE_FIT:
               w = ow;
               h = ((double)ih * w) / (double)iw;
 
@@ -222,27 +222,28 @@ _image_sizing_eval(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *img)
                    w = ((double)iw * h) / (double)ih;
                 }
 
-              if (((!sd->scale_up) && (w > iw))
-                  || ((!sd->scale_down) && (w < iw)))
-                {
-                   w = iw;
-                   h = ih;
-                }
+
               break;
-           case EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE:
+           case EFL_GFX_IMAGE_SCALE_TYPE_FIT_WIDTH:
               w = ow;
               h = ((double)ih * w) / (double)iw;
-              if (h < oh)
+
+              break;
+           case EFL_GFX_IMAGE_SCALE_TYPE_FIT_HEIGHT:
+              h = oh;
+              w = ((double)iw * h) / (double)ih;
+
+              break;
+           case EFL_GFX_IMAGE_SCALE_TYPE_EXPAND:
+              if (ow > oh)
+                {
+                   w = ow;
+                   h = ((double)ih * w) / (double)iw;
+                }
+              else
                 {
                    h = oh;
                    w = ((double)iw * h) / (double)ih;
-                }
-
-              if (((!sd->scale_up) && (w > iw))
-                  || ((!sd->scale_down) && (w < iw)))
-                {
-                   w = iw;
-                   h = ih;
                 }
               break;
            case EFL_GFX_IMAGE_SCALE_TYPE_TILE:
@@ -250,7 +251,16 @@ _image_sizing_eval(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *img)
               evas_object_image_fill_set(img, x, y, iw, ih);
               goto done;
           }
-
+        if (((!sd->scale_up) && (w > iw))
+            || ((!sd->scale_down) && (w < iw)))
+          {
+             w = iw;
+          }
+        if (((!sd->scale_up) && (h > ih))
+            || ((!sd->scale_down) && (h < ih)))
+          {
+             h = ih;
+          }
         //3. Calculate offset according to align value
         if (!elm_widget_is_legacy(sd->self))
           {
@@ -859,7 +869,7 @@ _efl_ui_image_efl_object_constructor(Eo *obj, Efl_Ui_Image_Data *pd)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_IMAGE);
 
-   pd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FIT_INSIDE;
+   pd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FIT;
    pd->self = obj;
 
    return obj;
@@ -2077,8 +2087,8 @@ elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
 
    if (sd->aspect_fixed)
      {
-        if (sd->fill_inside) sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FIT_INSIDE;
-        else sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE;
+        if (sd->fill_inside) sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FIT;
+        else sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_EXPAND;
      }
    else
      sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FILL;
@@ -2222,8 +2232,8 @@ elm_image_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed)
 
    if (sd->aspect_fixed)
      {
-        if (sd->fill_inside) sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FIT_INSIDE;
-        else sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE;
+        if (sd->fill_inside) sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FIT;
+        else sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_EXPAND;
      }
    else
      sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FILL;
