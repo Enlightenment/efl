@@ -1742,18 +1742,18 @@ elm_widget_tree_unfocusable_set(Eo *obj, Eina_Bool tree_unfocusable)
    else
      pd->tree_unfocusable --;
 
-   distance = pd->disabled - parent_counter;
+   distance = pd->tree_unfocusable - parent_counter;
 
    if ((distance < 0) || (distance > 1))
      {
         distance = MAX(MIN(tree_unfocusable, 1), 0);
-        pd->disabled = parent_counter + distance;
+        pd->tree_unfocusable = parent_counter + distance;
      }
 
    EINA_LIST_FOREACH(pd->subobjs, n, subs)
      {
         if (efl_isa(subs, EFL_UI_WIDGET_CLASS))
-          efl_ui_widget_disabled_set(subs, elm_widget_tree_unfocusable_get(obj));
+          elm_widget_tree_unfocusable_set(subs, elm_widget_tree_unfocusable_get(obj));
      }
 
    //focus state eval on all children
