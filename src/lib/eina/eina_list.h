@@ -23,10 +23,16 @@
 
 #include "eina_config.h"
 
+// magic number checks for eina list nodes - this costs extra memory and a
+// few cycles for some safety = aybe during debugging/devel only?
+//#define EINA_LIST_MAGIC 1
+
 #include "eina_types.h"
 #include "eina_iterator.h"
 #include "eina_accessor.h"
-#include "eina_magic.h"
+#ifdef EINA_LIST_MAGIC
+# include "eina_magic.h"
+#endif
 
 /**
  * @page eina_list_01_example_page Adding elements to Eina_List
@@ -323,8 +329,9 @@ struct _Eina_List
    Eina_List            *next; /**< Next member in the list */
    Eina_List            *prev; /**< Previous member in the list */
    Eina_List_Accounting *accounting; /**< Private list accounting info - don't touch */
-
+#ifdef EINA_LIST_MAGIC
    EINA_MAGIC
+#endif
 };
 
 /**
