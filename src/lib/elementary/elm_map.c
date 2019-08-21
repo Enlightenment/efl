@@ -3192,18 +3192,18 @@ _name_list_cb(void *data,
         sd->src_name->name_list_parse_cb(name_list);
         INF("Name List request success address");
         if (name_list->cb)
-          name_list->cb(name_list->data, wd->obj,
+          name_list->cb(name_list->data, sd->obj,
                         name_list->names);
         efl_event_callback_legacy_call
-          (wd->obj, ELM_MAP_EVENT_NAME_LOADED, NULL);
+          (sd->obj, ELM_MAP_EVENT_NAME_LOADED, NULL);
      }
    else
      {
         ERR("Name List request failed: %d", status);
         if (name_list->cb)
-          name_list->cb(name_list->data, wd->obj, NULL);
+          name_list->cb(name_list->data, sd->obj, NULL);
         efl_event_callback_legacy_call
-          (wd->obj, ELM_MAP_EVENT_NAME_LOADED_FAIL, NULL);
+          (sd->obj, ELM_MAP_EVENT_NAME_LOADED_FAIL, NULL);
      }
 
    edje_object_signal_emit(wd->resize_obj,
@@ -3306,7 +3306,7 @@ _name_list_request(const Evas_Object *obj,
 
    fname = _prepare_download();
    url = sd->src_name->url_cb
-   (wd->obj, method, address, lon, lat);
+   (obj, method, address, lon, lat);
    if (!url)
      {
         ERR("Name URL is NULL");
@@ -3335,7 +3335,7 @@ _name_list_request(const Evas_Object *obj,
    free(fname);
 
    efl_event_callback_legacy_call
-     (wd->obj, ELM_MAP_EVENT_NAME_LOAD, name_list->names);
+     ((Eo*)obj, ELM_MAP_EVENT_NAME_LOAD, name_list->names);
    edje_object_signal_emit(wd->resize_obj,
                            "elm,state,busy,start", "elm");
    return name_list->names;
