@@ -5914,6 +5914,7 @@ _efl_ui_widget_model_provider_invalidate(void *data, const Efl_Event *event EINA
                                 data);
    efl_replace(&pd->properties.provider, NULL);
    efl_replace(&pd->properties.model, NULL);
+   pd->properties.callback_to_provider = EINA_FALSE;
 }
 
 static void
@@ -5928,10 +5929,11 @@ _efl_ui_widget_model_register(Eo *obj, Efl_Ui_Widget_Data *pd)
         efl_replace(&pd->properties.provider,
                     efl_provider_find(obj, EFL_MODEL_PROVIDER_CLASS));
         if (!pd->properties.provider) return ;
-        efl_event_callback_array_add(pd->properties.provider,
-                                     efl_ui_widget_model_provider_callbacks(),
-                                     obj);
-
+        if (!pd->properties.callback_to_provider)
+          efl_event_callback_array_add(pd->properties.provider,
+                                       efl_ui_widget_model_provider_callbacks(),
+                                       obj);
+        pd->properties.callback_to_provider = EINA_TRUE;
         efl_replace(&pd->properties.model,
                     efl_ui_view_model_get(pd->properties.provider));
 

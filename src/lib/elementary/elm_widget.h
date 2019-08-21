@@ -386,6 +386,7 @@ typedef struct _Elm_Widget_Smart_Data
       Eina_Hash *model_lookup;
       Eina_Hash *view_lookup;
       Eina_Bool  registered : 1;
+      Eina_Bool  callback_to_provider : 1;
    } properties;
    void                          *shared_win_data;
    Eina_Bool                     scroll_x_locked : 1;
