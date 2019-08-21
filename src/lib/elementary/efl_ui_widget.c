@@ -4804,11 +4804,7 @@ _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UN
         if (parent_sd)
           sd->shared_win_data = parent_sd->shared_win_data;
         else
-          {
-             ELM_WIDGET_DATA_GET(sd->window, window_sd);
-             if (window_sd)
-               sd->shared_win_data = window_sd->shared_win_data;
-          }
+          sd->shared_win_data = efl_ui_win_shared_data_get(obj);
         efl_ui_widget_sub_object_add(parent, obj);
      }
    else
