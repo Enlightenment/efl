@@ -2535,7 +2535,7 @@ _efl_ui_widget_scroll_freeze_push(Eo *obj, Elm_Widget_Smart_Data *sd)
                {
                   if (elm_widget_is(child) && _elm_scrollable_is(child))
                     {
-                       if (elm_widget_is_legacy(obj))
+                       if (elm_widget_is_legacy(child))
                          elm_interface_scrollable_freeze_set(child, EINA_TRUE);
                        else
                          efl_ui_scrollable_scroll_freeze_set(child, EINA_TRUE);
