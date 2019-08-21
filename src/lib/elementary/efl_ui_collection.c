@@ -877,8 +877,8 @@ _efl_ui_collection_efl_ui_focus_manager_move(Eo *obj, Efl_Ui_Collection_Data *pd
         Eina_Rect element;
         element = efl_gfx_entity_geometry_get(focus);
         viewport = efl_gfx_entity_geometry_get(obj);
-        if (!eina_spans_intersect(element.x, element.x+element.w, viewport.x, viewport.x+viewport.w) &&
-            !eina_spans_intersect(element.y, element.y+element.h, viewport.y, viewport.y+viewport.y))
+        if (!eina_spans_intersect(element.x, element.w, viewport.x, viewport.w) &&
+            !eina_spans_intersect(element.y, element.h, viewport.y, viewport.h))
           {
              efl_ui_scrollable_scroll(obj, element, EINA_TRUE);
              return focus;
