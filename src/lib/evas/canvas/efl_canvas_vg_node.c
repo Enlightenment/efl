@@ -73,10 +73,10 @@ _efl_canvas_vg_node_transformation_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vg_
 }
 
 static void
-_efl_canvas_vg_node_comp_method_set(Eo *obj EINA_UNUSED,
-                                    Efl_Canvas_Vg_Node_Data *pd EINA_UNUSED,
-                                    Efl_Canvas_Vg_Node *target EINA_UNUSED,
-                                    Ector_Renderer_Composite_Method method EINA_UNUSED)
+_efl_canvas_vg_node_mask_set(Eo *obj EINA_UNUSED,
+                             Efl_Canvas_Vg_Node_Data *pd EINA_UNUSED,
+                             Efl_Canvas_Vg_Node *mask EINA_UNUSED,
+                             int op EINA_UNUSED)
 {
 }
 

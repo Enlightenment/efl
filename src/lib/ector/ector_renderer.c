@@ -146,10 +146,10 @@ _ector_renderer_crc_get(const Eo *obj EINA_UNUSED,
 }
 
 static void
-_ector_renderer_comp_method_set(Eo *obj EINA_UNUSED,
-                                Ector_Renderer_Data *pd EINA_UNUSED,
-                                Ector_Buffer *comp EINA_UNUSED,
-                                Ector_Renderer_Composite_Method method EINA_UNUSED)
+_ector_renderer_mask_set(Eo *obj EINA_UNUSED,
+                         Ector_Renderer_Data *pd EINA_UNUSED,
+                         Ector_Buffer *mask EINA_UNUSED,
+                         int op EINA_UNUSED)
 {
 }
 

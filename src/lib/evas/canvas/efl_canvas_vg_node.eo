@@ -1,5 +1,4 @@
 import eina_types;
-import ector_types;
 
 abstract @beta Efl.Canvas.Vg.Node extends Efl.Object implements Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Duplicate, Efl.Gfx.Path
 {
@@ -36,13 +35,13 @@ abstract @beta Efl.Canvas.Vg.Node extends Efl.Object implements Efl.Gfx.Entity, 
             y: double; [[$origin y position.]]
          }
       }
-      @property comp_method {
-         [[Set a composite target node to this node object.]]
+      @property mask {
+         [[Set Mask Node to this renderer]]
          set {
          }
          values {
-            target: Efl.Canvas.Vg.Node; [[Composite target node]]
-            method: Ector.Renderer.Composite_Method; [[Composite Method.]]
+            mask: Efl.Canvas.Vg.Node; [[Mask object]]
+            op: int; [[Masking Option. Reserved]]
          }
       }
    }

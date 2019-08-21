@@ -67,7 +67,7 @@ struct _Efl_Canvas_Vg_Node_Data
    void (*render_pre)(Evas_Object_Protected_Data *vg_pd, Efl_VG *node,
          Efl_Canvas_Vg_Node_Data *nd,
          void *engine, void *output, void *contenxt, Ector_Surface *surface,
-         Eina_Matrix3 *ptransform, Ector_Buffer *comp, Ector_Renderer_Composite_Method comp_method, void *data);
+         Eina_Matrix3 *ptransform, Ector_Buffer *mask, int mask_op, void *data);
    void *data;
 
    double x, y;
@@ -78,24 +78,24 @@ struct _Efl_Canvas_Vg_Node_Data
    Eina_Bool changed : 1;
 };
 
-typedef struct _Vg_Composite
+typedef struct _Vg_Mask
 {
-   Evas_Object_Protected_Data *vg_pd;      //Vector Object (for accessing backend engine)
-   Ector_Buffer *buffer;                   //Composite Ector Buffer
-   void *pixels;                           //Composite pixel buffer (actual data)
-   Eina_Rect bound;                        //Composite boundary
-   Eina_List *src;                         //Composite Sources
-   Ector_Renderer_Composite_Method method; //Composite Method
-} Vg_Comp;
+   Evas_Object_Protected_Data *vg_pd;  //Vector Object (for accessing backend engine)
+   Ector_Buffer *buffer;               //Mask Ector Buffer
+   void *pixels;                       //Mask pixel buffer (actual data)
+   Eina_Rect bound;                    //Mask boundary
+   Eina_List *target;                  //Mask target
+   int option;                         //Mask option
+} Vg_Mask;
 
 struct _Efl_Canvas_Vg_Container_Data
 {
    Eina_List *children;
    Eina_Hash *names;
 
-   //Composite feature.
-   Efl_Canvas_Vg_Node *comp_target; //Composite target
-   Vg_Comp comp;                    //Composite target data
+   //Masking feature.
+   Efl_Canvas_Vg_Node *mask_src;         //Mask Source
+   Vg_Mask mask;                         //Mask source data
 
    //Layer transparency feature. This buffer is only valid when the layer has transparency.
    Ector_Buffer *blend_buffer;
@@ -150,13 +150,13 @@ _evas_vg_render_pre(Evas_Object_Protected_Data *vg_pd, Efl_VG *child,
                     void *engine, void *output, void *context,
                     Ector_Surface *surface,
                     Eina_Matrix3 *transform,
-                    Ector_Buffer *comp, Ector_Renderer_Composite_Method comp_method)
+                    Ector_Buffer *mask, int mask_op)
 {
    if (!child) return NULL;
    Efl_Canvas_Vg_Node_Data *nd = efl_data_scope_get(child, EFL_CANVAS_VG_NODE_CLASS);
    if (nd) nd->render_pre(vg_pd, child, nd,
                           engine, output, context, surface,
-                          transform, comp, comp_method, nd->data);
+                          transform, mask, mask_op, nd->data);
    return nd;
 }
 

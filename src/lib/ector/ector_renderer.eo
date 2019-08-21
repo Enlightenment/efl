@@ -1,5 +1,4 @@
 import eina_types;
-import ector_types;
 
 abstract @beta Ector.Renderer extends Efl.Object
 {
@@ -79,13 +78,13 @@ abstract @beta Ector.Renderer extends Efl.Object
             return: uint; [[CRC value]]
          }
       }
-      @property comp_method {
-         [[Set Composite Buffer to this Renderer]]
+      @property mask {
+         [[Set Mask Image to this Renderer]]
          set {
          }
          values {
-            comp: Ector.Buffer; [[Composite Buffer]]
-            method: Ector.Renderer.Composite_Method; [[Composite method]]
+            mask: Ector.Buffer; [[Mask Image Buffer]]
+            op: int; [[Masking option]]
          }
       }
       draw @pure_virtual {

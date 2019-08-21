@@ -5,7 +5,7 @@ class @beta Ector.Renderer.Software.Image extends Ector.Renderer.Software implem
    implements {
       Ector.Renderer.prepare;
       Ector.Renderer.draw;
-      Ector.Renderer.comp_method { set; }
+      Ector.Renderer.mask { set; }
       Ector.Renderer.crc { get; }
       Efl.Object.constructor;
       Efl.Object.destructor;

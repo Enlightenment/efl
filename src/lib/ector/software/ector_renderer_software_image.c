@@ -21,10 +21,10 @@ struct _Ector_Renderer_Software_Image_Data
    Ector_Software_Surface_Data *surface;
    Ector_Renderer_Image_Data   *image;
    Ector_Renderer_Data         *base;
-   Ector_Buffer                *comp;
-   Ector_Renderer_Composite_Method comp_method;
-   int                          opacity;
-   Eina_Matrix3                 inv_m;
+   Ector_Buffer                *mask;
+   int                          mask_op;
+   int                         opacity;
+   Eina_Matrix3                inv_m;
    struct {
       int x1, y1, x2, y2;
    } boundary;
@@ -101,7 +101,7 @@ _ector_renderer_software_image_ector_renderer_draw(Eo *obj EINA_UNUSED,
       return EINA_TRUE;
 
    const int pix_stride = pd->surface->rasterizer->fill_data.raster_buffer->stride / 4;
-   Ector_Software_Buffer_Base_Data *comp = pd->comp ? efl_data_scope_get(pd->comp, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN) : NULL;
+   Ector_Software_Buffer_Base_Data *mask = pd->mask ? efl_data_scope_get(pd->mask, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN) : NULL;
    Ector_Software_Buffer_Base_Data *bpd = efl_data_scope_get(pd->image->buffer, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN);
    double im11, im12, im21, im22, im31, im32;
    uint32_t *dst_buf, *src_buf;
@@ -128,10 +128,10 @@ _ector_renderer_software_image_ector_renderer_draw(Eo *obj EINA_UNUSED,
                continue;
              uint32_t *src = src_buf + (rx + (ry * image_w));  //FIXME: use to stride
              uint32_t temp = 0x0;
-             if (comp)
+             if (mask)
                {
-                  uint32_t *m = comp->pixels.u32 + ((int)local_x + ((int)local_y * comp->generic->w));
-                  //FIXME : This comping can work only matte case.
+                  uint32_t *m = mask->pixels.u32 + ((int)local_x + ((int)local_y * mask->generic->w));
+                  //FIXME : This masking can work only matte case.
                   //        We need consider to inverse matte case.
                   temp = draw_mul_256((((*m)>>24) * pd->opacity)>>8, *src);
                }
@@ -182,13 +182,13 @@ _ector_renderer_software_image_ector_renderer_crc_get(const Eo *obj,
 }
 
 static void
-_ector_renderer_software_image_ector_renderer_comp_method_set(Eo *obj EINA_UNUSED,
-                                                              Ector_Renderer_Software_Image_Data *pd,
-                                                              Ector_Buffer *comp,
-                                                              Ector_Renderer_Composite_Method method)
+_ector_renderer_software_image_ector_renderer_mask_set(Eo *obj EINA_UNUSED,
+                                                       Ector_Renderer_Software_Image_Data *pd,
+                                                       Ector_Buffer *mask,
+                                                       int op)
 {
-   pd->comp = comp;
-   pd->comp_method = method;
+   pd->mask = mask;
+   pd->mask_op = op;
 }
 
 #include "ector_renderer_software_image.eo.c"

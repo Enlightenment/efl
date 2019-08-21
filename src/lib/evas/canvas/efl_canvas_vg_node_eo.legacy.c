@@ -24,7 +24,7 @@ evas_vg_node_origin_get(const Efl_Canvas_Vg_Node *obj, double *x, double *y)
 }
 
 EAPI void
-evas_vg_node_mask_set(Efl_Canvas_Vg_Node *obj, Efl_Canvas_Vg_Node *mask, int op EINA_UNUSED)
+evas_vg_node_mask_set(Efl_Canvas_Vg_Node *obj, Efl_Canvas_Vg_Node *mask, int op)
 {
-   efl_canvas_vg_node_comp_method_set(obj, mask, 0);
+   efl_canvas_vg_node_mask_set(obj, mask, op);
 }

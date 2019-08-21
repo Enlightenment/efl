@@ -396,7 +396,7 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
         Eina_List *l;
         Efl_Canvas_Vg_Container_Data *cd = efl_data_scope_get(node, EFL_CANVAS_VG_CONTAINER_CLASS);
 
-        if (cd->comp.src) return;   //Don't draw composite target itself.
+        if (cd->mask.target) return;   //Don't draw mask itself.
 
         int alpha = 255;
         efl_gfx_color_get(node, NULL, NULL, NULL, &alpha);
@@ -508,7 +508,7 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd
    evas_common_draw_context_set_render_op(context, _EVAS_RENDER_COPY);
    evas_common_draw_context_set_color(context, 255, 255, 255, 255);
 
-   //ector begin - end for drawing composite images.
+   //ector begin - end for drawing mask images.
    //ENFN->ector_begin(engine, buffer, context, ector, 0, 0, EINA_FALSE, EINA_FALSE);
    _evas_vg_render_pre(obj, root, engine, buffer, context, ector, NULL, NULL, 0);
    //ENFN->ector_end(engine, buffer, context, ector, EINA_FALSE);
