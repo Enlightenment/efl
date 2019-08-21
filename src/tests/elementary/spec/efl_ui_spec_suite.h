@@ -14,6 +14,7 @@ void efl_pack_behavior_test(TCase *tc);
 void efl_pack_linear_behavior_test(TCase *tc);
 void efl_content_behavior_test(TCase *tc);
 void efl_gfx_arrangement_behavior_test(TCase *tc);
+void efl_gfx_view_behavior_test(TCase *tc);
 void efl_ui_clickable_behavior_test(TCase *tc);
 void efl_ui_format_behavior_test(TCase *tc);
 void efl_ui_range_display_behavior_test(TCase *tc);

@@ -1,0 +1,281 @@
+
+enum Efl.Ui.Animation_View_State
+{
+   not_ready, [[Animation is not ready to play. (Probably, it didn't file set yet or failed to read file.]]
+   play, [[Animation is on playing. see @Efl.Ui.Animation_View.play]]
+   play_back, [[Animation is on playing back (rewinding). see @Efl.Ui.Animation_View.play_back]]
+   pause, [[Animation has been paused. To continue animation, call @Efl.Ui.Animation_View.resume. see @Efl.Ui.Animation_View.pause]]
+   stop [[Animation view successfully loaded a file then readied for playing. Otherwise after finished animation or stopped forcely by request. see @Efl.Ui.Animation_View.stop]]
+}
+
+class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View, Efl.File
+{
+   [[Elementary Animation view class.
+     Animation view is designed to show and play animation of
+     vector graphics based content. It hides all efl_canvas_vg details
+     but just open an API to read vector data from file. Also, it implements
+     details of animation control methods of Vector.
+
+     Vector data could contain static or animatable vector elements including
+     animation infomation. Currently approved vector data file format is svg, json and eet.
+     Only json(known for Lottie file as well) and eet could contains animation infomation,
+     currently Animation_View is supporting.
+   ]]
+   event_prefix: efl_ui_animation_view;
+   methods {
+      @property auto_play {
+         [[Animation will be started automatically when it's possible.
+
+           If @.auto_play is $true, animation will be started when it's readied.
+           The condition of $auto play is when animation view opened file successfully,
+           yet to play it plus when the object is visible.
+           If animation view is disabled, invisible,
+           it turns to pause state then resume animation when it's visible again.
+
+           $true Enable auto play mode, disable otherwise.
+
+           Warning: This auto play will be only affected to the next animation source.
+           So must be called before setting animation file.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            auto_play: bool; [[Auto play mode, Default value is $false]]
+         }
+      }
+      @property auto_repeat {
+         [[Turn on/off animation looping.
+
+           If @.auto_repeat is $true, it repeats animation when animation frame is reached to
+           end. This auto repeat mode is valid to both play and play_back cases.
+
+           $true Enable auto play mode, disable otherwise.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            auto_repeat: bool; [[Loop mode, Defalut is $false.]]
+         }
+      }
+      @property speed {
+         [[Control animation speed.
+
+           Control animation speed by multiplying $speed value. If you want to play
+           animation double-time faster, you can give $speed 2. If you want to play
+           animation double-time slower, you can give $speed 0.5.
+
+           $true when it's successful. $false otherwise.
+
+           Warning: speed must be greater than zero.
+         ]]
+         set {
+            return: bool;
+         }
+         get {
+         }
+         values {
+            speed: double; [[ Speed factor. Default value is 1.0]]
+         }
+      }
+      @property duration_time {
+         [[Get the duration of animation in seconds.
+
+           This API returns total duration time of current animation in the seconds.
+           If current animation source isn't animatable, it returns zero.
+         ]]
+         get {
+         }
+         values {
+            frame_duration: double; [[duration time in the seconds]]
+         }
+      }
+      @property progress {
+         [[Set current progress position of animation view object.
+
+           When you required to jump on a certain frame instantly,
+           you can change current position by using this API.
+
+           Warning: The range of progress is 0 ~ 1.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            progress: double; [[Progress position. Value must be 0 ~ 1.]]
+         }
+      }
+      @property frame {
+         [[Number of current frame.
+
+           Ranges from 0 to @.frame_count - 1.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            frame_num: int; [[Current frame number.]]
+         }
+      }
+      play {
+         [[Play animation one time instantly when it's available.
+
+           If current keyframe is on a certain position by playing back, this will
+           play forward from there.
+
+           Warning: Play request will be ignored if animation source is not set yet or
+           animation is paused state or it's already on playing.
+         ]]
+
+         return: bool; [[$true when it's successful. $false otherwise.]]
+      }
+      play_back {
+         [[Play back animation one time instantly when it's available.
+
+           If current keyframe is on a certain position by playing, this will
+           play backward from there.
+
+           Warning: Play back request will be ignored if animation source is not set yet or
+           animation is paused state or it's already on playing back.
+         ]]
+
+         return: bool; [[$true when it's successful. $false otherwise.]]
+      }
+      pause {
+         [[Pause current animation instantly.
+
+           Once animation is paused, animation view must get resume to play continue again.
+
+           Warning: Animation must be on playing or playing back status.
+         ]]
+
+         return: bool; [[$true when it's successful. $false otherwise.]]
+      }
+      resume {
+         [[Resume paused animation to continue animation.
+
+           Warning: This resume must be called on animation paused status.
+         ]]
+
+         return: bool; [[$true when it's successful. $false otherwise.]]
+      }
+      stop {
+         [[Stop playing animation.
+
+           Stop animation instatly regardless of it's status and reset to
+           show first frame of animation. Even though current animation is paused,
+           the animation status will be stopped.
+         ]]
+
+         return: bool; [[$true when it's successful. $false otherwise.]]
+      }
+      @property default_view_size {
+         [[The default view size that specified from vector resource.
+         ]]
+         get {
+         }
+         values {
+            size: Eina.Size2D;
+         }
+      }
+      @property state {
+         [[Current animation view state.
+           see @Efl.Ui.Animation_View_State
+         ]]
+         get{
+         }
+         values {
+            state: Efl.Ui.Animation_View_State; [[Current animation view state]]
+         }
+      }
+      is_playing_back {
+         [[Returns the status whether current animation is on playing forward or backward.
+           warning: If animation view is not on playing, it will return $false.
+         ]]
+         return: bool; [[$true, if animation on playing back, $false otherwise.]]
+      }
+      @property frame_count {
+         [[The index of end frame of the animation view, if it's animated.
+           note : frame number starts with 0.
+         ]]
+         get {
+         }
+         values {
+            frame_count: int; [[The number of frames. 0, if it's not animated.]]
+         }
+      }
+      @property min_progress {
+         [[The start progress of the play.
+           Default value is 0.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            min_progress: double; [[The minimum progress. Value must be 0 ~ 1.]]
+         }
+      }
+      @property max_progress {
+         [[The last progress of the play.
+           Default value is 1.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            max_progress: double; [[The maximum progress. Value must be 0 ~ 1.]]
+         }
+      }
+      @property min_frame {
+         [[The start frame of the play.
+           Default value is 0.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            min_frame: int; [[The minimum frame for play. Value must be 0 ~ @.max_frame]]
+         }
+      }
+      @property max_frame {
+         [[The last frame of the play.
+           Default value is @.frame_count - 1
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            max_frame: int; [[The maximum frame for play. Value must be @.min_frame ~ (@.frame_count - 1)]]
+         }
+      }
+
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.File.load;
+      Efl.File.unload;
+      Efl.Gfx.Entity.visible { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
+      Efl.Gfx.View.view_size { set; get; }
+   }
+   events {
+      play,start: void; [[Called when animation is just started]]
+      play,repeat: void; [[Called when animation is just repeated]]
+      play,done: void; [[Called when animation is just finished]]
+      play,pause: void; [[Called when animation is just paused]]
+      play,resume: void; [[Called when animation is just resumed]]
+      play,stop: void; [[Called when animation is just stopped]]
+      play,update: void; [[Called when animation is just updated]]
+   }
+}

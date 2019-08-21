@@ -212,6 +212,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 #include <elm_button.h>
 #include <elm_cache.h>
 #include <elm_calendar.h>
+#include <efl_ui_animation_view.h>
 #include <efl_ui_calendar.h>
 #include <elm_check.h>
 #include <elm_clock.h>
@@ -350,6 +351,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_dnd.eo.h>
 # include <efl_ui_dnd_container.eo.h>
 # include <efl_ui_relative_layout.eo.h>
+# include <efl_ui_animation_view.eo.h>
 # include <efl_ui_tab_bar.eo.h>
 # include <efl_ui_tab_page.eo.h>
 # include <efl_ui_tab_page_part_tab.eo.h>
