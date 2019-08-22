@@ -663,7 +663,7 @@ void ector_software_thread_init(Ector_Software_Thread *thread)
 
    SW_FT_Stroker_New(&thread->stroker);
    SW_FT_Stroker_Set(thread->stroker, 1 << 6,
-                     SW_FT_STROKER_LINECAP_BUTT, SW_FT_STROKER_LINEJOIN_MITER, 0x4<<16);
+                     SW_FT_STROKER_LINECAP_BUTT, SW_FT_STROKER_LINEJOIN_MITER_FIXED, 0x4<<16);
 }
 
 void ector_software_rasterizer_init(Software_Rasterizer *rasterizer)
@@ -728,7 +728,7 @@ void ector_software_rasterizer_stroke_set(Ector_Software_Thread *thread,
           join = SW_FT_STROKER_LINEJOIN_ROUND;
           break;
         default:
-          join = SW_FT_STROKER_LINEJOIN_MITER;
+          join = SW_FT_STROKER_LINEJOIN_MITER_FIXED;
           break;
      }
    SW_FT_Stroker_Set(thread->stroker, stroke_width, cap, join, miter_limit);
