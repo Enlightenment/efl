@@ -161,11 +161,12 @@ _efl_canvas_gesture_touch_delta(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture_To
 {
    Pointer_Data *point = eina_hash_find(pd->touch_points, &tool);
    Eina_Vector2 vec = { 0, 0 };
-   Eina_Vector2 v1 = { point->cur.pos.x, point->cur.pos.y };
-   Eina_Vector2 v2 = { point->prev.pos.x, point->prev.pos.y };
 
    if (!point)
      return vec;
+
+   Eina_Vector2 v1 = { point->cur.pos.x, point->cur.pos.y };
+   Eina_Vector2 v2 = { point->prev.pos.x, point->prev.pos.y };
 
    eina_vector2_subtract(&vec, &v1, &v2);
    return vec;
@@ -176,11 +177,12 @@ _efl_canvas_gesture_touch_distance(const Eo *obj EINA_UNUSED, Efl_Canvas_Gesture
 {
    Pointer_Data *point = eina_hash_find(pd->touch_points, &tool);
    Eina_Vector2 vec = { 0, 0 };
-   Eina_Vector2 v1 = { point->cur.pos.x, point->cur.pos.y };
-   Eina_Vector2 v2 = { point->start.pos.x, point->start.pos.y };
 
    if (!point)
      return vec;
+
+   Eina_Vector2 v1 = { point->cur.pos.x, point->cur.pos.y };
+   Eina_Vector2 v2 = { point->start.pos.x, point->start.pos.y };
 
    eina_vector2_subtract(&vec, &v1, &v2);
    return vec;
