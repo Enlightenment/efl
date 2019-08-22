@@ -6,7 +6,8 @@
 typedef struct _Efl_Ui_Item_Data
 {
    // Eo Objects
-   Eo *parent; /* Parent Widget */
+   Eo *container; /* Parent Widget */
+   Efl_Ui_Item *parent;
 
    // Boolean Data
    Eina_Bool  selected : 1; /* State for item selected */

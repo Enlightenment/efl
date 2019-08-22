@@ -84,4 +84,13 @@ void test_efl_ui_item(void *data EINA_UNUSED,
    efl_gfx_hint_size_min_set(o, EINA_SIZE2D(40, 40));
    efl_ui_widget_disabled_set(o, EINA_TRUE);
    efl_pack_end(box, o);
+
+   o = _item_add(box, EFL_UI_GROUP_ITEM_CLASS, 5);
+   efl_gfx_hint_size_min_set(o, EINA_SIZE2D(40, 40+40));
+   efl_pack_end(box, o);
+
+   o = _item_add(box, EFL_UI_GROUP_ITEM_CLASS, 6);
+   efl_gfx_hint_size_min_set(o, EINA_SIZE2D(40, 40));
+   efl_ui_widget_disabled_set(o, EINA_TRUE);
+   efl_pack_end(box, o);
 }

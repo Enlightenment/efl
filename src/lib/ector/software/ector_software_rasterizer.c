@@ -663,7 +663,7 @@ void ector_software_thread_init(Ector_Software_Thread *thread)
 
    SW_FT_Stroker_New(&thread->stroker);
    SW_FT_Stroker_Set(thread->stroker, 1 << 6,
-                     SW_FT_STROKER_LINECAP_BUTT, SW_FT_STROKER_LINEJOIN_MITER, 0x4<<16);
+                     SW_FT_STROKER_LINECAP_BUTT, SW_FT_STROKER_LINEJOIN_MITER_FIXED, 0x4<<16);
 }
 
 void ector_software_rasterizer_init(Software_Rasterizer *rasterizer)
@@ -685,15 +685,15 @@ void ector_software_thread_shutdown(Ector_Software_Thread *thread)
 void ector_software_rasterizer_stroke_set(Ector_Software_Thread *thread,
                                           Software_Rasterizer *rasterizer EINA_UNUSED, double width,
                                           Efl_Gfx_Cap cap_style, Efl_Gfx_Join join_style,
-                                          Eina_Matrix3 *m)
+                                          Eina_Matrix3 *m, double miterlimit)
 {
    SW_FT_Stroker_LineCap cap;
    SW_FT_Stroker_LineJoin join;
    int stroke_width;
    double scale_factor = 1.0;
 
-   //TODO: The interface to change the value of the miter_limit is not yet ready.
-   SW_FT_Fixed miter_limit = 0x4<<16;
+   // convert to freetype co-ordinate
+   SW_FT_Fixed miter_limit = miterlimit * (1<<16);
 
    if (m)
      {
@@ -728,7 +728,7 @@ void ector_software_rasterizer_stroke_set(Ector_Software_Thread *thread,
           join = SW_FT_STROKER_LINEJOIN_ROUND;
           break;
         default:
-          join = SW_FT_STROKER_LINEJOIN_MITER;
+          join = SW_FT_STROKER_LINEJOIN_MITER_FIXED;
           break;
      }
    SW_FT_Stroker_Set(thread->stroker, stroke_width, cap, join, miter_limit);

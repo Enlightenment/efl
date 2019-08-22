@@ -208,4 +208,5 @@ collections {
 #include "edc/efl/tab_bar.edc"
 #include "edc/efl/tab_page.edc"
 #include "edc/efl/item_container.edc"
+#include "edc/efl/group_item.edc"
 }

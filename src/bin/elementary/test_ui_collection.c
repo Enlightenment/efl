@@ -86,7 +86,7 @@ _widget_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 static void
-_add_item(Efl_Ui_Collection *c)
+_add_item(Efl_Ui_Collection *c, Eo *cont)
 {
    Efl_Class *itc = efl_key_data_get(c, "__item_class");
    char buf[PATH_MAX];
@@ -126,7 +126,7 @@ _add_item(Efl_Ui_Collection *c)
      efl_gfx_hint_size_min_set(il, EINA_SIZE2D(100, 180));
    else
      efl_gfx_hint_size_min_set(il, EINA_SIZE2D(40, 40+(i%2)*40));
-   efl_pack_end(c, il);
+   efl_pack_end(cont, il);
 }
 
 static void
@@ -138,7 +138,7 @@ _remove_all_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 static void
 _add_one_item(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   _add_item(data);
+   _add_item(data, data);
 }
 
 static void
@@ -146,7 +146,7 @@ _add_thousend_items(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    for (int i = 0; i < 1000; ++i)
      {
-        _add_item(data);
+        _add_item(data, data);
      }
 }
 
@@ -158,9 +158,9 @@ _select_value_cb(void *data, const Efl_Event *ev)
    efl_ui_select_mode_set(c, efl_ui_radio_group_selected_value_get(ev->object));
 }
 
-void create_item_container_ui(Efl_Ui_Position_Manager_Entity *manager, const Efl_Class *item, const char *name)
+void create_item_container_ui(const Efl_Class *collection_class, const Efl_Class *item, const char *name)
 {
-   Efl_Ui_Win *win, *o, *tbl, *item_container, *bx;
+   Efl_Ui_Win *win, *o, *tbl, *item_container, *bx, *git;
    Match_Content_Ctx *ctx = calloc(1, sizeof(*ctx));
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
@@ -170,14 +170,28 @@ void create_item_container_ui(Efl_Ui_Position_Manager_Entity *manager, const Efl
    tbl = efl_add(EFL_UI_TABLE_CLASS, win);
    efl_content_set(win, tbl);
 
-   item_container = o = efl_add(EFL_UI_COLLECTION_CLASS, win,
-                 efl_ui_collection_position_manager_set(efl_added, manager));
+   item_container = o = efl_add(collection_class, win);
    efl_key_data_set(o, "__item_class", item);
    efl_event_callback_add(o, EFL_EVENT_DEL, _widget_del_cb, ctx);
-   for (int i = 0; i < 2000; ++i)
+   for (int i = 0; i < 200; ++i)
      {
-        _add_item(o);
+        _add_item(o, o);
      }
+   for (int j = 0; j < 5; ++j)
+     {
+        Eina_Strbuf *buf = eina_strbuf_new();
+
+        eina_strbuf_append_printf(buf, "Group #%d", j);
+        git = efl_add(EFL_UI_GROUP_ITEM_CLASS, o);
+        efl_text_set(git, eina_strbuf_release(buf));
+        efl_pack_end(o, git);
+        efl_gfx_hint_size_min_set(git, EINA_SIZE2D(40, 40+40));
+        for (int i = 0; i < 200; ++i)
+          {
+            _add_item(o, git);
+          }
+     }
+
    efl_pack_table(tbl, o, 1, 0, 1, 12);
    ctx->c = o;
 
@@ -278,12 +292,12 @@ void test_efl_ui_collection_grid(void *data EINA_UNUSED,
                                    Evas_Object *obj EINA_UNUSED,
                                    void *event_info EINA_UNUSED)
 {
-   create_item_container_ui(efl_new(EFL_UI_POSITION_MANAGER_GRID_CLASS), EFL_UI_GRID_DEFAULT_ITEM_CLASS, "Efl.Ui.Item_Container Grid");
+   create_item_container_ui(EFL_UI_GRID_CLASS, EFL_UI_GRID_DEFAULT_ITEM_CLASS, "Efl.Ui.Grid");
 }
 
 void test_efl_ui_collection_list(void *data EINA_UNUSED,
                                    Evas_Object *obj EINA_UNUSED,
                                    void *event_info EINA_UNUSED)
 {
-   create_item_container_ui(efl_new(EFL_UI_POSITION_MANAGER_LIST_CLASS), EFL_UI_LIST_DEFAULT_ITEM_CLASS, "Efl.Ui.Item_Container List");
+   create_item_container_ui(EFL_UI_LIST_CLASS, EFL_UI_LIST_DEFAULT_ITEM_CLASS, "Efl.Ui.List");
 }

@@ -17,19 +17,6 @@
 
    spec-meta-end */
 
-
-static void
-_setup(void)
-{
-   Eo *c[3];
-
-   for (int i = 0; i < 3; ++i)
-     {
-        c[i] = create_test_widget();
-        efl_pack_end(widget, c[i]);
-     }
-}
-
 static void
 _set_pointer_quit(void *data, const Efl_Event *ev)
 {
@@ -229,7 +216,7 @@ EFL_END_TEST
 void
 efl_ui_multi_selectable_behavior_test(TCase *tc)
 {
-   tcase_add_checked_fixture(tc, _setup, NULL);
+   //Items are getting added by the fixture added in efl_ui_single_selectable_behavior_test
    tcase_add_test(tc, test_multi_select);
    tcase_add_test(tc, test_multi_select_removal);
    tcase_add_test(tc, test_single_select);

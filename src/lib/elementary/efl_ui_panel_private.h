@@ -31,8 +31,9 @@ struct _Efl_Ui_Panel_Data
    Evas_Object                          *bx, *content;
    Evas_Object                          *event;
    Evas_Object                          *scr_ly;
-   Evas_Object                          *hit_rect, *panel_edje, *scr_edje;
+   Evas_Object                          *panel_edje, *scr_edje;
    Evas_Object                          *scr_panel, *scr_event;
+   Evas_Object                          *smanager, *pan_obj;
 
 
    Efl_Ui_Panel_Orient                   orient;

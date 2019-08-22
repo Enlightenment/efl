@@ -321,9 +321,7 @@ typedef void (*Elm_Access_On_Highlight_Cb)(void *data);
  */
 typedef struct _Elm_Widget_Smart_Data
 {
-   Evas_Object                  *obj; /**< object pointer for this widget smart data */
    Evas_Object                  *parent_obj; /**< parent object of a widget in the elementary tree */
-   Evas_Coord                    x, y, w, h;
    Eina_List                    *subobjs; /**< list of widgets' sub objects in the elementary tree */
    Evas_Object                  *resize_obj; /**< an unique object for each widget that shows the look of a widget. Resize object's geometry is same as the widget. This resize object is different from that of window's resize object. */
    Evas_Object                  *hover_obj;
@@ -349,15 +347,13 @@ typedef struct _Elm_Widget_Smart_Data
    const char                   *style;
    const char                   *access_info;
    const char                   *accessible_name;
-   unsigned int                  focus_order;
-   Eina_Bool                     focus_order_on_calc;
 
    int                           child_drag_x_locked;
    int                           child_drag_y_locked;
    int                           disabled;
+   int                           tree_unfocusable;
 
    Eina_Inlist                  *translate_strings;
-   Eina_List                    *focus_chain;
    Eina_List                    *event_cb;
    /* this is a hook to be set on-the-fly on widgets. this is code
     * handling the request of showing a specific region from an inner
@@ -390,14 +386,15 @@ typedef struct _Elm_Widget_Smart_Data
       Eina_Hash *model_lookup;
       Eina_Hash *view_lookup;
       Eina_Bool  registered : 1;
+      Eina_Bool  callback_to_provider : 1;
    } properties;
+   void                          *shared_win_data;
    Eina_Bool                     scroll_x_locked : 1;
    Eina_Bool                     scroll_y_locked : 1;
 
    Eina_Bool                     can_focus : 1;
    Eina_Bool                     focused : 1;
    Eina_Bool                     top_win_focused : 1;
-   Eina_Bool                     tree_unfocusable : 1;
    Eina_Bool                     focus_move_policy_auto_mode : 1; /* This is TRUE by default */
    Eina_Bool                     highlight_ignore : 1;
    Eina_Bool                     highlight_in_theme : 1;

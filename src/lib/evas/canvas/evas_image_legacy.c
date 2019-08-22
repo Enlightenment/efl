@@ -50,7 +50,7 @@ evas_object_image_memfile_set(Evas_Object *eo_obj, void *data, int size, char *f
    f = eina_file_virtualize(NULL, data, size, EINA_TRUE);
    if (!f) return ;
    efl_file_simple_mmap_load(eo_obj, f, key);
-   eina_file_close(f);
+   eina_file_close(f); // close matching open OK
 }
 
 EAPI void

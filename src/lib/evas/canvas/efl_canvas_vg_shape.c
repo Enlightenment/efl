@@ -132,6 +132,10 @@ _efl_canvas_vg_shape_efl_object_constructor(Eo *obj, Efl_Canvas_Vg_Shape_Data *p
    efl_gfx_shape_stroke_cap_set(obj, EFL_GFX_CAP_BUTT);
    efl_gfx_shape_stroke_join_set(obj, EFL_GFX_JOIN_MITER);
 
+   //NOTE: The default value is 4. It only refers to the standard of web svg.
+   //      https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/stroke-miterlimit
+   efl_gfx_shape_stroke_miterlimit_set(obj, 4);
+
    nd = efl_data_scope_get(obj, EFL_CANVAS_VG_NODE_CLASS);
    nd->render_pre = _efl_canvas_vg_shape_render_pre;
    nd->data = pd;

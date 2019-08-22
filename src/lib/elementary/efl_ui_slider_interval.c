@@ -39,20 +39,12 @@ _efl_ui_slider_interval_val_fetch(Evas_Object *obj, Efl_Ui_Slider_Interval_Data 
    EFL_UI_SLIDER_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   if (elm_widget_is_legacy(obj))
-     efl_ui_drag_value_get(efl_part(wd->resize_obj, "elm.dragable.slider"),
-                           &posx, &posy);
-   else
-     efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.dragable.slider"),
+   efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.dragable.slider"),
                            &posx, &posy);
    if (efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE)) pos = posx;
    else pos = posy;
 
-   if (elm_widget_is_legacy(obj))
-     efl_ui_drag_value_get(efl_part(wd->resize_obj, "elm.dragable2.slider"),
-                           &posx2, &posy2);
-   else
-     efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.dragable2.slider"),
+   efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.dragable2.slider"),
                            &posx2, &posy2);
    if (efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE)) pos2 = posx2;
    else pos2 = posy2;
@@ -124,20 +116,10 @@ _efl_ui_slider_interval_val_set(Evas_Object *obj, Efl_Ui_Slider_Interval_Data *p
    else if (pos2 > 1.0)
      pos2 = 1.0;
 
-   if (elm_widget_is_legacy(obj))
-     {
-        efl_ui_drag_value_set(efl_part(wd->resize_obj, "elm.dragable.slider"),
-                              pos, pos);
-        efl_ui_drag_value_set(efl_part(wd->resize_obj, "elm.dragable2.slider"),
-                              pos2, pos2);
-     }
-   else
-     {
-        efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
-                              pos, pos);
-        efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable2.slider"),
-                              pos2, pos2);
-     }
+   efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
+                         pos, pos);
+   efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable2.slider"),
+                         pos2, pos2);
 
    // emit accessibility event also if value was changed by API
    if (_elm_config->atspi_mode)
@@ -156,20 +138,10 @@ _efl_ui_slider_interval_down_knob(Evas_Object *obj, Efl_Ui_Slider_Interval_Data 
 
    pd->intvl_flag = 0;
 
-   if (elm_widget_is_legacy(obj))
-     {
-        efl_ui_drag_value_get(efl_part(wd->resize_obj, "elm.dragable.slider"),
-                              &posx, &posy);
-        efl_ui_drag_value_get(efl_part(wd->resize_obj, "elm.dragable2.slider"),
-                              &posx2, &posy2);
-     }
-   else
-     {
-        efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.dragable.slider"),
-                              &posx, &posy);
-        efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.dragable2.slider"),
-                              &posx2, &posy2);
-     }
+   efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.dragable.slider"),
+                         &posx, &posy);
+   efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.dragable2.slider"),
+                         &posx2, &posy2);
 
    if (efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
      {
@@ -186,21 +158,13 @@ _efl_ui_slider_interval_down_knob(Evas_Object *obj, Efl_Ui_Slider_Interval_Data 
 
    if (diff1 < diff2)
      {
-        if (elm_widget_is_legacy(obj))
-          efl_ui_drag_value_set(efl_part(wd->resize_obj, "elm.dragable.slider"),
-                                button_x, button_y);
-        else
-          efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
+        efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
                                 button_x, button_y);
         pd->intvl_flag = 1;
      }
    else if (diff1 > diff2)
      {
-        if (elm_widget_is_legacy(obj))
-          efl_ui_drag_value_set(efl_part(wd->resize_obj, "elm.dragable2.slider"),
-                                button_x, button_y);
-        else
-          efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable2.slider"),
+        efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable2.slider"),
                                 button_x, button_y);
         pd->intvl_flag = 2;
      }
@@ -208,21 +172,13 @@ _efl_ui_slider_interval_down_knob(Evas_Object *obj, Efl_Ui_Slider_Interval_Data 
      {
         if (diff3 < 0)
           {
-             if (elm_widget_is_legacy(obj))
-               efl_ui_drag_value_set(efl_part(wd->resize_obj, "elm.dragable.slider"),
-                                     button_x, button_y);
-             else
-               efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
+             efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
                                      button_x, button_y);
              pd->intvl_flag = 1;
           }
         else
           {
-             if (elm_widget_is_legacy(obj))
-               efl_ui_drag_value_set(efl_part(wd->resize_obj, "elm.dragable2.slider"),
-                                     button_x, button_y);
-             else
-               efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable2.slider"),
+             efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable2.slider"),
                                      button_x, button_y);
              pd->intvl_flag = 2;
           }
@@ -236,20 +192,12 @@ _efl_ui_slider_interval_move_knob(Evas_Object *obj, Efl_Ui_Slider_Interval_Data 
 
    if (pd->intvl_flag == 1)
      {
-        if (elm_widget_is_legacy(obj))
-          efl_ui_drag_value_set(efl_part(wd->resize_obj, "elm.dragable.slider"),
-                                button_x, button_y);
-        else
-          efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
+        efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
                                 button_x, button_y);
      }
    else if (pd->intvl_flag == 2)
      {
-        if (elm_widget_is_legacy(obj))
-          efl_ui_drag_value_set(efl_part(wd->resize_obj, "elm.dragable2.slider"),
-                                button_x, button_y);
-        else
-          efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable2.slider"),
+        efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable2.slider"),
                                 button_x, button_y);
      }
 }

@@ -269,6 +269,7 @@ struct _Efl_Ui_Win_Data
       Eina_Bool    bg_must_swallow_init : 1;
       Eina_Bool    ctor : 1; /**< legacy constructor: elm_win~add */
    } legacy;
+   Efl_Ui_Shared_Win_Data spd;
 
    Eina_Value exit_on_close;
 
@@ -9440,4 +9441,13 @@ EAPI const char *
 elm_win_focus_highlight_style_get(const Efl_Ui_Win *obj)
 {
    return efl_ui_win_focus_highlight_style_get(obj);
+}
+
+EAPI Efl_Ui_Shared_Win_Data*
+efl_ui_win_shared_data_get(Efl_Ui_Win *obj)
+{
+   Efl_Ui_Win_Data *pd = efl_data_scope_safe_get(obj, MY_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(pd, NULL);
+
+   return &pd->spd;
 }

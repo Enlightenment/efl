@@ -335,6 +335,7 @@ _efl_ui_scroller_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Scroller_Data 
 
    if (sd->content) efl_gfx_entity_size_set(sd->content, EINA_SIZE2D(view.w, view.h));
 
+   edje_object_message_signal_process(wd->resize_obj);
    edje_object_size_min_calc(wd->resize_obj, &vmw, &vmh);
 
    if (sd->match_content_w) size.w = vmw + min.w;

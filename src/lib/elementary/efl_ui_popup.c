@@ -19,23 +19,6 @@
 static const char PART_NAME_BACKWALL[] = "backwall";
 
 static void
-_backwall_clicked_cb(void *data,
-                     Eo *o EINA_UNUSED,
-                     const char *emission EINA_UNUSED,
-                     const char *source EINA_UNUSED)
-{
-   Eo *obj = data;
-   efl_event_callback_call(obj, EFL_UI_POPUP_EVENT_BACKWALL_CLICKED, NULL);
-}
-
-EOLIAN static void
-_efl_ui_popup_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eina_Position2D pos)
-{
-   pd->align = EFL_UI_POPUP_ALIGN_NONE;
-   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
-}
-
-static void
 _calc_align(Eo *obj)
 {
    Efl_Ui_Popup_Data *pd = efl_data_scope_get(obj, MY_CLASS);
@@ -74,6 +57,293 @@ _calc_align(Eo *obj)
      }
 }
 
+static void
+_anchor_calc(Eo *obj)
+{
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+   EFL_UI_POPUP_DATA_GET_OR_RETURN(obj, pd);
+
+   if (!pd->anchor) return;
+
+   Eina_Position2D pos = {0, 0};
+
+   Eina_Rect a_geom = efl_gfx_entity_geometry_get(pd->anchor);
+   Eina_Rect o_geom = efl_gfx_entity_geometry_get(obj);
+   Eina_Rect p_geom = efl_gfx_entity_geometry_get(pd->win_parent);
+
+   pd->used_align = EFL_UI_POPUP_ALIGN_NONE;
+
+   /* 1. Find align which display popup.
+         It enables to shifting popup from exact position.
+         LEFT, RIGHT - shift only y position within anchor object's height
+         TOP, BOTTOM - shift only x position within anchor object's width
+         CENTER - shift both x, y position within anchor object's area
+    */
+
+   for (int idx = 0; idx < 6; idx++)
+     {
+        Efl_Ui_Popup_Align cur_align;
+
+        if (idx == 0)
+          cur_align = pd->align;
+        else
+          cur_align = pd->priority[idx - 1];
+
+        if (cur_align == EFL_UI_POPUP_ALIGN_NONE)
+          continue;
+
+        switch(cur_align)
+          {
+           case EFL_UI_POPUP_ALIGN_TOP:
+              pos.x = a_geom.x + ((a_geom.w - o_geom.w) / 2);
+              pos.y = (a_geom.y - o_geom.h);
+
+              if ((pos.y < 0) ||
+                  ((pos.y + o_geom.h) > p_geom.h) ||
+                  (o_geom.w > p_geom.w))
+                continue;
+              break;
+
+           case EFL_UI_POPUP_ALIGN_LEFT:
+              pos.x = (a_geom.x - o_geom.w);
+              pos.y = a_geom.y + ((a_geom.h - o_geom.h) / 2);
+
+              if ((pos.x < 0) ||
+                  ((pos.x + o_geom.w) > p_geom.w) ||
+                  (o_geom.h > p_geom.h))
+                continue;
+              break;
+
+           case EFL_UI_POPUP_ALIGN_RIGHT:
+              pos.x = (a_geom.x + a_geom.w);
+              pos.y = a_geom.y + ((a_geom.h - o_geom.h) / 2);
+
+              if ((pos.x < 0) ||
+                  ((pos.x + o_geom.w) > p_geom.w) ||
+                  (o_geom.h > p_geom.h))
+                continue;
+              break;
+
+           case EFL_UI_POPUP_ALIGN_BOTTOM:
+              pos.x = a_geom.x + ((a_geom.w - o_geom.w) / 2);
+              pos.y = (a_geom.y + a_geom.h);
+
+              if ((pos.y < 0) ||
+                  ((pos.y + o_geom.h) > p_geom.h) ||
+                  (o_geom.w > p_geom.w))
+                continue;
+              break;
+
+           case EFL_UI_POPUP_ALIGN_CENTER:
+              pos.x = a_geom.x + ((a_geom.w - o_geom.w) / 2);
+              pos.y = a_geom.y + ((a_geom.h - o_geom.h) / 2);
+
+              if ((o_geom.w > p_geom.w) || (o_geom.h > p_geom.h))
+                continue;
+              break;
+
+           default:
+              continue;
+          }
+
+        if ((cur_align == EFL_UI_POPUP_ALIGN_TOP) ||
+            (cur_align == EFL_UI_POPUP_ALIGN_BOTTOM) ||
+            (cur_align == EFL_UI_POPUP_ALIGN_CENTER))
+          {
+             if (pos.x < 0)
+               pos.x = 0;
+             if ((pos.x + o_geom.w) > p_geom.w)
+               pos.x = p_geom.w - o_geom.w;
+
+             if ((pos.x > (a_geom.x + a_geom.w)) ||
+                 ((pos.x + o_geom.w) < a_geom.x))
+               continue;
+          }
+
+        if ((cur_align == EFL_UI_POPUP_ALIGN_LEFT) ||
+            (cur_align == EFL_UI_POPUP_ALIGN_RIGHT) ||
+            (cur_align == EFL_UI_POPUP_ALIGN_CENTER))
+          {
+             if (pos.y < 0)
+               pos.y = 0;
+             if ((pos.y + o_geom.h) > p_geom.h)
+               pos.y = p_geom.h - o_geom.h;
+
+             if ((pos.y > (a_geom.y + a_geom.h)) ||
+                 ((pos.y + o_geom.h) < a_geom.y))
+               continue;
+          }
+
+        pd->used_align = cur_align;
+        goto end;
+     }
+
+   /* 2. Move popup to fit first valid align although entire popup can't display */
+
+   for (int idx = 0; idx < 6; idx++)
+     {
+        Efl_Ui_Popup_Align cur_align;
+
+        if (idx == 0)
+          cur_align = pd->align;
+        else
+          cur_align = pd->priority[idx - 1];
+
+        if (cur_align == EFL_UI_POPUP_ALIGN_NONE)
+          continue;
+
+        switch(cur_align)
+          {
+           case EFL_UI_POPUP_ALIGN_TOP:
+              pos.x = a_geom.x + ((a_geom.w - o_geom.w) / 2);
+              pos.y = (a_geom.y - o_geom.h);
+              pd->used_align = cur_align;
+              goto end;
+              break;
+
+           case EFL_UI_POPUP_ALIGN_LEFT:
+              pos.x = (a_geom.x - o_geom.w);
+              pos.y = a_geom.y + ((a_geom.h - o_geom.h) / 2);
+              pd->used_align = cur_align;
+              goto end;
+              break;
+
+           case EFL_UI_POPUP_ALIGN_RIGHT:
+              pos.x = (a_geom.x + a_geom.w);
+              pos.y = a_geom.y + ((a_geom.h - o_geom.h) / 2);
+              pd->used_align = cur_align;
+              goto end;
+              break;
+
+           case EFL_UI_POPUP_ALIGN_BOTTOM:
+              pos.x = a_geom.x + ((a_geom.w - o_geom.w) / 2);
+              pos.y = (a_geom.y + a_geom.h);
+              pd->used_align = cur_align;
+              goto end;
+              break;
+
+           case EFL_UI_POPUP_ALIGN_CENTER:
+              pos.x = a_geom.x + ((a_geom.w - o_geom.w) / 2);
+              pos.y = a_geom.y + ((a_geom.h - o_geom.h) / 2);
+              pd->used_align = cur_align;
+              goto end;
+              break;
+
+           default:
+              break;
+          }
+     }
+
+end:
+   if (pd->used_align != EFL_UI_POPUP_ALIGN_NONE)
+     efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
+}
+
+static void
+_anchor_geom_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   _anchor_calc(data);
+}
+
+static void
+_anchor_del_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   EFL_UI_POPUP_DATA_GET_OR_RETURN(data, pd);
+
+   efl_event_callback_del(pd->win_parent, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _anchor_geom_cb, data);
+
+   pd->anchor = NULL;
+   _anchor_calc(data);
+}
+
+static void
+_anchor_detach(Eo *obj, Efl_Ui_Popup_Data *pd)
+{
+   if (!pd->anchor) return;
+
+   efl_event_callback_del(pd->win_parent, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _anchor_geom_cb, obj);
+   efl_event_callback_del(pd->anchor, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _anchor_geom_cb, obj);
+   efl_event_callback_del(pd->anchor, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _anchor_geom_cb, obj);
+   efl_event_callback_del(pd->anchor, EFL_EVENT_DEL, _anchor_del_cb, obj);
+}
+
+EOLIAN static void
+_efl_ui_popup_anchor_set(Eo *obj, Efl_Ui_Popup_Data *pd, Eo *anchor)
+{
+   _anchor_detach(obj, pd);
+   pd->anchor = anchor;
+
+   if (anchor)
+     {
+        efl_event_callback_add(pd->win_parent, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _anchor_geom_cb, obj);
+        efl_event_callback_add(anchor, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _anchor_geom_cb, obj);
+        efl_event_callback_add(anchor, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _anchor_geom_cb, obj);
+        efl_event_callback_add(anchor, EFL_EVENT_DEL, _anchor_del_cb, obj);
+        _anchor_calc(obj);
+     }
+   else
+     _calc_align(obj);
+}
+
+EOLIAN static Efl_Object *
+_efl_ui_popup_anchor_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
+{
+   return pd->anchor;
+}
+
+EOLIAN static void
+_efl_ui_popup_align_priority_set(Eo *obj EINA_UNUSED,
+                                        Efl_Ui_Popup_Data *pd,
+                                        Efl_Ui_Popup_Align first,
+                                        Efl_Ui_Popup_Align second,
+                                        Efl_Ui_Popup_Align third,
+                                        Efl_Ui_Popup_Align fourth,
+                                        Efl_Ui_Popup_Align fifth)
+{
+   pd->priority[0] = first;
+   pd->priority[1] = second;
+   pd->priority[2] = third;
+   pd->priority[3] = fourth;
+   pd->priority[4] = fifth;
+}
+
+EOLIAN static void
+_efl_ui_popup_align_priority_get(const Eo *obj EINA_UNUSED,
+                                        Efl_Ui_Popup_Data *pd,
+                                        Efl_Ui_Popup_Align *first,
+                                        Efl_Ui_Popup_Align *second,
+                                        Efl_Ui_Popup_Align *third,
+                                        Efl_Ui_Popup_Align *fourth,
+                                        Efl_Ui_Popup_Align *fifth)
+{
+   if (first) *first = pd->priority[0];
+   if (second) *second = pd->priority[1];
+   if (third) *third = pd->priority[2];
+   if (fourth) *fourth = pd->priority[3];
+   if (fifth) *fifth = pd->priority[4];
+}
+
+
+static void
+_backwall_clicked_cb(void *data,
+                     Eo *o EINA_UNUSED,
+                     const char *emission EINA_UNUSED,
+                     const char *source EINA_UNUSED)
+{
+   Eo *obj = data;
+   efl_event_callback_call(obj, EFL_UI_POPUP_EVENT_BACKWALL_CLICKED, NULL);
+}
+
+EOLIAN static void
+_efl_ui_popup_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Popup_Data *pd, Eina_Position2D pos)
+{
+   pd->align = EFL_UI_POPUP_ALIGN_NONE;
+   _anchor_detach(obj, pd);
+
+   pd->anchor = NULL;
+   efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
+}
+
 EOLIAN static void
 _efl_ui_popup_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Popup_Data *pd, Eina_Size2D size)
 {
@@ -93,8 +363,17 @@ _parent_geom_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_canvas_group_change(obj);
 }
 
+static void
+_hints_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Efl_Ui_Popup_Data *pd = data;
+
+   if (!pd->in_calc)
+     efl_canvas_group_change(ev->object);
+}
+
 EOLIAN static void
-_efl_ui_popup_efl_ui_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd EINA_UNUSED, Eo *parent)
+_efl_ui_popup_efl_ui_widget_widget_parent_set(Eo *obj, Efl_Ui_Popup_Data *pd, Eo *parent)
 {
    if (!parent)
      {
@@ -209,6 +488,7 @@ _efl_ui_popup_efl_object_constructor(Eo *obj, Efl_Ui_Popup_Data *pd)
      elm_widget_theme_klass_set(obj, "popup");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
+   efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _hints_changed_cb, pd);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
    if (elm_widget_theme_object_set(obj, wd->resize_obj,
@@ -227,6 +507,11 @@ _efl_ui_popup_efl_object_constructor(Eo *obj, Efl_Ui_Popup_Data *pd)
 
    pd->align = EFL_UI_POPUP_ALIGN_CENTER;
 
+   pd->priority[0] = EFL_UI_POPUP_ALIGN_TOP;
+   pd->priority[1] = EFL_UI_POPUP_ALIGN_LEFT;
+   pd->priority[2] = EFL_UI_POPUP_ALIGN_RIGHT;
+   pd->priority[3] = EFL_UI_POPUP_ALIGN_BOTTOM;
+   pd->priority[4] = EFL_UI_POPUP_ALIGN_CENTER;
    return obj;
 }
 
@@ -234,6 +519,7 @@ EOLIAN static void
 _efl_ui_popup_efl_object_destructor(Eo *obj, Efl_Ui_Popup_Data *pd)
 {
    ELM_SAFE_DEL(pd->backwall);
+   _anchor_detach(obj, pd);
 
    efl_event_callback_del(pd->win_parent, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _parent_geom_cb,
                           obj);
@@ -274,7 +560,10 @@ _efl_ui_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popup_Data *pd)
         _sizing_eval(obj);
         pd->in_calc = EINA_FALSE;
      }
-   _calc_align(obj);
+   if (pd->anchor)
+     _anchor_calc(obj);
+   else
+     _calc_align(obj);
 
    Eina_Rect p_geom = efl_gfx_entity_geometry_get(pd->win_parent);
 
@@ -372,15 +661,15 @@ _efl_ui_popup_part_backwall_efl_file_load(Eo *obj, void *_pd EINA_UNUSED)
         efl_del(prev_obj);
      }
 
-   Eo *image = elm_image_add(pd->obj);
+   Eo *image = efl_add(EFL_UI_IMAGE_CLASS, pd->obj);
    Eina_Bool ret;
    const Eina_File *f;
 
    f = efl_file_mmap_get(obj);
    if (f)
-     ret = elm_image_mmap_set(image, f, efl_file_key_get(obj));
+     ret = efl_file_simple_mmap_load(image, f, efl_file_key_get(obj));
    else
-     ret = elm_image_file_set(image, efl_file_get(obj), efl_file_key_get(obj));
+     ret = efl_file_simple_load(image, efl_file_get(obj), efl_file_key_get(obj));
    if (!ret)
      {
         efl_del(image);

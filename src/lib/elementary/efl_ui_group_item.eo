@@ -1,0 +1,22 @@
+class @beta Efl.Ui.Group_Item extends Efl.Ui.Default_Item implements Efl.Pack_Linear
+{
+   [[Group item for grids and lists]]
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.invalidate;
+      Efl.Pack.pack_clear;
+      Efl.Pack.unpack_all;
+      Efl.Pack.unpack;
+      Efl.Pack.pack;
+      Efl.Pack_Linear.pack_end;
+      Efl.Pack_Linear.pack_begin;
+      Efl.Pack_Linear.pack_before;
+      Efl.Pack_Linear.pack_after;
+      Efl.Pack_Linear.pack_at;
+      Efl.Pack_Linear.pack_unpack_at;
+      Efl.Pack_Linear.pack_index_get;
+      Efl.Pack_Linear.pack_content_get;
+      Efl.Container.content_iterate;
+      Efl.Container.content_count;
+   }
+}

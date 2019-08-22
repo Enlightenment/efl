@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#define EFL_UI_ANCHOR_POPUP_BETA
+#define EFL_UI_POPUP_BETA
 #define EFL_UI_SCROLL_ALERT_POPUP_BETA
 #include <Efl_Ui.h>
 #include <Elementary.h>
@@ -992,13 +992,13 @@ test_ui_text_alert_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, v
 static void
 _anchor_set_cb(void *data, const Efl_Event *ev)
 {
-   efl_ui_anchor_popup_anchor_set(data, ev->object);
+   efl_ui_popup_anchor_set(data, ev->object);
 }
 
 static void
 _anchor_unset_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   efl_ui_anchor_popup_anchor_set(data, NULL);
+   efl_ui_popup_anchor_set(data, NULL);
 }
 
 void
@@ -1021,12 +1021,12 @@ test_ui_anchor_popup(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    efl_gfx_hint_weight_set(layout, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    efl_content_set(win, layout);
 
-   Eo *efl_ui_popup = efl_add(EFL_UI_ANCHOR_POPUP_CLASS, win);
+   Eo *efl_ui_popup = efl_add(EFL_UI_POPUP_CLASS, win);
 
    efl_ui_popup_part_backwall_repeat_events_set(efl_part(efl_ui_popup, "backwall"), EINA_TRUE);
 
    //Default align priority order is top, left, right, bottom, center.
-   efl_ui_anchor_popup_align_priority_set(efl_ui_popup, EFL_UI_POPUP_ALIGN_TOP,
+   efl_ui_popup_align_priority_set(efl_ui_popup, EFL_UI_POPUP_ALIGN_TOP,
                                           EFL_UI_POPUP_ALIGN_BOTTOM,
                                           EFL_UI_POPUP_ALIGN_LEFT,
                                           EFL_UI_POPUP_ALIGN_RIGHT,

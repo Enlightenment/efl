@@ -60,7 +60,11 @@ _elm_theme_item_finalize(Eina_Inlist **files,
         char *version;
         int v;
 
-        if (!(version = edje_mmap_data_get(f, "version"))) return;
+        if (!(version = edje_mmap_data_get(f, "version")))
+          {
+             eina_file_close(f); // close matching open (finalize expected to consume eina file) OK
+             return;
+          }
         v = atoi(version);
         if (v < 110) // bump this version number when we need to
           {
@@ -71,7 +75,7 @@ _elm_theme_item_finalize(Eina_Inlist **files,
    etf = calloc(1, sizeof(Elm_Theme_File));
    EINA_SAFETY_ON_NULL_RETURN(etf);
    etf->item = eina_stringshare_add(item);
-   etf->handle = f;
+   etf->handle = f; // now own/consume the file handle
    if (istheme)
      {
         name = edje_mmap_data_get(f, "efl_theme_base");
@@ -152,7 +156,7 @@ _elm_theme_file_item_del(Eina_Inlist **files, const char *str)
    EINA_INLIST_FOREACH_SAFE(*files, l, item)
      {
         if (item->item != str) continue;
-        eina_file_close(item->handle);
+        eina_file_close(item->handle); // close matching open (file consumed in finalize by putting it in etf) OK
         eina_stringshare_del(item->item);
         *files = eina_inlist_remove(*files, EINA_INLIST_GET(item));
         free(item);
@@ -170,7 +174,7 @@ _elm_theme_file_mmap_del(Eina_Inlist **files, const Eina_File *file)
    EINA_INLIST_FOREACH_SAFE(*files, l, item)
      {
         if (item->handle != file) continue;
-        eina_file_close(item->handle);
+        eina_file_close(item->handle); // close matching open (file consumed in finalize by putting it in etf) OK
         eina_stringshare_del(item->item);
         *files = eina_inlist_remove(*files, EINA_INLIST_GET(item));
         free(item);
@@ -185,7 +189,7 @@ _elm_theme_file_clean(Eina_Inlist **files)
         Elm_Theme_File *etf = EINA_INLIST_CONTAINER_GET(*files, Elm_Theme_File);
 
         eina_stringshare_del(etf->item);
-        eina_file_close(etf->handle);
+        eina_file_close(etf->handle); // close matching open (file consumed in finalize by putting it in etf) OK
         eina_stringshare_del(etf->match_theme);
         *files = eina_inlist_remove(*files, *files);
         free(etf);
@@ -653,7 +657,7 @@ elm_theme_overlay_mmap_add(Elm_Theme *th, const Eina_File *f)
    if (!th) th = theme_default;
    if (!th)
      {
-        eina_file_close(file);
+        eina_file_close(file); // close matching open (finalize expected to consume eina file) OK
         return;
      }
    th->overlay_items = eina_list_free(th->overlay_items);
@@ -706,11 +710,12 @@ elm_theme_extension_del(Elm_Theme *th, const char *item)
 EAPI void
 elm_theme_extension_mmap_add(Elm_Theme *th, const Eina_File *f)
 {
-   Eina_File *file = eina_file_dup(f);
+   Eina_File *file;
 
    if (!f) return;
    if (!th) th = theme_default;
    if (!th) return;
+   file = eina_file_dup(f);
    th->extension_items = eina_list_free(th->extension_items);
    _elm_theme_item_finalize(&th->extension, eina_file_filename_get(file), file, EINA_FALSE, EINA_FALSE);
    elm_theme_flush(th);

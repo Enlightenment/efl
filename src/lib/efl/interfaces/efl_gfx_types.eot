@@ -132,6 +132,7 @@ struct @beta Efl.Gfx.Stroke
   dash_length: uint; [[Stroke dash length]]
   cap: Efl.Gfx.Cap; [[Stroke cap]]
   join: Efl.Gfx.Join; [[Stroke join]]
+  miterlimit: double; [[Stroke miterlimit]]
 }
 
 struct @beta Efl.Gfx.Shape_Public

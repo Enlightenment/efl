@@ -191,6 +191,7 @@ _evas_image_file_header(Evas_Module *em, Image_Entry *ie, int *error)
         if (!ie->f)
           {
              ie->f = eina_file_open(ie->file, EINA_FALSE);
+             ie->flags.given_mmap = EINA_FALSE;
              file = ie->file;
           }
         else file = eina_file_filename_get(ie->f);

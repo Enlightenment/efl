@@ -25,33 +25,42 @@ item_container_teardown()
    win = NULL;
 }
 
-static int
+static Efl_Ui_Position_Manager_Batch_Result
 _size_accessor_get_at(void *data EINA_UNUSED, int start_id, Eina_Rw_Slice memory)
 {
    int i;
+   Efl_Ui_Position_Manager_Batch_Size_Access *sizes = memory.mem;
+   Efl_Ui_Position_Manager_Batch_Result result;
 
    for (i = start_id; i < (int)(MIN(start_id + memory.len, eina_inarray_count(arr_size))); ++i)
      {
-         Eina_Size2D *size = eina_inarray_nth(arr_size, i);
+        Eina_Size2D *size = eina_inarray_nth(arr_size, i);
 
-         ((Eina_Size2D*)memory.mem)[i - start_id] = *size;
+        sizes[i - start_id].size = *size;
+        sizes[i - start_id].group = 0;
      }
-   return i - start_id;
+   result.filled_items = i - start_id;
+   result.group_id = -1;
+   return result;
 }
 
-static int
+static Efl_Ui_Position_Manager_Batch_Result
 _obj_accessor_get_at(void *data EINA_UNUSED, int start_id, Eina_Rw_Slice memory)
 {
    int i;
+   Efl_Ui_Position_Manager_Batch_Entity_Access *objs = memory.mem;
+   Efl_Ui_Position_Manager_Batch_Result result;
 
    for (i = start_id; i < (int)(MIN(start_id + memory.len, eina_array_count(arr_obj))); ++i)
      {
          Efl_Gfx_Entity *geom = eina_array_data_get(arr_obj, i);
 
-         ((Efl_Gfx_Entity**)memory.mem)[i - start_id] = geom;
+         objs[i - start_id].entity = geom;
+         objs[i - start_id].group = 0;
      }
-
-   return i - start_id;
+   result.filled_items = i - start_id;
+   result.group_id = -1;
+   return result;
 }
 static void
 _initial_setup(void)

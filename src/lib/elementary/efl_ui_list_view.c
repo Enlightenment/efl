@@ -904,9 +904,10 @@ _content_created(Eo *obj, void *data, const Eina_Value value)
    Efl_Ui_List_View_Layout_Item *item = tracking->item;
    Efl_Ui_List_View_Item_Event evt;
 
-   eina_value_pget(&value, &item->layout);
+   if (eina_value_array_count(&value) != 1) return eina_value_error_init(EINVAL);
+   eina_value_array_get(&value, 0, &item->layout);
 
-   evas_object_smart_member_add(item->layout, tracking->pd->pan_obj);
+   efl_canvas_group_member_add(tracking->pd->pan_obj, item->layout);
    evas_object_event_callback_add(item->layout, EVAS_CALLBACK_MOUSE_UP, _on_item_mouse_up, item);
 
    if (_elm_config->atspi_mode)
@@ -942,6 +943,7 @@ EOLIAN static Efl_Ui_List_View_Layout_Item *
 _efl_ui_list_view_efl_ui_list_view_model_realize(Eo *obj, Efl_Ui_List_View_Data *pd, Efl_Ui_List_View_Layout_Item *item)
 {
    Efl_Ui_List_View_Layout_Item_Tracking *tracking;
+   Efl_Model *childrens[1];
    EINA_SAFETY_ON_NULL_RETURN_VAL(item->children, item);
 
    if (!item->children) return item;
@@ -953,11 +955,14 @@ _efl_ui_list_view_efl_ui_list_view_model_realize(Eo *obj, Efl_Ui_List_View_Data 
 
    tracking->item = item;
    tracking->pd = pd;
+   childrens[0] = item->children;
 
-   item->layout_request = efl_ui_view_factory_create_with_event(pd->factory, item->children, obj);
+   item->layout_request = efl_ui_view_factory_create_with_event(pd->factory,
+                                                                EINA_C_ARRAY_ITERATOR_NEW(childrens),
+                                                                obj);
    item->layout_request = efl_future_then(obj, item->layout_request,
                                           .success = _content_created,
-                                          .success_type = EINA_VALUE_TYPE_OBJECT,
+                                          .success_type = EINA_VALUE_TYPE_ARRAY,
                                           .data = tracking,
                                           .free = _clean_request);
 
@@ -995,8 +1000,8 @@ _efl_ui_list_view_efl_ui_list_view_model_unrealize(Eo *obj, Efl_Ui_List_View_Dat
    evt.index = efl_ui_list_view_item_index_get(item);
    efl_event_callback_call(obj, EFL_UI_LIST_VIEW_EVENT_ITEM_UNREALIZED, &evt);
 
+   efl_canvas_group_member_remove(obj, pd->pan_obj);
    efl_ui_factory_release(pd->factory, item->layout);
-   evas_object_smart_member_del(item->layout);
    item->layout = NULL;
 }
 

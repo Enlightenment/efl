@@ -499,14 +499,14 @@ _edje_edit_file_import(Edje *ed, const char *path, const char *entry, int compre
    _edje_edit_eet_close(eetf);
 
    eina_file_map_free(f, fdata);
-   eina_file_close(f);
+   eina_file_close(f); // close matching open OK
 
    return EINA_TRUE;
 
 on_error:
    if (eetf) _edje_edit_eet_close(eetf);
    eina_file_map_free(f, fdata);
-   eina_file_close(f);
+   eina_file_close(f); // close matching open OK
 
    return EINA_FALSE;
 }

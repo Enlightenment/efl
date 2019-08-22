@@ -118,7 +118,7 @@ void ector_software_rasterizer_init(Software_Rasterizer *rasterizer);
 
 void ector_software_rasterizer_stroke_set(Ector_Software_Thread *thread, Software_Rasterizer *rasterizer,
                                           double width,
-                                          Efl_Gfx_Cap cap_style, Efl_Gfx_Join join_style, Eina_Matrix3 *m);
+                                          Efl_Gfx_Cap cap_style, Efl_Gfx_Join join_style, Eina_Matrix3 *m, double miterlimit);
 
 void ector_software_rasterizer_transform_set(Software_Rasterizer *rasterizer, Eina_Matrix3 *t);
 void ector_software_rasterizer_color_set(Software_Rasterizer *rasterizer, int r, int g, int b, int a);

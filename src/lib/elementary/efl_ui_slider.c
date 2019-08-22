@@ -65,11 +65,7 @@ _efl_ui_slider_val_fetch(Evas_Object *obj, Efl_Ui_Slider_Data *sd,  Eina_Bool us
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   if (elm_widget_is_legacy(obj))
-     efl_ui_drag_value_get(efl_part(wd->resize_obj, "elm.dragable.slider"),
-                           &posx, &posy);
-   else
-     efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.dragable.slider"),
+   efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.dragable.slider"),
                            &posx, &posy);
    if (_is_horizontal(sd->dir)) pos = posx;
    else pos = posy;
@@ -119,11 +115,7 @@ _efl_ui_slider_val_set(Evas_Object *obj, Efl_Ui_Slider_Data *sd)
         pos = 1.0 - pos;
      }
 
-   if (elm_widget_is_legacy(obj))
-     efl_ui_drag_value_set(efl_part(wd->resize_obj, "elm.dragable.slider"),
-                           pos, pos);
-   else
-     efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
+   efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
                            pos, pos);
 
    // emit accessibility event also if value was changed by API
@@ -138,11 +130,7 @@ _efl_ui_slider_down_knob(Evas_Object *obj, Efl_Ui_Slider_Data *sd EINA_UNUSED, d
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   if (elm_widget_is_legacy(obj))
-     efl_ui_drag_value_set(efl_part(wd->resize_obj, "elm.dragable.slider"),
-                           button_x, button_y);
-   else
-     efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
+   efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
                            button_x, button_y);
 }
 
@@ -151,11 +139,7 @@ _efl_ui_slider_move_knob(Evas_Object *obj, Efl_Ui_Slider_Data *sd EINA_UNUSED, d
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   if (elm_widget_is_legacy(obj))
-     efl_ui_drag_value_set(efl_part(wd->resize_obj, "elm.dragable.slider"),
-                           button_x, button_y);
-   else
-     efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
+   efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
                            button_x, button_y);
 }
 
@@ -210,7 +194,7 @@ _drag_step(void *data,
 
 static void
 _drag_up(void *data,
-         Evas_Object *obj,
+         Evas_Object *obj EINA_UNUSED,
          const char *emission EINA_UNUSED,
          const char *source EINA_UNUSED)
 {
@@ -224,18 +208,15 @@ _drag_up(void *data,
 
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
    relative_step = step/(sd->val_max - sd->val_min);
-   if (elm_widget_is_legacy(obj))
-     efl_ui_drag_step_move(efl_part(wd->resize_obj, "elm.dragable.slider"),
-                           step, step);
-   else
-     efl_ui_drag_step_move(efl_part(wd->resize_obj, "efl.dragable.slider"),
+
+   efl_ui_drag_step_move(efl_part(wd->resize_obj, "efl.dragable.slider"),
                            relative_step, relative_step);
    _slider_update(data, EINA_TRUE);
 }
 
 static void
 _drag_down(void *data,
-           Evas_Object *obj,
+           Evas_Object *obj EINA_UNUSED,
            const char *emission EINA_UNUSED,
            const char *source EINA_UNUSED)
 {
@@ -249,11 +230,8 @@ _drag_down(void *data,
 
    ELM_WIDGET_DATA_GET_OR_RETURN(data, wd);
    relative_step = step/(sd->val_max - sd->val_min);
-   if (elm_widget_is_legacy(obj))
-     efl_ui_drag_step_move(efl_part(wd->resize_obj, "elm.dragable.slider"),
-                           step, step);
-   else
-     efl_ui_drag_step_move(efl_part(wd->resize_obj, "efl.dragable.slider"),
+
+   efl_ui_drag_step_move(efl_part(wd->resize_obj, "efl.dragable.slider"),
                            relative_step, relative_step);
    _slider_update(data, EINA_TRUE);
 }
@@ -443,20 +421,10 @@ _efl_ui_slider_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Slider_Data *sd)
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
-   if (elm_widget_is_legacy(obj))
-     {
-        if (efl_ui_layout_orientation_is_inverted(sd->dir))
-          efl_layout_signal_emit(obj, "elm,state,inverted,on", "elm");
-        else
-          efl_layout_signal_emit(obj, "elm,state,inverted,off", "elm");
-     }
+   if (efl_ui_layout_orientation_is_inverted(sd->dir))
+     efl_layout_signal_emit(obj, "efl,state,inverted,on", "efl");
    else
-     {
-        if (efl_ui_layout_orientation_is_inverted(sd->dir))
-          efl_layout_signal_emit(obj, "efl,state,inverted,on", "efl");
-        else
-          efl_layout_signal_emit(obj, "efl,state,inverted,off", "efl");
-     }
+     efl_layout_signal_emit(obj, "efl,state,inverted,off", "efl");
 
    efl_ui_slider_val_set(obj);
 
@@ -668,10 +636,7 @@ _efl_ui_slider_efl_object_constructor(Eo *obj, Efl_Ui_Slider_Data *priv)
    priv->spacer = efl_add(EFL_CANVAS_RECTANGLE_CLASS, obj,
                           efl_gfx_color_set(efl_added, 0, 0, 0, 0));
 
-   if (elm_widget_is_legacy(obj))
-     efl_content_set(efl_part(obj, "elm.swallow.bar"), priv->spacer);
-   else
-     efl_content_set(efl_part(obj, "efl.bar"), priv->spacer);
+   efl_content_set(efl_part(obj, "efl.bar"), priv->spacer);
 
    evas_object_event_callback_add
      (priv->spacer, EVAS_CALLBACK_MOUSE_DOWN, _spacer_down_cb, obj);
@@ -755,18 +720,15 @@ _efl_ui_slider_efl_ui_range_display_range_limits_get(const Eo *obj EINA_UNUSED, 
 EOLIAN static void
 _efl_ui_slider_efl_ui_range_display_range_value_set(Eo *obj, Efl_Ui_Slider_Data *sd, double val)
 {
-   if (!elm_widget_is_legacy(obj))
+   if (val < sd->val_min)
      {
-        if (val < sd->val_min)
-          {
-             ERR("Error, value is less than minimum");
-             return;
-          }
-        if (val > sd->val_max)
-          {
-             ERR("Error, value is greater than maximum");
-             return;
-          }
+        ERR("Error, value is less than minimum");
+        return;
+     }
+   if (val > sd->val_max)
+     {
+        ERR("Error, value is greater than maximum");
+        return;
      }
 
    if (EINA_DBL_EQ(val, sd->val)) return;

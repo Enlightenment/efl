@@ -98,6 +98,10 @@ slider_changed(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_U
    if (event_counter == 1)
      evas_object_smart_callback_del(obj, "changed", slider_changed);
    else if (event_counter == 2)
+     evas_object_smart_callback_del(obj, "slider,drag,start", slider_changed);
+   else if (event_counter == 3)
+     evas_object_smart_callback_del(obj, "slider,drag,stop", slider_changed);
+   else if (event_counter == 4)
      ecore_main_loop_quit();
 }
 
@@ -112,6 +116,8 @@ EFL_START_TEST(elm_slider_events)
    slider = elm_slider_add(win);
    evas_object_smart_callback_add(slider, "changed", slider_changed, NULL);
    evas_object_smart_callback_add(slider, "delay,changed", slider_changed, NULL);
+   evas_object_smart_callback_add(slider, "slider,drag,start", slider_changed, NULL);
+   evas_object_smart_callback_add(slider, "slider,drag,stop", slider_changed, NULL);
    evas_object_show(slider);
    evas_object_show(win);
    evas_object_resize(slider, 400, 100);
@@ -131,7 +137,7 @@ EFL_START_TEST(elm_slider_events)
    evas_event_feed_mouse_move(e, sx + (sw / 2), sy + (sh / 2), 0, NULL);
    evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
    ecore_main_loop_begin();
-   ck_assert_int_eq(event_counter, 2);
+   ck_assert_int_eq(event_counter, 4);
 }
 EFL_END_TEST
 

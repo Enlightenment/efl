@@ -11,6 +11,7 @@ efl_ui_suite_behavior_test_files = files([
   'efl_test_single_selectable.c',
   'efl_test_multi_selectable.c',
   'efl_test_selectable.c',
+  'efl_test_gfx_view.c',
 ])
 
 efl_ui_suite_behavior_src = files([

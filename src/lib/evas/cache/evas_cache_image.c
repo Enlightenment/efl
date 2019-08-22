@@ -183,7 +183,7 @@ _evas_cache_image_entry_delete(Evas_Cache_Image *cache, Image_Entry *ie)
    FREESTRC(ie->key);
    if (ie->f && ie->flags.given_mmap)
      {
-        eina_file_close(ie->f);
+        eina_file_close(ie->f); // close matching open (in _evas_cache_image_entry_new) OK
         ie->f = NULL;
      }
    ie->cache = NULL;

@@ -441,6 +441,7 @@ vg_common_svg_node_eet(void)
    EET_DATA_DESCRIPTOR_ADD_BASIC(_eet_vg_node, Svg_Node, "id", id, EET_T_STRING);
    EET_DATA_DESCRIPTOR_ADD_SUB(_eet_vg_node, Svg_Node, "style", style, _eet_style_property_node);
    EET_DATA_DESCRIPTOR_ADD_SUB(_eet_vg_node, Svg_Node, "transform", transform, _eet_matrix3_node);
+   EET_DATA_DESCRIPTOR_ADD_BASIC(_eet_vg_node, Svg_Node, "display", display, EET_T_INT);
 
    return _eet_vg_node;
 }
@@ -714,6 +715,8 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
 
    // apply the transformation
    if (node->transform) efl_canvas_vg_node_transformation_set(vg, node->transform);
+
+   if (!node->display) efl_gfx_entity_visible_set(vg, EINA_FALSE);
 
    if ((node->type == SVG_NODE_G) || (node->type == SVG_NODE_DOC)) return;
 

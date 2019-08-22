@@ -2,6 +2,8 @@
 # include "elementary_config.h"
 #endif
 
+#define EFL_UI_FACTORY_PROTECTED
+
 #include <Elementary.h>
 #include "elm_priv.h"
 
@@ -73,30 +75,39 @@ _efl_ui_layout_factory_bind(Eo *obj EINA_UNUSED, void *data, const Eina_Value va
 {
    Efl_Ui_Layout_Factory_Data *pd = data;
    Efl_Gfx_Entity *layout;
+   int len, i;
 
-   eina_value_pget(&value, &layout);
+   EINA_VALUE_ARRAY_FOREACH(&value, len, i, layout)
+     {
+        eina_hash_foreach(pd->bind.properties, _property_bind, layout);
+        eina_hash_foreach(pd->bind.factories, _factory_bind, layout);
 
-   efl_ui_layout_theme_set(layout, pd->klass, pd->group, pd->style);
-
-   eina_hash_foreach(pd->bind.properties, _property_bind, layout);
-   eina_hash_foreach(pd->bind.factories, _factory_bind, layout);
-
-   evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, 0);
-   evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+        evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, 0);
+        evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
+     }
 
    return value;
 }
 
+static void
+_efl_ui_layout_factory_efl_ui_factory_building(const Eo *obj, Efl_Ui_Layout_Factory_Data *pd, Efl_Gfx_Entity *ui_view)
+{
+   if (pd->klass || pd->group || pd->style)
+     efl_ui_layout_theme_set(ui_view, pd->klass, pd->group, pd->style);
+
+   efl_ui_factory_building(efl_super(obj, EFL_UI_LAYOUT_FACTORY_CLASS), ui_view);
+}
+
 EOLIAN static Eina_Future *
 _efl_ui_layout_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Layout_Factory_Data *pd,
-                                             Efl_Model *model, Efl_Gfx_Entity *parent)
+                                             Eina_Iterator *models, Efl_Gfx_Entity *parent)
 {
    Eina_Future *f;
 
-   f = efl_ui_factory_create(efl_super(obj, EFL_UI_LAYOUT_FACTORY_CLASS), model, parent);
+   f = efl_ui_factory_create(efl_super(obj, EFL_UI_LAYOUT_FACTORY_CLASS), models, parent);
 
    return efl_future_then(obj, f,
-                          .success_type = EINA_VALUE_TYPE_OBJECT,
+                          .success_type = EINA_VALUE_TYPE_ARRAY,
                           .success = _efl_ui_layout_factory_bind,
                           .data = pd);
 }
@@ -148,8 +159,8 @@ _efl_ui_layout_factory_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSED, E
 }
 
 EOLIAN static void
-_efl_ui_layout_factory_theme_config(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Factory_Data *pd
-                                        , const char *klass, const char *group, const char *style)
+_efl_ui_layout_factory_theme_config(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Factory_Data *pd,
+                                    const char *klass, const char *group, const char *style)
 {
    eina_stringshare_replace(&pd->klass, klass);
    eina_stringshare_replace(&pd->group, group);

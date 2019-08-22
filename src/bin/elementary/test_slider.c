@@ -24,6 +24,18 @@ _change_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    elm_slider_value_set(data, val);
 }
 
+void
+_drag_start_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   printf("drag,started! slider value : %d\n", (int)round(elm_slider_value_get(obj)));
+}
+
+void
+_drag_stop_cb(void *data EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   printf("drag,stopped! slider value : %d\n", (int)round(elm_slider_value_get(obj)));
+}
+
 static void
 _ok_btn_clicked(void *data, Evas_Object *obj EINA_UNUSED,
 		        void *event_info EINA_UNUSED)
@@ -243,6 +255,10 @@ test_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_in
    elm_box_pack_end(bx, sl);
    evas_object_show(ic);
    evas_object_show(sl);
+
+   evas_object_smart_callback_add(sl, "slider,drag,start", _drag_start_cb, NULL);
+   evas_object_smart_callback_add(sl, "slider,drag,stop", _drag_stop_cb, NULL);
+
 
    // horizontally inverted slider
    ic = elm_icon_add(bx);

@@ -4380,11 +4380,13 @@ _elm_gengrid_efl_object_constructor(Eo *obj, Elm_Gengrid_Data *sd)
 {
    legacy_efl_ui_focus_manager_widget_legacy_signals(obj, obj);
    sd->content_item_map = eina_hash_pointer_new(NULL);
+
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
+
    sd->provider = efl_add(EFL_UI_FOCUS_PARENT_PROVIDER_GEN_CLASS, obj,
     efl_ui_focus_parent_provider_gen_container_set(efl_added, obj),
     efl_ui_focus_parent_provider_gen_content_item_map_set(efl_added, sd->content_item_map));
 
-   obj = efl_constructor(efl_super(obj, MY_CLASS));
    sd->obj = obj;
 
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);

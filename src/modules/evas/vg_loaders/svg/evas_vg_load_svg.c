@@ -911,6 +911,16 @@ _handle_transform_attr(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node* node, cons
    node->transform = _parse_transformation_matrix(value);
 }
 
+static void
+_handle_display_attr(Evas_SVG_Loader *loader EINA_UNUSED, Svg_Node* node, const char *value)
+{
+   //TODO : The display attribute can have various values as well as "none".
+   //       The default is "inline" which means visible and "none" means invisible.
+   //       Depending on the type of node, additional functionality may be required.
+   //       refer to https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/display
+   if (!strcmp(value, "none")) node->display = EINA_FALSE;
+   else node->display = EINA_TRUE;
+}
 
 typedef void (*Style_Method)(Evas_SVG_Loader *loader, Svg_Node *node, const char *value);
 
@@ -932,7 +942,8 @@ static const struct {
   STYLE_DEF(stroke-linejoin, stroke_linejoin),
   STYLE_DEF(stroke-linecap, stroke_linecap),
   STYLE_DEF(stroke-opacity, stroke_opacity),
-  STYLE_DEF(transform, transform)
+  STYLE_DEF(transform, transform),
+  STYLE_DEF(display, display)
 };
 
 static Eina_Bool
@@ -1029,6 +1040,9 @@ _create_node(Svg_Node *parent, Svg_Node_Type type)
    // default line join is miter
    node->style->stroke.join = EFL_GFX_JOIN_MITER;
    node->style->stroke.scale = 1.0;
+
+   // default display is true("inline").
+   node->display = EINA_TRUE;
 
    node->parent = parent;
    node->type = type;

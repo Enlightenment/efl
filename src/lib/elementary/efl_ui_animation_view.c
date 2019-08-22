@@ -878,7 +878,6 @@ EOLIAN Eina_Size2D
 _efl_ui_animation_view_efl_gfx_view_view_size_get(const Eo *obj EINA_UNUSED,
                                                   Efl_Ui_Animation_View_Data *pd)
 {
-
    Eina_Rect viewbox = efl_canvas_vg_object_viewbox_get(pd->vg);
 
    return EINA_SIZE2D(viewbox.w, viewbox.h);

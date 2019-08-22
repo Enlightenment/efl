@@ -503,9 +503,9 @@ EFL_START_TEST(efl_ui_test_popup_text_alert)
    for (i = 0; i < num_tests; i++)
      {
         unsigned int j;
-        Eina_Size2D popup_sz_min, popup_sz, label_sz_min;
+        Eina_Size2D popup_sz_min, popup_sz, label_sz_min, label_sz, scroller_sz;
         Eina_Strbuf *buf = eina_strbuf_new();
-        Eo *label;
+        Eo *label, *scroller;
 
         for (j = 0; j < string_counts[i]; j++)
           eina_strbuf_append(buf, test_string);
@@ -515,7 +515,15 @@ EFL_START_TEST(efl_ui_test_popup_text_alert)
         efl_canvas_group_calculate(popup);
 
         /* get internal label object: VERY illegal */
-        label = efl_content_get(efl_content_get(efl_part(efl_super(popup, efl_ui_text_alert_popup_class_get()), "efl.content")));
+        scroller = efl_content_get(efl_part(efl_super(popup, efl_ui_text_alert_popup_class_get()), "efl.content"));
+        label = efl_content_get(scroller);
+
+        /* label should never be larger than scroller horizontally
+         * ...but we give it an extra pixel because that's how it's always been
+         */
+        label_sz = efl_gfx_entity_size_get(label);
+        scroller_sz = efl_gfx_entity_size_get(scroller);
+        ck_assert_int_le(label_sz.w, scroller_sz.w + 1);
 
         label_sz_min = efl_gfx_hint_size_combined_min_get(label);
         popup_sz_min = efl_gfx_hint_size_combined_min_get(popup);
@@ -622,7 +630,7 @@ can_move_y(Align align)
 static void
 verify_anchor(Eo *popup, Eo **align_buttons, Align align, Eina_Size2D *popup_sz)
 {
-   Eo *anchor = efl_ui_anchor_popup_anchor_get(popup);
+   Eo *anchor = efl_ui_popup_anchor_get(popup);
    Eo *win = efl_provider_find(popup, EFL_UI_WIN_CLASS);
    Eina_Rect anchor_geom;
    Efl_Ui_Popup_Align cur_prio;
@@ -758,10 +766,10 @@ EFL_START_TEST(efl_ui_test_popup_text_anchor)
    ck_assert(efl_file_simple_load(layout, buf, "efl_ui_popup_anchor_layout"));
    efl_content_set(win, layout);
 
-   popup = efl_add(EFL_UI_ANCHOR_POPUP_CLASS, win);
+   popup = efl_add(EFL_UI_POPUP_CLASS, win);
    efl_ui_popup_part_backwall_repeat_events_set(efl_part(popup, "backwall"), EINA_TRUE);
    //Default align priority order is top, left, right, bottom, center.
-   efl_ui_anchor_popup_align_priority_set(popup, EFL_UI_POPUP_ALIGN_TOP,
+   efl_ui_popup_align_priority_set(popup, EFL_UI_POPUP_ALIGN_TOP,
                                           EFL_UI_POPUP_ALIGN_BOTTOM,
                                           EFL_UI_POPUP_ALIGN_LEFT,
                                           EFL_UI_POPUP_ALIGN_RIGHT,
@@ -863,9 +871,9 @@ EFL_START_TEST(efl_ui_test_popup_text_anchor)
           }
         for (i = -1; i < num_anchors; i++)
           {
-             if (i >= 0) efl_ui_anchor_popup_anchor_set(popup, bganchors[i]);
+             if (i >= 0) efl_ui_popup_anchor_set(popup, bganchors[i]);
              /* -1 is anchored to win object */
-             else efl_ui_anchor_popup_anchor_set(popup, NULL);
+             else efl_ui_popup_anchor_set(popup, NULL);
              for (unsigned int j = 0; j < ALIGN_RESIZE; j++)
                {
                   verify_anchor(popup, aligns, j, &popup_sz);
