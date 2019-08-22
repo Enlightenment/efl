@@ -498,7 +498,6 @@ _edje_signal_callback_patterns_ref(const Edje_Signal_Callback_Group *gp)
         if (m == tmp)
           {
              ERR("Should not happen - gp->match == hash found match");
-             abort();
              return NULL;
           }
         _edje_signal_callback_matches_unref
