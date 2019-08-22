@@ -604,7 +604,8 @@ _update_rle(void *data, Ector_Software_Thread *thread)
                                               task->pd->public_shape->stroke.scale),
                                              task->pd->public_shape->stroke.cap,
                                              task->pd->public_shape->stroke.join,
-                                             task->pd->base->m);
+                                             task->pd->base->m,
+                                             task->pd->public_shape->stroke.miterlimit);
 
         if (task->pd->public_shape->stroke.dash)
           {
