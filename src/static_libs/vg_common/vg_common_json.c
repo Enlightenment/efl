@@ -149,6 +149,8 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
                }
              efl_gfx_shape_stroke_join_set(shape, join);
 
+             efl_gfx_shape_stroke_miterlimit_set(shape, node->mStroke.miterLimit);
+
              //Stroke Dash
              if (node->mStroke.dashArraySize > 0)
                {
