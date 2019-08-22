@@ -89,8 +89,6 @@ _build_list(int items)
 static void
 _build_grid(int items)
 {
-   Eo *list;
-
    collection = efl_add(EFL_UI_GRID_CLASS, win);
    efl_content_set(win, collection);
 
