@@ -440,8 +440,9 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
 
              if (tag->text_class) stl->readonly = EINA_FALSE;
           }
-        /* Configure the style */
-        evas_textblock_style_set(stl->style, eina_strbuf_string_get(styleBuffer));
+        /* Configure the style  only if it will never change again*/
+        if (stl->readonly)
+          evas_textblock_style_set(stl->style, eina_strbuf_string_get(styleBuffer));
      }
 
    if (fontsource) free(fontsource);
