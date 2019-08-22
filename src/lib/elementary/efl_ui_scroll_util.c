@@ -89,11 +89,11 @@ _scroll_connector_vbar_drag_cb(void *data,
                           const char *source EINA_UNUSED)
 {
    Scroll_Connector_Context *ctx = data;
-   Efl_Ui_Scrollbar_Direction type;
+   Efl_Ui_Layout_Orientation type;
 
    _scroll_connector_bar_read_and_update(ctx);
 
-   type = EFL_UI_SCROLLBAR_DIRECTION_VERTICAL;
+   type = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
    efl_event_callback_call(ctx->obj, EFL_UI_SCROLLBAR_EVENT_BAR_DRAG, &type);
 }
 
@@ -104,7 +104,7 @@ _scroll_connector_vbar_press_cb(void *data,
                            const char *source EINA_UNUSED)
 {
    Scroll_Connector_Context *ctx = data;
-   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_VERTICAL;
+   Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
 
    efl_event_callback_call(ctx->obj, EFL_UI_SCROLLBAR_EVENT_BAR_PRESS, &type);
 }
@@ -116,7 +116,7 @@ _scroll_connector_vbar_unpress_cb(void *data,
                              const char *source EINA_UNUSED)
 {
    Scroll_Connector_Context *ctx = data;
-   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_VERTICAL;
+   Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
 
    efl_event_callback_call(ctx->obj, EFL_UI_SCROLLBAR_EVENT_BAR_UNPRESS, &type);
 }
@@ -128,7 +128,7 @@ _scroll_connector_hbar_drag_cb(void *data,
                           const char *source EINA_UNUSED)
 {
    Scroll_Connector_Context *ctx = data;
-   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL;
+   Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
 
    _scroll_connector_bar_read_and_update(ctx);
    efl_event_callback_call(ctx->obj, EFL_UI_SCROLLBAR_EVENT_BAR_DRAG, &type);
@@ -141,7 +141,7 @@ _scroll_connector_hbar_press_cb(void *data,
                            const char *source EINA_UNUSED)
 {
    Scroll_Connector_Context *ctx = data;
-   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL;
+   Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
 
    efl_event_callback_call(ctx->obj, EFL_UI_SCROLLBAR_EVENT_BAR_PRESS, &type);
 }
@@ -153,7 +153,7 @@ _scroll_connector_hbar_unpress_cb(void *data,
                              const char *source EINA_UNUSED)
 {
    Scroll_Connector_Context *ctx = data;
-   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL;
+   Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
 
    efl_event_callback_call(ctx->obj, EFL_UI_SCROLLBAR_EVENT_BAR_UNPRESS, &type);
 }
@@ -202,11 +202,11 @@ _scroll_connector_bar_show_cb(void *data, const Efl_Event *event)
 {
    Scroll_Connector_Context *ctx = data;
    ELM_WIDGET_DATA_GET_OR_RETURN(ctx->obj, wd);
-   Efl_Ui_Scrollbar_Direction type = *(Efl_Ui_Scrollbar_Direction *)(event->info);
+   Efl_Ui_Layout_Orientation type = *(Efl_Ui_Layout_Orientation *)(event->info);
 
-   if (type == EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL)
+   if (type == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
      efl_layout_signal_emit(wd->resize_obj, "efl,action,show,hbar", "efl");
-   else if (type == EFL_UI_SCROLLBAR_DIRECTION_VERTICAL)
+   else if (type == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
      efl_layout_signal_emit(wd->resize_obj, "efl,action,show,vbar", "efl");
 }
 
@@ -215,11 +215,11 @@ _scroll_connector_bar_hide_cb(void *data, const Efl_Event *event)
 {
    Scroll_Connector_Context *ctx = data;
    ELM_WIDGET_DATA_GET_OR_RETURN(ctx->obj, wd);
-   Efl_Ui_Scrollbar_Direction type = *(Efl_Ui_Scrollbar_Direction *)(event->info);
+   Efl_Ui_Layout_Orientation type = *(Efl_Ui_Layout_Orientation *)(event->info);
 
-   if (type == EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL)
+   if (type == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
      efl_layout_signal_emit(wd->resize_obj, "efl,action,hide,hbar", "efl");
-   else if (type == EFL_UI_SCROLLBAR_DIRECTION_VERTICAL)
+   else if (type == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
      efl_layout_signal_emit(wd->resize_obj, "efl,action,hide,vbar", "efl");
 }
 
