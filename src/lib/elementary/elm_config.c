@@ -2004,6 +2004,7 @@ _config_flush_get(void)
    _elm_config->is_mirrored = is_mirrored;
    _elm_config->translate = translate;
 
+   _elm_recache();
    _config_apply();
    _config_sub_apply();
    evas_font_reinit();
@@ -2011,7 +2012,6 @@ _config_flush_get(void)
    _elm_config_color_overlay_apply();
    if (pre_scale != _elm_config->scale)
      _elm_rescale();
-   _elm_recache();
    _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
    _elm_win_access(_elm_config->access_mode);
@@ -4189,10 +4189,10 @@ _elm_config_init(void)
    ELM_SAFE_FREE(_elm_accel_preference, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_gl_preference, eina_stringshare_del);
    _translation_init();
+   _elm_recache();
    _config_apply();
    _elm_config_font_overlay_apply();
    _elm_config_color_overlay_apply();
-   _elm_recache();
    _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
 }
@@ -4373,6 +4373,7 @@ _elm_config_reload(void)
    _elm_config->is_mirrored = is_mirrored;
    _elm_config->translate = translate;
 
+   _elm_recache();
    _config_apply();
    _elm_config_font_overlay_apply();
    _elm_config_color_overlay_apply();
@@ -4397,7 +4398,6 @@ _elm_config_reload(void)
       )
      _elm_rescale();
 #undef CMP
-   _elm_recache();
    _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
    ecore_event_add(ELM_EVENT_CONFIG_ALL_CHANGED, NULL, NULL, NULL);
@@ -4674,11 +4674,11 @@ _elm_config_profile_set(const char *profile)
    _elm_config->is_mirrored = is_mirrored;
    _elm_config->translate = translate;
 
+   _elm_recache();
    _config_apply();
    _elm_config_font_overlay_apply();
    _elm_config_color_overlay_apply();
    _elm_rescale();
-   _elm_recache();
    _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
 }
