@@ -106,6 +106,6 @@ class @beta Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Input.Clickable, E
       Efl.Gfx.Arrangement.content_align { get; set; }
    }
    events {
-      drop: string; [[Called when drop from drag and drop happened]] /* FIXME - Belongs to DnD interface */
+      drop @beta: string; [[Called when drop from drag and drop happened]] /* FIXME - Belongs to DnD interface */
    }
 }
