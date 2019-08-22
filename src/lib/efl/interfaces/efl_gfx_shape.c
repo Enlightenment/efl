@@ -293,12 +293,28 @@ _efl_gfx_shape_efl_gfx_path_copy_from(Eo *obj, Efl_Gfx_Shape_Data *pd,
    pd->public.stroke.color.g = from->public.stroke.color.g;
    pd->public.stroke.color.b = from->public.stroke.color.b;
    pd->public.stroke.color.a = from->public.stroke.color.a;
+   pd->public.stroke.miterlimit = from->public.stroke.miterlimit;
    pd->fill_rule = from->fill_rule;
 
    _efl_gfx_shape_stroke_dash_set(obj, pd, from->public.stroke.dash,
                                   from->public.stroke.dash_length);
 
    efl_gfx_path_copy_from(efl_super(obj, MY_CLASS), dup_from);
+}
+
+EOLIAN static void
+_efl_gfx_shape_stroke_miterlimit_set(Eo *obj EINA_UNUSED,
+                                     Efl_Gfx_Shape_Data *pd,
+                                     double miterlimit)
+{
+   pd->public.stroke.miterlimit = miterlimit;
+}
+
+EOLIAN static double
+_efl_gfx_shape_stroke_miterlimit_get(const Eo *obj EINA_UNUSED,
+                                     Efl_Gfx_Shape_Data *pd)
+{
+   return pd->public.stroke.miterlimit;
 }
 
 #include "interfaces/efl_gfx_shape.eo.c"

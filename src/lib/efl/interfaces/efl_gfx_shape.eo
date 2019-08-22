@@ -97,6 +97,18 @@ mixin @beta Efl.Gfx.Shape extends Efl.Gfx.Path
             j: Efl.Gfx.Join; [[Join style to use, default is @Efl.Gfx.Join.miter]]
          }
       }
+      @property stroke_miterlimit {
+         [[The stroke_miterlimit is a presentation defining a limit on the ratio of
+           the miter length to the stroke-width used to draw a miter join.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            miterlimit: double; [[Limit value on the ratio of the miter.]]
+         }
+      }
       @property fill_rule {
          [[The fill rule of the given shape object.
            @Efl.Gfx.Fill_Rule.winding or @Efl.Gfx.Fill_Rule.odd_even.
