@@ -4,17 +4,31 @@ group { name: "elm/button/base/default";
    script {
       BUTTONMODE_SCRIPT
    }
+   images.image: "win_shadow.png" COMP;
    parts {
+      part { name: "shadow"; mouse_events: 0;
+         scale: 1;
+         description { state: "default" 0.0;
+            rel.to: "base";
+            WIN_SHADOW_SMALL;
+         }
+         description { state: "pressed" 0.0;
+            inherit;
+            image.border_scale_by: 0.25;
+            rel1.offset: -5 -3;
+            rel2.offset: 4 6;
+         }
+      }
       rect { "base";
          scale: 1;
          desc { "default";
-            color: 80 80 80 255;
+            color: 51 153 255 255;
             rel1.offset: 2 2;
             rel2.offset: -3 -3;
             offscale;
          }
          desc { "pressed"; inherit;
-            color: 40 40 40 255;
+            color: 255 153 51 255;
          }
          desc { "disabled"; inherit;
             color: 64 64 64 255;
@@ -101,7 +115,7 @@ group { name: "elm/button/base/default";
          scale: 1;
          desc { "default";
             fixed: 1 1;
-            color: 160 160 160 255;
+            color: 255 255 255 255;
             rel1.offset: 0 4;
             rel1.relative: 1.0 0.0;
             rel1.to_x: "elm.swallow.content";
@@ -189,12 +203,14 @@ group { name: "elm/button/base/default";
       program { name: "buttonactivate";
          signal: "elm,anim,activate"; source: "elm";
          action: STATE_SET "pressed" 0.0;
+         target: "shadow";
          target: "base";
          after: "button_unpressed_anim";
       }
       program { name: "button_unpressed_anim";
          in: 0.5 0.0;
          action: STATE_SET "default" 0.0;
+         target: "shadow";
          target: "base";
       }
       program {
