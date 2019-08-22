@@ -151,8 +151,6 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl, Eina_Bool force)
    if (!txt)
      txt = eina_strbuf_new();
 
-   if (_edje_fontset_append)
-     fontset = eina_str_escape(_edje_fontset_append);
    if (ed->file->fonts)
      fontsource = eina_str_escape(ed->file->path);
 
