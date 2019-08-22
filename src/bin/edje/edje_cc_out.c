@@ -754,10 +754,10 @@ check_program(Edje_Part_Collection *pc, Edje_Program *ep, Eet_File *ef)
 
         /*
          * we are accessing part with an id,
-         * if actions is ACTION_STOP or ACTION_TYPE_SCRIPT, then id is from the parts array.
+         * if actions is ACTION_STOP or ACTION_TYPE_SCRIPT, then id is NOT from the parts array.
          * In order to not crash here, we should continue here.
          */
-        if (ep->action != EDJE_ACTION_TYPE_ACTION_STOP || ep->action != EDJE_ACTION_TYPE_SCRIPT)
+        if (ep->action == EDJE_ACTION_TYPE_ACTION_STOP || ep->action == EDJE_ACTION_TYPE_SCRIPT)
           continue;
 
         if (et->id >= (int) pc->parts_count)
