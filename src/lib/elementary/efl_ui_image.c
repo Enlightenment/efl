@@ -1595,21 +1595,35 @@ _efl_ui_image_efl_gfx_image_scale_type_get(const Eo *obj EINA_UNUSED, Efl_Ui_Ima
 }
 
 EOLIAN static void
-_efl_ui_image_scalable_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool up, Eina_Bool down)
+_efl_ui_image_efl_gfx_image_can_upscale_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool can_upscale)
 {
-   if ((up == sd->scale_up) && (down == sd->scale_down)) return;
+   if (can_upscale == sd->scale_up) return;
 
-   sd->scale_up = !!up;
-   sd->scale_down = !!down;
+   sd->scale_up = !!can_upscale;
 
    efl_canvas_group_change(obj);
 }
 
-EOLIAN static void
-_efl_ui_image_scalable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, Eina_Bool *scale_up, Eina_Bool *scale_down)
+EOLIAN static Eina_Bool
+_efl_ui_image_efl_gfx_image_can_upscale_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
-   if (scale_up) *scale_up = sd->scale_up;
-   if (scale_down) *scale_down = sd->scale_down;
+   return sd->scale_up;
+}
+
+EOLIAN static void
+_efl_ui_image_efl_gfx_image_can_downscale_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool can_downscale)
+{
+   if (can_downscale == sd->scale_down) return;
+
+   sd->scale_down = !!can_downscale;
+
+   efl_canvas_group_change(obj);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_efl_gfx_image_can_downscale_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+{
+   return sd->scale_down;
 }
 
 EOLIAN static void
