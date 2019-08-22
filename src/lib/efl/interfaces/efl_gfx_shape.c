@@ -36,6 +36,7 @@ struct _Efl_Gfx_Property
    double scale;
    double w;
    double centered;
+   double miterlimit;
 
    Efl_Gfx_Cap c;
    Efl_Gfx_Join j;
@@ -57,6 +58,7 @@ _efl_gfx_property_get(const Eo *obj, Efl_Gfx_Property *property)
    efl_gfx_shape_stroke_dash_get(obj, &property->dash, &property->dash_length);
    property->c = efl_gfx_shape_stroke_cap_get(obj);
    property->j = efl_gfx_shape_stroke_join_get(obj);
+   property->miterlimit = efl_gfx_shape_stroke_miterlimit_get(obj);
 }
 
 EOLIAN static Eina_Bool
@@ -116,6 +118,9 @@ _efl_gfx_shape_efl_gfx_path_interpolate(Eo *obj, Efl_Gfx_Shape_Data *pd,
 
    interv = interpolate(property_from.centered, property_to.centered, pos_map);
    efl_gfx_shape_stroke_location_set(obj, interv);
+
+   interv = interpolate(property_from.miterlimit, property_to.miterlimit, pos_map);
+   efl_gfx_shape_stroke_miterlimit_set(obj, interv);
 
    efl_gfx_shape_stroke_dash_set(obj, dash, property_to.dash_length);
    efl_gfx_shape_stroke_cap_set(obj, (pos_map < 0.5) ?
