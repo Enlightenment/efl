@@ -185,7 +185,12 @@ _emotion_webcam_remove_cb(void *user_data, void *func_data EINA_UNUSED)
    webcam = user_data;
 
    EINA_REFCOUNT_UNREF(webcam)
-      emotion_webcam_destroy(webcam);
+     {
+        if (_emotion_webcams)
+          _emotion_webcams->webcams =
+          eina_list_remove(_emotion_webcams->webcams, webcam);
+        emotion_webcam_destroy(webcam);
+     }
 }
 
 static Eina_Bool
