@@ -88,6 +88,24 @@ interface @beta Efl.Gfx.Image
             scale_type: Efl.Gfx.Image_Scale_Type; [[Image scale type]]
          }
       }
+      @property can_upscale {
+         [[If $true, the image may be scaled to a larger size. If $false,
+           the image will never be resized larger than its native size.
+           This is set to $true by default.
+         ]]
+         values {
+            upscale: bool; [[Allow image upscaling]]
+         }
+      }
+      @property can_downscale {
+         [[If $true, the image may be scaled to a smaller size. If $false,
+           the image will never be resized smaller than its native size.
+           This is set to $true by default.
+         ]]
+         values {
+            downscale: bool; [[Allow image downscaling]]
+         }
+      }
       @property ratio {
          [[The native width/height ratio of the image.]]
          get {
