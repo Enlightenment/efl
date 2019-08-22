@@ -11,41 +11,35 @@ static Eina_Hash *radio_group_map;
 
 typedef struct {
    Efl_Ui_Radio *selected;
+   Efl_Ui_Radio *fallback_object;
    Eina_List *registered_set;
+   Eina_Bool in_value_change;
 } Efl_Ui_Radio_Group_Impl_Data;
 
+
 EOLIAN static void
-_efl_ui_radio_group_impl_efl_ui_radio_group_selected_object_set(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Group_Impl_Data *pd, Efl_Ui_Radio *selected_object)
+_efl_ui_radio_group_impl_efl_ui_single_selectable_fallback_selection_set(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Group_Impl_Data *pd, Efl_Ui_Selectable *fallback)
 {
-   int new_value = -1;
-   Eo *old_selected;
+   pd->fallback_object = fallback;
 
-   if (pd->selected == selected_object) return;
+   if (!pd->selected)
+     efl_ui_selectable_selected_set(pd->fallback_object, EINA_TRUE);
+}
 
-   old_selected = pd->selected;
-   pd->selected = selected_object;
-
-   //it is essential to *first* set pd->selected to the new state before calling this
-   //otherwise this here will be called again, and the event will get emitted twice
-   if (old_selected && efl_alive_get(old_selected))
-    efl_ui_selectable_selected_set(old_selected, EINA_FALSE);
-
-   if (pd->selected)
-     {
-        efl_ui_selectable_selected_set(pd->selected, EINA_TRUE);
-        new_value = efl_ui_radio_state_value_get(pd->selected);
-     }
-   efl_event_callback_call(obj, EFL_UI_RADIO_GROUP_EVENT_VALUE_CHANGED, &new_value);
+EOLIAN static Efl_Ui_Selectable*
+_efl_ui_radio_group_impl_efl_ui_single_selectable_fallback_selection_get(const Eo *obj EINA_UNUSED, Efl_Ui_Radio_Group_Impl_Data *pd)
+{
+   return pd->fallback_object;
 }
 
 EOLIAN static Efl_Ui_Radio*
-_efl_ui_radio_group_impl_efl_ui_radio_group_selected_object_get(const Eo *obj EINA_UNUSED, Efl_Ui_Radio_Group_Impl_Data *pd)
+_efl_ui_radio_group_impl_efl_ui_single_selectable_last_selected_get(const Eo *obj EINA_UNUSED, Efl_Ui_Radio_Group_Impl_Data *pd)
 {
    return pd->selected;
 }
 
 EOLIAN static void
-_efl_ui_radio_group_impl_efl_ui_radio_group_selected_value_set(Eo *obj, Efl_Ui_Radio_Group_Impl_Data *pd, int selected_value)
+_efl_ui_radio_group_impl_efl_ui_radio_group_selected_value_set(Eo *obj EINA_UNUSED, Efl_Ui_Radio_Group_Impl_Data *pd, int selected_value)
 {
    Efl_Ui_Radio *reged;
    Eina_List *n;
@@ -54,7 +48,7 @@ _efl_ui_radio_group_impl_efl_ui_radio_group_selected_value_set(Eo *obj, Efl_Ui_R
      {
         if (efl_ui_radio_state_value_get(reged) == selected_value)
           {
-             efl_ui_radio_group_selected_object_set(obj, reged);
+             efl_ui_selectable_selected_set(reged, EINA_TRUE);
              return;
           }
      }
@@ -70,17 +64,42 @@ _efl_ui_radio_group_impl_efl_ui_radio_group_selected_value_get(const Eo *obj EIN
 static void
 _selected_cb(void *data, const Efl_Event *ev)
 {
+   Efl_Ui_Radio_Group_Impl_Data *pd = efl_data_scope_safe_get(data, EFL_UI_RADIO_GROUP_IMPL_CLASS);
    if (efl_ui_selectable_selected_get(ev->object))
      {
-        efl_ui_radio_group_selected_object_set(data, ev->object);
+        if (pd->selected)
+          {
+             pd->in_value_change = EINA_TRUE;
+             efl_ui_selectable_selected_set(pd->selected, EINA_FALSE);
+          }
+        pd->in_value_change = EINA_FALSE;
+        EINA_SAFETY_ON_FALSE_RETURN(!pd->selected);
+        pd->selected = ev->object;
      }
    else
      {
         //if something was unselected, we need to make sure that we are unsetting the internal pointer to NULL
-        if (efl_ui_radio_group_selected_object_get(data) == ev->object)
+        if (pd->selected == ev->object)
           {
-             efl_ui_radio_group_selected_object_set(data, NULL);
+             pd->selected = NULL;
           }
+        //checkout if we want to do fallback handling
+        if (!pd->in_value_change)
+          {
+             if (!pd->selected && pd->fallback_object)
+               efl_ui_selectable_selected_set(pd->fallback_object, EINA_TRUE);
+          }
+     }
+
+   if (!pd->in_value_change)
+     {
+        int value;
+        if (pd->selected)
+          value = efl_ui_radio_state_value_get(pd->selected);
+        else
+          value = -1;
+        efl_event_callback_call(data, EFL_UI_RADIO_GROUP_EVENT_VALUE_CHANGED, &value);
+        efl_event_callback_call(data, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, NULL);
      }
 }
 
@@ -123,7 +142,7 @@ EOLIAN static void
 _efl_ui_radio_group_impl_efl_ui_radio_group_unregister(Eo *obj, Efl_Ui_Radio_Group_Impl_Data *pd, Efl_Ui_Radio *radio)
 {
    if (pd->selected == radio)
-     efl_ui_radio_group_selected_object_set(obj, NULL);
+     efl_ui_selectable_selected_set(pd->selected, EINA_FALSE);
 
    efl_event_callback_array_del(radio, radio_btn_cb(), obj);
    pd->registered_set = eina_list_remove(pd->registered_set, radio);
