@@ -1638,7 +1638,8 @@ _edje_emit_cb(Edje *ed, const char *sig, const char *src, Edje_Message_Signal_Da
 
    ed->walking_callbacks++;
 
-   ssp = _edje_signal_callback_patterns_ref(ed->callbacks);
+   ssp = _edje_signal_callback_patterns_ref
+     ((Edje_Signal_Callback_Group *)ed->callbacks);
    if (ssp)
      {
         m = (Edje_Signal_Callback_Matches *)ed->callbacks->matches;
