@@ -68,12 +68,10 @@ _edje_signal_callback_matches_dup(const Edje_Signal_Callback_Matches *src)
    result = calloc(1, sizeof (Edje_Signal_Callback_Matches));
    if (!result) return NULL;
 
-   result->hashed = EINA_FALSE;
    result->matches = malloc
      (sizeof(Edje_Signal_Callback_Match) * src->matches_count);
    if (!result->matches) goto err;
    result->matches_count = src->matches_count;
-   result->patterns = NULL;
    EINA_REFCOUNT_REF(result);
 
    if (src->free_cb)
@@ -107,7 +105,6 @@ _edje_callbacks_patterns_clean(Edje_Signal_Callback_Group *gp)
    Edje_Signal_Callback_Matches *tmp = (Edje_Signal_Callback_Matches *)gp->matches;
 
    if (!tmp) return;
-   assert(EINA_REFCOUNT_GET(tmp) == 1);
    _edje_signal_callback_patterns_unref(tmp->patterns);
    tmp->patterns = NULL;
 }
@@ -220,6 +217,7 @@ _edje_signal_callback_grow(Edje_Signal_Callback_Group *gp)
    m = realloc(tmp->matches, sizeof(Edje_Signal_Callback_Match) * tmp->matches_count);
    if (!m) goto err;
    tmp->matches = m;
+   memset(&(tmp->matches[tmp->matches_count - 1]), 0, sizeof(Edje_Signal_Callback_Match));
    if (tmp->free_cb)
      {
         f = realloc(tmp->free_cb, sizeof(Eina_Free_Cb) * tmp->matches_count);
@@ -230,9 +228,11 @@ _edje_signal_callback_grow(Edje_Signal_Callback_Group *gp)
    cd = realloc(gp->custom_data, sizeof(void *) * tmp->matches_count);
    if (!cd) goto err;
    gp->custom_data = cd;
+   gp->custom_data[tmp->matches_count - 1] = NULL;
    fl = realloc(gp->flags, sizeof(Edje_Signal_Callback_Flags) * tmp->matches_count);
    if (!fl) goto err;
    gp->flags = fl;
+   memset(&(gp->flags[tmp->matches_count - 1]), 0, sizeof(Edje_Signal_Callback_Flags));
    return gp;
 err:
    ERR("Allocation error in rowing signal callback group");
@@ -285,7 +285,6 @@ _edje_signal_callback_push(Edje_Signal_Callback_Group *gp,
                }
              gp->matches = tmp = tmp_dup;
           }
-        assert(tmp->hashed == EINA_FALSE);
      }
 
    // search an empty spot now
@@ -300,6 +299,8 @@ _edje_signal_callback_push(Edje_Signal_Callback_Group *gp,
      }
 
    m = tmp->matches;
+   if (tmp->hashed)
+     eina_hash_del(signal_match, tmp, tmp);
    if (_edje_signal_callback_grow(gp))
      {
         // Set propagate and just_added flags
@@ -310,8 +311,15 @@ _edje_signal_callback_push(Edje_Signal_Callback_Group *gp,
              _edje_callbacks_patterns_clean(gp);
              _edje_callbacks_patterns_init(gp);
           }
+        if (tmp->hashed)
+          eina_hash_add(signal_match, tmp, tmp);
      }
-   else goto err;
+   else
+     {
+        if (tmp->hashed)
+          eina_hash_add(signal_match, tmp, tmp);
+        goto err;
+     }
    return EINA_TRUE;
 err:
    ERR("Allocation error in pushing callback");
@@ -355,19 +363,22 @@ _edje_signal_callback_matches_unref(Edje_Signal_Callback_Matches *m,
 
    EINA_REFCOUNT_UNREF(m)
      {
-        _edje_signal_callback_patterns_unref(m->patterns);
         if (m->hashed)
           eina_hash_del(signal_match, m, m);
         for (i = 0; i < m->matches_count; ++i)
           {
              eina_stringshare_del(m->matches[i].signal);
              eina_stringshare_del(m->matches[i].source);
+             m->matches[i].signal = NULL;
+             m->matches[i].source = NULL;
           }
+        _edje_signal_callback_patterns_unref(m->patterns);
         free(m->matches);
         free(m->free_cb);
-        m->hashed = EINA_FALSE;
+        m->patterns = NULL;
         m->matches = NULL;
         m->free_cb = NULL;
+        m->hashed = EINA_FALSE;
         free(m);
      }
 }
@@ -458,7 +469,7 @@ _edje_signal_callback_patterns_ref(const Edje_Signal_Callback_Group *gp)
    tmp = (Edje_Signal_Callback_Matches *)gp->matches;
    if (!tmp) return NULL;
    if (tmp->hashed) goto got_it;
-   m = eina_hash_find(signal_match, gp->matches);
+   m = eina_hash_find(signal_match, tmp);
    if (!m)
      {
         if (!(tmp->patterns && (EINA_REFCOUNT_GET(tmp->patterns) > 1)))
