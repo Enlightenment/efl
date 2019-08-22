@@ -321,7 +321,6 @@
          }
          program { signal: "e,action,thumb,gen"; source: "e";
             action: STATE_SET "visible" 0.0;
-            target: "shadow";
             target: "base";
             target: "events";
             after: "thumb_gen2";
