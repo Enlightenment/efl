@@ -70,46 +70,19 @@ _efl_ui_layout_factory_efl_object_destructor(Eo *obj, Efl_Ui_Layout_Factory_Data
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
-static Eina_Value
-_efl_ui_layout_factory_bind(Eo *obj EINA_UNUSED, void *data, const Eina_Value value)
-{
-   Efl_Ui_Layout_Factory_Data *pd = data;
-   Efl_Gfx_Entity *layout;
-   int len, i;
-
-   EINA_VALUE_ARRAY_FOREACH(&value, len, i, layout)
-     {
-        eina_hash_foreach(pd->bind.properties, _property_bind, layout);
-        eina_hash_foreach(pd->bind.factories, _factory_bind, layout);
-
-        evas_object_size_hint_weight_set(layout, EVAS_HINT_EXPAND, 0);
-        evas_object_size_hint_align_set(layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
-     }
-
-   return value;
-}
-
 static void
 _efl_ui_layout_factory_efl_ui_factory_building(const Eo *obj, Efl_Ui_Layout_Factory_Data *pd, Efl_Gfx_Entity *ui_view)
 {
    if (pd->klass || pd->group || pd->style)
      efl_ui_layout_theme_set(ui_view, pd->klass, pd->group, pd->style);
 
+   eina_hash_foreach(pd->bind.properties, _property_bind, ui_view);
+   eina_hash_foreach(pd->bind.factories, _factory_bind, ui_view);
+
+   evas_object_size_hint_weight_set(ui_view, EVAS_HINT_EXPAND, 0);
+   evas_object_size_hint_align_set(ui_view, EVAS_HINT_FILL, EVAS_HINT_FILL);
+
    efl_ui_factory_building(efl_super(obj, EFL_UI_LAYOUT_FACTORY_CLASS), ui_view);
-}
-
-EOLIAN static Eina_Future *
-_efl_ui_layout_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Layout_Factory_Data *pd,
-                                             Eina_Iterator *models, Efl_Gfx_Entity *parent)
-{
-   Eina_Future *f;
-
-   f = efl_ui_factory_create(efl_super(obj, EFL_UI_LAYOUT_FACTORY_CLASS), models, parent);
-
-   return efl_future_then(obj, f,
-                          .success_type = EINA_VALUE_TYPE_ARRAY,
-                          .success = _efl_ui_layout_factory_bind,
-                          .data = pd);
 }
 
 EOLIAN static void
