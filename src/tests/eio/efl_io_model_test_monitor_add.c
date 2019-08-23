@@ -144,10 +144,9 @@ _children_get(void *data,
      {
         int fd;
 
-        if ((fd = eina_file_mkstemp("prefixXXXXXX.ext", &temp_filename)) > 0)
-          {
-             close(fd);
-          }
+        fd = eina_file_mkstemp("prefixXXXXXX.ext", &temp_filename);
+        ck_assert_int_gt(fd, 0);
+        close(fd);
      }
    started_up = EINA_TRUE;
 
