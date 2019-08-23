@@ -72,12 +72,29 @@ static void
 _efl_ui_widget_factory_efl_ui_factory_building(const Eo *obj EINA_UNUSED, Efl_Ui_Widget_Factory_Data *pd EINA_UNUSED, Efl_Gfx_Entity *ui_view)
 {
    const Efl_Model *model;
-   Eina_Value *property;
+   Eina_Value *property, *width, *height;
    char *style;
 
    if (!pd->style) return ;
 
    model = efl_ui_view_model_get(ui_view);
+
+   // Fetch min size from model if available to avoid recalculcating it
+   width = efl_model_property_get(model, "self.width");
+   height = efl_model_property_get(model, "self.height");
+   if (eina_value_type_get(width) != EINA_VALUE_TYPE_ERROR &&
+       eina_value_type_get(height) != EINA_VALUE_TYPE_ERROR)
+     {
+        Eina_Size2D s;
+
+        if (!eina_value_int_convert(width, &s.w)) s.w = 0;
+        if (!eina_value_int_convert(height, &s.h)) s.h = 0;
+
+        efl_gfx_hint_size_min_set(ui_view, s);
+     }
+   eina_value_free(width);
+   eina_value_free(height);
+
    // As we have already waited for the property to be ready, we should get the right style now
    property = efl_model_property_get(model, pd->style);
    if (!property) return ;
