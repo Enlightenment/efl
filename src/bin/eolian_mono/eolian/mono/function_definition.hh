@@ -263,7 +263,8 @@ struct property_extension_method_definition_generator
         }
 
       // Do we need BindablePart extensions for this class?
-      if (!helpers::inherits_from(cls, "Efl.Ui.LayoutPart"))
+      // IContent parts are handled directly through BindableFactoryParts
+      if (!helpers::inherits_from(cls, "Efl.Ui.LayoutPart") || helpers::inherits_from(cls, "Efl.IContent"))
         return true;
 
       if (property.setter.is_engaged())
