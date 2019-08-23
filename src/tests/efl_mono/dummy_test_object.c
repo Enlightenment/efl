@@ -1,4 +1,6 @@
 
+#define DUMMY_TEST_IFACE_PROTECTED
+
 #include "libefl_mono_native_test.h"
 
 typedef struct Dummy_Test_Object_Data
@@ -4702,6 +4704,16 @@ Efl_Object *_dummy_test_object_call_find_provider_for_iface(Eo *obj, EINA_UNUSED
 const Eina_Value_Type *_dummy_test_object_mirror_value_type(EINA_UNUSED const Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, const Eina_Value_Type *type)
 {
     return type;
+}
+
+int _dummy_test_object_dummy_test_iface_method_protected(EINA_UNUSED const Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, int x)
+{
+    return -x;
+}
+
+int _dummy_test_object_dummy_test_iface_call_method_protected(const Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, int x)
+{
+    return dummy_test_iface_method_protected(obj, x);
 }
 
 // Inherit

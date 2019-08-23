@@ -233,6 +233,12 @@ std::vector<attributes::function_def> get_all_implementable_methods(attributes::
   return ret;
 }
 
+inline bool is_managed_interface(attributes::klass_def const& klass)
+{
+    return klass.type == attributes::class_type::interface_
+           || klass.type == attributes::class_type::mixin;
+}
+
 /*
  * Checks whether the given is unique going up the inheritance tree from leaf_klass
  */

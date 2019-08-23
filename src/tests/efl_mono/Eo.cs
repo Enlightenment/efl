@@ -533,4 +533,44 @@ class TestObjectDeletion
     }
 }
 
+class TestProtectedInterfaceMembers
+{
+
+    private class MyObject : Dummy.TestObject
+    {
+        public MyObject(Efl.Object parent = null) : base(parent)
+        {
+        }
+
+        public override int MethodProtected(int x)
+        {
+            return x * x;
+        }
+    }
+
+    public static void test_protected_interface_in_generated_class()
+    {
+        var obj = new Dummy.TestObject();
+        Test.AssertEquals(obj.MethodProtected(42), -42);
+    }
+
+    public static void test_protected_interface_in_generated_class_called_from_c()
+    {
+        var obj = new Dummy.TestObject();
+        Test.AssertEquals(obj.CallMethodProtected(42), -42);
+    }
+
+    public static void test_protected_interface_in_inherited_class()
+    {
+        var obj = new MyObject();
+        Test.AssertEquals(obj.MethodProtected(42), 42 * 42);
+    }
+
+    public static void test_protected_interface_in_inherited_class_called_from_c()
+    {
+        var obj = new MyObject();
+        Test.AssertEquals(obj.CallMethodProtected(42), 42 * 42);
+    }
+}
+
 }

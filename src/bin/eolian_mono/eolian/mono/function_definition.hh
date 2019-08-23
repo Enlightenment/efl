@@ -81,6 +81,10 @@ struct native_function_definition_generator
        .generate(sink, std::make_tuple(f.c_name, f.c_name, f.c_name, f.c_name), context))
       return false;
 
+    // We do not generate the wrapper to be called from C for non public interface member directly.
+    if (blacklist::is_non_public_interface_member(f, *klass))
+      return true;
+
     // Actual method implementation to be called from C.
     std::string return_type;
     if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))

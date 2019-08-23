@@ -35,6 +35,11 @@ struct function_registration_generator
     if(blacklist::is_function_blacklisted(f, context) || f.is_static) // Static methods aren't overrideable
       return true;
 
+    // We do not generate registration wrappers for non public interface/mixin members in their concrete classes.
+    // They go in the first concrete/abstract implementation.
+    if(blacklist::is_non_public_interface_member(f, *klass))
+      return true;
+
     if(!as_generator(
                indent << "if (" << f.c_name << "_static_delegate == null)\n"
                << indent << "{\n"

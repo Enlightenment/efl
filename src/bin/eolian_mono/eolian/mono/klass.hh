@@ -31,18 +31,6 @@
 
 namespace eolian_mono {
 
-/* Get the actual number of functions of a class, checking for blacklisted ones */
-template<typename Context>
-static std::size_t
-get_implementable_function_count(grammar::attributes::klass_def const& cls, Context context)
-{
-   auto methods = helpers::get_all_implementable_methods(cls, context);
-   return std::count_if(methods.cbegin(), methods.cend(), [&context](grammar::attributes::function_def const& func)
-     {
-        return !blacklist::is_function_blacklisted(func, context) && !func.is_static;
-     });
-}
-
 template<typename Context>
 static bool
 is_inherit_context(Context const& context)
