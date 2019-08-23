@@ -1,6 +1,6 @@
 import eina_types;
 
-mixin @beta Efl.Ui.Widget.Scrollable_Content requires Efl.Object
+mixin @beta Efl.Ui.Widget_Scrollable_Content requires Efl.Object
 {
    [[Efl widget scrollable content mixin
 
