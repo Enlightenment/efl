@@ -18,15 +18,31 @@ _select(Eo *obj, int index)
    if (sd->cnt > index) sd->cur = index;
    else sd->cur = 0;
 
-   efl_ui_tab_bar_current_tab_set(sd->tab_bar, sd->cur);
+   Efl_Ui_Tab_Page *page = eina_list_nth(sd->tab_pages, sd->cur);
+
+   efl_ui_selectable_selected_set(efl_ui_tab_page_tab_bar_item_get(page), EINA_TRUE);
 }
 
 static void
 _tab_select_cb(void *data, const Efl_Event *event)
 {
-   int index = efl_ui_tab_bar_current_tab_get(event->object);
-   if (efl_ui_spotlight_active_index_get(data) != index)
-     efl_ui_spotlight_active_index_set(data, index);
+   Eina_List *n;
+   Efl_Ui_Tab_Page *p;
+   EFL_UI_TAB_PAGER_DATA_GET(data, sd);
+   int i = 0;
+   //FIXME this is super clumsy, this can be improved later on
+   Efl_Ui_Tab_Bar_Default_Item *selected;
+
+   selected = efl_ui_single_selectable_last_selected_get(event->object);
+   EINA_LIST_FOREACH(sd->tab_pages, n, p)
+     {
+        if (efl_ui_tab_page_tab_bar_item_get(p) == selected)
+          {
+             if (efl_ui_spotlight_active_index_get(data) != i)
+               efl_ui_spotlight_active_index_set(data, i);
+          }
+        i++;
+     }
 }
 
 EOLIAN static void

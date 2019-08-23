@@ -2,11 +2,6 @@ class @beta Efl.Ui.Tab_Bar extends Efl.Ui.Layout_Base implements Efl.Ui.Single_S
 {
    [[Tab Bar class]]
    methods {
-      @property current_tab {
-         values {
-            index: int;
-         }
-      }
       tab_count @const {
          return: uint;
       }
@@ -25,5 +20,22 @@ class @beta Efl.Ui.Tab_Bar extends Efl.Ui.Layout_Base implements Efl.Ui.Single_S
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
+      Efl.Ui.Single_Selectable.last_selected {get;}
+      Efl.Ui.Single_Selectable.fallback_selection {get; set;}
+      Efl.Pack.pack;
+      Efl.Pack.pack_clear;
+      Efl.Pack.unpack_all;
+      Efl.Pack.unpack;
+      Efl.Pack_Linear.pack_unpack_at;
+      Efl.Pack_Linear.pack_begin;
+      Efl.Pack_Linear.pack_end;
+      Efl.Pack_Linear.pack_before;
+      Efl.Pack_Linear.pack_after;
+      Efl.Pack_Linear.pack_at;
+      Efl.Container.content_count;
+      Efl.Container.content_iterate;
+   }
+   composite {
+      Efl.Pack_Linear;
    }
 }

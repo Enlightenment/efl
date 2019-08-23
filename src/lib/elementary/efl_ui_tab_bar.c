@@ -11,25 +11,31 @@
 #define MY_CLASS EFL_UI_TAB_BAR_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Tab_Bar"
 
-EOLIAN static void
-_efl_ui_tab_bar_current_tab_set(Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *sd, int index)
-{
-   Efl_Ui_Item *item;
-   item = eina_list_nth(sd->tab_infos, index);
 
-   efl_ui_selectable_selected_set(item, EINA_TRUE);
-}
-
-EOLIAN static int
-_efl_ui_tab_bar_current_tab_get(const Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *sd)
+EOLIAN static Efl_Ui_Selectable*
+_efl_ui_tab_bar_efl_ui_single_selectable_last_selected_get(const Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *pd)
 {
-   return eina_list_data_idx(sd->tab_infos, sd->selected);
+   return pd->selected;
 }
 
 EOLIAN static unsigned int
 _efl_ui_tab_bar_tab_count(const Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *sd)
 {
    return sd->cnt;
+}
+
+EOLIAN static void
+_efl_ui_tab_bar_efl_ui_single_selectable_fallback_selection_set(Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *pd, Efl_Ui_Selectable *fallback)
+{
+   pd->fallback_selection = fallback;
+   if (!pd->selected)
+     efl_ui_selectable_selected_set(pd->fallback_selection, EINA_TRUE);
+}
+
+EOLIAN static Efl_Ui_Selectable*
+_efl_ui_tab_bar_efl_ui_single_selectable_fallback_selection_get(const Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *pd)
+{
+   return pd->fallback_selection;
 }
 
 static void _remove_item(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Efl_Ui_Item *item);
@@ -45,14 +51,26 @@ _selelction_change_cb(void *data, const Efl_Event *ev)
           {
              pd->selected = NULL;
           }
+        //checkout if we want to do fallback handling
+        if (!pd->in_value_change)
+          {
+             if (!pd->selected && pd->fallback_selection)
+               efl_ui_selectable_selected_set(pd->fallback_selection, EINA_TRUE);
+          }
      }
    else
      {
+        pd->in_value_change = EINA_TRUE;
         if (pd->selected)
           efl_ui_selectable_selected_set(pd->selected, EINA_FALSE);
+        pd->in_value_change = EINA_FALSE;
         EINA_SAFETY_ON_FALSE_RETURN(!pd->selected);
         pd->selected = ev->object;
         efl_event_callback_call(data, EFL_UI_EVENT_ITEM_SELECTED, NULL);
+     }
+   if (!pd->in_value_change)
+     {
+        efl_event_callback_call(data, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, NULL);
      }
 }
 
