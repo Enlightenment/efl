@@ -97,7 +97,7 @@ tab_page_add(Eo *parent)
 void
 test_ui_tab_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Eo *win, *layout, *navi, *list, *tp, *tb, *page;
+   Eo *win, *layout, *navi, *list, *tp, *page;
    //Efl_Page_Transition *tran;
    App_Data *ad = NULL;
    char buf[PATH_MAX];
@@ -131,9 +131,6 @@ test_ui_tab_pager(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *ev
                 efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
                 efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
                 efl_content_set(efl_part(layout, "tab_pager"), efl_added));
-
-   tb = efl_add(EFL_UI_TAB_BAR_CLASS, tp);
-   efl_ui_tab_pager_tab_bar_set(tp, tb);
 
    tab_label_count = 0;
    tab_icon_count = 0;

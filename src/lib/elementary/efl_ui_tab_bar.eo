@@ -27,6 +27,5 @@ class @beta Efl.Ui.Tab_Bar extends Efl.Ui.Layout_Base implements Efl.Ui.Single_S
       Efl.Pack_Linear;
       Efl.Pack;
       Efl.Pack_Linear;
-      Efl.Container;
    }
 }

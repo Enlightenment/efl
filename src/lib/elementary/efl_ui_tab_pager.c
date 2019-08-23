@@ -45,22 +45,6 @@ _tab_select_cb(void *data, const Efl_Event *event)
      }
 }
 
-EOLIAN static void
-_efl_ui_tab_pager_tab_bar_set(Eo *obj, Efl_Ui_Tab_Pager_Data *sd, Efl_Canvas_Object *tab_bar)
-{
-   if (sd->tab_bar != NULL)
-     {
-        efl_event_callback_del(sd->tab_bar, EFL_UI_EVENT_ITEM_SELECTED, _tab_select_cb, obj);
-        efl_content_unset(efl_part(obj, "efl.tab_root"));
-        efl_del(sd->tab_bar);
-     }
-
-   sd->tab_bar = tab_bar;
-   efl_content_set(efl_part(obj, "efl.tab_root"), sd->tab_bar);
-
-   efl_event_callback_add(sd->tab_bar, EFL_UI_EVENT_ITEM_SELECTED, _tab_select_cb, obj);
-}
-
 EOLIAN static Efl_Canvas_Object *
 _efl_ui_tab_pager_tab_bar_get(const Eo *obj EINA_UNUSED, Efl_Ui_Tab_Pager_Data *sd)
 {
@@ -93,9 +77,20 @@ _efl_ui_tab_pager_efl_object_constructor(Eo *obj, Efl_Ui_Tab_Pager_Data *sd)
 
    efl_ui_widget_focus_allow_set(obj, EINA_TRUE);
 
-   sd->tab_bar = NULL;
+   sd->tab_bar = efl_add(EFL_UI_TAB_BAR_CLASS, obj);
+   efl_event_callback_add(sd->tab_bar, EFL_UI_EVENT_ITEM_SELECTED, _tab_select_cb, obj);
    sd->cur = 0;
    sd->cnt = 0;
+
+   return obj;
+}
+
+EOLIAN static Efl_Object*
+_efl_ui_tab_pager_efl_object_finalize(Eo *obj, Efl_Ui_Tab_Pager_Data *pd)
+{
+   obj = efl_finalize(efl_super(obj, MY_CLASS));
+
+   efl_content_set(efl_part(obj, "efl.tab_root"), pd->tab_bar);
 
    return obj;
 }

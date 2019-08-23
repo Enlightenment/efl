@@ -8,11 +8,12 @@
 
 /* spec-meta-start
       {"test-interface":"Efl.Ui.Single_Selectable",
-       "test-widgets": ["Efl.Ui.Grid", "Efl.Ui.List", "Efl.Ui.Radio_Box"],
+       "test-widgets": ["Efl.Ui.Grid", "Efl.Ui.List", "Efl.Ui.Radio_Box", "Efl.Ui.Tab_Bar"],
        "custom-mapping" : {
           "Efl.Ui.Grid" : "EFL_UI_GRID_DEFAULT_ITEM_CLASS",
           "Efl.Ui.List" : "EFL_UI_LIST_DEFAULT_ITEM_CLASS",
-          "Efl.Ui.Radio_Box" : "EFL_UI_RADIO_CLASS"
+          "Efl.Ui.Radio_Box" : "EFL_UI_RADIO_CLASS",
+          "Efl.Ui.Tab_Bar" : "EFL_UI_TAB_BAR_DEFAULT_ITEM_CLASS"
         }
       }
 

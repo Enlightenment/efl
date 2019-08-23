@@ -3,6 +3,9 @@ class @beta Efl.Ui.Tab_Pager extends Efl.Ui.Spotlight.Container
    [[Tab Pager class]]
    methods {
       @property tab_bar {
+         get {
+
+         }
          values {
             tab_bar: Efl.Canvas.Object;
          }
@@ -11,6 +14,7 @@ class @beta Efl.Ui.Tab_Pager extends Efl.Ui.Spotlight.Container
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
+      Efl.Object.finalize;
       Efl.Container.content_count;
       Efl.Pack.pack_clear;                     // TODO
       Efl.Pack.unpack_all;                     // TODO
