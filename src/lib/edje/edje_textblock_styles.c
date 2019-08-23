@@ -219,7 +219,11 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl, Eina_Bool force)
      eina_strbuf_free(txt);
 }
 
-/* Update all evas_styles which are in an edje
+/*
+ * mark all the styles in the Edje_File dirty (except readonly styles)so that
+ * subsequent  request to style will update before giving the style.
+ * Note: this will enable lazy style computation (only when some
+ * widget request for new style it will get computed).
  *
  * @param ed The edje containing styles which need to be updated
  */
@@ -232,7 +236,7 @@ _edje_textblock_style_all_update(Edje *ed)
    if (!ed->file) return;
 
    EINA_LIST_FOREACH(ed->file->styles, l, stl)
-      _edje_textblock_style_update(ed, stl, EINA_FALSE);
+     if (stl && !stl->readonly) stl->cache = EINA_FALSE;
 }
 
 static inline Edje_Style *
