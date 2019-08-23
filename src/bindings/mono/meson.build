@@ -80,6 +80,8 @@ blacklisted_files = [
   'elm_multibuttonentry_part.eo',
   'elm_atspi_bridge.eo',
   'elm_atspi_app_object.eo',
+  'elm_interface_scrollable.eo',
+  'evas_canvas3d_types.eot',
 ]
 
 manual_inheritance_files = [
