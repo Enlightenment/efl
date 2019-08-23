@@ -87,8 +87,9 @@ tab_page_add(Eo *parent)
 
    tab_page = efl_add(EFL_UI_TAB_PAGE_CLASS, parent);
    efl_content_set(tab_page, content);
-   efl_text_set(efl_part(tab_page, "tab"), label);
-   efl_ui_tab_page_part_tab_icon_set(efl_part(tab_page, "tab"), icon);
+   Eo *item = efl_ui_tab_page_tab_bar_item_get(tab_page);
+   efl_text_set(item, label);
+   efl_ui_tab_bar_default_item_icon_set(item, icon);
 
    return tab_page;
 }
@@ -472,7 +473,7 @@ _change_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    if (efl_ui_selectable_selected_get(tcd->label_check))
    {
       label = tab_label_get();
-      efl_text_set(efl_part(tab_page, "tab"), label);
+      efl_text_set(efl_ui_tab_page_tab_bar_item_get(tab_page), label);
       content = content_add(tab_page, label);
       efl_content_set(tab_page, content);
    }
@@ -480,7 +481,7 @@ _change_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    if (efl_ui_selectable_selected_get(tcd->icon_check))
    {
       icon = tab_icon_get();
-      efl_ui_tab_page_part_tab_icon_set(efl_part(tab_page, "tab"), icon);
+      efl_ui_tab_bar_default_item_icon_set(efl_ui_tab_page_tab_bar_item_get(tab_page), icon);
    }
 }
 

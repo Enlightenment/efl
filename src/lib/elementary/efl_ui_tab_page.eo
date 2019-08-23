@@ -16,14 +16,10 @@ class @beta Efl.Ui.Tab_Page extends Efl.Ui.Layout_Base implements Efl.Content
          }
       }
    }
-   parts {
-      tab: Efl.Ui.Tab_Page_Part_Tab;
-   }
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
-      Efl.Part.part_get;
    }
 }

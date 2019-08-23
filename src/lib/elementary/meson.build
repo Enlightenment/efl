@@ -157,7 +157,6 @@ pub_eo_files = [
   'efl_ui_tab_pager.eo',
   'efl_ui_tab_bar.eo',
   'efl_ui_tab_page.eo',
-  'efl_ui_tab_page_part_tab.eo',
   'efl_ui_widget_focus_manager.eo',
   'efl_ui_legacy.eo',
   'efl_ui_button_legacy_part.eo',
