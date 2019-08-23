@@ -1477,6 +1477,7 @@ _profile_fetch_from_conf(void)
    Eet_File *ef = NULL;
    int len = 0, i;
 
+   if (_use_build_config) goto end;
    // if env var - use profile without question
    s = _getenv_once("ELM_PROFILE");
    if (s)
@@ -1497,7 +1498,7 @@ _profile_fetch_from_conf(void)
           }
      }
 
-   for (i = 0; i < 2 && !_use_build_config; i++)
+   for (i = 0; i < 2; i++)
      {
         // user profile
         if (i == 0)
@@ -1527,7 +1528,7 @@ _profile_fetch_from_conf(void)
              eet_close(ef);
           }
      }
-
+end:
    _elm_profile = strdup("default");
 }
 
