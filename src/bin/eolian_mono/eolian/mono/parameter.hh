@@ -488,23 +488,31 @@ struct marshall_parameter_generator
 // FIXME This seems to be used only in the else branch of the native function definition. Is it really needed?
 struct argument_generator
 {
+   bool generate_direction;
+   argument_generator () : generate_direction(true) {}
+   argument_generator (bool r) : generate_direction(r) {}
+
    template <typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
      std::string param_name = escape_keyword(param.param_name);
      std::string direction = marshall_direction_modifier(param);
 
-     if (!param.type.original_type.visit(is_fp_visitor{}))
-       return as_generator(
-                direction << param_name
-           ).generate(sink, attributes::unused, context);
-
-    return as_generator(
-            param_name << "_data, " << param_name << ", " << param_name << "_free_cb"
-          ).generate(sink, attributes::unused, context);
+     if (generate_direction && !param.type.original_type.visit(is_fp_visitor{}))
+       return as_generator(direction << param_name).generate(sink, attributes::unused, context);
+     if (!generate_direction && !param.type.original_type.visit(is_fp_visitor{}))
+       return as_generator(param_name).generate(sink, attributes::unused, context);
+     else
+       return as_generator
+         (param_name << "_data, " << param_name << ", " << param_name << "_free_cb"
+         ).generate(sink, attributes::unused, context);
 
    }
 
+   argument_generator operator ()(bool r) const
+   {
+     return {r};
+   }
 } const argument {};
 
 struct native_argument_invocation_generator

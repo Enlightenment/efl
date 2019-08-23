@@ -16,6 +16,8 @@ typedef struct Dummy_Test_Object_Data
   int iface_prop;
   Eo *provider;
   Eo *iface_provider;
+  int prop1;
+  int prop2;
 
   // Containers passed to C# as iterator/accessors
   Eina_Array *out_array;
@@ -4568,6 +4570,18 @@ Dummy_MyInt _dummy_test_object_bypass_typedef(EINA_UNUSED Eo *obj, EINA_UNUSED D
 {
     *receiver = data;
     return data;
+}
+
+void _dummy_test_object_multi_valued_prop_get(Eo const* obj EINA_UNUSED, Dummy_Test_Object_Data* pd, int* prop1, int* prop2)
+{
+    *prop1 = pd->prop1;
+    *prop2 = pd->prop2;
+}
+
+void _dummy_test_object_multi_valued_prop_set(Eo* obj EINA_UNUSED, Dummy_Test_Object_Data* pd, int prop1, int prop2)
+{
+    pd->prop1 = prop1;
+    pd->prop2 = prop2;
 }
 
 /* Class Properties */

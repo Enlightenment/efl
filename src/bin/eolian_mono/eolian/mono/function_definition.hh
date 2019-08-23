@@ -6,10 +6,12 @@
 #include "grammar/generator.hpp"
 #include "grammar/klass_def.hpp"
 
+#include "grammar/kleene.hpp"
 #include "grammar/indentation.hpp"
 #include "grammar/list.hpp"
 #include "grammar/alternative.hpp"
 #include "grammar/attribute_reorder.hpp"
+#include "grammar/counter.hpp"
 #include "logging.hh"
 #include "type.hh"
 #include "name_helpers.hh"
@@ -292,6 +294,11 @@ struct property_wrapper_definition_generator
    template<typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::property_def const& property, Context const& context) const
    {
+      using efl::eolian::grammar::attribute_reorder;
+      using efl::eolian::grammar::counter;
+      using efl::eolian::grammar::attributes::parameter_direction;
+      using efl::eolian::grammar::attributes::parameter_def;
+
       if (blacklist::is_property_blacklisted(property, *implementing_klass, context))
         return true;
 
@@ -304,7 +311,7 @@ struct property_wrapper_definition_generator
         return true;
 
       auto get_params = property.getter.is_engaged() ? property.getter->parameters.size() : 0;
-      auto set_params = property.setter.is_engaged() ? property.setter->parameters.size() : 0;
+      //auto set_params = property.setter.is_engaged() ? property.setter->parameters.size() : 0;
 
       // C# properties must have a single value.
       //
@@ -312,16 +319,62 @@ struct property_wrapper_definition_generator
       // meaning they should have 0 parameters.
       //
       // For setters, we ignore the return type - usually boolean.
-      if (get_params > 0 || set_params > 1)
+      // if (get_params > 0 || set_params > 1)
+      //   return true;
+
+      if (property.getter
+          && std::find_if (property.getter->parameters.begin()
+                           , property.getter->parameters.end()
+                           , [] (parameter_def const& p)
+                           {
+                             return p.direction != parameter_direction::out;
+                           }) != property.getter->parameters.end())
+        return true;
+      if (property.setter
+          && std::find_if (property.setter->parameters.begin()
+                           , property.setter->parameters.end()
+                           , [] (parameter_def const& p)
+                           {
+                             return p.direction != parameter_direction::in;
+                           }) != property.setter->parameters.end())
         return true;
 
-      attributes::type_def prop_type;
+      if (property.getter && property.setter)
+      {
+        if (get_params != 0 && property.setter->parameters.size() != property.getter->parameters.size())
+          return true;
+      }
 
-      if (property.getter.is_engaged())
-        prop_type = property.getter->return_type;
-      else if (property.setter.is_engaged())
-        prop_type = property.setter->parameters[0].type;
-      else
+      std::vector<attributes::parameter_def> parameters;
+
+      if (property.setter.is_engaged())
+      {
+        std::transform (property.setter->parameters.begin(), property.setter->parameters.end()
+                        , std::back_inserter(parameters)
+                        , [] (parameter_def p) -> parameter_def
+                        {
+                          //p.direction = efl::eolian::attributes::parameter_direction::in;
+                          return p;
+                        });
+      }
+      else if (property.getter.is_engaged())
+      {
+        // if getter has parameters, then we ignore return type, otherwise
+        // we use the return type.
+        if (get_params == 0)
+          parameters.push_back({parameter_direction::in
+                , property.getter->return_type, "propertyResult", {}
+                , property.getter->unit});
+        else
+          std::transform (property.getter->parameters.begin(), property.getter->parameters.end()
+                          , std::back_inserter(parameters)
+                          , [] (parameter_def p) -> parameter_def
+                          {
+                            p.direction = parameter_direction::in;
+                            return p;
+                          });
+      }
+        else
         {
            EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "Property must have either a getter or a setter." << std::endl;
            return false;
@@ -365,21 +418,88 @@ struct property_wrapper_definition_generator
            set_scope = "";
         }
 
-      if (!as_generator(
-                  documentation(1)
-                  << scope_tab << scope << (is_static ? "static " : "") << type(true) << " " << managed_name << " {\n"
-            ).generate(sink, std::make_tuple(property, prop_type), context))
-        return false;
+      if (parameters.size() == 1)
+      {
+        if (!as_generator(
+                    documentation(1)
+                    << scope_tab << scope << (is_static ? "static " : "") << type(true) << " " << managed_name << " {\n"
+              ).generate(sink, std::make_tuple(property, parameters[0].type), context))
+          return false;
+      }
+      else
+      {
+        if (!as_generator
+            (
+             documentation(1)
+             << scope_tab << scope << (is_static ? "static (" : "(")
+             << (attribute_reorder<1, -1>(type(true) /*<< " " << argument*/) % ", ") << ") "
+             << managed_name << " {\n"
+            ).generate(sink, std::make_tuple(property, parameters), context))
+          return false;
+      }
 
-      if (property.getter.is_engaged())
-        if (!as_generator(scope_tab << scope_tab << get_scope << "get " << (interface ? ";" : "{ return " + name_helpers::managed_method_name(*property.getter) + "(); }") << "\n"
+      if (property.getter.is_engaged() && interface)
+      {
+        if (!as_generator(scope_tab << scope_tab << set_scope <<  "get;\n"
+                          ).generate(sink, attributes::unused, context))
+          return false;
+      }
+      else if (property.getter.is_engaged() && get_params == 0/*parameters.size() == 1 && property.getter.is_engaged()*/)
+      {
+        if (!as_generator
+            (scope_tab << scope_tab << get_scope
+             << "get " << "{ return " + name_helpers::managed_method_name(*property.getter) + "(); }\n"
             ).generate(sink, attributes::unused, context))
           return false;
+      }
+      else if (parameters.size() >= 1 && property.getter)
+      {
+        if (!as_generator
+                 (scope_tab << scope_tab << get_scope << "get "
+                  << "{\n"
+                  << *attribute_reorder<1, -1, 1>
+                    (scope_tab(3) << type(true) << " _out_"
+                     << argument(false) << " = default(" << type(true) << ");\n"
+                    )
+                  << scope_tab(3) << name_helpers::managed_method_name(*property.getter)
+                  << "(" << (("out _out_" << argument(false)) % ",") << ");\n"
+                  << scope_tab(3) << "return (" << (("_out_"<< argument(false)) % ",") << ");\n"
+                  << scope_tab(2) << "}" << "\n"
+                 ).generate(sink, std::make_tuple(parameters, parameters, parameters), context))
+          return false;
+      }
+      // else if (parameters.size() == 1)
+      // {
+      //   if (!as_generator
+      //            (scope_tab << scope_tab << get_scope << "get "
+      //             << "{\n"
+      //             << *attribute_reorder<1, -1, 1>(scope_tab(3) << type(true) << " _out_" << argument(false) << " = default(" << type(true) << ");\n")
+      //             << scope_tab(3) << name_helpers::managed_method_name(*property.getter)
+      //             << "(" << (("out _out_" << argument(false)) % ",") << ");\n"
+      //             << scope_tab(3) << "return " << (("_out_"<< argument(false)) % ",") << ";\n"
+      //             << scope_tab(2) << "}" << "\n"
+      //            ).generate(sink, std::make_tuple(parameters, parameters, parameters), context))
+      //     return false;
+      // }
 
-      if (property.setter.is_engaged())
-        if (!as_generator(scope_tab << scope_tab << set_scope <<  "set " << (interface ? ";" : "{ " + name_helpers::managed_method_name(*property.setter) + "(" + dir_mod + "value); }") << "\n"
+      if (property.setter.is_engaged() && interface)
+      {
+        if (!as_generator(scope_tab << scope_tab << set_scope <<  "set;\n"
+                          ).generate(sink, attributes::unused, context))
+          return false;
+      }
+      else if (parameters.size() == 1 && property.setter.is_engaged())
+      {
+        if (!as_generator(scope_tab << scope_tab << set_scope <<  "set " << "{ " + name_helpers::managed_method_name(*property.setter) + "(" + dir_mod + "value); }\n"
             ).generate(sink, attributes::unused, context))
           return false;
+      }
+      else if (parameters.size() > 1 && property.setter.is_engaged())
+      {
+        if (!as_generator(scope_tab << scope_tab << set_scope <<  "set " << ("{ " + name_helpers::managed_method_name(*property.setter) + "(" + dir_mod) << ((" value.Item" << counter(1)) % ", ") << "); }" << "\n"
+           ).generate(sink, parameters, context))
+          return false;
+      }
 
       if (!as_generator(scope_tab << "}\n").generate(sink, attributes::unused, context))
         return false;
