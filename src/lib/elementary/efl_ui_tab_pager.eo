@@ -15,18 +15,15 @@ class @beta Efl.Ui.Tab_Pager extends Efl.Ui.Spotlight.Container
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Object.finalize;
-      Efl.Container.content_count;
-      Efl.Pack.pack_clear;                     // TODO
-      Efl.Pack.unpack_all;                     // TODO
+      Efl.Pack.pack_clear;
+      Efl.Pack.unpack_all;
       Efl.Pack.unpack;
       Efl.Pack_Linear.pack_begin;
       Efl.Pack_Linear.pack_end;
       Efl.Pack_Linear.pack_before;
       Efl.Pack_Linear.pack_after;
       Efl.Pack_Linear.pack_at;
-      Efl.Pack_Linear.pack_content_get;
-      Efl.Pack_Linear.pack_index_get;
-      Efl.Pack_Linear.pack_unpack_at;          // TODO
+      Efl.Pack_Linear.pack_unpack_at;
       Efl.Ui.Spotlight.Container.active_index { set; }
    }
 }
