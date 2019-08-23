@@ -55,5 +55,6 @@ abstract @beta Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Selectab
       Efl.Object.finalize;
       Efl.Object.destructor;
       Efl.Ui.Selectable.selected {get; set;}
+      Efl.Ui.Widget.widget_input_event_handler;
    }
 }

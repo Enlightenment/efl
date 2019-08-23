@@ -12,6 +12,20 @@
 
 #define MY_CLASS_NAME "Efl.Ui.Item"
 
+static Eina_Bool _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED);
+
+static const Elm_Action key_actions[] = {
+   {"select", _key_action_select},
+   {NULL, NULL}
+};
+
+static Eina_Bool
+_key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   efl_ui_selectable_selected_set(obj, EINA_TRUE);
+   return EINA_FALSE;
+}
+
 static Efl_Ui_Select_Mode
 _fetch_state(Eo *obj)
 {
@@ -194,6 +208,7 @@ _efl_ui_item_item_parent_get(const Eo *obj EINA_UNUSED, Efl_Ui_Item_Data *pd)
    return pd->parent;
 }
 
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_item, Efl_Ui_Item_Data)
 
 #include "efl_ui_item.eo.c"
 #include "efl_ui_selectable.eo.c"

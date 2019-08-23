@@ -2293,6 +2293,35 @@ _elm_key_bindings_update(Elm_Config *cfg, Elm_Config *syscfg EINA_UNUSED)
 }
 
 static void
+_elm_key_bindings_copy_missing_bindings(Elm_Config *cfg, Elm_Config *syscfg)
+{
+   Eina_Hash *safed_bindings = eina_hash_string_superfast_new(NULL);
+   Elm_Config_Bindings_Widget *wd;
+   Eina_List *n, *nnext;
+   Eina_Bool missing_bindings = EINA_FALSE;
+
+   EINA_LIST_FOREACH(cfg->bindings, n, wd)
+     {
+        eina_hash_add(safed_bindings, wd->name, wd);
+     }
+
+   EINA_LIST_FOREACH_SAFE(syscfg->bindings, n, nnext, wd)
+     {
+         if (!eina_hash_find(safed_bindings, wd->name))
+           {
+              syscfg->bindings = eina_list_remove_list(syscfg->bindings, n);
+              cfg->bindings = eina_list_append(cfg->bindings, wd);
+              printf("Upgraded keybindings for %s!\n", wd->name);
+              missing_bindings = EINA_TRUE;
+           }
+     }
+   if (missing_bindings)
+     {
+        printf("There have been missing Key bindings in the config, config is now adjusted\n");
+     }
+}
+
+static void
 _config_update(void)
 {
    Elm_Config *tcfg;
@@ -2415,6 +2444,13 @@ _config_update(void)
    _elm_config->win_no_border = EINA_FALSE;
    IFCFGEND
 
+   IFCFG(0x0022)
+
+   _elm_key_bindings_copy_missing_bindings(_elm_config, tcfg);
+   /* after this function call, the tcfg is partly invalidated, reload! */
+   _config_free(tcfg);
+   tcfg = _config_system_load();
+   IFCFGEND
    /**
     * Fix user config for current ELM_CONFIG_EPOCH here.
     **/
