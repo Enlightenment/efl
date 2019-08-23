@@ -154,37 +154,25 @@ _efl_model_evt_added_ecore_cb(void *data, int type, void *event)
    return EINA_TRUE;
 }
 
-static Eina_Bool
-_efl_model_evt_deleted_ecore_cb(void *data, int type, void *event)
+static void
+_model_child_remove(Efl_Io_Model_Data *pd, Eina_Stringshare *path)
 {
    Efl_Io_Model_Info *mi;
    Eina_List *l;
-   Eio_Monitor_Event *ev = event;
-   Efl_Io_Model *obj;
-   Efl_Io_Model_Data *pd = data;
-   Eina_Stringshare *spath = NULL;
+   Efl_Io_Model *obj = pd->self;
    Efl_Model_Children_Event cevt = { 0 };
    unsigned int i = 0;
-
-   if (type != EIO_MONITOR_DIRECTORY_DELETED && type != EIO_MONITOR_FILE_DELETED)
-     return EINA_TRUE;
-
-   if (ev->monitor != pd->monitor) return EINA_TRUE;
-
-   obj = pd->self;
-
-   spath = eina_stringshare_add(ev->filename);
 
    // FIXME: Linear search is pretty slow
    EINA_LIST_FOREACH(pd->files, l, mi)
      {
-        if (mi->path == spath)
+        if (mi->path == path)
           break ;
         ++i;
      }
 
    if (i >= eina_list_count(pd->files))
-     goto end;
+     return;
 
    cevt.index = i;
    cevt.child = mi->object;
@@ -197,8 +185,22 @@ _efl_model_evt_deleted_ecore_cb(void *data, int type, void *event)
 
    // This will only trigger the data destruction if no object is referencing them.
    _efl_io_model_info_free(mi, EINA_FALSE);
+}
 
- end:
+static Eina_Bool
+_efl_model_evt_deleted_ecore_cb(void *data, int type, void *event)
+{
+   Eio_Monitor_Event *ev = event;
+   Efl_Io_Model_Data *pd = data;
+   Eina_Stringshare *spath = NULL;
+
+   if (type != EIO_MONITOR_DIRECTORY_DELETED && type != EIO_MONITOR_FILE_DELETED)
+     return EINA_TRUE;
+
+   if (ev->monitor != pd->monitor) return EINA_TRUE;
+
+   spath = eina_stringshare_add(ev->filename);
+   _model_child_remove(pd, spath);
    eina_stringshare_del(spath);
 
    return EINA_TRUE;
@@ -221,7 +223,12 @@ static void
 _eio_done_unlink_cb(void *data, Eio_File *handler EINA_UNUSED)
 {
    Efl_Io_Model *child = data;
+   Efl_Io_Model_Data *child_pd, *pd;
 
+   child_pd = efl_data_scope_get(child, MY_CLASS);
+   pd = efl_data_scope_get(efl_parent_get(child), MY_CLASS);
+
+   _model_child_remove(pd, child_pd->path);
    _eio_del_cleanup(child);
 }
 
