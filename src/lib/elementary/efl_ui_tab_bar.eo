@@ -1,24 +1,12 @@
-class @beta Efl.Ui.Tab_Bar extends Efl.Ui.Layout_Base implements Efl.Ui.Single_Selectable
+class @beta Efl.Ui.Tab_Bar extends Efl.Ui.Layout_Base implements Efl.Ui.Single_Selectable, Efl.Pack_Linear
 {
    [[Tab Bar class]]
    methods {
-      tab_count @const {
-         return: uint;
-      }
-      tab_add @beta {
-         params {
-            @in index: int;
-            @in icon : Efl.Ui.Tab_Bar_Default_Item;
-         }
-      }
-      tab_remove @beta {
-         params {
-            @in index: int;
-         }
-      }
+
    }
    implements {
       Efl.Object.constructor;
+      Efl.Object.finalize;
       Efl.Object.destructor;
       Efl.Ui.Single_Selectable.last_selected {get;}
       Efl.Ui.Single_Selectable.fallback_selection {get; set;}
@@ -37,5 +25,8 @@ class @beta Efl.Ui.Tab_Bar extends Efl.Ui.Layout_Base implements Efl.Ui.Single_S
    }
    composite {
       Efl.Pack_Linear;
+      Efl.Pack;
+      Efl.Pack_Linear;
+      Efl.Container;
    }
 }

@@ -113,14 +113,12 @@ _efl_ui_tab_pager_efl_pack_pack_clear(Eo *obj, Efl_Ui_Tab_Pager_Data *sd)
      {
         Eo *subobj;
         Eina_List *l, *l_next;
-        int begin_index = 0;
         EINA_LIST_FOREACH_SAFE(sd->tab_pages, l, l_next, subobj)
           {
              sd->tab_pages = eina_list_remove(sd->tab_pages, subobj);
              sd->cnt--;
-
-             efl_ui_tab_bar_tab_remove(sd->tab_bar, begin_index);
           }
+        efl_pack_clear(sd->tab_bar);
         efl_pack_clear(efl_super(obj, MY_CLASS));
 
         return EINA_TRUE;
@@ -135,14 +133,12 @@ _efl_ui_tab_pager_efl_pack_unpack_all(Eo *obj, Efl_Ui_Tab_Pager_Data *sd)
      {
         Eo *subobj;
         Eina_List *l, *l_next;
-        int begin_index = 0;
         EINA_LIST_FOREACH_SAFE(sd->tab_pages, l, l_next, subobj)
           {
              sd->tab_pages = eina_list_remove(sd->tab_pages, subobj);
              sd->cnt--;
-
-             efl_ui_tab_bar_tab_remove(sd->tab_bar, begin_index);
           }
+        efl_pack_unpack_all(sd->tab_bar);
         efl_pack_unpack_all(efl_super(obj, MY_CLASS));
 
         return EINA_TRUE;
@@ -155,14 +151,11 @@ _efl_ui_tab_pager_efl_pack_unpack(Eo *obj, Efl_Ui_Tab_Pager_Data *sd, Efl_Gfx_En
 {
    if (sd->tab_bar)
      {
-        int index = eina_list_data_idx(sd->tab_pages, (void *)subobj);
-
         sd->tab_pages = eina_list_remove(sd->tab_pages, subobj);
         sd->cnt--;
 
-        efl_ui_tab_bar_tab_remove(sd->tab_bar, index);
+        efl_pack_unpack(sd->tab_bar, efl_ui_tab_page_tab_bar_item_get(subobj));
         efl_pack_unpack(efl_super(obj, MY_CLASS), subobj);
-
 
         return EINA_TRUE;
      }
@@ -176,12 +169,11 @@ _efl_ui_tab_pager_efl_pack_linear_pack_begin(Eo *obj,
 {
    if (sd->tab_bar)
      {
-        int begin_index = 0;
 
         sd->tab_pages = eina_list_prepend(sd->tab_pages, subobj);
         sd->cnt ++;
 
-        efl_ui_tab_bar_tab_add(sd->tab_bar, begin_index, efl_ui_tab_page_tab_bar_item_get(subobj));
+        efl_pack_begin(sd->tab_bar, efl_ui_tab_page_tab_bar_item_get(subobj));
         efl_pack_begin(efl_super(obj, MY_CLASS), subobj);
 
         sd->cur ++;
@@ -198,12 +190,10 @@ _efl_ui_tab_pager_efl_pack_linear_pack_end(Eo *obj,
 {
    if (sd->tab_bar)
      {
-        int end_index = efl_ui_tab_bar_tab_count(sd->tab_bar);
-
         sd->tab_pages = eina_list_append(sd->tab_pages, subobj);
         sd->cnt ++;
 
-        efl_ui_tab_bar_tab_add(sd->tab_bar, end_index, efl_ui_tab_page_tab_bar_item_get(subobj));
+        efl_pack_end(sd->tab_bar, efl_ui_tab_page_tab_bar_item_get(subobj));
         efl_pack_end(efl_super(obj, MY_CLASS), subobj);
 
         return EINA_TRUE;
@@ -224,7 +214,7 @@ _efl_ui_tab_pager_efl_pack_linear_pack_before(Eo *obj,
         sd->tab_pages = eina_list_prepend_relative(sd->tab_pages, subobj, existing);
         sd->cnt ++;
 
-        efl_ui_tab_bar_tab_add(sd->tab_bar, before_index, efl_ui_tab_page_tab_bar_item_get(subobj));
+        efl_pack_before(sd->tab_bar, efl_ui_tab_page_tab_bar_item_get(subobj), existing);
         efl_pack_before(efl_super(obj, MY_CLASS), subobj, existing);
 
         if (sd->cur >= before_index) sd->cur ++;
@@ -247,7 +237,7 @@ _efl_ui_tab_pager_efl_pack_linear_pack_after(Eo *obj,
         sd->tab_pages = eina_list_append_relative(sd->tab_pages, subobj, existing);
         sd->cnt ++;
 
-        efl_ui_tab_bar_tab_add(sd->tab_bar, after_index, efl_ui_tab_page_tab_bar_item_get(subobj));
+        efl_pack_after(sd->tab_bar, efl_ui_tab_page_tab_bar_item_get(subobj), existing);
         efl_pack_after(efl_super(obj, MY_CLASS), subobj, existing);
 
         if (sd->cur > after_index) sd->cur ++;
@@ -271,7 +261,7 @@ _efl_ui_tab_pager_efl_pack_linear_pack_at(Eo *obj,
         sd->tab_pages = eina_list_prepend_relative(sd->tab_pages, subobj, existing);
         sd->cnt ++;
 
-        efl_ui_tab_bar_tab_add(sd->tab_bar, index, efl_ui_tab_page_tab_bar_item_get(subobj));
+        efl_pack_at(sd->tab_bar, efl_ui_tab_page_tab_bar_item_get(subobj), index);
         efl_pack_at(efl_super(obj, MY_CLASS), subobj, index);
 
         if (sd->cur >= index) sd->cur ++;
@@ -293,7 +283,7 @@ _efl_ui_tab_pager_efl_pack_linear_pack_unpack_at(Eo *obj, Efl_Ui_Tab_Pager_Data 
         sd->tab_pages = eina_list_remove(sd->tab_pages, existing);
         sd->cnt--;
 
-        efl_ui_tab_bar_tab_remove(sd->tab_bar, index);
+        efl_pack_unpack_at(sd->tab_bar, index);
         efl_pack_unpack_at(efl_super(obj, MY_CLASS), index);
 
         return existing;

@@ -5,10 +5,7 @@ typedef struct _Efl_Ui_Tab_Bar_Data                   Efl_Ui_Tab_Bar_Data;
 
 struct _Efl_Ui_Tab_Bar_Data
 {
-   Efl_Canvas_Object                    *bx;
-   int                                   cnt;
-   Efl_Ui_Layout_Orientation             dir;
-   Eina_List                            *tab_infos;
+   Efl_Ui_Box                           *bx;
    Efl_Ui_Item                          *selected, *fallback_selection;
    Eina_Bool                             in_value_change;
 };

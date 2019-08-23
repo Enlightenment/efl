@@ -9,11 +9,12 @@
 
 /* spec-meta-start
       {"test-interface":"Efl.Pack_Linear",
-       "test-widgets": ["Efl.Ui.Box", "Efl.Ui.Grid", "Efl.Ui.Spotlight.Container", "Efl.Ui.List", "Efl.Ui.Group_Item" ],
+       "test-widgets": ["Efl.Ui.Box", "Efl.Ui.Grid", "Efl.Ui.Spotlight.Container", "Efl.Ui.List", "Efl.Ui.Group_Item", "Efl.Ui.Tab_Bar"],
        "custom-mapping" : {
           "Efl.Ui.Grid" : "EFL_UI_GRID_DEFAULT_ITEM_CLASS",
           "Efl.Ui.List" : "EFL_UI_LIST_DEFAULT_ITEM_CLASS",
-          "Efl.Ui.Group_Item" : "EFL_UI_LIST_DEFAULT_ITEM_CLASS"
+          "Efl.Ui.Group_Item" : "EFL_UI_LIST_DEFAULT_ITEM_CLASS",
+          "Efl.Ui.Tab_Bar" : "EFL_UI_TAB_BAR_DEFAULT_ITEM_CLASS"
         }
        }
    spec-meta-end */
