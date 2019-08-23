@@ -347,7 +347,7 @@ error:
 void
 _c_shutdown(void)
 {
-   if (!_c || _c->ref--) return;
+   if (!_c || --_c->ref) return;
    if (_c->_curlm)
      {
         _c->curl_multi_cleanup(_c->_curlm);
