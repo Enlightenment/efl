@@ -39,6 +39,7 @@ struct _Eio_Monitor_Stat
 struct _Eio_Monitor_Backend
 {
    Eio_Monitor *parent;
+   Eina_Stringshare *path;
 
    Eina_Stat self;
    Eina_Hash *children;
@@ -74,17 +75,14 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
    else
      est = alloca(sizeof (Eina_Stat));
 
-   if (!backend->parent)
-     return;
-
-   if (_eio_stat(backend->parent->path, &st))
+   if (_eio_stat(backend->path, &st))
      {
         if (backend->initialised && !backend->destroyed)
           {
              ecore_thread_main_loop_begin();
              deleted = backend->delete_me;
              if (!deleted)
-               _eio_monitor_send(backend->parent, backend->parent->path, EIO_MONITOR_SELF_DELETED);
+               _eio_monitor_send(backend->parent, backend->path, EIO_MONITOR_SELF_DELETED);
              ecore_thread_main_loop_end();
              backend->destroyed = EINA_TRUE;
           }
@@ -137,12 +135,12 @@ _eio_monitor_fallback_heavy_cb(void *data, Ecore_Thread *thread)
         ecore_thread_main_loop_begin();
         deleted = backend->delete_me;
         if (!deleted)
-          _eio_monitor_send(backend->parent, backend->parent->path, event);
+          _eio_monitor_send(backend->parent, backend->path, event);
         ecore_thread_main_loop_end();
         if (deleted) return;
      }
 
-   it = eina_file_direct_ls(backend->parent->path);
+   it = eina_file_direct_ls(backend->path);
    EINA_ITERATOR_FOREACH(it, info)
      {
         Eio_Monitor_Stat *cmp;
@@ -344,6 +342,7 @@ eio_monitor_fallback_add(Eio_Monitor *monitor)
 
    backend->children = eina_hash_string_superfast_new(free);
    backend->parent = monitor;
+   backend->path = eina_stringshare_ref(monitor->path);
    monitor->backend = backend;
    monitor->fallback = EINA_TRUE;
 
@@ -370,6 +369,7 @@ eio_monitor_fallback_del(Eio_Monitor *monitor)
    if (backend->timer) ecore_timer_del(backend->timer);
    eina_hash_set(timer_hash, &backend, NULL);
    backend->timer = NULL;
+   backend->parent = NULL;
 
    if (backend->work)
      {
@@ -377,7 +377,7 @@ eio_monitor_fallback_del(Eio_Monitor *monitor)
         return;
      }
 
-   backend->parent = NULL;
+   eina_stringshare_del(backend->path);
    eina_hash_free(backend->children);
    free(backend);
 }
