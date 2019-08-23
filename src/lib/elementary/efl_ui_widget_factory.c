@@ -69,15 +69,29 @@ _efl_ui_widget_factory_item_class_get(const Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_ui_widget_factory_efl_ui_factory_building(const Eo *obj EINA_UNUSED, Efl_Ui_Widget_Factory_Data *pd EINA_UNUSED, Efl_Gfx_Entity *ui_view)
+_efl_ui_widget_factory_efl_ui_factory_building(const Eo *factory EINA_UNUSED, Efl_Ui_Widget_Factory_Data *pd, Efl_Gfx_Entity *ui_view)
 {
    const Efl_Model *model;
    Eina_Value *property, *width, *height;
+   Efl_Ui_Bind_Part_Data *bpd;
+   Eina_Iterator *it;
    char *style;
 
-   if (!pd->style) return ;
-
    model = efl_ui_view_model_get(ui_view);
+
+   // Bind all property before the object is finalize
+   it = eina_hash_iterator_data_new(pd->parts);
+   EINA_ITERATOR_FOREACH(it, bpd)
+     {
+        Efl_Ui_Property_Bind_Data *bppd;
+        Eina_List *l;
+
+        EINA_LIST_FOREACH(bpd->properties, l, bppd)
+          efl_ui_property_bind(efl_part(ui_view, bpd->part),
+                               bppd->part_property,
+                               bppd->model_property);
+     }
+   eina_iterator_free(it);
 
    // Fetch min size from model if available to avoid recalculcating it
    width = efl_model_property_get(model, "self.width");
@@ -96,6 +110,8 @@ _efl_ui_widget_factory_efl_ui_factory_building(const Eo *obj EINA_UNUSED, Efl_Ui
    eina_value_free(height);
 
    // As we have already waited for the property to be ready, we should get the right style now
+   if (!pd->style) return ;
+
    property = efl_model_property_get(model, pd->style);
    if (!property) return ;
 
@@ -109,31 +125,13 @@ _efl_ui_widget_factory_efl_ui_factory_building(const Eo *obj EINA_UNUSED, Efl_Ui
 static Efl_Ui_Widget *
 _efl_ui_widget_create(const Efl_Ui_Factory *factory,
                       const Efl_Class *klass, Eo *parent,
-                      Efl_Model *model,
-                      const Eina_Hash *parts)
+                      Efl_Model *model)
 {
-   Efl_Ui_Bind_Part_Data *bpd;
-   Eina_Iterator *it;
    Efl_Ui_Widget *w;
 
    w = efl_add(klass, parent,
                efl_ui_view_model_set(efl_added, model),
                efl_ui_factory_building(factory, efl_added));
-   if (!parts) return w;
-
-   it = eina_hash_iterator_data_new(parts);
-   EINA_ITERATOR_FOREACH(it, bpd)
-     {
-        Efl_Ui_Property_Bind_Data *bppd;
-        Eina_List *l;
-
-        EINA_LIST_FOREACH(bpd->properties, l, bppd)
-          efl_ui_property_bind(efl_part(w, bpd->part),
-                               bppd->part_property,
-                               bppd->model_property);
-     }
-   eina_iterator_free(it);
-
    return w;
 }
 
@@ -143,7 +141,7 @@ _efl_ui_widget_factory_create_then(Eo *model, void *data, const Eina_Value v EIN
    Efl_Ui_Widget_Factory_Request *r = data;
    Efl_Ui_Widget *w;
 
-   w = _efl_ui_widget_create(r->factory, r->pd->klass, r->parent, model, r->pd->parts);
+   w = _efl_ui_widget_create(r->factory, r->pd->klass, r->parent, model);
    if (!w) return eina_value_error_init(ENOMEM);
    return eina_value_object_init(w);
 }
@@ -185,7 +183,7 @@ _efl_ui_widget_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Widget_Factory_Data
 
         EINA_ITERATOR_FOREACH(models, model)
           {
-             w = _efl_ui_widget_create(obj, pd->klass, parent, model, pd->parts);
+             w = _efl_ui_widget_create(obj, pd->klass, parent, model);
 
              if (!w) return efl_loop_future_rejected(obj, ENOMEM);
              eina_value_array_append(&r, w);
