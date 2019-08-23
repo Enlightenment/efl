@@ -11,12 +11,6 @@ typedef Eo Efl_Canvas_Text;
 #ifndef _EFL_CANVAS_TEXT_EO_TYPES
 #define _EFL_CANVAS_TEXT_EO_TYPES
 
-/** EFL text style data structure
- *
- * @ingroup Efl_Canvas
- */
-typedef struct _Efl_Canvas_Text_Style Efl_Canvas_Text_Style;
-
 
 #endif
 

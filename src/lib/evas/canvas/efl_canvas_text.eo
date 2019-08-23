@@ -1,7 +1,5 @@
 import efl_text_types;
 
-struct @beta Efl.Canvas.Text_Style; [[EFL text style data structure]]
-
 class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
                        Efl.Canvas.Filter.Internal, Efl.Text_Font,
                        Efl.Text_Style, Efl.Text_Format, Efl.Text_Cursor,
