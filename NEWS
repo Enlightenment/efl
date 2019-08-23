@@ -1,6 +1,89 @@
 ==========
-EFL 1.22.2
+EFL 1.22.3
 ==========
+Changes since 1.22.2:
+---------------------
+
+Features:
+
+
+Fixes:
+
+   * evas_object_textblock: Fix binary search fail.
+   * evas/image: fix broken auto_fill mechanism when manually changing fill
+   * elm_test: fix some bugs in elm_image tests
+   * benchmarks: Fix copy-paste error (CID1401052)
+   * evas/render: fix proxy clipping when source_clip is disabled
+   * elm_color_class: use legacy event for genlist selection
+   * efl_ui_focus_manager_sub: handle manager change when tree is set to unfocusable
+   * edje/calc: correctly handle swallow/group objects as clippers for state clips
+   * gl_generic: handle image orientation setting when texture has not been created
+   * ecore/timer: fix handling of timer freeze during construction
+   * edje/load: (more) correctly handle part updates after changing edje group
+   * efl_canvas_layout: permit part_type_get on invalid parts
+   * eina/prefix: ignore magic files when running in tree
+   * efl_ui_focus_manager/calc: handle redirect setting if no previous redirect set
+   * elm/layout: do not trigger sizing eval on subobj deletion if no resize_obj set
+   * elm/layout: do not trigger sizing eval at end of canvas_group_add
+   * elm/colorselector: return early from theme apply if object is not yet finalized
+   * elm/diskselector: fix handling in theme data setup
+   * elm/diskselector: trigger sizing eval during theme set only if finalized
+   * elm/entry: use edje functions directly for interacting with edje objects
+   * elm/gengrid: handle cache item deletion without errors
+   * elm/gengrid: more null checks for setting mirrored state during construction
+   * elm/gengrid: handle focus events when no previous focus item was set
+   * elm/hovers: don't trigger more errors when setting null hover parent
+   * elm: fix value of datadir when running in tree
+   * elm/map: ignore zoom events during construction which cannot be handled
+   * elm/slider: avoid emitting double events when range slider value changes
+   * elm/slider: check for interval/range state before using that functionality
+   * efl_ui/button: check icon swallow existence before getting its content
+   * ecore-evas: check for internal evas presence before using it during free
+   * ecore-x: protect ecore_x_shutdown from creating a negative init count
+   * efl/io_model: check for parent object existence before removing wref
+   * eldbus: don't print warnings for user-canceled calls
+   * efl_ui/check: check icon swallow existence before getting its content
+   * efl_ui/layout: do not trigger sizing eval on hint change if object is dead
+   * efl_ui/layout: do not trigger sizing eval on subobj delete if layout is dead
+   * efl_ui/layout: only freeze internal layout during delete if it exists
+   * efl_ui/progressbar: check for part existence before using parts
+   * efl_ui/video: do not set 0x0 aspect hint
+   * efl_ui/widget: skip updating access info during parent_set(NULL) if dead
+   * elm/fileselector: return early in theme_apply during construction
+   * elm/popup: remove del callback for internal table object during destruction
+   * elm/code: check for cursor layout existence before emitting signals to it
+   * elm/gengrid: trigger unrealize event after unsetting unrealized flag
+   * elm/gen*: only call focus_object_setup_order_non_recursive if realized
+   * elm/genlist: unify all creation of calc jobs, skip if genlist is dead
+   * elm/genlist: trigger unrealize event after unsetting unrealized flag
+   * elm/genlist: handle cache item deletion without errors
+   * elm/genlist: handle genlist finding of nearest visible item when not realized
+   * elm/index: create event_rect[0] earlier in construction
+   * elm/interface_scrollable: return immediately from setting region if no content
+   * elm/list: return early from min_limit_cb if list object is dead
+   * elm/map: move setting initial zoom to later in construction
+   * elm/scroller: return immediately from updating focused scroll region without content
+   * elm_widget_item_static_focus: check for adapter existence in unrealize cb
+   * emotion: don't update crop clipper geometry if crop clipper doesn't exist
+   * ecore-imf/xim: only call ecore_x_shutdown if init was previously called
+   * efl sel manager - flush wl conenction in cnp to avoid hangs...
+   * ecore_x - restore move event skipper that was removed long ago
+   * elm - cursor - clear cursor job late to avoid crash
+   * edje - double make sure edje messages are zero'd due to a segv i saw
+   * ecore wl2 - fall back to shm if dmabuf fails in buf init
+   * evas events - fix segv if pointer data is freed by cb
+   * elm toolbar - fix packing options at start to avoid visual layout bugs
+   * elm toolbar - fix toolbar item separators and refactor aling/fill of item
+   * evas - gl_drm - delete old surfaces before creating new ones
+   * elm - dnd - fix drop target del to not nuke handler all the time
+   * elm hoversel - avoid crash when items modified while popping down
+   * edje - handle errors and eina file handles and vpath properly
+   * elm theme - handle error cases and eina file handles properly
+   * evas - font rendering - dont crash if we have color fonts and gl and sw
+   * eina file refs in edje/evas - audit them and plug holes where refs stay
+   * edje signal matches/patterns - handle re/alloc errors and missing ptrs
+   * edje - signal callback matches/patterns try fix number 2
+   * emotion - webcam fix deletion of webcam still left in webcam list
 
 Changes since 1.22.1:
 ---------------------
