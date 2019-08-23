@@ -12,6 +12,8 @@ typedef struct {
    Eo *obj;
    Eo *smanager;
    int freeze_want;
+   Eina_Bool scroll_count : 1;
+   Eina_Bool need_scroll : 1;
 } Scroll_Connector_Context;
 
 static void
@@ -50,6 +52,21 @@ _scroll_connector_edje_drag_cb(void *data,
    Scroll_Connector_Context *ctx = data;
 
    _scroll_connector_bar_read_and_update(ctx);
+}
+
+
+static void
+_scroll(void *data,
+                          Evas_Object *obj,
+                          const char *emission EINA_UNUSED,
+                          const char *source EINA_UNUSED)
+{
+   Scroll_Connector_Context *ctx = data;
+
+   ctx->scroll_count = EINA_FALSE;
+   if (!ctx->need_scroll) return;
+   ctx->need_scroll = EINA_FALSE;
+   efl_layout_signal_emit(obj, "efl,action,scroll", "efl");
 }
 
 static void
@@ -170,7 +187,6 @@ _scroll_connector_bar_size_changed_cb(void *data, const Efl_Event *event EINA_UN
    efl_ui_scrollbar_bar_size_get(ctx->smanager, &width, &height);
    edje_object_part_drag_size_set(wd->resize_obj, "efl.dragable.hbar", width, 1.0);
    edje_object_part_drag_size_set(wd->resize_obj, "efl.dragable.vbar", 1.0, height);
-   efl_layout_signal_emit(wd->resize_obj, "efl,action,scroll", "efl");
 }
 
 static void
@@ -194,7 +210,13 @@ _scroll_connector_bar_pos_changed_cb(void *data, const Efl_Event *event EINA_UNU
    efl_ui_scrollbar_bar_position_get(ctx->smanager, &posx, &posy);
    edje_object_part_drag_value_set(wd->resize_obj, "efl.dragable.hbar", posx, 0.0);
    edje_object_part_drag_value_set(wd->resize_obj, "efl.dragable.vbar", 0.0, posy);
-   efl_layout_signal_emit(wd->resize_obj, "efl,action,scroll", "efl");
+   if (ctx->scroll_count)
+     ctx->need_scroll = EINA_TRUE;
+   else
+     {
+        efl_layout_signal_emit(wd->resize_obj, "efl,action,scroll", "efl");
+        ctx->scroll_count = EINA_TRUE;
+     }
 }
 
 static void
@@ -266,6 +288,9 @@ efl_ui_scroll_connector_bind(Eo *obj, Eo *manager)
                                   ctx, _scroll_connector_hbar_press_cb, NULL);
    efl_layout_signal_callback_add(obj, "efl,hbar,unpress", "efl",
                                   ctx, _scroll_connector_hbar_unpress_cb, NULL);
+   efl_layout_signal_callback_add(obj, "efl,action,scroll", "efl",
+                                  ctx, _scroll, NULL);
+
    //from the object to the theme
    efl_event_callback_add(obj, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED,
                           _scroll_connector_bar_size_changed_cb, ctx);
