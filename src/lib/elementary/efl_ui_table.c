@@ -244,6 +244,10 @@ _efl_ui_table_efl_object_invalidate(Eo *obj, Efl_Ui_Table_Data *pd)
    EINA_INLIST_FREE(EINA_INLIST_GET(pd->items), gi)
      {
         efl_event_callback_array_del(gi->object, efl_ui_table_callbacks(), obj);
+
+        pd->items = (Table_Item *)
+            eina_inlist_remove(EINA_INLIST_GET(pd->items), EINA_INLIST_GET(gi));
+        free(gi);
      }
 }
 
