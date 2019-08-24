@@ -174,7 +174,7 @@ evas_common_rgba_image_scalecache_dirty(Image_Entry *ie)
      {
         Scaleitem *sci = im->cache.list->data;
 
-        im->cache.list = eina_list_remove(im->cache.list, sci);
+        im->cache.list = eina_list_remove_list(im->cache.list, im->cache.list);
         if ((sci->im) && (sci->im->cache_entry.references == 0))
           {
              SLKL(cache_lock);
@@ -192,7 +192,17 @@ evas_common_rgba_image_scalecache_dirty(Image_Entry *ie)
           }
 
         if (!sci->im)
-          free(sci);
+          {
+             Eina_Inlist *il = (Eina_Inlist *)sci;
+
+             if ((il->next) || (il->prev) || (il == cache_list))
+               {
+                  SLKL(cache_lock);
+                  cache_list = eina_inlist_remove(cache_list, (Eina_Inlist *)sci);
+                  SLKU(cache_lock);
+               }
+             free(sci);
+          }
      }
    eina_hash_free(im->cache.hash);
    im->cache.hash = NULL;
