@@ -453,6 +453,9 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
         if (!lookup->item.entity) goto not_found;
 
         item_size = efl_gfx_hint_size_min_get(lookup->item.entity);
+//        printf("%lu %p %s-%s\n", search_index,lookup->item.entity, efl_text_get(lookup->item.entity), efl_class_name_get(lookup->item.entity));
+        item_size.w = MAX(item_size.w, 10);
+        item_size.h = MAX(item_size.h, 10);
         _size_to_model(model, item_size);
      }
 
@@ -485,7 +488,6 @@ _cache_entity_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
                                               NULL);
    if (!lookup) goto not_found;
    if (!lookup->item.entity) goto not_found;
-
    target->entity = lookup->item.entity;
    target->group = EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_NO_GROUP;
 
@@ -663,8 +665,13 @@ _batch_size_cb(void *data, int start_id, Eina_Rw_Slice memory)
    parent = pd->model;
    if (!ITEM_BASE_SIZE_FROM_MODEL(parent, item_base))
      {
-        item_base.w = 0;
-        item_base.h = 0;
+        item_base.w = 10;
+        item_base.h = 10;
+     }
+   else
+     {
+        item_base.w = MAX(item_base.w, 10);
+        item_base.h = MAX(item_base.h, 10);
      }
    pd->last_base = item_base;
 
@@ -942,6 +949,7 @@ _manager_content_visible_range_changed_cb(void *data, const Efl_Event *ev)
    delta = pd->end_id - pd->start_id;
 
    // First time setting up the viewport, so trigger request as we see fit
+   //printf("%lu -> %lu\n", pd->start_id, pd->end_id);
    if (!pd->viewport[0])
      {
         Eina_List *requests = NULL;
