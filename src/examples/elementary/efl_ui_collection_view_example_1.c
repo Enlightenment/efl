@@ -90,11 +90,13 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    efl_ui_widget_factory_item_class_set(factory, EFL_UI_LIST_DEFAULT_ITEM_CLASS);
    efl_ui_property_bind(factory, "signal/efl,state,%v", "odd_style");
    efl_ui_property_bind(factory, "signal/efl,state,%{selected;unselected}", "selected");
-   efl_ui_property_bind(factory, "efl.text", "title");
+   efl_ui_property_bind(factory, "text", "title");
 
+   Eo *lst = efl_new(EFL_UI_POSITION_MANAGER_LIST_CLASS);
    li = efl_add(EFL_UI_COLLECTION_VIEW_CLASS, win,
-                efl_ui_view_model_set(efl_added, selmodel));
-   efl_ui_collection_view_position_manager_set(li, efl_new(EFL_UI_POSITION_MANAGER_LIST_CLASS));
+                efl_ui_collection_view_position_manager_set(efl_added, lst),
+                efl_ui_view_model_set(efl_added, selmodel),
+                efl_ui_collection_view_factory_set(efl_added, factory));
 
    //   efl_event_callback_add(li, EFL_UI_LIST_VIEW_EVENT_ITEM_REALIZED, _realized_cb, NULL);
    //   efl_event_callback_add(li, EFL_UI_LIST_VIEW_EVENT_ITEM_UNREALIZED, _unrealized_cb, NULL);
