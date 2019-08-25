@@ -173,6 +173,8 @@ _size_from_model(Efl_Model *model, Eina_Size2D *r, const char *width, const char
    Eina_Value *vw, *vh;
    Eina_Bool success = EINA_FALSE;
 
+   EINA_SAFETY_ON_NULL_RETURN_VAL(model, EINA_FALSE);
+
    vw = efl_model_property_get(model, width);
    vh = efl_model_property_get(model, height);
 
