@@ -1512,10 +1512,11 @@ EFL_CALLBACKS_ARRAY_DEFINE(pan_events_cb,
 static Efl_Object *
 _efl_ui_collection_view_efl_object_constructor(Eo *obj, Efl_Ui_Collection_View_Data *pd)
 {
+   pd->direction = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
    obj = efl_constructor(efl_super(obj, EFL_UI_COLLECTION_VIEW_CLASS));
 
    if (!elm_widget_theme_klass_get(obj))
-     elm_widget_theme_klass_set(obj, "collection");
+     elm_widget_theme_klass_set(obj, "item_container");
 
    efl_wref_add(efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas_object_evas_get(obj)), &pd->sizer);
    efl_gfx_color_set(pd->sizer, 0, 0, 0, 0);
