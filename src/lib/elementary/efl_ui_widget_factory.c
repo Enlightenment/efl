@@ -130,8 +130,9 @@ _efl_ui_widget_create(const Efl_Ui_Factory *factory,
    Efl_Ui_Widget *w;
 
    w = efl_add(klass, parent,
-               efl_ui_view_model_set(efl_added, model),
-               efl_ui_factory_building(factory, efl_added));
+               efl_ui_view_model_set(efl_added, model)
+               );
+   efl_ui_factory_building(factory, w);
    return w;
 }
 
