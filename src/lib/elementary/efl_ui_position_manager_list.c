@@ -229,7 +229,14 @@ _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_
           }
 
         if (ent)
-          efl_gfx_entity_geometry_set(ent, geom);
+          {
+             printf("%d %d %d %d | %d %d\n", geom.x, geom.y, geom.w, geom.h, size.w, size.h);
+             efl_gfx_entity_geometry_set(ent, geom);
+             if (!efl_gfx_entity_visible_get(ent))
+               efl_gfx_entity_visible_set(ent, EINA_TRUE);
+          }
+        else
+          printf("ELEMENT for %d not found\n", i);
         if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
           geom.y += size.h;
         else
