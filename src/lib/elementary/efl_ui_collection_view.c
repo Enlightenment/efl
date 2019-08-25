@@ -1475,6 +1475,8 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
      }
 
    requests = _batch_request_flush(requests, data, pd);
+
+   pd->model = model;
 }
 
 static void
