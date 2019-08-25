@@ -346,12 +346,18 @@ _sci_find(RGBA_Image *im,
              if (sci->im->cache_entry.references > 0) goto try_alloc;
 
              evas_common_rgba_image_free(&sci->im->cache_entry);
+             sci->im = NULL;
              if (!sci->forced_unload)
                cache_size -= sci->key.dst_w * sci->key.dst_h * 4;
              else
                cache_size -= sci->size_adjust;
 //             INF(" 1- %i", sci->dst_w * sci->dst_h * 4);
              cache_list = eina_inlist_remove(cache_list, (Eina_Inlist *)sci);
+             if (max_scale_items < 1)
+               {
+                  free(sci);
+                  sci = NULL;
+               }
           }
         if (max_scale_items < 1) return NULL;
      }
