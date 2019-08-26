@@ -16,6 +16,36 @@ _slider_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
      efl_ui_range_value_set(ev->object, 100);
 }
 
+static void
+_slider_steady_cb(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   double val;
+
+   val = efl_ui_range_value_get(ev->object);
+
+   printf("steady callbck : val = %f\n", val);
+}
+
+static void
+_slider_drag_start_cb(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   double val;
+
+   val = efl_ui_range_value_get(ev->object);
+
+   printf("drag start callbck : val = %f\n", val);
+}
+
+static void
+_slider_drag_stop_cb(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   double val;
+
+   val = efl_ui_range_value_get(ev->object);
+
+   printf("drag stop callbck : val = %f\n", val);
+}
+
 void
 test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
@@ -37,6 +67,9 @@ test_ui_slider(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event
    efl_add(EFL_UI_SLIDER_CLASS, bx,
            efl_gfx_hint_size_min_set(efl_added, EINA_SIZE2D(160, 0)),
            efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, 0.0),
+           efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_STEADY, _slider_steady_cb, NULL),
+           efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_START, _slider_drag_start_cb, NULL),
+           efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_STOP, _slider_drag_stop_cb, NULL),
            efl_pack(bx, efl_added));
 
    efl_add(EFL_UI_TEXT_CLASS, bx,
