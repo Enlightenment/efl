@@ -40,7 +40,7 @@ class @beta Efl.Ui.Spin_Button extends Efl.Ui.Spin implements Efl.Ui.Focus.Compo
             circulate: bool(false); [[$true to enable circulate or $false to disable it.]]
          }
       }
-      @property editable {
+      @property direct_text_input {
          [[Control whether the spin can be directly edited by the user.
 
            Spin objects can have editing disabled, in which case they can only
@@ -55,7 +55,7 @@ class @beta Efl.Ui.Spin_Button extends Efl.Ui.Spin implements Efl.Ui.Focus.Compo
          get {
          }
          values {
-            editable: bool(false); [[$true to allow users to edit it or $false to don't allow users to edit it directly.]]
+            direct_text_input: bool(false); [[$true to allow users to edit it or $false to don't allow users to edit it directly.]]
          }
       }
    }

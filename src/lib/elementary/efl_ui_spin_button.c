@@ -722,13 +722,13 @@ _efl_ui_spin_button_efl_ui_range_display_range_value_set(Eo *obj, Efl_Ui_Spin_Bu
 }
 
 EOLIAN static void
-_efl_ui_spin_button_editable_set(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd, Eina_Bool editable)
+_efl_ui_spin_button_direct_text_input_set(Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd, Eina_Bool editable)
 {
    sd->editable = editable;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_spin_button_editable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd)
+_efl_ui_spin_button_direct_text_input_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spin_Button_Data *sd)
 {
    return sd->editable;
 }
