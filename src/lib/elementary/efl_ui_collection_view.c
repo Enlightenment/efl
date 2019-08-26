@@ -323,11 +323,7 @@ _entity_propagate(Efl_Model *model, Efl_Gfx_Entity *entity)
 
    if (ITEM_SIZE_FROM_MODEL(model, item_size)) return EINA_FALSE;
 
-   //FIXME: size min get returns wrong min values.
-   item_size.w = _elm_config->finger_size;
-   item_size.h = _elm_config->finger_size;
-   item_size = efl_layout_calc_size_min(entity, item_size);
-   //item_size = efl_gfx_hint_size_min_get(entity);
+   item_size = efl_gfx_hint_size_min_get(entity);
    _size_to_model(model, item_size);
    return EINA_TRUE;
 }
@@ -439,7 +435,6 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
    Efl_Ui_Collection_Item_Lookup *lookup;
    Efl_Model *model;
    Eina_Size2D item_size;
-   Eo *entity;
 
    if (!pd->cache) goto not_found;
 
@@ -450,20 +445,15 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
 
    // In the cache we should always have model, so no need to check for it
    model = lookup->item.model;
-   entity = lookup->item.entity;
 
    // If we do not know the size
    if (!ITEM_SIZE_FROM_MODEL(model, item_size))
      {
         // But can calculate it now
-        if (!entity) goto not_found;
+        if (!lookup->item.entity) goto not_found;
 
-        //FIXME: size min get returns wrong min values.
-        item_size.w = _elm_config->finger_size;
-        item_size.h = _elm_config->finger_size;
-        item_size = efl_layout_calc_size_min(entity, item_size);
-        //item_size = efl_gfx_hint_size_min_get(entity);
-//        printf("%lu %p %s-%s\n", search_index, entity, efl_text_get(entity), efl_class_name_get(entity));
+        item_size = efl_gfx_hint_size_min_get(lookup->item.entity);
+//        printf("%lu %p %s-%s\n", search_index,lookup->item.entity, efl_text_get(lookup->item.entity), efl_class_name_get(lookup->item.entity));
         item_size.w = MAX(item_size.w, 10);
         item_size.h = MAX(item_size.h, 10);
         _size_to_model(model, item_size);
@@ -717,7 +707,7 @@ _batch_size_cb(void *data, int start_id, Eina_Rw_Slice memory)
              Efl_Gfx_Entity *entity = pd->viewport[i]->items[offset].entity;
              Eina_Bool entity_request = EINA_FALSE;
 
-             if (model)
+             if (!model)
                {
                   Eina_Size2D item_size;
                   Eina_Bool found = EINA_FALSE;
@@ -726,11 +716,7 @@ _batch_size_cb(void *data, int start_id, Eina_Rw_Slice memory)
                     found = EINA_TRUE;
                   if (!found && entity)
                     {
-                       //FIXME: size min get returns wrong min values.
-                       item_size.w = _elm_config->finger_size;
-                       item_size.h = _elm_config->finger_size;
-                       item_size = efl_layout_calc_size_min(entity, item_size);
-                       //item_size = efl_gfx_hint_size_min_get(entity);
+                       item_size = efl_gfx_hint_size_min_get(entity);
                        _size_to_model(model, item_size);
                        found = EINA_TRUE;
                     }
