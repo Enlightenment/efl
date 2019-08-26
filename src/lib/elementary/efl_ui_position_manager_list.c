@@ -105,6 +105,9 @@ static void
 recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
 {
    Eina_Size2D min_size = EINA_SIZE2D(-1, -1);
+   Eina_Size2D pabs_size = pd->abs_size;
+   int pmin_size = pd->maximum_min_size;
+
    cache_require(obj, pd);
 
    pd->abs_size = pd->viewport.size;
@@ -116,8 +119,8 @@ recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
         else
           pd->abs_size.w = MAX(cache_access(obj, pd, pd->size), pd->abs_size.w);
      }
-
-   efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_SIZE_CHANGED, &pd->abs_size);
+   if ((pabs_size.w != pd->abs_size.w) || (pabs_size.h != pd->abs_size.h))
+     efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_SIZE_CHANGED, &pd->abs_size);
 
    if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
      {
@@ -127,8 +130,8 @@ recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
      {
         min_size.h = pd->maximum_min_size;
      }
-
-   efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_MIN_SIZE_CHANGED, &min_size);
+   if ((pd->maximum_min_size > 0) && (pmin_size > 0) && (pd->maximum_min_size != pmin_size))
+     efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_MIN_SIZE_CHANGED, &min_size);
 }
 
 static inline Vis_Segment
@@ -343,6 +346,7 @@ schedule_recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
 EOLIAN static void
 _efl_ui_position_manager_list_efl_ui_position_manager_entity_viewport_set(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, Eina_Rect size)
 {
+   if ((!pd->viewport.w) && (!size.w) && (!pd->viewport.h) && (!size.h)) return;
    pd->viewport = size;
 
    recalc_absolut_size(obj, pd);
@@ -449,6 +453,7 @@ _efl_ui_position_manager_list_efl_ui_layout_orientable_orientation_set(Eo *obj E
 
    cache_invalidate(obj, pd);
    cache_require(obj,pd);
+   if (!efl_finalized_get(obj)) return;
    recalc_absolut_size(obj, pd);
    position_content(obj, pd);
 }

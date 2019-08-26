@@ -76,7 +76,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    Eo *model;
    Efl_Select_Model *selmodel;
 
-   win = elm_win_util_standard_add("list_view", "List_View");
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(), efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC));
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    elm_win_autodel_set(win, EINA_TRUE);
@@ -101,14 +101,10 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    //   efl_event_callback_add(li, EFL_UI_LIST_VIEW_EVENT_ITEM_REALIZED, _realized_cb, NULL);
    //   efl_event_callback_add(li, EFL_UI_LIST_VIEW_EVENT_ITEM_UNREALIZED, _unrealized_cb, NULL);
 
-   elm_win_resize_object_add(win, li);
-   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   efl_content_set(win, li);
 
    //showall
-   evas_object_show(li);
    evas_object_resize(win, 320, 320);
-   evas_object_show(win);
 
    elm_run();
 

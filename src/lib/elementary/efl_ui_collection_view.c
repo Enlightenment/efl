@@ -1255,7 +1255,8 @@ _efl_ui_collection_view_position_manager_set(Eo *obj, Efl_Ui_Collection_View_Dat
                                                   efl_ref(obj), _batch_entity_cb, _batch_free_cb,
                                                   efl_ref(obj), _batch_size_cb, _batch_free_cb,
                                                   count);
-   efl_ui_position_manager_entity_viewport_set(pd->manager, efl_ui_scrollable_viewport_geometry_get(obj));
+   if (efl_finalized_get(obj))
+     efl_ui_position_manager_entity_viewport_set(pd->manager, efl_ui_scrollable_viewport_geometry_get(obj));
    efl_ui_layout_orientation_set(pd->manager, pd->direction);
 }
 
