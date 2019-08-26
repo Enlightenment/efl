@@ -189,18 +189,21 @@ _edje_object_message_signal_process_do(Eo *obj EINA_UNUSED, Edje *ed)
 
    groups = ed->groups;
 
-   for (l = msgq; l; l = ln)
+   if (groups)
      {
-        ln = l->next;
-        em = INLIST_CONTAINER(Edje_Message, l, inlist_main);
-        EINA_LIST_FOREACH(groups, lg, lookup_ed)
+        for (l = msgq; l; l = ln)
           {
-             if (em->edje == lookup_ed)
+             ln = l->next;
+             em = INLIST_CONTAINER(Edje_Message, l, inlist_main);
+             EINA_LIST_FOREACH(groups, lg, lookup_ed)
                {
-                  msgq = eina_inlist_remove(msgq, &(em->inlist_main));
-                  tmp_msgq = eina_inlist_append(tmp_msgq, &(em->inlist_main));
-                  em->in_tmp_msgq = EINA_TRUE;
-                  break;
+                  if (em->edje == lookup_ed)
+                    {
+                       msgq = eina_inlist_remove(msgq, &(em->inlist_main));
+                       tmp_msgq = eina_inlist_append(tmp_msgq, &(em->inlist_main));
+                       em->in_tmp_msgq = EINA_TRUE;
+                       break;
+                    }
                }
           }
      }
@@ -213,12 +216,14 @@ again:
         em = INLIST_CONTAINER(Edje_Message, l, inlist_edje);
         if (!em->in_tmp_msgq) continue;
         // so why this? any group edje is not the parent - skip this
+        lookup_ed = NULL;
         EINA_LIST_FOREACH(groups, lg, lookup_ed)
           {
              if (em->edje == lookup_ed) break;
           }
+        if (!lookup_ed) continue;
         tmp_msgq = eina_inlist_remove(tmp_msgq, &(em->inlist_main));
-        em->edje->messages = eina_inlist_remove(em->edje->messages, &(em->inlist_edje));
+        lookup_ed->messages = eina_inlist_remove(lookup_ed->messages, &(em->inlist_edje));
         if (!lookup_ed->delete_me)
           {
              lookup_ed->processing_messages++;
