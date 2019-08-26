@@ -9,4 +9,4 @@ if rsvg.version() >= '2.36.0'
 endif
 
 generic_deps = [rsvg]
-generic_support = ['svg', 'svgz', 'svg.gz']
+generic_support = [ 'svgz', 'svg.gz']
