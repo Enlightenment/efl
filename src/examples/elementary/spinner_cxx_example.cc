@@ -50,7 +50,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    bx.pack_end(sp4);
 
    efl::ui::Spin_Button sp5(instantiate, win);
-   sp5.editable_set(false);
+   sp5.direct_text_input_set(false);
    sp5.hint_fill_set(true, false);
    bx.pack_end(sp5);
 
@@ -70,7 +70,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    };
    efl::eina::accessor<Efl_Ui_Format_Value> values_acc(EINA_C_ARRAY_ACCESSOR_NEW(values));
    efl::ui::Spin_Button sp6(instantiate, win);
-   sp6.editable_set(false);
+   sp6.direct_text_input_set(false);
    sp6.range_limits_set(1, 12);
    //sp6.format_values_set(values_acc);
    sp6.hint_fill_set(true, false);
@@ -79,7 +79,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    efl::ui::Spin_Button sp7(instantiate, win);
    sp7.hint_fill_set(true, false);
    bx.pack_end(sp7);
-   sp7.editable_set(true);
+   sp7.direct_text_input_set(true);
 
    auto changed = std::bind ( [] (efl::ui::Range_Display obj)
    { std::cout << "Changed to " << obj.range_value_get() << std::endl; }
