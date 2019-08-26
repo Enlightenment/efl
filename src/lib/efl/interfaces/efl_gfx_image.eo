@@ -21,32 +21,29 @@ enum @beta Efl.Gfx.Image_Scale_Hint
 enum @beta Efl.Gfx.Image_Scale_Type
 {
    [[Enumeration that defines scale types of an image.]]
-   none,     [[Use the image's natural size.]]
+   none,        [[Use the image's natural size.]]
    fill,        [[Scale the image so that it matches
                   the object's area exactly.
                   The image's aspect ratio might be changed.]]
-   fit,      [[Scale the image
+   fit,         [[Scale the image
                   so that it fits completely inside the object's area
                   while maintaining the aspect ratio.
                   At least one of the dimensions of the image
-                  should be equal to the corresponding dimension
+                  will be equal to the corresponding dimension
                   of the object.]]
-   fit_width, [[Scale the image
+   fit_width,   [[Scale the image
                   so that it covers the entire object area horizontally
                   while maintaining the aspect ratio.
-                  The image may become larger than the object.
-                  ]]
-   fit_height, [[Scale the image
+                  The image may become taller than the object.]]
+   fit_height,  [[Scale the image
                   so that it covers the entire object area vertically
                   while maintaining the aspect ratio.
-                  The image may become larger than the object.
-                  ]]
-   expand,     [[Scale the image
+                  The image may become wider than the object.]]
+   expand,      [[Scale the image
                   so that it covers the entire object area on one axis
                   while maintaining the aspect ratio, preferring whichever
                   axis is largest.
-                  The image may become larger than the object.
-                  ]]
+                  The image may become larger than the object.]]
    tile,        [[Tile image at its original size.]]
 }
 
