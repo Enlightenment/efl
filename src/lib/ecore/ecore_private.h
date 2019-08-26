@@ -144,6 +144,8 @@ struct _Efl_Loop_Data
    Eina_List           *win32_handlers_to_delete;
 # endif
 
+   Eina_List           *thread_children;
+
    Eina_Inlist         *message_queue;
    unsigned int         message_walking;
 
@@ -176,7 +178,8 @@ struct _Efl_Loop_Data
       char      **environ_copy;
    } env;
 
-   Eina_Bool            do_quit;
+   Eina_Bool            do_quit : 1;
+   Eina_Bool            quit_on_last_thread_child_del : 1;
 };
 
 struct _Efl_Task_Data
@@ -456,6 +459,8 @@ void _efl_loop_messages_call(Eo *obj, Efl_Loop_Data *pd, void *func, void *data)
 
 void _efl_loop_message_send_info_set(Eo *obj, Eina_Inlist *node, Eo *loop, Efl_Loop_Data *loop_data);
 void _efl_loop_message_unsend(Eo *obj);
+
+void _efl_thread_child_remove(Eo *loop, Efl_Loop_Data *pd, Eo *child);
 
 static inline Eina_Bool
 _ecore_call_task_cb(Ecore_Task_Cb func,

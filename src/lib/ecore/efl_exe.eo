@@ -18,7 +18,6 @@ enum @beta Efl.Exe_Flags {
    [[Flags to customize task behavior.]] // TODO: This needs more detail.
    none             = 0, [[No special flags.]]
    group_leader     = 1, [[Process will be executed in its own session.]]
-   exit_with_parent = 2, [[Exit process when parent process exits.]]
    hide_io          = 4  [[All console IO will be hidden.]]
 }
 

@@ -124,7 +124,10 @@ _task_exit(void *data, Eina_Value v, const Eina_Future *dead EINA_UNUSED)
    // all output to read has stopped
    Eo *obj = data;
    printf("--- [%p] EXITED exit_code=%i outdata=%p\n", obj, efl_task_exit_code_get(obj), efl_threadio_outdata_get(obj));
-   efl_del(obj);
+   // thread object will be automatically deleted after as long as
+   // EFL_TASK_FLAGS_EXIT_WITH_PAREN is set on task flags, and this is
+   // actually the default unless you change the flags to be something
+   // else. if you don't use this then the task/thread becomes orphaned
    return v;
 }
 
