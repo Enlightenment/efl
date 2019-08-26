@@ -412,6 +412,23 @@ static inline unsigned int eina_array_count_get(const Eina_Array *array) EINA_AR
 static inline unsigned int eina_array_count(const Eina_Array *array) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
 
 /**
+ * @brief Search for the given data in an array.
+ *
+ * @param[in] array The array.
+ * @param[in] data need to be found.
+ * @param[out] out_idx The position of the data in the array if found.
+ * @return EINA_TRUE if found otherwise returns EINA_FALSE.
+ *
+ * This function searches for the data pointer @p data inside @p array, returning @c EINA_TRUE if found.
+ * The exact position where the pointer is found can be retrieved through @p out_idx.
+ * Please note that only the pointer is compared, not the actual data pointed by it.
+ *
+ * @since 1.23
+ */
+static inline Eina_Bool  eina_array_find(const Eina_Array *array,
+                                         const void       *data,
+                                         unsigned int     *out_idx) EINA_ARG_NONNULL(1) EINA_WARN_UNUSED_RESULT;
+/**
  * @brief Gets a new iterator associated with an array.
  *
  * @param[in] array The array.

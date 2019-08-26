@@ -93,6 +93,24 @@ eina_array_count(const Eina_Array *array)
 }
 
 static inline Eina_Bool
+eina_array_find(const Eina_Array *array, const void *data, unsigned int *out_idx)
+{
+   if (!array) return EINA_FALSE;
+
+   unsigned int i = 0;
+   for (; i < array->count; i++)
+     {
+        if (array->data[i] == data)
+          {
+             if (out_idx) *out_idx = i;
+             
+             return EINA_TRUE;
+          }
+     }
+   return EINA_FALSE;
+}
+
+static inline Eina_Bool
 eina_array_foreach(Eina_Array *array, Eina_Each_Cb cb, void *fdata)
 {
    void *data;
