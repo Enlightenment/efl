@@ -825,7 +825,7 @@ _evas_common_map_rgba_internal_high(RGBA_Image *src, RGBA_Image *dst,
    if (anti_alias)
      {
         //Adjust AA Y range
-        float ystart = 9999999999, yend = -1;
+        float ystart = 9999999.0f, yend = -1.0f;
         for (int i = 0; i < 4; i++)
           {
              if (y[i] < ystart) ystart = y[i];
