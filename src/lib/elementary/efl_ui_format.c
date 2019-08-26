@@ -136,11 +136,14 @@ _do_format_string(Efl_Ui_Format_Data *pd, Eina_Strbuf *str, const Eina_Value val
       case FORMAT_TYPE_TM:
       {
         struct tm v;
-        char *buf;
+        char *buf = NULL;
         eina_value_get(&value, &v);
         buf = eina_strftime(pd->format_string, &v);
-        eina_strbuf_append(str, buf);
-        free(buf);
+        if (buf)
+          {
+             eina_strbuf_append(str, buf);
+             free(buf);
+          }
         break;
       }
       default:
