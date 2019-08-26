@@ -349,6 +349,8 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_viewport_set(Eo *ob
    if ((!pd->viewport.w) && (!size.w) && (!pd->viewport.h) && (!size.h)) return;
    pd->viewport = size;
 
+   if ((!pd->average_item_size) && (!pd->maximum_min_size))
+     cache_invalidate(obj, pd);
    recalc_absolut_size(obj, pd);
    position_content(obj, pd);
 }
