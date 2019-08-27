@@ -305,6 +305,7 @@ EAPI char *
 eina_vpath_resolve(const char* path)
 {
    char buf[PATH_MAX];
+   EINA_SAFETY_ON_NULL_RETURN_VAL(path, NULL);
 
    if (_eina_vpath_resolve(path, buf, sizeof(buf)) > 0)
      return strdup(buf);
