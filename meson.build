@@ -227,7 +227,11 @@ endif
 
 config_h.set_quoted('SHARED_LIB_SUFFIX', '.'+sys_lib_extension)
 config_h.set_quoted('MOD_SUFFIX', '.'+sys_mod_extension)
-config_h.set_quoted('EXE_SUFFIX', '.'+sys_exe_extension)
+if sys_exe_extension == ''
+  config_h.set_quoted('EXE_SUFFIX', '')
+else
+  config_h.set_quoted('EXE_SUFFIX', '.'+sys_exe_extension)
+endif
 config_h.set('EFL_BUILD', '1')
 
 if get_option('tslib') == true
