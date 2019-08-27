@@ -138,7 +138,8 @@ EOLIAN static Eina_Error
 _efl_ui_layout_factory_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Factory_Data *pd,
                                                           const char *key, const char *property)
 {
-   Eina_Stringshare *ss_key, *ss_prop, *ss_old;
+   Eina_Stringshare *ss_key, *ss_prop;
+   Eina_Stringshare *ss_old = NULL;
    ss_key = eina_stringshare_add(key);
 
    if (property == NULL)
@@ -150,11 +151,11 @@ _efl_ui_layout_factory_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSED, E
    ss_prop = eina_stringshare_add(property);
    ss_old = eina_hash_set(pd->bind.properties, ss_key, ss_prop);
    if (ss_old) eina_stringshare_del(ss_old);
-   else ss_key = NULL; // Prevent destruction of key to keep at least one reference
 
  end:
    efl_event_callback_call(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTY_BOUND, (void*) ss_key);
-   eina_stringshare_del(ss_key);
+   // Only delete our key ref it it was already present in the property hash
+   if (ss_old) eina_stringshare_del(ss_key);
    return 0;
 }
 
