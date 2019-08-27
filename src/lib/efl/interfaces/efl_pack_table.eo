@@ -40,16 +40,27 @@ interface @beta Efl.Pack_Table extends Efl.Pack
             @in row: int; [[Row number]]
          }
       }
-      @property table_position {
-         [[Position and span of the $subobj in this container, may be modified to move the $subobj]]
+      @property table_cell_column {
+         [[column of the $subobj in this container.]]
+         set {}
          get { return: bool; [[Returns false if item is not a child]] }
          keys {
             subobj: Efl.Gfx.Entity; [[Child object]]
          }
          values {
             col: int; [[Column number]]
-            row: int; [[Row number]]
             colspan: int; [[Column span]]
+         }
+      }
+      @property table_cell_row {
+         [[row of the $subobj in this container.]]
+         set {}
+         get { return: bool; [[Returns false if item is not a child]] }
+         keys {
+            subobj: Efl.Gfx.Entity; [[Child object]]
+         }
+         values {
+            row: int; [[Row number]]
             rowspan: int; [[Row span]]
          }
       }

@@ -236,7 +236,8 @@ EFL_START_TEST(edje_test_table_eoapi)
    it = efl_content_iterate(efl_part(obj, "table"));
    EINA_ITERATOR_FOREACH(it, sobj)
      {
-        efl_pack_table_position_get(efl_part(obj, "table"), sobj, &k, &l, &cs, &rs);
+        efl_pack_table_cell_column_get(efl_part(obj, "table"), sobj, &k, &cs);
+        efl_pack_table_cell_column_get(efl_part(obj, "table"), sobj, &l, &rs);
         fail_if(cs != 1);
         fail_if(rs != 1);
         if (l >= 2)

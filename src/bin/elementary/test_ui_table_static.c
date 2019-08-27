@@ -86,10 +86,8 @@ _ch_table(void *data, const Efl_Event *ev)
    Eo *table = data;
    int x, y, w, h;
 
-   // FIXME: old elm_table API doesn't need table object
-   //elm_grid_pack_get(obj, &x, &y, &w, &h);
-   //elm_grid_pack_set(obj, x - 1, y - 1, w + 2, h + 2);
-   efl_pack_table_position_get(table, ev->object, &x, &y, &w, &h);
+   efl_pack_table_cell_column_get(table, ev->object, &x, &w);
+   efl_pack_table_cell_row_get(table, ev->object, &y, &h);
    efl_pack_table(table, ev->object, x - 1, y - 1, w + 2, h + 2);
 }
 
