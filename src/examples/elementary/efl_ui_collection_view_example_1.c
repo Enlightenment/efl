@@ -45,6 +45,7 @@ static Efl_Model*
 _make_model(Evas_Object *win)
 {
    Eina_Value vtext;
+   Eina_Value w, h;
    Efl_Generic_Model *model, *child;
    unsigned int i, s;
    char buf[256];
@@ -52,13 +53,17 @@ _make_model(Evas_Object *win)
    model = efl_add(EFL_GENERIC_MODEL_CLASS, win);
    eina_value_setup(&vtext, EINA_VALUE_TYPE_STRING);
 
+   w = eina_value_int_init(91);
+   h = eina_value_int_init(24);
+   efl_model_property_set(model, "item.width", &w);
+   efl_model_property_set(model, "item.height", &h);
+
    for (i = 0; i < (NUM_ITEMS); i++)
      {
         s = i%2;
         child = efl_model_child_add(model);
         eina_value_set(&vtext, styles[s]);
         efl_model_property_set(child, "odd_style", &vtext);
-
         snprintf(buf, sizeof(buf), "Item # %i", i);
         eina_value_set(&vtext, buf);
         efl_model_property_set(child, "title", &vtext);

@@ -28,6 +28,14 @@ typedef struct {
    Api_Callbacks callbacks;
 } Efl_Ui_Position_Manager_List_Data;
 
+static void
+cache_invalidate(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
+{
+ printf("INVALIDATE\n");
+   if (pd->size_cache)
+     free(pd->size_cache);
+   pd->size_cache = NULL;
+}
 /*
  * The here used cache is a sum map
  * Every element in the cache contains the sum of the previous element, and the size of the current item
@@ -82,19 +90,15 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
           }
         pd->size_cache[i + 1] = pd->size_cache[i] + step;
         pd->maximum_min_size = MAX(pd->maximum_min_size, min);
+        /* no point iterating further if size calc can't be done yet */
+        if ((!i) && (!pd->maximum_min_size)) break;
      }
    pd->average_item_size = pd->size_cache[pd->size]/pd->size;
+   if ((!pd->average_item_size) && (!pd->maximum_min_size))
+     cache_invalidate(obj, pd);
 }
 
-static void
-cache_invalidate(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
-{
-   if (pd->size_cache)
-     free(pd->size_cache);
-   pd->size_cache = NULL;
-}
-
-static inline int
+static int
 cache_access(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, unsigned int idx)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(idx <= pd->size, 0);
@@ -109,6 +113,8 @@ recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
    int pmin_size = pd->maximum_min_size;
 
    cache_require(obj, pd);
+   /* deferred */
+   if (!pd->size_cache) return;
 
    pd->abs_size = pd->viewport.size;
 
@@ -232,13 +238,14 @@ _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_
 
         if (ent)
           {
+             if (!size.w || !size.h) ERR("NULL SIZE ENT");
              printf("%d %d %d %d | %d %d\n", geom.x, geom.y, geom.w, geom.h, size.w, size.h);
              efl_gfx_entity_geometry_set(ent, geom);
              if (!efl_gfx_entity_visible_get(ent))
                efl_gfx_entity_visible_set(ent, EINA_TRUE);
           }
         else
-          printf("ELEMENT for %d not found\n", i);
+          if (!size.w || !size.h) ERR("ENT(%d) NOT FOUND", i);
         if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
           geom.y += size.h;
         else
@@ -347,10 +354,9 @@ EOLIAN static void
 _efl_ui_position_manager_list_efl_ui_position_manager_entity_viewport_set(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, Eina_Rect size)
 {
    if ((!pd->viewport.w) && (!size.w) && (!pd->viewport.h) && (!size.h)) return;
+
    pd->viewport = size;
 
-   if ((!pd->average_item_size) && (!pd->maximum_min_size))
-     cache_invalidate(obj, pd);
    recalc_absolut_size(obj, pd);
    position_content(obj, pd);
 }

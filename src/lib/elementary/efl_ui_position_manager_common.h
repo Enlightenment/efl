@@ -41,6 +41,7 @@ _batch_request_size(Api_Callbacks cb , int start_id, int len, Eina_Bool cache, v
    return res;
 }
 
+<<<<<<< HEAD
 #define BATCH_ACCESS_SIZE(cb, start_id, len, cache, data) \
   do { \
     size_result = _batch_request_size((cb), (start_id), (len), (cache), (data)); \
@@ -90,18 +91,27 @@ vis_change_segment(Api_Callbacks cb, int a, int b, Eina_Bool flag)
    const int len = 50;
    Efl_Ui_Position_Manager_Object_Batch_Entity data[len];
    Efl_Ui_Position_Manager_Object_Batch_Result object_result;
+=======
+static void
+vis_change_segment(Api_Callback *cb, int a, int b, Eina_Bool flag)
+{
+   const int len = 50;
+   Efl_Ui_Position_Manager_Batch_Entity_Access data[50];
+>>>>>>> wip
 
    if (a == b) return;
 
+   printf("ITERATE %d -> %d\n", MIN(a, b), MAX(a, b));
    for (int i = MIN(a, b); i < MAX(a, b); ++i)
      {
         Efl_Gfx_Entity *ent = NULL;
-        int buffer_id = (i-MIN(a,b)) % len;
+        int buffer_id = abs(i-MIN(a,b)) % 50;
 
         if (buffer_id == 0)
           {
              BATCH_ACCESS_OBJECT(cb, i, len, data);
           }
+        printf("buffer_id %d\n", buffer_id);
         ent = data[buffer_id].entity;
         if (ent && !flag && (efl_ui_focus_object_focus_get(ent) || efl_ui_focus_object_child_focus_get(ent)))
           {

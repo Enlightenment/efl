@@ -106,8 +106,6 @@ _efl_ui_widget_factory_efl_ui_factory_building(const Eo *factory EINA_UNUSED, Ef
 
         efl_gfx_hint_size_min_set(ui_view, s);
      }
-   else
-     CRI("ACK");
    eina_value_free(width);
    eina_value_free(height);
 

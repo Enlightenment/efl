@@ -51,6 +51,8 @@ struct _Efl_Ui_Collection_Request
    uint64_t length;
 
    Eina_Bool model_requested : 1;
+   Eina_Bool model_fetched : 1;
+   Eina_Bool need_entity : 1;
    Eina_Bool entity_requested : 1;
 };
 
@@ -95,6 +97,8 @@ static const char *COLLECTION_VIEW_MANAGED_YES = "yes";
 
 #define MY_DATA_GET(obj, pd)                                            \
   Efl_Ui_Collection_View_Data *pd = efl_data_scope_get(obj, MY_CLASS);
+
+static void _entity_request(Efl_Ui_Collection_View *obj, Efl_Ui_Collection_Request *request);
 
 static int
 _cache_tree_lookup(const Eina_Rbtree *node, const void *key,
@@ -220,12 +224,13 @@ _request_add(Eina_List *requests, Efl_Ui_Collection_Request **request,
 
    if ((*request)->offset + (*request)->length == index)
      {
-        if (need_entity) (*request)->entity_requested = EINA_TRUE;
+        if (need_entity) (*request)->need_entity = EINA_TRUE;
         (*request)->length += 1;
+        if ((*request)->length < 1) CRI("ACK");
         return requests;
      }
 
-   requests = eina_list_append(requests, request);
+   requests = eina_list_append(requests, *request);
 
  create:
    *request = calloc(1, sizeof (Efl_Ui_Collection_Request));
@@ -234,7 +239,8 @@ _request_add(Eina_List *requests, Efl_Ui_Collection_Request **request,
    (*request)->length = 1;
    // At this point, we rely on the model caching ability to avoid recreating model
    (*request)->model_requested = EINA_TRUE;
-   (*request)->entity_requested = !!need_entity;
+   printf("MODEL REQ(%lu) %d\n", index, __LINE__);
+   (*request)->need_entity = !!need_entity;
 
    return requests;
 }
@@ -246,7 +252,8 @@ _model_fetched_cb(Eo *obj, void *data, const Eina_Value v)
    Efl_Ui_Collection_Request *request = data;
    Efl_Model *child;
    unsigned int i, len;
-
+printf("ENTITY FETCHED %d -> %d\n", request->offset, request->length);
+   request->model_fetched = EINA_TRUE;
    EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
      {
         Efl_Ui_Collection_Item_Lookup *insert;
@@ -261,6 +268,8 @@ _model_fetched_cb(Eo *obj, void *data, const Eina_Value v)
                {
                   uint64_t index = request->offset + i - pd->viewport[v]->offset;
 
+if (!index)
+  printf("MODEL SET %d\n", v);
                   efl_replace(&pd->viewport[v]->items[index].model, child);
                   child = NULL;
                   break;
@@ -288,7 +297,12 @@ _model_free_cb(Eo *o, void *data, const Eina_Future *dead_future EINA_UNUSED)
    MY_DATA_GET(o, pd);
    Efl_Ui_Collection_Request *request = data;
 
-   if (request->entity_requested) return;
+   if (request->need_entity)
+     {
+        if (!request->entity_requested)
+          _entity_request(o, request);
+        return;
+     }
    pd->requests = eina_list_remove(pd->requests, request);
    free(request);
 }
@@ -321,11 +335,33 @@ _entity_propagate(Efl_Model *model, Efl_Gfx_Entity *entity)
 {
    Eina_Size2D item_size;
 
-   if (ITEM_SIZE_FROM_MODEL(model, item_size)) return EINA_FALSE;
+   if (!ITEM_SIZE_FROM_MODEL(model, item_size))
+     {
+        if (!ITEM_BASE_SIZE_FROM_MODEL(efl_parent_get(model), item_size))
+          return EINA_FALSE;
+     }
 
-   item_size = efl_gfx_hint_size_min_get(entity);
+   item_size = efl_gfx_hint_size_combined_min_get(entity);
    _size_to_model(model, item_size);
    return EINA_TRUE;
+}
+
+static void
+_del(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   printf("DEL0 %p\n", obj);
+}
+
+static void
+_hide(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   printf("HIDE0 %p\n", obj);
+}
+
+static void
+_show(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Evas_Object *obj, void *event_info EINA_UNUSED)
+{
+   printf("SHOW0 %p\n", obj);
 }
 
 static Eina_Value
@@ -337,7 +373,7 @@ _entity_fetched_cb(Eo *obj, void *data, const Eina_Value v)
    unsigned int i, len;
    uint64_t updated_start_id;
    Eina_Bool updated = EINA_FALSE;
-
+printf("ENTITY FETCHED %d -> %d\n", request->offset, request->length);
    EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
      {
         Efl_Ui_Collection_Item_Lookup *lookup;
@@ -345,6 +381,16 @@ _entity_fetched_cb(Eo *obj, void *data, const Eina_Value v)
         unsigned int v;
 
         efl_key_data_set(child, COLLECTION_VIEW_MANAGED, COLLECTION_VIEW_MANAGED_YES);
+        /* fix eventing in scroller by ensuring collection items are in the scroller hierarchy */
+        efl_canvas_group_member_add(pd->pan, child);
+        efl_gfx_entity_visible_set(child, EINA_FALSE);
+        if (request->offset + i == 0)
+          {
+             printf("NEW0 %p\n", child);
+             evas_object_event_callback_add(child, EVAS_CALLBACK_DEL, _del, NULL);
+             evas_object_event_callback_add(child, EVAS_CALLBACK_HIDE, _hide, NULL);
+             evas_object_event_callback_add(child, EVAS_CALLBACK_SHOW, _show, NULL);
+          }
 
         for (v = 0; v < 3; ++v)
           {
@@ -356,6 +402,11 @@ _entity_fetched_cb(Eo *obj, void *data, const Eina_Value v)
                   uint64_t index = request->offset + i - pd->viewport[v]->offset;
 
                   efl_replace(&pd->viewport[v]->items[index].entity, child);
+if (!pd->viewport[v]->items[index].model)
+  {
+    printf("OFFSET %u\n", pd->viewport[v]->offset);
+   CRI("ACK");
+  }
                   if (_entity_propagate(pd->viewport[v]->items[index].model, child))
                     {
                        if (!updated)
@@ -452,7 +503,7 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
         // But can calculate it now
         if (!lookup->item.entity) goto not_found;
 
-        item_size = efl_gfx_hint_size_min_get(lookup->item.entity);
+        item_size = efl_gfx_hint_size_combined_min_get(lookup->item.entity);
         _size_to_model(model, item_size);
      }
 
@@ -462,6 +513,7 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
    return requests;
 
  not_found:
+ printf("LINE %d\n", __LINE__);
    requests = _request_add(requests, request, search_index, EINA_FALSE);
 
    target->size = item_base;
@@ -492,6 +544,7 @@ _cache_entity_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
    return requests;
 
  not_found:
+ printf("LINE %d\n", __LINE__);
    requests = _request_add(requests, request, search_index, EINA_TRUE);
 
    target->entity = NULL;
@@ -503,6 +556,8 @@ _cache_entity_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
 static void
 _entity_request(Efl_Ui_Collection_View *obj, Efl_Ui_Collection_Request *request)
 {
+   if (request->model_requested && (!request->model_fetched)) return;
+   printf("ENTITY REQ %d -> %d\n", request->offset, request->length);
    request->f = efl_future_then(obj, request->f,
                                 .success_type = EINA_VALUE_TYPE_ARRAY,
                                 .success = _entity_fetch_cb);
@@ -511,6 +566,7 @@ _entity_request(Efl_Ui_Collection_View *obj, Efl_Ui_Collection_Request *request)
                                 .success = _entity_fetched_cb,
                                 .data = request,
                                 .free = _entity_free_cb);
+   request->entity_requested = EINA_TRUE;
 }
 
 static inline void
@@ -518,11 +574,10 @@ _entity_inflight_request(Efl_Ui_Collection_View *obj,
                          Efl_Ui_Collection_Request *request,
                          Efl_Ui_Collection_Request *inflight)
 {
-   if (request->entity_requested == EINA_FALSE) return ;
-   if (request->entity_requested == inflight->entity_requested) return ;
+   if (request->need_entity == EINA_FALSE) return ;
+   if (inflight->entity_requested) return ;
 
    _entity_request(obj, inflight);
-   inflight->entity_requested = EINA_TRUE;
 }
 
 static Eina_List *
@@ -531,14 +586,16 @@ _batch_request_flush(Eina_List *requests,
                      Efl_Ui_Collection_View_Data *pd)
 {
    Efl_Ui_Collection_Request *request;
+   Eina_List *ll, *lll;
 
-   EINA_LIST_FREE(requests, request)
+   EINA_LIST_FOREACH_SAFE(requests, ll, lll, request)
      {
         // Check request intersection with all pending request
         Efl_Ui_Collection_Request *inflight;
         Efl_Model *model;
         Eina_List *l;
 
+if (request->length < 1) CRI("ACK");
         EINA_LIST_FOREACH(pd->requests, l, inflight)
           {
              uint64_t istart = inflight->offset;
@@ -557,6 +614,7 @@ _batch_request_flush(Eina_List *requests,
                   _entity_inflight_request(obj, request, inflight);
 
                   // In this case no need to start a request
+                  requests = eina_list_remove_list(requests, ll);
                   free(request);
                   request = NULL;
                   break;
@@ -573,12 +631,15 @@ _batch_request_flush(Eina_List *requests,
 
                   rn->offset = iend;
                   rn->length = rend - iend;
+                  if (rn->length < 1) CRI("ACK");
                   rn->model_requested = request->model_requested;
-                  rn->entity_requested = request->entity_requested;
+                  printf("MODEL REQ(%lu) %d\n", rn->offset, __LINE__);
+                  rn->need_entity = request->need_entity;
 
                   requests = eina_list_append(requests, rn);
 
                   request->length = istart - rstart;
+                  if (request->length < 1) CRI("ACK");
                   _entity_inflight_request(obj, request, inflight);
 
                   continue;
@@ -588,6 +649,7 @@ _batch_request_flush(Eina_List *requests,
              if (rstart < istart && iend > istart && rend < iend)
                {
                   request->length = istart - rstart;
+                  if (request->length < 1) CRI("ACK");
                   _entity_inflight_request(obj, request, inflight);
                   continue;
                }
@@ -597,6 +659,7 @@ _batch_request_flush(Eina_List *requests,
                {
                   request->offset = iend;
                   request->length = rend - iend;
+                  if (request->length < 1) CRI("ACK");
                   _entity_inflight_request(obj, request, inflight);
                   continue;
                }
@@ -608,12 +671,14 @@ _batch_request_flush(Eina_List *requests,
         // Are we ready yet
         if (!model)
           {
+             requests = eina_list_remove_list(requests, ll);
              free(request);
              continue;
           }
         // Is the request inside the limit of the model?
         if (request->offset >= efl_model_children_count_get(model))
           {
+             requests = eina_list_remove_list(requests, ll);
              free(request);
              continue;
           }
@@ -621,26 +686,26 @@ _batch_request_flush(Eina_List *requests,
         if (request->offset + request->length >= efl_model_children_count_get(model))
           {
              request->length = efl_model_children_count_get(model) - request->offset;
+             if (request->length < 1) CRI("ACK");
           }
+        if (!request->length) CRI("ACK");
 
         // We now have a request, time to trigger a fetch
         // We assume here that we are always fetching the model (model_requested must be true)
         if (!request->model_requested)
           {
-             ERR("Someone forgot to set model_requested for %lu to %lu.",
+             CRI("Someone forgot to set model_requested for %lu to %lu.",
                  request->offset, request->offset + request->length);
              request->model_requested = EINA_TRUE;
           }
+        printf("MODEL REQ FLUSH %lu -> %lu\n", request->offset, request->length);
         request->f = efl_model_children_slice_get(model, request->offset, request->length);
         request->f = efl_future_then(obj, request->f,
                                      .success = _model_fetched_cb,
                                      .data = request,
                                      .free = _model_free_cb);
 
-        if (request->entity_requested)
-          _entity_request(obj, request);
-
-        pd->requests = eina_list_append(pd->requests, request);
+        eina_list_move_list(&pd->requests, &requests, ll);
      }
 
    return NULL;
@@ -671,6 +736,7 @@ _batch_size_cb(void *data, int start_id, Eina_Rw_Slice memory)
    sizes = memory.mem;
    count = efl_model_children_count_get(parent);
    limit = MIN(count - start_id, memory.len);
+   printf("batch_size %u, %d\n", limit, start_id);
 
    // Look in the temporary cache now for the beginning of the buffer
    if (pd->viewport[0] && ((uint64_t)(start_id + idx) < pd->viewport[0]->offset))
@@ -678,7 +744,7 @@ _batch_size_cb(void *data, int start_id, Eina_Rw_Slice memory)
         while ((uint64_t)(start_id + idx) < pd->viewport[0]->offset)
           {
              uint64_t search_index = start_id + idx;
-
+printf("LINE %d\n", __LINE__);
              requests = _cache_size_fetch(requests, &request, pd,
                                           search_index, &sizes[idx], item_base);
 
@@ -700,7 +766,7 @@ _batch_size_cb(void *data, int start_id, Eina_Rw_Slice memory)
              Efl_Gfx_Entity *entity = pd->viewport[i]->items[offset].entity;
              Eina_Bool entity_request = EINA_FALSE;
 
-             if (!model)
+             if (model)
                {
                   Eina_Size2D item_size;
                   Eina_Bool found = EINA_FALSE;
@@ -709,7 +775,7 @@ _batch_size_cb(void *data, int start_id, Eina_Rw_Slice memory)
                     found = EINA_TRUE;
                   if (!found && entity)
                     {
-                       item_size = efl_gfx_hint_size_min_get(entity);
+                       item_size = efl_gfx_hint_size_combined_min_get(entity);
                        _size_to_model(model, item_size);
                        found = EINA_TRUE;
                     }
@@ -724,7 +790,7 @@ _batch_size_cb(void *data, int start_id, Eina_Rw_Slice memory)
                   // We will need an entity to calculate this size
                   entity_request = EINA_TRUE;
                }
-
+printf("LINE %d\n", __LINE__);
              // No data, add to the requests
              requests = _request_add(requests, &request, start_id + idx, entity_request);
 
@@ -740,7 +806,7 @@ _batch_size_cb(void *data, int start_id, Eina_Rw_Slice memory)
    while (idx < limit)
      {
         uint64_t search_index = start_id + idx;
-
+printf("%lu LINE %d\n", search_index, __LINE__);
         requests = _cache_size_fetch(requests, &request, pd,
                                      search_index, &sizes[idx], item_base);
 
@@ -804,6 +870,7 @@ _batch_entity_cb(void *data, int start_id, Eina_Rw_Slice memory)
 
              if (!entity)
                {
+                printf("LINE %d\n", __LINE__);
                   // No data, add to the requests
                   requests = _request_add(requests, &request, start_id + idx, EINA_TRUE);
 
@@ -832,7 +899,11 @@ _batch_entity_cb(void *data, int start_id, Eina_Rw_Slice memory)
      }
 
    // Done, but flush request first
-   if (request) requests = eina_list_append(requests, request);
+   if (request)
+     {
+        if (request->length < 1) CRI("ACK");
+        requests = eina_list_append(requests, request);
+     }
 
    requests = _batch_request_flush(requests, data, pd);
 
@@ -859,7 +930,7 @@ flush_min_size(Eo *obj, Efl_Ui_Collection_View_Data *pd)
    if (!pd->match_content.h)
      tmp.h = -1;
 
-   efl_gfx_hint_size_min_set(obj, tmp);
+   efl_gfx_hint_size_restricted_min_set(obj, tmp);
 }
 
 static void
@@ -915,7 +986,7 @@ _viewport_walk_fill(Eina_List *requests,
 
      check_entity:
         if (viewport->items[j].entity) continue ;
-
+printf("LINE %d\n", __LINE__);
         requests = _request_add(requests, &current, index, EINA_TRUE);
      }
 
@@ -944,8 +1015,6 @@ _manager_content_visible_range_changed_cb(void *data, const Efl_Event *ev)
    // First time setting up the viewport, so trigger request as we see fit
    if (!pd->viewport[0])
      {
-        Eina_List *requests = NULL;
-
         baseid = (pd->start_id < delta) ? 0 : pd->start_id - delta;
 
         for (i = 0; i < 3; i++)
@@ -1054,8 +1123,9 @@ _manager_content_visible_range_changed_cb(void *data, const Efl_Event *ev)
         target = baseid;
 
         // cleanup before target
-        for (current = pd->viewport[0]->offset; current < target; current++)
+        for (current = pd->viewport[t]->offset; current < target; current++)
           {
+             if (!j) printf("MODEL CLEAR %d\n", t);
              _item_cleanup(pd->factory, &pd->viewport[t]->items[j]);
 
              j++;
@@ -1130,8 +1200,10 @@ _manager_content_visible_range_changed_cb(void *data, const Efl_Event *ev)
         request->offset = lowerlimit_offset;
         // This length work over multiple viewport as they are contiguous
         request->length = lowerlimit_offset - pd->viewport[0]->offset;
+        if (request->length < 1) CRI("ACK");
         request->model_requested = EINA_TRUE;
-        request->entity_requested = EINA_TRUE;
+        printf("MODEL REQ(%lu) %d\n", request->offset, __LINE__);
+        request->need_entity = EINA_TRUE;
 
         requests = eina_list_append(requests, request);
      }
@@ -1147,8 +1219,10 @@ _manager_content_visible_range_changed_cb(void *data, const Efl_Event *ev)
         request->offset = upperlimit_offset;
         // This length work over multiple viewport as they are contiguous
         request->length = pd->viewport[2]->offset + pd->viewport[2]->count - upperlimit_offset;
+        if (request->length < 1) CRI("ACK");
         request->model_requested = EINA_TRUE;
-        request->entity_requested = EINA_TRUE;
+        printf("MODEL REQ(%lu) %d\n", request->offset, __LINE__);
+        request->need_entity = EINA_TRUE;
 
         requests = eina_list_append(requests, request);
      }
@@ -1314,7 +1388,8 @@ _efl_model_child_added(void *data, const Efl_Event *event)
         request->offset = ev->index;
         request->length = 1;
         request->model_requested = EINA_TRUE;
-        request->entity_requested = EINA_TRUE;
+        printf("MODEL REQ(%lu) %d\n", request->offset, __LINE__);
+        request->need_entity = EINA_TRUE;
 
         requests = eina_list_append(requests, request);
 
@@ -1380,7 +1455,8 @@ _efl_model_child_removed(void *data, const Efl_Event *event)
         request->offset = pd->viewport[2]->offset + pd->viewport[i]->count - 1;
         request->length = 1;
         request->model_requested = EINA_TRUE;
-        request->entity_requested = EINA_TRUE;
+        printf("MODEL REQ(%lu) %d\n", request->offset, __LINE__);
+        request->need_entity = EINA_TRUE;
 
         requests = eina_list_append(requests, request);
 
@@ -1461,8 +1537,10 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
 
         request->offset = pd->viewport[i]->offset;
         request->length = pd->viewport[i]->count;
+        if (request->length < 1) CRI("ACK");
         request->model_requested = EINA_TRUE;
-        request->entity_requested = EINA_TRUE;
+        printf("MODEL REQ(%lu) %d\n", request->offset, __LINE__);
+        request->need_entity = EINA_TRUE;
 
         requests = eina_list_append(requests, request);
      }
@@ -1625,7 +1703,7 @@ _efl_ui_collection_view_efl_ui_focus_manager_move(Eo *obj, Efl_Ui_Collection_Vie
 
    new_obj = efl_ui_focus_manager_move(efl_super(obj, MY_CLASS), direction);
    focus = efl_ui_focus_manager_focus_get(obj);
-   step = efl_gfx_hint_size_min_get(focus);
+   step = efl_gfx_hint_size_combined_min_get(focus);
    if (!new_obj)
      {
         Eina_Rect pos = efl_gfx_entity_geometry_get(focus);
