@@ -53,7 +53,7 @@ _edje_smart_nested_smart_class_new(void)
 }
 
 void
-_edje_extract_mo_files(Edje *ed)
+_edje_extract_mo_files(Edje_File *edf)
 {
    Eina_Strbuf *mo_id_str;
    const void *data;
@@ -67,19 +67,19 @@ _edje_extract_mo_files(Edje *ed)
 
    cache_path = efreet_cache_home_get();
 
-   t = eina_file_mtime_get(ed->file->f);
-   sz = eina_file_size_get(ed->file->f);
-   filename = eina_file_filename_get(ed->file->f);
+   t = eina_file_mtime_get(edf->f);
+   sz = eina_file_size_get(edf->f);
+   filename = eina_file_filename_get(edf->f);
    crc = eina_crc(filename, strlen(filename), 0xffffffff, EINA_TRUE);
 
-   snprintf(ed->file->fid, sizeof(ed->file->fid), "%lld-%lld-%x",
+   snprintf(edf->fid, sizeof(edf->fid), "%lld-%lld-%x",
             (long long int)t,
             (long long int)sz,
             crc);
 
    mo_id_str = eina_strbuf_new();
 
-   for (i = 0; i < ed->file->mo_dir->mo_entries_count; i++)
+   for (i = 0; i < edf->mo_dir->mo_entries_count; i++)
      {
         Edje_Mo *mo_entry;
         char out[PATH_MAX + PATH_MAX + 128];
@@ -87,13 +87,13 @@ _edje_extract_mo_files(Edje *ed)
         char *sub_str;
         char *mo_src;
 
-        mo_entry = &ed->file->mo_dir->mo_entries[i];
+        mo_entry = &edf->mo_dir->mo_entries[i];
 
         eina_strbuf_append_printf(mo_id_str,
                                   "edje/mo/%i/%s/LC_MESSAGES",
                                   mo_entry->id,
                                   mo_entry->locale);
-        data = eet_read_direct(ed->file->ef,
+        data = eet_read_direct(edf->ef,
                                eina_strbuf_string_get(mo_id_str),
                                &len);
 
@@ -110,10 +110,10 @@ _edje_extract_mo_files(Edje *ed)
                sub_str[1] = 'm';
 
              snprintf(out, sizeof(out), "%s/%s-%s",
-                      outdir, ed->file->fid, mo_src);
+                      outdir, edf->fid, mo_src);
              if (ecore_file_exists(out))
                {
-                  if (ed->file->mtime > ecore_file_mod_time(out))
+                  if (edf->mtime > ecore_file_mod_time(out))
                     ecore_file_remove(out);
                }
              if (!ecore_file_exists(out))
@@ -847,7 +847,7 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
 
    ed->has_entries = EINA_FALSE;
    if (ed->file && ed->file->mo_dir)
-     _edje_extract_mo_files(ed);
+     _edje_extract_mo_files(ed->file);
 
    if (ed->collection)
      {
