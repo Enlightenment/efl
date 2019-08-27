@@ -43,9 +43,9 @@ _efl_ui_bg_efl_object_constructor(Eo *obj, Efl_Ui_Bg_Data *pd)
                            efl_gfx_color_set(efl_added, 0, 0, 0, 0),
                            efl_content_set(efl_part(obj, "elm.swallow.rectangle"), efl_added));
 
-        pd->img = efl_add(EFL_UI_IMAGE_CLASS, obj,
-                          efl_gfx_image_scale_type_set(efl_added, EFL_GFX_IMAGE_SCALE_TYPE_EXPAND),
-                          efl_content_set(efl_part(obj, "elm.swallow.background"), efl_added));
+        pd->img = elm_image_add(obj);
+        efl_gfx_image_scale_type_set(pd->img, EFL_GFX_IMAGE_SCALE_TYPE_EXPAND);
+        elm_layout_content_set(obj, "elm.swallow.background", pd->img);
      }
    else
      {
