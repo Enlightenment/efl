@@ -66,7 +66,7 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
 
         if (buffer_id == 0)
           {
-             BATCH_ACCESS_SIZE(pd->callbacks, i, MIN(len, pd->size - i), EINA_TRUE, size_buffer);
+             BATCH_ACCESS_SIZE(pd->callbacks, i, pd->size, MIN(len, pd->size - i), EINA_TRUE, size_buffer);
           }
        size = size_buffer[buffer_id].size;
 
@@ -192,8 +192,8 @@ _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_
 
         if (buffer_id == 0)
           {
-             BATCH_ACCESS_SIZE(pd->callbacks, i, len, EINA_FALSE, size_buffer);
-             BATCH_ACCESS_OBJECT(pd->callbacks, i, len, obj_buffer);
+             BATCH_ACCESS_SIZE(pd->callbacks, i, new.end_id, len, EINA_FALSE, size_buffer);
+             BATCH_ACCESS_OBJECT(pd->callbacks, i, new.end_id, len, obj_buffer);
 
              if (i == new.start_id)
                {
@@ -433,7 +433,7 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_position_single_ite
 
    geom = pd->viewport;
 
-   BATCH_ACCESS_SIZE_VAL(pd->callbacks, idx, 1, EINA_FALSE, size_buffer, EINA_RECT_EMPTY());
+   BATCH_ACCESS_SIZE_VAL(pd->callbacks, idx, idx + 1, 1, EINA_FALSE, size_buffer, EINA_RECT_EMPTY());
 
    size = size_buffer[0].size;
 
