@@ -60,6 +60,7 @@ inline std::string escape_keyword(std::string const& name)
      || is_equal(name, "string")
      || is_equal(name, "internal")
      || is_equal(name, "fixed")
+     || is_equal(name, "var")
      || is_equal(name, "base"))
     return "kw_" + name;
 

@@ -1,3 +1,5 @@
+import efl_ui_layout_orientable;
+
 enum @beta Efl.Ui.Scrollbar_Mode
 {
    [[When should the scrollbar be shown.]]
@@ -7,13 +9,6 @@ enum @beta Efl.Ui.Scrollbar_Mode
    last      [[For internal use only]]
 }
 
-enum @beta Efl.Ui.Scrollbar_Direction
-{
-   [[What kind of scrollbar is this.]]
-   horizontal = 0, [[Goes along the X axis.]]
-   vertical,       [[Goes along the Y axis.]]
-   last            [[For internal use only]]
-}
 interface @beta Efl.Ui.Scrollbar
 {
    [[Interface used by widgets which can display scrollbars, enabling them to contain more content
@@ -63,12 +58,12 @@ interface @beta Efl.Ui.Scrollbar
       }
    }
    events {
-      bar,press: Efl.Ui.Scrollbar_Direction; [[Called when bar is pressed.]]
-      bar,unpress: Efl.Ui.Scrollbar_Direction; [[Called when bar is unpressed.]]
-      bar,drag: Efl.Ui.Scrollbar_Direction; [[Called when bar is dragged.]]
+      bar,press: Efl.Ui.Layout_Orientation; [[Called when bar is pressed.]]
+      bar,unpress: Efl.Ui.Layout_Orientation; [[Called when bar is unpressed.]]
+      bar,drag: Efl.Ui.Layout_Orientation; [[Called when bar is dragged.]]
       bar,size,changed: void; [[Called when bar size is changed.]]
       bar,pos,changed: void; [[Called when bar position is changed.]]
-      bar,show: Efl.Ui.Scrollbar_Direction; [[Callend when bar is shown.]]
-      bar,hide: Efl.Ui.Scrollbar_Direction; [[Called when bar is hidden.]]
+      bar,show: Efl.Ui.Layout_Orientation; [[Callend when bar is shown.]]
+      bar,hide: Efl.Ui.Layout_Orientation; [[Called when bar is hidden.]]
    }
 }

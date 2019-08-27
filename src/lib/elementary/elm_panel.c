@@ -56,7 +56,7 @@ _mirrored_set(Evas_Object *obj,
 }
 
 EOLIAN static void
-_elm_panel_efl_canvas_group_calculate(Eo *obj, Elm_Panel_Data *sd)
+_elm_panel_efl_canvas_group_group_calculate(Eo *obj, Elm_Panel_Data *sd)
 {
    if (sd->delete_me) return;
 

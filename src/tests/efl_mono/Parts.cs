@@ -50,6 +50,16 @@ public static class TestMVVMParts
 
         Test.AssertEquals(error, Eina.Error.NO_ERROR);
     }
+
+    public static void mvvm_factory_properties()
+    {
+        var factory = new Efl.Ui.ItemFactory<Efl.Ui.ListDefaultItem>();
+        var iconFactory = new Efl.Ui.ImageFactory(null);
+        iconFactory.PropertyBind("filename", "modelProperty");
+        var error = factory.IconPart().BindFactory(iconFactory);
+
+        Test.AssertEquals(error, Eina.Error.NO_ERROR);
+    }
 }
 
 #endif

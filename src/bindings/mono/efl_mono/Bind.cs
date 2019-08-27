@@ -82,6 +82,31 @@ public class BindablePart<T>
     public string PartName { get; private set; }
     /// <summary>The binder that will be used to bind the properties.</summary>
     public Efl.Ui.IPropertyBind Binder { get; private set; }
+
+}
+
+/// <summary>Represents bindable factory parts as used by <see cref="Efl.Ui.ItemFactory&lt;T&gt;" /> instances.
+/// </summary>
+public class BindableFactoryPart<T>
+{
+    /// <summary>Creates a new bindable factory part with the binder <c>binder</c>.</summary>
+    public BindableFactoryPart(string partName, Efl.Ui.IFactoryBind binder)
+    {
+        this.PartName = partName;
+        this.Binder = binder;
+    }
+
+    /// <summary>The name of the part this instance wraps.</summary>
+    public string PartName { get; private set; }
+    /// <summary>The binder that will be used to bind the properties.</summary>
+    public Efl.Ui.IFactoryBind Binder { get; private set; }
+
+    /// <summary>Binds the given factory to this part.</summary>
+    public Eina.Error BindFactory(Efl.Ui.IFactory factory)
+    {
+        this.Binder.FactoryBind(this.PartName, factory);
+        return Eina.Error.NO_ERROR;
+    }
 }
 
 namespace Csharp

@@ -138,7 +138,8 @@ child_evt_cb(void *data, const Efl_Event *event)
    int col, row, colspan, rowspan;
    char buf[64];
 
-   efl_pack_table_position_get(event->object, it, &col, &row, &colspan, &rowspan);
+   efl_pack_table_cell_column_get(event->object, it, &col, &colspan);
+   efl_pack_table_cell_row_get(event->object, it, &row, &rowspan);
    if (event->desc == EFL_CONTAINER_EVENT_CONTENT_ADDED)
      sprintf(buf, "pack %d,%d %dx%d", col, row, colspan, rowspan);
    else
@@ -168,7 +169,8 @@ _custom_layout_update(Eo *pack, void *_pd EINA_UNUSED)
    it = efl_content_iterate(pack);
    EINA_ITERATOR_FOREACH(it, item)
      {
-        if (efl_pack_table_position_get(pack, item, &c, &r, &cs, &rs))
+        if (efl_pack_table_cell_column_get(pack, item, &c, &cs) &&
+            efl_pack_table_cell_row_get(pack, item, &r, &rs))
           {
              Eina_Rect m;
 

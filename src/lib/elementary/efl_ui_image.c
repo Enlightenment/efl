@@ -49,7 +49,6 @@ static const Evas_Smart_Cb_Description _smart_callbacks[] = {
 static Eina_Bool _key_action_activate(Evas_Object *obj, const char *params);
 static Eina_Error _efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd);
 static void _efl_ui_image_remote_copier_cancel(Eo *obj, Efl_Ui_Image_Data *sd);
-void _efl_ui_image_sizing_eval(Evas_Object *obj);
 static void _efl_ui_image_model_properties_changed_cb(void *data, const Efl_Event *event);
 static void _on_size_hints_changed(void *data, const Efl_Event *e);
 static Eina_Bool _efl_ui_image_download(Eo *obj, Efl_Ui_Image_Data *sd, const char *url);
@@ -165,16 +164,18 @@ _img_new(Evas_Object *obj)
 }
 
 static void
-_image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
+_image_sizing_eval(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *img)
 {
    Evas_Coord x = 0, y = 0, w = 1, h = 1;
+   int ox, oy, ow, oh;
 
+   evas_object_geometry_get(obj, &ox, &oy, &ow, &oh);
    if (efl_isa(img, EFL_CANVAS_LAYOUT_CLASS))
      {
-        x = sd->img_x;
-        y = sd->img_y;
-        w = sd->img_w;
-        h = sd->img_h;
+        x = ox;
+        y = oy;
+        w = ow;
+        h = oh;
         goto done;
      }
    else
@@ -186,7 +187,7 @@ _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
         evas_object_image_size_get(img, &iw, &ih);
 
         //Exception Case
-        if ((iw == 0) || (ih == 0) || (sd->img_w == 0) || (sd->img_h == 0))
+        if ((iw == 0) || (ih == 0) || (ow == 0) || (oh == 0))
           {
              evas_object_resize(img, 0, 0);
              evas_object_resize(sd->hit_rect, 0, 0);
@@ -200,7 +201,7 @@ _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
         if (ih < 1) ih = 1;
 
         //2. Calculate internal image size (w x h)
-        //   according to (iw x ih), (sd->img_w x sd->img_h), and scale_type
+        //   according to (iw x ih), (ow x oh), and scale_type
         switch (sd->scale_type)
           {
            case EFL_GFX_IMAGE_SCALE_TYPE_NONE:
@@ -208,56 +209,63 @@ _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
               h = ih;
               break;
            case EFL_GFX_IMAGE_SCALE_TYPE_FILL:
-              w = sd->img_w;
-              h = sd->img_h;
+              w = ow;
+              h = oh;
               break;
-           case EFL_GFX_IMAGE_SCALE_TYPE_FIT_INSIDE:
-              w = sd->img_w;
+           case EFL_GFX_IMAGE_SCALE_TYPE_FIT:
+              w = ow;
               h = ((double)ih * w) / (double)iw;
 
-              if (h > sd->img_h)
+              if (h > oh)
                 {
-                   h = sd->img_h;
+                   h = oh;
                    w = ((double)iw * h) / (double)ih;
                 }
 
-              if (((!sd->scale_up) && (w > iw))
-                  || ((!sd->scale_down) && (w < iw)))
-                {
-                   w = iw;
-                   h = ih;
-                }
-              break;
-           case EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE:
-              w = sd->img_w;
-              h = ((double)ih * w) / (double)iw;
-              if (h < sd->img_h)
-                {
-                   h = sd->img_h;
-                   w = ((double)iw * h) / (double)ih;
-                }
 
-              if (((!sd->scale_up) && (w > iw))
-                  || ((!sd->scale_down) && (w < iw)))
+              break;
+           case EFL_GFX_IMAGE_SCALE_TYPE_FIT_WIDTH:
+              w = ow;
+              h = ((double)ih * w) / (double)iw;
+
+              break;
+           case EFL_GFX_IMAGE_SCALE_TYPE_FIT_HEIGHT:
+              h = oh;
+              w = ((double)iw * h) / (double)ih;
+
+              break;
+           case EFL_GFX_IMAGE_SCALE_TYPE_EXPAND:
+              if (ow > oh)
                 {
-                   w = iw;
-                   h = ih;
+                   w = ow;
+                   h = ((double)ih * w) / (double)iw;
+                }
+              else
+                {
+                   h = oh;
+                   w = ((double)iw * h) / (double)ih;
                 }
               break;
            case EFL_GFX_IMAGE_SCALE_TYPE_TILE:
-              x = sd->img_x;
-              y = sd->img_y;
-              w = sd->img_w;
-              h = sd->img_h;
+              evas_object_geometry_get(obj, &x, &y, &w, &h);
               evas_object_image_fill_set(img, x, y, iw, ih);
               goto done;
           }
-
+        if (((!sd->scale_up) && (w > iw))
+            || ((!sd->scale_down) && (w < iw)))
+          {
+             w = iw;
+          }
+        if (((!sd->scale_up) && (h > ih))
+            || ((!sd->scale_down) && (h < ih)))
+          {
+             h = ih;
+          }
         //3. Calculate offset according to align value
         if (!elm_widget_is_legacy(sd->self))
           {
-             offset_x = ((sd->img_w - w) * sd->align_x);
-             offset_y = ((sd->img_h - h) * sd->align_y);
+             offset_x = ((ow - w) * sd->align_x);
+             offset_y = ((oh - h) * sd->align_y);
           }
         else
           {
@@ -265,12 +273,12 @@ _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
              if (EINA_DBL_EQ(alignh, EVAS_HINT_FILL)) alignh = 0.5;
              if (EINA_DBL_EQ(alignv, EVAS_HINT_FILL)) alignv = 0.5;
 
-             offset_x = ((sd->img_w - w) * alignh);
-             offset_y = ((sd->img_h - h) * alignv);
+             offset_x = ((ow - w) * alignh);
+             offset_y = ((oh - h) * alignv);
           }
 
-        x = sd->img_x + offset_x;
-        y = sd->img_y + offset_y;
+        x = ox + offset_x;
+        y = oy + offset_y;
 
         //4. Fill, move, resize
         if (offset_x >= 0) offset_x = 0;
@@ -280,13 +288,13 @@ _image_sizing_eval(Efl_Ui_Image_Data *sd, Evas_Object *img)
 
         if (offset_x < 0)
           {
-             x = sd->img_x;
-             w = sd->img_w;
+             x = ox;
+             w = ow;
           }
         if (offset_y < 0)
           {
-             y = sd->img_y;
-             h = sd->img_h;
+             y = oy;
+             h = oh;
           }
      }
 done:
@@ -527,7 +535,7 @@ _efl_ui_image_edje_file_set(Evas_Object *obj)
      return _efl_ui_image_async_file_set(obj, sd);
 
    /* FIXME: do i want to update icon on file change ? */
-   _efl_ui_image_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return 0;
 }
@@ -626,38 +634,26 @@ _efl_ui_image_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Data *sd)
    efl_canvas_group_del(efl_super(obj, MY_CLASS));
 }
 
+/* this function exists solely to call efl_canvas_group_change */
 EOLIAN static void
-_efl_ui_image_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Position2D pos)
+_efl_ui_image_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Image_Data *sd EINA_UNUSED, Eina_Position2D pos)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_MOVE, 0, pos.x, pos.y))
      return;
 
    efl_gfx_entity_position_set(efl_super(obj, MY_CLASS), pos);
-
-   if ((sd->img_x == pos.x) && (sd->img_y == pos.y)) return;
-   sd->img_x = pos.x;
-   sd->img_y = pos.y;
-
-   /* takes care of moving */
-   _efl_ui_image_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
+/* this function exists solely to call efl_canvas_group_change */
 EOLIAN static void
-_efl_ui_image_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Size2D sz)
+_efl_ui_image_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Image_Data *sd EINA_UNUSED, Eina_Size2D sz)
 {
    if (_evas_object_intercept_call(obj, EVAS_OBJECT_INTERCEPT_CB_RESIZE, 0, sz.w, sz.h))
      return;
 
-   if ((sd->img_w == sz.w) && (sd->img_h == sz.h)) goto super;
-
-   sd->img_w = sz.w;
-   sd->img_h = sz.h;
-
-   /* takes care of resizing */
-   _efl_ui_image_sizing_eval(obj);
-
-super:
    efl_gfx_entity_size_set(efl_super(obj, MY_CLASS), sz);
+   efl_canvas_group_change(obj);
 }
 
 static void
@@ -736,7 +732,7 @@ _efl_ui_image_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Image_Data *sd EINA_UNUS
    int_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (int_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return int_ret;
 
-   _efl_ui_image_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return int_ret;
 }
@@ -751,15 +747,14 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
    return EINA_TRUE;
 }
 
-void
-_efl_ui_image_sizing_eval(Evas_Object *obj)
+static void
+_efl_ui_image_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Image_Data *sd)
 {
-   EFL_UI_IMAGE_DATA_GET_OR_RETURN(obj, sd);
-
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    Eina_Size2D sz;
    double ts;
 
+   sd->in_calc = EINA_TRUE;
    // TODO: remove this function after using the widget's scale value instead of image's scale value,
    if (sd->no_scale)
      sd->scale = 1.0;
@@ -811,9 +806,10 @@ _efl_ui_image_sizing_eval(Evas_Object *obj)
         if (!sd->edje)
           efl_gfx_image_orientation_set(sd->img, sd->orient);
 
-        _image_sizing_eval(sd, sd->img);
-        if (sd->prev_img) _image_sizing_eval(sd, sd->prev_img);
+        _image_sizing_eval(obj, sd, sd->img);
+        if (sd->prev_img) _image_sizing_eval(obj, sd, sd->prev_img);
      }
+   sd->in_calc = EINA_FALSE;
 }
 
 static void
@@ -844,9 +840,11 @@ _efl_ui_image_file_set_do(Evas_Object *obj)
 }
 
 static void
-_on_size_hints_changed(void *data EINA_UNUSED, const Efl_Event *ev)
+_on_size_hints_changed(void *data, const Efl_Event *ev)
 {
-   _efl_ui_image_sizing_eval(ev->object);
+   Efl_Ui_Image_Data *pd = data;
+   if (!pd->in_calc)
+     efl_canvas_group_change(ev->object);
 }
 
 static void
@@ -871,7 +869,7 @@ _efl_ui_image_efl_object_constructor(Eo *obj, Efl_Ui_Image_Data *pd)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_IMAGE);
 
-   pd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FIT_INSIDE;
+   pd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FIT;
    pd->self = obj;
 
    return obj;
@@ -987,7 +985,7 @@ _efl_ui_image_efl_file_unload(Eo *obj, Efl_Ui_Image_Data *sd)
         evas_object_image_preload(sd->img, EINA_FALSE);
      }
 
-   _efl_ui_image_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 static Eina_Error
@@ -1042,7 +1040,7 @@ _efl_ui_image_smart_internal_file_set(Eo *obj, Efl_Ui_Image_Data *sd)
         evas_object_image_preload(sd->img, EINA_FALSE);
      }
 
-   _efl_ui_image_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return 0;
 }
@@ -1400,7 +1398,7 @@ _efl_ui_image_efl_gfx_image_orientable_image_orientation_set(Eo *obj, Efl_Ui_Ima
    if (sd->orient == orient) return;
 
    sd->orient = orient;
-   _efl_ui_image_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static Efl_Gfx_Image_Orientation
@@ -1587,7 +1585,7 @@ _efl_ui_image_efl_gfx_image_scale_type_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Dat
 
    sd->scale_type = scale_type;
 
-   _efl_ui_image_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static Efl_Gfx_Image_Scale_Type
@@ -1597,25 +1595,39 @@ _efl_ui_image_efl_gfx_image_scale_type_get(const Eo *obj EINA_UNUSED, Efl_Ui_Ima
 }
 
 EOLIAN static void
-_efl_ui_image_scalable_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool up, Eina_Bool down)
+_efl_ui_image_efl_gfx_image_can_upscale_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool can_upscale)
 {
-   if ((up == sd->scale_up) && (down == sd->scale_down)) return;
+   if (can_upscale == sd->scale_up) return;
 
-   sd->scale_up = !!up;
-   sd->scale_down = !!down;
+   sd->scale_up = !!can_upscale;
 
-   _efl_ui_image_sizing_eval(obj);
+   efl_canvas_group_change(obj);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_efl_gfx_image_can_upscale_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+{
+   return sd->scale_up;
 }
 
 EOLIAN static void
-_efl_ui_image_scalable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, Eina_Bool *scale_up, Eina_Bool *scale_down)
+_efl_ui_image_efl_gfx_image_can_downscale_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool can_downscale)
 {
-   if (scale_up) *scale_up = sd->scale_up;
-   if (scale_down) *scale_down = sd->scale_down;
+   if (can_downscale == sd->scale_down) return;
+
+   sd->scale_down = !!can_downscale;
+
+   efl_canvas_group_change(obj);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_efl_gfx_image_can_downscale_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+{
+   return sd->scale_down;
 }
 
 EOLIAN static void
-_efl_ui_image_align_set(Eo *obj, Efl_Ui_Image_Data *sd, double align_x, double align_y)
+_efl_ui_image_efl_gfx_arrangement_content_align_set(Eo *obj, Efl_Ui_Image_Data *sd, double align_x, double align_y)
 {
    if (align_x > 1.0)
      align_x = 1.0;
@@ -1632,11 +1644,11 @@ _efl_ui_image_align_set(Eo *obj, Efl_Ui_Image_Data *sd, double align_x, double a
    sd->align_x = align_x;
    sd->align_y = align_y;
 
-   _efl_ui_image_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EOLIAN static void
-_efl_ui_image_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, double *align_x, double *align_y)
+_efl_ui_image_efl_gfx_arrangement_content_align_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, double *align_x, double *align_y)
 {
    if (align_x) *align_x = sd->align_x;
    if (align_y) *align_y = sd->align_y;
@@ -1791,7 +1803,7 @@ _internal_efl_ui_image_icon_set(Evas_Object *obj, const char *name, Eina_Bool *f
    if (ret)
      {
         eina_stringshare_replace(&sd->stdicon, name);
-        _efl_ui_image_sizing_eval(obj);
+        efl_canvas_group_change(obj);
         return EINA_TRUE;
      }
    else
@@ -1986,7 +1998,7 @@ elm_image_smooth_set(Evas_Object *obj, Eina_Bool smooth)
 {
    EINA_SAFETY_ON_FALSE_RETURN(efl_isa(obj, MY_CLASS));
    efl_gfx_image_smooth_scale_set(obj, smooth);
-   _efl_ui_image_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EAPI Eina_Bool
@@ -2018,7 +2030,7 @@ elm_image_file_set(Evas_Object *obj, const char *file, const char *group)
 
    EFL_UI_IMAGE_CHECK(obj) EINA_FALSE;
    ret = efl_file_simple_load(obj, file, group);
-   _efl_ui_image_sizing_eval(obj);
+   efl_canvas_group_change(obj);
    return ret;
 }
 
@@ -2071,7 +2083,7 @@ elm_image_memfile_set(Evas_Object *obj, const void *img, size_t size, const char
         return EINA_FALSE;
      }
 
-   _efl_ui_image_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 
    return EINA_TRUE;
 }
@@ -2089,13 +2101,13 @@ elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
 
    if (sd->aspect_fixed)
      {
-        if (sd->fill_inside) sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FIT_INSIDE;
-        else sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE;
+        if (sd->fill_inside) sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FIT;
+        else sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_EXPAND;
      }
    else
      sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FILL;
 
-   _efl_ui_image_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EAPI Eina_Bool
@@ -2191,7 +2203,7 @@ elm_image_no_scale_set(Evas_Object *obj, Eina_Bool no_scale)
    EFL_UI_IMAGE_DATA_GET(obj, sd);
    sd->no_scale = no_scale;
 
-   _efl_ui_image_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EAPI Eina_Bool
@@ -2210,7 +2222,7 @@ elm_image_resizable_set(Evas_Object *obj, Eina_Bool up, Eina_Bool down)
    sd->scale_up = !!up;
    sd->scale_down = !!down;
 
-   _efl_ui_image_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EAPI void
@@ -2234,13 +2246,13 @@ elm_image_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed)
 
    if (sd->aspect_fixed)
      {
-        if (sd->fill_inside) sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FIT_INSIDE;
-        else sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE;
+        if (sd->fill_inside) sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FIT;
+        else sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_EXPAND;
      }
    else
      sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FILL;
 
-   _efl_ui_image_sizing_eval(obj);
+   efl_canvas_group_change(obj);
 }
 
 EAPI Eina_Bool
@@ -2258,7 +2270,8 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_image, Efl_Ui_Image_Data)
 /* Internal EO APIs and hidden overrides */
 
 #define EFL_UI_IMAGE_EXTRA_OPS \
-   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_image)
+   EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_image), \
+   EFL_CANVAS_GROUP_CALC_OPS(efl_ui_image)
 
 #include "efl_ui_image.eo.c"
 

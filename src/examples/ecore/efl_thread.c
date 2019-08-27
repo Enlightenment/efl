@@ -82,7 +82,7 @@ _th_main(void *data EINA_UNUSED, const Efl_Event *ev)
         Eo *obj2 = efl_add(EFL_THREAD_CLASS, obj,
                            efl_threadio_indata_set(efl_added, (void *)0x1234),
                            efl_core_command_line_command_array_set(efl_added, args),
-                           efl_task_flags_set(efl_added, EFL_TASK_FLAGS_USE_STDOUT | EFL_TASK_FLAGS_USE_STDIN),
+                           efl_task_flags_set(efl_added, EFL_TASK_FLAGS_USE_STDOUT | EFL_TASK_FLAGS_USE_STDIN | EFL_TASK_FLAGS_EXIT_WITH_PARENT),
                            efl_event_callback_add(efl_added, EFL_LOOP_EVENT_ARGUMENTS, _th_main, NULL),
                            efl_event_callback_add(efl_added, EFL_IO_READER_EVENT_CAN_READ_CHANGED, _read_change, NULL),
                            eina_future_then(efl_task_run(efl_added), _task_exit, efl_added)
@@ -124,7 +124,10 @@ _task_exit(void *data, Eina_Value v, const Eina_Future *dead EINA_UNUSED)
    // all output to read has stopped
    Eo *obj = data;
    printf("--- [%p] EXITED exit_code=%i outdata=%p\n", obj, efl_task_exit_code_get(obj), efl_threadio_outdata_get(obj));
-   efl_del(obj);
+   // thread object will be automatically deleted after as long as
+   // EFL_TASK_FLAGS_EXIT_WITH_PAREN is set on task flags, and this is
+   // actually the default unless you change the flags to be something
+   // else. if you don't use this then the task/thread becomes orphaned
    return v;
 }
 
@@ -175,7 +178,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev)
         Eo *obj = efl_add(EFL_THREAD_CLASS, app,
                           efl_threadio_indata_set(efl_added, (void *)0x5678),
                           efl_core_command_line_command_array_set(efl_added, args),
-                          efl_task_flags_set(efl_added, EFL_TASK_FLAGS_USE_STDOUT | EFL_TASK_FLAGS_USE_STDIN),
+                          efl_task_flags_set(efl_added, EFL_TASK_FLAGS_USE_STDOUT | EFL_TASK_FLAGS_USE_STDIN | EFL_TASK_FLAGS_EXIT_WITH_PARENT),
                           efl_event_callback_add(efl_added, EFL_LOOP_EVENT_ARGUMENTS, _th_main, NULL),
                           efl_event_callback_add(efl_added, EFL_IO_READER_EVENT_CAN_READ_CHANGED, _read_change, NULL),
                           eina_future_then(efl_task_run(efl_added), _task_exit, efl_added)

@@ -244,6 +244,10 @@ _efl_ui_table_efl_object_invalidate(Eo *obj, Efl_Ui_Table_Data *pd)
    EINA_INLIST_FREE(EINA_INLIST_GET(pd->items), gi)
      {
         efl_event_callback_array_del(gi->object, efl_ui_table_callbacks(), obj);
+
+        pd->items = (Table_Item *)
+            eina_inlist_remove(EINA_INLIST_GET(pd->items), EINA_INLIST_GET(gi));
+        free(gi);
      }
 }
 
@@ -379,9 +383,9 @@ _efl_ui_table_efl_pack_table_pack_table(Eo *obj, Efl_Ui_Table_Data *pd,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_table_efl_pack_table_table_position_get(const Eo *obj, Efl_Ui_Table_Data *pd, Evas_Object *subobj, int *col, int *row, int *colspan, int *rowspan)
+_efl_ui_table_efl_pack_table_table_cell_column_get(const Eo *obj, Efl_Ui_Table_Data *pd, Evas_Object *subobj, int *col, int *colspan)
 {
-   int c = -1, r = -1, cs = 0, rs = 0;
+   int c = -1, cs = 0;
    Table_Item *gi;
    Eina_Bool ret = EINA_FALSE;
 
@@ -389,17 +393,99 @@ _efl_ui_table_efl_pack_table_table_position_get(const Eo *obj, Efl_Ui_Table_Data
    if (gi)
      {
         c = gi->col;
-        r = gi->row;
         cs = gi->col_span;
-        rs = gi->row_span;
         ret = EINA_TRUE;
      }
 
    if (col) *col = c;
-   if (row) *row = r;
    if (colspan) *colspan = cs;
+   return ret;
+}
+
+EOLIAN static void
+_efl_ui_table_efl_pack_table_table_cell_column_set(Eo *obj, Efl_Ui_Table_Data *pd, Evas_Object *subobj, int col, int colspan)
+{
+   Table_Item *gi;
+
+   gi = _efl_ui_table_item_date_get((Eo *)obj, pd, subobj);
+   if (!gi)
+     return;
+
+   if (col < 0) col = 0;
+   if (colspan < 1) colspan = 1;
+
+   if (((int64_t) col + (int64_t) colspan) > (int64_t) INT_MAX)
+     colspan = INT_MAX - col;
+
+   if (pd->req_cols && ((col + colspan) > pd->req_cols))
+     {
+        ERR("table requested size exceeded! packing in extra cell at "
+            "%d+%d (table cols: %d)", col, colspan, pd->req_cols);
+     }
+
+   gi->col = col;
+   gi->col_span = colspan;
+
+   if (gi->col > pd->last_col)
+     pd->linear_recalc = EINA_TRUE;
+
+   if (pd->cols < gi->col + gi->col_span)
+     pd->cols = gi->col + gi->col_span;
+
+   efl_pack_layout_request(obj);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_table_efl_pack_table_table_cell_row_get(const Eo *obj, Efl_Ui_Table_Data *pd, Evas_Object *subobj, int *row, int *rowspan)
+{
+   int r = -1, rs = 0;
+   Table_Item *gi;
+   Eina_Bool ret = EINA_FALSE;
+
+   gi = _efl_ui_table_item_date_get((Eo *)obj, pd, subobj);
+   if (gi)
+     {
+        r = gi->row;
+        rs = gi->row_span;
+        ret = EINA_TRUE;
+     }
+
+   if (row) *row = r;
    if (rowspan) *rowspan = rs;
    return ret;
+}
+
+EOLIAN static void
+_efl_ui_table_efl_pack_table_table_cell_row_set(Eo *obj, Efl_Ui_Table_Data *pd, Evas_Object *subobj, int row, int rowspan)
+{
+   Table_Item *gi;
+
+   gi = _efl_ui_table_item_date_get((Eo *)obj, pd, subobj);
+   if (!gi)
+     return;
+
+   if (row < 0) row = 0;
+   if (rowspan < 1) rowspan = 1;
+
+   if (((int64_t) row + (int64_t) rowspan) > (int64_t) INT_MAX)
+     rowspan = INT_MAX - row;
+
+   if (pd->req_rows && ((row + rowspan) > pd->req_rows))
+     {
+        ERR("table requested size exceeded! packing in extra cell at "
+            "%d+%d (table rows: %d)", row, rowspan, pd->req_rows);
+     }
+
+   gi->row = row;
+   gi->row_span = rowspan;
+
+   if (gi->row > pd->last_row)
+     pd->linear_recalc = EINA_TRUE;
+
+   if (pd->rows < gi->row + gi->row_span)
+     pd->rows = gi->row + gi->row_span;
+
+   efl_pack_layout_request(obj);
 }
 
 EOLIAN static Efl_Gfx_Entity *

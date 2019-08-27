@@ -322,22 +322,63 @@ _efl_ui_layout_part_table_efl_pack_table_table_contents_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_layout_part_table_efl_pack_table_table_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity * subobj, int *col, int *row, int *colspan, int *rowspan)
+_efl_ui_layout_part_table_efl_pack_table_table_cell_column_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity * subobj, int *col, int *colspan)
 {
-   unsigned short c, r, cs, rs;
+   unsigned short c, cs;
    Eina_Bool ret;
 
    edje_object_freeze(pd->obj);
    Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
    edje_object_thaw(pd->obj);
 
-   ret = evas_object_table_pack_get(pack, subobj, &c, &r, &cs, &rs);
+   ret = evas_object_table_pack_get(pack, subobj, &c, NULL, &cs, NULL);
    if (col) *col = c;
-   if (row) *row = r;
    if (colspan) *colspan = cs;
+
+   return ret;
+}
+
+EOLIAN static void
+_efl_ui_layout_part_table_efl_pack_table_table_cell_column_set(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity * subobj, int col, int colspan)
+{
+   unsigned short r, rs;
+
+   edje_object_freeze(pd->obj);
+   Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
+   edje_object_thaw(pd->obj);
+
+   evas_object_table_pack_get(pack, subobj, NULL, &r, NULL, &rs);
+   evas_object_table_pack(pack, subobj, col, r, colspan, rs);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_layout_part_table_efl_pack_table_table_cell_row_get(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity * subobj, int *row, int *rowspan)
+{
+   unsigned short r, rs;
+   Eina_Bool ret;
+
+   edje_object_freeze(pd->obj);
+   Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
+   edje_object_thaw(pd->obj);
+
+   ret = evas_object_table_pack_get(pack, subobj, NULL, &r, NULL, &rs);
+   if (row) *row = r;
    if (rowspan) *rowspan = rs;
 
    return ret;
+}
+
+EOLIAN static void
+_efl_ui_layout_part_table_efl_pack_table_table_cell_row_set(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity * subobj, int row, int rowspan)
+{
+   unsigned short c, cs;
+
+   edje_object_freeze(pd->obj);
+   Eo *pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
+   edje_object_thaw(pd->obj);
+
+   evas_object_table_pack_get(pack, subobj, &c, NULL, &cs, NULL);
+   evas_object_table_pack(pack, subobj, c, row, cs, rowspan);
 }
 
 EOLIAN static void

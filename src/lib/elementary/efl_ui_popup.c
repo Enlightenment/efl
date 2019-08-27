@@ -5,7 +5,7 @@
 #define EFL_PART_PROTECTED
 #define EFL_UI_POPUP_PROTECTED
 #define EFL_PART_PROTECTED
-
+#define EFL_UI_WIDGET_SCROLLABLE_CONTENT_PROTECTED
 #include <Elementary.h>
 
 #include "elm_priv.h"
@@ -479,6 +479,57 @@ _efl_ui_popup_timeout_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
    return pd->timeout;
 }
 
+/* this will ONLY be called during _sizing_eval() */
+static void
+_scrollable_content_size_cb(void *data EINA_UNUSED, const Efl_Event *ev)
+{
+   Eina_Size2D *size = ev->info;
+
+   efl_gfx_entity_size_set(ev->object, *size);
+   /* finish group calc chain */
+   efl_canvas_group_calculate(efl_super(ev->object, EFL_UI_WIDGET_SCROLLABLE_CONTENT_MIXIN));
+}
+
+static void
+_sizing_eval(Eo *obj)
+{
+   Eina_Size2D min;
+
+   /* trigger layout calc */
+   efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
+   if (efl_ui_widget_scrollable_content_did_group_calc_get(obj)) return;
+   min = efl_gfx_hint_size_combined_min_get(obj);
+
+   Eina_Size2D size = efl_gfx_entity_size_get(obj);
+
+   Eina_Size2D new_size;
+   new_size.w = (min.w > size.w ? min.w : size.w);
+   new_size.h = (min.h > size.h ? min.h : size.h);
+   efl_gfx_entity_size_set(obj, new_size);
+}
+
+EOLIAN static void
+_efl_ui_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popup_Data *pd)
+{
+   /* When efl_canvas_group_change() is called, just flag is set instead of size
+    * calculation.
+    * The actual size calculation is done here when the object is rendered to
+    * avoid duplicate size calculations. */
+   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
+   pd->in_calc = EINA_TRUE;
+   _sizing_eval(obj);
+   pd->in_calc = EINA_FALSE;
+   if (pd->anchor)
+     _anchor_calc(obj);
+   else
+     _calc_align(obj);
+
+   Eina_Rect p_geom = efl_gfx_entity_geometry_get(pd->win_parent);
+
+   efl_gfx_entity_position_set(pd->backwall, EINA_POSITION2D(0, 0));
+   efl_gfx_entity_size_set(pd->backwall, EINA_SIZE2D(p_geom.w, p_geom.h));
+}
+
 EOLIAN static Eo *
 _efl_ui_popup_efl_object_constructor(Eo *obj, Efl_Ui_Popup_Data *pd)
 {
@@ -489,6 +540,7 @@ _efl_ui_popup_efl_object_constructor(Eo *obj, Efl_Ui_Popup_Data *pd)
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
    efl_event_callback_add(obj, EFL_GFX_ENTITY_EVENT_HINTS_CHANGED, _hints_changed_cb, pd);
+   efl_event_callback_add(obj, EFL_UI_WIDGET_SCROLLABLE_CONTENT_EVENT_OPTIMAL_SIZE_CALC, _scrollable_content_size_cb, pd);
 
    elm_widget_can_focus_set(obj, EINA_TRUE);
    if (elm_widget_theme_object_set(obj, wd->resize_obj,
@@ -527,48 +579,6 @@ _efl_ui_popup_efl_object_destructor(Eo *obj, Efl_Ui_Popup_Data *pd)
                           obj);
 
    efl_destructor(efl_super(obj, MY_CLASS));
-}
-
-static void
-_sizing_eval(Eo *obj)
-{
-   Eina_Size2D min;
-
-   /* trigger layout calc */
-   efl_canvas_group_calculate(efl_super(obj, MY_CLASS));
-   min = efl_gfx_hint_size_combined_min_get(obj);
-
-   Eina_Size2D size = efl_gfx_entity_size_get(obj);
-
-   Eina_Size2D new_size;
-   new_size.w = (min.w > size.w ? min.w : size.w);
-   new_size.h = (min.h > size.h ? min.h : size.h);
-   efl_gfx_entity_size_set(obj, new_size);
-}
-
-EOLIAN static void
-_efl_ui_popup_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Popup_Data *pd)
-{
-   /* When efl_canvas_group_change() is called, just flag is set instead of size
-    * calculation.
-    * The actual size calculation is done here when the object is rendered to
-    * avoid duplicate size calculations. */
-   efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
-   if (!pd->in_calc)
-     {
-        pd->in_calc = EINA_TRUE;
-        _sizing_eval(obj);
-        pd->in_calc = EINA_FALSE;
-     }
-   if (pd->anchor)
-     _anchor_calc(obj);
-   else
-     _calc_align(obj);
-
-   Eina_Rect p_geom = efl_gfx_entity_geometry_get(pd->win_parent);
-
-   efl_gfx_entity_position_set(pd->backwall, EINA_POSITION2D(0, 0));
-   efl_gfx_entity_size_set(pd->backwall, EINA_SIZE2D(p_geom.w, p_geom.h));
 }
 
 /* Standard widget overrides */

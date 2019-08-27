@@ -49,7 +49,7 @@ _scale_type_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    efl_file_simple_load(efl_part(target, "background"), buf, NULL);
    type = efl_gfx_image_scale_type_get(efl_part(target, "background"));
-   type = (type + 1) % 5;
+   type = (type + 1) % 6;
    efl_gfx_image_scale_type_set(efl_part(target, "background"), type);
 }
 

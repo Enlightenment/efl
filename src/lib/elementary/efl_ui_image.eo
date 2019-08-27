@@ -20,8 +20,8 @@ class @beta Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Input.Clickable, E
                  Efl.File, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller, Efl.Player, Efl.Gfx.View,
                  Efl.Access.Component, Efl.Access.Widget.Action, Efl.Gfx.Color,
                  Efl.Gfx.Image_Orientable,
-                 Efl.Layout.Calc,
-                 Efl.Layout.Group, Efl.Layout.Signal
+                 Efl.Layout.Calc, Efl.Layout.Group, Efl.Layout.Signal,
+                 Efl.Gfx.Arrangement
 {
    [[Efl UI image class
 
@@ -30,28 +30,6 @@ class @beta Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Input.Clickable, E
    ]]
    event_prefix: efl_ui_image;
    methods {
-      @property scalable {
-         [[Enable or disable scaling up or down the internal image.
-         ]]
-         values {
-            scale_up: bool;   [[If $true, the internal image might be scaled up
-                                if necessary according to the scale type.
-                                if $false, the internal image is not scaled up
-                                no matter what the scale type is.]]
-            scale_down: bool; [[If $true, the internal image might be scaled down
-                                if necessary according to the scale type.
-                                if $false, the internal image is not scaled down
-                                no matter what the scale type is.]]
-         }
-      }
-      @property align {
-         [[Controls how the internal image is positioned inside an image object.
-         ]]
-         values {
-            align_x: double; [[Alignment in the horizontal axis (0 <= align_x <= 1).]]
-            align_y: double; [[Alignment in the vertical axis (0 <= align_y <= 1).]]
-         }
-      }
       @property icon {
          set {
             [[Set the image by icon standards names.
@@ -97,6 +75,8 @@ class @beta Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Input.Clickable, E
       Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set; }
       Efl.Gfx.View.view_size { get; }
+      Efl.Gfx.Image.can_upscale { get; set; }
+      Efl.Gfx.Image.can_downscale { get; set; }
       Efl.Gfx.Image.image_size { get; }
       Efl.Gfx.Image_Load_Controller.load_size { get; set; }
       Efl.Gfx.Image.smooth_scale { get; set; }
@@ -123,8 +103,9 @@ class @beta Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Input.Clickable, E
       Efl.Ui.Widget.widget_input_event_handler;
       Efl.Access.Component.extents { get; }
       Efl.Access.Widget.Action.elm_actions { get; }
+      Efl.Gfx.Arrangement.content_align { get; set; }
    }
    events {
-      drop: string; [[Called when drop from drag and drop happened]] /* FIXME - Belongs to DnD interface */
+      drop @beta: string; [[Called when drop from drag and drop happened]] /* FIXME - Belongs to DnD interface */
    }
 }

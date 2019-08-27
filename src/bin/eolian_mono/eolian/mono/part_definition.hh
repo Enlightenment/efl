@@ -47,12 +47,19 @@ struct part_extension_method_definition_generator
       /* auto unit = (const Eolian_Unit*) context_find_tag<eolian_state_context>(context).state; */
       /* auto klass = get_klass(part.klass, unit); */
 
+      std::string bindableClass = "Efl.BindablePart";
+
+      // Efl.Content parts should be bound only throught FactoryBind
+      attributes::klass_def c(get_klass(part.klass, cls.unit), cls.unit);
+      if (helpers::inherits_from(c, "Efl.IContent"))
+        bindableClass = "Efl.BindableFactoryPart";
+
       if (!as_generator(
-                scope_tab << "public static Efl.BindablePart<" << part_klass_name << "> " << name_helpers::managed_part_name(part) << "<T>(this Efl.Ui.ItemFactory<T> fac, Efl.Csharp.ExtensionTag<"
+                scope_tab << "public static " << bindableClass << "<" << part_klass_name << "> " << name_helpers::managed_part_name(part) << "<T>(this Efl.Ui.ItemFactory<T> fac, Efl.Csharp.ExtensionTag<"
                             << name_helpers::klass_full_concrete_or_interface_name(cls)
                             << ", T> x=null) where T : " << name_helpers::klass_full_concrete_or_interface_name(cls) << "\n"
                 << scope_tab << "{\n"
-                << scope_tab << scope_tab << "return new Efl.BindablePart<" << part_klass_name << ">(\"" << part.name << "\" ,fac);\n"
+                << scope_tab << scope_tab << "return new " << bindableClass << "<" << part_klass_name << ">(\"" << part.name << "\" ,fac);\n"
                 << scope_tab << "}\n"
             ).generate(sink, attributes::unused, context))
         return false;

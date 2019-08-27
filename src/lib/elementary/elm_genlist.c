@@ -925,7 +925,7 @@ _calc_job(void *data)
 }
 
 EOLIAN static void
-_elm_genlist_efl_canvas_group_calculate(Eo *obj, Elm_Genlist_Data *sd)
+_elm_genlist_efl_canvas_group_group_calculate(Eo *obj, Elm_Genlist_Data *sd)
 {
    Evas_Coord minw = -1, minh = -1, maxw = -1, maxh = -1;
    Evas_Coord vmw = 0, vmh = 0;

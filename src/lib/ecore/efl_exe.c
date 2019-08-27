@@ -98,7 +98,7 @@ _close_fds(Efl_Exe_Data *pd)
 }
 
 static void
-_exec(const char *cmd, Efl_Exe_Flags flags)
+_exec(const char *cmd, Efl_Exe_Flags flags, Efl_Task_Flags task_flags)
 {
    char use_sh = 1, *buf = NULL, **args = NULL;
 
@@ -149,7 +149,7 @@ _exec(const char *cmd, Efl_Exe_Flags flags)
           }
      }
 # ifdef HAVE_PRCTL
-   if (flags & EFL_EXE_FLAGS_EXIT_WITH_PARENT)
+   if (task_flags & EFL_TASK_FLAGS_EXIT_WITH_PARENT)
      prctl(PR_SET_PDEATHSIG, SIGTERM);
 # endif
 
@@ -603,7 +603,7 @@ _efl_exe_efl_task_run(Eo *obj, Efl_Exe_Data *pd)
      }
 
    // actually execute!
-   _exec(cmd, pd->flags);
+   _exec(cmd, pd->flags, td->flags);
    // we couldn't exec... uh oh. HAAAAAAAALP!
    if ((errno == EACCES)  || (errno == EINVAL) || (errno == ELOOP) ||
        (errno == ENOEXEC) || (errno == ENOMEM))
@@ -641,7 +641,7 @@ _efl_exe_efl_object_constructor(Eo *obj, Efl_Exe_Data *pd)
    pd->fd.exited_read = -1;
 #endif
    pd->fd.can_write = EINA_TRUE;
-   pd->flags = EFL_EXE_FLAGS_EXIT_WITH_PARENT;
+   pd->flags = 0;
    pd->exit_signal = -1;
    return obj;
 }

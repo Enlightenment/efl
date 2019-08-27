@@ -45,6 +45,15 @@ mixin @beta Efl.Input.Clickable
             button : uint;
          }
       }
+      @property interaction {
+         [[This returns true if the given object is currently in event emission]]
+         get {
+
+         }
+         values {
+            interaction : bool;
+         }
+      }
    }
    events {
       clicked: Efl.Input.Clickable_Clicked; [[Called when object is in sequence pressed and unpressed, by the primary button]]

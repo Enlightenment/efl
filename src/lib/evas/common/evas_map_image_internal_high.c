@@ -83,7 +83,7 @@ _map_horiz_coverage_calc(AALine *spans, int eidx, int y, int x, int x2)
 static void
 _map_aa_edge_calc_internal(AALine *spans, int eidx, int ystart, int yend)
 {
-   int y;
+   int y = 0;
    Evas_Coord_Point p_edge = {-1, -1};  //previous edge point
    Evas_Coord_Point edge_diff = {0, 0}; //temporary used for point distance 
 
@@ -114,12 +114,11 @@ do \
 
    yend -= ystart;
 
-   //Find Start Edge
-   for (y = 0; y < yend; y++)
+   //Start Edge
+   if (y < yend)
      {
         p_edge.x = spans[y].x[eidx];
         p_edge.y = y;
-        break;
      }
 
    //Calculates AA Edges
@@ -826,7 +825,7 @@ _evas_common_map_rgba_internal_high(RGBA_Image *src, RGBA_Image *dst,
    if (anti_alias)
      {
         //Adjust AA Y range
-        float ystart = 9999999999, yend = -1;
+        float ystart = 9999999.0f, yend = -1.0f;
         for (int i = 0; i < 4; i++)
           {
              if (y[i] < ystart) ystart = y[i];

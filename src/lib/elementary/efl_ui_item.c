@@ -12,6 +12,31 @@
 
 #define MY_CLASS_NAME "Efl.Ui.Item"
 
+static Eina_Bool _key_action_select(Evas_Object *obj, const char *params EINA_UNUSED);
+
+static const Elm_Action key_actions[] = {
+   {"select", _key_action_select},
+   {NULL, NULL}
+};
+
+static Eina_Bool
+_key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
+{
+   efl_ui_selectable_selected_set(obj, EINA_TRUE);
+   return EINA_FALSE;
+}
+
+static Efl_Ui_Select_Mode
+_fetch_state(Eo *obj)
+{
+   if (efl_isa(obj, EFL_UI_MULTI_SELECTABLE_INTERFACE))
+     return efl_ui_select_mode_get(obj);
+   if (efl_isa(obj, EFL_UI_SINGLE_SELECTABLE_INTERFACE))
+     return EFL_UI_SELECT_MODE_SINGLE;
+   ERR("Uncaught state");
+   return EFL_UI_SELECT_MODE_NONE;
+}
+
 static void
 _item_select(Eo *obj, Efl_Ui_Item_Data *pd)
 {
@@ -19,7 +44,7 @@ _item_select(Eo *obj, Efl_Ui_Item_Data *pd)
 
    if (pd->container)
      {
-        m = efl_ui_select_mode_get(pd->container);
+        m = _fetch_state(pd->container);
         if (m == EFL_UI_SELECT_MODE_NONE || (pd->selected && m != EFL_UI_SELECT_MODE_SINGLE_ALWAYS))
           return;
      }
@@ -68,7 +93,7 @@ _item_unpressed(void *data, const Efl_Event *ev EINA_UNUSED)
    if (!efl_ui_item_container_get(obj)) return;
 
    efl_layout_signal_emit(obj, "efl,state,unpressed", "efl");
-   m = efl_ui_select_mode_get(efl_ui_item_container_get(obj));
+   m = _fetch_state(pd->container);
 
    if ((m != EFL_UI_SELECT_MODE_SINGLE_ALWAYS) && (pd->selected))
      efl_ui_selectable_selected_set(obj, EINA_FALSE);
@@ -183,6 +208,7 @@ _efl_ui_item_item_parent_get(const Eo *obj EINA_UNUSED, Efl_Ui_Item_Data *pd)
    return pd->parent;
 }
 
+ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_item, Efl_Ui_Item_Data)
 
 #include "efl_ui_item.eo.c"
 #include "efl_ui_selectable.eo.c"

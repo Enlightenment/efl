@@ -1499,7 +1499,7 @@ _picker_sizing_eval(Evas_Object *obj)
 }
 
 EOLIAN static void
-_elm_colorselector_efl_canvas_group_calculate(Eo *obj, Elm_Colorselector_Data *sd)
+_elm_colorselector_efl_canvas_group_group_calculate(Eo *obj, Elm_Colorselector_Data *sd)
 {
    Evas_Coord minw = -1, minh = -1;
 

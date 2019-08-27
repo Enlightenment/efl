@@ -55,6 +55,26 @@ EOLIAN static Eina_Value *
 _efl_loop_begin(Eo *obj, Efl_Loop_Data *pd)
 {
    _ecore_main_loop_begin(obj, pd);
+   if (pd->thread_children)
+     {
+        Eina_List *l, *ll;
+        Eo *child;
+
+        // request all child threads to die and defer the quit until
+        // the children have all died and returned.
+        // run main loop again to clean out children and their exits
+        pd->quit_on_last_thread_child_del = EINA_TRUE;
+        EINA_LIST_FOREACH_SAFE(pd->thread_children, l, ll, child)
+          {
+             Efl_Task_Flags task_flags = efl_task_flags_get(child);
+
+             if (task_flags & EFL_TASK_FLAGS_EXIT_WITH_PARENT)
+               efl_task_end(child);
+             else
+               _efl_thread_child_remove(obj, pd, child);
+          }
+        if (pd->thread_children) _ecore_main_loop_begin(obj, pd);
+     }
    return &(pd->exit_code);
 }
 
@@ -304,7 +324,8 @@ EOLIAN static void
 _efl_loop_efl_object_destructor(Eo *obj, Efl_Loop_Data *pd)
 {
    pd->future_message_handler = NULL;
-
+   while (pd->thread_children)
+     _efl_thread_child_remove(obj, pd, pd->thread_children->data);
    efl_destructor(efl_super(obj, EFL_LOOP_CLASS));
 }
 

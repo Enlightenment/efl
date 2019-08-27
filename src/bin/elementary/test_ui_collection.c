@@ -5,6 +5,18 @@
 #include <Efl_Ui.h>
 
 static void
+_select_all(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   efl_ui_select_all(data);
+}
+
+static void
+_unselect_all(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   efl_ui_unselect_all(data);
+}
+
+static void
 _selection_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    if (efl_ui_selectable_selected_get(ev->object))
@@ -192,7 +204,7 @@ void create_item_container_ui(const Efl_Class *collection_class, const Efl_Class
           }
      }
 
-   efl_pack_table(tbl, o, 1, 0, 1, 12);
+   efl_pack_table(tbl, o, 1, 0, 1, 14);
    ctx->c = o;
 
    o = efl_add(EFL_UI_BUTTON_CLASS, tbl,
@@ -269,11 +281,26 @@ void create_item_container_ui(const Efl_Class *collection_class, const Efl_Class
    efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _add_thousend_items, item_container);
    efl_pack_table(tbl, o, 0, 10, 1, 1);
 
+   o = efl_add(EFL_UI_BUTTON_CLASS, tbl,
+           efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
+           efl_gfx_hint_align_set(efl_added, 0, 0.5));
+   efl_text_set(o, "Select All");
+   efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _select_all, item_container);
+   efl_pack_table(tbl, o, 0, 11, 1, 1);
+
+   o = efl_add(EFL_UI_BUTTON_CLASS, tbl,
+           efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
+           efl_gfx_hint_align_set(efl_added, 0, 0.5));
+   efl_text_set(o, "Unselect All");
+   efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _unselect_all, item_container);
+   efl_pack_table(tbl, o, 0, 12, 1, 1);
+
+
    bx = efl_add(EFL_UI_RADIO_BOX_CLASS, tbl,
            efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
            efl_gfx_hint_align_set(efl_added, 0, 0.5));
    efl_event_callback_add(bx, EFL_UI_RADIO_GROUP_EVENT_VALUE_CHANGED, _select_value_cb, item_container);
-   efl_pack_table(tbl, bx, 0, 11, 1, 1);
+   efl_pack_table(tbl, bx, 0, 13, 1, 1);
    o = efl_add(EFL_UI_RADIO_CLASS, bx,
            efl_ui_radio_state_value_set(efl_added, EFL_UI_SELECT_MODE_SINGLE));
    efl_text_set(o, "Singleselect");

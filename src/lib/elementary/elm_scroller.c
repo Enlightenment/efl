@@ -326,7 +326,7 @@ _elm_scroller_efl_ui_widget_on_access_activate(Eo *obj, Elm_Scroller_Data *_pd E
 }
 
 EOLIAN static void
-_elm_scroller_efl_canvas_group_calculate(Eo *obj, Elm_Scroller_Data *sd)
+_elm_scroller_efl_canvas_group_group_calculate(Eo *obj, Elm_Scroller_Data *sd)
 {
    Evas_Coord vw = 0, vh = 0, minw = 0, minh = 0, maxw = 0, maxh = 0, w, h,
               vmw, vmh;

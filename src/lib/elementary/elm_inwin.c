@@ -26,7 +26,7 @@ typedef struct {
 } Elm_Inwin_Data;
 
 EOLIAN static void
-_elm_inwin_efl_canvas_group_calculate(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
+_elm_inwin_efl_canvas_group_group_calculate(Eo *obj, Elm_Inwin_Data *pd EINA_UNUSED)
 {
    if (elm_layout_content_get(obj, NULL))
      efl_canvas_group_calculate(efl_super(obj, MY_CLASS));

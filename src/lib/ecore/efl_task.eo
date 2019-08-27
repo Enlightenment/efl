@@ -18,6 +18,7 @@ enum Efl.Task_Flags {
    use_stdin          = 1, [[Task will require console input.]]
    use_stdout         = 2, [[Task will require console output.]]
    no_exit_code_error = 4, [[Task will not produce an exit code upon termination.]]
+   exit_with_parent   = 8, [[Exit when parent exits.]]
 }
 
 abstract Efl.Task extends Efl.Loop_Consumer
@@ -42,7 +43,9 @@ abstract Efl.Task extends Efl.Loop_Consumer
          }
       }
       @property flags {
-         [[Flags to further customize task's behavior.]]
+         [[Flags to further customize task's behavior. The default value:
+             exit_with_parent
+         ]]
          set { }
          get { }
          values {
@@ -62,6 +65,7 @@ abstract Efl.Task extends Efl.Loop_Consumer
    events {
    }
    implements {
+      Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Object.parent { set; }
    }

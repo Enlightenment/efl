@@ -940,10 +940,6 @@ test_ui_spotlight_stack(void *data EINA_UNUSED,
            case 2:
              view = view_add(BUTTON, spotlight);
              break;
-
-           default:
-             view = view_add(LAYOUT, spotlight);
-             break;
           }
         efl_pack_end(spotlight, view);
      }
@@ -1038,10 +1034,6 @@ test_ui_spotlight_plain(void *data EINA_UNUSED,
 
            case 2:
              view = view_add(BUTTON, spotlight);
-             break;
-
-           default:
-             view = view_add(LAYOUT, spotlight);
              break;
           }
         efl_pack_end(spotlight, view);
@@ -1140,10 +1132,6 @@ test_ui_spotlight_scroll(void *data EINA_UNUSED,
 
            case 2:
              view = view_add(BUTTON, spotlight);
-             break;
-
-           default:
-             view = view_add(LAYOUT, spotlight);
              break;
           }
         efl_pack_end(spotlight, view);

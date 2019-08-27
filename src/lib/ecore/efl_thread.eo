@@ -4,6 +4,7 @@ class @beta Efl.Thread extends Efl.Task implements Efl.ThreadIO, Efl.Io.Reader, 
    }
    implements {
       Efl.Object.constructor;
+      Efl.Object.finalize;
       Efl.Object.destructor;
       Efl.Object.parent { set; }
       Efl.Task.run;

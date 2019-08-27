@@ -50,6 +50,14 @@ _efl_task_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Task_Data *pd)
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
+EOLIAN static Efl_Object *
+_efl_task_efl_object_constructor(Eo *obj, Efl_Task_Data *pd)
+{
+   obj = efl_constructor(efl_super(obj, EFL_TASK_CLASS));
+   pd->flags = EFL_TASK_FLAGS_EXIT_WITH_PARENT;
+   return obj;
+}
+
 EOLIAN static void
 _efl_task_efl_object_parent_set(Eo *obj, Efl_Task_Data *pd EINA_UNUSED, Efl_Object *parent)
 {

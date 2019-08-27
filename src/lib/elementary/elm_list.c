@@ -691,7 +691,7 @@ _elm_list_efl_ui_l10n_translation_update(Eo *obj EINA_UNUSED, Elm_List_Data *sd)
 }
 
 EOLIAN static void
-_elm_list_efl_canvas_group_calculate(Eo *obj, Elm_List_Data *sd)
+_elm_list_efl_canvas_group_group_calculate(Eo *obj, Elm_List_Data *sd)
 {
    Evas_Coord vw = 0, vh = 0;
    Evas_Coord minw = 0, minh = 0, maxw = 0, maxh = 0, w = 0, h = 0, vmw = 0, vmh = 0;

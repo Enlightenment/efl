@@ -2659,7 +2659,7 @@ Eina_Stringshare *_edje_seat_name_get(Edje *ed, Efl_Input_Device *device);
 Efl_Input_Device *_edje_seat_get(Edje *ed, Eina_Stringshare *name);
 Eina_Bool _edje_part_allowed_seat_find(Edje_Real_Part *rp, const char *seat_name);
 
-const Edje_Signals_Sources_Patterns *_edje_signal_callback_patterns_ref(const Edje_Signal_Callback_Group *gp);
+const Edje_Signals_Sources_Patterns *_edje_signal_callback_patterns_ref(Edje_Signal_Callback_Group *gp);
 void _edje_signal_callback_patterns_unref(const Edje_Signals_Sources_Patterns *essp);
 void _edje_signal_callback_reset(Edje_Signal_Callback_Flags *flags, unsigned int length);
 

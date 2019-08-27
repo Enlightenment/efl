@@ -44,7 +44,7 @@ _efl_ui_bg_efl_object_constructor(Eo *obj, Efl_Ui_Bg_Data *pd)
                            efl_content_set(efl_part(obj, "elm.swallow.rectangle"), efl_added));
 
         pd->img = efl_add(EFL_UI_IMAGE_CLASS, obj,
-                          efl_gfx_image_scale_type_set(efl_added, EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE),
+                          efl_gfx_image_scale_type_set(efl_added, EFL_GFX_IMAGE_SCALE_TYPE_EXPAND),
                           efl_content_set(efl_part(obj, "elm.swallow.background"), efl_added));
      }
    else
@@ -54,7 +54,7 @@ _efl_ui_bg_efl_object_constructor(Eo *obj, Efl_Ui_Bg_Data *pd)
                            efl_content_set(efl_part(obj, "efl.rectangle"), efl_added));
 
         pd->img = efl_add(EFL_UI_IMAGE_CLASS, obj,
-                          efl_gfx_image_scale_type_set(efl_added, EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE),
+                          efl_gfx_image_scale_type_set(efl_added, EFL_GFX_IMAGE_SCALE_TYPE_EXPAND),
                           efl_content_set(efl_part(obj, "efl.background"), efl_added));
      }
    pd->file = NULL;
@@ -87,7 +87,7 @@ elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option)
          type = EFL_GFX_IMAGE_SCALE_TYPE_NONE;
          break;
        case ELM_BG_OPTION_SCALE:
-         type = EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE;
+         type = EFL_GFX_IMAGE_SCALE_TYPE_EXPAND;
          break;
        case ELM_BG_OPTION_TILE:
          type = EFL_GFX_IMAGE_SCALE_TYPE_TILE;
@@ -97,7 +97,7 @@ elm_bg_option_set(Evas_Object *obj, Elm_Bg_Option option)
          break;
        case ELM_BG_OPTION_LAST:
        default:
-         type = EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE;
+         type = EFL_GFX_IMAGE_SCALE_TYPE_EXPAND;
      }
    efl_gfx_image_scale_type_set(obj, type);
 }
@@ -114,7 +114,7 @@ elm_bg_option_get(const Evas_Object *obj)
        case EFL_GFX_IMAGE_SCALE_TYPE_NONE:
          option = ELM_BG_OPTION_CENTER;
         break;
-       case EFL_GFX_IMAGE_SCALE_TYPE_FIT_OUTSIDE:
+       case EFL_GFX_IMAGE_SCALE_TYPE_EXPAND:
          option = ELM_BG_OPTION_SCALE;
         break;
        case EFL_GFX_IMAGE_SCALE_TYPE_TILE:
@@ -123,7 +123,7 @@ elm_bg_option_get(const Evas_Object *obj)
        case EFL_GFX_IMAGE_SCALE_TYPE_FILL:
          option = ELM_BG_OPTION_STRETCH;
          break;
-       case EFL_GFX_IMAGE_SCALE_TYPE_FIT_INSIDE:
+       case EFL_GFX_IMAGE_SCALE_TYPE_FIT:
        default:
          ERR("Scale type %d cannot be converted to Elm_Bg_Option", type);
          break;

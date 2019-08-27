@@ -17,6 +17,7 @@ typedef struct {
 
 typedef struct {
    Button_State state[3];
+   Eina_Bool interaction;
 } Efl_Input_Clickable_Data;
 
 #define MY_CLASS EFL_INPUT_CLICKABLE_MIXIN
@@ -48,6 +49,7 @@ _efl_input_clickable_press(Eo *obj EINA_UNUSED, Efl_Input_Clickable_Data *pd, un
    Button_State *state;
    EINA_SAFETY_ON_FALSE_RETURN(button < 3);
 
+   pd->interaction = EINA_TRUE;
    INF("Widget %s,%p is pressed(%d)", efl_class_name_get(obj), obj, button);
 
    state = &pd->state[button];
@@ -60,6 +62,7 @@ _efl_input_clickable_press(Eo *obj EINA_UNUSED, Efl_Input_Clickable_Data *pd, un
                                      efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TIMER_TICK, _timer_longpress, obj));
 
    efl_event_callback_call(obj, EFL_INPUT_EVENT_PRESSED, &button);
+   pd->interaction = EINA_FALSE;
 }
 
 EOLIAN static void
@@ -69,6 +72,8 @@ _efl_input_clickable_unpress(Eo *obj EINA_UNUSED, Efl_Input_Clickable_Data *pd, 
    Button_State *state;
    Eina_Bool pressed;
    EINA_SAFETY_ON_FALSE_RETURN(button < 3);
+
+   pd->interaction = EINA_TRUE;
 
    state = &pd->state[button];
    EINA_SAFETY_ON_NULL_RETURN(state);
@@ -99,6 +104,7 @@ _efl_input_clickable_unpress(Eo *obj EINA_UNUSED, Efl_Input_Clickable_Data *pd, 
           efl_event_callback_call(obj, EFL_INPUT_EVENT_CLICKED, &clicked);
         efl_event_callback_call(obj, EFL_INPUT_EVENT_CLICKED_ANY, &clicked);
      }
+   pd->interaction = EINA_FALSE;
 }
 
 EOLIAN static void
@@ -133,4 +139,11 @@ _efl_input_clickable_longpress_abort(Eo *obj EINA_UNUSED, Efl_Input_Clickable_Da
      efl_del(state->timer);
    state->timer = NULL;
 }
+
+EOLIAN static Eina_Bool
+_efl_input_clickable_interaction_get(const Eo *obj EINA_UNUSED, Efl_Input_Clickable_Data *pd)
+{
+   return pd->interaction;
+}
+
 #include "efl_input_clickable.eo.c"

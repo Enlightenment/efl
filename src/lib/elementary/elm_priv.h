@@ -268,7 +268,7 @@ struct _Efl_Ui_Theme_Data
  * the users config doesn't need to be wiped - simply new values need
  * to be put in
  */
-# define ELM_CONFIG_FILE_GENERATION 0x0015
+# define ELM_CONFIG_FILE_GENERATION 0x0016
 # define ELM_CONFIG_VERSION_EPOCH_OFFSET 16
 # define ELM_CONFIG_VERSION         ((ELM_CONFIG_EPOCH << ELM_CONFIG_VERSION_EPOCH_OFFSET) | \
                                      ELM_CONFIG_FILE_GENERATION)
@@ -865,7 +865,6 @@ void                *_elm_icon_signal_callback_del(Evas_Object *obj,
                                                    const char *emission,
                                                    const char *source,
                                                    Edje_Signal_Cb func_cb);
- void                _efl_ui_image_sizing_eval(Evas_Object *obj);
 /* end of DEPRECATED */
 
 /* DO NOT USE THIS this is only for performance optimization! */
@@ -958,7 +957,7 @@ void efl_ui_slider_move_knob(Evas_Object *obj, double button_x, double button_y)
 # define ELM_LAYOUT_TEXT_ALIASES_OPS(_pfx) _ELM_LAYOUT_ALIASES_OPS(_pfx, text)
 
 # define EFL_CANVAS_GROUP_CALC_OPS(_pfx) \
-   EFL_OBJECT_OP_FUNC(efl_canvas_group_calculate, _##_pfx##_efl_canvas_group_calculate)
+   EFL_OBJECT_OP_FUNC(efl_canvas_group_calculate, _##_pfx##_efl_canvas_group_group_calculate)
 
 # define ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(_pfx, _typ) \
 EOLIAN static Eina_Bool \

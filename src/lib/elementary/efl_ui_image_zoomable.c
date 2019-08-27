@@ -1389,7 +1389,7 @@ _efl_ui_image_zoomable_vbar_drag_cb(void *data,
 {
    _efl_ui_image_zoomable_bar_read_and_update(data);
 
-   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_VERTICAL;
+   Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
    efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_DRAG, &type);
 }
 
@@ -1399,7 +1399,7 @@ _efl_ui_image_zoomable_vbar_press_cb(void *data,
                                      const char *emission EINA_UNUSED,
                                      const char *source EINA_UNUSED)
 {
-   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_VERTICAL;
+   Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
    efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_PRESS, &type);
 }
 
@@ -1409,7 +1409,7 @@ _efl_ui_image_zoomable_vbar_unpress_cb(void *data,
                                        const char *emission EINA_UNUSED,
                                        const char *source EINA_UNUSED)
 {
-   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_VERTICAL;
+   Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
    efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_UNPRESS, &type);
 }
 
@@ -1459,7 +1459,7 @@ _efl_ui_image_zoomable_hbar_drag_cb(void *data,
 {
    _efl_ui_image_zoomable_bar_read_and_update(data);
 
-   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL;
+   Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
    efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_DRAG, &type);
 }
 
@@ -1469,7 +1469,7 @@ _efl_ui_image_zoomable_hbar_press_cb(void *data,
                                      const char *emission EINA_UNUSED,
                                      const char *source EINA_UNUSED)
 {
-   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL;
+   Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
    efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_PRESS, &type);
 }
 
@@ -1479,7 +1479,7 @@ _efl_ui_image_zoomable_hbar_unpress_cb(void *data,
                                        const char *emission EINA_UNUSED,
                                        const char *source EINA_UNUSED)
 {
-   Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL;
+   Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
    efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_UNPRESS, &type);
 }
 
@@ -1534,20 +1534,20 @@ _efl_ui_image_zoomable_bar_show_cb(void *data, const Efl_Event *event)
 {
    Eo *obj = data;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   Efl_Ui_Scrollbar_Direction type = *(Efl_Ui_Scrollbar_Direction *)(event->info);
+   Efl_Ui_Layout_Orientation type = *(Efl_Ui_Layout_Orientation *)(event->info);
 
    if (elm_widget_is_legacy(obj))
      {
-        if (type == EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL)
+        if (type == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
           edje_object_signal_emit(wd->resize_obj, "elm,action,show,hbar", "elm");
-        else if (type == EFL_UI_SCROLLBAR_DIRECTION_VERTICAL)
+        else if (type == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
           edje_object_signal_emit(wd->resize_obj, "elm,action,show,vbar", "elm");
      }
    else
      {
-        if (type == EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL)
+        if (type == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
           edje_object_signal_emit(wd->resize_obj, "efl,action,show,hbar", "efl");
-        else if (type == EFL_UI_SCROLLBAR_DIRECTION_VERTICAL)
+        else if (type == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
           edje_object_signal_emit(wd->resize_obj, "efl,action,show,vbar", "efl");
      }
 }
@@ -1557,20 +1557,20 @@ _efl_ui_image_zoomable_bar_hide_cb(void *data, const Efl_Event *event)
 {
    Eo *obj = data;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
-   Efl_Ui_Scrollbar_Direction type = *(Efl_Ui_Scrollbar_Direction *)(event->info);
+   Efl_Ui_Layout_Orientation type = *(Efl_Ui_Layout_Orientation *)(event->info);
 
    if (elm_widget_is_legacy(obj))
      {
-        if (type == EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL)
+        if (type == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
           edje_object_signal_emit(wd->resize_obj, "elm,action,hide,hbar", "elm");
-        else if (type == EFL_UI_SCROLLBAR_DIRECTION_VERTICAL)
+        else if (type == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
           edje_object_signal_emit(wd->resize_obj, "elm,action,hide,vbar", "elm");
      }
    else
      {
-        if (type == EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL)
+        if (type == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
           edje_object_signal_emit(wd->resize_obj, "efl,action,hide,hbar", "efl");
-        else if (type == EFL_UI_SCROLLBAR_DIRECTION_VERTICAL)
+        else if (type == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
           edje_object_signal_emit(wd->resize_obj, "efl,action,hide,vbar", "efl");
      }
 }

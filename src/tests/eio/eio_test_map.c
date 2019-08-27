@@ -84,6 +84,7 @@ EFL_START_TEST(eio_test_map_simple)
    ecore_main_loop_begin();
    fail_if(!ef);
 
+   unlink(file_path);
    eina_tmpstr_del(file_path);
 }
 EFL_END_TEST

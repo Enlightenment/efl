@@ -72,7 +72,7 @@ EFL_START_TEST(elm_actionslider_test_callbacks)
    elm_actionslider_enabled_pos_set(as, ELM_ACTIONSLIDER_LEFT |
                                     ELM_ACTIONSLIDER_CENTER | ELM_ACTIONSLIDER_RIGHT);
    evas_object_smart_callback_add(as, "pos_changed",
-                                  event_callback_that_is_called_exactly_one_time_and_sets_a_single_int_data_pointer_when_called, &called);
+                                  event_callback_single_call_int_data, &called);
    evas_object_smart_callback_add(as, "selected", test_selected_cb, &called);
 
    get_me_to_those_events(as);

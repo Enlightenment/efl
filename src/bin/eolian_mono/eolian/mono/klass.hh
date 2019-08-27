@@ -50,6 +50,11 @@ is_inherit_context(Context const& context)
    return context_find_tag<class_context>(context).current_wrapper_kind == class_context::inherit;
 }
 
+enum partial_class
+{
+ class_partial = 1
+};
+
 struct klass
 {
    template <typename OutputIterator, typename Context>
@@ -109,9 +114,11 @@ struct klass
        if(!as_generator("[Efl.Eo.BindingEntity]\n").generate(sink, attributes::unused, iface_cxt))
          return false;
 
+       using efl::eolian::grammar::lit;
        if(!as_generator
         (
-         "public " /*<< class_type*/ "interface" /*<<*/ " " << string << " : "
+         lit("public ") << (is_partial ? "partial ":"")
+         /*<< class_type*/ << "interface" /*<<*/ " " << string << " : "
          )
         .generate(sink, name_helpers::klass_interface_name(cls), iface_cxt))
          return false;
@@ -191,7 +198,7 @@ struct klass
          if(!as_generator
             (
              documentation
-             << "sealed public class " << concrete_name << " :\n"
+             << "sealed public " << (is_partial ? "partial ":"") << " class " << concrete_name << " :\n"
              << scope_tab << (root ? "Efl.Eo.EoWrapper" : "") << (klass_full_concrete_or_interface_name % "") << "\n"
              << scope_tab << ", " << interface_name << "\n"
              << scope_tab << *(", " << name_helpers::klass_full_concrete_or_interface_name) << "\n"
@@ -284,7 +291,14 @@ struct klass
              documentation
              << "[" << name_helpers::klass_full_native_inherit_name(cls) << "]\n"
              << "[Efl.Eo.BindingEntity]\n"
-             << "public " << class_type << " " << name_helpers::klass_concrete_name(cls) << " : "
+             << "public "
+             << (is_partial
+                 ? class_type == "class"
+                 ? "partial class"
+                 : "abstract partial class"
+                 : class_type
+                )
+             << " " << name_helpers::klass_concrete_name(cls) << " : "
              << (klass_full_concrete_or_interface_name % ",") // classes
              << (root ? "Efl.Eo.EoWrapper" : "") // ... or root
              << (inherit_interfaces.empty() ? "" : ", ")
@@ -358,13 +372,15 @@ struct klass
      }
 
      if(!as_generator
-        (lit("#pragma warning disable CS1591\n") // Disabling warnings as DocFx will hide these classes
+        (lit("#if EFL_BETA\n")
+         << "#pragma warning disable CS1591\n" // Disabling warnings as DocFx will hide these classes
          <<"public static class " << (string % "_") << name_helpers::klass_inherit_name(cls)
          << "_ExtensionMethods {\n"
          << *((scope_tab << property_extension_method_definition(cls)) << "\n")
          << *((scope_tab << part_extension_method_definition(cls)) << "\n")
          << "}\n"
-         << lit("#pragma warning restore CS1591\n"))
+         << "#pragma warning restore CS1591\n"
+         << "#endif\n")
         .generate(sink, std::make_tuple(cls.namespaces, implementable_properties, cls.parts), context))
      return false;
 
@@ -598,9 +614,16 @@ struct klass
        }
      return true;
    }
+
+  bool is_partial;
+
+  klass const operator()(partial_class) const
+  {
+    return klass{true};
+  }
 };
 
-struct klass const klass = {};
+struct klass const klass = {false};
 
 }
 

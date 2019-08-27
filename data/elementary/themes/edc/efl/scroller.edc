@@ -313,7 +313,6 @@ group { name: "efl/scroller";
          target: "y_vbar_down";
          target: "arrow1_vbar_indent";
          target: "arrow2_vbar_indent";
-         after: "check_pos_vbar";
       }
       program {
          signal: "efl,action,hide,vbar"; source: "efl";
@@ -374,11 +373,6 @@ group { name: "efl/scroller";
       }
       program {
          signal: "efl,action,scroll"; source: "efl";
-         script {
-            action_on_pos_vbar(10);
-         }
-      }
-      program { name: "check_pos_vbar";
          script {
             action_on_pos_vbar(10);
          }
@@ -600,7 +594,6 @@ group { name: "efl/scroller";
          target: "x_hbar_right";
          target: "arrow1_hbar_indent";
          target: "arrow2_hbar_indent";
-         after: "check_pos_hbar";
       }
       program {
          signal: "efl,action,hide,hbar"; source: "efl";
@@ -653,21 +646,14 @@ group { name: "efl/scroller";
          signal: "mouse,down,1*"; source: "sb_hbar_p1";
          action: DRAG_VAL_PAGE -1.0 0.0;
          target: "efl.dragable.hbar";
-         after: "check_pos_hbar";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_hbar_p2";
          action: DRAG_VAL_PAGE  1.0 0.0;
          target: "efl.dragable.hbar";
-         after: "check_pos_hbar";
       }
       program {
          signal: "efl,action,scroll"; source: "efl";
-         script {
-            action_on_pos_hbar(10);
-         }
-      }
-      program { name: "check_pos_hbar";
          script {
             action_on_pos_hbar(10);
          }

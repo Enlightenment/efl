@@ -2038,12 +2038,12 @@ _efl_ui_scroll_manager_scrollbar_h_visibility_apply(Efl_Ui_Scroll_Manager_Data *
 {
    if (sd->hbar_visible)
      {
-        Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL;
+        Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
         efl_event_callback_call(sd->parent, EFL_UI_SCROLLBAR_EVENT_BAR_SHOW, &type);
      }
    else
      {
-        Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_HORIZONTAL;
+        Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
         efl_event_callback_call(sd->parent, EFL_UI_SCROLLBAR_EVENT_BAR_HIDE, &type);
      }
 }
@@ -2053,12 +2053,12 @@ _efl_ui_scroll_manager_scrollbar_v_visibility_apply(Efl_Ui_Scroll_Manager_Data *
 {
    if (sd->vbar_visible)
      {
-        Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_VERTICAL;
+        Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
         efl_event_callback_call(sd->parent, EFL_UI_SCROLLBAR_EVENT_BAR_SHOW, &type);
      }
    else
      {
-        Efl_Ui_Scrollbar_Direction type = EFL_UI_SCROLLBAR_DIRECTION_VERTICAL;
+        Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
         efl_event_callback_call(sd->parent, EFL_UI_SCROLLBAR_EVENT_BAR_HIDE, &type);
      }
 }

@@ -50,6 +50,7 @@ struct options_type
    int v_major;
    int v_minor;
    bool want_beta;
+   bool want_partial;
    std::map<const std::string, std::string> references_map;
 };
 
@@ -192,8 +193,9 @@ run(options_type const& opts)
        efl::eolian::grammar::attributes::klass_def klass_def(klass, opts.unit);
        std::vector<efl::eolian::grammar::attributes::klass_def> klasses{klass_def};
 
-       if (!eolian_mono::klass
-         .generate(iterator, klass_def, context))
+       auto klass_gen = !opts.want_partial ? eolian_mono::klass
+         : eolian_mono::klass(eolian_mono::class_partial);
+       if (!klass_gen.generate(iterator, klass_def, context))
          {
             throw std::runtime_error("Failed to generate class");
          }
@@ -297,6 +299,7 @@ _usage(const char *progname)
      << "  -v, --version           Print the version." << std::endl
      << "  -b, --beta              Enable @beta methods." << std::endl
      << "  -e, --example-dir <dir> Folder to search for example files." << std::endl
+     << "  -p, --partial           Create class as a partial class" << std::endl
      << "  -h, --help              Print this help." << std::endl;
    exit(EXIT_FAILURE);
 }
@@ -328,9 +331,10 @@ opts_get(int argc, char **argv)
        { "references", required_argument, 0, 'r'},
        { "beta", no_argument, 0, 'b'},
        { "example-dir", required_argument, 0,  'e' },
+       { "partial", no_argument, 0,  'p' },
        { 0,           0,                 0,   0  }
      };
-   const char* options = "I:D:o:c:M:m:ar:vhbe:";
+   const char* options = "I:D:o:c:M:m:ar:vhbpe:";
 
    int c, idx;
    while ( (c = getopt_long(argc, argv, options, long_options, &idx)) != -1)
@@ -390,6 +394,10 @@ opts_get(int argc, char **argv)
           {
              opts.examples_dir = optarg;
              if (!opts.examples_dir.empty() && opts.examples_dir.back() != '/') opts.examples_dir += "/";
+          }
+        else if (c == 'p')
+          {
+             opts.want_partial = true;
           }
      }
    if (optind == argc-1)

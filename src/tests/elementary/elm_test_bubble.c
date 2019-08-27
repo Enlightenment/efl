@@ -58,7 +58,7 @@ EFL_START_TEST(elm_bubble_test_callbacks)
    elm_object_part_text_set(bb, "info", "Corner: bottom_right");
    elm_object_part_content_set(bb, "icon", ic);
    elm_bubble_pos_set(bb, ELM_BUBBLE_POS_BOTTOM_RIGHT);
-   evas_object_smart_callback_add(bb, "clicked", event_callback_that_is_called_exactly_one_time_and_sets_a_single_int_data_pointer_when_called, &called);
+   evas_object_smart_callback_add(bb, "clicked", event_callback_single_call_int_data, &called);
    evas_object_show(ic);
    evas_object_size_hint_weight_set(bb, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bb, EVAS_HINT_FILL, EVAS_HINT_FILL);

@@ -47,14 +47,14 @@ static Eina_Size2D
 _popup_scroll_alert_setup(Eo **popup_ret, Eo **layout_ret)
 {
    Eina_Size2D layout_sz_min;
-   Eo *popup = *popup_ret = _popup_alert_setup(EFL_UI_SCROLL_ALERT_POPUP_CLASS);
+   Eo *popup = *popup_ret = _popup_alert_setup(EFL_UI_ALERT_POPUP_CLASS);
    Eo *layout = *layout_ret = _popup_layout_create(popup);
 
    /* should be 200x200 */
    layout_sz_min = efl_gfx_hint_size_combined_min_get(layout);
    efl_gfx_entity_size_set(layout, layout_sz_min);
 
-   efl_content_set(popup, layout);
+   efl_ui_widget_scrollable_content_set(popup, layout);
    return layout_sz_min;
 }
 
@@ -177,7 +177,7 @@ EFL_START_TEST(efl_ui_test_popup_events)
    popup = efl_add(EFL_UI_POPUP_CLASS, win);
 
    efl_event_callback_add(popup, EFL_UI_POPUP_EVENT_BACKWALL_CLICKED,
-     (void*)event_callback_that_is_called_exactly_one_time_and_sets_a_single_int_data_pointer_when_called, &called);
+     (void*)event_callback_single_call_int_data, &called);
    efl_event_callback_add(popup, EFL_UI_POPUP_EVENT_TIMEOUT, event_callback_that_quits_the_main_loop_when_called, NULL);
    efl_gfx_hint_size_min_set(popup, EINA_SIZE2D(POPUP_SIZE, POPUP_SIZE));
 
@@ -199,7 +199,7 @@ EFL_START_TEST(efl_ui_test_popup_events)
    efl_gfx_entity_size_set(repeat_test_btn, EINA_SIZE2D(100, 100));
    efl_text_set(repeat_test_btn, "Repeat Event Test");
    efl_event_callback_add(repeat_test_btn, EFL_INPUT_EVENT_CLICKED,
-     (void*)event_callback_that_is_called_exactly_one_time_and_sets_a_single_int_data_pointer_when_called, &called);
+     (void*)event_callback_single_call_int_data, &called);
    efl_ui_popup_part_backwall_repeat_events_set(efl_part(popup, "backwall"), EINA_TRUE);
    click_object(repeat_test_btn);
 
@@ -445,7 +445,7 @@ EFL_END_TEST
 
 EFL_START_TEST(efl_ui_test_popup_text_alert)
 {
-   Eo *popup = _popup_alert_setup(EFL_UI_TEXT_ALERT_POPUP_CLASS);
+   Eo *popup = _popup_alert_setup(EFL_UI_ALERT_POPUP_CLASS);
    char test_string[] = "This is Text Popup";
    unsigned int string_counts[] =
    {
@@ -510,12 +510,12 @@ EFL_START_TEST(efl_ui_test_popup_text_alert)
         for (j = 0; j < string_counts[i]; j++)
           eina_strbuf_append(buf, test_string);
 
-        efl_text_set(popup, eina_strbuf_string_get(buf));
+        efl_ui_widget_scrollable_text_set(popup, eina_strbuf_string_get(buf));
         efl_gfx_hint_size_max_set(popup, test_expands[i]);
         efl_canvas_group_calculate(popup);
 
         /* get internal label object: VERY illegal */
-        scroller = efl_content_get(efl_part(efl_super(popup, efl_ui_text_alert_popup_class_get()), "efl.content"));
+        scroller = efl_content_get(efl_part(efl_super(popup, EFL_UI_ALERT_POPUP_CLASS), "efl.content"));
         label = efl_content_get(scroller);
 
         /* label should never be larger than scroller horizontally

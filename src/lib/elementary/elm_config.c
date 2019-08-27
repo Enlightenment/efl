@@ -1477,6 +1477,7 @@ _profile_fetch_from_conf(void)
    Eet_File *ef = NULL;
    int len = 0, i;
 
+   if (_use_build_config) goto end;
    // if env var - use profile without question
    s = _getenv_once("ELM_PROFILE");
    if (s)
@@ -1497,7 +1498,7 @@ _profile_fetch_from_conf(void)
           }
      }
 
-   for (i = 0; i < 2 && !_use_build_config; i++)
+   for (i = 0; i < 2; i++)
      {
         // user profile
         if (i == 0)
@@ -1527,7 +1528,7 @@ _profile_fetch_from_conf(void)
              eet_close(ef);
           }
      }
-
+end:
    _elm_profile = strdup("default");
 }
 
@@ -2033,6 +2034,7 @@ _config_flush_get(void)
    _elm_config->is_mirrored = is_mirrored;
    _elm_config->translate = translate;
 
+   _elm_recache();
    _config_apply();
    _config_sub_apply();
    evas_font_reinit();
@@ -2040,7 +2042,6 @@ _config_flush_get(void)
    _elm_config_color_overlay_apply();
    if (pre_scale != _elm_config->scale)
      _elm_rescale();
-   _elm_recache();
    _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
    _elm_win_access(_elm_config->access_mode);
@@ -2292,6 +2293,35 @@ _elm_key_bindings_update(Elm_Config *cfg, Elm_Config *syscfg EINA_UNUSED)
 }
 
 static void
+_elm_key_bindings_copy_missing_bindings(Elm_Config *cfg, Elm_Config *syscfg)
+{
+   Eina_Hash *safed_bindings = eina_hash_string_superfast_new(NULL);
+   Elm_Config_Bindings_Widget *wd;
+   Eina_List *n, *nnext;
+   Eina_Bool missing_bindings = EINA_FALSE;
+
+   EINA_LIST_FOREACH(cfg->bindings, n, wd)
+     {
+        eina_hash_add(safed_bindings, wd->name, wd);
+     }
+
+   EINA_LIST_FOREACH_SAFE(syscfg->bindings, n, nnext, wd)
+     {
+         if (!eina_hash_find(safed_bindings, wd->name))
+           {
+              syscfg->bindings = eina_list_remove_list(syscfg->bindings, n);
+              cfg->bindings = eina_list_append(cfg->bindings, wd);
+              printf("Upgraded keybindings for %s!\n", wd->name);
+              missing_bindings = EINA_TRUE;
+           }
+     }
+   if (missing_bindings)
+     {
+        printf("There have been missing Key bindings in the config, config is now adjusted\n");
+     }
+}
+
+static void
 _config_update(void)
 {
    Elm_Config *tcfg;
@@ -2414,6 +2444,13 @@ _config_update(void)
    _elm_config->win_no_border = EINA_FALSE;
    IFCFGEND
 
+   IFCFG(0x0022)
+
+   _elm_key_bindings_copy_missing_bindings(_elm_config, tcfg);
+   /* after this function call, the tcfg is partly invalidated, reload! */
+   _config_free(tcfg);
+   tcfg = _config_system_load();
+   IFCFGEND
    /**
     * Fix user config for current ELM_CONFIG_EPOCH here.
     **/
@@ -4218,10 +4255,10 @@ _elm_config_init(void)
    ELM_SAFE_FREE(_elm_accel_preference, eina_stringshare_del);
    ELM_SAFE_FREE(_elm_gl_preference, eina_stringshare_del);
    _translation_init();
+   _elm_recache();
    _config_apply();
    _elm_config_font_overlay_apply();
    _elm_config_color_overlay_apply();
-   _elm_recache();
    _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
 }
@@ -4402,6 +4439,7 @@ _elm_config_reload(void)
    _elm_config->is_mirrored = is_mirrored;
    _elm_config->translate = translate;
 
+   _elm_recache();
    _config_apply();
    _elm_config_font_overlay_apply();
    _elm_config_color_overlay_apply();
@@ -4426,7 +4464,6 @@ _elm_config_reload(void)
       )
      _elm_rescale();
 #undef CMP
-   _elm_recache();
    _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
    ecore_event_add(ELM_EVENT_CONFIG_ALL_CHANGED, NULL, NULL, NULL);
@@ -4703,11 +4740,11 @@ _elm_config_profile_set(const char *profile)
    _elm_config->is_mirrored = is_mirrored;
    _elm_config->translate = translate;
 
+   _elm_recache();
    _config_apply();
    _elm_config_font_overlay_apply();
    _elm_config_color_overlay_apply();
    _elm_rescale();
-   _elm_recache();
    _elm_old_clouseau_reload();
    _elm_config_key_binding_hash();
 }

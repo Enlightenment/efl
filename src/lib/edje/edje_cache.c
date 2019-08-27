@@ -156,6 +156,103 @@ _edje_programs_patterns_init(Edje_Part_Collection *edc)
    ssp->sources_patterns = edje_match_programs_source_init(all, j);
 }
 
+static inline void
+_edje_part_collection_fix(Edje_Part_Collection *edc)
+{
+   if (edc->checked) return;
+
+   edc->checked = 1;
+
+   unsigned int j;
+   Edje_Part *ep;
+   Eina_List *hist;
+
+   for (j = 0; j < edc->parts_count; ++j)
+     {
+        Edje_Part *ep2;
+        ep = edc->parts[j];
+
+        /* Register any color classes in this parts descriptions. */
+        hist = NULL;
+        hist = eina_list_append(hist, ep);
+        ep2 = ep;
+        while (ep2->dragable.confine_id >= 0)
+          {
+             if (ep2->dragable.confine_id >= (int)edc->parts_count)
+               {
+                  ERR("confine_to above limit. invalidating it.");
+                  ep2->dragable.confine_id = -1;
+                  break;
+               }
+
+             ep2 = edc->parts[ep2->dragable.confine_id];
+             if (eina_list_data_find(hist, ep2))
+               {
+                  ERR("confine_to loops. invalidating loop.");
+                  ep2->dragable.confine_id = -1;
+                  break;
+               }
+             hist = eina_list_append(hist, ep2);
+          }
+        eina_list_free(hist);
+        hist = NULL;
+        hist = eina_list_append(hist, ep);
+        ep2 = ep;
+        while (ep2->dragable.event_id >= 0)
+          {
+             Edje_Part *prev;
+
+             if (ep2->dragable.event_id >= (int)edc->parts_count)
+               {
+                  ERR("event_id above limit. invalidating it.");
+                  ep2->dragable.event_id = -1;
+                  break;
+               }
+             prev = ep2;
+
+             ep2 = edc->parts[ep2->dragable.event_id];
+             /* events_to may be used only with dragable */
+             if (!ep2->dragable.x && !ep2->dragable.y)
+               {
+                  prev->dragable.event_id = -1;
+                  break;
+               }
+
+             if (eina_list_data_find(hist, ep2))
+               {
+                  ERR("events_to loops. invalidating loop.");
+                  ep2->dragable.event_id = -1;
+                  break;
+               }
+             hist = eina_list_append(hist, ep2);
+          }
+        eina_list_free(hist);
+        hist = NULL;
+        hist = eina_list_append(hist, ep);
+        ep2 = ep;
+        while (ep2->clip_to_id >= 0)
+          {
+             if (ep2->clip_to_id >= (int)edc->parts_count)
+               {
+                  ERR("clip_to_id above limit. invalidating it.");
+                  ep2->clip_to_id = -1;
+                  break;
+               }
+
+             ep2 = edc->parts[ep2->clip_to_id];
+             if (eina_list_data_find(hist, ep2))
+               {
+                  ERR("clip_to loops. invalidating loop.");
+                  ep2->clip_to_id = -1;
+                  break;
+               }
+             hist = eina_list_append(hist, ep2);
+          }
+        eina_list_free(hist);
+        hist = NULL;
+     }
+}
+
 static Edje_Part_Collection *
 _edje_file_coll_open(Edje_File *edf, const char *coll)
 {
@@ -283,6 +380,8 @@ _edje_file_coll_open(Edje_File *edf, const char *coll)
              EDJE_LOAD_BUILD_TABLE(nocmp, edc, i, pr);
           }
      }
+
+   _edje_part_collection_fix(edc);
 
    return edc;
 }
@@ -463,30 +562,21 @@ _edje_file_dangling(Edje_File *edf)
 
 #endif
 
-Edje_File *
-_edje_cache_file_coll_open(const Eina_File *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret, Edje *ed EINA_UNUSED)
+static inline void
+_edje_file_cache_init()
 {
-   Edje_File *edf;
-   Eina_List *l, *hist;
-   Edje_Part_Collection *edc;
-   Edje_Part *ep;
-
    if (!_edje_id_hash)
      _edje_id_hash = eina_hash_stringshared_new(NULL);
    if (!_edje_file_hash)
-     {
-        _edje_file_hash = eina_hash_pointer_new(NULL);
-        goto find_list;
-     }
+     _edje_file_hash = eina_hash_pointer_new(NULL);
+}
 
-   edf = eina_hash_find(_edje_file_hash, &file);
-   if (edf)
-     {
-        edf->references++;
-        goto open;
-     }
+static inline Edje_File*
+_edje_file_cache_trash_pop(const Eina_File *file)
+{
+   Edje_File *edf;
+   Eina_List *l;
 
-find_list:
    EINA_LIST_FOREACH(_edje_file_cache, l, edf)
      {
         if (edf->f == file)
@@ -494,121 +584,61 @@ find_list:
              edf->references = 1;
              _edje_file_cache = eina_list_remove_list(_edje_file_cache, l);
              eina_hash_direct_add(_edje_file_hash, &edf->f, edf);
-             goto open;
+             return edf;
           }
      }
+   return NULL;
+}
 
-   edf = _edje_file_open(file, error_ret, eina_file_mtime_get(file), !!coll);
-   if (!edf) return NULL;
+static inline Edje_File*
+_edje_file_cache_find(const Eina_File *file)
+{
+   Edje_File *edf;
 
+   // initialize cache.
+   _edje_file_cache_init();
+
+   // serach in the file_hash.
+   edf = eina_hash_find(_edje_file_hash, &file);
+   if (edf)
+     {
+        edf->references++;
+        return edf;
+     }
+
+   // search in the trash list
+   return _edje_file_cache_trash_pop(file);
+}
+
+static inline void
+_edje_file_cache_add(Edje_File *edf)
+{
    eina_hash_direct_add(_edje_file_hash, &edf->f, edf);
    if (edf->id)
      eina_hash_list_append(_edje_id_hash, edf->id, edf);
-   /* return edf; */
+}
 
-open:
+Edje_File *
+_edje_cache_file_coll_open(const Eina_File *file, const char *coll, int *error_ret, Edje_Part_Collection **edc_ret, Edje *ed EINA_UNUSED)
+{
+   Edje_File *edf;
+   Edje_Part_Collection *edc;
+
+   edf = _edje_file_cache_find(file);
+
+   if (!edf)
+     {
+        edf = _edje_file_open(file, error_ret, eina_file_mtime_get(file), !!coll);
+        if (!edf) return NULL;
+        _edje_file_cache_add(edf);
+     }
+
    if (!coll)
      return edf;
 
    edc = _edje_file_coll_open(edf, coll);
    if (!edc)
-     {
-        *error_ret = EDJE_LOAD_ERROR_UNKNOWN_COLLECTION;
-     }
-   else
-     {
-        if (!edc->checked)
-          {
-             unsigned int j;
-
-             for (j = 0; j < edc->parts_count; ++j)
-               {
-                  Edje_Part *ep2;
-
-                  ep = edc->parts[j];
-
-                  /* Register any color classes in this parts descriptions. */
-                  hist = NULL;
-                  hist = eina_list_append(hist, ep);
-                  ep2 = ep;
-                  while (ep2->dragable.confine_id >= 0)
-                    {
-                       if (ep2->dragable.confine_id >= (int)edc->parts_count)
-                         {
-                            ERR("confine_to above limit. invalidating it.");
-                            ep2->dragable.confine_id = -1;
-                            break;
-                         }
-
-                       ep2 = edc->parts[ep2->dragable.confine_id];
-                       if (eina_list_data_find(hist, ep2))
-                         {
-                            ERR("confine_to loops. invalidating loop.");
-                            ep2->dragable.confine_id = -1;
-                            break;
-                         }
-                       hist = eina_list_append(hist, ep2);
-                    }
-                  eina_list_free(hist);
-                  hist = NULL;
-                  hist = eina_list_append(hist, ep);
-                  ep2 = ep;
-                  while (ep2->dragable.event_id >= 0)
-                    {
-                       Edje_Part *prev;
-
-                       if (ep2->dragable.event_id >= (int)edc->parts_count)
-                         {
-                            ERR("event_id above limit. invalidating it.");
-                            ep2->dragable.event_id = -1;
-                            break;
-                         }
-                       prev = ep2;
-
-                       ep2 = edc->parts[ep2->dragable.event_id];
-                       /* events_to may be used only with dragable */
-                       if (!ep2->dragable.x && !ep2->dragable.y)
-                         {
-                            prev->dragable.event_id = -1;
-                            break;
-                         }
-
-                       if (eina_list_data_find(hist, ep2))
-                         {
-                            ERR("events_to loops. invalidating loop.");
-                            ep2->dragable.event_id = -1;
-                            break;
-                         }
-                       hist = eina_list_append(hist, ep2);
-                    }
-                  eina_list_free(hist);
-                  hist = NULL;
-                  hist = eina_list_append(hist, ep);
-                  ep2 = ep;
-                  while (ep2->clip_to_id >= 0)
-                    {
-                       if (ep2->clip_to_id >= (int)edc->parts_count)
-                         {
-                            ERR("clip_to_id above limit. invalidating it.");
-                            ep2->clip_to_id = -1;
-                            break;
-                         }
-
-                       ep2 = edc->parts[ep2->clip_to_id];
-                       if (eina_list_data_find(hist, ep2))
-                         {
-                            ERR("clip_to loops. invalidating loop.");
-                            ep2->clip_to_id = -1;
-                            break;
-                         }
-                       hist = eina_list_append(hist, ep2);
-                    }
-                  eina_list_free(hist);
-                  hist = NULL;
-               }
-             edc->checked = 1;
-          }
-     }
+     *error_ret = EDJE_LOAD_ERROR_UNKNOWN_COLLECTION;
 
    if (edc_ret) *edc_ret = edc;
 

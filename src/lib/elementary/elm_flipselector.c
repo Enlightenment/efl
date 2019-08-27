@@ -62,7 +62,7 @@ static const Elm_Action key_actions[] = {
 };
 
 EOLIAN static void
-_elm_flipselector_efl_canvas_group_calculate(Eo *obj, Elm_Flipselector_Data *sd)
+_elm_flipselector_efl_canvas_group_group_calculate(Eo *obj, Elm_Flipselector_Data *sd)
 {
    char *tmp = NULL;
    Evas_Coord minw = -1, minh = -1, w, h;

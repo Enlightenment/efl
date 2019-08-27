@@ -348,6 +348,14 @@ class TestCsharpProperties
         iface.IfaceProp = val;
         Test.AssertEquals(val, iface.IfaceProp);
     }
+
+    public static void test_csharp_multi_valued_prop()
+    {
+        var obj = new Dummy.TestObject();
+        obj.MultiValuedProp = (1, 2);
+        var ret = obj.MultiValuedProp;
+        Test.AssertEquals(ret, (1, 2));
+    }
 }
 
 class TestEoGrandChildrenFinalize

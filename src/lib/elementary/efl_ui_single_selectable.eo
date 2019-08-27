@@ -13,5 +13,20 @@ interface @beta Efl.Ui.Single_Selectable {
           selectable : Efl.Ui.Selectable; [[The latest selected item.]]
         }
       }
+      @property fallback_selection {
+         [[A object that will be selected in case nothing is selected
+
+           A object set to this property will be selected instead of no item beeing selected. Which means, there will be always at least one element selected.
+           If this property is NULL, the state of "no item is selected" can be reached.
+
+           Setting this property as a result of selection events results in undefined behavior.
+         ]]
+         values {
+            fallback : Efl.Ui.Selectable;
+         }
+      }
+   }
+   events {
+      selection_changed : void; [[Called when there is a change in the selection state, this event will collect all the item selection change events that are happening within one loop iteration. This means, you will only get this event once, even if a lot of items have changed. If you are interested in detailed changes, subscribe to the selection,changed event of Efl.Ui.Selectable.]]
    }
 }

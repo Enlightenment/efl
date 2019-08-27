@@ -372,6 +372,7 @@ _thread_exit_eval(Eo *obj, Efl_Thread_Data *pd)
                eina_promise_reject(p, exit_code + 1000000);
              else eina_promise_resolve(p, eina_value_int_init(exit_code));
           }
+        efl_del(obj);
      }
 }
 
@@ -564,6 +565,48 @@ _efl_thread_efl_object_constructor(Eo *obj, Efl_Thread_Data *pd)
    pd->fd.can_write = EINA_TRUE;
    pd->ctrl.in = -1;
    pd->ctrl.out = -1;
+   return obj;
+}
+
+
+static void
+_child_thread_del_cb(void *data, const Efl_Event *event)
+{
+   Eo *loop = data;
+   Efl_Loop_Data *loop_data = efl_data_scope_get(loop, EFL_LOOP_CLASS);
+
+   if (!loop_data) return;
+   _efl_thread_child_remove(loop, loop_data, event->object);
+   if (!loop_data->quit_on_last_thread_child_del) return;
+   if (loop_data->thread_children) return;
+   // no more children waiting exits - quit the loop
+   _ecore_main_loop_quit(loop, loop_data);
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(thread_child_del,
+                           { EFL_EVENT_DEL, _child_thread_del_cb });
+
+void
+_efl_thread_child_remove(Eo *loop, Efl_Loop_Data *pd, Eo *child)
+{
+   pd->thread_children = eina_list_remove(pd->thread_children, child);
+   efl_event_callback_array_del(child, thread_child_del(), loop);
+}
+
+EOLIAN static Efl_Object *
+_efl_thread_efl_object_finalize(Eo *obj, Efl_Thread_Data *pd EINA_UNUSED)
+{
+   Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
+   if (loop != obj)
+     {
+        Efl_Loop_Data *loop_data = efl_data_scope_get(loop, EFL_LOOP_CLASS);
+        if (loop_data)
+          {
+             loop_data->thread_children =
+               eina_list_prepend(loop_data->thread_children, obj);
+             efl_event_callback_array_add(obj, thread_child_del(), loop);
+          }
+     }
    return obj;
 }
 
@@ -834,7 +877,7 @@ EOLIAN static void
 _efl_thread_efl_task_end(Eo *obj EINA_UNUSED, Efl_Thread_Data *pd)
 {
    if (pd->end_sent) return;
-   if (pd->thdat)
+   if ((pd->thdat) && (!pd->exit_called))
      {
         Control_Data cmd;
 

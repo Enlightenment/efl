@@ -47,7 +47,8 @@ class Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pack_Lay
       Efl.Pack_Table.pack_table;
       Efl.Pack_Table.table_content_get;
       Efl.Pack_Table.table_contents_get;
-      Efl.Pack_Table.table_position { get; }
+      Efl.Pack_Table.table_cell_column { get; set; }
+      Efl.Pack_Table.table_cell_row { get; set; }
       Efl.Pack_Table.table_size { get; set; }
       Efl.Pack_Table.table_columns { get; set; }
       Efl.Pack_Table.table_rows { get; set; }

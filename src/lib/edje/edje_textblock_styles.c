@@ -219,7 +219,11 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl, Eina_Bool force)
      eina_strbuf_free(txt);
 }
 
-/* Update all evas_styles which are in an edje
+/*
+ * mark all the styles in the Edje_File dirty (except readonly styles)so that
+ * subsequent  request to style will update before giving the style.
+ * Note: this will enable lazy style computation (only when some
+ * widget request for new style it will get computed).
  *
  * @param ed The edje containing styles which need to be updated
  */
@@ -232,7 +236,7 @@ _edje_textblock_style_all_update(Edje *ed)
    if (!ed->file) return;
 
    EINA_LIST_FOREACH(ed->file->styles, l, stl)
-      _edje_textblock_style_update(ed, stl, EINA_FALSE);
+     if (stl && !stl->readonly) stl->cache = EINA_FALSE;
 }
 
 static inline Edje_Style *
@@ -254,14 +258,57 @@ _edje_textblock_style_member_add(Edje *ed, Edje_Style *stl)
    EINA_LIST_FOREACH(stl->tags, l, tag)
      {
         if (tag->text_class)
-          {
-             efl_observable_observer_add(_edje_text_class_member, tag->text_class, ed->obj);
-
-             /* Newly added text_class member should be updated
-                according to the latest text_class's status. */
-             _edje_textblock_style_update(ed, stl, EINA_TRUE);
-          }
+          efl_observable_observer_add(_edje_text_class_member, tag->text_class, ed->obj);
      }
+    /* Newly added text_class member should be updated
+       according to the latest text_class's status. */
+     _edje_textblock_style_update(ed, stl, EINA_TRUE);
+}
+
+static inline void
+_edje_textblock_style_observer_add(Edje_Style *stl, Efl_Observer* observer)
+{
+   Eina_List* l;
+   Edje_Style_Tag *tag;
+
+   EINA_LIST_FOREACH(stl->tags, l, tag)
+     {
+        if (tag->text_class)
+          efl_observable_observer_add(_edje_text_class_member, tag->text_class, observer);
+     }
+}
+
+static inline void
+_edje_textblock_style_observer_del(Edje_Style *stl, Efl_Observer* observer)
+{
+   Eina_List* l;
+   Edje_Style_Tag *tag;
+
+   EINA_LIST_FOREACH(stl->tags, l, tag)
+     {
+        if (tag->text_class)
+          efl_observable_observer_del(_edje_text_class_member, tag->text_class, observer);
+     }
+}
+
+static inline void
+_edje_textblock_style_add(Edje *ed, Edje_Style *stl)
+{
+   if (!stl) return;
+
+   if (stl->readonly) return;
+
+   _edje_textblock_style_observer_add(stl, ed->obj);
+
+   _edje_textblock_style_update(ed, stl, EINA_TRUE);
+}
+
+static inline void
+_edje_textblock_style_del(Edje *ed, Edje_Style *stl)
+{
+   if (!stl) return;
+
+   _edje_textblock_style_observer_del(stl, ed->obj);
 }
 
 void
@@ -280,7 +327,8 @@ _edje_textblock_styles_add(Edje *ed, Edje_Real_Part *ep)
    desc = (Edje_Part_Description_Text *)pt->default_desc;
    style = edje_string_get(&desc->text.style);
    stl = _edje_textblock_style_search(ed, style);
-   _edje_textblock_style_member_add(ed, stl);
+
+   _edje_textblock_style_add(ed, stl);
 
    /* If any other classes exist add them */
    for (i = 0; i < pt->other.desc_count; ++i)
@@ -288,7 +336,8 @@ _edje_textblock_styles_add(Edje *ed, Edje_Real_Part *ep)
         desc = (Edje_Part_Description_Text *)pt->other.desc[i];
         style = edje_string_get(&desc->text.style);
         stl = _edje_textblock_style_search(ed, style);
-        _edje_textblock_style_member_add(ed, stl);
+
+        _edje_textblock_style_add(ed, stl);
      }
 }
 
@@ -307,34 +356,15 @@ _edje_textblock_styles_del(Edje *ed, Edje_Part *pt)
 
    stl = _edje_textblock_style_search(ed, style);
 
-   if (stl)
-     {
-        Edje_Style_Tag *tag;
-        Eina_List *l;
-
-        EINA_LIST_FOREACH(stl->tags, l, tag)
-          {
-             if (tag->text_class)
-               efl_observable_observer_del(_edje_text_class_member, tag->text_class, ed->obj);
-          }
-     }
+   _edje_textblock_style_del(ed, stl);
 
    for (i = 0; i < pt->other.desc_count; ++i)
      {
         desc = (Edje_Part_Description_Text *)pt->other.desc[i];
         style = edje_string_get(&desc->text.style);
         stl = _edje_textblock_style_search(ed, style);
-        if (stl)
-          {
-             Edje_Style_Tag *tag;
-             Eina_List *l;
 
-             EINA_LIST_FOREACH(stl->tags, l, tag)
-               {
-                  if (tag->text_class)
-                    efl_observable_observer_del(_edje_text_class_member, tag->text_class, ed->obj);
-               }
-          }
+        _edje_textblock_style_del(ed, stl);
      }
 }
 

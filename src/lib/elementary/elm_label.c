@@ -208,7 +208,7 @@ _elm_label_efl_ui_widget_theme_apply(Eo *obj, Elm_Label_Data *sd)
 }
 
 EOLIAN static void
-_elm_label_efl_canvas_group_calculate(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
+_elm_label_efl_canvas_group_group_calculate(Eo *obj, Elm_Label_Data *_pd EINA_UNUSED)
 {
    Evas_Coord minw = -1, minh = -1;
    Evas_Coord resw, resh;
