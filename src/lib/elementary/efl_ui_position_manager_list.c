@@ -14,7 +14,6 @@
   Efl_Ui_Position_Manager_List_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
 typedef struct {
-   Api_Callback min_size, object;
    unsigned int size;
    Eina_Future *rebuild_absolut_size;
    Eina_Rect viewport;
@@ -26,6 +25,7 @@ typedef struct {
    int maximum_min_size;
    Vis_Segment prev_run;
    Efl_Gfx_Entity *last_group;
+   Api_Callbacks callbacks;
 } Efl_Ui_Position_Manager_List_Data;
 
 /*
@@ -41,8 +41,8 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
 {
    unsigned int i;
    const int len = 100;
-   Efl_Ui_Position_Manager_Batch_Size_Access size_buffer[100];
-
+   Efl_Ui_Position_Manager_Size_Batch_Entity size_buffer[len];
+   Efl_Ui_Position_Manager_Size_Batch_Result size_result;
 
    if (pd->size_cache) return;
 
@@ -66,7 +66,7 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
 
         if (buffer_id == 0)
           {
-             EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->min_size, i, len, NULL, size_buffer) > 0);
+             BATCH_ACCESS_SIZE(pd->callbacks, i, MIN(len, pd->size - i), EINA_TRUE, size_buffer);
           }
        size = size_buffer[buffer_id].size;
 
@@ -166,13 +166,14 @@ err:
 static inline void
 _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_Segment new, int relevant_space_size)
 {
-   int group_id = -1;
    Efl_Gfx_Entity *first_group = NULL, *first_fully_visual_group = NULL;
    Eina_Size2D first_group_size;
    Eina_Rect geom;
    const int len = 100;
-   Efl_Ui_Position_Manager_Batch_Size_Access size_buffer[len];
-   Efl_Ui_Position_Manager_Batch_Entity_Access obj_buffer[len];
+   Efl_Ui_Position_Manager_Size_Batch_Entity size_buffer[len];
+   Efl_Ui_Position_Manager_Size_Batch_Result size_result;
+   Efl_Ui_Position_Manager_Object_Batch_Entity obj_buffer[len];
+   Efl_Ui_Position_Manager_Object_Batch_Result object_result;
    unsigned int i;
 
    //placement of the plain items
@@ -191,20 +192,18 @@ _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_
 
         if (buffer_id == 0)
           {
-             int tmp_group;
-             int res1, res2;
-
-             res1 = _fill_buffer(&pd->object, i, len, &tmp_group, obj_buffer);
-             res2 = _fill_buffer(&pd->min_size, i, len, NULL, size_buffer);
-             EINA_SAFETY_ON_FALSE_RETURN(res1 == res2);
-             EINA_SAFETY_ON_FALSE_RETURN(res2 > 0);
+             BATCH_ACCESS_SIZE(pd->callbacks, i, len, EINA_FALSE, size_buffer);
+             BATCH_ACCESS_OBJECT(pd->callbacks, i, len, obj_buffer);
 
              if (i == new.start_id)
                {
-                  if (tmp_group > 0)
-                    group_id = tmp_group;
-                  else if (obj_buffer[0].group ==  EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_GROUP)
-                    group_id = i;
+                  first_group = object_result.group;
+                  first_group_size = size_result.parent_size;
+                  if (obj_buffer[0].depth_leader)
+                    {
+                       first_group = obj_buffer[0].entity;
+                       first_group_size = size_buffer[0].size;
+                    }
                }
           }
 
@@ -221,7 +220,7 @@ _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_
         else
           geom.w = size.w;
 
-        if (!first_fully_visual_group && obj_buffer[buffer_id].group == EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_GROUP &&
+        if (!first_fully_visual_group && obj_buffer[buffer_id].depth_leader &&
              eina_spans_intersect(geom.x, geom.w, pd->viewport.x, pd->viewport.w) &&
              eina_spans_intersect(geom.y, geom.h, pd->viewport.y, pd->viewport.h))
           {
@@ -236,14 +235,6 @@ _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_
           geom.x += size.w;
      }
    //Now place group items
-
-   if (group_id > 0)
-     {
-        EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->object, group_id, 1, NULL, obj_buffer) == 1);
-        EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->min_size, group_id, 1, NULL, size_buffer) == 1);
-        first_group = obj_buffer[0].entity;
-        first_group_size = size_buffer[0].size;
-     }
    if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
      first_group_size.w = pd->viewport.w;
    else
@@ -305,7 +296,7 @@ position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
    cur = _search_visual_segment(obj, pd, relevant_space_size, relevant_viewport);
    //to performance optimize the whole widget, we are setting the objects that are outside the viewport to visibility false
    //The code below ensures that things outside the viewport are always hidden, and things inside the viewport are visible
-   vis_segment_swap(&pd->object, cur, pd->prev_run);
+   vis_segment_swap(pd->callbacks, cur, pd->prev_run);
 
    _position_items(obj, pd, cur, relevant_space_size);
 
@@ -340,19 +331,6 @@ schedule_recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
 
    pd->rebuild_absolut_size = efl_loop_job(efl_app_main_get());
    eina_future_then(pd->rebuild_absolut_size, _rebuild_job_cb, obj);
-}
-
-EOLIAN static void
-_efl_ui_position_manager_list_efl_ui_position_manager_entity_data_access_set(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, void *obj_access_data, Efl_Ui_Position_Manager_Batch_Access_Entity obj_access, Eina_Free_Cb obj_access_free_cb, void *size_access_data, Efl_Ui_Position_Manager_Batch_Access_Size size_access, Eina_Free_Cb size_access_free_cb, int size)
-{
-   cache_invalidate(obj, pd);
-   pd->object.data = obj_access_data;
-   pd->object.access = obj_access;
-   pd->object.free_cb = obj_access_free_cb;
-   pd->min_size.data = size_access_data;
-   pd->min_size.access = size_access;
-   pd->min_size.free_cb = size_access_free_cb;
-   pd->size = size;
 }
 
 EOLIAN static void
@@ -408,7 +386,8 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_position_single_ite
    Eina_Size2D space_size;
    int relevant_space_size;
    Eina_Size2D size;
-   Efl_Ui_Position_Manager_Batch_Size_Access size_buffer[1];
+   Efl_Ui_Position_Manager_Size_Batch_Entity size_buffer[1];
+   Efl_Ui_Position_Manager_Size_Batch_Result size_result;
 
    if (!pd->size) return EINA_RECT(0,0,0,0);
 
@@ -428,7 +407,7 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_position_single_ite
 
    geom = pd->viewport;
 
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(_fill_buffer(&pd->min_size, idx, 1, NULL, size_buffer) == 1, EINA_RECT_EMPTY());
+   BATCH_ACCESS_SIZE_VAL(pd->callbacks, idx, 1, EINA_FALSE, size_buffer, EINA_RECT_EMPTY());
 
    size = size_buffer[0].size;
 
@@ -457,7 +436,7 @@ _efl_ui_position_manager_list_efl_ui_layout_orientable_orientation_set(Eo *obj E
 {
    pd->dir = dir;
    //in order to reset the state of the visible items, just hide everything and set the old segment accordingly
-   vis_change_segment(&pd->object, pd->prev_run.start_id, pd->prev_run.end_id, EINA_FALSE);
+   vis_change_segment(pd->callbacks, pd->prev_run.start_id, pd->prev_run.end_id, EINA_FALSE);
    pd->prev_run.start_id = 0;
    pd->prev_run.end_id = 0;
 
@@ -507,6 +486,25 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_relative_item(Eo *o
      return -1;
    else
      return new_id;
+}
+
+EOLIAN static int
+_efl_ui_position_manager_list_efl_ui_position_manager_entity_version(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd EINA_UNUSED, int max EINA_UNUSED)
+{
+   return 1;
+}
+
+EOLIAN static void
+_efl_ui_position_manager_list_efl_ui_position_manager_data_access_v1_data_access_set(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, void *obj_access_data, Efl_Ui_Position_Manager_Object_Batch_Callback obj_access, Eina_Free_Cb obj_access_free_cb, void *size_access_data, Efl_Ui_Position_Manager_Size_Batch_Callback size_access, Eina_Free_Cb size_access_free_cb, int size)
+{
+   cache_invalidate(obj, pd);
+   pd->callbacks.object.data = obj_access_data;
+   pd->callbacks.object.access = obj_access;
+   pd->callbacks.object.free_cb = obj_access_free_cb;
+   pd->callbacks.size.data = size_access_data;
+   pd->callbacks.size.access = size_access;
+   pd->callbacks.size.free_cb = size_access_free_cb;
+   pd->size = size;
 }
 
 

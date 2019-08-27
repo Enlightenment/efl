@@ -13,7 +13,6 @@
   Efl_Ui_Position_Manager_Grid_Data *pd = efl_data_scope_get(obj, MY_CLASS);
 
 typedef struct {
-   Api_Callback min_size, object;
    unsigned int size;
    unsigned int groups;
    Eina_Rect viewport;
@@ -30,6 +29,7 @@ typedef struct {
    Eina_Bool size_cache_dirty;
    Eo *last_group;
    Eina_Future *rebuild_absolut_size;
+   Api_Callbacks callbacks;
 } Efl_Ui_Position_Manager_Grid_Data;
 
 typedef struct {
@@ -43,7 +43,8 @@ _group_cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
 {
    unsigned int i;
    const int len = 100;
-   Efl_Ui_Position_Manager_Batch_Size_Access size_buffer[len];
+   Efl_Ui_Position_Manager_Size_Batch_Entity size_buffer[len];
+   Efl_Ui_Position_Manager_Size_Batch_Result size_result;
    Group_Cache_Line line = { 0 };
 
    if (!pd->group_cache_dirty)
@@ -60,22 +61,22 @@ _group_cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
 
         if (buffer_id == 0)
           {
-             EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->min_size, i, len, NULL, size_buffer) > 0);
+             BATCH_ACCESS_SIZE(pd->callbacks, i, MIN(len, pd->size - i), EINA_TRUE, size_buffer);
           }
 
-        if (size_buffer[buffer_id].group == EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_GROUP)
+        if (size_buffer[buffer_id].depth_leader)
           {
              eina_inarray_push(pd->group_cache, &line);
              line.real_group = EINA_TRUE;
              line.group_header_size = size_buffer[buffer_id].size;
              line.items = 1;
           }
-        else if (size_buffer[buffer_id].group == EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_PART_OF_GROUP ||
-                (!line.real_group && size_buffer[buffer_id].group == EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_NO_GROUP))
+        else if (size_buffer[buffer_id].element_depth > 0 ||
+                (!line.real_group && size_buffer[buffer_id].element_depth == 0))
           {
              line.items ++;
           }
-        else if (size_buffer[buffer_id].group == EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_NO_GROUP && line.real_group)
+        else if (size_buffer[buffer_id].element_depth == 0 && line.real_group)
           {
              eina_inarray_push(pd->group_cache, &line);
              line.real_group = EINA_FALSE;
@@ -240,7 +241,10 @@ _position_items_vertical(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data 
    unsigned int i;
    const int len = 100;
    int columns, last_block_start = ctx->new.start_id;
-   Efl_Ui_Position_Manager_Batch_Entity_Access obj_buffer[len];
+   Efl_Ui_Position_Manager_Size_Batch_Entity size_buffer[len];
+   Efl_Ui_Position_Manager_Size_Batch_Result size_result;
+   Efl_Ui_Position_Manager_Object_Batch_Entity obj_buffer[len];
+   Efl_Ui_Position_Manager_Object_Batch_Result object_result;
 
    if (!pd->viewport.w || !pd->viewport.h) return;
 
@@ -252,17 +256,13 @@ _position_items_vertical(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data 
         int buffer_id = (i-ctx->new.start_id) % len;
         if (buffer_id == 0)
           {
-             int tmp_group;
+             BATCH_ACCESS_SIZE(pd->callbacks, i, len, EINA_FALSE, size_buffer);
+             BATCH_ACCESS_OBJECT(pd->callbacks, i, len, obj_buffer);
 
-             EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->object, i, len, &tmp_group, obj_buffer) > 0);
-             if (tmp_group != -1 && i == ctx->new.start_id)
+             if (i == ctx->new.start_id)
                {
-                  Efl_Ui_Position_Manager_Batch_Size_Access size_buffer[1];
-                  Efl_Ui_Position_Manager_Batch_Entity_Access obj_buffer[1];
-                  EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->min_size, tmp_group, 1, NULL, size_buffer) != 0);
-                  EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->object, tmp_group, 1, NULL, obj_buffer) != 0);
-                  ctx->floating_group = obj_buffer[0].entity;
-                  ctx->floating_size.h = size_buffer[0].size.h;
+                  ctx->floating_group = object_result.group;
+                  ctx->floating_size = size_result.parent_size;
                   ctx->floating_size.w = pd->viewport.w;
                }
           }
@@ -274,19 +274,16 @@ _position_items_vertical(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data 
         if (obj_buffer[buffer_id].entity == pd->last_group)
           pd->last_group = NULL;
 
-        if (obj_buffer[buffer_id].group == EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_GROUP)
+        if (obj_buffer[buffer_id].depth_leader)
           {
-             Efl_Ui_Position_Manager_Batch_Size_Access size_buffer[1];
-             EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->min_size, i, 1, NULL, size_buffer) == 1);
-
              if (x != 0)
                y += 1;
 
              last_block_start = i + 1;
-             start.y += size_buffer[0].size.h + y*pd->max_min_size.h;
+             start.y += size_buffer[buffer_id].size.h + y*pd->max_min_size.h;
 
              geom.size = pd->viewport.size;
-             geom.h = size_buffer[0].size.h;
+             geom.h = size_buffer[buffer_id].size.h;
              geom.y += y*pd->max_min_size.h;
              if (!ctx->placed_item)
                ctx->placed_item = obj_buffer[buffer_id].entity;
@@ -307,7 +304,10 @@ _position_items_horizontal(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Dat
    unsigned int i;
    const int len = 100;
    int columns, last_block_start = ctx->new.start_id;
-   Efl_Ui_Position_Manager_Batch_Entity_Access obj_buffer[len];
+   Efl_Ui_Position_Manager_Size_Batch_Entity size_buffer[len];
+   Efl_Ui_Position_Manager_Size_Batch_Result size_result;
+   Efl_Ui_Position_Manager_Object_Batch_Entity obj_buffer[len];
+   Efl_Ui_Position_Manager_Object_Batch_Result object_result;
 
    if (!pd->viewport.w || !pd->viewport.h) return;
 
@@ -319,20 +319,16 @@ _position_items_horizontal(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Dat
         int buffer_id = (i-ctx->new.start_id) % len;
         if (buffer_id == 0)
           {
-             int tmp_group;
+             BATCH_ACCESS_SIZE(pd->callbacks, i, len, EINA_FALSE, size_buffer);
+             BATCH_ACCESS_OBJECT(pd->callbacks, i, len, obj_buffer);
 
-             EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->object, i, len, &tmp_group, obj_buffer) > 0);
-             if (tmp_group != -1 && i == ctx->new.start_id && pd->dir != EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
+             if (i == ctx->new.start_id)
                {
-                  Efl_Ui_Position_Manager_Batch_Size_Access size_buffer[1];
-                  Efl_Ui_Position_Manager_Batch_Entity_Access obj_buffer[1];
-                  EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->min_size, tmp_group, 1, NULL, size_buffer) != 0);
-                  EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->object, tmp_group, 1, NULL, obj_buffer) != 0);
-                  start.y += size_buffer[0].size.h;
-                  columns = (pd->viewport.h - size_buffer[0].size.h)/pd->max_min_size.h;
-                  ctx->floating_group = obj_buffer[0].entity;
-                  ctx->floating_size.h = size_buffer[0].size.h;
+                  ctx->floating_group = object_result.group;
+                  ctx->floating_size = size_result.parent_size;
                   ctx->floating_size.w = pd->viewport.w;
+                  start.y += size_result.parent_size.h;
+                  columns = (pd->viewport.h - size_result.parent_size.h)/pd->max_min_size.h;
                }
           }
         Eina_Rect geom;
@@ -344,21 +340,18 @@ _position_items_horizontal(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Dat
         if (obj_buffer[buffer_id].entity == pd->last_group)
           pd->last_group = NULL;
 
-        if (obj_buffer[buffer_id].group == EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_GROUP)
+        if (obj_buffer[buffer_id].depth_leader)
           {
-             Efl_Ui_Position_Manager_Batch_Size_Access size_buffer[1];
-             EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->min_size, i, 1, NULL, size_buffer) == 1);
-
              last_block_start = i + 1;
-             start.y = pd->viewport.y + size_buffer[0].size.h;
+             start.y = pd->viewport.y + size_buffer[buffer_id].size.h;
              start.x += x*pd->max_min_size.w;
 
-             geom.size.h = size_buffer[0].size.h;
+             geom.size.h = size_buffer[buffer_id].size.h;
              geom.size.w = pd->viewport.w;
              geom.x += x*pd->max_min_size.w;
              geom.y = pd->viewport.y;
 
-             columns = (pd->viewport.h - size_buffer[0].size.h)/pd->max_min_size.h;
+             columns = (pd->viewport.h - size_buffer[buffer_id].size.h)/pd->max_min_size.h;
              if (!ctx->placed_item)
                ctx->placed_item = obj_buffer[buffer_id].entity;
           }
@@ -456,7 +449,7 @@ _reposition_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
 
    //to performance optimize the whole widget, we are setting the objects that are outside the viewport to visibility false
    //The code below ensures that things outside the viewport are always hidden, and things inside the viewport are visible
-   vis_segment_swap(&pd->object, cur, pd->prev_run);
+   vis_segment_swap(pd->callbacks, cur, pd->prev_run);
 
    ctx.new = cur;
    ctx.consumed_space = consumed_space;
@@ -540,18 +533,6 @@ _flush_min_size(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_position_manager_grid_efl_ui_position_manager_entity_data_access_set(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd, void *obj_access_data, Efl_Ui_Position_Manager_Batch_Access_Entity obj_access, Eina_Free_Cb obj_access_free_cb, void *size_access_data, Efl_Ui_Position_Manager_Batch_Access_Size size_access, Eina_Free_Cb size_access_free_cb, int size)
-{
-   pd->object.data = obj_access_data;
-   pd->object.access = obj_access;
-   pd->object.free_cb = obj_access_free_cb;
-   pd->min_size.data = size_access_data;
-   pd->min_size.access = size_access;
-   pd->min_size.free_cb = size_access_free_cb;
-   pd->size = size;
-}
-
-EOLIAN static void
 _efl_ui_position_manager_grid_efl_ui_position_manager_entity_viewport_set(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd, Eina_Rect viewport)
 {
    _size_cache_invalidate(obj, pd);
@@ -594,13 +575,14 @@ _schedule_recalc_abs_size(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd)
 EOLIAN static void
 _efl_ui_position_manager_grid_efl_ui_position_manager_entity_item_added(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd, int added_index, Efl_Gfx_Entity *subobj EINA_UNUSED)
 {
-   Efl_Ui_Position_Manager_Batch_Size_Access size[1];
+   Efl_Ui_Position_Manager_Size_Batch_Entity size_buffer[1];
+   Efl_Ui_Position_Manager_Size_Batch_Result size_result;
    pd->size ++;
 
    efl_gfx_entity_visible_set(subobj, EINA_FALSE);
    _group_cache_invalidate(obj, pd);
-   EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->min_size, added_index, 1, NULL, &size) == 1);
-   _update_min_size(obj, pd, added_index, size[0].size);
+   BATCH_ACCESS_SIZE(pd->callbacks, added_index, 1, EINA_TRUE, size_buffer);
+   _update_min_size(obj, pd, added_index, size_buffer[0].size);
    _flush_min_size(obj, pd);
    _schedule_recalc_abs_size(obj, pd);
 }
@@ -622,16 +604,17 @@ EOLIAN static void
 _efl_ui_position_manager_grid_efl_ui_position_manager_entity_item_size_changed(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd, int start_id, int end_id)
 {
    const int len = 50;
-   Efl_Ui_Position_Manager_Batch_Size_Access data[len];
+   Efl_Ui_Position_Manager_Size_Batch_Entity size_buffer[len];
+   Efl_Ui_Position_Manager_Size_Batch_Result size_result;
 
    for (int i = start_id; i <= end_id; ++i)
      {
         int buffer_id = (i-start_id) % len;
         if (buffer_id == 0)
           {
-             EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(&pd->min_size, start_id, len, NULL, data) >= 0);
+             BATCH_ACCESS_SIZE(pd->callbacks, i, len, EINA_TRUE, size_buffer);
           }
-        _update_min_size(obj, pd, i, data[i-start_id].size);
+        _update_min_size(obj, pd, i, size_buffer[buffer_id].size);
      }
    _size_cache_invalidate(obj, pd);
    _flush_min_size(obj, pd);
@@ -662,11 +645,12 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_entity_position_single_ite
    unsigned int relevant_space_size;
    unsigned int group_consumed_size = 0;
    unsigned int group_consumed_ids = 0;
-   Efl_Ui_Position_Manager_Batch_Size_Access size_buffer[1];
+   Efl_Ui_Position_Manager_Size_Batch_Entity size_buffer[1];
+   Efl_Ui_Position_Manager_Size_Batch_Result size_result;
 
    if (!pd->size) return EINA_RECT(0, 0, 0, 0);
    if (pd->max_min_size.w <= 0 || pd->max_min_size.h <= 0) return EINA_RECT(0, 0, 0, 0);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(_fill_buffer(&pd->min_size, idx, 1, NULL, size_buffer) == 1, EINA_RECT_EMPTY());
+   BATCH_ACCESS_SIZE_VAL(pd->callbacks, idx, 1, EINA_TRUE, size_buffer, EINA_RECT_EMPTY());
 
    _size_cache_require(obj, pd);
    _flush_abs_size(obj, pd);
@@ -759,6 +743,25 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_entity_relative_item(Eo *o
      return -1;
    else
      return new_id;
+}
+
+EOLIAN static int
+_efl_ui_position_manager_grid_efl_ui_position_manager_entity_version(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd EINA_UNUSED, int max EINA_UNUSED)
+{
+   return 1;
+}
+
+EOLIAN static void
+_efl_ui_position_manager_grid_efl_ui_position_manager_data_access_v1_data_access_set(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd, void *obj_access_data, Efl_Ui_Position_Manager_Object_Batch_Callback obj_access, Eina_Free_Cb obj_access_free_cb, void *size_access_data, Efl_Ui_Position_Manager_Size_Batch_Callback size_access, Eina_Free_Cb size_access_free_cb, int size)
+{
+   _group_cache_invalidate(obj, pd);
+   pd->callbacks.object.data = obj_access_data;
+   pd->callbacks.object.access = obj_access;
+   pd->callbacks.object.free_cb = obj_access_free_cb;
+   pd->callbacks.size.data = size_access_data;
+   pd->callbacks.size.access = size_access;
+   pd->callbacks.size.free_cb = size_access_free_cb;
+   pd->size = size;
 }
 
 #include "efl_ui_position_manager_grid.eo.c"

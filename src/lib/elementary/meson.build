@@ -181,6 +181,7 @@ pub_eo_files = [
   'efl_ui_selectable.eo',
   'efl_ui_multi_selectable.eo',
   'efl_ui_single_selectable.eo',
+  'efl_ui_position_manager_data_access_v1.eo',
 ]
 
 foreach eo_file : pub_eo_files

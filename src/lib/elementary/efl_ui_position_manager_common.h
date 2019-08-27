@@ -6,36 +6,90 @@
 #include "efl_ui_position_manager_entity.eo.h"
 
 typedef struct {
-   void *data;
-   Efl_Ui_Position_Manager_Batch_Access_Entity access; //this can also be the size accessor, but that does not matter here
-   Eina_Free_Cb free_cb;
-} Api_Callback;
+   struct {
+     void *data;
+     Efl_Ui_Position_Manager_Size_Batch_Callback access; //this can also be the size accessor, but that does not matter here
+     Eina_Free_Cb free_cb;
+   } size;
+   struct {
+     void *data;
+     Efl_Ui_Position_Manager_Object_Batch_Callback access; //this can also be the size accessor, but that does not matter here
+     Eina_Free_Cb free_cb;
+   } object;
+} Api_Callbacks;
 
 typedef struct {
    unsigned int start_id, end_id;
 } Vis_Segment;
 
-static inline int
-_fill_buffer(Api_Callback *cb , int start_id, int len, int *group_id, void *data)
+static Efl_Ui_Position_Manager_Size_Batch_Result
+_batch_request_size(Api_Callbacks cb , int start_id, int len, Eina_Bool cache, void *data)
 {
-   Efl_Ui_Position_Manager_Batch_Result res;
+   Efl_Ui_Position_Manager_Size_Batch_Result res;
+
    Eina_Rw_Slice slice;
    slice.mem = data;
    slice.len = len;
 
-   res = cb->access(cb->data, start_id, slice);
+   Efl_Ui_Position_Manager_Size_Call_Config conf;
+   conf.cache_request = cache;
+   conf.range.start_id = start_id;
+   conf.range.end_id = start_id + len;
 
-   if (group_id)
-     *group_id = res.group_id;
+   res = cb.size.access(cb.size.data, conf, slice);
 
-   return res.filled_items;
+   return res;
 }
 
+#define BATCH_ACCESS_SIZE(cb, start_id, len, cache, data) \
+  do { \
+    size_result = _batch_request_size((cb), (start_id), (len), (cache), (data)); \
+    EINA_SAFETY_ON_FALSE_RETURN(size_result.filled_items > 0); \
+  } while(0);
+
+#define BATCH_ACCESS_SIZE_VAL(cb, start_id, len, cache, data, V) \
+  do { \
+    size_result = _batch_request_size((cb), (start_id), (len), (cache), (data)); \
+    EINA_SAFETY_ON_FALSE_RETURN_VAL(size_result.filled_items > 0, V); \
+  } while(0);
+
+
+static Efl_Ui_Position_Manager_Object_Batch_Result
+_batch_request_objects(Api_Callbacks cb , int start_id, int len, void *data)
+{
+   Efl_Ui_Position_Manager_Object_Batch_Result res;
+
+   Eina_Rw_Slice slice;
+   slice.mem = data;
+   slice.len = len;
+
+   Efl_Ui_Position_Manager_Request_Range range;
+   range.start_id = start_id;
+   range.end_id = start_id + len;
+
+   res = cb.object.access(cb.object.data, range, slice);
+
+   return res;
+}
+
+#define BATCH_ACCESS_OBJECT(cb, start_id, len, data) \
+  do { \
+    object_result = _batch_request_objects((cb), (start_id), (len), (data)); \
+    EINA_SAFETY_ON_FALSE_RETURN(object_result.filled_items > 0); \
+  } while(0);
+
+#define BATCH_ACCESS_OBJECT_VAL(cb, start_id, len, data, v) \
+  do { \
+    object_result = _batch_request_objects((cb), (start_id), (len), (data)); \
+    EINA_SAFETY_ON_FALSE_RETURN_VAL(object_result.filled_items > 0, v); \
+  } while(0);
+
 static inline void
-vis_change_segment(Api_Callback *cb, int a, int b, Eina_Bool flag)
+vis_change_segment(Api_Callbacks cb, int a, int b, Eina_Bool flag)
 {
    const int len = 50;
-   Efl_Ui_Position_Manager_Batch_Entity_Access data[len];
+   Efl_Ui_Position_Manager_Object_Batch_Entity data[len];
+   Efl_Ui_Position_Manager_Object_Batch_Result object_result;
 
    if (a == b) return;
 
@@ -46,7 +100,7 @@ vis_change_segment(Api_Callback *cb, int a, int b, Eina_Bool flag)
 
         if (buffer_id == 0)
           {
-             EINA_SAFETY_ON_FALSE_RETURN(_fill_buffer(cb, MIN(a,b), len, NULL, data) >= 0);
+             BATCH_ACCESS_OBJECT(cb, i, len, data);
           }
         ent = data[buffer_id].entity;
         if (ent && !flag && (efl_ui_focus_object_focus_get(ent) || efl_ui_focus_object_child_focus_get(ent)))
@@ -60,10 +114,9 @@ vis_change_segment(Api_Callback *cb, int a, int b, Eina_Bool flag)
           }
      }
 }
-#endif
 
 static inline void
-vis_segment_swap(Api_Callback *cb, Vis_Segment new, Vis_Segment old)
+vis_segment_swap(Api_Callbacks cb, Vis_Segment new, Vis_Segment old)
 {
    if (new.end_id <= old.start_id || new.start_id >= old.end_id)
      {
@@ -78,3 +131,5 @@ vis_segment_swap(Api_Callback *cb, Vis_Segment new, Vis_Segment old)
         vis_change_segment(cb, old.end_id, new.end_id, (old.end_id < new.end_id));
      }
 }
+
+#endif

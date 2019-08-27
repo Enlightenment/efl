@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Position_Manager.List extends Efl.Object implements Efl.Ui.Position_Manager.Entity
+class @beta Efl.Ui.Position_Manager.List extends Efl.Object implements Efl.Ui.Position_Manager.Entity, Efl.Ui.Position_Manager.Data_Access_V1
 {
    [[Implementation of @Efl.Ui.Position_Manager.Entity for a list
 
@@ -6,7 +6,7 @@ class @beta Efl.Ui.Position_Manager.List extends Efl.Object implements Efl.Ui.Po
    ]]
    implements {
       Efl.Object.destructor;
-      Efl.Ui.Position_Manager.Entity.data_access {set;}
+      Efl.Ui.Position_Manager.Entity.version;
       Efl.Ui.Position_Manager.Entity.viewport {set;}
       Efl.Ui.Position_Manager.Entity.scroll_position {set;}
       Efl.Ui.Position_Manager.Entity.item_added;
@@ -15,5 +15,6 @@ class @beta Efl.Ui.Position_Manager.List extends Efl.Object implements Efl.Ui.Po
       Efl.Ui.Position_Manager.Entity.item_size_changed;
       Efl.Ui.Position_Manager.Entity.relative_item;
       Efl.Ui.Layout_Orientable.orientation {set; get;}
+      Efl.Ui.Position_Manager.Data_Access_V1.data_access {set;}
    }
 }
