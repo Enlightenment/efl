@@ -592,6 +592,7 @@ evas_outbuf_buffer_state_get(Outbuf *ob)
              char buf[16];
              snprintf(buf, sizeof(buf), "! %i", (int)age);
              eina_evlog("!gl_buffer_age", ob, 0.0, buf);
+             swap_mode = MODE_FULL;
           }
         else
           {
