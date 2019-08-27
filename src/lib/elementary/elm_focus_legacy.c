@@ -22,7 +22,8 @@
    EINA_SAFETY_ON_FALSE_RETURN_VAL(elm_widget_is_legacy(obj), val);
 
 #define MARK_WINDOW_LEGACY_USAGE() \
-   ((Efl_Ui_Shared_Win_Data*)pd->shared_win_data)->legacy_focus_api_used = EINA_TRUE;
+   if (pd->shared_win_data) \
+     ((Efl_Ui_Shared_Win_Data*)pd->shared_win_data)->legacy_focus_api_used = EINA_TRUE;
 
 #define MAPPING() \
         MAP(PREVIOUS, prev) \

@@ -40,7 +40,8 @@ _efl_ui_focus_parent_provider_gen_container_set(Eo *obj, Efl_Ui_Focus_Parent_Pro
 
    ELM_WIDGET_DATA_GET(pd->container, wid_pd);
 
-   ((Efl_Ui_Shared_Win_Data*)wid_pd->shared_win_data)->custom_parent_provider = EINA_TRUE;
+   if (wid_pd->shared_win_data)
+     ((Efl_Ui_Shared_Win_Data*)wid_pd->shared_win_data)->custom_parent_provider = EINA_TRUE;
 }
 
 EOLIAN static Efl_Ui_Widget*

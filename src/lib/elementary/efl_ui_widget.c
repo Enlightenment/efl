@@ -396,7 +396,7 @@ _eval_registration_candidate(Eo *obj, Elm_Widget_Smart_Data *pd, Eina_Bool *shou
         pd->tree_unfocusable > 0)
       return;
 
-    if (((Efl_Ui_Shared_Win_Data*)pd->shared_win_data)->legacy_focus_api_used)
+    if (!pd->shared_win_data || ((Efl_Ui_Shared_Win_Data*)pd->shared_win_data)->legacy_focus_api_used)
       {
          if (_legacy_focus_eval(obj))
            return;
@@ -456,7 +456,7 @@ _logical_parent_eval(Eo *obj EINA_UNUSED, Elm_Widget_Smart_Data *pd, Eina_Bool s
    Efl_Ui_Widget *parent;
    Efl_Ui_Focus_Parent_Provider *provider;
 
-   if (((Efl_Ui_Shared_Win_Data*)pd->shared_win_data)->custom_parent_provider)
+   if (!pd->shared_win_data || ((Efl_Ui_Shared_Win_Data*)pd->shared_win_data)->custom_parent_provider)
      {
         if (should)
           {
@@ -4788,13 +4788,16 @@ elm_widget_tree_dot_dump(const Evas_Object *top,
 EOLIAN static Eo *
 _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
+   Eina_Bool parent_is_widget = EINA_FALSE;
+
    sd->on_create = EINA_TRUE;
 
    sd->window = efl_provider_find(efl_parent_get(obj), EFL_UI_WIN_CLASS);
    if (!efl_isa(obj, EFL_UI_WIN_CLASS))
      {
         Eo *parent = efl_parent_get(obj);
-        if (!efl_isa(parent, EFL_UI_WIDGET_CLASS))
+        parent_is_widget = efl_isa(parent, EFL_UI_WIDGET_CLASS);
+        if (!parent_is_widget)
           {
              ERR("You passed a wrong parent parameter (%p %s). "
                  "Elementary widget's parent should be an elementary widget.",
@@ -4822,7 +4825,11 @@ _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UN
 
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_UNKNOWN);
 
-   EINA_SAFETY_ON_NULL_RETURN_VAL(sd->shared_win_data, NULL);
+   if (!sd->shared_win_data)
+     {
+        if (sd->window && parent_is_widget)
+          EINA_SAFETY_ON_NULL_RETURN_VAL(sd->shared_win_data, NULL);
+     }
 
    return obj;
 }
