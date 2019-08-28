@@ -610,6 +610,8 @@ _selection_data_cb(void *data EINA_UNUSED, Eo *obj,
    if (!efl_text_cursor_equal(obj, start, end))
      {
         efl_canvas_text_range_delete(obj, start, end);
+        EFL_UI_TEXT_DATA_GET(obj, sd);
+        _efl_ui_text_select_none(obj, sd);
      }
    cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_TYPE_MAIN);
    info.insert = EINA_TRUE;
