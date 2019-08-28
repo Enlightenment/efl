@@ -219,6 +219,9 @@ _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_
         size = size_buffer[buffer_id].size;
         ent = obj_buffer[buffer_id].entity;
 
+        if (size.h != cache_access(obj, pd, i) - cache_access(obj, pd, i - 1))
+          ERR("WTF %d %d", size.h, cache_access(obj, pd, i) - cache_access(obj, pd, i - 1));
+
         if (ent == pd->last_group)
           {
              pd->last_group = NULL;
@@ -294,6 +297,8 @@ position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
 
    if (!pd->size) return;
    if (pd->average_item_size <= 0) return;
+
+   cache_require(obj, pd);
 
    //space size contains the amount of space that is outside the viewport (either to the top or to the left)
    space_size.w = (MAX(pd->abs_size.w - pd->viewport.w, 0))*pd->scroll_position.x;
