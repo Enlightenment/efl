@@ -1,0 +1,28 @@
+// Feels empty, does it need more things?
+
+interface Efl2.Text.Content.Markup extends Efl2.Text.Content.Plain
+{
+    [[Efl text interface
+
+      @since 1.22
+    ]]
+    c_prefix: efl2_text;
+    methods {
+        @property markup {
+            set {
+                [[Sets the text string to be displayed by the given text object.
+                ]]
+            }
+            get {
+                [[Retrieves the text string currently being displayed by the given
+                  text object.
+
+                  Do not free() the return value.
+                ]]
+            }
+            values {
+                text: string; [[Text string to display on it.]]
+            }
+        }
+    }
+}

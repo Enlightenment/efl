@@ -1,0 +1,429 @@
+// elm entry
+
+
+/* FIXME - Text object must stop using elm_general! */
+import elm_general;
+
+
+// FIXME: All of these need to be better named. It's not selection. Either dnd or cnp...
+enum @beta Efl2.Ui.Selection_Type
+{
+   [[Selection type]]
+   primary, [[Primary text selection (highlighted or selected text)]]
+   secondary, [[Used when primary selection is in use]]
+   dnd, [[Drag and Drop]]
+   clipboard [[Clipboard selection (ctrl+C)]]
+}
+
+enum @beta Efl2.Ui.Selection_Format
+{
+   [[Selection format]]
+   targets = -1, [[For matching every possible atom]]
+   none = 0x0, [[Content is from outside of EFL]]
+   text = 0x01, [[Plain unformatted text: Used for things that don't want rich markup]]
+   markup = 0x2, [[Edje textblock markup, including inline images]]
+   image = 0x4, [[Images]]
+   vcard = 0x08, [[Vcards]]
+   html = 0x10 [[Raw HTML-like data (eg. webkit)]]
+}
+
+enum @beta Efl2.Ui.Selection_Action
+{
+   [[Defines the kind of action associated with the drop data]]
+   unknown, [[Action type is unknown]]
+   copy, [[Copy the data]]
+   move, [[Move the data]]
+   private, [[Private action type]]
+   ask, [[Ask the user what to do]]
+   list, [[List the data]]
+   link, [[Link the data]]
+   description [[Describe the data]]
+}
+
+struct @beta Efl2.Ui.Selection_Data
+{
+   [[Structure holding the info about selected data]]
+   pos: Eina.Position2D; [[Coordinates of the drop (DND operations only)]]
+   format: Efl2.Ui.Selection_Format; [[Format of the selection]]
+   content: Eina.Slice; [[Selection data]]
+   action: Efl2.Ui.Selection_Action; [[Action to perform with the data]]
+   item: Efl.Object; [[Item under the drag position. It is only available for container]]
+}
+
+function @beta Efl2.Ui.Selection_Data_Ready {
+   [[Function pointer for getting selection]]
+   params {
+      @in obj: Efl.Object; [[Object which requested for the selection]]
+      @in seldata: ptr(Efl2.Ui.Selection_Data); [[Selection data]]
+   }
+};
+
+struct @beta Efl2.Ui.Selection_Changed
+{
+   [[Selection-changed specific information.]] // TODO: This needs to be filled in.
+   type: Efl2.Ui.Selection_Type; [[Selection type]]
+   seat: int; [[The seat on which the selection changed, or NULL for "default"]]
+   display: void_ptr; [[The display connection object, NULL under X11]]
+   exist: bool; [[EINA_TRUE if the selection has an owner]]
+}
+
+// FIXME: Gotta figure out dnd and cnp modes.
+class @beta Efl2.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickable,
+                 Efl.Access.Text, Efl.Access.Editable.Text, Efl.File
+                 // FIXME , Efl2.Text.Raw_Editable
+{
+   [[A flexible text widget which can be static (as a label) or editable by
+     the user (as a text entry). It provides all sorts of editing facilities
+     like automatic scrollbars, virtual keyboard, clipboard, configurable
+     context menus, password mode or autocapitalization, for example.]]
+   methods {
+      // FIXME: rename and improve doc
+      @property valign {
+         [[Vertical alignment of text]]
+         values {
+            value: double; [[Vertical alignment value]]
+         }
+      }
+
+      @property scrollable {
+         [[Enable or disable scrolling in the widget.
+
+           When scrolling is enabled scrollbars will appear if the text does
+           not fit the widget size.]]
+         set {}
+         get {}
+         values {
+            scroll: bool; [[$true to enable scrolling. Default is $false.]]
+         }
+      }
+      @property input_panel_show_on_demand {
+         set {
+            [[Set the attribute to show the input panel in case of only a user's explicit Mouse Up event.
+              It doesn't request to show the input panel even though it has focus.
+            ]]
+         }
+         get {
+            [[Get the attribute to show the input panel in case of only an user's explicit Mouse Up event.
+            ]]
+         }
+         values {
+            ondemand: bool; [[If $true, the input panel will be shown in case of only Mouse up event.
+            (Focus event will be ignored.)
+            ]]
+         }
+      }
+      @property context_menu_disabled {
+         set {
+            [[This disables the entry's contextual (longpress) menu.]]
+         }
+         get {
+            [[This returns whether the entry's contextual (longpress) menu is
+              disabled.
+            ]]
+         }
+         values {
+            disabled: bool; [[If $true, the menu is disabled.]]
+         }
+      }
+      @property cnp_mode {
+         /* FIXME: Efl2.Ui.Selection_Format does not allow markup without images! */
+         set {
+            [[Control pasting of text and images for the widget.
+
+              Normally the entry allows both text and images to be pasted.
+              By setting cnp_mode to be #ELM_CNP_MODE_NO_IMAGE this prevents images from being copied or pasted.
+              By setting cnp_mode to be #ELM_CNP_MODE_PLAINTEXT this remove all tags in text .
+
+              Note: This only changes the behaviour of text.
+            ]]
+         }
+         get {
+            [[Getting elm_entry text paste/drop mode.
+
+              Normally the entry allows both text and images to be pasted.
+              This gets the copy & paste mode of the entry.
+            ]]
+         }
+         values {
+            format: Efl2.Ui.Selection_Format; [[Format for copy & paste.]]
+         }
+      }
+
+      cnp_copy {
+         [[This executes a "copy" action on the selected text in the entry.]]
+      }
+      cnp_cut {
+         [[This executes a "cut" action on the selected text in the entry.]]
+      }
+      cnp_paste {
+         [[This executes a "paste" action in the entry.]]
+      }
+
+      @property input_panel_language {
+         set {
+            [[Set the language mode of the input panel.
+
+              This API can be used if you want to show the alphabet keyboard mode.
+            ]]
+         }
+         get {
+            [[Get the language mode of the input panel.]]
+         }
+         values {
+            lang: Elm.Input.Panel.Lang; [[Language to be set to the input panel.]]
+         }
+      }
+      @property selection_handler_disabled {
+         set {
+            [[This disables the entry's selection handlers.]]
+         }
+         get {
+            [[This returns whether the entry's selection handlers are disabled.]]
+         }
+         values {
+            disabled: bool; [[If $true, the selection handlers are disabled.]]
+         }
+      }
+      @property input_panel_layout_variation {
+         set {
+            [[Set the input panel layout variation of the entry
+            ]]
+         }
+         get {
+            [[Get the input panel layout variation of the entry
+            ]]
+         }
+         values {
+            variation: int; [[Layout variation type.]]
+         }
+      }
+      @property autocapital_type {
+         set {
+            [[Set the autocapitalization type on the immodule.]]
+         }
+         get {
+            [[Get the autocapitalization type on the immodule.]]
+         }
+         values {
+            autocapital_type: Elm.Autocapital.Type; [[The type of autocapitalization.]]
+         }
+      }
+      @property input_panel_return_key_disabled {
+         set {
+            [[Set the return key on the input panel to be disabled.]]
+         }
+         get {
+            [[Get whether the return key on the input panel should be disabled or not.]]
+         }
+         values {
+            disabled: bool; [[The state to put in in: $true for
+            disabled, $false for enabled.]]
+         }
+      }
+      @property prediction_allow {
+         set {
+            [[Set whether the entry should allow predictive text.]]
+         }
+         get {
+            [[Get whether the entry allows predictive text.]]
+         }
+         values {
+            prediction: bool; [[Whether the entry should allow predictive text.]]
+         }
+      }
+      @property input_hint {
+         set {
+            [[Sets the input hint which allows input methods to fine-tune their behavior.]]
+         }
+         get {
+            [[Gets the value of input hint.]]
+         }
+         values {
+            hints: Elm.Input.Hints; [[Input hint.]]
+         }
+      }
+      @property input_panel_layout {
+         set {
+            [[Set the input panel layout of the entry.]]
+         }
+         get {
+            [[Get the input panel layout of the entry.]]
+         }
+         values {
+            layout: Elm.Input.Panel.Layout(Elm.Input.Panel.Layout.invalid); [[Layout type.]]
+         }
+      }
+      @property input_panel_return_key_type {
+         set {
+            [[Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
+
+              An input panel displays the string or icon associated with this type.
+            ]]
+         }
+         get {
+            [[Get the "return" key type.]]
+         }
+         values {
+            return_key_type: Elm.Input.Panel.Return_Key.Type; [[The type of "return" key on the input panel.]]
+         }
+      }
+      @property input_panel_enabled {
+         set {
+            [[Sets the attribute to show the input panel automatically.]]
+         }
+         get {
+            [[Get the attribute to show the input panel automatically.]]
+         }
+         values {
+            enabled: bool; [[If $true, the input panel is appeared when entry is clicked or has a focus.]]
+         }
+      }
+      @property input_panel_return_key_autoenabled {
+         set {
+            [[Set whether the return key on the input panel is disabled automatically when entry has no text.
+
+              If $enabled is $true, the return key on input panel is disabled when the entry has no text.
+              The return key on the input panel is automatically enabled when the entry has text.
+              The default value is $false.
+            ]]
+         }
+         values {
+            enabled: bool; [[If $enabled is $true, the return key is automatically disabled when the entry has no text.]]
+         }
+      }
+
+      input_panel_show {
+         [[Show the input panel (virtual keyboard) based on the input panel property of entry such as layout, autocapital types and so on.
+
+           Note that input panel is shown or hidden automatically according to the focus state of entry widget.
+           This API can be used in the case of manually controlling by using @.input_panel_enabled.set(en, $false).
+         ]]
+      }
+      context_menu_clear {
+         [[This clears and frees the items in a entry's contextual (longpress)
+           menu.
+
+           See also @.context_menu_item_add.
+         ]]
+      }
+      input_panel_imdata_set {
+         [[Set the input panel-specific data to deliver to the input panel.
+
+           This API is used by applications to deliver specific data to the input panel.
+           The data format MUST be negotiated by both application and the input panel.
+           The size and format of data are defined by the input panel.
+         ]]
+         params {
+            @in data: const(void_ptr); [[The specific data to be set to the input panel.]]
+            @in len: int; [[The length of data, in bytes, to send to the input panel.]]
+         }
+      }
+      input_panel_imdata_get @const {
+         [[Get the specific data of the current input panel.]]
+         params {
+            @inout data: void; [[The specific data to be obtained from the input panel.]]
+            @out len: int; [[The length of data.]]
+         }
+      }
+
+      input_panel_hide {
+         [[Hide the input panel (virtual keyboard).
+
+           Note that input panel is shown or hidden automatically according to the focus state of entry widget.
+           This API can be used in the case of manually controlling by using @.input_panel_enabled.set(en, $false)
+         ]]
+      }
+      cursor_selection_end {
+         [[This ends a selection within the entry as though
+           the user had just released the mouse button while making a selection.]]
+      }
+      context_menu_item_add {
+         [[This adds an item to the entry's contextual menu.
+
+           A longpress on an entry will make the contextual menu show up unless this
+           has been disabled with @.context_menu_disabled.set.
+           By default this menu provides a few options like enabling selection mode,
+           which is useful on embedded devices that need to be explicit about it.
+           When a selection exists it also shows the copy and cut actions.
+
+           With this function, developers can add other options to this menu to
+           perform any action they deem necessary.
+         ]]
+         params {
+            @in label: string @optional; [[The item's text label.]]
+            @in icon_file: string @optional; [[The item's icon file.]]
+            @in icon_type: Elm.Icon.Type; [[The item's icon type.]]
+            @in func: Evas_Smart_Cb @optional; [[The callback to execute when the item is clicked.]]
+            @in data: const(void_ptr) @optional; [[The data to associate with the item for related functions.]]
+         }
+      }
+      cursor_new {
+         [[Creates and returns a new cursor for the text.]]
+         return: ptr(Efl.Text_Cursor_Cursor); [[Text cursor]]
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.finalize;
+      Efl.Object.destructor;
+      Efl.Gfx.Entity.visible { set; }
+      Efl.Gfx.Entity.position { set; }
+      Efl.Gfx.Entity.size { set; }
+      Efl.Canvas.Group.group_member_add;
+      Efl.Canvas.Group.group_calculate;
+      Efl.Layout.Signal.signal_callback_add;
+      Efl.Layout.Signal.signal_callback_del;
+      Efl.Layout.Signal.signal_emit;
+      Efl.Ui.Widget.on_access_activate;
+      Efl.Ui.Widget.theme_apply;
+      Efl.Ui.Focus.Object.on_focus_update;
+      Efl.Ui.Widget.interest_region { get; }
+      Efl.Ui.Widget.disabled {set;}
+      //Efl.Ui.Widget.widget_sub_object_del;
+      //Elm.Interface_Scrollable.policy { set; }
+      //Elm.Interface_Scrollable.bounce_allow { set; }
+      Efl.Access.Object.state_set { get; }
+      Efl.Access.Object.i18n_name { get; }
+      Efl.Access.Text.access_text { get; }
+      Efl.Access.Text.string { get; }
+      Efl.Access.Text.attribute { get; }
+      Efl.Access.Text.text_attributes { get; }
+      Efl.Access.Text.default_attributes { get; }
+      Efl.Access.Text.caret_offset { get; set; }
+      Efl.Access.Text.character { get; }
+      Efl.Access.Text.character_extents { get; }
+      Efl.Access.Text.character_count { get; }
+      Efl.Access.Text.offset_at_point { get; }
+      Efl.Access.Text.bounded_ranges { get; }
+      Efl.Access.Text.range_extents { get; }
+      Efl.Access.Text.access_selection { get; set; }
+      Efl.Access.Text.selections_count { get; }
+      Efl.Access.Text.selection_add;
+      Efl.Access.Text.selection_remove;
+      Efl.Access.Editable.Text.text_content { set; }
+      Efl.Access.Editable.Text.insert;
+      Efl.Access.Editable.Text.copy;
+      Efl.Access.Editable.Text.cut;
+      Efl.Access.Editable.Text.delete;
+      Efl.Access.Editable.Text.paste;
+      Efl.File.file { set; }
+      Efl.File.load;
+      Efl.Part.part_get;
+   }
+   events {
+       // most/all of the events just come from raw_editable
+
+      // FIXME: here or the layer below??
+      // FIXME: how should these behave? Type isn't there anchor,down: Elm.Entry_Anchor_Info; [[Called on anchor down]]
+      // FIXME: how should these behave? Type isn't there anchor,in: Elm.Entry_Anchor_Info; [[Called on anchor in]]
+      // FIXME: how should these behave? Type isn't there anchor,out: Elm.Entry_Anchor_Info; [[Called on anchor out]]
+      // FIXME: how should these behave? Type isn't there anchor,up: Elm.Entry_Anchor_Info; [[called on anchor up]]
+
+      cnp,paste: void; [[Called when selection is pasted]]
+      cnp,copy: void; [[Called when selection is copied]]
+      cnp,cut: void; [[Called when selection is cut]]
+   }
+   composite {
+// FIXME      Efl2.Text.Raw_Editable;
+   }
+}

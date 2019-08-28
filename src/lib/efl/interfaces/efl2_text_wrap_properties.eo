@@ -1,0 +1,36 @@
+// This is somehow good, not everything belogs here (e.g. multiline) I guess per-pargraph ellipsis could still maybe
+// make sense but not really. So maybe that one is off too. review.
+
+enum @beta Efl2.Text.Wrap.Mode {
+   [[Wrap mode of the text (not in effect if not multiline)]]
+   none, [[No wrapping]]
+   char, [[Wrap mode character]]
+   word, [[Wrap mode word]]
+   mixed, [[Wrap mode mixed]]
+   hyphenation [[Wrap mode hyphenation]]
+}
+
+interface @beta Efl2.Text.Wrap.Properties {
+   [[The look and layout of the text
+
+     The text format can affect the geometry of the text object, as well as
+     how characters are presented.
+   ]]
+   c_prefix: efl2_text_wrap;
+   methods {
+      @property ellipsis {
+         [[Ellipsis value (number from -1.0 to 1.0)]]
+         values
+         {
+            value: double; [[Ellipsis value]]
+         }
+      }
+
+      @property wrap {
+         [[Wrap mode for use in the text]]
+         values {
+            wrap: Efl2.Text.Wrap.Mode; [[Wrap mode]]
+         }
+      }
+   }
+}

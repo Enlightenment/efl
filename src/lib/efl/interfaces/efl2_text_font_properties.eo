@@ -1,0 +1,203 @@
+// How does this work with annotations? Does it strdup? Or whate? I like the idea of having helper functions for annotations
+// this feels a bit verbose though, and it looks like it's on the object, which is hm... Not perfect.
+// Bitmap scalable feels off
+
+type @beta Efl2.Font.Size: int; [[Efl font size type]]
+
+enum @beta Efl2.Text.Font.Weight {
+   [[Type of font weight]]
+   normal, [[Normal font weight]]
+   thin, [[Thin font weight]]
+   ultralight, [[Ultralight font weight]]
+   extralight, [[Extralight font weight]]
+   light, [[Light font weight]]
+   book, [[Book font weight]]
+   medium, [[Medium font weight]]
+   semibold, [[Semibold font weight]]
+   bold, [[Bold font weight]]
+   ultrabold, [[Ultrabold font weight]]
+   extrabold, [[Extrabold font weight]]
+   black, [[Black font weight]]
+   extrablack, [[Extrablack font weight]]
+}
+
+enum @beta Efl2.Text.Font.Width {
+   [[Type of font width]]
+   normal, [[Normal font width]]
+   ultracondensed, [[Ultracondensed font width]]
+   extracondensed, [[Extracondensed font width]]
+   condensed, [[Condensed font width]]
+   semicondensed, [[Semicondensed font width]]
+   semiexpanded, [[Semiexpanded font width]]
+   expanded, [[Expanded font width]]
+   extraexpanded, [[Extraexpanded font width]]
+   ultraexpanded, [[Ultraexpanded font width]]
+}
+
+enum @beta Efl2.Text.Font.Slant {
+    [[Type of font slant]]
+    normal, [[Normal font slant]]
+    oblique, [[Oblique font slant]]
+    italic, [[Italic font slant]]
+}
+
+/* FIXME: It needs to support "normal" option for non-color bitmap font.
+   For supporting "normal" option, S/W glyph drawing engine should be updated.
+ */
+enum @beta Efl2.Text.Font.Bitmap_Scalable {
+   [[Scalable of bitmap fonts
+   ]]
+   none = 0,         [[Disable scalable feature for bitmap fonts.]]
+   color = (1 << 0), [[Enable scalable feature for color bitmap fonts.]]
+}
+
+interface @beta Efl2.Text.Font.Properties {
+   [[Font settings of the text
+   ]]
+   c_prefix: efl2_text;
+   methods {
+      @property font_family {
+         set {
+            [[Set the font family for a given text object.
+
+              This function allows the font name of a text object to
+              be set. The font string has to follow fontconfig's convention for
+              naming fonts, as it's the underlying library used to query system
+              fonts by Evas (see the fc-list command's output, on your system,
+              to get an idea). Alternatively, youe can use the full path to a font
+              file.
+
+              See also @.font_source.get.
+            ]]
+         }
+         get {
+            [[Retrieve the font family in use on a given text object.
+
+              This function allows the font name of a text object to
+              be queried. Remember that the font name string is still owned by
+              Evas and should not have free() called on it by the caller of the
+              function.
+            ]]
+         }
+         values {
+            font: string; [[The font family name or filename.]]
+         }
+      }
+      @property font_size {
+         set {
+            [[Set the font size for a given text object.
+
+              This function allows the font size of a text object to
+              be set. The font string has to follow fontconfig's convention for
+              naming fonts, as it's the underlying library used to query system
+              fonts by Evas (see the fc-list command's output, on your system,
+              to get an idea). Alternatively, youe can use the full path to a font
+              file.
+
+              See also @.font_family.get, @.font_source.get.
+            ]]
+         }
+         get {
+            [[Retrieve the font family and size in use on a given text object.
+
+              This function allows the font size of a text object to
+              be queried. Remember that the font name string is still owned by
+              Evas and should not have free() called on it by the caller of the
+              function.
+
+              See also @.font_family.set.
+            ]]
+         }
+         values {
+            size: Efl2.Font.Size; [[The font size, in points.]]
+         }
+      }
+      @property font_source {
+         set {
+            [[Set the font (source) file to be used on a given text object.
+
+              This function allows the font file to be explicitly set for a
+              given text object, overriding system lookup, which will first
+              occur in the given file's contents.
+
+              See also @.font_family.set.
+            ]]
+         }
+         get {
+            [[Get the font file's path which is being used on a given text
+              object.
+
+              See @.font_family.get for more details.
+            ]]
+         }
+         values {
+            source: string; [[The font file's path.]]
+         }
+      }
+
+      @property font_fallbacks {
+         [[Comma-separated list of font fallbacks
+
+           Will be used in case the primary font isn't available.
+         ]]
+         values {
+            fallbacks: string; [[Font name fallbacks]]
+         }
+      }
+
+      @property font_weight {
+         [[Type of weight of the displayed font
+
+           Default is @Efl2.Text.Font.Weight.normal\.
+         ]]
+         values {
+            weight: Efl2.Text.Font.Weight; [[Font weight]]
+         }
+      }
+
+      @property font_slant {
+         [[Type of slant of the displayed font
+
+           Default is @Efl2.Text.Font.Slant.normal\.
+         ]]
+         values {
+            style: Efl2.Text.Font.Slant; [[Font slant]]
+         }
+      }
+
+      @property font_width {
+         [[Type of width of the displayed font
+
+           Default is @Efl2.Text.Font.Width.normal\.
+         ]]
+         values {
+            width: Efl2.Text.Font.Width; [[Font width]]
+         }
+      }
+
+      @property font_lang {
+         [[Specific language of the displayed font
+
+           This is used to lookup fonts suitable to the specified language, as
+           well as helping the font shaper backend.
+           The language $lang can be either a code e.g "en_US",
+           "auto" to use the system locale, or "none".
+         ]]
+         values {
+            lang: string; [[Language]]
+         }
+      }
+
+      @property font_bitmap_scalable {
+           [[The bitmap fonts have fixed size glyphs for several available sizes.
+             Basically, it is not scalable. But, it needs to be scalable for some use cases.
+             (ex. colorful emoji fonts)
+
+             Default is @Efl2.Text.Font.Bitmap_Scalable.none\.
+           ]]
+           values {
+              scalable: Efl2.Text.Font.Bitmap_Scalable; [[Scalable]]
+           }
+      }
+   }
+}

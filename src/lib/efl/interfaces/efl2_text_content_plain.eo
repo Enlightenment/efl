@@ -1,0 +1,64 @@
+// Feels empty, does it need more things?
+
+enum Efl2.Text.Bidi.Type {
+   [[Bidirectionaltext type]]
+   neutral = 0, [[Neutral text type]]
+   ltr, [[Left to right text type]]
+   rtl, [[Right to left text type]]
+   inherit [[Inherit text type]]
+}
+
+
+interface Efl2.Text.Content.Plain
+{
+    [[Efl text interface
+
+      @since 1.22
+    ]]
+    c_prefix: efl2_text;
+    methods {
+        @property text {
+            set {
+                [[Sets the text string to be displayed by the given text object.
+
+                  See also @.text.get.
+                ]]
+            }
+            get {
+                [[Retrieves the text string currently being displayed by the given
+                  text object.
+
+                  Do not free() the return value.
+
+                  See also @.text.set.
+                ]]
+            }
+            values {
+                text: string; [[Text string to display on it.]]
+            }
+        }
+        @property bidi_delimiters {
+            [[BiDi delimiters are used for in-paragraph separation of bidi
+              segments. This is useful, for example, in the recipient fields of
+              e-mail clients where bidi oddities can occur when mixing RTL
+              and LTR.
+            ]]
+            set {}
+            get {}
+            values {
+                delim: string; [[A null terminated string of delimiters, e.g ",|" or $null if empty]]
+            }
+        }
+        // FIXME: Remove the one from evas_object and then rename back
+        @property paragraph_direction2 {
+            [[This handles text paragraph direction of the given object.
+              Even if the given object is not textblock or text, its smart child
+              objects can inherit the paragraph direction from the given object.
+              The default paragraph direction is $inherit.
+            ]]
+            values {
+                 dir: Efl2.Text.Bidi.Type; [[Paragraph direction for the given object.]]
+            }
+        }
+    }
+}

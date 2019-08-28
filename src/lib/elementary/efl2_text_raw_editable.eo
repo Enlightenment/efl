@@ -1,0 +1,131 @@
+// FIXME: Make sure I'm happy with the undo/redo mechanism and filtering
+// FIXME: Remove length? It's we can always get utf8 length if that's what we want. Why is it there?
+struct @beta Efl2.Text.Change_Info {
+   [[This structure includes all the information about content changes.
+
+     It's meant to be used to implement undo/redo.
+   ]]
+   content: string; [[The content added/removed]]
+   position: size; [[The position where it was added/removed]]
+   length: size; [[The length of content in characters (not bytes, actual unicode characters)]]
+   insert: bool; [[$true if the content was inserted, $false if removed]]
+   merge: bool; [[$true if can be merged with the previous one. Used for example with insertion when something is already selected]]
+}
+
+/* FIXME
+       - Filters/validators/etc
+      - There would be a "changed" and a "pre-changed" events so you can filter / validate the text using those probably
+        - Needs a better name
+      - Maybe validation should be in efl.ui.text because it's really just a visual thing that doesn't edit the text
+  - It accepts user input, handles selection, IMF, and what not.
+  - low level object - Not theme aware
+  - a way to do "user_insert", so emulate an insertion as if it's from the user. Maybe just inherit Cursor and have Cursor.Interactive?
+
+  - missing a lot of IMF/etc functions
+*/
+class @beta Efl2.Text.Raw_Editable extends Efl2.Canvas.Text {
+   methods {
+      @property editable {
+         [[Whether the entry is editable.
+
+           By default text interactives are editable. However setting this
+           property to $false will make it so that key input will be disregarded.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            editable: bool; [[If $true, user input will be inserted in the entry,
+            if not, the entry is read-only and no user input is allowed.]]
+         }
+      }
+
+      @property multiline {
+         [[Multiline is enabled or not]]
+         values {
+            enabled: bool; [[$true if multiline is enabled, $false otherwise]]
+         }
+      }
+
+      @property password_mode {
+         [[Whether text is a password]]
+         get {}
+         set {}
+         values {
+            enabled: bool; [[$true if the text is a password, $false otherwise]]
+         }
+      }
+
+      @property replacement_char {
+         [[The character used to replace characters that can't be displayed
+
+           Currently only used to replace characters if @.password_mode
+           is enabled.
+         ]]
+         values {
+            repch: string; [[Replacement character]]
+         }
+      }
+
+      @property main_cursor {
+         [[The user visible cursor
+         ]]
+         get {}
+         values {
+            cursor: Efl2.Text.Cursor; [[The user visible cursor]]
+         }
+      }
+
+      @property selection_allowed {
+         [[Whether or not selection is allowed on this object]]
+         set {}
+         get {}
+         values {
+            allowed: bool; [[$true if enabled, $false otherwise]]
+         }
+      }
+
+      @property selection_cursors {
+         [[The cursors used for selection handling.
+
+           If the cursors are equal there's
+           no selection.
+
+           You are allowed to retain and modify them. Modifying them modifies
+           the selection of the object.
+         ]]
+         get {}
+         values {
+            start: Efl2.Text.Cursor; [[The start of the selection]]
+            end: Efl2.Text.Cursor; [[The end of the selection]]
+         }
+      }
+
+      select_none {
+         [[Clears the selection.]]
+      }
+   }
+   events {
+      // FIXME: add docs: used for filtering. You are meant to edit the event_info. So e.g. to block a change set content to "", or replace it (and free the existing) to filter.
+      // How do we feel about this change? Maybe cumbersome? Better way? Problematic also with ownership of strings.
+      // Maybe instead of filtering the string directly we could have functions on the object that let us manipulate it? Better API.
+      // Why do we need the pre? We just need to make sure "changed,user" that take it for undo/redo register with a low priority...
+      changed,user,pre: Efl2.Text.Change_Info; [[The text object has changed due to user interaction - before the changes are committed to the object]]
+      changed,user: Efl2.Text.Change_Info; [[The text object has changed due to user interaction]]
+
+      redo,request: void; [[Called when redo is requested]]
+      undo,request: void; [[Called when undo is requested]]
+
+      // FIXME: review:
+      // validation is probaly no longer needed is we can validate using change,user? changed,user,pre? When exactly is validation called and how is it processed? Probably not the pre.
+      // validate: Elm.Validate_Content; [[Called when validating]]
+      cursor,changed,manual: void; [[Called on manual cursor change]]
+      context,open: void; [[Called when context menu was opened]]
+      preedit,changed: void; [[Called when entry preedit changed]]
+
+      selection,start: void; [[Called at selection start]]
+      selection,changed: void; [[Called when selection is changed]]
+      selection,cleared: void; [[Called when selection is cleared]]
+   }
+}

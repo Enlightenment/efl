@@ -1,0 +1,4 @@
+// FIXME: Rename to drop the "Item"?
+class @beta Efl2.Text.Item.Emoticon.Factory extends Efl2.Text.Item.Factory {
+    [[Emoticon text item factory]]
+}

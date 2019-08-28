@@ -51,7 +51,13 @@ pub_eo_files = [
   'efl_canvas_group.eo',
   'efl_gfx_mapping.eo',
   'efl_canvas_event_grabber.eo',
-  'efl_canvas_text.eo'
+  'efl_canvas_text.eo',
+
+  'efl2_canvas_text.eo',
+  'efl2_text_cursor.eo',
+  'efl2_text_attribute_factory.eo',
+  'efl2_text_item_factory.eo',
+  'efl2_text_markup.eo',
 ]
 
 evas_canvas_eo_files = pub_eo_files
@@ -179,6 +185,7 @@ evas_src += files([
   'efl_canvas_animation_group_parallel.c',
   'efl_canvas_animation_group_sequential.c',
   'efl_canvas_animation_player.c',
+  'efl_canvas_text.c',
   'efl_canvas_vg_object.c',
   'efl_canvas_vg_node.c',
   'efl_canvas_vg_container.c',
