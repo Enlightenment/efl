@@ -436,7 +436,7 @@ struct struct_definition_generator
           // Constructor with default parameters for easy struct initialization
           if(!as_generator(
                       indent << scope_tab << "/// <summary>Constructor for " << string << ".</summary>\n"
-                      << *(indent << scope_tab << field_argument_docs << ";\n")
+                      << *(indent << scope_tab << field_argument_docs << "\n")
                       << indent << scope_tab << "public " << string << "(\n"
                       << ((indent << scope_tab << scope_tab << field_argument_default) % ",\n")
                       << indent << scope_tab << ")\n"
