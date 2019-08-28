@@ -165,7 +165,9 @@ _edje_part_collection_fix(Edje_Part_Collection *edc)
 
    unsigned int j;
    Edje_Part *ep;
-   Eina_List *hist;
+   Eina_Array hist;
+
+   eina_array_step_set(&hist, sizeof(Eina_Array), 5);
 
    for (j = 0; j < edc->parts_count; ++j)
      {
@@ -173,8 +175,7 @@ _edje_part_collection_fix(Edje_Part_Collection *edc)
         ep = edc->parts[j];
 
         /* Register any color classes in this parts descriptions. */
-        hist = NULL;
-        hist = eina_list_append(hist, ep);
+        eina_array_push(&hist, ep);
         ep2 = ep;
         while (ep2->dragable.confine_id >= 0)
           {
@@ -186,17 +187,17 @@ _edje_part_collection_fix(Edje_Part_Collection *edc)
                }
 
              ep2 = edc->parts[ep2->dragable.confine_id];
-             if (eina_list_data_find(hist, ep2))
+             if (eina_array_find(&hist, ep2, NULL))
                {
                   ERR("confine_to loops. invalidating loop.");
                   ep2->dragable.confine_id = -1;
                   break;
                }
-             hist = eina_list_append(hist, ep2);
+             eina_array_push(&hist, ep2);
           }
-        eina_list_free(hist);
-        hist = NULL;
-        hist = eina_list_append(hist, ep);
+        eina_array_clean(&hist);
+
+        eina_array_push(&hist, ep);
         ep2 = ep;
         while (ep2->dragable.event_id >= 0)
           {
@@ -218,17 +219,17 @@ _edje_part_collection_fix(Edje_Part_Collection *edc)
                   break;
                }
 
-             if (eina_list_data_find(hist, ep2))
+             if (eina_array_find(&hist, ep2, NULL))
                {
                   ERR("events_to loops. invalidating loop.");
                   ep2->dragable.event_id = -1;
                   break;
                }
-             hist = eina_list_append(hist, ep2);
+             eina_array_push(&hist, ep2);
           }
-        eina_list_free(hist);
-        hist = NULL;
-        hist = eina_list_append(hist, ep);
+        eina_array_clean(&hist);
+
+        eina_array_push(&hist, ep);
         ep2 = ep;
         while (ep2->clip_to_id >= 0)
           {
@@ -240,17 +241,17 @@ _edje_part_collection_fix(Edje_Part_Collection *edc)
                }
 
              ep2 = edc->parts[ep2->clip_to_id];
-             if (eina_list_data_find(hist, ep2))
+             if (eina_array_find(&hist, ep2, NULL))
                {
                   ERR("clip_to loops. invalidating loop.");
                   ep2->clip_to_id = -1;
                   break;
                }
-             hist = eina_list_append(hist, ep2);
+             eina_array_push(&hist, ep2);
           }
-        eina_list_free(hist);
-        hist = NULL;
+        eina_array_clean(&hist);
      }
+     eina_array_flush(&hist);
 }
 
 static Edje_Part_Collection *

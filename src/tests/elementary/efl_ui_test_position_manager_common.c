@@ -25,41 +25,43 @@ item_container_teardown()
    win = NULL;
 }
 
-static Efl_Ui_Position_Manager_Batch_Result
-_size_accessor_get_at(void *data EINA_UNUSED, int start_id, Eina_Rw_Slice memory)
+static Efl_Ui_Position_Manager_Size_Batch_Result
+_size_accessor_get_at(void *data EINA_UNUSED, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_Rw_Slice memory)
 {
    int i;
-   Efl_Ui_Position_Manager_Batch_Size_Access *sizes = memory.mem;
-   Efl_Ui_Position_Manager_Batch_Result result;
+   Efl_Ui_Position_Manager_Size_Batch_Entity *sizes = memory.mem;
+   Efl_Ui_Position_Manager_Size_Batch_Result result;
 
-   for (i = start_id; i < (int)(MIN(start_id + memory.len, eina_inarray_count(arr_size))); ++i)
+   for (i = conf.range.start_id; i < (int)(MIN(conf.range.end_id, eina_inarray_count(arr_size))); ++i)
      {
         Eina_Size2D *size = eina_inarray_nth(arr_size, i);
 
-        sizes[i - start_id].size = *size;
-        sizes[i - start_id].group = 0;
+        sizes[i - conf.range.start_id].size = *size;
+        sizes[i - conf.range.start_id].depth_leader = 0;
+        sizes[i - conf.range.start_id].element_depth = 0;
      }
-   result.filled_items = i - start_id;
-   result.group_id = -1;
+   result.filled_items = i - conf.range.start_id;
+   result.parent_size = EINA_SIZE2D(0, 0);
    return result;
 }
 
-static Efl_Ui_Position_Manager_Batch_Result
-_obj_accessor_get_at(void *data EINA_UNUSED, int start_id, Eina_Rw_Slice memory)
+static Efl_Ui_Position_Manager_Object_Batch_Result
+_obj_accessor_get_at(void *data EINA_UNUSED, Efl_Ui_Position_Manager_Request_Range range, Eina_Rw_Slice memory)
 {
    int i;
-   Efl_Ui_Position_Manager_Batch_Entity_Access *objs = memory.mem;
-   Efl_Ui_Position_Manager_Batch_Result result;
+   Efl_Ui_Position_Manager_Object_Batch_Entity *objs = memory.mem;
+   Efl_Ui_Position_Manager_Object_Batch_Result result;
 
-   for (i = start_id; i < (int)(MIN(start_id + memory.len, eina_array_count(arr_obj))); ++i)
+   for (i = range.start_id; i < (int)(MIN(range.end_id, eina_array_count(arr_obj))); ++i)
      {
          Efl_Gfx_Entity *geom = eina_array_data_get(arr_obj, i);
 
-         objs[i - start_id].entity = geom;
-         objs[i - start_id].group = 0;
+         objs[i - range.start_id].entity = geom;
+         objs[i - range.start_id].depth_leader = 0;
+         objs[i - range.start_id].element_depth = 0;
      }
-   result.filled_items = i - start_id;
-   result.group_id = -1;
+   result.filled_items = i - range.start_id;
+   result.group = NULL;
    return result;
 }
 static void
@@ -68,7 +70,7 @@ _initial_setup(void)
    arr_obj = eina_array_new(10);
    arr_size = eina_inarray_new(sizeof(Eina_Size2D), 10);
 
-   efl_ui_position_manager_entity_data_access_set(position_manager,
+   efl_ui_position_manager_data_access_v1_data_access_set(position_manager,
       NULL, _obj_accessor_get_at, NULL,
       NULL, _size_accessor_get_at, NULL,
       0);

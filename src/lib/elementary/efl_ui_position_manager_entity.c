@@ -12,3 +12,4 @@
 #define MY_CLASS      EFL_UI_POSITION_MANAGER_ENTITY_CLASS
 
 #include "efl_ui_position_manager_entity.eo.c"
+#include "efl_ui_position_manager_data_access_v1.eo.c"

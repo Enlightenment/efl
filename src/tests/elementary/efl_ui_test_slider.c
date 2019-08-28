@@ -13,8 +13,12 @@ slider_changed(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    event_counter++;
    if (event_counter == 1)
-     efl_event_callback_del(ev->object, EFL_UI_RANGE_EVENT_CHANGED, slider_changed, NULL);
+     efl_event_callback_del(ev->object, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_START, slider_changed, NULL);
    else if (event_counter == 2)
+     efl_event_callback_del(ev->object, EFL_UI_RANGE_EVENT_CHANGED, slider_changed, NULL);
+   else if (event_counter == 3)
+     efl_event_callback_del(ev->object, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_STOP, slider_changed, NULL);
+   else if (event_counter == 4)
      ecore_main_loop_quit();
 }
 
@@ -28,6 +32,8 @@ EFL_START_TEST(efl_ui_test_slider_events)
    slider = efl_add(EFL_UI_SLIDER_CLASS, win,
                 efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED, slider_changed, NULL),
                 efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_STEADY, slider_changed, NULL),
+                efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_START, slider_changed, NULL),
+                efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_STOP, slider_changed, NULL),
                 efl_gfx_entity_size_set(efl_added, EINA_SIZE2D(400, 100))
                 );
 
@@ -48,7 +54,7 @@ EFL_START_TEST(efl_ui_test_slider_events)
    evas_event_feed_mouse_move(e, sx + (sw / 2), sy + (sh / 2), 0, NULL);
    evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
    ecore_main_loop_begin();
-   ck_assert_int_eq(event_counter, 2);
+   ck_assert_int_eq(event_counter, 4);
 }
 EFL_END_TEST
 
@@ -62,6 +68,8 @@ EFL_START_TEST(efl_ui_test_slider_step)
    slider = efl_add(EFL_UI_SLIDER_CLASS, win,
                 efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_CHANGED, slider_changed, NULL),
                 efl_event_callback_add(efl_added, EFL_UI_RANGE_EVENT_STEADY, slider_changed, NULL),
+                efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_START, slider_changed, NULL),
+                efl_event_callback_add(efl_added, EFL_UI_SLIDER_EVENT_SLIDER_DRAG_STOP, slider_changed, NULL),
                 efl_gfx_entity_size_set(efl_added, EINA_SIZE2D(400, 100))
                 );
    efl_ui_range_limits_set(slider, 0, 100);

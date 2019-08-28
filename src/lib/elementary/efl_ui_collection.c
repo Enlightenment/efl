@@ -266,38 +266,47 @@ _efl_ui_collection_efl_ui_multi_selectable_selected_items_get(Eo *obj EINA_UNUSE
 }
 
 static inline void
-_fill_group_flag(Eo *item, Efl_Ui_Position_Manager_Batch_Group_State *flag)
+_fill_depth(Eo *item, unsigned char *depth, Eina_Bool *leader)
 {
    if (efl_isa(item, EFL_UI_GROUP_ITEM_CLASS))
-     *flag = EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_GROUP;
+     {
+        *depth = 1;
+        *leader = EINA_TRUE;
+     }
    else if (efl_ui_item_parent_get(item))
-     *flag = EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_PART_OF_GROUP;
+     {
+        *depth = 1;
+        *leader = EINA_FALSE;
+     }
    else
-     *flag = EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_NO_GROUP;
+     {
+        *leader = EINA_FALSE;
+        *depth = 0;
+     }
 }
 
-static Efl_Ui_Position_Manager_Batch_Result
-_size_accessor_get_at(void *data, int start_id, Eina_Rw_Slice memory)
+static Efl_Ui_Position_Manager_Size_Batch_Result
+_size_accessor_get_at(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_Rw_Slice memory)
 {
    Fast_Accessor *accessor = data;
    size_t i;
-   const Eina_List *lst = _fast_accessor_get_at(accessor, start_id);
-   Efl_Ui_Position_Manager_Batch_Size_Access *sizes = memory.mem;
-   Efl_Ui_Position_Manager_Batch_Result result = {-1, 0};
+   const Eina_List *lst = _fast_accessor_get_at(accessor, conf.range.start_id);
+   Efl_Ui_Position_Manager_Size_Batch_Entity *sizes = memory.mem;
+   Efl_Ui_Position_Manager_Size_Batch_Result result = {0};
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(lst, result);
 
-   for (i = 0; i < memory.len; ++i)
+   for (i = 0; i < (conf.range.end_id - conf.range.start_id); ++i)
      {
          Efl_Gfx_Entity *geom = eina_list_data_get(lst), *parent;
          Eina_Size2D size = efl_gfx_hint_size_min_get(geom);
 
          parent = efl_ui_item_parent_get(geom);
          sizes[i].size = size;
-         _fill_group_flag(geom, &sizes[i].group);
-         if (i == 0 && sizes[0].group != EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_GROUP && parent)
+         _fill_depth(geom, &sizes[i].element_depth, &sizes[i].depth_leader);
+         if (i == 0 && !sizes[0].depth_leader && parent)
            {
-              result.group_id = efl_pack_index_get(efl_ui_item_container_get(parent), parent);
+              result.parent_size = efl_gfx_hint_size_min_get(parent);
            }
          lst = eina_list_next(lst);
          if (!lst)
@@ -311,25 +320,25 @@ _size_accessor_get_at(void *data, int start_id, Eina_Rw_Slice memory)
    return result;
 }
 
-static Efl_Ui_Position_Manager_Batch_Result
-_obj_accessor_get_at(void *data, int start_id, Eina_Rw_Slice memory)
+static Efl_Ui_Position_Manager_Object_Batch_Result
+_obj_accessor_get_at(void *data, Efl_Ui_Position_Manager_Request_Range range, Eina_Rw_Slice memory)
 {
    Fast_Accessor *accessor = data;
    size_t i;
-   const Eina_List *lst = _fast_accessor_get_at(accessor, start_id);
-   Efl_Ui_Position_Manager_Batch_Entity_Access *objs = memory.mem;
-   Efl_Ui_Position_Manager_Batch_Result result = {-1, 0};
+   const Eina_List *lst = _fast_accessor_get_at(accessor, range.start_id);
+   Efl_Ui_Position_Manager_Object_Batch_Entity *objs = memory.mem;
+   Efl_Ui_Position_Manager_Object_Batch_Result result = {0};
 
-   for (i = 0; i < memory.len; ++i)
+   for (i = 0; i < range.end_id - range.start_id; ++i)
      {
          Efl_Gfx_Entity *geom = eina_list_data_get(lst), *parent;
 
          parent = efl_ui_item_parent_get(geom);
          objs[i].entity = geom;
-         _fill_group_flag(geom, &objs[i].group);
-         if (i == 0 && objs[0].group != EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_GROUP && parent)
+         _fill_depth(geom, &objs[i].element_depth, &objs[i].depth_leader);
+         if (i == 0 && !objs[0].depth_leader && parent)
            {
-              result.group_id = efl_pack_index_get(efl_ui_item_container_get(parent), parent);
+              result.group = parent;
            }
 
          lst = eina_list_next(lst);
@@ -343,6 +352,7 @@ _obj_accessor_get_at(void *data, int start_id, Eina_Rw_Slice memory)
 
    return result;
 }
+
 
 EOLIAN static Efl_Object*
 _efl_ui_collection_efl_object_constructor(Eo *obj, Efl_Ui_Collection_Data *pd EINA_UNUSED)
@@ -864,7 +874,6 @@ _efl_ui_collection_position_manager_set(Eo *obj, Efl_Ui_Collection_Data *pd, Efl
    if (pd->pos_man)
      {
         efl_event_callback_array_del(pd->pos_man, pos_manager_cbs(), obj);
-        efl_ui_position_manager_entity_data_access_set(pd->pos_man, NULL, NULL, NULL, NULL, NULL, NULL, 0);
         efl_del(pd->pos_man);
      }
    pd->pos_man = layouter;
@@ -872,11 +881,16 @@ _efl_ui_collection_position_manager_set(Eo *obj, Efl_Ui_Collection_Data *pd, Efl
      {
         efl_parent_set(pd->pos_man, obj);
         efl_event_callback_array_add(pd->pos_man, pos_manager_cbs(), obj);
-        //efl_ui_position_manager_entity_data_access_set(pd->pos_man, &pd->obj_accessor.acc, &pd->size_accessor.acc, eina_list_count(pd->items));
-        efl_ui_position_manager_entity_data_access_set(pd->pos_man,
-          &pd->obj_accessor, _obj_accessor_get_at, NULL,
-          &pd->size_accessor, _size_accessor_get_at, NULL,
-          eina_list_count(pd->items));
+        switch(efl_ui_position_manager_entity_version(pd->pos_man, 1))
+          {
+            case 1:
+              efl_ui_position_manager_data_access_v1_data_access_set(pd->pos_man,
+                &pd->obj_accessor, _obj_accessor_get_at, NULL,
+                &pd->size_accessor, _size_accessor_get_at, NULL,
+                eina_list_count(pd->items));
+            break;
+          }
+
         efl_ui_position_manager_entity_viewport_set(pd->pos_man, efl_ui_scrollable_viewport_geometry_get(obj));
         efl_ui_layout_orientation_set(pd->pos_man, pd->dir);
      }
