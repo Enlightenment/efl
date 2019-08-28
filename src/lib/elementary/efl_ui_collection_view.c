@@ -741,7 +741,7 @@ _batch_size_cb(void *data, int start_id, Eina_Rw_Slice memory)
    // Look in the temporary cache now for the beginning of the buffer
    if (pd->viewport[0] && ((uint64_t)(start_id + idx) < pd->viewport[0]->offset))
      {
-        while ((uint64_t)(start_id + idx) < pd->viewport[0]->offset)
+        while ((uint64_t)(start_id + idx) < pd->viewport[0]->offset && idx < limit)
           {
              uint64_t search_index = start_id + idx;
 printf("LINE %d\n", __LINE__);
@@ -845,7 +845,7 @@ _batch_entity_cb(void *data, int start_id, Eina_Rw_Slice memory)
    // Look in the temporary cache now for the beginning of the buffer
    if (pd->viewport[0] && ((uint64_t)(start_id + idx) < pd->viewport[0]->offset))
      {
-        while ((uint64_t)(start_id + idx) < pd->viewport[0]->offset)
+        while (idx < limit && (uint64_t)(start_id + idx) < pd->viewport[0]->offset)
           {
              uint64_t search_index = start_id + idx;
 
