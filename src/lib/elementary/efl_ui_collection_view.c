@@ -462,7 +462,14 @@ if (!pd->viewport[v]->items[index].model)
                }
           }
      }
-
+   //flush out the update to the items, in case we have updated anything but not flushed yet.
+   if (updated)
+     {
+        efl_ui_position_manager_entity_item_size_changed(pd->manager,
+                                                         updated_start_id,
+                                                         i - 1);
+        updated = EINA_FALSE;
+     }
    return v;
 }
 

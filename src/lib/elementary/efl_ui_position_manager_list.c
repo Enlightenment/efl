@@ -219,8 +219,11 @@ _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_
         size = size_buffer[buffer_id].size;
         ent = obj_buffer[buffer_id].entity;
 
-        if (size.h != cache_access(obj, pd, i) - cache_access(obj, pd, i - 1))
-          ERR("WTF %d %d", size.h, cache_access(obj, pd, i) - cache_access(obj, pd, i - 1));
+        int diff = cache_access(obj, pd, i + 1) - cache_access(obj, pd, i);
+
+
+        if (size.h != diff)
+          ERR("WTF %d %d", size.h, diff);
 
         if (ent == pd->last_group)
           {
