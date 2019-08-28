@@ -300,14 +300,14 @@ _size_accessor_get_at(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf,
    for (i = 0; i < (conf.range.end_id - conf.range.start_id); ++i)
      {
          Efl_Gfx_Entity *geom = eina_list_data_get(lst), *parent;
-         Eina_Size2D size = efl_gfx_hint_size_min_get(geom);
+         Eina_Size2D size = efl_gfx_hint_size_combined_min_get(geom);
 
          parent = efl_ui_item_parent_get(geom);
          sizes[i].size = size;
          _fill_depth(geom, &sizes[i].element_depth, &sizes[i].depth_leader);
          if (i == 0 && !sizes[0].depth_leader && parent)
            {
-              result.parent_size = efl_gfx_hint_size_min_get(parent);
+              result.parent_size = efl_gfx_hint_size_combined_min_get(parent);
            }
          lst = eina_list_next(lst);
          if (!lst)

@@ -315,6 +315,7 @@ elm_main(int argc EINA_UNUSED, char **argv)
    elm_win_resize_object_add(win, wbox);
    //window show
    efl_gfx_entity_visible_set(win, EINA_TRUE);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(417, 600));
 
    elm_run();
 
