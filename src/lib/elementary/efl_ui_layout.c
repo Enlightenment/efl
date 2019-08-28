@@ -65,7 +65,6 @@ static const char *_elm_legacy_layout_swallow_parts[] = {
 static const char *_efl_ui_layout_swallow_parts[] = {
    "efl.content",
    "efl.icon",
-   "efl.end",
    "efl.background",
    "efl.extra",
    NULL
