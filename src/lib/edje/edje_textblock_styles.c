@@ -248,24 +248,6 @@ _edje_textblock_style_search(Edje *ed, const char *style)
 }
 
 static inline void
-_edje_textblock_style_member_add(Edje *ed, Edje_Style *stl)
-{
-   Edje_Style_Tag *tag;
-   Eina_List *l;
-
-   if (!stl) return;
-
-   EINA_LIST_FOREACH(stl->tags, l, tag)
-     {
-        if (tag->text_class)
-          efl_observable_observer_add(_edje_text_class_member, tag->text_class, ed->obj);
-     }
-    /* Newly added text_class member should be updated
-       according to the latest text_class's status. */
-     _edje_textblock_style_update(ed, stl, EINA_TRUE);
-}
-
-static inline void
 _edje_textblock_style_observer_add(Edje_Style *stl, Efl_Observer* observer)
 {
    Eina_List* l;
