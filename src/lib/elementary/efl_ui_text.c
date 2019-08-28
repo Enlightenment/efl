@@ -3992,8 +3992,8 @@ _efl_ui_text_selection_changed_cb(void *data, const Efl_Event *event EINA_UNUSED
    if (!text || (text[0] == '\0'))
      {
         _edje_signal_emit(sd, "selection,cleared", "efl.text");
-        sd->have_selection = EINA_FALSE;
         _selection_clear(data, 0);
+        sd->have_selection = EINA_FALSE;
      }
    else
      {
