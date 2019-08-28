@@ -1,0 +1,52 @@
+// FIXME: Needs a way to be able to process custom tags so it's extensible, without having to write a different parser
+// FIXME: The current class is not great - need to rethink
+/*
+  - This is all that's needed. This allows us to get and set in every scenario.
+  - There should other such clases for e.g. markdown, pango markup or whatever
+  - This also includes all of the html entity handling (&nbsp;)
+  - Should figure out if we want to reduce the html entity list we support, if we want it case insensitive and etc.
+  - This should be inheritable so we can also handle items automatically from higher layers.
+  - Maybe make it an object rather than class?
+  - Also support <a > tags for anchors? Or maybe this should be in a Markup for editable text inheriting class?
+  - Make the way markup is parsed reusable so we can use it for e.g. parsing a style string from the edje theme
+  Tag start/end properties? functions?
+*/
+class @beta Efl2.Text.Markup {
+   [[Markup creation object
+
+    FIXME:
+     - Redesign the markup language to be more strict with what it allows (xml subset?)
+      - Potentially also use the <span> directive like in pango rather than "empty" we use now. E.g. <span size=12 color=...> rather than <size=12 color=...>
+   ]]
+   methods {
+      // FIXME: This design doesn't let us reuse item factories for e.g. a markdown parser
+      hook_item_insert {
+         [[Lets us override how items are inserted (so we can, for example handle emojis or other special items)
+         ]]
+         params {
+              @in position: const(Efl2.Text.Cursor); [[Position of the item]]
+              @in attributes: const(string); [[The attributes of the <item> tag]]
+         }
+      }
+
+      insert {
+         [[Parse and insert the markup at the cursor's position
+         ]]
+         params {
+              @in position: const(Efl2.Text.Cursor); [[Start of range]]
+              @in markup: const(string); [[The markup string]]
+         }
+      }
+
+      range_get {
+         [[Get the markup representing the text inside a given range
+         ]]
+         params {
+              @in start: const(Efl2.Text.Cursor); [[Start of range]]
+              @in end: const(Efl2.Text.Cursor); [[End of range]]
+         }
+         // FIXME: shouldn't it be @owned?
+         return: string; [[The markup within the range]]
+      }
+   }
+}

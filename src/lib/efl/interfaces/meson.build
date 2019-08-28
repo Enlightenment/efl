@@ -100,6 +100,12 @@ pub_eo_files = [
   'efl_gfx_text_class.eo',
   'efl_gfx_size_class.eo',
   'efl_cached_item.eo',
+
+  'efl2_text_content_plain.eo',
+  'efl2_text_content_markup.eo',
+  'efl2_text_font_properties.eo',
+  'efl2_text_style_properties.eo',
+  'efl2_text_wrap_properties.eo',
 ]
 
 foreach eo_file : pub_eo_files

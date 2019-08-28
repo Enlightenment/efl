@@ -1,0 +1,198 @@
+// Textblock
+
+import efl2_text_attribute_factory;
+
+/* FIXME:
+    missing:
+        - pango_layout_set_indent equivalent
+*/
+class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Content.Markup,
+                       Efl.Canvas.Filter.Internal, Efl2.Text.Wrap.Properties, Efl.Ui.I18n
+{
+   [[Efl canvas text class]]
+   methods {
+      @property is_empty {
+         [[Whether the object is empty (no text) or not
+         ]]
+         get {
+         }
+         values {
+            is_empty: bool; [[$true if empty, $false otherwise]]
+         }
+      }
+      @property is_ellipsized {
+         [[Whether the text was ellipsized to fit or not
+         ]]
+         get {
+         }
+         values {
+            ellipsized: bool; [[$true if it was ellipsized, $false otherwise]]
+         }
+      }
+      visible_range_get {
+         [[Returns the currently visible range.
+
+           The given $start and $end cursor act like out-variables here,
+           as they are set to the positions of the start and the end of the
+           visible range in the text, respectively.
+         ]]
+         return: bool; [[$true on success, $false otherwise]]
+         params {
+            @in start: Efl2.Text.Cursor; [[Range start position]]
+            @in end: Efl2.Text.Cursor; [[Range end position]]
+         }
+      }
+      // FIXME: Do extents instead? Also Pango has ink and logical pango_layout_get_extents -> check what that means.
+      @property style_insets {
+         [[Gets the left, right, top and bottom insets of the text.
+
+           The inset is any applied padding on the text.
+         ]]
+         get {}
+         values {
+            l: int; [[Left padding]]
+            r: int; [[Right padding]]
+            t: int; [[Top padding]]
+            b: int; [[Bottom padding]]
+         }
+      }
+      @property legacy_newline {
+         [[When $true, newline character will behave as a paragraph separator.
+         ]]
+         set {}
+         get {}
+         values {
+            mode: bool; [[$true for legacy mode, $false otherwise]]
+         }
+      }
+      // FIXME: updatedocs + am I happy with this?
+      // Probably used when using theme and then retheming without changing use configuration...
+      // Maybe have priorities built in rather than naming?
+      @property style {
+         [[The text style of the object.
+
+           $key is how you reference the style (for deletion or fetching). $NULL
+           as key indicates the style has the highest priority (default style).
+           The style priority is the order of creation, styles created first
+           are applied first with the exception of $NULL which is implicitly
+           first.
+
+           Set $style to $NULL to delete it.
+         ]]
+         set {
+         }
+         get {
+         }
+         keys {
+            key: string; [[The name to the style. $NULL is the default style]]
+         }
+         values {
+            attribute: const(ptr(Efl2.Text.Attribute.Handle)); [[The style]]
+         }
+      }
+      @property size_formatted {
+         [[The formatted width and height.
+
+           This calculates the actual size after restricting the
+           textblock to the current size of the object.
+
+           The main difference between this and @.size_native.get
+           is that the "native" function does not wrapping into account
+           it just calculates the real width of the object if it was
+           placed on an infinite canvas, while this function gives the
+           size after wrapping according to the size restrictions of the
+           object.
+
+           For example for a textblock containing the text:
+           "You shall not pass!" with no margins or padding and assuming
+           a monospace font and a size of 7x10 char widths (for simplicity)
+           has a native size of 19x1 and a formatted size of 5x4.
+         ]]
+         get {}
+         values {
+            w: int; [[The width of the object.]]
+            h: int; [[The height of the object.]]
+         }
+      }
+      @property size_native {
+         [[The native width and height.
+
+           This calculates the actual size without taking account the
+           current size of the object.
+
+           The main difference between this and @.size_formatted.get
+           is that the "native" function does not take wrapping into
+           account it just calculates the real width of the object if
+           it was placed on an infinite canvas, while the "formatted"
+           function gives the size after  wrapping text according to
+           the size restrictions of the object.
+
+           For example for a textblock containing the text:
+           "You shall not pass!" with no margins or padding and assuming
+           a monospace font and a size of 7x10 char widths (for simplicity)
+           has a native size of 19x1 and a formatted size of 5x4.
+         ]]
+         get {}
+         values {
+            w: int; [[The width returned.]]
+            h: int; [[The height returned.]]
+         }
+      }
+      // Obstacles
+      obstacle_add {
+         [[Add obstacle evas object $eo_obs to be observed during layout
+           of text.
+
+           The textblock does the layout of the text according to the
+           position of the obstacle.
+         ]]
+         params {
+            @in eo_obs: Efl.Canvas.Object; [[Obstacle object]]
+         }
+         return: bool; [[$true on success, $false otherwise.]]
+      }
+      obstacle_del {
+         [[Removes $eo_obs from observation during text layout.
+         ]]
+         params {
+            @in eo_obs: Efl.Canvas.Object; [[Obstacle object]]
+         }
+         return: bool; [[$true on success, $false otherwise.]]
+      }
+      // FIXME: Needs to be removed! It should just keep callbacks on those objects and update the flag when they change
+      // obstacles_update {
+      // FIXME: Should just be an event instead of future.
+      // Should probably be used in ui.text when e.g. the text is too large or something. No need when text is small.
+      async_layout {
+         [[Requests to layout the text off the mainloop.
+
+           Once layout is complete, the result is returned as @Eina.Rect,
+           with w, h fields set.
+         ]]
+         return: future<Eina.Rect> @owned; [[Future for layout result]]
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+      Efl.Object.destructor;
+      Efl.Canvas.Object.paragraph_direction { get; set; }
+      Efl2.Text.Content.Plain.text { get; set; }
+      Efl.Gfx.Filter.filter_program { get; set; }
+      Efl.Gfx.Filter.filter_data { get; set; }
+      Efl.Gfx.Filter.filter_source { get; set; }
+      Efl.Canvas.Filter.Internal.filter_dirty;
+      Efl.Canvas.Filter.Internal.filter_input_render;
+      Efl.Canvas.Filter.Internal.filter_state_prepare;
+      Efl2.Text.Wrap.Properties.ellipsis { get; set; }
+      Efl2.Text.Wrap.Properties.wrap { get; set; }
+      Efl.Gfx.Entity.scale { set; }
+   }
+   events {
+       // FIXME: define when changed is actually called compared to layout. I guess chaged is called everything time content changes, and layout one just after layout is done.
+      changed: void; [[Called when canvas text changed ]]
+      layout,finished: void; [[Called when the object has been layed out]]
+
+      // FIXME: rename if we rename the property
+      style_insets,changed: void; [[Called when the property @.style_insets changed.]]
+   }
+}
