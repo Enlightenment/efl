@@ -187,6 +187,12 @@ pub_eo_files = [
   'efl_ui_collection_view.eo',
   'efl_ui_collection_view_focus_manager.eo',
   'efl_ui_grid_view.eo',
+  'efl2_ui_text.eo',
+  'efl2_ui_label.eo',
+  'efl2_text_raw_editable.eo',
+  'efl2_text_cursor_interactive.eo',
+  'efl2_text_item_image_factory.eo',
+  'efl2_text_item_emoticon_factory.eo',
 ]
 
 foreach eo_file : pub_eo_files

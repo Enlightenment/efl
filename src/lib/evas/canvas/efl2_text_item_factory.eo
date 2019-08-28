@@ -1,0 +1,95 @@
+struct @beta Efl2.Text.Item.Handle;
+
+/* FIXME:
+   * Add mising functions (probably an interface) to set size, src and other needed item properties.
+    * Note that "src" is potentially not applicable here but only in an inherited class - as this object is quite dumb
+  - Deletion is just like a normal char deletion
+  - In the text it's the unicode object replacement char
+  - Do we even want refcount?
+*/
+class @beta Efl2.Text.Item.Factory {
+   [[Annotation factory API
+
+       Long-lived you keep it and reuse it as needed
+   ]]
+   methods {
+      reset {
+         [[Resets the factory context
+         ]]
+      }
+
+      load {
+         [[Sets the factory context from a handle
+         ]]
+         params {
+            @cref handle: Efl2.Text.Item.Handle; [[Item handle]]
+         }
+      }
+
+      // FIXME: rename?
+      update {
+         [[Sets the factory context to an handle
+         ]]
+         params {
+            @cref handle: Efl2.Text.Item.Handle; [[Item handle]]
+         }
+      }
+
+      // FIXME: cursor_?
+      insert {
+         [[Creates an item from the current factory context and inserts it + an object replacement char at the cursor
+         ]]
+         return: Efl2.Text.Item.Handle; [[The handle to the item]]
+         params {
+            position: Efl2.Text.Cursor; [[Item's position]]
+         }
+      }
+
+      // FIXME: cursor_?
+      attach {
+         [[Creates an item from the current factory context and attaches it to the object replacement char under the cursor
+           or updates the existing one if already exists.
+         ]]
+         return: Efl2.Text.Item.Handle; [[The handle to the item]]
+         params {
+            position: Efl2.Text.Cursor; [[Item's position]]
+         }
+      }
+
+      // FIXME: cursor_?
+      range_items_get @static {
+         [[Returns an iterator of all the handles in a range.
+         ]]
+         params {
+              @in start: const(Efl2.Text.Cursor); [[Start of range]]
+              @in end: const(Efl2.Text.Cursor); [[End of range]]
+         }
+         return: iterator<Efl2.Text.Item.Handle> @owned; [[The handles of the items]]
+      }
+
+      // FIXME: cursor_?
+      item_position_get @static {
+         [[Gets the item's position and set the cursor
+         ]]
+         params {
+              @out position: const(Efl2.Text.Cursor); [[Start of range]]
+         }
+      }
+
+      ref @static {
+         [[Increase the item's refcount
+         ]]
+         params {
+              @cref handle: Efl2.Text.Item.Handle; [[Handle to the item to delete from the object]]
+         }
+      }
+
+      unref @static {
+         [[Decrease the item's refcount
+         ]]
+         params {
+              @cref handle: Efl2.Text.Item.Handle; [[Handle to the item to delete from the object]]
+         }
+      }
+   }
+}

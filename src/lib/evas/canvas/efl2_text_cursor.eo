@@ -1,0 +1,250 @@
+import eina_types;
+
+struct @beta Efl2.Text.Cursor_Handle;
+
+enum @beta Efl2.Text.Cursor_Type
+{
+   [[Text cursor types]]
+   before, [[Cursor type before]]
+   under [[Cursor type under]]
+}
+
+// FIXME: eo_parent has to be the wanted textblock object -- not sure I like this
+//        Could have cursor_new on the object that creates a cursor and if you want a different cursor type just use either the cursor handle, or whoever implements that can just implement a wrapper
+//        Could also jut make the textblock object return a handle which we can use to load here directly, so we don't need the override functionality
+//          Need to figure out the life-time of this with refs and etc -> Apparently cursors don't have refs.
+// Whatever we do with the handle, I guess it should only have one owning eo wrapper? Because otherwise events on the cursor itself won't work. Or we can change that.
+//   I can just have a list of extra eo objects (other than the one pointed from the cursor itself so for extra such objects? Should be rarely used
+// How does it work with composite objects that use textblock?
+// Internally it's still a lightweight object and we should be able to get that lightweight object as an opaque type so
+// we can cache it
+// - Have signals that indicate it has changed? Or overkill at this stage?
+// Rename cluster onse to grapheme?
+// Should the range functions be moved here?
+// Am I happy with the range functions being on the cursor?
+class @beta Efl2.Text.Cursor {
+   [[Cursor API
+   ]]
+   c_prefix: efl2_text_cursor;
+   methods {
+      @property position {
+         [[Cursor position]]
+         set {  }
+         get {  }
+         values {
+            position: int; [[Cursor position]]
+         }
+      }
+      @property content {
+         [[The content of the cursor (the character under the cursor)]]
+         get {
+         }
+         values {
+            content: Eina.Unicode; [[The unicode codepoint of the character]]
+         }
+      }
+      // FIXME: Not sure I like the use of enum. Maybe should be split to two separate functions.
+      @property geometry {
+         [[Returns the geometry of two cursors ("split cursor"), if logical cursor is
+           between LTR/RTL text, also considering paragraph direction.
+           Upper cursor is shown for the text of the same direction as paragraph,
+           lower cursor - for opposite.
+
+           Split cursor geometry is valid only  in '|' cursor mode.
+           In this case $true is returned and $cx2, $cy2, $cw2, $ch2 are set.
+         ]]
+         get {
+            return: bool; [[ $true if split cursor, $false otherwise.]]
+         }
+         keys {
+            ctype: Efl2.Text.Cursor_Type; [[The type of the cursor.]]
+         }
+         values {
+            cx: int; [[The x of the cursor (or upper cursor)]]
+            cy: int; [[The y of the cursor (or upper cursor)]]
+            cw: int; [[The width of the cursor (or upper cursor)]]
+            ch: int; [[The height of the cursor (or upper cursor)]]
+            cx2: int; [[The x of the lower cursor]]
+            cy2: int; [[The y of the lower cursor]]
+            cw2: int; [[The width of the lower cursor]]
+            ch2: int; [[The height of the lower cursor]]
+         }
+      }
+      equal {
+         [[Check if two cursors are equal - faster than compare if all you want is equality]]
+         params {
+            cur2: Efl2.Text.Cursor; [[Cursor 2 object]]
+         }
+         return: bool; [[$true if cursors are equal, $false otherwise]]
+      }
+      compare {
+         [[Compare two cursors]]
+         params {
+            cur2: Efl2.Text.Cursor; [[Cursor 2 object]]
+         }
+         return: int; [[Difference between cursors]]
+      }
+      copy {
+         [[Copy existing cursor]]
+      }
+      char_next {
+         [[Advances to the next character]]
+      }
+      char_prev {
+         [[Advances to the previous character]]
+      }
+      char_delete {
+         [[Deletes a single character from position pointed by given cursor.]]
+      }
+
+      cluster_start {
+         [[Advances to the end of grapheme cluster]]
+      }
+      cluster_end {
+         [[Advances to the start of the grapheme cluster]]
+      }
+      cluster_delete {
+         [[Deletes the current cluster from position pointed by given cursor.]]
+      }
+
+      paragraph_start {
+         [[Advances to the first character in this paragraph]]
+      }
+      paragraph_end {
+         [[Advances to the last character in this paragraph]]
+      }
+      word_start {
+         [[Advance to current word start]]
+      }
+      word_end {
+         [[Advance to current word end]]
+      }
+      line_start {
+         [[Advance to current line first character]]
+      }
+      line_end {
+          [[Advance to current line last character]]
+      }
+      paragraph_first {
+         [[Advance to current paragraph first character]]
+      }
+      paragraph_last {
+         [[Advance to current paragraph last character]]
+      }
+      paragraph_next {
+         [[Advances to the start of the next text node]]
+      }
+      paragraph_prev {
+         [[Advances to the end of the previous text node]]
+      }
+      line_jump_by {
+         [[Jump the cursor by the given number of lines]]
+         params {
+            by: int; [[Number of lines]]
+         }
+      }
+
+      char_coord_set {
+         [[Set cursor coordinates]]
+         params {
+            @in x: int; [[X coord to set by.]]
+            @in y: int; [[Y coord to set by.]]
+         }
+      }
+
+      // FIXME: should be removed. It's just char_coord_set + grapheme_start
+      cluster_coord_set {
+         [[Set cursor coordinates according to grapheme cluster.
+         ]]
+         params {
+            @in x: int; [[X coord to set by.]]
+            @in y: int; [[Y coord to set by.]]
+         }
+      }
+
+      text_insert {
+         [[Adds text to the current cursor position and set the cursor to
+           *after* the start of the text just added.
+         ]]
+         params {
+            @in text: string; [[Text to append (UTF-8 format).]]
+         }
+         return: int; [[Length of the appended text.]]
+      }
+
+      range_text_get @const {
+         [[Returns the text in the range between $cur1 and $cur2.
+         ]]
+         return: mstring @owned; [[The text in the given range]]
+         params {
+            cur2: Efl2.Text.Cursor; [[End of range]]
+         }
+      }
+      range_geometry_get {
+         [[Get the simple geometry of a range in the text.
+
+           The geometry is the geometry in which rectangles in middle lines of
+           range are merged into one big rectangle. This is an optimized
+           version of @.range_geometry_get.
+         ]]
+         params {
+             cur2: Efl2.Text.Cursor; [[End of range]]
+         }
+         return: iterator<ptr(Eina.Rect)> @owned; [[
+            Iterator on all geoemtries of the given range
+         ]]
+      }
+      range_precise_geometry_get {
+         [[Get the "precise" geometry of a range.
+
+           The geometry is represented as rectangles for each of the line
+           segments in the given range [$cur1, $cur2].
+         ]]
+         params {
+             cur2: Efl2.Text.Cursor; [[End of range]]
+         }
+         return: iterator<ptr(Eina.Rect)> @owned; [[
+            Iterator on all simple geometries of the given range
+         ]]
+      }
+      range_delete {
+         [[Deletes the range between given cursors.
+
+           This removes all the text in given range [$start,$end].
+         ]]
+         params {
+            @in cur2: Efl2.Text.Cursor; [[Range end position]]
+         }
+      }
+
+      @property handle {
+         [[This function should rarely be used by people. It gives you a lightweight handle to a cursor that you can either cache (make sure to ref!) or just use to populate a different cursor object.
+
+         You can either replace the handle to change the object this is working on, or get it for caching]]
+         set {  }
+         get {  }
+         values {
+            handle: Efl2.Text.Cursor_Handle; [[The handle of the cursor object]]
+         }
+      }
+
+      handle_ref @static {
+         [[Increase the handle's refcount
+         ]]
+         params {
+              handle: Efl2.Text.Cursor_Handle; [[Cursor handle]]
+         }
+      }
+
+      handle_unref @static {
+         [[Decrease the handle's refcount
+         ]]
+         params {
+              handle: Efl2.Text.Cursor_Handle; [[Cursor handle]]
+         }
+      }
+   }
+   events {
+      changed: void; [[Called when its position has changed]]
+   }
+}

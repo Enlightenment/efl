@@ -1,0 +1,332 @@
+// See how this interacts with text format
+
+enum @beta Efl2.Text.Style.Background
+{
+   [[Whether to apply background style to the displayed text or not]]
+   off = 0, [[Do not use background]]
+   on,      [[Use background style]]
+}
+
+enum @beta Efl2.Text.Style.Strikethrough
+{
+   [[Whether to apply strikethrough style to the displayed text or not]]
+   off = 0, [[Do not use strikethrough]]
+   on,      [[Use strikethrough style]]
+}
+
+enum @beta Efl2.Text.Style.Effect
+{
+   [[Effect to apply to the displayed text]]
+   none = 0, [[No effect]]
+
+   // colored with shadow_color
+   shadow, [[Shadow effect]]
+   far_shadow, [[Far shadow effect]]
+   soft_shadow, [[Soft shadow effect]]
+   far_soft_shadow, [[Far and soft shadow effect]]
+   // colored with glow_color
+   glow, [[Glow effect]]
+   // colored with outline_color
+   outline, [[Outline effect]]
+   soft_outline, [[Soft outline effect]]
+   // colored with outline_color + shadow_color
+   outline_shadow, [[Outline shadow effect]]
+   outline_soft_shadow, [[Outline soft shadow effect]]
+}
+
+// FIXME: Should this be an enum or used as flags?
+enum @beta Efl2.Text.Style.Shadow_Direction
+{
+   [[Direction of the shadow style, if used]]
+   bottom_right = 0, [[Shadow towards bottom right]]
+   bottom, [[Shadow towards botom]]
+   bottom_left, [[Shadow towards bottom left]]
+   left, [[Shadow towards left]]
+   top_left, [[Shadow towards top left]]
+   top, [[Shadow towards top]]
+   top_right, [[Shadow towards top right]]
+   right, [[Shadow towards right]]
+}
+
+enum @beta Efl2.Text.Style.Underline
+{
+   [[Underline type of the displayed text]]
+   off = 0, [[Text without underline]]
+   on, [[Underline enabled]]
+   single, [[Underlined with a signle line]]
+   double, [[Underlined with a double line]]
+   dashed, [[Underlined with a dashed line]]
+}
+
+enum @beta Efl2.Text.Style.Horizontal_Alignment_Auto_Type {
+   [[Auto-horizontal alignment of the text]]
+   none,   [[No auto-alignment rule]]
+   normal, [[Respects LTR/RTL (bidirectional) settings]]
+   // FIXME: Wtf is the locale one meant to do
+   locale, [[Respects locale's langauge settings]]
+   end     [[Text is places at opposite side of LTR/RTL (bidirectional) settings]]
+}
+
+// FIXME: rename to Efl2.Text.Attribute.Properties?
+// FIXME: This should be applicable to the normal text object, so potentially split as necessary
+// FIXME: am I happy with all the names/exposed options here? Better match with CSS?
+// No justification support. We can add in the future. Too much now. Definitely not part of alignment.
+interface @beta Efl2.Text.Style.Properties {
+   [[Style to apply to the text
+
+     A style can be coloring, effects, underline, strikethrough etc.
+   ]]
+   c_prefix: efl2_text_style;
+   methods {
+      @property foreground_color {
+         [[Color of text, excluding style]]
+         values
+         {
+            r: ubyte; [[Red component]]
+            g: ubyte; [[Green component]]
+            b: ubyte; [[Blue component]]
+            a: ubyte; [[Alpha component]]
+         }
+      }
+
+      @property background_type {
+          [[Enable or disable background type]]
+         values
+         {
+            type: Efl2.Text.Style.Background; [[Background type]]
+         }
+      }
+
+      @property background_color {
+          [[Background color]]
+         values
+         {
+            r: ubyte; [[Red component]]
+            g: ubyte; [[Green component]]
+            b: ubyte; [[Blue component]]
+            a: ubyte; [[Alpha component]]
+         }
+      }
+
+      @property underline_type {
+         [[Sets an underline style on the text]]
+         values
+         {
+            type: Efl2.Text.Style.Underline; [[Underline type]]
+         }
+      }
+
+      @property underline_color
+      {
+         [[Color of normal underline style]]
+         values
+         {
+            r: ubyte; [[Red component]]
+            g: ubyte; [[Green component]]
+            b: ubyte; [[Blue component]]
+            a: ubyte; [[Alpha component]]
+         }
+      }
+
+      @property underline_height
+      {
+         [[Height of underline style]]
+         values
+         {
+            height: double; [[Height]]
+         }
+      }
+
+      @property underline_dashed_color
+      {
+         [[Color of dashed underline style]]
+         values
+         {
+            r: ubyte; [[Red component]]
+            g: ubyte; [[Green component]]
+            b: ubyte; [[Blue component]]
+            a: ubyte; [[Alpha component]]
+         }
+      }
+
+      @property underline_dashed_width
+      {
+         [[Width of dashed underline style]]
+         values
+         {
+            width: int; [[Width]]
+         }
+      }
+
+      @property underline_dashed_gap
+      {
+         [[Gap of dashed underline style]]
+         values
+         {
+            gap: int; [[Gap]]
+         }
+      }
+
+      @property underline2_color
+      {
+         [[Color of underline2 style]]
+         values
+         {
+            r: ubyte; [[Red component]]
+            g: ubyte; [[Green component]]
+            b: ubyte; [[Blue component]]
+            a: ubyte; [[Alpha component]]
+         }
+      }
+
+      @property strikethrough_type {
+         [[Type of strikethrough style]]
+         values
+         {
+            type: Efl2.Text.Style.Strikethrough; [[Strikethrough type]]
+         }
+      }
+
+      @property strikethrough_color
+      {
+         [[Color of strikethrough_style]]
+         values
+         {
+            r: ubyte; [[Red component]]
+            g: ubyte; [[Green component]]
+            b: ubyte; [[Blue component]]
+            a: ubyte; [[Alpha component]]
+         }
+      }
+
+      @property effect_type {
+         [[Type of effect used for the displayed text]]
+         values {
+            type: Efl2.Text.Style.Effect; [[Effect type]]
+         }
+      }
+      @property outline_color
+      {
+         [[Color of outline effect]]
+         values
+         {
+            r: ubyte; [[Red component]]
+            g: ubyte; [[Green component]]
+            b: ubyte; [[Blue component]]
+            a: ubyte; [[Alpha component]]
+         }
+      }
+
+      @property shadow_direction
+      {
+         [[Direction of shadow effect]]
+         values
+         {
+            type: Efl2.Text.Style.Shadow_Direction; [[Shadow direction]]
+         }
+      }
+
+      @property shadow_color
+      {
+         [[Color of shadow effect]]
+         values
+         {
+            r: ubyte; [[Red component]]
+            g: ubyte; [[Green component]]
+            b: ubyte; [[Blue component]]
+            a: ubyte; [[Alpha component]]
+         }
+      }
+
+      @property glow_color
+      {
+         [[Color of glow effect]]
+         values
+         {
+            r: ubyte; [[Red component]]
+            g: ubyte; [[Green component]]
+            b: ubyte; [[Blue component]]
+            a: ubyte; [[Alpha component]]
+         }
+      }
+
+      @property glow2_color
+      {
+         [[Second color of the glow effect]]
+         values
+         {
+            r: ubyte; [[Red component]]
+            g: ubyte; [[Green component]]
+            b: ubyte; [[Blue component]]
+            a: ubyte; [[Alpha component]]
+         }
+      }
+
+      @property gfx_filter
+      {
+         [[Program that applies a special filter
+
+           See @Efl.Gfx.Filter.
+         ]]
+         values
+         {
+            code: string; [[Filter code]]
+         }
+      }
+
+
+      // FIXME: It's a bit weird. I don't understand why it should be anything more than "use bidi", and "not"
+      // FIXME: definitely rename
+      @property halign_auto_type {
+         [[Horizontal alignment of text]]
+         values {
+            value: Efl2.Text.Style.Horizontal_Alignment_Auto_Type; [[Alignment type]]
+         }
+      }
+
+      @property halign {
+         [[Horizontal alignment of text]]
+         values {
+            value: double; [[Horizontal alignment value]]
+         }
+      }
+
+      // FIXME: Make enum and add justification - should be ascent/descent/etc
+      @property valign {
+         [[Horizontal alignment of text]]
+         values {
+            value: double; [[Horizontal alignment value]]
+         }
+      }
+
+      @property line_spacing {
+         [[Minimal line gap (top and bottom) for each line in the text
+
+           $value is absolute size.
+         ]]
+         values
+         {
+            value: double; [[Line gap value]]
+         }
+      }
+
+      @property line_spacing_factor {
+         [[Relative line gap (top and bottom) for each line in the text
+
+           The original line gap value is multiplied by $value.
+         ]]
+         values
+         {
+            value: double; [[Relative line gap value]]
+         }
+      }
+
+      @property tab_width {
+         [[Tab width in number of spaces (em sizes)]]
+         values
+         {
+            value: int; [[Tapstops value]]
+         }
+      }
+   }
+}
