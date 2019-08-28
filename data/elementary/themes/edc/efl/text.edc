@@ -34,7 +34,7 @@ group { "efl/text/scroller";
             rel1.to: "efl.icon";
             rel1.relative: 1.0 0.0;
             rel1.offset: 0 0;
-            rel2.to: "efl.end";
+            rel2.to: "efl.extra";
             rel2.relative: 0.0 1.0;
             rel2.offset: -1 -1;
          }
@@ -67,7 +67,7 @@ group { "efl/text/scroller";
          action: STATE_SET "default" 0.0;
          target: "efl.icon";
       }
-      part { name: "efl.end"; type: SWALLOW;
+      part { name: "efl.extra"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -88,12 +88,12 @@ group { "efl/text/scroller";
       program {
          signal: "efl,action,show,end"; source: "efl";
          action: STATE_SET "visible" 0.0;
-         target: "efl.end";
+         target: "efl.extra";
       }
       program {
          signal: "efl,action,hide,end"; source: "efl";
          action: STATE_SET "default" 0.0;
-         target: "efl.end";
+         target: "efl.extra";
       }
       part { name: "glow";
          insert_after: "shadow";
@@ -242,7 +242,7 @@ group { "efl/text/single/scroller";
          description { state: "default" 0.0;
             rel1.to: "efl.icon";
             rel1.relative: 1.0 0.0;
-            rel2.to: "efl.end";
+            rel2.to: "efl.extra";
             rel2.relative: 0.0 1.0;
          }
       }
@@ -272,7 +272,7 @@ group { "efl/text/single/scroller";
          action: STATE_SET "default" 0.0;
          target: "efl.icon";
       }
-      part { name: "efl.end"; type: SWALLOW;
+      part { name: "efl.extra"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -291,12 +291,12 @@ group { "efl/text/single/scroller";
       program {
          signal: "efl,action,show,end"; source: "efl";
          action: STATE_SET "visible" 0.0;
-         target: "efl.end";
+         target: "efl.extra";
       }
       program {
          signal: "efl,action,hide,end"; source: "efl";
          action: STATE_SET "default" 0.0;
-         target: "efl.end";
+         target: "efl.extra";
       }
       part { name: "inset"; mouse_events: 0;
          description { state: "default" 0.0;
