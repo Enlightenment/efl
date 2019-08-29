@@ -930,6 +930,17 @@ _parts_cursors_find(Efl_Ui_Layout_Data *sd,
 /* The public functions down here are meant to operate on whichever
  * widget inheriting from elm_layout */
 
+EOLIAN static void
+_efl_ui_layout_efl_file_unload(Eo *obj, void *_pd EINA_UNUSED)
+{
+   Efl_Ui_Layout_Data *sd = efl_data_scope_get(obj, MY_CLASS);
+
+   ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
+
+   efl_file_unload(wd->resize_obj);
+   sd->file_set = EINA_FALSE;
+}
+
 EOLIAN static Eina_Error
 _efl_ui_layout_efl_file_load(Eo *obj, void *_pd EINA_UNUSED)
 {

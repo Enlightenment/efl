@@ -7,6 +7,7 @@ class @beta Efl.Ui.Win_Part extends Efl.Ui.Widget_Part implements Efl.Content, E
       Efl.Content.content_unset;
       Efl.Gfx.Color.color { get; set; }
       Efl.File.load;
+      Efl.File.unload;
       Efl.File.file { get; }
       Efl.File.key { get; }
    }

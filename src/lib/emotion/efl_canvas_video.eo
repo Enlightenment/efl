@@ -52,6 +52,7 @@ class @beta Efl.Canvas.Video extends Efl.Canvas.Group implements Efl.File, Efl.P
         Efl.Gfx.Entity.position { set; }
         Efl.Gfx.Entity.size { set; }
         Efl.File.load;
+        Efl.File.unload;
         Efl.File.file { set; }
         Efl.File.loaded { get; }
         Efl.Player.play { get; set; }

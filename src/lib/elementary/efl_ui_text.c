@@ -2530,6 +2530,14 @@ _efl_ui_text_efl_file_file_set(Eo *obj, Efl_Ui_Text_Data *sd, const char *file)
    return efl_file_set(efl_super(obj, MY_CLASS), file);
 }
 
+EOLIAN static void
+_efl_ui_text_efl_file_unload(Eo *obj, Efl_Ui_Text_Data *sd)
+{
+   efl_file_unload(efl_super(obj, MY_CLASS));
+   ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
+   elm_object_text_set(obj, "");
+}
+
 EOLIAN static Eina_Error
 _efl_ui_text_efl_file_load(Eo *obj, Efl_Ui_Text_Data *sd)
 {

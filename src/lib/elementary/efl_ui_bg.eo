@@ -10,6 +10,7 @@ class @beta Efl.Ui.Bg extends Efl.Ui.Layout_Base implements Efl.File, Efl.Gfx.Co
       Efl.Object.destructor;
       Efl.Object.finalize;
       Efl.File.load;
+      Efl.File.unload;
       Efl.File.file { get; set; }
       Efl.File.key { get; set; }
       Efl.File.mmap { get; set; }
