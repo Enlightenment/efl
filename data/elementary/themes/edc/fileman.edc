@@ -688,7 +688,7 @@ group { name: "e/fileman/default/scrollframe";
    parts {
       part { name: "bg";
          description { state: "default" 0.0;
-            color_class: "fileman_base";
+            color: 64 64 64 255;
          }
       }
       part { name: "e.swallow.bg"; type: SWALLOW; insert_before: "e.swallow.content";
@@ -707,13 +707,18 @@ group { name: "e/fileman/default/scrollframe";
          }
       }
       part { name: "e.box.operations"; type: BOX;
-         insert_after: "e.swallow.overlay";
+//      part { name: "e.box.operations"; type: RECT;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.offset: 3 3;
+            rel1.offset: -8 -8;
             rel1.to: "bg";
-            rel2.offset: -4 -4;
+            rel1.relative: 1.0 1.0;
+            rel2.offset: -8 -8;
             rel2.to: "bg";
             align: 1.0 1.0;
+            offscale;
+//            min: 50 50;
+//            color: 255 128 0 128;
             box { layout: "vertical";
                padding: 0 0;
                align: 1.0 1.0;
@@ -1341,7 +1346,7 @@ group { name: "e/fileman/default/progress";
             rel1.relative: 0.0 1.0;
             rel1.offset: 0 -5;
             rel2.to: "e.gauge.bar";
-            rel2.relative: 0.5 1.0;
+            rel2.relative: 1.0 1.0;
             color: 51 153 255 255;
             min: 0 5;
             align: 0.0 1.0;
@@ -1368,9 +1373,10 @@ group { name: "e/fileman/default/progress";
             rel2.to_x: "close_event";
             rel2.offset: -5 -9;
             color: 255 255 255 255;
+            min: 240 1;
             text { font: FN; size: 10;
-               min: 1 0;
-               ellipsis: -1;
+               min: 0 1;
+               ellipsis: 0.0;
                align: 0.0 0.5;
                text_class: "fileman_icon";
             }
