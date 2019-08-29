@@ -302,6 +302,7 @@ _blend_gradient_alpha(int count, const SW_FT_Span *spans, void *user_data)
    uint32_t *buffer;
    const int pix_stride = sd->raster_buffer->stride / 4;
    uint32_t gradientbuffer[BLEND_GRADIENT_BUFFER_SIZE];
+   uint32_t tbuffer[BLEND_GRADIENT_BUFFER_SIZE];  //temp buffer
 
    // FIXME: Get the proper composition function using ,color, ECTOR_OP etc.
    if (sd->type == LinearGradient) fetchfunc = &fetch_linear_gradient;
@@ -311,11 +312,6 @@ _blend_gradient_alpha(int count, const SW_FT_Span *spans, void *user_data)
 
    Ector_Software_Buffer_Base_Data *mask = sd->mask;
    uint32_t *mbuffer = mask->pixels.u32;
-
-   //Temp buffer for intermediate processing
-   int tsize = sd->raster_buffer->generic->w > spans->len ? sd->raster_buffer->generic->w : spans->len;
-   uint32_t *tbuffer = alloca(sizeof(uint32_t) * tsize);
-   if (!tbuffer) return;
 
    comp_func = efl_draw_func_span_get(sd->op, sd->mul_col, sd->gradient->alpha);
 
@@ -359,6 +355,7 @@ _blend_gradient_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
    uint32_t *buffer;
    const int pix_stride = sd->raster_buffer->stride / 4;
    uint32_t gradientbuffer[BLEND_GRADIENT_BUFFER_SIZE];
+   uint32_t tbuffer[BLEND_GRADIENT_BUFFER_SIZE];  //temp buffer
 
    // FIXME: Get the proper composition function using ,color, ECTOR_OP etc.
    if (sd->type == LinearGradient) fetchfunc = &fetch_linear_gradient;
@@ -368,11 +365,6 @@ _blend_gradient_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
 
    Ector_Software_Buffer_Base_Data *mask = sd->mask;
    uint32_t *mbuffer = mask->pixels.u32;
-
-   //Temp buffer for intermediate processing
-   int tsize = sd->raster_buffer->generic->w > spans->len ? sd->raster_buffer->generic->w : spans->len;
-   uint32_t *tbuffer = alloca(sizeof(uint32_t) * tsize);
-   if (!tbuffer) return;
 
    comp_func = efl_draw_func_span_get(sd->op, sd->mul_col, sd->gradient->alpha);
 
