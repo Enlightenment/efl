@@ -504,7 +504,7 @@ _efl_canvas_layout_efl_observer_update(Eo *obj EINA_UNUSED, Edje *ed, Efl_Object
      }
    else if (obs == _edje_text_class_member)
      {
-        _edje_textblock_style_all_update_text_class(ed, key);
+        _edje_file_textblock_style_all_update_text_class(ed->file, key);
 #ifdef EDJE_CALC_CACHE
         ed->text_part_change = EINA_TRUE;
 #endif

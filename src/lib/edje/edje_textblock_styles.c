@@ -237,14 +237,14 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl)
  * @param ed The edje containing styles which need to be updated
  */
 void
-_edje_textblock_style_all_update(Edje *ed)
+_edje_file_textblock_style_all_update(Edje_File *edf)
 {
    Eina_List *l;
    Edje_Style *stl;
 
-   if (!ed->file) return;
+   if (!edf) return;
 
-   EINA_LIST_FOREACH(ed->file->styles, l, stl)
+   EINA_LIST_FOREACH(edf->styles, l, stl)
      if (stl && !stl->readonly) stl->cache = EINA_FALSE;
 }
 
@@ -390,15 +390,15 @@ _edje_textblock_style_get(Edje *ed, const char *style)
  * updates them.
  */
 void
-_edje_textblock_style_all_update_text_class(Edje *ed, const char *text_class)
+_edje_file_textblock_style_all_update_text_class(Edje_File *edf, const char *text_class)
 {
    Eina_List *l, *ll;
    Edje_Style *stl;
 
-   if (!ed->file) return;
+   if (!edf) return;
    if (!text_class) return;
 
-   EINA_LIST_FOREACH(ed->file->styles, l, stl)
+   EINA_LIST_FOREACH(edf->styles, l, stl)
      {
         Edje_Style_Tag *tag;
 
@@ -426,7 +426,7 @@ _edje_textblock_style_all_update_text_class(Edje *ed, const char *text_class)
  * followed by a list of tags.
  */
 void
-_edje_textblock_style_parse_and_fix(Edje_File *edf)
+_edje_file_textblock_style_parse_and_fix(Edje_File *edf)
 {
    Eina_List *l, *ll;
    Edje_Style *stl;
@@ -498,7 +498,7 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
 }
 
 void
-_edje_textblock_style_cleanup(Edje_File *edf)
+_edje_file_textblock_style_cleanup(Edje_File *edf)
 {
    Edje_Style *stl;
 

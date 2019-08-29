@@ -2280,7 +2280,7 @@ _edje_file_free(Edje_File *edf)
    if (edf->free_strings && edf->compiler) eina_stringshare_del(edf->compiler);
    if (edf->free_strings) eina_stringshare_del(edf->id);
    eina_hash_free(edf->style_hash);
-   _edje_textblock_style_cleanup(edf);
+   _edje_file_textblock_style_cleanup(edf);
    if (edf->ef) eet_close(edf->ef);
    if (edf->f) eina_file_close(edf->f);  // close matching open (in _edje_file_open) OK
    free(edf);
