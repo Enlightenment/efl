@@ -25,7 +25,7 @@ fi;
 #
 if [ ! -d "bin" ]; then
   rm -rf docfx.zip bin
-  wget https://github.com/dotnet/docfx/releases/download/v2.40.4/docfx.zip
+  wget https://github.com/dotnet/docfx/releases/download/v2.45/docfx.zip
   unzip -q docfx.zip -d bin
   rm docfx.zip
 else
