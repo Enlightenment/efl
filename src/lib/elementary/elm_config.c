@@ -4025,6 +4025,19 @@ elm_config_glayer_double_tap_timeout_set(double double_tap_timeout)
 }
 
 EAPI Eina_Bool
+elm_config_desktop_entry_get(void)
+{
+   return _elm_config->desktop_entry;
+}
+
+EAPI void
+elm_config_desktop_entry_set(Eina_Bool enable)
+{
+   _elm_config->priv.desktop_entry = EINA_TRUE;
+   _elm_config->desktop_entry = !!enable;
+}
+
+EAPI Eina_Bool
 elm_config_magnifier_enable_get(void)
 {
    return _elm_config->magnifier_enable;
