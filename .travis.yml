@@ -124,7 +124,7 @@ before_cache:
 
 notifications:
   - |
-      if [[ "$TRAVIS_BRANCH" == "master" ]]; then
+      if [[ "$TRAVIS_BRANCH" == "devs/stefan/travis-notification-tweaks" ]]; then
         irc:
           channels:
             - "chat.freenode.net#e-commits"
