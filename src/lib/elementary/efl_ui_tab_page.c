@@ -111,11 +111,6 @@ _efl_ui_tab_page_part_tab_icon_set(Eo *obj, void *_pd EINA_UNUSED, const char *p
 
    eina_stringshare_replace(&sd->tab_icon, path);
    efl_ui_tab_bar_default_item_icon_set(sd->tab_bar_icon, sd->tab_icon);
-
-   Efl_Ui_Tab_Page_Tab_Changed_Event event;
-   event.changed_info = EFL_UI_TAB_PAGE_TAB_CHANGED_ICON;
-
-   efl_event_callback_call(pd->obj, EFL_UI_TAB_PAGE_EVENT_TAB_CHANGED, &event);
 }
 
 EOLIAN static const char *
@@ -135,11 +130,6 @@ _efl_ui_tab_page_part_tab_efl_text_text_set(Eo *obj, void *_pd EINA_UNUSED, cons
 
    eina_stringshare_replace(&sd->tab_label, text);
    efl_text_set(sd->tab_bar_icon, sd->tab_label);
-
-   Efl_Ui_Tab_Page_Tab_Changed_Event event;
-   event.changed_info = EFL_UI_TAB_PAGE_TAB_CHANGED_LABEL;
-
-   efl_event_callback_call(pd->obj, EFL_UI_TAB_PAGE_EVENT_TAB_CHANGED, &event);
 }
 
 EOLIAN static const char *

@@ -1,14 +1,3 @@
-enum @beta Efl.Ui.Tab_Page_Tab_Changed {
-   [[Which part of the tab has changed.]]
-   label = 0, [[Label has changed.]]
-   icon [[Icon has changed.]]
-}
-
-struct @beta Efl.Ui.Tab_Page_Tab_Changed_Event {
-   [[Information of changed event.]]
-   changed_info: Efl.Ui.Tab_Page_Tab_Changed; [[Which part of the tab has changed.]]
-}
-
 class @beta Efl.Ui.Tab_Page extends Efl.Ui.Layout_Base implements Efl.Content
 {
    [[Tab Page class]]
@@ -36,8 +25,5 @@ class @beta Efl.Ui.Tab_Page extends Efl.Ui.Layout_Base implements Efl.Content
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
       Efl.Part.part_get;
-   }
-   events {
-      tab,changed: Efl.Ui.Tab_Page_Tab_Changed_Event; [[Called when tab changed]]
    }
 }

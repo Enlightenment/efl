@@ -57,26 +57,6 @@ static char *tab_icon_get()
 	return tab_icons[tab_icon_count++];
 }
 
-static void
-_tab_changed_cb(void *data EINA_UNUSED, const Efl_Event *event)
-{
-   Efl_Ui_Tab_Page_Tab_Changed_Event *ev = event->info;
-
-   switch (ev->changed_info)
-     {
-        case EFL_UI_TAB_PAGE_TAB_CHANGED_LABEL:
-          printf("[%p] tab label changed\n", event->object);
-          break;
-
-        case EFL_UI_TAB_PAGE_TAB_CHANGED_ICON:
-          printf("[%p] tab icon changed\n", event->object);
-          break;
-
-        default:
-          break;
-     }
-}
-
 Eo *
 content_add(Eo *parent, char *text)
 {
@@ -109,8 +89,6 @@ tab_page_add(Eo *parent)
    efl_content_set(tab_page, content);
    efl_text_set(efl_part(tab_page, "tab"), label);
    efl_ui_tab_page_part_tab_icon_set(efl_part(tab_page, "tab"), icon);
-
-   efl_event_callback_add(tab_page, EFL_UI_TAB_PAGE_EVENT_TAB_CHANGED, _tab_changed_cb, NULL);
 
    return tab_page;
 }
