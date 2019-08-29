@@ -146,14 +146,14 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl)
    /* this check is only here to catch misuse of this function */
    if (stl->readonly)
      {
-        ERR("style_update() shouldn't be called for readonly style. performance regression : %s", stl->name);
+        WRN("style_update() shouldn't be called for readonly style. performance regression : %s", stl->name);
         return;
      }
 
    /* this check is only here to catch misuse of this function */
    if (stl->cache)
      {
-        ERR("style_update() shouldn't be called for cached style. performance regression : %s", stl->name);
+        WRN("style_update() shouldn't be called for cached style. performance regression : %s", stl->name);
         return;
      }
 
