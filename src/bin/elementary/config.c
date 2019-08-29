@@ -859,6 +859,32 @@ ecc_change(void *data       EINA_UNUSED,
 }
 
 static void
+desk_entry_change(void *data       EINA_UNUSED,
+                  Evas_Object     *obj,
+                  void *event_info EINA_UNUSED)
+{
+   Eina_Bool val = elm_check_state_get(obj);
+   Eina_Bool de = elm_config_desktop_entry_get();
+
+   if (val == de) return;
+   elm_config_desktop_entry_set(val);
+   elm_config_all_flush();
+}
+
+static void
+mag_change(void *data       EINA_UNUSED,
+           Evas_Object     *obj,
+           void *event_info EINA_UNUSED)
+{
+   Eina_Bool val = elm_check_state_get(obj);
+   Eina_Bool mag = elm_config_magnifier_enable_get();
+
+   if (val == mag) return;
+   elm_config_magnifier_enable_set(val);
+   elm_config_all_flush();
+}
+
+static void
 ac_change(void *data       EINA_UNUSED,
           Evas_Object     *obj,
           void *event_info EINA_UNUSED)
@@ -1971,6 +1997,14 @@ _status_config_etc(Evas_Object *win,
    bx = elm_box_add(win);
    evas_object_size_hint_weight_set(bx, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set(bx, EVAS_HINT_FILL, 0.5);
+
+   // desktop_entry
+   CHECK_ADD("Desktop style entries", "Set entries to do things like on a normal desktop (non-touch) system", desk_entry_change, NULL);
+   elm_check_state_set(ck, elm_config_desktop_entry_get());
+
+   // desktop_entry
+   CHECK_ADD("Entry Mangifiers", "Set popup magnifiers on start/end selection handles in entries", mag_change, NULL);
+   elm_check_state_set(ck, elm_config_magnifier_enable_get());
 
    // access
    CHECK_ADD("Enable Access Mode", "Set access mode", ac_change, NULL);
