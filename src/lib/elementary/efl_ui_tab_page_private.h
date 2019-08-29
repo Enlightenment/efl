@@ -24,6 +24,4 @@ struct _Efl_Ui_Tab_Page_Data
        return __VA_ARGS__;                           \
     }
 
-#include "efl_ui_tab_page_part_tab.eo.h"
-
 #endif
