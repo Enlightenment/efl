@@ -314,7 +314,8 @@ _blend_gradient_alpha(int count, const SW_FT_Span *spans, void *user_data)
    uint32_t *mbuffer = mask->pixels.u32;
 
    //Temp buffer for intermediate processing
-   uint32_t *tbuffer = alloca(sizeof(uint32_t) * sd->raster_buffer->generic->w);
+   int tsize = sd->raster_buffer->generic->w > spans->len ? sd->raster_buffer->generic->w : spans->len;
+   uint32_t *tbuffer = alloca(sizeof(uint32_t) * tsize);
 
    comp_func = efl_draw_func_span_get(sd->op, sd->mul_col, sd->gradient->alpha);
 
@@ -370,7 +371,8 @@ _blend_gradient_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
    uint32_t *mbuffer = mask->pixels.u32;
 
    //Temp buffer for intermediate processing
-   uint32_t *tbuffer = alloca(sizeof(uint32_t) * sd->raster_buffer->generic->w);
+   int tsize = sd->raster_buffer->generic->w > spans->len ? sd->raster_buffer->generic->w : spans->len;
+   uint32_t *tbuffer = alloca(sizeof(uint32_t) * tsize);
 
    comp_func = efl_draw_func_span_get(sd->op, sd->mul_col, sd->gradient->alpha);
 
