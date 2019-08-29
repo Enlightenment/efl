@@ -351,6 +351,31 @@ _edje_textblock_styles_del(Edje *ed, Edje_Part *pt)
 }
 
 /*
+ * returns a evas_textblock style for a given style_string.
+ * does lazy computation of the evas_textblock_style
+ * It will compute and cache it if not computed yet and
+ * will return the final textblock style.
+ */
+Evas_Textblock_Style *
+_edje_textblock_style_get(Edje *ed, const char *style)
+{
+   if (!style) return NULL;
+
+   Edje_Style *stl = _edje_textblock_style_search(ed, style);
+
+   if (!stl) return NULL;
+
+   /* readonly style naver change */
+   if (stl->readonly) return stl->style;
+
+   /* if style is dirty recompute */
+   if (!stl->cache)
+     _edje_textblock_style_update(ed, stl, EINA_FALSE);
+
+   return stl->style;
+}
+
+/*
  * Finds all the styles having text class tag as text_class and
  * updates them.
  */
