@@ -1,6 +1,9 @@
 class @beta Efl.Ui.Grid extends Efl.Ui.Collection
 {
-   [[Simple grid widget with Pack interface.]]
+   [[A scrollable grid of @Efl.Ui.Item objects.
+
+     @Efl.Ui.Grid supports group items. Group items are displayed in the top of the viewport, if items of the group are in the viewport.
+   ]]
    data: null;
    implements {
       Efl.Object.constructor;

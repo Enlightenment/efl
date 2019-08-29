@@ -1,6 +1,11 @@
 class @beta Efl.Ui.List extends Efl.Ui.Collection
 {
-   [[Simple list widget with Pack interface.]]
+   [[A scrollable list of @Efl.Ui.Item objects.
+
+     @Efl.Ui.List supports group items. Group items are displayed in the top or right of the viewport, if the items belonging to them are in the viewport.
+
+
+     ]]
    data: null;
    implements {
       Efl.Object.constructor;
