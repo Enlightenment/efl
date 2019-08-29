@@ -23,6 +23,7 @@ _edje_edit_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_constructor, _edje_edit_efl_object_constructor),
       EFL_OBJECT_OP_FUNC(efl_destructor, _edje_edit_efl_object_destructor),
       EFL_OBJECT_OP_FUNC(efl_file_load, _edje_edit_efl_file_load),
+      EFL_OBJECT_OP_FUNC(efl_file_unload, _edje_edit_efl_file_unload),
       EDJE_EDIT_EXTRA_OPS
    );
    opsp = &ops;

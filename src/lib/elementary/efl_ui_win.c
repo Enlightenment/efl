@@ -7646,6 +7646,19 @@ _efl_ui_win_part_color_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char 
    return EINA_FALSE;
 }
 
+static void
+_efl_ui_win_part_file_unload(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eo *part_obj EINA_UNUSED, const char *part)
+{
+   sd->legacy.forbidden = EINA_TRUE;
+   if (eina_streq(part, "background"))
+     {
+        _elm_win_bg_set(sd, NULL);
+        return;
+     }
+
+   WIN_PART_ERR(part);
+}
+
 static Eina_Error
 _efl_ui_win_part_file_load(Eo *obj, Efl_Ui_Win_Data *sd, Eo *part_obj, const char *part)
 {
@@ -7753,6 +7766,14 @@ _efl_ui_win_part_efl_file_key_get(const Eo *obj, void *_pd EINA_UNUSED)
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Win_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
    return _efl_ui_win_part_file_key_get(pd->obj, sd, obj, pd->part);
+}
+
+EOLIAN static void
+_efl_ui_win_part_efl_file_unload(Eo *obj, void *_pd EINA_UNUSED)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Win_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
+   return _efl_ui_win_part_file_unload(pd->obj, sd, obj, pd->part);
 }
 
 EOLIAN static Eina_Error

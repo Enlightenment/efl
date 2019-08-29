@@ -5954,6 +5954,14 @@ _efl_ui_widget_part_bg_efl_file_load(Eo *obj, void *pd EINA_UNUSED)
    return efl_file_load(bg_obj);
 }
 
+EOLIAN static void
+_efl_ui_widget_part_bg_efl_file_unload(Eo *obj, void *pd EINA_UNUSED)
+{
+   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
+
+   efl_file_unload(bg_obj);
+}
+
 EOLIAN static const char *
 _efl_ui_widget_part_bg_efl_file_file_get(const Eo *obj, void *pd EINA_UNUSED)
 {

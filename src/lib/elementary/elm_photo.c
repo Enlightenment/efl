@@ -335,6 +335,13 @@ _elm_photo_efl_object_constructor(Eo *obj, Elm_Photo_Data *_pd EINA_UNUSED)
    return obj;
 }
 
+EOLIAN static void
+_elm_photo_efl_file_unload(Eo *obj, Elm_Photo_Data *sd)
+{
+   elm_icon_standard_set(sd->icon, "no_photo");
+   _sizing_eval(obj);
+}
+
 EOLIAN static Eina_Error
 _elm_photo_efl_file_load(Eo *obj, Elm_Photo_Data *sd)
 {

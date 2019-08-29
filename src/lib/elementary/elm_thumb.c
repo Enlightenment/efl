@@ -634,6 +634,36 @@ _elm_thumb_efl_file_loaded_get(const Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
    return sd->loaded;
 }
 
+EOLIAN static void
+_elm_thumb_efl_file_unload(Eo *obj EINA_UNUSED, Elm_Thumb_Data *sd)
+{
+   sd->is_video = EINA_FALSE;
+   eina_stringshare_replace(&(sd->thumb.file), NULL);
+   eina_stringshare_replace(&(sd->thumb.key), NULL);
+   sd->loaded = EINA_FALSE;
+
+   if (sd->thumb.request)
+     {
+        ethumb_client_thumb_async_cancel(_elm_ethumb_client, sd->thumb.request);
+        sd->thumb.request = NULL;
+     }
+   if (sd->thumb.retry)
+     {
+        retry = eina_list_remove(retry, sd);
+        efl_data_unref(sd->obj, sd);
+        sd->thumb.retry = EINA_FALSE;
+     }
+   evas_object_event_callback_del_full(sd->view, EVAS_CALLBACK_IMAGE_PRELOADED,
+                                       _on_thumb_preloaded, sd);
+
+   ELM_SAFE_FREE(sd->view, evas_object_del);
+   eina_stringshare_replace(&sd->thumb.thumb_path, NULL);
+   eina_stringshare_replace(&sd->thumb.thumb_key, NULL);
+
+   ELM_SAFE_FREE(sd->eeh, ecore_event_handler_del);
+
+}
+
 EOLIAN static Eina_Error
 _elm_thumb_efl_file_load(Eo *obj, Elm_Thumb_Data *sd)
 {

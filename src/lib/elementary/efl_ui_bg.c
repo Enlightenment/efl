@@ -218,6 +218,12 @@ _efl_ui_bg_efl_file_load(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd)
    return efl_file_load(sd->img);
 }
 
+EOLIAN static void
+_efl_ui_bg_efl_file_unload(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd)
+{
+   efl_file_unload(sd->img);
+}
+
 EOLIAN static Eina_Error
 _efl_ui_bg_efl_file_file_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd, const char *file)
 {

@@ -287,6 +287,19 @@ _efl_ui_video_efl_object_constructor(Eo *obj, Efl_Ui_Video_Data *_pd EINA_UNUSED
    return obj;
 }
 
+EOLIAN static void
+_efl_ui_video_efl_file_unload(Eo *obj, Efl_Ui_Video_Data *sd)
+{
+   if (sd->remember) emotion_object_last_position_save(sd->emotion);
+   sd->stop = EINA_FALSE;
+   efl_file_unload(sd->emotion);
+
+   if(elm_widget_is_legacy(obj))
+     elm_layout_signal_emit(obj, "elm,video,stop", "elm");
+   else
+     elm_layout_signal_emit(obj, "efl,video,stop", "efl");
+}
+
 EOLIAN static Eina_Error
 _efl_ui_video_efl_file_load(Eo *obj, Efl_Ui_Video_Data *sd)
 {

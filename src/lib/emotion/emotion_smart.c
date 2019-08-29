@@ -366,6 +366,22 @@ _efl_canvas_video_efl_file_loaded_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vide
    return sd->open && sd->loaded;
 }
 
+EOLIAN static void
+_efl_canvas_video_efl_file_unload(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+{
+    if (sd->engine_instance) emotion_engine_instance_file_close(sd->engine_instance);
+    sd->engine_instance = NULL;
+    evas_object_image_data_set(sd->obj, NULL);
+    evas_object_image_size_set(sd->obj, 1, 1);
+    _emotion_image_data_zero(sd->obj);
+
+   if (sd->anim) ecore_animator_del(sd->anim);
+   sd->anim = NULL;
+
+   _xattr_data_cancel(sd->xattr);
+   sd->loaded = 0;
+}
+
 EOLIAN static Eina_Error
 _efl_canvas_video_efl_file_load(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
@@ -410,7 +426,6 @@ _efl_canvas_video_efl_file_load(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
         evas_object_image_data_set(sd->obj, NULL);
         evas_object_image_size_set(sd->obj, 1, 1);
         _emotion_image_data_zero(sd->obj);
-        eina_stringshare_replace(&sd->file, NULL);
      }
 
    if (sd->anim) ecore_animator_del(sd->anim);

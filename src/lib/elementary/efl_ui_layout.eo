@@ -16,5 +16,6 @@ class Efl.Ui.Layout extends Efl.Ui.Layout_Base implements Efl.File
       Efl.File.key { get; set; }
       Efl.File.mmap { get; set; }
       Efl.File.load;
+      Efl.File.unload;
    }
 }

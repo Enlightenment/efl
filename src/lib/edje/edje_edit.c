@@ -269,6 +269,13 @@ _edje_edit_efl_file_load(Eo *obj, Edje_Edit *eed)
    return 0;
 }
 
+EOLIAN static void
+_edje_edit_efl_file_unload(Eo *obj, Edje_Edit *eed)
+{
+   efl_file_unload(efl_super(obj, MY_CLASS));
+   _edje_edit_data_clean(eed);
+}
+
 EAPI Evas_Object *
 edje_edit_object_add(Evas *evas)
 {
