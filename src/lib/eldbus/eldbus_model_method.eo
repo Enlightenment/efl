@@ -16,7 +16,7 @@ class @beta Eldbus.Model.Method extends Eldbus.Model.Arguments {
             [[Object]]
             set {}
             values {
-                @cref method: Eldbus.Introspection.Method; [[The introspected interface]]
+                method: ptr(const(Eldbus.Introspection.Method)); [[The introspected interface]]
             }
         }
         call {

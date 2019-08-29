@@ -138,8 +138,8 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
          ]]
          return: mstring @owned; [[The text in the given range]]
          params {
-            @cref cur1: Efl.Text_Cursor_Cursor; [[Start of range]]
-            @cref cur2: Efl.Text_Cursor_Cursor; [[End of range]]
+            @in cur1: ptr(const(Efl.Text_Cursor_Cursor)); [[Start of range]]
+            @in cur2: ptr(const(Efl.Text_Cursor_Cursor)); [[End of range]]
          }
       }
       range_geometry_get {
@@ -149,8 +149,8 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
            segments in the given range [$cur1, $cur2].
          ]]
          params {
-             @cref cur1: Efl.Text_Cursor_Cursor; [[Start of range]]
-             @cref cur2: Efl.Text_Cursor_Cursor; [[End of range]]
+             @in cur1: ptr(const(Efl.Text_Cursor_Cursor)); [[Start of range]]
+             @in cur2: ptr(const(Efl.Text_Cursor_Cursor)); [[End of range]]
          }
          return: iterator<ptr(Eina.Rect)> @owned; [[
             Iterator on all geoemtries of the given range
@@ -164,8 +164,8 @@ class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
            version of @.range_geometry_get.
          ]]
          params {
-             @cref cur1: Efl.Text_Cursor_Cursor; [[Start of range]]
-             @cref cur2: Efl.Text_Cursor_Cursor; [[End of range]]
+             @in cur1: ptr(const(Efl.Text_Cursor_Cursor)); [[Start of range]]
+             @in cur2: ptr(const(Efl.Text_Cursor_Cursor)); [[End of range]]
          }
          return: iterator<ptr(Eina.Rect)> @owned; [[
             Iterator on all simple geometries of the given range

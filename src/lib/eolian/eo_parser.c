@@ -1058,13 +1058,12 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
 {
    Eina_Bool has_optional = EINA_FALSE,
              has_owned    = EINA_FALSE;
-   Eina_Bool cref = (ls->t.kw == KW_at_cref);
    Eolian_Function_Parameter *par = calloc(1, sizeof(Eolian_Function_Parameter));
    par->param_dir = EOLIAN_IN_PARAM;
    FILL_BASE(par->base, ls, ls->line_number, ls->column, FUNCTION_PARAMETER);
    *params = eina_list_append(*params, par);
    eolian_object_ref(&par->base);
-   if (cref || (allow_inout && (ls->t.kw == KW_at_in)))
+   if (allow_inout && (ls->t.kw == KW_at_in))
      {
         par->param_dir = EOLIAN_IN_PARAM;
         eo_lexer_get(ls);
@@ -1097,11 +1096,6 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
         ls->expr_mode = EINA_FALSE;
         eo_lexer_expr_release_ref(ls, par->value);
         check_match(ls, ')', '(', line, col);
-     }
-   if (cref)
-     {
-        par->type->is_const = EINA_TRUE;
-        par->type->is_ptr = EINA_TRUE;
      }
    for (;;) switch (ls->t.kw)
      {

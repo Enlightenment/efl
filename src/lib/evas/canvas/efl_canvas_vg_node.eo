@@ -16,7 +16,7 @@ abstract @beta Efl.Canvas.Vg.Node extends Efl.Object implements Efl.Gfx.Entity, 
             ]]
          }
          values {
-            @cref m: Eina.Matrix3; [[Transformation matrix.]]
+            m: ptr(const(Eina.Matrix3)); [[Transformation matrix.]]
          }
       }
       @property origin {

@@ -26,7 +26,7 @@ abstract Efl.App extends Efl.Loop implements Efl.Core.Command_Line
          ]]
          get {}
          values {
-            @cref version: Efl.Version; [[Efl build version]]
+            version: ptr(const(Efl.Version)); [[Efl build version]]
          }
       }
       @property efl_version {
@@ -36,7 +36,7 @@ abstract Efl.App extends Efl.Loop implements Efl.Core.Command_Line
          ]]
          get {}
          values {
-            @cref version: Efl.Version; [[Efl version]]
+            version: ptr(const(Efl.Version)); [[Efl version]]
          }
       }
    }
