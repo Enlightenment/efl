@@ -260,22 +260,22 @@ static void
 _blend_gradient(int count, const SW_FT_Span *spans, void *user_data)
 {
    RGBA_Comp_Func comp_func;
-   Span_Data *data = (Span_Data *)(user_data);
+   Span_Data *sd = (Span_Data *)(user_data);
    src_fetch fetchfunc = NULL;
    unsigned int buffer[BLEND_GRADIENT_BUFFER_SIZE], *target, *destbuffer;
    int length, l;
-   const int pix_stride = data->raster_buffer->stride / 4;
+   const int pix_stride = sd->raster_buffer->stride / 4;
 
    // FIXME: Get the proper composition function using ,color, ECTOR_OP etc.
-   if (data->type == LinearGradient) fetchfunc = &fetch_linear_gradient;
-   if (data->type == RadialGradient) fetchfunc = &fetch_radial_gradient;
+   if (sd->type == LinearGradient) fetchfunc = &fetch_linear_gradient;
+   if (sd->type == RadialGradient) fetchfunc = &fetch_radial_gradient;
 
-   if (!fetchfunc || !data->raster_buffer->pixels.u32) return;
+   if (!fetchfunc || !sd->raster_buffer->pixels.u32) return;
 
-   comp_func = efl_draw_func_span_get(data->op, data->mul_col, data->gradient->alpha);
+   comp_func = efl_draw_func_span_get(sd->op, sd->mul_col, sd->gradient->alpha);
 
    // move to the offset location
-   destbuffer = data->raster_buffer->pixels.u32 + ((pix_stride * data->offy) + data->offx);
+   destbuffer = sd->raster_buffer->pixels.u32 + ((pix_stride * sd->offy) + sd->offx);
 
    while (count--)
      {
@@ -284,8 +284,8 @@ _blend_gradient(int count, const SW_FT_Span *spans, void *user_data)
         while (length)
           {
              l = MIN(length, BLEND_GRADIENT_BUFFER_SIZE);
-             fetchfunc(buffer, data, spans->y, spans->x, l);
-             comp_func(target, buffer, l, data->mul_col, spans->coverage);
+             fetchfunc(buffer, sd, spans->y, spans->x, l);
+             comp_func(target, buffer, l, sd->mul_col, spans->coverage);
              target += l;
              length -= l;
           }
@@ -297,33 +297,33 @@ static void
 _blend_gradient_alpha(int count, const SW_FT_Span *spans, void *user_data)
 {
    RGBA_Comp_Func comp_func;
-   Span_Data *data = (Span_Data *)(user_data);
+   Span_Data *sd = (Span_Data *)(user_data);
    src_fetch fetchfunc = NULL;
    uint32_t *buffer;
-   const int pix_stride = data->raster_buffer->stride / 4;
+   const int pix_stride = sd->raster_buffer->stride / 4;
    uint32_t gradientbuffer[BLEND_GRADIENT_BUFFER_SIZE];
 
    // FIXME: Get the proper composition function using ,color, ECTOR_OP etc.
-   if (data->type == LinearGradient) fetchfunc = &fetch_linear_gradient;
-   if (data->type == RadialGradient) fetchfunc = &fetch_radial_gradient;
+   if (sd->type == LinearGradient) fetchfunc = &fetch_linear_gradient;
+   if (sd->type == RadialGradient) fetchfunc = &fetch_radial_gradient;
 
    if (!fetchfunc)
      return;
 
-   Ector_Software_Buffer_Base_Data *mask = data->mask;
+   Ector_Software_Buffer_Base_Data *mask = sd->mask;
    uint32_t *mbuffer = mask->pixels.u32;
 
    //Temp buffer for intermediate processing
-   uint32_t *tbuffer = malloc(sizeof(uint32_t) * data->raster_buffer->generic->w);
+   uint32_t *tbuffer = malloc(sizeof(uint32_t) * sd->raster_buffer->generic->w);
 
-   comp_func = efl_draw_func_span_get(data->op, data->mul_col, data->gradient->alpha);
+   comp_func = efl_draw_func_span_get(sd->op, sd->mul_col, sd->gradient->alpha);
 
    // move to the offset location
-   buffer = data->raster_buffer->pixels.u32 + ((pix_stride * data->offy) + data->offx);
+   buffer = sd->raster_buffer->pixels.u32 + ((pix_stride * sd->offy) + sd->offx);
 
    while (count--)
      {
-        uint32_t *target = buffer + ((data->raster_buffer->generic->w * spans->y) + spans->x);
+        uint32_t *target = buffer + ((sd->raster_buffer->generic->w * spans->y) + spans->x);
         uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
         uint32_t *temp = tbuffer;
         int length = spans->len;
@@ -331,8 +331,8 @@ _blend_gradient_alpha(int count, const SW_FT_Span *spans, void *user_data)
         while (length)
           {
              int l = MIN(length, BLEND_GRADIENT_BUFFER_SIZE);
-             fetchfunc(gradientbuffer, data, spans->y, spans->x, l);
-             comp_func(temp, gradientbuffer, l, data->mul_col, spans->coverage);
+             fetchfunc(gradientbuffer, sd, spans->y, spans->x, l);
+             comp_func(temp, gradientbuffer, l, sd->mul_col, spans->coverage);
 
              for (int i = 0; i < l; i++)
                {
@@ -354,33 +354,33 @@ static void
 _blend_gradient_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
 {
    RGBA_Comp_Func comp_func;
-   Span_Data *data = (Span_Data *)(user_data);
+   Span_Data *sd = (Span_Data *)(user_data);
    src_fetch fetchfunc = NULL;
    uint32_t *buffer;
-   const int pix_stride = data->raster_buffer->stride / 4;
+   const int pix_stride = sd->raster_buffer->stride / 4;
    uint32_t gradientbuffer[BLEND_GRADIENT_BUFFER_SIZE];
 
    // FIXME: Get the proper composition function using ,color, ECTOR_OP etc.
-   if (data->type == LinearGradient) fetchfunc = &fetch_linear_gradient;
-   if (data->type == RadialGradient) fetchfunc = &fetch_radial_gradient;
+   if (sd->type == LinearGradient) fetchfunc = &fetch_linear_gradient;
+   if (sd->type == RadialGradient) fetchfunc = &fetch_radial_gradient;
 
    if (!fetchfunc)
      return;
 
-   Ector_Software_Buffer_Base_Data *mask = data->mask;
+   Ector_Software_Buffer_Base_Data *mask = sd->mask;
    uint32_t *mbuffer = mask->pixels.u32;
 
    //Temp buffer for intermediate processing
-   uint32_t *tbuffer = malloc(sizeof(uint32_t) * data->raster_buffer->generic->w);
+   uint32_t *tbuffer = malloc(sizeof(uint32_t) * sd->raster_buffer->generic->w);
 
-   comp_func = efl_draw_func_span_get(data->op, data->mul_col, data->gradient->alpha);
+   comp_func = efl_draw_func_span_get(sd->op, sd->mul_col, sd->gradient->alpha);
 
    // move to the offset location
-   buffer = data->raster_buffer->pixels.u32 + ((pix_stride * data->offy) + data->offx);
+   buffer = sd->raster_buffer->pixels.u32 + ((pix_stride * sd->offy) + sd->offx);
 
    while (count--)
      {
-        uint32_t *target = buffer + ((data->raster_buffer->generic->w * spans->y) + spans->x);
+        uint32_t *target = buffer + ((sd->raster_buffer->generic->w * spans->y) + spans->x);
         uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
         uint32_t *temp = tbuffer;
         int length = spans->len;
@@ -388,8 +388,8 @@ _blend_gradient_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
         while (length)
           {
              int l = MIN(length, BLEND_GRADIENT_BUFFER_SIZE);
-             fetchfunc(gradientbuffer, data, spans->y, spans->x, l);
-             comp_func(temp, gradientbuffer, l, data->mul_col, spans->coverage);
+             fetchfunc(gradientbuffer, sd, spans->y, spans->x, l);
+             comp_func(temp, gradientbuffer, l, sd->mul_col, spans->coverage);
 
              for (int i = 0; i < l; i++)
                {
