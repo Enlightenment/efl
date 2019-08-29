@@ -21,13 +21,6 @@ typedef Evas_Coord2 Evas_Coord3;
 
 typedef enum
 {
-  BAR_FIRST_ITEM = 0,
-  BAR_SECOND_ITEM,
-  BAR_LAST_ITEM
-} Enum_Bar;
-
-typedef enum
-{
   ELM_OBJECT_SELECT_MODE_DEFAULT = 0,
   ELM_OBJECT_SELECT_MODE_ALWAYS,
   ELM_OBJECT_SELECT_MODE_NONE,

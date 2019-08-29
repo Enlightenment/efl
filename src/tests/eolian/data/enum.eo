@@ -5,11 +5,6 @@ enum Foo {
     baz = 5 * 3
 }
 
-enum Bar {
-    legacy: test;
-    foo = Foo.baz
-}
-
 enum Baz {
     flag1 = 1 << 0,
     flag2 = 1 << 1,

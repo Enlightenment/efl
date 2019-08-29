@@ -184,6 +184,11 @@ _validate_typedecl(Validate_State *vals, Eolian_Typedecl *tp)
         return _validate(&tp->base);
       case EOLIAN_TYPEDECL_ENUM:
         {
+           if (vals->stable && tp->legacy)
+             {
+                _eo_parser_log(&tp->base, "legacy field not allowed in stable enums");
+                return EINA_FALSE;
+             }
            Cb_Ret rt = { vals, EINA_TRUE };
            eina_hash_foreach(tp->fields, (Eina_Hash_Foreach)_ef_map_cb, &rt);
            if (!rt.succ)
