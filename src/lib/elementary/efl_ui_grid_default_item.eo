@@ -1,7 +1,9 @@
 
 class @beta Efl.Ui.Grid_Default_Item extends Efl.Ui.Default_Item
 {
-   [[Grid Default Item class.]]
+   [[Grid default Item class.
+     The icon part is in the middle, extra will overlap the icon part in its right upper icon. The text is aligned below. Further details may differ between themes.
+   ]]
    data: null;
    implements {
       Efl.Object.constructor;
