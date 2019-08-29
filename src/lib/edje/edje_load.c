@@ -52,93 +52,6 @@ _edje_smart_nested_smart_class_new(void)
    return smart;
 }
 
-void
-_edje_extract_mo_files(Edje_File *edf)
-{
-   Eina_Strbuf *mo_id_str;
-   const void *data;
-   const char *cache_path;
-   const char *filename;
-   unsigned int crc;
-   time_t t;
-   size_t sz;
-   unsigned int i;
-   int len;
-
-   cache_path = efreet_cache_home_get();
-
-   t = eina_file_mtime_get(edf->f);
-   sz = eina_file_size_get(edf->f);
-   filename = eina_file_filename_get(edf->f);
-   crc = eina_crc(filename, strlen(filename), 0xffffffff, EINA_TRUE);
-
-   snprintf(edf->fid, sizeof(edf->fid), "%lld-%lld-%x",
-            (long long int)t,
-            (long long int)sz,
-            crc);
-
-   mo_id_str = eina_strbuf_new();
-
-   for (i = 0; i < edf->mo_dir->mo_entries_count; i++)
-     {
-        Edje_Mo *mo_entry;
-        char out[PATH_MAX + PATH_MAX + 128];
-        char outdir[PATH_MAX];
-        char *sub_str;
-        char *mo_src;
-
-        mo_entry = &edf->mo_dir->mo_entries[i];
-
-        eina_strbuf_append_printf(mo_id_str,
-                                  "edje/mo/%i/%s/LC_MESSAGES",
-                                  mo_entry->id,
-                                  mo_entry->locale);
-        data = eet_read_direct(edf->ef,
-                               eina_strbuf_string_get(mo_id_str),
-                               &len);
-
-        if (data)
-          {
-             snprintf(outdir, sizeof(outdir),
-                      "%s/edje/%s/LC_MESSAGES",
-                      cache_path, mo_entry->locale);
-             ecore_file_mkpath(outdir);
-             mo_src = strdup(mo_entry->mo_src);
-             sub_str = strstr(mo_src, ".po");
-
-             if (sub_str)
-               sub_str[1] = 'm';
-
-             snprintf(out, sizeof(out), "%s/%s-%s",
-                      outdir, edf->fid, mo_src);
-             if (ecore_file_exists(out))
-               {
-                  if (edf->mtime > ecore_file_mod_time(out))
-                    ecore_file_remove(out);
-               }
-             if (!ecore_file_exists(out))
-               {
-                  FILE *f;
-
-                  f = fopen(out, "wb");
-                  if (f)
-                    {
-                       if (fwrite(data, len, 1, f) != 1)
-                         ERR("Could not write mo: %s: %s", out, strerror(errno));
-                       fclose(f);
-                    }
-                  else
-                    ERR("Could not open for writing mo: %s: %s", out, strerror(errno));
-               }
-             free(mo_src);
-          }
-
-        eina_strbuf_reset(mo_id_str);
-     }
-
-   eina_strbuf_free(mo_id_str);
-}
-
 Evas_Object *
 edje_smart_nested_add(Evas *evas)
 {
@@ -771,6 +684,85 @@ _edje_devices_add(Edje *ed, Evas *tev)
                             _edje_device_changed_cb, ed);
 }
 
+static inline void
+_edje_process_colorclass(Edje *ed)
+{
+   unsigned int i;
+
+   for (i = 0; i < ed->collection->parts_count; ++i)
+     {
+        Edje_Part *ep;
+        unsigned int k;
+
+        ep = ed->collection->parts[i];
+
+        /* Register any color classes in this parts descriptions. */
+        if ((ep->default_desc) && (ep->default_desc->color_class))
+          efl_observable_observer_add(_edje_color_class_member, ep->default_desc->color_class, ed->obj);
+
+        for (k = 0; k < ep->other.desc_count; k++)
+          {
+             Edje_Part_Description_Common *desc;
+
+             desc = ep->other.desc[k];
+
+             if (desc->color_class)
+               efl_observable_observer_add(_edje_color_class_member, desc->color_class, ed->obj);
+          }
+     }
+}
+
+static inline void
+_edje_process_sizeclass(Edje *ed)
+{
+   unsigned int i;
+
+   for (i = 0; i < ed->collection->parts_count; ++i)
+     {
+        Edje_Part *ep;
+        unsigned int k;
+
+        ep = ed->collection->parts[i];
+
+        /* Register any size classes in this parts descriptions. */
+        if ((ep->default_desc) && (ep->default_desc->size_class))
+          efl_observable_observer_add(_edje_size_class_member, ep->default_desc->size_class, ed->obj);
+
+        for (k = 0; k < ep->other.desc_count; k++)
+          {
+             Edje_Part_Description_Common *desc;
+
+             desc = ep->other.desc[k];
+
+             if (desc->size_class)
+               efl_observable_observer_add(_edje_size_class_member, desc->size_class, ed->obj);
+          }
+     }
+}
+
+static inline void
+_edje_process_physics(Edje *ed)
+{
+#ifdef HAVE_EPHYSICS
+   if (EPH_LOAD())
+     {
+        EPH_CALL(ephysics_init)();
+        ed->world = EPH_CALL(ephysics_world_new)();
+        EPH_CALL(ephysics_world_event_callback_add)
+         (ed->world, EPHYSICS_CALLBACK_WORLD_UPDATE,
+          _edje_physics_world_update_cb, ed);
+        EPH_CALL(ephysics_world_rate_set)
+         (ed->world, ed->collection->physics.world.rate);
+        EPH_CALL(ephysics_world_gravity_set)
+         (ed->world, ed->collection->physics.world.gravity.x,
+          ed->collection->physics.world.gravity.y,
+          ed->collection->physics.world.gravity.z);
+     }
+#else
+   ERR("Edje compiled without support to physics.");
+#endif
+}
+
 Eina_Error
 _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested)
 {
@@ -835,19 +827,8 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
    _edje_file_add(ed, file);
    ed->block_break = EINA_FALSE;
 
-   if (ed->file && ed->file->external_dir)
-     {
-        unsigned int i;
-
-        for (i = 0; i < ed->file->external_dir->entries_count; ++i)
-          edje_module_load(ed->file->external_dir->entries[i].entry);
-     }
-
-   _edje_textblock_style_all_update(ed);
 
    ed->has_entries = EINA_FALSE;
-   if (ed->file && ed->file->mo_dir)
-     _edje_extract_mo_files(ed->file);
 
    if (ed->collection)
      {
@@ -875,74 +856,17 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
              unsigned int i;
 
              if (ed->collection->physics_enabled)
-#ifdef HAVE_EPHYSICS
-               {
-                  if (EPH_LOAD())
-                    {
-                       EPH_CALL(ephysics_init)();
-                       ed->world = EPH_CALL(ephysics_world_new)();
-                       EPH_CALL(ephysics_world_event_callback_add)
-                         (ed->world, EPHYSICS_CALLBACK_WORLD_UPDATE,
-                          _edje_physics_world_update_cb, ed);
-                       EPH_CALL(ephysics_world_rate_set)
-                         (ed->world, ed->collection->physics.world.rate);
-                       EPH_CALL(ephysics_world_gravity_set)
-                         (ed->world, ed->collection->physics.world.gravity.x,
-                          ed->collection->physics.world.gravity.y,
-                          ed->collection->physics.world.gravity.z);
-                    }
-               }
-#else
-               ERR("Edje compiled without support to physics.");
-#endif
+               _edje_process_physics(ed);
 
              /* handle multiseat stuff */
              _edje_devices_add(ed, tev);
 
              /* colorclass stuff */
-             for (i = 0; i < ed->collection->parts_count; ++i)
-               {
-                  Edje_Part *ep;
-                  unsigned int k;
+             _edje_process_colorclass(ed);
 
-                  ep = ed->collection->parts[i];
-
-                  /* Register any color classes in this parts descriptions. */
-                  if ((ep->default_desc) && (ep->default_desc->color_class))
-                    efl_observable_observer_add(_edje_color_class_member, ep->default_desc->color_class, obj);
-
-                  for (k = 0; k < ep->other.desc_count; k++)
-                    {
-                       Edje_Part_Description_Common *desc;
-
-                       desc = ep->other.desc[k];
-
-                       if (desc->color_class)
-                         efl_observable_observer_add(_edje_color_class_member, desc->color_class, obj);
-                    }
-               }
              /* sizeclass stuff */
-             for (i = 0; i < ed->collection->parts_count; ++i)
-               {
-                  Edje_Part *ep;
-                  unsigned int k;
+             _edje_process_sizeclass(ed);
 
-                  ep = ed->collection->parts[i];
-
-                  /* Register any size classes in this parts descriptions. */
-                  if ((ep->default_desc) && (ep->default_desc->size_class))
-                    efl_observable_observer_add(_edje_size_class_member, ep->default_desc->size_class, obj);
-
-                  for (k = 0; k < ep->other.desc_count; k++)
-                    {
-                       Edje_Part_Description_Common *desc;
-
-                       desc = ep->other.desc[k];
-
-                       if (desc->size_class)
-                         efl_observable_observer_add(_edje_size_class_member, desc->size_class, obj);
-                    }
-               }
              /* build real parts */
              for (n = 0; n < ed->collection->parts_count; n++)
                {

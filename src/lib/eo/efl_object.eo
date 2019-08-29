@@ -259,7 +259,7 @@ abstract Efl.Object
            @.invalidate and then to @.destructor.
            See the Life Cycle section in this class' description.]]
       }
-      name_find @const {
+      name_find @const @beta {
          [[Find a child object with the given name and return it.
 
            The search string can be a glob (shell style, using *). It can also

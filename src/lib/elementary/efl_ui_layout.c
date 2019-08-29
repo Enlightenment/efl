@@ -67,6 +67,7 @@ static const char *_efl_ui_layout_swallow_parts[] = {
    "efl.icon",
    "efl.end",
    "efl.background",
+   "efl.extra",
    NULL
 };
 

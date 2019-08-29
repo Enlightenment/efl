@@ -140,7 +140,8 @@ ecore_wl2_test_window(TCase *tc)
         tcase_add_test(tc, wl2_window_surface_test);
         tcase_add_test(tc, wl2_window_rotation_get);
         tcase_add_test(tc, wl2_window_output_find);
-        tcase_add_test(tc, wl2_window_aux_hints_supported_get);
+        if (getenv("E_START"))
+          tcase_add_test(tc, wl2_window_aux_hints_supported_get);
         tcase_add_test(tc, wl2_window_display_get);
      }
 }

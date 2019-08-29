@@ -1015,5 +1015,49 @@ evas_object_vg_file_set(Evas_Object *obj, const char *file, const char *key)
    return efl_file_simple_load(obj, file, key);
 }
 
+static inline Efl_Canvas_Vg_Fill_Mode
+_evas_object_vg_fill_mode_to_efl_ui_canvas_object_vg_fill_mode(Evas_Object_Vg_Fill_Mode mode)
+{
+   switch (mode)
+     {
+#define CONVERT_MODE(MODE) case EVAS_OBJECT_VG_FILL_MODE_##MODE: return EFL_CANVAS_VG_FILL_MODE_##MODE
+       CONVERT_MODE(NONE);
+       CONVERT_MODE(STRETCH);
+       CONVERT_MODE(MEET);
+       CONVERT_MODE(SLICE);
+       default: break;
+     }
+#undef CONVERT_MODE
+   return EFL_CANVAS_VG_FILL_MODE_NONE;
+}
+
+static inline Evas_Object_Vg_Fill_Mode
+_efl_ui_canvas_object_vg_fill_mode_to_evas_object_vg_fill_mode(Efl_Canvas_Vg_Fill_Mode mode)
+{
+   switch (mode)
+     {
+#define CONVERT_MODE(MODE) case EFL_CANVAS_VG_FILL_MODE_##MODE: return EVAS_OBJECT_VG_FILL_MODE_##MODE
+       CONVERT_MODE(NONE);
+       CONVERT_MODE(STRETCH);
+       CONVERT_MODE(MEET);
+       CONVERT_MODE(SLICE);
+       default: break;
+     }
+#undef CONVERT_MODE
+   return EVAS_OBJECT_VG_FILL_MODE_NONE;
+}
+
+EAPI void
+evas_object_vg_fill_mode_set(Efl_VG *obj, Evas_Object_Vg_Fill_Mode fill_mode)
+{
+   efl_canvas_vg_object_fill_mode_set(obj, _evas_object_vg_fill_mode_to_efl_ui_canvas_object_vg_fill_mode(fill_mode));
+}
+
+EAPI Evas_Object_Vg_Fill_Mode
+evas_object_vg_fill_mode_get(const Efl_VG *obj)
+{
+   return _efl_ui_canvas_object_vg_fill_mode_to_evas_object_vg_fill_mode(efl_canvas_vg_object_fill_mode_get(obj));
+}
+
 #include "efl_canvas_vg_object.eo.c"
 #include "efl_canvas_vg_object_eo.legacy.c"
