@@ -2897,12 +2897,17 @@ typedef struct _Allocator
 {
    char       stack[ALLOCATOR_SIZE];
    char      *heap;
+   size_t     heap_size;
 } Allocator;
 
 static inline void
 _allocator_init(Allocator* allocator)
 {
-   if (allocator) allocator->heap = NULL;
+   if (allocator)
+     {
+        allocator->heap = NULL;
+        allocator->heap_size = 0;
+     }
 }
 
 static inline void
@@ -2912,6 +2917,7 @@ _allocator_reset(Allocator* allocator)
      {
         free(allocator->heap);
         allocator->heap = NULL;
+        allocator->heap_size = 0;
      }
 }
 
@@ -2928,11 +2934,24 @@ _allocator_make_string(Allocator* allocator, const char* str, size_t size)
         return allocator->stack;
      }
    //fallback to heap
-   if (allocator->heap) free(allocator->heap);
+   if (allocator->heap && allocator->heap_size < (size + 1))
+     {
+        free(allocator->heap);
+        allocator->heap = NULL;
+        allocator->heap_size = 0;
+     }
 
-   allocator->heap = malloc(size + 1);
+   if (!allocator->heap)
+     {
+        allocator->heap = malloc(size + 1);
+        allocator->heap_size = (size + 1);
+     }
 
-   if (!allocator->heap) return NULL;
+   if (!allocator->heap)
+     {
+        allocator->heap_size = 0;
+        return NULL;
+     }
 
    memcpy(allocator->heap, str, size);
    allocator->heap[size] = '\0';
@@ -3099,8 +3118,9 @@ _format_fill(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const char 
           {
              /* immediate - not handled here */
           }
-        _allocator_reset(&allocator);
      }
+
+   _allocator_reset(&allocator);
 }
 
 /**
