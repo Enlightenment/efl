@@ -4,7 +4,7 @@
 
 #define EFL_PART_PROTECTED
 
-#include <Elementary.h>
+#include <Efl_Ui.h>
 #include "elm_priv.h"
 #include "efl_ui_tab_page_private.h"
 #include "elm_part_helper.h"
@@ -110,6 +110,7 @@ _efl_ui_tab_page_part_tab_icon_set(Eo *obj, void *_pd EINA_UNUSED, const char *p
    Efl_Ui_Tab_Page_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_TAB_PAGE_CLASS);
 
    eina_stringshare_replace(&sd->tab_icon, path);
+   efl_ui_tab_bar_default_item_icon_set(sd->tab_bar_icon, sd->tab_icon);
 
    Efl_Ui_Tab_Page_Tab_Changed_Event event;
    event.changed_info = EFL_UI_TAB_PAGE_TAB_CHANGED_ICON;
@@ -133,6 +134,7 @@ _efl_ui_tab_page_part_tab_efl_text_text_set(Eo *obj, void *_pd EINA_UNUSED, cons
    Efl_Ui_Tab_Page_Data *sd = efl_data_scope_get(pd->obj, EFL_UI_TAB_PAGE_CLASS);
 
    eina_stringshare_replace(&sd->tab_label, text);
+   efl_text_set(sd->tab_bar_icon, sd->tab_label);
 
    Efl_Ui_Tab_Page_Tab_Changed_Event event;
    event.changed_info = EFL_UI_TAB_PAGE_TAB_CHANGED_LABEL;
@@ -148,6 +150,20 @@ _efl_ui_tab_page_part_tab_efl_text_text_get(const Eo *obj, void *_pd EINA_UNUSED
 
    return sd->tab_label;
 }
+
+EOLIAN static Efl_Ui_Tab_Bar_Default_Item*
+_efl_ui_tab_page_tab_bar_item_get(const Eo *obj, Efl_Ui_Tab_Page_Data *pd)
+{
+  if (!pd->tab_bar_icon)
+    {
+       pd->tab_bar_icon = efl_add(EFL_UI_TAB_BAR_DEFAULT_ITEM_CLASS, (Eo*)obj);
+       efl_text_set(pd->tab_bar_icon, pd->tab_label);
+       efl_ui_tab_bar_default_item_icon_set(pd->tab_bar_icon, pd->tab_icon);
+    }
+
+  return pd->tab_bar_icon;
+}
+
 
 #include "efl_ui_tab_page_part_tab.eo.c"
 

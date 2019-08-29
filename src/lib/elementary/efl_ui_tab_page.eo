@@ -13,6 +13,19 @@ class @beta Efl.Ui.Tab_Page extends Efl.Ui.Layout_Base implements Efl.Content
 {
    [[Tab Page class]]
    methods {
+      @property tab_bar_item {
+         [[Get this page represented as a @Efl.Ui.Tab_Bar_Default_Item
+
+           The object returned here will reflect all the properties from the part here. Properties will be automatically updated.
+           This property is unique per @Efl.Ui.Tab_Page
+         ]]
+         get {
+
+         }
+         values {
+            item : Efl.Ui.Tab_Bar_Default_Item; [[The @Efl.Ui.Tab_Bar_Default_Item for the tab bar]]
+         }
+      }
    }
    parts {
       tab: Efl.Ui.Tab_Page_Part_Tab;

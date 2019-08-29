@@ -8,6 +8,7 @@ struct _Efl_Ui_Tab_Page_Data
    Eo                                   *content;
    const char                           *tab_label;
    const char                           *tab_icon;
+   Eo                                   *tab_bar_icon;
 };
 
 
