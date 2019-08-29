@@ -514,4 +514,11 @@ _elm_unneed_systray(void)
      }
 }
 
+EAPI Elm_Systray*
+elm_systray_add(Evas_Object *win)
+{
+   return efl_add(ELM_SYSTRAY_CLASS, win);
+}
+
+
 #include "elm_systray_eo.c"
