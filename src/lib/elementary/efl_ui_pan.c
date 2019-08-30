@@ -142,6 +142,7 @@ _efl_ui_pan_content_resize_cb(void *data,
         evas_object_smart_changed(pobj);
      }
    efl_event_callback_call(pobj, EFL_UI_PAN_EVENT_PAN_CONTENT_POSITION_CHANGED, NULL);
+   efl_event_callback_call(pobj, EFL_UI_PAN_EVENT_PAN_CONTENT_SIZE_CHANGED, &sz);
 }
 
 EOLIAN static Eina_Bool

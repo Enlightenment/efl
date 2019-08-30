@@ -18,7 +18,6 @@ typedef struct _Efl_Ui_Scroll_Manager_Data
 
    Evas_Object                  *obj;
    Evas_Object                  *pan_obj;
-   Evas_Object                  *pan_content;
    Evas_Object                  *event_rect;
 
    Evas_Object                  *parent;

@@ -140,10 +140,13 @@ _calc_job_cb(void *data)
      }
    if ((minw != sd->minw) || (minh != sd->minh))
      {
+        Eina_Size2D sz;
         sd->minw = minw;
         sd->minh = minh;
 
-        efl_event_callback_call(sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_POSITION_CHANGED, NULL);
+        sz = efl_ui_pan_content_size_get(sd->pan_obj);
+
+        efl_event_callback_call(sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_SIZE_CHANGED, &sz);
         _sizing_eval(obj);
      }
    sd->calc_job = NULL;

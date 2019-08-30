@@ -857,13 +857,15 @@ _efl_ui_list_view_efl_ui_list_view_model_min_size_get(const Eo *obj EINA_UNUSED,
 EOLIAN static void
 _efl_ui_list_view_efl_ui_list_view_model_min_size_set(Eo *obj, Efl_Ui_List_View_Data *pd, Eina_Size2D min)
 {
+   Eina_Size2D sz;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
    pd->min.w = min.w;
    pd->min.h = min.h;
 
    efl_gfx_hint_size_min_set(wd->resize_obj, EINA_SIZE2D(pd->min.w, pd->min.h));
-   efl_event_callback_call(pd->pan_obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
+   sz = pd->min;
+   efl_event_callback_call(pd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_SIZE_CHANGED, &sz);
 }
 
 EOLIAN static void

@@ -1977,7 +1977,7 @@ _efl_ui_scroll_manager_content_resized(Efl_Ui_Scroll_Manager_Data *sd, Eina_Size
 }
 
 static void
-_efl_ui_scroll_manager_pan_content_resized_cb(void *data, const Efl_Event *event)
+_efl_ui_scroll_manager_pan_content_size_changed_cb(void *data, const Efl_Event *event)
 {
    Efl_Ui_Scroll_Manager_Data *sd = data;
    Eina_Size2D *content = event->info;
@@ -1986,24 +1986,18 @@ _efl_ui_scroll_manager_pan_content_resized_cb(void *data, const Efl_Event *event
 }
 
 static void
-_efl_ui_scroll_manager_pan_content_changed(Efl_Ui_Scroll_Manager_Data *sd, Eo *content)
+_efl_ui_scroll_manager_pan_content_changed(Efl_Ui_Scroll_Manager_Data *sd)
 {
    Eina_Size2D sz = {0, 0};
 
-   /* protect against widgets that synthesize these events to trigger this codepath */
-   if (content && (content != sd->pan_content))
-     efl_event_callback_add(sd->pan_content, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _efl_ui_scroll_manager_pan_content_resized_cb, sd);
-   else if (sd->pan_content)
-     efl_event_callback_del(sd->pan_content, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _efl_ui_scroll_manager_pan_content_resized_cb, sd);
-   sd->pan_content = content;
-   sz = efl_ui_pan_content_size_get(sd->pan_obj);
+   if (sd->pan_obj) sz = efl_ui_pan_content_size_get(sd->pan_obj);
    _efl_ui_scroll_manager_content_resized(sd, sz);
 }
 
 static void
-_efl_ui_scroll_manager_pan_content_changed_cb(void *data, const Efl_Event *event)
+_efl_ui_scroll_manager_pan_content_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
-   _efl_ui_scroll_manager_pan_content_changed(data, event->info);
+   _efl_ui_scroll_manager_pan_content_changed(data);
 }
 
 static void
@@ -2279,10 +2273,12 @@ _efl_ui_scroll_manager_pan_set(Eo *obj, Efl_Ui_Scroll_Manager_Data *sd, Eo *pan)
            (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_VIEWPORT_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
         efl_event_callback_del
            (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_POSITION_CHANGED, _efl_ui_scroll_manager_pan_position_changed_cb, sd);
-        _efl_ui_scroll_manager_pan_content_changed(sd, NULL);
+        efl_event_callback_del
+           (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_SIZE_CHANGED, _efl_ui_scroll_manager_pan_content_size_changed_cb, sd);
      }
 
    sd->pan_obj = pan;
+   _efl_ui_scroll_manager_pan_content_changed(sd);
    if (!pan)
      return;
 
@@ -2292,11 +2288,12 @@ _efl_ui_scroll_manager_pan_set(Eo *obj, Efl_Ui_Scroll_Manager_Data *sd, Eo *pan)
      (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_VIEWPORT_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
    efl_event_callback_add
      (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_POSITION_CHANGED, _efl_ui_scroll_manager_pan_position_changed_cb, sd);
+   efl_event_callback_add
+     (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_SIZE_CHANGED, _efl_ui_scroll_manager_pan_content_size_changed_cb, sd);
    evas_object_event_callback_add(sd->pan_obj, EVAS_CALLBACK_RESIZE,
                                        _efl_ui_scroll_manager_pan_resized_cb, obj);
    evas_object_event_callback_add(sd->pan_obj, EVAS_CALLBACK_MOVE,
                                        _efl_ui_scroll_manager_pan_moved_cb, obj);
-   _efl_ui_scroll_manager_pan_content_changed(sd, efl_content_get(pan));
 }
 
 EOLIAN static Eina_Bool
@@ -2486,9 +2483,8 @@ _efl_ui_scroll_manager_efl_object_destructor(Eo *obj, Efl_Ui_Scroll_Manager_Data
            (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_VIEWPORT_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
         efl_event_callback_del
            (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_POSITION_CHANGED, _efl_ui_scroll_manager_pan_position_changed_cb, sd);
-        if (sd->pan_content)
-          efl_event_callback_del(sd->pan_content, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _efl_ui_scroll_manager_pan_content_resized_cb, sd);
-        sd->pan_content = NULL;
+        efl_event_callback_del
+           (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_SIZE_CHANGED, _efl_ui_scroll_manager_pan_content_size_changed_cb, sd);
      }
    efl_destructor(efl_super(obj, MY_CLASS));
 }
