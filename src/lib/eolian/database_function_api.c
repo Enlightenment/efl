@@ -287,6 +287,58 @@ eolian_function_return_allow_unused(const Eolian_Function *fid,
 }
 
 EAPI Eina_Bool
+eolian_function_return_is_by_ref(const Eolian_Function *fid,
+      Eolian_Function_Type ftype)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_UNRESOLVED, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_PROPERTY, EINA_FALSE);
+   switch (ftype)
+     {
+      case EOLIAN_METHOD:
+        if (fid->type != EOLIAN_METHOD)
+          return EINA_FALSE;
+        return fid->get_return_by_ref;
+      case EOLIAN_PROP_GET:
+        if ((fid->type != EOLIAN_PROP_GET) && (fid->type != EOLIAN_PROPERTY))
+          return EINA_FALSE;
+        return !fid->get_return_by_ref;
+      case EOLIAN_PROP_SET:
+        if ((fid->type != EOLIAN_PROP_SET) && (fid->type != EOLIAN_PROPERTY))
+          return EINA_FALSE;
+        return !fid->set_return_by_ref;
+      default:
+        return EINA_FALSE;
+     }
+}
+
+EAPI Eina_Bool
+eolian_function_return_is_move(const Eolian_Function *fid,
+      Eolian_Function_Type ftype)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_UNRESOLVED, EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_PROPERTY, EINA_FALSE);
+   switch (ftype)
+     {
+      case EOLIAN_METHOD:
+        if (fid->type != EOLIAN_METHOD)
+          return EINA_FALSE;
+        return fid->get_return_move;
+      case EOLIAN_PROP_GET:
+        if ((fid->type != EOLIAN_PROP_GET) && (fid->type != EOLIAN_PROPERTY))
+          return EINA_FALSE;
+        return !fid->get_return_move;
+      case EOLIAN_PROP_SET:
+        if ((fid->type != EOLIAN_PROP_SET) && (fid->type != EOLIAN_PROPERTY))
+          return EINA_FALSE;
+        return !fid->set_return_move;
+      default:
+        return EINA_FALSE;
+     }
+}
+
+EAPI Eina_Bool
 eolian_function_object_is_const(const Eolian_Function *fid)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);

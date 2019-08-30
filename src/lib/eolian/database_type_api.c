@@ -63,6 +63,20 @@ eolian_typedecl_struct_field_type_get(const Eolian_Struct_Type_Field *fl)
    return fl->type;
 }
 
+EAPI Eina_Bool
+eolian_typedecl_struct_field_is_by_ref(const Eolian_Struct_Type_Field *fl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fl, EINA_FALSE);
+   return fl->by_ref;
+}
+
+EAPI Eina_Bool
+eolian_typedecl_struct_field_is_move(const Eolian_Struct_Type_Field *fl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fl, EINA_FALSE);
+   return fl->move;
+}
+
 EAPI Eina_Iterator *
 eolian_typedecl_enum_fields_get(const Eolian_Typedecl *tp)
 {

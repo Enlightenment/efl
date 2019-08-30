@@ -1884,6 +1884,26 @@ EAPI const Eolian_Documentation *eolian_parameter_documentation_get(const Eolian
 EAPI Eina_Bool eolian_parameter_is_optional(const Eolian_Function_Parameter *param_desc);
 
 /*
+ * @brief Get whether a parameter is by reference.
+ *
+ * @param[in] param_desc parameter handle
+ * @return EINA_TRUE and EINA_FALSE respectively
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_parameter_is_by_ref(const Eolian_Function_Parameter *param_desc);
+
+/*
+ * @brief Get whether a parameter is moved into the callee.
+ *
+ * @param[in] param_desc parameter handle
+ * @return EINA_TRUE and EINA_FALSE respectively
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_parameter_is_move(const Eolian_Function_Parameter *param_desc);
+
+/*
  * @brief Get the return type of a function.
  *
  * @param[in] function_id id of the function
@@ -1948,6 +1968,38 @@ EAPI const Eolian_Documentation *eolian_function_return_documentation_get(const 
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_function_return_allow_unused(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
+
+/*
+ * @brief Get whether a parameter is by reference.
+ *
+ * @param[in] function_id id of the function
+ * @param[in] ftype type of the function
+ * @return EINA_TRUE and EINA_FALSE respectively
+ *
+ * The type of the function is needed because a given function can represent a
+ * property, that can be set and get functions.
+ *
+ * Acceptable input types are METHOD, PROP_GET and PROP_SET.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_function_return_is_by_ref(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
+
+/*
+ * @brief Get whether a parameter is moved into the callee.
+ *
+ * @param[in] function_id id of the function
+ * @param[in] ftype type of the function
+ * @return EINA_TRUE and EINA_FALSE respectively
+ *
+ * The type of the function is needed because a given function can represent a
+ * property, that can be set and get functions.
+ *
+ * Acceptable input types are METHOD, PROP_GET and PROP_SET.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_function_return_is_move(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Indicates if a function object is const.
@@ -2501,6 +2553,26 @@ EAPI const Eolian_Documentation *eolian_typedecl_struct_field_documentation_get(
  * @ingroup Eolian
  */
 EAPI const Eolian_Type *eolian_typedecl_struct_field_type_get(const Eolian_Struct_Type_Field *fl);
+
+/*
+ * @brief Get whether a struct field is by reference.
+ *
+ * @param[in] fl the field.
+ * @return EINA_TRUE and EINA_FALSE respectively
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_typedecl_struct_field_is_by_ref(const Eolian_Struct_Type_Field *fl);
+
+/*
+ * @brief Get whether a struct field is moved with the struct.
+ *
+ * @param[in] fl the field.
+ * @return EINA_TRUE and EINA_FALSE respectively
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_typedecl_struct_field_is_move(const Eolian_Struct_Type_Field *fl);
 
 /*
  * @brief Get an iterator to all fields of an enum type.

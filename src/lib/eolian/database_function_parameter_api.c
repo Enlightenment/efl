@@ -39,3 +39,17 @@ eolian_parameter_is_optional(const Eolian_Function_Parameter *param)
    EINA_SAFETY_ON_NULL_RETURN_VAL(param, EINA_FALSE);
    return param->optional;
 }
+
+EAPI Eina_Bool
+eolian_parameter_is_move(const Eolian_Function_Parameter *param)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(param, EINA_FALSE);
+   return param->move;
+}
+
+EAPI Eina_Bool
+eolian_parameter_is_by_ref(const Eolian_Function_Parameter *param)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(param, EINA_FALSE);
+   return param->by_ref;
+}
