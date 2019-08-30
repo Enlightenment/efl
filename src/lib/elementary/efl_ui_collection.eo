@@ -7,34 +7,50 @@ class @beta Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
                    Efl.Ui.Focus.Manager_Sub,
                    Efl.Ui.Widget_Focus_Manager
 {
-   [[This widget displays a list of items in an arrangement controlled by an external $position_manager object. By using different $position_manager objects this widget can show lists of items or two-dimensional grids of items, for example.
+   [[This widget displays a list of items in an arrangement controlled by an external @.position_manager
+     object. By using different @.position_manager objects this widget can show unidimensional lists or
+     two-dimensional grids of items, for example.
 
-    Items inside this widget can be selected according to the $select_mode policy, and retrieved with $selected_items_get.
+     This class is intended to act as a base for widgets like @Efl.Ui.List or @Efl.Ui.Grid, which hide
+     this complexity from the user.
+
+     Items are added using the @Efl.Pack_Linear interface and must be of @Efl.Ui.Item type.
+
+     The direction of the arrangement can be controlled through @Efl.Ui.Layout_Orientable.orientation.
+
+     If all items do not fit in the current widget size scrolling facilities are provided.
+
+     Items inside this widget can be selected according to the @Efl.Ui.Multi_Selectable.select_mode
+     policy, and the selection can be retrieved with @Efl.Ui.Multi_Selectable.selected_items_get.
    ]]
    event_prefix:efl_ui;
    methods {
       item_scroll {
-         [[Bring the passed item into the viewport.]]
+         [[Brings the passed item into the viewport.]]
          params {
-            @in item: Efl.Ui.Item; [[The target to move in.]]
-            @in animation: bool; [[If you want to have an animation or not.]]
+            @in item: Efl.Ui.Item; [[The target to move into view.]]
+            @in animation: bool; [[If you want to have an animated transition.]]
          }
       }
       item_scroll_align {
-         [[Bring the passed item into the viewport, place the item accordingly to align in the viewport.
+         [[Brings the passed item into the viewport and align it.
 
-         $align selects the final position of the object inside the viewport. 0.0 will move the object to the first visible position inside the viewport, 1.0 will move it to the last visible position, and values in between will move it accordingly to positions in between, along the scrolling axis.
+           $align selects the final position of the object inside the viewport. 0.0 will move the object
+           to the first visible position inside the viewport, 1.0 will move it to the last visible
+           position, and values in between will move it accordingly to positions in between, along the
+           scrolling axis.
          ]]
          params {
-            @in item: Efl.Ui.Item; [[The target to move in.]]
-            @in align: double; [[0.0 to have this item at the upper or left side of the viewport, 1.0 to have this item at the lower or right side of the viewport]]
-            @in animation: bool; [[If you want to have an animation or not.]]
+            @in item: Efl.Ui.Item; [[The target to move into view.]]
+            @in align: double; [[0.0 to have this item at the upper or left side of the viewport,
+                                 1.0 to have this item at the lower or right side of the viewport.]]
+            @in animation: bool; [[If you want to have an animated transition.]]
          }
       }
       @property position_manager {
          [[Position manager object that handles placement of items.]]
          values {
-            position_manager : Efl.Ui.Position_Manager.Entity @owned; [[The objects ownership is passed to the item container.]]
+            position_manager : Efl.Ui.Position_Manager.Entity @owned; [[Ownership is passed to the item container.]]
          }
       }
    }
@@ -74,7 +90,7 @@ class @beta Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
    }
    events {
       item,pressed : Efl.Ui.Item; [[A $press event occurred over an item.]]
-      item,unpressed : Efl.Ui.Item; [[A $unpress event occurred over an item.]]
+      item,unpressed : Efl.Ui.Item; [[An $unpress event occurred over an item.]]
       item,longpressed : Efl.Ui.Item; [[A $longpressed event occurred over an item.]]
       item,clicked : Efl.Ui.Item; [[A $clicked event occurred over an item.]]
       item,clicked,any : Efl.Ui.Item; [[A $clicked,any event occurred over an item.]]

@@ -1,11 +1,19 @@
 class @beta Efl.Ui.List extends Efl.Ui.Collection
 {
-   [[A scrollable list of @Efl.Ui.Item objects.
+   [[A scrollable list of @Efl.Ui.Item objects, typically @Efl.Ui.List_Default_Item objects.
 
-     @Efl.Ui.List supports group items. Group items are displayed in the top or right of the viewport, if the items belonging to them are in the viewport.
+     Items are added using the @Efl.Pack_Linear interface.
 
+     The orientation (vertical or horizontal) of the list can be set with
+     @Efl.Ui.Layout_Orientable.orientation.
 
-     ]]
+     Items inside this widget can be selected according to the @Efl.Ui.Multi_Selectable.select_mode
+     policy, and the selection can be retrieved with @Efl.Ui.Multi_Selectable.selected_items_get.
+
+     @Efl.Ui.List supports grouping by using @Efl.Ui.Group_Item objects.
+     Group headers are displayed at the top or left side of the viewport if items belonging to the group
+     are visible in the viewport.
+   ]]
    data: null;
    implements {
       Efl.Object.constructor;
