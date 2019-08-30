@@ -198,17 +198,17 @@ _pan_viewport_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 static void
-_pan_position_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+_pan_position_changed_cb(void *data, const Efl_Event *ev)
 {
    MY_DATA_GET(data, pd);
-   Eina_Position2D pos = efl_ui_pan_position_get(pd->pan);
+   Eina_Position2D *pos = ev->info;
    Eina_Position2D max = efl_ui_pan_position_max_get(pd->pan);
    Eina_Vector2 rpos = {0.0, 0.0};
 
    if (max.x > 0.0)
-     rpos.x = (double)pos.x/(double)max.x;
+     rpos.x = (double)pos->x/(double)max.x;
    if (max.y > 0.0)
-     rpos.y = (double)pos.y/(double)max.y;
+     rpos.y = (double)pos->y/(double)max.y;
 
    efl_ui_position_manager_entity_scroll_position_set(pd->pos_man, rpos.x, rpos.y);
 }

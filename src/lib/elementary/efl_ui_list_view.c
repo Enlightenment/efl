@@ -59,7 +59,7 @@ _efl_ui_list_view_pan_efl_ui_pan_pan_position_set(Eo *obj EINA_UNUSED, Efl_Ui_Li
    psd->gmt.x = pos.x;
    psd->gmt.y = pos.y;
 
-   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_PAN_CONTENT_POSITION_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_PAN_CONTENT_POSITION_CHANGED, &pos);
    evas_object_smart_changed(psd->wobj);
 }
 

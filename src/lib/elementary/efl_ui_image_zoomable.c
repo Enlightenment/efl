@@ -402,7 +402,7 @@ _efl_ui_image_zoomable_pan_efl_ui_pan_pan_position_set(Eo *obj, Efl_Ui_Image_Zoo
    psd->wsd->pan_y = pos.y;
    evas_object_smart_changed(obj);
 
-   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_PAN_CONTENT_POSITION_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_PAN_CONTENT_POSITION_CHANGED, &pos);
 }
 
 EOLIAN static Eina_Position2D
