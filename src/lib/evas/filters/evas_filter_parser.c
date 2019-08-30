@@ -1405,10 +1405,16 @@ _curve_instruction_prepare(Evas_Filter_Program *pgm, Evas_Filter_Instruction *in
    // TODO: Allow passing an array of 256 values as points.
    // It could be easily computed from another function in the script.
    _instruction_param_seq_add(instr, "points", VT_SPECIAL, _lua_curve_points_func, NULL);
-   if (instr->params) last = instr->params->last;
-   param = EINA_INLIST_CONTAINER_GET(last, Instruction_Param);
-   param->allow_any_string = EINA_TRUE;
-
+   if (instr->params)
+     {
+        last = instr->params->last;
+        if (last)
+          {
+             param = EINA_INLIST_CONTAINER_GET(last, Instruction_Param);
+             param->allow_any_string = EINA_TRUE;
+          }
+     }
+     
    _instruction_param_seq_add(instr, "interpolation", VT_STRING, "linear");
    _instruction_param_seq_add(instr, "channel", VT_STRING, "rgb");
    _instruction_param_name_add(instr, "src", VT_BUFFER, _buffer_get(pgm, "input"));
