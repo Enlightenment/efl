@@ -318,13 +318,13 @@ _blend_gradient_alpha(int count, const SW_FT_Span *spans, void *user_data)
      {
         uint32_t *target = buffer + ((sd->raster_buffer->generic->w * spans->y) + spans->x);
         uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
-        uint32_t *temp = gbuffer;
         int length = spans->len;
-        memset(temp, 0x00, sizeof(uint32_t) * spans->len);
+
         while (length)
           {
              int l = MIN(length, BLEND_GRADIENT_BUFFER_SIZE);
-             fetchfunc(temp, sd, spans->y, spans->x, l);
+             fetchfunc(gbuffer, sd, spans->y, spans->x, l);
+             uint32_t *temp = gbuffer;
 
              for (int i = 0; i < l; i++)
                {
@@ -366,13 +366,13 @@ _blend_gradient_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
      {
         uint32_t *target = buffer + ((sd->raster_buffer->generic->w * spans->y) + spans->x);
         uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
-        uint32_t *temp = gbuffer;
         int length = spans->len;
-        memset(temp, 0x00, sizeof(uint32_t) * spans->len);
+
         while (length)
           {
              int l = MIN(length, BLEND_GRADIENT_BUFFER_SIZE);
-             fetchfunc(temp, sd, spans->y, spans->x, l);
+             fetchfunc(gbuffer, sd, spans->y, spans->x, l);
+             uint32_t *temp = gbuffer;
 
              for (int i = 0; i < l; i++)
                {
