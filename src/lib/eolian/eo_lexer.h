@@ -35,9 +35,9 @@ enum Tokens
     \
     KWAT(auto), KWAT(beta), KWAT(by_ref), KWAT(c_name), KWAT(const), \
     KWAT(empty), KWAT(extern), KWAT(free), KWAT(hot), KWAT(in), KWAT(inout), \
-    KWAT(no_unused), KWAT(nullable), KWAT(optional), KWAT(out), KWAT(owned), \
-    KWAT(private), KWAT(property), KWAT(protected), KWAT(restart), \
-    KWAT(pure_virtual), KWAT(static), KWAT(transfer), \
+    KWAT(move), KWAT(no_unused), KWAT(nullable), KWAT(optional), KWAT(out), \
+    KWAT(owned), KWAT(private), KWAT(property), KWAT(protected), KWAT(restart), \
+    KWAT(pure_virtual), KWAT(static), \
     \
     KWH(version), \
     \
