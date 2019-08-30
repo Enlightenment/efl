@@ -700,6 +700,53 @@ update_pos_man(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd, Efl_Gfx_Entity *
    efl_ui_position_manager_entity_item_added(pd->pos_man, id, subobj);
 }
 
+static inline Efl_Ui_Item*
+fetch_rep_parent(Eina_List *lst)
+{
+   if (!lst)
+     return NULL;
+
+   Efl_Ui_Item *it = eina_list_data_get(lst);
+
+   return efl_ui_item_parent_get(it);
+}
+
+static Eina_Bool
+check_group_integrity(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd, Efl_Gfx_Entity *subobj)
+{
+   Eina_List *carrier_list = eina_list_data_find_list(pd->items, subobj), *prev_lst;
+   Efl_Ui_Item *next, *prev, *carrier;
+
+   prev_lst = eina_list_prev(carrier_list);
+   next = fetch_rep_parent(eina_list_next(carrier_list));
+   prev = fetch_rep_parent(prev_lst);
+   carrier = fetch_rep_parent(carrier_list);
+
+   if (next && next == prev && carrier != prev)
+     {
+        //a item got inserted into the middle of one group, but does not have the correct group header, that is a bug
+        ERR("Inserting a item with the wrong group into another group(%p,%p,%p)", prev, carrier, next);
+        unregister_item(obj, pd, subobj);
+        return EINA_FALSE;
+     }
+
+   if (prev_lst && eina_list_data_get(prev_lst) == next && carrier != next)
+     {
+        //a item got inserted between group header and group children, also a error
+        ERR("Inserting a item between group header, and group elements(%p,%p,%p)", prev_lst, eina_list_data_get(prev_lst), next);
+        unregister_item(obj, pd, subobj);
+        return EINA_FALSE;
+     }
+   if (!next && !prev && carrier && prev_lst && eina_list_data_get(prev_lst) != carrier)
+     {
+        ERR("Tried to insert a item with group, outside its group(%p,%p,%p)", next, prev, carrier);
+        unregister_item(obj, pd, subobj);
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
 EOLIAN static Eina_Bool
 _efl_ui_collection_efl_pack_pack_clear(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
 {
@@ -779,6 +826,7 @@ _efl_ui_collection_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Collection_Data *
    if (!register_item(obj, pd, subobj))
      return EINA_FALSE;
    pd->items = eina_list_prepend_relative_list(pd->items, subobj, subobj_list);
+   if (!check_group_integrity(obj, pd, subobj)) return EINA_FALSE;
    update_pos_man(obj, pd, subobj);
    return EINA_TRUE;
 }
@@ -792,6 +840,7 @@ _efl_ui_collection_efl_pack_linear_pack_after(Eo *obj, Efl_Ui_Collection_Data *p
    if (!register_item(obj, pd, subobj))
      return EINA_FALSE;
    pd->items = eina_list_append_relative_list(pd->items, subobj, subobj_list);
+   if (!check_group_integrity(obj, pd, subobj)) return EINA_FALSE;
    update_pos_man(obj, pd, subobj);
    return EINA_TRUE;
 }
@@ -814,6 +863,7 @@ _efl_ui_collection_efl_pack_linear_pack_at(Eo *obj, Efl_Ui_Collection_Data *pd, 
      pd->items = eina_list_append(pd->items, subobj);
    else
      pd->items = eina_list_prepend(pd->items, subobj);
+   if (!check_group_integrity(obj, pd, subobj)) return EINA_FALSE;
    update_pos_man(obj, pd, subobj);
    return EINA_TRUE;
 }
