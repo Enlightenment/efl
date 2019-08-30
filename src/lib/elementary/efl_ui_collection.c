@@ -215,7 +215,8 @@ _pan_position_changed_cb(void *data, const Efl_Event *ev)
 
 EFL_CALLBACKS_ARRAY_DEFINE(pan_events_cb,
   {EFL_UI_PAN_EVENT_PAN_CONTENT_POSITION_CHANGED, _pan_position_changed_cb},
-  {EFL_UI_PAN_EVENT_PAN_VIEWPORT_CHANGED, _pan_viewport_changed_cb},
+  {EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _pan_viewport_changed_cb},
+  {EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _pan_viewport_changed_cb},
 )
 
 static void

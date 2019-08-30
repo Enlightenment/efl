@@ -33,7 +33,6 @@ _efl_ui_pan_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Pan_Data *psd, Eina_Posi
    psd->y = pos.y;
 
    evas_object_smart_changed(obj);
-   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_PAN_VIEWPORT_CHANGED, NULL);
 }
 
 EOLIAN static void
@@ -48,7 +47,6 @@ _efl_ui_pan_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Pan_Data *psd, Eina_Size2D s
    psd->h = sz.h;
 
    evas_object_smart_changed(obj);
-   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_PAN_VIEWPORT_CHANGED, NULL);
 }
 
 EOLIAN static void

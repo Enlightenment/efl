@@ -2270,7 +2270,9 @@ _efl_ui_scroll_manager_pan_set(Eo *obj, Efl_Ui_Scroll_Manager_Data *sd, Eo *pan)
         efl_event_callback_del
            (sd->pan_obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, _efl_ui_scroll_manager_pan_content_changed_cb, sd);
         efl_event_callback_del
-           (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_VIEWPORT_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
+           (sd->pan_obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
+        efl_event_callback_del
+           (sd->pan_obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
         efl_event_callback_del
            (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_POSITION_CHANGED, _efl_ui_scroll_manager_pan_position_changed_cb, sd);
         efl_event_callback_del
@@ -2285,7 +2287,9 @@ _efl_ui_scroll_manager_pan_set(Eo *obj, Efl_Ui_Scroll_Manager_Data *sd, Eo *pan)
    efl_event_callback_add
      (sd->pan_obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, _efl_ui_scroll_manager_pan_content_changed_cb, sd);
    efl_event_callback_add
-     (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_VIEWPORT_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
+     (sd->pan_obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
+   efl_event_callback_add
+     (sd->pan_obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
    efl_event_callback_add
      (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_POSITION_CHANGED, _efl_ui_scroll_manager_pan_position_changed_cb, sd);
    efl_event_callback_add
@@ -2480,7 +2484,9 @@ _efl_ui_scroll_manager_efl_object_destructor(Eo *obj, Efl_Ui_Scroll_Manager_Data
         efl_event_callback_del
            (sd->pan_obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, _efl_ui_scroll_manager_pan_content_changed_cb, sd);
         efl_event_callback_del
-           (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_VIEWPORT_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
+           (sd->pan_obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
+        efl_event_callback_del
+           (sd->pan_obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
         efl_event_callback_del
            (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_POSITION_CHANGED, _efl_ui_scroll_manager_pan_position_changed_cb, sd);
         efl_event_callback_del
