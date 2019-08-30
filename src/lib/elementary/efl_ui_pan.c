@@ -141,7 +141,6 @@ _efl_ui_pan_content_resize_cb(void *data,
         psd->content_h = sz.h;
         evas_object_smart_changed(pobj);
      }
-   efl_event_callback_call(pobj, EFL_UI_PAN_EVENT_PAN_CONTENT_POSITION_CHANGED, NULL);
    efl_event_callback_call(pobj, EFL_UI_PAN_EVENT_PAN_CONTENT_SIZE_CHANGED, &sz);
 }
 
