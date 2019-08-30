@@ -1964,25 +1964,46 @@ _scroll_event_object_attach(Evas_Object *obj)
 }
 
 static void
-_efl_ui_scroll_manager_pan_content_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_efl_ui_scroll_manager_content_resized(Efl_Ui_Scroll_Manager_Data *sd, Eina_Size2D content)
+{
+   sd->content_info.w = content.w;
+   sd->content_info.h = content.h;
+
+   sd->content_info.resized = EINA_TRUE;
+   efl_event_callback_call(sd->parent, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED, NULL);
+   efl_event_callback_call(sd->parent, EFL_UI_SCROLLBAR_EVENT_BAR_POS_CHANGED, NULL);
+   efl_ui_scrollbar_bar_visibility_update(sd->obj);
+   _efl_ui_scroll_manager_wanted_region_set(sd->obj);
+}
+
+static void
+_efl_ui_scroll_manager_pan_content_resized_cb(void *data, const Efl_Event *event)
 {
    Efl_Ui_Scroll_Manager_Data *sd = data;
-   Eina_Size2D content = {0, 0};
+   Eina_Size2D *content = event->info;
 
-   if (!sd->pan_obj) return;
+   _efl_ui_scroll_manager_content_resized(sd, *content);
+}
 
-   content = efl_ui_pan_content_size_get(sd->pan_obj);
-   if ((content.w != sd->content_info.w) || (content.h != sd->content_info.h))
-     {
-        sd->content_info.w = content.w;
-        sd->content_info.h = content.h;
+static void
+_efl_ui_scroll_manager_pan_content_changed(Efl_Ui_Scroll_Manager_Data *sd, Eo *content)
+{
+   Eina_Size2D sz = {0, 0};
 
-        sd->content_info.resized = EINA_TRUE;
-        efl_event_callback_call(sd->parent, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED, NULL);
-        efl_event_callback_call(sd->parent, EFL_UI_SCROLLBAR_EVENT_BAR_POS_CHANGED, NULL);
-        efl_ui_scrollbar_bar_visibility_update(sd->obj);
-        _efl_ui_scroll_manager_wanted_region_set(sd->obj);
-     }
+   /* protect against widgets that synthesize these events to trigger this codepath */
+   if (content && (content != sd->pan_content))
+     efl_event_callback_add(sd->pan_content, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _efl_ui_scroll_manager_pan_content_resized_cb, sd);
+   else if (sd->pan_content)
+     efl_event_callback_del(sd->pan_content, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _efl_ui_scroll_manager_pan_content_resized_cb, sd);
+   sd->pan_content = content;
+   sz = efl_ui_pan_content_size_get(sd->pan_obj);
+   _efl_ui_scroll_manager_content_resized(sd, sz);
+}
+
+static void
+_efl_ui_scroll_manager_pan_content_changed_cb(void *data, const Efl_Event *event)
+{
+   _efl_ui_scroll_manager_pan_content_changed(data, event->info);
 }
 
 static void
@@ -2248,23 +2269,25 @@ _efl_ui_scroll_manager_efl_ui_scrollbar_bar_size_get(const Eo *obj EINA_UNUSED, 
 EOLIAN static void
 _efl_ui_scroll_manager_pan_set(Eo *obj, Efl_Ui_Scroll_Manager_Data *sd, Eo *pan)
 {
+   if (sd->pan_obj == pan) return;
+
    if (sd->pan_obj)
      {
         efl_event_callback_del
-           (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_CHANGED, _efl_ui_scroll_manager_pan_content_changed_cb, sd);
+           (sd->pan_obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, _efl_ui_scroll_manager_pan_content_changed_cb, sd);
         efl_event_callback_del
            (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_VIEWPORT_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
         efl_event_callback_del
            (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_POSITION_CHANGED, _efl_ui_scroll_manager_pan_position_changed_cb, sd);
+        _efl_ui_scroll_manager_pan_content_changed(sd, NULL);
      }
 
+   sd->pan_obj = pan;
    if (!pan)
      return;
 
-   sd->pan_obj = pan;
-
    efl_event_callback_add
-     (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_CHANGED, _efl_ui_scroll_manager_pan_content_changed_cb, sd);
+     (sd->pan_obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, _efl_ui_scroll_manager_pan_content_changed_cb, sd);
    efl_event_callback_add
      (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_VIEWPORT_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
    efl_event_callback_add
@@ -2273,6 +2296,7 @@ _efl_ui_scroll_manager_pan_set(Eo *obj, Efl_Ui_Scroll_Manager_Data *sd, Eo *pan)
                                        _efl_ui_scroll_manager_pan_resized_cb, obj);
    evas_object_event_callback_add(sd->pan_obj, EVAS_CALLBACK_MOVE,
                                        _efl_ui_scroll_manager_pan_moved_cb, obj);
+   _efl_ui_scroll_manager_pan_content_changed(sd, efl_content_get(pan));
 }
 
 EOLIAN static Eina_Bool
@@ -2457,11 +2481,14 @@ _efl_ui_scroll_manager_efl_object_destructor(Eo *obj, Efl_Ui_Scroll_Manager_Data
         evas_object_event_callback_del_full(sd->pan_obj, EVAS_CALLBACK_MOVE,
                                             _efl_ui_scroll_manager_pan_moved_cb, obj);
         efl_event_callback_del
-           (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_CHANGED, _efl_ui_scroll_manager_pan_content_changed_cb, sd);
+           (sd->pan_obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, _efl_ui_scroll_manager_pan_content_changed_cb, sd);
         efl_event_callback_del
            (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_VIEWPORT_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
         efl_event_callback_del
            (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_POSITION_CHANGED, _efl_ui_scroll_manager_pan_position_changed_cb, sd);
+        if (sd->pan_content)
+          efl_event_callback_del(sd->pan_content, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _efl_ui_scroll_manager_pan_content_resized_cb, sd);
+        sd->pan_content = NULL;
      }
    efl_destructor(efl_super(obj, MY_CLASS));
 }

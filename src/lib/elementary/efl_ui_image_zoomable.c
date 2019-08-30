@@ -143,7 +143,7 @@ _calc_job_cb(void *data)
         sd->minw = minw;
         sd->minh = minh;
 
-        efl_event_callback_call(sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_CHANGED, NULL);
+        efl_event_callback_call(sd->pan_obj, EFL_UI_PAN_EVENT_PAN_POSITION_CHANGED, NULL);
         _sizing_eval(obj);
      }
    sd->calc_job = NULL;
@@ -1823,16 +1823,16 @@ _efl_ui_image_zoomable_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Zoomable
 
    priv->pan_obj = efl_add(MY_PAN_CLASS, obj);
 
+   pan_data = efl_data_scope_get(priv->pan_obj, MY_PAN_CLASS);
+   efl_data_ref(obj, MY_CLASS);
+   pan_data->wobj = obj;
+   pan_data->wsd = priv;
+
    efl_ui_scroll_manager_pan_set(priv->smanager, priv->pan_obj);
    if (elm_widget_is_legacy(obj))
      edje_object_part_swallow(edje, "elm.swallow.content", priv->pan_obj);
    else
      edje_object_part_swallow(edje, "efl.content", priv->pan_obj);
-
-   pan_data = efl_data_scope_get(priv->pan_obj, MY_PAN_CLASS);
-   efl_data_ref(obj, MY_CLASS);
-   pan_data->wobj = obj;
-   pan_data->wsd = priv;
 
    efl_event_callback_add(obj, EFL_UI_EVENT_SCROLL, _scroll_cb, obj);
 

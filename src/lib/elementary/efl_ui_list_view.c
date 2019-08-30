@@ -863,7 +863,7 @@ _efl_ui_list_view_efl_ui_list_view_model_min_size_set(Eo *obj, Efl_Ui_List_View_
    pd->min.h = min.h;
 
    efl_gfx_hint_size_min_set(wd->resize_obj, EINA_SIZE2D(pd->min.w, pd->min.h));
-   efl_event_callback_call(pd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_CHANGED, NULL);
+   efl_event_callback_call(pd->pan_obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
 }
 
 EOLIAN static void
