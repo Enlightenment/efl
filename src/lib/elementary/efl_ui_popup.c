@@ -460,7 +460,7 @@ _efl_ui_popup_efl_gfx_entity_visible_set(Eo *obj, Efl_Ui_Popup_Data *pd, Eina_Bo
 }
 
 EOLIAN static void
-_efl_ui_popup_timeout_set(Eo *obj, Efl_Ui_Popup_Data *pd, double time)
+_efl_ui_popup_closing_timeout_set(Eo *obj, Efl_Ui_Popup_Data *pd, double time)
 {
    if (time < 0.0)
      time = 0.0;
@@ -474,7 +474,7 @@ _efl_ui_popup_timeout_set(Eo *obj, Efl_Ui_Popup_Data *pd, double time)
 }
 
 EOLIAN static double
-_efl_ui_popup_timeout_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
+_efl_ui_popup_closing_timeout_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
 {
    return pd->timeout;
 }

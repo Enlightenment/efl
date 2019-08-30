@@ -206,7 +206,7 @@ _timeout_set_cb(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
    efl_ui_popup_data *p_data = data;
    if (!p_data->efl_ui_popup) return;
-   efl_ui_popup_timeout_set(p_data->efl_ui_popup, 3);
+   efl_ui_popup_closing_timeout_set(p_data->efl_ui_popup, 3);
    printf("timemout is set to 3 seconds\n");
 }
 

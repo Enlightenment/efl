@@ -23,7 +23,7 @@ class @beta Efl.Ui.Popup extends Efl.Ui.Layout_Base implements Efl.Content, Efl.
              type: Efl.Ui.Popup_Align; [[Alignment type]]
          }
       }
-      @property timeout {
+      @property closing_timeout {
          set {
             [[ Set the timeout seconds.
                After timeout seconds, popup will be deleted automatically.
