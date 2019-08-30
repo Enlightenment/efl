@@ -105,6 +105,8 @@ _validate_doc(Eolian_Documentation *doc)
 }
 
 static Eina_Bool _validate_type(Validate_State *vals, Eolian_Type *tp);
+static Eina_Bool _validate_type_by_ref(Validate_State *vals, Eolian_Type *tp,
+                                       Eina_Bool by_ref);
 static Eina_Bool _validate_expr(Eolian_Expression *expr,
                                 const Eolian_Type *tp,
                                 Eolian_Expression_Mask msk);
@@ -122,7 +124,7 @@ static Eina_Bool
 _sf_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
            const Eolian_Struct_Type_Field *sf, Cb_Ret *sc)
 {
-   sc->succ = _validate_type(sc->vals, sf->type);
+   sc->succ = _validate_type_by_ref(sc->vals, sf->type, sf->by_ref);
 
    if (!sc->succ)
      return EINA_FALSE;
@@ -220,6 +222,25 @@ _validate_ownable(Eolian_Type *tp)
         return EINA_FALSE;
      }
    return _validate(&tp->base);
+}
+
+static Eina_Bool
+_validate_by_ref(Eolian_Type *tp, Eina_Bool by_ref)
+{
+   /* when not @by_ref, allow any type */
+   if (!by_ref)
+     return EINA_TRUE;
+   /* else only allow value types */
+   return !database_type_is_ownable(tp->base.unit, tp, EINA_FALSE);
+}
+
+static Eina_Bool
+_validate_type_by_ref(Validate_State *vals, Eolian_Type *tp, Eina_Bool by_ref)
+{
+   if (!_validate_type(vals, tp))
+     return EINA_FALSE;
+
+   return _validate_by_ref(tp, by_ref);
 }
 
 static Eina_Bool
@@ -392,7 +413,7 @@ _validate_expr(Eolian_Expression *expr, const Eolian_Type *tp,
 static Eina_Bool
 _validate_param(Validate_State *vals, Eolian_Function_Parameter *param)
 {
-   if (!_validate_type(vals, param->type))
+   if (!_validate_type_by_ref(vals, param->type, param->by_ref))
      return EINA_FALSE;
 
    if (param->value && !_validate_expr(param->value, param->type, 0))
@@ -434,10 +455,12 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
    /* need to preserve stable flag set from the class */
    Eina_Bool was_stable = _set_stable(vals, !func->base.is_beta && vals->stable);
 
-   if (func->get_ret_type && !_validate_type(vals, func->get_ret_type))
+   if (func->get_ret_type && !_validate_type_by_ref(vals, func->get_ret_type,
+       func->get_return_by_ref))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
-   if (func->set_ret_type && !_validate_type(vals, func->set_ret_type))
+   if (func->set_ret_type && !_validate_type_by_ref(vals, func->set_ret_type,
+       func->set_return_by_ref))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
    if (func->get_ret_val && !_validate_expr(func->get_ret_val,
