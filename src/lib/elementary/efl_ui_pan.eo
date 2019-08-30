@@ -65,6 +65,6 @@ class @beta Efl.Ui.Pan extends Efl.Canvas.Group implements Efl.Content
    }
    events {
       pan,viewport,changed: void; [[This widget's position or size has changed.]]
-      pan,position,changed: void; [[The content's position has changed.]]
+      pan,content_position,changed: void; [[The content's position has changed.]]
    }
 }
