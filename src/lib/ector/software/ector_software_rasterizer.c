@@ -296,12 +296,11 @@ _blend_gradient(int count, const SW_FT_Span *spans, void *user_data)
 static void
 _blend_gradient_alpha(int count, const SW_FT_Span *spans, void *user_data)
 {
-   RGBA_Comp_Func comp_func;
    Span_Data *sd = (Span_Data *)(user_data);
    src_fetch fetchfunc = NULL;
    uint32_t *buffer;
    const int pix_stride = sd->raster_buffer->stride / 4;
-   uint32_t gradientbuffer[BLEND_GRADIENT_BUFFER_SIZE];
+   uint32_t gbuffer[BLEND_GRADIENT_BUFFER_SIZE];  //gradient buffer
 
    // FIXME: Get the proper composition function using ,color, ECTOR_OP etc.
    if (sd->type == LinearGradient) fetchfunc = &fetch_linear_gradient;
@@ -312,11 +311,6 @@ _blend_gradient_alpha(int count, const SW_FT_Span *spans, void *user_data)
    Ector_Software_Buffer_Base_Data *mask = sd->mask;
    uint32_t *mbuffer = mask->pixels.u32;
 
-   //Temp buffer for intermediate processing
-   uint32_t *tbuffer = malloc(sizeof(uint32_t) * sd->raster_buffer->generic->w);
-
-   comp_func = efl_draw_func_span_get(sd->op, sd->mul_col, sd->gradient->alpha);
-
    // move to the offset location
    buffer = sd->raster_buffer->pixels.u32 + ((pix_stride * sd->offy) + sd->offx);
 
@@ -324,14 +318,13 @@ _blend_gradient_alpha(int count, const SW_FT_Span *spans, void *user_data)
      {
         uint32_t *target = buffer + ((sd->raster_buffer->generic->w * spans->y) + spans->x);
         uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
-        uint32_t *temp = tbuffer;
+        uint32_t *temp = gbuffer;
         int length = spans->len;
         memset(temp, 0x00, sizeof(uint32_t) * spans->len);
         while (length)
           {
              int l = MIN(length, BLEND_GRADIENT_BUFFER_SIZE);
-             fetchfunc(gradientbuffer, sd, spans->y, spans->x, l);
-             comp_func(temp, gradientbuffer, l, sd->mul_col, spans->coverage);
+             fetchfunc(temp, sd, spans->y, spans->x, l);
 
              for (int i = 0; i < l; i++)
                {
@@ -346,18 +339,16 @@ _blend_gradient_alpha(int count, const SW_FT_Span *spans, void *user_data)
           }
         ++spans;
      }
-   free(tbuffer);
 }
 
 static void
 _blend_gradient_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
 {
-   RGBA_Comp_Func comp_func;
    Span_Data *sd = (Span_Data *)(user_data);
    src_fetch fetchfunc = NULL;
    uint32_t *buffer;
    const int pix_stride = sd->raster_buffer->stride / 4;
-   uint32_t gradientbuffer[BLEND_GRADIENT_BUFFER_SIZE];
+   uint32_t gbuffer[BLEND_GRADIENT_BUFFER_SIZE];  //gradient buffer
 
    // FIXME: Get the proper composition function using ,color, ECTOR_OP etc.
    if (sd->type == LinearGradient) fetchfunc = &fetch_linear_gradient;
@@ -368,11 +359,6 @@ _blend_gradient_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
    Ector_Software_Buffer_Base_Data *mask = sd->mask;
    uint32_t *mbuffer = mask->pixels.u32;
 
-   //Temp buffer for intermediate processing
-   uint32_t *tbuffer = malloc(sizeof(uint32_t) * sd->raster_buffer->generic->w);
-
-   comp_func = efl_draw_func_span_get(sd->op, sd->mul_col, sd->gradient->alpha);
-
    // move to the offset location
    buffer = sd->raster_buffer->pixels.u32 + ((pix_stride * sd->offy) + sd->offx);
 
@@ -380,14 +366,13 @@ _blend_gradient_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
      {
         uint32_t *target = buffer + ((sd->raster_buffer->generic->w * spans->y) + spans->x);
         uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
-        uint32_t *temp = tbuffer;
+        uint32_t *temp = gbuffer;
         int length = spans->len;
         memset(temp, 0x00, sizeof(uint32_t) * spans->len);
         while (length)
           {
              int l = MIN(length, BLEND_GRADIENT_BUFFER_SIZE);
-             fetchfunc(gradientbuffer, sd, spans->y, spans->x, l);
-             comp_func(temp, gradientbuffer, l, sd->mul_col, spans->coverage);
+             fetchfunc(temp, sd, spans->y, spans->x, l);
 
              for (int i = 0; i < l; i++)
                {
@@ -403,7 +388,6 @@ _blend_gradient_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
           }
         ++spans;
      }
-   free(tbuffer);
 }
 /*!
     \internal
