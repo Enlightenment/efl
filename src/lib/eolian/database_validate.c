@@ -106,7 +106,7 @@ _validate_doc(Eolian_Documentation *doc)
 
 static Eina_Bool _validate_type(Validate_State *vals, Eolian_Type *tp);
 static Eina_Bool _validate_type_by_ref(Validate_State *vals, Eolian_Type *tp,
-                                       Eina_Bool by_ref);
+                                       Eina_Bool by_ref, Eina_Bool move);
 static Eina_Bool _validate_expr(Eolian_Expression *expr,
                                 const Eolian_Type *tp,
                                 Eolian_Expression_Mask msk);
@@ -124,7 +124,7 @@ static Eina_Bool
 _sf_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
            const Eolian_Struct_Type_Field *sf, Cb_Ret *sc)
 {
-   sc->succ = _validate_type_by_ref(sc->vals, sf->type, sf->by_ref);
+   sc->succ = _validate_type_by_ref(sc->vals, sf->type, sf->by_ref, sf->move);
 
    if (!sc->succ)
      return EINA_FALSE;
@@ -212,47 +212,47 @@ _validate_typedecl(Validate_State *vals, Eolian_Typedecl *tp)
 }
 
 static Eina_Bool
-_validate_ownable(Eolian_Type *tp)
+_validate_by_ref(Eolian_Type *tp, Eina_Bool by_ref, Eina_Bool move)
 {
+   Eina_Bool maybe_ownable =
+     database_type_is_ownable(tp->base.unit, tp, EINA_FALSE);
+
+   /* only allow value types when @by_ref */
+   if (by_ref && !maybe_ownable)
+     return EINA_FALSE;
+
+   /* futures can be whatever... */
    if (tp->btype == EOLIAN_TYPE_BUILTIN_FUTURE)
      return EINA_TRUE;
-   if (tp->owned && !tp->ownable)
+
+   /* not marked @move; just validate */
+   if (!move)
+      return EINA_TRUE;
+
+   /* marked @move, now pointer-like or otherwise ownable, error */
+   if (!maybe_ownable || !tp->ownable)
      {
         _eo_parser_log(&tp->base, "type '%s' is not ownable", tp->base.name);
         return EINA_FALSE;
      }
-   return _validate(&tp->base);
+
+   return EINA_TRUE;
 }
 
 static Eina_Bool
-_validate_by_ref(Eolian_Type *tp, Eina_Bool by_ref)
-{
-   /* when not @by_ref, allow any type */
-   if (!by_ref)
-     return EINA_TRUE;
-   /* else only allow value types */
-   return !database_type_is_ownable(tp->base.unit, tp, EINA_FALSE);
-}
-
-static Eina_Bool
-_validate_type_by_ref(Validate_State *vals, Eolian_Type *tp, Eina_Bool by_ref)
+_validate_type_by_ref(Validate_State *vals, Eolian_Type *tp,
+                      Eina_Bool by_ref, Eina_Bool move)
 {
    if (!_validate_type(vals, tp))
      return EINA_FALSE;
 
-   return _validate_by_ref(tp, by_ref);
+   return _validate_by_ref(tp, by_ref, move);
 }
 
 static Eina_Bool
 _validate_type(Validate_State *vals, Eolian_Type *tp)
 {
    const Eolian_Unit *src = tp->base.unit;
-
-   if (tp->owned && !database_type_is_ownable(src, tp, EINA_FALSE))
-     {
-        _eo_parser_log(&tp->base, "type '%s' is not ownable", tp->base.name);
-        return EINA_FALSE;
-     }
 
    if (tp->is_ptr)
      {
@@ -270,7 +270,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
      {
       case EOLIAN_TYPE_VOID:
       case EOLIAN_TYPE_UNDEFINED:
-        return _validate_ownable(tp);
+        return _validate(&tp->base);
       case EOLIAN_TYPE_REGULAR:
         {
            if (tp->base_type)
@@ -293,7 +293,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                        return EINA_FALSE;
                      itp = itp->next_type;
                   }
-                return _validate_ownable(tp);
+                return _validate(&tp->base);
              }
            /* builtins */
            int id = eo_lexer_keyword_str_to_id(tp->base.name);
@@ -326,7 +326,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                           return EINA_FALSE;
                        }
                   }
-                return _validate_ownable(tp);
+                return _validate(&tp->base);
              }
            /* user defined */
            tp->tdecl = database_type_decl_find(src, tp);
@@ -347,7 +347,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
            if (tp->tdecl->ownable)
              tp->ownable = EINA_TRUE;
            tp->base.c_name = eina_stringshare_ref(tp->tdecl->base.c_name);
-           return _validate_ownable(tp);
+           return _validate(&tp->base);
         }
       case EOLIAN_TYPE_CLASS:
         {
@@ -366,7 +366,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
              }
            tp->ownable = EINA_TRUE;
            tp->base.c_name = eina_stringshare_ref(tp->klass->base.c_name);
-           return _validate_ownable(tp);
+           return _validate(&tp->base);
         }
       case EOLIAN_TYPE_ERROR:
         {
@@ -413,7 +413,7 @@ _validate_expr(Eolian_Expression *expr, const Eolian_Type *tp,
 static Eina_Bool
 _validate_param(Validate_State *vals, Eolian_Function_Parameter *param)
 {
-   if (!_validate_type_by_ref(vals, param->type, param->by_ref))
+   if (!_validate_type_by_ref(vals, param->type, param->by_ref, param->move))
      return EINA_FALSE;
 
    if (param->value && !_validate_expr(param->value, param->type, 0))
@@ -456,11 +456,11 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
    Eina_Bool was_stable = _set_stable(vals, !func->base.is_beta && vals->stable);
 
    if (func->get_ret_type && !_validate_type_by_ref(vals, func->get_ret_type,
-       func->get_return_by_ref))
+       func->get_return_by_ref, func->get_return_move))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
    if (func->set_ret_type && !_validate_type_by_ref(vals, func->set_ret_type,
-       func->set_return_by_ref))
+       func->set_return_by_ref, func->set_return_move))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
    if (func->get_ret_val && !_validate_expr(func->get_ret_val,
