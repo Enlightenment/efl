@@ -3363,7 +3363,7 @@ _elm_entry_text_set(Eo *obj, Elm_Entry_Data *sd, const char *part, const char *e
 
    /* If old and new text are the same do nothing */
    current_text = edje_object_part_text_get(sd->entry_edje, "elm.text");
-   if (current_text == entry || !strcmp(entry, current_text))
+   if (eina_streq(current_text, entry))
      goto done;
 
    ELM_SAFE_FREE(sd->text, eina_stringshare_del);
