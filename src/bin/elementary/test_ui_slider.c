@@ -11,8 +11,9 @@ _slider_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 
    val = efl_ui_range_value_get(ev->object);
 
-   printf("val = %f\n", val);
-   if (val > 100)
+   if (val <= 100)
+     printf("val = %f\n", val);
+   else
      efl_ui_range_value_set(ev->object, 100);
 }
 
