@@ -71,8 +71,10 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
         int min;
         int buffer_id = i % len;
 
+        printf("-----> %d\n", buffer_id);
         if (buffer_id == 0)
           {
+             printf("BATCH_FILL %d\n", i);
              BATCH_ACCESS_SIZE(pd->callbacks, i, MIN(len, pd->size - i), EINA_TRUE, size_buffer);
           }
        size = size_buffer[buffer_id].size;
@@ -90,7 +92,7 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
         pd->size_cache[i + 1] = pd->size_cache[i] + step;
         pd->maximum_min_size = MAX(pd->maximum_min_size, min);
         /* no point iterating further if size calc can't be done yet */
-        if ((!i) && (!pd->maximum_min_size)) break;
+        //if ((!i) && (!pd->maximum_min_size)) break;
      }
    pd->average_item_size = pd->size_cache[pd->size]/pd->size;
    if ((!pd->average_item_size) && (!pd->maximum_min_size))
@@ -320,7 +322,7 @@ position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
 
    //to performance optimize the whole widget, we are setting the objects that are outside the viewport to visibility false
    //The code below ensures that things outside the viewport are always hidden, and things inside the viewport are visible
-   vis_segment_swap(&pd->object, cur, pd->prev_run);
+   vis_segment_swap(pd->callbacks, cur, pd->prev_run);
 
    _position_items(obj, pd, cur, relevant_space_size);
 

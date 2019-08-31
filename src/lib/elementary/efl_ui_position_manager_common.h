@@ -41,7 +41,6 @@ _batch_request_size(Api_Callbacks cb , int start_id, int len, Eina_Bool cache, v
    return res;
 }
 
-<<<<<<< HEAD
 #define BATCH_ACCESS_SIZE(cb, start_id, len, cache, data) \
   do { \
     size_result = _batch_request_size((cb), (start_id), (len), (cache), (data)); \
@@ -91,13 +90,6 @@ vis_change_segment(Api_Callbacks cb, int a, int b, Eina_Bool flag)
    const int len = 50;
    Efl_Ui_Position_Manager_Object_Batch_Entity data[len];
    Efl_Ui_Position_Manager_Object_Batch_Result object_result;
-=======
-static void
-vis_change_segment(Api_Callback *cb, int a, int b, Eina_Bool flag)
-{
-   const int len = 50;
-   Efl_Ui_Position_Manager_Batch_Entity_Access data[50];
->>>>>>> wip
 
    if (a == b) return;
 

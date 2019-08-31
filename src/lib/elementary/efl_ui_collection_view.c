@@ -487,7 +487,7 @@ static Eina_List *
 _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
                   Efl_Ui_Collection_View_Data *pd,
                   uint64_t search_index,
-                  Efl_Ui_Position_Manager_Batch_Size_Access *target,
+                  Efl_Ui_Position_Manager_Size_Batch_Entity *target,
                   Eina_Size2D item_base)
 {
    Efl_Ui_Collection_Item_Lookup *lookup;
@@ -515,7 +515,8 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
      }
 
    target->size = item_size;
-   target->group = EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_NO_GROUP;
+   target->element_depth = 0;
+   target->depth_leader = EINA_FALSE;
 
    return requests;
 
@@ -523,8 +524,9 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
 // printf("LINE %d\n", __LINE__);
    requests = _request_add(requests, request, search_index, EINA_FALSE);
 
-   target->size = item_base;
-   target->group = EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_NO_GROUP;
+   target->size = item_size;
+   target->element_depth = 0;
+   target->depth_leader = EINA_FALSE;
 
    return requests;
 }
@@ -533,7 +535,7 @@ static Eina_List *
 _cache_entity_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
                     Efl_Ui_Collection_View_Data *pd,
                     uint64_t search_index,
-                    Efl_Ui_Position_Manager_Batch_Entity_Access *target)
+                    Efl_Ui_Position_Manager_Object_Batch_Entity *target)
 {
    Efl_Ui_Collection_Item_Lookup *lookup;
 
@@ -546,7 +548,8 @@ _cache_entity_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
    if (!lookup->item.entity) goto not_found;
 
    target->entity = lookup->item.entity;
-   target->group = EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_NO_GROUP;
+   target->element_depth = 0;
+   target->depth_leader = EINA_FALSE;
 
    return requests;
 
@@ -555,7 +558,8 @@ _cache_entity_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
    requests = _request_add(requests, request, search_index, EINA_TRUE);
 
    target->entity = NULL;
-   target->group = EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_NO_GROUP;
+   target->element_depth = 0;
+   target->depth_leader = EINA_FALSE;
 
    return requests;
 }
@@ -718,13 +722,13 @@ if (request->length < 1) CRI("ACK");
    return NULL;
 }
 
-static Efl_Ui_Position_Manager_Batch_Result
-_batch_size_cb(void *data, int start_id, Eina_Rw_Slice memory)
+static Efl_Ui_Position_Manager_Size_Batch_Result
+_batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_Rw_Slice memory)
 {
    MY_DATA_GET(data, pd);
-   Efl_Ui_Position_Manager_Batch_Size_Access *sizes;
+   Efl_Ui_Position_Manager_Size_Batch_Entity *sizes;
    Efl_Ui_Collection_Request *request = NULL;
-   Efl_Ui_Position_Manager_Batch_Result result = {-1, 0};
+   Efl_Ui_Position_Manager_Size_Batch_Result result = {0};
    Efl_Model *parent;
    Eina_List *requests = NULL;
    Eina_Size2D item_base;
@@ -742,15 +746,15 @@ _batch_size_cb(void *data, int start_id, Eina_Rw_Slice memory)
 
    sizes = memory.mem;
    count = efl_model_children_count_get(parent);
-   limit = MIN(count - start_id, memory.len);
+   limit = conf.range.end_id - conf.range.start_id;
 //   printf("batch_size %u, %d\n", limit, start_id);
 
    // Look in the temporary cache now for the beginning of the buffer
-   if (pd->viewport[0] && ((uint64_t)(start_id + idx) < pd->viewport[0]->offset))
+   if (pd->viewport[0] && ((uint64_t)(conf.range.start_id + idx) < pd->viewport[0]->offset))
      {
-        while ((uint64_t)(start_id + idx) < pd->viewport[0]->offset && idx < limit)
+        while ((uint64_t)(conf.range.start_id + idx) < pd->viewport[0]->offset && idx < limit)
           {
-             uint64_t search_index = start_id + idx;
+             uint64_t search_index = conf.range.start_id + idx;
 // printf("LINE %d\n", __LINE__);
              requests = _cache_size_fetch(requests, &request, pd,
                                           search_index, &sizes[idx], item_base);
@@ -765,10 +769,10 @@ _batch_size_cb(void *data, int start_id, Eina_Rw_Slice memory)
         if (!pd->viewport[i]) continue;
 
         while (idx < limit &&
-               (pd->viewport[i]->offset <= start_id + idx) &&
-               (start_id + idx < (pd->viewport[i]->offset + pd->viewport[i]->count)))
+               (pd->viewport[i]->offset <= conf.range.start_id + idx) &&
+               (conf.range.start_id + idx < (pd->viewport[i]->offset + pd->viewport[i]->count)))
           {
-             uint16_t offset = start_id + idx - pd->viewport[i]->offset;
+             uint16_t offset = conf.range.start_id + idx - pd->viewport[i]->offset;
              Efl_Model *model = pd->viewport[i]->items[offset].model;
              Efl_Gfx_Entity *entity = pd->viewport[i]->items[offset].entity;
              Eina_Bool entity_request = EINA_FALSE;
@@ -790,7 +794,8 @@ _batch_size_cb(void *data, int start_id, Eina_Rw_Slice memory)
                   if (found)
                     {
                        sizes[idx].size = item_size;
-                       sizes[idx].group = EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_NO_GROUP;
+                       sizes[idx].element_depth = 0;
+                       sizes[idx].depth_leader = EINA_FALSE;
                        goto done;
                     }
 
@@ -799,10 +804,11 @@ _batch_size_cb(void *data, int start_id, Eina_Rw_Slice memory)
                }
 // printf("LINE %d\n", __LINE__);
              // No data, add to the requests
-             requests = _request_add(requests, &request, start_id + idx, entity_request);
+             requests = _request_add(requests, &request, conf.range.start_id + idx, entity_request);
 
              sizes[idx].size = item_base;
-             sizes[idx].group = EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_NO_GROUP;
+             sizes[idx].element_depth = 0;
+             sizes[idx].depth_leader = EINA_FALSE;
 
           done:
              idx++;
@@ -812,7 +818,7 @@ _batch_size_cb(void *data, int start_id, Eina_Rw_Slice memory)
    // Look in the temporary cache now for the end of the buffer
    while (idx < limit)
      {
-        uint64_t search_index = start_id + idx;
+        uint64_t search_index = conf.range.start_id + idx;
 // printf("%lu LINE %d\n", search_index, __LINE__);
         requests = _cache_size_fetch(requests, &request, pd,
                                      search_index, &sizes[idx], item_base);
@@ -831,13 +837,13 @@ _batch_size_cb(void *data, int start_id, Eina_Rw_Slice memory)
    return result;
 }
 
-static Efl_Ui_Position_Manager_Batch_Result
-_batch_entity_cb(void *data, int start_id, Eina_Rw_Slice memory)
+static Efl_Ui_Position_Manager_Object_Batch_Result
+_batch_entity_cb(void *data, Efl_Ui_Position_Manager_Request_Range range, Eina_Rw_Slice memory)
 {
    MY_DATA_GET(data, pd);
-   Efl_Ui_Position_Manager_Batch_Entity_Access *entities;
+   Efl_Ui_Position_Manager_Object_Batch_Entity *entities;
    Efl_Ui_Collection_Request *request = NULL;
-   Efl_Ui_Position_Manager_Batch_Result result = {-1, 0};
+   Efl_Ui_Position_Manager_Object_Batch_Result result = {0};
    Eina_List *requests = NULL;
    Efl_Model *parent;
    unsigned int i, count, limit;
@@ -847,14 +853,14 @@ _batch_entity_cb(void *data, int start_id, Eina_Rw_Slice memory)
 
    entities = memory.mem;
    count = efl_model_children_count_get(parent);
-   limit = MIN(count - start_id, memory.len);
+   limit = range.end_id - range.start_id;;
 
    // Look in the temporary cache now for the beginning of the buffer
-   if (pd->viewport[0] && ((uint64_t)(start_id + idx) < pd->viewport[0]->offset))
+   if (pd->viewport[0] && ((uint64_t)(range.start_id + idx) < pd->viewport[0]->offset))
      {
-        while (idx < limit && (uint64_t)(start_id + idx) < pd->viewport[0]->offset)
+        while (idx < limit && (uint64_t)(range.start_id + idx) < pd->viewport[0]->offset)
           {
-             uint64_t search_index = start_id + idx;
+             uint64_t search_index = range.start_id + idx;
 
              requests = _cache_entity_fetch(requests, &request, pd,
                                             search_index, &entities[idx]);
@@ -869,25 +875,27 @@ _batch_entity_cb(void *data, int start_id, Eina_Rw_Slice memory)
         if (!pd->viewport[i]) continue;
 
         while (idx < limit &&
-               (pd->viewport[i]->offset <= start_id + idx) &&
-               (start_id + idx < (pd->viewport[i]->offset + pd->viewport[i]->count)))
+               (pd->viewport[i]->offset <= range.start_id + idx) &&
+               (range.start_id + idx < (pd->viewport[i]->offset + pd->viewport[i]->count)))
           {
-             uint16_t offset = start_id + idx - pd->viewport[i]->offset;
+             uint16_t offset = range.start_id + idx - pd->viewport[i]->offset;
              Efl_Gfx_Entity *entity = pd->viewport[i]->items[offset].entity;
 
              if (!entity)
                {
 //                printf("LINE %d\n", __LINE__);
                   // No data, add to the requests
-                  requests = _request_add(requests, &request, start_id + idx, EINA_TRUE);
+                  requests = _request_add(requests, &request, range.start_id + idx, EINA_TRUE);
 
                   entities[idx].entity = NULL;
-                  entities[idx].group = EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_NO_GROUP;
+                  entities[idx].depth_leader = EINA_FALSE;
+                  entities[idx].element_depth = 0;
                }
              else
                {
                   entities[idx].entity = entity;
-                  entities[idx].group = EFL_UI_POSITION_MANAGER_BATCH_GROUP_STATE_NO_GROUP;
+                  entities[idx].depth_leader = EINA_FALSE;
+                  entities[idx].element_depth = 0;
                }
 
              idx++;
@@ -897,7 +905,7 @@ _batch_entity_cb(void *data, int start_id, Eina_Rw_Slice memory)
    // Look in the temporary cache now for the end of the buffer
    while (idx < limit)
      {
-        uint64_t search_index = start_id + idx;
+        uint64_t search_index = range.start_id + idx;
 
         requests = _cache_entity_fetch(requests, &request, pd,
                                        search_index, &entities[idx]);
@@ -1295,10 +1303,6 @@ _efl_ui_collection_view_position_manager_set(Eo *obj, Efl_Ui_Collection_View_Dat
    if (pd->manager)
      {
         efl_event_callback_array_del(pd->manager, manager_cbs(), obj);
-        efl_ui_position_manager_entity_data_access_set(pd->manager,
-                                                       NULL, NULL, NULL,
-                                                       NULL, NULL, NULL,
-                                                       0);
         efl_del(pd->manager);
      }
    pd->manager = manager;
@@ -1310,10 +1314,16 @@ _efl_ui_collection_view_position_manager_set(Eo *obj, Efl_Ui_Collection_View_Dat
 
    efl_parent_set(pd->manager, obj);
    efl_event_callback_array_add(pd->manager, manager_cbs(), obj);
-   efl_ui_position_manager_entity_data_access_set(pd->manager,
-                                                  efl_ref(obj), _batch_entity_cb, _batch_free_cb,
-                                                  efl_ref(obj), _batch_size_cb, _batch_free_cb,
-                                                  count);
+        switch(efl_ui_position_manager_entity_version(pd->manager, 1))
+          {
+            case 1:
+              efl_ui_position_manager_data_access_v1_data_access_set(pd->manager,
+                efl_ref(obj), _batch_entity_cb, NULL,
+                efl_ref(obj), _batch_size_cb, NULL,
+                count);
+            break;
+          }
+
    if (efl_finalized_get(obj))
      efl_ui_position_manager_entity_viewport_set(pd->manager, efl_ui_scrollable_viewport_geometry_get(obj));
    efl_ui_layout_orientation_set(pd->manager, pd->direction);
@@ -1527,10 +1537,15 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
                                efl_ui_view_model_set(efl_added, ev->current));
 
    count = efl_model_children_count_get(model);
-   efl_ui_position_manager_entity_data_access_set(pd->manager,
-                                                  efl_ref(data), _batch_entity_cb, _batch_free_cb,
-                                                  efl_ref(data), _batch_size_cb, _batch_free_cb,
-                                                  count);
+   switch(efl_ui_position_manager_entity_version(pd->manager, 1))
+     {
+       case 1:
+         efl_ui_position_manager_data_access_v1_data_access_set(pd->manager,
+           efl_ref(data), _batch_entity_cb, NULL,
+           efl_ref(data), _batch_size_cb, NULL,
+           count);
+       break;
+     }
 
    for (i = 0; i < 3; i++)
      {
