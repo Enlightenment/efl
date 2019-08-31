@@ -289,7 +289,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                                          tp->base.name);
                           return EINA_FALSE;
                        }
-                     if (!_validate_type(vals, itp))
+                     if (!_validate_type_by_ref(vals, itp, EINA_FALSE, itp->move))
                        return EINA_FALSE;
                      itp = itp->next_type;
                   }
