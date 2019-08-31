@@ -941,7 +941,7 @@ elementary_src = [
   'efl_ui_position_manager_entity.c',
   'efl_ui_position_manager_list.c',
   'efl_ui_position_manager_grid.c',
-  'efl_ui_tab_bar_default_item.c'
+  'efl_ui_tab_bar_default_item.c',
   'efl_ui_collection_view.c',
 ]
 
