@@ -71,10 +71,8 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
         int min;
         int buffer_id = i % len;
 
-        printf("-----> %d\n", buffer_id);
         if (buffer_id == 0)
           {
-             printf("BATCH_FILL %d\n", i);
              BATCH_ACCESS_SIZE(pd->callbacks, i, MIN(len, pd->size - i), EINA_TRUE, size_buffer);
           }
        size = size_buffer[buffer_id].size;
