@@ -317,9 +317,10 @@ position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
      }
 
    cur = _search_visual_segment(obj, pd, relevant_space_size, relevant_viewport);
+
    //to performance optimize the whole widget, we are setting the objects that are outside the viewport to visibility false
    //The code below ensures that things outside the viewport are always hidden, and things inside the viewport are visible
-   vis_segment_swap(pd->callbacks, cur, pd->prev_run);
+   vis_segment_swap(&pd->object, cur, pd->prev_run);
 
    _position_items(obj, pd, cur, relevant_space_size);
 
@@ -329,7 +330,6 @@ position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
         ev.end_id = pd->prev_run.end_id = cur.end_id;
         efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_VISIBLE_RANGE_CHANGED, &ev);
      }
-
 }
 
 static Eina_Value
