@@ -520,7 +520,7 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
    return requests;
 
  not_found:
- printf("LINE %d\n", __LINE__);
+// printf("LINE %d\n", __LINE__);
    requests = _request_add(requests, request, search_index, EINA_FALSE);
 
    target->size = item_base;
@@ -551,7 +551,7 @@ _cache_entity_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
    return requests;
 
  not_found:
- printf("LINE %d\n", __LINE__);
+// printf("LINE %d\n", __LINE__);
    requests = _request_add(requests, request, search_index, EINA_TRUE);
 
    target->entity = NULL;
@@ -743,7 +743,7 @@ _batch_size_cb(void *data, int start_id, Eina_Rw_Slice memory)
    sizes = memory.mem;
    count = efl_model_children_count_get(parent);
    limit = MIN(count - start_id, memory.len);
-   printf("batch_size %u, %d\n", limit, start_id);
+//   printf("batch_size %u, %d\n", limit, start_id);
 
    // Look in the temporary cache now for the beginning of the buffer
    if (pd->viewport[0] && ((uint64_t)(start_id + idx) < pd->viewport[0]->offset))
@@ -751,7 +751,7 @@ _batch_size_cb(void *data, int start_id, Eina_Rw_Slice memory)
         while ((uint64_t)(start_id + idx) < pd->viewport[0]->offset && idx < limit)
           {
              uint64_t search_index = start_id + idx;
-printf("LINE %d\n", __LINE__);
+// printf("LINE %d\n", __LINE__);
              requests = _cache_size_fetch(requests, &request, pd,
                                           search_index, &sizes[idx], item_base);
 
@@ -797,7 +797,7 @@ printf("LINE %d\n", __LINE__);
                   // We will need an entity to calculate this size
                   entity_request = EINA_TRUE;
                }
-printf("LINE %d\n", __LINE__);
+// printf("LINE %d\n", __LINE__);
              // No data, add to the requests
              requests = _request_add(requests, &request, start_id + idx, entity_request);
 
@@ -813,7 +813,7 @@ printf("LINE %d\n", __LINE__);
    while (idx < limit)
      {
         uint64_t search_index = start_id + idx;
-printf("%lu LINE %d\n", search_index, __LINE__);
+// printf("%lu LINE %d\n", search_index, __LINE__);
         requests = _cache_size_fetch(requests, &request, pd,
                                      search_index, &sizes[idx], item_base);
 
@@ -877,7 +877,7 @@ _batch_entity_cb(void *data, int start_id, Eina_Rw_Slice memory)
 
              if (!entity)
                {
-                printf("LINE %d\n", __LINE__);
+//                printf("LINE %d\n", __LINE__);
                   // No data, add to the requests
                   requests = _request_add(requests, &request, start_id + idx, EINA_TRUE);
 
@@ -993,7 +993,7 @@ _viewport_walk_fill(Eina_List *requests,
 
      check_entity:
         if (viewport->items[j].entity) continue ;
-printf("LINE %d\n", __LINE__);
+// printf("LINE %d\n", __LINE__);
         requests = _request_add(requests, &current, index, EINA_TRUE);
      }
 
@@ -1009,7 +1009,7 @@ _manager_content_visible_range_changed_cb(void *data, const Efl_Event *ev)
    Efl_Ui_Position_Manager_Range_Update *event = ev->info;
    MY_DATA_GET(data, pd);
    Eina_List *requests = NULL;
-   unsigned int baseid;
+   long baseid;
    unsigned int delta, marginup, margindown;
    uint64_t upperlimit_offset, lowerlimit_offset;
    unsigned int i;
@@ -1022,14 +1022,14 @@ _manager_content_visible_range_changed_cb(void *data, const Efl_Event *ev)
    // First time setting up the viewport, so trigger request as we see fit
    if (!pd->viewport[0])
      {
-        baseid = (pd->start_id < delta) ? 0 : pd->start_id - delta;
+        baseid = pd->start_id - delta;
 
         for (i = 0; i < 3; i++)
           {
              pd->viewport[i] = calloc(1, sizeof (Efl_Ui_Collection_Viewport));
              if (!pd->viewport[i]) continue;
 
-             pd->viewport[i]->offset = baseid + delta * i;
+             pd->viewport[i]->offset = MAX(baseid + delta * i, 0);
              pd->viewport[i]->count = delta;
              pd->viewport[i]->items = calloc(delta, sizeof (Efl_Ui_Collection_Item));
              if (!pd->viewport[i]->items) continue ;
@@ -1209,7 +1209,7 @@ _manager_content_visible_range_changed_cb(void *data, const Efl_Event *ev)
         request->length = lowerlimit_offset - pd->viewport[0]->offset;
         if (request->length < 1) CRI("ACK");
         request->model_requested = EINA_TRUE;
-        printf("MODEL REQ(%lu) %d\n", request->offset, __LINE__);
+//        printf("MODEL REQ(%lu) %d\n", request->offset, __LINE__);
         request->need_entity = EINA_TRUE;
 
         requests = eina_list_append(requests, request);
@@ -1228,7 +1228,7 @@ _manager_content_visible_range_changed_cb(void *data, const Efl_Event *ev)
         request->length = pd->viewport[2]->offset + pd->viewport[2]->count - upperlimit_offset;
         if (request->length < 1) CRI("ACK");
         request->model_requested = EINA_TRUE;
-        printf("MODEL REQ(%lu) %d\n", request->offset, __LINE__);
+//        printf("MODEL REQ(%lu) %d\n", request->offset, __LINE__);
         request->need_entity = EINA_TRUE;
 
         requests = eina_list_append(requests, request);
@@ -1395,7 +1395,7 @@ _efl_model_child_added(void *data, const Efl_Event *event)
         request->offset = ev->index;
         request->length = 1;
         request->model_requested = EINA_TRUE;
-        printf("MODEL REQ(%lu) %d\n", request->offset, __LINE__);
+//        printf("MODEL REQ(%lu) %d\n", request->offset, __LINE__);
         request->need_entity = EINA_TRUE;
 
         requests = eina_list_append(requests, request);
@@ -1462,7 +1462,7 @@ _efl_model_child_removed(void *data, const Efl_Event *event)
         request->offset = pd->viewport[2]->offset + pd->viewport[i]->count - 1;
         request->length = 1;
         request->model_requested = EINA_TRUE;
-        printf("MODEL REQ(%lu) %d\n", request->offset, __LINE__);
+//        printf("MODEL REQ(%lu) %d\n", request->offset, __LINE__);
         request->need_entity = EINA_TRUE;
 
         requests = eina_list_append(requests, request);
@@ -1546,7 +1546,7 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
         request->length = pd->viewport[i]->count;
         if (request->length < 1) CRI("ACK");
         request->model_requested = EINA_TRUE;
-        printf("MODEL REQ(%lu) %d\n", request->offset, __LINE__);
+//        printf("MODEL REQ(%lu) %d\n", request->offset, __LINE__);
         request->need_entity = EINA_TRUE;
 
         requests = eina_list_append(requests, request);

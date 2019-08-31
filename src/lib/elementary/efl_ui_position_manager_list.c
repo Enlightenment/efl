@@ -31,7 +31,6 @@ typedef struct {
 static void
 cache_invalidate(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
 {
- printf("INVALIDATE\n");
    if (pd->size_cache)
      free(pd->size_cache);
    pd->size_cache = NULL;
@@ -223,7 +222,7 @@ _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_
 
 
         if (size.h != diff)
-          ERR("WTF %d %d", size.h, diff);
+          ERR("WTF %d %d %d", i, size.h, diff);
 
         if (ent == pd->last_group)
           {
@@ -245,7 +244,6 @@ _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_
         if (ent)
           {
              if (!size.w || !size.h) ERR("NULL SIZE ENT");
-             printf("%d %d %d %d | %d %d\n", geom.x, geom.y, geom.w, geom.h, size.w, size.h);
              efl_gfx_entity_geometry_set(ent, geom);
              if (!efl_gfx_entity_visible_get(ent))
                efl_gfx_entity_visible_set(ent, EINA_TRUE);
@@ -435,7 +433,6 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_position_single_ite
    geom = pd->viewport;
 
    BATCH_ACCESS_SIZE_VAL(pd->callbacks, idx, 1, EINA_FALSE, size_buffer, EINA_RECT_EMPTY());
-
    size = size_buffer[0].size;
 
    if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
