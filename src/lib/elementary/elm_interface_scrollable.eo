@@ -1,6 +1,6 @@
-type Elm_Interface_Scrollable_Cb: __undefined_type; [[Elementary interface scrollable callback type]]
-type Elm_Interface_Scrollable_Resize_Cb: __undefined_type; [[Elementary interface scrollable resize callback type]]
-type Elm_Interface_Scrollable_Min_Limit_Cb: __undefined_type; [[Elementary interface scrollable minimal limit callback type]]
+type @beta Elm_Interface_Scrollable_Cb: __undefined_type; [[Elementary interface scrollable callback type]]
+type @beta Elm_Interface_Scrollable_Resize_Cb: __undefined_type; [[Elementary interface scrollable resize callback type]]
+type @beta Elm_Interface_Scrollable_Min_Limit_Cb: __undefined_type; [[Elementary interface scrollable minimal limit callback type]]
 
 /* FIXME: Rename the namespace of the types. */
 enum Elm.Scroller.Policy

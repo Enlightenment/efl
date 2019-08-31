@@ -269,7 +269,14 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
    switch (tp->type)
      {
       case EOLIAN_TYPE_VOID:
+        return _validate(&tp->base);
       case EOLIAN_TYPE_UNDEFINED:
+        if (vals->stable)
+          {
+             _eo_parser_log(&tp->base,
+               "__undefined_type not allowed in stable context");
+             return EINA_FALSE;
+          }
         return _validate(&tp->base);
       case EOLIAN_TYPE_REGULAR:
         {
@@ -314,17 +321,11 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                    default:
                      break;
                   }
-                switch (id)
+                if (id == KW_void_ptr && vals->stable)
                   {
-                   case KW_void_ptr:
-                   case KW___undefined_type:
-                     if (vals->stable)
-                       {
-                          _eo_parser_log(&tp->base,
-                            "deprecated builtin type '%s' not allowed in stable context",
-                            tp->base.name);
-                          return EINA_FALSE;
-                       }
+                     _eo_parser_log(&tp->base,
+                       "void pointers not allowed in stable context");
+                     return EINA_FALSE;
                   }
                 return _validate(&tp->base);
              }
