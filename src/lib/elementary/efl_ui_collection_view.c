@@ -401,6 +401,14 @@ printf("ENTITY FETCHED %d -> %d\n", request->offset, request->length);
                {
                   uint64_t index = request->offset + i - pd->viewport[v]->offset;
 
+                  if (pd->viewport[v]->items[index].entity)
+                    {
+                       ERR("Entity already existing for id %d", i);
+                       efl_unref(pd->viewport[v]->items[index].entity);
+                       efl_del(pd->viewport[v]->items[index].entity);
+                       pd->viewport[v]->items[index].entity = NULL;
+                    }
+
                   efl_replace(&pd->viewport[v]->items[index].entity, child);
 if (!pd->viewport[v]->items[index].model)
   {
@@ -439,7 +447,18 @@ if (!pd->viewport[v]->items[index].model)
                                                    sizeof (search_index), _cache_tree_lookup,
                                                    NULL);
 
-        if (!lookup) continue;
+        if (!lookup)
+          {
+             efl_ui_factory_release(pd->factory, child);
+             continue;
+          }
+        if (lookup->item.entity)
+          {
+             ERR("Entity already existing for id %lu", search_index);
+             efl_unref(lookup->item.entity);
+             efl_del(lookup->item.entity);
+             lookup->item.entity = NULL;
+          }
 
         lookup->item.entity = efl_ref(child);
 
@@ -1038,7 +1057,9 @@ _manager_content_visible_range_changed_cb(void *data, const Efl_Event *ev)
              if (!pd->viewport[i]) continue;
 
              pd->viewport[i]->offset = MAX(baseid + delta * i, 0);
+             printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> OOOOFFFSET %d %lu\n", i, pd->viewport[i]->offset);
              pd->viewport[i]->count = delta;
+             printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> COUNT %d %d\n", i, pd->viewport[i]->count);
              pd->viewport[i]->items = calloc(delta, sizeof (Efl_Ui_Collection_Item));
              if (!pd->viewport[i]->items) continue ;
 
@@ -1109,6 +1130,8 @@ _manager_content_visible_range_changed_cb(void *data, const Efl_Event *ev)
              pd->viewport[i]->items = items[i];
              pd->viewport[i]->count = delta;
              pd->viewport[i]->offset = pd->viewport[0]->offset + delta * i;
+             printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> OOOOFFFSET %d %lu\n", i, pd->viewport[i]->offset);
+             printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> COUNT %d %d\n", i, pd->viewport[i]->count);
           }
      }
 
@@ -1200,6 +1223,8 @@ _manager_content_visible_range_changed_cb(void *data, const Efl_Event *ev)
              free(pd->viewport[i]->items);
              pd->viewport[i]->items = items[i];
              pd->viewport[i]->offset = baseid + delta * i;
+             printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> OOOOFFFSET %d %lu\n", i, pd->viewport[i]->offset);
+             printf(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> COUNT %d %d\n", i, pd->viewport[i]->count);
           }
      }
 
