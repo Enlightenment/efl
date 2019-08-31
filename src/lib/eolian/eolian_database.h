@@ -278,6 +278,7 @@ struct _Eolian_Type
    };
    Eina_Bool is_const  :1;
    Eina_Bool is_ptr    :1;
+   Eina_Bool move      :1;
    Eina_Bool owned     :1;
    Eina_Bool ownable   :1;
 };

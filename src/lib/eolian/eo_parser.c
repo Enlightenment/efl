@@ -774,14 +774,14 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr)
                     def->base_type = eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE));
                   /* view-only types are not allowed to own the contents */
                   if (tpid == KW_array || tpid == KW_hash || tpid == KW_list || tpid == KW_future)
-                    if ((def->base_type->owned = (ls->t.kw == KW_at_owned || ls->t.kw == KW_at_move)))
+                    if ((def->base_type->owned = def->base_type->move = (ls->t.kw == KW_at_owned || ls->t.kw == KW_at_move)))
                       eo_lexer_get(ls);
                   if (tpid == KW_hash)
                     {
                        check_next(ls, ',');
                        def->base_type->next_type =
                          eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE));
-                       if ((def->base_type->next_type->owned = (ls->t.kw == KW_at_owned || ls->t.kw == KW_at_move)))
+                       if ((def->base_type->next_type->owned = def->base_type->move = (ls->t.kw == KW_at_owned || ls->t.kw == KW_at_move)))
                          eo_lexer_get(ls);
                     }
                   check_match(ls, '>', '<', bline, bcol);

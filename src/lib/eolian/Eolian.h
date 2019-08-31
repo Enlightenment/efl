@@ -2916,6 +2916,21 @@ EAPI const Eolian_Error *eolian_type_error_get(const Eolian_Type *tp);
 EAPI Eina_Bool eolian_type_is_owned(const Eolian_Type *tp);
 
 /*
+ * @brief Get whether the given type is moved with its parent type.
+ *
+ * This is only used for inner types of complex types, i.e. the types
+ * inside the brackets of lists, arrays, hashes and so on. You can use
+ * this to tell whether they belong to their parent type (i.e. whether
+ * they are marked @move).
+ *
+ * @param[in] tp the type.
+ * @return EINA_TRUE when the type is marked move, EINA_FALSE otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_type_is_move(const Eolian_Type *tp);
+
+/*
  * @brief Get whether the given type is const.
  *
  * @param[in] tp the type.
