@@ -207,7 +207,7 @@ _size_to_model(Efl_Model *model, Eina_Size2D state)
    vh = eina_value_int_init(state.h);
 
    efl_model_property_set(model, "self.width", &vw);
-   efl_model_property_set(model, "self.height", &vh);
+   efl_model_property_set(model, "selft.height", &vh);
 
    eina_value_flush(&vw);
    eina_value_flush(&vh);
