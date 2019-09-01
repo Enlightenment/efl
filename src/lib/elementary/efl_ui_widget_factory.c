@@ -122,6 +122,8 @@ _efl_ui_widget_factory_efl_ui_factory_building(const Eo *factory EINA_UNUSED, Ef
    eina_value_free(property);
 }
 
+static int created_widgets = 0;
+
 static Efl_Ui_Widget *
 _efl_ui_widget_create(const Efl_Ui_Factory *factory,
                       const Efl_Class *klass, Eo *parent,
@@ -133,6 +135,8 @@ _efl_ui_widget_create(const Efl_Ui_Factory *factory,
                efl_ui_view_model_set(efl_added, model)
                );
    efl_ui_factory_building(factory, w);
+   created_widgets++;
+   printf("------------------------------------------------> WIDGETS %d\n", created_widgets);
    return w;
 }
 
@@ -228,6 +232,8 @@ _efl_ui_widget_factory_efl_ui_factory_release(Eo *obj EINA_UNUSED,
                                               Efl_Gfx_Entity *ui_view)
 {
    // We do not cache or track this item, just get rid of them asap
+   created_widgets--;
+   printf("------------------------------------------------> WIDGETS %d\n", created_widgets);
    efl_del(ui_view);
 }
 
