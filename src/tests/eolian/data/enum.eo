@@ -34,7 +34,7 @@ class Enum {
             params {
                 idx: int;
             }
-            return: mstring @owned;
+            return: mstring @move;
         }
     }
 }

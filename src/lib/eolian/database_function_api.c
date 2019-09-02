@@ -328,11 +328,11 @@ eolian_function_return_is_move(const Eolian_Function *fid,
       case EOLIAN_PROP_GET:
         if ((fid->type != EOLIAN_PROP_GET) && (fid->type != EOLIAN_PROPERTY))
           return EINA_FALSE;
-        return !fid->get_return_move;
+        return fid->get_return_move;
       case EOLIAN_PROP_SET:
         if ((fid->type != EOLIAN_PROP_SET) && (fid->type != EOLIAN_PROPERTY))
           return EINA_FALSE;
-        return !fid->set_return_move;
+        return fid->set_return_move;
       default:
         return EINA_FALSE;
      }
