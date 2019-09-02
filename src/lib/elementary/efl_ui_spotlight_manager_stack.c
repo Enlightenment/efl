@@ -151,9 +151,9 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Sp
            efl_canvas_group_member_add(pd->group, elem);
            efl_gfx_entity_visible_set(elem, EINA_FALSE);
         }
-        if (efl_ui_spotlight_active_index_get(spotlight) != -1)
+        if (efl_ui_spotlight_active_element_get(spotlight))
           {
-             pd->content = efl_pack_content_get(pd->container, efl_ui_spotlight_active_index_get(spotlight));
+             pd->content = efl_ui_spotlight_active_element_get(spotlight);
              efl_gfx_entity_visible_set(pd->content, EINA_TRUE);
              _geom_sync(obj, pd);
           }

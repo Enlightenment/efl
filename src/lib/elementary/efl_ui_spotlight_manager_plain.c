@@ -10,8 +10,9 @@ typedef struct {
    Efl_Ui_Spotlight_Container * container;
    Efl_Gfx_Entity *group;
    Eina_Size2D page_size;
-   int current_content;
+   Efl_Ui_Widget *current_content;
    Eina_Bool animation;
+   double last_pos;
 } Efl_Ui_Spotlight_Manager_Plain_Data;
 
 #define MY_CLASS EFL_UI_SPOTLIGHT_MANAGER_PLAIN_CLASS
@@ -19,14 +20,17 @@ typedef struct {
 static void
 _emit_position(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Plain_Data *pd)
 {
-   double absolut_position = pd->current_content;
-   efl_event_callback_call(obj, EFL_UI_SPOTLIGHT_MANAGER_EVENT_POS_UPDATE, &absolut_position);
+   double absolut_position = efl_pack_index_get(pd->container, pd->current_content);
+   if (pd->last_pos != absolut_position)
+     efl_event_callback_call(obj, EFL_UI_SPOTLIGHT_MANAGER_EVENT_POS_UPDATE, &absolut_position);
+
+   pd->last_pos = absolut_position;
 }
 
 static void
 _geom_sync(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Plain_Data *pd)
 {
-   Efl_Gfx_Entity *entity = efl_pack_content_get(pd->container, pd->current_content);
+   Efl_Gfx_Entity *entity = pd->current_content;
    Eina_Rect group_pos = efl_gfx_entity_geometry_get(pd->group);
    Eina_Rect goal = EINA_RECT_EMPTY();
 
@@ -58,7 +62,7 @@ _efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Sp
 {
    if (spotlight && group)
      {
-        int index;
+        Efl_Ui_Widget *index;
 
         pd->container = spotlight;
         pd->group = group;
@@ -70,11 +74,11 @@ _efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Sp
            efl_canvas_group_member_add(pd->group, elem);
            efl_gfx_entity_visible_set(elem, EINA_FALSE);
         }
-        index = efl_ui_spotlight_active_index_get(spotlight);
-        if (index != -1)
+        index = efl_ui_spotlight_active_element_get(spotlight);
+        if (index)
           {
              pd->current_content = index;
-             efl_gfx_entity_visible_set(efl_pack_content_get(pd->container, pd->current_content), EINA_TRUE);
+             efl_gfx_entity_visible_set(pd->current_content, EINA_TRUE);
              _geom_sync(obj, pd);
              _emit_position(obj, pd);
           }
@@ -84,15 +88,15 @@ _efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Sp
 static void
 _content_changed(Eo *obj, Efl_Ui_Spotlight_Manager_Plain_Data *pd)
 {
-   if (efl_ui_spotlight_active_index_get(pd->container) != pd->current_content)
+   if (efl_ui_spotlight_active_element_get(pd->container) != pd->current_content)
      {
-        int old_current_content = pd->current_content;
-        pd->current_content = efl_ui_spotlight_active_index_get(pd->container);
-        efl_gfx_entity_visible_set(efl_pack_content_get(pd->container, old_current_content), EINA_FALSE);
-        efl_gfx_entity_visible_set(efl_pack_content_get(pd->container, pd->current_content), EINA_TRUE);
+        Efl_Ui_Widget *old_current_content = pd->current_content;
+        pd->current_content = efl_ui_spotlight_active_element_get(pd->container);
+        efl_gfx_entity_visible_set(old_current_content, EINA_FALSE);
+        efl_gfx_entity_visible_set(pd->current_content, EINA_TRUE);
         _geom_sync(obj, pd);
-        _emit_position(obj, pd);
      }
+   _emit_position(obj, pd);
 }
 
 EOLIAN static void
@@ -118,13 +122,13 @@ _efl_ui_spotlight_manager_plain_efl_ui_spotlight_manager_switch_to(Eo *obj, Efl_
    if (from_obj)
      {
         efl_gfx_entity_visible_set(from_obj, EINA_FALSE);
-        pd->current_content = -1;
+        pd->current_content = NULL;
      }
 
    if (to_obj)
      {
         efl_gfx_entity_visible_set(to_obj, EINA_TRUE);
-        pd->current_content = to;
+        pd->current_content = efl_pack_content_get(pd->container, to);
      }
 
    _emit_position(obj, pd);

@@ -24,6 +24,6 @@ class @beta Efl.Ui.Tab_Pager extends Efl.Ui.Spotlight.Container
       Efl.Pack_Linear.pack_after;
       Efl.Pack_Linear.pack_at;
       Efl.Pack_Linear.pack_unpack_at;
-      Efl.Ui.Spotlight.Container.active_index { set; }
+      Efl.Ui.Spotlight.Container.active_element { set; }
    }
 }

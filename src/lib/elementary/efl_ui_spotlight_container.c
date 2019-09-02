@@ -14,7 +14,7 @@ typedef struct _Efl_Ui_Spotlight_Container_Data
       Eina_Size2D sz;
    } page_spec;
    struct {
-      int page;
+      Efl_Ui_Widget *page;
       double pos;
    } curr;
    struct {
@@ -36,6 +36,14 @@ typedef struct _Efl_Ui_Spotlight_Container_Data
 } Efl_Ui_Spotlight_Container_Data;
 
 #define MY_CLASS EFL_UI_SPOTLIGHT_CONTAINER_CLASS
+
+static void
+_fetch_partners(Eina_List *list, Eo *subobj, Eo **next, Eo **prev)
+{
+   Eina_List *node = eina_list_data_find_list(list, subobj);
+   *next = eina_list_data_get(eina_list_next(node));
+   *prev = eina_list_data_get(eina_list_prev(node));
+}
 
 static void _unpack(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd, Efl_Gfx_Entity *subobj, int index);
 static void _unpack_all(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data *pd, Eina_Bool clear);
@@ -73,10 +81,13 @@ _transition_end(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data *pd)
    if (pd->transition_done.content)
      {
         Eina_Value v = eina_value_object_init(pd->transition_done.content);
-        efl_pack_unpack(obj, pd->transition_done.content);
-        eina_promise_resolve(pd->transition_done.transition_done, v);
+        //first store the fields, then NULL them, then resolve the situation, otherwise we might get trapped in a endless recursion
+        Eina_Promise *p = pd->transition_done.transition_done;
+        Eo *content = pd->transition_done.content;
         pd->transition_done.transition_done = NULL;
         pd->transition_done.content = NULL;
+        efl_pack_unpack(obj, content);
+        eina_promise_resolve(p , v);
      }
 
    ev.from = pd->show_request.from;
@@ -176,7 +187,7 @@ _efl_ui_spotlight_container_efl_object_constructor(Eo *obj,
      CRI("Failed to set layout!");
 
    pd->position = -1;
-   pd->curr.page = -1;
+   pd->curr.page = NULL;
    pd->curr.pos = 0.0;
 
    pd->transition = NULL;
@@ -267,24 +278,14 @@ _register_child(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data *pd, Efl_Gf
 static void
 _update_internals(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Container_Data *pd, Efl_Gfx_Entity *subobj EINA_UNUSED, int index)
 {
-   Eina_Bool curr_page_update = EINA_FALSE;
-
-   if (pd->curr.page >= index)
-     {
-        pd->curr.page++;
-        curr_page_update = EINA_TRUE;
-     }
-
    pd->prevent_transition_interaction = EINA_TRUE;
    if (pd->transition)
      efl_ui_spotlight_manager_content_add(pd->transition, subobj, index);
    if (pd->indicator)
      efl_ui_spotlight_indicator_content_add(pd->indicator, subobj, index);
-   if (curr_page_update && !pd->transition && eina_list_count(pd->content_list) != 1)
-     _position_set(obj, pd, pd->curr.page);
    pd->prevent_transition_interaction = EINA_FALSE;
    if (eina_list_count(pd->content_list) == 1)
-     efl_ui_spotlight_active_index_set(obj, 0);
+     efl_ui_spotlight_active_element_set(obj, subobj);
 }
 
 EOLIAN static Eina_Bool
@@ -386,21 +387,21 @@ _efl_ui_spotlight_container_efl_pack_linear_pack_index_get(Eo *obj EINA_UNUSED,
 }
 
 EOLIAN static void
-_efl_ui_spotlight_container_active_index_set(Eo *obj EINA_UNUSED,
+_efl_ui_spotlight_container_active_element_set(Eo *obj EINA_UNUSED,
                                Efl_Ui_Spotlight_Container_Data *pd,
-                               int index)
+                               Efl_Ui_Widget *new_page)
 {
-   int before;
+   int before = -1;
+   int index;
 
-   if ((index < 0) || (index > ((int)eina_list_count(pd->content_list) - 1)))
-     {
-        ERR("index %d out of range", index);
-        return;
-     }
+   if (pd->curr.page)
+     before = efl_pack_index_get(obj, pd->curr.page);
+   index = efl_pack_index_get(obj, new_page);
 
-   before = pd->curr.page;
-   pd->show_request.last_pos = pd->curr.page;
-   pd->show_request.from = pd->curr.page;
+   EINA_SAFETY_ON_FALSE_RETURN(index != -1);
+
+   pd->show_request.last_pos = efl_pack_index_get(obj, pd->curr.page);
+   pd->show_request.from = efl_pack_index_get(obj, pd->curr.page);
    pd->show_request.to = index;
 
    if (pd->show_request.active && pd->show_request.from == -1 && pd->show_request.to)
@@ -410,13 +411,12 @@ _efl_ui_spotlight_container_active_index_set(Eo *obj EINA_UNUSED,
         _transition_start(obj, pd, before, index, before);
      }
 
-   int old_curr_page = pd->curr.page;
-   pd->curr.page = index;
-   efl_ui_spotlight_manager_switch_to(pd->transition, old_curr_page, pd->curr.page);
+   pd->curr.page = new_page;
+   efl_ui_spotlight_manager_switch_to(pd->transition, before, index);
 }
 
-EOLIAN static int
-_efl_ui_spotlight_container_active_index_get(const Eo *obj EINA_UNUSED,
+EOLIAN static Efl_Ui_Widget*
+_efl_ui_spotlight_container_active_element_get(const Eo *obj EINA_UNUSED,
                                Efl_Ui_Spotlight_Container_Data *pd)
 {
    return pd->curr.page;
@@ -456,7 +456,7 @@ _unpack_all(Eo *obj EINA_UNUSED,
             Efl_Ui_Spotlight_Container_Data *pd,
             Eina_Bool clear)
 {
-   pd->curr.page = -1;
+   pd->curr.page = NULL;
 
    while(pd->content_list)
      {
@@ -493,15 +493,15 @@ _unpack(Eo *obj,
         Efl_Gfx_Entity *subobj,
         int index)
 {
-   int early_curr_page = pd->curr.page;
-   Eina_Bool deletion_of_active = (index == pd->curr.page);
+   int early_curr_page = efl_pack_index_get(obj, pd->curr.page);
+   Eina_Bool deletion_of_active = (subobj == pd->curr.page);
+   Efl_Ui_Widget *next, *prev;
 
+   _fetch_partners(pd->content_list, subobj, &next, &prev);
    pd->content_list = eina_list_remove(pd->content_list, subobj);
    _elm_widget_sub_object_redirect_to_top(obj, subobj);
 
    if (!efl_alive_get(obj)) return;
-   if (index < pd->curr.page)
-     pd->curr.page--;
 
    if (pd->transition)
      efl_ui_spotlight_manager_content_del(pd->transition, subobj, index);
@@ -509,23 +509,33 @@ _unpack(Eo *obj,
      efl_ui_spotlight_indicator_content_del(pd->indicator, subobj, index);
 
    //we deleted the current index
-   if (early_curr_page == index)
+   if (deletion_of_active)
      {
-        int new_curr_page = MIN(MAX(early_curr_page, 0), (int)eina_list_count(pd->content_list) - 1);
-        //when we delete the active index and we are not updating the index,
-        // then force a update, so the same sort of animation is triggered from the right direction
-        if (deletion_of_active && new_curr_page == pd->curr.page)
-          pd->curr.page = index -1;
-        if (eina_list_count(pd->content_list) > 0 && efl_alive_get(obj))
-          efl_ui_spotlight_active_index_set(obj, new_curr_page);
-        else
-          pd->curr.page = -1;
+        if (deletion_of_active)
+          {
+            if (eina_list_count(pd->content_list) == 0)
+              {
+                 pd->curr.page = NULL;
+              }
+            else
+              {
+                 //when we delete the active index and we are not updating the index,
+                 // then force a update, so the same sort of animation is triggered from the right direction
+                 if (early_curr_page == efl_pack_index_get(obj, prev))
+                   pd->curr.page = eina_list_nth(pd->content_list, early_curr_page - 1);
+
+                 if (prev)
+                   efl_ui_spotlight_active_element_set(obj, prev);
+                 else
+                   efl_ui_spotlight_active_element_set(obj, next);
+              }
+          }
      }
 
    //position has updated
-   if (early_curr_page != pd->curr.page && early_curr_page != index &&
+   if (deletion_of_active &&
        pd->indicator && !pd->transition)
-     efl_ui_spotlight_indicator_position_update(pd->indicator, pd->curr.page);
+     efl_ui_spotlight_indicator_position_update(pd->indicator, efl_pack_index_get(obj, pd->curr.page));
 
    efl_event_callback_del(subobj, EFL_EVENT_INVALIDATE, _child_inv, obj);
 }
@@ -656,13 +666,8 @@ _efl_ui_spotlight_container_indicator_get(const Eo *obj EINA_UNUSED, Efl_Ui_Spot
 EOLIAN static void
 _efl_ui_spotlight_container_push(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd EINA_UNUSED, Efl_Gfx_Entity *view)
 {
-   int old_active_index = efl_ui_spotlight_active_index_get(obj);
-
-   if (old_active_index == -1)
-     old_active_index = 0;
-
-   efl_pack_at(obj, view, old_active_index);
-   efl_ui_spotlight_active_index_set(obj, old_active_index);
+   efl_pack_before(obj, view, efl_ui_spotlight_active_element_get(obj));
+   efl_ui_spotlight_active_element_set(obj, view);
 }
 
 static Eina_Value
@@ -686,13 +691,13 @@ _efl_ui_spotlight_container_pop(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd, Ei
 
    if (count == 0) return NULL;
 
-   content = efl_pack_content_get(obj, efl_ui_spotlight_active_index_get(obj));
+   content = efl_ui_spotlight_active_element_get(obj);
 
    //pop() unpacks content without transition if there is one content.
    if (count == 1)
      {
         efl_pack_unpack(obj, content);
-        pd->curr.page = -1;
+        pd->curr.page = NULL;
 
         if (del)
           {
@@ -706,7 +711,7 @@ _efl_ui_spotlight_container_pop(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd, Ei
         return efl_loop_future_resolved(obj, v);
      }
 
-   new_index = efl_ui_spotlight_active_index_get(obj) + 1;
+   new_index = efl_pack_index_get(obj, efl_ui_spotlight_active_element_get(obj)) + 1;
    if (new_index >= count)
      new_index -= 2;
 
@@ -717,7 +722,7 @@ _efl_ui_spotlight_container_pop(Eo *obj, Efl_Ui_Spotlight_Container_Data *pd, Ei
    if (del)
      transition_done = eina_future_then(transition_done, _delete_obj, NULL);
 
-   efl_ui_spotlight_active_index_set(obj, new_index);
+   efl_ui_spotlight_active_element_set(obj, efl_pack_content_get(obj, new_index));
 
    return transition_done;
 }

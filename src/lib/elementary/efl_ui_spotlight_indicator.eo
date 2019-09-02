@@ -1,7 +1,7 @@
 abstract @beta Efl.Ui.Spotlight.Indicator extends Efl.Object {
   [[Object used by @Efl.Ui.Spotlight.Container to render an indication of the active widgets's position among
     the rest of the container's widgets.
-    
+
     An example would be Android's little dots in the home screen.
   ]]
   methods {
@@ -17,29 +17,21 @@ abstract @beta Efl.Ui.Spotlight.Indicator extends Efl.Object {
       }
     }
     content_add @pure_virtual  {
-      [[A $subobj has been added at position $index in the bound container.
-
-        The manager should check the container's @Efl.Ui.Spotlight.Container.active_index since indices might have
-        shifted due to the insertion of the new object.
-      ]]
+      [[A $subobj has been added at position $index in the bound container.]]
       params {
         subobj : Efl.Gfx.Entity; [[The new object that has been added to the container.]]
         index : int; [[The index of the new object in the container's list.]]
       }
     }
     content_del @pure_virtual  {
-      [[The $subobj at position $index in the bound container has been removed.
-
-        The manager should check the container's @Efl.Ui.Spotlight.Container.active_index since indices might have
-        shifted due to the removal of the object.
-      ]]
+      [[The $subobj at position $index in the bound container has been removed.]]
       params {
         subobj : Efl.Gfx.Entity; [[The object being removed from the container.]]
         index : int; [[The index this object had in the container's list.]]
       }
     }
     position_update @pure_virtual {
-      [[This method tells the indicator that @Efl.Ui.Spotlight.Container.active_index has changed in the bound container.
+      [[This method tells the indicator that @Efl.Ui.Spotlight.Container.active_element has changed in the bound container.
 
         $position ranges from -1 to the number of views in the bound container (@Efl.Container.content_count).
         Notice this allows moving to a position before the first view or past the last view, which might happen if the view
