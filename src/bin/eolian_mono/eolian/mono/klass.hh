@@ -227,6 +227,9 @@ struct klass
          if (!generate_events(sink, cls, concrete_cxt))
              return false;
 
+         if (!as_generator(lit("#pragma warning disable CS0628\n")).generate(sink, attributes::unused, concrete_cxt))
+            return false;
+
          // Parts
          if(!as_generator(*(part_definition))
             .generate(sink, cls.parts, concrete_cxt)) return false;
@@ -250,6 +253,9 @@ struct klass
               if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, c.properties, concrete_cxt))
                 return false;
            }
+
+         if (!as_generator(lit("#pragma warning restore CS0628\n")).generate(sink, attributes::unused, concrete_cxt))
+            return false;
 
          // Copied from nativeinherit class, used when setting up providers.
          if(!as_generator(

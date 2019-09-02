@@ -165,9 +165,9 @@ function_definition_epilogue_generator const as_generator(function_definition_ep
 
 inline std::string function_scope_get(attributes::function_def const& f)
 {
-  if ((f.klass.type == attributes::class_type::mixin) ||
-      (f.klass.type == attributes::class_type::interface_))
-    return "public ";
+  /* if ((f.klass.type == attributes::class_type::mixin) || */
+  /*     (f.klass.type == attributes::class_type::interface_)) */
+  /*   return "public "; */
 
   switch (f.scope)
     {

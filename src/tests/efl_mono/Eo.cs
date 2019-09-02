@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.Reflection;
 
 namespace TestSuite
 {
@@ -542,16 +543,10 @@ class TestProtectedInterfaceMembers
         {
         }
 
-        public override int MethodProtected(int x)
+        protected override int MethodProtected(int x)
         {
             return x * x;
         }
-    }
-
-    public static void test_protected_interface_in_generated_class()
-    {
-        var obj = new Dummy.TestObject();
-        Test.AssertEquals(obj.MethodProtected(42), -42);
     }
 
     public static void test_protected_interface_in_generated_class_called_from_c()
@@ -560,16 +555,55 @@ class TestProtectedInterfaceMembers
         Test.AssertEquals(obj.CallMethodProtected(42), -42);
     }
 
-    public static void test_protected_interface_in_inherited_class()
-    {
-        var obj = new MyObject();
-        Test.AssertEquals(obj.MethodProtected(42), 42 * 42);
-    }
-
     public static void test_protected_interface_in_inherited_class_called_from_c()
     {
         var obj = new MyObject();
         Test.AssertEquals(obj.CallMethodProtected(42), 42 * 42);
+    }
+
+    public static void test_interface_skipped_protected()
+    {
+        var type = typeof(Dummy.ITestIface);
+        var methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+
+        // Fully protected property
+        Test.AssertNull(methods.SingleOrDefault(m => m.Name == "GetProtectedProp"));
+        Test.AssertNull(methods.SingleOrDefault(m => m.Name == "SetProtectedProp"));
+
+        // Partially protected property
+        Test.AssertNotNull(methods.SingleOrDefault(m => m.Name == "GetPublicGetterPrivateSetter"));
+        Test.AssertNull(methods.SingleOrDefault(m => m.Name == "SetPublicGetterPrivateSetter"));
+
+        var properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        Test.AssertNull(properties.SingleOrDefault(m => m.Name == "ProtectedProp"));
+        Test.AssertNotNull(properties.SingleOrDefault(m => m.Name == "PublicGetterPrivateSetter"));
+    }
+
+    public static void test_interface_skipped_protected_in_implementation()
+    {
+        var type = typeof(Dummy.TestObject);
+
+        // Fully protected property
+        var protected_methods = type.GetMethods(BindingFlags.NonPublic | BindingFlags.Instance).Where(m => m.IsFamily);
+        Test.AssertNotNull(protected_methods.SingleOrDefault(m => m.Name == "GetProtectedProp"));
+        Test.AssertNotNull(protected_methods.SingleOrDefault(m => m.Name == "SetProtectedProp"));
+
+        // Partially protected property
+        var public_methods = type.GetMethods(BindingFlags.Public | BindingFlags.Instance);
+        Test.AssertNotNull(public_methods.SingleOrDefault(m => m.Name == "GetPublicGetterPrivateSetter"));
+        Test.AssertNotNull(protected_methods.SingleOrDefault(m => m.Name == "SetPublicGetterPrivateSetter"));
+
+        var protected_properties = type.GetProperties(BindingFlags.NonPublic | BindingFlags.Instance);
+        var prop = protected_properties.SingleOrDefault(m => m.Name == "ProtectedProp");
+        Test.AssertNotNull(prop);
+        Test.Assert(prop.GetMethod.IsFamily);
+        Test.Assert(prop.SetMethod.IsFamily);
+
+        var public_properties = type.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        prop = public_properties.SingleOrDefault(m => m.Name == "PublicGetterPrivateSetter");
+        Test.AssertNotNull(prop);
+        Test.Assert(prop.GetMethod.IsPublic);
+        Test.Assert(prop.SetMethod.IsFamily);
     }
 }
 

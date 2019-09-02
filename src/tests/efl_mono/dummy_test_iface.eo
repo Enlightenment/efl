@@ -25,6 +25,22 @@ interface Dummy.Test_Iface
          return: int;
       }
 
+      @property protected_prop @protected {
+         get {}
+         set {}
+         values {
+            data: int;
+         }
+      }
+
+      @property public_getter_private_setter {
+         get {}
+         set @protected {}
+         values {
+            data: int;
+         }
+      }
+
    }
    events {
       nonconflicted: void;

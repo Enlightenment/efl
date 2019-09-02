@@ -307,12 +307,12 @@ struct property_wrapper_definition_generator
       if (blacklist::is_property_blacklisted(property, *implementing_klass, context))
         return true;
 
-      bool interface = context_find_tag<class_context>(context).current_wrapper_kind == class_context::interface;
+      bool is_interface = context_find_tag<class_context>(context).current_wrapper_kind == class_context::interface;
       bool is_static = (property.getter.is_engaged() && property.getter->is_static)
                        || (property.setter.is_engaged() && property.setter->is_static);
 
 
-      if (interface && is_static)
+      if (is_interface && is_static)
         return true;
 
       auto get_params = property.getter.is_engaged() ? property.getter->parameters.size() : 0;
@@ -394,7 +394,12 @@ struct property_wrapper_definition_generator
       std::string scope = "public ";
       std::string get_scope = property.getter.is_engaged() ? eolian_mono::function_scope_get(*property.getter) : "";
       std::string set_scope = property.setter.is_engaged() ? eolian_mono::function_scope_get(*property.setter) : "";
-      if (interface)
+
+      // No need to generate this wrapper as no accessor is public.
+      if (is_interface && (get_scope != "public " && set_scope != "public "))
+          return true;
+
+      if (is_interface)
         {
            scope = "";
            get_scope = "";
@@ -443,7 +448,7 @@ struct property_wrapper_definition_generator
           return false;
       }
 
-      if (property.getter.is_engaged() && interface)
+      if (property.getter.is_engaged() && is_interface)
       {
         if (!as_generator(scope_tab << scope_tab << set_scope <<  "get;\n"
                           ).generate(sink, attributes::unused, context))
@@ -487,7 +492,7 @@ struct property_wrapper_definition_generator
       //     return false;
       // }
 
-      if (property.setter.is_engaged() && interface)
+      if (property.setter.is_engaged() && is_interface)
       {
         if (!as_generator(scope_tab << scope_tab << set_scope <<  "set;\n"
                           ).generate(sink, attributes::unused, context))
