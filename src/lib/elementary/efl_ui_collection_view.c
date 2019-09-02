@@ -511,7 +511,7 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
 {
    Efl_Ui_Collection_Item_Lookup *lookup;
    Efl_Model *model;
-   Eina_Size2D item_size;
+   Eina_Size2D item_size = item_base;
 
    if (!pd->cache) goto not_found;
 
