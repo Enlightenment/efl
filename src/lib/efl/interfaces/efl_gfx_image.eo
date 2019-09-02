@@ -229,27 +229,20 @@ interface @beta Efl.Gfx.Image
 
       /* Note: those are obscure features of evas image. Expose in Efl.Gfx.Image? */
       @property content_hint {
-         set {
-            [[Set the content hint setting of a given image object of the
-              canvas.
+         [[Content hint setting for the image. These hints might be used by EFL
+           to enable optimizations.
 
-              This function sets the content hint value of the given image
-              of the canvas. For example, if you're on the GL engine and
-              your driver implementation supports it, setting this hint to
-              #EVAS_IMAGE_CONTENT_HINT_DYNAMIC will make it need zero copies
-              at texture upload time, which is an "expensive" operation.
-            ]]
+           For example, if you're on the GL engine and your driver implementation
+           supports it, setting this hint to @Efl.Gfx.Image_Content_Hint.dynamic
+           will make it need zero copies at texture upload time, which is an
+           "expensive" operation.
+         ]]
+         set {
          }
          get {
-            [[Get the content hint setting of a given image object of the
-              canvas.
-
-              This returns #EVAS_IMAGE_CONTENT_HINT_NONE on error.
-            ]]
          }
          values {
-            hint: Efl.Gfx.Image_Content_Hint; [[Dynamic or static content hint,
-                                            see @Efl.Gfx.Image_Content_Hint]]
+            hint: Efl.Gfx.Image_Content_Hint; [[Dynamic or static content hint.]]
          }
       }
       @property scale_hint {

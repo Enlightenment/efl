@@ -9,10 +9,10 @@ enum Elm.Scroller.Policy
 
      See also @Elm.Interface_Scrollable.policy.set.
    ]]
-   auto = 0, [[Show scrollbars as needed]]
-   on, [[Always show scrollbars]]
-   off, [[Never show scrollbars]]
-   last [[Sentinel value to indicate last enum field during iteration]]
+   auto = 0, [[Show scrollbars as needed.]]
+   on, [[Always show scrollbars.]]
+   off, [[Never show scrollbars.]]
+   last [[Internal. Sentinel value to indicate last enum field during iteration.]]
 }
 
 enum Elm.Scroller.Single_Direction
@@ -21,10 +21,10 @@ enum Elm.Scroller.Single_Direction
 
      See also @Elm.Interface_Scrollable.single_direction.set.
    ]]
-   none = 0, [[Scroll every direction]]
-   soft, [[Scroll single direction if the direction is certain]]
-   hard, [[Scroll only single direction]]
-   last  [[Sentinel value to indicate last enum field during iteration]]
+   none = 0, [[Scroll every direction.]]
+   soft, [[Scroll single direction if the direction is certain.]]
+   hard, [[Scroll only single direction.]]
+   last  [[Internal. Sentinel value to indicate last enum field during iteration.]]
 }
 
 mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrollable, Efl.Ui.Focus.Manager_Sub, Efl.Ui.Widget_Focus_Manager
@@ -113,12 +113,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
          }
       }
       @property policy {
-          [[Scrollbar visibility policy
-
-            #ELM_SCROLLER_POLICY_AUTO means the scrollbar is made visible if it is
-            needed, and otherwise kept hidden. #ELM_SCROLLER_POLICY_ON turns it on all
-            the time, and #ELM_SCROLLER_POLICY_OFF always keeps it off. This applies
-            respectively for the horizontal and vertical scrollbars.]]
+          [[Scrollbar visibility policy]]
          set {
          }
          get {
