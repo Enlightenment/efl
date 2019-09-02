@@ -54,7 +54,7 @@ _make_model(Evas_Object *win)
    eina_value_setup(&vtext, EINA_VALUE_TYPE_STRING);
 
    w = eina_value_int_init(91);
-   h = eina_value_int_init(24);
+   h = eina_value_int_init(18);
    efl_model_property_set(model, "item.width", &w);
    efl_model_property_set(model, "item.height", &h);
 
