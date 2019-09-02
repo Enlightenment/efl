@@ -314,7 +314,7 @@ _gen_function_param_fallback(Eina_Iterator *itr, Eina_Strbuf *fallback_free_owne
         inner_type = eolian_type_base_type_get(type);
 
         //check if they should be freed or just ignored
-        if (!eolian_type_is_owned(type) || eolian_parameter_direction_get(pr) == EOLIAN_OUT_PARAM)
+        if (!eolian_parameter_is_move(pr) || eolian_parameter_direction_get(pr) == EOLIAN_OUT_PARAM)
           {
              eina_strbuf_append_printf(fallback_free_ownership, "   (void)%s;\n", eolian_parameter_name_get(pr));
              continue;
@@ -329,11 +329,11 @@ _gen_function_param_fallback(Eina_Iterator *itr, Eina_Strbuf *fallback_free_owne
         eina_strbuf_append(param_call, eolian_parameter_name_get(pr));
 
         //check if we might want to free or handle the children
-        if (!inner_type || !eolian_type_is_owned(inner_type))
+        if (!inner_type || !eolian_type_is_move(inner_type))
           {
              _generate_normal_free(&fallback_free_ownership, type, param_call, "");
           }
-        else if (inner_type && eolian_type_is_owned(inner_type))
+        else if (inner_type && eolian_type_is_move(inner_type))
           {
              _generate_iterative_free(&fallback_free_ownership, type, inner_type, pr, param_call);
           }
