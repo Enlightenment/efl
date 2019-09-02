@@ -427,7 +427,7 @@ inline std::string managed_event_args_short_name(attributes::event_def const& ev
 {
    std::string ret;
      ret = klass_concrete_or_interface_name(evt.klass);
-   return ret + name_helpers::managed_event_name(evt.name) + "_Args";
+   return ret + name_helpers::managed_event_name(evt.name) + "Args";
 }
 
 inline std::string managed_event_args_name(attributes::event_def evt)

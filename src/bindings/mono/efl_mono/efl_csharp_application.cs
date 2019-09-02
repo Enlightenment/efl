@@ -135,7 +135,7 @@ public abstract class Application
 #if EFL_BETA
         app.SetCommandArray(command_line);
 #endif
-        app.ArgumentsEvt += (object sender, LoopArgumentsEvt_Args evt) =>
+        app.ArgumentsEvt += (object sender, LoopArgumentsEvtArgs evt) =>
         {
             if (evt.arg.Initialization)
             {
