@@ -2,11 +2,11 @@ abstract @beta Efl.Ui.Spotlight.Manager extends Efl.Object {
   [[Manager object used by @Efl.Ui.Spotlight.Container to handle rendering and animation of its sub-widgets,
     and user interaction.
 
-    For instance, changes to the current sub-widget in the spotlight (@Efl.Ui.Spotlight.Container.active_index) can be
+    For instance, changes to the current sub-widget in the spotlight (@Efl.Ui.Spotlight.Container.active_element) can be
     animated with a transition.
     This object can also handle user interaction. For example, dragging the sub-widget to one side to get to a
     different sub-widget (like an smartphone home screen).
-    Such user interactions should end up setting a new @Efl.Ui.Spotlight.Container.active_index.
+    Such user interactions should end up setting a new @Efl.Ui.Spotlight.Container.active_element.
     During a transition, the evolution of the current position should be exposed by emitting $pos_update events.
   ]]
   methods {
@@ -24,22 +24,14 @@ abstract @beta Efl.Ui.Spotlight.Manager extends Efl.Object {
       }
     }
     content_add @pure_virtual  {
-      [[A $subobj has been added at position $index in the bound container.
-
-        The manager should check the container's @Efl.Ui.Spotlight.Container.active_index since indices might have
-        shifted due to the insertion of the new object.
-      ]]
+      [[A $subobj has been added at position $index in the bound container.]]
       params {
         subobj : Efl.Gfx.Entity; [[The new object that has been added to the container.]]
         index : int; [[The index of the new object in the container's list.]]
       }
     }
     content_del @pure_virtual  {
-      [[The $subobj at position $index in the bound container has been removed.
-
-        The manager should check the container's @Efl.Ui.Spotlight.Container.active_index since indices might have
-        shifted due to the removal of the object.
-      ]]
+      [[The $subobj at position $index in the bound container has been removed.]]
       params {
         subobj : Efl.Gfx.Entity; [[The object being removed from the container.]]
         index : int; [[The index this object had in the container's list.]]

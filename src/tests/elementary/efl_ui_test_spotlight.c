@@ -21,13 +21,13 @@ typedef struct {
     int called;
     Efl_Gfx_Entity *subobj;
     int index;
-    int current_page_at_call;
+    Efl_Ui_Widget *current_page_at_call;
   } content_del;
   struct {
     int called;
     Efl_Gfx_Entity *subobj;
     int index;
-    int current_page_at_call;
+    Efl_Ui_Widget *current_page_at_call;
   } content_add;
   struct {
     int called;
@@ -43,7 +43,7 @@ _indicator_content_del(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Gfx_Entity
    indicator_calls.content_del.called ++;
    indicator_calls.content_del.subobj = subobj;
    indicator_calls.content_del.index = index;
-   indicator_calls.content_del.current_page_at_call = efl_ui_spotlight_active_index_get(container);
+   indicator_calls.content_del.current_page_at_call = efl_ui_spotlight_active_element_get(container);
 }
 
 static void
@@ -52,7 +52,7 @@ _indicator_content_add(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Gfx_Entity
    indicator_calls.content_add.called ++;
    indicator_calls.content_add.subobj = subobj;
    indicator_calls.content_add.index = index;
-   indicator_calls.content_add.current_page_at_call = efl_ui_spotlight_active_index_get(container);
+   indicator_calls.content_add.current_page_at_call = efl_ui_spotlight_active_element_get(container);
 }
 
 static void
@@ -92,13 +92,13 @@ typedef struct {
     int called;
     Efl_Gfx_Entity *subobj;
     int index;
-    int current_page_at_call;
+    Efl_Ui_Widget *current_page_at_call;
   } content_del;
   struct {
     int called;
     Efl_Gfx_Entity *subobj;
     int index;
-    int current_page_at_call;
+    Efl_Ui_Widget *current_page_at_call;
   } content_add;
   struct {
     int called;
@@ -125,7 +125,9 @@ Transition_Calls transition_calls = { 0 };
 static void
 _emit_pos(Eo *obj, double d)
 {
+   printf("EMITTING %f %f\n", d, transition_calls.last_position);
    if (d == transition_calls.last_position) return;
+
    efl_event_callback_call(obj, EFL_UI_SPOTLIGHT_MANAGER_EVENT_POS_UPDATE, &d);
    transition_calls.last_position = d;
 }
@@ -136,9 +138,9 @@ _transition_content_add(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Gfx_Entit
    transition_calls.content_add.called ++;
    transition_calls.content_add.subobj = subobj;
    transition_calls.content_add.index = index;
-   transition_calls.content_add.current_page_at_call = efl_ui_spotlight_active_index_get(container);
+   transition_calls.content_add.current_page_at_call = efl_ui_spotlight_active_element_get(container);
 
-   int i = efl_ui_spotlight_active_index_get(container);
+   int i = efl_pack_index_get(container, efl_ui_spotlight_active_element_get(container));
    if (i != -1)
      _emit_pos(obj, i);
 }
@@ -149,9 +151,9 @@ _transition_content_del(Eo *obj EINA_UNUSED, void *pd EINA_UNUSED, Efl_Gfx_Entit
    transition_calls.content_del.called ++;
    transition_calls.content_del.subobj = subobj;
    transition_calls.content_del.index = index;
-   transition_calls.content_del.current_page_at_call = efl_ui_spotlight_active_index_get(container);
+   transition_calls.content_del.current_page_at_call = efl_ui_spotlight_active_element_get(container);
 
-   int i = efl_ui_spotlight_active_index_get(container);
+   int i = efl_pack_index_get(container, efl_ui_spotlight_active_element_get(container));
    if (i != -1)
      _emit_pos(obj, i);
 }
@@ -224,7 +226,7 @@ EFL_START_TEST (efl_ui_spotlight_init)
    Eina_Size2D s = efl_ui_spotlight_size_get(container);
    ck_assert_int_eq(s.w, 0); //FIXME
    ck_assert_int_eq(s.h, 0); //FIXME
-   ck_assert_int_eq(efl_ui_spotlight_active_index_get(container), -1);
+   ck_assert_ptr_eq(efl_ui_spotlight_active_element_get(container), NULL);
 }
 EFL_END_TEST
 
@@ -232,17 +234,23 @@ EFL_START_TEST (efl_ui_spotlight_active_index)
 {
    Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
    efl_pack(container, w);
-   ck_assert_int_eq(efl_ui_spotlight_active_index_get(container), 0);
 
-   for (int i = -20; i < 20; ++i)
-     {
-        if (i == 0) continue;
-        EXPECT_ERROR_START;
-        efl_ui_spotlight_active_index_set(container, i);
-        EXPECT_ERROR_END;
-     }
+   ck_assert_ptr_eq(efl_ui_spotlight_active_element_get(container), w);
+   EXPECT_ERROR_START;
+   efl_ui_spotlight_active_element_set(container, 0x0);
+   EXPECT_ERROR_END;
+   ck_assert_ptr_eq(efl_ui_spotlight_active_element_get(container), w);
+   EXPECT_ERROR_START;
+   efl_ui_spotlight_active_element_set(container, (void*)0xAFFE);
+   EXPECT_ERROR_END;
+   ck_assert_ptr_eq(efl_ui_spotlight_active_element_get(container), w);
+   EXPECT_ERROR_START;
+   efl_ui_spotlight_active_element_set(container, efl_main_loop_get());
+   EXPECT_ERROR_END;
+   ck_assert_ptr_eq(efl_ui_spotlight_active_element_get(container), w);
+
    efl_del(w);
-   ck_assert_int_eq(efl_ui_spotlight_active_index_get(container), -1);
+   ck_assert_ptr_eq(efl_ui_spotlight_active_element_get(container), NULL);
 }
 EFL_END_TEST
 
@@ -280,7 +288,7 @@ EFL_START_TEST (efl_ui_smart_transition_calls)
    ck_assert_int_eq(transition_calls.content_add.called, 1);
    ck_assert_int_eq(transition_calls.content_add.index, 0);
    ck_assert_ptr_eq(transition_calls.content_add.subobj, w);
-   ck_assert_int_eq(transition_calls.content_add.current_page_at_call, -1);
+   ck_assert_ptr_eq(transition_calls.content_add.current_page_at_call, NULL);
    ck_assert_int_eq(transition_calls.content_del.called, 0);
    transition_calls.content_add.called = 0;
    transition_calls.request_switch.called = 0;
@@ -293,11 +301,11 @@ EFL_START_TEST (efl_ui_smart_transition_calls)
    ck_assert_int_eq(transition_calls.content_add.called, 1);
    ck_assert_int_eq(transition_calls.content_add.index, 0);
    ck_assert_ptr_eq(transition_calls.content_add.subobj, w1);
-   ck_assert_int_eq(transition_calls.content_add.current_page_at_call, 1);
+   ck_assert_ptr_eq(transition_calls.content_add.current_page_at_call, w);
    ck_assert_int_eq(transition_calls.content_del.called, 0);
    transition_calls.content_add.called = 0;
    transition_calls.request_switch.called = 0;
-   ck_assert_int_eq(efl_ui_spotlight_active_index_get(container), 1);
+   ck_assert_ptr_eq(efl_ui_spotlight_active_element_get(container), w);
 
    //new object, must update the content and a not update current page
    efl_pack_end(container, w2);
@@ -307,13 +315,13 @@ EFL_START_TEST (efl_ui_smart_transition_calls)
    ck_assert_int_eq(transition_calls.content_add.called, 1);
    ck_assert_int_eq(transition_calls.content_add.index, 2);
    ck_assert_ptr_eq(transition_calls.content_add.subobj, w2);
-   ck_assert_int_eq(transition_calls.content_add.current_page_at_call, 1);
+   ck_assert_ptr_eq(transition_calls.content_add.current_page_at_call, w);
    ck_assert_int_eq(transition_calls.content_del.called, 0);
    transition_calls.content_add.called = 0;
-   ck_assert_int_eq(efl_ui_spotlight_active_index_get(container), 1);
+   ck_assert_ptr_eq(efl_ui_spotlight_active_element_get(container), w);
 
    //page change must result in a call to request a switch
-   efl_ui_spotlight_active_index_set(container, 2);
+   efl_ui_spotlight_active_element_set(container, w2);
    ck_assert_int_eq(transition_calls.spotlight.called, 0);
    ck_assert_int_eq(transition_calls.page_size.called, 0);
    ck_assert_int_eq(transition_calls.request_switch.called, 1);
@@ -332,7 +340,7 @@ EFL_START_TEST (efl_ui_smart_transition_calls)
    ck_assert_int_eq(transition_calls.content_del.called, 1);
    ck_assert_int_eq(transition_calls.content_del.index, 1);
    ck_assert_ptr_eq(transition_calls.content_del.subobj, w);
-   ck_assert_int_eq(transition_calls.content_del.current_page_at_call, 1);
+   ck_assert_ptr_eq(transition_calls.content_del.current_page_at_call, w2);
    transition_calls.content_del.called = 0;
 }
 EFL_END_TEST
@@ -486,7 +494,7 @@ _verify_transition_start_end_events(void)
    ck_assert_int_eq(end.from, -8);
 
    EV_RESET
-   efl_ui_spotlight_active_index_set(container, 2);
+   efl_ui_spotlight_active_element_set(container, w2);
    ck_assert_int_eq(start.to, 2);
    ck_assert_int_eq(end.to, 2);
    ck_assert_int_eq(start.from, 1);
@@ -511,7 +519,7 @@ EFL_START_TEST (efl_ui_spotlight_test_push1)
     Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
     efl_ui_spotlight_push(container, w);
     ck_assert_int_eq(efl_pack_index_get(container, w), 0);
-    ck_assert_int_eq(efl_ui_spotlight_active_index_get(container), 0);
+    ck_assert_ptr_eq(efl_ui_spotlight_active_element_get(container), efl_pack_content_get(container, 0));
 }
 EFL_END_TEST
 
@@ -521,13 +529,13 @@ EFL_START_TEST (efl_ui_spotlight_test_push2)
      {
         Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
         efl_pack_end(container, w);
+        if (i == 3)
+          efl_ui_spotlight_active_element_set(container, w);
      }
-    efl_ui_spotlight_active_index_set(container, 3);
-
     Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
     efl_ui_spotlight_push(container, w);
     ck_assert_int_eq(efl_pack_index_get(container, w), 3);
-    ck_assert_int_eq(efl_ui_spotlight_active_index_get(container), 3);
+    ck_assert_ptr_eq(efl_ui_spotlight_active_element_get(container), w);
 }
 EFL_END_TEST
 
@@ -590,16 +598,17 @@ EFL_START_TEST (efl_ui_spotlight_test_pop3)
      {
         Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
         efl_pack_end(container, w);
+        if (i == 3)
+          efl_ui_spotlight_active_element_set(container, w);
      }
     Efl_Ui_Widget *w = efl_add(WIDGET_CLASS, win);
-    efl_ui_spotlight_active_index_set(container, 3);
     efl_ui_spotlight_push(container, w);
     Eina_Future *f = efl_ui_spotlight_pop(container, EINA_TRUE);
     for (int i = 0; i < 10; ++i)
       {
          efl_loop_iterate(efl_provider_find(container, EFL_LOOP_CLASS));
       }
-    ck_assert_int_eq(efl_ui_spotlight_active_index_get(container), 3);
+    ck_assert_ptr_eq(efl_ui_spotlight_active_element_get(container), efl_pack_content_get(container, 3));
     ck_assert_int_eq(efl_ref_count(w), 0);
     ck_assert_int_eq(efl_content_count(container), 5);
     ck_assert_ptr_ne(f, NULL);
