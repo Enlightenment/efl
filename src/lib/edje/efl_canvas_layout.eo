@@ -124,6 +124,7 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
       Efl.Ui.I18n.language { set; get; }
       Efl.Gfx.Entity.scale { set; get; }
       Efl.File.load;
+      Efl.File.unload;
       Efl.Container.content_iterate;
       Efl.Container.content_count;
       Efl.Part.part_get; [[Returns @Efl.Canvas.Layout_Part]]

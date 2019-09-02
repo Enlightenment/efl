@@ -7,7 +7,7 @@ class @beta Efl.Ui.Datepicker extends Efl.Ui.Layout_Base
      value using internal entry.
    ]]
    methods {
-      @property min {
+      @property date_min {
          [[The lower boundary of date.
 
            $year: Year. The year range is from 1900 to 2137.
@@ -26,7 +26,7 @@ class @beta Efl.Ui.Datepicker extends Efl.Ui.Layout_Base
             day: int; [[The day value from 1 to 31.]]
          }
       }
-      @property max {
+      @property date_max {
          [[The upper boundary of date.
 
            $year: Year. The year range is from 1900 to 2137.

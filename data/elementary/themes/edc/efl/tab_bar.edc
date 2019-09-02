@@ -70,7 +70,7 @@ group { "efl/tab_bar/tab";
 #define LABEL   2
 #define MASK    3
 #define DISABLE 4
-   script {   
+   script {
       public btmode;
       public eval_mode(m) {
          new m1 = m & MASK;
@@ -216,10 +216,10 @@ group { "efl/tab_bar/tab";
          desc { "default";
             align: 0.5 0.5;
             rel1.relative: 0.0 0.0;
-            rel1.offset: 2 2;
+            rel1.offset: 5 5;
             rel2.to_y: "efl.text";
             rel2.relative: 1.0 0.0;
-            rel2.offset: -3 -1;
+            rel2.offset: -6 -4;
          }
          desc { "noicon";
             inherit: "default" 0.0;
@@ -417,12 +417,22 @@ group { "efl/tab_bar/tab";
          }
       }
       rect { "event";
-         ignore_flags: ON_HOLD;
          desc { "default";
             color: 0 0 0 0;
          }
       }
+      swallow { "efl.extra";
+         desc { "default";
+            fixed: 1 1;
+            align: 1.0 0.0;
+            rel1.relative: 1.0 0.0;
+            rel1.offset: -3 2;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: -3 2;
+         }
+      }
    programs {
+      EFL_UI_CLICKABLE_PART_BIND(event)
       program {
          signal: "efl,orient,horizontal"; source: "efl";
          action: STATE_SET "default" 0.0;
@@ -462,10 +472,6 @@ group { "efl/tab_bar/tab";
          target: "bend";
       }
       program {
-         signal: "mouse,up,1"; source: "event";
-         action: SIGNAL_EMIT "efl,action,click" "efl";
-      }
-      program {
          signal: "efl,highlight,on"; source: "efl";
          action: STATE_SET "selected" 0.0;
          target: "highlight";
@@ -474,14 +480,6 @@ group { "efl/tab_bar/tab";
          signal: "efl,highlight,off"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "highlight";
-      }
-      program {
-         signal:  "mouse,in"; source:  "event";
-         action:  SIGNAL_EMIT "efl,mouse,in" "efl";
-      }
-      program { name: "mouse,out";
-         signal:  "mouse,out"; source:  "event";
-         action:  SIGNAL_EMIT "efl,mouse,out" "efl";
       }
       program { name: "st1";
          signal: "efl,state,text,unset"; source: "efl";

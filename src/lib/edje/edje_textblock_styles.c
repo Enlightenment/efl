@@ -126,10 +126,11 @@ _edje_format_reparse(Edje_File *edf, const char *str, Edje_Style_Tag *tag_ret, E
  *
  * @param ed The edje containing the given style which need to be updated
  * @param style The style which need to be updated
- * @param force Update the given style forcely or not
+ * As now edje_style supports lazy computation of evas_textblock_style
+ * only call this function from _edje_textblock_style_get()
  */
 void
-_edje_textblock_style_update(Edje *ed, Edje_Style *stl, Eina_Bool force)
+_edje_textblock_style_update(Edje *ed, Edje_Style *stl)
 {
    Eina_List *l;
    Eina_Strbuf *txt = NULL;
@@ -142,11 +143,19 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl, Eina_Bool force)
    /* Make sure the style is already defined */
    if (!stl->style) return;
 
-   /* we are sure it dosen't have any text_class */
-   if (stl->readonly) return;
+   /* this check is only here to catch misuse of this function */
+   if (stl->readonly)
+     {
+        WRN("style_update() shouldn't be called for readonly style. performance regression : %s", stl->name);
+        return;
+     }
 
-   /* No need to compute it again and again and again */
-   if (!force && stl->cache) return;
+   /* this check is only here to catch misuse of this function */
+   if (stl->cache)
+     {
+        WRN("style_update() shouldn't be called for cached style. performance regression : %s", stl->name);
+        return;
+     }
 
    if (!txt)
      txt = eina_strbuf_new();
@@ -228,14 +237,14 @@ _edje_textblock_style_update(Edje *ed, Edje_Style *stl, Eina_Bool force)
  * @param ed The edje containing styles which need to be updated
  */
 void
-_edje_textblock_style_all_update(Edje *ed)
+_edje_file_textblock_style_all_update(Edje_File *edf)
 {
    Eina_List *l;
    Edje_Style *stl;
 
-   if (!ed->file) return;
+   if (!edf) return;
 
-   EINA_LIST_FOREACH(ed->file->styles, l, stl)
+   EINA_LIST_FOREACH(edf->styles, l, stl)
      if (stl && !stl->readonly) stl->cache = EINA_FALSE;
 }
 
@@ -282,7 +291,8 @@ _edje_textblock_style_add(Edje *ed, Edje_Style *stl)
 
    _edje_textblock_style_observer_add(stl, ed->obj);
 
-   _edje_textblock_style_update(ed, stl, EINA_TRUE);
+   // mark it dirty to recompute it later.
+   stl->cache = EINA_FALSE;
 }
 
 static inline void
@@ -351,19 +361,44 @@ _edje_textblock_styles_del(Edje *ed, Edje_Part *pt)
 }
 
 /*
+ * returns a evas_textblock style for a given style_string.
+ * does lazy computation of the evas_textblock_style
+ * It will compute and cache it if not computed yet and
+ * will return the final textblock style.
+ */
+Evas_Textblock_Style *
+_edje_textblock_style_get(Edje *ed, const char *style)
+{
+   if (!style) return NULL;
+
+   Edje_Style *stl = _edje_textblock_style_search(ed, style);
+
+   if (!stl) return NULL;
+
+   /* readonly style naver change */
+   if (stl->readonly) return stl->style;
+
+   /* if style is dirty recompute */
+   if (!stl->cache)
+     _edje_textblock_style_update(ed, stl);
+
+   return stl->style;
+}
+
+/*
  * Finds all the styles having text class tag as text_class and
  * updates them.
  */
 void
-_edje_textblock_style_all_update_text_class(Edje *ed, const char *text_class)
+_edje_file_textblock_style_all_update_text_class(Edje_File *edf, const char *text_class)
 {
    Eina_List *l, *ll;
    Edje_Style *stl;
 
-   if (!ed->file) return;
+   if (!edf) return;
    if (!text_class) return;
 
-   EINA_LIST_FOREACH(ed->file->styles, l, stl)
+   EINA_LIST_FOREACH(edf->styles, l, stl)
      {
         Edje_Style_Tag *tag;
 
@@ -375,7 +410,9 @@ _edje_textblock_style_all_update_text_class(Edje *ed, const char *text_class)
 
              if (!strcmp(tag->text_class, text_class))
                {
-                  _edje_textblock_style_update(ed, stl, EINA_TRUE);
+                  // just mark it dirty so the next request
+                  // for this style will trigger recomputation.
+                  stl->cache = EINA_FALSE;
                   break;
                }
           }
@@ -389,7 +426,7 @@ _edje_textblock_style_all_update_text_class(Edje *ed, const char *text_class)
  * followed by a list of tags.
  */
 void
-_edje_textblock_style_parse_and_fix(Edje_File *edf)
+_edje_file_textblock_style_parse_and_fix(Edje_File *edf)
 {
    Eina_List *l, *ll;
    Edje_Style *stl;
@@ -461,7 +498,7 @@ _edje_textblock_style_parse_and_fix(Edje_File *edf)
 }
 
 void
-_edje_textblock_style_cleanup(Edje_File *edf)
+_edje_file_textblock_style_cleanup(Edje_File *edf)
 {
    Edje_Style *stl;
 

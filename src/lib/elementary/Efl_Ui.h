@@ -273,6 +273,10 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_popup_part_backwall.eo.h>
 # include <efl_ui_grid.eo.h>
 # include <efl_ui_list.eo.h>
+# include <efl_ui_tab_bar_default_item.eo.h>
+# include <efl_ui_tab_bar.eo.h>
+# include <efl_ui_tab_page.eo.h>
+# include <efl_ui_tab_pager.eo.h>
 /**
  * Initialize Elementary
  *

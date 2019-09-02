@@ -1,30 +1,25 @@
-enum @beta Efl.Ui.Tab_Page_Tab_Changed {
-   [[Which part of the tab has changed.]]
-   label = 0, [[Label has changed.]]
-   icon [[Icon has changed.]]
-}
-
-struct @beta Efl.Ui.Tab_Page_Tab_Changed_Event {
-   [[Information of changed event.]]
-   changed_info: Efl.Ui.Tab_Page_Tab_Changed; [[Which part of the tab has changed.]]
-}
-
 class @beta Efl.Ui.Tab_Page extends Efl.Ui.Layout_Base implements Efl.Content
 {
    [[Tab Page class]]
    methods {
-   }
-   parts {
-      tab: Efl.Ui.Tab_Page_Part_Tab;
+      @property tab_bar_item {
+         [[Get this page represented as a @Efl.Ui.Tab_Bar_Default_Item
+
+           The object returned here will reflect all the properties from the part here. Properties will be automatically updated.
+           This property is unique per @Efl.Ui.Tab_Page
+         ]]
+         get {
+
+         }
+         values {
+            item : Efl.Ui.Tab_Bar_Default_Item; [[The @Efl.Ui.Tab_Bar_Default_Item for the tab bar]]
+         }
+      }
    }
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Content.content { get; set; }
       Efl.Content.content_unset;
-      Efl.Part.part_get;
-   }
-   events {
-      tab,changed: Efl.Ui.Tab_Page_Tab_Changed_Event; [[Called when tab changed]]
    }
 }

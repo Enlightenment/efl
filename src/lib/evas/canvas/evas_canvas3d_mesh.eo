@@ -427,6 +427,7 @@ class @beta Evas.Canvas3D.Mesh extends Evas.Canvas3D.Object implements Efl.File,
       Evas.Canvas3D.Object.update_notify;
       Evas.Canvas3D.Object.change_notify;
       Efl.File.load;
+      Efl.File.unload;
       Efl.File_Save.save;
       @empty Evas.Canvas3D.Object.callback_register;
       @empty Evas.Canvas3D.Object.callback_unregister;

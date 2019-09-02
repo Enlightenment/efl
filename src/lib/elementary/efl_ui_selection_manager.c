@@ -5050,6 +5050,7 @@ _efl_ui_selection_manager_drop_target_del(Eo *obj EINA_UNUSED, Efl_Ui_Selection_
              remove_handler = EINA_TRUE;
           }
      }
+   else remove_handler = EINA_TRUE;
 #endif
    if (remove_handler)
      {

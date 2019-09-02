@@ -1,7 +1,10 @@
-
 class @beta Efl.Ui.Grid_Default_Item extends Efl.Ui.Default_Item
 {
-   [[Grid Default Item class.]]
+   [[Default Item class to be used inside @Efl.Ui.Grid containers.
+     The $icon part is in the middle, the $extra part overlaps it on its upper-right corner.
+     The $text part is centered below the $icon.
+     Theming can change this arrangement.
+   ]]
    data: null;
    implements {
       Efl.Object.constructor;

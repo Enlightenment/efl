@@ -5,9 +5,10 @@ class @beta Efl.Ui.Radio_Group_Impl extends Efl.Object implements Efl.Ui.Radio_G
    implements {
       class.constructor;
       Efl.Object.destructor;
-      Efl.Ui.Radio_Group.selected_object {get; set;}
       Efl.Ui.Radio_Group.selected_value {get; set;}
       Efl.Ui.Radio_Group.register;
       Efl.Ui.Radio_Group.unregister;
+      Efl.Ui.Single_Selectable.last_selected {get;}
+      Efl.Ui.Single_Selectable.fallback_selection {set; get;}
    }
 }

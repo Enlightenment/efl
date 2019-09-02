@@ -57,6 +57,7 @@ _elm_thumb_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_constructor, _elm_thumb_efl_object_constructor),
       EFL_OBJECT_OP_FUNC(efl_finalize, _elm_thumb_efl_object_finalize),
       EFL_OBJECT_OP_FUNC(efl_file_load, _elm_thumb_efl_file_load),
+      EFL_OBJECT_OP_FUNC(efl_file_unload, _elm_thumb_efl_file_unload),
       EFL_OBJECT_OP_FUNC(efl_file_loaded_get, _elm_thumb_efl_file_loaded_get),
       EFL_OBJECT_OP_FUNC(efl_file_set, _elm_thumb_efl_file_file_set),
       EFL_OBJECT_OP_FUNC(efl_file_get, _elm_thumb_efl_file_file_get),

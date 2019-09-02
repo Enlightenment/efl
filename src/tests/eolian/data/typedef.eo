@@ -8,14 +8,6 @@ type @extern Evas.Pants: float; /* not generated */
 
 type @beta Undef: __undefined_type; /* not generated */
 
-enum Enum.Bar
-{
-   legacy: bar;
-   first_item  = 0,
-   second_item,
-   last_item
-}
-
 enum Elm.Object.Select_Mode
 {
    default = 0,

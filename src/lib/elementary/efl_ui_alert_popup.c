@@ -188,16 +188,8 @@ _efl_ui_alert_popup_button_set(Eo *obj, Efl_Ui_Alert_Popup_Data *pd, Efl_Ui_Aler
                         !!pd->button[EFL_UI_ALERT_POPUP_BUTTON_USER];
 
         cur_content = efl_content_get(efl_part(obj, "efl.buttons"));
-        if (cur_content)
-          {
-             for (i = 0; i < EFL_UI_ALERT_POPUP_BUTTON_COUNT; i++)
-              efl_content_unset(efl_part(cur_content, BUTTON_SWALLOW_NAME[i]));
-          }
-        else
-          {
-             cur_content = efl_add(EFL_UI_LAYOUT_CLASS, obj,
-                           efl_content_set(efl_part(obj, "efl.buttons"), efl_added));
-          }
+        for (i = 0; i < EFL_UI_ALERT_POPUP_BUTTON_COUNT; i++)
+          efl_content_unset(efl_part(cur_content, BUTTON_SWALLOW_NAME[i]));
 
         elm_widget_element_update(obj, cur_content, PART_NAME_BUTTON_LAYOUT[btn_count - 1]);
 
@@ -241,6 +233,9 @@ _efl_ui_alert_popup_efl_object_constructor(Eo *obj,
      elm_widget_theme_klass_set(obj, "alert_popup");
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME);
+
+   efl_add(EFL_UI_LAYOUT_CLASS, obj,
+           efl_content_set(efl_part(obj, "efl.buttons"), efl_added));
 
    return obj;
 }

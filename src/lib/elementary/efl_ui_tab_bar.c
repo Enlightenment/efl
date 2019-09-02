@@ -3,7 +3,7 @@
 #endif
 
 
-#include <Elementary.h>
+#include <Efl_Ui.h>
 #include "elm_priv.h"
 #include "efl_ui_tab_bar_private.h"
 #include "els_box.h"
@@ -11,347 +11,97 @@
 #define MY_CLASS EFL_UI_TAB_BAR_CLASS
 #define MY_CLASS_NAME "Efl.Ui.Tab_Bar"
 
-static const char PART_NAME_TAB[] = "tab";
 
-static void _tab_select(Efl_Ui_Tab_Bar_Data *sd, Tab_Info *ti);
-
-static Eina_Bool _key_action_select(Evas_Object *obj, const char *params);
-
-static const Elm_Action key_actions[] = {
-   {"select", _key_action_select},
-   {NULL, NULL}
-};
-
-static Eina_Bool
-_key_action_select(Evas_Object *obj, const char *params EINA_UNUSED)
+EOLIAN static Efl_Ui_Selectable*
+_efl_ui_tab_bar_efl_ui_single_selectable_last_selected_get(const Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *pd)
 {
-   EFL_UI_TAB_BAR_DATA_GET(obj, sd);
-
-   if (!sd->tab_infos) return EINA_FALSE;
-
-   Tab_Info *ti;
-   Eina_List *l, *l_next;
-   EINA_LIST_FOREACH_SAFE(sd->tab_infos, l, l_next, ti)
-     {
-        if (efl_ui_focus_object_focus_get(ti->tab))
-          {
-             _tab_select(sd, ti);
-             return EINA_TRUE;
-          }
-     }
-
-   return EINA_FALSE;
+   return pd->selected;
 }
 
 EOLIAN static void
-_efl_ui_tab_bar_current_tab_set(Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *sd, int index)
+_efl_ui_tab_bar_efl_ui_single_selectable_fallback_selection_set(Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *pd, Efl_Ui_Selectable *fallback)
 {
-   Tab_Info *ti;
-   ti = eina_list_nth(sd->tab_infos, index);
-
-   _tab_select(sd, ti);
+   pd->fallback_selection = fallback;
+   if (!pd->selected)
+     efl_ui_selectable_selected_set(pd->fallback_selection, EINA_TRUE);
 }
 
-EOLIAN static int
-_efl_ui_tab_bar_current_tab_get(const Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *sd)
+EOLIAN static Efl_Ui_Selectable*
+_efl_ui_tab_bar_efl_ui_single_selectable_fallback_selection_get(const Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *pd)
 {
-   return sd->cur;
+   return pd->fallback_selection;
 }
 
-EOLIAN static unsigned int
-_efl_ui_tab_bar_tab_count(const Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *sd)
-{
-   return sd->cnt;
-}
+static void _remove_item(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Efl_Ui_Item *item);
 
 static void
-_tab_icon_update(Tab_Info *ti)
+_selelction_change_cb(void *data, const Efl_Event *ev)
 {
-   Eo *old_icon =
-     efl_content_get(efl_part(ti->tab, "efl.icon"));
+   Efl_Ui_Tab_Bar_Data *pd = efl_data_scope_safe_get(data, MY_CLASS);
 
-   _elm_widget_sub_object_redirect_to_top(ti->tab, old_icon);
-   efl_content_unset(efl_part(ti->tab, "efl.icon"));
-   efl_content_set(efl_part(ti->tab, "efl.icon"), ti->icon);
-
-   efl_del(old_icon);
-}
-
-static void
-_tab_icon_set_cb(void *data,
-                 Eo *obj,
-                 const char *emission,
-                 const char *source)
-{
-   Tab_Info *ti = data;
-   _tab_icon_update(ti);
-
-   efl_layout_signal_callback_del(obj, emission, source, ti, _tab_icon_set_cb, NULL);
-   efl_layout_signal_emit(ti->tab, "efl,state,icon,reset", "efl");
-}
-
-static void
-_tab_icon_obj_set(Eo *obj,
-                  Tab_Info *ti,
-                  Eo *icon_obj,
-                  const char *icon_str)
-{
-   Eo *old_icon;
-   const char *s;
-
-   if (icon_str)
-     eina_stringshare_replace(&ti->icon_str, icon_str);
-   else
+   if (!efl_ui_selectable_selected_get(ev->object))
      {
-        eina_stringshare_del(ti->icon_str);
-        ti->icon_str = NULL;
-     }
-
-   ti->icon = icon_obj;
-   if (icon_obj)
-     {
-        efl_gfx_entity_visible_set(ti->icon, EINA_TRUE);
-        elm_widget_sub_object_add(obj, ti->icon);
-     }
-
-   s = elm_layout_data_get(ti->tab, "transition_animation_on");
-   if ((s) && (atoi(s)))
-     {
-        old_icon = efl_content_get
-            (efl_part(ti->tab, "efl.icon_new"));
-        if (old_icon)
+        if (pd->selected == ev->object)
           {
-             _elm_widget_sub_object_redirect_to_top(ti->tab, old_icon);
-             efl_gfx_entity_visible_set(old_icon, EINA_FALSE);
+             pd->selected = NULL;
           }
-        efl_content_set
-          (efl_part(ti->tab, "efl.icon_new"), ti->icon);
-        efl_layout_signal_emit(ti->tab, "efl,state,icon_new,set", "efl");
-        efl_layout_signal_callback_add
-          (ti->tab, "efl,state,icon_set,done", "efl", ti, _tab_icon_set_cb, NULL);
+        //checkout if we want to do fallback handling
+        if (!pd->in_value_change)
+          {
+             if (!pd->selected && pd->fallback_selection)
+               efl_ui_selectable_selected_set(pd->fallback_selection, EINA_TRUE);
+          }
      }
    else
-     _tab_icon_update(ti);
+     {
+        pd->in_value_change = EINA_TRUE;
+        if (pd->selected)
+          efl_ui_selectable_selected_set(pd->selected, EINA_FALSE);
+        pd->in_value_change = EINA_FALSE;
+        EINA_SAFETY_ON_FALSE_RETURN(!pd->selected);
+        pd->selected = ev->object;
+        efl_event_callback_call(data, EFL_UI_EVENT_ITEM_SELECTED, NULL);
+     }
+   if (!pd->in_value_change)
+     {
+        efl_event_callback_call(data, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, NULL);
+     }
+}
+
+static void
+_invalidate_cb(void *data, const Efl_Event *ev)
+{
+   Efl_Ui_Tab_Bar_Data *pd = efl_data_scope_safe_get(data, MY_CLASS);
+
+   EINA_SAFETY_ON_NULL_RETURN(pd);
+   _remove_item(data, pd, ev->object);
+}
+
+EFL_CALLBACKS_ARRAY_DEFINE(item_listeners,
+  {EFL_UI_EVENT_SELECTED_CHANGED, _selelction_change_cb},
+  {EFL_EVENT_INVALIDATE, _invalidate_cb},
+)
+
+static void
+_remove_item(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Efl_Ui_Item *item)
+{
+   if (pd->selected == item)
+     pd->selected = NULL;
+
+   efl_event_callback_array_del(item, item_listeners(), obj);
+   if (efl_alive_get(item))
+     _elm_widget_sub_object_redirect_to_top(obj, item);
 }
 
 static Eina_Bool
-_tab_icon_set(Eo *icon_obj,
-              const char *type,
-              const char *icon)
+_register_item(Eo *obj, Efl_Ui_Tab_Bar_Data *pd EINA_UNUSED, Eo *subitem)
 {
-   char icon_str[512];
-
-   if ((!type) || (!*type)) goto end;
-   if ((!icon) || (!*icon)) return EINA_FALSE;
-   if ((snprintf(icon_str, sizeof(icon_str), "%s%s", type, icon) > 0)
-       && (elm_icon_standard_set(icon_obj, icon_str)))
-     return EINA_TRUE;
-end:
-   if (elm_icon_standard_set(icon_obj, icon))
-     return EINA_TRUE;
-
-   WRN("couldn't find icon definition for '%s'", icon);
-   return EINA_FALSE;
-}
-
-static void
-_tab_unselect(Efl_Ui_Tab_Bar_Data *sd, Tab_Info *ti)
-{
-   if ((!ti->tab) || (!ti->selected)) return;
-
-   ti->selected = EINA_FALSE;
-
-   efl_layout_signal_emit(ti->tab, "efl,state,unselected", "efl");
-   if (ti->icon)
-     elm_widget_signal_emit(ti->icon, "efl,state,unselected", "efl");
-
-   sd->cur = -1;
-}
-
-static void
-_tab_select(Efl_Ui_Tab_Bar_Data *sd, Tab_Info *ti)
-{
-   if (!ti->selected)
-     {
-        Eo *tp;
-        tp = efl_parent_get(ti->tab);
-        int index;
-
-        _tab_unselect(sd, sd->selected_tab);
-        ti->selected = EINA_TRUE;
-        sd->selected_tab = ti;
-
-        efl_layout_signal_emit(ti->tab, "efl,state,selected", "efl");
-        if (ti->icon)
-          elm_widget_signal_emit(ti->icon, "efl,state,selected", "efl");
-
-        index = eina_list_data_idx(sd->tab_infos, ti);
-
-        sd->cur = index;
-
-        efl_event_callback_call(tp, EFL_UI_EVENT_ITEM_SELECTED, NULL);
-     }
-}
-
-static void
-_action_click_cb(void *data,
-                 Eo *obj EINA_UNUSED,
-                 const char *emission EINA_UNUSED,
-                 const char *source EINA_UNUSED)
-{
-   Eo *tb;
-   Tab_Info *ti;
-   ti = data;
-   tb = efl_parent_get(ti->tab);
-   EFL_UI_TAB_BAR_DATA_GET(tb, sd);
-
-   _tab_select(sd, ti);
-}
-
-static Tab_Info *
-_tab_add(Eo *obj, const char *label, const char *icon)
-{
-   Eo *tab, *icon_obj;
-   Tab_Info *ti;
-   Eina_Error theme_apply;
-
-   ti = calloc(1, sizeof(*ti));
-
-   ti->tab = NULL;
-   ti->label = eina_stringshare_add(label);
-
-   tab = efl_add(EFL_UI_LAYOUT_CLASS, obj,
-                 efl_gfx_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL));
-   /* FIXME: This is for tab sizing issue.
-    * Recently, the size_hint_fill API has been added,
-    * but currently tab_bar is not available because it uses evas_object_box.
-    * This should be removed after the box in tab_bar has been replaced by efl.ui.box */
-
-   icon_obj = elm_icon_add(tab);
-
-   if (_tab_icon_set(icon_obj, "toolbar/", icon))
-     {
-        ti->icon = icon_obj;
-        ti->icon_str = eina_stringshare_add(icon);
-     }
-   else
-     {
-        ti->icon = NULL;
-        ti->icon_str = NULL;
-        efl_del(icon_obj);
-     }
-
-   theme_apply = elm_widget_element_update(obj, tab, PART_NAME_TAB);
-
-   if (theme_apply == EFL_UI_THEME_APPLY_ERROR_GENERIC)
-     CRI("Failed to set layout!");
-
-   efl_layout_signal_callback_add
-     (tab, "efl,action,click", "efl", ti,_action_click_cb, NULL);
-
-   if (ti->icon)
-     efl_content_set(efl_part(tab, "efl.icon"), ti->icon);
-
-   if (ti->label)
-     efl_text_set(efl_part(tab, "efl.text"), ti->label);
-
-   efl_ui_widget_focus_allow_set(tab, EINA_TRUE);
-
-   ti->tab = tab;
-
-   return ti;
-}
-
-EOLIAN static void
-_efl_ui_tab_bar_tab_add(Eo *obj, Efl_Ui_Tab_Bar_Data *sd,
-                        int index, const char *label, const char *icon)
-{
-   Tab_Info *ti;
-   ti = _tab_add(obj, label, icon);
-
-   efl_parent_set(ti->tab, obj);
-   efl_ui_widget_sub_object_add(obj, ti->tab);
-
-   if (sd->cnt > index)
-     {
-        Tab_Info *existing_ti;
-        existing_ti = eina_list_nth(sd->tab_infos, index);
-
-        sd->tab_infos = eina_list_prepend_relative(sd->tab_infos, ti, existing_ti);
-        evas_object_box_insert_before(sd->bx, ti->tab, existing_ti->tab);
-
-        if (sd->cur >= index) sd->cur ++;
-     }
-   else
-     {
-        sd->tab_infos = eina_list_append(sd->tab_infos, ti);
-        evas_object_box_append(sd->bx, ti->tab);
-     }
-
-   sd->cnt ++;
-}
-
-EOLIAN static void
-_efl_ui_tab_bar_tab_remove(Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *sd, int index)
-{
-   if ((sd->cnt > 0) && (sd->cnt > index) && (index >= 0))
-     {
-        Tab_Info *ti;
-        ti = eina_list_nth(sd->tab_infos, index);
-
-        _tab_unselect(sd, ti);
-        evas_object_box_remove(sd->bx, ti->tab);
-        efl_del(ti->tab);
-
-        sd->tab_infos = eina_list_remove(sd->tab_infos, ti);
-        sd->cnt --;
-     }
-}
-
-EOLIAN static void
-_efl_ui_tab_bar_tab_label_set(Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *sd, int index, const char *label)
-{
-   Tab_Info *ti;
-   ti = eina_list_nth(sd->tab_infos, index);
-   eina_stringshare_replace(&ti->label, label);
-
-   efl_text_set(efl_part(ti->tab, "efl.text"), ti->label);
-}
-
-EOLIAN static void
-_efl_ui_tab_bar_tab_icon_set(Eo *obj, Efl_Ui_Tab_Bar_Data *sd, int index, const char *icon)
-{
-   Eo *icon_obj;
-   Tab_Info *ti;
-   ti = eina_list_nth(sd->tab_infos, index);
-
-   if ((icon) && (ti->icon_str) && (!strcmp(icon, ti->icon_str))) return;
-
-   icon_obj = elm_icon_add(obj);
-   if (!icon_obj) return;
-   if (_tab_icon_set(icon_obj, "toolbar/", icon))
-     _tab_icon_obj_set(obj, ti, icon_obj, icon);
-   else
-     {
-        _tab_icon_obj_set(obj, ti, NULL, NULL);
-        efl_del(icon_obj);
-     }
-}
-
-static void
-_layout(Evas_Object *o,
-        Evas_Object_Box_Data *priv,
-        void *data)
-{
-   Evas_Object *obj = (Evas_Object *)data;
-   Eina_Bool horizontal;
-
-   EFL_UI_TAB_BAR_DATA_GET(obj, sd);
-
-   horizontal = efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE);
-
-   _els_box_layout
-     (o, priv, horizontal, EINA_TRUE, efl_ui_mirrored_get(obj));
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(subitem, EFL_UI_TAB_BAR_DEFAULT_ITEM_CLASS), EINA_FALSE);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_ui_widget_sub_object_add(obj, subitem), EINA_FALSE);
+   efl_ui_item_container_set(subitem, obj);
+   efl_event_callback_array_add(subitem, item_listeners(), obj);
+   efl_gfx_hint_align_set(subitem, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   return EINA_TRUE;
 }
 
 EOLIAN static void
@@ -370,32 +120,114 @@ _efl_ui_tab_bar_efl_object_constructor(Eo *obj, Efl_Ui_Tab_Bar_Data *sd)
 
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
-   if (elm_widget_theme_object_set(obj, wd->resize_obj,
-                                       elm_widget_theme_klass_get(obj),
-                                       elm_widget_theme_element_get(obj),
-                                       elm_widget_theme_style_get(obj)) == EFL_UI_THEME_APPLY_ERROR_GENERIC)
-     CRI("Failed to set layout!");
+   sd->bx = efl_add(EFL_UI_BOX_CLASS, obj);
+   efl_ui_box_homogeneous_set(sd->bx, EINA_TRUE);
+   efl_ui_layout_orientation_set(sd->bx, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
+   efl_ui_widget_internal_set(sd->bx, EINA_TRUE);
 
-   sd->dir = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
-   sd->bx = evas_object_box_add(evas_object_evas_get(obj));
-   evas_object_box_align_set(sd->bx, 0.5, 0.5);
-   evas_object_box_layout_set(sd->bx, _layout, obj, NULL);
-
-   efl_ui_widget_focus_allow_set(obj, EINA_TRUE);
-
-   efl_content_set(efl_part(obj, "efl.content"), sd->bx);
-
-   sd->cnt = 0;
-   sd->cur = -1;
-
-   Tab_Info *ti = calloc(1, sizeof(*ti));
-   sd->selected_tab = ti;
+   efl_composite_attach(obj, sd->bx);
 
    return obj;
 }
 
-/* Standard widget overrides */
+EOLIAN static Efl_Object*
+_efl_ui_tab_bar_efl_object_finalize(Eo *obj, Efl_Ui_Tab_Bar_Data *pd)
+{
+   Eo *o = efl_finalize(efl_super(obj, MY_CLASS));
 
-ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_tab_bar, Efl_Ui_Tab_Bar_Data)
+   if (!o) return NULL;
+
+   efl_content_set(efl_part(obj,"efl.content"), pd->bx);
+
+   return o;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_tab_bar_efl_pack_pack_clear(Eo *obj, Efl_Ui_Tab_Bar_Data *pd)
+{
+   for (int i = 0; i < efl_content_count(pd->bx); ++i)
+     {
+        _remove_item(obj, pd, efl_pack_content_get(pd->bx, i));
+     }
+   return efl_pack_clear(pd->bx);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_tab_bar_efl_pack_unpack_all(Eo *obj, Efl_Ui_Tab_Bar_Data *pd)
+{
+   for (int i = 0; i < efl_content_count(pd->bx); ++i)
+     {
+        _remove_item(obj, pd, efl_pack_content_get(pd->bx, i));
+     }
+   return efl_pack_unpack_all(pd->bx);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_tab_bar_efl_pack_unpack(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Efl_Gfx_Entity *subobj)
+{
+   _remove_item(obj, pd, subobj);
+   return efl_pack_unpack(pd->bx, subobj);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_tab_bar_efl_pack_linear_pack_begin(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Efl_Gfx_Entity *subobj)
+{
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(_register_item(obj, pd, subobj), EINA_FALSE);
+   return efl_pack_begin(pd->bx, subobj);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_tab_bar_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Efl_Gfx_Entity *subobj)
+{
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(_register_item(obj, pd, subobj), EINA_FALSE);
+   return efl_pack_end(pd->bx, subobj);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_tab_bar_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Efl_Gfx_Entity *subobj, const Efl_Gfx_Entity *existing)
+{
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(_register_item(obj, pd, subobj), EINA_FALSE);
+   return efl_pack_before(pd->bx, subobj, existing);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_tab_bar_efl_pack_linear_pack_after(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Efl_Gfx_Entity *subobj, const Efl_Gfx_Entity *existing)
+{
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(_register_item(obj, pd, subobj), EINA_FALSE);
+   return efl_pack_after(pd->bx, subobj, existing);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_tab_bar_efl_pack_linear_pack_at(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Efl_Gfx_Entity *subobj, int index)
+{
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(_register_item(obj, pd, subobj), EINA_FALSE);
+   return efl_pack_at(pd->bx, subobj, index);
+}
+
+EOLIAN static int
+_efl_ui_tab_bar_efl_container_content_count(Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *pd)
+{
+   return efl_content_count(pd->bx);
+}
+
+EOLIAN static Eina_Iterator*
+_efl_ui_tab_bar_efl_container_content_iterate(Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *pd)
+{
+   return efl_content_iterate(pd->bx);
+}
+
+EOLIAN static Efl_Gfx_Entity*
+_efl_ui_tab_bar_efl_pack_linear_pack_unpack_at(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, int index)
+{
+   _remove_item(obj, pd, efl_pack_content_get(pd->bx, index));
+   return efl_pack_unpack_at(pd->bx, index);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_tab_bar_efl_pack_pack(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Efl_Gfx_Entity *subobj)
+{
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(_register_item(obj, pd, subobj), EINA_FALSE);
+   return efl_pack(pd->bx, subobj);
+}
 
 #include "efl_ui_tab_bar.eo.c"

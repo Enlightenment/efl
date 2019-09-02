@@ -140,10 +140,13 @@ _calc_job_cb(void *data)
      }
    if ((minw != sd->minw) || (minh != sd->minh))
      {
+        Eina_Size2D sz;
         sd->minw = minw;
         sd->minh = minh;
 
-        efl_event_callback_call(sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_CHANGED, NULL);
+        sz = efl_ui_pan_content_size_get(sd->pan_obj);
+
+        efl_event_callback_call(sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_SIZE_CHANGED, &sz);
         _sizing_eval(obj);
      }
    sd->calc_job = NULL;
@@ -399,7 +402,7 @@ _efl_ui_image_zoomable_pan_efl_ui_pan_pan_position_set(Eo *obj, Efl_Ui_Image_Zoo
    psd->wsd->pan_y = pos.y;
    evas_object_smart_changed(obj);
 
-   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_PAN_POSITION_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_PAN_CONTENT_POSITION_CHANGED, &pos);
 }
 
 EOLIAN static Eina_Position2D
@@ -1823,16 +1826,16 @@ _efl_ui_image_zoomable_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Zoomable
 
    priv->pan_obj = efl_add(MY_PAN_CLASS, obj);
 
+   pan_data = efl_data_scope_get(priv->pan_obj, MY_PAN_CLASS);
+   efl_data_ref(obj, MY_CLASS);
+   pan_data->wobj = obj;
+   pan_data->wsd = priv;
+
    efl_ui_scroll_manager_pan_set(priv->smanager, priv->pan_obj);
    if (elm_widget_is_legacy(obj))
      edje_object_part_swallow(edje, "elm.swallow.content", priv->pan_obj);
    else
      edje_object_part_swallow(edje, "efl.content", priv->pan_obj);
-
-   pan_data = efl_data_scope_get(priv->pan_obj, MY_PAN_CLASS);
-   efl_data_ref(obj, MY_CLASS);
-   pan_data->wobj = obj;
-   pan_data->wsd = priv;
 
    efl_event_callback_add(obj, EFL_UI_EVENT_SCROLL, _scroll_cb, obj);
 
@@ -2314,6 +2317,25 @@ static Eina_Error
 _efl_ui_image_zoomable_file_set_internal(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Evas_Load_Error *ret)
 {
    const char *file = efl_file_get(obj);
+   efl_file_unload(obj);
+
+   if (_efl_ui_image_zoomable_is_remote(file))
+     {
+        if (_efl_ui_image_zoomable_download(obj, sd, file))
+          {
+             efl_event_callback_legacy_call
+               (obj, EFL_UI_IMAGE_ZOOMABLE_EVENT_DOWNLOAD_START, NULL);
+             *ret = EVAS_LOAD_ERROR_NONE;
+             return 0;
+          }
+     }
+
+   return _internal_file_set(obj, sd, ret);
+}
+
+EOLIAN static void
+_efl_ui_image_zoomable_efl_file_unload(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd)
+{
    ELM_SAFE_FREE(sd->edje, evas_object_del);
    eina_stringshare_replace(&sd->stdicon, NULL);
 
@@ -2332,19 +2354,6 @@ _efl_ui_image_zoomable_file_set_internal(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd
    if (sd->remote.binbuf) ELM_SAFE_FREE(sd->remote.binbuf, eina_binbuf_free);
 
    sd->preload_num = 0;
-
-   if (_efl_ui_image_zoomable_is_remote(file))
-     {
-        if (_efl_ui_image_zoomable_download(obj, sd, file))
-          {
-             efl_event_callback_legacy_call
-               (obj, EFL_UI_IMAGE_ZOOMABLE_EVENT_DOWNLOAD_START, NULL);
-             *ret = EVAS_LOAD_ERROR_NONE;
-             return 0;
-          }
-     }
-
-   return _internal_file_set(obj, sd, ret);
 }
 
 EOLIAN static Eina_Error

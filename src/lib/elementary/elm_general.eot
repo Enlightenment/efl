@@ -3,10 +3,10 @@
  */
 
 /* Legacy-only function pointer types, for the legacy EO classes (genlist, etc...) */
-type Evas_Smart_Cb: __undefined_type; [[Evas smart callback type]]
+type @beta Evas_Smart_Cb: __undefined_type; [[Evas smart callback type]]
 
 /* FIXME: Move to Efl.Ui namespace after Efl.Ui.List gets merged! */
-enum Elm.Object.Select_Mode
+enum @beta @extern Elm.Object.Select_Mode
 {
    [[Possible values for the #ELM_OBJECT_SELECT_MODE policy.
 
@@ -29,7 +29,7 @@ enum Elm.Object.Select_Mode
          is forbidden.]]
 }
 
-enum Elm.Icon.Type
+enum @beta @extern Elm.Icon.Type
 {
    [[Elementary icon types]]
    legacy: elm_icon;
@@ -39,13 +39,13 @@ enum Elm.Icon.Type
 }
 
 /* FIXME: shouldn't exist, they are unusable by the bindings */
-struct @extern Elm.Validate_Content; [[Data for the elm_validator_regexp_helper()]]
-struct @extern Elm.Entry_Anchor_Info; [[The info sent in the callback for the "anchor,clicked" signals emitted
-                                        by entries.]]
-struct @extern Elm.Entry_Anchor_Hover_Info; [[The info sent in the callback for "anchor,hover" signals emitted
-                                              by the Anchor_Hover widget]]
+struct @beta @extern Elm.Validate_Content; [[Data for the elm_validator_regexp_helper()]]
+struct @beta @extern Elm.Entry_Anchor_Info; [[The info sent in the callback for the "anchor,clicked" signals emitted
+                                              by entries.]]
+struct @beta @extern Elm.Entry_Anchor_Hover_Info; [[The info sent in the callback for "anchor,hover" signals emitted
+                                                    by the Anchor_Hover widget]]
 
-enum Elm.Input.Panel.Layout
+enum @beta @extern Elm.Input.Panel.Layout
 {
    [[Input panel (virtual keyboard) layout types.
      Type of input panel (virtual keyboard) to use - this is a hint and may not provide exactly what is desired.
@@ -73,7 +73,7 @@ enum Elm.Input.Panel.Layout
                   @since 1.19]]
 }
 
-enum Elm.Input.Panel.Lang
+enum @beta @extern Elm.Input.Panel.Lang
 {
    [[Input panel (virtual keyboard) language modes.
    ]]
@@ -81,7 +81,7 @@ enum Elm.Input.Panel.Lang
    alphabet      [[Alphabet]]
 }
 
-enum Elm.Autocapital.Type
+enum @beta @extern Elm.Autocapital.Type
 {
    [[Autocapitalization Types.
      Choose method of auto-capitalization.
@@ -92,7 +92,7 @@ enum Elm.Autocapital.Type
    allcharacter  [[Autocapitalize all letters.]]
 }
 
-enum Elm.Input.Panel.Return_Key.Type
+enum @beta @extern Elm.Input.Panel.Return_Key.Type
 {
    [["Return" Key types on the input panel (virtual keyboard).
    ]]
@@ -109,7 +109,7 @@ enum Elm.Input.Panel.Return_Key.Type
               @since 1.8]]
 }
 
-enum Elm.Input.Hints
+enum @beta @extern Elm.Input.Hints
 {
    [[Enumeration that defines the types of Input Hints.
 

@@ -227,12 +227,16 @@ struct _Eolian_Function
    Eolian_Implement *impl;
    Eolian_Documentation *get_return_doc;
    Eolian_Documentation *set_return_doc;
+   Eina_List *ctor_of;
+   Eolian_Class *klass;
    Eina_Bool obj_is_const :1; /* True if the object has to be const. Useful for a few methods. */
    Eina_Bool get_return_no_unused :1; /* also used for methods */
    Eina_Bool set_return_no_unused :1;
+   Eina_Bool get_return_move      :1;
+   Eina_Bool set_return_move      :1;
+   Eina_Bool get_return_by_ref    :1;
+   Eina_Bool set_return_by_ref    :1;
    Eina_Bool is_static :1;
-   Eina_List *ctor_of;
-   Eolian_Class *klass;
 };
 
 struct _Eolian_Part
@@ -255,6 +259,8 @@ struct _Eolian_Function_Parameter
    Eolian_Documentation *doc;
    Eolian_Parameter_Dir param_dir;
    Eina_Bool optional :1; /* True if this argument is optional */
+   Eina_Bool by_ref   :1;
+   Eina_Bool move     :1;
 };
 
 struct _Eolian_Type
@@ -272,6 +278,7 @@ struct _Eolian_Type
    };
    Eina_Bool is_const  :1;
    Eina_Bool is_ptr    :1;
+   Eina_Bool move      :1;
    Eina_Bool owned     :1;
    Eina_Bool ownable   :1;
 };
@@ -342,6 +349,8 @@ struct _Eolian_Struct_Type_Field
    Eolian_Object     base;
    Eolian_Type      *type;
    Eolian_Documentation *doc;
+   Eina_Bool move     :1;
+   Eina_Bool by_ref   :1;
 };
 
 struct _Eolian_Enum_Type_Field

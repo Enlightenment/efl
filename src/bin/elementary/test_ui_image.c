@@ -640,7 +640,7 @@ test_ui_image_prescale(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_
    efl_pack(hbox, rd);
    efl_event_callback_add(hbox, EFL_UI_RADIO_GROUP_EVENT_VALUE_CHANGED, _cb_prescale_radio_changed, im);
 
-   efl_ui_radio_group_selected_object_set(hbox, rd);
+   efl_ui_selectable_selected_set(rd, EINA_TRUE);
 
    efl_pack(box, hbox);
 

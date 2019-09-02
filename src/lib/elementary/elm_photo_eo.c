@@ -56,6 +56,7 @@ _elm_photo_class_initializer(Efl_Class *klass)
       EFL_OBJECT_OP_FUNC(efl_file_mmap_set, _elm_photo_efl_file_mmap_set),
       EFL_OBJECT_OP_FUNC(efl_file_mmap_get, _elm_photo_efl_file_mmap_get),
       EFL_OBJECT_OP_FUNC(efl_file_load, _elm_photo_efl_file_load),
+      EFL_OBJECT_OP_FUNC(efl_file_unload, _elm_photo_efl_file_unload),
       EFL_OBJECT_OP_FUNC(efl_ui_widget_theme_apply, _elm_photo_efl_ui_widget_theme_apply),
       EFL_OBJECT_OP_FUNC(efl_ui_draggable_drag_target_set, _elm_photo_efl_ui_draggable_drag_target_set),
       EFL_OBJECT_OP_FUNC(efl_ui_draggable_drag_target_get, _elm_photo_efl_ui_draggable_drag_target_get),

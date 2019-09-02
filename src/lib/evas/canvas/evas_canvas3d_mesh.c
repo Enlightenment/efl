@@ -861,6 +861,13 @@ _evas_canvas3d_mesh_alpha_test_enable_get(const Eo *obj EINA_UNUSED, Evas_Canvas
    return pd->alpha_test_enabled;
 }
 
+EOLIAN static void
+_evas_canvas3d_mesh_efl_file_unload(Eo *obj, Evas_Canvas3D_Mesh_Data *pd)
+{
+   efl_file_unload(efl_super(obj, MY_CLASS));
+   _mesh_fini(pd);
+}
+
 EOLIAN static Eina_Error
 _evas_canvas3d_mesh_efl_file_load(Eo *obj, Evas_Canvas3D_Mesh_Data *pd)
 {

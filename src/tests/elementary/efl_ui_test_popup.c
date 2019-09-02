@@ -203,7 +203,7 @@ EFL_START_TEST(efl_ui_test_popup_events)
    efl_ui_popup_part_backwall_repeat_events_set(efl_part(popup, "backwall"), EINA_TRUE);
    click_object(repeat_test_btn);
 
-   efl_ui_popup_timeout_set(popup, 0.1);
+   efl_ui_popup_closing_timeout_set(popup, 0.1);
    ecore_main_loop_begin();
 }
 EFL_END_TEST

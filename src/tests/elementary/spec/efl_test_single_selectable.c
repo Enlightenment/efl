@@ -8,10 +8,12 @@
 
 /* spec-meta-start
       {"test-interface":"Efl.Ui.Single_Selectable",
-       "test-widgets": ["Efl.Ui.Grid", "Efl.Ui.List"],
+       "test-widgets": ["Efl.Ui.Grid", "Efl.Ui.List", "Efl.Ui.Radio_Box", "Efl.Ui.Tab_Bar"],
        "custom-mapping" : {
           "Efl.Ui.Grid" : "EFL_UI_GRID_DEFAULT_ITEM_CLASS",
-          "Efl.Ui.List" : "EFL_UI_LIST_DEFAULT_ITEM_CLASS"
+          "Efl.Ui.List" : "EFL_UI_LIST_DEFAULT_ITEM_CLASS",
+          "Efl.Ui.Radio_Box" : "EFL_UI_RADIO_CLASS",
+          "Efl.Ui.Tab_Bar" : "EFL_UI_TAB_BAR_DEFAULT_ITEM_CLASS"
         }
       }
 
@@ -49,9 +51,17 @@ EFL_START_TEST(last_selectable_check)
 
    efl_ui_selectable_selected_set(c2, EINA_TRUE);
    ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(widget), c2);
+   if (c == 0) efl_loop_begin(efl_main_loop_get());
+   ck_assert_int_eq(c, 1);
+   c = 0;
+
    efl_ui_selectable_selected_set(c1, EINA_FALSE);
    ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(widget), c2);
    efl_ui_selectable_selected_set(c2, EINA_FALSE);
+   if (c == 0) efl_loop_begin(efl_main_loop_get());
+   ck_assert_int_eq(c, 1);
+   c = 0;
+
    ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(widget), NULL);
 }
 EFL_END_TEST

@@ -254,7 +254,7 @@ _efl_ui_datepicker_efl_object_destructor(Eo *obj, Efl_Ui_Datepicker_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_datepicker_min_set(Eo *obj, Efl_Ui_Datepicker_Data *pd EINA_UNUSED, int year, int month, int day)
+_efl_ui_datepicker_date_min_set(Eo *obj, Efl_Ui_Datepicker_Data *pd EINA_UNUSED, int year, int month, int day)
 {
    int new_time[EFL_UI_DATEPICKER_TYPE_COUNT] = {year, month, day};
 
@@ -271,7 +271,7 @@ _efl_ui_datepicker_min_set(Eo *obj, Efl_Ui_Datepicker_Data *pd EINA_UNUSED, int 
 }
 
 EOLIAN static void
-_efl_ui_datepicker_min_get(const Eo *obj EINA_UNUSED, Efl_Ui_Datepicker_Data *pd, int *year, int *month, int *day)
+_efl_ui_datepicker_date_min_get(const Eo *obj EINA_UNUSED, Efl_Ui_Datepicker_Data *pd, int *year, int *month, int *day)
 {
    *year = pd->min_date[DATEPICKER_YEAR];
    *month = pd->min_date[DATEPICKER_MONTH];
@@ -279,7 +279,7 @@ _efl_ui_datepicker_min_get(const Eo *obj EINA_UNUSED, Efl_Ui_Datepicker_Data *pd
 }
 
 EOLIAN static void
-_efl_ui_datepicker_max_set(Eo *obj, Efl_Ui_Datepicker_Data *pd EINA_UNUSED, int year, int month, int day)
+_efl_ui_datepicker_date_max_set(Eo *obj, Efl_Ui_Datepicker_Data *pd EINA_UNUSED, int year, int month, int day)
 {
    int new_time[EFL_UI_DATEPICKER_TYPE_COUNT] = {year, month, day};
 
@@ -296,7 +296,7 @@ _efl_ui_datepicker_max_set(Eo *obj, Efl_Ui_Datepicker_Data *pd EINA_UNUSED, int 
 }
 
 EOLIAN static void
-_efl_ui_datepicker_max_get(const Eo *obj EINA_UNUSED, Efl_Ui_Datepicker_Data *pd, int *year, int *month, int *day)
+_efl_ui_datepicker_date_max_get(const Eo *obj EINA_UNUSED, Efl_Ui_Datepicker_Data *pd, int *year, int *month, int *day)
 {
    *year = pd->max_date[DATEPICKER_YEAR];
    *month = pd->max_date[DATEPICKER_MONTH];

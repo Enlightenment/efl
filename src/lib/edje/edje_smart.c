@@ -402,6 +402,29 @@ _efl_canvas_layout_efl_canvas_group_group_calculate(Eo *obj EINA_UNUSED, Edje *e
    _edje_recalc_do(ed);
 }
 
+EOLIAN static void
+_efl_canvas_layout_efl_file_unload(Eo *obj, Edje *ed)
+{
+   efl_file_unload(efl_super(obj, MY_CLASS));
+   if (_edje_lua_script_only(ed)) _edje_lua_script_only_shutdown(ed);
+#ifdef HAVE_EPHYSICS
+   /* clear physics world  / shutdown ephysics */
+   if ((ed->collection) && (ed->collection->physics_enabled) && (ed->world))
+     {
+        if (EPH_LOAD())
+          {
+             EPH_CALL(ephysics_world_del)(ed->world);
+             EPH_CALL(ephysics_shutdown)();
+          }
+     }
+#endif
+   if (ed->persp) edje_object_perspective_set(obj, NULL);
+   _edje_file_del(ed);
+   eina_stringshare_replace(&ed->path, NULL);
+   eina_stringshare_replace(&ed->group, NULL);
+   eina_stringshare_replace(&ed->parent, NULL);
+}
+
 EOLIAN static Eina_Error
 _efl_canvas_layout_efl_file_load(Eo *obj, Edje *ed)
 {
@@ -481,7 +504,7 @@ _efl_canvas_layout_efl_observer_update(Eo *obj EINA_UNUSED, Edje *ed, Efl_Object
      }
    else if (obs == _edje_text_class_member)
      {
-        _edje_textblock_style_all_update_text_class(ed, key);
+        _edje_file_textblock_style_all_update_text_class(ed->file, key);
 #ifdef EDJE_CALC_CACHE
         ed->text_part_change = EINA_TRUE;
 #endif

@@ -158,7 +158,6 @@ pub_eo_files = [
   'efl_ui_tab_pager.eo',
   'efl_ui_tab_bar.eo',
   'efl_ui_tab_page.eo',
-  'efl_ui_tab_page_part_tab.eo',
   'efl_ui_widget_focus_manager.eo',
   'efl_ui_legacy.eo',
   'efl_ui_button_legacy_part.eo',
@@ -183,6 +182,7 @@ pub_eo_files = [
   'efl_ui_multi_selectable.eo',
   'efl_ui_single_selectable.eo',
   'efl_ui_position_manager_data_access_v1.eo',
+  'efl_ui_tab_bar_default_item.eo',
 ]
 
 foreach eo_file : pub_eo_files
@@ -940,6 +940,7 @@ elementary_src = [
   'efl_ui_position_manager_entity.c',
   'efl_ui_position_manager_list.c',
   'efl_ui_position_manager_grid.c',
+  'efl_ui_tab_bar_default_item.c'
 ]
 
 elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, efreet_mime, efreet_trash, eio, atspi, dl, intl]

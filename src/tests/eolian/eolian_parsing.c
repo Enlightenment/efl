@@ -928,19 +928,6 @@ EFL_START_TEST(eolian_enum)
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != 15);
 
-   fail_if(!(tdl = eolian_unit_enum_by_name_get(unit, "Bar")));
-   fail_if(strcmp(eolian_typedecl_enum_legacy_prefix_get(tdl), "test"));
-
-   fail_if(!(field = eolian_typedecl_enum_field_get(tdl, "foo")));
-   fail_if(!(exp = eolian_typedecl_enum_field_value_get(field, EINA_FALSE)));
-   v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
-   fail_if(v.type != EOLIAN_EXPR_INT);
-   fail_if(v.value.i != 15);
-
-   cname = eolian_typedecl_enum_field_c_constant_get(field);
-   fail_if(strcmp(cname, "TEST_FOO"));
-   eina_stringshare_del(cname);
-
    fail_if(!(tdl = eolian_unit_enum_by_name_get(unit, "Baz")));
 
    fail_if(!(field = eolian_typedecl_enum_field_get(tdl, "flag1")));

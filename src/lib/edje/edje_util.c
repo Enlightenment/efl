@@ -680,13 +680,21 @@ _edje_color_class_get_internal(Edje_Color_Class *cc, Efl_Gfx_Color_Class_Layer l
 EAPI Eina_Bool
 edje_color_class_set(const char *color_class, int r, int g, int b, int a, int r2, int g2, int b2, int a2, int r3, int g3, int b3, int a3)
 {
-   Eina_Bool int_ret = EINA_TRUE;
+   Eina_Bool result = EINA_TRUE;
+   Eina_Bool normal = EINA_FALSE , outline = EINA_FALSE , shadow = EINA_FALSE;
 
-   int_ret &= efl_gfx_color_class_set(_edje_global(), color_class, EFL_GFX_COLOR_CLASS_LAYER_NORMAL, r, g, b, a);
-   int_ret &= efl_gfx_color_class_set(_edje_global(), color_class, EFL_GFX_COLOR_CLASS_LAYER_OUTLINE, r2, g2, b2, a2);
-   int_ret &= efl_gfx_color_class_set(_edje_global(), color_class, EFL_GFX_COLOR_CLASS_LAYER_SHADOW, r3, g3, b3, a3);
+   if (!_edje_color_class_hash)
+     _edje_color_class_hash = eina_hash_string_superfast_new(NULL);
 
-   return int_ret;
+   result &= _edje_color_class_set_internal(_edje_color_class_hash, color_class, EFL_GFX_COLOR_CLASS_LAYER_NORMAL, r, g, b, a, &normal);
+   result &= _edje_color_class_set_internal(_edje_color_class_hash, color_class, EFL_GFX_COLOR_CLASS_LAYER_OUTLINE, r2, g2, b2, a2, &outline);
+   result &= _edje_color_class_set_internal(_edje_color_class_hash, color_class, EFL_GFX_COLOR_CLASS_LAYER_SHADOW, r3, g3, b3, a3, &shadow);
+
+   // either of them changes then request an update.
+   if (result && (normal || outline || shadow))
+     efl_observable_observers_update(_edje_color_class_member, color_class, "color_class,set");
+
+   return result;
 }
 
 EOLIAN Eina_Bool

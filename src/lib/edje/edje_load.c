@@ -1707,26 +1707,13 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
                if (rp->part->default_desc)
                  {
                     Edje_Part_Description_Text *text;
-                    Edje_Style *stl = NULL;
-                    const char *style;
+                    Evas_Textblock_Style *style = NULL;
 
                     text = (Edje_Part_Description_Text *)rp->part->default_desc;
-                    style = edje_string_get(&text->text.style);
-                    if (style)
-                      {
-                         Eina_List *l;
+                    style = _edje_textblock_style_get(ed, edje_string_get(&text->text.style));
 
-                         EINA_LIST_FOREACH(ed->file->styles, l, stl)
-                           {
-                              if ((stl->name) && (!strcmp(stl->name, style))) break;
-                              stl = NULL;
-                           }
-                      }
-                    if (stl)
-                      {
-                         if (evas_object_textblock_style_get(rp->object) != stl->style)
-                           evas_object_textblock_style_set(rp->object, stl->style);
-                      }
+                    if (evas_object_textblock_style_get(rp->object) != style)
+                      evas_object_textblock_style_set(rp->object, style);
                  }
           }
         _edje_entry_init(ed);
@@ -2315,7 +2302,7 @@ _edje_file_free(Edje_File *edf)
    if (edf->free_strings && edf->compiler) eina_stringshare_del(edf->compiler);
    if (edf->free_strings) eina_stringshare_del(edf->id);
    eina_hash_free(edf->style_hash);
-   _edje_textblock_style_cleanup(edf);
+   _edje_file_textblock_style_cleanup(edf);
    if (edf->ef) eet_close(edf->ef);
    if (edf->f) eina_file_close(edf->f);  // close matching open (in _edje_file_open) OK
    free(edf);

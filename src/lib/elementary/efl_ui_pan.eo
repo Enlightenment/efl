@@ -64,8 +64,7 @@ class @beta Efl.Ui.Pan extends Efl.Canvas.Group implements Efl.Content
       Efl.Canvas.Group.group_calculate;
    }
    events {
-      pan,content,changed: void; [[The content has changed.]]
-      pan,viewport,changed: void; [[This widget's position or size has changed.]]
-      pan,position,changed: void; [[The content's position has changed.]]
+      pan,content_position,changed: Eina.Position2D; [[The content's position has changed, its position in the event is the new position.]]
+      pan,content_size,changed: Eina.Size2D; [[The content's size has changed, its size in the event is the new size]]
    }
 }

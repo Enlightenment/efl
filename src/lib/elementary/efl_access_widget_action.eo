@@ -11,7 +11,7 @@ mixin @beta Efl.Access.Widget.Action extends Efl.Access.Action
          get @pure_virtual {
          }
          values {
-            @cref actions: ptr(const(Efl.Access.Action_Data));
+            actions: ptr(const(Efl.Access.Action_Data));
                [[NULL-terminated array of Efl.Access.Action_Data.]]
          }
       }
