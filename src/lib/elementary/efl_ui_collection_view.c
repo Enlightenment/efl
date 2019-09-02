@@ -259,7 +259,7 @@ printf("MODEL FETCHED %d -> %d\n", request->offset, request->length);
         Efl_Ui_Collection_Item_Lookup *insert;
         unsigned int v;
 
-        for (v = 0; v < 3; ++v)
+        /*for (v = 0; v < 3; ++v)
           {
              if (!pd->viewport[v]) continue;
 
@@ -274,18 +274,38 @@ if (!index)
                   child = NULL;
                   break;
                }
-          }
+          }*/
 
         // When requesting a model, it should not be in the cache prior to the request
         if (!child) continue;
 
-        insert = calloc(1, sizeof (Efl_Ui_Collection_Item_Lookup));
-        if (!insert) continue;
+        int search_index = request->offset + i;
 
-        insert->index = request->offset + i;
-        insert->item.model = efl_ref(child);
+        insert = (void*) eina_rbtree_inline_lookup(pd->cache, &search_index,
+                                              sizeof (search_index), _cache_tree_lookup,
+                                              NULL);
+        if (insert)
+          {
+             if (!insert->item.entity && request->need_entity)
+               {
+                  //drop the old model here, overwrite with model + view
+                  efl_unref(insert->item.model);
+                  insert->item.model = efl_ref(child);
+               }
+             else
+               ERR("Inserting a model that was already fetched, dropping new model %d", search_index);
 
-        pd->cache = eina_rbtree_inline_insert(pd->cache, EINA_RBTREE_GET(insert), _cache_tree_cmp, NULL);
+          }
+        else
+          {
+             insert = calloc(1, sizeof (Efl_Ui_Collection_Item_Lookup));
+             if (!insert) continue;
+             insert->index = request->offset + i;
+             insert->item.model = efl_ref(child);
+             pd->cache = eina_rbtree_inline_insert(pd->cache, EINA_RBTREE_GET(insert), _cache_tree_cmp, NULL);
+             printf("INSERTING ELEMENT %lu\n", request->offset + i);
+          }
+
      }
 
    return v;
@@ -526,9 +546,6 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
    // If we do not know the size
    if (!ITEM_SIZE_FROM_MODEL(model, item_size))
      {
-        // But can calculate it now
-        if (!lookup->item.entity) goto not_found;
-
         item_size = efl_gfx_hint_size_combined_min_get(lookup->item.entity);
         if (item_size.h == 0 && item_size.w == 0)
           ITEM_BASE_SIZE_FROM_MODEL(pd->model, item_size);
@@ -543,7 +560,6 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
    return requests;
 
  not_found:
-// printf("LINE %d\n", __LINE__);
    requests = _request_add(requests, request, search_index, EINA_FALSE);
 
    target->size = item_size;
@@ -858,21 +874,36 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
              if (!sizes[idx].size.w || !sizes[idx].size.h) ERR("NULL SIZE ENT");
         idx++;
      }*/
-   while (idx < limit)
+   if (conf.cache_request)
      {
-        uint64_t search_index = conf.range.start_id + idx;
-// printf("%lu LINE %d\n", search_index, __LINE__);
-        requests = _cache_size_fetch(requests, &request, pd,
-                                     search_index, &sizes[idx], item_base);
-             if (!sizes[idx].size.w || !sizes[idx].size.h) ERR("NULL SIZE ENT");
-        idx++;
+        printf("CACHING SIZE CALL\n");
+        while (idx < limit)
+            {
+               sizes[idx].depth_leader = EINA_FALSE;
+               sizes[idx].element_depth = 0;
+               sizes[idx].size = item_base;
+                    if (!sizes[idx].size.w || !sizes[idx].size.h) ERR("NULL SIZE ENT");
+               idx++;
+          }
      }
+   else
+     {
+        while (idx < limit)
+          {
+             uint64_t search_index = conf.range.start_id + idx;
+    // printf("%lu LINE %d\n", search_index, __LINE__);
+             requests = _cache_size_fetch(requests, &request, pd,
+                                         search_index, &sizes[idx], item_base);
+                  if (!sizes[idx].size.w || !sizes[idx].size.h) ERR("NULL SIZE ENT");
+             idx++;
+          }
 
 
-   // Done, but flush request first
-   if (request) requests = eina_list_append(requests, request);
+        // Done, but flush request first
+        if (request) requests = eina_list_append(requests, request);
 
-   requests = _batch_request_flush(requests, data, pd);
+        requests = _batch_request_flush(requests, data, pd);
+     }
 
    // Get the amount of filled item
    result.filled_items = limit;
