@@ -739,13 +739,6 @@ if (request->length < 1) CRI("ACK");
 
         eina_list_move_list(&pd->requests, &requests, ll);
      }
-
-   EINA_LIST_FOREACH(pd->requests, ll, request)
-     {
-        printf("-----> %lu %lu\n", request->offset, request->offset + request->length);
-     }
-
-
    return NULL;
 }
 
