@@ -12,6 +12,12 @@ _efl_canvas_animation_player_target_set(Eo *eo_obj EINA_UNUSED,
                                  Efl_Canvas_Animation_Player_Data *pd,
                                  Efl_Canvas_Object *target)
 {
+   if (pd->target == target)
+     return;
+
+   if (pd->target)
+     efl_event_callback_del(pd->target, EFL_EVENT_DEL, _target_del_cb, pd);
+
    efl_event_callback_add(target, EFL_EVENT_DEL, _target_del_cb, pd);
 
    pd->target = target;
