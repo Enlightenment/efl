@@ -527,7 +527,8 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
                   Eolian_Function_Parameter *pr = d1;
                   rtp = eolian_parameter_type_get(pr);
                   /* reflect only when returning 1 val */
-                  reflect_type = rtp;
+                  if (!eolian_parameter_is_by_ref(pr))
+                    reflect_type = rtp;
                   var_as_ret = EINA_TRUE;
                   def_ret = eolian_parameter_default_value_get(pr);
                }
@@ -543,7 +544,8 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
         if (eina_iterator_next(itr, &d1) && !eina_iterator_next(itr, &d2))
           {
              Eolian_Function_Parameter *pr = d1;
-             reflect_type = eolian_parameter_type_get(pr);
+             if (!eolian_parameter_is_by_ref(pr))
+               reflect_type = eolian_parameter_type_get(pr);
           }
         eina_iterator_free(itr);
      }
