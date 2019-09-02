@@ -23,7 +23,7 @@ public class Example
         popup.SetVisible(true);
         popup.SetButton(Efl.Ui.AlertPopupButton.Positive, "Ok", null);
         popup.SetSize(new Eina.Size2D(150, 30));
-        popup.ButtonClickedEvt += (object sender, Efl.Ui.AlertPopupButtonClickedEvtArgs e) => {
+        popup.ButtonClickedEvt += (object sender, Efl.Ui.AlertPopupButtonClickedEvt_Args e) => {
             popup.SetParent(null);
             popup.Invalidate();
         };
