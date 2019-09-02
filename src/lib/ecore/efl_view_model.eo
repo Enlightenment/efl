@@ -19,27 +19,34 @@ function @beta EflViewModelPropertySet {
 
 class @beta Efl.View_Model extends Efl.Composite_Model
 {
-   [[Efl model providing helpers for custom properties used when linking a model to a view and you need to generate/adapt values for display.
+   [[Efl model providing helpers for custom properties used when linking a model to a view and you need to
+     generate/adapt values for display.
 
-     There is two ways to use this class, you can either inherit from it and have a custom constructor for example. Or you can just instantiate
-     it and manually define your property on it via callbacks.
+     There is two ways to use this class, you can either inherit from it and have a custom constructor for example.
+     Or you can just instantiate it and manually define your property on it via callbacks.
    ]]
    methods {
       property_string_add {
          [[Adds a synthetic string property, generated from a $definition string and other properties in the model.
 
-           The $definition string, similar to how $printf works, contains ${} placeholders that are replaced by the actual value of the property inside the placeholder tags when the synthetic property is retrieved.
-           For example, a numeric property $length might be strange to use as a label, since it will only display a number. However, a synthetic string can be generated with the definition "Length ${length}." which renders more nicely and does not require any more code by the user of the property.
+           The $definition string, similar to how $printf works, contains ${} placeholders that are replaced by the
+           actual value of the property inside the placeholder tags when the synthetic property is retrieved.
+           For example, a numeric property $length might be strange to use as a label, since it will only display a
+           number. However, a synthetic string can be generated with the definition "Length ${length}." which renders
+           more nicely and does not require any more code by the user of the property.
 
-           $not_ready and $on_error strings can be given to be used when the data is not ready or there is some error, respectively. These strings do accept placeholder tags.
+           $not_ready and $on_error strings can be given to be used when the data is not ready or there is some error,
+           respectively. These strings do accept placeholder tags.
 
            See @.property_string_del
          ]]
          params {
             name: string; [[The name for the new synthetic property.]]
             definition: string; [[The definition string for the new synthetic property.]]
-            not_ready: string; [[The text to be used if any of the properties used in $definition is not ready yet. If set to $null, no check against EAGAIN will be done.]]
-            on_error: string; [[The text to be used if any of the properties used in $definition is in error. It takes precedence over $not_ready. If set to $null, no error checks are performed.]]
+            not_ready: string; [[The text to be used if any of the properties used in $definition is not ready yet.
+                                 If set to $null, no check against EAGAIN will be done.]]
+            on_error: string; [[The text to be used if any of the properties used in $definition is in error. It takes
+                                precedence over $not_ready. If set to $null, no error checks are performed.]]
          }
          return: Eina.Error;
       }
@@ -54,7 +61,8 @@ class @beta Efl.View_Model extends Efl.Composite_Model
          return: Eina.Error;
       }
       property_logic_add {
-         [[Add callbacks that will be triggered when someone ask for the specified property name when getting or setting a property.
+         [[Add callbacks that will be triggered when someone ask for the specified property name when getting or
+           setting a property.
 
            A get or set should at least be provided for this call to succeed.
 
@@ -62,14 +70,18 @@ class @beta Efl.View_Model extends Efl.Composite_Model
          ]]
          params {
             property: string; [[The property to bind on to.]]
-            get: EflViewModelPropertyGet; [[Define the get callback called when the @Efl.Model.property.get is called with the above property name.]]
-            set: EflViewModelPropertySet; [[Define the set callback called when the @Efl.Model.property.set is called with the above property name.]]
-            binded: iterator<string>; [[Iterator of property name to bind with this defined property see @.property_bind.]]
+            get: EflViewModelPropertyGet; [[Define the get callback called when the @Efl.Model.property.get is called
+                                            with the above property name.]]
+            set: EflViewModelPropertySet; [[Define the set callback called when the @Efl.Model.property.set is called
+                                            with the above property name.]]
+            binded: iterator<string>; [[Iterator of property name to bind with this defined property see
+                                        @.property_bind.]]
          }
          return: Eina.Error;
       }
       property_logic_del {
-         [[Delete previously added callbacks that were triggered when someone asked for the specified property name when getting or setting a property.
+         [[Delete previously added callbacks that were triggered when someone asked for the specified property name
+           when getting or setting a property.
 
            A get or set should at least be provided for this call to succeed.
 
@@ -102,7 +114,7 @@ class @beta Efl.View_Model extends Efl.Composite_Model
          }
       }
       @property children_bind {
-         [[Define if we will intercept all childrens object reference and
+         [[Define if we will intercept all children object reference and
            bind them through the ViewModel with the same property logic as this
            one. Be careful of recursivity.
 

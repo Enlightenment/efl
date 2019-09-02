@@ -1,6 +1,7 @@
 import eina_types;
 
-abstract @beta Efl.Canvas.Vg.Node extends Efl.Object implements Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Duplicate, Efl.Gfx.Path
+abstract @beta Efl.Canvas.Vg.Node extends Efl.Object
+                                  implements Efl.Gfx.Entity, Efl.Gfx.Color, Efl.Gfx.Stack, Efl.Duplicate, Efl.Gfx.Path
 {
    [[Efl vector graphics abstract class]]
    methods {

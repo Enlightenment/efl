@@ -406,12 +406,14 @@ abstract Efl.Object
          [[Will register a manager of a specific class to be answered by eo.provider_find.]]
          params {
             @in klass: const(Efl.Class); [[The class provided by the registered provider.]]
-            @in provider: const(Efl.Object); [[The provider for the newly registered class that has to provide that said Efl.Class.]]
+            @in provider: const(Efl.Object); [[The provider for the newly registered class that has to provide that
+                                               said Efl.Class.]]
          }
          return: bool; [[$true if successfully register, $false otherwise.]]
       }
       provider_unregister {
-         [[Will unregister a manager of a specific class that was previously registered and answered by eo.provider_find.]]
+         [[Will unregister a manager of a specific class that was previously registered and answered by
+           eo.provider_find.]]
          params {
             @in klass: const(Efl.Class); [[The class provided by the provider to unregister for.]]
             @in provider: const(Efl.Object); [[The provider for the registered class to unregister.]]
@@ -426,7 +428,8 @@ abstract Efl.Object
    events {
       del @hot: void; [[Object is being deleted. See @.destructor.]]
       invalidate @hot: void; [[Object is being invalidated and losing its parent. See @.invalidate.]]
-      noref @hot: void; [[Object has lost its last reference, only parent relationship is keeping it alive. Advanced usage.]]
+      noref @hot: void; [[Object has lost its last reference, only parent relationship is keeping it alive.
+                          Advanced usage.]]
       ownership,unique @hot: void; [[Object has lost a reference and only one is left. It has just one owner now.
                                      Triggered whenever the refcount goes from two to one.]]
       ownership,shared @hot: void; [[Object has acquired a second reference. It has multiple owners now.

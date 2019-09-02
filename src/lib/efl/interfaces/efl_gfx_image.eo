@@ -183,7 +183,7 @@ interface @beta Efl.Gfx.Image
            making frames and decorations. You would most probably also be
            using a filled image (as in @Efl.Gfx.Fill.fill_auto) to use as a frame.
 
-           The default value is @Efl.Gfx.Border_Fill_Mode.default, ie. render
+           The default value is @Efl.Gfx.Border_Fill_Mode.default, i.e. render
            and scale the center area, respecting its transparency.
          ]]
          set {}
@@ -208,8 +208,10 @@ interface @beta Efl.Gfx.Image
          }
          get {}
          values {
-            horizontal: iterator<ptr(Efl.Gfx.Image_Stretch_Region)>; [[Representation of area that are stretchable in the image horizontal space.]]
-            vertical: iterator<ptr(Efl.Gfx.Image_Stretch_Region)>; [[Representation of area that are stretchable in the image vertical space.]]
+            horizontal: iterator<ptr(Efl.Gfx.Image_Stretch_Region)>; [[Representation of areas that are stretchable in
+                                                                       the image horizontal space.]]
+            vertical: iterator<ptr(Efl.Gfx.Image_Stretch_Region)>; [[Representation of areas that are stretchable in
+                                                                     the image vertical space.]]
          }
       }
       @property image_size {

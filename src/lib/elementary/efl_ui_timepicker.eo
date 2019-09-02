@@ -30,7 +30,8 @@ class @beta Efl.Ui.Timepicker extends Efl.Ui.Layout_Base
          get {
          }
          values {
-            is_24hour: bool; [[$true to display the 24 hour time, $false to display 12 hour time including AM/PM button.]]
+            is_24hour: bool; [[$true to display the 24 hour time,
+                               $false to display 12 hour time including AM/PM label.]]
          }
       }
    }

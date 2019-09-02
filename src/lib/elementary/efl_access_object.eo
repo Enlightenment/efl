@@ -284,7 +284,7 @@ mixin @beta Efl.Access.Object requires Efl.Object
          }
       }
       @property role_name @protected @beta {
-         [[Gets human-readable string indentifying object accessibility role.]]
+         [[Gets human-readable string identifying object accessibility role.]]
          get {
          }
          values {
@@ -292,11 +292,12 @@ mixin @beta Efl.Access.Object requires Efl.Object
          }
       }
       @property attributes @protected @beta {
-         [[Gets key-value pairs indentifying object extra attributes. Must be free by a user.]]
+         [[Gets key-value pairs identifying object extra attributes. Must be free by a user.]]
          get {
          }
          values {
-            attributes: list<ptr(Efl.Access.Attribute) @owned> @owned; [[List of object attributes, Must be freed by the user]]
+            attributes: list<ptr(Efl.Access.Attribute) @owned> @owned; [[List of object attributes.
+                                                                         Must be freed by the user]]
          }
       }
       attribute_append {

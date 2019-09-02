@@ -3,24 +3,26 @@ enum Efl.Ui.Animation_View_State
 {
    [[State of animation view]]
    not_ready, [[Animation is not ready to play. (Probably, it didn't file set yet or failed to read file.]]
-   play, [[Animation is on playing. see @Efl.Ui.Animation_View.play]]
-   play_back, [[Animation is on playing back (rewinding). see @Efl.Ui.Animation_View.play_back]]
-   pause, [[Animation has been paused. To continue animation, call @Efl.Ui.Animation_View.resume. see @Efl.Ui.Animation_View.pause]]
-   stop [[Animation view successfully loaded a file then readied for playing. Otherwise after finished animation or stopped forcely by request. see @Efl.Ui.Animation_View.stop]]
+   play, [[Animation is playing. See @Efl.Ui.Animation_View.play.]]
+   play_back, [[Animation is playing back (rewinding). See @Efl.Ui.Animation_View.play_back.]]
+   pause, [[Animation has been paused. To continue animation call @Efl.Ui.Animation_View.resume.
+            See @Efl.Ui.Animation_View.pause.]]
+   stop [[Animation view successfully loaded a file then readied for playing.
+          Otherwise after finished animation or stopped forcibly by request. See @Efl.Ui.Animation_View.stop.]]
 }
 
 class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View, Efl.File
 {
    [[Elementary Animation view class.
      Animation view is designed to show and play animation of
-     vector graphics based content. It hides all efl_canvas_vg details
+     vector graphics based content. It hides all @Efl.Canvas.Vg.Object details
      but just open an API to read vector data from file. Also, it implements
      details of animation control methods of Vector.
 
      Vector data could contain static or animatable vector elements including
-     animation infomation. Currently approved vector data file format is svg, json and eet.
-     Only json(known for Lottie file as well) and eet could contains animation infomation,
-     currently Animation_View is supporting.
+     animation information. Available vector data file formats are SVG, JSON and EET.
+     @Efl.Ui.Animation_View currently only supports the animation information contained in
+     JSON (known as Lottie file as well) and EET files.
    ]]
    event_prefix: efl_ui_animation_view;
    methods {
@@ -59,7 +61,7 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
          get {
          }
          values {
-            auto_repeat: bool; [[Loop mode, Defalut is $false.]]
+            auto_repeat: bool; [[Loop mode, Default is $false.]]
          }
       }
       @property speed {
@@ -168,7 +170,7 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
       stop {
          [[Stop playing animation.
 
-           Stop animation instatly regardless of it's status and reset to
+           Stop animation instantly regardless of its status and reset to
            show first frame of animation. Even though current animation is paused,
            the animation status will be stopped.
          ]]
@@ -186,7 +188,7 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
       }
       @property state {
          [[Current animation view state.
-           see @Efl.Ui.Animation_View_State
+           See @Efl.Ui.Animation_View_State
          ]]
          get{
          }
@@ -196,13 +198,13 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
       }
       is_playing_back {
          [[Returns the status whether current animation is on playing forward or backward.
-           warning: If animation view is not on playing, it will return $false.
+           Note: If animation view is not on playing, it will return $false.
          ]]
          return: bool; [[$true, if animation on playing back, $false otherwise.]]
       }
       @property frame_count {
          [[The index of end frame of the animation view, if it's animated.
-           note : frame number starts with 0.
+           Note : frame number starts with 0.
          ]]
          get {
          }

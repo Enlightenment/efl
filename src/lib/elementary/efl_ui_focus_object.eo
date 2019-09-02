@@ -33,7 +33,9 @@ mixin Efl.Ui.Focus.Object
         }
         @property focus_manager {
             [[This is the focus manager where this focus object is registered in.
-              The element which is the $root of a Efl.Ui.Focus.Manager will not have this focus manager as this object, but rather the second focus manager where it is registered in.
+              The element which is the $root of a Efl.Ui.Focus.Manager will not
+              have this focus manager as this object, but rather the second focus
+              manager where it is registered in.
             ]]
             get {}
             values {
@@ -60,7 +62,8 @@ mixin Efl.Ui.Focus.Object
             ]]
         }
         setup_order_non_recursive @protected {
-            [[This is called when @.setup_order is called, but only on the first call, additional recursive calls to @.setup_order will not call this function again.]]
+            [[This is called when @.setup_order is called, but only on the first call,
+              additional recursive calls to @.setup_order will not call this function again.]]
         }
         on_focus_update @protected {
            [[Virtual function handling focus in/out events on the widget]]

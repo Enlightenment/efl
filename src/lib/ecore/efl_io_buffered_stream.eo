@@ -59,7 +59,8 @@ class @beta Efl.Io.Buffered_Stream extends Efl.Loop_Consumer implements Efl.Io.R
                 [[Constructor-only property to set buffer limit. 0 is unlimited]]
             }
             values {
-                max_queue_size_input: size; [[Defines a maximum buffer size for incoming data or 0 to allow an unlimited amount of bytes]]
+                max_queue_size_input: size; [[Defines a maximum buffer size for incoming data or 0 to allow an
+                                              unlimited amount of bytes]]
             }
         }
 
@@ -74,12 +75,15 @@ class @beta Efl.Io.Buffered_Stream extends Efl.Loop_Consumer implements Efl.Io.R
                 [[Constructor-only property to set buffer limit. 0 is unlimited]]
             }
             values {
-                max_queue_size_output: size; [[Defines a maximum buffer size for output data, or 0 to allow unlimited amount of bytes. If limited, @Efl.Io.Writer.write will take less data than requested.]]
+                max_queue_size_output: size; [[Defines a maximum buffer size for output data, or 0 to allow unlimited
+                                               amount of bytes. If limited, @Efl.Io.Writer.write will take less data
+                                               than requested.]]
             }
         }
 
         @property line_delimiter {
-            [[If set incoming data will be checked for the delimiter and "line" events. The line may include the delimiter, unless it's end-of-stream in @.max_queue_size_input has been reached.]]
+            [[If set incoming data will be checked for the delimiter and "line" events. The line may include the
+              delimiter, unless it's end-of-stream in @.max_queue_size_input has been reached.]]
             get { }
             set {
                [[Changes line delimiter to use. If empty no delimiter is to be used]]
@@ -100,7 +104,8 @@ class @beta Efl.Io.Buffered_Stream extends Efl.Loop_Consumer implements Efl.Io.R
               greater-than zero. Defaults to inactive.
             ]]
             values {
-                seconds: double; [[Number of inactive seconds to timeout this object. If zero or less it will be disabled.]]
+                seconds: double; [[Number of inactive seconds to timeout this object. If zero or less it will be
+                                   disabled.]]
             }
         }
 
@@ -162,7 +167,9 @@ class @beta Efl.Io.Buffered_Stream extends Efl.Loop_Consumer implements Efl.Io.R
             ]]
             get { }
             values {
-                slice: Eina.Slice; [[Slice of the current buffer, may be invalidated if @Efl.Io.Writer.write, @Efl.Io.Closer.close or @Efl.Io.Reader.read are called. It is the full slice available for reading.]]
+                slice: Eina.Slice; [[Slice of the current buffer, may be invalidated if @Efl.Io.Writer.write,
+                                     @Efl.Io.Closer.close or @Efl.Io.Reader.read are called. It is the full
+                                     slice available for reading.]]
             }
         }
 
@@ -216,7 +223,7 @@ class @beta Efl.Io.Buffered_Stream extends Efl.Loop_Consumer implements Efl.Io.R
               otherwise and more calls to flush must be made.
 
               If the @.inner_io implements @Efl.Io.Closer and it
-              is closed or the wrapper itself's closed, this
+              is closed or the wrapper itself is closed, this
               function will do nothing and return $true.
 
               Note: this function may block the main loop execution
@@ -226,7 +233,8 @@ class @beta Efl.Io.Buffered_Stream extends Efl.Loop_Consumer implements Efl.Io.R
               "write,finished" event.
             ]]
             params {
-                may_block: bool; [[If $true, then @Efl.Io.Reader.can_read and @Efl.Io.Writer.can_write are not checked and the call may block.]]
+                may_block: bool; [[If $true, then @Efl.Io.Reader.can_read and @Efl.Io.Writer.can_write are not checked
+                                   and the call may block.]]
                 ignore_line_delimiter: bool; [[Forces flush ignoring line delimiters]]
             }
             return: bool(true); [[$true if all data was sent, $false otherwise]]
@@ -240,7 +248,9 @@ class @beta Efl.Io.Buffered_Stream extends Efl.Loop_Consumer implements Efl.Io.R
         error: Eina.Error; [[An error has occurred and I/O has stopped]]
         progress: void; [[Property @.progress changed]]
         slice,changed: void; [[The read-slice returned by @.slice may have changed.]]
-        line: ptr(const(Eina.Slice)); [[If @.line_delimiter is set, will be emitted with current line. The memory is only valid during event callback dispatched and should not be modified. Note that the line slice may not be inside @.slice.]]
+        line: ptr(const(Eina.Slice)); [[If @.line_delimiter is set, will be emitted with current line. The memory is
+                                        only valid during event callback dispatched and should not be modified.
+                                        Note that the line slice may not be inside @.slice.]]
     }
 
     implements {

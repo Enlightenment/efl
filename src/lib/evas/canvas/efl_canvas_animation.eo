@@ -32,7 +32,7 @@ class @beta Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
          get {
          }
          values {
-            mode: Efl.Canvas.Animation_Repeat_Mode; [[Repeat mode. EFL_ANIMATION_REPEAT_MODE_RESTART restarts animation when the animation ends and EFL_ANIMATION_REPEAT_MODE_REVERSE reverses animation when the animation ends.]]
+            mode: Efl.Canvas.Animation_Repeat_Mode; [[Repeat mode.]]
          }
       }
       @property repeat_count {
@@ -42,7 +42,7 @@ class @beta Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
          get {
          }
          values {
-            count: int; [[Repeat count. EFL_ANIMATION_REPEAT_INFINITE repeats animation infinitely.]]
+            count: int; [[Repeat count. -1 repeats animation infinitely.]]
          }
       }
       @property start_delay {
@@ -52,7 +52,7 @@ class @beta Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
          get {
          }
          values {
-            sec: double; [[Delay time, in seconds, from when the animation starts until the animation is animated]]
+            sec: double; [[Delay time, in seconds, from when the animation starts until the animation is animated.]]
          }
       }
       @property interpolator {
@@ -62,7 +62,7 @@ class @beta Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
          get {
          }
          values {
-            interpolator: Efl.Interpolator; [[Interpolator which indicates interpolation function. Efl_Interpolator is required.]]
+            interpolator: Efl.Interpolator; [[Interpolator which indicates interpolation function.]]
          }
       }
       animation_apply {

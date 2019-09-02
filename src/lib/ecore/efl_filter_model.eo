@@ -2,7 +2,8 @@ function @beta EflFilterModel {
    [[EflFilterModel function]]
    params {
       parent: Efl.Filter_Model; [[This object can be used to know when to cancel the future.]]
-      child: Efl.Model; [[You must reference this object for the duration of your use of it as the caller will not do that for you.]]
+      child: Efl.Model; [[You must reference this object for the duration of your use of it as the caller will not do
+                          that for you.]]
    }
    return: future<bool>; [[$true if the model should be kept.]]
 };

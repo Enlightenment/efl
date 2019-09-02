@@ -4,7 +4,8 @@ struct Efl.Loop_Arguments {
      @since 1.22
    ]]
    argv: const(array<const(stringshare)>); [[Array with loop arguments]]
-   initialization: bool; [[Set to $true when the program should initialize its internal state. This happen once per process instance.]]
+   initialization: bool; [[Set to $true when the program should initialize its internal state.
+                           This happens once per process instance.]]
 }
 
 abstract Efl.Loop extends Efl.Task
@@ -69,8 +70,10 @@ abstract Efl.Loop extends Efl.Task
            [[You should never need/call this, unless you are implementing a custom
              tick source for an animator.
 
-             Note: The time point must match whatever zero time you get from ecore_time_get() and @.time.get() (same 0 point).
-             What this point is is undefined, so unless your source uses the same 0 time, then you may have to adjust and do some guessing.
+             Note: The time point must match whatever zero time you get from ecore_time_get() and @.time.get()
+             (same 0 point).
+             What this point is is undefined, so unless your source uses the same 0 time, then you may have to adjust
+             and do some guessing.
            ]]
          }
          get {
@@ -106,12 +109,17 @@ abstract Efl.Loop extends Efl.Task
    events {
       idle,enter @restart: void; [[Event occurs once the main loop enters the idle state.]]
       idle,exit @restart: void; [[Event occurs once the main loop exits the idle state.]]
-      idle @restart: void; [[Event occurs once the main loop is idle. If you keep listening on this event it may increase the burden on your CPU.]]
+      idle @restart: void; [[Event occurs once the main loop is idle. If you keep listening on this event it may
+                             increase the burden on your CPU.]]
       arguments: Efl.Loop_Arguments; [[Event happens when args are provided to the loop by args_add().]]
-      poll,high: void; [[Event occurs multiple times per second. The exact tick is undefined and can be adjusted system wide.]]
-      poll,medium: void; [[Event occurs multiple times per minute. The exact tick is undefined and can be adjusted system wide.]]
-      poll,low: void; [[Event occurs multiple times every 15 minutes. The exact tick is undefined and can be adjusted system wide.]]
-      quit: void; [[Event occurs when the loop was requested to quit externally e.g. by a ctrl+c signal or a request from a parent loop/thread to have the child exit.]]
+      poll,high: void; [[Event occurs multiple times per second. The exact tick is undefined and can be adjusted
+                         system-wide.]]
+      poll,medium: void; [[Event occurs multiple times per minute. The exact tick is undefined and can be adjusted
+                           system-wide.]]
+      poll,low: void; [[Event occurs multiple times every 15 minutes. The exact tick is undefined and can be adjusted
+                        system-wide.]]
+      quit: void; [[Event occurs when the loop was requested to quit externally e.g. by a ctrl+c signal or a request
+                    from a parent loop/thread to have the child exit.]]
    }
    implements {
       Efl.Object.constructor;

@@ -15,8 +15,9 @@ struct @beta Efl.Ui.Panel_Scroll_Info
    rel_y: double; [[content scrolled position (0.0 ~ 1.0) in the panel]]
 }
 
-class @beta Efl.Ui.Panel extends Efl.Ui.Layout_Base implements Efl.Ui.Focus.Layer, Efl.Ui.Scrollable_Interactive, Efl.Content,
-                    Efl.Access.Widget.Action
+class @beta Efl.Ui.Panel extends Efl.Ui.Layout_Base
+                         implements Efl.Ui.Focus.Layer, Efl.Ui.Scrollable_Interactive, Efl.Content,
+                                    Efl.Access.Widget.Action
 {
    [[Elementary panel class]]
    methods {

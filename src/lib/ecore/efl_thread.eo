@@ -1,4 +1,5 @@
-class @beta Efl.Thread extends Efl.Task implements Efl.ThreadIO, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Efl.Core.Command_Line
+class @beta Efl.Thread extends Efl.Task
+                       implements Efl.ThreadIO, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Efl.Core.Command_Line
 {
    methods {
    }

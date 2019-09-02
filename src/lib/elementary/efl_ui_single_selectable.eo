@@ -1,7 +1,8 @@
 interface @beta Efl.Ui.Single_Selectable {
    [[Interface for getting access to a single selected item in the implementor.
 
-     The implementor is free to allow a specific number of selectables beeing selected or not. This interface just covers always the latest selected selectable.
+     The implementor is free to allow a specific number of selectables being selected or not.
+     This interface just covers always the latest selected selectable.
    ]]
    methods {
       @property last_selected {
@@ -16,8 +17,9 @@ interface @beta Efl.Ui.Single_Selectable {
       @property fallback_selection {
          [[A object that will be selected in case nothing is selected
 
-           A object set to this property will be selected instead of no item beeing selected. Which means, there will be always at least one element selected.
-           If this property is NULL, the state of "no item is selected" can be reached.
+           A object set to this property will be selected instead of no item being selected.
+           Which means, there will be always at least one element selected.
+           If this property is $NULL, the state of "no item is selected" can be reached.
 
            Setting this property as a result of selection events results in undefined behavior.
          ]]
@@ -27,6 +29,10 @@ interface @beta Efl.Ui.Single_Selectable {
       }
    }
    events {
-      selection_changed : void; [[Called when there is a change in the selection state, this event will collect all the item selection change events that are happening within one loop iteration. This means, you will only get this event once, even if a lot of items have changed. If you are interested in detailed changes, subscribe to the selection,changed event of Efl.Ui.Selectable.]]
+      selection_changed : void; [[Emitted when there is a change in the selection state. This event will collect all
+                                  the item selection change events that are happening within one loop iteration.
+                                  This means, you will only get this event once, even if a lot of items have changed.
+                                  If you are interested in detailed changes, subscribe to the individual
+                                  @[Efl.Ui.Selectable.selected,changed] events of each item.]]
    }
 }

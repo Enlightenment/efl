@@ -72,7 +72,7 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
             [[Returns the current cursor style name.]]
          }
          values {
-            style: string; [[A specific style to use, eg. default,
+            style: string; [[A specific style to use, e.g. default,
                              transparent, ....]]
          }
       }
@@ -111,7 +111,8 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
       @property disabled {
          [[Whether the widget is enabled (accepts and reacts to user inputs).
 
-           The property works counted, this means, whenever n-caller set the value to $true, n-caller have to set it to $false in order to get it out of the disabled state again.
+           The property is counted, this is, if it is set n times to $true,
+           it has to be set n times to $false in order to get it out of the disabled state again.
 
            Each widget may handle the disabled state differently, but overall
            disabled widgets shall not respond to any input events. This is
@@ -193,7 +194,7 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
            Note: Objects which are meant to be interacted with by input events
            are created able to be focused, by default. All the others are not.
 
-           This property's default value depends on the widget (eg. a box is
+           This property's default value depends on the widget (e.g. a box is
            not focusable, but a button is).
          ]]
          set {
@@ -383,10 +384,13 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
       focus_state_apply @protected {
          [[Apply a new focus state on the widget.
 
-          This method is called internally by @Efl.Ui.Widget. Override it to change how a widget interacts with its focus manager.
-          If a widget desires to change the applied configuration, it has to modify $configured_state in addition to any internal changes.
+          This method is called internally by @Efl.Ui.Widget.
+          Override it to change how a widget interacts with its focus manager.
+          If a widget desires to change the applied configuration,
+          it has to modify $configured_state in addition to any internal changes.
 
-          The default implementation (when this method is not overridden) applies $configured_state using the $manager contained inside.
+          The default implementation (when this method is not overridden) applies $configured_state using
+          the $manager contained inside.
          ]]
          params {
             @in current_state : Efl.Ui.Widget_Focus_State;

@@ -1,4 +1,6 @@
-class @beta Efl.Ui.Position_Manager.Grid extends Efl.Object implements Efl.Ui.Position_Manager.Entity, Efl.Ui.Position_Manager.Data_Access_V1
+class @beta Efl.Ui.Position_Manager.Grid extends Efl.Object
+                                         implements Efl.Ui.Position_Manager.Entity,
+                                                    Efl.Ui.Position_Manager.Data_Access_V1
 {
    [[Implementation of @Efl.Ui.Position_Manager.Entity for two-dimensional grids.
 

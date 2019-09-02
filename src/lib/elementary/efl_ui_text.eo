@@ -215,7 +215,7 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
             ]]
          }
          values {
-            enabled: bool; [[If $enabled is $true, the return key is automatically disabled when the entry has no text.]]
+            enabled: bool; [[If $true, the return key is automatically disabled when the entry has no text.]]
          }
       }
       @property item_factory {
@@ -227,7 +227,8 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
          }
       }
       input_panel_show {
-         [[Show the input panel (virtual keyboard) based on the input panel property of entry such as layout, autocapital types and so on.
+         [[Show the input panel (virtual keyboard) based on the input panel property of entry such as layout,
+           autocapital types and so on.
 
            Note that input panel is shown or hidden automatically according to the focus state of entry widget.
            This API can be used in the case of manually controlling by using @.input_panel_enabled.set(en, $false).

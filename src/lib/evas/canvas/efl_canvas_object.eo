@@ -72,7 +72,7 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
            Please do not assume that @Efl.Gfx.Render_Op.copy mode can be
            used to "poke" holes in a window (to see through it), as only the
            compositor can ensure that. Copy mode should only be used with
-           otherwise opaque widgets or inside non-window surfaces (eg. a
+           otherwise opaque widgets or inside non-window surfaces (e.g. a
            transparent background inside a buffer canvas).
          ]]
          set {
@@ -232,7 +232,8 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
            Note: The old focus APIs still work, however they will only act on the default seat.
          ]]
          params {
-            @in seat: Efl.Input.Device; [[The seat that should be added to the focus list. Use $null for the default seat.]]
+            @in seat: Efl.Input.Device; [[The seat that should be added to the focus list. Use $null for the default
+                                          seat.]]
          }
          return: bool; [[$true if the focus has been set or $false otherwise.]]
       }
@@ -241,7 +242,8 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
          [[ Remove a seat from the focus list.
          ]]
          params {
-            @in seat: Efl.Input.Device; [[The seat that should be removed from the focus list. Use $null for the default seat.]]
+            @in seat: Efl.Input.Device; [[The seat that should be removed from the focus list. Use $null for the
+                                          default seat.]]
          }
          return: bool; [[$true if the seat was removed from the focus list or $false otherwise.]]
       }

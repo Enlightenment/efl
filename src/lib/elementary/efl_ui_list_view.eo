@@ -13,7 +13,8 @@ class @beta Efl.Ui.List_View extends Efl.Ui.Layout_Base implements Efl.Ui.Scroll
 {
    methods {
       @property homogeneous {
-         [[When in homogeneous mode, all items have the same height and width. Otherwise, each item's size is respected.
+         [[When in homogeneous mode, all items have the same height and width.
+           Otherwise, each item's size is respected.
          ]]
          get {
          }
