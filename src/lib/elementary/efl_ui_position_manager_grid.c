@@ -38,6 +38,13 @@ typedef struct {
    int items;
 } Group_Cache_Line;
 
+static inline void
+_update_min_size(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd, int added_index EINA_UNUSED, Eina_Size2D min_size)
+{
+   pd->max_min_size.w = MAX(pd->max_min_size.w, min_size.w);
+   pd->max_min_size.h = MAX(pd->max_min_size.h, min_size.h);
+}
+
 static void
 _group_cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
 {
@@ -49,6 +56,8 @@ _group_cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
 
    if (!pd->group_cache_dirty)
      return;
+
+   pd->max_min_size = EINA_SIZE2D(0, 0);
 
    pd->group_cache_dirty = EINA_FALSE;
    if (pd->group_cache)
@@ -83,6 +92,7 @@ _group_cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
              line.group_header_size = EINA_SIZE2D(0, 0);
              line.items = 0;
           }
+        _update_min_size(obj, pd, i, size_buffer[buffer_id].size);
      }
    eina_inarray_push(pd->group_cache, &line);
 }
@@ -509,13 +519,6 @@ _flush_abs_size(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd)
 }
 
 static inline void
-_update_min_size(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd, int added_index EINA_UNUSED, Eina_Size2D min_size)
-{
-   pd->max_min_size.w = MAX(pd->max_min_size.w, min_size.w);
-   pd->max_min_size.h = MAX(pd->max_min_size.h, min_size.h);
-}
-
-static inline void
 _flush_min_size(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd)
 {
    Eina_Size2D min_size = pd->max_min_size;
@@ -762,6 +765,22 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_data_access_v1_data_access
    pd->callbacks.size.access = size_access;
    pd->callbacks.size.free_cb = size_access_free_cb;
    pd->size = size;
+   _group_cache_require(obj, pd);
+   _schedule_recalc_abs_size(obj, pd);
+
 }
+
+EOLIAN static Efl_Object*
+_efl_ui_position_manager_grid_efl_object_finalize(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd)
+{
+   obj = efl_finalize(efl_super(obj, MY_CLASS));
+
+   pd->group_cache_dirty = EINA_TRUE;
+   _group_cache_require(obj, pd);
+   _schedule_recalc_abs_size(obj, pd);
+
+   return obj;
+}
+
 
 #include "efl_ui_position_manager_grid.eo.c"
