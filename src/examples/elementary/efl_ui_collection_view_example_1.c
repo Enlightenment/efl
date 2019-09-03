@@ -45,6 +45,7 @@ static Efl_Model*
 _make_model(Evas_Object *win)
 {
    Eina_Value vtext;
+   Eina_Value w, h;
    Efl_Generic_Model *model, *child;
    unsigned int i, s;
    char buf[256];
@@ -52,13 +53,17 @@ _make_model(Evas_Object *win)
    model = efl_add(EFL_GENERIC_MODEL_CLASS, win);
    eina_value_setup(&vtext, EINA_VALUE_TYPE_STRING);
 
+   w = eina_value_int_init(91);
+   h = eina_value_int_init(18);
+   efl_model_property_set(model, "item.width", &w);
+   efl_model_property_set(model, "item.height", &h);
+
    for (i = 0; i < (NUM_ITEMS); i++)
      {
         s = i%2;
         child = efl_model_child_add(model);
         eina_value_set(&vtext, styles[s]);
         efl_model_property_set(child, "odd_style", &vtext);
-
         snprintf(buf, sizeof(buf), "Item # %i", i);
         eina_value_set(&vtext, buf);
         efl_model_property_set(child, "title", &vtext);
@@ -76,7 +81,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    Eo *model;
    Efl_Select_Model *selmodel;
 
-   win = elm_win_util_standard_add("list_view", "List_View");
+   win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(), efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC));
    elm_policy_set(ELM_POLICY_QUIT, ELM_POLICY_QUIT_LAST_WINDOW_CLOSED);
 
    elm_win_autodel_set(win, EINA_TRUE);
@@ -90,23 +95,21 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    efl_ui_widget_factory_item_class_set(factory, EFL_UI_LIST_DEFAULT_ITEM_CLASS);
    efl_ui_property_bind(factory, "signal/efl,state,%v", "odd_style");
    efl_ui_property_bind(factory, "signal/efl,state,%{selected;unselected}", "selected");
-   efl_ui_property_bind(factory, "efl.text", "title");
+   efl_ui_property_bind(factory, "text", "title");
 
+   Eo *lst = efl_new(EFL_UI_POSITION_MANAGER_LIST_CLASS);
    li = efl_add(EFL_UI_COLLECTION_VIEW_CLASS, win,
-                efl_ui_view_model_set(efl_added, selmodel));
-   efl_ui_collection_view_position_manager_set(li, efl_new(EFL_UI_POSITION_MANAGER_LIST_CLASS));
+                efl_ui_collection_view_position_manager_set(efl_added, lst),
+                efl_ui_view_model_set(efl_added, selmodel),
+                efl_ui_collection_view_factory_set(efl_added, factory));
 
    //   efl_event_callback_add(li, EFL_UI_LIST_VIEW_EVENT_ITEM_REALIZED, _realized_cb, NULL);
    //   efl_event_callback_add(li, EFL_UI_LIST_VIEW_EVENT_ITEM_UNREALIZED, _unrealized_cb, NULL);
 
-   elm_win_resize_object_add(win, li);
-   evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
-   evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
+   efl_content_set(win, li);
 
    //showall
-   evas_object_show(li);
    evas_object_resize(win, 320, 320);
-   evas_object_show(win);
 
    elm_run();
 
