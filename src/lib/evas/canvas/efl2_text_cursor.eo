@@ -22,6 +22,8 @@ enum @beta Efl2.Text.Cursor_Type
 // Rename cluster onse to grapheme?
 // Should the range functions be moved here?
 // Am I happy with the range functions being on the cursor?
+// item_geometry_get <-- do I call it on the item handle? Or maybe just it's going to be done with range geometry get?
+//      Common enoguh to warrant a nice helper?
 class @beta Efl2.Text.Cursor {
    [[Cursor API
    ]]

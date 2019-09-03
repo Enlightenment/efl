@@ -12613,38 +12613,6 @@ ppar(Evas_Object_Textblock_Paragraph *par)
 #define EFL2_CANVAS_TEXT_EXTRA_OPS \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl2_canvas_text_efl_object_dbg_info_get)
 
-EOLIAN static Efl_Text_Cursor_Cursor *
-_efl_canvas_text_efl_text_cursor_text_cursor_get(const Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o, Efl_Text_Cursor_Get_Type get_type)
-{
-   if (get_type > EFL_TEXT_CURSOR_GET_TYPE_MAIN)
-     {
-        ERR("Unsupported cursor types other than main!");
-     }
-   return o->cursor;
-}
-
-EOLIAN static Efl_Text_Cursor_Cursor *
-_efl_canvas_text_efl_text_cursor_cursor_new(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o)
-{
-   Efl_Text_Cursor_Cursor *cur;
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   evas_object_async_block(obj);
-
-   cur = calloc(1, sizeof(Efl_Text_Cursor_Cursor));
-   if (!cur) return NULL;
-   _evas_textblock_cursor_init(cur, eo_obj);
-
-   o->cursors = eina_list_append(o->cursors, cur);
-   return cur;
-}
-
-EOLIAN static void
-_efl_canvas_text_efl_text_cursor_cursor_free(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o EINA_UNUSED,
-      Efl_Text_Cursor_Cursor *cur)
-{
-   evas_textblock_cursor_free(cur);
-}
-
 /* Async Layout */
 
 typedef struct _Text_Promise_Ctx Text_Promise_Ctx;
