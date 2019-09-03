@@ -237,7 +237,10 @@ _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_
           }
 
         if (ent)
-          efl_gfx_entity_geometry_set(ent, geom);
+          {
+             efl_gfx_entity_visible_set(ent, EINA_TRUE);
+             efl_gfx_entity_geometry_set(ent, geom);
+          }
         if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
           geom.y += size.h;
         else
