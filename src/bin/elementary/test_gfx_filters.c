@@ -492,7 +492,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
 
       // Experimental textblock support
       o = tb = evas_object_textblock_add(evas_object_evas_get(win));
-      efl_event_callback_add(o, EFL_CANVAS_TEXT_EVENT_STYLE_INSETS_CHANGED, _textblock_resize, NULL);
+      efl_event_callback_add(o, EVAS_TEXTBLOCK_LEGACY_EVENT_STYLE_INSETS_CHANGED, _textblock_resize, NULL);
       efl_event_callback_add(o, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _textblock_resize, NULL);
       Evas_Textblock_Style *st = evas_textblock_style_new();
       evas_textblock_style_set(st, "DEFAULT='font=Sans font_size=20 color=#FFF wrap=word'");

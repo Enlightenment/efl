@@ -1,11 +1,11 @@
 import efl_text_types;
 
-class @beta Efl.Canvas.Text extends Efl.Canvas.Object implements Efl.Text,
+class @beta Evas.Textblock.Legacy extends Efl.Canvas.Object implements Efl.Text,
                        Efl.Canvas.Filter.Internal, Efl.Text_Font,
                        Efl.Text_Style, Efl.Text_Format, Efl.Text_Cursor,
                        Efl.Text_Annotate, Efl.Text_Markup, Efl.Text_Markup_Interactive, Efl.Ui.I18n
 {
-   [[Efl canvas text class]]
+   [[Efl canvas textblock class]]
    methods {
       @property is_empty {
          [[Whether the object is empty (no text) or not

@@ -610,7 +610,7 @@ _selection_data_cb(void *data EINA_UNUSED, Eo *obj,
    efl_text_interactive_selection_cursors_get(obj, &start, &end);
    if (!efl_text_cursor_equal(obj, start, end))
      {
-        efl_canvas_text_range_delete(obj, start, end);
+        evas_textblock_legacy_range_delete(obj, start, end);
         EFL_UI_TEXT_DATA_GET(obj, sd);
         _efl_ui_text_select_none(obj, sd);
      }
@@ -919,9 +919,9 @@ _efl_ui_text_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Text_Data *sd)
         efl_gfx_entity_size_set(sd->text_obj, EINA_SIZE2D(sz.w, 0));
         /* ignore current object size for single-line since we always need to know the actual size */
         if (sd->single_line)
-          efl_canvas_text_size_native_get(sd->text_obj, &min.w, &min.h);
+          evas_textblock_legacy_size_native_get(sd->text_obj, &min.w, &min.h);
         else
-          efl_canvas_text_size_formatted_get(sd->text_obj, &min.w, &min.h);
+          evas_textblock_legacy_size_formatted_get(sd->text_obj, &min.w, &min.h);
         efl_gfx_entity_size_set(sd->text_obj, text_sz);
         efl_event_thaw(sd->text_obj);
         min.w += edmin.w;
@@ -939,7 +939,7 @@ _return_key_enabled_check(Evas_Object *obj)
 
    if (!sd->auto_return_key) return;
 
-   if (efl_canvas_text_is_empty_get(obj) == EINA_TRUE)
+   if (evas_textblock_legacy_is_empty_get(obj) == EINA_TRUE)
      return_key_disabled = EINA_TRUE;
 
    efl_ui_text_input_panel_return_key_disabled_set(obj, return_key_disabled);
@@ -1245,7 +1245,7 @@ _cut_cb(Eo *obj)
 
    _selection_store(EFL_UI_SELECTION_TYPE_CLIPBOARD, obj);
    efl_text_interactive_selection_cursors_get(obj, &start, &end);
-   efl_canvas_text_range_delete(obj, start, end);
+   evas_textblock_legacy_range_delete(obj, start, end);
    _efl_ui_text_select_none(obj, sd);
 }
 
@@ -2128,7 +2128,7 @@ _efl_ui_text_efl_object_constructor(Eo *obj, Efl_Ui_Text_Data *sd)
    efl_event_callback_forwarder_add(text_obj, EFL_UI_TEXT_EVENT_CHANGED, obj);
    efl_event_callback_forwarder_add(text_obj, EFL_TEXT_INTERACTIVE_EVENT_TEXT_SELECTION_CHANGED, obj);
    sd->text_obj = text_obj;
-   sd->text_guide_obj = efl_add(EFL_CANVAS_TEXT_CLASS, obj);
+   sd->text_guide_obj = efl_add(EVAS_TEXTBLOCK_LEGACY_CLASS, obj);
    sd->text_table = efl_add(EFL_UI_TABLE_CLASS, obj);
    efl_composite_attach(obj, text_obj);
 
@@ -2192,11 +2192,11 @@ _efl_ui_text_efl_object_finalize(Eo *obj,
       (sd->entry_edje, EVAS_HINT_FILL, EVAS_HINT_FILL);
    efl_event_callback_add(sd->text_obj, EFL_UI_TEXT_EVENT_CHANGED_USER,
          _efl_ui_text_changed_user_cb, obj);
-   efl_event_callback_add(sd->text_obj, EFL_CANVAS_TEXT_EVENT_CHANGED,
+   efl_event_callback_add(sd->text_obj, EVAS_TEXTBLOCK_LEGACY_EVENT_CHANGED,
          _efl_ui_text_changed_cb, obj);
    efl_event_callback_add(sd->text_obj, EFL_TEXT_INTERACTIVE_EVENT_TEXT_SELECTION_CHANGED,
          _efl_ui_text_selection_changed_cb, obj);
-   efl_event_callback_add(sd->text_obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED,
+   efl_event_callback_add(sd->text_obj, EVAS_TEXTBLOCK_LEGACY_EVENT_CURSOR_CHANGED,
          _efl_ui_text_cursor_changed_cb, obj);
    efl_event_callback_add(sd->text_obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED,
          _text_position_changed_cb, obj);
@@ -2359,7 +2359,7 @@ _efl_ui_text_selection_get(const Eo *obj, Efl_Ui_Text_Data *sd)
    if ((sd->password)) return NULL;
 
    efl_text_interactive_selection_cursors_get(obj, &start_obj, &end_obj);
-   return efl_canvas_text_range_text_get(obj, start_obj, end_obj);
+   return evas_textblock_legacy_range_text_get(obj, start_obj, end_obj);
 }
 
 EOLIAN static void
@@ -3537,7 +3537,7 @@ _update_text_selection(Eo *obj, Eo *text_obj)
 
    efl_text_interactive_selection_cursors_get(text_obj, &sel_start, &sel_end);
 
-   range = efl_canvas_text_range_simple_geometry_get(text_obj,
+   range = evas_textblock_legacy_range_simple_geometry_get(text_obj,
          sel_start, sel_end);
 
    l = sd->sel;
@@ -3767,7 +3767,7 @@ _anchors_update(Eo *obj, Efl_Ui_Text_Data *sd)
                   efl_text_annotation_positions_get(obj, anc->annotation,
                         start, end);
 
-                  range = efl_canvas_text_range_geometry_get(obj, start, end);
+                  range = evas_textblock_legacy_range_geometry_get(obj, start, end);
                   count = eina_list_count(eina_iterator_container_get(range));
 
                   // Add additional rectangles if needed
@@ -3981,7 +3981,7 @@ _efl_ui_text_selection_changed_cb(void *data, const Efl_Event *event EINA_UNUSED
 
    efl_text_interactive_selection_cursors_get(obj, &start, &end);
 
-   text = efl_canvas_text_range_text_get(obj, start, end);
+   text = evas_textblock_legacy_range_text_get(obj, start, end);
    if (!text || (text[0] == '\0'))
      {
         _edje_signal_emit(sd, "selection,cleared", "efl.text");
