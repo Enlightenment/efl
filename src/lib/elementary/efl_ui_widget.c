@@ -2653,14 +2653,14 @@ elm_widget_cursor_del(Eo *obj, Elm_Cursor *cur)
 }
 
 EAPI void
-elm_widget_scroll_lock_set(Eo *obj, Efl_Ui_Scroll_Block block)
+elm_widget_scroll_lock_set(Eo *obj, Efl_Ui_Layout_Orientation block)
 {
    Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    Eina_Bool lx, ly;
 
    if (!sd) return;
-   lx = !!(block & EFL_UI_SCROLL_BLOCK_HORIZONTAL);
-   ly = !!(block & EFL_UI_SCROLL_BLOCK_VERTICAL);
+   lx = !!(block & EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
+   ly = !!(block & EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
    if (sd->scroll_x_locked != lx)
      {
         sd->scroll_x_locked = lx;
@@ -2673,15 +2673,15 @@ elm_widget_scroll_lock_set(Eo *obj, Efl_Ui_Scroll_Block block)
      }
 }
 
-EAPI Efl_Ui_Scroll_Block
+EAPI Efl_Ui_Layout_Orientation
 elm_widget_scroll_lock_get(const Eo *obj)
 {
    Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
-   Efl_Ui_Scroll_Block block = EFL_UI_SCROLL_BLOCK_NONE;
+   Efl_Ui_Layout_Orientation block = EFL_UI_LAYOUT_ORIENTATION_DEFAULT;
 
    if (!sd) return block;
-   if (sd->scroll_x_locked) block |= EFL_UI_SCROLL_BLOCK_HORIZONTAL;
-   if (sd->scroll_y_locked) block |= EFL_UI_SCROLL_BLOCK_VERTICAL;
+   if (sd->scroll_x_locked) block |= EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
+   if (sd->scroll_y_locked) block |= EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
 
    return block;
 }

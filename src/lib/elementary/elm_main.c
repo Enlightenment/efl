@@ -1790,12 +1790,12 @@ EAPI void
 elm_object_scroll_lock_x_set(Evas_Object *obj,
                              Eina_Bool    lock)
 {
-   Efl_Ui_Scroll_Block block;
+   Efl_Ui_Layout_Orientation block;
 
    EINA_SAFETY_ON_NULL_RETURN(obj);
    block = elm_widget_scroll_lock_get(obj);
-   if (lock) block |= EFL_UI_SCROLL_BLOCK_HORIZONTAL;
-   else block &= ~EFL_UI_SCROLL_BLOCK_HORIZONTAL;
+   if (lock) block |= EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
+   else block &= ~EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
    elm_widget_scroll_lock_set(obj, block);
 }
 
@@ -1803,33 +1803,33 @@ EAPI void
 elm_object_scroll_lock_y_set(Evas_Object *obj,
                              Eina_Bool    lock)
 {
-   Efl_Ui_Scroll_Block block;
+   Efl_Ui_Layout_Orientation block;
 
    EINA_SAFETY_ON_NULL_RETURN(obj);
    block = elm_widget_scroll_lock_get(obj);
-   if (lock) block |= EFL_UI_SCROLL_BLOCK_VERTICAL;
-   else block &= ~EFL_UI_SCROLL_BLOCK_VERTICAL;
+   if (lock) block |= EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
+   else block &= ~EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
    elm_widget_scroll_lock_set(obj, block);
 }
 
 EAPI Eina_Bool
 elm_object_scroll_lock_x_get(const Evas_Object *obj)
 {
-   Efl_Ui_Scroll_Block block;
+   Efl_Ui_Layout_Orientation block;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    block = elm_widget_scroll_lock_get(obj);
-   return !!(block & EFL_UI_SCROLL_BLOCK_HORIZONTAL);
+   return !!(block & EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
 }
 
 EAPI Eina_Bool
 elm_object_scroll_lock_y_get(const Evas_Object *obj)
 {
-   Efl_Ui_Scroll_Block block;
+   Efl_Ui_Layout_Orientation block;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    block = elm_widget_scroll_lock_get(obj);
-   return !!(block & EFL_UI_SCROLL_BLOCK_VERTICAL);
+   return !!(block & EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
 }
 
 EAPI void

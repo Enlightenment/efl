@@ -1,3 +1,4 @@
+import efl_ui_layout_orientable;
 type @beta Elm_Interface_Scrollable_Cb: __undefined_type; [[Elementary interface scrollable callback type]]
 type @beta Elm_Interface_Scrollable_Resize_Cb: __undefined_type; [[Elementary interface scrollable resize callback type]]
 type @beta Elm_Interface_Scrollable_Min_Limit_Cb: __undefined_type; [[Elementary interface scrollable minimal limit callback type]]
@@ -99,7 +100,7 @@ mixin @beta Elm.Interface_Scrollable requires Efl.Ui.Widget extends Efl.Ui.Scrol
            with regard to scrolling.
          ]]
          values {
-            block: Efl.Ui.Scroll_Block(Efl.Ui.Scroll_Block.none); [[Which axis (or axes) to block]]
+            block: Efl.Ui.Layout_Orientation(Efl.Ui.Layout_Orientation.default); [[Which axis (or axes) to block]]
          }
       }
       @property momentum_animator_disabled {
