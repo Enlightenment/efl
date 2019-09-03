@@ -25,7 +25,7 @@ typedef struct _Efl_Ui_Scroll_Manager_Data
    Efl_Ui_Scrollbar_Mode         hbar_mode, vbar_mode;
 
    Ecore_Timer                  *hbar_timer, *vbar_timer;
-   Efl_Ui_Layout_Orientation block;
+   Efl_Ui_Layout_Orientation     block;
 
    struct
    {
