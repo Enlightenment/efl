@@ -458,6 +458,7 @@ _efl_ui_position_manager_list_efl_ui_layout_orientable_orientation_set(Eo *obj E
 
    cache_invalidate(obj, pd);
    cache_require(obj,pd);
+   if (!efl_finalized_get(obj)) return;
    recalc_absolut_size(obj, pd);
    position_content(obj, pd);
 }
