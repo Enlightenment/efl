@@ -29,6 +29,14 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
             ellipsized: bool; [[$true if it was ellipsized, $false otherwise]]
          }
       }
+
+      @property multiline {
+         [[Multiline is enabled or not]]
+         values {
+            enabled: bool; [[$true if multiline is enabled, $false otherwise]]
+         }
+      }
+
       visible_range_get {
          [[Returns the currently visible range.
 
