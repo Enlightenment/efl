@@ -83,6 +83,7 @@ ecore_string_instance(const char *string)
 
         str =
            (Ecore_String *)malloc(sizeof(Ecore_String) + length * sizeof(char));
+        if (!str) return NULL;
 
         str->string = (char *)(str + 1);
         str->references = 0;
