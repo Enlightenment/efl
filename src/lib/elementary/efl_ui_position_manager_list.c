@@ -210,6 +210,15 @@ _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_
         size = size_buffer[buffer_id].size;
         ent = obj_buffer[buffer_id].entity;
 
+        int diff = cache_access(obj, pd, i + 1) - cache_access(obj, pd, i);
+        int real_diff = 0;
+        if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
+          real_diff = size.h;
+        else
+          real_diff = size.w;
+        if (real_diff != diff)
+          ERR("Reported sizes changed during caching and placement %d %d %d", i, real_diff, diff);
+
         if (ent == pd->last_group)
           {
              pd->last_group = NULL;
