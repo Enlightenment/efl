@@ -41,13 +41,6 @@ class @beta Efl2.Text.Raw_Editable extends Efl2.Canvas.Text {
          }
       }
 
-      @property multiline {
-         [[Multiline is enabled or not]]
-         values {
-            enabled: bool; [[$true if multiline is enabled, $false otherwise]]
-         }
-      }
-
       @property password_mode {
          [[Whether text is a password]]
          get {}
