@@ -17,7 +17,7 @@ class @beta Efl2.Text.Attribute.Factory implements Efl2.Text.Font.Properties, Ef
          [[Sets the factory context from a handle
          ]]
          params {
-            @cref handle: Efl2.Text.Attribute.Handle; [[Attribute handle]]
+            handle: const(ptr(Efl2.Text.Attribute.Handle)); [[Attribute handle]]
          }
       }
 
@@ -26,7 +26,7 @@ class @beta Efl2.Text.Attribute.Factory implements Efl2.Text.Font.Properties, Ef
          [[Sets the factory context to an handle
          ]]
          params {
-            @cref handle: Efl2.Text.Attribute.Handle; [[Attribute handle]]
+            handle: ptr(Efl2.Text.Attribute.Handle); [[Attribute handle]]
          }
       }
 
@@ -34,10 +34,10 @@ class @beta Efl2.Text.Attribute.Factory implements Efl2.Text.Font.Properties, Ef
       insert {
          [[Creates an attribute from the current factory context and inserts it into the range marked by the cursors
          ]]
-         return: Efl2.Text.Attribute.Handle; [[The handle to the attribute]]
+         return: ptr(Efl2.Text.Attribute.Handle); [[The handle to the attribute]]
          params {
-            cur1: Efl2.Text.Cursor; [[Start of range]]
-            cur2: Efl2.Text.Cursor; [[End of range]]
+            cur1: const(Efl2.Text.Cursor); [[Start of range]]
+            cur2: const(Efl2.Text.Cursor); [[End of range]]
          }
       }
 
@@ -45,7 +45,7 @@ class @beta Efl2.Text.Attribute.Factory implements Efl2.Text.Font.Properties, Ef
       create {
          [[Creates an attribute from the current factory context without inserting
          ]]
-         return: Efl2.Text.Attribute.Handle; [[The handle to the attribute]]
+         return: ptr(Efl2.Text.Attribute.Handle); [[The handle to the attribute]]
       }
 
       // FIXME: cursor_?
@@ -64,8 +64,8 @@ class @beta Efl2.Text.Attribute.Factory implements Efl2.Text.Font.Properties, Ef
          [[Gets the attribute's range and set the cursors
          ]]
          params {
-              @out start: const(Efl2.Text.Cursor); [[Start of range]]
-              @out end: const(Efl2.Text.Cursor); [[End of range]]
+              start: Efl2.Text.Cursor; [[Start of range]]
+              end: Efl2.Text.Cursor; [[End of range]]
          }
       }
 
@@ -73,7 +73,7 @@ class @beta Efl2.Text.Attribute.Factory implements Efl2.Text.Font.Properties, Ef
          [[Increase the attribute's refcount
          ]]
          params {
-              @cref handle: Efl2.Text.Attribute.Handle; [[Handle to the attribute to delete from the object]]
+              handle: ptr(Efl2.Text.Attribute.Handle); [[Handle to the attribute to delete from the object]]
          }
       }
 
@@ -81,7 +81,7 @@ class @beta Efl2.Text.Attribute.Factory implements Efl2.Text.Font.Properties, Ef
          [[Decrease the attribute's refcount
          ]]
          params {
-              @cref handle: Efl2.Text.Attribute.Handle; [[Handle to the attribute to delete from the object]]
+              handle: ptr(Efl2.Text.Attribute.Handle); [[Handle to the attribute to delete from the object]]
          }
       }
 
@@ -89,8 +89,40 @@ class @beta Efl2.Text.Attribute.Factory implements Efl2.Text.Font.Properties, Ef
          [[Deletes the current attribute
          ]]
          params {
-              @cref handle: Efl2.Text.Attribute.Handle; [[Handle to the attribute to delete from the object]]
+              handle: ptr(Efl2.Text.Attribute.Handle); [[Handle to the attribute to delete from the object]]
          }
       }
+   }
+   implements {
+       Efl2.Text.Font.Properties.font_family { set; get; }
+       Efl2.Text.Font.Properties.font_size { set; get; }
+       Efl2.Text.Font.Properties.font_source { set; get; }
+       Efl2.Text.Font.Properties.font_fallbacks { set; get; }
+       Efl2.Text.Font.Properties.font_weight { set; get; }
+       Efl2.Text.Font.Properties.font_slant { set; get; }
+       Efl2.Text.Font.Properties.font_width { set; get; }
+       Efl2.Text.Font.Properties.font_lang { set; get; }
+       Efl2.Text.Font.Properties.font_bitmap_scalable { set; get; }
+       Efl2.Text.Style.Properties.foreground_color { set; get; }
+       Efl2.Text.Style.Properties.background_type { set; get; }
+       Efl2.Text.Style.Properties.background_color { set; get; }
+       Efl2.Text.Style.Properties.underline_type { set; get; }
+       Efl2.Text.Style.Properties.underline_color { set; get; }
+       Efl2.Text.Style.Properties.underline_height { set; get; }
+       Efl2.Text.Style.Properties.underline_dashed_gap { set; get; }
+       Efl2.Text.Style.Properties.underline_dashed_color { set; get; }
+       Efl2.Text.Style.Properties.underline_dashed_width { set; get; }
+       Efl2.Text.Style.Properties.underline2_color { set; get; }
+       Efl2.Text.Style.Properties.strikethrough_type { set; get; }
+       Efl2.Text.Style.Properties.strikethrough_color { set; get; }
+       Efl2.Text.Style.Properties.shadow_direction { set; get; }
+       Efl2.Text.Style.Properties.shadow_color { set; get; }
+       Efl2.Text.Style.Properties.glow_color { set; get; }
+       Efl2.Text.Style.Properties.glow2_color { set; get; }
+       Efl2.Text.Style.Properties.line_spacing { set; get; }
+       Efl2.Text.Style.Properties.line_spacing_factor { set; get; }
+       Efl2.Text.Style.Properties.line_height { set; get; }
+       Efl2.Text.Style.Properties.line_height_factor { set; get; }
+       Efl2.Text.Style.Properties.tab_width { set; get; }
    }
 }

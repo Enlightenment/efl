@@ -128,6 +128,7 @@ interface @beta Efl2.Text.Style.Properties {
          }
       }
 
+      // FIXME: Should this really be a double?
       @property underline_height
       {
          [[Height of underline style]]
@@ -306,7 +307,7 @@ interface @beta Efl2.Text.Style.Properties {
          ]]
          values
          {
-            value: double; [[Line gap value]]
+            value: int; [[Line gap value]]
          }
       }
 
@@ -318,6 +319,28 @@ interface @beta Efl2.Text.Style.Properties {
          values
          {
             value: double; [[Relative line gap value]]
+         }
+      }
+
+      @property line_height {
+         [[The minimum line height for each line in the text
+
+           $value is absolute size.
+         ]]
+         values
+         {
+            value: int; [[Line height value]]
+         }
+      }
+
+      @property line_height_factor {
+         [[Relative line height for each line in the text
+
+           The original line height value is multiplied by $value.
+         ]]
+         values
+         {
+            value: double; [[Relative line height value]]
          }
       }
 
