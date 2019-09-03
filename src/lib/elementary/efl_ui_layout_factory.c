@@ -70,6 +70,14 @@ _efl_ui_layout_factory_efl_object_destructor(Eo *obj, Efl_Ui_Layout_Factory_Data
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
+
+EOLIAN static void
+_efl_ui_layout_factory_efl_ui_factory_constructing(const Eo *obj EINA_UNUSED, Efl_Ui_Layout_Factory_Data *pd EINA_UNUSED, Efl_Gfx_Entity *ui_view EINA_UNUSED)
+{
+   /* NOP */
+}
+
+
 static void
 _efl_ui_layout_factory_efl_ui_factory_building(const Eo *obj, Efl_Ui_Layout_Factory_Data *pd, Efl_Gfx_Entity *ui_view)
 {
