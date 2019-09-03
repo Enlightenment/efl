@@ -791,8 +791,16 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
    cur = efl_ui_pan_position_get(sd->pan_obj);
    x = cur.x;
    y = cur.y;
-   if (sd->scrollto.x.animator) x = sd->scrollto.x.end;
-   if (sd->scrollto.y.animator) y = sd->scrollto.y.end;
+   if (sd->scrollto.x.animator)
+     {
+        if (((ev->z > 0) && (sd->scrollto.x.end > x)) || ((ev->z < 0) && (sd->scrollto.x.end < x)))
+          x = sd->scrollto.x.end;
+     }
+   if (sd->scrollto.y.animator)
+     {
+        if (((ev->z > 0) && (sd->scrollto.y.end > y)) || ((ev->z < 0) && (sd->scrollto.y.end < y)))
+          y = sd->scrollto.y.end;
+     }
    max = efl_ui_pan_position_max_get(sd->pan_obj);
    min = efl_ui_pan_position_min_get(sd->pan_obj);
    if (x < min.x) x = min.x;
