@@ -7721,7 +7721,8 @@ _escaped_is_eq_and_advance(const char *s, const char *s_end,
  * @param escape_values array of Escape_Value to look inside, Sorted by Escape
  * @param escape_values_len is the len of Escape_Value array
  */
-int _escaped_string_search(const char * s, size_t s_len, const Escape_Value escape_values[], const size_t escape_values_len)
+static int
+_escaped_string_search(const char *s, size_t s_len, const Escape_Value escape_values[], const size_t escape_values_len)
 {
    int l = 0;
    int r = escape_values_len - 1;
@@ -7755,7 +7756,8 @@ int _escaped_string_search(const char * s, size_t s_len, const Escape_Value esca
  * @param escape_values array of Escape_Value to look inside, Sorted by Value
  * @param escape_values_len is the len of Escape_Value array
  */
-int _escaped_value_search(const char * s, const Escape_Value escape_values[], const size_t escape_values_len)
+static int
+_escaped_value_search(const char *s, const Escape_Value escape_values[], const size_t escape_values_len)
 {
    int l = 0;
    int r = escape_values_len - 1;
