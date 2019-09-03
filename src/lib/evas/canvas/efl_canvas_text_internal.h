@@ -42,6 +42,7 @@ struct _Efl2_Text_Attribute_Format
       } foreground, underline, underline2, underline_dash, outline, shadow, glow, glow2, background,
         strikethrough;
    } color;
+   // FIXME: Not using this one! Should it be used?
    struct {
       int               l, r;
    } margin;  /**< Left and right margin width. */
@@ -54,9 +55,11 @@ struct _Efl2_Text_Attribute_Format
    double               underline_height;  /**< Value to set the height of the single underline. */
    double               line_height_factor;  /**< Value to set the size of line of text. */
    double               line_spacing_factor;  /**< Value for setting line gap. */
+   // FIXME: Not using this one! Should it be used?
    double               linefill;  /**< The value must be a percentage. */
    Efl2_Text_Style_Underline underline : 3; // FIXME: Is the size correct?
    Efl2_Text_Style_Shadow_Direction shadow_direction : 8; // FIXME: is the size correct?
+   // FIXME: Not using this one! Should it be used?
    unsigned char        style;  /**< Value from Evas_Text_Style_Type enum. */
    Eina_Bool            strikethrough : 1;  /**< EINA_TRUE if text should be stricked off, else EINA_FALSE */
    Eina_Bool            background : 1;  /**< EINA_TRUE if enable background color, else EINA_FALSE */
