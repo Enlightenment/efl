@@ -299,7 +299,7 @@ if (!index)
                   insert->item.model = efl_ref(child);
                }
              else
-               ERR("Inserting a model that was already fetched, dropping new model %d", search_index);
+               ERR("Inserting a model that was already fetched, dropping new model %lu", search_index);
 
           }
         else
@@ -776,7 +776,7 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
    Efl_Model *parent;
    Eina_List *requests = NULL;
    Eina_Size2D item_base;
-   unsigned int i, count, limit;
+   unsigned int limit;
    unsigned int idx = 0;
 
    // get the approximate value from the tree node
@@ -789,7 +789,7 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
    pd->last_base = item_base;
 
    sizes = memory.mem;
-   count = efl_model_children_count_get(parent);
+   //count = efl_model_children_count_get(parent);
    limit = conf.range.end_id - conf.range.start_id;
 //   printf("batch_size %u, %d\n", limit, start_id);
 
@@ -927,14 +927,14 @@ _batch_entity_cb(void *data, Efl_Ui_Position_Manager_Request_Range range, Eina_R
    Efl_Ui_Collection_Request *request = NULL;
    Efl_Ui_Position_Manager_Object_Batch_Result result = {0};
    Eina_List *requests = NULL;
-   Efl_Model *parent;
-   unsigned int i, count, limit;
+   //Efl_Model *parent;
+   unsigned int limit;
    unsigned int idx = 0;
 
-   parent = pd->model;
+   //parent = pd->model;
 
    entities = memory.mem;
-   count = efl_model_children_count_get(parent);
+   //count = efl_model_children_count_get(parent);
    limit = range.end_id - range.start_id;;
 
    // Look in the temporary cache now for the beginning of the buffer
@@ -1018,11 +1018,14 @@ _batch_entity_cb(void *data, Efl_Ui_Position_Manager_Request_Range range, Eina_R
    return result;
 }
 
+
+#if 0
 static void
 _batch_free_cb(void *data)
 {
    efl_unref(data);
 }
+#endif
 
 static void
 flush_min_size(Eo *obj, Efl_Ui_Collection_View_Data *pd)
@@ -1058,6 +1061,7 @@ _manager_content_min_size_changed_cb(void *data, const Efl_Event *ev)
    flush_min_size(data, pd);
 }
 
+#if 0
 static Eina_List *
 _viewport_walk_fill(Eina_List *requests,
                     Efl_Ui_Collection_View *obj EINA_UNUSED,
@@ -1101,8 +1105,10 @@ _viewport_walk_fill(Eina_List *requests,
    return requests;
 }
 
+#endif
+
 static void
-_remove_data(Eo *obj, Efl_Ui_Collection_View_Data *pd, uint64_t remove_index)
+_remove_data(Eo *obj EINA_UNUSED, Efl_Ui_Collection_View_Data *pd, uint64_t remove_index)
 {
    Efl_Ui_Collection_Item_Lookup *lookup;
 
@@ -1529,8 +1535,8 @@ _efl_model_child_added(void *data, const Efl_Event *event)
    // At the moment model only append child, but let's try to handle it theorically correct
    Efl_Model_Children_Event *ev = event->info;
    MY_DATA_GET(data, pd);
-   Eina_List *requests = NULL;
-   unsigned int i;
+   //Eina_List *requests = NULL;
+   //unsigned int i;
 
    _cache_cleanup(pd);
 
@@ -1586,7 +1592,7 @@ _efl_model_child_added(void *data, const Efl_Event *event)
         break;
      }*/
 
- notify_manager:
+// notify_manager:
    efl_ui_position_manager_entity_item_added(pd->manager, ev->index, NULL);
 }
 
@@ -1595,8 +1601,8 @@ _efl_model_child_removed(void *data, const Efl_Event *event)
 {
    Efl_Model_Children_Event *ev = event->info;
    MY_DATA_GET(data, pd);
-   Eina_List *requests = NULL;
-   unsigned int i;
+   //Eina_List *requests = NULL;
+   //unsigned int i;
 
    _cache_cleanup(pd);
 
@@ -1653,7 +1659,7 @@ _efl_model_child_removed(void *data, const Efl_Event *event)
         break;
      }*/
 
- notify_manager:
+ //notify_manager:
    efl_ui_position_manager_entity_item_removed(pd->manager, ev->index, NULL);
 }
 
@@ -1672,7 +1678,7 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
    Eina_Iterator *it;
    const char *property;
    Efl_Model *model = NULL;
-   unsigned int i, count;
+   unsigned int count;
    Eina_Bool selection = EINA_FALSE, sizing = EINA_FALSE;
 
    if (ev->previous) efl_event_callback_array_del(ev->previous, model_cbs(), data);
@@ -2052,7 +2058,7 @@ _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_request_move(Eo *obj,
           }
         else
           {
-             unsigned int i;
+             //unsigned int i;
 
 /*             for (i = 0; i < 3; i++)
                {
