@@ -302,8 +302,12 @@ _position_items_vertical(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data 
           {
              _place_grid_item(&geom, pd, x, y);
           }
-
-        efl_gfx_entity_geometry_set(obj_buffer[buffer_id].entity, geom);
+        Efl_Gfx_Entity *item = obj_buffer[buffer_id].entity;
+        if (item)
+          {
+             efl_gfx_entity_geometry_set(item, geom);
+             efl_gfx_entity_visible_set(item, EINA_TRUE);
+          }
      }
 }
 
@@ -369,7 +373,12 @@ _position_items_horizontal(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Dat
           {
              _place_grid_item(&geom, pd, x, y);
           }
-        efl_gfx_entity_geometry_set(obj_buffer[buffer_id].entity, geom);
+        Efl_Gfx_Entity *item = obj_buffer[buffer_id].entity;
+        if (item)
+          {
+             efl_gfx_entity_geometry_set(item, geom);
+             efl_gfx_entity_visible_set(item, EINA_TRUE);
+          }
      }
 }
 
