@@ -195,6 +195,8 @@ evas_src += files([
   'efl_canvas_vg_utils.c',
   'efl_canvas_vg_shape.c',
   'efl_canvas_vg_image.c',
+  'efl_text_attribute_factory.c',
+  'efl_text_cursor.c',
   'evas_filter_mixin.c',
   'evas_canvas3d_object.c',
   'evas_canvas3d_scene.c',
@@ -207,7 +209,6 @@ evas_src += files([
   'evas_canvas3d_primitive.c',
   'evas_canvas3d_node_callback.h',
   'evas_canvas3d_eet.c',
-  'efl_text_attribute_factory.c',
   ])
 
 evas_include_directories += include_directories('.')

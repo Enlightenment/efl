@@ -224,15 +224,16 @@ class @beta Efl2.Text.Cursor {
          set {  }
          get {  }
          values {
-            handle: Efl2.Text.Cursor_Handle; [[The handle of the cursor object]]
+            handle: ptr(Efl2.Text.Cursor_Handle); [[The handle of the cursor object]]
          }
       }
 
+      // FIXME: mirror how we do ref/unref in Eo, in terms of returning values and etc.
       handle_ref @static {
          [[Increase the handle's refcount
          ]]
          params {
-              handle: Efl2.Text.Cursor_Handle; [[Cursor handle]]
+              handle: ptr(Efl2.Text.Cursor_Handle); [[Cursor handle]]
          }
       }
 
@@ -240,7 +241,7 @@ class @beta Efl2.Text.Cursor {
          [[Decrease the handle's refcount
          ]]
          params {
-              handle: Efl2.Text.Cursor_Handle; [[Cursor handle]]
+              handle: ptr(Efl2.Text.Cursor_Handle); [[Cursor handle]]
          }
       }
    }
