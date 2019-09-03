@@ -14,6 +14,7 @@ enum @beta Efl2.Text.Style.Strikethrough
    on,      [[Use strikethrough style]]
 }
 
+// FIXME: This seems completely broken. You can't have more than one effect at a time with this... Was it always the case?
 enum @beta Efl2.Text.Style.Effect
 {
    [[Effect to apply to the displayed text]]
