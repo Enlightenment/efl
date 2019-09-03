@@ -135,6 +135,7 @@ _efl_ui_view_factory_item_created(Eo *factory, void *data EINA_UNUSED, const Ein
 static Eina_Future *
 _efl_ui_view_factory_create_with_event(Efl_Ui_Factory *factory, Eina_Iterator *models, Efl_Gfx_Entity *parent)
 {
+   EINA_SAFETY_ON_NULL_RETURN_VAL(factory, NULL);
    return efl_future_then(factory, efl_ui_factory_create(factory, models, parent),
                           .success_type = EINA_VALUE_TYPE_ARRAY,
                           .success = _efl_ui_view_factory_item_created);
