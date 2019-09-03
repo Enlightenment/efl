@@ -44,6 +44,22 @@ _factory_bind(const Eina_Hash *hash EINA_UNUSED, const void *key, void *data, vo
    return EINA_TRUE;
 }
 
+static void
+_efl_ui_layout_factory_building(void *data, const Efl_Event *event)
+{
+   Efl_Ui_Layout_Factory_Data *pd = data;
+   Efl_Gfx_Entity *ui_view = event->info;
+
+   if (pd->klass || pd->group || pd->style)
+     efl_ui_layout_theme_set(ui_view, pd->klass, pd->group, pd->style);
+
+   eina_hash_foreach(pd->bind.properties, _property_bind, ui_view);
+   eina_hash_foreach(pd->bind.factories, _factory_bind, ui_view);
+
+   efl_gfx_hint_weight_set(ui_view, EFL_GFX_HINT_EXPAND, 0);
+   efl_gfx_hint_fill_set(ui_view, EINA_TRUE, EINA_TRUE);
+}
+
 EOLIAN static Eo *
 _efl_ui_layout_factory_efl_object_constructor(Eo *obj, Efl_Ui_Layout_Factory_Data *pd)
 {
@@ -53,6 +69,8 @@ _efl_ui_layout_factory_efl_object_constructor(Eo *obj, Efl_Ui_Layout_Factory_Dat
 
    pd->bind.properties = eina_hash_stringshared_new(EINA_FREE_CB(eina_stringshare_del));
    pd->bind.factories = eina_hash_stringshared_new(EINA_FREE_CB(efl_unref));
+
+   efl_event_callback_add(obj, EFL_UI_FACTORY_EVENT_ITEM_BUILDING, _efl_ui_layout_factory_building, pd);
 
    return obj;
 }
@@ -68,21 +86,6 @@ _efl_ui_layout_factory_efl_object_destructor(Eo *obj, Efl_Ui_Layout_Factory_Data
    eina_hash_free( pd->bind.factories);
 
    efl_destructor(efl_super(obj, MY_CLASS));
-}
-
-static void
-_efl_ui_layout_factory_efl_ui_factory_building(const Eo *obj, Efl_Ui_Layout_Factory_Data *pd, Efl_Gfx_Entity *ui_view)
-{
-   if (pd->klass || pd->group || pd->style)
-     efl_ui_layout_theme_set(ui_view, pd->klass, pd->group, pd->style);
-
-   eina_hash_foreach(pd->bind.properties, _property_bind, ui_view);
-   eina_hash_foreach(pd->bind.factories, _factory_bind, ui_view);
-
-   efl_gfx_hint_weight_set(ui_view, EFL_GFX_HINT_EXPAND, 0);
-   efl_gfx_hint_fill_set(ui_view, EINA_TRUE, EINA_TRUE);
-
-   efl_ui_factory_building(efl_super(obj, EFL_UI_LAYOUT_FACTORY_CLASS), ui_view);
 }
 
 EOLIAN static void

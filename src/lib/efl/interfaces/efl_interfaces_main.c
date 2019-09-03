@@ -118,15 +118,11 @@ __efl_internal_init(void)
 static Eina_Value
 _efl_ui_view_factory_item_created(Eo *factory, void *data EINA_UNUSED, const Eina_Value v)
 {
-   Efl_Ui_Factory_Item_Created_Event event = { NULL, NULL };
+   Efl_Gfx_Entity *item;
    int len, i;
 
-   EINA_VALUE_ARRAY_FOREACH(&v, len, i, event.item)
-     {
-        event.model = efl_ui_view_model_get(event.item);
-
-        efl_event_callback_call(factory, EFL_UI_FACTORY_EVENT_CREATED, &event);
-     }
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, item)
+     efl_event_callback_call(factory, EFL_UI_FACTORY_EVENT_ITEM_CREATED, item);
 
    return v;
 }

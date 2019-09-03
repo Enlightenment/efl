@@ -15,11 +15,22 @@ typedef struct _Efl_Ui_Image_Factory_Data
     Eina_Stringshare *property;
 } Efl_Ui_Image_Factory_Data;
 
+static void
+_efl_ui_image_factory_building(void *data, const Efl_Event *ev)
+{
+   Efl_Ui_Image_Factory_Data *pd = data;
+   Efl_Gfx_Entity *ui_view = ev->info;
+
+   efl_ui_property_bind(ui_view, "filename", pd->property);
+}
+
 EOLIAN static Eo *
 _efl_ui_image_factory_efl_object_constructor(Eo *obj, Efl_Ui_Image_Factory_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_ui_widget_factory_item_class_set(obj, EFL_UI_IMAGE_CLASS);
+
+   efl_event_callback_add(obj, EFL_UI_FACTORY_EVENT_ITEM_BUILDING, _efl_ui_image_factory_building, pd);
 
    pd->property = NULL;
 
@@ -33,14 +44,6 @@ _efl_ui_image_factory_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Ui_Image_Fa
    pd->property = NULL;
 
    efl_destructor(efl_super(obj, MY_CLASS));
-}
-
-EOLIAN static void
-_efl_ui_image_factory_efl_ui_factory_building(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Factory_Data *pd, Efl_Gfx_Entity *ui_view)
-{
-   efl_ui_property_bind(ui_view, "filename", pd->property);
-
-   efl_ui_factory_building(efl_super(obj, EFL_UI_IMAGE_FACTORY_CLASS), ui_view);
 }
 
 EOLIAN static Eina_Future *

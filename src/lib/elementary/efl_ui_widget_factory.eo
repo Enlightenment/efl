@@ -4,7 +4,6 @@ class @beta Efl.Ui.Widget_Factory extends Efl.Loop_Consumer implements Efl.Ui.Fa
 
      This factory is designed to build @Efl.Ui.Widget and optionally set their
      @Efl.Ui.Widget.style if it was connected with @Efl.Ui.Property_Bind.property_bind "$style".
-
    ]]
    methods {
       @property item_class {
@@ -18,9 +17,9 @@ class @beta Efl.Ui.Widget_Factory extends Efl.Loop_Consumer implements Efl.Ui.Fa
    }
 
    implements {
+      Efl.Object.constructor;
       Efl.Ui.Factory.create;
       Efl.Ui.Factory.release;
-      Efl.Ui.Factory.building;
       Efl.Ui.Property_Bind.property_bind;
       Efl.Part.part_get;
    }

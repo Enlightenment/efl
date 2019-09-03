@@ -11,6 +11,8 @@ interface @beta Efl.Ui.Factory extends Efl.Ui.Property_Bind, Efl.Ui.Factory_Bind
      This object represents a Factory in the factory pattern. Objects should be created via the method
      @Efl.Ui.View_Factory.create_with_event, which will in turn call the necessary APIs from this interface.
      Objects created this way should be removed using @.release.
+
+     It is recommended to not create your own @Efl.Ui.Factory and use event handler as much as possible.
    ]]
    methods {
       create @protected {
@@ -31,18 +33,12 @@ interface @beta Efl.Ui.Factory extends Efl.Ui.Property_Bind, Efl.Ui.Factory_Bind
             ui_view: Efl.Gfx.Entity; [[Object to remove.]]
          }
       }
-      building @const {
-         [[This function is called during the creation of an UI object between the @Efl.Object.constructor and
-           @Efl.Object.finalize call.
-
-           Note: If the @Efl.Ui.Factory does keep a cache of objects, this won't be called when objects are pulled out
-           of the cache.]]
-         params {
-            ui_view: Efl.Gfx.Entity; [[The UI object being created.]]
-         }
-      }
    }
    events {
-      created: Efl.Ui.Factory_Item_Created_Event; [[Event triggered when an item has been successfully created.]]
+      item,constructing: Efl.Gfx.Entity; [[Event triggered when an item is under construction (between the @Efl.Object.constructor and @Efl.Object.finalize call on the item).
+                                         Note:  If the @Efl.Ui.Factory does keep a cache of objects, this won't be called when objects are pulled out of the cache.]]
+      item,building: Efl.Gfx.Entity; [[Event triggered when an item has processed @Efl.Object.finalize, but before all the factory are done building it.
+                                     Note: if the @Efl.Ui.Factory does keep a cache of object, this will be called when object are pulled out of the cache.]]
+      item,created: Efl.Gfx.Entity; [[Event triggered when an item has been successfully created by the factory and is about to be used by an @Efl.Ui.View.]]
    }
 }
