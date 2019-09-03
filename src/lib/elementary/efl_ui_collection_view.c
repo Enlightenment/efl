@@ -1714,15 +1714,6 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
                                efl_ui_view_model_set(efl_added, ev->current));
 
    count = efl_model_children_count_get(model);
-   switch(efl_ui_position_manager_entity_version(pd->manager, 1))
-     {
-       case 1:
-         efl_ui_position_manager_data_access_v1_data_access_set(pd->manager,
-           efl_ref(data), _batch_entity_cb, NULL,
-           efl_ref(data), _batch_size_cb, NULL,
-           count);
-       break;
-     }
 
    /*for (i = 0; i < 3; i++)
      {
@@ -1747,6 +1738,17 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
    requests = _batch_request_flush(requests, data, pd);
 
    pd->model = model;
+   switch(efl_ui_position_manager_entity_version(pd->manager, 1))
+     {
+       case 1:
+         efl_ui_position_manager_data_access_v1_data_access_set(pd->manager,
+           efl_ref(data), _batch_entity_cb, NULL,
+           efl_ref(data), _batch_size_cb, NULL,
+           count);
+       break;
+     }
+
+
 }
 
 static void
