@@ -350,6 +350,8 @@ schedule_recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
 EOLIAN static void
 _efl_ui_position_manager_list_efl_ui_position_manager_entity_viewport_set(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, Eina_Rect size)
 {
+   if (pd->viewport.w == size.w && pd->viewport.h == size.h) return;
+
    pd->viewport = size;
 
    recalc_absolut_size(obj, pd);
