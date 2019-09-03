@@ -410,7 +410,10 @@ printf("ENTITY FETCHED %d -> %d\n", request->offset, request->length);
 
         efl_key_data_set(child, COLLECTION_VIEW_MANAGED, COLLECTION_VIEW_MANAGED_YES);
         /* fix eventing in scroller by ensuring collection items are in the scroller hierarchy */
+        efl_ui_item_container_set(child, obj);
+        efl_ui_widget_sub_object_add(obj, child);
         efl_canvas_group_member_add(pd->pan, child);
+        efl_ui_widget_focus_allow_set(child, EINA_FALSE);
         efl_gfx_entity_visible_set(child, EINA_FALSE);
         if (request->offset + i == 0)
           {
