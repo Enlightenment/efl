@@ -138,7 +138,7 @@ typedef Eo Evas_Textblock;
  * @see evas_textblock_style_set()
  */
 
-typedef struct _Efl_Canvas_Text_Style             Evas_Textblock_Style;
+typedef struct _Evas_Textblock_Legacy_Style             Evas_Textblock_Style;
 
 /**
  * @typedef Evas_Textblock_Cursor
@@ -921,7 +921,7 @@ EAPI int evas_textblock_cursor_text_prepend(Evas_Textblock_Cursor *cur, const ch
  *
  * @param[in] ch The charset name.
  *
- * @ingroup Efl_Canvas_Text
+ * @ingroup Evas_Textblock_Legacy
  */
 EAPI void evas_object_textblock_replace_char_set(Evas_Object *obj, const char *ch);
 
@@ -930,7 +930,7 @@ EAPI void evas_object_textblock_replace_char_set(Evas_Object *obj, const char *c
  *
  * @return The charset name.
  *
- * @ingroup Efl_Canvas_Text
+ * @ingroup Evas_Textblock_Legacy
  */
 EAPI const char *evas_object_textblock_replace_char_get(const Evas_Object *obj);
 
@@ -945,7 +945,7 @@ EAPI const char *evas_object_textblock_replace_char_get(const Evas_Object *obj);
  *
  * @since 1.1
  *
- * @ingroup Efl_Canvas_Text
+ * @ingroup Evas_Textblock_Legacy
  */
 EAPI void evas_object_textblock_valign_set(Evas_Object *obj, double align);
 
@@ -960,7 +960,7 @@ EAPI void evas_object_textblock_valign_set(Evas_Object *obj, double align);
  *
  * @since 1.1
  *
- * @ingroup Efl_Canvas_Text
+ * @ingroup Evas_Textblock_Legacy
  */
 EAPI double evas_object_textblock_valign_get(const Evas_Object *obj);
 
@@ -1056,7 +1056,7 @@ EAPI void evas_textblock_cursor_char_delete(Evas_Textblock_Cursor *cur);
  * @ingroup Evas_Textblock
  */
 EAPI Evas_Textblock_Cursor *evas_object_textblock_cursor_get(const Evas_Object *obj);
-#include "canvas/efl_canvas_text_eo.legacy.h"
+#include "canvas/evas_textblock_legacy_eo.h"
 /**
  * @}
  */

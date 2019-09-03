@@ -17,7 +17,7 @@ static size_t     _hyphen_clients = 0;
 static void
 _dicts_hyphen_init(Eo *eo_obj)
 {
-   Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Textblock_Legacy_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
 
    if (!o->hyphenating)
      {
@@ -98,7 +98,7 @@ _dicts_hyphen_free(void)
 static inline void
 _dicts_hyphen_detach(Eo *eo_obj)
 {
-   Efl_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Textblock_Legacy_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
 
    if (!o->hyphenating) return;
    o->hyphenating = EINA_FALSE;

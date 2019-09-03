@@ -102,7 +102,7 @@ _on_bt3_clicked(void *data, const Efl_Event *event EINA_UNUSED)
    Eo *en = data;
 
    efl_text_interactive_selection_cursors_get(data, &sel_start, &sel_end);
-   const char *s = efl_canvas_text_range_text_get(data, sel_start, sel_end);
+   const char *s = evas_textblock_legacy_range_text_get(data, sel_start, sel_end);
 
    printf("SELECTION REGION: %d - %d\n",
          efl_text_cursor_position_get(en, sel_start),

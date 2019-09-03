@@ -71,7 +71,7 @@ extern "C" {
 #include <canvas/efl_canvas_scene3d.eo.h>
 */
 #include <canvas/efl_canvas_snapshot.eo.h>
-#include <canvas/efl_canvas_text.eo.h>
+#include <canvas/evas_textblock_legacy.eo.h>
 #include <canvas/efl_canvas_text_factory.eo.h>
 #include <canvas/efl_canvas_vg_node.eo.h>
 #include <canvas/efl_canvas_vg_container.eo.h>
