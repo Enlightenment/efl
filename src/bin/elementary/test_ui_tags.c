@@ -67,7 +67,7 @@ test_ui_tags(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    snprintf(buf, sizeof(buf), "%s/objects/multibuttonentry.edj", elm_app_data_dir_get());
    layout = efl_add(EFL_UI_LAYOUT_CLASS, win,
                     elm_layout_file_set(efl_added, buf, "multibuttonentry_test"),
-                    elm_win_resize_object_add(win, efl_added));
+                    efl_content_set(win, efl_added));
 
    array = eina_array_new(10);
    for (i = 0; i < 9; i++)
