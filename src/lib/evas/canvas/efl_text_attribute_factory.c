@@ -21,8 +21,9 @@
    *(A) = (It).a; \
 } while (0)
 
-struct _Efl2_Text_Attribute_Factory_Data {
-     Efl2_Text_Attribute_Format fmt;
+struct _Efl2_Text_Attribute_Factory_Data
+{
+   Efl2_Text_Attribute_Format fmt;
 };
 
 typedef struct _Efl2_Text_Attribute_Factory_Data Efl2_Text_Attribute_Factory_Data;

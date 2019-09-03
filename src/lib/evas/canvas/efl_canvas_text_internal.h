@@ -15,6 +15,7 @@ struct _Efl2_Text_Cursor_Handle
    Evas_Object                     *obj;
    size_t                           pos;
    Evas_Object_Textblock_Node_Text *node;
+   short                            ref;
    Eina_Bool                        changed : 1;
 };
 
@@ -46,7 +47,6 @@ struct _Efl2_Text_Attribute_Format
    struct {
       int               l, r;
    } margin;  /**< Left and right margin width. */
-   int                  ref;  /**< Value of the ref. */
    int                  tab_width;  /**< Value of the size of the tab character. */
    int                  line_height;  /**< Value of the size of the line of the text. */
    int                  line_spacing;  /**< Value to set the line gap in text. */
@@ -72,6 +72,7 @@ struct _Efl2_Text_Attribute_Handle
    EINA_INLIST;
    Evas_Object_Textblock_Node_Format *start_node, *end_node;
    Efl2_Text_Attribute_Format fmt;
+   int ref;  /**< Value of the ref. */
 };
 
 #endif
