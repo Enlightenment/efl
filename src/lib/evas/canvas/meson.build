@@ -209,6 +209,7 @@ evas_src += files([
   'evas_canvas3d_primitive.c',
   'evas_canvas3d_node_callback.h',
   'evas_canvas3d_eet.c',
+  'efl_text_attribute_factory.c',
   ])
 
 evas_include_directories += include_directories('.')
