@@ -302,11 +302,11 @@ eolian_function_return_is_by_ref(const Eolian_Function *fid,
       case EOLIAN_PROP_GET:
         if ((fid->type != EOLIAN_PROP_GET) && (fid->type != EOLIAN_PROPERTY))
           return EINA_FALSE;
-        return !fid->get_return_by_ref;
+        return fid->get_return_by_ref;
       case EOLIAN_PROP_SET:
         if ((fid->type != EOLIAN_PROP_SET) && (fid->type != EOLIAN_PROPERTY))
           return EINA_FALSE;
-        return !fid->set_return_by_ref;
+        return fid->set_return_by_ref;
       default:
         return EINA_FALSE;
      }
