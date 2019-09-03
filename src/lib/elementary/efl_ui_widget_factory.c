@@ -69,6 +69,13 @@ _efl_ui_widget_factory_item_class_get(const Eo *obj EINA_UNUSED,
 }
 
 static void
+_efl_ui_widget_factory_efl_ui_factory_constructing(const Eo *obj EINA_UNUSED, Efl_Ui_Widget_Factory_Data *pd EINA_UNUSED, Efl_Gfx_Entity *ui_view EINA_UNUSED)
+{
+  /* NOP */
+}
+
+
+static void
 _efl_ui_widget_factory_efl_ui_factory_building(const Eo *factory EINA_UNUSED, Efl_Ui_Widget_Factory_Data *pd, Efl_Gfx_Entity *ui_view)
 {
    const Efl_Model *model;
@@ -131,7 +138,8 @@ _efl_ui_widget_create(const Efl_Ui_Factory *factory,
 
    w = efl_add(klass, parent,
                efl_ui_view_model_set(efl_added, model),
-               efl_ui_factory_building(factory, efl_added));
+               efl_ui_factory_constructing(factory, efl_added));
+   efl_ui_factory_building(factory, w);
    return w;
 }
 

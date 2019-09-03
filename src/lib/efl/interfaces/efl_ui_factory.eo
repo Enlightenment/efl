@@ -26,7 +26,15 @@ interface @beta Efl.Ui.Factory extends Efl.Ui.Property_Bind, Efl.Ui.Factory_Bind
          }
       }
       building @const {
-         [[This function is called during the creation of an UI object between the @Efl.Object.constructor and @Efl.Object.finalize call.
+         [[This function is called after the creation of an UI object.
+
+         Note: if the @Efl.Ui.Factory does keep a cache of object, this won't be called when object are pulled out of the cache.]]
+         params {
+            ui_view: Efl.Gfx.Entity; [[The UI object being created.]]
+         }
+      }
+      constructing @const {
+         [[This function is called during the construction of an UI object between the @Efl.Object.constructor and @Efl.Object.finalize call.
 
          Note: if the @Efl.Ui.Factory does keep a cache of object, this won't be called when object are pulled out of the cache.]]
          params {
