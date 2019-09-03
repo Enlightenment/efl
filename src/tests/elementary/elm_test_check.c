@@ -49,6 +49,37 @@ EFL_START_TEST(elm_test_check_onoff_text)
 }
 EFL_END_TEST
 
+EFL_START_TEST(elm_test_check_callbacks)
+{
+   Evas_Object *win, *check;
+   int called = 0;
+
+   win = win_add(NULL, "check", ELM_WIN_BASIC);
+   evas_object_resize(win, 500, 500);
+
+   check = elm_check_add(win);
+   elm_object_style_set(check, "toggle");
+   elm_object_text_set(check, "TEST TEST TEST");
+   evas_object_smart_callback_add(check, "changed", event_callback_single_call_int_data, &called);
+
+   evas_object_resize(check, 200, 100);
+   evas_object_show(win);
+   evas_object_show(check);
+   get_me_to_those_events(check);
+
+   click_object_at(check, 150, 50);
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(elm_check_state_get(check), 1);
+   ck_assert_int_eq(called, 1);
+
+   called = 0;
+   click_object_at(check, 150, 50);
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(elm_check_state_get(check), 0);
+   ck_assert_int_eq(called, 1);
+}
+EFL_END_TEST
+
 EFL_START_TEST(elm_test_check_state)
 {
    Evas_Object *win, *check;
@@ -88,5 +119,6 @@ void elm_test_check(TCase *tc)
    tcase_add_test(tc, elm_test_check_legacy_type_check);
    tcase_add_test(tc, elm_test_check_onoff_text);
    tcase_add_test(tc, elm_test_check_state);
+   tcase_add_test(tc, elm_test_check_callbacks);
    tcase_add_test(tc, elm_atspi_role_get);
 }
