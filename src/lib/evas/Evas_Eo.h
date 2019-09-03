@@ -150,12 +150,12 @@ struct _Efl_Canvas_Object_Animation_Event
  */
 
 /**
- * @ingroup Efl_Canvas_Text
+ * @ingroup Efl_Canvas_Textblock
  *
  * @{
  */
 //#include "canvas/efl_canvas_text_cursor.eo.h"
-#include "canvas/efl_canvas_text.eo.h"
+#include "canvas/efl_canvas_textblock.eo.h"
 #include "canvas/efl_canvas_text_factory.eo.h"
 /**
  * @}
