@@ -2,7 +2,7 @@ interface Efl.Ui.Focus.Manager_Window_Root {
   [[An interface to indicate the end of a focus chain.
 
      Focus managers are ensuring that if they give focus to something, that is registered in the upper focus manager.
-     The most upper focus manager does not need to do that, and can implement this interface to indicate that.
+     The uppermost focus manager does not need to do that, and can implement this interface to indicate so.
 
      @since 1.22
   ]]

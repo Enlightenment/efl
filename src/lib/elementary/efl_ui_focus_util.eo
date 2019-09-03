@@ -1,24 +1,32 @@
 class @beta Efl.Ui.Focus.Util extends Efl.Object  {
-   [[EFL UI Focus Util class]]
+   [[EFL UI Focus Utility class.
+   
+     This class contains a series of static methods that simplify common focus management operations.
+     There's no need to instantiate this class.
+   ]]
    methods {
       focus @static {
-         [[Focus helper method]]
+         [[Sets the focus to the given object.]]
          params {
-            focus_elem : Efl.Ui.Focus.Object; [[Focus element]]
+            focus_elem : Efl.Ui.Focus.Object; [[Object to receive focus.]]
          }
       }
       active_manager @static {
-         [[Get the highest manager in the redirect property]]
+         [[Gets the highest manager in the redirect chain.]]
          params {
-            manager : Efl.Ui.Focus.Manager;
+            manager : Efl.Ui.Focus.Manager; [[Manager to start looking from.]]
          }
          return: Efl.Ui.Focus.Manager;
       }
       direction_complement @static {
+         [[Returns the complementary (opposite) focus direction.
+         
+           The defined opposites are Left-Right, Up-Down and Next-Previous.
+         ]]
          params {
-            dir : Efl.Ui.Focus.Direction;
+            dir : Efl.Ui.Focus.Direction; [[Direction to complement.]]
          }
-         return: Efl.Ui.Focus.Direction;
+         return: Efl.Ui.Focus.Direction; [[The opposite direction.]]
       }
    }
 }

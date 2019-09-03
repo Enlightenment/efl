@@ -6,11 +6,9 @@ class Efl.Input.Focus extends Efl.Object implements Efl.Input.Event
    ]]
    methods {
       @property object {
-         [[The focused object]]
+         [[The focused object.]]
          values {
-            object: Efl.Object; [[The focused object.
-                                  In case this represents a canvas
-                                  focus the object will be $null]]
+            object: Efl.Object; [[The focused object, or $NULL if the event comes from the canvas.]]
          }
       }
    }

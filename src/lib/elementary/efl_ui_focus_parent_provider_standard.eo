@@ -1,5 +1,9 @@
 class @beta Efl.Ui.Focus.Parent_Provider_Standard extends Efl.Object implements Efl.Ui.Focus.Parent_Provider {
-   [[EFL UI Focus Parent Provider Standard Class]]
+   [[EFL UI Focus Parent Provider Standard Class.
+
+     This is the default implementation for the @Efl.Ui.Focus.Parent_Provider interface. It simply uses
+     the widget's parent as the focus parent.
+   ]]
    implements {
       Efl.Ui.Focus.Parent_Provider.find_logical_parent;
    }

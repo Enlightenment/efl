@@ -1,24 +1,24 @@
 mixin @beta Efl.Ui.Focus.Layer requires Efl.Ui.Widget extends Efl.Ui.Widget_Focus_Manager {
-   [[This defines the inheriting widget as focus layer.
+   [[This defines the widget as a focus layer.
 
-     A focus layer is the uppermost one which receives input and handles all focus related events for as long as
-     it exists and is visible. It's NOT possible to escape this layer with focus movement.
+     A focus layer is the uppermost widget which receives input and handles all focus related events for as long as
+     it exists and is visible. It's not possible to escape this layer with focus movements.
 
      Once the object is hidden or destroyed the focus will go back to the main window, where it was before.
    ]]
    methods {
      @property enable @protected {
-        [[Enable property]]
+        [[Whether the focus layer is enabled.
+          This can be handled automatically through @Efl.Gfx.Entity.visible and @.behaviour.]]
         values {
-           v : bool; [[$true to set enable the layer $false to disable it]]
+           v : bool; [[$true to set enable.]]
         }
      }
      @property behaviour @protected {
-        [[Constructor for setting the behaviour of the layer]]
+        [[Sets the behaviour of the focus layer.]]
         values {
-           enable_on_visible : bool;  [[$true means layer will set itself once the inheriting widget becomes visible,
-                                        $false means the layer isn't enabled automatically]]
-           cycle : bool; [[If $true the focus will cycle in the layer, if $false]]
+           enable_on_visible : bool;  [[$true means layer will enable itself once the widget becomes visible]]
+           cycle : bool; [[If $true the focus will cycle (from last object to first, and vice versa) in the layer.]]
         }
      }
    }
