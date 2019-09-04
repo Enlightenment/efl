@@ -284,6 +284,7 @@ _blend_gradient(int count, const SW_FT_Span *spans, void *user_data)
         while (length)
           {
              l = MIN(length, BLEND_GRADIENT_BUFFER_SIZE);
+             //FIXME: span->x must have adding an offset as much as subtracted length...
              fetchfunc(buffer, sd, spans->y, spans->x, l);
              comp_func(target, buffer, l, sd->mul_col, spans->coverage);
              target += l;
@@ -316,13 +317,14 @@ _blend_gradient_alpha(int count, const SW_FT_Span *spans, void *user_data)
 
    while (count--)
      {
-        uint32_t *target = buffer + ((sd->raster_buffer->generic->w * spans->y) + spans->x);
+        uint32_t *target = buffer + ((pix_stride * spans->y) + spans->x);
         uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
         int length = spans->len;
 
         while (length)
           {
              int l = MIN(length, BLEND_GRADIENT_BUFFER_SIZE);
+             //FIXME: span->x must have adding an offset as much as subtracted length...
              fetchfunc(gbuffer, sd, spans->y, spans->x, l);
              uint32_t *temp = gbuffer;
 
@@ -364,13 +366,14 @@ _blend_gradient_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
 
    while (count--)
      {
-        uint32_t *target = buffer + ((sd->raster_buffer->generic->w * spans->y) + spans->x);
+        uint32_t *target = buffer + ((pix_stride * spans->y) + spans->x);
         uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
         int length = spans->len;
 
         while (length)
           {
              int l = MIN(length, BLEND_GRADIENT_BUFFER_SIZE);
+             //FIXME: span->x must have adding an offset as much as subtracted length...
              fetchfunc(gbuffer, sd, spans->y, spans->x, l);
              uint32_t *temp = gbuffer;
 

@@ -23,7 +23,7 @@ class @beta Efl.Ui.Timepicker extends Efl.Ui.Layout_Base
             min: int; [[The minute value from 0 to 59.]]
          }
       }
-      @property ampm {
+      @property is_24hour {
          [[Control if the Timepicker displays 24 hour time or 12 hour time including AM/PM button.]]
          set {
          }
