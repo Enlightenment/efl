@@ -218,8 +218,11 @@ _validate_by_ref(Eolian_Type *tp, Eina_Bool by_ref, Eina_Bool move)
      database_type_is_ownable(tp->base.unit, tp, EINA_FALSE);
 
    /* only allow value types when @by_ref */
-   if (by_ref && !maybe_ownable)
-     return EINA_FALSE;
+   if (by_ref && maybe_ownable)
+     {
+        _eo_parser_log(&tp->base, "@by_ref is only allowed for value types");
+        return EINA_FALSE;
+     }
 
    /* futures can be whatever... */
    if (tp->btype == EOLIAN_TYPE_BUILTIN_FUTURE)
@@ -229,7 +232,7 @@ _validate_by_ref(Eolian_Type *tp, Eina_Bool by_ref, Eina_Bool move)
    if (!move)
       return EINA_TRUE;
 
-   /* marked @move, now pointer-like or otherwise ownable, error */
+   /* marked @move, not pointer-like or otherwise ownable, error */
    if (!maybe_ownable || !tp->ownable)
      {
         _eo_parser_log(&tp->base, "type '%s' is not ownable", tp->base.name);
