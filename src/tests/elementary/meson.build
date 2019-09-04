@@ -154,6 +154,8 @@ efl_ui_suite_src = [
   'efl_ui_test_position_manager_common.c',
   'efl_ui_test_popup.c',
   'efl_ui_test_scroller.c',
+  'efl_ui_test_select_model.c',
+  'efl_ui_test_view_model.c',
 ]
 
 efl_ui_suite = executable('efl_ui_suite',
