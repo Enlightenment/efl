@@ -70,8 +70,8 @@ typedef struct _Efl2_Text_Attribute_Format Efl2_Text_Attribute_Format;
 struct _Efl2_Text_Attribute_Handle
 {
    EINA_INLIST;
-   Evas_Object_Textblock_Node_Format *start_node, *end_node;
    Efl2_Text_Attribute_Format fmt;
+   // FIXME: Just add cursor handles for the start/end so they are updated automatically?
    int ref;  /**< Value of the ref. */
 };
 

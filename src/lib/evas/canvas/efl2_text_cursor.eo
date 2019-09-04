@@ -88,12 +88,18 @@ class @beta Efl2.Text.Cursor {
       }
       copy {
          [[Copy existing cursor]]
+         params {
+            dst: Efl2.Text.Cursor; [[Cursor 2 object]]
+         }
       }
       char_next {
          [[Advances to the next character]]
+         // FIXME: Make the number of characters we moved by? Useful for all the other functions
+         return: bool; [[True if actually moved]]
       }
       char_prev {
          [[Advances to the previous character]]
+         return: bool; [[True if actually moved]]
       }
       char_delete {
          [[Deletes a single character from position pointed by given cursor.]]
@@ -101,49 +107,62 @@ class @beta Efl2.Text.Cursor {
 
       cluster_start {
          [[Advances to the end of grapheme cluster]]
+         return: bool; [[True if actually moved]]
       }
       cluster_end {
          [[Advances to the start of the grapheme cluster]]
+         return: bool; [[True if actually moved]]
       }
-      cluster_delete {
-         [[Deletes the current cluster from position pointed by given cursor.]]
-      }
+      // FIXME: It's just implemented as range delete with cluster start + end.
+      // Sholud we have convenience wrappers for those though? This and cluster prev/next?
+      // cluster_delete {
 
       paragraph_start {
          [[Advances to the first character in this paragraph]]
+         return: bool; [[True if actually moved]]
       }
       paragraph_end {
          [[Advances to the last character in this paragraph]]
+         return: bool; [[True if actually moved]]
       }
       word_start {
          [[Advance to current word start]]
+         return: bool; [[True if actually moved]]
       }
       word_end {
          [[Advance to current word end]]
+         return: bool; [[True if actually moved]]
       }
       line_start {
          [[Advance to current line first character]]
+         return: bool; [[True if actually moved]]
       }
       line_end {
           [[Advance to current line last character]]
+         return: bool; [[True if actually moved]]
       }
       paragraph_first {
          [[Advance to current paragraph first character]]
+         return: bool; [[True if actually moved]]
       }
       paragraph_last {
          [[Advance to current paragraph last character]]
+         return: bool; [[True if actually moved]]
       }
       paragraph_next {
          [[Advances to the start of the next text node]]
+         return: bool; [[True if actually moved]]
       }
       paragraph_prev {
          [[Advances to the end of the previous text node]]
+         return: bool; [[True if actually moved]]
       }
       line_jump_by {
          [[Jump the cursor by the given number of lines]]
          params {
             by: int; [[Number of lines]]
          }
+         return: int; [[The number of lines jupmed]]
       }
 
       char_coord_set {

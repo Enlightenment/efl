@@ -86,8 +86,8 @@ class @beta Efl2.Text.Attribute.Factory implements Efl2.Text.Font.Properties, Ef
          }
       }
 
-      del @static {
-         [[Deletes the current attribute
+      remove @static {
+         [[Removes the attribute from the text object
          ]]
          params {
               handle: ptr(Efl2.Text.Attribute.Handle); [[Handle to the attribute to delete from the object]]

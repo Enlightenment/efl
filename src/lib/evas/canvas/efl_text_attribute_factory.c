@@ -94,7 +94,7 @@ _efl2_text_attribute_factory_unref(Efl2_Text_Attribute_Handle *handle)
 }
 
 EOLIAN static void
-_efl2_text_attribute_factory_del(Efl2_Text_Attribute_Handle *handle)
+_efl2_text_attribute_factory_remove(Efl2_Text_Attribute_Handle *handle)
 {
    // FIXME: implement
    (void) handle;
