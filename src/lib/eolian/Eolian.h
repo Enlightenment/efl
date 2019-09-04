@@ -1904,6 +1904,23 @@ EAPI Eina_Bool eolian_parameter_is_by_ref(const Eolian_Function_Parameter *param
 EAPI Eina_Bool eolian_parameter_is_move(const Eolian_Function_Parameter *param_desc);
 
 /*
+ * @brief Get the full C type name of the given parameter.
+ *
+ * @param[in] param_desc parameter handle
+ * @param[in] as_return if true, it will be treated as a return type
+ * @return The C type name assuming @c param_desc is not NULL.
+ *
+ * You're responsible for the stringshare. The @c as_return argument is meant
+ * for properties, where the first out-param gets made into a return, which
+ * has different typing characteristics.
+ *
+ * @see eolian_type_c_type_get
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_parameter_c_type_get(const Eolian_Function_Parameter *param_desc, Eina_Bool as_return);
+
+/*
  * @brief Get the return type of a function.
  *
  * @param[in] function_id id of the function
@@ -2000,6 +2017,21 @@ EAPI Eina_Bool eolian_function_return_is_by_ref(const Eolian_Function *foo_id, E
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_function_return_is_move(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
+
+/*
+ * @brief Get the full C type name of the return value.
+ *
+ * @param[in] function_id id of the function
+ * @param[in] ftype type of the function
+ * @return The C type name.
+ *
+ * You're responsible for the stringshare.
+ *
+ * @see eolian_type_c_type_get
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_function_return_c_type_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
 
 /*
  * @brief Indicates if a function object is const.
@@ -2573,6 +2605,20 @@ EAPI Eina_Bool eolian_typedecl_struct_field_is_by_ref(const Eolian_Struct_Type_F
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_typedecl_struct_field_is_move(const Eolian_Struct_Type_Field *fl);
+
+/*
+ * @brief Get the full C type name of the struct field.
+ *
+ * @param[in] fl the field.
+ * @return The C type name.
+ *
+ * You're responsible for the stringshare.
+ *
+ * @see eolian_type_c_type_get
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_typedecl_struct_field_c_type_get(const Eolian_Struct_Type_Field *fl);
 
 /*
  * @brief Get an iterator to all fields of an enum type.

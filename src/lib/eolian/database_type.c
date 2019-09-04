@@ -101,7 +101,7 @@ _buf_add_suffix(Eina_Strbuf *buf, const char *suffix)
 void
 database_type_to_str(const Eolian_Type *tp,
                      Eina_Strbuf *buf, const char *name,
-                     Eolian_C_Type_Type ctype)
+                     Eolian_C_Type_Type ctype, Eina_Bool by_ref)
 {
    if ((tp->type == EOLIAN_TYPE_REGULAR
      || tp->type == EOLIAN_TYPE_CLASS
@@ -128,7 +128,7 @@ database_type_to_str(const Eolian_Type *tp,
      {
         /* handles arrays and pointers as they all serialize to pointers */
         database_type_to_str(tp->base_type, buf, NULL,
-                             EOLIAN_C_TYPE_DEFAULT);
+                             EOLIAN_C_TYPE_DEFAULT, EINA_FALSE);
         _buf_add_suffix(buf, "*");
         if (tp->is_const && (ctype != EOLIAN_C_TYPE_RETURN))
           eina_strbuf_append(buf, " const");
@@ -136,6 +136,8 @@ database_type_to_str(const Eolian_Type *tp,
    if (tp->type == EOLIAN_TYPE_CLASS)
      _buf_add_suffix(buf, "*");
    if (tp->is_ptr)
+     _buf_add_suffix(buf, "*");
+   if (by_ref)
      _buf_add_suffix(buf, "*");
    _buf_add_suffix(buf, name);
 }
@@ -153,7 +155,7 @@ _stype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
    EINA_LIST_FOREACH(tp->field_list, l, sf)
      {
         database_type_to_str(sf->type, buf, sf->base.name,
-                             EOLIAN_C_TYPE_DEFAULT);
+                             EOLIAN_C_TYPE_DEFAULT, sf->by_ref);
         eina_strbuf_append(buf, "; ");
      }
    eina_strbuf_append(buf, "}");
@@ -191,7 +193,7 @@ _atype_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf)
 {
    eina_strbuf_append(buf, "typedef ");
    database_type_to_str(tp->base_type, buf, tp->base.c_name,
-                        EOLIAN_C_TYPE_DEFAULT);
+                        EOLIAN_C_TYPE_DEFAULT, EINA_FALSE);
 }
 
 void

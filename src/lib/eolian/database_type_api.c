@@ -77,6 +77,17 @@ eolian_typedecl_struct_field_is_move(const Eolian_Struct_Type_Field *fl)
    return fl->move;
 }
 
+EAPI Eina_Stringshare *
+eolian_typedecl_struct_field_c_type_get(const Eolian_Struct_Type_Field *fl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
+   Eina_Strbuf *buf = eina_strbuf_new();
+   database_type_to_str(fl->type, buf, NULL, EOLIAN_C_TYPE_DEFAULT, fl->by_ref);
+   Eina_Stringshare *ret = eina_stringshare_add(eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
+   return ret;
+}
+
 EAPI Eina_Iterator *
 eolian_typedecl_enum_fields_get(const Eolian_Typedecl *tp)
 {
@@ -262,7 +273,7 @@ eolian_type_c_type_get(const Eolian_Type *tp, Eolian_C_Type_Type ctype)
    Eina_Strbuf *buf;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    buf = eina_strbuf_new();
-   database_type_to_str(tp, buf, NULL, ctype);
+   database_type_to_str(tp, buf, NULL, ctype, EINA_FALSE);
    ret = eina_stringshare_add(eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
    return ret;
