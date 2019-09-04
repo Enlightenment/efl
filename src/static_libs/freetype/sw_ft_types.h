@@ -10,7 +10,7 @@
 /*    This type is used to store 16.16 fixed-point values, like scaling  */
 /*    values or matrix coefficients.                                     */
 /*                                                                       */
-typedef signed long  SW_FT_Fixed;
+typedef signed long long SW_FT_Fixed;
 
 
 /*************************************************************************/
