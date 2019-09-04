@@ -75,6 +75,7 @@ class @beta Efl2.Text.Attribute.Factory implements Efl2.Text.Font.Properties, Ef
          params {
               handle: ptr(Efl2.Text.Attribute.Handle); [[Handle to the attribute to delete from the object]]
          }
+         return: ptr(Efl2.Text.Attribute.Handle); [[The handle passed (also returned for convenience]]
       }
 
       unref @static {

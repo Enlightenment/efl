@@ -79,11 +79,11 @@ _efl2_text_attribute_factory_attribute_range_get(Efl2_Text_Cursor *start, Efl2_T
    // FIXME: implement
 }
 
-EOLIAN static void
+EOLIAN static Efl2_Text_Attribute_Handle *
 _efl2_text_attribute_factory_ref(Efl2_Text_Attribute_Handle *handle)
 {
    // FIXME: implement
-   (void) handle;
+   return handle;
 }
 
 EOLIAN static void
