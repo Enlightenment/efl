@@ -335,7 +335,12 @@ _find_mod(const char *name)
              p > path;
              p--)
           {
-             if (*p == '/')
+             if ((*p == '/')
+/* FIXME : find a better way to handle Windows path in all the EFL */
+#ifdef _WIN32
+                 || (*p == '\\')
+#endif
+                 )
                {
                   found++;
                   // found == 1 -> p = /module.*
