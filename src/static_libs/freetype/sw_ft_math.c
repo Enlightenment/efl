@@ -41,54 +41,53 @@ SW_FT_END_STMNT
 
 
 
-SW_FT_Long
-SW_FT_MulFix( SW_FT_Long  a,
-           SW_FT_Long  b )
+SW_FT_Int64
+SW_FT_MulFix( SW_FT_Int64  a,
+           SW_FT_Int64  b )
 {
   SW_FT_Int   s = 1;
-  SW_FT_Long  c;
+  SW_FT_Int64  c;
 
 
   SW_FT_MOVE_SIGN( a, s );
   SW_FT_MOVE_SIGN( b, s );
 
-  c = (SW_FT_Long)( ( (SW_FT_Int64)a * b + 0x8000L ) >> 16 );
+  c = ( a * b + 0x8000L ) >> 16;
 
   return ( s > 0 ) ? c : -c;
 }
 
-SW_FT_Long
-SW_FT_MulDiv( SW_FT_Long  a,
-           SW_FT_Long  b,
-           SW_FT_Long  c )
+SW_FT_Int64
+SW_FT_MulDiv( SW_FT_Int64  a,
+           SW_FT_Int64  b,
+           SW_FT_Int64  c )
 {
   SW_FT_Int   s = 1;
-  SW_FT_Long  d;
+  SW_FT_Int64  d;
 
 
   SW_FT_MOVE_SIGN( a, s );
   SW_FT_MOVE_SIGN( b, s );
   SW_FT_MOVE_SIGN( c, s );
 
-  d = (SW_FT_Long)( c > 0 ? ( (SW_FT_Int64)a * b + ( c >> 1 ) ) / c
-                       : 0x7FFFFFFFL );
+  d = c > 0 ? ( a * b + ( c >> 1 ) ) / c
+                       : 0x7FFFFFFFL;
 
   return ( s > 0 ) ? d : -d;
 }
 
-SW_FT_Long
-SW_FT_DivFix( SW_FT_Long  a,
-           SW_FT_Long  b )
+SW_FT_Int64
+SW_FT_DivFix( SW_FT_Int64  a,
+           SW_FT_Int64  b )
 {
   SW_FT_Int   s = 1;
-  SW_FT_Long  q;
-
+  SW_FT_Int64  q;
 
   SW_FT_MOVE_SIGN( a, s );
   SW_FT_MOVE_SIGN( b, s );
 
-  q = (SW_FT_Long)( b > 0 ? ( ( (SW_FT_UInt64)a << 16 ) + ( b >> 1 ) ) / b
-                       : 0x7FFFFFFFL );
+  q = b > 0 ? ( ( a << 16 ) + ( b >> 1 ) ) / b
+                       : 0x7FFFFFFFL;
 
   return ( s < 0 ? -q : q );
 }

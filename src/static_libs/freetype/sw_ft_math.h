@@ -71,9 +71,9 @@
 /*    _second_ argument of this function; this can make a great          */
 /*    difference.                                                        */
 /*                                                                       */
-SW_FT_Long
-SW_FT_MulFix( SW_FT_Long  a,
-           SW_FT_Long  b );
+SW_FT_Int64
+SW_FT_MulFix( SW_FT_Int64  a,
+           SW_FT_Int64  b );
 
 /*************************************************************************/
 /*                                                                       */
@@ -98,10 +98,10 @@ SW_FT_MulFix( SW_FT_Long  a,
 /*    divide by zero; it simply returns `MaxInt' or `MinInt' depending   */
 /*    on the signs of `a' and `b'.                                       */
 /*                                                                       */
-SW_FT_Long
-SW_FT_MulDiv( SW_FT_Long  a,
-           SW_FT_Long  b,
-           SW_FT_Long  c );
+SW_FT_Int64
+SW_FT_MulDiv( SW_FT_Int64  a,
+           SW_FT_Int64  b,
+           SW_FT_Int64  c );
 
 /*************************************************************************/
 /*                                                                       */
@@ -120,9 +120,9 @@ SW_FT_MulDiv( SW_FT_Long  a,
 /* <Return>                                                              */
 /*    The result of `(a*0x10000)/b'.                                     */
 /*                                                                       */
-SW_FT_Long
-SW_FT_DivFix( SW_FT_Long  a,
-           SW_FT_Long  b );
+SW_FT_Int64
+SW_FT_DivFix( SW_FT_Int64  a,
+           SW_FT_Int64  b );
 
 
 
