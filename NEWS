@@ -1,6 +1,47 @@
 ==========
-EFL 1.22.3
+EFL 1.22.4
 ==========
+Changes since 1.22.3:
+---------------------
+
+Features:
+
+
+Fixes:
+
+   * edje signal - let's not crash if something odd happens
+   * edje signal matches - try number 3 to try plug all the holes
+   * edje - backport fix to opt that actually was a fix to existing bug
+   * evas -gl engines - buffer age - bring back fix for changing buffer age
+   * eio - don't call cb's after a cancel
+   * elm sel mgr - remove event handlers when no drop targets are left
+   * theme: fix fileselector search button layout
+   * evas vector: set proper parents of clone objects.
+   * evas svg: fix missing node opacity attribute.
+   * ecore: also error when trying to add an event handler for a type 0 event
+   * elm_actionslider: fix internal state when programmatically changing value
+   * evas/box: avoid triggering smart_move callback
+   * ecore: avoid breaking next main loop start if quit occurs outside of loop
+   * evas: fix type checking of Evas pointers in legacy functions
+   * evas/map: permit evas_map_free(NULL)
+   * ecore_evas buffer: fix a deadlock issue.
+   * efl_ui_widget: add safety checks to verify parents aren't being added as children
+   * [elm] Add missing sizing eval hook at radio
+   * elm/glview: fix glview to (again) return null if context creation fails
+   * elm_test/plug: fix error handling
+   * elm/ctxpopup: check list existence before trying to delete list items
+   * efl_ui/popup: implement efl.file.unload for popup backwall part
+   * efl_ui/popup: unset callbacks on win object when parent is removed
+   * elm/config: monitor MODIFIED events on config files
+   * elm/config: fix config usage with EFL_RUN_IN_TREE set
+   * efl_ui/flow.box: fix item calc with mixed weights
+   * elm/hoversel: avoid calling api functions on null hoversel objects
+   * efl/io: fix race condition with child model deletion
+   * eio/poll: avoid ever dereferencing the backend's parent in a thread
+   * evas events: fix corrupted mouse events behavior on mapped object.
+   * evas_vg: fix alpha animation bug in case of partial update
+
+
 Changes since 1.22.2:
 ---------------------
 
