@@ -2281,6 +2281,7 @@ tests/evas/evas_test_text.c \
 tests/evas/evas_test_callbacks.c \
 tests/evas/evas_test_render_engines.c \
 tests/evas/evas_test_filters.c \
+tests/evas/evas_test_focus.c \
 tests/evas/evas_test_image.c \
 tests/evas/evas_test_mesh.c \
 tests/evas/evas_test_mask.c \
