@@ -245,7 +245,7 @@ _efl_ui_timepicker_time_get(const Eo *obj EINA_UNUSED, Efl_Ui_Timepicker_Data *p
 }
 
 EOLIAN static void
-_efl_ui_timepicker_ampm_set(Eo *obj, Efl_Ui_Timepicker_Data *pd, Eina_Bool is_24hour)
+_efl_ui_timepicker_is_24hour_set(Eo *obj, Efl_Ui_Timepicker_Data *pd, Eina_Bool is_24hour)
 {
    if (pd->is_24hour == is_24hour) return;
 
@@ -258,7 +258,7 @@ _efl_ui_timepicker_ampm_set(Eo *obj, Efl_Ui_Timepicker_Data *pd, Eina_Bool is_24
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_timepicker_ampm_get(const Eo *obj EINA_UNUSED, Efl_Ui_Timepicker_Data *pd)
+_efl_ui_timepicker_is_24hour_get(const Eo *obj EINA_UNUSED, Efl_Ui_Timepicker_Data *pd)
 {
    return pd->is_24hour;
 }
