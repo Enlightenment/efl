@@ -4530,18 +4530,18 @@ EFL_START_TEST(evas_textblock_annotation)
 }
 EFL_END_TEST;
 
-#define START_EFL_CANVAS_TEXTBLOCK_TEST() \
+#define START_EVAS_TEXTBLOCK_LEGACY_TEST() \
    Evas *evas; \
    Eo *txt; \
    Efl_Text_Cursor_Cursor *cur; \
    evas = EVAS_TEST_INIT_EVAS(); \
    evas_font_hinting_set(evas, EVAS_FONT_HINTING_AUTO); \
-   txt = efl_add(EFL_CANVAS_TEXTBLOCK_CLASS, evas); \
+   txt = efl_add(EVAS_TEXTBLOCK_LEGACY_CLASS, evas); \
    fail_if(!txt); \
-   efl_canvas_textblock_legacy_newline_set(txt, EINA_FALSE); \
-   efl_canvas_textblock_style_set(txt, NULL, style_buf); \
-   fail_if(!efl_canvas_textblock_style_get(txt, NULL) || \
-		   strcmp(style_buf, efl_canvas_textblock_style_get(txt, NULL))); \
+   evas_textblock_legacy_newline_set(txt, EINA_FALSE); \
+   evas_textblock_legacy_style_set(txt, NULL, style_buf); \
+   fail_if(!evas_textblock_legacy_style_get(txt, NULL) || \
+		   strcmp(style_buf, evas_textblock_legacy_style_get(txt, NULL))); \
    cur = efl_text_cursor_new(txt); \
    fail_if(!cur); \
 do \
@@ -4549,7 +4549,7 @@ do \
 } \
 while (0)
 
-#define END_EFL_CANVAS_TEXTBLOCK_TEST() \
+#define END_EVAS_TEXTBLOCK_LEGACY_TEST() \
 do \
 { \
    efl_text_cursor_free(txt, cur); \
@@ -4558,17 +4558,17 @@ do \
 } \
 while (0)
 
-EFL_START_TEST(efl_canvas_textblock_simple)
+EFL_START_TEST(evas_textblock_legacy_simple)
 {
-   START_EFL_CANVAS_TEXTBLOCK_TEST();
+   START_EVAS_TEXTBLOCK_LEGACY_TEST();
 
-   /* It is simple test for Efl_Canvas_Textblock.
+   /* It is simple test for Evas_Textblock_Legacy.
     * The main object is "txt". */
    const char *buf = "Th<i>i</i>s is a <br/> te<b>s</b>t.";
    efl_text_set(txt, buf);
    fail_if(strcmp(efl_text_get(txt), buf));
 
-   END_EFL_CANVAS_TEXTBLOCK_TEST();
+   END_EVAS_TEXTBLOCK_LEGACY_TEST();
 }
 EFL_END_TEST
 
@@ -4585,7 +4585,7 @@ EFL_START_TEST(efl_text)
     * Russian 't' in the beginnning to create additional item.*/
                    /*01234    5 6789012345678  19  01234 */
    efl_text_set(tb, "тest \u202bנסיוןabcנסיון\u202c bang");
-   efl_canvas_textblock_size_native_get(tb, &nw, &nh);
+   evas_textblock_legacy_size_native_get(tb, &nw, &nh);
    efl_gfx_entity_size_set(tb, EINA_SIZE2D(nw,  nh));
 
    /* Logical cursor after "test " */
@@ -4605,9 +4605,9 @@ EFL_START_TEST(efl_text)
 }
 EFL_END_TEST
 
-EFL_START_TEST(efl_canvas_textblock_cursor)
+EFL_START_TEST(evas_textblock_legacy_cursor)
 {
-   START_EFL_CANVAS_TEXTBLOCK_TEST();
+   START_EVAS_TEXTBLOCK_LEGACY_TEST();
    int pos;
 
    const char *buf = "abcdefghij";
@@ -4621,14 +4621,14 @@ EFL_START_TEST(efl_canvas_textblock_cursor)
    pos = efl_text_cursor_position_get(txt, cur);
    ck_assert_int_eq(pos, 10);
 
-   END_EFL_CANVAS_TEXTBLOCK_TEST();
+   END_EVAS_TEXTBLOCK_LEGACY_TEST();
 }
 EFL_END_TEST
 
 
-EFL_START_TEST(efl_canvas_textblock_markup)
+EFL_START_TEST(evas_textblock_legacy_markup)
 {
-   START_EFL_CANVAS_TEXTBLOCK_TEST();
+   START_EVAS_TEXTBLOCK_LEGACY_TEST();
    Efl_Text_Cursor_Cursor *start, *end;
    char *res;
 
@@ -4650,13 +4650,13 @@ EFL_START_TEST(efl_canvas_textblock_markup)
    ck_assert_str_eq(res, "bc<br>");
    free(res);
 
-   END_EFL_CANVAS_TEXTBLOCK_TEST();
+   END_EVAS_TEXTBLOCK_LEGACY_TEST();
 }
 EFL_END_TEST
 
-EFL_START_TEST(efl_canvas_textblock_markup_invalid_escape)
+EFL_START_TEST(evas_textblock_legacy_markup_invalid_escape)
 {
-   START_EFL_CANVAS_TEXTBLOCK_TEST();
+   START_EVAS_TEXTBLOCK_LEGACY_TEST();
 
    char * text1 = "Hello";
    char * text2 = "Hello&123";
@@ -4664,22 +4664,22 @@ EFL_START_TEST(efl_canvas_textblock_markup_invalid_escape)
    Evas_Coord fw1, fw2, fw3;
 
    efl_text_markup_set(txt,text1);
-   efl_canvas_textblock_size_native_get(txt, &fw1, NULL);
+   evas_textblock_legacy_size_native_get(txt, &fw1, NULL);
    efl_text_markup_set(txt,text2);
-   efl_canvas_textblock_size_native_get(txt, &fw2, NULL);
+   evas_textblock_legacy_size_native_get(txt, &fw2, NULL);
    fail_if(fw2 <= fw1);
    efl_text_markup_set(txt,text3);
-   efl_canvas_textblock_size_native_get(txt, &fw3, NULL);
+   evas_textblock_legacy_size_native_get(txt, &fw3, NULL);
    fail_if(fw3 <= fw2);
 
-   END_EFL_CANVAS_TEXTBLOCK_TEST();
+   END_EVAS_TEXTBLOCK_LEGACY_TEST();
 }
 EFL_END_TEST
 
 
 EFL_START_TEST(efl_text_font)
 {
-   START_EFL_CANVAS_TEXTBLOCK_TEST();
+   START_EVAS_TEXTBLOCK_LEGACY_TEST();
 
    efl_text_set(txt, "\n\n\n");
 
@@ -4702,7 +4702,7 @@ EFL_START_TEST(efl_text_font)
    fail_if(30 != font_size);
    fail_if(strcmp(font,"arial"));
 
-   END_EFL_CANVAS_TEXTBLOCK_TEST();
+   END_EVAS_TEXTBLOCK_LEGACY_TEST();
 }
 EFL_END_TEST
 
@@ -4734,11 +4734,11 @@ void evas_test_textblock(TCase *tc)
 #endif
    tcase_add_test(tc, evas_textblock_text_iface);
    tcase_add_test(tc, evas_textblock_annotation);
-   tcase_add_test(tc, efl_canvas_textblock_simple);
+   tcase_add_test(tc, evas_textblock_legacy_simple);
    tcase_add_test(tc, efl_text);
-   tcase_add_test(tc, efl_canvas_textblock_cursor);
-   tcase_add_test(tc, efl_canvas_textblock_markup);
-   tcase_add_test(tc, efl_canvas_textblock_markup_invalid_escape);
+   tcase_add_test(tc, evas_textblock_legacy_cursor);
+   tcase_add_test(tc, evas_textblock_legacy_markup);
+   tcase_add_test(tc, evas_textblock_legacy_markup_invalid_escape);
    tcase_add_test(tc, efl_text_font);
 }
 

@@ -51,7 +51,7 @@ pub_eo_files = [
   'efl_canvas_group.eo',
   'efl_gfx_mapping.eo',
   'efl_canvas_event_grabber.eo',
-  'efl_canvas_textblock.eo'
+  'evas_textblock_legacy.eo'
 ]
 
 evas_canvas_eo_files = pub_eo_files
@@ -99,7 +99,7 @@ evas_legacy_h = files([
   'efl_canvas_event_grabber_eo.legacy.h',
   'efl_canvas_group_eo.legacy.h',
   'efl_canvas_object_eo.legacy.h',
-  'efl_canvas_textblock_eo.legacy.h',
+  'evas_textblock_legacy_eo.h',
   'efl_canvas_vg_container_eo.legacy.h',
   'efl_canvas_vg_node_eo.legacy.h',
   'efl_canvas_vg_object_eo.legacy.h',
