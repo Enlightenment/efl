@@ -800,7 +800,7 @@ EFL_START_TEST(eolian_var)
    fail_if(!(name = eolian_type_short_name_get(type)));
    fail_if(strcmp(name, "int"));
    fail_if(!(exp = eolian_variable_value_get(var)));
-   v = eolian_expression_eval_type(exp, type);
+   v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != 5);
 
@@ -812,7 +812,7 @@ EFL_START_TEST(eolian_var)
    fail_if(!(name = eolian_type_short_name_get(type)));
    fail_if(strcmp(name, "float"));
    fail_if(!(exp = eolian_variable_value_get(var)));
-   v = eolian_expression_eval_type(exp, type);
+   v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_FLOAT);
    fail_if(((int)v.value.f) != 10);
 

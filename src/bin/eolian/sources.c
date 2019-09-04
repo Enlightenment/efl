@@ -107,7 +107,7 @@ _append_defval(Eina_Strbuf *buf, const Eolian_Expression *exp, const Eolian_Type
 {
    if (exp)
      {
-        Eolian_Value val = eolian_expression_eval_type(exp, tp);
+        Eolian_Value val = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
         Eina_Stringshare *lit = eolian_expression_value_to_literal(&val);
         if (lit)
           {

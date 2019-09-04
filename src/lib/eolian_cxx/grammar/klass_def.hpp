@@ -1015,7 +1015,7 @@ struct variable_def
           if (!expr)
             throw std::runtime_error("Could not get constant variable value expression");
 
-          this->expression_value = ::eolian_expression_eval_type(expr, ::eolian_variable_base_type_get(variable));
+          this->expression_value = ::eolian_expression_eval(expr, ::EOLIAN_MASK_ALL);
        }
   }
 };

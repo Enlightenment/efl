@@ -3078,20 +3078,6 @@ eolian_type_namespaces_get(const Eolian_Type *tp)
 EAPI Eolian_Value eolian_expression_eval(const Eolian_Expression *expr, Eolian_Expression_Mask m);
 
 /*
- * @brief Evaluate an Eolian expression given a type instead of a mask.
- *
- * @param[in] expr the expression.
- * @param[in] type the type the expression is assigned to.
- * @return the value, its type is set to EOLIAN_EXPR_UNKNOWN on error.
- *
- * The mask is automatically decided from the given type, allowing only values
- * that can be assigned to that type.
- *
- * @ingroup Eolian
- */
-EAPI Eolian_Value eolian_expression_eval_type(const Eolian_Expression *expr, const Eolian_Type *type);
-
-/*
  * @brief Convert the result of expression evaluation to a literal as in how
  * it would appear in C (e.g. strings are quoted and escaped).
  *

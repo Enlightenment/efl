@@ -191,7 +191,7 @@ _var_generate(const Eolian_State *state, const Eolian_Variable *vr)
         eina_strbuf_prepend_printf(buf, "#ifndef %s\n", fn);
         eina_strbuf_append_printf(buf, "#define %s ", fn);
         const Eolian_Expression *vv = eolian_variable_value_get(vr);
-        Eolian_Value val = eolian_expression_eval_type(vv, vt);
+        Eolian_Value val = eolian_expression_eval(vv, EOLIAN_MASK_ALL);
         Eina_Stringshare *lit = eolian_expression_value_to_literal(&val);
         eina_strbuf_append(buf, lit);
         Eina_Stringshare *exp = eolian_expression_serialize(vv);
@@ -397,7 +397,7 @@ _source_gen_var(Eina_Strbuf *buf, const Eolian_Variable *vr)
    eina_stringshare_del(ct);
    free(fn);
 
-   Eolian_Value val = eolian_expression_eval_type(vv, vt);
+   Eolian_Value val = eolian_expression_eval(vv, EOLIAN_MASK_ALL);
    Eina_Stringshare *lit = eolian_expression_value_to_literal(&val);
    eina_strbuf_append(buf, lit);
    eina_strbuf_append_char(buf, ';');
