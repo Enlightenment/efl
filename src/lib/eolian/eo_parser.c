@@ -1131,6 +1131,7 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
         eo_lexer_get(ls);
         break;
       case KW_at_owned:
+      case KW_at_move:
         CASE_LOCK(ls, owned, "owned qualifier");
         par->type->owned = par->move = EINA_TRUE;
         eo_lexer_get(ls);

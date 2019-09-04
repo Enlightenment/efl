@@ -1,69 +1,70 @@
 enum @beta Efl.Ui.Popup_Align {
-    [[Popup alignment type]]
-    none = 0, [[Popup not aligned]]
-    center,   [[Popup aligned to center]]
-    left,     [[Popup aligned to left]]
-    right,    [[Popup aligned to right]]
-    top,      [[Popup aligned to top]]
-    bottom    [[Popup aligned to bottom]]
+    [[Popup alignment type.]]
+    none = 0, [[Popup not aligned.]]
+    center,   [[Popup aligned to center.]]
+    left,     [[Popup aligned to left.]]
+    right,    [[Popup aligned to right.]]
+    top,      [[Popup aligned to top.]]
+    bottom    [[Popup aligned to bottom.]]
 }
 
-class @beta Efl.Ui.Popup extends Efl.Ui.Layout_Base implements Efl.Content, Efl.Ui.Focus.Layer, Efl.Ui.Widget_Scrollable_Content
+class @beta Efl.Ui.Popup extends Efl.Ui.Layout_Base implements Efl.Content, Efl.Ui.Focus.Layer,
+                                                               Efl.Ui.Widget_Scrollable_Content
 {
    [[EFL UI popup class]]
    methods {
       @property align {
+         [[Popup alignment.]]
          set {
-            [[ Set the popup alignment.]]
          }
          get {
-            [[ Get the current popup alignment.]]
          }
          values {
-             type: Efl.Ui.Popup_Align; [[Alignment type]]
+             type: Efl.Ui.Popup_Align; [[Alignment type.]]
          }
       }
       @property closing_timeout {
+         [[Set the timeout seconds.
+           After timeout seconds, popup will be deleted automatically.
+         ]]
          set {
-            [[ Set the timeout seconds.
-               After timeout seconds, popup will be deleted automatically.
-            ]]
          }
          get {
-            [[ Get the currently set timeout seconds.]]
          }
          values {
-             time: double; [[Timeout in seconds]]
+             time: double; [[Timeout in seconds.]]
          }
       }
       @property anchor {
+         [[Anchor object which sets this popup's position.
+           If anchor object is moved or parent window is resized, the popup moves to the new position.
+           If anchor object is set to NULL, the popup stops following the anchor object.
+           When the popup is moved by using @Efl.Gfx.Entity.position.set, $anchor is set NULL.
+         ]]
          set {
-            [[Set anchor popup to follow an anchor object.
-              If anchor object is moved or parent window is resized, the anchor popup moves to the new position.
-              If anchor object is set to NULL, the anchor popup stops following the anchor object.
-              When the popup is moved by using gfx_position_set, anchor is set NULL.
-              ]]
          }
          get {
-            [[Returns the anchor object which the popup is following.]]
          }
          values {
             anchor: Efl.Canvas.Object; [[The object which popup is following.]]
          }
       }
       @property align_priority {
+         [[Prioritized popup alignment.
+         
+           In contrast to the @.align property, each alignment is tried in turn until one is found which allows
+           the popup to be placed in the exact requested position relative to the @.anchor.
+         ]]
          set {
-            [[Set the align priority of a popup.]]
          }
          get {
-            [[Get the align priority of a popup.]]
          }
          values {
-            first: Efl.Ui.Popup_Align;  [[First align priority]]
-            second: Efl.Ui.Popup_Align; [[Second align priority]]
-            third: Efl.Ui.Popup_Align;  [[Third align priority]]
-            fourth: Efl.Ui.Popup_Align; [[Fourth align priority]]
-            fifth: Efl.Ui.Popup_Align;  [[Fifth align priority]]
+            first: Efl.Ui.Popup_Align;  [[First alignment.]]
+            second: Efl.Ui.Popup_Align; [[Second alignment.]]
+            third: Efl.Ui.Popup_Align;  [[Third alignment.]]
+            fourth: Efl.Ui.Popup_Align; [[Fourth alignment.]]
+            fifth: Efl.Ui.Popup_Align;  [[Fifth alignment.]]
          }
       }
    }

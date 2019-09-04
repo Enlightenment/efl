@@ -1,18 +1,19 @@
 enum @beta Efl.Ui.Select_Mode {
    [[Type of multi selectable object.]]
-   single, [[Only single child is selected. if the child is selected,
+   single, [[Only single child is selected. If a child is selected,
              previous selected child will be unselected.]]
    single_always, [[Same as single select except, this will be selected
-                    in every select calls though child is already been selected.]]
-   multi, [[allow multiple selection of children.]]
-   none [[Last value of select mode. child cannot be selected at all.]]
+                    in every select call even if child is already been selected.]]
+   multi, [[Allow multiple selection of children.]]
+   none [[No child can be selected at all.]]
 }
 
 interface @beta Efl.Ui.Multi_Selectable extends Efl.Ui.Single_Selectable
 {
    [[Interface for getting access to a range of selected items.
 
-     The implementor of this interface provides the possibility to select multiple Selectables. (If not, only Efl.Ui.Single_Selectable should be implemented)]]
+     The implementor of this interface provides the possibility to select multiple Selectables.
+     If not, only @Efl.Ui.Single_Selectable should be implemented.]]
    c_prefix: efl_ui;
    methods
    {

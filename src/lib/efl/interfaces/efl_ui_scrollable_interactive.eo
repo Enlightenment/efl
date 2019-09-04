@@ -1,4 +1,5 @@
 import eina_types;
+import efl_ui_layout_orientable;
 
 interface @beta Efl.Ui.Scrollable_Interactive extends Efl.Ui.Scrollable
 {
@@ -97,7 +98,7 @@ interface @beta Efl.Ui.Scrollable_Interactive extends Efl.Ui.Scrollable
          get {
          }
          values {
-            block: Efl.Ui.Scroll_Block(Efl.Ui.Scroll_Block.none); [[Which axis (or axes) to block]]
+            block: Efl.Ui.Layout_Orientation(Efl.Ui.Layout_Orientation.default); [[Which axis (or axes) to block]]
          }
       }
       @property gravity {

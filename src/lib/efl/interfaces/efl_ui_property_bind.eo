@@ -25,7 +25,10 @@ interface @beta Efl.Ui.Property_Bind
       }
    }
    events {
-      properties,changed: Efl.Ui.Property_Event; [[Event dispatched when a property on the object has changed due to an user interaction on the object that a model could be interested in.]]
-      property,bound: stringshare; [[Event dispatched when a property on the object is bound to a model. This is useful to not overgenerate event.]]
+      properties,changed: Efl.Ui.Property_Event; [[Event dispatched when a property on the object has changed due to
+                                                   a user interaction on the object that a model could be interested
+                                                   in.]]
+      property,bound: stringshare; [[Event dispatched when a property on the object is bound to a model.
+                                     This is useful to avoid generating too many events.]]
    }
 }

@@ -8,18 +8,23 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Layout_Base implements Efl
 {
    [[The Spotlight widget is a container for other sub-widgets, where only one sub-widget is active at any given time.
 
-     Sub-widgets are added using the @Efl.Pack_Linear interface and the active one (the one in the "spotlight") is selected using @.active_index.
+     Sub-widgets are added using the @Efl.Pack_Linear interface and the active one (the one in the "spotlight") is
+     selected using @.active_index.
 
-     The way the different sub-widgets are rendered can be customized through the @.spotlight_manager object. For example, only the active sub-widget
-     might be shown, or it might be shown in a central position whereas the other sub-widgets are displayed on the sides, or grayed-out.
+     The way the different sub-widgets are rendered can be customized through the @.spotlight_manager object.
+     For example, only the active sub-widget might be shown, or it might be shown in a central position whereas the
+     other sub-widgets are displayed on the sides, or grayed-out.
      All sub-widgets are displayed with the same size, selected with @.spotlight_size.
 
-     Additionally, the transition from one sub-widget to another can be animated. This animation is also controlled by the @.spotlight_manager object.
+     Additionally, the transition from one sub-widget to another can be animated.
+     This animation is also controlled by the @.spotlight_manager object.
 
-     Also, an indicator widget can be used to show a visual cue of how many sub-widgets are there and which one is the active one.
+     Also, an indicator widget can be used to show a visual cue of how many sub-widgets are there and which one is the
+     active one.
 
-     This class can be used to create other widgets like Pagers, Tabbed pagers or Stacks, where each sub-widget represents a "page" full
-     of other widgets. All these cases can be implemented with a different @.spotlight_manager and use the same @Efl.Ui.Spotlight.Container.
+     This class can be used to create other widgets like Pagers, Tabbed pagers or Stacks, where each sub-widget
+     represents a "page" full of other widgets. All these cases can be implemented with a different
+     @.spotlight_manager and use the same @Efl.Ui.Spotlight.Container.
    ]]
    c_prefix: efl_ui_spotlight;
    methods {
@@ -32,7 +37,8 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Layout_Base implements Efl
         }
       }
       @property indicator {
-        [[An indicator object to use, which will display the current state of the spotlight (number of sub-widgets and active one).
+        [[An indicator object to use, which will display the current state of the spotlight (number of sub-widgets
+          and active one).
           When this object is set, it is immediately updated to reflect the current state of the widget.
           Its location inside the container is controlled by the @.spotlight_manager.
         ]]
@@ -46,14 +52,17 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Layout_Base implements Efl
            Changing this value might trigger an animation.
          ]]
          values {
-            index: int; [[Index of the sub-widget that has the spotlight, from 0 to the number of sub-widgets - 1 (@Efl.Container.content_count - 1).]]
+            index: int; [[Index of the sub-widget that has the spotlight, from 0 to the number of sub-widgets - 1
+            (@Efl.Container.content_count - 1).]]
          }
       }
       @property spotlight_size {
-         [[The size to use when displaying the Sub-Widget which has the spotlight. This is used by the @.spotlight_manager to perform the rendering.
+         [[The size to use when displaying the Sub-Widget which has the spotlight.
+           This is used by the @.spotlight_manager to perform the rendering.
            Sub-Widgets other than the Active one may or may not use this size.]]
          values {
-            size: Eina.Size2D; [[Render size for the spotlight. (-1, -1) means that all available space inside the container is used.]]
+            size: Eina.Size2D; [[Render size for the spotlight.
+                                 (-1, -1) means that all available space inside the container can be used.]]
          }
       }
       push @beta {
@@ -70,19 +79,28 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Layout_Base implements Efl
       pop @beta {
          [[Removes the sub-widget that has the spotlight from the widget.
 
-           The sub-widgets behind it naturally flow down so the next one gets the spotlight. This is the same behavior as a pop operation on a stack.
-           When combined with @.push you don't have to worry about @.active_index since only the first sub-widget is manipulated.
+           The sub-widgets behind it naturally flow down so the next one gets the spotlight.
+           This is the same behavior as a pop operation on a stack.
+           When combined with @.push you don't have to worry about @.active_index since only the first sub-widget is
+           manipulated.
 
-           An animation might be triggered to give the new sub-widget the spotlight, come into position and the old one disappear.
+           An animation might be triggered to give the new sub-widget the spotlight, come into position and the old
+           one disappear.
 
            The removed sub-widget can be returned to the caller or deleted (depending on $delete_on_transition_end).
          ]]
          params {
-            deletion_on_transition_end : bool; [[ if $true, then the object will be deleted before resolving the future, and a NULL pointer is the value of the future. $false if no operation should be applied to it]]
+            deletion_on_transition_end : bool; [[If $true, then the object will be deleted before resolving the future,
+                                                 and a NULL pointer is the value of the future.
+                                                 $false if no operation should be applied to it.]]
          }
-         return : future<Efl.Gfx.Entity>; [[ This Future gets resolved when any transition animation finishes and the popped sub-widget is ready for collection.
-                                             If there is no animation, the Future resolves immediately.
-                                             If $deletion_on_transition_end is $true then this widget will destroy the popped sub-widget and the Future will contain no Value. Otherwise, the caller becomes the owner of the sub-widget contained in the Future and must dispose of it appropriately. ]]
+         return : future<Efl.Gfx.Entity>; [[This Future gets resolved when any transition animation finishes and the
+                                            popped sub-widget is ready for collection.
+                                            If there is no animation, the Future resolves immediately.
+                                            If $deletion_on_transition_end is $true then this widget will destroy the
+                                            popped sub-widget and the Future will contain no Value.
+                                            Otherwise, the caller becomes the owner of the sub-widget contained in the
+                                            Future and must dispose of it appropriately. ]]
       }
    }
    events {

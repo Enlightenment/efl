@@ -1,8 +1,11 @@
-class @beta Efl.Ui.Position_Manager.List extends Efl.Object implements Efl.Ui.Position_Manager.Entity, Efl.Ui.Position_Manager.Data_Access_V1
+class @beta Efl.Ui.Position_Manager.List extends Efl.Object
+                                         implements Efl.Ui.Position_Manager.Entity,
+                                                    Efl.Ui.Position_Manager.Data_Access_V1
 {
    [[Implementation of @Efl.Ui.Position_Manager.Entity for a list
 
-     Every item in the list will get at least his minsize applied, changes to the misize are listend to and change the layouting of all items. This supports the vertical and horizontal orientation.
+     Every item in the list will get at least his minsize applied, changes to the misize are listened to and change
+     the layout of all items. This supports the vertical and horizontal orientation.
    ]]
    implements {
       Efl.Object.destructor;

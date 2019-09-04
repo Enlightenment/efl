@@ -17,7 +17,8 @@ class @beta Efl.Canvas.Animation_Player extends Efl.Object implements Efl.Player
          get {
          }
          values {
-            auto_del: bool; [[$true to delete animation object automatically when animation is finished or animation is cancelled, $false otherwise.]]
+            auto_del: bool; [[$true to delete animation object automatically when animation is finished or animation is
+                              cancelled, $false otherwise.]]
          }
       }
       @property target {

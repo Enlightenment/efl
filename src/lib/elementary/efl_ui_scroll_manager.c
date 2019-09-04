@@ -137,8 +137,8 @@ static inline Eina_Bool
 _scroll_manager_thumb_scrollable_get(Efl_Ui_Scroll_Manager_Data *sd)
 {
    if (!sd) return EINA_FALSE;
-   if ((sd->block & EFL_UI_SCROLL_BLOCK_VERTICAL) &&
-       (sd->block & EFL_UI_SCROLL_BLOCK_HORIZONTAL))
+   if ((sd->block & EFL_UI_LAYOUT_ORIENTATION_VERTICAL) &&
+       (sd->block & EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL))
      return EINA_FALSE;
 
    if (!_elm_config->thumbscroll_enable) return EINA_FALSE;
@@ -791,8 +791,16 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
    cur = efl_ui_pan_position_get(sd->pan_obj);
    x = cur.x;
    y = cur.y;
-   if (sd->scrollto.x.animator) x = sd->scrollto.x.end;
-   if (sd->scrollto.y.animator) y = sd->scrollto.y.end;
+   if (sd->scrollto.x.animator)
+     {
+        if (((ev->z > 0) && (sd->scrollto.x.end > x)) || ((ev->z < 0) && (sd->scrollto.x.end < x)))
+          x = sd->scrollto.x.end;
+     }
+   if (sd->scrollto.y.animator)
+     {
+        if (((ev->z > 0) && (sd->scrollto.y.end > y)) || ((ev->z < 0) && (sd->scrollto.y.end < y)))
+          y = sd->scrollto.y.end;
+     }
    max = efl_ui_pan_position_max_get(sd->pan_obj);
    min = efl_ui_pan_position_min_get(sd->pan_obj);
    if (x < min.x) x = min.x;
@@ -898,11 +906,11 @@ _efl_ui_scroll_manager_wheel_event_cb(void *data,
      return;
    if (direction)
      {
-        if (sd->block & EFL_UI_SCROLL_BLOCK_HORIZONTAL) return;
+        if (sd->block & EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL) return;
      }
    else
      {
-        if (sd->block & EFL_UI_SCROLL_BLOCK_VERTICAL) return;
+        if (sd->block & EFL_UI_LAYOUT_ORIENTATION_VERTICAL) return;
      }
 
    evas_post_event_callback_push(e, _scroll_wheel_post_event_cb, sd);
@@ -1641,10 +1649,10 @@ _efl_ui_scroll_manager_post_event_move_direction_restrict_eval(Efl_Ui_Scroll_Man
    else if (dy < 0)
       sd->down.vdir = DOWN;
 
-   if (!(sd->block & EFL_UI_SCROLL_BLOCK_HORIZONTAL))
+   if (!(sd->block & EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL))
      sd->down.dir_x = EINA_TRUE;
 
-   if (!(sd->block & EFL_UI_SCROLL_BLOCK_VERTICAL))
+   if (!(sd->block & EFL_UI_LAYOUT_ORIENTATION_VERTICAL))
      sd->down.dir_y = EINA_TRUE;
 
    return EINA_TRUE;
@@ -2390,12 +2398,12 @@ _efl_ui_scroll_manager_efl_ui_scrollable_interactive_gravity_get(const Eo *obj E
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_movement_block_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Efl_Ui_Scroll_Block block)
+_efl_ui_scroll_manager_efl_ui_scrollable_interactive_movement_block_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Efl_Ui_Layout_Orientation block)
 {
    sd->block = block;
 }
 
-EOLIAN static Efl_Ui_Scroll_Block
+EOLIAN static Efl_Ui_Layout_Orientation
 _efl_ui_scroll_manager_efl_ui_scrollable_interactive_movement_block_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
 {
    return sd->block;
@@ -2443,7 +2451,7 @@ _efl_ui_scroll_manager_efl_object_constructor(Eo *obj, Efl_Ui_Scroll_Manager_Dat
    sd->bounce_horiz = _elm_config->thumbscroll_bounce_enable;
    sd->bounce_vert = _elm_config->thumbscroll_bounce_enable;
 
-   sd->block = EFL_UI_SCROLL_BLOCK_NONE;
+   sd->block = EFL_UI_LAYOUT_ORIENTATION_DEFAULT;
    sd->scrolling = EINA_FALSE;
 
    sd->event_rect = evas_object_rectangle_add(evas_object_evas_get(sd->parent));

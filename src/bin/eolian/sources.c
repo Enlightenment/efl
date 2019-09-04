@@ -314,7 +314,7 @@ _gen_function_param_fallback(Eina_Iterator *itr, Eina_Strbuf *fallback_free_owne
         inner_type = eolian_type_base_type_get(type);
 
         //check if they should be freed or just ignored
-        if (!eolian_type_is_owned(type) || eolian_parameter_direction_get(pr) == EOLIAN_OUT_PARAM)
+        if (!eolian_parameter_is_move(pr) || eolian_parameter_direction_get(pr) == EOLIAN_OUT_PARAM)
           {
              eina_strbuf_append_printf(fallback_free_ownership, "   (void)%s;\n", eolian_parameter_name_get(pr));
              continue;
@@ -329,11 +329,11 @@ _gen_function_param_fallback(Eina_Iterator *itr, Eina_Strbuf *fallback_free_owne
         eina_strbuf_append(param_call, eolian_parameter_name_get(pr));
 
         //check if we might want to free or handle the children
-        if (!inner_type || !eolian_type_is_owned(inner_type))
+        if (!inner_type || !eolian_type_is_move(inner_type))
           {
              _generate_normal_free(&fallback_free_ownership, type, param_call, "");
           }
-        else if (inner_type && eolian_type_is_owned(inner_type))
+        else if (inner_type && eolian_type_is_move(inner_type))
           {
              _generate_iterative_free(&fallback_free_ownership, type, inner_type, pr, param_call);
           }
@@ -527,7 +527,8 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
                   Eolian_Function_Parameter *pr = d1;
                   rtp = eolian_parameter_type_get(pr);
                   /* reflect only when returning 1 val */
-                  reflect_type = rtp;
+                  if (!eolian_parameter_is_by_ref(pr))
+                    reflect_type = rtp;
                   var_as_ret = EINA_TRUE;
                   def_ret = eolian_parameter_default_value_get(pr);
                }
@@ -543,7 +544,8 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
         if (eina_iterator_next(itr, &d1) && !eina_iterator_next(itr, &d2))
           {
              Eolian_Function_Parameter *pr = d1;
-             reflect_type = eolian_parameter_type_get(pr);
+             if (!eolian_parameter_is_by_ref(pr))
+               reflect_type = eolian_parameter_type_get(pr);
           }
         eina_iterator_free(itr);
      }

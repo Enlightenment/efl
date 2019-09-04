@@ -357,7 +357,6 @@ EFL_START_TEST(eolian_typedef)
    eina_stringshare_del(type_name);
    fail_if(!(type = eolian_typedecl_base_type_get(tdl)));
    fail_if(!(type_name = eolian_type_short_name_get(type)));
-   fail_if(eolian_type_is_owned(type));
    fail_if(eolian_type_is_const(type));
    fail_if(eolian_type_base_type_get(type));
    fail_if(strcmp(type_name, "int"));
@@ -377,14 +376,12 @@ EFL_START_TEST(eolian_typedef)
    fail_if(strcmp(type_name, "List_Objects"));
    fail_if(!(type = eolian_typedecl_base_type_get(tdl)));
    fail_if(!(type_name = eolian_type_c_type_get(type, EOLIAN_C_TYPE_DEFAULT)));
-   fail_if(eolian_type_is_owned(type));
    fail_if(strcmp(type_name, "Eina_List *"));
    eina_stringshare_del(type_name);
    fail_if(!(type = eolian_type_base_type_get(type)));
    fail_if(!!eolian_type_next_type_get(type));
    fail_if(!(type_name = eolian_type_c_type_get(type, EOLIAN_C_TYPE_DEFAULT)));
    fail_if(strcmp(type_name, "Typedef *"));
-   fail_if(eolian_type_is_owned(type));
    eina_stringshare_del(type_name);
 
    /* List */
@@ -429,21 +426,21 @@ EFL_START_TEST(eolian_complex_type)
    fail_if(!(fid = eolian_class_function_by_name_get(class, "a", EOLIAN_PROPERTY)));
    fail_if(!(type = eolian_function_return_type_get(fid, EOLIAN_PROP_SET)));
    fail_if(!(type_name = eolian_type_c_type_get(type, EOLIAN_C_TYPE_RETURN)));
-   fail_if(!eolian_type_is_owned(type));
+   fail_if(!eolian_function_return_is_move(fid, EOLIAN_PROP_SET));
    fail_if(eolian_type_builtin_type_get(type) != EOLIAN_TYPE_BUILTIN_LIST);
    fail_if(strcmp(type_name, "Eina_List *"));
    eina_stringshare_del(type_name);
    fail_if(!(type = eolian_type_base_type_get(type)));
    fail_if(!!eolian_type_next_type_get(type));
    fail_if(!(type_name = eolian_type_c_type_get(type, EOLIAN_C_TYPE_DEFAULT)));
-   fail_if(eolian_type_is_owned(type));
+   fail_if(eolian_type_is_move(type));
    fail_if(eolian_type_builtin_type_get(type) != EOLIAN_TYPE_BUILTIN_ARRAY);
    fail_if(strcmp(type_name, "Eina_Array *"));
    eina_stringshare_del(type_name);
    fail_if(!(type = eolian_type_base_type_get(type)));
    fail_if(!!eolian_type_next_type_get(type));
    fail_if(!(type_name = eolian_type_c_type_get(type, EOLIAN_C_TYPE_DEFAULT)));
-   fail_if(!eolian_type_is_owned(type));
+   fail_if(!eolian_type_is_move(type));
    fail_if(strcmp(type_name, "Eina_Strbuf *"));
    eina_stringshare_del(type_name);
    /* Properties parameter type */
@@ -454,13 +451,13 @@ EFL_START_TEST(eolian_complex_type)
    fail_if(strcmp(eolian_parameter_name_get(param), "value"));
    fail_if(!(type = eolian_parameter_type_get(param)));
    fail_if(!(type_name = eolian_type_c_type_get(type, EOLIAN_C_TYPE_PARAM)));
-   fail_if(!eolian_type_is_owned(type));
+   fail_if(!eolian_parameter_is_move(param));
    fail_if(strcmp(type_name, "Eina_List *"));
    eina_stringshare_del(type_name);
    fail_if(!(type = eolian_type_base_type_get(type)));
    fail_if(!!eolian_type_next_type_get(type));
    fail_if(!(type_name = eolian_type_c_type_get(type, EOLIAN_C_TYPE_DEFAULT)));
-   fail_if(eolian_type_is_owned(type));
+   fail_if(eolian_type_is_move(type));
    fail_if(strcmp(type_name, "const char *"));
    eina_stringshare_del(type_name);
 
@@ -468,13 +465,13 @@ EFL_START_TEST(eolian_complex_type)
    fail_if(!(fid = eolian_class_function_by_name_get(class, "foo", EOLIAN_METHOD)));
    fail_if(!(type = eolian_function_return_type_get(fid, EOLIAN_METHOD)));
    fail_if(!(type_name = eolian_type_c_type_get(type, EOLIAN_C_TYPE_RETURN)));
-   fail_if(!eolian_type_is_owned(type));
+   fail_if(!eolian_function_return_is_move(fid, EOLIAN_METHOD));
    fail_if(strcmp(type_name, "Eina_List *"));
    eina_stringshare_del(type_name);
    fail_if(!(type = eolian_type_base_type_get(type)));
    fail_if(!!eolian_type_next_type_get(type));
    fail_if(!(type_name = eolian_type_c_type_get(type, EOLIAN_C_TYPE_DEFAULT)));
-   fail_if(eolian_type_is_owned(type));
+   fail_if(eolian_type_is_move(type));
    fail_if(eolian_type_builtin_type_get(type) != EOLIAN_TYPE_BUILTIN_STRINGSHARE);
    fail_if(strcmp(type_name, "Eina_Stringshare *"));
    eina_stringshare_del(type_name);
@@ -485,7 +482,7 @@ EFL_START_TEST(eolian_complex_type)
    fail_if(strcmp(eolian_parameter_name_get(param), "buf"));
    fail_if(!(type = eolian_parameter_type_get(param)));
    fail_if(!(type_name = eolian_type_c_type_get(type, EOLIAN_C_TYPE_PARAM)));
-   fail_if(!eolian_type_is_owned(type));
+   fail_if(!eolian_parameter_is_move(param));
    fail_if(eolian_type_builtin_type_get(type) != EOLIAN_TYPE_BUILTIN_MSTRING);
    fail_if(strcmp(type_name, "char *"));
    eina_stringshare_del(type_name);
@@ -494,7 +491,7 @@ EFL_START_TEST(eolian_complex_type)
    fail_if(strcmp(eolian_parameter_name_get(param), "sl"));
    fail_if(!(type = eolian_parameter_type_get(param)));
    fail_if(!(type_name = eolian_type_c_type_get(type, EOLIAN_C_TYPE_PARAM)));
-   fail_if(eolian_type_is_owned(type));
+   fail_if(eolian_parameter_is_move(param));
    fail_if(eolian_type_builtin_type_get(type) != EOLIAN_TYPE_BUILTIN_SLICE);
    fail_if(strcmp(type_name, "Eina_Slice"));
    eina_stringshare_del(type_name);
@@ -1386,7 +1383,7 @@ EFL_START_TEST(eolian_function_types)
    fail_if(strcmp(eolian_parameter_name_get(param), "c"));
    fail_if(!(type = eolian_parameter_type_get(param)));
    fail_if(eolian_parameter_direction_get(param) != EOLIAN_IN_PARAM);
-   fail_if(eolian_type_is_owned(type));
+   fail_if(eolian_parameter_is_move(param));
    fail_if(!(type_name = eolian_type_c_type_get(type, EOLIAN_C_TYPE_PARAM)));
    fail_if(strcmp(type_name, "const char *"));
 
@@ -1395,7 +1392,7 @@ EFL_START_TEST(eolian_function_types)
    fail_if(strcmp(eolian_parameter_name_get(param), "d"));
    fail_if(eolian_parameter_direction_get(param) != EOLIAN_OUT_PARAM);
    fail_if(!(type = eolian_parameter_type_get(param)));
-   fail_if(!eolian_type_is_owned(type));
+   fail_if(!eolian_parameter_is_move(param));
    fail_if(!(type_name = eolian_type_c_type_get(type, EOLIAN_C_TYPE_PARAM)));
    fail_if(strcmp(type_name, "char *"));
 
@@ -1416,7 +1413,7 @@ EFL_START_TEST(eolian_function_types)
    fail_if(strcmp(eolian_parameter_name_get(param), "cb"));
    fail_if(!(type = eolian_parameter_type_get(param)));
    fail_if(eolian_parameter_direction_get(param) != EOLIAN_IN_PARAM);
-   fail_if(eolian_type_is_owned(type));
+   fail_if(eolian_parameter_is_move(param));
    fail_if(!(type_name = eolian_type_short_name_get(type)));
    fail_if(strcmp(type_name, "VoidFunc"));
    fail_if(!(arg_decl = eolian_type_typedecl_get(type)));
@@ -1426,7 +1423,7 @@ EFL_START_TEST(eolian_function_types)
    fail_if(strcmp(eolian_parameter_name_get(param), "another_cb"));
    fail_if(eolian_parameter_direction_get(param) != EOLIAN_IN_PARAM);
    fail_if(!(type = eolian_parameter_type_get(param)));
-   fail_if(eolian_type_is_owned(type));
+   fail_if(eolian_parameter_is_move(param));
    fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_REGULAR);
    fail_if(!(type_name = eolian_type_short_name_get(type)));
    fail_if(strcmp(type_name, "SimpleFunc"));
@@ -1467,7 +1464,7 @@ EFL_START_TEST(eolian_function_as_arguments)
    fail_if(strcmp(eolian_parameter_name_get(param), "cb"));
    fail_if(!(type = eolian_parameter_type_get(param)));
    fail_if(eolian_parameter_direction_get(param) != EOLIAN_IN_PARAM);
-   fail_if(eolian_type_is_owned(type));
+   fail_if(eolian_parameter_is_move(param));
    fail_if(!(type_name = eolian_type_short_name_get(type)));
    fail_if(strcmp(type_name, "SimpleFunc"));
    fail_if(!(arg_decl = eolian_type_typedecl_get(type)));

@@ -85,7 +85,7 @@ class @beta Efl.Io.Copier extends Efl.Loop_Consumer implements Efl.Io.Closer {
              that in order to attempt to write a full line at a time,
              including the delimiter. Exceptions may be if the
              @.source object emitted "eos" and there is no trailing
-             delimiter (ie: missing trailing newline in files) or if the
+             delimiter (i.e: missing trailing newline in files) or if the
              @.buffer_limit is reached.
 
              Once @Efl.Io.Reader.eos is $true or "eos" event happen,
@@ -184,7 +184,9 @@ class @beta Efl.Io.Copier extends Efl.Loop_Consumer implements Efl.Io.Closer {
         }
 
         @property line_delimiter {
-            [[If there is a line delimiter, reads will buffer/queue up to the line delimiter before calling @Efl.Io.Writer.write on the @.destination and the event line is emitted with the current line. The line may include the delimiter unless it's end-of-stream on @.source or @.buffer_limit was reached.]]
+            [[If there is a line delimiter, reads will buffer/queue up to the line delimiter before calling
+              @Efl.Io.Writer.write on the @.destination and the event line is emitted with the current line.
+              The line may include the delimiter unless it's end-of-stream on @.source or @.buffer_limit was reached.]]
             get { }
             set {
                [[Changes line delimiter to use. If empty, no delimiter is to be used]]
@@ -264,7 +266,8 @@ class @beta Efl.Io.Copier extends Efl.Loop_Consumer implements Efl.Io.Closer {
             values {
                 read: uint64 @optional; [[Amount of bytes read from source]]
                 written: uint64 @optional; [[Amount of bytes written to destination]]
-                total: uint64 @optional; [[If @.source is an Efl.Io.Sizer, its total size. Otherwise 0 to report unknown size]]
+                total: uint64 @optional; [[If @.source is an @Efl.Io.Sizer, its total size. Otherwise 0 to
+                                           report unknown size]]
            }
         }
 
@@ -279,7 +282,8 @@ class @beta Efl.Io.Copier extends Efl.Loop_Consumer implements Efl.Io.Closer {
               greater-than zero. Defaults to inactive.
             ]]
             values {
-                seconds: double; [[Number inactive seconds to timeout this copier. If zero or less, it will be disabled.]]
+                seconds: double; [[Number inactive seconds to timeout this copier. If zero or less, it will be
+                                   disabled.]]
             }
         }
 
@@ -294,7 +298,8 @@ class @beta Efl.Io.Copier extends Efl.Loop_Consumer implements Efl.Io.Closer {
             get { }
             set @protected { }
             values {
-                done: bool; [[If $true, source is "eos" and all data was written to "destination". If $false, it's still pending some more copies]]
+                done: bool; [[If $true, source is "eos" and all data was written to "destination". If $false, it's
+                              still pending some more copies]]
             }
         }
 
@@ -351,7 +356,8 @@ class @beta Efl.Io.Copier extends Efl.Loop_Consumer implements Efl.Io.Closer {
               "done" event.
             ]]
             params {
-                may_block: bool; [[If $true, then @Efl.Io.Reader.can_read and @Efl.Io.Writer.can_write are not checked and the call may block.]]
+                may_block: bool; [[If $true, then @Efl.Io.Reader.can_read and @Efl.Io.Writer.can_write are not checked
+                                   and the call may block.]]
                 ignore_line_delimiter: bool; [[Forces flush ignoring line delimiters]]
             }
             return: bool(true); [[$true on success, $false otherwise]]
@@ -362,8 +368,10 @@ class @beta Efl.Io.Copier extends Efl.Loop_Consumer implements Efl.Io.Closer {
         done: void; [[All available data was copied from source to destination]]
         error: Eina.Error; [[An error happened and the copy stopped]]
         progress: void; [[Total size changed or Data was read/written]]
-        data: ptr(const(Eina.Slice)); [[When data is read to internal buffer, it's emitted in this event. The memory is only valid during event callback dispatched and should not be modified.]]
-        line: ptr(const(Eina.Slice)); [[If @.line_delimiter is set, will be emitted with current line. The memory is only valid during event callback dispatched and should not be modified.]]
+        data: ptr(const(Eina.Slice)); [[When data is read to internal buffer, it's emitted in this event. The memory
+                                        is only valid during event callback dispatched and should not be modified.]]
+        line: ptr(const(Eina.Slice)); [[If @.line_delimiter is set, will be emitted with current line. The memory is
+                                        only valid during event callback dispatched and should not be modified.]]
     }
 
     implements {

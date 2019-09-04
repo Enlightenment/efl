@@ -210,6 +210,15 @@ _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_
         size = size_buffer[buffer_id].size;
         ent = obj_buffer[buffer_id].entity;
 
+        int diff = cache_access(obj, pd, i + 1) - cache_access(obj, pd, i);
+        int real_diff = 0;
+        if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
+          real_diff = size.h;
+        else
+          real_diff = size.w;
+        if (real_diff != diff)
+          ERR("Reported sizes changed during caching and placement %d %d %d", i, real_diff, diff);
+
         if (ent == pd->last_group)
           {
              pd->last_group = NULL;
@@ -228,7 +237,10 @@ _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_
           }
 
         if (ent)
-          efl_gfx_entity_geometry_set(ent, geom);
+          {
+             efl_gfx_entity_visible_set(ent, EINA_TRUE);
+             efl_gfx_entity_geometry_set(ent, geom);
+          }
         if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
           geom.y += size.h;
         else
@@ -277,6 +289,8 @@ position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
 
    if (!pd->size) return;
    if (pd->average_item_size <= 0) return;
+
+   cache_require(obj, pd);
 
    //space size contains the amount of space that is outside the viewport (either to the top or to the left)
    space_size.w = (MAX(pd->abs_size.w - pd->viewport.w, 0))*pd->scroll_position.x;
@@ -336,6 +350,8 @@ schedule_recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
 EOLIAN static void
 _efl_ui_position_manager_list_efl_ui_position_manager_entity_viewport_set(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, Eina_Rect size)
 {
+   if (pd->viewport.w == size.w && pd->viewport.h == size.h) return;
+
    pd->viewport = size;
 
    recalc_absolut_size(obj, pd);
@@ -442,6 +458,7 @@ _efl_ui_position_manager_list_efl_ui_layout_orientable_orientation_set(Eo *obj E
 
    cache_invalidate(obj, pd);
    cache_require(obj,pd);
+   if (!efl_finalized_get(obj)) return;
    recalc_absolut_size(obj, pd);
    position_content(obj, pd);
 }

@@ -22,7 +22,7 @@ interface @beta Efl.Model
             get {
                [[Get properties from model.
 
-                 properties_get is due to provide callers a way the fetch the
+                 Properties_get is due to provide callers a way the fetch the
                  current properties implemented/used by the model. The event
                  @[Efl.Model.properties,changed] will be raised to notify
                  listeners of any modifications in the properties.
@@ -51,7 +51,8 @@ interface @beta Efl.Model
 
                See @.property.get, @[Efl.Model.properties,changed]
               ]]
-              return: future<any_value_ptr>; [[Return an error in case the property could not be set, the value that was set otherwise.]]
+              return: future<any_value_ptr>; [[Return an error in case the property could not be set,
+                                               or the value that was set otherwise.]]
            }
            get {
               [[Retrieve the value of a given property name.
@@ -75,7 +76,7 @@ interface @beta Efl.Model
 
              @.property.get can return an error with code EAGAIN when it doesn't have any
              meaningful value. To make life easier, this future will resolve when
-             the error:EAGAIN disapears. Either into a failed future in case the error
+             the error:EAGAIN disappears. Either into a failed future in case the error
              code changed to something else or a success with the value of the property
              whenever the property finally changes.
 
@@ -85,7 +86,8 @@ interface @beta Efl.Model
            params {
               @in property: string; [[Property name.]]
            }
-           return: future<any_value_ptr>; [[Future to be resolved when the property changes to anything other than error:EAGAIN]]
+           return: future<any_value_ptr>; [[Future to be resolved when the property changes to anything other than
+                                            error:EAGAIN]]
         }
         children_slice_get {
                [[Get children slice OR full range.

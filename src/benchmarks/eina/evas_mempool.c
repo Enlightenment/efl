@@ -40,6 +40,7 @@ _evas_mp_pool_new(Evas_Mempool *pool)
    item_alloc =
       ((pool->item_size + sizeof(void *) - 1) / sizeof(void *)) * sizeof(void *);
    p = malloc(sizeof(Pool) + (pool->pool_size * item_alloc));
+   if (!p) return NULL;
    ptr = (void **)(((unsigned char *)p) + sizeof(Pool));
    p->usage = 0;
    p->base = ptr;

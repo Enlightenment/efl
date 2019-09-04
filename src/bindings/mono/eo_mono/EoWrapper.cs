@@ -3,6 +3,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Reflection;
+using System.Collections;
 
 namespace Efl
 {
@@ -26,6 +27,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
     private static Efl.EventCb ownershipUniqueDelegate = new Efl.EventCb(OwnershipUniqueCallback);
     private static Efl.EventCb ownershipSharedDelegate = new Efl.EventCb(OwnershipSharedCallback);
 
+    private Hashtable keyValueHash = null;
 
     /// <summary>Constructor to be used when objects are expected to be constructed from native code.
     /// For a class that inherited from an EFL# class to be properly constructed from native code
@@ -320,6 +322,28 @@ public abstract class EoWrapper : IWrapper, IDisposable
 
         /// <summary>Pointer to the native instance.</summary>
         public IntPtr NativeHandle { get; private set; }
+    }
+
+    /// <summary>
+    /// Set a value object associated with a key object.
+    /// </summary>
+    public void SetKeyValue(object key, object val)
+    {
+        if (keyValueHash == null)
+            keyValueHash = new Hashtable();
+
+        keyValueHash.Add(key, val);
+    }
+
+    /// <summary>
+    /// Get a value object associated with a key object.
+    /// </summary>
+    public object GetKeyValue(object key)
+    {
+        if (keyValueHash == null)
+            return null;
+
+        return keyValueHash[key];
     }
 
     /// <summary>Wrapper for native methods and virtual method delegates.

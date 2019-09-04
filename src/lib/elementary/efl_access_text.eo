@@ -55,7 +55,9 @@ interface @beta Efl.Access.Text
             offset: int; [[Position in text.]]
          }
          values {
-            character: Eina.Unicode; [[Character at offset. 0 when out-of bounds offset has been given. Codepoints between DC80 and DCFF indicates that string includes invalid UTF8 chars.]]
+            character: Eina.Unicode; [[Character at offset. 0 when out-of bounds offset has been given.
+                                       Codepoints between DC80 and DCFF indicate that string includes invalid
+                                       UTF8 chars.]]
          }
       }
       @property string @protected @beta {
@@ -64,8 +66,10 @@ interface @beta Efl.Access.Text
          }
          keys {
             granularity: Efl.Access.Text_Granularity; [[Text granularity]]
-            start_offset: ptr(int); [[Offset indicating start of string according to given granularity.  -1 in case of error.]]
-            end_offset: ptr(int); [[Offset indicating end of string according to given granularity. -1 in case of error.]]
+            start_offset: ptr(int); [[Offset indicating start of string according to given granularity.
+                                      -1 in case of error.]]
+            end_offset: ptr(int); [[Offset indicating end of string according to given granularity.
+                                    -1 in case of error.]]
          }
          values {
             string: mstring @owned; [[Newly allocated UTF-8 encoded string. Must be free by a user.]]
@@ -136,7 +140,8 @@ interface @beta Efl.Access.Text
          }
          keys {
             offset: int; [[Offset]]
-            screen_coords: bool; [[If $true, x and y values will be relative to screen origin, otherwise relative to canvas]]
+            screen_coords: bool; [[If $true, x and y values will be relative to screen origin,
+                                   otherwise relative to canvas]]
          }
          values {
             rect: Eina.Rect; [[Extents rectangle]]
@@ -155,7 +160,8 @@ interface @beta Efl.Access.Text
          get {
          }
          keys {
-            screen_coords: bool; [[If $true, x and y values will be relative to screen origin, otherwise relative to canvas]]
+            screen_coords: bool; [[If $true, x and y values will be relative to screen origin,
+                                   otherwise relative to canvas]]
             x: int; [[X coordinate]]
             y: int; [[Y coordinate]]
          }
@@ -168,7 +174,8 @@ interface @beta Efl.Access.Text
          get {
          }
          keys {
-            screen_coords: bool; [[If $true, x and y values will be relative to screen origin, otherwise relative to canvas]]
+            screen_coords: bool; [[If $true, x and y values will be relative to screen origin,
+                                   otherwise relative to canvas]]
             rect: Eina.Rect; [[Bounding box]]
             xclip: Efl.Access.Text_Clip_Type; [[xclip]]
             yclip: Efl.Access.Text_Clip_Type; [[yclip]]
@@ -183,7 +190,8 @@ interface @beta Efl.Access.Text
             return: bool; [[$true if range extents, $false otherwise]]
          }
          keys {
-            screen_coords: bool; [[If $true, x and y values will be relative to screen origin, otherwise relative to canvas]]
+            screen_coords: bool; [[If $true, x and y values will be relative to screen origin,
+                                   otherwise relative to canvas]]
             start_offset: int; [[Start offset]]
             end_offset: int; [[End offset]]
          }

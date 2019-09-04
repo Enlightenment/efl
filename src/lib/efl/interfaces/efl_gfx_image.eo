@@ -183,7 +183,7 @@ interface @beta Efl.Gfx.Image
            making frames and decorations. You would most probably also be
            using a filled image (as in @Efl.Gfx.Fill.fill_auto) to use as a frame.
 
-           The default value is @Efl.Gfx.Border_Fill_Mode.default, ie. render
+           The default value is @Efl.Gfx.Border_Fill_Mode.default, i.e. render
            and scale the center area, respecting its transparency.
          ]]
          set {}
@@ -208,8 +208,10 @@ interface @beta Efl.Gfx.Image
          }
          get {}
          values {
-            horizontal: iterator<ptr(Efl.Gfx.Image_Stretch_Region)>; [[Representation of area that are stretchable in the image horizontal space.]]
-            vertical: iterator<ptr(Efl.Gfx.Image_Stretch_Region)>; [[Representation of area that are stretchable in the image vertical space.]]
+            horizontal: iterator<ptr(Efl.Gfx.Image_Stretch_Region)>; [[Representation of areas that are stretchable in
+                                                                       the image horizontal space.]]
+            vertical: iterator<ptr(Efl.Gfx.Image_Stretch_Region)>; [[Representation of areas that are stretchable in
+                                                                     the image vertical space.]]
          }
       }
       @property image_size {
@@ -229,27 +231,20 @@ interface @beta Efl.Gfx.Image
 
       /* Note: those are obscure features of evas image. Expose in Efl.Gfx.Image? */
       @property content_hint {
-         set {
-            [[Set the content hint setting of a given image object of the
-              canvas.
+         [[Content hint setting for the image. These hints might be used by EFL
+           to enable optimizations.
 
-              This function sets the content hint value of the given image
-              of the canvas. For example, if you're on the GL engine and
-              your driver implementation supports it, setting this hint to
-              #EVAS_IMAGE_CONTENT_HINT_DYNAMIC will make it need zero copies
-              at texture upload time, which is an "expensive" operation.
-            ]]
+           For example, if you're on the GL engine and your driver implementation
+           supports it, setting this hint to @Efl.Gfx.Image_Content_Hint.dynamic
+           will make it need zero copies at texture upload time, which is an
+           "expensive" operation.
+         ]]
+         set {
          }
          get {
-            [[Get the content hint setting of a given image object of the
-              canvas.
-
-              This returns #EVAS_IMAGE_CONTENT_HINT_NONE on error.
-            ]]
          }
          values {
-            hint: Efl.Gfx.Image_Content_Hint; [[Dynamic or static content hint,
-                                            see @Efl.Gfx.Image_Content_Hint]]
+            hint: Efl.Gfx.Image_Content_Hint; [[Dynamic or static content hint.]]
          }
       }
       @property scale_hint {

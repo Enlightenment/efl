@@ -2,29 +2,46 @@ import efl_ui_layout_orientable;
 
 enum @beta Efl.Ui.Flip_Mode
 {
-   [[Efl UI flip mode ]]
-   rotate_y_center_axis, [[Rotate Y center axis flip mode]]
-   rotate_x_center_axis, [[Rotate X center axis flip mode]]
-   rotate_xz_center_axis, [[Rotate XZ center axis flip mode]]
-   rotate_yz_center_axis, [[Rotate YZ center axis flip mode]]
-   cube_left, [[Cube left flip mode]]
-   cube_right, [[Cube right flip mode]]
-   cube_up, [[Cube up flip mode]]
-   cube_down, [[Cube down flip mode]]
-   page_left, [[Page left flip mode]]
-   page_right, [[Page right flip mode]]
-   page_up, [[Page up flip mode]]
-   page_down, [[Page down flip mode]]
-   cross_fade, [[Cross fade flip mode]]
+   [[Efl UI flip mode used by @Efl.Ui.Flip.go and @Efl.Ui.Flip.go_to.]]
+   rotate_y_center_axis, [[Rotate Y center axis flip mode: Rotates the currently visible
+                           content around a vertical axis in the middle of its width, the
+                           other content is shown as the other side of the flip.]]
+   rotate_x_center_axis, [[Rotate X center axis flip mode: Rotates the currently visible
+                           content around a horizontal axis in the middle of its height,
+                           the other content is shown as the other side of the flip.]]
+   rotate_xz_center_axis, [[Rotate XZ center axis flip mode: Rotates the currently visible
+                            content around a diagonal axis in the middle of its width, the
+                            other content is shown as the other side of the flip.]]
+   rotate_yz_center_axis, [[Rotate YZ center axis flip mode: Rotates the currently visible
+                            content around a diagonal axis in the middle of its height, the
+                            other content is shown as the other side of the flip.]]
+   cube_left, [[Cube left flip mode: Rotates the currently visible content to the left as if
+                the flip was a cube, the other content is shown as the right face of the cube.]]
+   cube_right, [[Cube right flip mode: Rotates the currently visible content to the right as if
+                 the flip was a cube, the other content is shown as the left face of the cube.]]
+   cube_up, [[Cube up flip mode: Rotates the currently visible content up as if the flip was a
+              cube, the other content is shown as the bottom face of the cube.]]
+   cube_down, [[Cube down flip mode: Rotates the currently visible content down as if the flip
+                was a cube, the other content is shown as the upper face of the cube.]]
+   page_left, [[Page left flip mode: Moves the currently visible content to the left as if the
+                flip was a book, the other content is shown as the page below that.]]
+   page_right, [[Page right flip mode: Moves the currently visible content to the right as if
+                 the flip was a book, the other content is shown as the page below it.]]
+   page_up, [[Page up flip mode: Moves the currently visible content up as if the flip was a
+              book, the other content is shown as the page below it.]]
+   page_down, [[Page down flip mode: Moves the currently visible content down as if the flip
+                was a book, the other content is shown as the page below that.]]
+   cross_fade, [[Cross fade flip mode: Fades out the currently visible content, while fading in
+                 the invisible content.]]
 }
 
 enum @beta Efl.Ui.Flip_Interaction
 {
-   [[Efl UI flip interaction]]
-   none, [[No interaction]]
-   rotate, [[Rotate interaction]]
-   cube, [[Cube interaction]]
-   page [[Page interaction]]
+   [[Efl UI flip interaction mode used by @Efl.Ui.Flip.interaction.]]
+   none, [[No interaction.]]
+   rotate, [[Rotate interaction.]]
+   cube, [[Cube interaction.]]
+   page [[Page interaction.]]
 }
 
 class @beta Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
@@ -32,28 +49,28 @@ class @beta Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
    [[Efl UI flip class]]
    methods {
       @property interaction {
+         [[Interactive flip mode.
+
+           This selects if the flip should be interactive (allow user to
+           click and drag a side of the flip to reveal the back page
+           and cause it to flip). By default a flip is not interactive.
+           You may also need to set which sides of the flip are "active"
+           for flipping and how much space they use (a minimum of a
+           finger size) with @.interaction_direction_enabled_set
+           and @.interaction_direction_hitsize_set.
+
+           The four available modes of interaction are @Efl.Ui.Flip_Interaction.none,
+           @Efl.Ui.Flip_Interaction.rotate, @Efl.Ui.Flip_Interaction.cube and
+           @Efl.Ui.Flip_Interaction.page.
+
+           Note: @Efl.Ui.Flip_Interaction.rotate cannot trigger
+           @Efl.Ui.Flip_Mode.rotate_xz_center_axis or
+           @Efl.Ui.Flip_Mode.rotate_yz_center_axis animations. These are only
+           available through the @.go and @.go_to methods.
+         ]]
          set {
-            [[Set the interactive flip mode.
-
-              This sets if the flip should be interactive (allow user to
-              click and drag a side of the flip to reveal the back page
-              and cause it to flip). By default a flip is not interactive.
-              You may also need to set which sides of the flip are "active"
-              for flipping and how much space they use (a minimum of a
-              finger size) with @.interaction_direction_enabled_set
-              and @.interaction_direction_hitsize_set.
-
-              The four available mode of interaction are
-              #ELM_FLIP_INTERACTION_NONE, #ELM_FLIP_INTERACTION_ROTATE,
-              #ELM_FLIP_INTERACTION_CUBE and  #ELM_FLIP_INTERACTION_PAGE.
-
-              Note: #ELM_FLIP_INTERACTION_ROTATE won't cause
-              #ELM_FLIP_ROTATE_XZ_CENTER_AXIS or #ELM_FLIP_ROTATE_YZ_CENTER_AXIS
-              to happen, those can only be achieved with @.go.
-            ]]
          }
          get {
-            [[Get the interactive flip mode.]]
          }
          values {
             mode: Efl.Ui.Flip_Interaction; [[The interactive flip mode to use.]]
@@ -74,7 +91,7 @@ class @beta Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
            entire flip. There is however a consideration to be made in that
            the area will never be smaller than the finger size set (as set
            in your Elementary configuration), and dragging must always start
-           from the opposite half of the flip (eg. right half of the flip
+           from the opposite half of the flip (e.g. right half of the flip
            when dragging to the left).
 
            Note: The $dir parameter is not actually related to the direction
@@ -128,40 +145,7 @@ class @beta Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
            This effectively hides the currently visible content and shows
            the hidden one.
 
-           There a number of possible animations to use for flipping,
-           namely #ELM_FLIP_ROTATE_X_CENTER_AXIS (rotate the currently
-           visible content around a horizontal axis in the middle of its
-           height, the other content is shown as the other side of the flip),
-           #ELM_FLIP_ROTATE_Y_CENTER_AXIS (rotate the currently visible
-           content around a vertical axis in the middle of its width, the
-           other content is shown as the other side of the flip),
-           #ELM_FLIP_ROTATE_XZ_CENTER_AXIS (rotate the currently visible
-           content around a diagonal axis in the middle of its width, the
-           other content is shown as the other side of the flip),
-           #ELM_FLIP_ROTATE_YZ_CENTER_AXIS (rotate the currently visible
-           content around a diagonal axis in the middle of its height, the
-           other content is shown as the other side of the flip).
-           #ELM_FLIP_CUBE_LEFT (rotate the currently visible content to the
-           left as if the flip was a cube, the other content is shown as the
-           right face of the cube), #ELM_FLIP_CUBE_RIGHT (rotate the
-           currently visible content to the right as if the flip was a
-           cube, the other content is shown as the left face of the cube),
-           #ELM_FLIP_CUBE_UP (rotate the currently visible content up as if
-           the flip was a cube, the other content is shown as the bottom face
-           of the cube), #ELM_FLIP_CUBE_DOWN (rotate the currently visible
-           content down as if the flip was a cube, the other content is shown
-           as the upper face of the cube), #ELM_FLIP_PAGE_LEFT (move the
-           currently visible content to the left as if the flip was a book,
-           the other content is shown as the page below that),
-           #ELM_FLIP_PAGE_RIGHT (move the currently visible content to the
-           right as if the flip was a book, the other content is shown as the
-           page below it), #ELM_FLIP_PAGE_UP (move the currently visible
-           content up as if the flip was a book, the other content is shown
-           as the page below it), #ELM_FLIP_PAGE_DOWN (move the
-           currently visible content down as if the flip was a book, the
-           other content is shown as the page below that) and #ELM_FLIP_CROSS_FADE
-           (fade out the currently visible content, while fading in the
-           invisible content).
+           Compare with @.go_to which only switches sides if necessary.
          ]]
          /* FIXME-doc
           * @image html elm_flip.png
@@ -172,44 +156,13 @@ class @beta Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
          }
       }
       go_to {
-         [[Runs the flip animation to front or back.
+         [[Runs the flip animation to front or back as selected with $front.
+           If the flip is already showing this side, nothing is done
+           (Compare with @.go which always switches sides).
 
            Flips the front and back contents using the $mode animation.
            This effectively hides the currently visible content and shows
            he hidden one.
-
-           There a number of possible animations to use for flipping,
-           namely #ELM_FLIP_ROTATE_X_CENTER_AXIS (rotate the currently
-           visible content around a horizontal axis in the middle of its
-           height, the other content is shown as the other side of the flip),
-           #ELM_FLIP_ROTATE_Y_CENTER_AXIS (rotate the currently visible
-           content around a vertical axis in the middle of its width, the
-           other content is shown as the other side of the flip),
-           #ELM_FLIP_ROTATE_XZ_CENTER_AXIS (rotate the currently visible
-           content around a diagonal axis in the middle of its width, the
-           other content is shown as the other side of the flip),
-           #ELM_FLIP_ROTATE_YZ_CENTER_AXIS (rotate the currently visible
-           content around a diagonal axis in the middle of its height, the
-           other content is shown as the other side of the flip).
-           #ELM_FLIP_CUBE_LEFT (rotate the currently visible content to the
-           left as if the flip was a cube, the other content is show as the
-           right face of the cube), #ELM_FLIP_CUBE_RIGHT (rotate the
-           currently visible content to the right as if the flip was a
-           cube, the other content is show as the left face of the cube),
-           #ELM_FLIP_CUBE_UP (rotate the currently visible content up as if
-           the flip was a cube, the other content is shown as the bottom face
-           of the cube), #ELM_FLIP_CUBE_DOWN (rotate the currently visible
-           content down as if the flip was a cube, the other content is shown
-           as the upper face of the cube), #ELM_FLIP_PAGE_LEFT (move the
-           currently visible content to the left as if the flip was a book,
-           the other content is shown as the page below that),
-           #ELM_FLIP_PAGE_RIGHT (move the currently visible content to the
-           right as if the flip was a book, the other content is shown as the
-           page below it), #ELM_FLIP_PAGE_UP (move the currently visible
-           content up as if the flip was a book, the other content is shown
-           as the page below it) and #ELM_FLIP_PAGE_DOWN (move the
-           currently visible content down as if the flip was a book, the
-           other content is shown as the page below that).
          ]]
          /* FIXME-doc
           * @image html elm_flip.png

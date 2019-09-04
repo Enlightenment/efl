@@ -35,7 +35,7 @@ _gen_param(Eina_Strbuf *buf, Eolian_Function_Parameter *pr,
    eina_strbuf_append(buf, _get_add_star(ftype, eolian_parameter_direction_get(pr)));
    eina_strbuf_append(buf, prn);
    eina_stringshare_del(prtn);
-   if (eolian_type_is_owned(eolian_parameter_type_get(pr)))
+   if (eolian_parameter_is_move(pr))
      eina_strbuf_append(buf, " EFL_TRANSFER_OWNERSHIP");
    *rpid = 0;
    return 1;
@@ -82,13 +82,16 @@ _gen_func(const Eolian_State *state, const Eolian_Function *fid,
 
    Eina_Bool var_as_ret = EINA_FALSE;
    const Eolian_Type *rtp = eolian_function_return_type_get(fid, ftype);
+   Eina_Bool return_move = eolian_function_return_is_move(fid, ftype);
    if (ftype == EOLIAN_PROP_GET && !rtp)
      {
         void *d1, *d2;
         Eina_Iterator *itr = eolian_property_values_get(fid, ftype);
         if (eina_iterator_next(itr, &d1) && !eina_iterator_next(itr, &d2))
           {
-             rtp = eolian_parameter_type_get((Eolian_Function_Parameter *)d1);
+             Eolian_Function_Parameter *pr = (Eolian_Function_Parameter *)d1;
+             rtp = eolian_parameter_type_get(pr);
+             return_move = eolian_parameter_is_move(pr);
              var_as_ret = EINA_TRUE;
           }
         eina_iterator_free(itr);
@@ -168,7 +171,7 @@ _gen_func(const Eolian_State *state, const Eolian_Function *fid,
           flagbuf = eina_strbuf_new();
         eina_strbuf_prepend(flagbuf, " EINA_WARN_UNUSED_RESULT");
      }
-   if (rtp && eolian_type_is_owned(rtp))
+   if (return_move)
      eina_strbuf_append(buf, " EFL_TRANSFER_OWNERSHIP");
    if (flagbuf)
      {

@@ -44,7 +44,8 @@ mixin @beta Efl.Ui.Format requires Efl.Object
      or an @Efl.Ui.Spin can hold numbers 1 to 7, but display the strings "Monday" thru "Sunday".
 
      This conversion can be controlled through the @.format_func, @.format_values and @.format_string properties.
-     Only one of them needs to be set. When more than one is set @.format_values has the highest priority, followed by @.format_func and then @.format_string.
+     Only one of them needs to be set. When more than one is set @.format_values has the highest priority,
+     followed by @.format_func and then @.format_string.
      If one mechanism fails to produce a valid string the others will be tried (if provided) in descending
      order of priority.
      If no user-provided mechanism works, a fallback is used that just displays the value.
@@ -103,7 +104,7 @@ mixin @beta Efl.Ui.Format requires Efl.Object
             string: string; [[Formatting string containing regular characters and format specifiers.]]
             type: Efl.Ui.Format_String_Type(Efl.Ui.Format_String_Type.simple);
                             [[Type of formatting string, which controls how the
-                              different format specifiers are to be traslated.]]
+                              different format specifiers are to be translated.]]
          }
       }
 

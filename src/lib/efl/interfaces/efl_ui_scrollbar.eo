@@ -3,10 +3,10 @@ import efl_ui_layout_orientable;
 enum @beta Efl.Ui.Scrollbar_Mode
 {
    [[When should the scrollbar be shown.]]
-   auto = 0, [[Visible if necessary]]
-   on,       [[Always visible]]
-   off,      [[Always invisible]]
-   last      [[For internal use only]]
+   auto = 0, [[Visible if necessary.]]
+   on,       [[Always visible.]]
+   off,      [[Always invisible.]]
+   last      [[For internal use only.]]
 }
 
 interface @beta Efl.Ui.Scrollbar
