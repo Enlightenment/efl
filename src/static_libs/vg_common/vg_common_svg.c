@@ -716,7 +716,7 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
    // apply the transformation
    if (node->transform) efl_canvas_vg_node_transformation_set(vg, node->transform);
 
-   if (!node->display) efl_gfx_entity_visible_set(vg, EINA_FALSE);
+   if (node->type != SVG_NODE_DOC && !node->display) efl_gfx_entity_visible_set(vg, EINA_FALSE);
 
    if ((node->type == SVG_NODE_G) || (node->type == SVG_NODE_DOC)) return;
 
@@ -1016,6 +1016,8 @@ _apply_svg_property(Svg_Node *node, Efl_VG *vg)
      {
         node->id = eina_stringshare_add(id);
      }
+
+   node->display = efl_gfx_entity_visible_get(vg);
 
    if (node->type == SVG_NODE_G) return;
 
