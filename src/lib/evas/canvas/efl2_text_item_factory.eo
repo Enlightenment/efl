@@ -80,15 +80,16 @@ class @beta Efl2.Text.Item.Factory {
          [[Increase the item's refcount
          ]]
          params {
-              @cref handle: Efl2.Text.Item.Handle; [[Handle to the item to delete from the object]]
+              handle: ptr(Efl2.Text.Item.Handle); [[Handle to the item to delete from the object]]
          }
+         return: ptr(Efl2.Text.Item.Handle); [[The handle passed (also returned for convenience]]
       }
 
       unref @static {
          [[Decrease the item's refcount
          ]]
          params {
-              @cref handle: Efl2.Text.Item.Handle; [[Handle to the item to delete from the object]]
+              handle: ptr(Efl2.Text.Item.Handle); [[Handle to the item to delete from the object]]
          }
       }
    }
