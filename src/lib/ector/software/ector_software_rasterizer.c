@@ -316,7 +316,7 @@ _blend_gradient_alpha(int count, const SW_FT_Span *spans, void *user_data)
 
    while (count--)
      {
-        uint32_t *target = buffer + ((sd->raster_buffer->generic->w * spans->y) + spans->x);
+        uint32_t *target = buffer + ((pix_stride * spans->y) + spans->x);
         uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
         int length = spans->len;
 
@@ -364,7 +364,7 @@ _blend_gradient_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
 
    while (count--)
      {
-        uint32_t *target = buffer + ((sd->raster_buffer->generic->w * spans->y) + spans->x);
+        uint32_t *target = buffer + ((pix_stride * spans->y) + spans->x);
         uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
         int length = spans->len;
 
