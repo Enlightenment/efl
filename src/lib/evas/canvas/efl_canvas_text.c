@@ -11507,7 +11507,7 @@ evas_object_textblock_init(Evas_Object *eo_obj)
    o = obj->private_data;
    Efl2_Text_Cursor_Handle *co = o->cursor;
    co->obj = eo_obj;
-   evas_object_textblock_text_markup_set(eo_obj, "");
+   efl_text_set(eo_obj, "");
 
    o->multiline = EINA_FALSE;
 #ifdef BIDI_SUPPORT
