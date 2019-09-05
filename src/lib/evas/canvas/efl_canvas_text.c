@@ -758,6 +758,7 @@ static void _evas_textblock_cursors_update_offset(const Efl2_Text_Cursor_Handle 
 static void _evas_textblock_cursors_set_node(Efl2_Canvas_Text_Data *o, const Evas_Object_Textblock_Node_Text *n, Evas_Object_Textblock_Node_Text *new_node);
 static void _evas_textblock_annotations_clear(Efl2_Canvas_Text_Data *o);
 static void _evas_textblock_annotation_remove(Efl2_Canvas_Text_Data *o, Efl_Text_Annotate_Annotation *an, Eina_Bool remove_nodes);
+static Eina_Bool _evas_textblock_cursor_format_item_geometry_get(const Efl2_Text_Cursor_Handle *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
 
 static void _evas_textblock_cursor_at_format_set(Efl2_Text_Cursor_Handle *cur, const Evas_Object_Textblock_Node_Format *fmt);
 static Evas_Filter_Program *_format_filter_program_get(Efl2_Canvas_Text_Data *o, Evas_Object_Textblock_Format *fmt);
@@ -10136,7 +10137,15 @@ _canvas_text_cursor_pen_geometry_get(const Efl2_Text_Cursor_Handle *cur, Evas_Co
 void
 _canvas_text_cursor_content_geometry_get(const Efl2_Text_Cursor_Handle *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
-   // FIXME: impl
+   Eina_Bool item_is = _evas_textblock_cursor_format_item_geometry_get(cur, cx, cy, cw, ch);
+   if (item_is)
+      return;
+
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
+
+   _canvas_text_cursor_char_pen_geometry_common_get(
+         ENFN->font_char_coords_get, cur, cx, cy, cw, ch);
 }
 
 int
