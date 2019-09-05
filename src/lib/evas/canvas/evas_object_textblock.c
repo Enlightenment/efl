@@ -9728,7 +9728,7 @@ _evas_textblock_cursor_cluster_pos_get(Evas_Textblock_Cursor *cur, Eina_Bool inc
 
                        free(grapheme_breaks);
                     }
-
+#ifdef OT_SUPPORT
                   if (is_single_glyph)
                     {
                        Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(last_it);
@@ -9786,6 +9786,9 @@ _evas_textblock_cursor_cluster_pos_get(Evas_Textblock_Cursor *cur, Eina_Bool inc
                             is_single_glyph = EINA_FALSE;
                          }
                     }
+#else//#ifdef OT_SUPPORT
+                  (void)is_single_glyph;
+#endif//#ifdef OT_SUPPORT
                }
           }
      }
