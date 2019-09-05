@@ -286,6 +286,7 @@ typedef struct _Ecore_Wl2_Event_Window_Rotation
    int rotation, w, h, angle;
    Eina_Bool resize : 1;
 } Ecore_Wl2_Event_Window_Rotation;
+
 typedef struct _Ecore_Wl2_Event_Window_Rotation Ecore_Wl2_Event_Window_Rotation_Change_Prepare;
 typedef struct _Ecore_Wl2_Event_Window_Rotation Ecore_Wl2_Event_Window_Rotation_Change_Prepare_Done;
 typedef struct _Ecore_Wl2_Event_Window_Rotation Ecore_Wl2_Event_Window_Rotation_Change_Request;
@@ -598,7 +599,6 @@ EAPI struct wl_shm *ecore_wl2_display_shm_get(Ecore_Wl2_Display *display);
  * @param display The Ecore_Wl2_Display for which to retrieve the existing
  *                Wayland dmabuf interface from
  *
- *
  * @return The wl_dmabuf which this Ecore_Wl2_Display is using
  *
  * @ingroup Ecore_Wl2_Display_Group
@@ -640,8 +640,11 @@ EAPI void ecore_wl2_display_screen_size_get(Ecore_Wl2_Display *display, int *w, 
 
 /**
  * Get all the Ecore_Wl2_Input from the display.
+ *
  * @param display The display
+ *
  * @return A Eina_Iterator of Ecore_Wl2_Input or @c NULL on error
+ *
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.19
  */
@@ -649,9 +652,12 @@ EAPI Eina_Iterator *ecore_wl2_display_inputs_get(Ecore_Wl2_Display *display);
 
 /**
  * Find a seat for a given display object using the seat id
+ *
  * @param display The display
  * @param id The seat id
+ *
  * @return The corresponding Ecore_Wl2_Input object or @c NULL if no match is found
+ *
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.20
  */
@@ -659,9 +665,12 @@ EAPI Ecore_Wl2_Input *ecore_wl2_display_input_find(const Ecore_Wl2_Display *disp
 
 /**
  * Find a seat for a given display object using the seat id
+ *
  * @param display The display
  * @param name The seat name
+ *
  * @return The corresponding Ecore_Wl2_Input object or @c NULL if no match is found
+ *
  * @ingroup Ecore_Wl2_Display_Group
  * @since 1.20
  */
@@ -1183,6 +1192,7 @@ EAPI void ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *window, int id);
 
 /**
  * @brief Get the activated state of a window
+ *
  * @param window The window
  * @return @c EINA_TRUE if activated
  *
@@ -1193,6 +1203,7 @@ EAPI Eina_Bool ecore_wl2_window_activated_get(const Ecore_Wl2_Window *window);
 
 /**
  * @brief Set the seat for a popup window to be used with grab
+ *
  * @param window The window
  * @param input The seat
  *
@@ -1317,8 +1328,11 @@ EAPI Ecore_Wl2_Seat_Capabilities ecore_wl2_input_seat_capabilities_get(Ecore_Wl2
 
 /**
  * Get the wayland's seat id from an input.
+ *
  * @param input The input
+ *
  * @return The seat id
+ *
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.19
  */
@@ -1326,8 +1340,11 @@ EAPI unsigned int ecore_wl2_input_seat_id_get(Ecore_Wl2_Input *input) EINA_WARN_
 
 /**
  * Get the display object of an input
+ *
  * @param input The input
+ *
  * @return The display
+ *
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.20
  */
@@ -1335,8 +1352,11 @@ EAPI Ecore_Wl2_Display *ecore_wl2_input_display_get(const Ecore_Wl2_Input *input
 
 /**
  * Get the xkb_keymap object of an input
+ *
  * @param input The input
+ *
  * @return The xkb_keymap object
+ *
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.20
  */
@@ -1344,8 +1364,11 @@ EAPI struct xkb_keymap *ecore_wl2_input_keymap_get(const Ecore_Wl2_Input *input)
 
 /**
  * Get the name of an input
+ *
  * @param input The input
+ *
  * @return The name
+ *
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.20
  */
@@ -1353,10 +1376,13 @@ EAPI Eina_Stringshare *ecore_wl2_input_name_get(Ecore_Wl2_Input *input);
 
 /**
  * Get the keyboard repeat rate and delay of an input
+ *
  * @param input The input
  * @param rate Pointer to store the repeat rate (in seconds)
  * @param rate Pointer to store the repeat delay (in seconds)
+ *
  * @return True if repeat is enabled
+ *
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.20
  */
@@ -1364,9 +1390,12 @@ EAPI Eina_Bool ecore_wl2_input_keyboard_repeat_get(const Ecore_Wl2_Input *input,
 
 /**
  * Get the Evas_Device for the seat belonging to a window from an input
+ *
  * @param input The input
  * @param window The window
+ *
  * @return The device object
+ *
  * @ingroup Ecore_Wl2_Input_Group
  * @since 1.20
  */
@@ -1426,7 +1455,6 @@ EAPI void ecore_wl2_input_cursor_from_name_set(Ecore_Wl2_Input *input, const cha
  * This call initializes a data source and offeres the given mimetypes
  *
  * @param input the input where to add on the data source
- *
  * @param types a null-terminated array of mimetypes
  *
  * @ingroup Ecore_Wl2_Dnd_Group
@@ -1438,10 +1466,9 @@ EAPI void ecore_wl2_dnd_drag_types_set(Ecore_Wl2_Input *input, const char **type
  * Start a drag on the given input
  *
  * @param input the input to use
- *
  * @param window the window which is the origin of the drag operation
- *
  * @param drag_window the window which is used as window of the visible hint.
+ *
  * @return The serial for the start_drag request
  *
  * @ingroup Ecore_Wl2_Dnd_Group
@@ -1459,7 +1486,7 @@ EAPI uint32_t ecore_wl2_dnd_drag_start(Ecore_Wl2_Input *input, Ecore_Wl2_Window 
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.20
  */
-EAPI EAPI void ecore_wl2_dnd_set_actions(Ecore_Wl2_Input *input);
+EAPI void ecore_wl2_dnd_set_actions(Ecore_Wl2_Input *input);
 
 /**
  * End a drag started by a call to ecore_wl2_dnd_drag_start
@@ -1487,7 +1514,6 @@ EAPI Ecore_Wl2_Offer* ecore_wl2_dnd_selection_get(Ecore_Wl2_Input *input);
  * where the caller of this api must write the data (encoded in the given mimetype) to the fd
  *
  * @param input the input to provice this types on
- *
  * @param types a null-terminated array of mimetypes supported by the client
  *
  * @return serial of request on success, 0 on failure
@@ -1719,6 +1745,7 @@ EAPI int ecore_wl2_display_compositor_version_get(Ecore_Wl2_Display *disp);
  * @param offer Offer object to use
  *
  * @return or´ed values from Ecore_Wl2_Drag_Action which are describing the available actions
+ *
  * @ingroup Ecore_Wl2_Dnd_Group
  * @since 1.19
  */
