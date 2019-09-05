@@ -11,7 +11,11 @@ function @beta EflIoFilter {
 
 class @beta Efl.Io.Model extends Efl.Loop_Model
 {
-    [[Efl Io model class]]
+    [[Efl Io model class
+
+      Model is populated asynchronously from a monitoring thread, so values
+      won't be correct immediately.
+    ]]
 
     methods {
        children_filter_set {
@@ -32,9 +36,9 @@ class @beta Efl.Io.Model extends Efl.Loop_Model
        @property path {
           [[ Define the root path of a model.
           ]]
-	  set { [[ Only possible during construction. ]] }
-	  get { }
-	  values {
+          set { [[ Only possible during construction. ]] }
+          get { }
+          values {
              path: string; [[ Root path of the model. ]]
           }
        }
