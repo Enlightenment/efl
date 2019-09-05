@@ -630,7 +630,7 @@ struct _Evas_Object_Textblock
          unsigned int                    font_width;
          Efl_Text_Style_Effect_Type      effect;
          Efl_Text_Style_Shadow_Direction shadow_direction;
-         Efl_Text_Format_Wrap            wrap;
+         Efl2_Text_Wrap_Mode             wrap;
          Efl_Text_Font_Bitmap_Scalable   bitmap_scalable;
       } info;
    } default_format;
@@ -7797,7 +7797,6 @@ _canvas_text_cursor_paragraph_last(Efl2_Text_Cursor_Handle *cur)
      {
         node = _NODE_TEXT(EINA_INLIST_GET(node)->last);
         cur->node = node;
-        // FIXME: change of behaviour, we removed this: evas_textblock_cursor_paragraph_char_last(cur);
      }
    else
      {
@@ -7849,8 +7848,6 @@ _canvas_text_cursor_paragraph_prev(Efl2_Text_Cursor_Handle *cur)
         if (pnode)
           {
              cur->node = pnode;
-             // FIXME: Change of behaviour, we removed this line and set pos instead
-             // evas_textblock_cursor_paragraph_char_last(cur);
              cur->pos = 0;
              return EINA_TRUE;
           }
@@ -8845,9 +8842,10 @@ _canvas_text_cursor_line_jump_by(Efl2_Text_Cursor_Handle *cur, int by)
 
    else
      {
+        // FIXME: This code seems to have a bug. It should just set the line and then set the x and that's it.
         if (evas_object_textblock_line_number_geometry_get(cur->obj,
                  ln, &lx, &ly, &lw, &lh) &&
-              (!evas_textblock_cursor_char_coord_set(cur, cx, ly + (lh / 2))))
+              (!_canvas_text_cursor_coord_set(cur, cx, ly + (lh / 2), EINA_TRUE)))
           {
              _canvas_text_cursor_line_number_set(cur, ln);
              if (cx < (lx + (lw / 2)))
@@ -9858,7 +9856,7 @@ _canvas_text_cursor_geometry_get(const Efl2_Text_Cursor_Handle *cur, Efl2_Text_C
                   /* Handling last char in line (or in paragraph).
                    * T.e. prev condition didn't work, so we are not standing in the beginning of item,
                    * but in the end of line or paragraph. */
-                  else if (evas_textblock_cursor_eol_get(cur))
+                  else if (_canvas_text_cursor_eol_get(cur))
                     {
                        EvasBiDiLevel par_level, it_level;
 
@@ -10956,6 +10954,25 @@ _evas_textblock_cursor_format_item_geometry_get(const Efl2_Text_Cursor_Handle *c
    if (cw) *cw = w;
    if (ch) *ch = h;
    return EINA_TRUE;
+}
+
+Eina_Bool
+_canvas_text_cursor_eol_get(const Efl2_Text_Cursor_Handle *cur)
+{
+   Eina_Bool ret = EINA_FALSE;
+   Efl2_Text_Cursor_Handle cur2;
+   if (!cur) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
+
+   _canvas_text_cursor_init(&cur2, cur->obj);
+   _canvas_text_cursor_copy(&cur2, cur);
+   _canvas_text_cursor_line_end(&cur2);
+   if (cur2.pos == cur->pos)
+     {
+        ret = EINA_TRUE;
+     }
+   return ret;
 }
 
 /* general controls */
@@ -12977,7 +12994,7 @@ _evas_textblock_annotation_remove(Efl2_Canvas_Text_Data *o,
              Efl2_Text_Cursor_Handle cur;
              _canvas_text_cursor_init(&cur, an->obj);
              _textblock_cursor_pos_at_fnode_set(an->obj, &cur, an->start_node);
-             evas_textblock_cursor_char_delete(&cur);
+             _canvas_text_cursor_char_delete(&cur);
              return; // 'an' should be deleted after char deletion.
           }
         _evas_textblock_node_format_remove(o, an->start_node, 0);
@@ -13061,10 +13078,10 @@ _efl2_canvas_text_efl2_text_wrap_properties_wrap_set(Eo *obj EINA_UNUSED, Efl2_C
 {
    ASYNC_BLOCK;
    _FMT_INFO_SET_START(wrap, wrap);
-   _FMT(wrap_word) = (wrap == EFL_TEXT_FORMAT_WRAP_WORD);
-   _FMT(wrap_char) = (wrap == EFL_TEXT_FORMAT_WRAP_CHAR);
-   _FMT(wrap_mixed) = (wrap == EFL_TEXT_FORMAT_WRAP_MIXED);
-   _FMT(wrap_hyphenation) = (wrap == EFL_TEXT_FORMAT_WRAP_HYPHENATION);
+   _FMT(wrap_word) = (wrap == EFL2_TEXT_FORMAT_WRAP_WORD);
+   _FMT(wrap_char) = (wrap == EFL2_TEXT_FORMAT_WRAP_CHAR);
+   _FMT(wrap_mixed) = (wrap == EFL2_TEXT_FORMAT_WRAP_MIXED);
+   _FMT(wrap_hyphenation) = (wrap == EFL2_TEXT_FORMAT_WRAP_HYPHENATION);
    _FMT_INFO_SET_END();
 }
 
@@ -13087,49 +13104,6 @@ static Eina_Bool
 _efl2_canvas_text_multiline_get(const Eo *obj EINA_UNUSED, Efl2_Canvas_Text_Data *o EINA_UNUSED)
 {
    return o->multiline;
-}
-
-static void
-_efl_canvas_text_efl_text_format_halign_auto_type_set(Eo *obj, Efl2_Canvas_Text_Data *o, Efl_Text_Format_Horizontal_Alignment_Auto_Type type)
-{
-   ASYNC_BLOCK;
-   if (type == EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_NONE)
-     {
-        _FMT_SET(halign_auto, EVAS_TEXTBLOCK_ALIGN_AUTO_NONE);
-     }
-   else if (type == EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_NORMAL)
-     {
-        _FMT_SET(halign_auto, EVAS_TEXTBLOCK_ALIGN_AUTO_NORMAL);
-     }
-   else if (type == EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_LOCALE)
-     {
-        _FMT_SET(halign_auto, EVAS_TEXTBLOCK_ALIGN_AUTO_LOCALE);
-     }
-   else if (type == EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_END)
-     {
-        _FMT_SET(halign_auto, EVAS_TEXTBLOCK_ALIGN_AUTO_END);
-     }
-}
-
-static Efl_Text_Format_Horizontal_Alignment_Auto_Type
-_efl_canvas_text_efl_text_format_halign_auto_type_get(const Eo *obj EINA_UNUSED, Efl2_Canvas_Text_Data *o)
-{
-   Efl_Text_Format_Horizontal_Alignment_Auto_Type ret =
-      EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_NONE;
-
-   if (_FMT(halign_auto) == EVAS_TEXTBLOCK_ALIGN_AUTO_NORMAL)
-     {
-        ret = EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_NORMAL;
-     }
-   else if (_FMT(halign_auto) == EVAS_TEXTBLOCK_ALIGN_AUTO_END)
-     {
-        ret = EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_END;
-     }
-   else if (_FMT(halign_auto) == EVAS_TEXTBLOCK_ALIGN_AUTO_LOCALE)
-     {
-        ret = EFL_TEXT_FORMAT_HORIZONTAL_ALIGNMENT_AUTO_TYPE_LOCALE;
-     }
-   return ret;
 }
 
 static void
