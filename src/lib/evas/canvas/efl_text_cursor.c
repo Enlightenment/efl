@@ -39,18 +39,16 @@ _efl2_text_cursor_content_get(const Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *
 EOLIAN static Eina_Bool
 _efl2_text_cursor_geometry_get(const Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, Efl2_Text_Cursor_Type ctype, int *cx, int *cy, int *cw, int *ch, int *cx2, int *cy2, int *cw2, int *ch2)
 {
-   // FIXME
-   (void) pd;
-   (void) ctype;
-   (void) cx;
-   (void) cy;
-   (void) cw;
-   (void) ch;
-   (void) cx2;
-   (void) cy2;
-   (void) cw2;
-   (void) ch2;
-   return EINA_TRUE;
+   Efl2_Text_Cursor_Handle *cur = pd->cur;
+
+   return _canvas_text_cursor_geometry_get(cur, ctype, cx, cy, cw, ch, cx2, cy2, cw2, ch2);
+}
+
+EOLIAN static void
+_efl2_text_cursor_content_geometry_get(const Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, int *cx, int *cy, int *cw, int *ch)
+{
+   Efl2_Text_Cursor_Handle *cur = pd->cur;
+   _canvas_text_cursor_content_geometry_get(cur, cx, cy, cw, ch);
 }
 
 EOLIAN static Eina_Bool
@@ -210,7 +208,8 @@ _efl2_text_cursor_line_number_get(const Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Da
 EOLIAN static int
 _efl2_text_cursor_line_jump_by(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, int by)
 {
-   return -1;
+   Efl2_Text_Cursor_Handle *cur = pd->cur;
+   return _canvas_text_cursor_line_jump_by(cur, by);
 }
 
 EOLIAN static void
