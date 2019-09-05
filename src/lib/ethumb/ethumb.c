@@ -626,7 +626,10 @@ ethumb_frame_set(Ethumb *e, const char *theme_file, const char *group, const cha
      {
         edje_object_part_unswallow(frame->edje, e->img);
         if (!theme_file)
-          _ethumb_frame_free(frame);
+          {
+             _ethumb_frame_free(frame);
+             frame = NULL;
+          }
      }
 
    if (!theme_file)
