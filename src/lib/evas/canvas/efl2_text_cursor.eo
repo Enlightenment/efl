@@ -45,6 +45,14 @@ class @beta Efl2.Text.Cursor {
             content: Eina.Unicode; [[The unicode codepoint of the character]]
          }
       }
+      @property line_number {
+         [[The line the cursor is on]]
+         set {  }
+         get {  }
+         values {
+            line_number: int; [[The line number]]
+         }
+      }
       // FIXME: Not sure I like the use of enum. Maybe should be split to two separate functions.
       @property geometry {
          [[Returns the geometry of two cursors ("split cursor"), if logical cursor is
@@ -174,14 +182,7 @@ class @beta Efl2.Text.Cursor {
       }
 
       // FIXME: should be removed. It's just char_coord_set + grapheme_start
-      cluster_coord_set {
-         [[Set cursor coordinates according to grapheme cluster.
-         ]]
-         params {
-            @in x: int; [[X coord to set by.]]
-            @in y: int; [[Y coord to set by.]]
-         }
-      }
+      // cluster_coord_set {
 
       text_insert {
          [[Adds text to the current cursor position and set the cursor to
