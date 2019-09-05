@@ -20,7 +20,7 @@ class @beta Name1.Name2.Type_Generation extends Efl.Object
      }
      instringown {
        params {
-         @in v: mstring @owned;
+         @in v: mstring @move;
        }
      }
      instringshare {
@@ -30,7 +30,7 @@ class @beta Name1.Name2.Type_Generation extends Efl.Object
      }
      instringshareown {
        params {
-         @in v: stringshare @owned;
+         @in v: stringshare @move;
        }
      }
      // return
@@ -44,13 +44,13 @@ class @beta Name1.Name2.Type_Generation extends Efl.Object
        return: string;
      }
      returnstringown {
-       return: mstring @owned;
+       return: mstring @move;
      }
      returnstringshare {
         return: stringshare;
      }
      returnstringshareown {
-        return: stringshare @owned;
+        return: stringshare @move;
      }
      // out
      outvoidptr {
@@ -70,7 +70,7 @@ class @beta Name1.Name2.Type_Generation extends Efl.Object
      }
      outstringshareown {
        params {
-         @out v: stringshare @owned;
+         @out v: stringshare @move;
        }
      }
      // classname

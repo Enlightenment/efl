@@ -7,7 +7,7 @@ class Dummy.Event_Manager extends Efl.Object {
          set {
          }
          values {
-            emitter: Efl.Object @owned;
+            emitter: Efl.Object @move;
          }
       }
 
