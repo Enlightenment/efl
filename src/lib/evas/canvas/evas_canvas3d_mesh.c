@@ -154,7 +154,10 @@ _mesh_fini(Evas_Canvas3D_Mesh_Data *pd)
      }
 
    if (pd->indices && pd->owns_indices)
-     free(pd->indices);
+     {
+        free(pd->indices);
+        pd->indices = NULL;
+     }
 
    if (pd->nodes)
      eina_hash_free(pd->nodes);
