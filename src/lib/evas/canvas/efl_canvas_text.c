@@ -744,6 +744,8 @@ static const Evas_Object_Func object_func =
    return (x); \
    MAGIC_CHECK_END();
 static Eina_Bool _canvas_text_cursor_is_at_the_end(const Efl2_Text_Cursor_Handle *cur);
+static int _canvas_text_cursor_pen_geometry_get(const Efl2_Text_Cursor_Handle *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
+static int _cavas_text_cursor_geometry_get_old(const Efl2_Text_Cursor_Handle *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_BiDi_Direction *dir, Evas_Textblock_Cursor_Type ctype);
 static void _evas_textblock_node_text_remove(Efl2_Canvas_Text_Data *o, Evas_Object_Textblock_Node_Text *n);
 static Evas_Object_Textblock_Node_Format *_evas_textblock_cursor_node_format_before_or_at_pos_get(const Efl2_Text_Cursor_Handle *cur);
 static size_t _evas_textblock_node_format_pos_get(const Evas_Object_Textblock_Node_Format *fmt);
@@ -8832,7 +8834,7 @@ _canvas_text_cursor_line_jump_by(Efl2_Text_Cursor_Handle *cur, int by)
    pnode = cur->node;
    ppos = cur->pos;
 
-   evas_textblock_cursor_geometry_get(cur, &cx, NULL, &cw, NULL, NULL, EVAS_TEXTBLOCK_CURSOR_UNDER);
+   _cavas_text_cursor_geometry_get_old(cur, &cx, NULL, &cw, NULL, NULL, EVAS_TEXTBLOCK_CURSOR_UNDER);
    cx += (cw / 2);
    evas_textblock_cursor_paragraph_last(cur);
    last = evas_textblock_cursor_line_geometry_get(cur, NULL, NULL, NULL, NULL);
@@ -9746,6 +9748,398 @@ _find_layout_line_by_item(Evas_Object_Textblock_Paragraph *par, Evas_Object_Text
 }
 #endif
 
+Eina_Bool
+_canvas_text_cursor_geometry_get(const Efl2_Text_Cursor_Handle *cur, Efl2_Text_Cursor_Type ctype, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_Coord *cx2, Evas_Coord *cy2, Evas_Coord *cw2, Evas_Coord *ch2)
+{
+   Eo *eo_obj = cur->obj;
+   Efl2_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   ASYNC_BLOCK;
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
+
+   if (!_relayout_if_needed(cur->obj, o)) return EINA_FALSE;
+
+   if (ctype == EFL_TEXT_CURSOR_TYPE_UNDER)
+     {
+        _canvas_text_cursor_pen_geometry_get(cur, cx, cy, cw, ch);
+        return EINA_FALSE;
+     }
+
+#ifdef BIDI_SUPPORT
+#define IS_RTL(par) ((par) % 2)
+#define IS_DIFFERENT_DIR(l1, l2) (IS_RTL(l1) != IS_RTL(l2))
+   else
+     {
+        Evas_Object_Textblock_Line *ln = NULL;
+        Evas_Object_Textblock_Item *it = NULL;
+        _find_layout_item_match(cur, &ln, &it);
+        if (ln && it)
+          {
+             if (ln->par->is_bidi)
+               {
+                  if (cw) *cw = 0;
+                  if (cw2) *cw2 = 0;
+
+                  /* If we are at the start or the end of the item there's a chance
+                   * we'll want a split cursor.  */
+                  Evas_Object_Textblock_Item *previt = NULL;
+                  Evas_Object_Textblock_Item *it1 = NULL, *it2 = NULL;
+                  Evas_Coord adv1 = 0, adv2 = 0;
+
+                  if (cur->pos == it->text_pos)
+                    {
+                       EvasBiDiLevel par_level, it_level, previt_level;
+
+                       _layout_update_bidi_props(o, ln->par);
+                       par_level = *(ln->par->bidi_props->embedding_levels);
+                       it_level = ln->par->bidi_props->embedding_levels[it->text_pos];
+                       /* Get the logically previous item. */
+                         {
+                            Eina_List *itr;
+                            Evas_Object_Textblock_Item *ititr;
+
+                            EINA_LIST_FOREACH(ln->par->logical_items, itr, ititr)
+                              {
+                                 if (ititr == it)
+                                   break;
+                                 previt = ititr;
+                              }
+
+                            if (previt)
+                              {
+                                 previt_level = ln->par->bidi_props->embedding_levels[previt->text_pos];
+                              }
+                         }
+
+                       if (previt && (it_level != previt_level))
+                         {
+                            Evas_Object_Textblock_Item *curit = NULL, *curit_opp = NULL;
+                            EvasBiDiLevel cur_level;
+
+                            if (it_level > previt_level)
+                              {
+                                 curit = it;
+                                 curit_opp = previt;
+                                 cur_level = it_level;
+                              }
+                            else
+                              {
+                                 curit = previt;
+                                 curit_opp = it;
+                                 cur_level = previt_level;
+                              }
+
+                            if (((curit == it) && (!IS_RTL(par_level))) ||
+                                ((curit == previt) && (IS_RTL(par_level))))
+                              {
+                                 adv1 = (IS_DIFFERENT_DIR(cur_level, par_level)) ?
+                                                          curit_opp->adv : 0;
+                                 adv2 = curit->adv;
+                              }
+                            else if (((curit == previt) && (!IS_RTL(par_level))) ||
+                                     ((curit == it) && (IS_RTL(par_level))))
+                              {
+                                 adv1 = (IS_DIFFERENT_DIR(cur_level, par_level)) ?
+                                                          0 : curit->adv;
+                                 adv2 = 0;
+                              }
+
+                            if (!IS_DIFFERENT_DIR(cur_level, par_level))
+                              curit_opp = curit;
+
+                            it1 = curit_opp;
+                            it2 = curit;
+                         }
+                       /* Clear the bidi props because we don't need them anymore. */
+                       evas_bidi_paragraph_props_unref(ln->par->bidi_props);
+                       ln->par->bidi_props = NULL;
+                    }
+                  /* Handling last char in line (or in paragraph).
+                   * T.e. prev condition didn't work, so we are not standing in the beginning of item,
+                   * but in the end of line or paragraph. */
+                  else if (evas_textblock_cursor_eol_get(cur))
+                    {
+                       EvasBiDiLevel par_level, it_level;
+
+                       _layout_update_bidi_props(o, ln->par);
+                       par_level = *(ln->par->bidi_props->embedding_levels);
+                       it_level = ln->par->bidi_props->embedding_levels[it->text_pos];
+
+                       if (it_level > par_level)
+                         {
+                            Evas_Object_Textblock_Item *lastit = it;
+
+                            if (IS_RTL(par_level)) /* RTL par*/
+                              {
+                                 /*  We know, that all the items before current are of the same or bigger embedding level.
+                                  *  So search backwards for the first one. */
+                                 while (EINA_INLIST_GET(lastit)->prev)
+                                   {
+                                      lastit = _EINA_INLIST_CONTAINER(it, EINA_INLIST_GET(lastit)->prev);
+                                   }
+
+                                 adv1 = 0;
+                                 adv2 = it->adv;
+                              }
+                            else /* LTR par */
+                              {
+                                 /*  We know, that all the items after current are of bigger or same embedding level.
+                                  *  So search forward for the last one. */
+                                 while (EINA_INLIST_GET(lastit)->next)
+                                   {
+                                      lastit = _EINA_INLIST_CONTAINER(it, EINA_INLIST_GET(lastit)->next);
+                                   }
+
+                                 adv1 = lastit->adv;
+                                 adv2 = 0;
+                              }
+
+                            it1 = lastit;
+                            it2 = it;
+                         }
+                       /* Clear the bidi props because we don't need them anymore. */
+                       evas_bidi_paragraph_props_unref(ln->par->bidi_props);
+                       ln->par->bidi_props = NULL;
+                    }
+
+                  if (it1 && it2)
+                    {
+                       Evas_Object_Textblock_Line *ln1 = NULL, *ln2 = NULL;
+                       ln1 = _find_layout_line_by_item(ln->par, it1);
+                       if (cx) *cx = ln1->x + it1->x + adv1;
+                       if (cy) *cy = ln1->par->y + ln1->y;
+                       if (ch) *ch = ln1->h;
+
+                       ln2 = _find_layout_line_by_item(ln->par, it2);
+                       if (cx2) *cx2 = ln2->x + it2->x + adv2;
+                       if (cy2) *cy2 = ln2->par->y + ln2->y;
+                       if (ch2) *ch2 = ln2->h;
+
+                       return EINA_TRUE;
+                    }
+               }
+          }
+     }
+#undef IS_DIFFERENT_DIR
+#undef IS_RTL
+#else
+   (void) cx2;
+   (void) cy2;
+   (void) cw2;
+   (void) ch2;
+#endif
+   _cavas_text_cursor_geometry_get_old(cur, cx, cy, cw, ch, NULL,
+         (ctype == EFL_TEXT_CURSOR_TYPE_BEFORE) ?
+         EVAS_TEXTBLOCK_CURSOR_BEFORE : EVAS_TEXTBLOCK_CURSOR_UNDER);
+   return EINA_FALSE;
+}
+
+static int
+_cavas_text_cursor_geometry_get_old(const Efl2_Text_Cursor_Handle *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_BiDi_Direction *dir, Evas_Textblock_Cursor_Type ctype)
+{
+   int ret = -1;
+   if (!cur) return -1;
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
+   Efl2_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
+
+   _relayout_if_needed(cur->obj, o);
+
+   if (ctype == EVAS_TEXTBLOCK_CURSOR_UNDER)
+     {
+        Evas_Object_Textblock_Line *ln;
+        Evas_Object_Textblock_Item *it;
+
+        ret = _canvas_text_cursor_pen_geometry_get(cur, cx, cy, cw, ch);
+        _find_layout_item_match(cur, &ln, &it);
+        if (ret >= 0)
+          {
+             Evas_BiDi_Direction itdir =
+                (it->type == EVAS_TEXTBLOCK_ITEM_TEXT) ?
+                _ITEM_TEXT(it)->text_props.bidi_dir :
+                _ITEM_FORMAT(it)->bidi_dir;
+             if (dir) *dir = itdir;
+          }
+     }
+   else if (ctype == EVAS_TEXTBLOCK_CURSOR_BEFORE)
+     {
+        /* In the case of a "before cursor", we should get the coordinates
+         * of just after the previous char (which in bidi text may not be
+         * just before the current char). */
+        Evas_Coord x, y, w, h;
+        Evas_Object_Textblock_Line *ln;
+        Evas_Object_Textblock_Item *it;
+
+        ret = _canvas_text_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
+        _find_layout_item_match(cur, &ln, &it);
+        if (ret >= 0)
+          {
+             Evas_BiDi_Direction itdir =
+                (it->type == EVAS_TEXTBLOCK_ITEM_TEXT) ?
+                _ITEM_TEXT(it)->text_props.bidi_dir :
+                _ITEM_FORMAT(it)->bidi_dir;
+             if (itdir == EVAS_BIDI_DIRECTION_RTL)
+               {
+                  if (cx) *cx = x + w;
+               }
+             else
+               {
+                  if (cx) *cx = x;
+               }
+             if (cy) *cy = y;
+             if (cw) *cw = 0;
+             if (ch) *ch = h;
+             if (dir) *dir = itdir;
+          }
+     }
+   return ret;
+}
+
+/**
+ * @internal
+ * Returns the geometry/pen position (depending on query_func) of the char
+ * at pos.
+ *
+ * @param cur the position of the char.
+ * @param query_func the query function to use.
+ * @param cx the x of the char (or pen_x in the case of pen position).
+ * @param cy the y of the char.
+ * @param cw the w of the char (or advance in the case pen position).
+ * @param ch the h of the char.
+ * @return line number of the char on success, -1 on error.
+ */
+static int
+_canvas_text_cursor_char_pen_geometry_common_get(int (*query_func) (void *data, Evas_Font_Set *font, const Evas_Text_Props *intl_props, int pos, int *cx, int *cy, int *cw, int *ch), const Efl2_Text_Cursor_Handle *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+{
+   Evas_Object_Textblock_Line *ln = NULL;
+   Evas_Object_Textblock_Item *it = NULL;
+   Evas_Object_Textblock_Text_Item *ti = NULL;
+   Evas_Object_Textblock_Format_Item *fi = NULL;
+   int x = 0, y = 0, w = 0, h = 0;
+   int pos;
+   Eina_Bool previous_format;
+
+   if (!cur) return -1;
+   Efl2_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
+
+   _relayout_if_needed(cur->obj, o);
+
+   if (!cur->node)
+     {
+        if (!o->text_nodes)
+          {
+             if (!o->paragraphs) return -1;
+             ln = o->paragraphs->lines;
+             if (!ln) return -1;
+             if (cx) *cx = ln->x;
+             if (cy) *cy = ln->par->y + ln->y;
+             if (cw) *cw = ln->w;
+             if (ch) *ch = ln->h;
+             return ln->par->line_no + ln->line_no;
+          }
+        else
+          return -1;
+     }
+
+   previous_format = _find_layout_item_match(cur, &ln, &it);
+   if (!it)
+     {
+        return -1;
+     }
+   if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+     {
+        ti = _ITEM_TEXT(it);
+     }
+   else
+     {
+        fi = _ITEM_FORMAT(it);
+     }
+
+   if (ln && ti)
+     {
+        pos = cur->pos - ti->parent.text_pos;
+
+        if (pos < 0) pos = 0;
+        if (ti->parent.format->font.font)
+          {
+             Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
+             query_func(ENC,
+                   ti->parent.format->font.font,
+                   &ti->text_props,
+                   pos,
+                   &x, &y, &w, &h);
+          }
+
+        x += ln->x + _ITEM(ti)->x;
+
+        if (x < ln->x)
+          {
+             x = ln->x;
+          }
+        y = ln->par->y + ln->y;
+        h = ln->h;
+     }
+   else if (ln && fi)
+     {
+        if (previous_format)
+          {
+             if (_IS_LINE_SEPARATOR(fi->item))
+               {
+                  x = 0;
+                  y = ln->par->y + ln->y + ln->h;
+               }
+             else
+               {
+#ifdef BIDI_SUPPORT
+                  if (ln->par->direction == EVAS_BIDI_DIRECTION_RTL)
+                    {
+                       x = ln->x;
+                    }
+                  else
+#endif
+                    {
+                       x = ln->x + ln->w;
+                    }
+                  y = ln->par->y + ln->y;
+               }
+             w = 0;
+             h = ln->h;
+          }
+        else
+          {
+             x = ln->x + _ITEM(fi)->x;
+             y = ln->par->y + ln->y;
+             w = _ITEM(fi)->w;
+             h = ln->h;
+          }
+     }
+   else
+     {
+        return -1;
+     }
+   if (cx) *cx = x;
+   if (cy) *cy = y;
+   if (cw) *cw = w;
+   if (ch) *ch = h;
+   return ln->par->line_no + ln->line_no;
+}
+
+static int
+_canvas_text_cursor_pen_geometry_get(const Efl2_Text_Cursor_Handle *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+{
+   if (!cur) return -1;
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
+   return _canvas_text_cursor_char_pen_geometry_common_get(
+         ENFN->font_pen_coords_get, cur, cx, cy, cw, ch);
+}
+
+void
+_canvas_text_cursor_content_geometry_get(const Efl2_Text_Cursor_Handle *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+{
+   // FIXME: impl
+}
+
 EOLIAN static Eina_Bool
 _efl2_canvas_text_visible_range_get(Eo *eo_obj EINA_UNUSED,
       Efl2_Canvas_Text_Data *pd EINA_UNUSED,
@@ -9766,6 +10160,201 @@ _efl2_canvas_text_visible_range_get(Eo *eo_obj EINA_UNUSED,
 
    return EINA_TRUE;
 }
+
+static Eina_Bool
+_evas_textblock_cursor_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, Evas_Coord y, Eina_Bool per_cluster)
+{
+   Evas_Object_Textblock_Paragraph *found_par;
+   Evas_Object_Textblock_Line *ln;
+   Evas_Object_Textblock_Item *it = NULL;
+   Eina_Bool ret = EINA_FALSE;
+
+   if (!cur) return ret;
+
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
+   Efl2_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
+
+   _relayout_if_needed(cur->obj, o);
+
+   x += o->style_pad.l;
+   y += o->style_pad.t;
+
+   found_par = _layout_find_paragraph_by_y(o, y);
+   if (found_par)
+     {
+        _layout_paragraph_render(o, found_par);
+        EINA_INLIST_FOREACH(found_par->lines, ln)
+          {
+             if (ln->par->y + ln->y > y) break;
+             if ((ln->par->y + ln->y <= y) && ((ln->par->y + ln->y + ln->h) > y))
+               {
+                  /* If before or after the line, go to start/end according
+                   * to paragraph direction. */
+                  if (x < ln->x)
+                    {
+                       cur->pos = ln->items->text_pos;
+                       cur->node = found_par->text_node;
+                       if (found_par->direction == EVAS_BIDI_DIRECTION_RTL)
+                         {
+                            evas_textblock_cursor_line_char_last(cur);
+                         }
+                       else
+                         {
+                            evas_textblock_cursor_line_char_first(cur);
+                         }
+                       ret = EINA_TRUE;
+                       goto end;
+                    }
+                  else if (x >= ln->x + ln->w)
+                    {
+                       cur->pos = ln->items->text_pos;
+                       cur->node = found_par->text_node;
+                       if (found_par->direction == EVAS_BIDI_DIRECTION_RTL)
+                         {
+                            evas_textblock_cursor_line_char_first(cur);
+                         }
+                       else
+                         {
+                            evas_textblock_cursor_line_char_last(cur);
+                         }
+                       ret = EINA_TRUE;
+                       goto end;
+                    }
+
+                  EINA_INLIST_FOREACH(ln->items, it)
+                    {
+                       if (((it->x + ln->x) <= x) && (((it->x + ln->x) + it->adv) > x))
+                         {
+                            if (it->type == EVAS_TEXTBLOCK_ITEM_TEXT)
+                              {
+                                 int pos;
+                                 int cx, cy, cw, ch;
+                                 Evas_Object_Textblock_Text_Item *ti;
+                                 ti = _ITEM_TEXT(it);
+
+                                 pos = -1;
+                                 if (ti->parent.format->font.font)
+                                   pos = ENFN->font_char_at_coords_get(
+                                         ENC,
+                                         ti->parent.format->font.font,
+                                         &ti->text_props,
+                                         x - it->x - ln->x, 0,
+                                         &cx, &cy, &cw, &ch);
+                                 if (pos < 0)
+                                   goto end;
+
+                                 if ((pos > 0) && per_cluster)
+                                   {
+                                      size_t len = eina_ustrbuf_length_get(it->text_node->unicode);
+                                      char *grapheme_breaks = _evas_textblock_grapheme_breaks_new(it, len);
+
+                                      /* If current position is not breakable,
+                                       * try to move cursor to a nearest breakable position. */
+                                      if (grapheme_breaks && (grapheme_breaks[pos + it->text_pos - 1] != GRAPHEMEBREAK_BREAK))
+                                        {
+                                           size_t left_index = pos + it->text_pos - 1;
+                                           size_t right_index = pos + it->text_pos - 1;
+                                           int lx, rx;
+
+                                           /* To the left */
+                                           while ((left_index > 0) &&
+                                                  (grapheme_breaks[left_index] != GRAPHEMEBREAK_BREAK))
+                                             {
+                                                left_index--;
+                                             }
+
+                                           ENFN->font_pen_coords_get(ENC,
+                                                                     ti->parent.format->font.font,
+                                                                     &ti->text_props,
+                                                                     left_index - it->text_pos + 1,
+                                                                     &lx, NULL, NULL, NULL);
+
+                                           /* To the right */
+                                           while ((right_index < len) &&
+                                                  (grapheme_breaks[right_index] != GRAPHEMEBREAK_BREAK))
+                                             {
+                                                right_index++;
+                                             }
+
+                                           ENFN->font_pen_coords_get(ENC,
+                                                                     ti->parent.format->font.font,
+                                                                     &ti->text_props,
+                                                                     right_index - it->text_pos + 1,
+                                                                     &rx, NULL, NULL, NULL);
+
+                                           /* Decide a nearest position by checking its geometry. */
+                                           if (((ti->text_props.bidi_dir != EVAS_BIDI_DIRECTION_RTL) &&
+                                                ((ln->x + it->x + rx - x) >= (x - (lx + ln->x + it->x)))) ||
+                                               ((ti->text_props.bidi_dir == EVAS_BIDI_DIRECTION_RTL) &&
+                                                ((ln->x + it->x + lx - x) >= (x - (rx + ln->x + it->x)))))
+                                             {
+                                                pos = left_index - it->text_pos + 1;
+                                             }
+                                           else
+                                             {
+                                                pos = right_index - it->text_pos + 1;
+                                             }
+                                        }
+
+                                      free(grapheme_breaks);
+                                   }
+
+                                 cur->pos = pos + it->text_pos;
+                                 cur->node = it->text_node;
+                                 ret = EINA_TRUE;
+                                 goto end;
+                              }
+                            else
+                              {
+                                 Evas_Object_Textblock_Format_Item *fi;
+                                 fi = _ITEM_FORMAT(it);
+                                 /* Lets keep cur position half way for easy positioning */
+                                 if (x > (ln->x + it->x + (it->adv / 2)))
+                                   {
+                                      cur->pos = fi->parent.text_pos + 1;
+                                   }
+                                 else
+                                   {
+                                      cur->pos = fi->parent.text_pos;
+                                   }
+                                 cur->node = found_par->text_node;
+                                 ret = EINA_TRUE;
+                                 goto end;
+                              }
+                         }
+                    }
+               }
+          }
+     }
+
+   if (o->paragraphs)
+     {
+        Evas_Object_Textblock_Line *first_line = o->paragraphs->lines;
+        if (y >= o->paragraphs->y + o->formatted.h)
+          {
+             /* If we are after the last paragraph, use the last position in the
+              * text. */
+             evas_textblock_cursor_paragraph_last(cur);
+             ret = EINA_TRUE;
+             goto end;
+          }
+        else if (o->paragraphs && (y < (o->paragraphs->y + first_line->y)))
+          {
+             evas_textblock_cursor_paragraph_first(cur);
+             ret = EINA_TRUE;
+             goto end;
+          }
+     }
+
+end:
+   if (ret)
+     {
+        efl_event_callback_legacy_call(cur->obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
+     }
+   return ret;
+}
+
 
 /**
  * @internal

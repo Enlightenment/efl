@@ -104,4 +104,6 @@ Efl2_Text_Cursor_Handle * _canvas_text_cursor_new(Efl2_Canvas_Text *eo_obj);
 void _canvas_text_cursor_init(Efl2_Text_Cursor_Handle *cur, const Evas_Object *tb);
 void _canvas_text_cursor_emit_if_changed(Efl2_Text_Cursor_Handle *cur);
 char *_canvas_text_cursor_text_plain_get(const Efl2_Text_Cursor_Handle *cur1, const Efl2_Text_Cursor_Handle *_cur2);
+Eina_Bool _canvas_text_cursor_geometry_get(const Efl2_Text_Cursor_Handle *cur, Efl2_Text_Cursor_Type ctype, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_Coord *cx2, Evas_Coord *cy2, Evas_Coord *cw2, Evas_Coord *ch2);
+void _canvas_text_cursor_content_geometry_get(const Efl2_Text_Cursor_Handle *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
 #endif

@@ -45,6 +45,17 @@ class @beta Efl2.Text.Cursor {
             content: Eina.Unicode; [[The unicode codepoint of the character]]
          }
       }
+      @property content_geometry {
+         [[The geometry of the item/char pointed by the cursor
+         ]]
+         get { }
+         values {
+            cx: int; [[The x of the content]]
+            cy: int; [[The y of the content]]
+            cw: int; [[The width of the content()]]
+            ch: int; [[The height of the content]]
+         }
+      }
       @property line_number {
          [[The line the cursor is on]]
          set {  }
@@ -202,6 +213,7 @@ class @beta Efl2.Text.Cursor {
             cur2: Efl2.Text.Cursor; [[End of range]]
          }
       }
+      // FIXME: Add line geometry get?
       range_geometry_get {
          [[Get the simple geometry of a range in the text.
 
