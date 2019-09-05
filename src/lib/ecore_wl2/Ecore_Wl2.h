@@ -1100,8 +1100,8 @@ EAPI Eina_Bool ecore_wl2_window_rotation_app_get(Ecore_Wl2_Window *window);
 /**
  * Set preferred rotation on a given window
  *
- * @param window
- * @param rot
+ * @param window The window to set preferred rotation on
+ * @param rot The value of the preferred rotation to set
  *
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
@@ -1111,7 +1111,7 @@ EAPI void ecore_wl2_window_preferred_rotation_set(Ecore_Wl2_Window *window, int 
 /**
  * Get preferred rotation for a given window
  *
- * @param window
+ * @param window The window to get preferred rotation from
  *
  * @return Given windows preferred rotation
  *
@@ -1202,7 +1202,8 @@ EAPI void ecore_wl2_window_aux_hint_del(Ecore_Wl2_Window *window, int id);
 /**
  * @brief Get the activated state of a window
  *
- * @param window The window
+ * @param window The window to get activated state from
+ *
  * @return @c EINA_TRUE if activated
  *
  * @ingroup Ecore_Wl2_Window_Group
@@ -1251,8 +1252,8 @@ EAPI Ecore_Wl2_Display *ecore_wl2_window_display_get(const Ecore_Wl2_Window *win
 /**
  * Set if this window should ignore focus requests
  *
- * @param window
- * @param focus_skip
+ * @param window The window to set ignore focus requests on
+ * @param focus_skip EINA_TRUE if this window should skip focus requests, EINA_FALSE otherwise
  *
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
@@ -1262,7 +1263,7 @@ EAPI void ecore_wl2_window_focus_skip_set(Ecore_Wl2_Window *window, Eina_Bool fo
 /**
  * Get if this window ignores focus requests
  *
- * @param window
+ * @param window The window to get the focus skip value from
  *
  * @return EINA_TRUE if a window should skip focus requests, EINA_FALSE otherwise
  *
@@ -1285,8 +1286,8 @@ EAPI void ecore_wl2_window_role_set(Ecore_Wl2_Window *window, const char *role);
 /**
  * Set if a given window is in floating mode
  *
- * @param window
- * @param floating
+ * @param window The window to set floating mode on
+ * @param floating EINA_TRUE if this window should be in floating mode, EINA_FALSE otherwise
  *
  * @ingroup Ecore_Wl2_Window_Group
  * @since 1.20
@@ -1296,7 +1297,7 @@ EAPI void ecore_wl2_window_floating_mode_set(Ecore_Wl2_Window *window, Eina_Bool
 /**
  * Get if a given window is in floating mode
  *
- * @param window
+ * @param window The window to get floating mode
  *
  * @return EINA_TRUE if floating, EINA_FALSE otherwise
  *
@@ -1731,6 +1732,7 @@ EAPI int ecore_wl2_output_dpi_get(Ecore_Wl2_Output *output);
  * @param output The output to get the transform of
  *
  * @return The output's current transform value
+ *
  * @ingroup Ecore_Wl2_Output_Group
  * @since 1.20
  */
@@ -1897,8 +1899,8 @@ EAPI void ecore_wl2_session_recovery_disable(void);
  * A surface that has been commit will be in the "pending" state until
  * the compositor tells us it's time to draw again via a frame callback.
  *
- * @surface surface to commit
- * @flush EINA_TRUE if we need to flush immediately.
+ * @param window The window whose surface we want to commit
+ * @param flush EINA_TRUE if we need to flush immediately.
  *
  * @since 1.21
  */
@@ -1912,6 +1914,8 @@ EAPI void ecore_wl2_window_false_commit(Ecore_Wl2_Window *window);
  * A surface is pending if it's been commit but we haven't received a
  * frame callback for it yet.  This mean's we're not ready to draw yet.
  *
+ * @param window The window whose surface we want to check
+ *
  * @return whether the window's surface is pending or not.
  *
  * @since 1.21
@@ -1921,9 +1925,9 @@ EAPI Eina_Bool ecore_wl2_window_pending_get(Ecore_Wl2_Window *window);
 /**
  * Add a callback that fires when the window's surface_frame callback fires
  *
- * @window the window to add a callback on
- * @cb The callback
- * @data user data to provide to the callback handler
+ * @param window The window to add a callback on
+ * @param cb The callback
+ * @param data User data to provide to the callback handler
  *
  * @since 1.21
  */
@@ -1932,8 +1936,8 @@ EAPI Ecore_Wl2_Frame_Cb_Handle *ecore_wl2_window_frame_callback_add(Ecore_Wl2_Wi
 /**
  * delete a callback that fires when the window's surface_frame callback fires
  *
- * @window the window to add a callback on
- * @cb The callback handle
+ * @param window The window to add a callback on
+ * @param cb The callback handle
  *
  * @since 1.21
  */
@@ -1947,11 +1951,11 @@ EAPI void ecore_wl2_window_frame_callback_del(Ecore_Wl2_Frame_Cb_Handle *handle)
  * has a valid buffer.  That is, call with implicit true and buffer NULL at
  * the time of glSwapBuffers.
  *
- * @window the target window
- * @buffer the buffer to attach
- * @x x offset from corner
- * @y y offset from corner
- * @implicit true if an external library is doing the actual attaching
+ * @param window The target window
+ * @param buffer The buffer to attach
+ * @param x X offset from corner
+ * @param y Y offset from corner
+ * @param implicit True if an external library is doing the actual attaching
  *
  * @since 1.21
  */
@@ -1964,7 +1968,8 @@ EAPI void ecore_wl2_window_buffer_attach(Ecore_Wl2_Window *win, void *buffer, in
  * so the display should be flushed at appropriate times, such
  * as after a commit.
  *
- * @param display
+ * @param display The display to flush
+ *
  * @since 1.21
  */
 EAPI void ecore_wl2_display_flush(Ecore_Wl2_Display *display);
@@ -1972,7 +1977,7 @@ EAPI void ecore_wl2_display_flush(Ecore_Wl2_Display *display);
 /**
  * Get if a given window is resizing
  *
- * @param window
+ * @param window The window to check for resizing
  *
  * @return EINA_TRUE if resizing, EINA_FALSE otherwise
  *
@@ -1991,7 +1996,8 @@ EAPI Eina_Bool ecore_wl2_window_resizing_get(Ecore_Wl2_Window *window);
  * Events deferred during an update will automatically fire
  * immediately after the caller calls ecore_wl2_window_commit.
  *
- * @param window
+ * @param window The window whose state we want to latch
+ *
  * @since 1.21
  */
 EAPI void ecore_wl2_window_update_begin(Ecore_Wl2_Window *window);
