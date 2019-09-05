@@ -86,15 +86,11 @@
 static const char o_type[] = "efl_canvas_text";
 
 /* The char to be inserted instead of visible formats */
-#define _REPLACEMENT_CHAR 0xFFFC
-#define _PARAGRAPH_SEPARATOR 0x2029
+#define _REPLACEMENT_CHAR EFL_TEXT_OBJECT_REPLACEMENT
+#define _PARAGRAPH_SEPARATOR EFL_TEXT_PARAGRAPH_SEPARATOR
 #define _NEWLINE '\n'
 #define _TAB '\t'
 
-#define _REPLACEMENT_CHAR_UTF8 "\xEF\xBF\xBC"
-#define _PARAGRAPH_SEPARATOR_UTF8 "\xE2\x80\xA9"
-#define _NEWLINE_UTF8 "\n"
-#define _TAB_UTF8 "\t"
 #define EVAS_TEXTBLOCK_IS_VISIBLE_FORMAT_CHAR(ch) \
    (((ch) == _REPLACEMENT_CHAR) || \
     ((ch) ==  _NEWLINE) || \
