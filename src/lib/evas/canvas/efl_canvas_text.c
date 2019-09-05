@@ -8828,17 +8828,19 @@ _canvas_text_cursor_line_jump_by(Efl2_Text_Cursor_Handle *cur, int by)
 
    _cavas_text_cursor_geometry_get_old(cur, &cx, NULL, &cw, NULL, NULL, EVAS_TEXTBLOCK_CURSOR_UNDER);
    cx += (cw / 2);
-   evas_textblock_cursor_paragraph_last(cur);
+   _canvas_text_cursor_paragraph_last(cur);
+   _canvas_text_cursor_paragraph_end(cur);
    last = _canvas_text_cursor_line_number_get(cur);
 
    if (ln < 0)
      {
-        evas_textblock_cursor_paragraph_first(cur);
+        _canvas_text_cursor_paragraph_first(cur);
      }
 
    else if (ln > last)
      {
-        evas_textblock_cursor_paragraph_last(cur);
+        _canvas_text_cursor_paragraph_last(cur);
+        _canvas_text_cursor_paragraph_end(cur);
      }
 
    else
@@ -8847,16 +8849,23 @@ _canvas_text_cursor_line_jump_by(Efl2_Text_Cursor_Handle *cur, int by)
                  ln, &lx, &ly, &lw, &lh) &&
               (!evas_textblock_cursor_char_coord_set(cur, cx, ly + (lh / 2))))
           {
-             evas_textblock_cursor_line_set(cur, ln);
+             _canvas_text_cursor_line_number_set(cur, ln);
              if (cx < (lx + (lw / 2)))
                {
-                  if (ln == last) evas_textblock_cursor_paragraph_last(cur);
+                  if (ln == last)
+                    {
+                       _canvas_text_cursor_paragraph_last(cur);
+                       _canvas_text_cursor_paragraph_end(cur);
+                    }
                   _canvas_text_cursor_line_start(cur);
                }
              else
                {
                   if (ln == last)
-                     evas_textblock_cursor_paragraph_last(cur);
+                    {
+                       _canvas_text_cursor_paragraph_last(cur);
+                       _canvas_text_cursor_paragraph_end(cur);
+                    }
                   else
                      _canvas_text_cursor_line_end(cur);
                }
@@ -10358,13 +10367,14 @@ _canvas_text_cursor_coord_set(Efl2_Text_Cursor_Handle *cur, Evas_Coord x, Evas_C
           {
              /* If we are after the last paragraph, use the last position in the
               * text. */
-             evas_textblock_cursor_paragraph_last(cur);
+             _canvas_text_cursor_paragraph_last(cur);
+             _canvas_text_cursor_paragraph_end(cur);
              ret = EINA_TRUE;
              goto end;
           }
         else if (o->paragraphs && (y < (o->paragraphs->y + first_line->y)))
           {
-             evas_textblock_cursor_paragraph_first(cur);
+             _canvas_text_cursor_paragraph_first(cur);
              ret = EINA_TRUE;
              goto end;
           }
