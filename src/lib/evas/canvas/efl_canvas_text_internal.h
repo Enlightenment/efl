@@ -75,6 +75,8 @@ struct _Efl2_Text_Attribute_Handle
    int ref;  /**< Value of the ref. */
 };
 
+Eina_Iterator *_canvas_text_selection_iterator_new(Eina_List *list);
+
 Eina_Unicode _canvas_text_cursor_content_get(const Efl2_Text_Cursor_Handle *cur);
 void _canvas_text_cursor_range_delete(Efl2_Text_Cursor_Handle *cur1, Efl2_Text_Cursor_Handle *cur2);
 void _canvas_text_cursor_char_delete(Efl2_Text_Cursor_Handle *cur);
@@ -106,4 +108,7 @@ void _canvas_text_cursor_emit_if_changed(Efl2_Text_Cursor_Handle *cur);
 char *_canvas_text_cursor_text_plain_get(const Efl2_Text_Cursor_Handle *cur1, const Efl2_Text_Cursor_Handle *_cur2);
 Eina_Bool _canvas_text_cursor_geometry_get(const Efl2_Text_Cursor_Handle *cur, Efl2_Text_Cursor_Type ctype, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch, Evas_Coord *cx2, Evas_Coord *cy2, Evas_Coord *cw2, Evas_Coord *ch2);
 void _canvas_text_cursor_content_geometry_get(const Efl2_Text_Cursor_Handle *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
+Eina_List *_canvas_text_cursor_range_precise_geometry_get(const Efl2_Text_Cursor_Handle *cur1, const Efl2_Text_Cursor_Handle *cur2);
+Eina_Iterator *_canvas_text_cursor_range_simple_geometry_get(const Efl2_Text_Cursor_Handle *cur1, const Efl2_Text_Cursor_Handle *cur2);
+Eina_Bool _canvas_text_cursor_coord_set(Efl2_Text_Cursor_Handle *cur, Evas_Coord x, Evas_Coord y, Eina_Bool per_cluster);
 #endif

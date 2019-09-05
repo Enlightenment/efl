@@ -23,7 +23,7 @@ _efl2_text_cursor_position_set(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, i
 EOLIAN static int
 _efl2_text_cursor_position_get(const Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd)
 {
-   // FIXME: Probably don't need this as we are only changing text nodes. Add this back if we do (+ we removed more) ASYNC_BLOCK;
+   // FIXME: Need to make sure all the async_block is everywhere that changes text nodes
    // FIXME: Check everywhere that cursor is not null and return an error if yes? Missing here.. Mostly other places missing errors.
    Efl2_Text_Cursor_Handle *cur = pd->cur;
    return _canvas_text_cursor_position_get(cur);
@@ -57,6 +57,7 @@ _efl2_text_cursor_equal(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, Efl2_Tex
    Efl2_Text_Cursor_Handle *cur = pd->cur;
    Efl2_Text_Cursor_Data *pd2 = efl_data_scope_get(obj2, MY_CLASS);
    Efl2_Text_Cursor_Handle *cur2 = pd2->cur;
+
    return _canvas_text_cursor_equal(cur, cur2);
 }
 
@@ -76,6 +77,7 @@ _efl2_text_cursor_copy(Eo *obj, Efl2_Text_Cursor_Data *pd, Efl2_Text_Cursor *dst
    Efl2_Text_Cursor_Handle *cur_src = pd->cur;
    Efl2_Text_Cursor_Data *pd_dst = efl_data_scope_get(dst, MY_CLASS);
    Efl2_Text_Cursor_Handle *cur_dest = pd_dst->cur;
+
    if (!cur_src || !cur_dest) return;
    if (!_efl2_text_cursor_equal(obj, pd, dst))
      {
@@ -213,8 +215,10 @@ _efl2_text_cursor_line_jump_by(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, i
 }
 
 EOLIAN static void
-_efl2_text_cursor_char_coord_set(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, int x, int y)
+_efl2_text_cursor_coord_set(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, int x, int y)
 {
+   Efl2_Text_Cursor_Handle *cur = pd->cur;
+   _canvas_text_cursor_coord_set(cur, x, y, EINA_FALSE);
 }
 
 EOLIAN static int
@@ -237,13 +241,24 @@ _efl2_text_cursor_range_text_get(const Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Dat
 }
 
 EOLIAN static Eina_Iterator *
-_efl2_text_cursor_range_geometry_get(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, Efl2_Text_Cursor *cur2)
+_efl2_text_cursor_range_geometry_get(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, Efl2_Text_Cursor *obj2)
 {
+   Efl2_Text_Cursor_Handle *cur1 = pd->cur;
+   Efl2_Text_Cursor_Data *pd2 = efl_data_scope_get(obj2, MY_CLASS);
+   Efl2_Text_Cursor_Handle *cur2 = pd2->cur;
+
+   return _canvas_text_cursor_range_simple_geometry_get(cur1, cur2);
 }
 
 EOLIAN static Eina_Iterator *
-_efl2_text_cursor_range_precise_geometry_get(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, Efl2_Text_Cursor *cur2)
+_efl2_text_cursor_range_precise_geometry_get(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, Efl2_Text_Cursor *obj2)
 {
+   Efl2_Text_Cursor_Handle *cur1 = pd->cur;
+   Efl2_Text_Cursor_Data *pd2 = efl_data_scope_get(obj2, MY_CLASS);
+   Efl2_Text_Cursor_Handle *cur2 = pd2->cur;
+
+   Eina_List *rects = _canvas_text_cursor_range_precise_geometry_get(cur1, cur2);
+   return _canvas_text_selection_iterator_new(rects);
 }
 
 EOLIAN static void

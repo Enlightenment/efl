@@ -830,8 +830,8 @@ _evas_textblock_selection_iterator_free(Evas_Textblock_Selection_Iterator *it)
   * @return If the memory cannot be allocated, NULL is returned.
   * Otherwise, a valid iterator is returned.
   */
-static Eina_Iterator *
-_evas_textblock_selection_iterator_new(Eina_List *list)
+Eina_Iterator *
+_canvas_text_selection_iterator_new(Eina_List *list)
 {
    Evas_Textblock_Selection_Iterator *it;
 
@@ -10161,8 +10161,8 @@ _efl2_canvas_text_visible_range_get(Eo *eo_obj EINA_UNUSED,
    return EINA_TRUE;
 }
 
-static Eina_Bool
-_evas_textblock_cursor_coord_set(Evas_Textblock_Cursor *cur, Evas_Coord x, Evas_Coord y, Eina_Bool per_cluster)
+Eina_Bool
+_canvas_text_cursor_coord_set(Efl2_Text_Cursor_Handle *cur, Evas_Coord x, Evas_Coord y, Eina_Bool per_cluster)
 {
    Evas_Object_Textblock_Paragraph *found_par;
    Evas_Object_Textblock_Line *ln;
@@ -10712,10 +10712,8 @@ _line_fill_rect_get(const Evas_Object_Textblock_Line *ln,
    return tr;
 }
 
-EOLIAN static Eina_Iterator *
-_efl_canvas_text_range_simple_geometry_get(Eo *eo_obj EINA_UNUSED,
-      Efl2_Canvas_Text_Data *o, const Efl2_Text_Cursor_Handle *cur1, const
-      Efl2_Text_Cursor_Handle *cur2)
+Eina_Iterator *
+_canvas_text_cursor_range_simple_geometry_get(const Efl2_Text_Cursor_Handle *cur1, const Efl2_Text_Cursor_Handle *cur2)
 {
    Evas_Object_Textblock_Line *ln1, *ln2;
    Evas_Object_Textblock_Item *it1, *it2;
@@ -10728,6 +10726,7 @@ _efl_canvas_text_range_simple_geometry_get(Eo *eo_obj EINA_UNUSED,
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur1->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
 
+   Efl2_Canvas_Text_Data *o = efl_data_scope_get(cur1->obj, MY_CLASS);
    _relayout_if_needed(cur1->obj, o);
 
    if (_canvas_text_cursor_compare(cur1, cur2) > 0)
@@ -10814,15 +10813,13 @@ _efl_canvas_text_range_simple_geometry_get(Eo *eo_obj EINA_UNUSED,
           }
         rects = eina_list_merge(rects, rects2);
      }
-   itr = _evas_textblock_selection_iterator_new(rects);
+   itr = _canvas_text_selection_iterator_new(rects);
 
    return itr;
 }
 
-static Eina_List *
-_efl_canvas_text_range_geometry_list_get(Eo *eo_obj EINA_UNUSED,
-      Efl2_Canvas_Text_Data *o, const Efl2_Text_Cursor_Handle *cur1, const
-      Efl2_Text_Cursor_Handle *cur2)
+Eina_List *
+_canvas_text_cursor_range_precise_geometry_get(const Efl2_Text_Cursor_Handle *cur1, const Efl2_Text_Cursor_Handle *cur2)
 {
    Evas_Object_Textblock_Line *ln1, *ln2;
    Evas_Object_Textblock_Item *it1, *it2;
@@ -10835,6 +10832,7 @@ _efl_canvas_text_range_geometry_list_get(Eo *eo_obj EINA_UNUSED,
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur1->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
 
+   Efl2_Canvas_Text_Data *o = efl_data_scope_get(cur1->obj, MY_CLASS);
    _relayout_if_needed(cur1->obj, o);
 
    if (_canvas_text_cursor_compare(cur1, cur2) > 0)
@@ -10894,16 +10892,6 @@ _efl_canvas_text_range_geometry_list_get(Eo *eo_obj EINA_UNUSED,
         rects = eina_list_merge(rects, rects2);
      }
    return rects;
-}
-
-EOLIAN static Eina_Iterator *
-_efl_canvas_text_range_geometry_get(Eo *eo_obj EINA_UNUSED,
-      Efl2_Canvas_Text_Data *o, const Efl2_Text_Cursor_Handle *cur1, const
-      Efl2_Text_Cursor_Handle *cur2)
-{
-   Eina_List *rects = _efl_canvas_text_range_geometry_list_get(eo_obj,
-         o, cur1, cur2);
-   return _evas_textblock_selection_iterator_new(rects);
 }
 
 static Eina_Bool
