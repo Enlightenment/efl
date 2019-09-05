@@ -352,6 +352,13 @@ _entity_fetch_cb(Eo *obj, void *data EINA_UNUSED, const Eina_Value v)
      }
 
    r = efl_ui_view_factory_create_with_event(pd->factory, eina_array_iterator_new(&tmp), obj);
+   if ((!pd->last_base.w) && (!pd->last_base.h))
+     {
+        efl_canvas_group_calculate(r);
+        pd->last_base = efl_gfx_hint_size_combined_min_get(r);
+     }
+   else
+     efl_canvas_group_need_recalculate_set(r, 0);
 
    eina_array_flush(&tmp);
 
@@ -781,12 +788,6 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
 
    // get the approximate value from the tree node
    parent = pd->model;
-   if (!ITEM_BASE_SIZE_FROM_MODEL(parent, item_base))
-     {
-        item_base.w = 0;
-        item_base.h = 0;
-     }
-   pd->last_base = item_base;
 
    sizes = memory.mem;
    //count = efl_model_children_count_get(parent);
@@ -1678,6 +1679,7 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
    Eina_Iterator *it;
    const char *property;
    Efl_Model *model = NULL;
+   Eina_Size2D last_base;
    unsigned int count;
    Eina_Bool selection = EINA_FALSE, sizing = EINA_FALSE;
 
@@ -1689,6 +1691,8 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
 
    efl_del(pd->model);
    pd->model = NULL;
+   last_base = pd->last_base;
+   pd->last_base = EINA_SIZE2D(0, 0);
 
    if (!ev->current) return ;
 
@@ -1734,10 +1738,12 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
 
         requests = eina_list_append(requests, request);
      }*/
-
+   ITEM_BASE_SIZE_FROM_MODEL(model, pd->last_base);
    requests = _batch_request_flush(requests, data, pd);
 
    pd->model = model;
+   if ((last_base.w != pd->last_base.w) || (last_base.h != pd->last_base.h))
+     efl_ui_position_manager_entity_item_size_changed(pd->manager, 0, count - 1);
    switch(efl_ui_position_manager_entity_version(pd->manager, 1))
      {
        case 1:
