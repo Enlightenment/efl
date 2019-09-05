@@ -85,7 +85,7 @@ void _canvas_text_cursor_copy(Efl2_Text_Cursor_Handle *dst, const Efl2_Text_Curs
 Eina_Bool _canvas_text_cursor_equal(const Efl2_Text_Cursor_Handle *cur, const Efl2_Text_Cursor_Handle *cur2);
 int _canvas_text_cursor_compare(const Efl2_Text_Cursor_Handle *cur1, const Efl2_Text_Cursor_Handle *cur2);
 Eina_Bool _canvas_text_cursor_line_jump_by(Efl2_Text_Cursor_Handle *cur, int by);
-int _canvas_text_cursor_line_number_get(Efl2_Text_Cursor_Handle *cur);
+int _canvas_text_cursor_line_number_get(const Efl2_Text_Cursor_Handle *cur);
 Eina_Bool _canvas_text_cursor_line_number_set(Efl2_Text_Cursor_Handle *cur, int line);
 void _canvas_text_cursor_position_set(Efl2_Text_Cursor_Handle *cur, int _pos);
 int _canvas_text_cursor_position_get(const Efl2_Text_Cursor_Handle *cur);
