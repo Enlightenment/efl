@@ -5,6 +5,7 @@ evas_suite_src = [
   'evas_test_object.c',
   'evas_test_object_smart.c',
   'evas_test_textblock.c',
+  'evas_test_efl_canvas_text.c',
   'evas_test_text.c',
   'evas_test_callbacks.c',
   'evas_test_render_engines.c',
