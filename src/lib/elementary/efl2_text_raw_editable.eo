@@ -95,6 +95,16 @@ class @beta Efl2.Text.Raw_Editable extends Efl2.Canvas.Text {
          }
       }
 
+      selection_start {
+         [[This starts a selection within the entry as though
+           the user had just started selecting text.]]
+      }
+
+      selection_end {
+         [[This ends a selection within the entry as though
+           the user had just released the mouse button while making a selection.]]
+      }
+
       select_none {
          [[Clears the selection.]]
       }
