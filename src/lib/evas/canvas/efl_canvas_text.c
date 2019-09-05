@@ -8859,14 +8859,14 @@ _canvas_text_cursor_line_jump_by(Efl2_Text_Cursor_Handle *cur, int by)
              if (cx < (lx + (lw / 2)))
                {
                   if (ln == last) evas_textblock_cursor_paragraph_last(cur);
-                  evas_textblock_cursor_line_char_first(cur);
+                  _canvas_text_cursor_line_start(cur);
                }
              else
                {
                   if (ln == last)
                      evas_textblock_cursor_paragraph_last(cur);
                   else
-                     evas_textblock_cursor_line_char_last(cur);
+                     _canvas_text_cursor_line_end(cur);
                }
           }
      }
@@ -10154,9 +10154,10 @@ _efl2_canvas_text_visible_range_get(Eo *eo_obj EINA_UNUSED,
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    cy = 0 - obj->cur->geometry.y;
    ch = e->viewport.h;
-   evas_textblock_cursor_line_coord_set(start, cy);
-   evas_textblock_cursor_line_coord_set(end, cy + ch);
-   evas_textblock_cursor_line_char_last(end);
+   efl2_text_cursor_coord_set(start, 0, cy);
+   efl2_text_cursor_line_start(start);
+   efl2_text_cursor_coord_set(end, 0, cy + ch);
+   efl2_text_cursor_line_end(end);
 
    return EINA_TRUE;
 }
@@ -10197,11 +10198,11 @@ _canvas_text_cursor_coord_set(Efl2_Text_Cursor_Handle *cur, Evas_Coord x, Evas_C
                        cur->node = found_par->text_node;
                        if (found_par->direction == EVAS_BIDI_DIRECTION_RTL)
                          {
-                            evas_textblock_cursor_line_char_last(cur);
+                            _canvas_text_cursor_line_end(cur);
                          }
                        else
                          {
-                            evas_textblock_cursor_line_char_first(cur);
+                            _canvas_text_cursor_line_start(cur);
                          }
                        ret = EINA_TRUE;
                        goto end;
@@ -10212,11 +10213,11 @@ _canvas_text_cursor_coord_set(Efl2_Text_Cursor_Handle *cur, Evas_Coord x, Evas_C
                        cur->node = found_par->text_node;
                        if (found_par->direction == EVAS_BIDI_DIRECTION_RTL)
                          {
-                            evas_textblock_cursor_line_char_first(cur);
+                            _canvas_text_cursor_line_start(cur);
                          }
                        else
                          {
-                            evas_textblock_cursor_line_char_last(cur);
+                            _canvas_text_cursor_line_end(cur);
                          }
                        ret = EINA_TRUE;
                        goto end;
@@ -12829,7 +12830,7 @@ _efl2_canvas_text_efl2_text_content_plain_text_set(Eo *eo_obj, Efl2_Canvas_Text_
 {
    ASYNC_BLOCK;
    evas_object_textblock_text_markup_set(eo_obj, "");
-   efl_text_cursor_text_insert(eo_obj, o->cursor, text);
+   _canvas_text_cursor_text_insert(o->cursor, text);
    //efl_event_callback_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
 }
 
@@ -12841,8 +12842,9 @@ _canvas_text_get_all(const Eo *eo_obj, Efl2_Canvas_Text_Data *o EINA_UNUSED)
    _canvas_text_cursor_init(&start, eo_obj);
    _canvas_text_cursor_init(&end, eo_obj);
 
-   evas_textblock_cursor_paragraph_first(&start);
-   evas_textblock_cursor_paragraph_last(&end);
+   _canvas_text_cursor_paragraph_first(&start);
+   _canvas_text_cursor_paragraph_last(&end);
+   _canvas_text_cursor_paragraph_end(&end);
 
    return _canvas_text_cursor_text_plain_get(&start, &end);
 }
