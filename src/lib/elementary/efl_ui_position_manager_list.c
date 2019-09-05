@@ -238,8 +238,14 @@ _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_
 
         if (ent)
           {
+             const char *signal;
              efl_gfx_entity_visible_set(ent, EINA_TRUE);
              efl_gfx_entity_geometry_set(ent, geom);
+             if (i % 2 == 0)
+               signal = "efl,state,even";
+             else
+               signal = "efl,state,odd";
+             efl_layout_signal_emit(ent, signal, "efl");
           }
         if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
           geom.y += size.h;
