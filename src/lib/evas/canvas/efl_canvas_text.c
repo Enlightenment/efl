@@ -9553,7 +9553,7 @@ _canvas_text_cursor_content_get(const Efl2_Text_Cursor_Handle *cur)
 }
 
 static char *
-_evas_textblock_cursor_range_text_plain_get(const Efl2_Text_Cursor_Handle *cur1, const Efl2_Text_Cursor_Handle *_cur2)
+_cursor_range_text_plain_get(const Efl2_Text_Cursor_Handle *cur1, const Efl2_Text_Cursor_Handle *_cur2)
 {
    Eina_UStrbuf *buf;
    Evas_Object_Textblock_Node_Text *n1, *n2;
@@ -9608,26 +9608,6 @@ _evas_textblock_cursor_range_text_plain_get(const Efl2_Text_Cursor_Handle *cur1,
      }
 }
 
-static char *
-_evas_textblock_cursor_range_text_get(const Efl2_Text_Cursor_Handle *cur1, const Efl2_Text_Cursor_Handle *cur2, Evas_Textblock_Text_Type format)
-{
-   if (!cur1 || !cur1->node) return NULL;
-   if (!cur2 || !cur2->node) return NULL;
-   if (cur1->obj != cur2->obj) return NULL;
-
-   Evas_Object_Protected_Data *obj;
-
-   obj = efl_data_scope_get(cur1->obj, EFL_CANVAS_OBJECT_CLASS);
-   evas_object_async_block(obj);
-   if (format == EVAS_TEXTBLOCK_TEXT_MARKUP)
-      return NULL;
-   else if (format == EVAS_TEXTBLOCK_TEXT_PLAIN)
-      return _evas_textblock_cursor_range_text_plain_get(cur1, cur2);
-   else
-      return NULL; /* Not yet supported */
-
-}
-
 // Add to legacy api
 EOLIAN static char *
 _efl2_canvas_text_range_text_get(const Eo *eo_obj EINA_UNUSED,
@@ -9635,7 +9615,7 @@ _efl2_canvas_text_range_text_get(const Eo *eo_obj EINA_UNUSED,
       const Efl2_Text_Cursor_Handle *cur1,
       const Efl2_Text_Cursor_Handle *cur2)
 {
-   return _evas_textblock_cursor_range_text_get(cur1, cur2, EVAS_TEXTBLOCK_TEXT_PLAIN);
+   return _cursor_range_text_plain_get(cur1, cur2);
 }
 
 static void
@@ -12202,7 +12182,7 @@ _canvas_text_get_all(const Eo *eo_obj, Efl2_Canvas_Text_Data *o EINA_UNUSED)
    evas_textblock_cursor_paragraph_first(&start);
    evas_textblock_cursor_paragraph_last(&end);
 
-   return _evas_textblock_cursor_range_text_get(&start, &end, EVAS_TEXTBLOCK_TEXT_PLAIN);
+   return _cursor_range_text_plain_get(&start, &end);
 }
 
 EOLIAN static const char *
