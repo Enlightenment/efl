@@ -53,12 +53,14 @@ EFL_START_TEST(elm_test_check_callbacks)
 {
    Evas_Object *win, *check;
    int called = 0;
+   int i;
 
    win = win_add(NULL, "check", ELM_WIN_BASIC);
    evas_object_resize(win, 500, 500);
 
    check = elm_check_add(win);
-   elm_object_style_set(check, "toggle");
+   if (_i)
+     elm_object_style_set(check, "toggle");
    elm_object_text_set(check, "TEST TEST TEST");
    evas_object_smart_callback_add(check, "changed", event_callback_single_call_int_data, &called);
 
@@ -67,16 +69,17 @@ EFL_START_TEST(elm_test_check_callbacks)
    evas_object_show(check);
    get_me_to_those_events(check);
 
-   click_object_at(check, 150, 50);
-   ecore_main_loop_iterate();
-   ck_assert_int_eq(elm_check_state_get(check), 1);
-   ck_assert_int_eq(called, 1);
-
-   called = 0;
-   click_object_at(check, 150, 50);
-   ecore_main_loop_iterate();
-   ck_assert_int_eq(elm_check_state_get(check), 0);
-   ck_assert_int_eq(called, 1);
+   for (i = 0; i < 4; i++)
+     {
+        called = 0;
+        if (_i)
+          click_object_at(check, 150, 50);
+        else
+          click_object(check);
+        ecore_main_loop_iterate();
+        ck_assert_int_eq(elm_check_state_get(check), !(i % 2));
+        ck_assert_int_eq(called, 1);
+     }
 }
 EFL_END_TEST
 
@@ -84,6 +87,7 @@ EFL_START_TEST(elm_test_check_state)
 {
    Evas_Object *win, *check;
    Eina_Bool state = EINA_TRUE;
+   int called = 0;
 
    win = win_add(NULL, "check", ELM_WIN_BASIC);
 
@@ -92,9 +96,11 @@ EFL_START_TEST(elm_test_check_state)
    ck_assert(elm_check_state_get(check) == EINA_TRUE);
    ck_assert(state == EINA_TRUE);
 
+   evas_object_smart_callback_add(check, "changed", event_callback_single_call_int_data, &called);
    elm_check_state_set(check, EINA_FALSE);
    ck_assert(elm_check_state_get(check) == EINA_FALSE);
    ck_assert(state == EINA_FALSE);
+   ck_assert_int_eq(called, 0);
 
 }
 EFL_END_TEST
@@ -119,6 +125,6 @@ void elm_test_check(TCase *tc)
    tcase_add_test(tc, elm_test_check_legacy_type_check);
    tcase_add_test(tc, elm_test_check_onoff_text);
    tcase_add_test(tc, elm_test_check_state);
-   tcase_add_test(tc, elm_test_check_callbacks);
+   tcase_add_loop_test(tc, elm_test_check_callbacks, 0, 2);
    tcase_add_test(tc, elm_atspi_role_get);
 }
