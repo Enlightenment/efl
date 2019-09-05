@@ -9443,6 +9443,148 @@ _canvas_text_cursor_is_at_the_end(const Efl2_Text_Cursor_Handle *cur)
               EINA_TRUE : EINA_FALSE;
 }
 
+static Eina_Bool
+_evas_textblock_cursor_format_append(Efl2_Text_Cursor_Handle *cur,
+      const char *format, Evas_Object_Textblock_Node_Format **_fnode,
+      Eina_Bool is_item)
+{
+   Evas_Object_Textblock_Node_Format *n;
+   Eina_Bool is_visible;
+
+   if (!cur) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
+   if ((!format) || (format[0] == 0)) return EINA_FALSE;
+   Efl2_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
+   /* We should always have at least one text node */
+   if (!o->text_nodes)
+     {
+        _canvas_text_cursor_text_insert(cur, "");
+     }
+
+   n = _evas_textblock_node_format_new(o, format, is_item);
+   is_visible = n->visible;
+   format = n->format;
+   if (!cur->node)
+     {
+        o->format_nodes = _NODE_FORMAT(eina_inlist_append(
+                 EINA_INLIST_GET(o->format_nodes),
+                 EINA_INLIST_GET(n)));
+        cur->pos = 0;
+        n->text_node = (EINA_INLIST_GET(n)->prev) ?
+           _NODE_FORMAT(EINA_INLIST_GET(n)->prev)->text_node :
+           o->text_nodes;
+        cur->node = n->text_node;
+        cur->changed = EINA_TRUE;
+     }
+   else
+     {
+        Evas_Object_Textblock_Node_Format *fmt;
+        fmt = _evas_textblock_cursor_node_format_before_or_at_pos_get(cur);
+        n->text_node = cur->node;
+        if (!fmt)
+          {
+             o->format_nodes = _NODE_FORMAT(eina_inlist_prepend(
+                      EINA_INLIST_GET(o->format_nodes),
+                      EINA_INLIST_GET(n)));
+             n->offset = cur->pos;
+          }
+        else
+          {
+             fmt = _evas_textblock_node_format_last_at_off(fmt);
+             if (_evas_textblock_cursor_format_is_visible_get(cur))
+               {
+                  o->format_nodes = _NODE_FORMAT(eina_inlist_prepend_relative(
+                           EINA_INLIST_GET(o->format_nodes),
+                           EINA_INLIST_GET(n),
+                           EINA_INLIST_GET(fmt)
+                           ));
+                  n->offset = fmt->offset;
+                  if (fmt->text_node->format_node == fmt)
+                    {
+                       fmt->text_node->format_node = n;
+                    }
+               }
+             else
+               {
+                  o->format_nodes = _NODE_FORMAT(eina_inlist_append_relative(
+                           EINA_INLIST_GET(o->format_nodes),
+                           EINA_INLIST_GET(n),
+                           EINA_INLIST_GET(fmt)
+                           ));
+                  if (fmt->text_node != cur->node)
+                    {
+                       n->offset = cur->pos;
+                    }
+                  else
+                    {
+                       n->offset = cur->pos -
+                          _evas_textblock_node_format_pos_get(fmt);
+                    }
+               }
+          }
+        /* Adjust differently if we insert a format char */
+        if (is_visible)
+          {
+             _evas_textblock_node_format_adjust_offset(o, cur->node, n,
+                   -(n->offset - 1));
+          }
+        else
+          {
+             _evas_textblock_node_format_adjust_offset(o, cur->node, n,
+                   -n->offset);
+          }
+
+        if (!fmt || (fmt->text_node != cur->node))
+          {
+             cur->node->format_node = n;
+          }
+     }
+   if (is_visible && cur->node)
+     {
+        Eina_Unicode insert_char;
+        /* Insert a visual representation according to the type of the
+           format */
+        if (_IS_PARAGRAPH_SEPARATOR_SIMPLE(format))
+           insert_char = _PARAGRAPH_SEPARATOR;
+        else if (_IS_LINE_SEPARATOR(format))
+           insert_char = _NEWLINE;
+        else if (_IS_TAB(format))
+           insert_char = _TAB;
+        else
+           insert_char = _REPLACEMENT_CHAR;
+
+        eina_ustrbuf_insert_char(cur->node->unicode, insert_char, cur->pos);
+
+        /* Advance all the cursors after our cursor */
+        _evas_textblock_cursors_update_offset(cur, cur->node, cur->pos, 1);
+        if (_IS_PARAGRAPH_SEPARATOR(o, format))
+          {
+             _evas_textblock_cursor_break_paragraph(cur, n, EINA_TRUE);
+          }
+        else
+          {
+             /* Handle visible format nodes here */
+             cur->node->dirty = EINA_TRUE;
+             n->is_new = EINA_FALSE;
+          }
+     }
+   else
+     {
+        o->format_changed = EINA_TRUE;
+     }
+
+   if (!o->pause_change)
+     _evas_textblock_changed(o, cur->obj);
+
+   Efl2_Text_Cursor_Handle *ocur = o->cursor;
+   if (!ocur->node)
+      ocur->node = o->text_nodes;
+
+   if (_fnode) *_fnode = n;
+   return is_visible;
+}
+
 void
 _canvas_text_cursor_char_delete(Efl2_Text_Cursor_Handle *cur)
 {
@@ -12987,6 +13129,96 @@ _textblock_cursor_pos_at_fnode_set(const Eo *eo_obj EINA_UNUSED,
    cur->pos = _evas_textblock_node_format_pos_get(fnode);
 }
 
+static Eina_Bool
+_textblock_annotation_set(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o,
+      Efl_Text_Annotate_Annotation *an,
+      Efl2_Text_Cursor_Handle *start, Efl2_Text_Cursor_Handle *end,
+      const char *format, Eina_Bool is_item)
+{
+   int len;
+   char *buf;
+   Evas_Textblock_Node_Format *fnode;
+
+   if (an->is_item)
+     {
+        ERR("Cannot reset format of \"item\" annotations. This is a special"
+             "annotation that should not be modified using this function");
+        return EINA_FALSE;
+     }
+
+   /* Add opening format at 'start' */
+   len = strlen(format);
+   buf = malloc(len + 3);
+   sprintf(buf, "<%s>", format);
+   _evas_textblock_cursor_format_append(start, buf, &fnode, is_item);
+   free(buf);
+   an->start_node = fnode;
+   fnode->annotation = an;
+
+   /* Add a closing format at end (i.e. format does not apply at end) */
+   len = strlen(format);
+   buf = malloc(len + 4);
+   sprintf(buf, "</%s>", format);
+   if (is_item) _canvas_text_cursor_next(end, EINA_FALSE);
+   _evas_textblock_cursor_format_append(end, buf, &fnode, is_item);
+   free(buf);
+   an->end_node = fnode;
+   fnode->annotation = an;
+
+   o->format_changed = EINA_TRUE;
+   return EINA_TRUE;
+}
+
+EOLIAN static const char *
+_efl_canvas_text_efl_text_annotate_annotation_get(const Eo *eo_obj, Efl2_Canvas_Text_Data *o EINA_UNUSED,
+      Efl_Text_Annotate_Annotation *annotation)
+{
+   if (!annotation || (annotation->obj != eo_obj))
+     {
+        ERR("Used invalid handle or of a different object");
+        return NULL;
+     }
+
+   return (annotation->start_node ? annotation->start_node->format : NULL);
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_text_efl_text_annotate_annotation_set(Eo *eo_obj,
+      Efl2_Canvas_Text_Data *o, Efl_Text_Annotate_Annotation *annotation,
+      const char *format)
+{
+   ASYNC_BLOCK;
+   Efl2_Text_Cursor_Handle start, end;
+   Eina_Bool ret = EINA_TRUE;
+
+   if (!annotation || (annotation->obj != eo_obj))
+     {
+        ERR("Used invalid handle or of a different object");
+        return EINA_FALSE;
+     }
+
+   if (!annotation->start_node || !annotation->end_node) return EINA_FALSE;
+   if (!format || (format[0] == '\0')) return EINA_FALSE;
+
+   _canvas_text_cursor_init(&start, eo_obj);
+   _canvas_text_cursor_init(&end, eo_obj);
+
+   /* XXX: Not efficient but works and saves code */
+   _textblock_cursor_pos_at_fnode_set(eo_obj, &start, annotation->start_node);
+   _textblock_cursor_pos_at_fnode_set(eo_obj, &end, annotation->end_node);
+
+   _evas_textblock_node_format_remove(o, annotation->start_node, 0);
+   _evas_textblock_node_format_remove(o, annotation->end_node, 0);
+
+   if (!_textblock_annotation_set(eo_obj, o, annotation, &start, &end, format,
+         EINA_FALSE))
+     {
+        ret = EINA_FALSE;
+     }
+
+   return ret;
+}
+
 static void
 _evas_textblock_annotation_remove(Efl2_Canvas_Text_Data *o,
       Efl_Text_Annotate_Annotation *an, Eina_Bool remove_nodes)
@@ -13020,6 +13252,163 @@ _evas_textblock_annotations_clear(Efl2_Canvas_Text_Data *o)
      {
         _evas_textblock_annotation_remove(o, an, EINA_TRUE);
      }
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_text_efl_text_annotate_annotation_del(Eo *eo_obj EINA_UNUSED,
+      Efl2_Canvas_Text_Data *o, Efl_Text_Annotate_Annotation *annotation)
+{
+   ASYNC_BLOCK;
+   if (!annotation || (annotation->obj != eo_obj))
+     {
+        ERR("Used invalid handle or of a different object");
+        return EINA_FALSE;
+     }
+
+   _evas_textblock_annotation_remove(o, annotation, EINA_TRUE);
+   o->format_changed = EINA_TRUE;
+
+   //XXX: It's a workaround. The underlying problem is that only new format
+   // nodes are checks when their respective text nodes are invalidated (see
+   // _format_changes_invalidate_text_nodes). Complete removal of the format
+   // nodes was not handled properly (as formats could only be removed via
+   // text changes e.g. deleting characters).
+   _evas_textblock_invalidate_all(o);
+
+   _evas_textblock_changed(o, eo_obj);
+   return EINA_TRUE;
+}
+
+static Efl_Text_Annotate_Annotation *
+_textblock_annotation_insert(Eo *eo_obj, Efl2_Canvas_Text_Data *o,
+      Efl2_Text_Cursor_Handle *start, Efl2_Text_Cursor_Handle *end,
+      const char *format, Eina_Bool is_item)
+{
+   Efl_Text_Annotate_Annotation *ret = NULL;
+   Eina_Strbuf *buf;
+   Eina_Bool first = EINA_TRUE;
+   const char *item;
+
+   if (!format || (format[0] == '\0') ||
+         _canvas_text_cursor_compare(start, end) > 0)
+     {
+        return NULL;
+     }
+
+   /* Sanitize the string and reject format items, closing '/' marks. */
+   buf = eina_strbuf_new();
+   while ((item = _format_parse(&format)))
+     {
+        int itlen = format - item;
+        /* We care about all of the formats even after a - except for
+         * item which we don't care after a - because it's just a standard
+         * closing */
+        if ((!strncmp(item, "\n", itlen) || !strncmp(item, "\\n", itlen)) ||
+              (!strncmp(item, "\t", itlen) || !strncmp(item, "\\t", itlen)) ||
+              (!strncmp(item, "br", itlen) && (itlen >= 2)) ||
+              (!strncmp(item, "tab", itlen) && (itlen >= 3)) ||
+              (!strncmp(item, "ps", itlen) && (itlen >= 2)) ||
+              (!strncmp(item, "item", itlen) && (itlen >= 4)))
+          {
+             continue;
+          }
+        if (first)
+          {
+             first = EINA_FALSE;
+          }
+        else
+          {
+             eina_strbuf_append_length(buf, " ", 1);
+          }
+        eina_strbuf_append_length(buf, item, itlen);
+     }
+
+   format = eina_strbuf_string_get(buf);
+   if (format && (format[0] != '\0'))
+     {
+        ret = calloc(1, sizeof(Efl_Text_Annotate_Annotation));
+        ret->obj = eo_obj;
+
+        o->annotations = (Efl_Text_Annotate_Annotation *)
+           eina_inlist_append(EINA_INLIST_GET(o->annotations),
+                 EINA_INLIST_GET(ret));
+
+
+        _textblock_annotation_set(eo_obj, o, ret, start, end, format, is_item);
+        ret->is_item = is_item;
+        _evas_textblock_changed(o, eo_obj);
+     }
+
+   eina_strbuf_free(buf);
+
+   return ret;
+}
+
+EOLIAN static Efl_Text_Annotate_Annotation *
+_efl_canvas_text_efl_text_annotate_annotation_insert(Eo *eo_obj, Efl2_Canvas_Text_Data *o,
+      Efl2_Text_Cursor_Handle *start, Efl2_Text_Cursor_Handle *end,
+      const char *format)
+{
+   ASYNC_BLOCK;
+   Efl_Text_Annotate_Annotation *ret;
+
+   ret = _textblock_annotation_insert(eo_obj, o, start, end, format,
+         EINA_FALSE);
+   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
+   return ret;
+}
+
+EOLIAN static Eina_Iterator *
+_efl_canvas_text_efl_text_annotate_range_annotations_get(const Eo *eo_obj, Efl2_Canvas_Text_Data *o EINA_UNUSED,
+      const Efl2_Text_Cursor_Handle *start, const Efl2_Text_Cursor_Handle *end)
+{
+   Eina_List *lst = NULL;
+   Efl_Text_Annotate_Annotation *it;
+
+   EINA_INLIST_FOREACH(o->annotations, it)
+     {
+        Efl2_Text_Cursor_Handle start2, end2;
+        _canvas_text_cursor_init(&start2, eo_obj);
+        _canvas_text_cursor_init(&end2, eo_obj);
+
+        if (!it->start_node || !it->end_node) continue;
+        _textblock_cursor_pos_at_fnode_set(eo_obj, &start2, it->start_node);
+        _textblock_cursor_pos_at_fnode_set(eo_obj, &end2, it->end_node);
+        _canvas_text_cursor_prev(&end2, EINA_FALSE);
+        if (!((_canvas_text_cursor_compare(&start2, end) > 0) ||
+                 (_canvas_text_cursor_compare(&end2, start) < 0)))
+          {
+             lst = eina_list_append(lst, it);
+          }
+     }
+   return _evas_textblock_annotation_iterator_new(lst);
+}
+
+EOLIAN static Efl_Text_Annotate_Annotation *
+_efl_canvas_text_efl_text_annotate_cursor_item_insert(Eo *eo_obj,
+      Efl2_Canvas_Text_Data *o EINA_UNUSED, Efl2_Text_Cursor_Handle *cur,
+      const char *item, const char *format)
+{
+   Eina_Strbuf *buf = eina_strbuf_new();
+
+   eina_strbuf_append_printf(buf, "%s href=%s", format, item);
+
+   Efl_Text_Annotate_Annotation *ret =
+      _textblock_annotation_insert(cur->obj, o, cur, cur,
+            eina_strbuf_string_get(buf), EINA_TRUE);
+   eina_strbuf_free(buf);
+   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
+   return ret;
+}
+
+EOLIAN static void
+_efl_canvas_text_efl_text_annotate_annotation_positions_get(Eo *eo_obj,
+      Efl2_Canvas_Text_Data *o EINA_UNUSED,
+      const Efl_Text_Annotate_Annotation *annotation,
+      Efl2_Text_Cursor_Handle *start, Efl2_Text_Cursor_Handle *end)
+{
+   _textblock_cursor_pos_at_fnode_set(eo_obj, start, annotation->start_node);
+   _textblock_cursor_pos_at_fnode_set(eo_obj, end, annotation->end_node);
 }
 
 static void
