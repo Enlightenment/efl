@@ -1,5 +1,5 @@
 struct Named {
-    field: ptr(int);
+    field: int @by_ref;
     something: string;
 }
 
@@ -24,7 +24,7 @@ class Struct {
          return: mstring @move;
       }
       bar {
-         return: ptr(Named);
+         return: Named @by_ref;
       }
    }
 }

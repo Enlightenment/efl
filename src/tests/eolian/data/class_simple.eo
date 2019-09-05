@@ -31,9 +31,9 @@ class Class_Simple {
             @in a: int; [[a]]
             @inout b: char;
             @out c: double (1337.6);
-            @in d: ptr(int);
+            @in d: int @by_ref;
          }
-         return: ptr(char) (null); [[comment for method return]]
+         return: mstring (null); [[comment for method return]]
       }
    }
 }

@@ -41,9 +41,8 @@ _type_generate(const Eolian_State *state, const Eolian_Typedecl *tp,
            Eina_Iterator *membs = eolian_typedecl_struct_fields_get(tp);
            EINA_ITERATOR_FOREACH(membs, memb)
              {
-                const Eolian_Type *mtp = eolian_typedecl_struct_field_type_get(memb);
                 Eina_Stringshare *ct = NULL;
-                ct = eolian_type_c_type_get(mtp, EOLIAN_C_TYPE_DEFAULT);
+                ct = eolian_typedecl_struct_field_c_type_get(memb);
                 eina_strbuf_append_printf(buf, "  %s%s%s;",
                    ct, strchr(ct, '*') ? "" : " ",
                    eolian_typedecl_struct_field_name_get(memb));
@@ -137,8 +136,9 @@ _type_generate(const Eolian_State *state, const Eolian_Typedecl *tp,
              eina_strbuf_append(buf, "void ");
            else
              {
-                Eina_Stringshare *ct = eolian_type_c_type_get(rtp, EOLIAN_C_TYPE_RETURN);
+                Eina_Stringshare *ct = eolian_function_return_c_type_get(fid, EOLIAN_FUNCTION_POINTER);
                 eina_strbuf_append_printf(buf, "%s ", ct);
+                eina_stringshare_del(ct);
              }
 
            /* Function name */

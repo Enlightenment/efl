@@ -615,7 +615,6 @@ EFL_START_TEST(eolian_simple_parsing)
    /* Method */
    fail_if(!(fid = eolian_class_function_by_name_get(class, "foo", EOLIAN_METHOD)));
    fail_if(!eolian_function_is_beta(fid));
-   fail_if(!eolian_type_is_ptr(eolian_function_return_type_get(fid, EOLIAN_METHOD)));
    /* Function return */
    tp = eolian_function_return_type_get(fid, EOLIAN_METHOD);
    fail_if(!tp);
@@ -652,7 +651,7 @@ EFL_START_TEST(eolian_simple_parsing)
    fail_if(!(eina_iterator_next(iter, (void**)&param)));
    fail_if(eolian_parameter_direction_get(param) != EOLIAN_IN_PARAM);
    fail_if(strcmp(eolian_type_short_name_get(eolian_parameter_type_get(param)), "int"));
-   fail_if(!eolian_type_is_ptr(eolian_parameter_type_get(param)));
+   fail_if(!eolian_parameter_is_by_ref(param));
    fail_if(strcmp(eolian_parameter_name_get(param), "d"));
    fail_if(eina_iterator_next(iter, &dummy));
    eina_iterator_free(iter);
@@ -695,12 +694,12 @@ EFL_START_TEST(eolian_struct)
    fail_if(strcmp(file, "struct.eo"));
    fail_if(!(field = eolian_typedecl_struct_field_get(tdl, "field")));
    fail_if(!(ftype = eolian_typedecl_struct_field_type_get(field)));
-   fail_if(!eolian_type_is_ptr(ftype));
+   fail_if(!eolian_typedecl_struct_field_is_by_ref(field));
    fail_if(!(type_name = eolian_type_short_name_get(ftype)));
    fail_if(strcmp(type_name, "int"));
    fail_if(!(field = eolian_typedecl_struct_field_get(tdl, "something")));
    fail_if(!(ftype = eolian_typedecl_struct_field_type_get(field)));
-   fail_if(eolian_type_is_ptr(ftype));
+   fail_if(eolian_typedecl_struct_field_is_by_ref(field));
    fail_if(!(type_name = eolian_typedecl_struct_field_c_type_get(field)));
    fail_if(strcmp(type_name, "const char *"));
    eina_stringshare_del(type_name);
@@ -728,7 +727,7 @@ EFL_START_TEST(eolian_struct)
    fail_if(!(func = eolian_class_function_by_name_get(class, "bar", EOLIAN_METHOD)));
    fail_if(!(type = eolian_function_return_type_get(func, EOLIAN_METHOD)));
    fail_if(eolian_type_type_get(type) != EOLIAN_TYPE_REGULAR);
-   fail_if(!eolian_type_is_ptr(type));
+   fail_if(!eolian_function_return_is_by_ref(func, EOLIAN_METHOD));
    fail_if(!(tdl = eolian_type_typedecl_get(type)));
    fail_if(eolian_typedecl_type_get(tdl) != EOLIAN_TYPEDECL_STRUCT);
 
