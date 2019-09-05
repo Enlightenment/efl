@@ -184,7 +184,7 @@ class @beta Efl2.Text.Cursor {
          return: int; [[The number of lines jupmed]]
       }
 
-      char_coord_set {
+      coord_set {
          [[Set cursor coordinates]]
          params {
             @in x: int; [[X coord to set by.]]
@@ -214,6 +214,7 @@ class @beta Efl2.Text.Cursor {
          }
       }
       // FIXME: Add line geometry get?
+      // FIXME: returning an iterator here feels a bit stupid
       range_geometry_get {
          [[Get the simple geometry of a range in the text.
 
