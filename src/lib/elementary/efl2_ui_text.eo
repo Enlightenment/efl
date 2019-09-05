@@ -333,10 +333,6 @@ class @beta Efl2.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickab
            This API can be used in the case of manually controlling by using @.input_panel_enabled.set(en, $false)
          ]]
       }
-      cursor_selection_end {
-         [[This ends a selection within the entry as though
-           the user had just released the mouse button while making a selection.]]
-      }
       context_menu_item_add {
          [[This adds an item to the entry's contextual menu.
 
