@@ -7080,16 +7080,16 @@ _efl2_canvas_text_legacy_newline_get(const Eo *eo_obj EINA_UNUSED, Efl2_Canvas_T
 }
 
 EOLIAN static Eina_Bool
+_efl2_canvas_text_is_empty_get(const Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o)
+{
+   return !o->text_nodes || (eina_ustrbuf_length_get(o->text_nodes->unicode) == 0);
+}
+
+EOLIAN static Eina_Bool
 _efl2_canvas_text_is_ellipsized_get(const Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o)
 {
    // FIXME-implement
    return o->legacy_newline;
-}
-
-EOLIAN static Eina_Bool
-_efl2_canvas_text_is_empty_get(const Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o)
-{
-   return !o->text_nodes || (eina_ustrbuf_length_get(o->text_nodes->unicode) == 0);
 }
 
 EOLIAN static void
@@ -8373,6 +8373,95 @@ _evas_textblock_cursor_node_text_at_format(Efl2_Text_Cursor_Handle *cur, Evas_Ob
 
 }
 
+
+/**
+ * @internal
+ * Remove pairs of + and - formats and also remove formats without + or -
+ * i.e formats that pair to themselves. Only removes invisible formats
+ * that pair themselves, if you want to remove invisible formats that pair
+ * themselves, please first change fmt->visible to EINA_FALSE.
+ *
+ * @param o the textblock object.
+ * @param fmt the current format.
+ */
+static void
+_evas_textblock_node_format_remove_matching(Efl2_Canvas_Text_Data *o,
+      Evas_Object_Textblock_Node_Format *fmt)
+{
+   Evas_Object_Textblock_Node_Text *tnode;
+   Eina_List *formats = NULL;
+   size_t offset = 0;
+
+   if (!fmt) return;
+
+   tnode = fmt->text_node;
+
+   do
+     {
+        Evas_Object_Textblock_Node_Format *nnode;
+        const char *fstr = fmt->orig_format;
+
+        nnode = _NODE_FORMAT(EINA_INLIST_GET(fmt)->next);
+        if (nnode)
+          {
+             offset = nnode->offset;
+          }
+
+
+        if (fmt->opener && !fmt->own_closer)
+          {
+             formats = eina_list_prepend(formats, fmt);
+          }
+        else if (fstr && !fmt->opener)
+          {
+             Evas_Object_Textblock_Node_Format *fnode;
+             size_t fstr_len;
+             fstr_len = strlen(fstr);
+             /* Generic popper, just pop (if there's anything to pop). */
+             if (formats && (((fstr[0] == '/') && !fstr[1]) || !fstr[0]))
+               {
+                  fnode = eina_list_data_get(formats);
+                  formats = eina_list_remove_list(formats, formats);
+                  _evas_textblock_node_format_remove(o, fnode, 0);
+                  _evas_textblock_node_format_remove(o, fmt, 0);
+               }
+             /* Find the matching format and pop it, if the matching format
+              * is our format, i.e the last one, pop and break. */
+             else
+               {
+                  Eina_List *i, *next;
+                  EINA_LIST_FOREACH_SAFE(formats, i, next, fnode)
+                    {
+                       if (_FORMAT_IS_CLOSER_OF(
+                                fnode->orig_format, fstr + 1, fstr_len - 1))
+                         {
+                            Efl_Text_Annotate_Annotation *an = fmt->annotation;
+
+                            fnode = eina_list_data_get(i);
+                            formats = eina_list_remove_list(formats, i);
+                            _evas_textblock_node_format_remove(o, fnode, 0);
+                            _evas_textblock_node_format_remove(o, fmt, 0);
+
+                            if (an)
+                              {
+                                 _evas_textblock_annotation_remove(
+                                       o, an, EINA_FALSE);
+                              }
+                            break;
+                         }
+                    }
+               }
+          }
+        else if (!fmt->visible)
+          {
+             _evas_textblock_node_format_remove(o, fmt, 0);
+          }
+        fmt = nnode;
+     }
+   while (fmt && (offset == 0) && (fmt->text_node == tnode));
+   eina_list_free(formats);
+}
+
 /**
  * @internal
  * Add the offset (may be negative) to the first node after fmt which is
@@ -9416,7 +9505,7 @@ _canvas_text_cursor_char_delete(Efl2_Text_Cursor_Handle *cur)
              _evas_textblock_cursor_nodes_merge(cur);
           }
 
-        // FIXME: _evas_textblock_node_format_remove_matching(o, fmt);
+        _evas_textblock_node_format_remove_matching(o, fmt);
      }
 
    if (cur->pos == eina_ustrbuf_length_get(n->unicode))
@@ -9532,7 +9621,7 @@ _canvas_text_cursor_range_delete(Efl2_Text_Cursor_Handle *cur1, Efl2_Text_Cursor
          * updated the cursors */
         _evas_textblock_nodes_merge(o, n1);
      }
-   // _evas_textblock_node_format_remove_matching(o, fnode);
+   _evas_textblock_node_format_remove_matching(o, fnode);
 
    _canvas_text_cursor_copy(cur1, cur2);
    if (reset_cursor)
