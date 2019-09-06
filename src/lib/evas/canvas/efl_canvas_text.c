@@ -13490,10 +13490,10 @@ _efl2_canvas_text_efl2_text_wrap_properties_wrap_set(Eo *obj EINA_UNUSED, Efl2_C
 {
    ASYNC_BLOCK;
    _FMT_INFO_SET_START(wrap, wrap);
-   _FMT(wrap_word) = (wrap == EFL2_TEXT_FORMAT_WRAP_WORD);
-   _FMT(wrap_char) = (wrap == EFL2_TEXT_FORMAT_WRAP_CHAR);
-   _FMT(wrap_mixed) = (wrap == EFL2_TEXT_FORMAT_WRAP_MIXED);
-   _FMT(wrap_hyphenation) = (wrap == EFL2_TEXT_FORMAT_WRAP_HYPHENATION);
+   _FMT(wrap_word) = (wrap == EFL2_TEXT_WRAP_MODE_WORD);
+   _FMT(wrap_char) = (wrap == EFL2_TEXT_WRAP_MODE_CHAR);
+   _FMT(wrap_mixed) = (wrap == EFL2_TEXT_WRAP_MODE_MIXED);
+   _FMT(wrap_hyphenation) = (wrap == EFL2_TEXT_WRAP_MODE_HYPHENATION);
    _FMT_INFO_SET_END();
 }
 
