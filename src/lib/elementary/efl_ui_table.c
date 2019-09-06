@@ -58,6 +58,14 @@ _on_child_del(void *data, const Efl_Event *event)
    gi = _efl_ui_table_item_date_get(table, pd, event->object);
    if (!gi) return;
 
+   if ((gi->col == pd->last_col) && (gi->row == pd->last_row))
+     pd->linear_recalc = EINA_TRUE;
+
+   if (gi->col + gi->col_span >= pd->cols)
+     pd->cols_recalc = EINA_TRUE;
+   if (gi->row + gi->row_span >= pd->rows)
+     pd->rows_recalc = EINA_TRUE;
+
    pd->items = (Table_Item *)
          eina_inlist_remove(EINA_INLIST_GET(pd->items), EINA_INLIST_GET(gi));
    free(gi);
