@@ -79,28 +79,45 @@ EFL_START_TEST(canvas_text_simple)
 }
 EFL_END_TEST
 
+static char *
+_paragraph_text_get(Efl2_Canvas_Text *tb, const Efl2_Text_Cursor *cur)
+{
+   Efl2_Text_Cursor *cur1 = efl_add(EFL2_TEXT_CURSOR_CLASS, tb,
+         efl2_text_cursor_handle_set(efl_added, efl2_canvas_text_cursor_handle_new(tb)));
+   Efl2_Text_Cursor *cur2 = efl_add(EFL2_TEXT_CURSOR_CLASS, tb,
+         efl2_text_cursor_handle_set(efl_added, efl2_canvas_text_cursor_handle_new(tb)));
+   efl2_text_cursor_copy(cur, cur1);
+   efl2_text_cursor_copy(cur, cur2);
+   efl2_text_cursor_paragraph_start(cur1);
+   efl2_text_cursor_paragraph_end(cur2);
+
+   return efl2_text_cursor_range_text_get(cur1, cur2);
+}
+
 #define _CHECK_CURSOR_COORDS() \
 do \
 { \
         Evas_Coord cx, cy, cw, ch; \
         int ret; \
-        ret = evas_textblock_cursor_geometry_get(cur, &cx, &cy, &cw, &ch, \
-              NULL, EVAS_TEXTBLOCK_CURSOR_UNDER); \
+        ret = efl2_text_cursor_geometry_get(cur, EFL2_TEXT_CURSOR_TYPE_UNDER, \
+              &cx, &cy, &cw, &ch, NULL, NULL, NULL, NULL); \
         fail_if(ret == -1); \
-        ret = evas_textblock_cursor_geometry_get(cur, &cx, &cy, &cw, &ch, \
-              NULL, EVAS_TEXTBLOCK_CURSOR_BEFORE); \
+        ret = efl2_text_cursor_geometry_get(cur, EFL2_TEXT_CURSOR_TYPE_BEFORE, \
+              &cx, &cy, &cw, &ch, NULL, NULL, NULL, NULL); \
         fail_if(ret == -1); \
-        ret = evas_textblock_cursor_char_geometry_get(cur, \
+        efl2_text_cursor_content_geometry_get(cur, \
               &cx, &cy, &cw, &ch); \
-        fail_if(ret == -1); \
+   /* FIXME:
         ret = evas_textblock_cursor_pen_geometry_get(cur, &cx, &cy, &cw, &ch); \
         fail_if(ret == -1); \
         ret = evas_textblock_cursor_line_geometry_get(cur, \
               &cx, &cy, &cw, &ch); \
         fail_if(ret == -1); \
+        */ \
 } \
 while (0)
-EFL_START_TEST(evas_textblock_cursor)
+
+EFL_START_TEST(canvas_text_cursor)
 {
    START_TB_TEST();
    Efl2_Text_Cursor *cur2;
@@ -110,231 +127,221 @@ EFL_START_TEST(evas_textblock_cursor)
 #ifdef HAVE_FRIBIDI
    Evas_BiDi_Direction dir;
 #endif
-   const char *buf = "This is a<br/> test.<ps/>Lets see if this works.<ps/>עוד פסקה.";
+   const char *buf = "This is a test." EFL_TEXT_PARAGRAPH_SEPARATOR_UTF8 "Lets see if this works." EFL_TEXT_PARAGRAPH_SEPARATOR_UTF8 "עוד פסקה.";
 
    /* Walk the textblock using cursor_char_next */
-   evas_object_textblock_text_markup_set(tb, buf);
-   fail_if(strcmp(evas_object_textblock_text_markup_get(tb), buf));
+   efl2_text_set(tb, buf);
+   fail_if(strcmp(efl2_text_get(tb), buf));
    len = eina_unicode_utf8_get_len(buf) - 12; /* 12 because len(<br/>) == 1 and len(<ps/>) == 1 */
    for (i = 0 ; i < len ; i++)
      {
         _CHECK_CURSOR_COORDS();
 
-        fail_if(evas_textblock_cursor_pos_get(cur) != (int) i);
+        fail_if(efl2_text_cursor_position_get(cur) != (int) i);
 
-        fail_if(!evas_textblock_cursor_char_next(cur) && (i < len - 1));
+        fail_if(!efl2_text_cursor_char_next(cur) && (i < len - 1));
      }
-   fail_if(evas_textblock_cursor_char_next(cur));
+   fail_if(efl2_text_cursor_char_next(cur));
 
    /* Jump to positions all aronud the textblock */
-   evas_textblock_cursor_pos_set(cur, -1);
-   fail_if(evas_textblock_cursor_pos_get(cur) != 0);
+   efl2_text_cursor_position_set(cur, -1);
+   fail_if(efl2_text_cursor_position_get(cur) != 0);
 
-   evas_textblock_cursor_pos_set(cur, len + 5);
-   fail_if(evas_textblock_cursor_pos_get(cur) != (int) len);
+   efl2_text_cursor_position_set(cur, len + 5);
+   fail_if(efl2_text_cursor_position_get(cur) != (int) len);
 
    for (i = 0 ; i < len ; i++)
      {
-        evas_textblock_cursor_pos_set(cur, i);
+        efl2_text_cursor_position_set(cur, i);
 
         _CHECK_CURSOR_COORDS();
 
-        fail_if(evas_textblock_cursor_pos_get(cur) != (int) i);
+        fail_if(efl2_text_cursor_position_get(cur) != (int) i);
      }
 
    /* Create another cursor and insert text, making sure everything
     * is in sync. */
    evas_object_textblock_clear(tb);
-   Efl2_Text_Cursor *main_cur = evas_object_textblock_cursor_get(tb);
-   evas_textblock_cursor_copy(main_cur, cur);
-   fail_if(evas_textblock_cursor_pos_get(cur) !=
-         evas_textblock_cursor_pos_get(main_cur));
+   Efl2_Text_Cursor *main_cur = efl_add(EFL2_TEXT_CURSOR_CLASS, tb,
+         efl2_text_cursor_handle_set(efl_added, efl2_canvas_text_cursor_handle_new(tb)));
+   efl2_text_cursor_copy(cur, main_cur);
+   fail_if(efl2_text_cursor_position_get(cur) !=
+         efl2_text_cursor_position_get(main_cur));
 
-   evas_textblock_cursor_text_prepend(main_cur, "a");
-   fail_if(evas_textblock_cursor_pos_get(cur) ==
-         evas_textblock_cursor_pos_get(main_cur));
-   evas_textblock_cursor_text_prepend(main_cur, "a");
-   fail_if(evas_textblock_cursor_pos_get(cur) ==
-         evas_textblock_cursor_pos_get(main_cur));
+   efl2_text_cursor_text_insert(main_cur, "a");
+   fail_if(efl2_text_cursor_position_get(cur) ==
+         efl2_text_cursor_position_get(main_cur));
+   efl2_text_cursor_text_insert(main_cur, "a");
+   fail_if(efl2_text_cursor_position_get(cur) ==
+         efl2_text_cursor_position_get(main_cur));
 
    /* Insert text to a non-empty textblock */
    evas_object_textblock_clear(tb);
    evas_object_textblock_text_markup_set(tb, buf);
-   evas_textblock_cursor_copy(main_cur, cur);
-   fail_if(evas_textblock_cursor_pos_get(cur) !=
-         evas_textblock_cursor_pos_get(main_cur));
+   efl2_text_cursor_copy(cur, main_cur);
+   fail_if(efl2_text_cursor_position_get(cur) !=
+         efl2_text_cursor_position_get(main_cur));
 
-   evas_textblock_cursor_text_prepend(main_cur, "a");
-   fail_if(evas_textblock_cursor_pos_get(cur) ==
-         evas_textblock_cursor_pos_get(main_cur));
-   evas_textblock_cursor_text_prepend(main_cur, "a");
-   fail_if(evas_textblock_cursor_pos_get(cur) ==
-         evas_textblock_cursor_pos_get(main_cur));
-
-   /* Make sure append works */
-   evas_textblock_cursor_copy(main_cur, cur);
-   fail_if(evas_textblock_cursor_pos_get(cur) !=
-         evas_textblock_cursor_pos_get(main_cur));
-   evas_textblock_cursor_text_append(main_cur, "a");
-   fail_if(evas_textblock_cursor_pos_get(cur) !=
-         evas_textblock_cursor_pos_get(main_cur));
+   efl2_text_cursor_text_insert(main_cur, "a");
+   fail_if(efl2_text_cursor_position_get(cur) ==
+         efl2_text_cursor_position_get(main_cur));
+   efl2_text_cursor_text_insert(main_cur, "a");
+   fail_if(efl2_text_cursor_position_get(cur) ==
+         efl2_text_cursor_position_get(main_cur));
 
    /* Cursor comparison */
-   evas_textblock_cursor_pos_set(cur, 1);
-   evas_textblock_cursor_pos_set(main_cur, 2);
-   fail_if(evas_textblock_cursor_compare(cur, main_cur) != -1);
+   efl2_text_cursor_position_set(cur, 1);
+   efl2_text_cursor_position_set(main_cur, 2);
+   fail_if(efl2_text_cursor_compare(cur, main_cur) != -1);
 
-   evas_textblock_cursor_pos_set(cur, 2);
-   evas_textblock_cursor_pos_set(main_cur, 2);
-   fail_if(evas_textblock_cursor_compare(cur, main_cur) != 0);
+   efl2_text_cursor_position_set(cur, 2);
+   efl2_text_cursor_position_set(main_cur, 2);
+   fail_if(efl2_text_cursor_compare(cur, main_cur) != 0);
 
-   evas_textblock_cursor_pos_set(cur, 3);
-   evas_textblock_cursor_pos_set(main_cur, 2);
-   fail_if(evas_textblock_cursor_compare(cur, main_cur) != 1);
+   efl2_text_cursor_position_set(cur, 3);
+   efl2_text_cursor_position_set(main_cur, 2);
+   fail_if(efl2_text_cursor_compare(cur, main_cur) != 1);
 
    /* Paragraph first */
-   evas_object_textblock_text_markup_set(tb, buf);
+   efl2_text_set(tb, buf);
    for (i = 0 ; i < len ; i++)
      {
-        evas_textblock_cursor_pos_set(cur, i);
+        efl2_text_cursor_position_set(cur, i);
 
-        evas_textblock_cursor_paragraph_first(cur);
-        fail_if(evas_textblock_cursor_pos_get(cur) != 0);
+        efl2_text_cursor_paragraph_first(cur);
+        fail_if(efl2_text_cursor_position_get(cur) != 0);
      }
 
    /* Paragraph last */
    for (i = 0 ; i < len ; i++)
      {
-        evas_textblock_cursor_pos_set(cur, i);
+        efl2_text_cursor_position_set(cur, i);
 
-        evas_textblock_cursor_paragraph_last(cur);
-        ck_assert_int_eq(evas_textblock_cursor_pos_get(cur), (int) len);
+        efl2_text_cursor_paragraph_last(cur);
+        efl2_text_cursor_paragraph_end(cur);
+        ck_assert_int_eq(efl2_text_cursor_position_get(cur), (int) len);
      }
 
    /* Paragraph next */
-   evas_textblock_cursor_paragraph_last(cur);
-   fail_if(evas_textblock_cursor_paragraph_next(cur));
+   efl2_text_cursor_paragraph_last(cur);
+   fail_if(efl2_text_cursor_paragraph_next(cur));
 
-   evas_textblock_cursor_paragraph_first(cur);
-   fail_if(!evas_textblock_cursor_paragraph_next(cur));
-   fail_if(!evas_textblock_cursor_paragraph_next(cur));
+   efl2_text_cursor_paragraph_first(cur);
+   fail_if(!efl2_text_cursor_paragraph_next(cur));
+   fail_if(!efl2_text_cursor_paragraph_next(cur));
 
    /* Paragraph prev */
-   evas_textblock_cursor_paragraph_first(cur);
-   fail_if(evas_textblock_cursor_paragraph_prev(cur));
+   efl2_text_cursor_paragraph_first(cur);
+   fail_if(efl2_text_cursor_paragraph_prev(cur));
 
-   evas_textblock_cursor_paragraph_last(cur);
-   fail_if(!evas_textblock_cursor_paragraph_prev(cur));
-   fail_if(!evas_textblock_cursor_paragraph_prev(cur));
+   efl2_text_cursor_paragraph_last(cur);
+   fail_if(!efl2_text_cursor_paragraph_prev(cur));
+   fail_if(!efl2_text_cursor_paragraph_prev(cur));
 
    /* Cher next */
-   evas_textblock_cursor_paragraph_last(cur);
-   fail_if(evas_textblock_cursor_char_next(cur));
+   efl2_text_cursor_paragraph_last(cur);
+   fail_if(efl2_text_cursor_char_next(cur));
 
-   evas_textblock_cursor_paragraph_first(cur);
-   fail_if(!evas_textblock_cursor_char_next(cur));
-   fail_if(!evas_textblock_cursor_paragraph_next(cur));
-   fail_if(!evas_textblock_cursor_char_next(cur));
-   fail_if(!evas_textblock_cursor_paragraph_next(cur));
-   fail_if(!evas_textblock_cursor_char_next(cur));
+   efl2_text_cursor_paragraph_first(cur);
+   fail_if(!efl2_text_cursor_char_next(cur));
+   fail_if(!efl2_text_cursor_paragraph_next(cur));
+   fail_if(!efl2_text_cursor_char_next(cur));
+   fail_if(!efl2_text_cursor_paragraph_next(cur));
+   fail_if(!efl2_text_cursor_char_next(cur));
 
    /* Cher prev */
-   evas_textblock_cursor_paragraph_first(cur);
-   fail_if(evas_textblock_cursor_char_prev(cur));
+   efl2_text_cursor_paragraph_first(cur);
+   fail_if(efl2_text_cursor_char_prev(cur));
 
-   evas_textblock_cursor_paragraph_last(cur);
-   fail_if(!evas_textblock_cursor_char_prev(cur));
-   fail_if(!evas_textblock_cursor_paragraph_prev(cur));
-   fail_if(!evas_textblock_cursor_char_prev(cur));
+   efl2_text_cursor_paragraph_last(cur);
+   efl2_text_cursor_paragraph_end(cur);
+   fail_if(!efl2_text_cursor_char_prev(cur));
+   fail_if(!efl2_text_cursor_paragraph_prev(cur));
+   fail_if(!efl2_text_cursor_char_prev(cur));
 
    /* Paragraph char first */
-   evas_textblock_cursor_paragraph_first(main_cur);
-   evas_textblock_cursor_paragraph_first(cur);
-   fail_if(!evas_textblock_cursor_char_next(cur));
-   evas_textblock_cursor_paragraph_char_first(cur);
-   fail_if(evas_textblock_cursor_compare(cur, main_cur));
+   efl2_text_cursor_paragraph_first(main_cur);
+   efl2_text_cursor_paragraph_first(cur);
+   fail_if(!efl2_text_cursor_char_next(cur));
+   efl2_text_cursor_paragraph_start(cur);
+   fail_if(efl2_text_cursor_compare(cur, main_cur));
 
    /* Paragraph char last */
-   evas_textblock_cursor_paragraph_last(main_cur);
-   evas_textblock_cursor_paragraph_last(cur);
-   fail_if(!evas_textblock_cursor_char_prev(cur));
-   evas_textblock_cursor_paragraph_char_last(cur);
-   fail_if(evas_textblock_cursor_compare(cur, main_cur));
+   efl2_text_cursor_paragraph_last(main_cur);
+   efl2_text_cursor_paragraph_end(main_cur);
+   efl2_text_cursor_paragraph_last(cur);
+   efl2_text_cursor_paragraph_end(cur);
+   fail_if(!efl2_text_cursor_char_prev(cur));
+   efl2_text_cursor_paragraph_end(cur);
+   fail_if(efl2_text_cursor_compare(cur, main_cur));
 
    /* Line char first */
-   evas_textblock_cursor_paragraph_first(main_cur);
-   evas_textblock_cursor_paragraph_first(cur);
-   fail_if(!evas_textblock_cursor_char_next(cur));
-   evas_textblock_cursor_line_char_first(cur);
-   fail_if(evas_textblock_cursor_compare(cur, main_cur));
+   efl2_text_cursor_paragraph_first(main_cur);
+   efl2_text_cursor_paragraph_first(cur);
+   fail_if(!efl2_text_cursor_char_next(cur));
+   efl2_text_cursor_line_start(cur);
+   fail_if(efl2_text_cursor_compare(cur, main_cur));
 
-   evas_textblock_cursor_pos_set(cur, 12);
-   evas_textblock_cursor_line_char_first(cur);
-   fail_if(evas_textblock_cursor_pos_get(cur) != 10);
+   efl2_text_cursor_position_set(cur, 12);
+   efl2_text_cursor_line_start(cur);
+   fail_if(efl2_text_cursor_position_get(cur) != 10);
 
    /* Line char first */
-   evas_textblock_cursor_paragraph_last(main_cur);
-   evas_textblock_cursor_paragraph_last(cur);
-   fail_if(!evas_textblock_cursor_char_prev(cur));
-   evas_textblock_cursor_line_char_last(cur);
-   fail_if(evas_textblock_cursor_compare(cur, main_cur));
+   efl2_text_cursor_paragraph_last(main_cur);
+   efl2_text_cursor_paragraph_end(main_cur);
+   efl2_text_cursor_paragraph_last(cur);
+   efl2_text_cursor_paragraph_end(cur);
+   fail_if(!efl2_text_cursor_char_prev(cur));
+   efl2_text_cursor_line_end(cur);
+   fail_if(efl2_text_cursor_compare(cur, main_cur));
 
-   evas_textblock_cursor_pos_set(cur, 12);
-   evas_textblock_cursor_line_char_last(cur);
-   fail_if(evas_textblock_cursor_pos_get(cur) != 16);
+   efl2_text_cursor_position_set(cur, 12);
+   efl2_text_cursor_line_end(cur);
+   fail_if(efl2_text_cursor_position_get(cur) != 16);
 
    /* Line set */
-   evas_textblock_cursor_paragraph_first(main_cur);
-   evas_textblock_cursor_paragraph_last(cur);
+   efl2_text_cursor_paragraph_first(main_cur);
+   efl2_text_cursor_paragraph_last(cur);
+   efl2_text_cursor_paragraph_end(cur);
 
-   fail_if(!evas_textblock_cursor_line_set(cur, 0));
-   fail_if(evas_textblock_cursor_compare(cur, main_cur));
-   fail_if(!evas_textblock_cursor_line_set(cur, 1));
-   fail_if(!evas_textblock_cursor_line_set(cur, 2));
-   fail_if(!evas_textblock_cursor_line_set(cur, 3));
+   /* FIXME: do we want to return a value from there?
+   fail_if(!efl2_text_cursor_line_number_set(cur, 0));
+   fail_if(efl2_text_cursor_compare(cur, main_cur));
+   fail_if(!efl2_text_cursor_line_number_set(cur, 1));
+   fail_if(!efl2_text_cursor_line_number_set(cur, 2));
+   fail_if(!efl2_text_cursor_line_number_set(cur, 3));
 
-   fail_if(evas_textblock_cursor_line_set(cur, -1));
-   fail_if(evas_textblock_cursor_line_set(cur, 99));
+   fail_if(efl2_text_cursor_line_number_set(cur, -1));
+   fail_if(efl2_text_cursor_line_number_set(cur, 99));
+   */
 
    /* Paragraph text get */
-   evas_textblock_cursor_paragraph_first(cur);
-   fail_if(strcmp(evas_textblock_cursor_paragraph_text_get(cur),
-            "This is a<br/> test."));
-   evas_textblock_cursor_paragraph_next(cur);
-   fail_if(strcmp(evas_textblock_cursor_paragraph_text_get(cur),
+   efl2_text_cursor_paragraph_first(cur);
+   fail_if(strcmp(_paragraph_text_get(tb, cur),
+            "This is a test."));
+   efl2_text_cursor_paragraph_next(cur);
+   fail_if(strcmp(_paragraph_text_get(tb, cur),
             "Lets see if this works."));
-   evas_textblock_cursor_paragraph_next(cur);
-   fail_if(strcmp(evas_textblock_cursor_paragraph_text_get(cur),
+   efl2_text_cursor_paragraph_next(cur);
+   fail_if(strcmp(_paragraph_text_get(tb, cur),
             "עוד פסקה."));
 
-   /* Paragraph length get */
-   evas_textblock_cursor_paragraph_first(cur);
-   /* -4 because len(<br/>) == 1 */
-   fail_if(evas_textblock_cursor_paragraph_text_length_get(cur) !=
-            eina_unicode_utf8_get_len("This is a<br/> test.") - 4);
-   evas_textblock_cursor_paragraph_next(cur);
-   fail_if(evas_textblock_cursor_paragraph_text_length_get(cur) !=
-            eina_unicode_utf8_get_len("Lets see if this works."));
-   evas_textblock_cursor_paragraph_next(cur);
-   fail_if(evas_textblock_cursor_paragraph_text_length_get(cur) !=
-            eina_unicode_utf8_get_len("עוד פסקה."));
-
    /* Cursor content get */
-   evas_textblock_cursor_pos_set(cur, 0);
-   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "T"));
-   evas_textblock_cursor_pos_set(cur, 9);
-   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "<br/>"));
-   evas_textblock_cursor_pos_set(cur, 43);
-   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "ד"));
+   efl2_text_cursor_position_set(cur, 0);
+   fail_if(efl2_text_cursor_content_get(cur) != 'T');
+   efl2_text_cursor_position_set(cur, 9);
+   fail_if(efl2_text_cursor_content_get(cur) != '\n');
+   efl2_text_cursor_position_set(cur, 43);
+   fail_if(efl2_text_cursor_content_get(cur) != 0x05D3); // 'ד'
 
    /* Eol get */
    for (i = 0 ; i < len ; i++)
      {
-        evas_textblock_cursor_pos_set(cur, i);
-        evas_textblock_cursor_copy(cur, main_cur);
-        evas_textblock_cursor_line_char_last(main_cur);
+        efl2_text_cursor_position_set(cur, i);
+        efl2_text_cursor_copy(main_cur, cur);
+        efl2_text_cursor_line_end(main_cur);
 
-        if (!evas_textblock_cursor_compare(cur, main_cur))
+        if (!efl2_text_cursor_compare(cur, main_cur))
           {
              fail_if(!evas_textblock_cursor_eol_get(cur));
           }
@@ -349,29 +356,29 @@ EFL_START_TEST(evas_textblock_cursor)
    fnode = evas_textblock_node_format_first_get(tb);
    fail_if(!fnode);
    evas_textblock_cursor_at_format_set(cur, fnode);
-   evas_textblock_cursor_copy(cur, main_cur);
-   fail_if(evas_textblock_cursor_pos_get(cur) != 9);
+   efl2_text_cursor_copy(main_cur, cur);
+   fail_if(efl2_text_cursor_position_get(cur) != 9);
    fail_if(evas_textblock_cursor_format_get(cur) != fnode);
 
    fnode = evas_textblock_node_format_next_get(fnode);
    fail_if(!fnode);
    evas_textblock_cursor_at_format_set(cur, fnode);
-   fail_if(evas_textblock_cursor_pos_get(cur) != 16);
+   fail_if(efl2_text_cursor_position_get(cur) != 16);
    fail_if(evas_textblock_cursor_format_get(cur) != fnode);
    evas_textblock_cursor_format_next(main_cur);
-   fail_if(evas_textblock_cursor_compare(main_cur, cur));
+   fail_if(efl2_text_cursor_compare(main_cur, cur));
 
    fnode = evas_textblock_node_format_prev_get(fnode);
    fail_if(!fnode);
    evas_textblock_cursor_at_format_set(cur, fnode);
-   fail_if(evas_textblock_cursor_pos_get(cur) != 9);
+   fail_if(efl2_text_cursor_position_get(cur) != 9);
    fail_if(evas_textblock_cursor_format_get(cur) != fnode);
    evas_textblock_cursor_format_prev(main_cur);
-   fail_if(evas_textblock_cursor_compare(main_cur, cur));
+   fail_if(efl2_text_cursor_compare(main_cur, cur));
 
-   evas_textblock_cursor_char_next(main_cur);
+   efl2_text_cursor_char_next(main_cur);
    evas_textblock_cursor_format_prev(main_cur);
-   fail_if(evas_textblock_cursor_compare(main_cur, cur));
+   fail_if(efl2_text_cursor_compare(main_cur, cur));
 
 
    evas_object_textblock_text_markup_set(tb, buf);
@@ -383,33 +390,33 @@ EFL_START_TEST(evas_textblock_cursor)
 
         /* Check if it's the last char, if it is, break, otherwise, go back
          * to the current char because our test advanced the cursor. */
-        if (!evas_textblock_cursor_char_next(cur))
+        if (!efl2_text_cursor_char_next(cur))
            break;
         else
-           evas_textblock_cursor_char_prev(cur);
+           efl2_text_cursor_char_prev(cur);
 
-        cur_pos = evas_textblock_cursor_pos_get(cur);
+        cur_pos = efl2_text_cursor_position_get(cur);
         evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
         evas_textblock_cursor_char_coord_set(cur, x + (w / 2), y + (h / 2));
-        fail_if(cur_pos != evas_textblock_cursor_pos_get(cur));
+        fail_if(cur_pos != efl2_text_cursor_position_get(cur));
      }
-   while (evas_textblock_cursor_char_next(cur));
+   while (efl2_text_cursor_char_next(cur));
 
    /* Try positions before the first paragraph, and after the last paragraph */
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
-   evas_textblock_cursor_pos_set(cur, 5);
+   efl2_text_cursor_position_set(cur, 5);
    evas_textblock_cursor_char_coord_set(cur, nw / 2,
          -50);
-   evas_textblock_cursor_paragraph_first(main_cur);
-   fail_if(evas_textblock_cursor_compare(cur, main_cur));
+   efl2_text_cursor_paragraph_first(main_cur);
+   fail_if(efl2_text_cursor_compare(cur, main_cur));
 
-   evas_textblock_cursor_pos_set(cur, 5);
+   efl2_text_cursor_position_set(cur, 5);
    evas_textblock_cursor_char_coord_set(cur, nw / 2,
          nh + 50);
    evas_textblock_cursor_paragraph_last(main_cur);
-   fail_if(evas_textblock_cursor_compare(cur, main_cur));
+   fail_if(efl2_text_cursor_compare(cur, main_cur));
 
    /* Try positions between the first paragraph and the first line. */
    evas_object_textblock_text_markup_set(tb, buf);
@@ -418,17 +425,17 @@ EFL_START_TEST(evas_textblock_cursor)
    /* Try positions beyond the left/right limits of lines. */
    for (i = 0 ; i < 2 ; i++)
      {
-        evas_textblock_cursor_line_set(cur, i);
+        efl2_text_cursor_line_number_set(cur, i);
         evas_textblock_cursor_line_geometry_get(cur, &x, &y, &w, &h);
 
-        evas_textblock_cursor_pos_set(main_cur, 5);
+        efl2_text_cursor_position_set(main_cur, 5);
         evas_textblock_cursor_char_coord_set(main_cur, x - 50, y);
-        fail_if(evas_textblock_cursor_compare(main_cur, cur));
+        fail_if(efl2_text_cursor_compare(main_cur, cur));
 
-        evas_textblock_cursor_line_char_last(cur);
-        evas_textblock_cursor_pos_set(main_cur, 5);
+        efl2_text_cursor_line_end(cur);
+        efl2_text_cursor_position_set(main_cur, 5);
         evas_textblock_cursor_char_coord_set(main_cur, x + w + 50, y);
-        fail_if(evas_textblock_cursor_compare(main_cur, cur));
+        fail_if(efl2_text_cursor_compare(main_cur, cur));
      }
 
 #ifdef HAVE_FRIBIDI
@@ -657,7 +664,7 @@ EFL_START_TEST(evas_textblock_cursor)
 
    for (i = 0 ; i < 8 ; i++)
      {
-        evas_textblock_cursor_line_set(cur, i);
+        efl2_text_cursor_line_number_set(cur, i);
         evas_textblock_cursor_line_geometry_get(cur, &x, &y, &w, &h);
         switch (i)
           {
@@ -666,29 +673,29 @@ EFL_START_TEST(evas_textblock_cursor)
            case 4:
            case 5:
               /* Ltr paragraph */
-              evas_textblock_cursor_pos_set(main_cur, 7);
+              efl2_text_cursor_position_set(main_cur, 7);
               evas_textblock_cursor_char_coord_set(main_cur, x - 50, y);
-              fail_if(evas_textblock_cursor_compare(main_cur, cur));
+              fail_if(efl2_text_cursor_compare(main_cur, cur));
 
-              evas_textblock_cursor_line_char_last(cur);
-              evas_textblock_cursor_pos_set(main_cur, 7);
+              efl2_text_cursor_line_end(cur);
+              efl2_text_cursor_position_set(main_cur, 7);
               evas_textblock_cursor_char_coord_set(main_cur, x + w + 50, y);
-              fail_if(evas_textblock_cursor_compare(main_cur, cur));
+              fail_if(efl2_text_cursor_compare(main_cur, cur));
               break;
            case 1:
            case 3:
            case 6:
            case 7:
               /* Rtl paragraph */
-              evas_textblock_cursor_line_char_last(cur);
-              evas_textblock_cursor_pos_set(main_cur, 7);
+              efl2_text_cursor_line_end(cur);
+              efl2_text_cursor_position_set(main_cur, 7);
               evas_textblock_cursor_char_coord_set(main_cur, x - 50, y);
-              fail_if(evas_textblock_cursor_compare(main_cur, cur));
+              fail_if(efl2_text_cursor_compare(main_cur, cur));
 
-              evas_textblock_cursor_line_char_first(cur);
-              evas_textblock_cursor_pos_set(main_cur, 7);
+              efl2_text_cursor_line_start(cur);
+              efl2_text_cursor_position_set(main_cur, 7);
               evas_textblock_cursor_char_coord_set(main_cur, x + w + 50, y);
-              fail_if(evas_textblock_cursor_compare(main_cur, cur));
+              fail_if(efl2_text_cursor_compare(main_cur, cur));
               break;
           }
      }
@@ -699,12 +706,12 @@ EFL_START_TEST(evas_textblock_cursor)
      {
         Evas_Coord lx, ly, lw, lh;
         Evas_Coord plx, ply, plw, plh;
-        evas_textblock_cursor_line_set(cur, 0);
-        evas_textblock_cursor_copy(cur, main_cur);
-        evas_textblock_cursor_line_char_last(main_cur);
+        efl2_text_cursor_line_number_set(cur, 0);
+        efl2_text_cursor_copy(main_cur, cur);
+        efl2_text_cursor_line_end(main_cur);
         evas_textblock_cursor_line_geometry_get(cur, &plx, &ply, &plw, &plh);
 
-        while (evas_textblock_cursor_compare(cur, main_cur) <= 0)
+        while (efl2_text_cursor_compare(cur, main_cur) <= 0)
           {
              evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
              fail_if(0 != evas_textblock_cursor_line_geometry_get(
@@ -717,15 +724,15 @@ EFL_START_TEST(evas_textblock_cursor)
              ply = ly;
              plw = lw;
              plh = lh;
-             evas_textblock_cursor_char_next(cur);
+             efl2_text_cursor_char_next(cur);
           }
 
-        evas_textblock_cursor_line_set(cur, 1);
-        evas_textblock_cursor_copy(cur, main_cur);
-        evas_textblock_cursor_line_char_last(main_cur);
+        efl2_text_cursor_line_number_set(cur, 1);
+        efl2_text_cursor_copy(main_cur, cur);
+        efl2_text_cursor_line_end(main_cur);
         evas_textblock_cursor_line_geometry_get(cur, &plx, &ply, &plw, &plh);
 
-        while (evas_textblock_cursor_compare(cur, main_cur) <= 0)
+        while (efl2_text_cursor_compare(cur, main_cur) <= 0)
           {
              evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
              fail_if(1 != evas_textblock_cursor_line_geometry_get(
@@ -738,18 +745,18 @@ EFL_START_TEST(evas_textblock_cursor)
              ply = ly;
              plw = lw;
              plh = lh;
-             evas_textblock_cursor_char_next(cur);
+             efl2_text_cursor_char_next(cur);
           }
 
         evas_textblock_cursor_paragraph_last(cur);
-        evas_textblock_cursor_line_set(cur, 0);
+        efl2_text_cursor_line_number_set(cur, 0);
         evas_textblock_cursor_line_geometry_get(cur, &plx, &ply, &plw, &plh);
         evas_object_textblock_line_number_geometry_get(tb, 0,
               &lx, &ly, &lw, &lh);
         fail_if((lx != plx) || (ly != ply) || (lw != plw) || (lh != plh));
         fail_if(0 != evas_textblock_cursor_line_coord_set(cur, ly + (lh / 2)));
 
-        evas_textblock_cursor_line_set(cur, 1);
+        efl2_text_cursor_line_number_set(cur, 1);
         evas_textblock_cursor_line_geometry_get(cur, &plx, &ply, &plw, &plh);
         evas_object_textblock_line_number_geometry_get(tb, 1,
               &lx, &ly, &lw, &lh);
@@ -766,43 +773,43 @@ EFL_START_TEST(evas_textblock_cursor)
         evas_object_resize(tb, 2 * nw, 2 * nh);
 
         evas_object_textblock_valign_set(tb, 0.5);
-        evas_textblock_cursor_paragraph_first(cur);
+        efl2_text_cursor_paragraph_first(cur);
         evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
         fail_if(y <= 0);
 
         evas_textblock_cursor_paragraph_last(main_cur);
         evas_textblock_cursor_char_coord_set(main_cur, x + w, y / 2);
-        fail_if(evas_textblock_cursor_compare(main_cur, cur));
+        fail_if(efl2_text_cursor_compare(main_cur, cur));
 
         evas_textblock_cursor_paragraph_last(main_cur);
         evas_textblock_cursor_line_coord_set(main_cur, y / 2);
-        fail_if(evas_textblock_cursor_compare(main_cur, cur));
+        fail_if(efl2_text_cursor_compare(main_cur, cur));
 
         /* Fail if they are equal, i.e if it for some reason thinks it should
          * go to the end. */
-        evas_textblock_cursor_paragraph_first(main_cur);
+        efl2_text_cursor_paragraph_first(main_cur);
         evas_textblock_cursor_paragraph_last(cur);
         evas_textblock_cursor_char_coord_set(main_cur, x + w, nh + 1);
-        fail_if(!evas_textblock_cursor_compare(main_cur, cur));
+        fail_if(!efl2_text_cursor_compare(main_cur, cur));
 
-        evas_textblock_cursor_paragraph_first(main_cur);
+        efl2_text_cursor_paragraph_first(main_cur);
         evas_textblock_cursor_paragraph_last(cur);
         evas_textblock_cursor_line_coord_set(main_cur, nh + 1);
-        fail_if(!evas_textblock_cursor_compare(main_cur, cur));
+        fail_if(!efl2_text_cursor_compare(main_cur, cur));
 
         /* Fail if it doesn't go to the end. */
         evas_textblock_cursor_paragraph_last(cur);
-        evas_textblock_cursor_paragraph_first(main_cur);
+        efl2_text_cursor_paragraph_first(main_cur);
         evas_textblock_cursor_char_coord_set(main_cur, x + w, (2 * nh) - 1);
-        fail_if(evas_textblock_cursor_compare(main_cur, cur));
+        fail_if(efl2_text_cursor_compare(main_cur, cur));
 
-        evas_textblock_cursor_paragraph_first(main_cur);
+        efl2_text_cursor_paragraph_first(main_cur);
         evas_textblock_cursor_line_coord_set(main_cur, (2 * nh) - 1);
-        fail_if(evas_textblock_cursor_compare(main_cur, cur));
+        fail_if(efl2_text_cursor_compare(main_cur, cur));
 
         evas_object_textblock_text_markup_set(tb, "123<br/>456<br/>789");
         evas_object_textblock_valign_set(tb, 0.0);
-        evas_textblock_cursor_pos_set(cur, 6);
+        efl2_text_cursor_position_set(cur, 6);
         ck_assert_int_eq(evas_textblock_cursor_line_coord_set(cur, 0), 0);
      }
 
@@ -811,74 +818,74 @@ EFL_START_TEST(evas_textblock_cursor)
         evas_object_textblock_text_markup_set(tb, buf_wb);
 
         /* Word start/end */
-        evas_textblock_cursor_pos_set(cur, 3);
+        efl2_text_cursor_position_set(cur, 3);
         evas_textblock_cursor_word_start(cur);
-        fail_if(2 != evas_textblock_cursor_pos_get(cur));
+        fail_if(2 != efl2_text_cursor_position_get(cur));
         evas_textblock_cursor_word_end(cur);
-        fail_if(5 != evas_textblock_cursor_pos_get(cur));
+        fail_if(5 != efl2_text_cursor_position_get(cur));
 
-        evas_textblock_cursor_pos_set(cur, 13);
+        efl2_text_cursor_position_set(cur, 13);
         evas_textblock_cursor_word_end(cur);
-        fail_if(18 != evas_textblock_cursor_pos_get(cur));
+        fail_if(18 != efl2_text_cursor_position_get(cur));
         evas_textblock_cursor_word_start(cur);
-        fail_if(12 != evas_textblock_cursor_pos_get(cur));
+        fail_if(12 != efl2_text_cursor_position_get(cur));
         evas_textblock_cursor_word_start(cur);
-        fail_if(12 != evas_textblock_cursor_pos_get(cur));
+        fail_if(12 != efl2_text_cursor_position_get(cur));
         evas_textblock_cursor_word_start(cur);
-        fail_if(12 != evas_textblock_cursor_pos_get(cur));
+        fail_if(12 != efl2_text_cursor_position_get(cur));
         evas_textblock_cursor_word_end(cur);
-        fail_if(18 != evas_textblock_cursor_pos_get(cur));
+        fail_if(18 != efl2_text_cursor_position_get(cur));
 
         /* Bug with 1 char word separators at paragraph start. */
         evas_object_textblock_text_markup_set(tb, "=test");
-        evas_textblock_cursor_pos_set(cur, 4);
+        efl2_text_cursor_position_set(cur, 4);
         evas_textblock_cursor_word_start(cur);
-        fail_if(1 != evas_textblock_cursor_pos_get(cur));
+        fail_if(1 != efl2_text_cursor_position_get(cur));
 
         /* 1 char words separated by spaces. */
         evas_object_textblock_text_markup_set(tb, "a a a a");
-        evas_textblock_cursor_paragraph_first(cur);
+        efl2_text_cursor_paragraph_first(cur);
 
         evas_textblock_cursor_word_end(cur);
-        ck_assert_int_eq(0, evas_textblock_cursor_pos_get(cur));
+        ck_assert_int_eq(0, efl2_text_cursor_position_get(cur));
 
         evas_textblock_cursor_word_start(cur);
-        ck_assert_int_eq(0, evas_textblock_cursor_pos_get(cur));
+        ck_assert_int_eq(0, efl2_text_cursor_position_get(cur));
 
-        evas_textblock_cursor_pos_set(cur, 2);
+        efl2_text_cursor_position_set(cur, 2);
         evas_textblock_cursor_word_start(cur);
-        ck_assert_int_eq(2, evas_textblock_cursor_pos_get(cur));
+        ck_assert_int_eq(2, efl2_text_cursor_position_get(cur));
         evas_textblock_cursor_word_end(cur);
-        ck_assert_int_eq(2, evas_textblock_cursor_pos_get(cur));
+        ck_assert_int_eq(2, efl2_text_cursor_position_get(cur));
 
-        evas_textblock_cursor_pos_set(cur, 3);
+        efl2_text_cursor_position_set(cur, 3);
         evas_textblock_cursor_word_start(cur);
-        ck_assert_int_eq(2, evas_textblock_cursor_pos_get(cur));
-        evas_textblock_cursor_pos_set(cur, 3);
+        ck_assert_int_eq(2, efl2_text_cursor_position_get(cur));
+        efl2_text_cursor_position_set(cur, 3);
         evas_textblock_cursor_word_end(cur);
-        ck_assert_int_eq(4, evas_textblock_cursor_pos_get(cur));
+        ck_assert_int_eq(4, efl2_text_cursor_position_get(cur));
 
         /* Going back when ending with whites. */
         evas_object_textblock_text_markup_set(tb, "aa bla ");
         evas_textblock_cursor_paragraph_last(cur);
 
         evas_textblock_cursor_word_start(cur);
-        ck_assert_int_eq(3, evas_textblock_cursor_pos_get(cur));
+        ck_assert_int_eq(3, efl2_text_cursor_position_get(cur));
 
         evas_textblock_cursor_word_end(cur);
-        ck_assert_int_eq(5, evas_textblock_cursor_pos_get(cur));
+        ck_assert_int_eq(5, efl2_text_cursor_position_get(cur));
 
         /* moving across paragraphs */
         evas_object_textblock_text_markup_set(tb,
                                               "test<ps/>"
                                               "  case");
-        evas_textblock_cursor_pos_set(cur, 4);
+        efl2_text_cursor_position_set(cur, 4);
         evas_textblock_cursor_word_end(cur);
-        ck_assert_int_eq(10, evas_textblock_cursor_pos_get(cur));
+        ck_assert_int_eq(10, efl2_text_cursor_position_get(cur));
 
-        evas_textblock_cursor_pos_set(cur, 6);
+        efl2_text_cursor_position_set(cur, 6);
         evas_textblock_cursor_word_start(cur);
-        ck_assert_int_eq(0, evas_textblock_cursor_pos_get(cur));
+        ck_assert_int_eq(0, efl2_text_cursor_position_get(cur));
      }
 
    /* Make sure coords are correct for ligatures */
@@ -890,16 +897,16 @@ EFL_START_TEST(evas_textblock_cursor)
           {
              evas_textblock_cursor_pen_geometry_get(cur, NULL, NULL, &w, NULL);
              ck_assert_int_eq(w, 3);
-             evas_textblock_cursor_char_next(cur);
+             efl2_text_cursor_char_next(cur);
           }
 
-        evas_textblock_cursor_char_next(cur);
+        efl2_text_cursor_char_next(cur);
 
         for (i = 0 ; i < 2 ; i++)
           {
              evas_textblock_cursor_pen_geometry_get(cur, NULL, NULL, &w, NULL);
              ck_assert_int_eq(w, 3);
-             evas_textblock_cursor_char_next(cur);
+             efl2_text_cursor_char_next(cur);
           }
         evas_textblock_cursor_pen_geometry_get(cur, NULL, NULL, &w, NULL);
         ck_assert_int_eq(w, 3);
@@ -908,17 +915,17 @@ EFL_START_TEST(evas_textblock_cursor)
 #if 0
         evas_textblock_cursor_pen_geometry_get(cur, NULL, NULL, &w, NULL);
         ck_assert_int_eq(w, 4);
-        evas_textblock_cursor_char_next(cur);
+        efl2_text_cursor_char_next(cur);
         evas_textblock_cursor_pen_geometry_get(cur, NULL, NULL, &w, NULL);
         ck_assert_int_eq(w, 3);
 
-        evas_textblock_cursor_pos_set(cur, 3);
+        efl2_text_cursor_position_set(cur, 3);
         evas_textblock_cursor_pen_geometry_get(cur, NULL, NULL, &w, NULL);
         ck_assert_int_eq(w, 4);
 
         for (i = 0 ; i < 2 ; i++)
           {
-             evas_textblock_cursor_char_next(cur);
+             efl2_text_cursor_char_next(cur);
              evas_textblock_cursor_pen_geometry_get(cur, NULL, NULL, &w, NULL);
              ck_assert_int_eq(w, 3);
           }
@@ -934,14 +941,14 @@ EFL_START_TEST(evas_textblock_cursor)
               "שלום עולם hello world<ps>"
               "שלום עולם hello world<ps>"
               "hello world שלום עולם");
-        evas_textblock_cursor_line_set(cur, 0);
-        pos = evas_textblock_cursor_pos_get(cur);
+        efl2_text_cursor_line_number_set(cur, 0);
+        pos = efl2_text_cursor_position_get(cur);
         ck_assert_int_eq(pos, 0);
-        evas_textblock_cursor_line_set(cur, 1);
-        pos = evas_textblock_cursor_pos_get(cur);
+        efl2_text_cursor_line_number_set(cur, 1);
+        pos = efl2_text_cursor_position_get(cur);
         ck_assert_int_eq(pos, 22);
-        evas_textblock_cursor_line_set(cur, 2);
-        pos = evas_textblock_cursor_pos_get(cur);
+        efl2_text_cursor_line_number_set(cur, 2);
+        pos = efl2_text_cursor_position_get(cur);
         ck_assert_int_eq(pos, 44);
      }
 
@@ -954,20 +961,20 @@ EFL_START_TEST(evas_textblock_cursor)
 
         cur2 = evas_object_textblock_cursor_new(tb);
         evas_object_textblock_text_markup_set(tb, "Hello world");
-        evas_textblock_cursor_pos_set(cur2, 0);
-        evas_textblock_cursor_pos_set(cur, 5);
+        efl2_text_cursor_position_set(cur2, 0);
+        efl2_text_cursor_position_set(cur, 5);
         for (j = 5; j >= 0; j--)
           {
-             pos = evas_textblock_cursor_pos_get(cur);
+             pos = efl2_text_cursor_position_get(cur);
              ck_assert_int_eq(pos, j);
              evas_textblock_cursor_char_delete(cur2);
           }
         evas_object_textblock_text_markup_set(tb, "Hello world");
-        evas_textblock_cursor_pos_set(cur2, 0);
-        evas_textblock_cursor_pos_set(cur, 5);
+        efl2_text_cursor_position_set(cur2, 0);
+        efl2_text_cursor_position_set(cur, 5);
         for (j = 5; j <= 10; j++)
           {
-             pos = evas_textblock_cursor_pos_get(cur);
+             pos = efl2_text_cursor_position_get(cur);
              ck_assert_int_eq(pos, j);
              evas_textblock_cursor_text_append(cur2, "a");
           }
@@ -977,21 +984,21 @@ EFL_START_TEST(evas_textblock_cursor)
    /* Testing for grapheme cluster */
    cur2 = evas_object_textblock_cursor_new(tb);
    evas_object_textblock_text_markup_set(tb, "ഹലോ");
-   evas_textblock_cursor_pos_set(cur, 0);
-   evas_textblock_cursor_pos_set(cur2, 0);
+   efl2_text_cursor_position_set(cur, 0);
+   efl2_text_cursor_position_set(cur2, 0);
 
    i = j = 0;
    while (evas_textblock_cursor_cluster_next(cur)) i++;
    ck_assert_int_eq(i, 2);
 
-   while (evas_textblock_cursor_char_next(cur2)) j++;
+   while (efl2_text_cursor_char_next(cur2)) j++;
    ck_assert_int_eq(j, 4);
 
    i = j = 0;
    while (evas_textblock_cursor_cluster_prev(cur)) i++;
    ck_assert_int_eq(i, 2);
 
-   while (evas_textblock_cursor_char_prev(cur2)) j++;
+   while (efl2_text_cursor_char_prev(cur2)) j++;
    ck_assert_int_eq(j, 4);
 
    END_TB_TEST();
@@ -1014,52 +1021,52 @@ EFL_START_TEST(evas_textblock_split_cursor)
    evas_object_resize(tb, nw, nh);
 
    /* Logical cursor after "test " */
-   evas_textblock_cursor_pos_set(cur, 6);
+   efl2_text_cursor_position_set(cur, 6);
    fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL, NULL,
             &cx2, NULL, NULL, NULL, EVAS_TEXTBLOCK_CURSOR_BEFORE));
-   evas_textblock_cursor_pos_set(cur, 18);
+   efl2_text_cursor_position_set(cur, 18);
    evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
-   evas_textblock_cursor_pos_set(cur, 20);
+   efl2_text_cursor_position_set(cur, 20);
    evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
    ck_assert_int_eq(cx, x);
    ck_assert_int_eq(cx2, x2);
 
    /* Logical cursor before "a" */
-   evas_textblock_cursor_pos_set(cur, 11);
+   efl2_text_cursor_position_set(cur, 11);
    fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL, NULL,
             &cx2, NULL, NULL, NULL, EVAS_TEXTBLOCK_CURSOR_BEFORE));
-   evas_textblock_cursor_pos_set(cur, 11);
+   efl2_text_cursor_position_set(cur, 11);
    evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
-   evas_textblock_cursor_pos_set(cur, 10);
+   efl2_text_cursor_position_set(cur, 10);
    evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
    ck_assert_int_eq(cx, x);
    ck_assert_int_eq(cx2, x2);
 
    /* Logical cursor after "c" */
-   evas_textblock_cursor_pos_set(cur, 14);
+   efl2_text_cursor_position_set(cur, 14);
    fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
                                                     NULL, &cx2, NULL, NULL, NULL,
                                                     EVAS_TEXTBLOCK_CURSOR_BEFORE));
-   evas_textblock_cursor_pos_set(cur, 10);
+   efl2_text_cursor_position_set(cur, 10);
    evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
-   evas_textblock_cursor_pos_set(cur, 11);
+   efl2_text_cursor_position_set(cur, 11);
    evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
    ck_assert_int_eq(cx, x);
    ck_assert_int_eq(cx2, x2);
 
    /* Logical cursor before " bang" */
-   evas_textblock_cursor_pos_set(cur, 20);
+   efl2_text_cursor_position_set(cur, 20);
    fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
                                                     NULL, &cx2, NULL, NULL, NULL,
                                                     EVAS_TEXTBLOCK_CURSOR_BEFORE));
    evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
-   evas_textblock_cursor_pos_set(cur, 19);
+   efl2_text_cursor_position_set(cur, 19);
    evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
    ck_assert_int_eq(cx, x);
    ck_assert_int_eq(cx2, x2);
 
    /* Logical cursor in the beginning */
-   evas_textblock_cursor_line_char_first(cur);
+   efl2_text_cursor_line_start(cur);
    fail_if(evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
                                                     NULL, NULL, NULL, NULL, NULL,
                                                     EVAS_TEXTBLOCK_CURSOR_BEFORE));
@@ -1067,7 +1074,7 @@ EFL_START_TEST(evas_textblock_split_cursor)
    ck_assert_int_eq(cx, x);
 
    /* Logical cursor in the end */
-   evas_textblock_cursor_line_char_last(cur);
+   efl2_text_cursor_line_end(cur);
    fail_if(evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
                                                     NULL, NULL, NULL, NULL, NULL,
                                                     EVAS_TEXTBLOCK_CURSOR_BEFORE));
@@ -1075,7 +1082,7 @@ EFL_START_TEST(evas_textblock_split_cursor)
    ck_assert_int_eq(cx, x);
 
    /* Logical cursor on the second pos */
-   evas_textblock_cursor_pos_set(cur, 2);
+   efl2_text_cursor_position_set(cur, 2);
    fail_if(evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
                                                     NULL, NULL, NULL, NULL, NULL,
                                                     EVAS_TEXTBLOCK_CURSOR_BEFORE));
@@ -1090,54 +1097,54 @@ EFL_START_TEST(evas_textblock_split_cursor)
    evas_object_resize(tb, nw, nh);
 
    /* Logical cursor before "test" */
-   evas_textblock_cursor_pos_set(cur, 6);
+   efl2_text_cursor_position_set(cur, 6);
    fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
                                                     NULL, &cx2, NULL, NULL, NULL,
                                                     EVAS_TEXTBLOCK_CURSOR_BEFORE));
-   evas_textblock_cursor_pos_set(cur, 4);
+   efl2_text_cursor_position_set(cur, 4);
    evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
-   evas_textblock_cursor_pos_set(cur, 6);
+   efl2_text_cursor_position_set(cur, 6);
    evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
    ck_assert_int_eq(cx, x);
    ck_assert_int_eq(cx2, x2);
 
    /* Logical cursor after "test " */
-   evas_textblock_cursor_pos_set(cur, 11);
+   efl2_text_cursor_position_set(cur, 11);
    fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
                                                     NULL, &cx2, NULL, NULL, NULL,
                                                     EVAS_TEXTBLOCK_CURSOR_BEFORE));
-   evas_textblock_cursor_pos_set(cur, 16);
+   efl2_text_cursor_position_set(cur, 16);
    evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
-   evas_textblock_cursor_pos_set(cur, 15);
+   efl2_text_cursor_position_set(cur, 15);
    evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
    ck_assert_int_eq(cx, x);
    ck_assert_int_eq(cx2, x2);
 
    /* Logical cursor before " efl" */
-   evas_textblock_cursor_pos_set(cur, 16);
+   efl2_text_cursor_position_set(cur, 16);
    fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
                                                     NULL, &cx2, NULL, NULL, NULL,
                                                     EVAS_TEXTBLOCK_CURSOR_BEFORE));
    evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
-   evas_textblock_cursor_pos_set(cur, 15);
+   efl2_text_cursor_position_set(cur, 15);
    evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
    ck_assert_int_eq(cx, x);
    ck_assert_int_eq(cx2, x2);
 
    /* Logical cursor after " efl" */
-   evas_textblock_cursor_pos_set(cur, 21);
+   efl2_text_cursor_position_set(cur, 21);
    fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
                                                     NULL, &cx2, NULL, NULL, NULL,
                                                     EVAS_TEXTBLOCK_CURSOR_BEFORE));
-   evas_textblock_cursor_pos_set(cur, 6);
+   efl2_text_cursor_position_set(cur, 6);
    evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
-   evas_textblock_cursor_pos_set(cur, 4);
+   efl2_text_cursor_position_set(cur, 4);
    evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
    ck_assert_int_eq(cx, x);
    ck_assert_int_eq(cx2, x2);
 
    /* Logical cursor in the beginning */
-   evas_textblock_cursor_line_char_first(cur);
+   efl2_text_cursor_line_start(cur);
    fail_if(evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
                                                     NULL, NULL, NULL, NULL, NULL,
                                                     EVAS_TEXTBLOCK_CURSOR_BEFORE));
@@ -1145,11 +1152,11 @@ EFL_START_TEST(evas_textblock_split_cursor)
    ck_assert_int_eq(cx, (x + w));
 
    /* Logical cursor in the end */
-   evas_textblock_cursor_line_char_last(cur);
+   efl2_text_cursor_line_end(cur);
    fail_if(evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
                                                     NULL, NULL, NULL, NULL, NULL,
                                                     EVAS_TEXTBLOCK_CURSOR_BEFORE));
-   evas_textblock_cursor_pos_set(cur, 26);
+   efl2_text_cursor_position_set(cur, 26);
    evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
    ck_assert_int_eq(cx, x);
 
@@ -1162,13 +1169,13 @@ EFL_START_TEST(evas_textblock_split_cursor)
    evas_object_textblock_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
 
-   evas_textblock_cursor_line_char_last(cur);
+   efl2_text_cursor_line_end(cur);
    fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
                                                     NULL, &cx2, NULL, NULL, NULL,
                                                     EVAS_TEXTBLOCK_CURSOR_BEFORE));
-   evas_textblock_cursor_pos_set(cur, 15);
+   efl2_text_cursor_position_set(cur, 15);
    evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
-   evas_textblock_cursor_pos_set(cur, 6);
+   efl2_text_cursor_position_set(cur, 6);
    evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, &w, NULL);
    ck_assert_int_eq(cx, (x + w));
    ck_assert_int_eq(cx2, x2);
@@ -1180,19 +1187,19 @@ EFL_START_TEST(evas_textblock_split_cursor)
    evas_object_textblock_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
 
-   evas_textblock_cursor_line_char_last(cur);
+   efl2_text_cursor_line_end(cur);
    fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
                                                     NULL, &cx2, NULL, NULL, NULL,
                                                     EVAS_TEXTBLOCK_CURSOR_BEFORE));
-   evas_textblock_cursor_pos_set(cur, 8);
+   efl2_text_cursor_position_set(cur, 8);
    evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
-   evas_textblock_cursor_pos_set(cur, 10);
+   efl2_text_cursor_position_set(cur, 10);
    evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
    ck_assert_int_eq(cx, x);
    ck_assert_int_eq(cx2, x2);
 
    /* Cursor is between items of the same direction */
-   evas_textblock_cursor_pos_set(cur, 14);
+   efl2_text_cursor_position_set(cur, 14);
    fail_if(evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
                                                     NULL, NULL, NULL, NULL, NULL,
                                                     EVAS_TEXTBLOCK_CURSOR_BEFORE));
@@ -1200,7 +1207,7 @@ EFL_START_TEST(evas_textblock_split_cursor)
    ck_assert_int_eq(cx, x);
 
    /* Cursor type is UNDER */
-   evas_textblock_cursor_pos_set(cur, 0);
+   efl2_text_cursor_position_set(cur, 0);
    fail_if(evas_textblock_cursor_geometry_bidi_get(cur, &cx, NULL, NULL,
                                                     NULL, NULL, NULL, NULL, NULL,
                                                     EVAS_TEXTBLOCK_CURSOR_UNDER));
@@ -1220,7 +1227,7 @@ EFL_START_TEST(evas_textblock_split_cursor)
      {
         evas_object_resize(tb, i, nh);
 
-        evas_textblock_cursor_pos_set(cur, 12);
+        efl2_text_cursor_position_set(cur, 12);
         fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, &cy, NULL,
                                                          NULL, &cx2, &cy2, NULL, NULL,
                                                          EVAS_TEXTBLOCK_CURSOR_BEFORE));
@@ -1228,7 +1235,7 @@ EFL_START_TEST(evas_textblock_split_cursor)
         ck_assert_int_eq(cy, ly);
         evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
         ck_assert_int_eq(cx, x);
-        evas_textblock_cursor_pos_set(cur, 11);
+        efl2_text_cursor_position_set(cur, 11);
         evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
         ck_assert_int_eq(cy2, ly);
         evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
@@ -1243,7 +1250,7 @@ EFL_START_TEST(evas_textblock_split_cursor)
    for (i = 0; i < nw; i++)
      {
         evas_object_resize(tb, i, nh);
-        evas_textblock_cursor_pos_set(cur, 16);
+        efl2_text_cursor_position_set(cur, 16);
         fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, &cy, NULL,
                                                          NULL, &cx2, &cy2, NULL, NULL,
                                                          EVAS_TEXTBLOCK_CURSOR_BEFORE));
@@ -1251,7 +1258,7 @@ EFL_START_TEST(evas_textblock_split_cursor)
         ck_assert_int_eq(cy, ly);
         evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, &w, NULL);
         ck_assert_int_eq(cx, (x + w));
-        evas_textblock_cursor_pos_set(cur, 15);
+        efl2_text_cursor_position_set(cur, 15);
         evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
         ck_assert_int_eq(cy2, ly);
         evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, &w2, NULL);
@@ -1264,22 +1271,22 @@ EFL_START_TEST(evas_textblock_split_cursor)
    evas_object_textblock_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
 
-   evas_textblock_cursor_pos_set(cur, 15);
+   efl2_text_cursor_position_set(cur, 15);
    evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, &w, NULL);
    /* Resizing textblock, so RTL item will be on the next line.*/
    evas_object_resize(tb, x + w, nh);
 
-   evas_textblock_cursor_pos_set(cur, 24);
+   efl2_text_cursor_position_set(cur, 24);
    fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, &cy, NULL,
                                                     NULL, &cx2, &cy2, NULL, NULL,
                                                     EVAS_TEXTBLOCK_CURSOR_BEFORE));
-   evas_textblock_cursor_pos_set(cur, 16);
+   efl2_text_cursor_position_set(cur, 16);
    evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, &w, NULL);
    ck_assert_int_eq(cx, (x + w));
    evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
    ck_assert_int_eq(cy, ly);
 
-   evas_textblock_cursor_pos_set(cur, 23);
+   efl2_text_cursor_position_set(cur, 23);
    evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
    ck_assert_int_eq(cx2, x2);
    evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
@@ -1291,22 +1298,22 @@ EFL_START_TEST(evas_textblock_split_cursor)
    evas_object_textblock_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
 
-   evas_textblock_cursor_pos_set(cur, 15);
+   efl2_text_cursor_position_set(cur, 15);
    evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, &w, NULL);
    /* Resizing textblock, so LTR item will be on the next line.*/
    evas_object_resize(tb, nw - x, nh);
 
-   evas_textblock_cursor_pos_set(cur, 24);
+   efl2_text_cursor_position_set(cur, 24);
    fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, &cy, NULL,
                                                     NULL, &cx2, &cy2, NULL, NULL,
                                                     EVAS_TEXTBLOCK_CURSOR_BEFORE));
-   evas_textblock_cursor_pos_set(cur, 16);
+   efl2_text_cursor_position_set(cur, 16);
    evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
    ck_assert_int_eq(cx, x);
    evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
    ck_assert_int_eq(cy, ly);
 
-   evas_textblock_cursor_line_char_last(cur);
+   efl2_text_cursor_line_end(cur);
    evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
    ck_assert_int_eq(cx2, x2);
    evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
@@ -1381,7 +1388,7 @@ EFL_START_TEST(evas_textblock_format_removal)
 
    /* Now remove formats by removing text */
    evas_object_textblock_text_markup_set(tb, buf);
-   evas_textblock_cursor_pos_set(cur, 6);
+   efl2_text_cursor_position_set(cur, 6);
    evas_textblock_cursor_char_delete(cur);
    evas_textblock_cursor_char_delete(cur);
    evas_textblock_cursor_char_delete(cur);
@@ -1400,7 +1407,7 @@ EFL_START_TEST(evas_textblock_format_removal)
    fail_if (fnode);
 
    /* No formats should remain. */
-   evas_textblock_cursor_pos_set(cur, 2);
+   efl2_text_cursor_position_set(cur, 2);
    evas_textblock_cursor_char_delete(cur);
    evas_textblock_cursor_char_delete(cur);
    evas_textblock_cursor_char_delete(cur);
@@ -1412,7 +1419,7 @@ EFL_START_TEST(evas_textblock_format_removal)
 
    /* Try to remove the formats in a way that shouldn't remove them */
    evas_object_textblock_text_markup_set(tb, buf);
-   evas_textblock_cursor_pos_set(cur, 7);
+   efl2_text_cursor_position_set(cur, 7);
    evas_textblock_cursor_char_delete(cur);
    evas_textblock_cursor_char_delete(cur);
    evas_textblock_cursor_char_delete(cur);
@@ -1442,8 +1449,8 @@ EFL_START_TEST(evas_textblock_format_removal)
 
    /* Try range deletion to delete a */
    evas_object_textblock_text_markup_set(tb, buf);
-   evas_textblock_cursor_pos_set(cur, 6);
-   evas_textblock_cursor_pos_set(main_cur, 9);
+   efl2_text_cursor_position_set(cur, 6);
+   efl2_text_cursor_position_set(main_cur, 9);
    evas_textblock_cursor_range_delete(cur, main_cur);
    fnode = evas_textblock_node_format_first_get(tb);
    fail_if (!fnode);
@@ -1460,8 +1467,8 @@ EFL_START_TEST(evas_textblock_format_removal)
 
    /* Range deletion to delete both */
    evas_object_textblock_text_markup_set(tb, buf);
-   evas_textblock_cursor_pos_set(cur, 2);
-   evas_textblock_cursor_pos_set(main_cur, 11);
+   efl2_text_cursor_position_set(cur, 2);
+   efl2_text_cursor_position_set(main_cur, 11);
    evas_textblock_cursor_range_delete(cur, main_cur);
    fnode = evas_textblock_node_format_first_get(tb);
    fail_if (fnode);
@@ -1470,8 +1477,8 @@ EFL_START_TEST(evas_textblock_format_removal)
    evas_object_textblock_text_markup_set(tb,
          "Th<b>is a<a>te<ps/>"
          "s</a>st</b>.");
-   evas_textblock_cursor_pos_set(cur, 6);
-   evas_textblock_cursor_pos_set(main_cur, 10);
+   efl2_text_cursor_position_set(cur, 6);
+   efl2_text_cursor_position_set(main_cur, 10);
    evas_textblock_cursor_range_delete(cur, main_cur);
    fnode = evas_textblock_node_format_first_get(tb);
    fail_if (!fnode);
@@ -1516,7 +1523,7 @@ EFL_START_TEST(evas_textblock_format_removal)
          " or even paths to image files on disk too like: "
          "<item absize=96x128 vsize=full href=file://bla/images/sky_01.jpg></item>"
          " ... end.");
-   evas_textblock_cursor_paragraph_first(cur);
+   efl2_text_cursor_paragraph_first(cur);
    evas_textblock_cursor_paragraph_last(main_cur);
    evas_textblock_cursor_range_delete(cur, main_cur);
    fnode = evas_textblock_node_format_first_get(tb);
@@ -1539,8 +1546,8 @@ EFL_START_TEST(evas_textblock_format_removal)
    /* Deleting a range with just one char and surrounded by formats, that
     * deletes a paragraph. */
    evas_object_textblock_text_markup_set(tb, "A<ps/><b>B</b>");
-   evas_textblock_cursor_pos_set(cur, 2);
-   evas_textblock_cursor_pos_set(main_cur, 3);
+   efl2_text_cursor_position_set(cur, 2);
+   efl2_text_cursor_position_set(main_cur, 3);
    evas_textblock_cursor_range_delete(cur, main_cur);
    fnode = evas_textblock_node_format_first_get(tb);
    fnode = evas_textblock_node_format_next_get(fnode);
@@ -1548,51 +1555,51 @@ EFL_START_TEST(evas_textblock_format_removal)
 
    /* Two formats in the same place. */
    evas_object_textblock_text_markup_set(tb, "a<b><a>b</a></b>b");
-   evas_textblock_cursor_pos_set(cur, 1);
+   efl2_text_cursor_position_set(cur, 1);
    evas_textblock_cursor_char_delete(cur);
    fnode = evas_textblock_node_format_first_get(tb);
    fail_if (fnode);
 
    /* Two formats across different paragraphs with notihng in between. */
    evas_object_textblock_text_markup_set(tb, "<b><ps/></b>");
-   evas_textblock_cursor_pos_set(cur, 0);
+   efl2_text_cursor_position_set(cur, 0);
    evas_textblock_cursor_char_delete(cur);
    fnode = evas_textblock_node_format_first_get(tb);
    fail_if (fnode);
 
    /* Try with range */
    evas_object_textblock_text_markup_set(tb, "<b><ps/></b>");
-   evas_textblock_cursor_pos_set(cur, 0);
-   evas_textblock_cursor_pos_set(main_cur, 1);
+   efl2_text_cursor_position_set(cur, 0);
+   efl2_text_cursor_position_set(main_cur, 1);
    evas_textblock_cursor_range_delete(cur, main_cur);
    fnode = evas_textblock_node_format_first_get(tb);
    fail_if (fnode);
 
    /* Range delete with empty paragraphs. */
    evas_object_textblock_text_markup_set(tb, "<ps/><ps/><ps/><ps/><ps/>");
-   evas_textblock_cursor_pos_set(cur, 2);
-   evas_textblock_cursor_pos_set(main_cur, 3);
+   efl2_text_cursor_position_set(cur, 2);
+   efl2_text_cursor_position_set(main_cur, 3);
    evas_textblock_cursor_range_delete(cur, main_cur);
    ck_assert_str_eq(evas_object_textblock_text_markup_get(tb), "<ps/><ps/><ps/><ps/>");
 
    /* Range delete with item formats, TEST_CASE#1 */
    evas_object_textblock_text_markup_set(tb, "The <b>Multiline</b><item size=50x50 href=abc></item> text!");
-   evas_textblock_cursor_pos_set(cur, 4);
-   evas_textblock_cursor_pos_set(main_cur, 14);
+   efl2_text_cursor_position_set(cur, 4);
+   efl2_text_cursor_position_set(main_cur, 14);
    evas_textblock_cursor_range_delete(cur, main_cur);
    ck_assert_str_eq(evas_object_textblock_text_markup_get(tb), "The  text!");
 
    /* Range delete with item formats, TEST_CASE#2 */
    evas_object_textblock_text_markup_set(tb, "The <b>Multiline</b><item size=50x50 href=abc></item> text! it is lon<item size=40x40 href=move></item>g text for test.");
-   evas_textblock_cursor_pos_set(cur, 14);
-   evas_textblock_cursor_pos_set(main_cur, 15);
+   efl2_text_cursor_position_set(cur, 14);
+   efl2_text_cursor_position_set(main_cur, 15);
    evas_textblock_cursor_range_delete(cur, main_cur);
    ck_assert_str_eq(evas_object_textblock_text_markup_get(tb), "The <b>Multiline</b><item size=50x50 href=abc></item>text! it is lon<item size=40x40 href=move></item>g text for test.");
 
    /* Verify fmt position and REP_CHAR positions are the same */
    evas_object_textblock_text_markup_set(tb,
          "This is<ps/>an <item absize=93x152 vsize=ascent></>a.");
-   evas_textblock_cursor_pos_set(cur, 7);
+   efl2_text_cursor_position_set(cur, 7);
    evas_textblock_cursor_char_delete(cur);
    fnode = evas_textblock_node_format_first_get(tb);
    /* FIXME:  to fix in Evas.h */
@@ -1600,7 +1607,7 @@ EFL_START_TEST(evas_textblock_format_removal)
 
    /* Out of order <b><i></b></i> mixes. */
    evas_object_textblock_text_markup_set(tb, "a<b>b<i>c</b>d</i>e");
-   evas_textblock_cursor_pos_set(cur, 2);
+   efl2_text_cursor_position_set(cur, 2);
 
    for (i = 0 ; i < 2 ; i++)
      {
@@ -1638,7 +1645,7 @@ EFL_START_TEST(evas_textblock_format_removal)
 
    /* This time with a generic closer */
    evas_object_textblock_text_markup_set(tb, "a<b>b<i>c</b>d</>e");
-   evas_textblock_cursor_pos_set(cur, 2);
+   efl2_text_cursor_position_set(cur, 2);
 
    for (i = 0 ; i < 2 ; i++)
      {
@@ -1676,7 +1683,7 @@ EFL_START_TEST(evas_textblock_format_removal)
 
    /* And now with remove pair. */
    evas_object_textblock_text_markup_set(tb, "a<b>b<i>c</b>d</i>e");
-   evas_textblock_cursor_pos_set(cur, 2);
+   efl2_text_cursor_position_set(cur, 2);
    fnode = evas_textblock_node_format_first_get(tb);
    evas_textblock_node_format_remove_pair(tb,
          (Evas_Object_Textblock_Node_Format *) fnode);
@@ -1694,7 +1701,7 @@ EFL_START_TEST(evas_textblock_format_removal)
 
    /* Remove the other pair */
    evas_object_textblock_text_markup_set(tb, "a<b>b<i>c</>d</i>e");
-   evas_textblock_cursor_pos_set(cur, 2);
+   efl2_text_cursor_position_set(cur, 2);
    fnode = evas_textblock_node_format_first_get(tb);
    fnode = evas_textblock_node_format_next_get(fnode);
    evas_textblock_node_format_remove_pair(tb,
@@ -1713,7 +1720,7 @@ EFL_START_TEST(evas_textblock_format_removal)
 
    /* Remove two pairs with the same name and same positions. */
    evas_object_textblock_text_markup_set(tb, "<a><a>A</a></a>");
-   evas_textblock_cursor_pos_set(cur, 0);
+   efl2_text_cursor_position_set(cur, 0);
    evas_textblock_cursor_char_delete(cur);
 
    fnode = evas_textblock_node_format_first_get(tb);
@@ -1721,7 +1728,7 @@ EFL_START_TEST(evas_textblock_format_removal)
 
    /* Try to remove a format that doesn't have a pair (with a bad mkup) */
    evas_object_textblock_text_markup_set(tb, "a<b>b<i>c</>d</i>e");
-   evas_textblock_cursor_pos_set(cur, 2);
+   efl2_text_cursor_position_set(cur, 2);
    fnode = evas_textblock_node_format_first_get(tb);
    evas_textblock_node_format_remove_pair(tb,
          (Evas_Object_Textblock_Node_Format *) fnode);
@@ -1758,7 +1765,7 @@ EFL_START_TEST(evas_textblock_items)
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    _ck_assert_int(w, >=, 93);
    _ck_assert_int(h, >=, 153);
-   evas_textblock_cursor_pos_set(cur, 11);
+   efl2_text_cursor_position_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    ck_assert_int_eq(w, 93);
    ck_assert_int_eq(h, 152);
@@ -1768,7 +1775,7 @@ EFL_START_TEST(evas_textblock_items)
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    _ck_assert_int(w, >=, 93);
    _ck_assert_int(h, >=, 153);
-   evas_textblock_cursor_pos_set(cur, 11);
+   efl2_text_cursor_position_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    ck_assert_int_eq(w, 93);
    ck_assert_int_eq(h, 152);
@@ -1779,7 +1786,7 @@ EFL_START_TEST(evas_textblock_items)
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    _ck_assert_int(w, >=, 93);
    _ck_assert_int(h, >=, 153);
-   evas_textblock_cursor_pos_set(cur, 11);
+   efl2_text_cursor_position_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    fail_if((w != 93) || (h != 152));
 
@@ -1787,7 +1794,7 @@ EFL_START_TEST(evas_textblock_items)
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    fail_if((w < 93) || (h <= 153));
-   evas_textblock_cursor_pos_set(cur, 11);
+   efl2_text_cursor_position_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    fail_if((w != 93) || (h != 152));
 
@@ -1796,10 +1803,10 @@ EFL_START_TEST(evas_textblock_items)
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    fail_if((w < (2 * 93)) || (h != (2 * 154)));
-   evas_textblock_cursor_pos_set(cur, 11);
+   efl2_text_cursor_position_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    fail_if((w != (2 * 93)) || (h != (2 * 152)));
-   evas_textblock_cursor_pos_set(cur, 11);
+   efl2_text_cursor_position_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    fail_if((w != (2 * 93)) || (h != (2 * 152)));
 
@@ -1807,7 +1814,7 @@ EFL_START_TEST(evas_textblock_items)
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    fail_if((w < (2 * 93)) || (h <= (2 * 154)));
-   evas_textblock_cursor_pos_set(cur, 11);
+   efl2_text_cursor_position_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    fail_if((w != (2 * 93)) || (h != (2 * 152)));
 
@@ -1819,7 +1826,7 @@ EFL_START_TEST(evas_textblock_items)
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    fail_if((w >= 93) || (h >= 153));
-   evas_textblock_cursor_pos_set(cur, 11);
+   efl2_text_cursor_position_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &ih);
    fail_if((w > 108) || (h <= ih));
 
@@ -1827,7 +1834,7 @@ EFL_START_TEST(evas_textblock_items)
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    fail_if((w >= 93) || (h >= 152));
-   evas_textblock_cursor_pos_set(cur, 11);
+   efl2_text_cursor_position_set(cur, 11);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &ih);
    fail_if((w > 108) || (h <= ih));
 
@@ -1838,18 +1845,18 @@ EFL_START_TEST(evas_textblock_items)
    evas_object_textblock_size_native_get(tb, &nw, &nh);
    fail_if((nw != w) || (nh != h));
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
-   evas_textblock_cursor_char_next(cur);
+   efl2_text_cursor_char_next(cur);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w2, &h2);
    fail_if((w != w2) || (h != h2));
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
-   evas_textblock_cursor_char_next(cur);
+   efl2_text_cursor_char_next(cur);
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w2, &h2);
    fail_if((w != w2) || (h != h2));
 
    buf = "<ellipsis=1.0>a<item absize=64x64 vsize=ascent href=emoticon/knowing-grin></item></ellipsis>";
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_resize(tb, 30, 30);
-   evas_textblock_cursor_pos_set(cur, 1);
+   efl2_text_cursor_position_set(cur, 1);
    if (evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h))
      fail_if((w != 64) || (h != 64));
 
@@ -1860,10 +1867,10 @@ EFL_START_TEST(evas_textblock_items)
    evas_object_textblock_text_markup_set(tb, buf);
    evas_textblock_cursor_format_item_geometry_get(cur, &x, &y, &w, NULL);
    evas_textblock_cursor_char_coord_set(cur, x + (w / 2) + 1, y);
-   fail_if(evas_textblock_cursor_pos_get(cur) != 1);
+   fail_if(efl2_text_cursor_position_get(cur) != 1);
    /* Test small increment in x and cursor position will be same */
    evas_textblock_cursor_char_coord_set(cur, x + 10, y);
-   fail_if(evas_textblock_cursor_pos_get(cur) != 0);
+   fail_if(efl2_text_cursor_position_get(cur) != 0);
 
    /* FIXME: Also verify x,y positions of the item. */
 
@@ -2205,7 +2212,7 @@ EFL_START_TEST(evas_textblock_wrapping)
 
    evas_textblock_cursor_paragraph_last(cur);
    Evas_Coord cx, cy, cw, ch;
-   evas_textblock_cursor_text_prepend(cur, " ");
+   efl2_text_cursor_text_insert(cur, " ");
    fail_if(-1 == evas_textblock_cursor_geometry_get(cur, &cx, &cy, &cw, &ch,
             NULL, EVAS_TEXTBLOCK_CURSOR_BEFORE));
 
@@ -2244,15 +2251,15 @@ EFL_START_TEST(evas_textblock_wrapping)
               "<ellipsis=1.0>aaa<ps>bbb</ellipsis>");
         evas_object_resize(tb, 1, 1);
         evas_object_textblock_size_formatted_get(tb, NULL, NULL);
-        evas_textblock_cursor_line_set(cur, 1);
-        bret = evas_textblock_cursor_pos_get(cur);
+        efl2_text_cursor_line_number_set(cur, 1);
+        bret = efl2_text_cursor_position_get(cur);
 
         evas_object_resize(tb, 500, 500);
         evas_object_textblock_size_formatted_get(tb, NULL, NULL);
         evas_object_resize(tb, 1, 1);
         evas_object_textblock_size_formatted_get(tb, NULL, NULL);
-        evas_textblock_cursor_line_set(cur, 1);
-        ret = evas_textblock_cursor_pos_get(cur);
+        efl2_text_cursor_line_number_set(cur, 1);
+        ret = efl2_text_cursor_position_get(cur);
 
         ck_assert_int_eq(bret, ret);
      }
@@ -2354,11 +2361,11 @@ EFL_START_TEST(evas_textblock_various)
 
    /* These shouldn't crash (although the desired outcome is not yet defined) */
    evas_object_textblock_text_markup_set(tb, "&#xfffc;");
-   evas_textblock_cursor_pos_set(cur, 0);
+   efl2_text_cursor_position_set(cur, 0);
    evas_textblock_cursor_char_delete(cur);
 
    evas_object_textblock_text_markup_set(tb, "\xEF\xBF\xBC");
-   evas_textblock_cursor_pos_set(cur, 0);
+   efl2_text_cursor_position_set(cur, 0);
    evas_textblock_cursor_char_delete(cur);
 
    /* Check margins' position */
@@ -2441,8 +2448,8 @@ EFL_START_TEST(evas_textblock_geometries)
 
    /* Single line range */
    Efl2_Text_Cursor *main_cur = evas_object_textblock_cursor_get(tb);
-   evas_textblock_cursor_pos_set(cur, 0);
-   evas_textblock_cursor_pos_set(main_cur, 6);
+   efl2_text_cursor_position_set(cur, 0);
+   efl2_text_cursor_position_set(main_cur, 6);
 
    Eina_List *rects, *rects2;
    Evas_Textblock_Rectangle *tr, *tr2;
@@ -2468,8 +2475,8 @@ EFL_START_TEST(evas_textblock_geometries)
       free(tr2);
 
    /* Multiline range */
-   evas_textblock_cursor_pos_set(cur, 0);
-   evas_textblock_cursor_pos_set(main_cur, 14);
+   efl2_text_cursor_position_set(cur, 0);
+   efl2_text_cursor_position_set(main_cur, 14);
 
    rects = evas_textblock_cursor_range_geometry_get(cur, main_cur);
    fail_if(!rects);
@@ -2507,8 +2514,8 @@ EFL_START_TEST(evas_textblock_geometries)
 
    /* Same run different scripts */
    evas_object_textblock_text_markup_set(tb, "עברית");
-   evas_textblock_cursor_pos_set(main_cur, 4); // last character
-   evas_textblock_cursor_pos_set(cur, 5); // after last character
+   efl2_text_cursor_position_set(main_cur, 4); // last character
+   efl2_text_cursor_position_set(cur, 5); // after last character
 
    rects = evas_textblock_cursor_range_geometry_get(cur, main_cur);
    fail_if(!rects);
@@ -2517,8 +2524,8 @@ EFL_START_TEST(evas_textblock_geometries)
 
    evas_object_textblock_text_markup_set(tb, "עבריתenglishрусскийעברית");
 
-   evas_textblock_cursor_pos_set(cur, 3);
-   evas_textblock_cursor_pos_set(main_cur, 7);
+   efl2_text_cursor_position_set(cur, 3);
+   efl2_text_cursor_position_set(main_cur, 7);
    rects = evas_textblock_cursor_range_geometry_get(cur, main_cur);
 
    fail_if(eina_list_count(rects) != 2);
@@ -2529,8 +2536,8 @@ EFL_START_TEST(evas_textblock_geometries)
    /* Same run different styles */
    evas_object_textblock_text_markup_set(tb, "test<b>test2</b>test3");
 
-   evas_textblock_cursor_pos_set(cur, 3);
-   evas_textblock_cursor_pos_set(main_cur, 11);
+   efl2_text_cursor_position_set(cur, 3);
+   efl2_text_cursor_position_set(main_cur, 11);
    rects = evas_textblock_cursor_range_geometry_get(cur, main_cur);
 
    fail_if(eina_list_count(rects) != 3);
@@ -2541,8 +2548,8 @@ EFL_START_TEST(evas_textblock_geometries)
    /* Bidi text with a few back and forth from bidi. */
    evas_object_textblock_text_markup_set(tb, "נגכדגךלח eountoheunth ךלחגדךכלח");
 
-   evas_textblock_cursor_pos_set(cur, 0);
-   evas_textblock_cursor_pos_set(main_cur, 28);
+   efl2_text_cursor_position_set(cur, 0);
+   efl2_text_cursor_position_set(main_cur, 28);
    rects = evas_textblock_cursor_range_geometry_get(cur, main_cur);
 
    ck_assert_int_eq(eina_list_count(rects), 3);
@@ -2557,8 +2564,8 @@ EFL_START_TEST(evas_textblock_geometries)
    Evas_Coord w = 200;
    evas_object_textblock_text_markup_set(tb, "This <br/> is a test.<br/>Another <br/>text.");
    evas_object_resize(tb, w, w / 2);
-   evas_textblock_cursor_pos_set(cur, 0);
-   evas_textblock_cursor_pos_set(main_cur, 3);
+   efl2_text_cursor_position_set(cur, 0);
+   efl2_text_cursor_position_set(main_cur, 3);
 
    it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
    fail_if(!it);
@@ -2584,8 +2591,8 @@ EFL_START_TEST(evas_textblock_geometries)
    eina_iterator_free(it2);
 
    /* Multiple range */
-   evas_textblock_cursor_pos_set(cur, 0);
-   evas_textblock_cursor_pos_set(main_cur, 16);
+   efl2_text_cursor_position_set(cur, 0);
+   efl2_text_cursor_position_set(main_cur, 16);
 
    it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
    fail_if(!it);
@@ -2631,8 +2638,8 @@ EFL_START_TEST(evas_textblock_geometries)
    fail_if(tr2->x + tr2->w != w);
 
    /* Have middle rectangle */
-   evas_textblock_cursor_pos_set(cur, 0);
-   evas_textblock_cursor_pos_set(main_cur, 31);
+   efl2_text_cursor_position_set(cur, 0);
+   efl2_text_cursor_position_set(main_cur, 31);
    it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
    fail_if(!it);
    rects = eina_iterator_container_get(it);
@@ -2695,7 +2702,7 @@ EFL_START_TEST(evas_textblock_geometries)
    /* Check number of rectangles in case a of line wrapping */
    evas_object_textblock_text_markup_set(tb, "<wrap=word>abc def <color=#0ff>ghi");
    evas_object_resize(tb, w, w / 2);
-   evas_textblock_cursor_pos_set(cur, 10);
+   efl2_text_cursor_position_set(cur, 10);
 
      {
         Evas_Coord cx;
@@ -2705,12 +2712,14 @@ EFL_START_TEST(evas_textblock_geometries)
         /* enforce wrapping of "ghi" to the next line */
         evas_object_resize(tb, cx, 400);
         /* Sanity, check there is actually a second line */
-        fail_if (!evas_textblock_cursor_line_set(cur, 1));
-        fail_if (evas_textblock_cursor_line_set(cur, 2));
+        /* FIXME:
+        fail_if (!efl2_text_cursor_line_number_set(cur, 1));
+        fail_if (efl2_text_cursor_line_number_set(cur, 2));
+        */
      }
 
-   evas_textblock_cursor_pos_set(cur, 7);
-   evas_textblock_cursor_pos_set(main_cur, 9);
+   efl2_text_cursor_position_set(cur, 7);
+   efl2_text_cursor_position_set(main_cur, 9);
 
    it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
    fail_if(!it);
@@ -2747,33 +2756,33 @@ EFL_START_TEST(evas_textblock_geometries)
          "<align=0.1>"
          "Hello World<ps>"
          "How are you<ps>");
-   evas_textblock_cursor_line_set(cur, 0);
-   evas_textblock_cursor_line_set(main_cur, 1);
+   efl2_text_cursor_line_number_set(cur, 0);
+   efl2_text_cursor_line_number_set(main_cur, 1);
    it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
    fail_if(!it);
    rects = eina_iterator_container_get(it);
    fail_if(!rects);
    ck_assert_int_eq(eina_list_count(rects), 3);
-   evas_textblock_cursor_char_next(main_cur);
+   efl2_text_cursor_char_next(main_cur);
    eina_iterator_free(it);
 
-   evas_textblock_cursor_char_next(main_cur);
+   efl2_text_cursor_char_next(main_cur);
    it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
    fail_if(!it);
    rects = eina_iterator_container_get(it);
    fail_if(!rects);
    ck_assert_int_eq(eina_list_count(rects), 4);
-   evas_textblock_cursor_char_next(main_cur);
+   efl2_text_cursor_char_next(main_cur);
    eina_iterator_free(it);
 
-   evas_textblock_cursor_line_set(main_cur, 2);
-   evas_textblock_cursor_char_next(main_cur);
+   efl2_text_cursor_line_number_set(main_cur, 2);
+   efl2_text_cursor_char_next(main_cur);
    it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
    fail_if(!it);
    rects = eina_iterator_container_get(it);
    fail_if(!rects);
    ck_assert_int_eq(eina_list_count(rects), 4);
-   evas_textblock_cursor_char_next(main_cur);
+   efl2_text_cursor_char_next(main_cur);
    eina_iterator_free(it);
 
    /* RTL text aligned to the left */
@@ -2781,23 +2790,23 @@ EFL_START_TEST(evas_textblock_geometries)
          "<align=left>"
          "שלום עולם<ps>"
          "מה שלומך");
-   evas_textblock_cursor_line_set(cur, 0);
-   evas_textblock_cursor_line_set(main_cur, 1);
+   efl2_text_cursor_line_number_set(cur, 0);
+   efl2_text_cursor_line_number_set(main_cur, 1);
    it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
    fail_if(!it);
    rects = eina_iterator_container_get(it);
    fail_if(!rects);
    ck_assert_int_eq(eina_list_count(rects), 2);
-   evas_textblock_cursor_char_next(main_cur);
+   efl2_text_cursor_char_next(main_cur);
    eina_iterator_free(it);
 
-   evas_textblock_cursor_char_next(main_cur);
+   efl2_text_cursor_char_next(main_cur);
    it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
    fail_if(!it);
    rects = eina_iterator_container_get(it);
    fail_if(!rects);
    ck_assert_int_eq(eina_list_count(rects), 3);
-   evas_textblock_cursor_char_next(main_cur);
+   efl2_text_cursor_char_next(main_cur);
    eina_iterator_free(it);
 
    /* RTL text aligned to the middle */
@@ -2805,8 +2814,8 @@ EFL_START_TEST(evas_textblock_geometries)
          "<align=middle>"
          "שלום עולם<ps>"
          "מה שלומך");
-   evas_textblock_cursor_line_set(cur, 0);
-   evas_textblock_cursor_line_set(main_cur, 1);
+   efl2_text_cursor_line_number_set(cur, 0);
+   efl2_text_cursor_line_number_set(main_cur, 1);
    it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
    fail_if(!it);
    rects = eina_iterator_container_get(it);
@@ -2814,7 +2823,7 @@ EFL_START_TEST(evas_textblock_geometries)
    ck_assert_int_eq(eina_list_count(rects), 3);
    eina_iterator_free(it);
 
-   evas_textblock_cursor_char_next(main_cur);
+   efl2_text_cursor_char_next(main_cur);
    it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
    fail_if(!it);
    rects = eina_iterator_container_get(it);
@@ -2826,8 +2835,8 @@ EFL_START_TEST(evas_textblock_geometries)
          "<align=middle>"
          "שלום עולם<ps>"
          "מה שלומך");
-   evas_textblock_cursor_line_set(cur, 0);
-   evas_textblock_cursor_line_set(main_cur, 1);
+   efl2_text_cursor_line_number_set(cur, 0);
+   efl2_text_cursor_line_number_set(main_cur, 1);
    it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
    fail_if(!it);
    rects = eina_iterator_container_get(it);
@@ -2835,7 +2844,7 @@ EFL_START_TEST(evas_textblock_geometries)
    ck_assert_int_eq(eina_list_count(rects), 3);
    eina_iterator_free(it);
 
-   evas_textblock_cursor_char_next(main_cur);
+   efl2_text_cursor_char_next(main_cur);
    it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
    fail_if(!it);
    rects = eina_iterator_container_get(it);
@@ -2847,8 +2856,8 @@ EFL_START_TEST(evas_textblock_geometries)
    evas_object_textblock_text_markup_set(tb,
          "Hello world<ps>"
          "מה שלומך");
-   evas_textblock_cursor_line_set(cur, 0);
-   evas_textblock_cursor_line_set(main_cur, 1);
+   efl2_text_cursor_line_number_set(cur, 0);
+   efl2_text_cursor_line_number_set(main_cur, 1);
    it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
    fail_if(!it);
    rects = eina_iterator_container_get(it);
@@ -2856,7 +2865,7 @@ EFL_START_TEST(evas_textblock_geometries)
    ck_assert_int_eq(eina_list_count(rects), 2);
    eina_iterator_free(it);
 
-   evas_textblock_cursor_char_next(main_cur);
+   efl2_text_cursor_char_next(main_cur);
    it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
    fail_if(!it);
    rects = eina_iterator_container_get(it);
@@ -2867,8 +2876,8 @@ EFL_START_TEST(evas_textblock_geometries)
    /* Same run different scripts */
    evas_object_textblock_text_markup_set(tb, "עבריתenglishрусскийעברית");
 
-   evas_textblock_cursor_pos_set(cur, 3);
-   evas_textblock_cursor_pos_set(main_cur, 7);
+   efl2_text_cursor_position_set(cur, 3);
+   efl2_text_cursor_position_set(main_cur, 7);
    it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
    fail_if(!it);
    rects = eina_iterator_container_get(it);
@@ -2881,8 +2890,8 @@ EFL_START_TEST(evas_textblock_geometries)
    /* Same run different styles */
    evas_object_textblock_text_markup_set(tb, "test<b>test2</b>test3");
 
-   evas_textblock_cursor_pos_set(cur, 3);
-   evas_textblock_cursor_pos_set(main_cur, 11);
+   efl2_text_cursor_position_set(cur, 3);
+   efl2_text_cursor_position_set(main_cur, 11);
    it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
    fail_if(!it);
    rects = eina_iterator_container_get(it);
@@ -2894,8 +2903,8 @@ EFL_START_TEST(evas_textblock_geometries)
    /* Bidi text with a few back and forth from bidi. */
    evas_object_textblock_text_markup_set(tb, "נגכדגךלח eountoheunth ךלחגדךכלח");
 
-   evas_textblock_cursor_pos_set(cur, 0);
-   evas_textblock_cursor_pos_set(main_cur, 28);
+   efl2_text_cursor_position_set(cur, 0);
+   efl2_text_cursor_position_set(main_cur, 28);
    it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
    fail_if(!it);
    rects = eina_iterator_container_get(it);
@@ -2907,8 +2916,8 @@ EFL_START_TEST(evas_textblock_geometries)
 
    /* Check trivial case with format items */
    evas_object_textblock_text_markup_set(tb, "abc<item size=32x32>efg");
-   evas_textblock_cursor_pos_set(cur, 3);
-   evas_textblock_cursor_pos_set(main_cur, 3);
+   efl2_text_cursor_position_set(cur, 3);
+   efl2_text_cursor_position_set(main_cur, 3);
    it = evas_textblock_cursor_range_simple_geometry_get(cur, main_cur);
    rects = eina_iterator_container_get(it);
    ck_assert(!rects);
@@ -2938,28 +2947,28 @@ EFL_START_TEST(evas_textblock_editing)
      }
 
    /* Delete the first char */
-   evas_textblock_cursor_paragraph_first(cur);
+   efl2_text_cursor_paragraph_first(cur);
    evas_textblock_cursor_char_delete(cur);
    fail_if(strcmp(evas_object_textblock_text_markup_get(tb),
             "irst par.<ps/>Second par."));
 
    /* Delete some arbitrary char */
-   evas_textblock_cursor_char_next(cur);
-   evas_textblock_cursor_char_next(cur);
-   evas_textblock_cursor_char_next(cur);
+   efl2_text_cursor_char_next(cur);
+   efl2_text_cursor_char_next(cur);
+   efl2_text_cursor_char_next(cur);
    evas_textblock_cursor_char_delete(cur);
    fail_if(strcmp(evas_object_textblock_text_markup_get(tb),
             "irs par.<ps/>Second par."));
 
    /* Delete a range */
-   evas_textblock_cursor_pos_set(main_cur, 1);
-   evas_textblock_cursor_pos_set(cur, 6);
+   efl2_text_cursor_position_set(main_cur, 1);
+   efl2_text_cursor_position_set(cur, 6);
    evas_textblock_cursor_range_delete(cur, main_cur);
    fail_if(strcmp(evas_object_textblock_text_markup_get(tb),
             "ir.<ps/>Second par."));
-   evas_textblock_cursor_paragraph_char_first(main_cur);
+   efl2_text_cursor_paragraph_start(main_cur);
    evas_textblock_cursor_paragraph_char_last(cur);
-   evas_textblock_cursor_char_next(cur);
+   efl2_text_cursor_char_next(cur);
    evas_textblock_cursor_range_delete(cur, main_cur);
    fail_if(strcmp(evas_object_textblock_text_markup_get(tb),
             "Second par."));
@@ -2968,7 +2977,7 @@ EFL_START_TEST(evas_textblock_editing)
    evas_textblock_cursor_paragraph_last(main_cur);
    evas_object_textblock_text_markup_prepend(main_cur, "Test<b>bla</b>bla.");
    evas_textblock_cursor_paragraph_last(cur);
-   evas_textblock_cursor_paragraph_char_first(main_cur);
+   efl2_text_cursor_paragraph_start(main_cur);
    evas_textblock_cursor_range_delete(cur, main_cur);
    fail_if(strcmp(evas_object_textblock_text_markup_get(tb),
             "First par.<ps/>"));
@@ -2976,38 +2985,38 @@ EFL_START_TEST(evas_textblock_editing)
    /* Merging paragraphs */
    evas_object_textblock_text_markup_set(tb, buf);
    evas_textblock_cursor_paragraph_char_last(cur);
-   evas_textblock_cursor_copy(cur, main_cur);
+   efl2_text_cursor_copy(main_cur, cur);
    evas_textblock_cursor_char_delete(cur);
 
-   evas_textblock_cursor_paragraph_first(cur);
-   fail_if(evas_textblock_cursor_paragraph_next(cur));
+   efl2_text_cursor_paragraph_first(cur);
+   fail_if(efl2_text_cursor_paragraph_next(cur));
 
    /* Split paragraphs */
    evas_textblock_cursor_format_prepend(cur, "ps");
 
-   evas_textblock_cursor_paragraph_first(cur);
-   fail_if(!evas_textblock_cursor_paragraph_next(cur));
-   fail_if(evas_textblock_cursor_paragraph_next(cur));
+   efl2_text_cursor_paragraph_first(cur);
+   fail_if(!efl2_text_cursor_paragraph_next(cur));
+   fail_if(efl2_text_cursor_paragraph_next(cur));
 
    /* Merge paragraphs using range deletion */
    evas_object_textblock_text_markup_set(tb, buf);
-   evas_textblock_cursor_paragraph_first(cur);
+   efl2_text_cursor_paragraph_first(cur);
    evas_textblock_cursor_paragraph_char_last(cur);
-   evas_textblock_cursor_copy(cur, main_cur);
-   evas_textblock_cursor_char_prev(cur);
-   evas_textblock_cursor_char_next(main_cur);
+   efl2_text_cursor_copy(main_cur, cur);
+   efl2_text_cursor_char_prev(cur);
+   efl2_text_cursor_char_next(main_cur);
 
    evas_textblock_cursor_range_delete(cur, main_cur);
-   evas_textblock_cursor_paragraph_first(cur);
-   fail_if(evas_textblock_cursor_paragraph_next(cur));
+   efl2_text_cursor_paragraph_first(cur);
+   fail_if(efl2_text_cursor_paragraph_next(cur));
 
    /* Test cursor range delete with <br/> tags when legacy newline is enabled.
     * After deleting first <br/> tag, the second <br/> tag shouldn't be changed to <ps/> */
    evas_object_textblock_legacy_newline_set(tb, EINA_TRUE);
    evas_object_textblock_text_markup_set(tb, "A<br/><br/>B");
-   evas_textblock_cursor_paragraph_first(cur);
-   evas_textblock_cursor_paragraph_first(main_cur);
-   evas_textblock_cursor_pos_set(main_cur, 2);
+   efl2_text_cursor_paragraph_first(cur);
+   efl2_text_cursor_paragraph_first(main_cur);
+   efl2_text_cursor_position_set(main_cur, 2);
    ck_assert_str_eq(evas_textblock_cursor_range_text_get(cur, main_cur, EVAS_TEXTBLOCK_TEXT_MARKUP), "A<br/>");
 
    evas_textblock_cursor_range_delete(cur, main_cur);
@@ -3022,12 +3031,12 @@ EFL_START_TEST(evas_textblock_editing)
         int limit = 1000;
         evas_object_textblock_text_markup_set(tb, "this is a test eauoeuaou<ps/>this is a test1<ps/>this is a test 3");
         evas_textblock_cursor_paragraph_last(cur);
-        while (evas_textblock_cursor_pos_get(cur) > 0)
+        while (efl2_text_cursor_position_get(cur) > 0)
           {
              limit--;
              fail_if(limit <= 0);
-             evas_textblock_cursor_copy(cur, main_cur);
-             evas_textblock_cursor_char_prev(cur);
+             efl2_text_cursor_copy(main_cur, cur);
+             efl2_text_cursor_char_prev(cur);
              evas_textblock_cursor_word_start(cur);
              evas_textblock_cursor_range_delete(cur, main_cur);
           }
@@ -3038,20 +3047,20 @@ EFL_START_TEST(evas_textblock_editing)
      {
         const char *content;
         evas_object_textblock_text_markup_set(tb, "a\n");
-        evas_textblock_cursor_pos_set(cur, 1);
-        content = evas_textblock_cursor_content_get(cur);
+        efl2_text_cursor_position_set(cur, 1);
+        content = efl2_text_cursor_content_get(cur);
 
         evas_object_textblock_text_markup_set(tb, "a\t");
-        evas_textblock_cursor_pos_set(cur, 1);
-        content = evas_textblock_cursor_content_get(cur);
+        efl2_text_cursor_position_set(cur, 1);
+        content = efl2_text_cursor_content_get(cur);
 
         evas_object_textblock_text_markup_set(tb, "a\xEF\xBF\xBC");
-        evas_textblock_cursor_pos_set(cur, 1);
-        content = evas_textblock_cursor_content_get(cur);
+        efl2_text_cursor_position_set(cur, 1);
+        content = efl2_text_cursor_content_get(cur);
 
         evas_object_textblock_text_markup_set(tb, "a\xE2\x80\xA9");
-        evas_textblock_cursor_pos_set(cur, 1);
-        content = evas_textblock_cursor_content_get(cur);
+        efl2_text_cursor_position_set(cur, 1);
+        content = efl2_text_cursor_content_get(cur);
         (void) content;
      }
 
@@ -3068,17 +3077,17 @@ EFL_START_TEST(evas_textblock_text_getters)
    const char *buf = "This is a <br/> test.<ps/>"
       "טקסט בעברית<ps/>and now in english.";
    evas_object_textblock_text_markup_set(tb, buf);
-   evas_textblock_cursor_paragraph_first(cur);
+   efl2_text_cursor_paragraph_first(cur);
 
-   fail_if(strcmp(evas_textblock_cursor_paragraph_text_get(cur),
+   fail_if(strcmp(_paragraph_text_get(tb, cur),
             "This is a <br/> test."));
 
-   evas_textblock_cursor_paragraph_next(cur);
-   fail_if(strcmp(evas_textblock_cursor_paragraph_text_get(cur),
+   efl2_text_cursor_paragraph_next(cur);
+   fail_if(strcmp(_paragraph_text_get(tb, cur),
             "טקסט בעברית"));
 
-   evas_textblock_cursor_paragraph_next(cur);
-   fail_if(strcmp(evas_textblock_cursor_paragraph_text_get(cur),
+   efl2_text_cursor_paragraph_next(cur);
+   fail_if(strcmp(_paragraph_text_get(tb, cur),
             "and now in english."));
 
    /* Range get */
@@ -3091,61 +3100,61 @@ EFL_START_TEST(evas_textblock_text_getters)
             EVAS_TEXTBLOCK_TEXT_MARKUP));
 
    Efl2_Text_Cursor *main_cur = evas_object_textblock_cursor_get(tb);
-   evas_textblock_cursor_pos_set(main_cur, 2);
-   evas_textblock_cursor_pos_set(cur, 2);
+   efl2_text_cursor_position_set(main_cur, 2);
+   efl2_text_cursor_position_set(cur, 2);
    fail_if(*evas_textblock_cursor_range_text_get(main_cur, cur,
             EVAS_TEXTBLOCK_TEXT_MARKUP));
 
-   evas_textblock_cursor_pos_set(main_cur, 2);
-   evas_textblock_cursor_pos_set(cur, 6);
+   efl2_text_cursor_position_set(main_cur, 2);
+   efl2_text_cursor_position_set(cur, 6);
    fail_if(strcmp(evas_textblock_cursor_range_text_get(main_cur, cur,
             EVAS_TEXTBLOCK_TEXT_MARKUP), "is i"));
 
-   evas_textblock_cursor_pos_set(main_cur, 5);
-   evas_textblock_cursor_pos_set(cur, 14);
+   efl2_text_cursor_position_set(main_cur, 5);
+   efl2_text_cursor_position_set(cur, 14);
    fail_if(strcmp(evas_textblock_cursor_range_text_get(main_cur, cur,
             EVAS_TEXTBLOCK_TEXT_MARKUP), "is a <br/> te"));
 
-   evas_textblock_cursor_pos_set(main_cur, 14);
-   evas_textblock_cursor_pos_set(cur, 20);
+   efl2_text_cursor_position_set(main_cur, 14);
+   efl2_text_cursor_position_set(cur, 20);
    fail_if(strcmp(evas_textblock_cursor_range_text_get(main_cur, cur,
             EVAS_TEXTBLOCK_TEXT_MARKUP), "st.<ps/>טק"));
 
-   evas_textblock_cursor_pos_set(main_cur, 14);
-   evas_textblock_cursor_pos_set(cur, 32);
+   efl2_text_cursor_position_set(main_cur, 14);
+   efl2_text_cursor_position_set(cur, 32);
    fail_if(strcmp(evas_textblock_cursor_range_text_get(main_cur, cur,
             EVAS_TEXTBLOCK_TEXT_MARKUP), "st.<ps/>טקסט בעברית<ps/>an"));
 
    /* Backward range get */
-   evas_textblock_cursor_pos_set(main_cur, 2);
-   evas_textblock_cursor_pos_set(cur, 2);
+   efl2_text_cursor_position_set(main_cur, 2);
+   efl2_text_cursor_position_set(cur, 2);
    fail_if(*evas_textblock_cursor_range_text_get(cur, main_cur,
             EVAS_TEXTBLOCK_TEXT_MARKUP));
 
-   evas_textblock_cursor_pos_set(main_cur, 2);
-   evas_textblock_cursor_pos_set(cur, 6);
+   efl2_text_cursor_position_set(main_cur, 2);
+   efl2_text_cursor_position_set(cur, 6);
    fail_if(strcmp(evas_textblock_cursor_range_text_get(cur, main_cur,
             EVAS_TEXTBLOCK_TEXT_MARKUP), "is i"));
 
-   evas_textblock_cursor_pos_set(main_cur, 5);
-   evas_textblock_cursor_pos_set(cur, 14);
+   efl2_text_cursor_position_set(main_cur, 5);
+   efl2_text_cursor_position_set(cur, 14);
    fail_if(strcmp(evas_textblock_cursor_range_text_get(cur, main_cur,
             EVAS_TEXTBLOCK_TEXT_MARKUP), "is a <br/> te"));
 
-   evas_textblock_cursor_pos_set(main_cur, 14);
-   evas_textblock_cursor_pos_set(cur, 20);
+   efl2_text_cursor_position_set(main_cur, 14);
+   efl2_text_cursor_position_set(cur, 20);
    fail_if(strcmp(evas_textblock_cursor_range_text_get(cur, main_cur,
             EVAS_TEXTBLOCK_TEXT_MARKUP), "st.<ps/>טק"));
 
-   evas_textblock_cursor_pos_set(main_cur, 14);
-   evas_textblock_cursor_pos_set(cur, 32);
+   efl2_text_cursor_position_set(main_cur, 14);
+   efl2_text_cursor_position_set(cur, 32);
    fail_if(strcmp(evas_textblock_cursor_range_text_get(cur, main_cur,
             EVAS_TEXTBLOCK_TEXT_MARKUP), "st.<ps/>טקסט בעברית<ps/>an"));
 
    /* Uninit cursors and other weird cases */
    evas_object_textblock_clear(tb);
-   evas_textblock_cursor_copy(main_cur, cur);
-   evas_textblock_cursor_text_prepend(main_cur, "aaa");
+   efl2_text_cursor_copy(cur, main_cur);
+   efl2_text_cursor_text_insert(main_cur, "aaa");
    fail_if(strcmp(evas_textblock_cursor_range_text_get(cur, main_cur,
             EVAS_TEXTBLOCK_TEXT_MARKUP), "aaa"));
 
@@ -3286,8 +3295,8 @@ EFL_START_TEST(evas_textblock_text_getters)
      {
         const char *text = "Break tag tes<item size=40x40 href=a></item>t <br/>Next<br/> line with it<item size=40x40 href=i></item>em tag";
         evas_object_textblock_text_markup_set(tb, text);
-        evas_textblock_cursor_pos_set(main_cur, 14);
-        evas_textblock_cursor_pos_set(cur, 37);
+        efl2_text_cursor_position_set(main_cur, 14);
+        efl2_text_cursor_position_set(cur, 37);
         fail_if(strcmp(evas_textblock_cursor_range_text_get(main_cur, cur,
                  EVAS_TEXTBLOCK_TEXT_MARKUP), "</item>t <br/>Next<br/> line with it<item size=40x40 href=i></item>e"));
      }
@@ -3413,7 +3422,7 @@ EFL_START_TEST(evas_textblock_formats)
    fail_if(!evas_textblock_cursor_format_is_visible_get(cur));
 
    size_t i = 0;
-   evas_textblock_cursor_paragraph_first(cur);
+   efl2_text_cursor_paragraph_first(cur);
    do
      {
         switch (i)
@@ -3435,13 +3444,13 @@ EFL_START_TEST(evas_textblock_formats)
           }
         i++;
      }
-   while (evas_textblock_cursor_char_next(cur));
+   while (efl2_text_cursor_char_next(cur));
 
    /* Format text nodes invalidation */
      {
         evas_object_textblock_text_markup_set(tb, "Test");
         evas_object_textblock_size_formatted_get(tb, &w, &h);
-        evas_textblock_cursor_paragraph_first(cur);
+        efl2_text_cursor_paragraph_first(cur);
         evas_textblock_cursor_format_prepend(cur, "+ font_size=40");
         evas_object_textblock_size_formatted_get(tb, &nw, &nh);
         fail_if((w >= nw) || (h >= nh));
@@ -3518,33 +3527,33 @@ EFL_START_TEST(evas_textblock_formats)
    evas_object_textblock_text_markup_set(tb, "<ps/>a<br/>a<tab/>a<item></>");
    fail_if(strcmp(evas_textblock_node_format_text_get(
                evas_textblock_cursor_format_get(cur)), "ps"));
-   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "<ps/>"));
+   fail_if(strcmp(efl2_text_cursor_content_get(cur), "<ps/>"));
    fail_if(!evas_textblock_cursor_format_is_visible_get(cur));
-   fail_if(!evas_textblock_cursor_char_next(cur));
-   fail_if(!evas_textblock_cursor_char_next(cur));
+   fail_if(!efl2_text_cursor_char_next(cur));
+   fail_if(!efl2_text_cursor_char_next(cur));
    fail_if(strcmp(evas_textblock_node_format_text_get(
                evas_textblock_cursor_format_get(cur)), "br"));
-   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "<br/>"));
+   fail_if(strcmp(efl2_text_cursor_content_get(cur), "<br/>"));
    fail_if(!evas_textblock_cursor_format_is_visible_get(cur));
-   fail_if(!evas_textblock_cursor_char_next(cur));
-   fail_if(!evas_textblock_cursor_char_next(cur));
+   fail_if(!efl2_text_cursor_char_next(cur));
+   fail_if(!efl2_text_cursor_char_next(cur));
    fail_if(strcmp(evas_textblock_node_format_text_get(
                evas_textblock_cursor_format_get(cur)), "tab"));
-   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "<tab/>"));
+   fail_if(strcmp(efl2_text_cursor_content_get(cur), "<tab/>"));
    fail_if(!evas_textblock_cursor_format_is_visible_get(cur));
-   fail_if(!evas_textblock_cursor_char_next(cur));
-   fail_if(!evas_textblock_cursor_char_next(cur));
+   fail_if(!efl2_text_cursor_char_next(cur));
+   fail_if(!efl2_text_cursor_char_next(cur));
    fail_if(strcmp(evas_textblock_node_format_text_get(
                evas_textblock_cursor_format_get(cur)), "+ item"));
-   fail_if(strcmp(evas_textblock_cursor_content_get(cur), "<item>"));
+   fail_if(strcmp(efl2_text_cursor_content_get(cur), "<item>"));
    fail_if(!evas_textblock_cursor_format_is_visible_get(cur));
 
    evas_object_textblock_text_markup_set(tb, "abc<br/>def");
-   evas_textblock_cursor_pos_set(cur, 3);
+   efl2_text_cursor_position_set(cur, 3);
    evas_object_textblock_text_markup_prepend(cur, "<b></b>");
    ck_assert_str_eq(evas_object_textblock_text_markup_get(tb), "abc<b></b><br/>def");
    evas_object_textblock_text_markup_set(tb, "abc<br/>def");
-   evas_textblock_cursor_pos_set(cur, 2);
+   efl2_text_cursor_position_set(cur, 2);
    evas_object_textblock_text_markup_prepend(cur, "<b></b>");
    ck_assert_str_eq(evas_object_textblock_text_markup_get(tb), "ab<b></b>c<br/>def");
 
@@ -4017,9 +4026,9 @@ EFL_START_TEST(evas_textblock_delete)
    evas_object_textblock_text_markup_set(tb, "ab");
    fmt =  evas_textblock_cursor_format_get(cur);
    fail_if(fmt);
-   evas_textblock_cursor_pos_set(cur, 1);
+   efl2_text_cursor_position_set(cur, 1);
    evas_object_textblock_text_markup_prepend(cur, "<ps/>");
-   evas_textblock_cursor_pos_set(cur, 1);
+   efl2_text_cursor_position_set(cur, 1);
    fmt =  evas_textblock_cursor_format_get(cur);
    fail_if (!fmt);
    evas_textblock_cursor_char_delete(cur);
@@ -4029,9 +4038,9 @@ EFL_START_TEST(evas_textblock_delete)
    evas_object_textblock_text_markup_set(tb, "ab");
    fmt =  evas_textblock_cursor_format_get(cur);
    fail_if(fmt);
-   evas_textblock_cursor_pos_set(cur, 1);
+   efl2_text_cursor_position_set(cur, 1);
    evas_object_textblock_text_markup_prepend(cur, "<ps>");
-   evas_textblock_cursor_pos_set(cur, 1);
+   efl2_text_cursor_position_set(cur, 1);
    fmt =  evas_textblock_cursor_format_get(cur);
    fail_if (!fmt);
    evas_textblock_cursor_char_delete(cur);
@@ -4252,7 +4261,7 @@ EFL_START_TEST(evas_textblock_text_iface)
    efl_text_set(tb, "a");
    evas_object_textblock_size_native_get(tb, &bw, &bh);
    efl_text_set(tb, "a\nb");
-   evas_textblock_cursor_pos_set(cur, 1);
+   efl2_text_cursor_position_set(cur, 1);
    evas_textblock_cursor_char_delete(cur);
    evas_object_textblock_size_native_get(tb, &nw, &nh);
    ck_assert_int_eq(nh, bh);
@@ -4262,7 +4271,7 @@ EFL_START_TEST(evas_textblock_text_iface)
    evas_object_textblock_size_native_get(tb, &w, &h);
    efl_text_set(tb, "aa\nb\nc\nd");
    evas_object_textblock_size_native_get(tb, &bw, &bh);
-   evas_textblock_cursor_pos_set(cur, 0);
+   efl2_text_cursor_position_set(cur, 0);
    evas_textblock_cursor_char_delete(cur); // delete 'a'
    evas_object_textblock_size_native_get(tb, &nw, &nh);
    ck_assert_int_eq(nh, bh);
@@ -4312,8 +4321,8 @@ _test_check_annotation(Evas_Object *tb,
    start = evas_object_textblock_cursor_new(tb);
    end = evas_object_textblock_cursor_new(tb);
 
-   evas_textblock_cursor_pos_set(start, start_pos);
-   evas_textblock_cursor_pos_set(end, end_pos);
+   efl2_text_cursor_position_set(start, start_pos);
+   efl2_text_cursor_position_set(end, end_pos);
 
    Eina_Iterator *it =
       efl_text_range_annotations_get(tb, start, end);
@@ -4362,28 +4371,28 @@ EFL_START_TEST(evas_textblock_annotation)
    efl_text_set(tb, buf);
 
    /* Check some trivial cases */
-   evas_textblock_cursor_pos_set(start, 0);
-   evas_textblock_cursor_pos_set(end, 3);
+   efl2_text_cursor_position_set(start, 0);
+   efl2_text_cursor_position_set(end, 3);
    ck_assert(!efl_text_annotation_insert(tb, start, end, NULL));
-   evas_textblock_cursor_pos_set(start, 0);
-   evas_textblock_cursor_pos_set(end, 3);
+   efl2_text_cursor_position_set(start, 0);
+   efl2_text_cursor_position_set(end, 3);
    ck_assert(!efl_text_annotation_insert(tb, start, end, ""));
-   evas_textblock_cursor_pos_set(start, 1);
-   evas_textblock_cursor_pos_set(end, 0);
+   efl2_text_cursor_position_set(start, 1);
+   efl2_text_cursor_position_set(end, 0);
    ck_assert(!efl_text_annotation_insert(tb, start, end, "color=#fff"));
 
    /* Insert and check correct positions */
    _test_check_annotation(tb, 0, 10, _COMP_PARAMS());
 
-   evas_textblock_cursor_pos_set(start, 0);
-   evas_textblock_cursor_pos_set(end, 3);
+   efl2_text_cursor_position_set(start, 0);
+   efl2_text_cursor_position_set(end, 3);
    efl_text_annotation_insert(tb, start, end, "font_weight=bold");
    _test_check_annotation(tb, 0, 2, _COMP_PARAMS("font_weight=bold"));
    _test_check_annotation(tb, 0, 2, _COMP_PARAMS("font_weight=bold"));
    _test_check_annotation(tb, 4, 10, _COMP_PARAMS());
 
-   evas_textblock_cursor_pos_set(start, 50);
-   evas_textblock_cursor_pos_set(end, 60);
+   efl2_text_cursor_position_set(start, 50);
+   efl2_text_cursor_position_set(end, 60);
    efl_text_annotation_insert(tb, start, end, "color=#0ff");
    _test_check_annotation(tb, 0, 49, _COMP_PARAMS("font_weight=bold"));
    _test_check_annotation(tb, 0, 50, _COMP_PARAMS("font_weight=bold", "color=#0ff"));
@@ -4397,11 +4406,11 @@ EFL_START_TEST(evas_textblock_annotation)
 
    /* See that annotation's positions are updated as text is inserted */
    efl_text_set(tb, "hello");
-   evas_textblock_cursor_pos_set(start, 0);
-   evas_textblock_cursor_pos_set(end, 2);
+   efl2_text_cursor_position_set(start, 0);
+   efl2_text_cursor_position_set(end, 2);
    an = efl_text_annotation_insert(tb, start, end, "color=#fff");
    _test_check_annotation(tb, 2, 3, _COMP_PARAMS());
-   evas_textblock_cursor_pos_set(cur, 0);
+   efl2_text_cursor_position_set(cur, 0);
    evas_textblock_cursor_text_append(cur, "a");
    _test_check_annotation(tb, 2, 3, _COMP_PARAMS("color=#fff"));
    _test_check_annotation(tb, 3, 4, _COMP_PARAMS());
@@ -4412,11 +4421,11 @@ EFL_START_TEST(evas_textblock_annotation)
    _test_check_annotation(tb, 3, 4, _COMP_PARAMS());
 
    efl_text_set(tb, "hello world");
-   evas_textblock_cursor_pos_set(start, 0);
-   evas_textblock_cursor_pos_set(end, 2);
+   efl2_text_cursor_position_set(start, 0);
+   efl2_text_cursor_position_set(end, 2);
    an = efl_text_annotation_insert(tb, start, end, "color=#fff");
-   evas_textblock_cursor_pos_set(start, 2);
-   evas_textblock_cursor_pos_set(end, 3);
+   efl2_text_cursor_position_set(start, 2);
+   efl2_text_cursor_position_set(end, 3);
    an2 = efl_text_annotation_insert(tb, start, end, "font_size=14");
    _test_check_annotation(tb, 0, 1, _COMP_PARAMS("color=#fff"));
    _test_check_annotation(tb, 2, 3, _COMP_PARAMS("font_size=14"));
@@ -4429,18 +4438,18 @@ EFL_START_TEST(evas_textblock_annotation)
 
    /* Delete annotations directly */
    efl_text_set(tb, "hello world");
-   evas_textblock_cursor_pos_set(start, 0);
-   evas_textblock_cursor_pos_set(end, 2);
+   efl2_text_cursor_position_set(start, 0);
+   efl2_text_cursor_position_set(end, 2);
    an = efl_text_annotation_insert(tb, start, end, "color=#fff");
-   evas_textblock_cursor_pos_set(start, 3);
-   evas_textblock_cursor_pos_set(end, 4);
+   efl2_text_cursor_position_set(start, 3);
+   efl2_text_cursor_position_set(end, 4);
    an2 = efl_text_annotation_insert(tb, start, end, "font_size=14");
    efl_text_annotation_del(tb, an);
    _test_check_annotation(tb, 0, 3, _COMP_PARAMS("font_size=14"));
    efl_text_annotation_del(tb, an2);
    _test_check_annotation(tb, 0, 3, _COMP_PARAMS());
-   evas_textblock_cursor_pos_set(start, 0);
-   evas_textblock_cursor_pos_set(end, 1);
+   efl2_text_cursor_position_set(start, 0);
+   efl2_text_cursor_position_set(end, 1);
    an = efl_text_annotation_insert(tb, start, end, "color=#fff");
    _test_check_annotation(tb, 1, 3, _COMP_PARAMS());
    _test_check_annotation(tb, 0, 0, _COMP_PARAMS("color=#fff"));
@@ -4449,30 +4458,30 @@ EFL_START_TEST(evas_textblock_annotation)
 
    /* Check blocking of "item formats" */
    efl_text_set(tb, "hello world");
-   evas_textblock_cursor_pos_set(start, 0);
-   evas_textblock_cursor_pos_set(end, 1);
+   efl2_text_cursor_position_set(start, 0);
+   efl2_text_cursor_position_set(end, 1);
    efl_text_annotation_insert(tb, start, end, "ps");
    _test_check_annotation(tb, 0, 1, _COMP_PARAMS());
-   evas_textblock_cursor_pos_set(start, 0);
-   evas_textblock_cursor_pos_set(end, 1);
+   efl2_text_cursor_position_set(start, 0);
+   efl2_text_cursor_position_set(end, 1);
    efl_text_annotation_insert(tb, start, end, "color=#fff");
    _test_check_annotation(tb, 0, 1, _COMP_PARAMS("color=#fff"));
-   evas_textblock_cursor_pos_set(start, 2);
-   evas_textblock_cursor_pos_set(end, 3);
+   efl2_text_cursor_position_set(start, 2);
+   efl2_text_cursor_position_set(end, 3);
    efl_text_annotation_insert(tb, start, end, "br");
-   evas_textblock_cursor_pos_set(start, 6);
-   evas_textblock_cursor_pos_set(end, 7);
+   efl2_text_cursor_position_set(start, 6);
+   efl2_text_cursor_position_set(end, 7);
    efl_text_annotation_insert(tb, start, end, "item");
    _test_check_annotation(tb, 0, 8, _COMP_PARAMS("color=#fff"));
 
    /* Check "item" annotations */
    efl_text_set(tb, "abcd");
-   evas_textblock_cursor_pos_set(cur, 4);
+   efl2_text_cursor_position_set(cur, 4);
    an = efl_text_cursor_item_insert(tb, cur, "", "size=16x16");
    _test_check_annotation(tb, 4, 4, _COMP_PARAMS("size=16x16 href="));
 
    /* Check that format is not extended if it's an "object item" */
-   evas_textblock_cursor_pos_set(cur, 5);
+   efl2_text_cursor_position_set(cur, 5);
    efl_text_cursor_text_insert(tb, cur, "a");
    _test_check_annotation(tb, 5, 7, _COMP_PARAMS());
    _test_check_annotation(tb, 0, 3, _COMP_PARAMS());
@@ -4480,7 +4489,7 @@ EFL_START_TEST(evas_textblock_annotation)
    /* Remove annotation of "item" also removes the OBJ character */
      {
         int blen, len;
-        evas_textblock_cursor_pos_set(cur, 5);
+        efl2_text_cursor_position_set(cur, 5);
         blen = evas_textblock_cursor_paragraph_text_length_get(cur);
         efl_text_annotation_del(tb, an);
         len = evas_textblock_cursor_paragraph_text_length_get(cur);
@@ -4490,35 +4499,35 @@ EFL_START_TEST(evas_textblock_annotation)
 
    /* Using annotations with new text API */
    efl_text_set(tb, "hello");
-   evas_textblock_cursor_pos_set(start, 0);
-   evas_textblock_cursor_pos_set(end, 5);
+   efl2_text_cursor_position_set(start, 0);
+   efl2_text_cursor_position_set(end, 5);
    efl_text_annotation_insert(tb, start, end, "color=#fff");
    _test_check_annotation(tb, 3, 3, _COMP_PARAMS("color=#fff"));
    /* Old API */
-   evas_textblock_cursor_pos_set(cur, 5);
+   efl2_text_cursor_position_set(cur, 5);
    efl_text_cursor_text_insert(tb, cur, "a");
    _test_check_annotation(tb, 0, 0, _COMP_PARAMS("color=#fff"));
    _test_check_annotation(tb, 5, 5, _COMP_PARAMS());
 
    /* Specific case with PS */
    efl_text_set(tb, "hello\nworld");
-   evas_textblock_cursor_pos_set(start, 0);
-   evas_textblock_cursor_pos_set(end, 5);
+   efl2_text_cursor_position_set(start, 0);
+   efl2_text_cursor_position_set(end, 5);
    efl_text_annotation_insert(tb, start, end, "color=#fff");
    _test_check_annotation(tb, 4, 4, _COMP_PARAMS("color=#fff"));
-   evas_textblock_cursor_pos_set(cur, 4);
+   efl2_text_cursor_position_set(cur, 4);
    /* Cursor position is now: hello|\nworld */
    efl_text_cursor_text_insert(tb, cur, "a");
    _test_check_annotation(tb, 0, 0, _COMP_PARAMS("color=#fff"));
    _test_check_annotation(tb, 5, 5, _COMP_PARAMS("color=#fff"));
 
    /* Test getting of object item */
-   evas_textblock_cursor_pos_set(cur, 4);
+   efl2_text_cursor_position_set(cur, 4);
    an = efl_text_cursor_item_annotation_get(tb, cur);
    ck_assert(!an);
 
    an = efl_text_cursor_item_insert(tb, cur, "", "size=16x16");
-   evas_textblock_cursor_pos_set(cur, 4);
+   efl2_text_cursor_position_set(cur, 4);
    an = efl_text_cursor_item_annotation_get(tb, cur);
    ck_assert(an);
    ck_assert_str_eq("size=16x16 href=", efl_text_annotation_get(tb, an));
@@ -4530,8 +4539,8 @@ EFL_END_TEST;
 void evas_test_canvas_text(TCase *tc)
 {
    tcase_add_test(tc, canvas_text_simple);
+   tcase_add_test(tc, canvas_text_cursor);
 #if 0
-   tcase_add_test(tc, evas_textblock_cursor);
 #ifdef HAVE_FRIBIDI
    tcase_add_test(tc, efl_text);
    tcase_add_test(tc, evas_textblock_split_cursor);
