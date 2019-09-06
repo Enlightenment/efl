@@ -7265,12 +7265,6 @@ _evas_object_textblock_text_markup_get(const Eo *eo_obj, Efl2_Canvas_Text_Data *
    return markup;
 }
 
-EOLIAN static const char*
-_efl_canvas_text_efl_text_markup_markup_get(const Eo *eo_obj, Efl2_Canvas_Text_Data *o)
-{
-   return _evas_object_textblock_text_markup_get(eo_obj, o);
-}
-
 static void
 _obstacle_update(Evas_Textblock_Obstacle *obs, Eo *eo_obj)
 {
@@ -13509,7 +13503,7 @@ _efl2_canvas_text_efl2_text_wrap_properties_wrap_get(const Eo *obj EINA_UNUSED, 
    return _FMT_INFO(wrap);
 }
 
-static void
+EOLIAN static void
 _efl2_canvas_text_multiline_set(Eo *obj EINA_UNUSED, Efl2_Canvas_Text_Data *o EINA_UNUSED, Eina_Bool enabled EINA_UNUSED)
 {
    ASYNC_BLOCK;
@@ -13518,7 +13512,7 @@ _efl2_canvas_text_multiline_set(Eo *obj EINA_UNUSED, Efl2_Canvas_Text_Data *o EI
    _canvas_text_format_changed(obj, o);
 }
 
-static Eina_Bool
+EOLIAN static Eina_Bool
 _efl2_canvas_text_multiline_get(const Eo *obj EINA_UNUSED, Efl2_Canvas_Text_Data *o EINA_UNUSED)
 {
    return o->multiline;

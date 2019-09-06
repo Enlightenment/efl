@@ -9,7 +9,7 @@ enum @beta Efl2.Text.Cursor_Type
    under [[Cursor type under]]
 }
 
-// Rename cluster onee to grapheme?
+// FIXME: Rename cluster ones to grapheme?
 class @beta Efl2.Text.Cursor extends Efl.Object {
    [[Cursor API
    ]]
