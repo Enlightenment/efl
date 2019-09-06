@@ -4568,8 +4568,8 @@ EFL_START_TEST(efl_canvas_text_simple)
    /* It is simple test for Efl_Canvas_Text.
     * The main object is "txt". */
    const char *buf = "Th<i>i</i>s is a <br/> te<b>s</b>t.";
-   efl_text_set(txt, buf);
-   fail_if(strcmp(efl_text_get(txt), buf));
+   efl2_text_set(txt, buf);
+   fail_if(strcmp(efl2_text_get(txt), buf));
 
    END_EFL_CANVAS_TEXT_TEST();
 }
