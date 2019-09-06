@@ -9,6 +9,7 @@ void evas_test_new(TCase *tc);
 void evas_test_object(TCase *tc);
 void evas_test_textblock(TCase *tc);
 void evas_test_text(TCase *tc);
+void evas_test_canvas_text(TCase *tc);
 void evas_test_callbacks(TCase *tc);
 void evas_test_render_engines(TCase *tc);
 void evas_test_filters(TCase *tc);
