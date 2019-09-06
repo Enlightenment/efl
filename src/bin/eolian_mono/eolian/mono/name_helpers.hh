@@ -420,14 +420,12 @@ inline std::string klass_get_full_name(T const& clsname)
 // Events
 inline std::string managed_event_name(std::string const& name)
 {
-   return utils::to_pascal_case(utils::split(name, "_,"), "") + "Evt";
+   return utils::to_pascal_case(utils::split(name, "_,"), "") + "Event";
 }
 
 inline std::string managed_event_args_short_name(attributes::event_def const& evt)
 {
-   std::string ret;
-     ret = klass_concrete_or_interface_name(evt.klass);
-   return ret + name_helpers::managed_event_name(evt.name) + "_Args";
+   return klass_concrete_or_interface_name(evt.klass) + name_helpers::managed_event_name(evt.name) + "Args";
 }
 
 inline std::string managed_event_args_name(attributes::event_def evt)
