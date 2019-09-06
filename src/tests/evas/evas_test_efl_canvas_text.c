@@ -70,16 +70,10 @@ while (0)
 EFL_START_TEST(canvas_text_simple)
 {
    START_TB_TEST();
-   const char *buf = "Th<i>i</i>s is a <br/> te<b>s</b>t.";
-   evas_object_textblock_text_markup_set(tb, buf);
-   fail_if(strcmp(evas_object_textblock_text_markup_get(tb), buf));
 
-   /* Set markup text(includes tag) without setting style */
-   Evas_Object *tb2 = evas_object_textblock_add(evas);
-   fail_if(!tb2);
-   evas_object_textblock_text_markup_set(tb2, buf);
-   ck_assert("Crash Not occurred");
-   evas_object_del(tb2);
+   const char *buf = "This is a simple text";
+   efl2_text_set(tb, buf);
+   fail_if(strcmp(efl2_text_get(tb), buf));
 
    END_TB_TEST();
 }
@@ -4533,182 +4527,6 @@ EFL_START_TEST(evas_textblock_annotation)
 }
 EFL_END_TEST;
 
-#define START_EFL_CANVAS_TEXT_TEST() \
-   Evas *evas; \
-   Eo *txt; \
-   Efl_Text_Cursor_Cursor *cur; \
-   evas = EVAS_TEST_INIT_EVAS(); \
-   evas_font_hinting_set(evas, EVAS_FONT_HINTING_AUTO); \
-   txt = efl_add(EFL_CANVAS_TEXT_CLASS, evas); \
-   fail_if(!txt); \
-   efl_canvas_text_legacy_newline_set(txt, EINA_FALSE); \
-   efl_canvas_text_style_set(txt, NULL, style_buf); \
-   fail_if(!efl_canvas_text_style_get(txt, NULL) || \
-		   strcmp(style_buf, efl_canvas_text_style_get(txt, NULL))); \
-   cur = efl_text_cursor_new(txt); \
-   fail_if(!cur); \
-do \
-{ \
-} \
-while (0)
-
-#define END_EFL_CANVAS_TEXT_TEST() \
-do \
-{ \
-   efl_text_cursor_free(txt, cur); \
-   efl_del(txt); \
-   evas_free(evas); \
-} \
-while (0)
-
-EFL_START_TEST(efl_canvas_text_simple)
-{
-   START_EFL_CANVAS_TEXT_TEST();
-
-   /* It is simple test for Efl_Canvas_Text.
-    * The main object is "txt". */
-   const char *buf = "Th<i>i</i>s is a <br/> te<b>s</b>t.";
-   efl2_text_set(txt, buf);
-   fail_if(strcmp(efl2_text_get(txt), buf));
-
-   END_EFL_CANVAS_TEXT_TEST();
-}
-EFL_END_TEST
-
-#ifdef HAVE_FRIBIDI
-EFL_START_TEST(efl_text)
-{
-   START_TB_TEST();
-
-   Evas_Coord x, x2;
-   Evas_Coord nw, nh;
-   Evas_Coord cx, cx2;
-
-   /* Split cursor in LTR paragraph.
-    * Russian 't' in the beginnning to create additional item.*/
-                   /*01234    5 6789012345678  19  01234 */
-   efl_text_set(tb, "тest \u202bנסיוןabcנסיון\u202c bang");
-   efl_canvas_text_size_native_get(tb, &nw, &nh);
-   efl_gfx_entity_size_set(tb, EINA_SIZE2D(nw,  nh));
-
-   /* Logical cursor after "test " */
-   evas_textblock_cursor_pos_set(cur, 6);
-   fail_if(!efl_text_cursor_geometry_get(tb, cur,
-            EFL_TEXT_CURSOR_TYPE_BEFORE, &cx, NULL, NULL, NULL, &cx2,
-            NULL, NULL, NULL));
-   evas_textblock_cursor_pos_set(cur, 18);
-   evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
-   evas_textblock_cursor_pos_set(cur, 20);
-   evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
-   ck_assert_int_eq(cx, x);
-   ck_assert_int_eq(cx2, x2);
-
-   END_TB_TEST();
-}
-EFL_END_TEST
-#endif
-
-EFL_START_TEST(efl_canvas_text_cursor)
-{
-   START_EFL_CANVAS_TEXT_TEST();
-   int pos;
-
-   const char *buf = "abcdefghij";
-   efl_text_set(txt, buf);
-   fail_if(strcmp(efl_text_get(txt), buf));
-
-   efl_text_cursor_line_jump_by(txt, cur, -1);
-   pos = efl_text_cursor_position_get(txt, cur);
-   ck_assert_int_eq(pos, 0);
-   efl_text_cursor_line_jump_by(txt, cur, 1);
-   pos = efl_text_cursor_position_get(txt, cur);
-   ck_assert_int_eq(pos, 10);
-
-   END_EFL_CANVAS_TEXT_TEST();
-}
-EFL_END_TEST
-
-
-EFL_START_TEST(efl_canvas_text_markup)
-{
-   START_EFL_CANVAS_TEXT_TEST();
-   Efl_Text_Cursor_Cursor *start, *end;
-   char *res;
-
-   start = efl_text_cursor_new(txt);
-   end   = efl_text_cursor_new(txt);
-
-   efl_text_set(txt, "\n\n\n");
-
-   efl_text_cursor_position_set(txt, start, 1);
-   efl_text_cursor_position_set(txt, end, 2);
-   res = efl_text_markup_interactive_markup_range_get(txt, start, end);
-   ck_assert_str_eq(res, "<br>");
-   free(res);
-
-   efl_text_set(txt, "a\u2029bc\ndef\n\u2029");
-   efl_text_cursor_position_set(txt, start, 2);
-   efl_text_cursor_position_set(txt, end, 5);
-   res = efl_text_markup_interactive_markup_range_get(txt, start, end);
-   ck_assert_str_eq(res, "bc<br>");
-   free(res);
-
-   END_EFL_CANVAS_TEXT_TEST();
-}
-EFL_END_TEST
-
-EFL_START_TEST(efl_canvas_text_markup_invalid_escape)
-{
-   START_EFL_CANVAS_TEXT_TEST();
-
-   char * text1 = "Hello";
-   char * text2 = "Hello&123";
-   char * text3 = "Hello&123&456";
-   Evas_Coord fw1, fw2, fw3;
-
-   efl_text_markup_set(txt,text1);
-   efl_canvas_text_size_native_get(txt, &fw1, NULL);
-   efl_text_markup_set(txt,text2);
-   efl_canvas_text_size_native_get(txt, &fw2, NULL);
-   fail_if(fw2 <= fw1);
-   efl_text_markup_set(txt,text3);
-   efl_canvas_text_size_native_get(txt, &fw3, NULL);
-   fail_if(fw3 <= fw2);
-
-   END_EFL_CANVAS_TEXT_TEST();
-}
-EFL_END_TEST
-
-
-EFL_START_TEST(efl_text_font)
-{
-   START_EFL_CANVAS_TEXT_TEST();
-
-   efl_text_set(txt, "\n\n\n");
-
-   const char * font;
-   int font_size;
-   efl_text_font_set(txt, "Sans", 20);
-   efl_text_font_set(txt, NULL, 0);
-
-   efl_text_font_get(txt, &font, &font_size);
-   fail_if(20 != font_size);
-   fail_if(strcmp(font,"Sans"));
-
-   efl_text_font_set(txt, NULL, 30);
-   efl_text_font_get(txt, &font, &font_size);
-   fail_if(30 != font_size);
-   fail_if(strcmp(font,"Sans"));
-
-   efl_text_font_set(txt, "arial", 0);
-   efl_text_font_get(txt, &font, &font_size);
-   fail_if(30 != font_size);
-   fail_if(strcmp(font,"arial"));
-
-   END_EFL_CANVAS_TEXT_TEST();
-}
-EFL_END_TEST
-
 void evas_test_canvas_text(TCase *tc)
 {
    tcase_add_test(tc, canvas_text_simple);
@@ -4739,11 +4557,6 @@ void evas_test_canvas_text(TCase *tc)
 #endif
    tcase_add_test(tc, evas_textblock_text_iface);
    tcase_add_test(tc, evas_textblock_annotation);
-   tcase_add_test(tc, efl_canvas_text_simple);
-   tcase_add_test(tc, efl_canvas_text_cursor);
-   tcase_add_test(tc, efl_canvas_text_markup);
-   tcase_add_test(tc, efl_canvas_text_markup_invalid_escape);
-   tcase_add_test(tc, efl_text_font);
 #endif
 }
 
