@@ -33,7 +33,7 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Layout_Base implements Efl
           If it is not set, only the active sub-widget is shown and transitions are instantaneous (not animated).
         ]]
         values {
-          spotlight_manager : Efl.Ui.Spotlight.Manager @owned; [[The Spotlight Manager object or $NULL.]]
+          spotlight_manager : Efl.Ui.Spotlight.Manager @move; [[The Spotlight Manager object or $NULL.]]
         }
       }
       @property indicator {
@@ -43,7 +43,7 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Layout_Base implements Efl
           Its location inside the container is controlled by the @.spotlight_manager.
         ]]
         values {
-          indicator : Efl.Ui.Spotlight.Indicator @owned; [[The Indicator object or $NULL.]]
+          indicator : Efl.Ui.Spotlight.Indicator @move; [[The Indicator object or $NULL.]]
         }
       }
       @property active_element {

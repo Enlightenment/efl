@@ -148,7 +148,7 @@ class @beta Efl.Net.Control.Manager extends Efl.Loop_Consumer {
             ]]
             get { }
             values {
-                access_points: iterator<Efl.Net.Control.Access_Point> @owned; [[Iterator of current access points]]
+                access_points: iterator<Efl.Net.Control.Access_Point> @move; [[Iterator of current access points]]
             }
         }
 
@@ -162,7 +162,7 @@ class @beta Efl.Net.Control.Manager extends Efl.Loop_Consumer {
             ]]
             get { }
             values {
-                technologies: iterator<Efl.Net.Control.Technology> @owned; [[Iterator of current technologies]]
+                technologies: iterator<Efl.Net.Control.Technology> @move; [[Iterator of current technologies]]
             }
         }
 

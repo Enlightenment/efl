@@ -280,7 +280,7 @@ mixin @beta Efl.Access.Object requires Efl.Object
          get {
          }
          values {
-            children: list<Efl.Access.Object> @owned; [[List of widget's children]]
+            children: list<Efl.Access.Object> @move; [[List of widget's children]]
          }
       }
       @property role_name @protected @beta {
@@ -296,7 +296,7 @@ mixin @beta Efl.Access.Object requires Efl.Object
          get {
          }
          values {
-            attributes: list<ptr(Efl.Access.Attribute) @owned> @owned; [[List of object attributes.
+            attributes: list<ptr(Efl.Access.Attribute) @move> @move; [[List of object attributes.
                                                                          Must be freed by the user]]
          }
       }

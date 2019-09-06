@@ -31,7 +31,7 @@ interface @beta Efl.Model
                ]]
             }
             values {
-               properties: iterator<string> @owned; [[Array of current properties]]
+               properties: iterator<string> @move; [[Array of current properties]]
             }
         }
 	@property property {

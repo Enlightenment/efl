@@ -5,7 +5,7 @@ interface @beta Efl.Text_Markup_Interactive extends Efl.Text_Cursor {
       @property markup_range {
          [[Markup of a given range in the text]]
          values {
-            markup: mstring @owned; [[The markup-text representation set to
+            markup: mstring @move; [[The markup-text representation set to
             this text of a given range]]
          }
          keys {

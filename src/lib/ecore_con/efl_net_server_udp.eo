@@ -58,7 +58,7 @@ class @beta Efl.Net.Server_Udp extends Efl.Net.Server_Ip {
               The iterator is only valid until a new group is joined
               or left using @.multicast_join or @.multicast_leave.
             ]]
-            return: iterator<string> @owned; [[List of multicast groups]]
+            return: iterator<string> @move; [[List of multicast groups]]
         }
 
         @property multicast_time_to_live {

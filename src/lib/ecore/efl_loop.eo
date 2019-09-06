@@ -53,7 +53,7 @@ abstract Efl.Loop extends Efl.Task
            This has higher priority, for low priority use
            @.idle
          ]]
-         return: future<void> @owned; [[The future handle.]]
+         return: future<void> @move; [[The future handle.]]
       }
       @property throttle {
          [[Slow down the loop execution by forcing sleep for a small
@@ -95,7 +95,7 @@ abstract Efl.Loop extends Efl.Task
 
            This is a low priority version of @.job
          ]]
-         return: future<void> @owned; [[The future handle.]]
+         return: future<void> @move; [[The future handle.]]
       }
       timeout {
          [[A future promise that will be resolved from a clean main
@@ -103,7 +103,7 @@ abstract Efl.Loop extends Efl.Task
          params {
             @in time: double; [[The time from now in second that the main loop will wait before triggering it.]]
          }
-         return: future<void> @owned; [[The future handle.]]
+         return: future<void> @move; [[The future handle.]]
       }
    }
    events {

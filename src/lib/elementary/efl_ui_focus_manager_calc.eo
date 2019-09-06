@@ -59,7 +59,7 @@ class @beta Efl.Ui.Focus.Manager_Calc extends Efl.Object implements Efl.Ui.Focus
             [[Sets the list of children to a different order.]]
             params {
                 parent : Efl.Ui.Focus.Object; [[The parent to update.]]
-                children : list<Efl.Ui.Focus.Object> @owned; [[The list of children with the new order.]]
+                children : list<Efl.Ui.Focus.Object> @move; [[The list of children with the new order.]]
             }
             return : bool; [[$true if successful, $false otherwise.]]
         }
@@ -71,7 +71,7 @@ class @beta Efl.Ui.Focus.Manager_Calc extends Efl.Object implements Efl.Ui.Focus
             ]]
             params {
                 parent : Efl.Ui.Focus.Object; [[The parent to update.]]
-                children : list<Efl.Ui.Focus.Object> @owned; [[The list of objects with the new order.]]
+                children : list<Efl.Ui.Focus.Object> @move; [[The list of objects with the new order.]]
             }
         }
         unregister {

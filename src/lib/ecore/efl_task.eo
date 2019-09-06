@@ -54,7 +54,7 @@ abstract Efl.Task extends Efl.Loop_Consumer
       }
       run @pure_virtual {
          [[Actually run the task.]]
-         return: future<void> @owned; [[A future triggered when task exits and is passed int exit code.]]
+         return: future<void> @move; [[A future triggered when task exits and is passed int exit code.]]
       }
       end @pure_virtual {
          [[Request the task end (may send a signal or interrupt

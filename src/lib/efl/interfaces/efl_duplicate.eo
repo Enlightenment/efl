@@ -11,7 +11,7 @@ interface @beta Efl.Duplicate
            The newly created object will have no event handlers or anything of
            the sort.
          ]]
-         return: Efl.Duplicate @owned; [[Returned carbon copy]]
+         return: Efl.Duplicate @move; [[Returned carbon copy]]
       }
    }
 }
