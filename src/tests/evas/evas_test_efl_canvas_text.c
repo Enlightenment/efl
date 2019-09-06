@@ -34,20 +34,24 @@ static const char *style_buf =
 
 #define START_TB_TEST() \
    Evas *evas; \
-   Evas_Object *tb; \
-   Evas_Textblock_Style *st; \
-   Evas_Textblock_Cursor *cur; \
+   Efl2_Canvas_Text *tb; \
+   Evas_Textblock_Style *st = NULL; \
+   (void) st; \
+   Efl2_Text_Cursor *cur; \
    evas = EVAS_TEST_INIT_EVAS(); \
    evas_font_hinting_set(evas, EVAS_FONT_HINTING_AUTO); \
-   tb = evas_object_textblock_add(evas); \
+   tb = efl_add(EFL2_CANVAS_TEXT_CLASS, evas); \
    fail_if(!tb); \
-   evas_object_textblock_legacy_newline_set(tb, EINA_FALSE); \
+   efl2_canvas_text_legacy_newline_set(tb, EINA_FALSE); \
+   /* FIXME:
    st = evas_textblock_style_new(); \
    fail_if(!st); \
    evas_textblock_style_set(st, style_buf); \
    fail_if(strcmp(style_buf, evas_textblock_style_get(st))); \
    evas_object_textblock_style_set(tb, st); \
-   cur = evas_object_textblock_cursor_new(tb); \
+   */ \
+   cur = efl_add(EFL2_TEXT_CURSOR_CLASS, tb, \
+         efl2_text_cursor_handle_set(efl_added, efl2_canvas_text_cursor_handle_new(tb))); \
 do \
 { \
 } \
@@ -56,14 +60,14 @@ while (0)
 #define END_TB_TEST() \
 do \
 { \
-   evas_textblock_cursor_free(cur); \
-   evas_object_del(tb); \
-   evas_textblock_style_free(st); \
-   evas_free(evas); \
+   efl_del(cur); \
+   efl_del(tb); \
+   /* FIXME: evas_textblock_style_free(st); */ \
+   efl_del(evas); \
 } \
 while (0)
 
-EFL_START_TEST(evas_textblock_simple)
+EFL_START_TEST(canvas_text_simple)
 {
    START_TB_TEST();
    const char *buf = "Th<i>i</i>s is a <br/> te<b>s</b>t.";
@@ -105,7 +109,7 @@ while (0)
 EFL_START_TEST(evas_textblock_cursor)
 {
    START_TB_TEST();
-   Evas_Textblock_Cursor *cur2;
+   Efl2_Text_Cursor *cur2;
    Evas_Coord x, y, w, h;
    size_t i, j, len;
    Evas_Coord nw, nh;
@@ -147,7 +151,7 @@ EFL_START_TEST(evas_textblock_cursor)
    /* Create another cursor and insert text, making sure everything
     * is in sync. */
    evas_object_textblock_clear(tb);
-   Evas_Textblock_Cursor *main_cur = evas_object_textblock_cursor_get(tb);
+   Efl2_Text_Cursor *main_cur = evas_object_textblock_cursor_get(tb);
    evas_textblock_cursor_copy(main_cur, cur);
    fail_if(evas_textblock_cursor_pos_get(cur) !=
          evas_textblock_cursor_pos_get(main_cur));
@@ -1325,7 +1329,7 @@ EFL_START_TEST(evas_textblock_format_removal)
    int i;
    const char *buf = "Th<b>is a<a>tes</a>st</b>.";
    const Evas_Object_Textblock_Node_Format *fnode;
-   Evas_Textblock_Cursor *main_cur = evas_object_textblock_cursor_get(tb);
+   Efl2_Text_Cursor *main_cur = evas_object_textblock_cursor_get(tb);
    evas_object_textblock_text_markup_set(tb, buf);
 
    /* Remove the "b" pair. */
@@ -2420,7 +2424,7 @@ EFL_START_TEST(evas_textblock_various)
         evas_textblock_style_free(stt);
 
         evas_object_textblock_text_markup_set(tb, substr);
-        Evas_Textblock_Cursor *cr;
+        Efl2_Text_Cursor *cr;
 
         cr = evas_object_textblock_cursor_get(tb);
         evas_textblock_cursor_text_append(cr, str);
@@ -2442,7 +2446,7 @@ EFL_START_TEST(evas_textblock_geometries)
    evas_object_textblock_text_markup_set(tb, buf);
 
    /* Single line range */
-   Evas_Textblock_Cursor *main_cur = evas_object_textblock_cursor_get(tb);
+   Efl2_Text_Cursor *main_cur = evas_object_textblock_cursor_get(tb);
    evas_textblock_cursor_pos_set(cur, 0);
    evas_textblock_cursor_pos_set(main_cur, 6);
 
@@ -2926,7 +2930,7 @@ EFL_START_TEST(evas_textblock_editing)
    START_TB_TEST();
    const char *buf = "First par.<ps/>Second par.";
    evas_object_textblock_text_markup_set(tb, buf);
-   Evas_Textblock_Cursor *main_cur = evas_object_textblock_cursor_get(tb);
+   Efl2_Text_Cursor *main_cur = evas_object_textblock_cursor_get(tb);
 
    /* Check deletion works */
    /* Try deleting after the end of the textblock */
@@ -3092,7 +3096,7 @@ EFL_START_TEST(evas_textblock_text_getters)
    fail_if(evas_textblock_cursor_range_text_get(NULL, cur,
             EVAS_TEXTBLOCK_TEXT_MARKUP));
 
-   Evas_Textblock_Cursor *main_cur = evas_object_textblock_cursor_get(tb);
+   Efl2_Text_Cursor *main_cur = evas_object_textblock_cursor_get(tb);
    evas_textblock_cursor_pos_set(main_cur, 2);
    evas_textblock_cursor_pos_set(cur, 2);
    fail_if(*evas_textblock_cursor_range_text_get(main_cur, cur,
@@ -4130,7 +4134,7 @@ EFL_END_TEST;
 
 #ifdef HAVE_HYPHEN
 static void
-_hyphenation_width_stress(Evas_Object *tb, Evas_Textblock_Cursor *cur)
+_hyphenation_width_stress(Evas_Object *tb, Efl2_Text_Cursor *cur)
 {
    Evas_Coord bw, bh, iw, nw, nh, w, h;
 
@@ -4571,11 +4575,11 @@ EFL_START_TEST(efl_canvas_text_simple)
 }
 EFL_END_TEST
 
+#ifdef HAVE_FRIBIDI
 EFL_START_TEST(efl_text)
 {
    START_TB_TEST();
 
-#ifdef HAVE_FRIBIDI
    Evas_Coord x, x2;
    Evas_Coord nw, nh;
    Evas_Coord cx, cx2;
@@ -4598,11 +4602,11 @@ EFL_START_TEST(efl_text)
    evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
    ck_assert_int_eq(cx, x);
    ck_assert_int_eq(cx2, x2);
-#endif
 
    END_TB_TEST();
 }
 EFL_END_TEST
+#endif
 
 EFL_START_TEST(efl_canvas_text_cursor)
 {
@@ -4705,11 +4709,13 @@ EFL_START_TEST(efl_text_font)
 }
 EFL_END_TEST
 
-void evas_test_textblock(TCase *tc)
+void evas_test_canvas_text(TCase *tc)
 {
-   tcase_add_test(tc, evas_textblock_simple);
+   tcase_add_test(tc, canvas_text_simple);
+#if 0
    tcase_add_test(tc, evas_textblock_cursor);
 #ifdef HAVE_FRIBIDI
+   tcase_add_test(tc, efl_text);
    tcase_add_test(tc, evas_textblock_split_cursor);
 #endif
    tcase_add_test(tc, evas_textblock_size);
@@ -4734,10 +4740,10 @@ void evas_test_textblock(TCase *tc)
    tcase_add_test(tc, evas_textblock_text_iface);
    tcase_add_test(tc, evas_textblock_annotation);
    tcase_add_test(tc, efl_canvas_text_simple);
-   tcase_add_test(tc, efl_text);
    tcase_add_test(tc, efl_canvas_text_cursor);
    tcase_add_test(tc, efl_canvas_text_markup);
    tcase_add_test(tc, efl_canvas_text_markup_invalid_escape);
    tcase_add_test(tc, efl_text_font);
+#endif
 }
 

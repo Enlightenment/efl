@@ -15,6 +15,7 @@ static const Efl_Test_Case etc[] = {
   { "Object", evas_test_object },
   { "Object Textblock", evas_test_textblock },
   { "Object Text", evas_test_text },
+  { "Canvas Text", evas_test_canvas_text },
   { "Callbacks", evas_test_callbacks },
   { "Render Engines", evas_test_render_engines },
   { "Filters", evas_test_filters },
