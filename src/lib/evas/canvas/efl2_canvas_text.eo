@@ -5,6 +5,8 @@ import efl2_text_attribute_factory;
 
 const efl_text_object_replacement: Eina.Unicode = 0xFFFCU;
 const efl_text_paragraph_separator: Eina.Unicode = 0x2029U;
+const efl_text_object_replacement_utf8: string = "\xEF\xBF\xBC";
+const efl_text_paragraph_separator_utf8: string = "\xE2\x80\xA9";
 
 /* FIXME:
     missing:

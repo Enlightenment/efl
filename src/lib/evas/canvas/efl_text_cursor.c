@@ -52,7 +52,7 @@ _efl2_text_cursor_content_geometry_get(const Eo *obj EINA_UNUSED, Efl2_Text_Curs
 }
 
 EOLIAN static Eina_Bool
-_efl2_text_cursor_equal(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, Efl2_Text_Cursor *obj2)
+_efl2_text_cursor_equal(const Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, const Efl2_Text_Cursor *obj2)
 {
    Efl2_Text_Cursor_Handle *cur = pd->cur;
    Efl2_Text_Cursor_Data *pd2 = efl_data_scope_get(obj2, MY_CLASS);
@@ -62,7 +62,7 @@ _efl2_text_cursor_equal(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, Efl2_Tex
 }
 
 EOLIAN static int
-_efl2_text_cursor_compare(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, Efl2_Text_Cursor *obj2)
+_efl2_text_cursor_compare(const Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, const Efl2_Text_Cursor *obj2)
 {
    Efl2_Text_Cursor_Handle *cur1 = pd->cur;
    Efl2_Text_Cursor_Data *pd2 = efl_data_scope_get(obj2, MY_CLASS);
@@ -72,7 +72,7 @@ _efl2_text_cursor_compare(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, Efl2_T
 }
 
 EOLIAN static void
-_efl2_text_cursor_copy(Eo *obj, Efl2_Text_Cursor_Data *pd, Efl2_Text_Cursor *dst)
+_efl2_text_cursor_copy(const Eo *obj, Efl2_Text_Cursor_Data *pd, Efl2_Text_Cursor *dst)
 {
    Efl2_Text_Cursor_Handle *cur_src = pd->cur;
    Efl2_Text_Cursor_Data *pd_dst = efl_data_scope_get(dst, MY_CLASS);
