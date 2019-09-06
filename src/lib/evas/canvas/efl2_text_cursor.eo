@@ -10,6 +10,7 @@ enum @beta Efl2.Text.Cursor_Type
 }
 
 // FIXME: Rename cluster ones to grapheme?
+// Missing pen_geometry get?
 class @beta Efl2.Text.Cursor extends Efl.Object {
    [[Cursor API
    ]]
@@ -77,21 +78,21 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
             ch2: int; [[The height of the lower cursor]]
          }
       }
-      equal {
+      equal @const {
          [[Check if two cursors are equal - faster than compare if all you want is equality]]
          params {
-            cur2: Efl2.Text.Cursor; [[Cursor 2 object]]
+            cur2: const(Efl2.Text.Cursor); [[Cursor 2 object]]
          }
          return: bool; [[$true if cursors are equal, $false otherwise]]
       }
-      compare {
+      compare @const {
          [[Compare two cursors]]
          params {
-            cur2: Efl2.Text.Cursor; [[Cursor 2 object]]
+            cur2: const(Efl2.Text.Cursor); [[Cursor 2 object]]
          }
          return: int; [[Difference between cursors]]
       }
-      copy {
+      copy @const {
          [[Copy existing cursor]]
          params {
             dst: Efl2.Text.Cursor; [[Cursor 2 object]]
