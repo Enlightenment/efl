@@ -5,23 +5,6 @@
 
 #define MY_CLASS EFL_CANVAS_VG_CONTAINER_CLASS
 
-
-//FIXME: This enum add temporarily to help understanding of additional code
-//related to masking in prepare_mask.
-//This needs to be formally declared through the eo class.
-//This is a list of blending supported via efl_canvas_vg_node_mask_set().
-typedef enum _EFL_CANVAS_VG_NODE_BLEND_TYPE
-{
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_NONE = 0,
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA,
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA_INV,
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_ADD,
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_SUBSTRACT,
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_INTERSECT,
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_DIFFERENCE
-}EFL_CANVAS_VG_NODE_BLEND_TYPE;
-//
-
 static void
 _invalidate_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
@@ -40,7 +23,7 @@ _invalidate_cb(void *data EINA_UNUSED, const Efl_Event *event)
 }
 
 static void
-_draw_mask(Evas_Object_Protected_Data *obj, Efl_VG *node,
+_draw_comp(Evas_Object_Protected_Data *obj, Efl_VG *node,
            Ector_Surface *ector, void *engine, void *output,
            void *context)
 {
@@ -51,11 +34,11 @@ _draw_mask(Evas_Object_Protected_Data *obj, Efl_VG *node,
         Efl_Canvas_Vg_Container_Data *cd =
            efl_data_scope_get(node, EFL_CANVAS_VG_CONTAINER_CLASS);
 
-        //Draw Mask Image.
+        //Draw Composite Image.
         Efl_VG *child;
         Eina_List *l;
         EINA_LIST_FOREACH(cd->children, l, child)
-          _draw_mask(obj, child, ector, engine, output, context);
+          _draw_comp(obj, child, ector, engine, output, context);
      }
    else
      {
@@ -65,93 +48,94 @@ _draw_mask(Evas_Object_Protected_Data *obj, Efl_VG *node,
 }
 
 static Ector_Buffer *
-_prepare_mask(Evas_Object_Protected_Data *obj,     //vector object
-              Efl_Canvas_Vg_Node* mask_obj,
+_prepare_comp(Evas_Object_Protected_Data *obj,     //vector object
+              Efl_Canvas_Vg_Node* comp_target,
               void *engine, void *output, void *context,
               Ector_Surface *surface,
               Eina_Matrix3 *ptransform,
               Eina_Matrix3 *ctransform,
-              Ector_Buffer *mask,
-              int mask_op)
+              Ector_Buffer *comp,
+              Efl_Gfx_Vg_Composite_Method comp_method)
 {
-   Efl_Canvas_Vg_Container_Data *pd = efl_data_scope_get(mask_obj, MY_CLASS);
+   Efl_Canvas_Vg_Container_Data *pd = efl_data_scope_get(comp_target, MY_CLASS);
    Efl_Canvas_Vg_Node_Data *nd =
-         efl_data_scope_get(mask_obj, EFL_CANVAS_VG_NODE_CLASS);
-   if (nd->flags == EFL_GFX_CHANGE_FLAG_NONE) return pd->mask.buffer;
+         efl_data_scope_get(comp_target, EFL_CANVAS_VG_NODE_CLASS);
+   if (nd->flags == EFL_GFX_CHANGE_FLAG_NONE) return pd->comp.buffer;
    uint32_t init_buffer = 0x0;
 
-   //1. Mask Size
+   //1. Composite Size
    Eina_Rect mbound;
    mbound.x = 0;
    mbound.y = 0;
    mbound.w = obj->cur->geometry.w;
    mbound.h = obj->cur->geometry.h;
 
-   //FIXME: If mask typs is SUBSTRACT or INTERSECT, buffer fills in white color(Full alpha color).
-   if (pd->mask.option == EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_SUBSTRACT || pd->mask.option == EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_INTERSECT)
+   //FIXME: If composite method is SUBSTRACT or INTERSECT, buffer fills in white color(Full alpha color).
+   if (pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MASK_SUBSTRACT ||
+       pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MASK_INTERSECT)
      init_buffer = 0xFFFFFFFF;
 
    //2. Reusable ector buffer?
-   if (!pd->mask.buffer || (pd->mask.bound.w != mbound.w) ||
-         (pd->mask.bound.h != mbound.h))
+   if (!pd->comp.buffer || (pd->comp.bound.w != mbound.w) ||
+         (pd->comp.bound.h != mbound.h))
      {
-        if (pd->mask.pixels) free(pd->mask.pixels);
-        if (pd->mask.buffer) efl_unref(pd->mask.buffer);
-        pd->mask.pixels = malloc(sizeof(uint32_t) * (mbound.w * mbound.h));
-        memset(pd->mask.pixels, init_buffer, sizeof(uint32_t) * (mbound.w * mbound.h));
-        pd->mask.buffer = ENFN->ector_buffer_new(ENC, obj->layer->evas->evas,
+        if (pd->comp.pixels) free(pd->comp.pixels);
+        if (pd->comp.buffer) efl_unref(pd->comp.buffer);
+        pd->comp.pixels = malloc(sizeof(uint32_t) * (mbound.w * mbound.h));
+        memset(pd->comp.pixels, init_buffer, sizeof(uint32_t) * (mbound.w * mbound.h));
+        pd->comp.buffer = ENFN->ector_buffer_new(ENC, obj->layer->evas->evas,
                                                  mbound.w, mbound.h,
                                                  EFL_GFX_COLORSPACE_ARGB8888,
                                                  ECTOR_BUFFER_FLAG_DRAWABLE |
                                                  ECTOR_BUFFER_FLAG_CPU_READABLE |
                                                  ECTOR_BUFFER_FLAG_CPU_WRITABLE);
-        ector_buffer_pixels_set(pd->mask.buffer, pd->mask.pixels,
+        ector_buffer_pixels_set(pd->comp.buffer, pd->comp.pixels,
                                 mbound.w, mbound.h, 0,
                                 EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
-        pd->mask.bound.w = mbound.w;
-        pd->mask.bound.h = mbound.h;
-        pd->mask.vg_pd = obj;
+        pd->comp.bound.w = mbound.w;
+        pd->comp.bound.h = mbound.h;
+        pd->comp.vg_pd = obj;
      }
    else
      {
-        if (pd->mask.pixels)
-          memset(pd->mask.pixels, init_buffer, sizeof(uint32_t) * mbound.w * mbound.h);
+        if (pd->comp.pixels)
+          memset(pd->comp.pixels, init_buffer, sizeof(uint32_t) * mbound.w * mbound.h);
      }
 
-   pd->mask.bound.x = mbound.x;
-   pd->mask.bound.y = mbound.y;
+   pd->comp.bound.x = mbound.x;
+   pd->comp.bound.y = mbound.y;
 
-   if (!pd->mask.buffer) ERR("Mask Buffer is invalid");
+   if (!pd->comp.buffer) ERR("Composite Buffer is invalid");
 
-   //FIXME: This code means that there is another masking container.
-   if (pd->mask.option >= EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_ADD)
+   //FIXME: This code means that there is another composite container.
+   if (pd->comp.method >= EFL_GFX_VG_COMPOSITE_METHOD_MASK_ADD)
      {
-        Efl_Canvas_Vg_Container_Data *src_pd = pd;
-        mask = pd->mask.buffer;
-        for (Efl_VG *mask_src = pd->mask_src; mask_src; mask_src = src_pd->mask_src)
+        Efl_Canvas_Vg_Container_Data *target_pd = pd;
+        comp = pd->comp.buffer;
+        for (Efl_VG *comp_target = pd->comp_target; comp_target; comp_target = target_pd->comp_target)
           {
-             Efl_Canvas_Vg_Container_Data *target_pd = NULL;
-             src_pd = efl_data_scope_get(mask_src, MY_CLASS);
-             target_pd = efl_data_scope_get(eina_list_nth(src_pd->mask.target, 0), MY_CLASS);
-             _evas_vg_render_pre(obj, mask_src,
+             Efl_Canvas_Vg_Container_Data *src_pd = NULL;
+             target_pd = efl_data_scope_get(comp_target, MY_CLASS);
+             src_pd = efl_data_scope_get(eina_list_nth(target_pd->comp.src, 0), MY_CLASS);
+             _evas_vg_render_pre(obj, comp_target,
                                  engine, output, context, surface,
-                                 ctransform, mask, target_pd->mask.option);
+                                 ctransform, comp, src_pd->comp.method);
           }
      }
 
    //3. Prepare Drawing shapes.
-   _evas_vg_render_pre(obj, mask_obj,
+   _evas_vg_render_pre(obj, comp_target,
                        engine, output, context,
                        surface,
-                       ptransform, mask, mask_op);
+                       ptransform, comp, comp_method);
 
-   //4. Generating Mask Image.
-   ector_buffer_pixels_set(surface, pd->mask.pixels, mbound.w, mbound.h, 0,
+   //4. Generating Composite Image.
+   ector_buffer_pixels_set(surface, pd->comp.pixels, mbound.w, mbound.h, 0,
                            EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
    ector_surface_reference_point_set(surface, -mbound.x, -mbound.y);
-   _draw_mask(obj, mask_obj, surface, engine, output, context);
+   _draw_comp(obj, comp_target, surface, engine, output, context);
 
-   return pd->mask.buffer;
+   return pd->comp.buffer;
 }
 
 static void
@@ -161,8 +145,8 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
                                     void *engine, void *output, void *context,
                                     Ector_Surface *surface,
                                     Eina_Matrix3 *ptransform,
-                                    Ector_Buffer *mask,
-                                    int mask_op,
+                                    Ector_Buffer *comp,
+                                    Efl_Gfx_Vg_Composite_Method comp_method,
                                     void *data)
 {
    Efl_Canvas_Vg_Container_Data *pd = data;
@@ -177,27 +161,27 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
 
    EFL_CANVAS_VG_COMPUTE_MATRIX(ctransform, ptransform, nd);
 
-   //Container may have mask source.
-   //FIXME : _prepare_mask() should only work in cases with matte or main mask.
-   // This condition is valid because the main mask use same type as matte alpha.
-   if (pd->mask_src &&
-       (pd->mask.option == EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA ||
-        pd->mask.option == EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA_INV))
+   //Container may have composite target.
+   //FIXME : _prepare_comp() should only work in cases with matte or masking.
+   // This condition is valid because the masking use same type as matte.
+   if (pd->comp_target &&
+       (pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA ||
+        pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA_INVERSE))
      {
-        mask_op = pd->mask.option;
-        mask = _prepare_mask(vg_pd, pd->mask_src,
+        comp_method = pd->comp.method;
+        comp = _prepare_comp(vg_pd, pd->comp_target,
                              engine, output, context, surface,
-                             ptransform, ctransform, mask, mask_op);
+                             ptransform, ctransform, comp, comp_method);
      }
 
    EINA_LIST_FOREACH(pd->children, l, child)
      {
-        //Don't need to update mask nodes.
+        //Don't need to update composite nodes.
         if (efl_isa(child, MY_CLASS))
           {
              Efl_Canvas_Vg_Container_Data *child_cd =
                 efl_data_scope_get(child, MY_CLASS);
-             if (child_cd->mask.target) continue;
+             if (child_cd->comp.src) continue;
           }
 
         //Skip Gradients. they will be updated by Shape.
@@ -212,7 +196,7 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
 
         _evas_vg_render_pre(vg_pd, child,
                             engine, output, context, surface,
-                            ctransform, mask, mask_op);
+                            ctransform, comp, comp_method);
      }
 }
 
@@ -243,12 +227,12 @@ _efl_canvas_vg_container_efl_object_destructor(Eo *obj,
    if (pd->blend_pixels) free(pd->blend_pixels);
    if (pd->blend_buffer) efl_unref(pd->blend_buffer);
 
-   //Destroy mask surface
-   if (pd->mask.buffer) efl_unref(pd->mask.buffer);
-   if (pd->mask.pixels) free(pd->mask.pixels);
+   //Destroy comp surface
+   if (pd->comp.buffer) efl_unref(pd->comp.buffer);
+   if (pd->comp.pixels) free(pd->comp.pixels);
 
-   efl_unref(pd->mask_src);
-   eina_list_free(pd->mask.target);
+   efl_unref(pd->comp_target);
+   eina_list_free(pd->comp.src);
    eina_hash_free(pd->names);
 
    efl_destructor(efl_super(obj, MY_CLASS));
@@ -333,14 +317,14 @@ _efl_canvas_vg_container_efl_gfx_path_interpolate(Eo *obj, Efl_Canvas_Vg_Contain
         if (!r) break;
      }
 
-   //Interpolates Mask
+   //Interpolates Composite
    Efl_Canvas_Vg_Container_Data *fromd = efl_data_scope_get(from, MY_CLASS);
    Efl_Canvas_Vg_Container_Data *tod = efl_data_scope_get(to, MY_CLASS);
 
-   if (fromd->mask_src && tod->mask_src && pd->mask_src)
+   if (fromd->comp_target && tod->comp_target && pd->comp_target)
      {
-        if (!efl_gfx_path_interpolate(pd->mask_src,
-                                      fromd->mask_src, tod->mask_src, pos_map))
+        if (!efl_gfx_path_interpolate(pd->comp_target,
+                                      fromd->comp_target, tod->comp_target, pos_map))
           return EINA_FALSE;
      }
 
@@ -351,30 +335,30 @@ _efl_canvas_vg_container_efl_gfx_path_interpolate(Eo *obj, Efl_Canvas_Vg_Contain
 }
 
 static void
-_efl_canvas_vg_container_efl_canvas_vg_node_mask_set(Eo *obj,
-                                                     Efl_Canvas_Vg_Container_Data *pd,
-                                                     Efl_Canvas_Vg_Node *mask,
-                                                     int op)
+_efl_canvas_vg_container_efl_canvas_vg_node_comp_method_set(Eo *obj,
+                                                            Efl_Canvas_Vg_Container_Data *pd,
+                                                            Efl_Canvas_Vg_Node *target,
+                                                            Efl_Gfx_Vg_Composite_Method method)
 {
-   if (pd->mask_src == mask) return;
+   if (pd->comp_target == target) return;
 
-   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(mask, MY_CLASS));
+   EINA_SAFETY_ON_FALSE_RETURN(efl_isa(target, MY_CLASS));
 
-   if (pd->mask_src)
+   if (pd->comp_target)
      {
         Efl_Canvas_Vg_Container_Data *pd2 =
-              efl_data_scope_get(pd->mask_src, MY_CLASS);
-        pd2->mask.target = eina_list_remove(pd2->mask.target, obj);
+              efl_data_scope_get(pd->comp_target, MY_CLASS);
+        pd2->comp.src = eina_list_remove(pd2->comp.src, obj);
      }
 
-   if (mask)
+   if (target)
      {
-        Efl_Canvas_Vg_Container_Data *pd2 = efl_data_scope_get(mask, MY_CLASS);
-        pd2->mask.target = eina_list_append(pd2->mask.target, obj);
+        Efl_Canvas_Vg_Container_Data *pd2 = efl_data_scope_get(target, MY_CLASS);
+        pd2->comp.src = eina_list_append(pd2->comp.src, obj);
      }
 
-   pd->mask.option = op;
-   efl_replace(&pd->mask_src, mask);
+   pd->comp.method = method;
+   efl_replace(&pd->comp_target, target);
    efl_canvas_vg_node_change(obj);
 }
 
@@ -400,12 +384,12 @@ _efl_canvas_vg_container_efl_duplicate_duplicate(const Eo *obj,
    container = efl_duplicate(efl_super(obj, MY_CLASS));
    efl_event_callback_add(container, EFL_EVENT_INVALIDATE, _invalidate_cb, NULL);
 
-   //Copy Mask
-   if (pd->mask_src)
+   //Copy Composite
+   if (pd->comp_target)
      {
-        Eo * mask_src = efl_duplicate(pd->mask_src);
-        efl_parent_set(mask_src, container);
-        efl_canvas_vg_node_mask_set(container, mask_src, pd->mask.option);
+        Eo * comp_target = efl_duplicate(pd->comp_target);
+        efl_parent_set(comp_target, container);
+        efl_canvas_vg_node_comp_method_set(container, comp_target, pd->comp.method);
      }
 
    //Copy Children

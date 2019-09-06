@@ -141,6 +141,17 @@ struct @beta Efl.Gfx.Shape_Public
    stroke: Efl.Gfx.Stroke; [[Internal representation as stroke]]
 }
 
+enum @beta Efl.Gfx.Vg_Composite_Method
+{
+   none,
+   matte_alpha,
+   matte_alpha_inverse,
+   mask_add,
+   mask_substract,
+   mask_intersect,
+   mask_difference
+}
+
 enum @beta Efl.Gfx.Border_Fill_Mode
 {
    [[How an image's center region (the complement to the border region) should be rendered by EFL]]

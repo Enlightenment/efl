@@ -9,21 +9,6 @@
 
 #include <rlottie_capi.h>
 
-//FIXME: This enum add temporarily to help understanding of additional code
-//related to masking in prepare_mask.
-//This needs to be formally declared through the eo class.
-typedef enum _EFL_CANVAS_VG_NODE_BLEND_TYPE
-{
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_NONE = 0,
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA,
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA_INV,
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_ADD,
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_SUBSTRACT,
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_INTERSECT,
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_DIFFERENCE
-}EFL_CANVAS_VG_NODE_BLEND_TYPE;
-//
-
 static char*
 _get_key_val(void *key)
 {
@@ -311,10 +296,10 @@ _construct_masks(Efl_Canvas_Vg_Container *mtarget, LOTMask *masks, unsigned int 
         efl_key_data_set(mtarget, key, msource);
      }
 
-   //FIXME : EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA option is temporary
-   //Currently matte alpha implemtnes is same the mask intersect impletment.
+   //FIXME : EFL_GFX_VG_COMPOSITE_METHOD_ALPHA option is temporary
+   //Currently matte alpha implements is same the mask intersect implement.
    //It has been implemented as a multiplication calculation.
-   efl_canvas_vg_node_mask_set(mtarget, msource, EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA);
+   efl_canvas_vg_node_comp_method_set(mtarget, msource, EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA);
 
    mtarget = msource;
 
@@ -332,24 +317,24 @@ _construct_masks(Efl_Canvas_Vg_Container *mtarget, LOTMask *masks, unsigned int 
           }
         _construct_mask_nodes(msource, mask, depth + 1);
 
-        EFL_CANVAS_VG_NODE_BLEND_TYPE mask_mode;
+        Efl_Gfx_Vg_Composite_Method mask_mode;
         switch (mask->mMode)
           {
            case MaskSubstract:
-              mask_mode = EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_SUBSTRACT;
+              mask_mode = EFL_GFX_VG_COMPOSITE_METHOD_MASK_SUBSTRACT;
               break;
            case MaskIntersect:
-              mask_mode = EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_INTERSECT;
+              mask_mode = EFL_GFX_VG_COMPOSITE_METHOD_MASK_INTERSECT;
               break;
            case MaskDifference:
-              mask_mode = EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_DIFFERENCE;
+              mask_mode = EFL_GFX_VG_COMPOSITE_METHOD_MASK_DIFFERENCE;
               break;
            case MaskAdd:
            default:
-              mask_mode = EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_ADD;
+              mask_mode = EFL_GFX_VG_COMPOSITE_METHOD_MASK_ADD;
               break;
           }
-        efl_canvas_vg_node_mask_set(mtarget, msource, mask_mode);
+        efl_canvas_vg_node_comp_method_set(mtarget, msource, mask_mode);
         mtarget = msource;
      }
 }
@@ -397,7 +382,7 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
 
         if (matte_mode != 0)
           {
-             efl_canvas_vg_node_mask_set(ptree, ctree, matte_mode);
+             efl_canvas_vg_node_comp_method_set(ptree, ctree, matte_mode);
              mtarget = ctree;
           }
         matte_mode = (int) clayer->mMatte;
@@ -417,10 +402,10 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
               matte_mode = 0;
               break;
            case MatteAlpha:
-              matte_mode = EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA;
+              matte_mode = EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA;
               break;
            case MatteAlphaInv:
-              matte_mode = EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA_INV;
+              matte_mode = EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA_INVERSE;
               break;
            case MatteLuma:
               matte_mode = 0;
