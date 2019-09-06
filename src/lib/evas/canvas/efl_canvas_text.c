@@ -6813,6 +6813,9 @@ _efl2_canvas_text_efl_object_constructor(Eo *eo_obj, Efl2_Canvas_Text_Data *clas
    obj->type = o_type;
 
    o = obj->private_data;
+   o->text_nodes = _NODE_TEXT(eina_inlist_append(
+            EINA_INLIST_GET(o->text_nodes),
+            EINA_INLIST_GET(_evas_textblock_node_text_new())));
    o->cursor = _canvas_text_cursor_new(eo_obj);
    //XXX: empty the list hacky but we need o->cursors to not contain o->cursor
    o->cursors = eina_list_remove_list(o->cursors, o->cursors);
@@ -13043,7 +13046,19 @@ _efl2_canvas_text_efl2_text_content_plain_text_set(Eo *eo_obj, Efl2_Canvas_Text_
       const char *text)
 {
    ASYNC_BLOCK;
-   evas_object_textblock_text_markup_set(eo_obj, "");
+   _evas_object_textblock_clear(eo_obj);
+   o->text_nodes = _NODE_TEXT(eina_inlist_append(
+            EINA_INLIST_GET(o->text_nodes),
+            EINA_INLIST_GET(_evas_textblock_node_text_new())));
+
+   // FIXME: reinit all cursors
+   Eina_List *l;
+   Efl2_Text_Cursor_Handle *cur;
+   EINA_LIST_FOREACH(o->cursors, l, cur)
+     {
+        _canvas_text_cursor_init(cur, eo_obj);
+     }
+
    _canvas_text_cursor_text_insert(o->cursor, text);
    //efl_event_callback_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
 }
