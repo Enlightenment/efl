@@ -7111,7 +7111,7 @@ _canvas_text_cursor_emit_if_changed(Efl2_Text_Cursor_Handle *cur)
    if (cur->changed)
      {
         cur->changed = EINA_FALSE;
-        efl_event_callback_legacy_call(cur->obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
+        efl_event_callback_call(cur->obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
      }
 }
 
@@ -8875,7 +8875,7 @@ _canvas_text_cursor_line_jump_by(Efl2_Text_Cursor_Handle *cur, int by)
 
    if ((pnode != cur->node) || (ppos != cur->pos))
      {
-        efl_event_callback_legacy_call(eo_obj,
+        efl_event_callback_call(eo_obj,
               EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
      }
 
@@ -10546,7 +10546,7 @@ _canvas_text_cursor_coord_set(Efl2_Text_Cursor_Handle *cur, Evas_Coord x, Evas_C
 end:
    if (ret)
      {
-        efl_event_callback_legacy_call(cur->obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
+        efl_event_callback_call(cur->obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
      }
    return ret;
 }
@@ -13372,7 +13372,7 @@ _efl_canvas_text_efl_text_annotate_annotation_insert(Eo *eo_obj, Efl2_Canvas_Tex
 
    ret = _textblock_annotation_insert(eo_obj, o, start, end, format,
          EINA_FALSE);
-   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
+   efl_event_callback_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
    return ret;
 }
 
@@ -13415,7 +13415,7 @@ _efl_canvas_text_efl_text_annotate_cursor_item_insert(Eo *eo_obj,
       _textblock_annotation_insert(cur->obj, o, cur, cur,
             eina_strbuf_string_get(buf), EINA_TRUE);
    eina_strbuf_free(buf);
-   efl_event_callback_legacy_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
+   efl_event_callback_call(eo_obj, EFL_CANVAS_TEXT_EVENT_CHANGED, NULL);
    return ret;
 }
 
