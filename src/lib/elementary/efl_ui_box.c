@@ -250,6 +250,8 @@ _efl_ui_box_efl_pack_linear_pack_begin(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Gfx_Ent
 EOLIAN static Eina_Bool
 _efl_ui_box_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Gfx_Entity *subobj, const Efl_Gfx_Entity *existing)
 {
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_list_data_find(pd->children, existing), EINA_FALSE);
+
    if (!_efl_ui_box_child_register(obj, pd, subobj))
      return EINA_FALSE;
 
@@ -261,6 +263,8 @@ _efl_ui_box_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Gfx_En
 EOLIAN static Eina_Bool
 _efl_ui_box_efl_pack_linear_pack_after(Eo *obj, Efl_Ui_Box_Data *pd, Efl_Gfx_Entity *subobj, const Efl_Gfx_Entity *existing)
 {
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_list_data_find(pd->children, existing), EINA_FALSE);
+
    if (!_efl_ui_box_child_register(obj, pd, subobj))
      return EINA_FALSE;
 
