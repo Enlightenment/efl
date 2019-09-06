@@ -36,13 +36,13 @@ abstract @beta Efl.Canvas.Vg.Node extends Efl.Object
             y: double; [[$origin y position.]]
          }
       }
-      @property mask {
-         [[Set Mask Node to this renderer]]
+      @property comp_method {
+         [[Set a composite target node to this node object.]]
          set {
          }
          values {
-            mask: Efl.Canvas.Vg.Node; [[Mask object]]
-            op: int; [[Masking Option. Reserved]]
+            target: Efl.Canvas.Vg.Node; [[Composite target node]]
+            method: Efl.Gfx.Vg_Composite_Method; [[Composite Method.]]
          }
       }
    }

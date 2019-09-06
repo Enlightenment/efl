@@ -83,8 +83,8 @@ typedef struct _Span_Data
 
    int              offx, offy;
    Clip_Data        clip;
-   Ector_Software_Buffer_Base_Data    *mask;
-   int mask_op;
+   Ector_Software_Buffer_Base_Data    *comp;
+   Efl_Gfx_Vg_Composite_Method comp_method;
    Eina_Matrix3     inv;
    Span_Data_Type   type;
    Eina_Bool        fast_matrix;
@@ -136,8 +136,8 @@ void ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,
                                              int x, int y, uint32_t mul_col,
                                              Efl_Gfx_Render_Op op,
                                              Shape_Rle_Data* rle,
-                                             Ector_Buffer *mask,
-                                             int mask_op);
+                                             Ector_Buffer *comp,
+                                             Efl_Gfx_Vg_Composite_Method comp_method);
 
 void ector_software_rasterizer_destroy_rle_data(Shape_Rle_Data *rle);
 

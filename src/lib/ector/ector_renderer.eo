@@ -78,13 +78,13 @@ abstract @beta Ector.Renderer extends Efl.Object
             return: uint; [[CRC value]]
          }
       }
-      @property mask {
-         [[Set Mask Image to this Renderer]]
+      @property comp_method {
+         [[Set Composite Buffer to this Renderer]]
          set {
          }
          values {
-            mask: Ector.Buffer; [[Mask Image Buffer]]
-            op: int; [[Masking option]]
+            comp: Ector.Buffer; [[Composite Buffer]]
+            method: Efl.Gfx.Vg_Composite_Method; [[Composite method]]
          }
       }
       draw @pure_virtual {

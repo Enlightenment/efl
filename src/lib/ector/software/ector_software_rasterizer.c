@@ -11,21 +11,6 @@
 
 #include "draw.h"
 
-//FIXME: This enum add temporarily to help understanding of additional code
-//related to masking in prepare_mask.
-//This needs to be formally declared through the eo class.
-typedef enum _EFL_CANVAS_VG_NODE_BLEND_TYPE
-{
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_NONE = 0,
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA,
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA_INV,
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_ADD,
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_SUBSTRACT,
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_INTERSECT,
-   EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_DIFFERENCE
-}EFL_CANVAS_VG_NODE_BLEND_TYPE;
-//
-
 static void
 _blend_argb(int count, const SW_FT_Span *spans, void *user_data)
 {
@@ -49,12 +34,12 @@ _blend_argb(int count, const SW_FT_Span *spans, void *user_data)
 }
 
 static void
-_blend_alpha(int count, const SW_FT_Span *spans, void *user_data)
+_comp_matte_alpha(int count, const SW_FT_Span *spans, void *user_data)
 {
    Span_Data *sd = user_data;
    const int pix_stride = sd->raster_buffer->stride / 4;
-   Ector_Software_Buffer_Base_Data *mask = sd->mask;
-   if (!mask || !mask->pixels.u32) return;
+   Ector_Software_Buffer_Base_Data *comp = sd->comp;
+   if (!comp || !comp->pixels.u32) return;
 
    // multiply the color with mul_col if any
    uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
@@ -63,7 +48,7 @@ _blend_alpha(int count, const SW_FT_Span *spans, void *user_data)
    // move to the offset location
    uint32_t *buffer =
          sd->raster_buffer->pixels.u32 + ((pix_stride * sd->offy) + sd->offx);
-   uint32_t *mbuffer = mask->pixels.u32;
+   uint32_t *mbuffer = comp->pixels.u32;
 
    //Temp buffer for intermediate processing
    int tsize = sd->raster_buffer->generic->w;
@@ -73,12 +58,12 @@ _blend_alpha(int count, const SW_FT_Span *spans, void *user_data)
      {
         uint32_t *target = buffer + ((pix_stride * spans->y) + spans->x);
         uint32_t *mtarget =
-              mbuffer + ((mask->generic->w * spans->y) + spans->x);
+              mbuffer + ((comp->generic->w * spans->y) + spans->x);
         uint32_t *temp = tbuffer;
         memset(temp, 0x00, sizeof(uint32_t) * spans->len);
         comp_func(temp, spans->len, color, spans->coverage);
 
-        //masking
+        //composite
         for (int i = 0; i < spans->len; i++)
           {
              *temp = draw_mul_256(((*mtarget)>>24), *temp);
@@ -93,12 +78,12 @@ _blend_alpha(int count, const SW_FT_Span *spans, void *user_data)
 }
 
 static void
-_blend_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
+_comp_matte_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
 {
    Span_Data *sd = user_data;
    const int pix_stride = sd->raster_buffer->stride / 4;
-   Ector_Software_Buffer_Base_Data *mask = sd->mask;
-   if (!mask || !mask->pixels.u32) return;
+   Ector_Software_Buffer_Base_Data *comp = sd->comp;
+   if (!comp || !comp->pixels.u32) return;
 
    // multiply the color with mul_col if any
    uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
@@ -107,7 +92,7 @@ _blend_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
    // move to the offset location
    uint32_t *buffer =
          sd->raster_buffer->pixels.u32 + ((pix_stride * sd->offy) + sd->offx);
-   uint32_t *mbuffer = mask->pixels.u32;
+   uint32_t *mbuffer = comp->pixels.u32;
 
    //Temp buffer for intermediate processing
    int tsize = sd->raster_buffer->generic->w;
@@ -117,12 +102,12 @@ _blend_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
      {
         uint32_t *target = buffer + ((pix_stride * spans->y) + spans->x);
         uint32_t *mtarget =
-              mbuffer + ((mask->generic->w * spans->y) + spans->x);
+              mbuffer + ((comp->generic->w * spans->y) + spans->x);
         uint32_t *temp = tbuffer;
         memset(temp, 0x00, sizeof(uint32_t) * spans->len);
         comp_func(temp, spans->len, color, spans->coverage);
 
-        //masking
+        //composite
         for (int i = 0; i < spans->len; i++)
           {
              if (*mtarget)
@@ -138,22 +123,22 @@ _blend_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
 }
 
 static void
-_blend_mask_add(int count, const SW_FT_Span *spans, void *user_data)
+_comp_mask_add(int count, const SW_FT_Span *spans, void *user_data)
 {
    Span_Data *sd = user_data;
-   Ector_Software_Buffer_Base_Data *mask = sd->mask;
-   if (!mask || !mask->pixels.u32) return;
+   Ector_Software_Buffer_Base_Data *comp = sd->comp;
+   if (!comp || !comp->pixels.u32) return;
 
    uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
    RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
-   uint32_t *mbuffer = mask->pixels.u32;
+   uint32_t *mbuffer = comp->pixels.u32;
 
    int tsize = sd->raster_buffer->generic->w;
    uint32_t *ttarget = alloca(sizeof(uint32_t) * tsize);
 
    while (count--)
      {
-        uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
+        uint32_t *mtarget = mbuffer + ((comp->generic->w * spans->y) + spans->x);
         memset(ttarget, 0x00, sizeof(uint32_t) * spans->len);
         comp_func(ttarget, spans->len, color, spans->coverage);
         for (int i = 0; i < spans->len; i++)
@@ -163,22 +148,22 @@ _blend_mask_add(int count, const SW_FT_Span *spans, void *user_data)
 }
 
 static void
-_blend_mask_sub(int count, const SW_FT_Span *spans, void *user_data)
+_comp_mask_sub(int count, const SW_FT_Span *spans, void *user_data)
 {
    Span_Data *sd = user_data;
-   Ector_Software_Buffer_Base_Data *mask = sd->mask;
-   if (!mask || !mask->pixels.u32) return;
+   Ector_Software_Buffer_Base_Data *comp = sd->comp;
+   if (!comp || !comp->pixels.u32) return;
 
    uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
    RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
-   uint32_t *mbuffer = mask->pixels.u32;
+   uint32_t *mbuffer = comp->pixels.u32;
 
    int tsize = sd->raster_buffer->generic->w;
    uint32_t *ttarget = alloca(sizeof(uint32_t) * tsize);
 
    while (count--)
      {
-        uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
+        uint32_t *mtarget = mbuffer + ((comp->generic->w * spans->y) + spans->x);
         memset(ttarget, 0x00, sizeof(uint32_t) * spans->len);
         comp_func(ttarget, spans->len, color, spans->coverage);
         for (int i = 0; i < spans->len; i++)
@@ -189,28 +174,28 @@ _blend_mask_sub(int count, const SW_FT_Span *spans, void *user_data)
 
 
 static void
-_blend_mask_ins(int count, const SW_FT_Span *spans, void *user_data)
+_comp_mask_ins(int count, const SW_FT_Span *spans, void *user_data)
 {
    Span_Data *sd = user_data;
-   Ector_Software_Buffer_Base_Data *mask = sd->mask;
-   if (!mask || !mask->pixels.u32) return;
+   Ector_Software_Buffer_Base_Data *comp = sd->comp;
+   if (!comp || !comp->pixels.u32) return;
 
    uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
    RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
-   uint32_t *mbuffer = mask->pixels.u32;
+   uint32_t *mbuffer = comp->pixels.u32;
 
    int tsize = sd->raster_buffer->generic->w;
    uint32_t *ttarget = alloca(sizeof(uint32_t) * tsize);
 
-   for(unsigned int y = 0; y < mask->generic->h; y++)
+   for(unsigned int y = 0; y < comp->generic->h; y++)
      {
-        for(unsigned int x = 0; x < mask->generic->w; x++)
+        for(unsigned int x = 0; x < comp->generic->w; x++)
           {
-             if (x == (unsigned int)spans->x && x + spans->len <= mask->generic->w &&
+             if (x == (unsigned int)spans->x && x + spans->len <= comp->generic->w &&
                  y == (unsigned int)spans->y && count > 0)
                {
                   memset(ttarget, 0x00, sizeof(uint32_t) * spans->len);
-                  uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
+                  uint32_t *mtarget = mbuffer + ((comp->generic->w * spans->y) + spans->x);
                   comp_func(ttarget, spans->len, color, spans->coverage);
                   for (int c = 0; c < spans->len; c++)
                     mtarget[c] = draw_mul_256(ttarget[c]>>24, mtarget[c]);
@@ -220,7 +205,7 @@ _blend_mask_ins(int count, const SW_FT_Span *spans, void *user_data)
                }
              else
                {
-                  mbuffer[x + (mask->generic->w * y)] = (0x00FFFFFF & mbuffer[x + (mask->generic->w * y)]);
+                  mbuffer[x + (comp->generic->w * y)] = (0x00FFFFFF & mbuffer[x + (comp->generic->w * y)]);
                }
           }
      }
@@ -228,15 +213,15 @@ _blend_mask_ins(int count, const SW_FT_Span *spans, void *user_data)
 
 
 static void
-_blend_mask_diff(int count, const SW_FT_Span *spans, void *user_data)
+_comp_mask_diff(int count, const SW_FT_Span *spans, void *user_data)
 {
    Span_Data *sd = user_data;
-   Ector_Software_Buffer_Base_Data *mask = sd->mask;
-   if (!mask || !mask->pixels.u32) return;
+   Ector_Software_Buffer_Base_Data *comp = sd->comp;
+   if (!comp || !comp->pixels.u32) return;
 
    uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
    RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
-   uint32_t *mbuffer = mask->pixels.u32;
+   uint32_t *mbuffer = comp->pixels.u32;
 
    int tsize = sd->raster_buffer->generic->w;
    uint32_t *ttarget = alloca(sizeof(uint32_t) * tsize);
@@ -244,7 +229,7 @@ _blend_mask_diff(int count, const SW_FT_Span *spans, void *user_data)
    while (count--)
      {
         memset(ttarget, 0x00, sizeof(uint32_t) * spans->len);
-        uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
+        uint32_t *mtarget = mbuffer + ((comp->generic->w * spans->y) + spans->x);
         comp_func(ttarget, spans->len, color, spans->coverage);
         for (int i = 0; i < spans->len; i++)
           mtarget[i] = draw_mul_256(0xFF - (mtarget[i]>>24), ttarget[i]) + draw_mul_256(0xFF - (ttarget[i]>>24), mtarget[i]);
@@ -309,8 +294,8 @@ _blend_gradient_alpha(int count, const SW_FT_Span *spans, void *user_data)
 
    if (!fetchfunc) return;
 
-   Ector_Software_Buffer_Base_Data *mask = sd->mask;
-   uint32_t *mbuffer = mask->pixels.u32;
+   Ector_Software_Buffer_Base_Data *comp = sd->comp;
+   uint32_t *mbuffer = comp->pixels.u32;
 
    // move to the offset location
    buffer = sd->raster_buffer->pixels.u32 + ((pix_stride * sd->offy) + sd->offx);
@@ -318,7 +303,7 @@ _blend_gradient_alpha(int count, const SW_FT_Span *spans, void *user_data)
    while (count--)
      {
         uint32_t *target = buffer + ((pix_stride * spans->y) + spans->x);
-        uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
+        uint32_t *mtarget = mbuffer + ((comp->generic->w * spans->y) + spans->x);
         int length = spans->len;
 
         while (length)
@@ -358,8 +343,8 @@ _blend_gradient_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
 
    if (!fetchfunc) return;
 
-   Ector_Software_Buffer_Base_Data *mask = sd->mask;
-   uint32_t *mbuffer = mask->pixels.u32;
+   Ector_Software_Buffer_Base_Data *comp = sd->comp;
+   uint32_t *mbuffer = comp->pixels.u32;
 
    // move to the offset location
    buffer = sd->raster_buffer->pixels.u32 + ((pix_stride * sd->offy) + sd->offx);
@@ -367,7 +352,7 @@ _blend_gradient_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
    while (count--)
      {
         uint32_t *target = buffer + ((pix_stride * spans->y) + spans->x);
-        uint32_t *mtarget = mbuffer + ((mask->generic->w * spans->y) + spans->x);
+        uint32_t *mtarget = mbuffer + ((comp->generic->w * spans->y) + spans->x);
         int length = spans->len;
 
         while (length)
@@ -584,38 +569,38 @@ static void
 _adjust_span_fill_methods(Span_Data *spdata)
 {
    //Blending Function
-   if (spdata->mask)
+   if (spdata->comp)
      {
-        switch (spdata->mask_op)
+        switch (spdata->comp_method)
           {
            default:
-           case EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA:
+           case EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA:
               if (spdata->type == Solid)
-                spdata->unclipped_blend = &_blend_alpha;
+                spdata->unclipped_blend = &_comp_matte_alpha;
               else if (spdata->type == LinearGradient || spdata->type == RadialGradient)
                 spdata->unclipped_blend = &_blend_gradient_alpha;
               else //None
                 spdata->unclipped_blend = NULL;
               break;
-           case EFL_CANVAS_VG_NODE_BLEND_TYPE_ALPHA_INV:
+           case EFL_GFX_VG_COMPOSITE_METHOD_MATTE_ALPHA_INVERSE:
               if (spdata->type == Solid)
-                spdata->unclipped_blend = &_blend_alpha_inv;
+                spdata->unclipped_blend = &_comp_matte_alpha_inv;
               else if (spdata->type == LinearGradient || spdata->type == RadialGradient)
                 spdata->unclipped_blend = &_blend_gradient_alpha_inv;
               else //None
                 spdata->unclipped_blend = NULL;
               break;
-           case EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_ADD:
-              spdata->unclipped_blend = &_blend_mask_add;
+           case EFL_GFX_VG_COMPOSITE_METHOD_MASK_ADD:
+              spdata->unclipped_blend = &_comp_mask_add;
               break;
-           case EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_SUBSTRACT:
-              spdata->unclipped_blend = &_blend_mask_sub;
+           case EFL_GFX_VG_COMPOSITE_METHOD_MASK_SUBSTRACT:
+              spdata->unclipped_blend = &_comp_mask_sub;
               break;
-           case EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_INTERSECT:
-              spdata->unclipped_blend = &_blend_mask_ins;
+           case EFL_GFX_VG_COMPOSITE_METHOD_MASK_INTERSECT:
+              spdata->unclipped_blend = &_comp_mask_ins;
               break;
-           case EFL_CANVAS_VG_NODE_BLEND_TYPE_MASK_DIFFERENCE:
-              spdata->unclipped_blend = &_blend_mask_diff;
+           case EFL_GFX_VG_COMPOSITE_METHOD_MASK_DIFFERENCE:
+              spdata->unclipped_blend = &_comp_mask_diff;
               break;
           }
      }
@@ -895,8 +880,8 @@ void
 ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,
                                         int x, int y, uint32_t mul_col,
                                         Efl_Gfx_Render_Op op, Shape_Rle_Data* rle,
-                                        Ector_Buffer *mask,
-                                        int mask_op)
+                                        Ector_Buffer *comp,
+                                        Efl_Gfx_Vg_Composite_Method comp_method)
 {
    if (!rle) return;
    if (!rasterizer->fill_data.raster_buffer->pixels.u32) return;
@@ -905,9 +890,9 @@ ector_software_rasterizer_draw_rle_data(Software_Rasterizer *rasterizer,
    rasterizer->fill_data.offy = y;
    rasterizer->fill_data.mul_col = mul_col;
    rasterizer->fill_data.op = op;
-   rasterizer->fill_data.mask =
-         mask ? efl_data_scope_get(mask, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN) : NULL;
-   rasterizer->fill_data.mask_op = mask_op;
+   rasterizer->fill_data.comp =
+         comp ? efl_data_scope_get(comp, ECTOR_SOFTWARE_BUFFER_BASE_MIXIN) : NULL;
+   rasterizer->fill_data.comp_method = comp_method;
 
    _setup_span_fill_matrix(rasterizer);
    _adjust_span_fill_methods(&rasterizer->fill_data);
