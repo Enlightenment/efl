@@ -2157,14 +2157,28 @@ _requires_add(Eo_Lexer *ls, Eina_Strbuf *buf)
 {
    const char *required;
    char *fnm;
+   Eina_List *l;
+   const char *oname;
+   char ebuf[PATH_MAX];
 
    eina_strbuf_reset(buf);
    eo_lexer_context_push(ls);
    parse_name(ls, buf);
-   required = eina_strbuf_string_get(buf);
+   required = eina_stringshare_add(eina_strbuf_string_get(buf));
+
+   EINA_LIST_FOREACH(ls->klass->requires, l, oname)
+     if (required == oname)
+       {
+          eo_lexer_context_restore(ls);
+          eina_stringshare_del(required);
+          snprintf(ebuf, sizeof(ebuf), "duplicate entry '%s'", oname);
+          eo_lexer_syntax_error(ls, ebuf);
+          return;
+       }
+
    fnm = database_class_to_filename(required);
 
-   ls->klass->requires = eina_list_append(ls->klass->requires, eina_stringshare_add(required));
+   ls->klass->requires = eina_list_append(ls->klass->requires, required);
    database_defer(ls->state, fnm, EINA_TRUE);
    eo_lexer_context_pop(ls);
 
@@ -2174,25 +2188,39 @@ _requires_add(Eo_Lexer *ls, Eina_Strbuf *buf)
 static void
 _composite_add(Eo_Lexer *ls, Eina_Strbuf *buf)
 {
+   const char *oname;
+   char ebuf[PATH_MAX];
+   Eina_List *l;
+
    eina_strbuf_reset(buf);
    eo_lexer_context_push(ls);
    parse_name(ls, buf);
-   const char *nm = eina_strbuf_string_get(buf);
+   const char *nm = eina_stringshare_add(eina_strbuf_string_get(buf));
+
+   EINA_LIST_FOREACH(ls->klass->composite, l, oname)
+     if (nm == oname)
+       {
+          eo_lexer_context_restore(ls);
+          snprintf(ebuf, sizeof(ebuf), "duplicate entry '%s'", nm);
+          eina_stringshare_del(nm);
+          eo_lexer_syntax_error(ls, ebuf);
+          return;
+       }
+
    char *fnm = database_class_to_filename(nm);
    if (!eina_hash_find(ls->state->filenames_eo, fnm))
      {
         free(fnm);
-        char ebuf[PATH_MAX];
         eo_lexer_context_restore(ls);
         snprintf(ebuf, sizeof(ebuf), "unknown interface '%s'", nm);
+        eina_stringshare_del(nm);
         eo_lexer_syntax_error(ls, ebuf);
         return;
      }
    /* do not introduce a dependency */
    database_defer(ls->state, fnm, EINA_FALSE);
    free(fnm);
-   ls->klass->composite = eina_list_append(ls->klass->composite,
-     eina_stringshare_add(nm));
+   ls->klass->composite = eina_list_append(ls->klass->composite, nm);
    eo_lexer_context_pop(ls);
 }
 
