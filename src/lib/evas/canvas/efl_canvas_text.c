@@ -745,7 +745,7 @@ static int _cavas_text_cursor_geometry_get_old(const Efl2_Text_Cursor_Handle *cu
 static void _evas_textblock_node_text_remove(Efl2_Canvas_Text_Data *o, Evas_Object_Textblock_Node_Text *n);
 static Evas_Object_Textblock_Node_Format *_evas_textblock_cursor_node_format_before_or_at_pos_get(const Efl2_Text_Cursor_Handle *cur);
 static size_t _evas_textblock_node_format_pos_get(const Evas_Object_Textblock_Node_Format *fmt);
-static void _evas_textblock_node_format_remove(Efl2_Canvas_Text_Data *o, Evas_Object_Textblock_Node_Format *n, int visual_adjustment);
+static void _evas_textblock_node_format_remove(Efl2_Canvas_Text_Data *o, Evas_Object_Textblock_Node_Format *n);
 static void _evas_textblock_node_format_free(Efl2_Canvas_Text_Data *o, Evas_Object_Textblock_Node_Format *n);
 static void _evas_textblock_node_text_free(Evas_Object_Textblock_Node_Text *n);
 static void _evas_textblock_changed(Efl2_Canvas_Text_Data *o, Evas_Object *eo_obj);
@@ -8424,8 +8424,8 @@ _evas_textblock_node_format_remove_matching(Efl2_Canvas_Text_Data *o,
                {
                   fnode = eina_list_data_get(formats);
                   formats = eina_list_remove_list(formats, formats);
-                  _evas_textblock_node_format_remove(o, fnode, 0);
-                  _evas_textblock_node_format_remove(o, fmt, 0);
+                  _evas_textblock_node_format_remove(o, fnode);
+                  _evas_textblock_node_format_remove(o, fmt);
                }
              /* Find the matching format and pop it, if the matching format
               * is our format, i.e the last one, pop and break. */
@@ -8441,8 +8441,8 @@ _evas_textblock_node_format_remove_matching(Efl2_Canvas_Text_Data *o,
 
                             fnode = eina_list_data_get(i);
                             formats = eina_list_remove_list(formats, i);
-                            _evas_textblock_node_format_remove(o, fnode, 0);
-                            _evas_textblock_node_format_remove(o, fmt, 0);
+                            _evas_textblock_node_format_remove(o, fnode);
+                            _evas_textblock_node_format_remove(o, fmt);
 
                             if (an)
                               {
@@ -8456,7 +8456,7 @@ _evas_textblock_node_format_remove_matching(Efl2_Canvas_Text_Data *o,
           }
         else if (!fmt->visible)
           {
-             _evas_textblock_node_format_remove(o, fmt, 0);
+             _evas_textblock_node_format_remove(o, fmt);
           }
         fmt = nnode;
      }
@@ -8503,7 +8503,7 @@ _evas_textblock_node_format_adjust_offset(Efl2_Canvas_Text_Data *o,
  * @param n the fromat node to remove
  */
 static void
-_evas_textblock_node_format_remove(Efl2_Canvas_Text_Data *o, Evas_Object_Textblock_Node_Format *n, int visible_adjustment)
+_evas_textblock_node_format_remove(Efl2_Canvas_Text_Data *o, Evas_Object_Textblock_Node_Format *n)
 {
    /* Update the text nodes about the change */
      {
@@ -8538,7 +8538,7 @@ _evas_textblock_node_format_remove(Efl2_Canvas_Text_Data *o, Evas_Object_Textblo
           }
      }
    _evas_textblock_node_format_adjust_offset(o, n->text_node, n,
-         n->offset - visible_adjustment);
+         n->offset);
 
    o->format_nodes = _NODE_FORMAT(eina_inlist_remove(
            EINA_INLIST_GET(o->format_nodes), EINA_INLIST_GET(n)));
@@ -8634,7 +8634,7 @@ _evas_textblock_node_text_adjust_offsets_to_start(Efl2_Canvas_Text_Data *o,
              /* Remove the PS, and return since it's the end of the node */
              if (_IS_PARAGRAPH_SEPARATOR(o, last_node->format))
                {
-                  _evas_textblock_node_format_remove(o, last_node, 0);
+                  _evas_textblock_node_format_remove(o, last_node);
                   return EINA_TRUE;
                }
 
@@ -13225,8 +13225,8 @@ _efl_canvas_text_efl_text_annotate_annotation_set(Eo *eo_obj,
    _textblock_cursor_pos_at_fnode_set(eo_obj, &start, annotation->start_node);
    _textblock_cursor_pos_at_fnode_set(eo_obj, &end, annotation->end_node);
 
-   _evas_textblock_node_format_remove(o, annotation->start_node, 0);
-   _evas_textblock_node_format_remove(o, annotation->end_node, 0);
+   _evas_textblock_node_format_remove(o, annotation->start_node);
+   _evas_textblock_node_format_remove(o, annotation->end_node);
 
    if (!_textblock_annotation_set(eo_obj, o, annotation, &start, &end, format,
          EINA_FALSE))
@@ -13252,8 +13252,8 @@ _evas_textblock_annotation_remove(Efl2_Canvas_Text_Data *o,
              _canvas_text_cursor_char_delete(&cur);
              return; // 'an' should be deleted after char deletion.
           }
-        _evas_textblock_node_format_remove(o, an->start_node, 0);
-        _evas_textblock_node_format_remove(o, an->end_node, 0);
+        _evas_textblock_node_format_remove(o, an->start_node);
+        _evas_textblock_node_format_remove(o, an->end_node);
      }
    o->annotations = (Efl_Text_Annotate_Annotation *)
       eina_inlist_remove(EINA_INLIST_GET(o->annotations),
