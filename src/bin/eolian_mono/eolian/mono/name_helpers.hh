@@ -293,11 +293,9 @@ struct klass_interface_name_generator
   template <typename T>
   std::string operator()(T const& klass) const
   {
-    std::string name = utils::remove_all(klass.eolian_name, '_');
-    if (klass.type == attributes::class_type::mixin || klass.type == attributes::class_type::interface_)
-      return "I" + name;
-    else
-      return name;
+     return ((klass.type == attributes::class_type::mixin
+              || klass.type == attributes::class_type::interface_) ? "I" : "")
+       + utils::remove_all(klass.eolian_name, '_');
   }
 
   template <typename OutputIterator, typename Attr, typename Context>
@@ -325,10 +323,9 @@ struct klass_full_interface_name_generator
 template<typename T>
 inline std::string klass_concrete_name(T const& klass)
 {
-  if (klass.type == attributes::class_type::mixin || klass.type == attributes::class_type::interface_)
-    return klass_interface_name(klass) + "Concrete";
-
-  return utils::remove_all(klass.eolian_name, '_');
+   return utils::remove_all(klass.eolian_name, '_') + ((klass.type == attributes::class_type::mixin
+           || klass.type == attributes::class_type::interface_)
+                                                       ? "Concrete" : "");
 }
 
 template<typename  T>
@@ -425,7 +422,7 @@ inline std::string managed_event_name(std::string const& name)
 
 inline std::string managed_event_args_short_name(attributes::event_def const& evt)
 {
-   return klass_concrete_or_interface_name(evt.klass) + name_helpers::managed_event_name(evt.name) + "Args";
+   return utils::remove_all(evt.klass.eolian_name, '_') + name_helpers::managed_event_name(evt.name) + "Args";
 }
 
 inline std::string managed_event_args_name(attributes::event_def evt)

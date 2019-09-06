@@ -125,7 +125,7 @@ public class GenericModel<T> : Efl.Object, Efl.IModel, IDisposable
    }
 
    /// <summary>Event triggered when properties on the wrapped model changes.</summary>
-   public event EventHandler<Efl.IModelPropertiesChangedEventArgs> PropertiesChangedEvent
+   public event EventHandler<Efl.ModelPropertiesChangedEventArgs> PropertiesChangedEvent
    {
       add {
           model.PropertiesChangedEvent += value;
@@ -136,7 +136,7 @@ public class GenericModel<T> : Efl.Object, Efl.IModel, IDisposable
    }
 
    /// <summary>Event triggered when a child is added from the wrapped model.</summary>
-   public event EventHandler<Efl.IModelChildAddedEventArgs> ChildAddedEvent
+   public event EventHandler<Efl.ModelChildAddedEventArgs> ChildAddedEvent
    {
       add {
           model.ChildAddedEvent += value;
@@ -147,7 +147,7 @@ public class GenericModel<T> : Efl.Object, Efl.IModel, IDisposable
    }
 
    /// <summary>Event triggered when a child is removed from the wrapped model.</summary>
-   public event EventHandler<Efl.IModelChildRemovedEventArgs> ChildRemovedEvent
+   public event EventHandler<Efl.ModelChildRemovedEventArgs> ChildRemovedEvent
    {
       add {
           model.ChildRemovedEvent += value;
