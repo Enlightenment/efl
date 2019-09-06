@@ -1,6 +1,6 @@
-class @beta Efl.Select_Model extends Efl.Boolean_Model
+class @beta Efl.Ui.Select_Model extends Efl.Boolean_Model
 {
-   [[Efl select model class]]
+   [[Efl ui select model class]]
    methods {
       selected_get {
          [[Get an iterator of all the selected child of this model.

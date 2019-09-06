@@ -2,31 +2,27 @@
 # include <config.h>
 #endif
 
-#include <Efl.h>
-#include <Eina.h>
-#include <Eo.h>
-#include <Ecore.h>
+#include <Elementary.h>
+#include "elm_priv.h"
 
 #include "ecore_internal.h"
 
-#include "efl_composite_model_private.h"
+typedef struct _Efl_Ui_View_Model_Data Efl_Ui_View_Model_Data;
+typedef struct _Efl_Ui_View_Model_Bind Efl_Ui_View_Model_Bind;
+typedef struct _Efl_Ui_View_Model_Text Efl_Ui_View_Model_Text;
+typedef struct _Efl_Ui_View_Model_Logic Efl_Ui_View_Model_Logic;
+typedef struct _Efl_Ui_View_Model_Property_Ref Efl_Ui_View_Model_Property_Ref;
 
-typedef struct _Efl_View_Model_Data Efl_View_Model_Data;
-typedef struct _Efl_View_Model_Bind Efl_View_Model_Bind;
-typedef struct _Efl_View_Model_Text Efl_View_Model_Text;
-typedef struct _Efl_View_Model_Logic Efl_View_Model_Logic;
-typedef struct _Efl_View_Model_Property_Ref Efl_View_Model_Property_Ref;
-
-struct _Efl_View_Model_Data
+struct _Efl_Ui_View_Model_Data
 {
    // FIXME: If parent is set, always access parent... recursively?
-   Efl_View_Model_Data *parent;
+   Efl_Ui_View_Model_Data *parent;
 
-   Eina_Hash *bound; // Stringhash of Efl_View_Model_Bind
-   Eina_Hash *logics; // Stringhash of Efl_View_Model_Logic
-   Eina_Hash *texts; // Stringhash of Efl_View_Model_Text
+   Eina_Hash *bound; // Stringhash of Efl_Ui_View_Model_Bind
+   Eina_Hash *logics; // Stringhash of Efl_Ui_View_Model_Logic
+   Eina_Hash *texts; // Stringhash of Efl_Ui_View_Model_Text
 
-   Eina_Hash *deduplication; // Stringhash of Efl_View_Model_Property_Ref
+   Eina_Hash *deduplication; // Stringhash of Efl_Ui_View_Model_Property_Ref
 
    struct {
       Eina_Bool property_changed : 1;
@@ -37,7 +33,7 @@ struct _Efl_View_Model_Data
    Eina_Bool children_bind : 1; // Define if child object should be automatically binded
 };
 
-struct _Efl_View_Model_Text
+struct _Efl_Ui_View_Model_Text
 {
    Eina_Stringshare *name;
    Eina_Stringshare *definition;
@@ -46,21 +42,21 @@ struct _Efl_View_Model_Text
    Efl_Model *self;
 };
 
-struct _Efl_View_Model_Bind
+struct _Efl_Ui_View_Model_Bind
 {
    Eina_Stringshare *source;
    Eina_List *destinations;
 };
 
-struct _Efl_View_Model_Logic
+struct _Efl_Ui_View_Model_Logic
 {
    struct {
-      EflViewModelPropertyGet fct;
+      EflUiViewModelPropertyGet fct;
       Eina_Free_Cb free_cb;
       void *data;
    } get;
    struct {
-      EflViewModelPropertySet fct;
+      EflUiViewModelPropertySet fct;
       Eina_Free_Cb free_cb;
       void *data;
    } set;
@@ -70,7 +66,7 @@ struct _Efl_View_Model_Logic
    Eina_Stringshare *property;
 };
 
-struct _Efl_View_Model_Property_Ref
+struct _Efl_Ui_View_Model_Property_Ref
 {
    EINA_REFCOUNT;
    Eina_Stringshare *property;
@@ -79,21 +75,21 @@ struct _Efl_View_Model_Property_Ref
 static void
 _ref_free(void *data)
 {
-   Efl_View_Model_Property_Ref *r = data;
+   Efl_Ui_View_Model_Property_Ref *r = data;
 
    eina_stringshare_del(r->property);
    free(r);
 }
 
 static void
-_ref_add(Efl_View_Model_Data *pd, Eina_Stringshare *property)
+_ref_add(Efl_Ui_View_Model_Data *pd, Eina_Stringshare *property)
 {
-   Efl_View_Model_Property_Ref *r;
+   Efl_Ui_View_Model_Property_Ref *r;
 
    r = eina_hash_find(pd->deduplication, property);
    if (!r)
      {
-        r = calloc(1, sizeof (Efl_View_Model_Property_Ref));
+        r = calloc(1, sizeof (Efl_Ui_View_Model_Property_Ref));
         if (!r) return ;
         r->property = eina_stringshare_ref(property);
 
@@ -104,9 +100,9 @@ _ref_add(Efl_View_Model_Data *pd, Eina_Stringshare *property)
 }
 
 static void
-_ref_del(Efl_View_Model_Data *pd, Eina_Stringshare *property)
+_ref_del(Efl_Ui_View_Model_Data *pd, Eina_Stringshare *property)
 {
-   Efl_View_Model_Property_Ref *r;
+   Efl_Ui_View_Model_Property_Ref *r;
 
    r = eina_hash_find(pd->deduplication, property);
    if (!r) return ;
@@ -118,14 +114,14 @@ _ref_del(Efl_View_Model_Data *pd, Eina_Stringshare *property)
 static void
 _logic_free(void *data)
 {
-   Efl_View_Model_Logic *logic = data;
+   Efl_Ui_View_Model_Logic *logic = data;
    Eina_Stringshare *source;
 
    if (logic->get.free_cb) logic->get.free_cb(logic->get.data);
    if (logic->set.free_cb) logic->set.free_cb(logic->set.data);
    EINA_LIST_FREE(logic->sources, source)
      {
-        efl_view_model_property_unbind(logic->object, source, logic->property);
+        efl_ui_view_model_property_unbind(logic->object, source, logic->property);
         eina_stringshare_del(source);
      }
    eina_stringshare_del(logic->property);
@@ -133,16 +129,16 @@ _logic_free(void *data)
 }
 
 static Eina_Value *
-_efl_view_model_property_dummy_get(void *data EINA_UNUSED,
-                                   const Efl_View_Model *view_model EINA_UNUSED,
+_efl_ui_view_model_property_dummy_get(void *data EINA_UNUSED,
+                                   const Efl_Ui_View_Model *view_model EINA_UNUSED,
                                    Eina_Stringshare *property EINA_UNUSED)
 {
    return eina_value_error_new(EFL_MODEL_ERROR_NOT_SUPPORTED);
 }
 
 static Eina_Future *
-_efl_view_model_property_dummy_set(void *data EINA_UNUSED,
-                                   Efl_View_Model *view_model,
+_efl_ui_view_model_property_dummy_set(void *data EINA_UNUSED,
+                                   Efl_Ui_View_Model *view_model,
                                    Eina_Stringshare *property EINA_UNUSED,
                                    Eina_Value *value EINA_UNUSED)
 {
@@ -150,13 +146,13 @@ _efl_view_model_property_dummy_set(void *data EINA_UNUSED,
 }
 
 static Eina_Error
-_efl_view_model_property_logic_add(Eo *obj, Efl_View_Model_Data *pd,
+_efl_ui_view_model_property_logic_add(Eo *obj, Efl_Ui_View_Model_Data *pd,
                                    const char *property,
-                                   void *get_data, EflViewModelPropertyGet get, Eina_Free_Cb get_free_cb,
-                                   void *set_data, EflViewModelPropertySet set, Eina_Free_Cb set_free_cb,
+                                   void *get_data, EflUiViewModelPropertyGet get, Eina_Free_Cb get_free_cb,
+                                   void *set_data, EflUiViewModelPropertySet set, Eina_Free_Cb set_free_cb,
                                    Eina_Iterator *bound)
 {
-   Efl_View_Model_Logic *logic;
+   Efl_Ui_View_Model_Logic *logic;
    Eina_Stringshare *prop;
    const char *source;
 
@@ -168,15 +164,15 @@ _efl_view_model_property_logic_add(Eo *obj, Efl_View_Model_Data *pd,
         return EFL_MODEL_ERROR_INCORRECT_VALUE;
      }
 
-   logic = calloc(1, sizeof (Efl_View_Model_Logic));
+   logic = calloc(1, sizeof (Efl_Ui_View_Model_Logic));
    if (!logic) return ENOMEM;
 
    logic->object = obj;
    logic->property = prop;
-   logic->get.fct = get ? get : _efl_view_model_property_dummy_get;
+   logic->get.fct = get ? get : _efl_ui_view_model_property_dummy_get;
    logic->get.free_cb = get_free_cb;
    logic->get.data = get_data;
-   logic->set.fct = set ? set : _efl_view_model_property_dummy_set;
+   logic->set.fct = set ? set : _efl_ui_view_model_property_dummy_set;
    logic->set.free_cb = set_free_cb;
    logic->set.data = set_data;
 
@@ -185,17 +181,17 @@ _efl_view_model_property_logic_add(Eo *obj, Efl_View_Model_Data *pd,
    EINA_ITERATOR_FOREACH(bound, source)
      {
         logic->sources = eina_list_append(logic->sources, eina_stringshare_add(source));
-        efl_view_model_property_bind(obj, source, property);
+        efl_ui_view_model_property_bind(obj, source, property);
      }
 
    return 0;
 }
 
 static Eina_Error
-_efl_view_model_property_logic_del(Eo *obj EINA_UNUSED, Efl_View_Model_Data *pd,
+_efl_ui_view_model_property_logic_del(Eo *obj EINA_UNUSED, Efl_Ui_View_Model_Data *pd,
                                    const char *property)
 {
-   Efl_View_Model_Logic *logic;
+   Efl_Ui_View_Model_Logic *logic;
 
    logic = eina_hash_find(pd->logics, property);
    if (!logic) return EFL_MODEL_ERROR_INCORRECT_VALUE;
@@ -235,13 +231,13 @@ _lookup_next_token(const char *definition,
 }
 
 static Eina_Error
-_efl_view_model_property_string_add(Eo *obj, Efl_View_Model_Data *pd,
+_efl_ui_view_model_property_string_add(Eo *obj, Efl_Ui_View_Model_Data *pd,
                                     const char *name,
                                     const char *definition,
                                     const char *not_ready,
                                     const char *on_error)
 {
-   Efl_View_Model_Text *text;
+   Efl_Ui_View_Model_Text *text;
    Eina_Stringshare *sn;
    Eina_Slstr *st = NULL;
    Eina_Slstr *sp = NULL;
@@ -255,9 +251,9 @@ _efl_view_model_property_string_add(Eo *obj, Efl_View_Model_Data *pd,
 
    // Lookup if there is an existing property defined and undo it first
    text = eina_hash_find(pd->texts, sn);
-   if (text) efl_view_model_property_string_del(obj, sn);
+   if (text) efl_ui_view_model_property_string_del(obj, sn);
 
-   text = calloc(1, sizeof (Efl_View_Model_Text));
+   text = calloc(1, sizeof (Efl_Ui_View_Model_Text));
    if (!text) goto on_error;
 
    err = EFL_MODEL_ERROR_INCORRECT_VALUE;
@@ -272,21 +268,21 @@ _efl_view_model_property_string_add(Eo *obj, Efl_View_Model_Data *pd,
         lookup;
         definition += lookup, lookup = _lookup_next_token(definition, &st, &sp))
      {
-        if (sp) efl_view_model_property_bind(obj, sp, name);
+        if (sp) efl_ui_view_model_property_bind(obj, sp, name);
      }
 
    for (lookup = _lookup_next_token(not_ready, &st, &sp);
         lookup;
         not_ready += lookup, lookup = _lookup_next_token(not_ready, &st, &sp))
      {
-        if (sp) efl_view_model_property_bind(obj, sp, name);
+        if (sp) efl_ui_view_model_property_bind(obj, sp, name);
      }
 
    for (lookup = _lookup_next_token(on_error, &st, &sp);
         lookup;
         on_error += lookup, lookup = _lookup_next_token(on_error, &st, &sp))
      {
-        if (sp) efl_view_model_property_bind(obj, sp, name);
+        if (sp) efl_ui_view_model_property_bind(obj, sp, name);
      }
 
    eina_hash_direct_add(pd->texts, text->name, text);
@@ -302,7 +298,7 @@ _efl_view_model_property_string_add(Eo *obj, Efl_View_Model_Data *pd,
 static void
 _text_free(void *data)
 {
-   Efl_View_Model_Text *text = data;
+   Efl_Ui_View_Model_Text *text = data;
    Eina_Stringshare *st;
    Eina_Stringshare *sp;
    int lookup;
@@ -313,7 +309,7 @@ _text_free(void *data)
         lookup;
         tmp += lookup, lookup = _lookup_next_token(tmp, &st, &sp))
      {
-        if (sp) efl_view_model_property_unbind(text->self, sp, text->name);
+        if (sp) efl_ui_view_model_property_unbind(text->self, sp, text->name);
      }
 
    tmp = text->not_ready;
@@ -321,7 +317,7 @@ _text_free(void *data)
         lookup;
         tmp += lookup, lookup = _lookup_next_token(tmp, &st, &sp))
      {
-        if (sp) efl_view_model_property_unbind(text->self, sp, text->name);
+        if (sp) efl_ui_view_model_property_unbind(text->self, sp, text->name);
      }
 
    tmp = text->on_error;
@@ -329,7 +325,7 @@ _text_free(void *data)
         lookup;
         tmp += lookup, lookup = _lookup_next_token(tmp, &st, &sp))
      {
-        if (sp) efl_view_model_property_unbind(text->self, sp, text->name);
+        if (sp) efl_ui_view_model_property_unbind(text->self, sp, text->name);
      }
 
    eina_stringshare_del(text->name);
@@ -339,11 +335,11 @@ _text_free(void *data)
 }
 
 static Eina_Error
-_efl_view_model_property_string_del(Eo *obj EINA_UNUSED,
-                                    Efl_View_Model_Data *pd,
+_efl_ui_view_model_property_string_del(Eo *obj EINA_UNUSED,
+                                    Efl_Ui_View_Model_Data *pd,
                                     const char *name)
 {
-   Efl_View_Model_Text *text;
+   Efl_Ui_View_Model_Text *text;
    Eina_Stringshare *sn;
    Eina_Error err = EFL_MODEL_ERROR_INCORRECT_VALUE;
 
@@ -361,10 +357,10 @@ _efl_view_model_property_string_del(Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_view_model_property_bind(Eo *obj EINA_UNUSED, Efl_View_Model_Data *pd,
+_efl_ui_view_model_property_bind(Eo *obj EINA_UNUSED, Efl_Ui_View_Model_Data *pd,
                               const char *source, const char *destination)
 {
-   Efl_View_Model_Bind *bind;
+   Efl_Ui_View_Model_Bind *bind;
    Eina_Stringshare *src;
    Eina_Stringshare *dst;
 
@@ -374,7 +370,7 @@ _efl_view_model_property_bind(Eo *obj EINA_UNUSED, Efl_View_Model_Data *pd,
    bind = eina_hash_find(pd->bound, src);
    if (!bind)
      {
-        bind = calloc(1, sizeof (Efl_View_Model_Bind));
+        bind = calloc(1, sizeof (Efl_Ui_View_Model_Bind));
         if (!bind) goto on_error;
         bind->source = eina_stringshare_ref(src);
 
@@ -390,10 +386,10 @@ _efl_view_model_property_bind(Eo *obj EINA_UNUSED, Efl_View_Model_Data *pd,
 }
 
 static void
-_efl_view_model_property_unbind(Eo *obj EINA_UNUSED, Efl_View_Model_Data *pd,
+_efl_ui_view_model_property_unbind(Eo *obj EINA_UNUSED, Efl_Ui_View_Model_Data *pd,
                                 const char *source, const char *destination)
 {
-   Efl_View_Model_Bind *bind;
+   Efl_Ui_View_Model_Bind *bind;
    Eina_Stringshare *src;
    Eina_Stringshare *dst;
    Eina_Stringshare *cmp;
@@ -426,7 +422,7 @@ _efl_view_model_property_unbind(Eo *obj EINA_UNUSED, Efl_View_Model_Data *pd,
 static void
 _bind_free(void *data)
 {
-   Efl_View_Model_Bind *bind = data;
+   Efl_Ui_View_Model_Bind *bind = data;
    Eina_Stringshare *dst;
 
    eina_stringshare_del(bind->source);
@@ -438,11 +434,11 @@ _bind_free(void *data)
 }
 
 static void
-_efl_view_model_property_bind_lookup(Eina_Array *changed_properties,
-                                     Efl_View_Model_Data *pd,
+_efl_ui_view_model_property_bind_lookup(Eina_Array *changed_properties,
+                                     Efl_Ui_View_Model_Data *pd,
                                      Eina_Stringshare *src)
 {
-   Efl_View_Model_Bind *bind;
+   Efl_Ui_View_Model_Bind *bind;
 
    if (!pd) return ;
    bind = eina_hash_find(pd->bound, src);
@@ -463,16 +459,16 @@ _efl_view_model_property_bind_lookup(Eina_Array *changed_properties,
              if (dup == dest) continue ;
 
              eina_array_push(changed_properties, dest);
-             _efl_view_model_property_bind_lookup(changed_properties, pd, dest);
+             _efl_ui_view_model_property_bind_lookup(changed_properties, pd, dest);
           }
      }
-   _efl_view_model_property_bind_lookup(changed_properties, pd->parent, src);
+   _efl_ui_view_model_property_bind_lookup(changed_properties, pd->parent, src);
 }
 
 static void
-_efl_view_model_property_changed(void *data, const Efl_Event *event)
+_efl_ui_view_model_property_changed(void *data, const Efl_Event *event)
 {
-   Efl_View_Model_Data *pd = data;
+   Efl_Ui_View_Model_Data *pd = data;
    Efl_Model_Property_Event *ev = event->info;
    Efl_Model_Property_Event nev = { 0 };
    const char *property;
@@ -493,7 +489,7 @@ _efl_view_model_property_changed(void *data, const Efl_Event *event)
         eina_array_push(nev.changed_properties, property);
 
         src = eina_stringshare_ref(property);
-        _efl_view_model_property_bind_lookup(nev.changed_properties, pd, src);
+        _efl_ui_view_model_property_bind_lookup(nev.changed_properties, pd, src);
      }
 
    efl_event_callback_call(event->object, EFL_MODEL_EVENT_PROPERTIES_CHANGED, &nev);
@@ -504,7 +500,7 @@ _efl_view_model_property_changed(void *data, const Efl_Event *event)
 }
 
 static void
-_efl_view_model_children_bind_set(Eo *obj EINA_UNUSED, Efl_View_Model_Data *pd, Eina_Bool enable)
+_efl_ui_view_model_children_bind_set(Eo *obj EINA_UNUSED, Efl_Ui_View_Model_Data *pd, Eina_Bool enable)
 {
    if (pd->finalized) return;
 
@@ -512,41 +508,41 @@ _efl_view_model_children_bind_set(Eo *obj EINA_UNUSED, Efl_View_Model_Data *pd, 
 }
 
 static Eina_Bool
-_efl_view_model_children_bind_get(const Eo *obj EINA_UNUSED, Efl_View_Model_Data *pd)
+_efl_ui_view_model_children_bind_get(const Eo *obj EINA_UNUSED, Efl_Ui_View_Model_Data *pd)
 {
    return pd->children_bind;
 }
 
 static void
-_efl_view_model_parent_data(Efl_View_Model *child, Efl_View_Model_Data *ppd)
+_efl_ui_view_model_parent_data(Efl_Ui_View_Model *child, Efl_Ui_View_Model_Data *ppd)
 {
-   Efl_View_Model_Data *cpd;
+   Efl_Ui_View_Model_Data *cpd;
 
-   cpd = efl_data_scope_get(child, EFL_VIEW_MODEL_CLASS);
+   cpd = efl_data_scope_get(child, EFL_UI_VIEW_MODEL_CLASS);
    cpd->parent = ppd;
    cpd->propagating = ppd->propagating;
 }
 
-static Efl_View_Model *
-_efl_view_model_child_lookup(Efl_View_Model_Data *pd, Efl_Object *parent, Efl_Model *view)
+static Efl_Ui_View_Model *
+_efl_ui_view_model_child_lookup(Efl_Ui_View_Model_Data *pd, Efl_Object *parent, Efl_Model *view)
 {
-   EFL_COMPOSITE_LOOKUP_RETURN(co, parent, view, "_efl.view_model");
+   EFL_COMPOSITE_LOOKUP_RETURN(co, parent, view, "_efl.ui.view_model");
 
-   co = efl_add(EFL_VIEW_MODEL_CLASS, parent,
+   co = efl_add(EFL_UI_VIEW_MODEL_CLASS, parent,
                 efl_ui_view_model_set(efl_added, view),
-                _efl_view_model_parent_data(efl_added, pd));
+                _efl_ui_view_model_parent_data(efl_added, pd));
    if (!co) return NULL;
 
    EFL_COMPOSITE_REMEMBER_RETURN(co, view);
 }
 
 static void
-_efl_view_model_child_added(void *data, const Efl_Event *event)
+_efl_ui_view_model_child_added(void *data, const Efl_Event *event)
 {
    Efl_Model_Children_Event *ev = event->info;
    Efl_Model_Children_Event nevt = { 0 };
-   Efl_View_Model_Data *pd = data;
-   Efl_View_Model *co;
+   Efl_Ui_View_Model_Data *pd = data;
+   Efl_Ui_View_Model *co;
 
    if (pd->propagating.child_added) return ;
    if (!pd->children_bind) return;
@@ -557,7 +553,7 @@ _efl_view_model_child_added(void *data, const Efl_Event *event)
    // Our strategy is to rebuild a new Child_Add and cancel the current one.
    efl_event_callback_stop(event->object);
 
-   co = _efl_view_model_child_lookup(pd, event->object, ev->child);
+   co = _efl_ui_view_model_child_lookup(pd, event->object, ev->child);
    if (!co) return;
 
    nevt.index = ev->index;
@@ -569,12 +565,12 @@ _efl_view_model_child_added(void *data, const Efl_Event *event)
 }
 
 static void
-_efl_view_model_child_removed(void *data, const Efl_Event *event)
+_efl_ui_view_model_child_removed(void *data, const Efl_Event *event)
 {
    Efl_Model_Children_Event *ev = event->info;
    Efl_Model_Children_Event nevt = { 0 };
-   Efl_View_Model_Data *pd = data;
-   Efl_View_Model *co;
+   Efl_Ui_View_Model_Data *pd = data;
+   Efl_Ui_View_Model *co;
 
    if (pd->propagating.child_removed) return ;
    if (!pd->children_bind) return;
@@ -585,7 +581,7 @@ _efl_view_model_child_removed(void *data, const Efl_Event *event)
    // Our strategy is to rebuild a new Child_Add and cancel the current one.
    efl_event_callback_stop(event->object);
 
-   co = _efl_view_model_child_lookup(pd, event->object, ev->child);
+   co = _efl_ui_view_model_child_lookup(pd, event->object, ev->child);
    if (!co) return;
 
    nevt.index = ev->index;
@@ -599,15 +595,15 @@ _efl_view_model_child_removed(void *data, const Efl_Event *event)
    pd->propagating.child_removed = EINA_FALSE;
 }
 
-EFL_CALLBACKS_ARRAY_DEFINE(efl_view_model_intercept,
-                           { EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_view_model_property_changed },
-                           { EFL_MODEL_EVENT_CHILD_ADDED, _efl_view_model_child_added },
-                           { EFL_MODEL_EVENT_CHILD_REMOVED, _efl_view_model_child_removed })
+EFL_CALLBACKS_ARRAY_DEFINE(efl_ui_view_model_intercept,
+                           { EFL_MODEL_EVENT_PROPERTIES_CHANGED, _efl_ui_view_model_property_changed },
+                           { EFL_MODEL_EVENT_CHILD_ADDED, _efl_ui_view_model_child_added },
+                           { EFL_MODEL_EVENT_CHILD_REMOVED, _efl_ui_view_model_child_removed })
 
 static Efl_Object *
-_efl_view_model_efl_object_constructor(Eo *obj, Efl_View_Model_Data *pd)
+_efl_ui_view_model_efl_object_constructor(Eo *obj, Efl_Ui_View_Model_Data *pd)
 {
-   obj = efl_constructor(efl_super(obj, EFL_VIEW_MODEL_CLASS));
+   obj = efl_constructor(efl_super(obj, EFL_UI_VIEW_MODEL_CLASS));
 
    pd->children_bind = EINA_TRUE;
    pd->bound = eina_hash_stringshared_new(_bind_free);
@@ -615,23 +611,23 @@ _efl_view_model_efl_object_constructor(Eo *obj, Efl_View_Model_Data *pd)
    pd->deduplication = eina_hash_stringshared_new(_ref_free);
    pd->texts = eina_hash_stringshared_new(_text_free);
 
-   efl_event_callback_array_priority_add(obj, efl_view_model_intercept(), EFL_CALLBACK_PRIORITY_BEFORE, pd);
+   efl_event_callback_array_priority_add(obj, efl_ui_view_model_intercept(), EFL_CALLBACK_PRIORITY_BEFORE, pd);
 
    return obj;
 }
 
 static Efl_Object *
-_efl_view_model_efl_object_finalize(Eo *obj, Efl_View_Model_Data *pd)
+_efl_ui_view_model_efl_object_finalize(Eo *obj, Efl_Ui_View_Model_Data *pd)
 {
    pd->finalized = EINA_TRUE;
 
-   return efl_finalize(efl_super(obj, EFL_VIEW_MODEL_CLASS));
+   return efl_finalize(efl_super(obj, EFL_UI_VIEW_MODEL_CLASS));
 }
 
 static void
-_efl_view_model_efl_object_destructor(Eo *obj, Efl_View_Model_Data *pd)
+_efl_ui_view_model_efl_object_destructor(Eo *obj, Efl_Ui_View_Model_Data *pd)
 {
-   efl_event_callback_array_del(obj, efl_view_model_intercept(), pd);
+   efl_event_callback_array_del(obj, efl_ui_view_model_intercept(), pd);
 
    eina_hash_free(pd->bound);
    pd->bound = NULL;
@@ -645,30 +641,30 @@ _efl_view_model_efl_object_destructor(Eo *obj, Efl_View_Model_Data *pd)
    eina_hash_free(pd->deduplication);
    pd->deduplication = NULL;
 
-   efl_destructor(efl_super(obj, EFL_VIEW_MODEL_CLASS));
+   efl_destructor(efl_super(obj, EFL_UI_VIEW_MODEL_CLASS));
 }
 
-static Efl_View_Model_Logic *
-_efl_view_model_property_logic_lookup(Efl_View_Model_Data *pd, Eina_Stringshare *property)
+static Efl_Ui_View_Model_Logic *
+_efl_ui_view_model_property_logic_lookup(Efl_Ui_View_Model_Data *pd, Eina_Stringshare *property)
 {
-   Efl_View_Model_Logic *logic;
+   Efl_Ui_View_Model_Logic *logic;
 
    if (!pd) return NULL;
    logic = eina_hash_find(pd->logics, property);
-   if (!logic) return _efl_view_model_property_logic_lookup(pd->parent, property);
+   if (!logic) return _efl_ui_view_model_property_logic_lookup(pd->parent, property);
    return logic;
 }
 
 static Eina_Future *
-_efl_view_model_efl_model_property_set(Eo *obj, Efl_View_Model_Data *pd,
+_efl_ui_view_model_efl_model_property_set(Eo *obj, Efl_Ui_View_Model_Data *pd,
                                        const char *property, Eina_Value *value)
 {
-   Efl_View_Model_Logic *logic;
+   Efl_Ui_View_Model_Logic *logic;
    Eina_Stringshare *prop;
    Eina_Future *f;
 
    prop = eina_stringshare_add(property);
-   logic = _efl_view_model_property_logic_lookup(pd, prop);
+   logic = _efl_ui_view_model_property_logic_lookup(pd, prop);
    if (logic)
      f = logic->set.fct(logic->get.data, obj, prop, value);
    else
@@ -676,7 +672,7 @@ _efl_view_model_efl_model_property_set(Eo *obj, Efl_View_Model_Data *pd,
         if (eina_hash_find(pd->texts, prop))
           f = efl_loop_future_rejected(obj, EFL_MODEL_ERROR_READ_ONLY);
         else
-          f = efl_model_property_set(efl_super(obj, EFL_VIEW_MODEL_CLASS), property, value);
+          f = efl_model_property_set(efl_super(obj, EFL_UI_VIEW_MODEL_CLASS), property, value);
      }
 
    eina_stringshare_del(prop);
@@ -684,7 +680,7 @@ _efl_view_model_efl_model_property_set(Eo *obj, Efl_View_Model_Data *pd,
 }
 
 static Eina_Value *
-_efl_view_model_text_generate(const Eo *obj,
+_efl_ui_view_model_text_generate(const Eo *obj,
                               Eina_Strbuf *out,
                               Eina_Stringshare *pattern,
                               Eina_Bool stop_on_error)
@@ -726,9 +722,9 @@ _efl_view_model_text_generate(const Eo *obj,
 }
 
 static Eina_Value *
-_efl_view_model_text_property_get(const Eo *obj, Efl_View_Model_Data *pd, Eina_Stringshare *prop)
+_efl_ui_view_model_text_property_get(const Eo *obj, Efl_Ui_View_Model_Data *pd, Eina_Stringshare *prop)
 {
-   Efl_View_Model_Text *lookup;
+   Efl_Ui_View_Model_Text *lookup;
    Eina_Strbuf *buf;
    Eina_Value *r;
    Eina_Error err = 0;
@@ -737,11 +733,11 @@ _efl_view_model_text_property_get(const Eo *obj, Efl_View_Model_Data *pd, Eina_S
    lookup = eina_hash_find(pd->texts, prop);
    // Lookup for property definition in the parent, but property value will be fetched on
    // the child object doing the request.
-   if (!lookup) return _efl_view_model_text_property_get(obj, pd->parent, prop);
+   if (!lookup) return _efl_ui_view_model_text_property_get(obj, pd->parent, prop);
 
    buf = eina_strbuf_new();
 
-   r = _efl_view_model_text_generate(obj, buf,
+   r = _efl_ui_view_model_text_generate(obj, buf,
                                      lookup->definition,
                                      !!(lookup->on_error || lookup->not_ready));
    if (eina_value_type_get(r) != EINA_VALUE_TYPE_ERROR)
@@ -751,7 +747,7 @@ _efl_view_model_text_property_get(const Eo *obj, Efl_View_Model_Data *pd, Eina_S
         eina_strbuf_reset(buf);
         eina_value_free(r);
 
-        r = _efl_view_model_text_generate(obj, buf, lookup->not_ready, !!lookup->on_error);
+        r = _efl_ui_view_model_text_generate(obj, buf, lookup->not_ready, !!lookup->on_error);
         if (eina_value_type_get(r) != EINA_VALUE_TYPE_ERROR)
           goto done;
      }
@@ -760,7 +756,7 @@ _efl_view_model_text_property_get(const Eo *obj, Efl_View_Model_Data *pd, Eina_S
         eina_strbuf_reset(buf);
         eina_value_free(r);
 
-        r = _efl_view_model_text_generate(obj, buf, lookup->on_error, 0);
+        r = _efl_ui_view_model_text_generate(obj, buf, lookup->on_error, 0);
      }
 
  done:
@@ -770,21 +766,21 @@ _efl_view_model_text_property_get(const Eo *obj, Efl_View_Model_Data *pd, Eina_S
 }
 
 static Eina_Value *
-_efl_view_model_efl_model_property_get(const Eo *obj, Efl_View_Model_Data *pd,
+_efl_ui_view_model_efl_model_property_get(const Eo *obj, Efl_Ui_View_Model_Data *pd,
                                        const char *property)
 {
-   Efl_View_Model_Logic *logic;
+   Efl_Ui_View_Model_Logic *logic;
    Eina_Stringshare *prop;
    Eina_Value *r;
 
    prop = eina_stringshare_add(property);
-   logic = _efl_view_model_property_logic_lookup(pd, prop);
+   logic = _efl_ui_view_model_property_logic_lookup(pd, prop);
    if (logic)
      r = logic->get.fct(logic->get.data, obj, prop);
    else
      {
-        r = _efl_view_model_text_property_get(obj, pd, prop);
-        if (!r) r = efl_model_property_get(efl_super(obj, EFL_VIEW_MODEL_CLASS), property);
+        r = _efl_ui_view_model_text_property_get(obj, pd, prop);
+        if (!r) r = efl_model_property_get(efl_super(obj, EFL_UI_VIEW_MODEL_CLASS), property);
      }
 
    eina_stringshare_del(prop);
@@ -792,25 +788,25 @@ _efl_view_model_efl_model_property_get(const Eo *obj, Efl_View_Model_Data *pd,
 }
 
 static Eina_Iterator *
-_efl_view_model_efl_model_properties_get(const Eo *obj, Efl_View_Model_Data *pd)
+_efl_ui_view_model_efl_model_properties_get(const Eo *obj, Efl_Ui_View_Model_Data *pd)
 {
-   EFL_COMPOSITE_MODEL_PROPERTIES_SUPER(props, obj, EFL_VIEW_MODEL_CLASS,
+   EFL_COMPOSITE_MODEL_PROPERTIES_SUPER(props, obj, EFL_UI_VIEW_MODEL_CLASS,
                                         eina_hash_iterator_key_new(pd->deduplication));
 
    return props;
 }
 
-typedef struct _Efl_View_Model_Slice_Request Efl_View_Model_Slice_Request;
-struct _Efl_View_Model_Slice_Request
+typedef struct _Efl_Ui_View_Model_Slice_Request Efl_Ui_View_Model_Slice_Request;
+struct _Efl_Ui_View_Model_Slice_Request
 {
-   Efl_View_Model_Data *pd;
+   Efl_Ui_View_Model_Data *pd;
    unsigned int start;
 };
 
 static Eina_Value
-_efl_view_model_slice_then(Eo *o, void *data, const Eina_Value v)
+_efl_ui_view_model_slice_then(Eo *o, void *data, const Eina_Value v)
 {
-   Efl_View_Model_Slice_Request *req = data;
+   Efl_Ui_View_Model_Slice_Request *req = data;
    Eo *target;
    Eina_Value r = EINA_VALUE_EMPTY;
    unsigned int i, len;
@@ -821,7 +817,7 @@ _efl_view_model_slice_then(Eo *o, void *data, const Eina_Value v)
      {
         Eo *composite;
 
-        composite = _efl_view_model_child_lookup(req->pd, o, target);
+        composite = _efl_ui_view_model_child_lookup(req->pd, o, target);
         eina_value_array_append(&r, composite);
      }
 
@@ -829,21 +825,21 @@ _efl_view_model_slice_then(Eo *o, void *data, const Eina_Value v)
 }
 
 static void
-_efl_view_model_slice_clean(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
+_efl_ui_view_model_slice_clean(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
 {
    free(data);
 }
 
 static Eina_Future *
-_efl_view_model_efl_model_children_slice_get(Eo *obj, Efl_View_Model_Data *pd,
+_efl_ui_view_model_efl_model_children_slice_get(Eo *obj, Efl_Ui_View_Model_Data *pd,
                                              unsigned int start, unsigned int count)
 {
-   Efl_View_Model_Slice_Request *req;
+   Efl_Ui_View_Model_Slice_Request *req;
    Eina_Future *f;
 
-   f = efl_model_children_slice_get(efl_super(obj, EFL_VIEW_MODEL_CLASS), start, count);
+   f = efl_model_children_slice_get(efl_super(obj, EFL_UI_VIEW_MODEL_CLASS), start, count);
 
-   req = malloc(sizeof (Efl_View_Model_Slice_Request));
+   req = malloc(sizeof (Efl_Ui_View_Model_Slice_Request));
    if (!req)
      {
         eina_future_cancel(f);
@@ -854,9 +850,9 @@ _efl_view_model_efl_model_children_slice_get(Eo *obj, Efl_View_Model_Data *pd,
    req->start = start;
 
    return efl_future_then(obj, f, .success_type = EINA_VALUE_TYPE_ARRAY,
-                          .success = _efl_view_model_slice_then,
-                          .free = _efl_view_model_slice_clean,
+                          .success = _efl_ui_view_model_slice_then,
+                          .free = _efl_ui_view_model_slice_clean,
                           .data = req);
 }
 
-#include "efl_view_model.eo.c"
+#include "efl_ui_view_model.eo.c"

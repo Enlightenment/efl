@@ -148,6 +148,17 @@ EWAPI extern const Efl_Event_Description _EFL_ANIMATION_PLAYER_EVENT_PRE_STARTED
 #define EFL_ANIMATION_PLAYER_EVENT_PRE_STARTED (&(_EFL_ANIMATION_PLAYER_EVENT_PRE_STARTED))
 /* Efl.Animation.Player END */
 
+
+
+/*TextBlock Internal function*/
+/**
+ * Check if cursor is at cluster with one glyph (replace codepoints with new codepoint).
+ *
+ * @param cur the cursor.
+ * @param forward if Eina_True check cluster after cusror position, else before cursor position.
+ */
+EAPI Eina_Bool evas_textblock_cursor_at_cluster_as_single_glyph(Evas_Textblock_Cursor *cur,Eina_Bool forward);
+
 #ifdef __cplusplus
 }
 #endif

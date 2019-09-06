@@ -4,7 +4,7 @@ interface Dummy.Inherit_Iface {
          params {
             @in v: stringshare;
          }
-         return: stringshare @owned;
+         return: stringshare @move;
       }
    }
 }

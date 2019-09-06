@@ -7,8 +7,6 @@
 #include <Ecore.h>
 
 #include "ecore_private.h"
-
-#include "efl_composite_model_private.h"
 #include "efl_composite_model.eo.h"
 
 typedef struct _Efl_Composite_Model_Data Efl_Composite_Model_Data;

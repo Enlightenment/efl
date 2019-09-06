@@ -53,3 +53,17 @@ eolian_parameter_is_by_ref(const Eolian_Function_Parameter *param)
    EINA_SAFETY_ON_NULL_RETURN_VAL(param, EINA_FALSE);
    return param->by_ref;
 }
+
+EAPI Eina_Stringshare *
+eolian_parameter_c_type_get(const Eolian_Function_Parameter *param_desc,
+                            Eina_Bool as_return)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(param_desc, NULL);
+   Eina_Strbuf *buf = eina_strbuf_new();
+   database_type_to_str(param_desc->type, buf, NULL,
+                        as_return ? EOLIAN_C_TYPE_RETURN : EOLIAN_C_TYPE_PARAM,
+                        param_desc->by_ref);
+   Eina_Stringshare *ret = eina_stringshare_add(eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
+   return ret;
+}

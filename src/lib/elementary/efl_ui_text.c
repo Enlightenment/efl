@@ -611,6 +611,8 @@ _selection_data_cb(void *data EINA_UNUSED, Eo *obj,
    if (!efl_text_cursor_equal(obj, start, end))
      {
         efl_canvas_text_range_delete(obj, start, end);
+        EFL_UI_TEXT_DATA_GET(obj, sd);
+        _efl_ui_text_select_none(obj, sd);
      }
    cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_TYPE_MAIN);
    info.insert = EINA_TRUE;
@@ -3983,8 +3985,8 @@ _efl_ui_text_selection_changed_cb(void *data, const Efl_Event *event EINA_UNUSED
    if (!text || (text[0] == '\0'))
      {
         _edje_signal_emit(sd, "selection,cleared", "efl.text");
-        sd->have_selection = EINA_FALSE;
         _selection_clear(data, 0);
+        sd->have_selection = EINA_FALSE;
      }
    else
      {

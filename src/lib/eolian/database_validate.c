@@ -109,7 +109,8 @@ static Eina_Bool _validate_type_by_ref(Validate_State *vals, Eolian_Type *tp,
                                        Eina_Bool by_ref, Eina_Bool move);
 static Eina_Bool _validate_expr(Eolian_Expression *expr,
                                 const Eolian_Type *tp,
-                                Eolian_Expression_Mask msk);
+                                Eolian_Expression_Mask msk,
+                                Eina_Bool by_ref);
 static Eina_Bool _validate_function(Validate_State *vals,
                                     Eolian_Function *func,
                                     Eina_Hash *nhash);
@@ -139,7 +140,7 @@ _ef_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
            const Eolian_Enum_Type_Field *ef, Cb_Ret *sc)
 {
    if (ef->value)
-     sc->succ = _validate_expr(ef->value, NULL, EOLIAN_MASK_INT);
+     sc->succ = _validate_expr(ef->value, NULL, EOLIAN_MASK_INT, EINA_FALSE);
    else
      sc->succ = EINA_TRUE;
 
@@ -218,8 +219,11 @@ _validate_by_ref(Eolian_Type *tp, Eina_Bool by_ref, Eina_Bool move)
      database_type_is_ownable(tp->base.unit, tp, EINA_FALSE);
 
    /* only allow value types when @by_ref */
-   if (by_ref && !maybe_ownable)
-     return EINA_FALSE;
+   if (by_ref && maybe_ownable)
+     {
+        _eo_parser_log(&tp->base, "@by_ref is only allowed for value types");
+        return EINA_FALSE;
+     }
 
    /* futures can be whatever... */
    if (tp->btype == EOLIAN_TYPE_BUILTIN_FUTURE)
@@ -229,7 +233,7 @@ _validate_by_ref(Eolian_Type *tp, Eina_Bool by_ref, Eina_Bool move)
    if (!move)
       return EINA_TRUE;
 
-   /* marked @move, now pointer-like or otherwise ownable, error */
+   /* marked @move, not pointer-like or otherwise ownable, error */
    if (!maybe_ownable || !tp->ownable)
      {
         _eo_parser_log(&tp->base, "type '%s' is not ownable", tp->base.name);
@@ -397,10 +401,12 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
 
 static Eina_Bool
 _validate_expr(Eolian_Expression *expr, const Eolian_Type *tp,
-               Eolian_Expression_Mask msk)
+               Eolian_Expression_Mask msk, Eina_Bool by_ref)
 {
    Eolian_Value val;
-   if (tp)
+   if (by_ref)
+     val = database_expr_eval(expr->base.unit, expr, EOLIAN_MASK_NULL, NULL, NULL);
+   else if (tp)
      val = database_expr_eval_type(expr->base.unit, expr, tp, NULL, NULL);
    else
      val = database_expr_eval(expr->base.unit, expr, msk, NULL, NULL);
@@ -417,7 +423,7 @@ _validate_param(Validate_State *vals, Eolian_Function_Parameter *param)
    if (!_validate_type_by_ref(vals, param->type, param->by_ref, param->move))
      return EINA_FALSE;
 
-   if (param->value && !_validate_expr(param->value, param->type, 0))
+   if (param->value && !_validate_expr(param->value, param->type, 0, param->by_ref))
      return EINA_FALSE;
 
    if (!_validate_doc(param->doc))
@@ -465,11 +471,13 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
    if (func->get_ret_val && !_validate_expr(func->get_ret_val,
-                                            func->get_ret_type, 0))
+                                            func->get_ret_type, 0,
+                                            func->get_return_by_ref))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
    if (func->set_ret_val && !_validate_expr(func->set_ret_val,
-                                            func->set_ret_type, 0))
+                                            func->set_ret_type, 0,
+                                            func->set_return_by_ref))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
 #define EOLIAN_PARAMS_VALIDATE(params) \
@@ -1431,7 +1439,7 @@ _validate_variable(Validate_State *vals, Eolian_Variable *var)
    if (!_validate_type(vals, var->base_type))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
-   if (var->value && !_validate_expr(var->value, var->base_type, 0))
+   if (var->value && !_validate_expr(var->value, var->base_type, 0, EINA_FALSE))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
    if (!_validate_doc(var->doc))

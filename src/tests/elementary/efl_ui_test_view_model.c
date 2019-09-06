@@ -20,10 +20,7 @@
 # include "config.h"
 #endif
 
-#include "efl_suite.h"
-
-#include <Efl.h>
-#include <Ecore.h>
+#include "efl_ui_suite.h"
 
 static const int child_number = 3;
 static const int base_ints[] = { 41, 42, 43 };
@@ -31,7 +28,7 @@ static const char *_efl_test_view_model_label_format = "Index %i.";
 static const char *dependences[] = { "test_p_int" };
 
 static Eina_Value *
-_efl_test_view_model_label_get(void *data, const Efl_View_Model *mv, Eina_Stringshare *property)
+_efl_test_view_model_label_get(void *data, const Efl_Ui_View_Model *mv, Eina_Stringshare *property)
 {
    Eina_Strbuf *buf;
    Eina_Value *r;
@@ -54,7 +51,7 @@ _efl_test_view_model_label_get(void *data, const Efl_View_Model *mv, Eina_String
 }
 
 static Eina_Future *
-_efl_test_view_model_label_set(void *data EINA_UNUSED, Efl_View_Model *mv, Eina_Stringshare *property EINA_UNUSED, Eina_Value *value EINA_UNUSED)
+_efl_test_view_model_label_set(void *data EINA_UNUSED, Efl_Ui_View_Model *mv, Eina_Stringshare *property EINA_UNUSED, Eina_Value *value EINA_UNUSED)
 {
    return efl_loop_future_rejected(mv, EFL_MODEL_ERROR_READ_ONLY);
 }
@@ -66,7 +63,7 @@ _efl_test_view_model_label_clean(void *data)
 }
 
 static Eina_Value *
-_efl_test_view_model_color_get(void *data EINA_UNUSED, const Efl_View_Model *mv, Eina_Stringshare *property)
+_efl_test_view_model_color_get(void *data EINA_UNUSED, const Efl_Ui_View_Model *mv, Eina_Stringshare *property)
 {
    Eina_Strbuf *buf;
    Eina_Value *r;
@@ -88,7 +85,7 @@ _efl_test_view_model_color_get(void *data EINA_UNUSED, const Efl_View_Model *mv,
 }
 
 static Eina_Future *
-_efl_test_view_model_color_set(void *data EINA_UNUSED, Efl_View_Model *mv, Eina_Stringshare *property EINA_UNUSED, Eina_Value *value EINA_UNUSED)
+_efl_test_view_model_color_set(void *data EINA_UNUSED, Efl_Ui_View_Model *mv, Eina_Stringshare *property EINA_UNUSED, Eina_Value *value EINA_UNUSED)
 {
    return efl_loop_future_rejected(mv, EFL_MODEL_ERROR_READ_ONLY);
 }
@@ -318,36 +315,36 @@ EFL_START_TEST(efl_test_view_model)
         efl_model_property_set(child, "test_p_int", &v);
      }
 
-   mv = efl_add_ref(EFL_VIEW_MODEL_CLASS, efl_main_loop_get(),
+   mv = efl_add_ref(EFL_UI_VIEW_MODEL_CLASS, efl_main_loop_get(),
                     efl_ui_view_model_set(efl_added, base_model));
    ck_assert(!!mv);
 
-   efl_view_model_property_logic_add(mv, "label",
+   efl_ui_view_model_property_logic_add(mv, "label",
                                      (void*) _efl_test_view_model_label_format, _efl_test_view_model_label_get, _efl_test_view_model_label_clean,
                                      (void*) _efl_test_view_model_label_format, _efl_test_view_model_label_set, _efl_test_view_model_label_clean,
                                      EINA_C_ARRAY_ITERATOR_NEW(dependences));
 
-   efl_view_model_property_logic_add(mv, "color",
+   efl_ui_view_model_property_logic_add(mv, "color",
                                      NULL, _efl_test_view_model_color_get, _efl_test_view_model_color_clean,
                                      NULL, _efl_test_view_model_color_set, _efl_test_view_model_color_clean,
                                      EINA_C_ARRAY_ITERATOR_NEW(dependences));
 
-   efl_view_model_property_logic_add(mv, "deadend",
+   efl_ui_view_model_property_logic_add(mv, "deadend",
                                      NULL, NULL, NULL,
                                      NULL, NULL, NULL,
                                      NULL);
 
-   efl_view_model_property_string_add(mv, "output",
+   efl_ui_view_model_property_string_add(mv, "output",
                                       "${label} has ${color} for index ${index}",
                                       "${index} not ready",
                                       "${index} in error");
 
-   efl_view_model_property_string_add(mv, "broken",
+   efl_ui_view_model_property_string_add(mv, "broken",
                                       "${nope} has ${color} for index ${index}",
                                       "${index} not ready",
                                       "${index} in error with '${nope}'");
 
-   efl_view_model_property_string_add(mv, "weird", "${} % { } has ${", NULL, NULL);
+   efl_ui_view_model_property_string_add(mv, "weird", "${} % { } has ${", NULL, NULL);
 
    f = efl_model_children_slice_get(mv, 0, efl_model_children_count_get(mv));
    f = efl_future_then(mv, f, .success_type = EINA_VALUE_TYPE_ARRAY,
@@ -367,7 +364,7 @@ EFL_START_TEST(efl_test_view_model)
 EFL_END_TEST
 
 void
-efl_test_case_view_model(TCase *tc)
+efl_ui_test_view_model(TCase *tc)
 {
    tcase_add_test(tc, efl_test_view_model);
 }

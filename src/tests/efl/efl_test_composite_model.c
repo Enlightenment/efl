@@ -70,47 +70,6 @@ _children_slice_get_then(void *data EINA_UNUSED,
    return v;
 }
 
-static Eina_Value
-_selection_children_slice_get_then(void *data EINA_UNUSED,
-                                   const Eina_Value v,
-                                   const Eina_Future *dead_future EINA_UNUSED)
-{
-   unsigned int i, len;
-   Efl_Model *child = NULL;
-
-   fail_if(eina_value_type_get(&v) != EINA_VALUE_TYPE_ARRAY);
-
-   EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)
-     {
-        Eina_Value *p_int = NULL;
-        Eina_Value *p_bool = NULL;
-        Eina_Value *p_index = NULL;
-        int v_int = 0;
-        unsigned int index = 0;
-        Eina_Bool v_bool = EINA_FALSE;
-
-        p_bool = efl_model_property_get(child, "selected");
-        p_int = efl_model_property_get(child, "test_p_int");
-        p_index = efl_model_property_get(child, "child.index");
-
-        eina_value_get(p_bool, &v_bool);
-        eina_value_get(p_int, &v_int);
-        fail_if(!eina_value_uint_convert(p_index, &index));
-
-        fail_if(v_bool != base_selections[i]);
-        fail_if(v_int != base_ints[i]);
-        ck_assert_int_eq(i, index);
-
-        eina_value_free(p_bool);
-        eina_value_free(p_int);
-        eina_value_free(p_index);
-     }
-
-   ecore_main_loop_quit();
-
-   return v;
-}
-
 EFL_START_TEST(efl_test_boolean_model)
 {
    Efl_Generic_Model *base_model, *child;
@@ -142,62 +101,6 @@ EFL_START_TEST(efl_test_boolean_model)
    eina_future_then(future, _children_slice_get_then, NULL, NULL);
 
    ecore_main_loop_begin();
-}
-EFL_END_TEST
-
-static Eina_Value
-_wait_propagate(void *data EINA_UNUSED,
-                const Eina_Value v,
-                const Eina_Future *dead_future EINA_UNUSED)
-{
-   ecore_main_loop_quit();
-   return v;
-}
-
-EFL_START_TEST(efl_test_select_model)
-{
-   Efl_Generic_Model *base_model, *child;
-   int i;
-   Eina_Value v = { 0 };
-   Efl_Select_Model *model;
-   Eina_Future *future;
-   Eina_Iterator *it;
-   uint64_t *index;
-
-   eina_value_setup(&v, EINA_VALUE_TYPE_INT);
-
-   base_model = efl_add_ref(EFL_GENERIC_MODEL_CLASS, efl_main_loop_get());
-   ck_assert(!!base_model);
-
-   for (i = 0; i < child_number; ++i)
-     {
-        child = efl_model_child_add(base_model);
-        ck_assert(!!child);
-        ck_assert(eina_value_set(&v, base_ints[i]));
-        efl_model_property_set(child, "test_p_int", &v);
-     }
-
-   model = efl_add_ref(EFL_SELECT_MODEL_CLASS, efl_main_loop_get(),
-                   efl_ui_view_model_set(efl_added, base_model));
-   ck_assert(!!model);
-   future = efl_model_property_set(model, "child.selected", eina_value_int_new(2));
-   eina_future_then(future, _wait_propagate, NULL, NULL);
-   ecore_main_loop_begin();
-
-   future = efl_model_children_slice_get(model, 0, efl_model_children_count_get(model));
-   eina_future_then(future, _selection_children_slice_get_then, NULL, NULL);
-
-   ecore_main_loop_begin();
-
-   it = efl_select_model_selected_get(model);
-   EINA_ITERATOR_FOREACH(it, index)
-     fail_if(*index != 2);
-   eina_iterator_free(it);
-
-   it = efl_select_model_unselected_get(model);
-   EINA_ITERATOR_FOREACH(it, index)
-     fail_if(*index == 2);
-   eina_iterator_free(it);
 }
 EFL_END_TEST
 
@@ -465,6 +368,5 @@ void
 efl_test_case_boolean_model(TCase *tc)
 {
    tcase_add_test(tc, efl_test_boolean_model);
-   tcase_add_test(tc, efl_test_select_model);
    tcase_add_test(tc, efl_test_filter_model);
 }

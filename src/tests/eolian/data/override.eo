@@ -38,7 +38,7 @@ abstract Override extends Base {
            params {
                 @in idx: int;
                 @out a: int (250);
-                @out str: ptr(char) (null);
+                @out str: mstring (null);
            }
       }
    }

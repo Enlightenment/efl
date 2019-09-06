@@ -425,7 +425,7 @@ void database_enum_add(Eolian_Unit *unit, Eolian_Typedecl *tp);
 void database_type_del(Eolian_Type *tp);
 void database_typedecl_del(Eolian_Typedecl *tp);
 
-void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name, Eolian_C_Type_Type ctype);
+void database_type_to_str(const Eolian_Type *tp, Eina_Strbuf *buf, const char *name, Eolian_C_Type_Type ctype, Eina_Bool by_ref);
 void database_typedecl_to_str(const Eolian_Typedecl *tp, Eina_Strbuf *buf);
 
 Eolian_Typedecl *database_type_decl_find(const Eolian_Unit *src, const Eolian_Type *tp);

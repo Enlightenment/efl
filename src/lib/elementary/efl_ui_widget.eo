@@ -148,7 +148,7 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
            The style can only be set before @Efl.Object.finalize, which means
            at construction time of the object (inside $efl_add in C).
          ]]
-         set @protected {
+         set {
             [[Can only be called during construction, before finalize.]]
             return: Eina.Error;
                [[Whether the style was successfully applied or not, see

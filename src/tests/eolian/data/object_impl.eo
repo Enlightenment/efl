@@ -41,7 +41,7 @@ abstract Object_Impl extends Base {
             @inout b: char;
             @out c: double;
          }
-         return: ptr(char) (null); [[comment for method return]]
+         return: mstring (null); [[comment for method return]]
       }
       foo2 @const {
          [[comment foo]]

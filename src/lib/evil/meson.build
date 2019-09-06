@@ -1,22 +1,6 @@
 evil_deps = []
 evil_pub_deps = []
 if target_machine.system() == 'windows'
-  evil_header_src = [
-  'Evil.h',
-  'evil_dlfcn.h',
-  'evil_fcntl.h',
-  'evil_langinfo.h',
-  'evil_locale.h',
-  'evil_macro_wrapper.h',
-  'evil_main.h',
-  'evil_stdio.h',
-  'evil_stdlib.h',
-  'evil_string.h',
-  'evil_time.h',
-  'evil_unistd.h',
-  'evil_util.h',
-  ]
-
   evil_src = [
   'evil_dlfcn.c',
   'evil_fcntl.c',
@@ -53,5 +37,6 @@ if target_machine.system() == 'windows'
   )
 else
   evil = declare_dependency()
-  automatic_pkgfile = false
 endif
+
+automatic_pkgfile = false

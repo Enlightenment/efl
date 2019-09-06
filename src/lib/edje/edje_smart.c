@@ -466,7 +466,17 @@ edje_object_mmap_set(Edje_Object *obj, const Eina_File *file, const char *group)
 EAPI Eina_Bool
 edje_object_file_set(Edje_Object *obj, const char *file, const char *group)
 {
-   efl_file_unload(obj);
+   // We can't blindly unload here - this loses swallowed content (in
+   // swallows, boxes, tables etc.) ... this here along with an actual
+   // implementation of file unload broke the pager in E for starters
+   // as shading then unshading (double click titlebar) a window would
+   // lose the mini preview image obj swallowed in. also fullscreening
+   // would do it. this also broke gadget bar, the xkb gadget in it too
+   // and more... so this is a particularly bad thing break. we need to
+   // iterate over every child and re-swallow, re-pack into boxes, tables
+   // etc. because that is what edje used to do. unloading here is definitely
+   // worse ... so disable for now.
+   // efl_file_unload(obj);
    return efl_file_simple_load(obj, file, group);
 }
 

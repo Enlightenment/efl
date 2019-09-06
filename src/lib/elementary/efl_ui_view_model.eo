@@ -1,23 +1,23 @@
-function @beta EflViewModelPropertyGet {
+function @beta EflUiViewModelPropertyGet {
    [[Function called when a property is get.]]
    params {
-      @in view_model: const(Efl.View_Model); [[The ViewModel object the @.property.get is issued on.]]
+      @in view_model: const(Efl.Ui.View_Model); [[The ViewModel object the @.property.get is issued on.]]
       @in property: stringshare; [[The property name the @.property.get is issued on.]]
    }
    return: any_value_ptr; [[The property value.]]
 };
 
-function @beta EflViewModelPropertySet {
+function @beta EflUiViewModelPropertySet {
    [[Function called when a property is set.]]
    params {
-      @in view_model: Efl.View_Model; [[The ViewModel object the @.property.set is issued on.]]
+      @in view_model: Efl.Ui.View_Model; [[The ViewModel object the @.property.set is issued on.]]
       @in property: stringshare; [[The property name the @.property.set is issued on.]]
       @in value: any_value_ptr @owned; [[The new value to set.]]
    }
    return: future<any_value_ptr>; [[The value that was finally set.]]
 };
 
-class @beta Efl.View_Model extends Efl.Composite_Model
+class @beta Efl.Ui.View_Model extends Efl.Composite_Model
 {
    [[Efl model providing helpers for custom properties used when linking a model to a view and you need to
      generate/adapt values for display.
@@ -70,9 +70,9 @@ class @beta Efl.View_Model extends Efl.Composite_Model
          ]]
          params {
             property: string; [[The property to bind on to.]]
-            get: EflViewModelPropertyGet; [[Define the get callback called when the @Efl.Model.property.get is called
+            get: EflUiViewModelPropertyGet; [[Define the get callback called when the @Efl.Model.property.get is called
                                             with the above property name.]]
-            set: EflViewModelPropertySet; [[Define the set callback called when the @Efl.Model.property.set is called
+            set: EflUiViewModelPropertySet; [[Define the set callback called when the @Efl.Model.property.set is called
                                             with the above property name.]]
             binded: iterator<string>; [[Iterator of property name to bind with this defined property see
                                         @.property_bind.]]
@@ -100,7 +100,7 @@ class @beta Efl.View_Model extends Efl.Composite_Model
          ]]
          params {
             @in source: string; [[Property name in the composited model.]]
-            @in destination: string; [[Property name in the @Efl.View_Model]]
+            @in destination: string; [[Property name in the @Efl.Ui.View_Model]]
          }
       }
       property_unbind {
@@ -110,7 +110,7 @@ class @beta Efl.View_Model extends Efl.Composite_Model
          ]]
          params {
             @in source: string; [[Property name in the composited model.]]
-            @in destination: string; [[Property name in the @Efl.View_Model]]
+            @in destination: string; [[Property name in the @Efl.Ui.View_Model]]
          }
       }
       @property children_bind {
@@ -139,6 +139,6 @@ class @beta Efl.View_Model extends Efl.Composite_Model
       Efl.Model.property { set; get; }
    }
    constructors {
-      Efl.View_Model.children_bind @optional;
+      Efl.Ui.View_Model.children_bind @optional;
    }
 }
