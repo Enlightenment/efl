@@ -54,6 +54,18 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
             @in end: Efl2.Text.Cursor; [[Range end position]]
          }
       }
+
+      cursor_handle_new {
+         [[Creates a new cursor handle associated with the text object]]
+         return: ptr(Efl2.Text.Cursor_Handle); [[The new cursor handle]]
+      }
+      cursor_handle_free {
+         [[Creates a new cursor handle associated with the text object]]
+         params {
+             cur: ptr(Efl2.Text.Cursor_Handle); [[The new cursor handle]]
+         }
+      }
+
       // FIXME: Do extents instead? Also Pango has ink and logical pango_layout_get_extents -> check what that means.
       @property style_insets {
          [[Gets the left, right, top and bottom insets of the text.

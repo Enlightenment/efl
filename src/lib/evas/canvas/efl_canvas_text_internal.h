@@ -12,10 +12,10 @@ typedef struct _Evas_Object_Textblock_Node_Text   Evas_Object_Textblock_Node_Tex
 
 struct _Efl2_Text_Cursor_Handle
 {
-   Evas_Object                     *obj;
+   Efl2_Canvas_Text                *obj;
+   Efl2_Text_Cursor                *cur_obj;
    size_t                           pos;
    Evas_Object_Textblock_Node_Text *node;
-   short                            ref;
    Eina_Bool                        changed : 1;
 };
 
@@ -103,6 +103,7 @@ Eina_Bool _canvas_text_cursor_paragraph_next(Efl2_Text_Cursor_Handle *cur);
 Eina_Bool _canvas_text_cursor_paragraph_first(Efl2_Text_Cursor_Handle *cur);
 Eina_Bool _canvas_text_cursor_paragraph_last(Efl2_Text_Cursor_Handle *cur);
 Efl2_Text_Cursor_Handle * _canvas_text_cursor_new(Efl2_Canvas_Text *eo_obj);
+void _canvas_text_cursor_free(Efl2_Text_Cursor_Handle *cur);
 void _canvas_text_cursor_init(Efl2_Text_Cursor_Handle *cur, const Evas_Object *tb);
 void _canvas_text_cursor_emit_if_changed(Efl2_Text_Cursor_Handle *cur);
 char *_canvas_text_cursor_text_plain_get(const Efl2_Text_Cursor_Handle *cur1, const Efl2_Text_Cursor_Handle *_cur2);
