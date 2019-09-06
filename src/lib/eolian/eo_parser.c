@@ -525,7 +525,6 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
              fdef->by_ref = EINA_TRUE;
              eo_lexer_get(ls);
              break;
-           case KW_at_owned:
            case KW_at_move:
              CASE_LOCK(ls, owned, "owned qualifier");
              fdef->type->owned = fdef->move = EINA_TRUE;
@@ -774,14 +773,14 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr)
                     def->base_type = eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE));
                   /* view-only types are not allowed to own the contents */
                   if (tpid == KW_array || tpid == KW_hash || tpid == KW_list || tpid == KW_future)
-                    if ((def->base_type->owned = def->base_type->move = (ls->t.kw == KW_at_owned || ls->t.kw == KW_at_move)))
+                    if ((def->base_type->owned = def->base_type->move = ls->t.kw == KW_at_move))
                       eo_lexer_get(ls);
                   if (tpid == KW_hash)
                     {
                        check_next(ls, ',');
                        def->base_type->next_type =
                          eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE));
-                       if ((def->base_type->next_type->owned = def->base_type->next_type->move = (ls->t.kw == KW_at_owned || ls->t.kw == KW_at_move)))
+                       if ((def->base_type->next_type->owned = def->base_type->next_type->move = ls->t.kw == KW_at_move))
                          eo_lexer_get(ls);
                     }
                   check_match(ls, '>', '<', bline, bcol);
@@ -1058,7 +1057,6 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void,
         ret->no_unused = EINA_TRUE;
         eo_lexer_get(ls);
         break;
-      case KW_at_owned:
       case KW_at_move:
         CASE_LOCK(ls, owned, "owned qualifier");
         ret->owned = EINA_TRUE;
@@ -1130,7 +1128,6 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
         par->optional = EINA_TRUE;
         eo_lexer_get(ls);
         break;
-      case KW_at_owned:
       case KW_at_move:
         CASE_LOCK(ls, owned, "owned qualifier");
         par->type->owned = par->move = EINA_TRUE;
