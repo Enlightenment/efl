@@ -1959,43 +1959,6 @@ parse_parts(Eo_Lexer *ls)
 }
 
 static void
-parse_composite(Eo_Lexer *ls)
-{
-   int line, col;
-   if (ls->klass->type == EOLIAN_CLASS_INTERFACE)
-     eo_lexer_syntax_error(ls, "composite section not allowed in interfaces");
-   eo_lexer_get(ls);
-   line = ls->line_number, col = ls->column;
-   check_next(ls, '{');
-   while (ls->t.token != '}')
-     {
-        Eina_Strbuf *buf = eina_strbuf_new();
-        eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), buf);
-        eo_lexer_context_push(ls);
-        parse_name(ls, buf);
-        const char *nm = eina_strbuf_string_get(buf);
-        char *fnm = database_class_to_filename(nm);
-        if (!eina_hash_find(ls->state->filenames_eo, fnm))
-          {
-             free(fnm);
-             char ebuf[PATH_MAX];
-             eo_lexer_context_restore(ls);
-             snprintf(ebuf, sizeof(ebuf), "unknown interface '%s'", nm);
-             eo_lexer_syntax_error(ls, ebuf);
-             return;
-          }
-        /* do not introduce a dependency */
-        database_defer(ls->state, fnm, EINA_FALSE);
-        free(fnm);
-        ls->klass->composite = eina_list_append(ls->klass->composite,
-          eina_stringshare_add(nm));
-        eo_lexer_dtor_pop(ls);
-        check_next(ls, ';');
-     }
-   check_match(ls, '}', '{', line, col);
-}
-
-static void
 parse_implements(Eo_Lexer *ls, Eina_Bool iface)
 {
    int line, col;
@@ -2065,7 +2028,6 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
              has_data          = EINA_FALSE,
              has_methods       = EINA_FALSE,
              has_parts         = EINA_FALSE,
-             has_composite     = EINA_FALSE,
              has_implements    = EINA_FALSE,
              has_constructors  = EINA_FALSE,
              has_events        = EINA_FALSE;
@@ -2111,10 +2073,6 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
       case KW_parts:
         CASE_LOCK(ls, parts, "parts definition")
         parse_parts(ls);
-        break;
-      case KW_composite:
-        CASE_LOCK(ls, composite, "composite definition")
-        parse_composite(ls);
         break;
       case KW_implements:
         CASE_LOCK(ls, implements, "implements definition")
@@ -2200,6 +2158,7 @@ _requires_add(Eo_Lexer *ls, Eina_Strbuf *buf)
    const char *required;
    char *fnm;
 
+   eina_strbuf_reset(buf);
    eo_lexer_context_push(ls);
    parse_name(ls, buf);
    required = eina_strbuf_string_get(buf);
@@ -2210,6 +2169,31 @@ _requires_add(Eo_Lexer *ls, Eina_Strbuf *buf)
    eo_lexer_context_pop(ls);
 
    free(fnm);
+}
+
+static void
+_composite_add(Eo_Lexer *ls, Eina_Strbuf *buf)
+{
+   eina_strbuf_reset(buf);
+   eo_lexer_context_push(ls);
+   parse_name(ls, buf);
+   const char *nm = eina_strbuf_string_get(buf);
+   char *fnm = database_class_to_filename(nm);
+   if (!eina_hash_find(ls->state->filenames_eo, fnm))
+     {
+        free(fnm);
+        char ebuf[PATH_MAX];
+        eo_lexer_context_restore(ls);
+        snprintf(ebuf, sizeof(ebuf), "unknown interface '%s'", nm);
+        eo_lexer_syntax_error(ls, ebuf);
+        return;
+     }
+   /* do not introduce a dependency */
+   database_defer(ls->state, fnm, EINA_FALSE);
+   free(fnm);
+   ls->klass->composite = eina_list_append(ls->klass->composite,
+     eina_stringshare_add(nm));
+   eo_lexer_context_pop(ls);
 }
 
 static void
@@ -2312,6 +2296,17 @@ tags_done:
                _inherit_dep(ls, ibuf, EINA_FALSE);
              while (test_next(ls, ','));
           }
+
+        if (ls->t.kw == KW_composite)
+          {
+             if (type == EOLIAN_CLASS_INTERFACE)
+                eo_lexer_syntax_error(ls, "composite not allowed in interfaces");
+             eo_lexer_get(ls);
+             do
+               _composite_add(ls, ibuf);
+             while (test_next(ls, ','));
+          }
+
         eo_lexer_dtor_pop(ls);
      }
 inherit_done:

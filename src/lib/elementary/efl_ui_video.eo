@@ -1,4 +1,6 @@
-class @beta Efl.Ui.Video extends Efl.Ui.Layout_Base implements Efl.File, Efl.Player, Efl.Access.Widget.Action
+class @beta Efl.Ui.Video extends Efl.Ui.Layout_Base
+   implements Efl.File, Efl.Player, Efl.Access.Widget.Action
+   composite Efl.Player
 {
    [[Efl UI video class]]
    methods {
@@ -49,8 +51,5 @@ class @beta Efl.Ui.Video extends Efl.Ui.Layout_Base implements Efl.File, Efl.Pla
       Efl.Player.start;
       Efl.Player.stop;
       Efl.Player.play { get; set; }
-   }
-   composite {
-      Efl.Player;
    }
 }
