@@ -295,6 +295,7 @@ _efl2_text_cursor_efl_object_destructor(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Da
         _canvas_text_cursor_free(pd->cur);
         pd->cur = NULL;
      }
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 
 #include "canvas/efl2_text_cursor.eo.c"
