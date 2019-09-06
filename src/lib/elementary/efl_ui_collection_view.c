@@ -85,6 +85,7 @@ struct _Efl_Ui_Collection_View_Data
    } match_content;
 
    Efl_Ui_Position_Manager_Request_Range current_range, running_range;
+   Eina_Bool model_has_size : 1;
 };
 
 struct _Efl_Ui_Collection_View_Focus_Manager_Data
@@ -136,6 +137,7 @@ _item_cleanup(Efl_Ui_Factory *factory, Efl_Ui_Collection_Item *item)
 
    efl_ui_view_model_set(entity, NULL);
    efl_replace(&item->entity, NULL);
+   efl_event_thaw(entity);
    efl_ui_factory_release(factory, entity);
 }
 
@@ -311,7 +313,12 @@ if (!index)
              pd->cache = eina_rbtree_inline_insert(pd->cache, EINA_RBTREE_GET(insert), _cache_tree_cmp, NULL);
              printf("INSERTING %lu\n", insert->index);
           }
+        {
+           Eina_Value prop;
 
+           prop = eina_value_bool_init(pd->model_has_size);
+           efl_model_property_set(child, "avoid_recalc", &prop);
+        }
      }
 
    return v;
@@ -352,13 +359,6 @@ _entity_fetch_cb(Eo *obj, void *data EINA_UNUSED, const Eina_Value v)
      }
 
    r = efl_ui_view_factory_create_with_event(pd->factory, eina_array_iterator_new(&tmp), obj);
-   if ((!pd->last_base.w) && (!pd->last_base.h))
-     {
-        efl_canvas_group_calculate(r);
-        pd->last_base = efl_gfx_hint_size_combined_min_get(r);
-     }
-   else
-     efl_canvas_group_need_recalculate_set(r, 0);
 
    eina_array_flush(&tmp);
 
@@ -419,6 +419,16 @@ printf("ENTITY FETCHED %d -> %d\n", request->offset, request->length);
         /* fix eventing in scroller by ensuring collection items are in the scroller hierarchy */
         efl_canvas_group_member_add(pd->pan, child);
         efl_gfx_entity_visible_set(child, EINA_FALSE);
+        if ((!pd->last_base.w) && (!pd->last_base.h))
+          {
+             efl_canvas_group_calculate(child);
+             pd->last_base = efl_gfx_hint_size_combined_min_get(child);
+          }
+        else
+          {
+             efl_event_freeze(child);
+             efl_canvas_group_need_recalculate_set(child, 0);
+          }
         if (request->offset + i == 0)
           {
              printf("NEW0 %p\n", child);
@@ -484,6 +494,7 @@ if (!pd->viewport[v]->items[index].model)
 
         if (!lookup)
           {
+             efl_event_thaw(child);
              efl_ui_factory_release(pd->factory, child);
              continue;
           }
@@ -559,11 +570,11 @@ _cache_size_fetch(Eina_List *requests, Efl_Ui_Collection_Request **request,
    model = lookup->item.model;
 
    // If we do not know the size
-   if (!ITEM_SIZE_FROM_MODEL(model, item_size))
+   if (!ITEM_BASE_SIZE_FROM_MODEL(pd->model, item_size))
      {
-        item_size = efl_gfx_hint_size_combined_min_get(lookup->item.entity);
+        ITEM_SIZE_FROM_MODEL(model, item_size);
         if (item_size.h == 0 && item_size.w == 0)
-          ITEM_BASE_SIZE_FROM_MODEL(pd->model, item_size);
+          item_size = efl_gfx_hint_size_combined_min_get(lookup->item.entity);
         else
           _size_to_model(model, item_size);
      }
@@ -782,7 +793,6 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
    Efl_Ui_Position_Manager_Size_Batch_Result result = {0};
    Efl_Model *parent;
    Eina_List *requests = NULL;
-   Eina_Size2D item_base;
    unsigned int limit;
    unsigned int idx = 0;
 
@@ -890,7 +900,7 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
             {
                sizes[idx].depth_leader = EINA_FALSE;
                sizes[idx].element_depth = 0;
-               sizes[idx].size = item_base;
+               sizes[idx].size = pd->last_base;
                     if (!sizes[idx].size.w || !sizes[idx].size.h) ERR("NULL SIZE ENT");
                idx++;
           }
@@ -902,7 +912,7 @@ _batch_size_cb(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf, Eina_R
              uint64_t search_index = conf.range.start_id + idx;
     // printf("%lu LINE %d\n", search_index, __LINE__);
              requests = _cache_size_fetch(requests, &request, pd,
-                                         search_index, &sizes[idx], item_base);
+                                         search_index, &sizes[idx], pd->last_base);
                   if (!sizes[idx].size.w || !sizes[idx].size.h) ERR("NULL SIZE ENT");
              idx++;
           }
@@ -1692,6 +1702,7 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
    efl_del(pd->model);
    pd->model = NULL;
    last_base = pd->last_base;
+   pd->model_has_size = EINA_FALSE;
    pd->last_base = EINA_SIZE2D(0, 0);
 
    if (!ev->current) return ;
@@ -1738,7 +1749,7 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
 
         requests = eina_list_append(requests, request);
      }*/
-   ITEM_BASE_SIZE_FROM_MODEL(model, pd->last_base);
+   pd->model_has_size = ITEM_BASE_SIZE_FROM_MODEL(model, pd->last_base);
    requests = _batch_request_flush(requests, data, pd);
 
    pd->model = model;

@@ -135,11 +135,20 @@ _efl_ui_widget_create(const Efl_Ui_Factory *factory,
                       Efl_Model *model)
 {
    Efl_Ui_Widget *w;
+   Eina_Value *value;
 
    w = efl_add(klass, parent,
                efl_ui_view_model_set(efl_added, model),
                efl_ui_factory_constructing(factory, efl_added));
    efl_ui_factory_building(factory, w);
+   value = efl_model_property_get(model, "avoid_recalc");
+   if (eina_value_type_get(value) != EINA_VALUE_TYPE_ERROR)
+     {
+        Eina_Bool avoid_recalc;
+
+        if (eina_value_bool_convert(value, &avoid_recalc) && avoid_recalc)
+          efl_canvas_group_need_recalculate_set(w, EINA_FALSE);
+     }
    return w;
 }
 

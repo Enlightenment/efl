@@ -6058,7 +6058,19 @@ _efl_ui_widget_efl_ui_view_model_set(Eo *obj,
    if (ev.current == pd->properties.model)
      efl_event_callback_call(obj, EFL_UI_VIEW_EVENT_MODEL_CHANGED, &ev);
 
-   if (pd->properties.model) _efl_ui_widget_model_update(obj, pd);
+   if (pd->properties.model)
+     {
+        Eina_Value *value;
+        _efl_ui_widget_model_update(obj, pd);
+        value = efl_model_property_get(pd->properties.model, "avoid_recalc");
+        if (eina_value_type_get(value) != EINA_VALUE_TYPE_ERROR)
+          {
+             Eina_Bool avoid_recalc;
+
+             if (eina_value_bool_convert(value, &avoid_recalc) && avoid_recalc)
+               efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
+          }
+     }
 
    efl_unref(ev.current);
    efl_unref(ev.previous);
