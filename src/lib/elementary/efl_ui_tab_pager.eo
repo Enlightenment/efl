@@ -1,13 +1,18 @@
 class @beta Efl.Ui.Tab_Pager extends Efl.Ui.Spotlight.Container
 {
-   [[Tab Pager class]]
+   [[Container for @Efl.Ui.Tab_Page
+
+     This container consists out of a Efl.Ui.Tab_Bar and a place to display the content of the pages.
+     The items that are generated out of the pages will be displayed in the tab bar of this pager.
+   ]]
    methods {
       @property tab_bar {
+         [[Tab bar where to add items of the @Efl.Ui.Tab_Page into.]]
          get {
 
          }
          values {
-            tab_bar: Efl.Canvas.Object;
+            tab_bar: Efl.Ui.Tab_Bar; [[Tab bar for the items of the @Efl.Ui.Tab_Page]]
          }
       }
    }
