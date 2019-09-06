@@ -274,7 +274,10 @@ _efl2_text_cursor_range_delete(Eo *eo_obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd
 EOLIAN static void
 _efl2_text_cursor_handle_set(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, Efl2_Text_Cursor_Handle *handle)
 {
-   // FIXME: What about refcouting?
+   if (handle && handle->cur_obj) {
+        // Remove the handle from the previous object before setting here
+        efl2_text_cursor_handle_set(handle->cur_obj, NULL);
+   }
    pd->cur = handle;
 }
 
@@ -285,16 +288,13 @@ _efl2_text_cursor_handle_get(const Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *p
 }
 
 EOLIAN static void
-_efl2_text_cursor_handle_ref(Efl2_Text_Cursor_Handle *handle)
+_efl2_text_cursor_efl_object_destructor(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd)
 {
-   handle->ref++;
-}
-
-EOLIAN static void
-_efl2_text_cursor_handle_unref(Efl2_Text_Cursor_Handle *handle)
-{
-   handle->ref--;
-   // FIXME: Actually do something
+   if (pd->cur)
+     {
+        _canvas_text_cursor_free(pd->cur);
+        pd->cur = NULL;
+     }
 }
 
 #include "canvas/efl2_text_cursor.eo.c"

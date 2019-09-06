@@ -7766,6 +7766,18 @@ _canvas_text_cursor_new(Efl2_Canvas_Text *eo_obj)
    return cur;
 }
 
+void
+_canvas_text_cursor_free(Efl2_Text_Cursor_Handle *cur)
+{
+   Efl2_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
+   if (cur->cur_obj)
+     {
+        efl2_text_cursor_handle_set(cur->cur_obj, NULL);
+     }
+   o->cursors = eina_list_remove(o->cursors, cur);
+   free(cur);
+}
+
 Eina_Bool
 _canvas_text_cursor_paragraph_first(Efl2_Text_Cursor_Handle *cur)
 {
@@ -10336,6 +10348,18 @@ _efl2_canvas_text_visible_range_get(Eo *eo_obj EINA_UNUSED,
    efl2_text_cursor_line_end(end);
 
    return EINA_TRUE;
+}
+
+EOLIAN static Efl2_Text_Cursor_Handle *
+_efl2_canvas_text_cursor_handle_new(Eo *obj, Efl2_Canvas_Text_Data *pd EINA_UNUSED)
+{
+   return _canvas_text_cursor_new(obj);
+}
+
+EOLIAN static void
+_efl2_canvas_text_cursor_handle_free(Eo *obj EINA_UNUSED, Efl2_Canvas_Text_Data *pd EINA_UNUSED, Efl2_Text_Cursor_Handle *cur)
+{
+   _canvas_text_cursor_free(cur);
 }
 
 Eina_Bool

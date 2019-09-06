@@ -9,22 +9,8 @@ enum @beta Efl2.Text.Cursor_Type
    under [[Cursor type under]]
 }
 
-// FIXME: eo_parent has to be the wanted textblock object -- not sure I like this
-//        Could have cursor_new on the object that creates a cursor and if you want a different cursor type just use either the cursor handle, or whoever implements that can just implement a wrapper
-//        Could also jut make the textblock object return a handle which we can use to load here directly, so we don't need the override functionality
-//          Need to figure out the life-time of this with refs and etc -> Apparently cursors don't have refs.
-// Whatever we do with the handle, I guess it should only have one owning eo wrapper? Because otherwise events on the cursor itself won't work. Or we can change that.
-//   I can just have a list of extra eo objects (other than the one pointed from the cursor itself so for extra such objects? Should be rarely used
-// How does it work with composite objects that use textblock?
-// Internally it's still a lightweight object and we should be able to get that lightweight object as an opaque type so
-// we can cache it
-// - Have signals that indicate it has changed? Or overkill at this stage?
-// Rename cluster onse to grapheme?
-// Should the range functions be moved here?
-// Am I happy with the range functions being on the cursor?
-// item_geometry_get <-- do I call it on the item handle? Or maybe just it's going to be done with range geometry get?
-//      Common enoguh to warrant a nice helper?
-class @beta Efl2.Text.Cursor {
+// Rename cluster onee to grapheme?
+class @beta Efl2.Text.Cursor extends Efl.Object {
    [[Cursor API
    ]]
    c_prefix: efl2_text_cursor;
@@ -213,7 +199,6 @@ class @beta Efl2.Text.Cursor {
             cur2: Efl2.Text.Cursor; [[End of range]]
          }
       }
-      // FIXME: Add line geometry get?
       // FIXME: returning an iterator here feels a bit stupid
       range_geometry_get {
          [[Get the simple geometry of a range in the text.
@@ -252,36 +237,27 @@ class @beta Efl2.Text.Cursor {
          }
       }
 
+      // One handle to one cursor object, that's it. Can't both have it.
       @property handle {
          [[This function should rarely be used by people. It gives you a lightweight handle to a cursor that you can either cache (make sure to ref!) or just use to populate a different cursor object.
 
-         You can either replace the handle to change the object this is working on, or get it for caching]]
+         You can either replace the handle to change the object this is working on, or get it for caching
+
+         The handle is freed when the object is freed if set, buth otherwise it remains under the control of the caller.
+         ]]
          set {  }
          get {  }
          values {
             handle: ptr(Efl2.Text.Cursor_Handle); [[The handle of the cursor object]]
          }
       }
-
-      // FIXME: mirror how we do ref/unref in Eo, in terms of returning values and etc.
-      handle_ref @static {
-         [[Increase the handle's refcount
-         ]]
-         params {
-              handle: ptr(Efl2.Text.Cursor_Handle); [[Cursor handle]]
-         }
-      }
-
-      handle_unref @static {
-         [[Decrease the handle's refcount
-         ]]
-         params {
-              handle: ptr(Efl2.Text.Cursor_Handle); [[Cursor handle]]
-         }
-      }
    }
    events {
       // FIXME: Needed for people who cache the position.
       changed: void; [[Called when its position has changed]]
+   }
+
+   implements {
+       Efl.Object.destructor;
    }
 }
