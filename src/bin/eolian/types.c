@@ -234,7 +234,7 @@ _err_generate(const Eolian_State *state, const Eolian_Error *err)
    if (!buf) buf = eina_strbuf_new();
    else eina_strbuf_append_char(buf, '\n');
 
-   eina_strbuf_prepend_printf(buf, "EWAPI extern Eina_Error %s_get(void);\n\n", fn);
+   eina_strbuf_prepend_printf(buf, "EWAPI Eina_Error %s_get(void);\n\n", fn);
 
    char *ufn = strdup(fn);
    eina_str_toupper(&ufn);
@@ -332,11 +332,13 @@ _source_gen_error(Eina_Strbuf *buf, const Eolian_Error *err)
      *p = '_';
    eina_str_tolower(&fn);
 
-   eina_strbuf_append_printf(buf, "EWAPI %s_get(void)\n{\n", fn);
+   eina_strbuf_append_printf(buf, "EWAPI Eina_Error %s_get(void)\n{\n", fn);
    free(fn);
 
    const char *msg = eolian_error_message_get(err);
-   eina_strbuf_append(buf, "   static Eina_Error err = eina_error_msg_static_register(\"");
+   eina_strbuf_append(buf, "   static Eina_Error err = EINA_ERROR_NO_ERROR;\n");
+   eina_strbuf_append(buf, "   if (err == EINA_ERROR_NO_ERROR)\n");
+   eina_strbuf_append(buf, "     err = eina_error_msg_static_register(\"");
    for (const char *p = msg; *p; ++p)
      switch (*p)
        {
