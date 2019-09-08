@@ -2,7 +2,7 @@ group { name: "e/deskmirror/frame/default";
    alias: "e/deskmirror/frame/dialog";
    alias: "e/deskmirror/frame/urgent";
    alias: "e/deskmirror/frame/sparkle";
-   images.image: "mini_box_bevel_shadow.png" COMP;
+   images.image: "pager_mini_win_shadow.png" COMP;
    script {
       public message(Msg_Type:type, id, ...) {
          if ((type == MSG_FLOAT) && (id == 0)) {
@@ -51,7 +51,7 @@ group { name: "e/deskmirror/frame/default";
       part { name: "shadow";
          mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "mini_box_bevel_shadow.png";
+            image.normal: "pager_mini_win_shadow.png";
             image.border: 7 7 7 7;
             image.middle: 0;
             rel1.to: "top";
