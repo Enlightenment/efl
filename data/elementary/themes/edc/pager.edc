@@ -938,12 +938,12 @@ group { name: "e/gadget/pager/default/desk";
 
 group { name: "e/modules/pager/window";
    alias: "e/gadget/pager/plain/window";
-   images.image: "mini_box_bevel_shadow.png" COMP;
+   images.image: "pager_mini_win_shadow.png" COMP;
    parts {
       part { name: "shadow"; mouse_events: 0;
          description { state: "default" 0.0;
-            image.normal: "mini_box_bevel_shadow.png";
-            image.border: 7 7 7 7;
+            image.normal: "pager_mini_win_shadow.png";
+            image.border: 5 5 5 5;
             image.middle: 0;
             rel1.to: "win";
             rel1.offset: -5 -5;
