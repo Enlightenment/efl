@@ -142,11 +142,6 @@ class Eolian_Type_Builtin_Type(IntEnum):
     VOID_PTR = 48
     FREE_CB = 49
 
-class Eolian_C_Type_Type(IntEnum):
-    DEFAULT = 0
-    PARAM = 1
-    RETURN = 2
-
 class Eolian_Expression_Type(IntEnum):
     UNKNOWN = 0
     INT = 1
@@ -1053,23 +1048,11 @@ class Type(Object):
     def builtin_type(self):
         return Eolian_Type_Builtin_Type(lib.eolian_type_builtin_type_get(self))
 
-    def c_type_get(self, ctype):
-        s = lib.eolian_type_c_type_get(self, ctype)
+    def c_type_get(self):
+        s = lib.eolian_type_c_type_get(self)
         ret = _str_to_py(s)
         lib.eina_stringshare_del(c_void_p(s))
         return ret
-
-    @cached_property
-    def c_type_default(self):
-        return self.c_type_get(Eolian_C_Type_Type.DEFAULT)
-
-    @cached_property
-    def c_type_param(self):
-        return self.c_type_get(Eolian_C_Type_Type.PARAM)
-
-    @cached_property
-    def c_type_return(self):
-        return self.c_type_get(Eolian_C_Type_Type.RETURN)
 
     @cached_property
     def typedecl(self):

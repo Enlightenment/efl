@@ -267,13 +267,13 @@ eolian_typedecl_is_extern(const Eolian_Typedecl *tp)
 }
 
 EAPI Eina_Stringshare *
-eolian_type_c_type_get(const Eolian_Type *tp, Eolian_C_Type_Type ctype)
+eolian_type_c_type_get(const Eolian_Type *tp)
 {
    Eina_Stringshare *ret;
    Eina_Strbuf *buf;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    buf = eina_strbuf_new();
-   database_type_to_str(tp, buf, NULL, ctype, EINA_FALSE);
+   database_type_to_str(tp, buf, NULL, EOLIAN_C_TYPE_DEFAULT, EINA_FALSE);
    ret = eina_stringshare_add(eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
    return ret;

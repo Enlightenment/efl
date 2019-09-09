@@ -380,7 +380,7 @@ eo_gen_docs_event_gen(const Eolian_State *state, const Eolian_Event *ev,
    if (rt)
      {
         p = buf;
-        Eina_Stringshare *rts = eolian_type_c_type_get(rt, EOLIAN_C_TYPE_DEFAULT);
+        Eina_Stringshare *rts = eolian_type_c_type_get(rt);
         snprintf(buf, sizeof(buf), "@return %s", rts);
         eina_stringshare_del(rts);
      }

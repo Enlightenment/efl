@@ -235,7 +235,7 @@ _generate_iterative_free(Eina_Strbuf **buf, const Eolian_Type *type, const Eolia
    eina_strbuf_append_printf(iter_param, "%s_iter", eolian_parameter_name_get(parameter));
 
    //generate the field definition
-   eina_strbuf_append_printf(*buf, "   %s", eolian_type_c_type_get(inner_type, EOLIAN_C_TYPE_DEFAULT));
+   eina_strbuf_append_printf(*buf, "   %s", eolian_type_c_type_get(inner_type));
    eina_strbuf_append_buffer(*buf, iter_param);
    eina_strbuf_append(*buf, ";\n");
 

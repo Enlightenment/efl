@@ -491,7 +491,7 @@ inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* uni
              {
                 complex.subtypes.push_back({stp
                                             , unit
-                                            , ::eolian_type_c_type_get(stp, EOLIAN_C_TYPE_DEFAULT)
+                                            , ::eolian_type_c_type_get(stp)
                                             , eolian_type_is_move(stp)
                                             , is_by::value});
                 stp = eolian_type_next_type_get(stp);
@@ -554,7 +554,7 @@ struct alias_def
           auto eolian_type = ::eolian_typedecl_base_type_get(alias_obj);
           base_type = type_def(eolian_type
                                , unit
-                               , ::eolian_type_c_type_get(eolian_type, EOLIAN_C_TYPE_DEFAULT)
+                               , ::eolian_type_c_type_get(eolian_type)
                                , value_ownership::unmoved
                                , is_by::value);
           is_undefined = false;
@@ -1029,7 +1029,7 @@ struct variable_def
         , full_name(::eolian_variable_name_get(variable))
         , base_type(::eolian_variable_base_type_get(variable)
                     , unit
-                    , ::eolian_type_c_type_get(eolian_variable_base_type_get(variable), ::EOLIAN_C_TYPE_DEFAULT)
+                    , ::eolian_type_c_type_get(eolian_variable_base_type_get(variable))
                     , value_ownership::unmoved
                     , is_by::value)
         , documentation(::eolian_variable_documentation_get(variable))
@@ -1117,7 +1117,7 @@ struct event_def
     : klass(cls, {attributes::qualifier_info::is_none, std::string()})
     , type( ::eolian_event_type_get(event) ? eina::optional<type_def>{{::eolian_event_type_get(event)
                                                                        , unit
-                                                                       , ::eolian_type_c_type_get(::eolian_event_type_get(event), EOLIAN_C_TYPE_DEFAULT)
+                                                                       , ::eolian_type_c_type_get(::eolian_event_type_get(event))
                                                                        , value_ownership::unmoved
                                                                        , is_by::value}
              } : eina::optional<type_def>{})
