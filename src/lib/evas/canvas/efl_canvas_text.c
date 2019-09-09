@@ -591,6 +591,7 @@ struct _Evas_Object_Textblock
 {
    Ecore_Thread                       *layout_th;
    int                                 layout_jobs;
+   Efl2_Text_Attribute_Handle         *style_attribute;
    Evas_Textblock_Style               *style;
    Eina_List                          *styles;
    Efl2_Text_Cursor_Handle        *cursor;
@@ -6599,6 +6600,12 @@ _layout_setup(Ctxt *c, const Eo *eo_obj, Evas_Coord w, Evas_Coord h)
              _format_fill(c->obj, c->fmt, c->o->style->default_tag);
              finalize = EINA_TRUE;
           }
+        if (c->o->style_attribute)
+          {
+             // FIXME: actually handle this
+             _format_fill(c->obj, c->fmt, "font=Sans font_size=10 color=#000");
+             finalize = EINA_TRUE;
+          }
 
         EINA_LIST_FOREACH(c->o->styles, itr, use)
           {
@@ -7045,14 +7052,14 @@ _style_fetch(const char *style)
 }
 
 EOLIAN static void
-_efl2_canvas_text_style_set(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o EINA_UNUSED, const char *key, const Efl2_Text_Attribute_Handle *attribute)
+_efl2_canvas_text_style_set(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o EINA_UNUSED, const char *key, Efl2_Text_Attribute_Handle *attribute)
 {
    // FIXME-implement
    (void) key;
-   (void) attribute;
+   o->style_attribute = attribute;
 }
 
-EOLIAN static const Efl2_Text_Attribute_Handle *
+EOLIAN static Efl2_Text_Attribute_Handle *
 _efl2_canvas_text_style_get(const Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o, const char *key)
 {
    // FIXME-implement
@@ -7111,7 +7118,7 @@ _efl_canvas_text_bidi_delimiters_get(const Eo *eo_obj EINA_UNUSED, Efl2_Canvas_T
 void
 _canvas_text_cursor_emit_if_changed(Efl2_Text_Cursor_Handle *cur)
 {
-   if (cur->changed)
+   if (cur && cur->changed)
      {
         cur->changed = EINA_FALSE;
         efl_event_callback_call(cur->obj, EFL_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
@@ -7758,8 +7765,11 @@ _find_layout_item_match(const Efl2_Text_Cursor_Handle *cur, Evas_Object_Textbloc
 Efl2_Text_Cursor_Handle *
 _canvas_text_cursor_new(Efl2_Canvas_Text *eo_obj)
 {
+   Efl2_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
    Efl2_Text_Cursor_Handle *cur = calloc(1, sizeof(*cur));
    _canvas_text_cursor_init(cur, eo_obj);
+
+   o->cursors = eina_list_append(o->cursors, cur);
    return cur;
 }
 
@@ -11553,7 +11563,7 @@ evas_object_textblock_free(Evas_Object *eo_obj)
    User_Style_Entry *use;
 
    _evas_object_textblock_clear(eo_obj);
-   evas_object_textblock_style_set(eo_obj, NULL);
+   // FIXME: evas_object_textblock_style_set(eo_obj, NULL);
 
    EINA_LIST_FREE(o->styles, use)
      {

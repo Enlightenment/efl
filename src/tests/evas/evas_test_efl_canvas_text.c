@@ -25,7 +25,9 @@ EAPI int
 _evas_textblock_format_offset_get(const Evas_Object_Textblock_Node_Format *n);
 /* end of functions defined in evas_object_textblock.c */
 
-#define TEST_FONT "font=DejaVuSans,UnDotum,malayalam font_source=" TESTS_SRC_DIR "/fonts/TestFont.eet"
+#define TEST_FONT_FAMILY "DejaVuSans,UnDotum,malayalam"
+#define TEST_FONT_SOURCE TESTS_SRC_DIR "/fonts/TestFont.eet"
+#define TEST_FONT "font=" TEST_FONT_FAMILY " font_source=" TEST_FONT_SOURCE
 
 static const char *style_buf =
    "DEFAULT='" TEST_FONT " font_size=10 color=#000 text_class=entry'"
@@ -43,6 +45,12 @@ static const char *style_buf =
    tb = efl_add(EFL2_CANVAS_TEXT_CLASS, evas); \
    fail_if(!tb); \
    efl2_canvas_text_legacy_newline_set(tb, EINA_FALSE); \
+   Efl2_Text_Attribute_Factory *attr_factory = efl_add(EFL2_TEXT_ATTRIBUTE_FACTORY_CLASS, tb); \
+   efl2_text_font_family_set(attr_factory, TEST_FONT_FAMILY); \
+   efl2_text_font_source_set(attr_factory, TEST_FONT_SOURCE); \
+   efl2_text_font_size_set(attr_factory, 10); \
+   efl2_text_style_foreground_color_set(attr_factory, 0, 0, 0, 1); \
+   efl2_canvas_text_style_set(tb, "DEFAULT", efl2_text_attribute_factory_create(attr_factory)); \
    /* FIXME:
    st = evas_textblock_style_new(); \
    fail_if(!st); \
@@ -132,7 +140,7 @@ EFL_START_TEST(canvas_text_cursor)
    /* Walk the textblock using cursor_char_next */
    efl2_text_set(tb, buf);
    fail_if(strcmp(efl2_text_get(tb), buf));
-   len = eina_unicode_utf8_get_len(buf) - 12; /* 12 because len(<br/>) == 1 and len(<ps/>) == 1 */
+   len = eina_unicode_utf8_get_len(buf);
    for (i = 0 ; i < len ; i++)
      {
         _CHECK_CURSOR_COORDS();
@@ -161,7 +169,7 @@ EFL_START_TEST(canvas_text_cursor)
 
    /* Create another cursor and insert text, making sure everything
     * is in sync. */
-   evas_object_textblock_clear(tb);
+   efl2_text_set(tb, "");
    Efl2_Text_Cursor *main_cur = efl_add(EFL2_TEXT_CURSOR_CLASS, tb,
          efl2_text_cursor_handle_set(efl_added, efl2_canvas_text_cursor_handle_new(tb)));
    efl2_text_cursor_copy(cur, main_cur);
@@ -176,8 +184,8 @@ EFL_START_TEST(canvas_text_cursor)
          efl2_text_cursor_position_get(main_cur));
 
    /* Insert text to a non-empty textblock */
-   evas_object_textblock_clear(tb);
-   evas_object_textblock_text_markup_set(tb, buf);
+   efl2_text_set(tb, "");
+   efl2_text_set(tb, buf);
    efl2_text_cursor_copy(cur, main_cur);
    fail_if(efl2_text_cursor_position_get(cur) !=
          efl2_text_cursor_position_get(main_cur));
@@ -381,7 +389,7 @@ EFL_START_TEST(canvas_text_cursor)
    fail_if(efl2_text_cursor_compare(main_cur, cur));
 
 
-   evas_object_textblock_text_markup_set(tb, buf);
+   efl2_text_set(tb, buf);
 
    /* Check that pen geometry and getting char at coord are in sync. */
    do
@@ -403,7 +411,7 @@ EFL_START_TEST(canvas_text_cursor)
    while (efl2_text_cursor_char_next(cur));
 
    /* Try positions before the first paragraph, and after the last paragraph */
-   evas_object_textblock_text_markup_set(tb, buf);
+   efl2_text_set(tb, buf);
    evas_object_textblock_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
    efl2_text_cursor_position_set(cur, 5);
@@ -419,7 +427,7 @@ EFL_START_TEST(canvas_text_cursor)
    fail_if(efl2_text_cursor_compare(cur, main_cur));
 
    /* Try positions between the first paragraph and the first line. */
-   evas_object_textblock_text_markup_set(tb, buf);
+   efl2_text_set(tb, buf);
    fail_if(!evas_textblock_cursor_char_coord_set(cur, 5, 1));
 
    /* Try positions beyond the left/right limits of lines. */
@@ -440,7 +448,7 @@ EFL_START_TEST(canvas_text_cursor)
 
 #ifdef HAVE_FRIBIDI
    /* Check direction */
-   evas_object_textblock_text_markup_set(tb, "test");
+   efl2_text_set(tb, "test");
    fail_if(strcmp(evas_object_textblock_text_markup_get(tb), "test"));
    dir = EVAS_BIDI_DIRECTION_RTL;
    evas_textblock_cursor_geometry_get(cur, NULL, NULL, NULL, NULL, &dir,
@@ -450,7 +458,7 @@ EFL_START_TEST(canvas_text_cursor)
    evas_textblock_cursor_geometry_get(cur, NULL, NULL, NULL, NULL, &dir,
                                       EVAS_TEXTBLOCK_CURSOR_BEFORE);
    fail_if(dir != EVAS_BIDI_DIRECTION_LTR);
-   evas_object_textblock_text_markup_set(tb, "עוד פסקה");
+   efl2_text_set(tb, "עוד פסקה");
    fail_if(strcmp(evas_object_textblock_text_markup_get(tb), "עוד פסקה"));
    dir = EVAS_BIDI_DIRECTION_LTR;
    evas_textblock_cursor_geometry_get(cur, NULL, NULL, NULL, NULL, &dir,
@@ -460,7 +468,7 @@ EFL_START_TEST(canvas_text_cursor)
    evas_textblock_cursor_geometry_get(cur, NULL, NULL, NULL, NULL, &dir,
                                       EVAS_TEXTBLOCK_CURSOR_BEFORE);
    fail_if(dir != EVAS_BIDI_DIRECTION_RTL);
-   evas_object_textblock_text_markup_set(tb, "123");
+   efl2_text_set(tb, "123");
    fail_if(strcmp(evas_object_textblock_text_markup_get(tb), "123"));
    dir = EVAS_BIDI_DIRECTION_RTL;
    evas_textblock_cursor_geometry_get(cur, NULL, NULL, NULL, NULL, &dir,
@@ -470,7 +478,7 @@ EFL_START_TEST(canvas_text_cursor)
    evas_textblock_cursor_geometry_get(cur, NULL, NULL, NULL, NULL, &dir,
                                       EVAS_TEXTBLOCK_CURSOR_BEFORE);
    fail_if(dir != EVAS_BIDI_DIRECTION_LTR);
-   evas_object_textblock_text_markup_set(tb, "%^&amp;");
+   efl2_text_set(tb, "%^&amp;");
    fail_if(strcmp(evas_object_textblock_text_markup_get(tb), "%^&amp;"));
    dir = EVAS_BIDI_DIRECTION_RTL;
    evas_textblock_cursor_geometry_get(cur, NULL, NULL, NULL, NULL, &dir,
@@ -486,7 +494,7 @@ EFL_START_TEST(canvas_text_cursor)
         Evas_Coord xx, yy, ww, hh;
 
         /* LTR text case */
-        evas_object_textblock_text_markup_set(tb, "test");
+        efl2_text_set(tb, "test");
         fail_if(strcmp(evas_object_textblock_text_markup_get(tb), "test"));
 
         /* EVAS_TEXTBLOCK_CURSOR_UNDER */
@@ -528,7 +536,7 @@ EFL_START_TEST(canvas_text_cursor)
         fail_if((x != xx) || (y != yy) || (w != ww) || (h != hh));
 
         /* RTL text case */
-        evas_object_textblock_text_markup_set(tb, "עוד פסקה");
+        efl2_text_set(tb, "עוד פסקה");
         fail_if(strcmp(evas_object_textblock_text_markup_get(tb), "עוד פסקה"));
 
         evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_NEUTRAL);
@@ -569,7 +577,7 @@ EFL_START_TEST(canvas_text_cursor)
 
         /* NEUTRAL(European Number) text case */
         /* It doesn't change characters sequence. */
-        evas_object_textblock_text_markup_set(tb, "123");
+        efl2_text_set(tb, "123");
         fail_if(strcmp(evas_object_textblock_text_markup_get(tb), "123"));
 
         evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_NEUTRAL);
@@ -610,7 +618,7 @@ EFL_START_TEST(canvas_text_cursor)
 
         /* NEUTRAL(Other Neutrals) text case */
         /* It changes characters sequence. */
-        evas_object_textblock_text_markup_set(tb, "%^&amp;");
+        efl2_text_set(tb, "%^&amp;");
         fail_if(strcmp(evas_object_textblock_text_markup_get(tb), "%^&amp;"));
 
         evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_NEUTRAL);
@@ -653,7 +661,7 @@ EFL_START_TEST(canvas_text_cursor)
         evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_NEUTRAL);
      }
 
-   evas_object_textblock_text_markup_set(tb,
+   efl2_text_set(tb,
          "testנסיוןtestנסיון<ps/>"
          "נסיוןtestנסיוןtest<ps/>"
          "testנסיוןtest<ps/>"
@@ -701,7 +709,7 @@ EFL_START_TEST(canvas_text_cursor)
      }
 #endif
 
-   evas_object_textblock_text_markup_set(tb, buf);
+   efl2_text_set(tb, buf);
    /* Testing line geometry.*/
      {
         Evas_Coord lx, ly, lw, lh;
@@ -768,7 +776,7 @@ EFL_START_TEST(canvas_text_cursor)
         fail_if(3 != evas_textblock_cursor_line_coord_set(cur, 100000));
 
         /* And now with a valigned textblock. */
-        evas_object_textblock_text_markup_set(tb, buf);
+        efl2_text_set(tb, buf);
         evas_object_textblock_size_native_get(tb, &nw, &nh);
         evas_object_resize(tb, 2 * nw, 2 * nh);
 
@@ -807,7 +815,7 @@ EFL_START_TEST(canvas_text_cursor)
         evas_textblock_cursor_line_coord_set(main_cur, (2 * nh) - 1);
         fail_if(efl2_text_cursor_compare(main_cur, cur));
 
-        evas_object_textblock_text_markup_set(tb, "123<br/>456<br/>789");
+        efl2_text_set(tb, "123<br/>456<br/>789");
         evas_object_textblock_valign_set(tb, 0.0);
         efl2_text_cursor_position_set(cur, 6);
         ck_assert_int_eq(evas_textblock_cursor_line_coord_set(cur, 0), 0);
@@ -815,7 +823,7 @@ EFL_START_TEST(canvas_text_cursor)
 
      {
         const char *buf_wb = "a This is_a t:e.s't a";
-        evas_object_textblock_text_markup_set(tb, buf_wb);
+        efl2_text_set(tb, buf_wb);
 
         /* Word start/end */
         efl2_text_cursor_position_set(cur, 3);
@@ -837,13 +845,13 @@ EFL_START_TEST(canvas_text_cursor)
         fail_if(18 != efl2_text_cursor_position_get(cur));
 
         /* Bug with 1 char word separators at paragraph start. */
-        evas_object_textblock_text_markup_set(tb, "=test");
+        efl2_text_set(tb, "=test");
         efl2_text_cursor_position_set(cur, 4);
         evas_textblock_cursor_word_start(cur);
         fail_if(1 != efl2_text_cursor_position_get(cur));
 
         /* 1 char words separated by spaces. */
-        evas_object_textblock_text_markup_set(tb, "a a a a");
+        efl2_text_set(tb, "a a a a");
         efl2_text_cursor_paragraph_first(cur);
 
         evas_textblock_cursor_word_end(cur);
@@ -866,7 +874,7 @@ EFL_START_TEST(canvas_text_cursor)
         ck_assert_int_eq(4, efl2_text_cursor_position_get(cur));
 
         /* Going back when ending with whites. */
-        evas_object_textblock_text_markup_set(tb, "aa bla ");
+        efl2_text_set(tb, "aa bla ");
         evas_textblock_cursor_paragraph_last(cur);
 
         evas_textblock_cursor_word_start(cur);
@@ -876,7 +884,7 @@ EFL_START_TEST(canvas_text_cursor)
         ck_assert_int_eq(5, efl2_text_cursor_position_get(cur));
 
         /* moving across paragraphs */
-        evas_object_textblock_text_markup_set(tb,
+        efl2_text_set(tb,
                                               "test<ps/>"
                                               "  case");
         efl2_text_cursor_position_set(cur, 4);
@@ -890,7 +898,7 @@ EFL_START_TEST(canvas_text_cursor)
 
    /* Make sure coords are correct for ligatures */
      {
-        evas_object_textblock_text_markup_set(tb, "fi<br/>fii");
+        efl2_text_set(tb, "fi<br/>fii");
 
 #ifdef HAVE_HARFBUZZ
         for (i = 0 ; i < 2 ; i++)
@@ -937,7 +945,7 @@ EFL_START_TEST(canvas_text_cursor)
      {
         size_t pos;
 
-        evas_object_textblock_text_markup_set(tb,
+        efl2_text_set(tb,
               "שלום עולם hello world<ps>"
               "שלום עולם hello world<ps>"
               "hello world שלום עולם");
@@ -960,7 +968,7 @@ EFL_START_TEST(canvas_text_cursor)
         int pos;
 
         cur2 = evas_object_textblock_cursor_new(tb);
-        evas_object_textblock_text_markup_set(tb, "Hello world");
+        efl2_text_set(tb, "Hello world");
         efl2_text_cursor_position_set(cur2, 0);
         efl2_text_cursor_position_set(cur, 5);
         for (j = 5; j >= 0; j--)
@@ -969,7 +977,7 @@ EFL_START_TEST(canvas_text_cursor)
              ck_assert_int_eq(pos, j);
              evas_textblock_cursor_char_delete(cur2);
           }
-        evas_object_textblock_text_markup_set(tb, "Hello world");
+        efl2_text_set(tb, "Hello world");
         efl2_text_cursor_position_set(cur2, 0);
         efl2_text_cursor_position_set(cur, 5);
         for (j = 5; j <= 10; j++)
@@ -983,7 +991,7 @@ EFL_START_TEST(canvas_text_cursor)
 
    /* Testing for grapheme cluster */
    cur2 = evas_object_textblock_cursor_new(tb);
-   evas_object_textblock_text_markup_set(tb, "ഹലോ");
+   efl2_text_set(tb, "ഹലോ");
    efl2_text_cursor_position_set(cur, 0);
    efl2_text_cursor_position_set(cur2, 0);
 
@@ -3152,7 +3160,7 @@ EFL_START_TEST(evas_textblock_text_getters)
             EVAS_TEXTBLOCK_TEXT_MARKUP), "st.<ps/>טקסט בעברית<ps/>an"));
 
    /* Uninit cursors and other weird cases */
-   evas_object_textblock_clear(tb);
+   efl2_text_set(tb, "");
    efl2_text_cursor_copy(cur, main_cur);
    efl2_text_cursor_text_insert(main_cur, "aaa");
    fail_if(strcmp(evas_textblock_cursor_range_text_get(cur, main_cur,
