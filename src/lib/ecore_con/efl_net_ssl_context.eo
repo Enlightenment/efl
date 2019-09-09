@@ -46,7 +46,7 @@ class @beta Efl.Net.Ssl.Context extends Efl.Object {
               Can only be set during object construction!
             ]]
             values {
-                paths: iterator<string> @owned; [[Path list for certificates]]
+                paths: iterator<string> @move; [[Path list for certificates]]
             }
         }
 
@@ -56,7 +56,7 @@ class @beta Efl.Net.Ssl.Context extends Efl.Object {
               Can only be set during object construction!
             ]]
             values {
-                paths: iterator<string> @owned; [[Path list for private keys]]
+                paths: iterator<string> @move; [[Path list for private keys]]
             }
         }
 
@@ -66,7 +66,7 @@ class @beta Efl.Net.Ssl.Context extends Efl.Object {
               Can only be set during object construction!
             ]]
             values {
-                paths: iterator<string> @owned; [[Path list for CRL's]]
+                paths: iterator<string> @move; [[Path list for CRL's]]
             }
         }
 
@@ -76,7 +76,7 @@ class @beta Efl.Net.Ssl.Context extends Efl.Object {
               Can only be set during object construction!
             ]]
             values {
-                paths: iterator<string> @owned; [[Path list for CA's]]
+                paths: iterator<string> @move; [[Path list for CA's]]
             }
         }
 

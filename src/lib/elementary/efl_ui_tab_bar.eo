@@ -1,6 +1,11 @@
-class @beta Efl.Ui.Tab_Bar extends Efl.Ui.Layout_Base implements Efl.Ui.Single_Selectable, Efl.Pack_Linear
+class @beta Efl.Ui.Tab_Bar extends Efl.Ui.Layout_Base
+   implements Efl.Ui.Single_Selectable, Efl.Pack_Linear
+   composite Efl.Pack_Linear, Efl.Pack
 {
-   [[Tab Bar class]]
+   [[A selectable box of items.
+
+     Within one object only one @Efl.Ui.Tab_Bar_Default_Item can be selected at the same time.
+   ]]
    methods {
 
    }
@@ -22,10 +27,5 @@ class @beta Efl.Ui.Tab_Bar extends Efl.Ui.Layout_Base implements Efl.Ui.Single_S
       Efl.Pack_Linear.pack_at;
       Efl.Container.content_count;
       Efl.Container.content_iterate;
-   }
-   composite {
-      Efl.Pack_Linear;
-      Efl.Pack;
-      Efl.Pack_Linear;
    }
 }

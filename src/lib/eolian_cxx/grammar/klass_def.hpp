@@ -452,7 +452,7 @@ inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* uni
    switch( ::eolian_type_type_get(eolian_type))
      {
      case EOLIAN_TYPE_VOID:
-       original_type = attributes::regular_type_def{"void", {qualifiers(eolian_type), {}}, {}};
+       original_type = attributes::regular_type_def{"void", {qualifiers(eolian_type, is_moved), {}}, {}};
        break;
      case EOLIAN_TYPE_REGULAR:
        if (!stp)
@@ -474,12 +474,12 @@ inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* uni
            for(efl::eina::iterator<const char> namespace_iterator( ::eolian_type_namespaces_get(eolian_type))
                  , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
              namespaces.push_back(&*namespace_iterator);
-           original_type = {regular_type_def{ ::eolian_type_short_name_get(eolian_type), {qualifiers(eolian_type), {}}, namespaces, type_type, is_undefined}};
+           original_type = {regular_type_def{ ::eolian_type_short_name_get(eolian_type), {qualifiers(eolian_type, is_moved), {}}, namespaces, type_type, is_undefined}};
          }
        else
          {
            complex_type_def complex
-            {{::eolian_type_short_name_get(eolian_type), {qualifiers(eolian_type), {}}, {}}, {}};
+            {{::eolian_type_short_name_get(eolian_type), {qualifiers(eolian_type, is_moved), {}}, {}}, {}};
            while (stp)
              {
                 complex.subtypes.push_back({stp, unit, EOLIAN_C_TYPE_DEFAULT, eolian_type_is_move(stp)});
@@ -491,7 +491,7 @@ inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* uni
      case EOLIAN_TYPE_CLASS:
        {
           Eolian_Class const* klass = eolian_type_class_get(eolian_type);
-          original_type = klass_name(klass, {qualifiers(eolian_type), {}});
+          original_type = klass_name(klass, {qualifiers(eolian_type, is_moved), {}});
        }
        break;
      default:

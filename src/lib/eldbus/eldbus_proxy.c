@@ -148,7 +148,10 @@ _eldbus_proxy_clear(Eldbus_Proxy *proxy)
 
    eldbus_cbs_free_dispatch(&(proxy->cbs_free), proxy);
    if (proxy->props)
-     eina_hash_free(proxy->props);
+     {
+        eina_hash_free(proxy->props);
+        proxy->props = NULL;
+     }
    proxy->refcount = 0;
 }
 

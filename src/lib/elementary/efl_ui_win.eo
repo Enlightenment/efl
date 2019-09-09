@@ -139,6 +139,7 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
                   Efl.Content, Efl.Input.State, Efl.Input.Interface, Efl.Screen,
                   Efl.Text, Efl.Config,
                   Efl.Ui.Widget_Focus_Manager, Efl.Ui.Focus.Manager_Window_Root
+   composite      Efl.Config
 {
    [[Efl UI window class.
 
@@ -894,8 +895,5 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
       elm,action,block_menu @beta: void; [[Called when elementary block menu action occurs]]
       pause: void; [[Called when the window is not going be displayed for some time]]
       resume: void; [[Called before a window is rendered after a pause event]]
-   }
-   composite {
-      Efl.Config;
    }
 }

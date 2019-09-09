@@ -18,7 +18,7 @@ mixin @beta Efl.Ui.Focus.Composition requires Efl.Ui.Widget {
            the focus property is redirected to the evas focus property. The mixin will take care of registration.
          ]]
          values {
-            logical_order : list<Efl.Gfx.Entity> @owned; [[The order to use]]
+            logical_order : list<Efl.Gfx.Entity> @move; [[The order to use]]
          }
       }
       dirty @protected {

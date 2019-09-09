@@ -4,6 +4,8 @@ import elm_general;
 class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickable,
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.File,
                  Efl.Ui.Text_Selectable, Efl.Text_Interactive, Efl.Text_Markup
+   composite
+                 Efl.Text_Interactive, Efl.Text_Markup
 {
    [[A flexible text widget which can be static (as a label) or editable by
      the user (as a text entry). It provides all sorts of editing facilities
@@ -373,9 +375,5 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
       anchor,out: Elm.Entry_Anchor_Info; [[Called on anchor out]]
       anchor,up: Elm.Entry_Anchor_Info; [[called on anchor up]]
       cursor,changed,manual: void; [[Called on manual cursor change]]
-   }
-   composite {
-      Efl.Text_Interactive;
-      Efl.Text_Markup;
    }
 }

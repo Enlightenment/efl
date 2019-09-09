@@ -12,7 +12,7 @@ function @beta EflUiViewModelPropertySet {
    params {
       @in view_model: Efl.Ui.View_Model; [[The ViewModel object the @.property.set is issued on.]]
       @in property: stringshare; [[The property name the @.property.set is issued on.]]
-      @in value: any_value_ptr @owned; [[The new value to set.]]
+      @in value: any_value_ptr @move; [[The new value to set.]]
    }
    return: future<any_value_ptr>; [[The value that was finally set.]]
 };

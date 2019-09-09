@@ -11,7 +11,7 @@ class @beta Efl.Text_Markup_Util {
          params {
             @in text: string; [[The text (UTF-8) to convert to markup]]
          }
-         return: mstring @owned; [[The markup representation of given text]]
+         return: mstring @move; [[The markup representation of given text]]
       }
       markup_to_text @static {
          [[Converts a given (UTF-8) text to a markup-compatible string.
@@ -21,7 +21,7 @@ class @beta Efl.Text_Markup_Util {
          params {
             @in text: string; [[The markup-text to convert to text (UTF-8)]]
          }
-         return: mstring @owned; [[The text representation of given format]]
+         return: mstring @move; [[The text representation of given format]]
       }
    }
 }

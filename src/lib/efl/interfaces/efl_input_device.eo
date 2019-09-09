@@ -65,7 +65,7 @@ class Efl.Input.Device extends Efl.Object
            This is only meaningful with seat devices, as they are groups of
            real input devices.
          ]]
-         return: iterator<const(Efl.Input.Device)> @owned; [[List of device children]]
+         return: iterator<const(Efl.Input.Device)> @move; [[List of device children]]
       }
       @property pointer_device_count {
          [[The number of pointer devices in this seat.

@@ -18,6 +18,7 @@ struct @beta Efl.Ui.Panel_Scroll_Info
 class @beta Efl.Ui.Panel extends Efl.Ui.Layout_Base
                          implements Efl.Ui.Focus.Layer, Efl.Ui.Scrollable_Interactive, Efl.Content,
                                     Efl.Access.Widget.Action
+                         composite Efl.Ui.Scrollable_Interactive
 {
    [[Elementary panel class]]
    methods {
@@ -92,8 +93,5 @@ class @beta Efl.Ui.Panel extends Efl.Ui.Layout_Base
    }
    events {
       toggled: void; [[Called when the hidden state was toggled]]
-   }
-   composite {
-      Efl.Ui.Scrollable_Interactive;
    }
 }

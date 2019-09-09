@@ -109,7 +109,7 @@ class @beta Efl.Net.Socket_Udp extends Efl.Net.Socket_Fd {
               The iterator is only valid until a new group is joined
               or left using @.multicast_join or @.multicast_leave.
             ]]
-            return: iterator<string> @owned; [[Iterator to multicast groups]]
+            return: iterator<string> @move; [[Iterator to multicast groups]]
         }
 
         @property multicast_time_to_live {

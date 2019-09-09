@@ -1,6 +1,10 @@
 class @beta Efl.Ui.Tab_Page extends Efl.Ui.Layout_Base implements Efl.Content
 {
-   [[Tab Page class]]
+   [[A holder class for setting up a page in the pager.
+
+     The item assosiated with this page can be used to setup a item which will later be displayed in the @Efl.Ui.Tab_Bar
+     of the @Efl.Ui.Tab_Pager where this page was added to.
+   ]]
    methods {
       @property tab_bar_item {
          [[Get this page represented as a @Efl.Ui.Tab_Bar_Default_Item

@@ -357,7 +357,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
 
         /// <summary>Gets the list of Eo operations to override.</summary>
         /// <returns>The list of Eo operations to be overload.</returns>
-        public override System.Collections.Generic.List<Efl_Op_Description> GetEoOps(Type type)
+        public override System.Collections.Generic.List<Efl_Op_Description> GetEoOps(Type type, bool includeInherited)
         {
             var descs = new System.Collections.Generic.List<Efl_Op_Description>();
 

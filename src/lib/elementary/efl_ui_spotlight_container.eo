@@ -9,7 +9,7 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Layout_Base implements Efl
    [[The Spotlight widget is a container for other sub-widgets, where only one sub-widget is active at any given time.
 
      Sub-widgets are added using the @Efl.Pack_Linear interface and the active one (the one in the "spotlight") is
-     selected using @.active_index.
+     selected using @.active_element.
 
      The way the different sub-widgets are rendered can be customized through the @.spotlight_manager object.
      For example, only the active sub-widget might be shown, or it might be shown in a central position whereas the
@@ -33,7 +33,7 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Layout_Base implements Efl
           If it is not set, only the active sub-widget is shown and transitions are instantaneous (not animated).
         ]]
         values {
-          spotlight_manager : Efl.Ui.Spotlight.Manager @owned; [[The Spotlight Manager object or $NULL.]]
+          spotlight_manager : Efl.Ui.Spotlight.Manager @move; [[The Spotlight Manager object or $NULL.]]
         }
       }
       @property indicator {
@@ -43,17 +43,17 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Layout_Base implements Efl
           Its location inside the container is controlled by the @.spotlight_manager.
         ]]
         values {
-          indicator : Efl.Ui.Spotlight.Indicator @owned; [[The Indicator object or $NULL.]]
+          indicator : Efl.Ui.Spotlight.Indicator @move; [[The Indicator object or $NULL.]]
         }
       }
-      @property active_index {
+      @property active_element {
          [[Currently active sub-widget (the one with the spotlight) among all the sub-widgets added to this widget
 
            Changing this value might trigger an animation.
          ]]
          values {
-            index: int; [[Index of the sub-widget that has the spotlight, from 0 to the number of sub-widgets - 1
-            (@Efl.Container.content_count - 1).]]
+            element : Efl.Ui.Widget; [[Sub-widget that has the spotlight.
+            The element has to be added prior to this call via the @Efl.Pack_Linear interface.]]
          }
       }
       @property spotlight_size {
@@ -66,7 +66,7 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Layout_Base implements Efl
          }
       }
       push @beta {
-         [[Packs a new sub-widget at the position indicated by @.active_index (0 by default).
+         [[Packs a new sub-widget before @.active_element, and move the spotlight there.
 
            This is the same behavior as a push operation on a stack.
 
@@ -81,7 +81,7 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Layout_Base implements Efl
 
            The sub-widgets behind it naturally flow down so the next one gets the spotlight.
            This is the same behavior as a pop operation on a stack.
-           When combined with @.push you don't have to worry about @.active_index since only the first sub-widget is
+           When combined with @.push you don't have to worry about @.active_element since only the first sub-widget is
            manipulated.
 
            An animation might be triggered to give the new sub-widget the spotlight, come into position and the old

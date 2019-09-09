@@ -99,7 +99,7 @@ class TestEolianError
         // the managed code
         var obj = new Dummy.TestObject();
         Listener listener = new Listener();
-        obj.EvtWithIntEvt += listener.callback;
+        obj.EvtWithIntEvent += listener.callback;
 
         Test.AssertRaises<Efl.EflException>(() => { obj.EmitEventWithInt(2); });
     }

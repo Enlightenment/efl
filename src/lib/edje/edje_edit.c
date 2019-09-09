@@ -454,7 +454,11 @@ _edje_real_part_free(Edje *ed, Edje_Real_Part *rp)
         rp->custom = NULL;
      }
 
-   free(rp->drag);
+   if (rp->drag)
+     {
+        free(rp->drag);
+        rp->drag = NULL;
+     }
 
    if (rp->param2) free(rp->param2->set);
    eina_mempool_free(_edje_real_part_state_mp, rp->param2);

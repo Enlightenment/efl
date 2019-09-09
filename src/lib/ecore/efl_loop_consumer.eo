@@ -52,7 +52,7 @@ abstract Efl.Loop_Consumer extends Efl.Object
          [[Create a new promise with the scheduler coming from the loop provided by this object.
 
 	 Note: You should not use eina_promise_data_set as this function rely on controlling the promise data.]]
-	 return: ptr(Eina.Promise) @owned; [[The new promise.]]
+	 return: ptr(Eina.Promise) @move; [[The new promise.]]
       }
    }
    implements {

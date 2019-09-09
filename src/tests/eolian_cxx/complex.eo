@@ -25,7 +25,7 @@ class Complex extends Efl.Object
       }
       incontowncontown {
          params {
-           l: list<list<string> @move> @owned;
+           l: list<list<string> @move> @move;
          }
       }
       incontowncont {
@@ -106,7 +106,7 @@ class Complex extends Efl.Object
       }
       outcontowncontown {
          params {
-           @out l: list<list<string> @move> @owned;
+           @out l: list<list<string> @move> @move;
          }
       }
       outcontowncont {

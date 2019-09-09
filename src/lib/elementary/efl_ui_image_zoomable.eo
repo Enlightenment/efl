@@ -5,6 +5,7 @@ struct @extern Elm.Photocam.Progress; [[Photocam progress information.]]
 class @beta Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
                              Efl.Ui.Scrollable_Interactive,
                              Efl.Ui.Scrollbar
+   composite Efl.Ui.Scrollable_Interactive, Efl.Ui.Scrollbar
 {
    [[Elementary Image Zoomable class]]
    methods {
@@ -83,9 +84,5 @@ class @beta Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
       download,progress: Elm.Photocam.Progress; [[Called when photocam download progress updated]]
       download,done: void; [[Called when photocam download finished]]
       download,error: Elm.Photocam.Error; [[Called when photocam download failed]]
-   }
-   composite {
-      Efl.Ui.Scrollable_Interactive;
-      Efl.Ui.Scrollbar;
    }
 }

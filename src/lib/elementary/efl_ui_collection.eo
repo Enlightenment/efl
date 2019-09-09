@@ -6,6 +6,10 @@ class @beta Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
                    Efl.Ui.Multi_Selectable,
                    Efl.Ui.Focus.Manager_Sub,
                    Efl.Ui.Widget_Focus_Manager
+   composite
+                   Efl.Ui.Scrollable_Interactive,
+                   Efl.Ui.Scrollbar,
+                   Efl.Ui.Focus.Manager
 {
    [[This widget displays a list of items in an arrangement controlled by an external @.position_manager
      object. By using different @.position_manager objects this widget can show unidimensional lists or
@@ -50,7 +54,7 @@ class @beta Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
       @property position_manager {
          [[Position manager object that handles placement of items.]]
          values {
-            position_manager : Efl.Ui.Position_Manager.Entity @owned; [[Ownership is passed to the item container.]]
+            position_manager : Efl.Ui.Position_Manager.Entity @move; [[Ownership is passed to the item container.]]
          }
       }
    }
@@ -94,11 +98,6 @@ class @beta Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
       item,longpressed : Efl.Ui.Item; [[A $longpressed event occurred over an item.]]
       item,clicked : Efl.Ui.Item; [[A $clicked event occurred over an item.]]
       item,clicked,any : Efl.Ui.Item; [[A $clicked,any event occurred over an item.]]
-   }
-   composite {
-      Efl.Ui.Scrollable_Interactive;
-      Efl.Ui.Scrollbar;
-      Efl.Ui.Focus.Manager;
    }
 }
 

@@ -51,7 +51,7 @@ interface Efl.Canvas.Scene
            Warning: This function will only evaluate top-level objects; child
            or "sub" objects will be skipped.
          ]]
-         return: iterator<Efl.Gfx.Entity> @owned @no_unused; [[
+         return: iterator<Efl.Gfx.Entity> @move @no_unused; [[
             The list of objects that are over the given position in $e.
          ]]
          params {
@@ -103,7 +103,7 @@ interface Efl.Canvas.Scene
            Warning: This function will only evaluate top-level objects; child
            or "sub" objects will be skipped.
          ]]
-         return: iterator<Efl.Gfx.Entity> @owned @no_unused; [[Iterator to objects]]
+         return: iterator<Efl.Gfx.Entity> @move @no_unused; [[Iterator to objects]]
          params {
             @in rect: Eina.Rect; [[The rectangular region.]]
             @in include_pass_events_objects: bool; [[
@@ -153,7 +153,7 @@ interface Efl.Canvas.Scene
            a pointer and a keyboard. A seat object is the parent of the individual input
            devices.
          ]]
-         return: iterator<Efl.Input.Device> @owned;
+         return: iterator<Efl.Input.Device> @move;
             [[An iterator over the attached seats.]]
       }
       /* FIXME Efl.Input.Device is not stable yet*/

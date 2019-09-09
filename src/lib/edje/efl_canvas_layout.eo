@@ -34,7 +34,7 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
 
       access_part_iterate @beta {
          [[Iterates over all accessibility-enabled part names.]]
-         return: iterator<string> @owned; [[Part name iterator]]
+         return: iterator<string> @move; [[Part name iterator]]
       }
       @property seat {
          get {

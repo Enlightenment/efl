@@ -25,7 +25,7 @@ interface @beta Efl.Pack_Table extends Efl.Pack
       }
       table_contents_get {
          [[Returns all objects at a given position in this table.]]
-         return: iterator<Efl.Gfx.Entity> @owned; [[Iterator to table contents]]
+         return: iterator<Efl.Gfx.Entity> @move; [[Iterator to table contents]]
          params {
             @in col: int; [[Column number]]
             @in row: int; [[Row number]]

@@ -2221,7 +2221,7 @@ static Evas_Image_Load_Func evas_image_load_xpm_func =
   NULL,
   (void*) evas_image_load_file_data_xpm,
   NULL,
-  EINA_FALSE,
+  EINA_TRUE,
   EINA_FALSE
 };
 

@@ -12,24 +12,21 @@
 #define MY_CLASS EFL_UI_TAB_PAGER_CLASS
 
 static void
-_select(Eo *obj, int index)
+_select(Eo *obj EINA_UNUSED, Efl_Ui_Tab_Page *page)
 {
-   Efl_Ui_Tab_Page *page = efl_pack_content_get(obj, index);
-
    efl_ui_selectable_selected_set(efl_ui_tab_page_tab_bar_item_get(page), EINA_TRUE);
 }
 
 static void
 _tab_select_cb(void *data, const Efl_Event *event)
 {
-   EFL_UI_TAB_PAGER_DATA_GET(data, sd);
    Efl_Ui_Tab_Bar_Default_Item *selected;
-   int i = 0;
+   Efl_Ui_Tab_Page *page;
 
    selected = efl_ui_single_selectable_last_selected_get(event->object);
-   i = efl_pack_index_get(sd->tab_bar, selected);
-   if (efl_ui_spotlight_active_index_get(data) != i)
-     efl_ui_spotlight_active_index_set(data, i);
+   page = efl_parent_get(selected);
+   if (efl_ui_spotlight_active_element_get(data))
+     efl_ui_spotlight_active_element_set(data, page);
 }
 
 EOLIAN static Efl_Canvas_Object *
@@ -39,10 +36,10 @@ _efl_ui_tab_pager_tab_bar_get(const Eo *obj EINA_UNUSED, Efl_Ui_Tab_Pager_Data *
 }
 
 EOLIAN static void
-_efl_ui_tab_pager_efl_ui_spotlight_container_active_index_set(Eo *obj, Efl_Ui_Tab_Pager_Data *sd EINA_UNUSED, int index)
+_efl_ui_tab_pager_efl_ui_spotlight_container_active_element_set(Eo *obj, Efl_Ui_Tab_Pager_Data *sd EINA_UNUSED, Efl_Ui_Widget *element)
 {
-   efl_ui_spotlight_active_index_set(efl_super(obj, MY_CLASS), index);
-   _select(obj, index);
+   efl_ui_spotlight_active_element_set(efl_super(obj, MY_CLASS), element);
+   _select(obj, element);
 }
 
 EOLIAN static void
