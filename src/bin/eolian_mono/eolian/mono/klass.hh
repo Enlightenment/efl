@@ -398,7 +398,7 @@ struct klass
                                             context);
          auto native_inherit_name = name_helpers::klass_native_inherit_name(cls);
          auto inherit_name = name_helpers::klass_inherit_name(cls);
-         auto implementable_methods = helpers::get_all_implementable_methods(cls, context);
+         auto implementable_methods = cls.functions;
          bool root = !helpers::has_regular_ancestor(cls);
          auto const& indent = current_indentation(inative_cxt);
 
@@ -430,7 +430,7 @@ struct klass
          if(!as_generator(
              indent << scope_tab << "/// <summary>Gets the list of Eo operations to override.</summary>\n"
              << indent << scope_tab << "/// <returns>The list of Eo operations to be overload.</returns>\n"
-             << indent << scope_tab << "public override System.Collections.Generic.List<Efl_Op_Description> GetEoOps(System.Type type)\n"
+             << indent << scope_tab << "public override System.Collections.Generic.List<Efl_Op_Description> GetEoOps(System.Type type, bool includeInherited)\n"
              << indent << scope_tab << "{\n"
              << indent << scope_tab << scope_tab << "var descs = new System.Collections.Generic.List<Efl_Op_Description>();\n"
             )
@@ -452,8 +452,22 @@ struct klass
                 ).generate(sink,  attributes::unused, inative_cxt))
              return false;
 
+         if(!as_generator(
+             indent << scope_tab << scope_tab << "if (includeInherited)\n"
+             << indent << scope_tab(2) << "{\n"
+             << indent << scope_tab(3) << "var all_interfaces = type.GetInterfaces();\n"
+             << indent << scope_tab(3) << "foreach (var iface in all_interfaces)\n"
+             << indent << scope_tab(3) << "{\n"
+             << indent << scope_tab(4) <<  "var moredescs = ((Efl.Eo.NativeClass)iface.GetCustomAttributes(false)?.FirstOrDefault(attr => attr is Efl.Eo.NativeClass))?.GetEoOps(type, false);\n"
+             << indent << scope_tab(4) <<  "if (moredescs != null)\n"
+             << indent << scope_tab(5) <<  "descs.AddRange(moredescs);\n"
+             << indent << scope_tab(3) << "}\n"
+             << indent << scope_tab(2) << "}\n"
+           ).generate(sink, attributes::unused, inative_cxt))
+             return false;
+
          if (!root || context_find_tag<class_context>(context).current_wrapper_kind != class_context::concrete)
-           if(!as_generator(indent << scope_tab << scope_tab << "descs.AddRange(base.GetEoOps(type));\n").generate(sink, attributes::unused, inative_cxt))
+           if(!as_generator(indent << scope_tab << scope_tab << "descs.AddRange(base.GetEoOps(type, false));\n").generate(sink, attributes::unused, inative_cxt))
              return false;
 
          if(!as_generator(
