@@ -2,7 +2,7 @@ struct @beta Efl2.Text.Attribute.Handle;
 
 // FIXME: maybe for both this an item, do'nt have insert, delete or any of those, but rather have those in the textblock object?
 // - Do we even want refcount?
-class @beta Efl2.Text.Attribute.Factory implements Efl2.Text.Font.Properties, Efl2.Text.Style.Properties {
+class @beta Efl2.Text.Attribute.Factory extends Efl.Object implements Efl2.Text.Font.Properties, Efl2.Text.Style.Properties {
    [[Annotation factory API
 
        Long-lived you keep it and reuse it as needed
