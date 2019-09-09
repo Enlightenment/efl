@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Check extends Efl.Ui.Layout_Base
+class Efl.Ui.Check extends Efl.Ui.Layout_Base
                          implements Efl.Access.Widget.Action, Efl.Text, Efl.Content, Efl.Input.Clickable,
                                     Efl.Ui.Selectable
 {

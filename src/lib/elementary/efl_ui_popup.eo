@@ -1,5 +1,5 @@
 parse efl_gfx_hint;
-enum @beta Efl.Ui.Popup_Align {
+enum Efl.Ui.Popup_Align {
     [[This is the alignment method for positioning Popup widgets.]]
     none = 0, [[Popup not aligned.]]
     center,   [[Popup is aligned to the center of its anchor object.]]
@@ -9,7 +9,7 @@ enum @beta Efl.Ui.Popup_Align {
     bottom    [[Popup's bottom is aligned to the bottom of its anchor object.]]
 }
 
-class @beta Efl.Ui.Popup extends Efl.Ui.Layout_Base implements Efl.Content, Efl.Ui.Focus.Layer,
+class Efl.Ui.Popup extends Efl.Ui.Layout_Base implements Efl.Content, Efl.Ui.Focus.Layer,
                                                                Efl.Ui.Widget_Scrollable_Content
 {
    [[A styled container widget which overlays a window's contents.

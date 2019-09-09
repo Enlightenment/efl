@@ -1,4 +1,4 @@
-interface @beta Efl.Ui.Range_Display
+interface Efl.Ui.Range_Display
 {
    [[Interface that contains properties regarding the displaying of a value within a range.
 

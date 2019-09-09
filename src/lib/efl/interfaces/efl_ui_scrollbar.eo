@@ -1,6 +1,6 @@
 import efl_ui_layout_orientable;
 
-enum @beta Efl.Ui.Scrollbar_Mode
+enum Efl.Ui.Scrollbar_Mode
 {
    [[When should the scrollbar be shown.]]
    auto = 0, [[Visible if necessary.]]
@@ -9,7 +9,7 @@ enum @beta Efl.Ui.Scrollbar_Mode
    last      [[For internal use only.]]
 }
 
-interface @beta Efl.Ui.Scrollbar
+interface Efl.Ui.Scrollbar
 {
    [[Interface used by widgets which can display scrollbars, enabling them to contain more content
      than actually fits inside them.]]

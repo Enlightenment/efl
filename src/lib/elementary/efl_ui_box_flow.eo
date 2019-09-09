@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Box_Flow extends Efl.Ui.Box
+class Efl.Ui.Box_Flow extends Efl.Ui.Box
 {
    [[A Flow Box is a customized type of @Efl.Ui.Box. It will fill along the axis selected with
      @Efl.Ui.Layout_Orientable.orientation (which defaults to Horizontal), until items will no

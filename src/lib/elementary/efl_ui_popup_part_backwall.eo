@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Popup_Part_Backwall extends Efl.Ui.Layout_Part implements Efl.File
+class Efl.Ui.Popup_Part_Backwall extends Efl.Ui.Layout_Part implements Efl.File
 {
    [[A Popup backwall is the background object for an @Efl.Ui.Popup widget. It can be returned
      from a given Popup widget by using the @Efl.Part API to fetch the "backwall" part.
