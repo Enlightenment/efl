@@ -113,7 +113,7 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
             key: string; [[The name to the style. $NULL is the default style]]
          }
          values {
-            attribute: const(ptr(Efl2.Text.Attribute.Handle)); [[The style]]
+            attribute: ptr(Efl2.Text.Attribute.Handle); [[The style]]
          }
       }
       @property size_formatted {
