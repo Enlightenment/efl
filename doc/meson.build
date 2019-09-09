@@ -114,7 +114,11 @@ foreach text_filter_property : text_filter_properties
   filter_code = run_command('cat', join_paths(meson.source_root(), 'src', 'examples', 'evas', 'filters', 'filter_'+name+'.lua'))
 
   doc_target += custom_target('preview_text_filters_'+name,
-                  command: [env, 'EFL_RUN_IN_TREE=1', preview_text_filter.full_path(), text, filter_code.stdout(), '@OUTPUT@', font, size],
+                  command: [
+                    env, 'EFL_RUN_IN_TREE=1',
+                    'EFL_EVAS_FILTER_LUA_PREFIX=' + join_paths(meson.source_root(), 'src', 'lib', 'evas'),
+                    preview_text_filter.full_path(), text, filter_code.stdout(), '@OUTPUT@', font, size
+                  ],
                   depends: preview_text_filter,
                   output:  'filter_'+name+'.png',
                   build_by_default: false

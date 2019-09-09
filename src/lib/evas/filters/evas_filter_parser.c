@@ -2262,7 +2262,13 @@ static char *_lua_color_code = NULL;
 static inline void
 _lua_import_path_get(char *path, size_t len, const char *name)
 {
-   const char *pfx = _evas_module_datadir_get();
+   const char *pfx = NULL;
+   /* a hack for in-tree runs, can point this to src/lib/evas */
+   if (getenv("EFL_RUN_IN_TREE"))
+     pfx = getenv("EFL_EVAS_FILTER_LUA_PREFIX");
+   /* the real path not for in-tree runs */
+   if (!pfx)
+     pfx = _evas_module_datadir_get();
    size_t r = 0;
 
 #ifdef FILTERS_DEBUG
