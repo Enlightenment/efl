@@ -1,4 +1,4 @@
-abstract @beta Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Selectable, Efl.Input.Clickable
+abstract Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Selectable, Efl.Input.Clickable
 {
    [[Selectable Item abstraction.
 

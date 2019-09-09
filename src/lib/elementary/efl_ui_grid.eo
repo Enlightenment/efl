@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Grid extends Efl.Ui.Collection
+class Efl.Ui.Grid extends Efl.Ui.Collection
 {
    [[A scrollable grid of @Efl.Ui.Item objects, typically @Efl.Ui.Grid_Default_Item objects.
 

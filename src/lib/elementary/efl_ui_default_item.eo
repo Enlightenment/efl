@@ -1,4 +1,4 @@
-abstract @beta Efl.Ui.Default_Item extends Efl.Ui.Item implements
+abstract Efl.Ui.Default_Item extends Efl.Ui.Item implements
                                 Efl.Text,
                                 Efl.Text_Markup,
                                 Efl.Ui.L10n,

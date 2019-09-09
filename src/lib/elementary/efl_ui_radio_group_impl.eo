@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Radio_Group_Impl extends Efl.Object implements Efl.Ui.Radio_Group
+class Efl.Ui.Radio_Group_Impl extends Efl.Object implements Efl.Ui.Radio_Group
 {
    [[Object with the default implementation for @Efl.Ui.Radio_Group.
    ]]

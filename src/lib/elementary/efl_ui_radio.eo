@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Radio extends Efl.Ui.Check implements Efl.Access.Widget.Action
+class Efl.Ui.Radio extends Efl.Ui.Check implements Efl.Access.Widget.Action
 {
    [[Elementary radio button class.
 

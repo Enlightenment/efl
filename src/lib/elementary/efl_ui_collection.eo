@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
+class Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
                    Efl.Pack_Linear,
                    Efl.Ui.Layout_Orientable,
                    Efl.Ui.Multi_Selectable,
@@ -49,7 +49,7 @@ class @beta Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
             @in animation: bool; [[If you want to have an animated transition.]]
          }
       }
-      @property position_manager {
+      @property position_manager @beta {
          [[Position manager object that handles placement of items.]]
          values {
             position_manager : Efl.Ui.Position_Manager.Entity @move; [[Ownership is passed to the item container.]]

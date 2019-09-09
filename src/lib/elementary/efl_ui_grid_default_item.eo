@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Grid_Default_Item extends Efl.Ui.Default_Item
+class Efl.Ui.Grid_Default_Item extends Efl.Ui.Default_Item
 {
    [[Default Item class to be used inside @Efl.Ui.Grid containers.
      The $icon part is in the middle, the $extra part overlaps it on its upper-right corner.
