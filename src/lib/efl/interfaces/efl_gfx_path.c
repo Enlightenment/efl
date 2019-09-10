@@ -1529,4 +1529,10 @@ _efl_gfx_path_copy_from(Eo *obj, Efl_Gfx_Path_Data *pd, const Eo *dup_from)
    _efl_gfx_path_path_set(obj, pd, from->commands, from->points);
 }
 
+EOLIAN static void
+_efl_gfx_path_efl_object_destructor(Eo *obj, Efl_Gfx_Path_Data *pd)
+{
+   _efl_gfx_path_reset(obj, pd);
+}
+
 #include "interfaces/efl_gfx_path.eo.c"
