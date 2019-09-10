@@ -1533,6 +1533,7 @@ EOLIAN static void
 _efl_gfx_path_efl_object_destructor(Eo *obj, Efl_Gfx_Path_Data *pd)
 {
    _efl_gfx_path_reset(obj, pd);
+   efl_destructor(efl_super(obj, EFL_GFX_PATH_MIXIN));
 }
 
 #include "interfaces/efl_gfx_path.eo.c"

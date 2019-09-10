@@ -292,5 +292,6 @@ _efl_core_command_line_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Core_Comma
    free(pd->string_command);
    pd->string_command = NULL;
    _clear_command(pd);
+   efl_destructor(efl_super(obj, MY_CLASS));
 }
 #include "efl_core_command_line.eo.c"
