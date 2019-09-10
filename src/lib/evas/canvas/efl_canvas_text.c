@@ -13558,7 +13558,7 @@ _evas_textblock_format_offset_get(const Evas_Object_Textblock_Node_Format *n)
 }
 #endif
 
-#if 0
+#if 1
 /* Good for debugging */
 EAPI void
 pfnode(Evas_Object_Textblock_Node_Format *n)
