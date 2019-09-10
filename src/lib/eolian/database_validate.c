@@ -230,8 +230,8 @@ _validate_by_ref(Eolian_Type *tp, Eina_Bool by_ref, Eina_Bool move)
    if (tp->btype == EOLIAN_TYPE_BUILTIN_FUTURE)
      return EINA_TRUE;
 
-   /* not marked @move; just validate */
-   if (!move)
+   /* not marked @move, or marked @by_ref; just validate */
+   if (!move || by_ref)
       return EINA_TRUE;
 
    /* marked @move, not pointer-like or otherwise ownable, error */
