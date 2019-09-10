@@ -135,7 +135,7 @@ EFL_START_TEST(canvas_text_cursor)
 #ifdef HAVE_FRIBIDI
    Evas_BiDi_Direction dir;
 #endif
-   const char *buf = "This is a test." EFL_TEXT_PARAGRAPH_SEPARATOR_UTF8 "Lets see if this works." EFL_TEXT_PARAGRAPH_SEPARATOR_UTF8 "עוד פסקה.";
+   const char *buf = "This is a\n test." EFL_TEXT_PARAGRAPH_SEPARATOR_UTF8 "Lets see if this works." EFL_TEXT_PARAGRAPH_SEPARATOR_UTF8 "עוד פסקה.";
 
    /* Walk the textblock using cursor_char_next */
    efl2_text_set(tb, buf);
@@ -248,6 +248,7 @@ EFL_START_TEST(canvas_text_cursor)
 
    /* Cher next */
    efl2_text_cursor_paragraph_last(cur);
+   efl2_text_cursor_paragraph_end(cur);
    fail_if(efl2_text_cursor_char_next(cur));
 
    efl2_text_cursor_paragraph_first(cur);
