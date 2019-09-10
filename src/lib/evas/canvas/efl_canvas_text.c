@@ -6824,8 +6824,6 @@ _efl2_canvas_text_efl_object_constructor(Eo *eo_obj, Efl2_Canvas_Text_Data *clas
             EINA_INLIST_GET(o->text_nodes),
             EINA_INLIST_GET(_evas_textblock_node_text_new())));
    o->cursor = _canvas_text_cursor_new(eo_obj);
-   //XXX: empty the list hacky but we need o->cursors to not contain o->cursor
-   o->cursors = eina_list_remove_list(o->cursors, o->cursors);
    _format_command_init();
    evas_object_textblock_init(eo_obj);
 
@@ -9145,12 +9143,6 @@ _evas_textblock_cursors_update_offset(const Efl2_Text_Cursor_Handle *cur,
    Efl2_Text_Cursor_Handle *ocur;
    Efl2_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
 
-   ocur = o->cursor;
-   if (cur != ocur)
-     {
-        _canvas_text_cursor_update_offset(ocur, o, n, start, offset);
-     }
-
    EINA_LIST_FOREACH(o->cursors, l, ocur)
      {
         if (ocur != cur)
@@ -9184,7 +9176,6 @@ _evas_textblock_changed(Efl2_Canvas_Text_Data *o, Evas_Object *eo_obj)
      }
 
    // FIXME: emit ONCE after this following checks
-   _canvas_text_cursor_emit_if_changed(o->cursor);
    EINA_LIST_FOREACH(o->cursors, l, data_obj)
      {
         _canvas_text_cursor_emit_if_changed(data_obj);
@@ -11175,10 +11166,6 @@ _evas_object_textblock_clear(Evas_Object *eo_obj)
      }
 
    _nodes_clear(eo_obj);
-   co = o->cursor;
-   co->node = NULL;
-   co->pos = 0;
-   co->changed = EINA_TRUE;
    EINA_LIST_FOREACH(o->cursors, l, cur)
      {
         cur->node = NULL;
@@ -11598,7 +11585,6 @@ evas_object_textblock_free(Evas_Object *eo_obj)
      {
         evas_object_textblock_style_user_pop(eo_obj);
      }
-   free(o->cursor);
    while (o->cursors)
      {
         Efl2_Text_Cursor_Handle *cur;
