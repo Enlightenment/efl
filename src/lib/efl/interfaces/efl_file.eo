@@ -23,7 +23,7 @@ mixin Efl.File requires Efl.Object {
             ]]
          }
          values {
-            f: ptr(const(Eina.File)); [[The handle to the @Eina.File that will be used]]
+            f: const(Eina.File) @by_ref; [[The handle to the @Eina.File that will be used]]
          }
       }
       @property file {
