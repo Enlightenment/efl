@@ -90,14 +90,14 @@ EOLIAN static Eina_Bool
 _efl2_text_cursor_char_next(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd)
 {
    Efl2_Text_Cursor_Handle *cur = pd->cur;
-   return _canvas_text_cursor_next(cur, EINA_FALSE);
+   return _canvas_text_cursor_next(cur);
 }
 
 EOLIAN static Eina_Bool
 _efl2_text_cursor_char_prev(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd)
 {
    Efl2_Text_Cursor_Handle *cur = pd->cur;
-   return _canvas_text_cursor_prev(cur, EINA_FALSE);
+   return _canvas_text_cursor_prev(cur);
 }
 
 EOLIAN static void
