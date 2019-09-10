@@ -14,7 +14,6 @@ typedef struct _Validate_State
    Eina_Bool stable;
    Eina_Bool unimplemented;
    Eina_Bool unimplemented_beta;
-   Eina_Bool ptr_stable;
 } Validate_State;
 
 static Eina_Bool
@@ -261,8 +260,11 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
 
    if (tp->is_ptr)
      {
-        if (vals->stable && vals->ptr_stable)
-          _eo_parser_log(&tp->base, "ptr() used in stable API");
+        if (vals->stable)
+          {
+             _eo_parser_log(&tp->base, "ptr() used in stable API");
+             return EINA_FALSE;
+          }
         tp->is_ptr = EINA_FALSE;
         Eina_Bool still_ownable = database_type_is_ownable(src, tp, EINA_FALSE);
         tp->is_ptr = EINA_TRUE;
@@ -1475,8 +1477,7 @@ database_validate(const Eolian_Unit *src)
       EINA_FALSE,
       EINA_TRUE,
       !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_WARN"),
-      !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_BETA_WARN"),
-      !!getenv("EOLIAN_PTR_STABLE_WARN")
+      !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_BETA_WARN")
    };
 
    /* do an initial pass to refill inherits */
