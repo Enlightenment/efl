@@ -1,11 +1,3 @@
-function @beta Efl.Ui.Scrollable_On_Show_Region {
-   [[Function pointer for on show region hook]]
-   params {
-      @in obj: Efl.Canvas.Object; [[Canvas object]]
-      @in region: Eina.Rect; [[Showed region]]
-   }
-};
-
 struct Efl.Ui.Widget_Focus_State {
    [[All relevant fields needed for the current state of focus registration
      @since 1.22

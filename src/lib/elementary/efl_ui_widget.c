@@ -5160,7 +5160,7 @@ _efl_ui_widget_efl_ui_focus_object_focus_set(Eo *obj, Elm_Widget_Smart_Data *pd,
 /* Legacy APIs */
 
 EAPI void
-elm_widget_on_show_region_hook_set(Eo *obj, void *data, Efl_Ui_Scrollable_On_Show_Region func, Eina_Free_Cb func_free_cb)
+elm_widget_on_show_region_hook_set(Eo *obj, void *data, Elm_Widget_On_Show_Region_Cb func, Eina_Free_Cb func_free_cb)
 {
    ELM_WIDGET_DATA_GET(obj, sd);
 
