@@ -289,7 +289,8 @@ _efl_canvas_vg_object_efl_file_load(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd)
    Evas_Object_Protected_Data *obj;
 
    obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   pd->vg_entry = evas_cache_vg_entry_create(file, key,
+   pd->vg_entry = evas_cache_vg_entry_create(evas_object_evas_get(eo_obj),
+                                             file, key,
                                              obj->cur->geometry.w,
                                              obj->cur->geometry.h);
    evas_object_change(eo_obj, obj);

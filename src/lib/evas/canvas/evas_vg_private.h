@@ -18,6 +18,7 @@ typedef struct _Vg_Cache
 
 typedef struct _Vg_Cache_Entry
 {
+   Evas                 *evas;
    char                 *hash_key;
    const Eina_File      *file;
    Eina_Stringshare     *key;
@@ -124,7 +125,7 @@ struct _Efl_Canvas_Vg_Interpolation
 void                        evas_cache_vg_init(void);
 void                        evas_cache_vg_shutdown(void);
 Vg_Cache_Entry*             evas_cache_vg_entry_resize(Vg_Cache_Entry *entry, int w, int h);
-Vg_Cache_Entry*             evas_cache_vg_entry_create(const Eina_File *file, const char *key, int w, int h);
+Vg_Cache_Entry*             evas_cache_vg_entry_create(Evas *evas, const Eina_File *file, const char *key, int w, int h);
 Efl_VG*                     evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry, unsigned int frame_num);
 void                        evas_cache_vg_entry_del(Vg_Cache_Entry *vg_entry);
 Vg_File_Data *              evas_cache_vg_file_open(const Eina_File *file, const char *key);
