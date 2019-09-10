@@ -8095,31 +8095,14 @@ _canvas_text_cursor_next(Efl2_Text_Cursor_Handle *cur)
    ind = cur->pos;
    text = eina_ustrbuf_string_get(cur->node->unicode);
 
-   if (text[ind]) ind = cur->pos + 1;
-
-   /* Only allow pointing a null if it's the last paragraph.
-    * because we don't have a PS there. */
    if (text[ind])
      {
-        cur->pos = ind;
+        cur->pos++;
         return EINA_TRUE;
      }
    else
      {
-        if (!_canvas_text_cursor_paragraph_next(cur))
-          {
-             /* If we already were at the end, that means we don't have
-              * where to go next we should return FALSE */
-             if (cur->pos == (size_t) ind)
-               return EINA_FALSE;
-
-             cur->pos = ind;
-             return EINA_TRUE;
-          }
-        else
-          {
-             return EINA_TRUE;
-          }
+        return _canvas_text_cursor_paragraph_next(cur);
      }
 }
 
@@ -8161,16 +8144,11 @@ _canvas_text_cursor_paragraph_end(Efl2_Text_Cursor_Handle *cur)
    if (!cur) return EINA_FALSE;
    TB_NULL_CHECK(cur->node, EINA_FALSE);
    ind = eina_ustrbuf_length_get(cur->node->unicode);
-   /* If it's not the last paragraph, go back one, because we want to point
-    * to the PS, not the NULL */
-   if (EINA_INLIST_GET(cur->node)->next)
-      ind--;
 
-   if (ind >= 0)
-      cur->pos = ind;
-   else
-      cur->pos = 0;
+   if (cur->pos == (size_t) ind)
+      return EINA_FALSE;
 
+   cur->pos = ind;
    return EINA_TRUE;
 }
 
@@ -8739,6 +8717,12 @@ _canvas_text_cursor_position_get(const Efl2_Text_Cursor_Handle *cur)
      {
         npos += eina_ustrbuf_length_get(n->unicode);
         n = _NODE_TEXT(EINA_INLIST_GET(n)->next);
+
+        // Add the paragraph separator if not the last
+        if (n)
+          {
+             npos++;
+          }
      }
    return npos + cur->pos;
 }
@@ -8761,10 +8745,18 @@ _canvas_text_cursor_position_set(Efl2_Text_Cursor_Handle *cur, int _pos)
      }
 
    n = o->text_nodes;
-   while (n && (pos >= eina_ustrbuf_length_get(n->unicode)))
+   while (n)
      {
-        pos -= eina_ustrbuf_length_get(n->unicode);
-        n = _NODE_TEXT(EINA_INLIST_GET(n)->next);
+        size_t len = eina_ustrbuf_length_get(n->unicode);
+        Evas_Object_Textblock_Node_Text *nnode = _NODE_TEXT(EINA_INLIST_GET(n)->next);
+        len += (nnode) ? 1 : 0; // Add the paragraph separator
+        if (pos < len)
+          {
+             break;
+          }
+
+        n = nnode;
+        pos -= len;
      }
 
    if (n)
@@ -9282,12 +9274,6 @@ _canvas_text_cursor_text_insert(Efl2_Text_Cursor_Handle *cur, const char *_text)
              end++;
           }
 
-        // We want to include the PS in the text
-        if (*end == _PARAGRAPH_SEPARATOR)
-          {
-             end++;
-          }
-
         int len = _evas_textblock_cursor_text_append(cur, start, end - start);
         cur->pos += len; /*Advance */
 
@@ -9296,6 +9282,7 @@ _canvas_text_cursor_text_insert(Efl2_Text_Cursor_Handle *cur, const char *_text)
              _evas_textblock_cursor_break_paragraph(cur, NULL, EINA_FALSE);
              _canvas_text_cursor_paragraph_next(cur);
 
+             end++;
              start = end;
           }
      }
@@ -9840,12 +9827,14 @@ _canvas_text_cursor_text_plain_get(const Efl2_Text_Cursor_Handle *cur1, const Ef
         const Eina_Unicode *tmp;
         tmp = eina_ustrbuf_string_get(n1->unicode);
         eina_ustrbuf_append(buf, tmp + cur1->pos);
+        eina_ustrbuf_append_char(buf, _PARAGRAPH_SEPARATOR);
         n1 = _NODE_TEXT(EINA_INLIST_GET(n1)->next);
         while (n1 != n2)
           {
              tmp = eina_ustrbuf_string_get(n1->unicode);
              eina_ustrbuf_append_length(buf, tmp,
                    eina_ustrbuf_length_get(n1->unicode));
+             eina_ustrbuf_append_char(buf, _PARAGRAPH_SEPARATOR);
              n1 = _NODE_TEXT(EINA_INLIST_GET(n1)->next);
           }
         tmp = eina_ustrbuf_string_get(n2->unicode);
