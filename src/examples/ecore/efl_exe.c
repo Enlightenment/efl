@@ -5,8 +5,8 @@
 #include <Eo.h>
 #include <Efl_Core.h>
 
-static void       _read_change(void *data EINA_UNUSED, const Efl_Event *ev);
-static Eina_Value _task_exit(void *data, Eina_Value v, const Eina_Future *dead EINA_UNUSED);
+static void _read_change(void *data EINA_UNUSED, const Efl_Event *ev);
+static void _task_exit(void *data EINA_UNUSED, const Efl_Event *ev);
 
 static void
 _read_change(void *data EINA_UNUSED, const Efl_Event *ev)
@@ -27,16 +27,19 @@ _read_change(void *data EINA_UNUSED, const Efl_Event *ev)
      }
 }
 
-static Eina_Value
-_task_exit(void *data, Eina_Value v, const Eina_Future *dead EINA_UNUSED)
+static void
+_task_exit(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    // called when the task says it has completed and exited.
    // all output to read has stopped
-   Eo *obj = data;
+   Eo *obj = ev->object;
    printf("--- [%p] EXITED exit_code=%i\n", obj, efl_task_exit_code_get(obj));
    efl_loop_quit(efl_provider_find(obj, EFL_LOOP_CLASS), eina_value_int_init(99));
-   efl_del(obj);
-   return v;
+   // exe auto deleted at this point like efl threads. more convenient as
+   // you don't need to remember to delete them yourself if launching
+   // lots of commands - this is how ecore_exe worked. so listen to the
+   // exit event (or del event) if you care about this... or ref it to keep
+   // it around longer.
 }
 
 EAPI_MAIN void
@@ -55,7 +58,8 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev)
                      efl_exe_env_set(efl_added, env),
                      efl_task_flags_set(efl_added, EFL_TASK_FLAGS_USE_STDOUT | EFL_TASK_FLAGS_USE_STDIN),
                      efl_event_callback_add(efl_added, EFL_IO_READER_EVENT_CAN_READ_CHANGED, _read_change, NULL),
-                     eina_future_then(efl_task_run(efl_added), _task_exit, efl_added)
+                     efl_event_callback_add(efl_added, EFL_TASK_EVENT_EXIT, _task_exit, NULL),
+                     efl_task_run(efl_added)
                     );
    efl_unref(env);
 

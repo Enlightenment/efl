@@ -642,21 +642,11 @@ efl_build_version_set(int vmaj, int vmin, int vmic, int revision,
    _app_efl_version.build_id = build_id ? strdup(build_id) : NULL;
 }
 
-EOLIAN static Eina_Future *
+EOLIAN static Eina_Bool
 _efl_loop_efl_task_run(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
 {
-   Eina_Value *ret;
-   int real;
-
-   ret = efl_loop_begin(obj);
-   real = efl_loop_exit_code_process(ret);
-   if (real == 0)
-     {
-        // we never return a valid future here because there is no loop
-        // any more to process the future callback as we would have quit
-        return NULL;
-     }
-   return NULL;
+   efl_loop_exit_code_process(efl_loop_begin(obj));
+   return EINA_TRUE;
 }
 
 EOLIAN static void

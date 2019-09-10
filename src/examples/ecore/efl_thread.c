@@ -8,7 +8,7 @@
 static void _th_read_change(void *data EINA_UNUSED, const Efl_Event *ev);
 static void _th_main(void *data EINA_UNUSED, const Efl_Event *ev);
 static void _read_change(void *data EINA_UNUSED, const Efl_Event *ev);
-static Eina_Value _task_exit(void *data, Eina_Value v, const Eina_Future *dead EINA_UNUSED);
+static void _task_exit(void *data EINA_UNUSED, const Efl_Event *ev);
 
 ////////////////////////////////////////////////////////////////////////////
 //// thread side of code
@@ -85,7 +85,8 @@ _th_main(void *data EINA_UNUSED, const Efl_Event *ev)
                            efl_task_flags_set(efl_added, EFL_TASK_FLAGS_USE_STDOUT | EFL_TASK_FLAGS_USE_STDIN | EFL_TASK_FLAGS_EXIT_WITH_PARENT),
                            efl_event_callback_add(efl_added, EFL_LOOP_EVENT_ARGUMENTS, _th_main, NULL),
                            efl_event_callback_add(efl_added, EFL_IO_READER_EVENT_CAN_READ_CHANGED, _read_change, NULL),
-                           eina_future_then(efl_task_run(efl_added), _task_exit, efl_added)
+                           efl_event_callback_add(efl_added, EFL_TASK_EVENT_EXIT, _task_exit, NULL),
+                           efl_task_run(efl_added)
                           );
 
         char *buf2 = "hello-out-there2 ";
@@ -117,18 +118,17 @@ _read_change(void *data EINA_UNUSED, const Efl_Event *ev)
      }
 }
 
-static Eina_Value
-_task_exit(void *data, Eina_Value v, const Eina_Future *dead EINA_UNUSED)
+static void
+_task_exit(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    // called when the task says it has completed and exited.
    // all output to read has stopped
-   Eo *obj = data;
+   Eo *obj = ev->object;
    printf("--- [%p] EXITED exit_code=%i outdata=%p\n", obj, efl_task_exit_code_get(obj), efl_threadio_outdata_get(obj));
    // thread object will be automatically deleted after as long as
-   // EFL_TASK_FLAGS_EXIT_WITH_PAREN is set on task flags, and this is
+   // EFL_TASK_FLAGS_EXIT_WITH_PARENT is set on task flags, and this is
    // actually the default unless you change the flags to be something
    // else. if you don't use this then the task/thread becomes orphaned
-   return v;
 }
 
 ////////////////////////////////////////////////////////////////////////////
@@ -181,7 +181,8 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev)
                           efl_task_flags_set(efl_added, EFL_TASK_FLAGS_USE_STDOUT | EFL_TASK_FLAGS_USE_STDIN | EFL_TASK_FLAGS_EXIT_WITH_PARENT),
                           efl_event_callback_add(efl_added, EFL_LOOP_EVENT_ARGUMENTS, _th_main, NULL),
                           efl_event_callback_add(efl_added, EFL_IO_READER_EVENT_CAN_READ_CHANGED, _read_change, NULL),
-                          eina_future_then(efl_task_run(efl_added), _task_exit, efl_added)
+                          efl_event_callback_add(efl_added, EFL_TASK_EVENT_EXIT, _task_exit, NULL),
+                          efl_task_run(efl_added)
                          );
 
         char *buf2 = "hello-out-there ";
