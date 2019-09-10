@@ -233,6 +233,39 @@ std::vector<attributes::function_def> get_all_implementable_methods(attributes::
   return ret;
 }
 
+template<typename Klass>
+inline bool is_managed_interface(Klass const& klass)
+{
+    return klass.type == attributes::class_type::interface_
+           || klass.type == attributes::class_type::mixin;
+}
+
+
+/*
+ * Gets all methods that this class should register (i.e. that comes from it and non-public interface methods
+ * that this class is the first one implementing)
+ */
+template<typename Context>
+std::vector<attributes::function_def> get_all_registerable_methods(attributes::klass_def const& cls, Context const& context)
+{
+   std::vector<attributes::function_def> ret;
+
+   auto implementable_methods = get_all_implementable_methods(cls, context);
+
+   std::copy_if(implementable_methods.cbegin(), implementable_methods.cend(), std::back_inserter(ret)
+                , [&cls](attributes::function_def const & func) {
+
+                    if (cls == func.klass)
+                      return true;
+
+                    if (!is_managed_interface(func.klass) || func.scope != attributes::member_scope::scope_public)
+                      return true;
+                    return false;
+               });
+
+   return ret;
+}
+
 /*
  * Checks whether the given is unique going up the inheritance tree from leaf_klass
  */

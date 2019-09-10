@@ -1653,6 +1653,8 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       Efl.Object.provider_find;
       Dummy.Test_Iface.emit_nonconflicted;
       Dummy.Test_Iface.iface_prop { get; set; }
+      Dummy.Test_Iface.method_protected;
+      Dummy.Test_Iface.call_method_protected;
    }
    events {
       evt,with,string @hot: const(string);

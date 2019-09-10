@@ -52,6 +52,9 @@ struct async_function_declaration_generator
       return true;
     if (!f.return_type.original_type.visit(is_future{}))
       return true;
+    // C# interfaces can't have non-public members
+    if(f.scope != attributes::member_scope::scope_public)
+      return true;
 
     if (!as_generator(
             scope_tab << "/// <summary>Async wrapper for <see cref=\"" << name_helpers::managed_method_name(f) << "\" />.</summary>\n"
