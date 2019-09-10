@@ -327,8 +327,8 @@ EFL_START_TEST(canvas_text_cursor)
 
    /* Paragraph text get */
    efl2_text_cursor_paragraph_first(cur);
-   fail_if(strcmp(_paragraph_text_get(tb, cur),
-            "This is a test."));
+   ck_assert_str_eq(_paragraph_text_get(tb, cur),
+            "This is a\n test.");
    efl2_text_cursor_paragraph_next(cur);
    fail_if(strcmp(_paragraph_text_get(tb, cur),
             "Lets see if this works."));
