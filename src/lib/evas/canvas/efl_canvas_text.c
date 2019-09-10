@@ -8842,7 +8842,7 @@ _canvas_text_cursor_line_jump_by(Efl2_Text_Cursor_Handle *cur, int by)
         // FIXME: This code seems to have a bug. It should just set the line and then set the x and that's it.
         if (evas_object_textblock_line_number_geometry_get(cur->obj,
                  ln, &lx, &ly, &lw, &lh) &&
-              (!_canvas_text_cursor_coord_set(cur, cx, ly + (lh / 2), EINA_TRUE)))
+              (!_canvas_text_cursor_coord_set(cur, cx, ly + (lh / 2))))
           {
              _canvas_text_cursor_line_number_set(cur, ln);
              if (cx < (lx + (lw / 2)))
@@ -10369,7 +10369,7 @@ _efl2_canvas_text_cursor_handle_free(Eo *obj EINA_UNUSED, Efl2_Canvas_Text_Data 
 }
 
 Eina_Bool
-_canvas_text_cursor_coord_set(Efl2_Text_Cursor_Handle *cur, Evas_Coord x, Evas_Coord y, Eina_Bool per_cluster)
+_canvas_text_cursor_coord_set(Efl2_Text_Cursor_Handle *cur, Evas_Coord x, Evas_Coord y)
 {
    Evas_Object_Textblock_Paragraph *found_par;
    Evas_Object_Textblock_Line *ln;
@@ -10450,62 +10450,6 @@ _canvas_text_cursor_coord_set(Efl2_Text_Cursor_Handle *cur, Evas_Coord x, Evas_C
                                          &cx, &cy, &cw, &ch);
                                  if (pos < 0)
                                    goto end;
-
-                                 if ((pos > 0) && per_cluster)
-                                   {
-                                      size_t len = eina_ustrbuf_length_get(it->text_node->unicode);
-                                      char *grapheme_breaks = _evas_textblock_grapheme_breaks_new(it, len);
-
-                                      /* If current position is not breakable,
-                                       * try to move cursor to a nearest breakable position. */
-                                      if (grapheme_breaks && (grapheme_breaks[pos + it->text_pos - 1] != GRAPHEMEBREAK_BREAK))
-                                        {
-                                           size_t left_index = pos + it->text_pos - 1;
-                                           size_t right_index = pos + it->text_pos - 1;
-                                           int lx, rx;
-
-                                           /* To the left */
-                                           while ((left_index > 0) &&
-                                                  (grapheme_breaks[left_index] != GRAPHEMEBREAK_BREAK))
-                                             {
-                                                left_index--;
-                                             }
-
-                                           ENFN->font_pen_coords_get(ENC,
-                                                                     ti->parent.format->font.font,
-                                                                     &ti->text_props,
-                                                                     left_index - it->text_pos + 1,
-                                                                     &lx, NULL, NULL, NULL);
-
-                                           /* To the right */
-                                           while ((right_index < len) &&
-                                                  (grapheme_breaks[right_index] != GRAPHEMEBREAK_BREAK))
-                                             {
-                                                right_index++;
-                                             }
-
-                                           ENFN->font_pen_coords_get(ENC,
-                                                                     ti->parent.format->font.font,
-                                                                     &ti->text_props,
-                                                                     right_index - it->text_pos + 1,
-                                                                     &rx, NULL, NULL, NULL);
-
-                                           /* Decide a nearest position by checking its geometry. */
-                                           if (((ti->text_props.bidi_dir != EVAS_BIDI_DIRECTION_RTL) &&
-                                                ((ln->x + it->x + rx - x) >= (x - (lx + ln->x + it->x)))) ||
-                                               ((ti->text_props.bidi_dir == EVAS_BIDI_DIRECTION_RTL) &&
-                                                ((ln->x + it->x + lx - x) >= (x - (rx + ln->x + it->x)))))
-                                             {
-                                                pos = left_index - it->text_pos + 1;
-                                             }
-                                           else
-                                             {
-                                                pos = right_index - it->text_pos + 1;
-                                             }
-                                        }
-
-                                      free(grapheme_breaks);
-                                   }
 
                                  cur->pos = pos + it->text_pos;
                                  cur->node = it->text_node;
