@@ -198,7 +198,7 @@ struct klass
          if(!as_generator
             (
              documentation
-             << "sealed public " << (is_partial ? "partial ":"") << " class " << concrete_name << " :\n"
+             << "public sealed " << (is_partial ? "partial ":"") << "class " << concrete_name << " :\n"
              << scope_tab << (root ? "Efl.Eo.EoWrapper" : "") << (klass_full_concrete_or_interface_name % "") << "\n"
              << scope_tab << ", " << interface_name << "\n"
              << scope_tab << *(", " << name_helpers::klass_full_concrete_or_interface_name) << "\n"

@@ -188,7 +188,7 @@ struct function_definition_generator
       self = "";
 
     if(!as_generator
-       (scope_tab << ((do_super && !f.is_static) ? "virtual " : "") << eolian_mono::function_scope_get(f) << (f.is_static ? "static " : "") << return_type << " " << string << "(" << (parameter % ", ")
+       (scope_tab << eolian_mono::function_scope_get(f) << ((do_super && !f.is_static) ? "virtual " : "") << (f.is_static ? "static " : "") << return_type << " " << string << "(" << (parameter % ", ")
         << ") {\n "
         << eolian_mono::function_definition_preamble()
         << klass_full_native_inherit_name(f.klass) << "." << string << "_ptr.Value.Delegate("
