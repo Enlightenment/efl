@@ -679,7 +679,7 @@ struct _Efl_Text_Annotate_Annotation_Iterator
 };
 
 /* private methods for textblock objects */
-static void evas_object_textblock_init(Evas_Object *eo_obj);
+static void evas_textblock_init(void);
 static void evas_object_textblock_render(Evas_Object *eo_obj,
                                          Evas_Object_Protected_Data *obj,
                                          void *type_private_data,
@@ -6812,6 +6812,8 @@ _efl2_canvas_text_efl_object_constructor(Eo *eo_obj, Efl2_Canvas_Text_Data *clas
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Efl2_Canvas_Text_Data *o;
 
+   evas_textblock_init();
+
    eo_obj = efl_constructor(efl_super(eo_obj, MY_CLASS));
 
    /* set up methods (compulsory) */
@@ -6825,7 +6827,13 @@ _efl2_canvas_text_efl_object_constructor(Eo *eo_obj, Efl2_Canvas_Text_Data *clas
             EINA_INLIST_GET(_evas_textblock_node_text_new())));
    o->cursor = _canvas_text_cursor_new(eo_obj);
    _format_command_init();
-   evas_object_textblock_init(eo_obj);
+
+   efl2_text_set(eo_obj, "");
+
+   o->multiline = EINA_FALSE;
+#ifdef BIDI_SUPPORT
+   o->inherit_paragraph_direction = EINA_TRUE;
+#endif
 
    _FMT(ref) = 1;
    _FMT(halign) = 0.0;
@@ -8994,32 +9002,35 @@ _evas_textblock_cursor_break_paragraph(Efl2_Text_Cursor_Handle *cur,
         size_t len, start;
         const Eina_Unicode *text;
 
-        if (legacy)
+        if (fnode)
           {
-        /* If there was a format node in the delete range,
-         * make it our format and update the text_node fields,
-         * otherwise, use the paragraph separator
-         * of the previous paragraph. */
-             nnode  = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
-             if (nnode && (nnode->text_node == cur->node))
+             if (legacy)
                {
-                  n->format_node = nnode;
-                  nnode->offset--; /* We don't have to take the replacement char
-                                      into account anymore */
-                  while (nnode && (nnode->text_node == cur->node))
+                  /* If there was a format node in the delete range,
+                   * make it our format and update the text_node fields,
+                   * otherwise, use the paragraph separator
+                   * of the previous paragraph. */
+                  nnode  = _NODE_FORMAT(EINA_INLIST_GET(fnode)->next);
+                  if (nnode && (nnode->text_node == cur->node))
                     {
-                       nnode->text_node = n;
-                       nnode = _NODE_FORMAT(EINA_INLIST_GET(nnode)->next);
+                       n->format_node = nnode;
+                       nnode->offset--; /* We don't have to take the replacement char
+                                           into account anymore */
+                       while (nnode && (nnode->text_node == cur->node))
+                         {
+                            nnode->text_node = n;
+                            nnode = _NODE_FORMAT(EINA_INLIST_GET(nnode)->next);
+                         }
+                    }
+                  else
+                    {
+                       n->format_node = fnode;
                     }
                }
              else
                {
                   n->format_node = fnode;
                }
-          }
-        else
-          {
-             n->format_node = fnode;
           }
 
         start = cur->pos;
@@ -9178,18 +9189,15 @@ _evas_textblock_invalidate_all(Efl2_Canvas_Text_Data *o)
 }
 
 static int
-_evas_textblock_cursor_text_append(Efl2_Text_Cursor_Handle *cur, const char *_text)
+_evas_textblock_cursor_text_append(Efl2_Text_Cursor_Handle *cur, const Eina_Unicode *text, int len)
 {
    Evas_Object_Textblock_Node_Text *n;
    Evas_Object_Textblock_Node_Format *fnode = NULL;
-   Eina_Unicode *text;
    Efl2_Text_Cursor_Handle *main_cur;
-   int len = 0;
 
    if (!cur) return 0;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
-   text = eina_unicode_utf8_to_unicode(_text, &len);
    Efl2_Canvas_Text_Data *o = efl_data_scope_get(cur->obj, MY_CLASS);
 
    n = cur->node;
@@ -9248,7 +9256,6 @@ _evas_textblock_cursor_text_append(Efl2_Text_Cursor_Handle *cur, const char *_te
    if (!o->pause_change)
      _evas_textblock_changed(o, cur->obj);
    n->dirty = EINA_TRUE;
-   free(text);
 
    main_cur = o->cursor;
    if (!main_cur->node)
@@ -9259,13 +9266,42 @@ _evas_textblock_cursor_text_append(Efl2_Text_Cursor_Handle *cur, const char *_te
 int
 _canvas_text_cursor_text_insert(Efl2_Text_Cursor_Handle *cur, const char *_text)
 {
-   int len;
+   int total_len;
    /*append is essentially prepend without advancing */
    if (!cur) return 0;
-   len = _evas_textblock_cursor_text_append(cur, _text);
-   if (len == 0) return 0;
-   cur->pos += len; /*Advance */
-   return len;
+
+   Eina_Unicode *text = eina_unicode_utf8_to_unicode(_text, &total_len);
+   Eina_Unicode *start = text;
+   Eina_Unicode *end = text;
+
+   while (*end)
+     {
+        // Find the exnd of the next run
+        while (*end && (*end != _PARAGRAPH_SEPARATOR))
+          {
+             end++;
+          }
+
+        // We want to include the PS in the text
+        if (*end == _PARAGRAPH_SEPARATOR)
+          {
+             end++;
+          }
+
+        int len = _evas_textblock_cursor_text_append(cur, start, end - start);
+        cur->pos += len; /*Advance */
+
+        if (*end)
+          {
+             _evas_textblock_cursor_break_paragraph(cur, NULL, EINA_FALSE);
+             _canvas_text_cursor_paragraph_next(cur);
+
+             start = end;
+          }
+     }
+
+   free(text);
+   return total_len;
 }
 
 /**
@@ -11490,10 +11526,8 @@ _efl2_canvas_text_efl_object_dbg_info_get(Eo *eo_obj, Efl2_Canvas_Text_Data *o E
 
 /* all nice and private */
 static void
-evas_object_textblock_init(Evas_Object *eo_obj)
+evas_textblock_init(void)
 {
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
-   Efl2_Canvas_Text_Data *o;
    static Eina_Bool linebreak_init = EINA_FALSE;
 
    if (!linebreak_init)
@@ -11501,18 +11535,8 @@ evas_object_textblock_init(Evas_Object *eo_obj)
         linebreak_init = EINA_TRUE;
         init_linebreak();
         init_wordbreak();
-		init_graphemebreak();
+        init_graphemebreak();
      }
-
-   o = obj->private_data;
-   Efl2_Text_Cursor_Handle *co = o->cursor;
-   co->obj = eo_obj;
-   efl2_text_set(eo_obj, "");
-
-   o->multiline = EINA_FALSE;
-#ifdef BIDI_SUPPORT
-   o->inherit_paragraph_direction = EINA_TRUE;
-#endif
 }
 
 EOLIAN static void
