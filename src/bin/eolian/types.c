@@ -203,7 +203,7 @@ _var_generate(const Eolian_State *state, const Eolian_Variable *vr)
      }
    else
      {
-        Eina_Stringshare *ct = eolian_type_c_type_get(vt, EOLIAN_C_TYPE_DEFAULT);
+        Eina_Stringshare *ct = eolian_type_c_type_get(vt);
         eina_strbuf_append_printf(buf, "EWAPI extern %s %s;", ct, fn);
         eina_stringshare_del(ct);
      }
@@ -394,7 +394,7 @@ _source_gen_var(Eina_Strbuf *buf, const Eolian_Variable *vr)
    eina_str_toupper(&fn);
 
    const Eolian_Type *vt = eolian_variable_base_type_get(vr);
-   Eina_Stringshare *ct = eolian_type_c_type_get(vt, EOLIAN_C_TYPE_DEFAULT);
+   Eina_Stringshare *ct = eolian_type_c_type_get(vt);
    eina_strbuf_append_printf(buf, "EWAPI %s %s = ", ct, fn);
    eina_stringshare_del(ct);
    free(fn);

@@ -603,8 +603,8 @@ lib.eolian_type_is_const.restype = c_bool
 lib.eolian_type_is_ptr.argtypes = (c_void_p,)
 lib.eolian_type_is_ptr.restype = c_bool
 
-# EAPI Eina_Stringshare *eolian_type_c_type_get(const Eolian_Type *tp, Eolian_C_Type_Type ctype);
-lib.eolian_type_c_type_get.argtypes = (c_void_p, c_int)
+# EAPI Eina_Stringshare *eolian_type_c_type_get(const Eolian_Type *tp);
+lib.eolian_type_c_type_get.argtypes = (c_void_p)
 lib.eolian_type_c_type_get.restype = c_void_p  # Stringshare TO BE FREED
 
 ###  Eolian_Expression  #######################################################

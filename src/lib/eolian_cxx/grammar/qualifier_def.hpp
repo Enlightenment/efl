@@ -72,11 +72,11 @@ inline qualifier_bool operator^(qualifier_bool lhs, qualifier_info rhs)
   return lhs;
 }
 
-inline qualifier_info qualifiers(Eolian_Type const* type, bool is_moved)
+inline qualifier_info qualifiers(Eolian_Type const* type, bool is_moved, bool is_by_ref)
 {
   qualifier_info is_own = is_moved ? qualifier_info::is_own : qualifier_info::is_none;
   qualifier_info is_const = ::eolian_type_is_const(type) ? qualifier_info::is_const : qualifier_info::is_none;
-  qualifier_info is_ref = ::eolian_type_is_ptr(type) ? qualifier_info::is_ref : qualifier_info::is_none;
+  qualifier_info is_ref = is_by_ref ? qualifier_info::is_ref : qualifier_info::is_none;
   return is_own | is_const | is_ref;
 }
         

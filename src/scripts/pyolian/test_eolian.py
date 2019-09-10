@@ -582,10 +582,6 @@ class TestEolianType(unittest.TestCase):
         self.assertIsNone(t.class_)
         self.assertEqual(t, t.aliased_base)  # TODO find a better test
 
-        self.assertEqual(t.c_type_default, 'double')  # TODO find a better test
-        self.assertEqual(t.c_type_param, 'double')
-        self.assertEqual(t.c_type_return, 'double')
-
     def test_type_regular(self):
         cls = eolian_db.class_by_name_get('Efl.Gfx.Entity')
         func = cls.function_by_name_get('geometry')
@@ -600,10 +596,6 @@ class TestEolianType(unittest.TestCase):
         self.assertEqual(list(t.namespaces), ['Eina'])
         self.assertIsNone(t.class_)
         self.assertEqual(t, t.aliased_base)
-
-        self.assertEqual(t.c_type_default, 'Eina_Rect')  # TODO find a better test
-        self.assertEqual(t.c_type_param, 'Eina_Rect')
-        self.assertEqual(t.c_type_return, 'Eina_Rect')
 
         td = t.typedecl
         self.assertIsInstance(td, eolian.Typedecl)
@@ -622,10 +614,6 @@ class TestEolianType(unittest.TestCase):
         self.assertEqual(t.file, 'efl_content.eo')  # TODO is this correct ?
         self.assertEqual(list(t.namespaces), ['Efl', 'Gfx'])
         self.assertEqual(t, t.aliased_base)
-
-        self.assertEqual(t.c_type_default, 'Efl_Gfx_Entity *')  # TODO find a better test
-        self.assertEqual(t.c_type_param, 'Efl_Gfx_Entity *')
-        self.assertEqual(t.c_type_return, 'Efl_Gfx_Entity *')
 
         cls = t.class_
         self.assertIsInstance(cls, eolian.Class)

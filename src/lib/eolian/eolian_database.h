@@ -263,6 +263,13 @@ struct _Eolian_Function_Parameter
    Eina_Bool move     :1;
 };
 
+typedef enum
+{
+   EOLIAN_C_TYPE_DEFAULT = 0,
+   EOLIAN_C_TYPE_PARAM,
+   EOLIAN_C_TYPE_RETURN
+} Eolian_C_Type_Type;
+
 struct _Eolian_Type
 {
    Eolian_Object base;

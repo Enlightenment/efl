@@ -60,7 +60,7 @@ _apply_box_properties(Eo *obj, Efl_Ui_Spotlight_Manager_Scroll_Data *pd)
         double diff = i - current_pos;
         Efl_Gfx_Entity *elem = efl_pack_content_get(pd->container, i);
 
-        geometry.x = (group_pos.x + group_pos.w/2)-(pd->page_size.w/2 - diff*pd->page_size.w);
+        geometry.x = (int)((group_pos.x + group_pos.w/2)-(pd->page_size.w/2 - diff*pd->page_size.w));
         if (!eina_rectangles_intersect(&geometry.rect, &group_pos.rect))
           {
              efl_canvas_object_clipper_set(elem, pd->backclip);

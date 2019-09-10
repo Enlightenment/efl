@@ -173,12 +173,6 @@ ffi.cdef [[
     } Eolian_Type_Builtin_Type;
 
     typedef enum {
-        EOLIAN_C_TYPE_DEFAULT = 0,
-        EOLIAN_C_TYPE_PARAM,
-        EOLIAN_C_TYPE_RETURN
-    } Eolian_C_Type_Type;
-
-    typedef enum {
         EOLIAN_EXPR_UNKNOWN = 0,
         EOLIAN_EXPR_INT,
         EOLIAN_EXPR_UINT,
@@ -453,7 +447,7 @@ ffi.cdef [[
 
     Eina_Bool eolian_typedecl_is_extern(const Eolian_Typedecl *tp);
 
-    const char *eolian_type_c_type_get(const Eolian_Type *tp, Eolian_C_Type_Type ctype);
+    const char *eolian_type_c_type_get(const Eolian_Type *tp);
     const char *eolian_typedecl_c_type_get(const Eolian_Typedecl *tp);
     const char *eolian_typedecl_free_func_get(const Eolian_Typedecl *tp);
 
@@ -989,12 +983,6 @@ M.typedecl_type = {
     FUNCTION_POINTER = 5
 }
 
-M.c_type_type = {
-    DEFAULT = 0,
-    PARAM   = 1,
-    RETURN  = 2
-}
-
 ffi.metatype("Eolian_Struct_Type_Field", {
     __index = wrap_object {
         documentation_get = function(self)
@@ -1175,8 +1163,8 @@ M.Type = ffi.metatype("Eolian_Type", {
             return eolian.eolian_type_is_ptr(self) ~= 0
         end,
 
-        c_type_get = function(self, ctype)
-            local v = eolian.eolian_type_c_type_get(self, ctype)
+        c_type_get = function(self)
+            local v = eolian.eolian_type_c_type_get(self)
             if v == nil then return nil end
             return ffi_stringshare(v)
         end

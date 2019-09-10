@@ -15,7 +15,7 @@ endif
 
 config_h.set('EDJE_CALC_CACHE', '1')
 
-if get_option('edje-sound-and-video')
+if get_option('audio') and get_option('edje-sound-and-video')
   config_h.set('ENABLE_MULTISENSE', '1')
   edje_deps += ecore_audio
 endif
