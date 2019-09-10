@@ -85,6 +85,11 @@ struct native_function_definition_generator
     if (blacklist::is_non_public_interface_member(f, *klass))
       return true;
 
+    // Do not generate static method in interface
+    if (((klass->type == attributes::class_type::interface_) ||
+        (klass->type == attributes::class_type::mixin)) && f.is_static)
+      return true;
+
     // Actual method implementation to be called from C.
     std::string return_type;
     if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))
@@ -171,7 +176,13 @@ struct function_definition_generator
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
     EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "function_definition_generator: " << f.c_name << std::endl;
+
+    bool is_concrete = context_find_tag<class_context>(context).current_wrapper_kind == class_context::concrete;
     if(blacklist::is_function_blacklisted(f, context))
+      return true;
+
+    // Do not generate static function for concrete class
+    if (is_concrete && f.is_static)
       return true;
 
     std::string return_type;
@@ -310,9 +321,10 @@ struct property_wrapper_definition_generator
       bool is_interface = context_find_tag<class_context>(context).current_wrapper_kind == class_context::interface;
       bool is_static = (property.getter.is_engaged() && property.getter->is_static)
                        || (property.setter.is_engaged() && property.setter->is_static);
+      bool is_concrete = context_find_tag<class_context>(context).current_wrapper_kind == class_context::concrete;
 
 
-      if (is_interface && is_static)
+      if ((is_concrete || is_interface) && is_static)
         return true;
 
       auto get_params = property.getter.is_engaged() ? property.getter->parameters.size() : 0;

@@ -258,6 +258,9 @@ std::vector<attributes::function_def> get_all_registerable_methods(attributes::k
                     if (cls == func.klass)
                       return true;
 
+                    if (is_managed_interface(func.klass) && func.is_static)
+                      return true;
+
                     if (!is_managed_interface(func.klass) || func.scope != attributes::member_scope::scope_public)
                       return true;
                     return false;
