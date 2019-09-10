@@ -1,75 +1,124 @@
+parse efl_gfx_hint;
 enum @beta Efl.Ui.Popup_Align {
-    [[Popup alignment type.]]
+    [[This is the alignment method for positioning Popup widgets.]]
     none = 0, [[Popup not aligned.]]
-    center,   [[Popup aligned to center.]]
-    left,     [[Popup aligned to left.]]
-    right,    [[Popup aligned to right.]]
-    top,      [[Popup aligned to top.]]
-    bottom    [[Popup aligned to bottom.]]
+    center,   [[Popup is aligned to the center of its anchor object.]]
+    left,     [[Popup's left edge is aligned to the left side of its anchor object.]]
+    right,    [[Popup's right edge is aligned to the right side of its anchor object.]]
+    top,      [[Popup's top is aligned to the top of its anchor object.]]
+    bottom    [[Popup's bottom is aligned to the bottom of its anchor object.]]
 }
 
 class @beta Efl.Ui.Popup extends Efl.Ui.Layout_Base implements Efl.Content, Efl.Ui.Focus.Layer,
                                                                Efl.Ui.Widget_Scrollable_Content
 {
-   [[EFL UI popup class]]
+   [[A styled container widget which overlays a window's contents.
+
+     The Popup widget is a theme-capable container which can be used for various purposes.
+     Regular contents can be set using the @Efl.Content interface, or basic scrollable contents
+     can be set through the @Efl.Ui.Widget_Scrollable_Content mixin API. For contents which
+     should be scrollable but require more fine-grained tuning, it may be necessary for users
+     to set up and provide their own scroller object such as @Efl.Ui.Scroller.
+
+     A Popup widget will create an overlay for the window contents. This overlay is an
+     @Efl.Ui.Popup_Part_Backwall object, which provides functionality for passing events
+     through to the main window while the Popup is active as well as the ability to set
+     background images for the Popup.
+
+     By default, a Popup is positioned by the user through the @Efl.Gfx.Entity.position property.
+     This behavior can be altered by using the @.align and @.anchor properties. Setting the
+     @Efl.Gfx.Entity.position property directly will unset both the @.align and @.anchor properties,
+     and vice versa.
+
+     By default, a Popup will size itself based on the minimum size of its contents through the
+     @Efl.Gfx.Hint interface. A Popup will never size itself smaller than the minimum size of its contents,
+     but by manually setting the @Efl.Gfx.Entity.size property or the @Efl.Gfx.Hint.hint_size_min property,
+     a larger size can be specified.
+
+     Users can set a given Popup widget to close automatically after a specified time using the @.closing_timeout
+     property.
+
+     For a Popup with a more specialized purpose, see @Efl.Ui.Alert_Popup.
+   ]]
    methods {
       @property align {
-         [[Popup alignment.]]
+         [[The align property specifies a Popup's current positioning relative to its anchor.
+
+           When set, this property will override any user-provided value for
+           the widget's @Efl.Gfx.Entity.position property.
+         ]]
          set {
          }
          get {
          }
          values {
-             type: Efl.Ui.Popup_Align; [[Alignment type.]]
+             type: Efl.Ui.Popup_Align; [[Alignment of the Popup relative to its anchor.
+                                         The default is @Efl.Ui.Popup_Align.none.]]
          }
       }
       @property closing_timeout {
-         [[Set the timeout seconds.
-           After timeout seconds, popup will be deleted automatically.
+         [[The closing_timeout property is the time after which the Popup widget will be automatically deleted.
+
+           The timer is initiated at the time when the popup is shown. If the value is changed
+           prior to the timer expiring, the existing timer will be deleted. If the new value is greater than $0,
+           a new timer will be created.
          ]]
          set {
          }
          get {
          }
          values {
-             time: double; [[Timeout in seconds.]]
+             time: double; [[If greater than $0, the Popup will close automatically after the value in seconds.
+                             The default is to not automatically delete the Popup.]]
          }
       }
       @property anchor {
-         [[Anchor object which sets this popup's position.
-           If anchor object is moved or parent window is resized, the popup moves to the new position.
-           If anchor object is set to NULL, the popup stops following the anchor object.
-           When the popup is moved by using @Efl.Gfx.Entity.position.set, $anchor is set NULL.
+         [[The anchor object is the reference object for positioning a Popup
+           using the @.align and @.align_priority properties.
+
+           A Popup will recalculate its alignment relative to its anchor and change its position when:
+           - the anchor object is moved (unless the anchor is a window)
+           - the anchor object is resized
+           - the Popup is resized
+           - the parent window is resized
+
+           If @.anchor.get returns NULL, the anchor is the parent window of the Popup.
+           If the anchor object is set to $NULL, the Popup will no longer recalculate its alignment or change
+           its position under any circumstance.
+           If the Popup is moved by using @Efl.Gfx.Entity.position.set, $anchor is set NULL.
          ]]
          set {
          }
          get {
          }
          values {
-            anchor: Efl.Canvas.Object; [[The object which popup is following.]]
+            anchor: Efl.Canvas.Object; [[The object which Popup is following. By default this is $NULL.]]
          }
       }
       @property align_priority {
-         [[Prioritized popup alignment.
-         
-           In contrast to the @.align property, each alignment is tried in turn until one is found which allows
-           the popup to be placed in the exact requested position relative to the @.anchor.
+         [[This is the priority in which alignments will be tested using the anchor object if the value of @.align
+           is determined to be invalid. If a given alignment would result in the popup being partially or fully
+           outside the visible area of the window, it is deemed invalid, and the next alignment is tested
+           until either the priority list is exhausted or a usable alignment is found.
+
+           An alignment will also be deemed invalid if the popup occludes its anchor object,
+           except if @Efl.Ui.Popup_Align.center is specified.
          ]]
          set {
          }
          get {
          }
          values {
-            first: Efl.Ui.Popup_Align;  [[First alignment.]]
-            second: Efl.Ui.Popup_Align; [[Second alignment.]]
-            third: Efl.Ui.Popup_Align;  [[Third alignment.]]
-            fourth: Efl.Ui.Popup_Align; [[Fourth alignment.]]
-            fifth: Efl.Ui.Popup_Align;  [[Fifth alignment.]]
+            first: Efl.Ui.Popup_Align;  [[First alignment. The default is @Efl.Ui.Popup_Align.top.]]
+            second: Efl.Ui.Popup_Align; [[Second alignment. The default is @Efl.Ui.Popup_Align.left.]]
+            third: Efl.Ui.Popup_Align;  [[Third alignment. The default is @Efl.Ui.Popup_Align.right.]]
+            fourth: Efl.Ui.Popup_Align; [[Fourth alignment. The default is @Efl.Ui.Popup_Align.bottom.]]
+            fifth: Efl.Ui.Popup_Align;  [[Fifth alignment. The default is @Efl.Ui.Popup_Align.center.]]
          }
       }
    }
    parts {
-      backwall: Efl.Ui.Popup_Part_Backwall; [[A backwall behind the popup.]]
+      backwall: Efl.Ui.Popup_Part_Backwall; [[A backwall behind the Popup.]]
    }
    implements {
       Efl.Object.constructor;
@@ -84,7 +133,7 @@ class @beta Efl.Ui.Popup extends Efl.Ui.Layout_Base implements Efl.Content, Efl.
       Efl.Part.part_get;
    }
    events {
-      backwall,clicked: void; [[This is called whenever the user clicks back wall of popup.]]
-      timeout: void; [[This is called when popup times out.]]
+      backwall,clicked: void; [[This is called whenever the user clicks the backwall part of the Popup.]]
+      timeout: void; [[This is called when Popup times out.]]
    }
 }
