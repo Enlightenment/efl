@@ -107,7 +107,7 @@ database_type_to_str(const Eolian_Type *tp,
      || tp->type == EOLIAN_TYPE_CLASS
      || tp->type == EOLIAN_TYPE_VOID)
      && tp->is_const
-     && ((ctype != EOLIAN_C_TYPE_RETURN) || database_type_is_ownable(NULL, tp, EINA_FALSE)))
+     && ((ctype != EOLIAN_C_TYPE_RETURN) || by_ref || database_type_is_ownable(NULL, tp, EINA_FALSE)))
      {
         eina_strbuf_append(buf, "const ");
      }
