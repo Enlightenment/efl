@@ -82,10 +82,10 @@ class @beta Efl.Ui.Popup extends Efl.Ui.Layout_Base implements Efl.Content, Efl.
            - the Popup is resized
            - the parent window is resized
 
-           If @.anchor.get returns NULL, the anchor is the parent window of the Popup.
+           If @.anchor.get returns $NULL, the anchor is the parent window of the Popup.
            If the anchor object is set to $NULL, the Popup will no longer recalculate its alignment or change
            its position under any circumstance.
-           If the Popup is moved by using @Efl.Gfx.Entity.position.set, $anchor is set NULL.
+           If the Popup is moved by using @Efl.Gfx.Entity.position.set, $anchor is set $NULL.
          ]]
          set {
          }

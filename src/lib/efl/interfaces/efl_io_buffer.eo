@@ -131,7 +131,7 @@ class @beta Efl.Io.Buffer extends Efl.Object
               The returned memory must be freed with eina_binbuf_free().
 
               On failure, for example a read-only backing store was
-              adopted with @.adopt_readonly, NULL is returned.
+              adopted with @.adopt_readonly, $NULL is returned.
             ]]
             return: ptr(Eina.Binbuf) @move @no_unused; [[Binbuf]]
         }

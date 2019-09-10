@@ -75,7 +75,7 @@ mixin @beta Efl.Gfx.Color_Class
               the third is the text shadow. (Note that the second two only apply
               to text parts).
 
-              Returns NULL if the color class cannot be fetched.
+              Returns $NULL if the color class cannot be fetched.
 
               Note: These color values are expected to be premultiplied by $a.]]
           }

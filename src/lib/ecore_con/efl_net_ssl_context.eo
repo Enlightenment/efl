@@ -115,7 +115,7 @@ class @beta Efl.Net.Ssl.Context extends Efl.Object {
               This is useful to avoid replicating a hostname in all
               socket wrapper with hostname_override.
 
-              If NULL, then sockets wrappers will will fetch from
+              If $NULL, then sockets wrappers will will fetch from
               adopted socket using address_remote or
               address_dial.
 

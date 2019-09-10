@@ -36,7 +36,7 @@ class @beta Elm.Code_Widget extends Efl.Ui.Layout
       @property font {
          set {
             [[Set the font that this widget uses, the font should be a monospaced scalable font.
-            Passing NULL will load the default system monospaced font.]]
+            Passing $NULL will load the default system monospaced font.]]
          }
          get {
             [[Get the font currently in use.

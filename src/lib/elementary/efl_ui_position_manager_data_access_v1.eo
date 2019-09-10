@@ -118,7 +118,7 @@ interface @beta Efl.Ui.Position_Manager.Data_Access_V1 {
          values {
            obj_access : Efl.Ui.Position_Manager.Object_Batch_Callback; [[Function callback for canvas objects, even if
                                                                          the start_id is valid, the returned objects
-                                                                         may be NULL.]]
+                                                                         may be $NULL.]]
            size_access : Efl.Ui.Position_Manager.Size_Batch_Callback; [[Function callback for the size, returned values
                                                                         are always valid, but might be changed later on.
                                                                       ]]

@@ -205,7 +205,7 @@ abstract Efl.Object
 
           The object from the provider will then be returned.
           The base implementation calls the provider_find function on the object parent,
-          and returns its result. If no parent is present NULL is returned.
+          and returns its result. If no parent is present $NULL is returned.
           Each implementation has to support this function by overriding
           it and returning itself if the interface matches the parameter.
           If this is not done the class cannot be found up in the object tree.

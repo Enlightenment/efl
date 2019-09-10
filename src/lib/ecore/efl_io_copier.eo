@@ -147,7 +147,7 @@ class @beta Efl.Io.Copier extends Efl.Loop_Consumer implements Efl.Io.Closer {
              If @.source is flagged "eos" and all data is written to the
              destination then the "done" event is emitted.
 
-             If the destination is not set (ie: NULL) then data is kept
+             If the destination is not set (ie: $NULL) then data is kept
              in a internal @Eina.Binbuf, which can be stolen with
              @.binbuf_steal once "data" or "line" events are
              emitted. It exists as a useful shortcut to easily drain
