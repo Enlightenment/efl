@@ -41,6 +41,14 @@ interface Dummy.Test_Iface
          }
       }
 
+      @property static_prop @static {
+         get {}
+         set {}
+         values {
+            data: int;
+         }
+      }
+
    }
    events {
       nonconflicted: void;

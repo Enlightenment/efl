@@ -607,4 +607,18 @@ class TestProtectedInterfaceMembers
     }
 }
 
+class TestStaticInterfaceMembers
+{
+    public static void test_interface_static_member()
+    {
+        var iface = typeof(Dummy.ITestIface);
+        var properties = iface.GetProperties(BindingFlags.Public | BindingFlags.Instance);
+        Test.AssertNull(properties.SingleOrDefault(p => p.Name == "StaticProp"));
+
+        var implementation = typeof(Dummy.TestObject);
+        properties = implementation.GetProperties(BindingFlags.Public | BindingFlags.Static);
+        Test.AssertNotNull(properties.SingleOrDefault(p => p.Name == "StaticProp"));
+    }
+}
+
 }
