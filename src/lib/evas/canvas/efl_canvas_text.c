@@ -8072,7 +8072,7 @@ _canvas_text_cursor_cluster_post_get(Efl2_Text_Cursor_Handle *cur, Eina_Bool inc
 }
 
 Eina_Bool
-_canvas_text_cursor_next(Efl2_Text_Cursor_Handle *cur, Eina_Bool per_cluster)
+_canvas_text_cursor_next(Efl2_Text_Cursor_Handle *cur)
 {
    Evas_Object_Protected_Data *obj;
    const Eina_Unicode *text;
@@ -8087,14 +8087,7 @@ _canvas_text_cursor_next(Efl2_Text_Cursor_Handle *cur, Eina_Bool per_cluster)
    ind = cur->pos;
    text = eina_ustrbuf_string_get(cur->node->unicode);
 
-   if (text[ind])
-     {
-        if (per_cluster)
-          ind = _canvas_text_cursor_cluster_post_get(cur, EINA_TRUE);
-
-        if (ind <= (int)cur->pos)
-          ind = cur->pos + 1;
-     }
+   if (text[ind]) ind = cur->pos + 1;
 
    /* Only allow pointing a null if it's the last paragraph.
     * because we don't have a PS there. */
@@ -8123,7 +8116,7 @@ _canvas_text_cursor_next(Efl2_Text_Cursor_Handle *cur, Eina_Bool per_cluster)
 }
 
 Eina_Bool
-_canvas_text_cursor_prev(Efl2_Text_Cursor_Handle *cur, Eina_Bool per_cluster)
+_canvas_text_cursor_prev(Efl2_Text_Cursor_Handle *cur)
 {
    Evas_Object_Protected_Data *obj;
 
@@ -8135,17 +8128,6 @@ _canvas_text_cursor_prev(Efl2_Text_Cursor_Handle *cur, Eina_Bool per_cluster)
 
    if (cur->pos != 0)
      {
-        if (per_cluster)
-          {
-             size_t ret = _canvas_text_cursor_cluster_post_get(cur, EINA_FALSE);
-
-             if (ret != cur->pos)
-               {
-                  cur->pos = ret;
-                  return EINA_TRUE;
-               }
-          }
-
         cur->pos--;
         return EINA_TRUE;
      }
@@ -13188,7 +13170,7 @@ _textblock_annotation_set(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o,
    len = strlen(format);
    buf = malloc(len + 4);
    sprintf(buf, "</%s>", format);
-   if (is_item) _canvas_text_cursor_next(end, EINA_FALSE);
+   if (is_item) _canvas_text_cursor_next(end);
    _evas_textblock_cursor_format_append(end, buf, &fnode, is_item);
    free(buf);
    an->end_node = fnode;
@@ -13403,7 +13385,7 @@ _efl_canvas_text_efl_text_annotate_range_annotations_get(const Eo *eo_obj, Efl2_
         if (!it->start_node || !it->end_node) continue;
         _textblock_cursor_pos_at_fnode_set(eo_obj, &start2, it->start_node);
         _textblock_cursor_pos_at_fnode_set(eo_obj, &end2, it->end_node);
-        _canvas_text_cursor_prev(&end2, EINA_FALSE);
+        _canvas_text_cursor_prev(&end2);
         if (!((_canvas_text_cursor_compare(&start2, end) > 0) ||
                  (_canvas_text_cursor_compare(&end2, start) < 0)))
           {
