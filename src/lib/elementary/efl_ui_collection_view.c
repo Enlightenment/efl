@@ -1709,11 +1709,11 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
    eina_iterator_free(it);
 
    // Push selection model first
-   if (!selection) model = efl_add(EFL_SELECT_MODEL_CLASS, data,
+   if (!selection) model = efl_add(EFL_UI_SELECT_MODEL_CLASS, data,
                                    efl_ui_view_model_set(efl_added, ev->current));
    if (!sizing) model = efl_add(EFL_UI_HOMOGENEOUS_MODEL_CLASS, data,
                                 efl_ui_view_model_set(efl_added, model ? model : ev->current));
-   if (!model) model = efl_add(EFL_VIEW_MODEL_CLASS, data,
+   if (!model) model = efl_add(EFL_UI_VIEW_MODEL_CLASS, data,
                                efl_ui_view_model_set(efl_added, ev->current));
 
    count = efl_model_children_count_get(model);
@@ -1792,7 +1792,7 @@ _efl_ui_collection_view_efl_object_constructor(Eo *obj, Efl_Ui_Collection_View_D
    obj = efl_constructor(efl_super(obj, EFL_UI_COLLECTION_VIEW_CLASS));
 
    if (!elm_widget_theme_klass_get(obj))
-     elm_widget_theme_klass_set(obj, "item_container");
+     elm_widget_theme_klass_set(obj, "collection");
 
    efl_wref_add(efl_add(EFL_CANVAS_RECTANGLE_CLASS, evas_object_evas_get(obj)), &pd->sizer);
    efl_gfx_color_set(pd->sizer, 0, 0, 0, 0);

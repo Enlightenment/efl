@@ -73,7 +73,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    Efl_Ui_Factory *factory;
    Evas_Object *win, *li;
    Eo *model;
-   Efl_Select_Model *selmodel;
+   Efl_Ui_Select_Model *selmodel;
    Eina_Value w, h;
    Eo *position_manager;
    const Efl_Class *item_class;
@@ -104,7 +104,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    efl_model_property_set(model, "item.width", &w);
    efl_model_property_set(model, "item.height", &h);
 
-   selmodel = efl_add(EFL_SELECT_MODEL_CLASS, efl_main_loop_get()
+   selmodel = efl_add(EFL_UI_SELECT_MODEL_CLASS, efl_main_loop_get()
      , efl_ui_view_model_set(efl_added, model)
    );
 

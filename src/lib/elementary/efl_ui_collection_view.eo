@@ -12,6 +12,7 @@ class @beta Efl.Ui.Collection_View extends Efl.Ui.Layout_Base implements
                 Efl.Ui.Multi_Selectable,
                 Efl.Ui.Focus.Manager_Sub,
 		Efl.Ui.Widget_Focus_Manager
+    composite Efl.Ui.Scrollable_Interactive, Efl.Ui.Scrollbar
 
 {
    methods {
@@ -26,7 +27,7 @@ class @beta Efl.Ui.Collection_View extends Efl.Ui.Layout_Base implements
       @property position_manager {
         [[Position manager object that handles placement of items.]]
         values {
-           position_manager : Efl.Ui.Position_Manager.Entity @owned; [[The objects ownership is passed to the item container.]]
+           position_manager : Efl.Ui.Position_Manager.Entity @move; [[The objects ownership is passed to the item container.]]
         }
       }
    }
@@ -50,9 +51,5 @@ class @beta Efl.Ui.Collection_View extends Efl.Ui.Layout_Base implements
       item,unfocused : Efl.Ui.Collection_View_Item_Event;
       item,highlighted : Efl.Ui.Collection_View_Item_Event;
       item,unhighlighted : Efl.Ui.Collection_View_Item_Event;
-   }
-   composite {
-      Efl.Ui.Scrollable_Interactive;
-      Efl.Ui.Scrollbar;
    }
 }
