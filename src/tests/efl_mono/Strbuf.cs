@@ -16,6 +16,16 @@ class TestStrBuf
         Test.AssertEquals("Here's Johnny!", buf.Steal());
     }
 
+    public static void test_tostring()
+    {
+        Eina.Strbuf buf = new Eina.Strbuf();
+        buf.Append("Hello");
+        buf.Append(' ');
+        buf.Append("World!");
+
+        Test.AssertEquals("Hello World!", buf.ToString());
+    }
+
     public static void test_eolian()
     {
         var obj = new Dummy.TestObject();
