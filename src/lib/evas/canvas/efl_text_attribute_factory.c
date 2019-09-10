@@ -249,6 +249,7 @@ _efl2_text_attribute_factory_efl2_text_style_properties_background_type_set(Eo *
 EOLIAN static Efl2_Text_Style_Background
 _efl2_text_attribute_factory_efl2_text_style_properties_background_type_get(const Eo *obj EINA_UNUSED, Efl2_Text_Attribute_Factory_Data *pd)
 {
+   // FIXME: Turn background color and strikethrough color on by default
    return (pd->fmt.background == EFL2_TEXT_STYLE_BACKGROUND_ON);
 }
 
