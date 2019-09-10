@@ -58,7 +58,7 @@ abstract Efl.Task extends Efl.Loop_Consumer
       }
       end @pure_virtual {
          [[Request the task end (may send a signal or interrupt
-           signal resulting in a terminate event being tiggered in the
+           signal resulting in a terminate event being triggered in the
            target task loop).]]
       }
    }
