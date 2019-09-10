@@ -6,24 +6,39 @@ enum @beta Efl.Ui.Alert_Popup_Button {
 }
 
 struct @beta Efl.Ui.Alert_Popup_Button_Clicked_Event {
-   [[Information of clicked event]]
+   [[Information for @[Efl.Ui.Alert_Popup.button,clicked] event.]]
    button_type: Efl.Ui.Alert_Popup_Button; [[Clicked button type]]
 }
 
 class @beta Efl.Ui.Alert_Popup extends Efl.Ui.Popup
 {
-   [[EFL UI Alert Popup class]]
+   [[A variant of @Efl.Ui.Popup which uses a layout containing a content object and
+     a variable number of buttons (up to 3 total).
+
+     An Alert_Popup is a popup which can be used when an application requires user interaction. It provides
+     functionality for easily creating button objects on the popup and passing information about
+     which button has been pressed to the button event callback.
+   ]]
    methods {
       @property button {
+         [[This property changes the text and icon for the specified button object.
+
+           When set, the Alert_Popup will create a button for the specified type if it does not yet
+           exist. The button's content and text will be set using the passed values.
+
+           Exactly one button may exist for each @Efl.Ui.Alert_Popup_Button type. Repeated calls to
+           set values for the same button type will overwrite previous values.
+
+           By default, no buttons are created.
+         ]]
          set {
-            [[Set popup buttons.]]
          }
          keys {
-            type: Efl.Ui.Alert_Popup_Button; [[Alert popup button type]]
+            type: Efl.Ui.Alert_Popup_Button; [[Alert_Popup button type]]
          }
          values {
-            text: string; [[Alert string on button]]
-            icon: Efl.Object; [[Alert icon on button]]
+            text: string; [[Text of the specified button type.]]
+            icon: Efl.Canvas.Object; [[Visual to use as an icon for the specified button type.]]
          }
       }
    }
@@ -33,6 +48,6 @@ class @beta Efl.Ui.Alert_Popup extends Efl.Ui.Popup
       Efl.Part.part_get;
    }
    events {
-      button,clicked: Efl.Ui.Alert_Popup_Button_Clicked_Event; [[Called when alert popup was clicked]]
+      button,clicked: Efl.Ui.Alert_Popup_Button_Clicked_Event; [[Called when an Alert_Popup button was clicked.]]
    }
 }
