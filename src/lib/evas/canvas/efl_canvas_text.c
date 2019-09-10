@@ -6835,6 +6835,7 @@ _efl2_canvas_text_efl_object_constructor(Eo *eo_obj, Efl2_Canvas_Text_Data *clas
    o->inherit_paragraph_direction = EINA_TRUE;
 #endif
 
+   // FIXME: Make sure to set the attribute correctly
    _FMT(ref) = 1;
    _FMT(halign) = 0.0;
    _FMT(halign_auto) = EINA_TRUE;
