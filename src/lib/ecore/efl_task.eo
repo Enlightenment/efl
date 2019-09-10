@@ -21,7 +21,7 @@ enum Efl.Task_Flags {
    exit_with_parent   = 8, [[Exit when parent exits.]]
 }
 
-abstract @beta Efl.Task extends Efl.Loop_Consumer
+abstract Efl.Task extends Efl.Loop_Consumer
 {
    [[EFL's abstraction for a task (process).
      @since 1.22
