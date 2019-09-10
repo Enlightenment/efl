@@ -6830,7 +6830,7 @@ _efl2_canvas_text_efl_object_constructor(Eo *eo_obj, Efl2_Canvas_Text_Data *clas
 
    efl2_text_set(eo_obj, "");
 
-   o->multiline = EINA_FALSE;
+   o->multiline = EINA_TRUE;
 #ifdef BIDI_SUPPORT
    o->inherit_paragraph_direction = EINA_TRUE;
 #endif
