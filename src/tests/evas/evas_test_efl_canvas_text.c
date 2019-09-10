@@ -145,7 +145,7 @@ EFL_START_TEST(canvas_text_cursor)
      {
         _CHECK_CURSOR_COORDS();
 
-        fail_if(efl2_text_cursor_position_get(cur) != (int) i);
+        ck_assert_int_eq(efl2_text_cursor_position_get(cur), (int) i);
 
         fail_if(!efl2_text_cursor_char_next(cur) && (i < len - 1));
      }
@@ -164,7 +164,7 @@ EFL_START_TEST(canvas_text_cursor)
 
         _CHECK_CURSOR_COORDS();
 
-        fail_if(efl2_text_cursor_position_get(cur) != (int) i);
+        ck_assert_int_eq(efl2_text_cursor_position_get(cur), (int) i);
      }
 
    /* Create another cursor and insert text, making sure everything
