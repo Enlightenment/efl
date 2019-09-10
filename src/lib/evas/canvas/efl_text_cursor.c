@@ -218,7 +218,7 @@ EOLIAN static void
 _efl2_text_cursor_coord_set(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, int x, int y)
 {
    Efl2_Text_Cursor_Handle *cur = pd->cur;
-   _canvas_text_cursor_coord_set(cur, x, y, EINA_FALSE);
+   _canvas_text_cursor_coord_set(cur, x, y);
 }
 
 EOLIAN static int
