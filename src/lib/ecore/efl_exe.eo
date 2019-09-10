@@ -23,7 +23,11 @@ enum @beta Efl.Exe_Flags {
 
 class @beta Efl.Exe extends Efl.Task implements Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Efl.Core.Command_Line
 {
-   [[Further customization of @Efl.Task, including signals and environment control.]] // TODO: This needs more detail
+   [[The Efl.Exe
+
+     Efl.Exe is a kind of specialized @Efl.Task which is a abstraction of process(task).
+     This class provides a way to execute some commands with certain executing flags under certain environment variables.
+     and also it can provides a way to manage signals to a process that it handles.]]
    methods {
       signal {
          [[Send a signal to this task.]]
