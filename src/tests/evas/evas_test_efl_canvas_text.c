@@ -473,6 +473,9 @@ EFL_START_TEST(canvas_text_cursor)
      }
 
 #ifdef HAVE_FRIBIDI
+
+   // FIXME: not currently exposed
+#if 0
    /* Check direction */
    efl2_text_set(tb, "test");
    fail_if(strcmp(evas_object_textblock_text_markup_get(tb), "test"));
@@ -686,14 +689,15 @@ EFL_START_TEST(canvas_text_cursor)
         /* Reset paragraph direction */
         evas_object_paragraph_direction_set(tb, EVAS_BIDI_DIRECTION_NEUTRAL);
      }
+#endif
 
    efl2_text_set(tb,
-         "testנסיוןtestנסיון<ps/>"
-         "נסיוןtestנסיוןtest<ps/>"
-         "testנסיוןtest<ps/>"
-         "נסיוןtestנסיון<ps/>"
-         "testנסיון<br/>נסיון<ps/>"
-         "נסיוןtest<br/>test"
+         "testנסיוןtestנסיון" EFL_TEXT_PARAGRAPH_SEPARATOR_UTF8
+         "נסיוןtestנסיוןtest" EFL_TEXT_PARAGRAPH_SEPARATOR_UTF8
+         "testנסיוןtest" EFL_TEXT_PARAGRAPH_SEPARATOR_UTF8
+         "נסיוןtestנסיון" EFL_TEXT_PARAGRAPH_SEPARATOR_UTF8
+         "testנסיון\nנסיון" EFL_TEXT_PARAGRAPH_SEPARATOR_UTF8
+         "נסיוןtest\ntest"
          );
 
    for (i = 0 ; i < 8 ; i++)
