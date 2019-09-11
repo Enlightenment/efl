@@ -285,7 +285,6 @@ EFL_START_TEST(canvas_text_cursor)
    fail_if(efl2_text_cursor_compare(cur, main_cur));
 
    // FIXME: need to enable
-#if 0
    /* Line char first */
    efl2_text_cursor_paragraph_first(main_cur);
    efl2_text_cursor_paragraph_first(cur);
@@ -310,6 +309,7 @@ EFL_START_TEST(canvas_text_cursor)
    efl2_text_cursor_line_end(cur);
    fail_if(efl2_text_cursor_position_get(cur) != 16);
 
+#if 0
    /* Line set */
    efl2_text_cursor_paragraph_first(main_cur);
    efl2_text_cursor_paragraph_last(cur);
