@@ -13581,6 +13581,28 @@ ppar(Evas_Object_Textblock_Paragraph *par)
      }
 }
 
+EAPI void
+playout(Efl2_Canvas_Text *eo_obj)
+{
+   Efl2_Canvas_Text_Data *o = efl_data_scope_get(eo_obj, MY_CLASS);
+   Evas_Object_Textblock_Paragraph *par;
+
+   EINA_INLIST_FOREACH(o->paragraphs, par)
+     {
+        Evas_Object_Textblock_Line *ln;
+        EINA_INLIST_FOREACH(par->lines, ln)
+          {
+             Evas_Object_Textblock_Item *it;
+             EINA_INLIST_FOREACH(ln->items, it)
+               {
+                  pitem(it);
+               }
+             printf(">>>>> NEWLINE \n");
+          }
+        printf("\n\n");
+     }
+}
+
 #endif
 
 #define EFL2_CANVAS_TEXT_EXTRA_OPS \
