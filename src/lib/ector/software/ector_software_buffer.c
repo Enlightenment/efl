@@ -45,7 +45,7 @@ _pixels_gry8_to_argb_convert(uint32_t *dst, const uint8_t *src, int len)
 }
 
 EOLIAN static void
-_ector_software_buffer_base_pixels_clear(Eo *obj, Ector_Software_Buffer_Base_Data *pd)
+_ector_software_buffer_base_pixels_clear(Eo *obj EINA_UNUSED, Ector_Software_Buffer_Base_Data *pd)
 {
    if (!pd->pixels.u8) return;
 

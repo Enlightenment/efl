@@ -5,7 +5,6 @@
 #include "region.h"
 
 #include <software/Ector_Software.h>
-#include "cairo/Ector_Cairo.h"
 #include "evas_ector_software.h"
 #include "draw.h"
 #include "evas_filter_private.h"
@@ -4193,26 +4192,13 @@ eng_output_idle_flush(void *engine EINA_UNUSED, void *data)
 
 // Ector functions
 
-static Eina_Bool use_cairo;
-
 static Ector_Surface *
 eng_ector_create(void *engine EINA_UNUSED)
 {
    Ector_Surface *ector;
-   const char *ector_backend;
 
-   ector_backend = getenv("ECTOR_BACKEND");
    efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
-   if (ector_backend && !strcasecmp(ector_backend, "default"))
-     {
-        ector = efl_add_ref(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
-        use_cairo = EINA_FALSE;
-     }
-   else
-     {
-        ector = efl_add_ref(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
-        use_cairo = EINA_TRUE;
-     }
+   ector = efl_add_ref(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
    efl_domain_current_pop();
    return ector;
 }
