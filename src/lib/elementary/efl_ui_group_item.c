@@ -128,7 +128,7 @@ _efl_ui_group_item_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Group_Item_Data *pd,
    int group_index = efl_pack_index_get(container, obj);
 
    _register_item(obj, pd, subobj);
-   HANDLE_REG_CALL(efl_pack_at(container, subobj, group_index + eina_list_count(pd->registered_items) + 1));
+   HANDLE_REG_CALL(efl_pack_at(container, subobj, group_index + eina_list_count(pd->registered_items)));
 }
 
 EOLIAN static Eina_Bool
