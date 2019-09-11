@@ -79,27 +79,36 @@ _prepare_comp(Evas_Object_Protected_Data *obj,     //vector object
    if (!pd->comp.buffer || (pd->comp.bound.w != mbound.w) ||
          (pd->comp.bound.h != mbound.h))
      {
-        if (pd->comp.pixels) free(pd->comp.pixels);
-        if (pd->comp.buffer) efl_unref(pd->comp.buffer);
-        pd->comp.pixels = malloc(sizeof(uint32_t) * (mbound.w * mbound.h));
-        memset(pd->comp.pixels, init_buffer, sizeof(uint32_t) * (mbound.w * mbound.h));
+        if (pd->comp.buffer)
+          {
+             if (pd->comp.pixels)
+               ector_buffer_unmap(pd->comp.buffer, pd->comp.pixels, pd->comp.length);
+             efl_unref(pd->comp.buffer);
+          }
         pd->comp.buffer = ENFN->ector_buffer_new(ENC, obj->layer->evas->evas,
                                                  mbound.w, mbound.h,
                                                  EFL_GFX_COLORSPACE_ARGB8888,
                                                  ECTOR_BUFFER_FLAG_DRAWABLE |
                                                  ECTOR_BUFFER_FLAG_CPU_READABLE |
                                                  ECTOR_BUFFER_FLAG_CPU_WRITABLE);
-        ector_buffer_pixels_set(pd->comp.buffer, pd->comp.pixels,
-                                mbound.w, mbound.h, 0,
-                                EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         pd->comp.bound.w = mbound.w;
         pd->comp.bound.h = mbound.h;
         pd->comp.vg_pd = obj;
+
+        //Map
+        pd->comp.pixels = ector_buffer_map(pd->comp.buffer, &pd->comp.length,
+                                           (ECTOR_BUFFER_FLAG_DRAWABLE |
+                                            ECTOR_BUFFER_FLAG_CPU_READABLE |
+                                            ECTOR_BUFFER_FLAG_CPU_WRITABLE),
+                                           0, 0, mbound.w, mbound.h,
+                                           EFL_GFX_COLORSPACE_ARGB8888,
+                                           &pd->comp.stride);
+        if (!pd->comp.pixels) ERR("Failed to map VG composite buffer");
      }
    else
      {
         if (pd->comp.pixels)
-          memset(pd->comp.pixels, init_buffer, sizeof(uint32_t) * mbound.w * mbound.h);
+          memset(pd->comp.pixels, init_buffer, pd->comp.length);
      }
 
    pd->comp.bound.x = mbound.x;
@@ -130,7 +139,7 @@ _prepare_comp(Evas_Object_Protected_Data *obj,     //vector object
                        ptransform, comp, comp_method);
 
    //4. Generating Composite Image.
-   ector_buffer_pixels_set(surface, pd->comp.pixels, mbound.w, mbound.h, 0,
+   ector_buffer_pixels_set(surface, pd->comp.pixels, mbound.w, mbound.h, pd->comp.stride,
                            EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
    ector_surface_reference_point_set(surface, -mbound.x, -mbound.y);
    _draw_comp(obj, comp_target, surface, engine, output, context);
@@ -228,8 +237,12 @@ _efl_canvas_vg_container_efl_object_destructor(Eo *obj,
    if (pd->blend_buffer) efl_unref(pd->blend_buffer);
 
    //Destroy comp surface
-   if (pd->comp.buffer) efl_unref(pd->comp.buffer);
-   if (pd->comp.pixels) free(pd->comp.pixels);
+   if (pd->comp.buffer)
+     {
+        if (pd->comp.pixels)
+          ector_buffer_unmap(pd->comp.buffer, pd->comp.pixels, pd->comp.length);
+        efl_unref(pd->comp.buffer);
+     }
 
    efl_unref(pd->comp_target);
    eina_list_free(pd->comp.src);
