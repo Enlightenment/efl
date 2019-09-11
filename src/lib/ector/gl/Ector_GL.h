@@ -34,8 +34,6 @@
 #ifndef _ECTOR_GL_SURFACE_EO_CLASS_TYPE
 #define _ECTOR_GL_SURFACE_EO_CLASS_TYPE
 
-typedef Eo Ector_Cairo_Surface;
-
 #endif
 
 typedef unsigned int GLuint;

@@ -58,9 +58,6 @@ _on_delete(Ecore_Evas *ee EINA_UNUSED)
 int
 main(void)
 {
-   //Cairo backend is not supported.
-   putenv("ECTOR_BACKEND=default");
-
    if (!ecore_evas_init())
      return EXIT_FAILURE;
 
