@@ -32,6 +32,51 @@ EFL_START_TEST(edje_test_edje_load)
 }
 EFL_END_TEST
 
+static void
+_callback(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+   int *called = data;
+   ck_assert_int_eq(*called, 0);
+   *called = 1;
+}
+
+EFL_START_TEST(edje_test_edje_reload)
+{
+   Evas *evas = _setup_evas();
+   Evas_Object *obj, *rect;
+   int called = 0;
+   struct timespec t[2] = {0};
+   const char *layout = test_layout_get("test_swallows.edj");
+
+   obj = edje_object_add(evas);
+   edje_object_signal_callback_add(obj, "load", "", _callback, &called);
+   fail_unless(edje_object_file_set(obj, layout, "test_group"));
+   rect = evas_object_rectangle_add(evas);
+   ck_assert(edje_object_part_swallow(obj, "swallow", rect));
+   edje_object_message_signal_process(obj);
+   /* load should be called */
+   ck_assert_int_eq(called, 1);
+
+   called = 0;
+   fail_unless(edje_object_file_set(obj, layout, "test_group"));
+   edje_object_message_signal_process(obj);
+   /* load should NOT be called */
+   ck_assert_int_eq(called, 0);
+
+   t[0].tv_nsec = t[1].tv_nsec = UTIME_NOW;
+   ck_assert(!utimensat(0, layout, t, 0));
+
+   called = 0;
+   fail_unless(edje_object_file_set(obj, layout, "test_group"));
+   edje_object_message_signal_process(obj);
+   /* layout mtime has changed; load should be called */
+   ck_assert_int_eq(called, 1);
+
+   /* verify that the object has actually loaded */
+   ck_assert_ptr_eq(edje_object_part_swallow_get(obj, "swallow"), rect);
+}
+EFL_END_TEST
+
 EFL_START_TEST(edje_test_load_simple_layout)
 {
    Evas *evas = _setup_evas();
@@ -241,6 +286,7 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_edje_init);
    tcase_add_test(tc, edje_test_load_simple_layout);
    tcase_add_test(tc, edje_test_edje_load);
+   tcase_add_test(tc, edje_test_edje_reload);
    tcase_add_test(tc, edje_test_simple_layout_geometry);
    tcase_add_test(tc, edje_test_complex_layout);
    tcase_add_test(tc, edje_test_calculate_parens);
