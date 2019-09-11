@@ -405,45 +405,40 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
         if (alpha < 255)
           {
              //Replace with a new size.
-             if (cd->blend_buffer)
+             if (cd->blend.buffer)
                {
                   int w2, h2;
-                  ector_buffer_size_get(cd->blend_buffer, &w2, &h2);
-
+                  ector_buffer_size_get(cd->blend.buffer, &w2, &h2);
                   if (w2 != w || h2 != h)
-                    {
-                       if (cd->blend_pixels)
-                         {
-                            free(cd->blend_pixels);
-                            cd->blend_pixels = NULL;
-                         }
-                       efl_unref(cd->blend_buffer);
-                       cd->blend_buffer = NULL;
-                    }
+                    efl_canvas_vg_container_blend_buffer_clear(node, cd);
                }
 
-             // Reuse buffer
-             if (!cd->blend_pixels)
-               cd->blend_pixels = calloc(w * h, sizeof(uint32_t*));
-             else
-               memset(cd->blend_pixels, 0, sizeof(uint32_t) * (w * h));
-
-             if (!cd->blend_buffer)
+             if (!cd->blend.buffer)
                {
-                  cd->blend_buffer = ENFN->ector_buffer_new(ENC, obj->layer->evas->evas,
-                                                                    w, h,
-                                                                    EFL_GFX_COLORSPACE_ARGB8888,
-                                                                    ECTOR_BUFFER_FLAG_DRAWABLE |
-                                                                    ECTOR_BUFFER_FLAG_CPU_READABLE |
-                                                                    ECTOR_BUFFER_FLAG_CPU_WRITABLE);
-                  ector_buffer_pixels_set(cd->blend_buffer, cd->blend_pixels,
-                                          w, h, 0,
-                                          EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
+                  cd->blend.buffer = ENFN->ector_buffer_new(ENC, obj->layer->evas->evas,
+                                                            w, h,
+                                                            EFL_GFX_COLORSPACE_ARGB8888,
+                                                            ECTOR_BUFFER_FLAG_DRAWABLE |
+                                                            ECTOR_BUFFER_FLAG_CPU_READABLE |
+                                                            ECTOR_BUFFER_FLAG_CPU_WRITABLE);
+                  cd->blend.pixels = ector_buffer_map(cd->blend.buffer, &cd->blend.length,
+                                                      (ECTOR_BUFFER_FLAG_DRAWABLE |
+                                                       ECTOR_BUFFER_FLAG_CPU_READABLE |
+                                                       ECTOR_BUFFER_FLAG_CPU_WRITABLE),
+                                                      0, 0, w, h,
+                                                      EFL_GFX_COLORSPACE_ARGB8888,
+                                                      &cd->blend.stride);
+                  if (!cd->blend.pixels) ERR("Failed to map VG blend bufffer");
+               }
+             else
+               {
+                  if (cd->blend.pixels)
+                    memset(cd->blend.pixels, 0, cd->blend.length);
                }
 
              // Buffer change
-             ector_buffer_pixels_set(ector, cd->blend_pixels,
-                                     w, h, 0,
+             ector_buffer_pixels_set(ector, cd->blend.pixels,
+                                     w, h, cd->blend.stride,
                                      EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
              ector_surface_reference_point_set(ector, 0,0);
 
@@ -455,21 +450,13 @@ _evas_vg_render(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd,
              ENFN->ector_begin(engine, output, context, ector, 0, 0, EINA_FALSE, do_async);
 
              // Draw buffer to original surface.(Ector_Surface)
-             ector_surface_draw_image(ector, cd->blend_buffer, 0, 0, alpha);
+             ector_surface_draw_image(ector, cd->blend.buffer, 0, 0, alpha);
 
           }
         else
           {
-             if (cd->blend_pixels)
-               {
-                  free(cd->blend_pixels);
-                  cd->blend_pixels = NULL;
-               }
-             if (cd->blend_buffer)
-               {
-                  efl_unref(cd->blend_buffer);
-                  cd->blend_buffer = NULL;
-               }
+             efl_canvas_vg_container_blend_buffer_clear(node, cd);
+
              EINA_LIST_FOREACH(cd->children, l, child)
                 _evas_vg_render(obj, pd, engine, output, context, child, clips, w, h, ector, do_async);
           }

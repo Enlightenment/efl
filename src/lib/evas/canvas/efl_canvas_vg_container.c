@@ -76,15 +76,19 @@ _prepare_comp(Evas_Object_Protected_Data *obj,     //vector object
      init_buffer = 0xFFFFFFFF;
 
    //2. Reusable ector buffer?
-   if (!pd->comp.buffer || (pd->comp.bound.w != mbound.w) ||
-         (pd->comp.bound.h != mbound.h))
+   if (pd->comp.buffer &&
+       ((pd->comp.bound.w != mbound.w) ||
+       (pd->comp.bound.h != mbound.h)))
+
      {
-        if (pd->comp.buffer)
-          {
-             if (pd->comp.pixels)
-               ector_buffer_unmap(pd->comp.buffer, pd->comp.pixels, pd->comp.length);
-             efl_unref(pd->comp.buffer);
-          }
+        if (pd->comp.pixels)
+          ector_buffer_unmap(pd->comp.buffer, pd->comp.pixels, pd->comp.length);
+        efl_unref(pd->comp.buffer);
+        pd->comp.buffer = NULL;
+     }
+
+   if (!pd->comp.buffer)
+     {
         pd->comp.buffer = ENFN->ector_buffer_new(ENC, obj->layer->evas->evas,
                                                  mbound.w, mbound.h,
                                                  EFL_GFX_COLORSPACE_ARGB8888,
@@ -233,8 +237,7 @@ static void
 _efl_canvas_vg_container_efl_object_destructor(Eo *obj,
                                                Efl_Canvas_Vg_Container_Data *pd)
 {
-   if (pd->blend_pixels) free(pd->blend_pixels);
-   if (pd->blend_buffer) efl_unref(pd->blend_buffer);
+   efl_canvas_vg_container_blend_buffer_clear(obj, pd);
 
    //Destroy comp surface
    if (pd->comp.buffer)
@@ -439,6 +442,20 @@ efl_canvas_vg_container_vg_obj_update(Efl_VG *obj, Efl_Canvas_Vg_Node_Data *nd)
         if (efl_isa(child, MY_CLASS))
           efl_canvas_vg_container_vg_obj_update(child, child_nd);
      }
+}
+
+void
+efl_canvas_vg_container_blend_buffer_clear(Efl_VG *obj EINA_UNUSED, Efl_Canvas_Vg_Container_Data *cd)
+{
+   if (!cd->blend.buffer) return;
+
+   if (cd->blend.pixels)
+     {
+        ector_buffer_unmap(cd->blend.buffer, cd->blend.pixels, cd->blend.length);
+        cd->blend.pixels = NULL;
+     }
+   if (cd->blend.buffer) efl_unref(cd->blend.buffer);
+   cd->blend.buffer = NULL;
 }
 
 EAPI Efl_VG*

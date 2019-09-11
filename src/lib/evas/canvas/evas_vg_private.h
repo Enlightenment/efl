@@ -100,9 +100,14 @@ struct _Efl_Canvas_Vg_Container_Data
    Efl_Canvas_Vg_Node *comp_target; //Composite target
    Vg_Comp comp;                    //Composite target data
 
-   //Layer transparency feature. This buffer is only valid when the layer has transparency.
-   Ector_Buffer *blend_buffer;
-   void *blend_pixels;
+   /* Layer transparency feature.
+      This buffer is only valid when the layer has transparency. */
+   struct {
+        Ector_Buffer *buffer;
+        void *pixels;
+        unsigned int length;                //blend buffer data size
+        unsigned int stride;                //blend buffer stride
+   } blend;
 };
 
 struct _Efl_Canvas_Vg_Gradient_Data
@@ -139,6 +144,7 @@ Eina_Size2D                 evas_cache_vg_entry_default_size_get(const Vg_Cache_
 void                        efl_canvas_vg_node_vg_obj_set(Efl_VG *node, Efl_VG *vg_obj, Efl_Canvas_Vg_Object_Data *vd);
 void                        efl_canvas_vg_node_change(Efl_VG *node);
 void                        efl_canvas_vg_container_vg_obj_update(Efl_VG *obj, Efl_Canvas_Vg_Node_Data *nd);
+void                        efl_canvas_vg_container_blend_buffer_clear(Efl_VG *obj, Efl_Canvas_Vg_Container_Data *cd);
 
 static inline void
 efl_canvas_vg_object_change(Efl_Canvas_Vg_Object_Data *vd)
