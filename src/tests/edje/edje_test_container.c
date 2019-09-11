@@ -51,7 +51,6 @@ EFL_START_TEST(edje_test_box)
      }
    eina_iterator_free(it);
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -111,7 +110,6 @@ EFL_START_TEST(edje_test_box_eoapi)
    efl_pack_clear(efl_part(obj, "box"));
    fail_if(efl_content_count(efl_part(obj, "box")) != 0);
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -186,7 +184,6 @@ EFL_START_TEST(edje_test_table)
           fail_if(strcmp(txt, buf) != 0);
        }
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -268,7 +265,6 @@ EFL_START_TEST(edje_test_table_eoapi)
    fail_if(efl_content_count(proxy) != 4);
    efl_del(proxy);
 
-   evas_free(evas);
 }
 EFL_END_TEST
 

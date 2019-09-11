@@ -28,7 +28,6 @@ EFL_START_TEST(edje_test_edje_load)
    error = edje_object_load_error_get(obj);
    fail_if(error != EDJE_LOAD_ERROR_DOES_NOT_EXIST);
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -89,7 +88,6 @@ EFL_START_TEST(edje_test_load_simple_layout)
    fail_unless(edje_object_part_exists(obj, "background"));
 
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -118,7 +116,6 @@ EFL_START_TEST(edje_test_simple_layout_geometry)
    evas_object_color_get(bg, &r, &g, &b, &a);
    fail_if(r != 255 || g != 255 || b != 255 || a != 255);
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -166,7 +163,6 @@ EFL_START_TEST(edje_test_complex_layout)
    fail_if(x != 5 || y != 500+2);
    fail_if(w != 1000-5-5 + 1 || h != 500-5-2 + 1);
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -189,7 +185,6 @@ EFL_START_TEST(edje_test_calculate_parens)
    edje_object_part_geometry_get(obj, "background", &x, &y, &w, &h);
    fail_if(x != 0 || y != 0 || w != 100 || h != 100);
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -232,7 +227,6 @@ EFL_START_TEST(edje_test_access)
      }
    fail_if(i != 2);
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -246,7 +240,6 @@ EFL_START_TEST(edje_test_combine_keywords)
    obj = edje_object_add(evas);
    fail_unless(edje_object_file_set(obj, test_layout_get("test_combine_keywords.edj"), "test_group"));
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -277,7 +270,6 @@ EFL_START_TEST(edje_test_part_caching)
 
      }
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
