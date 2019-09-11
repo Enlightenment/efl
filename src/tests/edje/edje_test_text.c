@@ -88,7 +88,6 @@ EFL_START_TEST(edje_test_text_cursor)
    new_pos = edje_object_part_text_cursor_pos_get(obj, "text", EDJE_CURSOR_MAIN);
    ck_assert_int_eq(old_pos, new_pos);
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -110,7 +109,6 @@ EFL_START_TEST(edje_test_textblock)
    txt = edje_object_part_text_get(obj, "text");
    fail_if(!txt || strcmp(txt, buf));
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -129,7 +127,6 @@ START_TEST(edje_test_text_ellipsis)
 
    efl_text_ellipsis_set(efl_part(layout, "text"), 1.0);
 
-   evas_free(evas);
 }
 END_TEST
 
@@ -148,7 +145,6 @@ START_TEST(edje_test_text_wrap)
 
    efl_text_wrap_set(efl_part(layout, "text"), EFL_TEXT_FORMAT_WRAP_WORD);
 
-   evas_free(evas);
 }
 END_TEST
 
@@ -167,7 +163,6 @@ START_TEST(edje_test_text_font)
 
    efl_text_font_set(efl_part(layout, "text"), "Sans", 14);
 
-   evas_free(evas);
 }
 END_TEST
 
@@ -186,7 +181,6 @@ START_TEST(edje_test_text_color)
 
    efl_text_normal_color_set(efl_part(layout, "text"), 255, 255, 255, 255);
 
-   evas_free(evas);
 }
 END_TEST
 
@@ -330,7 +324,6 @@ START_TEST(edje_test_text_part)
    ck_assert(!efl_file_load(layout));
    _basic_check(layout, EINA_FALSE);
 
-   evas_free(evas);
 }
 END_TEST
 
