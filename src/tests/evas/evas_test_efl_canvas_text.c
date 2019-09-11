@@ -102,6 +102,33 @@ _paragraph_text_get(Efl2_Canvas_Text *tb, const Efl2_Text_Cursor *cur)
    return efl2_text_cursor_range_text_get(cur1, cur2);
 }
 
+static int
+_line_geometry_get(Efl2_Canvas_Text *tb, const Efl2_Text_Cursor *cur, int *x, int *y, int *w, int *h)
+{
+   Efl2_Text_Cursor *cur1 = efl_add(EFL2_TEXT_CURSOR_CLASS, tb,
+         efl2_text_cursor_handle_set(efl_added, efl2_canvas_text_cursor_handle_new(tb)));
+   Efl2_Text_Cursor *cur2 = efl_add(EFL2_TEXT_CURSOR_CLASS, tb,
+         efl2_text_cursor_handle_set(efl_added, efl2_canvas_text_cursor_handle_new(tb)));
+   efl2_text_cursor_copy(cur, cur1);
+   efl2_text_cursor_copy(cur, cur2);
+   efl2_text_cursor_line_start(cur1);
+   efl2_text_cursor_line_end(cur2);
+
+   Eina_Rect *rect;
+   Eina_Iterator *itr = efl2_text_cursor_range_geometry_get(cur1, cur2);
+   EINA_ITERATOR_FOREACH(itr, rect)
+     {
+        *x = rect->x;
+        *y = rect->y;
+        *w = rect->w;
+        *h = rect->h;
+
+        return efl2_text_cursor_line_number_get(cur);
+     }
+
+   return -1;
+}
+
 #define _CHECK_CURSOR_COORDS() \
 do \
 { \
@@ -118,10 +145,10 @@ do \
    /* FIXME:
         ret = evas_textblock_cursor_pen_geometry_get(cur, &cx, &cy, &cw, &ch); \
         fail_if(ret == -1); \
-        ret = evas_textblock_cursor_line_geometry_get(cur, \
+        */ \
+        ret = _line_geometry_get(tb, cur, \
               &cx, &cy, &cw, &ch); \
         fail_if(ret == -1); \
-        */ \
 } \
 while (0)
 
@@ -409,37 +436,39 @@ EFL_START_TEST(canvas_text_cursor)
 
    /* Try positions before the first paragraph, and after the last paragraph */
    efl2_text_set(tb, buf);
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
    efl2_text_cursor_position_set(cur, 5);
-   evas_textblock_cursor_char_coord_set(cur, nw / 2,
+   efl2_text_cursor_coord_set(cur, nw / 2,
          -50);
    efl2_text_cursor_paragraph_first(main_cur);
    fail_if(efl2_text_cursor_compare(cur, main_cur));
 
    efl2_text_cursor_position_set(cur, 5);
-   evas_textblock_cursor_char_coord_set(cur, nw / 2,
+   efl2_text_cursor_coord_set(cur, nw / 2,
          nh + 50);
-   evas_textblock_cursor_paragraph_last(main_cur);
+   efl2_text_cursor_paragraph_last(main_cur);
+   efl2_text_cursor_paragraph_end(main_cur);
    fail_if(efl2_text_cursor_compare(cur, main_cur));
 
    /* Try positions between the first paragraph and the first line. */
    efl2_text_set(tb, buf);
-   fail_if(!evas_textblock_cursor_char_coord_set(cur, 5, 1));
+   // FIXME: actually test something
+   efl2_text_cursor_coord_set(cur, 5, 1);
 
    /* Try positions beyond the left/right limits of lines. */
    for (i = 0 ; i < 2 ; i++)
      {
         efl2_text_cursor_line_number_set(cur, i);
-        evas_textblock_cursor_line_geometry_get(cur, &x, &y, &w, &h);
+        _line_geometry_get(tb, cur, &x, &y, &w, &h);
 
         efl2_text_cursor_position_set(main_cur, 5);
-        evas_textblock_cursor_char_coord_set(main_cur, x - 50, y);
+        efl2_text_cursor_coord_set(main_cur, x - 50, y);
         fail_if(efl2_text_cursor_compare(main_cur, cur));
 
         efl2_text_cursor_line_end(cur);
         efl2_text_cursor_position_set(main_cur, 5);
-        evas_textblock_cursor_char_coord_set(main_cur, x + w + 50, y);
+        efl2_text_cursor_coord_set(main_cur, x + w + 50, y);
         fail_if(efl2_text_cursor_compare(main_cur, cur));
      }
 
@@ -670,7 +699,7 @@ EFL_START_TEST(canvas_text_cursor)
    for (i = 0 ; i < 8 ; i++)
      {
         efl2_text_cursor_line_number_set(cur, i);
-        evas_textblock_cursor_line_geometry_get(cur, &x, &y, &w, &h);
+        _line_geometry_get(tb, cur, &x, &y, &w, &h);
         switch (i)
           {
            case 0:
@@ -679,12 +708,12 @@ EFL_START_TEST(canvas_text_cursor)
            case 5:
               /* Ltr paragraph */
               efl2_text_cursor_position_set(main_cur, 7);
-              evas_textblock_cursor_char_coord_set(main_cur, x - 50, y);
+              efl2_text_cursor_coord_set(main_cur, x - 50, y);
               fail_if(efl2_text_cursor_compare(main_cur, cur));
 
               efl2_text_cursor_line_end(cur);
               efl2_text_cursor_position_set(main_cur, 7);
-              evas_textblock_cursor_char_coord_set(main_cur, x + w + 50, y);
+              efl2_text_cursor_coord_set(main_cur, x + w + 50, y);
               fail_if(efl2_text_cursor_compare(main_cur, cur));
               break;
            case 1:
@@ -694,12 +723,12 @@ EFL_START_TEST(canvas_text_cursor)
               /* Rtl paragraph */
               efl2_text_cursor_line_end(cur);
               efl2_text_cursor_position_set(main_cur, 7);
-              evas_textblock_cursor_char_coord_set(main_cur, x - 50, y);
+              efl2_text_cursor_coord_set(main_cur, x - 50, y);
               fail_if(efl2_text_cursor_compare(main_cur, cur));
 
               efl2_text_cursor_line_start(cur);
               efl2_text_cursor_position_set(main_cur, 7);
-              evas_textblock_cursor_char_coord_set(main_cur, x + w + 50, y);
+              efl2_text_cursor_coord_set(main_cur, x + w + 50, y);
               fail_if(efl2_text_cursor_compare(main_cur, cur));
               break;
           }
@@ -714,12 +743,12 @@ EFL_START_TEST(canvas_text_cursor)
         efl2_text_cursor_line_number_set(cur, 0);
         efl2_text_cursor_copy(main_cur, cur);
         efl2_text_cursor_line_end(main_cur);
-        evas_textblock_cursor_line_geometry_get(cur, &plx, &ply, &plw, &plh);
+        _line_geometry_get(tb, cur, &plx, &ply, &plw, &plh);
 
         while (efl2_text_cursor_compare(cur, main_cur) <= 0)
           {
              evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
-             fail_if(0 != evas_textblock_cursor_line_geometry_get(
+             fail_if(0 != _line_geometry_get(tb, 
                       cur, &lx, &ly, &lw, &lh));
              fail_if((x < lx) ||
                    (y < ly) || (y + h > ly + lh));
@@ -735,12 +764,12 @@ EFL_START_TEST(canvas_text_cursor)
         efl2_text_cursor_line_number_set(cur, 1);
         efl2_text_cursor_copy(main_cur, cur);
         efl2_text_cursor_line_end(main_cur);
-        evas_textblock_cursor_line_geometry_get(cur, &plx, &ply, &plw, &plh);
+        _line_geometry_get(tb, cur, &plx, &ply, &plw, &plh);
 
         while (efl2_text_cursor_compare(cur, main_cur) <= 0)
           {
              evas_textblock_cursor_pen_geometry_get(cur, &x, &y, &w, &h);
-             fail_if(1 != evas_textblock_cursor_line_geometry_get(
+             fail_if(1 != _line_geometry_get(tb, 
                       cur, &lx, &ly, &lw, &lh));
              fail_if((x < lx) ||
                    (y < ly) || (y + h > ly + lh));
@@ -755,14 +784,14 @@ EFL_START_TEST(canvas_text_cursor)
 
         evas_textblock_cursor_paragraph_last(cur);
         efl2_text_cursor_line_number_set(cur, 0);
-        evas_textblock_cursor_line_geometry_get(cur, &plx, &ply, &plw, &plh);
+        _line_geometry_get(tb, cur, &plx, &ply, &plw, &plh);
         evas_object_textblock_line_number_geometry_get(tb, 0,
               &lx, &ly, &lw, &lh);
         fail_if((lx != plx) || (ly != ply) || (lw != plw) || (lh != plh));
         fail_if(0 != evas_textblock_cursor_line_coord_set(cur, ly + (lh / 2)));
 
         efl2_text_cursor_line_number_set(cur, 1);
-        evas_textblock_cursor_line_geometry_get(cur, &plx, &ply, &plw, &plh);
+        _line_geometry_get(tb, cur, &plx, &ply, &plw, &plh);
         evas_object_textblock_line_number_geometry_get(tb, 1,
               &lx, &ly, &lw, &lh);
         fail_if((lx != plx) || (ly != ply) || (lw != plw) || (lh != plh));
@@ -774,7 +803,7 @@ EFL_START_TEST(canvas_text_cursor)
 
         /* And now with a valigned textblock. */
         efl2_text_set(tb, buf);
-        evas_object_textblock_size_native_get(tb, &nw, &nh);
+        efl2_canvas_text_size_native_get(tb, &nw, &nh);
         evas_object_resize(tb, 2 * nw, 2 * nh);
 
         evas_object_textblock_valign_set(tb, 0.5);
@@ -783,7 +812,7 @@ EFL_START_TEST(canvas_text_cursor)
         fail_if(y <= 0);
 
         evas_textblock_cursor_paragraph_last(main_cur);
-        evas_textblock_cursor_char_coord_set(main_cur, x + w, y / 2);
+        efl2_text_cursor_coord_set(main_cur, x + w, y / 2);
         fail_if(efl2_text_cursor_compare(main_cur, cur));
 
         evas_textblock_cursor_paragraph_last(main_cur);
@@ -794,7 +823,7 @@ EFL_START_TEST(canvas_text_cursor)
          * go to the end. */
         efl2_text_cursor_paragraph_first(main_cur);
         evas_textblock_cursor_paragraph_last(cur);
-        evas_textblock_cursor_char_coord_set(main_cur, x + w, nh + 1);
+        efl2_text_cursor_coord_set(main_cur, x + w, nh + 1);
         fail_if(!efl2_text_cursor_compare(main_cur, cur));
 
         efl2_text_cursor_paragraph_first(main_cur);
@@ -805,7 +834,7 @@ EFL_START_TEST(canvas_text_cursor)
         /* Fail if it doesn't go to the end. */
         evas_textblock_cursor_paragraph_last(cur);
         efl2_text_cursor_paragraph_first(main_cur);
-        evas_textblock_cursor_char_coord_set(main_cur, x + w, (2 * nh) - 1);
+        efl2_text_cursor_coord_set(main_cur, x + w, (2 * nh) - 1);
         fail_if(efl2_text_cursor_compare(main_cur, cur));
 
         efl2_text_cursor_paragraph_first(main_cur);
@@ -1022,7 +1051,7 @@ EFL_START_TEST(evas_textblock_split_cursor)
     * Russian 't' in the beginnning to create additional item.*/
                                             /*01234    5 6789012345678  19  01234 */
    evas_object_textblock_text_markup_set(tb, "тest \u202bנסיוןabcנסיון\u202c bang");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
 
    /* Logical cursor after "test " */
@@ -1098,7 +1127,7 @@ EFL_START_TEST(evas_textblock_split_cursor)
                                            /*                1           2
                                               01234  5   67890123456789  0   123456 */
    evas_object_textblock_text_markup_set(tb, "שלום \u202atest עברית efl\u202c נסיון");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
 
    /* Logical cursor before "test" */
@@ -1171,7 +1200,7 @@ EFL_START_TEST(evas_textblock_split_cursor)
                                              /*              1
                                               01234   5  678901234567   */
    evas_object_textblock_text_markup_set(tb, "test \u202bנסיוןشسيبabc");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
 
    efl2_text_cursor_line_end(cur);
@@ -1189,7 +1218,7 @@ EFL_START_TEST(evas_textblock_split_cursor)
                                           /*                 1         2
                                               012345678   9  01234567890123 */
    evas_object_textblock_text_markup_set(tb, "נסיוןشسي \u202atestприветשלום");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
 
    efl2_text_cursor_line_end(cur);
@@ -1224,7 +1253,7 @@ EFL_START_TEST(evas_textblock_split_cursor)
    int i;
                                                       /* 012345678901234 */
    evas_object_textblock_text_markup_set(tb, "<wrap=char>testשלוםشسيبefl");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    nh = nh * 15;
    evas_object_resize(tb, nw, nh);
 
@@ -1236,19 +1265,19 @@ EFL_START_TEST(evas_textblock_split_cursor)
         fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, &cy, NULL,
                                                          NULL, &cx2, &cy2, NULL, NULL,
                                                          EVAS_TEXTBLOCK_CURSOR_BEFORE));
-        evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
+        _line_geometry_get(tb, cur, NULL, &ly, NULL, NULL);
         ck_assert_int_eq(cy, ly);
         evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
         ck_assert_int_eq(cx, x);
         efl2_text_cursor_position_set(cur, 11);
-        evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
+        _line_geometry_get(tb, cur, NULL, &ly, NULL, NULL);
         ck_assert_int_eq(cy2, ly);
         evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
         ck_assert_int_eq(cx2, x2);
      }
                                                       /* 01234567890123456789 */
    evas_object_textblock_text_markup_set(tb, "<wrap=char>נסיוןhelloприветשלום");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    nh = nh * 20;
    evas_object_resize(tb, nw, nh);
 
@@ -1259,12 +1288,12 @@ EFL_START_TEST(evas_textblock_split_cursor)
         fail_if(!evas_textblock_cursor_geometry_bidi_get(cur, &cx, &cy, NULL,
                                                          NULL, &cx2, &cy2, NULL, NULL,
                                                          EVAS_TEXTBLOCK_CURSOR_BEFORE));
-        evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
+        _line_geometry_get(tb, cur, NULL, &ly, NULL, NULL);
         ck_assert_int_eq(cy, ly);
         evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, &w, NULL);
         ck_assert_int_eq(cx, (x + w));
         efl2_text_cursor_position_set(cur, 15);
-        evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
+        _line_geometry_get(tb, cur, NULL, &ly, NULL, NULL);
         ck_assert_int_eq(cy2, ly);
         evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, &w2, NULL);
         ck_assert_int_eq(cx2, (x2 + w2));
@@ -1273,7 +1302,7 @@ EFL_START_TEST(evas_textblock_split_cursor)
    /* Testing multiline, when only RTL item is in the line. */
                                                       /* 012345678901234567890123 */
    evas_object_textblock_text_markup_set(tb, "<wrap=char>testtesttestтестשלוםشسيب");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
 
    efl2_text_cursor_position_set(cur, 15);
@@ -1288,19 +1317,19 @@ EFL_START_TEST(evas_textblock_split_cursor)
    efl2_text_cursor_position_set(cur, 16);
    evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, &w, NULL);
    ck_assert_int_eq(cx, (x + w));
-   evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
+   _line_geometry_get(tb, cur, NULL, &ly, NULL, NULL);
    ck_assert_int_eq(cy, ly);
 
    efl2_text_cursor_position_set(cur, 23);
    evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
    ck_assert_int_eq(cx2, x2);
-   evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
+   _line_geometry_get(tb, cur, NULL, &ly, NULL, NULL);
    ck_assert_int_eq(cy2, ly);
 
    /* Testing multiline, when only LTR item is in the line. */
                                                       /* 012345678901234567890123 */
    evas_object_textblock_text_markup_set(tb, "<wrap=char>שלוםשלוםשלוםشسيبtestтест");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
 
    efl2_text_cursor_position_set(cur, 15);
@@ -1315,13 +1344,13 @@ EFL_START_TEST(evas_textblock_split_cursor)
    efl2_text_cursor_position_set(cur, 16);
    evas_textblock_cursor_pen_geometry_get(cur, &x, NULL, NULL, NULL);
    ck_assert_int_eq(cx, x);
-   evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
+   _line_geometry_get(tb, cur, NULL, &ly, NULL, NULL);
    ck_assert_int_eq(cy, ly);
 
    efl2_text_cursor_line_end(cur);
    evas_textblock_cursor_pen_geometry_get(cur, &x2, NULL, NULL, NULL);
    ck_assert_int_eq(cx2, x2);
-   evas_textblock_cursor_line_geometry_get(cur, NULL, &ly, NULL, NULL);
+   _line_geometry_get(tb, cur, NULL, &ly, NULL, NULL);
    ck_assert_int_eq(cy2, ly);
 
    END_TB_TEST();
@@ -1847,7 +1876,7 @@ EFL_START_TEST(evas_textblock_items)
    buf = "<item relsize=64x64 vsize=ascent href=emoticon/knowing-grin></item><item absize=64x64 vsize=ascent href=emoticon/knowing-grin></item><item relsize=64x64 vsize=ascent href=emoticon/knowing-grin></item>";
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    fail_if((nw != w) || (nh != h));
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    efl2_text_cursor_char_next(cur);
@@ -1871,10 +1900,10 @@ EFL_START_TEST(evas_textblock_items)
    buf = "<item size=100x100 vsize=full></>.";
    evas_object_textblock_text_markup_set(tb, buf);
    evas_textblock_cursor_format_item_geometry_get(cur, &x, &y, &w, NULL);
-   evas_textblock_cursor_char_coord_set(cur, x + (w / 2) + 1, y);
+   efl2_text_cursor_coord_set(cur, x + (w / 2) + 1, y);
    fail_if(efl2_text_cursor_position_get(cur) != 1);
    /* Test small increment in x and cursor position will be same */
-   evas_textblock_cursor_char_coord_set(cur, x + 10, y);
+   efl2_text_cursor_coord_set(cur, x + 10, y);
    fail_if(efl2_text_cursor_position_get(cur) != 0);
 
    /* FIXME: Also verify x,y positions of the item. */
@@ -1944,7 +1973,7 @@ EFL_START_TEST(evas_textblock_wrapping)
    evas_textblock_cursor_format_prepend(cur, "+ wrap=word");
    evas_object_resize(tb, bw, bh);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    ck_assert_int_eq(w, nw);
@@ -1962,7 +1991,7 @@ EFL_START_TEST(evas_textblock_wrapping)
          "aaaaaa"
          );
    evas_textblock_cursor_format_prepend(cur, "+ wrap=char");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
 
    Evas_Coord iw;
    for (iw = nw ; iw >= bw ; iw--)
@@ -1976,13 +2005,13 @@ EFL_START_TEST(evas_textblock_wrapping)
 
    /* Verify that no empty line is added */
    evas_object_textblock_text_markup_set(tb, "<wrap=word>Hello</wrap>");
-   evas_object_textblock_size_native_get(tb, NULL, &nh);
+   efl2_canvas_text_size_native_get(tb, NULL, &nh);
    evas_object_resize(tb, 0, 1000);
    evas_object_textblock_size_formatted_get(tb, NULL, &h);
    ck_assert_int_eq(nh, h);
 
    evas_object_textblock_text_markup_set(tb, "<wrap=char>a</wrap>");
-   evas_object_textblock_size_native_get(tb, NULL, &nh);
+   efl2_canvas_text_size_native_get(tb, NULL, &nh);
    evas_object_resize(tb, 0, 1000);
    evas_object_textblock_size_formatted_get(tb, NULL, &h);
    ck_assert_int_eq(nh, h);
@@ -1997,7 +2026,7 @@ EFL_START_TEST(evas_textblock_wrapping)
          "aaaaa"
          );
    evas_textblock_cursor_format_prepend(cur, "+ wrap=word");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
 
    for (iw = nw ; iw >= bw ; iw--)
      {
@@ -2018,7 +2047,7 @@ EFL_START_TEST(evas_textblock_wrapping)
          "aaaaa"
          );
    evas_textblock_cursor_format_prepend(cur, "+ wrap=mixed");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
 
    for (iw = nw ; iw >= bw ; iw--)
      {
@@ -2065,7 +2094,7 @@ EFL_START_TEST(evas_textblock_wrapping)
          );
 
    /* Get minimum size */
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
 
    for (i = 0 ; i < wrap_items ; i++)
      {
@@ -2087,18 +2116,18 @@ EFL_START_TEST(evas_textblock_wrapping)
    /* Ellipsis */
    int ellip_w = 0;
    evas_object_textblock_text_markup_set(tb, "…");
-   evas_object_textblock_size_native_get(tb, &ellip_w, NULL);
+   efl2_canvas_text_size_native_get(tb, &ellip_w, NULL);
 
    evas_object_textblock_text_markup_set(tb, "aaaaaaaaaaaaaaaaaa<br/>b");
    evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0 wrap=word");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw / 2, nh * 2);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    ck_assert_int_le(w, (nw / 2));
 
    evas_object_textblock_text_markup_set(tb, "a<b>b</b>a<b>b</b>a<b>b</b>");
    evas_textblock_cursor_format_prepend(cur, "+ font_size=50 ellipsis=1.0");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw / 2, nh * 2);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    ck_assert_int_le(w, (nw / 2));
@@ -2120,7 +2149,7 @@ EFL_START_TEST(evas_textblock_wrapping)
 
    evas_object_textblock_text_markup_set(tb, "ab");
    evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw / 2, nh * 2);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    ck_assert_int_le(w, ellip_w);
@@ -2130,7 +2159,7 @@ EFL_START_TEST(evas_textblock_wrapping)
         evas_object_resize(tb, 500, 500);
         evas_object_textblock_text_markup_set(tb, "ABC 한글한글 DEF");
         evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0");
-        evas_object_textblock_size_native_get(tb, &nw, &nh);
+        efl2_canvas_text_size_native_get(tb, &nw, &nh);
         evas_object_resize(tb, nw, nh);
         evas_object_textblock_size_formatted_get(tb, &w, &h);
 
@@ -2166,7 +2195,7 @@ EFL_START_TEST(evas_textblock_wrapping)
            sprintf(buf, "+ ellipsis=%f", ellip);
            evas_object_textblock_text_markup_set(tb, "aaaaaaaaaa");
            evas_textblock_cursor_format_prepend(cur, buf);
-           evas_object_textblock_size_native_get(tb, &nw, &nh);
+           efl2_canvas_text_size_native_get(tb, &nw, &nh);
            evas_object_resize(tb, nw / 2, nh);
            evas_object_textblock_size_formatted_get(tb, &w, &h);
            ck_assert_int_le(w, (nw / 2));
@@ -2174,7 +2203,7 @@ EFL_START_TEST(evas_textblock_wrapping)
 
            evas_object_textblock_text_markup_set(tb, "aaaaaaaaaa");
            evas_textblock_cursor_format_prepend(cur, buf);
-           evas_object_textblock_size_native_get(tb, &nw, &nh);
+           efl2_canvas_text_size_native_get(tb, &nw, &nh);
            evas_object_resize(tb, nw, nh);
            evas_object_textblock_size_formatted_get(tb, &w, &h);
            evas_object_resize(tb, nw / 2, nh);
@@ -2190,7 +2219,7 @@ EFL_START_TEST(evas_textblock_wrapping)
                  "jumps<tab> over the<tab> lazy dog"
                  );
            evas_textblock_cursor_format_prepend(cur, buf);
-           evas_object_textblock_size_native_get(tb, &nw, &nh);
+           efl2_canvas_text_size_native_get(tb, &nw, &nh);
            evas_object_resize(tb, nw / 2, nh);
            evas_object_textblock_size_formatted_get(tb, &w, &h);
            ck_assert_int_le(w, (nw / 2));
@@ -2199,7 +2228,7 @@ EFL_START_TEST(evas_textblock_wrapping)
    }
 
    evas_object_textblock_text_markup_set(tb, "aaaaaaaaaaaaaaaaaa");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
 
    evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0 wrap=char");
    nw /= 3;
@@ -2245,7 +2274,7 @@ EFL_START_TEST(evas_textblock_wrapping)
 
    evas_object_textblock_text_markup_set(tb,
          "<wrap=none>aaa bbbbbbbbbbb ccccc</wrap><wrap=word>dddddd</wrap>");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw / 2, nh * 4);
    evas_object_textblock_size_formatted_get(tb, &w, NULL);
    ck_assert_int_le(w, nw);
@@ -2290,10 +2319,10 @@ EFL_START_TEST(evas_textblock_wrapping)
 
    /* Check char-wrapping for small items */
    evas_object_textblock_text_markup_set(tb, "x");
-   evas_object_textblock_size_native_get(tb, &bw, NULL);
+   efl2_canvas_text_size_native_get(tb, &bw, NULL);
    evas_object_textblock_text_markup_set(tb, "AxAx");
    evas_textblock_cursor_format_prepend(cur, "+ wrap=char");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw - bw, nh);
    evas_object_textblock_size_formatted_get(tb, &bw, NULL);
 
@@ -2306,13 +2335,13 @@ EFL_START_TEST(evas_textblock_wrapping)
    /* Check the ellipsis is placed at proper place
     * in RTL text with formats */
    evas_object_textblock_text_markup_set(tb, ")");
-   evas_object_textblock_size_native_get(tb, &bw, NULL);
+   efl2_canvas_text_size_native_get(tb, &bw, NULL);
    bw++;
 
    /* Expect to see: "...)ي" */
    evas_object_textblock_text_markup_set(tb, "ي(ي)");
    evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw - bw, nh);
    evas_object_textblock_size_formatted_get(tb, &bw, NULL);
 
@@ -2378,28 +2407,28 @@ EFL_START_TEST(evas_textblock_various)
         Evas_Coord nw, nh, lx, lw;
 
         evas_object_textblock_text_markup_set(tb, "This is a test");
-        evas_object_textblock_size_native_get(tb, &nw, &nh);
+        efl2_canvas_text_size_native_get(tb, &nw, &nh);
         evas_object_resize(tb, nw, nh);
         evas_object_textblock_line_number_geometry_get(tb, 0, &lx, NULL, &lw, NULL);
         ck_assert_int_eq(lx, 0);
         ck_assert_int_eq(lx + lw, nw);
 
         evas_object_textblock_text_markup_set(tb, "<left_margin=10 right_margin=5>This is a test</>");
-        evas_object_textblock_size_native_get(tb, &nw, &nh);
+        efl2_canvas_text_size_native_get(tb, &nw, &nh);
         evas_object_resize(tb, nw, nh);
         evas_object_textblock_line_number_geometry_get(tb, 0, &lx, NULL, &lw, NULL);
         ck_assert_int_eq(lx, 10);
         ck_assert_int_eq(lx + lw + 5, nw);
 
         evas_object_textblock_text_markup_set(tb, "עוד פסקה");
-        evas_object_textblock_size_native_get(tb, &nw, &nh);
+        efl2_canvas_text_size_native_get(tb, &nw, &nh);
         evas_object_resize(tb, nw, nh);
         evas_object_textblock_line_number_geometry_get(tb, 0, &lx, NULL, &lw, NULL);
         ck_assert_int_eq(lx, 0);
         ck_assert_int_eq(lx + lw, nw);
 
         evas_object_textblock_text_markup_set(tb, "<left_margin=10 right_margin=5>עוד פסקה</>");
-        evas_object_textblock_size_native_get(tb, &nw, &nh);
+        efl2_canvas_text_size_native_get(tb, &nw, &nh);
         evas_object_resize(tb, nw, nh);
         evas_object_textblock_line_number_geometry_get(tb, 0, &lx, NULL, &lw, NULL);
         ck_assert_int_eq(lx, 10);
@@ -3749,7 +3778,7 @@ EFL_START_TEST(evas_textblock_style)
    // Ellipsis style padding
    // Should be consistent if style_pad is added
    evas_object_textblock_text_markup_set(tb, "hello");
-   evas_object_textblock_size_native_get(tb, &w, &h);
+   efl2_canvas_text_size_native_get(tb, &w, &h);
    evas_object_resize(tb, w - 1, 200);
    evas_object_textblock_text_markup_set(tb,
          "<ellipsis=1.0>hello");
@@ -3912,7 +3941,7 @@ EFL_START_TEST(evas_textblock_size)
 
    /* Empty textblock */
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    ck_assert_int_eq(w, nw);
    ck_assert_int_eq(h, nh);
    fail_if(w != 0);
@@ -3922,19 +3951,19 @@ EFL_START_TEST(evas_textblock_size)
 
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    ck_assert_int_eq(w, nw);
    ck_assert_int_eq(h, nh);
 
    evas_object_textblock_text_markup_set(tb, "a<br/>a");
    evas_object_textblock_size_formatted_get(tb, &w, &h2);
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    ck_assert_int_eq(w, nw);
    ck_assert_int_eq(h2, nh);
 
    evas_object_textblock_text_markup_set(tb, "/u200eאאא AAA");
    evas_object_resize(tb, 1, 1); //force wrapping
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    ck_assert_int_eq(w, nw);
@@ -3946,19 +3975,19 @@ EFL_START_TEST(evas_textblock_size)
    evas_object_textblock_text_markup_set(tb, buf);
 
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    fail_if((w != nw) || (h != nh));
    fail_if(w <= 0);
 
    evas_object_textblock_text_markup_set(tb, "i<b>。</b>");
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    ck_assert_int_eq(w, nw);
    ck_assert_int_eq(h, nh);
 
    evas_object_textblock_text_markup_set(tb, "。<b>i</b>");
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    ck_assert_int_eq(w, nw);
    ck_assert_int_eq(h, nh);
 
@@ -3969,7 +3998,7 @@ EFL_START_TEST(evas_textblock_size)
 
         evas_object_textblock_text_markup_set(tb, buf);
         evas_object_textblock_size_formatted_get(tb, &oldw, &oldh);
-        evas_object_textblock_size_native_get(tb, &oldnw, &oldnh);
+        efl2_canvas_text_size_native_get(tb, &oldnw, &oldnh);
 
 
         newst = evas_textblock_style_new();
@@ -3979,7 +4008,7 @@ EFL_START_TEST(evas_textblock_size)
         evas_object_textblock_style_user_push(tb, newst);
 
         evas_object_textblock_size_formatted_get(tb, &w, &h);
-        evas_object_textblock_size_native_get(tb, &nw, &nh);
+        efl2_canvas_text_size_native_get(tb, &nw, &nh);
 
         fail_if((w != oldw + 8) || (h != oldh) ||
               (nw != oldnw + 8) || (nh != oldnh));
@@ -3988,7 +4017,7 @@ EFL_START_TEST(evas_textblock_size)
    evas_object_resize(tb, 1000, 1000);
    evas_object_textblock_text_markup_set(tb, "\u200fHello שלום");
    evas_object_textblock_size_formatted_get(tb, &w, NULL);
-   evas_object_textblock_size_native_get(tb, &nw, NULL);
+   efl2_canvas_text_size_native_get(tb, &nw, NULL);
    ck_assert_int_eq(nw, w);
 
      {
@@ -4147,7 +4176,7 @@ _hyphenation_width_stress(Evas_Object *tb, Efl2_Text_Cursor *cur)
    Evas_Coord bw, bh, iw, nw, nh, w, h;
 
    evas_object_resize(tb, 100000, 1000);
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, 1, 1000);
    evas_textblock_cursor_format_prepend(cur, "<wrap=mixed>");
    evas_object_textblock_size_formatted_get(tb, &bw, &bh);
@@ -4253,36 +4282,36 @@ EFL_START_TEST(evas_textblock_text_iface)
 
    /* Set text */
    efl_text_set(tb, "hello world");
-   evas_object_textblock_size_native_get(tb, &bw, &bh);
+   efl2_canvas_text_size_native_get(tb, &bw, &bh);
    efl_text_set(tb, "hello\nworld");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    ck_assert_int_gt(nh, bh);
    ck_assert_int_gt(bw, nw);
    efl_text_set(tb, "hello\nworld\ngoodbye\nworld");
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    ck_assert_int_ge(nh, bh * 3);
 
    /* Delete text */
    efl_text_set(tb, "a");
-   evas_object_textblock_size_native_get(tb, &bw, &bh);
+   efl2_canvas_text_size_native_get(tb, &bw, &bh);
    efl_text_set(tb, "a\nb");
    efl2_text_cursor_position_set(cur, 1);
    evas_textblock_cursor_char_delete(cur);
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    ck_assert_int_eq(nh, bh);
 
    /* Paragraph checks */
    efl_text_set(tb, "d");
-   evas_object_textblock_size_native_get(tb, &w, &h);
+   efl2_canvas_text_size_native_get(tb, &w, &h);
    efl_text_set(tb, "aa\nb\nc\nd");
-   evas_object_textblock_size_native_get(tb, &bw, &bh);
+   efl2_canvas_text_size_native_get(tb, &bw, &bh);
    efl2_text_cursor_position_set(cur, 0);
    evas_textblock_cursor_char_delete(cur); // delete 'a'
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    ck_assert_int_eq(nh, bh);
    evas_textblock_cursor_char_delete(cur); // delete 'a'
    evas_textblock_cursor_char_delete(cur); // delete '\n'
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    ck_assert_int_lt(nh, bh);
    /* "b\nc\nd" is left */
    evas_textblock_cursor_char_delete(cur); // b
@@ -4290,7 +4319,7 @@ EFL_START_TEST(evas_textblock_text_iface)
    evas_textblock_cursor_char_delete(cur); // c
    evas_textblock_cursor_char_delete(cur); // \n
    /* expecting "d" only */
-   evas_object_textblock_size_native_get(tb, &nw, &nh);
+   efl2_canvas_text_size_native_get(tb, &nw, &nh);
    ck_assert_int_eq(nh, h);
    ck_assert_int_eq(nw, w);
 
