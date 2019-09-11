@@ -6604,7 +6604,14 @@ _layout_setup(Ctxt *c, const Eo *eo_obj, Evas_Coord w, Evas_Coord h)
         if (c->o->style_attribute)
           {
              // FIXME: actually handle this
-             _format_fill(c->obj, c->fmt, "font=Sans font_size=10 color=#000");
+             Eina_Strbuf *strbuf = eina_strbuf_new();
+             eina_strbuf_append_printf(strbuf, "font=%s font_source=%s font_size=%d color=#000",
+                   c->o->style_attribute->fmt.font.family,
+                   c->o->style_attribute->fmt.font.source,
+                   c->o->style_attribute->fmt.font.size
+                   );
+             _format_fill(c->obj, c->fmt, eina_strbuf_string_get(strbuf));
+             eina_strbuf_free(strbuf);
              finalize = EINA_TRUE;
           }
 
@@ -13616,15 +13623,16 @@ playout(Efl2_Canvas_Text *eo_obj)
 
    EINA_INLIST_FOREACH(o->paragraphs, par)
      {
+        printf(">>>>> PAR: y=%d h=%d\n", par->y, par->h);
         Evas_Object_Textblock_Line *ln;
         EINA_INLIST_FOREACH(par->lines, ln)
           {
+             printf(">>>>> LINE: y=%d h=%d\n", ln->y, ln->h);
              Evas_Object_Textblock_Item *it;
              EINA_INLIST_FOREACH(ln->items, it)
                {
                   pitem(it);
                }
-             printf(">>>>> NEWLINE \n");
           }
         printf("\n\n");
      }
