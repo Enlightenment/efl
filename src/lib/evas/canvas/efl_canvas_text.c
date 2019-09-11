@@ -756,6 +756,7 @@ static void _evas_textblock_cursors_set_node(Efl2_Canvas_Text_Data *o, const Eva
 static void _evas_textblock_annotations_clear(Efl2_Canvas_Text_Data *o);
 static void _evas_textblock_annotation_remove(Efl2_Canvas_Text_Data *o, Efl_Text_Annotate_Annotation *an, Eina_Bool remove_nodes);
 static Eina_Bool _evas_textblock_cursor_format_item_geometry_get(const Efl2_Text_Cursor_Handle *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
+static Eina_Bool _evas_textblock_cursor_format_prepend(Efl2_Text_Cursor_Handle *cur, const char *format);
 
 static void _evas_textblock_cursor_at_format_set(Efl2_Text_Cursor_Handle *cur, const Evas_Object_Textblock_Node_Format *fmt);
 static Evas_Filter_Program *_format_filter_program_get(Efl2_Canvas_Text_Data *o, Evas_Object_Textblock_Format *fmt);
@@ -9270,7 +9271,7 @@ _canvas_text_cursor_text_insert(Efl2_Text_Cursor_Handle *cur, const char *_text)
    while (*end)
      {
         // Find the exnd of the next run
-        while (*end && (*end != _PARAGRAPH_SEPARATOR))
+        while (*end && (*end != _PARAGRAPH_SEPARATOR) && (*end != _NEWLINE) && (*end != _TAB))
           {
              end++;
           }
@@ -9280,8 +9281,16 @@ _canvas_text_cursor_text_insert(Efl2_Text_Cursor_Handle *cur, const char *_text)
 
         if (*end)
           {
-             _evas_textblock_cursor_break_paragraph(cur, NULL, EINA_FALSE);
-             _canvas_text_cursor_paragraph_next(cur);
+             if (*end == _PARAGRAPH_SEPARATOR)
+               {
+                  _evas_textblock_cursor_break_paragraph(cur, NULL, EINA_FALSE);
+                  _canvas_text_cursor_paragraph_next(cur);
+               }
+             else if ((*end == _NEWLINE) || (*end == _TAB))
+               {
+                  const char *format= (*end == _NEWLINE) ? "\n" : "\t";
+                  _evas_textblock_cursor_format_prepend(cur, format);
+               }
 
              end++;
              start = end;
@@ -9598,6 +9607,25 @@ _evas_textblock_cursor_format_append(Efl2_Text_Cursor_Handle *cur,
       ocur->node = o->text_nodes;
 
    if (_fnode) *_fnode = n;
+   return is_visible;
+}
+
+static Eina_Bool
+_evas_textblock_cursor_format_prepend(Efl2_Text_Cursor_Handle *cur, const char *format)
+{
+   Eina_Bool is_visible;
+
+   if (!cur) return EINA_FALSE;
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
+   /* append is essentially prepend without advancing */
+   is_visible = _evas_textblock_cursor_format_append(cur, format, NULL, EINA_FALSE);
+   if (is_visible)
+     {
+        /* Advance after the replacement char */
+        _canvas_text_cursor_next(cur);
+     }
+
    return is_visible;
 }
 
@@ -11102,7 +11130,6 @@ _evas_object_textblock_clear(Evas_Object *eo_obj)
 {
    Eina_List *l;
    Efl2_Text_Cursor_Handle *cur;
-   Efl2_Text_Cursor_Handle *co;
    Evas *eo_e;
    Evas_Public_Data *evas;
 
