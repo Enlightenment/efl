@@ -435,7 +435,7 @@ mixin @beta Efl.Access.Object requires Efl.Object
       relationship_remove @beta {
          [[Removes the relationship between two accessible objects.
 
-          If relation_object is NULL function removes all relations
+          If relation_object is $NULL function removes all relations
           of the given type.
          ]]
          params {

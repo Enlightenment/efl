@@ -74,7 +74,7 @@ interface @beta Efl.Net.Dialer extends Efl.Net.Socket {
               'http'.
 
               Whenever appropriate dialers may use system proxy if the
-              proxy is NULL (the default). To forcefully disable
+              proxy is $NULL (the default). To forcefully disable
               proxy, use an empty string ("").
 
                 - http://username:password\@proxyserver:port
@@ -91,7 +91,7 @@ interface @beta Efl.Net.Dialer extends Efl.Net.Socket {
             get { }
             set { }
             values {
-                proxy_url: string; [[May be empty or NULL to unset]]
+                proxy_url: string; [[May be empty or $NULL to unset]]
             }
         }
 

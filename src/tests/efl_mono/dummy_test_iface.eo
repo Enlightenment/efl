@@ -10,6 +10,45 @@ interface Dummy.Test_Iface
             data: int;
          }
       }
+
+      method_protected @protected @const {
+         params {
+            @in x: int;
+         }
+         return: int;
+      }
+
+      call_method_protected @const {
+         params {
+            @in x: int;
+         }
+         return: int;
+      }
+
+      @property protected_prop @protected {
+         get {}
+         set {}
+         values {
+            data: int;
+         }
+      }
+
+      @property public_getter_private_setter {
+         get {}
+         set @protected {}
+         values {
+            data: int;
+         }
+      }
+
+      @property static_prop @static {
+         get {}
+         set {}
+         values {
+            data: int;
+         }
+      }
+
    }
    events {
       nonconflicted: void;

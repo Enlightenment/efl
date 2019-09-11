@@ -64,6 +64,18 @@ inline bool is_function_blacklisted(attributes::function_def const& func, Contex
   return is_function_blacklisted(c_name);
 }
 
+inline bool is_non_public_interface_member(attributes::function_def const& func, attributes::klass_def const&current_klass)
+{
+  if (current_klass.type == attributes::class_type::interface_
+      || current_klass.type == attributes::class_type::mixin)
+    {
+       if (func.scope != attributes::member_scope::scope_public)
+         return true;
+    }
+
+  return false;
+}
+
 
 // Blacklist structs that require some kind of manual binding.
 inline bool is_struct_blacklisted(std::string const& full_name)

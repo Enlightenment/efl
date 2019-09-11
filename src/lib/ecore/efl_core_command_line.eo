@@ -1,4 +1,4 @@
-mixin @beta Efl.Core.Command_Line {
+mixin @beta Efl.Core.Command_Line requires Efl.Object {
   [[A mixin that implements standard functions for command lines.
 
     This object parses the command line that gets passed, later the object can be accessed via accessor or the string
@@ -78,5 +78,8 @@ mixin @beta Efl.Core.Command_Line {
       }
 
     }
+  }
+  implements {
+    Efl.Object.destructor;
   }
 }

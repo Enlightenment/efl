@@ -31,18 +31,6 @@
 
 namespace eolian_mono {
 
-/* Get the actual number of functions of a class, checking for blacklisted ones */
-template<typename Context>
-static std::size_t
-get_implementable_function_count(grammar::attributes::klass_def const& cls, Context context)
-{
-   auto methods = helpers::get_all_implementable_methods(cls, context);
-   return std::count_if(methods.cbegin(), methods.cend(), [&context](grammar::attributes::function_def const& func)
-     {
-        return !blacklist::is_function_blacklisted(func, context) && !func.is_static;
-     });
-}
-
 template<typename Context>
 static bool
 is_inherit_context(Context const& context)
@@ -198,7 +186,7 @@ struct klass
          if(!as_generator
             (
              documentation
-             << "sealed public " << (is_partial ? "partial ":"") << " class " << concrete_name << " :\n"
+             << "public sealed " << (is_partial ? "partial ":"") << "class " << concrete_name << " :\n"
              << scope_tab << (root ? "Efl.Eo.EoWrapper" : "") << (klass_full_concrete_or_interface_name % "") << "\n"
              << scope_tab << ", " << interface_name << "\n"
              << scope_tab << *(", " << name_helpers::klass_full_concrete_or_interface_name) << "\n"
@@ -239,6 +227,9 @@ struct klass
          if (!generate_events(sink, cls, concrete_cxt))
              return false;
 
+         if (!as_generator(lit("#pragma warning disable CS0628\n")).generate(sink, attributes::unused, concrete_cxt))
+            return false;
+
          // Parts
          if(!as_generator(*(part_definition))
             .generate(sink, cls.parts, concrete_cxt)) return false;
@@ -262,6 +253,9 @@ struct klass
               if (!as_generator(*(property_wrapper_definition(cls))).generate(sink, c.properties, concrete_cxt))
                 return false;
            }
+
+         if (!as_generator(lit("#pragma warning restore CS0628\n")).generate(sink, attributes::unused, concrete_cxt))
+            return false;
 
          // Copied from nativeinherit class, used when setting up providers.
          if(!as_generator(
@@ -398,7 +392,7 @@ struct klass
                                             context);
          auto native_inherit_name = name_helpers::klass_native_inherit_name(cls);
          auto inherit_name = name_helpers::klass_inherit_name(cls);
-         auto implementable_methods = cls.functions;
+         auto implementable_methods = helpers::get_all_registerable_methods(cls, context);
          bool root = !helpers::has_regular_ancestor(cls);
          auto const& indent = current_indentation(inative_cxt);
 

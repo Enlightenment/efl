@@ -40,7 +40,7 @@ class @beta Efl.Ui.Tags extends Efl.Ui.Layout_Base
          get {
          }
          values {
-            items: const(array<string>); [[The array of items, or NULL if none.]]
+            items: const(array<string>); [[The array of items, or $NULL if none.]]
          }
       }
    }

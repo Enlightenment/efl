@@ -73,6 +73,25 @@ struct documentation_generator
       // Klass is needed to check the property naming rulles
       attributes::klass_def klass_d((const ::Eolian_Class *)klass, eolian_object_unit_get(klass));
 
+      // Comment the block below to enable @see reference conversion for non-public interface members.
+      // As they are not generated, this causes a doc warning that fails the build, but can be useful to track
+      // public methods referencing protected stuff.
+      if (ftype != EOLIAN_PROPERTY)
+        {
+           bool is_func_public = ::eolian_function_scope_get(function, ftype) == EOLIAN_SCOPE_PUBLIC;
+
+           if (helpers::is_managed_interface(klass_d) && !is_func_public)
+             return "";
+        }
+      else
+        {
+           bool is_get_public = ::eolian_function_scope_get(function, EOLIAN_PROP_GET) == EOLIAN_SCOPE_PUBLIC;
+           bool is_set_public = ::eolian_function_scope_get(function, EOLIAN_PROP_SET) == EOLIAN_SCOPE_PUBLIC;
+
+           if (helpers::is_managed_interface(klass_d) && !(is_get_public || is_set_public))
+             return "";
+        }
+
       switch(ftype)
       {
          case ::EOLIAN_METHOD:
@@ -112,6 +131,8 @@ struct documentation_generator
 
    static std::string function_conversion(attributes::function_def const& func)
    {
+      // This function is called only from the constructor reference conversion, so it does not
+      // need to check whether this function non-public in a interface returning an empty reference (yet).
       std::string name = name_helpers::klass_full_concrete_or_interface_name(func.klass);
       switch (func.type)
       {

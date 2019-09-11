@@ -1,6 +1,6 @@
 import eina_types;
 
-interface Efl.Io.Closer {
+interface @beta Efl.Io.Closer {
     [[Generic interface for objects that can close themselves.
 
       This interface allows external objects to transparently close an

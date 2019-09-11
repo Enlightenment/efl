@@ -123,7 +123,7 @@ _append_defval(Eina_Strbuf *buf, const Eolian_Expression *exp, const Eolian_Type
      }
    /* default value or fallback */
    const Eolian_Type *btp = eolian_type_aliased_base_get(tp);
-   if (eolian_type_is_ptr(btp))
+   if (eolian_type_is_ptr(btp) || strchr(ctp, '*'))
      {
         eina_strbuf_append(buf, "NULL");
         return;
@@ -137,11 +137,6 @@ _append_defval(Eina_Strbuf *buf, const Eolian_Expression *exp, const Eolian_Type
         else
           eina_strbuf_append_printf(buf, "((%s){0})", sn);
         free(sn);
-        return;
-     }
-   if (strchr(ctp, '*'))
-     {
-        eina_strbuf_append(buf, "NULL");
         return;
      }
    /* enums and remaining regulars... 0 should do */

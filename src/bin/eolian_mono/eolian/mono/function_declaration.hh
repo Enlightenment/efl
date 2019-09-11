@@ -23,6 +23,10 @@ struct function_declaration_generator
     if(blacklist::is_function_blacklisted(f, context) || f.is_static)
       return true;
 
+    // C# interfaces can't have non-public members
+    if(f.scope != attributes::member_scope::scope_public)
+      return true;
+
     if(!as_generator(documentation).generate(sink, f, context))
       return false;
 

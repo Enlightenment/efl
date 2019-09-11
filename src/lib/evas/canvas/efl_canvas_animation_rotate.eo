@@ -14,7 +14,7 @@ class @beta Efl.Canvas.Animation_Rotate extends Efl.Canvas.Animation
             from_degree: double; [[Rotation degree when animation starts]]
             to_degree: double; [[Rotation degree when animation ends]]
             pivot: Efl.Canvas.Object; [[Pivot object for the center point.
-                                        If the pivot object is NULL, then the object is rotated on itself.]]
+                                        If the pivot object is $NULL, then the object is rotated on itself.]]
             cx: double; [[X relative coordinate of the center point.
                           The left end is 0.0 and the right end is 1.0 (the center is 0.5).]]
             cy: double; [[Y relative coordinate of the center point.

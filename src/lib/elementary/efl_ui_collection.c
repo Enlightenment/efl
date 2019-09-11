@@ -366,7 +366,7 @@ _efl_ui_collection_efl_object_constructor(Eo *obj, Efl_Ui_Collection_Data *pd EI
    _fast_accessor_init(&pd->size_accessor, &pd->items);
 
    if (!elm_widget_theme_klass_get(obj))
-     elm_widget_theme_klass_set(obj, "item_container");
+     elm_widget_theme_klass_set(obj, "collection");
 
    o = efl_constructor(efl_super(obj, MY_CLASS));
 

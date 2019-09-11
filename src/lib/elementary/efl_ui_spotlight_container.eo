@@ -91,7 +91,7 @@ class @beta Efl.Ui.Spotlight.Container extends Efl.Ui.Layout_Base implements Efl
          ]]
          params {
             deletion_on_transition_end : bool; [[If $true, then the object will be deleted before resolving the future,
-                                                 and a NULL pointer is the value of the future.
+                                                 and a $NULL pointer is the value of the future.
                                                  $false if no operation should be applied to it.]]
          }
          return : future<Efl.Gfx.Entity>; [[This Future gets resolved when any transition animation finishes and the

@@ -1,3 +1,3 @@
-group { "efl/item_container";
+group { "efl/collection";
    inherit: "efl/scroller";
 }

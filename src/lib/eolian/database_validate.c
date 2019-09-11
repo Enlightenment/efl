@@ -229,8 +229,8 @@ _validate_by_ref(Eolian_Type *tp, Eina_Bool by_ref, Eina_Bool move)
    if (tp->btype == EOLIAN_TYPE_BUILTIN_FUTURE)
      return EINA_TRUE;
 
-   /* not marked @move; just validate */
-   if (!move)
+   /* not marked @move, or marked @by_ref; just validate */
+   if (!move || by_ref)
       return EINA_TRUE;
 
    /* marked @move, not pointer-like or otherwise ownable, error */
@@ -260,6 +260,11 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
 
    if (tp->is_ptr)
      {
+        if (vals->stable)
+          {
+             _eo_parser_log(&tp->base, "ptr() used in stable API");
+             return EINA_FALSE;
+          }
         tp->is_ptr = EINA_FALSE;
         Eina_Bool still_ownable = database_type_is_ownable(src, tp, EINA_FALSE);
         tp->is_ptr = EINA_TRUE;
@@ -1472,7 +1477,7 @@ database_validate(const Eolian_Unit *src)
       EINA_FALSE,
       EINA_TRUE,
       !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_WARN"),
-      !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_BETA_WARN"),
+      !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_BETA_WARN")
    };
 
    /* do an initial pass to refill inherits */

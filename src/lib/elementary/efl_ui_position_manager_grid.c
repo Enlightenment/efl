@@ -70,7 +70,7 @@ _group_cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
 
         if (buffer_id == 0)
           {
-             BATCH_ACCESS_SIZE(pd->callbacks, i, MIN(len, pd->size - i), EINA_TRUE, size_buffer);
+             BATCH_ACCESS_SIZE(pd->callbacks, i, pd->size, MIN(len, pd->size - i), EINA_TRUE, size_buffer);
           }
 
         if (size_buffer[buffer_id].depth_leader)
@@ -266,8 +266,8 @@ _position_items_vertical(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data 
         int buffer_id = (i-ctx->new.start_id) % len;
         if (buffer_id == 0)
           {
-             BATCH_ACCESS_SIZE(pd->callbacks, i, len, EINA_FALSE, size_buffer);
-             BATCH_ACCESS_OBJECT(pd->callbacks, i, len, obj_buffer);
+             BATCH_ACCESS_SIZE(pd->callbacks, i, ctx->new.end_id, len, EINA_FALSE, size_buffer);
+             BATCH_ACCESS_OBJECT(pd->callbacks, i, ctx->new.end_id, len, obj_buffer);
 
              if (i == ctx->new.start_id)
                {
@@ -333,8 +333,8 @@ _position_items_horizontal(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Dat
         int buffer_id = (i-ctx->new.start_id) % len;
         if (buffer_id == 0)
           {
-             BATCH_ACCESS_SIZE(pd->callbacks, i, len, EINA_FALSE, size_buffer);
-             BATCH_ACCESS_OBJECT(pd->callbacks, i, len, obj_buffer);
+             BATCH_ACCESS_SIZE(pd->callbacks, i, ctx->new.end_id, len, EINA_FALSE, size_buffer);
+             BATCH_ACCESS_OBJECT(pd->callbacks, i, ctx->new.end_id, len, obj_buffer);
 
              if (i == ctx->new.start_id)
                {
@@ -593,7 +593,7 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_entity_item_added(Eo *obj,
 
    efl_gfx_entity_visible_set(subobj, EINA_FALSE);
    _group_cache_invalidate(obj, pd);
-   BATCH_ACCESS_SIZE(pd->callbacks, added_index, 1, EINA_TRUE, size_buffer);
+   BATCH_ACCESS_SIZE(pd->callbacks, added_index, added_index + 1, 1, EINA_TRUE, size_buffer);
    _update_min_size(obj, pd, added_index, size_buffer[0].size);
    _flush_min_size(obj, pd);
    _schedule_recalc_abs_size(obj, pd);
@@ -624,7 +624,7 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_entity_item_size_changed(E
         int buffer_id = (i-start_id) % len;
         if (buffer_id == 0)
           {
-             BATCH_ACCESS_SIZE(pd->callbacks, i, len, EINA_TRUE, size_buffer);
+             BATCH_ACCESS_SIZE(pd->callbacks, i, end_id + 1, len, EINA_TRUE, size_buffer);
           }
         _update_min_size(obj, pd, i, size_buffer[buffer_id].size);
      }
@@ -662,7 +662,7 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_entity_position_single_ite
 
    if (!pd->size) return EINA_RECT(0, 0, 0, 0);
    if (pd->max_min_size.w <= 0 || pd->max_min_size.h <= 0) return EINA_RECT(0, 0, 0, 0);
-   BATCH_ACCESS_SIZE_VAL(pd->callbacks, idx, 1, EINA_TRUE, size_buffer, EINA_RECT_EMPTY());
+   BATCH_ACCESS_SIZE_VAL(pd->callbacks, idx, idx + 1, 1, EINA_TRUE, size_buffer, EINA_RECT_EMPTY());
 
    _size_cache_require(obj, pd);
    _flush_abs_size(obj, pd);

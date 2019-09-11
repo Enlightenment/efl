@@ -31,7 +31,7 @@ class @beta Efl.Net.Dialer_Http extends Efl.Loop_Consumer implements Efl.Net.Dia
       To enable debugging use EINA_LOG_LEVELS=ecore_con:4 environment
       variable.
 
-      If the proxy is NULL (default), then the system proxy will be
+      If the proxy is $NULL (default), then the system proxy will be
       used. On UNIX that's the environment variable $http_proxy (or
       '$all_proxy') is used if the given address doesn't match
       $no_proxy patterns. To disable proxy use an empty string. If
@@ -259,7 +259,7 @@ class @beta Efl.Net.Dialer_Http extends Efl.Loop_Consumer implements Efl.Net.Dia
               Since multiple requests can occur if @.allow_redirects
               is true, then all headers will be accumulated. To know
               when a new request's been started, check for headers with keys
-              being NULL. The value will be the "HTTP/VERSION RESPONSE"
+              being $NULL. The value will be the "HTTP/VERSION RESPONSE"
               string received from the host, such as:
 
                 - key=NULL, value="HTTP/1.1 302 Found"
@@ -381,7 +381,7 @@ class @beta Efl.Net.Dialer_Http extends Efl.Loop_Consumer implements Efl.Net.Dia
             params {
                 epochtime: int64; [[UNIX Epoch time - seconds since 1/1/1970]]
             }
-            return: mstring @move @no_unused; [[Newly allocated null-terminated string on success or NULL on errors]]
+            return: mstring @move @no_unused; [[Newly allocated null-terminated string on success or $NULL on errors]]
         }
     }
 

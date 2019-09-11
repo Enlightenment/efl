@@ -205,7 +205,7 @@ abstract Efl.Object
 
           The object from the provider will then be returned.
           The base implementation calls the provider_find function on the object parent,
-          and returns its result. If no parent is present NULL is returned.
+          and returns its result. If no parent is present $NULL is returned.
           Each implementation has to support this function by overriding
           it and returning itself if the interface matches the parameter.
           If this is not done the class cannot be found up in the object tree.
@@ -330,7 +330,7 @@ abstract Efl.Object
          by inserting a handler at the right position in the stack of event handler on the object that
          emit the event.]]
          params {
-            @in desc: ptr(const(Efl.Event_Description)); [[The description of the event to listen to]]
+            @in desc: const(Efl.Event_Description) @by_ref; [[The description of the event to listen to]]
             @in priority: Efl.Callback_Priority; [[The priority at which to insert the event forwarder handler
             in the existing list of handler on the source of event object. The lower the number, the higher
             the priority. As a shortcut @Efl.Callback_Priority_Before,
@@ -342,7 +342,7 @@ abstract Efl.Object
       event_callback_forwarder_del {
          [[Remove an event callback forwarder for a specified event and object.]]
          params {
-            @in desc: ptr(const(Efl.Event_Description)); [[The description of the event to listen to]]
+            @in desc: const(Efl.Event_Description) @by_ref; [[The description of the event to listen to]]
             @in new_obj: Efl.Object; [[The object to emit events from]]
          }
       }

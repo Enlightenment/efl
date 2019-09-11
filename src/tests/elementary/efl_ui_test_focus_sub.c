@@ -46,7 +46,6 @@ static void
 _unregister(Eo *eo, void* data EINA_UNUSED, Efl_Ui_Focus_Object *child)
 {
    unregistered = eina_list_append(unregistered, child);
-   printf("UNREGISTERED %p %s\n", child, efl_name_get(child));
 
    efl_ui_focus_manager_calc_unregister(efl_super(eo, EFL_OBJECT_OVERRIDE_CLASS) , child);
 }

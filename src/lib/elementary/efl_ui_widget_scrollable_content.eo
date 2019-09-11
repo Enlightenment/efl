@@ -1,13 +1,18 @@
 import eina_types;
+parse efl_text_format;
 
 mixin @beta Efl.Ui.Widget_Scrollable_Content requires Efl.Object
 {
    [[Efl widget scrollable content mixin
 
-     This can be used to provide scrollable contents and text for widgets.
+     This can be used to provide scrollable contents and text for widgets. When a scrollable
+     text or content is set, this mixin will create and manage an internal scroller object which
+     will be the container of that text or content.
 
-     Widgets can set the "__efl_scrollable_content_scroller_style" key data during
-     their constructor to apply a style to the internal scroller widget.
+     Only a single content or text can be set at any given time. Setting @.scrollable_content
+     will unset @.scrollable_text and vice versa.
+
+     @since 1.23
    ]]
    c_prefix: efl_ui_widget;
    event_prefix: efl_ui_widget_scrollable_content;
@@ -22,11 +27,13 @@ mixin @beta Efl.Ui.Widget_Scrollable_Content requires Efl.Object
            this method returns $true.
 
            In the case that this returns $true, it's likely that the widget should be completing
-           its internal sizing calculations from the optimal_size,calc callback using
+           its internal sizing calculations from the @[Efl.Ui.Widget_Scrollable_Content.optimal_size,calc] callback using
 
-           `efl_canvas_group_calculate(efl_super(ev->object, EFL_UI_WIDGET_SCROLLABLE_CONTENT_MIXIN));`
+           efl_canvas_group_calculate(efl_super(ev->object, EFL_UI_WIDGET_SCROLLABLE_CONTENT_MIXIN));
 
            in order to skip the scrollable sizing calc.
+
+           @since 1.23
          ]]
          get {}
          values {
@@ -35,6 +42,8 @@ mixin @beta Efl.Ui.Widget_Scrollable_Content requires Efl.Object
       }
       @property scrollable_content {
          [[This is the content which will be placed in the internal scroller.
+
+           @since 1.23
          ]]
          set {
             return: bool; [[True on success]]
@@ -47,10 +56,13 @@ mixin @beta Efl.Ui.Widget_Scrollable_Content requires Efl.Object
       @property scrollable_text {
          set {
             [[Sets the text string to be displayed by the given text object.
-              The text will be scrollable depending on its size relative to the
+              The text will use @Efl.Text_Format_Wrap.mixed wrapping,
+              and it will be scrollable depending on its size relative to the
               object's geometry.
 
               See also @.scrollable_text.get.
+
+              @since 1.23
             ]]
          }
          get {
@@ -60,6 +72,8 @@ mixin @beta Efl.Ui.Widget_Scrollable_Content requires Efl.Object
               Do not free() the return value.
 
               See also @.scrollable_text.set.
+
+              @since 1.23
             ]]
          }
          values {

@@ -68,7 +68,6 @@ struct _Efl_Thread_Data
       Eina_Bool can_write : 1;
    } fd, ctrl;
    int read_listeners;
-   Eina_Promise *promise;
    Eo *loop;
    Thread_Data *thdat;
    Efl_Callback_Array_Item_Full *event_cb;
@@ -363,15 +362,7 @@ _thread_exit_eval(Eo *obj, Efl_Thread_Data *pd)
      {
         pd->exit_called = EINA_TRUE;
         if (pd->thdat) efl_threadio_outdata_set(obj, pd->thdat->outdata);
-        if (pd->promise)
-          {
-             Eina_Promise *p = pd->promise;
-             int exit_code = efl_task_exit_code_get(obj);
-             if ((exit_code != 0) && (!(efl_task_flags_get(obj) &
-                                        EFL_TASK_FLAGS_NO_EXIT_CODE_ERROR)))
-               eina_promise_reject(p, exit_code + 1000000);
-             else eina_promise_resolve(p, eina_value_int_init(exit_code));
-          }
+        efl_event_callback_call(obj, EFL_TASK_EVENT_EXIT, NULL);
         efl_del(obj);
      }
 }
@@ -447,22 +438,6 @@ _cb_thread_parent_ctrl_out(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 //////////////////////////////////////////////////////////////////////////
-
-static Eina_Value
-_run_cancel_cb(Efl_Loop_Consumer *consumer, void *data EINA_UNUSED, Eina_Error error)
-{
-   if (error == ECANCELED) efl_task_end(consumer);
-
-   return eina_value_error_init(error);
-}
-
-static void
-_run_clean_cb(Efl_Loop_Consumer *consumer EINA_UNUSED,void *data, const Eina_Future *dead_future EINA_UNUSED)
-{
-   Efl_Thread_Data *pd = data;
-
-   pd->promise = NULL;
-}
 
 static void
 _thread_parent_read_listeners_modify(Efl_Thread_Data *pd, int mod)
@@ -613,7 +588,7 @@ _efl_thread_efl_object_finalize(Eo *obj, Efl_Thread_Data *pd EINA_UNUSED)
 EOLIAN static void
 _efl_thread_efl_object_destructor(Eo *obj, Efl_Thread_Data *pd)
 {
-   if (pd->promise)
+   if (pd->exit_called)
      ERR("Thread being destroyed while real worker has  not exited yet.");
    if (pd->thdat)
      {
@@ -664,7 +639,7 @@ _task_run_pipe_fail_clear(Thread_Data *thdat, Efl_Thread_Data *pd)
    free(thdat);
 }
 
-EOLIAN static Eina_Future *
+EOLIAN static Eina_Bool
 _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
 {
    Eina_Thread_Priority pri;
@@ -676,10 +651,10 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
    Efl_Callback_Array_Item_Full *it;
    Efl_Task_Data *td = efl_data_scope_get(obj, EFL_TASK_CLASS);
 
-   if (pd->run) return NULL;
-   if (!td) return NULL;
+   if (pd->run) return EINA_FALSE;
+   if (!td) return EINA_FALSE;
    thdat = calloc(1, sizeof(Thread_Data));
-   if (!thdat) return NULL;
+   if (!thdat) return EINA_FALSE;
    thdat->fd.in = -1;
    thdat->fd.out = -1;
    thdat->ctrl.in = -1;
@@ -695,7 +670,7 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
           {
              ERR("Can't create to_thread pipe");
              free(thdat);
-             return NULL;
+             return EINA_FALSE;
           }
      }
    if (td->flags & EFL_TASK_FLAGS_USE_STDOUT)
@@ -709,7 +684,7 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
                   close(pipe_from_thread[1]);
                }
              free(thdat);
-             return NULL;
+             return EINA_FALSE;
           }
      }
    if (td->flags & EFL_TASK_FLAGS_USE_STDIN)
@@ -752,7 +727,7 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
      {
         ERR("Can't create to_thread control pipe");
         _task_run_pipe_fail_clear(thdat, pd);
-        return NULL;
+        return EINA_FALSE;
      }
    if (pipe(pipe_from_thread) != 0)
      {
@@ -760,7 +735,7 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
         _task_run_pipe_fail_clear(thdat, pd);
         close(pipe_to_thread[0]);
         close(pipe_to_thread[1]);
-        return NULL;
+        return EINA_FALSE;
      }
    thdat->ctrl.in  = pipe_from_thread[1]; // write - input to parent
    thdat->ctrl.out = pipe_to_thread  [0]; // read - output from parent
@@ -864,13 +839,11 @@ _efl_thread_efl_task_run(Eo *obj, Efl_Thread_Data *pd)
         pd->fd.out = -1;
         pd->ctrl.in = -1;
         pd->ctrl.out = -1;
-        return NULL;
+        return EINA_FALSE;
      }
    pd->thdat = thdat;
    pd->run = EINA_TRUE;
-   pd->promise = efl_loop_promise_new(obj);
-   return efl_future_then(obj, eina_future_new(pd->promise),
-                          .data = pd, .error = _run_cancel_cb, .free = _run_clean_cb);
+   return EINA_TRUE;
 }
 
 EOLIAN static void

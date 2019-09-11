@@ -89,7 +89,7 @@ abstract @beta Ecore.Audio extends Efl.Object
               data: void_ptr; [[User data to pass to the VIO functions]]
               free_func: efl_key_data_free_func; [[This function takes care to
                                                   clean up $data when he VIO is
-                                                  destroyed. NULL means do
+                                                  destroyed. $NULL means do
                                                   nothing.
                                                 ]]
          }

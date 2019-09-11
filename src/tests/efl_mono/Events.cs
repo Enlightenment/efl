@@ -39,6 +39,8 @@ class TestEoEvents
         Test.Assert(listener.called);
         Test.Assert(listener.correct_sender);
         Test.AssertEquals("loop_called", loop.GetName());
+
+        loop.IdleEvent -= listener.callback;
     }
 
     public static void event_with_string_payload()

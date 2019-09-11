@@ -1277,6 +1277,26 @@ struct klass_def
        || lhs.parts < rhs.parts;
   }
 
+  friend inline bool operator==(klass_def const& lhs, klass_name const& rhs)
+  {
+     return lhs.namespaces == rhs.namespaces
+         && lhs.eolian_name == rhs.eolian_name
+         && lhs.type == rhs.type;
+  }
+  friend inline bool operator==(klass_name const& lhs, klass_def const& rhs)
+  {
+      return rhs == lhs;
+  }
+  friend inline bool operator!=(klass_def const& lhs, klass_name const& rhs)
+  {
+      return !(lhs == rhs);
+  }
+  friend inline bool operator!=(klass_name const& lhs, klass_def const& rhs)
+  {
+      return !(rhs == lhs);
+  }
+
+
   klass_def(std::string eolian_name, std::string cxx_name, std::string filename
             , documentation_def documentation
             , std::vector<std::string> namespaces

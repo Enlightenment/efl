@@ -85,7 +85,7 @@ class @beta Efl.Net.Ip_Address extends Efl.Object {
             params {
                 numeric_address: string; [[The numeric address to parse, such as '127.0.0.1:1234' or '[::1]:1234']]
             }
-            return: Efl.Net.Ip_Address @move; [[The new IP address object or NULL if it failed to parse]]
+            return: Efl.Net.Ip_Address @move; [[The new IP address object or $NULL if it failed to parse]]
         }
 
         resolve @static {

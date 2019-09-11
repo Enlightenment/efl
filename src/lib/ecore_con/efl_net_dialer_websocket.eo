@@ -52,7 +52,7 @@ class @beta Efl.Net.Dialer_Websocket extends Efl.Loop_Consumer implements Efl.Ne
       not a subclass and thus not all HTTP features are exposed as the
       WebSocket has strict requirements that must be respected.
 
-      If the proxy is NULL (default), then the system proxy will be
+      If the proxy is $NULL (default), then the system proxy will be
       used. On UNIX that's the environment variable $http_proxy (or
       '$all_proxy') is used if the given address doesn't match
       $no_proxy patterns. To disable the proxy use an empty string. If

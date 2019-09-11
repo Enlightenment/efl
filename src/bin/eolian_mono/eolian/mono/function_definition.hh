@@ -81,6 +81,15 @@ struct native_function_definition_generator
        .generate(sink, std::make_tuple(f.c_name, f.c_name, f.c_name, f.c_name), context))
       return false;
 
+    // We do not generate the wrapper to be called from C for non public interface member directly.
+    if (blacklist::is_non_public_interface_member(f, *klass))
+      return true;
+
+    // Do not generate static method in interface
+    if (((klass->type == attributes::class_type::interface_) ||
+        (klass->type == attributes::class_type::mixin)) && f.is_static)
+      return true;
+
     // Actual method implementation to be called from C.
     std::string return_type;
     if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))
@@ -167,7 +176,13 @@ struct function_definition_generator
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   {
     EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "function_definition_generator: " << f.c_name << std::endl;
+
+    bool is_concrete = context_find_tag<class_context>(context).current_wrapper_kind == class_context::concrete;
     if(blacklist::is_function_blacklisted(f, context))
+      return true;
+
+    // Do not generate static function for concrete class
+    if (is_concrete && f.is_static)
       return true;
 
     std::string return_type;
@@ -188,7 +203,7 @@ struct function_definition_generator
       self = "";
 
     if(!as_generator
-       (scope_tab << ((do_super && !f.is_static) ? "virtual " : "") << eolian_mono::function_scope_get(f) << (f.is_static ? "static " : "") << return_type << " " << string << "(" << (parameter % ", ")
+       (scope_tab << eolian_mono::function_scope_get(f) << ((do_super && !f.is_static) ? "virtual " : "") << (f.is_static ? "static " : "") << return_type << " " << string << "(" << (parameter % ", ")
         << ") {\n "
         << eolian_mono::function_definition_preamble()
         << klass_full_native_inherit_name(f.klass) << "." << string << "_ptr.Value.Delegate("
@@ -303,12 +318,13 @@ struct property_wrapper_definition_generator
       if (blacklist::is_property_blacklisted(property, *implementing_klass, context))
         return true;
 
-      bool interface = context_find_tag<class_context>(context).current_wrapper_kind == class_context::interface;
+      bool is_interface = context_find_tag<class_context>(context).current_wrapper_kind == class_context::interface;
       bool is_static = (property.getter.is_engaged() && property.getter->is_static)
                        || (property.setter.is_engaged() && property.setter->is_static);
+      bool is_concrete = context_find_tag<class_context>(context).current_wrapper_kind == class_context::concrete;
 
 
-      if (interface && is_static)
+      if ((is_concrete || is_interface) && is_static)
         return true;
 
       auto get_params = property.getter.is_engaged() ? property.getter->parameters.size() : 0;
@@ -389,16 +405,18 @@ struct property_wrapper_definition_generator
 
       std::string scope = "public ";
       std::string get_scope = property.getter.is_engaged() ? eolian_mono::function_scope_get(*property.getter) : "";
+      bool is_get_public = get_scope == "public ";
       std::string set_scope = property.setter.is_engaged() ? eolian_mono::function_scope_get(*property.setter) : "";
-      if (interface)
+      bool is_set_public = set_scope == "public ";
+
+      // No need to generate this wrapper as no accessor is public.
+      if (is_interface && (!is_get_public && !is_set_public))
+          return true;
+
+      // C# interface members are declared automatically as public
+      if (is_interface)
         {
            scope = "";
-           get_scope = "";
-           set_scope = "";
-        }
-      else if ((property.klass.type == attributes::class_type::mixin) ||
-               (property.klass.type == attributes::class_type::interface_))
-        {
            get_scope = "";
            set_scope = "";
         }
@@ -439,11 +457,12 @@ struct property_wrapper_definition_generator
           return false;
       }
 
-      if (property.getter.is_engaged() && interface)
+      if (property.getter.is_engaged() && is_interface)
       {
-        if (!as_generator(scope_tab << scope_tab << set_scope <<  "get;\n"
-                          ).generate(sink, attributes::unused, context))
-          return false;
+        if (is_get_public)
+          if (!as_generator(scope_tab << scope_tab << set_scope <<  "get;\n"
+                            ).generate(sink, attributes::unused, context))
+            return false;
       }
       else if (property.getter.is_engaged() && get_params == 0/*parameters.size() == 1 && property.getter.is_engaged()*/)
       {
@@ -483,11 +502,12 @@ struct property_wrapper_definition_generator
       //     return false;
       // }
 
-      if (property.setter.is_engaged() && interface)
+      if (property.setter.is_engaged() && is_interface)
       {
-        if (!as_generator(scope_tab << scope_tab << set_scope <<  "set;\n"
-                          ).generate(sink, attributes::unused, context))
-          return false;
+        if (is_set_public)
+          if (!as_generator(scope_tab << scope_tab << set_scope <<  "set;\n"
+                            ).generate(sink, attributes::unused, context))
+            return false;
       }
       else if (parameters.size() == 1 && property.setter.is_engaged())
       {
