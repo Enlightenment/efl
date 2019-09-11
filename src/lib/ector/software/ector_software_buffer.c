@@ -96,7 +96,7 @@ _ector_software_buffer_base_ector_buffer_pixels_set(Eo *obj, Ector_Software_Buff
         pd->nofree = EINA_TRUE;
         pd->writable = !!writable;
      }
-   else
+   else if (stride > 0 && height > 0)
      {
         pd->pixels.u8 = calloc(stride * height, 1);
         pd->nofree = EINA_FALSE;
