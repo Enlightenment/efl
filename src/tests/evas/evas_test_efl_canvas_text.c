@@ -401,7 +401,7 @@ EFL_START_TEST(canvas_text_cursor)
         int cur_pos;
 
         cur_pos = efl2_text_cursor_position_get(cur);
-        efl2_text_cursor_content_geometry_get(cur, &x, &y, &w, &h);
+        efl2_text_cursor_geometry_get(cur, EFL2_TEXT_CURSOR_TYPE_UNDER, &x, &y, &w, &h, NULL, NULL, NULL, NULL);
         efl2_text_cursor_coord_set(cur, x + (w / 2), y + (h / 2));
         ck_assert_int_eq(cur_pos, efl2_text_cursor_position_get(cur));
      }
