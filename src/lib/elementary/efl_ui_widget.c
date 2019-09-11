@@ -4788,27 +4788,24 @@ elm_widget_tree_dot_dump(const Evas_Object *top,
 EOLIAN static Eo *
 _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
-   Eina_Bool parent_is_widget = EINA_FALSE;
-
    sd->on_create = EINA_TRUE;
 
    sd->window = efl_provider_find(efl_parent_get(obj), EFL_UI_WIN_CLASS);
    if (!efl_isa(obj, EFL_UI_WIN_CLASS))
      {
         Eo *parent = efl_parent_get(obj);
-        parent_is_widget = efl_isa(parent, EFL_UI_WIDGET_CLASS);
-        if (!parent_is_widget)
+        if (!efl_isa(parent, EFL_UI_WIDGET_CLASS))
           {
              ERR("You passed a wrong parent parameter (%p %s). "
                  "Elementary widget's parent should be an elementary widget.",
                  parent, evas_object_type_get(parent));
           }
-        ELM_WIDGET_DATA_GET(parent, parent_sd);
-        if (parent_sd)
-          sd->shared_win_data = parent_sd->shared_win_data;
         else
-          sd->shared_win_data = efl_ui_win_shared_data_get(obj);
-        efl_ui_widget_sub_object_add(parent, obj);
+          {
+             ELM_WIDGET_DATA_GET(parent, parent_sd);
+             sd->shared_win_data = parent_sd->shared_win_data;
+             efl_ui_widget_sub_object_add(parent, obj);
+          }
      }
    else
      {
@@ -4825,11 +4822,8 @@ _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UN
 
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_UNKNOWN);
 
-   if (!sd->shared_win_data)
-     {
-        if (sd->window && parent_is_widget)
-          EINA_SAFETY_ON_NULL_RETURN_VAL(sd->shared_win_data, NULL);
-     }
+   if (!elm_widget_is_legacy(obj))
+     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->shared_win_data, NULL);
 
    return obj;
 }
