@@ -144,7 +144,7 @@ struct Dl_info
  */
 EAPI void *dlopen(const char* path, int mode);
 #ifndef HAVE_DLOPEN
-#define HAVE_DLOPEN 1
+# define HAVE_DLOPEN 1
 #endif
 /**
  * @brief Close a dynamic-link library.

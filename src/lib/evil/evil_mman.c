@@ -58,6 +58,8 @@ mmap(void  *addr EVIL_UNUSED,
    DWORD  acs = 0;
    HANDLE handle;
    void  *data;
+   DWORD low;
+   DWORD high;
 
    /* get protection */
    protect = _evil_mmap_protection_get(prot);
@@ -89,7 +91,15 @@ mmap(void  *addr EVIL_UNUSED,
           }
      }
 
-   fm = CreateFileMapping(handle, NULL, protect, 0, 0, NULL);
+#ifdef _WIN64
+   low = (DWORD)((len >> 32) & 0x00000000ffffffff);
+   low = (DWORD)(len & 0x00000000ffffffff);
+#else
+   high = 0L;
+   low = len;
+#endif
+
+   fm = CreateFileMapping(handle, NULL, protect, high, low, NULL);
    if (!fm)
      {
         fprintf(stderr, "[Evil] [mmap] CreateFileMapping failed: %s\n",
