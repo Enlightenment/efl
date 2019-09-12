@@ -821,10 +821,11 @@ _eo_future1_ok(Eo *eo EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value v)
 }
 
 static Eina_Value
-_eo_future1_err(Eo *eo EINA_UNUSED, void *data EINA_UNUSED, Eina_Error err EINA_UNUSED)
+_eo_future1_err(Eo *eo EINA_UNUSED, void *data EINA_UNUSED, Eina_Error err)
 {
    //Should not happen
    fail_if(EINA_TRUE);
+   return eina_value_error_init(err);
 }
 
 static Eina_Value
