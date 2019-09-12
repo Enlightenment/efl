@@ -57,7 +57,7 @@ class TestEo
        {
            var obj = new Dummy.TestObject();
            Eina.Log.Error($"Created object 0x{obj.NativeHandle.ToInt64():x}");
-           obj.DelEvt += (object sender, EventArgs e) => { delEventCalled = true; };
+           obj.DelEvent += (object sender, EventArgs e) => { delEventCalled = true; };
            Eina.Log.Error($"Will dispose object 0x{obj.NativeHandle.ToInt64():x}");
            ((IDisposable)obj).Dispose();
        }

@@ -25,9 +25,9 @@ class TestMain
 
         Console.WriteLine("Starting MainLoop");
 
-        timer.TimerTickEvt += listener.on_tick;
-        timer.TimerTickEvt += listener.another_callback;
-        timer.TimerTickEvt -= listener.another_callback;
+        timer.TimerTickEvent += listener.on_tick;
+        timer.TimerTickEvent += listener.another_callback;
+        timer.TimerTickEvent -= listener.another_callback;
 
         loop.Begin();
 

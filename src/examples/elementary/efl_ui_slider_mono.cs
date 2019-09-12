@@ -11,7 +11,7 @@ public class Example
         button.SetText(text);
         button.SetSize(new Eina.Size2D(w, h));
 
-        ((Efl.Ui.Clickable)button).ClickedEvt += callback;
+        ((Efl.Ui.Clickable)button).ClickedEvent += callback;
 
         return button;
     }
@@ -57,7 +57,7 @@ public class Example
         Efl.Ui.Slider slider = new Efl.Ui.Slider(box);
         slider.SetSize(new Eina.Size2D(W, H));
 
-        slider.ChangedEvt += (object sender, EventArgs e) => {
+        slider.ChangedEvent += (object sender, EventArgs e) => {
             bar.SetRangeValue(slider.GetRangeValue());
         };
 
