@@ -70,6 +70,6 @@ class @beta Efl.Ui.Datepicker extends Efl.Ui.Layout_Base
       Efl.Object.destructor;
    }
    events {
-      changed: void; [[Called when date value is changed]]
+      date,changed: void; [[Called when date value is changed]]
    }
 }

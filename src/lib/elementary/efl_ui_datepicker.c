@@ -144,7 +144,7 @@ _field_changed_cb(void *data, const Efl_Event *ev)
      }
 
    DATE_SET();
-   efl_event_callback_call(data, EFL_UI_DATEPICKER_EVENT_CHANGED, NULL);
+   efl_event_callback_call(data, EFL_UI_DATEPICKER_EVENT_DATE_CHANGED, NULL);
 }
 
 static void

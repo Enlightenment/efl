@@ -106,7 +106,7 @@ _field_changed_cb(void *data, const Efl_Event *ev)
      }
 
    TIME_SET();
-   efl_event_callback_call(data, EFL_UI_TIMEPICKER_EVENT_CHANGED, NULL);
+   efl_event_callback_call(data, EFL_UI_TIMEPICKER_EVENT_TIME_CHANGED, NULL);
 }
 
 static void
