@@ -50,9 +50,9 @@ interface @beta Efl.Ui.Scrollable_Interactive extends Efl.Ui.Scrollable
       @property scroll_freeze {
          [[Freeze property
            This function will freeze scrolling movement (by input of a user).
-           Unlike efl_ui_scrollable_movement_block_set, this function freezes bidirectionally.
+           Unlike @.movement_block, this function freezes bidirectionally.
            If you want to freeze in only one direction,
-           See @.movement_block.set.
+           see @.movement_block.set.
          ]]
          get {
          }
