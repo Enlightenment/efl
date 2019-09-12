@@ -3,6 +3,7 @@ struct @beta Efl2.Text.Item.Handle;
 /* FIXME:
    * Add mising functions (probably an interface) to set size, src and other needed item properties.
     * Note that "src" is potentially not applicable here but only in an inherited class - as this object is quite dumb
+        * Probably "name" and "src" though so at least theer's a generic interface
   - Deletion is just like a normal char deletion
   - In the text it's the unicode object replacement char
   - Do we even want refcount?
