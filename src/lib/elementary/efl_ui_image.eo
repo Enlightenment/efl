@@ -78,7 +78,7 @@ class @beta Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Ui.Clickable, Efl.
          get {
             [[Get the icon name of image set by icon standard names.
 
-              If the image was set using efl_file_set() instead of
+              If the image was set using @Efl.File.file instead of
               @.icon.set, then this function will return null.
             ]]
          }
