@@ -10,7 +10,8 @@ enum @beta Efl2.Text.Cursor_Type
 }
 
 // FIXME: Rename cluster ones to grapheme?
-// Missing pen_geometry get?
+// Missing pen_geometry get? - probably not, that's the cursor geometry with under.
+// Should we always do split cursor and "under" should just be content geometry? -- probably!
 class @beta Efl2.Text.Cursor extends Efl.Object {
    [[Cursor API
    ]]
@@ -182,6 +183,7 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
       // FIXME: should be removed. It's just char_coord_set + grapheme_start
       // cluster_coord_set {
 
+      // FIXME: Add a way to add with a length parameter (always have it?) so we just copy n characters, or all if -1. Useful for saving copies when inserting from another source.
       text_insert {
          [[Adds text to the current cursor position and set the cursor to
            *after* the start of the text just added.
