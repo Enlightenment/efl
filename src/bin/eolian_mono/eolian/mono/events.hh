@@ -416,6 +416,7 @@ struct event_definition_generator
       std::string upper_c_name = utils::to_uppercase(evt.c_name);
       if (!as_generator(
             scope_tab << "/// <summary>Method to raise event "<< event_name << ".</summary>\n"
+            << scope_tab << "/// <param name=\"e\">Event to raise.</param>\n"
             << scope_tab << "public void On" << event_name << "(" << event_args_type << " e)\n"
             << scope_tab << "{\n"
             << scope_tab << scope_tab << "var key = \"_" << upper_c_name << "\";\n"
