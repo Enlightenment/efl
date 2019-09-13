@@ -46,6 +46,8 @@ jobs:
   include:
     - os: osx
     - os: linux
+      env: DISTRO=Ubuntu1904-i386
+    - os: linux
       env: DISTRO=Fedora30-mingw CI_BUILD_TYPE=mingw
     - os: linux
       env: DISTRO=Fedora30 CI_BUILD_TYPE=options-enabled
