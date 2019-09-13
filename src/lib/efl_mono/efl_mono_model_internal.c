@@ -44,6 +44,9 @@ typedef struct _Efl_Mono_Model_Internal_Data
   Eina_Array *properties_info;
   Eina_Array *properties_names;
   Eina_Array *items;
+  // These two are needed by CollectionView currently
+  int item_height;
+  int item_width;
 } _Efl_Mono_Model_Internal_Data;
 
 
@@ -101,11 +104,12 @@ _efl_mono_model_internal_add_property(Eo *obj EINA_UNUSED, Efl_Mono_Model_Intern
   eina_array_push (pd->properties_names, eina_stringshare_add(info->name));
 }
 
+static const char* _efl_mono_model_properties_names[] = { "item.width", "item.height" };
 
 static Eina_Iterator *
 _efl_mono_model_internal_efl_model_properties_get(const Eo *obj EINA_UNUSED, Efl_Mono_Model_Internal_Data *pd EINA_UNUSED)
 {
-  return eina_array_iterator_new (NULL);
+  return EINA_C_ARRAY_ITERATOR_NEW(_efl_mono_model_properties_names);
 }
 
 static Efl_Object*
@@ -128,6 +132,55 @@ _efl_mono_model_internal_efl_model_children_count_get(const Eo *obj EINA_UNUSED,
 {
   return eina_array_count_get(pd->items);
 }
+
+static Eina_Future *
+_efl_mono_model_internal_efl_model_property_set(Eo *obj, Efl_Mono_Model_Internal_Data *pd, const char *property, Eina_Value *value)
+{
+  if (strcmp(property, "item.width"))
+    {
+       int width;
+       eina_value_get(value, &width);
+       pd->item_width = width;
+    }
+  else if (strcmp(property, "item.height"))
+    {
+       int height;
+       eina_value_get(value, &height);
+       pd->item_height = height;
+    }
+  else
+    {
+        return efl_loop_future_rejected(obj, EINVAL);
+    }
+
+  Eina_Value tmp_value;
+  eina_value_copy(value, &tmp_value);
+
+  return efl_loop_future_resolved(obj, tmp_value);
+}
+
+static Eina_Value *
+_efl_mono_model_internal_efl_model_property_get(const Eo *obj EINA_UNUSED, Efl_Mono_Model_Internal_Data *pd EINA_UNUSED, const char *property EINA_UNUSED)
+{
+  if (strcmp(property, "item.width"))
+    {
+       Eina_Value *value = malloc(sizeof(Eina_Value));
+       eina_value_setup(value, EINA_VALUE_TYPE_INT);
+       eina_value_set(value, pd->item_width);
+       return value;
+    }
+  else if (strcmp(property, "item.height"))
+    {
+       Eina_Value *value = malloc(sizeof(Eina_Value));
+       eina_value_setup(value, EINA_VALUE_TYPE_INT);
+       eina_value_set(value, pd->item_height);
+       return value;
+    }
+
+  return eina_value_error_new(EINVAL);
+}
+
+/// Model_Internal_Child implementations
 
 static Eina_Future *
 _efl_mono_model_internal_child_efl_model_property_set(Eo *obj, Efl_Mono_Model_Internal_Child_Data *pd, const char *property, Eina_Value *value)
