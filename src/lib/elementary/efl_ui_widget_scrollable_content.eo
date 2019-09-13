@@ -43,6 +43,8 @@ mixin @beta Efl.Ui.Widget_Scrollable_Content requires Efl.Object
       @property scrollable_content {
          [[This is the content which will be placed in the internal scroller.
 
+           If a scrollable text string is set, this will return $NULL.
+
            @since 1.23
          ]]
          set {

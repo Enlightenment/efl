@@ -206,6 +206,7 @@ _efl_ui_widget_scrollable_content_scrollable_content_set(Eo *obj, Efl_Ui_Widget_
 EOLIAN static Eo *
 _efl_ui_widget_scrollable_content_scrollable_content_get(const Eo *obj EINA_UNUSED, Efl_Ui_Widget_Scrollable_Content_Data *pd)
 {
+   if (pd->label) return NULL;
    if (!pd->scroller) return NULL;
    return efl_content_get(pd->scroller);
 }
