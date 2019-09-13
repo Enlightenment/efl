@@ -1,7 +1,8 @@
 struct @beta Efl.Ui.Collection_View_Item_Event
 {
-   item: Efl.Ui.Widget;
-   model: Efl.Model;
+   [[Data from collection view item events]]
+   item: Efl.Ui.Widget; [[The item that triggered the event]]
+   model: Efl.Model; [[The model that originated the item data]]
 }
 
 class @beta Efl.Ui.Collection_View extends Efl.Ui.Layout_Base implements
