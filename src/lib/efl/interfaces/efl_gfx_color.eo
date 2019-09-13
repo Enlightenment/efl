@@ -9,35 +9,28 @@ mixin Efl.Gfx.Color
    data: null;
    methods {
       @property color @pure_virtual {
+         [[The general/main color of the given Evas object.
+
+           Represents the main color's RGB component (and alpha channel)
+           values, which range from 0 to 255. For the alpha channel,
+           which defines the object's transparency level, 0 means totally
+           transparent, while 255 means opaque. These color values are
+           premultiplied by the alpha value.
+
+           Usually you'll use this attribute for text and rectangle objects,
+           where the main color is the only color. If set for objects
+           which themselves have colors, like the images one, those colors
+           get modulated by this one.
+
+           All newly created Evas rectangles get the default color
+           values of 255 255 255 255 (opaque white).
+
+           When reading this property, use $NULL pointers on the components you're not interested
+           in and they'll be ignored by the function.
+         ]]
          set {
-            [[Sets the general/main color of the given Evas object to the given
-              one.
-
-              See also @.color.get (for an example)
-
-              These color values are expected to be premultiplied by alpha.
-            ]]
          }
          get {
-            [[Retrieves the general/main color of the given Evas object.
-
-              Retrieves the main color's RGB component (and alpha channel)
-              values, which range from 0 to 255. For the alpha channel,
-              which defines the object's transparency level, 0 means totally
-              transparent, while 255 means opaque. These color values are
-              premultiplied by the alpha value.
-
-              Usually youll use this attribute for text and rectangle objects,
-              where the main color is their unique one. If set for objects
-              which themselves have colors, like the images one, those colors
-              get modulated by this one.
-
-              All newly created Evas rectangles get the default color
-              values of 255 255 255 255 (opaque white).
-
-              Use null pointers on the components you're not interested
-              in: they'll be ignored by the function.
-            ]]
          }
          values {
             r: int;
@@ -47,15 +40,11 @@ mixin Efl.Gfx.Color
          }
       }
       @property color_code {
+          [[Hexadecimal color code of given Evas object (#RRGGBBAA).
+          ]]
           set {
-             [[Set the color of given Evas object to the given hex color code(#RRGGBBAA).
-               e.g. efl_gfx_color_code_set(obj, "#FFCCAACC");
-             ]]
           }
           get {
-             [[Get hex color code of given Evas object.
-               This returns a short lived hex color code string.
-             ]]
           }
           values {
              colorcode: string; [[the hex color code.]]

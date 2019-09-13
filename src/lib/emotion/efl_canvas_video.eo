@@ -4,15 +4,15 @@ class @beta Efl.Canvas.Video extends Efl.Canvas.Group
    [[Efl canvas video class]]
    methods {
         @property option {
+             [[Sets options for the current module.
+
+               This function allows one to mute the video or audio of the
+               emotion object.
+
+               Please don't use this function, consider using
+               @Efl.Player.mute instead.
+             ]]
              set {
-                  [[Set the specified option for the current module.
-
-                    This function allows one to mute the video or audio of the
-                    emotion object.
-
-                    Please don't use this function, consider using
-                    @Efl.Player.mute instead.
-                  ]]
              }
              values {
                   opt: string; [[The option that is being set. Currently
@@ -22,23 +22,23 @@ class @beta Efl.Canvas.Video extends Efl.Canvas.Group
              }
         }
         @property engine {
+             [[Initializes an emotion object with the specified module.
+
+               This function is required after creating the emotion object,
+               in order to specify which module will be used with this
+               object. Different objects can use different modules to
+               play a media file. The current supported modules are
+               gstreamer and xine.
+
+               To use any of them, you need to make sure that support for
+               them was compiled correctly.
+
+               It's possible to disable the build of a module with
+               --disable-module_name.
+
+               See also @Efl.File.file.
+             ]]
              set {
-                  [[Initializes an emotion object with the specified module.
-
-                    This function is required after creating the emotion object,
-                    in order to specify which module will be used with this
-                    object. Different objects can use different modules to
-                    play a media file. The current supported modules are
-                    gstreamer and xine.
-
-                    To use any of them, you need to make sure that support for
-                    them was compiled correctly.
-
-                    It's possible to disable the build of a module with
-                    --disable-module_name.
-
-                    See also @Efl.File.file.
-                  ]]
                   return: bool; [[$true if the specified module was successfully
                                   initialized for this object, $false otherwise.]]
              }

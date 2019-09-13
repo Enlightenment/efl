@@ -10,35 +10,27 @@ class @beta Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
    [[Elementary Image Zoomable class]]
    methods {
       @property gesture_enabled {
-         set {
-            [[Set the gesture state for photocam.
+         [[The gesture state for photocam.
 
-              This sets the gesture state to on or off for photocam. The
-              default is off. This will start multi touch zooming.
-            ]]
+           This sets the gesture state to on or off for photocam. The
+           default is off. This will start multi touch zooming.
+         ]]
+         set {
          }
          get {
-            [[Get the gesture state for photocam.
-
-              This gets the current gesture state for the photocam object.
-            ]]
          }
          values {
             gesture: bool; [[The gesture state.]]
          }
       }
       @property image_region {
-         get {
-            [[Get the region of the image that is currently shown
+         [[The region of the image that is currently shown
 
-              See also @.image_region.set.
-            ]]
+           Setting it shows the region of the image without using animation.
+         ]]
+         get {
          }
          set {
-            [[Set the viewed region of the image
-
-              This shows the region of the image without using animation.
-            ]]
          }
          values {
             region: Eina.Rect; [[The region in the original image pixels.]]

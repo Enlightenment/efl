@@ -3,8 +3,8 @@ interface @beta Efl.Access.Selection
    [[Elementary access selection interface]]
    methods {
       @property selected_children_count @protected @beta {
+         [[Gets the number of currently selected children]]
          get {
-            [[Gets the number of currently selected children]]
             return: int; [[Number of currently selected children]]
          }
       }

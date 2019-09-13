@@ -9,17 +9,17 @@ interface Efl.Canvas.Scene
    ]]
    methods {
       @property image_max_size {
+         [[The maximum image size the canvas can possibly handle.
+
+           This function returns the largest image or surface size that
+           the canvas can handle in pixels, and if there is one, returns $true.
+           It returns $false if no extra constraint on maximum image
+           size exists.
+
+           The default limit is 65535x65535.
+
+         ]]
          get {
-            [[Get the maximum image size the canvas can possibly handle.
-
-              This function returns the largest image or surface size that
-              the canvas can handle in pixels, and if there is one, returns $true.
-              It returns $false if no extra constraint on maximum image
-              size exists.
-
-              The default limit is 65535x65535.
-
-            ]]
             return: bool; [[$true on success, $false otherwise]]
          }
          values {
@@ -33,8 +33,8 @@ interface Efl.Canvas.Scene
          ]]
       }
       @property group_objects_calculating {
+         [[Get if the canvas is currently calculating group objects.]]
          get {
-            [[Get if the canvas is currently calculating group objects.]]
          }
          values {
             calculating: bool; [[$true if currently calculating group objects.]]
@@ -213,12 +213,12 @@ interface Efl.Canvas.Scene
       }
       /* FIXME Efl.Input.Device is not stable yet*/
       @property pointer_position @beta {
-         get {
-            [[This function returns the current known pointer coordinates
+         [[The current known pointer coordinates.
 
-              This function returns the current position of the main input
-              pointer (mouse, pen, etc...).
-            ]]
+           This function returns the current position of the main input
+           pointer (mouse, pen, etc...).
+         ]]
+         get {
             return: bool; [[$true if a pointer exists for the given seat, otherwise $false.]]
          }
          keys {

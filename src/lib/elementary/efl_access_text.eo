@@ -48,8 +48,8 @@ interface @beta Efl.Access.Text
    [[Elementary accessible text interface]]
    methods {
       @property character @protected @beta {
+         [[Gets single character present in accessible widget's text at given offset.]]
          get {
-            [[Gets single character present in accessible widget's text at given offset.]]
          }
          keys {
             offset: int; [[Position in text.]]
@@ -61,8 +61,8 @@ interface @beta Efl.Access.Text
          }
       }
       @property string @protected @beta {
+         [[Gets string, start and end offset in text according to given initial offset and granularity.]]
          get {
-            [[Gets string, start and end offset in text according to given initial offset and granularity.]]
          }
          keys {
             granularity: Efl.Access.Text_Granularity; [[Text granularity]]
@@ -76,8 +76,8 @@ interface @beta Efl.Access.Text
          }
       }
       @property access_text @protected @beta {
+         [[Gets text of accessible widget.]]
          get {
-            [[Gets text of accessible widget.]]
          }
          keys {
             start_offset: int; [[Position in text.]]
@@ -100,8 +100,8 @@ interface @beta Efl.Access.Text
          }
       }
       @property attribute @protected @beta {
+         [[Indicate if a text attribute with a given name is set]]
          get {
-            [[Indicate if a text attribute with a given name is set]]
             return: bool; [[$true if attribute name is set, $false otherwise]]
          }
          keys {
@@ -114,8 +114,8 @@ interface @beta Efl.Access.Text
          }
       }
       @property text_attributes @protected @beta {
+         [[Gets list of all text attributes.]]
          get {
-            [[Gets list of all text attributes.]]
          }
          keys {
             start_offset: ptr(int); [[Start offset]]

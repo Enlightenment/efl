@@ -144,28 +144,28 @@ abstract Efl.Object
          }
       }
       @property event_global_freeze_count @static {
-         get {
-            [[Return the global count of freeze events.
+         [[Return the global count of freeze events.
 
-              This is the amount of calls to @.event_global_freeze minus
-              the amount of calls to @.event_global_thaw.
-              EFL will not emit any event while this count is > 0 (Except
-              events marked $hot).
-            ]]
+           This is the amount of calls to @.event_global_freeze minus
+           the amount of calls to @.event_global_thaw.
+           EFL will not emit any event while this count is > 0 (Except
+           events marked $hot).
+         ]]
+         get {
          }
          values {
             fcount: int; [[The global event freeze count.]]
          }
       }
       @property event_freeze_count {
-         get {
-            [[Return the count of freeze events for this object.
+         [[Return the count of freeze events for this object.
 
-              This is the amount of calls to @.event_freeze minus
-              the amount of calls to @.event_thaw.
-              This object will not emit any event while this count is > 0
-              (Except events marked $hot).
-            ]]
+           This is the amount of calls to @.event_freeze minus
+           the amount of calls to @.event_thaw.
+           This object will not emit any event while this count is > 0
+           (Except events marked $hot).
+         ]]
+         get {
          }
          values {
             fcount: int; [[The event freeze count of this object.]]

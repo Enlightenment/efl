@@ -27,15 +27,13 @@ class @beta Efl.Ui.Progressbar extends Efl.Ui.Layout_Base implements Efl.Ui.Rang
          }
       }
       @property pulse {
-         set {
-           [[Start/stop a given progress bar "pulsing" animation, if its under that mode
+         [[Start/stop a given progress bar "pulsing" animation, if its under that mode.
 
            Note: This call won't do anything if $obj is not under "pulsing mode". See @.pulse_mode.
-           ]]
+         ]]
+         set {
          }
          get {
-            [[ Get the pulsing state on a given progressbar widget. See @.pulse_mode.
-            ]]
          }
          values {
            state: bool; [[$true, to start the pulsing animation, $false to stop it]]

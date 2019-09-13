@@ -6,20 +6,15 @@ interface Efl.Text
    ]]
    methods {
       @property text {
-         set {
-            [[Sets the text string to be displayed by the given text object.
+         [[The text string to be displayed by the given text object.
 
-              See also @.text.get.
-            ]]
+           Do not release (free) the returned value.
+
+           See also @.text.get.
+         ]]
+         set {
          }
          get {
-            [[Retrieves the text string currently being displayed by the given
-              text object.
-
-              Do not free() the return value.
-
-              See also @.text.set.
-            ]]
          }
          values {
             text: string; [[Text string to display on it.]]

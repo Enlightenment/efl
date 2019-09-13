@@ -79,18 +79,18 @@ class @beta Ecore.Audio.In extends Ecore.Audio
          }
       }
       @property output {
+         [[The output that this input is attached to
+         ]]
          get {
-            [[Gets the output that this input is attached to
-            ]]
          }
          values {
             output: Ecore.Audio; [[The output]] /* FIXME-cyclic Should be Ecore.Audio.Out */
          }
       }
       @property remaining {
+         [[The remaining time of the input
+         ]]
          get {
-            [[Gets the remaining time of the input
-            ]]
          }
          values {
             remaining: double; [[The amount of time in seconds left to play]]

@@ -6,63 +6,58 @@ interface @beta Efl.Player
            [[Start a playing playable object.]]
         }
         stop {
-          [[Stop playable object.]]
+           [[Stop playable object.]]
         }
         @property playable {
-             [[Whether or not the playable can be played.]]
-             get {
-             }
-             values {
-                  play: bool; [[$true if the object have playable data, $false otherwise]]
-             }
+           [[Whether or not the playable can be played.]]
+           get {
+           }
+           values {
+                play: bool; [[$true if the object have playable data, $false otherwise]]
+           }
         }
         @property play {
-             set {
-                  [[Set play/pause state of the media file.
+           [[Playback state of the media file.
 
-                    This functions sets the currently playing status of the
-                    video. Using this function to play or pause the video
-                    doesn't alter it's current position.
-                  ]]
-             }
-             get {
-                  [[Get play/pause state of the media file.]]
-             }
-             values {
-                  play: bool; [[$true if playing, $false otherwise.]]
-             }
+             This property sets the currently playback state of the
+             video. Using this function to play or pause the video
+             doesn't alter it's current position.
+           ]]
+           set {
+           }
+           get {
+           }
+           values {
+                play: bool; [[$true if playing, $false otherwise.]]
+           }
         }
         @property pos {
-             set {
-                  [[Set the position in the media file.
+           [[Position in the media file.
 
-                    This functions sets the current position of the media file
-                    to "sec", this only works on seekable streams. Setting the
-                    position doesn't change the playing state of the media file.
-                  ]]
-             }
-             get {
-                  [[Get the position in the media file.
-
-                    The position is returned as the number of seconds since the
-                    beginning of the media file.
-                  ]]
-             }
-             values {
-                  sec: double; [[The position (in seconds).]]
-             }
+             This property sets the current position of the media file
+             to $sec seconds since the beginning of the media file.
+             This only works on seekable streams. Setting the
+             position doesn't change the playing state of the media file.
+           ]]
+           set {
+           }
+           get {
+           }
+           values {
+                sec: double; [[The position (in seconds).]]
+           }
         }
         @property progress {
-             get {
-                  [[Get how much of the file has been played.
+           [[How much of the file has been played.
 
-                    This function gets the progress in playing the file, the
-                    return value is in the [0, 1] range.
-                  ]]
-             }
-             values {
-                  progress: double; [[The progress within the [0, 1] range.]]
-             }
+             This function gets the progress in playing the file, the
+             return value is in the [0, 1] range.
+           ]]
+           get {
+           }
+           values {
+                progress: double; [[The progress within the [0, 1] range.]]
+           }
         }
         @property play_speed {
              [[Control the play speed of the media file.
