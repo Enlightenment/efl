@@ -9,7 +9,9 @@
 #define EFL_CANVAS_LAYOUT_BETA
 
 #include "edje_suite.h"
-
+#ifdef _WIN32
+# include <windows.h>
+#endif
 #define EVAS_DATA_DIR TESTS_SRC_DIR "/../../lib/evas"
 
 EFL_START_TEST(edje_test_edje_init)
@@ -44,7 +46,6 @@ EFL_START_TEST(edje_test_edje_reload)
    Evas *evas = _setup_evas();
    Evas_Object *obj, *rect;
    int called = 0;
-   struct timespec t[2] = {0};
    const char *layout = test_layout_get("test_swallows.edj");
 
    obj = edje_object_add(evas);
@@ -62,8 +63,27 @@ EFL_START_TEST(edje_test_edje_reload)
    /* load should NOT be called */
    ck_assert_int_eq(called, 0);
 
+#ifdef _WIN32
+   HANDLE handle;
+   FILETIME modtime;
+   SYSTEMTIME st;
+   wchar_t date[80], time[80];
+   handle = CreateFile(layout,
+                       GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                       NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL,
+                       NULL);
+   ck_assert(handle != INVALID_HANDLE_VALUE);
+   GetSystemTime(&st);
+   ck_assert(GetDateFormatW(LOCALE_USER_DEFAULT, DATE_LONGDATE, &st, NULL, date, sizeof(date) / sizeof(date[0])));
+   ck_assert(GetTimeFormatW(LOCALE_USER_DEFAULT, 0, &st, NULL, time, sizeof(time) / sizeof(time[0])));
+   ck_assert(SystemTimeToFileTime(&st, &modtime));
+   ck_assert(SetFileTime(handle, NULL, NULL, &modtime));
+   CloseHandle(handle);
+#else
+   struct timespec t[2] = {0};
    t[0].tv_nsec = t[1].tv_nsec = UTIME_NOW;
    ck_assert(!utimensat(0, layout, t, 0));
+#endif
 
    called = 0;
    fail_unless(edje_object_file_set(obj, layout, "test_group"));
