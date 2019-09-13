@@ -3,19 +3,19 @@ class @beta Efl.Ui.Select_Model extends Efl.Boolean_Model
    [[Efl ui select model class]]
    methods {
       selected_get {
-         [[Get an iterator of all the selected child of this model.
+         [[Gets an iterator of all the selected child of this model.
          ]]
          return: iterator<uint64>; [[The iterator gives indices of selected children.
                                      It is valid until any change is made on the model.]]
       }
       unselected_get {
-         [[Get an iterator of all the child of this model that are not selected.
+         [[Gets an iterator of all the child of this model that are not selected.
          ]]
          return: iterator<uint64>; [[The iterator gives indices of unselected children.
                                      It is valid until any change is made on the model.]]
       }
       @property single_selection {
-         [[Define if we support only one exclusive selection at a time when set to $true.
+         [[Defines if we support only one exclusive selection at a time when set to $true.
 
            If disable with $false, it will have the behavior of a multi select mode.
          ]]
