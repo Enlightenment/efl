@@ -81,6 +81,7 @@ efl_mono_src = [
      'Value.cs',
      'ValueEolian.cs',
      'Inheritance.cs',
+     'Hash.cs'
 ]
 
 efl_mono_suite = executable('efl-mono-suite',
