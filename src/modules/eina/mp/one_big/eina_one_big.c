@@ -63,14 +63,14 @@ struct _One_Big
 {
    const char *name;
 
-   int item_size;
+   unsigned int item_size;
    int offset_to_item_inlist;
 
    int usage;
    int over;
 
-   int served;
-   int max;
+   unsigned int served;
+   unsigned int max;
    unsigned char *base;
 
    Eina_Trash *empty;
@@ -263,6 +263,79 @@ eina_one_big_from(void *data, void *ptr)
    return r;
 }
 
+typedef struct _Eina_Iterator_One_Big_Mempool Eina_Iterator_One_Big_Mempool;
+struct _Eina_Iterator_One_Big_Mempool
+{
+   Eina_Iterator iterator;
+
+   Eina_Iterator *walker;
+   One_Big *pool;
+
+   unsigned int offset;
+};
+
+static Eina_Bool
+eina_mempool_iterator_next(Eina_Iterator_One_Big_Mempool *it, void **data)
+{
+   Eina_Inlist *il = NULL;
+
+ retry:
+   if (it->offset < (it->pool->max * it->pool->item_size))
+     {
+        unsigned char *ptr = (unsigned char *) (it->pool->base);
+
+        ptr += it->offset;
+        it->offset += it->pool->item_size;
+
+        if (!eina_one_big_from(it->pool, ptr)) goto retry;
+
+        if (data) *data = (void *) ptr;
+        return EINA_TRUE;
+     }
+
+   if (!eina_iterator_next(it->walker, (void **) &il))
+     return EINA_FALSE;
+
+   if (data) *data = OVER_MEM_FROM_LIST(it->pool, il);
+   return EINA_TRUE;
+}
+
+static One_Big *
+eina_mempool_iterator_get_container(Eina_Iterator_One_Big_Mempool *it)
+{
+   return it->pool;
+}
+
+static void
+eina_mempool_iterator_free(Eina_Iterator_One_Big_Mempool *it)
+{
+   eina_iterator_free(it->walker);
+   free(it);
+}
+
+static Eina_Iterator *
+eina_one_big_iterator_new(void *data)
+{
+   Eina_Iterator_One_Big_Mempool *it;
+   One_Big *pool = data;
+
+   it = calloc(1, sizeof (Eina_Iterator_One_Big_Mempool));
+   if (!it) return NULL;
+
+    it->walker = eina_inlist_iterator_new(pool->over_list);
+    it->pool = pool;
+
+    it->iterator.version = EINA_ITERATOR_VERSION;
+    it->iterator.next = FUNC_ITERATOR_NEXT(eina_mempool_iterator_next);
+    it->iterator.get_container = FUNC_ITERATOR_GET_CONTAINER(
+                                                             eina_mempool_iterator_get_container);
+    it->iterator.free = FUNC_ITERATOR_FREE(eina_mempool_iterator_free);
+
+    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_ITERATOR);
+
+    return &it->iterator;
+}
+
 static void *
 eina_one_big_realloc(EINA_UNUSED void *data,
                      EINA_UNUSED void *element,
@@ -378,7 +451,8 @@ static Eina_Mempool_Backend _eina_one_big_mp_backend = {
    NULL,
    &eina_one_big_shutdown,
    NULL,
-   &eina_one_big_from
+   &eina_one_big_from,
+   &eina_one_big_iterator_new
 };
 
 Eina_Bool one_big_init(void)
