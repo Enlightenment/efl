@@ -56,6 +56,11 @@ struct _Eina_Mempool_Backend
     * @see eina_mempool_from
     */
    Eina_Bool (*from)(void *data, void *element);
+   /** Function to get an Eina_Iterator that will walk every allocated element
+    * in the pool.
+    * @use eina_mempool_iterator_new
+    */
+   Eina_Iterator *(*iterator)(void *data);
 };
 
 struct _Eina_Mempool_Backend_ABI1
@@ -74,6 +79,7 @@ struct _Eina_Mempool_Backend_ABI2
 {
    void (*repack)(void *data, Eina_Mempool_Repack_Cb cb, void *cb_data);
    Eina_Bool (*from)(void *data, void *element);
+   Eina_Iterator *(*iterator)(void *data);
 };
 
 struct _Eina_Mempool
@@ -114,6 +120,13 @@ eina_mempool_from(Eina_Mempool *mp, void *element)
 {
    if (!element) return EINA_FALSE;
    return mp->backend2->from(mp->backend_data, element);
+}
+
+static inline Eina_Iterator *
+eina_mempool_iterator_new(Eina_Mempool *mp)
+{
+   if (!mp->backend2->iterator) return NULL;
+   return mp->backend2->iterator(mp->backend_data);
 }
 
 static inline unsigned int
