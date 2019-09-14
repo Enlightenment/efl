@@ -88,6 +88,17 @@ EFL_START_TEST(eina_mempool_pass_through)
 EFL_END_TEST
 #endif
 
+#ifdef EINA_BUILD_ONE_BIG
+EFL_START_TEST(eina_mempool_one_big)
+{
+   Eina_Mempool *mp;
+
+   mp = eina_mempool_add("one_big", "test", NULL, sizeof (int), 384);
+   _eina_mempool_test(mp, EINA_FALSE, EINA_FALSE, EINA_TRUE);
+}
+EFL_END_TEST
+#endif
+
 void
 eina_test_mempool(TCase *tc)
 {
@@ -96,5 +107,8 @@ eina_test_mempool(TCase *tc)
 #endif
 #ifdef EINA_BUILD_PASS_THROUGH
    tcase_add_test(tc, eina_mempool_pass_through);
+#endif
+#ifdef EINA_BUILD_ONE_BIG
+   tcase_add_test(tc, eina_mempool_one_big);
 #endif
 }
