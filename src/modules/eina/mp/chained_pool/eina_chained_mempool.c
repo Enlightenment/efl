@@ -189,7 +189,7 @@ _eina_chained_mempool_alloc_in(Chained_Mempool *pool, Chained_Pool *p)
       mem = p->last;
       p->last += pool->item_alloc;
       if (p->last >= p->limit)
-      p->last = NULL;
+        p->last = NULL;
     }
   else
     {
@@ -199,11 +199,11 @@ _eina_chained_mempool_alloc_in(Chained_Mempool *pool, Chained_Pool *p)
       // Request a free pointer
       mem = eina_trash_pop(&p->base);
     }
-  
+
   // move to end - it just filled up
   if (!p->base && !p->last)
     pool->first = eina_inlist_demote(pool->first, EINA_INLIST_GET(p));
-  
+
   p->usage++;
   pool->usage++;
 
@@ -407,6 +407,15 @@ eina_chained_mempool_from(void *data, void *ptr)
      {
 #ifdef DEBUG
         ERR("%p is inside the private part of %p pool from %p '%s' Chained_Mempool (could be the sign of a buffer underrun).", ptr, p, pool, pool->name);
+#endif
+        goto end;
+     }
+
+   // is the pointer in the allocated zone of the mempool
+   if (p->last != NULL && ((unsigned char *)ptr >= p->last))
+     {
+#ifdef DEBUG
+        ERR("%p has not been allocated yet from %p pool of %p '%s' Chained_Mempool.", ptr, p, pool, pool->name);
 #endif
         goto end;
      }
