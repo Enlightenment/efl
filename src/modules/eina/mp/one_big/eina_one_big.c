@@ -32,6 +32,7 @@
 #include "eina_log.h"
 #include "eina_lock.h"
 #include "eina_thread.h"
+#include "eina_cpu.h"
 
 #ifndef NVALGRIND
 # include <memcheck.h>
@@ -288,7 +289,7 @@ eina_one_big_init(const char *context,
    item_size = va_arg(args, int);
    if (item_size < 1) item_size = 1;
 
-   pool->item_size = eina_mempool_alignof(item_size);
+   pool->item_size = MAX(eina_mempool_alignof(item_size), sizeof(void*));
    pool->max = va_arg(args, int);
    if (pool->max < 1) pool->max = 1;
 
