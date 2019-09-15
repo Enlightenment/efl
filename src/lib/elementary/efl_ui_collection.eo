@@ -3,7 +3,8 @@ class Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
                    Efl.Ui.Layout_Orientable,
                    Efl.Ui.Multi_Selectable,
                    Efl.Ui.Focus.Manager_Sub,
-                   Efl.Ui.Widget_Focus_Manager
+                   Efl.Ui.Widget_Focus_Manager,
+                   Efl.Ui.Collection_Events
    composites
                    Efl.Ui.Scrollable,
                    Efl.Ui.Scrollbar,
@@ -25,7 +26,6 @@ class Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
      Items inside this widget can be selected according to the @Efl.Ui.Multi_Selectable.select_mode
      policy, and the selection can be retrieved with @Efl.Ui.Multi_Selectable.selected_items_get.
    ]]
-   event_prefix:efl_ui;
    methods {
       item_scroll {
          [[Brings the passed item into the viewport.]]
@@ -89,13 +89,6 @@ class Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
       Efl.Ui.Multi_Selectable.select_range;
       Efl.Ui.Multi_Selectable.unselect_range;
       Efl.Ui.Single_Selectable.fallback_selection {get; set;}
-   }
-   events {
-      item,pressed : Efl.Ui.Item; [[A $press event occurred over an item.]]
-      item,unpressed : Efl.Ui.Item; [[An $unpress event occurred over an item.]]
-      item,longpressed : Efl.Ui.Item; [[A $longpressed event occurred over an item.]]
-      item,clicked : Efl.Ui.Item; [[A $clicked event occurred over an item.]]
-      item,clicked,any : Efl.Ui.Item; [[A $clicked,any event occurred over an item.]]
    }
 }
 
