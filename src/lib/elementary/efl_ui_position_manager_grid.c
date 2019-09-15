@@ -19,6 +19,7 @@ typedef struct {
    Eina_Vector2 scroll_position;
    Efl_Ui_Layout_Orientation dir;
    Vis_Segment prev_run;
+   unsigned int prev_consumed_space;
    Eina_Size2D max_min_size;
    Eina_Size2D last_viewport_size;
    Eina_Size2D prev_min_size;
@@ -491,6 +492,7 @@ _reposition_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
      {
         ev.start_id = pd->prev_run.start_id = cur.start_id;
         ev.end_id = pd->prev_run.end_id = cur.end_id;
+        pd->prev_consumed_space = consumed_space;
         efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_VISIBLE_RANGE_CHANGED, &ev);
      }
 }
@@ -808,6 +810,47 @@ _efl_ui_position_manager_grid_efl_object_finalize(Eo *obj, Efl_Ui_Position_Manag
 
    return obj;
 }
+
+EOLIAN static void
+_efl_ui_position_manager_grid_efl_ui_position_manager_entity_entities_ready(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd, unsigned int start_id, unsigned int end_id)
+{
+   Eina_Size2D space_size;
+   int relevant_space_size;
+   Item_Position_Context ctx;
+
+   if (end_id < pd->prev_run.start_id || start_id > pd->prev_run.end_id)
+     return;
+
+   space_size.w = (MAX(pd->last_viewport_size.w - pd->viewport.w, 0))*pd->scroll_position.x;
+   space_size.h = (MAX(pd->last_viewport_size.h - pd->viewport.h, 0))*pd->scroll_position.y;
+
+   if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
+     {
+        relevant_space_size = space_size.h;
+     }
+   else
+     {
+        relevant_space_size = space_size.w;
+     }
+
+   ctx.new = pd->prev_run;
+   ctx.consumed_space = pd->prev_consumed_space;
+   ctx.relevant_space_size = relevant_space_size;
+   ctx.floating_group = NULL;
+   ctx.placed_item = NULL;
+
+   if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
+     {
+        _position_items_vertical(obj, pd, &ctx);
+        _position_group_items(obj, pd, &ctx);
+     }
+   else
+     {
+        _position_items_horizontal(obj, pd, &ctx);
+        _position_group_items(obj, pd, &ctx);
+     }
+}
+
 
 
 #include "efl_ui_position_manager_grid.eo.c"
