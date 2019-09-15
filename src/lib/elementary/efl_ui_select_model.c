@@ -2,6 +2,10 @@
 # include <config.h>
 #endif
 
+// Note: we do not rely on reflection here to implement select as it require to asynchronously acces
+// children. Could be done differently by implementing the children select in the parent instead of
+// in the children. For later optimization.
+
 #include <Elementary.h>
 #include "elm_priv.h"
 
@@ -13,15 +17,21 @@ typedef struct _Efl_Ui_Select_Model_Data Efl_Ui_Select_Model_Data;
 struct _Efl_Ui_Select_Model_Data
 {
    Efl_Ui_Select_Model_Data *parent;
+
+   Eina_Future *pending_selection_event;
+
+   Efl_Ui_Select_Model *fallback_model;
+   Efl_Ui_Select_Model *last_model;
    unsigned long last;
 
-   Eina_Bool single_selection : 1;
+   Efl_Ui_Select_Mode selection;
+
    Eina_Bool none : 1;
 };
 
 static Eo*
 _efl_ui_select_model_efl_object_constructor(Eo *obj,
-                                         Efl_Ui_Select_Model_Data *pd EINA_UNUSED)
+                                            Efl_Ui_Select_Model_Data *pd)
 {
    Eo *parent;
 
@@ -29,7 +39,9 @@ _efl_ui_select_model_efl_object_constructor(Eo *obj,
 
    efl_boolean_model_boolean_add(obj, "selected", EINA_FALSE);
 
-   pd->last = -1;
+   efl_replace(&pd->last_model, NULL);
+   pd->last = 0;
+   pd->none = EINA_TRUE;
 
    parent = efl_parent_get(obj);
    if (efl_isa(parent, EFL_UI_SELECT_MODEL_CLASS))
@@ -38,10 +50,61 @@ _efl_ui_select_model_efl_object_constructor(Eo *obj,
    return obj;
 }
 
+static void
+_efl_ui_select_model_efl_object_invalidate(Eo *obj,
+                                           Efl_Ui_Select_Model_Data *pd)
+{
+   efl_replace(&pd->fallback_model, NULL);
+   efl_replace(&pd->last_model, NULL);
+   pd->none = EINA_TRUE;
+
+   efl_invalidate(efl_super(obj, EFL_UI_SELECT_MODEL_CLASS));
+}
+
+static void
+_efl_ui_select_model_fallback(Efl_Ui_Select_Model_Data *pd)
+{
+   Eina_Value selected;
+
+   if (!pd->parent) return;
+   if (!pd->parent->none) return;
+   if (!pd->parent->fallback_model) return;
+   // I think it only make sense to trigger the fallback on single mode
+   if (pd->parent->selection != EFL_UI_SELECT_MODE_SINGLE) return;
+
+   selected = eina_value_bool_init(EINA_TRUE);
+   efl_model_property_set(pd->parent->fallback_model, "self.selected", &selected);
+   eina_value_flush(&selected);
+}
+
+static Eina_Value
+_select_notification_cb(Eo *o, void *data EINA_UNUSED, const Eina_Value v)
+{
+   Efl_Ui_Select_Model_Data *pd = efl_data_scope_get(o, EFL_UI_SELECT_MODEL_CLASS);
+
+   efl_event_callback_call(o, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, NULL);
+
+   pd->pending_selection_event = NULL;
+
+   return v;
+}
+
+static void
+_efl_ui_select_model_selection_notification(Eo *parent, Efl_Ui_Select_Model_Data *pd)
+{
+   if (!pd) return;
+   if (pd->pending_selection_event) return;
+
+   pd->pending_selection_event = efl_future_then(parent,
+                                                 efl_loop_job(efl_loop_get(parent)),
+                                                 .success = _select_notification_cb);
+}
+
 static Eina_Value
 _commit_change(Eo *child, void *data EINA_UNUSED, const Eina_Value v)
 {
    Efl_Ui_Select_Model_Data *pd;
+   Eo *parent;
    Eina_Value *selected = NULL;
    Eina_Bool selflag = EINA_FALSE;
 
@@ -50,7 +113,8 @@ _commit_change(Eo *child, void *data EINA_UNUSED, const Eina_Value v)
 
    selected = efl_model_property_get(child, "selected");
 
-   pd = efl_data_scope_get(efl_parent_get(child), EFL_UI_SELECT_MODEL_CLASS);
+   parent = efl_parent_get(child);
+   pd = efl_data_scope_get(parent, EFL_UI_SELECT_MODEL_CLASS);
    if (!pd) goto on_error;
 
    eina_value_bool_get(selected, &selflag);
@@ -59,6 +123,7 @@ _commit_change(Eo *child, void *data EINA_UNUSED, const Eina_Value v)
         // select case
         pd->none = EINA_FALSE;
         pd->last = efl_composite_model_index_get(child);
+        efl_replace(&pd->last_model, child);
         efl_event_callback_call(child, EFL_UI_SELECT_MODEL_EVENT_SELECTED, child);
      }
    else
@@ -69,11 +134,17 @@ _commit_change(Eo *child, void *data EINA_UNUSED, const Eina_Value v)
         last = efl_composite_model_index_get(child);
         if (pd->last == last)
           {
+             efl_replace(&pd->last_model, NULL);
              pd->last = 0;
              pd->none = EINA_TRUE;
+
+             // Just in case we need to refill the fallback
+             _efl_ui_select_model_fallback(pd);
           }
         efl_event_callback_call(child, EFL_UI_SELECT_MODEL_EVENT_UNSELECTED, child);
      }
+   _efl_ui_select_model_selection_notification(parent, pd);
+   efl_model_properties_changed(child, "self.selected");
 
  on_error:
    eina_value_free(selected);
@@ -239,7 +310,7 @@ _untangle_free(void *data,
 
 static Eina_Iterator *
 _efl_ui_select_model_efl_model_properties_get(const Eo *obj,
-                                           Efl_Ui_Select_Model_Data *pd EINA_UNUSED)
+                                              Efl_Ui_Select_Model_Data *pd EINA_UNUSED)
 {
    EFL_COMPOSITE_MODEL_PROPERTIES_SUPER(props,
                                         obj, EFL_UI_SELECT_MODEL_CLASS,
@@ -250,22 +321,23 @@ _efl_ui_select_model_efl_model_properties_get(const Eo *obj,
 
 static Eina_Future *
 _efl_ui_select_model_efl_model_property_set(Eo *obj,
-                                                      Efl_Ui_Select_Model_Data *pd,
-                                                      const char *property, Eina_Value *value)
+                                            Efl_Ui_Select_Model_Data *pd,
+                                            const char *property, Eina_Value *value)
 {
    Eina_Value vf = EINA_VALUE_EMPTY;
 
    if (eina_streq("single_selection", property))
      {
-        Eina_Bool single_selection = pd->single_selection;
+        Eina_Bool single_selection = pd->selection == EFL_UI_SELECT_MODE_SINGLE;
+        Eina_Bool new_selection;
         Eina_Bool changed;
 
-        vf = eina_value_bool_init(single_selection);
-        eina_value_convert(value, &vf);
-        eina_value_bool_get(&vf, &single_selection);
+        if (!eina_value_bool_get(value, &new_selection))
+          return efl_loop_future_rejected(obj, EINVAL);
 
-        changed = (!pd->single_selection != !single_selection);
-        pd->single_selection = !!single_selection;
+        changed = (!!new_selection != !!single_selection);
+        if (new_selection) pd->selection = EFL_UI_SELECT_MODE_SINGLE;
+        else pd->selection = EFL_UI_SELECT_MODE_MULTI;
 
         if (changed) efl_model_properties_changed(obj, "single_selection");
 
@@ -275,6 +347,9 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
    if (eina_streq("child.selected", property))
      {
         unsigned long l = 0;
+
+        if (pd->selection == EFL_UI_SELECT_MODE_NONE)
+          return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_READ_ONLY);
 
         if (!eina_value_ulong_convert(value, &l))
           return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
@@ -293,6 +368,9 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
         Eina_Value *prev;
         Eina_Future *chain;
 
+        if (pd->parent->selection == EFL_UI_SELECT_MODE_NONE)
+          return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
+
         prev = efl_model_property_get(efl_super(obj, EFL_UI_SELECT_MODEL_CLASS), "selected");
         success = eina_value_bool_get(prev, &prevflag);
         success &= eina_value_bool_convert(value, &newflag);
@@ -303,7 +381,7 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
         if (newflag == prevflag)
           return efl_loop_future_resolved(obj, eina_value_bool_init(newflag));
 
-        single_selection = pd->parent->single_selection;
+        single_selection = !!(pd->parent->selection == EFL_UI_SELECT_MODE_SINGLE);
 
         // First store the new value in the boolean model we inherit from
         chain = efl_model_property_set(efl_super(obj, EFL_UI_SELECT_MODEL_CLASS),
@@ -321,7 +399,12 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
 
                   i = efl_composite_model_index_get(obj);
                   if (pd->parent->last == i && !newflag)
-                    pd->parent->none = EINA_TRUE;
+                    {
+                       efl_replace(&pd->last_model, NULL);
+                       pd->parent->none = EINA_TRUE;
+
+                       _efl_ui_select_model_fallback(pd);
+                    }
                }
              else
                {
@@ -362,7 +445,7 @@ static Eina_Value *
 _efl_ui_select_model_efl_model_property_get(const Eo *obj, Efl_Ui_Select_Model_Data *pd, const char *property)
 {
    if (eina_streq("single_selection", property))
-     return eina_value_bool_new(pd->single_selection);
+     return eina_value_bool_new(pd->selection == EFL_UI_SELECT_MODE_SINGLE);
    // Last selected child
    if (eina_streq("child.selected", property))
      {
@@ -374,27 +457,19 @@ _efl_ui_select_model_efl_model_property_get(const Eo *obj, Efl_Ui_Select_Model_D
    // Redirect to are we ourself selected
    if (pd->parent && eina_streq("self.selected", property))
      {
+        if (pd->parent->selection == EFL_UI_SELECT_MODE_NONE)
+          return eina_value_bool_new(EINA_FALSE);
         return efl_model_property_get(efl_super(obj, EFL_UI_SELECT_MODEL_CLASS), "selected");
      }
 
    return efl_model_property_get(efl_super(obj, EFL_UI_SELECT_MODEL_CLASS), property);
 }
 
-static void
-_efl_ui_select_model_single_selection_set(Eo *obj EINA_UNUSED, Efl_Ui_Select_Model_Data *pd, Eina_Bool enable)
-{
-   pd->single_selection = enable;
-}
-
-static Eina_Bool
-_efl_ui_select_model_single_selection_get(const Eo *obj EINA_UNUSED, Efl_Ui_Select_Model_Data *pd)
-{
-   return pd->single_selection;
-}
-
 static Eina_Iterator *
-_efl_ui_select_model_selected_get(Eo *obj, Efl_Ui_Select_Model_Data *pd EINA_UNUSED)
+_efl_ui_select_model_selected_get(Eo *obj, Efl_Ui_Select_Model_Data *pd)
 {
+   if (pd->parent && pd->parent->selection == EFL_UI_SELECT_MODE_NONE)
+     return eina_list_iterator_new(NULL); // Quick hack to get a valid empty iterator
    return efl_boolean_model_boolean_iterator_get(obj, "selected", EINA_TRUE);
 }
 
@@ -404,4 +479,223 @@ _efl_ui_select_model_unselected_get(Eo *obj, Efl_Ui_Select_Model_Data *pd EINA_U
    return efl_boolean_model_boolean_iterator_get(obj, "selected", EINA_FALSE);
 }
 
+static Efl_Ui_Selectable *
+_efl_ui_select_model_efl_ui_single_selectable_last_selected_get(const Eo *obj EINA_UNUSED,
+                                                                Efl_Ui_Select_Model_Data *pd)
+{
+   return pd->last_model;
+}
+
+static Eina_Iterator *
+_efl_ui_select_model_efl_ui_multi_selectable_async_selected_items_get(Eo *obj,
+                                                                      Efl_Ui_Select_Model_Data *pd EINA_UNUSED)
+{
+   return efl_ui_select_model_selected_get(obj);
+}
+
+static void
+_efl_ui_select_model_efl_ui_multi_selectable_async_select_mode_set(Eo *obj,
+                                                                   Efl_Ui_Select_Model_Data *pd,
+                                                                   Efl_Ui_Select_Mode mode)
+{
+   switch (mode)
+     {
+      case EFL_UI_SELECT_MODE_SINGLE:
+      case EFL_UI_SELECT_MODE_SINGLE_ALWAYS:
+         mode = EFL_UI_SELECT_MODE_SINGLE;
+         if (pd->selection == EFL_UI_SELECT_MODE_MULTI)
+           efl_ui_multi_selectable_async_unselect_all(obj);
+         break;
+      case EFL_UI_SELECT_MODE_NONE:
+         if (pd->selection == EFL_UI_SELECT_MODE_MULTI)
+           efl_ui_multi_selectable_async_unselect_all(obj);
+         else if (pd->last_model)
+           {
+              Eina_Value unselect = eina_value_bool_init(EINA_FALSE);
+
+              efl_model_property_set(pd->last_model, "self.selected", &unselect);
+              eina_value_flush(&unselect);
+           }
+         break;
+      case EFL_UI_SELECT_MODE_MULTI:
+         break;
+      default:
+         ERR("Unknown select mode passed to %s: %i.", efl_debug_name_get(obj), mode);
+         return;
+     }
+
+   pd->selection = mode;
+   efl_model_properties_changed(obj, "single_selection", "child.selected");
+}
+
+static Efl_Ui_Select_Mode
+_efl_ui_select_model_efl_ui_multi_selectable_async_select_mode_get(const Eo *obj EINA_UNUSED,
+                                                                   Efl_Ui_Select_Model_Data *pd)
+{
+   return pd->selection;
+}
+
+static void
+_efl_ui_select_model_efl_ui_multi_selectable_async_select_all(Eo *obj,
+                                                              Efl_Ui_Select_Model_Data *pd EINA_UNUSED)
+{
+   unsigned long count, i;
+
+   // Not the fastest way to implement it, but will reuse more code and be easier as a v1.
+   // It also make it not very async which could be noticable.
+   count = efl_model_children_count_get(obj);
+
+   for (i = 0; i < count; i++)
+     {
+        Eina_Value p = eina_value_ulong_init(i);
+
+        efl_model_property_set(obj, "child.selected", &p);
+
+        eina_value_flush(&p);
+     }
+}
+
+static void
+_efl_ui_select_model_efl_ui_multi_selectable_async_unselect_all(Eo *obj,
+                                                                Efl_Ui_Select_Model_Data *pd EINA_UNUSED)
+{
+   uint64_t count = efl_model_children_count_get(obj);
+
+   efl_ui_multi_selectable_async_unselect_range(obj, 0, count - 1);
+}
+
+static void
+_efl_ui_select_model_efl_ui_multi_selectable_async_select_range(Eo *obj,
+                                                                Efl_Ui_Select_Model_Data *pd EINA_UNUSED,
+                                                                uint64_t a, uint64_t b)
+{
+   unsigned long count, i;
+
+   // Not the fastest way to implement it, but will reuse more code and be easier as a v1.
+   // It also make it not very async which could be noticable.
+   count = MIN(efl_model_children_count_get(obj), b + 1);
+
+   for (i = a; i < count; i++)
+     {
+        Eina_Value p = eina_value_ulong_init(i);
+
+        efl_model_property_set(obj, "child.selected", &p);
+
+        eina_value_flush(&p);
+     }
+}
+
+static Eina_Value
+_children_unselect_then(Eo *o EINA_UNUSED, void *data EINA_UNUSED, const Eina_Value v)
+{
+   Eo *target;
+   Eina_Value unselect;
+   unsigned int i, len;
+
+   unselect = eina_value_bool_init(EINA_FALSE);
+
+   EINA_VALUE_ARRAY_FOREACH(&v, len, i, target)
+     {
+        efl_model_property_set(target, "self.selected", &unselect);
+     }
+
+   eina_value_flush(&unselect);
+
+   return v;
+}
+
+#define BATCH_MAX 100
+
+static void
+_efl_ui_select_model_efl_ui_multi_selectable_async_unselect_range(Eo *obj,
+                                                                  Efl_Ui_Select_Model_Data *pd EINA_UNUSED,
+                                                                  uint64_t a, uint64_t b)
+{
+   unsigned int count, batch, i;
+
+   count = MIN(efl_model_children_count_get(obj), b + 1);
+
+   // Fetch group request of children in batches not to big to allow for throttling
+   // In the callback edit said object property to be unselected
+   i = a;
+   batch = 0;
+
+   while (i < count)
+     {
+        Eina_Future *f;
+
+        batch = MIN(i + BATCH_MAX, count);
+        batch -= i;
+
+        f = efl_model_children_slice_get(obj, i, batch);
+        efl_future_then(obj, f, .success_type = EINA_VALUE_TYPE_ARRAY,
+                        .success = _children_unselect_then);
+
+        i += batch;
+     }
+}
+
+static void
+_efl_ui_select_model_efl_ui_single_selectable_fallback_selection_set(Eo *obj,
+                                                                     Efl_Ui_Select_Model_Data *pd,
+                                                                     Efl_Ui_Selectable *fallback)
+{
+   Eina_Value *index;
+
+   if (!efl_isa(fallback, EFL_UI_SELECT_MODEL_CLASS))
+     {
+        ERR("Class of object '%s' does not provide the necessary interface for Efl.Ui.Select_Model.fallback.", efl_debug_name_get(fallback));
+        return;
+     }
+   if (efl_parent_get(fallback) != obj)
+     {
+        ERR("Provided object '%s' for fallback isn't a child of '%s'.",
+            efl_debug_name_get(fallback), efl_debug_name_get(obj));
+        return;
+     }
+
+   efl_replace(&pd->fallback_model, fallback);
+
+   if (!pd->none) return ;
+
+   // When we provide a fallback, we should use it!
+   index = efl_model_property_get(fallback, EFL_COMPOSITE_MODEL_CHILD_INDEX);
+   efl_model_property_set(obj, "child.selected", index);
+   eina_value_free(index);
+}
+
+static Efl_Ui_Selectable *
+_efl_ui_select_model_efl_ui_single_selectable_fallback_selection_get(const Eo *obj EINA_UNUSED,
+                                                                     Efl_Ui_Select_Model_Data *pd)
+{
+   return pd->fallback_model;
+}
+
+static void
+_efl_ui_select_model_efl_ui_selectable_selected_set(Eo *obj,
+                                                    Efl_Ui_Select_Model_Data *pd EINA_UNUSED,
+                                                    Eina_Bool selected)
+{
+   Eina_Value set = eina_value_bool_init(selected);
+
+   efl_model_property_set(obj, "self.selected", &set);
+
+   eina_value_flush(&set);
+}
+
+static Eina_Bool
+_efl_ui_select_model_efl_ui_selectable_selected_get(const Eo *obj,
+                                                    Efl_Ui_Select_Model_Data *pd EINA_UNUSED)
+{
+   Eina_Value *selected;
+   Eina_Bool r = EINA_FALSE;
+
+   selected = efl_model_property_get(obj, "self.selected");
+   eina_value_bool_convert(selected, &r);
+   eina_value_free(selected);
+
+   return r;
+}
+
 #include "efl_ui_select_model.eo.c"
+#include "efl_ui_multi_selectable_async.eo.c"
