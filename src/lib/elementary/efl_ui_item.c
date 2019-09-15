@@ -214,3 +214,5 @@ ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_item, Efl_Ui_Item_Data)
 #include "efl_ui_selectable.eo.c"
 #include "efl_ui_multi_selectable.eo.c"
 #include "efl_ui_single_selectable.eo.c"
+#include "efl_ui_collection_events.eo.c"
+

@@ -173,6 +173,7 @@ pub_eo_files = [
   'efl_ui_relative_layout.eo',
   'efl_ui_action_connector.eo',
   'efl_ui_format.eo',
+  'efl_ui_collection_events.eo',
   'efl_ui_collection.eo',
   'efl_ui_position_manager_entity.eo',
   'efl_ui_position_manager_list.eo',
