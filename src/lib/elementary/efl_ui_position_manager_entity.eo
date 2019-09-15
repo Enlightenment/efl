@@ -91,6 +91,16 @@ interface @beta Efl.Ui.Position_Manager.Entity extends Efl.Ui.Layout_Orientable
           end_id : int; [[The last item that has a new size]]
         }
       }
+      entities_ready {
+        [[The items from $start_id to $end_id now have their entities ready
+
+          The position manager will reapply the geometry to the elements if they are visible.
+        ]]
+        params {
+          start_id : uint; [[The first item that is available]]
+          end_id : uint; [[The last item that is available]]
+        }
+      }
       relative_item {
         [[Translates the $current_id, into a new id which is oriented in the $direction of $current_id.
           In case that there is no item, -1 is returned]]
