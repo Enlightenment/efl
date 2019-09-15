@@ -1,10 +1,4 @@
-enum @beta Efl.Ui.Select_Mode {
-   [[Type of multi selectable object.]]
-   single, [[Only single child is selected. If a child is selected,
-             previous selected child will be unselected.]]
-   multi, [[Allow multiple selection of children.]]
-   none [[No child can be selected at all.]]
-}
+import efl_ui;
 
 interface @beta Efl.Ui.Multi_Selectable extends Efl.Ui.Single_Selectable
 {

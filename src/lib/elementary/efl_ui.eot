@@ -96,5 +96,13 @@ enum @beta Efl.Ui.Widget_Orientation_Mode
       not change according to the window or screen orientation.]]
 }
 
+enum @beta Efl.Ui.Select_Mode {
+   [[Type of multi selectable object.]]
+   single, [[Only single child is selected. If a child is selected,
+             previous selected child will be unselected.]]
+   multi, [[Allow multiple selection of children.]]
+   none [[No child can be selected at all.]]
+}
+
 /* Types for A11Y (internal/beta API) */
 type @beta @extern Efl.Access.Action_Data: __undefined_type; [[Internal struct for accesssibility.]]
