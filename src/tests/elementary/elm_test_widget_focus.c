@@ -93,7 +93,7 @@ static Evas_Object*
 _custom_progressbar(Evas_Object *win)
 {
    Evas_Object *o = elm_progressbar_add(win);
-   efl_ui_widget_focus_allow_set(o, EINA_TRUE);
+   elm_object_focus_allow_set(o, EINA_TRUE);
    return o;
 }
 

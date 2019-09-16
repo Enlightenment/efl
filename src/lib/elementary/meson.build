@@ -431,6 +431,7 @@ elementary_pub_headers = [
   'efl_ui_check_eo.h',
   'elm_check_legacy.h',
   'elm_clock.h',
+  'elm_clock_eo.h',
   'elm_clock_legacy.h',
   'elm_cnp.h',
   'elm_colorselector.h',
