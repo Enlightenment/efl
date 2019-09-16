@@ -26,7 +26,8 @@ struct html_escaped_string_generator
                case '\'': out.append("&apos;"); break;
                case '<':  out.append("&lt;"); break;
                case '>':  out.append("&gt;"); break;
-               case '\\': if (pos < input.size() - 1) pos++; // Deliberate fallthrough
+               case '\\': if (pos < input.size() - 1) pos++;
+                    // fall through
                default:   out.append(&input[pos], 1); break;
             }
         }

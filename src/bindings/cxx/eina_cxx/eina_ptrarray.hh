@@ -50,6 +50,12 @@ struct _ptr_array_iterator
     : _ptr(other._ptr)
   {
   }
+  _ptr_array_iterator<T>& operator=(_ptr_array_iterator<typename remove_cv<value_type>::type> const& other)
+  {
+    if (this != &other)
+      _ptr = other._ptr;
+    return *this;
+  }
   _ptr_array_iterator<T>& operator++()
   {
     ++_ptr;

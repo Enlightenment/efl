@@ -67,6 +67,13 @@ struct _ptr_list_iterator : _ptr_list_iterator_base
   {
   }
 
+  _ptr_list_iterator<value_type>& operator=(_ptr_list_iterator<value_type> const &other)
+  {
+    if (this != &other)
+      _ptr_list_iterator_base::operator=(other);
+    return *this;
+  }
+
   _ptr_list_iterator<T>& operator++()
   {
     _node = eina_list_next(_node);
