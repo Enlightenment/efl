@@ -281,7 +281,7 @@ interface @beta Efl.Gfx.Image
    }
    events {
       image,preload: void; [[Image data has been preloaded.]]
-      image,resized: void;  [[Image was resized (its pixel data).]]
+      image,resized: Eina.Size2D;  [[Image was resized (its pixel data). The event data is the image's new size.]]
       image,unload: void;  [[Image data has been unloaded (by some mechanism in
                        EFL that threw out the original image data).]]
    }
