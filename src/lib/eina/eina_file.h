@@ -798,7 +798,7 @@ EAPI void         eina_file_statgen_enable(void);
  * @brief Disable stat generation count optimiziing to only stat/do file i/o between generation counts changing
  * @since 1.23
  */
-EAPI void         eina_file_statgen_bisable(void);
+EAPI void         eina_file_statgen_disable(void);
 
 /**
  * @}
