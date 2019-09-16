@@ -959,9 +959,7 @@ _efl_ui_list_view_efl_ui_list_view_model_realize(Eo *obj, Efl_Ui_List_View_Data 
    tracking->pd = pd;
    childrens[0] = item->children;
 
-   item->layout_request = efl_ui_view_factory_create_with_event(pd->factory,
-                                                                EINA_C_ARRAY_ITERATOR_NEW(childrens),
-                                                                obj);
+   item->layout_request = efl_ui_view_factory_create_with_event(pd->factory, EINA_C_ARRAY_ITERATOR_NEW(childrens));
    item->layout_request = efl_future_then(obj, item->layout_request,
                                           .success = _content_created,
                                           .success_type = EINA_VALUE_TYPE_ARRAY,

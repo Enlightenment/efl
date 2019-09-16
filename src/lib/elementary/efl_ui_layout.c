@@ -2238,9 +2238,7 @@ _efl_ui_layout_view_model_content_update(Efl_Ui_Layout_Data *pd, Efl_Ui_Layout_F
    request->tracking = tracking;
 
    models[0] = efl_ui_view_model_get(pd->obj);
-   f = efl_ui_view_factory_create_with_event(tracking->factory,
-                                             EINA_C_ARRAY_ITERATOR_NEW(models),
-                                             pd->obj);
+   f = efl_ui_view_factory_create_with_event(tracking->factory, EINA_C_ARRAY_ITERATOR_NEW(models));
    f = efl_future_then(pd->obj, f,
                        .success = _content_created,
                        .success_type = EINA_VALUE_TYPE_ARRAY,

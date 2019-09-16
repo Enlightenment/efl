@@ -32,6 +32,8 @@ struct _Efl_Ui_Widget_Factory_Data
 {
    const Efl_Class *klass;
 
+   Efl_Ui_Widget *parenting_widget;
+
    Eina_Hash *parts;
 
    Eina_Stringshare *style;
@@ -41,8 +43,24 @@ struct _Efl_Ui_Widget_Factory_Request
 {
    Efl_Ui_Widget_Factory_Data *pd;
    Efl_Ui_Factory *factory;
-   Eo *parent;
 };
+
+static Efl_Object *
+_efl_ui_widget_factory_efl_object_finalize(Eo *obj, Efl_Ui_Widget_Factory_Data *pd)
+{
+   pd->parenting_widget = efl_provider_find(obj, EFL_UI_WIDGET_CLASS);
+   if (!pd->parenting_widget) return NULL;
+
+   return efl_finalize(efl_super(obj, EFL_UI_WIDGET_FACTORY_CLASS));
+}
+
+Efl_Ui_Win *
+efl_ui_widget_factory_widget_get(Efl_Ui_Widget_Factory *factory)
+{
+   Efl_Ui_Widget_Factory_Data *pd = efl_data_scope_get(factory, EFL_UI_WIDGET_FACTORY_CLASS);
+
+   return pd->parenting_widget;
+}
 
 static void
 _efl_ui_widget_factory_item_class_set(Eo *obj, Efl_Ui_Widget_Factory_Data *pd,
@@ -151,7 +169,8 @@ _efl_ui_widget_factory_efl_object_constructor(Efl_Ui_Widget_Factory *obj,
 
 static Efl_Ui_Widget *
 _efl_ui_widget_create(const Efl_Ui_Factory *factory,
-                      const Efl_Class *klass, Eo *parent,
+                      const Efl_Class *klass,
+                      Efl_Ui_Widget *parent,
                       Efl_Model *model)
 {
    Efl_Ui_Widget *w;
@@ -169,7 +188,7 @@ _efl_ui_widget_factory_create_then(Eo *model, void *data, const Eina_Value v EIN
    Efl_Ui_Widget_Factory_Request *r = data;
    Efl_Ui_Widget *w;
 
-   w = _efl_ui_widget_create(r->factory, r->pd->klass, r->parent, model);
+   w = _efl_ui_widget_create(r->factory, r->pd->klass, r->pd->parenting_widget, model);
    if (!w) return eina_value_error_init(ENOMEM);
    return eina_value_object_init(w);
 }
@@ -186,13 +205,12 @@ _efl_ui_widget_factory_create_cleanup(Eo *o EINA_UNUSED, void *data, const Eina_
    Efl_Ui_Widget_Factory_Request *r = data;
 
    efl_unref(r->factory);
-   efl_unref(r->parent);
    free(r);
 }
 
 static Eina_Future *
 _efl_ui_widget_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Widget_Factory_Data *pd,
-                                             Eina_Iterator *models, Efl_Gfx_Entity *parent)
+                                             Eina_Iterator *models)
 {
    Efl_Ui_Widget_Factory_Request *r;
    Eina_Future **f;
@@ -211,7 +229,7 @@ _efl_ui_widget_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Widget_Factory_Data
 
         EINA_ITERATOR_FOREACH(models, model)
           {
-             w = _efl_ui_widget_create(obj, pd->klass, parent, model);
+             w = _efl_ui_widget_create(obj, pd->klass, pd->parenting_widget, model);
 
              if (!w) return efl_loop_future_rejected(obj, ENOMEM);
              eina_value_array_append(&r, w);
@@ -225,7 +243,6 @@ _efl_ui_widget_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Widget_Factory_Data
    if (!r) return efl_loop_future_rejected(obj, ENOMEM);
 
    r->pd = pd;
-   r->parent = efl_ref(parent);
    r->factory = efl_ref(obj);
 
    f = calloc(count + 1, sizeof (Eina_Future *));
@@ -249,7 +266,6 @@ _efl_ui_widget_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Widget_Factory_Data
                           .free = _efl_ui_widget_factory_create_cleanup);
 
 alloc_array_error:
-   efl_unref(r->parent);
    efl_unref(r->factory);
    free(r);
    eina_iterator_free(models);
