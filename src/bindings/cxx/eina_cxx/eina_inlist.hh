@@ -108,21 +108,6 @@ struct _inlist_iterator
     : _list(other._list), _node(other._node) {}
 
   /**
-   * @brief Copy assignment operator.
-   * @param other Other iterator being copied
-   * @return Copy of the iterator
-   */
-  _inlist_iterator<T> & operator=(_inlist_iterator<typename std::remove_const<T>::type> const& other)
-  {
-    if (this != &other)
-      {
-          _list = other._list;
-          _node = other._node;
-      }
-    return *this;
-  }
-
-  /**
    * @brief Move the iterator to the next position in the list.
    * @return The iterator itself.
    *

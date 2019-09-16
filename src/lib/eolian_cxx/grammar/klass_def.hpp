@@ -492,7 +492,7 @@ inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* uni
                 complex.subtypes.push_back({stp
                                             , unit
                                             , ::eolian_type_c_type_get(stp)
-                                            , (bool)eolian_type_is_move(stp)
+                                            , eolian_type_is_move(stp)
                                             , is_by::value});
                 stp = eolian_type_next_type_get(stp);
              }
