@@ -298,6 +298,11 @@
  */
 
 #include "elm_object_item.h"
+#include "efl_ui.eot.h"
+typedef Eo Efl_Ui_Focus_Manager;
+#define _EFL_UI_FOCUS_MANAGER_EO_CLASS_TYPE
+#include "efl_ui_focus_object.eo.h"
+#include "efl_ui_focus_manager.eo.h"
 
 typedef Eina_Bool             (*Elm_Widget_Del_Pre_Cb)(void *data);
 typedef void                  (*Elm_Widget_Item_Signal_Cb)(void *data, Elm_Object_Item *item, const char *emission, const char *source);
