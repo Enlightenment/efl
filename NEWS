@@ -7,7 +7,6 @@ Changes since 1.22.0:
 
 Features:
 
-   * eolian: remove support for inlist/inarray
    * ecore-drm2: Add API function to return output rotation (T7690)
    * ecore-drm2: Add background_color to crtc atomic properties
    * ecore-drm2: Fill in crtc background color (if supported) during atomic commits
@@ -30,10 +29,6 @@ Features:
 
 Fixes:
 
-   * Fix leak in elm atspi
-   * eina_file: set errno on open fail for win32 build
-   * evas-gl-drm: Fix issue of rotation not actually rotating (T7690)
-   * solve neon rotation issue by moving to the tiled rotator
    * eo: Fix missing varags cleanup (CID1399080)
    * efl_core_command_line: Fix logically dead code (CID1399106)
    * efl_ui_widget_common: Fix potential resource leak (CID1399088)
@@ -232,6 +227,8 @@ Fixes:
    * vg_common_svg : Initialize "display" attribute
    * fix a bunch of breaks that having a blind file unload has brought
    * fix xpm loader to be threadable - fixes so much stuff...
+   * efl: check file's mtime in efl.file::file_set to determine if file is the same
+   * meson.build: allow to disable tiff evas loader
 
 Changes since 1.21.0:
 ---------------------
