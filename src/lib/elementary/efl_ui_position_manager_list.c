@@ -136,7 +136,7 @@ recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
      {
         min_size.h = pd->maximum_min_size;
      }
-   if ((pd->maximum_min_size > 0) && (pmin_size > 0) && (pd->maximum_min_size != pmin_size))
+   if ((pd->maximum_min_size > 0) && (pd->maximum_min_size != pmin_size))
      efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_MIN_SIZE_CHANGED, &min_size);
 }
 
