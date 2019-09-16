@@ -110,14 +110,16 @@ _do_format_string(Efl_Ui_Format_Data *pd, Eina_Strbuf *str, const Eina_Value val
       case FORMAT_TYPE_DOUBLE:
       {
         double v = 0.0;
-        eina_value_double_convert(&value, &v);
+        if (!eina_value_double_convert(&value, &v))
+           ERR("Format conversion failed");
         eina_strbuf_append_printf(str, pd->format_string, v);
         break;
       }
       case FORMAT_TYPE_INT:
       {
         int v = 0;
-        eina_value_int_convert(&value, &v);
+        if (!eina_value_int_convert(&value, &v))
+           ERR("Format conversion failed");
         eina_strbuf_append_printf(str, pd->format_string, v);
         break;
       }
@@ -269,7 +271,8 @@ _efl_ui_format_formatted_value_get(Eo *obj EINA_UNUSED, Efl_Ui_Format_Data *pd, 
         /* Search in the format_values array if we have one */
         Efl_Ui_Format_Value val = { 0 };
         int ndx;
-        eina_value_int_convert(&value, &val.value);
+        if (!eina_value_int_convert(&value, &val.value))
+           ERR("Format conversion failed");
         ndx = eina_inarray_search_sorted(pd->format_values, &val, (Eina_Compare_Cb)_value_compare);
         if (ndx > -1) {
           Efl_Ui_Format_Value *entry = eina_inarray_nth(pd->format_values, ndx);
