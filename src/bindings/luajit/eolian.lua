@@ -394,7 +394,6 @@ ffi.cdef [[
     const Eolian_Class *eolian_constructor_class_get(const Eolian_Constructor *ctor);
     const Eolian_Function *eolian_constructor_function_get(const Eolian_Constructor *ctor);
     Eina_Bool eolian_constructor_is_optional(const Eolian_Constructor *ctor);
-    Eina_Bool eolian_constructor_is_ctor_param(const Eolian_Constructor *ctor);
     Eina_Iterator *eolian_class_constructors_get(const Eolian_Class *klass);
     Eina_Iterator *eolian_class_events_get(const Eolian_Class *klass);
     const Eolian_Type *eolian_event_type_get(const Eolian_Event *event);
@@ -1382,10 +1381,6 @@ ffi.metatype("Eolian_Constructor", {
 
         is_optional = function(self)
             return eolian.eolian_constructor_is_optional(self) ~= 0
-        end,
-
-        is_ctor_param = function(self)
-            return eolian.eolian_constructor_is_ctor_param(self) ~= 0
         end
     }
 })

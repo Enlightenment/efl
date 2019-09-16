@@ -329,7 +329,6 @@ struct _Eolian_Constructor
    Eolian_Object base;
    const Eolian_Class *klass;
    Eina_Bool is_optional: 1;
-   Eina_Bool is_ctor_param : 1;
 };
 
 struct _Eolian_Event

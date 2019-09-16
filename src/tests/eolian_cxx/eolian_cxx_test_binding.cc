@@ -292,7 +292,6 @@ EFL_START_TEST(eolian_cxx_test_constructors)
     auto ctor = constructors[0];
     ck_assert_str_eq("Generic.required_ctor_a", ctor.name.c_str());
     ck_assert(!ctor.is_optional);
-    ck_assert(!ctor.is_ctor_param);
 
     auto function = ctor.function;
     ck_assert_str_eq("required_ctor_a", function.name.c_str());
@@ -300,7 +299,6 @@ EFL_START_TEST(eolian_cxx_test_constructors)
     ctor = constructors[2];
     ck_assert_str_eq("Generic.optional_ctor_a", ctor.name.c_str());
     ck_assert(ctor.is_optional);
-    ck_assert(!ctor.is_ctor_param);
 
     function = ctor.function;
     ck_assert_str_eq("optional_ctor_a", function.name.c_str());
