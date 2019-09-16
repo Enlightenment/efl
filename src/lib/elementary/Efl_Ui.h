@@ -140,6 +140,7 @@ extern EAPI double _efl_startup_time;
 // EO types. Defined for legacy-only builds as legacy uses typedef of EO types.
 #include "efl_ui.eot.h"
 #include "efl_ui_selection_types.eot.h"
+#include "efl_ui_dnd_types.eot.h"
 
 //define focus manager earlier since focus object and manager is circular
 typedef Eo Efl_Ui_Focus_Manager;
@@ -175,9 +176,12 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_widget_scrollable_content.eo.h>
 # include <efl_ui_widget_common.h>
 # include <efl_ui_widget_part.eo.h>
+# include <efl_ui_widget_part_bg.eo.h>
+# include <efl_ui_widget_part_shadow.eo.h>
 # include <efl_ui_layout_base.eo.h>
 # include <efl_ui_layout.eo.h>
 # include <efl_ui_layout_part.eo.h>
+# include <efl_ui_layout_part_bg.eo.h>
 # include <efl_ui_layout_part_box.eo.h>
 # include <efl_ui_layout_part_content.eo.h>
 # include <efl_ui_layout_part_text.eo.h>
@@ -193,6 +197,7 @@ EAPI void efl_ui_focus_relation_free(Efl_Ui_Focus_Relations *rel);
 # include <efl_ui_table.eo.h>
 # include <efl_ui_table_static.eo.h>
 # include <efl_ui_image.eo.h>
+# include <efl_ui_image_zoomable.eo.h>
 # include <efl_ui_win.eo.h>
 /* FIXME: what the actual fuck. */
 #ifdef EFL_BETA_API_SUPPORT
@@ -238,36 +243,39 @@ EAPI Eina_Bool efl_ui_win_autodel_get(const Efl_Ui_Win *obj);
 # include <efl_ui_relative_layout.eo.h>
 
 /* FIXME: Efl.Ui.Text must not use elm_general.h */
-// no.
-//# warning Efl.Ui.Text is not available yet without Elementary.h
-# if 0
-# include <efl_ui_text_interactive.eo.h>
+# include <elm_general.h>
+# include <efl_text_interactive.eo.h>
 # include <efl_ui_text.eo.h>
 # include <efl_ui_text_editable.eo.h>
 # include <efl_ui_text_async.eo.h>
-# endif
 
 # include <efl_ui_animation_view.eo.h>
 # include <efl_ui_clock.h>
-# include <efl_ui_image_factory.eo.h>
 # include <efl_ui_video.h>
-# include <efl_ui_calendar.h>
-# include <efl_ui_button_eo.h>
 
-# include "efl_ui_caching_factory.eo.h"
-# include "efl_ui_widget_factory.eo.h"
+# include <efl_ui_widget_factory.eo.h>
+# include <efl_ui_image_factory.eo.h>
+# include <efl_ui_layout_factory.eo.h>
+# include <efl_ui_caching_factory.eo.h>
+# include <efl_ui_text_factory_fallback.eo.h>
+# include <efl_ui_text_factory_images.eo.h>
+# include <efl_ui_text_factory_emoticons.eo.h>
 
 /* FIXME: Multibuttonentry must not use elm_widget_item */
 
 # include <efl_ui_tags.eo.h>
+# include <efl_ui_button.eo.h>
+# include <efl_ui_check.eo.h>
+# include <efl_ui_radio.eo.h>
+# include <efl_ui_radio_group.eo.h>
+# include <efl_ui_radio_group_impl.eo.h>
+# include <efl_ui_radio_box.eo.h>
+# include <efl_ui_progressbar.eo.h>
 
-# include <efl_ui_flip_eo.h>
-# include <efl_ui_frame_eo.h>
-# include <efl_ui_check_eo.h>
-# include <efl_ui_image_zoomable_eo.h>
-# include <efl_ui_progressbar_eo.h>
-# include <efl_ui_radio_eo.h>
-# include <efl_ui_panes_eo.h>
+# include <efl_ui_flip.eo.h>
+# include <efl_ui_frame.eo.h>
+# include <efl_ui_panel.eo.h>
+# include <efl_ui_panes.eo.h>
 # include <efl_ui_panes_part.eo.h>
 
 #define _EFL_UI_SPOTLIGHT_MANAGEREO_EO_CLASS_TYPE
@@ -292,6 +300,7 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_spin.eo.h>
 # include <efl_ui_spin_button.eo.h>
 # include <efl_ui_slider.eo.h>
+# include <efl_ui_slider_interval.eo.h>
 # include <efl_ui_item.eo.h>
 # include <efl_ui_position_manager_entity.eo.h>
 # include <efl_ui_position_manager_data_access_v1.eo.h>
@@ -314,7 +323,34 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_tab_page.eo.h>
 # include <efl_ui_tab_pager.eo.h>
 # include <efl_ui_select_model.eo.h>
+
+# include "efl_ui_list_view_types.eot.h"
+# include <efl_ui_list_view.eo.h>
+# include <efl_ui_list_view_model.eo.h>
+# include <efl_ui_list_view_precise_layouter.eo.h>
+# include <efl_ui_list_view_relayout.eo.h>
+# include <efl_ui_list_view_pan.eo.h>
 # include <efl_ui_view_model.eo.h>
+# include <efl_ui_size_model.eo.h>
+# include <efl_ui_homogeneous_model.eo.h>
+# include <efl_ui_exact_model.eo.h>
+# include <efl_ui_average_model.eo.h>
+
+# include <efl_ui_scroller.eo.h>
+# include <efl_ui_pan.eo.h>
+# include <efl_ui_scroll_manager.eo.h>
+
+# include <efl_ui_focus_parent_provider.eo.h>
+# include <efl_ui_widget_focus_manager.eo.h>
+# include <efl_ui_focus_parent_provider_standard.eo.h>
+# include <efl_ui_selection.eo.h>
+# include <efl_ui_dnd.eo.h>
+# include <efl_ui_dnd_container.eo.h>
+# include <efl_ui_selection_manager.eo.h>
+
+# include <efl_datetime_manager.eo.h>
+# include <efl_ui_timepicker.eo.h>
+# include <efl_ui_datepicker.eo.h>
 # include <efl_ui_calendar.eo.h>
 
 /**
