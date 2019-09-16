@@ -40,7 +40,7 @@ _scale_type_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Efl_Ui_Radio_Group *radio = data;
    Evas_Object *target;
-   Efl_Gfx_Image_Scale_Type type;
+   Efl_Gfx_Image_Scale_Method type;
    char buf[PATH_MAX];
 
    radio = efl_ui_single_selectable_last_selected_get(radio);
@@ -48,9 +48,9 @@ _scale_type_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    efl_file_simple_load(efl_part(target, "background"), buf, NULL);
-   type = efl_gfx_image_scale_type_get(efl_part(target, "background"));
+   type = efl_gfx_image_scale_method_get(efl_part(target, "background"));
    type = (type + 1) % 6;
-   efl_gfx_image_scale_type_set(efl_part(target, "background"), type);
+   efl_gfx_image_scale_method_set(efl_part(target, "background"), type);
 }
 
 static Efl_Ui_Radio_Group *

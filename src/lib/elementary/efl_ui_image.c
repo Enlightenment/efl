@@ -204,15 +204,15 @@ _image_sizing_eval(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *img)
         //   according to (iw x ih), (ow x oh), and scale_type
         switch (sd->scale_type)
           {
-           case EFL_GFX_IMAGE_SCALE_TYPE_NONE:
+           case EFL_GFX_IMAGE_SCALE_METHOD_NONE:
               w = iw;
               h = ih;
               break;
-           case EFL_GFX_IMAGE_SCALE_TYPE_FILL:
+           case EFL_GFX_IMAGE_SCALE_METHOD_FILL:
               w = ow;
               h = oh;
               break;
-           case EFL_GFX_IMAGE_SCALE_TYPE_FIT:
+           case EFL_GFX_IMAGE_SCALE_METHOD_FIT:
               w = ow;
               h = ((double)ih * w) / (double)iw;
 
@@ -224,17 +224,17 @@ _image_sizing_eval(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *img)
 
 
               break;
-           case EFL_GFX_IMAGE_SCALE_TYPE_FIT_WIDTH:
+           case EFL_GFX_IMAGE_SCALE_METHOD_FIT_WIDTH:
               w = ow;
               h = ((double)ih * w) / (double)iw;
 
               break;
-           case EFL_GFX_IMAGE_SCALE_TYPE_FIT_HEIGHT:
+           case EFL_GFX_IMAGE_SCALE_METHOD_FIT_HEIGHT:
               h = oh;
               w = ((double)iw * h) / (double)ih;
 
               break;
-           case EFL_GFX_IMAGE_SCALE_TYPE_EXPAND:
+           case EFL_GFX_IMAGE_SCALE_METHOD_EXPAND:
               if (ow > oh)
                 {
                    w = ow;
@@ -246,7 +246,7 @@ _image_sizing_eval(Eo *obj, Efl_Ui_Image_Data *sd, Evas_Object *img)
                    w = ((double)iw * h) / (double)ih;
                 }
               break;
-           case EFL_GFX_IMAGE_SCALE_TYPE_TILE:
+           case EFL_GFX_IMAGE_SCALE_METHOD_TILE:
               evas_object_geometry_get(obj, &x, &y, &w, &h);
               evas_object_image_fill_set(img, x, y, iw, ih);
               goto done;
@@ -869,7 +869,7 @@ _efl_ui_image_efl_object_constructor(Eo *obj, Efl_Ui_Image_Data *pd)
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_IMAGE);
 
-   pd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FIT;
+   pd->scale_type = EFL_GFX_IMAGE_SCALE_METHOD_FIT;
    pd->self = obj;
 
    return obj;
@@ -1579,7 +1579,7 @@ _efl_ui_image_efl_player_play_get(const Eo *obj, Efl_Ui_Image_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_image_efl_gfx_image_scale_type_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd EINA_UNUSED, Efl_Gfx_Image_Scale_Type scale_type)
+_efl_ui_image_efl_gfx_image_scale_method_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd EINA_UNUSED, Efl_Gfx_Image_Scale_Method scale_type)
 {
    if (scale_type == sd->scale_type) return;
 
@@ -1588,8 +1588,8 @@ _efl_ui_image_efl_gfx_image_scale_type_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Dat
    efl_canvas_group_change(obj);
 }
 
-EOLIAN static Efl_Gfx_Image_Scale_Type
-_efl_ui_image_efl_gfx_image_scale_type_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+EOLIAN static Efl_Gfx_Image_Scale_Method
+_efl_ui_image_efl_gfx_image_scale_method_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    return sd->scale_type;
 }
@@ -2101,11 +2101,11 @@ elm_image_fill_outside_set(Evas_Object *obj, Eina_Bool fill_outside)
 
    if (sd->aspect_fixed)
      {
-        if (sd->fill_inside) sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FIT;
-        else sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_EXPAND;
+        if (sd->fill_inside) sd->scale_type = EFL_GFX_IMAGE_SCALE_METHOD_FIT;
+        else sd->scale_type = EFL_GFX_IMAGE_SCALE_METHOD_EXPAND;
      }
    else
-     sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FILL;
+     sd->scale_type = EFL_GFX_IMAGE_SCALE_METHOD_FILL;
 
    efl_canvas_group_change(obj);
 }
@@ -2246,11 +2246,11 @@ elm_image_aspect_fixed_set(Evas_Object *obj, Eina_Bool fixed)
 
    if (sd->aspect_fixed)
      {
-        if (sd->fill_inside) sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FIT;
-        else sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_EXPAND;
+        if (sd->fill_inside) sd->scale_type = EFL_GFX_IMAGE_SCALE_METHOD_FIT;
+        else sd->scale_type = EFL_GFX_IMAGE_SCALE_METHOD_EXPAND;
      }
    else
-     sd->scale_type = EFL_GFX_IMAGE_SCALE_TYPE_FILL;
+     sd->scale_type = EFL_GFX_IMAGE_SCALE_METHOD_FILL;
 
    efl_canvas_group_change(obj);
 }

@@ -18,7 +18,7 @@ enum @beta Efl.Gfx.Image_Scale_Hint
   static = 2   [[Image will not be re-scaled over time, thus turning scaling cache ON for its data.]]
 }
 
-enum @beta Efl.Gfx.Image_Scale_Type
+enum @beta Efl.Gfx.Image_Scale_Method
 {
    [[Enumeration that defines scaling methods to be used when rendering an image.]]
    none,        [[Use the image's natural size.]]
@@ -82,14 +82,15 @@ interface @beta Efl.Gfx.Image
             smooth_scale: bool; [[Whether to use smooth scale or not. The default value is $true.]]
          }
       }
-      @property scale_type {
+      @property scale_method {
          [[Determine how the image is scaled at render time.
 
            This allows more granular controls for how an image object should display its internal
            buffer. The underlying image data will not be modified.
          ]]
          values {
-            scale_type: Efl.Gfx.Image_Scale_Type; [[Image scale type to use. The default value is @Efl.Gfx.Image_Scale_Type.none.]]
+            scale_method: Efl.Gfx.Image_Scale_Method; [[Image scale type to use. The default value is
+                                                        @Efl.Gfx.Image_Scale_Method.none.]]
          }
       }
       @property can_upscale {
