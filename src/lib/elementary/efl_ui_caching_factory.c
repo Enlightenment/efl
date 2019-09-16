@@ -136,6 +136,7 @@ _efl_ui_caching_factory_create_then(Eo *model, void *data, const Eina_Value v)
    _efl_ui_caching_factory_remove(r->pd, eina_list_data_find(r->pd->cache, w), w);
 
    efl_ui_view_model_set(w, model);
+   efl_event_callback_call(r->factory, EFL_UI_FACTORY_EVENT_ITEM_BUILDING, w);
 
    return eina_value_object_init(w);
 }
@@ -356,7 +357,7 @@ _efl_ui_caching_factory_efl_ui_factory_release(Eo *obj,
 
    // Change parent, disconnect the object and make it invisible
    efl_gfx_entity_visible_set(ui_view, EINA_FALSE);
-   efl_ui_view_model_set(ui_view, NULL);
+   efl_event_callback_call(obj, EFL_UI_FACTORY_EVENT_ITEM_RELEASING, ui_view);
 
    // Add to the cache
    pd->cache = eina_list_prepend(pd->cache, ui_view);
