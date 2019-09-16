@@ -53,6 +53,7 @@ class @beta Efl.Ui.Collection_View extends Efl.Ui.Layout_Base implements
       Efl.Ui.Scrollable.match_content { set; }
       Efl.Ui.Widget_Focus_Manager.focus_manager_create;
       Efl.Ui.Focus.Manager.move;
+      Efl.Ui.Widget.focus_state_apply;
    }
    events {
       item,realized : Efl.Ui.Item; [[Event triggered when an @Efl.Ui.Item has been provided by the @Efl.Ui.Factory and is about to be used.]]

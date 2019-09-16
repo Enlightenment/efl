@@ -508,7 +508,6 @@ _entity_fetched_cb(Eo *obj, void *data, const Eina_Value v)
         efl_ui_item_container_set(child, obj);
         efl_ui_widget_sub_object_add(obj, child);
         efl_canvas_group_member_add(pd->pan, child);
-        efl_ui_widget_focus_allow_set(child, EINA_FALSE);
         efl_gfx_entity_visible_set(child, EINA_FALSE);
 
 #ifdef VIEWPORT_ENABLE
@@ -2180,6 +2179,12 @@ _efl_ui_collection_view_efl_ui_focus_manager_move(Eo *obj, Efl_Ui_Collection_Vie
    return new_obj;
 }
 
+EOLIAN static Eina_Bool
+_efl_ui_collection_view_efl_ui_widget_focus_state_apply(Eo *obj, Efl_Ui_Collection_View_Data *pd EINA_UNUSED, Efl_Ui_Widget_Focus_State current_state, Efl_Ui_Widget_Focus_State *configured_state, Efl_Ui_Widget *redirect EINA_UNUSED)
+{
+   return efl_ui_widget_focus_state_apply(efl_super(obj, MY_CLASS), current_state, configured_state, obj);
+}
+
 #include "efl_ui_collection_view.eo.c"
 
 #define ITEM_IS_OUTSIDE_VISIBLE(id) id < cpd->start_id || id > cpd->end_id
@@ -2240,12 +2245,26 @@ _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_manager_focus_set(Eo 
    efl_ui_focus_manager_focus_set(efl_super(obj, EFL_UI_COLLECTION_VIEW_FOCUS_MANAGER_CLASS), focus);
 }
 
+static int
+_id_from_item(Efl_Ui_Item *item, uint64_t *index)
+{
+   Eina_Value *vindex;
+   Efl_Model *model;
+
+   model = efl_ui_view_model_get(item);
+
+   vindex = efl_model_property_get(model, "child.index");
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(eina_value_uint64_convert(vindex, index), EINA_FALSE);
+   eina_value_free(vindex);
+   return EINA_TRUE;
+}
+
 EOLIAN static Efl_Ui_Focus_Object *
 _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_request_move(Eo *obj, Efl_Ui_Collection_View_Focus_Manager_Data *pd, Efl_Ui_Focus_Direction direction, Efl_Ui_Focus_Object *child, Eina_Bool logical)
 {
    MY_DATA_GET(pd->collection, cpd);
    Efl_Ui_Item *new_item, *item;
-   unsigned int item_id;
+   uint64_t item_id;
 
    if (!child)
      child = efl_ui_focus_manager_focus_get(obj);
@@ -2256,14 +2275,15 @@ _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_request_move(Eo *obj,
    if (!cpd->manager) return NULL;
    if (!item) return NULL;
 
-   item_id = efl_ui_item_index_get(item);
+   if (!_id_from_item(item, &item_id))
+     return NULL;
 
    if (ITEM_IS_OUTSIDE_VISIBLE(item_id))
      {
         int new_id;
 
         new_id = efl_ui_position_manager_entity_relative_item(cpd->manager,
-                                                              efl_ui_item_index_get(item),
+                                                              item_id,
                                                               direction);
         if (new_id == -1)
           {
@@ -2271,6 +2291,7 @@ _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_request_move(Eo *obj,
           }
         else
           {
+             Efl_Ui_Collection_Item_Lookup *lookup;
 #ifdef VIEWPORT_ENABLE
              unsigned int i;
 
@@ -2287,6 +2308,21 @@ _efl_ui_collection_view_focus_manager_efl_ui_focus_manager_request_move(Eo *obj,
                   if (!new_item) break; // Just in case
                   _assert_item_available(new_item, new_id, cpd);
                }
+#else
+               uint64_t search_index = new_id;
+               lookup = (void*) eina_rbtree_inline_lookup(cpd->cache, &search_index,
+                                           sizeof (new_id), _cache_tree_lookup,
+                                           NULL);
+               if (lookup)
+                 {
+                    _assert_item_available(lookup->item.entity, new_id, cpd);
+                    new_item = lookup->item.entity;
+                 }
+               else
+                 {
+                    ERR("This item cannot get focus right now. It should be visible first.");
+                    new_item = NULL;
+                 }
 #endif
           }
      }
