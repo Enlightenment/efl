@@ -186,6 +186,7 @@ pub_eo_files = [
   'efl_ui_view_model.eo',
   'efl_ui_collection_view.eo',
   'efl_ui_collection_view_focus_manager.eo',
+  'efl_ui_grid_view.eo',
 ]
 
 foreach eo_file : pub_eo_files
@@ -899,6 +900,7 @@ elementary_src = [
   'efl_ui_grid_default_item.c',
   'efl_ui_grid.c',
   'efl_ui_list_view.c',
+  'efl_ui_grid_view.c',
   'efl_ui_layout_factory.c',
   'efl_ui_scroller.c',
   'efl_ui_scroll_manager.c',
