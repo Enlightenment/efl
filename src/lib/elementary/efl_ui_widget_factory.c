@@ -116,6 +116,8 @@ _efl_ui_widget_factory_constructing(void *data EINA_UNUSED, const Efl_Event *ev)
      }
    eina_value_free(width);
    eina_value_free(height);
+
+   efl_key_data_set(ui_view, "efl.ui.widget.factory.size_check", (void*)EINA_TRUE);
 }
 
 

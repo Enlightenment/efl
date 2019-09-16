@@ -1,4 +1,4 @@
-// gcc -o efl_ui_list_view_example_1 efl_ui_list_view_example_1.c `pkg-config --cflags --libs elementary`
+//  gcc -o efl_ui_collection_view_example_1 efl_ui_collection_view_example_1.c `pkg-config --cflags --libs efl-ui
 
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"

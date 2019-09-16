@@ -285,6 +285,7 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_select_model.eo.h>
 # include <efl_ui_view_model.eo.h>
 # include <efl_ui_collection_view.eo.h>
+# include <efl_ui_list_view.eo.h>
 
 /**
  * Initialize Elementary
