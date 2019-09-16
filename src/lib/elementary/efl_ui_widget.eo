@@ -13,8 +13,16 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
                         Efl.Ui.Selection, Efl.Ui.Dnd,
                         Efl.Ui.Property_Bind, Efl.Ui.View
 {
-   [[Efl UI widget abstract class
+   [[Base class for all Efl.Ui.* widgets
 
+     The class here is designed in a way that widgets can be expressed as a tree.
+     The parent relation in the tree can be fetched via @.widget_parent .
+     The parent relation should never be modified directly, instead you should use the APIs of the widgets
+     (Typically @Efl.Pack_Linear, @Efl.Pack_Table or @Efl.Content).
+
+     Properties implemented here should be treated with extra care, some are defined for the sub-tree, others are
+     defined for the widget itself, additional information for this can be fetched from the documentation in the
+     implements section.
      @since 1.22
    ]]
    //c_prefix: efl_ui_widget;
@@ -407,11 +415,14 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
       Efl.Object.destructor;
       Efl.Object.provider_find;
       Efl.Object.debug_name_override;
-      Efl.Gfx.Color.color { set; }
+      Efl.Gfx.Color.color { set; [[This will set the color on every object in the sub-tree including those that are not
+                                   @Efl.Ui.Widget (like simple @Efl.Canvas.Object objects that are added via
+                                   @Efl.Canvas.Group.group_member_add). ]] }
       Efl.Gfx.Entity.visible { set; }
       Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set; }
-      Efl.Gfx.Entity.scale { set; get; }
+      Efl.Gfx.Entity.scale { set; get; [[A change in this property will also apply the new scale to the whole sub-tree.
+                                       ]] }
       Efl.Canvas.Object.clipper { set; }
       Efl.Canvas.Object.no_render { set; }
       Efl.Canvas.Group.group_calculate;
@@ -426,7 +437,7 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
       Efl.Ui.Focus.Object.focus_parent { get; }
       Efl.Ui.Focus.Object.focus_geometry { get; }
       Efl.Ui.Focus.Object.focus { set; }
-      Efl.Ui.I18n.mirrored { get; set; }
+      Efl.Ui.I18n.mirrored { get; set; [[This sets the mirror state of the whole sub-tree. ]] }
       Efl.Ui.I18n.mirrored_automatic { get; set; }
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.L10n.translation_update; [[This implements the calls to $gettext() and $text_set().]]
