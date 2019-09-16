@@ -223,4 +223,5 @@ efl_ui_focus_graph_calc(Efl_Ui_Focus_Graph_Context *ctx, Eina_Iterator *nodes, O
 cont:
         continue;
      }
+   eina_iterator_free(nodes);
 }
