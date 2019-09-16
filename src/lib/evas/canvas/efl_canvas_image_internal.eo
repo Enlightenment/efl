@@ -17,7 +17,7 @@ abstract @beta Efl.Canvas.Image_Internal extends Efl.Canvas.Object implements Ef
       Efl.Gfx.Image.content_region { get; }
       Efl.Gfx.Image.border { get; set; }
       Efl.Gfx.Image.border_scale { get; set; }
-      Efl.Gfx.Image.border_center_fill { get; set; }
+      Efl.Gfx.Image.center_fill_mode { get; set; }
       Efl.Gfx.Image.stretch_region { get; set; }
       Efl.Gfx.Image.scale_hint { get; set; }
       Efl.Gfx.Image.content_hint { get; set; }

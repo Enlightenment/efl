@@ -179,13 +179,13 @@ interface @beta Efl.Gfx.Image
             scale: double; [[The scale factor. The default value is $[1.0].]]
          }
       }
-      @property border_center_fill {
+      @property center_fill_mode {
          [[Specifies how the center part of the object (not the borders)
            should be drawn when EFL is rendering it.
 
            This function sets how the center part of the image object's
            source image is to be drawn, which must be one of the values
-           in @Efl.Gfx.Border_Fill_Mode. By center we mean the complementary
+           in @Efl.Gfx.Center_Fill_Mode. By center we mean the complementary
            part of that defined by @.border.set. This is very useful for
            making frames and decorations. You would most probably also be
            using a filled image (as in @Efl.Gfx.Fill.fill_auto) to use as a frame.
@@ -193,8 +193,8 @@ interface @beta Efl.Gfx.Image
          set {}
          get {}
          values {
-            fill: Efl.Gfx.Border_Fill_Mode; [[Fill mode of the center region.
-                                              The default value is @Efl.Gfx.Border_Fill_Mode.default, i.e. render
+            fill: Efl.Gfx.Center_Fill_Mode; [[Fill mode of the center region.
+                                              The default value is @Efl.Gfx.Center_Fill_Mode.default, i.e. render
                                               and scale the center area, respecting its transparency.]]
          }
       }
@@ -205,7 +205,7 @@ interface @beta Efl.Gfx.Image
            once and then destroy them. When the regions are retrieved by the user,
            it is his responsibility to destroy the iterators.. It will remember the
            information for the lifetime of the object. It will ignore all value
-           of @.border, @.border_scale and @.border_center_fill . To reset the object
+           of @.border, @.border_scale and @.center_fill_mode . To reset the object
            you can just pass $null to both horizontal and vertical at the same
            time.
          ]]

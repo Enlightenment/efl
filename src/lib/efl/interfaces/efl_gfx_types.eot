@@ -152,7 +152,7 @@ enum @beta Efl.Gfx.Vg_Composite_Method
    mask_difference
 }
 
-enum @beta Efl.Gfx.Border_Fill_Mode
+enum @beta Efl.Gfx.Center_Fill_Mode
 {
    [[How an image's center region (the complement to the border region) should be rendered by EFL]]
    none = 0, [[Image's center region is $not to be rendered]]
