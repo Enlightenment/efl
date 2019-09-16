@@ -41,6 +41,6 @@ class @beta Efl.Ui.Caching_Factory extends Efl.Ui.Widget_Factory
       Efl.Ui.Property_Bind.property_bind;
       Efl.Ui.Widget_Factory.item_class { get; set; }
       Efl.Object.invalidate;
-      Efl.Object.parent { set; }
+      Efl.Object.finalize;
    }
 }

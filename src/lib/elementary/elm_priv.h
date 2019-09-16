@@ -892,6 +892,8 @@ extern const char SIG_LAYOUT_UNFOCUSED[];
 
 extern Eina_Stringshare *_property_style_ss;
 
+Efl_Ui_Win *efl_ui_widget_factory_widget_get(Efl_Ui_Widget_Factory *factory);
+
 extern Eina_Bool _config_profile_lock;
 
 extern Eina_FreeQ *postponed_fq;

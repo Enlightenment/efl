@@ -47,13 +47,11 @@ _efl_ui_image_factory_efl_object_destructor(Eo *obj EINA_UNUSED, Efl_Ui_Image_Fa
 }
 
 EOLIAN static Eina_Future *
-_efl_ui_image_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Image_Factory_Data *pd,
-                                            Eina_Iterator *models, Efl_Gfx_Entity *parent)
+_efl_ui_image_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Image_Factory_Data *pd, Eina_Iterator *models)
 {
-   if (!parent) return efl_loop_future_rejected(obj, EFL_FACTORY_ERROR_NOT_SUPPORTED);
    if (!pd->property) return efl_loop_future_rejected(obj, EFL_FACTORY_ERROR_NOT_SUPPORTED);
 
-   return efl_ui_factory_create(efl_super(obj, EFL_UI_IMAGE_FACTORY_CLASS), models, parent);
+   return efl_ui_factory_create(efl_super(obj, EFL_UI_IMAGE_FACTORY_CLASS), models);
 }
 
 EOLIAN static Eina_Error

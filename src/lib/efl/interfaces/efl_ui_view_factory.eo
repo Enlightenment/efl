@@ -12,7 +12,6 @@ class @beta Efl.Ui.View_Factory
                                  event onto.]]
 	    models: iterator<Efl.Model>; [[Efl iterator providing the model to be associated to the new item. It should
                                      remain valid until the end of the function call.]]
-	    parent: Efl.Gfx.Entity; [[Efl canvas]]
          }
 	 return: future<Efl.Gfx.Entity>; [[Created UI object]]
       }

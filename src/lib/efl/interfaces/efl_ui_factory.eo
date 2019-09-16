@@ -16,7 +16,6 @@ interface @beta Efl.Ui.Factory extends Efl.Ui.Property_Bind, Efl.Ui.Factory_Bind
          params {
             models: iterator<Efl.Model>; [[Efl iterator providing the model to be associated to the new item.
                                            It should remain valid until the end of the function call.]]
-            parent: Efl.Gfx.Entity; [[Efl canvas]]
          }
          return: future<Efl.Gfx.Entity>; [[Created UI object]]
       }

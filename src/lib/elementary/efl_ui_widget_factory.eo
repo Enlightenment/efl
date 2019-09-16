@@ -23,6 +23,7 @@ class @beta Efl.Ui.Widget_Factory extends Efl.Loop_Consumer implements Efl.Ui.Fa
       Efl.Ui.Factory.release;
       Efl.Ui.Property_Bind.property_bind;
       Efl.Part.part_get;
+      Efl.Object.finalize;
    }
    constructors {
       .item_class @optional;
