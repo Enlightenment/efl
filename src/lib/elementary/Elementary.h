@@ -212,6 +212,7 @@ typedef Eo Efl_Ui_Focus_Manager;
 #include <elm_button.h>
 #include <elm_cache.h>
 #include <elm_calendar.h>
+/* this is elm_animation_view */
 #include <efl_ui_animation_view.h>
 #include <efl_ui_calendar.h>
 #include <elm_check.h>

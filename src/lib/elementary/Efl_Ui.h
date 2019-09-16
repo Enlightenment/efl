@@ -247,7 +247,7 @@ EAPI Eina_Bool efl_ui_win_autodel_get(const Efl_Ui_Win *obj);
 # include <efl_ui_text_async.eo.h>
 # endif
 
-# include <efl_ui_animation_view.h>
+# include <efl_ui_animation_view.eo.h>
 # include <efl_ui_clock.h>
 # include <efl_ui_image_factory.eo.h>
 # include <efl_ui_video.h>
