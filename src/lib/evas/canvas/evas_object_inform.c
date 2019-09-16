@@ -116,6 +116,6 @@ evas_object_inform_call_image_resize(Evas_Object *eo_obj)
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    int event_id = _evas_object_event_new();
 
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_IMAGE_RESIZE, NULL, event_id, EFL_GFX_IMAGE_EVENT_IMAGE_RESIZE);
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_IMAGE_RESIZE, NULL, event_id, EFL_GFX_IMAGE_EVENT_IMAGE_RESIZED);
    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
 }
