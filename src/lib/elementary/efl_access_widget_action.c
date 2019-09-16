@@ -5,8 +5,6 @@
 #define EFL_ACCESS_ACTION_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
-#include <Elementary.h>
-#include "elm_widget.h"
 #include "elm_priv.h"
 
 extern Eina_Hash *_elm_key_bindings;
