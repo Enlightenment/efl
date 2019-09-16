@@ -2195,14 +2195,14 @@ _content_created(Eo *obj, void *data, const Eina_Value value)
 {
    Efl_Ui_Layout_Factory_Request *request = data;
    Efl_Gfx_Entity *content = NULL;
-   Efl_Gfx_Entity *old_content;
+   Efl_Gfx_Entity *old_content[1];
    int len, i;
 
    EINA_VALUE_ARRAY_FOREACH(&value, len, i, content)
      {
         // Recycle old content
-        old_content = efl_content_get(efl_part(obj, request->key));
-        if (old_content) efl_ui_factory_release(request->factory, old_content);
+        old_content[0] = efl_content_get(efl_part(obj, request->key));
+        if (old_content[0]) efl_ui_factory_release(request->factory, EINA_C_ARRAY_ITERATOR_NEW(old_content));
 
         // Set new content
         efl_content_set(efl_part(obj, request->key), content);
@@ -2366,7 +2366,7 @@ _efl_ui_layout_base_model_register(Eo *obj, Efl_Ui_Layout_Data *pd,
    EINA_ITERATOR_FOREACH(it, tuple)
      {
         Efl_Ui_Layout_Factory_Tracking *factory;
-        Efl_Gfx_Entity *content;
+        Efl_Gfx_Entity *content[1];
 
         key = tuple->key;
         factory = tuple->data;
@@ -2375,11 +2375,11 @@ _efl_ui_layout_base_model_register(Eo *obj, Efl_Ui_Layout_Data *pd,
         if (factory->in_flight) eina_future_cancel(factory->in_flight);
 
         // Cleanup content
-        content = efl_content_get(efl_part(obj, key));
+        content[0] = efl_content_get(efl_part(obj, key));
         efl_content_unset(efl_part(obj, key));
 
         // And recycle it
-        if (content) efl_ui_factory_release(factory->factory, content);
+        if (content[0]) efl_ui_factory_release(factory->factory, EINA_C_ARRAY_ITERATOR_NEW(content));
      }
    eina_iterator_free(it);
 
@@ -2502,12 +2502,12 @@ _efl_ui_layout_base_efl_ui_factory_bind_factory_bind(Eo *obj EINA_UNUSED, Efl_Ui
    tracking = eina_hash_find(pd->connect.factories, ss_key);
    if (tracking)
      {
-        Efl_Gfx_Entity *old;
+        Efl_Gfx_Entity *old[1];
 
         // Unset and recycle
-        old = efl_content_get(efl_part(obj, ss_key));
+        old[0] = efl_content_get(efl_part(obj, ss_key));
         efl_content_unset(efl_part(obj, ss_key));
-        if (old) efl_ui_factory_release(tracking->factory, old);
+        if (old[0]) efl_ui_factory_release(tracking->factory, EINA_C_ARRAY_ITERATOR_NEW(old));
 
         // Stop in flight request
         if (tracking->in_flight) eina_future_cancel(tracking->in_flight);

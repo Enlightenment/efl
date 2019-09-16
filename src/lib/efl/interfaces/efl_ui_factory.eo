@@ -22,7 +22,7 @@ interface @beta Efl.Ui.Factory extends Efl.Ui.Property_Bind, Efl.Ui.Factory_Bind
       release {
          [[Release a UI object and disconnect from models.]]
          params {
-            ui_view: Efl.Gfx.Entity; [[Efl canvas]]
+            ui_views: iterator<Efl.Gfx.Entity> @move; [[Efl canvas]]
          }
       }
    }

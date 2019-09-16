@@ -21,6 +21,7 @@ struct _Efl_Ui_Caching_Factory_Data
    // end of the list objects are added and removed.
    Eina_List *cache;
    Eina_Hash *lookup;
+   Eina_Future *flush;
 
    struct {
       unsigned int memory;
@@ -57,15 +58,29 @@ _efl_ui_caching_factory_remove(Efl_Ui_Caching_Factory_Data *pd, Eina_List *l, Ef
 
 static void
 _efl_ui_caching_factory_item_del(Eo *obj, Efl_Ui_Caching_Factory_Data *pd,
-                                 Efl_Gfx_Entity *entity)
+                                 Eina_Iterator *entities)
 {
-   if (pd->klass) efl_del(entity);
-   else efl_ui_factory_release(efl_super(obj, EFL_UI_CACHING_FACTORY_CLASS), entity);
+   if (!pd->klass)
+     {
+        efl_ui_factory_release(efl_super(obj, EFL_UI_CACHING_FACTORY_CLASS), entities);
+     }
+   else
+     {
+        Efl_Gfx_Entity *entity;
+
+        EINA_ITERATOR_FOREACH(entities, entity)
+          efl_del(entity);
+        eina_iterator_free(entities);
+     }
 }
 
 static void
 _efl_ui_caching_factory_flush(Eo *obj, Efl_Ui_Caching_Factory_Data *pd)
 {
+   Eina_Array scheduled;
+
+   eina_array_step_set(&scheduled, sizeof (Eina_Array), 8);
+
    while (pd->limit.items != 0 &&
           pd->current.items > pd->limit.items)
      {
@@ -75,7 +90,8 @@ _efl_ui_caching_factory_flush(Eo *obj, Efl_Ui_Caching_Factory_Data *pd)
 
         _efl_ui_caching_factory_remove(pd, eina_list_last(pd->cache), entity);
         if (pd->lookup) eina_hash_del(pd->lookup, efl_ui_widget_style_get(entity), entity);
-        _efl_ui_caching_factory_item_del(obj, pd, entity);
+
+        eina_array_push(&scheduled, entity);
      }
 
    while (pd->limit.memory != 0 &&
@@ -87,8 +103,13 @@ _efl_ui_caching_factory_flush(Eo *obj, Efl_Ui_Caching_Factory_Data *pd)
 
         _efl_ui_caching_factory_remove(pd, eina_list_last(pd->cache), entity);
         if (pd->lookup) eina_hash_del(pd->lookup, efl_ui_widget_style_get(entity), entity);
-        _efl_ui_caching_factory_item_del(obj, pd, entity);
+
+        eina_array_push(&scheduled, entity);
      }
+
+   // We could improve this by doing some limited batch to reduce potential spike usage
+   _efl_ui_caching_factory_item_del(obj, pd, eina_array_iterator_new(&scheduled));
+   eina_array_flush(&scheduled);
 }
 
 static Eina_Value
@@ -344,38 +365,67 @@ _efl_ui_caching_factory_items_limit_get(const Eo *obj EINA_UNUSED,
    return pd->limit.items;
 }
 
-static void
-_efl_ui_caching_factory_efl_ui_factory_release(Eo *obj,
-                                               Efl_Ui_Caching_Factory_Data *pd,
-                                               Efl_Gfx_Entity *ui_view)
+static Eina_Value
+_schedule_cache_flush(Eo *obj, void *data, const Eina_Value v)
 {
-   // Are we invalidated ?
-   if (pd->invalidated)
-     {
-        _efl_ui_caching_factory_item_del(obj, pd, ui_view);
-        return;
-     }
-
-   // Change parent, disconnect the object and make it invisible
-   efl_gfx_entity_visible_set(ui_view, EINA_FALSE);
-   efl_event_callback_call(obj, EFL_UI_FACTORY_EVENT_ITEM_RELEASING, ui_view);
-
-   // Add to the cache
-   pd->cache = eina_list_prepend(pd->cache, ui_view);
-   pd->current.items++;
-   pd->current.memory += efl_class_memory_size_get(ui_view);
-   if (efl_isa(ui_view, EFL_CACHED_ITEM_INTERFACE))
-     pd->current.memory += efl_cached_item_memory_size_get(ui_view);
-
-   // Fill lookup
-   if (!pd->klass && efl_ui_widget_style_get(ui_view))
-     {
-        if (!pd->lookup) pd->lookup = eina_hash_string_djb2_new(NULL);
-        eina_hash_direct_add(pd->lookup, efl_ui_widget_style_get(ui_view), ui_view);
-     }
+   Efl_Ui_Caching_Factory_Data *pd = data;
 
    // And check if the cache need some triming
    _efl_ui_caching_factory_flush(obj, pd);
+
+   return v;
+}
+
+static void
+_schedule_done(Eo *o EINA_UNUSED, void *data, const Eina_Future *dead_future EINA_UNUSED)
+{
+   Efl_Ui_Caching_Factory_Data *pd = data;
+
+   pd->flush = NULL;
+}
+
+static void
+_efl_ui_caching_factory_efl_ui_factory_release(Eo *obj,
+                                               Efl_Ui_Caching_Factory_Data *pd,
+                                               Eina_Iterator *ui_views)
+{
+   Efl_Gfx_Entity *ui_view;
+
+   // Are we invalidated ?
+   if (pd->invalidated)
+     {
+        _efl_ui_caching_factory_item_del(obj, pd, ui_views);
+        return;
+     }
+
+   EINA_ITERATOR_FOREACH(ui_views, ui_view)
+     {
+        // Change parent, disconnect the object and make it invisible
+        efl_gfx_entity_visible_set(ui_view, EINA_FALSE);
+        efl_event_callback_call(obj, EFL_UI_FACTORY_EVENT_ITEM_RELEASING, ui_view);
+
+        // Add to the cache
+        pd->cache = eina_list_prepend(pd->cache, ui_view);
+        pd->current.items++;
+        pd->current.memory += efl_class_memory_size_get(ui_view);
+        if (efl_isa(ui_view, EFL_CACHED_ITEM_INTERFACE))
+          pd->current.memory += efl_cached_item_memory_size_get(ui_view);
+
+        // Fill lookup
+        if (!pd->klass && efl_ui_widget_style_get(ui_view))
+          {
+             if (!pd->lookup) pd->lookup = eina_hash_string_djb2_new(NULL);
+             eina_hash_direct_add(pd->lookup, efl_ui_widget_style_get(ui_view), ui_view);
+          }
+     }
+   eina_iterator_free(ui_views);
+
+   // Schedule a cache flush if necessary
+   if (!pd->flush)
+     pd->flush = efl_future_then(obj, efl_loop_job(efl_loop_get(obj)),
+                                 .success = _schedule_cache_flush,
+                                 .free = _schedule_done,
+                                 .data = pd);
 }
 
 static void
