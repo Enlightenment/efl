@@ -111,9 +111,6 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
       @property disabled {
          [[Whether the widget is enabled (accepts and reacts to user inputs).
 
-           The property is counted, this is, if it is set n times to $true,
-           it has to be set n times to $false in order to get it out of the disabled state again.
-
            Each widget may handle the disabled state differently, but overall
            disabled widgets shall not respond to any input events. This is
            $false by default, meaning the widget is enabled.
