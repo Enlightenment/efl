@@ -23,7 +23,7 @@
 
 #define DATE_SET()                                                   \
    do {                                                              \
-     Efl_Time t;                                                     \
+     Efl_Time t = { 0 };                                             \
      t.tm_year = pd->cur_date[DATEPICKER_YEAR] - 1900;               \
      t.tm_mon = pd->cur_date[DATEPICKER_MONTH] - 1;                  \
      t.tm_mday = pd->cur_date[DATEPICKER_DAY];                       \

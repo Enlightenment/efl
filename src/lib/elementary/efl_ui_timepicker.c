@@ -22,7 +22,7 @@
 
 #define TIME_SET()                                                   \
    do {                                                              \
-     Efl_Time t;                                                     \
+     Efl_Time t = { 0 };                                             \
      t.tm_hour = pd->cur_time[TIMEPICKER_HOUR];                      \
      t.tm_min = pd->cur_time[TIMEPICKER_MIN];                        \
      efl_datetime_manager_value_set(pd->dt_manager, t);              \
