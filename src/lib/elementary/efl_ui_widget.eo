@@ -25,7 +25,6 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
      implements section.
      @since 1.22
    ]]
-   //c_prefix: efl_ui_widget;
    event_prefix: efl_ui_widget;
    data: Efl_Ui_Widget_Data;
    methods {
@@ -179,7 +178,6 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
          }
          return: bool; [[$true on success, $false otherwise]]
       }
-      // FIXME: focus_allow? can_focus? focusable?
       @property focus_allow {
          [[The ability for a widget to be focused.
 
@@ -253,8 +251,6 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
             @in enable: bool; [[$true if accessibility is enabled.]]
          }
       }
-
-      /* Internal hooks. */
       widget_sub_object_add @protected {
          [[Virtual function customizing sub objects being added.
 
