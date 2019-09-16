@@ -1227,8 +1227,8 @@ _efl_ui_panel_scrollable_set(Eo *obj, Efl_Ui_Panel_Data *sd, Eina_Bool scrollabl
              sd->smanager = efl_add(EFL_UI_SCROLL_MANAGER_CLASS, obj);
              efl_ui_mirrored_set(sd->smanager, efl_ui_mirrored_get(obj));
 
-             efl_event_callback_add(obj, EFL_UI_EVENT_SCROLL_ANIM_STOP, _anim_stop_cb, NULL);
-             efl_event_callback_add(obj, EFL_UI_EVENT_SCROLL, _scroll_cb, NULL);
+             efl_event_callback_add(obj, EFL_UI_EVENT_SCROLL_ANIM_FINISHED, _anim_stop_cb, NULL);
+             efl_event_callback_add(obj, EFL_UI_EVENT_SCROLL_CHANGED, _scroll_cb, NULL);
           }
 
         efl_composite_attach(obj, sd->smanager);
