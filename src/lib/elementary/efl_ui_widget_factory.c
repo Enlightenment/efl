@@ -326,13 +326,19 @@ alloc_array_error:
 static void
 _efl_ui_widget_factory_efl_ui_factory_release(Eo *obj,
                                               Efl_Ui_Widget_Factory_Data *pd EINA_UNUSED,
-                                              Efl_Gfx_Entity *ui_view)
+                                              Eina_Iterator *ui_views)
 {
-   // There might be multiple call to releasing on the same object as every factory in the
-   // inheritance chain can decide to keep it for a time
-   efl_event_callback_call(obj, EFL_UI_FACTORY_EVENT_ITEM_RELEASING, ui_view);
-   // We do not cache or track this item, just get rid of them asap
-   efl_del(ui_view);
+   Efl_Gfx_Entity *ui_view;
+
+   EINA_ITERATOR_FOREACH(ui_views, ui_view)
+     {
+        // There might be multiple call to releasing on the same object as every factory in the
+        // inheritance chain can decide to keep it for a time
+        efl_event_callback_call(obj, EFL_UI_FACTORY_EVENT_ITEM_RELEASING, ui_view);
+        // We do not cache or track this item, just get rid of them asap
+        efl_del(ui_view);
+     }
+   eina_iterator_free(ui_views);
 }
 
 Eina_Stringshare *_property_style_ss = NULL;

@@ -973,6 +973,7 @@ EOLIAN static void
 _efl_ui_list_view_efl_ui_list_view_model_unrealize(Eo *obj, Efl_Ui_List_View_Data *pd, Efl_Ui_List_View_Layout_Item *item)
 {
    Efl_Ui_List_View_Item_Event evt;
+   Efl_Gfx_Entity *entities[1];
    EINA_SAFETY_ON_NULL_RETURN(item);
 
    if (!item->layout)
@@ -1001,7 +1002,8 @@ _efl_ui_list_view_efl_ui_list_view_model_unrealize(Eo *obj, Efl_Ui_List_View_Dat
    efl_event_callback_call(obj, EFL_UI_LIST_VIEW_EVENT_ITEM_UNREALIZED, &evt);
 
    efl_canvas_group_member_remove(obj, pd->pan_obj);
-   efl_ui_factory_release(pd->factory, item->layout);
+   entities[0] = item->layout;
+   efl_ui_factory_release(pd->factory, EINA_C_ARRAY_ITERATOR_NEW(entities));
    item->layout = NULL;
 }
 
