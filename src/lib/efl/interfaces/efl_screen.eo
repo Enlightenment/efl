@@ -8,12 +8,12 @@ interface Efl.Screen
    ]]
    methods {
       @property screen_size_in_pixels {
-         get {
-            [[Get screen size (in pixels) for the screen.
+         [[Screen size (in pixels) for the screen.
 
-              Note that on some display systems this information is not available and
-              a value of 0x0 will be returned.
-            ]]
+           Note that on some display systems this information is not available and
+           a value of 0x0 will be returned.
+         ]]
+         get {
          }
          values {
             size: Eina.Size2D; [[The screen size in pixels.]]
@@ -32,34 +32,34 @@ interface Efl.Screen
 //         }
 //      }
       @property screen_scale_factor {
+         [[Screen scaling factor.
+
+           This is the factor by which window contents will be scaled on the screen.
+
+           Note that on some display systems this information is not available and a
+           value of 1.0 will be returned.
+         ]]
          get {
-            [[Get screen scaling factor.
-
-              This is the factor by which window contents will be scaled on the screen.
-
-              Note that on some display systems this information is not available and a
-              value of 1.0 will be returned.
-            ]]
          }
          values {
             size: float; [[The screen scaling factor.]]
          }
       }
       @property screen_rotation {
-         get {
-            [[Get the rotation of the screen.
+         [[The rotation of the screen.
 
-              Most engines only return multiples of 90.
-            ]]
+           Most engines only return multiples of 90.
+         ]]
+         get {
          }
          values {
             rotation: int; [[Screen rotation in degrees.]]
          }
       }
       @property screen_dpi {
+         [[The pixel density in DPI (Dots Per Inch) for the screen that a window is on.
+         ]]
          get {
-            [[Get the pixel density in DPI (Dots Per Inch) for the screen that a window is on.
-            ]]
          }
          values {
             xdpi: int; [[Horizontal DPI.]]

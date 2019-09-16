@@ -7,62 +7,50 @@ mixin Efl.File requires Efl.Object {
    ]]
    methods {
       @property mmap {
+         [[The mmaped file from where an object will fetch the real
+           data (it must be an @Eina.File).
+
+           If mmap is set during object construction, the object will automatically
+           call @.load during the finalize phase of construction.
+         ]]
          set {
-            [[Set the mmaped file from where an object will fetch the real
-              data (it must be an @Eina.File).
-
-              If mmap is set during object construction, the object will automatically
-              call @.load during the finalize phase of construction.
-            ]]
-
             return: Eina.Error; [[0 on success, error code otherwise]]
          }
          get {
-            [[Get the mmaped file from where an object will fetch the real
-              data (it must be an @Eina.File).
-            ]]
          }
          values {
             f: const(Eina.File) @by_ref; [[The handle to the @Eina.File that will be used]]
          }
       }
       @property file {
+         [[The file path from where an object will fetch the data.
+
+           If file is set during object construction, the object will automatically
+           call @.load during the finalize phase of construction.
+
+           You must not modify the strings on the returned pointers.
+         ]]
          set {
-            [[Set the file path from where an object will fetch the data.
-
-              If file is set during object construction, the object will automatically
-              call @.load during the finalize phase of construction.
-            ]]
-
             return: Eina.Error; [[0 on success, error code otherwise]]
          }
          get {
-            [[Retrieve the file path from where an object is to fetch the data.
-
-              You must not modify the strings on the returned pointers.
-            ]]
          }
          values {
             file: string; [[The file path.]]
          }
       }
       @property key {
-         set {
-            [[Set the key which corresponds to the target data within a file.
+         [[The key which corresponds to the target data within a file.
 
-              Some filetypes can contain multiple data streams which are indexed by
-              a key. Use this property for such cases.
-            ]]
+           Some file types can contain multiple data streams which are indexed by
+           a key. Use this property for such cases (See for example @Efl.Ui.Image or
+           @Efl.Ui.Layout).
+
+           You must not modify the strings on the returned pointers.
+         ]]
+         set {
          }
          get {
-            [[Get the previously-set key which corresponds to the target data within a file.
-
-              Some filetypes can contain multiple data streams which are indexed by
-              a key. Use this property for such cases (See for example @Efl.Ui.Image or
-              @Efl.Ui.Layout).
-
-              You must not modify the strings on the returned pointers.
-            ]]
          }
          values {
             key: string; [[The group that the data belongs to. See the class documentation
@@ -71,9 +59,9 @@ mixin Efl.File requires Efl.Object {
          }
       }
       @property loaded {
+         [[The load state of the object.
+         ]]
          get {
-            [[Get the load state of the object.
-            ]]
          }
          values {
             loaded: bool; [[$true if the object is loaded, $false otherwise.]]

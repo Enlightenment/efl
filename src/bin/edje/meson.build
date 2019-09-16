@@ -42,7 +42,7 @@ else
     env = find_program('env', native: true)
     edje_cc_exe = [env, 'EFL_RUN_IN_TREE=1', edje_cc.full_path()]
   endif
-  edje_depends = [edje_cc, epp]
+  edje_depends = [edje_cc, epp, evas_engine_buffer_mod]
 endif
 
 edje_decc_src = [

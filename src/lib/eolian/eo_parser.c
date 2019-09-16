@@ -1217,19 +1217,16 @@ parse_accessor:
    check_next(ls, '{');
    if ((ls->t.token == TOK_DOC) && !prop->impl->common_doc)
      {
-        if (getenv("EOLIAN_PROPERTY_DOC_WARN"))
-          {
-             Eolian_Object tmp;
-             memset(&tmp, 0, sizeof(Eolian_Object));
-             tmp.file = prop->base.file;
-             tmp.line = line;
-             tmp.column = col;
-             tmp.unit = ls->unit;
-             eolian_state_log_obj(ls->state, &tmp,
-                                  "%s doc without property doc for '%s.%s'",
-                                  is_get ? "getter" : "setter",
-                                  ls->klass->base.name, prop->base.name);
-          }
+        Eolian_Object tmp;
+        memset(&tmp, 0, sizeof(Eolian_Object));
+        tmp.file = prop->base.file;
+        tmp.line = line;
+        tmp.column = col;
+        tmp.unit = ls->unit;
+        eolian_state_log_obj(ls->state, &tmp,
+                             "%s doc without property doc for '%s.%s'",
+                             is_get ? "getter" : "setter",
+                             ls->klass->base.name, prop->base.name);
      }
    if (is_get)
      {

@@ -46,6 +46,7 @@ public abstract class Application
         Eina.Config.Init();
         Efl.Eo.Config.Init();
         ecore_init();
+        ecore_init_ex(0, IntPtr.Zero);
         evas_init();
         eldbus.Config.Init();
 

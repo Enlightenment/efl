@@ -248,20 +248,14 @@ interface @beta Efl.Gfx.Image
          }
       }
       @property scale_hint {
-         set {
-            [[Set the scale hint of a given image of the canvas.
+         [[The scale hint of a given image of the canvas.
 
-              This function sets the scale hint value of the given image
-              object in the canvas, which will affect how Evas is to cache
-              scaled versions of its original source image.
-            ]]
+           The scale hint affects how Evas is to cache
+           scaled versions of its original source image.
+         ]]
+         set {
          }
          get {
-            [[Get the scale hint of a given image of the canvas.
-
-              This function returns the scale hint value of the given image
-              object of the canvas.
-            ]]
          }
          values {
             hint: Efl.Gfx.Image_Scale_Hint; [[Scalable or static size hint,
@@ -269,8 +263,8 @@ interface @beta Efl.Gfx.Image
          }
       }
       @property image_load_error {
+         [[The (last) file loading error for a given object.]]
          get {
-             [[Gets the (last) file loading error for a given object.]]
          }
          values {
             error: Eina.Error; [[The load error code.]]

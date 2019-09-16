@@ -9802,8 +9802,8 @@ EAPI Eina_Bool evas_textblock_cursor_at_cluster_as_single_glyph(Evas_Textblock_C
 {
    Eina_Bool is_single_glyph = EINA_FALSE;
    size_t ret = _evas_textblock_cursor_cluster_pos_get(cur, forward, &is_single_glyph);
-
-    if ((abs(ret-cur->pos) > 1) && is_single_glyph)
+   size_t distance = (ret > cur->pos) ? ret - cur->pos : cur->pos - ret;
+    if ((distance > 1) && is_single_glyph)
       {
          return EINA_TRUE;
       }

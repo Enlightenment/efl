@@ -10,28 +10,24 @@ interface Efl.Gfx.Stack
    event_prefix: efl_gfx_entity;
    methods {
       @property layer {
+         [[The layer of its canvas that the given object will be part of.
+
+           If you don't use this property, you'll be dealing with a unique
+           layer of objects (the default one). Additional layers are handy when
+           you don't want a set of objects to interfere with another set with
+           regard to stacking. Two layers are completely disjoint in that
+           matter.
+
+           This is a low-level function, which you'd be using when something
+           should be always on top, for example.
+
+           Warning: Don't change the layer of
+           smart objects' children. Smart objects have a layer of their own,
+           which should contain all their child objects.
+         ]]
          set {
-            [[Sets the layer of its canvas that the given object will be part of.
-
-              If you don't use this function, you'll be dealing with an unique
-              layer of objects (the default one). Additional layers are handy when
-              you don't want a set of objects to interfere with another set with
-              regard to stacking. Two layers are completely disjoint in that
-              matter.
-
-              This is a low-level function, which you'd be using when something
-              should be always on top, for example.
-
-              Warning: Don't change the layer of
-              smart objects' children. Smart objects have a layer of their own,
-              which should contain all their child objects.
-
-              See also @.layer.get()]]
          }
          get {
-            [[Retrieves the layer of its canvas that the given object is part of.
-
-              See also @.layer.set()]]
          }
          values {
             l: short; [[The number of the layer to place the object on.
@@ -39,25 +35,25 @@ interface Efl.Gfx.Stack
          }
       }
       @property below {
+         [[The Evas object stacked right below this object.
+
+           This function will traverse layers in its search, if there are
+           objects on layers below the one $obj is placed at.
+
+           See also @.layer.]]
          get {
-            [[Get the Evas object stacked right below $obj
-
-              This function will traverse layers in its search, if there are
-              objects on layers below the one $obj is placed at.
-
-              See also @.layer.get(), @.layer.set() and @.below.get()]]
             return: Efl.Gfx.Stack @no_unused; [[The @Efl.Gfx.Stack object directly below $obj, if any,
                                                 or $null, if none.]]
          }
       }
       @property above {
+         [[Get the Evas object stacked right above this object.
+
+           This function will traverse layers in its search, if there are
+           objects on layers above the one $obj is placed at.
+
+           See also @.layer and @.below]]
          get {
-            [[Get the Evas object stacked right above $obj
-
-              This function will traverse layers in its search, if there are
-              objects on layers above the one $obj is placed at.
-
-              See also @.layer.get(), @.layer.set() and @.below.get()]]
             return: Efl.Gfx.Stack @no_unused; [[The @Efl.Gfx.Stack object directly below $obj, if any,
                                                 or $null, if none.]]
          }

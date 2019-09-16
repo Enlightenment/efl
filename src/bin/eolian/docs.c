@@ -126,7 +126,6 @@ _append_section(const Eolian_State *state, const char *desc, int ind, int curl,
    Eina_Bool try_note = EINA_TRUE;
    while (*desc)
      {
-        eina_strbuf_reset(wbuf);
         while (*desc && isspace(*desc) && (*desc != '\n'))
           eina_strbuf_append_char(wbuf, *desc++);
         if (try_note)
@@ -155,6 +154,8 @@ _append_section(const Eolian_State *state, const char *desc, int ind, int curl,
 #undef CHECK_NOTE
              try_note = EINA_FALSE;
           }
+        int limit = DOC_LIMIT(ind);
+        int wlen;
         if (*desc == '\\')
           {
              desc++;
@@ -180,7 +181,47 @@ _append_section(const Eolian_State *state, const char *desc, int ind, int curl,
           }
         else if (*desc == '$')
           {
-             desc++;
+             if (*++desc == '[')
+               {
+                  ++desc;
+                  eina_strbuf_append(wbuf, "<tt>");
+                  wlen = eina_strbuf_length_get(wbuf);
+                  while ((*desc != '\0') && (*desc != ']') && (*desc != '\n'))
+                    {
+                       if (*desc == ' ')
+                         {
+                            eina_strbuf_append_char(wbuf, ' ');
+                            wlen = eina_strbuf_length_get(wbuf);
+                            if ((int)(curl + wlen) > limit)
+                              {
+                                 curl = 3;
+                                 eina_strbuf_append_char(buf, '\n');
+                                 curl += _indent_line(buf, ind);
+                                 eina_strbuf_append(buf, " * ");
+                                 if (*eina_strbuf_string_get(wbuf) == ' ')
+                                   eina_strbuf_remove(wbuf, 0, 1);
+                              }
+                            curl += eina_strbuf_length_get(wbuf);
+                            eina_strbuf_append(buf, eina_strbuf_string_get(wbuf));
+                            eina_strbuf_reset(wbuf);
+                            ++desc;
+                            continue;
+                         }
+                       /* skip escape */
+                       if (*desc == '\\')
+                         {
+                            ++desc;
+                            if ((*desc == '\0') || (*desc == '\n'))
+                              break;
+                         }
+                       eina_strbuf_append_char(wbuf, *desc++);
+                    }
+                  if (*desc == ']')
+                    ++desc;
+                  eina_strbuf_append(wbuf, "</tt>");
+                  curl += 5;
+                  goto split;
+               }
              if (isalpha(*desc))
                eina_strbuf_append(wbuf, "@c ");
              else
@@ -188,8 +229,8 @@ _append_section(const Eolian_State *state, const char *desc, int ind, int curl,
           }
         while (*desc && !isspace(*desc))
           eina_strbuf_append_char(wbuf, *desc++);
-        int limit = DOC_LIMIT(ind);
-        int wlen = eina_strbuf_length_get(wbuf);
+split:
+        wlen = eina_strbuf_length_get(wbuf);
         if ((int)(curl + wlen) > limit)
           {
              curl = 3;
@@ -201,6 +242,7 @@ _append_section(const Eolian_State *state, const char *desc, int ind, int curl,
           }
         curl += eina_strbuf_length_get(wbuf);
         eina_strbuf_append(buf, eina_strbuf_string_get(wbuf));
+        eina_strbuf_reset(wbuf);
         if (*desc == '\n')
           {
              desc++;

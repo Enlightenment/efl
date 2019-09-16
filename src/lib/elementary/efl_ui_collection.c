@@ -854,7 +854,8 @@ _efl_ui_collection_efl_pack_linear_pack_at(Eo *obj, Efl_Ui_Collection_Data *pd, 
    clamp = clamp_index(pd, index);
    index = index_adjust(pd, index);
    subobj_list = eina_list_nth_list(pd->items, index);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(subobj_list, EINA_FALSE);
+   if (pd->items)
+     EINA_SAFETY_ON_NULL_RETURN_VAL(subobj_list, EINA_FALSE);
    if (!register_item(obj, pd, subobj))
      return EINA_FALSE;
    if (clamp == 0)

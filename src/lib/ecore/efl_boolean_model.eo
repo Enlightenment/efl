@@ -1,25 +1,29 @@
 class @beta Efl.Boolean_Model extends Efl.Composite_Model
 {
-   [[Efl boolean model class]]
+   [[@Efl.Model that efficiently stores boolean properties (they can only be $true or $false).
+
+     Internally the values are stored in a compact bit buffer, taking up minimum memory.
+     An example usage is @Efl.Ui.Select_Model.
+   ]]
    methods {
       boolean_add {
-         [[Add a new named boolean property with a defined default value.]]
+         [[Adds a new named boolean property with a default value.]]
          params {
-            @in name: string;
-            @in default_value: bool;
+            @in name: string; [[The name of the new boolean property.]]
+            @in default_value: bool; [[Default value for new boolean property.]]
 	 }
       }
       boolean_del {
-         [[Delete an existing named boolean property]]
+         [[Deletes an existing named boolean property.]]
          params {
-            @in name: string;
+            @in name: string; [[Name of the property to be deleted.]]
 	 }
       }
       boolean_iterator_get {
-         [[Get an iterator that will quickly find all the index with the requested value for a specific boolean.]]
+         [[Gets an iterator that will quickly find all the indices with the requested value for a specific property.]]
          params {
-            @in name: string;
-            @in request: bool;
+            @in name: string; [[The name of the property to examine.]]
+            @in request: bool; [[The value to look for.]]
          }
          return: iterator<ptr(uint64)>; [[The iterator that is valid until any change is made on the model.]]
       }

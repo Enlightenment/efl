@@ -19,22 +19,23 @@ interface @beta Efl.Model
    c_prefix: efl_model;
       methods {
          @property properties {
+            [[Get properties from model.
+
+              Properties_get is due to provide callers a way the fetch the
+              current properties implemented/used by the model. The event
+              @[Efl.Model.properties,changed] will be raised to notify
+              listeners of any modifications in the properties.
+
+              See also @[Efl.Model.properties,changed].
+            ]]
             get {
-               [[Get properties from model.
-
-                 Properties_get is due to provide callers a way the fetch the
-                 current properties implemented/used by the model. The event
-                 @[Efl.Model.properties,changed] will be raised to notify
-                 listeners of any modifications in the properties.
-
-                 See also @[Efl.Model.properties,changed].
-               ]]
             }
             values {
                properties: iterator<string> @move; [[Array of current properties]]
             }
         }
-	@property property {
+        @property property {
+           [[ ]]
            set {
               [[Set a property value of a given property name.
 
@@ -71,7 +72,7 @@ interface @beta Efl.Model
               value: any_value_ptr; [[Property value]]
            }
         }
-	property_ready_get {
+        property_ready_get {
            [[Get a future value when it changes to something that is not error:EAGAIN
 
              @.property.get can return an error with code EAGAIN when it doesn't have any
@@ -82,7 +83,7 @@ interface @beta Efl.Model
 
 
              The future can also be canceled if the model itself gets destroyed.
-	   ]]
+        ]]
            params {
               @in property: string; [[Property name.]]
            }
@@ -126,17 +127,17 @@ interface @beta Efl.Model
             return: future<array<Efl.Object>>; [[Array of children]]
          }
          @property children_count {
-	    get {
-               [[Get children count.
+            [[Number of children.
 
-                  When efl_model_load is completed @.children_count.get
-                  can be used to get the number of children. @.children_count.get
-                  can also be used before calling @.children_slice_get so a valid
-                  range is known. Event @[Efl.Model.children,count,changed] is
-                  emitted when count is finished.
+               When efl_model_load is completed @.children_count.get
+               can be used to get the number of children. @.children_count.get
+               can also be used before calling @.children_slice_get so a valid
+               range is known. Event @[Efl.Model.children,count,changed] is
+               emitted when count is finished.
 
-                  See also @.children_slice_get.
-               ]]
+               See also @.children_slice_get.
+            ]]
+            get {
             }
             values {
                count: uint; [[Current known children count]]

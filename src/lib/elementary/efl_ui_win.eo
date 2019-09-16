@@ -165,11 +165,10 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
          }
       }
       @property keyboard_mode @beta {
+         [[The keyboard mode of the window.]]
          set {
-            [[Sets the keyboard mode of the window.]]
          }
          get {
-            [[Get the keyboard mode of the window.]]
          }
          values {
             mode: Efl.Ui.Win_Keyboard_Mode; [[The mode, one of @Efl.Ui.Win_Keyboard_Mode.]]
@@ -205,45 +204,39 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
          }
       }
       @property screen_constrain @beta {
-         set {
-            [[Constrain the maximum width and height of a window to the
-              width and height of the screen.
+         [[Constrain the maximum width and height of a window to the
+           width and height of the screen.
 
-              When $constrain is $true, $obj will never resize larger than
-              the screen.
-            ]]
+           When $constrain is $true, $obj will never resize larger than
+           the screen.
+         ]]
+         set {
          }
          get {
-            [[Get the constraints on the maximum width and height of a
-              window relative to the width and height of the screen.
-
-              When this function returns $true, $obj will never resize
-              larger than the screen.
-            ]]
          }
          values {
             constrain: bool; [[$true to restrict the window's maximum size.]]
          }
       }
       @property prop_focus_skip @beta {
+         [[Set the window to be skipped by keyboard focus.
+
+           This sets the window to be skipped by normal keyboard input.
+           This means a window manager will be asked not to focus this
+           window as well as omit it from things like the taskbar, pager,
+           "alt-tab" list etc. etc.
+
+           Call this and enable it on a window BEFORE you show it for
+           the first time, otherwise it may have no effect.
+
+           Use this for windows that have only output information or
+           might only be interacted with by the mouse or touchscreen,
+           never for typing. This may have
+           side-effects like making the window non-accessible in
+           some cases unless the window is specially handled. Use
+           this with care.
+         ]]
          set {
-            [[Set the window to be skipped by keyboard focus.
-
-              This sets the window to be skipped by normal keyboard input.
-              This means a window manager will be asked not to focus this
-              window as well as omit it from things like the taskbar, pager,
-              "alt-tab" list etc. etc.
-
-              Call this and enable it on a window BEFORE you show it for
-              the first time, otherwise it may have no effect.
-
-              Use this for windows that have only output information or
-              might only be interacted with by the mouse or touchscreen,
-              never for typing. This may have
-              side-effects like making the window non-accessible in
-              some cases unless the window is specially handled. Use
-              this with care.
-            ]]
          }
          values {
             skip: bool; [[The skip flag state ($true if it is to be skipped).]]
@@ -291,29 +284,24 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
          }
       }
       @property icon_object {
-         set {
-            [[Set a window object's icon.
+         [[A window object's icon.
 
-              This sets an image to be used as the icon for the given
-              window, in the window manager decoration part. The exact
-              pixel dimensions of the object (not object size) will be
-              used and the image pixels will be used as-is when this
-              function is called. If the image object has been updated,
-              then call this function again to source the image pixels
-              and place them in the window's icon. Note that only objects of
-              type @Efl.Canvas.Image or @Efl.Ui.Image are allowed.
-            ]]
+           This sets an image to be used as the icon for the given
+           window, in the window manager decoration part. The exact
+           pixel dimensions of the object (not object size) will be
+           used and the image pixels will be used as-is when this
+           function is called. If the image object has been updated,
+           then call this function again to source the image pixels
+           and place them in the window's icon. Note that only objects of
+           type @Efl.Canvas.Image or @Efl.Ui.Image are allowed.
+         ]]
+         set {
             values {
                icon: Efl.Canvas.Object;
                   [[The image object to use for an icon.]]
             }
          }
          get {
-            [[Get the icon object used for the window.
-
-              The object returns is the one marked by @.icon_object.set as
-              the object to use for the window icon.
-            ]]
             values {
                icon: const(Efl.Canvas.Object);
                   [[The Evas image object to use for an icon.]]
@@ -321,60 +309,55 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
          }
       }
       @property minimized {
+         [[The minimized state of a window.]]
          set {
-            [[Set the minimized state of a window.]]
          }
          get {
-            [[Get the minimized state of a window.]]
          }
          values {
             state: bool; [[If $true, the window is minimized.]]
          }
       }
       @property maximized {
+         [[The maximized state of a window.]]
          set {
-            [[Set the maximized state of a window.]]
          }
          get {
-            [[Get the maximized state of a window.]]
          }
          values {
             maximized: bool; [[If $true, the window is maximized.]]
          }
       }
       @property fullscreen {
+         [[The fullscreen state of a window.]]
          set {
-            [[Set the fullscreen state of a window.]]
          }
          get {
-            [[Get the fullscreen state of a window.]]
          }
          values {
             fullscreen: bool; [[If $true, the window is fullscreen.]]
          }
       }
       @property sticky @beta {
-         set {
-            [[Set the sticky state of the window.
+         [[The sticky state of the window.
 
-              Hints the Window Manager that the window in $obj should be
-              left fixed at its position even when the virtual desktop
-              it's on moves or changes.
-            ]]
+           Hints the Window Manager that the window in $obj should be
+           left fixed at its position even when the virtual desktop
+           it's on moves or changes.
+         ]]
+         set {
          }
          get {
-            [[Get the sticky state of the window.]]
          }
          values {
             sticky: bool; [[If $true, the window's sticky state is enabled.]]
          }
       }
       @property urgent @beta {
+         [[The urgent state of a window.]]
          set {
-            [[Set the urgent state of a window.]]
          }
          get {
-            [[Get the urgent state of a window.]]
          }
          values {
             urgent: Efl.Ui.Win_Urgent_Mode;
@@ -382,26 +365,24 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
          }
       }
       @property modal @beta {
+         [[The modal state of a window.]]
          set {
-            [[Set the modal state of a window.]]
          }
          get {
-            [[Get the modal state of a window.]]
          }
          values {
             modal: Efl.Ui.Win_Modal_Mode; [[The mode of a window, one of @Efl.Ui.Win_Modal_Mode.]]
          }
       }
       @property borderless @beta {
-         set {
-            [[Set the borderless state of a window.
+         [[The borderless state of a window.
 
-              This function requests the Window Manager not to draw any
-              decoration around the window.
-            ]]
+           This function requests the Window Manager not to draw any
+           decoration around the window.
+         ]]
+         set {
          }
          get {
-            [[Get the borderless state of a window.]]
          }
          values {
             borderless: bool; [[If $true, the window is borderless.]]
@@ -413,17 +394,14 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
 
            It is a hint of how the Window Manager should handle it. Unlike
            @.win_type and @.win_name this can be changed at runtime.
+
+           The returned string is an internal one and should not be
+           freed or modified. It will also be invalid if a new role
+           is set or if the window is destroyed.
          ]]
          set {
-            [[Set the role of the window.]]
          }
          get {
-            [[Get the role of the window.
-
-              The returned string is an internal one and should not be
-              freed or modified. It will also be invalid if a new role
-              is set or if the window is destroyed.
-            ]]
          }
          values {
             role: string; [[The role to set.]]
@@ -522,24 +500,23 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
          }
       }
       @property alpha {
+         [[The alpha channel state of a window.
+
+           If $alpha is true, the alpha channel of the canvas will be
+           enabled possibly making parts of the window completely or
+           partially transparent. This is also subject to the underlying
+           system supporting it, for example a system using a
+           compositing manager.
+
+           Note: Alpha window can be enabled automatically by window
+           theme style's property. If "alpha" data.item is "1" or
+           "true" in window style(eg. elm/win/base/default), the window
+           is switched to alpha automatically without the explicit api
+           call.
+         ]]
          set {
-            [[Set the alpha channel state of a window.
-
-              If $alpha is true, the alpha channel of the canvas will be
-              enabled possibly making parts of the window completely or
-              partially transparent. This is also subject to the underlying
-              system supporting it, for example a system using a
-              compositing manager.
-
-              Note: Alpha window can be enabled automatically by window
-              theme style's property. If "alpha" data.item is "1" or
-              "true" in window style(eg. elm/win/base/default), the window
-              is switched to alpha automatically without the explicit api
-              call.
-            ]]
          }
          get {
-            [[Get the alpha channel state of a window.]]
          }
          values {
             alpha: bool; [[$true if the window alpha channel is enabled,
@@ -547,19 +524,19 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
          }
       }
       @property stack_id @beta {
+         [[Get the stack ID string of the window as an opaque string.
+
+           This ID is immutable and can never be modified. It will be
+           an opaque string that has no specific defined format or
+           content other than being a string (no character with a
+           value of 0).
+
+           This string is intended for use as a stack master ID to be
+           use by other windows to make this window part of a stack
+           of windows to be placed on top of each other as if they are
+           a series of dialogs or questions one after the other, allowing
+           you to go back through history.]]
          get {
-            [[Get the stack ID string of the window as an opaque string.
-
-              This ID is immutable and can never be modified. It will be
-              an opaque string that has no specific defined format or
-              content other than being a string (no character with a
-              value of 0).
-
-              This string is intended for use as a stack master ID to be
-              use by other windows to make this window part of a stack
-              of windows to be placed on top of each other as if they are
-              a series of dialogs or questions one after the other, allowing
-              you to go back through history.]]
          }
          values {
             id: string; [[An opaque string that has no specific format
@@ -568,16 +545,15 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
          }
       }
       @property stack_master_id @beta {
-         set {
-            [[Set the window stack ID to use as the master top-level.
+         [[The window stack ID to use as the master top-level.
 
-              This sets the ID string to be used as the master top-level
-              window as the base of a stack of windows. This must be set
-              before the first time the window is shown and should never
-              be changed afterwards.]]
+           This sets the ID string to be used as the master top-level
+           window as the base of a stack of windows. This must be set
+           before the first time the window is shown and should never
+           be changed afterwards.]]
+         set {
          }
          get {
-            [[Get the stack master Id that has been set.]]
          }
          values {
             id: string; [[An opaque string that has no specific format,

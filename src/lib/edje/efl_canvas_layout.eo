@@ -22,10 +22,8 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
            value.
          ]]
          get {
-            [[Get the current state of animation, $true by default.]]
          }
          set {
-            [[Start or stop animating this object.]]
          }
          values {
             on: bool; [[The animation state, $true by default.]]
@@ -37,15 +35,14 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
          return: iterator<string> @move; [[Part name iterator]]
       }
       @property seat {
+         [[The seat device given its Edje's name.
+
+           Edje references seats by a name that differs from Evas.
+           Edje naming follows a incrementional convention: first
+           registered name is "seat1", second is "seat2", differently
+           from Evas.
+         ]]
          get {
-            [[Returns the seat device given its Edje's name.
-
-              Edje references seats by a name that differs from Evas.
-              Edje naming follows a incrementional convention: first
-              registered name is "seat1", second is "seat2", differently
-              from Evas.
-            ]]
-
             return: Efl.Input.Device; [[The seat device or $null if not found.]]
          }
          keys {
@@ -53,14 +50,14 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
          }
       }
       @property seat_name {
-         get {
-            [[Gets the name given to a set by Edje.
+         [[The name given to a set by Edje.
 
-              Edje references seats by a name that differs from Evas.
-              Edje naming follows a incrementional convention: first
-              registered name is "seat1", second is "seat2", differently
-              from Evas.
-            ]]
+           Edje references seats by a name that differs from Evas.
+           Edje naming follows a incrementional convention: first
+           registered name is "seat1", second is "seat2", differently
+           from Evas.
+         ]]
+         get {
             return: stringshare; [[The name's character string or $null if not found.]]
          }
          keys {
@@ -68,8 +65,8 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
          }
       }
       @property layout_load_error {
+          [[The (last) file loading error for a given object.]]
           get {
-              [[Gets the (last) file loading error for a given object.]]
           }
           values {
              error: Eina.Error; [[The load error code.]]

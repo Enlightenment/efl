@@ -43,6 +43,8 @@ mixin @beta Efl.Ui.Widget_Scrollable_Content requires Efl.Object
       @property scrollable_content {
          [[This is the content which will be placed in the internal scroller.
 
+           If a scrollable text string is set, this will return $NULL.
+
            @since 1.23
          ]]
          set {
@@ -54,27 +56,18 @@ mixin @beta Efl.Ui.Widget_Scrollable_Content requires Efl.Object
          }
       }
       @property scrollable_text {
+         [[The text string to be displayed by the given text object.
+           The text will use @Efl.Text_Format_Wrap.mixed wrapping,
+           and it will be scrollable depending on its size relative to the
+           object's geometry.
+
+           When reading, do not free the return value.
+
+           @since 1.23
+         ]]
          set {
-            [[Sets the text string to be displayed by the given text object.
-              The text will use @Efl.Text_Format_Wrap.mixed wrapping,
-              and it will be scrollable depending on its size relative to the
-              object's geometry.
-
-              See also @.scrollable_text.get.
-
-              @since 1.23
-            ]]
          }
          get {
-            [[Retrieves the text string currently being displayed by the given
-              text object.
-
-              Do not free() the return value.
-
-              See also @.scrollable_text.set.
-
-              @since 1.23
-            ]]
          }
          values {
             text: string; [[Text string to display on it.]]

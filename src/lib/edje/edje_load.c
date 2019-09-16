@@ -740,10 +740,10 @@ _edje_process_sizeclass(Edje *ed)
      }
 }
 
+#ifdef HAVE_EPHYSICS
 static inline void
 _edje_process_physics(Edje *ed)
 {
-#ifdef HAVE_EPHYSICS
    if (EPH_LOAD())
      {
         EPH_CALL(ephysics_init)();
@@ -758,10 +758,8 @@ _edje_process_physics(Edje *ed)
           ed->collection->physics.world.gravity.y,
           ed->collection->physics.world.gravity.z);
      }
-#else
-   ERR("Edje compiled without support to physics.");
-#endif
 }
+#endif
 
 Eina_Error
 _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const char *group, const char *parent, Eina_List *group_path, Eina_Array *nested)
@@ -856,7 +854,13 @@ _edje_object_file_set_internal(Evas_Object *obj, const Eina_File *file, const ch
              unsigned int i;
 
              if (ed->collection->physics_enabled)
-               _edje_process_physics(ed);
+               {
+#ifdef HAVE_EPHYSICS
+                  _edje_process_physics(ed);
+#else
+                     ERR("Edje compiled without support to physics.");
+#endif
+               }
 
              /* handle multiseat stuff */
              _edje_devices_add(ed, tev);

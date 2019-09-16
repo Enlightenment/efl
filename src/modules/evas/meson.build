@@ -1,6 +1,6 @@
 #fixed dependencies by efl
 png = dependency('libpng')
-tiff = dependency('libtiff-4')
+tiff = dependency('libtiff-4', required: get_option('evas-loaders-disabler').contains('tiff') == false)
 giflib = cc.find_library('gif')
 json = dependency('rlottie', required: get_option('evas-loaders-disabler').contains('json') == false)
 webp = dependency('libwebp', required: get_option('evas-loaders-disabler').contains('webp') == false)

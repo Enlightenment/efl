@@ -6,30 +6,26 @@ abstract @beta Efl.Canvas.Vg.Node extends Efl.Object
    [[Efl vector graphics abstract class]]
    methods {
       @property transformation {
-         set {
-            [[Sets the transformation matrix to be used for this node object.
+         [[The transformation matrix to be used for this node object.
 
-              Note: Pass $null to cancel the applied transformation.
-            ]]
+           Note: Pass $null to cancel the applied transformation.
+         ]]
+         set {
          }
          get {
-            [[Gets the transformation matrix used for this node object.
-            ]]
          }
          values {
             m: ptr(const(Eina.Matrix3)); [[Transformation matrix.]]
          }
       }
       @property origin {
-         set {
-            [[Sets the origin position of the node object.
+         [[The origin position of the node object.
 
-              This origin position affects node transformation.
-            ]]
+           This origin position affects node transformation.
+         ]]
+         set {
          }
          get {
-            [[Gets the origin position of the node object.
-            ]]
          }
          values {
             x: double; [[$origin x position.]]

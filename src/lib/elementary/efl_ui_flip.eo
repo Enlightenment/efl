@@ -77,8 +77,8 @@ class @beta Efl.Ui.Flip extends Efl.Ui.Widget implements Efl.Pack_Linear
          }
       }
       @property front_visible {
+         [[Get flip front visibility state.]]
          get {
-            [[Get flip front visibility state.]]
             return: bool; [[$true if front front is showing, $false if
                             the back is showing.]]
          }

@@ -144,28 +144,28 @@ abstract Efl.Object
          }
       }
       @property event_global_freeze_count @static {
-         get {
-            [[Return the global count of freeze events.
+         [[Return the global count of freeze events.
 
-              This is the amount of calls to @.event_global_freeze minus
-              the amount of calls to @.event_global_thaw.
-              EFL will not emit any event while this count is > 0 (Except
-              events marked $hot).
-            ]]
+           This is the amount of calls to @.event_global_freeze minus
+           the amount of calls to @.event_global_thaw.
+           EFL will not emit any event while this count is > 0 (Except
+           events marked $hot).
+         ]]
+         get {
          }
          values {
             fcount: int; [[The global event freeze count.]]
          }
       }
       @property event_freeze_count {
-         get {
-            [[Return the count of freeze events for this object.
+         [[Return the count of freeze events for this object.
 
-              This is the amount of calls to @.event_freeze minus
-              the amount of calls to @.event_thaw.
-              This object will not emit any event while this count is > 0
-              (Except events marked $hot).
-            ]]
+           This is the amount of calls to @.event_freeze minus
+           the amount of calls to @.event_thaw.
+           This object will not emit any event while this count is > 0
+           (Except events marked $hot).
+         ]]
+         get {
          }
          values {
             fcount: int; [[The event freeze count of this object.]]
@@ -403,7 +403,7 @@ abstract Efl.Object
          }
       }
       provider_register {
-         [[Will register a manager of a specific class to be answered by eo.provider_find.]]
+         [[Will register a manager of a specific class to be answered by @.provider_find.]]
          params {
             @in klass: const(Efl.Class); [[The class provided by the registered provider.]]
             @in provider: const(Efl.Object); [[The provider for the newly registered class that has to provide that
@@ -413,7 +413,7 @@ abstract Efl.Object
       }
       provider_unregister {
          [[Will unregister a manager of a specific class that was previously registered and answered by
-           eo.provider_find.]]
+           @.provider_find.]]
          params {
             @in klass: const(Efl.Class); [[The class provided by the provider to unregister for.]]
             @in provider: const(Efl.Object); [[The provider for the registered class to unregister.]]

@@ -238,57 +238,53 @@ class @beta Evas.Canvas3D.Mesh extends Evas.Canvas3D.Object implements Efl.File,
          }
       }
       @property shader_mode {
-         set {
-            [[Set the shader mode of the given mesh.
+         [[Set the shader mode of the given mesh.
 
-              Default shader mode is EVAS_CANVAS3D_SHADER_MODE_VERTEX_COLOR.
-            ]]
+           Default shader mode is EVAS_CANVAS3D_SHADER_MODE_VERTEX_COLOR.
+         ]]
+         set {
          }
          get {
-            [[Get the shader mode of the given mesh.]]
          }
          values {
             mode: Evas.Canvas3D.Shader_Mode; [[The shader mode.]]
          }
       }
       @property color_pick_enable {
-        set {
-            [[Set possibility color picking.]]
+         [[Set possibility color picking.]]
+         set {
          }
          get {
-            [[Get status of color picking of the mesh.]]
          }
          values {
             enabled: bool; [[Possibility flag.]]
          }
       }
       @property vertex_count {
+        [[The vertex count of the given mesh.
+
+          Each key frame should have same vertex count to be properly
+          interpolated. Key frames have their own vertex data and the
+          data should have more vertices than the mesh's vertex count.
+
+          Default vertex count is 0.
+        ]]
         set {
-           [[Set the vertex count of the given mesh.
-
-             Each key frame should have same vertex count to be properly
-             interpolated. Key frames have their own vertex data and the
-             data should have more vertices than the mesh's vertex count.
-
-             Default vertex count is 0.
-           ]]
         }
         get {
-           [[Get the vertex count of the given mesh.]]
         }
         values {
            count: uint; [[Vertex count.]]
         }
       }
       @property fog_enable {
-        set {
-            [[Enable or disable fog effect for given mesh.
+         [[Enable or disable fog effect for given mesh.
 
-              Default fog is disabled.
-            ]]
+           Default fog is disabled.
+         ]]
+         set {
          }
          get {
-            [[Get the enable status of fog effect for given mesh.]]
          }
          values {
             enabled: bool; [[Fog enabled status.]]
@@ -296,11 +292,11 @@ class @beta Evas.Canvas3D.Mesh extends Evas.Canvas3D.Object implements Efl.File,
       }
 
       @property alpha_test_enable {
-        set {
-            [[Get the enable status of alpha test for given mesh.
+         [[The enable status of alpha test for given mesh.
 
-              Default alpha test disabled.
-            ]]
+           Default alpha test disabled.
+         ]]
+         set {
          }
          get {
             [[Get the enable status of alpha test for given mesh.]]
@@ -311,19 +307,16 @@ class @beta Evas.Canvas3D.Mesh extends Evas.Canvas3D.Object implements Efl.File,
       }
 
       @property alpha_func {
-        set {
-           [[Set the alpha func.
+        [[The alpha function.
 
-             The alpha test discards fragments depending on the outcome of
-             a comparison between an incoming fragment's alpha value and a
-             constant reference value. This func specifies the reference
-             value and the comparison function.
-           ]]
+          The alpha test discards fragments depending on the outcome of
+          a comparison between an incoming fragment's alpha value and a
+          constant reference value. This function specifies the reference
+          value and the comparison function.
+        ]]
+        set {
         }
         get {
-            [[Get the reference value and the comparison function for alpha
-              testing.
-            ]]
         }
         values {
            comparison_func: Evas.Canvas3D.Comparison; [[The alpha comparison function.]]
@@ -332,11 +325,10 @@ class @beta Evas.Canvas3D.Mesh extends Evas.Canvas3D.Object implements Efl.File,
       }
 
       @property blending_enable {
-        set {
-            [[Enable or disable blending for given mesh.]]
+         [[Enable or disable blending for given mesh.]]
+         set {
          }
          get {
-            [[Get whether blending is enabled for the mesh.]]
          }
          values {
             blending: bool; [[The blending state.]]
@@ -344,15 +336,14 @@ class @beta Evas.Canvas3D.Mesh extends Evas.Canvas3D.Object implements Efl.File,
       }
 
       @property frame_material {
-         set {
-            [[Set the material of the key frame of the given mesh.
+         [[The material of the key frame of the given mesh.
 
-              Setting different materials for each key frame is useful for
-              doing animations like GIF images or color changing animations.
-            ]]
+           Setting different materials for each key frame is useful for
+           doing animations like GIF images or color changing animations.
+         ]]
+         set {
          }
          get {
-            [[Get the material of the key frame of the given mesh.]]
          }
          keys {
             frame: int; [[The number of the key frame.]]
@@ -363,32 +354,30 @@ class @beta Evas.Canvas3D.Mesh extends Evas.Canvas3D.Object implements Efl.File,
       }
 
       @property vertex_assembly {
+         [[The vertex assembly of the given mesh.
+
+           Vertex assembly defines how the engine organizes vertices into
+           geometric primitives.
+
+           Default vertex assembly is EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES.
+         ]]
          set {
-            [[Set the vertex assembly of the given mesh.
-
-              Vertex assembly defines how the engine organizes vertices into
-              geometric primitives.
-
-              Default vertex assembly is EVAS_CANVAS3D_VERTEX_ASSEMBLY_TRIANGLES.
-            ]]
          }
          get {
-            [[Get the vertex assembly of the given mesh.]]
          }
          values {
             assembly: Evas.Canvas3D.Vertex_Assembly; [[The vertex assembly.]]
          }
       }
       @property shadows_edges_filtering {
-        set {
-           [[Set the shadow edges blur parameters.
+        [[The shadow edges blur parameters.
 
-             The averaging values in window is used for blurring.
-             User can set the size of window and num of points in window.
-           ]]
+          The averaging values in window is used for blurring.
+          User can set the size of window and num of points in window.
+        ]]
+        set {
         }
         get {
-            [[Get the shadow edges blur parameters.]]
         }
         values {
            blur_level: int; [[Number of points within a bluring radius.]]
@@ -396,24 +385,20 @@ class @beta Evas.Canvas3D.Mesh extends Evas.Canvas3D.Object implements Efl.File,
         }
       }
       @property shadows_constant_bias {
+        [[The offset shadow toward object.]]
         set {
-           [[Set offset shadow toward object.]]
         }
         get {
-            [[Get offset shadow toward object.]]
         }
         values {
            bias: Evas.Real; [[Offset.]]
         }
       }
       @property lod_boundary {
+         [[The LOD boundary distances.]]
          set {
-            [[Set LOD boundary distances.]]
          }
          get {
-            [[Get LOD boundary distances.
-
-              See also @Evas.Canvas3D.Mesh.lod_boundary.set.]]
          }
          values {
             near_lod: Evas.Real; [[Up boundary]]

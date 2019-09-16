@@ -40,6 +40,6 @@ class @beta Efl.Ui.Timepicker extends Efl.Ui.Layout_Base
       Efl.Object.destructor;
    }
    events {
-      changed: void; [[Called when date is changed]]
+      time,changed: void; [[Called when time is changed]]
    }
 }

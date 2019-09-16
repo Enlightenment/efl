@@ -31,7 +31,7 @@ test_ui_datepicker(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
            efl_ui_datepicker_date_set(efl_added, 1987, 9, 17),
            efl_ui_datepicker_date_max_set(efl_added, 1990, 9, 17),
            efl_ui_datepicker_date_min_set(efl_added, 1980, 9, 17),
-           efl_event_callback_add(efl_added, EFL_UI_DATEPICKER_EVENT_CHANGED,_date_changed_cb, NULL),
+           efl_event_callback_add(efl_added, EFL_UI_DATEPICKER_EVENT_DATE_CHANGED,_date_changed_cb, NULL),
            efl_pack(bx, efl_added));
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(150, 170));

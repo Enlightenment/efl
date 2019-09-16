@@ -225,7 +225,6 @@ _efl_canvas_object_efl_object_constructor(Eo *eo_obj, Evas_Object_Protected_Data
    obj->events = eina_cow_alloc(evas_object_events_cow);
 
    evas_object_inject(eo_obj, obj, evas);
-   evas_object_callback_init(eo_obj, obj);
 
    return eo_obj;
 
@@ -255,6 +254,7 @@ _efl_canvas_object_efl_object_finalize(Eo *eo_obj, Evas_Object_Protected_Data *o
    e->finalize_objects = eina_list_prepend(e->finalize_objects, eo_obj);
 
 end:
+    evas_object_callbacks_finalized(eo_obj, obj);
    return efl_finalize(efl_super(eo_obj, MY_CLASS));
 }
 
@@ -475,7 +475,6 @@ evas_object_free(Evas_Object_Protected_Data *obj, Eina_Bool clean_layer)
    if (!obj) return ;
    eo_obj = obj->object;
 
-   evas_object_callback_shutdown(eo_obj, obj);
    if (efl_isa(eo_obj, EFL_CANVAS_IMAGE_INTERNAL_CLASS))
      _evas_object_image_free(eo_obj);
    evas_object_map_set(eo_obj, NULL);
@@ -2431,6 +2430,73 @@ _efl_canvas_object_coords_inside_get(const Eo *eo_obj EINA_UNUSED, Evas_Object_P
    return RECTS_INTERSECT(pos.x, pos.y, 1, 1, c.x, c.y, c.w, c.h);
 }
 
+EOLIAN static Eina_Bool
+_efl_canvas_object_efl_object_event_callback_priority_add(Eo *obj, Evas_Object_Protected_Data *pd,
+                                        const Efl_Event_Description *desc,
+                                        Efl_Callback_Priority priority,
+                                        Efl_Event_Cb func,
+                                        const void *user_data)
+{
+   Efl_Callback_Array_Item full[2] = {
+    {desc, func},
+    {NULL, NULL}
+   };
+
+   if (efl_event_callback_priority_add(efl_super(obj, MY_CLASS), desc, priority, func, user_data))
+     {
+        evas_object_callbacks_event_catcher_add(obj, pd, full);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_object_efl_object_event_callback_del(Eo *obj, Evas_Object_Protected_Data *pd,
+                               const Efl_Event_Description *desc,
+                               Efl_Event_Cb func,
+                               const void *user_data)
+{
+   Efl_Callback_Array_Item full[2] = {
+    {desc, func},
+    {NULL, NULL}
+   };
+
+   if (efl_event_callback_del(efl_super(obj, MY_CLASS), desc, func, user_data))
+     {
+        evas_object_callbacks_event_catcher_del(obj, pd, full);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_object_efl_object_event_callback_array_priority_add(Eo *obj, Evas_Object_Protected_Data *pd,
+                                              const Efl_Callback_Array_Item *array,
+                                              Efl_Callback_Priority priority,
+                                              const void *user_data)
+{
+
+   if (efl_event_callback_array_priority_add(efl_super(obj, MY_CLASS), array, priority, user_data))
+     {
+        evas_object_callbacks_event_catcher_add(obj, pd, array);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_object_efl_object_event_callback_array_del(Eo *obj, Evas_Object_Protected_Data *pd,
+                                     const Efl_Callback_Array_Item *array,
+                                     const void *user_data)
+{
+   if (efl_event_callback_array_del(efl_super(obj, MY_CLASS), array, user_data))
+     {
+        evas_object_callbacks_event_catcher_del(obj, pd, array);
+        return EINA_TRUE;
+     }
+   return EINA_FALSE;
+}
+
 static void
 _is_frame_flag_set(Evas_Object_Protected_Data *obj, Eina_Bool is_frame)
 {
@@ -2699,7 +2765,11 @@ EOAPI EFL_VOID_FUNC_BODYV(efl_canvas_object_type_set, EFL_FUNC_CALL(type), const
    EFL_OBJECT_OP_FUNC(efl_canvas_object_is_frame_object_set, _efl_canvas_object_is_frame_object_set), \
    EFL_OBJECT_OP_FUNC(efl_canvas_object_is_frame_object_get, _efl_canvas_object_is_frame_object_get), \
    EFL_OBJECT_OP_FUNC(efl_canvas_object_legacy_ctor, _efl_canvas_object_legacy_ctor), \
-   EFL_OBJECT_OP_FUNC(efl_canvas_object_type_set, _efl_canvas_object_type_set)
+   EFL_OBJECT_OP_FUNC(efl_canvas_object_type_set, _efl_canvas_object_type_set), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_priority_add, _efl_canvas_object_efl_object_event_callback_priority_add), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_array_priority_add, _efl_canvas_object_efl_object_event_callback_array_priority_add), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_del, _efl_canvas_object_efl_object_event_callback_del), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_array_del, _efl_canvas_object_efl_object_event_callback_array_del)
 
 #include "canvas/efl_canvas_object.eo.c"
 #include "canvas/efl_canvas_object_eo.legacy.c"

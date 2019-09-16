@@ -16,8 +16,8 @@ mixin Efl.Ui.Focus.Object
             }
         }
         @property focus {
+            [[Whether the widget is currently focused or not.]]
             get {
-              [[Returns whether the widget is currently focused or not.]]
             }
             set @protected {
               [[This is called by the manager and should never be called by

@@ -800,18 +800,30 @@ _animator_repeater(void *data, const Efl_Event *event)
    DBG("Emitting animator tick on %p.", obj->object);
 }
 
-static void
-_check_event_catcher_add(void *data, const Efl_Event *event)
+void
+evas_object_callbacks_finalized(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
-   const Efl_Callback_Array_Item_Full *array = event->info;
-   Evas_Object_Protected_Data *obj = data;
+   if (obj->animator_ref > 0)
+     {
+       if (obj->layer && obj->layer->evas)
+         {
+            efl_event_callback_add(obj->layer->evas->evas, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
+            DBG("Registering an animator tick on canvas %p for object %p.",
+                obj->layer->evas->evas, obj->object);
+         }
+     }
+}
+
+void
+evas_object_callbacks_event_catcher_add(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, const Efl_Callback_Array_Item *array)
+{
    Evas_Callback_Type type = EVAS_CALLBACK_LAST;
    void *gd = NULL;
    int i;
 
    for (i = 0; array[i].desc != NULL; i++)
      {
-        if (obj->layer->evas->gesture_manager)
+        if (obj->layer && obj->layer->evas && obj->layer->evas->gesture_manager)
           {
              if (!gd) gd = _efl_canvas_gesture_manager_private_data_get(obj->layer->evas->gesture_manager);
 
@@ -822,9 +834,12 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
           {
              if (obj->animator_ref++ > 0) break;
 
-             efl_event_callback_add(obj->layer->evas->evas, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
-             DBG("Registering an animator tick on canvas %p for object %p.",
-                 obj->layer->evas->evas, obj->object);
+             if (efl_finalized_get(eo_obj))
+               {
+                  efl_event_callback_add(obj->layer->evas->evas, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _animator_repeater, obj);
+                  DBG("Registering an animator tick on canvas %p for object %p.",
+                      obj->layer->evas->evas, obj->object);
+               }
           }
         else if ((type = _legacy_evas_callback_type(array[i].desc)) != EVAS_CALLBACK_LAST)
           {
@@ -838,11 +853,9 @@ _check_event_catcher_add(void *data, const Efl_Event *event)
      }
 }
 
-static void
-_check_event_catcher_del(void *data, const Efl_Event *event)
+void
+evas_object_callbacks_event_catcher_del(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj, const Efl_Callback_Array_Item *array)
 {
-   const Efl_Callback_Array_Item_Full *array = event->info;
-   Evas_Object_Protected_Data *obj = data;
    void *gd = NULL;
    int i;
 
@@ -870,18 +883,3 @@ _check_event_catcher_del(void *data, const Efl_Event *event)
      }
 }
 
-EFL_CALLBACKS_ARRAY_DEFINE(event_catcher_watch,
-                          { EFL_EVENT_CALLBACK_ADD, _check_event_catcher_add },
-                          { EFL_EVENT_CALLBACK_DEL, _check_event_catcher_del });
-
-void
-evas_object_callback_init(Efl_Canvas_Object *eo_obj, Evas_Object_Protected_Data *obj)
-{
-   efl_event_callback_array_add(eo_obj, event_catcher_watch(), obj);
-}
-
-void
-evas_object_callback_shutdown(Efl_Canvas_Object *eo_obj, Evas_Object_Protected_Data *obj)
-{
-   efl_event_callback_array_del(eo_obj, event_catcher_watch(), obj);
-}

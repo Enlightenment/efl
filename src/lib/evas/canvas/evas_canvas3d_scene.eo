@@ -121,11 +121,10 @@ class @beta Evas.Canvas3D.Scene extends Evas.Canvas3D.Object
       }
 
       @property root_node {
+         [[The root node of a scene.]]
          set {
-            [[Set the root node of a scene.]]
          }
          get {
-            [[Get the root node of a scene.]]
          }
          values {
             node: Evas.Canvas3D.Node; [[A node which will be used as a
@@ -134,11 +133,10 @@ class @beta Evas.Canvas3D.Scene extends Evas.Canvas3D.Object
       }
 
       @property camera_node {
+         [[The camera node of a scene.]]
          set {
-            [[Set the camera node of a scene.]]
          }
          get {
-            [[Get the camera node of a scene.]]
          }
          values {
             node: Evas.Canvas3D.Node; [[A node which will be used as a
@@ -146,11 +144,10 @@ class @beta Evas.Canvas3D.Scene extends Evas.Canvas3D.Object
          }
       }
       @property shadows_depth {
+         [[Scale and units used to calculate depth values.]]
          set {
-            [[Set scale and units used to calculate depth values.]]
          }
          get {
-            [[Get scale and units used to calculate depth values.]]
          }
          values {
             depth_offset: Evas.Real; [[Scale factor that is used to

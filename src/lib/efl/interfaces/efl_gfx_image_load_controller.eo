@@ -71,19 +71,13 @@ interface @beta Efl.Gfx.Image_Load_Controller
          }
       }
       @property load_dpi {
-         set {
-            [[Set the DPI resolution of an image object's source image.
+         [[The DPI resolution of an image object's source image.
 
-              This function sets the DPI resolution of a given loaded canvas
-              image. Most useful for the SVG image loader.
-            ]]
+           Most useful for the SVG image loader.
+         ]]
+         set {
          }
          get {
-            [[Get the DPI resolution of a loaded image object in the canvas.
-
-              This function returns the DPI resolution of the given canvas
-              image.
-            ]]
          }
          values {
             dpi: double; [[The DPI resolution.]]
@@ -99,22 +93,19 @@ interface @beta Efl.Gfx.Image_Load_Controller
          }
       }
       @property load_region {
+         [[Inform a given image object to load a selective region of its
+           source image.
+
+           This property is useful when one is not showing all of an
+           image's area on its image object.
+
+           Note: The image loader for the image format in question has
+           to support selective region loading in order for this function
+           to work.
+         ]]
          set {
-            [[Inform a given image object to load a selective region of its
-              source image.
-
-              This function is useful when one is not showing all of an
-              image's area on its image object.
-
-              Note: The image loader for the image format in question has
-              to support selective region loading in order for this function
-              to work.
-            ]]
          }
          get {
-            [[Retrieve the coordinates of a given image object's selective
-              (source image) load region.
-            ]]
          }
          values {
             region: Eina.Rect; [[A region of the image.]]
@@ -159,14 +150,13 @@ interface @beta Efl.Gfx.Image_Load_Controller
          }
       }
       @property load_skip_header {
-         [[Initial load should skip header check and leave it all to data load
+         [[Initial load should skip header check and leave it all to data load.
 
            If this is true, then future loads of images will defer header
            loading to a preload stage and/or data load later on rather than
            at the start when the load begins (e.g. when file is set).
          ]]
          set {
-            [[Set the skip header state for susbsequent loads of a file. ]]
          }
          get {}
          values {

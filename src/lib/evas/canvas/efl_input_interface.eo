@@ -23,13 +23,13 @@ interface Efl.Input.Interface
    event_prefix: efl;
    methods {
       @property seat_event_filter @beta {
+          [[Whether input events from a given seat are enabled.
+            If the filter list is empty (no seat is disabled) this object
+            will report mouse, keyboard and focus events from any seat, otherwise those events will
+            only be reported if the event comes from a seat that is not in the list.]]
           set {
-             [[Add or remove a given seat to the filter list. If the filter list is empty this object
-               will report mouse, keyboard and focus events from any seat, otherwise those events will
-               only be reported if the event comes from a seat that is in the list.]]
           }
           get {
-             [[Check if input events from a given seat is enabled.]]
           }
           keys {
              seat: Efl.Input.Device; [[The seat to act on.]]

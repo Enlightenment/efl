@@ -50,16 +50,16 @@ mixin @beta Efl.Canvas.Filter.Internal requires Efl.Object extends Efl.Gfx.Filte
 
    methods {
       @property filter_changed @protected {
+         [[Marks this filter as changed.]]
          set {
-            [[Marks this filter as changed.]]
          }
          values {
             val: bool; [[$true if filter changed, $false otherwise]]
          }
       }
       @property filter_invalid @protected {
+         [[Marks this filter as invalid.]]
          set {
-            [[Marks this filter as invalid.]]
          }
          values {
             val: bool; [[$true if filter is invalid, $false otherwise]]
@@ -102,11 +102,11 @@ mixin @beta Efl.Canvas.Filter.Internal requires Efl.Object extends Efl.Gfx.Filte
          ]]
       }
       @property filter_output_buffer @protected {
-         get {
-            [[Retrieve cached output buffer, if any.
+         [[Retrieves cached output buffer, if any.
 
-              Does not increment the reference count.
-            ]]
+           Does not increment the reference count.
+         ]]
+         get {
          }
          values {
             buffer: void_ptr; [[Output buffer]]

@@ -30,7 +30,7 @@ test_ui_timepicker(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 
    efl_add(EFL_UI_TIMEPICKER_CLASS, bx,
            efl_ui_timepicker_time_set(efl_added, 11, 35),
-           efl_event_callback_add(efl_added, EFL_UI_TIMEPICKER_EVENT_CHANGED,_time_changed_cb, NULL),
+           efl_event_callback_add(efl_added, EFL_UI_TIMEPICKER_EVENT_TIME_CHANGED,_time_changed_cb, NULL),
            efl_pack(bx, efl_added));
 
    efl_gfx_entity_size_set(win, EINA_SIZE2D(150, 170));

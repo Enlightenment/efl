@@ -314,7 +314,6 @@ eolian_documentation_tokenize(const char *doc, Eolian_Doc_Token *ret)
 #undef CMP_MARK_NOTE
 
 mloop:
-
    /* monospace markup ($foo) */
    if ((doc[0] == '$') && ((doc[1] == '_') || isalpha(doc[1])))
      {
@@ -323,6 +322,28 @@ mloop:
         while ((ret->text_end[0] == '_') || isalnum(ret->text_end[0]))
           ++ret->text_end;
         ret->type = EOLIAN_DOC_TOKEN_MARKUP_MONOSPACE;
+        return ret->text_end;
+     }
+
+   /* complex monospace markup ($[...]) */
+   if ((doc[0] == '$') && (doc[1] == '['))
+     {
+        doc += 2;
+        ret->text = doc;
+        ret->text_end = ret->text;
+        while ((ret->text_end[0] != '\0') && (ret->text_end[0] != ']') &&
+               (ret->text_end[0] != '\n'))
+          {
+             /* escape: skip backslash */
+             if ((ret->text_end[0] == '\\') && (ret->text_end[1] != '\0') &&
+                 (ret->text_end[1] != '\n'))
+               ++ret->text_end;
+             ++ret->text_end;
+          }
+        ret->type = EOLIAN_DOC_TOKEN_MARKUP_MONOSPACE;
+        /* return past the ending bracket as that's markup syntax */
+        if (ret->text_end[0] == ']')
+          return ret->text_end + 1;
         return ret->text_end;
      }
 
@@ -349,7 +370,8 @@ mloop:
              continue;
           }
         /* monospace markup */
-        if ((schr[0] == '$') && ((schr[1] == '_') || isalpha(schr[1])))
+        if ((schr[0] == '$') && (
+            (schr[1] == '_') || (schr[1] == '[') || isalpha(schr[1])))
           {
              pschr = schr;
              break;

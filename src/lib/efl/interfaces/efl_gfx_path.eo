@@ -104,10 +104,8 @@ mixin @beta Efl.Gfx.Path requires Efl.Object
         }
       }
       append_squadratic_to {
-        [[Same as efl_gfx_path_append_quadratic_to() api only difference is
+        [[Same as @.append_quadratic_to api only difference is
           that it uses the current control point to draw the bezier.
-
-          See also @.append_quadratic_to.
         ]]
         params {
           @in x: double; [[X co-ordinate of end point of the line.]]
@@ -130,10 +128,8 @@ mixin @beta Efl.Gfx.Path requires Efl.Object
         }
       }
       append_scubic_to {
-        [[Same as efl_gfx_path_append_cubic_to() api only difference is that it
+        [[Same as @.append_cubic_to api only difference is that it
           uses the current control point to draw the bezier.
-
-         See also @.append_cubic_to.
         ]]
         params {
           @in x: double; [[X co-ordinate of end point of the line.]]

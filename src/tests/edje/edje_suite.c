@@ -29,10 +29,11 @@ test_layout_get(const char *name)
    return filename;
 }
 
+static Evas *evas = NULL;
+
 Evas *
 _setup_evas(void)
 {
-   Evas *evas;
    Evas_Engine_Info *einfo;
 
    evas = evas_new();
@@ -55,6 +56,8 @@ SUITE_INIT(edje)
 
 SUITE_SHUTDOWN(edje)
 {
+   if (evas) evas_free(evas);
+   evas = NULL;
    ck_assert_int_eq(edje_shutdown(), 0);
    ck_assert_int_eq(ecore_evas_shutdown(), 0);
 }

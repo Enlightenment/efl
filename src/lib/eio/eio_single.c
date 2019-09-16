@@ -605,7 +605,7 @@ eio_file_chown(const char *path,
    return &c->common;
 #else
    EINA_SAFETY_ON_NULL_RETURN_VAL(error_cb, NULL);
-   error_cb(data, NULL, EINVAL);
+   error_cb((char *)data, NULL, EINVAL);
    return NULL;
    (void)path;
    (void)user;
