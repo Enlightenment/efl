@@ -1,3 +1,5 @@
+#ifndef _ELM_GENERAL_H
+#define _ELM_GENERAL_H
 /**
  * @defgroup Elm_General General
  * @ingroup Elementary
@@ -821,3 +823,4 @@ typedef enum
 /**
  * @}
  */
+#endif
