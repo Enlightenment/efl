@@ -83,7 +83,8 @@ _svg_shutdown(void)
 {
    if (rsvg)
      {
-        rsvg_handle_close(rsvg, NULL);
+// we don't really need this it seems and it's deprecated in 2.46
+//        rsvg_handle_close(rsvg, NULL);
         g_object_unref(rsvg);
      }
    // Maybe it's not crashing anymore, let's try it.
