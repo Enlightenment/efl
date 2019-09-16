@@ -87,14 +87,31 @@ _efl_ui_widget_factory_item_class_get(const Eo *obj EINA_UNUSED,
 }
 
 static void
-_efl_ui_widget_factory_constructing(void *data, const Efl_Event *ev)
+_efl_ui_widget_factory_constructing(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    Efl_Gfx_Entity *ui_view = ev->info;
-   Efl_Ui_Widget_Factory_Data *pd = data;
+   const Efl_Model *model;
+   Eina_Value *width, *height;
 
-   /* NOP */
-   (void)(ui_view);
-   (void)(pd);
+   model = efl_ui_view_model_get(ui_view);
+
+   // Fetch min size from model if available to avoid recalculcating it
+   width = efl_model_property_get(model, "self.width");
+   height = efl_model_property_get(model, "self.height");
+   if (eina_value_type_get(width) != EINA_VALUE_TYPE_ERROR &&
+       eina_value_type_get(height) != EINA_VALUE_TYPE_ERROR)
+     {
+        Eina_Size2D s;
+
+        if (!eina_value_int_convert(width, &s.w)) s.w = 0;
+        if (!eina_value_int_convert(height, &s.h)) s.h = 0;
+
+        /* efl_event_freeze(ui_view); */
+        efl_key_data_set(ui_view, "efl.ui.widget.factory.size_set", (void*)EINA_TRUE);
+        efl_gfx_hint_size_min_set(ui_view, s);
+     }
+   eina_value_free(width);
+   eina_value_free(height);
 }
 
 
@@ -110,6 +127,10 @@ _efl_ui_widget_factory_building(void *data, const Efl_Event *ev)
    char *style;
 
    model = efl_ui_view_model_get(ui_view);
+
+   // Check property size only if not checked yet
+   if (!efl_key_data_get(ui_view, "efl.ui.widget.factory.size_check"))
+     _efl_ui_widget_factory_constructing(data, ev);
 
    // Bind all property before the object is finalize
    it = eina_hash_iterator_data_new(pd->parts);
@@ -154,9 +175,37 @@ _efl_ui_widget_factory_building(void *data, const Efl_Event *ev)
    eina_value_free(property);
 }
 
+static void
+_efl_ui_widget_factory_releasing(void *data, const Efl_Event *ev)
+{
+   Efl_Ui_Widget_Factory_Data *pd = data;
+   Efl_Gfx_Entity *ui_view = ev->info;
+   Efl_Ui_Bind_Part_Data *bpd;
+   Eina_Iterator *it;
+
+   efl_key_data_set(ui_view, "efl.ui.widget.factory.size_set", NULL);
+   efl_key_data_set(ui_view, "efl.ui.widget.factory.size_check", NULL);
+
+   // Bind all property before the object is finalize
+   it = eina_hash_iterator_data_new(pd->parts);
+   EINA_ITERATOR_FOREACH(it, bpd)
+     {
+        Efl_Ui_Property_Bind_Data *bppd;
+        Eina_List *l;
+
+        EINA_LIST_FOREACH(bpd->properties, l, bppd)
+          efl_ui_property_bind(efl_part(ui_view, bpd->part),
+                               bppd->part_property, NULL);
+     }
+   eina_iterator_free(it);
+
+   efl_ui_view_model_set(ui_view, NULL);
+}
+
 EFL_CALLBACKS_ARRAY_DEFINE(item_callbacks,
                            { EFL_UI_FACTORY_EVENT_ITEM_CONSTRUCTING, _efl_ui_widget_factory_constructing },
-                           { EFL_UI_FACTORY_EVENT_ITEM_BUILDING, _efl_ui_widget_factory_building })
+                           { EFL_UI_FACTORY_EVENT_ITEM_BUILDING, _efl_ui_widget_factory_building },
+                           { EFL_UI_FACTORY_EVENT_ITEM_RELEASING, _efl_ui_widget_factory_releasing })
 
 static Eo *
 _efl_ui_widget_factory_efl_object_constructor(Efl_Ui_Widget_Factory *obj,
@@ -277,10 +326,13 @@ _efl_ui_widget_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Widget_Factory_Data
 }
 
 static void
-_efl_ui_widget_factory_efl_ui_factory_release(Eo *obj EINA_UNUSED,
+_efl_ui_widget_factory_efl_ui_factory_release(Eo *obj,
                                               Efl_Ui_Widget_Factory_Data *pd EINA_UNUSED,
                                               Efl_Gfx_Entity *ui_view)
 {
+   // There might be multiple call to releasing on the same object as every factory in the
+   // inheritance chain can decide to keep it for a time
+   efl_event_callback_call(obj, EFL_UI_FACTORY_EVENT_ITEM_RELEASING, ui_view);
    // We do not cache or track this item, just get rid of them asap
    efl_del(ui_view);
 }

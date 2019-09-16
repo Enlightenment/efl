@@ -32,5 +32,6 @@ interface @beta Efl.Ui.Factory extends Efl.Ui.Property_Bind, Efl.Ui.Factory_Bind
       item,building: Efl.Gfx.Entity; [[Event triggered when an item has processed @Efl.Object.finalize, but before all the factory are done building it.
                                      Note: if the @Efl.Ui.Factory does keep a cache of object, this will be called when object are pulled out of the cache.]]
       item,created: Efl.Gfx.Entity; [[Event triggered when an item has been successfully created by the factory and is about to be used by an @Efl.Ui.View.]]
+      item,releasing: Efl.Gfx.Entity; [[Event triggered when an item is being released by the @Efl.Ui.Factory. It must be assumed that after this call, the object can be recycle to another @Efl.Ui.View and there can be more than one call for the same item.]]
    }
 }
