@@ -186,6 +186,7 @@ pub_eo_files = [
   'efl_ui_view_model.eo',
   'efl_ui_collection_view.eo',
   'efl_ui_collection_view_focus_manager.eo',
+  'efl_ui_grid_view.eo',
 ]
 
 foreach eo_file : pub_eo_files
