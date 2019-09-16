@@ -315,6 +315,8 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_tab_pager.eo.h>
 # include <efl_ui_select_model.eo.h>
 # include <efl_ui_view_model.eo.h>
+# include <efl_ui_calendar.eo.h>
+
 /**
  * Initialize Elementary
  *

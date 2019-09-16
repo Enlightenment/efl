@@ -426,7 +426,6 @@ elementary_pub_headers = [
   'elm_calendar.h',
   'elm_calendar_legacy.h',
   'elm_calendar_common.h',
-  'efl_ui_calendar.h',
   'elm_check.h',
   'efl_ui_check_eo.h',
   'elm_check_legacy.h',

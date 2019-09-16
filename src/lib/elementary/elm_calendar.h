@@ -50,6 +50,7 @@
 
 #include "elm_calendar_common.h"
 #ifndef EFL_NOLEGACY_API_SUPPORT
+#include "elm_calendar_eo.legacy.h"
 #include "elm_calendar_legacy.h"
 #endif
 /**
