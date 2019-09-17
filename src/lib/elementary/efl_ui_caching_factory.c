@@ -199,7 +199,11 @@ _efl_ui_caching_factory_efl_ui_factory_create(Eo *obj,
         r->factory = efl_ref(obj);
 
         all = calloc(1, sizeof (Eina_Future *));
-        if (!all) return efl_loop_future_rejected(obj, ENOMEM);
+        if (!all)
+          {
+             free(r);
+             return efl_loop_future_rejected(obj, ENOMEM);
+          }
 
         EINA_ITERATOR_FOREACH(models, model)
           {
@@ -209,7 +213,11 @@ _efl_ui_caching_factory_efl_ui_factory_create(Eo *obj,
                                             .data = r);
 
              all = realloc(all, (count + 1) * sizeof (Eina_Future *));
-             if (!all) return efl_loop_future_rejected(obj, ENOMEM);
+             if (!all)
+               {
+                  free(r);
+                  return efl_loop_future_rejected(obj, ENOMEM);
+               }
           }
         eina_iterator_free(models);
 
