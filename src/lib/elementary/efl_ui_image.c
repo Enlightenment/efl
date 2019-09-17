@@ -1183,6 +1183,37 @@ _efl_ui_image_efl_layout_signal_signal_emit(Eo *obj EINA_UNUSED, Efl_Ui_Image_Da
      edje_object_signal_emit(sd->img, emission, source);
 }
 
+EOLIAN static void
+_efl_ui_image_efl_layout_signal_message_send(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, int id, const Eina_Value msg)
+{
+   if (pd->edje)
+     efl_layout_signal_message_send(pd->img, id, msg);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_efl_layout_signal_signal_callback_add(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
+{
+   if (pd->edje)
+     return efl_layout_signal_callback_add(pd->img, emission, source, func_data, func, func_free_cb);
+   return EINA_FALSE;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_efl_layout_signal_signal_callback_del(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, const char *emission, const char *source, void *func_data, EflLayoutSignalCb func, Eina_Free_Cb func_free_cb)
+{
+   if (pd->edje)
+     return efl_layout_signal_callback_del(pd->img, emission, source, func_data, func, func_free_cb);
+   return EINA_FALSE;
+}
+
+EOLIAN static void
+_efl_ui_image_efl_layout_signal_signal_process(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, Eina_Bool recurse)
+{
+   if (pd->edje)
+     efl_layout_signal_process(pd->img, recurse);
+}
+
+
 EOLIAN static Eina_Size2D
 _efl_ui_image_efl_layout_group_group_size_min_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
