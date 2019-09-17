@@ -1,6 +1,12 @@
 class @beta Efl.Ui.Widget_Part_Bg extends Efl.Ui.Widget_Part implements Efl.File, Efl.Gfx.Color, Efl.Gfx.Image
 {
-   [[Elementary widget internal part background class]]
+   [[Elementary widget internal part background class
+
+     This part will proxy the calls on it to the @Efl.Ui.Bg internal object of this widget.
+     This internal object is stacked below the @Efl.Ui.Widget.resize_object and co-located with the widget.
+
+     All @Efl.Ui.Widget objects have this part, allowing the background of the widget to be customized.
+   ]]
    data: null;
    implements {
       Efl.File.file { get; set; }
