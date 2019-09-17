@@ -40,6 +40,7 @@ _comp_matte_alpha(int count, const SW_FT_Span *spans, void *user_data)
    const int pix_stride = sd->raster_buffer->stride / 4;
    Ector_Software_Buffer_Base_Data *comp = sd->comp;
    if (!comp || !comp->pixels.u32) return;
+   const int comp_stride = comp->stride / 4;
 
    // multiply the color with mul_col if any
    uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
@@ -58,7 +59,7 @@ _comp_matte_alpha(int count, const SW_FT_Span *spans, void *user_data)
      {
         uint32_t *target = buffer + ((pix_stride * spans->y) + spans->x);
         uint32_t *mtarget =
-              mbuffer + ((comp->generic->w * spans->y) + spans->x);
+              mbuffer + ((comp_stride * spans->y) + spans->x);
         uint32_t *temp = tbuffer;
         memset(temp, 0x00, sizeof(uint32_t) * spans->len);
         comp_func(temp, spans->len, color, spans->coverage);
@@ -84,6 +85,7 @@ _comp_matte_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
    const int pix_stride = sd->raster_buffer->stride / 4;
    Ector_Software_Buffer_Base_Data *comp = sd->comp;
    if (!comp || !comp->pixels.u32) return;
+   const int comp_stride = comp->stride / 4;
 
    // multiply the color with mul_col if any
    uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
@@ -102,7 +104,7 @@ _comp_matte_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
      {
         uint32_t *target = buffer + ((pix_stride * spans->y) + spans->x);
         uint32_t *mtarget =
-              mbuffer + ((comp->generic->w * spans->y) + spans->x);
+              mbuffer + ((comp_stride * spans->y) + spans->x);
         uint32_t *temp = tbuffer;
         memset(temp, 0x00, sizeof(uint32_t) * spans->len);
         comp_func(temp, spans->len, color, spans->coverage);
@@ -128,6 +130,7 @@ _comp_mask_add(int count, const SW_FT_Span *spans, void *user_data)
    Span_Data *sd = user_data;
    Ector_Software_Buffer_Base_Data *comp = sd->comp;
    if (!comp || !comp->pixels.u32) return;
+   const int comp_stride = comp->stride / 4;
 
    uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
    RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
@@ -138,7 +141,7 @@ _comp_mask_add(int count, const SW_FT_Span *spans, void *user_data)
 
    while (count--)
      {
-        uint32_t *mtarget = mbuffer + ((comp->generic->w * spans->y) + spans->x);
+        uint32_t *mtarget = mbuffer + ((comp_stride * spans->y) + spans->x);
         memset(ttarget, 0x00, sizeof(uint32_t) * spans->len);
         comp_func(ttarget, spans->len, color, spans->coverage);
         for (int i = 0; i < spans->len; i++)
@@ -153,6 +156,7 @@ _comp_mask_sub(int count, const SW_FT_Span *spans, void *user_data)
    Span_Data *sd = user_data;
    Ector_Software_Buffer_Base_Data *comp = sd->comp;
    if (!comp || !comp->pixels.u32) return;
+   const int comp_stride = comp->stride / 4;
 
    uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
    RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
@@ -163,7 +167,7 @@ _comp_mask_sub(int count, const SW_FT_Span *spans, void *user_data)
 
    while (count--)
      {
-        uint32_t *mtarget = mbuffer + ((comp->generic->w * spans->y) + spans->x);
+        uint32_t *mtarget = mbuffer + ((comp_stride * spans->y) + spans->x);
         memset(ttarget, 0x00, sizeof(uint32_t) * spans->len);
         comp_func(ttarget, spans->len, color, spans->coverage);
         for (int i = 0; i < spans->len; i++)
@@ -179,6 +183,7 @@ _comp_mask_ins(int count, const SW_FT_Span *spans, void *user_data)
    Span_Data *sd = user_data;
    Ector_Software_Buffer_Base_Data *comp = sd->comp;
    if (!comp || !comp->pixels.u32) return;
+   const int comp_stride = comp->stride / 4;
 
    uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
    RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
@@ -195,7 +200,7 @@ _comp_mask_ins(int count, const SW_FT_Span *spans, void *user_data)
                  y == (unsigned int)spans->y && count > 0)
                {
                   memset(ttarget, 0x00, sizeof(uint32_t) * spans->len);
-                  uint32_t *mtarget = mbuffer + ((comp->generic->w * spans->y) + spans->x);
+                  uint32_t *mtarget = mbuffer + ((comp_stride * spans->y) + spans->x);
                   comp_func(ttarget, spans->len, color, spans->coverage);
                   for (int c = 0; c < spans->len; c++)
                     mtarget[c] = draw_mul_256(ttarget[c]>>24, mtarget[c]);
@@ -205,7 +210,7 @@ _comp_mask_ins(int count, const SW_FT_Span *spans, void *user_data)
                }
              else
                {
-                  mbuffer[x + (comp->generic->w * y)] = (0x00FFFFFF & mbuffer[x + (comp->generic->w * y)]);
+                  mbuffer[x + (comp_stride * y)] = (0x00FFFFFF & mbuffer[x + (comp_stride * y)]);
                }
           }
      }
@@ -218,6 +223,7 @@ _comp_mask_diff(int count, const SW_FT_Span *spans, void *user_data)
    Span_Data *sd = user_data;
    Ector_Software_Buffer_Base_Data *comp = sd->comp;
    if (!comp || !comp->pixels.u32) return;
+   const int comp_stride = comp->stride / 4;
 
    uint32_t color = DRAW_MUL4_SYM(sd->color, sd->mul_col);
    RGBA_Comp_Func_Solid comp_func = efl_draw_func_solid_span_get(sd->op, color);
@@ -229,7 +235,7 @@ _comp_mask_diff(int count, const SW_FT_Span *spans, void *user_data)
    while (count--)
      {
         memset(ttarget, 0x00, sizeof(uint32_t) * spans->len);
-        uint32_t *mtarget = mbuffer + ((comp->generic->w * spans->y) + spans->x);
+        uint32_t *mtarget = mbuffer + ((comp_stride * spans->y) + spans->x);
         comp_func(ttarget, spans->len, color, spans->coverage);
         for (int i = 0; i < spans->len; i++)
           mtarget[i] = draw_mul_256(0xFF - (mtarget[i]>>24), ttarget[i]) + draw_mul_256(0xFF - (ttarget[i]>>24), mtarget[i]);
@@ -296,6 +302,7 @@ _blend_gradient_alpha(int count, const SW_FT_Span *spans, void *user_data)
 
    Ector_Software_Buffer_Base_Data *comp = sd->comp;
    uint32_t *mbuffer = comp->pixels.u32;
+   const int comp_stride = comp->stride / 4;
 
    // move to the offset location
    buffer = sd->raster_buffer->pixels.u32 + ((pix_stride * sd->offy) + sd->offx);
@@ -303,7 +310,7 @@ _blend_gradient_alpha(int count, const SW_FT_Span *spans, void *user_data)
    while (count--)
      {
         uint32_t *target = buffer + ((pix_stride * spans->y) + spans->x);
-        uint32_t *mtarget = mbuffer + ((comp->generic->w * spans->y) + spans->x);
+        uint32_t *mtarget = mbuffer + ((comp_stride * spans->y) + spans->x);
         int length = spans->len;
 
         while (length)
@@ -345,6 +352,7 @@ _blend_gradient_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
 
    Ector_Software_Buffer_Base_Data *comp = sd->comp;
    uint32_t *mbuffer = comp->pixels.u32;
+   const int comp_stride = comp->stride / 4;
 
    // move to the offset location
    buffer = sd->raster_buffer->pixels.u32 + ((pix_stride * sd->offy) + sd->offx);
@@ -352,7 +360,7 @@ _blend_gradient_alpha_inv(int count, const SW_FT_Span *spans, void *user_data)
    while (count--)
      {
         uint32_t *target = buffer + ((pix_stride * spans->y) + spans->x);
-        uint32_t *mtarget = mbuffer + ((comp->generic->w * spans->y) + spans->x);
+        uint32_t *mtarget = mbuffer + ((comp_stride * spans->y) + spans->x);
         int length = spans->len;
 
         while (length)
