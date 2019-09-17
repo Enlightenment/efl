@@ -960,6 +960,7 @@ _efl_ui_collection_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj, Efl
    Eo *man = efl_add(EFL_UI_COLLECTION_FOCUS_MANAGER_CLASS, obj,
                  efl_ui_focus_manager_root_set(efl_added, root));
    Efl_Ui_Collection_Focus_Manager_Data *fm_pd = efl_data_scope_safe_get(man, EFL_UI_COLLECTION_FOCUS_MANAGER_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fm_pd, NULL);
    fm_pd->collection = obj;
    return man;
 }
