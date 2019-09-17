@@ -297,6 +297,7 @@ EFL_START_TEST(eina_test_quaternion_normalized)
 }
 EFL_END_TEST
 
+#if 0
 EFL_START_TEST(eina_test_matrix_quaternion)
 {
    const Eina_Point_3D rt = { -2, -3, 0 };
@@ -341,6 +342,7 @@ EFL_START_TEST(eina_test_matrix_quaternion)
 
 }
 EFL_END_TEST
+#endif
 
 EFL_START_TEST(eina_test_quaternion_f16p16_lerp)
 {
@@ -517,7 +519,7 @@ eina_test_quaternion(TCase *tc)
    tcase_add_test(tc, eina_test_quaternion_set);
    tcase_add_test(tc, eina_test_quaternion_mul);
    tcase_add_test(tc, eina_test_quaternion_normalized);
-   tcase_add_test(tc, eina_test_matrix_quaternion);
+   //tcase_add_test(tc, eina_test_matrix_quaternion);
    tcase_add_test(tc, eina_test_matrix_recompose);
    tcase_add_test(tc, eina_test_quaternion_f16p16_lerp);
    tcase_add_test(tc, eina_test_quaternion_lerp);
