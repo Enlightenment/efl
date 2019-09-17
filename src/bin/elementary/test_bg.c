@@ -318,7 +318,7 @@ _image_cb(void *data, const Efl_Event *ev)
      {
         efl_file_simple_get(ev->object, &f, &k);
         o = efl_add(EFL_UI_IMAGE_CLASS, win,
-                    efl_gfx_image_scale_type_set(efl_added, EFL_GFX_IMAGE_SCALE_TYPE_EXPAND),
+                    efl_gfx_image_scale_method_set(efl_added, EFL_GFX_IMAGE_SCALE_METHOD_EXPAND),
                     efl_file_set(efl_added, f),
                     efl_file_key_set(efl_added, k)
                     );
@@ -380,7 +380,7 @@ _cb_radio_changed_scale_type(void *data, const Efl_Event *ev)
    int v = efl_ui_radio_group_selected_value_get(bx);
    if (v == -1) v = 0;
 
-   efl_gfx_image_scale_type_set(o_bg, v);
+   efl_gfx_image_scale_method_set(o_bg, v);
 }
 
 static void
@@ -437,48 +437,48 @@ test_bg_scale_type(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
                   efl_pack(box, efl_added));
 
    rd = efl_add(EFL_UI_RADIO_CLASS, hbox);
-   efl_ui_radio_state_value_set(rd, EFL_GFX_IMAGE_SCALE_TYPE_FILL);
+   efl_ui_radio_state_value_set(rd, EFL_GFX_IMAGE_SCALE_METHOD_FILL);
    efl_text_set(rd, "Fill");
    efl_gfx_hint_weight_set(rd, EFL_GFX_HINT_EXPAND, 0.0);
    efl_event_callback_add(rd, EFL_UI_EVENT_SELECTED_CHANGED, _cb_radio_changed_scale_type, o_bg);
    efl_pack(hbox, rd);
 
    rd = efl_add(EFL_UI_RADIO_CLASS, hbox);
-   efl_ui_radio_state_value_set(rd, EFL_GFX_IMAGE_SCALE_TYPE_FIT);
+   efl_ui_radio_state_value_set(rd, EFL_GFX_IMAGE_SCALE_METHOD_FIT);
    efl_text_set(rd, "Fit");
    efl_gfx_hint_weight_set(rd, EFL_GFX_HINT_EXPAND, 0.0);
    efl_event_callback_add(rd, EFL_UI_EVENT_SELECTED_CHANGED, _cb_radio_changed_scale_type, o_bg);
    efl_pack(hbox, rd);
 
    rd = efl_add(EFL_UI_RADIO_CLASS, hbox);
-   efl_ui_radio_state_value_set(rd, EFL_GFX_IMAGE_SCALE_TYPE_FIT_WIDTH);
+   efl_ui_radio_state_value_set(rd, EFL_GFX_IMAGE_SCALE_METHOD_FIT_WIDTH);
    efl_text_set(rd, "Fit Horizontally");
    efl_gfx_hint_weight_set(rd, EFL_GFX_HINT_EXPAND, 0.0);
    efl_event_callback_add(rd, EFL_UI_EVENT_SELECTED_CHANGED, _cb_radio_changed_scale_type, o_bg);
    efl_pack(hbox, rd);
 
    rd = efl_add(EFL_UI_RADIO_CLASS, hbox);
-   efl_ui_radio_state_value_set(rd, EFL_GFX_IMAGE_SCALE_TYPE_FIT_HEIGHT);
+   efl_ui_radio_state_value_set(rd, EFL_GFX_IMAGE_SCALE_METHOD_FIT_HEIGHT);
    efl_text_set(rd, "Fit Verically");
    efl_gfx_hint_weight_set(rd, EFL_GFX_HINT_EXPAND, 0.0);
    efl_event_callback_add(rd, EFL_UI_EVENT_SELECTED_CHANGED, _cb_radio_changed_scale_type, o_bg);
    efl_pack(hbox, rd);
 
    rd = efl_add(EFL_UI_RADIO_CLASS, hbox);
-   efl_ui_radio_state_value_set(rd, EFL_GFX_IMAGE_SCALE_TYPE_EXPAND);
+   efl_ui_radio_state_value_set(rd, EFL_GFX_IMAGE_SCALE_METHOD_EXPAND);
    efl_text_set(rd, "Expand");
    efl_gfx_hint_weight_set(rd, EFL_GFX_HINT_EXPAND, 0.0);
    efl_event_callback_add(rd, EFL_UI_EVENT_SELECTED_CHANGED, _cb_radio_changed_scale_type, o_bg);
    efl_pack(hbox, rd);
 
    rd = efl_add(EFL_UI_RADIO_CLASS, hbox);
-   efl_ui_radio_state_value_set(rd, EFL_GFX_IMAGE_SCALE_TYPE_TILE);
+   efl_ui_radio_state_value_set(rd, EFL_GFX_IMAGE_SCALE_METHOD_TILE);
    efl_text_set(rd, "Tile");
    efl_gfx_hint_weight_set(rd, EFL_GFX_HINT_EXPAND, 0.0);
    efl_event_callback_add(rd, EFL_UI_EVENT_SELECTED_CHANGED, _cb_radio_changed_scale_type, o_bg);
    efl_pack(hbox, rd);
 
-   efl_ui_radio_group_selected_value_set(hbox, EFL_GFX_IMAGE_SCALE_TYPE_FILL);
+   efl_ui_radio_group_selected_value_set(hbox, EFL_GFX_IMAGE_SCALE_METHOD_FILL);
 
    c = efl_add(EFL_UI_CHECK_CLASS, box);
    efl_text_set(c, "Bg Color");

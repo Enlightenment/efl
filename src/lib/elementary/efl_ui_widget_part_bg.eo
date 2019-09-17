@@ -9,6 +9,6 @@ class @beta Efl.Ui.Widget_Part_Bg extends Efl.Ui.Widget_Part implements Efl.File
       Efl.File.load;
       Efl.File.unload;
       Efl.Gfx.Color.color { set; get; }
-      Efl.Gfx.Image.scale_type { get; set; }
+      Efl.Gfx.Image.scale_method { get; set; }
    }
 }

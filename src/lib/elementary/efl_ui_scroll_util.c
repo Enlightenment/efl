@@ -81,7 +81,7 @@ _scroll_connector_edje_drag_start_cb(void *data,
 
    ctx->freeze_want = efl_ui_scrollable_scroll_freeze_get(ctx->smanager);
    efl_ui_scrollable_scroll_freeze_set(ctx->smanager, EINA_TRUE);
-   efl_event_callback_call(ctx->obj, EFL_UI_EVENT_SCROLL_DRAG_START, NULL);
+   efl_event_callback_call(ctx->obj, EFL_UI_EVENT_SCROLL_DRAG_STARTED, NULL);
 }
 
 static void
@@ -96,7 +96,7 @@ _scroll_connector_edje_drag_stop_cb(void *data,
    EINA_SAFETY_ON_TRUE_RETURN(ctx->freeze_want == -1);
    efl_ui_scrollable_scroll_freeze_set(ctx->smanager, ctx->freeze_want);
    ctx->freeze_want = -1;
-   efl_event_callback_call(ctx->obj, EFL_UI_EVENT_SCROLL_DRAG_STOP, NULL);
+   efl_event_callback_call(ctx->obj, EFL_UI_EVENT_SCROLL_DRAG_FINISHED, NULL);
 }
 
 static void

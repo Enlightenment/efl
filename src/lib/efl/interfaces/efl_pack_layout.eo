@@ -1,8 +1,8 @@
 interface @beta Efl.Pack_Layout
 {
-   [[Low-level APIs for object that can lay their children out.
+   [[Low-level APIs for objects that can lay their children out.
 
-     Used for containers (box, grid).
+     Used for containers like @Efl.Ui.Box and @Efl.Ui.Table.
    ]]
    c_prefix: efl_pack;
    methods {
@@ -19,7 +19,7 @@ interface @beta Efl.Pack_Layout
            EFL will call this function whenever the contents of this
            container need to be re-laid out on the canvas.
 
-           This can be overriden to implement custom layout behaviors.
+           This can be overridden to implement custom layout behaviors.
          ]]
       }
    }

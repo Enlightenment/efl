@@ -1428,7 +1428,7 @@ _efl_ui_image_zoomable_edje_drag_start_cb(void *data,
 
    sd->freeze_want = efl_ui_scrollable_scroll_freeze_get(sd->smanager);
    efl_ui_scrollable_scroll_freeze_set(sd->smanager, EINA_TRUE);
-   efl_event_callback_call(data, EFL_UI_EVENT_SCROLL_DRAG_START, NULL);
+   efl_event_callback_call(data, EFL_UI_EVENT_SCROLL_DRAG_STARTED, NULL);
 }
 
 static void
@@ -1442,7 +1442,7 @@ _efl_ui_image_zoomable_edje_drag_stop_cb(void *data,
    _efl_ui_image_zoomable_bar_read_and_update(data);
 
    efl_ui_scrollable_scroll_freeze_set(sd->smanager, sd->freeze_want);
-   efl_event_callback_call(data, EFL_UI_EVENT_SCROLL_DRAG_STOP, NULL);
+   efl_event_callback_call(data, EFL_UI_EVENT_SCROLL_DRAG_FINISHED, NULL);
 }
 
 static void
@@ -1837,7 +1837,7 @@ _efl_ui_image_zoomable_efl_canvas_group_group_add(Eo *obj, Efl_Ui_Image_Zoomable
    else
      edje_object_part_swallow(edje, "efl.content", priv->pan_obj);
 
-   efl_event_callback_add(obj, EFL_UI_EVENT_SCROLL, _scroll_cb, obj);
+   efl_event_callback_add(obj, EFL_UI_EVENT_SCROLL_CHANGED, _scroll_cb, obj);
 
    priv->g_layer_start = 1.0;
    priv->zoom = 1;
@@ -1902,7 +1902,7 @@ _efl_ui_image_zoomable_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Image_Zoomable
    ecore_timer_del(sd->scr_timer);
    efl_event_callback_del(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _zoom_anim_cb, obj);
    efl_event_callback_del(obj, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _bounce_eval, obj);
-   efl_event_callback_del(obj, EFL_UI_EVENT_SCROLL, _scroll_cb, obj);
+   efl_event_callback_del(obj, EFL_UI_EVENT_SCROLL_CHANGED, _scroll_cb, obj);
 
    _efl_ui_image_zoomable_edje_object_detach(obj);
    efl_del(sd->pan_obj);

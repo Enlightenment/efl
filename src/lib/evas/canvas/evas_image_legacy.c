@@ -145,14 +145,14 @@ EAPI void
 evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Border_Fill_Mode fill)
 {
    EVAS_IMAGE_API(obj);
-   efl_gfx_image_border_center_fill_set(obj, (Efl_Gfx_Border_Fill_Mode) fill);
+   efl_gfx_image_center_fill_mode_set(obj, (Efl_Gfx_Center_Fill_Mode) fill);
 }
 
 EAPI Evas_Border_Fill_Mode
 evas_object_image_border_center_fill_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EVAS_BORDER_FILL_NONE);
-   return (Evas_Border_Fill_Mode) efl_gfx_image_border_center_fill_get(obj);
+   return (Evas_Border_Fill_Mode) efl_gfx_image_center_fill_mode_get(obj);
 }
 
 EAPI void

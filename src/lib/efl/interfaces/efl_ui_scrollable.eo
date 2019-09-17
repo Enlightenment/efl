@@ -3,9 +3,9 @@ interface @beta Efl.Ui.Scrollable
    [[Efl UI scrollable interface]]
    event_prefix: efl_ui;
    events {
-      scroll,start: void; [[Called when scroll operation starts]]
-      scroll: void; [[Called when scrolling]]
-      scroll,stop: void; [[Called when scroll operation stops]]
+      scroll,started: void; [[Called when scroll operation starts]]
+      scroll,changed: void; [[Called when scrolling]]
+      scroll,finished: void; [[Called when scroll operation finishes]]
       scroll,up: void; [[Called when scrolling upwards]]
       scroll,down: void; [[Called when scrolling downwards]]
       scroll,left: void; [[Called when scrolling left]]
@@ -14,9 +14,9 @@ interface @beta Efl.Ui.Scrollable
       edge,down: void; [[Called when hitting the bottom edge]]
       edge,left: void; [[Called when hitting the left edge]]
       edge,right: void; [[Called when hitting the right edge]]
-      scroll,anim,start: void; [[Called when scroll animation starts]]
-      scroll,anim,stop: void; [[Called when scroll animation stopps]]
-      scroll,drag,start: void; [[Called when scroll drag starts]]
-      scroll,drag,stop: void; [[Called when scroll drag stops]]
+      scroll,anim,started: void; [[Called when scroll animation starts]]
+      scroll,anim,finished: void; [[Called when scroll animation finishes]]
+      scroll,drag,started: void; [[Called when scroll drag starts]]
+      scroll,drag,finished: void; [[Called when scroll drag finishes]]
    }
 }

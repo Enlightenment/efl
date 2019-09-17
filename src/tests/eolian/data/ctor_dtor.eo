@@ -23,6 +23,5 @@ class Ctor_Dtor extends Base {
    constructors {
       .custom_constructor_1;
       .custom_constructor_2 @optional;
-      .custom_constructor_3 @ctor_param;
    }
 }

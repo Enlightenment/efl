@@ -72,7 +72,7 @@ struct _Efl_Ui_Image_Data
    } async;
 
    Efl_Ui_Image_Preload_Status preload_status;
-   Efl_Gfx_Image_Scale_Type scale_type;
+   Efl_Gfx_Image_Scale_Method scale_type;
 
    const char           *stdicon;
 

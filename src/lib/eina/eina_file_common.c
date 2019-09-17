@@ -108,7 +108,7 @@ eina_file_statgen_enable(void)
 }
 
 EAPI void
-eina_file_statgen_bisable(void)
+eina_file_statgen_disable(void)
 {
    eina_spinlock_take(&_eina_statgen_lock);
    _eina_statgen = 0;

@@ -158,20 +158,20 @@ static void
 _efl_ui_scroll_manager_scroll_start(Efl_Ui_Scroll_Manager_Data *sd)
 {
    sd->scrolling = EINA_TRUE;
-   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_START, NULL);
+   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_STARTED, NULL);
 }
 
 static void
 _efl_ui_scroll_manager_scroll_stop(Efl_Ui_Scroll_Manager_Data *sd)
 {
    sd->scrolling = EINA_FALSE;
-   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_STOP, NULL);
+   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_FINISHED, NULL);
 }
 
 static void
 _efl_ui_scroll_manager_drag_start(Efl_Ui_Scroll_Manager_Data *sd)
 {
-   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_DRAG_START, NULL);
+   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_DRAG_STARTED, NULL);
    if (!sd->scrolling)
      _efl_ui_scroll_manager_scroll_start(sd);
 }
@@ -179,13 +179,13 @@ _efl_ui_scroll_manager_drag_start(Efl_Ui_Scroll_Manager_Data *sd)
 static void
 _efl_ui_scroll_manager_drag_stop(Efl_Ui_Scroll_Manager_Data *sd)
 {
-   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_DRAG_STOP, NULL);
+   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_DRAG_FINISHED, NULL);
 }
 
 static void
 _efl_ui_scroll_manager_anim_start(Efl_Ui_Scroll_Manager_Data *sd)
 {
-   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_ANIM_START, NULL);
+   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_ANIM_STARTED, NULL);
    if (!sd->scrolling)
      _efl_ui_scroll_manager_scroll_start(sd);
 }
@@ -193,7 +193,7 @@ _efl_ui_scroll_manager_anim_start(Efl_Ui_Scroll_Manager_Data *sd)
 static void
 _efl_ui_scroll_manager_anim_stop(Efl_Ui_Scroll_Manager_Data *sd)
 {
-   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_ANIM_STOP, NULL);
+   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_ANIM_FINISHED, NULL);
    if (sd->scrolling)
      _efl_ui_scroll_manager_scroll_stop(sd);
 }
@@ -201,7 +201,7 @@ _efl_ui_scroll_manager_anim_stop(Efl_Ui_Scroll_Manager_Data *sd)
 static void
 _efl_ui_scroll_manager_scroll(Efl_Ui_Scroll_Manager_Data *sd)
 {
-   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL, NULL);
+   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_CHANGED, NULL);
 }
 
 static void

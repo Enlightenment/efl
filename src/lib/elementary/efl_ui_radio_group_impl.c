@@ -65,6 +65,8 @@ static void
 _selected_cb(void *data, const Efl_Event *ev)
 {
    Efl_Ui_Radio_Group_Impl_Data *pd = efl_data_scope_safe_get(data, EFL_UI_RADIO_GROUP_IMPL_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(pd);
+
    if (efl_ui_selectable_selected_get(ev->object))
      {
         if (pd->selected)

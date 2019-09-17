@@ -7736,7 +7736,7 @@ _efl_ui_win_part_file_load(Eo *obj, Efl_Ui_Win_Data *sd, Eo *part_obj, const cha
         if (file)
           {
              bg = efl_add(EFL_UI_IMAGE_CLASS, obj);
-             efl_gfx_image_scale_type_set(bg, EFL_GFX_IMAGE_SCALE_TYPE_EXPAND);
+             efl_gfx_image_scale_method_set(bg, EFL_GFX_IMAGE_SCALE_METHOD_EXPAND);
              ok = efl_file_simple_load(bg, file, key);
              if (!ok) ELM_SAFE_DEL(bg);
              _elm_win_bg_set(sd, bg);

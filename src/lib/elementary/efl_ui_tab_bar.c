@@ -39,6 +39,8 @@ _selelction_change_cb(void *data, const Efl_Event *ev)
 {
    Efl_Ui_Tab_Bar_Data *pd = efl_data_scope_safe_get(data, MY_CLASS);
 
+   EINA_SAFETY_ON_NULL_RETURN(pd);
+
    if (!efl_ui_selectable_selected_get(ev->object))
      {
         if (pd->selected == ev->object)

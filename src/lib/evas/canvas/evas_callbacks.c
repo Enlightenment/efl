@@ -66,7 +66,7 @@ DEFINE_EVAS_CALLBACKS(_legacy_evas_callback_table, EVAS_CALLBACK_LAST,
                       EFL_GFX_IMAGE_EVENT_IMAGE_UNLOAD,
                       EFL_CANVAS_SCENE_EVENT_RENDER_PRE,
                       EFL_CANVAS_SCENE_EVENT_RENDER_POST,
-                      EFL_GFX_IMAGE_EVENT_IMAGE_RESIZE,
+                      EFL_GFX_IMAGE_EVENT_IMAGE_RESIZED,
                       EFL_CANVAS_SCENE_EVENT_DEVICE_CHANGED,
                       EFL_EVENT_POINTER_AXIS,
                       EVAS_CANVAS_EVENT_VIEWPORT_RESIZE );

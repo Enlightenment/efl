@@ -12,17 +12,17 @@ _bt_clicked(void *data EINA_UNUSED, const Efl_Event *ev)
 }
 
 static void
-_scroll_start_cb(void *data EINA_UNUSED, const Efl_Event *ev)
+_scroll_started_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    Eina_Position2D pos = efl_ui_scrollable_content_pos_get(ev->object);
    printf("scroll start: %p x: %d y: %d\n", ev->object, pos.x, pos.y);
 }
 
 static void
-_scroll_stop_cb(void *data EINA_UNUSED, const Efl_Event *ev)
+_scroll_finished_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
    Eina_Position2D pos = efl_ui_scrollable_content_pos_get(ev->object);
-   printf("scroll stop: %p x: %d y: %d\n", ev->object, pos.x, pos.y);
+   printf("scroll finish: %p x: %d y: %d\n", ev->object, pos.x, pos.y);
 }
 
 void
@@ -39,8 +39,8 @@ test_efl_ui_scroller(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
 
    sc = efl_add(EFL_UI_SCROLLER_CLASS, win,
                 efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-                efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_START, _scroll_start_cb, NULL),
-                efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_STOP, _scroll_stop_cb, NULL),
+                efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_STARTED, _scroll_started_cb, NULL),
+                efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_FINISHED, _scroll_finished_cb, NULL),
                 efl_content_set(win, efl_added));
 
    bx = efl_add(EFL_UI_BOX_CLASS, sc,
@@ -144,8 +144,8 @@ test_efl_ui_scroller_simple(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED
 
    sc = efl_add(EFL_UI_SCROLLER_CLASS, win,
                 efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-                efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_START, _scroll_start_cb, NULL),
-                efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_STOP, _scroll_stop_cb, NULL),
+                efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_STARTED, _scroll_started_cb, NULL),
+                efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_FINISHED, _scroll_finished_cb, NULL),
                 efl_content_set(win, efl_added));
 
    bx = efl_add(EFL_UI_BOX_CLASS, sc,
@@ -180,8 +180,8 @@ test_efl_ui_scroller_simple2(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 
    sc = efl_add(EFL_UI_SCROLLER_CLASS, win,
                 efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
-                efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_START, _scroll_start_cb, NULL),
-                efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_STOP, _scroll_stop_cb, NULL),
+                efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_STARTED, _scroll_started_cb, NULL),
+                efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_FINISHED, _scroll_finished_cb, NULL),
                 efl_content_set(win, efl_added));
 
    tb = efl_add(EFL_UI_TABLE_CLASS, sc,

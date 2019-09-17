@@ -1196,15 +1196,13 @@ struct constructor_def
     klass_name klass;
     function_def function;
     bool is_optional;
-    bool is_ctor_param;
 
     friend inline bool operator==(constructor_def const& lhs, constructor_def const& rhs)
     {
       return lhs.name == rhs.name
         && lhs.klass == rhs.klass
         && lhs.function == rhs.function
-        && lhs.is_optional == rhs.is_optional
-        && lhs.is_ctor_param == rhs.is_ctor_param;
+        && lhs.is_optional == rhs.is_optional;
     }
 
     friend inline bool operator!=(constructor_def const& lhs, constructor_def const& rhs)
@@ -1216,7 +1214,6 @@ struct constructor_def
         : name(::eolian_constructor_name_get(constructor))
         , klass(::eolian_constructor_class_get(constructor), {})
         , is_optional(::eolian_constructor_is_optional(constructor))
-        , is_ctor_param(::eolian_constructor_is_ctor_param(constructor))
     {
          Eolian_Function const* eo_function = ::eolian_constructor_function_get(constructor);
          Eolian_Function_Type eo_func_type = ::eolian_function_type_get(eo_function);

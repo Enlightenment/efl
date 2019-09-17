@@ -2319,6 +2319,7 @@ _elm_key_bindings_copy_missing_bindings(Elm_Config *cfg, Elm_Config *syscfg)
      {
         printf("There have been missing Key bindings in the config, config is now adjusted\n");
      }
+   eina_hash_free(safed_bindings);
 }
 
 static void

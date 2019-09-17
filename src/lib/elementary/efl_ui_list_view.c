@@ -324,7 +324,7 @@ _efl_ui_list_view_edje_drag_start_cb(void *data,
 
    pd->scrl_freeze = efl_ui_scrollable_scroll_freeze_get(pd->scrl_mgr);
    efl_ui_scrollable_scroll_freeze_set(pd->scrl_mgr, EINA_TRUE);
-   efl_event_callback_call(data, EFL_UI_EVENT_SCROLL_DRAG_START, NULL);
+   efl_event_callback_call(data, EFL_UI_EVENT_SCROLL_DRAG_STARTED, NULL);
 }
 
 static void
@@ -338,7 +338,7 @@ _efl_ui_list_view_edje_drag_stop_cb(void *data,
    _efl_ui_list_view_bar_read_and_update(data);
 
    efl_ui_scrollable_scroll_freeze_set(pd->scrl_mgr, pd->scrl_freeze);
-   efl_event_callback_call(data, EFL_UI_EVENT_SCROLL_DRAG_STOP, NULL);
+   efl_event_callback_call(data, EFL_UI_EVENT_SCROLL_DRAG_FINISHED, NULL);
 }
 
 static void

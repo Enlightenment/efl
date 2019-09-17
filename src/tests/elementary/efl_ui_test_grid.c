@@ -257,13 +257,13 @@ grid_timer_cb(void *data EINA_UNUSED, const Efl_Event *event)
 }
 
 static void
-grid_scroll_start_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
+grid_scroll_started_cb(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
   //printf("LSH :: scroll start!!!\n");
 }
 
 static void
-grid_scroll_stop_cb(void *data, const Efl_Event *event EINA_UNUSED)
+grid_scroll_finished_cb(void *data, const Efl_Event *event EINA_UNUSED)
 {
    Efl_Loop_Timer *timer = data;
    efl_del(timer);
@@ -271,8 +271,8 @@ grid_scroll_stop_cb(void *data, const Efl_Event *event EINA_UNUSED)
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(grid_scroll_callbacks,
-                           { EFL_UI_EVENT_SCROLL_START, grid_scroll_start_cb },
-                           { EFL_UI_EVENT_SCROLL_STOP, grid_scroll_stop_cb });
+                           { EFL_UI_EVENT_SCROLL_STARTED, grid_scroll_started_cb },
+                           { EFL_UI_EVENT_SCROLL_FINISHED, grid_scroll_finished_cb });
 
 EFL_START_TEST(efl_ui_grid_scroll)
 {

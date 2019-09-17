@@ -1803,6 +1803,7 @@ _elm_layout_efl_canvas_group_change(Eo *obj, Elm_Layout_Data *ld)
 
    if (!efl_finalized_get(obj)) return;
    sd = efl_data_scope_safe_get(obj, EFL_UI_LAYOUT_BASE_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN(sd);
    if (sd->frozen) return;
    ld->needs_size_calc = EINA_TRUE;
    efl_canvas_group_change(efl_super(obj, ELM_LAYOUT_MIXIN));
