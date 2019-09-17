@@ -5759,21 +5759,16 @@ _efl_ui_widget_part_bg_efl_gfx_color_color_get(const Eo *obj, void *pd EINA_UNUS
    efl_gfx_color_get(bg_obj, r, g, b, a);
 }
 
-EOLIAN static void
-_efl_ui_widget_part_bg_efl_gfx_image_scale_method_set(Eo *obj, void *pd EINA_UNUSED, Efl_Gfx_Image_Scale_Method scale_type)
+EOLIAN static Efl_Object*
+_efl_ui_widget_part_bg_efl_object_finalize(Eo *obj, void *pd EINA_UNUSED)
 {
    Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
 
-   efl_gfx_image_scale_method_set(bg_obj, scale_type);
+   efl_composite_attach(obj, bg_obj);
+
+   return efl_finalize(efl_super(obj, EFL_UI_WIDGET_PART_BG_CLASS));
 }
 
-EOLIAN static Efl_Gfx_Image_Scale_Method
-_efl_ui_widget_part_bg_efl_gfx_image_scale_method_get(const Eo *obj, void *pd EINA_UNUSED)
-{
-   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
-
-   return efl_gfx_image_scale_method_get(bg_obj);
-}
 
 typedef struct _Efl_Ui_Property_Bound Efl_Ui_Property_Bound;
 struct _Efl_Ui_Property_Bound
