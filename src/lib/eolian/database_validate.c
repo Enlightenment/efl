@@ -921,7 +921,11 @@ _db_check_implemented(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fs,
    EINA_LIST_FOREACH(cl->callables, l, impl)
      {
         const Eolian_Function *fid = impl->foo_id;
+        /* not checking beta and the function is beta: skip */
         if (!vals->unimplemented_beta && fid->base.is_beta)
+          continue;
+        /* not checking beta and the function's class is beta: skip */
+        if (!vals->unimplemented_beta && fid->klass->base.is_beta)
           continue;
         Impl_Status st = (Impl_Status)eina_hash_find(fs, &fid);
         /* found an interface this func was originally defined in in the
