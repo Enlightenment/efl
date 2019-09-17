@@ -41,15 +41,24 @@ struct _Layout_Part_Data
    unsigned char          temp;
 };
 
+static void
+_efl_ui_layout_part_set_real_part(Eo *obj, struct _Layout_Part_Data *pd, Eo *layout, const char *part)
+{
+   pd->obj = layout;
+   pd->sd = efl_data_xref(pd->obj, EFL_UI_LAYOUT_BASE_CLASS, obj);
+   eina_stringshare_replace(&pd->part, part);
+   pd->temp = 1;
+}
+
 Eo *
 _efl_ui_layout_pack_proxy_get(Efl_Ui_Layout *obj, Edje_Part_Type type, const char *part)
 {
    if (type == EDJE_PART_TYPE_BOX)
      return efl_add(BOX_CLASS, obj,
-                   efl_ui_layout_part_box_real_part_set(efl_added, obj, part));
+                   _efl_ui_layout_part_set_real_part(efl_added, efl_data_scope_get(efl_added, BOX_CLASS), obj, part));
    else if (type == EDJE_PART_TYPE_TABLE)
      return efl_add(TABLE_CLASS, obj,
-                   efl_ui_layout_part_table_real_part_set(efl_added, obj, part));
+                   _efl_ui_layout_part_set_real_part(efl_added, efl_data_scope_get(efl_added, TABLE_CLASS), obj, part));
    else
      return NULL;
 }
@@ -61,15 +70,6 @@ _efl_ui_layout_part_box_efl_object_destructor(Eo *obj, Efl_Ui_Layout_Table_Data 
    efl_data_xunref(pd->obj, pd->sd, obj);
    eina_stringshare_del(pd->part);
    efl_destructor(efl_super(obj, BOX_CLASS));
-}
-
-EOLIAN static void
-_efl_ui_layout_part_box_real_part_set(Eo *obj, Efl_Ui_Layout_Box_Data *pd, Eo *layout, const char *part)
-{
-   pd->obj = layout;
-   pd->sd = efl_data_xref(pd->obj, EFL_UI_LAYOUT_BASE_CLASS, obj);
-   eina_stringshare_replace(&pd->part, part);
-   pd->temp = 1;
 }
 
 EOLIAN static Eina_Iterator *
@@ -213,15 +213,6 @@ _efl_ui_layout_part_box_efl_ui_layout_orientable_orientation_get(const Eo *obj E
 
 
 /* Table proxy implementation */
-
-EOLIAN static void
-_efl_ui_layout_part_table_real_part_set(Eo *obj, Efl_Ui_Layout_Table_Data *pd, Eo *layout, const char *part)
-{
-   pd->obj = layout;
-   pd->sd = efl_data_xref(pd->obj, EFL_UI_LAYOUT_BASE_CLASS, obj);
-   eina_stringshare_replace(&pd->part, part);
-   pd->temp = 1;
-}
 
 EOLIAN static void
 _efl_ui_layout_part_table_efl_object_destructor(Eo *obj, Efl_Ui_Layout_Table_Data *pd)

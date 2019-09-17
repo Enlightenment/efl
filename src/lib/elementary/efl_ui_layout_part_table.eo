@@ -7,15 +7,6 @@ class @beta Efl.Ui.Layout_Part_Table extends Efl.Object implements Efl.Pack_Tabl
    ]]
    data: Efl_Ui_Layout_Table_Data;
    methods {
-      /* FIXME: Remove this. */
-      @property real_part @protected {
-          [[Real part property]]
-         set {}
-         values {
-            layout: Efl.Object; [[Real part object]]
-            part: string; [[Real part name]]
-         }
-      }
    }
    implements {
       Efl.Object.destructor;
