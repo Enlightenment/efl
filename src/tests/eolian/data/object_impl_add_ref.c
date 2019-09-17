@@ -87,4 +87,10 @@ _object_impl_add_c_get(const Eo *obj, Object_Impl_Data *pd)
 
 }
 
+EOLIAN static void
+_object_impl_add_base_constructor(Eo *obj, Object_Impl_Data *pd)
+{
+
+}
+
 #include "object_impl_add.eo.c"

@@ -12,7 +12,6 @@ typedef struct _Validate_State
 {
    Eina_Bool warned;
    Eina_Bool stable;
-   Eina_Bool unimplemented;
    Eina_Bool unimplemented_beta;
 } Validate_State;
 
@@ -913,10 +912,6 @@ _db_check_implemented(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fs,
 
    Eina_Bool succ = EINA_TRUE;
 
-   /* unimplemented checks are not enabled for any objects */
-   if (!vals->unimplemented)
-     return EINA_TRUE;
-
    /* class is beta and we didn't enable unimplemented checking for those */
    if (!vals->unimplemented_beta && cl->base.is_beta)
      return EINA_TRUE;
@@ -1476,7 +1471,6 @@ database_validate(const Eolian_Unit *src)
    Validate_State vals = {
       EINA_FALSE,
       EINA_TRUE,
-      !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_WARN"),
       !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_BETA_WARN")
    };
 
