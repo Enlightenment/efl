@@ -274,6 +274,48 @@ _efl_ui_layout_part_table_efl_pack_unpack(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Tab
    return _efl_ui_layout_table_unpack(pd->obj, pd->sd, pd->part, subobj) == subobj;
 }
 
+
+EOLIAN static Eina_Bool
+_efl_ui_layout_part_table_efl_pack_pack(Eo *obj, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity *subobj)
+{
+   int last_col, last_row;
+   int req_cols, req_rows;
+   Eina_Iterator *iter;
+   Eo *pack, *element;
+
+   pack = (Eo *) edje_object_part_object_get(pd->obj, pd->part);
+
+
+   //first lookup what the most lower / right element is
+   iter = evas_object_table_iterator_new(pack);
+   EINA_ITERATOR_FOREACH(iter, element)
+     {
+        unsigned short item_col, item_row;
+
+        evas_object_table_pack_get(pack, element, &item_col, &item_row, NULL, NULL);
+        if (item_row > last_row ||
+            (item_row == last_row && item_col > last_col))
+          {
+             last_col = item_col;
+             last_row = item_row;
+          }
+     }
+   eina_iterator_free(iter);
+
+   //now add the new element right to it, or do a linebreak and place
+   //that element in the next column on the first element
+   evas_object_table_col_row_size_get(pack, &req_cols, &req_rows);
+   last_col ++;
+   if (last_col > req_cols)
+     {
+        last_row ++;
+        last_col = 0;
+     }
+
+   return _efl_ui_layout_table_pack(obj, pd->sd, pd->part, subobj, last_col, last_row, 1, 1);
+}
+
+
 EOLIAN static Eina_Bool
 _efl_ui_layout_part_table_efl_pack_table_pack_table(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity *subobj, int col, int row, int colspan, int rowspan)
 {
