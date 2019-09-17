@@ -367,20 +367,34 @@ struct documentation_generator
       auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
       // Example embedding not requested
       if (options.examples_dir.empty()) return true;
-      std::string file_name = options.examples_dir + full_object_name + ".cs";
+      bool is_plain_code = false;
+      std::string file_name = options.examples_dir + full_object_name + ".xml";
       std::ifstream exfile(file_name);
-      // There is no example file for this class or method, just return
-      if (!exfile.good()) return true;
+      if (!exfile.good())
+        {
+           // There is no example XML file for this class, try a CS file
+           file_name = options.examples_dir + full_object_name + ".cs";
+           exfile.open(file_name);
+           // There are no example files for this class or method, just return
+           if (!exfile.good()) return true;
+           is_plain_code = true;
+        }
       std::stringstream example_buff;
       // Start with a newline so the first line renders with same indentation as the rest
       example_buff << std::endl << exfile.rdbuf();
 
       if (!as_generator(scope_tab(scope_size) << "/// ").generate(sink, attributes::unused, context)) return false;
-      if (!generate_opening_tag(sink, "example", context)) return false;
-      if (!generate_opening_tag(sink, "code", context)) return false;
+      if (is_plain_code)
+        {
+           if (!generate_opening_tag(sink, "example", context)) return false;
+           if (!generate_opening_tag(sink, "code", context)) return false;
+        }
       if (!generate_escaped_content(sink, example_buff.str(), context)) return false;
-      if (!generate_closing_tag(sink, "code", context)) return false;
-      if (!generate_closing_tag(sink, "example", context)) return false;
+      if (is_plain_code)
+        {
+           if (!generate_closing_tag(sink, "code", context)) return false;
+           if (!generate_closing_tag(sink, "example", context)) return false;
+        }
       return as_generator("\n").generate(sink, attributes::unused, context);
    }
 
