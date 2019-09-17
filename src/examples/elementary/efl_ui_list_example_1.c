@@ -240,10 +240,6 @@ elm_main(int argc EINA_UNUSED, char **argv)
    efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_MODE_SINGLE);
    efl_pack_end(bbox, radio);
    radio = efl_add(EFL_UI_RADIO_CLASS, wbox);
-   efl_text_set(radio, "SINGLE_ALWAYS");
-   efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_MODE_SINGLE_ALWAYS);
-   efl_pack_end(bbox, radio);
-   radio = efl_add(EFL_UI_RADIO_CLASS, wbox);
    efl_text_set(radio, "MULTI");
    efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_MODE_MULTI);
    efl_pack_end(bbox, radio);

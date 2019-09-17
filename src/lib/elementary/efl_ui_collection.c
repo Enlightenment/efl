@@ -486,7 +486,7 @@ EOLIAN static void
 _efl_ui_collection_efl_ui_multi_selectable_select_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd, Efl_Ui_Select_Mode mode)
 {
    pd->mode = mode;
-   if ((mode == EFL_UI_SELECT_MODE_SINGLE_ALWAYS || mode == EFL_UI_SELECT_MODE_SINGLE) &&
+   if ((mode == EFL_UI_SELECT_MODE_SINGLE) &&
        eina_list_count(pd->selected) > 0)
      {
         Efl_Ui_Item *last = eina_list_last_data_get(pd->selected);
@@ -569,7 +569,7 @@ _selection_changed(void *data, const Efl_Event *ev)
 
    if (selection)
      {
-        if (pd->mode == EFL_UI_SELECT_MODE_SINGLE_ALWAYS || pd->mode == EFL_UI_SELECT_MODE_SINGLE)
+        if (pd->mode == EFL_UI_SELECT_MODE_SINGLE)
           {
              _single_selection_behaviour(obj, pd, ev->object);
           }
