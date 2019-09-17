@@ -48,6 +48,7 @@ void
 evas_object_intercept_cleanup(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   if (!obj) return;
    if (obj->interceptors) free(obj->interceptors);
 }
 
