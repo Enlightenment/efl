@@ -281,9 +281,8 @@ interface @beta Efl.Gfx.Image
       }
    }
    events {
-      image,preload: void; [[Image data has been preloaded.]]
+      image,preload_state,changed: bool; [[If $true, image data has been preloaded and can be displayed.
+                                           If $false, the image data has been unloaded and can no longer be displayed.]]
       image,resized: Eina.Size2D;  [[Image was resized (its pixel data). The event data is the image's new size.]]
-      image,unload: void;  [[Image data has been unloaded (by some mechanism in
-                       EFL that threw out the original image data).]]
    }
 }

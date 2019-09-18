@@ -7,6 +7,10 @@ EWAPI const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_SHOW =
    EFL_EVENT_DESCRIPTION("show");
 EWAPI const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_HIDE =
    EFL_EVENT_DESCRIPTION("hide");
+EWAPI const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_IMAGE_PRELOAD =
+   EFL_EVENT_DESCRIPTION("preload");
+EWAPI const Efl_Event_Description _EFL_GFX_ENTITY_EVENT_IMAGE_UNLOAD =
+   EFL_EVENT_DESCRIPTION("unload");
 /* END: events to maintain compatibility with legacy */
 
 /* local calls */
@@ -94,8 +98,9 @@ evas_object_inform_call_image_preloaded(Evas_Object *eo_obj)
           and mimic as it finished preloading done. */
        (preload & EVAS_IMAGE_PRELOAD_CANCEL))
      {
+        Eina_Bool val = EINA_TRUE;
         event_id = _evas_object_event_new();
-        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_IMAGE_PRELOADED, NULL, event_id, EFL_GFX_IMAGE_EVENT_IMAGE_PRELOAD);
+        evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_IMAGE_PRELOADED, &val, event_id, EFL_GFX_IMAGE_EVENT_IMAGE_PRELOAD);
         _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
      }
 }
@@ -105,8 +110,9 @@ evas_object_inform_call_image_unloaded(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    int event_id = _evas_object_event_new();
+   Eina_Bool val = EINA_FALSE;
 
-   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_IMAGE_UNLOADED, NULL, event_id, EFL_GFX_IMAGE_EVENT_IMAGE_UNLOAD);
+   evas_object_event_callback_call(eo_obj, obj, EVAS_CALLBACK_IMAGE_UNLOADED, &val, event_id, EFL_GFX_IMAGE_EVENT_IMAGE_UNLOAD);
    _evas_post_event_callback_call(obj->layer->evas->evas, obj->layer->evas, event_id);
 }
 
