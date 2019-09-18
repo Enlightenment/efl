@@ -139,8 +139,6 @@ ecore_src = [
   'efl_container_model.c',
   'efl_composite_model.c',
   'efl_boolean_model.c',
-  'efl_model_accessor_view.c',
-  'efl_model_accessor_view_private.h',
   'efl_filter_model.c',
   'efl_linear_interpolator.c',
   'efl_accelerate_interpolator.c',
