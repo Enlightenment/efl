@@ -39,13 +39,13 @@ mixin @beta Efl.ThreadIO
             data: void_ptr; [[Data pointer.]]
          }
       }
-      call {
+      call @pure_virtual {
          [[Executes a method on a different thread, asynchronously.]]
          params {
             func: EflThreadIOCall; [[The method to execute asynchronously.]]
          }
       }
-      call_sync {
+      call_sync @pure_virtual {
          [[Executes a method on a different thread, synchronously.
            This call will not return until the method finishes and its return value can be recovered.
          ]]
