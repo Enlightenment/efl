@@ -1,9 +1,11 @@
 class @beta Efl.Appthread extends Efl.Loop
                           implements Efl.ThreadIO, Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Efl.Core.Command_Line
 {
-   [[@Efl.Appthread object created to house the thread and run the loop.
-     @Efl.Appthread also Inherits from @Efl.Loop, @Efl.Io and @Efl.Task
-     So it works almost the same as Efl.App but misses some of the process-global controls from @Efl.App.]]
+   [[This class houses the application's thread and main loop.
+     It works similarly to @Efl.App but allows communicating with it from a different thread
+     through the @Efl.ThreadIO, @Efl.Io.Reader and @Efl.Io.Writer interfaces.
+     Methods can be scheduled to be executed in this thread using @Efl.ThreadIO.call and @Efl.ThreadIO.call_sync.
+   ]]
    methods {
    }
    events {
