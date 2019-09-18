@@ -42,8 +42,6 @@ EFL_START_TEST(elm_atspi_role_get)
 }
 EFL_END_TEST
 
-#if 0
-
 static Eina_Bool
 timer_expired_cb(void *user_data)
 {
@@ -147,13 +145,10 @@ EFL_START_TEST(elm_fileselector_selected)
 }
 EFL_END_TEST
 
-#endif
-
 void elm_test_fileselector(TCase *tc)
 {
    tcase_add_test(tc, elm_fileselector_legacy_type_check);
    tcase_add_test(tc, elm_atspi_role_get);
-   //FIXME this should be reenabled when issues on travis are fixed with this.
-   //tcase_add_test(tc, elm_fileselector_selected);
+   tcase_add_test(tc, elm_fileselector_selected);
 }
 
