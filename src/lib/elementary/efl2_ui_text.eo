@@ -96,19 +96,7 @@ class @beta Efl2.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickab
             scroll: bool; [[$true to enable scrolling. Default is $false.]]
          }
       }
-      @property context_menu_disabled {
-         set {
-            [[This disables the entry's contextual (longpress) menu.]]
-         }
-         get {
-            [[This returns whether the entry's contextual (longpress) menu is
-              disabled.
-            ]]
-         }
-         values {
-            disabled: bool; [[If $true, the menu is disabled.]]
-         }
-      }
+
       @property cnp_mode {
          /* FIXME: Efl2.Ui.Selection_Format does not allow markup without images! */
          set {
@@ -154,6 +142,20 @@ class @beta Efl2.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickab
             disabled: bool; [[If $true, the selection handlers are disabled.]]
          }
       }
+
+      @property context_menu_disabled {
+         set {
+            [[This disables the entry's contextual (longpress) menu.]]
+         }
+         get {
+            [[This returns whether the entry's contextual (longpress) menu is
+              disabled.
+            ]]
+         }
+         values {
+            disabled: bool; [[If $true, the menu is disabled.]]
+         }
+      }
       context_menu_clear {
          [[This clears and frees the items in a entry's contextual (longpress)
            menu.
@@ -178,6 +180,7 @@ class @beta Efl2.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickab
          params {
             @in label: string @optional; [[The item's text label.]]
             @in icon_file: string @optional; [[The item's icon file.]]
+            // FIXME: What should be done with this one?
             @in icon_type: Elm.Icon.Type; [[The item's icon type.]]
             @in func: Evas_Smart_Cb @optional; [[The callback to execute when the item is clicked.]]
             @in data: const(void_ptr) @optional; [[The data to associate with the item for related functions.]]
