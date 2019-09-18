@@ -175,7 +175,7 @@ _efl_generic_model_efl_model_child_del(Eo *obj, Efl_Generic_Model_Data *sd, Eo *
      {
         if (data == child)
           {
-             Efl_Model_Children_Event cevt;
+             Efl_Model_Children_Event cevt = { 0 };
 
              sd->childrens = eina_list_remove_list(sd->childrens, l);
 
