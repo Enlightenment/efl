@@ -1,7 +1,3 @@
-// How does this work with annotations? Does it strdup? Or whate? I like the idea of having helper functions for annotations
-// this feels a bit verbose though, and it looks like it's on the object, which is hm... Not perfect.
-// Bitmap scalable feels off
-
 type @beta Efl2.Font.Size: int; [[Efl font size type]]
 
 enum @beta Efl2.Text.Font.Weight {

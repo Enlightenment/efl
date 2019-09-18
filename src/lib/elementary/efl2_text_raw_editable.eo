@@ -110,6 +110,8 @@ class @beta Efl2.Text.Raw_Editable extends Efl2.Canvas.Text {
       }
    }
    events {
+      // FIXME: All of these signals will be under this namespace, which is wrong. I guess as part of the composite object changes this will have to change.
+
       // FIXME: add docs: used for filtering. You are meant to edit the event_info. So e.g. to block a change set content to "", or replace it (and free the existing) to filter.
       // How do we feel about this change? Maybe cumbersome? Better way? Problematic also with ownership of strings.
       // Maybe instead of filtering the string directly we could have functions on the object that let us manipulate it? Better API.
