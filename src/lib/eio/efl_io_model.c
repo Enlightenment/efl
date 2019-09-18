@@ -712,6 +712,12 @@ _efl_io_model_efl_model_property_set(Eo *obj,
    return efl_loop_future_rejected(obj, err);
 }
 
+static Eina_Bool
+_monitor_has_context(Efl_Io_Model_Data *pd, const char *path)
+{
+   return eio_monitor_has_context(pd->monitor, path);
+}
+
 static void
 _efl_io_model_children_list(void *data, Eina_Array *entries)
 {
@@ -729,6 +735,7 @@ _efl_io_model_children_list(void *data, Eina_Array *entries)
      {
         Efl_Io_Model_Info *mi;
 
+        if (!_monitor_has_context(pd, info->path)) continue;
         if (_already_added(pd, info->path)) continue;
 
         if (pd->filter.cb)

@@ -491,7 +491,9 @@ void eio_monitor_shutdown(void);
 void eio_monitor_backend_shutdown(void);
 void eio_monitor_fallback_shutdown(void);
 void eio_monitor_backend_add(Eio_Monitor *monitor);
+Eina_Bool eio_monitor_context_check(const Eio_Monitor *monitor, const char *path);
 void eio_monitor_fallback_add(Eio_Monitor *monitor);
+Eina_Bool eio_monitor_fallback_context_check(const Eio_Monitor *monitor, const char *path);
 
 void eio_monitor_backend_del(Eio_Monitor *monitor);
 void eio_monitor_fallback_del(Eio_Monitor *monitor);

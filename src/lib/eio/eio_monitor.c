@@ -404,3 +404,17 @@ eio_monitor_path_get(Eio_Monitor *monitor)
    EINA_SAFETY_ON_NULL_RETURN_VAL(monitor, NULL);
    return monitor->path;
 }
+
+
+EAPI Eina_Bool
+eio_monitor_has_context(const Eio_Monitor *monitor, const char *path)
+{
+   if (monitor->fallback)
+     {
+        return eio_monitor_fallback_context_check(monitor, path);
+     }
+   else
+     {
+        return eio_monitor_context_check(monitor, path);
+     }
+}
