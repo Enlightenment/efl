@@ -447,5 +447,23 @@ _efl_ui_layout_part_table_efl_pack_table_table_rows_get(const Eo *obj EINA_UNUSE
    return rows;
 }
 
+EOLIAN static void
+_efl_ui_layout_part_table_efl_pack_table_table_rows_set(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd EINA_UNUSED, int rows EINA_UNUSED)
+{
+   ERR("This API is currently not supported on table parts");
+}
+
+EOLIAN static void
+_efl_ui_layout_part_table_efl_pack_table_table_columns_set(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd EINA_UNUSED, int cols EINA_UNUSED)
+{
+   ERR("This API is currently not supported on table parts");
+}
+
+EOLIAN static void
+_efl_ui_layout_part_table_efl_pack_table_table_size_set(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Table_Data *pd EINA_UNUSED, int cols EINA_UNUSED, int rows EINA_UNUSED)
+{
+   ERR("This API is currently not supported on table parts");
+}
+
 #include "efl_ui_layout_part_box.eo.c"
 #include "efl_ui_layout_part_table.eo.c"

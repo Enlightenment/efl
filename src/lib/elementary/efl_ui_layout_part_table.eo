@@ -21,8 +21,8 @@ class Efl.Ui.Layout_Part_Table extends Efl.Object implements Efl.Pack_Table
       Efl.Pack_Table.table_contents_get;
       Efl.Pack_Table.table_cell_column { get; set; }
       Efl.Pack_Table.table_cell_row { get; set; }
-      Efl.Pack_Table.table_size { get; }
-      Efl.Pack_Table.table_columns { get; }
-      Efl.Pack_Table.table_rows { get; }
+      Efl.Pack_Table.table_size { get; set; }
+      Efl.Pack_Table.table_columns { get; set; }
+      Efl.Pack_Table.table_rows { get; set; }
    }
 }
