@@ -16,7 +16,7 @@
 #define MY_CLASS_NAME "Efl.Ui.Grid_View"
 
 EOLIAN static Eo *
-_efl_ui_grid_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
+_efl_ui_grid_view_efl_object_constructor(Eo *obj, void *pd EINA_UNUSED)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
 
