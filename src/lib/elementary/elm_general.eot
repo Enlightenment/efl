@@ -45,6 +45,8 @@ struct @extern Elm.Entry_Anchor_Info; [[The info sent in the callback for the "a
 struct @extern Elm.Entry_Anchor_Hover_Info; [[The info sent in the callback for "anchor,hover" signals emitted
                                               by the Anchor_Hover widget]]
 
+
+// FIXME: remove the rest
 enum Elm.Input.Panel.Layout
 {
    [[Input panel (virtual keyboard) layout types.
