@@ -183,6 +183,7 @@ pub_eo_files = [
   'efl_ui_single_selectable.eo',
   'efl_ui_position_manager_data_access_v1.eo',
 
+  'efl2_input_text.eo',
   'efl2_ui_text.eo',
   'efl2_ui_label.eo',
   'efl2_text_raw_editable.eo',
