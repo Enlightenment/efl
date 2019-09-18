@@ -64,11 +64,9 @@ _prepare_comp(Evas_Object_Protected_Data *obj,     //vector object
    uint32_t init_buffer = 0x0;
 
    //1. Composite Size
-   Eina_Rect mbound;
-   mbound.x = 0;
-   mbound.y = 0;
-   mbound.w = obj->cur->geometry.w;
-   mbound.h = obj->cur->geometry.h;
+   Eina_Size2D size;
+   size.w = obj->cur->geometry.w;
+   size.h = obj->cur->geometry.h;
 
    //FIXME: If composite method is SUBSTRACT or INTERSECT, buffer fills in white color(Full alpha color).
    if (pd->comp.method == EFL_GFX_VG_COMPOSITE_METHOD_MASK_SUBSTRACT ||
@@ -77,8 +75,8 @@ _prepare_comp(Evas_Object_Protected_Data *obj,     //vector object
 
    //2. Reusable ector buffer?
    if (pd->comp.buffer &&
-       ((pd->comp.bound.w != mbound.w) ||
-       (pd->comp.bound.h != mbound.h)))
+       ((pd->comp.size.w != size.w) ||
+       (pd->comp.size.h != size.h)))
 
      {
         if (pd->comp.pixels)
@@ -90,13 +88,13 @@ _prepare_comp(Evas_Object_Protected_Data *obj,     //vector object
    if (!pd->comp.buffer)
      {
         pd->comp.buffer = ENFN->ector_buffer_new(ENC, obj->layer->evas->evas,
-                                                 mbound.w, mbound.h,
+                                                 size.w, size.h,
                                                  EFL_GFX_COLORSPACE_ARGB8888,
                                                  ECTOR_BUFFER_FLAG_DRAWABLE |
                                                  ECTOR_BUFFER_FLAG_CPU_READABLE |
                                                  ECTOR_BUFFER_FLAG_CPU_WRITABLE);
-        pd->comp.bound.w = mbound.w;
-        pd->comp.bound.h = mbound.h;
+        pd->comp.size.w = size.w;
+        pd->comp.size.h = size.h;
         pd->comp.vg_pd = obj;
 
         //Map
@@ -104,7 +102,7 @@ _prepare_comp(Evas_Object_Protected_Data *obj,     //vector object
                                            (ECTOR_BUFFER_FLAG_DRAWABLE |
                                             ECTOR_BUFFER_FLAG_CPU_READABLE |
                                             ECTOR_BUFFER_FLAG_CPU_WRITABLE),
-                                           0, 0, mbound.w, mbound.h,
+                                           0, 0, size.w, size.h,
                                            EFL_GFX_COLORSPACE_ARGB8888,
                                            &pd->comp.stride);
         if (!pd->comp.pixels) ERR("Failed to map VG composite buffer");
@@ -114,9 +112,6 @@ _prepare_comp(Evas_Object_Protected_Data *obj,     //vector object
         if (pd->comp.pixels)
           memset(pd->comp.pixels, init_buffer, pd->comp.length);
      }
-
-   pd->comp.bound.x = mbound.x;
-   pd->comp.bound.y = mbound.y;
 
    if (!pd->comp.buffer) ERR("Composite Buffer is invalid");
 
@@ -143,9 +138,9 @@ _prepare_comp(Evas_Object_Protected_Data *obj,     //vector object
                        ptransform, comp, comp_method);
 
    //4. Generating Composite Image.
-   ector_buffer_pixels_set(surface, pd->comp.pixels, mbound.w, mbound.h, pd->comp.stride,
+   ector_buffer_pixels_set(surface, pd->comp.pixels, size.w, size.h, pd->comp.stride,
                            EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
-   ector_surface_reference_point_set(surface, -mbound.x, -mbound.y);
+   ector_surface_reference_point_set(surface, 0, 0);
    _draw_comp(obj, comp_target, surface, engine, output, context);
 
    return pd->comp.buffer;
