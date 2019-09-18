@@ -94,6 +94,7 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
       // FIXME: updatedocs + am I happy with this?
       // Probably used when using theme and then retheming without changing use configuration...
       // Maybe have priorities built in rather than naming?
+      // Maybe do peep/pop/push instead?
       @property style {
          [[The text style of the object.
 
