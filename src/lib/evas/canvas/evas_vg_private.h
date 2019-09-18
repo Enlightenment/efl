@@ -86,7 +86,7 @@ typedef struct _Vg_Composite
    void *pixels;                           //Composite pixel buffer (actual data)
    unsigned int length;                    //pixel buffer data size
    unsigned int stride;                    //pixel buffer stride
-   Eina_Rect bound;                        //Composite boundary
+   Eina_Size2D size;                       //Composite boundary
    Eina_List *src;                         //Composite Sources
    Efl_Gfx_Vg_Composite_Method method;     //Composite Method
 } Vg_Comp;
