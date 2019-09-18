@@ -187,6 +187,8 @@ pub_eo_files = [
   'efl_ui_collection_view.eo',
   'efl_ui_collection_view_focus_manager.eo',
   'efl_ui_grid_view.eo',
+
+  'efl2_input_text.eo',
   'efl2_ui_text.eo',
   'efl2_ui_label.eo',
   'efl2_text_raw_editable.eo',
