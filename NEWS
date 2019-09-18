@@ -1,6 +1,19 @@
 ==========
-EFL 1.22.4
+EFL 1.22.5
 ==========
+Changes since 1.22.4:
+---------------------
+
+Features:
+
+
+Fixes:
+
+   * fix a bunch of breaks that having a blind file unload has brought
+   * fix xpm loader to be threadable - fixes so much stuff...
+   * efl: check file's mtime in efl.file::file_set to determine if file is the same
+
+
 Changes since 1.22.3:
 ---------------------
 
