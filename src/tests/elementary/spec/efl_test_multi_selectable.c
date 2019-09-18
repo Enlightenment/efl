@@ -18,15 +18,6 @@
    spec-meta-end */
 
 static void
-_set_pointer_quit(void *data, const Efl_Event *ev)
-{
-   Efl_Ui_Item **b = data;
-
-   ck_assert_ptr_eq(*b, NULL);
-   *b = ev->info;
-}
-
-static void
 _iterator_to_array(Eina_Array **arr, Eina_Iterator *iter)
 {
    Efl_Ui_Widget *widget;
@@ -137,31 +128,26 @@ EFL_END_TEST
 
 EFL_START_TEST(test_none_select)
 {
-   Efl_Ui_Item *selected = NULL;
-   Efl_Ui_Item *unselected = NULL;
    Eina_Array *arr_selected;
+   int c = 0;
 
    efl_ui_select_mode_set(widget, EFL_UI_SELECT_MODE_NONE);
-   efl_event_callback_add(widget, EFL_UI_EVENT_ITEM_SELECTED, _set_pointer_quit, &selected);
-   efl_event_callback_add(widget, EFL_UI_EVENT_ITEM_UNSELECTED, _set_pointer_quit, &unselected);
+   efl_event_callback_add(widget, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, (void*) event_callback_single_call_int_data, &c);
+   efl_event_callback_add(widget, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, event_callback_that_quits_the_main_loop_when_called, NULL);
 
    efl_ui_selectable_selected_set(efl_pack_content_get(widget, 0), EINA_TRUE);
-   ck_assert_ptr_eq(selected, NULL);
-   ck_assert_ptr_eq(unselected, NULL);
-   selected = NULL;
-   unselected = NULL;
+   get_me_to_those_events(widget);
+   ck_assert_int_eq(c, 0);
    efl_ui_selectable_selected_set(efl_pack_content_get(widget, 2), EINA_TRUE);
-   ck_assert_ptr_eq(selected, NULL);
-   ck_assert_ptr_eq(unselected, NULL);
-   selected = NULL;
-   unselected = NULL;
+   get_me_to_those_events(widget);
+   ck_assert_int_eq(c, 0);
    ck_assert_int_eq(efl_ui_selectable_selected_get(efl_pack_content_get(widget, 0)), EINA_FALSE);
    ck_assert_int_eq(efl_ui_selectable_selected_get(efl_pack_content_get(widget, 2)), EINA_FALSE);
    ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(widget), NULL);
    _iterator_to_array(&arr_selected, efl_ui_selected_items_get(widget));
    ck_assert_int_eq(eina_array_count(arr_selected), 0);
-   efl_event_callback_del(widget, EFL_UI_EVENT_ITEM_SELECTED, _set_pointer_quit, &selected);
-   efl_event_callback_del(widget, EFL_UI_EVENT_ITEM_UNSELECTED, _set_pointer_quit, &unselected);
+   efl_event_callback_del(widget, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, (void*) event_callback_single_call_int_data, &c);
+   efl_event_callback_del(widget, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, event_callback_that_quits_the_main_loop_when_called, NULL);
 }
 EFL_END_TEST
 
