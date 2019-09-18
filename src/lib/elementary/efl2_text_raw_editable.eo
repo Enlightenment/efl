@@ -23,7 +23,7 @@ struct @beta Efl2.Text.Change_Info {
 
   - missing a lot of IMF/etc functions
 */
-class @beta Efl2.Text.Raw_Editable extends Efl2.Canvas.Text {
+class @beta Efl2.Text.Raw_Editable extends Efl2.Canvas.Text implements Efl2.Input.Text {
    methods {
       @property editable {
          [[Whether the entry is editable.
