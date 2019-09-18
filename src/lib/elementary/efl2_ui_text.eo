@@ -353,10 +353,6 @@ class @beta Efl2.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickab
             @in data: const(void_ptr) @optional; [[The data to associate with the item for related functions.]]
          }
       }
-      cursor_new {
-         [[Creates and returns a new cursor for the text.]]
-         return: ptr(Efl.Text_Cursor_Cursor); [[Text cursor]]
-      }
    }
    implements {
       Efl.Object.constructor;
