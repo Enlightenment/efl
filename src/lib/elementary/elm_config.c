@@ -1704,6 +1704,11 @@ _config_system_load(void)
         EINA_SAFETY_ON_FALSE_RETURN_VAL(eet_data_undump(ef, "config", embedded_config, strlen(embedded_config)-1, EINA_FALSE), NULL);
         eet_close(ef);
         ef = eet_open(tmp, EET_FILE_MODE_READ);
+        if (!ef)
+          {
+             ERR("Failed to load a fallback config file.");
+             return NULL;
+          }
         cfg = eet_data_read(ef, _config_edd, "config");
         eet_close(ef);
      }
