@@ -423,6 +423,11 @@ void eio_monitor_backend_del(Eio_Monitor *monitor)
    monitor->backend = NULL;
 }
 
+Eina_Bool eio_monitor_context_check(const Eio_Monitor *monitor, const char *path)
+{
+   return EINA_TRUE;
+}
+
 
 /**
  * @endcond

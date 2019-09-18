@@ -315,6 +315,12 @@ void eio_monitor_backend_del(Eio_Monitor *monitor)
 {
   eio_monitor_fallback_del(monitor);
 }
+
+Eina_Bool eio_monitor_content_check(const Eio_Monitor *monitor, const char *path)
+{
+   return eio_monitor_fallback_content_check(monitor, path);
+}
+
 #endif
 
 void
@@ -328,6 +334,15 @@ eio_monitor_fallback_shutdown(void)
 {
    eina_hash_free(timer_hash);
    timer_hash = NULL;
+}
+
+Eina_Bool
+eio_monitor_fallback_context_check(const Eio_Monitor *monitor, const char *path)
+{
+   Eio_Monitor_Backend *backend;
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(monitor->fallback, EINA_TRUE);
+   backend = monitor->backend;
+   return !!eina_hash_find(backend->children, path);
 }
 
 void
