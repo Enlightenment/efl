@@ -51,6 +51,25 @@ static const Elm_Action key_actions[] = {
 };
 
 static void
+_check_legacy_event(Eo *obj)
+{
+   EFL_UI_CHECK_DATA_GET(obj, pd);
+   if (pd->selected)
+     {
+        if (pd->legacy_changed_emitted_select) return;
+        pd->legacy_changed_emitted_select = EINA_TRUE;
+        pd->legacy_changed_emitted_unselect = EINA_FALSE;
+     }
+   else
+     {
+        if (pd->legacy_changed_emitted_unselect) return;
+        pd->legacy_changed_emitted_unselect = EINA_TRUE;
+        pd->legacy_changed_emitted_select = EINA_FALSE;
+     }
+   evas_object_smart_callback_call(obj, "changed", NULL);
+}
+
+static void
 _activate(Evas_Object *obj)
 {
    // state will be changed by the later call to the selected_set call
@@ -97,8 +116,7 @@ _activate(Evas_Object *obj)
    // "efl,state,check,on" or "efl,state,check,off" for eo-api
    efl_ui_selectable_selected_set(obj, !efl_ui_selectable_selected_get(obj));
    if (elm_widget_is_legacy(obj))
-     evas_object_smart_callback_call(obj, "changed", NULL);
-
+     _check_legacy_event(obj);
    if (_elm_config->atspi_mode)
      efl_access_state_changed_signal_emit(obj,
                                           EFL_ACCESS_STATE_TYPE_CHECKED,
@@ -231,6 +249,8 @@ _on_check_off(void *data,
    Evas_Object *obj = data;
 
    _flush_selected(obj, EINA_FALSE);
+   if (elm_widget_is_legacy(obj))
+     _check_legacy_event(obj);
 }
 
 static void
@@ -242,6 +262,8 @@ _on_check_on(void *data,
    Evas_Object *obj = data;
 
    _flush_selected(obj, EINA_TRUE);
+   if (elm_widget_is_legacy(obj))
+     _check_legacy_event(obj);
 }
 
 static void
