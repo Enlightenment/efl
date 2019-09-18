@@ -1,48 +1,61 @@
 import efl_object;
 
 function @beta EflThreadIOCall {
-   [[ A Function to call on the "other end" of a thread obvject ]]
+   [[ A Function to call on the "other end" of a thread object ]]
    params {
-      @in event: const(event); [[ ]]
+      @in event: const(event); [[Event struct with an EFL_LOOP_HANDLER_CLASS as info]]
    }
 };
 
 function @beta EflThreadIOCallSync {
-   [[ A Function to call on the "other end" of a thread obvject ]]
+   [[ A Function to call on the "other end" of a thread object ]]
    params {
-      @in event: const(event); [[ ]]
+      @in event: const(event); [[Event struct with an EFL_LOOP_HANDLER_CLASS as info]]
    }
-   return: void_ptr; [[ ]]
+   return: void_ptr; [[The "other end" of a thread object's data]]
 };
 
 mixin @beta Efl.ThreadIO
 {
-   [[ ]]
+   [[This adds a simple indata and outdata void ptr to begin that you can
+     set on @Efl.Thread objects (set the indata) and get the outdata too to
+     get results. then on the efl.appthread side the indata is set on the
+     @Efl.Appthread before it runs and on quit the thread can set the
+     outdata on the appthread, and this appears back on the @Efl.Thread
+     object in the parent thread.
+
+     So you can basically share pointers to anything in and out this way on
+     start/exit in addition to string args etc.
+   ]]
    methods {
       @property indata {
+         [[Sets/gets on Efl.Thread object's indata.]]
          set { }
          get { }
          values {
-            data: void_ptr; [[ ]]
+            data: void_ptr; [[Pointer data set to indata.]]
          }
       }
       @property outdata {
+         [[Sets/gets on Efl.Thread object's outdata.]]
          set { }
          get { }
          values {
-            data: void_ptr; [[ ]]
+            data: void_ptr; [[Pointer data set to outdata.]]
          }
       }
       call {
+         [[Write a command as async.]]
          params {
-            func: EflThreadIOCall; [[ ]]
+            func: EflThreadIOCall; [[A Function to call on the "other end" of a thread object]]
          }
       }
       call_sync {
+         [[Write a command as sync.]]
          params {
-            func: EflThreadIOCallSync; [[ ]]
+            func: EflThreadIOCallSync; [[A Function to call on the "other end" of a thread object]]
          }
-         return: void_ptr; [[ ]]
+         return: void_ptr; [[The "other end" of a thread object's data]]
       }
    }
    events {
