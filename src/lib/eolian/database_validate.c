@@ -865,6 +865,22 @@ _extend_impl(Eina_Hash *fs, Eolian_Implement *impl, Eina_Bool as_iface)
    return !st;
 }
 
+/* fills a complete set of stuff implemented or inherited on a class
+ * this is used to check whether to auto-add composited interfaces into
+ * implemented/extended list
+ */
+static void
+_db_fill_ihash(Eolian_Class *icl, Eina_Hash *icls)
+{
+   if (icl->parent)
+     _db_fill_ihash(icl->parent, icls);
+   Eina_List *l;
+   Eolian_Class *sicl;
+   EINA_LIST_FOREACH(icl->extends, l, sicl)
+     _db_fill_ihash(sicl, icls);
+   eina_hash_set(icls, &icl, icl);
+}
+
 static void
 _db_fill_callables(Eolian_Class *cl, Eolian_Class *icl, Eina_Hash *fs, Eina_Bool parent)
 {
@@ -1084,13 +1100,6 @@ _db_swap_inherit(Eolian_Class *cl, Eina_Bool succ, Eina_Stringshare *in_cl,
         succ = EINA_FALSE;
         _eo_parser_log(&cl->base, "non-interface class '%s' in composite list", icl->base.name);
      }
-   else if (iface_only && !_get_impl_class(cl, icl->base.name))
-     {
-        /* TODO: optimize check using a lookup hash later */
-        succ = EINA_FALSE;
-        _eo_parser_log(&cl->base, "interface '%s' not found within the inheritance tree of '%s'",
-                       icl->base.name, cl->base.name);
-     }
    else
      *out_cl = icl;
    eina_stringshare_del(in_cl);
@@ -1183,6 +1192,7 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash,
    /* replace the composite list with real instances and initial-fill the hash */
    il = cl->composite;
    cl->composite = NULL;
+   int ncomp = 0;
    EINA_LIST_FREE(il, inn)
      {
         Eolian_Class *out_cl = NULL;
@@ -1190,6 +1200,8 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash,
         if (!succ)
           continue;
         cl->composite = eina_list_append(cl->composite, out_cl);
+        succ = _db_fill_inherits(vals, out_cl, fhash, errh);
+        ++ncomp;
         eina_hash_set(ch, &out_cl, out_cl);
      }
 
@@ -1215,6 +1227,37 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash,
      }
 
    eina_hash_add(fhash, &cl->base.name, cl);
+
+   /* there are more than zero of composites of its own */
+   if (ncomp > 0)
+     {
+        /* this one stores what is already in inheritance tree */
+        Eina_Hash *ih = eina_hash_pointer_new(NULL);
+
+        /* fill a complete inheritance tree set */
+        if (cl->parent)
+          _db_fill_ihash(cl->parent, ih);
+
+        EINA_LIST_FOREACH(cl->extends, il, icl)
+          _db_fill_ihash(icl, ih);
+
+        /* go through only the explicitly specified composite list part, as the
+         * rest was to be handled in parents already... add what hasn't been
+         * explicitly implemented so far into implements/extends
+         */
+        EINA_LIST_FOREACH(cl->composite, il, icl)
+          {
+             /* ran out of classes */
+             if (!ncomp--)
+               break;
+             /* found in inheritance tree, skip */
+             if (eina_hash_find(ih, &icl))
+               continue;
+             cl->extends = eina_list_append(cl->extends, icl);
+          }
+
+        eina_hash_free(ih);
+     }
 
    /* stores mappings from function to Impl_Status */
    Eina_Hash *fh = eina_hash_pointer_new(NULL);
