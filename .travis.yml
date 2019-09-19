@@ -103,15 +103,11 @@ script:
       if [[ "$TRAVIS_OS_NAME" == "linux" ]] && [[ "$CI_BUILD_TYPE" == "" ]]; then
           .ci/ci-make-benchmark.sh "$CI_BUILD_TYPE"
       fi
-  #- .ci/ci-make-install.sh "$CI_BUILD_TYPE"
+  - .ci/ci-make-install.sh "$CI_BUILD_TYPE"
   - .ci/ci-make-check.sh "$CI_BUILD_TYPE"
   - .ci/ci-make-distcheck.sh "$CI_BUILD_TYPE"
-  #- |
-      #if [[ "$DISTRO" == "" ]] && [[ "$TRAVIS_OS_NAME" != "linux" ]] ; then
-        #true
-      #elif [[ "$CI_BUILD_TYPE" != "release-ready" ]] ; then
-        #docker exec --env EIO_MONITOR_POLL=1 $(cat $HOME/cid) .ci/build-efl-app.sh
-      #fi
+  - |
+  - .ci/ci-build-test.sh "$CI_BUILD_TYPE"
 before_cache:
   - .ci/ci-ccache-stats.sh
   - |
