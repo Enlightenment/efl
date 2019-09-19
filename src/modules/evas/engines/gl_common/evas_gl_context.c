@@ -3769,8 +3769,7 @@ shader_array_flush(Evas_Engine_GL_Context *gc)
         pipe_done++;
         gc->flushnum++;
 
-        GLERRV("<flush err>");
-        if (prog && (prog != gc->state.current.prog))
+        if (prog != gc->state.current.prog)
           {
              glUseProgram(prog->prog);
              if (prog->reset)
