@@ -1,4 +1,5 @@
 group { name: "e/comp/border/default";
+   alias: "e/comp/border/default/fast"; // legacy
    images.image: "win_shadow.png" COMP;
    parts {
       part { name: "clipper"; type: RECT;
@@ -160,6 +161,7 @@ group { name: "e/comp/border/default";
 }
 
 group { name: "e/comp/border/rotate";
+   alias: "e/comp/border/rotate/fast"; // legacy
    inherit: "e/comp/border/default";
    parts {
       part { name: "e.swallow.content";
@@ -200,19 +202,8 @@ group { name: "e/comp/border/rotate";
    }
 }
 
-group { name: "e/comp/border/rotate/fast";
-   inherit: "e/comp/border/rotate";
-   programs {
-      program { name: "focus3";
-         transition: LINEAR 0;
-      }
-      program { name: "focus_off3";
-         transition: LINEAR 0;
-      }
-   }
-}
-
 group { name: "e/comp/border/flip";
+   alias: "e/comp/border/flip/fast"; // legacy
    inherit: "e/comp/border/rotate";
    parts {
       part { name: "e.swallow.content";
@@ -237,65 +228,9 @@ group { name: "e/comp/border/flip";
    }
 }
 
-group { name: "e/comp/border/flip/fast";
-   inherit: "e/comp/border/flip";
-   programs {
-      program { name: "focus3";
-         transition: LINEAR 0;
-      }
-      program { name: "focus_off3";
-         transition: LINEAR 0;
-      }
-   }
-}
-
 group { name: "e/comp/border/popup";
+   alias: "e/comp/border/popup/fast"; // legacy
    inherit: "e/comp/border/default";
-   parts {
-      part { name: "focus-clipper";
-         description { state: "default";
-            color_class: "";
-         }
-      }
-   }
-}
-
-group { name: "e/comp/border/default/fast";
-   inherit: "e/comp/border/default";
-   programs {
-      program {
-         name: "visible_on";
-         transition: DECELERATE 0;
-      }
-      program {
-         name: "visible_off";
-         transition: DECELERATE 0;
-      }
-/*
-      program {
-         name: "focus_on";
-         signal: "e,state,focus,on"; source: "e";
-         action: STATE_SET "focused" 0.0;
-         transition: SINUSOIDAL 0.1;
-         target: "glow";
-         target: "focus-clipper";
-         after: "focus2";
-      }
-      program { name: "focus2";
-         action: STATE_SET "default" 0.0;
-         transition: SINUSOIDAL 0.1;
-         target: "glow";
-      }
-      program {
-         name: "focus_off";
-         transition: SINUSOIDAL 0;
-      }
- */
-   }
-}
-
-group { name: "e/comp/border/popup/fast";
-   inherit: "e/comp/border/default/fast";
    parts {
       part { name: "focus-clipper";
          description { state: "default";
@@ -325,6 +260,7 @@ group { name: "e/comp/border/none";
 }
 
 group { name: "e/comp/border/still";
+   alias: "e/comp/border/still/fast"; // legacy
    inherit: "e/comp/border/default";
    parts {
       part { name: "shower";
@@ -336,32 +272,9 @@ group { name: "e/comp/border/still";
    }
 }
 
-group { name: "e/comp/border/still/fast";
-   inherit: "e/comp/border/default/fast";
-   parts {
-      part { name: "shower";
-         description { state: "default" 0.0;
-            rel1.relative: 0.0 0.0;
-            rel2.relative: 1.0 1.0;
-         }
-      }
-   }
-}
-
 group { name: "e/comp/border/menu";
+   alias: "e/comp/border/menu/fast"; // legacy
    inherit: "e/comp/border/popup";
-   parts {
-      part { name: "shower";
-         description { state: "default" 0.0;
-            rel1.relative: 0.05 0.0;
-            rel2.relative: 0.95 0.9;
-         }
-      }
-   }
-}
-
-group { name: "e/comp/border/menu/fast";
-   inherit: "e/comp/border/popup/fast";
    parts {
       part { name: "shower";
          description { state: "default" 0.0;
@@ -373,6 +286,7 @@ group { name: "e/comp/border/menu/fast";
 }
 
 group { name: "e/comp/border/everything";
+   alias: "e/comp/border/everything/fast"; // legacy
    inherit: "e/comp/border/popup";
    parts {
       part { name: "shower";
@@ -384,19 +298,8 @@ group { name: "e/comp/border/everything";
    }
 }
 
-group { name: "e/comp/border/everything/fast";
-   inherit: "e/comp/border/popup/fast";
-   parts {
-      part { name: "shower";
-         description { state: "default" 0.0;
-            rel1.relative: -0.3 -0.3;
-            rel2.relative: 1.3 1.3;
-         }
-      }
-   }
-}
-
 group { name: "e/comp/border/fullscreen";
+   alias: "e/comp/border/fullscreen/fast"; // legacy
    images.image: "screen_circular_shadow.png" COMP;
    data.item: "screen.bg" "fullscreen.bg";
    parts {
@@ -555,34 +458,6 @@ group { name: "e/comp/border/fullscreen";
       }
       program { name: "hide3";
          action: SIGNAL_EMIT "e,action,hide,done" "e";
-      }
-   }
-}
-
-group { name: "e/comp/border/fullscreen/fast";
-   inherit: "e/comp/border/fullscreen";
-   programs {
-      program {
-         name: "visible_on";
-         transition: DECELERATE 0;
-      }
-      program {
-         name: "visible_on2";
-         transition: DECELERATE 0;
-      }
-      program { name: "show2";
-         transition: DECELERATE 0;
-      }
-      program {
-         name: "visible_off";
-         transition: DECELERATE 0;
-      }
-      program {
-         name: "visible_off2";
-         transition: DECELERATE 0;
-      }
-      program { name: "hide2";
-         transition: DECELERATE 0;
       }
    }
 }

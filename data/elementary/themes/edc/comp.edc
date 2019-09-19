@@ -22,7 +22,7 @@ group { name: "e/comp/preview";
 }
 
 group { name: "e/comp/screen/base/default";
-   alias: "e/comp/screen/base/noeffects";
+   alias: "e/comp/screen/base/noeffects"; // legacy
    parts {
       part { name: "clip"; type: RECT; mouse_events: 0;
          description { state: "default" 0.0;
@@ -37,6 +37,7 @@ group { name: "e/comp/screen/base/default";
 }
 
 group { name: "e/comp/screen/overlay/default";
+   alias: "e/comp/screen/overlay/noeffects"; // legacy
    images.image: "screen_circular_shadow.png" COMP;
    parts {
       part { name: "clip"; type: RECT; mouse_events: 0;
@@ -176,54 +177,8 @@ group { name: "e/comp/screen/overlay/default";
    }
 }
 
-
-group { name: "e/comp/screen/overlay/noeffects";
-   inherit: "e/comp/screen/overlay/default";
-   programs {
-         program {
-            name: "screensaver_on";
-            transition: ACCELERATE 0 CURRENT;
-         }
-         program {
-            name: "screensaver_on2";
-            transition: DECELERATE 0 CURRENT;
-         }
-         program {
-            name: "screensaver_off";
-            transition: ACCELERATE 0 CURRENT;
-         }
-         program {
-            name: "screensaver_off2";
-            transition: ACCELERATE 0 CURRENT;
-         }
-         program {
-            name: "suspend";
-            transition: ACCELERATE 0 CURRENT;
-         }
-         program {
-            name: "hibernate";
-            transition: ACCELERATE 0 CURRENT;
-         }
-         program {
-            name: "resume";
-            transition: DECELERATE 0 CURRENT;
-         }
-         program {
-            name: "reboot";
-            transition: DECELERATE 0 CURRENT;
-         }
-         program {
-            name: "halt";
-            transition: DECELERATE 0 CURRENT;
-         }
-         program {
-            name: "logout";
-            transition: DECELERATE 0 CURRENT;
-         }
-   }
-}
-
 group { name: "e/comp/frame/default";
+   alias: "e/comp/frame/default/fast"; // legacy
    images.image: "win_shadow.png" COMP;
    script {
       public message(Msg_Type:type, id, ...) {
@@ -411,6 +366,7 @@ group { name: "e/comp/frame/default";
 }
 
 group { name: "e/comp/frame/rotate";
+   alias: "e/comp/frame/rotate/fast"; // legacy
    inherit: "e/comp/frame/default";
    parts {
       part { name: "e.swallow.content";
@@ -451,19 +407,8 @@ group { name: "e/comp/frame/rotate";
    }
 }
 
-group { name: "e/comp/frame/rotate/fast";
-   inherit: "e/comp/frame/rotate";
-   programs {
-      program { name: "focus3";
-         transition: LINEAR 0;
-      }
-      program { name: "focus_off3";
-         transition: LINEAR 0;
-      }
-   }
-}
-
 group { name: "e/comp/frame/flip";
+   alias: "e/comp/frame/flip/fast"; // legacy
    inherit: "e/comp/frame/rotate";
    parts {
       part { name: "e.swallow.content";
@@ -488,64 +433,9 @@ group { name: "e/comp/frame/flip";
    }
 }
 
-group { name: "e/comp/frame/flip/fast";
-   inherit: "e/comp/frame/flip";
-   programs {
-      program { name: "focus3";
-         transition: LINEAR 0;
-      }
-      program { name: "focus_off3";
-         transition: LINEAR 0;
-      }
-   }
-}
-
 group { name: "e/comp/frame/popup";
+   alias: "e/comp/frame/popup/fast"; // legacy
    inherit: "e/comp/frame/default";
-   images.image: "win_shadow.png" COMP;
-   parts {
-      part { name: "focus-clipper";
-         description { state: "default";
-            color_class: "";
-         }
-      }
-   }
-}
-
-group { name: "e/comp/frame/default/fast";
-   inherit: "e/comp/frame/default";
-   programs {
-      program {
-         name: "visible_on";
-         transition: DECELERATE 0;
-      }
-      program {
-         name: "visible_off";
-         transition: DECELERATE 0;
-      }
-/*
-      program {
-         name: "focus_on";
-         signal: "e,state,focus,on"; source: "e";
-         action: STATE_SET "focused" 0.0;
-         transition: SINUSOIDAL 0.1;
-         targets: "glow" "focus-clipper";
-         sequence {
-             action: STATE_SET "default" 0.0;
-             transition: SINUSOIDAL 0.1;
-             target: "glow";
-         }
-      }
-      program {
-         name: "focus_off";
-         transition: SINUSOIDAL 0;
-      }
- */
-   }
-}
-
-group { name: "e/comp/frame/popup/fast";
-   inherit: "e/comp/frame/default/fast";
    images.image: "win_shadow.png" COMP;
    parts {
       part { name: "focus-clipper";
@@ -576,6 +466,7 @@ group { name: "e/comp/frame/none";
 }
 
 group { name: "e/comp/frame/still";
+   alias: "e/comp/frame/still/fast"; // legacy
    inherit: "e/comp/frame/default";
    parts {
       part { name: "shower";
@@ -587,19 +478,8 @@ group { name: "e/comp/frame/still";
    }
 }
 
-group { name: "e/comp/frame/still/fast";
-   inherit: "e/comp/frame/default/fast";
-   parts {
-      part { name: "shower";
-         description { state: "default" 0.0;
-            rel1.relative: 0.0 0.0;
-            rel2.relative: 1.0 1.0;
-         }
-      }
-   }
-}
-
 group { name: "e/comp/frame/menu";
+   alias: "e/comp/frame/menu/fast"; // legacy
    inherit: "e/comp/frame/popup";
    images.image: "win_menu_shadow.png" COMP;
    parts {
@@ -617,19 +497,8 @@ group { name: "e/comp/frame/menu";
    }
 }
 
-group { name: "e/comp/frame/menu/fast";
-   inherit: "e/comp/frame/popup/fast";
-   parts {
-      part { name: "shower";
-         description { state: "default" 0.0;
-            rel1.relative: 0.05 0.0;
-            rel2.relative: 0.95 0.9;
-         }
-      }
-   }
-}
-
 group { name: "e/comp/frame/everything";
+   alias: "e/comp/frame/everything/fast"; // legacy
    inherit: "e/comp/frame/popup";
    parts {
       part { name: "shadow";
@@ -646,19 +515,8 @@ group { name: "e/comp/frame/everything";
    }
 }
 
-group { name: "e/comp/frame/everything/fast";
-   inherit: "e/comp/frame/popup/fast";
-   parts {
-      part { name: "shower";
-         description { state: "default" 0.0;
-            rel1.relative: -0.3 -0.3;
-            rel2.relative: 1.3 1.3;
-         }
-      }
-   }
-}
-
 group { name: "e/comp/frame/fullscreen";
+   alias: "e/comp/frame/fullscreen/fast"; // legacy
    images.image: "screen_circular_shadow.png" COMP;
    data.item: "screen.bg" "fullscreen.bg";
    parts {
@@ -809,34 +667,6 @@ group { name: "e/comp/frame/fullscreen";
              targets: "clipper" "shower" "fader";
              action: SIGNAL_EMIT "e,action,hide,done" "e";
          }
-      }
-   }
-}
-
-group { name: "e/comp/frame/fullscreen/fast";
-   inherit: "e/comp/frame/fullscreen";
-   programs {
-      program {
-         name: "visible_on";
-         transition: DECELERATE 0;
-      }
-      program {
-         name: "visible_on2";
-         transition: DECELERATE 0;
-      }
-      program { name: "show2";
-         transition: DECELERATE 0;
-      }
-      program {
-         name: "visible_off";
-         transition: DECELERATE 0;
-      }
-      program {
-         name: "visible_off2";
-         transition: DECELERATE 0;
-      }
-      program { name: "hide2";
-         transition: DECELERATE 0;
       }
    }
 }
