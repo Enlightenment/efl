@@ -1,6 +1,9 @@
 class @beta Efl.Canvas.Gesture_Double_Tap extends Efl.Canvas.Gesture
 {
-   [[EFL Gesture Double Tap class]]
+   [[EFL Gesture Double Tap class
+   
+     A gesture class defines a method that double tap gesture event and provides information
+     about the double tap gesture's type, state and associated pointer information.]]
    data: null;
    c_prefix: efl_gesture_double_tap;
    implements {

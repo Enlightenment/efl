@@ -2,7 +2,10 @@ import eina_types;
 
 class @beta Efl.Canvas.Gesture_Momentum extends Efl.Canvas.Gesture
 {
-   [[EFL Gesture Momentum class]]
+   [[EFL Gesture Momentum class
+   
+     This gesture class defines a method to get momentum value of specific
+	 gesture event such as flick.]]
    c_prefix: efl_gesture_momentum;
    methods {
       momentum_get {

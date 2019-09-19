@@ -1,6 +1,10 @@
 class @beta Efl.Canvas.Gesture_Zoom extends Efl.Canvas.Gesture
 {
-   [[EFL Gesture Zoom class]]
+   [[EFL Gesture Zoom class
+   
+     This gesture class defines methods to get zoom center point and zoom value
+	 and provides information about ghe zoom gesture's type, state and associated
+     pointer information.]]
    c_prefix: efl_gesture_zoom;
    methods {
       radius_get {

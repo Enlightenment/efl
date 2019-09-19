@@ -2,7 +2,11 @@ import eina_types;
 
 class @beta Efl.Canvas.Gesture_Flick extends Efl.Canvas.Gesture
 {
-   [[EFL Gesture Flick class]]
+   [[EFL Gesture Flick class
+   
+     This gesture class defines a method that flick gesture event and provides
+     information about the flick gesture's type, state, and associated pointer
+     information.]]
    c_prefix: efl_gesture_flick;
    methods {
       momentum_get {

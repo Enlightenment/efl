@@ -1,6 +1,9 @@
 class @beta Efl.Canvas.Gesture_Manager extends Efl.Object
 {
-   [[EFL Gesture Manager class]]
+   [[EFL Gesture Manager class
+   
+     This gesture class defines methods that register and unregister a recognizer and
+     get a recognizer according to gesture event type.]]
    c_prefix: efl_gesture_manager;
    methods {
       recognizer_register {
@@ -18,7 +21,7 @@ class @beta Efl.Canvas.Gesture_Manager extends Efl.Object
       recognizer_get {
          [[Gets event type's recognizer]]
          params {
-            @in gesture_type: Efl.Canvas.Gesture_Recognizer_Type; [[The gesture type]]
+            @in gesture_type: Efl.Canvas.Gesture_Recognizer_Type; [[The gesture event type]]
          }
          return: const(Efl.Canvas.Gesture_Recognizer); [[The gesture recognizer]]
       }

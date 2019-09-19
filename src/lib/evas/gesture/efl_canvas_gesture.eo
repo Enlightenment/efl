@@ -4,7 +4,7 @@ abstract @beta Efl.Canvas.Gesture extends Efl.Object
 {
    [[EFL Gesture abstract class
 
-     A gesture class defines a method that spcific gesture event and privides information
+     A gesture class defines a method that specific gesture event and privides information
      about the gesture's type, state, and associated pointer information.
 
      For cetain gesture types, additional methods are defined to provide meaningful gesture

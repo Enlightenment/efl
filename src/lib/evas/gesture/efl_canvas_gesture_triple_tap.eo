@@ -1,6 +1,10 @@
 class @beta Efl.Canvas.Gesture_Triple_Tap extends Efl.Canvas.Gesture
 {
-   [[EFL Gesture Triple Tap class]]
+   [[EFL Gesture Triple Tap class
+   
+     This gesture class defines a method that triple tap gesture event and provides
+     information about the triple tap gesture's type, state and associated pointer
+     information.]]
    data: null;
    c_prefix: efl_gesture_triple_tap;
    implements {
