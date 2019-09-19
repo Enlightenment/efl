@@ -111,8 +111,6 @@ pub_eo_files = [
   'efl_ui_layout_part_bg.eo',
   'efl_ui_layout_part_legacy.eo',
   'efl_ui_list_view.eo',
-  'efl_ui_list_view_model.eo',
-  'efl_ui_list_view_pan.eo',
   'efl_ui_item.eo',
   'efl_ui_default_item.eo',
   'efl_ui_group_item.eo',
@@ -208,7 +206,6 @@ endforeach
 pub_eo_types_files = [
   'elm_general.eot',
   'efl_ui.eot',
-  'efl_ui_list_view_types.eot',
   'efl_ui_selection_types.eot',
   'efl_ui_dnd_types.eot'
 ]
@@ -236,8 +233,6 @@ priv_eo_files = [
   'efl_ui_state_model.eo',
   'efl_ui_selection_manager.eo',
   'efl_datetime_manager.eo',
-  'efl_ui_list_view_precise_layouter.eo',
-  'efl_ui_list_view_relayout.eo',
   'efl_ui_size_model.eo',
   'efl_ui_homogeneous_model.eo',
   'efl_ui_exact_model.eo',
@@ -357,8 +352,6 @@ elementary_headers_unstable = [
   'elm_widget_toolbar.h',
   'efl_ui_video_private.h',
   'efl_ui_item_private.h',
-  'efl_ui_list_view_private.h',
-  'efl_ui_list_view_seg_array.h',
   'elm_widget_web.h',
   'efl_ui_clock.h',
   'elm_code.h',
@@ -906,8 +899,6 @@ elementary_src = [
   'efl_ui_grid_default_item.c',
   'efl_ui_grid.c',
   'efl_ui_list_view.c',
-  'efl_ui_list_view_precise_layouter.c',
-  'efl_ui_list_view_seg_array.c',
   'efl_ui_layout_factory.c',
   'efl_ui_scroller.c',
   'efl_ui_scroll_manager.c',
