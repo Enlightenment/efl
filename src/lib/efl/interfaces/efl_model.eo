@@ -15,7 +15,14 @@ struct @beta Efl.Model_Children_Event {
 
 interface @beta Efl.Model
 {
-   [[Efl model interface]]
+   [[Basic Model abstraction.
+
+     A model in EFL can have a set of key-value properties, where key can only be a string.
+     The value can be anything within an Eina_Value. If a property is not yet available EAGAIN is returned.
+
+     Additionally a model can have a list of children. The fetching of the children is asynchronous, this has the advantage of
+     having as few data sets as possible in the memory itself.
+   ]]
    c_prefix: efl_model;
       methods {
          @property properties {
