@@ -22,12 +22,21 @@ struct _Efl_Ui_Select_Model_Data
 
    Efl_Ui_Select_Model *fallback_model;
    Efl_Ui_Select_Model *last_model;
-   unsigned long last;
 
    Efl_Ui_Select_Mode selection;
 
    Eina_Bool none : 1;
 };
+
+static void
+_efl_ui_select_model_child_removed(void *data, const Efl_Event *event)
+{
+   Efl_Ui_Select_Model_Data *pd = data;
+   Efl_Model_Children_Event *ev = event->info;
+
+   if (ev->child == pd->last_model)
+     efl_replace(&pd->last_model, NULL);
+}
 
 static Eo*
 _efl_ui_select_model_efl_object_constructor(Eo *obj,
@@ -39,8 +48,7 @@ _efl_ui_select_model_efl_object_constructor(Eo *obj,
 
    efl_boolean_model_boolean_add(obj, "selected", EINA_FALSE);
 
-   efl_replace(&pd->last_model, NULL);
-   pd->last = 0;
+   efl_event_callback_add(obj, EFL_MODEL_EVENT_CHILD_REMOVED, _efl_ui_select_model_child_removed, pd);
    pd->none = EINA_TRUE;
 
    parent = efl_parent_get(obj);
@@ -122,20 +130,16 @@ _commit_change(Eo *child, void *data EINA_UNUSED, const Eina_Value v)
      {
         // select case
         pd->none = EINA_FALSE;
-        pd->last = efl_composite_model_index_get(child);
         efl_replace(&pd->last_model, child);
         efl_event_callback_call(child, EFL_UI_SELECT_MODEL_EVENT_SELECTED, child);
      }
    else
      {
         // unselect case
-        unsigned long last;
-
-        last = efl_composite_model_index_get(child);
-        if (pd->last == last)
+        // There should only be one model which represent the same data at all in memory
+        if (pd->last_model == child) // direct comparison of pointer is ok
           {
              efl_replace(&pd->last_model, NULL);
-             pd->last = 0;
              pd->none = EINA_TRUE;
 
              // Just in case we need to refill the fallback
@@ -395,10 +399,7 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
              // there is nothing special to do, just normal commit change will do.
              if (!newflag)
                {
-                  unsigned int i;
-
-                  i = efl_composite_model_index_get(obj);
-                  if (pd->parent->last == i && !newflag)
+                  if (pd->parent->last_model == obj && !newflag)
                     {
                        efl_replace(&pd->last_model, NULL);
                        pd->parent->none = EINA_TRUE;
@@ -413,7 +414,7 @@ _efl_ui_select_model_efl_model_property_set(Eo *obj,
 
                   // In this case we need to first unselect the previously selected one
                   // and then commit the change to this one.
-                  selected = pd->parent->last;
+                  selected = efl_composite_model_index_get(pd->parent->last_model);
 
                   // There was, need to unselect the previous one along setting the new value
                   parent = efl_parent_get(obj);
@@ -451,8 +452,10 @@ _efl_ui_select_model_efl_model_property_get(const Eo *obj, Efl_Ui_Select_Model_D
      {
         if (pd->none)
           return eina_value_error_new(EFL_MODEL_ERROR_INCORRECT_VALUE);
-        else
-          return eina_value_ulong_new(pd->last);
+        else if (pd->last_model)
+          return eina_value_ulong_new(efl_composite_model_index_get(pd->last_model));
+        else // Nothing selected yet, try again later
+          return eina_value_error_new(EAGAIN);
      }
    // Redirect to are we ourself selected
    if (pd->parent && eina_streq("self.selected", property))
