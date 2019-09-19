@@ -1,19 +1,21 @@
 class @beta Efl.Canvas.Gesture_Zoom extends Efl.Canvas.Gesture
 {
-   [[EFL Gesture Zoom class
-   
-     This gesture class defines methods to get zoom center point and zoom value
-     and provides information about the zoom gesture's type, state and associated
-     pointer information.]]
+   [[Zoom gesture class holding state information.
+     See @Efl.Canvas.Gesture to see what this state is and
+     @[Efl.Gesture.Events.gesture,zoom] for a description of the Flick gesture.
+   ]]
    c_prefix: efl_gesture_zoom;
    methods {
       radius_get {
-         [[Gets zoom center point reported to user]]
-         return: double; [[The radius value]]
+         [[Gets the current radius (i.e. the distance between the two fingers) of the gesture.]]
+         return: double; [[The radius value in pixels.]]
       }
       zoom_get {
-         [[Gets zoom value. (1.0 means no zoom)]]
-         return: double; [[The zoom value]]
+         [[Gets the current zoom value of the gesture. When the gesture begins, the finger
+           distance is recorded. When the distance becomes greater than the initial one, a
+           zoom value greater than $[1.0] is reported. When it becomes smaller, a zoom value
+           lesser than $[1.0] is reported.]]
+         return: double; [[The zoom value. $[1.0] means no zoom.]]
       }
    }
    implements {

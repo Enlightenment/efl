@@ -1,19 +1,19 @@
 class @beta Efl.Canvas.Gesture_Recognizer_Long_Tap extends Efl.Canvas.Gesture_Recognizer
 {
-   [[EFL Gesture Recognizer Long Tap class
-   
-     This gesture recognizer class grabs long tap gesture events that occur
-     on the target that user register.]]
+   [[This is the recognizer for Long-tap gestures.
+     See @Efl.Canvas.Gesture_Long_Tap and @Efl.Canvas.Gesture_Recognizer.
+     For internal use only.
+   ]]
    c_prefix: efl_gesture_recognizer_long_tap;
    methods {
       @property timeout {
-         [[Sets the holding time to be recognized as a long tap.]]
+         [[Minimum holding time to be recognized as a long tap.]]
          set {
          }
          get {
          }
          values {
-            time: double; [[Allowed time gap value]]
+            time: double; [[Time in seconds.]]
          }
       }
    }

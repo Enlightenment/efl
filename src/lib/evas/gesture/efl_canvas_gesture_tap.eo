@@ -1,10 +1,9 @@
 class @beta Efl.Canvas.Gesture_Tap extends Efl.Canvas.Gesture
 {
-   [[EFL Gesture Tap class
-   
-     This gesture class defines a method that tap gesture event and provides
-     information about the tap gesture's type, state, and associated pointer
-     information.]]
+   [[Tap gesture class holding state information.
+     See @Efl.Canvas.Gesture to see what this state is and
+     @[Efl.Gesture.Events.gesture,tap] for a description of the Tap gesture.
+   ]]
    data: null;
    c_prefix: efl_gesture_tap;
    implements {
