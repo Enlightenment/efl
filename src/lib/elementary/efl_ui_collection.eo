@@ -1,12 +1,10 @@
 class @beta Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
-                   Efl.Ui.Scrollable_Interactive,
-                   Efl.Ui.Scrollbar,
                    Efl.Pack_Linear, Efl.Pack_Layout,
                    Efl.Ui.Layout_Orientable,
                    Efl.Ui.Multi_Selectable,
                    Efl.Ui.Focus.Manager_Sub,
                    Efl.Ui.Widget_Focus_Manager
-   composite
+   composites
                    Efl.Ui.Scrollable_Interactive,
                    Efl.Ui.Scrollbar,
                    Efl.Ui.Focus.Manager

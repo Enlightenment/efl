@@ -1,6 +1,6 @@
 class @beta Efl.Ui.Tab_Bar extends Efl.Ui.Layout_Base
-   implements Efl.Ui.Single_Selectable, Efl.Pack_Linear
-   composite Efl.Pack_Linear, Efl.Pack
+   implements Efl.Ui.Single_Selectable
+   composites Efl.Pack_Linear, Efl.Pack
 {
    [[A selectable box of items.
 

@@ -1,6 +1,6 @@
 class @beta Efl.Ui.Video extends Efl.Ui.Layout_Base
-   implements Efl.File, Efl.Player, Efl.Access.Widget.Action
-   composite Efl.Player
+   implements Efl.File, Efl.Access.Widget.Action
+   composites Efl.Player
 {
    [[Efl UI video class]]
    methods {

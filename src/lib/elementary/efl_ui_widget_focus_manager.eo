@@ -1,7 +1,6 @@
 mixin Efl.Ui.Widget_Focus_Manager
    requires Efl.Ui.Widget
-   extends Efl.Ui.Focus.Manager
-   composite Efl.Ui.Focus.Manager
+   composites Efl.Ui.Focus.Manager
 {
   [[Helper mixin for widgets which also can act as focus managers.
 
