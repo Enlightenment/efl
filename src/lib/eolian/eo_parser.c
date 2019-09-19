@@ -2318,7 +2318,7 @@ tags_done:
              while (test_next(ls, ','));
           }
 
-        if (ls->t.kw == KW_composite || ls->t.kw == KW_composites)
+        if (ls->t.kw == KW_composites)
           {
              if (type == EOLIAN_CLASS_INTERFACE)
                 eo_lexer_syntax_error(ls, "interfaces cannot composite");
