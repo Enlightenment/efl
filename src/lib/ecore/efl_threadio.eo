@@ -1,48 +1,58 @@
 import efl_object;
 
 function @beta EflThreadIOCall {
-   [[ A Function to call on the "other end" of a thread obvject ]]
+   [[A Function to be called asynchronously on a different thread.]]
    params {
-      @in event: const(event); [[ ]]
+      @in event: const(event); [[Event struct with an @Efl.Loop_Handler as payload.]]
    }
 };
 
 function @beta EflThreadIOCallSync {
-   [[ A Function to call on the "other end" of a thread obvject ]]
+   [[A Function to be called synchronously on another thread.
+     Execution will be stopped until this function returns and its return value can be recovered.
+   ]]
    params {
-      @in event: const(event); [[ ]]
+      @in event: const(event); [[Event struct with an @Efl.Loop_Handler as payload.]]
    }
-   return: void_ptr; [[ ]]
+   return: void_ptr; [[Data that the function executed on the other thread returned.]]
 };
 
 mixin @beta Efl.ThreadIO
 {
-   [[ ]]
+   [[This mixin defines input and output pointers to allow exchanging data with another thread.
+     It also defines a mechanism to call methods on that thread.
+   ]]
    methods {
       @property indata {
+         [[Input data pointer for the thread.]]
          set { }
          get { }
          values {
-            data: void_ptr; [[ ]]
+            data: void_ptr; [[Data pointer.]]
          }
       }
       @property outdata {
+         [[Output data pointer for the thread.]]
          set { }
          get { }
          values {
-            data: void_ptr; [[ ]]
+            data: void_ptr; [[Data pointer.]]
          }
       }
-      call {
+      call @pure_virtual {
+         [[Executes a method on a different thread, asynchronously.]]
          params {
-            func: EflThreadIOCall; [[ ]]
+            func: EflThreadIOCall; [[The method to execute asynchronously.]]
          }
       }
-      call_sync {
+      call_sync @pure_virtual {
+         [[Executes a method on a different thread, synchronously.
+           This call will not return until the method finishes and its return value can be recovered.
+         ]]
          params {
-            func: EflThreadIOCallSync; [[ ]]
+            func: EflThreadIOCallSync; [[The method to execute synchronously.]]
          }
-         return: void_ptr; [[ ]]
+         return: void_ptr; [[The return value from the method.]]
       }
    }
    events {

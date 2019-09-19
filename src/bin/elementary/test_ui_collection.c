@@ -306,10 +306,6 @@ void create_item_container_ui(const Efl_Class *collection_class, const Efl_Class
    efl_text_set(o, "Singleselect");
    efl_pack_end(bx, o);
    o = efl_add(EFL_UI_RADIO_CLASS, bx,
-           efl_ui_radio_state_value_set(efl_added, EFL_UI_SELECT_MODE_SINGLE_ALWAYS));
-   efl_text_set(o, "Singleselect Always");
-   efl_pack_end(bx, o);
-   o = efl_add(EFL_UI_RADIO_CLASS, bx,
            efl_ui_radio_state_value_set(efl_added, EFL_UI_SELECT_MODE_MULTI));
    efl_text_set(o, "Multiselect");
    efl_pack_end(bx, o);

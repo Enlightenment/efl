@@ -13,4 +13,8 @@ class Object_Impl_Add extends Base {
          }
       }
    }
+
+   implements {
+      Base.constructor;
+   }
 }

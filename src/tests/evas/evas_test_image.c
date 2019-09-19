@@ -737,7 +737,7 @@ EFL_START_TEST(evas_object_image_cached_data_comparision)
    ck_assert_int_eq(region.y, 0);
    ck_assert_int_eq(region.w, 250);
    ck_assert_int_eq(region.h, 250);
-   efl_gfx_image_border_set(img, 7, 14, 5, 10);
+   efl_gfx_image_border_insets_set(img, 7, 14, 5, 10);
    region = efl_gfx_image_content_region_get(img);
    ck_assert_int_eq(region.x, 7);
    ck_assert_int_eq(region.y, 5);

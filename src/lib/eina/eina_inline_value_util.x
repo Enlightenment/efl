@@ -327,8 +327,7 @@ eina_value_reference_copy(const Eina_Value *val)
 {
    Eina_Value v = EINA_VALUE_EMPTY;
 
-   if (!eina_value_setup(&v, eina_value_type_get(val)) ||
-       !eina_value_copy(val, &v))
+   if (!eina_value_copy(val, &v))
      {
         eina_value_setup(&v, EINA_VALUE_TYPE_ERROR);
         eina_value_set(&v, EINA_ERROR_VALUE_FAILED);

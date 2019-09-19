@@ -359,6 +359,8 @@ _evas_callback_legacy_smart_compatibility_do_it(Evas_Object *eo_obj, const Efl_E
    /* this is inverted: the base call is the legacy compat and this is the new event */
    else if ((efl_event_desc == EFL_GFX_ENTITY_EVENT_SHOW) || (efl_event_desc == EFL_GFX_ENTITY_EVENT_HIDE))
      efl_event_callback_call(eo_obj, EFL_GFX_ENTITY_EVENT_VISIBILITY_CHANGED, event_info);
+   else if ((efl_event_desc == EFL_GFX_IMAGE_EVENT_IMAGE_PRELOAD) || (efl_event_desc == EFL_GFX_IMAGE_EVENT_IMAGE_UNLOAD))
+     efl_event_callback_call(eo_obj, EFL_GFX_IMAGE_EVENT_IMAGE_PRELOAD_STATE_CHANGED, event_info);
 }
 
 

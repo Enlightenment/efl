@@ -12,6 +12,7 @@
 
 #include "elm_priv.h"
 #include "efl_ui_image_zoomable_private.h"
+#include "efl_ui_image_zoomable_pan.eo.h"
 
 #define MY_PAN_CLASS EFL_UI_IMAGE_ZOOMABLE_PAN_CLASS
 

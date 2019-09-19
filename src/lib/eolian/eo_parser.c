@@ -1077,7 +1077,7 @@ end:
 
 static void
 parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
-            Eina_Bool is_vals)
+            Eina_Bool is_vals, const Eolian_Function *func)
 {
    Eina_Bool has_optional = EINA_FALSE,
              has_owned    = EINA_FALSE,
@@ -1107,10 +1107,17 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
    par->base.name = eina_stringshare_ref(ls->t.value.s);
    eo_lexer_get(ls);
    check_next(ls, ':');
-   if (par->param_dir == EOLIAN_OUT_PARAM || par->param_dir == EOLIAN_INOUT_PARAM)
-     par->type = eo_lexer_type_release(ls, parse_type_void(ls, EINA_TRUE));
-   else
-     par->type = eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE));
+   if ((ls->klass && ls->klass->base.is_beta) || func->base.is_beta)
+     {
+       if (par->param_dir == EOLIAN_OUT_PARAM || par->param_dir == EOLIAN_INOUT_PARAM)
+         {
+            /* void is allowed for out/inout for beta-api for now to make a voidptr */
+            par->type = eo_lexer_type_release(ls, parse_type_void(ls, EINA_TRUE));
+            goto type_done;
+         }
+     }
+   par->type = eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE));
+type_done:
    if ((is_vals || (par->param_dir == EOLIAN_OUT_PARAM)) && (ls->t.token == '('))
      {
         int line = ls->line_number, col = ls->column;
@@ -1148,14 +1155,14 @@ end:
 
 static void
 parse_params(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
-             Eina_Bool is_vals)
+             Eina_Bool is_vals, const Eolian_Function *func)
 {
    int line, col;
    eo_lexer_get(ls);
    line = ls->line_number, col = ls->column;
    check_next(ls, '{');
    while (ls->t.token != '}')
-     parse_param(ls, params, allow_inout, is_vals);
+     parse_param(ls, params, allow_inout, is_vals, func);
    check_match(ls, '}', '{', line, col);
 }
 
@@ -1268,7 +1275,7 @@ parse_accessor:
            Eina_List **stor;
            CASE_LOCK(ls, keys, "keys definition")
            stor = is_get ? &prop->prop_keys_get : &prop->prop_keys_set;
-           parse_params(ls, stor, EINA_FALSE, EINA_FALSE);
+           parse_params(ls, stor, EINA_FALSE, EINA_FALSE, prop);
            break;
         }
       case KW_values:
@@ -1276,7 +1283,7 @@ parse_accessor:
            Eina_List **stor;
            CASE_LOCK(ls, values, "values definition")
            stor = is_get ? &prop->prop_values_get : &prop->prop_values_set;
-           parse_params(ls, stor, EINA_FALSE, EINA_TRUE);
+           parse_params(ls, stor, EINA_FALSE, EINA_TRUE, prop);
            break;
         }
       default:
@@ -1377,11 +1384,11 @@ body:
         break;
       case KW_keys:
         CASE_LOCK(ls, keys, "keys definition")
-        parse_params(ls, &prop->prop_keys, EINA_FALSE, EINA_FALSE);
+        parse_params(ls, &prop->prop_keys, EINA_FALSE, EINA_FALSE, prop);
         break;
       case KW_values:
         CASE_LOCK(ls, values, "values definition")
-        parse_params(ls, &prop->prop_values, EINA_FALSE, EINA_TRUE);
+        parse_params(ls, &prop->prop_values, EINA_FALSE, EINA_TRUE, prop);
         break;
       default:
         goto end;
@@ -1478,7 +1485,7 @@ tags_done:
         break;
       case KW_params:
         CASE_LOCK(ls, params, "params definition");
-        parse_params(ls, &meth->params, EINA_TRUE, EINA_FALSE);
+        parse_params(ls, &meth->params, EINA_TRUE, EINA_FALSE, meth);
         break;
       default:
         goto end;
@@ -1576,7 +1583,7 @@ body:
         break;
       case KW_params:
         CASE_LOCK(ls, params, "params definition")
-        parse_params(ls, &meth->params, EINA_TRUE, EINA_FALSE);
+        parse_params(ls, &meth->params, EINA_TRUE, EINA_FALSE, meth);
         break;
       default:
         goto end;

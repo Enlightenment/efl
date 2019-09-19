@@ -480,12 +480,14 @@ _efl_ui_position_manager_list_efl_ui_layout_orientable_orientation_get(const Eo 
 }
 
 EOLIAN static void
-_efl_ui_position_manager_list_efl_object_destructor(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
+_efl_ui_position_manager_list_efl_object_invalidate(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
 {
    if (pd->rebuild_absolut_size)
      eina_future_cancel(pd->rebuild_absolut_size);
 
-   efl_destructor(efl_super(obj, MY_CLASS));
+   efl_ui_position_manager_data_access_v1_data_access_set(obj, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+   efl_invalidate(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static int
@@ -524,7 +526,16 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_version(Eo *obj EIN
 EOLIAN static void
 _efl_ui_position_manager_list_efl_ui_position_manager_data_access_v1_data_access_set(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, void *obj_access_data, Efl_Ui_Position_Manager_Object_Batch_Callback obj_access, Eina_Free_Cb obj_access_free_cb, void *size_access_data, Efl_Ui_Position_Manager_Size_Batch_Callback size_access, Eina_Free_Cb size_access_free_cb, int size)
 {
+   // Cleanup cache first
    cache_invalidate(obj, pd);
+
+   // Clean callback if they were set
+   if (pd->callbacks.object.free_cb)
+     pd->callbacks.object.free_cb(pd->callbacks.object.data);
+   if (pd->callbacks.size.free_cb)
+     pd->callbacks.size.free_cb(pd->callbacks.size.data);
+
+   // Set them
    pd->callbacks.object.data = obj_access_data;
    pd->callbacks.object.access = obj_access;
    pd->callbacks.object.free_cb = obj_access_free_cb;

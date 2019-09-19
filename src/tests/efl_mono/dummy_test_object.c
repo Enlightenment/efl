@@ -16,6 +16,8 @@ typedef struct Dummy_Test_Object_Data
   Eina_List *list_for_accessor;
   int setter_only;
   int iface_prop;
+  int protected_prop;
+  int public_getter_private_setter;
   Eo *provider;
   Eo *iface_provider;
   int prop1;
@@ -4670,6 +4672,26 @@ void _dummy_test_object_setter_only_set(EINA_UNUSED Eo *obj, Dummy_Test_Object_D
 int _dummy_test_object_get_setter_only(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd)
 {
     return pd->setter_only;
+}
+
+void _dummy_test_object_dummy_test_iface_protected_prop_set(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd, int value)
+{
+   pd->protected_prop = value;
+}
+
+int _dummy_test_object_dummy_test_iface_protected_prop_get(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd)
+{
+   return pd->protected_prop;
+}
+
+void _dummy_test_object_dummy_test_iface_public_getter_private_setter_set(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd, int value)
+{
+   pd->public_getter_private_setter = value;
+}
+
+int _dummy_test_object_dummy_test_iface_public_getter_private_setter_get(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd)
+{
+   return pd->public_getter_private_setter;
 }
 
 void _dummy_test_object_dummy_test_iface_iface_prop_set(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd, int value)

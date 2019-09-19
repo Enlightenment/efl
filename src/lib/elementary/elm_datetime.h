@@ -204,6 +204,7 @@
 
 #ifndef _ELM_DATE_TIME_H
 #define _ELM_DATE_TIME_H
+#include <elm_clock_eo.h>
 typedef enum
 {
    ELM_DATETIME_YEAR = 0, /**< Indicates Year field. */
@@ -462,7 +463,7 @@ EAPI Eina_Bool elm_datetime_value_max_set(Evas_Object *obj, const Efl_Time *maxt
  */
 EAPI Eina_Bool elm_datetime_value_max_get(const Evas_Object *obj, Efl_Time *maxtime);
 
-#define ELM_DATETIME_EVENT_CHANGED EFL_UI_CLOCK_EVENT_CHANGED
+#define ELM_DATETIME_EVENT_CHANGED ELM_CLOCK_EVENT_CHANGED
 
 #endif
 /**

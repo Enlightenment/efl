@@ -73,7 +73,7 @@ test_ui_image(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *event_info EIN
    efl_key_data_set(win, "rdg", box);
 
    im = img_add(win, "/images/logo.png");
-   efl_content_set(win, im);
+   efl_pack(box, im);
 
    for (i = 0; images_orient[i].name; ++i)
      {
@@ -152,7 +152,7 @@ test_ui_image_scale_type(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *eve
    elm_image_file_set(im, buf, NULL);
    efl_gfx_hint_weight_set(im, 1.0, 1.0);
    efl_gfx_hint_fill_set(im, EINA_TRUE, EINA_TRUE);
-   efl_content_set(win, im);
+   efl_pack(box, im);
 
    efl_key_data_set(win, "im", im);
 
@@ -320,7 +320,6 @@ test_remote_ui_image(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *event_i
 
    box2 = efl_add(EFL_UI_RADIO_BOX_CLASS, win);
    efl_gfx_hint_weight_set(box2, 1.0, 1.0);
-   efl_content_set(win, box2);
    efl_key_data_set(win, "rdg", box2);
    efl_pack(box, box2);
 

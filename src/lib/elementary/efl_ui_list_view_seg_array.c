@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#include <Efl.h>
+#include "elm_priv.h"
 #include <assert.h>
 
 #include "efl_ui_list_view_private.h"

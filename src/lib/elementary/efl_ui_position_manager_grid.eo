@@ -18,5 +18,6 @@ class @beta Efl.Ui.Position_Manager.Grid extends Efl.Object
       Efl.Ui.Layout_Orientable.orientation {set; get;}
       Efl.Ui.Position_Manager.Data_Access_V1.data_access {set;}
       Efl.Object.finalize;
+      Efl.Object.invalidate;
    }
 }

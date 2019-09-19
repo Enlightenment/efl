@@ -133,11 +133,11 @@ interface @beta Efl.Gfx.Image
          get { }
          values {
             region: Eina.Rect; [[A rectangle inside the object boundary where content is expected.
-                                 The default value is the image object's geometry with the @Efl.Gfx.Image.border
+                                 The default value is the image object's geometry with the @.border_insets
                                  values subtracted.]]
          }
       }
-      @property border {
+      @property border_insets {
          [[Dimensions of this image's border, a region that does not scale
            with the center area.
 
@@ -151,7 +151,7 @@ interface @beta Efl.Gfx.Image
            The units used for $l, $r, $t and $b are canvas units (pixels).
 
            Note: The border region itself may be scaled by the
-           @.border_scale.set function.
+           @.border_insets_scale.set function.
 
            Note: By default, image objects have no borders set, i.e.
            $l, $r, $t and $b start as 0.
@@ -167,10 +167,10 @@ interface @beta Efl.Gfx.Image
             b: int; [[The border's bottom height. The default value is $0.]]
          }
       }
-      @property border_scale {
+      @property border_insets_scale {
          [[Scaling factor applied to the image borders.
 
-           This value multiplies the size of the @.border when scaling an
+           This value multiplies the size of the @.border_insets when scaling an
            object.
          ]]
          set {}
@@ -186,7 +186,7 @@ interface @beta Efl.Gfx.Image
            This function sets how the center part of the image object's
            source image is to be drawn, which must be one of the values
            in @Efl.Gfx.Center_Fill_Mode. By center we mean the complementary
-           part of that defined by @.border.set. This is very useful for
+           part of that defined by @.border_insets.set. This is very useful for
            making frames and decorations. You would most probably also be
            using a filled image (as in @Efl.Gfx.Fill.fill_auto) to use as a frame.
          ]]
@@ -205,7 +205,7 @@ interface @beta Efl.Gfx.Image
            once and then destroy them. When the regions are retrieved by the user,
            it is his responsibility to destroy the iterators.. It will remember the
            information for the lifetime of the object. It will ignore all value
-           of @.border, @.border_scale and @.center_fill_mode . To reset the object
+           of @.border_insets, @.border_insets_scale and @.center_fill_mode . To reset the object
            you can just pass $null to both horizontal and vertical at the same
            time.
          ]]
@@ -281,9 +281,8 @@ interface @beta Efl.Gfx.Image
       }
    }
    events {
-      image,preload: void; [[Image data has been preloaded.]]
+      image,preload_state,changed: bool; [[If $true, image data has been preloaded and can be displayed.
+                                           If $false, the image data has been unloaded and can no longer be displayed.]]
       image,resized: Eina.Size2D;  [[Image was resized (its pixel data). The event data is the image's new size.]]
-      image,unload: void;  [[Image data has been unloaded (by some mechanism in
-                       EFL that threw out the original image data).]]
    }
 }

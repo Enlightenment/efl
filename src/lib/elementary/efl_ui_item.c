@@ -45,7 +45,7 @@ _item_select(Eo *obj, Efl_Ui_Item_Data *pd)
    if (pd->container)
      {
         m = _fetch_state(pd->container);
-        if (m == EFL_UI_SELECT_MODE_NONE || (pd->selected && m != EFL_UI_SELECT_MODE_SINGLE_ALWAYS))
+        if (m == EFL_UI_SELECT_MODE_NONE)
           return;
      }
    else
@@ -95,7 +95,7 @@ _item_unpressed(void *data, const Efl_Event *ev EINA_UNUSED)
    efl_layout_signal_emit(obj, "efl,state,unpressed", "efl");
    m = _fetch_state(pd->container);
 
-   if ((m != EFL_UI_SELECT_MODE_SINGLE_ALWAYS) && (pd->selected))
+   if (pd->selected)
      efl_ui_selectable_selected_set(obj, EINA_FALSE);
    else if (m != EFL_UI_SELECT_MODE_NONE)
      efl_ui_selectable_selected_set(obj, EINA_TRUE);

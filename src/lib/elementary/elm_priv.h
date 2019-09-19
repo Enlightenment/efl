@@ -24,6 +24,7 @@
 // Evas internal EO APIs
 # include "Evas.h"
 # include "Evas_Internal.h"
+# include "Emotion.h"
 
 #include "Elementary.h"
 #include "Efl_Ui.h"
@@ -153,16 +154,7 @@
 #include "elm_widget_item_static_focus_eo.h"
 #include "elm_win_eo.h"
 
-# include "efl_ui_focus_parent_provider.eo.h"
-# include "efl_ui_widget_focus_manager.eo.h"
-# include "efl_ui_focus_parent_provider_standard.eo.h"
-# include "elm_widget_item_static_focus_eo.h"
-# include "efl_ui_selection_manager.eo.h"
-# include "efl_datetime_manager.eo.h"
-# include "efl_ui_size_model.eo.h"
-# include "efl_ui_homogeneous_model.eo.h"
-# include "efl_ui_exact_model.eo.h"
-# include "efl_ui_average_model.eo.h"
+
 #include "efl_ui_layout_legacy_eo.h"
 
 extern const char *_efl_model_property_itemw;

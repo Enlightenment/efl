@@ -8,7 +8,7 @@
 #define EFL_UI_FOCUS_COMPOSITION_PROTECTED
 #define EFL_UI_WIDGET_FOCUS_MANAGER_PROTECTED
 
-#include <Elementary.h>
+#include "elm_priv.h"
 #include "efl_ui_list_view_private.h"
 #include "efl_ui_list_view_precise_layouter.eo.h"
 

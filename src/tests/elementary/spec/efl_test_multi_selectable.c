@@ -135,38 +135,6 @@ EFL_START_TEST(test_single_select)
 }
 EFL_END_TEST
 
-EFL_START_TEST(test_single_select_always)
-{
-   int c = 0;
-   Eina_Array *arr_selected;
-
-   efl_ui_select_mode_set(widget, EFL_UI_SELECT_MODE_SINGLE_ALWAYS);
-   efl_event_callback_add(widget, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, (void*) event_callback_single_call_int_data, &c);
-   efl_event_callback_add(widget, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, event_callback_that_quits_the_main_loop_when_called, NULL);
-
-   efl_ui_selectable_selected_set(efl_pack_content_get(widget, 0), EINA_TRUE);
-   if (c == 0) efl_loop_begin(efl_main_loop_get());
-   ck_assert_int_eq(c, 1);
-   c = 0;
-   efl_ui_selectable_selected_set(efl_pack_content_get(widget, 2), EINA_TRUE);
-   if (c == 0) efl_loop_begin(efl_main_loop_get());
-   ck_assert_int_eq(c, 1);
-   c = 0;
-   efl_ui_selectable_selected_set(efl_pack_content_get(widget, 2), EINA_TRUE);
-   if (c == 0) efl_loop_begin(efl_main_loop_get());
-   ck_assert_int_eq(c, 1);
-   c = 0;
-   ck_assert_int_eq(efl_ui_selectable_selected_get(efl_pack_content_get(widget, 0)), EINA_FALSE);
-   ck_assert_int_eq(efl_ui_selectable_selected_get(efl_pack_content_get(widget, 2)), EINA_TRUE);
-   ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(widget), efl_pack_content_get(widget, 2));
-   _iterator_to_array(&arr_selected, efl_ui_selected_items_get(widget));
-   ck_assert_int_eq(eina_array_count(arr_selected), 1);
-   ck_assert_ptr_eq(eina_array_data_get(arr_selected, 0), efl_pack_content_get(widget, 2));
-   efl_event_callback_del(widget, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, (void*) event_callback_single_call_int_data, &c);
-   efl_event_callback_del(widget, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, event_callback_that_quits_the_main_loop_when_called, NULL);
-}
-EFL_END_TEST
-
 EFL_START_TEST(test_none_select)
 {
    Efl_Ui_Item *selected = NULL;
@@ -290,7 +258,6 @@ efl_ui_multi_selectable_behavior_test(TCase *tc)
    tcase_add_test(tc, test_multi_select_removal);
    tcase_add_test(tc, test_single_select);
    tcase_add_test(tc, test_none_select);
-   tcase_add_test(tc, test_single_select_always);
    tcase_add_test(tc, select_all_api);
    tcase_add_test(tc, unselect_all_api);
    tcase_add_test(tc, unselect_range);

@@ -2,16 +2,13 @@
 # include "elementary_config.h"
 #endif
 
-#include <Emotion.h>
-
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
-#include <Elementary.h>
 
+#include "elm_priv.h"
 #include "elm_widget_layout.h"
 #include "efl_ui_video_private.h"
-#include "elm_priv.h"
 
 /* TODO: add buffering support to Emotion and display buffering
  * progress in the theme when needed */

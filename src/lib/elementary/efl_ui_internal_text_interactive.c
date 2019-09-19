@@ -2,7 +2,7 @@
 # include "elementary_config.h"
 #endif
 
-#include <Elementary.h>
+#include "elm_priv.h"
 #include "efl_ui_internal_text_interactive.h"
 
 #define MY_CLASS EFL_UI_INTERNAL_TEXT_INTERACTIVE_CLASS

@@ -766,7 +766,16 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_entity_version(Eo *obj EIN
 EOLIAN static void
 _efl_ui_position_manager_grid_efl_ui_position_manager_data_access_v1_data_access_set(Eo *obj, Efl_Ui_Position_Manager_Grid_Data *pd, void *obj_access_data, Efl_Ui_Position_Manager_Object_Batch_Callback obj_access, Eina_Free_Cb obj_access_free_cb, void *size_access_data, Efl_Ui_Position_Manager_Size_Batch_Callback size_access, Eina_Free_Cb size_access_free_cb, int size)
 {
+   // Cleanup cache first
    _group_cache_invalidate(obj, pd);
+
+   // Clean callback if they were set
+   if (pd->callbacks.object.free_cb)
+     pd->callbacks.object.free_cb(pd->callbacks.object.data);
+   if (pd->callbacks.size.free_cb)
+     pd->callbacks.size.free_cb(pd->callbacks.size.data);
+
+   // Set them
    pd->callbacks.object.data = obj_access_data;
    pd->callbacks.object.access = obj_access;
    pd->callbacks.object.free_cb = obj_access_free_cb;
@@ -777,6 +786,15 @@ _efl_ui_position_manager_grid_efl_ui_position_manager_data_access_v1_data_access
    _group_cache_require(obj, pd);
    _schedule_recalc_abs_size(obj, pd);
 
+}
+
+EOLIAN static void
+_efl_ui_position_manager_grid_efl_object_invalidate(Eo *obj,
+                                                    Efl_Ui_Position_Manager_Grid_Data *pd EINA_UNUSED)
+{
+   efl_ui_position_manager_data_access_v1_data_access_set(obj, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+   efl_invalidate(efl_super(obj, EFL_UI_POSITION_MANAGER_GRID_CLASS));
 }
 
 EOLIAN static Efl_Object*

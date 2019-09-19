@@ -9472,3 +9472,15 @@ efl_ui_win_shared_data_get(Efl_Ui_Win *obj)
 
    return &pd->spd;
 }
+
+EAPI void
+efl_ui_win_autodel_set(Efl_Ui_Win *obj, Eina_Bool autodel)
+{
+   elm_win_autodel_set(obj, autodel);
+}
+
+EAPI Eina_Bool
+efl_ui_win_autodel_get(const Efl_Ui_Win *obj)
+{
+   return elm_win_autodel_get(obj);
+}

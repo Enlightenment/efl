@@ -8,7 +8,7 @@ class @beta Efl.Ui.Position_Manager.List extends Efl.Object
      the layout of all items. This supports the vertical and horizontal orientation.
    ]]
    implements {
-      Efl.Object.destructor;
+      Efl.Object.invalidate;
       Efl.Ui.Position_Manager.Entity.version;
       Efl.Ui.Position_Manager.Entity.viewport {set;}
       Efl.Ui.Position_Manager.Entity.scroll_position {set;}
