@@ -526,7 +526,16 @@ struct documentation_generator
    template<typename OutputIterator, typename Context>
    bool generate_parameter(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-      return generate_tag_param(sink, name_helpers::escape_keyword(param.param_name), param.documentation.full_text, context);
+      auto text = param.documentation.full_text;
+      if (param.default_value.is_engaged())
+      {
+          auto value = param.default_value->serialized;
+
+          if (param.default_value->is_name_ref)
+            value = name_helpers::full_managed_name(value);
+          text += "\nThis parameter has a default value of \\<c\\>" + value + "\\</c\\>";
+      }
+      return generate_tag_param(sink, name_helpers::escape_keyword(param.param_name), text, context);
    }
 
    template<typename OutputIterator, typename Context>
