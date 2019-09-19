@@ -29,21 +29,31 @@ EFL_START_TEST(ecore_test_job)
 EFL_END_TEST
 
 #ifndef _WIN32
+#define NUM_SIGNALS 2000
+static Eina_Bool
+_signal_cb(void *data, int t EINA_UNUSED, void *ev EINA_UNUSED)
+{
+   int *called = data;
+   (*called)++;
+   if (*called == NUM_SIGNALS) ecore_main_loop_quit();
+   return ECORE_CALLBACK_RENEW;
+}
+
 static void
 _ecore_signal_job(void *data EINA_UNUSED)
 {
-   EXPECT_ERROR_START;
-   for (unsigned int i = 0; i < 1000; i++)
+   for (unsigned int i = 0; i < NUM_SIGNALS; i++)
      raise(SIGUSR2);
-   ecore_main_loop_quit();
-   EXPECT_ERROR_END;
 }
 
 EFL_START_TEST(ecore_test_job_signal)
 {
+   int called = 0;
    ecore_job_add(_ecore_signal_job, NULL);
+   ecore_event_handler_add(ECORE_EVENT_SIGNAL_USER, _signal_cb, &called);
 
    ecore_main_loop_begin();
+   ck_assert_int_eq(called, NUM_SIGNALS);
 }
 EFL_END_TEST
 #endif
