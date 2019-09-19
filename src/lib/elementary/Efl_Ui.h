@@ -327,28 +327,18 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include "efl_ui_list_view_types.eot.h"
 # include <efl_ui_list_view.eo.h>
 # include <efl_ui_list_view_model.eo.h>
-# include <efl_ui_list_view_precise_layouter.eo.h>
-# include <efl_ui_list_view_relayout.eo.h>
-# include <efl_ui_list_view_pan.eo.h>
 # include <efl_ui_view_model.eo.h>
-# include <efl_ui_size_model.eo.h>
-# include <efl_ui_homogeneous_model.eo.h>
-# include <efl_ui_exact_model.eo.h>
-# include <efl_ui_average_model.eo.h>
+
 
 # include <efl_ui_scroller.eo.h>
 # include <efl_ui_pan.eo.h>
 # include <efl_ui_scroll_manager.eo.h>
 
-# include <efl_ui_focus_parent_provider.eo.h>
 # include <efl_ui_widget_focus_manager.eo.h>
-# include <efl_ui_focus_parent_provider_standard.eo.h>
 # include <efl_ui_selection.eo.h>
 # include <efl_ui_dnd.eo.h>
 # include <efl_ui_dnd_container.eo.h>
-# include <efl_ui_selection_manager.eo.h>
 
-# include <efl_datetime_manager.eo.h>
 # include <efl_ui_timepicker.eo.h>
 # include <efl_ui_datepicker.eo.h>
 # include <efl_ui_calendar.eo.h>

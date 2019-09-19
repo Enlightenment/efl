@@ -156,7 +156,15 @@
 
 
 #include "efl_ui_layout_legacy_eo.h"
+# include "efl_ui_size_model.eo.h"
+# include "efl_ui_homogeneous_model.eo.h"
+# include "efl_ui_exact_model.eo.h"
+# include "efl_ui_average_model.eo.h"
 
+# include "efl_ui_focus_parent_provider.eo.h"
+# include "efl_ui_focus_parent_provider_standard.eo.h"
+# include "efl_ui_selection_manager.eo.h"
+# include "efl_datetime_manager.eo.h"
 extern const char *_efl_model_property_itemw;
 extern const char *_efl_model_property_itemh;
 extern const char *_efl_model_property_selfw;
