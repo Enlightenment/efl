@@ -46,8 +46,8 @@ interface @beta Efl.Model
            set {
               [[Set a property value of a given property name.
 
-               The caller must ensure to call at least efl_model_prop_list
-               before being able to see/set properties. This function sets
+               The caller must first read @.properties to obtain the list of available properties
+               before being able to access them through @.property. This function sets
                a new property value into given property name. Once the
                operation is completed the concrete implementation should
                raise @[Efl.Model.properties,changed] event in order to
@@ -136,7 +136,7 @@ interface @beta Efl.Model
          @property children_count {
             [[Number of children.
 
-               When efl_model_load is completed @.children_count.get
+               After @[.properties,changed] is emitted, @.children_count.get
                can be used to get the number of children. @.children_count.get
                can also be used before calling @.children_slice_get so a valid
                range is known. Event @[Efl.Model.children,count,changed] is
