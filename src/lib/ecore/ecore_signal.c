@@ -168,13 +168,17 @@ _ecore_signal_callback(int sig, siginfo_t *si, void *foo EINA_UNUSED)
      {
         int err = errno;
         if (pipe_dead) return;
-        const ssize_t bytes = write(sig_pipe[1], &sdata, sizeof(sdata));
-        if (EINA_UNLIKELY(bytes != sizeof(sdata)))
+        do
           {
-             err = errno;
-             ERR("write() failed: %s", strerror(err));
-          }
-        errno = err;
+             const ssize_t bytes = write(sig_pipe[1], &sdata, sizeof(sdata));
+             if (EINA_UNLIKELY(bytes != sizeof(sdata)))
+               {
+                  err = errno;
+                  ERR("write() failed: %d: %s", err, strerror(err));
+               }
+             errno = err;
+             /* loop if we got preempted */
+          } while (err == EINTR);
      }
    switch (sig)
      {
@@ -248,6 +252,8 @@ _ecore_signal_pipe_init(void)
         eina_file_close_on_exec(sig_pipe[0], EINA_TRUE);
         eina_file_close_on_exec(sig_pipe[1], EINA_TRUE);
         if (fcntl(sig_pipe[0], F_SETFL, O_NONBLOCK) < 0)
+          ERR("can't set pipe to NONBLOCK");
+        if (fcntl(sig_pipe[1], F_SETFL, O_NONBLOCK) < 0)
           ERR("can't set pipe to NONBLOCK");
 
      }
