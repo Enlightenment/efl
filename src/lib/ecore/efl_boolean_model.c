@@ -8,6 +8,7 @@
 
 typedef struct _Efl_Boolean_Model_Data Efl_Boolean_Model_Data;
 typedef struct _Efl_Boolean_Model_Value Efl_Boolean_Model_Value;
+typedef struct _Efl_Boolean_Model_Storage_Range Efl_Boolean_Model_Storage_Range;
 
 struct _Efl_Boolean_Model_Data
 {
@@ -15,18 +16,105 @@ struct _Efl_Boolean_Model_Data
    Eina_Hash *values;
 };
 
+struct _Efl_Boolean_Model_Storage_Range
+{
+   EINA_RBTREE;
+
+   unsigned int  offset;
+   uint16_t      length; // Maximum length of the buffer will be 256, to avoid math error we rely on 16bits here.
+
+   // We over allocate this buffer to have things fitting in one alloc
+   unsigned char buffer[256];
+};
+
 struct _Efl_Boolean_Model_Value
 {
    Eina_Stringshare *property;
 
-   // This is not the best for supporting sparse bitfield with random insertion
-   // but will do for now (Would be best to have a tree of fixed size array
-   // or something along that line).
-   unsigned char *buffer;
-   unsigned int   buffer_count;
+   Eina_Rbtree *buffers_root;
+   Efl_Boolean_Model_Storage_Range *last;
 
    Eina_Bool      default_value;
 };
+
+static Eina_Rbtree_Direction
+_storage_range_cmp(const Efl_Boolean_Model_Storage_Range *left,
+                   const Efl_Boolean_Model_Storage_Range *right,
+                   void *data EINA_UNUSED)
+{
+   // We should not have any overlapping range
+   if (left->offset < right->offset)
+     return EINA_RBTREE_LEFT;
+   return EINA_RBTREE_RIGHT;
+}
+
+static int
+_storage_range_key(const Efl_Boolean_Model_Storage_Range *node,
+                   const unsigned int *key, int length EINA_UNUSED, void *data EINA_UNUSED)
+{
+   if (node->offset > *key) return 1;
+   if (node->offset + node->length < *key) return -1;
+   // The key is in the range!
+   return 0;
+}
+
+static void
+_storage_range_free(Eina_Rbtree *node, void *data EINA_UNUSED)
+{
+   free(node);
+}
+
+static Efl_Boolean_Model_Storage_Range *
+_storage_lookup(Efl_Boolean_Model_Data *pd,
+                const char *property,
+                unsigned int index,
+                Eina_Bool allocate,
+                Eina_Bool value,
+                Eina_Bool *found,
+                Eina_Bool *default_value)
+{
+   Efl_Boolean_Model_Storage_Range *lookup;
+   Efl_Boolean_Model_Value *v;
+   Eina_Stringshare *s;
+
+   // Check if this is requesting a defined boolean property
+   // Property are defined and their value are stored on the parent BOOLEAN
+   s = eina_stringshare_add(property);
+   v = eina_hash_find(pd->parent->values, s);
+   eina_stringshare_del(s);
+
+   if (!v) return NULL;
+   *found = EINA_TRUE;
+   *default_value = !!v->default_value;
+
+   lookup = (void*) eina_rbtree_inline_lookup(v->buffers_root, &index, sizeof (unsigned int),
+                                              EINA_RBTREE_CMP_KEY_CB(_storage_range_key), NULL);
+   if (lookup) return lookup;
+   if (!allocate) return NULL;
+
+   // The value is the same as the default value, why bother allocate
+   if (*default_value == value) return NULL;
+
+   // For simplicity we do not create a sparse array, every boolean potentially needed are allocated
+   // FIXME: keep it a sparse allocated buffer and only allocate needed buffer on demand
+   do
+     {
+        lookup = calloc(1, sizeof (Efl_Boolean_Model_Storage_Range));
+        if (!lookup) return NULL;
+
+        lookup->offset = v->last ? v->last->offset + v->last->length + 1 : 0;
+        lookup->length = sizeof (lookup->buffer) * 8; // Number of bits in the buffer
+        // Initialize the buffer to the right default value
+        if (default_value) memset(&lookup->buffer[0], *default_value, sizeof (&lookup->buffer));
+
+        v->buffers_root = eina_rbtree_inline_insert(v->buffers_root, EINA_RBTREE_GET(lookup),
+                                                    EINA_RBTREE_CMP_NODE_CB(_storage_range_cmp), NULL);
+        v->last = lookup;
+     }
+   while (v->last->offset + v->last->length < index);
+
+   return lookup;
+}
 
 static Eina_Iterator *
 _efl_boolean_model_efl_model_properties_get(const Eo *obj,
@@ -47,10 +135,12 @@ _efl_boolean_model_efl_model_property_get(const Eo *obj,
                                           Efl_Boolean_Model_Data *pd,
                                           const char *property)
 {
-   Efl_Boolean_Model_Value *v;
-   Eina_Stringshare *s;
+   Efl_Boolean_Model_Storage_Range *sr;
    Eina_Bool flag;
    unsigned int index;
+   unsigned int offset;
+   Eina_Bool found = EINA_FALSE;
+   Eina_Bool default_value = EINA_FALSE;
 
    if (property == NULL) return NULL;
 
@@ -58,23 +148,20 @@ _efl_boolean_model_efl_model_property_get(const Eo *obj,
    if (!pd->parent)
      return efl_model_property_get(efl_super(obj, EFL_BOOLEAN_MODEL_CLASS), property);
 
-   // Check if this is requesting a defined boolean property
-   // Property are defined and their value are stored on the parent BOOLEAN
-   s = eina_stringshare_add(property);
-   v = eina_hash_find(pd->parent->values, s);
-   eina_stringshare_del(s);
-
-   if (!v) // Not a property handle by this object, forward
-     return efl_model_property_get(efl_super(obj, EFL_BOOLEAN_MODEL_CLASS), property);
-
    index = efl_composite_model_index_get(obj);
 
-   // As an optimization we do optimistically allocate the boolean array
-   // Better would be to have a sparse boolean array
-   if ((index >> 3) >= v->buffer_count)
-     flag = v->default_value;
-   else
-     flag = v->buffer[index >> 3] & (((unsigned char)1) << (index & 0x7));
+
+   sr = _storage_lookup(pd, property, index, EINA_FALSE, EINA_FALSE, &found, &default_value);
+   if (!found) // Not a property handle by this object, forward
+     return efl_model_property_get(efl_super(obj, EFL_BOOLEAN_MODEL_CLASS), property);
+
+   if (!sr) // Not found in storage, should be the default value
+     return eina_value_bool_new(default_value);
+
+   // Calculate the matching offset for the requested index
+   offset = index - sr->offset;
+
+   flag = sr->buffer[offset >> 3] & (((unsigned char)1) << (offset & 0x7));
 
    return eina_value_bool_new(!!flag);
 }
@@ -84,54 +171,45 @@ _efl_boolean_model_efl_model_property_set(Eo *obj,
                                           Efl_Boolean_Model_Data *pd,
                                           const char *property, Eina_Value *value)
 {
-   Efl_Boolean_Model_Value *v;
-   Eina_Stringshare *s;
-   Eina_Bool flag;
+   Efl_Boolean_Model_Storage_Range *sr;
    unsigned int index;
+   unsigned int offset;
+   Eina_Bool flag = EINA_FALSE;
+   Eina_Bool found = EINA_FALSE;
+   Eina_Bool convert_fail = EINA_FALSE;
+   Eina_Bool default_value = EINA_FALSE;
 
-   if (!property)
-     return efl_loop_future_rejected(obj,
-                                 EFL_MODEL_ERROR_UNKNOWN);
+   if (!property) return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_UNKNOWN);
 
    // If we do not have a parent set that his a BOOLEAN, then we should just forward up the call
    if (!pd->parent)
      return efl_model_property_set(efl_super(obj, EFL_BOOLEAN_MODEL_CLASS),
                                    property, value);
 
-   // Check if this is requesting a defined boolean property
-   // Property are defined and their value are stored on the parent BOOLEAN
-   s = eina_stringshare_add(property);
-   v = eina_hash_find(pd->parent->values, s);
-   eina_stringshare_del(s);
+   index = efl_composite_model_index_get(obj);
+   if (!eina_value_bool_convert(value, &flag))
+     convert_fail = EINA_TRUE;
 
-   if (!v)
+   sr = _storage_lookup(pd, property, index, EINA_TRUE, flag, &found, &default_value);
+   if (!found)
      return efl_model_property_set(efl_super(obj, EFL_BOOLEAN_MODEL_CLASS),
                                    property, value);
 
-   if (!eina_value_bool_convert(value, &flag))
+   // Convert did fail and we actually should have a valid Boolean to put in the buffer
+   if (convert_fail)
      return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_UNKNOWN);
 
-   index = efl_composite_model_index_get(obj);
+   if (!sr)
+     return efl_loop_future_resolved(obj, eina_value_bool_init(default_value));
 
-   // We are optimistically allocating the boolean buffer now.
-   // Aligning it on 64bits
-   if (v->buffer_count < (((index) >> 3) | 0x7) + 1)
-     {
-        unsigned int rcount = (((index | 0xF) >> 3) | 0x7) + 1;
-        unsigned char *tmp;
-
-        tmp = realloc(v->buffer, rcount);
-        if (!tmp) return efl_loop_future_rejected(obj, ENOMEM);
-        v->buffer = tmp;
-        memset(v->buffer + v->buffer_count, 0, rcount - v->buffer_count);
-        v->buffer_count = rcount;
-     }
+   // Calculate the matching offset for the requested index
+   offset = index - sr->offset;
 
    // It is assumed that during slice get the buffer is properly sized
    if (flag)
-     v->buffer[index >> 3] |= ((unsigned char)1) << (index & 0x7);
+     sr->buffer[offset >> 3] |= ((unsigned char)1) << (offset & 0x7);
    else
-     v->buffer[index >> 3] &= ~(((unsigned char)1) << (index & 0x7));
+     sr->buffer[offset >> 3] &= ~(((unsigned char)1) << (offset & 0x7));
 
    // Calling "properties,changed" event
    efl_model_properties_changed(obj, property);
@@ -148,11 +226,114 @@ _boolean_value_free(void *data)
    eina_stringshare_del(value->property);
    value->property = NULL;
 
-   free(value->buffer);
-   value->buffer = NULL;
-   value->buffer_count = 0;
+   eina_rbtree_delete(value->buffers_root, _storage_range_free, NULL);
+   value->last = NULL;
 
    free(value);
+}
+
+static void
+_mark_greater(Efl_Boolean_Model_Storage_Range *root, Eina_Array *mark, const unsigned int upper)
+{
+   if (!root) return ;
+
+   if (root->offset > upper)
+     {
+        eina_array_push(mark, root);
+        _mark_greater((void*) EINA_RBTREE_GET(root)->son[0], mark, upper);
+        _mark_greater((void*) EINA_RBTREE_GET(root)->son[1], mark, upper);
+     }
+   else
+     {
+        _mark_greater((void*) EINA_RBTREE_GET(root)->son[0], mark, upper);
+     }
+}
+
+static void
+_child_removed(void *data, const Efl_Event *event)
+{
+   Efl_Boolean_Model_Data *pd = data;
+   Efl_Model_Children_Event *ev = event->info;
+   Efl_Boolean_Model_Value *v;
+   Eina_Iterator *it;
+   Eina_Array updated;
+
+   if (!pd->parent) return;
+
+   eina_array_step_set(&updated, sizeof (Eina_Array), 8);
+
+   it = eina_hash_iterator_data_new(pd->parent->values);
+   EINA_ITERATOR_FOREACH(it, v)
+     {
+        Efl_Boolean_Model_Storage_Range *lookup;
+        Eina_Array_Iterator iterator;
+        unsigned int i;
+
+        // Remove the data from the buffer it belong to
+        lookup = (void*) eina_rbtree_inline_lookup(v->buffers_root, &ev->index, sizeof (unsigned int),
+                                                   EINA_RBTREE_CMP_KEY_CB(_storage_range_key), NULL);
+        if (lookup)
+          {
+             unsigned char lower_mask = (((unsigned char)1) << (ev->index & 0x7)) - 1;
+             unsigned char upper_mask = (~(((unsigned char)1) << (ev->index & 0x7))) & (~lower_mask);
+             unsigned char offset = (ev->index - lookup->offset) >> 3;
+             uint16_t byte_length = lookup->length >> 3;
+
+             // Manually shift all the byte in the buffer
+             while (offset < byte_length)
+               {
+                  lookup->buffer[offset] = (lookup->buffer[offset] & upper_mask) |
+                    ((lookup->buffer[offset] & lower_mask) << 1);
+                  if (offset + 1 < byte_length)
+                    lookup->buffer[offset] |= lookup->buffer[offset + 1] & 0x1;
+
+                  lower_mask = 0;
+                  upper_mask = 0xFE;
+                  offset++;
+               }
+
+             lookup->length--;
+             if (lookup->length == 0)
+               {
+                  v->buffers_root = eina_rbtree_inline_remove(v->buffers_root, EINA_RBTREE_GET(lookup),
+                                                              EINA_RBTREE_CMP_NODE_CB(_storage_range_cmp), NULL);
+                  free(lookup);
+
+                  if (lookup == v->last)
+                    {
+                       if (v->buffers_root)
+                         {
+                            unsigned int last_index = ev->index - 1;
+
+                            lookup = (void*) eina_rbtree_inline_lookup(v->buffers_root, &last_index,
+                                                                       sizeof (unsigned int),
+                                                                       EINA_RBTREE_CMP_KEY_CB(_storage_range_key),
+                                                                       NULL);
+                            v->last = lookup;
+                         }
+                       else
+                         {
+                            // Nobody left
+                            v->last = NULL;
+                         }
+                    }
+               }
+          }
+
+        _mark_greater((void*) v->buffers_root, &updated, ev->index);
+
+        // Correct all the buffer after it
+        // There is no need to remove and reinsert them as their relative order will not change.
+        EINA_ARRAY_ITER_NEXT(&updated, i, lookup, iterator)
+          {
+             lookup->offset--;
+          }
+
+        eina_array_clean(&updated);
+     }
+   eina_iterator_free(it);
+
+   eina_array_flush(&updated);
 }
 
 static Eo *
@@ -169,6 +350,8 @@ _efl_boolean_model_efl_object_constructor(Eo *obj, Efl_Boolean_Model_Data *pd)
    parent = efl_parent_get(obj);
    if (efl_isa(parent, EFL_BOOLEAN_MODEL_CLASS))
      pd->parent = efl_data_scope_get(parent, EFL_BOOLEAN_MODEL_CLASS);
+
+   efl_event_callback_add(obj, EFL_MODEL_EVENT_CHILD_REMOVED, _child_removed, pd);
 
    return obj;
 }
@@ -220,6 +403,8 @@ struct _Eina_Iterator_Boolean
    Eo *obj;
    Efl_Boolean_Model_Data *pd;
    Efl_Boolean_Model_Value *v;
+   Efl_Boolean_Model_Storage_Range *sr;
+   Eina_Iterator *infix;
 
    uint64_t index;
    uint64_t total;
@@ -227,59 +412,85 @@ struct _Eina_Iterator_Boolean
    Eina_Bool request;
 };
 
-static inline Eina_Bool
-_lookup_next_chunk(uint64_t *index, uint64_t total,
-                   Efl_Boolean_Model_Value *v, unsigned char pattern)
+static Eina_Bool
+_efl_boolean_model_iterator_storage_index_find(Eina_Iterator_Boolean *it)
 {
-   uint64_t upidx = *index >> 3;
+   uint16_t offset;
+   uint16_t byte_length;
 
-   while (upidx < v->buffer_count &&
-          v->buffer[upidx] == pattern)
-     upidx++;
+   offset = it->index - it->sr->offset;
+   byte_length = it->sr->length >> 3;
 
-   *index = upidx << 3;
-   if (upidx == v->buffer_count &&
-       *index >= total) return EINA_FALSE;
-   return EINA_TRUE;
+   while (offset < it->sr->length)
+     {
+        uint64_t upidx;
+
+        upidx = offset >> 3;
+
+        // Quickly dismiss byte that really do not match
+        while (upidx < byte_length &&
+               it->sr->buffer[upidx] == (it->request ? 0x00 : 0xFF))
+          upidx++;
+
+        // Make the indexes jump
+        if (upidx != (offset >> 3))
+          {
+             offset = upidx << 3;
+             it->index = it->sr->offset + offset;
+          }
+
+        // Search inside the said byte
+        while (((offset >> 3) == upidx) &&
+               (offset < it->sr->length))
+          {
+             Eina_Bool flag = it->sr->buffer[offset >> 3] &
+               (((unsigned char)1) << (offset & 0x7));
+
+             if (it->request == !!flag)
+               return EINA_TRUE;
+
+             it->index++;
+             offset++;
+          }
+     }
+
+   return EINA_FALSE;
+}
+
+static Eina_Bool
+_efl_boolean_model_iterator_index_find(Eina_Iterator_Boolean *it)
+{
+   while (it->index < it->total)
+     {
+        // If we are not walking on an existing storage range, look for a new one
+        if (!it->sr)
+          {
+             if (!eina_iterator_next(it->infix, (void**) &it->sr))
+               {
+                  // All the rest of the data are not allocated and there value is still default
+                  if (it->v->default_value != it->request)
+                    return EINA_FALSE;
+                  return EINA_TRUE;
+               }
+          }
+
+        if (_efl_boolean_model_iterator_storage_index_find(it))
+          return EINA_TRUE;
+
+        // Nothing more to look at in this buffer
+        it->sr = NULL;
+     }
+
+   return EINA_FALSE;
 }
 
 static Eina_Bool
 efl_boolean_model_iterator_next(Eina_Iterator_Boolean *it, void **data)
 {
-   uint64_t upidx;
-
    *data = &it->index;
    it->index++;
 
- retry:
-   if (it->index >= it->total) return EINA_FALSE;
-   if ((it->index >> 3) >= it->v->buffer_count)
-     {
-        if (it->v->default_value != it->request)
-          return EINA_FALSE;
-        return EINA_TRUE;
-     }
-
-   upidx = it->index >> 3;
-   while ((it->index >> 3) == upidx)
-     {
-        Eina_Bool flag = it->v->buffer[it->index >> 3] &
-          (((unsigned char)1) << (it->index & 0x7));
-
-        if (it->request == !!flag)
-          break;
-
-        it->index++;
-     }
-
-   if ((it->index >> 3) != upidx)
-     {
-        if (!_lookup_next_chunk(&it->index, it->total, it->v, it->request ? 0x00 : 0xFF))
-          return EINA_FALSE;
-        goto retry;
-     }
-
-   return EINA_TRUE;
+   return _efl_boolean_model_iterator_index_find(it);
 }
 
 static Eo *
@@ -291,6 +502,7 @@ efl_boolean_model_iterator_get_container(Eina_Iterator_Boolean *it)
 static void
 efl_boolean_model_iterator_free(Eina_Iterator_Boolean *it)
 {
+   eina_iterator_free(it->infix);
    efl_unref(it->obj);
    EINA_MAGIC_SET(&it->iterator, EINA_MAGIC_NONE);
    free(it);
@@ -314,6 +526,9 @@ _efl_boolean_model_boolean_iterator_get(Eo *obj, Efl_Boolean_Model_Data *pd, con
    itb->obj = efl_ref(obj);
    itb->pd = pd;
    itb->v = v;
+   itb->infix = eina_rbtree_iterator_infix(v->buffers_root);
+   // Search the first index that do have the valid value
+   _efl_boolean_model_iterator_index_find(itb);
    itb->index = 0;
    itb->total = efl_model_children_count_get(obj);
    itb->request = !!request;
