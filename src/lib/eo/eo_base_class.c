@@ -1132,6 +1132,7 @@ efl_object_legacy_only_event_description_get(const char *_event_name)
         event_desc = calloc(1, sizeof(Efl_Event_Description));
         event_desc->name = event_name;
         event_desc->legacy_is = EINA_TRUE;
+        event_desc->unfreezable = EINA_TRUE;
         eina_hash_add(_legacy_events_hash, event_name, event_desc);
      }
    else
