@@ -2210,8 +2210,8 @@ _composite_add(Eo_Lexer *ls, Eina_Strbuf *buf)
         eo_lexer_syntax_error(ls, ebuf);
         return;
      }
-   /* do not introduce a dependency */
-   database_defer(ls->state, fnm, EINA_FALSE);
+   /* composite == definitely a dependency */
+   database_defer(ls->state, fnm, EINA_TRUE);
    free(fnm);
    ls->klass->composite = eina_list_append(ls->klass->composite, nm);
    eo_lexer_context_pop(ls);
@@ -2306,7 +2306,7 @@ tags_done:
                   /* regular class can have a parent, but just one */
                   _inherit_dep(ls, ibuf, EINA_TRUE);
                   /* if not followed by implements, we're done */
-                  if (ls->t.kw != KW_implements)
+                  if ((ls->t.kw != KW_implements) && (ls->t.kw != KW_composites))
                     {
                        eo_lexer_dtor_pop(ls);
                        goto inherit_done;
@@ -2318,10 +2318,10 @@ tags_done:
              while (test_next(ls, ','));
           }
 
-        if (ls->t.kw == KW_composite)
+        if (ls->t.kw == KW_composite || ls->t.kw == KW_composites)
           {
              if (type == EOLIAN_CLASS_INTERFACE)
-                eo_lexer_syntax_error(ls, "composite not allowed in interfaces");
+                eo_lexer_syntax_error(ls, "interfaces cannot composite");
              eo_lexer_get(ls);
              do
                _composite_add(ls, ibuf);
