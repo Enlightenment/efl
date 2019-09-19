@@ -201,6 +201,8 @@ EFL_START_TEST(elm_test_widget_focus_simple_widget)
          ck_assert_int_eq(flag_unfocused, EINA_TRUE);
          ck_assert_int_eq(elm_object_focus_get(resettor), EINA_TRUE);
          ck_assert_int_eq(elm_object_focus_get(o), EINA_FALSE);
+         evas_object_smart_callback_del_full(o, "focused", _eventing_test, &flag_focused);
+         evas_object_smart_callback_del_full(o, "unfocused", _eventing_test, &flag_unfocused);
       }
 }
 EFL_END_TEST
