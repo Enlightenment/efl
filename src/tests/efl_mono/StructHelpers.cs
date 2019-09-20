@@ -117,6 +117,7 @@ internal class StructHelpers
         Test.Assert(simple.Fstringshare == null);
     }
 
+#if EFL_BETA
     internal static Dummy.StructComplex structComplexWithValues()
     {
         var complex = new Dummy.StructComplex();
@@ -209,6 +210,8 @@ internal class StructHelpers
 
         Test.Assert(complex.Fobj == null);
     }
+
+#endif
 
 }
 

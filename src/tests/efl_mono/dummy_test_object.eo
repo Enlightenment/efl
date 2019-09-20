@@ -73,7 +73,7 @@ struct @free(free) Dummy.StructSimple
    fmyint: Dummy.MyInt;
 }
 
-struct @free(free) Dummy.StructComplex {
+struct @beta @free(free) Dummy.StructComplex {
    farray: array<string>;
    flist: list<string>;
    fhash: hash<string, string>;
@@ -764,7 +764,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       // Eina Hash //
 
       // Integer //
-      eina_hash_int_in {
+      eina_hash_int_in @beta {
          params {
             @in hsh: hash<int, int>;
          }
@@ -772,7 +772,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       /*
-      eina_hash_int_in_own {
+      eina_hash_int_in_own @beta {
          params {
             @in hsh: hash<int, int> @move; // <, int @move>
          }
@@ -783,150 +783,150 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
       */
 
-      eina_hash_int_out {
+      eina_hash_int_out @beta {
          params {
             @out hsh: hash<int, int>;
          }
          return: bool;
       }
-      check_eina_hash_int_out {
+      check_eina_hash_int_out @beta {
          return: bool;
       }
 
       /*
-      eina_hash_int_out_own {
+      eina_hash_int_out_own @beta {
          params {
             @out hsh: hash<int, int> @move; // <, int @move>
          }
          return: bool;
       }
-      check_eina_hash_int_out_own {
+      check_eina_hash_int_out_own @beta {
          return: bool;
       }
       */
 
-      eina_hash_int_return {
+      eina_hash_int_return @beta {
          return: hash<int, int>;
       }
-      check_eina_hash_int_return {
+      check_eina_hash_int_return @beta {
          return: bool;
       }
 
       /*
-      eina_hash_int_return_own {
+      eina_hash_int_return_own @beta {
          return: hash<int, int> @move; // <, int @move>
       }
-      check_eina_hash_int_return_own {
+      check_eina_hash_int_return_own @beta {
          return: bool;
       }
       */
 
       // String //
-      eina_hash_str_in {
+      eina_hash_str_in @beta {
          params {
             @in hsh: hash<string, string>;
          }
          return: bool;
       }
 
-      eina_hash_str_in_own {
+      eina_hash_str_in_own @beta {
          params {
             @in hsh: hash<string, mstring @move> @move;
          }
          return: bool;
       }
-      check_eina_hash_str_in_own {
+      check_eina_hash_str_in_own @beta {
          return: bool;
       }
 
-      eina_hash_str_out {
+      eina_hash_str_out @beta {
          params {
             @out hsh: hash<string, string>;
          }
          return: bool;
       }
-      check_eina_hash_str_out {
+      check_eina_hash_str_out @beta {
          return: bool;
       }
 
-      eina_hash_str_out_own {
+      eina_hash_str_out_own @beta {
          params {
             @out hsh: hash<string, mstring @move> @move;
          }
          return: bool;
       }
-      check_eina_hash_str_out_own {
+      check_eina_hash_str_out_own @beta {
          return: bool;
       }
 
-      eina_hash_str_return {
+      eina_hash_str_return @beta {
          return: hash<string, string>;
       }
-      check_eina_hash_str_return {
+      check_eina_hash_str_return @beta {
          return: bool;
       }
 
-      eina_hash_str_return_own {
+      eina_hash_str_return_own @beta {
          return: hash<string, mstring @move> @move;
       }
-      check_eina_hash_str_return_own {
+      check_eina_hash_str_return_own @beta {
          return: bool;
       }
 
       // Eina_Stringshare //
-      eina_hash_strshare_in {
+      eina_hash_strshare_in @beta {
          params {
             @in hsh: hash<stringshare, stringshare>;
          }
          return: bool;
       }
 
-      eina_hash_strshare_in_own {
+      eina_hash_strshare_in_own @beta {
          params {
             @in hsh: hash<stringshare, stringshare @move> @move;
          }
          return: bool;
       }
-      check_eina_hash_strshare_in_own {
+      check_eina_hash_strshare_in_own @beta {
          return: bool;
       }
 
-      eina_hash_strshare_out {
+      eina_hash_strshare_out @beta {
          params {
             @out hsh: hash<stringshare, stringshare>;
          }
          return: bool;
       }
-      check_eina_hash_strshare_out {
+      check_eina_hash_strshare_out @beta {
          return: bool;
       }
 
-      eina_hash_strshare_out_own {
+      eina_hash_strshare_out_own @beta {
          params {
             @out hsh: hash<stringshare, stringshare @move> @move;
          }
          return: bool;
       }
-      check_eina_hash_strshare_out_own {
+      check_eina_hash_strshare_out_own @beta {
          return: bool;
       }
 
-      eina_hash_strshare_return {
+      eina_hash_strshare_return @beta {
          return: hash<stringshare, stringshare>;
       }
-      check_eina_hash_strshare_return {
+      check_eina_hash_strshare_return @beta {
          return: bool;
       }
 
-      eina_hash_strshare_return_own {
+      eina_hash_strshare_return_own @beta {
          return: hash<stringshare, stringshare @move> @move;
       }
-      check_eina_hash_strshare_return_own {
+      check_eina_hash_strshare_return_own @beta {
          return: bool;
       }
 
       // Object //
-      eina_hash_obj_in {
+      eina_hash_obj_in @beta {
          params {
             @in hsh: hash<Dummy.Numberwrapper, Dummy.Numberwrapper>;
             @in nwk1: Dummy.Numberwrapper;
@@ -937,7 +937,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_hash_obj_in_own {
+      eina_hash_obj_in_own @beta {
          params {
             @in hsh: hash<Dummy.Numberwrapper, Dummy.Numberwrapper @move> @move;
             @in nwk1: Dummy.Numberwrapper;
@@ -947,7 +947,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
          return: bool;
       }
-      check_eina_hash_obj_in_own {
+      check_eina_hash_obj_in_own @beta {
          params {
             @in nwk1: Dummy.Numberwrapper;
             @in nwv1: Dummy.Numberwrapper;
@@ -957,7 +957,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_hash_obj_out {
+      eina_hash_obj_out @beta {
          params {
             @out hsh: hash<Dummy.Numberwrapper, Dummy.Numberwrapper>;
             @out nwk: Dummy.Numberwrapper;
@@ -965,7 +965,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
          return: bool;
       }
-      check_eina_hash_obj_out {
+      check_eina_hash_obj_out @beta {
          params {
             @in nwk1: Dummy.Numberwrapper;
             @in nwv1: Dummy.Numberwrapper;
@@ -975,7 +975,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_hash_obj_out_own {
+      eina_hash_obj_out_own @beta {
          params {
             @out hsh: hash<Dummy.Numberwrapper, Dummy.Numberwrapper @move> @move;
             @out nwk: Dummy.Numberwrapper;
@@ -983,18 +983,18 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
          return: bool;
       }
-      check_eina_hash_obj_out_own {
+      check_eina_hash_obj_out_own @beta {
          return: bool;
       }
 
-      eina_hash_obj_return {
+      eina_hash_obj_return @beta {
          params {
             @out nwk: Dummy.Numberwrapper;
             @out nwv: Dummy.Numberwrapper;
          }
          return: hash<Dummy.Numberwrapper, Dummy.Numberwrapper>;
       }
-      check_eina_hash_obj_return {
+      check_eina_hash_obj_return @beta {
          params {
             @in nwk1: Dummy.Numberwrapper;
             @in nwv1: Dummy.Numberwrapper;
@@ -1004,14 +1004,14 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_hash_obj_return_own {
+      eina_hash_obj_return_own @beta {
          params {
             @out nwk: Dummy.Numberwrapper;
             @out nwv: Dummy.Numberwrapper;
          }
          return: hash<Dummy.Numberwrapper, Dummy.Numberwrapper @move> @move;
       }
-      check_eina_hash_obj_return_own {
+      check_eina_hash_obj_return_own @beta {
          return: bool;
       }
 
@@ -1419,7 +1419,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
       */
 
-      struct_complex_in {
+      struct_complex_in @beta {
          params {
             @in complex: Dummy.StructComplex;
          }
@@ -1427,14 +1427,14 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       /*
-      struct_complex_ptr_in {
+      struct_complex_ptr_in @beta {
          params {
             @in complex: ptr(Dummy.StructComplex);
          }
          return: bool;
       }
 
-      struct_complex_ptr_in_own {
+      struct_complex_ptr_in_own @beta {
          params {
             @in complex: ptr(Dummy.StructComplex) @move;
          }
@@ -1442,7 +1442,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
       */
 
-      struct_complex_out {
+      struct_complex_out @beta {
          params {
             @out complex: Dummy.StructComplex;
          }
@@ -1463,7 +1463,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       //    return: bool;
       // }
 
-      struct_complex_return {
+      struct_complex_return @beta {
          return: Dummy.StructComplex;
       }
 
@@ -1523,7 +1523,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
       }
 
-      emit_event_with_struct_complex {
+      emit_event_with_struct_complex @beta {
          params {
             @in data: Dummy.StructComplex;
          }
@@ -1669,7 +1669,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       evt,with,obj @hot: Dummy.Test_Object;
       evt,with,error @hot: Eina.Error;
       evt,with,struct @hot: Dummy.StructSimple;
-      evt,with,struct,complex @hot: Dummy.StructComplex;
+      evt,with,struct,complex @beta @hot: Dummy.StructComplex;
       evt,with,array @hot: const(array<string>);
       evt_with,under @hot: void;
 

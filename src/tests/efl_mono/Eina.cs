@@ -2442,6 +2442,7 @@ class TestEinaInlist
 
 } // < TestEinaInlist
 
+#if EFL_BETA
 
 class TestEinaHash
 {
@@ -3037,6 +3038,8 @@ class TestEinaHash
         Test.Assert(t.CheckEinaHashObjReturnOwn());
     }
 }
+
+#endif // EFL_BETA
 
 
 class TestEinaIterator
