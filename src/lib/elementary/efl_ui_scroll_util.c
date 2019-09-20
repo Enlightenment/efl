@@ -111,7 +111,7 @@ _scroll_connector_vbar_drag_cb(void *data,
    _scroll_connector_bar_read_and_update(ctx);
 
    type = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
-   efl_event_callback_call(ctx->obj, EFL_UI_SCROLLBAR_EVENT_BAR_DRAG, &type);
+   efl_event_callback_call(ctx->obj, EFL_UI_SCROLLBAR_EVENT_BAR_DRAGGED, &type);
 }
 
 static void
@@ -123,7 +123,7 @@ _scroll_connector_vbar_press_cb(void *data,
    Scroll_Connector_Context *ctx = data;
    Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
 
-   efl_event_callback_call(ctx->obj, EFL_UI_SCROLLBAR_EVENT_BAR_PRESS, &type);
+   efl_event_callback_call(ctx->obj, EFL_UI_SCROLLBAR_EVENT_BAR_PRESSED, &type);
 }
 
 static void
@@ -135,7 +135,7 @@ _scroll_connector_vbar_unpress_cb(void *data,
    Scroll_Connector_Context *ctx = data;
    Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
 
-   efl_event_callback_call(ctx->obj, EFL_UI_SCROLLBAR_EVENT_BAR_UNPRESS, &type);
+   efl_event_callback_call(ctx->obj, EFL_UI_SCROLLBAR_EVENT_BAR_UNPRESSED, &type);
 }
 
 static void
@@ -148,7 +148,7 @@ _scroll_connector_hbar_drag_cb(void *data,
    Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
 
    _scroll_connector_bar_read_and_update(ctx);
-   efl_event_callback_call(ctx->obj, EFL_UI_SCROLLBAR_EVENT_BAR_DRAG, &type);
+   efl_event_callback_call(ctx->obj, EFL_UI_SCROLLBAR_EVENT_BAR_DRAGGED, &type);
 }
 
 static void
@@ -160,7 +160,7 @@ _scroll_connector_hbar_press_cb(void *data,
    Scroll_Connector_Context *ctx = data;
    Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
 
-   efl_event_callback_call(ctx->obj, EFL_UI_SCROLLBAR_EVENT_BAR_PRESS, &type);
+   efl_event_callback_call(ctx->obj, EFL_UI_SCROLLBAR_EVENT_BAR_PRESSED, &type);
 }
 
 static void
@@ -172,7 +172,7 @@ _scroll_connector_hbar_unpress_cb(void *data,
    Scroll_Connector_Context *ctx = data;
    Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
 
-   efl_event_callback_call(ctx->obj, EFL_UI_SCROLLBAR_EVENT_BAR_UNPRESS, &type);
+   efl_event_callback_call(ctx->obj, EFL_UI_SCROLLBAR_EVENT_BAR_UNPRESSED, &type);
 }
 
 static void

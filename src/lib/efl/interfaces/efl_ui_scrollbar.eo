@@ -58,9 +58,9 @@ interface @beta Efl.Ui.Scrollbar
       }
    }
    events {
-      bar,press: Efl.Ui.Layout_Orientation; [[Called when bar is pressed.]]
-      bar,unpress: Efl.Ui.Layout_Orientation; [[Called when bar is unpressed.]]
-      bar,drag: Efl.Ui.Layout_Orientation; [[Called when bar is dragged.]]
+      bar,pressed: Efl.Ui.Layout_Orientation; [[Called when bar is pressed.]]
+      bar,unpressed: Efl.Ui.Layout_Orientation; [[Called when bar is unpressed.]]
+      bar,dragged: Efl.Ui.Layout_Orientation; [[Called when bar is dragged.]]
       bar,size,changed: void; [[Called when bar size is changed.]]
       bar,pos,changed: void; [[Called when bar position is changed.]]
       bar,show: Efl.Ui.Layout_Orientation; [[Callend when bar is shown.]]
