@@ -249,6 +249,7 @@ void
 efl_ui_scroll_connector_bind(Eo *obj, Eo *manager)
 {
    Scroll_Connector_Context *ctx = calloc(1, sizeof(Scroll_Connector_Context));
+   if (!ctx) return;
    ctx->obj = obj;
    ctx->smanager = manager;
    efl_key_data_set(obj, "__context", ctx);
