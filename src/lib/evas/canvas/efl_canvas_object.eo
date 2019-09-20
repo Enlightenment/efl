@@ -47,7 +47,6 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
            If the value is @Efl.Input.Object_Pointer_Mode.no_grab, then events
            will be emitted just when inside this object area.
 
-           The default value is @Efl.Input.Object_Pointer_Mode.auto_grab.
            See also: @.pointer_mode_by_device.get and @.pointer_mode_by_device.set
            Note: This function will only set/get the mode for the default pointer.
          ]]
@@ -57,7 +56,7 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
             return: bool; [[$true if pointer behaviour was set, $false otherwise]]
          }
          values {
-            pointer_mode: Efl.Input.Object_Pointer_Mode; [[Input pointer mode]]
+            pointer_mode: Efl.Input.Object_Pointer_Mode(Efl.Input.Object_Pointer_Mode.auto_grab); [[Input pointer mode]]
          }
       }
       @property render_op {
@@ -265,8 +264,7 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
          get {
          }
          values {
-            precise: bool; [[Whether to use precise point collision
-                             detection or not. The default value is false.]]
+            precise: bool(false); [[Whether to use precise point collision detection.]]
          }
       }
       @property propagate_events {
@@ -280,7 +278,7 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
            propagated on to the smart object of which $obj is a member.
            If $prop is $false, events occurring on this object will not
            be propagated on to the smart object of which $obj is a
-           member. The default value is $true.
+           member.
 
            See also @.repeat_events.set, @.pass_events.set.
          ]]
@@ -289,8 +287,7 @@ abstract Efl.Canvas.Object extends Efl.Loop_Consumer implements Efl.Gfx.Entity, 
          get {
          }
          values {
-            propagate: bool; [[Whether to propagate events ($true) or not
-                               ($false).]]
+            propagate: bool(true); [[Whether to propagate events.]]
          }
       }
       @property pass_events {

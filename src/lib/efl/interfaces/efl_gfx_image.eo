@@ -79,7 +79,7 @@ interface @beta Efl.Gfx.Image
          set {}
          get {}
          values {
-            smooth_scale: bool; [[Whether to use smooth scale or not. The default value is $true.]]
+            smooth_scale: bool(true); [[Whether to use smooth scale or not.]]
          }
       }
       @property scale_method {
@@ -89,8 +89,7 @@ interface @beta Efl.Gfx.Image
            buffer. The underlying image data will not be modified.
          ]]
          values {
-            scale_method: Efl.Gfx.Image_Scale_Method; [[Image scale type to use. The default value is
-                                                        @Efl.Gfx.Image_Scale_Method.none.]]
+            scale_method: Efl.Gfx.Image_Scale_Method(Efl.Gfx.Image_Scale_Method.none); [[Image scale type to use.]]
          }
       }
       @property can_upscale {
@@ -98,7 +97,7 @@ interface @beta Efl.Gfx.Image
            the image will never be resized larger than its native size.
          ]]
          values {
-            upscale: bool; [[Whether to allow image upscaling. The default value is $true.]]
+            upscale: bool(true); [[Whether to allow image upscaling.]]
          }
       }
       @property can_downscale {
@@ -106,7 +105,7 @@ interface @beta Efl.Gfx.Image
            the image will never be resized smaller than its native size.
          ]]
          values {
-            downscale: bool; [[Whether to allow image downscaling. The default value is $true.]]
+            downscale: bool(true); [[Whether to allow image downscaling.]]
          }
       }
       @property ratio {
@@ -116,7 +115,7 @@ interface @beta Efl.Gfx.Image
          get {
          }
          values {
-            ratio: double; [[The image's ratio. The default value is $[1.0].]]
+            ratio: double(1.0); [[The image's ratio.]]
          }
       }
       @property content_region {
@@ -161,10 +160,10 @@ interface @beta Efl.Gfx.Image
          set {}
          get {}
          values {
-            l: int; [[The border's left width. The default value is $0.]]
-            r: int; [[The border's right width. The default value is $0.]]
-            t: int; [[The border's top height. The default value is $0.]]
-            b: int; [[The border's bottom height. The default value is $0.]]
+            l: int(0); [[The border's left width.]]
+            r: int(0); [[The border's right width.]]
+            t: int(0); [[The border's top height.]]
+            b: int(0); [[The border's bottom height.]]
          }
       }
       @property border_insets_scale {
@@ -176,7 +175,7 @@ interface @beta Efl.Gfx.Image
          set {}
          get {}
          values {
-            scale: double; [[The scale factor. The default value is $[1.0].]]
+            scale: double(1.0); [[The scale factor.]]
          }
       }
       @property center_fill_mode {
@@ -193,8 +192,8 @@ interface @beta Efl.Gfx.Image
          set {}
          get {}
          values {
-            fill: Efl.Gfx.Center_Fill_Mode; [[Fill mode of the center region.
-                                              The default value is @Efl.Gfx.Center_Fill_Mode.default, i.e. render
+            fill: Efl.Gfx.Center_Fill_Mode(Efl.Gfx.Center_Fill_Mode.default); [[Fill mode of the center region.
+                                              The default behavior is to render
                                               and scale the center area, respecting its transparency.]]
          }
       }
@@ -214,12 +213,10 @@ interface @beta Efl.Gfx.Image
          }
          get {}
          values {
-            horizontal: iterator<ptr(Efl.Gfx.Image_Stretch_Region)>; [[Representation of areas that are stretchable in
-                                                                       the image horizontal space. The default value
-                                                                       is $NULL.]]
-            vertical: iterator<ptr(Efl.Gfx.Image_Stretch_Region)>; [[Representation of areas that are stretchable in
-                                                                     the image vertical space. The default value
-                                                                     is $NULL.]]
+            horizontal: iterator<ptr(Efl.Gfx.Image_Stretch_Region)>(null); [[Representation of areas that are
+                stretchable in the image horizontal space.]]
+            vertical: iterator<ptr(Efl.Gfx.Image_Stretch_Region)>(null); [[Representation of areas that are
+                stretchable in the image vertical space.]]
          }
       }
       @property image_size {
@@ -251,8 +248,7 @@ interface @beta Efl.Gfx.Image
          get {
          }
          values {
-            hint: Efl.Gfx.Image_Content_Hint; [[Dynamic or static content hint. The default value is
-                                                @Efl.Gfx.Image_Content_Hint.none.]]
+            hint: Efl.Gfx.Image_Content_Hint(Efl.Gfx.Image_Content_Hint.none); [[Dynamic or static content hint.]]
          }
       }
       @property scale_hint {
@@ -266,8 +262,7 @@ interface @beta Efl.Gfx.Image
          get {
          }
          values {
-            hint: Efl.Gfx.Image_Scale_Hint; [[Scalable or static size hint. The default value is
-                                              @Efl.Gfx.Image_Scale_Hint.none.]]
+            hint: Efl.Gfx.Image_Scale_Hint(Efl.Gfx.Image_Scale_Hint.none); [[Scalable or static size hint.]]
          }
       }
       @property image_load_error {

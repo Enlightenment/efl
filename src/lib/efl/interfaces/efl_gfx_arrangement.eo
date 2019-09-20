@@ -22,10 +22,10 @@ interface @beta Efl.Gfx.Arrangement
          set {}
          get {}
          values {
-            align_horiz: double; [[Double, ranging from 0.0 to 1.0, where 0.0 is at the start of the horizontal axis
-                                   and 1.0 is at the end. The default value is 0.5.]]
-            align_vert:  double; [[Double, ranging from 0.0 to 1.0, where 0.0 is at the start of the vertical axis
-                                   and 1.0 is at the end. The default value is 0.5.]]
+            align_horiz: double(0.5); [[Double, ranging from 0.0 to 1.0, where 0.0 is at the start of the horizontal
+                                        axis and 1.0 is at the end.]]
+            align_vert:  double(0.5); [[Double, ranging from 0.0 to 1.0, where 0.0 is at the start of the vertical
+                                        axis and 1.0 is at the end.]]
          }
       }
       @property content_padding {
@@ -40,9 +40,9 @@ interface @beta Efl.Gfx.Arrangement
          set {}
          get {}
          values {
-            pad_horiz: double; [[Horizontal padding. The default value is 0.0.]]
-            pad_vert:  double; [[Vertical padding. The default value is 0.0.]]
-            scalable:  bool; [[$true if scalable, $false otherwise. The default value is $false.]]
+            pad_horiz: double(0.0); [[Horizontal padding.]]
+            pad_vert:  double(0.0); [[Vertical padding.]]
+            scalable:  bool(false); [[$true if scalable.]]
          }
       }
    }

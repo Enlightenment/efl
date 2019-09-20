@@ -67,7 +67,7 @@ interface @beta Efl.Ui.Zoom
          get {
          }
          values {
-            mode: Efl.Ui.Zoom_Mode; [[The zoom mode.]]
+            mode: Efl.Ui.Zoom_Mode(Efl.Ui.Zoom_Mode.manual); [[The zoom mode.]]
          }
       }
    }
