@@ -1801,7 +1801,6 @@ _elm_layout_efl_canvas_group_change(Eo *obj, Elm_Layout_Data *ld)
 {
    Efl_Ui_Layout_Data *sd;
 
-   if (!efl_finalized_get(obj)) return;
    sd = efl_data_scope_safe_get(obj, EFL_UI_LAYOUT_BASE_CLASS);
    EINA_SAFETY_ON_NULL_RETURN(sd);
    if (sd->frozen) return;
