@@ -95,10 +95,19 @@ _efl_ui_exact_model_slot_compress(unsigned int index, Eina_List *compressed, uns
              unsigned char *zmem;
 
              zmem = calloc(EFL_UI_EXACT_MODEL_CONTENT, sizeof (unsigned int));
-             if (!zmem) return compressed;
+             if (!zmem)
+               {
+                  if (cbuf) eina_binbuf_free(cbuf);
+                  return compressed;
+               }
 
              tbuf = eina_binbuf_manage_new(zmem, EFL_UI_EXACT_MODEL_CONTENT_LENGTH, EINA_TRUE);
-             if (!tbuf) return compressed;
+             if (!tbuf)
+               {
+                  if (cbuf) eina_binbuf_free(cbuf);
+                  if (zmem) free(zmem);
+                  return compressed;
+               }
 
              z = emile_compress(tbuf, EMILE_LZ4, EMILE_COMPRESSOR_FAST);
 
