@@ -190,7 +190,7 @@ collections {
 #include "edc/efl/tags.edc"
 #include "edc/efl/panel.edc"
 #include "edc/efl/tooltip.edc"
-#include "edc/efl/photocam.edc"
+#include "edc/efl/image_zoomable.edc"
 #include "edc/efl/progress.edc"
 #include "edc/efl/border.edc"
 #include "edc/efl/spin.edc"

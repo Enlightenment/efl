@@ -1,4 +1,4 @@
-group { name: "efl/photocam";
+group { name: "efl/image_zoomable";
    inherit: "efl/scroller";
    images.image: "knob_round_busy.png" COMP;
    images.image: "glow_round_corners.png" COMP;
