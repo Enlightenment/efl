@@ -1,4 +1,4 @@
-class Owning {
+class @beta Owning {
    methods {
      test1 {
        params {

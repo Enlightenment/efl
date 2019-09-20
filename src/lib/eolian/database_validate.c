@@ -293,6 +293,11 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                 int kwid = eo_lexer_keyword_str_to_id(tp->base.name);
                 if (kwid > KW_void)
                   tp->ownable = EINA_TRUE;
+                if (kwid == KW_hash && vals->stable)
+                  {
+                     _eo_parser_log(&tp->base, "hashes not allowed in stable context");
+                     return EINA_FALSE;
+                  }
                 Eolian_Type *itp = tp->base_type;
                 /* validate types in brackets so transitive fields get written */
                 while (itp)

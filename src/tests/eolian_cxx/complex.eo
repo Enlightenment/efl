@@ -58,12 +58,12 @@ class Complex extends Efl.Object
            l: array<string> @move;
          }
       }
-      inhash {
+      inhash @beta {
          params {
            l: hash<string, string>;
          }
       }
-      inhashown {
+      inhashown @beta {
          params {
            l: hash<string, string> @move;
          }
@@ -139,12 +139,12 @@ class Complex extends Efl.Object
            @out l: array<string> @move;
          }
       }
-      outhash {
+      outhash @beta {
          params {
            @out l: hash<string, string>;
          }
       }
-      outhashown {
+      outhashown @beta {
          params {
            @out l: hash<string, string> @move;
          }
