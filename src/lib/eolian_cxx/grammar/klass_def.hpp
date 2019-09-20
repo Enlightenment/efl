@@ -412,6 +412,9 @@ struct type_def
                << rhs.c_type << " has_own " << rhs.has_own << " is_ptr "
                << rhs.is_ptr << "]";
    }
+
+private:
+   void set(const char* regular_name, const char* c_type);
 };
 
 struct get_qualifier_visitor
@@ -516,15 +519,37 @@ inline void type_def::set(Eolian_Expression_Type eolian_exp_type)
     switch(eolian_exp_type)
       {
       case EOLIAN_EXPR_INT:
-        original_type = attributes::regular_type_def{"int", {{}, {}}, {}};
-        c_type = "int";
+        set("int", "int");
+        break;
+      case EOLIAN_EXPR_UINT:
+        set("uint", "unsigned int");
+        break;
+      case EOLIAN_EXPR_FLOAT:
+        set("float", "float");
+        break;
+      case EOLIAN_EXPR_DOUBLE:
+        set("double", "double");
+        break;
+      case EOLIAN_EXPR_STRING:
+        set("string", "const char *");
+      case EOLIAN_EXPR_BOOL:
+        set("bool", "Eina_Bool");
+        break;
+      case EOLIAN_EXPR_NULL:
+        set("null", "void *");
         break;
       default:
         // FIXME implement the remaining types
-        EINA_LOG_ERR("Unsupported expression type");
+        EINA_LOG_ERR("Unsupported expression type : %d", eolian_exp_type);
         std::abort();
         break;
       }
+}
+
+inline void type_def::set(const char* regular_name, const char* c_type)
+{
+    original_type = attributes::regular_type_def{regular_name, {{}, {}}, {}};
+    this->c_type = c_type;
 }
 
 struct alias_def
@@ -585,12 +610,57 @@ struct add_optional_qualifier_visitor
 };
 }
 
+struct value_def
+{
+  typedef eina::variant<int> variant_type; // FIXME support other types
+  variant_type value;
+  std::string literal;
+  type_def type;
+
+  value_def() = default;
+  value_def(Eolian_Value value_obj)
+  {
+    type.set(value_obj.type);
+    value = value_obj.value.i;
+    literal = eolian_expression_value_to_literal(&value_obj);
+  }
+};
+
+
+struct expression_def
+{
+  value_def value;
+  std::string serialized;
+  // We store this explicitly as evaluating the value reduces a name reference
+  // to a plain string value.
+  bool is_name_ref;
+
+  friend inline bool operator==(expression_def const& lhs, expression_def const& rhs)
+  {
+    return lhs.serialized == rhs.serialized;
+  }
+  friend inline bool operator!=(expression_def const& lhs, expression_def const& rhs)
+  {
+    return lhs != rhs;
+  }
+
+  expression_def(Eolian_Expression const* expression) : value(::eolian_expression_eval(expression, EOLIAN_MASK_ALL))
+                                                , serialized()
+                                                , is_name_ref(::eolian_expression_type_get(expression) == EOLIAN_EXPR_NAME)
+  {
+    auto serialized_s = ::eolian_expression_serialize(expression);
+    serialized = serialized_s;
+    ::eina_stringshare_del(serialized_s);
+  }
+};
+
 struct parameter_def
 {
   parameter_direction direction;
   type_def type;
   std::string param_name;
   documentation_def documentation;
+  eina::optional<expression_def> default_value;
   Eolian_Unit const* unit;
 
   friend inline bool operator==(parameter_def const& lhs, parameter_def const& rhs)
@@ -598,7 +668,8 @@ struct parameter_def
     return lhs.direction == rhs.direction
       && lhs.type == rhs.type
       && lhs.param_name == rhs.param_name
-      && lhs.documentation == rhs.documentation;
+      && lhs.documentation == rhs.documentation
+      && lhs.default_value == rhs.default_value;
   }
   friend inline bool operator!=(parameter_def const& lhs, parameter_def const& rhs)
   {
@@ -608,13 +679,17 @@ struct parameter_def
   parameter_def(parameter_direction direction, type_def type, std::string param_name,
                 documentation_def documentation, Eolian_Unit const* unit)
     : direction(std::move(direction)), type(std::move(type)), param_name(std::move(param_name)), documentation(documentation), unit(unit) {}
-  parameter_def(Eolian_Function_Parameter const* param, Eolian_Unit const* unit)
+  parameter_def(Eolian_Function_Parameter const* param, Eolian_Unit const* _unit)
     : type( ::eolian_parameter_type_get(param)
-            , unit
+            , _unit
             , eolian_parameter_c_type_get(param, EINA_FALSE)
             , eolian_parameter_is_move(param)
             , eolian_parameter_is_by_ref(param))
-    , param_name( ::eolian_parameter_name_get(param)), unit(unit)
+    , param_name( ::eolian_parameter_name_get(param))
+    , default_value(::eolian_parameter_default_value_get(param) ?
+                        ::eolian_parameter_default_value_get(param) :
+                        eina::optional<expression_def>{})
+    , unit(_unit)
   {
      Eolian_Parameter_Dir direction = ::eolian_parameter_direction_get(param);
      switch(direction)
@@ -1527,22 +1602,6 @@ struct klass_def
         }
 
       return ret;
-  }
-};
-
-struct value_def
-{
-  typedef eina::variant<int> variant_type; // FIXME support other types
-  variant_type value;
-  std::string literal;
-  type_def type;
-
-  value_def() = default;
-  value_def(Eolian_Value value_obj)
-  {
-    type.set(value_obj.type);
-    value = value_obj.value.i;
-    literal = eolian_expression_value_to_literal(&value_obj);
   }
 };
 
