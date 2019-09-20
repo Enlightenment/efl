@@ -606,6 +606,7 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
              _eo_parser_log(&tp->base, "pointers not allowed in events");
              return _reset_stable(vals, was_stable, EINA_FALSE);
           }
+        int kwid = eo_lexer_keyword_str_to_id(tp->base.name);
         /* require containers to be const for now...
          *
          * this is FIXME, and decision wasn't reached before 1.22
@@ -613,10 +614,17 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
          */
         if (database_type_is_ownable(tp->base.unit, tp, EINA_FALSE))
           {
-             if (!tp->is_const)
+             switch (kwid)
                {
-                  _eo_parser_log(&tp->base, "event container types must be const");
-                  return _reset_stable(vals, was_stable, EINA_FALSE);
+                case KW_string:
+                case KW_stringshare:
+                  break;
+                default:
+                  if (!tp->is_const)
+                    {
+                       _eo_parser_log(&tp->base, "event container types must be const");
+                       return _reset_stable(vals, was_stable, EINA_FALSE);
+                    }
                }
           }
         else if (tp->is_const)
@@ -624,7 +632,6 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
              _eo_parser_log(&tp->base, "event value types cannot be const");
              return _reset_stable(vals, was_stable, EINA_FALSE);
           }
-        int kwid = eo_lexer_keyword_str_to_id(tp->base.name);
         /* containers are allowed but not iterators/lists */
         if (kwid == KW_iterator || kwid == KW_list)
           {
