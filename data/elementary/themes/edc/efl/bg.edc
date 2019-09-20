@@ -20,11 +20,11 @@ group { "efl/bg";
             color: 64 64 64 255;
          }
       }
-      part { name: "efl.rectangle"; type: SWALLOW;
+      part { name: "efl.rectangle"; type: SWALLOW; required;
          description { state: "default" 0.0;
          }
       }
-      part { name: "efl.background"; type: SWALLOW;
+      part { name: "efl.background"; type: SWALLOW; required;
          clip_to: "clipper";
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -38,7 +38,7 @@ group { "efl/bg";
             fill.smooth: 0;
          }
       }
-      part { name: "efl.content"; type: SWALLOW;
+      part { name: "efl.content"; type: SWALLOW; required;
          description { state: "default" 0.0;
          }
       }
