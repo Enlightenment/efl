@@ -170,7 +170,7 @@ group { name: "efl/scroller";
             fixed: 1 1;
          }
       }
-      part { name: "efl.dragable.vbar"; type: RECT;
+      part { name: "efl.dragable.vbar"; type: RECT; required;
          clip_to: "sb_vbar";
          scale: 1;
          dragable.x: 0 0 0;
@@ -451,7 +451,7 @@ group { name: "efl/scroller";
             fixed: 1 1;
          }
       }
-      part { name: "efl.dragable.hbar"; type: RECT;
+      part { name: "efl.dragable.hbar"; type: RECT; required;
          clip_to: "sb_hbar";
          scale: 1;
          dragable.x: 1 1 0;
@@ -687,7 +687,7 @@ group { name: "efl/scroller";
             rel2.to: "efl.background";
          }
       }
-      part { name: "efl.background"; type: SWALLOW;
+      part { name: "efl.background"; type: SWALLOW; required;
          clip_to: "clipper";
          description { state: "default" 0.0;
             rel1.offset: 1 1;
@@ -697,7 +697,7 @@ group { name: "efl/scroller";
             rel2.to_y: "sb_hbar";
          }
       }
-      part { name: "efl.content"; type: SWALLOW;
+      part { name: "efl.content"; type: SWALLOW; required;
          clip_to: "clipper";
          description { state: "default" 0.0;
             rel1.offset: 1 1;
@@ -730,7 +730,7 @@ group { name: "efl/scroller";
             color: 255 255 255 128;
          }
       }
-      part { name: "efl.overlay"; type: SWALLOW;
+      part { name: "efl.overlay"; type: SWALLOW; required;
          clip_to: "clipper";
          description { state: "default" 0.0;
             rel1.to: "efl.content";
@@ -1285,12 +1285,12 @@ group { name: "efl/scroller:popup/no_inset_shadow";
 
 group { name: "efl/scroller/contents";
    parts {
-      part { name: "efl.content";
+      part { name: "efl.content"; required;
          type: SWALLOW;
          description { state: "default" 0.0;
          }
       }
-      part { name: "efl.content_r";
+      part { name: "efl.content_r"; required;
          type: SWALLOW;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -1304,7 +1304,7 @@ group { name: "efl/scroller/contents";
             }
          }
       }
-      part { name: "efl.content_b";
+      part { name: "efl.content_b"; required;
          type: SWALLOW;
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -1318,7 +1318,7 @@ group { name: "efl/scroller/contents";
             }
          }
       }
-      part { name: "efl.content_rb";
+      part { name: "efl.content_rb"; required;
          type: SWALLOW;
          description { state: "default" 0.0;
             fixed: 1 1;
