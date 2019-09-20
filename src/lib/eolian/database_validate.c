@@ -326,7 +326,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                    case KW_mstring:
                    case KW_stringshare:
                    case KW_any_value:
-                   case KW_any_value_ptr:
+                   case KW_any_value_ref:
                    case KW_binbuf:
                    case KW_strbuf:
                      tp->ownable = EINA_TRUE;
@@ -645,12 +645,12 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
              return _reset_stable(vals, was_stable, EINA_FALSE);
           }
         /* any type past builtin value types and containers is not allowed,
-         * any_value is allowed but passed as const reference, any_value_ptr
+         * any_value is allowed but passed as const reference, any_value_ref
          * is not; string is allowed, but mutable strings or stringshares are
          * not and neither are string buffers, the type is never owned by the
          * callee, so all strings passed in are unowned and read-only
          */
-        if (kwid >= KW_any_value_ptr && kwid != KW_string)
+        if (kwid >= KW_any_value_ref && kwid != KW_string)
           {
              _eo_parser_log(&tp->base, "forbidden event type");
              return _reset_stable(vals, was_stable, EINA_FALSE);

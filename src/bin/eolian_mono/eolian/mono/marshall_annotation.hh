@@ -70,10 +70,10 @@ struct marshall_annotation_visitor_generate
           {"stringshare", false, [&] {
                 return "[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringshareKeepOwnershipMarshaler))]";
           }},
-          {"any_value_ptr", true, [&] {
+          {"any_value_ref", true, [&] {
                     return "[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Eina.ValueMarshalerOwn))]";
           }},
-          {"any_value_ptr", false, [&] {
+          {"any_value_ref", false, [&] {
                     return "[MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Eina.ValueMarshaler))]";
           }},
           {"strbuf", true, [&] {
@@ -108,10 +108,10 @@ struct marshall_annotation_visitor_generate
           {"stringshare", false, [&] {
                 return "[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Efl.Eo.StringshareKeepOwnershipMarshaler))]";
           }},
-          {"any_value_ptr", true, [&] {
+          {"any_value_ref", true, [&] {
                     return "[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Eina.ValueMarshalerOwn))]";
           }},
-          {"any_value_ptr", false, [&] {
+          {"any_value_ref", false, [&] {
                     return "[return: MarshalAs(UnmanagedType.CustomMarshaler, MarshalTypeRef=typeof(Eina.ValueMarshaler))]";
           }},
           {"strbuf", true, [&] {

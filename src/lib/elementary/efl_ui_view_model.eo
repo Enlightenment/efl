@@ -4,7 +4,7 @@ function @beta EflUiViewModelPropertyGet {
       @in view_model: const(Efl.Ui.View_Model); [[The ViewModel object the @.property.get is issued on.]]
       @in property: stringshare; [[The property name the @.property.get is issued on.]]
    }
-   return: any_value_ptr; [[The property value.]]
+   return: any_value_ref; [[The property value.]]
 };
 
 function @beta EflUiViewModelPropertySet {
@@ -12,9 +12,9 @@ function @beta EflUiViewModelPropertySet {
    params {
       @in view_model: Efl.Ui.View_Model; [[The ViewModel object the @.property.set is issued on.]]
       @in property: stringshare; [[The property name the @.property.set is issued on.]]
-      @in value: any_value_ptr @move; [[The new value to set.]]
+      @in value: any_value_ref @move; [[The new value to set.]]
    }
-   return: future<any_value_ptr>; [[The value that was finally set.]]
+   return: future<any_value_ref>; [[The value that was finally set.]]
 };
 
 class @beta Efl.Ui.View_Model extends Efl.Composite_Model

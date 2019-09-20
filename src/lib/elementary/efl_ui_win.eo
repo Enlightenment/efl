@@ -280,7 +280,7 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
            windows are closed.
          ]]
          values {
-            exit_code: const(any_value_ptr); [[The exit code to use when exiting]]
+            exit_code: const(any_value_ref); [[The exit code to use when exiting]]
          }
       }
       @property icon_object {
@@ -596,7 +596,7 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
            Note this is different from @.exit_on_close which exits when a given window is closed.
          ]]
          values {
-            exit_code: const(any_value_ptr); [[The exit code to use when exiting.]]
+            exit_code: const(any_value_ref); [[The exit code to use when exiting.]]
          }
       }
       activate {

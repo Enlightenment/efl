@@ -141,8 +141,8 @@ internal class StructHelpers
         complex.Fany_value = new Eina.Value(Eina.ValueType.Double);
         complex.Fany_value.Set(-9007199254740992.0);
 
-        complex.Fany_value_ptr = new Eina.Value(Eina.ValueType.String);
-        complex.Fany_value_ptr.Set("abc");
+        complex.Fany_value_ref = new Eina.Value(Eina.ValueType.String);
+        complex.Fany_value_ref.Set("abc");
 
         complex.Fbinbuf = new Eina.Binbuf();
         complex.Fbinbuf.Append(126);
@@ -180,7 +180,7 @@ internal class StructHelpers
         Test.Assert(double_val == -9007199254740992.0);
 
         string str_val = null;
-        Test.Assert(complex.Fany_value_ptr.Get(out str_val));
+        Test.Assert(complex.Fany_value_ref.Get(out str_val));
         Test.Assert(str_val == "abc");
 
         Test.Assert(complex.Fbinbuf.Length == 1);
@@ -201,7 +201,7 @@ internal class StructHelpers
         Test.Assert(complex.Fhash == null);
         Test.Assert(complex.Fiterator == null);
         Test.Assert(complex.Fany_value == null);
-        Test.Assert(complex.Fany_value_ptr == null);
+        Test.Assert(complex.Fany_value_ref == null);
         Test.Assert(complex.Fbinbuf == null);
 
         Test.Assert(complex.Fslice.Length == 0);

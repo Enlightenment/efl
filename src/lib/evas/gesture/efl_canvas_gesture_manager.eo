@@ -37,7 +37,7 @@ class @beta Efl.Canvas.Gesture_Manager extends Efl.Object
             name: string; [[Property name.]]
          }
          values {
-            value: any_value_ptr; [[Value of the property.]]
+            value: any_value_ref; [[Value of the property.]]
          }
       }
    }

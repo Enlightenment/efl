@@ -37,7 +37,7 @@ abstract Efl.Loop extends Efl.Task
       }
       begin {
          [[Runs the application main loop.]]
-         return: any_value_ptr; [[Value set by quit()]]
+         return: any_value_ref; [[Value set by quit()]]
       }
       quit {
          [[Quits the main loop once all the events currently on the queue have

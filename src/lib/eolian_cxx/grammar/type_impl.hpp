@@ -164,7 +164,7 @@ struct visitor_generate
                 else
                   return replace_base_type(r, " Eina_Binbuf const*");
               }}
-           /* FIXME: handle any_value_ptr */
+           /* FIXME: handle any_value_ref */
            , {"any_value", true, nullptr, nullptr, [&]
               {
                 return regular_type_def{" ::efl::eina::value", regular.base_qualifier ^ qualifier_info::is_ref, {}};
@@ -172,11 +172,11 @@ struct visitor_generate
            , {"any_value", false, nullptr, nullptr, [&]
               { return regular_type_def{" ::efl::eina::value_view", regular.base_qualifier, {}};
               }}
-           , {"any_value_ptr", true, nullptr, nullptr, [&]
+           , {"any_value_ref", true, nullptr, nullptr, [&]
               {
                 return regular_type_def{" ::efl::eina::value", regular.base_qualifier ^ qualifier_info::is_ref, {}};
               }}
-           , {"any_value_ptr", false, nullptr, nullptr, [&]
+           , {"any_value_ref", false, nullptr, nullptr, [&]
               { return regular_type_def{" ::efl::eina::value_view", regular.base_qualifier ^ qualifier_info::is_ref, {}};
               }}
         };

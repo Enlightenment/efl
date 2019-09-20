@@ -293,7 +293,7 @@ struct struct_internal_definition_generator
               || (regular && (regular->base_type == "string"
                               || regular->base_type == "mstring"
                               || regular->base_type == "stringshare"
-                              || regular->base_type == "any_value_ptr")))
+                              || regular->base_type == "any_value_ref")))
             {
                if (!as_generator(indent << scope_tab << "/// <summary>Internal wrapper for field " << field_name << "</summary>\n"
                                  << indent << scope_tab << "public System.IntPtr " << field_name << ";\n")

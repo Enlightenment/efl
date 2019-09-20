@@ -59,7 +59,7 @@ interface @beta Efl.Model
 
                See @.property.get, @[Efl.Model.properties,changed]
               ]]
-              return: future<any_value_ptr>; [[Return an error in case the property could not be set,
+              return: future<any_value_ref>; [[Return an error in case the property could not be set,
                                                or the value that was set otherwise.]]
            }
            get {
@@ -76,7 +76,7 @@ interface @beta Efl.Model
               property: string; [[Property name]]
            }
            values {
-              value: any_value_ptr; [[Property value]]
+              value: any_value_ref; [[Property value]]
            }
         }
         property_ready_get {
@@ -94,7 +94,7 @@ interface @beta Efl.Model
            params {
               @in property: string; [[Property name.]]
            }
-           return: future<any_value_ptr>; [[Future to be resolved when the property changes to anything other than
+           return: future<any_value_ref>; [[Future to be resolved when the property changes to anything other than
                                             error:EAGAIN]]
         }
         children_slice_get {

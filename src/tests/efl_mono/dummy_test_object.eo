@@ -79,7 +79,7 @@ struct @free(free) Dummy.StructComplex {
    fhash: hash<string, string>;
    fiterator: iterator<string>;
    fany_value: any_value;
-   fany_value_ptr: any_value_ptr;
+   fany_value_ref: any_value_ref;
    fbinbuf: binbuf;
    fslice: slice<ubyte>;
    // fslice: ptr(Eina.Slice); // TODO
@@ -1243,13 +1243,13 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       /* Eina Values */
       set_value_ptr {
          params {
-            value: any_value_ptr;
+            value: any_value_ref;
          }
       }
 
       set_value_ptr_own {
          params {
-            value: any_value_ptr @move;
+            value: any_value_ref @move;
          }
       }
 
@@ -1266,11 +1266,11 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       get_value_ptr_own {
-         return: any_value_ptr @move;
+         return: any_value_ref @move;
       }
 
       get_value_ptr {
-         return: any_value_ptr;
+         return: any_value_ref;
       }
 
       /* Commented out due to issues regarding eolian treatment of any_value.
@@ -1287,13 +1287,13 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       out_value_ptr {
          params {
-            @out value: any_value_ptr;
+            @out value: any_value_ref;
          }
       }
 
       out_value_ptr_own {
          params {
-            @out value: any_value_ptr @move;
+            @out value: any_value_ref @move;
          }
       }
 
@@ -1595,7 +1595,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       /* Futures */
 
       get_future {
-         return: future<any_value_ptr>;
+         return: future<any_value_ref>;
       }
 
       fulfill_promise {
