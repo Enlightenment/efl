@@ -443,7 +443,7 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
             [[If the object is not window object, returns $unknown.]]
          }
          values {
-            type: Efl.Ui.Win_Type(Efl.Ui.Win_Type.unknown); [[Window type]]
+            type: Efl.Ui.Win_Type(Efl.Ui.Win_Type.basic); [[Window type]]
          }
       }
       @property accel_preference @beta {
