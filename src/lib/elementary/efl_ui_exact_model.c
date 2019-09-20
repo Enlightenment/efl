@@ -81,10 +81,11 @@ _efl_ui_exact_model_slot_compress(unsigned int index, Eina_List *compressed, uns
    _efl_ui_exact_model_list_find(list_index, compressed, &l);
 
    tbuf = eina_binbuf_manage_new((unsigned char *) buffer, EFL_UI_EXACT_MODEL_CONTENT_LENGTH, EINA_TRUE);
+   if (!tbuf) return compressed;
+
    cbuf = emile_compress(tbuf, EMILE_LZ4, EMILE_COMPRESSOR_FAST);
    eina_binbuf_free(tbuf);
-
-   if (!tbuf || !cbuf) return compressed;
+   if (!cbuf) return compressed;
 
    // Make sure the list has all the buffer up to the needed one filled with valid data
    if (list_index)
