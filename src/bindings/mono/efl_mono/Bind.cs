@@ -37,7 +37,7 @@ public class BindableProperty<T>
     {
         if (this.partName == null)
         {
-            return this.binder.PropertyBind(this.propertyName, modelProperty);
+            return this.binder.BindProperty(this.propertyName, modelProperty);
         }
         else
         {
@@ -59,7 +59,7 @@ public class BindableProperty<T>
             var partBinder = partMethod.Invoke(partHolder, new System.Object[] { this.partName }) as Efl.Ui.IPropertyBind;
             if (partBinder != null)
             {
-                return partBinder.PropertyBind(this.propertyName, modelProperty);
+                return partBinder.BindProperty(this.propertyName, modelProperty);
             }
             else
             {
@@ -112,7 +112,7 @@ public class BindableFactoryPart<T>
     /// <summary>Binds the given factory to this part.</summary>
     public Eina.Error BindFactory(Efl.Ui.IFactory factory)
     {
-        this.Binder.FactoryBind(this.PartName, factory);
+        this.Binder.BindFactory(this.PartName, factory);
         return Eina.Error.NO_ERROR;
     }
 }
