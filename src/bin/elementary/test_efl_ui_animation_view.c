@@ -142,8 +142,7 @@ test_efl_ui_animation_view(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    char buf[255];
 
    win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Efl_Ui_Animation_View demo"),
+                                  efl_text_set(efl_added, "Efl_Ui_Animation_View demo"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    // Create a box in Canvas
@@ -297,8 +296,7 @@ test_efl_ui_animation_view(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    char buf[255];
 
    win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Efl_Ui_Animation_View demo"),
+                                  efl_text_set(efl_added, "Efl_Ui_Animation_View demo"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    // Create a box

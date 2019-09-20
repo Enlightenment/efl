@@ -23,8 +23,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    Efl_Ui_Item *gitem;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Efl.Ui.Grid"),
+                                  efl_text_set(efl_added, "Efl.Ui.Grid"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    box = efl_add(EFL_UI_BOX_CLASS, win);

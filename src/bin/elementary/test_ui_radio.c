@@ -96,8 +96,7 @@ void test_efl_ui_radio(void *data EINA_UNUSED,
    Efl_Ui_Button *o;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Efl.Ui.Radio_Box"),
+                                  efl_text_set(efl_added, "Efl.Ui.Radio_Box"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
    table = efl_add(EFL_UI_TABLE_CLASS, win);
    efl_content_set(win, table);

@@ -176,8 +176,7 @@ void create_item_container_ui(const Efl_Class *collection_class, const Efl_Class
    Match_Content_Ctx *ctx = calloc(1, sizeof(*ctx));
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, name),
+                                  efl_text_set(efl_added, name),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
    tbl = efl_add(EFL_UI_TABLE_CLASS, win);
    efl_content_set(win, tbl);
