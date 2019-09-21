@@ -4788,6 +4788,8 @@ elm_widget_tree_dot_dump(const Evas_Object *top,
 EOLIAN static Eo *
 _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
+   efl_canvas_group_clipped_set(obj, EINA_FALSE);
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    sd->on_create = EINA_TRUE;
 
    sd->window = efl_provider_find(efl_parent_get(obj), EFL_UI_WIN_CLASS);
@@ -4813,8 +4815,6 @@ _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UN
      }
 
    _efl_ui_focus_event_redirector(obj, obj);
-   efl_canvas_group_clipped_set(obj, EINA_FALSE);
-   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
 
