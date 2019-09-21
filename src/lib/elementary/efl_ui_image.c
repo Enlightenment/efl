@@ -1388,6 +1388,143 @@ _efl_ui_image_efl_gfx_image_image_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Ima
    return efl_gfx_image_size_get(sd->img);
 }
 
+EOLIAN static double
+_efl_ui_image_efl_gfx_image_ratio_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
+{
+   if (pd->edje) return 1.0; //documented value for the case that ratio cannot be calculated
+   return efl_gfx_image_ratio_get(pd->img);
+}
+
+EOLIAN static Eina_Rect
+_efl_ui_image_efl_gfx_image_content_region_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
+{
+   if (pd->edje)
+     {
+        Eina_Size2D size = efl_gfx_entity_size_get(pd->img);
+        return EINA_RECT(0, 0, size.w, size.h);
+     }
+
+   return efl_gfx_image_content_region_get(pd->img);
+}
+
+EOLIAN static void
+_efl_ui_image_efl_gfx_image_border_insets_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, int l, int r, int t, int b)
+{
+   if (pd->edje) return;
+   efl_gfx_image_border_insets_set(pd->img, l, r, t, b);
+}
+
+EOLIAN static void
+_efl_ui_image_efl_gfx_image_border_insets_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, int *l, int *r, int *t, int *b)
+{
+   if (pd->edje)
+     {
+        if (l) *l = 0;
+        if (r) *r = 0;
+        if (t) *t = 0;
+        if (b) *b = 0;
+     }
+   else
+     {
+        efl_gfx_image_border_insets_get(pd->img, l, r, t, b);
+     }
+}
+
+EOLIAN static void
+_efl_ui_image_efl_gfx_image_border_insets_scale_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, double scale)
+{
+   if (pd->edje) return;
+   efl_gfx_image_border_insets_scale_set(pd->img, scale);
+}
+
+EOLIAN static double
+_efl_ui_image_efl_gfx_image_border_insets_scale_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
+{
+   if (pd->edje) return 0.0;
+   return efl_gfx_image_border_insets_scale_get(pd->img);
+}
+
+
+EOLIAN static void
+_efl_ui_image_efl_gfx_image_center_fill_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, Efl_Gfx_Center_Fill_Mode fill)
+{
+   if (pd->edje) return;
+   efl_gfx_image_center_fill_mode_set(pd->img, fill);
+}
+
+
+EOLIAN static Efl_Gfx_Center_Fill_Mode
+_efl_ui_image_efl_gfx_image_center_fill_mode_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
+{
+   if (pd->edje) return EFL_GFX_CENTER_FILL_MODE_DEFAULT;
+   return efl_gfx_image_center_fill_mode_get(pd->img);
+}
+
+EOLIAN static Eina_Error
+_efl_ui_image_efl_gfx_image_stretch_region_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, Eina_Iterator *horizontal, Eina_Iterator *vertical)
+{
+   if (pd->edje)
+     {
+        eina_iterator_free(horizontal);
+        eina_iterator_free(vertical);
+        return EINA_ERROR_NO_ERROR;
+     }
+   else
+     {
+        return efl_gfx_image_stretch_region_set(pd->img, horizontal, vertical);
+     }
+}
+
+EOLIAN static void
+_efl_ui_image_efl_gfx_image_stretch_region_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, Eina_Iterator **horizontal, Eina_Iterator **vertical)
+{
+   if (pd->edje)
+     {
+        *horizontal = NULL;
+        *vertical = NULL;
+     }
+   else
+     {
+        efl_gfx_image_stretch_region_get(pd->img, horizontal, vertical);
+     }
+}
+
+EOLIAN static void
+_efl_ui_image_efl_gfx_image_scale_hint_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, Efl_Gfx_Image_Scale_Hint hint)
+{
+   if (pd->edje) return;
+   return efl_gfx_image_scale_hint_set(pd->img, hint);
+}
+
+EOLIAN static Efl_Gfx_Image_Scale_Hint
+_efl_ui_image_efl_gfx_image_scale_hint_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
+{
+  if (pd->edje) return EFL_GFX_IMAGE_SCALE_HINT_NONE;
+  return efl_gfx_image_scale_hint_get(pd->img);
+}
+
+EOLIAN static void
+_efl_ui_image_efl_gfx_image_content_hint_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, Efl_Gfx_Image_Content_Hint hint)
+{
+   if (pd->edje) return;
+   return efl_gfx_image_content_hint_set(pd->img, hint);
+}
+
+EOLIAN static Efl_Gfx_Image_Content_Hint
+_efl_ui_image_efl_gfx_image_content_hint_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
+{
+  if (pd->edje) return EFL_GFX_IMAGE_CONTENT_HINT_NONE;
+  return efl_gfx_image_content_hint_get(pd->img);
+}
+
+EOLIAN static Eina_Error
+_efl_ui_image_efl_gfx_image_image_load_error_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
+{
+   if (pd->edje) return EINA_ERROR_NO_ERROR;
+
+   return efl_gfx_image_load_error_get(pd->img);
+}
+
 EAPI void
 elm_image_prescale_set(Evas_Object *obj,
                        int size)
@@ -1403,6 +1540,104 @@ _efl_ui_image_efl_gfx_image_load_controller_load_size_set(Eo *obj, Efl_Ui_Image_
 
    if (!sd->img) return;
    _efl_ui_image_load_size_set_internal(obj, sd);
+}
+
+EOLIAN static void
+_efl_ui_image_efl_gfx_image_load_controller_load_async_start(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
+{
+   if (pd->edje) return;
+   efl_gfx_image_load_controller_load_async_start(pd->img);
+}
+
+EOLIAN static void
+_efl_ui_image_efl_gfx_image_load_controller_load_async_cancel(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
+{
+   if (pd->edje) return;
+   efl_gfx_image_load_controller_load_async_cancel(pd->img);
+}
+
+EOLIAN static void
+_efl_ui_image_efl_gfx_image_load_controller_load_dpi_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, double dpi)
+{
+   if (pd->edje) return;
+   efl_gfx_image_load_controller_load_dpi_set(pd->img, dpi);
+}
+
+
+EOLIAN static double
+_efl_ui_image_efl_gfx_image_load_controller_load_dpi_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
+{
+   if (pd->edje) return 0.0;
+   return efl_gfx_image_load_controller_load_dpi_get(pd->img);
+}
+
+EOLIAN static void
+_efl_ui_image_efl_gfx_image_load_controller_load_orientation_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, Eina_Bool enable)
+{
+   if (pd->edje) return;
+   efl_gfx_image_load_controller_load_orientation_set(pd->img, enable);
+}
+
+
+EOLIAN static Eina_Bool
+_efl_ui_image_efl_gfx_image_load_controller_load_orientation_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
+{
+   if (pd->edje) return EINA_FALSE;
+   return efl_gfx_image_load_controller_load_orientation_get(pd->img);
+}
+
+
+EOLIAN static void
+_efl_ui_image_efl_gfx_image_load_controller_load_scale_down_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, int div)
+{
+   if (pd->edje) return;
+   efl_gfx_image_load_controller_load_scale_down_set(pd->img, div);
+}
+
+EOLIAN static int
+_efl_ui_image_efl_gfx_image_load_controller_load_scale_down_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
+{
+   if (pd->edje) return EINA_FALSE;
+   return efl_gfx_image_load_controller_load_scale_down_get(pd->img);
+}
+
+EOLIAN static void
+_efl_ui_image_efl_gfx_image_load_controller_load_skip_header_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, Eina_Bool skip)
+{
+   if (pd->edje) return;
+   return efl_gfx_image_load_controller_load_skip_header_set(pd->img, skip);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_efl_gfx_image_load_controller_load_skip_header_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
+{
+   if (pd->edje) return EINA_FALSE;
+   return efl_gfx_image_load_controller_load_skip_header_get(pd->img);
+}
+
+
+EOLIAN static void
+_efl_ui_image_efl_gfx_image_load_controller_load_region_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd, Eina_Rect region)
+{
+   if (pd->edje) return;
+   return efl_gfx_image_load_controller_load_region_set(pd->img, region);
+}
+
+
+EOLIAN static Eina_Rect
+_efl_ui_image_efl_gfx_image_load_controller_load_region_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
+{
+
+   if (pd->edje) return EINA_RECT(0, 0, 0, 0);
+   return efl_gfx_image_load_controller_load_region_get(pd->img);
+}
+
+
+EOLIAN static Eina_Bool
+_efl_ui_image_efl_gfx_image_load_controller_load_region_support_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *pd)
+{
+  if (pd->edje) return EINA_FALSE;
+  return EINA_TRUE;
 }
 
 EAPI int
