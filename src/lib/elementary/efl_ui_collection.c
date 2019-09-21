@@ -1152,8 +1152,9 @@ _efl_ui_collection_efl_ui_single_selectable_fallback_selection_get(const Eo *obj
 #define ITEM_IS_OUTSIDE_VISIBLE(id) id < collection_pd->start_id || id > collection_pd->end_id
 
 static inline void
-_assert_item_available(Eo *item, int new_id, Efl_Ui_Collection_Data *pd)
+_assert_item_available(Eo *item, unsigned int new_id, Efl_Ui_Collection_Data *pd)
 {
+   EINA_SAFETY_ON_FALSE_RETURN(new_id < eina_list_count(pd->items));
    efl_gfx_entity_visible_set(item, EINA_TRUE);
    efl_gfx_entity_geometry_set(item, efl_ui_position_manager_entity_position_single_item(pd->pos_man, new_id));
 }
