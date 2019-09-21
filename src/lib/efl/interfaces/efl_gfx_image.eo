@@ -213,9 +213,9 @@ interface @beta Efl.Gfx.Image
          }
          get {}
          values {
-            horizontal: iterator<ptr(Efl.Gfx.Image_Stretch_Region)>(null); [[Representation of areas that are
+            horizontal: iterator<Efl.Gfx.Image_Stretch_Region>(null); [[Representation of areas that are
                 stretchable in the image horizontal space.]]
-            vertical: iterator<ptr(Efl.Gfx.Image_Stretch_Region)>(null); [[Representation of areas that are
+            vertical: iterator<Efl.Gfx.Image_Stretch_Region>(null); [[Representation of areas that are
                 stretchable in the image vertical space.]]
          }
       }
