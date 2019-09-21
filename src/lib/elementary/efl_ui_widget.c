@@ -4788,14 +4788,12 @@ elm_widget_tree_dot_dump(const Evas_Object *top,
 EOLIAN static Eo *
 _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
-   efl_canvas_group_clipped_set(obj, EINA_FALSE);
-   obj = efl_constructor(efl_super(obj, MY_CLASS));
+   Eo *parent = efl_parent_get(obj);
    sd->on_create = EINA_TRUE;
 
    sd->window = efl_provider_find(efl_parent_get(obj), EFL_UI_WIN_CLASS);
    if (!efl_isa(obj, EFL_UI_WIN_CLASS))
      {
-        Eo *parent = efl_parent_get(obj);
         if (!efl_isa(parent, EFL_UI_WIDGET_CLASS))
           {
              ERR("You passed a wrong parent parameter (%p %s). "
@@ -4806,7 +4804,6 @@ _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UN
           {
              ELM_WIDGET_DATA_GET(parent, parent_sd);
              sd->shared_win_data = parent_sd->shared_win_data;
-             efl_ui_widget_sub_object_add(parent, obj);
           }
      }
    else
@@ -4815,8 +4812,13 @@ _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UN
      }
 
    _efl_ui_focus_event_redirector(obj, obj);
+   efl_canvas_group_clipped_set(obj, EINA_FALSE);
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+
+   if (!efl_isa(obj, EFL_UI_WIN_CLASS) && efl_isa(parent, EFL_UI_WIDGET_CLASS))
+     efl_ui_widget_sub_object_add(parent, obj);
 
    sd->on_create = EINA_FALSE;
 
