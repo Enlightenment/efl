@@ -64,6 +64,8 @@ _efl_ui_bg_efl_object_constructor(Eo *obj, Efl_Ui_Bg_Data *pd)
 
    efl_ui_widget_focus_allow_set(obj, EINA_FALSE);
 
+   efl_composite_attach(obj, pd->img);
+
    return obj;
 }
 
@@ -132,18 +134,6 @@ elm_bg_option_get(const Evas_Object *obj)
    return option;
 }
 
-EOLIAN static void
-_efl_ui_bg_efl_gfx_image_scale_method_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd, Efl_Gfx_Image_Scale_Method scale_type)
-{
-   efl_gfx_image_scale_method_set(sd->img, scale_type);
-}
-
-EOLIAN static Efl_Gfx_Image_Scale_Method
-_efl_ui_bg_efl_gfx_image_scale_method_get(const Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd)
-{
-   return efl_gfx_image_scale_method_get(sd->img);
-}
-
 EAPI void
 elm_bg_color_set(Evas_Object *obj,
                  int r,
@@ -192,18 +182,6 @@ elm_bg_load_size_set(Evas_Object *obj, int w, int h)
 {
    EFL_UI_BG_DATA_GET_OR_RETURN(obj, sd);
    efl_gfx_image_load_controller_load_size_set(sd->img, EINA_SIZE2D(w, h));
-}
-
-EOLIAN static void
-_efl_ui_bg_efl_gfx_image_load_controller_load_size_set(Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd, Eina_Size2D sz)
-{
-   efl_gfx_image_load_controller_load_size_set(sd->img, sz);
-}
-
-EOLIAN static Eina_Size2D
-_efl_ui_bg_efl_gfx_image_load_controller_load_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Bg_Data *sd)
-{
-   return efl_gfx_image_load_controller_load_size_get(sd->img);
 }
 
 EAPI Eina_Bool

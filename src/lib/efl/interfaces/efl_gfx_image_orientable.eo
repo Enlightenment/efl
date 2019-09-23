@@ -29,7 +29,11 @@ enum Efl.Gfx.Image_Orientation
 
 interface Efl.Gfx.Image_Orientable
 {
-   [[Interface for objects which can be oriented.]]
+   [[Interface for images which can be rotated or flipped (mirrored).
+
+     Compare with @Efl.Ui.Layout_Orientable which works for layout objects and does
+     not include rotation.
+   ]]
    c_prefix: efl_gfx;
    methods {
        @property image_orientation {

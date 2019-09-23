@@ -1,6 +1,9 @@
 class @beta Efl.Canvas.Gesture_Recognizer_Momentum extends Efl.Canvas.Gesture_Recognizer
 {
-   [[EFL Gesture Recognizer Momentum class]]
+   [[This is the recognizer for Momentum gestures.
+     See @Efl.Canvas.Gesture_Momentum and @Efl.Canvas.Gesture_Recognizer.
+     For internal use only.
+   ]]
    c_prefix: efl_gesture_recognizer_momentum;
    implements {
       Efl.Canvas.Gesture_Recognizer.add;

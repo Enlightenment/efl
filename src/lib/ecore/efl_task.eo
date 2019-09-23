@@ -43,13 +43,11 @@ abstract Efl.Task extends Efl.Loop_Consumer
          }
       }
       @property flags {
-         [[Flags to further customize task's behavior. The default value:
-             exit_with_parent
-         ]]
+         [[Flags to further customize task's behavior.]]
          set { }
          get { }
          values {
-            flags: Efl.Task_Flags; [[Desired task flags.]]
+            flags: Efl.Task_Flags(Efl.Task_Flags.exit_with_parent); [[Desired task flags.]]
          }
       }
       run @pure_virtual {

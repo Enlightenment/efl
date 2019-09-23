@@ -104,6 +104,7 @@ _new_va(const char *name,
         if (!mp->backend2) goto on_error;
         mp->backend2->repack = be->repack;
         mp->backend2->from = be->from;
+        mp->backend2->iterator = be->iterator;
      }
 
    mp->backend_data = mp->backend.init(context, options, args);

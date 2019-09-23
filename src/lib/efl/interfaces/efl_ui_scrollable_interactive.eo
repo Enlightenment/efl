@@ -86,11 +86,12 @@ interface @beta Efl.Ui.Scrollable_Interactive extends Efl.Ui.Scrollable
          }
       }
       @property movement_block {
-         [[Blocking of scrolling (per axis)
+         [[Blocking of scrolling (per axis).
 
            This function will block scrolling movement (by input of a user) in
            a given direction. You can disable movements in the X axis, the Y
-           axis or both. The default value is $none, where movements are
+           axis or both.
+           The default value is @Efl.Ui.Layout_Orientation.default meaning that movements are
            allowed in both directions.
          ]]
          set {
@@ -107,21 +108,19 @@ interface @beta Efl.Ui.Scrollable_Interactive extends Efl.Ui.Scrollable
            The gravity defines how the scroller will adjust its view
            when the size of the scroller contents increases.
 
-           The scroller will adjust the view to glue itself as follows.
-
-            x=0.0, for staying where it is relative to the left edge of the content
-            x=1.0, for staying where it is relative to the right edge of the content
-            y=0.0, for staying where it is relative to the top edge of the content
-            y=1.0, for staying where it is relative to the bottom edge of the content
-
-           Default values for x and y are 0.0]]
+           The scroller will adjust the view to glue itself as follows:
+           $[x=0.0] to stay where it is relative to the left edge of the content.
+           $[x=1.0] to stay where it is relative to the right edge of the content.
+           $[y=0.0] to stay where it is relative to the top edge of the content.
+           $[y=1.0] to stay where it is relative to the bottom edge of the content.
+         ]]
          set {
          }
          get {
          }
          values {
-            x: double; [[Horizontal scrolling gravity]]
-            y: double; [[Vertical scrolling gravity]]
+            x: double(0.0); [[Horizontal scrolling gravity.]]
+            y: double(0.0); [[Vertical scrolling gravity.]]
          }
       }
       @property match_content {

@@ -293,6 +293,11 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                 int kwid = eo_lexer_keyword_str_to_id(tp->base.name);
                 if (kwid > KW_void)
                   tp->ownable = EINA_TRUE;
+                if (kwid == KW_hash && vals->stable)
+                  {
+                     _eo_parser_log(&tp->base, "hashes not allowed in stable context");
+                     return EINA_FALSE;
+                  }
                 Eolian_Type *itp = tp->base_type;
                 /* validate types in brackets so transitive fields get written */
                 while (itp)
@@ -321,7 +326,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp)
                    case KW_mstring:
                    case KW_stringshare:
                    case KW_any_value:
-                   case KW_any_value_ptr:
+                   case KW_any_value_ref:
                    case KW_binbuf:
                    case KW_strbuf:
                      tp->ownable = EINA_TRUE;
@@ -601,6 +606,7 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
              _eo_parser_log(&tp->base, "pointers not allowed in events");
              return _reset_stable(vals, was_stable, EINA_FALSE);
           }
+        int kwid = eo_lexer_keyword_str_to_id(tp->base.name);
         /* require containers to be const for now...
          *
          * this is FIXME, and decision wasn't reached before 1.22
@@ -608,10 +614,17 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
          */
         if (database_type_is_ownable(tp->base.unit, tp, EINA_FALSE))
           {
-             if (!tp->is_const)
+             switch (kwid)
                {
-                  _eo_parser_log(&tp->base, "event container types must be const");
-                  return _reset_stable(vals, was_stable, EINA_FALSE);
+                case KW_string:
+                case KW_stringshare:
+                  break;
+                default:
+                  if (!tp->is_const)
+                    {
+                       _eo_parser_log(&tp->base, "event container types must be const");
+                       return _reset_stable(vals, was_stable, EINA_FALSE);
+                    }
                }
           }
         else if (tp->is_const)
@@ -619,7 +632,6 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
              _eo_parser_log(&tp->base, "event value types cannot be const");
              return _reset_stable(vals, was_stable, EINA_FALSE);
           }
-        int kwid = eo_lexer_keyword_str_to_id(tp->base.name);
         /* containers are allowed but not iterators/lists */
         if (kwid == KW_iterator || kwid == KW_list)
           {
@@ -633,12 +645,12 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
              return _reset_stable(vals, was_stable, EINA_FALSE);
           }
         /* any type past builtin value types and containers is not allowed,
-         * any_value is allowed but passed as const reference, any_value_ptr
+         * any_value is allowed but passed as const reference, any_value_ref
          * is not; string is allowed, but mutable strings or stringshares are
          * not and neither are string buffers, the type is never owned by the
          * callee, so all strings passed in are unowned and read-only
          */
-        if (kwid >= KW_any_value_ptr && kwid != KW_string)
+        if (kwid >= KW_any_value_ref && kwid != KW_string)
           {
              _eo_parser_log(&tp->base, "forbidden event type");
              return _reset_stable(vals, was_stable, EINA_FALSE);
@@ -865,6 +877,22 @@ _extend_impl(Eina_Hash *fs, Eolian_Implement *impl, Eina_Bool as_iface)
    return !st;
 }
 
+/* fills a complete set of stuff implemented or inherited on a class
+ * this is used to check whether to auto-add composited interfaces into
+ * implemented/extended list
+ */
+static void
+_db_fill_ihash(Eolian_Class *icl, Eina_Hash *icls)
+{
+   if (icl->parent)
+     _db_fill_ihash(icl->parent, icls);
+   Eina_List *l;
+   Eolian_Class *sicl;
+   EINA_LIST_FOREACH(icl->extends, l, sicl)
+     _db_fill_ihash(sicl, icls);
+   eina_hash_set(icls, &icl, icl);
+}
+
 static void
 _db_fill_callables(Eolian_Class *cl, Eolian_Class *icl, Eina_Hash *fs, Eina_Bool parent)
 {
@@ -1084,13 +1112,6 @@ _db_swap_inherit(Eolian_Class *cl, Eina_Bool succ, Eina_Stringshare *in_cl,
         succ = EINA_FALSE;
         _eo_parser_log(&cl->base, "non-interface class '%s' in composite list", icl->base.name);
      }
-   else if (iface_only && !_get_impl_class(cl, icl->base.name))
-     {
-        /* TODO: optimize check using a lookup hash later */
-        succ = EINA_FALSE;
-        _eo_parser_log(&cl->base, "interface '%s' not found within the inheritance tree of '%s'",
-                       icl->base.name, cl->base.name);
-     }
    else
      *out_cl = icl;
    eina_stringshare_del(in_cl);
@@ -1183,6 +1204,7 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash,
    /* replace the composite list with real instances and initial-fill the hash */
    il = cl->composite;
    cl->composite = NULL;
+   int ncomp = 0;
    EINA_LIST_FREE(il, inn)
      {
         Eolian_Class *out_cl = NULL;
@@ -1190,6 +1212,8 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash,
         if (!succ)
           continue;
         cl->composite = eina_list_append(cl->composite, out_cl);
+        succ = _db_fill_inherits(vals, out_cl, fhash, errh);
+        ++ncomp;
         eina_hash_set(ch, &out_cl, out_cl);
      }
 
@@ -1215,6 +1239,37 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash,
      }
 
    eina_hash_add(fhash, &cl->base.name, cl);
+
+   /* there are more than zero of composites of its own */
+   if (ncomp > 0)
+     {
+        /* this one stores what is already in inheritance tree */
+        Eina_Hash *ih = eina_hash_pointer_new(NULL);
+
+        /* fill a complete inheritance tree set */
+        if (cl->parent)
+          _db_fill_ihash(cl->parent, ih);
+
+        EINA_LIST_FOREACH(cl->extends, il, icl)
+          _db_fill_ihash(icl, ih);
+
+        /* go through only the explicitly specified composite list part, as the
+         * rest was to be handled in parents already... add what hasn't been
+         * explicitly implemented so far into implements/extends
+         */
+        EINA_LIST_FOREACH(cl->composite, il, icl)
+          {
+             /* ran out of classes */
+             if (!ncomp--)
+               break;
+             /* found in inheritance tree, skip */
+             if (eina_hash_find(ih, &icl))
+               continue;
+             cl->extends = eina_list_append(cl->extends, icl);
+          }
+
+        eina_hash_free(ih);
+     }
 
    /* stores mappings from function to Impl_Status */
    Eina_Hash *fh = eina_hash_pointer_new(NULL);

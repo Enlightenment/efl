@@ -2,7 +2,10 @@ import efl_gfx_types;
 
 mixin @beta Efl.Gfx.Color_Class
 {
-   [[Efl Gfx Color Class mixin class]]
+   [[This mixin provides an interface for objects supporting color classes
+     (this is, named colors) and provides a helper method to also allow hexadecimal
+     color codes.
+   ]]
    data: null;
    methods {
       @property color_class @pure_virtual {
@@ -53,7 +56,7 @@ mixin @beta Efl.Gfx.Color_Class
 
             Setting color emits a signal "color_class,set" with source being
             the given color.
-            
+
             When retrieving the color of an object, if no explicit
             object color is set, then global values will be used.
 

@@ -198,6 +198,17 @@ static inline Eina_Bool eina_mempool_from(Eina_Mempool *mp, void *element);
 EAPI void           eina_mempool_statistics(Eina_Mempool *mp) EINA_ARG_NONNULL(1);
 
 /**
+ * @brief Provide an iterator to walk all allocated elements from a specified mempool.
+ *
+ * @param[in] mp The mempool
+ * @return @c NULL if it is not possible to iterate over the mempool, a valid iterator otherwise.
+ *
+ * @note This call is expected to be slow and should not be used in any performance critical area.
+ * @since 1.23
+ */
+static inline Eina_Iterator *eina_mempool_iterator_new(Eina_Mempool *mp);
+
+/**
  * @brief Registers the given memory pool backend.
  *
  * @param[in] be The backend

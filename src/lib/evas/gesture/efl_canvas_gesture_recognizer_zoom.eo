@@ -1,6 +1,9 @@
 class @beta Efl.Canvas.Gesture_Recognizer_Zoom extends Efl.Canvas.Gesture_Recognizer
 {
-   [[EFL Gesture Recognizer Zoom class]]
+   [[This is the recognizer for Zoom gestures.
+     See @Efl.Canvas.Gesture_Zoom and @Efl.Canvas.Gesture_Recognizer.
+     For internal use only.
+   ]]
    c_prefix: efl_gesture_recognizer_zoom;
    implements {
       Efl.Canvas.Gesture_Recognizer.add;

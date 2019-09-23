@@ -4788,12 +4788,12 @@ elm_widget_tree_dot_dump(const Evas_Object *top,
 EOLIAN static Eo *
 _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
+   Eo *parent = efl_parent_get(obj);
    sd->on_create = EINA_TRUE;
 
    sd->window = efl_provider_find(efl_parent_get(obj), EFL_UI_WIN_CLASS);
    if (!efl_isa(obj, EFL_UI_WIN_CLASS))
      {
-        Eo *parent = efl_parent_get(obj);
         if (!efl_isa(parent, EFL_UI_WIDGET_CLASS))
           {
              ERR("You passed a wrong parent parameter (%p %s). "
@@ -4804,7 +4804,6 @@ _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UN
           {
              ELM_WIDGET_DATA_GET(parent, parent_sd);
              sd->shared_win_data = parent_sd->shared_win_data;
-             efl_ui_widget_sub_object_add(parent, obj);
           }
      }
    else
@@ -4817,6 +4816,9 @@ _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UN
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
+
+   if (!efl_isa(obj, EFL_UI_WIN_CLASS) && efl_isa(parent, EFL_UI_WIDGET_CLASS))
+     efl_ui_widget_sub_object_add(parent, obj);
 
    sd->on_create = EINA_FALSE;
 
@@ -5759,21 +5761,16 @@ _efl_ui_widget_part_bg_efl_gfx_color_color_get(const Eo *obj, void *pd EINA_UNUS
    efl_gfx_color_get(bg_obj, r, g, b, a);
 }
 
-EOLIAN static void
-_efl_ui_widget_part_bg_efl_gfx_image_scale_method_set(Eo *obj, void *pd EINA_UNUSED, Efl_Gfx_Image_Scale_Method scale_type)
+EOLIAN static Efl_Object*
+_efl_ui_widget_part_bg_efl_object_finalize(Eo *obj, void *pd EINA_UNUSED)
 {
    Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
 
-   efl_gfx_image_scale_method_set(bg_obj, scale_type);
+   efl_composite_attach(obj, bg_obj);
+
+   return efl_finalize(efl_super(obj, EFL_UI_WIDGET_PART_BG_CLASS));
 }
 
-EOLIAN static Efl_Gfx_Image_Scale_Method
-_efl_ui_widget_part_bg_efl_gfx_image_scale_method_get(const Eo *obj, void *pd EINA_UNUSED)
-{
-   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
-
-   return efl_gfx_image_scale_method_get(bg_obj);
-}
 
 typedef struct _Efl_Ui_Property_Bound Efl_Ui_Property_Bound;
 struct _Efl_Ui_Property_Bound

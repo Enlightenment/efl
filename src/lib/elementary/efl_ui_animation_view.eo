@@ -45,7 +45,7 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
          get {
          }
          values {
-            auto_play: bool; [[Auto play mode, Default value is $false]]
+            auto_play: bool(false); [[Auto play mode.]]
          }
       }
       @property auto_repeat {
@@ -71,17 +71,15 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
            animation double-time faster, you can give $speed 2. If you want to play
            animation double-time slower, you can give $speed 0.5.
 
-           $true when it's successful. $false otherwise.
-
            Warning: speed must be greater than zero.
          ]]
          set {
-            return: bool;
+            return: bool; [[$true when it's successful. $false otherwise.]]
          }
          get {
          }
          values {
-            speed: double; [[ Speed factor. Default value is 1.0]]
+            speed: double(1.0); [[Speed factor.]]
          }
       }
       @property duration_time {
@@ -214,50 +212,48 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
       }
       @property min_progress {
          [[The start progress of the play.
-           Default value is 0.
          ]]
          set {
          }
          get {
          }
          values {
-            min_progress: double; [[The minimum progress. Value must be 0 ~ 1.]]
+            min_progress: double(0.0); [[The minimum progress. Value must be 0 ~ 1.]]
          }
       }
       @property max_progress {
          [[The last progress of the play.
-           Default value is 1.
          ]]
          set {
          }
          get {
          }
          values {
-            max_progress: double; [[The maximum progress. Value must be 0 ~ 1.]]
+            max_progress: double(1.0); [[The maximum progress. Value must be 0 ~ 1.]]
          }
       }
       @property min_frame {
          [[The start frame of the play.
-           Default value is 0.
          ]]
          set {
          }
          get {
          }
          values {
-            min_frame: int; [[The minimum frame for play. Value must be 0 ~ @.max_frame]]
+            min_frame: int(0); [[The minimum frame for play. Value must be 0 ~ @.max_frame]]
          }
       }
       @property max_frame {
          [[The last frame of the play.
-           Default value is @.frame_count - 1
          ]]
          set {
          }
          get {
          }
          values {
-            max_frame: int; [[The maximum frame for play. Value must be @.min_frame ~ (@.frame_count - 1)]]
+            max_frame: int; [[The maximum frame for play. Value must be @.min_frame ~ (@.frame_count - 1).
+                              The default value is @.frame_count - 1.
+                            ]]
          }
       }
 

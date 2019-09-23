@@ -546,4 +546,34 @@ _efl_ui_position_manager_list_efl_ui_position_manager_data_access_v1_data_access
 }
 
 
+EOLIAN static void
+_efl_ui_position_manager_list_efl_ui_position_manager_entity_entities_ready(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, unsigned int start_id, unsigned int end_id)
+{
+   Eina_Size2D space_size;
+   int relevant_space_size;
+
+   if (end_id < pd->prev_run.start_id || start_id > pd->prev_run.end_id)
+     return;
+
+   if (!pd->size) return;
+   if (pd->average_item_size <= 0) return;
+
+   cache_require(obj, pd);
+
+   //space size contains the amount of space that is outside the viewport (either to the top or to the left)
+   space_size.w = (MAX(pd->abs_size.w - pd->viewport.w, 0))*pd->scroll_position.x;
+   space_size.h = (MAX(pd->abs_size.h - pd->viewport.h, 0))*pd->scroll_position.y;
+
+   if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
+     {
+        relevant_space_size = space_size.h;
+     }
+   else
+     {
+        relevant_space_size = space_size.w;
+     }
+   _position_items(obj, pd, pd->prev_run, relevant_space_size);
+}
+
+
 #include "efl_ui_position_manager_list.eo.c"

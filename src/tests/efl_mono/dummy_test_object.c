@@ -4117,8 +4117,8 @@ void struct_complex_with_values(Dummy_StructComplex *complex)
    eina_value_setup(&complex->fany_value, EINA_VALUE_TYPE_DOUBLE);
    eina_value_set(&complex->fany_value, -9007199254740992.0);
 
-   complex->fany_value_ptr = eina_value_new(EINA_VALUE_TYPE_STRING);
-   eina_value_set(complex->fany_value_ptr, "abc");
+   complex->fany_value_ref = eina_value_new(EINA_VALUE_TYPE_STRING);
+   eina_value_set(complex->fany_value_ref, "abc");
 
    complex->fbinbuf = eina_binbuf_new();
    eina_binbuf_append_char(complex->fbinbuf, 126);
@@ -4152,7 +4152,7 @@ Eina_Bool check_and_modify_struct_complex(Dummy_StructComplex *complex)
      return EINA_FALSE;
 
    const char *str_val = NULL;
-   if (!eina_value_get(complex->fany_value_ptr, &str_val) || strcmp(str_val, "abc") != 0)
+   if (!eina_value_get(complex->fany_value_ref, &str_val) || strcmp(str_val, "abc") != 0)
      return EINA_FALSE;
 
    if (eina_binbuf_length_get(complex->fbinbuf) != 1 || eina_binbuf_string_get(complex->fbinbuf)[0] != 126)

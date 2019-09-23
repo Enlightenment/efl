@@ -1,6 +1,6 @@
 class @beta Efl.Ui.Tags extends Efl.Ui.Layout_Base
-   implements Efl.Text, Efl.Ui.Format
-   composite Efl.Text
+   implements Efl.Ui.Format
+   composites Efl.Text
 {
    [[A widget displaying a list of tags. The user can remove tags by clicking
      on each tag "close" button and add new tags by typing text in the text

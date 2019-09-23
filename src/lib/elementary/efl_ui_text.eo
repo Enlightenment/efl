@@ -3,8 +3,8 @@ import elm_general;
 
 class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickable,
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.File,
-                 Efl.Ui.Text_Selectable, Efl.Text_Interactive, Efl.Text_Markup
-   composite
+                 Efl.Ui.Text_Selectable
+   composites
                  Efl.Text_Interactive, Efl.Text_Markup
 {
    [[A flexible text widget which can be static (as a label) or editable by
@@ -190,12 +190,11 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
 
            If $enabled is $true, the return key on input panel is disabled when the entry has no text.
            The return key on the input panel is automatically enabled when the entry has text.
-           The default value is $false.
          ]]
          set {
          }
          values {
-            enabled: bool; [[If $true, the return key is automatically disabled when the entry has no text.]]
+            enabled: bool(false); [[If $true, the return key is automatically disabled when the entry has no text.]]
          }
       }
       @property item_factory {

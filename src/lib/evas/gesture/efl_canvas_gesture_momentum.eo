@@ -2,12 +2,15 @@ import eina_types;
 
 class @beta Efl.Canvas.Gesture_Momentum extends Efl.Canvas.Gesture
 {
-   [[EFL Gesture Momentum class]]
+   [[Momentum gesture class holding state information.
+     See @Efl.Canvas.Gesture to see what this state is and
+     @[Efl.Gesture.Events.gesture,momentum] for a description of the Momentum gesture.
+   ]]
    c_prefix: efl_gesture_momentum;
    methods {
       momentum_get {
-         [[Gets momentum value]]
-         return: Eina.Vector2; [[The momentum vector]]
+         [[Gets the momentum value, this is, the direction in which the action occurred.]]
+         return: Eina.Vector2; [[The momentum vector.]]
       }
    }
    implements {

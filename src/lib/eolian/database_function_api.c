@@ -346,9 +346,9 @@ EAPI Eina_Stringshare *
 eolian_function_return_c_type_get(const Eolian_Function *fid,
                                   Eolian_Function_Type ftype)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_UNRESOLVED, EINA_FALSE);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_PROPERTY, EINA_FALSE);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fid, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_UNRESOLVED, NULL);
+   EINA_SAFETY_ON_FALSE_RETURN_VAL(ftype != EOLIAN_PROPERTY, NULL);
    const Eolian_Type *tp = NULL;
    Eina_Bool by_ref = EINA_FALSE;
    switch (ftype)

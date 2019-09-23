@@ -5,7 +5,11 @@ import efl_input_types;
 
 class @beta Efl.Canvas.Gesture_Touch extends Efl.Object
 {
-   [[EFL Gesture Touch class]]
+   [[EFL Gesture Touch class
+   
+     This gesture class defines a method that records touch points and supports
+     properties - first touch point, current touch point, timestamp, multi-touch 
+     and state information.]]
    c_prefix: efl_gesture_touch;
    methods {
       point_record {

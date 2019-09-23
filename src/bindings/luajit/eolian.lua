@@ -161,7 +161,7 @@ ffi.cdef [[
         EOLIAN_TYPE_BUILTIN_LIST,
 
         EOLIAN_TYPE_BUILTIN_ANY_VALUE,
-        EOLIAN_TYPE_BUILTIN_ANY_VALUE_PTR,
+        EOLIAN_TYPE_BUILTIN_ANY_VALUE_REF,
         EOLIAN_TYPE_BUILTIN_BINBUF,
         EOLIAN_TYPE_BUILTIN_EVENT,
         EOLIAN_TYPE_BUILTIN_MSTRING,
@@ -962,7 +962,7 @@ M.type_builtin_type = {
    LIST          = 39,
 
    ANY_VALUE     = 40,
-   ANY_VALUE_PTR = 41,
+   ANY_VALUE_REF = 41,
    BINBUF        = 42,
    EVENT         = 43,
    MSTRING       = 44,

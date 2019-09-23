@@ -7,6 +7,7 @@
 
 #include <Elementary.h>
 #include "efl_ui_list_view_relayout.eo.h"
+#include "efl_ui_list_view_pan.eo.h"
 #include "elm_priv.h"
 
 typedef struct _Efl_Ui_List_View_Data Efl_Ui_List_View_Data;

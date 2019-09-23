@@ -397,8 +397,8 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
       }
    }
    parts {
-      shadow @beta: Efl.Ui.Widget_Part_Shadow;
-      background @beta: Efl.Ui.Widget_Part_Bg;
+      shadow : Efl.Ui.Widget_Part_Shadow;
+      background : Efl.Ui.Widget_Part_Bg;
    }
    implements {
       class.constructor;

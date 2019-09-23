@@ -228,9 +228,9 @@ struct visitor_generate
            , {"any_value", false, [&]
               { return regular_type_def{"Eina.Value", regular.base_qualifier, {}};
               }}
-           , {"any_value_ptr", nullptr, [&] 
+           , {"any_value_ref", nullptr, [&] 
               { return regular_type_def{"Eina.Value", regular.base_qualifier, {}};
-              }} // FIXME add proper support for any_value_ptr
+              }} // FIXME add proper support for any_value_ref
         };
         std::string full_type_name = name_helpers::type_full_eolian_name(regular);
         if(eina::optional<bool> b = call_match

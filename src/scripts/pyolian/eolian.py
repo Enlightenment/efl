@@ -130,7 +130,7 @@ class Eolian_Type_Builtin_Type(IntEnum):
     LIST = 39
 
     ANY_VALUE = 40
-    ANY_VALUE_PTR = 41
+    ANY_VALUE_REF = 41
     BINBUF = 42
     EVENT = 43
 

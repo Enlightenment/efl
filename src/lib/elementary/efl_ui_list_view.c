@@ -289,7 +289,7 @@ _efl_ui_list_view_vbar_drag_cb(void *data,
    _efl_ui_list_view_bar_read_and_update(data);
 
    Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
-   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_DRAG, &type);
+   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_DRAGGED, &type);
 }
 
 static void
@@ -299,7 +299,7 @@ _efl_ui_list_view_vbar_press_cb(void *data,
                                const char *source EINA_UNUSED)
 {
    Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
-   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_PRESS, &type);
+   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_PRESSED, &type);
 }
 
 static void
@@ -309,7 +309,7 @@ _efl_ui_list_view_vbar_unpress_cb(void *data,
                                  const char *source EINA_UNUSED)
 {
    Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
-   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_UNPRESS, &type);
+   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_UNPRESSED, &type);
 }
 
 static void
@@ -359,7 +359,7 @@ _efl_ui_list_view_hbar_drag_cb(void *data,
    _efl_ui_list_view_bar_read_and_update(data);
 
    Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
-   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_DRAG, &type);
+   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_DRAGGED, &type);
 }
 
 static void
@@ -369,7 +369,7 @@ _efl_ui_list_view_hbar_press_cb(void *data,
                           const char *source EINA_UNUSED)
 {
    Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
-   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_PRESS, &type);
+   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_PRESSED, &type);
 }
 
 static void
@@ -379,7 +379,7 @@ _efl_ui_list_view_hbar_unpress_cb(void *data,
                             const char *source EINA_UNUSED)
 {
    Efl_Ui_Layout_Orientation type = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
-   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_UNPRESS, &type);
+   efl_event_callback_call(data, EFL_UI_SCROLLBAR_EVENT_BAR_UNPRESSED, &type);
 }
 
 static void

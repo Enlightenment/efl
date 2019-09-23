@@ -123,7 +123,42 @@ static const std::vector<std::string> verbs =
     "unpack",
     "emit",
     "call",
-    "append"
+    "append",
+    "apply",
+    "bind",
+    "cancel",
+    "copy",
+    "create",
+    "cut",
+    "delete",
+    "deselect",
+    "detach",
+    "do",
+    "gen",
+    "insert",
+    "iterate",
+    "join",
+    "leave",
+    "limit",
+    "paste",
+    "parse",
+    "prepend",
+    "process",
+    "query",
+    "refresh",
+    "remove",
+    "register",
+    "reject",
+    "release",
+    "reply",
+    "send",
+    "select",
+    "serialize",
+    "steal",
+    "sync",
+    "toggle",
+    "unbind",
+    "unregister"
   };
 
 const std::vector<std::string> not_verbs =
@@ -202,6 +237,30 @@ inline std::string managed_name(std::string const& name, char separator='_')
 {
   auto tokens = utils::split(name, separator);
   return utils::to_pascal_case(tokens);
+}
+
+inline std::string full_managed_name(std::string const& name)
+{
+  std::stringstream ss;
+
+  auto words = utils::split(name, '.');
+  std::transform(words.begin(), words.end(), words.begin(), [](std::string const& word) {
+     return managed_name(word);
+  });
+
+  auto b = std::begin(words), e = std::end(words);
+
+  if (b != e)
+    {
+      std::copy(b, std::prev(e), std::ostream_iterator<std::string>(ss, "."));
+      b = std::prev(e);
+    }
+
+  // Avoid trailing separator
+  if (b != e)
+    ss << *b;
+
+  return ss.str();
 }
 
 inline std::string alias_full_eolian_name(attributes::alias_def const& alias)

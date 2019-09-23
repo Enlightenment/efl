@@ -7,10 +7,12 @@ struct @beta Efl.Ui.List_View_Item_Event
    child: Efl.Model; [[TBD]]
    index: int; [[TBD]]
 }
-class @beta Efl.Ui.List_View extends Efl.Ui.Layout_Base implements Efl.Ui.Scrollable_Interactive, Efl.Ui.Scrollbar,
-                Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Ui.Focus.Composition, Efl.Ui.Focus.Manager_Sub,
-                Efl.Ui.Container_Selectable, Efl.Ui.List_View_Model, Efl.Ui.Widget_Focus_Manager
-   composite
+class @beta Efl.Ui.List_View extends Efl.Ui.Layout_Base implements
+                Efl.Access.Widget.Action, Efl.Access.Selection,
+                Efl.Ui.Focus.Composition, Efl.Ui.Focus.Manager_Sub,
+                Efl.Ui.Container_Selectable, Efl.Ui.List_View_Model,
+                Efl.Ui.Widget_Focus_Manager
+   composites
                 Efl.Ui.Scrollable_Interactive, Efl.Ui.Scrollbar
 {
    methods {

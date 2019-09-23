@@ -156,7 +156,7 @@ _free_func_get(const Eolian_Type *type)
         return "eina_stringshare_del";
       case EOLIAN_TYPE_BUILTIN_ANY_VALUE:
         return "eina_value_flush";
-      case EOLIAN_TYPE_BUILTIN_ANY_VALUE_PTR:
+      case EOLIAN_TYPE_BUILTIN_ANY_VALUE_REF:
         return "eina_value_free";
       case EOLIAN_TYPE_BUILTIN_STRBUF:
         return "eina_strbuf_free";
