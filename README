@@ -464,7 +464,7 @@ Required by default:
   * libxcursor
   * libxp
   * libxi (2.2 or newer)
-  * opengl(mesa etc.) (opengl/glx/full or opengl-es2/egl)
+  * opengl(mesa etc.) (opengl/glx/full or opengl-es2/egl. full opengl only on osx - must be explicitly specified to be full to have support)
   * giflib
   * util-linux (limbount + libblkid)
   * systemd / libudev
