@@ -805,7 +805,7 @@ add_tests:
    ADD_TEST(NULL, "Images", "Photocam", test_photocam);
    ADD_TEST(NULL, "Images", "Photocam Remote", test_photocam_remote);
    ADD_TEST(NULL, "Images", "Photocam Icon", test_photocam_icon);
-   ADD_TEST(NULL, "Images", "Image Zoomable animation", test_image_zoomable_animated);
+   ADD_TEST_EO(NULL, "Images", "Image Zoomable animation", test_image_zoomable_animated);
    ADD_TEST(NULL, "Images", "Photo", test_photo);
    ADD_TEST(NULL, "Images", "Thumb", test_thumb);
    ADD_TEST(NULL, "Images", "Image", test_image);
