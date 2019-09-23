@@ -3,14 +3,14 @@ parse efl_text_format;
 
 mixin @beta Efl.Ui.Widget_Scrollable_Content requires Efl.Object
 {
-   [[Efl widget scrollable content mixin
+   [[Mixin helper to add scrollable content to widgets.
 
-     This can be used to provide scrollable contents and text for widgets. When a scrollable
-     text or content is set, this mixin will create and manage an internal scroller object which
+     This can be used to provide scrollable contents and text for widgets. When @.scrollable_content or
+     @.scrollable_text is set, this mixin will create and manage an internal scroller object which
      will be the container of that text or content.
 
-     Only a single content or text can be set at any given time. Setting @.scrollable_content
-     will unset @.scrollable_text and vice versa.
+     Only a single content or text can be set at any given time. Setting @.scrollable_text
+     will unset @.scrollable_content.
 
      @since 1.23
    ]]
@@ -21,34 +21,32 @@ mixin @beta Efl.Ui.Widget_Scrollable_Content requires Efl.Object
       @property scrollable_content_did_group_calc @protected @beta {
          [[Widgets can call this function during their @Efl.Canvas.Group.group_calculate
            implementation after the super call to determine whether the internal scroller
-           has performed sizing calculations.
+           has already performed sizing calculations.
 
-           The optimal_size,calc event will have been emitted during the super call if
-           this method returns $true.
-
-           In the case that this returns $true, it's likely that the widget should be completing
-           its internal sizing calculations from the @[Efl.Ui.Widget_Scrollable_Content.optimal_size,calc] callback using
+           If this property is $true, the @[Efl.Ui.Widget_Scrollable_Content.optimal_size,calc] event will have been
+           emitted during the super call. In this case it's likely that the widget should be completing
+           its internal sizing calculations from that event using:
 
            efl_canvas_group_calculate(efl_super(ev->object, EFL_UI_WIDGET_SCROLLABLE_CONTENT_MIXIN));
 
-           in order to skip the scrollable sizing calc.
+           in order to skip the scrollable sizing calculation.
 
            @since 1.23
          ]]
          get {}
          values {
-            did_group_calc: bool; [[Whether the internal scroller has done sizing calcs.]]
+            did_group_calc: bool; [[Whether the internal scroller has already done sizing calculations.]]
          }
       }
       @property scrollable_content {
          [[This is the content which will be placed in the internal scroller.
 
-           If a scrollable text string is set, this will return $NULL.
+           If a @.scrollable_text string is set, this property will be $NULL.
 
            @since 1.23
          ]]
          set {
-            return: bool; [[True on success]]
+            return: bool; [[$true on success.]]
          }
          get {}
          values {
