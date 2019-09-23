@@ -306,10 +306,10 @@ _efl_ui_radio_efl_access_object_state_set_get(const Eo *obj, Efl_Ui_Radio_Data *
 /* Internal EO APIs and hidden overrides */
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_radio, Efl_Ui_Radio_Data)
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+EFL_UI_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_RADIO_EXTRA_OPS \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX)
+   EFL_UI_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX)
 
 #include "efl_ui_radio.eo.c"
 #include "efl_ui_radio_group.eo.c"

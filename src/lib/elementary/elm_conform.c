@@ -1025,10 +1025,10 @@ _elm_conformant_class_constructor(Efl_Class *klass)
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+EFL_UI_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define ELM_CONFORMANT_EXTRA_OPS \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
+   EFL_UI_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_conformant)
 
 #include "elm_conformant_eo.c"

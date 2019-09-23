@@ -4082,7 +4082,7 @@ ELM_PART_OVERRIDE_TEXT_GET(efl_ui_text, EFL_UI_TEXT, Efl_Ui_Text_Data)
 
 /* Internal EO APIs and hidden overrides */
 
-//ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+//EFL_UI_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #include "efl_ui_text.eo.c"
 

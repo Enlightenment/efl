@@ -374,10 +374,10 @@ elm_button_autorepeat_get(const Evas_Object *obj)
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+EFL_UI_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_BUTTON_EXTRA_OPS \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
+   EFL_UI_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_button)
 
 #include "efl_ui_button.eo.c"

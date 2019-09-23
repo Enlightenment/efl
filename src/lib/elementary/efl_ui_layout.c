@@ -660,9 +660,9 @@ _elm_layout_part_aliasing_eval(const Evas_Object *obj,
      }
 
    if (is_text)
-     aliases = elm_layout_text_aliases_get(obj);
+     aliases = efl_ui_layout_text_aliases_get(obj);
    else
-     aliases =  elm_layout_content_aliases_get(obj);
+     aliases =  efl_ui_layout_content_aliases_get(obj);
 
    while (aliases && aliases->alias && aliases->real_part)
      {
@@ -2847,18 +2847,18 @@ _efl_ui_layout_base_theme_rotation_apply(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UN
 
 /* Internal EO APIs and hidden overrides */
 
-EFL_FUNC_BODY_CONST(elm_layout_text_aliases_get, const Elm_Layout_Part_Alias_Description *, NULL)
-EFL_FUNC_BODY_CONST(elm_layout_content_aliases_get, const Elm_Layout_Part_Alias_Description *, NULL)
+EFL_FUNC_BODY_CONST(efl_ui_layout_text_aliases_get, const Elm_Layout_Part_Alias_Description *, NULL)
+EFL_FUNC_BODY_CONST(efl_ui_layout_content_aliases_get, const Elm_Layout_Part_Alias_Description *, NULL)
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+EFL_UI_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+EFL_UI_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_LAYOUT_BASE_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_layout_base), \
    ELM_PART_CONTENT_DEFAULT_OPS(efl_ui_layout_base), \
    ELM_PART_TEXT_DEFAULT_OPS(efl_ui_layout_base), \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
+   EFL_UI_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
+   EFL_UI_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_ui_layout_base_efl_object_dbg_info_get)
 
 
