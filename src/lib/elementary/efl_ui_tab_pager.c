@@ -14,7 +14,10 @@
 static void
 _select(Eo *obj EINA_UNUSED, Efl_Ui_Tab_Page *page)
 {
-   efl_ui_selectable_selected_set(efl_ui_tab_page_tab_bar_item_get(page), EINA_TRUE);
+   Efl_Ui_Tab_Bar_Default_Item *item = efl_ui_tab_page_tab_bar_item_get(page);
+
+   if (!efl_ui_selectable_selected_get(item))
+     efl_ui_selectable_selected_set(item, EINA_TRUE);
 }
 
 static void
