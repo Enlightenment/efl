@@ -13,7 +13,7 @@ class @beta Efl.Ui.List_View extends Efl.Ui.Layout_Base implements
                 Efl.Ui.Container_Selectable, Efl.Ui.List_View_Model,
                 Efl.Ui.Widget_Focus_Manager
    composites
-                Efl.Ui.Scrollable_Interactive, Efl.Ui.Scrollbar
+                Efl.Ui.Scrollable, Efl.Ui.Scrollbar
 {
    methods {
       @property homogeneous {

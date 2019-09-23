@@ -470,7 +470,7 @@ _efl_ui_collection_efl_ui_layout_orientable_orientation_get(const Eo *obj EINA_U
 }
 
 EOLIAN static void
-_efl_ui_collection_efl_ui_scrollable_interactive_match_content_set(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd, Eina_Bool w, Eina_Bool h)
+_efl_ui_collection_efl_ui_scrollable_match_content_set(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd, Eina_Bool w, Eina_Bool h)
 {
    if (pd->match_content.w == w && pd->match_content.h == h)
      return;

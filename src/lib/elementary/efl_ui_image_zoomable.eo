@@ -3,7 +3,7 @@ struct @extern Elm.Photocam.Error; [[Photocam error information.]]
 struct @extern Elm.Photocam.Progress; [[Photocam progress information.]]
 
 class @beta Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom
-   composites Efl.Ui.Scrollable_Interactive, Efl.Ui.Scrollbar
+   composites Efl.Ui.Scrollable, Efl.Ui.Scrollbar
 {
    [[Elementary Image Zoomable class]]
    methods {
@@ -52,7 +52,7 @@ class @beta Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.widget_input_event_handler;
-      Efl.Ui.Scrollable_Interactive.scroll;
+      Efl.Ui.Scrollable.scroll;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.File.load;
       Efl.File.unload;
