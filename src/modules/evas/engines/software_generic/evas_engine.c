@@ -4430,12 +4430,15 @@ _draw_thread_ector_surface_set(void *data)
    if (surface)
      {
         pixels = evas_cache_image_pixels(&surface->cache_entry);
-        w = surface->cache_entry.w;
-        h = surface->cache_entry.h;
-        x = ector_surface->x;
-        y = ector_surface->y;
-        // clear the surface before giving to ector
-        if (ector_surface->clear) memset(pixels, 0, (w * h * 4));
+        if (pixels)
+          {
+             w = surface->cache_entry.w;
+             h = surface->cache_entry.h;
+             x = ector_surface->x;
+             y = ector_surface->y;
+             // clear the surface before giving to ector
+             if (ector_surface->clear) memset(pixels, 0, (w * h * 4));
+          }
      }
 
    ector_buffer_pixels_set(ector_surface->ector, pixels, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
