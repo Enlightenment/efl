@@ -370,12 +370,12 @@ struct struct_internal_definition_generator
        }
 
      if (!as_generator(indent << scope_tab << scope_tab << "return _external_struct;\n"
-                       << indent << scope_tab << "}\n\n").generate(sink, nullptr, context))
+                       << indent << scope_tab << "}\n").generate(sink, nullptr, context))
        return false;
 
      // close internal class
-     if(!as_generator(indent << "}\n\n"
-                      << indent << "#pragma warning restore CS1591\n\n"
+     if(!as_generator(indent << "}\n"
+                      << indent << "#pragma warning restore CS1591\n"
                  ).generate(sink, attributes::unused, context)) return false;
 
      return true;

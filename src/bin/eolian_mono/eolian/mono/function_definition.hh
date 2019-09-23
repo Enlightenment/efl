@@ -119,7 +119,7 @@ struct native_function_definition_generator
         << indent << scope_tab << "var ws = Efl.Eo.Globals.GetWrapperSupervisor(obj);\n"
         << indent << scope_tab << "if (ws != null)\n"
         << indent << scope_tab << "{\n"
-        << eolian_mono::native_function_definition_preamble()
+        << indent << scope_tab << scope_tab << eolian_mono::native_function_definition_preamble() << "\n"
         << indent << scope_tab << scope_tab << "try\n"
         << indent << scope_tab << scope_tab << "{\n"
         << indent << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "_ret_var = " : "")
@@ -131,7 +131,7 @@ struct native_function_definition_generator
         << indent << scope_tab << scope_tab << scope_tab << "Eina.Log.Warning($\"Callback error: {e.ToString()}\");\n"
         << indent << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.UNHANDLED_EXCEPTION);\n"
         << indent << scope_tab << scope_tab << "}\n\n"
-        << eolian_mono::native_function_definition_epilogue(*klass) << "\n"
+        << indent << eolian_mono::native_function_definition_epilogue(*klass) << "\n"
         << indent << scope_tab << "}\n"
         << indent << scope_tab << "else\n"
         << indent << scope_tab << "{\n"
@@ -204,14 +204,14 @@ struct function_definition_generator
 
     if(!as_generator
        (scope_tab << eolian_mono::function_scope_get(f) << ((do_super && !f.is_static) ? "virtual " : "") << (f.is_static ? "static " : "") << return_type << " " << string << "(" << (parameter % ", ")
-        << ") {\n "
-        << eolian_mono::function_definition_preamble()
+        << ") {\n"
+        << scope_tab(2) << eolian_mono::function_definition_preamble()
         << klass_full_native_inherit_name(f.klass) << "." << string << "_ptr.Value.Delegate("
         << self
         << ((!f.is_static && (f.parameters.size() > 0)) ? "," : "")
         << (argument_invocation % ", ") << ");\n"
-        << eolian_mono::function_definition_epilogue()
-        << " }\n")
+        << scope_tab(2) << eolian_mono::function_definition_epilogue()
+        << scope_tab(1) << "}\n\n")
        .generate(sink, std::make_tuple(name_helpers::managed_method_name(f), f.parameters, f, f.c_name, f.parameters, f), context))
       return false;
 
@@ -268,11 +268,11 @@ struct property_extension_method_definition_generator
       if (property.setter.is_engaged())
         {
           attributes::type_def prop_type = property.setter->parameters[0].type;
-          if (!as_generator("public static Efl.BindableProperty<" << type(true) << "> " << managed_name << "<T>(this Efl.Ui.ItemFactory<T> fac, Efl.Csharp.ExtensionTag<"
-                                        << name_helpers::klass_full_concrete_or_interface_name(cls)
-                                        << ", T>magic = null) where T : " << name_helpers::klass_full_concrete_or_interface_name(cls) <<  " {\n"
+          if (!as_generator(scope_tab << "public static Efl.BindableProperty<" << type(true) << "> " << managed_name << "<T>(this Efl.Ui.ItemFactory<T> fac, Efl.Csharp.ExtensionTag<"
+                            << name_helpers::klass_full_concrete_or_interface_name(cls)
+                            << ", T>magic = null) where T : " << name_helpers::klass_full_concrete_or_interface_name(cls) <<  " {\n"
                             << scope_tab << scope_tab << "return new Efl.BindableProperty<" << type(true) << ">(\"" << property.name << "\", fac);\n"
-                            << scope_tab << "}\n"
+                            << scope_tab << "}\n\n"
                             ).generate(sink, std::make_tuple(prop_type, prop_type), context))
             return false;
         }
@@ -285,11 +285,11 @@ struct property_extension_method_definition_generator
       if (property.setter.is_engaged())
         {
           attributes::type_def prop_type = property.setter->parameters[0].type;
-          if (!as_generator("public static Efl.BindableProperty<" << type(true) << "> " << managed_name << "<T>(this Efl.BindablePart<T> part, Efl.Csharp.ExtensionTag<"
-                                        << name_helpers::klass_full_concrete_or_interface_name(cls)
-                                        << ", T>magic = null) where T : " << name_helpers::klass_full_concrete_or_interface_name(cls) <<  " {\n"
+          if (!as_generator(scope_tab << "public static Efl.BindableProperty<" << type(true) << "> " << managed_name << "<T>(this Efl.BindablePart<T> part, Efl.Csharp.ExtensionTag<"
+                            << name_helpers::klass_full_concrete_or_interface_name(cls)
+                            << ", T>magic = null) where T : " << name_helpers::klass_full_concrete_or_interface_name(cls) <<  " {\n"
                             << scope_tab << scope_tab << "return new Efl.BindableProperty<" << type(true) << ">(part.PartName, \"" << property.name << "\", part.Binder);\n"
-                            << scope_tab << "}\n"
+                            << scope_tab << "}\n\n"
                             ).generate(sink, std::make_tuple(prop_type, prop_type), context))
             return false;
         }
@@ -522,7 +522,7 @@ struct property_wrapper_definition_generator
           return false;
       }
 
-      if (!as_generator(scope_tab << "}\n").generate(sink, attributes::unused, context))
+      if (!as_generator(scope_tab << "}\n\n").generate(sink, attributes::unused, context))
         return false;
 
       return true;

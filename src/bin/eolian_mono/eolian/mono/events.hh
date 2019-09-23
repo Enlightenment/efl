@@ -255,7 +255,7 @@ struct event_argument_wrapper_generator
                           << scope_tab << "/// <summary>Actual event payload.</summary>\n"
                           << scope_tab << "/// <value>" << documentation_string << "</value>\n"
                           << scope_tab << "public " << type << " arg { get; set; }\n"
-                          << "}\n"
+                          << "}\n\n"
                  ).generate(sink, std::make_tuple(evt.documentation.summary, *etype), context);
    }
 } const event_argument_wrapper {};
@@ -279,9 +279,8 @@ struct event_declaration_generator
       if (evt.type.is_engaged())
         wrapper_args_type = "<" + name_helpers::managed_event_args_name(evt) + ">";
 
-      if (!as_generator(
-              documentation(1)
-           ).generate(sink, evt, context)) return false;
+      if (!as_generator(documentation(1))
+                        .generate(sink, evt, context)) return false;
       if (evt.type.is_engaged())
         if (!as_generator(
                 scope_tab << "/// <value><see cref=\"" << name_helpers::managed_event_args_name(evt) << "\"/></value>\n"
@@ -427,7 +426,7 @@ struct event_definition_generator
             << scope_tab << scope_tab << scope_tab << "return;\n"
             << scope_tab << scope_tab << "}\n\n"
             << event_native_call
-            << scope_tab << "}\n"
+            << scope_tab << "}\n\n"
           ).generate(sink, nullptr, context))
        return false;
 
@@ -479,7 +478,7 @@ struct event_definition_generator
            << scope_tab << scope_tab << scope_tab << scope_tab << "RemoveNativeEventHandler(" << library_name << ", key, value);\n"
            << scope_tab << scope_tab << scope_tab << "}\n" // End of lock block
            << scope_tab << scope_tab << "}\n"
-           << scope_tab << "}\n"
+           << scope_tab << "}\n\n"
            ).generate(sink, attributes::unused, context);
    }
 };
