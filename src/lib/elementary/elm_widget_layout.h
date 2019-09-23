@@ -62,10 +62,9 @@ typedef struct _Efl_Ui_Layout_Data
       Eina_Bool          updating : 1;
    } connect;
 
-   int                   frozen; /**< Layout freeze counter */
-
    unsigned int          finger_size_multiplier_x, finger_size_multiplier_y; /**< multipliers for finger_size during group_calc */
 
+   Eina_Bool             frozen; /**< Layout freeze state */
    Eina_Bool             can_access : 1; /**< This is true when all text(including textblock) parts can be accessible by accessibility. */
    Eina_Bool             destructed_is : 1; /**< This flag indicates if Efl.Ui.Layout destructor was called. This is needed to avoid unnecessary calculation of subobject deletion during layout object's deletion. */
    Eina_Bool             file_set : 1; /**< This flag indicates if Efl.Ui.Layout source is set from a file*/

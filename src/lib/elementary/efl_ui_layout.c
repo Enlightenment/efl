@@ -1834,26 +1834,25 @@ EOLIAN static int
 _efl_ui_layout_base_efl_layout_calc_calc_freeze(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, 0);
-
-   if ((sd->frozen)++ != 0) return sd->frozen;
-
-   edje_object_freeze(wd->resize_obj);
-
-   return 1;
+   sd->frozen = EINA_TRUE;
+   return edje_object_freeze(wd->resize_obj);
 }
 
 EOLIAN static int
 _efl_ui_layout_base_efl_layout_calc_calc_thaw(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
+   int ret;
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, 0);
 
-   if (--(sd->frozen) != 0) return sd->frozen;
+   ret = edje_object_thaw(wd->resize_obj);
 
-   edje_object_thaw(wd->resize_obj);
+   if (!ret)
+     {
+        sd->frozen = EINA_FALSE;
+        efl_canvas_group_change(obj);
+     }
 
-   efl_canvas_group_change(obj);
-
-   return 0;
+   return ret;
 }
 
 EOLIAN void
