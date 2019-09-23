@@ -289,7 +289,7 @@ abstract Efl.Object
          ]]
       }
       event_global_thaw @static {
-         [[Gobally thaw events for ALL EFL OBJECTS.
+         [[Globally thaw events for ALL EFL OBJECTS.
 
            Allows event callbacks to be called for all EFL objects after they have
            been disabled by @.event_global_freeze. The amount of thaws must match
@@ -347,7 +347,7 @@ abstract Efl.Object
          }
       }
       children_iterator_new {
-         [[Get an iterator on all childrens]]
+         [[Get an iterator on all children.]]
          return: iterator<Efl.Object> @move @no_unused; [[Children iterator]]
       }
       composite_attach @beta {
