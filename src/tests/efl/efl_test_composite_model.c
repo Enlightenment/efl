@@ -51,9 +51,9 @@ _children_slice_get_then(void *data EINA_UNUSED,
         p_true = efl_model_property_get(child, "test_p_true");
         p_false = efl_model_property_get(child, "test_p_false");
 
-        eina_value_int_get(p_int, &v_int);
-        eina_value_bool_get(p_true, &v_true);
-        eina_value_bool_get(p_false, &v_false);
+        fail_if(!eina_value_int_get(p_int, &v_int));
+        fail_if(!eina_value_bool_get(p_true, &v_true));
+        fail_if(!eina_value_bool_get(p_false, &v_false));
 
         fail_if(v_int != base_ints[i]);
         fail_if(v_true != EINA_TRUE);
