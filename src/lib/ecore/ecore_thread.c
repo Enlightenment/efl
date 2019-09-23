@@ -168,7 +168,7 @@ static Eina_Bool have_main_loop_thread = 0;
 static Eina_Trash *_ecore_thread_worker_trash = NULL;
 static int _ecore_thread_worker_count = 0;
 
-static void                 *_ecore_thread_worker(void *);
+static void                 *_ecore_thread_worker(void *, Eina_Thread);
 static Ecore_Pthread_Worker *_ecore_thread_worker_new(void);
 
 static PH(get_main_loop_thread) (void)
@@ -472,8 +472,9 @@ _ecore_direct_worker_cleanup(void *data)
 }
 
 static void *
-_ecore_direct_worker(Ecore_Pthread_Worker *work)
+_ecore_direct_worker(void *data, Eina_Thread t EINA_UNUSED)
 {
+   Ecore_Pthread_Worker *work = data;
    eina_thread_cancellable_set(EINA_FALSE, NULL);
    eina_thread_name_set(eina_thread_self(), "Ethread-feedback");
    work->self = PHS();
@@ -501,7 +502,7 @@ _ecore_thread_worker_cleanup(void *data EINA_UNUSED)
 }
 
 static void *
-_ecore_thread_worker(void *data EINA_UNUSED)
+_ecore_thread_worker(void *data EINA_UNUSED, Eina_Thread t EINA_UNUSED)
 {
    eina_thread_cancellable_set(EINA_FALSE, NULL);
    EINA_THREAD_CLEANUP_PUSH(_ecore_thread_worker_cleanup, NULL);
