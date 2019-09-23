@@ -182,6 +182,21 @@ EFL_START_TEST(pack_before3)
 }
 EFL_END_TEST
 
+EFL_START_TEST(pack_before4)
+{
+   Efl_Ui_Widget *wid[3];
+   Efl_Ui_Widget *inv = create_test_widget();
+
+   _fill_array(wid);
+
+   for (int i = 0; i < 3; i++)
+     efl_pack_end(widget, wid[i]);
+
+   ck_assert_int_eq(efl_pack_before(widget, inv, NULL), EINA_TRUE);
+   ck_assert_ptr_eq(efl_pack_content_get(widget, 0), inv);
+}
+EFL_END_TEST
+
 EFL_START_TEST(pack_after1)
 {
    Efl_Ui_Widget *wid[3];
@@ -244,6 +259,21 @@ EFL_START_TEST(pack_after3)
 
    ck_assert_int_eq(efl_pack_after(widget, inv, wid[0]), EINA_TRUE);
    ck_assert_ptr_eq(efl_test_parent_get(inv), widget);
+}
+EFL_END_TEST
+
+EFL_START_TEST(pack_after4)
+{
+   Efl_Ui_Widget *wid[3];
+   Efl_Ui_Widget *inv = create_test_widget();
+
+   _fill_array(wid);
+
+   for (int i = 0; i < 3; i++)
+     efl_pack_end(widget, wid[i]);
+
+   ck_assert_int_eq(efl_pack_after(widget, inv, NULL), EINA_TRUE);
+   ck_assert_ptr_eq(efl_pack_content_get(widget, 3), inv);
 }
 EFL_END_TEST
 
@@ -449,9 +479,11 @@ efl_pack_linear_behavior_test(TCase *tc)
    tcase_add_test(tc, pack_before1);
    tcase_add_test(tc, pack_before2);
    tcase_add_test(tc, pack_before3);
+   tcase_add_test(tc, pack_before4);
    tcase_add_test(tc, pack_after1);
    tcase_add_test(tc, pack_after2);
    tcase_add_test(tc, pack_after3);
+   tcase_add_test(tc, pack_after4);
    tcase_add_test(tc, pack_at1);
    tcase_add_test(tc, pack_at2);
    tcase_add_test(tc, pack_at3);
