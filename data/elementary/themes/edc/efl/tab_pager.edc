@@ -5,7 +5,7 @@ group { "efl/tab_pager";
          desc { "default";
          }
       }
-      swallow { "efl.tab_root";
+      swallow { "efl.tab_root"; required;
          scale;
          desc { "default";
             rel.to: "base";
@@ -15,7 +15,7 @@ group { "efl/tab_pager";
             fixed: 0 1;
          }
       }
-      swallow { "efl.page_root";
+      swallow { "efl.page_root"; required;
          scale;
          desc { "default";
             rel1.to: "efl.tab_root";
@@ -23,7 +23,7 @@ group { "efl/tab_pager";
             rel1.relative: 0 1;
          }
       }
-      swallow { "efl.event";
+      swallow { "efl.event"; required;
          scale;
          repeat_events: 1;
          desc { "default";
