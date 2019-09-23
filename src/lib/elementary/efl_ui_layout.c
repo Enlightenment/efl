@@ -655,8 +655,8 @@ _elm_layout_part_aliasing_eval(const Evas_Object *obj,
                *part = efl_ui_default_text;
              else
                *part = efl_ui_default_content;
+             return EINA_TRUE;
           }
-        return EINA_TRUE;
      }
 
    if (is_text)
