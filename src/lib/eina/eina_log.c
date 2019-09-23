@@ -1538,7 +1538,7 @@ eina_log_init(void)
 #endif
 
 #ifdef HAVE_SYSTEMD
-   if (getenv("NOTIFY_SOCKET"))
+   if (getenv("NOTIFY_SOCKET") && !getenv("EFL_RUN_IN_TREE"))
       _print_cb = eina_log_print_cb_journald;
 #endif
 
