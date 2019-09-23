@@ -105,7 +105,7 @@ group { "efl/timepicker";
             align: 1.0 1.0;
          }
       }
-      swallow { "efl.field0";
+      swallow { "efl.field0"; required;
          mouse;
          scale;
          desc { "default";
@@ -197,7 +197,7 @@ group { "efl/timepicker";
             max: 0 0;
          }
       }
-      swallow { "efl.field1";
+      swallow { "efl.field1"; required;
          mouse;
          scale;
          desc { "default";
@@ -289,7 +289,7 @@ group { "efl/timepicker";
             max: 0 0;
          }
       }
-      swallow { "efl.field2";
+      swallow { "efl.field2"; required;
          mouse;
          scale;
          desc { "default";
