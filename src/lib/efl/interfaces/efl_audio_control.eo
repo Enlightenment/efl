@@ -1,4 +1,4 @@
-interface @beta Efl.Audio_Control extends Efl.Player
+interface @beta Efl.Audio_Control
 {
    [[Player interface for audio related properties]]
    methods {
