@@ -49,7 +49,11 @@ static Efl_Object *
 _efl_ui_widget_factory_efl_object_finalize(Eo *obj, Efl_Ui_Widget_Factory_Data *pd)
 {
    pd->parenting_widget = efl_provider_find(obj, EFL_UI_WIDGET_CLASS);
-   if (!pd->parenting_widget) return NULL;
+   if (!pd->parenting_widget)
+     {
+        ERR("Widget_Factory requires a Widget as parent.");
+        return NULL;
+     }
 
    return efl_finalize(efl_super(obj, EFL_UI_WIDGET_FACTORY_CLASS));
 }
@@ -397,7 +401,7 @@ _efl_ui_property_bind_part_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSE
 
    if (!pd->pd)
      {
-        EINA_LOG_ERR("Trying to bind part property without specifying which part");
+        ERR("Trying to bind part property without specifying which part");
         return ENOENT;
      }
 
