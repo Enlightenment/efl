@@ -69,7 +69,7 @@ _start_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED
         efl_text_set(obj, "Start Alpha Animation from 0.0 to 1.0");
      }
    //Let Animation Object start animation
-   efl_player_start(ad->anim_obj);
+   efl_player_playing_set(ad->anim_obj, EINA_TRUE);
 }
 
 static void

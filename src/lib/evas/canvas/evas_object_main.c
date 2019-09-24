@@ -1870,7 +1870,7 @@ static void
 _show(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj)
 {
    if (obj->anim_player)
-     efl_player_stop(obj->anim_player);
+     efl_player_playing_set(obj->anim_player, EINA_FALSE);
    if (obj->is_smart && obj->smart.smart && obj->smart.smart->smart_class->show)
      {
         obj->smart.smart->smart_class->show(eo_obj);
@@ -2583,7 +2583,7 @@ _efl_canvas_object_event_animation_cancel(Eo *eo_obj)
    Evas_Object_Protected_Data *obj = EVAS_OBJECT_DATA_SAFE_GET(eo_obj);
 
    if (obj)
-     efl_player_stop(obj->anim_player);
+     efl_player_playing_set(obj->anim_player, EINA_FALSE);
 }
 
 /* legacy */

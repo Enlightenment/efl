@@ -43,8 +43,7 @@ class @beta Efl.Ui.Video extends Efl.Ui.Layout_Base
       Efl.Canvas.Group.group_calculate;
       Efl.Ui.Widget.widget_input_event_handler;
       Efl.Access.Widget.Action.elm_actions { get; }
-      Efl.Player.start;
-      Efl.Player.stop;
+      Efl.Player.playing { get; set; }
       Efl.Player.play { get; set; }
    }
 }

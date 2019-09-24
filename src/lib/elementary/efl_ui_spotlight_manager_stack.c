@@ -176,9 +176,9 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_content_del(Eo *obj EIN
 static void
 _setup_anim(Efl_Animation_Player *player, Efl_Gfx_Entity *entity)
 {
-   efl_player_stop(player);
+   efl_player_playing_set(player, EINA_FALSE);
    efl_animation_player_target_set(player, entity);
-   efl_player_start(player);
+   efl_player_playing_set(player, EINA_TRUE);
 }
 
 static Eina_Bool
@@ -256,7 +256,7 @@ _reset_player(Efl_Animation_Player *player, Eina_Bool vis)
    Efl_Gfx_Entity *obj;
 
    obj = efl_animation_player_target_get(player);
-   efl_player_stop(player);
+   efl_player_playing_set(player, EINA_FALSE);
    efl_animation_player_target_set(player, NULL);
    efl_gfx_entity_visible_set(obj, vis);
 }

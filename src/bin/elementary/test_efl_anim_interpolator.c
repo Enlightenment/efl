@@ -113,7 +113,7 @@ _anim_start(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    int index = (uintptr_t)evas_object_data_get(obj, "index");
 
    //Let Animation Object start animation
-   efl_player_start(ad->anim_obj[index]);
+   efl_player_playing_set(ad->anim_obj[index], EINA_TRUE);
 
    elm_object_disabled_set(obj, EINA_TRUE);
    elm_object_disabled_set(ad->start_all_btn, EINA_TRUE);
@@ -128,7 +128,7 @@ _anim_start_all(void *data, Evas_Object *obj, void *event_info EINA_UNUSED)
    for (i = 0; i < INTERP_NUM; i++)
      {
         //Let Animation Object start animation
-        efl_player_start(ad->anim_obj[i]);
+        efl_player_playing_set(ad->anim_obj[i], EINA_TRUE);
         elm_object_disabled_set(ad->btn[i], EINA_TRUE);
      }
 

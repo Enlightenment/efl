@@ -3,11 +3,25 @@ interface @beta Efl.Player
    [[Efl media player interface]]
    c_prefix: efl_player;
    methods {
-        start {
-           [[Start a playing playable object.]]
-        }
-        stop {
-           [[Stop playable object.]]
+        @property playing {
+           [[Playback state of the media file.
+
+             This property sets the playback state of the object. Re-setting the current
+             playback state has no effect.
+
+             If set to $false, the object's @.progress property is reset to $0.0. Applying
+             the $false playing state also has the same effect as the player object reaching
+             the end of its playback, which may invoke additional behavior based on a class's
+             implementation.
+           ]]
+           set {
+              return: bool(false); [[If $true, the property change has succeeded.]]
+           }
+           get {
+           }
+           values {
+                playing: bool; [[$true if playing, $false otherwise.]]
+           }
         }
         @property play {
            [[Playback state of the media file.
