@@ -492,6 +492,7 @@ database_doc_token_ref_resolve(const Eolian_Doc_Token *tok,
           case EOLIAN_OBJECT_CLASS:
           case EOLIAN_OBJECT_TYPEDECL:
           case EOLIAN_OBJECT_VARIABLE:
+          case EOLIAN_OBJECT_ERROR:
             /* we only allow certain types to be referenced */
             return tp;
           default:
