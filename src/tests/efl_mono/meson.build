@@ -10,9 +10,13 @@ eo_files = [
     'dummy_constructible_object.eo',
 ]
 
+private_eo_files = [
+    'dummy_hidden_object.eo'
+]
+
 eo_file_targets = []
 
-foreach eo_file : eo_files
+foreach eo_file : eo_files + private_eo_files
   eo_file_targets += custom_target('eolian_gen_' + eo_file,
     input : eo_file,
     output : [eo_file + '.h'],
@@ -35,6 +39,7 @@ efl_mono_native_test = library('efl_mono_native_test',
         'dummy_test_object.c',
         'dummy_event_manager.c',
         'dummy_constructible_object.c',
+        'dummy_hidden_object.c',
     ],
     dependencies : [ecore, eo, efl],
 )

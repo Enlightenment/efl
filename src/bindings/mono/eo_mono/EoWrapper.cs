@@ -413,4 +413,15 @@ public abstract class EoWrapper : IWrapper, IDisposable
 
 } // namespace Eo
 
+/// <summary>Concrete realization of Efl.Object.
+///
+/// Some legacy classes (like Evas.Canvas) may be returned by some methods. As these classes are not bound, we
+/// allow minimal interaction with them through <see cref="Efl.Object" />.
+///
+/// But as <see cref="Efl.Object" /> is abstract, whis realized class will allow us to create C# instances of it.</summary>
+internal class ObjectRealized : Efl.Object
+{
+    protected ObjectRealized(Efl.Eo.Globals.WrappingHandle ch) : base(ch) { }
+}
+
 } // namespace Efl

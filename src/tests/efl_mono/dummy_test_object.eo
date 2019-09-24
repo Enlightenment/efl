@@ -1646,6 +1646,14 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
          return: const(ptr(Eina.Value_Type));
       }
+
+      @property hidden_object {
+         get {}
+
+         values {
+            obj: Efl.Object;
+         }
+      }
    }
    implements {
       Efl.Object.constructor;
