@@ -31,7 +31,7 @@ enum Tokens
     KW(data), KW(destructor), KW(error), KW(event_prefix), KW(events), KW(extends), \
     KW(free), KW(get), KW(implements), KW(import), KW(interface), \
     KW(keys), KW(legacy), KW(methods), KW(mixin), KW(params), \
-    KW(parse), KW(parts), KW(ptr), KW(set), KW(type), KW(values), KW(var), KW(requires), \
+    KW(parse), KW(parts), KW(ptr), KW(set), KW(type), KW(values), KW(requires), \
     \
     KWAT(auto), KWAT(beta), KWAT(by_ref), KWAT(c_name), KWAT(const), \
     KWAT(empty), KWAT(extern), KWAT(free), KWAT(hot), KWAT(in), KWAT(inout), \
@@ -264,16 +264,16 @@ eo_lexer_typedecl_release(Eo_Lexer *ls, Eolian_Typedecl *tp)
    return (Eolian_Typedecl *)eo_lexer_node_release(ls, (Eolian_Object *)tp);
 }
 
-static inline Eolian_Variable *
-eo_lexer_variable_new(Eo_Lexer *ls)
+static inline Eolian_Constant *
+eo_lexer_constant_new(Eo_Lexer *ls)
 {
-   return (Eolian_Variable *)eo_lexer_node_new(ls, sizeof(Eolian_Variable));
+   return (Eolian_Constant *)eo_lexer_node_new(ls, sizeof(Eolian_Constant));
 }
 
-static inline Eolian_Variable *
-eo_lexer_variable_release(Eo_Lexer *ls, Eolian_Variable *var)
+static inline Eolian_Constant *
+eo_lexer_constant_release(Eo_Lexer *ls, Eolian_Constant *var)
 {
-   return (Eolian_Variable *)eo_lexer_node_release(ls, (Eolian_Object *)var);
+   return (Eolian_Constant *)eo_lexer_node_release(ls, (Eolian_Object *)var);
 }
 
 static inline Eolian_Expression *

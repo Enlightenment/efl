@@ -765,7 +765,7 @@ EFL_END_TEST
 
 EFL_START_TEST(eolian_var)
 {
-   const Eolian_Variable *var = NULL;
+   const Eolian_Constant *var = NULL;
    const Eolian_Expression *exp = NULL;
    const Eolian_Type *type = NULL;
    const Eolian_Class *class;
@@ -785,12 +785,11 @@ EFL_START_TEST(eolian_var)
 
    /* regular constant */
    fail_if(!(var = eolian_unit_constant_by_name_get(unit, "Foo")));
-   fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_CONSTANT);
-   fail_if(eolian_variable_is_extern(var));
-   fail_if(!(type = eolian_variable_base_type_get(var)));
+   fail_if(eolian_constant_is_extern(var));
+   fail_if(!(type = eolian_constant_base_type_get(var)));
    fail_if(!(name = eolian_type_short_name_get(type)));
    fail_if(strcmp(name, "int"));
-   fail_if(!(exp = eolian_variable_value_get(var)));
+   fail_if(!(exp = eolian_constant_value_get(var)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != 5);
@@ -849,7 +848,7 @@ EFL_END_TEST
 EFL_START_TEST(eolian_enum)
 {
    const Eolian_Enum_Type_Field *field = NULL;
-   const Eolian_Variable *var = NULL;
+   const Eolian_Constant *var = NULL;
    const Eolian_Typedecl *tdl = NULL;
    const Eolian_Type *type = NULL;
    const Eolian_Class *class;
@@ -914,19 +913,16 @@ EFL_START_TEST(eolian_enum)
    eina_stringshare_del(cname);
 
    fail_if(!(var = eolian_unit_constant_by_name_get(unit, "Bah")));
-   fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_CONSTANT);
-   fail_if(eolian_variable_is_extern(var));
-   fail_if(!(type = eolian_variable_base_type_get(var)));
+   fail_if(!(type = eolian_constant_base_type_get(var)));
    fail_if(!(name = eolian_type_short_name_get(type)));
    fail_if(strcmp(name, "Baz"));
-   fail_if(!(exp = eolian_variable_value_get(var)));
+   fail_if(!(exp = eolian_constant_value_get(var)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != (1 << 0));
 
    fail_if(!(var = eolian_unit_constant_by_name_get(unit, "Pants")));
-   fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_CONSTANT);
-   fail_if(!(exp = eolian_variable_value_get(var)));
+   fail_if(!(exp = eolian_constant_value_get(var)));
    v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != 5);
@@ -1032,7 +1028,7 @@ EFL_START_TEST(eolian_docs)
    const Eolian_Typedecl *tdl;
    const Eolian_Class *class;
    const Eolian_Event *event;
-   const Eolian_Variable *var;
+   const Eolian_Constant *var;
    const Eolian_Function *fid;
    const Eolian_Documentation *doc;
    const Eolian_Function_Parameter *par;
@@ -1101,7 +1097,7 @@ EFL_START_TEST(eolian_docs)
    fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_REF);
    txt = eolian_doc_token_text_get(&tok);
    fail_if(strcmp(txt, "pants"));
-   fail_if(eolian_doc_token_ref_resolve(&tok, eos, NULL, NULL) != EOLIAN_OBJECT_VARIABLE);
+   fail_if(eolian_doc_token_ref_resolve(&tok, eos, NULL, NULL) != EOLIAN_OBJECT_CONSTANT);
    free(txt);
    tdoc = eolian_documentation_tokenize(tdoc, &tok);
    fail_if(eolian_doc_token_type_get(&tok) != EOLIAN_DOC_TOKEN_TEXT);
@@ -1181,7 +1177,7 @@ EFL_START_TEST(eolian_docs)
                   "2.0"));
 
    fail_if(!(var = eolian_unit_constant_by_name_get(unit, "pants")));
-   fail_if(!(doc = eolian_variable_documentation_get(var)));
+   fail_if(!(doc = eolian_constant_documentation_get(var)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Docs for var."));
    fail_if(eolian_documentation_description_get(doc));

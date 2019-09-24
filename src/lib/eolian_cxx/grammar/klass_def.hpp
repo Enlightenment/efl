@@ -113,13 +113,6 @@ inline typedecl_type typedecl_type_get(Eolian_Typedecl const* decl)
   }
 }
 
-enum class variable_type
-{
-  unknown,
-  constant,
-  global
-};
-
 
 struct type_def;
 bool operator==(type_def const& lhs, type_def const& rhs);
@@ -1070,63 +1063,57 @@ struct property_def
   }
 };
 
-struct variable_def
+struct constant_def
 {
   std::string name;
   std::string full_name;
   type_def base_type;
   documentation_def documentation;
-  variable_type type;
   std::vector<std::string> namespaces;
   Eolian_Value expression_value;
   bool is_extern : 1;
 
-  friend inline bool operator==(variable_def const& lhs, variable_def const& rhs)
+  friend inline bool operator==(constant_def const& lhs, constant_def const& rhs)
   {
     return lhs.name == rhs.name
       && lhs.full_name == rhs.full_name
       && lhs.base_type == rhs.base_type
       && lhs.documentation == rhs.documentation
-      && lhs.type == rhs.type
       && lhs.namespaces == rhs.namespaces
       && lhs.expression_value.type == rhs.expression_value.type
       && lhs.expression_value.value.ll == rhs.expression_value.value.ll
       && lhs.is_extern == rhs.is_extern;
   }
 
-  friend inline bool operator!=(variable_def const& lhs, variable_def const& rhs)
+  friend inline bool operator!=(constant_def const& lhs, constant_def const& rhs)
   {
     return !(lhs == rhs);
   }
 
-  variable_def() = default;
-  variable_def(Eolian_Variable const* variable, Eolian_Unit const* unit)
-        : name(::eolian_variable_short_name_get(variable))
-        , full_name(::eolian_variable_name_get(variable))
-        , base_type(::eolian_variable_base_type_get(variable)
+  constant_def() = default;
+  constant_def(Eolian_Constant const* constant, Eolian_Unit const* unit)
+        : name(::eolian_constant_short_name_get(constant))
+        , full_name(::eolian_constant_name_get(constant))
+        , base_type(::eolian_constant_base_type_get(constant)
                     , unit
-                    , ::eolian_type_c_type_get(eolian_variable_base_type_get(variable))
+                    , ::eolian_type_c_type_get(eolian_constant_base_type_get(constant))
                     , value_ownership::unmoved
                     , is_by::value)
-        , documentation(::eolian_variable_documentation_get(variable))
-        , type(static_cast<variable_type>(::eolian_variable_type_get(variable)))
+        , documentation(::eolian_constant_documentation_get(constant))
         , expression_value()
-        , is_extern(::eolian_variable_is_extern(variable))
+        , is_extern(::eolian_constant_is_extern(constant))
   {
-     for(efl::eina::iterator<const char> namespace_iterator( ::eolian_variable_namespaces_get(variable))
+     for(efl::eina::iterator<const char> namespace_iterator( ::eolian_constant_namespaces_get(constant))
           , namespace_last; namespace_iterator != namespace_last; ++namespace_iterator)
        {
           this->namespaces.push_back((&*namespace_iterator));
        }
 
-     if (this->type == variable_type::constant)
-       {
-          auto expr = ::eolian_variable_value_get(variable);
-          if (!expr)
-            throw std::runtime_error("Could not get constant variable value expression");
+     auto expr = ::eolian_constant_value_get(constant);
+     if (!expr)
+       throw std::runtime_error("Could not get constant variable value expression");
 
-          this->expression_value = ::eolian_expression_eval(expr, ::EOLIAN_MASK_ALL);
-       }
+     this->expression_value = ::eolian_expression_eval(expr, ::EOLIAN_MASK_ALL);
   }
 };
 

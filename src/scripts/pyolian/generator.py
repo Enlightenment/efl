@@ -125,7 +125,7 @@ class Template(pyratemp.Template):
             'Enum_Type_Field': eolian.Enum_Type_Field,
             'Struct_Type_Field': eolian.Struct_Type_Field,
             'Expression': eolian.Expression,
-            'Variable': eolian.Variable,
+            'Constant': eolian.Constant,
             'Documentation': eolian.Documentation,
             'Documentation_Token': eolian.Documentation_Token,
             # Eolian Enums
@@ -139,7 +139,6 @@ class Template(pyratemp.Template):
             'Eolian_C_Type_Type': eolian.Eolian_C_Type_Type,
             'Eolian_Expression_Type': eolian.Eolian_Expression_Type,
             'Eolian_Expression_Mask': eolian.Eolian_Expression_Mask,
-            'Eolian_Variable_Type': eolian.Eolian_Variable_Type,
             'Eolian_Binary_Operator': eolian.Eolian_Binary_Operator,
             'Eolian_Unary_Operator': eolian.Eolian_Unary_Operator,
             'Eolian_Doc_Token_Type': eolian.Eolian_Doc_Token_Type,

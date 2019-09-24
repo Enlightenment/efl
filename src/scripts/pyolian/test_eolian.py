@@ -180,22 +180,14 @@ class TestEolianUnit(unittest.TestCase):
             all_count += 1
         self.assertGreater(all_count, 10)
 
-    def test_variable_listing(self):
+    def test_constant_listing(self):
         l = list(eolian_db.constants)
         self.assertGreater(len(l), 2)
-        self.assertIsInstance(l[0], eolian.Variable)
-
-        l = list(eolian_db.globals)
-        self.assertGreater(len(l), 20)
-        self.assertIsInstance(l[0], eolian.Variable)
+        self.assertIsInstance(l[0], eolian.Constant)
 
         l = list(eolian_db.constants_by_file_get('efl_gfx_stack.eo'))
         self.assertGreater(len(l), 1)
-        self.assertIsInstance(l[0], eolian.Variable)
-
-        l = list(eolian_db.globals_by_file_get('efl_net_http_types.eot'))
-        self.assertGreater(len(l), 10)
-        self.assertIsInstance(l[0], eolian.Variable)
+        self.assertIsInstance(l[0], eolian.Constant)
 
     def test_class_listing(self):
         all_count = 0
@@ -473,26 +465,12 @@ class TestEolianDocumentation(unittest.TestCase):
         self.assertEqual(doc.since, '1.22')
 
 
-class TestEolianVariable(unittest.TestCase):
-    def test_variable_global(self):
-        var = eolian_db.global_by_name_get('Efl.Net.Http.Error.BAD_CONTENT_ENCODING')
-        self.assertIsInstance(var, eolian.Variable)
-        self.assertEqual(var.name, 'Efl.Net.Http.Error.BAD_CONTENT_ENCODING')
-        self.assertEqual(var.short_name, 'BAD_CONTENT_ENCODING')
-        self.assertEqual(var.type, eolian.Eolian_Variable_Type.GLOBAL)
-        self.assertEqual(var.file, 'efl_net_http_types.eot')
-        self.assertFalse(var.is_extern)
-        self.assertEqual(list(var.namespaces), ['Efl','Net','Http','Error'])
-        self.assertIsInstance(var.documentation, eolian.Documentation)
-        self.assertIsInstance(var.base_type, eolian.Type)
-        self.assertIsNone(var.value)  # TODO is None correct here? no value?
-
-    def test_variable_constant(self):
+class TestEolianConstant(unittest.TestCase):
+    def test_constant(self):
         var = eolian_db.constant_by_name_get('Efl.Gfx.Hint_Expand')
-        self.assertIsInstance(var, eolian.Variable)
+        self.assertIsInstance(var, eolian.Constant)
         self.assertEqual(var.name, 'Efl.Gfx.Hint_Expand')
         self.assertEqual(var.short_name, 'Hint_Expand')
-        self.assertEqual(var.type, eolian.Eolian_Variable_Type.CONSTANT)
         self.assertEqual(var.file, 'efl_gfx_hint.eo')
         self.assertFalse(var.is_extern)
         self.assertEqual(list(var.namespaces), ['Efl','Gfx'])

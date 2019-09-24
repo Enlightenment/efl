@@ -125,7 +125,7 @@ _eolian_decl_get(Eo_Lexer *ls, const char *name)
      obj = eina_hash_find(ls->state->staging.unit.objects, name);
    if (obj && ((obj->type == EOLIAN_OBJECT_CLASS) ||
                (obj->type == EOLIAN_OBJECT_TYPEDECL) ||
-               (obj->type == EOLIAN_OBJECT_VARIABLE)))
+               (obj->type == EOLIAN_OBJECT_CONSTANT)))
      return obj;
 
    return NULL;
@@ -152,8 +152,8 @@ _eolian_decl_name_get(Eolian_Object *obj)
              break;
           }
         goto end;
-      case EOLIAN_OBJECT_VARIABLE:
-        return "variable";
+      case EOLIAN_OBJECT_CONSTANT:
+        return "constant";
       default:
         break;
      }
@@ -879,10 +879,10 @@ tags_done:
    return def;
 }
 
-static Eolian_Variable *
-parse_variable(Eo_Lexer *ls, Eina_Bool global)
+static Eolian_Constant *
+parse_constant(Eo_Lexer *ls)
 {
-   Eolian_Variable *def = eo_lexer_variable_new(ls);
+   Eolian_Constant *def = eo_lexer_constant_new(ls);
    Eina_Strbuf *buf;
    eo_lexer_get(ls);
    Eina_Stringshare *cname = NULL;
@@ -908,11 +908,10 @@ parse_variable(Eo_Lexer *ls, Eina_Bool global)
         goto tags_done;
      }
 tags_done:
-   def->type = global ? EOLIAN_VAR_GLOBAL : EOLIAN_VAR_CONSTANT;
    buf = eina_strbuf_new();
    eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), buf);
    eo_lexer_context_push(ls);
-   FILL_BASE(def->base, ls, ls->line_number, ls->column, VARIABLE);
+   FILL_BASE(def->base, ls, ls->line_number, ls->column, CONSTANT);
    parse_name(ls, buf);
    def->base.name = eina_stringshare_add(eina_strbuf_string_get(buf));
    if (cname)
@@ -932,17 +931,12 @@ tags_done:
    check_next(ls, ':');
    def->base_type = eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE));
    /* constants are required to have a value */
-   if (!global)
-     check(ls, '=');
-   /* globals can optionally have a value */
-   if (ls->t.token == '=')
-     {
-        ls->expr_mode = EINA_TRUE;
-        eo_lexer_get(ls);
-        def->value = parse_expr(ls);
-        ls->expr_mode = EINA_FALSE;
-        eo_lexer_expr_release_ref(ls, def->value);
-     }
+   check(ls, '=');
+   ls->expr_mode = EINA_TRUE;
+   eo_lexer_get(ls);
+   def->value = parse_expr(ls);
+   ls->expr_mode = EINA_FALSE;
+   eo_lexer_expr_release_ref(ls, def->value);
    check_next(ls, ';');
    FILL_DOC(ls, def, doc);
    eo_lexer_dtor_pop(ls);
@@ -2401,10 +2395,8 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            break;
         }
       case KW_const:
-      case KW_var:
         {
-           database_var_add(ls->unit, eo_lexer_variable_release(ls,
-             parse_variable(ls, ls->t.kw == KW_var)));
+           database_constant_add(ls->unit, eo_lexer_constant_release(ls, parse_constant(ls)));
            break;
         }
       case KW_error:

@@ -108,10 +108,6 @@ lib.eolian_state_objects_by_file_get.restype = c_void_p
 lib.eolian_state_class_by_file_get.argtypes = (c_void_p, c_char_p)
 lib.eolian_state_class_by_file_get.restype = c_void_p
 
-# EAPI Eina_Iterator *eolian_state_globals_by_file_get(const Eolian_State *state, const char *file_name);
-lib.eolian_state_globals_by_file_get.argtypes = (c_void_p, c_char_p)
-lib.eolian_state_globals_by_file_get.restype = c_void_p
-
 # EAPI Eina_Iterator *eolian_state_constants_by_file_get(const Eolian_State *state, const char *file_name);
 lib.eolian_state_constants_by_file_get.argtypes = (c_void_p, c_char_p)
 lib.eolian_state_constants_by_file_get.restype = c_void_p
@@ -182,21 +178,13 @@ lib.eolian_unit_structs_get.restype = c_void_p
 lib.eolian_unit_enums_get.argtypes = (c_void_p,)
 lib.eolian_unit_enums_get.restype = c_void_p
 
-# EAPI const Eolian_Variable *eolian_unit_global_by_name_get(const Eolian_Unit *unit, const char *name);
-lib.eolian_unit_global_by_name_get.argtypes = (c_void_p, c_char_p)
-lib.eolian_unit_global_by_name_get.restype = c_void_p
-
-# EAPI const Eolian_Variable *eolian_unit_constant_by_name_get(const Eolian_Unit *unit, const char *name);
+# EAPI const Eolian_Constant *eolian_unit_constant_by_name_get(const Eolian_Unit *unit, const char *name);
 lib.eolian_unit_constant_by_name_get.argtypes = (c_void_p, c_char_p)
 lib.eolian_unit_constant_by_name_get.restype = c_void_p
 
 # EAPI Eina_Iterator *eolian_unit_constants_get(const Eolian_Unit *unit);
 lib.eolian_unit_constants_get.argtypes = (c_void_p,)
 lib.eolian_unit_constants_get.restype = c_void_p
-
-# EAPI Eina_Iterator *eolian_unit_globals_get(const Eolian_Unit *unit);
-lib.eolian_unit_globals_get.argtypes = (c_void_p,)
-lib.eolian_unit_globals_get.restype = c_void_p
 
 ###  Eolian_Object  ###########################################################
 
@@ -637,27 +625,23 @@ lib.eolian_expression_unary_operator_get.restype = c_int
 lib.eolian_expression_unary_expression_get.argtypes = (c_void_p,)
 lib.eolian_expression_unary_expression_get.restype = c_void_p
 
-###  Eolian_Variable  #########################################################
+###  Eolian_Constant  #########################################################
 
-# EAPI Eolian_Variable_Type eolian_variable_type_get(const Eolian_Variable *var);
-lib.eolian_variable_type_get.argtypes = (c_void_p,)
-lib.eolian_variable_type_get.restype = c_int
+# EAPI const Eolian_Documentation *eolian_constant_documentation_get(const Eolian_Constant *var);
+lib.eolian_constant_documentation_get.argtypes = (c_void_p,)
+lib.eolian_constant_documentation_get.restype = c_void_p
 
-# EAPI const Eolian_Documentation *eolian_variable_documentation_get(const Eolian_Variable *var);
-lib.eolian_variable_documentation_get.argtypes = (c_void_p,)
-lib.eolian_variable_documentation_get.restype = c_void_p
+# EAPI const Eolian_Type *eolian_constant_base_type_get(const Eolian_Constant *var);
+lib.eolian_constant_base_type_get.argtypes = (c_void_p,)
+lib.eolian_constant_base_type_get.restype = c_void_p
 
-# EAPI const Eolian_Type *eolian_variable_base_type_get(const Eolian_Variable *var);
-lib.eolian_variable_base_type_get.argtypes = (c_void_p,)
-lib.eolian_variable_base_type_get.restype = c_void_p
+# EAPI const Eolian_Expression *eolian_constant_value_get(const Eolian_Constant *var);
+lib.eolian_constant_value_get.argtypes = (c_void_p,)
+lib.eolian_constant_value_get.restype = c_void_p
 
-# EAPI const Eolian_Expression *eolian_variable_value_get(const Eolian_Variable *var);
-lib.eolian_variable_value_get.argtypes = (c_void_p,)
-lib.eolian_variable_value_get.restype = c_void_p
-
-# EAPI Eina_Bool eolian_variable_is_extern(const Eolian_Variable *var);
-lib.eolian_variable_is_extern.argtypes = (c_void_p,)
-lib.eolian_variable_is_extern.restype = c_bool
+# EAPI Eina_Bool eolian_constant_is_extern(const Eolian_Constant *var);
+lib.eolian_constant_is_extern.argtypes = (c_void_p,)
+lib.eolian_constant_is_extern.restype = c_bool
 
 ###  Eolian_Documentation  ####################################################
 

@@ -173,11 +173,6 @@ class Eolian_Expression_Mask(IntEnum):
     NUMBER = INT | FLOAT
     ALL    = NUMBER | BOOL | STRING | CHAR | NULL
 
-class Eolian_Variable_Type(IntEnum):
-    UNKNOWN = 0
-    CONSTANT = 1
-    GLOBAL = 2
-
 class Eolian_Binary_Operator(IntEnum):
     INVALID = 0
     ADD = 1  # + int, float
@@ -350,19 +345,11 @@ class Eolian_Unit(EolianBaseObject):
 
     @property
     def constants(self):
-        return Iterator(Variable, lib.eolian_unit_constants_get(self))
+        return Iterator(Constant, lib.eolian_unit_constants_get(self))
 
     def constant_by_name_get(self, name):
         c_var = lib.eolian_unit_constant_by_name_get(self, _str_to_bytes(name))
-        return Variable(c_var) if c_var else None
-
-    @property
-    def globals(self):
-        return Iterator(Variable, lib.eolian_unit_globals_get(self))
-
-    def global_by_name_get(self, name):
-        c_var = lib.eolian_unit_global_by_name_get(self, _str_to_bytes(name))
-        return Variable(c_var) if c_var else None
+        return Constant(c_var) if c_var else None
 
     @property
     def enums(self):
@@ -472,12 +459,8 @@ class Eolian_State(Eolian_Unit):
         return Class(c_cls) if c_cls else None
 
     def constants_by_file_get(self, file_name):
-        return Iterator(Variable,
+        return Iterator(Constant,
             lib.eolian_state_constants_by_file_get(self, _str_to_bytes(file_name)))
-
-    def globals_by_file_get(self, file_name):
-        return Iterator(Variable,
-            lib.eolian_state_globals_by_file_get(self, _str_to_bytes(file_name)))
 
     def aliases_by_file_get(self, file_name):
         return Iterator(Typedecl,
@@ -1238,31 +1221,27 @@ class Expression(Object):
         return Expression(c_expr) if c_expr is not None else None
 
 
-class Variable(Object):
+class Constant(Object):
     def __repr__(self):
-        return "<eolian.Variable '{0.name}', type={0.type!s}, file={0.file}>".format(self)
-
-    @cached_property
-    def type(self):
-        return Eolian_Variable_Type(lib.eolian_variable_type_get(self))
+        return "<eolian.Constant '{0.name}', type={0.type!s}, file={0.file}>".format(self)
 
     @cached_property
     def value(self):
-        c_expr = lib.eolian_variable_value_get(self)
+        c_expr = lib.eolian_constant_value_get(self)
         return Expression(c_expr) if c_expr else None
 
     @cached_property
     def base_type(self):
-        c_type = lib.eolian_variable_base_type_get(self)
+        c_type = lib.eolian_constant_base_type_get(self)
         return Type(c_type) if c_type else None
 
     @cached_property
     def is_extern(self):
-        return bool(lib.eolian_variable_is_extern(self))
+        return bool(lib.eolian_constant_is_extern(self))
 
     @cached_property
     def documentation(self):
-        c_doc = lib.eolian_variable_documentation_get(self)
+        c_doc = lib.eolian_constant_documentation_get(self)
         return Documentation(c_doc) if c_doc else None
 
 
@@ -1380,7 +1359,7 @@ class _Eolian_Object_Type(IntEnum):
     STRUCT_FIELD = 3
     ENUM_FIELD = 4
     TYPE = 5
-    VARIABLE = 6
+    CONSTANT = 6
     EXPRESSION = 7
     FUNCTION = 8
     FUNCTION_PARAMETER = 9
@@ -1397,7 +1376,7 @@ _eolian_type_class_mapping = {
     _Eolian_Object_Type.STRUCT_FIELD: Struct_Type_Field,
     _Eolian_Object_Type.ENUM_FIELD: Enum_Type_Field,
     _Eolian_Object_Type.TYPE: Type,
-    _Eolian_Object_Type.VARIABLE: Variable,
+    _Eolian_Object_Type.CONSTANT: Constant,
     _Eolian_Object_Type.EXPRESSION: Expression,
     _Eolian_Object_Type.FUNCTION: Function,
     _Eolian_Object_Type.FUNCTION_PARAMETER: Function_Parameter,

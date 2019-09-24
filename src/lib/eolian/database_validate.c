@@ -1488,7 +1488,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
 }
 
 static Eina_Bool
-_validate_variable(Validate_State *vals, Eolian_Variable *var)
+_validate_constant(Validate_State *vals, Eolian_Constant *var)
 {
    if (var->base.validated)
      return EINA_TRUE;
@@ -1498,7 +1498,7 @@ _validate_variable(Validate_State *vals, Eolian_Variable *var)
    if (!_validate_type(vals, var->base_type))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
-   if (var->value && !_validate_expr(var->value, var->base_type, 0, EINA_FALSE))
+   if (!_validate_expr(var->value, var->base_type, 0, EINA_FALSE))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
    if (!_validate_doc(var->doc))
@@ -1516,10 +1516,10 @@ _typedecl_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
 }
 
 static Eina_Bool
-_var_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
-             Eolian_Variable *var, Cb_Ret *sc)
+_constant_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
+             Eolian_Constant *var, Cb_Ret *sc)
 {
-   return (sc->succ = _validate_variable(sc->vals, var));
+   return (sc->succ = _validate_constant(sc->vals, var));
 }
 
 Eina_Bool
@@ -1597,11 +1597,7 @@ database_validate(const Eolian_Unit *src)
    if (!rt.succ)
      return EINA_FALSE;
 
-   eina_hash_foreach(src->globals, (Eina_Hash_Foreach)_var_map_cb, &rt);
-   if (!rt.succ)
-     return EINA_FALSE;
-
-   eina_hash_foreach(src->constants, (Eina_Hash_Foreach)_var_map_cb, &rt);
+   eina_hash_foreach(src->constants, (Eina_Hash_Foreach)_constant_map_cb, &rt);
    if (!rt.succ)
      return EINA_FALSE;
 
