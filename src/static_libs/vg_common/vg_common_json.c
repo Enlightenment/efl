@@ -177,13 +177,25 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
 
                 if (node->mGradient.type == GradientLinear)
                   {
-                     grad = efl_add(EFL_CANVAS_VG_GRADIENT_LINEAR_CLASS, parent);
+                     char *key = _get_key_val(shape);
+                     grad = efl_key_data_get(shape, key);
+                     if (!grad)
+                       {
+                          grad = efl_add(EFL_CANVAS_VG_GRADIENT_LINEAR_CLASS, parent);
+                          efl_key_data_set(shape, key, grad);
+                       }
                      efl_gfx_gradient_linear_start_set(grad, node->mGradient.start.x, node->mGradient.start.y);
                      efl_gfx_gradient_linear_end_set(grad, node->mGradient.end.x, node->mGradient.end.y);
                   }
                 else if (node->mGradient.type == GradientRadial)
                   {
-                     grad = efl_add(EFL_CANVAS_VG_GRADIENT_RADIAL_CLASS, parent);
+                     char *key = _get_key_val(shape);
+                     grad = efl_key_data_get(shape, key);
+                     if (!grad)
+                       {
+                          grad = efl_add(EFL_CANVAS_VG_GRADIENT_RADIAL_CLASS, parent);
+                          efl_key_data_set(shape, key, grad);
+                       }
                      efl_gfx_gradient_radial_center_set(grad, node->mGradient.center.x, node->mGradient.center.y);
                      efl_gfx_gradient_radial_focal_set(grad, node->mGradient.focal.x, node->mGradient.focal.y);
                      efl_gfx_gradient_radial_radius_set(grad, node->mGradient.cradius);
