@@ -9,8 +9,11 @@ interface @beta Efl.Player
              This property sets the playback state of the object. Re-setting the current
              playback state has no effect.
 
-             If set to $false, the object's @.progress property is reset to $0.0. Applying
-             the $false playing state also has the same effect as the player object reaching
+             If set to $false, the object's @.playback_progress property is, by default, reset to $0.0. A
+             class may alter this behavior, and it will be stated in the documentation for a class
+             if such behavior changes should be expected.
+
+             Applying the $false playing state also has the same effect as the player object reaching
              the end of its playback, which may invoke additional behavior based on a class's
              implementation.
            ]]
@@ -30,7 +33,8 @@ interface @beta Efl.Player
              pause state has no effect.
 
              If @.playing is set to $true, this property can be used to pause and resume
-             playback of the media without changing its @.progress property.
+             playback of the media without changing its @.playback_progress property. This property
+             cannot be changed if @.playing is $false.
            ]]
            set {
               return: bool(false); [[If $true, the property change has succeeded.]]
@@ -47,7 +51,7 @@ interface @beta Efl.Player
              This property sets the current position of the media file
              to $sec seconds since the beginning of the media file.
              This only works on seekable streams. Setting the
-             position doesn't change the playing state of the media file.
+             position doesn't change the @.playing or @.paused states of the media file.
            ]]
            set {
            }
@@ -70,7 +74,7 @@ interface @beta Efl.Player
            }
         }
         @property playback_speed {
-             [[Control the play speed of the media file.
+             [[Control the playback speed of the media file.
 
                This function control the speed with which the media file will
                be played. 1.0 represents the normal speed, 2 double speed, 0.5
