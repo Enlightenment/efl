@@ -83,7 +83,7 @@ _animator_cb(void *data)
    EFL_ANIMATION_PLAYER_ANIMATION_GET(eo_obj, anim);
    double duration, elapsed_time, vector;
 
-   if (efl_player_seekable_get(eo_obj))
+   if (efl_playable_seekable_get(eo_obj))
      {
         pd->time.current = ecore_loop_time_get();
 
@@ -195,7 +195,7 @@ _efl_canvas_animation_player_efl_player_start(Eo *eo_obj,
    double start_delay;
    EFL_ANIMATION_PLAYER_ANIMATION_GET(eo_obj, anim);
 
-   if (!efl_player_playable_get(eo_obj)) return;
+   if (!efl_playable_get(eo_obj)) return;
    pd->is_play = EINA_TRUE;
    //TODO: check this case is correct
    if (pd->start_delay_timer) return;
@@ -317,7 +317,7 @@ _efl_canvas_animation_player_efl_player_play_get(const Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_animation_player_efl_player_playable_get(const Eo *eo_obj,
+_efl_canvas_animation_player_efl_playable_playable_get(const Eo *eo_obj,
                                               Efl_Canvas_Animation_Player_Data *pd EINA_UNUSED)
 {
    Efl_Canvas_Animation *anim = efl_animation_player_animation_get(eo_obj);
@@ -342,7 +342,7 @@ _efl_canvas_animation_player_efl_player_pos_set(Eo *eo_obj,
                                               double sec)
 {
    //TODO: this is not correct
-   if (!efl_player_seekable_get(eo_obj))
+   if (!efl_playable_seekable_get(eo_obj))
      return;
 
    EFL_ANIMATION_PLAYER_ANIMATION_GET(eo_obj, anim);
@@ -382,7 +382,7 @@ _efl_canvas_animation_player_efl_player_play_speed_get(const Eo *eo_obj EINA_UNU
 }
 
 EOLIAN static double
-_efl_canvas_animation_player_efl_player_length_get(const Eo *eo_obj,
+_efl_canvas_animation_player_efl_playable_length_get(const Eo *eo_obj,
                                               Efl_Canvas_Animation_Player_Data *pd EINA_UNUSED)
 {
    EFL_ANIMATION_PLAYER_ANIMATION_GET(eo_obj, anim);
@@ -390,7 +390,7 @@ _efl_canvas_animation_player_efl_player_length_get(const Eo *eo_obj,
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_animation_player_efl_player_seekable_get(const Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_player_efl_playable_seekable_get(const Eo *eo_obj EINA_UNUSED,
                                               Efl_Canvas_Animation_Player_Data *pd EINA_UNUSED)
 {
    EFL_ANIMATION_PLAYER_ANIMATION_GET(eo_obj, anim);

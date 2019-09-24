@@ -538,7 +538,7 @@ _efl_canvas_layout_efl_observer_update(Eo *obj EINA_UNUSED, Edje *ed, Efl_Object
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_efl_player_playable_get(const Eo *obj EINA_UNUSED, Edje *pd EINA_UNUSED)
+_efl_canvas_layout_efl_playable_playable_get(const Eo *obj EINA_UNUSED, Edje *pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }

@@ -498,13 +498,13 @@ elm_video_audio_mute_get(const Evas_Object *obj)
 EAPI double
 elm_video_play_length_get(const Evas_Object *obj)
 {
-   return efl_player_length_get(obj);
+   return efl_playable_length_get(obj);
 }
 
 EAPI Eina_Bool
 elm_video_is_seekable_get(const Evas_Object *obj)
 {
-   return efl_player_seekable_get(obj);
+   return efl_playable_seekable_get(obj);
 }
 
 EAPI void

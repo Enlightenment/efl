@@ -3003,7 +3003,7 @@ _efl_ui_image_zoomable_gesture_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Ima
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_image_zoomable_efl_player_playable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+_efl_ui_image_zoomable_efl_playable_playable_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
 {
    if (sd->edje) return EINA_TRUE;
    return evas_object_image_animated_get(sd->img);

@@ -1,5 +1,5 @@
 class @beta Efl.Canvas.Video extends Efl.Canvas.Group
-                             implements Efl.File, Efl.Audio_Control, Efl.Player,
+                             implements Efl.File, Efl.Audio_Control, Efl.Player, Efl.Playable,
                                         Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller
 {
    [[Efl canvas video class]]
@@ -62,8 +62,8 @@ class @beta Efl.Canvas.Video extends Efl.Canvas.Group
         Efl.Player.progress { get; }
         Efl.Audio_Control.volume { get; set; }
         Efl.Audio_Control.mute { get; set; }
-        Efl.Player.length { get; }
-        Efl.Player.seekable { get; }
+        Efl.Playable.length { get; }
+        Efl.Playable.seekable { get; }
         Efl.Gfx.Image_Load_Controller.load_size { get; }
         Efl.Gfx.Image.ratio { get; }
         Efl.Gfx.Image.smooth_scale { get; set; }

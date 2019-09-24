@@ -9,14 +9,6 @@ interface @beta Efl.Player
         stop {
            [[Stop playable object.]]
         }
-        @property playable {
-           [[Whether or not the playable can be played.]]
-           get {
-           }
-           values {
-                play: bool; [[$true if the object have playable data, $false otherwise]]
-           }
-        }
         @property play {
            [[Playback state of the media file.
 
@@ -73,22 +65,6 @@ interface @beta Efl.Player
              }
              values {
                   speed: double; [[The play speed in the [0, infinity) range.]]
-             }
-        }
-        @property length {
-             [[Get the length of play for the media file.]]
-             get {
-             }
-             values {
-                  length: double; [[The length of the stream in seconds.]]
-             }
-        }
-        @property seekable {
-             [[Get whether the media file is seekable.]]
-             get {
-             }
-             values {
-                  seekable: bool; [[$true if seekable.]]
              }
         }
    }

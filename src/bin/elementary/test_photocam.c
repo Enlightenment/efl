@@ -152,7 +152,7 @@ my_bt_open(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
      }
 
    if (file && eina_str_has_extension(file, ".gif")
-       && efl_player_playable_get(ph))
+       && efl_playable_get(ph))
      efl_player_play_set(ph, EINA_TRUE);
 }
 
@@ -829,7 +829,7 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
                       efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _zoomable_clicked_cb, NULL)
                      );
 
-   if (efl_player_playable_get(zoomable))
+   if (efl_playable_get(zoomable))
      {
         printf("animation is available for this image.\n");
         efl_player_play_set(zoomable, EINA_TRUE);

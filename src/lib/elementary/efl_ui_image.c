@@ -1716,11 +1716,11 @@ _efl_ui_image_efl_ui_draggable_drag_target_get(const Eo *obj EINA_UNUSED, Efl_Ui
 EAPI Eina_Bool
 elm_image_animated_available_get(const Evas_Object *obj)
 {
-   return efl_player_playable_get(obj);
+   return efl_playable_get(obj);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_image_efl_player_playable_get(const Eo *obj, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_playable_playable_get(const Eo *obj, Efl_Ui_Image_Data *sd)
 {
    if (sd->edje) return EINA_TRUE;
 

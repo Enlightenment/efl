@@ -17,7 +17,7 @@ struct @beta Efl.Ui.Image_Error
 }
 
 class Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Input.Clickable, Efl.Ui.Draggable,
-                 Efl.File, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller, Efl.Player, Efl.Gfx.View,
+                 Efl.File, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller, Efl.Player, Efl.Playable, Efl.Gfx.View,
                  Efl.Access.Component, Efl.Access.Widget.Action, Efl.Gfx.Color,
                  Efl.Gfx.Image_Orientable,
                  Efl.Layout.Calc, Efl.Layout.Group, Efl.Layout.Signal,
@@ -97,7 +97,7 @@ class Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Input.Clickable, Efl.Ui.
       Efl.Gfx.Image.scale_hint { get; set; }
       Efl.Gfx.Image.content_hint { get; set; }
       Efl.Gfx.Image.image_load_error { get; }
-      Efl.Player.playable { get; }
+      Efl.Playable.playable { get; }
       Efl.Player.play { get; set; }
       Efl.Layout.Signal.signal_emit;
       Efl.Layout.Signal.message_send;

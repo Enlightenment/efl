@@ -43,7 +43,7 @@ class @beta Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom
       Efl.Gfx.View.view_size { get; }
       Efl.Gfx.Image.image_size { get; }
       Efl.Ui.Image.icon { set; get; }
-      Efl.Player.playable { get; }
+      Efl.Playable.playable { get; }
       Efl.Player.play { get; set; }
       Efl.Ui.Zoom.zoom_animation { set; get; }
       Efl.Ui.Zoom.zoom_level { set; get; }

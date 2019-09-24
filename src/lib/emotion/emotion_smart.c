@@ -731,7 +731,7 @@ emotion_object_buffer_size_get(const Evas_Object *obj)
 EAPI Eina_Bool
 emotion_object_seekable_get(const Evas_Object *obj)
 {
-   return efl_player_seekable_get(obj);
+   return efl_playable_seekable_get(obj);
 }
 
 EAPI Eina_Bool
@@ -757,7 +757,7 @@ emotion_object_audio_handled_get(const Evas_Object *obj)
 EAPI double
 emotion_object_play_length_get(const Evas_Object *obj)
 {
-   return efl_player_length_get(obj);
+   return efl_playable_length_get(obj);
 }
 
 EAPI void
@@ -1171,7 +1171,7 @@ _efl_canvas_video_efl_player_progress_get(const Eo *obj EINA_UNUSED, Efl_Canvas_
 }
 
 EOLIAN static double
-_efl_canvas_video_efl_player_length_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_playable_length_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return 0.0;
    sd->len = emotion_engine_instance_len_get(sd->engine_instance);
@@ -1179,7 +1179,7 @@ _efl_canvas_video_efl_player_length_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vi
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_video_efl_player_seekable_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_playable_seekable_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return EINA_FALSE;
    return emotion_engine_instance_seekable(sd->engine_instance);
