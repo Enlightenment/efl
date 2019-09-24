@@ -132,6 +132,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_part.eo.h"
 #include "interfaces/efl_playable.eo.h"
 #include "interfaces/efl_player.eo.h"
+#include "interfaces/efl_audio_control.eo.h"
 #include "interfaces/efl_text.eo.h"
 #include "interfaces/efl_text_types.eot.h"
 #include "interfaces/efl_ui_i18n.eo.h"

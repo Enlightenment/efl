@@ -1,6 +1,7 @@
 interface @beta Efl.Player
 {
    [[Efl media player interface]]
+   c_prefix: efl_player;
    methods {
         start {
            [[Start a playing playable object.]]
@@ -72,33 +73,6 @@ interface @beta Efl.Player
              }
              values {
                   speed: double; [[The play speed in the [0, infinity) range.]]
-             }
-        }
-        @property volume {
-             [[Control the audio volume.
-
-               Controls the audio volume of the stream being played. This has
-               nothing to do with the system volume. This volume will be
-               multiplied by the system volume. e.g.: if the current volume
-               level is 0.5, and the system volume is 50%, it will be
-               0.5 * 0.5 = 0.25.
-             ]]
-             set {
-             }
-             get {
-             }
-             values {
-                  volume: double; [[The volume level]]
-             }
-        }
-        @property mute {
-             [[This property controls the audio mute state.]]
-             set {
-             }
-             get {
-             }
-             values {
-                  mute: bool; [[The mute state. $true or $false.]]
              }
         }
         @property length {

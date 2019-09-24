@@ -1,5 +1,5 @@
 class @beta Efl.Canvas.Video extends Efl.Canvas.Group
-                             implements Efl.File, Efl.Player, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller
+                             implements Efl.File, Efl.Audio_Control, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller
 {
    [[Efl canvas video class]]
    methods {
@@ -10,7 +10,7 @@ class @beta Efl.Canvas.Video extends Efl.Canvas.Group
                emotion object.
 
                Please don't use this function, consider using
-               @Efl.Player.mute instead.
+               @Efl.Audio_Control.mute instead.
              ]]
              set {
              }
@@ -59,8 +59,8 @@ class @beta Efl.Canvas.Video extends Efl.Canvas.Group
         Efl.Player.play { get; set; }
         Efl.Player.pos { get; set; }
         Efl.Player.progress { get; }
-        Efl.Player.volume { get; set; }
-        Efl.Player.mute { get; set; }
+        Efl.Audio_Control.volume { get; set; }
+        Efl.Audio_Control.mute { get; set; }
         Efl.Player.length { get; }
         Efl.Player.seekable { get; }
         Efl.Gfx.Image_Load_Controller.load_size { get; }

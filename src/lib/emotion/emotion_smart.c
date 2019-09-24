@@ -830,11 +830,11 @@ emotion_object_event_simple_send(Evas_Object *obj, Emotion_Event ev)
 EAPI void
 emotion_object_audio_volume_set(Evas_Object *obj, double vol)
 {
-   efl_player_volume_set(obj, vol);
+   efl_audio_control_volume_set(obj, vol);
 }
 
 EOLIAN static void
-_efl_canvas_video_efl_player_volume_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, double vol)
+_efl_canvas_video_efl_audio_control_volume_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, double vol)
 {
    DBG("vol=%f", vol);
    if (!sd->engine_instance) return;
@@ -844,11 +844,11 @@ _efl_canvas_video_efl_player_volume_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Da
 EAPI double
 emotion_object_audio_volume_get(const Evas_Object *obj)
 {
-   return efl_player_volume_get(obj);
+   return efl_audio_control_volume_get(obj);
 }
 
 EOLIAN static double
-_efl_canvas_video_efl_player_volume_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_audio_control_volume_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return 0.0;
    return emotion_engine_instance_audio_channel_volume_get(sd->engine_instance);
@@ -857,11 +857,11 @@ _efl_canvas_video_efl_player_volume_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Vi
 EAPI void
 emotion_object_audio_mute_set(Evas_Object *obj, Eina_Bool mute)
 {
-   efl_player_mute_set(obj, mute);
+   efl_audio_control_mute_set(obj, mute);
 }
 
 EOLIAN static void
-_efl_canvas_video_efl_player_mute_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, Eina_Bool mute)
+_efl_canvas_video_efl_audio_control_mute_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd, Eina_Bool mute)
 {
    DBG("mute=" FMT_UCHAR, mute);
    if (!sd->engine_instance) return;
@@ -871,11 +871,11 @@ _efl_canvas_video_efl_player_mute_set(Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data
 EAPI Eina_Bool
 emotion_object_audio_mute_get(const Evas_Object *obj)
 {
-   return efl_player_mute_get(obj);
+   return efl_audio_control_mute_get(obj);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_video_efl_player_mute_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_audio_control_mute_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return EINA_FALSE;
    return emotion_engine_instance_audio_channel_mute_get(sd->engine_instance);

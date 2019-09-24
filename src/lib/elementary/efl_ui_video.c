@@ -474,25 +474,25 @@ elm_video_file_get(Eo *obj, const char **filename)
 EAPI void
 elm_video_audio_level_set(Evas_Object *obj, double volume)
 {
-   efl_player_volume_set(obj, volume);
+   efl_audio_control_volume_set(obj, volume);
 }
 
 EAPI double
 elm_video_audio_level_get(const Evas_Object *obj)
 {
-   return efl_player_volume_get(obj);
+   return efl_audio_control_volume_get(obj);
 }
 
 EAPI void
 elm_video_audio_mute_set(Evas_Object *obj, Eina_Bool mute)
 {
-   efl_player_mute_set(obj, mute);
+   efl_audio_control_mute_set(obj, mute);
 }
 
 EAPI Eina_Bool
 elm_video_audio_mute_get(const Evas_Object *obj)
 {
-   return efl_player_mute_get(obj);
+   return efl_audio_control_mute_get(obj);
 }
 
 EAPI double
