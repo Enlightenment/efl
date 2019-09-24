@@ -1,5 +1,5 @@
 class @beta Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
-                   Efl.Pack_Linear, Efl.Pack_Layout,
+                   Efl.Pack_Linear,
                    Efl.Ui.Layout_Orientable,
                    Efl.Ui.Multi_Selectable,
                    Efl.Ui.Focus.Manager_Sub,
