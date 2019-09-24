@@ -13,19 +13,29 @@ if sys_windows == true
  ]
 endif
 
+have_gl_engine = false
+
 if get_option('opengl') != 'none'
   engines += [
-   ['gl_generic', []],
    ['gl_x11', ['x11']],
-   ['gl_drm', ['drm']],
-   ['gl_cocoa', ['cocoa']],
+   ['gl_drm', ['drm']]
   ]
+  have_gl_engine = true
+endif
+
+if get_option('opengl') == 'full'
+  engines += [['gl_cocoa', ['cocoa']]]
+  have_gl_engine = true
 endif
 
 if get_option('opengl') == 'es-egl'
   engines += [['wayland_egl', ['wl']]]
+  have_gl_engine = true
 endif
 
+if have_gl_engine
+  engines += [['gl_generic', []]]
+endif
 
 foreach engine_conf : engines
   engine = engine_conf[0]

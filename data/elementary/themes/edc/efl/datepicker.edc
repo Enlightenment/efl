@@ -97,7 +97,7 @@ group { "efl/datepicker";
             align: 1.0 1.0;
          }
       }
-      swallow { "efl.field0";
+      swallow { "efl.field0"; required;
          mouse;
          scale;
          desc { "default";
@@ -125,7 +125,7 @@ group { "efl/datepicker";
             align: 0.0 0.5;
          }
       }
-      swallow { "efl.field1";
+      swallow { "efl.field1"; required;
          mouse;
          scale;
          desc { "default";
@@ -156,7 +156,7 @@ group { "efl/datepicker";
             align: 1.0 0.5;
          }
       }
-      swallow { "efl.field2";
+      swallow { "efl.field2"; required;
          mouse;
          scale;
          desc { "default";
@@ -215,7 +215,7 @@ group { "efl/datepicker/spin_button";
             vis;
          }
       }
-      swallow { "efl.inc_button";
+      swallow { "efl.inc_button"; required;
          scale;
          desc { "default";
             align: 0.5 0.0;
@@ -224,7 +224,7 @@ group { "efl/datepicker/spin_button";
             fixed: 1 1;
          }
       }
-      swallow { "efl.dec_button";
+      swallow { "efl.dec_button"; required;
          scale;
          desc { "default";
             align: 0.5 1.0;
@@ -233,7 +233,7 @@ group { "efl/datepicker/spin_button";
             fixed: 1 1;
          }
       }
-      swallow { "efl.entry";
+      swallow { "efl.entry"; required;
          clip: "clip";
          desc { "default";
             fixed: 1 1;
@@ -246,7 +246,7 @@ group { "efl/datepicker/spin_button";
             vis;
          }
       }
-      swallow { "efl.text_button";
+      swallow { "efl.text_button"; required;
          scale;
          desc { "default";
             rel.to_x: "base";

@@ -182,7 +182,7 @@ _elm_scrollable_is(const Evas_Object *obj)
         efl_isa(obj, ELM_INTERFACE_SCROLLABLE_MIXIN);
    else
      return
-        efl_isa(obj, EFL_UI_SCROLLABLE_INTERACTIVE_INTERFACE);
+        efl_isa(obj, EFL_UI_SCROLLABLE_INTERFACE);
 }
 
 static void

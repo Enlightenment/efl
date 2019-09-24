@@ -493,7 +493,7 @@ group { name: "efl/button:anchor";
             color: 255 255 255 64;
          }
       }
-      swallow { "efl.background"; nomouse;
+      swallow { "efl.background"; nomouse; required;
          desc { "default";
             rel1.to: "base";
             rel2.to: "base";
@@ -504,7 +504,7 @@ group { name: "efl/button:anchor";
             visible: 1;
          }
       }
-      swallow { "efl.content"; nomouse;
+      swallow { "efl.content"; nomouse; required;
          clip_to: "icon_clip";
          desc { "default";
             fixed: 1 0;

@@ -2429,6 +2429,7 @@ _wl_general_converter(char *target, Sel_Manager_Selection *sel, void *data, int 
                   memcpy(tmp, data, size);
                   if (data_ret) *data_ret = tmp;
                   if (size_ret) *size_ret = size;
+                  if (!data_ret) free(tmp);
                }
           }
         else

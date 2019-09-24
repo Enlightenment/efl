@@ -62,8 +62,8 @@ struct alias_definition_generator
                  << scope_tab << "public static implicit operator " << alias_type << "(" << alias_name << " value)\n"
                  << scope_tab << "{\n"
                  << scope_tab << scope_tab << "return value.payload;\n"
-                 << scope_tab << "}\n\n"
-                 << "}\n\n"
+                 << scope_tab << "}\n"
+                 << "}\n"
                  ).generate(sink, alias, context))
        return false;
 

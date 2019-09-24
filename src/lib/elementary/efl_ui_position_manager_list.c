@@ -417,6 +417,8 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_position_single_ite
 
    if (!pd->size) return EINA_RECT(0,0,0,0);
 
+   cache_require(obj, pd);
+
    //space size contains the amount of space that is outside the viewport (either to the top or to the left)
    space_size.w = (MAX(pd->abs_size.w - pd->viewport.w, 0))*pd->scroll_position.x;
    space_size.h = (MAX(pd->abs_size.h - pd->viewport.h, 0))*pd->scroll_position.y;

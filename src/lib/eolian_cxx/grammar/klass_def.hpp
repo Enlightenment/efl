@@ -495,7 +495,7 @@ inline void type_def::set(Eolian_Type const* eolian_type, Eolian_Unit const* uni
                 complex.subtypes.push_back({stp
                                             , unit
                                             , ::eolian_type_c_type_get(stp)
-                                            , eolian_type_is_move(stp)
+                                            , static_cast<bool>(eolian_type_is_move(stp))
                                             , is_by::value});
                 stp = eolian_type_next_type_get(stp);
              }
@@ -532,6 +532,7 @@ inline void type_def::set(Eolian_Expression_Type eolian_exp_type)
         break;
       case EOLIAN_EXPR_STRING:
         set("string", "const char *");
+        break;
       case EOLIAN_EXPR_BOOL:
         set("bool", "Eina_Bool");
         break;

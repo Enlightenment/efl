@@ -317,7 +317,8 @@ _efl_ui_spotlight_container_efl_pack_linear_pack_before(Eo *obj EINA_UNUSED,
                                           const Efl_Gfx_Entity *existing)
 {
    int index = eina_list_data_idx(pd->content_list, (void *)existing);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(index >= 0, EINA_FALSE);
+   if (existing)
+     EINA_SAFETY_ON_FALSE_RETURN_VAL(index >= 0, EINA_FALSE);
 
    if (!_register_child(obj, pd, subobj)) return EINA_FALSE;
    pd->content_list = eina_list_prepend_relative(pd->content_list, subobj, existing);
@@ -332,7 +333,8 @@ _efl_ui_spotlight_container_efl_pack_linear_pack_after(Eo *obj EINA_UNUSED,
                                          const Efl_Gfx_Entity *existing)
 {
    int index = eina_list_data_idx(pd->content_list, (void *)existing);
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(index >= 0, EINA_FALSE);
+   if (existing)
+     EINA_SAFETY_ON_FALSE_RETURN_VAL(index >= 0, EINA_FALSE);
 
    if (!_register_child(obj, pd, subobj)) return EINA_FALSE;
    pd->content_list = eina_list_append_relative(pd->content_list, subobj, existing);

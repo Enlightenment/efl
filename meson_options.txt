@@ -67,7 +67,7 @@ option('eeze',
 option('opengl',
   type : 'combo',
   choices : ['full', 'es-egl', 'none'],
-  value : 'full',
+  value : 'es-egl',
   description : 'Type of OpenGL support in efl'
 )
 
@@ -170,7 +170,7 @@ option('xinput22',
 
 option('tslib',
   type : 'boolean',
-  value : true,
+  value : false,
   description : 'Framebuffer (/dev/fb / fbcon) touchscreen tslib support in efl'
 )
 

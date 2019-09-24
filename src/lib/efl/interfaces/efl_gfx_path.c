@@ -1377,6 +1377,13 @@ _next_command(char *path, char *cmd, double *arr, int *count)
         path++;
         *count = _number_count(*cmd);
      }
+   else 
+     {
+        if (*cmd == 'm')
+          *cmd = 'l';
+        else if (*cmd == 'M')
+          *cmd = 'L';
+     }
    if ( *count == 7)
      {
         // special case for arc command

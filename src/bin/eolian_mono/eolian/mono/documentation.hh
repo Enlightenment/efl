@@ -23,7 +23,7 @@ struct documentation_generator
 
    int scope_size = 0;
 
-   documentation_generator(int scope_size)
+   documentation_generator(int scope_size = 0)
        : scope_size(scope_size) {}
 
 
@@ -595,9 +595,8 @@ struct documentation_generator
           else
             ref = "<see cref=\"" + ref + "\" />";
 
-          if (!as_generator(
-                      scope_tab << "/// <param name=\"" << constructor_parameter_name(ctor) << "\">" << summary << " See " << ref <<  "</param>\n"
-                      ).generate(sink, param, context))
+          if (!as_generator(scope_tab(scope_size) << "/// <param name=\"" << constructor_parameter_name(ctor) << "\">" << summary << " See " << ref <<  "</param>\n")
+                            .generate(sink, param, context))
             return false;
         }
       return true;

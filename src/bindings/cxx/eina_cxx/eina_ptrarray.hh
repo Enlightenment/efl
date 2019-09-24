@@ -46,9 +46,9 @@ struct _ptr_array_iterator
 
   {
   }
-  _ptr_array_iterator(_ptr_array_iterator<typename remove_cv<value_type>::type> const& other)
-    : _ptr(other._ptr)
+  operator _ptr_array_iterator<T const>()
   {
+    return _ptr_array_iterator<T const>{_ptr};
   }
   _ptr_array_iterator<T>& operator++()
   {

@@ -470,7 +470,7 @@ _efl_ui_collection_efl_ui_layout_orientable_orientation_get(const Eo *obj EINA_U
 }
 
 EOLIAN static void
-_efl_ui_collection_efl_ui_scrollable_interactive_match_content_set(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd, Eina_Bool w, Eina_Bool h)
+_efl_ui_collection_efl_ui_scrollable_match_content_set(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd, Eina_Bool w, Eina_Bool h)
 {
    if (pd->match_content.w == w && pd->match_content.h == h)
      return;
@@ -821,7 +821,8 @@ EOLIAN static Eina_Bool
 _efl_ui_collection_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Gfx_Entity *subobj, const Efl_Gfx_Entity *existing)
 {
    Eina_List *subobj_list = eina_list_data_find_list(pd->items, existing);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(subobj_list, EINA_FALSE);
+   if (existing)
+     EINA_SAFETY_ON_NULL_RETURN_VAL(subobj_list, EINA_FALSE);
 
    if (!register_item(obj, pd, subobj))
      return EINA_FALSE;
@@ -835,7 +836,8 @@ EOLIAN static Eina_Bool
 _efl_ui_collection_efl_pack_linear_pack_after(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Gfx_Entity *subobj, const Efl_Gfx_Entity *existing)
 {
    Eina_List *subobj_list = eina_list_data_find_list(pd->items, existing);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(subobj_list, EINA_FALSE);
+   if (existing)
+     EINA_SAFETY_ON_NULL_RETURN_VAL(subobj_list, EINA_FALSE);
 
    if (!register_item(obj, pd, subobj))
      return EINA_FALSE;

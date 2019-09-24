@@ -34,14 +34,14 @@ struct native_function_definition_preamble_generator
           return false;
 
       if (!as_generator(
-                *(scope_tab << scope_tab << native_convert_in_variable)
-                << *(scope_tab << scope_tab << native_convert_out_variable)
-                << *(scope_tab << scope_tab << native_convert_function_pointer)
-                << scope_tab << scope_tab << scope_tab << native_convert_return_variable
+                *(native_convert_in_variable)
+                << *(native_convert_out_variable)
+                << *(native_convert_function_pointer)
+                << native_convert_return_variable
                 ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.parameters, f.return_type), context))
           return false;
 
-      return as_generator("\n").generate(sink, attributes::unused, context);
+      return as_generator("").generate(sink, attributes::unused, context);
   }
 };
 
@@ -57,11 +57,11 @@ struct function_definition_preamble_generator
           return false;
 
       if (!as_generator(
-                  *(scope_tab << scope_tab << convert_in_variable)
-                  << *(scope_tab << scope_tab << convert_out_variable)
-                  << *(scope_tab << scope_tab << convert_function_pointer)
-                  << scope_tab << scope_tab << convert_return_variable
-                  ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.parameters, f.return_type), context))
+                        *(convert_in_variable)
+                        << *(convert_out_variable)
+                        << *(convert_function_pointer)
+                        << convert_return_variable
+                        ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.parameters, f.return_type), context))
           return false;
 
       return true;
@@ -82,9 +82,9 @@ struct native_function_definition_epilogue_generator
           return false;
 
       if (!as_generator(
-                  *(scope_tab << scope_tab << native_convert_out_assign(*klass))
-                  << *(scope_tab << scope_tab << native_convert_in_ptr_assign)
-                  << scope_tab << scope_tab << native_convert_return(*klass)
+                  *(native_convert_out_assign(*klass))
+                  << *(native_convert_in_ptr_assign)
+                  << scope_tab(2) << native_convert_return(*klass)
                   ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.return_type), context))
           return false;
 
@@ -99,10 +99,10 @@ struct function_definition_epilogue_generator
   bool generate(OutputIterator sink, attributes::function_def const& f, Context const& context) const
   { 
       if (!as_generator(
-                  scope_tab << scope_tab << "Eina.Error.RaiseIfUnhandledException();\n"
-                  << *(scope_tab << scope_tab << convert_out_assign)
-                  << *(scope_tab << scope_tab << convert_in_ptr_assign)
-                  << scope_tab << scope_tab << convert_return
+                  "Eina.Error.RaiseIfUnhandledException();\n"
+                  << *(convert_out_assign)
+                  << *(convert_in_ptr_assign)
+                  << scope_tab(2) << convert_return << "\n"
                   ).generate(sink, std::make_tuple(f.parameters, f.parameters, f.return_type), context))
           return false;
 

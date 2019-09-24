@@ -6,6 +6,32 @@
 #include <Elementary.h>
 #include "elm_suite.h"
 
+EFL_START_TEST(elm_test_check_size)
+{
+   Evas_Object *win, *check, *box;
+   int width, height;
+
+   win = elm_win_util_standard_add("check", "Check");
+
+   box = elm_box_add(win);
+   evas_object_size_hint_weight_set(box, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   elm_win_resize_object_add(win, box);
+   evas_object_show(box);
+
+   check = elm_check_add(box);
+   elm_box_pack_end(box, check);
+   evas_object_show(check);
+
+   evas_object_show(win);
+
+   get_me_to_those_events(check);
+
+   evas_object_size_hint_min_get(check, &width, &height);
+   ck_assert_int_gt(width, 0);
+   ck_assert_int_gt(height, 0);
+}
+EFL_END_TEST
+
 EFL_START_TEST(elm_test_check_legacy_type_check)
 {
    Evas_Object *win, *check;
@@ -122,6 +148,7 @@ EFL_END_TEST
 
 void elm_test_check(TCase *tc)
 {
+   tcase_add_test(tc, elm_test_check_size);
    tcase_add_test(tc, elm_test_check_legacy_type_check);
    tcase_add_test(tc, elm_test_check_onoff_text);
    tcase_add_test(tc, elm_test_check_state);

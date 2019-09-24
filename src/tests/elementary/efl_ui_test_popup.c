@@ -642,7 +642,7 @@ verify_anchor(Eo *popup, Eo **align_buttons, Align align, Eina_Size2D *popup_sz)
    else
      anchor_geom = win_geom;
 
-   Evas_Coord x, y;
+   Evas_Coord x = 0, y = 0;
 
    /* click the button to trigger changing the align on the popup
     * this could be done manually, but we're trying to copy the elm_test case

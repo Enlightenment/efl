@@ -36,7 +36,7 @@ group { "efl/spin_button/horizontal";
             vis;
          }
       }
-      swallow { "efl.entry";
+      swallow { "efl.entry"; required;
          clip: "clip";
          desc { "default";
             fixed: 1 1;
@@ -49,7 +49,7 @@ group { "efl/spin_button/horizontal";
             vis;
          }
       }
-      swallow { "efl.dec_button";
+      swallow { "efl.dec_button"; required;
          scale;
          desc { "default";
             fixed: 1 0;
@@ -58,7 +58,7 @@ group { "efl/spin_button/horizontal";
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
          }
       }
-      swallow { "efl.inc_button";
+      swallow { "efl.inc_button"; required;
          scale;
          desc { "default";
             fixed: 1 0;
@@ -67,7 +67,7 @@ group { "efl/spin_button/horizontal";
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
          }
       }
-      swallow { "efl.text_button";
+      swallow { "efl.text_button"; required;
          scale;
          desc { "default";
             vis;
@@ -158,7 +158,7 @@ group { "efl/spin_button/vertical";
             min: 40 150;
          }
       }
-      swallow { "efl.inc_button";
+      swallow { "efl.inc_button"; required;
          scale;
          desc { "default";
             rel.to: "inset";
@@ -168,7 +168,7 @@ group { "efl/spin_button/vertical";
             fixed: 1 1;
          }
       }
-      swallow { "efl.dec_button";
+      swallow { "efl.dec_button"; required;
          scale;
          desc { "default";
             rel.to: "inset";
@@ -178,7 +178,7 @@ group { "efl/spin_button/vertical";
             fixed: 1 1;
          }
       }
-      swallow { "efl.text_button";
+      swallow { "efl.text_button"; required;
          scale;
          desc { "default";
             rel.to_x: "inset";

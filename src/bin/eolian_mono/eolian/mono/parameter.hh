@@ -1071,7 +1071,7 @@ struct convert_return_generator
      else if (helpers::need_struct_conversion(regular))
        {
           return as_generator(
-               "return _ret_var;\n"
+               "return _ret_var;"
             ).generate(sink, nullptr, context);
        }
      else if (ret_type.c_type == "Eina_Binbuf *" || ret_type.c_type == "const Eina_Binbuf *")
@@ -1119,7 +1119,7 @@ struct convert_return_generator
        }
      else if (ret_type.c_type != "void")
        {
-         return as_generator("return _ret_var;\n").generate(sink, ret_type, context);
+         return as_generator("return _ret_var;").generate(sink, ret_type, context);
        }
      return true;
    }
@@ -1289,13 +1289,13 @@ struct native_convert_return_generator
      if (ret_type.is_ptr && helpers::need_pointer_conversion(regular) && !helpers::need_struct_conversion_in_return(ret_type, attributes::parameter_direction::unknown) )
        {
           return as_generator(
-               "return Eina.PrimitiveConversion.ManagedToPointerAlloc(_ret_var);\n"
+               "return Eina.PrimitiveConversion.ManagedToPointerAlloc(_ret_var);"
             ).generate(sink, attributes::unused, context);
        }
      else if (helpers::need_struct_conversion(regular))
        {
           return as_generator(
-               "return _ret_var;\n"
+               "return _ret_var;"
             ).generate(sink, nullptr, context);
        }
      else if (ret_type.c_type == "const char *")
@@ -1308,12 +1308,12 @@ struct native_convert_return_generator
                     return false;
                  }
                return as_generator(
-                    "return _ret_var;\n"
+                    "return _ret_var;"
                  ).generate(sink, attributes::unused, context);
             }
           else
             {
-                return as_generator("return _ret_var;\n"
+                return as_generator("return _ret_var;"
                     ).generate(sink, attributes::unused, context);
             }
        }
@@ -1326,12 +1326,12 @@ struct native_convert_return_generator
                     return false;
                  }
               return as_generator(
-                   "return _ret_var;\n"
+                   "return _ret_var;"
                 ).generate(sink, attributes::unused, context);
            }
          else
            {
-              return as_generator("return _ret_var;\n")
+              return as_generator("return _ret_var;")
                  .generate(sink, attributes::unused, context);
            }
      }
@@ -1341,7 +1341,7 @@ struct native_convert_return_generator
               .generate(sink, attributes::unused, context))
             return false;
 
-          return as_generator("return _ret_var.Handle;\n")
+          return as_generator("return _ret_var.Handle;")
             .generate(sink, attributes::unused, context);
        }
      else if (ret_type.c_type == "Eina_Hash *" || ret_type.c_type == "const Eina_Hash *")
@@ -1359,7 +1359,7 @@ struct native_convert_return_generator
               .generate(sink, attributes::unused, context))
             return false;
 
-          return as_generator("return _ret_var.Handle;\n")
+          return as_generator("return _ret_var.Handle;")
             .generate(sink, attributes::unused, context);
        }
      else if (ret_type.c_type == "Eina_Array *" || ret_type.c_type == "const Eina_Array *"
@@ -1386,11 +1386,11 @@ struct native_convert_return_generator
                   return false;
              }
 
-          return as_generator("return _ret_var.Handle;\n")
+          return as_generator("return _ret_var.Handle;")
             .generate(sink, attributes::unused, context);
        }
      else if (ret_type.c_type != "void")
-       return as_generator("return _ret_var;\n").generate(sink, ret_type, context);
+       return as_generator("return _ret_var;").generate(sink, ret_type, context);
      return true;
    }
 

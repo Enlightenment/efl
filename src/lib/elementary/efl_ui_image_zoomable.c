@@ -2703,7 +2703,7 @@ _efl_ui_image_zoomable_image_region_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd,
 }
 
 EOLIAN static void
-_efl_ui_image_zoomable_efl_ui_scrollable_interactive_scroll(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Eina_Rect rc, Eina_Bool animation)
+_efl_ui_image_zoomable_efl_ui_scrollable_scroll(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Eina_Rect rc, Eina_Bool animation)
 {
    int rx, ry, rw, rh;
 

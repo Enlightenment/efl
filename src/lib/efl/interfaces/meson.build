@@ -9,7 +9,6 @@ pub_legacy_eo_files = [
   'efl_input_device.eo',
   'efl_ui_draggable.eo',
   'efl_ui_scrollable.eo',
-  'efl_ui_scrollable_interactive.eo',
   'efl_ui_scrollbar.eo',
   'efl_ui_container_selectable.eo',
   'efl_ui_text_selectable.eo',

@@ -101,11 +101,12 @@ struct _inlist_iterator
     : _list(list), _node(node) {}
 
   /**
-   * @brief Copy constructor. Creates a copy of the given iterator.
+   * @brief Create a const iterator from this one.
    * @param other Other iterator.
    */
-  _inlist_iterator(_inlist_iterator<typename std::remove_const<T>::type> const& other)
-    : _list(other._list), _node(other._node) {}
+  operator _inlist_iterator<T const>() {
+    return _inlist_iterator<T const>{_list, _node};
+  }
 
   /**
    * @brief Move the iterator to the next position in the list.

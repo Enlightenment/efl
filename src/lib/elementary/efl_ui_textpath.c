@@ -577,7 +577,8 @@ _path_start_angle_adjust(Eo *obj, Efl_Ui_Textpath_Data *pd)
 {
    Eina_Rect r;
    Efl_Ui_Textpath_Segment *seg;
-   Eina_Vector2 first, last;
+   Eina_Vector2 first = { 0, 0 };
+   Eina_Vector2 last = { 0, 0 };
    int remained_w, len;
    double rad, t, offset_angle;
 

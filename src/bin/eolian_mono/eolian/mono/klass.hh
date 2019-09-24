@@ -127,10 +127,10 @@ struct klass
        if(!as_generator("\n{\n").generate(sink, attributes::unused, iface_cxt))
          return false;
 
-       if(!as_generator(*(scope_tab << function_declaration)).generate(sink, cls.functions, iface_cxt))
+       if(!as_generator(*(function_declaration)).generate(sink, cls.functions, iface_cxt))
          return false;
 
-       if(!as_generator(*(scope_tab << async_function_declaration)).generate(sink, cls.functions, iface_cxt))
+       if(!as_generator(*(async_function_declaration)).generate(sink, cls.functions, iface_cxt))
          return false;
 
        if(!as_generator(*(event_declaration)).generate(sink, cls.events, iface_cxt))
@@ -147,7 +147,7 @@ struct klass
          return false;
 
        // End of interface declaration
-       if(!as_generator("}\n").generate(sink, attributes::unused, iface_cxt)) return false;
+       if(!as_generator("}\n\n").generate(sink, attributes::unused, iface_cxt)) return false;
      }
 
      // Events arguments go in the top namespace to avoid the Concrete suffix clutter in interface events.
@@ -213,7 +213,7 @@ struct klass
             (
              scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(concrete_cxt).actual_library_name(cls.filename)
              << ")] internal static extern System.IntPtr\n"
-             << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n"
+             << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n\n"
              << scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << interface_name << "\"/> class.\n"
              << scope_tab << "/// Internal usage: This is used when interacting with C code and should not be used directly.</summary>\n"
              << scope_tab << "/// <param name=\"wh\">The native pointer to be wrapped.</param>\n"
@@ -262,7 +262,7 @@ struct klass
               scope_tab << "private static IntPtr GetEflClassStatic()\n"
               << scope_tab << "{\n"
               << scope_tab << scope_tab << "return " << name_helpers::klass_get_full_name(cls) << "();\n"
-              << scope_tab << "}\n"
+              << scope_tab << "}\n\n"
            ).generate(sink, attributes::unused, concrete_cxt))
            return false;
 
@@ -342,7 +342,7 @@ struct klass
               scope_tab << "private static IntPtr GetEflClassStatic()\n"
               << scope_tab << "{\n"
               << scope_tab << scope_tab << "return " << name_helpers::klass_get_full_name(cls) << "();\n"
-              << scope_tab << "}\n"
+              << scope_tab << "}\n\n"
            ).generate(sink, attributes::unused, inherit_cxt))
            return false;
 
@@ -370,8 +370,8 @@ struct klass
          << "#pragma warning disable CS1591\n" // Disabling warnings as DocFx will hide these classes
          <<"public static class " << (string % "_") << name_helpers::klass_inherit_name(cls)
          << "_ExtensionMethods {\n"
-         << *((scope_tab << property_extension_method_definition(cls)) << "\n")
-         << *((scope_tab << part_extension_method_definition(cls)) << "\n")
+         << *(property_extension_method_definition(cls))
+         << *(part_extension_method_definition(cls))
          << "}\n"
          << "#pragma warning restore CS1591\n"
          << "#endif\n")
@@ -416,7 +416,7 @@ struct klass
            {
               if(!as_generator(
                     indent << scope_tab << "private static Efl.Eo.NativeModule Module = new Efl.Eo.NativeModule("
-                    << indent << context_find_tag<library_context>(context).actual_library_name(cls.filename) << ");\n"
+                    <<  context_find_tag<library_context>(context).actual_library_name(cls.filename) << ");\n\n"
                  ).generate(sink, attributes::unused, inative_cxt))
                 return false;
            }
@@ -466,7 +466,7 @@ struct klass
 
          if(!as_generator(
                 indent << scope_tab << scope_tab << "return descs;\n"
-                << indent << scope_tab << "}\n"
+                << indent << scope_tab << "}\n\n"
             ).generate(sink, attributes::unused, inative_cxt))
            return false;
 
@@ -532,7 +532,7 @@ struct klass
      if(!as_generator(
              scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(context).actual_library_name(cls.filename)
              << ")] internal static extern System.IntPtr\n"
-             << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n"
+             << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n\n"
             ).generate(sink, attributes::unused, context))
        return false;
 
@@ -607,7 +607,7 @@ struct klass
          return true;
 
      // Self events
-     if (!as_generator(*(event_definition(cls, cls))).generate(sink, cls.events, context))
+     if (!as_generator(*(event_definition(cls, cls)) << "\n").generate(sink, cls.events, context))
        return false;
 
      // Inherited events

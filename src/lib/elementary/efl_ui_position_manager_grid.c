@@ -448,6 +448,8 @@ _reposition_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_Grid_Data *pd)
    if (pd->max_min_size.w <= 0 || pd->max_min_size.h <= 0) return;
    if (!eina_inarray_count(pd->group_cache)) return;
 
+   _size_cache_require(obj, pd);
+
    //space size contains the amount of space that is outside the viewport (either to the top or to the left)
    space_size.w = (MAX(pd->last_viewport_size.w - pd->viewport.w, 0))*pd->scroll_position.x;
    space_size.h = (MAX(pd->last_viewport_size.h - pd->viewport.h, 0))*pd->scroll_position.y;

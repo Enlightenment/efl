@@ -210,9 +210,9 @@ Ecore main-loop and event queue.
 
 //BSD 2-Clause license//
 
-This is a library to wrap/deal with Xlib as well as optionally XCB to
-make dealing with X11 less painful and less footwork as well as being
-glue to tie these into the Ecore main-loop and event queue.
+This is a library to wrap/deal with Xlib make dealing with X11 less painful
+and less footwork as well as being glue to tie these into the Ecore main-loop
+and event queue.
 
 
 
@@ -464,7 +464,7 @@ Required by default:
   * libxcursor
   * libxp
   * libxi (2.2 or newer)
-  * libgl (opengl/glx or opengl-es2/egl)
+  * opengl(mesa etc.) (opengl/glx/full or opengl-es2/egl. full opengl only on osx - must be explicitly specified to be full to have support)
   * giflib
   * util-linux (limbount + libblkid)
   * systemd / libudev
@@ -473,18 +473,41 @@ Required by default:
   * libspectre
   * librsvg
 
-Recommended requirements (highly recommended):
+You might want webp support so disable fewer loaders and remove webp
+from the disablers with:
 
-  * harfbuzz
-  * libwebp
-  * libunwind (where available)
+    -Devas-loaders-disabler=json
 
-Enable these with configure options:
+Wayland support:
 
-    --enable-xinput22 \
-    --enable-image-loader-webp \
-    --enable-harfbuzz \
-    --enable-multisense
+You may also want wayland support when on Linux. This enables support
+for EFL to trget wayland support for client applications. To do this
+supply:
+
+    -Dwl=true
+
+Framebuffer support:
+
+This requires linux frame-buffer support, headers etc. This supports
+basic frame-buffers like /dev/fb as well as input via /dev/input for
+keyboards and mice in a basic way. Enable this with:
+
+    -Dfb=true
+
+For more modern framebuffer support you may want drm/kms rendering
+support so enable this. This is what you also want for wayland
+compositor support in enlightenment as it will want to be able to
+render to a moder framebuffer tarbet with atomic buffer swapping. To
+do this provide:
+
+    -Ddrm=true
+
+You may want to change the install prefix for EFL with:
+
+    --prefix=/path/to/prefix
+
+The default prefix if not given is "/usr/local". Many people like to
+use prefixes like /opt/e or /opt/efl or /home/USERNAME/software etc.
 
 COMPILER FLAGS
 --------------
@@ -495,159 +518,24 @@ that to ensure ABI stability you should use the exact same CFLAGS /
 CXXFLAGS for all the build of EFL and any applications/libraries that
 depend on them.
 
-Other possible recommendations:
-
-  * scim
-
-Enable this with:
-
-    --enable-scim
-
-Framebuffer support:
-
-This requires linux frame-buffer support, headers etc. This supports
-basic frame-buffers like /dev/fb as well as input via /dev/input for
-keyboards and mice in a basic way. Enable this with:
-
-    --enable-fb
-
-This also turns on support for touch-screens via tslib. Not everyone
-has tslib, so you may want to disable it with:
-
-    --disable-tslib
-
-You likely don't need static libraries most of the time so you can
-disable them with:
-
-    --disable-static
-
-You may want to change the install prefix for EFL with:
-
-    --prefix=/path/to/prefix
-
-The default prefix if not given is "/usr/local". Many people like to
-use prefixes like /opt/e or /opt/efl or /home/USERNAME/software etc.
-
-You may want to enable valgrind support if you plan on doing debugging
-with EFL or apps built on top of EFL. This requires an install of
-valgrind first. You can enable this with:
-
-    --enable-valgrind
-
-You may want to enable xine support in emotion, as this library
-provides fairly solid support for a lot of codecs and DVD navigation
-support and more. You can enable it with:
-
-    --enable-xine
-
-Wayland is also supported fairly solidly in EFL 1.8. It is not
-required by default due to it being new and not that widely spread.
-You can enable Wayland support with:
-
-    --enable-wayland \
-    --enable-elput \
-    --enable-drm
-
-For faster rendering when dithering down to lower-than 24/32bpp, you
-can try:
-
-    --with-evas-dither-mask=small
-
-But this will drop quality slightly, using a small 16x16 ordered
-dither mask rather than the default 128x128. This should save a little
-memory too in the binary size of Evas.
-
 There are many other configure options that can be used, but in
 general it is not a good idea to go enabling or disabling things
 unless you wish to break things. The defaults are well tested, with
 the above recommended options also being well tested. Go much further
 and your mileage may vary wildly. Disabling features is a good way of
-breaking EFL functionality, so it is not recommended. The defaults
+breaking EFL functionality, so it is not recommended to mess with
+these without understanding the implications. The defaults
 have been carefully considered to provide full functionality so users
 will not be missing anything.
-
-
-VALGRIND DEPENDENCY
--------------------
-
-EFL uses the concept of memory pools (mempool) and this will confuse
-valgrind memcheck tool. By using memory pool, the memory is still
-owned by EFL, then valgrind won't alert on memory leaks or use of
-unused memory. EFL will use memcheck.h from valgrind to declare its
-memory pools to valgrind, producing better debugging results.
-
-However valgrind is only available to limited platforms, making it 
-hard for us to declare it a mandatory requirement. Based on
---with-profile={dev,debug} valgrind will be used if available or will
-be issued a warning. You can force valgrind with --enable-valgrind, or
-disable it and the warning with --disable-valgrind.
-
-EFL does NOT link to valgrind libraries. Then there is NO runtime
-dependency on valgrind.
-
-
-BULLET PHYSICS DEPENDENCY
--------------------------
-
-EFL comes with EPhysics (a physics wrapper library) enabled by
-default. To build it the user must have BulletPhysics engine installed.
-
-More information about BulletPhysics can be obtained in the upstream project
-web site at http://bulletphysics.org
-
-We have received many reports about BulletPhysics installation and distros
-packages in bad shape, some without even a package. If your distro doesn't
-ship a BulletPhysics package or you want to build it from source code follow
-the instructions below:
-
-**Required Packages:**
-
-You should have cmake installed. Bullet comes with autotools and cmake build
-systems, do not use the autotools alternative, it's unstable, bogus and hasn't
-been maintained for quite some time.
-
-**Download the tarball from:**
-
-http://code.google.com/p/bullet/downloads/list
-
-**NOTE:**
-
-The current supported version is 2.80 or greater.
-
-**Compiling and Installing:**
-
-Uncompress it to (say) ~/bullet and:
-
-    cd ~/bullet/build
-    cmake .. -DBUILD_CPU_DEMOS=OFF -DBUILD_DEMOS=OFF -DBUILD_SHARED_LIBS=ON
-    make
-    sudo make install
-    sudo ldconfig
-
-**Ubuntu Users:**
-
-Alternatively Ubuntu users have the option to install the BulletPhysics from
-our official EFL PPA:
-
-https://launchpad.net/~efl/+archive/trunk
-
-
-PROFILES
---------
-
-EFL build is based on "profiles". It will default to "dev" for
-unreleased software and "release" for official tarballs. One can
-change it with --with-profile=NAME, where NAME is one of:
-
-  * **dev**: extra checks useful to test software.
-  * **debug**: superset of dev, with debug features and assert().
-  * **release**: optimizations and less checks so it runs faster.
 
 
 CRYPTOGRAPHY
 ------------
 
-EFL officially uses "openssl" library to do signature, cipher and related.
-Alternatively one can use "gnutls" (some distros are strict about licenses
-and want gnutls instead of openssl) or disable it. One can change it with
---with-crypto=NAME, where NAME is one of: "openssl", "gnutls" and "none".
+EFL officially offers openssl or gnutls as cryptography backends. By
+default it uses "openssl" to do signature, cipher and related. Alternatively
+one can use "gnutls" (some distros are strict about licenses and want gnutls
+instead of openssl) You can switch to gnutls with:
+
+    -Dcrypto=gnutls
+

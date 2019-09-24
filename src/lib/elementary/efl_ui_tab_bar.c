@@ -188,7 +188,8 @@ _efl_ui_tab_bar_efl_pack_linear_pack_end(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Efl_G
 EOLIAN static Eina_Bool
 _efl_ui_tab_bar_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Efl_Gfx_Entity *subobj, const Efl_Gfx_Entity *existing)
 {
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_pack_index_get(pd->bx, existing) >= 0, EINA_FALSE);
+   if (existing)
+     EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_pack_index_get(pd->bx, existing) >= 0, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(_register_item(obj, pd, subobj), EINA_FALSE);
    return efl_pack_before(pd->bx, subobj, existing);
 }
@@ -196,7 +197,8 @@ _efl_ui_tab_bar_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Ef
 EOLIAN static Eina_Bool
 _efl_ui_tab_bar_efl_pack_linear_pack_after(Eo *obj, Efl_Ui_Tab_Bar_Data *pd, Efl_Gfx_Entity *subobj, const Efl_Gfx_Entity *existing)
 {
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_pack_index_get(pd->bx, existing) >= 0, EINA_FALSE);
+   if (existing)
+     EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_pack_index_get(pd->bx, existing) >= 0, EINA_FALSE);
    EINA_SAFETY_ON_FALSE_RETURN_VAL(_register_item(obj, pd, subobj), EINA_FALSE);
    return efl_pack_after(pd->bx, subobj, existing);
 }

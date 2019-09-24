@@ -36,29 +36,35 @@ interface Efl.Pack_Linear extends Efl.Pack
          return: bool; [[$false if $subobj could not be packed.]]
       }
       pack_before {
-         [[Prepend an object before an existing sub-object.
+         [[Prepend an object before the $existing sub-object.
 
            When this container is deleted, it will request deletion of the
            given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
            container without deleting it.
+
+           If $existing is $NULL this method behaves like @.pack_begin.
          ]]
          params {
             @in subobj: Efl.Gfx.Entity; [[Object to pack before $existing.]]
-            @in existing: const(Efl.Gfx.Entity); [[Existing reference sub-object.]]
+            @in existing: const(Efl.Gfx.Entity); [[Existing reference sub-object. Must already belong to the container
+                                                   or be $NULL.]]
          }
          return: bool; [[$false if $existing could not be found or $subobj
                          could not be packed.]]
       }
       pack_after {
-         [[Append an object after an existing sub-object.
+         [[Append an object after the $existing sub-object.
 
            When this container is deleted, it will request deletion of the
            given $subobj. Use @Efl.Pack.unpack to remove $subobj from this
            container without deleting it.
+
+           If $existing is $NULL this method behaves like @.pack_end.
          ]]
          params {
             @in subobj: Efl.Gfx.Entity; [[Object to pack after $existing.]]
-            @in existing: const(Efl.Gfx.Entity); [[Existing reference sub-object.]]
+            @in existing: const(Efl.Gfx.Entity); [[Existing reference sub-object. Must already belong to the container
+                                                   or be $NULL.]]
          }
          return: bool; [[$false if $existing could not be found or $subobj
                          could not be packed.]]

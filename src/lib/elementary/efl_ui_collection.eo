@@ -5,7 +5,7 @@ class @beta Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
                    Efl.Ui.Focus.Manager_Sub,
                    Efl.Ui.Widget_Focus_Manager
    composites
-                   Efl.Ui.Scrollable_Interactive,
+                   Efl.Ui.Scrollable,
                    Efl.Ui.Scrollbar,
                    Efl.Ui.Focus.Manager
 {
@@ -77,7 +77,7 @@ class @beta Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
       Efl.Pack_Linear.pack_unpack_at;
       Efl.Pack_Linear.pack_index_get;
       Efl.Pack_Linear.pack_content_get;
-      Efl.Ui.Scrollable_Interactive.match_content { set; }
+      Efl.Ui.Scrollable.match_content { set; }
       Efl.Ui.Widget_Focus_Manager.focus_manager_create;
       Efl.Ui.Widget.focus_state_apply;
       Efl.Ui.Focus.Manager.move;

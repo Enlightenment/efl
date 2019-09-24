@@ -149,10 +149,19 @@ _efl_ui_group_item_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Group_Item_Data *
    EINA_SAFETY_ON_TRUE_RETURN_VAL(subobj == obj, EINA_FALSE);
    Eo *container = efl_ui_item_container_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(container, EINA_FALSE);
+   int group_index = efl_pack_index_get(container, obj);
 
    //FIXME, maybe we should check if existing is really part of this group
    _register_item(obj, pd, subobj);
-   HANDLE_REG_CALL(efl_pack_before(container, subobj, existing));
+   if (existing)
+     {
+        HANDLE_REG_CALL(efl_pack_before(container, subobj, existing));
+     }
+   else
+     {
+        HANDLE_REG_CALL(efl_pack_at(container, subobj, group_index + 1));
+     }
+
 }
 
 EOLIAN static Eina_Bool
@@ -161,10 +170,18 @@ _efl_ui_group_item_efl_pack_linear_pack_after(Eo *obj, Efl_Ui_Group_Item_Data *p
    EINA_SAFETY_ON_TRUE_RETURN_VAL(subobj == obj, EINA_FALSE);
    Eo *container = efl_ui_item_container_get(obj);
    EINA_SAFETY_ON_NULL_RETURN_VAL(container, EINA_FALSE);
+   int group_index = efl_pack_index_get(container, obj);
 
    //FIXME, maybe we should check if existing is really part of this group
    _register_item(obj, pd, subobj);
-   HANDLE_REG_CALL(efl_pack_after(container, subobj, existing));
+   if (existing)
+     {
+        HANDLE_REG_CALL(efl_pack_after(container, subobj, existing));
+     }
+   else
+     {
+        HANDLE_REG_CALL(efl_pack_at(container, subobj, group_index + eina_list_count(pd->registered_items)));
+     }
 }
 
 EOLIAN static Eina_Bool

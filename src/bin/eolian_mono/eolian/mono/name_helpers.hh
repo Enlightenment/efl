@@ -508,7 +508,7 @@ bool open_namespaces(OutputIterator sink, std::vector<std::string> namespaces, C
 template<typename OutputIterator, typename Context>
 bool close_namespaces(OutputIterator sink, std::vector<std::string> const& namespaces, Context const& context)
 {
-     auto close_namespace = (lit("}") % "\n\n" ) << "\n\n";
+     auto close_namespace = (lit("}") % "\n" ) << "\n\n";
      return as_generator(close_namespace).generate(sink, namespaces, context);
 }
 

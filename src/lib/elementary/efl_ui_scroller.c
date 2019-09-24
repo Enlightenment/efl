@@ -361,7 +361,7 @@ _efl_ui_scroller_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Scroller_Data *sd)
 }
 
 EOLIAN static void
-_efl_ui_scroller_efl_ui_scrollable_interactive_match_content_set(Eo *obj EINA_UNUSED,
+_efl_ui_scroller_efl_ui_scrollable_match_content_set(Eo *obj EINA_UNUSED,
                                                                  Efl_Ui_Scroller_Data *sd,
                                                                  Eina_Bool match_content_w,
                                                                  Eina_Bool match_content_h)
