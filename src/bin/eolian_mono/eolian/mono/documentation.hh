@@ -188,11 +188,13 @@ struct documentation_generator
            is_beta = eolian_object_is_beta(data) || eolian_object_is_beta(data2);
            break;
          case ::EOLIAN_OBJECT_CONSTANT:
-           auto names = utils::split(name_helpers::managed_namespace(::eolian_object_name_get(data)), '.');
-           names.pop_back(); // Remove var name
-           ref = name_helpers::join_namespaces(names, '.');
-           ref += "Constants.";
-           ref += name_helpers::managed_name(::eolian_object_short_name_get(data));
+           {
+              auto names = utils::split(name_helpers::managed_namespace(::eolian_object_name_get(data)), '.');
+              names.pop_back(); // Remove var name
+              ref = name_helpers::join_namespaces(names, '.');
+              ref += "Constants.";
+              ref += name_helpers::managed_name(::eolian_object_short_name_get(data));
+           }
            break;
          case ::EOLIAN_OBJECT_UNKNOWN:
            // If the reference cannot be resolved, just return an empty string and
