@@ -1,4 +1,4 @@
-interface @beta Efl.Player
+interface Efl.Player
 {
    [[Efl media player interface]]
    c_prefix: efl_player;
