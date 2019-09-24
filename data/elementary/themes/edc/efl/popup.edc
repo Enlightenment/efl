@@ -106,13 +106,19 @@ group { "efl/alert_popup"; data.item: "version" "123";
    }
    programs {
       program {
-         signal: "efl,title,show"; source: "efl";
+         signal: "efl,title,visible,on"; source: "efl";
          action: STATE_SET "title_visible" 0.0;
          target: "title_bg";
          target: "efl.text.title";
       }
       program {
-         signal: "efl,buttons,show"; source: "efl";
+         signal: "efl,title,visible,off"; source: "efl";
+         action: STATE_SET "default" 0.0;
+         target: "title_bg";
+         target: "efl.text.title";
+      }
+      program {
+         signal: "efl,buttons,visible,on"; source: "efl";
          action: STATE_SET "button_visible" 0.0;
          target: "efl.buttons";
       }
