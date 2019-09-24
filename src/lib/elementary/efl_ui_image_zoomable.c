@@ -3127,6 +3127,30 @@ _efl_ui_image_zoomable_efl_player_paused_get(const Eo *obj EINA_UNUSED, Efl_Ui_I
 }
 
 EOLIAN static void
+_efl_ui_image_zoomable_efl_player_playback_position_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd, double sec)
+{
+   EINA_SAFETY_ON_TRUE_RETURN(sec < 0.0);
+   if (sd->edje)
+     efl_player_playback_position_set(sd->edje, sec);
+   else if ((sd->frame_count > 0) && (sd->frame_duration > 0.0))
+     {
+        /* validate total animation time */
+        EINA_SAFETY_ON_TRUE_RETURN(sd->frame_count * sd->frame_duration < sec);
+        sd->cur_frame = lround(sec / sd->frame_duration);
+     }
+}
+
+EOLIAN static double
+_efl_ui_image_zoomable_efl_player_playback_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+{
+   if (sd->edje)
+     efl_player_playback_position_get(sd->edje);
+   else if ((sd->frame_count > 0) && (sd->frame_duration > 0.0))
+     return sd->cur_frame * sd->frame_duration;
+   return 0.0;
+}
+
+EOLIAN static void
 _efl_ui_image_zoomable_class_constructor(Efl_Class *klass EINA_UNUSED)
 {
    PHOTO_FILE_LOAD_ERROR_GENERIC = eina_error_msg_static_register("Generic load error");

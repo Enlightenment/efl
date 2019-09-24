@@ -1809,6 +1809,30 @@ _efl_ui_image_efl_player_playing_get(const Eo *obj, Efl_Ui_Image_Data *sd)
    return _efl_ui_image_animated_get_internal(obj, sd);
 }
 
+EOLIAN static void
+_efl_ui_image_efl_player_playback_position_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, double sec)
+{
+   EINA_SAFETY_ON_TRUE_RETURN(sec < 0.0);
+   if (sd->edje)
+     efl_player_playback_position_set(sd->img, sec);
+   else if ((sd->frame_count > 0) && (sd->frame_duration > 0.0))
+     {
+        /* validate total animation time */
+        EINA_SAFETY_ON_TRUE_RETURN(sd->frame_count * sd->frame_duration < sec);
+        sd->cur_frame = lround(sec / sd->frame_duration);
+     }
+}
+
+EOLIAN static double
+_efl_ui_image_efl_player_playback_position_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+{
+   if (sd->edje)
+     efl_player_playback_position_get(sd->img);
+   else if ((sd->frame_count > 0) && (sd->frame_duration > 0.0))
+     return sd->cur_frame * sd->frame_duration;
+   return 0.0;
+}
+
 static Eina_Bool
 _efl_ui_image_animated_paused_set_internal(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool paused)
 {
