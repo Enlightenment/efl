@@ -420,7 +420,7 @@
       } \
    }
 
-group { "efl/calendar";
+group { "efl/calendar"; data.item: "version" "123";
    images.image: "sym_left_light_normal.png" COMP;
    images.image: "sym_right_light_normal.png" COMP;
    images.image: "sym_left_glow_normal.png" COMP;
@@ -541,7 +541,7 @@ group { "efl/calendar";
 #undef CIT
 #undef CH
 
- group { name: "efl/calendar/inc_button";
+ group { name: "efl/calendar/inc_button"; data.item: "version" "123";
       images.image: "sym_right_light_normal.png" COMP;
       images.image: "sym_right_glow_normal.png" COMP;
       images.image: "sym_right_dark_normal.png" COMP;
@@ -693,6 +693,7 @@ group { "efl/calendar";
 
    group { name: "efl/calendar/dec_button";
       inherit: "efl/calendar/inc_button";
+      data.item: "version" "123";
       images.image: "sym_left_light_normal.png" COMP;
       images.image: "sym_left_glow_normal.png" COMP;
       images.image: "sym_left_dark_normal.png" COMP;

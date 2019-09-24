@@ -1,4 +1,4 @@
-group { name: "efl/focus_highlight/top";
+group { name: "efl/focus_highlight/top"; data.item: "version" "123";
    images.image: "box_glow.png" COMP;
    images.image: "box_outline.png" COMP;
    data.item: "animate" "on";
@@ -171,7 +171,7 @@ group { name: "efl/focus_highlight/top";
    }
 }
 
-group { name: "efl/focus_highlight/top:blank";
+group { name: "efl/focus_highlight/top:blank"; data.item: "version" "123";
    parts {
    }
 }

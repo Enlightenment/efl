@@ -1,5 +1,6 @@
 group { name: "efl/image_zoomable";
    inherit: "efl/scroller";
+   data.item: "version" "123";
    images.image: "knob_round_busy.png" COMP;
    images.image: "glow_round_corners.png" COMP;
    parts {

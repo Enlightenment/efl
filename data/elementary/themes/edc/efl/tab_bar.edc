@@ -1,4 +1,5 @@
 group { "efl/tab_bar";
+   data.item: "version" "123";
    images.image: "vgrad_med_lighter.png" COMP;
    images.image: "bevel_out.png" COMP;
    images.image: "shine.png" COMP;
@@ -60,6 +61,7 @@ group { "efl/tab_bar";
 }
 
 group { "efl/tab_bar/tab";
+   data.item: "version" "123";
    images.image: "shadow_inset_bevels.png" COMP;
    images.image: "shadow_angled_in_sides.png" COMP;
    images.image: "horizontal_separated_bar_small_glow.png" COMP;

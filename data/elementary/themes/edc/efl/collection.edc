@@ -1,3 +1,4 @@
 group { "efl/collection";
    inherit: "efl/scroller";
+   data.item: "version" "123";
 }

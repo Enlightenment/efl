@@ -1,4 +1,4 @@
-group { "efl/pager";
+group { "efl/pager"; data.item: "version" "123";
    parts {
       spacer { "base";
          scale;
@@ -32,7 +32,7 @@ group { "efl/pager";
    }
 }
 
-group { "efl/pager/indicator";
+group { "efl/pager/indicator"; data.item: "version" "123";
    images {
       image: "ring_white_middle.png" COMP;
    }

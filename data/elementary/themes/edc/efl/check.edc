@@ -1,4 +1,4 @@
-group { "efl/check";
+group { "efl/check"; data.item: "version" "123";
    images.image: "inset_shadow_tiny.png" COMP;
    images.image: "bevel_in.png" COMP;
    images.image: "sym_check_alum.png" COMP;
@@ -322,7 +322,7 @@ group { "efl/check";
 #undef DISABLE
 }
 
-group { "efl/check:toggle";
+group { "efl/check:toggle"; data.item: "version" "123";
    images.image: "inset_shadow_tiny.png" COMP;
    images.image: "bevel_in.png" COMP;
    images.image: "bevel_out.png" COMP;

@@ -1,12 +1,14 @@
 group { "efl/grid";
    inherit: "efl/scroller";
+   data.item: "version" "123";
 }
 
 group { "efl/view_grid";
    inherit: "efl/grid";
+   data.item: "version" "123";
 }
 
-group { "efl/grid_item";
+group { "efl/grid_item"; data.item: "version" "123";
    data.item: "selectraise" "on";
    data.item: "focusraise" "on";
    images.image: "bevel_dark_out.png" COMP;

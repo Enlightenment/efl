@@ -1,4 +1,4 @@
-group { name: "efl/button";
+group { name: "efl/button"; data.item: "version" "123";
    images.image: "button_normal.png" COMP;
    images.image: "button_clicked.png" COMP;
 
@@ -403,7 +403,7 @@ group { name: "efl/button";
 #undef BACKGROUND
 }
 
-group { name: "efl/button:anchor";
+group { name: "efl/button:anchor"; data.item: "version" "123";
    images.image: "horizontal_separated_bar_small_glow.png" COMP;
 #define ICON     1
 #define LABEL    2

@@ -1,4 +1,4 @@
-group { "efl/datepicker";
+group { "efl/datepicker"; data.item: "version" "123";
    parts {
       spacer { "base";
          scale;
@@ -182,7 +182,7 @@ group { "efl/datepicker";
    }
 }
 
-group { "efl/datepicker/spin_button";
+group { "efl/datepicker/spin_button"; data.item: "version" "123";
    parts {
       rect { "clip";
          desc { "default";

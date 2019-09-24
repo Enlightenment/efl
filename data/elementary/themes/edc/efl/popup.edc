@@ -1,5 +1,6 @@
 //Efl.Ui.Popup Themes
 group { "efl/popup";
+   data.item: "version" "123";
    images.image: "rounded_square.png" COMP;
    parts {
       spacer { "base";
@@ -28,7 +29,7 @@ group { "efl/popup";
    }
 }
 
-group { "efl/alert_popup";
+group { "efl/alert_popup"; data.item: "version" "123";
    images.image: "rounded_square.png" COMP;
    parts {
       alias: "title" "efl.text.title";
@@ -119,7 +120,7 @@ group { "efl/alert_popup";
    }
 }
 
-group { "efl/popup/backwall";
+group { "efl/popup/backwall"; data.item: "version" "123";
    alias: "efl/alert_popup/backwall";
    parts {
       rect { "base";
@@ -169,14 +170,14 @@ group { "efl/popup/backwall";
    }
 }
 
-group { "efl/alert_popup/button_layout1";
+group { "efl/alert_popup/button_layout1"; data.item: "version" "123";
    parts {
       swallow { "efl.button1"; required;
       }
    }
 }
 
-group { "efl/alert_popup/button_layout2";
+group { "efl/alert_popup/button_layout2"; data.item: "version" "123";
    parts {
       spacer { "div1";
          desc { "default";
@@ -200,7 +201,7 @@ group { "efl/alert_popup/button_layout2";
    }
 }
 
-group { "efl/alert_popup/button_layout3";
+group { "efl/alert_popup/button_layout3"; data.item: "version" "123";
    parts {
       spacer { "div1";
          desc { "default";
@@ -241,12 +242,15 @@ group { "efl/alert_popup/button_layout3";
 
 group { "efl/alert_popup/left_button";
    inherit: "efl/button";
+   data.item: "version" "123";
 }
 
 group { "efl/alert_popup/right_button";
    inherit: "efl/button";
+   data.item: "version" "123";
 }
 
 group { "efl/alert_popup/button";
    inherit: "efl/button";
+   data.item: "version" "123";
 }

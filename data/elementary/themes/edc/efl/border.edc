@@ -7,7 +7,7 @@
  *  - virtual keyboard
  */
 
-group { "efl/border";
+group { "efl/border"; data.item: "version" "123";
    images.image: "vgrad_med_lighter.png" COMP;
    images.image: "vgrad_med_dark.png" COMP;
    images.image: "bevel_out.png" COMP;
@@ -1124,6 +1124,7 @@ group { "efl/border";
 
 group { "efl/border/dialog";
    inherit:   "efl/border";
+   data.item: "version" "123";
    parts {
       text {  "efl.text.title";
          clip: "top_clip";
@@ -1191,6 +1192,7 @@ group { "efl/border/dialog";
 
 group { "efl/border/naviframe";
    inherit:   "efl/border";
+   data.item: "version" "123";
    images.image: "sym_left_dark_normal.png" COMP;
    images.image: "sym_left_glow_normal.png" COMP;
    images.image: "sym_left_light_normal.png" COMP;

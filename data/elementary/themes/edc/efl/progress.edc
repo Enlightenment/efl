@@ -1,4 +1,5 @@
 group { "efl/progressbar/horizontal";
+   data.item: "version" "123";
    images.image: "inset_bar_horiz_base.png" COMP;
    images.image: "inset_bar_horiz_light.png" COMP;
    images.image: "inset_bar_horiz_inside_base.png" COMP;
@@ -559,6 +560,7 @@ group { "efl/progressbar/horizontal";
 }
 
 group { "efl/progressbar/vertical";
+   data.item: "version" "123";
    images.image: "inset_bar_vert_base.png" COMP;
    images.image: "inset_bar_vert_light.png" COMP;
    images.image: "inset_bar_vert_inside_base.png" COMP;
@@ -1132,6 +1134,7 @@ group { "efl/progressbar/vertical";
 }
 
 group { "efl/progressbar/horizontal:wheel";
+   data.item: "version" "123";
    alias: "efl/progressbar/vertical:wheel";
    images.image: "knob_round_busy.png" COMP;
    images.image: "glow_round_corners.png" COMP;
@@ -1226,6 +1229,7 @@ group { "efl/progressbar/horizontal:wheel";
 
 group { "efl/progressbar/horizontal:double";
    inherit: "efl/progressbar/horizontal";
+   data.item: "version" "123";
    images {
       image: "inset_bar_horiz_glow_base_double.png" COMP;
       image: "inset_bar_horiz_glow_inv_base_double.png" COMP;
@@ -1315,6 +1319,7 @@ group { "efl/progressbar/horizontal:double";
 
 group { "efl/progressbar/vertical:double";
    inherit: "efl/progressbar/vertical";
+   data.item: "version" "123";
    images {
       image: "inset_bar_vert_glow_base_double.png" COMP;
       image: "inset_bar_vert_glow_inv_base_double.png" COMP;

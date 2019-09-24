@@ -1,5 +1,5 @@
 //Efl.Ui.Navigation_Bar Themes
-group { "efl/navigation_bar";
+group { "efl/navigation_bar"; data.item: "version" "123";
    styles {
       style { name: "navigation_bar_text";
          base: "font="FNBD" font_size=10 text_class=label align=center color=#fff color_class=navigation_bar_text style=shadow,bottom shadow_color=#00000080 ellipsis=1.0 wrap=mixed";
@@ -101,6 +101,7 @@ group { "efl/navigation_bar";
 
 group { name: "efl/navigation_bar/back_button";
    inherit: "efl/button";
+   data.item: "version" "123";
    images.image: "icon_arrow_left.png" COMP;
    parts {
       image { name: "icon_arrow_left";

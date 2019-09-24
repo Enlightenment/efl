@@ -7,7 +7,7 @@
 */
 
 group { "efl/bg";
-   data.item: "version" "119";
+   data.item: "version" "123";
    images.image: "bevel_dark_out.png" COMP;
    parts {
       part { name: "clipper"; type: RECT;

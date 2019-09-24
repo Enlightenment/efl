@@ -1,4 +1,5 @@
 group { name: "efl/scroller";
+   data.item: "version" "123";
    images.image: "inset_shadow.png" COMP;
    images.image: "bevel_in.png" COMP;
    images.image: "bevel_out.png" COMP;
@@ -1235,6 +1236,7 @@ group { name: "efl/scroller";
 
 group { name: "efl/scroller:noclip";
    inherit: "efl/scroller";
+   data.item: "version" "123";
    parts {
       part { name: "clipper";
          description { state: "default" 0.0;
@@ -1269,6 +1271,7 @@ group { name: "efl/scroller:noclip";
 
 group { name: "efl/scroller:popup/no_inset_shadow";
    inherit: "efl/scroller";
+   data.item: "version" "123";
    parts {
       part { name: "inset";
          description { state: "default" 0.0;
@@ -1284,6 +1287,7 @@ group { name: "efl/scroller:popup/no_inset_shadow";
 }
 
 group { name: "efl/scroller/contents";
+   data.item: "version" "123";
    parts {
       part { name: "efl.content"; required;
          type: SWALLOW;
