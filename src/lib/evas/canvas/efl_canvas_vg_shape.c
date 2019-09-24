@@ -23,6 +23,8 @@ _efl_canvas_vg_shape_fill_set(Eo *obj EINA_UNUSED,
                        Efl_Canvas_Vg_Shape_Data *pd,
                        Efl_Canvas_Vg_Node *f)
 {
+   if (pd->fill == f) return;
+
    Efl_Canvas_Vg_Node *tmp = pd->fill;
 
    pd->fill = efl_ref(f);
@@ -40,8 +42,9 @@ _efl_canvas_vg_shape_stroke_fill_set(Eo *obj EINA_UNUSED,
                               Efl_Canvas_Vg_Shape_Data *pd,
                               Efl_Canvas_Vg_Node *f)
 {
-   Efl_Canvas_Vg_Node *tmp = pd->fill;
+   if (pd->stroke.fill == f) return;
 
+   Efl_Canvas_Vg_Node *tmp = pd->stroke.fill;
    pd->stroke.fill = efl_ref(f);
    efl_unref(tmp);
 }
