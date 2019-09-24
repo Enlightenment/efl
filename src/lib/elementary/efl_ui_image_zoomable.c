@@ -3150,6 +3150,16 @@ _efl_ui_image_zoomable_efl_player_playback_position_get(const Eo *obj EINA_UNUSE
    return 0.0;
 }
 
+EOLIAN static double
+_efl_ui_image_zoomable_efl_player_playback_progress_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+{
+   if (sd->edje)
+     efl_player_playback_progress_get(sd->edje);
+   else if ((sd->frame_count > 0) && (sd->frame_duration > 0.0))
+     return (sd->cur_frame * sd->frame_duration) / sd->frame_count;
+   return 0.0;
+}
+
 EOLIAN static void
 _efl_ui_image_zoomable_class_constructor(Efl_Class *klass EINA_UNUSED)
 {
