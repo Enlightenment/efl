@@ -63,6 +63,7 @@ typedef struct _Efl_Ui_Layout_Data
    } connect;
 
    unsigned int          finger_size_multiplier_x, finger_size_multiplier_y; /**< multipliers for finger_size during group_calc */
+   unsigned int          version; /**< version number specified in the widget's theme */
 
    Eina_Bool             frozen; /**< Layout freeze state */
    Eina_Bool             can_access : 1; /**< This is true when all text(including textblock) parts can be accessible by accessibility. */

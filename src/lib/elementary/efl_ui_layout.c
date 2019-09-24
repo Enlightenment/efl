@@ -492,12 +492,13 @@ _efl_ui_layout_base_efl_ui_widget_disabled_set(Eo *obj, Efl_Ui_Layout_Data *_pd 
 }
 
 static Eina_Error
-_efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd)
+_efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd, Elm_Widget_Smart_Data **widget_data)
 {
    Eina_Error ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EFL_UI_THEME_APPLY_ERROR_GENERIC);
 
+   *widget_data = wd;
    /* function already prints error messages, if any */
    if (!sd->file_set)
      {
@@ -521,11 +522,14 @@ EOLIAN static Eina_Error
 _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
    Eina_Error theme_apply_ret, theme_apply_internal_ret;
+   Elm_Widget_Smart_Data *wd;
+   char buf[64];
+   static unsigned int version = 0;
 
    theme_apply_ret = efl_ui_widget_theme_apply(efl_super(obj, MY_CLASS));
    if (theme_apply_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC) return EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
-   theme_apply_internal_ret = _efl_ui_layout_theme_internal(obj, sd);
+   theme_apply_internal_ret = _efl_ui_layout_theme_internal(obj, sd, &wd);
    if (theme_apply_internal_ret == EFL_UI_THEME_APPLY_ERROR_GENERIC)
      return EFL_UI_THEME_APPLY_ERROR_GENERIC;
 
@@ -537,6 +541,38 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
    efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(0, 0));
    if (elm_widget_is_legacy(obj))
      efl_gfx_hint_size_min_set(obj, EINA_SIZE2D(0, 0));
+   else
+     {
+        const char *version = edje_object_data_get(wd->resize_obj, "version");
+        if (!version)
+          ERR("Widget(%p) with type '%s' is not providing a version in its theme!", obj,
+              efl_class_name_get(efl_class_get(obj)));
+        errno = 0;
+        sd->version = strtoul(version, NULL, 10);
+        if (errno)
+          {
+             ERR("Widget(%p) with type '%s' is not providing a valid version in its theme!", obj,
+                 efl_class_name_get(efl_class_get(obj)));
+             sd->version = 0;
+          }
+     }
+   if (!version)
+     {
+        snprintf(buf, sizeof(buf), "%d%d", EFL_VERSION_MAJOR, EFL_VERSION_MINOR);
+        errno = 0;
+        version = strtoul(buf, NULL, 10);
+        if (errno)
+          {
+             ERR("something broke in theme parsing, this system is probably busted");
+             version = 0;
+          }
+     }
+   if (version && (!_running_in_tree))
+     {
+        if (sd->version < version)
+          WRN("Widget(%p) with type '%s' is providing a potentially old version in its theme: found %u, should be %u", obj,
+              efl_class_name_get(efl_class_get(obj)), sd->version, version);
+     }
 
    return EFL_UI_THEME_APPLY_ERROR_NONE;
 }
