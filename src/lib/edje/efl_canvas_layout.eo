@@ -18,7 +18,7 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
 
            If animations are disabled, transitions between states (as
            defined in EDC) are then instantaneous. This is conceptually similar
-           to setting the @Efl.Player.play_speed to an infinitely high
+           to setting the @Efl.Player.playback_speed to an infinitely high
            value.
          ]]
          get {
@@ -128,6 +128,6 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
       Efl.Observer.update;
       Efl.Playable.playable { get; }
       Efl.Player.paused { get; set; }
-      Efl.Player.play_speed { get; set; }
+      Efl.Player.playback_speed { get; set; }
    }
 }

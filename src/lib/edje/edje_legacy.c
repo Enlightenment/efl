@@ -1215,13 +1215,13 @@ EAPI void
 edje_object_transition_duration_factor_set(Evas_Object *obj, double scale)
 {
    if (scale <= 0.0) return;
-   efl_player_play_speed_set(obj, 1.0/scale);
+   efl_player_playback_speed_set(obj, 1.0/scale);
 }
 
 EAPI double
 edje_object_transition_duration_factor_get(const Evas_Object *obj)
 {
-   double speed = efl_player_play_speed_get(obj);
+   double speed = efl_player_playback_speed_get(obj);
 
    if (speed <= 0.0) speed = 1.0;
    return 1.0/speed;

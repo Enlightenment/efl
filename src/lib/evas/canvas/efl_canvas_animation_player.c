@@ -367,7 +367,7 @@ _efl_canvas_animation_player_efl_player_progress_get(const Eo *eo_obj EINA_UNUSE
 }
 
 EOLIAN static void
-_efl_canvas_animation_player_efl_player_play_speed_set(Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_player_efl_player_playback_speed_set(Eo *eo_obj EINA_UNUSED,
                                                 Efl_Canvas_Animation_Player_Data *pd,
                                                 double play_speed)
 {
@@ -378,7 +378,7 @@ _efl_canvas_animation_player_efl_player_play_speed_set(Eo *eo_obj EINA_UNUSED,
 }
 
 EOLIAN static double
-_efl_canvas_animation_player_efl_player_play_speed_get(const Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_player_efl_player_playback_speed_get(const Eo *eo_obj EINA_UNUSED,
                                                 Efl_Canvas_Animation_Player_Data *pd)
 {
    return pd->play_speed;

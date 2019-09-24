@@ -69,7 +69,7 @@ interface @beta Efl.Player
                 progress: double; [[The progress within the [0, 1] range.]]
            }
         }
-        @property play_speed {
+        @property playback_speed {
              [[Control the play speed of the media file.
 
                This function control the speed with which the media file will

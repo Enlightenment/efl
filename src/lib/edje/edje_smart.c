@@ -588,14 +588,14 @@ _efl_canvas_layout_efl_player_paused_get(const Eo *obj EINA_UNUSED, Edje *ed)
 }
 
 EOLIAN void
-_efl_canvas_layout_efl_player_play_speed_set(Eo *obj EINA_UNUSED, Edje *pd , double speed)
+_efl_canvas_layout_efl_player_playback_speed_set(Eo *obj EINA_UNUSED, Edje *pd , double speed)
 {
    if (speed <= 0.0) speed = 1.0;
    pd->duration_scale = 1.0/speed;
 }
 
 EOLIAN double
-_efl_canvas_layout_efl_player_play_speed_get(const Eo *obj EINA_UNUSED, Edje *pd)
+_efl_canvas_layout_efl_player_playback_speed_get(const Eo *obj EINA_UNUSED, Edje *pd)
 {
    return 1.0/pd->duration_scale;
 }
