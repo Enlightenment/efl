@@ -118,7 +118,7 @@ group { name: "efl/focus_highlight/top"; data.item: "version" "123";
    }
    programs {
       program {
-         signal: "efl,action,focus,show"; source: "efl";
+         signal: "efl,focus,visible,on"; source: "efl";
          action: ACTION_STOP;
          target: "pulse";
          target: "pulse2";
@@ -132,17 +132,17 @@ group { name: "efl/focus_highlight/top"; data.item: "version" "123";
          after: "go3";
       }
       program { name: "go3";
-         action: SIGNAL_EMIT "efl,action,focus,show,end" "efl";
+         action: SIGNAL_EMIT "efl,focus,visible,on,done" "efl";
       }
       program {
-         signal: "efl,action,focus,hide"; source: "efl";
+         signal: "efl,focus,visible,off"; source: "efl";
          action: STATE_SET "default" 0.0;
          transition: DECELERATE 0.4;
          target: "clip";
          after: "stop2";
       }
       program { name: "stop2";
-         action: SIGNAL_EMIT "efl,action,focus,hide,end" "efl";
+         action: SIGNAL_EMIT "efl,focus,visible,off,done" "efl";
          after: "stop3";
       }
       program { name: "stop3";

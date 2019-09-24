@@ -1160,14 +1160,14 @@ _elm_win_focus_highlight_visible_set(Efl_Ui_Win_Data *sd,
         if (elm_widget_is_legacy(sd->obj))
           edje_object_signal_emit(fobj, "elm,action,focus,show", "elm");
         else
-          edje_object_signal_emit(fobj, "efl,action,focus,show", "efl");
+          edje_object_signal_emit(fobj, "efl,focus,visible,on", "efl");
      }
    else
      {
         if (elm_widget_is_legacy(sd->obj))
           edje_object_signal_emit(fobj, "elm,action,focus,hide", "elm");
         else
-          edje_object_signal_emit(fobj, "efl,action,focus,hide", "efl");
+          edje_object_signal_emit(fobj, "efl,focus,visible,off", "efl");
      }
 }
 
@@ -4074,7 +4074,7 @@ _elm_win_focus_highlight_init(Efl_Ui_Win_Data *sd)
         else
           {
              edje_object_signal_callback_add(sd->focus_highlight.fobj,
-                                             "efl,action,focus,hide,end", "*",
+                                             "efl,focus,visible,off,done", "*",
                                              _elm_win_focus_highlight_hide, NULL);
              edje_object_signal_callback_add(sd->focus_highlight.fobj,
                                              "efl,action,focus,anim,end", "*",
