@@ -44,6 +44,6 @@ class @beta Efl.Ui.Video extends Efl.Ui.Layout_Base
       Efl.Ui.Widget.widget_input_event_handler;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.Player.playing { get; set; }
-      Efl.Player.play { get; set; }
+      Efl.Player.paused { get; set; }
    }
 }

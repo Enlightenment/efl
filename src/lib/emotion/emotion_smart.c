@@ -116,6 +116,7 @@ struct _Efl_Canvas_Video_Data
 
    Eina_Bool open : 1;
    Eina_Bool play : 1;
+   Eina_Bool pause : 1;
    Eina_Bool remember_play : 1;
    Eina_Bool seek : 1;
    Eina_Bool seeking : 1;
@@ -645,38 +646,83 @@ emotion_object_keep_aspect_get(const Evas_Object *obj)
 EAPI void
 emotion_object_play_set(Evas_Object *obj, Eina_Bool play)
 {
-   efl_player_play_set(obj, play);
+   /* avoid calling playback_position_set(0) for legacy */
+   if (play)
+     efl_player_playing_set(obj, EINA_TRUE);
+   efl_player_paused_set(obj, !play);
 }
 
-EOLIAN static void
-_efl_canvas_video_efl_player_play_set(Eo *obj, Efl_Canvas_Video_Data *sd, Eina_Bool play)
+EOLIAN static Eina_Bool
+_efl_canvas_video_efl_player_playing_set(Eo *obj, Efl_Canvas_Video_Data *sd, Eina_Bool play)
 {
+   play = !!play;
    DBG("play=" FMT_UCHAR ", was=" FMT_UCHAR, play, sd->play);
-   if (!sd->engine_instance) return;
+   if (!sd->engine_instance) return EINA_FALSE;
+   /* always unset pause if playing is false */
+   if (!play) sd->pause = EINA_FALSE;
    if (!sd->open)
      {
         sd->remember_play = play;
-        return;
+        return EINA_TRUE;
      }
-   if (play == sd->play) return;
+   if (play == sd->play) return EINA_TRUE;
    sd->play = play;
    sd->remember_play = play;
    if (sd->state != EMOTION_WAKEUP) emotion_object_suspend_set(obj, EMOTION_WAKEUP);
-   if (sd->play) emotion_engine_instance_play(sd->engine_instance, sd->pos);
-   else emotion_engine_instance_stop(sd->engine_instance);
+   if (sd->play) emotion_engine_instance_play(sd->engine_instance, 0.0);
+   else
+     {
+        emotion_engine_instance_stop(sd->engine_instance);
+        efl_player_playback_position_set(obj, 0.0);
+     }
+   return EINA_TRUE;
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_video_efl_player_paused_set(Eo *obj, Efl_Canvas_Video_Data *sd, Eina_Bool paused)
+{
+   paused = !!paused;
+   DBG("paused=" FMT_UCHAR ", was=" FMT_UCHAR, paused, sd->pause);
+   if (!sd->engine_instance) return EINA_FALSE;
+   if (!sd->open)
+     {
+        /* queue pause */
+        if (sd->remember_play)
+          sd->pause = paused;
+        return sd->remember_play;
+     }
+   if (!sd->play) return EINA_FALSE;
+   if (paused == sd->pause) return EINA_TRUE;
+   sd->pause = paused;
+   if (sd->pause)
+     emotion_engine_instance_stop(sd->engine_instance);
+   else
+     {
+        if (sd->state != EMOTION_WAKEUP) emotion_object_suspend_set(obj, EMOTION_WAKEUP);
+        emotion_engine_instance_play(sd->engine_instance, sd->pos);
+     }
+   return EINA_TRUE;
 }
 
 EAPI Eina_Bool
 emotion_object_play_get(const Evas_Object *obj)
 {
-   return efl_player_play_get(obj);
+   return efl_player_playing_get(obj) && !efl_player_paused_get(obj);
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_video_efl_player_play_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_player_playing_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    if (!sd->engine_instance) return EINA_FALSE;
    return sd->play;
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_video_efl_player_paused_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+{
+   if (!sd->engine_instance) return EINA_FALSE;
+   if (!sd->play) return EINA_FALSE;
+   return sd->pause;
 }
 
 EAPI void
@@ -1632,7 +1678,12 @@ _emotion_open_done(Evas_Object *obj)
    if (!EINA_DBL_EQ(sd->remember_jump, 0.0))
      emotion_object_position_set(obj, sd->remember_jump);
    if (sd->remember_play != sd->play)
-     emotion_object_play_set(obj, sd->remember_play);
+     {
+        if (sd->pause)
+          sd->play = sd->remember_play;
+        else
+          emotion_object_play_set(obj, sd->remember_play);
+     }
    efl_event_callback_call(obj, EFL_CANVAS_VIDEO_EVENT_OPEN_DONE, NULL);
    evas_object_smart_callback_call(obj, "open_done", NULL);
 }

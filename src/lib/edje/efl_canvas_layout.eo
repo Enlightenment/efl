@@ -127,7 +127,7 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
       Efl.Part.part_get; [[Returns @Efl.Canvas.Layout_Part]]
       Efl.Observer.update;
       Efl.Playable.playable { get; }
-      Efl.Player.play { get; set; }
+      Efl.Player.paused { get; set; }
       Efl.Player.play_speed { get; set; }
    }
 }

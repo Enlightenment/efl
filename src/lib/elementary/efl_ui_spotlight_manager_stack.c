@@ -23,7 +23,7 @@ _geom_sync(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Stack_Data *pd)
 {
    Eina_Array *array = eina_array_new(2);
    Eina_Rect group_pos = efl_gfx_entity_geometry_get(pd->group);
-   if (efl_player_play_get(pd->hide))
+   if (efl_player_playing_get(pd->hide))
      {
         //we are currently in animation, sync the geometry of the targets
         eina_array_push(array, efl_animation_player_target_get(pd->hide));
@@ -132,7 +132,7 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Sp
 
         pd->show = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, obj);
         efl_animation_player_animation_set(pd->show, show_anim);
-        efl_player_play_set(pd->show, EINA_FALSE);
+        efl_player_playing_set(pd->show, EINA_FALSE);
         efl_event_callback_array_add(pd->show, _anim_show_event_cb(), obj);
 
         //Default Hide Animation
@@ -143,7 +143,7 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Sp
 
         pd->hide = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, obj);
         efl_animation_player_animation_set(pd->hide, hide_anim);
-        efl_player_play_set(pd->hide, EINA_FALSE);
+        efl_player_playing_set(pd->hide, EINA_FALSE);
         efl_event_callback_array_add(pd->hide, _anim_hide_event_cb(), obj);
 
         for (int i = 0; i < efl_content_count(spotlight) ; ++i) {

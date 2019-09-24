@@ -95,7 +95,7 @@ _key_action_move(Evas_Object *obj, const char *params)
 static Eina_Bool
 _key_action_play(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   if (efl_player_play_get(obj))
+   if (!efl_player_paused_get(obj))
      elm_video_pause(obj);
    else
      elm_video_play(obj);
@@ -327,15 +327,17 @@ _efl_ui_video_emotion_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
    return sd->emotion;
 }
 
-EOLIAN static void
-_efl_ui_video_efl_player_play_set(Eo *obj, Efl_Ui_Video_Data *sd, Eina_Bool play)
+EOLIAN static Eina_Bool
+_efl_ui_video_efl_player_paused_set(Eo *obj, Efl_Ui_Video_Data *sd, Eina_Bool paused)
 {
-   if (emotion_object_play_get(sd->emotion) == !!play) return;
+   paused = !!paused;
+   /* can't pause if we're stopped */
+   if (sd->stop) return EINA_FALSE;
+   if (emotion_object_play_get(sd->emotion) == !paused) return EINA_TRUE;
 
-   if (play)
+   if (!paused)
      {
         ELM_SAFE_FREE(sd->timer, ecore_timer_del);
-        sd->stop = EINA_FALSE;
         emotion_object_play_set(sd->emotion, EINA_TRUE);
 
         if(elm_widget_is_legacy(obj))
@@ -356,6 +358,7 @@ _efl_ui_video_efl_player_play_set(Eo *obj, Efl_Ui_Video_Data *sd, Eina_Bool play
         else
           elm_layout_signal_emit(obj, "efl,video,pause", "efl");
      }
+   return EINA_TRUE;
 }
 
 /* FIXME: stop should go into hibernate state directly.
@@ -397,9 +400,10 @@ _efl_ui_video_efl_player_playing_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Dat
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_video_efl_player_play_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
+_efl_ui_video_efl_player_paused_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
 {
-   return emotion_object_play_get(sd->emotion);
+   /* pause is when !playing and !stopped */
+   return !emotion_object_play_get(sd->emotion) && !sd->stop;
 }
 
 EOLIAN static const char*
@@ -533,13 +537,16 @@ elm_video_play_position_get(const Evas_Object *obj)
 EAPI Eina_Bool
 elm_video_is_playing_get(Evas_Object *obj)
 {
-   return efl_player_play_get(obj);
+   return efl_player_playing_get(obj) && !efl_player_paused_get(obj);
 }
 
 EAPI void
 elm_video_play(Evas_Object *obj)
 {
-   efl_player_play_set(obj, EINA_TRUE);
+   if (efl_player_playing_get(obj))
+     efl_player_paused_set(obj, EINA_FALSE);
+   else
+     efl_player_playing_set(obj, EINA_TRUE);
 }
 
 EAPI void
@@ -551,7 +558,7 @@ elm_video_stop(Evas_Object *obj)
 EAPI void
 elm_video_pause(Evas_Object *obj)
 {
-   efl_player_play_set(obj, EINA_FALSE);
+   efl_player_paused_set(obj, EINA_TRUE);
 }
 
 #include "efl_ui_video_legacy_eo.c"

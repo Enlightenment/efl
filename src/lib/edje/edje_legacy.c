@@ -1202,13 +1202,13 @@ edje_object_calc_force(Edje_Object *obj)
 EAPI void
 edje_object_play_set(Evas_Object *obj, Eina_Bool play)
 {
-   efl_player_play_set(obj, play);
+   efl_player_paused_set(obj, !play);
 }
 
 EAPI Eina_Bool
 edje_object_play_get(const Evas_Object *obj)
 {
-   return efl_player_play_get(obj);
+   return !efl_player_paused_get(obj);
 }
 
 EAPI void

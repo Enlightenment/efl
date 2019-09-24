@@ -408,7 +408,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                        efl_name_set(efl_added, images[k].src_name),
                        elm_object_tooltip_text_set(efl_added, images[k].src_name));
            if (efl_playable_get(o))
-             efl_player_play_set(o, 1);
+             efl_player_playing_set(o, 1);
            efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _img_click, win);
            efl_pack(box2, o);
         }

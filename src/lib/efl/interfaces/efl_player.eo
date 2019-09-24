@@ -23,19 +23,22 @@ interface @beta Efl.Player
                 playing: bool; [[$true if playing, $false otherwise.]]
            }
         }
-        @property play {
-           [[Playback state of the media file.
+        @property paused {
+           [[Pause state of the media file.
 
-             This property sets the currently playback state of the
-             video. Using this function to play or pause the video
-             doesn't alter it's current position.
+             This property sets the pause state of the media.  Re-setting the current
+             pause state has no effect.
+
+             If @.playing is set to $true, this property can be used to pause and resume
+             playback of the media without changing its @.progress property.
            ]]
            set {
+              return: bool(false); [[If $true, the property change has succeeded.]]
            }
            get {
            }
            values {
-                play: bool; [[$true if playing, $false otherwise.]]
+                paused: bool; [[$true if paused, $false otherwise.]]
            }
         }
         @property playback_position {

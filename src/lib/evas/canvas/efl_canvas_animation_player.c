@@ -222,35 +222,25 @@ _player_stop(Eo *eo_obj, Efl_Canvas_Animation_Player_Data *pd, Efl_Canvas_Animat
    //Reset the state of the target to the initial state
    efl_gfx_mapping_reset(efl_animation_player_target_get(eo_obj));
 
-   Eina_Bool play = efl_player_play_get(eo_obj);
-   if (play)
+   if (efl_animation_final_state_keep_get(anim))
      {
-        efl_player_play_set(eo_obj, EINA_FALSE);
-        if (efl_animation_final_state_keep_get(anim))
+        if (_is_final_state(anim, pd->progress))
           {
-             if (_is_final_state(anim, pd->progress))
-               {
-                  /* Keep the final state only if efl_player_stop is called at
-                   * the end of _animator_cb. */
-                  efl_animation_apply(anim, pd->progress,
-                                      efl_animation_player_target_get(eo_obj));
-               }
-             else
-               {
-                  pd->progress = 0.0;
-               }
+             /* Keep the final state only if efl_player_playing_set(EINA_FALSE) is called at
+              * the end of _animator_cb. */
+             efl_animation_apply(anim, pd->progress,
+                                 efl_animation_player_target_get(eo_obj));
           }
         else
           {
              pd->progress = 0.0;
           }
-        efl_event_callback_call(eo_obj, EFL_ANIMATION_PLAYER_EVENT_ENDED, NULL);
      }
    else
      {
         pd->progress = 0.0;
      }
-
+   efl_event_callback_call(eo_obj, EFL_ANIMATION_PLAYER_EVENT_ENDED, NULL);
    if (pd->auto_del) efl_del(eo_obj);
 }
 
@@ -266,6 +256,8 @@ _efl_canvas_animation_player_efl_player_playing_set(Eo *eo_obj, Efl_Canvas_Anima
    pd->is_play = !!playing;
    if (!playing)
      {
+        if (!pd->is_play) return EINA_TRUE;
+        pd->is_paused = EINA_FALSE;
         _player_stop(eo_obj, pd, anim);
         return EINA_TRUE;
      }
@@ -290,19 +282,20 @@ _efl_canvas_animation_player_efl_player_playing_get(const Eo *eo_obj EINA_UNUSED
    return pd->is_play;
 }
 
-EOLIAN static void
-_efl_canvas_animation_player_efl_player_play_set(Eo *eo_obj,
+EOLIAN static Eina_Bool
+_efl_canvas_animation_player_efl_player_paused_set(Eo *eo_obj,
                                           Efl_Canvas_Animation_Player_Data *pd,
-                                          Eina_Bool play)
+                                          Eina_Bool paused)
 {
-   if (efl_player_play_get(eo_obj) == !!play)
-     return;
-
-   pd->is_play = play;
-   if (play)
+   paused = !!paused;
+   /* can't pause if not playing */
+   if (!pd->is_play) return EINA_FALSE;
+   if (pd->is_paused == paused) return EINA_TRUE;
+   pd->is_paused = paused;
+   if (!paused)
      {
         //TODO: check this case is correct.
-        if (pd->start_delay_timer) return;
+        if (pd->start_delay_timer) return EINA_FALSE;
 
         pd->time.prev = ecore_loop_time_get();
         pd->animator = ecore_evas_animator_add(pd->target, _animator_cb, eo_obj);
@@ -316,13 +309,14 @@ _efl_canvas_animation_player_efl_player_play_set(Eo *eo_obj,
         ecore_animator_del(pd->animator);
         pd->animator = NULL;
      }
+   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_efl_canvas_animation_player_efl_player_play_get(const Eo *eo_obj EINA_UNUSED,
+_efl_canvas_animation_player_efl_player_paused_get(const Eo *eo_obj EINA_UNUSED,
                                           Efl_Canvas_Animation_Player_Data *pd)
 {
-   return pd->is_play;
+   return pd->is_paused;
 }
 
 EOLIAN static Eina_Bool

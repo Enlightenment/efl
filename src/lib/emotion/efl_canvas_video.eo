@@ -57,7 +57,8 @@ class @beta Efl.Canvas.Video extends Efl.Canvas.Group
         Efl.File.unload;
         Efl.File.file { set; }
         Efl.File.loaded { get; }
-        Efl.Player.play { get; set; }
+        Efl.Player.playing { get; set; }
+        Efl.Player.paused { get; set; }
         Efl.Player.playback_position { get; set; }
         Efl.Player.progress { get; }
         Efl.Audio_Control.volume { get; set; }

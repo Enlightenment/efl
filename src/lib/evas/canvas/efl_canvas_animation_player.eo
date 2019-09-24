@@ -36,7 +36,7 @@ class @beta Efl.Canvas.Animation_Player extends Efl.Object implements Efl.Player
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Player.playing { get; set; }
-      Efl.Player.play { get; set; }
+      Efl.Player.paused { get; set; }
       Efl.Playable.playable { get; }
       Efl.Player.playback_position { get; set; }
       Efl.Player.progress { get;}

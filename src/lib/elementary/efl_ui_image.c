@@ -871,6 +871,8 @@ _efl_ui_image_efl_object_constructor(Eo *obj, Efl_Ui_Image_Data *pd)
 
    pd->scale_type = EFL_GFX_IMAGE_SCALE_METHOD_FIT;
    pd->self = obj;
+   /* legacy elm_image starts paused */
+   pd->paused = elm_widget_is_legacy(obj);
 
    return obj;
 }
@@ -930,8 +932,11 @@ _efl_ui_image_efl_file_load(Eo *obj, Efl_Ui_Image_Data *sd)
    if (sd->anim)
      {
         ELM_SAFE_FREE(sd->anim_timer, ecore_timer_del);
-        sd->play = EINA_FALSE;
+        sd->paused = elm_widget_is_legacy(obj);
         sd->anim = EINA_FALSE;
+        sd->frame_count = -1;
+        sd->cur_frame = -1;
+        sd->frame_duration = -1;
      }
 
    if (file && _efl_ui_image_is_remote(file))
@@ -967,8 +972,11 @@ _efl_ui_image_efl_file_unload(Eo *obj, Efl_Ui_Image_Data *sd)
    if (sd->anim)
      {
         ELM_SAFE_FREE(sd->anim_timer, ecore_timer_del);
-        sd->play = EINA_FALSE;
+        sd->paused = elm_widget_is_legacy(obj);
         sd->anim = EINA_FALSE;
+        sd->frame_count = -1;
+        sd->cur_frame = -1;
+        sd->frame_duration = -1;
      }
 
    if (sd->prev_img)
@@ -1727,21 +1735,21 @@ _efl_ui_image_efl_playable_playable_get(const Eo *obj, Efl_Ui_Image_Data *sd)
    return evas_object_image_animated_get(elm_image_object_get(obj));
 }
 
-static void
+static Eina_Bool
 _efl_ui_image_animated_set_internal(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool anim)
 {
    anim = !!anim;
-   if (sd->anim == anim) return;
-
-   sd->anim = anim;
+   if (sd->anim == anim) return EINA_TRUE;
 
    if (sd->edje)
      {
         edje_object_animation_set(sd->img, anim);
-        return;
+        sd->anim = anim;
+        return EINA_TRUE;
      }
    sd->img = elm_image_object_get(obj);
-   if (!evas_object_image_animated_get(sd->img)) return;
+   if (!evas_object_image_animated_get(sd->img)) return EINA_FALSE;
+   sd->anim = anim;
 
    if (anim)
      {
@@ -1751,13 +1759,18 @@ _efl_ui_image_animated_set_internal(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool an
           evas_object_image_animated_frame_duration_get
             (sd->img, sd->cur_frame, 0);
         evas_object_image_animated_frame_set(sd->img, sd->cur_frame);
+        if (!sd->paused)//legacy
+          sd->anim_timer = ecore_timer_add
+              (sd->frame_duration, _efl_ui_image_animate_cb, obj);
      }
    else
      {
         sd->frame_count = -1;
         sd->cur_frame = -1;
         sd->frame_duration = -1;
+        ELM_SAFE_FREE(sd->anim_timer, ecore_timer_del);
      }
+   return EINA_TRUE;
 }
 
 static Eina_Bool
@@ -1784,18 +1797,31 @@ elm_image_animated_get(const Evas_Object *obj)
    return _efl_ui_image_animated_get_internal(obj, sd);
 }
 
-static void
-_efl_ui_image_animated_play_set_internal(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool play)
+EOLIAN static Eina_Bool
+_efl_ui_image_efl_player_playing_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool playing)
 {
-   if (!sd->anim) return;
-   if (sd->play == play) return;
-   sd->play = play;
+   return _efl_ui_image_animated_set_internal(obj, sd, playing);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_efl_player_playing_get(const Eo *obj, Efl_Ui_Image_Data *sd)
+{
+   return _efl_ui_image_animated_get_internal(obj, sd);
+}
+
+static Eina_Bool
+_efl_ui_image_animated_paused_set_internal(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool paused)
+{
+   paused = !!paused;
+   if (!sd->anim) return EINA_FALSE;
+   if (sd->paused == paused) return EINA_TRUE;
+   sd->paused = paused;
    if (sd->edje)
      {
-        edje_object_play_set(sd->img, play);
-        return;
+        edje_object_play_set(sd->img, !paused);
+        return EINA_TRUE;
      }
-   if (play)
+   if (!paused)
      {
         sd->anim_timer = ecore_timer_add
             (sd->frame_duration, _efl_ui_image_animate_cb, obj);
@@ -1804,14 +1830,15 @@ _efl_ui_image_animated_play_set_internal(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bo
      {
         ELM_SAFE_FREE(sd->anim_timer, ecore_timer_del);
      }
+   return EINA_TRUE;
 }
 
 static Eina_Bool
-_efl_ui_image_animated_play_get_internal(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+_efl_ui_image_animated_paused_get_internal(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
 {
    if (sd->edje)
-     return edje_object_play_get(sd->img);
-   return sd->play;
+     return !edje_object_play_get(sd->img);
+   return sd->paused;
 }
 
 EAPI void
@@ -1819,7 +1846,7 @@ elm_image_animated_play_set(Elm_Image *obj, Eina_Bool play)
 {
    Efl_Ui_Image_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    if (!sd) return;
-   _efl_ui_image_animated_play_set_internal(obj, sd, play);
+   _efl_ui_image_animated_paused_set_internal(obj, sd, !play);
 }
 
 EAPI Eina_Bool
@@ -1827,21 +1854,19 @@ elm_image_animated_play_get(const Elm_Image *obj)
 {
    Efl_Ui_Image_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    if (!sd) return EINA_FALSE;
-   return _efl_ui_image_animated_play_get_internal(obj, sd);
-}
-
-EOLIAN static void
-_efl_ui_image_efl_player_play_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool play)
-{
-   if (play && !_efl_ui_image_animated_get_internal(obj, sd))
-     _efl_ui_image_animated_set_internal(obj, sd, play);
-   _efl_ui_image_animated_play_set_internal(obj, sd, play);
+   return _efl_ui_image_animated_paused_get_internal(obj, sd);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_image_efl_player_play_get(const Eo *obj, Efl_Ui_Image_Data *sd)
+_efl_ui_image_efl_player_paused_set(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool paused)
 {
-   return _efl_ui_image_animated_play_get_internal(obj, sd);
+   return _efl_ui_image_animated_paused_set_internal(obj, sd, paused);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_image_efl_player_paused_get(const Eo *obj, Efl_Ui_Image_Data *sd)
+{
+   return _efl_ui_image_animated_paused_get_internal(obj, sd);
 }
 
 EOLIAN static void

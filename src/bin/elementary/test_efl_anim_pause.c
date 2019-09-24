@@ -82,13 +82,13 @@ _pause_btn_clicked_cb(void *data, Evas_Object *obj, void *event_info EINA_UNUSED
    if (ad->is_anim_paused)
      {
         //Pause animation
-        efl_player_play_set(ad->anim_obj, EINA_FALSE);
+        efl_player_paused_set(ad->anim_obj, EINA_TRUE);
         elm_object_text_set(obj, "Resume Animation");
      }
    else
      {
         //Resume animation
-        efl_player_play_set(ad->anim_obj, EINA_TRUE);
+        efl_player_paused_set(ad->anim_obj, EINA_FALSE);
         elm_object_text_set(obj, "Pause Animation");
      }
 }

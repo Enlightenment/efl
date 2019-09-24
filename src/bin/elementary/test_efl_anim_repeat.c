@@ -122,8 +122,7 @@ test_efl_anim_repeat(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void 
    App_Data *ad = calloc(1, sizeof(App_Data));
    if (!ad) return;
 
-   Evas_Object *win = elm_win_add(NULL, "Efl Animation Repeat", ELM_WIN_BASIC);
-   elm_win_title_set(win, "Efl Animation Repeat");
+   Evas_Object *win = elm_win_util_standard_add(NULL, "Efl Animation Repeat");
    elm_win_autodel_set(win, EINA_TRUE);
    evas_object_smart_callback_add(win, "delete,request", _win_del_cb, ad);
 
