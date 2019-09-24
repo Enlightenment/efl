@@ -994,7 +994,7 @@ _elm_config_profile_dir_get(const char *prof,
    if (!is_user)
      goto not_user;
 
-   if ((!_use_build_config) || (!bs_data_path_get(buf, sizeof(buf), "elementary/config", prof)))
+   if ((!_running_in_tree) || (!bs_data_path_get(buf, sizeof(buf), "elementary/config", prof)))
      _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/%s", prof);
 
    // See elm_config_profile_dir_free: always use strdup+free
@@ -1004,7 +1004,7 @@ _elm_config_profile_dir_get(const char *prof,
    return NULL;
 
 not_user:
-   if ((!_use_build_config) || (!bs_data_path_get(buf, sizeof(buf), "elementary/config", prof)))
+   if ((!_running_in_tree) || (!bs_data_path_get(buf, sizeof(buf), "elementary/config", prof)))
      snprintf(buf, sizeof(buf), "%s/config/%s", _elm_data_dir, prof);
 
    // See elm_config_profile_dir_free: always use strdup+free
@@ -1389,7 +1389,7 @@ _elm_config_profiles_list(Eina_Bool hide_profiles)
    const char *dir;
    size_t len = 0;
 
-   if (_use_build_config)
+   if (_running_in_tree)
      {
         len = bs_data_path_get(buf, sizeof(buf), "elementary", "config");
         if (len) len = strlen(buf);
@@ -1477,7 +1477,7 @@ _profile_fetch_from_conf(void)
    Eet_File *ef = NULL;
    int len = 0, i;
 
-   if (_use_build_config) goto end;
+   if (_running_in_tree) goto end;
    // if env var - use profile without question
    s = _getenv_once("ELM_PROFILE");
    if (s)
@@ -1769,7 +1769,7 @@ _config_load(void)
    efl_provider_register(efl_main_loop_get(), EFL_CONFIG_INTERFACE, _efl_config_obj);
    efl_provider_register(efl_main_loop_get(), EFL_CONFIG_GLOBAL_CLASS, _efl_config_obj);
    efl_del_intercept_set(_efl_config_obj, _efl_config_obj_del);
-   if (!_use_build_config)
+   if (!_running_in_tree)
      {
         _elm_config = _config_user_load();
         if (_elm_config)
@@ -2127,7 +2127,7 @@ _elm_config_profile_save(const char *profile)
    Eet_File *ef;
    size_t len;
 
-   if (_use_build_config || ((s = _getenv_once("ELM_PROFILE_NOSAVE")) && atoi(s)))
+   if (_running_in_tree || ((s = _getenv_once("ELM_PROFILE_NOSAVE")) && atoi(s)))
      return EINA_TRUE;
 
    len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "config/profile.cfg");
@@ -3083,7 +3083,7 @@ elm_config_profile_exists(const char *profile)
 
    if (!profile) return EINA_FALSE;
 
-   if (_use_build_config)
+   if (_running_in_tree)
      {
         if (!bs_data_path_get(buf, sizeof(buf), "elementary/config", profile)) return EINA_FALSE;
         return ecore_file_exists(buf);
@@ -4193,7 +4193,7 @@ elm_config_all_flush(void)
    int ok = 0;
    size_t len;
 
-   if (_use_build_config) return;
+   if (_running_in_tree) return;
    len = _elm_config_user_dir_snprintf(buf, sizeof(buf), "themes/");
    if (len + 1 >= sizeof(buf))
      return;
@@ -4300,7 +4300,7 @@ _elm_config_sub_shutdown(void)
    ELM_SAFE_FREE(_monitor_file_created_handler, ecore_event_handler_del);
    ELM_SAFE_FREE(_monitor_file_modified_handler, ecore_event_handler_del);
    ELM_SAFE_FREE(_monitor_directory_created_handler, ecore_event_handler_del);
-   _use_build_config = EINA_FALSE;
+   _running_in_tree = EINA_FALSE;
 }
 
 static Eina_Bool
@@ -4392,7 +4392,7 @@ _elm_config_sub_init(void)
    char buf[PATH_MAX];
    int ok = 0;
 
-   if (_use_build_config)
+   if (_running_in_tree)
      ok = bs_data_path_get(buf, sizeof(buf), "elementary", "config");
    else
      {
