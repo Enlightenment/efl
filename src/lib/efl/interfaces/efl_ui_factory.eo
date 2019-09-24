@@ -21,10 +21,10 @@ interface @beta Efl.Ui.Factory extends Efl.Ui.Property_Bind, Efl.Ui.Factory_Bind
            Note: This is the function you need to implement for a custom factory, but if you want to use a factory,
            you should rely on @Efl.Ui.View_Factory.create_with_event.]]
          params {
-            models: iterator<Efl.Model>; [[Efl iterator providing the model to be associated to the new item.
+            models: iterator<Efl.Model> @move; [[Efl iterator providing the model to be associated to the new item.
                                            It should remain valid until the end of the function call.]]
          }
-         return: future<Efl.Gfx.Entity>; [[Created UI object.]]
+         return: future<Efl.Gfx.Entity> @move @no_unused; [[Created UI object.]]
       }
       release {
          [[Release a UI object and disconnect from models.]]
