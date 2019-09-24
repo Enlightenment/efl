@@ -141,7 +141,7 @@ _efl_ui_image_animate_cb(void *data)
        (sd->img, sd->cur_frame, 0);
 
    if (sd->frame_duration > 0)
-     ecore_timer_interval_set(sd->anim_timer, sd->frame_duration);
+     ecore_timer_interval_set(sd->anim_timer, sd->frame_duration * sd->playback_speed);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -873,6 +873,7 @@ _efl_ui_image_efl_object_constructor(Eo *obj, Efl_Ui_Image_Data *pd)
    pd->self = obj;
    /* legacy elm_image starts paused */
    pd->paused = elm_widget_is_legacy(obj);
+   pd->playback_speed = 1;
 
    return obj;
 }
@@ -1761,7 +1762,7 @@ _efl_ui_image_animated_set_internal(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool an
         evas_object_image_animated_frame_set(sd->img, sd->cur_frame);
         if (!sd->paused)//legacy
           sd->anim_timer = ecore_timer_add
-              (sd->frame_duration, _efl_ui_image_animate_cb, obj);
+              (sd->frame_duration * sd->playback_speed, _efl_ui_image_animate_cb, obj);
      }
    else
      {
@@ -1807,6 +1808,28 @@ EOLIAN static Eina_Bool
 _efl_ui_image_efl_player_playing_get(const Eo *obj, Efl_Ui_Image_Data *sd)
 {
    return _efl_ui_image_animated_get_internal(obj, sd);
+}
+
+EOLIAN static void
+_efl_ui_image_efl_player_playback_speed_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd, double factor)
+{
+   EINA_SAFETY_ON_TRUE_RETURN(factor < 0.0);
+   EINA_SAFETY_ON_TRUE_RETURN(EINA_DBL_EQ(factor, 0.0));
+   if (EINA_DBL_EQ(sd->playback_speed, factor)) return;
+   sd->playback_speed = factor;
+   if (sd->edje)
+     efl_player_playback_speed_set(sd->img, factor);
+   else if (sd->anim_timer)
+     {
+        ecore_timer_interval_set(sd->anim_timer, sd->frame_duration * sd->playback_speed);
+        ecore_timer_reset(sd->anim_timer);
+     }
+}
+
+EOLIAN static double
+_efl_ui_image_efl_player_playback_speed_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Data *sd)
+{
+   return sd->playback_speed;
 }
 
 EOLIAN static void
@@ -1858,7 +1881,7 @@ _efl_ui_image_animated_paused_set_internal(Eo *obj, Efl_Ui_Image_Data *sd, Eina_
    if (!paused)
      {
         sd->anim_timer = ecore_timer_add
-            (sd->frame_duration, _efl_ui_image_animate_cb, obj);
+            (sd->frame_duration * sd->playback_speed, _efl_ui_image_animate_cb, obj);
      }
    else
      {

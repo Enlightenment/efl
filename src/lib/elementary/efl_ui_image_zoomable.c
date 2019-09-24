@@ -1938,12 +1938,13 @@ _efl_ui_image_zoomable_efl_canvas_group_group_member_add(Eo *obj, Efl_Ui_Image_Z
 }
 
 EOLIAN static Eo *
-_efl_ui_image_zoomable_efl_object_constructor(Eo *obj, Efl_Ui_Image_Zoomable_Data *_pd EINA_UNUSED)
+_efl_ui_image_zoomable_efl_object_constructor(Eo *obj, Efl_Ui_Image_Zoomable_Data *pd)
 {
    obj = efl_constructor(efl_super(obj, MY_CLASS));
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_IMAGE);
    legacy_object_focus_handle(obj);
+   pd->playback_speed = 1;
    return obj;
 }
 
@@ -3034,7 +3035,7 @@ _efl_ui_image_zoomable_animate_cb(void *data)
        (sd->img, sd->cur_frame, 0);
 
    if (sd->frame_duration > 0)
-     ecore_timer_interval_set(sd->anim_timer, sd->frame_duration);
+     ecore_timer_interval_set(sd->anim_timer, sd->frame_duration * sd->playback_speed);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -3064,7 +3065,7 @@ _efl_ui_image_zoomable_animated_set_internal(Eo *obj EINA_UNUSED, Efl_Ui_Image_Z
         evas_object_image_animated_frame_set(sd->img, sd->cur_frame);
         if (!sd->paused)//legacy
           sd->anim_timer = ecore_timer_add
-              (sd->frame_duration, _efl_ui_image_zoomable_animate_cb, obj);
+              (sd->frame_duration * sd->playback_speed, _efl_ui_image_zoomable_animate_cb, obj);
      }
    else
      {
@@ -3091,7 +3092,7 @@ _efl_ui_image_zoomable_animated_paused_set_internal(Eo *obj, Efl_Ui_Image_Zoomab
    if (!paused)
      {
         sd->anim_timer = ecore_timer_add
-            (sd->frame_duration, _efl_ui_image_zoomable_animate_cb, obj);
+            (sd->frame_duration * sd->playback_speed, _efl_ui_image_zoomable_animate_cb, obj);
      }
    else
      {
@@ -3124,6 +3125,28 @@ _efl_ui_image_zoomable_efl_player_paused_get(const Eo *obj EINA_UNUSED, Efl_Ui_I
    if (sd->edje)
      return !edje_object_play_get(sd->edje);
    return sd->paused;
+}
+
+EOLIAN static void
+_efl_ui_image_zoomable_efl_player_playback_speed_set(Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd, double factor)
+{
+   EINA_SAFETY_ON_TRUE_RETURN(factor < 0.0);
+   EINA_SAFETY_ON_TRUE_RETURN(EINA_DBL_EQ(factor, 0.0));
+   if (EINA_DBL_EQ(sd->playback_speed, factor)) return;
+   sd->playback_speed = factor;
+   if (sd->edje)
+     efl_player_playback_speed_set(sd->edje, factor);
+   else if (sd->anim_timer)
+     {
+        ecore_timer_interval_set(sd->anim_timer, sd->frame_duration * sd->playback_speed);
+        ecore_timer_reset(sd->anim_timer);
+     }
+}
+
+EOLIAN static double
+_efl_ui_image_zoomable_efl_player_playback_speed_get(const Eo *obj EINA_UNUSED, Efl_Ui_Image_Zoomable_Data *sd)
+{
+   return sd->playback_speed;
 }
 
 EOLIAN static void

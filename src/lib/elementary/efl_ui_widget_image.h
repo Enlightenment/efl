@@ -56,6 +56,7 @@ struct _Efl_Ui_Image_Data
 
    double                scale;
    double                frame_duration;
+   double                playback_speed;
    double                align_x, align_y;
 
    Eina_Size2D           load_size;

@@ -125,6 +125,7 @@ struct _Efl_Ui_Image_Zoomable_Data
 
    Ecore_Timer          *anim_timer;
    double                frame_duration;
+   double                playback_speed;
    int                   cur_frame;
    int                   frame_count;
 
