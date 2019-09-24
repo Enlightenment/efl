@@ -60,7 +60,7 @@ class @beta Efl.Canvas.Video extends Efl.Canvas.Group
         Efl.Player.playing { get; set; }
         Efl.Player.paused { get; set; }
         Efl.Player.playback_position { get; set; }
-        Efl.Player.progress { get; }
+        Efl.Player.playback_progress { get; }
         Efl.Audio_Control.volume { get; set; }
         Efl.Audio_Control.mute { get; set; }
         Efl.Playable.length { get; }

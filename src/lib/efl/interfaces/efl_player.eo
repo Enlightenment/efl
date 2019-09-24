@@ -57,7 +57,7 @@ interface @beta Efl.Player
                 sec: double; [[The position (in seconds).]]
            }
         }
-        @property progress {
+        @property playback_progress {
            [[How much of the file has been played.
 
              This function gets the progress in playing the file, the

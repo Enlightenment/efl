@@ -1207,11 +1207,11 @@ emotion_object_progress_info_get(const Evas_Object *obj)
 EAPI double
 emotion_object_progress_status_get(const Evas_Object *obj)
 {
-   return efl_player_progress_get(obj);
+   return efl_player_playback_progress_get(obj);
 }
 
 EOLIAN static double
-_efl_canvas_video_efl_player_progress_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
+_efl_canvas_video_efl_player_playback_progress_get(const Eo *obj EINA_UNUSED, Efl_Canvas_Video_Data *sd)
 {
    return sd->progress.stat;
 }
