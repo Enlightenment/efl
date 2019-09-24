@@ -48,6 +48,8 @@
 #include "Ecore_Con.h"
 #include "ecore_con_private.h"
 
+#include "efl_net_types.eot.c"
+
 #ifndef MSG_NOSIGNAL
 #define MSG_NOSIGNAL 0 /* noop */
 #endif
@@ -56,8 +58,6 @@
 int sd_fd_index = 0;
 int sd_fd_max = 0;
 #endif
-
-EWAPI Eina_Error EFL_NET_ERROR_COULDNT_RESOLVE_HOST = 0;
 
 static int _ecore_con_init_count = 0;
 int _ecore_con_log_dom = -1;
@@ -95,9 +95,9 @@ ecore_con_init(void)
    ecore_con_mempool_init();
    ecore_con_legacy_init();
 
-   EFL_NET_ERROR_COULDNT_RESOLVE_HOST = eina_error_msg_static_register("Couldn't resolve host name");
-
    /* initialize the .eo file errors once to guarantee thread safety */
+
+   EFL_NET_ERROR_COULDNT_RESOLVE_HOST;
 
    EFL_NET_DIALER_ERROR_COULDNT_CONNECT;
    EFL_NET_DIALER_ERROR_COULDNT_RESOLVE_PROXY;

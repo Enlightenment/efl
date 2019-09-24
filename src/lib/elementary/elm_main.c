@@ -405,16 +405,14 @@ _sys_lang_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA
 }
 
 EAPI Eina_Error EFL_UI_THEME_APPLY_ERROR_NONE = 0;
-EAPI Eina_Error EFL_UI_THEME_APPLY_ERROR_DEFAULT = 0;
-EAPI Eina_Error EFL_UI_THEME_APPLY_ERROR_GENERIC = 0;
 
 static void
 _efl_ui_theme_apply_error_init(void)
 {
    if (EFL_UI_THEME_APPLY_ERROR_DEFAULT) return;
    /* NONE should always be 0 */
-   EFL_UI_THEME_APPLY_ERROR_DEFAULT = eina_error_msg_static_register("Fallback to default style was enabled for this widget");
-   EFL_UI_THEME_APPLY_ERROR_GENERIC = eina_error_msg_static_register("An error occurred and no theme could be set for this widget");
+   EFL_UI_THEME_APPLY_ERROR_DEFAULT;
+   EFL_UI_THEME_APPLY_ERROR_GENERIC;
 }
 
 // This is necessary to keep backward compatibility

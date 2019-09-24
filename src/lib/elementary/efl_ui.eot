@@ -1,11 +1,16 @@
 /* Efl.Ui enum and struct types */
 import eina_types;
 
-var Efl.Ui.Theme.Apply_Error.NONE: Eina.Error; [[Successfully applied the requested style from the current theme.]]
-var Efl.Ui.Theme.Apply_Error.DEFAULT: Eina.Error; [[Successfully applied the default style. The widget may
-                                                    look different from the rest of the UI if a custom theme
-                                                    is in use, but it should be usable.]]
-var Efl.Ui.Theme.Apply_Error.GENERIC: Eina.Error; [[Failed to apply theme. The widget may become unusable.]]
+/* FIXME: find a better way to express this */
+error @extern Efl.Ui.Theme.Apply_Error.NONE = "Succcess"; [[Successfully applied the requested style from the current theme.]]
+
+error Efl.Ui.Theme.Apply_Error.DEFAULT = "Fallback to default style was enabled for this widget"; [[
+   Successfully applied the default style. The widget may look different from
+   the rest of the UI if a custom theme is in use, but it should be usable.
+]]
+error Efl.Ui.Theme.Apply_Error.GENERIC = "An error occurred and no theme could be set for this widget"; [[
+   Failed to apply theme. The widget may become unusable.
+]]
 
 enum Efl.Ui.Focus.Direction
 {

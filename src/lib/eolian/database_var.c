@@ -33,6 +33,7 @@ database_var_constant_add(Eolian_Unit *unit, Eolian_Variable *var)
    EOLIAN_OBJECT_ADD(unit, var->base.name, var, constants);
    eina_hash_set(unit->state->staging.constants_f, var->base.file, eina_list_append
                  ((Eina_List*)eina_hash_find(unit->state->staging.constants_f, var->base.file), var));
+   database_object_add(unit, &var->base);
 }
 
 void

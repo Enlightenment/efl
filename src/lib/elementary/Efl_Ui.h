@@ -137,6 +137,9 @@ extern "C" {
 
 extern EAPI double _efl_startup_time;
 
+/** Successfully applied the requested style from the current theme. */
+extern EAPI Eina_Error EFL_UI_THEME_APPLY_ERROR_NONE;
+
 // EO types. Defined for legacy-only builds as legacy uses typedef of EO types.
 #include "efl_ui.eot.h"
 #include "efl_ui_selection_types.eot.h"
