@@ -31,6 +31,8 @@
 #include "elm_gengrid_eo.h"
 #include "elm_widget_gengrid.h"
 
+#include "efl_ui.eot.c"
+
 #define SEMI_BROKEN_QUICKLAUNCH 1
 
 #ifdef __CYGWIN__
