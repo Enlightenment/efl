@@ -2,12 +2,6 @@
 
 const Foo: int = 5; [[doc for constant]]
 
-var Bar: float = 10.3f; [[doc for global]]
-
-var Baz: long; [[in header but not in source]]
-
-var @extern Bah: double; // not generated
-
 class Class_Simple {
    [[Class Desc Simple]]
    c_prefix: efl_canvas_object_simple;

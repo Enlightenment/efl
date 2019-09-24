@@ -795,36 +795,6 @@ EFL_START_TEST(eolian_var)
    fail_if(v.type != EOLIAN_EXPR_INT);
    fail_if(v.value.i != 5);
 
-   /* regular global */
-   fail_if(!(var = eolian_unit_global_by_name_get(unit, "Bar")));
-   fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_GLOBAL);
-   fail_if(eolian_variable_is_extern(var));
-   fail_if(!(type = eolian_variable_base_type_get(var)));
-   fail_if(!(name = eolian_type_short_name_get(type)));
-   fail_if(strcmp(name, "float"));
-   fail_if(!(exp = eolian_variable_value_get(var)));
-   v = eolian_expression_eval(exp, EOLIAN_MASK_ALL);
-   fail_if(v.type != EOLIAN_EXPR_FLOAT);
-   fail_if(((int)v.value.f) != 10);
-
-   /* no-value global */
-   fail_if(!(var = eolian_unit_global_by_name_get(unit, "Baz")));
-   fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_GLOBAL);
-   fail_if(eolian_variable_is_extern(var));
-   fail_if(!(type = eolian_variable_base_type_get(var)));
-   fail_if(!(name = eolian_type_short_name_get(type)));
-   fail_if(strcmp(name, "long"));
-   fail_if(eolian_variable_value_get(var));
-
-   /* extern global  */
-   fail_if(!(var = eolian_unit_global_by_name_get(unit, "Bah")));
-   fail_if(eolian_variable_type_get(var) != EOLIAN_VAR_GLOBAL);
-   fail_if(!eolian_variable_is_extern(var));
-   fail_if(!(type = eolian_variable_base_type_get(var)));
-   fail_if(!(name = eolian_type_short_name_get(type)));
-   fail_if(strcmp(name, "double"));
-   fail_if(eolian_variable_value_get(var));
-
    eolian_state_free(eos);
 }
 EFL_END_TEST
@@ -1210,7 +1180,7 @@ EFL_START_TEST(eolian_docs)
    fail_if(strcmp(eolian_documentation_since_get(doc),
                   "2.0"));
 
-   fail_if(!(var = eolian_unit_global_by_name_get(unit, "pants")));
+   fail_if(!(var = eolian_unit_constant_by_name_get(unit, "pants")));
    fail_if(!(doc = eolian_variable_documentation_get(var)));
    fail_if(strcmp(eolian_documentation_summary_get(doc),
                   "Docs for var."));
