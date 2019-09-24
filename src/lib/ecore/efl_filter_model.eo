@@ -10,12 +10,13 @@ function @beta EflFilterModel {
 
 class @beta Efl.Filter_Model extends Efl.Composite_Model
 {
-   [[Efl model designed to filter its children.]]
+   [[Filtering data that @Efl.Model provides is the main feature of this class.
+     This class provides a filter function so only children that match it are returned.]]
    methods {
       filter_set {
          [[Set a filter function that will catch children from the composited model.]]
          params {
-            filter: EflFilterModel; [[Filter callback]]
+            filter: EflFilterModel; [[Filter callback.]]
          }
       }
    }
