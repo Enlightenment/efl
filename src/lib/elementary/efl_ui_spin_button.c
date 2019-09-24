@@ -542,13 +542,13 @@ _access_increment_decrement_info_say(Evas_Object *obj,
    if (is_incremented)
      {
         elm_object_signal_emit
-           (sd->inc_button, "efl,action,anim,activate", "efl");
+           (sd->inc_button, "efl,anim,activate", "efl");
         eina_strbuf_append(buf, E_("incremented"));
      }
    else
      {
         elm_object_signal_emit
-           (sd->dec_button, "efl,action,anim,activate", "efl");
+           (sd->dec_button, "efl,anim,activate", "efl");
         eina_strbuf_append(buf, E_("decremented"));
      }
 

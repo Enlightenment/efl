@@ -311,7 +311,7 @@ group { "efl/spin_button/horizontal/inc_button";
          action: SIGNAL_EMIT "efl,action,click" "";
       }
       program { name: "access_pressed";
-         signal: "efl,action,anim,activate";
+         signal: "efl,anim,activate";
          source: "efl";
          action: STATE_SET "pressed" 0.0;
          target: "arrow.image";
