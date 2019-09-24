@@ -392,8 +392,11 @@ _write_source(const Eolian_State *eos, const char *ofname,
    const Eolian_Class *cl = eolian_state_class_by_file_get(eos, ifname);
    eo_gen_types_source_gen(eolian_state_objects_by_file_get(eos, ifname), buf);
    eo_gen_source_gen(cl, buf);
-   if (cl || (eot && eina_strbuf_length_get(buf)))
+   if (cl || eot)
      {
+        /* always have at least a stub in order to allow unconditional generation */
+        if (!eina_strbuf_length_get(buf))
+          eina_strbuf_append(buf, "/* Nothing to implement. */\n");
         if (!_write_file(ofname, buf))
           goto done;
         ret = EINA_TRUE;
