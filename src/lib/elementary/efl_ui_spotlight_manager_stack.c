@@ -66,7 +66,7 @@ _running_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    EINA_SAFETY_ON_NULL_RETURN(pd);
    //calculate absolut position, multiply pos with 2.0 because duration is only 0.5)
-   absolut_position = pd->from + (pd->to - pd->from)*(efl_player_pos_get(pd->show)*2.0);
+   absolut_position = pd->from + (pd->to - pd->from)*(efl_player_playback_position_get(pd->show)*2.0);
    efl_event_callback_call(data, EFL_UI_SPOTLIGHT_MANAGER_EVENT_POS_UPDATE, &absolut_position);
 }
 

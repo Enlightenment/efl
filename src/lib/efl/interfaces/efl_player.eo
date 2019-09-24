@@ -24,7 +24,7 @@ interface @beta Efl.Player
                 play: bool; [[$true if playing, $false otherwise.]]
            }
         }
-        @property pos {
+        @property playback_position {
            [[Position in the media file.
 
              This property sets the current position of the media file

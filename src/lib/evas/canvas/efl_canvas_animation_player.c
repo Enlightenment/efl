@@ -326,7 +326,7 @@ _efl_canvas_animation_player_efl_playable_playable_get(const Eo *eo_obj,
 }
 
 EOLIAN static double
-_efl_canvas_animation_player_efl_player_pos_get(const Eo *eo_obj,
+_efl_canvas_animation_player_efl_player_playback_position_get(const Eo *eo_obj,
                                               Efl_Canvas_Animation_Player_Data *pd EINA_UNUSED)
 {
    //TODO: this is not correct
@@ -337,7 +337,7 @@ _efl_canvas_animation_player_efl_player_pos_get(const Eo *eo_obj,
 }
 
 EOLIAN static void
-_efl_canvas_animation_player_efl_player_pos_set(Eo *eo_obj,
+_efl_canvas_animation_player_efl_player_playback_position_set(Eo *eo_obj,
                                               Efl_Canvas_Animation_Player_Data *pd EINA_UNUSED,
                                               double sec)
 {
