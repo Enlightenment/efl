@@ -164,8 +164,4 @@ interface @beta Efl.Gfx.Image_Load_Controller
          }
       }
    }
-   events {
-      load,done: void; [[Emitted after the image has been loaded.]]
-      load,error: Eina.Error; [[Emitted if an error happened during image loading.]]
-   }
 }
