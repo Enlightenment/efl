@@ -130,7 +130,7 @@ group { "efl/border"; data.item: "version" "123";
             rel.to: "efl.menu";
          }
       }
-      swallow { "efl.menu";
+      swallow { "efl.menu"; required;
          required: 1; // since 1.19
          desc { "default";
             rel.to: "indicator_spacer";
@@ -162,7 +162,7 @@ group { "efl/border"; data.item: "version" "123";
       }
 
       /* application contents */
-      swallow { "efl.client";
+      swallow { "efl.client"; required;
          clip: "client_clip";
          desc { "default";
             rel.to: "client_spacer";
@@ -308,7 +308,7 @@ group { "efl/border"; data.item: "version" "123";
             rel2.relative: 1.2 1.2;
          }
       }
-      swallow {  "efl.icon"; nomouse;
+      swallow {  "efl.icon"; nomouse; required;
          clip_to: "top_clip";
          desc { "default";
             rel1.to: "icon";
@@ -694,7 +694,7 @@ group { "efl/border"; data.item: "version" "123";
             color: 0 0 0 0;
          }
       }
-      swallow { "efl.indicator";
+      swallow { "efl.indicator"; required;
          clip: "bg_clip";
          desc { "default";
             rel.to: "top_clip";
