@@ -301,7 +301,7 @@ group { name: "efl/scroller";
          }
       }
       program {
-         signal: "efl,action,show,vbar"; source: "efl";
+         signal: "efl,vbar,visible,on"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "sb_vbar";
          target: "sb_vbar_show";
@@ -316,7 +316,7 @@ group { name: "efl/scroller";
          target: "arrow2_vbar_indent";
       }
       program {
-         signal: "efl,action,hide,vbar"; source: "efl";
+         signal: "efl,vbar,visible,off"; source: "efl";
          action: STATE_SET "hidden" 0.0;
          target: "sb_vbar";
          target: "sb_vbar_show";
@@ -582,7 +582,7 @@ group { name: "efl/scroller";
          }
       }
       program {
-         signal: "efl,action,show,hbar"; source: "efl";
+         signal: "efl,hbar,visible,on"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "sb_hbar";
          target: "sb_hbar_show";
@@ -597,7 +597,7 @@ group { name: "efl/scroller";
          target: "arrow2_hbar_indent";
       }
       program {
-         signal: "efl,action,hide,hbar"; source: "efl";
+         signal: "efl,hbar,visible,off"; source: "efl";
          action: STATE_SET "hidden" 0.0;
          target: "sb_hbar";
          target: "sb_hbar_show";
