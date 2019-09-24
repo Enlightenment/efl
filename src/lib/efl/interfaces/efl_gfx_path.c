@@ -1380,9 +1380,9 @@ _next_command(char *path, char *cmd, double *arr, int *count)
    else 
      {
         if (*cmd == 'm')
-          {
-             *cmd = 'l';
-          }
+          *cmd = 'l';
+        else if (*cmd == 'M')
+          *cmd = 'L';
      }
    if ( *count == 7)
      {
