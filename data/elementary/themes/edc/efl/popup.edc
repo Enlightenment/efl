@@ -32,7 +32,6 @@ group { "efl/popup";
 group { "efl/alert_popup"; data.item: "version" "123";
    images.image: "rounded_square.png" COMP;
    parts {
-      alias: "title" "efl.text.title";
       image { "bg";
          desc { "default";
             min: 100 100;
