@@ -378,20 +378,6 @@ group { name: "efl/scroller";
             action_on_pos_vbar(10);
          }
       }
-      program { name: "loop_set_vbar";
-         signal: "efl,loop_y,set"; source: "efl";
-         script {
-            set_int(loop_y, 1);
-            action_on_pos_vbar(10);
-         }
-      }
-      program { name: "loop_unset_vbar";
-         signal: "efl,loop_y,unset"; source: "efl";
-         script {
-            set_int(loop_y, 0);
-            action_on_pos_vbar(10);
-         }
-      }
 
 // horiz bar /////////////////////////////////////////////////////////////
       part { name: "sb_hbar_show"; type: RECT;
@@ -656,20 +642,6 @@ group { name: "efl/scroller";
       program {
          signal: "efl,action,scroll"; source: "efl";
          script {
-            action_on_pos_hbar(10);
-         }
-      }
-      program { name: "loop_set_hbar";
-         signal: "efl,loop_x,set"; source: "efl";
-         script {
-            set_int(loop_x, 1);
-            action_on_pos_hbar(10);
-         }
-      }
-      program { name: "loop_unset_hbar";
-         signal: "efl,loop_x,unset"; source: "efl";
-         script {
-            set_int(loop_x, 0);
             action_on_pos_hbar(10);
          }
       }
@@ -1166,70 +1138,6 @@ group { name: "efl/scroller";
       program {
          signal: "mouse,up,*"; source: "efl.dragable.hbar";
          action: SIGNAL_EMIT "efl,hbar,unpress" "efl";
-      }
-      program {
-         signal: "efl,action,looping,left"; source: "efl";
-         action: STATE_SET "effect" 0.0;
-         transition: LINEAR 0.3;
-         target: "dim_effect";
-         after: "looping,left,done";
-      }
-      program { name: "looping,left,done";
-         action: SIGNAL_EMIT "efl,looping,left,done" "efl";
-      }
-      program {
-         signal: "efl,action,looping,left,end"; source: "efl";
-         action: STATE_SET "default" 0.0;
-         transition: LINEAR 0.3;
-         target: "dim_effect";
-      }
-      program {
-         signal: "efl,action,looping,right"; source: "efl";
-         action: STATE_SET "effect" 0.0;
-         transition: LINEAR 0.3;
-         target: "dim_effect";
-         after: "looping,right,done";
-      }
-      program { name: "looping,right,done";
-         action: SIGNAL_EMIT "efl,looping,right,done" "efl";
-      }
-      program {
-         signal: "efl,action,looping,right,end"; source: "efl";
-         action: STATE_SET "default" 0.0;
-         transition: LINEAR 0.3;
-         target: "dim_effect";
-      }
-      program {
-         signal: "efl,action,looping,up"; source: "efl";
-         action: STATE_SET "effect" 0.0;
-         transition: LINEAR 0.3;
-         target: "dim_effect";
-         after: "looping,up,done";
-      }
-      program { name: "looping,up,done";
-         action: SIGNAL_EMIT "efl,looping,up,done" "efl";
-      }
-      program {
-         signal: "efl,action,looping,up,end"; source: "efl";
-         action: STATE_SET "default" 0.0;
-         transition: LINEAR 0.3;
-         target: "dim_effect";
-      }
-      program {
-         signal: "efl,action,looping,down"; source: "efl";
-         action: STATE_SET "effect" 0.0;
-         transition: LINEAR 0.3;
-         target: "dim_effect";
-         after: "looping,down,done";
-      }
-      program { name: "looping,down,done";
-         action: SIGNAL_EMIT "efl,looping,down,done" "efl";
-      }
-      program {
-         signal: "efl,action,looping,down,end"; source: "efl";
-         action: STATE_SET "default" 0.0;
-         transition: LINEAR 0.3;
-         target: "dim_effect";
       }
    }
 }
