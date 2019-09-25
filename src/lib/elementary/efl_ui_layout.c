@@ -70,6 +70,13 @@ static const char *_efl_ui_layout_swallow_parts[] = {
    NULL
 };
 
+typedef struct _Deferred_Version_Signal
+{
+   Eina_Stringshare *old_sig;
+   Eina_Stringshare *new_sig;
+   unsigned int version_threshold;
+} Deferred_Version_Signal;
+
 typedef struct _Efl_Ui_Layout_Factory_Tracking Efl_Ui_Layout_Factory_Tracking;
 
 struct _Efl_Ui_Layout_Factory_Tracking
@@ -220,6 +227,19 @@ _efl_ui_layout_subobjs_calc_set(Eo *obj, Eina_Bool set)
    Efl_Ui_Layout_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    EINA_SAFETY_ON_NULL_RETURN(sd);
    sd->calc_subobjs = !!set;
+}
+
+static void
+_defer_version_signal(Efl_Ui_Layout_Data *sd, Eina_Stringshare *old_sig, Eina_Stringshare *new_sig, unsigned int version_threshold)
+{
+   Deferred_Version_Signal dvs;
+   if (!sd->deferred_signals)
+     sd->deferred_signals = eina_inarray_new(sizeof(Deferred_Version_Signal), 5);
+   EINA_SAFETY_ON_NULL_RETURN(sd->deferred_signals);
+   dvs.old_sig = old_sig;
+   dvs.new_sig = new_sig;
+   dvs.version_threshold = version_threshold;
+   eina_inarray_push(sd->deferred_signals, &dvs);
 }
 
 /* common content cases for layout objects: icon and text */
@@ -563,6 +583,21 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
                }
           }
      }
+   if (sd->deferred_signals)
+     {
+        do
+          {
+             Deferred_Version_Signal *dvs = eina_inarray_pop(sd->deferred_signals);
+
+             if (sd->version < dvs->version_threshold)
+               efl_layout_signal_emit(sd->obj, dvs->old_sig, "efl");
+             else
+               efl_layout_signal_emit(sd->obj, dvs->new_sig, "efl");
+             eina_stringshare_del(dvs->old_sig);
+             eina_stringshare_del(dvs->new_sig);
+          } while (eina_inarray_count(sd->deferred_signals));
+        ELM_SAFE_FREE(sd->deferred_signals, eina_inarray_free);
+     }
    if (!version)
      {
         snprintf(buf, sizeof(buf), "%d%d", EFL_VERSION_MAJOR, EFL_VERSION_MINOR);
@@ -903,6 +938,17 @@ _efl_ui_layout_base_efl_canvas_group_group_del(Eo *obj, Efl_Ui_Layout_Data *sd)
    sd->connect.signals = NULL;
    eina_hash_free(sd->connect.factories);
    sd->connect.factories = NULL;
+   if (sd->deferred_signals)
+     {
+        do
+          {
+             Deferred_Version_Signal *dvs = eina_inarray_pop(sd->deferred_signals);
+
+             eina_stringshare_del(dvs->old_sig);
+             eina_stringshare_del(dvs->new_sig);
+          } while (eina_inarray_count(sd->deferred_signals));
+        ELM_SAFE_FREE(sd->deferred_signals, eina_inarray_free);
+     }
 
    /* let's make our Edje object the *last* to be processed, since it
     * may (smart) parent other sub objects here */
