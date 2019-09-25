@@ -276,7 +276,7 @@ _grid_load(Evas_Object *obj,
                        else
                          edje_object_signal_emit
                             (wd->resize_obj,
-                             "efl,state,busy,start", "efl");
+                             "efl,state,busy,started", "efl");
 
                        efl_event_callback_legacy_call
                         (obj, EFL_UI_IMAGE_ZOOMABLE_EVENT_LOAD_DETAIL, NULL);
@@ -294,7 +294,7 @@ _grid_load(Evas_Object *obj,
                        else
                          edje_object_signal_emit
                             (wd->resize_obj,
-                             "efl,state,busy,stop", "efl");
+                             "efl,state,busy,stopped", "efl");
 
                        efl_event_callback_legacy_call
                         (obj, EFL_UI_IMAGE_ZOOMABLE_EVENT_LOADED_DETAIL, NULL);
@@ -498,7 +498,7 @@ _grid_clear(Evas_Object *obj,
                        else
                          edje_object_signal_emit
                             (wd->resize_obj,
-                             "efl,state,busy,stop", "efl");
+                             "efl,state,busy,stopped", "efl");
 
                        efl_event_callback_legacy_call
                          (obj, EFL_UI_IMAGE_ZOOMABLE_EVENT_LOAD_DETAIL, NULL);
@@ -536,7 +536,7 @@ _tile_preloaded_cb(void *data,
                    "elm");
              else
                edje_object_signal_emit
-                  (wd->resize_obj, "efl,state,busy,stop",
+                  (wd->resize_obj, "efl,state,busy,stopped",
                    "efl");
 
              efl_event_callback_legacy_call
@@ -745,7 +745,7 @@ _main_img_preloaded_cb(void *data,
              (wd->resize_obj, "elm,state,busy,stop", "elm");
         else
           edje_object_signal_emit
-             (wd->resize_obj, "efl,state,busy,stop", "efl");
+             (wd->resize_obj, "efl,state,busy,stopped", "efl");
 
         efl_event_callback_legacy_call
           (obj, EFL_UI_IMAGE_ZOOMABLE_EVENT_LOADED_DETAIL, NULL);
@@ -2054,7 +2054,7 @@ _img_proxy_set(Evas_Object *obj, Efl_Ui_Image_Zoomable_Data *sd,
              (wd->resize_obj, "elm,state,busy,start", "elm");
         else
           edje_object_signal_emit
-             (wd->resize_obj, "efl,state,busy,start", "efl");
+             (wd->resize_obj, "efl,state,busy,started", "efl");
         efl_event_callback_legacy_call(obj, EFL_UI_IMAGE_ZOOMABLE_EVENT_LOAD_DETAIL, NULL);
      }
 
@@ -2139,7 +2139,7 @@ _internal_file_set(Eo *obj, Efl_Ui_Image_Zoomable_Data *sd, Evas_Load_Error *ret
              (wd->resize_obj, "elm,state,busy,start", "elm");
         else
           edje_object_signal_emit
-             (wd->resize_obj, "efl,state,busy,start", "efl");
+             (wd->resize_obj, "efl,state,busy,started", "efl");
         efl_event_callback_legacy_call(obj, EFL_UI_IMAGE_ZOOMABLE_EVENT_LOAD_DETAIL, NULL);
      }
 
