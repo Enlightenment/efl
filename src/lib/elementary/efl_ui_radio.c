@@ -170,8 +170,8 @@ _efl_ui_radio_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Radio_Data *sd EINA_UNUS
      }
    else
      {
-        if (efl_ui_selectable_selected_get(obj)) elm_layout_signal_emit(obj, "efl,state,radio,on", "efl");
-        else elm_layout_signal_emit(obj, "efl,state,radio,off", "efl");
+        if (efl_ui_selectable_selected_get(obj)) elm_layout_signal_emit(obj, "efl,state,selected", "efl");
+        else elm_layout_signal_emit(obj, "efl,state,unselected", "efl");
      }
 
    edje_object_message_signal_process(wd->resize_obj);

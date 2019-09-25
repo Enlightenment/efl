@@ -225,12 +225,12 @@ group { "efl/radio";
    programs {
       EFL_UI_CLICKABLE_PART_BIND(event)
       program {
-         signal: "efl,state,radio,on"; source: "efl";
+         signal: "efl,state,selected"; source: "efl";
          action:  STATE_SET "selected" 0.0;
          target: "indicator";
       }
       program {
-         signal: "efl,state,radio,off"; source: "efl";
+         signal: "efl,state,unselected"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target: "indicator";
       }
