@@ -1,7 +1,7 @@
 import efl_gfx_types;
 import eina_types;
 
-enum @beta Efl.Gfx.Image_Content_Hint
+enum Efl.Gfx.Image_Content_Hint
 {
    [[How an image's data is to be treated by EFL, for optimization.]]
    none = 0,    [[No hint on the content (default).]]
@@ -9,7 +9,7 @@ enum @beta Efl.Gfx.Image_Content_Hint
    static = 2   [[The content won't change over time.]]
 }
 
-enum @beta Efl.Gfx.Image_Scale_Hint
+enum Efl.Gfx.Image_Scale_Hint
 {
   /* FIXME: Legacy is in Emile, where it does not belong. */
   [[How an image's data is to be treated by EFL, with regard to scaling cache.]]
@@ -18,7 +18,7 @@ enum @beta Efl.Gfx.Image_Scale_Hint
   static = 2   [[Image will not be re-scaled over time, thus turning scaling cache ON for its data.]]
 }
 
-enum @beta Efl.Gfx.Image_Scale_Method
+enum Efl.Gfx.Image_Scale_Method
 {
    [[Enumeration that defines scaling methods to be used when rendering an image.]]
    none,        [[Use the image's natural size.]]
@@ -58,7 +58,7 @@ struct Efl.Gfx.Image_Stretch_Region
    length: uint; [[Length of the stretchable region in pixels.]]
 }
 
-interface @beta Efl.Gfx.Image
+interface Efl.Gfx.Image
 {
    [[This interface defines a set of common APIs which should be implemented by image objects.
 
