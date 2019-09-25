@@ -84,10 +84,10 @@ class Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
       Efl.Ui.Single_Selectable.last_selected { get; }
       Efl.Ui.Multi_Selectable.selected_items_get;
       Efl.Ui.Multi_Selectable.select_mode {get; set;}
-      Efl.Ui.Multi_Selectable.select_all;
-      Efl.Ui.Multi_Selectable.unselect_all;
-      Efl.Ui.Multi_Selectable.select_range;
-      Efl.Ui.Multi_Selectable.unselect_range;
+      Efl.Ui.Multi_Selectable.all_select;
+      Efl.Ui.Multi_Selectable.all_unselect;
+      Efl.Ui.Multi_Selectable.range_select;
+      Efl.Ui.Multi_Selectable.range_unselect;
       Efl.Ui.Single_Selectable.fallback_selection {get; set;}
    }
 }

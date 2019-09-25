@@ -12,10 +12,10 @@ class @beta Efl.Ui.Select_Model extends Efl.Boolean_Model
       Efl.Ui.Multi_Selectable_Async.selected_iterator_new;
       Efl.Ui.Multi_Selectable_Async.unselected_iterator_new;
       Efl.Ui.Multi_Selectable_Async.select_mode {get; set;}
-      Efl.Ui.Multi_Selectable_Async.select_all;
-      Efl.Ui.Multi_Selectable_Async.unselect_all;
-      Efl.Ui.Multi_Selectable_Async.select_range;
-      Efl.Ui.Multi_Selectable_Async.unselect_range;
+      Efl.Ui.Multi_Selectable_Async.all_select;
+      Efl.Ui.Multi_Selectable_Async.all_unselect;
+      Efl.Ui.Multi_Selectable_Async.range_select;
+      Efl.Ui.Multi_Selectable_Async.range_unselect;
       Efl.Ui.Single_Selectable.fallback_selection {get; set;}
       Efl.Ui.Selectable.selected {get; set;}
    }

@@ -1079,13 +1079,13 @@ _selectable_range_apply(Eina_List *start, Eina_Bool flag)
 }
 
 EOLIAN static void
-_efl_ui_collection_efl_ui_multi_selectable_select_all(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
+_efl_ui_collection_efl_ui_multi_selectable_all_select(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
 {
    _selectable_range_apply(pd->items, EINA_TRUE);
 }
 
 EOLIAN static void
-_efl_ui_collection_efl_ui_multi_selectable_unselect_all(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
+_efl_ui_collection_efl_ui_multi_selectable_all_unselect(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
 {
    _selectable_range_apply(pd->items, EINA_FALSE);
 }
@@ -1125,13 +1125,13 @@ _range_selection_find(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Ui_Selectable *a,
 }
 
 EOLIAN static void
-_efl_ui_collection_efl_ui_multi_selectable_select_range(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Ui_Selectable *a, Efl_Ui_Selectable *b)
+_efl_ui_collection_efl_ui_multi_selectable_range_select(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Ui_Selectable *a, Efl_Ui_Selectable *b)
 {
    _range_selection_find(obj, pd, a, b, EINA_TRUE);
 }
 
 EOLIAN static void
-_efl_ui_collection_efl_ui_multi_selectable_unselect_range(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Ui_Selectable *a, Efl_Ui_Selectable *b)
+_efl_ui_collection_efl_ui_multi_selectable_range_unselect(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Ui_Selectable *a, Efl_Ui_Selectable *b)
 {
    _range_selection_find(obj, pd, a, b, EINA_FALSE);
 }
