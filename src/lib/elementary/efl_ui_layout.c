@@ -545,8 +545,11 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
      {
         const char *version = edje_object_data_get(wd->resize_obj, "version");
         if (!version)
-          ERR("Widget(%p) with type '%s' is not providing a version in its theme!", obj,
-              efl_class_name_get(efl_class_get(obj)));
+          {
+             ERR("Widget(%p) with type '%s' is not providing a version in its theme!", obj,
+                 efl_class_name_get(efl_class_get(obj)));
+             return EFL_UI_THEME_APPLY_ERROR_VERSION;
+          }
         else
           {
              errno = 0;
@@ -556,6 +559,7 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
                   ERR("Widget(%p) with type '%s' is not providing a valid version in its theme!", obj,
                       efl_class_name_get(efl_class_get(obj)));
                   sd->version = 0;
+                  return EFL_UI_THEME_APPLY_ERROR_VERSION;
                }
           }
      }
@@ -575,6 +579,13 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
         if (sd->version < version)
           WRN("Widget(%p) with type '%s' is providing a potentially old version in its theme: found %u, should be %u", obj,
               efl_class_name_get(efl_class_get(obj)), sd->version, version);
+        else if (sd->version > version)
+          {
+             CRI("Widget(%p) with type '%s' is attempting to use a theme that is too new: found %u, should be %u", obj,
+              efl_class_name_get(efl_class_get(obj)), sd->version, version);
+             CRI("\tTheme file: %s\tTheme group: %s", efl_file_get(obj), efl_file_key_get(obj));
+             return EFL_UI_THEME_APPLY_ERROR_VERSION;
+          }
      }
 
    return EFL_UI_THEME_APPLY_ERROR_NONE;

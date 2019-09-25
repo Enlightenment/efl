@@ -11,6 +11,9 @@ error Efl.Ui.Theme.Apply_Error.DEFAULT = "Fallback to default style was enabled 
 error Efl.Ui.Theme.Apply_Error.GENERIC = "An error occurred and no theme could be set for this widget"; [[
    Failed to apply theme. The widget may become unusable.
 ]]
+error Efl.Ui.Theme.Apply_Error.VERSION = "The widget attempted to load a theme that is incompatible with the current EFL version"; [[
+   The theme was applied. The widget may not function or look as expected.
+]]
 
 enum Efl.Ui.Focus.Direction
 {
