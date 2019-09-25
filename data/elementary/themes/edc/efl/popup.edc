@@ -170,7 +170,7 @@ group { "efl/popup/backwall"; data.item: "version" "123";
       }
       program {
          signal: "mouse,clicked,1"; source: "block";
-         action: SIGNAL_EMIT "efl,action,clicked" "efl";
+         action: SIGNAL_EMIT "efl,action,click" "efl";
       }
    }
 }
