@@ -1550,9 +1550,9 @@ _efl_ui_image_zoomable_bar_show_cb(void *data, const Efl_Event *event)
    else
      {
         if (type == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
-          edje_object_signal_emit(wd->resize_obj, "efl,hbar,visible,on", "efl");
+          edje_object_signal_emit(wd->resize_obj, "efl,horizontal_bar,visible,on", "efl");
         else if (type == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
-          edje_object_signal_emit(wd->resize_obj, "efl,vbar,visible,on", "efl");
+          edje_object_signal_emit(wd->resize_obj, "efl,vertical_bar,visible,on", "efl");
      }
 }
 
@@ -1573,9 +1573,9 @@ _efl_ui_image_zoomable_bar_hide_cb(void *data, const Efl_Event *event)
    else
      {
         if (type == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
-          edje_object_signal_emit(wd->resize_obj, "efl,hbar,visible,off", "efl");
+          edje_object_signal_emit(wd->resize_obj, "efl,horizontal_bar,visible,off", "efl");
         else if (type == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
-          edje_object_signal_emit(wd->resize_obj, "efl,vbar,visible,off", "efl");
+          edje_object_signal_emit(wd->resize_obj, "efl,vertical_bar,visible,off", "efl");
      }
 }
 

@@ -227,9 +227,9 @@ _scroll_connector_bar_show_cb(void *data, const Efl_Event *event)
    Efl_Ui_Layout_Orientation type = *(Efl_Ui_Layout_Orientation *)(event->info);
 
    if (type == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
-     efl_layout_signal_emit(wd->resize_obj, "efl,hbar,visible,on", "efl");
+     efl_layout_signal_emit(wd->resize_obj, "efl,horizontal_bar,visible,on", "efl");
    else if (type == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
-     efl_layout_signal_emit(wd->resize_obj, "efl,vbar,visible,on", "efl");
+     efl_layout_signal_emit(wd->resize_obj, "efl,vertical_bar,visible,on", "efl");
 }
 
 static void
@@ -240,9 +240,9 @@ _scroll_connector_bar_hide_cb(void *data, const Efl_Event *event)
    Efl_Ui_Layout_Orientation type = *(Efl_Ui_Layout_Orientation *)(event->info);
 
    if (type == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
-     efl_layout_signal_emit(wd->resize_obj, "efl,hbar,visible,off", "efl");
+     efl_layout_signal_emit(wd->resize_obj, "efl,horizontal_bar,visible,off", "efl");
    else if (type == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
-     efl_layout_signal_emit(wd->resize_obj, "efl,vbar,visible,off", "efl");
+     efl_layout_signal_emit(wd->resize_obj, "efl,vertical_bar,visible,off", "efl");
 }
 
 void
