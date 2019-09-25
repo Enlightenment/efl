@@ -244,23 +244,30 @@ _defer_version_signal(Efl_Ui_Layout_Data *sd, Eina_Stringshare *old_sig, Eina_St
 
 /* common content cases for layout objects: icon and text */
 static inline void
-_signals_emit(Eo *obj,
+_signals_emit(Efl_Ui_Layout_Data *sd,
               const char *type,
               Eina_Bool set)
 {
    char buf[1024];
 
-   if (elm_widget_is_legacy(obj))
+   if (elm_widget_is_legacy(sd->obj))
      {
         snprintf(buf, sizeof(buf), "elm,state,%s,%s", type,
                  set ? "visible" : "hidden");
-        efl_layout_signal_emit(obj, buf, "elm");
+        efl_layout_signal_emit(sd->obj, buf, "elm");
      }
    else
      {
-        snprintf(buf, sizeof(buf), "efl,state,%s,%s", type,
-                 set ? "set" : "unset");
-        efl_layout_signal_emit(obj, buf, "efl");
+        char buf2[1024];
+        char *use = buf;
+        if (sd->version >= 123) // efl,state,(content|text),(set|unset) -> efl,(content|text),(set|unset)
+          use = buf2;
+        snprintf(buf, sizeof(buf), "efl,state,%s,%s", type, set ? "set" : "unset");
+        snprintf(buf2, sizeof(buf2), "efl,%s,%s", type, set ? "set" : "unset");
+        if (efl_finalized_get(sd->obj))
+          efl_layout_signal_emit(sd->obj, use, "efl");
+        else
+          _defer_version_signal(sd, eina_stringshare_add(buf), eina_stringshare_add(buf2), 123);
      }
 }
 
@@ -311,7 +318,7 @@ _icon_signal_emit(Efl_Ui_Layout_Data *sd,
           type = sub_d->part;
      }
 
-   _signals_emit(sd->obj, type, visible);
+   _signals_emit(sd, type, visible);
 
    /* themes might need immediate action here */
    efl_layout_signal_process(sd->obj, EINA_FALSE);
@@ -359,7 +366,7 @@ _text_signal_emit(Efl_Ui_Layout_Data *sd,
           type = sub_d->part;
      }
 
-   _signals_emit(sd->obj, type, visible);
+   _signals_emit(sd, type, visible);
 
    /* TODO: is this right? It was like that, but IMO it should be removed: */
 

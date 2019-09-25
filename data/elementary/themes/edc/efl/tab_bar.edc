@@ -484,7 +484,7 @@ group { "efl/tab_bar/tab";
          target: "highlight";
       }
       program { name: "st1";
-         signal: "efl,state,text,unset"; source: "efl";
+         signal: "efl,text,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);
@@ -492,7 +492,7 @@ group { "efl/tab_bar/tab";
          }
       }
       program { name: "st2";
-         signal: "efl,state,text,set"; source: "efl";
+         signal: "efl,text,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);
