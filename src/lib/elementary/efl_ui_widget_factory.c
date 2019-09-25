@@ -36,6 +36,8 @@ struct _Efl_Ui_Widget_Factory_Data
 
    Eina_Hash *parts;
 
+   Eina_Stringshare *default_property;
+
    Eina_Stringshare *style;
 };
 
@@ -181,6 +183,9 @@ _efl_ui_widget_factory_releasing(void *data, const Efl_Event *ev)
    efl_key_data_set(ui_view, "efl.ui.widget.factory.size_set", NULL);
    efl_key_data_set(ui_view, "efl.ui.widget.factory.size_check", NULL);
    if (efl_isa(ui_view, EFL_UI_ITEM_CLASS)) efl_ui_item_calc_locked_set(ui_view, EINA_TRUE);
+
+   // Bind default property
+   if (pd->default_property) efl_ui_property_bind(ui_view, NULL, pd->default_property);
 
    // Bind all property before the object is finalize
    it = eina_hash_iterator_data_new(pd->parts);
@@ -403,6 +408,12 @@ _efl_ui_property_bind_part_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSE
      {
         ERR("Trying to bind part property without specifying which part");
         return ENOENT;
+     }
+
+   if (!key)
+     {
+        eina_stringshare_replace(&pd->pd->default_property, property);
+        return;
      }
 
    if (!pd->pd->parts)
