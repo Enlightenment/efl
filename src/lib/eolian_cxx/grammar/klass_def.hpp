@@ -1094,9 +1094,9 @@ struct constant_def
   constant_def(Eolian_Constant const* constant, Eolian_Unit const* unit)
         : name(::eolian_constant_short_name_get(constant))
         , full_name(::eolian_constant_name_get(constant))
-        , base_type(::eolian_constant_base_type_get(constant)
+        , base_type(::eolian_constant_type_get(constant)
                     , unit
-                    , ::eolian_type_c_type_get(eolian_constant_base_type_get(constant))
+                    , ::eolian_type_c_type_get(eolian_constant_type_get(constant))
                     , value_ownership::unmoved
                     , is_by::value)
         , documentation(::eolian_constant_documentation_get(constant))

@@ -645,8 +645,8 @@ class Class(Object):
         return ret
 
     @cached_property
-    def eo_prefix(self):
-        return _str_to_py(lib.eolian_class_eo_prefix_get(self))
+    def c_prefix(self):
+        return _str_to_py(lib.eolian_class_c_prefix_get(self))
 
     @cached_property
     def event_prefix(self):
@@ -1063,10 +1063,6 @@ class Type(Object):
         return Class(c_cls) if c_cls else None
 
     @cached_property
-    def is_owned(self):
-        return bool(lib.eolian_type_is_owned(self))
-
-    @cached_property
     def is_const(self):
         return bool(lib.eolian_type_is_const(self))
 
@@ -1231,8 +1227,8 @@ class Constant(Object):
         return Expression(c_expr) if c_expr else None
 
     @cached_property
-    def base_type(self):
-        c_type = lib.eolian_constant_base_type_get(self)
+    def type(self):
+        c_type = lib.eolian_constant_type_get(self)
         return Type(c_type) if c_type else None
 
     @cached_property

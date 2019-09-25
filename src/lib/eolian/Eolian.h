@@ -34,7 +34,7 @@ extern "C" {
 #include <Eina.h>
 
 /**
- * @page eolian_main Eolian (BETA)
+ * @page eolian_main Eolian
  *
  * @date 2014 (created)
  *
@@ -81,8 +81,6 @@ extern "C" {
  * @addtogroup Eolian
  * @{
  */
-
-#ifdef EFL_BETA_API_SUPPORT
 
 /* The maximum format version supported by this version of Eolian */
 #define EOLIAN_FILE_FORMAT_VERSION 1
@@ -284,7 +282,9 @@ typedef enum
    EOLIAN_TYPE_REGULAR,
    EOLIAN_TYPE_CLASS,
    EOLIAN_TYPE_ERROR,
+#ifdef EFL_BETA_API_SUPPORT
    EOLIAN_TYPE_UNDEFINED
+#endif
 } Eolian_Type_Type;
 
 typedef enum
@@ -336,7 +336,7 @@ typedef enum
    EOLIAN_TYPE_BUILTIN_ARRAY,
    EOLIAN_TYPE_BUILTIN_FUTURE,
    EOLIAN_TYPE_BUILTIN_ITERATOR,
-   EOLIAN_TYPE_BUILTIN_HASH,
+   EOLIAN_TYPE_BUILTIN_HASH, /* FIXME: beta */
    EOLIAN_TYPE_BUILTIN_LIST,
 
    EOLIAN_TYPE_BUILTIN_ANY_VALUE,
@@ -348,7 +348,9 @@ typedef enum
    EOLIAN_TYPE_BUILTIN_STRINGSHARE,
    EOLIAN_TYPE_BUILTIN_STRBUF,
 
+#ifdef EOLIAN_BETA_API_SUPPORT
    EOLIAN_TYPE_BUILTIN_VOID_PTR
+#endif
 } Eolian_Type_Builtin_Type;
 
 typedef enum
@@ -1498,14 +1500,14 @@ EAPI Eolian_Class_Type eolian_class_type_get(const Eolian_Class *klass);
 EAPI const Eolian_Documentation *eolian_class_documentation_get(const Eolian_Class *klass);
 
 /*
- * @brief Returns the eo prefix of a class
+ * @brief Returns the C function prefix of a class
  *
  * @param[in] klass the class
  * @return the eo prefix
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare* eolian_class_eo_prefix_get(const Eolian_Class *klass);
+EAPI Eina_Stringshare* eolian_class_c_prefix_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the event prefix of a class
@@ -1700,16 +1702,6 @@ eolian_function_is_beta(const Eolian_Function *function_id)
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_function_is_constructor(const Eolian_Function *function_id, const Eolian_Class *klass);
-
-/*
- * @brief Get whether a function is a function pointer.
- *
- * @param[in] function_id Id of the function
- * @return EINA_TRUE and EINA_FALSE respectively
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_function_is_function_pointer(const Eolian_Function *function_id);
 
 /*
  * @brief Returns an iterator to the parameter handles for a method/ctor/dtor.
@@ -2613,17 +2605,6 @@ EAPI const Eolian_Documentation *eolian_typedecl_enum_field_documentation_get(co
 EAPI const Eolian_Expression *eolian_typedecl_enum_field_value_get(const Eolian_Enum_Type_Field *fl, Eina_Bool force);
 
 /*
- * @brief Get the legacy prefix of enum field names. When not specified,
- * enum name is used.
- *
- * @param[in] tp the type declaration.
- * @return the legacy prefix or NULL.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_typedecl_enum_legacy_prefix_get(const Eolian_Typedecl *tp);
-
-/*
  * @brief Get the documentation of a struct/alias type.
  *
  * @param[in] tp the type declaration.
@@ -2867,18 +2848,6 @@ EAPI const Eolian_Class *eolian_type_class_get(const Eolian_Type *tp);
 EAPI const Eolian_Error *eolian_type_error_get(const Eolian_Type *tp);
 
 /*
- * @brief Get whether the given type is owned.
- *
- * This is true when a parameter, return or whatever is marked as @owned.
- *
- * @param[in] tp the type.
- * @return EINA_TRUE when the type is marked owned, EINA_FALSE otherwise.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_type_is_owned(const Eolian_Type *tp);
-
-/*
  * @brief Get whether the given type is moved with its parent type.
  *
  * This is only used for inner types of complex types, i.e. the types
@@ -2902,16 +2871,6 @@ EAPI Eina_Bool eolian_type_is_move(const Eolian_Type *tp);
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_type_is_const(const Eolian_Type *tp);
-
-/*
- * @brief Get whether the given type is a reference.
- *
- * @param[in] tp the type.
- * @return EINA_TRUE when the type is marked ref, EINA_FALSE otherwise.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_type_is_ptr(const Eolian_Type *tp);
 
 /*
  * @brief Get the full C type name of the given type.
@@ -3133,7 +3092,7 @@ EAPI const Eolian_Documentation *eolian_constant_documentation_get(const Eolian_
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Type *eolian_constant_base_type_get(const Eolian_Constant *var);
+EAPI const Eolian_Type *eolian_constant_type_get(const Eolian_Constant *var);
 
 /*
  * @brief Get the value of a constant.
@@ -3439,7 +3398,30 @@ EAPI char *eolian_doc_token_text_get(const Eolian_Doc_Token *tok);
  */
 EAPI Eolian_Object_Type eolian_doc_token_ref_resolve(const Eolian_Doc_Token *tok, const Eolian_State *state, const Eolian_Object **data, const Eolian_Object **data2);
 
-#endif
+#ifdef EFL_BETA_API_SUPPORT
+
+/*
+ * @brief Get the legacy prefix of enum field names. When not specified,
+ * enum name is used. (BETA)
+ *
+ * @param[in] tp the type declaration.
+ * @return the legacy prefix or NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_typedecl_enum_legacy_prefix_get(const Eolian_Typedecl *tp);
+
+/*
+ * @brief Get whether the given type is a reference.
+ *
+ * @param[in] tp the type.
+ * @return EINA_TRUE when the type is marked ref, EINA_FALSE otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_type_is_ptr(const Eolian_Type *tp);
+
+#endif /* EFL_BETA_API_SUPPORT */
 
 /**
  * @}

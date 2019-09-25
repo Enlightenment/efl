@@ -554,7 +554,7 @@ EFL_START_TEST(eolian_simple_parsing)
    fail_if(eolian_class_type_get(class) != EOLIAN_CLASS_REGULAR);
    fail_if(eolian_class_parent_get(class) != NULL);
    fail_if(eolian_class_extensions_get(class) != NULL);
-   fail_if(strcmp(eolian_class_eo_prefix_get(class), "efl_canvas_object_simple"));
+   fail_if(strcmp(eolian_class_c_prefix_get(class), "efl_canvas_object_simple"));
    fail_if(strcmp(eolian_class_data_type_get(class), "Evas_Simple_Data"));
    Eina_Stringshare *dt = eolian_class_c_data_type_get(class);
    fail_if(strcmp(dt, "Evas_Simple_Data"));
@@ -786,7 +786,7 @@ EFL_START_TEST(eolian_var)
    /* regular constant */
    fail_if(!(var = eolian_unit_constant_by_name_get(unit, "Foo")));
    fail_if(eolian_constant_is_extern(var));
-   fail_if(!(type = eolian_constant_base_type_get(var)));
+   fail_if(!(type = eolian_constant_type_get(var)));
    fail_if(!(name = eolian_type_short_name_get(type)));
    fail_if(strcmp(name, "int"));
    fail_if(!(exp = eolian_constant_value_get(var)));
@@ -913,7 +913,7 @@ EFL_START_TEST(eolian_enum)
    eina_stringshare_del(cname);
 
    fail_if(!(var = eolian_unit_constant_by_name_get(unit, "Bah")));
-   fail_if(!(type = eolian_constant_base_type_get(var)));
+   fail_if(!(type = eolian_constant_type_get(var)));
    fail_if(!(name = eolian_type_short_name_get(type)));
    fail_if(strcmp(name, "Baz"));
    fail_if(!(exp = eolian_constant_value_get(var)));

@@ -339,7 +339,7 @@ ffi.cdef [[
 
     Eolian_Class_Type eolian_class_type_get(const Eolian_Class *klass);
     const Eolian_Documentation *eolian_class_documentation_get(const Eolian_Class *klass);
-    const char *eolian_class_eo_prefix_get(const Eolian_Class *klass);
+    const char *eolian_class_c_prefix_get(const Eolian_Class *klass);
     const char *eolian_class_event_prefix_get(const Eolian_Class *klass);
     const char *eolian_class_data_type_get(const Eolian_Class *klass);
     const Eolian_Class *eolian_class_parent_get(const Eolian_Class *klass);
@@ -454,7 +454,7 @@ ffi.cdef [[
     const Eolian_Expression *eolian_expression_unary_expression_get(const Eolian_Expression *expr);
     Eolian_Value_t eolian_expression_value_get(const Eolian_Expression *expr);
     const Eolian_Documentation *eolian_constant_documentation_get(const Eolian_Constant *var);
-    const Eolian_Type *eolian_constant_base_type_get(const Eolian_Constant *var);
+    const Eolian_Type *eolian_constant_type_get(const Eolian_Constant *var);
     const Eolian_Expression *eolian_constant_value_get(const Eolian_Constant *var);
     Eina_Bool eolian_constant_is_extern(const Eolian_Constant *var);
     const char *eolian_documentation_summary_get(const Eolian_Documentation *doc);
@@ -1435,8 +1435,8 @@ M.Class = ffi.metatype("Eolian_Class", {
             return v
         end,
 
-        eo_prefix_get = function(self)
-            local v = eolian.eolian_class_eo_prefix_get(self)
+        c_prefix_get = function(self)
+            local v = eolian.eolian_class_c_prefix_get(self)
             if v == nil then
                 local buf = self:namespaces_get()
                 buf[#buf + 1] = self:short_name_get()
@@ -1448,7 +1448,7 @@ M.Class = ffi.metatype("Eolian_Class", {
         event_prefix_get = function(self)
             local v = eolian.eolian_class_event_prefix_get(self)
             if v == nil then
-                return self:eo_prefix_get()
+                return self:c_prefix_get()
             end
             return ffi.string(v)
         end,
@@ -1713,8 +1713,8 @@ M.Constant = ffi.metatype("Eolian_Constant", {
             return v
         end,
 
-        base_type_get = function(self)
-            local v = eolian.eolian_constant_base_type_get(self)
+        type_get = function(self)
+            local v = eolian.eolian_constant_type_get(self)
             if v == nil then return nil end
             return v
         end,

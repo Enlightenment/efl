@@ -333,7 +333,7 @@ class TestEolianClass(unittest.TestCase):
         self.assertEqual(list(cls.namespaces), ['Efl'])
         self.assertEqual(cls.type, eolian.Eolian_Class_Type.REGULAR)
         self.assertIsInstance(cls.documentation, eolian.Documentation)
-        self.assertIsNone(cls.eo_prefix)  # TODO fin a class with a value
+        self.assertIsNone(cls.c_prefix)  # TODO fin a class with a value
         self.assertIsNone(cls.event_prefix)  # TODO same as above
         self.assertIsNone(cls.data_type)  # TODO same as above
         self.assertEqual(cls.parent.name, 'Efl.Loop_Consumer')
@@ -475,7 +475,7 @@ class TestEolianConstant(unittest.TestCase):
         self.assertFalse(var.is_extern)
         self.assertEqual(list(var.namespaces), ['Efl','Gfx'])
         self.assertIsInstance(var.documentation, eolian.Documentation)
-        self.assertIsInstance(var.base_type, eolian.Type)
+        self.assertIsInstance(var.type, eolian.Type)
         self.assertIsInstance(var.value, eolian.Expression)
         self.assertEqual(float(var.value.serialize), +1.0)
 
@@ -553,7 +553,6 @@ class TestEolianType(unittest.TestCase):
         self.assertEqual(t.file, 'efl_loop_timer.eo') # TODO is this correct ?
         self.assertIsNone(t.base_type)  # TODO find a better test
         self.assertIsNone(t.next_type)  # TODO find a better test
-        self.assertFalse(t.is_owned)
         self.assertFalse(t.is_const)
         self.assertFalse(t.is_ptr)
         self.assertEqual(list(t.namespaces), [])

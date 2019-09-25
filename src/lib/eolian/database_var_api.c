@@ -13,7 +13,7 @@ eolian_constant_documentation_get(const Eolian_Constant *var)
 }
 
 EAPI const Eolian_Type *
-eolian_constant_base_type_get(const Eolian_Constant *var)
+eolian_constant_type_get(const Eolian_Constant *var)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(var, NULL);
    return var->base_type;
