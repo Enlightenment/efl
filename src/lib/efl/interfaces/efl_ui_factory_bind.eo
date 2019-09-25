@@ -14,6 +14,7 @@ interface @beta Efl.Ui.Factory_Bind
             key: string; [[Key string for bind model property data]]
             factory: Efl.Ui.Factory; [[@Efl.Ui.Factory for create and bind model property data]]
          }
+         return: Eina.Error; [[0 when it succeed, an error code otherwise.]]
       }
    }
 }

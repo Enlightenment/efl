@@ -88,7 +88,7 @@ _efl_ui_layout_factory_efl_object_destructor(Eo *obj, Efl_Ui_Layout_Factory_Data
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
-EOLIAN static void
+EOLIAN static Eina_Error
 _efl_ui_layout_factory_efl_ui_factory_bind_factory_bind(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Factory_Data *pd,
                                                         const char *key, Efl_Ui_Factory *factory)
 {
@@ -99,7 +99,7 @@ _efl_ui_layout_factory_efl_ui_factory_bind_factory_bind(Eo *obj EINA_UNUSED, Efl
    if (factory == NULL)
      {
         eina_hash_del(pd->bind.factories, ss_key, NULL);
-        return;
+        return EINA_ERROR_NO_ERROR;
      }
 
    f_old = eina_hash_set(pd->bind.factories, ss_key, efl_ref(factory));
@@ -108,6 +108,8 @@ _efl_ui_layout_factory_efl_ui_factory_bind_factory_bind(Eo *obj EINA_UNUSED, Efl
         efl_unref(f_old);
         eina_stringshare_del(ss_key);
      }
+
+   return EINA_ERROR_NO_ERROR;
 }
 
 EOLIAN static Eina_Error

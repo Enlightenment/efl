@@ -2527,16 +2527,16 @@ _efl_ui_layout_base_efl_ui_property_bind_property_bind(Eo *obj, Efl_Ui_Layout_Da
    return 0;
 }
 
-EOLIAN static void
+EOLIAN static Eina_Error
 _efl_ui_layout_base_efl_ui_factory_bind_factory_bind(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Data *pd,
                                                 const char *key, Efl_Ui_Factory *factory)
 {
-   EINA_SAFETY_ON_NULL_RETURN(key);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(key, EFL_PROPERTY_ERROR_INVALID_KEY);
    Efl_Ui_Layout_Factory_Tracking *tracking;
    Eina_Stringshare *ss_key;
 
    if (!_elm_layout_part_aliasing_eval(obj, &key, EINA_TRUE))
-     return;
+     return EFL_PROPERTY_ERROR_INVALID_KEY;
 
    // Check if there is a model and register it
    _efl_ui_layout_base_model_watch(obj, pd);
@@ -2566,7 +2566,7 @@ _efl_ui_layout_base_efl_ui_factory_bind_factory_bind(Eo *obj EINA_UNUSED, Efl_Ui
    else
      {
         tracking = calloc(1, sizeof (Efl_Ui_Layout_Factory_Tracking));
-        if (!tracking) return ;
+        if (!tracking) return ENOMEM;
 
         tracking->key = ss_key;
 
@@ -2577,6 +2577,8 @@ _efl_ui_layout_base_efl_ui_factory_bind_factory_bind(Eo *obj EINA_UNUSED, Efl_Ui
    tracking->factory = efl_ref(factory);
 
    _efl_ui_layout_view_model_content_update(pd, tracking, ss_key);
+
+   return EINA_ERROR_NO_ERROR;
 }
 
 EOLIAN void

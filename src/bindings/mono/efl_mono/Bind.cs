@@ -112,8 +112,7 @@ public class BindableFactoryPart<T>
     /// <summary>Binds the given factory to this part.</summary>
     public Eina.Error BindFactory(Efl.Ui.IFactory factory)
     {
-        this.Binder.BindFactory(this.PartName, factory);
-        return Eina.Error.NO_ERROR;
+        return this.Binder.BindFactory(this.PartName, factory);
     }
 }
 

@@ -413,7 +413,7 @@ _efl_ui_property_bind_part_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSE
    if (!key)
      {
         eina_stringshare_replace(&pd->pd->default_property, property);
-        return;
+        return 0;
      }
 
    if (!pd->pd->parts)
@@ -441,6 +441,16 @@ _efl_ui_property_bind_part_efl_ui_property_bind_property_bind(Eo *obj EINA_UNUSE
    efl_event_callback_call(obj, EFL_UI_PROPERTY_BIND_EVENT_PROPERTY_BOUND, (void*) key);
 
    return 0;
+}
+
+static Eina_Error
+_efl_ui_widget_factory_efl_ui_factory_bind_factory_bind(Eo *obj EINA_UNUSED,
+                                                        Efl_Ui_Widget_Factory_Data *pd EINA_UNUSED,
+                                                        const char *key EINA_UNUSED,
+                                                        Efl_Ui_Factory *factory EINA_UNUSED)
+{
+   ERR("Efl.Ui.Widget_Factory doesn't support efl.ui.factory_bind.\n");
+   return EINA_ERROR_NOT_IMPLEMENTED;
 }
 
 #include "efl_ui_property_bind_part.eo.c"
