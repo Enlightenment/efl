@@ -282,25 +282,25 @@ group { "efl/datepicker/spin_button"; data.item: "version" "123";
    }
    programs {
       program { "entry_active";
-         signal: "efl,state,entry,active";
+         signal: "efl,entry,visible,on";
          source: "efl";
          action: STATE_SET "active";
          target: "efl.entry";
       }
       program { "entry_inactive";
-         signal: "efl,state,entry,inactive";
+         signal: "efl,entry,visible,off";
          source: "efl";
          action: STATE_SET "default";
          target: "efl.entry";
       }
       program { "text_button_active";
-         signal: "efl,state,button,active";
+         signal: "efl,button,visible,on";
          source: "efl";
          action: STATE_SET "default";
          target: "efl.text_button";
       }
       program { "text_button_inactive";
-         signal: "efl,state,button,inactive";
+         signal: "efl,button,visible,off";
          source: "efl";
          action: STATE_SET "inactive";
          target: "efl.text_button";

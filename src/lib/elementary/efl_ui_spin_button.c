@@ -167,8 +167,8 @@ _entry_hide(Evas_Object *obj)
 {
    Efl_Ui_Spin_Button_Data *sd = efl_data_scope_get(obj, MY_CLASS);
 
-   efl_layout_signal_emit(obj, "efl,state,button,active", "efl");
-   efl_layout_signal_emit(obj, "efl,state,entry,inactive", "efl");
+   efl_layout_signal_emit(obj, "efl,button,visible,on", "efl");
+   efl_layout_signal_emit(obj, "efl,entry,visible,off", "efl");
 
    if (sd->entry_visible && !evas_focus_state_get(evas_object_evas_get(obj)))
      sd->entry_reactivate = EINA_TRUE;
@@ -343,7 +343,7 @@ _entry_show_cb(void *data,
    elm_object_focus_set(obj, EINA_TRUE);
    elm_entry_select_all(obj);
    sd->entry_visible = EINA_TRUE;
-   efl_layout_signal_emit(data, "efl,state,button,inactive", "efl");
+   efl_layout_signal_emit(data, "efl,button,visible,off", "efl");
 }
 
 static void
@@ -378,7 +378,7 @@ _toggle_entry(Evas_Object *obj)
         efl_event_callback_add(sd->ent, EFL_UI_FOCUS_OBJECT_EVENT_FOCUS_CHANGED,
                                _entry_focus_changed_cb, obj);
         sd->entry_visible = EINA_TRUE;
-        efl_layout_signal_emit(obj, "efl,state,entry,active", "efl");
+        efl_layout_signal_emit(obj, "efl,entry,visible,on", "efl");
         {
            Eina_List *items = NULL;
 
