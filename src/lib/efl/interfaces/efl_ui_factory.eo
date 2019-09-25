@@ -1,10 +1,10 @@
-struct @beta Efl.Ui.Factory_Item_Created_Event {
+struct Efl.Ui.Factory_Item_Created_Event {
    [[EFL UI Factory event structure provided when an item was just created.]]
    model: Efl.Model; [[The model already set on the new item.]]
    item: Efl.Gfx.Entity; [[The item that was just created.]]
 }
 
-interface @beta Efl.Ui.Factory extends Efl.Ui.Property_Bind, Efl.Ui.Factory_Bind
+interface Efl.Ui.Factory extends Efl.Ui.Property_Bind, Efl.Ui.Factory_Bind
 {
    [[Interface for factory-pattern object creation.
 
