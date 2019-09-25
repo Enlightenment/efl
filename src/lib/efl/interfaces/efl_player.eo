@@ -9,7 +9,7 @@ interface Efl.Player
              This property sets the playback state of the object. Re-setting the current
              playback state has no effect.
 
-             If set to $false, the object's @.playback_progress property is, by default, reset to $0.0. A
+             If set to $false, the object's @.playback_progress property is, by default, reset to $[0.0]. A
              class may alter this behavior, and it will be stated in the documentation for a class
              if such behavior changes should be expected.
 
