@@ -3035,7 +3035,7 @@ _efl_ui_image_zoomable_animate_cb(void *data)
        (sd->img, sd->cur_frame, 0);
 
    if (sd->frame_duration > 0)
-     ecore_timer_interval_set(sd->anim_timer, sd->frame_duration * sd->playback_speed);
+     ecore_timer_interval_set(sd->anim_timer, sd->frame_duration / sd->playback_speed);
 
    return ECORE_CALLBACK_RENEW;
 }
@@ -3065,7 +3065,7 @@ _efl_ui_image_zoomable_animated_set_internal(Eo *obj EINA_UNUSED, Efl_Ui_Image_Z
         evas_object_image_animated_frame_set(sd->img, sd->cur_frame);
         if (!sd->paused)//legacy
           sd->anim_timer = ecore_timer_add
-              (sd->frame_duration * sd->playback_speed, _efl_ui_image_zoomable_animate_cb, obj);
+              (sd->frame_duration / sd->playback_speed, _efl_ui_image_zoomable_animate_cb, obj);
      }
    else
      {
@@ -3092,7 +3092,7 @@ _efl_ui_image_zoomable_animated_paused_set_internal(Eo *obj, Efl_Ui_Image_Zoomab
    if (!paused)
      {
         sd->anim_timer = ecore_timer_add
-            (sd->frame_duration * sd->playback_speed, _efl_ui_image_zoomable_animate_cb, obj);
+            (sd->frame_duration / sd->playback_speed, _efl_ui_image_zoomable_animate_cb, obj);
      }
    else
      {
@@ -3138,7 +3138,7 @@ _efl_ui_image_zoomable_efl_player_playback_speed_set(Eo *obj EINA_UNUSED, Efl_Ui
      efl_player_playback_speed_set(sd->edje, factor);
    else if (sd->anim_timer)
      {
-        ecore_timer_interval_set(sd->anim_timer, sd->frame_duration * sd->playback_speed);
+        ecore_timer_interval_set(sd->anim_timer, sd->frame_duration / sd->playback_speed);
         ecore_timer_reset(sd->anim_timer);
      }
 }
