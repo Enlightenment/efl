@@ -164,7 +164,7 @@ group { name: "efl/focus_highlight/top"; data.item: "version" "123";
          after: "pulse";
       }
       program {
-         signal: "efl,state,anim,stop"; source: "efl";
+         signal: "efl,state,animating,stopped"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "base";
       }

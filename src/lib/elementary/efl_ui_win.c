@@ -1226,7 +1226,7 @@ _elm_win_focus_highlight_simple_setup(Efl_Ui_Win_Data *sd,
    if (elm_widget_is_legacy(sd->obj))
      edje_object_signal_emit(obj, "elm,state,anim,stop", "elm");
    else
-     edje_object_signal_emit(obj, "efl,state,anim,stop", "efl");
+     edje_object_signal_emit(obj, "efl,state,animating,stopped", "efl");
 }
 
 static void
