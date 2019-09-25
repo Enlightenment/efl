@@ -436,13 +436,13 @@ group { "efl/tab_bar/tab";
    programs {
       EFL_UI_CLICKABLE_PART_BIND(event)
       program {
-         signal: "efl,orient,horizontal"; source: "efl";
+         signal: "efl,state,horizontal"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "bend_clip";
       }
       program {
-         signal: "efl,orient,vertical"; source: "efl";
+         signal: "efl,state,vertical"; source: "efl";
          action: STATE_SET "vert" 0.0;
          target: "base";
          target: "bend_clip";
