@@ -320,7 +320,7 @@ group { name: "efl/button"; data.item: "version" "123";
          }
       }
       program { name: "buttonactivate";
-         signal: "efl,anim,activate"; source: "efl";
+         signal: "efl,state,animation,activated"; source: "efl";
          action: STATE_SET "pressed" 0.0;
          target: "base";
          after: "button_unpressed_anim";
@@ -696,7 +696,7 @@ group { name: "efl/button:anchor"; data.item: "version" "123";
          target: "text2";
       }
       program {
-         signal: "efl,anim,activate"; source: "efl";
+         signal: "efl,state,animation,activated"; source: "efl";
          action: STATE_SET "clicked" 0.0;
          target: "bar2";
          target: "text2";

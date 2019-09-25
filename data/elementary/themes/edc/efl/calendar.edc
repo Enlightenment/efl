@@ -647,7 +647,7 @@ group { "efl/calendar"; data.item: "version" "123";
             action: SIGNAL_EMIT "efl,action,click" "";
          }
          program { name: "access_pressed";
-            signal: "efl,action,anim,activate";
+            signal: "efl,state,animation,activated";
             source: "efl";
             action: STATE_SET "pressed" 0.0;
             target: "arrow.image";
