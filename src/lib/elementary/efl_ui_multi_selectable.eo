@@ -17,7 +17,7 @@ interface @beta Efl.Ui.Multi_Selectable extends Efl.Ui.Single_Selectable
             mode: Efl.Ui.Select_Mode; [[Type of selection of children]]
          }
       }
-      selected_items_get {
+      selected_iterator_new {
          [[Get the selected items in a iterator. The iterator sequence will be decided by selection.]]
          return: iterator<Efl.Ui.Selectable> @move @no_unused; [[User has to free the iterator after usage.]]
       }

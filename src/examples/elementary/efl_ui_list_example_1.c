@@ -30,7 +30,7 @@ _list_selected(void *data EINA_UNUSED, const Efl_Event *ev)
   Eo *item = ev->info, *tmp;
   printf("list item [%p:%d] is %s\n", item, efl_ui_item_index_get(item), (efl_ui_selectable_selected_get(item)? "selected" : "unselected"));
 
-  Eina_Iterator *selects = efl_ui_selected_items_get(list);
+  Eina_Iterator *selects = efl_ui_selected_iterator_new(list);
 
   EINA_ITERATOR_FOREACH(selects, tmp)
      printf("selected [%p:%d] ", tmp, efl_ui_item_index_get(tmp));

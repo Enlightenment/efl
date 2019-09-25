@@ -261,7 +261,7 @@ _efl_ui_collection_efl_ui_single_selectable_last_selected_get(const Eo *obj EINA
 }
 
 EOLIAN static Eina_Iterator*
-_efl_ui_collection_efl_ui_multi_selectable_selected_items_get(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
+_efl_ui_collection_efl_ui_multi_selectable_selected_iterator_new(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
 {
    return eina_list_iterator_new(pd->selected);
 }
