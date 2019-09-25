@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Widget_Factory extends Efl.Loop_Consumer implements Efl.Ui.Factory, Efl.Part
+class Efl.Ui.Widget_Factory extends Efl.Loop_Consumer implements Efl.Ui.Factory, Efl.Part
 {
    [[Efl Ui Factory that provides @Efl.Ui.Widget.
 
