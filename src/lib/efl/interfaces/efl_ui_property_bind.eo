@@ -6,7 +6,7 @@ struct Efl.Ui.Property_Event {
    changed_properties: array<stringshare>; [[List of changed properties]]
 }
 
-interface @beta Efl.Ui.Property_Bind
+interface Efl.Ui.Property_Bind
 {
    [[Efl UI Property_Bind interface.
      view object can have @Efl.Model to manage the data,
