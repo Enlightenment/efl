@@ -547,13 +547,16 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
         if (!version)
           ERR("Widget(%p) with type '%s' is not providing a version in its theme!", obj,
               efl_class_name_get(efl_class_get(obj)));
-        errno = 0;
-        sd->version = strtoul(version, NULL, 10);
-        if (errno)
+        else
           {
-             ERR("Widget(%p) with type '%s' is not providing a valid version in its theme!", obj,
-                 efl_class_name_get(efl_class_get(obj)));
-             sd->version = 0;
+             errno = 0;
+             sd->version = strtoul(version, NULL, 10);
+             if (errno)
+               {
+                  ERR("Widget(%p) with type '%s' is not providing a valid version in its theme!", obj,
+                      efl_class_name_get(efl_class_get(obj)));
+                  sd->version = 0;
+               }
           }
      }
    if (!version)
