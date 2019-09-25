@@ -494,7 +494,7 @@ _entity_fetched_cb(Eo *obj, void *data, const Eina_Value v)
    Efl_Ui_Collection_Request *request = data;
    Efl_Gfx_Entity *child;
    unsigned int i, len;
-   uint64_t updated_size_start_id, updated_entity_start_id;
+   uint64_t updated_size_start_id = 0, updated_entity_start_id = 0;
    Eina_Bool updated_size = EINA_FALSE, updated_entity = EINA_FALSE;
 
    EINA_VALUE_ARRAY_FOREACH(&v, len, i, child)

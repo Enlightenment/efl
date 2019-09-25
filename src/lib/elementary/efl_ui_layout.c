@@ -522,7 +522,7 @@ EOLIAN static Eina_Error
 _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
 {
    Eina_Error theme_apply_ret, theme_apply_internal_ret;
-   Elm_Widget_Smart_Data *wd;
+   Elm_Widget_Smart_Data *wd = NULL;
    char buf[64];
    static unsigned int version = 0;
 
