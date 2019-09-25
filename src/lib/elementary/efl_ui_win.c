@@ -5960,7 +5960,7 @@ _efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *pd)
    if (!efl_parent_get(obj))
      efl_allow_parent_unref_set(obj, EINA_TRUE);
 
-   if (elm_widget_is_legacy(obj))
+   if (!elm_widget_is_legacy(obj))
      pd->type = EFL_UI_WIN_TYPE_BASIC;
 
    return obj;
