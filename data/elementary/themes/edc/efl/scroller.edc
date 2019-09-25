@@ -1101,7 +1101,7 @@ group { name: "efl/scroller";
       }
       program {
          signal: "mouse,down,*"; source: "efl.dragable.vbar";
-         action: SIGNAL_EMIT "efl,vbar,press" "efl";
+         action: SIGNAL_EMIT "efl,vertical_bar,press" "efl";
       }
       program {
          signal: "mouse,up,1"; source: "efl.dragable.vbar";
@@ -1125,7 +1125,7 @@ group { name: "efl/scroller";
       }
       program {
          signal: "mouse,down,*"; source: "efl.dragable.hbar";
-         action: SIGNAL_EMIT "efl,hbar,press" "efl";
+         action: SIGNAL_EMIT "efl,horizontal_bar,press" "efl";
       }
       program {
          signal: "mouse,up,1"; source: "efl.dragable.hbar";
@@ -1137,7 +1137,7 @@ group { name: "efl/scroller";
       }
       program {
          signal: "mouse,up,*"; source: "efl.dragable.hbar";
-         action: SIGNAL_EMIT "efl,hbar,unpress" "efl";
+         action: SIGNAL_EMIT "efl,horizontal_bar,unpress" "efl";
       }
    }
 }

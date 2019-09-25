@@ -1658,7 +1658,7 @@ _efl_ui_image_zoomable_edje_object_attach(Eo *obj)
            (obj, "drag,page", "efl.dragable.vbar",
             obj, _efl_ui_image_zoomable_edje_drag_cb, NULL);
         efl_layout_signal_callback_add
-           (obj, "efl,vbar,press", "efl",
+           (obj, "efl,vertical_bar,press", "efl",
             obj, _efl_ui_image_zoomable_vbar_press_cb, NULL);
         efl_layout_signal_callback_add
            (obj, "efl,vbar,unpress", "efl",
@@ -1682,7 +1682,7 @@ _efl_ui_image_zoomable_edje_object_attach(Eo *obj)
            (obj, "drag,page", "efl.dragable.hbar",
             obj, _efl_ui_image_zoomable_edje_drag_cb, NULL);
         efl_layout_signal_callback_add
-           (obj, "efl,hbar,press", "efl",
+           (obj, "efl,horizontal_bar,press", "efl",
             obj, _efl_ui_image_zoomable_hbar_press_cb, NULL);
         efl_layout_signal_callback_add
            (obj, "efl,hbar,unpress", "efl",
@@ -1769,7 +1769,7 @@ _efl_ui_image_zoomable_edje_object_detach(Evas_Object *obj)
            (obj, "drag,page", "efl.dragable.vbar",
             obj, _efl_ui_image_zoomable_edje_drag_cb, NULL);
         efl_layout_signal_callback_del
-           (obj, "efl,vbar,press", "efl",
+           (obj, "efl,vertical_bar,press", "efl",
             obj, _efl_ui_image_zoomable_vbar_press_cb, NULL);
         efl_layout_signal_callback_del
            (obj, "efl,vbar,unpress", "efl",
@@ -1793,7 +1793,7 @@ _efl_ui_image_zoomable_edje_object_detach(Evas_Object *obj)
            (obj, "drag,page", "efl.dragable.hbar",
             obj, _efl_ui_image_zoomable_edje_drag_cb, NULL);
         efl_layout_signal_callback_del
-           (obj, "efl,hbar,press", "efl",
+           (obj, "efl,horizontal_bar,press", "efl",
             obj, _efl_ui_image_zoomable_hbar_press_cb, NULL);
         efl_layout_signal_callback_del
            (obj, "efl,hbar,unpress", "efl",
