@@ -99,8 +99,7 @@ elementary_suite_src = [
   'elm_code_test_widget_text.c',
   'elm_code_test_widget_selection.c',
   'elm_code_test_widget_undo.c',
-  'elm_test_widget_focus.c',
-  'elm_test_widget_basics.c'
+  'elm_test_widget_focus.c'
 ]
 
 elementary_suite = executable('elementary_suite',

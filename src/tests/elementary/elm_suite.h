@@ -84,7 +84,6 @@ void elm_test_slideshow(TCase *tc);
 void elm_test_spinner(TCase *tc);
 void elm_test_plug(TCase *tc);
 void elm_test_widget_focus(TCase *tc);
-void elm_test_widget_basics(TCase *tc);
 
 void elm_code_file_test_load(TCase *tc);
 void elm_code_file_test_memory(TCase *tc);
