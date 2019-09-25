@@ -1,7 +1,7 @@
 import eina_types;
 import efl_ui_layout_orientable;
 
-interface @beta Efl.Ui.Scrollable
+interface Efl.Ui.Scrollable
 {
    [[Efl UI scrollable interface]]
    event_prefix: efl_ui;
