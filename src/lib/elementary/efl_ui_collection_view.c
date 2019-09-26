@@ -183,23 +183,36 @@ _redirect_item_cb(void *data, const Efl_Event *ev)
 {
    Eo *obj = data;
 
-#define REDIRECT_EVT(Desc, Item_Desc)                                   \
-   if (Desc == ev->desc)                                                \
-     {                                                                  \
-        Efl_Ui_Item_Clickable_Clicked item_clicked;                     \
-        Efl_Input_Clickable_Clicked *clicked = ev->info;                \
-                                                                        \
-        item_clicked.clicked = *clicked;                                \
-        item_clicked.item = ev->object;                                 \
-                                                                        \
-        efl_event_callback_call(obj, Item_Desc, &item_clicked);         \
+#define REDIRECT_EVT(Desc, Item_Desc)                           \
+   if (Desc == ev->desc)                                        \
+     {                                                          \
+        Efl_Ui_Item_Clickable_Clicked item_clicked;             \
+        Efl_Input_Clickable_Clicked *clicked = ev->info;        \
+                                                                \
+        item_clicked.clicked = *clicked;                        \
+        item_clicked.item = ev->object;                         \
+                                                                \
+        efl_event_callback_call(obj, Item_Desc, &item_clicked); \
      }
-   REDIRECT_EVT(EFL_INPUT_EVENT_PRESSED, EFL_UI_EVENT_ITEM_PRESSED);
-   REDIRECT_EVT(EFL_INPUT_EVENT_UNPRESSED, EFL_UI_EVENT_ITEM_UNPRESSED);
-   REDIRECT_EVT(EFL_INPUT_EVENT_LONGPRESSED, EFL_UI_EVENT_ITEM_LONGPRESSED);
+#define REDIRECT_EVT_PRESS(Desc, Item_Desc)                           \
+   if (Desc == ev->desc)                                        \
+     {                                                          \
+        Efl_Ui_Item_Clickable_Pressed item_pressed;             \
+        int *button = ev->info;        \
+                                                                \
+        item_pressed.button = *button;                        \
+        item_pressed.item = ev->object;                         \
+                                                                \
+        efl_event_callback_call(obj, Item_Desc, &item_pressed); \
+     }
+
+   REDIRECT_EVT_PRESS(EFL_INPUT_EVENT_PRESSED, EFL_UI_EVENT_ITEM_PRESSED);
+   REDIRECT_EVT_PRESS(EFL_INPUT_EVENT_UNPRESSED, EFL_UI_EVENT_ITEM_UNPRESSED);
+   REDIRECT_EVT_PRESS(EFL_INPUT_EVENT_LONGPRESSED, EFL_UI_EVENT_ITEM_LONGPRESSED);
    REDIRECT_EVT(EFL_INPUT_EVENT_CLICKED_ANY, EFL_UI_EVENT_ITEM_CLICKED_ANY);
    REDIRECT_EVT(EFL_INPUT_EVENT_CLICKED, EFL_UI_EVENT_ITEM_CLICKED);
 #undef REDIRECT_EVT
+#undef REDIRECT_EVT_PRESS
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(active_item_cbs,
