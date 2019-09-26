@@ -28,7 +28,7 @@ class Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Input.Clickable, Efl.Ui.
      When loading images from a file, the @Efl.File.key property can be used to access different
      streams. For example, when accessing Evas image caches.
    ]]
-   event_prefix: efl_ui_image;
+   event_c_prefix: efl_ui_image;
    methods {
       @property icon {
          [[The image name, using icon standards names.

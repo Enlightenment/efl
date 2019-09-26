@@ -8,7 +8,7 @@ interface Efl.Container
      @since 1.22
    ]]
    c_prefix: efl_content;
-   event_prefix: efl_container;
+   event_c_prefix: efl_container;
    methods {
       content_iterate {
          [[Begin iterating over this object's contents.]]

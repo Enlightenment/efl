@@ -15,7 +15,7 @@ mixin @beta Efl.Ui.Widget_Scrollable_Content requires Efl.Object
      @since 1.23
    ]]
    c_prefix: efl_ui_widget;
-   event_prefix: efl_ui_widget_scrollable_content;
+   event_c_prefix: efl_ui_widget_scrollable_content;
    data: Efl_Ui_Widget_Scrollable_Content_Data;
    methods {
       @property scrollable_content_did_group_calc @protected @beta {

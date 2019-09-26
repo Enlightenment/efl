@@ -238,9 +238,9 @@ lib.eolian_class_documentation_get.restype = c_void_p
 lib.eolian_class_c_prefix_get.argtypes = (c_void_p,)
 lib.eolian_class_c_prefix_get.restype = c_char_p
 
-# EAPI Eina_Stringshare* eolian_class_event_prefix_get(const Eolian_Class *klass);
-lib.eolian_class_event_prefix_get.argtypes = (c_void_p,)
-lib.eolian_class_event_prefix_get.restype = c_char_p
+# EAPI Eina_Stringshare* eolian_class_event_c_prefix_get(const Eolian_Class *klass);
+lib.eolian_class_event_c_prefix_get.argtypes = (c_void_p,)
+lib.eolian_class_event_c_prefix_get.restype = c_char_p
 
 # EAPI Eina_Stringshare *eolian_class_data_type_get(const Eolian_Class *klass);
 lib.eolian_class_data_type_get.argtypes = (c_void_p,)

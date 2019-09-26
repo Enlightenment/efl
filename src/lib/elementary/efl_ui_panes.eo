@@ -2,7 +2,7 @@ class @beta Efl.Ui.Panes extends Efl.Ui.Layout_Base implements Efl.Ui.Layout_Ori
                                                                Efl.Input.Clickable
 {
    [[Elementary panes class]]
-   event_prefix: elm_panes;
+   event_c_prefix: elm_panes;
    methods {
       @property split_ratio {
          [[Set the split ratio between panes widget first and second parts.

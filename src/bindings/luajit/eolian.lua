@@ -340,7 +340,7 @@ ffi.cdef [[
     Eolian_Class_Type eolian_class_type_get(const Eolian_Class *klass);
     const Eolian_Documentation *eolian_class_documentation_get(const Eolian_Class *klass);
     const char *eolian_class_c_prefix_get(const Eolian_Class *klass);
-    const char *eolian_class_event_prefix_get(const Eolian_Class *klass);
+    const char *eolian_class_event_c_prefix_get(const Eolian_Class *klass);
     const char *eolian_class_data_type_get(const Eolian_Class *klass);
     const Eolian_Class *eolian_class_parent_get(const Eolian_Class *klass);
     Eina_Iterator *eolian_class_requires_get(const Eolian_Class *klass);
@@ -1445,8 +1445,8 @@ M.Class = ffi.metatype("Eolian_Class", {
             return ffi.string(v)
         end,
 
-        event_prefix_get = function(self)
-            local v = eolian.eolian_class_event_prefix_get(self)
+        event_c_prefix_get = function(self)
+            local v = eolian.eolian_class_event_c_prefix_get(self)
             if v == nil then
                 return self:c_prefix_get()
             end

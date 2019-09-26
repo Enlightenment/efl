@@ -2,7 +2,7 @@ class @beta Ecore.Audio.In extends Ecore.Audio
 {
    [[Ecore Audio input object.]]
    c_prefix: ecore_audio_obj_in;
-   event_prefix: ecore_audio_in;
+   event_c_prefix: ecore_audio_in;
    data: Ecore_Audio_Input;
    methods {
       @property speed {

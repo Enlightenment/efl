@@ -334,7 +334,7 @@ class TestEolianClass(unittest.TestCase):
         self.assertEqual(cls.type, eolian.Eolian_Class_Type.REGULAR)
         self.assertIsInstance(cls.documentation, eolian.Documentation)
         self.assertIsNone(cls.c_prefix)  # TODO fin a class with a value
-        self.assertIsNone(cls.event_prefix)  # TODO same as above
+        self.assertIsNone(cls.event_c_prefix)  # TODO same as above
         self.assertIsNone(cls.data_type)  # TODO same as above
         self.assertEqual(cls.parent.name, 'Efl.Loop_Consumer')
         self.assertEqual([c.name for c in cls.extensions], [])

@@ -1,6 +1,6 @@
 interface @beta Efl.Gesture.Events
 {
-   event_prefix: efl;
+   event_c_prefix: efl;
    events {
       gesture,tap: Efl.Canvas.Gesture_Tap; [[Emitted when a Tap gesture has been detected.
         A Tap gesture consists of a touch of the screen (or click of the mouse) quickly followed by

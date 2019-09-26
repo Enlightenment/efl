@@ -20,7 +20,7 @@ interface Efl.Input.Interface
      down...up,down...up,down...up (not down...up or down...down...down...up).
    ]]
    c_prefix: efl_input;
-   event_prefix: efl;
+   event_c_prefix: efl;
    methods {
       @property seat_event_filter @beta {
           [[Whether input events from a given seat are enabled.

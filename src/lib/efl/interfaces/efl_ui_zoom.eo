@@ -11,7 +11,7 @@ enum @beta Efl.Ui.Zoom_Mode
 interface @beta Efl.Ui.Zoom
 {
    [[Efl UI zoom interface]]
-   event_prefix: efl_ui;
+   event_c_prefix: efl_ui;
    c_prefix: efl_ui;
 
    methods {

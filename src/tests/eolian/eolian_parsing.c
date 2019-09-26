@@ -113,7 +113,7 @@ EFL_START_TEST(eolian_events)
 
    /* Class */
    fail_if(!(class = eolian_unit_class_by_name_get(unit, "Events")));
-   fail_if(strcmp(eolian_class_event_prefix_get(class), "totally_not_events"));
+   fail_if(strcmp(eolian_class_event_c_prefix_get(class), "totally_not_events"));
 
    /* Events */
    fail_if(!(iter = eolian_class_events_get(class)));

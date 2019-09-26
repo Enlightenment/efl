@@ -648,8 +648,8 @@ class Class(Object):
         return _str_to_py(lib.eolian_class_c_prefix_get(self))
 
     @cached_property
-    def event_prefix(self):
-        return _str_to_py(lib.eolian_class_event_prefix_get(self))
+    def event_c_prefix(self):
+        return _str_to_py(lib.eolian_class_event_c_prefix_get(self))
 
     @cached_property
     def documentation(self):

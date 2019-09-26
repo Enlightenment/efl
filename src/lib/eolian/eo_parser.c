@@ -2013,7 +2013,7 @@ static void
 parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
 {
    Eina_Bool has_c_prefix     = EINA_FALSE,
-             has_event_prefix  = EINA_FALSE,
+             has_event_c_prefix = EINA_FALSE,
              has_data          = EINA_FALSE,
              has_methods       = EINA_FALSE,
              has_parts         = EINA_FALSE,
@@ -2036,8 +2036,8 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
         eo_lexer_get(ls);
         check_next(ls, ';');
         break;
-      case KW_event_prefix:
-        CASE_LOCK(ls, event_prefix, "event prefix definition")
+      case KW_event_c_prefix:
+        CASE_LOCK(ls, event_c_prefix, "event prefix definition")
         eo_lexer_get(ls);
         check_next(ls, ':');
         _validate_pfx(ls);

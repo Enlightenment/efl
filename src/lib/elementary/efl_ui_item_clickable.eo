@@ -15,7 +15,7 @@ struct Efl.Ui.Item_Clickable_Pressed {
 interface Efl.Ui.Item_Clickable
 {
    [[Shared sets of events between @Efl.Ui.Collection and @Efl.Ui.Collection_View.]]
-   event_prefix: efl_ui;
+   event_c_prefix: efl_ui;
    events {
       item,pressed : Efl.Ui.Item_Clickable_Pressed; [[A $pressed event occurred over an item.]]
       item,unpressed : Efl.Ui.Item_Clickable_Pressed; [[An $unpressed event occurred over an item.]]
