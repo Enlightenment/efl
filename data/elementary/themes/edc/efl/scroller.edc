@@ -1,3 +1,38 @@
+/**
+Group: efl/scroller (@since 1.23)
+	 Part Rectangle: efl.dragable.hbar (required)
+	 Part Rectangle: efl.dragable.vbar (required)
+	 Part Swallow: efl.background (required)
+	 Part Swallow: efl.content (required)
+	 Part Swallow: efl.overlay (required)
+	 Signal: efl,action,scroll
+	 Signal: efl,horizontal_bar,visible,off
+	 Signal: efl,horizontal_bar,visible,on
+	 Signal: efl,vertical_bar,visible,off
+	 Signal: efl,vertical_bar,visible,on
+Group: efl/scroller:noclip (@since 1.23)
+	 Part Rectangle: efl.dragable.hbar (required)
+	 Part Rectangle: efl.dragable.vbar (required)
+	 Part Swallow: efl.background (required)
+	 Part Swallow: efl.content (required)
+	 Part Swallow: efl.overlay (required)
+	 Signal: efl,action,scroll
+	 Signal: efl,horizontal_bar,visible,off
+	 Signal: efl,horizontal_bar,visible,on
+	 Signal: efl,vertical_bar,visible,off
+	 Signal: efl,vertical_bar,visible,on
+Group: efl/scroller:popup/no_inset_shadow (@since 1.23)
+	 Part Rectangle: efl.dragable.hbar (required)
+	 Part Rectangle: efl.dragable.vbar (required)
+	 Part Swallow: efl.background (required)
+	 Part Swallow: efl.content (required)
+	 Part Swallow: efl.overlay (required)
+	 Signal: efl,action,scroll
+	 Signal: efl,horizontal_bar,visible,off
+	 Signal: efl,horizontal_bar,visible,on
+	 Signal: efl,vertical_bar,visible,off
+	 Signal: efl,vertical_bar,visible,on
+*/
 group { name: "efl/scroller";
    data.item: "version" "123";
    images.image: "inset_shadow.png" COMP;

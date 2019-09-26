@@ -1,3 +1,10 @@
+/**
+Group: efl/focus_highlight/top (@since 1.23)
+	 Signal: efl,focus,visible,off
+	 Signal: efl,focus,visible,on
+	 Signal: efl,state,animating,stopped
+Group: efl/focus_highlight/top:blank (@since 1.23)
+*/
 group { name: "efl/focus_highlight/top"; data.item: "version" "123";
    images.image: "box_glow.png" COMP;
    images.image: "box_outline.png" COMP;

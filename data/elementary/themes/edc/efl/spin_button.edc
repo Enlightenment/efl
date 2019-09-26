@@ -1,3 +1,73 @@
+/**
+Group: efl/spin_button/vertical (@since 1.23)
+	 Part Swallow: efl.dec_button (required)
+	 Part Swallow: efl.entry (required)
+	 Part Swallow: efl.inc_button (required)
+	 Part Swallow: efl.text_button (required)
+	 Signal: efl,button,visible,off
+	 Signal: efl,button,visible,on
+	 Signal: efl,entry,visible,off
+	 Signal: efl,entry,visible,on
+	 Signal: efl,state,access,active
+	 Signal: efl,state,access,inactive
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
+Group: efl/spin_button/horizontal/dec_button (@since 1.23)
+	 Signal: efl,action,multi,down
+	 Signal: efl,action,multi,up
+	 Signal: efl,action,pressed
+	 Signal: efl,action,unpressed
+	 Signal: efl,state,animation,activated
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
+Group: efl/spin_button/horizontal (@since 1.23)
+	 Part Swallow: efl.dec_button (required)
+	 Part Swallow: efl.entry (required)
+	 Part Swallow: efl.inc_button (required)
+	 Part Swallow: efl.text_button (required)
+	 Signal: efl,button,visible,off
+	 Signal: efl,button,visible,on
+	 Signal: efl,entry,visible,off
+	 Signal: efl,entry,visible,on
+	 Signal: efl,state,access,active
+	 Signal: efl,state,access,inactive
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
+Group: efl/spin_button/vertical/text_button (@since 1.23)
+	 Part Text: efl.text
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
+Group: efl/spin (@since 1.23)
+	 Part Text: efl.text
+Group: efl/spin_button/horizontal/inc_button (@since 1.23)
+	 Signal: efl,action,multi,down
+	 Signal: efl,action,multi,up
+	 Signal: efl,action,pressed
+	 Signal: efl,action,unpressed
+	 Signal: efl,state,animation,activated
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
+Group: efl/spin_button/horizontal/text_button (@since 1.23)
+	 Part Text: efl.text
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
+Group: efl/spin_button/vertical/dec_button (@since 1.23)
+	 Signal: efl,action,multi,down
+	 Signal: efl,action,multi,up
+	 Signal: efl,action,pressed
+	 Signal: efl,action,unpressed
+	 Signal: efl,state,animation,activated
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
+Group: efl/spin_button/vertical/inc_button (@since 1.23)
+	 Signal: efl,action,multi,down
+	 Signal: efl,action,multi,up
+	 Signal: efl,action,pressed
+	 Signal: efl,action,unpressed
+	 Signal: efl,state,animation,activated
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
+*/
 group { "efl/spin_button/horizontal";
    data.item: "version" "123";
    images.image: "vert_bar_inset.png" COMP;

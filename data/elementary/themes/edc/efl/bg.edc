@@ -1,9 +1,14 @@
 /* bg widget style information
 
+Group: efl/bg (@since 1.23)
+	 Part Swallow: efl.background (required)
+	 Part Swallow: efl.content (required)
+	 Part Swallow: efl.rectangle (required)
+
    [SWALLOW]
-      efl.rectangle: Used for elm_bg_color_set()
-      efl.background: Used for elm_bg_file_set()
-      efl.content: Used for elm_layout_part_content_set(bg, "overlay", content).
+      efl.rectangle: Used for efl_gfx_color_color_set()
+      efl.background: Used for efl_file_set()
+      efl.content: Used for storing the main object for which this is the background
 */
 
 group { "efl/bg";
