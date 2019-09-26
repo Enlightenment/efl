@@ -288,7 +288,7 @@ _validate_type(Validate_State *vals, Eolian_Type *tp, Eina_Bool by_ref,
                 case KW_string:
                 case KW_mstring:
                 case KW_stringshare:
-                  _eo_parser_log(&tp->base, "string types cannot be const");
+                  _eo_parser_log(&tp->base, "spurious explicit const on string type");
                   return EINA_FALSE;
                 default:
                   {
