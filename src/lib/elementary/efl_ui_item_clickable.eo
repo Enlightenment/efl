@@ -1,18 +1,18 @@
 import efl_input_clickable;
 
-struct Efl.Ui.Item_Clickable_Clicked {
+struct @beta Efl.Ui.Item_Clickable_Clicked {
    [[A struct that expresses a click in item of container widget.]]
    clicked: Efl.Input.Clickable_Clicked; [[The input clicked event data.]]
    item: Efl.Ui.Item; [[The clicked item.]]
 }
 
-struct Efl.Ui.Item_Clickable_Pressed {
+struct @beta Efl.Ui.Item_Clickable_Pressed {
    [[A struct that expresses a press or unpress in item of container widget.]]
    button: int; [[The button which was pressed or unpressed.]]
    item: Efl.Ui.Item; [[The corresponding item.]]
 }
 
-interface Efl.Ui.Item_Clickable
+interface @beta Efl.Ui.Item_Clickable
 {
    [[Shared sets of events between @Efl.Ui.Collection and @Efl.Ui.Collection_View.]]
    event_c_prefix: efl_ui;
