@@ -570,8 +570,8 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
      efl_gfx_hint_size_min_set(obj, EINA_SIZE2D(0, 0));
    else
      {
-        const char *version = edje_object_data_get(wd->resize_obj, "version");
-        if (!version)
+        const char *theme_version = edje_object_data_get(wd->resize_obj, "version");
+        if (!theme_version)
           {
              ERR("Widget(%p) with type '%s' is not providing a version in its theme!", obj,
                  efl_class_name_get(efl_class_get(obj)));
@@ -580,7 +580,7 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
         else
           {
              errno = 0;
-             sd->version = strtoul(version, NULL, 10);
+             sd->version = strtoul(theme_version, NULL, 10);
              if (errno)
                {
                   ERR("Widget(%p) with type '%s' is not providing a valid version in its theme!", obj,
