@@ -562,6 +562,7 @@ test_prepend(Eina_Strbuf *buf, ...)
 
    va_start(ap, buf);
    str = test_prepend_vprintf(buf, "%s %s %s %s", ap);
+   va_end(ap);
    return str;
 }
 
