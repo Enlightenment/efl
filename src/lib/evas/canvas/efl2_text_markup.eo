@@ -40,8 +40,8 @@ class @beta Efl2.Text.Markup {
          params {
               @in cur1: const(Efl2.Text.Cursor); [[Start of range]]
               @in cur2: const(Efl2.Text.Cursor); [[End of range - could be null if self-closing (item)]]
-              @in tag: const(string); [[The tag's name. E.g: span, em and item]]
-              @in proprties: const(string); [[The proprties of the tag]]
+              @in tag: string; [[The tag's name. E.g: span, em and item]]
+              @in proprties: string; [[The proprties of the tag]]
          }
       }
 
@@ -50,7 +50,7 @@ class @beta Efl2.Text.Markup {
          ]]
          params {
               @in position: const(Efl2.Text.Cursor); [[Start of range]]
-              @in markup: const(string); [[The markup string]]
+              @in markup: string; [[The markup string]]
          }
       }
 
