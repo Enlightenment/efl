@@ -69,6 +69,8 @@ static const char *interface_gl_x11_name = "gl_x11";
 #endif
 static const int   interface_gl_x11_version = 1;
 
+static Eina_Bool wm_exists;
+
 typedef struct _Ecore_Evas_Engine_Data_X11 Ecore_Evas_Engine_Data_X11;
 
 struct _Ecore_Evas_Engine_Data_X11 {
@@ -857,6 +859,11 @@ _ecore_evas_x_event_property_change(void *data EINA_UNUSED, int type EINA_UNUSED
    int state_change = 0;
 
    e = event;
+   if (e->win == ecore_x_window_root_first_get())
+     {
+        if (e->atom == ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK)
+          wm_exists = !ecore_x_window_prop_window_get(ecore_x_window_root_first_get(), ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK, NULL, 0);
+     }
    ee = ecore_event_window_match(e->win);
    if ((!ee) || (ee->ignore_events)) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    edata = ee->engine.data;
@@ -1048,7 +1055,7 @@ _ecore_evas_x_event_visibility_change(void *data EINA_UNUSED, int type EINA_UNUS
    if (e->fully_obscured)
      {
         /* FIXME: round trip */
-        if (!ecore_x_screen_is_composited(edata->screen_num))
+        if ((!wm_exists) || (!ecore_x_screen_is_composited(edata->screen_num)))
           ee->draw_block = !edata->configured;
      }
    else if (ee->draw_block)
@@ -1627,14 +1634,14 @@ _ecore_evas_x_event_window_configure(void *data EINA_UNUSED, int type EINA_UNUSE
    if (!ee) return ECORE_CALLBACK_PASS_ON; /* pass on event */
    edata = ee->engine.data;
    if (e->win != ee->prop.window) return ECORE_CALLBACK_PASS_ON;
-   if ((e->from_wm) || (ee->prop.override))
+   if ((!wm_exists) || (e->from_wm) || (ee->prop.override))
      {
         if (!edata->configured)
           {
              if (edata->fully_obscured)
                {
                   /* FIXME: round trip */
-                  if (!ecore_x_screen_is_composited(edata->screen_num))
+                  if ((!wm_exists) || (!ecore_x_screen_is_composited(edata->screen_num)))
                     ee->draw_block = EINA_FALSE;
                }
              else
@@ -1995,11 +2002,16 @@ _ecore_evas_x_layer_update(Ecore_Evas *ee)
    /* FIXME: Set gnome layer */
 }
 
+EAPI void ecore_x_window_root_properties_select(void);
+
 static int
 _ecore_evas_x_init(void)
 {
    _ecore_evas_init_count++;
    if (_ecore_evas_init_count > 1) return _ecore_evas_init_count;
+
+   ecore_x_window_root_properties_select();
+   wm_exists = !ecore_x_window_prop_window_get(ecore_x_window_root_first_get(), ECORE_X_ATOM_NET_SUPPORTING_WM_CHECK, NULL, 0);
    ecore_evas_event_handlers[0] =
      ecore_event_handler_add(ECORE_X_EVENT_MOUSE_IN,
                              _ecore_evas_x_event_mouse_in, NULL);
@@ -4243,6 +4255,7 @@ ecore_evas_software_x11_new_internal(const char *disp_name, Ecore_X_Window paren
 
    ee->engine.func->fn_render = _ecore_evas_x_render;
    ee->draw_block = EINA_TRUE;
+   if (!wm_exists) edata->configured = 1;
 
    ecore_x_input_multi_select(ee->prop.window);
    ecore_evas_done(ee, EINA_FALSE);
@@ -4460,6 +4473,7 @@ ecore_evas_software_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Windo
    _ecore_evas_register(ee);
 
    ee->draw_block = EINA_FALSE;
+   if (!wm_exists) edata->configured = 1;
 
    /* ecore_x_input_multi_select(ee->prop.window); */
    /* ecore_event_window_register(ee->prop.window, ee, ee->evas, */
@@ -4690,6 +4704,7 @@ ecore_evas_gl_x11_options_new_internal(const char *disp_name, Ecore_X_Window par
    _ecore_evas_x_sync_set(ee);
 
    ee->draw_block = 1;
+   if (!wm_exists) edata->configured = 1;
 
    ee->engine.func->fn_render = _ecore_evas_x_render;
    ecore_x_input_multi_select(ee->prop.window);
@@ -4890,6 +4905,7 @@ ecore_evas_gl_x11_pixmap_new_internal(const char *disp_name, Ecore_X_Window pare
    _ecore_evas_register(ee);
 
    ee->draw_block = EINA_TRUE;
+   if (!wm_exists) edata->configured = 1;
 
    /* ecore_x_input_multi_select(ee->prop.window); */
    /* ecore_event_window_register(ee->prop.window, ee, ee->evas, */
