@@ -90,7 +90,7 @@ _select_notification_cb(Eo *o, void *data EINA_UNUSED, const Eina_Value v)
 {
    Efl_Ui_Select_Model_Data *pd = efl_data_scope_get(o, EFL_UI_SELECT_MODEL_CLASS);
 
-   efl_event_callback_call(o, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, NULL);
 
    pd->pending_selection_event = NULL;
 

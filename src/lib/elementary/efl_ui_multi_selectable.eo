@@ -6,7 +6,7 @@ interface @beta Efl.Ui.Multi_Selectable extends Efl.Ui.Single_Selectable
 
      The implementor of this interface provides the possibility to select multiple Selectables.
      If not, only @Efl.Ui.Single_Selectable should be implemented.]]
-   c_prefix: efl_ui;
+   c_prefix: efl_ui_selectable;
    methods
    {
       @property select_mode {

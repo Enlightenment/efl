@@ -1885,7 +1885,7 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
         if (pd->multi_selectable_async_model)
           {
              efl_event_callback_forwarder_del(pd->multi_selectable_async_model,
-                                              EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED,
+                                              EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED,
                                               data);
              efl_composite_detach(data, pd->multi_selectable_async_model);
              efl_replace(&pd->multi_selectable_async_model, NULL);
@@ -1934,14 +1934,14 @@ _efl_ui_collection_view_model_changed(void *data, const Efl_Event *event)
    if (pd->multi_selectable_async_model)
      {
         efl_event_callback_forwarder_del(pd->multi_selectable_async_model,
-                                         EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED,
+                                         EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED,
                                          data);
         efl_composite_detach(data, pd->multi_selectable_async_model);
      }
    efl_replace(&pd->multi_selectable_async_model, mselect);
    efl_composite_attach(data, pd->multi_selectable_async_model);
    efl_event_callback_forwarder_add(pd->multi_selectable_async_model,
-                                    EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED,
+                                    EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED,
                                     data);
 
    if (!sizing) model = efl_add(EFL_UI_HOMOGENEOUS_MODEL_CLASS, data,

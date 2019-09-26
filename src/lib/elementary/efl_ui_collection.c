@@ -431,7 +431,7 @@ _efl_ui_collection_efl_object_invalidate(Eo *obj, Efl_Ui_Collection_Data *pd EIN
 {
    efl_ui_collection_position_manager_set(obj, NULL);
 
-   efl_ui_single_selectable_fallback_selection_set(obj, NULL);
+   efl_ui_selectable_fallback_selection_set(obj, NULL);
 
    deselect_all(pd);
 
@@ -514,7 +514,7 @@ _schedule_selection_job_cb(Eo *o, void *data EINA_UNUSED, const Eina_Value value
 
    pd->selection_changed_job = NULL;
 
-   efl_event_callback_call(o, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, NULL);
 
    return EINA_VALUE_EMPTY;
 }

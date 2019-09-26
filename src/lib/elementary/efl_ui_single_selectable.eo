@@ -4,6 +4,7 @@ interface @beta Efl.Ui.Single_Selectable {
      The implementor is free to allow a specific number of selectables being selected or not.
      This interface just covers always the latest selected selectable.
    ]]
+   c_prefix: efl_ui_selectable;
    methods {
       @property last_selected {
         [[The selectable that was selected most recently.]]

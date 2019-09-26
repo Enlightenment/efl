@@ -60,7 +60,7 @@ _selected(void *data, const Efl_Event *event)
 {
    Priv_Data *priv = (Priv_Data*)data;
 
-   priv->selected = efl_ui_single_selectable_last_selected_get(event->object);
+   priv->selected = efl_ui_selectable_last_selected_get(event->object);
 }
 
 static void
@@ -299,7 +299,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    elm_box_pack_end(vbx, bt);
 
    elm_box_pack_end(bx, priv->list2);
-   efl_event_callback_add(priv->list2, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, _selected, priv);
+   efl_event_callback_add(priv->list2, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, _selected, priv);
 
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _cleanup_cb, priv);
 

@@ -15,7 +15,7 @@ _reset_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    Efl_Ui_Radio_Group *radio = data;
    Evas_Object *target;
 
-   radio = efl_ui_single_selectable_last_selected_get(radio);
+   radio = efl_ui_selectable_last_selected_get(radio);
    target = evas_object_data_get(radio, "data");
 
    efl_gfx_color_set(efl_part(target, "background"), 0, 0, 0, 0);
@@ -29,7 +29,7 @@ _color_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    Evas_Object *target;
    static Eina_Bool i;
 
-   radio = efl_ui_single_selectable_last_selected_get(radio);
+   radio = efl_ui_selectable_last_selected_get(radio);
    target = evas_object_data_get(radio, "data");
    i ^= EINA_TRUE;
    efl_gfx_color_set(efl_part(target, "background"), (i) ? 255 : 0, (i) ? 0 : 255, 0, 255);
@@ -43,7 +43,7 @@ _scale_type_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    Efl_Gfx_Image_Scale_Method type;
    char buf[PATH_MAX];
 
-   radio = efl_ui_single_selectable_last_selected_get(radio);
+   radio = efl_ui_selectable_last_selected_get(radio);
    target = evas_object_data_get(radio, "data");
 
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
