@@ -1,4 +1,4 @@
-interface @beta Efl.Ui.Selectable {
+interface Efl.Ui.Selectable {
   [[Selectable interface for UI objects
 
     An object implementing this interface can be selected.
