@@ -1,11 +1,11 @@
 import efl_input_clickable;
 
-struct @beta Efl.Ui.Item_Clickable_Clicked {
+struct Efl.Ui.Item_Clickable_Clicked {
    clicked: Efl.Input.Clickable_Clicked;
    item: Efl.Ui.Item;
 }
 
-interface @beta Efl.Ui.Item_Clickable
+interface Efl.Ui.Item_Clickable
 {
    [[Shared sets of events between @Efl.Ui.Collection and @Efl.Ui.Collection_View.]]
    event_prefix: efl_ui;
