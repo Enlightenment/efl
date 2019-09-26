@@ -30,7 +30,7 @@ _size_accessor_get_at(void *data EINA_UNUSED, Efl_Ui_Position_Manager_Size_Call_
 {
    int i;
    Efl_Ui_Position_Manager_Size_Batch_Entity *sizes = memory.mem;
-   Efl_Ui_Position_Manager_Size_Batch_Result result;
+   Efl_Ui_Position_Manager_Size_Batch_Result result = {0};
 
    for (i = conf.range.start_id; i < (int)(MIN(conf.range.end_id, eina_inarray_count(arr_size))); ++i)
      {
