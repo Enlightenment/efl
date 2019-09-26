@@ -67,11 +67,11 @@ ffi.cdef [[
 
     typedef enum
     {
-        EOLIAN_UNKNOWN_PARAM = 0,
-        EOLIAN_IN_PARAM,
-        EOLIAN_OUT_PARAM,
-        EOLIAN_INOUT_PARAM
-    } Eolian_Parameter_Dir;
+        EOLIAN_PARAMETER_UNKNOWN = 0,
+        EOLIAN_PARAMETER_IN,
+        EOLIAN_PARAMETER_OUT,
+        EOLIAN_PARAMETER_INOUT
+    } Eolian_Parameter_Direction;
 
     typedef enum
     {
@@ -357,7 +357,7 @@ ffi.cdef [[
     Eina_Iterator *eolian_property_keys_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Iterator *eolian_property_values_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Iterator *eolian_function_parameters_get(const Eolian_Function *function_id);
-    Eolian_Parameter_Dir eolian_parameter_direction_get(const Eolian_Function_Parameter *param);
+    Eolian_Parameter_Direction eolian_parameter_direction_get(const Eolian_Function_Parameter *param);
     const Eolian_Type *eolian_parameter_type_get(const Eolian_Function_Parameter *param);
     const Eolian_Expression *eolian_parameter_default_value_get(const Eolian_Function_Parameter *param);
     const Eolian_Documentation *eolian_parameter_documentation_get(const Eolian_Function_Parameter *param);

@@ -341,7 +341,7 @@ _function_is_generatable(const Eolian_Function *function, Eolian_Function_Type f
    for (auto parameter : full_params)
      {
         auto tp = ::eolian_parameter_type_get(parameter);
-        bool add_pointer = eolian_parameter_direction_get(parameter) != EOLIAN_IN_PARAM;
+        bool add_pointer = eolian_parameter_direction_get(parameter) != EOLIAN_PARAMETER_IN;
         if (!_type_is_generatable(tp, add_pointer, EOLIAN_C_TYPE_PARAM))
           return false;
 
@@ -868,8 +868,8 @@ int main(int argc, char** argv)
                             {
                                switch (eolian_parameter_direction_get(parameter))
                                  {
-                                 case EOLIAN_IN_PARAM:
-                                 case EOLIAN_INOUT_PARAM:
+                                 case EOLIAN_PARAMETER_IN:
+                                 case EOLIAN_PARAMETER_INOUT:
                                    ss << ", " << i;
                                  default: break;
                                  }
@@ -899,8 +899,8 @@ int main(int argc, char** argv)
                              {
                                 switch (eolian_parameter_direction_get(parameter))
                                   {
-                                  case EOLIAN_OUT_PARAM:
-                                  case EOLIAN_INOUT_PARAM:
+                                  case EOLIAN_PARAMETER_OUT:
+                                  case EOLIAN_PARAMETER_INOUT:
                                     ss << ", " << i;
                                   default: break;
                                   }
@@ -958,8 +958,8 @@ int main(int argc, char** argv)
                           {
                              switch(eolian_parameter_direction_get(parameter))
                                {
-                               case EOLIAN_OUT_PARAM:
-                               case EOLIAN_INOUT_PARAM:
+                               case EOLIAN_PARAMETER_OUT:
+                               case EOLIAN_PARAMETER_INOUT:
                                  param += "*";
                                default: break;
                                }

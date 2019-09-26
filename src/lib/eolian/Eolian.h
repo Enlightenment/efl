@@ -242,11 +242,11 @@ typedef enum
 
 typedef enum
 {
-   EOLIAN_UNKNOWN_PARAM = 0,
-   EOLIAN_IN_PARAM,
-   EOLIAN_OUT_PARAM,
-   EOLIAN_INOUT_PARAM
-} Eolian_Parameter_Dir;
+   EOLIAN_PARAMETER_UNKNOWN = 0,
+   EOLIAN_PARAMETER_IN,
+   EOLIAN_PARAMETER_OUT,
+   EOLIAN_PARAMETER_INOUT
+} Eolian_Parameter_Direction;
 
 typedef enum
 {
@@ -1747,7 +1747,7 @@ EAPI Eina_Iterator *eolian_property_values_get(const Eolian_Function *foo_id, Eo
  *
  * @ingroup Eolian
  */
-EAPI Eolian_Parameter_Dir eolian_parameter_direction_get(const Eolian_Function_Parameter *param);
+EAPI Eolian_Parameter_Direction eolian_parameter_direction_get(const Eolian_Function_Parameter *param);
 
 /*
  * @brief Get type of a parameter

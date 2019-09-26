@@ -2,11 +2,11 @@
 #include "docs.h"
 
 static const char *
-_get_add_star(Eolian_Function_Type ftype, Eolian_Parameter_Dir pdir)
+_get_add_star(Eolian_Function_Type ftype, Eolian_Parameter_Direction pdir)
 {
    if (ftype == EOLIAN_PROP_GET)
      return "*";
-   if ((pdir == EOLIAN_OUT_PARAM) || (pdir == EOLIAN_INOUT_PARAM))
+   if ((pdir == EOLIAN_PARAMETER_OUT) || (pdir == EOLIAN_PARAMETER_INOUT))
      return "*";
    return "";
 }

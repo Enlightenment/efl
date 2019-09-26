@@ -685,17 +685,17 @@ struct parameter_def
                         eina::optional<expression_def>{})
     , unit(_unit)
   {
-     Eolian_Parameter_Dir direction = ::eolian_parameter_direction_get(param);
+     Eolian_Parameter_Direction direction = ::eolian_parameter_direction_get(param);
      switch(direction)
        {
-       case EOLIAN_UNKNOWN_PARAM:
-       case EOLIAN_IN_PARAM:
+       case EOLIAN_PARAMETER_UNKNOWN:
+       case EOLIAN_PARAMETER_IN:
          this->direction = parameter_direction::in;
          break;
-       case EOLIAN_INOUT_PARAM:
+       case EOLIAN_PARAMETER_INOUT:
          this->direction = parameter_direction::inout;
          break;
-       case EOLIAN_OUT_PARAM:
+       case EOLIAN_PARAMETER_OUT:
          this->direction = parameter_direction::out;
          break;
        }

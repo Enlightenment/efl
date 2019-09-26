@@ -371,7 +371,7 @@ lib.eolian_property_values_get.restype = c_void_p
 
 ###  Eolian_Function_Parameter  ###############################################
 
-# EAPI Eolian_Parameter_Dir eolian_parameter_direction_get(const Eolian_Function_Parameter *param);
+# EAPI Eolian_Parameter_Direction eolian_parameter_direction_get(const Eolian_Function_Parameter *param);
 lib.eolian_parameter_direction_get.argtypes = (c_void_p,)
 lib.eolian_parameter_direction_get.restype = c_int
 

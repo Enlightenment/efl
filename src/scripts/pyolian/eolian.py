@@ -45,7 +45,7 @@ class Eolian_Function_Type(IntEnum):
     METHOD = 4
     FUNCTION_POINTER = 5
 
-class Eolian_Parameter_Dir(IntEnum):
+class Eolian_Parameter_Direction(IntEnum):
     UNKNOWN = 0
     IN = 1
     OUT = 2
@@ -946,7 +946,7 @@ class Function_Parameter(Object):
 
     @cached_property
     def direction(self):
-        return Eolian_Parameter_Dir(lib.eolian_parameter_direction_get(self))
+        return Eolian_Parameter_Direction(lib.eolian_parameter_direction_get(self))
 
     @cached_property
     def documentation(self):

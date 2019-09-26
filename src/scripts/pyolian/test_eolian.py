@@ -382,7 +382,7 @@ class TestEolianFunction(unittest.TestCase):
         cls = eolian_db.class_by_name_get('Efl.Loop_Timer')
         f = cls.function_by_name_get('timer_delay')
         p = list(f.parameters)[0]
-        self.assertEqual(p.direction, eolian.Eolian_Parameter_Dir.IN)
+        self.assertEqual(p.direction, eolian.Eolian_Parameter_Direction.IN)
         self.assertEqual(p.name, 'add')
         self.assertIsNone(p.default_value)
         self.assertFalse(p.is_optional)

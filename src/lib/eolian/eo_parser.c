@@ -1079,33 +1079,33 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
              has_move     = EINA_FALSE,
              has_by_ref   = EINA_FALSE;
    Eolian_Function_Parameter *par = calloc(1, sizeof(Eolian_Function_Parameter));
-   par->param_dir = EOLIAN_IN_PARAM;
+   par->param_dir = EOLIAN_PARAMETER_IN;
    FILL_BASE(par->base, ls, ls->line_number, ls->column, FUNCTION_PARAMETER);
    *params = eina_list_append(*params, par);
    eolian_object_ref(&par->base);
    if (allow_inout && (ls->t.kw == KW_at_in))
      {
-        par->param_dir = EOLIAN_IN_PARAM;
+        par->param_dir = EOLIAN_PARAMETER_IN;
         eo_lexer_get(ls);
      }
    else if (allow_inout && ls->t.kw == KW_at_out)
      {
-        par->param_dir = EOLIAN_OUT_PARAM;
+        par->param_dir = EOLIAN_PARAMETER_OUT;
         eo_lexer_get(ls);
      }
    else if (allow_inout && ls->t.kw == KW_at_inout)
      {
-        par->param_dir = EOLIAN_INOUT_PARAM;
+        par->param_dir = EOLIAN_PARAMETER_INOUT;
         eo_lexer_get(ls);
      }
-   else par->param_dir = EOLIAN_IN_PARAM;
+   else par->param_dir = EOLIAN_PARAMETER_IN;
    check(ls, TOK_VALUE);
    par->base.name = eina_stringshare_ref(ls->t.value.s);
    eo_lexer_get(ls);
    check_next(ls, ':');
    if ((ls->klass && ls->klass->base.is_beta) || func->base.is_beta)
      {
-       if (par->param_dir == EOLIAN_OUT_PARAM || par->param_dir == EOLIAN_INOUT_PARAM)
+       if (par->param_dir == EOLIAN_PARAMETER_OUT || par->param_dir == EOLIAN_PARAMETER_INOUT)
          {
             /* void is allowed for out/inout for beta-api for now to make a voidptr */
             par->type = eo_lexer_type_release(ls, parse_type_void(ls, EINA_TRUE, EINA_TRUE));
@@ -1114,7 +1114,7 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
      }
    par->type = eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE, EINA_TRUE));
 type_done:
-   if ((is_vals || (par->param_dir == EOLIAN_OUT_PARAM)) && (ls->t.token == '('))
+   if ((is_vals || (par->param_dir == EOLIAN_PARAMETER_OUT)) && (ls->t.token == '('))
      {
         int line = ls->line_number, col = ls->column;
         ls->expr_mode = EINA_TRUE;

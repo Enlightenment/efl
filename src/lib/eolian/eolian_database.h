@@ -255,7 +255,7 @@ struct _Eolian_Function_Parameter
    Eolian_Type *type;
    Eolian_Expression *value;
    Eolian_Documentation *doc;
-   Eolian_Parameter_Dir param_dir;
+   Eolian_Parameter_Direction param_dir;
    Eina_Bool optional :1; /* True if this argument is optional */
    Eina_Bool by_ref   :1;
    Eina_Bool move     :1;

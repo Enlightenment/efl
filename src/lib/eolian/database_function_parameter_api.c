@@ -5,10 +5,10 @@
 #include <Eina.h>
 #include "eolian_database.h"
 
-EAPI Eolian_Parameter_Dir
+EAPI Eolian_Parameter_Direction
 eolian_parameter_direction_get(const Eolian_Function_Parameter *param)
 {
-   EINA_SAFETY_ON_NULL_RETURN_VAL(param, EOLIAN_UNKNOWN_PARAM);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(param, EOLIAN_PARAMETER_UNKNOWN);
    return param->param_dir;
 }
 
