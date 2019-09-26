@@ -621,8 +621,18 @@ _redirect_cb(void *data, const Efl_Event *ev)
 {
    Eo *obj = data;
 
-#define REDIRECT_EVT(item_evt, item) \
-   if (item_evt == ev->desc) efl_event_callback_call(obj, item, ev->object);
+#define REDIRECT_EVT(Desc, Item_Desc)                           \
+   if (Desc == ev->desc)                                        \
+     {                                                          \
+        Efl_Ui_Item_Clickable_Clicked item_clicked;             \
+        Efl_Input_Clickable_Clicked *clicked = ev->info;        \
+                                                                \
+        item_clicked.clicked = *clicked;                        \
+        item_clicked.item = ev->object;                         \
+                                                                \
+        efl_event_callback_call(obj, Item_Desc, &item_clicked); \
+     }
+
    REDIRECT_EVT(EFL_INPUT_EVENT_PRESSED, EFL_UI_EVENT_ITEM_PRESSED);
    REDIRECT_EVT(EFL_INPUT_EVENT_UNPRESSED, EFL_UI_EVENT_ITEM_UNPRESSED);
    REDIRECT_EVT(EFL_INPUT_EVENT_LONGPRESSED, EFL_UI_EVENT_ITEM_LONGPRESSED);
