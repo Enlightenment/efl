@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Collection_View extends Efl.Ui.Layout_Base implements
+class Efl.Ui.Collection_View extends Efl.Ui.Layout_Base implements
                 Efl.Ui.Layout_Orientable,
                 Efl.Ui.Selectable,
                 Efl.Ui.Multi_Selectable_Async,
@@ -35,7 +35,7 @@ class @beta Efl.Ui.Collection_View extends Efl.Ui.Layout_Base implements
             factory: Efl.Ui.Factory; [[The factory.]]
          }
       }
-      @property position_manager {
+      @property position_manager @beta {
         [[Position manager object that handles placement of items.]]
         values {
            position_manager : Efl.Ui.Position_Manager.Entity @move; [[The objects ownership is passed to the item container.]]
