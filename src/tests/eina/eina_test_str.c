@@ -173,9 +173,9 @@ EFL_START_TEST(str_split)
         fail_if(elements != 3);
    for (elements = 0; elements < 3 - 1; elements++)
      fail_if(strcmp(result[elements], "match") != 0);
-     fail_if(result[3]);
-        free(result[0]);
-        free(result);
+   fail_if(result[3]);
+      free(result[0]);
+      free(result);
 
    str = malloc(sizeof(char) * 1024);
    str[0] = 0;
