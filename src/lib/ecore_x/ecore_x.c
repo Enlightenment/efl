@@ -1394,6 +1394,7 @@ EAPI void
 ecore_x_window_container_manage(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (_ecore_x_window_manage_succeeded && (win == ecore_x_window_root_first_get())) return;
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    XSelectInput(_ecore_x_disp, win,
                 SubstructureRedirectMask |
@@ -1406,6 +1407,7 @@ ecore_x_window_client_manage(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+   if (_ecore_x_window_manage_succeeded && (win == ecore_x_window_root_first_get())) return;
    XSelectInput(_ecore_x_disp, win,
                 PropertyChangeMask |
 //		ResizeRedirectMask |
@@ -1425,6 +1427,7 @@ ecore_x_window_sniff(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+   if (_ecore_x_window_manage_succeeded && (win == ecore_x_window_root_first_get())) return;
    XSelectInput(_ecore_x_disp, win,
                 PropertyChangeMask |
                 SubstructureNotifyMask);
@@ -1446,6 +1449,7 @@ EAPI void
 ecore_x_window_client_sniff(Ecore_X_Window win)
 {
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (_ecore_x_window_manage_succeeded && (win == ecore_x_window_root_first_get())) return;
    EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
    XSelectInput(_ecore_x_disp, win,
                 PropertyChangeMask |
