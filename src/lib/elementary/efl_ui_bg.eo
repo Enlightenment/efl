@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Bg extends Efl.Ui.Layout_Base
+class Efl.Ui.Bg extends Efl.Ui.Layout_Base
                       implements Efl.File, Efl.Gfx.Color
                       composites Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller
 {

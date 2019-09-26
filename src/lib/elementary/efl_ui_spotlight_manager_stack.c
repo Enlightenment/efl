@@ -23,7 +23,7 @@ _geom_sync(Eo *obj EINA_UNUSED, Efl_Ui_Spotlight_Manager_Stack_Data *pd)
 {
    Eina_Array *array = eina_array_new(2);
    Eina_Rect group_pos = efl_gfx_entity_geometry_get(pd->group);
-   if (efl_player_play_get(pd->hide))
+   if (efl_player_playing_get(pd->hide))
      {
         //we are currently in animation, sync the geometry of the targets
         eina_array_push(array, efl_animation_player_target_get(pd->hide));
@@ -66,7 +66,7 @@ _running_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 
    EINA_SAFETY_ON_NULL_RETURN(pd);
    //calculate absolut position, multiply pos with 2.0 because duration is only 0.5)
-   absolut_position = pd->from + (pd->to - pd->from)*(efl_player_pos_get(pd->show)*2.0);
+   absolut_position = pd->from + (pd->to - pd->from)*(efl_player_playback_position_get(pd->show)*2.0);
    efl_event_callback_call(data, EFL_UI_SPOTLIGHT_MANAGER_EVENT_POS_UPDATE, &absolut_position);
 }
 
@@ -132,7 +132,7 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Sp
 
         pd->show = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, obj);
         efl_animation_player_animation_set(pd->show, show_anim);
-        efl_player_play_set(pd->show, EINA_FALSE);
+        efl_player_playing_set(pd->show, EINA_FALSE);
         efl_event_callback_array_add(pd->show, _anim_show_event_cb(), obj);
 
         //Default Hide Animation
@@ -143,7 +143,7 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_Sp
 
         pd->hide = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, obj);
         efl_animation_player_animation_set(pd->hide, hide_anim);
-        efl_player_play_set(pd->hide, EINA_FALSE);
+        efl_player_playing_set(pd->hide, EINA_FALSE);
         efl_event_callback_array_add(pd->hide, _anim_hide_event_cb(), obj);
 
         for (int i = 0; i < efl_content_count(spotlight) ; ++i) {
@@ -176,9 +176,9 @@ _efl_ui_spotlight_manager_stack_efl_ui_spotlight_manager_content_del(Eo *obj EIN
 static void
 _setup_anim(Efl_Animation_Player *player, Efl_Gfx_Entity *entity)
 {
-   efl_player_stop(player);
+   efl_player_playing_set(player, EINA_FALSE);
    efl_animation_player_target_set(player, entity);
-   efl_player_start(player);
+   efl_player_playing_set(player, EINA_TRUE);
 }
 
 static Eina_Bool
@@ -256,7 +256,7 @@ _reset_player(Efl_Animation_Player *player, Eina_Bool vis)
    Efl_Gfx_Entity *obj;
 
    obj = efl_animation_player_target_get(player);
-   efl_player_stop(player);
+   efl_player_playing_set(player, EINA_FALSE);
    efl_animation_player_target_set(player, NULL);
    efl_gfx_entity_visible_set(obj, vis);
 }

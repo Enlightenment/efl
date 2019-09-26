@@ -1,4 +1,5 @@
 group { "efl/slider/horizontal";
+   data.item: "version" "123";
    alias: "efl/slider/horizontal:disabled";
    images.image: "slider_run_base_horiz.png" COMP;
    images.image: "slider_run_bevel_horiz.png" COMP;
@@ -235,6 +236,7 @@ group { "efl/slider/horizontal";
 }
 
 group { "efl/slider/vertical";
+   data.item: "version" "123";
    alias: "efl/slider/vertical:disabled";
    images.image: "slider_run_base_vert.png" COMP;
    images.image: "slider_run_bevel_vert.png" COMP;
@@ -473,6 +475,7 @@ group { "efl/slider/vertical";
 //Range
 
 group { "efl/slider_interval/horizontal";
+   data.item: "version" "123";
    alias: "efl/slider/horizontal:disabled";
    images.image: "slider_run_base_horiz.png" COMP;
    images.image: "slider_run_bevel_horiz.png" COMP;
@@ -755,6 +758,7 @@ group { "efl/slider_interval/horizontal";
 }
 
 group { "efl/slider_interval/vertical";
+   data.item: "version" "123";
    alias: "efl/slider/vertical:disabled";
    images.image: "slider_run_base_vert.png" COMP;
    images.image: "slider_run_bevel_vert.png" COMP;

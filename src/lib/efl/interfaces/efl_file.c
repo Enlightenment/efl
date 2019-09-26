@@ -172,7 +172,11 @@ efl_file_simple_load(Eo *obj, const char *file, const char *key)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(obj, EINA_FALSE);
    efl_ref(obj);
-   EINA_SAFETY_ON_TRUE_GOTO(efl_file_set(obj, file), fail);
+   if (efl_file_set(obj, file))
+     {
+        EINA_LOG_ERR("File set to '%s' on '%s' failed.", file, efl_debug_name_get(obj));
+        goto fail;
+     }
    efl_file_key_set(obj, key);
    if (file)
      {

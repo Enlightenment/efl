@@ -538,33 +538,31 @@ _efl_canvas_layout_efl_observer_update(Eo *obj EINA_UNUSED, Edje *ed, Efl_Object
 }
 
 EOLIAN Eina_Bool
-_efl_canvas_layout_efl_player_playable_get(const Eo *obj EINA_UNUSED, Edje *pd EINA_UNUSED)
+_efl_canvas_layout_efl_playable_playable_get(const Eo *obj EINA_UNUSED, Edje *pd EINA_UNUSED)
 {
    return EINA_TRUE;
 }
 
-EOLIAN void
-_efl_canvas_layout_efl_player_play_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool play)
+EOLIAN Eina_Bool
+_efl_canvas_layout_efl_player_paused_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool paused)
 {
    double t;
    Eina_List *l;
    Edje_Running_Program *runp;
    unsigned short i;
 
-   if (!ed) return;
-   if (ed->delete_me) return;
-   if (play)
+   if (!ed) return EINA_FALSE;
+   if (ed->delete_me) return EINA_FALSE;
+   paused = !!paused;
+   if (ed->paused == paused) return EINA_TRUE;
+   if (!paused)
      {
-        if (!ed->paused) return;
-        ed->paused = EINA_FALSE;
         t = ecore_time_get() - ed->paused_at;
         EINA_LIST_FOREACH(ed->actions, l, runp)
           runp->start_time += t;
      }
    else
      {
-        if (ed->paused) return;
-        ed->paused = EINA_TRUE;
         ed->paused_at = ecore_time_get();
      }
 
@@ -576,29 +574,28 @@ _efl_canvas_layout_efl_player_play_set(Eo *obj EINA_UNUSED, Edje *ed, Eina_Bool 
             ((rp->type == EDJE_RP_TYPE_SWALLOW) &&
              (rp->typedata.swallow)) &&
             (rp->typedata.swallow->swallowed_object))
-          edje_object_play_set(rp->typedata.swallow->swallowed_object, play);
+          efl_player_paused_set(rp->typedata.swallow->swallowed_object, paused);
      }
-}
-
-EOLIAN Eina_Bool
-_efl_canvas_layout_efl_player_play_get(const Eo *obj EINA_UNUSED, Edje *ed)
-{
-   if (!ed) return EINA_FALSE;
-   if (ed->delete_me) return EINA_FALSE;
-   if (ed->paused) return EINA_FALSE;
-
    return EINA_TRUE;
 }
 
+EOLIAN Eina_Bool
+_efl_canvas_layout_efl_player_paused_get(const Eo *obj EINA_UNUSED, Edje *ed)
+{
+   if (!ed) return EINA_FALSE;
+   if (ed->delete_me) return EINA_FALSE;
+   return ed->paused;
+}
+
 EOLIAN void
-_efl_canvas_layout_efl_player_play_speed_set(Eo *obj EINA_UNUSED, Edje *pd , double speed)
+_efl_canvas_layout_efl_player_playback_speed_set(Eo *obj EINA_UNUSED, Edje *pd , double speed)
 {
    if (speed <= 0.0) speed = 1.0;
    pd->duration_scale = 1.0/speed;
 }
 
 EOLIAN double
-_efl_canvas_layout_efl_player_play_speed_get(const Eo *obj EINA_UNUSED, Edje *pd)
+_efl_canvas_layout_efl_player_playback_speed_get(const Eo *obj EINA_UNUSED, Edje *pd)
 {
    return 1.0/pd->duration_scale;
 }

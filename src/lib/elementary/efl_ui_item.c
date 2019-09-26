@@ -208,9 +208,34 @@ _efl_ui_item_item_parent_get(const Eo *obj EINA_UNUSED, Efl_Ui_Item_Data *pd)
    return pd->parent;
 }
 
+EOLIAN static void
+_efl_ui_item_calc_locked_set(Eo *obj EINA_UNUSED, Efl_Ui_Item_Data *pd, Eina_Bool locked)
+{
+   pd->locked = !!locked;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_item_calc_locked_get(const Eo *obj EINA_UNUSED, Efl_Ui_Item_Data *pd)
+{
+   return pd->locked;
+}
+
+EOLIAN static void
+_efl_ui_item_efl_canvas_group_group_need_recalculate_set(Eo *obj, Efl_Ui_Item_Data *pd EINA_UNUSED, Eina_Bool value)
+{
+   // Prevent recalc when the item are stored in the cache
+   // As due to async behavior, we can still have text updated from future that just finished after
+   // we have left the releasing stage of factories. This is the simplest way to prevent those later
+   // update.
+   if (pd->locked) return;
+   efl_canvas_group_need_recalculate_set(efl_super(obj, EFL_UI_ITEM_CLASS), value);
+}
+
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_item, Efl_Ui_Item_Data)
 
 #include "efl_ui_item.eo.c"
 #include "efl_ui_selectable.eo.c"
 #include "efl_ui_multi_selectable.eo.c"
 #include "efl_ui_single_selectable.eo.c"
+#include "efl_ui_item_clickable.eo.c"
+

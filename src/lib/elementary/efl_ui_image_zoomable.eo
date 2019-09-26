@@ -2,7 +2,7 @@
 struct @extern Elm.Photocam.Error; [[Photocam error information.]]
 struct @extern Elm.Photocam.Progress; [[Photocam progress information.]]
 
-class @beta Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom
+class Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom
    composites Efl.Ui.Scrollable, Efl.Ui.Scrollbar
 {
    [[Elementary Image Zoomable class]]
@@ -43,8 +43,12 @@ class @beta Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom
       Efl.Gfx.View.view_size { get; }
       Efl.Gfx.Image.image_size { get; }
       Efl.Ui.Image.icon { set; get; }
-      Efl.Player.playable { get; }
-      Efl.Player.play { get; set; }
+      Efl.Playable.playable { get; }
+      Efl.Player.playing { get; set; }
+      Efl.Player.paused { get; set; }
+      Efl.Player.playback_position { get; set; }
+      Efl.Player.playback_progress { get; }
+      Efl.Player.playback_speed { get; set; }
       Efl.Ui.Zoom.zoom_animation { set; get; }
       Efl.Ui.Zoom.zoom_level { set; get; }
       Efl.Ui.Zoom.zoom_mode { set; get; }

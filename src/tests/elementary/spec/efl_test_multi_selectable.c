@@ -52,7 +52,7 @@ EFL_START_TEST(test_multi_select)
    ck_assert_int_eq(efl_ui_selectable_selected_get(efl_pack_content_get(widget, 0)), EINA_TRUE);
    ck_assert_int_eq(efl_ui_selectable_selected_get(efl_pack_content_get(widget, 2)), EINA_TRUE);
    ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(widget), efl_pack_content_get(widget, 2));
-   _iterator_to_array(&arr_selected, efl_ui_selected_items_get(widget));
+   _iterator_to_array(&arr_selected, efl_ui_selected_iterator_new(widget));
    ck_assert_int_eq(eina_array_count(arr_selected), 2);
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 0), efl_pack_content_get(widget, 0));
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 1), efl_pack_content_get(widget, 2));
@@ -87,7 +87,7 @@ EFL_START_TEST(test_multi_select_removal)
    c = 0;
 
    ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(widget), NULL);
-   _iterator_to_array(&arr_selected, efl_ui_selected_items_get(widget));
+   _iterator_to_array(&arr_selected, efl_ui_selected_iterator_new(widget));
    ck_assert_int_eq(eina_array_count(arr_selected), 0);
    efl_event_callback_del(widget, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, (void*) event_callback_single_call_int_data, &c);
    efl_event_callback_del(widget, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, event_callback_that_quits_the_main_loop_when_called, NULL);
@@ -114,7 +114,7 @@ EFL_START_TEST(test_single_select)
    ck_assert_int_eq(efl_ui_selectable_selected_get(efl_pack_content_get(widget, 0)), EINA_FALSE);
    ck_assert_int_eq(efl_ui_selectable_selected_get(efl_pack_content_get(widget, 2)), EINA_TRUE);
    ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(widget), efl_pack_content_get(widget, 2));
-   _iterator_to_array(&arr_selected, efl_ui_selected_items_get(widget));
+   _iterator_to_array(&arr_selected, efl_ui_selected_iterator_new(widget));
    ck_assert_int_eq(eina_array_count(arr_selected), 1);
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 0), efl_pack_content_get(widget, 2));
 
@@ -144,20 +144,20 @@ EFL_START_TEST(test_none_select)
    ck_assert_int_eq(efl_ui_selectable_selected_get(efl_pack_content_get(widget, 0)), EINA_FALSE);
    ck_assert_int_eq(efl_ui_selectable_selected_get(efl_pack_content_get(widget, 2)), EINA_FALSE);
    ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(widget), NULL);
-   _iterator_to_array(&arr_selected, efl_ui_selected_items_get(widget));
+   _iterator_to_array(&arr_selected, efl_ui_selected_iterator_new(widget));
    ck_assert_int_eq(eina_array_count(arr_selected), 0);
    efl_event_callback_del(widget, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, (void*) event_callback_single_call_int_data, &c);
    efl_event_callback_del(widget, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, event_callback_that_quits_the_main_loop_when_called, NULL);
 }
 EFL_END_TEST
 
-EFL_START_TEST(select_all_api)
+EFL_START_TEST(all_select_api)
 {
    Eina_Array *arr_selected;
 
    efl_ui_select_mode_set(widget, EFL_UI_SELECT_MODE_MULTI);
-   efl_ui_select_all(widget);
-   _iterator_to_array(&arr_selected, efl_ui_selected_items_get(widget));
+   efl_ui_all_select(widget);
+   _iterator_to_array(&arr_selected, efl_ui_selected_iterator_new(widget));
 
    ck_assert_int_eq(eina_array_count(arr_selected), 3);
 
@@ -167,69 +167,69 @@ EFL_START_TEST(select_all_api)
 }
 EFL_END_TEST
 
-EFL_START_TEST(unselect_all_api)
+EFL_START_TEST(all_unselect_api)
 {
    Eina_Array *arr_selected;
 
    efl_ui_select_mode_set(widget, EFL_UI_SELECT_MODE_MULTI);
    efl_ui_selectable_selected_set(efl_pack_content_get(widget, 0), EINA_TRUE);
 
-   efl_ui_unselect_all(widget);
-   _iterator_to_array(&arr_selected, efl_ui_selected_items_get(widget));
+   efl_ui_all_unselect(widget);
+   _iterator_to_array(&arr_selected, efl_ui_selected_iterator_new(widget));
 
    ck_assert_int_eq(eina_array_count(arr_selected), 0);
    ck_assert_int_eq(efl_ui_selectable_selected_get(efl_pack_content_get(widget, 0)), EINA_FALSE);
 }
 EFL_END_TEST
 
-EFL_START_TEST(unselect_range)
+EFL_START_TEST(range_unselect)
 {
    Eina_Array *arr_selected;
 
    efl_ui_select_mode_set(widget, EFL_UI_SELECT_MODE_MULTI);
-   efl_ui_select_all(widget);
+   efl_ui_all_select(widget);
 
-   efl_ui_unselect_range(widget, efl_pack_content_get(widget, 1), efl_pack_content_get(widget, 2));
-   _iterator_to_array(&arr_selected, efl_ui_selected_items_get(widget));
+   efl_ui_range_unselect(widget, efl_pack_content_get(widget, 1), efl_pack_content_get(widget, 2));
+   _iterator_to_array(&arr_selected, efl_ui_selected_iterator_new(widget));
    ck_assert_int_eq(eina_array_count(arr_selected), 1);
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 0), efl_pack_content_get(widget, 0));
 }
 EFL_END_TEST
 
-EFL_START_TEST(unselect_range2)
+EFL_START_TEST(range_unselect2)
 {
    Eina_Array *arr_selected;
 
    efl_ui_select_mode_set(widget, EFL_UI_SELECT_MODE_MULTI);
-   efl_ui_select_all(widget);
+   efl_ui_all_select(widget);
 
-   efl_ui_unselect_range(widget, efl_pack_content_get(widget, 2), efl_pack_content_get(widget, 1));
-   _iterator_to_array(&arr_selected, efl_ui_selected_items_get(widget));
+   efl_ui_range_unselect(widget, efl_pack_content_get(widget, 2), efl_pack_content_get(widget, 1));
+   _iterator_to_array(&arr_selected, efl_ui_selected_iterator_new(widget));
    ck_assert_int_eq(eina_array_count(arr_selected), 1);
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 0), efl_pack_content_get(widget, 0));
 }
 EFL_END_TEST
 
-EFL_START_TEST(select_range)
+EFL_START_TEST(range_select)
 {
    Eina_Array *arr_selected;
 
    efl_ui_select_mode_set(widget, EFL_UI_SELECT_MODE_MULTI);
-   efl_ui_select_range(widget, efl_pack_content_get(widget, 1), efl_pack_content_get(widget, 2));
-   _iterator_to_array(&arr_selected, efl_ui_selected_items_get(widget));
+   efl_ui_range_select(widget, efl_pack_content_get(widget, 1), efl_pack_content_get(widget, 2));
+   _iterator_to_array(&arr_selected, efl_ui_selected_iterator_new(widget));
    ck_assert_int_eq(eina_array_count(arr_selected), 2);
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 0), efl_pack_content_get(widget, 1));
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 1), efl_pack_content_get(widget, 2));
 }
 EFL_END_TEST
 
-EFL_START_TEST(select_range2)
+EFL_START_TEST(range_select2)
 {
    Eina_Array *arr_selected;
 
    efl_ui_select_mode_set(widget, EFL_UI_SELECT_MODE_MULTI);
-   efl_ui_select_range(widget, efl_pack_content_get(widget, 2), efl_pack_content_get(widget, 1));
-   _iterator_to_array(&arr_selected, efl_ui_selected_items_get(widget));
+   efl_ui_range_select(widget, efl_pack_content_get(widget, 2), efl_pack_content_get(widget, 1));
+   _iterator_to_array(&arr_selected, efl_ui_selected_iterator_new(widget));
    ck_assert_int_eq(eina_array_count(arr_selected), 2);
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 0), efl_pack_content_get(widget, 1));
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 1), efl_pack_content_get(widget, 2));
@@ -244,11 +244,11 @@ efl_ui_multi_selectable_behavior_test(TCase *tc)
    tcase_add_test(tc, test_multi_select_removal);
    tcase_add_test(tc, test_single_select);
    tcase_add_test(tc, test_none_select);
-   tcase_add_test(tc, select_all_api);
-   tcase_add_test(tc, unselect_all_api);
-   tcase_add_test(tc, unselect_range);
-   tcase_add_test(tc, unselect_range2);
-   tcase_add_test(tc, select_range);
-   tcase_add_test(tc, select_range2);
+   tcase_add_test(tc, all_select_api);
+   tcase_add_test(tc, all_unselect_api);
+   tcase_add_test(tc, range_unselect);
+   tcase_add_test(tc, range_unselect2);
+   tcase_add_test(tc, range_select);
+   tcase_add_test(tc, range_select2);
    efl_ui_single_selectable_behavior_test(tc);
 }

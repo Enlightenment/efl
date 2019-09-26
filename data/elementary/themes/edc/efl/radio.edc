@@ -1,4 +1,5 @@
 group { "efl/radio";
+   data.item: "version" "123";
    images.image: "inset_shadow_circle_tiny.png" COMP;
    images.image: "inset_circle_tiny.png" COMP;
    images.image: "sym_radio_alum.png" COMP;
@@ -224,17 +225,17 @@ group { "efl/radio";
    programs {
       EFL_UI_CLICKABLE_PART_BIND(event)
       program {
-         signal: "efl,state,radio,on"; source: "efl";
+         signal: "efl,state,selected"; source: "efl";
          action:  STATE_SET "selected" 0.0;
          target: "indicator";
       }
       program {
-         signal: "efl,state,radio,off"; source: "efl";
+         signal: "efl,state,unselected"; source: "efl";
          action:  STATE_SET "default" 0.0;
          target: "indicator";
       }
       program {
-         signal: "efl,state,text,set"; source: "efl";
+         signal: "efl,text,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);
@@ -242,7 +243,7 @@ group { "efl/radio";
          }
       }
       program {
-         signal: "efl,state,text,unset"; source: "efl";
+         signal: "efl,text,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);
@@ -250,7 +251,7 @@ group { "efl/radio";
          }
       }
       program {
-         signal: "efl,state,content,set"; source: "efl";
+         signal: "efl,content,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= ICON; set_int(btmode, m);
@@ -258,7 +259,7 @@ group { "efl/radio";
          }
       }
       program {
-         signal: "efl,state,content,unset"; source: "efl";
+         signal: "efl,content,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~ICON; set_int(btmode, m);

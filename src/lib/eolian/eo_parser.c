@@ -125,7 +125,7 @@ _eolian_decl_get(Eo_Lexer *ls, const char *name)
      obj = eina_hash_find(ls->state->staging.unit.objects, name);
    if (obj && ((obj->type == EOLIAN_OBJECT_CLASS) ||
                (obj->type == EOLIAN_OBJECT_TYPEDECL) ||
-               (obj->type == EOLIAN_OBJECT_VARIABLE)))
+               (obj->type == EOLIAN_OBJECT_CONSTANT)))
      return obj;
 
    return NULL;
@@ -152,8 +152,8 @@ _eolian_decl_name_get(Eolian_Object *obj)
              break;
           }
         goto end;
-      case EOLIAN_OBJECT_VARIABLE:
-        return "variable";
+      case EOLIAN_OBJECT_CONSTANT:
+        return "constant";
       default:
         break;
      }
@@ -517,7 +517,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         FILL_BASE(fdef->base, ls, fline, fcol, STRUCT_FIELD);
         fdef->type = eo_lexer_type_release(ls, tp);
         fdef->base.name = eina_stringshare_ref(fname);
-        Eina_Bool has_owned = EINA_FALSE, has_by_ref = EINA_FALSE;
+        Eina_Bool has_move = EINA_FALSE, has_by_ref = EINA_FALSE;
         for (;;) switch (ls->t.kw)
           {
            case KW_at_by_ref:
@@ -526,8 +526,8 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
              eo_lexer_get(ls);
              break;
            case KW_at_move:
-             CASE_LOCK(ls, owned, "owned qualifier");
-             fdef->type->owned = fdef->move = EINA_TRUE;
+             CASE_LOCK(ls, move, "move qualifier");
+             fdef->move = EINA_TRUE;
              eo_lexer_get(ls);
              break;
            default:
@@ -773,14 +773,14 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr)
                     def->base_type = eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE));
                   /* view-only types are not allowed to own the contents */
                   if (tpid == KW_array || tpid == KW_hash || tpid == KW_list || tpid == KW_future)
-                    if ((def->base_type->owned = def->base_type->move = ls->t.kw == KW_at_move))
+                    if ((def->base_type->move = ls->t.kw == KW_at_move))
                       eo_lexer_get(ls);
                   if (tpid == KW_hash)
                     {
                        check_next(ls, ',');
                        def->base_type->next_type =
                          eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE));
-                       if ((def->base_type->next_type->owned = def->base_type->next_type->move = ls->t.kw == KW_at_move))
+                       if ((def->base_type->next_type->move = ls->t.kw == KW_at_move))
                          eo_lexer_get(ls);
                     }
                   check_match(ls, '>', '<', bline, bcol);
@@ -879,10 +879,10 @@ tags_done:
    return def;
 }
 
-static Eolian_Variable *
-parse_variable(Eo_Lexer *ls, Eina_Bool global)
+static Eolian_Constant *
+parse_constant(Eo_Lexer *ls)
 {
-   Eolian_Variable *def = eo_lexer_variable_new(ls);
+   Eolian_Constant *def = eo_lexer_constant_new(ls);
    Eina_Strbuf *buf;
    eo_lexer_get(ls);
    Eina_Stringshare *cname = NULL;
@@ -908,11 +908,10 @@ parse_variable(Eo_Lexer *ls, Eina_Bool global)
         goto tags_done;
      }
 tags_done:
-   def->type = global ? EOLIAN_VAR_GLOBAL : EOLIAN_VAR_CONSTANT;
    buf = eina_strbuf_new();
    eo_lexer_dtor_push(ls, EINA_FREE_CB(eina_strbuf_free), buf);
    eo_lexer_context_push(ls);
-   FILL_BASE(def->base, ls, ls->line_number, ls->column, VARIABLE);
+   FILL_BASE(def->base, ls, ls->line_number, ls->column, CONSTANT);
    parse_name(ls, buf);
    def->base.name = eina_stringshare_add(eina_strbuf_string_get(buf));
    if (cname)
@@ -932,17 +931,12 @@ tags_done:
    check_next(ls, ':');
    def->base_type = eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE));
    /* constants are required to have a value */
-   if (!global)
-     check(ls, '=');
-   /* globals can optionally have a value */
-   if (ls->t.token == '=')
-     {
-        ls->expr_mode = EINA_TRUE;
-        eo_lexer_get(ls);
-        def->value = parse_expr(ls);
-        ls->expr_mode = EINA_FALSE;
-        eo_lexer_expr_release_ref(ls, def->value);
-     }
+   check(ls, '=');
+   ls->expr_mode = EINA_TRUE;
+   eo_lexer_get(ls);
+   def->value = parse_expr(ls);
+   ls->expr_mode = EINA_FALSE;
+   eo_lexer_expr_release_ref(ls, def->value);
    check_next(ls, ';');
    FILL_DOC(ls, def, doc);
    eo_lexer_dtor_pop(ls);
@@ -1020,7 +1014,7 @@ typedef struct _Eo_Ret_Def
    Eolian_Documentation *doc;
    Eolian_Expression *default_ret_val;
    Eina_Bool no_unused: 1;
-   Eina_Bool owned: 1;
+   Eina_Bool move: 1;
    Eina_Bool by_ref: 1;
 } Eo_Ret_Def;
 
@@ -1037,7 +1031,7 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void,
    ret->doc = NULL;
    ret->default_ret_val = NULL;
    ret->no_unused = EINA_FALSE;
-   ret->owned = EINA_FALSE;
+   ret->move = EINA_FALSE;
    ret->by_ref = EINA_FALSE;
    if (allow_def && (ls->t.token == '('))
      {
@@ -1048,7 +1042,7 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void,
         ls->expr_mode = EINA_FALSE;
         check_match(ls, ')', '(', line, col);
      }
-   Eina_Bool has_no_unused = EINA_FALSE, has_owned = EINA_FALSE,
+   Eina_Bool has_no_unused = EINA_FALSE, has_move = EINA_FALSE,
              has_by_ref = EINA_FALSE;
    if (!is_funcptr) for (;;) switch (ls->t.kw)
      {
@@ -1058,8 +1052,8 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void,
         eo_lexer_get(ls);
         break;
       case KW_at_move:
-        CASE_LOCK(ls, owned, "owned qualifier");
-        ret->owned = EINA_TRUE;
+        CASE_LOCK(ls, move, "move qualifier");
+        ret->move = EINA_TRUE;
         eo_lexer_get(ls);
         break;
       case KW_at_by_ref:
@@ -1080,7 +1074,7 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
             Eina_Bool is_vals, const Eolian_Function *func)
 {
    Eina_Bool has_optional = EINA_FALSE,
-             has_owned    = EINA_FALSE,
+             has_move     = EINA_FALSE,
              has_by_ref   = EINA_FALSE;
    Eolian_Function_Parameter *par = calloc(1, sizeof(Eolian_Function_Parameter));
    par->param_dir = EOLIAN_IN_PARAM;
@@ -1136,8 +1130,8 @@ type_done:
         eo_lexer_get(ls);
         break;
       case KW_at_move:
-        CASE_LOCK(ls, owned, "owned qualifier");
-        par->type->owned = par->move = EINA_TRUE;
+        CASE_LOCK(ls, move, "move qualifier");
+        par->move = EINA_TRUE;
         eo_lexer_get(ls);
         break;
       case KW_at_by_ref:
@@ -1258,7 +1252,7 @@ parse_accessor:
              prop->get_ret_val = ret.default_ret_val;
              prop->get_return_no_unused = ret.no_unused;
              prop->get_return_by_ref = ret.by_ref;
-             prop->get_return_move = prop->get_ret_type->owned = ret.owned;
+             prop->get_return_move = ret.move;
           }
         else
           {
@@ -1267,7 +1261,7 @@ parse_accessor:
              prop->set_ret_val = ret.default_ret_val;
              prop->set_return_no_unused = ret.no_unused;
              prop->set_return_by_ref = ret.by_ref;
-             prop->set_return_move = prop->set_ret_type->owned = ret.owned;
+             prop->set_return_move = ret.move;
           }
         break;
       case KW_keys:
@@ -1579,7 +1573,7 @@ body:
         meth->get_ret_val = ret.default_ret_val;
         meth->get_return_no_unused = ret.no_unused;
         meth->get_return_by_ref = ret.by_ref;
-        meth->get_return_move = meth->get_ret_type->owned = ret.owned;
+        meth->get_return_move = ret.move;
         break;
       case KW_params:
         CASE_LOCK(ls, params, "params definition")
@@ -2401,10 +2395,8 @@ parse_unit(Eo_Lexer *ls, Eina_Bool eot)
            break;
         }
       case KW_const:
-      case KW_var:
         {
-           database_var_add(ls->unit, eo_lexer_variable_release(ls,
-             parse_variable(ls, ls->t.kw == KW_var)));
+           database_constant_add(ls->unit, eo_lexer_constant_release(ls, parse_constant(ls)));
            break;
         }
       case KW_error:

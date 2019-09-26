@@ -13,7 +13,7 @@ enum @beta Efl.Gfx.Image_Load_Controller_State
 }
 */
 
-interface @beta Efl.Gfx.Image_Load_Controller
+interface Efl.Gfx.Image_Load_Controller
 {
    [[Common APIs for all loadable 2D images.]]
 
@@ -163,9 +163,5 @@ interface @beta Efl.Gfx.Image_Load_Controller
             skip: bool; [[$true if header is to be skipped.]]
          }
       }
-   }
-   events {
-      load,done: void; [[Emitted after the image has been loaded.]]
-      load,error: Eina.Error; [[Emitted if an error happened during image loading.]]
    }
 }

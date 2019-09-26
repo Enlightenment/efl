@@ -1,4 +1,4 @@
-class @beta Efl.Canvas.Animation_Player extends Efl.Object implements Efl.Player
+class @beta Efl.Canvas.Animation_Player extends Efl.Object implements Efl.Player, Efl.Playable
 {
    [[Efl animation object class]]
    c_prefix: efl_animation_player;
@@ -35,17 +35,16 @@ class @beta Efl.Canvas.Animation_Player extends Efl.Object implements Efl.Player
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Player.start;
-      Efl.Player.stop;
-      Efl.Player.play { get; set; }
-      Efl.Player.playable { get; }
-      Efl.Player.pos { get; set; }
-      Efl.Player.progress { get;}
-      Efl.Player.play_speed { get; set; }
+      Efl.Player.playing { get; set; }
+      Efl.Player.paused { get; set; }
+      Efl.Playable.playable { get; }
+      Efl.Player.playback_position { get; set; }
+      Efl.Player.playback_progress { get;}
+      Efl.Player.playback_speed { get; set; }
       //Efl.Player.volume { get; set; }
       //Efl.Player.mute { get; set; }
-      Efl.Player.length { get; }
-      Efl.Player.seekable { get; }
+      Efl.Playable.length { get; }
+      Efl.Playable.seekable { get; }
    }
    events {
       /* FIXME: This event is similar to Efl.Canvas.Object.anim_started but with different type, might be confusing. */

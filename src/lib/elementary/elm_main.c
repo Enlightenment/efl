@@ -31,6 +31,8 @@
 #include "elm_gengrid_eo.h"
 #include "elm_widget_gengrid.h"
 
+#include "efl_ui.eot.c"
+
 #define SEMI_BROKEN_QUICKLAUNCH 1
 
 #ifdef __CYGWIN__
@@ -39,7 +41,7 @@
 # define LIBEXT ".so"
 #endif
 
-Eina_Bool _use_build_config;
+Eina_Bool _running_in_tree;
 
 static Elm_Version _version = { VMAJ, VMIN, VMIC, VREV };
 EAPI Elm_Version *elm_version = &_version;
@@ -405,16 +407,14 @@ _sys_lang_changed(void *data EINA_UNUSED, int type EINA_UNUSED, void *event EINA
 }
 
 EAPI Eina_Error EFL_UI_THEME_APPLY_ERROR_NONE = 0;
-EAPI Eina_Error EFL_UI_THEME_APPLY_ERROR_DEFAULT = 0;
-EAPI Eina_Error EFL_UI_THEME_APPLY_ERROR_GENERIC = 0;
 
 static void
 _efl_ui_theme_apply_error_init(void)
 {
    if (EFL_UI_THEME_APPLY_ERROR_DEFAULT) return;
    /* NONE should always be 0 */
-   EFL_UI_THEME_APPLY_ERROR_DEFAULT = eina_error_msg_static_register("Fallback to default style was enabled for this widget");
-   EFL_UI_THEME_APPLY_ERROR_GENERIC = eina_error_msg_static_register("An error occurred and no theme could be set for this widget");
+   EFL_UI_THEME_APPLY_ERROR_DEFAULT;
+   EFL_UI_THEME_APPLY_ERROR_GENERIC;
 }
 
 // This is necessary to keep backward compatibility
@@ -786,7 +786,7 @@ elm_quicklaunch_init(int    argc EINA_UNUSED,
 {
    _elm_ql_init_count++;
    if (_elm_ql_init_count > 1) return _elm_ql_init_count;
-   _use_build_config = !!getenv("EFL_RUN_IN_TREE");
+   _running_in_tree = !!getenv("EFL_RUN_IN_TREE");
    EINA_SAFETY_ON_FALSE_GOTO(eina_init(), fail_eina);
    _elm_log_dom = eina_log_domain_register("elementary", EINA_COLOR_LIGHTBLUE);
    EINA_SAFETY_ON_TRUE_GOTO(_elm_log_dom < 0, fail_eina_log);
@@ -829,7 +829,7 @@ elm_quicklaunch_init(int    argc EINA_UNUSED,
                          LOCALE_DIR);
    if (pfx)
      {
-        if (_use_build_config)
+        if (_running_in_tree)
           _elm_data_dir = eina_stringshare_add(PACKAGE_BUILD_DIR "/data/elementary");
         else
           _elm_data_dir = eina_stringshare_add(eina_prefix_data_get(pfx));

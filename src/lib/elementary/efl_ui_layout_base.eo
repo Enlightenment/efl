@@ -5,7 +5,19 @@ abstract Efl.Ui.Layout_Base extends Efl.Ui.Widget implements Efl.Container,
                      Efl.Layout.Calc, Efl.Layout.Signal,
                      Efl.Layout.Group
 {
-   [[Elementary layout abstract
+   [[EFL layout widget abstract.
+
+     A "layout" in the context of EFL is an object which interfaces with the internal layout engine.
+     Layouts are created using the EDC language, and any widget which implements this abstract must
+     have a corresponding theme group to load in order to graphically display anything.
+
+     Theme groups for EFL widgets must be versioned. This means having a "version" $[data.item] key in
+     the theme group for the widget. If the loaded theme group for a widget has version info which
+     is lower than the currently-running EFL version, a warning will be printed to notify the user that
+     new features may be available. If the loaded theme group for a widget has no version info, an
+     error will be generated. If the loaded theme group for a widget has a version that is newer than
+     the currently-running EFL version, a critical error will be printed to notify the user that
+     the theme may not be compatible.
 
      @since 1.22
    ]]

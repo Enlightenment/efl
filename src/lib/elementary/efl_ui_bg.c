@@ -267,10 +267,10 @@ _efl_ui_bg_efl_object_finalize(Eo *obj, Efl_Ui_Bg_Data *sd)
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+EFL_UI_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_BG_EXTRA_OPS \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX)
+   EFL_UI_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX)
 
 #include "efl_ui_bg.eo.c"
 

@@ -56,6 +56,7 @@
 #include "dummy_part_holder.eo.h"
 #include "dummy_event_manager.eo.h"
 #include "dummy_constructible_object.eo.h"
+#include "dummy_hidden_object.eo.h"
 
 #include <interfaces/efl_part.eo.h>
 

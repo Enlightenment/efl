@@ -232,13 +232,6 @@ eolian_type_error_get(const Eolian_Type *tp)
 }
 
 EAPI Eina_Bool
-eolian_type_is_owned(const Eolian_Type *tp)
-{
-   EINA_SAFETY_ON_NULL_RETURN_VAL(tp, EINA_FALSE);
-   return tp->owned;
-}
-
-EAPI Eina_Bool
 eolian_type_is_move(const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, EINA_FALSE);

@@ -34,7 +34,7 @@ extern "C" {
 #include <Eina.h>
 
 /**
- * @page eolian_main Eolian (BETA)
+ * @page eolian_main Eolian
  *
  * @date 2014 (created)
  *
@@ -81,8 +81,6 @@ extern "C" {
  * @addtogroup Eolian
  * @{
  */
-
-#ifdef EFL_BETA_API_SUPPORT
 
 /* The maximum format version supported by this version of Eolian */
 #define EOLIAN_FILE_FORMAT_VERSION 1
@@ -164,11 +162,11 @@ typedef struct _Eolian_Event Eolian_Event;
  */
 typedef struct _Eolian_Expression Eolian_Expression;
 
-/* Variable information
+/* Constant information
  *
  * @ingroup Eolian
  */
-typedef struct _Eolian_Variable Eolian_Variable;
+typedef struct _Eolian_Constant Eolian_Constant;
 
 /* Error information
  *
@@ -220,7 +218,7 @@ typedef enum
    EOLIAN_OBJECT_STRUCT_FIELD,
    EOLIAN_OBJECT_ENUM_FIELD,
    EOLIAN_OBJECT_TYPE,
-   EOLIAN_OBJECT_VARIABLE,
+   EOLIAN_OBJECT_CONSTANT,
    EOLIAN_OBJECT_EXPRESSION,
    EOLIAN_OBJECT_FUNCTION,
    EOLIAN_OBJECT_FUNCTION_PARAMETER,
@@ -284,7 +282,9 @@ typedef enum
    EOLIAN_TYPE_REGULAR,
    EOLIAN_TYPE_CLASS,
    EOLIAN_TYPE_ERROR,
+#ifdef EFL_BETA_API_SUPPORT
    EOLIAN_TYPE_UNDEFINED
+#endif
 } Eolian_Type_Type;
 
 typedef enum
@@ -336,7 +336,7 @@ typedef enum
    EOLIAN_TYPE_BUILTIN_ARRAY,
    EOLIAN_TYPE_BUILTIN_FUTURE,
    EOLIAN_TYPE_BUILTIN_ITERATOR,
-   EOLIAN_TYPE_BUILTIN_HASH,
+   EOLIAN_TYPE_BUILTIN_HASH, /* FIXME: beta */
    EOLIAN_TYPE_BUILTIN_LIST,
 
    EOLIAN_TYPE_BUILTIN_ANY_VALUE,
@@ -348,7 +348,9 @@ typedef enum
    EOLIAN_TYPE_BUILTIN_STRINGSHARE,
    EOLIAN_TYPE_BUILTIN_STRBUF,
 
+#ifdef EOLIAN_BETA_API_SUPPORT
    EOLIAN_TYPE_BUILTIN_VOID_PTR
+#endif
 } Eolian_Type_Builtin_Type;
 
 typedef enum
@@ -387,13 +389,6 @@ typedef enum
                       | EOLIAN_MASK_STRING | EOLIAN_MASK_CHAR
                       | EOLIAN_MASK_NULL
 } Eolian_Expression_Mask;
-
-typedef enum
-{
-   EOLIAN_VAR_UNKNOWN = 0,
-   EOLIAN_VAR_CONSTANT,
-   EOLIAN_VAR_GLOBAL
-} Eolian_Variable_Type;
 
 typedef union
 {
@@ -699,7 +694,7 @@ EAPI const char *eolian_object_name_get(const Eolian_Object *obj);
  * This is the full name, but for C. It is typically derived from the
  * regular full name, with namespaces flattened to underscores, but
  * some things may be explicitly renamed. Only classes, types (both
- * declarations and instances) and variables have C names, as others
+ * declarations and instances) and constants have C names, as others
  * are never referred to by name directly in C.
  *
  * @see eolian_object_unit_get
@@ -1018,7 +1013,7 @@ EAPI unsigned short eolian_unit_version_get(const Eolian_Unit *unit);
  * @brief Get an object in a unit by name.
  *
  * Only objects declared directly within the file can be retrieved, i.e.
- * classes, typedecls and variables.
+ * classes, typedecls and constants.
  *
  * @param[in] unit The unit.
  * @param[in] name The fully namespaced object name.
@@ -1032,7 +1027,7 @@ EAPI const Eolian_Object *eolian_unit_object_by_name_get(const Eolian_Unit *unit
  *
  * The order is not necessarily the declaration order. Only objects declared
  * directly within the file can be retrieved, i.e. classes, typedecls and
- * variables.
+ * constants.
  *
  * @param[in] unit The unit.
  *
@@ -1060,24 +1055,14 @@ EAPI const Eolian_Class *eolian_unit_class_by_name_get(const Eolian_Unit *unit, 
 EAPI Eina_Iterator *eolian_unit_classes_get(const Eolian_Unit *unit);
 
 /*
- * @brief Get a global variable in a unit by name.
+ * @brief Get a constant in a unit by name.
  *
  * @param[in] unit The unit.
- * @param[in] name the name of the variable
+ * @param[in] name the name of the constant
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Variable *eolian_unit_global_by_name_get(const Eolian_Unit *unit, const char *name);
-
-/*
- * @brief Get a constant variable in a unit by name.
- *
- * @param[in] unit The unit.
- * @param[in] name the name of the variable
- *
- * @ingroup Eolian
- */
-EAPI const Eolian_Variable *eolian_unit_constant_by_name_get(const Eolian_Unit *unit, const char *name);
+EAPI const Eolian_Constant *eolian_unit_constant_by_name_get(const Eolian_Unit *unit, const char *name);
 
 /*
  * @brief Get an error declaration in a unit by name.
@@ -1090,7 +1075,7 @@ EAPI const Eolian_Variable *eolian_unit_constant_by_name_get(const Eolian_Unit *
 EAPI const Eolian_Error *eolian_unit_error_by_name_get(const Eolian_Unit *unit, const char *name);
 
 /*
- * @brief Get an iterator to all constant variables in the Eolian database.
+ * @brief Get an iterator to all constants in the Eolian database.
  *
  * @return the iterator or NULL
  *
@@ -1099,17 +1084,6 @@ EAPI const Eolian_Error *eolian_unit_error_by_name_get(const Eolian_Unit *unit, 
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_unit_constants_get(const Eolian_Unit *unit);
-
-/*
- * @brief Get an iterator to all global variables in the Eolian database.
- *
- * @return the iterator or NULL
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_unit_globals_get(const Eolian_Unit *unit);
 
 /*
  * @brief Get an iterator to all error declarations in the Eolian database.
@@ -1203,7 +1177,7 @@ eolian_state_object_by_name_get(const Eolian_State *state, const char *name)
  *
  * The list follows declaration order in the file. Only objects declared
  * directly within the file can be retrieved, i.e. classes, typedecls and
- * variables.
+ * constants.
  *
  * @param[in] state The state.
  * @param[in] file_name The file name.
@@ -1262,26 +1236,13 @@ eolian_state_classes_get(const Eolian_State *state)
 }
 
 /*
- * @brief A helper function to get a global in a state by name.
- *
- * @see eolian_unit_global_by_name_get
- *
- * @ingroup Eolian
- */
-static inline const Eolian_Variable *
-eolian_state_global_by_name_get(const Eolian_State *state, const char *name)
-{
-   return eolian_unit_global_by_name_get(EOLIAN_UNIT(state), name);
-}
-
-/*
  * @brief A helper function to get a constant in a state by name.
  *
  * @see eolian_unit_constant_by_name_get
  *
  * @ingroup Eolian
  */
-static inline const Eolian_Variable *
+static inline const Eolian_Constant *
 eolian_state_constant_by_name_get(const Eolian_State *state, const char *name)
 {
    return eolian_unit_constant_by_name_get(EOLIAN_UNIT(state), name);
@@ -1301,19 +1262,7 @@ eolian_state_error_by_name_get(const Eolian_State *state, const char *name)
 }
 
 /*
- * @brief Get an iterator to all global variables contained in a file.
- *
- * @param[in] state The state.
- * @param[in] file_name The file name.
- *
- * Thanks to internal caching, this is an O(1) operation.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Iterator *eolian_state_globals_by_file_get(const Eolian_State *state, const char *file_name);
-
-/*
- * @brief Get an iterator to all constant variables contained in a file.
+ * @brief Get an iterator to all constants contained in a file.
  *
  * @param[in] state The state.
  * @param[in] file_name The file name.
@@ -1337,19 +1286,6 @@ EAPI Eina_Iterator *eolian_state_constants_by_file_get(const Eolian_State *state
  * @ingroup Eolian
  */
 EAPI Eina_Iterator *eolian_state_errors_by_file_get(const Eolian_State *state, const char *file_name);
-
-/*
- * @brief A helper function to get all globals in a state.
- *
- * @see eolian_unit_globals_get
- *
- * @ingroup Eolian
- */
-static inline Eina_Iterator *
-eolian_state_globals_get(const Eolian_State *state)
-{
-   return eolian_unit_globals_get(EOLIAN_UNIT(state));
-}
 
 /*
  * @brief A helper function to get all constants in a state.
@@ -1564,14 +1500,14 @@ EAPI Eolian_Class_Type eolian_class_type_get(const Eolian_Class *klass);
 EAPI const Eolian_Documentation *eolian_class_documentation_get(const Eolian_Class *klass);
 
 /*
- * @brief Returns the eo prefix of a class
+ * @brief Returns the C function prefix of a class
  *
  * @param[in] klass the class
  * @return the eo prefix
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare* eolian_class_eo_prefix_get(const Eolian_Class *klass);
+EAPI Eina_Stringshare* eolian_class_c_prefix_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the event prefix of a class
@@ -1766,16 +1702,6 @@ eolian_function_is_beta(const Eolian_Function *function_id)
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_function_is_constructor(const Eolian_Function *function_id, const Eolian_Class *klass);
-
-/*
- * @brief Get whether a function is a function pointer.
- *
- * @param[in] function_id Id of the function
- * @return EINA_TRUE and EINA_FALSE respectively
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_function_is_function_pointer(const Eolian_Function *function_id);
 
 /*
  * @brief Returns an iterator to the parameter handles for a method/ctor/dtor.
@@ -2679,17 +2605,6 @@ EAPI const Eolian_Documentation *eolian_typedecl_enum_field_documentation_get(co
 EAPI const Eolian_Expression *eolian_typedecl_enum_field_value_get(const Eolian_Enum_Type_Field *fl, Eina_Bool force);
 
 /*
- * @brief Get the legacy prefix of enum field names. When not specified,
- * enum name is used.
- *
- * @param[in] tp the type declaration.
- * @return the legacy prefix or NULL.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Stringshare *eolian_typedecl_enum_legacy_prefix_get(const Eolian_Typedecl *tp);
-
-/*
  * @brief Get the documentation of a struct/alias type.
  *
  * @param[in] tp the type declaration.
@@ -2933,18 +2848,6 @@ EAPI const Eolian_Class *eolian_type_class_get(const Eolian_Type *tp);
 EAPI const Eolian_Error *eolian_type_error_get(const Eolian_Type *tp);
 
 /*
- * @brief Get whether the given type is owned.
- *
- * This is true when a parameter, return or whatever is marked as @owned.
- *
- * @param[in] tp the type.
- * @return EINA_TRUE when the type is marked owned, EINA_FALSE otherwise.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_type_is_owned(const Eolian_Type *tp);
-
-/*
  * @brief Get whether the given type is moved with its parent type.
  *
  * This is only used for inner types of complex types, i.e. the types
@@ -2968,16 +2871,6 @@ EAPI Eina_Bool eolian_type_is_move(const Eolian_Type *tp);
  * @ingroup Eolian
  */
 EAPI Eina_Bool eolian_type_is_const(const Eolian_Type *tp);
-
-/*
- * @brief Get whether the given type is a reference.
- *
- * @param[in] tp the type.
- * @return EINA_TRUE when the type is marked ref, EINA_FALSE otherwise.
- *
- * @ingroup Eolian
- */
-EAPI Eina_Bool eolian_type_is_ptr(const Eolian_Type *tp);
 
 /*
  * @brief Get the full C type name of the given type.
@@ -3182,116 +3075,106 @@ EAPI const Eolian_Expression *eolian_expression_unary_expression_get(const Eolia
 EAPI Eolian_Value eolian_expression_value_get(const Eolian_Expression *expr);
 
 /*
- * @brief Get the type of a variable (global, constant)
+ * @brief Get the documentation of a constant.
  *
- * @param[in] var the variable.
- * @return an Eolian_Type_Type.
- *
- * @ingroup Eolian
- */
-EAPI Eolian_Variable_Type eolian_variable_type_get(const Eolian_Variable *var);
-
-/*
- * @brief Get the documentation of a variable.
- *
- * @param[in] var the variable.
+ * @param[in] var the constant.
  * @return the documentation or NULL.
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Documentation *eolian_variable_documentation_get(const Eolian_Variable *var);
+EAPI const Eolian_Documentation *eolian_constant_documentation_get(const Eolian_Constant *var);
 
 /*
- * @brief Get the base type of a variable.
+ * @brief Get the base type of a constant.
  *
- * @param[in] var the variable.
+ * @param[in] var the constant.
  * @return the base type or NULL.
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Type *eolian_variable_base_type_get(const Eolian_Variable *var);
+EAPI const Eolian_Type *eolian_constant_type_get(const Eolian_Constant *var);
 
 /*
- * @brief Get the value of a variable.
+ * @brief Get the value of a constant.
  *
- * @param[in] var the variable.
+ * @param[in] var the constant.
  * @return the value or NULL.
  *
  * @ingroup Eolian
  */
-EAPI const Eolian_Expression *eolian_variable_value_get(const Eolian_Variable *var);
+EAPI const Eolian_Expression *eolian_constant_value_get(const Eolian_Constant *var);
 
 /*
- * @brief A helper function to get the full name of a variable.
+ * @brief A helper function to get the full name of a constant.
  *
  * @see eolian_object_name_get
  *
  * @ingroup Eolian
  */
 static inline const char *
-eolian_variable_name_get(const Eolian_Variable *tp)
+eolian_constant_name_get(const Eolian_Constant *tp)
 {
    return eolian_object_name_get(EOLIAN_OBJECT(tp));
 }
 
 /*
- * @brief A helper function to get the C name of a variable.
+ * @brief A helper function to get the C name of a constant.
  *
  * @see eolian_object_c_name_get
  *
  * @ingroup Eolian
  */
 static inline const char *
-eolian_variable_c_name_get(const Eolian_Variable *tp)
+eolian_constant_c_name_get(const Eolian_Constant *tp)
 {
    return eolian_object_c_name_get(EOLIAN_OBJECT(tp));
 }
 
 /*
- * @brief A helper function to get the short name of a variable.
+ * @brief A helper function to get the short name of a constant.
  *
  * @see eolian_object_short_name_get
  *
  * @ingroup Eolian
  */
 static inline const char *
-eolian_variable_short_name_get(const Eolian_Variable *tp)
+eolian_constant_short_name_get(const Eolian_Constant *tp)
 {
    return eolian_object_short_name_get(EOLIAN_OBJECT(tp));
 }
 
 /*
- * @brief A helper function to get the namespaces of a variable.
+ * @brief A helper function to get the namespaces of a constant.
  *
  * @see eolian_object_namespaces_get
  *
  * @ingroup Eolian
  */
 static inline Eina_Iterator *
-eolian_variable_namespaces_get(const Eolian_Variable *tp)
+eolian_constant_namespaces_get(const Eolian_Constant *tp)
 {
    return eolian_object_namespaces_get(EOLIAN_OBJECT(tp));
 }
 
 /*
- * @brief Check if a variable is extern.
+ * @brief Check if a constant is extern.
  *
- * @param[in] var the variable.
+ * @param[in] var the constant.
  * @return EINA_TRUE if it's extern, EINA_FALSE otherwise.
  *
  * @ingroup Eolian
  */
-EAPI Eina_Bool eolian_variable_is_extern(const Eolian_Variable *var);
+EAPI Eina_Bool eolian_constant_is_extern(const Eolian_Constant *var);
 
 /*
- * @brief Get whether a variable is beta.
+ * @brief Get whether a constant is beta.
  *
  * @see eolian_object_is_beta
  *
  * @ingroup Eolian
  */
 static inline Eina_Bool
-eolian_variable_is_beta(const Eolian_Variable *var)
+eolian_constant_is_beta(const Eolian_Constant *var)
 {
    return eolian_object_is_beta(EOLIAN_OBJECT(var));
 }
@@ -3515,7 +3398,30 @@ EAPI char *eolian_doc_token_text_get(const Eolian_Doc_Token *tok);
  */
 EAPI Eolian_Object_Type eolian_doc_token_ref_resolve(const Eolian_Doc_Token *tok, const Eolian_State *state, const Eolian_Object **data, const Eolian_Object **data2);
 
-#endif
+#ifdef EFL_BETA_API_SUPPORT
+
+/*
+ * @brief Get the legacy prefix of enum field names. When not specified,
+ * enum name is used. (BETA)
+ *
+ * @param[in] tp the type declaration.
+ * @return the legacy prefix or NULL.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Stringshare *eolian_typedecl_enum_legacy_prefix_get(const Eolian_Typedecl *tp);
+
+/*
+ * @brief Get whether the given type is a reference.
+ *
+ * @param[in] tp the type.
+ * @return EINA_TRUE when the type is marked ref, EINA_FALSE otherwise.
+ *
+ * @ingroup Eolian
+ */
+EAPI Eina_Bool eolian_type_is_ptr(const Eolian_Type *tp);
+
+#endif /* EFL_BETA_API_SUPPORT */
 
 /**
  * @}

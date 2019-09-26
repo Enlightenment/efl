@@ -42,6 +42,7 @@ pub_eo_files = [
   'efl_gfx_image_load_controller.eo',
   'efl_part.eo',
   'efl_player.eo',
+  'efl_audio_control.eo',
   'efl_text.eo',
   'efl_text_font.eo',
   'efl_text_style.eo',

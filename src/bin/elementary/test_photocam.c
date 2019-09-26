@@ -152,8 +152,8 @@ my_bt_open(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
      }
 
    if (file && eina_str_has_extension(file, ".gif")
-       && efl_player_playable_get(ph))
-     efl_player_play_set(ph, EINA_TRUE);
+       && efl_playable_get(ph))
+     efl_player_playing_set(ph, EINA_TRUE);
 }
 
 static void
@@ -754,11 +754,11 @@ test_photocam_icon(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *e
 static void
 _zoomable_clicked_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {
-   Eina_Bool play;
+   Eina_Bool paused;
 
-   play = !efl_player_play_get(ev->object);
-   printf("image clicked! play = %d\n", play);
-   efl_player_play_set(ev->object, play);
+   paused = efl_player_paused_get(ev->object);
+   printf("image clicked! paused = %d\n", paused);
+   efl_player_paused_set(ev->object, !paused);
 }
 
 static void
@@ -806,8 +806,7 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
    char buf[PATH_MAX];
 
    win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Efl.Ui.Image_Zoomable animation"),
+                                  efl_text_set(efl_added, "Efl.Ui.Image_Zoomable animation"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    bx = efl_add(EFL_UI_BOX_CLASS, win,
@@ -830,10 +829,10 @@ test_image_zoomable_animated(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
                       efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _zoomable_clicked_cb, NULL)
                      );
 
-   if (efl_player_playable_get(zoomable))
+   if (efl_playable_get(zoomable))
      {
         printf("animation is available for this image.\n");
-        efl_player_play_set(zoomable, EINA_TRUE);
+        efl_player_playing_set(zoomable, EINA_TRUE);
      }
 
    rect = efl_add(EFL_CANVAS_RECTANGLE_CLASS, win,

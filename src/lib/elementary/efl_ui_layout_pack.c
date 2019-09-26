@@ -269,7 +269,7 @@ _efl_ui_layout_part_table_efl_pack_unpack(Eo *obj EINA_UNUSED, Efl_Ui_Layout_Tab
 EOLIAN static Eina_Bool
 _efl_ui_layout_part_table_efl_pack_pack(Eo *obj, Efl_Ui_Layout_Table_Data *pd, Efl_Gfx_Entity *subobj)
 {
-   int last_col, last_row;
+   int last_col = 0, last_row = 0;
    int req_cols, req_rows;
    Eina_Iterator *iter;
    Eo *pack, *element;

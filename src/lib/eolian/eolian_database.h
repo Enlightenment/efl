@@ -39,7 +39,6 @@ struct _Eolian_Unit
    Eolian_State  *state;
    Eina_Hash     *children;
    Eina_Hash     *classes;
-   Eina_Hash     *globals;
    Eina_Hash     *constants;
    Eina_Hash     *errors;
    Eina_Hash     *aliases;
@@ -59,7 +58,6 @@ typedef struct _Eolian_State_Area
    Eina_Hash *aliases_f;
    Eina_Hash *structs_f;
    Eina_Hash *enums_f;
-   Eina_Hash *globals_f;
    Eina_Hash *constants_f;
    Eina_Hash *errors_f;
    Eina_Hash *objects_f;
@@ -286,7 +284,6 @@ struct _Eolian_Type
    Eina_Bool is_const  :1;
    Eina_Bool is_ptr    :1;
    Eina_Bool move      :1;
-   Eina_Bool owned     :1;
    Eina_Bool ownable   :1;
 };
 
@@ -394,10 +391,9 @@ struct _Eolian_Expression
    Eina_Bool weak_rhs :1;
 };
 
-struct _Eolian_Variable
+struct _Eolian_Constant
 {
    Eolian_Object         base;
-   Eolian_Variable_Type  type;
    Eolian_Type          *base_type;
    Eolian_Expression    *value;
    Eolian_Documentation *doc;
@@ -449,8 +445,8 @@ void database_expr_print(Eolian_Expression *expr);
 
 /* variables */
 
-void database_var_del(Eolian_Variable *var);
-void database_var_add(Eolian_Unit *unit, Eolian_Variable *var);
+void database_constant_del(Eolian_Constant *var);
+void database_constant_add(Eolian_Unit *unit, Eolian_Constant *var);
 
 /* classes */
 void database_class_del(Eolian_Class *cl);

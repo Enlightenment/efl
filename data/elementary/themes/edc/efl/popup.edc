@@ -1,5 +1,6 @@
 //Efl.Ui.Popup Themes
 group { "efl/popup";
+   data.item: "version" "123";
    images.image: "rounded_square.png" COMP;
    parts {
       spacer { "base";
@@ -28,10 +29,9 @@ group { "efl/popup";
    }
 }
 
-group { "efl/alert_popup";
+group { "efl/alert_popup"; data.item: "version" "123";
    images.image: "rounded_square.png" COMP;
    parts {
-      alias: "title" "efl.text.title";
       image { "bg";
          desc { "default";
             min: 100 100;
@@ -106,20 +106,26 @@ group { "efl/alert_popup";
    }
    programs {
       program {
-         signal: "efl,title,show"; source: "efl";
+         signal: "efl,title,visible,on"; source: "efl";
          action: STATE_SET "title_visible" 0.0;
          target: "title_bg";
          target: "efl.text.title";
       }
       program {
-         signal: "efl,buttons,show"; source: "efl";
+         signal: "efl,title,visible,off"; source: "efl";
+         action: STATE_SET "default" 0.0;
+         target: "title_bg";
+         target: "efl.text.title";
+      }
+      program {
+         signal: "efl,buttons,visible,on"; source: "efl";
          action: STATE_SET "button_visible" 0.0;
          target: "efl.buttons";
       }
    }
 }
 
-group { "efl/popup/backwall";
+group { "efl/popup/backwall"; data.item: "version" "123";
    alias: "efl/alert_popup/backwall";
    parts {
       rect { "base";
@@ -151,32 +157,32 @@ group { "efl/popup/backwall";
 
    programs {
       program {
-         signal: "efl,state,content,set"; source: "efl";
+         signal: "efl,content,set"; source: "efl";
          action: STATE_SET "content_visible" 0.0;
          target: "base";
          target: "efl.content";
       }
       program {
-         signal: "efl,state,content,unset"; source: "efl";
+         signal: "efl,content,unset"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "efl.content";
       }
       program {
          signal: "mouse,clicked,1"; source: "block";
-         action: SIGNAL_EMIT "efl,action,clicked" "efl";
+         action: SIGNAL_EMIT "efl,action,click" "efl";
       }
    }
 }
 
-group { "efl/alert_popup/button_layout1";
+group { "efl/alert_popup/button_layout1"; data.item: "version" "123";
    parts {
       swallow { "efl.button1"; required;
       }
    }
 }
 
-group { "efl/alert_popup/button_layout2";
+group { "efl/alert_popup/button_layout2"; data.item: "version" "123";
    parts {
       spacer { "div1";
          desc { "default";
@@ -200,7 +206,7 @@ group { "efl/alert_popup/button_layout2";
    }
 }
 
-group { "efl/alert_popup/button_layout3";
+group { "efl/alert_popup/button_layout3"; data.item: "version" "123";
    parts {
       spacer { "div1";
          desc { "default";
@@ -241,12 +247,15 @@ group { "efl/alert_popup/button_layout3";
 
 group { "efl/alert_popup/left_button";
    inherit: "efl/button";
+   data.item: "version" "123";
 }
 
 group { "efl/alert_popup/right_button";
    inherit: "efl/button";
+   data.item: "version" "123";
 }
 
 group { "efl/alert_popup/button";
    inherit: "efl/button";
+   data.item: "version" "123";
 }

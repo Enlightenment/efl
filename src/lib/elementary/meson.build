@@ -112,8 +112,6 @@ pub_eo_files = [
   'efl_ui_layout_part_bg.eo',
   'efl_ui_layout_part_legacy.eo',
   'efl_ui_list_view.eo',
-  'efl_ui_list_view_model.eo',
-  'efl_ui_list_view_pan.eo',
   'efl_ui_item.eo',
   'efl_ui_default_item.eo',
   'efl_ui_group_item.eo',
@@ -174,17 +172,22 @@ pub_eo_files = [
   'efl_ui_relative_layout.eo',
   'efl_ui_action_connector.eo',
   'efl_ui_format.eo',
+  'efl_ui_item_clickable.eo',
   'efl_ui_collection.eo',
   'efl_ui_position_manager_entity.eo',
   'efl_ui_position_manager_list.eo',
   'efl_ui_position_manager_grid.eo',
   'efl_ui_selectable.eo',
   'efl_ui_multi_selectable.eo',
+  'efl_ui_multi_selectable_async.eo',
   'efl_ui_single_selectable.eo',
   'efl_ui_position_manager_data_access_v1.eo',
   'efl_ui_tab_bar_default_item.eo',
   'efl_ui_select_model.eo',
   'efl_ui_view_model.eo',
+  'efl_ui_collection_view.eo',
+  'efl_ui_collection_view_focus_manager.eo',
+  'efl_ui_grid_view.eo',
 ]
 
 foreach eo_file : pub_eo_files
@@ -205,7 +208,6 @@ endforeach
 pub_eo_types_files = [
   'elm_general.eot',
   'efl_ui.eot',
-  'efl_ui_list_view_types.eot',
   'efl_ui_selection_types.eot',
   'efl_ui_dnd_types.eot'
 ]
@@ -219,8 +221,9 @@ foreach eo_file : pub_eo_types_files
     install_dir : dir_package_include,
     command : eolian_gen + [ '-I', meson.current_source_dir(), eolian_include_directories,
                            '-o', 'h:' + join_paths(meson.current_build_dir(), eo_file + '.h'),
+                           '-o', 'c:' + join_paths(meson.current_build_dir(), eo_file + '.c'),
                            '-o', 'd:' + join_paths(meson.current_build_dir(), eo_file + '.d'),
-                           '-ghd', '@INPUT@'])
+                           '-gchd', '@INPUT@'])
 endforeach
 
 priv_eo_files = [
@@ -232,8 +235,6 @@ priv_eo_files = [
   'efl_ui_state_model.eo',
   'efl_ui_selection_manager.eo',
   'efl_datetime_manager.eo',
-  'efl_ui_list_view_precise_layouter.eo',
-  'efl_ui_list_view_relayout.eo',
   'efl_ui_size_model.eo',
   'efl_ui_homogeneous_model.eo',
   'efl_ui_exact_model.eo',
@@ -353,8 +354,6 @@ elementary_headers_unstable = [
   'elm_widget_toolbar.h',
   'efl_ui_video_private.h',
   'efl_ui_item_private.h',
-  'efl_ui_list_view_private.h',
-  'efl_ui_list_view_seg_array.h',
   'elm_widget_web.h',
   'efl_ui_clock.h',
   'elm_code.h',
@@ -902,8 +901,7 @@ elementary_src = [
   'efl_ui_grid_default_item.c',
   'efl_ui_grid.c',
   'efl_ui_list_view.c',
-  'efl_ui_list_view_precise_layouter.c',
-  'efl_ui_list_view_seg_array.c',
+  'efl_ui_grid_view.c',
   'efl_ui_layout_factory.c',
   'efl_ui_scroller.c',
   'efl_ui_scroll_manager.c',
@@ -945,6 +943,7 @@ elementary_src = [
   'efl_ui_tab_bar_default_item.c',
   'efl_ui_select_model.c',
   'efl_ui_view_model.c',
+  'efl_ui_collection_view.c',
 ]
 
 elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, efreet_mime, efreet_trash, eio, atspi, dl, intl]

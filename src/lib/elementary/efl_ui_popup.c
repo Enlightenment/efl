@@ -554,7 +554,7 @@ _efl_ui_popup_efl_object_constructor(Eo *obj, Efl_Ui_Popup_Data *pd)
    evas_object_smart_member_add(pd->backwall, obj);
    evas_object_stack_below(pd->backwall, wd->resize_obj);
 
-   edje_object_signal_callback_add(pd->backwall, "efl,action,clicked", "*",
+   edje_object_signal_callback_add(pd->backwall, "efl,action,click", "*",
                                    _backwall_clicked_cb, obj);
 
    pd->align = EFL_UI_POPUP_ALIGN_CENTER;

@@ -843,7 +843,7 @@ public static class ClassRegister
 
             if (t == null)
             {
-                return typeof(Efl.Object);
+                return typeof(Efl.ObjectRealized);
             }
         }
 

@@ -491,7 +491,8 @@ database_doc_token_ref_resolve(const Eolian_Doc_Token *tok,
          {
           case EOLIAN_OBJECT_CLASS:
           case EOLIAN_OBJECT_TYPEDECL:
-          case EOLIAN_OBJECT_VARIABLE:
+          case EOLIAN_OBJECT_CONSTANT:
+          case EOLIAN_OBJECT_ERROR:
             /* we only allow certain types to be referenced */
             return tp;
           default:
@@ -588,8 +589,7 @@ database_unit_init(Eolian_State *state, Eolian_Unit *unit, const char *file)
 
    unit->children   = eina_hash_stringshared_new(NULL);
    unit->classes    = eina_hash_stringshared_new(EINA_FREE_CB(database_class_del));
-   unit->globals    = eina_hash_stringshared_new(EINA_FREE_CB(database_var_del));
-   unit->constants  = eina_hash_stringshared_new(EINA_FREE_CB(database_var_del));
+   unit->constants  = eina_hash_stringshared_new(EINA_FREE_CB(database_constant_del));
    unit->errors     = eina_hash_stringshared_new(EINA_FREE_CB(database_error_del));
    unit->aliases    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
    unit->structs    = eina_hash_stringshared_new(EINA_FREE_CB(database_typedecl_del));
@@ -606,7 +606,6 @@ _unit_contents_del(Eolian_Unit *unit)
    eina_stringshare_del(unit->file);
    eina_hash_free(unit->children);
    eina_hash_free(unit->classes);
-   eina_hash_free(unit->globals);
    eina_hash_free(unit->constants);
    eina_hash_free(unit->errors);
    eina_hash_free(unit->aliases);
@@ -659,7 +658,6 @@ _state_area_init(Eolian_State *state, Eolian_State_Area *a)
    a->aliases_f   = eina_hash_stringshared_new(NULL);
    a->structs_f   = eina_hash_stringshared_new(NULL);
    a->enums_f     = eina_hash_stringshared_new(NULL);
-   a->globals_f   = eina_hash_stringshared_new(NULL);
    a->constants_f = eina_hash_stringshared_new(NULL);
    a->errors_f    = eina_hash_stringshared_new(NULL);
    a->objects_f   = eina_hash_stringshared_new(NULL);
@@ -686,7 +684,6 @@ _state_area_contents_del(Eolian_State_Area *a)
    _hashlist_free(a->aliases_f);
    _hashlist_free(a->structs_f);
    _hashlist_free(a->enums_f);
-   _hashlist_free(a->globals_f);
    _hashlist_free(a->constants_f);
    _hashlist_free(a->errors_f);
    _hashlist_free(a->objects_f);
@@ -905,7 +902,6 @@ _state_clean(Eolian_State *state)
 
    Eolian_Unit *stu = &st->unit;
    eina_hash_free_buckets(stu->classes);
-   eina_hash_free_buckets(stu->globals);
    eina_hash_free_buckets(stu->constants);
    eina_hash_free_buckets(stu->aliases);
    eina_hash_free_buckets(stu->structs);
@@ -920,7 +916,6 @@ _state_clean(Eolian_State *state)
    _hashlist_free_buckets(st->aliases_f);
    _hashlist_free_buckets(st->structs_f);
    _hashlist_free_buckets(st->enums_f);
-   _hashlist_free_buckets(st->globals_f);
    _hashlist_free_buckets(st->constants_f);
    _hashlist_free_buckets(st->objects_f);
 }
@@ -1009,7 +1004,6 @@ static void
 _merge_unit(Eolian_Unit *dest, Eolian_Unit *src)
 {
    eina_hash_foreach(src->classes, _merge_unit_cb, dest->classes);
-   eina_hash_foreach(src->globals, _merge_unit_cb, dest->globals);
    eina_hash_foreach(src->constants, _merge_unit_cb, dest->constants);
    eina_hash_foreach(src->aliases, _merge_unit_cb, dest->aliases);
    eina_hash_foreach(src->structs, _merge_unit_cb, dest->structs);
@@ -1072,7 +1066,6 @@ _merge_staging(Eolian_State *state)
    EOLIAN_STAGING_MERGE_LIST(aliases);
    EOLIAN_STAGING_MERGE_LIST(structs);
    EOLIAN_STAGING_MERGE_LIST(enums);
-   EOLIAN_STAGING_MERGE_LIST(globals);
    EOLIAN_STAGING_MERGE_LIST(constants);
    EOLIAN_STAGING_MERGE_LIST(objects);
 
@@ -1248,17 +1241,6 @@ eolian_state_class_by_file_get(const Eolian_State *state, const char *file_name)
 }
 
 EAPI Eina_Iterator *
-eolian_state_globals_by_file_get(const Eolian_State *state, const char *file_name)
-{
-   if (!state) return NULL;
-   Eina_Stringshare *shr = eina_stringshare_add(file_name);
-   Eina_List *l = eina_hash_find(state->main.globals_f, shr);
-   eina_stringshare_del(shr);
-   if (!l) return NULL;
-   return eina_list_iterator_new(l);
-}
-
-EAPI Eina_Iterator *
 eolian_state_constants_by_file_get(const Eolian_State *state, const char *file_name)
 {
    if (!state) return NULL;
@@ -1382,22 +1364,12 @@ eolian_unit_classes_get(const Eolian_Unit *unit)
    return (unit ? eina_hash_iterator_data_new(unit->classes) : NULL);
 }
 
-EAPI const Eolian_Variable *
-eolian_unit_global_by_name_get(const Eolian_Unit *unit, const char *name)
-{
-   if (!unit) return NULL;
-   Eina_Stringshare *shr = eina_stringshare_add(name);
-   Eolian_Variable *v = eina_hash_find(unit->globals, shr);
-   eina_stringshare_del(shr);
-   return v;
-}
-
-EAPI const Eolian_Variable *
+EAPI const Eolian_Constant *
 eolian_unit_constant_by_name_get(const Eolian_Unit *unit, const char *name)
 {
    if (!unit) return NULL;
    Eina_Stringshare *shr = eina_stringshare_add(name);
-   Eolian_Variable *v = eina_hash_find(unit->constants, shr);
+   Eolian_Constant *v = eina_hash_find(unit->constants, shr);
    eina_stringshare_del(shr);
    return v;
 }
@@ -1416,12 +1388,6 @@ EAPI Eina_Iterator *
 eolian_unit_constants_get(const Eolian_Unit *unit)
 {
    return (unit ? eina_hash_iterator_data_new(unit->constants) : NULL);
-}
-
-EAPI Eina_Iterator *
-eolian_unit_globals_get(const Eolian_Unit *unit)
-{
-   return (unit ? eina_hash_iterator_data_new(unit->globals) : NULL);
 }
 
 EAPI Eina_Iterator *

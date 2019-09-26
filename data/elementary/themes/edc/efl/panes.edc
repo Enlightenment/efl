@@ -13,7 +13,7 @@
 #define PANEMIN2 16
 #define PANEWID  32
 
-group { name: "efl/panes/vertical";
+group { name: "efl/panes/vertical"; data.item: "version" "123";
    images.image: "holes_vert.png" COMP;
    parts {
       //TODO: remove left/right
@@ -143,7 +143,7 @@ group { name: "efl/panes/vertical";
    }
 }
 
-group { name: "efl/panes/horizontal";
+group { name: "efl/panes/horizontal"; data.item: "version" "123";
    images.image: "holes_horiz.png" COMP;
    parts {
       //TODO: remove left/right
@@ -273,7 +273,7 @@ group { name: "efl/panes/horizontal";
    }
 }
 
-group { name: "efl/panes/vertical:flush";
+group { name: "efl/panes/vertical:flush"; data.item: "version" "123";
    images.image: "downlight_glow_left.png" COMP;
    images.image: "downlight_glow_right.png" COMP;
    parts {
@@ -490,7 +490,7 @@ group { name: "efl/panes/vertical:flush";
    }
 }
 
-group { name: "efl/panes/horizontal:flush";
+group { name: "efl/panes/horizontal:flush"; data.item: "version" "123";
    images.image: "downlight_glow.png" COMP;
    images.image: "downlight_glow_up.png" COMP;
    parts {
@@ -709,6 +709,7 @@ group { name: "efl/panes/horizontal:flush";
 
 group { name: "efl/panes/vertical:left-fold";
    inherit: "efl/panes/vertical";
+   data.item: "version" "123";
    images.image: "icon_arrow_left.png" COMP;
    images.image: "icon_arrow_right.png" COMP;
    script {
@@ -772,6 +773,7 @@ group { name: "efl/panes/vertical:left-fold";
 
 group { name: "efl/panes/vertical:right-fold";
    inherit: "efl/panes/vertical";
+   data.item: "version" "123";
    images.image: "icon_arrow_left.png" COMP;
    images.image: "icon_arrow_right.png" COMP;
    script {
@@ -835,6 +837,7 @@ group { name: "efl/panes/vertical:right-fold";
 
 group { name: "efl/panes/horizontal:up-fold";
    inherit: "efl/panes/horizontal";
+   data.item: "version" "123";
    images.image: "icon_arrow_up.png" COMP;
    images.image: "icon_arrow_down.png" COMP;
    script {
@@ -898,6 +901,7 @@ group { name: "efl/panes/horizontal:up-fold";
 
 group { name: "efl/panes/horizontal:down-fold";
    inherit: "efl/panes/horizontal";
+   data.item: "version" "123";
    images.image: "icon_arrow_up.png" COMP;
    images.image: "icon_arrow_down.png" COMP;
    script {

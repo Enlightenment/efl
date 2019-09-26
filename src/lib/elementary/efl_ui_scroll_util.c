@@ -227,9 +227,9 @@ _scroll_connector_bar_show_cb(void *data, const Efl_Event *event)
    Efl_Ui_Layout_Orientation type = *(Efl_Ui_Layout_Orientation *)(event->info);
 
    if (type == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
-     efl_layout_signal_emit(wd->resize_obj, "efl,action,show,hbar", "efl");
+     efl_layout_signal_emit(wd->resize_obj, "efl,horizontal_bar,visible,on", "efl");
    else if (type == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
-     efl_layout_signal_emit(wd->resize_obj, "efl,action,show,vbar", "efl");
+     efl_layout_signal_emit(wd->resize_obj, "efl,vertical_bar,visible,on", "efl");
 }
 
 static void
@@ -240,9 +240,9 @@ _scroll_connector_bar_hide_cb(void *data, const Efl_Event *event)
    Efl_Ui_Layout_Orientation type = *(Efl_Ui_Layout_Orientation *)(event->info);
 
    if (type == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
-     efl_layout_signal_emit(wd->resize_obj, "efl,action,hide,hbar", "efl");
+     efl_layout_signal_emit(wd->resize_obj, "efl,horizontal_bar,visible,off", "efl");
    else if (type == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
-     efl_layout_signal_emit(wd->resize_obj, "efl,action,hide,vbar", "efl");
+     efl_layout_signal_emit(wd->resize_obj, "efl,vertical_bar,visible,off", "efl");
 }
 
 void
@@ -269,7 +269,7 @@ efl_ui_scroll_connector_bind(Eo *obj, Eo *manager)
                                   ctx, _scroll_connector_edje_drag_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,page", "efl.dragable.vbar",
                                   ctx, _scroll_connector_edje_drag_cb, NULL);
-   efl_layout_signal_callback_add(obj, "efl,vbar,press", "efl",
+   efl_layout_signal_callback_add(obj, "efl,vertical_bar,press", "efl",
                                   ctx, _scroll_connector_vbar_press_cb, NULL);
    efl_layout_signal_callback_add(obj, "efl,vbar,unpress", "efl",
                                   ctx, _scroll_connector_vbar_unpress_cb, NULL);
@@ -285,7 +285,7 @@ efl_ui_scroll_connector_bind(Eo *obj, Eo *manager)
                                   ctx, _scroll_connector_edje_drag_cb, NULL);
    efl_layout_signal_callback_add(obj, "drag,page", "efl.dragable.hbar",
                                   ctx, _scroll_connector_edje_drag_cb, NULL);
-   efl_layout_signal_callback_add(obj, "efl,hbar,press", "efl",
+   efl_layout_signal_callback_add(obj, "efl,horizontal_bar,press", "efl",
                                   ctx, _scroll_connector_hbar_press_cb, NULL);
    efl_layout_signal_callback_add(obj, "efl,hbar,unpress", "efl",
                                   ctx, _scroll_connector_hbar_unpress_cb, NULL);
@@ -325,7 +325,7 @@ efl_ui_scroll_connector_unbind(Eo *obj)
                                   ctx, _scroll_connector_edje_drag_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,page", "efl.dragable.vbar",
                                   ctx, _scroll_connector_edje_drag_cb, NULL);
-   efl_layout_signal_callback_del(obj, "efl,vbar,press", "efl",
+   efl_layout_signal_callback_del(obj, "efl,vertical_bar,press", "efl",
                                   ctx, _scroll_connector_vbar_press_cb, NULL);
    efl_layout_signal_callback_del(obj, "efl,vbar,unpress", "efl",
                                   ctx, _scroll_connector_vbar_unpress_cb, NULL);
@@ -342,7 +342,7 @@ efl_ui_scroll_connector_unbind(Eo *obj)
                                   ctx, _scroll_connector_edje_drag_cb, NULL);
    efl_layout_signal_callback_del(obj, "drag,page", "efl.dragable.hbar",
                                   ctx, _scroll_connector_edje_drag_cb, NULL);
-   efl_layout_signal_callback_del(obj, "efl,hbar,press", "efl",
+   efl_layout_signal_callback_del(obj, "efl,horizontal_bar,press", "efl",
                                   ctx, _scroll_connector_hbar_press_cb, NULL);
    efl_layout_signal_callback_del(obj, "efl,hbar,unpress", "efl",
                                   ctx, _scroll_connector_hbar_unpress_cb, NULL);

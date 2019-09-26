@@ -1,4 +1,4 @@
-struct @beta Efl.Model_Property_Event {
+struct Efl.Model_Property_Event {
      [[EFL model property event data structure]]
      changed_properties: array<stringshare>; [[List of changed properties]]
      invalidated_properties: array<stringshare>; [[Removed properties identified by name]]
@@ -13,7 +13,7 @@ struct @beta Efl.Model_Children_Event {
                           the parent, it will be available here.]]
 }
 
-interface @beta Efl.Model
+interface Efl.Model
 {
    [[Basic Model abstraction.
 
@@ -178,8 +178,8 @@ interface @beta Efl.Model
       properties,changed: Efl.Model_Property_Event; [[Event dispatched when
                                                       properties list is
                                                       available.]]
-      child,added: Efl.Model_Children_Event; [[Event dispatched when new child is added.]]
-      child,removed: Efl.Model_Children_Event; [[Event dispatched when child is removed.]]
+      child,added @beta: Efl.Model_Children_Event; [[Event dispatched when new child is added.]]
+      child,removed @beta: Efl.Model_Children_Event; [[Event dispatched when child is removed.]]
       children,count,changed: void; [[Event dispatched when children count is finished.]]
    }
 }

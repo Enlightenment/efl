@@ -30,7 +30,7 @@ _list_selected(void *data EINA_UNUSED, const Efl_Event *ev)
   Eo *item = ev->info, *tmp;
   printf("list item [%p:%d] is %s\n", item, efl_ui_item_index_get(item), (efl_ui_selectable_selected_get(item)? "selected" : "unselected"));
 
-  Eina_Iterator *selects = efl_ui_selected_items_get(list);
+  Eina_Iterator *selects = efl_ui_selected_iterator_new(list);
 
   EINA_ITERATOR_FOREACH(selects, tmp)
      printf("selected [%p:%d] ", tmp, efl_ui_item_index_get(tmp));
@@ -110,8 +110,7 @@ elm_main(int argc EINA_UNUSED, char **argv)
 
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Efl.Ui.List"),
+                                  efl_text_set(efl_added, "Efl.Ui.List"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
 

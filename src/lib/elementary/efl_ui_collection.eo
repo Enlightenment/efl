@@ -1,9 +1,10 @@
-class @beta Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
-                   Efl.Pack_Linear, Efl.Pack_Layout,
+class Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
+                   Efl.Pack_Linear,
                    Efl.Ui.Layout_Orientable,
                    Efl.Ui.Multi_Selectable,
                    Efl.Ui.Focus.Manager_Sub,
-                   Efl.Ui.Widget_Focus_Manager
+                   Efl.Ui.Widget_Focus_Manager,
+                   Efl.Ui.Item_Clickable
    composites
                    Efl.Ui.Scrollable,
                    Efl.Ui.Scrollbar,
@@ -23,9 +24,8 @@ class @beta Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
      If all items do not fit in the current widget size scrolling facilities are provided.
 
      Items inside this widget can be selected according to the @Efl.Ui.Multi_Selectable.select_mode
-     policy, and the selection can be retrieved with @Efl.Ui.Multi_Selectable.selected_items_get.
+     policy, and the selection can be retrieved with @Efl.Ui.Multi_Selectable.selected_iterator_new.
    ]]
-   event_prefix:efl_ui;
    methods {
       item_scroll {
          [[Brings the passed item into the viewport.]]
@@ -49,7 +49,7 @@ class @beta Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
             @in animation: bool; [[If you want to have an animated transition.]]
          }
       }
-      @property position_manager {
+      @property position_manager @beta {
          [[Position manager object that handles placement of items.]]
          values {
             position_manager : Efl.Ui.Position_Manager.Entity @move; [[Ownership is passed to the item container.]]
@@ -82,20 +82,13 @@ class @beta Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
       Efl.Ui.Widget.focus_state_apply;
       Efl.Ui.Focus.Manager.move;
       Efl.Ui.Single_Selectable.last_selected { get; }
-      Efl.Ui.Multi_Selectable.selected_items_get;
+      Efl.Ui.Multi_Selectable.selected_iterator_new;
       Efl.Ui.Multi_Selectable.select_mode {get; set;}
-      Efl.Ui.Multi_Selectable.select_all;
-      Efl.Ui.Multi_Selectable.unselect_all;
-      Efl.Ui.Multi_Selectable.select_range;
-      Efl.Ui.Multi_Selectable.unselect_range;
+      Efl.Ui.Multi_Selectable.all_select;
+      Efl.Ui.Multi_Selectable.all_unselect;
+      Efl.Ui.Multi_Selectable.range_select;
+      Efl.Ui.Multi_Selectable.range_unselect;
       Efl.Ui.Single_Selectable.fallback_selection {get; set;}
-   }
-   events {
-      item,pressed : Efl.Ui.Item; [[A $press event occurred over an item.]]
-      item,unpressed : Efl.Ui.Item; [[An $unpress event occurred over an item.]]
-      item,longpressed : Efl.Ui.Item; [[A $longpressed event occurred over an item.]]
-      item,clicked : Efl.Ui.Item; [[A $clicked event occurred over an item.]]
-      item,clicked,any : Efl.Ui.Item; [[A $clicked,any event occurred over an item.]]
    }
 }
 

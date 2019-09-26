@@ -2,7 +2,7 @@ import efl_ui;
 
 class Efl.Ui.Layout extends Efl.Ui.Layout_Base implements Efl.File
 {
-   [[Elementary layout class
+   [[EFL layout widget class.
 
      When loading layouts from a file, use the @Efl.File.key property to specify
      the group that the data belongs to, in case it's an EET file

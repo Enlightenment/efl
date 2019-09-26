@@ -805,6 +805,8 @@ _animator_repeater(void *data, const Efl_Event *event)
 void
 evas_object_callbacks_finalized(Eo *eo_obj EINA_UNUSED, Evas_Object_Protected_Data *obj)
 {
+   EINA_SAFETY_ON_NULL_RETURN(obj);
+
    if (obj->animator_ref > 0)
      {
        if (obj->layer && obj->layer->evas)

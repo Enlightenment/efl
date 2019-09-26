@@ -157,6 +157,7 @@ elementary_test_src = [
   'test_ui_tab_pager.c',
   'test_ui_relative_layout.c',
   'test_ui_collection.c',
+  'test_ui_collection_view.c',
   'test_ui_items.c',
   'test_ui_frame.c',
   'test_efl_ui_animation_view.c',

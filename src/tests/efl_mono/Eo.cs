@@ -621,4 +621,15 @@ class TestStaticInterfaceMembers
     }
 }
 
+class TestHiddenClasses
+{
+    public static void test_hidden_class()
+    {
+        var obj = new Dummy.TestObject();
+        var hidden = obj.HiddenObject;
+
+        Test.AssertEquals(hidden.Name, "hidden_object");
+    }
+}
+
 }

@@ -22,6 +22,7 @@ typedef struct Dummy_Test_Object_Data
   Eo *iface_provider;
   int prop1;
   int prop2;
+  Eo *hidden_object;
 
   // Containers passed to C# as iterator/accessors
   Eina_Array *out_array;
@@ -75,6 +76,8 @@ _dummy_test_object_efl_object_constructor(Eo *obj, Dummy_Test_Object_Data *pd)
 {
    efl_constructor(efl_super(obj, DUMMY_TEST_OBJECT_CLASS));
    pd->provider = efl_add(DUMMY_NUMBERWRAPPER_CLASS, obj);
+   pd->hidden_object = efl_add(DUMMY_HIDDEN_OBJECT_CLASS, obj);
+   efl_name_set(pd->hidden_object, "hidden_object");
 
    if (efl_parent_get(obj) == NULL) { // Avoid recursion
        pd->iface_provider = efl_add(DUMMY_TEST_OBJECT_CLASS, obj);
@@ -4736,6 +4739,11 @@ int _dummy_test_object_dummy_test_iface_method_protected(EINA_UNUSED const Eo *o
 int _dummy_test_object_dummy_test_iface_call_method_protected(const Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, int x)
 {
     return dummy_test_iface_method_protected(obj, x);
+}
+
+Eo *_dummy_test_object_hidden_object_get(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd)
+{
+    return pd->hidden_object;
 }
 
 // Inherit

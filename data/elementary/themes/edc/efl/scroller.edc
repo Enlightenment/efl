@@ -1,4 +1,5 @@
 group { name: "efl/scroller";
+   data.item: "version" "123";
    images.image: "inset_shadow.png" COMP;
    images.image: "bevel_in.png" COMP;
    images.image: "bevel_out.png" COMP;
@@ -300,7 +301,7 @@ group { name: "efl/scroller";
          }
       }
       program {
-         signal: "efl,action,show,vbar"; source: "efl";
+         signal: "efl,vertical_bar,visible,on"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "sb_vbar";
          target: "sb_vbar_show";
@@ -315,7 +316,7 @@ group { name: "efl/scroller";
          target: "arrow2_vbar_indent";
       }
       program {
-         signal: "efl,action,hide,vbar"; source: "efl";
+         signal: "efl,vertical_bar,visible,off"; source: "efl";
          action: STATE_SET "hidden" 0.0;
          target: "sb_vbar";
          target: "sb_vbar_show";
@@ -374,20 +375,6 @@ group { name: "efl/scroller";
       program {
          signal: "efl,action,scroll"; source: "efl";
          script {
-            action_on_pos_vbar(10);
-         }
-      }
-      program { name: "loop_set_vbar";
-         signal: "efl,loop_y,set"; source: "efl";
-         script {
-            set_int(loop_y, 1);
-            action_on_pos_vbar(10);
-         }
-      }
-      program { name: "loop_unset_vbar";
-         signal: "efl,loop_y,unset"; source: "efl";
-         script {
-            set_int(loop_y, 0);
             action_on_pos_vbar(10);
          }
       }
@@ -581,7 +568,7 @@ group { name: "efl/scroller";
          }
       }
       program {
-         signal: "efl,action,show,hbar"; source: "efl";
+         signal: "efl,horizontal_bar,visible,on"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "sb_hbar";
          target: "sb_hbar_show";
@@ -596,7 +583,7 @@ group { name: "efl/scroller";
          target: "arrow2_hbar_indent";
       }
       program {
-         signal: "efl,action,hide,hbar"; source: "efl";
+         signal: "efl,horizontal_bar,visible,off"; source: "efl";
          action: STATE_SET "hidden" 0.0;
          target: "sb_hbar";
          target: "sb_hbar_show";
@@ -655,20 +642,6 @@ group { name: "efl/scroller";
       program {
          signal: "efl,action,scroll"; source: "efl";
          script {
-            action_on_pos_hbar(10);
-         }
-      }
-      program { name: "loop_set_hbar";
-         signal: "efl,loop_x,set"; source: "efl";
-         script {
-            set_int(loop_x, 1);
-            action_on_pos_hbar(10);
-         }
-      }
-      program { name: "loop_unset_hbar";
-         signal: "efl,loop_x,unset"; source: "efl";
-         script {
-            set_int(loop_x, 0);
             action_on_pos_hbar(10);
          }
       }
@@ -1128,7 +1101,7 @@ group { name: "efl/scroller";
       }
       program {
          signal: "mouse,down,*"; source: "efl.dragable.vbar";
-         action: SIGNAL_EMIT "efl,vbar,press" "efl";
+         action: SIGNAL_EMIT "efl,vertical_bar,press" "efl";
       }
       program {
          signal: "mouse,up,1"; source: "efl.dragable.vbar";
@@ -1152,7 +1125,7 @@ group { name: "efl/scroller";
       }
       program {
          signal: "mouse,down,*"; source: "efl.dragable.hbar";
-         action: SIGNAL_EMIT "efl,hbar,press" "efl";
+         action: SIGNAL_EMIT "efl,horizontal_bar,press" "efl";
       }
       program {
          signal: "mouse,up,1"; source: "efl.dragable.hbar";
@@ -1164,77 +1137,14 @@ group { name: "efl/scroller";
       }
       program {
          signal: "mouse,up,*"; source: "efl.dragable.hbar";
-         action: SIGNAL_EMIT "efl,hbar,unpress" "efl";
-      }
-      program {
-         signal: "efl,action,looping,left"; source: "efl";
-         action: STATE_SET "effect" 0.0;
-         transition: LINEAR 0.3;
-         target: "dim_effect";
-         after: "looping,left,done";
-      }
-      program { name: "looping,left,done";
-         action: SIGNAL_EMIT "efl,looping,left,done" "efl";
-      }
-      program {
-         signal: "efl,action,looping,left,end"; source: "efl";
-         action: STATE_SET "default" 0.0;
-         transition: LINEAR 0.3;
-         target: "dim_effect";
-      }
-      program {
-         signal: "efl,action,looping,right"; source: "efl";
-         action: STATE_SET "effect" 0.0;
-         transition: LINEAR 0.3;
-         target: "dim_effect";
-         after: "looping,right,done";
-      }
-      program { name: "looping,right,done";
-         action: SIGNAL_EMIT "efl,looping,right,done" "efl";
-      }
-      program {
-         signal: "efl,action,looping,right,end"; source: "efl";
-         action: STATE_SET "default" 0.0;
-         transition: LINEAR 0.3;
-         target: "dim_effect";
-      }
-      program {
-         signal: "efl,action,looping,up"; source: "efl";
-         action: STATE_SET "effect" 0.0;
-         transition: LINEAR 0.3;
-         target: "dim_effect";
-         after: "looping,up,done";
-      }
-      program { name: "looping,up,done";
-         action: SIGNAL_EMIT "efl,looping,up,done" "efl";
-      }
-      program {
-         signal: "efl,action,looping,up,end"; source: "efl";
-         action: STATE_SET "default" 0.0;
-         transition: LINEAR 0.3;
-         target: "dim_effect";
-      }
-      program {
-         signal: "efl,action,looping,down"; source: "efl";
-         action: STATE_SET "effect" 0.0;
-         transition: LINEAR 0.3;
-         target: "dim_effect";
-         after: "looping,down,done";
-      }
-      program { name: "looping,down,done";
-         action: SIGNAL_EMIT "efl,looping,down,done" "efl";
-      }
-      program {
-         signal: "efl,action,looping,down,end"; source: "efl";
-         action: STATE_SET "default" 0.0;
-         transition: LINEAR 0.3;
-         target: "dim_effect";
+         action: SIGNAL_EMIT "efl,horizontal_bar,unpress" "efl";
       }
    }
 }
 
 group { name: "efl/scroller:noclip";
    inherit: "efl/scroller";
+   data.item: "version" "123";
    parts {
       part { name: "clipper";
          description { state: "default" 0.0;
@@ -1269,6 +1179,7 @@ group { name: "efl/scroller:noclip";
 
 group { name: "efl/scroller:popup/no_inset_shadow";
    inherit: "efl/scroller";
+   data.item: "version" "123";
    parts {
       part { name: "inset";
          description { state: "default" 0.0;
@@ -1278,58 +1189,6 @@ group { name: "efl/scroller:popup/no_inset_shadow";
       part { name: "shadow";
          description { state: "default" 0.0;
             visible: 0;
-         }
-      }
-   }
-}
-
-group { name: "efl/scroller/contents";
-   parts {
-      part { name: "efl.content"; required;
-         type: SWALLOW;
-         description { state: "default" 0.0;
-         }
-      }
-      part { name: "efl.content_r"; required;
-         type: SWALLOW;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1 {
-                relative: 1.0 0.0;
-                to: "efl.content";
-            }
-            rel2 {
-                relative: 2.0 1.0;
-                to: "efl.content";
-            }
-         }
-      }
-      part { name: "efl.content_b"; required;
-         type: SWALLOW;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1 {
-                relative: 0.0 1.0;
-                to: "efl.content";
-            }
-            rel2 {
-                relative: 1.0 2.0;
-                to: "efl.content";
-            }
-         }
-      }
-      part { name: "efl.content_rb"; required;
-         type: SWALLOW;
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1 {
-                relative: 1.0 1.0;
-                to: "efl.content";
-            }
-            rel2 {
-                relative: 2.0 2.0;
-                to: "efl.content";
-            }
          }
       }
    }

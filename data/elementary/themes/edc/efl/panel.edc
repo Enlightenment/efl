@@ -1,4 +1,4 @@
-group { name: "efl/panel";
+group { name: "efl/panel"; data.item: "version" "123";
    data {
       item: "handler_size" "30";
    }
@@ -10,7 +10,7 @@ group { name: "efl/panel";
       }
    }
 }
-group { name: "efl/panel/scrollable/left";
+group { name: "efl/panel/scrollable/left"; data.item: "version" "123";
    parts {
       part { name: "efl.panel_area";
          type: SWALLOW;
@@ -102,7 +102,7 @@ group { name: "efl/panel/scrollable/left";
    }
 }
 
-group { name: "efl/panel/scrollable/right";
+group { name: "efl/panel/scrollable/right"; data.item: "version" "123";
    parts {
       part { name: "efl.event_area";
          type: SWALLOW;
@@ -194,7 +194,7 @@ group { name: "efl/panel/scrollable/right";
    }
 }
 
-group { name: "efl/panel/scrollable/top";
+group { name: "efl/panel/scrollable/top"; data.item: "version" "123";
    parts {
       part { name: "efl.panel_area";
          type: SWALLOW;
@@ -286,7 +286,7 @@ group { name: "efl/panel/scrollable/top";
    }
 }
 
-group { name: "efl/panel/scrollable/bottom";
+group { name: "efl/panel/scrollable/bottom"; data.item: "version" "123";
    parts {
       part { name: "efl.event_area";
          type: SWALLOW;
@@ -378,7 +378,7 @@ group { name: "efl/panel/scrollable/bottom";
    }
 }
 
-group { name: "efl/panel/left";
+group { name: "efl/panel/left"; data.item: "version" "123";
    images.image: "bevel_out.png" COMP;
    images.image: "shine.png" COMP;
    images.image: "shadow_square_tiny.png" COMP;
@@ -627,6 +627,7 @@ group { name: "efl/panel/left";
 
 group { name: "efl/panel/right";
    inherit: "efl/panel/left";
+   data.item: "version" "123";
    parts {
       part { name: "base";
          description { state: "default" 0.0;
@@ -681,6 +682,7 @@ group { name: "efl/panel/right";
 
 group { name: "efl/panel/top";
    inherit: "efl/panel/left";
+   data.item: "version" "123";
    parts {
       part { name: "base";
          description { state: "default" 0.0;
@@ -775,6 +777,7 @@ group { name: "efl/panel/top";
 
 group { name: "efl/panel/bottom";
    inherit: "efl/panel/top";
+   data.item: "version" "123";
    parts {
       part { name: "base";
          description { state: "default" 0.0;

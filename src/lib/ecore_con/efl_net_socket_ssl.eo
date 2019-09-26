@@ -1,5 +1,5 @@
-var @beta Efl.Net.Socket_Ssl_Error.HANDSHAKE: Eina.Error; [[Failed SSL handshake]]
-var @beta Efl.Net.Socket_Ssl_Error.CERTIFICATE_VERIFY_FAILED: Eina.Error; [[Failed to verify peer's certificate]]
+error @beta Efl.Net.Socket_Ssl_Error.HANDSHAKE = "Failed SSL handshake"; [[Failed SSL handshake]]
+error @beta Efl.Net.Socket_Ssl_Error.CERTIFICATE_VERIFY_FAILED = "Failed to verify peer's certificate"; [[Failed to verify peer's certificate]]
 
 class @beta Efl.Net.Socket_Ssl extends Efl.Loop_Consumer implements Efl.Net.Socket {
     [[A wrapper socket doing SSL (Secure Sockets Layer).

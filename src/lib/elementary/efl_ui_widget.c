@@ -5816,8 +5816,6 @@ _efl_ui_property_bind_get(Eo *obj, Efl_Ui_Widget_Data *pd, Efl_Ui_Property_Bound
    value = efl_model_property_get(pd->properties.model, prop->property);
    target = prop->part ? efl_part(obj, prop->part) : obj;
 
-   fprintf(stderr, "setting: %s for %s from %s\n",
-           eina_value_to_string(value), prop->property, efl_debug_name_get(pd->properties.model));
    err = efl_property_reflection_set(target, prop->key, eina_value_reference_copy(value));
    eina_value_free(value);
 

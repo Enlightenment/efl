@@ -137,6 +137,9 @@ extern "C" {
 
 extern EAPI double _efl_startup_time;
 
+/** Successfully applied the requested style from the current theme. */
+extern EAPI Eina_Error EFL_UI_THEME_APPLY_ERROR_NONE;
+
 // EO types. Defined for legacy-only builds as legacy uses typedef of EO types.
 #include "efl_ui.eot.h"
 #include "efl_ui_selection_types.eot.h"
@@ -304,6 +307,8 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_item.eo.h>
 # include <efl_ui_position_manager_entity.eo.h>
 # include <efl_ui_position_manager_data_access_v1.eo.h>
+# include <canvas/efl_input_clickable.eo.h>
+# include <efl_ui_item_clickable.eo.h>
 # include <efl_ui_collection.eo.h>
 # include <efl_ui_position_manager_list.eo.h>
 # include <efl_ui_position_manager_grid.eo.h>
@@ -322,13 +327,14 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_tab_bar.eo.h>
 # include <efl_ui_tab_page.eo.h>
 # include <efl_ui_tab_pager.eo.h>
+# include <efl_ui_multi_selectable_async.eo.h>
 # include <efl_ui_select_model.eo.h>
 
-# include "efl_ui_list_view_types.eot.h"
 # include <efl_ui_list_view.eo.h>
-# include <efl_ui_list_view_model.eo.h>
 # include <efl_ui_view_model.eo.h>
-
+# include <efl_ui_collection_view.eo.h>
+# include <efl_ui_list_view.eo.h>
+# include <efl_ui_grid_view.eo.h>
 
 # include <efl_ui_scroller.eo.h>
 # include <efl_ui_pan.eo.h>

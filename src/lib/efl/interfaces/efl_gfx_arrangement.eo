@@ -28,7 +28,7 @@ interface @beta Efl.Gfx.Arrangement
                                         axis and 1.0 is at the end.]]
          }
       }
-      @property content_padding {
+      @property content_padding @beta {
          [[This property determines the space between a container's content items.
 
            It is different than the @Efl.Gfx.Hint.hint_margin property in that it is applied to each

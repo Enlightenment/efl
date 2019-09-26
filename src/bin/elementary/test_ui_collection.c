@@ -5,15 +5,15 @@
 #include <Efl_Ui.h>
 
 static void
-_select_all(void *data, const Efl_Event *ev EINA_UNUSED)
+_all_select(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   efl_ui_select_all(data);
+   efl_ui_all_select(data);
 }
 
 static void
-_unselect_all(void *data, const Efl_Event *ev EINA_UNUSED)
+_all_unselect(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   efl_ui_unselect_all(data);
+   efl_ui_all_unselect(data);
 }
 
 static void
@@ -176,8 +176,7 @@ void create_item_container_ui(const Efl_Class *collection_class, const Efl_Class
    Match_Content_Ctx *ctx = calloc(1, sizeof(*ctx));
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, name),
+                                  efl_text_set(efl_added, name),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
    tbl = efl_add(EFL_UI_TABLE_CLASS, win);
    efl_content_set(win, tbl);
@@ -285,14 +284,14 @@ void create_item_container_ui(const Efl_Class *collection_class, const Efl_Class
            efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
            efl_gfx_hint_align_set(efl_added, 0, 0.5));
    efl_text_set(o, "Select All");
-   efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _select_all, item_container);
+   efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _all_select, item_container);
    efl_pack_table(tbl, o, 0, 11, 1, 1);
 
    o = efl_add(EFL_UI_BUTTON_CLASS, tbl,
            efl_gfx_hint_weight_set(efl_added, 0.0, 0.0),
            efl_gfx_hint_align_set(efl_added, 0, 0.5));
    efl_text_set(o, "Unselect All");
-   efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _unselect_all, item_container);
+   efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _all_unselect, item_container);
    efl_pack_table(tbl, o, 0, 12, 1, 1);
 
 

@@ -1,5 +1,5 @@
 //Efl.Ui.Navigation_Layout Themes
-group { "efl/navigation_layout";
+group { "efl/navigation_layout"; data.item: "version" "123";
    parts {
       spacer { "base";
          desc { "default";

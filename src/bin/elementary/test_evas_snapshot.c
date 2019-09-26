@@ -46,8 +46,12 @@ _anim_toggle(void *data, const Efl_Event *ev EINA_UNUSED)
    it = efl_content_iterate(table);
    EINA_ITERATOR_FOREACH(it, o)
      {
-        if (efl_isa(o, EFL_PLAYER_INTERFACE) && efl_player_playable_get(o))
-          efl_player_play_set(o, !efl_player_play_get(o));
+        if (efl_isa(o, EFL_PLAYER_INTERFACE) && efl_playable_get(o))
+          {
+             if (!efl_player_playing_get(o))
+               efl_player_playing_set(o, EINA_TRUE);
+             efl_player_paused_set(o, !efl_player_paused_get(o));
+          }
      }
    eina_iterator_free(it);
 }

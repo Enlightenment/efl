@@ -37,6 +37,14 @@ typedef struct {
  */
 
 static void
+cache_invalidate(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
+{
+   if (pd->size_cache)
+     free(pd->size_cache);
+   pd->size_cache = NULL;
+}
+
+static void
 cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
 {
    unsigned int i;
@@ -82,19 +90,15 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
           }
         pd->size_cache[i + 1] = pd->size_cache[i] + step;
         pd->maximum_min_size = MAX(pd->maximum_min_size, min);
+        /* no point iterating further if size calc can't be done yet */
+        //if ((!i) && (!pd->maximum_min_size)) break;
      }
    pd->average_item_size = pd->size_cache[pd->size]/pd->size;
+   if ((!pd->average_item_size) && (!pd->maximum_min_size))
+     cache_invalidate(obj, pd);
 }
 
-static void
-cache_invalidate(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
-{
-   if (pd->size_cache)
-     free(pd->size_cache);
-   pd->size_cache = NULL;
-}
-
-static inline int
+static int
 cache_access(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, unsigned int idx)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(idx <= pd->size, 0);
@@ -105,7 +109,12 @@ static void
 recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
 {
    Eina_Size2D min_size = EINA_SIZE2D(-1, -1);
+   Eina_Size2D pabs_size = pd->abs_size;
+   int pmin_size = pd->maximum_min_size;
+
    cache_require(obj, pd);
+   /* deferred */
+   if (!pd->size_cache) return;
 
    pd->abs_size = pd->viewport.size;
 
@@ -116,8 +125,8 @@ recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
         else
           pd->abs_size.w = MAX(cache_access(obj, pd, pd->size), pd->abs_size.w);
      }
-
-   efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_SIZE_CHANGED, &pd->abs_size);
+   if ((pabs_size.w != pd->abs_size.w) || (pabs_size.h != pd->abs_size.h))
+     efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_SIZE_CHANGED, &pd->abs_size);
 
    if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
      {
@@ -127,8 +136,8 @@ recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
      {
         min_size.h = pd->maximum_min_size;
      }
-
-   efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_MIN_SIZE_CHANGED, &min_size);
+   if ((pd->maximum_min_size > 0) && (pd->maximum_min_size != pmin_size))
+     efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_MIN_SIZE_CHANGED, &min_size);
 }
 
 static inline Vis_Segment

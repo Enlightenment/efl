@@ -25,27 +25,34 @@ static const char BUTTON_SWALLOW_NAME[EFL_UI_ALERT_POPUP_BUTTON_COUNT][20] =
                                                  "efl.button2",
                                                  "efl.button3"};
 
+static const Elm_Layout_Part_Alias_Description _text_aliases[] =
+{
+   {"title", "efl.text.title"},
+   {NULL, NULL}
+};
+
 static Eina_Bool
 _efl_ui_alert_popup_text_set(Eo *obj, Efl_Ui_Alert_Popup_Data *pd, const char *part, const char *label)
 {
-   if (eina_streq(part, "title") || eina_streq(part, "efl.text.title"))
+   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
+      return EINA_FALSE;
+   efl_text_set(efl_part(efl_super(obj, MY_CLASS), part), label);
+   if (eina_streq(part, "efl.text.title"))
      {
         Eina_Bool changed = eina_stringshare_replace(&pd->title_text, label);
         if (changed)
           {
-             efl_text_set(efl_part(efl_super(obj, MY_CLASS), "title"), label);
+             efl_text_set(efl_part(efl_super(obj, MY_CLASS), part), label);
              if (label)
-               elm_layout_signal_emit(obj, "efl,title,show", "efl");
+               elm_layout_signal_emit(obj, "efl,title,visible,on", "efl");
              else
-               elm_layout_signal_emit(obj, "efl,title,hide", "efl");
+               elm_layout_signal_emit(obj, "efl,title,visible,off", "efl");
 
              ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd, EINA_FALSE);
              edje_object_message_signal_process(wd->resize_obj);
              efl_canvas_group_change(obj);
           }
      }
-   else
-     efl_text_set(efl_part(efl_super(obj, MY_CLASS), part), label);
 
    return EINA_TRUE;
 }
@@ -53,7 +60,9 @@ _efl_ui_alert_popup_text_set(Eo *obj, Efl_Ui_Alert_Popup_Data *pd, const char *p
 const char *
 _efl_ui_alert_popup_text_get(Eo *obj EINA_UNUSED, Efl_Ui_Alert_Popup_Data *pd, const char *part)
 {
-   if (eina_streq(part, "title") || eina_streq(part, "efl.text.title"))
+   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE))
+      return EINA_FALSE;
+   if (eina_streq(part, "efl.text.title"))
      {
         if (pd->title_text)
           return pd->title_text;
@@ -216,7 +225,7 @@ _efl_ui_alert_popup_button_set(Eo *obj, Efl_Ui_Alert_Popup_Data *pd, Efl_Ui_Aler
                              pd->button[EFL_UI_ALERT_POPUP_BUTTON_NEGATIVE]);
           }
 
-        elm_layout_signal_emit(obj, "efl,buttons,show", "efl");
+        elm_layout_signal_emit(obj, "efl,buttons,visible,on", "efl");
         edje_object_message_signal_process(wd->resize_obj);
      }
 
@@ -248,9 +257,10 @@ _efl_ui_alert_popup_efl_object_destructor(Eo *obj, Efl_Ui_Alert_Popup_Data *pd)
 }
 
 static Eina_Bool
-_part_is_efl_ui_alert_popup_part(const Eo *obj EINA_UNUSED, const char *part)
+_part_is_efl_ui_alert_popup_part(const Eo *obj, const char *part)
 {
-   return (eina_streq(part, "title") || eina_streq(part, "efl.text.title"));
+   if (!_elm_layout_part_aliasing_eval(obj, &part, EINA_TRUE)) return EINA_FALSE;
+   return eina_streq(part, "efl.text.title");
 }
 
 /* Efl.Part begin */
@@ -261,5 +271,8 @@ ELM_PART_OVERRIDE_TEXT_GET(efl_ui_alert_popup, EFL_UI_ALERT_POPUP, Efl_Ui_Alert_
 #include "efl_ui_alert_popup_part.eo.c"
 
 /* Efl.Part end */
+EFL_UI_LAYOUT_TEXT_ALIASES_IMPLEMENT(efl_ui_alert_popup)
 
+#define EFL_UI_ALERT_POPUP_EXTRA_OPS \
+   EFL_UI_LAYOUT_TEXT_ALIASES_OPS(efl_ui_alert_popup)
 #include "efl_ui_alert_popup.eo.c"

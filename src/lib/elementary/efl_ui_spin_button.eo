@@ -1,6 +1,6 @@
-class @beta Efl.Ui.Spin_Button extends Efl.Ui.Spin
-                               implements Efl.Ui.Focus.Composition, Efl.Ui.Layout_Orientable, Efl.Ui.Range_Interactive,
-                                          Efl.Access.Widget.Action
+class Efl.Ui.Spin_Button extends Efl.Ui.Spin
+                         implements Efl.Ui.Focus.Composition, Efl.Ui.Layout_Orientable, Efl.Ui.Range_Interactive,
+                                    Efl.Access.Widget.Action
 {
    [[A Button Spin.
 
@@ -42,7 +42,7 @@ class @beta Efl.Ui.Spin_Button extends Efl.Ui.Spin
             circulate: bool(false); [[$true to enable circulate or $false to disable it.]]
          }
       }
-      @property direct_text_input {
+      @property direct_text_input @beta {
          [[Control whether the spin can be directly edited by the user.
 
            Spin objects can have editing disabled, in which case they can only

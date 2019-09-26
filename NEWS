@@ -29,26 +29,6 @@ Features:
 
 Fixes:
 
-   * eo: Fix missing varags cleanup (CID1399080)
-   * efl_core_command_line: Fix logically dead code (CID1399106)
-   * efl_ui_widget_common: Fix potential resource leak (CID1399088)
-   * efl_ui_selection_manager: Fix unchecked return value (CID1399092)
-   * evas_device: Fix dereferencing null pointer (CID1399091)
-   * efl_ui_stack: Fix dereference null return value (CID1399082)
-   * efl_ui_datepicker: Fix uninitialized scalar value (CID1397006)
-   * efl_ui_grid: Fix dereferencing null pointer (CID1397000)
-   * ecore_con: Fix dereferencing of null pointer (CID1396990)
-   * elm_atspi_bridge: Fix resource leak (CID1399429)
-   * efl_ui_win: Fix dereference null return value (CID1399428)
-   * efl_ui_win: Fix dereference null return (CID1399427)
-   * efl_ui_win: Fix dereference null return (CID1399426)
-   * efl_ui_win: Fix dereference null return value (CID1399425)
-   * efreet: Fix resource leak (CID1399090)
-   * efl_ui_text: Fix resource leak (CID1396998)
-   * eldbus: Fix dereference after null check (CID1399422)
-   * efl_ui_focus_manager_calc: Fix resource leaks (CID1396984, CID1396965)
-   * elm_focus_legacy: Fix resource leaks (CID1399096, CID1399095)
-   * eldbus: Fix resource leak (CID1399097)
    * efl_canvas_vg_object: Fix dereference after null check (CID1399423, CID1399421)
    * efl_ui_win: fix hw accel detection
    * efl_ui_layout: Eina_Error type has been modified to work correctly.
@@ -229,6 +209,8 @@ Fixes:
    * fix xpm loader to be threadable - fixes so much stuff...
    * efl: check file's mtime in efl.file::file_set to determine if file is the same
    * meson.build: allow to disable tiff evas loader
+   * ecore/signal: also use nonblock for writing side of signal pipe
+   * ector engine: +null checking.
 
 Changes since 1.21.0:
 ---------------------

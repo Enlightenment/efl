@@ -165,6 +165,7 @@
 # include "efl_ui_focus_parent_provider_standard.eo.h"
 # include "efl_ui_selection_manager.eo.h"
 # include "efl_datetime_manager.eo.h"
+
 extern const char *_efl_model_property_itemw;
 extern const char *_efl_model_property_itemh;
 extern const char *_efl_model_property_selfw;
@@ -892,6 +893,8 @@ extern const char SIG_LAYOUT_UNFOCUSED[];
 
 extern Eina_Stringshare *_property_style_ss;
 
+Efl_Ui_Win *efl_ui_widget_factory_widget_get(Efl_Ui_Widget_Factory *factory);
+
 extern Eina_Bool _config_profile_lock;
 
 extern Eina_FreeQ *postponed_fq;
@@ -916,7 +919,7 @@ _elm_dgettext(const char *string)
 
 # endif
 
-extern Eina_Bool _use_build_config;
+extern Eina_Bool _running_in_tree;
 
 /* Used by the paste handler */
 void   _elm_entry_entry_paste(Evas_Object *obj, const char *entry);
@@ -932,29 +935,29 @@ void *_elm_entry_signal_callback_del_legacy(Eo *obj, const char *emission, const
 void efl_ui_win_inlined_parent_set(Eo *obj, Efl_Canvas_Object *parent);
 
 /* Internal EO APIs */
-const Elm_Layout_Part_Alias_Description *elm_layout_content_aliases_get(const Eo *obj);
-const Elm_Layout_Part_Alias_Description *elm_layout_text_aliases_get(const Eo *obj);
+const Elm_Layout_Part_Alias_Description *efl_ui_layout_content_aliases_get(const Eo *obj);
+const Elm_Layout_Part_Alias_Description *efl_ui_layout_text_aliases_get(const Eo *obj);
 void efl_ui_slider_val_fetch(Evas_Object *obj, Eina_Bool user_event);
 void efl_ui_slider_val_set(Evas_Object *obj);
 void efl_ui_slider_down_knob(Evas_Object *obj, double button_x, double button_y);
 void efl_ui_slider_move_knob(Evas_Object *obj, double button_x, double button_y);
 //void elm_layout_sizing_eval_eoapi(Eo *obj);
 
-# define _ELM_LAYOUT_ALIASES_IMPLEMENT(_pfx, _typ) \
+# define _EFL_UI_LAYOUT_ALIASES_IMPLEMENT(_pfx, _typ) \
    static const Elm_Layout_Part_Alias_Description * \
    _##_pfx##_##_typ##_aliases_get(Eo *obj EINA_UNUSED, void *_pd EINA_UNUSED) \
    { \
       return _##_typ##_aliases; \
    }
 
-# define _ELM_LAYOUT_ALIASES_OPS(_pfx, _typ) \
-   EFL_OBJECT_OP_FUNC(elm_layout_##_typ##_aliases_get, _##_pfx##_##_typ##_aliases_get)
+# define _EFL_UI_LAYOUT_ALIASES_OPS(_pfx, _typ) \
+   EFL_OBJECT_OP_FUNC(efl_ui_layout_##_typ##_aliases_get, _##_pfx##_##_typ##_aliases_get)
 
-# define ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(_pfx) _ELM_LAYOUT_ALIASES_IMPLEMENT(_pfx, content)
-# define ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(_pfx) _ELM_LAYOUT_ALIASES_IMPLEMENT(_pfx, text)
+# define EFL_UI_LAYOUT_CONTENT_ALIASES_IMPLEMENT(_pfx) _EFL_UI_LAYOUT_ALIASES_IMPLEMENT(_pfx, content)
+# define EFL_UI_LAYOUT_TEXT_ALIASES_IMPLEMENT(_pfx) _EFL_UI_LAYOUT_ALIASES_IMPLEMENT(_pfx, text)
 
-# define ELM_LAYOUT_CONTENT_ALIASES_OPS(_pfx) _ELM_LAYOUT_ALIASES_OPS(_pfx, content)
-# define ELM_LAYOUT_TEXT_ALIASES_OPS(_pfx) _ELM_LAYOUT_ALIASES_OPS(_pfx, text)
+# define EFL_UI_LAYOUT_CONTENT_ALIASES_OPS(_pfx) _EFL_UI_LAYOUT_ALIASES_OPS(_pfx, content)
+# define EFL_UI_LAYOUT_TEXT_ALIASES_OPS(_pfx) _EFL_UI_LAYOUT_ALIASES_OPS(_pfx, text)
 
 # define EFL_CANVAS_GROUP_CALC_OPS(_pfx) \
    EFL_OBJECT_OP_FUNC(efl_canvas_group_calculate, _##_pfx##_efl_canvas_group_group_calculate)

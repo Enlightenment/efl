@@ -19,8 +19,7 @@ static void
 _small_ui(State *s)
 {
    s->win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Hello World"));
+                                  efl_text_set(efl_added, "Hello World"));
 
    s->ic = efl_add(EFL_UI_IMAGE_CLASS, s->win,
                  efl_ui_win_icon_object_set(s->win, efl_added));
@@ -233,8 +232,7 @@ EFL_START_TEST(efl_ui_test_widget_parent_relation)
    Efl_Ui_Win *win, *w1, *w2, *w3;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Hello World"));
+                                  efl_text_set(efl_added, "Hello World"));
    //first check the initial state
    w1 = efl_add(efl_ui_widget_realized_class_get(), win);
    ck_assert_ptr_eq(efl_ui_widget_parent_get(w1), win);
@@ -257,8 +255,7 @@ EFL_START_TEST(efl_ui_test_widget_disabled_parent)
    Efl_Ui_Win *win, *w1, *w2, *t;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Hello World"));
+                                  efl_text_set(efl_added, "Hello World"));
    //first check the initial state
    w1 = efl_add(efl_ui_widget_realized_class_get(), win);
    efl_ui_widget_disabled_set(w1, EINA_TRUE);
@@ -293,8 +290,7 @@ EFL_START_TEST(efl_ui_test_widget_disabled_behaviour)
    Efl_Ui_Win *win, *w1, *w2, *t;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Hello World"));
+                                  efl_text_set(efl_added, "Hello World"));
    //first check the initial state
    w1 = efl_add(efl_ui_widget_realized_class_get(), win);
    efl_ui_widget_disabled_set(w1, EINA_TRUE);

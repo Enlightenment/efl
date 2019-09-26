@@ -1726,9 +1726,9 @@ void _elm_slider_efl_ui_format_apply_formatted_value(Eo *obj EINA_UNUSED, Elm_Sl
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(elm_slider)
+EFL_UI_LAYOUT_CONTENT_ALIASES_IMPLEMENT(elm_slider)
 
 #define ELM_SLIDER_EXTRA_OPS \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(elm_slider)
+   EFL_UI_LAYOUT_CONTENT_ALIASES_OPS(elm_slider)
 
 #include "elm_slider_eo.c"

@@ -17,7 +17,7 @@ function @beta EflUiViewModelPropertySet {
    return: future<any_value_ref>; [[The value that was finally set.]]
 };
 
-class @beta Efl.Ui.View_Model extends Efl.Composite_Model
+class Efl.Ui.View_Model extends Efl.Composite_Model
 {
    [[Efl model providing helpers for custom properties used when linking a model to a view and you need to
      generate/adapt values for display.
@@ -60,7 +60,7 @@ class @beta Efl.Ui.View_Model extends Efl.Composite_Model
          }
          return: Eina.Error;
       }
-      property_logic_add {
+      property_logic_add @beta {
          [[Add callbacks that will be triggered when someone ask for the specified property name when getting or
            setting a property.
 
@@ -79,7 +79,7 @@ class @beta Efl.Ui.View_Model extends Efl.Composite_Model
          }
          return: Eina.Error;
       }
-      property_logic_del {
+      property_logic_del @beta {
          [[Delete previously added callbacks that were triggered when someone asked for the specified property name
            when getting or setting a property.
 

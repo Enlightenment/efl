@@ -1,4 +1,5 @@
 group { "efl/tab_bar";
+   data.item: "version" "123";
    images.image: "vgrad_med_lighter.png" COMP;
    images.image: "bevel_out.png" COMP;
    images.image: "shine.png" COMP;
@@ -60,6 +61,7 @@ group { "efl/tab_bar";
 }
 
 group { "efl/tab_bar/tab";
+   data.item: "version" "123";
    images.image: "shadow_inset_bevels.png" COMP;
    images.image: "shadow_angled_in_sides.png" COMP;
    images.image: "horizontal_separated_bar_small_glow.png" COMP;
@@ -434,13 +436,13 @@ group { "efl/tab_bar/tab";
    programs {
       EFL_UI_CLICKABLE_PART_BIND(event)
       program {
-         signal: "efl,orient,horizontal"; source: "efl";
+         signal: "efl,state,horizontal"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "base";
          target: "bend_clip";
       }
       program {
-         signal: "efl,orient,vertical"; source: "efl";
+         signal: "efl,state,vertical"; source: "efl";
          action: STATE_SET "vert" 0.0;
          target: "base";
          target: "bend_clip";
@@ -482,7 +484,7 @@ group { "efl/tab_bar/tab";
          target: "highlight";
       }
       program { name: "st1";
-         signal: "efl,state,text,unset"; source: "efl";
+         signal: "efl,text,unset"; source: "efl";
          script {
             new m = get_int(btmode);
             m &= ~LABEL; set_int(btmode, m);
@@ -490,7 +492,7 @@ group { "efl/tab_bar/tab";
          }
       }
       program { name: "st2";
-         signal: "efl,state,text,set"; source: "efl";
+         signal: "efl,text,set"; source: "efl";
          script {
             new m = get_int(btmode);
             m |= LABEL; set_int(btmode, m);

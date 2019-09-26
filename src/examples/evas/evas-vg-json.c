@@ -124,7 +124,7 @@ main(void)
    Eo *player = efl_add(EFL_CANVAS_ANIMATION_PLAYER_CLASS, evas);
    efl_animation_player_animation_set(player, anim);
    efl_event_callback_add(player, EFL_ANIMATION_PLAYER_EVENT_RUNNING, running_cb, NULL);
-   efl_player_start(player);
+   efl_player_playing_set(player, EINA_TRUE);
 
    ecore_main_loop_begin();
    ecore_evas_shutdown();

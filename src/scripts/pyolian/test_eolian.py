@@ -180,22 +180,14 @@ class TestEolianUnit(unittest.TestCase):
             all_count += 1
         self.assertGreater(all_count, 10)
 
-    def test_variable_listing(self):
+    def test_constant_listing(self):
         l = list(eolian_db.constants)
         self.assertGreater(len(l), 2)
-        self.assertIsInstance(l[0], eolian.Variable)
-
-        l = list(eolian_db.globals)
-        self.assertGreater(len(l), 20)
-        self.assertIsInstance(l[0], eolian.Variable)
+        self.assertIsInstance(l[0], eolian.Constant)
 
         l = list(eolian_db.constants_by_file_get('efl_gfx_stack.eo'))
         self.assertGreater(len(l), 1)
-        self.assertIsInstance(l[0], eolian.Variable)
-
-        l = list(eolian_db.globals_by_file_get('efl_net_http_types.eot'))
-        self.assertGreater(len(l), 10)
-        self.assertIsInstance(l[0], eolian.Variable)
+        self.assertIsInstance(l[0], eolian.Constant)
 
     def test_class_listing(self):
         all_count = 0
@@ -341,7 +333,7 @@ class TestEolianClass(unittest.TestCase):
         self.assertEqual(list(cls.namespaces), ['Efl'])
         self.assertEqual(cls.type, eolian.Eolian_Class_Type.REGULAR)
         self.assertIsInstance(cls.documentation, eolian.Documentation)
-        self.assertIsNone(cls.eo_prefix)  # TODO fin a class with a value
+        self.assertIsNone(cls.c_prefix)  # TODO fin a class with a value
         self.assertIsNone(cls.event_prefix)  # TODO same as above
         self.assertIsNone(cls.data_type)  # TODO same as above
         self.assertEqual(cls.parent.name, 'Efl.Loop_Consumer')
@@ -473,31 +465,17 @@ class TestEolianDocumentation(unittest.TestCase):
         self.assertEqual(doc.since, '1.22')
 
 
-class TestEolianVariable(unittest.TestCase):
-    def test_variable_global(self):
-        var = eolian_db.global_by_name_get('Efl.Net.Http.Error.BAD_CONTENT_ENCODING')
-        self.assertIsInstance(var, eolian.Variable)
-        self.assertEqual(var.name, 'Efl.Net.Http.Error.BAD_CONTENT_ENCODING')
-        self.assertEqual(var.short_name, 'BAD_CONTENT_ENCODING')
-        self.assertEqual(var.type, eolian.Eolian_Variable_Type.GLOBAL)
-        self.assertEqual(var.file, 'efl_net_http_types.eot')
-        self.assertFalse(var.is_extern)
-        self.assertEqual(list(var.namespaces), ['Efl','Net','Http','Error'])
-        self.assertIsInstance(var.documentation, eolian.Documentation)
-        self.assertIsInstance(var.base_type, eolian.Type)
-        self.assertIsNone(var.value)  # TODO is None correct here? no value?
-
-    def test_variable_constant(self):
+class TestEolianConstant(unittest.TestCase):
+    def test_constant(self):
         var = eolian_db.constant_by_name_get('Efl.Gfx.Hint_Expand')
-        self.assertIsInstance(var, eolian.Variable)
+        self.assertIsInstance(var, eolian.Constant)
         self.assertEqual(var.name, 'Efl.Gfx.Hint_Expand')
         self.assertEqual(var.short_name, 'Hint_Expand')
-        self.assertEqual(var.type, eolian.Eolian_Variable_Type.CONSTANT)
         self.assertEqual(var.file, 'efl_gfx_hint.eo')
         self.assertFalse(var.is_extern)
         self.assertEqual(list(var.namespaces), ['Efl','Gfx'])
         self.assertIsInstance(var.documentation, eolian.Documentation)
-        self.assertIsInstance(var.base_type, eolian.Type)
+        self.assertIsInstance(var.type, eolian.Type)
         self.assertIsInstance(var.value, eolian.Expression)
         self.assertEqual(float(var.value.serialize), +1.0)
 
@@ -575,7 +553,6 @@ class TestEolianType(unittest.TestCase):
         self.assertEqual(t.file, 'efl_loop_timer.eo') # TODO is this correct ?
         self.assertIsNone(t.base_type)  # TODO find a better test
         self.assertIsNone(t.next_type)  # TODO find a better test
-        self.assertFalse(t.is_owned)
         self.assertFalse(t.is_const)
         self.assertFalse(t.is_ptr)
         self.assertEqual(list(t.namespaces), [])
