@@ -1431,6 +1431,17 @@ ecore_x_window_sniff(Ecore_X_Window win)
    if (_ecore_xlib_sync) ecore_x_sync();
 }
 
+/* this is internal-only for now */
+EAPI void
+ecore_x_window_root_properties_select(void)
+{
+   LOGFN(__FILE__, __LINE__, __FUNCTION__);
+   if (_ecore_x_window_manage_succeeded) return;
+   EINA_SAFETY_ON_NULL_RETURN(_ecore_x_disp);
+   XSelectInput(_ecore_x_disp, ecore_x_window_root_first_get(), PropertyChangeMask);
+   if (_ecore_xlib_sync) ecore_x_sync();
+}
+
 EAPI void
 ecore_x_window_client_sniff(Ecore_X_Window win)
 {
