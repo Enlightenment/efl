@@ -635,7 +635,7 @@ struct expression_def
   }
   friend inline bool operator!=(expression_def const& lhs, expression_def const& rhs)
   {
-    return lhs != rhs;
+    return !(lhs == rhs);
   }
 
   expression_def(Eolian_Expression const* expression) : value(::eolian_expression_eval(expression, EOLIAN_MASK_ALL))
