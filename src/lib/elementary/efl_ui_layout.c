@@ -575,6 +575,8 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
           {
              ERR("Widget(%p) with type '%s' is not providing a version in its theme!", obj,
                  efl_class_name_get(efl_class_get(obj)));
+             ERR("Group '%s' should have data.item: \"version\" \"%d%d\";",
+                 efl_file_key_get(wd->resize_obj), EFL_VERSION_MAJOR, EFL_VERSION_MINOR);
              return EFL_UI_THEME_APPLY_ERROR_VERSION;
           }
         else
@@ -585,6 +587,8 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
                {
                   ERR("Widget(%p) with type '%s' is not providing a valid version in its theme!", obj,
                       efl_class_name_get(efl_class_get(obj)));
+                  ERR("Group '%s' should have data.item: \"version\" \"%d%d\";",
+                       efl_file_key_get(wd->resize_obj), EFL_VERSION_MAJOR, EFL_VERSION_MINOR);
                   sd->version = 0;
                   return EFL_UI_THEME_APPLY_ERROR_VERSION;
                }
