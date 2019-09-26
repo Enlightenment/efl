@@ -1133,8 +1133,13 @@ _efl_canvas_object_efl_object_invalidate(Eo *eo_obj, Evas_Object_Protected_Data 
           }
      }
 
-   if (obj->cur && obj->cur->clipper) evas_object_clip_unset(eo_obj);
-   if (obj->prev) _efl_canvas_object_clipper_prev_reset(obj, EINA_FALSE);
+   if (obj->cur)
+     {
+        if (obj->cur->clipper)
+          evas_object_clip_unset(eo_obj);
+        if (obj->prev)
+          _efl_canvas_object_clipper_prev_reset(obj, EINA_FALSE);
+     }
 
    if (obj->map) evas_object_map_set(eo_obj, NULL);
 
