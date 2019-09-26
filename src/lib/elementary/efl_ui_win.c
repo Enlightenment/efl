@@ -9392,6 +9392,10 @@ elm_win_name_get(const Evas_Object *obj)
 EAPI Elm_Win_Type
 elm_win_type_get(const Evas_Object *obj)
 {
+   if (!(efl_isa(obj, EFL_UI_WIN_CLASS) ||
+         efl_isa(obj, EFL_UI_WIN_LEGACY_CLASS) ||
+         efl_isa(obj, EFL_UI_WIN_INLINED_CLASS))) return ELM_WIN_UNKNOWN;
+
    return _efl_ui_win_type_to_elm_win_type(efl_ui_win_type_get(obj));
 }
 
