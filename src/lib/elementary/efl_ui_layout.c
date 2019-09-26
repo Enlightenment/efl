@@ -264,7 +264,7 @@ _signals_emit(Efl_Ui_Layout_Data *sd,
           use = buf2;
         snprintf(buf, sizeof(buf), "efl,state,%s,%s", type, set ? "set" : "unset");
         snprintf(buf2, sizeof(buf2), "efl,%s,%s", type, set ? "set" : "unset");
-        if (efl_finalized_get(sd->obj))
+        if (efl_isa(sd->obj, EFL_UI_LAYOUT_CLASS) || efl_finalized_get(sd->obj))
           efl_layout_signal_emit(sd->obj, use, "efl");
         else
           _defer_version_signal(sd, eina_stringshare_add(buf), eina_stringshare_add(buf2), 123);
