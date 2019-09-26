@@ -68,7 +68,6 @@ enum Efl2.Input.Text_Hints
 
      @since 1.12
    ]]
-   legacy: elm_input_hint;
    none                = 0,        [[No active hints
 
                                      @since 1.12]]
