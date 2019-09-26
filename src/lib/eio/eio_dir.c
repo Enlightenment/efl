@@ -268,7 +268,7 @@ _eio_dir_link(Ecore_Thread *thread, Eio_Dir_Copy *order,
    /* recreate all links */
    EINA_LIST_FOREACH(order->links, l, ln)
      {
-        ssize_t length;
+        ssize_t length = -1;
 
         eina_strbuf_reset(oldpath);
 
@@ -293,7 +293,8 @@ _eio_dir_link(Ecore_Thread *thread, Eio_Dir_Copy *order,
           }
 
         /* read link target */
-        length = readlink(ln, target, bsz);
+        if (target)
+          length = readlink(ln, target, bsz);
         if (length < 0)
           goto on_error;
 
