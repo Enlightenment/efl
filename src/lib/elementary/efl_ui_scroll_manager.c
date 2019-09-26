@@ -610,8 +610,8 @@ _efl_ui_scroll_manager_efl_ui_scrollbar_bar_mode_get(const Eo *obj EINA_UNUSED,
                                                      Efl_Ui_Scrollbar_Mode *hmode,
                                                      Efl_Ui_Scrollbar_Mode *vmode)
 {
-    *hmode = sd->hbar_mode;
-    *vmode = sd->vbar_mode;
+    if (hmode) *hmode = sd->hbar_mode;
+    if (vmode) *vmode = sd->vbar_mode;
 }
 
 /* returns TRUE when we need to move the scroller, FALSE otherwise.
