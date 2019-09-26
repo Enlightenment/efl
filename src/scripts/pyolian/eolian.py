@@ -126,21 +126,20 @@ class Eolian_Type_Builtin_Type(IntEnum):
     ARRAY = 35
     FUTURE = 36
     ITERATOR = 37
-    HASH = 38
-    LIST = 39
+    LIST = 38
 
-    ANY_VALUE = 40
-    ANY_VALUE_REF = 41
-    BINBUF = 42
-    EVENT = 43
+    ANY_VALUE = 39
+    ANY_VALUE_REF = 40
+    BINBUF = 41
+    EVENT = 42
 
-    MSTRING = 44
-    STRING = 45
-    STRINGSHARE = 46
-    STRBUF = 47
+    MSTRING = 43
+    STRING = 44
+    STRINGSHARE = 45
+    STRBUF = 46
 
+    HASH = 47
     VOID_PTR = 48
-    FREE_CB = 49
 
 class Eolian_Expression_Type(IntEnum):
     UNKNOWN = 0

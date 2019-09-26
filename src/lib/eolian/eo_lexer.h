@@ -59,10 +59,11 @@ enum Tokens
     \
     KW(void), \
     \
-    KW(accessor), KW(array), KW(future), KW(iterator), KW(hash), KW(list), \
+    KW(accessor), KW(array), KW(future), KW(iterator), KW(list), \
     KW(any_value), KW(any_value_ref), KW(binbuf), KW(event), \
     KW(mstring), KW(string), KW(stringshare), KW(strbuf), \
     \
+    KW(hash), \
     KW(void_ptr), \
     KW(function), \
     KW(__undefined_type), \

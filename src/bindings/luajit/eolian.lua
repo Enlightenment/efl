@@ -157,7 +157,6 @@ ffi.cdef [[
         EOLIAN_TYPE_BUILTIN_ARRAY,
         EOLIAN_TYPE_BUILTIN_FUTURE,
         EOLIAN_TYPE_BUILTIN_ITERATOR,
-        EOLIAN_TYPE_BUILTIN_HASH,
         EOLIAN_TYPE_BUILTIN_LIST,
 
         EOLIAN_TYPE_BUILTIN_ANY_VALUE,
@@ -169,6 +168,7 @@ ffi.cdef [[
         EOLIAN_TYPE_BUILTIN_STRINGSHARE,
         EOLIAN_TYPE_BUILTIN_STRBUF,
 
+        EOLIAN_TYPE_BUILTIN_HASH,
         EOLIAN_TYPE_BUILTIN_VOID_PTR
     } Eolian_Type_Builtin_Type;
 
@@ -932,18 +932,18 @@ M.type_builtin_type = {
    ARRAY         = 35,
    FUTURE        = 36,
    ITERATOR      = 37,
-   HASH          = 38,
-   LIST          = 39,
+   LIST          = 38,
 
-   ANY_VALUE     = 40,
-   ANY_VALUE_REF = 41,
-   BINBUF        = 42,
-   EVENT         = 43,
-   MSTRING       = 44,
-   STRING        = 45,
-   STRINGSHARE   = 46,
-   STRBUF        = 47,
+   ANY_VALUE     = 39,
+   ANY_VALUE_REF = 40,
+   BINBUF        = 41,
+   EVENT         = 42,
+   MSTRING       = 43,
+   STRING        = 44,
+   STRINGSHARE   = 45,
+   STRBUF        = 46,
 
+   HASH          = 47,
    VOID_PTR      = 48
 }
 
