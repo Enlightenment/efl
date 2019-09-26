@@ -480,6 +480,7 @@ Required by default:
   * libraw
   * libspectre
   * librsvg
+  * openmp (clang needs libomp, while gcc uses libgomp)
 
 Recommended requirements (highly recommended):
 
