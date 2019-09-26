@@ -1507,7 +1507,7 @@ EAPI const Eolian_Documentation *eolian_class_documentation_get(const Eolian_Cla
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare* eolian_class_c_prefix_get(const Eolian_Class *klass);
+EAPI const char *eolian_class_c_prefix_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the C event prefix of a class
@@ -1517,7 +1517,7 @@ EAPI Eina_Stringshare* eolian_class_c_prefix_get(const Eolian_Class *klass);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare* eolian_class_event_c_prefix_get(const Eolian_Class *klass);
+EAPI const char *eolian_class_event_c_prefix_get(const Eolian_Class *klass);
 
 /*
  * @brief Returns the data type of a class
@@ -1527,7 +1527,7 @@ EAPI Eina_Stringshare* eolian_class_event_c_prefix_get(const Eolian_Class *klass
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_class_data_type_get(const Eolian_Class *klass);
+EAPI const char *eolian_class_data_type_get(const Eolian_Class *klass);
 
 /*
  * @brief Get the parent class of a class
@@ -2735,7 +2735,7 @@ eolian_typedecl_namespaces_get(const Eolian_Typedecl *tp)
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_typedecl_free_func_get(const Eolian_Typedecl *tp);
+EAPI const char *eolian_typedecl_free_func_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get the function object for this function pointer type.
@@ -3284,7 +3284,7 @@ EAPI Eina_Bool eolian_error_is_extern(const Eolian_Error *err);
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_documentation_summary_get(const Eolian_Documentation *doc);
+EAPI const char *eolian_documentation_summary_get(const Eolian_Documentation *doc);
 
 /*
  * @brief Get the description of the documentation.
@@ -3297,7 +3297,7 @@ EAPI Eina_Stringshare *eolian_documentation_summary_get(const Eolian_Documentati
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_documentation_description_get(const Eolian_Documentation *doc);
+EAPI const char *eolian_documentation_description_get(const Eolian_Documentation *doc);
 
 /*
  * @brief Get the "since" tag of the documentation.
@@ -3310,7 +3310,7 @@ EAPI Eina_Stringshare *eolian_documentation_description_get(const Eolian_Documen
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_documentation_since_get(const Eolian_Documentation *doc);
+EAPI const char *eolian_documentation_since_get(const Eolian_Documentation *doc);
 
 /*
  * @brief Split a documentation string into individual paragraphs.
@@ -3409,7 +3409,7 @@ EAPI Eolian_Object_Type eolian_doc_token_ref_resolve(const Eolian_Doc_Token *tok
  *
  * @ingroup Eolian
  */
-EAPI Eina_Stringshare *eolian_typedecl_enum_legacy_prefix_get(const Eolian_Typedecl *tp);
+EAPI const char *eolian_typedecl_enum_legacy_prefix_get(const Eolian_Typedecl *tp);
 
 /*
  * @brief Get whether the given type is a reference.
