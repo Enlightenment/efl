@@ -779,7 +779,7 @@ ecore_x_init_from_display(Ecore_X_Display *display)
    eina_shutdown();
    return --_ecore_x_init_count;
 }
-
+static Eina_Bool _ecore_x_window_manage_succeeded = EINA_FALSE;
 int
 _ecore_x_shutdown(void)
 {
@@ -855,6 +855,7 @@ _ecore_x_shutdown(void)
    free(_ecore_x_event_handlers);
    _ecore_x_fd_handler_handle = NULL;
    _ecore_x_event_handlers = NULL;
+   _ecore_x_window_manage_succeeded = EINA_FALSE;
    _ecore_x_events_shutdown();
    _ecore_x_input_shutdown();
    _ecore_x_selection_shutdown();
@@ -1347,13 +1348,12 @@ ecore_x_window_root_first_get(void)
 
 static void _ecore_x_window_manage_error(void *data);
 
-static int _ecore_x_window_manage_failed = 0;
 static void
 _ecore_x_window_manage_error(void *data EINA_UNUSED)
 {
    if ((ecore_x_error_request_get() == X_ChangeWindowAttributes) &&
        (ecore_x_error_code_get() == BadAccess))
-     _ecore_x_window_manage_failed = 1;
+     _ecore_x_window_manage_succeeded = EINA_FALSE;
 }
 
 EAPI Eina_Bool
@@ -1367,7 +1367,7 @@ ecore_x_window_manage(Ecore_X_Window win)
      return EINA_FALSE;
 
    ecore_x_sync();
-   _ecore_x_window_manage_failed = 0;
+   _ecore_x_window_manage_succeeded = EINA_TRUE;
    ecore_x_error_handler_set(_ecore_x_window_manage_error, NULL);
    XSelectInput(_ecore_x_disp, win,
                 EnterWindowMask |
@@ -1382,9 +1382,8 @@ ecore_x_window_manage(Ecore_X_Window win)
                 att.your_event_mask);
    ecore_x_sync();
    ecore_x_error_handler_set(NULL, NULL);
-   if (_ecore_x_window_manage_failed)
+   if (!_ecore_x_window_manage_succeeded)
      {
-        _ecore_x_window_manage_failed = 0;
         return EINA_FALSE;
      }
 
