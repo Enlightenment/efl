@@ -1,4 +1,4 @@
-interface @beta Efl.Ui.Collection_Events
+interface @beta Efl.Ui.Item_Clickable
 {
    [[Shared sets of events between @Efl.Ui.Collection and @Efl.Ui.Collection_View.]]
    event_prefix: efl_ui;

@@ -307,7 +307,7 @@ typedef Eo Efl_Ui_Spotlight_Indicator;
 # include <efl_ui_item.eo.h>
 # include <efl_ui_position_manager_entity.eo.h>
 # include <efl_ui_position_manager_data_access_v1.eo.h>
-# include <efl_ui_collection_events.eo.h>
+# include <efl_ui_item_clickable.eo.h>
 # include <efl_ui_collection.eo.h>
 # include <efl_ui_position_manager_list.eo.h>
 # include <efl_ui_position_manager_grid.eo.h>

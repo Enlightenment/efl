@@ -4,7 +4,7 @@ class Efl.Ui.Collection extends Efl.Ui.Layout_Base implements
                    Efl.Ui.Multi_Selectable,
                    Efl.Ui.Focus.Manager_Sub,
                    Efl.Ui.Widget_Focus_Manager,
-                   Efl.Ui.Collection_Events
+                   Efl.Ui.Item_Clickable
    composites
                    Efl.Ui.Scrollable,
                    Efl.Ui.Scrollbar,
