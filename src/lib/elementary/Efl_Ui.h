@@ -47,10 +47,6 @@
 #endif
 #endif
 
-#include <Eina.h>
-#include <Eo.h>
-#include <Efl.h>
-
 #ifdef _WIN32
 # define WIN32_LEAN_AND_MEAN
 # include <winsock2.h>
@@ -76,25 +72,8 @@
 #include <Efl_Core.h>
 #include <Efl_Net.h>
 
-#include <Evas.h>
-#ifndef EFL_NOLEGACY_API_SUPPORT
-# include <Evas_GL.h>
-#endif
-#include <Eio.h>
-#include <Edje.h>
-#include <Eldbus.h>
-#include <Efreet.h>
-#include <Efreet_Mime.h>
-#include <Efreet_Trash.h>
-#include <Ethumb_Client.h>
-
-#ifdef ELM_ELOCATION
-#include <Elocation.h>
-#endif
-
-#ifdef ELM_EMAP
-#include <EMap.h>
-#endif
+#include <Efl_Canvas.h>
+#include <Efl_Layout.h>
 
 #ifdef EAPI
 # undef EAPI
