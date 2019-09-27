@@ -86,7 +86,7 @@ _set_fallback_radio_btn_clicked(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 void test_efl_ui_radio(void *data EINA_UNUSED,
-                                   Evas_Object *obj EINA_UNUSED,
+                                   Eo *obj EINA_UNUSED,
                                    void *event_info EINA_UNUSED)
 {
    Efl_Ui_Win *win;
