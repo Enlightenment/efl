@@ -77,8 +77,8 @@ static void _elm_scroll_momentum_animator(void *data, const Efl_Event *event);
 
 static const char iface_scr_legacy_dragable_hbar[]  = "elm.dragable.hbar";
 static const char iface_scr_legacy_dragable_vbar[]  = "elm.dragable.vbar";
-static const char iface_scr_efl_ui_dragable_hbar[]  = "efl.dragable.horizontal_bar";
-static const char iface_scr_efl_ui_dragable_vbar[]  = "efl.dragable.vertical_bar";
+static const char iface_scr_efl_ui_dragable_hbar[]  = "efl.draggable.horizontal_bar";
+static const char iface_scr_efl_ui_dragable_vbar[]  = "efl.draggable.vertical_bar";
 
 static double
 _round(double value, int pos)

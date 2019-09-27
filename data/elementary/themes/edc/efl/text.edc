@@ -185,7 +185,7 @@ group { "efl/text/single/scroller";
             visible: 0;
          }
       }
-      part { name: "efl.dragable.vertical_bar"; type: RECT;
+      part { name: "efl.draggable.vertical_bar"; type: RECT;
          dragable.x: 0 0 0;
          dragable.y: 1 1 0;
          dragable.confine: "sb_vbar_base";
@@ -205,7 +205,7 @@ group { "efl/text/single/scroller";
             visible: 0;
          }
       }
-      part { name: "efl.dragable.horizontal_bar"; type: RECT;
+      part { name: "efl.draggable.horizontal_bar"; type: RECT;
          dragable.x: 1 1 0;
          dragable.y: 0 0 0;
          dragable.confine: "sb_hbar_base";

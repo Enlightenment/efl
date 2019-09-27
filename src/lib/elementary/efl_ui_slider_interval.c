@@ -82,9 +82,9 @@ _val_set(Evas_Object *obj)
    else if (pos2 > 1.0)
      pos2 = 1.0;
 
-   efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
+   efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.draggable.slider"),
                          pos, pos);
-   efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable2.slider"),
+   efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.draggable2.slider"),
                          pos2, pos2);
 
    // emit accessibility event also if value was changed by API
@@ -103,12 +103,12 @@ _val_fetch(Evas_Object *obj, Eina_Bool user_event)
    EFL_UI_SLIDER_INTERVAL_DATA_GET(obj, sd);
    ELM_WIDGET_DATA_GET_OR_RETURN(obj, wd);
 
-   efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.dragable.slider"),
+   efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.draggable.slider"),
                            &posx, &posy);
    if (efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE)) pos = posx;
    else pos = posy;
 
-   efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.dragable2.slider"),
+   efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.draggable2.slider"),
                            &posx2, &posy2);
    if (efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE)) pos2 = posx2;
    else pos2 = posy2;
@@ -163,9 +163,9 @@ _down_knob(Evas_Object *obj, double button_x, double button_y)
 
    sd->intvl_flag = 0;
 
-   efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.dragable.slider"),
+   efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.draggable.slider"),
                          &posx, &posy);
-   efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.dragable2.slider"),
+   efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.draggable2.slider"),
                          &posx2, &posy2);
 
    if (efl_ui_layout_orientation_is_horizontal(sd->dir, EINA_TRUE))
@@ -183,13 +183,13 @@ _down_knob(Evas_Object *obj, double button_x, double button_y)
 
    if (diff1 < diff2)
      {
-        efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
+        efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.draggable.slider"),
                                 button_x, button_y);
         sd->intvl_flag = 1;
      }
    else if (diff1 > diff2)
      {
-        efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable2.slider"),
+        efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.draggable2.slider"),
                                 button_x, button_y);
         sd->intvl_flag = 2;
      }
@@ -197,13 +197,13 @@ _down_knob(Evas_Object *obj, double button_x, double button_y)
      {
         if (diff3 < 0)
           {
-             efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
+             efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.draggable.slider"),
                                      button_x, button_y);
              sd->intvl_flag = 1;
           }
         else
           {
-             efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable2.slider"),
+             efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.draggable2.slider"),
                                      button_x, button_y);
              sd->intvl_flag = 2;
           }
@@ -218,12 +218,12 @@ _move_knob(Evas_Object *obj, double button_x, double button_y)
 
    if (sd->intvl_flag == 1)
      {
-        efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
+        efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.draggable.slider"),
                                 button_x, button_y);
      }
    else if (sd->intvl_flag == 2)
      {
-        efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable2.slider"),
+        efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.draggable2.slider"),
                                 button_x, button_y);
      }
 }
@@ -640,7 +640,7 @@ _drag_up(Evas_Object *obj)
 
    relative_step = step/(sd->val_max - sd->val_min);
 
-   efl_ui_drag_step_move(efl_part(wd->resize_obj, "efl.dragable.slider"),
+   efl_ui_drag_step_move(efl_part(wd->resize_obj, "efl.draggable.slider"),
                            relative_step, relative_step);
    _slider_update(obj, EINA_TRUE);
 }
@@ -659,7 +659,7 @@ _drag_down(Evas_Object *obj)
 
    relative_step = step/(sd->val_max - sd->val_min);
 
-   efl_ui_drag_step_move(efl_part(wd->resize_obj, "efl.dragable.slider"),
+   efl_ui_drag_step_move(efl_part(wd->resize_obj, "efl.draggable.slider"),
                            relative_step, relative_step);
    _slider_update(obj, EINA_TRUE);
 }

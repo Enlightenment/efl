@@ -85,7 +85,7 @@ _drag_value_fetch(Evas_Object *obj)
 
    double posx = 0.0, posy = 0.0, pos = 0.0, val;
 
-   efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.dragable.slider"),
+   efl_ui_drag_value_get(efl_part(wd->resize_obj, "efl.draggable.slider"),
                            &posx, &posy);
    if (_is_horizontal(sd->dir)) pos = posx;
    else pos = posy;
@@ -129,7 +129,7 @@ _drag_value_update(Evas_Object *obj)
         pos = 1.0 - pos;
      }
 
-   efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
+   efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.draggable.slider"),
                            pos, pos);
 
    evas_object_smart_changed(obj);
@@ -192,7 +192,7 @@ _drag_up(Evas_Object *obj)
 
    relative_step = step/(sd->val_max - sd->val_min);
 
-   efl_ui_drag_step_move(efl_part(wd->resize_obj, "efl.dragable.slider"),
+   efl_ui_drag_step_move(efl_part(wd->resize_obj, "efl.draggable.slider"),
                            relative_step, relative_step);
    _drag_value_fetch(obj);
 }
@@ -212,7 +212,7 @@ _drag_down(Evas_Object *obj)
 
    relative_step = step/(sd->val_max - sd->val_min);
 
-   efl_ui_drag_step_move(efl_part(wd->resize_obj, "efl.dragable.slider"),
+   efl_ui_drag_step_move(efl_part(wd->resize_obj, "efl.draggable.slider"),
                            relative_step, relative_step);
    _drag_value_fetch(obj);
 }
@@ -445,7 +445,7 @@ _spacer_down_cb(void *data,
         if (button_y < 0) button_y = 0;
      }
 
-   efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
+   efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.draggable.slider"),
                            button_x, button_y);
 
    if (!efl_ui_focus_object_focus_get(data))
@@ -511,7 +511,7 @@ _spacer_move_cb(void *data,
              if (button_y < 0) button_y = 0;
           }
 
-        efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.dragable.slider"),
+        efl_ui_drag_value_set(efl_part(wd->resize_obj, "efl.draggable.slider"),
                               button_x, button_y);
         _drag_value_fetch(data);
      }
