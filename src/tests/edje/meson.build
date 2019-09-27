@@ -10,6 +10,9 @@ edje_suite_src = [
   'edje_test_signal.c',
   'edje_test_swallow.c',
   'edje_test_text.c',
+  'efl_test_layout.c',
+  'efl_test_layout2.c',
+  'efl_test_layout3.c',
 ]
 
 edje_suite = executable('edje_suite',
