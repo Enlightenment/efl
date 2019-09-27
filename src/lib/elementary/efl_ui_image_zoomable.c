@@ -1367,9 +1367,9 @@ _efl_ui_image_zoomable_bar_read_and_update(Eo *obj)
    else
      {
         edje_object_part_drag_value_get
-           (wd->resize_obj, "efl.dragable.vbar", NULL, &vy);
+           (wd->resize_obj, "efl.dragable.vertical_bar", NULL, &vy);
         edje_object_part_drag_value_get
-           (wd->resize_obj, "efl.dragable.hbar", &vx, NULL);
+           (wd->resize_obj, "efl.dragable.horizontal_bar", &vx, NULL);
      }
    efl_ui_scrollbar_bar_position_set(sd->smanager, vx, vy);
 }
@@ -1505,8 +1505,8 @@ _efl_ui_image_zoomable_bar_size_changed_cb(void *data, const Efl_Event *event EI
      }
    else
      {
-        edje_object_part_drag_size_set(wd->resize_obj, "efl.dragable.hbar", width, 1.0);
-        edje_object_part_drag_size_set(wd->resize_obj, "efl.dragable.vbar", 1.0, height);
+        edje_object_part_drag_size_set(wd->resize_obj, "efl.dragable.horizontal_bar", width, 1.0);
+        edje_object_part_drag_size_set(wd->resize_obj, "efl.dragable.vertical_bar", 1.0, height);
      }
 }
 
@@ -1528,8 +1528,8 @@ _efl_ui_image_zoomable_bar_pos_changed_cb(void *data, const Efl_Event *event EIN
      }
    else
      {
-        edje_object_part_drag_value_set(wd->resize_obj, "efl.dragable.hbar", posx, 0.0);
-        edje_object_part_drag_value_set(wd->resize_obj, "efl.dragable.vbar", 0.0, posy);
+        edje_object_part_drag_value_set(wd->resize_obj, "efl.dragable.horizontal_bar", posx, 0.0);
+        edje_object_part_drag_value_set(wd->resize_obj, "efl.dragable.vertical_bar", 0.0, posy);
      }
 }
 
@@ -1640,22 +1640,22 @@ _efl_ui_image_zoomable_edje_object_attach(Eo *obj)
         efl_layout_signal_callback_add
           (obj, "reload", "efl", obj, _efl_ui_image_zoomable_reload_cb, NULL);
         efl_layout_signal_callback_add
-          (obj, "drag", "efl.dragable.vbar",
+          (obj, "drag", "efl.dragable.vertical_bar",
            obj, _efl_ui_image_zoomable_vbar_drag_cb, NULL);
         efl_layout_signal_callback_add
-           (obj, "drag,set", "efl.dragable.vbar",
+           (obj, "drag,set", "efl.dragable.vertical_bar",
             obj, _efl_ui_image_zoomable_edje_drag_cb, NULL);
         efl_layout_signal_callback_add
-           (obj, "drag,start", "efl.dragable.vbar",
+           (obj, "drag,start", "efl.dragable.vertical_bar",
             obj, _efl_ui_image_zoomable_edje_drag_start_cb, NULL);
         efl_layout_signal_callback_add
-           (obj, "drag,stop", "efl.dragable.vbar",
+           (obj, "drag,stop", "efl.dragable.vertical_bar",
             obj, _efl_ui_image_zoomable_edje_drag_stop_cb, NULL);
         efl_layout_signal_callback_add
-           (obj, "drag,step", "efl.dragable.vbar",
+           (obj, "drag,step", "efl.dragable.vertical_bar",
             obj, _efl_ui_image_zoomable_edje_drag_cb, NULL);
         efl_layout_signal_callback_add
-           (obj, "drag,page", "efl.dragable.vbar",
+           (obj, "drag,page", "efl.dragable.vertical_bar",
             obj, _efl_ui_image_zoomable_edje_drag_cb, NULL);
         efl_layout_signal_callback_add
            (obj, "efl,vertical_bar,press", "efl",
@@ -1664,22 +1664,22 @@ _efl_ui_image_zoomable_edje_object_attach(Eo *obj)
            (obj, "efl,vbar,unpress", "efl",
             obj, _efl_ui_image_zoomable_vbar_unpress_cb, NULL);
         efl_layout_signal_callback_add
-           (obj, "drag", "efl.dragable.hbar",
+           (obj, "drag", "efl.dragable.horizontal_bar",
             obj, _efl_ui_image_zoomable_hbar_drag_cb, NULL);
         efl_layout_signal_callback_add
-           (obj, "drag,set", "efl.dragable.hbar",
+           (obj, "drag,set", "efl.dragable.horizontal_bar",
             obj, _efl_ui_image_zoomable_edje_drag_cb, NULL);
         efl_layout_signal_callback_add
-           (obj, "drag,start", "efl.dragable.hbar",
+           (obj, "drag,start", "efl.dragable.horizontal_bar",
             obj, _efl_ui_image_zoomable_edje_drag_start_cb, NULL);
         efl_layout_signal_callback_add
-           (obj, "drag,stop", "efl.dragable.hbar",
+           (obj, "drag,stop", "efl.dragable.horizontal_bar",
             obj, _efl_ui_image_zoomable_edje_drag_stop_cb, NULL);
         efl_layout_signal_callback_add
-           (obj, "drag,step", "efl.dragable.hbar",
+           (obj, "drag,step", "efl.dragable.horizontal_bar",
             obj, _efl_ui_image_zoomable_edje_drag_cb, NULL);
         efl_layout_signal_callback_add
-           (obj, "drag,page", "efl.dragable.hbar",
+           (obj, "drag,page", "efl.dragable.horizontal_bar",
             obj, _efl_ui_image_zoomable_edje_drag_cb, NULL);
         efl_layout_signal_callback_add
            (obj, "efl,horizontal_bar,press", "efl",
@@ -1751,22 +1751,22 @@ _efl_ui_image_zoomable_edje_object_detach(Evas_Object *obj)
         efl_layout_signal_callback_del
           (obj, "reload", "efl", obj, _efl_ui_image_zoomable_reload_cb, NULL);
         efl_layout_signal_callback_del
-           (obj, "drag", "efl.dragable.vbar",
+           (obj, "drag", "efl.dragable.vertical_bar",
             obj, _efl_ui_image_zoomable_vbar_drag_cb, NULL);
         efl_layout_signal_callback_del
-           (obj, "drag,set", "efl.dragable.vbar",
+           (obj, "drag,set", "efl.dragable.vertical_bar",
             obj, _efl_ui_image_zoomable_edje_drag_cb, NULL);
         efl_layout_signal_callback_del
-           (obj, "drag,start", "efl.dragable.vbar",
+           (obj, "drag,start", "efl.dragable.vertical_bar",
             obj, _efl_ui_image_zoomable_edje_drag_start_cb, NULL);
         efl_layout_signal_callback_del
-           (obj, "drag,stop", "efl.dragable.vbar",
+           (obj, "drag,stop", "efl.dragable.vertical_bar",
             obj, _efl_ui_image_zoomable_edje_drag_stop_cb, NULL);
         efl_layout_signal_callback_del
-           (obj, "drag,step", "efl.dragable.vbar",
+           (obj, "drag,step", "efl.dragable.vertical_bar",
             obj, _efl_ui_image_zoomable_edje_drag_cb, NULL);
         efl_layout_signal_callback_del
-           (obj, "drag,page", "efl.dragable.vbar",
+           (obj, "drag,page", "efl.dragable.vertical_bar",
             obj, _efl_ui_image_zoomable_edje_drag_cb, NULL);
         efl_layout_signal_callback_del
            (obj, "efl,vertical_bar,press", "efl",
@@ -1775,22 +1775,22 @@ _efl_ui_image_zoomable_edje_object_detach(Evas_Object *obj)
            (obj, "efl,vbar,unpress", "efl",
             obj, _efl_ui_image_zoomable_vbar_unpress_cb, NULL);
         efl_layout_signal_callback_del
-           (obj, "drag", "efl.dragable.hbar",
+           (obj, "drag", "efl.dragable.horizontal_bar",
             obj, _efl_ui_image_zoomable_hbar_drag_cb, NULL);
         efl_layout_signal_callback_del
-           (obj, "drag,set", "efl.dragable.hbar",
+           (obj, "drag,set", "efl.dragable.horizontal_bar",
             obj, _efl_ui_image_zoomable_edje_drag_cb, NULL);
         efl_layout_signal_callback_del
-           (obj, "drag,start", "efl.dragable.hbar",
+           (obj, "drag,start", "efl.dragable.horizontal_bar",
             obj, _efl_ui_image_zoomable_edje_drag_start_cb, NULL);
         efl_layout_signal_callback_del
-           (obj, "drag,stop", "efl.dragable.hbar",
+           (obj, "drag,stop", "efl.dragable.horizontal_bar",
             obj, _efl_ui_image_zoomable_edje_drag_stop_cb, NULL);
         efl_layout_signal_callback_del
-           (obj, "drag,step", "efl.dragable.hbar",
+           (obj, "drag,step", "efl.dragable.horizontal_bar",
             obj, _efl_ui_image_zoomable_edje_drag_cb, NULL);
         efl_layout_signal_callback_del
-           (obj, "drag,page", "efl.dragable.hbar",
+           (obj, "drag,page", "efl.dragable.horizontal_bar",
             obj, _efl_ui_image_zoomable_edje_drag_cb, NULL);
         efl_layout_signal_callback_del
            (obj, "efl,horizontal_bar,press", "efl",
