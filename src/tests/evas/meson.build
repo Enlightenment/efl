@@ -17,7 +17,10 @@ evas_suite_src = [
   'evas_test_focus.c',
   'evas_test_events.c',
   'evas_tests_helpers.h',
-  'evas_suite.h'
+  'evas_suite.h',
+  'efl_test_canvas.c',
+  'efl_test_canvas2.c',
+  'efl_test_canvas3.c',
 ]
 
 evas_suite = executable('evas_suite',
