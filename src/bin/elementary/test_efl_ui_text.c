@@ -4,7 +4,7 @@
 #define EO_BETA_API
 #include <Efl_Ui.h>
 #include <Elementary.h>
-
+#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
 static void
 _apply_style(Eo *obj, size_t start_pos, size_t end_pos, const char *style)
 {

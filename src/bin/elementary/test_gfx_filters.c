@@ -5,7 +5,7 @@
 #include <Elementary.h>
 #include <Efl_Ui.h>
 #include "elm_spinner_eo.h"
-
+#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
 static const int default_font_size = 48;
 
 typedef struct _Filter_Image

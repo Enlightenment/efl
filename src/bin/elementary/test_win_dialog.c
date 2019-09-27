@@ -4,6 +4,8 @@
 #include <Efl_Ui.h>
 #include <Elementary.h>
 
+#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
+
 static void
 _bt_clicked_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {

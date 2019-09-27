@@ -245,12 +245,13 @@ EAPI Eina_Bool efl_ui_win_autodel_get(const Efl_Ui_Win *obj);
 # include <efl_ui_win_socket.eo.h>
 # include <efl_ui_relative_layout.eo.h>
 
-/* FIXME: Efl.Ui.Text must not use elm_general.h */
+/* FIXME: Efl.Ui.Text must not use elm_general.h
 # include <elm_general.h>
 # include <efl_text_interactive.eo.h>
 # include <efl_ui_text.eo.h>
 # include <efl_ui_text_editable.eo.h>
 # include <efl_ui_text_async.eo.h>
+*/
 
 # include <efl_ui_animation_view.eo.h>
 # include <efl_ui_clock.eo.h>
