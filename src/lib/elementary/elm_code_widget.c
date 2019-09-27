@@ -311,7 +311,7 @@ _elm_code_widget_fill_whitespace(Elm_Code_Widget *widget, Eina_Unicode character
 static void
 _elm_code_widget_cursor_update(Elm_Code_Widget *widget, Elm_Code_Widget_Data *pd)
 {
-   Evas_Coord cx, cy, cw, ch;
+   Evas_Coord cx = 0, cy = 0, cw = 0, ch = 0;
 
    elm_code_widget_geometry_for_position_get(widget, pd->cursor_line, pd->cursor_col, &cx, &cy, &cw, &ch);
 
