@@ -52,7 +52,7 @@ foreach eo_file : pub_legacy_eo_files
 endforeach
 
 pub_eo_types_files = [
-  'edje_types.eot'
+  'efl_canvas_layout_types.eot'
 ]
 
 foreach eo_file : pub_eo_types_files

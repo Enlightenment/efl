@@ -6,6 +6,8 @@
 #include "efl_canvas_layout.eo.h"
 #include "edje_edit_eo.h"
 
+#include <efl_canvas_layout_types.eot.h>
+
 #include "efl_canvas_layout_part.eo.h"
 #include "efl_canvas_layout_part_box.eo.h"
 #include "efl_canvas_layout_part_table.eo.h"
