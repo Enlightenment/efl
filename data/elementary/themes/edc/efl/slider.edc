@@ -2,7 +2,6 @@
 Group: efl/slider/horizontal (@since 1.23)
 	 Part Rectangle: efl.dragable.slider
 	 Part Swallow: efl.bar
-	 Part Swallow: efl.track.slider
 	 Signal: efl,state,disabled
 	 Signal: efl,state,enabled
 	 Signal: efl,state,inverted,off
@@ -10,7 +9,6 @@ Group: efl/slider/horizontal (@since 1.23)
 Group: efl/slider/vertical (@since 1.23)
 	 Part Rectangle: efl.dragable.slider
 	 Part Swallow: efl.bar
-	 Part Swallow: efl.track.slider
 	 Signal: efl,state,disabled
 	 Signal: efl,state,enabled
 	 Signal: efl,state,inverted,off
@@ -183,13 +181,6 @@ group { "efl/slider/horizontal";
             rel1.to: "efl.dragable.slider";
             rel2.to: "efl.dragable.slider";
             color: 0 0 0 0;
-         }
-      }
-      part { name: "efl.track.slider"; type: SWALLOW; mouse_events: 0;
-         description { state: "default" 0.0;
-            max: 0 0;
-            rel1.to: "efl.dragable.slider";
-            rel2.to: "efl.dragable.slider";
          }
       }
       part { name: "event"; type: RECT;
@@ -419,13 +410,6 @@ group { "efl/slider/vertical";
             rel1.to: "efl.dragable.slider";
             rel2.to: "efl.dragable.slider";
             color: 0 0 0 0;
-         }
-      }
-      part { name: "efl.track.slider"; type: SWALLOW; mouse_events: 0;
-         description { state: "default" 0.0;
-            max: 0 0;
-            rel1.to: "efl.dragable.slider";
-            rel2.to: "efl.dragable.slider";
          }
       }
       part { name: "event"; type: RECT;
@@ -662,13 +646,6 @@ group { "efl/slider_interval/horizontal";
             color: 0 0 0 0;
          }
       }
-      part { name: "efl.track.slider"; type: SWALLOW; mouse_events: 0;
-         description { state: "default" 0.0;
-            max: 0 0;
-            rel1.to: "efl.dragable.slider";
-            rel2.to: "efl.dragable.slider";
-         }
-      }
       part { name: "efl.dragable2.slider"; type: RECT;
          nomouse;
          scale: 1;
@@ -713,13 +690,6 @@ group { "efl/slider_interval/horizontal";
             rel1.to: "efl.dragable2.slider";
             rel2.to: "efl.dragable2.slider";
             color: 0 0 0 0;
-         }
-      }
-      part { name: "efl.track2.slider"; type: SWALLOW; mouse_events: 0;
-         description { state: "default" 0.0;
-            max: 0 0;
-            rel1.to: "efl.dragable2.slider";
-            rel2.to: "efl.dragable2.slider";
          }
       }
       part { name: "event"; type: RECT;
@@ -944,13 +914,6 @@ group { "efl/slider_interval/vertical";
             color: 0 0 0 0;
          }
       }
-      part { name: "efl.track.slider"; type: SWALLOW; mouse_events: 0;
-         description { state: "default" 0.0;
-            max: 0 0;
-            rel1.to: "efl.dragable.slider";
-            rel2.to: "efl.dragable.slider";
-         }
-      }
       part { name: "efl.dragable2.slider"; type: RECT;
          nomouse;
          scale: 1;
@@ -995,13 +958,6 @@ group { "efl/slider_interval/vertical";
             rel1.to: "efl.dragable2.slider";
             rel2.to: "efl.dragable2.slider";
             color: 0 0 0 0;
-         }
-      }
-      part { name: "efl.track2.slider"; type: SWALLOW; mouse_events: 0;
-         description { state: "default" 0.0;
-            max: 0 0;
-            rel1.to: "efl.dragable2.slider";
-            rel2.to: "efl.dragable2.slider";
          }
       }
       part { name: "event"; type: RECT;
