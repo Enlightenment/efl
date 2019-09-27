@@ -3,7 +3,7 @@
 #endif
 #include <Efl_Ui.h>
 #include <Elementary.h>
-
+#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
 static void
 _slider_changed_cb(void *data EINA_UNUSED, const Efl_Event *ev)
 {

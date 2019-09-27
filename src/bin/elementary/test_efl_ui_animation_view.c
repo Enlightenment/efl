@@ -3,7 +3,7 @@
 #endif
 #include <Elementary.h>
 #include <Efl_Ui.h>
-
+#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
 #ifndef EFL_BETA_API_SUPPORT
 #define EFL_BETA_API_SUPPORT
 #endif

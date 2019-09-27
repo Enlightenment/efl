@@ -3,7 +3,7 @@
 #endif
 #include <Elementary.h>
 #include <Efl_Ui.h>
-
+#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
 static const struct {
    Efl_Gfx_Image_Orientation orient;
    const char *name;

@@ -3,7 +3,7 @@
 #endif
 #include <Efl_Ui.h>
 #include <Elementary.h>
-
+#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
 #define MAX_NUM_OF_CONTENT 17
 
 const Efl_Class *content_class[MAX_NUM_OF_CONTENT];
