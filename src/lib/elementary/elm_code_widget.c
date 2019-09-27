@@ -542,6 +542,8 @@ _elm_code_widget_refresh(Elm_Code_Widget *widget, Elm_Code_Line *line)
      return ;
 
    _elm_code_widget_fill_update(widget, first_row, last_row, line);
+   if (pd->editable)
+     _elm_code_widget_cursor_update(widget, pd);
 }
 
 static void
@@ -798,6 +800,7 @@ _elm_code_widget_geometry_for_position_get(Elm_Code_Widget *widget, Elm_Code_Wid
    gutter = efl_ui_code_widget_text_left_gutter_width_get(widget);
 
    grid = eina_list_nth(pd->grids, row - 1);
+   evas_object_smart_calculate(pd->gridbox);
    evas_object_geometry_get(grid, x, y, NULL, NULL);
 
    if (x)
