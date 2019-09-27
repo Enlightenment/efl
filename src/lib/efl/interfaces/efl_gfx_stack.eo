@@ -7,7 +7,7 @@ interface Efl.Gfx.Stack
 
      @since 1.22
    ]]
-   event_prefix: efl_gfx_entity;
+   event_c_prefix: efl_gfx_entity;
    methods {
       @property layer {
          [[The layer of its canvas that the given object will be part of.

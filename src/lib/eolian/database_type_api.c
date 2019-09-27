@@ -148,7 +148,7 @@ eolian_typedecl_enum_field_value_get(const Eolian_Enum_Type_Field *fl, Eina_Bool
    return fl->value;
 }
 
-EAPI Eina_Stringshare *
+EAPI const char *
 eolian_typedecl_enum_legacy_prefix_get(const Eolian_Typedecl *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
@@ -285,7 +285,7 @@ eolian_typedecl_c_type_get(const Eolian_Typedecl *tp)
    return ret;
 }
 
-EAPI Eina_Stringshare *
+EAPI const char *
 eolian_typedecl_free_func_get(const Eolian_Typedecl *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);

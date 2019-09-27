@@ -130,7 +130,7 @@ class Template(pyratemp.Template):
             'Documentation_Token': eolian.Documentation_Token,
             # Eolian Enums
             'Eolian_Function_Type': eolian.Eolian_Function_Type,
-            'Eolian_Parameter_Dir': eolian.Eolian_Parameter_Dir,
+            'Eolian_Parameter_Direction': eolian.Eolian_Parameter_Direction,
             'Eolian_Class_Type': eolian.Eolian_Class_Type,
             'Eolian_Object_Scope': eolian.Eolian_Object_Scope,
             'Eolian_Typedecl_Type': eolian.Eolian_Typedecl_Type,

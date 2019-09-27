@@ -79,10 +79,10 @@ _set_selected_btn_clicked(void *data, const Efl_Event *ev EINA_UNUSED)
 static void
 _set_fallback_radio_btn_clicked(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   if (!efl_ui_single_selectable_fallback_selection_get(data))
-     efl_ui_single_selectable_fallback_selection_set(data, efl_pack_content_get(data, 4));
+   if (!efl_ui_selectable_fallback_selection_get(data))
+     efl_ui_selectable_fallback_selection_set(data, efl_pack_content_get(data, 4));
    else
-     efl_ui_single_selectable_fallback_selection_set(data, NULL);
+     efl_ui_selectable_fallback_selection_set(data, NULL);
 }
 
 void test_efl_ui_radio(void *data EINA_UNUSED,

@@ -1668,7 +1668,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       Dummy.Test_Iface.call_method_protected;
    }
    events {
-      evt,with,string @hot: const(string);
+      evt,with,string @hot: string;
       evt,with,bool: bool;
       evt,with,int @hot: int;
       evt,with,uint @hot: uint;

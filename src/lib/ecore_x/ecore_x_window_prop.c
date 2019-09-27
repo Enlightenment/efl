@@ -81,8 +81,9 @@ ecore_x_window_prop_card32_get(Ecore_X_Window win,
         if (num_ret < len)
           len = num_ret;
 
-        for (i = 0; i < len; i++)
-          val[i] = ((unsigned long *)prop_ret)[i];
+        if (val)
+          for (i = 0; i < len; i++)
+            val[i] = ((unsigned long *)prop_ret)[i];
         num = len;
      }
 
@@ -112,7 +113,7 @@ ecore_x_window_prop_card32_list_get(Ecore_X_Window win,
    int num;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   *plst = NULL;
+   if (plst) *plst = NULL;
    prop_ret = NULL;
    if (XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
                           XA_CARDINAL, &type_ret, &format_ret, &num_ret,
@@ -123,7 +124,7 @@ ecore_x_window_prop_card32_list_get(Ecore_X_Window win,
      num = -1;
    else if ((num_ret == 0) || (!prop_ret))
      num = 0;
-   else
+   else if (plst)
      {
         val = malloc(num_ret * sizeof(unsigned int));
         if (!val)
@@ -136,6 +137,8 @@ ecore_x_window_prop_card32_list_get(Ecore_X_Window win,
         num = num_ret;
         *plst = val;
      }
+   else
+     num = num_ret;
 
    if (_ecore_xlib_sync) ecore_x_sync();
    if (prop_ret)
@@ -214,8 +217,9 @@ ecore_x_window_prop_xid_get(Ecore_X_Window win,
         if (num_ret < len)
           len = num_ret;
 
-        for (i = 0; i < len; i++)
-          lst[i] = ((unsigned long *)prop_ret)[i];
+        if (lst)
+          for (i = 0; i < len; i++)
+            lst[i] = ((unsigned long *)prop_ret)[i];
         num = len;
      }
 
@@ -249,7 +253,7 @@ ecore_x_window_prop_xid_list_get(Ecore_X_Window win,
    Eina_Bool success;
 
    LOGFN(__FILE__, __LINE__, __FUNCTION__);
-   *val = NULL;
+   if (val) *val = NULL;
    prop_ret = NULL;
    success = (XGetWindowProperty(_ecore_x_disp, win, atom, 0, 0x7fffffff, False,
                           type, &type_ret, &format_ret, &num_ret,
@@ -261,7 +265,7 @@ ecore_x_window_prop_xid_list_get(Ecore_X_Window win,
      num = -1;
    else if (num_ret == 0 || !prop_ret)
      num = 0;
-   else
+   else if (val)
      {
         alst = malloc(num_ret * sizeof(Ecore_X_ID));
         for (i = 0; i < num_ret; i++)
@@ -269,6 +273,8 @@ ecore_x_window_prop_xid_list_get(Ecore_X_Window win,
         num = num_ret;
         *val = alst;
      }
+   else
+     num = num_ret;
 
    if (prop_ret)
      XFree(prop_ret);

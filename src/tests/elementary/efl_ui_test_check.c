@@ -70,6 +70,31 @@ EFL_START_TEST(check_selection_events)
 }
 EFL_END_TEST
 
+
+EFL_START_TEST(efl_ui_test_check_callbacks)
+{
+   int called = 0;
+   int i;
+
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(500, 500));
+
+   efl_text_set(check, "TEST TEST TEST");
+   efl_event_callback_add(check, EFL_UI_EVENT_SELECTED_CHANGED, (void*)event_callback_single_call_int_data, &called);
+
+   efl_gfx_entity_size_set(check, EINA_SIZE2D(200, 100));
+   get_me_to_those_events(check);
+
+   for (i = 0; i < 4; i++)
+     {
+        called = 0;
+        click_object(check);
+        ecore_main_loop_iterate();
+        ck_assert_int_eq(efl_ui_selectable_selected_get(check), !(i % 2));
+        ck_assert_int_eq(called, 1);
+     }
+}
+EFL_END_TEST
+
 void efl_ui_test_check(TCase *tc)
 {
    tcase_add_checked_fixture(tc, check_setup, NULL);
@@ -77,4 +102,5 @@ void efl_ui_test_check(TCase *tc)
    tcase_add_test(tc, check_text);
    tcase_add_test(tc, check_content);
    tcase_add_test(tc, check_selection_events);
+   tcase_add_test(tc, efl_ui_test_check_callbacks);
 }

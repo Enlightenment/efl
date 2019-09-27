@@ -1208,6 +1208,7 @@ edje_object_play_set(Evas_Object *obj, Eina_Bool play)
 EAPI Eina_Bool
 edje_object_play_get(const Evas_Object *obj)
 {
+   if (!efl_isa(obj, EFL_CANVAS_LAYOUT_CLASS)) return EINA_FALSE;
    return !efl_player_paused_get(obj);
 }
 

@@ -436,14 +436,14 @@ parse_expr(Eo_Lexer *ls)
    return parse_expr_bin(ls, 1);
 }
 
-static Eolian_Type *parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr);
+static Eolian_Type *parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr, Eina_Bool allow_const);
 
 static Eolian_Type *
-parse_type(Eo_Lexer *ls, Eina_Bool allow_ptr)
+parse_type(Eo_Lexer *ls, Eina_Bool allow_ptr, Eina_Bool allow_const)
 {
    Eolian_Type *ret;
    eo_lexer_context_push(ls);
-   ret = parse_type_void(ls, allow_ptr);
+   ret = parse_type_void(ls, allow_ptr, allow_const);
    if (ret->type == EOLIAN_TYPE_VOID)
      {
         eo_lexer_context_restore(ls);
@@ -513,7 +513,7 @@ parse_struct(Eo_Lexer *ls, const char *name, Eina_Bool is_extern,
         eolian_object_ref(&fdef->base);
         eo_lexer_get(ls);
         check_next(ls, ':');
-        tp = parse_type(ls, EINA_TRUE);
+        tp = parse_type(ls, EINA_TRUE, EINA_TRUE);
         FILL_BASE(fdef->base, ls, fline, fcol, STRUCT_FIELD);
         fdef->type = eo_lexer_type_release(ls, tp);
         fdef->base.name = eina_stringshare_ref(fname);
@@ -689,7 +689,7 @@ parse_type_error(Eo_Lexer *ls)
 }
 
 static Eolian_Type *
-parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr)
+parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr, Eina_Bool allow_const)
 {
    Eolian_Type *def;
    Eina_Strbuf *buf;
@@ -698,12 +698,14 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr)
      {
       case KW_const:
         {
+           if (!allow_const)
+             break;
            int pline, pcol;
            eo_lexer_get(ls);
            pline = ls->line_number;
            pcol = ls->column;
            check_next(ls, '(');
-           def = parse_type_void(ls, allow_ptr);
+           def = parse_type_void(ls, allow_ptr, EINA_FALSE);
            FILL_BASE(def->base, ls, line, col, TYPE);
            def->is_const = EINA_TRUE;
            check_match(ls, ')', '(', pline, pcol);
@@ -718,7 +720,7 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr)
            pline = ls->line_number;
            pcol = ls->column;
            check_next(ls, '(');
-           def = parse_type_void(ls, EINA_FALSE);
+           def = parse_type_void(ls, EINA_FALSE, allow_const);
            FILL_BASE(def->base, ls, line, col, TYPE);
            def->is_ptr = EINA_TRUE;
            check_match(ls, ')', '(', pline, pcol);
@@ -763,14 +765,14 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr)
              def->base.c_name = eina_stringshare_ref(def->base.name);
              eo_lexer_get(ls);
              if ((tpid >= KW_accessor && tpid <= KW_list) ||
-                 (tpid >= KW_slice && tpid <= KW_rw_slice))
+                 (tpid >= KW_slice && tpid <= KW_rw_slice) || (tpid == KW_hash))
                {
                   int bline = ls->line_number, bcol = ls->column;
                   check_next(ls, '<');
                   if (tpid == KW_future)
-                    def->base_type = eo_lexer_type_release(ls, parse_type_void(ls, EINA_TRUE));
+                    def->base_type = eo_lexer_type_release(ls, parse_type_void(ls, EINA_TRUE, EINA_TRUE));
                   else
-                    def->base_type = eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE));
+                    def->base_type = eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE, EINA_TRUE));
                   /* view-only types are not allowed to own the contents */
                   if (tpid == KW_array || tpid == KW_hash || tpid == KW_list || tpid == KW_future)
                     if ((def->base_type->move = ls->t.kw == KW_at_move))
@@ -779,7 +781,7 @@ parse_type_void(Eo_Lexer *ls, Eina_Bool allow_ptr)
                     {
                        check_next(ls, ',');
                        def->base_type->next_type =
-                         eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE));
+                         eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE, EINA_TRUE));
                        if ((def->base_type->next_type->move = ls->t.kw == KW_at_move))
                          eo_lexer_get(ls);
                     }
@@ -872,7 +874,7 @@ tags_done:
      }
    eo_lexer_context_pop(ls);
    check_next(ls, ':');
-   def->base_type = eo_lexer_type_release(ls, parse_type(ls, EINA_FALSE));
+   def->base_type = eo_lexer_type_release(ls, parse_type(ls, EINA_FALSE, EINA_FALSE));
    check_next(ls, ';');
    FILL_DOC(ls, def, doc);
    eo_lexer_dtor_pop(ls);
@@ -929,7 +931,7 @@ tags_done:
      }
    eo_lexer_context_pop(ls);
    check_next(ls, ':');
-   def->base_type = eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE));
+   def->base_type = eo_lexer_type_release(ls, parse_type(ls, EINA_FALSE, EINA_FALSE));
    /* constants are required to have a value */
    check(ls, '=');
    ls->expr_mode = EINA_TRUE;
@@ -1025,9 +1027,9 @@ parse_return(Eo_Lexer *ls, Eo_Ret_Def *ret, Eina_Bool allow_void,
    eo_lexer_get(ls);
    check_next(ls, ':');
    if (allow_void)
-     ret->type = parse_type_void(ls, EINA_TRUE);
+     ret->type = parse_type_void(ls, EINA_TRUE, EINA_TRUE);
    else
-     ret->type = parse_type(ls, EINA_TRUE);
+     ret->type = parse_type(ls, EINA_TRUE, EINA_TRUE);
    ret->doc = NULL;
    ret->default_ret_val = NULL;
    ret->no_unused = EINA_FALSE;
@@ -1077,42 +1079,42 @@ parse_param(Eo_Lexer *ls, Eina_List **params, Eina_Bool allow_inout,
              has_move     = EINA_FALSE,
              has_by_ref   = EINA_FALSE;
    Eolian_Function_Parameter *par = calloc(1, sizeof(Eolian_Function_Parameter));
-   par->param_dir = EOLIAN_IN_PARAM;
+   par->param_dir = EOLIAN_PARAMETER_IN;
    FILL_BASE(par->base, ls, ls->line_number, ls->column, FUNCTION_PARAMETER);
    *params = eina_list_append(*params, par);
    eolian_object_ref(&par->base);
    if (allow_inout && (ls->t.kw == KW_at_in))
      {
-        par->param_dir = EOLIAN_IN_PARAM;
+        par->param_dir = EOLIAN_PARAMETER_IN;
         eo_lexer_get(ls);
      }
    else if (allow_inout && ls->t.kw == KW_at_out)
      {
-        par->param_dir = EOLIAN_OUT_PARAM;
+        par->param_dir = EOLIAN_PARAMETER_OUT;
         eo_lexer_get(ls);
      }
    else if (allow_inout && ls->t.kw == KW_at_inout)
      {
-        par->param_dir = EOLIAN_INOUT_PARAM;
+        par->param_dir = EOLIAN_PARAMETER_INOUT;
         eo_lexer_get(ls);
      }
-   else par->param_dir = EOLIAN_IN_PARAM;
+   else par->param_dir = EOLIAN_PARAMETER_IN;
    check(ls, TOK_VALUE);
    par->base.name = eina_stringshare_ref(ls->t.value.s);
    eo_lexer_get(ls);
    check_next(ls, ':');
    if ((ls->klass && ls->klass->base.is_beta) || func->base.is_beta)
      {
-       if (par->param_dir == EOLIAN_OUT_PARAM || par->param_dir == EOLIAN_INOUT_PARAM)
+       if (par->param_dir == EOLIAN_PARAMETER_OUT || par->param_dir == EOLIAN_PARAMETER_INOUT)
          {
             /* void is allowed for out/inout for beta-api for now to make a voidptr */
-            par->type = eo_lexer_type_release(ls, parse_type_void(ls, EINA_TRUE));
+            par->type = eo_lexer_type_release(ls, parse_type_void(ls, EINA_TRUE, EINA_TRUE));
             goto type_done;
          }
      }
-   par->type = eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE));
+   par->type = eo_lexer_type_release(ls, parse_type(ls, EINA_TRUE, EINA_TRUE));
 type_done:
-   if ((is_vals || (par->param_dir == EOLIAN_OUT_PARAM)) && (ls->t.token == '('))
+   if ((is_vals || (par->param_dir == EOLIAN_PARAMETER_OUT)) && (ls->t.token == '('))
      {
         int line = ls->line_number, col = ls->column;
         ls->expr_mode = EINA_TRUE;
@@ -1906,7 +1908,7 @@ parse_event(Eo_Lexer *ls)
      }
 end:
    check_next(ls, ':');
-   ev->type = eo_lexer_type_release(ls, parse_type_void(ls, EINA_TRUE));
+   ev->type = eo_lexer_type_release(ls, parse_type_void(ls, EINA_TRUE, EINA_TRUE));
    check(ls, ';');
    eo_lexer_get(ls);
    FILL_DOC(ls, ev, doc);
@@ -2011,7 +2013,7 @@ static void
 parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
 {
    Eina_Bool has_c_prefix     = EINA_FALSE,
-             has_event_prefix  = EINA_FALSE,
+             has_event_c_prefix = EINA_FALSE,
              has_data          = EINA_FALSE,
              has_methods       = EINA_FALSE,
              has_parts         = EINA_FALSE,
@@ -2034,8 +2036,8 @@ parse_class_body(Eo_Lexer *ls, Eolian_Class_Type type)
         eo_lexer_get(ls);
         check_next(ls, ';');
         break;
-      case KW_event_prefix:
-        CASE_LOCK(ls, event_prefix, "event prefix definition")
+      case KW_event_c_prefix:
+        CASE_LOCK(ls, event_c_prefix, "event prefix definition")
         eo_lexer_get(ls);
         check_next(ls, ':');
         _validate_pfx(ls);

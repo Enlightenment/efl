@@ -1489,8 +1489,8 @@ _efl_ui_image_efl_gfx_image_stretch_region_get(const Eo *obj EINA_UNUSED, Efl_Ui
 {
    if (pd->edje)
      {
-        *horizontal = NULL;
-        *vertical = NULL;
+        if (horizontal) *horizontal = NULL;
+        if (vertical) *vertical = NULL;
      }
    else
      {
@@ -1911,7 +1911,7 @@ elm_image_animated_play_get(const Elm_Image *obj)
 {
    Efl_Ui_Image_Data *sd = efl_data_scope_get(obj, MY_CLASS);
    if (!sd) return EINA_FALSE;
-   return _efl_ui_image_animated_paused_get_internal(obj, sd);
+   return !_efl_ui_image_animated_paused_get_internal(obj, sd);
 }
 
 EOLIAN static Eina_Bool

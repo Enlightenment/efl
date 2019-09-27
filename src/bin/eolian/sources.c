@@ -9,11 +9,11 @@ static Eina_Hash *_funcs_params_init_get = NULL;
 static Eina_Hash *_funcs_params_init_set = NULL;
 
 static const char *
-_get_add_star(Eolian_Function_Type ftype, Eolian_Parameter_Dir pdir)
+_get_add_star(Eolian_Function_Type ftype, Eolian_Parameter_Direction pdir)
 {
    if (ftype == EOLIAN_PROP_GET)
      return "*";
-   if ((pdir == EOLIAN_OUT_PARAM) || (pdir == EOLIAN_INOUT_PARAM))
+   if ((pdir == EOLIAN_PARAMETER_OUT) || (pdir == EOLIAN_PARAMETER_INOUT))
      return "*";
    return "";
 }
@@ -307,7 +307,7 @@ _gen_function_param_fallback(Eina_Iterator *itr, Eina_Strbuf *fallback_free_owne
         inner_type = eolian_type_base_type_get(type);
 
         //check if they should be freed or just ignored
-        if (!eolian_parameter_is_move(pr) || eolian_parameter_direction_get(pr) == EOLIAN_OUT_PARAM)
+        if (!eolian_parameter_is_move(pr) || eolian_parameter_direction_get(pr) == EOLIAN_PARAMETER_OUT)
           {
              eina_strbuf_append_printf(fallback_free_ownership, "   (void)%s;\n", eolian_parameter_name_get(pr));
              continue;
@@ -317,7 +317,7 @@ _gen_function_param_fallback(Eina_Iterator *itr, Eina_Strbuf *fallback_free_owne
 
         eina_strbuf_reset(param_call);
 
-        if (eolian_parameter_direction_get(pr) == EOLIAN_INOUT_PARAM)
+        if (eolian_parameter_direction_get(pr) == EOLIAN_PARAMETER_INOUT)
           eina_strbuf_append_char(param_call, '*');
         eina_strbuf_append(param_call, eolian_parameter_name_get(pr));
 
@@ -638,7 +638,7 @@ _gen_func(const Eolian_Class *cl, const Eolian_Function *fid,
         Eolian_Function_Parameter *pr;
         EINA_ITERATOR_FOREACH(itr, pr)
           {
-             Eolian_Parameter_Dir pd = eolian_parameter_direction_get(pr);
+             Eolian_Parameter_Direction pd = eolian_parameter_direction_get(pr);
              const Eolian_Expression *dfv = eolian_parameter_default_value_get(pr);
              const char *prn = eolian_parameter_name_get(pr);
              const Eolian_Type *pt = eolian_parameter_type_get(pr);
@@ -1267,7 +1267,7 @@ _gen_params(const Eolian_Function *fid, Eolian_Function_Type ftype,
         Eolian_Function_Parameter *pr;
         EINA_ITERATOR_FOREACH(itr, pr)
           {
-             Eolian_Parameter_Dir pd = eolian_parameter_direction_get(pr);
+             Eolian_Parameter_Direction pd = eolian_parameter_direction_get(pr);
              const char *prn = eolian_parameter_name_get(pr);
              const Eolian_Type *pt = eolian_parameter_type_get(pr);
              const Eolian_Typedecl *ptd = eolian_type_typedecl_get(pt);

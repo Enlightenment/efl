@@ -21,7 +21,7 @@ interface Efl.Gfx.Hint
 
      @since 1.22
    ]]
-   event_prefix: efl_gfx_entity;
+   event_c_prefix: efl_gfx_entity;
    methods {
       @property hint_aspect {
          [[Defines the aspect ratio to respect when scaling this object.

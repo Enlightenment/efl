@@ -7,7 +7,7 @@ struct Efl.Input.Clickable_Clicked {
 mixin Efl.Input.Clickable
 {
    [[Efl input clickable interface]]
-   event_prefix: efl_input;
+   event_c_prefix: efl_input;
    methods {
       press @protected {
          [[Change internal states that a button got pressed.

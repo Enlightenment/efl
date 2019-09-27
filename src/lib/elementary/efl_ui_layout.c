@@ -264,7 +264,7 @@ _signals_emit(Efl_Ui_Layout_Data *sd,
           use = buf2;
         snprintf(buf, sizeof(buf), "efl,state,%s,%s", type, set ? "set" : "unset");
         snprintf(buf2, sizeof(buf2), "efl,%s,%s", type, set ? "set" : "unset");
-        if (efl_finalized_get(sd->obj))
+        if (efl_isa(sd->obj, EFL_UI_LAYOUT_CLASS) || efl_finalized_get(sd->obj))
           efl_layout_signal_emit(sd->obj, use, "efl");
         else
           _defer_version_signal(sd, eina_stringshare_add(buf), eina_stringshare_add(buf2), 123);
@@ -570,21 +570,25 @@ _efl_ui_layout_base_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Layout_Data *sd)
      efl_gfx_hint_size_min_set(obj, EINA_SIZE2D(0, 0));
    else
      {
-        const char *version = edje_object_data_get(wd->resize_obj, "version");
-        if (!version)
+        const char *theme_version = edje_object_data_get(wd->resize_obj, "version");
+        if (!theme_version)
           {
              ERR("Widget(%p) with type '%s' is not providing a version in its theme!", obj,
                  efl_class_name_get(efl_class_get(obj)));
+             ERR("Group '%s' should have data.item: \"version\" \"%d%d\";",
+                 efl_file_key_get(wd->resize_obj), EFL_VERSION_MAJOR, EFL_VERSION_MINOR);
              return EFL_UI_THEME_APPLY_ERROR_VERSION;
           }
         else
           {
              errno = 0;
-             sd->version = strtoul(version, NULL, 10);
+             sd->version = strtoul(theme_version, NULL, 10);
              if (errno)
                {
                   ERR("Widget(%p) with type '%s' is not providing a valid version in its theme!", obj,
                       efl_class_name_get(efl_class_get(obj)));
+                  ERR("Group '%s' should have data.item: \"version\" \"%d%d\";",
+                       efl_file_key_get(wd->resize_obj), EFL_VERSION_MAJOR, EFL_VERSION_MINOR);
                   sd->version = 0;
                   return EFL_UI_THEME_APPLY_ERROR_VERSION;
                }

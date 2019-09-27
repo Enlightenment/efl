@@ -30,7 +30,7 @@ _list_selected(void *data EINA_UNUSED, const Efl_Event *ev)
   Eo *item = ev->info, *tmp;
   printf("list item [%p:%d] is %s\n", item, efl_ui_item_index_get(item), (efl_ui_selectable_selected_get(item)? "selected" : "unselected"));
 
-  Eina_Iterator *selects = efl_ui_selected_iterator_new(list);
+  Eina_Iterator *selects = efl_ui_selectable_selected_iterator_new(list);
 
   EINA_ITERATOR_FOREACH(selects, tmp)
      printf("selected [%p:%d] ", tmp, efl_ui_item_index_get(tmp));
@@ -70,7 +70,7 @@ static void
 _select_radio_changed(void *data, const Efl_Event *ev)
 {
   Eo *list = data;
-  efl_ui_select_mode_set(list, efl_ui_radio_group_selected_value_get(ev->object));
+  efl_ui_selectable_select_mode_set(list, efl_ui_radio_group_selected_value_get(ev->object));
 }
 
 static void
@@ -82,7 +82,7 @@ _anim_radio_changed(void *data, const Efl_Event *ev EINA_UNUSED)
 static void
 _scrl_btn_clicked(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
-  Efl_Ui_List_Default_Item *item = efl_ui_single_selectable_last_selected_get(priv_d.list);
+  Efl_Ui_List_Default_Item *item = efl_ui_selectable_last_selected_get(priv_d.list);
   printf("show [%d:%p] [%d]\n", efl_ui_item_index_get(item), item, priv_d.anim);
   efl_ui_collection_item_scroll(priv_d.list, item, priv_d.anim);
 }
@@ -90,7 +90,7 @@ _scrl_btn_clicked(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 static void
 _scrl_align_btn_clicked(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
-  Efl_Ui_List_Default_Item *item = efl_ui_single_selectable_last_selected_get(priv_d.list);
+  Efl_Ui_List_Default_Item *item = efl_ui_selectable_last_selected_get(priv_d.list);
   double align = efl_ui_range_value_get(priv_d.slider);
   printf("show [%d:%p] [%.2lf], [%d]\n", efl_ui_item_index_get(item), item, align, priv_d.anim);
   efl_ui_collection_item_scroll_align(priv_d.list, item, align, priv_d.anim);

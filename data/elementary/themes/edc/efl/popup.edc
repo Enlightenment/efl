@@ -1,4 +1,74 @@
 //Efl.Ui.Popup Themes
+/**
+Group: efl/popup (@since 1.23)
+	 Part Swallow: efl.background (required)
+	 Part Swallow: efl.content (required)
+Group: efl/popup/backwall (@since 1.23)
+	 Part Swallow: efl.content (required)
+	 Signal: efl,content,set
+	 Signal: efl,content,unset
+
+Group: efl/alert_popup/backwall (@since 1.23)
+  Part Swallow: efl.content (required)
+  Signal: efl,content,set
+  Signal: efl,content,unset
+Group: efl/alert_popup/button_layout2 (@since 1.23)
+  Part Swallow: efl.button1 (required)
+  Part Swallow: efl.button2 (required)
+Group: efl/alert_popup/right_button (@since 1.23)
+  Part Text: efl.text (required)
+  Part Swallow: efl.background (required)
+  Part Swallow: efl.content (required)
+  Signal: efl,content,set
+  Signal: efl,content,unset
+  Signal: efl,state,animation,activated
+  Signal: efl,state,background,set
+  Signal: efl,state,background,unset
+  Signal: efl,state,disabled
+  Signal: efl,state,enabled
+  Signal: efl,text,set
+  Signal: efl,text,unset
+Group: efl/alert_popup (@since 1.23)
+  Part Swallow: efl.background (required)
+  Part Swallow: efl.buttons (required)
+  Part Swallow: efl.content (required)
+  Part Textblock: efl.text.title (required)
+  Signal: efl,buttons,visible,on
+  Signal: efl,title,visible,off
+  Signal: efl,title,visible,on
+Group: efl/alert_popup/button_layout3 (@since 1.23)
+  Part Swallow: efl.button1 (required)
+  Part Swallow: efl.button2 (required)
+  Part Swallow: efl.button3 (required)
+Group: efl/alert_popup/button (@since 1.23)
+  Part Text: efl.text (required)
+  Part Swallow: efl.background (required)
+  Part Swallow: efl.content (required)
+  Signal: efl,content,set
+  Signal: efl,content,unset
+  Signal: efl,state,animation,activated
+  Signal: efl,state,background,set
+  Signal: efl,state,background,unset
+  Signal: efl,state,disabled
+  Signal: efl,state,enabled
+  Signal: efl,text,set
+  Signal: efl,text,unset
+Group: efl/alert_popup/button_layout1 (@since 1.23)
+  Part Swallow: efl.button1 (required)
+Group: efl/alert_popup/left_button (@since 1.23)
+  Part Text: efl.text (required)
+  Part Swallow: efl.background (required)
+  Part Swallow: efl.content (required)
+  Signal: efl,content,set
+  Signal: efl,content,unset
+  Signal: efl,state,animation,activated
+  Signal: efl,state,background,set
+  Signal: efl,state,background,unset
+  Signal: efl,state,disabled
+  Signal: efl,state,enabled
+  Signal: efl,text,set
+  Signal: efl,text,unset
+*/
 group { "efl/popup";
    data.item: "version" "123";
    images.image: "rounded_square.png" COMP;

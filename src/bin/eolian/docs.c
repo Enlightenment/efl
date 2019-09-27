@@ -623,17 +623,17 @@ eo_gen_docs_func_gen(const Eolian_State *state, const Eolian_Function *fid,
         const Eolian_Documentation *adoc = eolian_parameter_documentation_get(par);
         curl = _indent_line(buf, indent);
 
-        Eolian_Parameter_Dir dir = EOLIAN_OUT_PARAM;
+        Eolian_Parameter_Direction dir = EOLIAN_PARAMETER_OUT;
         if (!force_out)
           dir = eolian_parameter_direction_get(par);
 
         switch (dir)
           {
-           case EOLIAN_OUT_PARAM:
+           case EOLIAN_PARAMETER_OUT:
              eina_strbuf_append(buf, " * @param[out] ");
              curl += sizeof(" * @param[out] ") - 1;
              break;
-           case EOLIAN_INOUT_PARAM:
+           case EOLIAN_PARAMETER_INOUT:
              eina_strbuf_append(buf, " * @param[in,out] ");
              curl += sizeof(" * @param[in,out] ") - 1;
              break;

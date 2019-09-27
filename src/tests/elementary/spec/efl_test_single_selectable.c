@@ -37,32 +37,32 @@ EFL_START_TEST(last_selectable_check)
 {
    int c = 0;
 
-   efl_event_callback_add(widget, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, (void*) event_callback_single_call_int_data, &c);
-   efl_event_callback_add(widget, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, event_callback_that_quits_the_main_loop_when_called, NULL);
+   efl_event_callback_add(widget, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, (void*) event_callback_single_call_int_data, &c);
+   efl_event_callback_add(widget, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, event_callback_that_quits_the_main_loop_when_called, NULL);
 
    Eo *c1 = efl_pack_content_get(widget, 0);
    Eo *c2 = efl_pack_content_get(widget, 2);
 
    efl_ui_selectable_selected_set(c1, EINA_TRUE);
-   ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(widget), c1);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(widget), c1);
    if (c == 0) efl_loop_begin(efl_main_loop_get());
    ck_assert_int_eq(c, 1);
    c = 0;
 
    efl_ui_selectable_selected_set(c2, EINA_TRUE);
-   ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(widget), c2);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(widget), c2);
    if (c == 0) efl_loop_begin(efl_main_loop_get());
    ck_assert_int_eq(c, 1);
    c = 0;
 
    efl_ui_selectable_selected_set(c1, EINA_FALSE);
-   ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(widget), c2);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(widget), c2);
    efl_ui_selectable_selected_set(c2, EINA_FALSE);
    if (c == 0) efl_loop_begin(efl_main_loop_get());
    ck_assert_int_eq(c, 1);
    c = 0;
 
-   ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(widget), NULL);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(widget), NULL);
 }
 EFL_END_TEST
 
@@ -71,7 +71,7 @@ EFL_START_TEST(fallback_selection)
    Eo *c1 = efl_pack_content_get(widget, 0);
    Eo *c2 = efl_pack_content_get(widget, 2);
 
-   efl_ui_single_selectable_fallback_selection_set(widget, c2);
+   efl_ui_selectable_fallback_selection_set(widget, c2);
    ck_assert_int_eq(efl_ui_selectable_selected_get(c2), EINA_TRUE);
    efl_ui_selectable_selected_set(c1, EINA_TRUE);
    ck_assert_int_eq(efl_ui_selectable_selected_get(c2), EINA_FALSE);

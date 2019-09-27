@@ -334,7 +334,7 @@ class TestEolianClass(unittest.TestCase):
         self.assertEqual(cls.type, eolian.Eolian_Class_Type.REGULAR)
         self.assertIsInstance(cls.documentation, eolian.Documentation)
         self.assertIsNone(cls.c_prefix)  # TODO fin a class with a value
-        self.assertIsNone(cls.event_prefix)  # TODO same as above
+        self.assertIsNone(cls.event_c_prefix)  # TODO same as above
         self.assertIsNone(cls.data_type)  # TODO same as above
         self.assertEqual(cls.parent.name, 'Efl.Loop_Consumer')
         self.assertEqual([c.name for c in cls.extensions], [])
@@ -382,7 +382,7 @@ class TestEolianFunction(unittest.TestCase):
         cls = eolian_db.class_by_name_get('Efl.Loop_Timer')
         f = cls.function_by_name_get('timer_delay')
         p = list(f.parameters)[0]
-        self.assertEqual(p.direction, eolian.Eolian_Parameter_Dir.IN)
+        self.assertEqual(p.direction, eolian.Eolian_Parameter_Direction.IN)
         self.assertEqual(p.name, 'add')
         self.assertIsNone(p.default_value)
         self.assertFalse(p.is_optional)

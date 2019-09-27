@@ -236,11 +236,11 @@ interface#!
 #!####  PARAM_DIRECTION_TAG(param)  ############################################
 #!##############################################################################
 <!--(macro PARAM_DIRECTION_TAG)-->
-      <!--(if param.direction == Eolian_Parameter_Dir.IN)-->
+      <!--(if param.direction == Eolian_Parameter_Direction.IN)-->
  ''in'' #!
-      <!--(elif param.direction == Eolian_Parameter_Dir.OUT)-->
+      <!--(elif param.direction == Eolian_Parameter_Direction.OUT)-->
  ''out'' #!
-      <!--(elif param.direction == Eolian_Parameter_Dir.INOUT)-->
+      <!--(elif param.direction == Eolian_Parameter_Direction.INOUT)-->
  ''inout'' #!
       <!--(end)-->
 <!--(end)-->

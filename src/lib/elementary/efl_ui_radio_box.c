@@ -118,7 +118,7 @@ _efl_ui_radio_box_efl_object_constructor(Eo *obj, Efl_Ui_Radio_Box_Data *pd)
 {
    pd->group = efl_new(EFL_UI_RADIO_GROUP_IMPL_CLASS, NULL);
    efl_composite_attach(obj, pd->group);
-   efl_event_callback_forwarder_add(pd->group, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, obj);
+   efl_event_callback_forwarder_add(pd->group, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, obj);
    efl_event_callback_forwarder_add(pd->group, EFL_UI_RADIO_GROUP_EVENT_VALUE_CHANGED, obj);
    return efl_constructor(efl_super(obj, MY_CLASS));
 }

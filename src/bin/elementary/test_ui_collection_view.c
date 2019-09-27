@@ -46,7 +46,7 @@ _item_constructing(void *data EINA_UNUSED, const Efl_Event *ev)
 static void
 _item_select(void *data, const Efl_Event *ev)
 {
-   Efl_Ui_Widget *w = efl_ui_single_selectable_last_selected_get(ev->object);
+   Efl_Ui_Widget *w = efl_ui_selectable_last_selected_get(ev->object);
    Efl_Model *m = efl_ui_view_model_get(w);
 
    if (m) efl_ui_view_model_set(data, m);
@@ -100,7 +100,7 @@ void test_efl_ui_collection_view(void *data EINA_UNUSED,
                efl_ui_frame_autocollapse_set(efl_added, EINA_FALSE));
    efl_provider_register(f, EFL_MODEL_PROVIDER_CLASS, provider);
    efl_pack_table(tbl, f, 1, 1, 1, 1);
-   efl_event_callback_add(lv, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, _item_select, provider);
+   efl_event_callback_add(lv, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, _item_select, provider);
 
    ib = efl_add(EFL_UI_BOX_CLASS, f,
                 efl_gfx_hint_align_set(efl_added, EVAS_HINT_FILL, EVAS_HINT_FILL),

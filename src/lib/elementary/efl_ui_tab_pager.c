@@ -26,7 +26,7 @@ _tab_select_cb(void *data, const Efl_Event *event)
    Efl_Ui_Tab_Bar_Default_Item *selected;
    Efl_Ui_Tab_Page *page;
 
-   selected = efl_ui_single_selectable_last_selected_get(event->object);
+   selected = efl_ui_selectable_last_selected_get(event->object);
    page = efl_parent_get(selected);
    if (efl_ui_spotlight_active_element_get(data))
      efl_ui_spotlight_active_element_set(data, page);

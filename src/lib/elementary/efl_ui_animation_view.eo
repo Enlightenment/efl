@@ -24,7 +24,7 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
      @Efl.Ui.Animation_View currently only supports the animation information contained in
      JSON (known as Lottie file as well) and EET files.
    ]]
-   event_prefix: efl_ui_animation_view;
+   event_c_prefix: efl_ui_animation_view;
    methods {
       @property auto_play {
          [[Animation will be started automatically when it's possible.

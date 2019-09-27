@@ -101,7 +101,7 @@ _selected_cb(void *data, const Efl_Event *ev)
         else
           value = -1;
         efl_event_callback_call(data, EFL_UI_RADIO_GROUP_EVENT_VALUE_CHANGED, &value);
-        efl_event_callback_call(data, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, NULL);
+        efl_event_callback_call(data, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, NULL);
      }
 }
 

@@ -66,7 +66,7 @@ _selelction_change_cb(void *data, const Efl_Event *ev)
      }
    if (!pd->in_value_change)
      {
-        efl_event_callback_call(data, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, NULL);
+        efl_event_callback_call(data, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, NULL);
      }
 }
 

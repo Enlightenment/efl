@@ -1,3 +1,22 @@
+/**
+Group: efl/datepicker (@since 1.23)
+	 Part Swallow: efl.field0 (required)
+	 Part Swallow: efl.field1 (required)
+	 Part Swallow: efl.field2 (required)
+Group: efl/datepicker/spin_button (@since 1.23)
+	 Part Swallow: efl.dec_button (required)
+	 Part Swallow: efl.entry (required)
+	 Part Swallow: efl.inc_button (required)
+	 Part Swallow: efl.text_button (required)
+	 Signal: efl,button,visible,off
+	 Signal: efl,button,visible,on
+	 Signal: efl,entry,visible,off
+	 Signal: efl,entry,visible,on
+	 Signal: efl,state,access,active
+	 Signal: efl,state,access,inactive
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
+*/
 group { "efl/datepicker"; data.item: "version" "123";
    parts {
       spacer { "base";

@@ -28,7 +28,7 @@ enum Tokens
 #define KEYWORDS KW(class), KW(const), KW(enum), KW(return), KW(struct), \
     \
     KW(abstract), KW(c_prefix), KW(composites), KW(constructor), KW(constructors), \
-    KW(data), KW(destructor), KW(error), KW(event_prefix), KW(events), KW(extends), \
+    KW(data), KW(destructor), KW(error), KW(event_c_prefix), KW(events), KW(extends), \
     KW(free), KW(get), KW(implements), KW(import), KW(interface), \
     KW(keys), KW(legacy), KW(methods), KW(mixin), KW(params), \
     KW(parse), KW(parts), KW(ptr), KW(set), KW(type), KW(values), KW(requires), \
@@ -59,10 +59,11 @@ enum Tokens
     \
     KW(void), \
     \
-    KW(accessor), KW(array), KW(future), KW(iterator), KW(hash), KW(list), \
+    KW(accessor), KW(array), KW(future), KW(iterator), KW(list), \
     KW(any_value), KW(any_value_ref), KW(binbuf), KW(event), \
     KW(mstring), KW(string), KW(stringshare), KW(strbuf), \
     \
+    KW(hash), \
     KW(void_ptr), \
     KW(function), \
     KW(__undefined_type), \

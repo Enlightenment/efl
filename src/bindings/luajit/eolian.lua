@@ -67,11 +67,11 @@ ffi.cdef [[
 
     typedef enum
     {
-        EOLIAN_UNKNOWN_PARAM = 0,
-        EOLIAN_IN_PARAM,
-        EOLIAN_OUT_PARAM,
-        EOLIAN_INOUT_PARAM
-    } Eolian_Parameter_Dir;
+        EOLIAN_PARAMETER_UNKNOWN = 0,
+        EOLIAN_PARAMETER_IN,
+        EOLIAN_PARAMETER_OUT,
+        EOLIAN_PARAMETER_INOUT
+    } Eolian_Parameter_Direction;
 
     typedef enum
     {
@@ -157,7 +157,6 @@ ffi.cdef [[
         EOLIAN_TYPE_BUILTIN_ARRAY,
         EOLIAN_TYPE_BUILTIN_FUTURE,
         EOLIAN_TYPE_BUILTIN_ITERATOR,
-        EOLIAN_TYPE_BUILTIN_HASH,
         EOLIAN_TYPE_BUILTIN_LIST,
 
         EOLIAN_TYPE_BUILTIN_ANY_VALUE,
@@ -169,6 +168,7 @@ ffi.cdef [[
         EOLIAN_TYPE_BUILTIN_STRINGSHARE,
         EOLIAN_TYPE_BUILTIN_STRBUF,
 
+        EOLIAN_TYPE_BUILTIN_HASH,
         EOLIAN_TYPE_BUILTIN_VOID_PTR
     } Eolian_Type_Builtin_Type;
 
@@ -340,7 +340,7 @@ ffi.cdef [[
     Eolian_Class_Type eolian_class_type_get(const Eolian_Class *klass);
     const Eolian_Documentation *eolian_class_documentation_get(const Eolian_Class *klass);
     const char *eolian_class_c_prefix_get(const Eolian_Class *klass);
-    const char *eolian_class_event_prefix_get(const Eolian_Class *klass);
+    const char *eolian_class_event_c_prefix_get(const Eolian_Class *klass);
     const char *eolian_class_data_type_get(const Eolian_Class *klass);
     const Eolian_Class *eolian_class_parent_get(const Eolian_Class *klass);
     Eina_Iterator *eolian_class_requires_get(const Eolian_Class *klass);
@@ -357,7 +357,7 @@ ffi.cdef [[
     Eina_Iterator *eolian_property_keys_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Iterator *eolian_property_values_get(const Eolian_Function *foo_id, Eolian_Function_Type ftype);
     Eina_Iterator *eolian_function_parameters_get(const Eolian_Function *function_id);
-    Eolian_Parameter_Dir eolian_parameter_direction_get(const Eolian_Function_Parameter *param);
+    Eolian_Parameter_Direction eolian_parameter_direction_get(const Eolian_Function_Parameter *param);
     const Eolian_Type *eolian_parameter_type_get(const Eolian_Function_Parameter *param);
     const Eolian_Expression *eolian_parameter_default_value_get(const Eolian_Function_Parameter *param);
     const Eolian_Documentation *eolian_parameter_documentation_get(const Eolian_Function_Parameter *param);
@@ -932,18 +932,18 @@ M.type_builtin_type = {
    ARRAY         = 35,
    FUTURE        = 36,
    ITERATOR      = 37,
-   HASH          = 38,
-   LIST          = 39,
+   LIST          = 38,
 
-   ANY_VALUE     = 40,
-   ANY_VALUE_REF = 41,
-   BINBUF        = 42,
-   EVENT         = 43,
-   MSTRING       = 44,
-   STRING        = 45,
-   STRINGSHARE   = 46,
-   STRBUF        = 47,
+   ANY_VALUE     = 39,
+   ANY_VALUE_REF = 40,
+   BINBUF        = 41,
+   EVENT         = 42,
+   MSTRING       = 43,
+   STRING        = 44,
+   STRINGSHARE   = 45,
+   STRBUF        = 46,
 
+   HASH          = 47,
    VOID_PTR      = 48
 }
 
@@ -1445,8 +1445,8 @@ M.Class = ffi.metatype("Eolian_Class", {
             return ffi.string(v)
         end,
 
-        event_prefix_get = function(self)
-            local v = eolian.eolian_class_event_prefix_get(self)
+        event_c_prefix_get = function(self)
+            local v = eolian.eolian_class_event_c_prefix_get(self)
             if v == nil then
                 return self:c_prefix_get()
             end

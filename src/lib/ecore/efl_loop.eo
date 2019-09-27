@@ -3,7 +3,7 @@ struct Efl.Loop_Arguments {
 
      @since 1.22
    ]]
-   argv: const(array<const(stringshare)>); [[Array with loop arguments]]
+   argv: const(array<stringshare>); [[Array with loop arguments]]
    initialization: bool; [[Set to $true when the program should initialize its internal state.
                            This happens once per process instance.]]
 }

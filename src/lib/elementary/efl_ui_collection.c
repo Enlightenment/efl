@@ -431,7 +431,7 @@ _efl_ui_collection_efl_object_invalidate(Eo *obj, Efl_Ui_Collection_Data *pd EIN
 {
    efl_ui_collection_position_manager_set(obj, NULL);
 
-   efl_ui_single_selectable_fallback_selection_set(obj, NULL);
+   efl_ui_selectable_fallback_selection_set(obj, NULL);
 
    deselect_all(pd);
 
@@ -514,7 +514,7 @@ _schedule_selection_job_cb(Eo *o, void *data EINA_UNUSED, const Eina_Value value
 
    pd->selection_changed_job = NULL;
 
-   efl_event_callback_call(o, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, NULL);
 
    return EINA_VALUE_EMPTY;
 }
@@ -632,13 +632,25 @@ _redirect_cb(void *data, const Efl_Event *ev)
                                                                 \
         efl_event_callback_call(obj, Item_Desc, &item_clicked); \
      }
+#define REDIRECT_EVT_PRESS(Desc, Item_Desc)                           \
+   if (Desc == ev->desc)                                        \
+     {                                                          \
+        Efl_Ui_Item_Clickable_Pressed item_pressed;             \
+        int *button = ev->info;        \
+                                                                \
+        item_pressed.button = *button;                        \
+        item_pressed.item = ev->object;                         \
+                                                                \
+        efl_event_callback_call(obj, Item_Desc, &item_pressed); \
+     }
 
-   REDIRECT_EVT(EFL_INPUT_EVENT_PRESSED, EFL_UI_EVENT_ITEM_PRESSED);
-   REDIRECT_EVT(EFL_INPUT_EVENT_UNPRESSED, EFL_UI_EVENT_ITEM_UNPRESSED);
-   REDIRECT_EVT(EFL_INPUT_EVENT_LONGPRESSED, EFL_UI_EVENT_ITEM_LONGPRESSED);
+   REDIRECT_EVT_PRESS(EFL_INPUT_EVENT_PRESSED, EFL_UI_EVENT_ITEM_PRESSED);
+   REDIRECT_EVT_PRESS(EFL_INPUT_EVENT_UNPRESSED, EFL_UI_EVENT_ITEM_UNPRESSED);
+   REDIRECT_EVT_PRESS(EFL_INPUT_EVENT_LONGPRESSED, EFL_UI_EVENT_ITEM_LONGPRESSED);
    REDIRECT_EVT(EFL_INPUT_EVENT_CLICKED_ANY, EFL_UI_EVENT_ITEM_CLICKED_ANY);
    REDIRECT_EVT(EFL_INPUT_EVENT_CLICKED, EFL_UI_EVENT_ITEM_CLICKED);
 #undef REDIRECT_EVT
+#undef REDIRECT_EVT_PRESS
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(active_item,

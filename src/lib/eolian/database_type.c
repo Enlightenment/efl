@@ -63,8 +63,9 @@ database_enum_add(Eolian_Unit *unit, Eolian_Typedecl *tp)
 }
 
 Eina_Bool
-database_type_is_ownable(const Eolian_Unit *unit, const Eolian_Type *tp, Eina_Bool allow_void)
+database_type_is_ownable(const Eolian_Unit *unit, const Eolian_Type *tp, Eina_Bool allow_void, const Eolian_Type **otp)
 {
+   if (otp) *otp = tp;
    if (tp->is_ptr)
      return EINA_TRUE;
    if (tp->type == EOLIAN_TYPE_REGULAR)
@@ -79,7 +80,7 @@ database_type_is_ownable(const Eolian_Unit *unit, const Eolian_Type *tp, Eina_Bo
              if (tpp->type == EOLIAN_TYPEDECL_FUNCTION_POINTER)
                return EINA_TRUE;
              if (tpp->type == EOLIAN_TYPEDECL_ALIAS)
-               return database_type_is_ownable(unit, tpp->base_type, allow_void);
+               return database_type_is_ownable(unit, tpp->base_type, allow_void, otp);
              return EINA_FALSE;
           }
         return (ct[strlen(ct) - 1] == '*');
@@ -107,7 +108,7 @@ database_type_to_str(const Eolian_Type *tp,
      || tp->type == EOLIAN_TYPE_CLASS
      || tp->type == EOLIAN_TYPE_VOID)
      && tp->is_const
-     && ((ctype != EOLIAN_C_TYPE_RETURN) || by_ref || database_type_is_ownable(NULL, tp, EINA_FALSE)))
+     && ((ctype != EOLIAN_C_TYPE_RETURN) || by_ref || database_type_is_ownable(NULL, tp, EINA_FALSE, NULL)))
      {
         eina_strbuf_append(buf, "const ");
      }

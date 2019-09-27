@@ -65,12 +65,12 @@ EFL_START_TEST(active_selected_value_setting)
    efl_ui_radio_group_register(radio_group, r2);
 
    ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radio_group), -1);
-   ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(radio_group), NULL);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(radio_group), NULL);
 
    RESET_EVT
    efl_ui_radio_group_selected_value_set(radio_group, 1);
    ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radio_group), 1);
-   ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(radio_group), r1);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(radio_group), r1);
    ck_assert_int_eq(efl_ui_selectable_selected_get(r1), EINA_TRUE);
    ck_assert_int_eq(efl_ui_selectable_selected_get(r2), EINA_FALSE);
    EXPECT_EVT(1,1);
@@ -78,7 +78,7 @@ EFL_START_TEST(active_selected_value_setting)
    RESET_EVT
    efl_ui_selectable_selected_set(r2, EINA_TRUE);
    ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radio_group), 2);
-   ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(radio_group), r2);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(radio_group), r2);
    ck_assert_int_eq(efl_ui_selectable_selected_get(r1), EINA_FALSE);
    ck_assert_int_eq(efl_ui_selectable_selected_get(r2), EINA_TRUE);
    EXPECT_EVT(1,2);
@@ -96,12 +96,12 @@ EFL_START_TEST(active_selection_setting)
    efl_ui_radio_group_register(radio_group, r2);
 
    ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radio_group), -1);
-   ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(radio_group), NULL);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(radio_group), NULL);
 
    RESET_EVT
    efl_ui_selectable_selected_set(r1, EINA_TRUE);
    ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radio_group), 1);
-   ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(radio_group), r1);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(radio_group), r1);
    ck_assert_int_eq(efl_ui_selectable_selected_get(r1), EINA_TRUE);
    ck_assert_int_eq(efl_ui_selectable_selected_get(r2), EINA_FALSE);
    EXPECT_EVT(1,1);
@@ -109,7 +109,7 @@ EFL_START_TEST(active_selection_setting)
    RESET_EVT
    efl_ui_selectable_selected_set(r2, EINA_TRUE);
    ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radio_group), 2);
-   ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(radio_group), r2);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(radio_group), r2);
    ck_assert_int_eq(efl_ui_selectable_selected_get(r1), EINA_FALSE);
    ck_assert_int_eq(efl_ui_selectable_selected_get(r2), EINA_TRUE);
    EXPECT_EVT(1,2);
@@ -126,10 +126,10 @@ EFL_START_TEST(active_selection_object_setting)
 
    RESET_EVT
    ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radio_group), -1);
-   ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(radio_group), NULL);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(radio_group), NULL);
    efl_ui_selectable_selected_set(r, EINA_TRUE);
    ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radio_group), 1);
-   ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(radio_group), r);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(radio_group), r);
    EXPECT_EVT(1,1);
 }
 EFL_END_TEST
@@ -145,12 +145,12 @@ EFL_START_TEST(unregister_setted)
    RESET_EVT
    efl_ui_selectable_selected_set(r, EINA_TRUE);
    ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radio_group), 1);
-   ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(radio_group), r);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(radio_group), r);
    EXPECT_EVT(1,1);
    RESET_EVT
    efl_ui_radio_group_unregister(radio_group, r);
    ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radio_group), -1);
-   ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(radio_group), NULL);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(radio_group), NULL);
    EXPECT_EVT(1,-1);
 }
 EFL_END_TEST
@@ -165,12 +165,12 @@ EFL_START_TEST(delete_setted)
    RESET_EVT
    efl_ui_selectable_selected_set(r, EINA_TRUE);
    ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radio_group), 1);
-   ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(radio_group), r);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(radio_group), r);
    EXPECT_EVT(1,1);
    RESET_EVT
    efl_del(r);
    ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radio_group), -1);
-   ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(radio_group), NULL);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(radio_group), NULL);
    EXPECT_EVT(1,-1);
 }
 EFL_END_TEST
@@ -185,12 +185,12 @@ EFL_START_TEST(external_setting)
    RESET_EVT
    efl_ui_selectable_selected_set(r, EINA_TRUE);
    ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radio_group), 1);
-   ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(radio_group), r);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(radio_group), r);
    EXPECT_EVT(1,1);
    RESET_EVT
    efl_ui_selectable_selected_set(r, EINA_FALSE);
    ck_assert_int_eq(efl_ui_radio_group_selected_value_get(radio_group), -1);
-   ck_assert_ptr_eq(efl_ui_single_selectable_last_selected_get(radio_group), NULL);
+   ck_assert_ptr_eq(efl_ui_selectable_last_selected_get(radio_group), NULL);
    EXPECT_EVT(1,-1);
 }
 EFL_END_TEST

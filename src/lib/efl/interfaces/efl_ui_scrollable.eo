@@ -4,7 +4,7 @@ import efl_ui_layout_orientable;
 interface Efl.Ui.Scrollable
 {
    [[Efl UI scrollable interface]]
-   event_prefix: efl_ui;
+   event_c_prefix: efl_ui;
    methods {
       @property content_pos {
          [[The content position]]

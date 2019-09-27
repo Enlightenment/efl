@@ -1,3 +1,19 @@
+/**
+Group: efl/image_zoomable (@since 1.23)
+	 Part Rectangle: efl.dragable.hbar (required)
+	 Part Rectangle: efl.dragable.vbar (required)
+	 Part Swallow: efl.background (required)
+	 Part Swallow: efl.content (required)
+	 Part Swallow: efl.overlay (required)
+	 Signal: efl,action,scroll
+	 Signal: efl,horizontal_bar,visible,off
+	 Signal: efl,horizontal_bar,visible,on
+	 Signal: efl,state,busy,started
+	 Signal: efl,state,busy,stopped
+	 Signal: efl,vertical_bar,visible,off
+	 Signal: efl,vertical_bar,visible,on
+
+*/
 group { name: "efl/image_zoomable";
    inherit: "efl/scroller";
    data.item: "version" "123";

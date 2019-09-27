@@ -7,7 +7,7 @@ class @beta Efl.Canvas.Layout extends Efl.Canvas.Group implements Efl.File, Efl.
                          Efl.Gfx.Size_Class
 {
    [[Edje object class]]
-   event_prefix: efl_layout;
+   event_c_prefix: efl_layout;
    data: Edje;
    methods {
       @property animation {

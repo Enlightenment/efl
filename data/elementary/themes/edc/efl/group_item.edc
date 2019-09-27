@@ -1,4 +1,12 @@
+/**
+Group: efl/group_item (@since 1.23)
+	 Part Text: efl.text
+	 Part Swallow: efl.extra
+	 Part Swallow: efl.icon
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
 
+*/
 
 group { "efl/group_item"; data.item: "version" "123"; nomouse; program_source: "efl";
    images.image: "shadow_square_tiny.png" COMP;

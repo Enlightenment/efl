@@ -238,9 +238,9 @@ lib.eolian_class_documentation_get.restype = c_void_p
 lib.eolian_class_c_prefix_get.argtypes = (c_void_p,)
 lib.eolian_class_c_prefix_get.restype = c_char_p
 
-# EAPI Eina_Stringshare* eolian_class_event_prefix_get(const Eolian_Class *klass);
-lib.eolian_class_event_prefix_get.argtypes = (c_void_p,)
-lib.eolian_class_event_prefix_get.restype = c_char_p
+# EAPI Eina_Stringshare* eolian_class_event_c_prefix_get(const Eolian_Class *klass);
+lib.eolian_class_event_c_prefix_get.argtypes = (c_void_p,)
+lib.eolian_class_event_c_prefix_get.restype = c_char_p
 
 # EAPI Eina_Stringshare *eolian_class_data_type_get(const Eolian_Class *klass);
 lib.eolian_class_data_type_get.argtypes = (c_void_p,)
@@ -371,7 +371,7 @@ lib.eolian_property_values_get.restype = c_void_p
 
 ###  Eolian_Function_Parameter  ###############################################
 
-# EAPI Eolian_Parameter_Dir eolian_parameter_direction_get(const Eolian_Function_Parameter *param);
+# EAPI Eolian_Parameter_Direction eolian_parameter_direction_get(const Eolian_Function_Parameter *param);
 lib.eolian_parameter_direction_get.argtypes = (c_void_p,)
 lib.eolian_parameter_direction_get.restype = c_int
 
