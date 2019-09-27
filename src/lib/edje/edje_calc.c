@@ -3297,11 +3297,11 @@ _edje_vector_animation_running_cb(void *data EINA_UNUSED, const Efl_Event *event
              else
                ep->typedata.vector->start_frame = 0;
 
-             efl_player_start(ep->typedata.vector->player);
+             efl_player_playing_set(ep->typedata.vector->player, EINA_TRUE);
           }
         else
           {
-             efl_player_stop(ep->typedata.vector->player);
+             efl_player_playing_set(ep->typedata.vector->player, EINA_FALSE);
           }
      }
 }
@@ -3429,7 +3429,7 @@ _edje_part_vector_anim_stop(Edje *ed EINA_UNUSED, Edje_Real_Part *rp)
    Edje_Part_Description_Vector *desc = (Edje_Part_Description_Vector *)rp->chosen_description;
    double frame_count = efl_gfx_frame_controller_frame_count_get(rp->object);
 
-   efl_player_stop(rp->typedata.vector->player);
+   efl_player_playing_set(rp->typedata.vector->player, EINA_FALSE);
    efl_gfx_frame_controller_frame_set(rp->object, (int)(frame_count * desc->vg.frame));
    rp->typedata.vector->is_playing = EINA_FALSE;
 }
@@ -3437,7 +3437,7 @@ _edje_part_vector_anim_stop(Edje *ed EINA_UNUSED, Edje_Real_Part *rp)
 void
 _edje_part_vector_anim_pause(Edje *ed EINA_UNUSED, Edje_Real_Part *rp)
 {
-   efl_player_stop(rp->typedata.vector->player);
+   efl_player_playing_set(rp->typedata.vector->player, EINA_FALSE);
 }
 
 void
@@ -3446,7 +3446,7 @@ _edje_part_vector_anim_resume(Edje *ed EINA_UNUSED, Edje_Real_Part *rp)
    if (rp->typedata.vector->is_playing)
      {
         rp->typedata.vector->start_frame = efl_gfx_frame_controller_frame_get(rp->object);
-        efl_player_start(rp->typedata.vector->player);
+        efl_player_playing_set(rp->typedata.vector->player, EINA_TRUE);
      }
 }
 
@@ -3457,7 +3457,7 @@ _edje_part_vector_anim_play(Edje *ed EINA_UNUSED, Edje_Real_Part *rp, Eina_Bool 
    rp->typedata.vector->loop = loop;
    rp->typedata.vector->start_frame = efl_gfx_frame_controller_frame_get(rp->object);
    rp->typedata.vector->is_playing = EINA_TRUE;
-   efl_player_start(rp->typedata.vector->player);
+   efl_player_playing_set(rp->typedata.vector->player, EINA_TRUE);
 }
 
 static Edje_Real_Part *
