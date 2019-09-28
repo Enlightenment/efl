@@ -1232,8 +1232,7 @@ _scroll_cb(Evas_Object *obj, void *data EINA_UNUSED)
           }
         break;
      }
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL_CHANGED, (void *) &event);
+   evas_object_smart_callback_call(obj, "scroll", &event);
 }
 
 EOLIAN static void
