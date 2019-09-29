@@ -1342,6 +1342,24 @@ class Documentation_Token(object):
         return self._ref
 
 
+class Error(Object):
+    def __repr__(self):
+        return "<eolian.Error '{0.name}', message='{0.message}'>".format(self)
+
+    @cached_property
+    def message(self):
+        return _str_to_py(lib.eolian_error_message_get(self))
+
+    @cached_property
+    def documentation(self):
+        c_doc = lib.eolian_error_documentation_get(self)
+        return Documentation(c_doc) if c_doc else None
+
+    @cached_property
+    def is_extern(self):
+        return bool(lib.eolian_error_is_extern(self))
+
+
 #  internal string encode/decode  #############################################
 
 def _str_to_bytes(s):
@@ -1380,6 +1398,7 @@ class _Eolian_Object_Type(IntEnum):
     IMPLEMENT = 12
     CONSTRUCTOR = 13
     DOCUMENTATION = 14
+    ERROR = 15
 
 
 _eolian_type_class_mapping = {
@@ -1398,6 +1417,7 @@ _eolian_type_class_mapping = {
     _Eolian_Object_Type.IMPLEMENT: Implement,
     _Eolian_Object_Type.CONSTRUCTOR: Constructor,
     _Eolian_Object_Type.DOCUMENTATION: Documentation,
+    _Eolian_Object_Type.ERROR: Error,
 }
 
 

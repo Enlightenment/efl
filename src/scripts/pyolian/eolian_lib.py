@@ -692,3 +692,17 @@ lib.eolian_doc_token_text_get.restype = c_void_p  # char* TO BE FREED
 # EAPI Eolian_Object_Type eolian_doc_token_ref_resolve(const Eolian_Doc_Token *tok, const Eolian_State *state, const Eolian_Object **data, const Eolian_Object **data2);
 #  lib.eolian_doc_token_ref_resolve.argtypes = (c_void_p, c_void_p, ???, ???)
 #  lib.eolian_doc_token_ref_resolve.restype = c_int
+
+
+#  Eolian_Error  ##############################################################
+# EAPI const char *eolian_error_message_get(const Eolian_Error *err);
+lib.eolian_error_message_get.argtypes = (c_void_p,)
+lib.eolian_error_message_get.restype = c_char_p
+
+# EAPI const Eolian_Documentation *eolian_error_documentation_get(const Eolian_Error *err);
+lib.eolian_error_documentation_get.argtypes = (c_void_p,)
+lib.eolian_error_documentation_get.restype = c_void_p
+
+# EAPI Eina_Bool eolian_error_is_extern(const Eolian_Error *err);
+lib.eolian_error_is_extern.argtypes = (c_void_p,)
+lib.eolian_error_is_extern.restype = c_bool
