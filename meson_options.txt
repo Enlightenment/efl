@@ -361,7 +361,7 @@ option('elementary-base-dir',
 
 option('install-eo-files',
   type: 'boolean',
-  value: false,
+  value: true,
   description : 'Install any eo file'
 )
 
