@@ -947,6 +947,8 @@ elementary_src = [
   'efl_ui_position_manager_entity.c',
   'efl_ui_position_manager_list.c',
   'efl_ui_position_manager_grid.c',
+  'efl2_input_text.c',
+  'efl2_text_raw_editable.c',
 ]
 
 elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, efreet_mime, efreet_trash, eio, atspi, dl, intl]

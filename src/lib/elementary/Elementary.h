@@ -353,6 +353,9 @@ typedef Eo Efl_Ui_Focus_Manager;
 # include <efl_ui_tab_page.eo.h>
 # include <efl_ui_tab_page_part_tab.eo.h>
 # include <efl_ui_tab_pager.eo.h>
+# include <efl2_input_text.eo.h>
+# include <efl2_text_raw_editable.eo.h>
+
 
 /* include deprecated calls last of all */
 #include <elm_deprecated.h>
