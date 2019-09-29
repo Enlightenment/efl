@@ -41,6 +41,7 @@ PYTHON_PATH, fe:
 """
 import os
 import datetime
+import atexit
 
 try:
     from . import eolian
@@ -70,11 +71,13 @@ if not eolian_db.all_eot_files_parse():
 if not eolian_db.all_eo_files_parse():
     raise(RuntimeError('Eolian, failed to parse all EO files'))
 
+
 # cleanup the database on exit
-import atexit
 def cleanup_db():
     global eolian_db
     del eolian_db
+
+
 atexit.register(cleanup_db)
 
 
@@ -92,11 +95,12 @@ class Template(pyratemp.Template):
         filename: Template file to load. (REQUIRED)
         context: User provided context for the template (dict).
     """
+
     def __init__(self, filename, encoding='utf-8', context=None, escape=None,
-                       loader_class=pyratemp.LoaderFile,
-                       parser_class=pyratemp.Parser,
-                       renderer_class=pyratemp.Renderer,
-                       eval_class=pyratemp.EvalPseudoSandbox):
+                 loader_class=pyratemp.LoaderFile,
+                 parser_class=pyratemp.Parser,
+                 renderer_class=pyratemp.Renderer,
+                 eval_class=pyratemp.EvalPseudoSandbox):
 
         # Build the global context for the template
         global_ctx = {}
@@ -154,7 +158,7 @@ class Template(pyratemp.Template):
                                    eval_class=eval_class)
 
     def render(self, filename=None, verbose=True, cls=None, ns=None,
-                     struct=None, enum=None, alias=None, **kargs):
+               struct=None, enum=None, alias=None, **kargs):
         # Build the context for the template
         ctx = {}
         if kargs:
