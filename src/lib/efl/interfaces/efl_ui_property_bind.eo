@@ -2,7 +2,10 @@ import eina_types;
 
 struct Efl.Ui.Property_Event {
    [[EFL Ui property event data structure triggered when an object property change due
-     to the interaction on the object.]]
+     to the interaction on the object.
+
+     @since 1.23
+   ]]
    changed_properties: array<stringshare>; [[List of changed properties]]
 }
 
@@ -12,7 +15,9 @@ interface Efl.Ui.Property_Bind
      view object can have @Efl.Model to manage the data,
      the interface can help loading and tracking child data from the model property.
      see @Efl.Model
-     see @Efl.Ui.Factory]]
+     see @Efl.Ui.Factory
+
+     @since 1.23]]
    methods {
       property_bind {
          [[bind property data with the given key string. when the data is ready or changed,

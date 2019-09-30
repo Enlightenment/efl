@@ -2,7 +2,10 @@ import efl_text_types;
 
 struct @beta Efl.Canvas.Object_Animation_Event; [[Information of animation events]]
 struct Efl.Event_Animator_Tick {
-   [[EFL event animator tick data structure]]
+   [[EFL event animator tick data structure
+
+     @since 1.22
+   ]]
    update_area: Eina.Rect; [[Area of the canvas that will be pushed to screen.]]
 }
 

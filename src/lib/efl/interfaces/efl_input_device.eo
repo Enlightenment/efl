@@ -3,6 +3,8 @@ enum Efl.Input.Device_Type
    [[General type of input device.
 
      Legacy support since 1.8 as $Evas_Device_Class.
+
+     @since 1.23
    ]]
    none,     [[Not a device.]]
    seat,     [[The user/seat (the user themselves).]]
@@ -22,6 +24,8 @@ enum Efl.Input.Device_Type
 class Efl.Input.Device extends Efl.Object
 {
    [[Represents a pointing device such as a touch finger, pen or mouse.
+
+     @since 1.23
    ]]
    methods {
       @property device_type {
