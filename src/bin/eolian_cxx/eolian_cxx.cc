@@ -40,10 +40,6 @@ struct options_type
    bool main_header;
 
    options_type() : main_header(false) {}
-   ~options_type()
-     {
-        eolian_state_free(state);
-     }
 };
 
 static efl::eina::log_domain domain("eolian_cxx");
@@ -386,19 +382,6 @@ run(options_type const& opts)
 }
 
 static void
-state_init(options_type const& opts)
-{
-   Eolian_State *eos = ::eolian_state_new();
-   if (!eos)
-     {
-        EINA_CXX_DOM_LOG_ERR(eolian_cxx::domain)
-          << "Eolian failed creating state";
-        assert(false && "Error creating Eolian state");
-     }
-   opts.state = eos;
-}
-
-static void
 database_load(options_type const& opts)
 {
    for (auto src : opts.include_dirs)
@@ -532,8 +515,9 @@ int main(int argc, char **argv)
      {
         efl::eina::eina_init eina_init;
         efl::eolian::eolian_init eolian_init;
+        efl::eolian::eolian_state eolian_state;
         eolian_cxx::options_type opts = opts_get(argc, argv);
-        eolian_cxx::state_init(opts);
+        opts.state = eolian_state.value;
         eolian_cxx::database_load(opts);
         eolian_cxx::run(opts);
      }
