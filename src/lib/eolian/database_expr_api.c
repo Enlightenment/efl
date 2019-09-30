@@ -152,8 +152,10 @@ _expr_serialize(const Eolian_Expression *expr, Eina_Strbuf *buf, Eina_Bool outer
       case EOLIAN_EXPR_STRING:
       case EOLIAN_EXPR_CHAR:
         {
-           Eolian_Value *v = (Eolian_Value*)&expr->type;
-           const char *x = eolian_expression_value_to_literal(v);
+           Eolian_Value v;
+           v.type = expr->type;
+           v.value = expr->value;
+           const char *x = eolian_expression_value_to_literal(&v);
            if (!x)
              return EINA_FALSE;
            eina_strbuf_append(buf, x);
