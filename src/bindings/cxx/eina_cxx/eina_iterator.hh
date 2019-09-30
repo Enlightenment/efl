@@ -189,7 +189,10 @@ public:
     void* data;
     Eina_Bool r = ::eina_iterator_next(this->_iterator, &data);
     if(!r)
-      this->_iterator = 0;
+      {
+         ::eina_iterator_free(this->_iterator);
+         this->_iterator = 0;
+      }
     _value = static_cast<pointer>(data);
     return *this;
   }
@@ -267,7 +270,10 @@ public:
     void* data;
     Eina_Bool r = ::eina_iterator_next(this->_iterator, &data);
     if(!r)
-      this->_iterator = 0;
+      {
+         ::eina_iterator_free(this->_iterator);
+         this->_iterator = 0;
+      }
     _value = static_cast<pointer>(data);
     return *this;
   }
