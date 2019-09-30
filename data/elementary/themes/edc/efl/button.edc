@@ -703,9 +703,9 @@ group { name: "efl/button:anchor"; data.item: "version" "123";
       }
    }
    programs {
+      EFL_UI_CLICKABLE_PART_BIND("event")
       program {
          signal: "mouse,down,1"; source: "event";
-         action: SIGNAL_EMIT "efl,action,press" "efl";
          after: "button_click_anim";
       }
       program { name: "button_click_anim";
@@ -715,7 +715,6 @@ group { name: "efl/button:anchor"; data.item: "version" "123";
       }
       program {
          signal: "mouse,up,1"; source: "event";
-         action: SIGNAL_EMIT "efl,action,unpress" "efl";
          after: "button_unclick_anim";
       }
       program { name: "button_unclick_anim";
@@ -735,10 +734,6 @@ group { name: "efl/button:anchor"; data.item: "version" "123";
          in: 0.5 0.0;
          target: "bar2";
          target: "text2";
-      }
-      program {
-         signal: "mouse,clicked,1"; source: "event";
-         action: SIGNAL_EMIT "efl,action,click" "efl";
       }
       program { name: "button_text_visible";
          signal: "efl,text,set"; source: "efl";
