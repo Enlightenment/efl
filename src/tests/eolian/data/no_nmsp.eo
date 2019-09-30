@@ -1,7 +1,9 @@
 mixin no_nmsp
 {
+   [[No description supplied.]]
    methods {
       foo {
+         [[No description supplied.]]
       }
    }
 }

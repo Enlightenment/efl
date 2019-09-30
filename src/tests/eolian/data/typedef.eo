@@ -1,15 +1,16 @@
-type Evas.Coord: int; /* Simple type definition */
-type List_Objects: list<Typedef>; /* A little more complex */
+type Evas.Coord: int; [[No description supplied.]]
+type List_Objects: list<Typedef>; [[No description supplied.]]
 
-type Evas.Coord2: Evas.Coord;
-type Evas.Coord3: Evas.Coord2;
+type Evas.Coord2: Evas.Coord; [[No description supplied.]]
+type Evas.Coord3: Evas.Coord2; [[No description supplied.]]
 
-type @extern Evas.Pants: float; /* not generated */
+type @extern Evas.Pants: float; [[No description supplied.]]
 
-type @beta Undef: __undefined_type; /* not generated */
+type @beta Undef: __undefined_type; [[No description supplied.]]
 
 enum Elm.Object.Select_Mode
 {
+   [[No description supplied.]]
    default = 0,
    always,
    none,
@@ -18,8 +19,10 @@ enum Elm.Object.Select_Mode
 }
 
 class Typedef {
+   [[No description supplied.]]
    methods {
       foo {
+         [[No description supplied.]]
          params {
             idx: int;
          }

@@ -1,11 +1,14 @@
 class Simple extends Efl.Object
 {
+   [[No description supplied.]]
    data: null;
    methods {
       simple_get {
+         [[No description supplied.]]
          return: bool;
       }
       name_get {
+         [[No description supplied.]]
          params {
             @out name: string;
          }

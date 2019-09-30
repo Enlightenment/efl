@@ -2,13 +2,16 @@ class @beta Focus.Test
     extends Efl.Object
     implements Efl.Ui.Focus.Object, Efl.Gfx.Entity
 {
+    [[No description supplied.]]
     methods {
         test_size {
+            [[No description supplied.]]
             params {
                 rect : Eina.Rect;
             }
         }
         @property manager {
+            [[No description supplied.]]
             set {
 
             }

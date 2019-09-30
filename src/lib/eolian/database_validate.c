@@ -41,12 +41,23 @@ _validate(Eolian_Object *obj)
    eolian_state_log_obj((_base)->unit->state, (_base), __VA_ARGS__)
 
 static Eina_Bool
-_validate_docstr(Eina_Stringshare *str, const Eolian_Object *info, Eina_List **rdbg)
+_validate_docstr(Eina_Stringshare *str, const Eolian_Object *info, Eina_List **rdbg, Eina_Bool sum)
 {
-   if (!str || !str[0]) return EINA_TRUE;
+   Eina_List *pl = NULL;
+   if (str && str[0])
+     pl = eolian_documentation_string_split(str);
+   if (!pl)
+     {
+        if (sum)
+          {
+             _eo_parser_log(info, "empty documentation");
+             return EINA_FALSE;
+          }
+        /* description can be empty, summary-only line */
+        return EINA_TRUE;
+     }
 
    Eina_Bool ret = EINA_TRUE;
-   Eina_List *pl = eolian_documentation_string_split(str);
    char *par;
    EINA_LIST_FREE(pl, par)
      {
@@ -88,16 +99,23 @@ _validate_docstr(Eina_Stringshare *str, const Eolian_Object *info, Eina_List **r
 }
 
 static Eina_Bool
-_validate_doc(Eolian_Documentation *doc)
+_validate_doc(Validate_State *vals, Eolian_Documentation *doc,
+              const Eolian_Object *obj)
 {
    if (!doc)
+     {
+        if (!obj) return EINA_TRUE;
+        if (!vals->stable) return EINA_TRUE;
+        _eo_parser_log(obj, "missing documentation");
+        return EINA_FALSE;
+     }
      return EINA_TRUE;
 
    Eina_List *rdbg = doc->ref_dbg;
 
-   if (!_validate_docstr(doc->summary, &doc->base, &rdbg))
+   if (!_validate_docstr(doc->summary, &doc->base, &rdbg, EINA_TRUE))
      return EINA_FALSE;
-   if (!_validate_docstr(doc->description, &doc->base, &rdbg))
+   if (!_validate_docstr(doc->description, &doc->base, &rdbg, EINA_FALSE))
      return EINA_FALSE;
 
    return _validate(&doc->base);
@@ -132,7 +150,7 @@ _sf_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
    if (!sc->succ)
      return EINA_FALSE;
 
-   sc->succ = _validate_doc(sf->doc);
+   sc->succ = _validate_doc(sc->vals, sf->doc, NULL);
 
    return sc->succ;
 }
@@ -149,7 +167,7 @@ _ef_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
    if (!sc->succ)
      return EINA_FALSE;
 
-   sc->succ = _validate_doc(ef->doc);
+   sc->succ = _validate_doc(sc->vals, ef->doc, NULL);
 
    return sc->succ;
 }
@@ -160,11 +178,11 @@ _validate_typedecl(Validate_State *vals, Eolian_Typedecl *tp)
    if (tp->base.validated)
      return EINA_TRUE;
 
-   if (!_validate_doc(tp->doc))
-     return EINA_FALSE;
-
    /* for the time being assume all typedecls are beta unless overridden */
    Eina_Bool was_stable = _set_stable(vals, !tp->base.is_beta);
+
+   if (!_validate_doc(vals, tp->doc, &tp->base))
+     return EINA_FALSE;
 
    switch (tp->type)
      {
@@ -471,7 +489,7 @@ _validate_param(Validate_State *vals, Eolian_Function_Parameter *param)
    if (param->value && !_validate_expr(param->value, param->type, 0, param->by_ref))
      return EINA_FALSE;
 
-   if (!_validate_doc(param->doc))
+   if (!_validate_doc(vals, param->doc, NULL))
      return EINA_FALSE;
 
    return _validate(&param->base);
@@ -539,9 +557,9 @@ _validate_function(Validate_State *vals, Eolian_Function *func, Eina_Hash *nhash
 
 #undef EOLIAN_PARAMS_VALIDATE
 
-   if (!_validate_doc(func->get_return_doc))
+   if (!_validate_doc(vals, func->get_return_doc, NULL))
      return _reset_stable(vals, was_stable, EINA_FALSE);
-   if (!_validate_doc(func->set_return_doc))
+   if (!_validate_doc(vals, func->set_return_doc, NULL))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
    /* just for now, when dups become errors there will be no need to check */
@@ -574,7 +592,7 @@ _validate_part(Validate_State *vals, Eolian_Part *part, Eina_Hash *phash)
 
    Eina_Bool was_stable = _set_stable(vals, !part->base.is_beta && vals->stable);
 
-   if (!_validate_doc(part->doc))
+   if (!_validate_doc(vals, part->doc, NULL))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
    /* switch the class name for class */
@@ -693,7 +711,7 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
           }
      }
 
-   if (!_validate_doc(event->doc))
+   if (!_validate_doc(vals, event->doc, &event->base))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
    eina_hash_set(nhash, &event->base.name, &event->base);
@@ -1346,16 +1364,17 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash,
 }
 
 static Eina_Bool
-_validate_implement(Eolian_Implement *impl)
+_validate_implement(Validate_State *vals, Eolian_Implement *impl)
 {
    if (impl->base.validated)
      return EINA_TRUE;
 
-   if (!_validate_doc(impl->common_doc))
+   if (!_validate_doc(vals, impl->common_doc, (impl->implklass == impl->klass)
+                      ? &impl->foo_id->base : NULL))
      return EINA_FALSE;
-   if (!_validate_doc(impl->get_doc))
+   if (!_validate_doc(vals, impl->get_doc, NULL))
      return EINA_FALSE;
-   if (!_validate_doc(impl->set_doc))
+   if (!_validate_doc(vals, impl->set_doc, NULL))
      return EINA_FALSE;
 
    return _validate(&impl->base);
@@ -1503,7 +1522,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
        return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->implements, l, impl)
-     if (!_validate_implement(impl))
+     if (!_validate_implement(vals, impl))
        return EINA_FALSE;
 
    /* all the checks that need to be done every time are performed now */
@@ -1514,7 +1533,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
         return EINA_TRUE;
      }
 
-   if (!_validate_doc(cl->doc))
+   if (!_validate_doc(vals, cl->doc, &cl->base))
      return EINA_FALSE;
 
    /* also done */
@@ -1537,7 +1556,7 @@ _validate_constant(Validate_State *vals, Eolian_Constant *var)
    if (!_validate_expr(var->value, var->base_type, 0, EINA_FALSE))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
-   if (!_validate_doc(var->doc))
+   if (!_validate_doc(vals, var->doc, &var->base))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
    _reset_stable(vals, was_stable, EINA_TRUE);

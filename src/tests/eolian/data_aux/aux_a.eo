@@ -1,9 +1,10 @@
 class Aux_A extends Aux_C  {
+    [[No description supplied.]]
     methods {
-        baz {}
+        baz { [[No description supplied.]] }
     }
     events {
-        test2: void;
+        test2: void; [[No description supplied.]]
     }
     implements {
         Aux_C.foo;

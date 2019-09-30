@@ -1,5 +1,6 @@
 class Generated_Future extends Efl.Object
 {
+   [[No description supplied.]]
    methods {
    }
 }

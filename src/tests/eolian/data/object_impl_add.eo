@@ -1,8 +1,10 @@
 class Object_Impl_Add extends Base {
+   [[No description supplied.]]
    data: Object_Impl_Data;
 
    methods {
       @property c {
+         [[No description supplied.]]
          set {
          }
          get {

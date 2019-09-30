@@ -1,6 +1,8 @@
 abstract Base {
+   [[No description supplied.]]
    methods {
       @property z {
+         [[No description supplied.]]
            values {
                 a: int;
                 b: char;
@@ -8,8 +10,10 @@ abstract Base {
            }
       }
       constructor @pure_virtual {
+         [[No description supplied.]]
       }
       destructor {
+         [[No description supplied.]]
       }
    }
    constructors {

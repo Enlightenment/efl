@@ -1,6 +1,7 @@
 interface Iface {
+    [[No description supplied.]]
     methods {
-        foo {}
-        bar {}
+        foo { [[No description supplied.]] }
+        bar { [[No description supplied.]] }
     }
 }

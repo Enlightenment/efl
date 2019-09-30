@@ -1,20 +1,24 @@
 struct Named {
+   [[No description supplied.]]
     field: int @by_ref;
     something: string;
 }
 
 struct Another {
+   [[No description supplied.]]
     field: Named;
 }
 
 /* opaque struct */
-struct Opaque;
+struct Opaque; [[No description supplied.]]
 
 struct @extern Not.Generated {
-    field: int;
+   [[No description supplied.]]
+   field: int;
 }
 
 class Struct {
+   [[No description supplied.]]
    methods {
       foo {
          [[Foo docs. This is $monospace. This is alone-standing $.]]
@@ -24,6 +28,7 @@ class Struct {
          return: mstring @move;
       }
       bar {
+         [[No description supplied.]]
          return: Named @by_ref;
       }
    }

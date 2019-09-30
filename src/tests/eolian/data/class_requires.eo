@@ -2,7 +2,7 @@ import base;
 import mixins_require;
 
 class Class.Requires extends Base implements Mixins.Require {
+  [[No description supplied.]]
   methods {
-
   }
 }

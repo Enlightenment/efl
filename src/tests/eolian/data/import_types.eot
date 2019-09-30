@@ -1,5 +1,6 @@
-type Imported: int;
+type Imported: int; [[No description supplied.]]
 
 struct Imported_Struct {
+    [[No description supplied.]]
     foo: float;
 }

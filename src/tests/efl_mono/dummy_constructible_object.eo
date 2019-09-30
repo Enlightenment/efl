@@ -1,16 +1,21 @@
 class Dummy.Constructible_Object extends Efl.Object {
+   [[No description supplied.]]
    methods {
       construct_type_and_store {
+         [[No description supplied.]]
          params {
             @in type: const(Efl.Class);
          }
          return: Efl.Object;
       }
       increment_default_construction_count {
+         [[No description supplied.]]
       }
       increment_special_construction_count {
+         [[No description supplied.]]
       }
       @property native_construction_count {
+         [[No description supplied.]]
          get {
          }
          values {
@@ -18,6 +23,7 @@ class Dummy.Constructible_Object extends Efl.Object {
          }
       }
       @property default_construction_count {
+         [[No description supplied.]]
          get {
          }
          values {
@@ -25,6 +31,7 @@ class Dummy.Constructible_Object extends Efl.Object {
          }
       }
       @property special_construction_count {
+         [[No description supplied.]]
          get {
          }
          values {
@@ -32,6 +39,7 @@ class Dummy.Constructible_Object extends Efl.Object {
          }
       }
       @property internal_object {
+         [[No description supplied.]]
          get {
          }
          values {
@@ -39,6 +47,7 @@ class Dummy.Constructible_Object extends Efl.Object {
          }
       }
       multiply_integer_value @const {
+         [[No description supplied.]]
          params {
             v: int;
          }

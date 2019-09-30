@@ -1,5 +1,6 @@
 class Eina_Simple extends Efl.Object
 {
+   [[No description supplied.]]
    data: null;
    implements {
       Efl.Object.constructor;

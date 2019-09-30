@@ -1,7 +1,9 @@
 class Cyclic2
 {
+   [[No description supplied.]]
    methods {
       foo {
+         [[No description supplied.]]
          return: Cyclic1;
       }
    }

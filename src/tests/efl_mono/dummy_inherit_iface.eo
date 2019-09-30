@@ -1,6 +1,8 @@
 interface Dummy.Inherit_Iface {
+   [[No description supplied.]]
    methods {
       stringshare_test {
+         [[No description supplied.]]
          params {
             @in v: stringshare;
          }

@@ -1,7 +1,7 @@
 import eina_types;
 
 class Dummy.Part_Holder extends Dummy.Test_Object implements Efl.Part {
-
+   [[No description supplied.]]
    parts {
       one: Dummy.Test_Object; [[ Part number one. ]]
       two: Dummy.Test_Object; [[ Part number two. ]]

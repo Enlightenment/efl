@@ -1,9 +1,11 @@
 // regular constant
-const Foo: int = 5;
+const Foo: int = 5; [[No description supplied.]]
 
 class Var {
+   [[No description supplied.]]
    methods {
       foo {
+         [[No description supplied.]]
          params {
             idx: int;
          }

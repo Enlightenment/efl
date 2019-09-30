@@ -1,20 +1,27 @@
 class Class_Funcs {
+   [[No description supplied.]]
    methods {
       @property a @static {
+         [[No description supplied.]]
          get {
          }
       }
       @property b {
+         [[No description supplied.]]
          get {
          }
       }
       foo @static {
+         [[No description supplied.]]
       }
       bar {
+         [[No description supplied.]]
       }
       baz @protected @static {
+         [[No description supplied.]]
       }
       bah @protected {
+         [[No description supplied.]]
       }
    }
 }

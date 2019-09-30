@@ -1,6 +1,8 @@
 class Complex_Type {
+   [[No description supplied.]]
    methods {
       @property a {
+         [[No description supplied.]]
          set {
             return: list<array<strbuf @move> > @move;
          }
@@ -11,6 +13,7 @@ class Complex_Type {
          }
       }
       foo {
+         [[No description supplied.]]
          params {
             buf: mstring @move;
             sl: slice<ubyte>;
