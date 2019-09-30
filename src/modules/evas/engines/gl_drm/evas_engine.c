@@ -16,6 +16,47 @@
 
 #define EVAS_GL_UPDATE_TILE_SIZE 16
 
+#ifndef DRM_FORMAT_MOD_LINEAR
+# define DRM_FORMAT_MOD_LINEAR 0
+#endif
+#ifndef DRM_FORMAT_MOD_INVALID
+# define DRM_FORMAT_MOD_INVALID ((1ULL << 56) - 1)
+#endif
+
+#ifdef EGL_DMA_BUF_PLANE3_FD_EXT
+# define EGL_DMA_BUF_PLANE3_FD_EXT 0x3440
+#endif
+#ifndef EGL_DMA_BUF_PLANE3_OFFSET_EXT
+# define EGL_DMA_BUF_PLANE3_OFFSET_EXT 0x3441
+#endif
+#ifndef EGL_DMA_BUF_PLANE3_PITCH_EXT
+# define EGL_DMA_BUF_PLANE3_PITCH_EXT 0x3442
+#endif
+#ifndef EGL_DMA_BUF_PLANE0_MODIFIER_LO_EXT
+# define EGL_DMA_BUF_PLANE0_MODIFIER_LO_EXT 0x3443
+#endif
+#ifndef EGL_DMA_BUF_PLANE0_MODIFIER_HI_EXT
+# define EGL_DMA_BUF_PLANE0_MODIFIER_HI_EXT 0x3444
+#endif
+#ifndef EGL_DMA_BUF_PLANE1_MODIFIER_LO_EXT
+# define EGL_DMA_BUF_PLANE1_MODIFIER_LO_EXT 0x3445
+#endif
+#ifndef EGL_DMA_BUF_PLANE1_MODIFIER_HI_EXT
+# define EGL_DMA_BUF_PLANE1_MODIFIER_HI_EXT 0x3446
+#endif
+#ifndef EGL_DMA_BUF_PLANE2_MODIFIER_LO_EXT
+# define EGL_DMA_BUF_PLANE2_MODIFIER_LO_EXT 0x3447
+#endif
+#ifndef EGL_DMA_BUF_PLANE2_MODIFIER_HIa_EXT
+# define EGL_DMA_BUF_PLANE2_MODIFIER_HI_EXT 0x3448
+#endif
+#ifndef EGL_DMA_BUF_PLANE3_MODIFIER_LO_EXT
+# define EGL_DMA_BUF_PLANE3_MODIFIER_LO_EXT 0x3449
+#endif
+#ifndef EGL_DMA_BUF_PLANE3_MODIFIER_HI_EXT
+# define EGL_DMA_BUF_PLANE3_MODIFIER_HI_EXT 0x344A
+#endif
+
 struct scanout_handle
 {
    Evas_Native_Scanout_Handler handler;
@@ -645,8 +686,9 @@ drm_import_simple_dmabuf(Ecore_Drm2_Device *dev, struct dmabuf_attributes *attri
 static EGLImageKHR
 gl_import_simple_dmabuf(EGLDisplay display, struct dmabuf_attributes *attributes)
 {
-   EGLAttrib attribs[30];
+   EGLAttrib attribs[50];
    int atti = 0;
+   Eina_Bool has_modifier = EINA_FALSE;
 
    if (!dmabuf_present) return NULL;
    if (!glsym_evas_gl_common_eglDestroyImage) return NULL;
@@ -665,7 +707,12 @@ gl_import_simple_dmabuf(EGLDisplay display, struct dmabuf_attributes *attributes
    attribs[atti++] = attributes->height;
    attribs[atti++] = EGL_LINUX_DRM_FOURCC_EXT;
    attribs[atti++] = attributes->format;
-   /* XXX: Add modifier here when supported */
+   if (attributes->modifier[0] != DRM_FORMAT_MOD_INVALID)
+     {
+// XXX: test for extension
+//        if (!have_dmabuf_import_modifiers) return NULL;
+        has_modifier = EINA_TRUE;
+     }
 
    if (attributes->n_planes > 0)
      {
@@ -675,6 +722,13 @@ gl_import_simple_dmabuf(EGLDisplay display, struct dmabuf_attributes *attributes
         attribs[atti++] = attributes->offset[0];
         attribs[atti++] = EGL_DMA_BUF_PLANE0_PITCH_EXT;
         attribs[atti++] = attributes->stride[0];
+        if (has_modifier)
+          {
+             attribs[atti++] = EGL_DMA_BUF_PLANE0_MODIFIER_LO_EXT;
+             attribs[atti++] = attributes->modifier[0] & 0xFFFFFFFF;
+             attribs[atti++] = EGL_DMA_BUF_PLANE0_MODIFIER_HI_EXT;
+             attribs[atti++] = attributes->modifier[0] >> 32;
+          }
      }
 
    if (attributes->n_planes > 1)
@@ -685,6 +739,13 @@ gl_import_simple_dmabuf(EGLDisplay display, struct dmabuf_attributes *attributes
         attribs[atti++] = attributes->offset[1];
         attribs[atti++] = EGL_DMA_BUF_PLANE1_PITCH_EXT;
         attribs[atti++] = attributes->stride[1];
+        if (has_modifier)
+          {
+             attribs[atti++] = EGL_DMA_BUF_PLANE1_MODIFIER_LO_EXT;
+             attribs[atti++] = attributes->modifier[1] & 0xFFFFFFFF;
+             attribs[atti++] = EGL_DMA_BUF_PLANE1_MODIFIER_HI_EXT;
+             attribs[atti++] = attributes->modifier[1] >> 32;
+          }
      }
 
    if (attributes->n_planes > 2)
@@ -695,6 +756,30 @@ gl_import_simple_dmabuf(EGLDisplay display, struct dmabuf_attributes *attributes
         attribs[atti++] = attributes->offset[2];
         attribs[atti++] = EGL_DMA_BUF_PLANE2_PITCH_EXT;
         attribs[atti++] = attributes->stride[2];
+        if (has_modifier)
+          {
+             attribs[atti++] = EGL_DMA_BUF_PLANE2_MODIFIER_LO_EXT;
+             attribs[atti++] = attributes->modifier[2] & 0xFFFFFFFF;
+             attribs[atti++] = EGL_DMA_BUF_PLANE2_MODIFIER_HI_EXT;
+             attribs[atti++] = attributes->modifier[2] >> 32;
+          }
+     }
+
+   if (attributes->n_planes > 3)
+     {
+        attribs[atti++] = EGL_DMA_BUF_PLANE3_FD_EXT;
+        attribs[atti++] = attributes->fd[3];
+        attribs[atti++] = EGL_DMA_BUF_PLANE3_OFFSET_EXT;
+        attribs[atti++] = attributes->offset[3];
+        attribs[atti++] = EGL_DMA_BUF_PLANE3_PITCH_EXT;
+        attribs[atti++] = attributes->stride[3];
+        if (has_modifier)
+          {
+             attribs[atti++] = EGL_DMA_BUF_PLANE3_MODIFIER_LO_EXT;
+             attribs[atti++] = attributes->modifier[3] & 0xFFFFFFFF;
+             attribs[atti++] = EGL_DMA_BUF_PLANE3_MODIFIER_HI_EXT;
+             attribs[atti++] = attributes->modifier[3] >> 32;
+          }
      }
 
    attribs[atti++] = EGL_NONE;
