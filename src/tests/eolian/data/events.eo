@@ -1,16 +1,14 @@
 struct Evas_Event_Clicked_Double_Info {
-   [[No description supplied.]]
    pants: int;
 }
 
 class Events {
-   [[No description supplied.]]
    event_c_prefix: totally_not_events;
    events {
       clicked @beta: void; [[Comment for clicked]]
-      clicked,double: Evas_Event_Clicked_Double_Info; [[No description supplied.]]
-      hot @hot: void; [[No description supplied.]]
-      restart @restart: void; [[No description supplied.]]
-      hot_restart @hot @restart: void; [[No description supplied.]]
+      clicked,double: Evas_Event_Clicked_Double_Info; /* No comment */
+      hot @hot: void;
+      restart @restart: void;
+      hot_restart @hot @restart: void;
    }
 }

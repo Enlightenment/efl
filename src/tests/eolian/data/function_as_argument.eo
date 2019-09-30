@@ -1,17 +1,14 @@
 import function_types;
 
 class Function_As_Argument {
-  [[No description supplied.]]
   methods {
     set_cb {
-      [[No description supplied.]]
       params {
         cb: SimpleFunc;
       }
     }
 
     call_cb {
-      [[No description supplied.]]
       params {
         a: int;
         b: double;

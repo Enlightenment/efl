@@ -1,28 +1,24 @@
 /* regular type */
-type Foo: int; [[No description supplied.]]
+type Foo: int;
 
 /* extern type */
-type @extern Evas.Coord: int; [[No description supplied.]]
+type @extern Evas.Coord: int;
 
 /* regular struct */
 struct X
 {
-   [[No description supplied.]]
    field: int;
 }
 
 /* extern struct */
 struct @extern Y
 {
-   [[No description supplied.]]
    field: int;
 }
 
 class Extern {
-   [[No description supplied.]]
    methods {
       foo {
-         [[No description supplied.]]
          params {
             idx: int;
          }

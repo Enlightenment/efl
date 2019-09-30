@@ -1,10 +1,8 @@
 import import_types;
 
 class Import {
-   [[No description supplied.]]
    methods {
       foo {
-         [[No description supplied.]]
       }
    }
 }

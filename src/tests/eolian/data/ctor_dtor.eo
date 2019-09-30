@@ -1,18 +1,14 @@
 class Ctor_Dtor extends Base {
-   [[No description supplied.]]
    methods {
       custom_constructor_1 {
-         [[No description supplied.]]
          params {
             @in a: int;
             @in b: char;
          }
       }
       custom_constructor_2 {
-         [[No description supplied.]]
       }
       custom_constructor_3 {
-         [[No description supplied.]]
          params {
             @in z: int;
          }

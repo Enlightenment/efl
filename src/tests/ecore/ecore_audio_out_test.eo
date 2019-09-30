@@ -1,6 +1,5 @@
 class @beta Ecore.Audio.Out.Test extends Ecore.Audio.Out
 {
-   [[No description supplied.]]
    data: null;
    implements {
       @empty Ecore.Audio.source { set; get; }

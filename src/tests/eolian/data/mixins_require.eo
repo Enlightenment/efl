@@ -2,10 +2,9 @@ import base;
 import class_simple;
 
 mixin Mixins.Require requires Base {
-  [[No description supplied.]]
   methods {
     test {
-       [[No description supplied.]]
+
     }
   }
   implements {

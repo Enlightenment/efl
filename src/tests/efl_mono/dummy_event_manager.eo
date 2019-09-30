@@ -1,10 +1,9 @@
 import eina_types;
 
 class Dummy.Event_Manager extends Efl.Object {
-   [[No description supplied.]]
+
    methods {
       @property emitter {
-         [[No description supplied.]]
          set {
          }
          values {
@@ -13,7 +12,6 @@ class Dummy.Event_Manager extends Efl.Object {
       }
 
       emit_with_int {
-         [[No description supplied.]]
          params {
             data: int;
          }
@@ -21,7 +19,6 @@ class Dummy.Event_Manager extends Efl.Object {
       }
 
       release {
-         [[No description supplied.]]
       }
    }
 

@@ -1,8 +1,6 @@
 abstract Object_Impl extends Base {
-   [[No description supplied.]]
    methods {
       @property a {
-         [[No description supplied.]]
          set {
             values {
                 value: const(list<string>);
@@ -19,7 +17,6 @@ abstract Object_Impl extends Base {
          }
       }
       @property b {
-         [[No description supplied.]]
          set {
          }
          get @pure_virtual {
@@ -30,14 +27,12 @@ abstract Object_Impl extends Base {
          }
       }
       constructor_1 {
-         [[No description supplied.]]
          params {
             @in a: int;
             @in b: char;
          }
       }
       constructor_2 {
-         [[No description supplied.]]
       }
       foo1 {
          [[comment foo]]
@@ -56,7 +51,6 @@ abstract Object_Impl extends Base {
          }
       }
       pure_foo3 @pure_virtual {
-         [[No description supplied.]]
          /* set as virtual pure - no implementation expected */
       }
    }

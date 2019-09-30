@@ -1,10 +1,9 @@
 import eina_types;
 
 class Dummy.Child extends Dummy.Test_Object {
-   [[No description supplied.]]
+
    methods {
       double_params {
-         [[No description supplied.]]
          params {
             @in a: string;
             @in b: double;
@@ -12,7 +11,6 @@ class Dummy.Child extends Dummy.Test_Object {
       }
 
       @property iface_was_set {
-        [[No description supplied.]]
         get {}
         values {
           data: bool;
@@ -32,7 +30,6 @@ class Dummy.Child extends Dummy.Test_Object {
       }
 
       @property obligatory_beta_ctor_was_called {
-        [[No description supplied.]]
         get{}
         values {
           data: bool;
@@ -40,7 +37,6 @@ class Dummy.Child extends Dummy.Test_Object {
       }
 
       @property optional_beta_ctor_was_called {
-        [[No description supplied.]]
         get{}
         values {
           data: bool;

@@ -1,22 +1,18 @@
 /* regular struct */
 struct Named1 {
-    [[No description supplied.]]
     field: int;
 }
 struct @free(test_free) Named2 {
-    [[No description supplied.]]
     field: int;
 }
 
 /* opaque */
-struct Opaque1; [[No description supplied.]]
-struct @free(opaque_free) Opaque2; [[No description supplied.]]
+struct Opaque1;
+struct @free(opaque_free) Opaque2;
 
 class Free_Func {
-   [[No description supplied.]]
    methods {
       foo {
-         [[No description supplied.]]
          params {
             idx: int;
          }

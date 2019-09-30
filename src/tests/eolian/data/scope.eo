@@ -1,31 +1,24 @@
 class Scope {
-   [[No description supplied.]]
    methods {
       @property a @protected {
-         [[No description supplied.]]
          get {
          }
       }
       @property b {
-         [[No description supplied.]]
          get {
          }
       }
       @property c {
-         [[No description supplied.]]
          get {
          }
          set @protected {
          }
       }
       foo {
-         [[No description supplied.]]
       }
       bar @protected {
-         [[No description supplied.]]
       }
       foobar {
-         [[No description supplied.]]
       }
    }
 }

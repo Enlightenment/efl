@@ -1,12 +1,9 @@
 interface Dummy.Test_Iface
 {
-   [[No description supplied.]]
    methods {
       emit_nonconflicted {
-         [[No description supplied.]]
       }
       @property iface_prop {
-         [[No description supplied.]]
          get {}
          set {}
          values {
@@ -15,7 +12,6 @@ interface Dummy.Test_Iface
       }
 
       method_protected @protected @const {
-         [[No description supplied.]]
          params {
             @in x: int;
          }
@@ -23,7 +19,6 @@ interface Dummy.Test_Iface
       }
 
       call_method_protected @const {
-         [[No description supplied.]]
          params {
             @in x: int;
          }
@@ -31,7 +26,6 @@ interface Dummy.Test_Iface
       }
 
       @property protected_prop @protected {
-         [[No description supplied.]]
          get {}
          set {}
          values {
@@ -40,7 +34,6 @@ interface Dummy.Test_Iface
       }
 
       @property public_getter_private_setter {
-         [[No description supplied.]]
          get {}
          set @protected {}
          values {
@@ -49,7 +42,6 @@ interface Dummy.Test_Iface
       }
 
       @property static_prop @static {
-         [[No description supplied.]]
          get {}
          set {}
          values {

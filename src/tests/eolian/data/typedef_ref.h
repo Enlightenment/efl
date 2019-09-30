@@ -11,34 +11,14 @@ typedef Eo Typedef;
 #ifndef _TYPEDEF_EO_TYPES
 #define _TYPEDEF_EO_TYPES
 
-/** No description supplied.
- *
- * @ingroup Evas
- */
 typedef int Evas_Coord;
 
-/** No description supplied.
- *
- * @ingroup List_Objects
- */
 typedef Eina_List *List_Objects;
 
-/** No description supplied.
- *
- * @ingroup Evas
- */
 typedef Evas_Coord Evas_Coord2;
 
-/** No description supplied.
- *
- * @ingroup Evas
- */
 typedef Evas_Coord2 Evas_Coord3;
 
-/** No description supplied.
- *
- * @ingroup Elm_Object
- */
 typedef enum
 {
   ELM_OBJECT_SELECT_MODE_DEFAULT = 0,
@@ -50,22 +30,10 @@ typedef enum
 
 
 #endif
-/** No description supplied.
- *
- * @ingroup Typedef
- */
 #define TYPEDEF_CLASS typedef_class_get()
 
 EWAPI const Efl_Class *typedef_class_get(void);
 
-/**
- * @brief No description supplied.
- *
- * @param[in] obj The object.
- * @param[in] idx
- *
- * @ingroup Typedef
- */
 EOAPI char *typedef_foo(Eo *obj, int idx) EFL_TRANSFER_OWNERSHIP;
 
 #endif

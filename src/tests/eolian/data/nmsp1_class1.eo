@@ -1,6 +1,5 @@
 class nmsp1.class1 extends nmsp1.nmsp11.class2 implements nmsp2.class1, no_nmsp
 {
-   [[No description supplied.]]
    implements {
       nmsp1.nmsp11.class2.a { set; }
       no_nmsp.foo;

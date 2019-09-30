@@ -1,14 +1,11 @@
 class Property_Holder extends Efl.Object
 {
-   [[No description supplied.]]
    methods {
       some_method {
-         [[No description supplied.]]
          return: int;
       }
 
       @property prop_simple {
-         [[No description supplied.]]
          get {}
          set {}
          values {
@@ -17,7 +14,6 @@ class Property_Holder extends Efl.Object
       }
 
       @property getter_only {
-         [[No description supplied.]]
          get {}
          values {
             data: int;
@@ -25,7 +21,6 @@ class Property_Holder extends Efl.Object
       }
 
       @property setter_only {
-         [[No description supplied.]]
          set {}
          values {
             data: int;
@@ -33,7 +28,6 @@ class Property_Holder extends Efl.Object
       }
 
       @property prop_with_key {
-         [[No description supplied.]]
          get {}
          set {}
          values {

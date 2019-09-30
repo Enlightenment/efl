@@ -1,6 +1,5 @@
 class B extends A
 {
-   [[No description supplied.]]
    data: B_Data;
    implements {
       Efl.Object.constructor;

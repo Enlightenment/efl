@@ -1,12 +1,10 @@
 
 // typedef void (*VoidFunc)(void *data);
 function VoidFunc {
-  [[No description supplied.]]
 };
 
 // typedef const char *(*SimpleFunc)(void *data, int a, double b);
 function SimpleFunc {
-  [[No description supplied.]]
   params {
     a: int;
     b: double;
@@ -16,7 +14,6 @@ function SimpleFunc {
 
 // typedef double (*ComplexFunc)(void *data, const char *a, const char **b);
 function ComplexFunc {
-  [[No description supplied.]]
   params {
     @in c: string;
     @out d: mstring @move;
@@ -26,7 +23,6 @@ function ComplexFunc {
 
 // typedef void (*FuncAsArgFunc)(void *data, VoidFunc cb, SimpleFunc another_cb);
 function FuncAsArgFunc {
-  [[No description supplied.]]
   params {
     cb: VoidFunc;
     another_cb: SimpleFunc;

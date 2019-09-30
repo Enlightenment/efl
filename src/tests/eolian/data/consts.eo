@@ -1,5 +1,4 @@
 class Consts {
-   [[No description supplied.]]
    methods {
       foo @const {
          [[comment foo]]

@@ -1,6 +1,5 @@
 abstract Efl.Loop_Model extends Efl.Loop_Consumer implements Efl.Model
 {
-   [[TBD]]
    data: null;
    methods {
       volatile_make {

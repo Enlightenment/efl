@@ -1,8 +1,6 @@
 class Dummy.Numberwrapper extends Efl.Object {
-   [[No description supplied.]]
    methods {
       @property number {
-         [[No description supplied.]]
          get {
          }
          set {

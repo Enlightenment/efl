@@ -1,9 +1,7 @@
 abstract nmsp1.nmsp11.class2
 {
-   [[No description supplied.]]
    methods {
       @property a {
-         [[No description supplied.]]
          set @pure_virtual {
          }
       }

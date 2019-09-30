@@ -1,10 +1,9 @@
 class Aux_C {
-    [[No description supplied.]]
     methods {
-        foo { [[No description supplied.]] }
-        bar { [[No description supplied.]] }
+        foo {}
+        bar {}
     }
     events {
-        test: void; [[No description supplied.]]
+        test: void;
     }
 }

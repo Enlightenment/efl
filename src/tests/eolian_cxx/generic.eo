@@ -1,17 +1,15 @@
+
 struct Generic.Event
 {
-  [[No description supplied.]]
   field1: int;
   field2: list<string>;
 }
 
 class Generic extends Efl.Object implements Generic_Interface
 {
-   [[No description supplied.]]
    data: Generic_Data;
    methods {
       @property req_ctor_a_value {
-         [[No description supplied.]]
          get {
          }
          values {
@@ -19,7 +17,6 @@ class Generic extends Efl.Object implements Generic_Interface
          }
       }
       @property opt_ctor_a_value {
-         [[No description supplied.]]
          get {
          }
          values {
@@ -27,114 +24,92 @@ class Generic extends Efl.Object implements Generic_Interface
          }
       }
       required_ctor_a {
-         [[No description supplied.]]
          params {
             @in value: int;
          }
       }
       required_ctor_b {
-         [[No description supplied.]]
          params {
             @in value: int;
          }
       }
       optional_ctor_a {
-         [[No description supplied.]]
          params {
             @in value: int;
          }
       }
       optional_ctor_b {
-         [[No description supplied.]]
          params {
             @in value: int;
          }
       }
 
       @property req_ctor_b_value {
-         [[No description supplied.]]
          get {}
          values {
             value: int;
          }
       }
       @property opt_ctor_b_value {
-         [[No description supplied.]]
          get {}
          values {
             value: int;
          }
       }
       out_required_ctor_a {
-         [[No description supplied.]]
          params {
             @out value: int;
          }
       }
       out_required_ctor_b {
-         [[No description supplied.]]
          params {
             @out value: int;
          }
       }
       out_optional_ctor_a {
-         [[No description supplied.]]
          params {
             @out value: int;
          }
       }
       out_optional_ctor_b {
-         [[No description supplied.]]
          params {
             @out value: int;
          }
       }
 
       call_event1 {
-         [[No description supplied.]]
       }
       call_event2 {
-         [[No description supplied.]]
       }
       call_event3 {
-         [[No description supplied.]]
       }
       call_event4 {
-         [[No description supplied.]]
       }
       call_event5 {
-         [[No description supplied.]]
       }
 
       protected_method1 @protected {
-         [[No description supplied.]]
       }
       beta_method1 @beta {
-         [[No description supplied.]]
       }
       protected_beta_method1 @protected @beta {
-         [[No description supplied.]]
       }
       event_param {
-         [[No description supplied.]]
          params {
            value: event;
          }
       }
       const_event_param {
-         [[No description supplied.]]
          params {
            value: const(event);
          }
       }
       binbuf_param {
-         [[No description supplied.]]
          params {
            value: binbuf;
          }
       }
       const_binbuf_param {
-         [[No description supplied.]]
          params {
            value: const(binbuf);
          }
@@ -150,13 +125,13 @@ class Generic extends Efl.Object implements Generic_Interface
       Efl.Object.constructor;
    }
    events {
-     prefix,event1: void; [[No description supplied.]]
-     prefix,event2: Generic; [[No description supplied.]]
-     prefix,event3: int; [[No description supplied.]]
-     prefix,event4: const(array<string>); [[No description supplied.]]
-     prefix,event5: Generic.Event; [[No description supplied.]]
-     protected,event1 @protected: void; [[No description supplied.]]
-     beta,event1 @beta: void; [[No description supplied.]]
-     protected,beta,event1 @beta @protected: void; [[No description supplied.]]
+     prefix,event1: void;
+     prefix,event2: Generic;
+     prefix,event3: int;
+     prefix,event4: const(array<string>);
+     prefix,event5: Generic.Event;
+     protected,event1 @protected: void;
+     beta,event1 @beta: void;
+     protected,beta,event1 @beta @protected: void;
    }
 }

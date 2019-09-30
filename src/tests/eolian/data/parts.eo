@@ -1,5 +1,4 @@
 class Parts extends Override {
-   [[No description supplied.]]
    parts {
       part1: Override; [[Part 1]]
       part2 @beta: Parts; [[Part 2]]

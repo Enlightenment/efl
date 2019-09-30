@@ -1,5 +1,4 @@
 class Unimpl composites Iface {
-    [[No description supplied.]]
     implements {
         Iface.foo;
     }
