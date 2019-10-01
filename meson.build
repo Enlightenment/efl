@@ -440,16 +440,7 @@ if sys_windows == false
   subdir(join_paths('src', 'generic', 'emotion'))
 endif
 subdir('cmakeconfig')
-
-bindings = get_option('bindings')
-bindings_order = ['luajit', 'cxx', 'mono']
-
-foreach binding : bindings_order
-  if bindings.contains(binding)
-    subdir(join_paths('src', 'bindings', binding))
-  endif
-endforeach
-
+subdir(join_paths('src', 'bindings'))
 subdir(join_paths('src', 'edje_external'))
 subdir(join_paths('data'))
 
