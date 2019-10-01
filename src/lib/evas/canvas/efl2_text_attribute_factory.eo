@@ -125,5 +125,6 @@ class @beta Efl2.Text.Attribute.Factory extends Efl.Object implements Efl2.Text.
        Efl2.Text.Style.Properties.line_height { set; get; }
        Efl2.Text.Style.Properties.line_height_factor { set; get; }
        Efl2.Text.Style.Properties.tab_width { set; get; }
+       Efl2.Text.Style.Properties.href { set; get; }
    }
 }
