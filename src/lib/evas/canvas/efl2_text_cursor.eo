@@ -124,6 +124,7 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
       // Sholud we have convenience wrappers for those though? This and cluster prev/next?
       // cluster_delete {
 
+      // FIXME: paragraph_end is inconsistent with word_end. The one goes to the last character and the other after the last character.
       paragraph_start {
          [[Advances to the first character in this paragraph]]
          return: bool; [[True if actually moved]]
