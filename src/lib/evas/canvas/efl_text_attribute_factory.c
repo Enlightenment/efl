@@ -129,6 +129,18 @@ _efl2_text_attribute_factory_efl2_text_font_properties_font_size_get(const Eo *o
 
 
 EOLIAN static void
+_efl2_text_attribute_factory_efl2_text_font_properties_font_size_factor_set(Eo *obj EINA_UNUSED, Efl2_Text_Attribute_Factory_Data *pd, double value)
+{
+   // FIXME: implement
+}
+
+EOLIAN static double
+_efl2_text_attribute_factory_efl2_text_font_properties_font_size_factor_get(const Eo *obj EINA_UNUSED, Efl2_Text_Attribute_Factory_Data *pd)
+{
+   // FIXME: implement
+}
+
+EOLIAN static void
 _efl2_text_attribute_factory_efl2_text_font_properties_font_source_set(Eo *obj EINA_UNUSED, Efl2_Text_Attribute_Factory_Data *pd, const char *source)
 {
    eina_stringshare_replace(&pd->fmt.font.source, source);

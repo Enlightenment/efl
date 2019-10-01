@@ -97,6 +97,7 @@ class @beta Efl2.Text.Attribute.Factory extends Efl.Object implements Efl2.Text.
    implements {
        Efl2.Text.Font.Properties.font_family { set; get; }
        Efl2.Text.Font.Properties.font_size { set; get; }
+       Efl2.Text.Font.Properties.font_size_factor { set; get; }
        Efl2.Text.Font.Properties.font_source { set; get; }
        Efl2.Text.Font.Properties.font_fallbacks { set; get; }
        Efl2.Text.Font.Properties.font_weight { set; get; }
