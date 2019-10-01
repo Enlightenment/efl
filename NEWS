@@ -7,7 +7,6 @@ Changes since 1.22.0:
 
 Features:
 
-   * ecore-drm2: Add API function to return output rotation (T7690)
    * ecore-drm2: Add background_color to crtc atomic properties
    * ecore-drm2: Fill in crtc background color (if supported) during atomic commits
    * ecore-drm2: Add API function to set crtc background color
@@ -29,18 +28,6 @@ Features:
 
 Fixes:
 
-   * efl_canvas_vg_object: Fix dereference after null check (CID1399423, CID1399421)
-   * efl_ui_win: fix hw accel detection
-   * efl_ui_layout: Eina_Error type has been modified to work correctly.
-   * ecore-drm2: Don't use AtomicAddProperty for plane rotation (T7690)
-   * ecore-drm2: Update plane state values based on FB (T7690)
-   * ecore-drm2: Factor in output rotation when getting output info (T7690)
-   * evas drm: Don't use eng_output_resize or redraws clear (T7690)
-   * evas drm: Fix software output rotation (T7690)
-   * efl_ui_image: remove job in sizing calc. (T7360)
-   * evas_render: Process deferred callback in the sync render case.
-   * efl_ui_selection_manager: Don't leak malloc'd data (CID1396949)
-   * ecore-drm2: Add missing @ingroup for some doxy
    * remove vpath test for user dir the test was broken and fixing is insane (T7728)
    * tests - fix check header to always include eina due to windows
    * tests - remove one of the eina strtod tests as libc is failing
@@ -211,6 +198,7 @@ Fixes:
    * meson.build: allow to disable tiff evas loader
    * ecore/signal: also use nonblock for writing side of signal pipe
    * ector engine: +null checking.
+   * ecore-x: fix null derefs in window prop code
 
 Changes since 1.21.0:
 ---------------------
