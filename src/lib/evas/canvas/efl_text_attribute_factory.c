@@ -24,6 +24,7 @@
 struct _Efl2_Text_Attribute_Factory_Data
 {
    Efl2_Text_Attribute_Format fmt;
+   Eina_Stringshare *tag;
 };
 
 typedef struct _Efl2_Text_Attribute_Factory_Data Efl2_Text_Attribute_Factory_Data;
@@ -98,6 +99,18 @@ _efl2_text_attribute_factory_remove(Efl2_Text_Attribute_Handle *handle)
 {
    // FIXME: implement
    (void) handle;
+}
+
+EOLIAN static void
+_efl2_text_attribute_factory_tag_set(Eo *obj EINA_UNUSED, Efl2_Text_Attribute_Factory_Data *pd, const char *name)
+{
+   eina_stringshare_replace(&pd->tag, name);
+}
+
+EOLIAN static const char *
+_efl2_text_attribute_factory_tag_get(const Eo *obj EINA_UNUSED, Efl2_Text_Attribute_Factory_Data *pd)
+{
+   return pd->tag;
 }
 
 EOLIAN static void
