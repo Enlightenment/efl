@@ -1,4 +1,3 @@
-#define EFL_BETA_API_SUPPORT
 #include <Eo.h>
 
 #include <Elementary.h>
@@ -14,6 +13,7 @@ typedef struct
    Efl2_Text_Cursor             *main_cursor;
    Efl2_Text_Cursor             *sel_start, *sel_end;
    Efl2_Text_Cursor             *preedit_start, *preedit_end;
+   Efl2_Text_Cursor             *cur_tmp_begin, *cur_tmp_end;
    Ecore_Timer                  *pw_timer;
    Eina_List                    *seq;
    char                         *selection;
@@ -44,24 +44,17 @@ static void _sel_init(Efl2_Text_Cursor *c, Eo *o, Efl2_Text_Raw_Editable_Data *e
 static void _sel_enable(Efl2_Text_Cursor *c EINA_UNUSED, Eo *o EINA_UNUSED, Efl2_Text_Raw_Editable_Data *en);
 static void _sel_extend(Efl2_Text_Cursor *c, Eo *o, Efl2_Text_Raw_Editable_Data *en);
 static void _sel_clear(Eo *o EINA_UNUSED, Efl2_Text_Raw_Editable_Data *en);
-static const char *_entry_selection_get(Eo *obj, Efl2_Text_Raw_Editable_Data *en);
 static void _entry_imf_cursor_info_set(Efl2_Text_Raw_Editable_Data *en);
 
 #warning NEW FUNCTIONS
 Eina_Bool _edje_entry_hide_visible_password(Eo *obj, Efl2_Text_Raw_Editable_Data *en);
-static void _entry_cursor_line_geometry_get(const Efl_Canvas_Text *obj, const Efl2_Text_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
+static void _entry_cursor_line_geometry_get(Efl_Canvas_Text *obj, const Efl2_Text_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch);
 
 
 #warning GLOBAL VARS
 double _edje_password_show_last_timeout = 0;
 Eina_Bool _edje_password_show_last = EINA_FALSE;
 
-static Efl2_Text_Change_Info *
-_text_filter_markup_prepend(Efl_Canvas_Text *obj, Efl2_Text_Raw_Editable_Data *en,
-                            Efl2_Text_Cursor *c,
-                            const char *text,
-                            const char *fmtpre, const char *fmtpost,
-                            Eina_Bool clearsel, Eina_Bool changeinfo);
 static void
 _text_filter_format_prepend(Efl_Canvas_Text *obj, Efl2_Text_Raw_Editable_Data *en,
                             Efl2_Text_Cursor *c, const char *text);
@@ -170,6 +163,46 @@ _entry_imf_retrieve_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSE
      }
 
    return EINA_TRUE;
+}
+
+
+static Efl2_Text_Change_Info *
+_text_filter_markup_prepend(Efl_Canvas_Text *obj, Efl2_Text_Raw_Editable_Data *en,
+                            Efl2_Text_Cursor *c,
+                            const char *text,
+                            const char *fmtpre, const char *fmtpost,
+                            Eina_Bool clearsel, Eina_Bool changeinfo)
+{
+   char *text2;
+   //Edje_Text_Insert_Filter_Callback *cb;
+   //Eina_List *l;
+
+   EINA_SAFETY_ON_NULL_RETURN_VAL(text, NULL);
+
+   if ((clearsel) && (en->have_selection))
+     {
+        _sel_range_del_emit(obj, en);
+     }
+
+   text2 = strdup(text);
+   /*EINA_LIST_FOREACH(ed->text_insert_filter_callbacks, l, cb)
+     {
+        if (!strcmp(cb->part, en->rp->part->name))
+          {
+             cb->func(cb->data, ed->obj, cb->part, EDJE_TEXT_FILTER_MARKUP, &text2);
+             if (!text2) break;
+          }
+     }*/
+   if (text2)
+     {
+        Efl2_Text_Change_Info *info;
+
+        info = _text_filter_markup_prepend_internal(obj, en, c, text2,
+                                                    fmtpre, fmtpost,
+                                                    clearsel, changeinfo);
+        return info;
+     }
+   return NULL;
 }
 
 static void
@@ -469,6 +502,14 @@ _entry_imf_event_selection_set_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED
      }
 }
 
+static const char *
+_entry_selection_get(Efl2_Text_Raw_Editable_Data *en)
+{
+   if ((!en->selection) && (en->have_selection))
+     en->selection = efl2_text_cursor_range_text_get(en->sel_start, en->sel_end);
+   return en->selection;
+}
+
 static Eina_Bool
 _entry_imf_retrieve_selection_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, char **text)
 {
@@ -491,8 +532,9 @@ _entry_imf_retrieve_selection_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED,
 
 #endif
 
+#ifdef HAVE_ECORE_IMF
 static void
-_entry_imf_cursor_location_set(Eo *obj, Efl2_Text_Cursor *cur, Efl2_Text_Raw_Editable_Data *en)
+_entry_imf_cursor_location_set(Efl2_Text_Cursor *cur, Efl2_Text_Raw_Editable_Data *en)
 {
 #ifdef HAVE_ECORE_IMF
    Evas_Coord cx = 0, cy = 0, cw = 0, ch = 0;
@@ -502,16 +544,17 @@ _entry_imf_cursor_location_set(Eo *obj, Efl2_Text_Cursor *cur, Efl2_Text_Raw_Edi
    ecore_imf_context_cursor_location_set(en->imf_context, cx, cy, cw, ch);
    // FIXME: ecore_imf_context_bidi_direction_set(en->imf_context, (Ecore_IMF_BiDi_Direction)dir);
 #else
+   (void)cur;
    (void)en;
 #endif
 }
+#endif
 
 static void
 _entry_imf_cursor_info_set(Efl2_Text_Raw_Editable_Data *en)
 {
-   int cursor_pos;
-
 #ifdef HAVE_ECORE_IMF
+   int cursor_pos;
    if (!en->imf_context) return;
 
    if (en->have_selection)
@@ -526,7 +569,7 @@ _entry_imf_cursor_info_set(Efl2_Text_Raw_Editable_Data *en)
 
    ecore_imf_context_cursor_position_set(en->imf_context, cursor_pos);
 
-   _entry_imf_cursor_location_set(obj, cur, en);
+   _entry_imf_cursor_location_set(cur, en);
 #else
    (void)en;
 #endif
@@ -545,6 +588,7 @@ _focus_in_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
    ecore_imf_context_focus_in(en->imf_context);
    _entry_imf_cursor_info_set(en);
 #endif
+   (void)obj;
 }
 
 static void
@@ -570,14 +614,7 @@ _focus_out_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_
    ecore_imf_context_reset(en->imf_context);
    ecore_imf_context_focus_out(en->imf_context);
 #endif
-}
-
-static const char *
-_entry_selection_get(Eo *obj, Efl2_Text_Raw_Editable_Data *en)
-{
-   if ((!en->selection) && (en->have_selection))
-     en->selection = efl2_text_cursor_range_text_get(en->sel_start, en->sel_end);
-   return en->selection;
+   (void)obj;
 }
 
 static void
@@ -640,26 +677,6 @@ _sel_extend(Efl2_Text_Cursor *c, Eo *o, Efl2_Text_Raw_Editable_Data *en)
    if (efl2_text_cursor_equal(c, en->sel_end)) return;
 
    efl2_text_cursor_copy(c, en->sel_end);
-
-   _entry_imf_cursor_info_set(en);
-
-   if (en->selection)
-     {
-        free(en->selection);
-        en->selection = NULL;
-     }
-
-   _emit_sel_state(o, en);
-}
-
-static void
-_sel_preextend(Efl2_Text_Cursor *c, Eo *o, Efl2_Text_Raw_Editable_Data *en)
-{
-   if (!en->sel_end) return;
-   _sel_enable(c, o, en);
-   if (!efl2_text_cursor_compare(c, en->sel_start)) return;
-
-   efl2_text_cursor_copy(c, en->sel_start);
 
    _entry_imf_cursor_info_set(en);
 
@@ -808,6 +825,7 @@ Eina_Bool
 _edje_entry_hide_visible_password(Eo *obj, Efl2_Text_Raw_Editable_Data *en EINA_UNUSED)
 {
    #warning IMPLEMENTATION
+   (void)obj;
    return EINA_FALSE;
    /*
    Eina_Bool int_ret = EINA_FALSE;
@@ -1474,12 +1492,9 @@ end:
 static void
 _key_up_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_info)
 {
-   Evas_Event_Key_Up *ev = event_info;
-   Efl_Input_Device *seat;
-   Efl2_Text_Raw_Editable_Data *en = efl_data_scope_get(obj, MY_CLASS);
-
-   seat = efl_input_device_seat_get(ev->dev);
 #ifdef HAVE_ECORE_IMF
+   Evas_Event_Key_Up *ev = event_info;
+   Efl2_Text_Raw_Editable_Data *en = efl_data_scope_get(obj, MY_CLASS);
    if (en->imf_context)
      {
         Ecore_IMF_Event_Key_Up ecore_ev;
@@ -1491,26 +1506,26 @@ _key_up_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_inf
           return;
      }
 #else
+   (void)obj;
    (void)event_info;
 #endif
 }
 
-static _entry_cursor_line_geometry_get(const Efl_Canvas_Text *obj, const Efl2_Text_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
+static void _entry_cursor_line_geometry_get(Efl_Canvas_Text *obj, const Efl2_Text_Cursor *cur, Evas_Coord *cx, Evas_Coord *cy, Evas_Coord *cw, Evas_Coord *ch)
 {
-   static Efl2_Text_Cursor *cur_begin = NULL;
-   static Efl2_Text_Cursor *cur_end = NULL;
-   if (!cur_begin) cur_begin = efl_add(EFL2_TEXT_CURSOR_CLASS, obj, efl2_text_cursor_handle_set(efl_added, efl2_canvas_text_cursor_handle_new(obj)));
-   if (!cur_end) cur_end = efl_add(EFL2_TEXT_CURSOR_CLASS, obj, efl2_text_cursor_handle_set(efl_added, efl2_canvas_text_cursor_handle_new(obj)));
-   efl2_text_cursor_copy(cur, cur_begin);
-   efl2_text_cursor_copy(cur, cur_end);
-   efl2_text_cursor_line_start(cur_begin);
-   efl2_text_cursor_line_end(cur_end);
-   Eina_Iterator *itr = efl2_text_cursor_range_geometry_get(cur_begin,cur_end);
+   Efl2_Text_Raw_Editable_Data *en = efl_data_scope_get(obj, MY_CLASS);
+   if (!en->cur_tmp_begin) en->cur_tmp_begin = efl_add(EFL2_TEXT_CURSOR_CLASS, obj, efl2_text_cursor_handle_set(efl_added, efl2_canvas_text_cursor_handle_new(obj)));
+   if (!en->cur_tmp_end) en->cur_tmp_end = efl_add(EFL2_TEXT_CURSOR_CLASS, obj, efl2_text_cursor_handle_set(efl_added, efl2_canvas_text_cursor_handle_new(obj)));
+   efl2_text_cursor_copy(cur, en->cur_tmp_begin);
+   efl2_text_cursor_copy(cur, en->cur_tmp_end);
+   efl2_text_cursor_line_start(en->cur_tmp_begin);
+   efl2_text_cursor_line_end(en->cur_tmp_end);
+   Eina_Iterator *itr = efl2_text_cursor_range_geometry_get(en->cur_tmp_begin, en->cur_tmp_end);
    if (itr)
      {
         void* data = NULL;
-        eina_iterator_next	(itr, &data);
-        if (data)
+        Eina_Bool ret = eina_iterator_next(itr, &data);
+        if (ret && data)
           {
              Eina_Rect* r = (Eina_Rect*) data;
              if (cx) *cx = r->x;
@@ -1816,9 +1831,9 @@ _mouse_move_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event
    Evas_Event_Mouse_Move *ev = event_info;
    Evas_Coord x, y, w, h;
    Efl2_Text_Cursor *tc;
-   Eina_Bool multiline;
+   //Eina_Bool multiline;
 
-   multiline = efl2_canvas_text_multiline_get(obj);
+   //multiline = efl2_canvas_text_multiline_get(obj);
 
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
@@ -1840,6 +1855,7 @@ _mouse_move_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event
         cx = ev->cur.canvas.x - x;
         cy = ev->cur.canvas.y - y;
         efl2_text_cursor_coord_set(cur, cx, cy);
+        //FIXME
         /*if (!efl2_text_cursor_coord_set(cur, cx, cy))
           {
              Evas_Coord lx, ly, lw, lh;
@@ -1909,7 +1925,7 @@ _efl2_text_raw_editable_efl_object_constructor(Eo *obj, Efl2_Text_Raw_Editable_D
    return obj;
 }
 EOLIAN static void
-_efl2_text_raw_editable_efl_object_destructor(Eo *obj, Efl2_Text_Raw_Editable_Data *en)
+_efl2_text_raw_editable_efl_object_destructor(Eo *obj EINA_UNUSED, Efl2_Text_Raw_Editable_Data *en)
 {
    //FIXME check all memory
 #ifdef HAVE_ECORE_IMF
@@ -2006,6 +2022,8 @@ _efl2_text_raw_editable_efl_object_finalize(Eo *obj, Efl2_Text_Raw_Editable_Data
            ecore_imf_context_input_hint_set(en->imf_context,
                  ecore_imf_context_input_hint_get(en->imf_context) | ECORE_IMF_INPUT_HINT_MULTILINE);
      }
+#else
+   goto done;
 #endif
 
 done:
@@ -2020,7 +2038,7 @@ _text_filter_markup_prepend_internal(Efl_Canvas_Text *obj, Efl2_Text_Raw_Editabl
                                      Eina_Bool clearsel, Eina_Bool changeinfo)
 {
    //Edje_Markup_Filter_Callback *cb;
-   Eina_List *l;
+   //Eina_List *l;
    Eina_Bool have_sel = EINA_FALSE;
 
    if ((clearsel) && (en->have_selection))
@@ -2092,7 +2110,7 @@ _text_filter_text_prepend(Efl_Canvas_Text *obj, Efl2_Text_Raw_Editable_Data *en,
 {
    char *text2 = NULL;
    //Edje_Text_Insert_Filter_Callback *cb;
-   Eina_List *l;
+   //Eina_List *l;
 
    EINA_SAFETY_ON_NULL_RETURN_VAL(text, NULL);
 
@@ -2132,7 +2150,7 @@ _text_filter_format_prepend(Efl_Canvas_Text *obj, Efl2_Text_Raw_Editable_Data *e
 {
    char *text2;
    //Edje_Text_Insert_Filter_Callback *cb;
-   Eina_List *l;
+   //Eina_List *l;
 
    EINA_SAFETY_ON_NULL_RETURN(text);
    text2 = strdup(text);
@@ -2212,45 +2230,6 @@ _text_filter_format_prepend(Efl_Canvas_Text *obj, Efl2_Text_Raw_Editable_Data *e
      }
 }
 
-static Efl2_Text_Change_Info *
-_text_filter_markup_prepend(Efl_Canvas_Text *obj, Efl2_Text_Raw_Editable_Data *en,
-                            Efl2_Text_Cursor *c,
-                            const char *text,
-                            const char *fmtpre, const char *fmtpost,
-                            Eina_Bool clearsel, Eina_Bool changeinfo)
-{
-   char *text2;
-   //Edje_Text_Insert_Filter_Callback *cb;
-   Eina_List *l;
-
-   EINA_SAFETY_ON_NULL_RETURN_VAL(text, NULL);
-
-   if ((clearsel) && (en->have_selection))
-     {
-        _sel_range_del_emit(obj, en);
-     }
-
-   text2 = strdup(text);
-   /*EINA_LIST_FOREACH(ed->text_insert_filter_callbacks, l, cb)
-     {
-        if (!strcmp(cb->part, en->rp->part->name))
-          {
-             cb->func(cb->data, ed->obj, cb->part, EDJE_TEXT_FILTER_MARKUP, &text2);
-             if (!text2) break;
-          }
-     }*/
-   if (text2)
-     {
-        Efl2_Text_Change_Info *info;
-
-        info = _text_filter_markup_prepend_internal(obj, en, c, text2,
-                                                    fmtpre, fmtpost,
-                                                    clearsel, changeinfo);
-        return info;
-     }
-   return NULL;
-}
-
 EOLIAN static void
 _efl2_text_raw_editable_selection_allowed_set(Eo *obj EINA_UNUSED, Efl2_Text_Raw_Editable_Data *pd, Eina_Bool allowed)
 {
@@ -2293,14 +2272,14 @@ _efl2_text_raw_editable_editable_get(const Eo *obj EINA_UNUSED, Efl2_Text_Raw_Ed
 
 
 EOLIAN static void
-_efl2_text_raw_editable_password_mode_set(Eo *obj, Efl2_Text_Raw_Editable_Data *pd, Eina_Bool enabled)
+_efl2_text_raw_editable_password_mode_set(Eo *obj EINA_UNUSED, Efl2_Text_Raw_Editable_Data *pd EINA_UNUSED, Eina_Bool enabled EINA_UNUSED)
 {
 #warning IMPLEMENTATION
 }
 
 
 EOLIAN static Eina_Bool
-_efl2_text_raw_editable_password_mode_get(const Eo *obj, Efl2_Text_Raw_Editable_Data *pd)
+_efl2_text_raw_editable_password_mode_get(const Eo *obj EINA_UNUSED, Efl2_Text_Raw_Editable_Data *pd EINA_UNUSED)
 {
    return EINA_FALSE;
 #warning IMPLEMENTATION
@@ -2308,21 +2287,22 @@ _efl2_text_raw_editable_password_mode_get(const Eo *obj, Efl2_Text_Raw_Editable_
 
 
 EOLIAN static void
-_efl2_text_raw_editable_replacement_char_set(Eo *obj, Efl2_Text_Raw_Editable_Data *pd, const char *repch)
+_efl2_text_raw_editable_replacement_char_set(Eo *obj EINA_UNUSED, Efl2_Text_Raw_Editable_Data *pd EINA_UNUSED, const char *repch EINA_UNUSED)
 {
 #warning IMPLEMENTATION
 }
 
 
 EOLIAN static const char *
-_efl2_text_raw_editable_replacement_char_get(const Eo *obj, Efl2_Text_Raw_Editable_Data *pd)
+_efl2_text_raw_editable_replacement_char_get(const Eo *obj EINA_UNUSED, Efl2_Text_Raw_Editable_Data *pd EINA_UNUSED)
 {
 #warning IMPLEMENTATION
+   return NULL;
 }
 
 
 EOLIAN static Efl2_Text_Cursor *
-_efl2_text_raw_editable_main_cursor_get(const Eo *obj, Efl2_Text_Raw_Editable_Data *pd)
+_efl2_text_raw_editable_main_cursor_get(const Eo *obj EINA_UNUSED, Efl2_Text_Raw_Editable_Data *pd)
 {
    return pd->main_cursor;
 }
@@ -2369,7 +2349,7 @@ _efl2_text_raw_editable_select_all(Eo *obj, Efl2_Text_Raw_Editable_Data *en)
 
 #warning NEW_METHOD
 EOLIAN static void
-_efl2_text_raw_editable_select_abort(Eo *obj, Efl2_Text_Raw_Editable_Data *en)
+_efl2_text_raw_editable_select_abort(Eo *obj EINA_UNUSED, Efl2_Text_Raw_Editable_Data *en)
 {
    if (en->selecting)
      {
