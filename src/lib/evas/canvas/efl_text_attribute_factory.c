@@ -515,4 +515,17 @@ _efl2_text_attribute_factory_efl2_text_style_properties_tab_width_get(const Eo *
    return pd->fmt.tab_width;
 }
 
+EOLIAN static void
+_efl2_text_attribute_factory_efl2_text_style_properties_href_set(Eo *obj EINA_UNUSED, Efl2_Text_Attribute_Factory_Data *pd, const char *value)
+{
+   eina_stringshare_replace(&pd->fmt.href, value);
+}
+
+
+EOLIAN static const char
+*_efl2_text_attribute_factory_efl2_text_style_properties_href_get(const Eo *obj EINA_UNUSED, Efl2_Text_Attribute_Factory_Data *pd)
+{
+   return pd->fmt.href;
+}
+
 #include "canvas/efl2_text_attribute_factory.eo.c"

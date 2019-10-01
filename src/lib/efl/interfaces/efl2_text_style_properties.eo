@@ -350,5 +350,13 @@ interface @beta Efl2.Text.Style.Properties {
             value: int; [[Tapstops value]]
          }
       }
+
+      @property href {
+         [[The link's destination. Could be a url, a name, or whatever the user wants as they deal with the actions themselves.]]
+         values
+         {
+            value: string; [[Href value]]
+         }
+      }
    }
 }
