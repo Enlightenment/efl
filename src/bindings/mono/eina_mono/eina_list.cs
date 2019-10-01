@@ -110,6 +110,10 @@ public class List<T> : IEnumerable<T>, IDisposable
     public bool Own {get;set;}
     public bool OwnContent {get;set;}
 
+    /// <summary>Delegate for comparing two elements of this list.</summary>
+    /// <returns>-1, 0 or 1 for respectively smaller, equal or larger.</returns>
+    public delegate int Compare(T a, T b);
+
     public int Length
     {
         get { return Count(); }
@@ -256,10 +260,10 @@ public class List<T> : IEnumerable<T>, IDisposable
         Handle = eina_list_sorted_insert(Handle, EinaCompareCb<T>(), ele);
     }
 
-    public void SortedInsert(Eina_Compare_Cb compareCb, T val)
+    public void SortedInsert(Compare compareCb, T val)
     {
         IntPtr ele = ManagedToNativeAlloc(val);
-        Handle = eina_list_sorted_insert(Handle, Marshal.GetFunctionPointerForDelegate(compareCb), ele);
+        Handle = eina_list_sorted_insert(Handle, Marshal.GetFunctionPointerForDelegate(GetNativeCompareCb(compareCb)), ele);
     }
 
     public void Sort(int limit = 0)
@@ -267,14 +271,21 @@ public class List<T> : IEnumerable<T>, IDisposable
         Handle = eina_list_sort(Handle, (uint)limit, EinaCompareCb<T>());
     }
 
-    public void Sort(Eina_Compare_Cb compareCb)
+    public void Sort(Compare compareCb)
     {
-        Handle = eina_list_sort(Handle, 0, Marshal.GetFunctionPointerForDelegate(compareCb));
+        Handle = eina_list_sort(Handle, 0, Marshal.GetFunctionPointerForDelegate(GetNativeCompareCb(compareCb)));
     }
 
-    public void Sort(int limit, Eina_Compare_Cb compareCb)
+    public void Sort(int limit, Compare compareCb)
     {
-        Handle = eina_list_sort(Handle, (uint)limit, Marshal.GetFunctionPointerForDelegate(compareCb));
+        Handle = eina_list_sort(Handle, (uint)limit, Marshal.GetFunctionPointerForDelegate(GetNativeCompareCb(compareCb)));
+    }
+
+    private Eina.Callbacks.EinaCompareCb GetNativeCompareCb(Compare managedCb)
+    {
+        return (IntPtr a, IntPtr b) => {
+            return managedCb(NativeToManaged<T>(a), NativeToManaged<T>(b));
+        };
     }
 
     public T Nth(int n)
