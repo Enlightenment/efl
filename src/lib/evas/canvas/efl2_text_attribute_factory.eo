@@ -53,7 +53,7 @@ class @beta Efl2.Text.Attribute.Factory extends Efl.Object implements Efl2.Text.
          [[Sets the factory context from a handle
          ]]
          params {
-            handle: const(ptr(Efl2.Text.Attribute.Handle)); [[Attribute handle]]
+            handle: const(Efl2.Text.Attribute.Handle) @by_ref; [[Attribute handle]]
          }
       }
 
@@ -62,7 +62,7 @@ class @beta Efl2.Text.Attribute.Factory extends Efl.Object implements Efl2.Text.
          [[Sets the factory context to an handle
          ]]
          params {
-            handle: ptr(Efl2.Text.Attribute.Handle); [[Attribute handle]]
+            handle: Efl2.Text.Attribute.Handle @by_ref; [[Attribute handle]]
          }
       }
 
@@ -70,7 +70,7 @@ class @beta Efl2.Text.Attribute.Factory extends Efl.Object implements Efl2.Text.
       insert {
          [[Creates an attribute from the current factory context and inserts it into the range marked by the cursors
          ]]
-         return: ptr(Efl2.Text.Attribute.Handle); [[The handle to the attribute]]
+         return: Efl2.Text.Attribute.Handle @by_ref; [[The handle to the attribute]]
          params {
             cur1: const(Efl2.Text.Cursor); [[Start of range]]
             cur2: const(Efl2.Text.Cursor); [[End of range]]
@@ -81,7 +81,7 @@ class @beta Efl2.Text.Attribute.Factory extends Efl.Object implements Efl2.Text.
       create {
          [[Creates an attribute from the current factory context without inserting
          ]]
-         return: ptr(Efl2.Text.Attribute.Handle); [[The handle to the attribute]]
+         return: Efl2.Text.Attribute.Handle @by_ref @move; [[The handle to the attribute]]
       }
 
       // FIXME: cursor_?
@@ -109,16 +109,16 @@ class @beta Efl2.Text.Attribute.Factory extends Efl.Object implements Efl2.Text.
          [[Increase the attribute's refcount
          ]]
          params {
-              handle: ptr(Efl2.Text.Attribute.Handle); [[Handle to the attribute to delete from the object]]
+              handle: Efl2.Text.Attribute.Handle @by_ref; [[Handle to the attribute to delete from the object]]
          }
-         return: ptr(Efl2.Text.Attribute.Handle); [[The handle passed (also returned for convenience]]
+         return: Efl2.Text.Attribute.Handle @by_ref; [[The handle passed (also returned for convenience]]
       }
 
       unref @static {
          [[Decrease the attribute's refcount
          ]]
          params {
-              handle: ptr(Efl2.Text.Attribute.Handle); [[Handle to the attribute to delete from the object]]
+              handle: Efl2.Text.Attribute.Handle @by_ref; [[Handle to the attribute to delete from the object]]
          }
       }
 
@@ -126,7 +126,7 @@ class @beta Efl2.Text.Attribute.Factory extends Efl.Object implements Efl2.Text.
          [[Removes the attribute from the text object
          ]]
          params {
-              handle: ptr(Efl2.Text.Attribute.Handle); [[Handle to the attribute to delete from the object]]
+              handle: Efl2.Text.Attribute.Handle @by_ref; [[Handle to the attribute to delete from the object]]
          }
       }
    }
