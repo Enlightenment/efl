@@ -196,7 +196,7 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
            Once layout is complete, the result is returned as @Eina.Rect,
            with w, h fields set.
          ]]
-         return: future<Eina.Rect> @owned; [[Future for layout result]]
+         return: future<Eina.Rect> @move; [[Future for layout result]]
       }
    }
    implements {

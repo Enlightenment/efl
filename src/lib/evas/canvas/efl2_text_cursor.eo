@@ -200,7 +200,7 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
       range_text_get @const {
          [[Returns the text in the range between $cur1 and $cur2.
          ]]
-         return: mstring @owned; [[The text in the given range]]
+         return: mstring @move; [[The text in the given range]]
          params {
             cur2: Efl2.Text.Cursor; [[End of range]]
          }
@@ -216,7 +216,7 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
          params {
              cur2: Efl2.Text.Cursor; [[End of range]]
          }
-         return: iterator<ptr(Eina.Rect)> @owned; [[
+         return: iterator<ptr(Eina.Rect)> @move; [[
             Iterator on all geoemtries of the given range
          ]]
       }
@@ -229,7 +229,7 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
          params {
              cur2: Efl2.Text.Cursor; [[End of range]]
          }
-         return: iterator<ptr(Eina.Rect)> @owned; [[
+         return: iterator<ptr(Eina.Rect)> @move; [[
             Iterator on all simple geometries of the given range
          ]]
       }
