@@ -24,6 +24,26 @@ class @beta Efl2.Text.Attribute.Factory extends Efl.Object implements Efl2.Text.
          }
       }
 
+      /*
+      // FIXME: return a value to know if succeeded or failed in setting?
+      // FIXME: Do I actually want this?
+      @property properties {
+         [[The properties of the format as a string
+
+           This property lets you manipulate the properties of the factory as a string.
+           This is similar to how you would set it when using markup.
+           For example, in order to set the markup <span font_weight=bold font_size=12>,
+           you would just set the tag using $.tag and then use this to set the
+           "font_weight=bold font_size=12" part.
+         ]]
+         set { }
+         get { }
+         values {
+            properties: string; [[The properties as a string]]
+         }
+      }
+      */
+
       reset {
          [[Resets the factory context
          ]]
