@@ -8,6 +8,22 @@ class @beta Efl2.Text.Attribute.Factory extends Efl.Object implements Efl2.Text.
        Long-lived you keep it and reuse it as needed
    ]]
    methods {
+      @property tag {
+         [[The the type of the attribute
+
+           This is sort of equivalent to the markup tag you would use for it.
+           Default is NULL, which means it'll select the correct tag automatically,
+           though you could override it if you'd like to set a special tag/style
+           that's defined in the theme.
+           E.g. your theme may define <danger> which you can then use here.
+         ]]
+         set { }
+         get { }
+         values {
+            name: string; [[The name of the tag.]]
+         }
+      }
+
       reset {
          [[Resets the factory context
          ]]
