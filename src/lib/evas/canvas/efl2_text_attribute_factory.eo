@@ -27,6 +27,7 @@ class @beta Efl2.Text.Attribute.Factory extends Efl.Object implements Efl2.Text.
       /*
       // FIXME: return a value to know if succeeded or failed in setting?
       // FIXME: Do I actually want this?
+      // FIXME: If I end up using this, the string representation needs to be API so need to work on that a bit.
       @property properties {
          [[The properties of the format as a string
 
