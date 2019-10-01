@@ -365,11 +365,12 @@ evas_cache_vg_file_open(const Eina_File *file, const char *key)
 Vg_Cache_Entry*
 evas_cache_vg_entry_resize(Vg_Cache_Entry *vg_entry, int w, int h)
 {
-   return evas_cache_vg_entry_create(vg_entry->file, vg_entry->key, w, h);
+   return evas_cache_vg_entry_create(vg_entry->evas, vg_entry->file, vg_entry->key, w, h);
 }
 
 Vg_Cache_Entry*
-evas_cache_vg_entry_create(const Eina_File *file,
+evas_cache_vg_entry_create(Evas *evas,
+                           const Eina_File *file,
                            const char *key,
                            int w, int h)
 {
@@ -381,7 +382,7 @@ evas_cache_vg_entry_create(const Eina_File *file,
    //TODO: zero-sized entry is useless. how to skip it?
 
    hash_key = eina_strbuf_new();
-   eina_strbuf_append_printf(hash_key, "%p/%s/%d/%d", file, key, w, h);
+   eina_strbuf_append_printf(hash_key, "%p/%p/%s/%d/%d", evas, file, key, w, h);
    vg_entry = eina_hash_find(vg_cache->vg_entry_hash, eina_strbuf_string_get(hash_key));
    if (!vg_entry)
      {
@@ -396,6 +397,7 @@ evas_cache_vg_entry_create(const Eina_File *file,
         vg_entry->key = eina_stringshare_add(key);
         vg_entry->w = w;
         vg_entry->h = h;
+        vg_entry->evas = evas;
         vg_entry->hash_key = eina_strbuf_string_steal(hash_key);
         eina_hash_direct_add(vg_cache->vg_entry_hash, vg_entry->hash_key, vg_entry);
      }

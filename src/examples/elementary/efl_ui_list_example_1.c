@@ -13,6 +13,13 @@
 #include <Eio.h>
 #include <stdio.h>
 
+//FIXME this can go away when efl_ui_text doesn't need elm_general
+# include <elm_general.h>
+# include <efl_text_interactive.eo.h>
+# include <efl_ui_text.eo.h>
+# include <efl_ui_text_editable.eo.h>
+# include <efl_ui_text_async.eo.h>
+
 #define NUM_ITEMS 400
 
 typedef struct _List_Scroll_Data {
@@ -30,7 +37,7 @@ _list_selected(void *data EINA_UNUSED, const Efl_Event *ev)
   Eo *item = ev->info, *tmp;
   printf("list item [%p:%d] is %s\n", item, efl_ui_item_index_get(item), (efl_ui_selectable_selected_get(item)? "selected" : "unselected"));
 
-  Eina_Iterator *selects = efl_ui_selected_items_get(list);
+  Eina_Iterator *selects = efl_ui_selectable_selected_iterator_new(list);
 
   EINA_ITERATOR_FOREACH(selects, tmp)
      printf("selected [%p:%d] ", tmp, efl_ui_item_index_get(tmp));
@@ -70,7 +77,7 @@ static void
 _select_radio_changed(void *data, const Efl_Event *ev)
 {
   Eo *list = data;
-  efl_ui_select_mode_set(list, efl_ui_radio_group_selected_value_get(ev->object));
+  efl_ui_selectable_select_mode_set(list, efl_ui_radio_group_selected_value_get(ev->object));
 }
 
 static void
@@ -82,7 +89,7 @@ _anim_radio_changed(void *data, const Efl_Event *ev EINA_UNUSED)
 static void
 _scrl_btn_clicked(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
-  Efl_Ui_List_Default_Item *item = efl_ui_single_selectable_last_selected_get(priv_d.list);
+  Efl_Ui_List_Default_Item *item = efl_ui_selectable_last_selected_get(priv_d.list);
   printf("show [%d:%p] [%d]\n", efl_ui_item_index_get(item), item, priv_d.anim);
   efl_ui_collection_item_scroll(priv_d.list, item, priv_d.anim);
 }
@@ -90,7 +97,7 @@ _scrl_btn_clicked(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 static void
 _scrl_align_btn_clicked(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
 {
-  Efl_Ui_List_Default_Item *item = efl_ui_single_selectable_last_selected_get(priv_d.list);
+  Efl_Ui_List_Default_Item *item = efl_ui_selectable_last_selected_get(priv_d.list);
   double align = efl_ui_range_value_get(priv_d.slider);
   printf("show [%d:%p] [%.2lf], [%d]\n", efl_ui_item_index_get(item), item, align, priv_d.anim);
   efl_ui_collection_item_scroll_align(priv_d.list, item, align, priv_d.anim);
@@ -110,8 +117,7 @@ elm_main(int argc EINA_UNUSED, char **argv)
 
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Efl.Ui.List"),
+                                  efl_text_set(efl_added, "Efl.Ui.List"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
 
@@ -200,13 +206,13 @@ elm_main(int argc EINA_UNUSED, char **argv)
 
            case 40:
              efl_file_simple_load(efl_part(item, "background"), "./sky_01.jpg", NULL);
-             efl_gfx_image_scale_type_set(efl_part(item, "background"), EFL_GFX_IMAGE_SCALE_TYPE_EXPAND);
+             efl_gfx_image_scale_method_set(efl_part(item, "background"), EFL_GFX_IMAGE_SCALE_METHOD_EXPAND);
              efl_pack_at(list, item, 39);
              break;
 
            case 50:
              efl_file_simple_load(efl_part(item, "background"), "./sky_01.jpg", NULL);
-             efl_gfx_image_scale_type_set(efl_part(item, "background"), EFL_GFX_IMAGE_SCALE_TYPE_TILE);
+             efl_gfx_image_scale_method_set(efl_part(item, "background"), EFL_GFX_IMAGE_SCALE_METHOD_TILE);
              efl_pack(list, item);
              break;
 
@@ -238,10 +244,6 @@ elm_main(int argc EINA_UNUSED, char **argv)
    radio = efl_add(EFL_UI_RADIO_CLASS, wbox);
    efl_text_set(radio, "SINGLE");
    efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_MODE_SINGLE);
-   efl_pack_end(bbox, radio);
-   radio = efl_add(EFL_UI_RADIO_CLASS, wbox);
-   efl_text_set(radio, "SINGLE_ALWAYS");
-   efl_ui_radio_state_value_set(radio, EFL_UI_SELECT_MODE_SINGLE_ALWAYS);
    efl_pack_end(bbox, radio);
    radio = efl_add(EFL_UI_RADIO_CLASS, wbox);
    efl_text_set(radio, "MULTI");
@@ -315,6 +317,7 @@ elm_main(int argc EINA_UNUSED, char **argv)
    elm_win_resize_object_add(win, wbox);
    //window show
    efl_gfx_entity_visible_set(win, EINA_TRUE);
+   efl_gfx_entity_size_set(win, EINA_SIZE2D(417, 600));
 
    elm_run();
 

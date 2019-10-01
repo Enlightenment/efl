@@ -73,13 +73,13 @@ struct @free(free) Dummy.StructSimple
    fmyint: Dummy.MyInt;
 }
 
-struct @free(free) Dummy.StructComplex {
+struct @beta @free(free) Dummy.StructComplex {
    farray: array<string>;
    flist: list<string>;
    fhash: hash<string, string>;
    fiterator: iterator<string>;
    fany_value: any_value;
-   fany_value_ptr: any_value_ptr;
+   fany_value_ref: any_value_ref;
    fbinbuf: binbuf;
    fslice: slice<ubyte>;
    // fslice: ptr(Eina.Slice); // TODO
@@ -134,13 +134,13 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          params {
             @in v: stringshare;
          }
-         return: stringshare @owned;
+         return: stringshare @move;
       }
       in_own_stringshare {
          params {
-            @in v: stringshare @owned;
+            @in v: stringshare @move;
          }
-         return: stringshare @owned;
+         return: stringshare @move;
       }
 
       out_stringshare {
@@ -150,7 +150,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
       out_own_stringshare {
          params {
-            @out v: stringshare @owned;
+            @out v: stringshare @move;
          }
       }
 
@@ -158,21 +158,21 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: stringshare;
       }
       return_own_stringshare {
-         return: stringshare @owned;
+         return: stringshare @move;
       }
 
       in_string {
          params {
             @in str: string;
          }
-         return: mstring @owned;
+         return: mstring @move;
       }
 
       in_own_string {
          params {
-            @in str: mstring @owned;
+            @in str: mstring @move;
          }
-         return: mstring @owned;
+         return: mstring @move;
       }
 
       return_string {
@@ -180,7 +180,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       return_own_string {
-         return: mstring @owned;
+         return: mstring @move;
       }
 
       out_string {
@@ -191,7 +191,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       out_own_string {
          params {
-            @out str: mstring @owned;
+            @out str: mstring @move;
          }
       }
 
@@ -203,7 +203,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       call_in_own_string {
         params {
-            @in str: mstring @owned;
+            @in str: mstring @move;
         }
       }
 
@@ -212,7 +212,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       call_return_own_string {
-         return: mstring @owned;
+         return: mstring @move;
       }
 
       call_out_string {
@@ -220,7 +220,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       call_out_own_string {
-         return: mstring @owned;
+         return: mstring @move;
       }
 
       // Stringshare virtual helpers
@@ -232,7 +232,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       call_in_own_stringshare {
         params {
-            @in str: stringshare @owned;
+            @in str: stringshare @move;
         }
       }
 
@@ -241,7 +241,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       call_return_own_stringshare {
-         return: stringshare @owned;
+         return: stringshare @move;
       }
 
       call_out_stringshare {
@@ -249,7 +249,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       call_out_own_stringshare {
-         return: stringshare @owned;
+         return: stringshare @move;
       }
 
       eina_slice_in {
@@ -313,14 +313,14 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_binbuf_in_own {
          params {
-            @in binbuf: binbuf @owned;
+            @in binbuf: binbuf @move;
          }
          return: bool;
       }
 
       call_eina_binbuf_in_own {
         params {
-            @in str: binbuf @owned;
+            @in str: binbuf @move;
         }
         return: bool;
       }
@@ -346,13 +346,13 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_binbuf_out_own {
          params {
-            @out binbuf: binbuf @owned;
+            @out binbuf: binbuf @move;
          }
          return: bool;
       }
 
       call_eina_binbuf_out_own {
-         return: binbuf @owned;
+         return: binbuf @move;
       }
 
       eina_binbuf_return {
@@ -368,11 +368,11 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       eina_binbuf_return_own {
-         return: binbuf @owned;
+         return: binbuf @move;
       }
 
       call_eina_binbuf_return_own {
-         return: binbuf @owned;
+         return: binbuf @move;
       }
 
       /* Eina Array */
@@ -387,7 +387,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_array_int_in_own {
          params {
-            @in arr: array<int> @owned; // <int @owned>
+            @in arr: array<int> @move; // <int @move>
          }
          return: bool;
       }
@@ -407,7 +407,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_array_int_out_own {
          params {
-            @out arr: array<int> @owned; // <int @owned>
+            @out arr: array<int> @move; // <int @move>
          }
          return: bool;
       }
@@ -420,7 +420,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       eina_array_int_return_own {
-         return: array<int> @owned; // <int @owned>
+         return: array<int> @move; // <int @move>
       }
 
       /* String */
@@ -433,7 +433,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_array_str_in_own {
          params {
-            @in arr: array<mstring @owned> @owned;
+            @in arr: array<mstring @move> @move;
          }
          return: bool;
       }
@@ -453,7 +453,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_array_str_out_own {
          params {
-            @out arr: array<mstring @owned> @owned;
+            @out arr: array<mstring @move> @move;
          }
          return: bool;
       }
@@ -466,7 +466,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       eina_array_str_return_own {
-         return: array<mstring @owned> @owned;
+         return: array<mstring @move> @move;
       }
 
       /* Eina_Stringshare */
@@ -479,7 +479,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_array_strshare_in_own {
          params {
-            @in arr: array<stringshare @owned> @owned;
+            @in arr: array<stringshare @move> @move;
          }
          return: bool;
       }
@@ -499,7 +499,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_array_strshare_out_own {
          params {
-            @out arr: array<stringshare @owned> @owned;
+            @out arr: array<stringshare @move> @move;
          }
          return: bool;
       }
@@ -512,7 +512,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       eina_array_strshare_return_own {
-         return: array<stringshare @owned> @owned;
+         return: array<stringshare @move> @move;
       }
 
       /* Object */
@@ -525,7 +525,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_array_obj_in_own {
          params {
-            @in arr: array<Dummy.Numberwrapper @owned> @owned;
+            @in arr: array<Dummy.Numberwrapper @move> @move;
          }
          return: bool;
       }
@@ -545,7 +545,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_array_obj_out_own {
          params {
-            @out arr: array<Dummy.Numberwrapper @owned> @owned;
+            @out arr: array<Dummy.Numberwrapper @move> @move;
          }
          return: bool;
       }
@@ -558,7 +558,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       eina_array_obj_return_own {
-         return: array<Dummy.Numberwrapper @owned> @owned;
+         return: array<Dummy.Numberwrapper @move> @move;
       }
 
       eina_array_obj_return_in {
@@ -580,7 +580,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_list_int_in_own {
          params {
-            @in lst: list<int> @owned; // <int @owned>
+            @in lst: list<int> @move; // <int @move>
          }
          return: bool;
       }
@@ -600,7 +600,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_list_int_out_own {
          params {
-            @out lst: list<int> @owned; // <int @owned>
+            @out lst: list<int> @move; // <int @move>
          }
          return: bool;
       }
@@ -613,7 +613,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       eina_list_int_return_own {
-         return: list<int> @owned; // <int @owned>
+         return: list<int> @move; // <int @move>
       }
 
       /* String */
@@ -626,7 +626,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_list_str_in_own {
          params {
-            @in lst: list<mstring @owned> @owned;
+            @in lst: list<mstring @move> @move;
          }
          return: bool;
       }
@@ -646,7 +646,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_list_str_out_own {
          params {
-            @out lst: list<mstring @owned> @owned;
+            @out lst: list<mstring @move> @move;
          }
          return: bool;
       }
@@ -659,7 +659,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       eina_list_str_return_own {
-         return: list<mstring @owned> @owned;
+         return: list<mstring @move> @move;
       }
 
       /* Eina_Stringshare */
@@ -672,7 +672,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_list_strshare_in_own {
          params {
-            @in lst: list<stringshare @owned> @owned;
+            @in lst: list<stringshare @move> @move;
          }
          return: bool;
       }
@@ -692,7 +692,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_list_strshare_out_own {
          params {
-            @out lst: list<stringshare @owned> @owned;
+            @out lst: list<stringshare @move> @move;
          }
          return: bool;
       }
@@ -705,7 +705,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       eina_list_strshare_return_own {
-         return: list<stringshare @owned> @owned;
+         return: list<stringshare @move> @move;
       }
 
       /* Object */
@@ -718,7 +718,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_list_obj_in_own {
          params {
-            @in lst: list<Dummy.Numberwrapper @owned> @owned;
+            @in lst: list<Dummy.Numberwrapper @move> @move;
          }
          return: bool;
       }
@@ -738,7 +738,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_list_obj_out_own {
          params {
-            @out lst: list<Dummy.Numberwrapper @owned> @owned;
+            @out lst: list<Dummy.Numberwrapper @move> @move;
          }
          return: bool;
       }
@@ -751,7 +751,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       eina_list_obj_return_own {
-         return: list<Dummy.Numberwrapper @owned> @owned;
+         return: list<Dummy.Numberwrapper @move> @move;
       }
 
       eina_list_obj_return_in {
@@ -764,7 +764,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       // Eina Hash //
 
       // Integer //
-      eina_hash_int_in {
+      eina_hash_int_in @beta {
          params {
             @in hsh: hash<int, int>;
          }
@@ -772,9 +772,9 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       /*
-      eina_hash_int_in_own {
+      eina_hash_int_in_own @beta {
          params {
-            @in hsh: hash<int, int> @owned; // <, int @owned>
+            @in hsh: hash<int, int> @move; // <, int @move>
          }
          return: bool;
       }
@@ -783,150 +783,150 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
       */
 
-      eina_hash_int_out {
+      eina_hash_int_out @beta {
          params {
             @out hsh: hash<int, int>;
          }
          return: bool;
       }
-      check_eina_hash_int_out {
+      check_eina_hash_int_out @beta {
          return: bool;
       }
 
       /*
-      eina_hash_int_out_own {
+      eina_hash_int_out_own @beta {
          params {
-            @out hsh: hash<int, int> @owned; // <, int @owned>
+            @out hsh: hash<int, int> @move; // <, int @move>
          }
          return: bool;
       }
-      check_eina_hash_int_out_own {
+      check_eina_hash_int_out_own @beta {
          return: bool;
       }
       */
 
-      eina_hash_int_return {
+      eina_hash_int_return @beta {
          return: hash<int, int>;
       }
-      check_eina_hash_int_return {
+      check_eina_hash_int_return @beta {
          return: bool;
       }
 
       /*
-      eina_hash_int_return_own {
-         return: hash<int, int> @owned; // <, int @owned>
+      eina_hash_int_return_own @beta {
+         return: hash<int, int> @move; // <, int @move>
       }
-      check_eina_hash_int_return_own {
+      check_eina_hash_int_return_own @beta {
          return: bool;
       }
       */
 
       // String //
-      eina_hash_str_in {
+      eina_hash_str_in @beta {
          params {
             @in hsh: hash<string, string>;
          }
          return: bool;
       }
 
-      eina_hash_str_in_own {
+      eina_hash_str_in_own @beta {
          params {
-            @in hsh: hash<string, mstring @owned> @owned;
+            @in hsh: hash<string, mstring @move> @move;
          }
          return: bool;
       }
-      check_eina_hash_str_in_own {
+      check_eina_hash_str_in_own @beta {
          return: bool;
       }
 
-      eina_hash_str_out {
+      eina_hash_str_out @beta {
          params {
             @out hsh: hash<string, string>;
          }
          return: bool;
       }
-      check_eina_hash_str_out {
+      check_eina_hash_str_out @beta {
          return: bool;
       }
 
-      eina_hash_str_out_own {
+      eina_hash_str_out_own @beta {
          params {
-            @out hsh: hash<string, mstring @owned> @owned;
+            @out hsh: hash<string, mstring @move> @move;
          }
          return: bool;
       }
-      check_eina_hash_str_out_own {
+      check_eina_hash_str_out_own @beta {
          return: bool;
       }
 
-      eina_hash_str_return {
+      eina_hash_str_return @beta {
          return: hash<string, string>;
       }
-      check_eina_hash_str_return {
+      check_eina_hash_str_return @beta {
          return: bool;
       }
 
-      eina_hash_str_return_own {
-         return: hash<string, mstring @owned> @owned;
+      eina_hash_str_return_own @beta {
+         return: hash<string, mstring @move> @move;
       }
-      check_eina_hash_str_return_own {
+      check_eina_hash_str_return_own @beta {
          return: bool;
       }
 
       // Eina_Stringshare //
-      eina_hash_strshare_in {
+      eina_hash_strshare_in @beta {
          params {
             @in hsh: hash<stringshare, stringshare>;
          }
          return: bool;
       }
 
-      eina_hash_strshare_in_own {
+      eina_hash_strshare_in_own @beta {
          params {
-            @in hsh: hash<stringshare, stringshare @owned> @owned;
+            @in hsh: hash<stringshare, stringshare @move> @move;
          }
          return: bool;
       }
-      check_eina_hash_strshare_in_own {
+      check_eina_hash_strshare_in_own @beta {
          return: bool;
       }
 
-      eina_hash_strshare_out {
+      eina_hash_strshare_out @beta {
          params {
             @out hsh: hash<stringshare, stringshare>;
          }
          return: bool;
       }
-      check_eina_hash_strshare_out {
+      check_eina_hash_strshare_out @beta {
          return: bool;
       }
 
-      eina_hash_strshare_out_own {
+      eina_hash_strshare_out_own @beta {
          params {
-            @out hsh: hash<stringshare, stringshare @owned> @owned;
+            @out hsh: hash<stringshare, stringshare @move> @move;
          }
          return: bool;
       }
-      check_eina_hash_strshare_out_own {
+      check_eina_hash_strshare_out_own @beta {
          return: bool;
       }
 
-      eina_hash_strshare_return {
+      eina_hash_strshare_return @beta {
          return: hash<stringshare, stringshare>;
       }
-      check_eina_hash_strshare_return {
+      check_eina_hash_strshare_return @beta {
          return: bool;
       }
 
-      eina_hash_strshare_return_own {
-         return: hash<stringshare, stringshare @owned> @owned;
+      eina_hash_strshare_return_own @beta {
+         return: hash<stringshare, stringshare @move> @move;
       }
-      check_eina_hash_strshare_return_own {
+      check_eina_hash_strshare_return_own @beta {
          return: bool;
       }
 
       // Object //
-      eina_hash_obj_in {
+      eina_hash_obj_in @beta {
          params {
             @in hsh: hash<Dummy.Numberwrapper, Dummy.Numberwrapper>;
             @in nwk1: Dummy.Numberwrapper;
@@ -937,9 +937,9 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_hash_obj_in_own {
+      eina_hash_obj_in_own @beta {
          params {
-            @in hsh: hash<Dummy.Numberwrapper, Dummy.Numberwrapper @owned> @owned;
+            @in hsh: hash<Dummy.Numberwrapper, Dummy.Numberwrapper @move> @move;
             @in nwk1: Dummy.Numberwrapper;
             @in nwv1: Dummy.Numberwrapper;
             @out nwk2: Dummy.Numberwrapper;
@@ -947,7 +947,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
          return: bool;
       }
-      check_eina_hash_obj_in_own {
+      check_eina_hash_obj_in_own @beta {
          params {
             @in nwk1: Dummy.Numberwrapper;
             @in nwv1: Dummy.Numberwrapper;
@@ -957,7 +957,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_hash_obj_out {
+      eina_hash_obj_out @beta {
          params {
             @out hsh: hash<Dummy.Numberwrapper, Dummy.Numberwrapper>;
             @out nwk: Dummy.Numberwrapper;
@@ -965,7 +965,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
          return: bool;
       }
-      check_eina_hash_obj_out {
+      check_eina_hash_obj_out @beta {
          params {
             @in nwk1: Dummy.Numberwrapper;
             @in nwv1: Dummy.Numberwrapper;
@@ -975,26 +975,26 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_hash_obj_out_own {
+      eina_hash_obj_out_own @beta {
          params {
-            @out hsh: hash<Dummy.Numberwrapper, Dummy.Numberwrapper @owned> @owned;
+            @out hsh: hash<Dummy.Numberwrapper, Dummy.Numberwrapper @move> @move;
             @out nwk: Dummy.Numberwrapper;
             @out nwv: Dummy.Numberwrapper;
          }
          return: bool;
       }
-      check_eina_hash_obj_out_own {
+      check_eina_hash_obj_out_own @beta {
          return: bool;
       }
 
-      eina_hash_obj_return {
+      eina_hash_obj_return @beta {
          params {
             @out nwk: Dummy.Numberwrapper;
             @out nwv: Dummy.Numberwrapper;
          }
          return: hash<Dummy.Numberwrapper, Dummy.Numberwrapper>;
       }
-      check_eina_hash_obj_return {
+      check_eina_hash_obj_return @beta {
          params {
             @in nwk1: Dummy.Numberwrapper;
             @in nwv1: Dummy.Numberwrapper;
@@ -1004,14 +1004,14 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          return: bool;
       }
 
-      eina_hash_obj_return_own {
+      eina_hash_obj_return_own @beta {
          params {
             @out nwk: Dummy.Numberwrapper;
             @out nwv: Dummy.Numberwrapper;
          }
-         return: hash<Dummy.Numberwrapper, Dummy.Numberwrapper @owned> @owned;
+         return: hash<Dummy.Numberwrapper, Dummy.Numberwrapper @move> @move;
       }
-      check_eina_hash_obj_return_own {
+      check_eina_hash_obj_return_own @beta {
          return: bool;
       }
 
@@ -1027,7 +1027,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_iterator_int_in_own {
          params {
-            @in itr: iterator<int> @owned;
+            @in itr: iterator<int> @move;
          }
          return: bool;
       }
@@ -1047,7 +1047,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_iterator_int_out_own {
          params {
-            @out itr: iterator<int> @owned;
+            @out itr: iterator<int> @move;
          }
          return: bool;
       }
@@ -1060,7 +1060,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       eina_iterator_int_return_own {
-         return: iterator<int> @owned;
+         return: iterator<int> @move;
       }
 
       /* String */
@@ -1073,7 +1073,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_iterator_str_in_own {
          params {
-            @in itr: iterator<mstring> @owned;
+            @in itr: iterator<mstring> @move;
          }
          return: bool;
       }
@@ -1093,7 +1093,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_iterator_str_out_own {
          params {
-            @out itr: iterator<mstring> @owned;
+            @out itr: iterator<mstring> @move;
          }
          return: bool;
       }
@@ -1106,7 +1106,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       eina_iterator_str_return_own {
-         return: iterator<mstring> @owned;
+         return: iterator<mstring> @move;
       }
 
       /* Eina_Stringshare */
@@ -1119,7 +1119,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_iterator_strshare_in_own {
          params {
-            @in itr: iterator<stringshare> @owned;
+            @in itr: iterator<stringshare> @move;
          }
          return: bool;
       }
@@ -1139,7 +1139,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_iterator_strshare_out_own {
          params {
-            @out itr: iterator<stringshare> @owned;
+            @out itr: iterator<stringshare> @move;
          }
          return: bool;
       }
@@ -1152,7 +1152,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       eina_iterator_strshare_return_own {
-         return: iterator<stringshare> @owned;
+         return: iterator<stringshare> @move;
       }
 
       /* Object */
@@ -1165,7 +1165,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_iterator_obj_in_own {
          params {
-            @in itr: iterator<Dummy.Numberwrapper> @owned;
+            @in itr: iterator<Dummy.Numberwrapper> @move;
          }
          return: bool;
       }
@@ -1185,7 +1185,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       eina_iterator_obj_out_own {
          params {
-            @out itr: iterator<Dummy.Numberwrapper> @owned;
+            @out itr: iterator<Dummy.Numberwrapper> @move;
          }
          return: bool;
       }
@@ -1198,7 +1198,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       eina_iterator_obj_return_own {
-         return: iterator<Dummy.Numberwrapper> @owned;
+         return: iterator<Dummy.Numberwrapper> @move;
       }
 
      /* Function Pointer */
@@ -1243,13 +1243,13 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       /* Eina Values */
       set_value_ptr {
          params {
-            value: any_value_ptr;
+            value: any_value_ref;
          }
       }
 
       set_value_ptr_own {
          params {
-            value: any_value_ptr @owned;
+            value: any_value_ref @move;
          }
       }
 
@@ -1266,11 +1266,11 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       get_value_ptr_own {
-         return: any_value_ptr @owned;
+         return: any_value_ref @move;
       }
 
       get_value_ptr {
-         return: any_value_ptr;
+         return: any_value_ref;
       }
 
       /* Commented out due to issues regarding eolian treatment of any_value.
@@ -1287,13 +1287,13 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       out_value_ptr {
          params {
-            @out value: any_value_ptr;
+            @out value: any_value_ref;
          }
       }
 
       out_value_ptr_own {
          params {
-            @out value: any_value_ptr @owned;
+            @out value: any_value_ref @move;
          }
       }
 
@@ -1322,7 +1322,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       struct_simple_ptr_in_own {
          params {
-            @in simple: ptr(Dummy.StructSimple) @owned;
+            @in simple: ptr(Dummy.StructSimple) @move;
          }
          return: Dummy.StructSimple;
       }
@@ -1345,7 +1345,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       struct_simple_ptr_out_own {
          params {
-            @out simple: ptr(Dummy.StructSimple) @owned;
+            @out simple: ptr(Dummy.StructSimple) @move;
          }
          return: Dummy.StructSimple;
       }
@@ -1361,7 +1361,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       struct_simple_ptr_return_own {
-         return: ptr(Dummy.StructSimple) @owned;
+         return: ptr(Dummy.StructSimple) @move;
       }
       */
 
@@ -1380,7 +1380,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       call_struct_simple_ptr_in_own {
          params {
-            @in simple: ptr(Dummy.StructSimple) @owned;
+            @in simple: ptr(Dummy.StructSimple) @move;
          }
       }
       */
@@ -1400,7 +1400,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
 
       call_struct_simple_ptr_out_own {
          params {
-            @out simple: ptr(Dummy.StructSimple) @owned;
+            @out simple: ptr(Dummy.StructSimple) @move;
          }
       }
       */
@@ -1415,11 +1415,11 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       call_struct_simple_ptr_return_own {
-         return: ptr(Dummy.StructSimple) @owned;
+         return: ptr(Dummy.StructSimple) @move;
       }
       */
 
-      struct_complex_in {
+      struct_complex_in @beta {
          params {
             @in complex: Dummy.StructComplex;
          }
@@ -1427,22 +1427,22 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       }
 
       /*
-      struct_complex_ptr_in {
+      struct_complex_ptr_in @beta {
          params {
             @in complex: ptr(Dummy.StructComplex);
          }
          return: bool;
       }
 
-      struct_complex_ptr_in_own {
+      struct_complex_ptr_in_own @beta {
          params {
-            @in complex: ptr(Dummy.StructComplex) @owned;
+            @in complex: ptr(Dummy.StructComplex) @move;
          }
          return: bool;
       }
       */
 
-      struct_complex_out {
+      struct_complex_out @beta {
          params {
             @out complex: Dummy.StructComplex;
          }
@@ -1458,12 +1458,12 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       //
       // struct_complex_ptr_out_own {
       //    params {
-      //       @out complex: ptr(Dummy.StructComplex) @owned;
+      //       @out complex: ptr(Dummy.StructComplex) @move;
       //    }
       //    return: bool;
       // }
 
-      struct_complex_return {
+      struct_complex_return @beta {
          return: Dummy.StructComplex;
       }
 
@@ -1472,7 +1472,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       // }
       //
       // struct_complex_ptr_return_own {
-      //    return: ptr(Dummy.StructComplex) @owned;
+      //    return: ptr(Dummy.StructComplex) @move;
       // }
 
       emit_event_with_string {
@@ -1523,7 +1523,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
       }
 
-      emit_event_with_struct_complex {
+      emit_event_with_struct_complex @beta {
          params {
             @in data: Dummy.StructComplex;
          }
@@ -1595,7 +1595,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       /* Futures */
 
       get_future {
-         return: future<any_value_ptr>;
+         return: future<any_value_ref>;
       }
 
       fulfill_promise {
@@ -1615,7 +1615,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          params {
             @in acc: accessor<int>;
          }
-         return: accessor<int> @owned;
+         return: accessor<int> @move;
       }
 
       @property setter_only {
@@ -1646,6 +1646,14 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
          }
          return: const(ptr(Eina.Value_Type));
       }
+
+      @property hidden_object {
+         get {}
+
+         values {
+            obj: Efl.Object;
+         }
+      }
    }
    implements {
       Efl.Object.constructor;
@@ -1653,9 +1661,14 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       Efl.Object.provider_find;
       Dummy.Test_Iface.emit_nonconflicted;
       Dummy.Test_Iface.iface_prop { get; set; }
+      Dummy.Test_Iface.protected_prop { get; set; }
+      Dummy.Test_Iface.public_getter_private_setter{ get; set; }
+      Dummy.Test_Iface.static_prop{ get; set; }
+      Dummy.Test_Iface.method_protected;
+      Dummy.Test_Iface.call_method_protected;
    }
    events {
-      evt,with,string @hot: const(string);
+      evt,with,string @hot: string;
       evt,with,bool: bool;
       evt,with,int @hot: int;
       evt,with,uint @hot: uint;
@@ -1664,7 +1677,7 @@ class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
       evt,with,obj @hot: Dummy.Test_Object;
       evt,with,error @hot: Eina.Error;
       evt,with,struct @hot: Dummy.StructSimple;
-      evt,with,struct,complex @hot: Dummy.StructComplex;
+      evt,with,struct,complex @beta @hot: Dummy.StructComplex;
       evt,with,array @hot: const(array<string>);
       evt_with,under @hot: void;
 

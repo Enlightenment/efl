@@ -1,71 +1,83 @@
-interface @beta Efl.Player
+interface Efl.Player
 {
-   [[Efl media player interface]]
+   [[Efl media player interface
+
+     @since 1.23
+   ]]
+   c_prefix: efl_player;
    methods {
-        start {
-           [[Start a playing playable object.]]
-        }
-        stop {
-          [[Stop playable object.]]
-        }
-        @property playable {
-             [[Whether or not the playable can be played.]]
-             get {
-             }
-             values {
-                  play: bool; [[$true if the object have playable data, $false otherwise]]
-             }
-        }
-        @property play {
-             set {
-                  [[Set play/pause state of the media file.
+        @property playing {
+           [[Playback state of the media file.
 
-                    This functions sets the currently playing status of the
-                    video. Using this function to play or pause the video
-                    doesn't alter it's current position.
-                  ]]
-             }
-             get {
-                  [[Get play/pause state of the media file.]]
-             }
-             values {
-                  play: bool; [[$true if playing, $false otherwise.]]
-             }
-        }
-        @property pos {
-             set {
-                  [[Set the position in the media file.
+             This property sets the playback state of the object. Re-setting the current
+             playback state has no effect.
 
-                    This functions sets the current position of the media file
-                    to "sec", this only works on seekable streams. Setting the
-                    position doesn't change the playing state of the media file.
-                  ]]
-             }
-             get {
-                  [[Get the position in the media file.
+             If set to $false, the object's @.playback_progress property is, by default, reset to $[0.0]. A
+             class may alter this behavior, and it will be stated in the documentation for a class
+             if such behavior changes should be expected.
 
-                    The position is returned as the number of seconds since the
-                    beginning of the media file.
-                  ]]
-             }
-             values {
-                  sec: double; [[The position (in seconds).]]
-             }
+             Applying the $false playing state also has the same effect as the player object reaching
+             the end of its playback, which may invoke additional behavior based on a class's
+             implementation.
+           ]]
+           set {
+              return: bool(false); [[If $true, the property change has succeeded.]]
+           }
+           get {
+           }
+           values {
+                playing: bool; [[$true if playing, $false otherwise.]]
+           }
         }
-        @property progress {
-             get {
-                  [[Get how much of the file has been played.
+        @property paused {
+           [[Pause state of the media file.
 
-                    This function gets the progress in playing the file, the
-                    return value is in the [0, 1] range.
-                  ]]
-             }
-             values {
-                  progress: double; [[The progress within the [0, 1] range.]]
-             }
+             This property sets the pause state of the media.  Re-setting the current
+             pause state has no effect.
+
+             If @.playing is set to $true, this property can be used to pause and resume
+             playback of the media without changing its @.playback_progress property. This property
+             cannot be changed if @.playing is $false.
+           ]]
+           set {
+              return: bool(false); [[If $true, the property change has succeeded.]]
+           }
+           get {
+           }
+           values {
+                paused: bool; [[$true if paused, $false otherwise.]]
+           }
         }
-        @property play_speed {
-             [[Control the play speed of the media file.
+        @property playback_position {
+           [[Position in the media file.
+
+             This property sets the current position of the media file
+             to $sec seconds since the beginning of the media file.
+             This only works on seekable streams. Setting the
+             position doesn't change the @.playing or @.paused states of the media file.
+           ]]
+           set {
+           }
+           get {
+           }
+           values {
+                sec: double; [[The position (in seconds).]]
+           }
+        }
+        @property playback_progress {
+           [[How much of the file has been played.
+
+             This function gets the progress in playing the file, the
+             return value is in the [0, 1] range.
+           ]]
+           get {
+           }
+           values {
+                progress: double; [[The progress within the [0, 1] range.]]
+           }
+        }
+        @property playback_speed {
+             [[Control the playback speed of the media file.
 
                This function control the speed with which the media file will
                be played. 1.0 represents the normal speed, 2 double speed, 0.5
@@ -77,49 +89,6 @@ interface @beta Efl.Player
              }
              values {
                   speed: double; [[The play speed in the [0, infinity) range.]]
-             }
-        }
-        @property volume {
-             [[Control the audio volume.
-
-               Controls the audio volume of the stream being played. This has
-               nothing to do with the system volume. This volume will be
-               multiplied by the system volume. e.g.: if the current volume
-               level is 0.5, and the system volume is 50%, it will be
-               0.5 * 0.5 = 0.25.
-             ]]
-             set {
-             }
-             get {
-             }
-             values {
-                  volume: double; [[The volume level]]
-             }
-        }
-        @property mute {
-             [[This property controls the audio mute state.]]
-             set {
-             }
-             get {
-             }
-             values {
-                  mute: bool; [[The mute state. $true or $false.]]
-             }
-        }
-        @property length {
-             [[Get the length of play for the media file.]]
-             get {
-             }
-             values {
-                  length: double; [[The length of the stream in seconds.]]
-             }
-        }
-        @property seekable {
-             [[Get whether the media file is seekable.]]
-             get {
-             }
-             values {
-                  seekable: bool; [[$true if seekable.]]
              }
         }
    }

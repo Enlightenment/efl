@@ -24,7 +24,10 @@ enum @beta Efl.Gfx.Colorspace {
 }
 
 enum Efl.Gfx.Render_Op {
-  [[Graphics render operation mode]]
+  [[Graphics render operation mode
+
+    @since 1.23
+  ]]
   blend = 0, [[Alpha blending onto destination (default); d = d*(1-sa) + s.]]
   copy  = 1, [[Copy source to destination; d = s.]]
   last       [[Sentinel value to indicate last enum field during iteration]]
@@ -141,7 +144,18 @@ struct @beta Efl.Gfx.Shape_Public
    stroke: Efl.Gfx.Stroke; [[Internal representation as stroke]]
 }
 
-enum @beta Efl.Gfx.Border_Fill_Mode
+enum @beta Efl.Gfx.Vg_Composite_Method
+{
+   none,
+   matte_alpha,
+   matte_alpha_inverse,
+   mask_add,
+   mask_substract,
+   mask_intersect,
+   mask_difference
+}
+
+enum Efl.Gfx.Center_Fill_Mode
 {
    [[How an image's center region (the complement to the border region) should be rendered by EFL]]
    none = 0, [[Image's center region is $not to be rendered]]
@@ -171,6 +185,8 @@ enum Efl.Gfx.Hint_Aspect
    [[Aspect types/policies for scaling size hints.
 
      See also @Efl.Gfx.Hint.hint_aspect.
+
+     @since 1.23
    ]]
 
    none = 0, [[No preference on either direction of the container
@@ -194,14 +210,14 @@ enum @beta Efl.Gfx.Color_Class_Layer {
 
 type @beta Efl.Font.Size: int; [[Efl font size type]]
 
-var @beta Efl.Gfx.Image.Load_Error.NONE: Eina.Error; [[No error on load]]
-var @beta Efl.Gfx.Image.Load_Error.GENERIC: Eina.Error; [[A non-specific error occurred]]
-var @beta Efl.Gfx.Image.Load_Error.DOES_NOT_EXIST: Eina.Error; [[File (or file path) does not exist]]
-var @beta Efl.Gfx.Image.Load_Error.PERMISSION_DENIED: Eina.Error; [[Permission denied to an existing file (or path)]]
-var @beta Efl.Gfx.Image.Load_Error.RESOURCE_ALLOCATION_FAILED: Eina.Error; [[Allocation of resources failure prevented load]]
-var @beta Efl.Gfx.Image.Load_Error.CORRUPT_FILE: Eina.Error; [[File corrupt (but was detected as a known format)]]
-var @beta Efl.Gfx.Image.Load_Error.UNKNOWN_FORMAT: Eina.Error; [[File is not a known format]]
-var @beta Efl.Gfx.Image.Load_Error.CANCELLED: Eina.Error; [[Reading operation has been cancelled during decoding]]
-var @beta Efl.Gfx.Image.Load_Error.INCOMPATIBLE_FILE: Eina.Error; [[(Edje only) The file pointed to is incompatible, i.e., it doesn't match the library's current version's format.]]
-var @beta Efl.Gfx.Image.Load_Error.UNKNOWN_COLLECTION: Eina.Error; [[(Edje only) The group/collection set to load from was not found in the file]]
-var @beta Efl.Gfx.Image.Load_Error.RECURSIVE_REFERENCE: Eina.Error; [[(Edje only) The group/collection set to load from had recursive references on its components]]
+error @extern @beta Efl.Gfx.Image.Load_Error.NONE = "XXX"; [[No error on load]]
+error @extern @beta Efl.Gfx.Image.Load_Error.GENERIC = "XXX"; [[A non-specific error occurred]]
+error @extern @beta Efl.Gfx.Image.Load_Error.DOES_NOT_EXIST = "XXX"; [[File (or file path) does not exist]]
+error @extern @beta Efl.Gfx.Image.Load_Error.PERMISSION_DENIED = "XXX"; [[Permission denied to an existing file (or path)]]
+error @extern @beta Efl.Gfx.Image.Load_Error.RESOURCE_ALLOCATION_FAILED = "XXX"; [[Allocation of resources failure prevented load]]
+error @extern @beta Efl.Gfx.Image.Load_Error.CORRUPT_FILE = "XXX"; [[File corrupt (but was detected as a known format)]]
+error @extern @beta Efl.Gfx.Image.Load_Error.UNKNOWN_FORMAT = "XXX"; [[File is not a known format]]
+error @extern @beta Efl.Gfx.Image.Load_Error.CANCELLED = "XXX"; [[Reading operation has been cancelled during decoding]]
+error @extern @beta Efl.Gfx.Image.Load_Error.INCOMPATIBLE_FILE = "XXX"; [[(Edje only) The file pointed to is incompatible, i.e., it doesn't match the library's current version's format.]]
+error @extern @beta Efl.Gfx.Image.Load_Error.UNKNOWN_COLLECTION = "XXX"; [[(Edje only) The group/collection set to load from was not found in the file]]
+error @extern @beta Efl.Gfx.Image.Load_Error.RECURSIVE_REFERENCE = "XXX"; [[(Edje only) The group/collection set to load from had recursive references on its components]]

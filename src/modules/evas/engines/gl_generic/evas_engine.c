@@ -2,7 +2,6 @@
 #include "evas_gl_core_private.h"
 
 #include "software/Ector_Software.h"
-#include "cairo/Ector_Cairo.h"
 #include "gl/Ector_GL.h"
 #include "evas_ector_gl.h"
 #include "filters/gl_engine_filter.h"
@@ -2534,7 +2533,6 @@ eng_texture_image_get(void *engine EINA_UNUSED, void *texture)
    return e3d_texture_get((E3D_Texture *)texture);
 }
 
-static Eina_Bool use_cairo = EINA_FALSE;
 static Eina_Bool use_gl = EINA_FALSE;
 
 static Ector_Surface *
@@ -2544,20 +2542,14 @@ eng_ector_create(void *engine EINA_UNUSED)
    const char *ector_backend;
    ector_backend = getenv("ECTOR_BACKEND");
    efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
-   if (ector_backend && !strcasecmp(ector_backend, "default"))
-     {
-        ector = efl_add_ref(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
-     }
-   else if (ector_backend && !strcasecmp(ector_backend, "experimental"))
+   if (ector_backend && !strcasecmp(ector_backend, "gl"))
      {
         ector = efl_add_ref(ECTOR_GL_SURFACE_CLASS, NULL);
         use_gl = EINA_TRUE;
      }
    else
-     {
-        ector = efl_add_ref(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
-        use_cairo = EINA_TRUE;
-     }
+     ector = efl_add_ref(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
+
    efl_domain_current_pop();
    return ector;
 }
@@ -2639,7 +2631,11 @@ eng_ector_renderer_draw(void *engine EINA_UNUSED, void *surface,
                         void *context EINA_UNUSED, Ector_Renderer *renderer,
                         Eina_Array *clips EINA_UNUSED, Eina_Bool do_async EINA_UNUSED)
 {
-   if (use_cairo || !use_gl)
+   if (use_gl)
+     {
+        //FIXME no implementation yet
+     }
+   else
      {
         int w, h;
         Eina_Rectangle *r;
@@ -2654,10 +2650,7 @@ eng_ector_renderer_draw(void *engine EINA_UNUSED, void *surface,
         while ((r = eina_array_pop(c)))
           eina_rectangle_free(r);
         eina_array_free(c);
-     }
-   else
-     {
-       //FIXME no implementation yet
+
      }
 }
 
@@ -2724,7 +2717,11 @@ eng_ector_begin(void *engine, void *surface,
                 void *context EINA_UNUSED, Ector_Surface *ector,
                 int x, int y, Eina_Bool clear, Eina_Bool do_async EINA_UNUSED)
 {
-   if (use_cairo|| !use_gl)
+   if (use_gl)
+     {
+        //FIXME: No implementation yet
+     }
+   else
      {
         int w, h, stride;
         Evas_GL_Image *glim = surface;
@@ -2740,10 +2737,7 @@ eng_ector_begin(void *engine, void *surface,
         // it just uses the software backend to draw for now
         ector_buffer_pixels_set(ector, pixels, w, h, stride, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         ector_surface_reference_point_set(ector, x, y);
-     }
-   else
-     {
-        //FIXME: No implementation yet
+
      }
 }
 
@@ -2754,7 +2748,11 @@ eng_ector_end(void *engine,
               Ector_Surface *ector,
               Eina_Bool do_async EINA_UNUSED)
 {
-   if (use_cairo || !use_gl)
+   if (use_gl)
+     {
+        //FIXME: No implementation yet
+     }
+   else
      {
         Evas_GL_Image *glim = surface;
         DATA32 *pixels;
@@ -2766,10 +2764,7 @@ eng_ector_end(void *engine,
         eng_image_data_put(engine, glim, pixels);
         ector_buffer_pixels_set(ector, NULL, 0, 0, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);
         evas_common_cpu_end_opt();
-     }
-   else if (use_gl)
-     {
-        //FIXME: No implementation yet
+
      }
 }
 
@@ -3132,6 +3127,7 @@ _gfx_filter_func_get(Render_Engine_GL_Generic *re, Evas_Filter_Command *cmd)
       case EVAS_FILTER_MODE_FILL: funcptr = gl_filter_fill_func_get(re, cmd); break;
       case EVAS_FILTER_MODE_MASK: funcptr = gl_filter_mask_func_get(re, cmd); break;
       //case EVAS_FILTER_MODE_TRANSFORM: funcptr = gl_filter_transform_func_get(re, cmd); break;
+      case EVAS_FILTER_MODE_GRAYSCALE: funcptr = gl_filter_grayscale_func_get(re, cmd); break;
       default: return NULL;
      }
 

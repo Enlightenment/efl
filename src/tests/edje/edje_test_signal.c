@@ -92,7 +92,6 @@ EFL_START_TEST(edje_test_message_send_legacy)
 
    evas_object_del(obj);
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -151,7 +150,6 @@ EFL_START_TEST(edje_test_message_send_eo)
 
    efl_del(obj);
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -185,7 +183,6 @@ EFL_START_TEST(edje_test_signals)
 
    efl_del(obj);
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -229,7 +226,6 @@ EFL_START_TEST(edje_test_signal_callback_del_full)
 
    efl_del(obj);
 
-   evas_free(evas);
 }
 EFL_END_TEST
 

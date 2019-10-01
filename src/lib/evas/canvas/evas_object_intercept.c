@@ -48,6 +48,7 @@ void
 evas_object_intercept_cleanup(Evas_Object *eo_obj)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   if (!obj) return;
    if (obj->interceptors) free(obj->interceptors);
 }
 
@@ -106,7 +107,7 @@ _evas_object_intercept_call_internal(Evas_Object *eo_obj,
              /* If show is called during hide animation is running, then the
               * current hide animation is cancelled and show operation is
               * proceeded. */
-             if ((!obj->anim_player) || (!efl_player_play_get(obj->anim_player)))
+             if ((!obj->anim_player) || (!efl_player_playing_get(obj->anim_player)))
                return 1;
           }
         if (!obj->interceptors) return 0;

@@ -1,6 +1,7 @@
 
 group { "efl/text/scroller";
    inherit: "efl/scroller";
+   data.item: "version" "123";
    image: "bg_glow_in.png" COMP;
    parts {
       part { name: "efl.background"; type: SWALLOW;
@@ -34,7 +35,7 @@ group { "efl/text/scroller";
             rel1.to: "efl.icon";
             rel1.relative: 1.0 0.0;
             rel1.offset: 0 0;
-            rel2.to: "efl.end";
+            rel2.to: "efl.extra";
             rel2.relative: 0.0 1.0;
             rel2.offset: -1 -1;
          }
@@ -67,7 +68,7 @@ group { "efl/text/scroller";
          action: STATE_SET "default" 0.0;
          target: "efl.icon";
       }
-      part { name: "efl.end"; type: SWALLOW;
+      part { name: "efl.extra"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -88,12 +89,12 @@ group { "efl/text/scroller";
       program {
          signal: "efl,action,show,end"; source: "efl";
          action: STATE_SET "visible" 0.0;
-         target: "efl.end";
+         target: "efl.extra";
       }
       program {
          signal: "efl,action,hide,end"; source: "efl";
          action: STATE_SET "default" 0.0;
-         target: "efl.end";
+         target: "efl.extra";
       }
       part { name: "glow";
          insert_after: "shadow";
@@ -157,6 +158,7 @@ group { "efl/text/scroller";
 }
 
 group { "efl/text/single/scroller";
+   data.item: "version" "123";
    images.image: "bevel_in.png" COMP;
    images.image: "inset_shadow.png" COMP;
    image: "bg_glow_in.png" COMP;
@@ -183,7 +185,7 @@ group { "efl/text/single/scroller";
             visible: 0;
          }
       }
-      part { name: "efl.dragable.vbar"; type: RECT;
+      part { name: "efl.draggable.vertical_bar"; type: RECT;
          dragable.x: 0 0 0;
          dragable.y: 1 1 0;
          dragable.confine: "sb_vbar_base";
@@ -203,7 +205,7 @@ group { "efl/text/single/scroller";
             visible: 0;
          }
       }
-      part { name: "efl.dragable.hbar"; type: RECT;
+      part { name: "efl.draggable.horizontal_bar"; type: RECT;
          dragable.x: 1 1 0;
          dragable.y: 0 0 0;
          dragable.confine: "sb_hbar_base";
@@ -242,7 +244,7 @@ group { "efl/text/single/scroller";
          description { state: "default" 0.0;
             rel1.to: "efl.icon";
             rel1.relative: 1.0 0.0;
-            rel2.to: "efl.end";
+            rel2.to: "efl.extra";
             rel2.relative: 0.0 1.0;
          }
       }
@@ -272,7 +274,7 @@ group { "efl/text/single/scroller";
          action: STATE_SET "default" 0.0;
          target: "efl.icon";
       }
-      part { name: "efl.end"; type: SWALLOW;
+      part { name: "efl.extra"; type: SWALLOW;
          clip_to: "clipper";
          description { state: "default" 0.0;
             fixed: 1 1;
@@ -291,12 +293,12 @@ group { "efl/text/single/scroller";
       program {
          signal: "efl,action,show,end"; source: "efl";
          action: STATE_SET "visible" 0.0;
-         target: "efl.end";
+         target: "efl.extra";
       }
       program {
          signal: "efl,action,hide,end"; source: "efl";
          action: STATE_SET "default" 0.0;
-         target: "efl.end";
+         target: "efl.extra";
       }
       part { name: "inset"; mouse_events: 0;
          description { state: "default" 0.0;
@@ -389,6 +391,7 @@ group { "efl/text/single/scroller";
 }
 
 group { "efl/text/cursor";
+   data.item: "version" "123";
    min: 1 0;
    images.image: "white_bar_vert_glow.png" COMP;
    parts {
@@ -491,6 +494,7 @@ group { "efl/text/cursor";
 }
 
 group { "efl/text/selection";
+   data.item: "version" "123";
    parts {
       part { name: "base"; type: RECT;
          description { state: "default" 0.0;
@@ -501,6 +505,7 @@ group { "efl/text/selection";
 }
 
 group { "efl/text/anchor";
+   data.item: "version" "123";
    images.image: "horizontal_separated_bar_small_glow.png" COMP;
    parts {
       part { name: "bar";
@@ -518,6 +523,7 @@ group { "efl/text/anchor";
 }
 
 group { "efl/text";
+   data.item: "version" "123";
    data {
       item: "font.name" "Sans";
       item: "font.size" "10";
@@ -637,6 +643,7 @@ group { "efl/text";
 }
 
 group { "efl/text/magnifier";
+   data.item: "version" "123";
    images.image: "frame_rounded.png" COMP;
    parts {
       part { name: "bg"; type: RECT; mouse_events: 0;
@@ -699,6 +706,7 @@ group { "efl/text/magnifier";
 }
 
 group { "efl/text/handler/start";
+   data.item: "version" "123";
    images.image: "handle_pick_up_left.png" COMP;
    parts {
       part { name: "base"; mouse_events: 0;
@@ -747,6 +755,7 @@ group { "efl/text/handler/start";
 }
 
 group { "efl/text/handler/end";
+   data.item: "version" "123";
    images.image: "handle_pick_up_right.png" COMP;
    parts {
       part { name: "base"; mouse_events: 0;
@@ -800,124 +809,124 @@ group { "efl/text/handler/end";
 // Tanya - Latvia
 // http://lazycrazy.deviantart.com/
 // http://lazycrazy.deviantart.com/art/Very-Emotional-Emoticons-144461621
-group { "efl/text/emoticon/angry"; images.image:
+group { "efl/text/emoticon/angry"; data.item: "version" "123"; images.image:
    "emo-angry.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-angry.png"; } } } }
-group { "efl/text/emoticon/angry-shout"; images.image:
+group { "efl/text/emoticon/angry-shout"; data.item: "version" "123"; images.image:
    "emo-angry-shout.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-angry-shout.png"; } } } }
-group { "efl/text/emoticon/crazy-laugh"; images.image:
+group { "efl/text/emoticon/crazy-laugh"; data.item: "version" "123"; images.image:
    "emo-crazy-laugh.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-crazy-laugh.png"; } } } }
-group { "efl/text/emoticon/evil-laugh"; images.image:
+group { "efl/text/emoticon/evil-laugh"; data.item: "version" "123"; images.image:
    "emo-evil-laugh.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-evil-laugh.png"; } } } }
-group { "efl/text/emoticon/evil"; images.image:
+group { "efl/text/emoticon/evil"; data.item: "version" "123"; images.image:
    "emo-evil.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-evil.png"; } } } }
-group { "efl/text/emoticon/goggle-smile"; images.image:
+group { "efl/text/emoticon/goggle-smile"; data.item: "version" "123"; images.image:
    "emo-goggle-smile.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-goggle-smile.png"; } } } }
-group { "efl/text/emoticon/grumpy"; images.image:
+group { "efl/text/emoticon/grumpy"; data.item: "version" "123"; images.image:
    "emo-grumpy.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-grumpy.png"; } } } }
-group { "efl/text/emoticon/grumpy-smile"; images.image:
+group { "efl/text/emoticon/grumpy-smile"; data.item: "version" "123"; images.image:
    "emo-grumpy-smile.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-grumpy-smile.png"; } } } }
-group { "efl/text/emoticon/guilty"; images.image:
+group { "efl/text/emoticon/guilty"; data.item: "version" "123"; images.image:
    "emo-guilty.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-guilty.png"; } } } }
-group { "efl/text/emoticon/guilty-smile"; images.image:
+group { "efl/text/emoticon/guilty-smile"; data.item: "version" "123"; images.image:
    "emo-guilty-smile.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-guilty-smile.png"; } } } }
-group { "efl/text/emoticon/haha"; images.image:
+group { "efl/text/emoticon/haha"; data.item: "version" "123"; images.image:
    "emo-haha.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-haha.png"; } } } }
-group { "efl/text/emoticon/half-smile"; images.image:
+group { "efl/text/emoticon/half-smile"; data.item: "version" "123"; images.image:
    "emo-half-smile.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-half-smile.png"; } } } }
-group { "efl/text/emoticon/happy-panting"; images.image:
+group { "efl/text/emoticon/happy-panting"; data.item: "version" "123"; images.image:
    "emo-happy-panting.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-happy-panting.png"; } } } }
-group { "efl/text/emoticon/happy"; images.image:
+group { "efl/text/emoticon/happy"; data.item: "version" "123"; images.image:
    "emo-happy.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-happy.png"; } } } }
-group { "efl/text/emoticon/indifferent"; images.image:
+group { "efl/text/emoticon/indifferent"; data.item: "version" "123"; images.image:
    "emo-indifferent.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-indifferent.png"; } } } }
-group { "efl/text/emoticon/kiss"; images.image:
+group { "efl/text/emoticon/kiss"; data.item: "version" "123"; images.image:
    "emo-kiss.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-kiss.png"; } } } }
-group { "efl/text/emoticon/knowing-grin"; images.image:
+group { "efl/text/emoticon/knowing-grin"; data.item: "version" "123"; images.image:
    "emo-knowing-grin.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-knowing-grin.png"; } } } }
-group { "efl/text/emoticon/laugh"; images.image:
+group { "efl/text/emoticon/laugh"; data.item: "version" "123"; images.image:
    "emo-laugh.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-laugh.png"; } } } }
-group { "efl/text/emoticon/little-bit-sorry"; images.image:
+group { "efl/text/emoticon/little-bit-sorry"; data.item: "version" "123"; images.image:
    "emo-little-bit-sorry.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-little-bit-sorry.png"; } } } }
-group { "efl/text/emoticon/love-lots"; images.image:
+group { "efl/text/emoticon/love-lots"; data.item: "version" "123"; images.image:
    "emo-love-lots.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-love-lots.png"; } } } }
-group { "efl/text/emoticon/love"; images.image:
+group { "efl/text/emoticon/love"; data.item: "version" "123"; images.image:
    "emo-love.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-love.png"; } } } }
-group { "efl/text/emoticon/minimal-smile"; images.image:
+group { "efl/text/emoticon/minimal-smile"; data.item: "version" "123"; images.image:
    "emo-minimal-smile.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-minimal-smile.png"; } } } }
-group { "efl/text/emoticon/not-happy"; images.image:
+group { "efl/text/emoticon/not-happy"; data.item: "version" "123"; images.image:
    "emo-not-happy.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-not-happy.png"; } } } }
-group { "efl/text/emoticon/not-impressed"; images.image:
+group { "efl/text/emoticon/not-impressed"; data.item: "version" "123"; images.image:
    "emo-not-impressed.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-not-impressed.png"; } } } }
-group { "efl/text/emoticon/omg"; images.image:
+group { "efl/text/emoticon/omg"; data.item: "version" "123"; images.image:
    "emo-omg.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-omg.png"; } } } }
-group { "efl/text/emoticon/opensmile"; images.image:
+group { "efl/text/emoticon/opensmile"; data.item: "version" "123"; images.image:
    "emo-opensmile.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-opensmile.png"; } } } }
-group { "efl/text/emoticon/smile"; images.image:
+group { "efl/text/emoticon/smile"; data.item: "version" "123"; images.image:
    "emo-smile.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-smile.png"; } } } }
-group { "efl/text/emoticon/sorry"; images.image:
+group { "efl/text/emoticon/sorry"; data.item: "version" "123"; images.image:
    "emo-sorry.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-sorry.png"; } } } }
-group { "efl/text/emoticon/squint-laugh"; images.image:
+group { "efl/text/emoticon/squint-laugh"; data.item: "version" "123"; images.image:
    "emo-squint-laugh.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-squint-laugh.png"; } } } }
-group { "efl/text/emoticon/surprised"; images.image:
+group { "efl/text/emoticon/surprised"; data.item: "version" "123"; images.image:
    "emo-surprised.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-surprised.png"; } } } }
-group { "efl/text/emoticon/suspicious"; images.image:
+group { "efl/text/emoticon/suspicious"; data.item: "version" "123"; images.image:
    "emo-suspicious.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-suspicious.png"; } } } }
-group { "efl/text/emoticon/tongue-dangling"; images.image:
+group { "efl/text/emoticon/tongue-dangling"; data.item: "version" "123"; images.image:
    "emo-tongue-dangling.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-tongue-dangling.png"; } } } }
-group { "efl/text/emoticon/tongue-poke"; images.image:
+group { "efl/text/emoticon/tongue-poke"; data.item: "version" "123"; images.image:
    "emo-tongue-poke.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-tongue-poke.png"; } } } }
-group { "efl/text/emoticon/uh"; images.image:
+group { "efl/text/emoticon/uh"; data.item: "version" "123"; images.image:
    "emo-uh.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-uh.png"; } } } }
-group { "efl/text/emoticon/unhappy"; images.image:
+group { "efl/text/emoticon/unhappy"; data.item: "version" "123"; images.image:
    "emo-unhappy.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-unhappy.png"; } } } }
-group { "efl/text/emoticon/very-sorry"; images.image:
+group { "efl/text/emoticon/very-sorry"; data.item: "version" "123"; images.image:
    "emo-very-sorry.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-very-sorry.png"; } } } }
-group { "efl/text/emoticon/what"; images.image:
+group { "efl/text/emoticon/what"; data.item: "version" "123"; images.image:
    "emo-what.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-what.png"; } } } }
-group { "efl/text/emoticon/wink"; images.image:
+group { "efl/text/emoticon/wink"; data.item: "version" "123"; images.image:
    "emo-wink.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-wink.png"; } } } }
-group { "efl/text/emoticon/worried"; images.image:
+group { "efl/text/emoticon/worried"; data.item: "version" "123"; images.image:
    "emo-worried.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-worried.png"; } } } }
-group { "efl/text/emoticon/wtf"; images.image:
+group { "efl/text/emoticon/wtf"; data.item: "version" "123"; images.image:
    "emo-wtf.png" COMP; parts { part { "icon"; nomouse; desc { "default"; max: 64 64; image.normal:
             "emo-wtf.png"; } } } }
 //------------------------------------------------------------

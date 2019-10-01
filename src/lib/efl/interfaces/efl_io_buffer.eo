@@ -1,4 +1,5 @@
-class @beta Efl.Io.Buffer extends Efl.Object implements Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Efl.Io.Sizer, Efl.Io.Positioner {
+class @beta Efl.Io.Buffer extends Efl.Object
+                          implements Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Efl.Io.Sizer, Efl.Io.Positioner {
     [[Generic In-memory buffer of data to be used as I/O.
 
       This class offers both input and output, which can be used at
@@ -118,7 +119,9 @@ class @beta Efl.Io.Buffer extends Efl.Object implements Efl.Io.Reader, Efl.Io.Wr
             ]]
             get { }
             values {
-                slice: Eina.Slice; [[Slice of the current buffer, may be invalidated if @Efl.Io.Writer.write, @Efl.Io.Closer.close or @Efl.Io.Sizer.resize are called. It is the full slice, not a partial one starting at current position.]]
+                slice: Eina.Slice; [[Slice of the current buffer, may be invalidated if @Efl.Io.Writer.write,
+                                     @Efl.Io.Closer.close or @Efl.Io.Sizer.resize are called.
+                                     It is the full slice, not a partial one starting at current position.]]
             }
         }
 
@@ -128,16 +131,17 @@ class @beta Efl.Io.Buffer extends Efl.Object implements Efl.Io.Reader, Efl.Io.Wr
               The returned memory must be freed with eina_binbuf_free().
 
               On failure, for example a read-only backing store was
-              adopted with @.adopt_readonly, NULL is returned.
+              adopted with @.adopt_readonly, $NULL is returned.
             ]]
-            return: ptr(Eina.Binbuf) @owned @no_unused; [[Binbuf]]
+            return: ptr(Eina.Binbuf) @move @no_unused; [[Binbuf]]
         }
     }
 
     events {
        position_read,changed: void; [[Notifies @.position_read changed]]
        position_write,changed: void; [[Notifies @.position_write changed]]
-       reallocated: void; [[Notifies the internal buffer was reallocated, thus whatever was returned by @.slice becomes invalid]]
+       reallocated: void; [[Notifies the internal buffer was reallocated, thus whatever was returned by @.slice
+                            becomes invalid.]]
     }
 
     implements {

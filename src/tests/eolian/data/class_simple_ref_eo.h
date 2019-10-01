@@ -19,18 +19,6 @@ typedef Eo Class_Simple;
 #define FOO 5
 #endif
 
-/** doc for global
- *
- * @ingroup Bar
- */
-EWAPI extern float BAR;
-
-/** in header but not in source
- *
- * @ingroup Baz
- */
-EWAPI extern long BAZ;
-
 
 #endif
 /** Class Desc Simple

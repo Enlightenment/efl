@@ -8,7 +8,7 @@ enum Efl.Gfx.Image_Orientation
      Directional values ($up, $down, $left, $right) indicate the final direction in
      which the top of the image will be facing (e.g. a picture of a house will have
      its roof pointing to the right if the $right orientation is used).
-     Flipping values ($flip_horizontal and $flip_vertical) can be additionaly added
+     Flipping values ($flip_horizontal and $flip_vertical) can be additionally added
      to produce a mirroring in each axis.
      Not to be confused with @Efl.Ui.Layout_Orientation which is meant for widgets, rather
      than images and canvases. This enum is used to rotate images, videos and
@@ -19,15 +19,21 @@ enum Efl.Gfx.Image_Orientation
    right = 1,            [[Orient right, rotate 90 degrees clock-wise.]]
    down = 2,             [[Orient down, rotate 180 degrees.]]
    left = 3,             [[Orient left, rotate 270 degrees clock-wise.]]
-   rotation_bitmask = 3, [[Bitmask that can be used to isolate rotation values, that is, $none, $up, $down, $left and $right.]]
+   rotation_bitmask = 3, [[Bitmask that can be used to isolate rotation values, that is, $none, $up, $down, $left and
+                           $right.]]
    flip_horizontal = 4,  [[Mirror horizontally. Can be added to the other values.]]
    flip_vertical = 8,    [[Mirror vertically. Can be added to the other values.]]
-   flip_bitmask = 12     [[Bitmask that can be used to isolate flipping values, that is, $flip_vertical and $flip_horizontal.]]
+   flip_bitmask = 12     [[Bitmask that can be used to isolate flipping values, that is, $flip_vertical and
+                           $flip_horizontal.]]
 }
 
 interface Efl.Gfx.Image_Orientable
 {
-   [[Interface for objects which can be oriented.]]
+   [[Interface for images which can be rotated or flipped (mirrored).
+
+     Compare with @Efl.Ui.Layout_Orientable which works for layout objects and does
+     not include rotation.
+   ]]
    c_prefix: efl_gfx;
    methods {
        @property image_orientation {

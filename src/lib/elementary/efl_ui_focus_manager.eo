@@ -4,45 +4,45 @@ import eina_types;
 struct @beta @free(efl_ui_focus_relation_free) Efl.Ui.Focus.Relations {
     [[Structure holding the graph of relations between focusable objects.
     ]]
-    right : list<Efl.Ui.Focus.Object> @owned; [[List of objects on the right side]]
-    left : list<Efl.Ui.Focus.Object> @owned; [[List of objects on the left side]]
-    top : list<Efl.Ui.Focus.Object> @owned; [[List of objects above]]
-    down : list<Efl.Ui.Focus.Object> @owned; [[List of objects below]]
-    next : Efl.Ui.Focus.Object; [[Next object]]
-    prev : Efl.Ui.Focus.Object; [[Previous object]]
-    parent : Efl.Ui.Focus.Object; [[Parent object]]
-    redirect : Efl.Ui.Focus.Manager; [[Redirect manager]]
-    node : Efl.Ui.Focus.Object; [[The node where this is the information from]]
-    logical : bool; [[$true if this node is only logical]]
-    position_in_history : int; [[The position in the history stack]]
+    right : list<Efl.Ui.Focus.Object> @move; [[List of objects to the right.]]
+    left : list<Efl.Ui.Focus.Object> @move; [[List of objects to the left.]]
+    top : list<Efl.Ui.Focus.Object> @move; [[List of objects above.]]
+    down : list<Efl.Ui.Focus.Object> @move; [[List of objects below.]]
+    next : Efl.Ui.Focus.Object; [[Next object.]]
+    prev : Efl.Ui.Focus.Object; [[Previous object.]]
+    parent : Efl.Ui.Focus.Object; [[Parent object.]]
+    redirect : Efl.Ui.Focus.Manager; [[Redirect manager.]]
+    node : Efl.Ui.Focus.Object; [[The node where this information is from.]]
+    logical : bool; [[$true if this is a logical (non-regular) node.]]
+    position_in_history : int; [[The position in the history stack.]]
 }
 
 struct Efl.Ui.Focus.Manager_Logical_End_Detail {
-    [[Structure holding the focus object with extra information on logical end
+    [[Structure holding the focus object with extra information on logical end.
 
       @since 1.22
     ]]
-    is_regular_end : bool; [[$true if element is registered as regular element in the @Efl.Ui.Focus.Manager obejct, $false otherwise]]
-    element : Efl.Ui.Focus.Object; [[The last element of the logical chain in the @Efl.Ui.Focus.Manager]]
+    is_regular_end : bool; [[$true if element is registered as regular element in the @Efl.Ui.Focus.Manager object.]]
+    element : Efl.Ui.Focus.Object; [[The last element of the logical chain in the @Efl.Ui.Focus.Manager.]]
 }
 
 interface Efl.Ui.Focus.Manager {
-    [[Interface for managing focus objects
+    [[Interface for managing focus objects.
 
       This interface is built in order to support movement of the focus property in a set of widgets.
       The movement of the focus property can happen in a tree manner, or a graph manner.
       The movement is also keeping track of the history of focused elements.
-      The tree interpretation differentiates between logical and non-logical widgets,
-      a logical widget cannot receive focus whereas a non-logical one can.
+      The tree interpretation differentiates between logical and regular widgets:
+      Logical widgets (typically containers) cannot receive focus, whereas Regular ones (like buttons) can.
 
       @since 1.22
     ]]
     methods {
         move {
-            [[Move the focus in the given direction.
+            [[Moves the focus in the given direction to the next regular widget.
 
               This call flushes all changes.
-              This means all changes between the last flush and now are computed.
+              This means all changes since last flush are computed.
             ]]
             params {
                 direction : Efl.Ui.Focus.Direction; [[The direction to move to.]]
@@ -50,21 +50,22 @@ interface Efl.Ui.Focus.Manager {
             return : Efl.Ui.Focus.Object; [[The element which is now focused.]]
         }
         request_move {
-            [[Return the object in the $direction from $child.]]
+            [[Returns the object in the $direction from $child.]]
             params {
                 direction : Efl.Ui.Focus.Direction; [[Direction to move focus.]]
-                child : Efl.Ui.Focus.Object; [[The child to move from. Pass $null to indicate the currently focused child.]]
-                logical : bool; [[Wether you want to have a logical node as result or a non-logical.
-                                  Note, in a @.move call no logical node will get focus.]]
+                child : Efl.Ui.Focus.Object; [[The child to move from.
+                                               Pass $null to indicate the currently focused child.]]
+                logical : bool; [[Wether you want to have a logical node as result or a regular.
+                                  Note that in a @.move call logical nodes will not get focus.]]
             }
             return : Efl.Ui.Focus.Object; [[Object that would receive focus if moved in the given direction.]]
         }
         @property manager_focus {
-            [[The element which is currently focused by this manager
+            [[The element which is currently focused by this manager.
 
               Use this property to retrieve the object currently being focused, or to set the focus
               to a new one.
-              When $focus is a logical child (which cannot receive focus), the next non-logical
+              When $focus is a logical child (which cannot receive focus), the next regular
               object is selected instead. If there is no such object, focus does not change.
             ]]
 
@@ -80,14 +81,14 @@ interface Efl.Ui.Focus.Manager {
               anymore.
             ]]
             values {
-                redirect : Efl.Ui.Focus.Manager; [[The redirect manager.]]
+                redirect : Efl.Ui.Focus.Manager; [[The new focus manager.]]
             }
         }
         @property border_elements {
-            [[The list of elements which are at the border of the graph.
+            [[Elements which are at the border of the graph.
 
               This means one of the relations right,left or down,up are not set.
-              This call flushes all changes. See @Efl.Ui.Focus.Manager.move
+              This call flushes all changes. See @Efl.Ui.Focus.Manager.move.
             ]]
             get {}
             values {
@@ -96,7 +97,7 @@ interface Efl.Ui.Focus.Manager {
             }
         }
         @property viewport_elements {
-            [[Get all elements that are at the border of the viewport
+            [[Elements that are at the border of the viewport
 
               Every element returned by this is located inside the viewport rectangle,
               but has a right, left, down or up neighbor outside the viewport.
@@ -106,30 +107,28 @@ interface Efl.Ui.Focus.Manager {
                 viewport : Eina.Rect; [[The rectangle defining the viewport.]]
             }
             values {
-              viewport_elements : iterator<Efl.Ui.Focus.Object>; [[The list of border objects.]]
+              viewport_elements : iterator<Efl.Ui.Focus.Object>; [[An iterator over the viewport border objects.]]
             }
         }
         @property root {
-            [[Root node for all logical subtrees.
+            [[Root node for all logical sub-trees.
 
               This property can only be set once.
             ]]
             set {
-                return : bool; [[If $true, this is the root node]]
+                return : bool; [[$true on success, $false if it had already been set.]]
             }
-
             get {}
 
             values {
-                root : Efl.Ui.Focus.Object; [[Will be registered into
-                    this manager object.]]
+                root : Efl.Ui.Focus.Object; [[Object to register as the root of this manager object.]]
             }
         }
         request_subchild {
-            [[Return the widget in the direction next.
+            [[Returns the widget in the direction next.
 
               The returned widget is a child of $root.
-              It's guaranteed that child will not be prepared once again,
+              It's guaranteed that child will not be prepared again,
               so you can call this function inside a @Efl.Ui.Focus.Object.setup_order call.
             ]]
               params {
@@ -138,25 +137,26 @@ interface Efl.Ui.Focus.Manager {
               return : Efl.Ui.Focus.Object; [[Child of passed parameter.]]
         }
         fetch @beta {
-            [[This will fetch the data from a registered node.
+            [[Fetches the data from a registered node.
 
-              Be aware this function will trigger a computation of all dirty nodes.
+              Note: This function triggers a computation of all dirty nodes.
             ]]
             params {
                 child : Efl.Ui.Focus.Object; [[The child object to inspect.]]
             }
-            return : ptr(Efl.Ui.Focus.Relations) @owned; [[The list of relations
+            return : ptr(Efl.Ui.Focus.Relations) @move; [[The list of relations
                 starting from $child.]]
         }
         logical_end {
-            [[Return the last logical object.
+            [[Returns the last logical object.
 
-              The returned object is the last object that would be returned if you start at the root and move the direction into next.
+              The returned object is the last object that would be returned if you start at the root
+              and move in the "next" direction.
             ]]
             return : Efl.Ui.Focus.Manager_Logical_End_Detail; [[Last object.]]
         }
         reset_history {
-            [[Reset the history stack of this manager object.
+            [[Resets the history stack of this manager object.
               This means the uppermost element will be unfocused, and all other elements
               will be removed from the remembered list.
 
@@ -165,7 +165,7 @@ interface Efl.Ui.Focus.Manager {
             ]]
         }
         pop_history_stack {
-            [[Remove the uppermost history element, and focus the previous one.
+            [[Removes the uppermost history element, and focuses the previous one.
 
               If there is an element that was focused before, it will be used.
               Otherwise, the best fitting element from the registered elements will be focused.
@@ -174,7 +174,7 @@ interface Efl.Ui.Focus.Manager {
         setup_on_first_touch {
            [[Called when this manager is set as redirect.
 
-             In case that this is called as an result of a move call, $direction and $entry
+             In case that this is called as a result of a move call, $direction and $entry
              will be set to the direction of the move call, and the $entry object will be
              set to the object that had this manager as redirect property.
            ]]
@@ -184,27 +184,32 @@ interface Efl.Ui.Focus.Manager {
            }
         }
         dirty_logic_freeze {
-          [[This disables the cache invalidation when an object is moved.
+          [[Disables the cache invalidation when an object is moved.
 
             Even if an object is moved, the focus manager will not recalculate its relations.
             This can be used when you know that the set of widgets in the focus manager is
-            moved the same way, so the relations between the widets in the set do not change
-            and the complex calculations can be avoided.
+            moved the same way, so the relations between the widgets in the set do not change
+            and complex calculations can be avoided.
             Use @.dirty_logic_unfreeze to re-enable relationship calculation.
           ]]
         }
         dirty_logic_unfreeze {
-          [[This enables the cache invalidation when an object is moved.
+          [[Enables the cache invalidation when an object is moved.
 
             This is the counterpart to @.dirty_logic_freeze.
           ]]
         }
     }
     events {
-        redirect,changed : Efl.Ui.Focus.Manager; [[Redirect object has changed, the old manager is passed as an event argument.]]
-        flush,pre: void; [[After this event, the manager object will calculate relations in the graph. Can be used to add / remove children in a lazy fashion.]]
+        redirect,changed : Efl.Ui.Focus.Manager; [[Redirect object has changed, the old manager is passed as
+                                                   an event argument.]]
+        flush,pre: void; [[After this event, the manager object will calculate relations in the graph.
+                           Can be used to add / remove children in a lazy fashion.]]
         coords,dirty: void; [[Cached relationship calculation results have been invalidated.]]
-        manager_focus,changed : Efl.Ui.Focus.Object; [[The manager_focus property has changed. The previously focused object is passed as an event argument.]]
-        dirty_logic_freeze,changed : bool; [[Called when this focus manager is frozen or thawed, even_info being $true indicates that it is now frozen, $false indicates that it is thawed.]]
+        manager_focus,changed : Efl.Ui.Focus.Object; [[The manager_focus property has changed.
+                                                       The previously focused object is passed as an event argument.]]
+        dirty_logic_freeze,changed : bool; [[Called when this focus manager is frozen or thawed,
+                                             even_info being $true indicates that it is now frozen,
+                                             $false indicates that it is thawed.]]
     }
 }

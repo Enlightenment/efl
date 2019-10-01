@@ -182,7 +182,7 @@ _elm_scrollable_is(const Evas_Object *obj)
         efl_isa(obj, ELM_INTERFACE_SCROLLABLE_MIXIN);
    else
      return
-        efl_isa(obj, EFL_UI_SCROLLABLE_INTERACTIVE_INTERFACE);
+        efl_isa(obj, EFL_UI_SCROLLABLE_INTERFACE);
 }
 
 static void
@@ -2653,14 +2653,14 @@ elm_widget_cursor_del(Eo *obj, Elm_Cursor *cur)
 }
 
 EAPI void
-elm_widget_scroll_lock_set(Eo *obj, Efl_Ui_Scroll_Block block)
+elm_widget_scroll_lock_set(Eo *obj, Efl_Ui_Layout_Orientation block)
 {
    Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
    Eina_Bool lx, ly;
 
    if (!sd) return;
-   lx = !!(block & EFL_UI_SCROLL_BLOCK_HORIZONTAL);
-   ly = !!(block & EFL_UI_SCROLL_BLOCK_VERTICAL);
+   lx = !!(block & EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
+   ly = !!(block & EFL_UI_LAYOUT_ORIENTATION_VERTICAL);
    if (sd->scroll_x_locked != lx)
      {
         sd->scroll_x_locked = lx;
@@ -2673,15 +2673,15 @@ elm_widget_scroll_lock_set(Eo *obj, Efl_Ui_Scroll_Block block)
      }
 }
 
-EAPI Efl_Ui_Scroll_Block
+EAPI Efl_Ui_Layout_Orientation
 elm_widget_scroll_lock_get(const Eo *obj)
 {
    Elm_Widget_Smart_Data *sd = efl_data_scope_safe_get(obj, MY_CLASS);
-   Efl_Ui_Scroll_Block block = EFL_UI_SCROLL_BLOCK_NONE;
+   Efl_Ui_Layout_Orientation block = EFL_UI_LAYOUT_ORIENTATION_DEFAULT;
 
    if (!sd) return block;
-   if (sd->scroll_x_locked) block |= EFL_UI_SCROLL_BLOCK_HORIZONTAL;
-   if (sd->scroll_y_locked) block |= EFL_UI_SCROLL_BLOCK_VERTICAL;
+   if (sd->scroll_x_locked) block |= EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
+   if (sd->scroll_y_locked) block |= EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
 
    return block;
 }
@@ -4788,27 +4788,23 @@ elm_widget_tree_dot_dump(const Evas_Object *top,
 EOLIAN static Eo *
 _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UNUSED)
 {
-   Eina_Bool parent_is_widget = EINA_FALSE;
-
+   Eo *parent = efl_parent_get(obj);
    sd->on_create = EINA_TRUE;
 
    sd->window = efl_provider_find(efl_parent_get(obj), EFL_UI_WIN_CLASS);
    if (!efl_isa(obj, EFL_UI_WIN_CLASS))
      {
-        Eo *parent = efl_parent_get(obj);
-        parent_is_widget = efl_isa(parent, EFL_UI_WIDGET_CLASS);
-        if (!parent_is_widget)
+        if (!efl_isa(parent, EFL_UI_WIDGET_CLASS))
           {
              ERR("You passed a wrong parent parameter (%p %s). "
                  "Elementary widget's parent should be an elementary widget.",
                  parent, evas_object_type_get(parent));
           }
-        ELM_WIDGET_DATA_GET(parent, parent_sd);
-        if (parent_sd)
-          sd->shared_win_data = parent_sd->shared_win_data;
         else
-          sd->shared_win_data = efl_ui_win_shared_data_get(obj);
-        efl_ui_widget_sub_object_add(parent, obj);
+          {
+             ELM_WIDGET_DATA_GET(parent, parent_sd);
+             sd->shared_win_data = parent_sd->shared_win_data;
+          }
      }
    else
      {
@@ -4821,15 +4817,15 @@ _efl_ui_widget_efl_object_constructor(Eo *obj, Elm_Widget_Smart_Data *sd EINA_UN
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    evas_object_smart_callbacks_descriptions_set(obj, _smart_callbacks);
 
+   if (!efl_isa(obj, EFL_UI_WIN_CLASS) && efl_isa(parent, EFL_UI_WIDGET_CLASS))
+     efl_ui_widget_sub_object_add(parent, obj);
+
    sd->on_create = EINA_FALSE;
 
    efl_access_object_role_set(obj, EFL_ACCESS_ROLE_UNKNOWN);
 
-   if (!sd->shared_win_data)
-     {
-        if (sd->window && parent_is_widget)
-          EINA_SAFETY_ON_NULL_RETURN_VAL(sd->shared_win_data, NULL);
-     }
+   if (!elm_widget_is_legacy(obj))
+     EINA_SAFETY_ON_NULL_RETURN_VAL(sd->shared_win_data, NULL);
 
    return obj;
 }
@@ -5160,7 +5156,7 @@ _efl_ui_widget_efl_ui_focus_object_focus_set(Eo *obj, Elm_Widget_Smart_Data *pd,
 /* Legacy APIs */
 
 EAPI void
-elm_widget_on_show_region_hook_set(Eo *obj, void *data, Efl_Ui_Scrollable_On_Show_Region func, Eina_Free_Cb func_free_cb)
+elm_widget_on_show_region_hook_set(Eo *obj, void *data, Elm_Widget_On_Show_Region_Cb func, Eina_Free_Cb func_free_cb)
 {
    ELM_WIDGET_DATA_GET(obj, sd);
 
@@ -5693,6 +5689,14 @@ _efl_ui_widget_part_bg_efl_file_load(Eo *obj, void *pd EINA_UNUSED)
    return efl_file_load(bg_obj);
 }
 
+EOLIAN static void
+_efl_ui_widget_part_bg_efl_file_unload(Eo *obj, void *pd EINA_UNUSED)
+{
+   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
+
+   efl_file_unload(bg_obj);
+}
+
 EOLIAN static const char *
 _efl_ui_widget_part_bg_efl_file_file_get(const Eo *obj, void *pd EINA_UNUSED)
 {
@@ -5757,21 +5761,16 @@ _efl_ui_widget_part_bg_efl_gfx_color_color_get(const Eo *obj, void *pd EINA_UNUS
    efl_gfx_color_get(bg_obj, r, g, b, a);
 }
 
-EOLIAN static void
-_efl_ui_widget_part_bg_efl_gfx_image_scale_type_set(Eo *obj, void *pd EINA_UNUSED, Efl_Gfx_Image_Scale_Type scale_type)
+EOLIAN static Efl_Object*
+_efl_ui_widget_part_bg_efl_object_finalize(Eo *obj, void *pd EINA_UNUSED)
 {
    Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
 
-   efl_gfx_image_scale_type_set(bg_obj, scale_type);
+   efl_composite_attach(obj, bg_obj);
+
+   return efl_finalize(efl_super(obj, EFL_UI_WIDGET_PART_BG_CLASS));
 }
 
-EOLIAN static Efl_Gfx_Image_Scale_Type
-_efl_ui_widget_part_bg_efl_gfx_image_scale_type_get(const Eo *obj, void *pd EINA_UNUSED)
-{
-   Evas_Object *bg_obj = efl_ui_widget_part_bg_get(obj);
-
-   return efl_gfx_image_scale_type_get(bg_obj);
-}
 
 typedef struct _Efl_Ui_Property_Bound Efl_Ui_Property_Bound;
 struct _Efl_Ui_Property_Bound
@@ -5817,8 +5816,6 @@ _efl_ui_property_bind_get(Eo *obj, Efl_Ui_Widget_Data *pd, Efl_Ui_Property_Bound
    value = efl_model_property_get(pd->properties.model, prop->property);
    target = prop->part ? efl_part(obj, prop->part) : obj;
 
-   fprintf(stderr, "setting: %s for %s from %s\n",
-           eina_value_to_string(value), prop->property, efl_debug_name_get(pd->properties.model));
    err = efl_property_reflection_set(target, prop->key, eina_value_reference_copy(value));
    eina_value_free(value);
 

@@ -1,6 +1,9 @@
 /* FIXME: Move to Eina when we decide they are handled properly. */
 struct @extern @free(eina_rectangle_free) Eina.Rect {
-    [[A rectangle in pixel dimensions.]]
+    [[A rectangle in pixel dimensions.
+
+     @since 1.22
+   ]]
     x: int; [[X coordinate of the rectangle, from the top-left corner.]]
     y: int; [[Y coordinate of the rectangle, from the top-left corner.]]
     w: int; [[Width of the rectangle in pixels.]]
@@ -8,27 +11,42 @@ struct @extern @free(eina_rectangle_free) Eina.Rect {
 }
 
 struct @extern Eina.Position2D {
-   [[A 2D location in pixels.]]
+   [[A 2D location in pixels.
+
+     @since 1.22
+   ]]
    x: int; [[X position in pixels, from the top-left corner.]]
    y: int; [[Y position in pixels, from the top-left corner.]]
 }
 
 struct @extern Eina.Size2D {
-   [[A 2D size in pixels.]]
+   [[A 2D size in pixels.
+
+     @since 1.22
+   ]]
    w: int; [[X position in pixels, from the top-left corner.]]
    h: int; [[Y position in pixels, from the top-left corner.]]
 }
 
-struct @extern Eina.File; [[Eina file data structure]]
+struct @extern Eina.File; [[Eina file data structure
+
+  @since 1.22
+]]
 
 struct @extern Eina.Vector2 {
-   [[A simple 2D vector type using floating point values.]]
+   [[A simple 2D vector type using floating point values.
+
+     @since 1.22
+   ]]
    x: double; [[X coordinate.]]
    y: double; [[Y coordinate.]]
 }
 
 struct @extern Eina.Matrix3 {
-   [[Eina 3x3 Matrix]]
+   [[Eina 3x3 Matrix
+
+     @since 1.22
+   ]]
    xx: double; [[XX matrix value]]
    xy: double; [[XY matrix value]]
    xz: double; [[XZ matrix value]]
@@ -60,7 +78,10 @@ enum @extern @beta Eina.Xattr.Flags {
   created [[This will only succeed if the extended attribute wasn't previously set]]
 }
 
-type @extern Eina.Error: int; [[Eina error type]]
+type @extern Eina.Error: int; [[Eina error type
+
+  @since 1.22
+]]
 
 struct @extern @beta @free(eina_binbuf_free) Eina.Binbuf; [[Eina binbuf data structure]]
 struct @extern @beta @free(eina_strbuf_free) Eina.Strbuf; [[Eina strbuf data structure]]
@@ -100,7 +121,10 @@ struct @extern @beta Eina.Stat {
     ctimensec: ulong; [[The nano version of the timestmap when the file was created]]
 }
 
-struct @extern @free(eina_promise_free) Eina.Promise; [[Eina promise type]]
+struct @extern @free(eina_promise_free) Eina.Promise; [[Eina promise type
+
+  @since 1.22
+]]
 
 /* FIXME: This definitely shouldn't be here. */
 type @beta Efl.Event_Cb: __undefined_type; [[Efl event callback type]]

@@ -1,6 +1,9 @@
 class @beta Efl.Canvas.Gesture_Long_Tap extends Efl.Canvas.Gesture
 {
-   [[EFL Gesture Long Tap class]]
+   [[Long-tap gesture class holding state information.
+     See @Efl.Canvas.Gesture to see what this state is and
+     @[Efl.Gesture.Events.gesture,long_tap] for a description of the Long-tap gesture.
+   ]]
    data: null;
    c_prefix: efl_gesture_long_tap;
    implements {

@@ -33,12 +33,11 @@ class @beta Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, 
          }
       }
       @property viewbox {
+         [[The viewbox for the evas vg canvas.
+           viewbox if set should be mapped to the canvas geometry when rendering the vg tree.]]
          get {
-            [[Get the current viewbox from the  evas_object_vg]]
          }
          set {
-            [[Sets the viewbox for the evas vg canvas.
-              viewbox if set should be mapped to the canvas geometry when rendering the vg tree.]]
          }
          values {
             viewbox: Eina.Rect; [[viewbox for the vg canvas]]
@@ -52,26 +51,24 @@ class @beta Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, 
          }
       }
       @property root_node {
+         [[The root node of the evas_object_vg.
+
+           Note: To manually create the shape object and show in the Vg
+                 object canvas you must create the hierarchy and set as root node.
+
+           It takes the ownership of the root node. ]]
          get {
-            [[Get the root node of the evas_object_vg.
-            ]]
          }
          set {
-            [[Set the root node of the evas_object_vg.
-
-              Note: To manually create the shape object and show in the Vg
-                    object canvas you must create the hierarchy and set as root node.
-
-              It takes the ownership of the root node. ]]
          }
          values {
             root: Efl.Canvas.Vg.Node; [[Root node of the VG canvas.]]
          }
       }
       @property default_size {
+         [[The default vector size that specified from vector resource.
+           @since 1.22]]
          get {
-            [[Get the default vector size that specified from vector resource.
-              @since 1.22]]
          }
          values {
             size: Eina.Size2D;
@@ -81,7 +78,7 @@ class @beta Efl.Canvas.Vg.Object extends Efl.Canvas.Object implements Efl.File, 
    implements {
       Efl.Object.constructor;
       Efl.Object.finalize;
-      Efl.Object.destructor;
+      Efl.Object.invalidate;
       Efl.File.load;
       Efl.File.unload;
       Efl.File.file { set; }

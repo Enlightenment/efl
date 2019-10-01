@@ -399,8 +399,9 @@ void test_ui_spotlight_scroll(void *data, Evas_Object *obj, void *event_info);
 
 void test_ui_relative_layout(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_radio(void *data, Evas_Object *obj, void *event_info);
-void test_efl_ui_collection_list(void *data, Evas_Object *obj, void *event_info );
+void test_efl_ui_collection_list(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_collection_grid(void *data, Evas_Object *obj, void *event_info);
+void test_efl_ui_collection_view(void *data, Evas_Object *obj, void *event_info);
 void test_efl_ui_item(void *data, Evas_Object *obj, void *event_info);
 void test_ui_frame(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 
@@ -860,7 +861,7 @@ add_tests:
    ADD_TEST(NULL, "Images", "Photocam", test_photocam);
    ADD_TEST(NULL, "Images", "Photocam Remote", test_photocam_remote);
    ADD_TEST(NULL, "Images", "Photocam Icon", test_photocam_icon);
-   ADD_TEST(NULL, "Images", "Image Zoomable animation", test_image_zoomable_animated);
+   ADD_TEST_EO(NULL, "Images", "Image Zoomable animation", test_image_zoomable_animated);
    ADD_TEST(NULL, "Images", "Photo", test_photo);
    ADD_TEST(NULL, "Images", "Thumb", test_thumb);
    ADD_TEST(NULL, "Images", "Image", test_image);
@@ -909,6 +910,7 @@ add_tests:
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Relative_Layout", test_ui_relative_layout);
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Collection List", test_efl_ui_collection_list);
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Collection Grid", test_efl_ui_collection_grid);
+   ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Collection_View", test_efl_ui_collection_view);
    ADD_TEST_EO(NULL, "Containers", "Items", test_efl_ui_item);
    ADD_TEST_EO(NULL, "Containers", "Efl.Ui.Frame", test_ui_frame);
 

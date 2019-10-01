@@ -11,22 +11,19 @@ interface @beta Efl.Gfx.Filter
    c_prefix: efl_gfx;
    methods {
       @property filter_program {
+         [[A graphical filter program on this object.
+
+           Valid for Text and Image objects at the moment.
+
+           The argument passed to this function is a string containing
+           a valid Lua program based on the filters API as described in
+           the "EFL Graphics Filters" reference page.
+
+           Set to $null to disable filtering.
+         ]]
          set {
-            [[Set a graphical filter program on this object.
-
-              Valid for Text and Image objects at the moment.
-
-              The argument passed to this function is a string containing
-              a valid Lua program based on the filters API as described in
-              the "EFL Graphics Filters" reference page.
-
-              Set to $null to disable filtering.
-            ]]
          }
          get {
-            [[Gets the code of the filter program set on this object.
-              May be $null.
-            ]]
          }
          values {
             code: string; [[The Lua program source code.]]

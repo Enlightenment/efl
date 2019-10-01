@@ -16,8 +16,8 @@ struct @beta Efl.Ui.Image_Error
    open_error: bool; [[$true if the error happened when opening the file, $false otherwise]]
 }
 
-class @beta Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Input.Clickable, Efl.Ui.Draggable,
-                 Efl.File, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller, Efl.Player, Efl.Gfx.View,
+class Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Input.Clickable, Efl.Ui.Draggable,
+                 Efl.File, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller, Efl.Player, Efl.Playable, Efl.Gfx.View,
                  Efl.Access.Component, Efl.Access.Widget.Action, Efl.Gfx.Color,
                  Efl.Gfx.Image_Orientable,
                  Efl.Layout.Calc, Efl.Layout.Group, Efl.Layout.Signal,
@@ -28,37 +28,35 @@ class @beta Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Input.Clickable, E
      When loading images from a file, the @Efl.File.key property can be used to access different
      streams. For example, when accessing Evas image caches.
    ]]
-   event_prefix: efl_ui_image;
+   event_c_prefix: efl_ui_image;
    methods {
       @property icon {
+         [[The image name, using icon standards names.
+
+           For example, freedesktop.org defines standard icon names such
+           as "home" and "network". There can be different icon sets to
+           match those icon keys. The "name" given as parameter is one of
+           these "keys" and will be used to look in the freedesktop.org
+           paths and elementary theme.
+
+           If the name is not found in any of the expected locations and is
+           the absolute path of an image file, this image will be used.
+           Lookup order used by @.icon.set can be set using "icon_theme" in config.
+
+           If the image was set using @Efl.File.file instead of
+           @.icon.set, then reading this property will return null.
+
+           Note: The image set by this function is changed when
+           @Efl.File.load is called.
+
+           Note: This function does not accept relative icon paths.
+
+           See also @.icon.get.
+         ]]
          set {
-            [[Set the image by icon standards names.
-
-              For example, freedesktop.org defines standard icon names such
-              as "home" and "network". There can be different icon sets to
-              match those icon keys. The "name" given as parameter is one of
-              these "keys" and will be used to look in the freedesktop.org
-              paths and elementary theme.
-
-              If the name is not found in any of the expected locations and is
-              the absolute path of an image file, this image will be used.
-              Lookup order used by @.icon.set can be set using "icon_theme" in config.
-
-              Note: The image set by this function is changed when
-              @Efl.File.load is called.
-
-              Note: This function does not accept relative icon path.
-
-              See also @.icon.get.
-            ]]
             return: bool; [[$true on success, $false on error]]
          }
          get {
-            [[Get the icon name of image set by icon standard names.
-
-              If the image was set using efl_file_set() instead of
-              @.icon.set, then this function will return null.
-            ]]
          }
          values {
             name: string; [[The icon name]]
@@ -78,13 +76,38 @@ class @beta Efl.Ui.Image extends Efl.Ui.Widget implements Efl.Input.Clickable, E
       Efl.Gfx.Image.can_upscale { get; set; }
       Efl.Gfx.Image.can_downscale { get; set; }
       Efl.Gfx.Image.image_size { get; }
+      Efl.Gfx.Image_Load_Controller.load_async_start;
+      Efl.Gfx.Image_Load_Controller.load_async_cancel;
+      Efl.Gfx.Image_Load_Controller.load_dpi { get; set; }
       Efl.Gfx.Image_Load_Controller.load_size { get; set; }
+      Efl.Gfx.Image_Load_Controller.load_orientation { get; set; }
+      Efl.Gfx.Image_Load_Controller.load_scale_down { get; set; }
+      Efl.Gfx.Image_Load_Controller.load_skip_header { get; set; }
+      Efl.Gfx.Image_Load_Controller.load_region { get; set; }
+      Efl.Gfx.Image_Load_Controller.load_region_support { get; }
       Efl.Gfx.Image.smooth_scale { get; set; }
-      Efl.Gfx.Image.scale_type { get; set; }
+      Efl.Gfx.Image.scale_method { get; set; }
       Efl.Gfx.Image_Orientable.image_orientation { get; set; }
-      Efl.Player.playable { get; }
-      Efl.Player.play { get; set; }
+      Efl.Gfx.Image.ratio { get; }
+      Efl.Gfx.Image.content_region { get; }
+      Efl.Gfx.Image.border_insets { get; set; }
+      Efl.Gfx.Image.border_insets_scale { get; set; }
+      Efl.Gfx.Image.center_fill_mode { get; set; }
+      Efl.Gfx.Image.stretch_region { get; set; }
+      Efl.Gfx.Image.scale_hint { get; set; }
+      Efl.Gfx.Image.content_hint { get; set; }
+      Efl.Gfx.Image.image_load_error { get; }
+      Efl.Playable.playable { get; }
+      Efl.Player.playing { get; set; }
+      Efl.Player.paused { get; set; }
+      Efl.Player.playback_position { get; set; }
+      Efl.Player.playback_progress { get; }
+      Efl.Player.playback_speed { get; set; }
       Efl.Layout.Signal.signal_emit;
+      Efl.Layout.Signal.message_send;
+      Efl.Layout.Signal.signal_callback_add;
+      Efl.Layout.Signal.signal_callback_del;
+      Efl.Layout.Signal.signal_process;
       Efl.Layout.Group.group_size_min { get; }
       Efl.Layout.Group.group_size_max { get; }
       Efl.Layout.Group.group_data { get; }

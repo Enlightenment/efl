@@ -76,6 +76,44 @@ typedef struct _Efl_Text_Annotate_Annotation Efl_Text_Annotate_Annotation;
 #include <Efl_MVVM_Common.h>
 
 /* Data types */
+
+#ifdef EFL_BETA_API_SUPPORT
+/** No error on load */
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_NONE;
+
+/** A non-specific error occurred */
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_GENERIC;
+
+/** File (or file path) does not exist */
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_DOES_NOT_EXIST;
+
+/** Permission denied to an existing file (or path) */
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_PERMISSION_DENIED;
+
+/** Allocation of resources failure prevented load */
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_RESOURCE_ALLOCATION_FAILED;
+
+/** File corrupt (but was detected as a known format) */
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_CORRUPT_FILE;
+
+/** File is not a known format */
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_UNKNOWN_FORMAT;
+
+/** Reading operation has been cancelled during decoding */
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_CANCELLED;
+
+/** (Edje only) The file pointed to is incompatible, i.e., it doesn't
+ * match the library's current version's format. */
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_INCOMPATIBLE_FILE;
+
+/** (Edje only) The group/collection set to load from was not found in the file */
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_UNKNOWN_COLLECTION;
+
+/** (Edje only) The group/collection set to load from had recursive references
+ * on its components */
+extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_RECURSIVE_REFERENCE;
+#endif /* EFL_BETA_API_SUPPORT */
+
 #include "interfaces/efl_gfx_types.eot.h"
 #include "interfaces/efl_ui_types.eot.h"
 typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
@@ -94,6 +132,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_part.eo.h"
 #include "interfaces/efl_playable.eo.h"
 #include "interfaces/efl_player.eo.h"
+#include "interfaces/efl_audio_control.eo.h"
 #include "interfaces/efl_text.eo.h"
 #include "interfaces/efl_text_types.eot.h"
 #include "interfaces/efl_ui_i18n.eo.h"
@@ -106,7 +145,6 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_ui_draggable.eo.h"
 #include "interfaces/efl_ui_scrollable.eo.h"
 #include "interfaces/efl_ui_scrollbar.eo.h"
-#include "interfaces/efl_ui_scrollable_interactive.eo.h"
 #include "interfaces/efl_ui_text_selectable.eo.h"
 #include "interfaces/efl_ui_container_selectable.eo.h"
 #include "interfaces/efl_ui_zoom.eo.h"

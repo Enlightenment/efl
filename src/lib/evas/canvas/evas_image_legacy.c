@@ -117,42 +117,42 @@ EAPI void
 evas_object_image_border_set(Evas_Object *obj, int l, int r, int t, int b)
 {
    EVAS_IMAGE_API(obj);
-   efl_gfx_image_border_set(obj, l, r, t, b);
+   efl_gfx_image_border_insets_set(obj, l, r, t, b);
 }
 
 EAPI void
 evas_object_image_border_get(const Evas_Object *obj, int *l, int *r, int *t, int *b)
 {
    EVAS_IMAGE_API(obj);
-   efl_gfx_image_border_get(obj, l, r, t, b);
+   efl_gfx_image_border_insets_get(obj, l, r, t, b);
 }
 
 EAPI void
 evas_object_image_border_scale_set(Evas_Object *obj, double scale)
 {
    EVAS_IMAGE_API(obj);
-   efl_gfx_image_border_scale_set(obj, scale);
+   efl_gfx_image_border_insets_scale_set(obj, scale);
 }
 
 EAPI double
 evas_object_image_border_scale_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, 0.0);
-   return efl_gfx_image_border_scale_get(obj);
+   return efl_gfx_image_border_insets_scale_get(obj);
 }
 
 EAPI void
 evas_object_image_border_center_fill_set(Evas_Object *obj, Evas_Border_Fill_Mode fill)
 {
    EVAS_IMAGE_API(obj);
-   efl_gfx_image_border_center_fill_set(obj, (Efl_Gfx_Border_Fill_Mode) fill);
+   efl_gfx_image_center_fill_mode_set(obj, (Efl_Gfx_Center_Fill_Mode) fill);
 }
 
 EAPI Evas_Border_Fill_Mode
 evas_object_image_border_center_fill_get(const Evas_Object *obj)
 {
    EVAS_IMAGE_API(obj, EVAS_BORDER_FILL_NONE);
-   return (Evas_Border_Fill_Mode) efl_gfx_image_border_center_fill_get(obj);
+   return (Evas_Border_Fill_Mode) efl_gfx_image_center_fill_mode_get(obj);
 }
 
 EAPI void

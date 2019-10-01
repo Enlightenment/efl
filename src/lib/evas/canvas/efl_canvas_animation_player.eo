@@ -1,13 +1,19 @@
-class @beta Efl.Canvas.Animation_Player extends Efl.Object implements Efl.Player
+class @beta Efl.Canvas.Animation_Player extends Efl.Object implements Efl.Player, Efl.Playable
 {
-   [[Efl animation object class]]
+   [[Player object for playing canvas animations.
+
+     This player object can be used to play animations on a @.target canvas object.
+     The type of animation depends on the @.animation object.
+   ]]
    c_prefix: efl_animation_player;
    methods {
       @property animation {
-         set {}
-         get {}
+         [[The animation to play.
+
+           This animation object will be used to change the visual state of the @.target object.
+         ]]
          values {
-            animation: Efl.Canvas.Animation;
+            animation: Efl.Canvas.Animation; [[An already-configured animation object.]]
          }
       }
       @property auto_del {
@@ -17,34 +23,34 @@ class @beta Efl.Canvas.Animation_Player extends Efl.Object implements Efl.Player
          get {
          }
          values {
-            auto_del: bool; [[$true to delete animation object automatically when animation is finished or animation is cancelled, $false otherwise.]]
+            auto_del: bool; [[$true to delete animation object automatically when animation is finished or animation is
+                              cancelled, $false otherwise.]]
          }
       }
       @property target {
-         [[Target object property]]
-         set {
-         }
-         get {
-         }
+         [[The canvas object to apply the effects of the @.animation object on.
+
+           The @.animation object can change several properties of the $target.
+           You should ensure that nothing else is trying to change them too.
+         ]]
          values {
-            target: Efl.Canvas.Object; [[Target object which is applied animation.]]
+            target: Efl.Canvas.Object; [[Canvas object to animate.]]
          }
       }
    }
    implements {
       Efl.Object.constructor;
       Efl.Object.destructor;
-      Efl.Player.start;
-      Efl.Player.stop;
-      Efl.Player.play { get; set; }
-      Efl.Player.playable { get; }
-      Efl.Player.pos { get; set; }
-      Efl.Player.progress { get;}
-      Efl.Player.play_speed { get; set; }
+      Efl.Player.playing { get; set; }
+      Efl.Player.paused { get; set; }
+      Efl.Playable.playable { get; }
+      Efl.Player.playback_position { get; set; }
+      Efl.Player.playback_progress { get;}
+      Efl.Player.playback_speed { get; set; }
       //Efl.Player.volume { get; set; }
       //Efl.Player.mute { get; set; }
-      Efl.Player.length { get; }
-      Efl.Player.seekable { get; }
+      Efl.Playable.length { get; }
+      Efl.Playable.seekable { get; }
    }
    events {
       /* FIXME: This event is similar to Efl.Canvas.Object.anim_started but with different type, might be confusing. */

@@ -611,6 +611,8 @@ _selection_data_cb(void *data EINA_UNUSED, Eo *obj,
    if (!efl_text_cursor_equal(obj, start, end))
      {
         efl_canvas_text_range_delete(obj, start, end);
+        EFL_UI_TEXT_DATA_GET(obj, sd);
+        _efl_ui_text_select_none(obj, sd);
      }
    cur = efl_text_cursor_get(obj, EFL_TEXT_CURSOR_GET_TYPE_MAIN);
    info.insert = EINA_TRUE;
@@ -2530,6 +2532,14 @@ _efl_ui_text_efl_file_file_set(Eo *obj, Efl_Ui_Text_Data *sd, const char *file)
    return efl_file_set(efl_super(obj, MY_CLASS), file);
 }
 
+EOLIAN static void
+_efl_ui_text_efl_file_unload(Eo *obj, Efl_Ui_Text_Data *sd)
+{
+   efl_file_unload(efl_super(obj, MY_CLASS));
+   ELM_SAFE_FREE(sd->delay_write, ecore_timer_del);
+   elm_object_text_set(obj, "");
+}
+
 EOLIAN static Eina_Error
 _efl_ui_text_efl_file_load(Eo *obj, Efl_Ui_Text_Data *sd)
 {
@@ -3975,8 +3985,8 @@ _efl_ui_text_selection_changed_cb(void *data, const Efl_Event *event EINA_UNUSED
    if (!text || (text[0] == '\0'))
      {
         _edje_signal_emit(sd, "selection,cleared", "efl.text");
-        sd->have_selection = EINA_FALSE;
         _selection_clear(data, 0);
+        sd->have_selection = EINA_FALSE;
      }
    else
      {
@@ -4072,7 +4082,7 @@ ELM_PART_OVERRIDE_TEXT_GET(efl_ui_text, EFL_UI_TEXT, Efl_Ui_Text_Data)
 
 /* Internal EO APIs and hidden overrides */
 
-//ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+//EFL_UI_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #include "efl_ui_text.eo.c"
 

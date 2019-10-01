@@ -56,11 +56,13 @@ typedef enum
  */
 typedef Bar Alias;
 
+#ifndef PANTS
 /** Docs for var.
  *
  * @ingroup pants
  */
-EWAPI extern int PANTS;
+#define PANTS 150
+#endif
 
 /** Opaque struct docs. See @ref Foo for another struct.
  *
@@ -74,7 +76,7 @@ typedef struct _Opaque Opaque;
  * @brief Docs for class.
  *
  * More docs for class. Testing references now. @ref Foo @ref Bar @ref Alias
- * @ref pants @ref eo_docs_meth @ref eo_docs_prop_get @ref eo_docs_prop_get
+ * @ref PANTS @ref eo_docs_meth @ref eo_docs_prop_get @ref eo_docs_prop_get
  * @ref eo_docs_prop_set @ref Foo.field1 @ref BAR_FOO @ref Eo_Docs
  *
  * @since 1.18

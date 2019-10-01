@@ -1,4 +1,6 @@
 
+#define DUMMY_TEST_IFACE_PROTECTED
+
 #include "libefl_mono_native_test.h"
 
 typedef struct Dummy_Test_Object_Data
@@ -14,10 +16,13 @@ typedef struct Dummy_Test_Object_Data
   Eina_List *list_for_accessor;
   int setter_only;
   int iface_prop;
+  int protected_prop;
+  int public_getter_private_setter;
   Eo *provider;
   Eo *iface_provider;
   int prop1;
   int prop2;
+  Eo *hidden_object;
 
   // Containers passed to C# as iterator/accessors
   Eina_Array *out_array;
@@ -71,6 +76,8 @@ _dummy_test_object_efl_object_constructor(Eo *obj, Dummy_Test_Object_Data *pd)
 {
    efl_constructor(efl_super(obj, DUMMY_TEST_OBJECT_CLASS));
    pd->provider = efl_add(DUMMY_NUMBERWRAPPER_CLASS, obj);
+   pd->hidden_object = efl_add(DUMMY_HIDDEN_OBJECT_CLASS, obj);
+   efl_name_set(pd->hidden_object, "hidden_object");
 
    if (efl_parent_get(obj) == NULL) { // Avoid recursion
        pd->iface_provider = efl_add(DUMMY_TEST_OBJECT_CLASS, obj);
@@ -4113,8 +4120,8 @@ void struct_complex_with_values(Dummy_StructComplex *complex)
    eina_value_setup(&complex->fany_value, EINA_VALUE_TYPE_DOUBLE);
    eina_value_set(&complex->fany_value, -9007199254740992.0);
 
-   complex->fany_value_ptr = eina_value_new(EINA_VALUE_TYPE_STRING);
-   eina_value_set(complex->fany_value_ptr, "abc");
+   complex->fany_value_ref = eina_value_new(EINA_VALUE_TYPE_STRING);
+   eina_value_set(complex->fany_value_ref, "abc");
 
    complex->fbinbuf = eina_binbuf_new();
    eina_binbuf_append_char(complex->fbinbuf, 126);
@@ -4148,7 +4155,7 @@ Eina_Bool check_and_modify_struct_complex(Dummy_StructComplex *complex)
      return EINA_FALSE;
 
    const char *str_val = NULL;
-   if (!eina_value_get(complex->fany_value_ptr, &str_val) || strcmp(str_val, "abc") != 0)
+   if (!eina_value_get(complex->fany_value_ref, &str_val) || strcmp(str_val, "abc") != 0)
      return EINA_FALSE;
 
    if (eina_binbuf_length_get(complex->fbinbuf) != 1 || eina_binbuf_string_get(complex->fbinbuf)[0] != 126)
@@ -4670,6 +4677,26 @@ int _dummy_test_object_get_setter_only(EINA_UNUSED Eo *obj, Dummy_Test_Object_Da
     return pd->setter_only;
 }
 
+void _dummy_test_object_dummy_test_iface_protected_prop_set(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd, int value)
+{
+   pd->protected_prop = value;
+}
+
+int _dummy_test_object_dummy_test_iface_protected_prop_get(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd)
+{
+   return pd->protected_prop;
+}
+
+void _dummy_test_object_dummy_test_iface_public_getter_private_setter_set(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd, int value)
+{
+   pd->public_getter_private_setter = value;
+}
+
+int _dummy_test_object_dummy_test_iface_public_getter_private_setter_get(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd)
+{
+   return pd->public_getter_private_setter;
+}
+
 void _dummy_test_object_dummy_test_iface_iface_prop_set(EINA_UNUSED Eo *obj, Dummy_Test_Object_Data *pd, int value)
 {
     pd->iface_prop = value;
@@ -4702,6 +4729,21 @@ Efl_Object *_dummy_test_object_call_find_provider_for_iface(Eo *obj, EINA_UNUSED
 const Eina_Value_Type *_dummy_test_object_mirror_value_type(EINA_UNUSED const Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, const Eina_Value_Type *type)
 {
     return type;
+}
+
+int _dummy_test_object_dummy_test_iface_method_protected(EINA_UNUSED const Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, int x)
+{
+    return -x;
+}
+
+int _dummy_test_object_dummy_test_iface_call_method_protected(const Eo *obj, EINA_UNUSED Dummy_Test_Object_Data *pd, int x)
+{
+    return dummy_test_iface_method_protected(obj, x);
+}
+
+Eo *_dummy_test_object_hidden_object_get(EINA_UNUSED const Eo *obj, Dummy_Test_Object_Data *pd)
+{
+    return pd->hidden_object;
 }
 
 // Inherit

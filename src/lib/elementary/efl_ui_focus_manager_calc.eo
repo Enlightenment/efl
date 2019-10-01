@@ -1,81 +1,77 @@
 class @beta Efl.Ui.Focus.Manager_Calc extends Efl.Object implements Efl.Ui.Focus.Manager {
-    [[Calculates the directions of Efl.Ui.Focus.Direction
+    [[Calculates the elements present in each @Efl.Ui.Focus.Direction.
 
-      Each registered item will get an other registered object in each
-      direction. You can get items for the currently focused item if
-      you call request move.
+      Each registered item will get a target item in each direction.
+      You can get the target items for the currently focused item by
+      calling @Efl.Ui.Focus.Manager.request_move.
     ]]
     methods {
         register {
-            [[Register a new item in the graph.
+            [[Registers a new item in the graph.
 
-              $parent can not be $null, it will be used as the parent in the
-              logical tree.
-              $redirect will be set as redirect property on that manager, once
-              $child gets focused.
+              $parent can not be $null, it will be used as the parent in the logical tree.
+              $redirect will be set as redirect property on that manager, once $child gets focused.
             ]]
             params {
-                child : Efl.Ui.Focus.Object; [[The object to register]]
-                parent : Efl.Ui.Focus.Object; [[The parent to use in
-                                                the logical tree]]
-                redirect : Efl.Ui.Focus.Manager; [[The redirect manager to set
-                    once this child is focused can be NULL for no redirect]]
+                child : Efl.Ui.Focus.Object; [[The object to register.]]
+                parent : Efl.Ui.Focus.Object; [[The parent to use in the logical tree.]]
+                redirect : Efl.Ui.Focus.Manager; [[The redirect manager to set once this child is focused.
+                                                   Can be $NULL for no redirect.]]
             }
-            return : bool; [[$true if successful, $false otherwise]]
+            return : bool; [[$true if successful, $false otherwise.]]
         }
         register_logical {
-            [[Register a new item only for the logical parent.
+            [[Registers a new logical item in the graph.
 
-              The item can never get focus, it just helps to build a tree out
-              of the items that are.
+              The item can never get focus, it just helps to build the tree.
+              Compare to @.register.
             ]]
             params {
-                child : Efl.Ui.Focus.Object; [[The object to register]]
-                parent : Efl.Ui.Focus.Object; [[The parent to use in
-                                                the logical tree]]
-                redirect : Efl.Ui.Focus.Manager; [[The redirect manager to set
-                    once this child is focused can be $null for no redirect]]
+                child : Efl.Ui.Focus.Object; [[The object to register.]]
+                parent : Efl.Ui.Focus.Object; [[The parent to use in the logical tree.]]
+                redirect : Efl.Ui.Focus.Manager; [[The redirect manager to set once this child is focused.
+                                                   Can be $NULL for no redirect.]]
             }
-            return : bool; [[$true if successful, $false otherwise]]
+            return : bool; [[$true if successful, $false otherwise.]]
         }
         update_redirect {
-            [[Set a new redirect object for the given child.
+            [[Sets a new redirect object for the given child.
 
               Once $child is focused the redirect manager will be set
-              in the redirect property. Set redirect to $null if nothing should happen.
+              in the redirect property. Set redirect to $NULL if nothing should happen.
             ]]
             params {
-                child : Efl.Ui.Focus.Object; [[The child to update]]
+                child : Efl.Ui.Focus.Object; [[The child to update.]]
                 redirect : Efl.Ui.Focus.Manager; [[Once $child is focused this
-                    element will be set as redirect]]
+                    element will be set as redirect.]]
             }
-            return : bool; [[$true if successful, $false otherwise]]
+            return : bool; [[$true if successful, $false otherwise.]]
         }
         update_parent {
-            [[Set a new logical parent for the given child.]]
+            [[Sets a new logical parent for the given child.]]
             params {
-                child : Efl.Ui.Focus.Object; [[The child to update]]
-                parent : Efl.Ui.Focus.Object; [[The parent which now
-                    will be the logical parent of child]]
+                child : Efl.Ui.Focus.Object; [[The child to update.]]
+                parent : Efl.Ui.Focus.Object; [[The parent which now will be the logical parent of child.]]
             }
-            return : bool; [[$true if successful, $false otherwise]]
+            return : bool; [[$true if successful, $false otherwise.]]
         }
         update_children {
-            [[Give the list of children a different order.]]
+            [[Sets the list of children to a different order.]]
             params {
-                parent : Efl.Ui.Focus.Object; [[the parent to update]]
-                children : list<Efl.Ui.Focus.Object> @owned; [[the list with the new order]]
+                parent : Efl.Ui.Focus.Object; [[The parent to update.]]
+                children : list<Efl.Ui.Focus.Object> @move; [[The list of children with the new order.]]
             }
-            return : bool; [[$true if successful, $false otherwise]]
+            return : bool; [[$true if successful, $false otherwise.]]
         }
         update_order {
-            [[Give the given order to the parent's child.
+            [[Sets the list of children to a different order.
 
-              Children from the list which are not true children are ignored.
+              Objects in the list which are not children of $parent are ignored.
+              Compare to @.update_children.
             ]]
             params {
-                parent : Efl.Ui.Focus.Object; [[the parent to update]]
-                children : list<Efl.Ui.Focus.Object> @owned; [[the order of items]]
+                parent : Efl.Ui.Focus.Object; [[The parent to update.]]
+                children : list<Efl.Ui.Focus.Object> @move; [[The list of objects with the new order.]]
             }
         }
         unregister {

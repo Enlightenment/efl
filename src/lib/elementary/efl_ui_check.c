@@ -51,6 +51,25 @@ static const Elm_Action key_actions[] = {
 };
 
 static void
+_check_legacy_event(Eo *obj)
+{
+   EFL_UI_CHECK_DATA_GET(obj, pd);
+   if (pd->selected)
+     {
+        if (pd->legacy_changed_emitted_select) return;
+        pd->legacy_changed_emitted_select = EINA_TRUE;
+        pd->legacy_changed_emitted_unselect = EINA_FALSE;
+     }
+   else
+     {
+        if (pd->legacy_changed_emitted_unselect) return;
+        pd->legacy_changed_emitted_unselect = EINA_TRUE;
+        pd->legacy_changed_emitted_select = EINA_FALSE;
+     }
+   evas_object_smart_callback_call(obj, "changed", NULL);
+}
+
+static void
 _activate(Evas_Object *obj)
 {
    // state will be changed by the later call to the selected_set call
@@ -60,14 +79,14 @@ _activate(Evas_Object *obj)
         // so that we can distinguish between state change by user or state change
         // by calling state_change() api. Keep both the signal for backward compatibility
         // and remove "elm,state,check,on" signal emission when we can break ABI.
-        // efl_ui_selectable_selected_set below will emit "elm,state,check,*" or "efl,state,check,*"
+        // efl_ui_selectable_selected_set below will emit "elm,state,check,*" or "efl,state,*selected"
         if (elm_widget_is_legacy(obj))
           {
              elm_layout_signal_emit(obj, "elm,activate,check,on", "elm");
           }
         else
           {
-             elm_layout_signal_emit(obj, "efl,activate,check,on", "efl");
+             elm_layout_signal_emit(obj, "efl,state,selected", "efl");
           }
 
         if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
@@ -79,14 +98,14 @@ _activate(Evas_Object *obj)
         // so that we can distinguish between state change by user or state change
         // by calling state_change() api. Keep both the signal for backward compatibility
         // and remove "elm,state,check,off" signal emission when we can break ABI.
-        // efl_ui_selectable_selected_set below will emit "elm,state,check,*" or "efl,state,check,*"
+        // efl_ui_selectable_selected_set below will emit "elm,state,check,*" or "efl,state,*selected"
         if (elm_widget_is_legacy(obj))
           {
              elm_layout_signal_emit(obj, "elm,activate,check,off", "elm");
           }
         else
           {
-             elm_layout_signal_emit(obj, "efl,activate,check,off", "efl");
+             elm_layout_signal_emit(obj, "efl,state,unselected", "efl");
           }
 
         if (_elm_config->access_mode != ELM_ACCESS_MODE_OFF)
@@ -94,11 +113,10 @@ _activate(Evas_Object *obj)
      }
    //This commit will update the theme with the correct signals
    // "elm,state,check,on" or "elm,state,check,off" for legacy
-   // "efl,state,check,on" or "efl,state,check,off" for eo-api
+   // "efl,state,selected" or "efl,state,unselected" for eo-api
    efl_ui_selectable_selected_set(obj, !efl_ui_selectable_selected_get(obj));
    if (elm_widget_is_legacy(obj))
-     evas_object_smart_callback_call(obj, "changed", NULL);
-
+     _check_legacy_event(obj);
    if (_elm_config->atspi_mode)
      efl_access_state_changed_signal_emit(obj,
                                           EFL_ACCESS_STATE_TYPE_CHECKED,
@@ -156,9 +174,9 @@ _efl_ui_check_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Check_Data *sd EINA_UNUS
    else
      {
         if (!efl_ui_selectable_selected_get(obj))
-          elm_layout_signal_emit(obj, "efl,state,check,off", "efl");
+          elm_layout_signal_emit(obj, "efl,state,unselected", "efl");
         else
-          elm_layout_signal_emit(obj, "efl,state,check,on", "efl");
+          elm_layout_signal_emit(obj, "efl,state,selected", "efl");
      }
 
    edje_object_message_signal_process(wd->resize_obj);
@@ -231,6 +249,8 @@ _on_check_off(void *data,
    Evas_Object *obj = data;
 
    _flush_selected(obj, EINA_FALSE);
+   if (elm_widget_is_legacy(obj))
+     _check_legacy_event(obj);
 }
 
 static void
@@ -242,6 +262,8 @@ _on_check_on(void *data,
    Evas_Object *obj = data;
 
    _flush_selected(obj, EINA_TRUE);
+   if (elm_widget_is_legacy(obj))
+     _check_legacy_event(obj);
 }
 
 static void
@@ -288,9 +310,9 @@ _efl_ui_check_efl_ui_selectable_selected_set(Eo *obj, Efl_Ui_Check_Data *pd, Ein
    else
      {
         if (value == 1)
-          elm_layout_signal_emit(obj, "efl,state,check,on", "efl");
+          elm_layout_signal_emit(obj, "efl,state,selected", "efl");
         else
-          elm_layout_signal_emit(obj, "efl,state,check,off", "efl");
+          elm_layout_signal_emit(obj, "efl,state,unselected", "efl");
      }
 
    edje_object_message_signal_process(wd->resize_obj);
@@ -323,9 +345,9 @@ _efl_ui_check_efl_object_constructor(Eo *obj, Efl_Ui_Check_Data *pd EINA_UNUSED)
    else
      {
         efl_layout_signal_callback_add
-          (wd->resize_obj, "efl,action,check,on", "*", obj, _on_check_on, NULL);
+          (wd->resize_obj, "efl,action,select", "*", obj, _on_check_on, NULL);
         efl_layout_signal_callback_add
-          (wd->resize_obj, "efl,action,check,off", "*", obj, _on_check_off, NULL);
+          (wd->resize_obj, "efl,action,unselect", "*", obj, _on_check_off, NULL);
         efl_event_callback_add(obj, EFL_INPUT_EVENT_CLICKED, _clicked_cb, obj);
      }
 
@@ -391,15 +413,15 @@ _efl_ui_check_efl_access_widget_action_elm_actions_get(const Eo *obj EINA_UNUSED
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_check, Efl_Ui_Check_Data)
 ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_check, Efl_Ui_Check_Data)
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_check, Efl_Ui_Check_Data)
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+EFL_UI_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+EFL_UI_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_CHECK_EXTRA_OPS \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX)
+   EFL_UI_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
+   EFL_UI_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX)
 
 
 #include "efl_ui_check.eo.c"

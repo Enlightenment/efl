@@ -2,42 +2,33 @@
 struct @extern Elm.Photocam.Error; [[Photocam error information.]]
 struct @extern Elm.Photocam.Progress; [[Photocam progress information.]]
 
-class @beta Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
-                             Efl.Ui.Scrollable_Interactive,
-                             Efl.Ui.Scrollbar
+class Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom
+   composites Efl.Ui.Scrollable, Efl.Ui.Scrollbar
 {
    [[Elementary Image Zoomable class]]
    methods {
       @property gesture_enabled {
-         set {
-            [[Set the gesture state for photocam.
+         [[The gesture state for photocam.
 
-              This sets the gesture state to on or off for photocam. The
-              default is off. This will start multi touch zooming.
-            ]]
+           This sets the gesture state to on or off for photocam. The
+           default is off. This will start multi touch zooming.
+         ]]
+         set {
          }
          get {
-            [[Get the gesture state for photocam.
-
-              This gets the current gesture state for the photocam object.
-            ]]
          }
          values {
             gesture: bool; [[The gesture state.]]
          }
       }
       @property image_region {
-         get {
-            [[Get the region of the image that is currently shown
+         [[The region of the image that is currently shown
 
-              See also @.image_region.set.
-            ]]
+           Setting it shows the region of the image without using animation.
+         ]]
+         get {
          }
          set {
-            [[Set the viewed region of the image
-
-              This shows the region of the image without using animation.
-            ]]
          }
          values {
             region: Eina.Rect; [[The region in the original image pixels.]]
@@ -52,8 +43,12 @@ class @beta Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
       Efl.Gfx.View.view_size { get; }
       Efl.Gfx.Image.image_size { get; }
       Efl.Ui.Image.icon { set; get; }
-      Efl.Player.playable { get; }
-      Efl.Player.play { get; set; }
+      Efl.Playable.playable { get; }
+      Efl.Player.playing { get; set; }
+      Efl.Player.paused { get; set; }
+      Efl.Player.playback_position { get; set; }
+      Efl.Player.playback_progress { get; }
+      Efl.Player.playback_speed { get; set; }
       Efl.Ui.Zoom.zoom_animation { set; get; }
       Efl.Ui.Zoom.zoom_level { set; get; }
       Efl.Ui.Zoom.zoom_mode { set; get; }
@@ -61,9 +56,10 @@ class @beta Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
       Efl.Ui.Widget.theme_apply;
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.Widget.widget_input_event_handler;
-      Efl.Ui.Scrollable_Interactive.scroll;
+      Efl.Ui.Scrollable.scroll;
       Efl.Access.Widget.Action.elm_actions { get; }
       Efl.File.load;
+      Efl.File.unload;
       Efl.File.file { get; set; }
       Efl.Gfx.Image_Orientable.image_orientation { get; set; }
       Efl.Layout.Group.group_size_min { get; }
@@ -82,9 +78,5 @@ class @beta Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom,
       download,progress: Elm.Photocam.Progress; [[Called when photocam download progress updated]]
       download,done: void; [[Called when photocam download finished]]
       download,error: Elm.Photocam.Error; [[Called when photocam download failed]]
-   }
-   composite {
-      Efl.Ui.Scrollable_Interactive;
-      Efl.Ui.Scrollbar;
    }
 }

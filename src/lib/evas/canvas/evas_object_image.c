@@ -590,7 +590,7 @@ _efl_canvas_image_internal_efl_gfx_image_content_region_get(const Eo *eo_obj, Ev
 }
 
 EOLIAN static void
-_efl_canvas_image_internal_efl_gfx_image_border_set(Eo *eo_obj, Evas_Image_Data *o, int l, int r, int t, int b)
+_efl_canvas_image_internal_efl_gfx_image_border_insets_set(Eo *eo_obj, Evas_Image_Data *o, int l, int r, int t, int b)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
@@ -617,7 +617,7 @@ _efl_canvas_image_internal_efl_gfx_image_border_set(Eo *eo_obj, Evas_Image_Data 
 }
 
 EOLIAN static void
-_efl_canvas_image_internal_efl_gfx_image_border_get(const Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, int *l, int *r, int *t, int *b)
+_efl_canvas_image_internal_efl_gfx_image_border_insets_get(const Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o, int *l, int *r, int *t, int *b)
 {
    if (l) *l = o->cur->border.l;
    if (r) *r = o->cur->border.r;
@@ -626,7 +626,7 @@ _efl_canvas_image_internal_efl_gfx_image_border_get(const Eo *eo_obj EINA_UNUSED
 }
 
 EOLIAN static void
-_efl_canvas_image_internal_efl_gfx_image_border_center_fill_set(Eo *eo_obj, Evas_Image_Data *o, Efl_Gfx_Border_Fill_Mode _fill)
+_efl_canvas_image_internal_efl_gfx_image_center_fill_mode_set(Eo *eo_obj, Evas_Image_Data *o, Efl_Gfx_Center_Fill_Mode _fill)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    Evas_Border_Fill_Mode fill = (Evas_Border_Fill_Mode)_fill;
@@ -641,10 +641,10 @@ _efl_canvas_image_internal_efl_gfx_image_border_center_fill_set(Eo *eo_obj, Evas
    evas_object_change(eo_obj, obj);
 }
 
-EOLIAN static Efl_Gfx_Border_Fill_Mode
-_efl_canvas_image_internal_efl_gfx_image_border_center_fill_get(const Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+EOLIAN static Efl_Gfx_Center_Fill_Mode
+_efl_canvas_image_internal_efl_gfx_image_center_fill_mode_get(const Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
-   return (Efl_Gfx_Border_Fill_Mode)o->cur->border.fill;
+   return (Efl_Gfx_Center_Fill_Mode)o->cur->border.fill;
 }
 
 static void
@@ -956,7 +956,7 @@ _efl_canvas_image_internal_efl_gfx_fill_fill_auto_get(const Eo *eo_obj EINA_UNUS
 }
 
 EOLIAN static void
-_efl_canvas_image_internal_efl_gfx_image_border_scale_set(Eo *eo_obj, Evas_Image_Data *o, double scale)
+_efl_canvas_image_internal_efl_gfx_image_border_insets_scale_set(Eo *eo_obj, Evas_Image_Data *o, double scale)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
@@ -971,7 +971,7 @@ _efl_canvas_image_internal_efl_gfx_image_border_scale_set(Eo *eo_obj, Evas_Image
 }
 
 EOLIAN static double
-_efl_canvas_image_internal_efl_gfx_image_border_scale_get(const Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
+_efl_canvas_image_internal_efl_gfx_image_border_insets_scale_get(const Eo *eo_obj EINA_UNUSED, Evas_Image_Data *o)
 {
    return o->cur->border.scale;
 }

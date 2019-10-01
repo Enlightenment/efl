@@ -56,7 +56,7 @@ class @beta Efl2.Text.Attribute.Factory extends Efl.Object implements Efl2.Text.
               @in start: const(Efl2.Text.Cursor); [[Start of range]]
               @in end: const(Efl2.Text.Cursor); [[End of range]]
          }
-         return: iterator<Efl2.Text.Attribute.Handle> @owned; [[The handles of the attributes]]
+         return: iterator<Efl2.Text.Attribute.Handle> @move; [[The handles of the attributes]]
       }
 
       // FIXME: cursor_?
@@ -97,6 +97,7 @@ class @beta Efl2.Text.Attribute.Factory extends Efl.Object implements Efl2.Text.
    implements {
        Efl2.Text.Font.Properties.font_family { set; get; }
        Efl2.Text.Font.Properties.font_size { set; get; }
+       Efl2.Text.Font.Properties.font_size_factor { set; get; }
        Efl2.Text.Font.Properties.font_source { set; get; }
        Efl2.Text.Font.Properties.font_fallbacks { set; get; }
        Efl2.Text.Font.Properties.font_weight { set; get; }
@@ -125,5 +126,6 @@ class @beta Efl2.Text.Attribute.Factory extends Efl.Object implements Efl2.Text.
        Efl2.Text.Style.Properties.line_height { set; get; }
        Efl2.Text.Style.Properties.line_height_factor { set; get; }
        Efl2.Text.Style.Properties.tab_width { set; get; }
+       Efl2.Text.Style.Properties.href { set; get; }
    }
 }

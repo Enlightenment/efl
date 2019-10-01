@@ -34,8 +34,10 @@ static void _ecore_signal_generic_free(void *data, void *event);
 
 typedef void (*Signal_Handler)(int sig, siginfo_t *si, void *foo);
 
-static int sig_pipe[2] = { -1, -1 }; // [0] == read, [1] == write
-static Eo *sig_pipe_handler = NULL;
+#define NUM_PIPES 5
+
+static int sig_pipe[NUM_PIPES][2] = {{ -1 }}; // [0] == read, [1] == write
+static Eo *sig_pipe_handler[NUM_PIPES] = {NULL};
 static Eina_Spinlock sig_pid_lock;
 static Eina_List *sig_pid_info_list = NULL;
 
@@ -48,113 +50,110 @@ typedef struct _Signal_Data
    siginfo_t info;
 } Signal_Data;
 
-static Eina_Bool
+static void
 _ecore_signal_pipe_read(Eo *obj)
 {
    Signal_Data sdata;
    int ret;
 
-   if (pipe_dead) return EINA_TRUE;
-   ret = read(sig_pipe[0], &sdata, sizeof(sdata));
-   if (ret != sizeof(sdata)) return EINA_FALSE;
-   switch (sdata.sig)
+   if (pipe_dead) return;
+   for (unsigned int i = 0; i < NUM_PIPES; i++)
      {
-      case SIGPIPE:
-        break;
-      case SIGALRM:
-        break;
-      case SIGCHLD:
-        _ecore_signal_waitpid(EINA_FALSE, sdata.info);
-        break;
-      case SIGUSR1:
-      case SIGUSR2:
+        while (1)
           {
-             Ecore_Event_Signal_User *e = _ecore_event_signal_user_new();
-             if (e)
+             ret = read(sig_pipe[i][0], &sdata, sizeof(sdata));
+
+             /* read as many signals as we can, trying again if we get interrupted */
+             if ((ret != sizeof(sdata)) && (errno != EINTR)) break;
+             switch (sdata.sig)
                {
-                  if (sdata.sig == SIGUSR1) e->number = 1;
-                  else e->number = 2;
-                  e->data = sdata.info;
-                  ecore_event_add(ECORE_EVENT_SIGNAL_USER, e,
-                                  _ecore_signal_generic_free, NULL);
+                case SIGPIPE:
+                  break;
+                case SIGALRM:
+                  break;
+                case SIGCHLD:
+                  _ecore_signal_waitpid(EINA_FALSE, sdata.info);
+                  break;
+                case SIGUSR1:
+                case SIGUSR2:
+                    {
+                       Ecore_Event_Signal_User *e = _ecore_event_signal_user_new();
+                       if (e)
+                         {
+                            if (sdata.sig == SIGUSR1) e->number = 1;
+                            else e->number = 2;
+                            e->data = sdata.info;
+                            ecore_event_add(ECORE_EVENT_SIGNAL_USER, e,
+                                            _ecore_signal_generic_free, NULL);
+                         }
+                       Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
+                       if (loop)
+                         {
+                            if (sdata.sig == SIGUSR1)
+                              efl_event_callback_call(loop, EFL_APP_EVENT_SIGNAL_USR1, NULL);
+                            else
+                              efl_event_callback_call(loop, EFL_APP_EVENT_SIGNAL_USR2, NULL);
+                         }
+                    }
+                  break;
+                case SIGHUP:
+                    {
+                       Ecore_Event_Signal_Hup *e = _ecore_event_signal_hup_new();
+                       if (e)
+                         {
+                            e->data = sdata.info;
+                            ecore_event_add(ECORE_EVENT_SIGNAL_HUP, e,
+                                            _ecore_signal_generic_free, NULL);
+                         }
+                       Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
+                       if (loop)
+                         efl_event_callback_call(loop, EFL_APP_EVENT_SIGNAL_HUP, NULL);
+                    }
+                  break;
+                case SIGQUIT:
+                case SIGINT:
+                case SIGTERM:
+                    {
+                       Ecore_Event_Signal_Exit *e = _ecore_event_signal_exit_new();
+                       if (e)
+                         {
+                            if (sdata.sig == SIGQUIT) e->quit = 1;
+                            else if (sdata.sig == SIGINT) e->interrupt = 1;
+                            else e->terminate = 1;
+                            e->data = sdata.info;
+                            ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e,
+                                            _ecore_signal_generic_free, NULL);
+                         }
+                       Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
+                       if (loop)
+                         efl_event_callback_call(loop, EFL_LOOP_EVENT_QUIT, NULL);
+                    }
+                  break;
+          #ifdef SIGPWR
+                case SIGPWR:
+                    {
+                       Ecore_Event_Signal_Power *e = _ecore_event_signal_power_new();
+                       if (e)
+                         {
+                            e->data = sdata.info;
+                            ecore_event_add(ECORE_EVENT_SIGNAL_POWER, e,
+                                            _ecore_signal_generic_free, NULL);
+                         }
+                    }
+                  break;
+          #endif
+                default:
+                  break;
                }
-             Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
-             if (loop)
-               {
-                  if (sdata.sig == SIGUSR1)
-                    efl_event_callback_call(loop, EFL_APP_EVENT_SIGNAL_USR1, NULL);
-                  else
-                    efl_event_callback_call(loop, EFL_APP_EVENT_SIGNAL_USR2, NULL);
-               }
-          }
-        break;
-      case SIGHUP:
-          {
-             Ecore_Event_Signal_Hup *e = _ecore_event_signal_hup_new();
-             if (e)
-               {
-                  e->data = sdata.info;
-                  ecore_event_add(ECORE_EVENT_SIGNAL_HUP, e,
-                                  _ecore_signal_generic_free, NULL);
-               }
-             Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
-             if (loop)
-               efl_event_callback_call(loop, EFL_APP_EVENT_SIGNAL_HUP, NULL);
-          }
-        break;
-      case SIGQUIT:
-      case SIGINT:
-      case SIGTERM:
-          {
-             Ecore_Event_Signal_Exit *e = _ecore_event_signal_exit_new();
-             if (e)
-               {
-                  if (sdata.sig == SIGQUIT) e->quit = 1;
-                  else if (sdata.sig == SIGINT) e->interrupt = 1;
-                  else e->terminate = 1;
-                  e->data = sdata.info;
-                  ecore_event_add(ECORE_EVENT_SIGNAL_EXIT, e,
-                                  _ecore_signal_generic_free, NULL);
-               }
-             Eo *loop = efl_provider_find(obj, EFL_LOOP_CLASS);
-             if (loop)
-               efl_event_callback_call(loop, EFL_LOOP_EVENT_QUIT, NULL);
-          }
-        break;
-#ifdef SIGPWR
-      case SIGPWR:
-          {
-             Ecore_Event_Signal_Power *e = _ecore_event_signal_power_new();
-             if (e)
-               {
-                  e->data = sdata.info;
-                  ecore_event_add(ECORE_EVENT_SIGNAL_POWER, e,
-                                  _ecore_signal_generic_free, NULL);
-               }
-          }
-        break;
-#endif
-      default:
-        break;
+        }
      }
-   return EINA_TRUE;
 }
 
 static void
 _ecore_signal_cb_read(void *data EINA_UNUSED, const Efl_Event *event EINA_UNUSED)
 {
-   while (_ecore_signal_pipe_read(event->object));
+   _ecore_signal_pipe_read(event->object);
 }
-
-static void
-_ecore_signal_cb_del(void *data EINA_UNUSED, const Efl_Event *event)
-{
-   if (event->object == sig_pipe_handler) sig_pipe_handler = NULL;
-}
-
-EFL_CALLBACKS_ARRAY_DEFINE(_event_watch,
-                             { EFL_LOOP_HANDLER_EVENT_READ, _ecore_signal_cb_read },
-                             { EFL_EVENT_DEL, _ecore_signal_cb_del });
 
 static void
 _ecore_signal_callback(int sig, siginfo_t *si, void *foo EINA_UNUSED)
@@ -168,13 +167,25 @@ _ecore_signal_callback(int sig, siginfo_t *si, void *foo EINA_UNUSED)
      {
         int err = errno;
         if (pipe_dead) return;
-        const ssize_t bytes = write(sig_pipe[1], &sdata, sizeof(sdata));
-        if (EINA_UNLIKELY(bytes != sizeof(sdata)))
+        for (unsigned int i = 0; i < NUM_PIPES; i++)
           {
-             err = errno;
-             ERR("write() failed: %s", strerror(err));
+             do
+               {
+                  err = 0;
+                  const ssize_t bytes = write(sig_pipe[i][1], &sdata, sizeof(sdata));
+                  if (EINA_UNLIKELY(bytes != sizeof(sdata)))
+                    {
+                       err = errno;
+                       if (err == EINTR)
+                         DBG("signal pipe %u full", i);
+                       else if (i == NUM_PIPES - 1) //only print errors on last pipe
+                         ERR("write() failed: %d: %s", err, strerror(err));
+                    }
+                  errno = err;
+                  /* loop if we got preempted */
+               } while (err == EINTR);
+             if (!err) break;
           }
-        errno = err;
      }
    switch (sig)
      {
@@ -238,43 +249,52 @@ static void
 _ecore_signal_pipe_init(void)
 {
    eina_spinlock_new(&sig_pid_lock);
-   if (sig_pipe[0] == -1)
-     {
-        if (pipe(sig_pipe) != 0)
-          {
-             sig_pipe[0] = -1;
-             return;
-          }
-        eina_file_close_on_exec(sig_pipe[0], EINA_TRUE);
-        eina_file_close_on_exec(sig_pipe[1], EINA_TRUE);
-        if (fcntl(sig_pipe[0], F_SETFL, O_NONBLOCK) < 0)
-          ERR("can't set pipe to NONBLOCK");
-
-     }
    _signalhandler_setup();
-   if (!sig_pipe_handler)
-     sig_pipe_handler =
-       efl_add(EFL_LOOP_HANDLER_CLASS, ML_OBJ,
-               efl_loop_handler_fd_set(efl_added, sig_pipe[0]),
-               efl_loop_handler_active_set(efl_added, EFL_LOOP_HANDLER_FLAGS_READ),
-               efl_event_callback_array_add(efl_added, _event_watch(), NULL));
+   if (sig_pipe[0][0] == -1)
+     {
+        for (unsigned int i = 0; i < NUM_PIPES; i++)
+          {
+            if (pipe(sig_pipe[i]) != 0)
+              {
+                 CRI("failed setting up signal pipes! %s", strerror(errno));
+                 for (unsigned int j = 0; j < i; j++)
+                   {
+                      close(sig_pipe[j][0]);
+                      close(sig_pipe[j][1]);
+                   }
+                 memset(sig_pipe, -1, sizeof(sig_pipe));
+                 return;
+              }
+            eina_file_close_on_exec(sig_pipe[i][0], EINA_TRUE);
+            eina_file_close_on_exec(sig_pipe[i][1], EINA_TRUE);
+            if (fcntl(sig_pipe[i][0], F_SETFL, O_NONBLOCK) < 0)
+              ERR("can't set pipe to NONBLOCK");
+            if (fcntl(sig_pipe[i][1], F_SETFL, O_NONBLOCK) < 0)
+              ERR("can't set pipe to NONBLOCK");
+            efl_add(EFL_LOOP_HANDLER_CLASS, ML_OBJ,
+                    efl_loop_handler_fd_set(efl_added, sig_pipe[i][0]),
+                    efl_loop_handler_active_set(efl_added, EFL_LOOP_HANDLER_FLAGS_READ),
+                    efl_event_callback_add(efl_added, EFL_LOOP_HANDLER_EVENT_READ, _ecore_signal_cb_read, NULL),
+                    efl_wref_add(efl_added, &sig_pipe_handler[i])
+                    );
+
+          }
+     }
 }
 
 static void
 _ecore_signal_pipe_shutdown(void)
 {
-   if (sig_pipe_handler)
+   if (sig_pipe[0][0] != -1)
      {
-        efl_del(sig_pipe_handler);
-        sig_pipe_handler = NULL;
+        for (unsigned int i = 0; i < NUM_PIPES; i++)
+          {
+             close(sig_pipe[i][0]);
+             close(sig_pipe[i][1]);
+             efl_del(sig_pipe_handler[i]);
+          }
      }
-   if (sig_pipe[0] != -1)
-     {
-        close(sig_pipe[0]);
-        close(sig_pipe[1]);
-        sig_pipe[0] = -1;
-        sig_pipe[1] = -1;
-     }
+   memset(sig_pipe, -1, sizeof(sig_pipe));
    eina_spinlock_free(&sig_pid_lock);
 }
 

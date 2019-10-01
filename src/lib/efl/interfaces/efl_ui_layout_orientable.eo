@@ -30,6 +30,8 @@ interface Efl.Ui.Layout_Orientable
 
      For example, sliders, which can be horizontal or vertical, or container
      boxes, which can arrange their elements in a horizontal or vertical fashion.
+
+     Compare with @Efl.Gfx.Image_Orientable that works for images and includes rotation.
    ]]
    c_prefix: efl_ui_layout;
    methods {

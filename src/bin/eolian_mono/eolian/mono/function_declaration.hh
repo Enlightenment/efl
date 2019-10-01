@@ -23,11 +23,15 @@ struct function_declaration_generator
     if(blacklist::is_function_blacklisted(f, context) || f.is_static)
       return true;
 
-    if(!as_generator(documentation).generate(sink, f, context))
+    // C# interfaces can't have non-public members
+    if(f.scope != attributes::member_scope::scope_public)
+      return true;
+
+    if(!as_generator(documentation(1)).generate(sink, f, context))
       return false;
 
     return as_generator
-        (eolian_mono::type(true) << " " << string << "(" << (parameter % ", ") << ");\n")
+      (scope_tab << eolian_mono::type(true) << " " << string << "(" << (parameter % ", ") << ");\n\n")
       .generate(sink, std::make_tuple(f.return_type, name_helpers::managed_method_name(f), f.parameters), context);
   }
 };

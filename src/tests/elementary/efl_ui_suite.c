@@ -38,6 +38,9 @@ static const Efl_Test_Case etc[] = {
   { "efl_ui_collection", efl_ui_test_item_container },
   { "efl_ui_grid_container", efl_ui_test_grid_container },
   { "efl_ui_list_container", efl_ui_test_list_container },
+  { "efl_ui_select_model", efl_ui_test_select_model },
+  { "efl_ui_view_model", efl_ui_test_view_model },
+  { "efl_ui_group_item", efl_ui_test_group_item },
   { NULL, NULL }
 };
 

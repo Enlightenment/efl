@@ -144,7 +144,7 @@ _efl_generic_model_efl_model_children_count_get(const Eo *obj EINA_UNUSED, Efl_G
 static Eo *
 _efl_generic_model_efl_model_child_add(Eo *obj, Efl_Generic_Model_Data *sd)
 {
-   Efl_Model_Children_Event cevt;
+   Efl_Model_Children_Event cevt = { 0 };
    Efl_Model *child;
 
    child = efl_add(EFL_GENERIC_MODEL_CLASS, obj);
@@ -175,7 +175,7 @@ _efl_generic_model_efl_model_child_del(Eo *obj, Efl_Generic_Model_Data *sd, Eo *
      {
         if (data == child)
           {
-             Efl_Model_Children_Event cevt;
+             Efl_Model_Children_Event cevt = { 0 };
 
              sd->childrens = eina_list_remove_list(sd->childrens, l);
 

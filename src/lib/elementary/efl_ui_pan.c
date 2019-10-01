@@ -33,7 +33,6 @@ _efl_ui_pan_efl_gfx_entity_position_set(Eo *obj, Efl_Ui_Pan_Data *psd, Eina_Posi
    psd->y = pos.y;
 
    evas_object_smart_changed(obj);
-   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_PAN_VIEWPORT_CHANGED, NULL);
 }
 
 EOLIAN static void
@@ -48,7 +47,6 @@ _efl_ui_pan_efl_gfx_entity_size_set(Eo *obj, Efl_Ui_Pan_Data *psd, Eina_Size2D s
    psd->h = sz.h;
 
    evas_object_smart_changed(obj);
-   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_PAN_VIEWPORT_CHANGED, NULL);
 }
 
 EOLIAN static void
@@ -69,7 +67,7 @@ _efl_ui_pan_pan_position_set(Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *psd, Eina_Pos
    psd->py = pos.y;
 
    evas_object_smart_changed(obj);
-   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_PAN_POSITION_CHANGED, NULL);
+   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_PAN_CONTENT_POSITION_CHANGED, &pos);
 }
 
 EOLIAN static Eina_Position2D
@@ -122,12 +120,7 @@ _efl_ui_pan_content_del_cb(void *data,
                         Evas_Object *obj EINA_UNUSED,
                         void *event_info EINA_UNUSED)
 {
-   Evas_Object *pobj = data;
-   EFL_UI_PAN_DATA_GET_OR_RETURN(pobj, psd);
-
-   psd->content = NULL;
-   psd->content_w = psd->content_h = psd->px = psd->py = 0;
-   efl_event_callback_call(pobj, EFL_UI_PAN_EVENT_PAN_CONTENT_CHANGED, NULL);
+   efl_content_unset(data);
 }
 
 static void
@@ -146,8 +139,7 @@ _efl_ui_pan_content_resize_cb(void *data,
         psd->content_h = sz.h;
         evas_object_smart_changed(pobj);
      }
-   efl_event_callback_call(pobj, EFL_UI_PAN_EVENT_PAN_CONTENT_CHANGED, NULL);
-   efl_event_callback_call(pobj, EFL_UI_PAN_EVENT_PAN_POSITION_CHANGED, NULL);
+   efl_event_callback_call(pobj, EFL_UI_PAN_EVENT_PAN_CONTENT_SIZE_CHANGED, &sz);
 }
 
 EOLIAN static Eina_Bool
@@ -160,7 +152,7 @@ _efl_ui_pan_efl_content_content_set(Evas_Object *obj, Efl_Ui_Pan_Data *psd, Evas
      {
         efl_content_unset(obj);
      }
-   if (!content) goto end;
+   if (!content) return EINA_TRUE;
 
    psd->content = content;
    efl_canvas_group_member_add(obj, content);
@@ -179,9 +171,7 @@ _efl_ui_pan_efl_content_content_set(Evas_Object *obj, Efl_Ui_Pan_Data *psd, Evas
 
    evas_object_smart_changed(obj);
 
-end:
    efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, content);
-   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_PAN_CONTENT_CHANGED, NULL);
    return EINA_TRUE;
 }
 
@@ -205,7 +195,6 @@ _efl_ui_pan_efl_content_content_unset(Eo *obj EINA_UNUSED, Efl_Ui_Pan_Data *pd)
    pd->content = NULL;
    pd->content_w = pd->content_h = pd->px = pd->py = 0;
    efl_event_callback_call(obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, NULL);
-   efl_event_callback_call(obj, EFL_UI_PAN_EVENT_PAN_CONTENT_CHANGED, NULL);
 
    return old_content;
 }

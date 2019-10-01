@@ -872,12 +872,12 @@ ELM_PART_OVERRIDE_CONTENT_UNSET(elm_hover, ELM_HOVER, Elm_Hover_Data)
 
 /* Internal EO APIs and hidden overrides */
 
-// ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX) is overridden with an if()
-// ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX) somehow doesn't compile!?
+// EFL_UI_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX) is overridden with an if()
+// EFL_UI_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX) somehow doesn't compile!?
 
 #define ELM_HOVER_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_hover), \
    EFL_CANVAS_GROUP_CALC_OPS(elm_hover), \
-   _ELM_LAYOUT_ALIASES_OPS(elm_hover, content)
+   _EFL_UI_LAYOUT_ALIASES_OPS(elm_hover, content)
 
 #include "elm_hover_eo.c"

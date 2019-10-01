@@ -2,7 +2,7 @@
 interface @beta Efl.Ui.Draggable
 {
    [[Efl UI draggable interface]]
-   event_prefix: efl_ui;
+   event_c_prefix: efl_ui;
    methods {
         @property drag_target {
              [[Control whether the object's content is changed by drag and drop.

@@ -1,43 +1,52 @@
 import eina_types;
+parse efl_text_format;
 
 mixin @beta Efl.Ui.Widget_Scrollable_Content requires Efl.Object
 {
-   [[Efl widget scrollable content mixin
+   [[Mixin helper to add scrollable content to widgets.
 
-     This can be used to provide scrollable contents and text for widgets.
+     This can be used to provide scrollable contents and text for widgets. When @.scrollable_content or
+     @.scrollable_text is set, this mixin will create and manage an internal scroller object which
+     will be the container of that text or content.
 
-     Widgets can set the "__efl_scrollable_content_scroller_style" key data during
-     their constructor to apply a style to the internal scroller widget.
+     Only a single content or text can be set at any given time. Setting @.scrollable_text
+     will unset @.scrollable_content.
+
+     @since 1.23
    ]]
    c_prefix: efl_ui_widget;
-   event_prefix: efl_ui_widget_scrollable_content;
+   event_c_prefix: efl_ui_widget_scrollable_content;
    data: Efl_Ui_Widget_Scrollable_Content_Data;
    methods {
       @property scrollable_content_did_group_calc @protected @beta {
          [[Widgets can call this function during their @Efl.Canvas.Group.group_calculate
            implementation after the super call to determine whether the internal scroller
-           has performed sizing calculations.
+           has already performed sizing calculations.
 
-           The optimal_size,calc event will have been emitted during the super call if
-           this method returns $true.
+           If this property is $true, the @[Efl.Ui.Widget_Scrollable_Content.optimal_size,calc] event will have been
+           emitted during the super call. In this case it's likely that the widget should be completing
+           its internal sizing calculations from that event using:
 
-           In the case that this returns $true, it's likely that the widget should be completing
-           its internal sizing calculations from the optimal_size,calc callback using
+           efl_canvas_group_calculate(efl_super(ev->object, EFL_UI_WIDGET_SCROLLABLE_CONTENT_MIXIN));
 
-           `efl_canvas_group_calculate(efl_super(ev->object, EFL_UI_WIDGET_SCROLLABLE_CONTENT_MIXIN));`
+           in order to skip the scrollable sizing calculation.
 
-           in order to skip the scrollable sizing calc.
+           @since 1.23
          ]]
          get {}
          values {
-            did_group_calc: bool; [[Whether the internal scroller has done sizing calcs.]]
+            did_group_calc: bool; [[Whether the internal scroller has already done sizing calculations.]]
          }
       }
       @property scrollable_content {
          [[This is the content which will be placed in the internal scroller.
+
+           If a @.scrollable_text string is set, this property will be $NULL.
+
+           @since 1.23
          ]]
          set {
-            return: bool; [[True on success]]
+            return: bool; [[$true on success.]]
          }
          get {}
          values {
@@ -45,22 +54,18 @@ mixin @beta Efl.Ui.Widget_Scrollable_Content requires Efl.Object
          }
       }
       @property scrollable_text {
-         set {
-            [[Sets the text string to be displayed by the given text object.
-              The text will be scrollable depending on its size relative to the
-              object's geometry.
+         [[The text string to be displayed by the given text object.
+           The text will use @Efl.Text_Format_Wrap.mixed wrapping,
+           and it will be scrollable depending on its size relative to the
+           object's geometry.
 
-              See also @.scrollable_text.get.
-            ]]
+           When reading, do not free the return value.
+
+           @since 1.23
+         ]]
+         set {
          }
          get {
-            [[Retrieves the text string currently being displayed by the given
-              text object.
-
-              Do not free() the return value.
-
-              See also @.scrollable_text.set.
-            ]]
          }
          values {
             text: string; [[Text string to display on it.]]

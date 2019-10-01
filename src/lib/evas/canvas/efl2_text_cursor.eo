@@ -120,10 +120,13 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
          [[Advances to the start of the grapheme cluster]]
          return: bool; [[True if actually moved]]
       }
+      // FIXME: need cluster_next and cluster_end?
+
       // FIXME: It's just implemented as range delete with cluster start + end.
       // Sholud we have convenience wrappers for those though? This and cluster prev/next?
       // cluster_delete {
 
+      // FIXME: paragraph_end is inconsistent with word_end. The one goes to the last character and the other after the last character.
       paragraph_start {
          [[Advances to the first character in this paragraph]]
          return: bool; [[True if actually moved]]
@@ -197,7 +200,7 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
       range_text_get @const {
          [[Returns the text in the range between $cur1 and $cur2.
          ]]
-         return: mstring @owned; [[The text in the given range]]
+         return: mstring @move; [[The text in the given range]]
          params {
             cur2: Efl2.Text.Cursor; [[End of range]]
          }
@@ -213,7 +216,7 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
          params {
              cur2: Efl2.Text.Cursor; [[End of range]]
          }
-         return: iterator<ptr(Eina.Rect)> @owned; [[
+         return: iterator<ptr(Eina.Rect)> @move; [[
             Iterator on all geoemtries of the given range
          ]]
       }
@@ -226,7 +229,7 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
          params {
              cur2: Efl2.Text.Cursor; [[End of range]]
          }
-         return: iterator<ptr(Eina.Rect)> @owned; [[
+         return: iterator<ptr(Eina.Rect)> @move; [[
             Iterator on all simple geometries of the given range
          ]]
       }

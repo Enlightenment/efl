@@ -60,7 +60,7 @@ struct part_extension_method_definition_generator
                             << ", T> x=null) where T : " << name_helpers::klass_full_concrete_or_interface_name(cls) << "\n"
                 << scope_tab << "{\n"
                 << scope_tab << scope_tab << "return new " << bindableClass << "<" << part_klass_name << ">(\"" << part.name << "\" ,fac);\n"
-                << scope_tab << "}\n"
+                << scope_tab << "}\n\n"
             ).generate(sink, attributes::unused, context))
         return false;
 

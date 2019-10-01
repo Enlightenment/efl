@@ -35,7 +35,6 @@ _efl_ui_homogeneous_model_property_set(Eo *obj, Eina_Value *value,
      return efl_loop_future_rejected(obj, EFL_MODEL_ERROR_INCORRECT_VALUE);
    *defined = EINA_TRUE;
    f = efl_loop_future_resolved(obj, *value);
-   eina_value_free(value);
    return f;
 }
 

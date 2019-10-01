@@ -23,7 +23,7 @@ struct documentation_generator
 
    int scope_size = 0;
 
-   documentation_generator(int scope_size)
+   documentation_generator(int scope_size = 0)
        : scope_size(scope_size) {}
 
 
@@ -73,6 +73,25 @@ struct documentation_generator
       // Klass is needed to check the property naming rulles
       attributes::klass_def klass_d((const ::Eolian_Class *)klass, eolian_object_unit_get(klass));
 
+      // Comment the block below to enable @see reference conversion for non-public interface members.
+      // As they are not generated, this causes a doc warning that fails the build, but can be useful to track
+      // public methods referencing protected stuff.
+      if (ftype != EOLIAN_PROPERTY)
+        {
+           bool is_func_public = ::eolian_function_scope_get(function, ftype) == EOLIAN_SCOPE_PUBLIC;
+
+           if (helpers::is_managed_interface(klass_d) && !is_func_public)
+             return "";
+        }
+      else
+        {
+           bool is_get_public = ::eolian_function_scope_get(function, EOLIAN_PROP_GET) == EOLIAN_SCOPE_PUBLIC;
+           bool is_set_public = ::eolian_function_scope_get(function, EOLIAN_PROP_SET) == EOLIAN_SCOPE_PUBLIC;
+
+           if (helpers::is_managed_interface(klass_d) && !(is_get_public || is_set_public))
+             return "";
+        }
+
       switch(ftype)
       {
          case ::EOLIAN_METHOD:
@@ -112,6 +131,8 @@ struct documentation_generator
 
    static std::string function_conversion(attributes::function_def const& func)
    {
+      // This function is called only from the constructor reference conversion, so it does not
+      // need to check whether this function non-public in a interface returning an empty reference (yet).
       std::string name = name_helpers::klass_full_concrete_or_interface_name(func.klass);
       switch (func.type)
       {
@@ -166,17 +187,14 @@ struct documentation_generator
            ref += function_conversion(data, (const ::Eolian_Function *)data2, name_tail);
            is_beta = eolian_object_is_beta(data) || eolian_object_is_beta(data2);
            break;
-         case ::EOLIAN_OBJECT_VARIABLE:
-           if (::eolian_variable_type_get((::Eolian_Variable *)data) == ::EOLIAN_VAR_CONSTANT)
-             {
-                auto names = utils::split(name_helpers::managed_namespace(::eolian_object_name_get(data)), '.');
-                names.pop_back(); // Remove var name
-                ref = name_helpers::join_namespaces(names, '.');
-                ref += "Constants.";
-                ref += name_helpers::managed_name(::eolian_object_short_name_get(data));
-             }
-           // Otherwise, do nothing and no <see> tag will be generated. Because, who would
-           // reference a global (non-constant) variable in the docs?
+         case ::EOLIAN_OBJECT_CONSTANT:
+           {
+              auto names = utils::split(name_helpers::managed_namespace(::eolian_object_name_get(data)), '.');
+              names.pop_back(); // Remove var name
+              ref = name_helpers::join_namespaces(names, '.');
+              ref += "Constants.";
+              ref += name_helpers::managed_name(::eolian_object_short_name_get(data));
+           }
            break;
          case ::EOLIAN_OBJECT_UNKNOWN:
            // If the reference cannot be resolved, just return an empty string and
@@ -346,20 +364,34 @@ struct documentation_generator
       auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
       // Example embedding not requested
       if (options.examples_dir.empty()) return true;
-      std::string file_name = options.examples_dir + full_object_name + ".cs";
+      bool is_plain_code = false;
+      std::string file_name = options.examples_dir + full_object_name + ".xml";
       std::ifstream exfile(file_name);
-      // There is no example file for this class or method, just return
-      if (!exfile.good()) return true;
+      if (!exfile.good())
+        {
+           // There is no example XML file for this class, try a CS file
+           file_name = options.examples_dir + full_object_name + ".cs";
+           exfile.open(file_name);
+           // There are no example files for this class or method, just return
+           if (!exfile.good()) return true;
+           is_plain_code = true;
+        }
       std::stringstream example_buff;
       // Start with a newline so the first line renders with same indentation as the rest
       example_buff << std::endl << exfile.rdbuf();
 
       if (!as_generator(scope_tab(scope_size) << "/// ").generate(sink, attributes::unused, context)) return false;
-      if (!generate_opening_tag(sink, "example", context)) return false;
-      if (!generate_opening_tag(sink, "code", context)) return false;
+      if (is_plain_code)
+        {
+           if (!generate_opening_tag(sink, "example", context)) return false;
+           if (!generate_opening_tag(sink, "code", context)) return false;
+        }
       if (!generate_escaped_content(sink, example_buff.str(), context)) return false;
-      if (!generate_closing_tag(sink, "code", context)) return false;
-      if (!generate_closing_tag(sink, "example", context)) return false;
+      if (is_plain_code)
+        {
+           if (!generate_closing_tag(sink, "code", context)) return false;
+           if (!generate_closing_tag(sink, "example", context)) return false;
+        }
       return as_generator("\n").generate(sink, attributes::unused, context);
    }
 
@@ -505,7 +537,22 @@ struct documentation_generator
    template<typename OutputIterator, typename Context>
    bool generate_parameter(OutputIterator sink, attributes::parameter_def const& param, Context const& context) const
    {
-      return generate_tag_param(sink, name_helpers::escape_keyword(param.param_name), param.documentation.full_text, context);
+      auto text = param.documentation.full_text;
+      if (param.default_value.is_engaged())
+      {
+          auto value = param.default_value->serialized;
+
+          if (param.default_value->is_name_ref)
+            {
+               value = name_helpers::full_managed_name(value);
+               text += "\\<br/\\>The default value is \\<see cref=\\\"" + value + "\\\"/\\>.";
+            }
+          else
+            {
+               text += "\\<br/\\>The default value is \\<c\\>" + value + "\\</c\\>.";
+            }
+      }
+      return generate_tag_param(sink, name_helpers::escape_keyword(param.param_name), text, context);
    }
 
    template<typename OutputIterator, typename Context>
@@ -513,7 +560,7 @@ struct documentation_generator
    {
       std::string str = doc.full_text;
       if (!doc.since.empty())
-        str += "\n(Since EFL " + doc.since + ")";
+        str += "\\<br/\\>Since EFL " + doc.since;
       str += tail_text;
       return generate_tag_summary(sink, str, context);
    }
@@ -545,9 +592,8 @@ struct documentation_generator
           else
             ref = "<see cref=\"" + ref + "\" />";
 
-          if (!as_generator(
-                      scope_tab << "/// <param name=\"" << constructor_parameter_name(ctor) << "\">" << summary << " See " << ref <<  "</param>\n"
-                      ).generate(sink, param, context))
+          if (!as_generator(scope_tab(scope_size) << "/// <param name=\"" << constructor_parameter_name(ctor) << "\">" << summary << " See " << ref <<  "</param>\n")
+                            .generate(sink, param, context))
             return false;
         }
       return true;

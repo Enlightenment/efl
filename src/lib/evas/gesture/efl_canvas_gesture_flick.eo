@@ -2,16 +2,21 @@ import eina_types;
 
 class @beta Efl.Canvas.Gesture_Flick extends Efl.Canvas.Gesture
 {
-   [[EFL Gesture Flick class]]
+   [[Flick gesture class holding state information.
+     See @Efl.Canvas.Gesture to see what this state is and
+     @[Efl.Gesture.Events.gesture,flick] for a description of the Flick gesture.
+   ]]
    c_prefix: efl_gesture_flick;
    methods {
       momentum_get {
-         [[Gets flick gesture momentum value]]
-         return: Eina.Vector2; [[The momentum vector]]
-	  }
+         [[Gets flick gesture momentum value, this is, the direction in which the
+           pointer was flicked.]]
+         return: Eina.Vector2; [[The momentum vector.]]
+      }
       angle_get {
-         [[Gets flick direction angle]]
-         return: double; [[The angle value]]
+         [[Gets flick gesture direction angle, this is, the angle in which the
+           pointer was flicked.]]
+         return: double; [[The angle value.]]
       }
    }
    implements {

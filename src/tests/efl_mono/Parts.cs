@@ -43,7 +43,9 @@ public static class TestMVVMParts
 {
     public static void mvvm_dynamic_parts()
     {
-        var factory = new Efl.Ui.ItemFactory<Efl.Ui.ListDefaultItem>();
+        var parent = new Efl.Ui.Win(null);
+        parent.Visible = false;
+        var factory = new Efl.Ui.ItemFactory<Efl.Ui.ListDefaultItem>(parent);
 
         var bindablePart = factory.TextPart();
         var error = bindablePart.Markup().Bind("name");
@@ -53,9 +55,11 @@ public static class TestMVVMParts
 
     public static void mvvm_factory_properties()
     {
-        var factory = new Efl.Ui.ItemFactory<Efl.Ui.ListDefaultItem>();
+        var parent = new Efl.Ui.Win(null);
+        parent.Visible = false;
+        var factory = new Efl.Ui.ItemFactory<Efl.Ui.ListDefaultItem>(parent);
         var iconFactory = new Efl.Ui.ImageFactory(null);
-        iconFactory.PropertyBind("filename", "modelProperty");
+        iconFactory.BindProperty("filename", "modelProperty");
         var error = factory.IconPart().BindFactory(iconFactory);
 
         Test.AssertEquals(error, Eina.Error.NO_ERROR);

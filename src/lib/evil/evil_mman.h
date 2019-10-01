@@ -114,6 +114,10 @@ EAPI void *mmap(void   *addr,
                 int    fd,
                 off_t  offset);
 
+#ifndef HAVE_MMAP
+# define HAVE_MMAP 1
+#endif
+
 /**
  * Unmaps a mapped view of a file from the calling process's
  * address space.

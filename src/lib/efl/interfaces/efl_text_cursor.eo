@@ -54,7 +54,7 @@ interface @beta Efl.Text_Cursor {
             content: Eina.Unicode; [[The unicode codepoint of the character]]
          }
          keys {
-            @cref cur: Efl.Text_Cursor_Cursor; [[Cursor object]]
+            cur: ptr(const(Efl.Text_Cursor_Cursor)); [[Cursor object]]
          }
       }
       @property cursor_geometry {
@@ -70,7 +70,7 @@ interface @beta Efl.Text_Cursor {
             return: bool; [[ $true if split cursor, $false otherwise.]]
          }
          keys {
-            @cref cur: Efl.Text_Cursor_Cursor; [[Cursor object]]
+            cur: ptr(const(Efl.Text_Cursor_Cursor)); [[Cursor object]]
             ctype: Efl.Text_Cursor_Type; [[The type of the cursor.]]
          }
          values {
@@ -97,16 +97,16 @@ interface @beta Efl.Text_Cursor {
       cursor_equal {
          [[Check if two cursors are equal]]
          params {
-            @cref cur1: Efl.Text_Cursor_Cursor; [[Cursor 1 object]]
-            @cref cur2: Efl.Text_Cursor_Cursor; [[Cursor 2 object]]
+            @in cur1: ptr(const(Efl.Text_Cursor_Cursor)); [[Cursor 1 object]]
+            @in cur2: ptr(const(Efl.Text_Cursor_Cursor)); [[Cursor 2 object]]
          }
          return: bool; [[$true if cursors are equal, $false otherwise]]
       }
       cursor_compare {
          [[Compare two cursors]]
          params {
-            @cref cur1: Efl.Text_Cursor_Cursor; [[Cursor 1 object]]
-            @cref cur2: Efl.Text_Cursor_Cursor; [[Cursor 2 object]]
+            @in cur1: ptr(const(Efl.Text_Cursor_Cursor)); [[Cursor 1 object]]
+            @in cur2: ptr(const(Efl.Text_Cursor_Cursor)); [[Cursor 2 object]]
          }
          return: int; [[Difference between cursors]]
       }
@@ -114,7 +114,7 @@ interface @beta Efl.Text_Cursor {
          [[Copy existing cursor]]
          params {
             /* @out */ dst: ptr(Efl.Text_Cursor_Cursor); [[Destination cursor]]
-            @cref src: Efl.Text_Cursor_Cursor; [[Source cursor]]
+            @in src: ptr(const(Efl.Text_Cursor_Cursor)); [[Source cursor]]
          }
       }
       cursor_char_next {

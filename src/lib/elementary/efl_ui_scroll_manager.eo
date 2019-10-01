@@ -1,10 +1,10 @@
 class @beta Efl.Ui.Scroll.Manager extends Efl.Object implements
                              Efl.Ui.I18n,
-                             Efl.Ui.Scrollable_Interactive,
+                             Efl.Ui.Scrollable,
                              Efl.Ui.Scrollbar
 {
    [[Efl ui scroll manager class]]
-   event_prefix: efl_ui;
+   event_c_prefix: efl_ui;
    c_prefix: efl_ui_scroll_manager;
    methods {
       @property pan @protected {
@@ -12,7 +12,7 @@ class @beta Efl.Ui.Scroll.Manager extends Efl.Object implements
 
       This property is protected as it is meant for scrollable object
       implementations only, to set and access the internal pan object.
-      If pan is set to NULL, scrolling does not work.
+      If pan is set to $NULL, scrolling does not work.
     ]]
          set {
          }
@@ -25,21 +25,21 @@ class @beta Efl.Ui.Scroll.Manager extends Efl.Object implements
       Efl.Object.constructor;
       Efl.Object.destructor;
       Efl.Ui.I18n.mirrored { set; }
-      Efl.Ui.Scrollable_Interactive.content_pos { set; get; }
-      Efl.Ui.Scrollable_Interactive.content_size{ get; }
-      Efl.Ui.Scrollable_Interactive.viewport_geometry{ get; }
-      Efl.Ui.Scrollable_Interactive.bounce_enabled { set; get; }
-      Efl.Ui.Scrollable_Interactive.scroll_freeze { get; set; }
-      Efl.Ui.Scrollable_Interactive.scroll_hold { get; set; }
-      Efl.Ui.Scrollable_Interactive.looping { get; set; }
-      Efl.Ui.Scrollable_Interactive.movement_block { get; set; }
-      Efl.Ui.Scrollable_Interactive.gravity { get; set; }
-      Efl.Ui.Scrollable_Interactive.match_content { set; }
-      Efl.Ui.Scrollable_Interactive.step_size { set; get; }
+      Efl.Ui.Scrollable.content_pos { set; get; }
+      Efl.Ui.Scrollable.content_size{ get; }
+      Efl.Ui.Scrollable.viewport_geometry{ get; }
+      Efl.Ui.Scrollable.bounce_enabled { set; get; }
+      Efl.Ui.Scrollable.scroll_freeze { get; set; }
+      Efl.Ui.Scrollable.scroll_hold { get; set; }
+      Efl.Ui.Scrollable.looping { get; set; }
+      Efl.Ui.Scrollable.movement_block { get; set; }
+      Efl.Ui.Scrollable.gravity { get; set; }
+      Efl.Ui.Scrollable.match_content { set; }
+      Efl.Ui.Scrollable.step_size { set; get; }
       Efl.Ui.Scrollbar.bar_mode { get; set; }
       Efl.Ui.Scrollbar.bar_size { get; }
       Efl.Ui.Scrollbar.bar_position { get; set; }
       Efl.Ui.Scrollbar.bar_visibility_update;
-      Efl.Ui.Scrollable_Interactive.scroll;
+      Efl.Ui.Scrollable.scroll;
    }
 }

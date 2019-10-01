@@ -7,11 +7,11 @@
 #include "efl_ui_suite.h"
 
 static void
-_startstop_event_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+_startfinish_event_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    int *called = data;
    (*called)++;
-   /* start/stop always come in pairs */
+   /* start/finish always come in pairs */
    if (*called == 2) ecore_main_loop_quit();
 }
 
@@ -24,8 +24,8 @@ EFL_START_TEST(efl_ui_test_scroller_events)
 
 
    sc = efl_add(EFL_UI_SCROLLER_CLASS, win,
-                efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_START, _startstop_event_cb, &called),
-                efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_STOP, _startstop_event_cb, &called),
+                efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_STARTED, _startfinish_event_cb, &called),
+                efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_FINISHED, _startfinish_event_cb, &called),
                 efl_gfx_entity_size_set(efl_added, EINA_SIZE2D(500, 500))
                 );
 
@@ -52,8 +52,8 @@ EFL_START_TEST(efl_ui_test_scroller_events)
 
    sc2 = efl_add(EFL_UI_SCROLLER_CLASS, bx,
                  efl_ui_scrollable_match_content_set(efl_added, EINA_FALSE, EINA_TRUE),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_START, _startstop_event_cb, &called2),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_STOP, _startstop_event_cb, &called2),
+                 efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_STARTED, _startfinish_event_cb, &called2),
+                 efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_FINISHED, _startfinish_event_cb, &called2),
                  efl_pack(bx, efl_added));
 
    bx2 = efl_add(EFL_UI_BOX_CLASS, sc2,
@@ -91,8 +91,8 @@ EFL_START_TEST(efl_ui_test_scroller_events)
    sc3 = efl_add(EFL_UI_SCROLLER_CLASS, win,
                  efl_gfx_hint_weight_set(efl_added, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND),
                  efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_TRUE),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_START, _startstop_event_cb, &called3),
-                 efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_STOP, _startstop_event_cb, &called3),
+                 efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_STARTED, _startfinish_event_cb, &called3),
+                 efl_event_callback_add(efl_added, EFL_UI_EVENT_SCROLL_FINISHED, _startfinish_event_cb, &called3),
                  efl_pack_table(gd, efl_added, 0, 0, 1, 1));
 
    gd2 = efl_add(EFL_UI_TABLE_CLASS, sc3,

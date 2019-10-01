@@ -403,6 +403,10 @@ void eio_monitor_backend_del(Eio_Monitor *monitor)
    eina_hash_del(_fsevent_monitors, monitor->path, backend);
 }
 
+Eina_Bool eio_monitor_context_check(const Eio_Monitor *monitor, const char *path)
+{
+   return EINA_TRUE;
+}
 
 /*============================================================================*
  *                                   API                                      *

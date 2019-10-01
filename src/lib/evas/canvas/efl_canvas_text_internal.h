@@ -47,6 +47,7 @@ struct _Efl2_Text_Attribute_Format
    struct {
       int               l, r;
    } margin;  /**< Left and right margin width. */
+   Eina_Stringshare    *href;
    int                  tab_width;  /**< Value of the size of the tab character. */
    int                  line_height;  /**< Value of the size of the line of the text. */
    int                  line_spacing;  /**< Value to set the line gap in text. */

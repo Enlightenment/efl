@@ -1,4 +1,6 @@
-class @beta Efl.Ui.Spin_Button extends Efl.Ui.Spin implements Efl.Ui.Focus.Composition, Efl.Ui.Layout_Orientable, Efl.Ui.Range_Interactive, Efl.Access.Widget.Action
+class Efl.Ui.Spin_Button extends Efl.Ui.Spin
+                         implements Efl.Ui.Focus.Composition, Efl.Ui.Layout_Orientable, Efl.Ui.Range_Interactive,
+                                    Efl.Access.Widget.Action
 {
    [[A Button Spin.
 
@@ -20,7 +22,7 @@ class @beta Efl.Ui.Spin_Button extends Efl.Ui.Spin implements Efl.Ui.Focus.Compo
 
            If enabled, when the user tries to increment the value
            but displayed value plus step value is bigger than maximum value,
-           the new value will become the minimum value. When the the user tries to
+           the new value will become the minimum value. When the user tries to
            decrement it, if the value minus step is less than minimum value,
            the new displayed value will be the maximum value.
 
@@ -40,7 +42,7 @@ class @beta Efl.Ui.Spin_Button extends Efl.Ui.Spin implements Efl.Ui.Focus.Compo
             circulate: bool(false); [[$true to enable circulate or $false to disable it.]]
          }
       }
-      @property direct_text_input {
+      @property direct_text_input @beta {
          [[Control whether the spin can be directly edited by the user.
 
            Spin objects can have editing disabled, in which case they can only
@@ -55,7 +57,7 @@ class @beta Efl.Ui.Spin_Button extends Efl.Ui.Spin implements Efl.Ui.Focus.Compo
          get {
          }
          values {
-            direct_text_input: bool(false); [[$true to allow users to edit it or $false to don't allow users to edit it directly.]]
+            direct_text_input: bool(false); [[$true to allow users to directly edit the value.]]
          }
       }
    }

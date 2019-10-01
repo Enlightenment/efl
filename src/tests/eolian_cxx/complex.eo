@@ -20,17 +20,17 @@ class Complex extends Efl.Object
       }
       incontcontown {
          params {
-           l: list<list<string>> @owned;
+           l: list<list<string>> @move;
          }
       }
       incontowncontown {
          params {
-           l: list<list<string> @owned> @owned;
+           l: list<list<string> @move> @move;
          }
       }
       incontowncont {
          params {
-           l: list<list<string> @owned>;
+           l: list<list<string> @move>;
          }
       }
       instringcont {
@@ -40,12 +40,12 @@ class Complex extends Efl.Object
       }
       instringowncont {
          params {
-           l: list<mstring @owned>;
+           l: list<mstring @move>;
          }
       }
       instringcontown {
          params {
-           l: list<string> @owned;
+           l: list<string> @move;
          }
       }
       inarray {
@@ -55,17 +55,17 @@ class Complex extends Efl.Object
       }
       inarrayown {
          params {
-           l: array<string> @owned;
+           l: array<string> @move;
          }
       }
-      inhash {
+      inhash @beta {
          params {
            l: hash<string, string>;
          }
       }
-      inhashown {
+      inhashown @beta {
          params {
-           l: hash<string, string> @owned;
+           l: hash<string, string> @move;
          }
       }
       initerator {
@@ -75,7 +75,7 @@ class Complex extends Efl.Object
       }
       initeratorown {
          params {
-           l: iterator<int> @owned;
+           l: iterator<int> @move;
          }
       }
       inaccessor {
@@ -85,7 +85,7 @@ class Complex extends Efl.Object
       }
       inaccessorown {
          params {
-           l: accessor<int> @owned;
+           l: accessor<int> @move;
          }
       }
       // out
@@ -101,17 +101,17 @@ class Complex extends Efl.Object
       }
       outcontcontown {
          params {
-           @out l: list<list<string>> @owned;
+           @out l: list<list<string>> @move;
          }
       }
       outcontowncontown {
          params {
-           @out l: list<list<string> @owned> @owned;
+           @out l: list<list<string> @move> @move;
          }
       }
       outcontowncont {
          params {
-           @out l: list<list<string> @owned>;
+           @out l: list<list<string> @move>;
          }
       }
       outstringcont {
@@ -121,12 +121,12 @@ class Complex extends Efl.Object
       }
       outstringowncont {
          params {
-           @out l: list<mstring @owned>;
+           @out l: list<mstring @move>;
          }
       }
       outstringcontown {
          params {
-           @out l: list<string> @owned;
+           @out l: list<string> @move;
          }
       }
       outarray {
@@ -136,17 +136,17 @@ class Complex extends Efl.Object
       }
       outarrayown {
          params {
-           @out l: array<string> @owned;
+           @out l: array<string> @move;
          }
       }
-      outhash {
+      outhash @beta {
          params {
            @out l: hash<string, string>;
          }
       }
-      outhashown {
+      outhashown @beta {
          params {
-           @out l: hash<string, string> @owned;
+           @out l: hash<string, string> @move;
          }
       }
       outiterator {
@@ -156,7 +156,7 @@ class Complex extends Efl.Object
       }
       outiteratorown {
          params {
-           @out l: iterator<int> @owned;
+           @out l: iterator<int> @move;
          }
       }
       outaccessor {
@@ -166,7 +166,7 @@ class Complex extends Efl.Object
       }
       outaccessorown {
          params {
-           @out l: accessor<int> @owned;
+           @out l: accessor<int> @move;
          }
       }
       foo {

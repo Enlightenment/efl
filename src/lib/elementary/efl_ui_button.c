@@ -102,7 +102,7 @@ _efl_ui_button_efl_ui_widget_on_access_activate(Eo *obj, Efl_Ui_Button_Data *_pd
    if (elm_widget_is_legacy(obj))
      elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
    else
-     elm_layout_signal_emit(obj, "efl,anim,activate", "efl");
+     elm_layout_signal_emit(obj, "efl,state,animation,activated", "efl");
 
    return EINA_TRUE;
 }
@@ -113,7 +113,7 @@ _key_action_activate(Evas_Object *obj, const char *params EINA_UNUSED)
    if (elm_widget_is_legacy(obj))
      elm_layout_signal_emit(obj, "elm,anim,activate", "elm");
    else
-     elm_layout_signal_emit(obj, "efl,anim,activate", "efl");
+     elm_layout_signal_emit(obj, "efl,state,animation,activated", "efl");
    _activate(obj);
    return EINA_TRUE;
 }
@@ -374,10 +374,10 @@ elm_button_autorepeat_get(const Evas_Object *obj)
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+EFL_UI_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_BUTTON_EXTRA_OPS \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
+   EFL_UI_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_button)
 
 #include "efl_ui_button.eo.c"

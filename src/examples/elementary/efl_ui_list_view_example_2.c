@@ -37,12 +37,11 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    efl_ui_property_bind(factory, "efl.text", "filename");
 
    li = efl_add(EFL_UI_LIST_VIEW_CLASS, win);
-   efl_ui_list_view_layout_factory_set(li, factory);
+   efl_ui_collection_view_factory_set(li, factory);
    efl_ui_view_model_set(li, model);
 
    evas_object_size_hint_weight_set(li, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(li, EVAS_HINT_FILL, EVAS_HINT_FILL);
-
 
    imgf = efl_add(EFL_UI_IMAGE_FACTORY_CLASS, win);
    efl_ui_property_bind(imgf, "", "path"); //connect to "path" property

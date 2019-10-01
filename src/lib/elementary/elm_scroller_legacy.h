@@ -1,3 +1,5 @@
+#ifndef _ELM_SCROLLER_LEGACY_H
+#define _ELM_SCROLLER_LEGACY_H
 #ifndef _ELM_INTERFACE_SCROLLABLE_EO_TYPES
 #define _ELM_INTERFACE_SCROLLABLE_EO_TYPES
 
@@ -637,3 +639,4 @@ EAPI void elm_scroller_propagate_events_set(Evas_Object *obj, Eina_Bool propagat
  * @ingroup Elm_Scroller
  */
 EAPI Eina_Bool elm_scroller_propagate_events_get(const Evas_Object *obj);
+#endif

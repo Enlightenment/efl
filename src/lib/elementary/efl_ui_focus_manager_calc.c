@@ -1473,13 +1473,14 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
    Node_Type node_type;
    Eina_Array *old_chain = eina_array_new(5), *chain = eina_array_new(5);
 
-   EINA_SAFETY_ON_NULL_RETURN(focus);
+   EINA_SAFETY_ON_NULL_GOTO(focus, end);
 
    _current_focused_parent_to_array(obj, pd, old_chain);
 
    //check if node is part of this manager object
    node = node_get(obj, pd, focus);
-   if (!node) return;
+   if (!node)
+     goto end;
 
    if (node->type == NODE_TYPE_ONLY_LOGICAL && !node->redirect_manager)
      {
@@ -1500,7 +1501,7 @@ _efl_ui_focus_manager_calc_efl_ui_focus_manager_manager_focus_set(Eo *obj, Efl_U
         else
           {
              ERR("Could not fetch a node located at %p", node->focusable);
-             return;
+             goto end;
           }
      }
 

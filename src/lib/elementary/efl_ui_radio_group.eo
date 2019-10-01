@@ -1,19 +1,10 @@
-interface @beta Efl.Ui.Radio_Group
+interface Efl.Ui.Radio_Group extends Efl.Ui.Single_Selectable
 {
    [[Interface for manually handling a group of @Efl.Ui.Radio buttons.
 
      See the documentation of @Efl.Ui.Radio for an explanation of radio button grouping.
    ]]
    methods {
-      @property selected_object {
-        [[Currently selected button in a radio button group, or $NULL if no button is selected.
-
-          See also @.selected_value.
-        ]]
-        values {
-          selected_object : Efl.Ui.Radio; [[The currently selected radio button in the group, or $NULL.]]
-        }
-      }
       @property selected_value {
         [[The value associated with the currently selected button in the group.
           Give each radio button in the group a different value using @Efl.Ui.Radio.state_value.

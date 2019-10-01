@@ -1,22 +1,24 @@
 import efl_ui;
 
 struct Efl.Ui.Position_Manager.Range_Update {
-   [[A struct containing the the updated range of visible items in this position manger.]]
+   [[A structure containing the updated range of visible items in this position manger.]]
    start_id : uint; [[The first item that is visible]]
    end_id : uint; [[The last item that is visible]]
 }
 
 interface @beta Efl.Ui.Position_Manager.Entity extends Efl.Ui.Layout_Orientable
 {
-   [[
-     This abstracts the basic placement of items in a not defined form under a viewport.
+   [[This abstracts the basic placement of items in a not-defined form under a viewport.
 
-     The interface gets a defined set of elements that is meant to be displayed. The implementation provides a way to calculate the size that is required to display all items. Every time this absolut size of items is changed, content_size,changed is called.
+     The interface gets a defined set of elements that is meant to be displayed.
+     The implementation provides a way to calculate the size that is required to display all items.
+     Every time this absolute size of items is changed, @[Efl.Ui.Position_Manager.Entity.content_size,changed] is
+     emitted.
    ]]
    methods {
       version {
-        [[ Return the version of Data_Access that is used.
-          This object needs to implement the interface Efl.Ui.Position_Manager.Data_Access_V1 if 1 is returned. 2 if V2 (not available yet) is implemented.
+        [[Returns the version of Data_Access that is used.
+          This object needs to implement the interface @Efl.Ui.Position_Manager.Data_Access_V1 if 1 is returned.
         ]]
         params {
           max : int; [[The maximum version that is available from the data-provider.]]
@@ -50,20 +52,22 @@ interface @beta Efl.Ui.Position_Manager.Entity extends Efl.Ui.Layout_Orientable
          }
       }
       position_single_item {
-         [[Return the position and size of item idx
+         [[Return the position and size of item idx.
 
            This method returns the size and position of the item at $idx.
-           Even if the item is outside the viewport, the returned rectangle must be valid. The result can be used for scrolling calculations.
+           Even if the item is outside the viewport, the returned rectangle must be valid.
+           The result can be used for scrolling calculations.
          ]]
          params {
             idx : int; [[The id for the item]]
          }
-         return : Eina.Rect; [[Position and Size in canvas coordinations]]
+         return : Eina.Rect; [[Position and Size in canvas coordinates.]]
       }
       item_added {
         [[The new item $subobj has been added at the $added_index field.
 
-         The accessor provided through @Efl.Ui.Position_Manager.Data_Access_V1.data_access will contain updated Entities.]]
+         The accessor provided through @Efl.Ui.Position_Manager.Data_Access_V1.data_access will contain updated
+         Entities.]]
         params {
           added_index : int;
           subobj : Efl.Gfx.Entity;
@@ -71,7 +75,8 @@ interface @beta Efl.Ui.Position_Manager.Entity extends Efl.Ui.Layout_Orientable
       }
       item_removed {
         [[The item $subobj previously at position $removed_index has been removed.
-          The accessor provided through @Efl.Ui.Position_Manager.Data_Access_V1.data_access will contain updated Entities.
+          The accessor provided through @Efl.Ui.Position_Manager.Data_Access_V1.data_access will contain updated
+          Entities.
         ]]
         params {
           removed_index : int;
@@ -86,8 +91,19 @@ interface @beta Efl.Ui.Position_Manager.Entity extends Efl.Ui.Layout_Orientable
           end_id : int; [[The last item that has a new size]]
         }
       }
+      entities_ready {
+        [[The items from $start_id to $end_id now have their entities ready
+
+          The position manager will reapply the geometry to the elements if they are visible.
+        ]]
+        params {
+          start_id : uint; [[The first item that is available]]
+          end_id : uint; [[The last item that is available]]
+        }
+      }
       relative_item {
-        [[translate the current_id, into a new id which is oriented in the $direction of $current_id. In case that there is no item, -1 is returned]]
+        [[Translates the $current_id, into a new id which is oriented in the $direction of $current_id.
+          In case that there is no item, -1 is returned]]
         params {
           current_id : uint; [[The id where the direction is oriented at]]
           direction : Efl.Ui.Focus.Direction; [[The direction where the new id is]]
@@ -96,8 +112,11 @@ interface @beta Efl.Ui.Position_Manager.Entity extends Efl.Ui.Layout_Orientable
       }
    }
    events {
-     content_size,changed : Eina.Size2D; [[Emitted when the aggregate size of all items has changed. This can be used to resize an enclosing Pan object.]]
-     content_min_size,changed : Eina.Size2D; [[Emitted when the minimum size of all items has changed. The minimum size is the size, that this position_manager needs at *least* to display a single item.]]
+     content_size,changed : Eina.Size2D; [[Emitted when the aggregate size of all items has changed.
+                                           This can be used to resize an enclosing Pan object.]]
+     content_min_size,changed : Eina.Size2D; [[Emitted when the minimum size of all items has changed.
+                                               The minimum size is the size that this position_manager needs
+                                               to display a single item.]]
      visible_range,changed : Efl.Ui.Position_Manager.Range_Update;
    }
 }

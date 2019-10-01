@@ -16,7 +16,7 @@ function SimpleFunc {
 function ComplexFunc {
   params {
     @in c: string;
-    @out d: mstring @owned;
+    @out d: mstring @move;
   }
   return: double;
 };

@@ -235,17 +235,14 @@ class @beta Evas.Canvas3D.Node extends Evas.Canvas3D.Object
       }
 
       @property position_inherit {
-         set {
-            [[Set the position inheritance flag of the given node.
+         [[The position inheritance flag of the given node.
 
-              When inheritance is enabled, a node's world space position is determined by
-              adding the parent node's world position and the node's position. Otherwise
-              the node's position will be the world space position.]]
+           When inheritance is enabled, a node's world space position is determined by
+           adding the parent node's world position and the node's position. Otherwise
+           the node's position will be the world space position.]]
+         set {
          }
          get {
-            [[Get the position inheritance flag of the given node.
-
-              See also @Evas.Canvas3D.Node.position_inherit.set.]]
          }
          values {
             inherit: bool; [[Whether to inherit parent position.]]
@@ -253,18 +250,15 @@ class @beta Evas.Canvas3D.Node extends Evas.Canvas3D.Object
       }
 
       @property orientation_inherit {
-         set {
-            [[Set the orientation inheritance flag of the given node.
+         [[The orientation inheritance flag of the given node.
 
-              When inheritance is enabled, a node's world space orientation is determined
-              by multiplying the parent node's world orientation and the node's
-              orientation. Otherwise the node's orientation will be the world space
-              orientation.]]
+           When inheritance is enabled, a node's world space orientation is determined
+           by multiplying the parent node's world orientation and the node's
+           orientation. Otherwise the node's orientation will be the world space
+           orientation.]]
+         set {
          }
          get {
-            [[Get the orientation inheritance flag of the given node.
-
-              See also @Evas.Canvas3D.Node.orientation_inherit.set.]]
          }
          values {
             inherit: bool; [[Whether to inherit parent orientation.]]
@@ -272,17 +266,14 @@ class @beta Evas.Canvas3D.Node extends Evas.Canvas3D.Object
       }
 
       @property scale_inherit {
-         set {
-            [[Set the scale inheritance flag of the given node.
+         [[The scale inheritance flag of the given node.
 
-              When inheritance is enabled, a node's world space scale is determined by
-              multiplying the parent node's world scale and the node's scale. Otherwise
-              the node's scale will be the world space scale.]]
+           When inheritance is enabled, a node's world space scale is determined by
+           multiplying the parent node's world scale and the node's scale. Otherwise
+           the node's scale will be the world space scale.]]
+         set {
          }
          get {
-            [[Get the scale inheritance flag of the given node.
-
-              See also @Evas.Canvas3D.Node.scale_inherit.set.]]
          }
          values {
             inherit: bool; [[Whether to inherit parent scale.]]
@@ -290,18 +281,15 @@ class @beta Evas.Canvas3D.Node extends Evas.Canvas3D.Object
       }
 
       @property camera {
+         [[A camera attached to the given node.
+
+           If the node is not of type EVAS_CANVAS3D_NODE_TYPE_CAMERA, error message will be
+           generated and nothing happens.
+
+           See also @Evas.Canvas3D.Node.member_add.]]
          set {
-            [[Set a camera to the given node.
-
-              If the node is not of type EVAS_CANVAS3D_NODE_TYPE_CAMERA, error message will be
-              generated and nothing happens.
-
-              See also @Evas.Canvas3D.Node.member_add.]]
          }
          get {
-            [[Get the camera of the given node.
-
-              See also @Evas.Canvas3D.Node.camera.set.]]
          }
          values {
             // FIXME: Evas_Canvas3D_Camera is necessary, but that introduces a cycle
@@ -310,18 +298,15 @@ class @beta Evas.Canvas3D.Node extends Evas.Canvas3D.Object
       }
 
       @property light {
+         [[A light attached to the given node.
+
+           If the node is not of type EVAS_CANVAS3D_NODE_TYPE_LIGHT, error message will be
+           generated and nothing happens.
+
+           See also @Evas.Canvas3D.Node.member_add.]]
          set {
-            [[Set the light of the given node.
-
-              If the node is not of type EVAS_CANVAS3D_NODE_TYPE_LIGHT, error message will be
-              generated and nothing happens.
-
-              See also @Evas.Canvas3D.Node.member_add.]]
          }
          get {
-            [[Get the light of the given node.
-
-              See also @Evas.Canvas3D.Node.light.set.]]
          }
          values {
             light: Evas.Canvas3D.Light; [[The light of the given node if any, or $null if there're none.]]
@@ -329,23 +314,17 @@ class @beta Evas.Canvas3D.Node extends Evas.Canvas3D.Object
       }
 
       @property mesh_frame {
+         [[The animation frame number of the given node for the given mesh.
+
+           If the node is not of type EVAS_CANVAS3D_NODE_TYPE_MESH or the given mesh does not
+           belong to the given mesh error mesh will be generated and nothing happens.
+
+           Default mesh frame is 0.
+
+           See also @Evas.Canvas3D.Node.mesh_add.]]
          set {
-            [[Set the animation frame number of the given node for the given mesh.
-
-              If the node is not of type EVAS_CANVAS3D_NODE_TYPE_MESH or the given mesh does not
-              belong to the given mesh error mesh will be generated and nothing happens.
-
-              Default mesh frame is 0.
-
-              See also @Evas.Canvas3D.Node.mesh_add.]]
          }
          get {
-            [[Set the animation frame number of the given node for the given mesh.
-
-              If the node is not of type EVAS_CANVAS3D_NODE_TYPE_MESH or the given mesh does not
-              belong to the given mesh error mesh will be generated and nothing happens.
-
-              See also @Evas.Canvas3D.Node.mesh_add.]]
          }
          keys {
             mesh: Evas.Canvas3D.Mesh; [[The given mesh.]]
@@ -356,13 +335,10 @@ class @beta Evas.Canvas3D.Node extends Evas.Canvas3D.Object
       }
 
       @property billboard_target {
+         [[Set behavior of node like billboard object.]]
          set {
-            [[Set behavior of node like billboard object.]]
          }
          get {
-            [[Get the target node for billboard object.
-
-              See also @Evas.Canvas3D.Node.billboard_target.set.]]
          }
          values {
             target: Evas.Canvas3D.Node; [[The pointer to target node for billboard object,
@@ -370,13 +346,10 @@ class @beta Evas.Canvas3D.Node extends Evas.Canvas3D.Object
          }
       }
       @property lod_enable {
+         [[Enable behavior of node like LOD object.]]
          set {
-            [[Enable behavior of node like LOD object.]]
          }
          get {
-            [[Get(check) status of node does node is LOD object.
-
-              See also @Evas.Canvas3D.Node.lod_enable.set.]]
          }
          values {
             enable: bool; [[status property (true/false)]]

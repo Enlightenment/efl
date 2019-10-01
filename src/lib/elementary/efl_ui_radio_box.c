@@ -2,7 +2,6 @@
 # include "elementary_config.h"
 #endif
 
-#include <Elementary.h>
 #include "elm_priv.h"
 
 #define MY_CLASS EFL_UI_RADIO_BOX_CLASS
@@ -13,10 +12,10 @@ typedef struct {
 } Efl_Ui_Radio_Box_Data;
 
 static inline Eina_Bool
-register_safe_in_group_begin(Eo *subobj, Efl_Ui_Radio_Box_Data *pd)
+register_safe_in_group_begin(Eo *subobj, Efl_Ui_Radio_Box_Data *pd, Eina_Bool is_radio)
 {
-   EINA_SAFETY_ON_FALSE_RETURN_VAL(efl_isa(subobj, EFL_UI_RADIO_CLASS), EINA_FALSE);
-   if (!pd->in_pack)
+   if (pd->in_pack) return EINA_TRUE;
+   if (is_radio)
      efl_ui_radio_group_register(pd->group, subobj);
    pd->in_pack = EINA_TRUE;
 
@@ -24,9 +23,9 @@ register_safe_in_group_begin(Eo *subobj, Efl_Ui_Radio_Box_Data *pd)
 }
 
 static inline Eina_Bool
-register_safe_group_end(Eo *subobj, Efl_Ui_Radio_Box_Data *pd, Eina_Bool result)
+register_safe_group_end(Eo *subobj, Efl_Ui_Radio_Box_Data *pd, Eina_Bool is_radio, Eina_Bool result)
 {
-   if (!result)
+   if (is_radio && (!result))
      efl_ui_radio_group_unregister(pd->group, subobj);
    pd->in_pack = EINA_FALSE;
 
@@ -34,11 +33,11 @@ register_safe_group_end(Eo *subobj, Efl_Ui_Radio_Box_Data *pd, Eina_Bool result)
 }
 
 #define REGISTER_SAFE(f) \
-  Eina_Bool result; \
-  if (!register_safe_in_group_begin(subobj, pd)) \
+  Eina_Bool result, is_radio = efl_isa(subobj, EFL_UI_RADIO_CLASS); \
+  if (!register_safe_in_group_begin(subobj, pd, is_radio)) \
     return EINA_FALSE; \
   result = f ; \
-  return register_safe_group_end(subobj, pd, result);
+  return register_safe_group_end(subobj, pd, is_radio, result);
 
 static void
 unpack_from_logical(Eo *obj, Efl_Ui_Radio_Box_Data *pd)
@@ -119,6 +118,7 @@ _efl_ui_radio_box_efl_object_constructor(Eo *obj, Efl_Ui_Radio_Box_Data *pd)
 {
    pd->group = efl_new(EFL_UI_RADIO_GROUP_IMPL_CLASS, NULL);
    efl_composite_attach(obj, pd->group);
+   efl_event_callback_forwarder_add(pd->group, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, obj);
    efl_event_callback_forwarder_add(pd->group, EFL_UI_RADIO_GROUP_EVENT_VALUE_CHANGED, obj);
    return efl_constructor(efl_super(obj, MY_CLASS));
 }

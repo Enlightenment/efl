@@ -13,7 +13,7 @@ abstract Object_Impl extends Base {
             part: string;
          }
          values {
-            value: list<string> @owned;
+            value: list<string> @move;
          }
       }
       @property b {
@@ -23,7 +23,7 @@ abstract Object_Impl extends Base {
             /* set as virtual pure - no implementation expected */
          }
          values {
-            value: list<string> @owned;
+            value: list<string> @move;
          }
       }
       constructor_1 {
@@ -41,7 +41,7 @@ abstract Object_Impl extends Base {
             @inout b: char;
             @out c: double;
          }
-         return: ptr(char) (null); [[comment for method return]]
+         return: mstring (null); [[comment for method return]]
       }
       foo2 @const {
          [[comment foo]]

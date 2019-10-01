@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 namespace eldbus
 {
 
+/// <summary>Initializes Eldbus. (Since EFL 1.23)</summary>
 public static class Config
 {
     [DllImport(efl.Libs.Eldbus)] private static extern int eldbus_init();

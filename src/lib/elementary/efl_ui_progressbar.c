@@ -780,10 +780,10 @@ ELM_PART_TEXT_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
 ELM_PART_MARKUP_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
 ELM_PART_CONTENT_DEFAULT_IMPLEMENT(efl_ui_progressbar, Efl_Ui_Progressbar_Data)
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_progressbar)
+EFL_UI_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_progressbar)
 
 #define EFL_UI_PROGRESSBAR_EXTRA_OPS \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_progressbar), \
+   EFL_UI_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_progressbar), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_ui_progressbar)
 
 #include "efl_ui_progressbar.eo.c"

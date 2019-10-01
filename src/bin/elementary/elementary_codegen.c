@@ -701,9 +701,13 @@ _programs_parse(Evas_Object *ed)
           }
 
         edje_edit_string_free(description);
+        description = NULL;
         edje_edit_string_free(sig);
+        sig = NULL;
         edje_edit_string_free(source);
+        source = NULL;
         free(apiname);
+        apiname = NULL;
      }
 
    edje_edit_string_list_free(programs);

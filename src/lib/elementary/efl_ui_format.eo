@@ -1,6 +1,6 @@
 import eina_types;
 
-function @beta Efl.Ui.Format_Func
+function Efl.Ui.Format_Func
 {
    [[A function taking an @Eina.Value and producing its textual representation.
      See @Efl.Ui.Format.format_func.
@@ -12,7 +12,7 @@ function @beta Efl.Ui.Format_Func
    return: bool; [[Whether the conversion succeeded or not.]]
 };
 
-struct @beta Efl.Ui.Format_Value
+struct Efl.Ui.Format_Value
 {
    [[A value which should always be displayed as a specific text string.
      See @Efl.Ui.Format.format_values.
@@ -21,7 +21,7 @@ struct @beta Efl.Ui.Format_Value
    text: string; [[Text string to replace it.]]
 }
 
-enum @beta Efl.Ui.Format_String_Type
+enum Efl.Ui.Format_String_Type
 {
    [[Type of formatting string.]]
    simple, [[This is the simplest formatting mechanism, working pretty much like $printf.
@@ -35,16 +35,17 @@ enum @beta Efl.Ui.Format_String_Type
            ]]
 }
 
-mixin @beta Efl.Ui.Format requires Efl.Object
+mixin Efl.Ui.Format requires Efl.Object
 {
    [[Helper mixin that simplifies converting numerical values to text.
-   
+
      A number of widgets represent a numerical value but display a text representation.
      For example, an @Efl.Ui.Progressbar can hold the number 0.75 but display the string "75%",
      or an @Efl.Ui.Spin can hold numbers 1 to 7, but display the strings "Monday" thru "Sunday".
 
      This conversion can be controlled through the @.format_func, @.format_values and @.format_string properties.
-     Only one of them needs to be set. When more than one is set @.format_values has the highest priority, followed by @.format_func and then @.format_string.
+     Only one of them needs to be set. When more than one is set @.format_values has the highest priority,
+     followed by @.format_func and then @.format_string.
      If one mechanism fails to produce a valid string the others will be tried (if provided) in descending
      order of priority.
      If no user-provided mechanism works, a fallback is used that just displays the value.
@@ -103,7 +104,7 @@ mixin @beta Efl.Ui.Format requires Efl.Object
             string: string; [[Formatting string containing regular characters and format specifiers.]]
             type: Efl.Ui.Format_String_Type(Efl.Ui.Format_String_Type.simple);
                             [[Type of formatting string, which controls how the
-                              different format specifiers are to be traslated.]]
+                              different format specifiers are to be translated.]]
          }
       }
 

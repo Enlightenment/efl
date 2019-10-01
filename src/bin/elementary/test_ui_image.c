@@ -3,7 +3,7 @@
 #endif
 #include <Elementary.h>
 #include <Efl_Ui.h>
-
+#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
 static const struct {
    Efl_Gfx_Image_Orientation orient;
    const char *name;
@@ -73,7 +73,7 @@ test_ui_image(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *event_info EIN
    efl_key_data_set(win, "rdg", box);
 
    im = img_add(win, "/images/logo.png");
-   efl_content_set(win, im);
+   efl_pack(box, im);
 
    for (i = 0; images_orient[i].name; ++i)
      {
@@ -107,16 +107,16 @@ im_align_cb(void *data, Eo *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 }
 
 static const struct {
-   Efl_Gfx_Image_Scale_Type scale_type;
+   Efl_Gfx_Image_Scale_Method scale_type;
    const char *name;
 } images_scale_type[] = {
-  { EFL_GFX_IMAGE_SCALE_TYPE_NONE, "None" },
-  { EFL_GFX_IMAGE_SCALE_TYPE_FILL, "Fill" },
-  { EFL_GFX_IMAGE_SCALE_TYPE_FIT, "Fit" },
-  { EFL_GFX_IMAGE_SCALE_TYPE_FIT_WIDTH, "Fit Horizontally" },
-  { EFL_GFX_IMAGE_SCALE_TYPE_FIT_HEIGHT, "Fit Vertically" },
-  { EFL_GFX_IMAGE_SCALE_TYPE_EXPAND, "Expand" },
-  { EFL_GFX_IMAGE_SCALE_TYPE_TILE, "Tile" },
+  { EFL_GFX_IMAGE_SCALE_METHOD_NONE, "None" },
+  { EFL_GFX_IMAGE_SCALE_METHOD_FILL, "Fill" },
+  { EFL_GFX_IMAGE_SCALE_METHOD_FIT, "Fit" },
+  { EFL_GFX_IMAGE_SCALE_METHOD_FIT_WIDTH, "Fit Horizontally" },
+  { EFL_GFX_IMAGE_SCALE_METHOD_FIT_HEIGHT, "Fit Vertically" },
+  { EFL_GFX_IMAGE_SCALE_METHOD_EXPAND, "Expand" },
+  { EFL_GFX_IMAGE_SCALE_METHOD_TILE, "Tile" },
   { 0, NULL }
 };
 
@@ -128,9 +128,9 @@ my_im_scale_ch(void *data, const Efl_Event *ev EINA_UNUSED)
    int v = efl_ui_radio_group_selected_value_get(ev->object);
    if (v == -1) v = 0;
 
-   efl_gfx_image_scale_type_set(im, images_scale_type[v].scale_type);
+   efl_gfx_image_scale_method_set(im, images_scale_type[v].scale_type);
    fprintf(stderr, "Set %d[%s] and got %d\n",
-   images_scale_type[v].scale_type, images_scale_type[v].name, efl_gfx_image_scale_type_get(im));
+   images_scale_type[v].scale_type, images_scale_type[v].name, efl_gfx_image_scale_method_get(im));
 }
 
 void
@@ -152,7 +152,7 @@ test_ui_image_scale_type(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *eve
    elm_image_file_set(im, buf, NULL);
    efl_gfx_hint_weight_set(im, 1.0, 1.0);
    efl_gfx_hint_fill_set(im, EINA_TRUE, EINA_TRUE);
-   efl_content_set(win, im);
+   efl_pack(box, im);
 
    efl_key_data_set(win, "im", im);
 
@@ -320,7 +320,6 @@ test_remote_ui_image(void *data EINA_UNUSED, Eo *obj  EINA_UNUSED, void *event_i
 
    box2 = efl_add(EFL_UI_RADIO_BOX_CLASS, win);
    efl_gfx_hint_weight_set(box2, 1.0, 1.0);
-   efl_content_set(win, box2);
    efl_key_data_set(win, "rdg", box2);
    efl_pack(box, box2);
 
@@ -640,7 +639,7 @@ test_ui_image_prescale(void *data EINA_UNUSED, Eo *obj EINA_UNUSED, void *event_
    efl_pack(hbox, rd);
    efl_event_callback_add(hbox, EFL_UI_RADIO_GROUP_EVENT_VALUE_CHANGED, _cb_prescale_radio_changed, im);
 
-   efl_ui_radio_group_selected_object_set(hbox, rd);
+   efl_ui_selectable_selected_set(rd, EINA_TRUE);
 
    efl_pack(box, hbox);
 

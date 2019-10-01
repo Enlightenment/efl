@@ -460,7 +460,7 @@ _efl_ui_popup_efl_gfx_entity_visible_set(Eo *obj, Efl_Ui_Popup_Data *pd, Eina_Bo
 }
 
 EOLIAN static void
-_efl_ui_popup_timeout_set(Eo *obj, Efl_Ui_Popup_Data *pd, double time)
+_efl_ui_popup_closing_timeout_set(Eo *obj, Efl_Ui_Popup_Data *pd, double time)
 {
    if (time < 0.0)
      time = 0.0;
@@ -474,7 +474,7 @@ _efl_ui_popup_timeout_set(Eo *obj, Efl_Ui_Popup_Data *pd, double time)
 }
 
 EOLIAN static double
-_efl_ui_popup_timeout_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
+_efl_ui_popup_closing_timeout_get(const Eo *obj EINA_UNUSED, Efl_Ui_Popup_Data *pd)
 {
    return pd->timeout;
 }
@@ -554,7 +554,7 @@ _efl_ui_popup_efl_object_constructor(Eo *obj, Efl_Ui_Popup_Data *pd)
    evas_object_smart_member_add(pd->backwall, obj);
    evas_object_stack_below(pd->backwall, wd->resize_obj);
 
-   edje_object_signal_callback_add(pd->backwall, "efl,action,clicked", "*",
+   edje_object_signal_callback_add(pd->backwall, "efl,action,click", "*",
                                    _backwall_clicked_cb, obj);
 
    pd->align = EFL_UI_POPUP_ALIGN_CENTER;

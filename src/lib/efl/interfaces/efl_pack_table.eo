@@ -1,7 +1,7 @@
-interface @beta Efl.Pack_Table extends Efl.Pack
+interface Efl.Pack_Table extends Efl.Pack
 {
    [[Interface for 2D containers which arrange their elements on a table with rows and columns.
-   
+
      Elements can be positioned on a specific row and column, or they can be simply added to
      the table using @Efl.Pack.pack and the container will chose where to put them.
    ]]
@@ -25,7 +25,7 @@ interface @beta Efl.Pack_Table extends Efl.Pack
       }
       table_contents_get {
          [[Returns all objects at a given position in this table.]]
-         return: iterator<Efl.Gfx.Entity> @owned; [[Iterator to table contents]]
+         return: iterator<Efl.Gfx.Entity> @move; [[Iterator to table contents]]
          params {
             @in col: int; [[Column number]]
             @in row: int; [[Row number]]

@@ -1,6 +1,6 @@
 project('efl', ['c','cpp'],
-  version: '1.22.99',
-  default_options : ['buildtype=plain', 'cpp_std=c++11'],
+  version: '1.23.99',
+  default_options : ['buildtype=release', 'cpp_std=c++11'],
   meson_version : '>=0.47'
 )
 
@@ -280,7 +280,7 @@ subprojects = [
 ['ecore'            ,[]                    , false,  true, false, false, false, false, ['eina', 'eo', 'efl'], ['buildsystem']],
 ['eldbus'           ,[]                    , false,  true,  true, false,  true,  true, ['eina', 'eo', 'efl'], []],
 ['ecore'            ,[]                    ,  true, false, false, false,  true,  true, ['eina', 'eo', 'efl'], []], #ecores modules depend on eldbus
-['ecore_audio'      ,[]                    , false,  true, false, false, false, false, ['eina', 'eo'], []],
+['ecore_audio'      ,['audio']             , false,  true, false, false, false, false, ['eina', 'eo'], []],
 ['ecore_avahi'      ,['avahi']             , false,  true, false, false, false,  true, ['eina', 'ecore'], []],
 ['ecore_con'        ,[]                    , false,  true,  true, false,  true, false, ['eina', 'eo', 'efl', 'ecore'], ['http-parser']],
 ['ecore_file'       ,[]                    , false,  true, false, false, false, false, ['eina'], []],
@@ -324,6 +324,10 @@ config_dir += include_directories('.')
 #we have to do that first, eina modules are required by eina
 #the other modules require theire package
 subdir(join_paths(local_module, 'eina'))
+
+#List of dependency objects that might be disabled due to configurations
+#If they are enabled, the object gets overwritten by the library file.
+ecore_audio = declare_dependency()
 
 test_dirs = []
 example_dirs = []

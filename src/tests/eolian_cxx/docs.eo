@@ -31,7 +31,7 @@ type Alias: Bar; [[Docs for typedef.
                    See @Bar. @since 2.0
                  ]]
 
-var pants: int = 150; [[Docs for var.]]
+const pants: int = 150; [[Docs for var.]]
 
 struct Opaque; [[Opaque struct docs. See @Foo for another struct.]]
 

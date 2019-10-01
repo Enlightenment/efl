@@ -15,7 +15,7 @@ class @beta Ecore.Event.Message extends Efl.Loop_Message
       }
       data_steal {
          [[ Steal the data out and set internal values to -1
-            for type and NULL for other vals ]]
+            for type and $NULL for other vals ]]
          params {
             @out type: int; [[ The event type ]]
             @out data: void_ptr; [[ The event data ]]

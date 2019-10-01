@@ -52,7 +52,9 @@ class @beta Efl.Io.Queue extends Efl.Object implements Efl.Io.Reader, Efl.Io.Wri
             ]]
             get { }
             values {
-                slice: Eina.Slice; [[Slice of the current buffer, may be invalidated if @Efl.Io.Writer.write, @Efl.Io.Closer.close or @Efl.Io.Reader.read are called. It is the full slice available for reading.]]
+                slice: Eina.Slice; [[Slice of the current buffer, may be invalidated if @Efl.Io.Writer.write,
+                                     @Efl.Io.Closer.close or @Efl.Io.Reader.read are called.
+                                     It is the full slice available for reading.]]
             }
         }
 

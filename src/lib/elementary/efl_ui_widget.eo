@@ -1,11 +1,3 @@
-function @beta Efl.Ui.Scrollable_On_Show_Region {
-   [[Function pointer for on show region hook]]
-   params {
-      @in obj: Efl.Canvas.Object; [[Canvas object]]
-      @in region: Eina.Rect; [[Showed region]]
-   }
-};
-
 struct Efl.Ui.Widget_Focus_State {
    [[All relevant fields needed for the current state of focus registration
      @since 1.22
@@ -21,12 +13,19 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
                         Efl.Ui.Selection, Efl.Ui.Dnd,
                         Efl.Ui.Property_Bind, Efl.Ui.View
 {
-   [[Efl UI widget abstract class
+   [[Base class for all Efl.Ui.* widgets
 
+     The class here is designed in a way that widgets can be expressed as a tree.
+     The parent relation in the tree can be fetched via @.widget_parent .
+     The parent relation should never be modified directly, instead you should use the APIs of the widgets
+     (Typically @Efl.Pack_Linear, @Efl.Pack_Table or @Efl.Content).
+
+     Properties implemented here should be treated with extra care, some are defined for the sub-tree, others are
+     defined for the widget itself, additional information for this can be fetched from the documentation in the
+     implements section.
      @since 1.22
    ]]
-   //c_prefix: efl_ui_widget;
-   event_prefix: efl_ui_widget;
+   event_c_prefix: efl_ui_widget;
    data: Efl_Ui_Widget_Data;
    methods {
       @property cursor @beta {
@@ -72,7 +71,7 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
             [[Returns the current cursor style name.]]
          }
          values {
-            style: string; [[A specific style to use, eg. default,
+            style: string; [[A specific style to use, e.g. default,
                              transparent, ....]]
          }
       }
@@ -111,8 +110,6 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
       @property disabled {
          [[Whether the widget is enabled (accepts and reacts to user inputs).
 
-           The property works counted, this means, whenever n-caller set the value to $true, n-caller have to set it to $false in order to get it out of the disabled state again.
-
            Each widget may handle the disabled state differently, but overall
            disabled widgets shall not respond to any input events. This is
            $false by default, meaning the widget is enabled.
@@ -147,7 +144,7 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
            The style can only be set before @Efl.Object.finalize, which means
            at construction time of the object (inside $efl_add in C).
          ]]
-         set @protected {
+         set {
             [[Can only be called during construction, before finalize.]]
             return: Eina.Error;
                [[Whether the style was successfully applied or not, see
@@ -181,7 +178,6 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
          }
          return: bool; [[$true on success, $false otherwise]]
       }
-      // FIXME: focus_allow? can_focus? focusable?
       @property focus_allow {
          [[The ability for a widget to be focused.
 
@@ -193,7 +189,7 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
            Note: Objects which are meant to be interacted with by input events
            are created able to be focused, by default. All the others are not.
 
-           This property's default value depends on the widget (eg. a box is
+           This property's default value depends on the widget (e.g. a box is
            not focusable, but a button is).
          ]]
          set {
@@ -255,8 +251,6 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
             @in enable: bool; [[$true if accessibility is enabled.]]
          }
       }
-
-      /* Internal hooks. */
       widget_sub_object_add @protected {
          [[Virtual function customizing sub objects being added.
 
@@ -383,10 +377,13 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
       focus_state_apply @protected {
          [[Apply a new focus state on the widget.
 
-          This method is called internally by @Efl.Ui.Widget. Override it to change how a widget interacts with its focus manager.
-          If a widget desires to change the applied configuration, it has to modify $configured_state in addition to any internal changes.
+          This method is called internally by @Efl.Ui.Widget.
+          Override it to change how a widget interacts with its focus manager.
+          If a widget desires to change the applied configuration,
+          it has to modify $configured_state in addition to any internal changes.
 
-          The default implementation (when this method is not overridden) applies $configured_state using the $manager contained inside.
+          The default implementation (when this method is not overridden) applies $configured_state using
+          the $manager contained inside.
          ]]
          params {
             @in current_state : Efl.Ui.Widget_Focus_State;
@@ -400,8 +397,8 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
       }
    }
    parts {
-      shadow @beta: Efl.Ui.Widget_Part_Shadow;
-      background @beta: Efl.Ui.Widget_Part_Bg;
+      shadow : Efl.Ui.Widget_Part_Shadow;
+      background : Efl.Ui.Widget_Part_Bg;
    }
    implements {
       class.constructor;
@@ -411,11 +408,14 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
       Efl.Object.destructor;
       Efl.Object.provider_find;
       Efl.Object.debug_name_override;
-      Efl.Gfx.Color.color { set; }
+      Efl.Gfx.Color.color { set; [[This will set the color on every object in the sub-tree including those that are not
+                                   @Efl.Ui.Widget (like simple @Efl.Canvas.Object objects that are added via
+                                   @Efl.Canvas.Group.group_member_add). ]] }
       Efl.Gfx.Entity.visible { set; }
       Efl.Gfx.Entity.position { set; }
       Efl.Gfx.Entity.size { set; }
-      Efl.Gfx.Entity.scale { set; get; }
+      Efl.Gfx.Entity.scale { set; get; [[A change in this property will also apply the new scale to the whole sub-tree.
+                                       ]] }
       Efl.Canvas.Object.clipper { set; }
       Efl.Canvas.Object.no_render { set; }
       Efl.Canvas.Group.group_calculate;
@@ -430,7 +430,7 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
       Efl.Ui.Focus.Object.focus_parent { get; }
       Efl.Ui.Focus.Object.focus_geometry { get; }
       Efl.Ui.Focus.Object.focus { set; }
-      Efl.Ui.I18n.mirrored { get; set; }
+      Efl.Ui.I18n.mirrored { get; set; [[This sets the mirror state of the whole sub-tree. ]] }
       Efl.Ui.I18n.mirrored_automatic { get; set; }
       Efl.Ui.Focus.Object.on_focus_update;
       Efl.Ui.L10n.translation_update; [[This implements the calls to $gettext() and $text_set().]]

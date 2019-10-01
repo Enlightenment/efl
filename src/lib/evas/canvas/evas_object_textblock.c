@@ -2897,12 +2897,17 @@ typedef struct _Allocator
 {
    char       stack[ALLOCATOR_SIZE];
    char      *heap;
+   size_t     heap_size;
 } Allocator;
 
 static inline void
 _allocator_init(Allocator* allocator)
 {
-   if (allocator) allocator->heap = NULL;
+   if (allocator)
+     {
+        allocator->heap = NULL;
+        allocator->heap_size = 0;
+     }
 }
 
 static inline void
@@ -2912,6 +2917,7 @@ _allocator_reset(Allocator* allocator)
      {
         free(allocator->heap);
         allocator->heap = NULL;
+        allocator->heap_size = 0;
      }
 }
 
@@ -2928,11 +2934,24 @@ _allocator_make_string(Allocator* allocator, const char* str, size_t size)
         return allocator->stack;
      }
    //fallback to heap
-   if (allocator->heap) free(allocator->heap);
+   if (allocator->heap && allocator->heap_size < (size + 1))
+     {
+        free(allocator->heap);
+        allocator->heap = NULL;
+        allocator->heap_size = 0;
+     }
 
-   allocator->heap = malloc(size + 1);
+   if (!allocator->heap)
+     {
+        allocator->heap = malloc(size + 1);
+        allocator->heap_size = (size + 1);
+     }
 
-   if (!allocator->heap) return NULL;
+   if (!allocator->heap)
+     {
+        allocator->heap_size = 0;
+        return NULL;
+     }
 
    memcpy(allocator->heap, str, size);
    allocator->heap[size] = '\0';
@@ -3099,8 +3118,9 @@ _format_fill(Evas_Object *eo_obj, Evas_Object_Textblock_Format *fmt, const char 
           {
              /* immediate - not handled here */
           }
-        _allocator_reset(&allocator);
      }
+
+   _allocator_reset(&allocator);
 }
 
 /**
@@ -7814,7 +7834,8 @@ _escaped_is_eq_and_advance(const char *s, const char *s_end,
  * @param escape_values array of Escape_Value to look inside, Sorted by Escape
  * @param escape_values_len is the len of Escape_Value array
  */
-int _escaped_string_search(const char * s, size_t s_len, const Escape_Value escape_values[], const size_t escape_values_len)
+static int
+_escaped_string_search(const char *s, size_t s_len, const Escape_Value escape_values[], const size_t escape_values_len)
 {
    int l = 0;
    int r = escape_values_len - 1;
@@ -7848,7 +7869,8 @@ int _escaped_string_search(const char * s, size_t s_len, const Escape_Value esca
  * @param escape_values array of Escape_Value to look inside, Sorted by Value
  * @param escape_values_len is the len of Escape_Value array
  */
-int _escaped_value_search(const char * s, const Escape_Value escape_values[], const size_t escape_values_len)
+static int
+_escaped_value_search(const char *s, const Escape_Value escape_values[], const size_t escape_values_len)
 {
    int l = 0;
    int r = escape_values_len - 1;
@@ -9642,7 +9664,7 @@ _evas_textblock_grapheme_breaks_new(Evas_Object_Textblock_Item *it, size_t len)
 }
 
 static size_t
-_evas_textblock_cursor_cluster_pos_get(Evas_Textblock_Cursor *cur, Eina_Bool inc)
+_evas_textblock_cursor_cluster_pos_get(Evas_Textblock_Cursor *cur, Eina_Bool inc, Eina_Bool *is_single_glyph)
 {
    Evas_Object_Textblock_Paragraph *par;
    Efl_Canvas_Text_Data *o;
@@ -9708,11 +9730,84 @@ _evas_textblock_cursor_cluster_pos_get(Evas_Textblock_Cursor *cur, Eina_Bool inc
 
                        free(grapheme_breaks);
                     }
+#ifdef OT_SUPPORT
+                  if (is_single_glyph)
+                    {
+                       Evas_Object_Textblock_Text_Item *ti = _ITEM_TEXT(last_it);
+                       Evas_Text_Props_Info *info = ti->text_props.info;
+                       int it_index = ((inc) ? cur->pos : ret) - last_it->text_pos;
+
+                       Evas_Font_OT_Info ot;
+                       if (ti->text_props.len != ti->text_props.text_len)/*if code point count same as glyph count skip it*/
+                         {
+                            Evas_BiDi_Direction itdir = ti->text_props.bidi_dir;
+                            int i = 0;
+                            if (itdir == EFL_TEXT_BIDIRECTIONAL_TYPE_RTL)
+                              {
+                                 for (i = ti->text_props.len-1 ; i >= 0; i--)
+                                   {
+                                      ot = info->ot[i];
+                                      if (ot.source_cluster >= (size_t)it_index)
+                                         break;
+                                   }
+                                 if (i <= 0)
+                                   {
+                                      if (ti->text_props.text_len - ot.source_cluster >= 2)
+                                         *is_single_glyph = EINA_TRUE;
+                                   }
+                                 else
+                                   {
+                                      Evas_Font_OT_Info ot_next = info->ot[i - 1];
+                                      if (ot_next.source_cluster - ot.source_cluster >= 2)
+                                         *is_single_glyph = EINA_TRUE;
+                                   }
+                              }
+                            else
+                              {
+                                 for (i = 0; i < (int) ti->text_props.len; i++)
+                                   {
+                                      ot = info->ot[i];
+                                      if ((int)ot.source_cluster >= it_index)
+                                         break;
+                                   }
+                                 if ((i + 1) >= (int) ti->text_props.len)
+                                   {
+                                      if (ti->text_props.text_len - ot.source_cluster >= 2)
+                                         *is_single_glyph = EINA_TRUE;
+                                   }
+                                 else
+                                   {
+                                      Evas_Font_OT_Info ot_next = info->ot[i + 1];
+                                      if (ot_next.source_cluster - ot.source_cluster >= 2)
+                                         *is_single_glyph = EINA_TRUE;
+                                   }
+                              }
+                         }
+                       else
+                         {
+                            is_single_glyph = EINA_FALSE;
+                         }
+                    }
+#else//#ifdef OT_SUPPORT
+                  (void)is_single_glyph;
+#endif//#ifdef OT_SUPPORT
                }
           }
      }
 
    return ret;
+}
+
+EAPI Eina_Bool evas_textblock_cursor_at_cluster_as_single_glyph(Evas_Textblock_Cursor *cur,Eina_Bool forward)
+{
+   Eina_Bool is_single_glyph = EINA_FALSE;
+   size_t ret = _evas_textblock_cursor_cluster_pos_get(cur, forward, &is_single_glyph);
+   size_t distance = (ret > cur->pos) ? ret - cur->pos : cur->pos - ret;
+    if ((distance > 1) && is_single_glyph)
+      {
+         return EINA_TRUE;
+      }
+   return EINA_FALSE;
 }
 
 static Eina_Bool
@@ -9734,7 +9829,7 @@ _evas_textblock_cursor_next(Evas_Textblock_Cursor *cur, Eina_Bool per_cluster)
    if (text[ind])
      {
         if (per_cluster)
-          ind = _evas_textblock_cursor_cluster_pos_get(cur, EINA_TRUE);
+          ind = _evas_textblock_cursor_cluster_pos_get(cur, EINA_TRUE, NULL);
 
         if (ind <= (int)cur->pos)
           ind = cur->pos + 1;
@@ -9781,7 +9876,7 @@ _evas_textblock_cursor_prev(Evas_Textblock_Cursor *cur, Eina_Bool per_cluster)
      {
         if (per_cluster)
           {
-             size_t ret = _evas_textblock_cursor_cluster_pos_get(cur, EINA_FALSE);
+             size_t ret = _evas_textblock_cursor_cluster_pos_get(cur, EINA_FALSE, NULL);
 
              if (ret != cur->pos)
                {

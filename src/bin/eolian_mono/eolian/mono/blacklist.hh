@@ -17,7 +17,7 @@ inline bool is_function_blacklisted(std::string const& c_name)
   return
     c_name == "efl_event_callback_array_priority_add"
     || c_name == "efl_constructor"
-    || c_name == "efl_player_position_get"
+    || c_name == "efl_player_playback_position_get"
     || c_name == "efl_ui_widget_focus_set"
     || c_name == "efl_ui_widget_focus_get"
     || c_name == "efl_ui_text_password_get"
@@ -62,6 +62,18 @@ inline bool is_function_blacklisted(attributes::function_def const& func, Contex
     return true;
 
   return is_function_blacklisted(c_name);
+}
+
+inline bool is_non_public_interface_member(attributes::function_def const& func, attributes::klass_def const&current_klass)
+{
+  if (current_klass.type == attributes::class_type::interface_
+      || current_klass.type == attributes::class_type::mixin)
+    {
+       if (func.scope != attributes::member_scope::scope_public)
+         return true;
+    }
+
+  return false;
 }
 
 

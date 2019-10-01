@@ -3,7 +3,7 @@
 #endif
 #include <Efl_Ui.h>
 #include <Elementary.h>
-
+#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
 /* A simple test, just displaying clock in its default format */
 
 Evas_Object *dt1, *dt2, *dt3, *dt4;
@@ -49,8 +49,7 @@ test_ui_clock(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    Evas_Object *win, *bx;
 
    win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Efl.Ui.Clock"),
+                                  efl_text_set(efl_added, "Efl.Ui.Clock"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    bx = efl_add(EFL_UI_BOX_CLASS, win,

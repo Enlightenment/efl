@@ -373,6 +373,15 @@ _evas_canvas3d_texture_data_set(Eo *obj, Evas_Canvas3D_Texture_Data *pd,
    evas_canvas3d_object_change(obj, EVAS_CANVAS3D_STATE_TEXTURE_DATA, NULL);
 }
 
+EOLIAN static void
+_evas_canvas3d_texture_efl_file_unload(Eo *obj, Evas_Canvas3D_Texture_Data *pd)
+{
+   efl_file_unload(efl_super(obj, MY_CLASS));
+   eina_file_close(pd->f); // close matching open (matches open in _evas_canvas3d_texture_efl_file_load) OK
+   pd->f = NULL;
+   _texture_fini(obj);
+}
+
 EOLIAN static Eina_Error
 _evas_canvas3d_texture_efl_file_load(Eo *obj, Evas_Canvas3D_Texture_Data *pd)
 {

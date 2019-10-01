@@ -9,7 +9,9 @@
 #define EFL_CANVAS_LAYOUT_BETA
 
 #include "edje_suite.h"
-
+#ifdef _WIN32
+# include <windows.h>
+#endif
 #define EVAS_DATA_DIR TESTS_SRC_DIR "/../../lib/evas"
 
 EFL_START_TEST(edje_test_edje_init)
@@ -28,7 +30,69 @@ EFL_START_TEST(edje_test_edje_load)
    error = edje_object_load_error_get(obj);
    fail_if(error != EDJE_LOAD_ERROR_DOES_NOT_EXIST);
 
-   evas_free(evas);
+}
+EFL_END_TEST
+
+static void
+_callback(void *data, Evas_Object *obj EINA_UNUSED, const char *sig EINA_UNUSED, const char *src EINA_UNUSED)
+{
+   int *called = data;
+   ck_assert_int_eq(*called, 0);
+   *called = 1;
+}
+
+EFL_START_TEST(edje_test_edje_reload)
+{
+   Evas *evas = _setup_evas();
+   Evas_Object *obj, *rect;
+   int called = 0;
+   const char *layout = test_layout_get("test_swallows.edj");
+
+   obj = edje_object_add(evas);
+   edje_object_signal_callback_add(obj, "load", "", _callback, &called);
+   fail_unless(edje_object_file_set(obj, layout, "test_group"));
+   rect = evas_object_rectangle_add(evas);
+   ck_assert(edje_object_part_swallow(obj, "swallow", rect));
+   edje_object_message_signal_process(obj);
+   /* load should be called */
+   ck_assert_int_eq(called, 1);
+
+   called = 0;
+   fail_unless(edje_object_file_set(obj, layout, "test_group"));
+   edje_object_message_signal_process(obj);
+   /* load should NOT be called */
+   ck_assert_int_eq(called, 0);
+
+#ifdef _WIN32
+   HANDLE handle;
+   FILETIME modtime;
+   SYSTEMTIME st;
+   wchar_t date[80], time[80];
+   handle = CreateFile(layout,
+                       GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                       NULL, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL,
+                       NULL);
+   ck_assert(handle != INVALID_HANDLE_VALUE);
+   GetSystemTime(&st);
+   ck_assert(GetDateFormatW(LOCALE_USER_DEFAULT, DATE_LONGDATE, &st, NULL, date, sizeof(date) / sizeof(date[0])));
+   ck_assert(GetTimeFormatW(LOCALE_USER_DEFAULT, 0, &st, NULL, time, sizeof(time) / sizeof(time[0])));
+   ck_assert(SystemTimeToFileTime(&st, &modtime));
+   ck_assert(SetFileTime(handle, NULL, NULL, &modtime));
+   CloseHandle(handle);
+#else
+   struct timespec t[2] = {0};
+   t[0].tv_nsec = t[1].tv_nsec = UTIME_NOW;
+   ck_assert(!utimensat(0, layout, t, 0));
+#endif
+
+   called = 0;
+   fail_unless(edje_object_file_set(obj, layout, "test_group"));
+   edje_object_message_signal_process(obj);
+   /* layout mtime has changed; load should be called */
+   ck_assert_int_eq(called, 1);
+
+   /* verify that the object has actually loaded */
+   ck_assert_ptr_eq(edje_object_part_swallow_get(obj, "swallow"), rect);
 }
 EFL_END_TEST
 
@@ -44,7 +108,6 @@ EFL_START_TEST(edje_test_load_simple_layout)
    fail_unless(edje_object_part_exists(obj, "background"));
 
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -73,7 +136,6 @@ EFL_START_TEST(edje_test_simple_layout_geometry)
    evas_object_color_get(bg, &r, &g, &b, &a);
    fail_if(r != 255 || g != 255 || b != 255 || a != 255);
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -121,7 +183,6 @@ EFL_START_TEST(edje_test_complex_layout)
    fail_if(x != 5 || y != 500+2);
    fail_if(w != 1000-5-5 + 1 || h != 500-5-2 + 1);
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -144,7 +205,6 @@ EFL_START_TEST(edje_test_calculate_parens)
    edje_object_part_geometry_get(obj, "background", &x, &y, &w, &h);
    fail_if(x != 0 || y != 0 || w != 100 || h != 100);
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -187,7 +247,6 @@ EFL_START_TEST(edje_test_access)
      }
    fail_if(i != 2);
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -201,7 +260,6 @@ EFL_START_TEST(edje_test_combine_keywords)
    obj = edje_object_add(evas);
    fail_unless(edje_object_file_set(obj, test_layout_get("test_combine_keywords.edj"), "test_group"));
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -232,7 +290,6 @@ EFL_START_TEST(edje_test_part_caching)
 
      }
 
-   evas_free(evas);
 }
 EFL_END_TEST
 
@@ -241,6 +298,7 @@ void edje_test_edje(TCase *tc)
    tcase_add_test(tc, edje_test_edje_init);
    tcase_add_test(tc, edje_test_load_simple_layout);
    tcase_add_test(tc, edje_test_edje_load);
+   tcase_add_test(tc, edje_test_edje_reload);
    tcase_add_test(tc, edje_test_simple_layout_geometry);
    tcase_add_test(tc, edje_test_complex_layout);
    tcase_add_test(tc, edje_test_calculate_parens);

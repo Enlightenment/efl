@@ -7,8 +7,6 @@
 #include <Ecore.h>
 
 #include "ecore_private.h"
-
-#include "efl_composite_model_private.h"
 #include "efl_composite_model.eo.h"
 
 typedef struct _Efl_Composite_Model_Data Efl_Composite_Model_Data;
@@ -42,7 +40,26 @@ static int
 _children_indexed_key(const Efl_Composite_Model_Data *node,
                       const int *key, int length EINA_UNUSED, void *data EINA_UNUSED)
 {
-   return node->index - *key;
+   if (node->index > (unsigned int) *key) return 1;
+   if (node->index < (unsigned int) *key) return -1;
+   return 0;
+}
+
+static void
+_mark_greater(Efl_Composite_Model_Data *root, Eina_Array *mark, const unsigned int upper)
+{
+   if (!root) return ;
+
+   if (root->index > upper)
+     {
+        eina_array_push(mark, root);
+        _mark_greater((void*) EINA_RBTREE_GET(root)->son[0], mark, upper);
+        _mark_greater((void*) EINA_RBTREE_GET(root)->son[1], mark, upper);
+     }
+   else
+     {
+        _mark_greater((void*) EINA_RBTREE_GET(root)->son[0], mark, upper);
+     }
 }
 
 static void
@@ -139,19 +156,74 @@ _efl_composite_model_index_get(const Eo *obj, Efl_Composite_Model_Data *pd)
 }
 
 static void
+_efl_composite_model_child_event(Efl_Composite_Model_Data *pd,
+                                 const Efl_Model_Children_Event *ev,
+                                 const Efl_Event_Description *description)
+{
+   Efl_Composite_Model_Data *cpd;
+   Efl_Model_Children_Event cev = { 0 };
+   Eina_Array mark;
+   Eina_Array_Iterator iterator;
+   unsigned int i;
+
+   cev.index = ev->index;
+   if (ev->child)
+     {
+        cev.child = _efl_composite_lookup(efl_class_get(pd->self),
+                                          pd->self, ev->child, ev->index);
+     }
+   else
+     {
+        cpd = (void*) eina_rbtree_inline_lookup(pd->indexed, &cev.index, sizeof (unsigned int),
+                                                EINA_RBTREE_CMP_KEY_CB(_children_indexed_key), NULL);
+        if (cpd) cev.child = efl_ref(cpd->self);
+     }
+
+   if (cev.child && description == EFL_MODEL_EVENT_CHILD_REMOVED)
+     {
+        cpd = efl_data_scope_get(cev.child, EFL_COMPOSITE_MODEL_CLASS);
+
+        // Remove child from lookup tree if it exist before triggering anything further
+        pd->indexed = eina_rbtree_inline_remove(pd->indexed, EINA_RBTREE_GET(cpd),
+                                                EINA_RBTREE_CMP_NODE_CB(_children_indexed_cmp), NULL);
+        cpd->inserted = EINA_FALSE;
+        efl_replace(&cpd->source, NULL);
+     }
+
+   // Update all index above this one if necessaryy
+   eina_array_step_set(&mark, sizeof (Eina_Array), 8);
+   _mark_greater((void*) pd->indexed, &mark, cev.index);
+
+   // Correct index of the object stored that need to
+   // There is no need to remove and reinsert them as their relative order will not change.
+   EINA_ARRAY_ITER_NEXT(&mark, i, cpd, iterator)
+     {
+        if (description == EFL_MODEL_EVENT_CHILD_REMOVED) cpd->index--;
+        else cpd->index++;
+
+        efl_ref(cpd->self);
+     }
+
+   efl_event_callback_call(pd->self, description, &cev);
+
+   // Notify of the index change only after notifying of the removal top avoid overlap
+   EINA_ARRAY_ITER_NEXT(&mark, i, cpd, iterator)
+      {
+         efl_model_properties_changed(cpd->self, EFL_COMPOSITE_MODEL_CHILD_INDEX);
+         efl_unref(cpd->self);
+      }
+   eina_array_flush(&mark);
+
+   efl_unref(cev.child);
+}
+
+static void
 _efl_composite_model_child_added(void *data, const Efl_Event *event)
 {
    Efl_Composite_Model_Data *pd = data;
    Efl_Model_Children_Event *ev = event->info;
-   Efl_Model_Children_Event cev = { 0 };
 
-   cev.index = ev->index;
-   if (ev->child)
-     cev.child = _efl_composite_lookup(efl_class_get(pd->self),
-                                       pd->self, ev->child, ev->index);
-   efl_event_callback_call(pd->self, EFL_MODEL_EVENT_CHILD_ADDED, &cev);
-
-   efl_unref(cev.child);
+   _efl_composite_model_child_event(pd, ev, EFL_MODEL_EVENT_CHILD_ADDED);
 }
 
 static void
@@ -159,16 +231,8 @@ _efl_composite_model_child_removed(void *data, const Efl_Event *event)
 {
    Efl_Composite_Model_Data *pd = data;
    Efl_Model_Children_Event *ev = event->info;
-   Efl_Model_Children_Event cev = { 0 };
 
-   cev.index = ev->index;
-   if (ev->child)
-     cev.child = _efl_composite_lookup(efl_class_get(pd->self),
-                                       pd->self, ev->child, ev->index);
-
-   efl_event_callback_call(pd->self, EFL_MODEL_EVENT_CHILD_REMOVED, &cev);
-
-   efl_unref(cev.child);
+   _efl_composite_model_child_event(pd, ev, EFL_MODEL_EVENT_CHILD_REMOVED);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(composite_callbacks,
@@ -429,8 +493,7 @@ _efl_composite_model_efl_object_destructor(Eo *obj, Efl_Composite_Model_Data *pd
         efl_event_callback_forwarder_del(pd->source, EFL_MODEL_EVENT_CHILDREN_COUNT_CHANGED, obj);
         efl_event_callback_forwarder_del(pd->source, EFL_MODEL_EVENT_PROPERTIES_CHANGED, obj);
 
-        efl_unref(pd->source);
-        pd->source = NULL;
+        efl_replace(&pd->source, NULL);
      }
 
    efl_destructor(efl_super(obj, EFL_COMPOSITE_MODEL_CLASS));

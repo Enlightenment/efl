@@ -4,7 +4,7 @@ struct @beta @free(efl_observable_tuple_free) Efl.Observable_Tuple
 {
    [[This type describes an observable touple]]
    key: string; [[Touple key]]
-   data: iterator<Efl.Observer> @owned; [[Touple data]]
+   data: iterator<Efl.Observer> @move; [[Touple data]]
 }
 
 class @beta Efl.Observable extends Efl.Object {
@@ -41,7 +41,7 @@ class @beta Efl.Observable extends Efl.Object {
       observers_iterator_new {
          [[Return a new iterator associated with a group of observers.
          ]]
-         return: iterator<Efl.Observer> @owned; [[Iterator for observers group]]
+         return: iterator<Efl.Observer> @move; [[Iterator for observers group]]
          params {
             @in key: string; [[A key to classify observer groups]]
          }
@@ -57,7 +57,7 @@ class @beta Efl.Observable extends Efl.Object {
       iterator_tuple_new {
          [[Return a new iterator associated to this observable.
          ]]
-         return: iterator<ptr(Efl.Observable_Tuple)> @owned; [[Iterator for observer]]
+         return: iterator<ptr(Efl.Observable_Tuple)> @move; [[Iterator for observer]]
       }
    }
    implements {

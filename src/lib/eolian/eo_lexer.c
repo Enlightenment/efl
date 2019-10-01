@@ -76,13 +76,13 @@ static const char * const ctypes[] =
    "void",
 
    "Eina_Accessor *", "Eina_Array *", "Eina_Future *", "Eina_Iterator *",
-   "Eina_Hash *", "Eina_List *",
+   "Eina_List *",
    "Eina_Value", "Eina_Value *", "Eina_Binbuf *", "Efl_Event *",
    "char *", "const char *", "Eina_Stringshare *", "Eina_Strbuf *",
 
+   "Eina_Hash *", 
    "void *",
 
-   "Eina_Free_Cb",
    "function",
 };
 
@@ -1056,8 +1056,8 @@ _node_free(Eolian_Object *obj)
       case EOLIAN_OBJECT_TYPE:
         database_type_del((Eolian_Type *)obj);
         break;
-      case EOLIAN_OBJECT_VARIABLE:
-        database_var_del((Eolian_Variable *)obj);
+      case EOLIAN_OBJECT_CONSTANT:
+        database_constant_del((Eolian_Constant *)obj);
         break;
       case EOLIAN_OBJECT_EXPRESSION:
         database_expr_del((Eolian_Expression *)obj);

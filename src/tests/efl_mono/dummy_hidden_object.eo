@@ -1,0 +1,2 @@
+class Dummy.Hidden_Object extends Efl.Object {
+}

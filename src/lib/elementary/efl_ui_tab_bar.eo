@@ -1,43 +1,31 @@
 class @beta Efl.Ui.Tab_Bar extends Efl.Ui.Layout_Base
+   implements Efl.Ui.Single_Selectable
+   composites Efl.Pack_Linear, Efl.Pack
 {
-   [[Tab Bar class]]
+   [[A selectable box of items.
+
+     Within one object only one @Efl.Ui.Tab_Bar_Default_Item can be selected at the same time.
+   ]]
    methods {
-      @property current_tab {
-         values {
-            index: int;
-         }
-      }
-      tab_count @const {
-         return: uint;
-      }
-      tab_add @beta {
-         params {
-            @in index: int;
-            @in label: string;
-            @in icon: string;
-         }
-      }
-      tab_remove @beta {
-         params {
-            @in index: int;
-         }
-      }
-      tab_label_set @beta {
-         params {
-            @in index: int;
-            @in label: string;
-         }
-      }
-      tab_icon_set @beta {
-         params {
-            @in index: int;
-            @in icon: string;
-         }
-      }
+
    }
    implements {
       Efl.Object.constructor;
+      Efl.Object.finalize;
       Efl.Object.destructor;
-      Efl.Ui.Widget.widget_input_event_handler;
+      Efl.Ui.Single_Selectable.last_selected {get;}
+      Efl.Ui.Single_Selectable.fallback_selection {get; set;}
+      Efl.Pack.pack;
+      Efl.Pack.pack_clear;
+      Efl.Pack.unpack_all;
+      Efl.Pack.unpack;
+      Efl.Pack_Linear.pack_unpack_at;
+      Efl.Pack_Linear.pack_begin;
+      Efl.Pack_Linear.pack_end;
+      Efl.Pack_Linear.pack_before;
+      Efl.Pack_Linear.pack_after;
+      Efl.Pack_Linear.pack_at;
+      Efl.Container.content_count;
+      Efl.Container.content_iterate;
    }
 }

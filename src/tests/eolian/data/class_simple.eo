@@ -2,12 +2,6 @@
 
 const Foo: int = 5; [[doc for constant]]
 
-var Bar: float = 10.3f; [[doc for global]]
-
-var Baz: long; [[in header but not in source]]
-
-var @extern Bah: double; // not generated
-
 class Class_Simple {
    [[Class Desc Simple]]
    c_prefix: efl_canvas_object_simple;
@@ -31,9 +25,9 @@ class Class_Simple {
             @in a: int; [[a]]
             @inout b: char;
             @out c: double (1337.6);
-            @in d: ptr(int);
+            @in d: int @by_ref;
          }
-         return: ptr(char) (null); [[comment for method return]]
+         return: mstring (null); [[comment for method return]]
       }
    }
 }

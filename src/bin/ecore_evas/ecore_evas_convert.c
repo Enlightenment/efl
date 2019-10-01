@@ -58,7 +58,7 @@ _save_do(void *data EINA_UNUSED)
    const char *output = job.output;
 
    job.ret = 0;
-   if (width || height)
+   if (width && height)
      {
         Eina_Slstr *str;
 

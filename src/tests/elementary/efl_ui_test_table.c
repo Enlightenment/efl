@@ -457,8 +457,9 @@ EFL_START_TEST (efl_ui_table_pack_table)
 
    //unpack test
    ck_assert(efl_pack_unpack(layout, btn[2]));
+   EXPECT_ERROR_START;
    ck_assert(!efl_pack_unpack(layout, btn[2]));
-
+   EXPECT_ERROR_END;
    efl_pack_unpack_all(layout);
    ck_assert_int_eq(efl_content_count(layout), 0);
    ck_assert(!efl_invalidated_get(btn[0]));

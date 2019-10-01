@@ -1,96 +1,17 @@
-import elm_general;
-
-struct @beta Efl.Ui.List_View_Item_Event
+class @beta Efl.Ui.List_View extends Efl.Ui.Collection_View
 {
-   [[Information related to item events.]] // TODO: This needs to be filled in.
-   layout: Efl.Ui.Layout; [[TBD]]
-   child: Efl.Model; [[TBD]]
-   index: int; [[TBD]]
-}
-class @beta Efl.Ui.List_View extends Efl.Ui.Layout_Base implements Efl.Ui.Scrollable_Interactive, Efl.Ui.Scrollbar,
-                Efl.Access.Widget.Action, Efl.Access.Selection, Efl.Ui.Focus.Composition, Efl.Ui.Focus.Manager_Sub,
-                Efl.Ui.Container_Selectable, Efl.Ui.List_View_Model, Efl.Ui.Widget_Focus_Manager
-{
-   methods {
-      @property homogeneous {
-         [[When in homogeneous mode, all items have the same height and width. Otherwise, each item's size is respected.
-         ]]
-         get {
-         }
-         set {
-         }
-         values {
-            homogeneous: bool; [[Homogeneous mode setting. Default is $false.]]
-         }
-      }
-      @property select_mode {
-         [[Listview select mode.]]
-         get {}
-         set {}
-         values {
-            mode: Elm.Object.Select_Mode(Elm.Object.Select_Mode.max); [[The select mode.]]
-         }
-      }
-      @property default_style {
-         [[TBD]] // TODO: This needs to be filled in. Does not seem to be in use.
-         values {
-            style: stringshare; [[TBD]]
-         }
-      }
-      @property layout_factory {
-         [[Listview layout factory set.]]
-         set {}
-         values {
-            factory: Efl.Ui.Factory; [[The factory.]]
-         }
-      }
-   }
-   events {
-      item,realized : Efl.Ui.List_View_Item_Event;
-      item,unrealized : Efl.Ui.List_View_Item_Event;
-      item,focused : Efl.Ui.List_View_Item_Event;
-      item,unfocused : Efl.Ui.List_View_Item_Event;
-      item,highlighted : Efl.Ui.List_View_Item_Event;
-      item,unhighlighted : Efl.Ui.List_View_Item_Event;
-   }
+  [[A scrollable list of @Efl.Ui.Item objects, typically @Efl.Ui.List_Default_Item objects.
 
+    Items are added asynchronously by an @Efl.Ui.Factory from the definition of an @Efl.Model.
+
+    The orientation (vertical or horizontal) of the list can be set with
+    @Efl.Ui.Layout_Orientable.orientation.
+
+    Items inside this widget can be selected according to the @Efl.Ui.Multi_Selectable_Async.select_mode
+    policy, and the selection can be retrieved with @Efl.Ui.Multi_Selectable_Async.selected_iterator_new.
+  ]]
+   data: null;
    implements {
       Efl.Object.constructor;
-      Efl.Object.finalize;
-      Efl.Object.destructor;
-      Efl.Gfx.Entity.position { set; }
-      Efl.Gfx.Entity.size { set; }
-      // Smart obj
-      Efl.Canvas.Group.group_member_add;
-      Efl.Canvas.Group.group_calculate;
-
-      Efl.Ui.List_View_Model.load_range { set;}
-      Efl.Ui.List_View_Model.realize;
-      Efl.Ui.List_View_Model.unrealize;
-      Efl.Ui.List_View_Model.model_size { get; }
-      Efl.Ui.List_View_Model.min_size { get; set; }
-
-      // Widget
-      Efl.Ui.Widget_Focus_Manager.focus_manager_create;
-      Efl.Ui.Widget.widget_input_event_handler;
-      Efl.Ui.Widget.focus_state_apply;
-      Efl.Ui.Focus.Composition.prepare;
-      Efl.Ui.View.model { get; set; }
-
-      Efl.Layout.Signal.signal_callback_add;
-      Efl.Layout.Signal.signal_callback_del;
-      Efl.Access.Object.access_children { get; }
-      Efl.Access.Selection.selected_children_count { get; }
-      Efl.Access.Selection.selected_child { get; }
-      Efl.Access.Selection.selected_child_deselect;
-      Efl.Access.Selection.child_select;
-      Efl.Access.Selection.child_deselect;
-      Efl.Access.Selection.is_child_selected;
-      Efl.Access.Selection.all_children_select;
-      Efl.Access.Selection.access_selection_clear;
-   }
-   composite {
-      Efl.Ui.Scrollable_Interactive;
-      Efl.Ui.Scrollbar;
    }
 }

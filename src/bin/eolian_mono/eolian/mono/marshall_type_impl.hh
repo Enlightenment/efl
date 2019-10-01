@@ -137,14 +137,14 @@ struct marshall_type_visitor_generate
                     r.base_type = "Eina.ValueNative";
                 return r;
                }}
-           , {"any_value_ptr", true, [&]
+           , {"any_value_ref", true, [&]
                {
                 regular_type_def r = regular;
                 r.namespaces.clear();
                 r.base_type = "Eina.Value";
                 return r;
                }}
-           , {"any_value_ptr", false, [&]
+           , {"any_value_ref", false, [&]
                {
                 regular_type_def r = regular;
                 r.namespaces.clear();

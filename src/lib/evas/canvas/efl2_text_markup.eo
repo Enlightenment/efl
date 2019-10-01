@@ -61,7 +61,7 @@ class @beta Efl2.Text.Markup {
               @in start: const(Efl2.Text.Cursor); [[Start of range]]
               @in end: const(Efl2.Text.Cursor); [[End of range]]
          }
-         // FIXME: shouldn't it be @owned?
+         // FIXME: shouldn't it be @move?
          return: string; [[The markup within the range]]
       }
    }

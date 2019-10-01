@@ -71,7 +71,7 @@ _zoom_compute(Efl_Canvas_Gesture_Recognizer_Zoom_Data *pd,
    Evas_Coord diam = _finger_gap_length_get(xx1, yy1, xx2, yy2,
                                             &x, &y);
 
-   zd->radius = diam / 2;
+   zd->radius = diam / 2.0;
 
    if (!pd->zoom_base)
      {
@@ -202,7 +202,7 @@ _efl_canvas_gesture_recognizer_zoom_efl_canvas_gesture_recognizer_recognize(Eo *
                                                        pd->zoom_st.cur.pos.y,
                                                        &x, &y);
 
-                zd->radius = pd->zoom_base / 2;
+                zd->radius = pd->zoom_base / 2.0;
 
                 if ((efl_gesture_state_get(gesture) != EFL_GESTURE_STARTED) &&
                     (efl_gesture_state_get(gesture) != EFL_GESTURE_UPDATED))

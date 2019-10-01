@@ -1,17 +1,17 @@
 enum @beta Efl.Ui.Zoom_Mode
 {
    [[Types of zoom available.]]
-   manual = 0, [[Zoom controlled normally by efl_ui_zoom_set]]
-   auto_fit, [[Zoom until photo fits in zoomable object]]
-   auto_fill, [[Zoom until photo fills zoomable object]]
-   auto_fit_in, [[Zoom in until photo fits in zoomable object]]
-   last [[Sentinel value to indicate last enum field during iteration]]
+   manual = 0, [[Zoom controlled manually by @Efl.Ui.Zoom.zoom_level.]]
+   auto_fit, [[Zoom until whole image fits inside object. Parts of the object might be left blank.]]
+   auto_fill, [[Zoom until image fills the object. Parts of the image might not show.]]
+   auto_fit_in, [[Zoom in until image fits inside object.]]
+   last [[Internal. Sentinel value to indicate last enum field during iteration.]]
 }
 
 interface @beta Efl.Ui.Zoom
 {
    [[Efl UI zoom interface]]
-   event_prefix: efl_ui;
+   event_c_prefix: efl_ui;
    c_prefix: efl_ui;
 
    methods {
@@ -27,58 +27,47 @@ interface @beta Efl.Ui.Zoom
          }
       }
       @property zoom_level {
-         set {
-            [[Set the zoom level of the photo
+         [[Zoom level of the image.
 
-              This sets the zoom level. If $zoom is 1, it means no zoom. If
-              it's smaller than 1, it means zoom in. If it's bigger than 1,
-              it means zoom out. For  example, $zoom 1 will be 1:1 pixel for
-              pixel. $zoom 2 will be 2:1 (that is 2x2 photo pixels will
-              display as 1 on-screen pixel) which is a zoom out. 4:1 will
-              be 4x4 photo pixels as 1 screen pixel, and so on. The $zoom
-              parameter must be greater than 0. It is suggested to stick
-              to powers of 2. (1, 2, 4, 8, 16, 32, etc.).
-            ]]
+           This selects the zoom level. If $zoom is 1, it means no zoom. If
+           it's smaller than 1, it means zoom in. If it's bigger than 1,
+           it means zoom out. For  example, $zoom 1 will be 1:1 pixel for
+           pixel. $zoom 2 will be 2:1 (that is 2x2 photo pixels will
+           display as 1 on-screen pixel) which is a zoom out. 4:1 will
+           be 4x4 photo pixels as 1 screen pixel, and so on. The $zoom
+           parameter must be greater than 0. It is suggested to stick
+           to powers of 2. (1, 2, 4, 8, 16, 32, etc.).
+
+           Note that if you set @.zoom_mode to anything other than
+           @Efl.Ui.Zoom_Mode.manual (which is the default value) the
+           @.zoom_level might be changed at any time by the zoomable
+           object itself to account for image and viewport size changes.
+         ]]
+         set {
          }
          get {
-            [[Get the zoom level of the photo
-
-              This returns the current zoom level of the zoomable object.
-              Note that if you set the fill mode to other than
-              #EFL_UI_ZOOM_MODE_MANUAL (which is the default), the
-              zoom level may be changed at any time by the  zoomable object
-              itself to account for photo size and zoomable viewport size.
-            ]]
          }
          values {
-            zoom: double; [[The zoom level to set]]
+            zoom: double; [[The image's current zoom level.]]
          }
       }
       @property zoom_mode {
+         [[Zoom mode.
+
+           This sets the zoom mode to manual or one of several automatic
+           levels. @Efl.Ui.Zoom_Mode.manual means that zoom is controlled
+           manually by @.zoom_level and will stay at that level until
+           changed by code or until @.zoom_mode is changed. This is the
+           default mode. The Automatic modes will allow the zoomable object
+           to automatically adjust zoom mode based on image and viewport
+           size changes.
+         ]]
          set {
-            [[Set the zoom mode
-
-              This sets the zoom mode to manual or one of several automatic
-              levels. Manual (EFL_UI_ZOOM_MODE_MANUAL) means that zoom
-              is set manually by @.zoom_level.set and will stay at that level until
-              changed by code or until zoom mode is changed. This is the
-              default mode. The Automatic modes will allow the zoomable object
-              to automatically adjust zoom mode based on properties.
-
-              #EFL_UI_ZOOM_MODE_AUTO_FIT) will adjust zoom so the photo
-              fits EXACTLY inside the scroll frame with no pixels outside this
-              region. #EFL_UI_ZOOM_MODE_AUTO_FILL will be similar but
-              ensure no pixels within the frame are left unfilled.
-            ]]
          }
          get {
-            [[Get the zoom mode
-
-              This gets the current zoom mode of the zoomable object.
-            ]]
          }
          values {
-            mode: Efl.Ui.Zoom_Mode; [[The zoom mode.]]
+            mode: Efl.Ui.Zoom_Mode(Efl.Ui.Zoom_Mode.manual); [[The zoom mode.]]
          }
       }
    }

@@ -45,7 +45,7 @@ _apply_box_properties(Eo *obj, Efl_Ui_Spotlight_Manager_Scroll_Data *pd)
    if (pd->transition.active)
      current_pos = pd->transition.from + ((double)pd->transition.to - pd->transition.from)*pd->transition.progress;
    else
-     current_pos = efl_ui_spotlight_active_index_get(pd->container);
+     current_pos = efl_pack_index_get(pd->container, efl_ui_spotlight_active_element_get(pd->container));
 
    efl_gfx_entity_geometry_set(pd->foreclip, group_pos);
    //first calculate the size
@@ -60,7 +60,7 @@ _apply_box_properties(Eo *obj, Efl_Ui_Spotlight_Manager_Scroll_Data *pd)
         double diff = i - current_pos;
         Efl_Gfx_Entity *elem = efl_pack_content_get(pd->container, i);
 
-        geometry.x = (group_pos.x + group_pos.w/2)-(pd->page_size.w/2 - diff*pd->page_size.w);
+        geometry.x = (int)((group_pos.x + group_pos.w/2)-(pd->page_size.w/2 - diff*pd->page_size.w));
         if (!eina_rectangles_intersect(&geometry.rect, &group_pos.rect))
           {
              efl_canvas_object_clipper_set(elem, pd->backclip);
@@ -106,7 +106,7 @@ _mouse_down_cb(void *data,
    efl_event_callback_del(pd->container, EFL_CANVAS_OBJECT_EVENT_ANIMATOR_TICK, _page_set_animation, obj);
 
    pd->mouse_move.active = EINA_TRUE;
-   pd->mouse_move.from = efl_ui_spotlight_active_index_get(pd->container);
+   pd->mouse_move.from = efl_pack_index_get(pd->container, efl_ui_spotlight_active_element_get(pd->container));
    pd->mouse_move.mouse_start = efl_input_pointer_position_get(ev);
 
    pd->transition.from = pd->mouse_move.from;
@@ -158,7 +158,8 @@ _mouse_up_cb(void *data,
    double absolut_current_position = (double)pd->transition.from + pd->transition.progress;
    int result = round(absolut_current_position);
 
-   efl_ui_spotlight_active_index_set(pd->container, MIN(MAX(result, 0), efl_content_count(pd->container) - 1));
+   Efl_Ui_Widget *new_content = efl_pack_content_get(pd->container, MIN(MAX(result, 0), efl_content_count(pd->container) - 1));
+   efl_ui_spotlight_active_element_set(pd->container, new_content);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(mouse_listeners,

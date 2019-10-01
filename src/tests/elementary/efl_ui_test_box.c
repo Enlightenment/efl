@@ -418,8 +418,12 @@ EFL_START_TEST (efl_ui_box_pack_unpack)
    ck_assert(efl_pack(layout, btn[1]));
    ck_assert_ptr_eq(efl_pack_content_get(layout, 0), btn[1]);
    ck_assert_int_eq(efl_pack_index_get(layout, btn[1]), 0);
+   EXPECT_ERROR_START;
    ck_assert(!efl_pack_end(layout, btn[1]));
+   EXPECT_ERROR_END;
+   EXPECT_ERROR_START;
    ck_assert(!efl_pack(layout, NULL));
+   EXPECT_ERROR_END;
    ck_assert(efl_pack_after(layout, btn[3], btn[1]));
    ck_assert_ptr_eq(efl_pack_content_get(layout, 1), btn[3]);
    ck_assert_int_eq(efl_pack_index_get(layout, btn[3]), 1);
@@ -428,8 +432,12 @@ EFL_START_TEST (efl_ui_box_pack_unpack)
    ck_assert_int_eq(efl_pack_index_get(layout, btn[5]), 2);
    ck_assert_ptr_eq(efl_pack_content_get(layout, -1), btn[5]);
    ck_assert_int_eq(efl_pack_index_get(layout, btn[5]), 2);
+   EXPECT_ERROR_START;
    ck_assert(!efl_pack_after(layout, btn[5], NULL));
+   EXPECT_ERROR_END;
+   EXPECT_ERROR_START;
    ck_assert(!efl_pack_after(layout, NULL, btn[5]));
+   EXPECT_ERROR_END;
    ck_assert(efl_pack_before(layout, btn[4], btn[5]));
    ck_assert(efl_pack_begin(layout, btn[0]));
    ck_assert_ptr_eq(efl_pack_content_get(layout, 0), btn[0]);
@@ -462,15 +470,21 @@ EFL_START_TEST (efl_ui_box_pack_unpack)
 
    //unpack test
    ck_assert_ptr_eq(efl_pack_unpack_at(layout, 2), btn[2]);
+   EXPECT_ERROR_START;
    ck_assert(!efl_pack_unpack(layout, btn[2]));
+   EXPECT_ERROR_END;
    efl_pack_at(layout, btn[2], 2);
    ck_assert(efl_pack_unpack(layout, efl_pack_content_get(layout, 2)));
+   EXPECT_ERROR_START;
    ck_assert(!efl_pack_unpack(layout, btn[2]));
+   EXPECT_ERROR_END;
 
    efl_pack_at(layout, btn[2], 2);
    ck_assert_ptr_eq(efl_pack_unpack_at(layout, efl_pack_index_get(layout, btn[2])), btn[2]);
 
+   EXPECT_ERROR_START;
    ck_assert(!efl_pack_unpack(layout, NULL));
+   EXPECT_ERROR_END;
    ck_assert_int_eq(efl_content_count(layout), BTN_NUM - 1);
 
    efl_pack_unpack_all(layout);

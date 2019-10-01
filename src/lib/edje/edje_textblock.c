@@ -434,9 +434,8 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
         Evas_Coord tw, th;
         const char *text = "";
         const char *style = "";
-        Edje_Style *stl = NULL;
+        Evas_Textblock_Style *stl = NULL;
         const char *tmp;
-        Eina_List *l;
 
         if (chosen_desc->text.id_source >= 0)
           {
@@ -484,19 +483,14 @@ _edje_part_recalc_single_textblock(FLOAT_T sc,
              if (ep->typedata.text->text) text = ep->typedata.text->text;
           }
 
-        EINA_LIST_FOREACH(ed->file->styles, l, stl)
-          {
-             if ((stl->name) && (!strcmp(stl->name, style))) break;
-             stl = NULL;
-          }
-
         if (ep->part->scale)
           evas_object_scale_set(ep->object, TO_DOUBLE(sc));
 
+        stl = _edje_textblock_style_get(ed, style);
         if (stl)
           {
-             if (evas_object_textblock_style_get(ep->object) != stl->style)
-               evas_object_textblock_style_set(ep->object, stl->style);
+             if (evas_object_textblock_style_get(ep->object) != stl)
+               evas_object_textblock_style_set(ep->object, stl);
              // FIXME: need to account for editing
              if (ep->part->entry_mode > EDJE_ENTRY_EDIT_MODE_NONE)
                {

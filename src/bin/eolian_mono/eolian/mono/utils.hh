@@ -88,6 +88,20 @@ namespace eolian_mono { namespace utils {
        else
            return false;
    }
+
+   inline std::string replace_all(std::string s, std::string target, std::string replace)
+   {
+       size_t pos = s.find(target);
+
+       while (pos != std::string::npos)
+       {
+           s.replace(pos, target.length(), replace);
+           pos += replace.length();
+           pos = s.find(target, pos);
+       }
+
+       return s;
+   }
 } }
 
 #endif

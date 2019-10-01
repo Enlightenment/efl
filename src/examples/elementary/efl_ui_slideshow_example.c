@@ -25,9 +25,9 @@ _show_next(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    efl_del(show_timer);
    show_timer = NULL;
 
-   int current_index = efl_ui_spotlight_active_index_get(container);
+   int current_index = efl_pack_index_get(container, efl_ui_spotlight_active_element_get(container));
    int new_index = (current_index + 1) % efl_content_count(container);
-   efl_ui_spotlight_active_index_set(container, new_index);
+   efl_ui_spotlight_active_element_set(container, efl_pack_content_get(container, new_index));
 }
 
 static void

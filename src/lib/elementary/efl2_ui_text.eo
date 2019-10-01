@@ -70,7 +70,7 @@ struct @beta Efl2.Ui.Selection_Changed
 // FIXME: Gotta figure out dnd and cnp modes.
 class @beta Efl2.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickable,
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.File
-                 // FIXME , Efl2.Text.Raw_Editable
+                 // FIXME composite Efl2.Text.Raw_Editable
 {
    [[A flexible text widget which can be static (as a label) or editable by
      the user (as a text entry). It provides all sorts of editing facilities
@@ -131,6 +131,7 @@ class @beta Efl2.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickab
          [[This executes a "paste" action in the entry.]]
       }
 
+      // FIXME: rename?
       @property selection_handler_disabled {
          set {
             [[This disables the entry's selection handlers.]]
@@ -247,8 +248,5 @@ class @beta Efl2.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickab
       cnp,paste: void; [[Called when selection is pasted]]
       cnp,copy: void; [[Called when selection is copied]]
       cnp,cut: void; [[Called when selection is cut]]
-   }
-   composite {
-// FIXME      Efl2.Text.Raw_Editable;
    }
 }

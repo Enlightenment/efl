@@ -1,19 +1,12 @@
-enum @beta Efl.Ui.Select_Mode {
-   [[Type of multi selectable object.]]
-   single, [[Only single child is selected. if the child is selected,
-             previous selected child will be unselected.]]
-   single_always, [[Same as single select except, this will be selected
-                    in every select calls though child is already been selected.]]
-   multi, [[allow multiple selection of children.]]
-   none [[Last value of select mode. child cannot be selected at all.]]
-}
+import efl_ui;
 
 interface @beta Efl.Ui.Multi_Selectable extends Efl.Ui.Single_Selectable
 {
    [[Interface for getting access to a range of selected items.
 
-     The implementor of this interface provides the possibility to select multiple Selectables. (If not, only Efl.Ui.Single_Selectable should be implemented)]]
-   c_prefix: efl_ui;
+     The implementor of this interface provides the possibility to select multiple Selectables.
+     If not, only @Efl.Ui.Single_Selectable should be implemented.]]
+   c_prefix: efl_ui_selectable;
    methods
    {
       @property select_mode {
@@ -24,11 +17,11 @@ interface @beta Efl.Ui.Multi_Selectable extends Efl.Ui.Single_Selectable
             mode: Efl.Ui.Select_Mode; [[Type of selection of children]]
          }
       }
-      selected_items_get {
+      selected_iterator_new {
          [[Get the selected items in a iterator. The iterator sequence will be decided by selection.]]
-         return: iterator<Efl.Ui.Selectable> @owned @no_unused; [[User has to free the iterator after usage.]]
+         return: iterator<Efl.Ui.Selectable> @move @no_unused; [[User has to free the iterator after usage.]]
       }
-      select_range {
+      range_select @beta {
          [[Select a range of @Efl.Ui.Selectable.
 
            This will select the range of selectables from a to b or from b to a depending on which one comes first.
@@ -41,7 +34,7 @@ interface @beta Efl.Ui.Multi_Selectable extends Efl.Ui.Single_Selectable
            b : Efl.Ui.Selectable; [[The other side of the range.]]
          }
       }
-      unselect_range {
+      range_unselect @beta {
          [[Unselect a range of @Efl.Ui.Selectable.
 
            This will unselect the range of selectables from a to b or from b to a depending on which one comes first.
@@ -54,10 +47,10 @@ interface @beta Efl.Ui.Multi_Selectable extends Efl.Ui.Single_Selectable
            b : Efl.Ui.Selectable; [[The other side of the range.]]
          }
       }
-      select_all {
+      all_select {
          [[Select all @Efl.Ui.Selectable]]
       }
-      unselect_all {
+      all_unselect {
          [[Unselect all @Efl.Ui.Selectable]]
       }
 

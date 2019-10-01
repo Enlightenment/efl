@@ -1,4 +1,4 @@
-group { name: "efl/pointer";
+group { name: "efl/pointer"; data.item: "version" "123";
    images {
       image: "pointer.png" COMP;
       image: "pointer_glow.png" COMP;
@@ -105,6 +105,7 @@ group { name: "efl/pointer";
 
 group { name: "efl/pointer:bottom_right_corner";
    inherit: "efl/pointer";
+   data.item: "version" "123";
    images.image: "mini_box_glow.png" COMP;
    parts {
       part { name: "box";
@@ -141,6 +142,7 @@ group { name: "efl/pointer:bottom_right_corner";
 
 group { name: "efl/pointer:bottom_left_corner";
    inherit: "efl/pointer:bottom_right_corner";
+   data.item: "version" "123";
    parts {
       part { name: "box";
          description { state: "default" 0.0;
@@ -158,6 +160,7 @@ group { name: "efl/pointer:bottom_left_corner";
 
 group { name: "efl/pointer:bottom_side";
    inherit: "efl/pointer:bottom_right_corner";
+   data.item: "version" "123";
    parts {
       part { name: "box";
          description { state: "default" 0.0;
@@ -174,6 +177,7 @@ group { name: "efl/pointer:bottom_side";
 
 group { name: "efl/pointer:top_right_corner";
    inherit: "efl/pointer:bottom_right_corner";
+   data.item: "version" "123";
    parts {
       part { name: "box";
          description { state: "default" 0.0;
@@ -190,6 +194,7 @@ group { name: "efl/pointer:top_right_corner";
 
 group { name: "efl/pointer:top_left_corner";
    inherit: "efl/pointer:bottom_right_corner";
+   data.item: "version" "123";
    parts {
       part { name: "box";
          description { state: "default" 0.0;
@@ -206,6 +211,7 @@ group { name: "efl/pointer:top_left_corner";
 
 group { name: "efl/pointer:top_side";
    inherit: "efl/pointer:bottom_right_corner";
+   data.item: "version" "123";
    parts {
       part { name: "box";
          description { state: "default" 0.0;

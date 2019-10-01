@@ -6,38 +6,34 @@ class @beta Evas.Canvas3D.Texture extends Evas.Canvas3D.Object implements Efl.Fi
    data : Evas_Canvas3D_Texture_Data;
    methods {
       @property source_visible {
+         [[The visibility flag of the source evas object of the given
+           texture.
+
+           Call \@ref evas_object_show on the source object
+           and control the visibility using this function.
+
+           By default the source object is visible.
+
+           See also @.source_set.
+         ]]
          set {
-            [[Set the visibility flag of the source evas object of the given
-              texture.
-
-              Call \@ref evas_object_show on the source object
-              and control the visibility using this function.
-
-              By default the source object is visible.
-
-              See also @.source_set.
-            ]]
          }
          get {
-            [[Get the visibility flag of the source evas object of the given
-              texture.
-            ]]
          }
          values {
             visible: bool; [[$true for visible, $false for invisible.]]
          }
       }
       @property atlas_enable {
+         [[Enable flag to generation texture unit with support atlas.
+
+           Use this flag only when you cannot normalize texture coordinates.
+
+           By default it is enabled.
+         ]]
          set {
-            [[Set enable flag to generation texture unit with support atlas.
-
-              Use this flag only when you cannot normalize texture coordinates.
-
-              By default it is enabled.
-            ]]
          }
          get {
-            [[Get enable flag of generation texture unit with support atlas.]]
          }
          values {
             use_atlas: bool; [[$true for enable, $false for disable.]]
@@ -156,6 +152,7 @@ class @beta Evas.Canvas3D.Texture extends Evas.Canvas3D.Object implements Efl.Fi
       Evas.Canvas3D.Object.update_notify;
       Evas.Canvas3D.Object.change_notify;
       Efl.File.load;
+      Efl.File.unload;
       @empty Evas.Canvas3D.Object.callback_register;
       @empty Evas.Canvas3D.Object.callback_unregister;
    }

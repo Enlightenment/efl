@@ -227,7 +227,7 @@ efl_main(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
    auto timeout_set_cb(std::bind([]() {
         if (!g_popup) return;
 
-        g_popup.timeout_set(3);
+        g_popup.closing_timeout_set(3);
         std::cout << "Timeout is set to 3 seconds" << std::endl;
      }));
    efl::eolian::event_add(efl::input::Clickable::clicked_event, timeout_btn, timeout_set_cb);

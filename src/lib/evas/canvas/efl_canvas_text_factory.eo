@@ -17,7 +17,7 @@ interface @beta Efl.Canvas.Text_Factory
             object: Efl.Canvas.Object; [[The parent of the created object]]
             key: string; [[Key that is associated to an item object]]
          }
-         return: Efl.Canvas.Object @owned;
+         return: Efl.Canvas.Object @move;
       }
    }
 }

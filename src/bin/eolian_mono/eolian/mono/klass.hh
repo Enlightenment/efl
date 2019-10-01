@@ -31,18 +31,6 @@
 
 namespace eolian_mono {
 
-/* Get the actual number of functions of a class, checking for blacklisted ones */
-template<typename Context>
-static std::size_t
-get_implementable_function_count(grammar::attributes::klass_def const& cls, Context context)
-{
-   auto methods = helpers::get_all_implementable_methods(cls, context);
-   return std::count_if(methods.cbegin(), methods.cend(), [&context](grammar::attributes::function_def const& func)
-     {
-        return !blacklist::is_function_blacklisted(func, context) && !func.is_static;
-     });
-}
-
 template<typename Context>
 static bool
 is_inherit_context(Context const& context)
@@ -139,10 +127,10 @@ struct klass
        if(!as_generator("\n{\n").generate(sink, attributes::unused, iface_cxt))
          return false;
 
-       if(!as_generator(*(scope_tab << function_declaration)).generate(sink, cls.functions, iface_cxt))
+       if(!as_generator(*(function_declaration)).generate(sink, cls.functions, iface_cxt))
          return false;
 
-       if(!as_generator(*(scope_tab << async_function_declaration)).generate(sink, cls.functions, iface_cxt))
+       if(!as_generator(*(async_function_declaration)).generate(sink, cls.functions, iface_cxt))
          return false;
 
        if(!as_generator(*(event_declaration)).generate(sink, cls.events, iface_cxt))
@@ -159,7 +147,7 @@ struct klass
          return false;
 
        // End of interface declaration
-       if(!as_generator("}\n").generate(sink, attributes::unused, iface_cxt)) return false;
+       if(!as_generator("}\n\n").generate(sink, attributes::unused, iface_cxt)) return false;
      }
 
      // Events arguments go in the top namespace to avoid the Concrete suffix clutter in interface events.
@@ -198,7 +186,7 @@ struct klass
          if(!as_generator
             (
              documentation
-             << "sealed public " << (is_partial ? "partial ":"") << " class " << concrete_name << " :\n"
+             << "public sealed " << (is_partial ? "partial ":"") << "class " << concrete_name << " :\n"
              << scope_tab << (root ? "Efl.Eo.EoWrapper" : "") << (klass_full_concrete_or_interface_name % "") << "\n"
              << scope_tab << ", " << interface_name << "\n"
              << scope_tab << *(", " << name_helpers::klass_full_concrete_or_interface_name) << "\n"
@@ -225,7 +213,7 @@ struct klass
             (
              scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(concrete_cxt).actual_library_name(cls.filename)
              << ")] internal static extern System.IntPtr\n"
-             << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n"
+             << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n\n"
              << scope_tab << "/// <summary>Initializes a new instance of the <see cref=\"" << interface_name << "\"/> class.\n"
              << scope_tab << "/// Internal usage: This is used when interacting with C code and should not be used directly.</summary>\n"
              << scope_tab << "/// <param name=\"wh\">The native pointer to be wrapped.</param>\n"
@@ -238,6 +226,9 @@ struct klass
 
          if (!generate_events(sink, cls, concrete_cxt))
              return false;
+
+         if (!as_generator(lit("#pragma warning disable CS0628\n")).generate(sink, attributes::unused, concrete_cxt))
+            return false;
 
          // Parts
          if(!as_generator(*(part_definition))
@@ -263,12 +254,15 @@ struct klass
                 return false;
            }
 
+         if (!as_generator(lit("#pragma warning restore CS0628\n")).generate(sink, attributes::unused, concrete_cxt))
+            return false;
+
          // Copied from nativeinherit class, used when setting up providers.
          if(!as_generator(
               scope_tab << "private static IntPtr GetEflClassStatic()\n"
               << scope_tab << "{\n"
               << scope_tab << scope_tab << "return " << name_helpers::klass_get_full_name(cls) << "();\n"
-              << scope_tab << "}\n"
+              << scope_tab << "}\n\n"
            ).generate(sink, attributes::unused, concrete_cxt))
            return false;
 
@@ -348,7 +342,7 @@ struct klass
               scope_tab << "private static IntPtr GetEflClassStatic()\n"
               << scope_tab << "{\n"
               << scope_tab << scope_tab << "return " << name_helpers::klass_get_full_name(cls) << "();\n"
-              << scope_tab << "}\n"
+              << scope_tab << "}\n\n"
            ).generate(sink, attributes::unused, inherit_cxt))
            return false;
 
@@ -376,8 +370,8 @@ struct klass
          << "#pragma warning disable CS1591\n" // Disabling warnings as DocFx will hide these classes
          <<"public static class " << (string % "_") << name_helpers::klass_inherit_name(cls)
          << "_ExtensionMethods {\n"
-         << *((scope_tab << property_extension_method_definition(cls)) << "\n")
-         << *((scope_tab << part_extension_method_definition(cls)) << "\n")
+         << *(property_extension_method_definition(cls))
+         << *(part_extension_method_definition(cls))
          << "}\n"
          << "#pragma warning restore CS1591\n"
          << "#endif\n")
@@ -398,7 +392,7 @@ struct klass
                                             context);
          auto native_inherit_name = name_helpers::klass_native_inherit_name(cls);
          auto inherit_name = name_helpers::klass_inherit_name(cls);
-         auto implementable_methods = helpers::get_all_implementable_methods(cls, context);
+         auto implementable_methods = helpers::get_all_registerable_methods(cls, context);
          bool root = !helpers::has_regular_ancestor(cls);
          auto const& indent = current_indentation(inative_cxt);
 
@@ -422,7 +416,7 @@ struct klass
            {
               if(!as_generator(
                     indent << scope_tab << "private static Efl.Eo.NativeModule Module = new Efl.Eo.NativeModule("
-                    << indent << context_find_tag<library_context>(context).actual_library_name(cls.filename) << ");\n"
+                    <<  context_find_tag<library_context>(context).actual_library_name(cls.filename) << ");\n\n"
                  ).generate(sink, attributes::unused, inative_cxt))
                 return false;
            }
@@ -430,7 +424,7 @@ struct klass
          if(!as_generator(
              indent << scope_tab << "/// <summary>Gets the list of Eo operations to override.</summary>\n"
              << indent << scope_tab << "/// <returns>The list of Eo operations to be overload.</returns>\n"
-             << indent << scope_tab << "public override System.Collections.Generic.List<Efl_Op_Description> GetEoOps(System.Type type)\n"
+             << indent << scope_tab << "public override System.Collections.Generic.List<Efl_Op_Description> GetEoOps(System.Type type, bool includeInherited)\n"
              << indent << scope_tab << "{\n"
              << indent << scope_tab << scope_tab << "var descs = new System.Collections.Generic.List<Efl_Op_Description>();\n"
             )
@@ -452,13 +446,27 @@ struct klass
                 ).generate(sink,  attributes::unused, inative_cxt))
              return false;
 
+         if(!as_generator(
+             indent << scope_tab << scope_tab << "if (includeInherited)\n"
+             << indent << scope_tab(2) << "{\n"
+             << indent << scope_tab(3) << "var all_interfaces = type.GetInterfaces();\n"
+             << indent << scope_tab(3) << "foreach (var iface in all_interfaces)\n"
+             << indent << scope_tab(3) << "{\n"
+             << indent << scope_tab(4) <<  "var moredescs = ((Efl.Eo.NativeClass)iface.GetCustomAttributes(false)?.FirstOrDefault(attr => attr is Efl.Eo.NativeClass))?.GetEoOps(type, false);\n"
+             << indent << scope_tab(4) <<  "if (moredescs != null)\n"
+             << indent << scope_tab(5) <<  "descs.AddRange(moredescs);\n"
+             << indent << scope_tab(3) << "}\n"
+             << indent << scope_tab(2) << "}\n"
+           ).generate(sink, attributes::unused, inative_cxt))
+             return false;
+
          if (!root || context_find_tag<class_context>(context).current_wrapper_kind != class_context::concrete)
-           if(!as_generator(indent << scope_tab << scope_tab << "descs.AddRange(base.GetEoOps(type));\n").generate(sink, attributes::unused, inative_cxt))
+           if(!as_generator(indent << scope_tab << scope_tab << "descs.AddRange(base.GetEoOps(type, false));\n").generate(sink, attributes::unused, inative_cxt))
              return false;
 
          if(!as_generator(
                 indent << scope_tab << scope_tab << "return descs;\n"
-                << indent << scope_tab << "}\n"
+                << indent << scope_tab << "}\n\n"
             ).generate(sink, attributes::unused, inative_cxt))
            return false;
 
@@ -524,7 +532,7 @@ struct klass
      if(!as_generator(
              scope_tab << "[System.Runtime.InteropServices.DllImport(" << context_find_tag<library_context>(context).actual_library_name(cls.filename)
              << ")] internal static extern System.IntPtr\n"
-             << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n"
+             << scope_tab << scope_tab << name_helpers::klass_get_name(cls) << "();\n\n"
             ).generate(sink, attributes::unused, context))
        return false;
 
@@ -599,7 +607,7 @@ struct klass
          return true;
 
      // Self events
-     if (!as_generator(*(event_definition(cls, cls))).generate(sink, cls.events, context))
+     if (!as_generator(*(event_definition(cls, cls)) << "\n").generate(sink, cls.events, context))
        return false;
 
      // Inherited events

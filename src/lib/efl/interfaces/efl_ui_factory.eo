@@ -1,40 +1,44 @@
-struct @beta Efl.Ui.Factory_Item_Created_Event {
-   [[EFL Ui Factory event structure provided when an item was just created.]]
+struct Efl.Ui.Factory_Item_Created_Event {
+   [[EFL UI Factory event structure provided when an item was just created.]]
    model: Efl.Model; [[The model already set on the new item.]]
    item: Efl.Gfx.Entity; [[The item that was just created.]]
 }
 
-interface @beta Efl.Ui.Factory extends Efl.Ui.Property_Bind, Efl.Ui.Factory_Bind
+interface Efl.Ui.Factory extends Efl.Ui.Property_Bind, Efl.Ui.Factory_Bind
 {
-   [[Efl UI factory interface]]
+   [[Interface for factory-pattern object creation.
+
+     This object represents a Factory in the factory pattern. Objects should be created via the method
+     @Efl.Ui.View_Factory.create_with_event, which will in turn call the necessary APIs from this interface.
+     Objects created this way should be removed using @.release.
+
+     It is recommended to not create your own @Efl.Ui.Factory and use event handler as much as possible.
+   ]]
    methods {
       create @protected {
          [[Create a UI object from the necessary properties in the specified model.
 
-
-         Note: This is the function you need to implement for a custom factory, but if you want to use a factory, you should rely on @Efl.Ui.View_Factory.create_with_event.]]
+           Note: This is the function you need to implement for a custom factory, but if you want to use a factory,
+           you should rely on @Efl.Ui.View_Factory.create_with_event.]]
          params {
-            models: iterator<Efl.Model>; [[Efl iterator providing the model to be associated to the new item. It should remain valid until the end of the function call.]]
-            parent: Efl.Gfx.Entity; [[Efl canvas]]
+            models: iterator<Efl.Model> @move; [[Efl iterator providing the model to be associated to the new item.
+                                           It should remain valid until the end of the function call.]]
          }
-         return: future<Efl.Gfx.Entity>; [[Created UI object]]
+         return: future<Efl.Gfx.Entity> @move @no_unused; [[Created UI object.]]
       }
       release {
          [[Release a UI object and disconnect from models.]]
          params {
-            ui_view: Efl.Gfx.Entity; [[Efl canvas]]
-         }
-      }
-      building @const {
-         [[This function is called during the creation of an UI object between the @Efl.Object.constructor and @Efl.Object.finalize call.
-
-         Note: if the @Efl.Ui.Factory does keep a cache of object, this won't be called when object are pulled out of the cache.]]
-         params {
-            ui_view: Efl.Gfx.Entity; [[The UI object being created.]]
+            ui_views: iterator<Efl.Gfx.Entity> @move; [[Object to remove.]]
          }
       }
    }
    events {
-      created: Efl.Ui.Factory_Item_Created_Event; [[Event triggered when an item has been successfully created.]]
+      item,constructing: Efl.Gfx.Entity; [[Event triggered when an item is under construction (between the @Efl.Object.constructor and @Efl.Object.finalize call on the item).
+                                         Note:  If the @Efl.Ui.Factory does keep a cache of objects, this won't be called when objects are pulled out of the cache.]]
+      item,building: Efl.Gfx.Entity; [[Event triggered when an item has processed @Efl.Object.finalize, but before all the factory are done building it.
+                                     Note: if the @Efl.Ui.Factory does keep a cache of object, this will be called when object are pulled out of the cache.]]
+      item,created: Efl.Gfx.Entity; [[Event triggered when an item has been successfully created by the factory and is about to be used by an @Efl.Ui.View.]]
+      item,releasing: Efl.Gfx.Entity; [[Event triggered when an item is being released by the @Efl.Ui.Factory. It must be assumed that after this call, the object can be recycle to another @Efl.Ui.View and there can be more than one call for the same item.]]
    }
 }

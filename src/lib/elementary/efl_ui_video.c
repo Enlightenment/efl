@@ -2,16 +2,13 @@
 # include "elementary_config.h"
 #endif
 
-#include <Emotion.h>
-
 #define EFL_ACCESS_OBJECT_PROTECTED
 #define EFL_ACCESS_WIDGET_ACTION_PROTECTED
 
-#include <Elementary.h>
 
+#include "elm_priv.h"
 #include "elm_widget_layout.h"
 #include "efl_ui_video_private.h"
-#include "elm_priv.h"
 
 /* TODO: add buffering support to Emotion and display buffering
  * progress in the theme when needed */
@@ -98,7 +95,7 @@ _key_action_move(Evas_Object *obj, const char *params)
 static Eina_Bool
 _key_action_play(Evas_Object *obj, const char *params EINA_UNUSED)
 {
-   if (efl_player_play_get(obj))
+   if (!efl_player_paused_get(obj))
      elm_video_pause(obj);
    else
      elm_video_play(obj);
@@ -288,6 +285,19 @@ _efl_ui_video_efl_object_constructor(Eo *obj, Efl_Ui_Video_Data *_pd EINA_UNUSED
    return obj;
 }
 
+EOLIAN static void
+_efl_ui_video_efl_file_unload(Eo *obj, Efl_Ui_Video_Data *sd)
+{
+   if (sd->remember) emotion_object_last_position_save(sd->emotion);
+   sd->stop = EINA_FALSE;
+   efl_file_unload(sd->emotion);
+
+   if(elm_widget_is_legacy(obj))
+     elm_layout_signal_emit(obj, "elm,video,stop", "elm");
+   else
+     elm_layout_signal_emit(obj, "efl,video,stop", "efl");
+}
+
 EOLIAN static Eina_Error
 _efl_ui_video_efl_file_load(Eo *obj, Efl_Ui_Video_Data *sd)
 {
@@ -317,22 +327,17 @@ _efl_ui_video_emotion_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
    return sd->emotion;
 }
 
-EOLIAN static void
-_efl_ui_video_efl_player_start(Eo *obj, Efl_Ui_Video_Data *sd EINA_UNUSED)
+EOLIAN static Eina_Bool
+_efl_ui_video_efl_player_paused_set(Eo *obj, Efl_Ui_Video_Data *sd, Eina_Bool paused)
 {
-   efl_player_pos_set(obj, 0.0);
-   efl_player_play_set(obj, EINA_TRUE);
-}
+   paused = !!paused;
+   /* can't pause if we're stopped */
+   if (sd->stop) return EINA_FALSE;
+   if (emotion_object_play_get(sd->emotion) == !paused) return EINA_TRUE;
 
-EOLIAN static void
-_efl_ui_video_efl_player_play_set(Eo *obj, Efl_Ui_Video_Data *sd, Eina_Bool play)
-{
-   if (emotion_object_play_get(sd->emotion) == !!play) return;
-
-   if (play)
+   if (!paused)
      {
         ELM_SAFE_FREE(sd->timer, ecore_timer_del);
-        sd->stop = EINA_FALSE;
         emotion_object_play_set(sd->emotion, EINA_TRUE);
 
         if(elm_widget_is_legacy(obj))
@@ -353,18 +358,30 @@ _efl_ui_video_efl_player_play_set(Eo *obj, Efl_Ui_Video_Data *sd, Eina_Bool play
         else
           elm_layout_signal_emit(obj, "efl,video,pause", "efl");
      }
+   return EINA_TRUE;
 }
 
 /* FIXME: stop should go into hibernate state directly.
  */
-EOLIAN static void
-_efl_ui_video_efl_player_stop(Eo *obj, Efl_Ui_Video_Data *sd)
+EOLIAN static Eina_Bool
+_efl_ui_video_efl_player_playing_set(Eo *obj, Efl_Ui_Video_Data *sd, Eina_Bool playing)
 {
-   if (!emotion_object_play_get(sd->emotion) && sd->stop) return;
-
+   playing = !!playing;
+   if (playing && emotion_object_play_get(sd->emotion)) return EINA_TRUE;
+   if ((!playing) && sd->stop) return EINA_TRUE;
    ELM_SAFE_FREE(sd->timer, ecore_timer_del);
+   sd->stop = !playing;
+   if (playing)
+     {
+        emotion_object_play_set(sd->emotion, EINA_TRUE);
 
-   sd->stop = EINA_TRUE;
+        if(elm_widget_is_legacy(obj))
+          elm_layout_signal_emit(obj, "elm,video,play", "elm");
+        else
+          elm_layout_signal_emit(obj, "efl,video,play", "efl");
+        return EINA_TRUE;
+     }
+   efl_player_playback_position_set(obj, 0.0);
    emotion_object_play_set(sd->emotion, EINA_FALSE);
 
    if(elm_widget_is_legacy(obj))
@@ -373,12 +390,20 @@ _efl_ui_video_efl_player_stop(Eo *obj, Efl_Ui_Video_Data *sd)
      elm_layout_signal_emit(obj, "efl,video,stop", "efl");
 
    emotion_object_suspend_set(sd->emotion, EMOTION_HIBERNATE);
+   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_video_efl_player_play_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
+_efl_ui_video_efl_player_playing_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
 {
    return emotion_object_play_get(sd->emotion);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_video_efl_player_paused_get(const Eo *obj EINA_UNUSED, Efl_Ui_Video_Data *sd)
+{
+   /* pause is when !playing and !stopped */
+   return !emotion_object_play_get(sd->emotion) && !sd->stop;
 }
 
 EOLIAN static const char*
@@ -464,73 +489,76 @@ elm_video_file_get(Eo *obj, const char **filename)
 EAPI void
 elm_video_audio_level_set(Evas_Object *obj, double volume)
 {
-   efl_player_volume_set(obj, volume);
+   efl_audio_control_volume_set(obj, volume);
 }
 
 EAPI double
 elm_video_audio_level_get(const Evas_Object *obj)
 {
-   return efl_player_volume_get(obj);
+   return efl_audio_control_volume_get(obj);
 }
 
 EAPI void
 elm_video_audio_mute_set(Evas_Object *obj, Eina_Bool mute)
 {
-   efl_player_mute_set(obj, mute);
+   efl_audio_control_mute_set(obj, mute);
 }
 
 EAPI Eina_Bool
 elm_video_audio_mute_get(const Evas_Object *obj)
 {
-   return efl_player_mute_get(obj);
+   return efl_audio_control_mute_get(obj);
 }
 
 EAPI double
 elm_video_play_length_get(const Evas_Object *obj)
 {
-   return efl_player_length_get(obj);
+   return efl_playable_length_get(obj);
 }
 
 EAPI Eina_Bool
 elm_video_is_seekable_get(const Evas_Object *obj)
 {
-   return efl_player_seekable_get(obj);
+   return efl_playable_seekable_get(obj);
 }
 
 EAPI void
 elm_video_play_position_set(Evas_Object *obj, double position)
 {
-   efl_player_pos_set(obj, position);
+   efl_player_playback_position_set(obj, position);
 }
 
 EAPI double
 elm_video_play_position_get(const Evas_Object *obj)
 {
-   return efl_player_pos_get(obj);
+   return efl_player_playback_position_get(obj);
 }
 
 EAPI Eina_Bool
 elm_video_is_playing_get(Evas_Object *obj)
 {
-   return efl_player_play_get(obj);
+   return efl_player_playing_get(obj) && !efl_player_paused_get(obj);
 }
 
 EAPI void
 elm_video_play(Evas_Object *obj)
 {
-   efl_player_play_set(obj, EINA_TRUE);
+   if (efl_player_playing_get(obj))
+     efl_player_paused_set(obj, EINA_FALSE);
+   else
+     efl_player_playing_set(obj, EINA_TRUE);
 }
 
 EAPI void
 elm_video_stop(Evas_Object *obj)
 {
-   efl_player_stop(obj);
+   efl_player_playing_set(obj, EINA_FALSE);
 }
 
 EAPI void
 elm_video_pause(Evas_Object *obj)
 {
-   efl_player_play_set(obj, EINA_FALSE);
+   efl_player_paused_set(obj, EINA_TRUE);
 }
 
 #include "efl_ui_video_legacy_eo.c"

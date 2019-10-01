@@ -1,52 +1,61 @@
 import efl_ui_layout_orientable;
 
-enum @beta Efl.Ui.Scrollbar_Mode
+enum Efl.Ui.Scrollbar_Mode
 {
    [[When should the scrollbar be shown.]]
-   auto = 0, [[Visible if necessary]]
-   on,       [[Always visible]]
-   off,      [[Always invisible]]
-   last      [[For internal use only]]
+   auto = 0, [[Visible if necessary.]]
+   on,       [[Always visible.]]
+   off,      [[Always invisible.]]
+   last      [[For internal use only.]]
 }
 
-interface @beta Efl.Ui.Scrollbar
+interface Efl.Ui.Scrollbar
 {
-   [[Interface used by widgets which can display scrollbars, enabling them to contain more content
-     than actually fits inside them.]]
+   [[Interface used by widgets which can display scrollbars, enabling them to hold more content
+     than actually visible through the viewport.
+     A scrollbar contains a draggable part (thumb) which allows the user to move the viewport
+     around the content. The size of the thumb relates to the size of the viewport compared to
+     the whole content.
+   ]]
    methods {
       @property bar_mode {
-         [[Scrollbar visibility policy]]
+         [[Scrollbar visibility mode, for each of the scrollbars.]]
          set {
          }
          get {
          }
          values {
-            hbar: Efl.Ui.Scrollbar_Mode; [[Horizontal scrollbar.]]
-            vbar: Efl.Ui.Scrollbar_Mode; [[Vertical scrollbar.]]
+            hbar: Efl.Ui.Scrollbar_Mode(Efl.Ui.Scrollbar_Mode.auto); [[Horizontal scrollbar mode.]]
+            vbar: Efl.Ui.Scrollbar_Mode(Efl.Ui.Scrollbar_Mode.auto); [[Vertical scrollbar mode.]]
          }
       }
       @property bar_size {
-         [[Scrollbar size.
-           It is calculated based on viewport size-content sizes.
-         ]] // TODO: This needs more details. What does 1.0 mean?
+         [[This returns the relative size the thumb should have, given the current size of the viewport and
+           the content.
+           $[0.0] means the viewport is much smaller than the content: the thumb will have its minimum size.
+           $[1.0] means the viewport has the same size as the content (or bigger): the thumb will have the same
+           size as the scrollbar and cannot move.
+         ]]
          get {
          }
          values {
-            width: double; [[Value between 0.0 and 1.0.]]
-            height: double; [[Value between 0.0 and 1.0.]]
+            width: double; [[Value between $[0.0] and $[1.0].]]
+            height: double; [[Value between $[0.0] and $[1.0].]]
          }
       }
       @property bar_position {
-         [[Scrollbar position.
-           It is calculated based on current position-maximum positions.
+         [[Position of the thumb (the draggable zone) inside the scrollbar.
+           It is calculated based on current position of the viewport inside the total content.
          ]]
          set {
          }
          get {
          }
          values {
-            posx: double; [[Value between 0.0 and 1.0.]]
-            posy: double; [[Value between 0.0 and 1.0.]]
+            posx: double; [[Value between $[0.0] (the left side of the thumb is touching the left edge of the widget)
+                            and $[1.0] (the right side of the thumb is touching the right edge of the widget).]]
+            posy: double; [[Value between $[0.0] (the top side of the thumb is touching the top edge of the widget)
+                            and $[1.0] (the bottom side of the thumb is touching the bottom edge of the widget).]]
          }
       }
       bar_visibility_update @protected @beta{
@@ -58,12 +67,12 @@ interface @beta Efl.Ui.Scrollbar
       }
    }
    events {
-      bar,press: Efl.Ui.Layout_Orientation; [[Called when bar is pressed.]]
-      bar,unpress: Efl.Ui.Layout_Orientation; [[Called when bar is unpressed.]]
-      bar,drag: Efl.Ui.Layout_Orientation; [[Called when bar is dragged.]]
-      bar,size,changed: void; [[Called when bar size is changed.]]
-      bar,pos,changed: void; [[Called when bar position is changed.]]
-      bar,show: Efl.Ui.Layout_Orientation; [[Callend when bar is shown.]]
-      bar,hide: Efl.Ui.Layout_Orientation; [[Called when bar is hidden.]]
+      bar,pressed: Efl.Ui.Layout_Orientation; [[Emitted when thumb is pressed.]]
+      bar,unpressed: Efl.Ui.Layout_Orientation; [[Emitted when thumb is unpressed.]]
+      bar,dragged: Efl.Ui.Layout_Orientation; [[Emitted when thumb is dragged.]]
+      bar,size,changed: void; [[Emitted when thumb size has changed.]]
+      bar,pos,changed: void; [[Emitted when thumb position has changed.]]
+      bar,show: Efl.Ui.Layout_Orientation; [[Emitted when scrollbar is shown.]]
+      bar,hide: Efl.Ui.Layout_Orientation; [[Emitted when scrollbar is hidden.]]
    }
 }

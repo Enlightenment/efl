@@ -23,7 +23,7 @@ typedef struct {
 } Vis_Segment;
 
 static Efl_Ui_Position_Manager_Size_Batch_Result
-_batch_request_size(Api_Callbacks cb , int start_id, int len, Eina_Bool cache, void *data)
+_batch_request_size(Api_Callbacks cb , int start_id, int end_id, int len, Eina_Bool cache, void *data)
 {
    Efl_Ui_Position_Manager_Size_Batch_Result res;
 
@@ -34,28 +34,28 @@ _batch_request_size(Api_Callbacks cb , int start_id, int len, Eina_Bool cache, v
    Efl_Ui_Position_Manager_Size_Call_Config conf;
    conf.cache_request = cache;
    conf.range.start_id = start_id;
-   conf.range.end_id = start_id + len;
+   conf.range.end_id = MIN(start_id + len, end_id);
 
    res = cb.size.access(cb.size.data, conf, slice);
 
    return res;
 }
 
-#define BATCH_ACCESS_SIZE(cb, start_id, len, cache, data) \
+#define BATCH_ACCESS_SIZE(cb, start_id, end_id, len, cache, data) \
   do { \
-    size_result = _batch_request_size((cb), (start_id), (len), (cache), (data)); \
+    size_result = _batch_request_size((cb), (start_id), (end_id), (len), (cache), (data)); \
     EINA_SAFETY_ON_FALSE_RETURN(size_result.filled_items > 0); \
   } while(0);
 
-#define BATCH_ACCESS_SIZE_VAL(cb, start_id, len, cache, data, V) \
+#define BATCH_ACCESS_SIZE_VAL(cb, start_id, end_id, len, cache, data, V) \
   do { \
-    size_result = _batch_request_size((cb), (start_id), (len), (cache), (data)); \
+    size_result = _batch_request_size((cb), (start_id), (end_id), (len), (cache), (data)); \
     EINA_SAFETY_ON_FALSE_RETURN_VAL(size_result.filled_items > 0, V); \
   } while(0);
 
 
 static Efl_Ui_Position_Manager_Object_Batch_Result
-_batch_request_objects(Api_Callbacks cb , int start_id, int len, void *data)
+_batch_request_objects(Api_Callbacks cb , int start_id, int end_id, int len, void *data)
 {
    Efl_Ui_Position_Manager_Object_Batch_Result res;
 
@@ -65,22 +65,22 @@ _batch_request_objects(Api_Callbacks cb , int start_id, int len, void *data)
 
    Efl_Ui_Position_Manager_Request_Range range;
    range.start_id = start_id;
-   range.end_id = start_id + len;
+   range.end_id = MIN(start_id + len, end_id);
 
    res = cb.object.access(cb.object.data, range, slice);
 
    return res;
 }
 
-#define BATCH_ACCESS_OBJECT(cb, start_id, len, data) \
+#define BATCH_ACCESS_OBJECT(cb, start_id, end_id, len, data) \
   do { \
-    object_result = _batch_request_objects((cb), (start_id), (len), (data)); \
+    object_result = _batch_request_objects((cb), (start_id), (end_id), (len), (data)); \
     EINA_SAFETY_ON_FALSE_RETURN(object_result.filled_items > 0); \
   } while(0);
 
-#define BATCH_ACCESS_OBJECT_VAL(cb, start_id, len, data, v) \
+#define BATCH_ACCESS_OBJECT_VAL(cb, start_id, end_id, len, data, v) \
   do { \
-    object_result = _batch_request_objects((cb), (start_id), (len), (data)); \
+    object_result = _batch_request_objects((cb), (start_id), (end_id), (len), (data)); \
     EINA_SAFETY_ON_FALSE_RETURN_VAL(object_result.filled_items > 0, v); \
   } while(0);
 
@@ -100,7 +100,7 @@ vis_change_segment(Api_Callbacks cb, int a, int b, Eina_Bool flag)
 
         if (buffer_id == 0)
           {
-             BATCH_ACCESS_OBJECT(cb, i, len, data);
+             BATCH_ACCESS_OBJECT(cb, i, MAX(a,b), len, data);
           }
         ent = data[buffer_id].entity;
         if (ent && !flag && (efl_ui_focus_object_focus_get(ent) || efl_ui_focus_object_child_focus_get(ent)))

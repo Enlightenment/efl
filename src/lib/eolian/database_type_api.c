@@ -63,6 +63,31 @@ eolian_typedecl_struct_field_type_get(const Eolian_Struct_Type_Field *fl)
    return fl->type;
 }
 
+EAPI Eina_Bool
+eolian_typedecl_struct_field_is_by_ref(const Eolian_Struct_Type_Field *fl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fl, EINA_FALSE);
+   return fl->by_ref;
+}
+
+EAPI Eina_Bool
+eolian_typedecl_struct_field_is_move(const Eolian_Struct_Type_Field *fl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fl, EINA_FALSE);
+   return fl->move;
+}
+
+EAPI Eina_Stringshare *
+eolian_typedecl_struct_field_c_type_get(const Eolian_Struct_Type_Field *fl)
+{
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fl, NULL);
+   Eina_Strbuf *buf = eina_strbuf_new();
+   database_type_to_str(fl->type, buf, NULL, EOLIAN_C_TYPE_DEFAULT, fl->by_ref);
+   Eina_Stringshare *ret = eina_stringshare_add(eina_strbuf_string_get(buf));
+   eina_strbuf_free(buf);
+   return ret;
+}
+
 EAPI Eina_Iterator *
 eolian_typedecl_enum_fields_get(const Eolian_Typedecl *tp)
 {
@@ -123,7 +148,7 @@ eolian_typedecl_enum_field_value_get(const Eolian_Enum_Type_Field *fl, Eina_Bool
    return fl->value;
 }
 
-EAPI Eina_Stringshare *
+EAPI const char *
 eolian_typedecl_enum_legacy_prefix_get(const Eolian_Typedecl *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
@@ -207,10 +232,10 @@ eolian_type_error_get(const Eolian_Type *tp)
 }
 
 EAPI Eina_Bool
-eolian_type_is_owned(const Eolian_Type *tp)
+eolian_type_is_move(const Eolian_Type *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, EINA_FALSE);
-   return tp->owned;
+   return tp->move;
 }
 
 EAPI Eina_Bool
@@ -235,13 +260,13 @@ eolian_typedecl_is_extern(const Eolian_Typedecl *tp)
 }
 
 EAPI Eina_Stringshare *
-eolian_type_c_type_get(const Eolian_Type *tp, Eolian_C_Type_Type ctype)
+eolian_type_c_type_get(const Eolian_Type *tp)
 {
    Eina_Stringshare *ret;
    Eina_Strbuf *buf;
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);
    buf = eina_strbuf_new();
-   database_type_to_str(tp, buf, NULL, ctype);
+   database_type_to_str(tp, buf, NULL, EOLIAN_C_TYPE_DEFAULT, EINA_FALSE);
    ret = eina_stringshare_add(eina_strbuf_string_get(buf));
    eina_strbuf_free(buf);
    return ret;
@@ -260,7 +285,7 @@ eolian_typedecl_c_type_get(const Eolian_Typedecl *tp)
    return ret;
 }
 
-EAPI Eina_Stringshare *
+EAPI const char *
 eolian_typedecl_free_func_get(const Eolian_Typedecl *tp)
 {
    EINA_SAFETY_ON_NULL_RETURN_VAL(tp, NULL);

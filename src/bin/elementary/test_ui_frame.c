@@ -3,7 +3,7 @@
 #endif
 #include <Efl_Ui.h>
 #include <Elementary.h>
-
+#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
 static void
 _inc_clicked(void *data, const Efl_Event *ev EINA_UNUSED)
 {
@@ -16,8 +16,7 @@ test_ui_frame(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    Eo *win, *bx, *f, *txt;
 
    win = efl_add_ref(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Efl.Ui.Frame"),
+                                  efl_text_set(efl_added, "Efl.Ui.Frame"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    bx = efl_add(EFL_UI_BOX_CLASS, win,

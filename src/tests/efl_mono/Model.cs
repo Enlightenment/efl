@@ -65,8 +65,10 @@ public class TestModel {
     {
         string propertyBound = null;
         bool callbackCalled = false;
-        var factory = new Efl.Ui.ItemFactory<Efl.Ui.Button>();
-        factory.PropertyBoundEvt += (object sender, Efl.Ui.IPropertyBindPropertyBoundEvt_Args args) => {
+        var parent = new Efl.Ui.Win(null);
+        parent.Visible = false;
+        var factory = new Efl.Ui.ItemFactory<Efl.Ui.Button>(parent);
+        factory.PropertyBoundEvent += (object sender, Efl.Ui.PropertyBindPropertyBoundEventArgs args) => {
             propertyBound = args.arg;
             callbackCalled = true;
         };

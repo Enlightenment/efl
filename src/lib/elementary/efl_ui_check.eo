@@ -1,11 +1,15 @@
-class @beta Efl.Ui.Check extends Efl.Ui.Layout_Base implements Efl.Access.Widget.Action, Efl.Text, Efl.Content, Efl.Input.Clickable, Efl.Ui.Selectable
+class Efl.Ui.Check extends Efl.Ui.Layout_Base
+                         implements Efl.Access.Widget.Action, Efl.Text, Efl.Content, Efl.Input.Clickable,
+                                    Efl.Ui.Selectable
 {
-   [[Check widget
+   [[Check widget.
 
-   The check widget allows for toggling a value between true and false.
-   Check objects are a lot like radio objects in layout and functionality,
+   The check widget allows for toggling a value between $true and $false.
+   Check objects are a lot like @Efl.Ui.Radio objects in layout and functionality,
    except they do not work as a group, but independently, and only toggle
-   the value of a boolean between false and true.
+   the value of a boolean between $false and $true. The boolean value of the check can be retrieved using the
+   @Efl.Ui.Selectable.selected property.
+   Changes to @Efl.Ui.Selectable.selected can be listed to using the @[Efl.Ui.Selectable.selected,changed] event.
    ]]
    methods {
    }

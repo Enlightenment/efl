@@ -16,8 +16,8 @@ mixin Efl.Ui.Focus.Object
             }
         }
         @property focus {
+            [[Whether the widget is currently focused or not.]]
             get {
-              [[Returns whether the widget is currently focused or not.]]
             }
             set @protected {
               [[This is called by the manager and should never be called by
@@ -33,15 +33,17 @@ mixin Efl.Ui.Focus.Object
         }
         @property focus_manager {
             [[This is the focus manager where this focus object is registered in.
-              The element which is the $root of a Efl.Ui.Focus.Manager will not have this focus manager as this object, but rather the second focus manager where it is registered in.
+              The element which is the $root of an @Efl.Ui.Focus.Manager will not
+              have this focus manager as this object, but rather the focus manager
+              where that is registered in.
             ]]
             get {}
             values {
-                manager : Efl.Ui.Focus.Manager; [[The manager object]]
+                manager : Efl.Ui.Focus.Manager; [[The manager object.]]
             }
         }
         @property focus_parent {
-            [[Describes which logical parent is used by this object.]]
+            [[The logical parent used by this object.]]
             get {}
             values {
                 logical_parent : Efl.Ui.Focus.Object; [[The focus parent.]]
@@ -55,16 +57,17 @@ mixin Efl.Ui.Focus.Object
         }
         setup_order {
             [[Tells the object that its children will be queried soon by the focus manager.
-              Overwrite this to update the order of the children. Deleting items in this call will
-              result in undefined behaviour and may cause your system to crash.
+              Overwrite this to have a chance to update the order of the children.
+              Deleting items in this call will result in undefined behaviour and may cause your system to crash.
             ]]
         }
         setup_order_non_recursive @protected {
-            [[This is called when @.setup_order is called, but only on the first call, additional recursive calls to @.setup_order will not call this function again.]]
+            [[This is called when @.setup_order is called, but only on the first call,
+              additional recursive calls to @.setup_order will not call this function again.]]
         }
         on_focus_update @protected {
-           [[Virtual function handling focus in/out events on the widget]]
-           return: bool; [[$true if this widget can handle focus, $false otherwise]]
+           [[Virtual function handling focus in/out events on the widget.]]
+           return: bool; [[$true if this widget can handle focus, $false otherwise.]]
         }
     }
     implements {
@@ -76,10 +79,8 @@ mixin Efl.Ui.Focus.Object
     }
     events {
         focus,changed : bool; [[Emitted if the focus state has changed.]]
-        focus_manager,changed: Efl.Ui.Focus.Manager; [[Emitted when a new manager is
-                                                 the parent for this object.]]
-        focus_parent,changed: Efl.Ui.Focus.Object; [[Emitted when a new logical
-                                                parent should be used.]]
+        focus_manager,changed: Efl.Ui.Focus.Manager; [[Emitted when a new manager is the parent for this object.]]
+        focus_parent,changed: Efl.Ui.Focus.Object; [[Emitted when a new logical parent should be used.]]
         child_focus,changed: bool; [[Emitted if child_focus has changed.]]
         focus_geometry,changed: Eina.Rect; [[Emitted if focus geometry of this object has changed.]]
     }

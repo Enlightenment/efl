@@ -1,0 +1,21 @@
+class @beta Efl.Ui.Tab_Bar_Default_Item extends Efl.Ui.Default_Item
+{
+   [[ A icon that represents the default parts in the appearance of the tab bar.
+
+     Setting the icon again after there was a previous one, will trigger an animation.
+   ]]
+   methods {
+      @property icon {
+        [[Set the content of the default item as a image.
+
+          The content will be re-set (means, the old content is deleted).
+        ]]
+        values {
+          standard_name : string; [[The icon name, names are defined as standard free desktop icon names.]]
+        }
+      }
+   }
+   implements {
+      Efl.Object.constructor;
+   }
+}

@@ -11,7 +11,7 @@ class @beta Efl.Canvas.Vg.Container extends Efl.Canvas.Vg.Node
       }
       children_get {
          [[Get all children of container]]
-         return: iterator<Efl.Canvas.Vg.Node> @owned @no_unused; [[Iterator to children]]
+         return: iterator<Efl.Canvas.Vg.Node> @move @no_unused; [[Iterator to children]]
       }
    }
    implements {
@@ -21,6 +21,6 @@ class @beta Efl.Canvas.Vg.Container extends Efl.Canvas.Vg.Node
       Efl.Gfx.Path.bounds_get;
       Efl.Gfx.Path.interpolate;
       Efl.Duplicate.duplicate;
-      Efl.Canvas.Vg.Node.mask { set; }
+      Efl.Canvas.Vg.Node.comp_method { set; }
    }
 }

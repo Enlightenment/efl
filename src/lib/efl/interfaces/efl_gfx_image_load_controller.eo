@@ -13,7 +13,7 @@ enum @beta Efl.Gfx.Image_Load_Controller_State
 }
 */
 
-interface @beta Efl.Gfx.Image_Load_Controller
+interface Efl.Gfx.Image_Load_Controller
 {
    [[Common APIs for all loadable 2D images.]]
 
@@ -21,8 +21,8 @@ interface @beta Efl.Gfx.Image_Load_Controller
       load_async_start {
          [[Begin preloading an image object's image data in the background.
 
-           Once the background task is complete the event $load,done will be
-           emitted.
+           Once the background task is complete the event @[.load,done] will be
+           emitted if loading succeeded, @[.load,error] otherwise.
          ]]
       }
       load_async_cancel {
@@ -51,9 +51,9 @@ interface @beta Efl.Gfx.Image_Load_Controller
 
            The image will be loaded into memory as if it was the specified
            size instead of its original size. This can save a lot of memory
-           and is important for scalable types like svg.
+           and is important for scalable types like SVG.
 
-           By default, the load size is not specified, so it is 0x0.
+           By default, the load size is not specified, so it is $[0x0].
          ]]
          set {
             [[Requests the canvas to load the image at the given size.
@@ -71,19 +71,13 @@ interface @beta Efl.Gfx.Image_Load_Controller
          }
       }
       @property load_dpi {
-         set {
-            [[Set the DPI resolution of an image object's source image.
+         [[The DPI resolution of an image object's source image.
 
-              This function sets the DPI resolution of a given loaded canvas
-              image. Most useful for the SVG image loader.
-            ]]
+           Most useful for the SVG image loader.
+         ]]
+         set {
          }
          get {
-            [[Get the DPI resolution of a loaded image object in the canvas.
-
-              This function returns the DPI resolution of the given canvas
-              image.
-            ]]
          }
          values {
             dpi: double; [[The DPI resolution.]]
@@ -95,26 +89,23 @@ interface @beta Efl.Gfx.Image_Load_Controller
          ]]
          get {}
          values {
-            support: bool; [[$true if region load of the image is supported, $false otherwise]]
+            support: bool; [[$true if region load of the image is supported, $false otherwise.]]
          }
       }
       @property load_region {
+         [[Inform a given image object to load a selective region of its
+           source image.
+
+           This property is useful when one is not showing all of an
+           image's area on its image object.
+
+           Note: The image loader for the image format in question has
+           to support selective region loading in order for this function
+           to work (see @.load_region_support).
+         ]]
          set {
-            [[Inform a given image object to load a selective region of its
-              source image.
-
-              This function is useful when one is not showing all of an
-              image's area on its image object.
-
-              Note: The image loader for the image format in question has
-              to support selective region loading in order for this function
-              to work.
-            ]]
          }
          get {
-            [[Retrieve the coordinates of a given image object's selective
-              (source image) load region.
-            ]]
          }
          values {
             region: Eina.Rect; [[A region of the image.]]
@@ -146,7 +137,7 @@ interface @beta Efl.Gfx.Image_Load_Controller
            image. Most useful for the SVG image loader but also applies
            to JPEG, PNG and BMP.
 
-           Powers of two (2, 4, 8) are best supported (especially with JPEG)
+           Powers of two (2, 4, 8, ...) are best supported (especially with JPEG).
          ]]
          set {
             [[Requests the image loader to scale down by $div times.
@@ -159,23 +150,18 @@ interface @beta Efl.Gfx.Image_Load_Controller
          }
       }
       @property load_skip_header {
-         [[Initial load should skip header check and leave it all to data load
+         [[Initial load should skip header check and leave it all to data load.
 
-           If this is true, then future loads of images will defer header
+           If this is $true, then future loads of images will defer header
            loading to a preload stage and/or data load later on rather than
            at the start when the load begins (e.g. when file is set).
          ]]
          set {
-            [[Set the skip header state for susbsequent loads of a file. ]]
          }
          get {}
          values {
-            skip: bool; [[Will be true if header is to be skipped. ]]
+            skip: bool; [[$true if header is to be skipped.]]
          }
       }
-   }
-   events {
-      load,done: void; [[Called when he image was loaded]]
-      load,error: Eina.Error; [[Called when an error happened during image loading]]
    }
 }

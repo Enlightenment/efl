@@ -52,7 +52,7 @@ extern "C" {
  *
  * Ector is a retained mode drawing library designed to work
  * for and with a scenegraph such as Evas, which supports several
- * types of rendering surface including software, cairo, and gl.
+ * types of rendering surface including software and gl.
  *
  * @section ector_main_compiling How to compile the library
  *

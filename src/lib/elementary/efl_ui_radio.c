@@ -170,8 +170,8 @@ _efl_ui_radio_efl_ui_widget_theme_apply(Eo *obj, Efl_Ui_Radio_Data *sd EINA_UNUS
      }
    else
      {
-        if (efl_ui_selectable_selected_get(obj)) elm_layout_signal_emit(obj, "efl,state,radio,on", "efl");
-        else elm_layout_signal_emit(obj, "efl,state,radio,off", "efl");
+        if (efl_ui_selectable_selected_get(obj)) elm_layout_signal_emit(obj, "efl,state,selected", "efl");
+        else elm_layout_signal_emit(obj, "efl,state,unselected", "efl");
      }
 
    edje_object_message_signal_process(wd->resize_obj);
@@ -306,10 +306,10 @@ _efl_ui_radio_efl_access_object_state_set_get(const Eo *obj, Efl_Ui_Radio_Data *
 /* Internal EO APIs and hidden overrides */
 
 ELM_WIDGET_KEY_DOWN_DEFAULT_IMPLEMENT(efl_ui_radio, Efl_Ui_Radio_Data)
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+EFL_UI_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define EFL_UI_RADIO_EXTRA_OPS \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX)
+   EFL_UI_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX)
 
 #include "efl_ui_radio.eo.c"
 #include "efl_ui_radio_group.eo.c"

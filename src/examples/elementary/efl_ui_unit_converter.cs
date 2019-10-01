@@ -23,7 +23,7 @@ public class Example
         popup.SetVisible(true);
         popup.SetButton(Efl.Ui.AlertPopupButton.Positive, "Ok", null);
         popup.SetSize(new Eina.Size2D(150, 30));
-        popup.ButtonClickedEvt += (object sender, Efl.Ui.AlertPopupButtonClickedEvt_Args e) => {
+        popup.ButtonClickedEvent += (object sender, Efl.Ui.AlertPopupButtonClickedEventArgs e) => {
             popup.SetParent(null);
             popup.Invalidate();
         };
@@ -99,7 +99,7 @@ public class Example
         kms_box.DoPack(kms_input);
         kms_box.DoPack(kms_button);
 
-        ((Efl.Ui.Clickable)kms_button).ClickedEvt += (object sender, EventArgs e) => {
+        ((Efl.Ui.Clickable)kms_button).ClickedEvent += (object sender, EventArgs e) => {
             try
             {
                 string text = kms_input.GetText();
@@ -115,7 +115,7 @@ public class Example
             }
         };
 
-        ((Efl.Ui.Clickable)miles_button).ClickedEvt += (object sender, EventArgs e) => {
+        ((Efl.Ui.Clickable)miles_button).ClickedEvent += (object sender, EventArgs e) => {
             try
             {
                 string text = miles_input.GetText();

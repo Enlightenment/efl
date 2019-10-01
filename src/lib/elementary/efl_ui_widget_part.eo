@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Widget_Part extends Efl.Object implements Efl.Ui.Property_Bind
+class Efl.Ui.Widget_Part extends Efl.Object implements Efl.Ui.Property_Bind
 {
    [[This is the base class for all "Part" handles in Efl.Ui widgets.
 

@@ -12,6 +12,7 @@ engine_src = files([
   join_paths('filters','gl_filter_displace.c'),
   join_paths('filters','gl_filter_fill.c'),
   join_paths('filters','gl_filter_mask.c'),
+  join_paths('filters','gl_filter_grayscale.c'),
 ])
 common_engine_src = [
   'evas_gl_private.h',

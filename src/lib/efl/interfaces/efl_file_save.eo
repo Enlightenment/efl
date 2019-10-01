@@ -35,7 +35,7 @@ interface Efl.File_Save {
                                 obligatory).]]
             @in key: string; [[The image key in the file (if an Eet one), or $null,
                                otherwise.]]
-            @in info: const(ptr(Efl.File_Save_Info)); [[The flags to be used ($null for defaults).]]
+            @in info: const(Efl.File_Save_Info) @by_ref; [[The flags to be used ($null for defaults).]]
          }
          return: bool;  [[$true on success, $false otherwise]]
       }

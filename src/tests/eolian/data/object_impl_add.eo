@@ -9,8 +9,12 @@ class Object_Impl_Add extends Base {
             /* set as virtual pure - no implementation expected */
          }
          values {
-            value: list<string> @owned;
+            value: list<string> @move;
          }
       }
+   }
+
+   implements {
+      Base.constructor;
    }
 }

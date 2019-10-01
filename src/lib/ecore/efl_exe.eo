@@ -15,7 +15,7 @@ enum @beta Efl.Exe_Signal {
 }
 
 enum @beta Efl.Exe_Flags {
-   [[Flags to customize task behavior.]] // TODO: This needs more detail.
+   [[Flags to customize process behavior.]]
    none             = 0, [[No special flags.]]
    group_leader     = 1, [[Process will be executed in its own session.]]
    hide_io          = 4  [[All console IO will be hidden.]]
@@ -23,16 +23,21 @@ enum @beta Efl.Exe_Flags {
 
 class @beta Efl.Exe extends Efl.Task implements Efl.Io.Reader, Efl.Io.Writer, Efl.Io.Closer, Efl.Core.Command_Line
 {
-   [[Further customization of @Efl.Task, including signals and environment control.]] // TODO: This needs more detail
+   [[This is a specialized @Efl.Task which abstracts an operating system process.
+     This class provides a way to start a task by running an executable file (specified using the
+     @Efl.Core.Command_Line interface) and further customize its execution flags (@.exe_flags) and
+     environment variables (@.env).
+     It also allows communicating with the process through signals (@.signal).
+   ]]
    methods {
       signal {
-         [[Send a signal to this task.]]
+         [[Send a signal to this process.]]
          params {
             sig: Efl.Exe_Signal; [[Signal number to send.]]
          }
       }
       @property exe_flags {
-        [[Customize the task's behavior.]]
+        [[Customize the process' behavior.]]
         set { }
         get { }
         values {
@@ -40,17 +45,17 @@ class @beta Efl.Exe extends Efl.Task implements Efl.Io.Reader, Efl.Io.Writer, Ef
         }
       }
       @property exit_signal {
-         [[The final exit signal of this task.]]
+         [[The signal this process emitted upon exiting, if any.]]
          get { }
          values {
             sig: int; [[The exit signal, or -1 if no exit signal happened.]]
          }
       }
       @property env {
-         [[If $env is $null then the process created by this object is
+         [[If $env is $NULL then the process created by this object is
            going to inherit the environment of this process.
 
-           In case $env is not $null then the environment variables declared
+           In case $env is not $NULL then the environment variables declared
            in this object will represent the environment passed to the new process.
          ]]
          get {

@@ -695,11 +695,11 @@ _efl_ui_panes_part_split_ratio_min_set(Eo *obj, void *_pd EINA_UNUSED, double ra
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_panes)
+EFL_UI_LAYOUT_CONTENT_ALIASES_IMPLEMENT(efl_ui_panes)
 
 #define EFL_UI_PANES_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_OPS(efl_ui_panes), \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_panes)
+   EFL_UI_LAYOUT_CONTENT_ALIASES_OPS(efl_ui_panes)
 
 #include "efl_ui_panes.eo.c"
 #include "efl_ui_panes_eo.legacy.c"

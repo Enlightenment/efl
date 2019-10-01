@@ -3,11 +3,10 @@ interface @beta Efl.Gfx.Gradient_Linear extends Efl.Gfx.Gradient
    [[Efl graphics gradient linear interface]]
    methods {
       @property start {
+         [[The start point of this linear gradient.]]
          set {
-            [[Sets the start point of this linear gradient.]]
          }
          get {
-            [[Gets the start point of this linear gradient.]]
          }
          values {
             x: double; [[X co-ordinate of start point]]
@@ -15,11 +14,10 @@ interface @beta Efl.Gfx.Gradient_Linear extends Efl.Gfx.Gradient
          }
       }
       @property end {
+         [[The end point of this linear gradient.]]
          set {
-            [[Sets the end point of this linear gradient.]]
          }
          get {
-            [[Gets the end point of this linear gradient.]]
          }
          values {
             x: double; [[X co-ordinate of end point]]

@@ -1,4 +1,75 @@
+/**
+Group: efl/spin_button/vertical (@since 1.23)
+	 Part Swallow: efl.dec_button (required)
+	 Part Swallow: efl.entry (required)
+	 Part Swallow: efl.inc_button (required)
+	 Part Swallow: efl.text_button (required)
+	 Signal: efl,button,visible,off
+	 Signal: efl,button,visible,on
+	 Signal: efl,entry,visible,off
+	 Signal: efl,entry,visible,on
+	 Signal: efl,state,access,active
+	 Signal: efl,state,access,inactive
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
+Group: efl/spin_button/horizontal/dec_button (@since 1.23)
+	 Signal: efl,action,multi,down
+	 Signal: efl,action,multi,up
+	 Signal: efl,action,pressed
+	 Signal: efl,action,unpressed
+	 Signal: efl,state,animation,activated
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
+Group: efl/spin_button/horizontal (@since 1.23)
+	 Part Swallow: efl.dec_button (required)
+	 Part Swallow: efl.entry (required)
+	 Part Swallow: efl.inc_button (required)
+	 Part Swallow: efl.text_button (required)
+	 Signal: efl,button,visible,off
+	 Signal: efl,button,visible,on
+	 Signal: efl,entry,visible,off
+	 Signal: efl,entry,visible,on
+	 Signal: efl,state,access,active
+	 Signal: efl,state,access,inactive
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
+Group: efl/spin_button/vertical/text_button (@since 1.23)
+	 Part Text: efl.text
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
+Group: efl/spin (@since 1.23)
+	 Part Text: efl.text
+Group: efl/spin_button/horizontal/inc_button (@since 1.23)
+	 Signal: efl,action,multi,down
+	 Signal: efl,action,multi,up
+	 Signal: efl,action,pressed
+	 Signal: efl,action,unpressed
+	 Signal: efl,state,animation,activated
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
+Group: efl/spin_button/horizontal/text_button (@since 1.23)
+	 Part Text: efl.text
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
+Group: efl/spin_button/vertical/dec_button (@since 1.23)
+	 Signal: efl,action,multi,down
+	 Signal: efl,action,multi,up
+	 Signal: efl,action,pressed
+	 Signal: efl,action,unpressed
+	 Signal: efl,state,animation,activated
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
+Group: efl/spin_button/vertical/inc_button (@since 1.23)
+	 Signal: efl,action,multi,down
+	 Signal: efl,action,multi,up
+	 Signal: efl,action,pressed
+	 Signal: efl,action,unpressed
+	 Signal: efl,state,animation,activated
+	 Signal: efl,state,disabled
+	 Signal: efl,state,enabled
+*/
 group { "efl/spin_button/horizontal";
+   data.item: "version" "123";
    images.image: "vert_bar_inset.png" COMP;
    parts {
       rect { "clip";
@@ -36,7 +107,7 @@ group { "efl/spin_button/horizontal";
             vis;
          }
       }
-      swallow { "efl.entry";
+      swallow { "efl.entry"; required;
          clip: "clip";
          desc { "default";
             fixed: 1 1;
@@ -49,7 +120,7 @@ group { "efl/spin_button/horizontal";
             vis;
          }
       }
-      swallow { "efl.dec_button";
+      swallow { "efl.dec_button"; required;
          scale;
          desc { "default";
             fixed: 1 0;
@@ -58,7 +129,7 @@ group { "efl/spin_button/horizontal";
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
          }
       }
-      swallow { "efl.inc_button";
+      swallow { "efl.inc_button"; required;
          scale;
          desc { "default";
             fixed: 1 0;
@@ -67,7 +138,7 @@ group { "efl/spin_button/horizontal";
             aspect: 1.0 1.0; aspect_preference: VERTICAL;
          }
       }
-      swallow { "efl.text_button";
+      swallow { "efl.text_button"; required;
          scale;
          desc { "default";
             vis;
@@ -100,25 +171,25 @@ group { "efl/spin_button/horizontal";
    }
    programs {
       program { "entry_active";
-         signal: "efl,state,entry,active";
+         signal: "efl,entry,visible,on";
          source: "efl";
          action: STATE_SET "active";
          target: "efl.entry";
       }
       program { "entry_inactive";
-         signal: "efl,state,entry,inactive";
+         signal: "efl,entry,visible,off";
          source: "efl";
          action: STATE_SET "default";
          target: "efl.entry";
       }
       program { "text_button_active";
-         signal: "efl,state,button,active";
+         signal: "efl,button,visible,on";
          source: "efl";
          action: STATE_SET "default";
          target: "efl.text_button";
       }
       program { "text_button_inactive";
-         signal: "efl,state,button,inactive";
+         signal: "efl,button,visible,off";
          source: "efl";
          action: STATE_SET "inactive";
          target: "efl.text_button";
@@ -152,13 +223,14 @@ group { "efl/spin_button/horizontal";
 
 group { "efl/spin_button/vertical";
    inherit: "efl/spin_button/horizontal";
+   data.item: "version" "123";
    parts {
       image { "inset"; nomouse;
          desc { "default";
             min: 40 150;
          }
       }
-      swallow { "efl.inc_button";
+      swallow { "efl.inc_button"; required;
          scale;
          desc { "default";
             rel.to: "inset";
@@ -168,7 +240,7 @@ group { "efl/spin_button/vertical";
             fixed: 1 1;
          }
       }
-      swallow { "efl.dec_button";
+      swallow { "efl.dec_button"; required;
          scale;
          desc { "default";
             rel.to: "inset";
@@ -178,7 +250,7 @@ group { "efl/spin_button/vertical";
             fixed: 1 1;
          }
       }
-      swallow { "efl.text_button";
+      swallow { "efl.text_button"; required;
          scale;
          desc { "default";
             rel.to_x: "inset";
@@ -203,6 +275,7 @@ group { "efl/spin_button/vertical";
 }
 
 group { "efl/spin_button/horizontal/inc_button";
+   data.item: "version" "123";
    images.image: "sym_right_light_normal.png" COMP;
    images.image: "sym_right_glow_normal.png" COMP;
    images.image: "sym_right_dark_normal.png" COMP;
@@ -308,7 +381,7 @@ group { "efl/spin_button/horizontal/inc_button";
          action: SIGNAL_EMIT "efl,action,click" "";
       }
       program { name: "access_pressed";
-         signal: "efl,action,anim,activate";
+         signal: "efl,state,animation,activated";
          source: "efl";
          action: STATE_SET "pressed" 0.0;
          target: "arrow.image";
@@ -355,10 +428,12 @@ group { "efl/spin_button/horizontal/inc_button";
 group { "efl/spin_button/horizontal/entry";
    alias: "efl/spin_button/vertical/entry";
    inherit: "efl/text";
+   data.item: "version" "123";
 }
 
 group { "efl/spin_button/horizontal/dec_button";
    inherit: "efl/spin_button/horizontal/inc_button";
+   data.item: "version" "123";
    images.image: "sym_left_light_normal.png" COMP;
    images.image: "sym_left_glow_normal.png" COMP;
    images.image: "sym_left_dark_normal.png" COMP;
@@ -384,6 +459,7 @@ group { "efl/spin_button/horizontal/dec_button";
 
 group { "efl/spin_button/horizontal/text_button";
    alias: "efl/spin_button/vertical/text_button";
+   data.item: "version" "123";
    parts {
       part { name: "bg";
          type: SPACER;
@@ -461,6 +537,7 @@ group { "efl/spin_button/horizontal/text_button";
 
 group { "efl/spin_button/vertical/inc_button";
    inherit: "efl/spin_button/horizontal/inc_button";
+   data.item: "version" "123";
    images.image: "sym_up_light_normal.png" COMP;
    images.image: "sym_up_glow_normal.png" COMP;
    images.image: "sym_up_dark_normal.png" COMP;
@@ -486,6 +563,7 @@ group { "efl/spin_button/vertical/inc_button";
 
 group { "efl/spin_button/vertical/dec_button";
    inherit: "efl/spin_button/horizontal/dec_button";
+   data.item: "version" "123";
    images.image: "sym_down_light_normal.png" COMP;
    images.image: "sym_down_glow_normal.png" COMP;
    images.image: "sym_down_dark_normal.png" COMP;

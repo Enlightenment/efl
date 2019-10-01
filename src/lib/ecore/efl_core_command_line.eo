@@ -1,7 +1,8 @@
-mixin @beta Efl.Core.Command_Line {
+mixin @beta Efl.Core.Command_Line requires Efl.Object {
   [[A mixin that implements standard functions for command lines.
 
-    This object parses the command line that gets passed, later the object can be accessed via accessor or the string directly.
+    This object parses the command line that gets passed, later the object can be accessed via accessor or the string
+    directly.
   ]]
   methods {
     @property command {
@@ -60,13 +61,14 @@ mixin @beta Efl.Core.Command_Line {
         return : bool; [[On success $true, $false otherwise]]
       }
       values {
-        array : array<stringshare @owned> @owned; [[An array where every array field is an argument]]
+        array : array<stringshare @move> @move; [[An array where every array field is an argument]]
       }
     }
     @property command_string {
-      [[ Use a string to fill this object
+      [[Use a string to fill this object
 
-         The string will be split at every unescaped ' ', every resulting substring will be a new argument to the command line.
+        The string will be split at every unescaped ' ', every resulting substring will be a new argument to the
+        command line.
       ]]
       set {
         return : bool; [[On success $true, $false otherwise]]
@@ -76,5 +78,8 @@ mixin @beta Efl.Core.Command_Line {
       }
 
     }
+  }
+  implements {
+    Efl.Object.destructor;
   }
 }

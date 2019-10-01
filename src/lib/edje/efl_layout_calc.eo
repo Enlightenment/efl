@@ -10,7 +10,7 @@ interface Efl.Layout.Calc
 
     @since 1.22
    ]]
-   event_prefix: efl_layout;
+   event_c_prefix: efl_layout;
    methods {
       @property calc_auto_update_hints {
          [[Whether this object updates its size hints automatically.

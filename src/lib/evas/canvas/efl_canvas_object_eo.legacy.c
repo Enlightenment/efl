@@ -68,6 +68,7 @@ evas_object_propagate_events_set(Efl_Canvas_Object *obj, Eina_Bool propagate)
 EAPI Eina_Bool
 evas_object_propagate_events_get(const Efl_Canvas_Object *obj)
 {
+   if (!efl_isa(obj, EFL_CANVAS_OBJECT_CLASS)) return EINA_FALSE;
    return efl_canvas_object_propagate_events_get(obj);
 }
 

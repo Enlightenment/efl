@@ -8,7 +8,7 @@ class @beta Efl.Ui.Pan extends Efl.Canvas.Group implements Efl.Content
 
      The position of this "window" into the content can be changed using @Efl.Ui.Pan.pan_position.
      This widget does not provide means for a user to change the content's position (like scroll bars).
-     This widget is meant to be used internally by other clases like @Efl.Ui.Scroll.Manager.
+     This widget is meant to be used internally by other classes like @Efl.Ui.Scroll.Manager.
    ]]
    methods {
       @property pan_position {
@@ -64,8 +64,8 @@ class @beta Efl.Ui.Pan extends Efl.Canvas.Group implements Efl.Content
       Efl.Canvas.Group.group_calculate;
    }
    events {
-      pan,content,changed: void; [[The content has changed.]]
-      pan,viewport,changed: void; [[This widget's position or size has changed.]]
-      pan,position,changed: void; [[The content's position has changed.]]
+      pan,content_position,changed: Eina.Position2D; [[The content's position has changed, its position in the event
+                                                       is the new position.]]
+      pan,content_size,changed: Eina.Size2D; [[The content's size has changed, its size in the event is the new size.]]
    }
 }

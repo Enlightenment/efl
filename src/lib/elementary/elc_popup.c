@@ -1039,8 +1039,11 @@ _content_text_set(Evas_Object *obj,
    evas_object_event_callback_add
      (sd->text_content_obj, EVAS_CALLBACK_DEL, _on_text_content_del, obj);
 
-   elm_label_line_wrap_set(sd->text_content_obj, sd->content_text_wrap_type);
+   elm_label_line_wrap_set(sd->text_content_obj, ELM_WRAP_NONE);
    elm_object_text_set(sd->text_content_obj, text);
+   efl_canvas_group_calculate(sd->text_content_obj);
+   elm_label_line_wrap_set(sd->text_content_obj, sd->content_text_wrap_type);
+
    evas_object_size_hint_weight_set
      (sd->text_content_obj, EVAS_HINT_EXPAND, 0.0);
    evas_object_size_hint_align_set

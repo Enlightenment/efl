@@ -1160,14 +1160,14 @@ _elm_win_focus_highlight_visible_set(Efl_Ui_Win_Data *sd,
         if (elm_widget_is_legacy(sd->obj))
           edje_object_signal_emit(fobj, "elm,action,focus,show", "elm");
         else
-          edje_object_signal_emit(fobj, "efl,action,focus,show", "efl");
+          edje_object_signal_emit(fobj, "efl,focus,visible,on", "efl");
      }
    else
      {
         if (elm_widget_is_legacy(sd->obj))
           edje_object_signal_emit(fobj, "elm,action,focus,hide", "elm");
         else
-          edje_object_signal_emit(fobj, "efl,action,focus,hide", "efl");
+          edje_object_signal_emit(fobj, "efl,focus,visible,off", "efl");
      }
 }
 
@@ -1226,7 +1226,7 @@ _elm_win_focus_highlight_simple_setup(Efl_Ui_Win_Data *sd,
    if (elm_widget_is_legacy(sd->obj))
      edje_object_signal_emit(obj, "elm,state,anim,stop", "elm");
    else
-     edje_object_signal_emit(obj, "efl,state,anim,stop", "efl");
+     edje_object_signal_emit(obj, "efl,state,animating,stopped", "efl");
 }
 
 static void
@@ -4074,7 +4074,7 @@ _elm_win_focus_highlight_init(Efl_Ui_Win_Data *sd)
         else
           {
              edje_object_signal_callback_add(sd->focus_highlight.fobj,
-                                             "efl,action,focus,hide,end", "*",
+                                             "efl,focus,visible,off,done", "*",
                                              _elm_win_focus_highlight_hide, NULL);
              edje_object_signal_callback_add(sd->focus_highlight.fobj,
                                              "efl,action,focus,anim,end", "*",
@@ -5960,6 +5960,9 @@ _efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *pd)
    if (!efl_parent_get(obj))
      efl_allow_parent_unref_set(obj, EINA_TRUE);
 
+   if (!elm_widget_is_legacy(obj))
+     pd->type = EFL_UI_WIN_TYPE_BASIC;
+
    return obj;
 }
 
@@ -7706,6 +7709,19 @@ _efl_ui_win_part_color_get(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, const char 
    return EINA_FALSE;
 }
 
+static void
+_efl_ui_win_part_file_unload(Eo *obj EINA_UNUSED, Efl_Ui_Win_Data *sd, Eo *part_obj EINA_UNUSED, const char *part)
+{
+   sd->legacy.forbidden = EINA_TRUE;
+   if (eina_streq(part, "background"))
+     {
+        _elm_win_bg_set(sd, NULL);
+        return;
+     }
+
+   WIN_PART_ERR(part);
+}
+
 static Eina_Error
 _efl_ui_win_part_file_load(Eo *obj, Efl_Ui_Win_Data *sd, Eo *part_obj, const char *part)
 {
@@ -7723,7 +7739,7 @@ _efl_ui_win_part_file_load(Eo *obj, Efl_Ui_Win_Data *sd, Eo *part_obj, const cha
         if (file)
           {
              bg = efl_add(EFL_UI_IMAGE_CLASS, obj);
-             efl_gfx_image_scale_type_set(bg, EFL_GFX_IMAGE_SCALE_TYPE_EXPAND);
+             efl_gfx_image_scale_method_set(bg, EFL_GFX_IMAGE_SCALE_METHOD_EXPAND);
              ok = efl_file_simple_load(bg, file, key);
              if (!ok) ELM_SAFE_DEL(bg);
              _elm_win_bg_set(sd, bg);
@@ -7813,6 +7829,14 @@ _efl_ui_win_part_efl_file_key_get(const Eo *obj, void *_pd EINA_UNUSED)
    Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
    Efl_Ui_Win_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
    return _efl_ui_win_part_file_key_get(pd->obj, sd, obj, pd->part);
+}
+
+EOLIAN static void
+_efl_ui_win_part_efl_file_unload(Eo *obj, void *_pd EINA_UNUSED)
+{
+   Elm_Part_Data *pd = efl_data_scope_get(obj, EFL_UI_WIDGET_PART_CLASS);
+   Efl_Ui_Win_Data *sd = efl_data_scope_get(pd->obj, MY_CLASS);
+   return _efl_ui_win_part_file_unload(pd->obj, sd, obj, pd->part);
 }
 
 EOLIAN static Eina_Error
@@ -9368,6 +9392,10 @@ elm_win_name_get(const Evas_Object *obj)
 EAPI Elm_Win_Type
 elm_win_type_get(const Evas_Object *obj)
 {
+   if (!(efl_isa(obj, EFL_UI_WIN_CLASS) ||
+         efl_isa(obj, EFL_UI_WIN_LEGACY_CLASS) ||
+         efl_isa(obj, EFL_UI_WIN_INLINED_CLASS))) return ELM_WIN_UNKNOWN;
+
    return _efl_ui_win_type_to_elm_win_type(efl_ui_win_type_get(obj));
 }
 
@@ -9450,4 +9478,16 @@ efl_ui_win_shared_data_get(Efl_Ui_Win *obj)
    EINA_SAFETY_ON_NULL_RETURN_VAL(pd, NULL);
 
    return &pd->spd;
+}
+
+EAPI void
+efl_ui_win_autodel_set(Efl_Ui_Win *obj, Eina_Bool autodel)
+{
+   elm_win_autodel_set(obj, autodel);
+}
+
+EAPI Eina_Bool
+efl_ui_win_autodel_get(const Efl_Ui_Win *obj)
+{
+   return elm_win_autodel_get(obj);
 }

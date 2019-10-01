@@ -50,7 +50,6 @@ endforeach
 
 eolian_include_directories += ['-I', meson.current_source_dir()]
 
-subdir('cairo')
 subdir('gl')
 
 pub_eo_types_files = [

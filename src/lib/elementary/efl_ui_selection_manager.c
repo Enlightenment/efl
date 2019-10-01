@@ -1483,7 +1483,7 @@ _x11_efl_sel_manager_drag_start(Eo *obj EINA_UNUSED, Efl_Ui_Selection_Manager_Da
    /* TODO BUG: should increase dnd-awareness, in case it's drop target as well. See _x11_drag_mouse_up() */
    ecore_x_dnd_aware_set(xwin, EINA_TRUE);
    ecore_x_dnd_callback_pos_update_set(_x11_drag_move, seat_sel);
-   ecore_x_dnd_self_begin(xwin, (unsigned char *)&sel, sizeof(Sel_Manager_Selection));
+   ecore_x_dnd_self_begin(xwin, (unsigned char *)sel, sizeof(Sel_Manager_Selection));
    actx = _x11_dnd_action_rev_map(seat_sel->drag_action);
    ecore_x_dnd_source_action_set(actx);
    ecore_x_pointer_grab(xwin);
@@ -2429,6 +2429,7 @@ _wl_general_converter(char *target, Sel_Manager_Selection *sel, void *data, int 
                   memcpy(tmp, data, size);
                   if (data_ret) *data_ret = tmp;
                   if (size_ret) *size_ret = size;
+                  if (!data_ret) free(tmp);
                }
           }
         else
@@ -5050,6 +5051,7 @@ _efl_ui_selection_manager_drop_target_del(Eo *obj EINA_UNUSED, Efl_Ui_Selection_
              remove_handler = EINA_TRUE;
           }
      }
+   else remove_handler = EINA_TRUE;
 #endif
    if (remove_handler)
      {

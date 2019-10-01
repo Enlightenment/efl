@@ -3,7 +3,9 @@ import elm_general;
 
 class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickable,
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.File,
-                 Efl.Ui.Text_Selectable, Efl.Text_Interactive, Efl.Text_Markup
+                 Efl.Ui.Text_Selectable
+   composites
+                 Efl.Text_Interactive, Efl.Text_Markup
 {
    [[A flexible text widget which can be static (as a label) or editable by
      the user (as a text entry). It provides all sorts of editing facilities
@@ -22,14 +24,12 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
          }
       }
       @property input_panel_show_on_demand {
+         [[The attribute to show the input panel in case of only a user's explicit Mouse Up event.
+           It doesn't request to show the input panel even though it has focus.
+         ]]
          set {
-            [[Set the attribute to show the input panel in case of only a user's explicit Mouse Up event.
-              It doesn't request to show the input panel even though it has focus.
-            ]]
          }
          get {
-            [[Get the attribute to show the input panel in case of only an user's explicit Mouse Up event.
-            ]]
          }
          values {
             ondemand: bool; [[If $true, the input panel will be shown in case of only Mouse up event.
@@ -38,13 +38,10 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
          }
       }
       @property context_menu_disabled {
+         [[This disables the entry's contextual (longpress) menu.]]
          set {
-            [[This disables the entry's contextual (longpress) menu.]]
          }
          get {
-            [[This returns whether the entry's contextual (longpress) menu is
-              disabled.
-            ]]
          }
          values {
             disabled: bool; [[If $true, the menu is disabled.]]
@@ -52,97 +49,83 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
       }
       @property cnp_mode {
          /* FIXME: Efl.Ui.Selection_Format does not allow markup without images! */
+         [[Control pasting of text and images for the widget.
+
+           Normally the entry allows both text and images to be pasted.
+
+           Note: This only changes the behaviour of text.
+         ]]
          set {
-            [[Control pasting of text and images for the widget.
-
-              Normally the entry allows both text and images to be pasted.
-              By setting cnp_mode to be #ELM_CNP_MODE_NO_IMAGE this prevents images from being copied or pasted.
-              By setting cnp_mode to be #ELM_CNP_MODE_PLAINTEXT this remove all tags in text .
-
-              Note: This only changes the behaviour of text.
-            ]]
          }
          get {
-            [[Getting elm_entry text paste/drop mode.
-
-              Normally the entry allows both text and images to be pasted.
-              This gets the copy & paste mode of the entry.
-            ]]
          }
          values {
             format: Efl.Ui.Selection_Format; [[Format for copy & paste.]]
          }
       }
       @property input_panel_language {
-         set {
-            [[Set the language mode of the input panel.
+         [[The language mode of the input panel.
 
-              This API can be used if you want to show the alphabet keyboard mode.
-            ]]
+           This API can be used if you want to show the alphabet keyboard mode.
+         ]]
+         set {
          }
          get {
-            [[Get the language mode of the input panel.]]
          }
          values {
             lang: Elm.Input.Panel.Lang; [[Language to be set to the input panel.]]
          }
       }
       @property selection_handler_disabled {
+         [[This disables the entry's selection handlers.]]
          set {
-            [[This disables the entry's selection handlers.]]
          }
          get {
-            [[This returns whether the entry's selection handlers are disabled.]]
          }
          values {
             disabled: bool; [[If $true, the selection handlers are disabled.]]
          }
       }
       @property input_panel_layout_variation {
+         [[Set the input panel layout variation of the entry
+         ]]
          set {
-            [[Set the input panel layout variation of the entry
-            ]]
          }
          get {
-            [[Get the input panel layout variation of the entry
-            ]]
          }
          values {
             variation: int; [[Layout variation type.]]
          }
       }
       @property autocapital_type {
+         [[Set the autocapitalization type on the immodule.]]
          set {
-            [[Set the autocapitalization type on the immodule.]]
          }
          get {
-            [[Get the autocapitalization type on the immodule.]]
          }
          values {
             autocapital_type: Elm.Autocapital.Type; [[The type of autocapitalization.]]
          }
       }
       @property password_mode {
-         set {
-            [[Sets the entry to password mode.
+         [[Sets the entry to password mode.
 
-              In password mode entries are implicitly single line and the display of
-              any text inside them is replaced with asterisks (*).
-            ]]
+           In password mode entries are implicitly single line and the display of
+           any text inside them is replaced with asterisks (*).
+         ]]
+         set {
          }
          get {
-            [[Get whether the entry is set to password mode.]]
          }
          values {
             password: bool; [[If true, password mode is enabled.]]
          }
       }
       @property input_panel_return_key_disabled {
+         [[Set the return key on the input panel to be disabled.]]
          set {
-            [[Set the return key on the input panel to be disabled.]]
          }
          get {
-            [[Get whether the return key on the input panel should be disabled or not.]]
          }
          values {
             disabled: bool; [[The state to put in in: $true for
@@ -150,74 +133,68 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
          }
       }
       @property prediction_allow {
+         [[Whether the entry should allow predictive text.]]
          set {
-            [[Set whether the entry should allow predictive text.]]
          }
          get {
-            [[Get whether the entry allows predictive text.]]
          }
          values {
             prediction: bool; [[Whether the entry should allow predictive text.]]
          }
       }
       @property input_hint {
+         [[Sets the input hint which allows input methods to fine-tune their behavior.]]
          set {
-            [[Sets the input hint which allows input methods to fine-tune their behavior.]]
          }
          get {
-            [[Gets the value of input hint.]]
          }
          values {
             hints: Elm.Input.Hints; [[Input hint.]]
          }
       }
       @property input_panel_layout {
+         [[Set the input panel layout of the entry.]]
          set {
-            [[Set the input panel layout of the entry.]]
          }
          get {
-            [[Get the input panel layout of the entry.]]
          }
          values {
             layout: Elm.Input.Panel.Layout(Elm.Input.Panel.Layout.invalid); [[Layout type.]]
          }
       }
       @property input_panel_return_key_type {
-         set {
-            [[Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
+         [[Set the "return" key type. This type is used to set string or icon on the "return" key of the input panel.
 
-              An input panel displays the string or icon associated with this type.
-            ]]
+           An input panel displays the string or icon associated with this type.
+         ]]
+         set {
          }
          get {
-            [[Get the "return" key type.]]
          }
          values {
             return_key_type: Elm.Input.Panel.Return_Key.Type; [[The type of "return" key on the input panel.]]
          }
       }
       @property input_panel_enabled {
+         [[Sets the attribute to show the input panel automatically.]]
          set {
-            [[Sets the attribute to show the input panel automatically.]]
          }
          get {
-            [[Get the attribute to show the input panel automatically.]]
          }
          values {
             enabled: bool; [[If $true, the input panel is appeared when entry is clicked or has a focus.]]
          }
       }
       @property input_panel_return_key_autoenabled {
-         set {
-            [[Set whether the return key on the input panel is disabled automatically when entry has no text.
+         [[Whether the return key on the input panel is disabled automatically when entry has no text.
 
-              If $enabled is $true, the return key on input panel is disabled when the entry has no text.
-              The return key on the input panel is automatically enabled when the entry has text.
-              The default value is $false.
-            ]]
+           If $enabled is $true, the return key on input panel is disabled when the entry has no text.
+           The return key on the input panel is automatically enabled when the entry has text.
+         ]]
+         set {
          }
          values {
-            enabled: bool; [[If $enabled is $true, the return key is automatically disabled when the entry has no text.]]
+            enabled: bool(false); [[If $true, the return key is automatically disabled when the entry has no text.]]
          }
       }
       @property item_factory {
@@ -229,7 +206,8 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
          }
       }
       input_panel_show {
-         [[Show the input panel (virtual keyboard) based on the input panel property of entry such as layout, autocapital types and so on.
+         [[Show the input panel (virtual keyboard) based on the input panel property of entry such as layout,
+           autocapital types and so on.
 
            Note that input panel is shown or hidden automatically according to the focus state of entry widget.
            This API can be used in the case of manually controlling by using @.input_panel_enabled.set(en, $false).
@@ -352,12 +330,13 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
       Efl.Access.Editable.Text.paste;
       Efl.File.file { set; }
       Efl.File.load;
+      Efl.File.unload;
       Efl.Text_Interactive.editable { set; }
       Efl.Part.part_get;
    }
    events {
       changed: void; [[Called when entry changes]]
-      /* can be NULL, tag nullable once Eolian supports it */
+      /* can be $NULL, tag nullable once Eolian supports it */
       changed,user: Efl.Ui.Text_Change_Info;
          [[The text object has changed due to user interaction]]
       validate: Elm.Validate_Content; [[Called when validating]]
@@ -373,9 +352,5 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
       anchor,out: Elm.Entry_Anchor_Info; [[Called on anchor out]]
       anchor,up: Elm.Entry_Anchor_Info; [[called on anchor up]]
       cursor,changed,manual: void; [[Called on manual cursor change]]
-   }
-   composite {
-      Efl.Text_Interactive;
-      Efl.Text_Markup;
    }
 }

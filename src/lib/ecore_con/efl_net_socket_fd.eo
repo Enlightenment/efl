@@ -1,8 +1,9 @@
-class @beta Efl.Net.Socket_Fd extends Efl.Loop_Fd implements Efl.Io.Reader_Fd, Efl.Io.Writer_Fd, Efl.Io.Closer_Fd, Efl.Net.Socket {
-    [[A base implementation for sockets over filedescriptors (fd)
+class @beta Efl.Net.Socket_Fd extends Efl.Loop_Fd 
+                              implements Efl.Io.Reader_Fd, Efl.Io.Writer_Fd, Efl.Io.Closer_Fd, Efl.Net.Socket {
+    [[A base implementation for sockets over file descriptors (fd)
 
       This is the common class and takes an existing FD, usually
-      created by an dialer or server.
+      created by an dialler or server.
 
       @Efl.Io.Closer.close_on_exec and
       @Efl.Io.Closer.close_on_invalidate are respected and default to

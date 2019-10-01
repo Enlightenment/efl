@@ -77,16 +77,16 @@ _set_selected_btn_clicked(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 static void
-_set_selected_object_btn_clicked(void *data, const Efl_Event *ev)
+_set_fallback_radio_btn_clicked(void *data, const Efl_Event *ev EINA_UNUSED)
 {
-   Efl_Ui_Radio_Group *group = data;
-
-   efl_ui_radio_group_selected_value_set(group, 3);
-   efl_ui_radio_group_selected_object_set(group, efl_key_data_get(ev->object, "uk"));
+   if (!efl_ui_selectable_fallback_selection_get(data))
+     efl_ui_selectable_fallback_selection_set(data, efl_pack_content_get(data, 4));
+   else
+     efl_ui_selectable_fallback_selection_set(data, NULL);
 }
 
 void test_efl_ui_radio(void *data EINA_UNUSED,
-                                   Evas_Object *obj EINA_UNUSED,
+                                   Eo *obj EINA_UNUSED,
                                    void *event_info EINA_UNUSED)
 {
    Efl_Ui_Win *win;
@@ -94,11 +94,9 @@ void test_efl_ui_radio(void *data EINA_UNUSED,
    Efl_Ui_Box *bx;
    Eina_Array *arr;
    Efl_Ui_Button *o;
-   Efl_Ui_Radio *uk = NULL;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Efl.Ui.Radio_Box"),
+                                  efl_text_set(efl_added, "Efl.Ui.Radio_Box"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
    table = efl_add(EFL_UI_TABLE_CLASS, win);
    efl_content_set(win, table);
@@ -112,8 +110,6 @@ void test_efl_ui_radio(void *data EINA_UNUSED,
      {
         Efl_Ui_Radio *r = eina_array_data_get(arr, i);
         efl_pack_end(bx, r);
-        if (i == 4)
-          uk = r;
      }
 
    o = efl_add(EFL_UI_BUTTON_CLASS, table);
@@ -128,9 +124,8 @@ void test_efl_ui_radio(void *data EINA_UNUSED,
 
    o = efl_add(EFL_UI_BUTTON_CLASS, table);
    efl_pack_table(table, o, 1, 2, 1, 1);
-   efl_text_set(o, "Set object for UK");
-   efl_key_data_set(o, "uk", uk);
-   efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _set_selected_object_btn_clicked, bx);
+   efl_text_set(o, "Fallback set to UK");
+   efl_event_callback_add(o, EFL_INPUT_EVENT_CLICKED, _set_fallback_radio_btn_clicked, bx);
 
    eina_array_free(arr);
 }

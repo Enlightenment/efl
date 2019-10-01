@@ -1,10 +1,10 @@
-struct @beta Efl.Model_Changed_Event {
+struct Efl.Model_Changed_Event {
      [[Every time the model is changed on the object.]]
      current: Efl.Model; [[The newly set model.]]
      previous: Efl.Model; [[The previously set model.]]
 }
 
-interface @beta Efl.Ui.View
+interface Efl.Ui.View
 {
    [[Efl UI view interface]]
    methods {

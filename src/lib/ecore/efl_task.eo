@@ -43,26 +43,25 @@ abstract Efl.Task extends Efl.Loop_Consumer
          }
       }
       @property flags {
-         [[Flags to further customize task's behavior. The default value:
-             exit_with_parent
-         ]]
+         [[Flags to further customize task's behavior.]]
          set { }
          get { }
          values {
-            flags: Efl.Task_Flags; [[Desired task flags.]]
+            flags: Efl.Task_Flags(Efl.Task_Flags.exit_with_parent); [[Desired task flags.]]
          }
       }
       run @pure_virtual {
          [[Actually run the task.]]
-         return: future<void> @owned; [[A future triggered when task exits and is passed int exit code.]]
+         return: bool; [[On success in starting the task, return true, otherwise false]]
       }
       end @pure_virtual {
          [[Request the task end (may send a signal or interrupt
-           signal resulting in a terminate event being tiggered in the
+           signal resulting in a terminate event being triggered in the
            target task loop).]]
       }
    }
    events {
+      exit: void; [[Called when the task exits. You can pick up any information you need at this point such as exit_code etc.]]
    }
    implements {
       Efl.Object.constructor;

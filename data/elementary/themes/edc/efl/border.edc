@@ -7,7 +7,7 @@
  *  - virtual keyboard
  */
 
-group { "efl/border";
+group { "efl/border"; data.item: "version" "123";
    images.image: "vgrad_med_lighter.png" COMP;
    images.image: "vgrad_med_dark.png" COMP;
    images.image: "bevel_out.png" COMP;
@@ -30,7 +30,6 @@ group { "efl/border";
    images.image: "screen_circular_shadow.png" COMP;
    images.image: "win_shadow.png" COMP;
    data.item: "shadow" "1";
-   data.item: "version" "119";
    parts {
       /* opaque region of the window, to inform the compositor */
       spacer { "efl.spacer.opaque";
@@ -130,7 +129,7 @@ group { "efl/border";
             rel.to: "efl.menu";
          }
       }
-      swallow { "efl.menu";
+      swallow { "efl.menu"; required;
          required: 1; // since 1.19
          desc { "default";
             rel.to: "indicator_spacer";
@@ -162,7 +161,7 @@ group { "efl/border";
       }
 
       /* application contents */
-      swallow { "efl.client";
+      swallow { "efl.client"; required;
          clip: "client_clip";
          desc { "default";
             rel.to: "client_spacer";
@@ -308,7 +307,7 @@ group { "efl/border";
             rel2.relative: 1.2 1.2;
          }
       }
-      swallow {  "efl.icon"; nomouse;
+      swallow {  "efl.icon"; nomouse; required;
          clip_to: "top_clip";
          desc { "default";
             rel1.to: "icon";
@@ -694,7 +693,7 @@ group { "efl/border";
             color: 0 0 0 0;
          }
       }
-      swallow { "efl.indicator";
+      swallow { "efl.indicator"; required;
          clip: "bg_clip";
          desc { "default";
             rel.to: "top_clip";
@@ -1124,6 +1123,7 @@ group { "efl/border";
 
 group { "efl/border/dialog";
    inherit:   "efl/border";
+   data.item: "version" "123";
    parts {
       text {  "efl.text.title";
          clip: "top_clip";
@@ -1191,6 +1191,7 @@ group { "efl/border/dialog";
 
 group { "efl/border/naviframe";
    inherit:   "efl/border";
+   data.item: "version" "123";
    images.image: "sym_left_dark_normal.png" COMP;
    images.image: "sym_left_glow_normal.png" COMP;
    images.image: "sym_left_light_normal.png" COMP;

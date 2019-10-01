@@ -48,8 +48,10 @@ class @beta Efl.Net.Control.Technology extends Efl.Loop_Consumer {
             set { }
             values {
                 enabled: bool; [[When to enable or disable tethering for this technology.]]
-                identifier: string @optional; [[The name to identify the tethering. For WiFi this will translate to an SSID.]]
-                passphrase: string @optional; [[The passphrase for tethering access. For WiFi this will translate to WPA passphrase.]]
+                identifier: string @optional; [[The name to identify the tethering. For WiFi this will translate to an
+                                                SSID.]]
+                passphrase: string @optional; [[The passphrase for tethering access. For WiFi this will translate to
+                                                WPA passphrase.]]
             }
         }
 
@@ -84,7 +86,7 @@ class @beta Efl.Net.Control.Technology extends Efl.Loop_Consumer {
               state. Otherwise allow the system to perform
               passive scans in a timely manner.
             ]]
-            return: future<void> @owned; [[Future return for finished background scan]]
+            return: future<void> @move; [[Future return for finished background scan]]
         }
     }
 

@@ -11,12 +11,6 @@ typedef Eo Efl_Ui_Widget;
 #ifndef _EFL_UI_WIDGET_EO_TYPES
 #define _EFL_UI_WIDGET_EO_TYPES
 
-/** Function pointer for on show region hook
- *
- * @ingroup Efl_Ui
- */
-typedef void (*Efl_Ui_Scrollable_On_Show_Region)(void *data, Efl_Canvas_Object *obj, Eina_Rect region);
-
 /** All relevant fields needed for the current state of focus registeration
  *
  * @ingroup Efl_Ui

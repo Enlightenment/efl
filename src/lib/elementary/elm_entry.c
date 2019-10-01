@@ -3365,7 +3365,7 @@ _elm_entry_text_set(Eo *obj, Elm_Entry_Data *sd, const char *part, const char *e
 
    /* If old and new text are the same do nothing */
    current_text = edje_object_part_text_get(sd->entry_edje, "elm.text");
-   if (current_text == entry || !strcmp(entry, current_text))
+   if (eina_streq(current_text, entry))
      goto done;
 
    ELM_SAFE_FREE(sd->text, eina_stringshare_del);
@@ -5149,8 +5149,7 @@ _scroll_cb(Evas_Object *obj, void *data EINA_UNUSED)
 {
    ELM_ENTRY_DATA_GET(obj, sd);
    /* here we need to emit the signal that the elm_scroller would have done */
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL, NULL);
+   evas_object_smart_callback_call(obj, "scroll", NULL);
 
    if (sd->have_selection)
      _update_selection_handler(obj);
@@ -6265,14 +6264,14 @@ ELM_PART_CONTENT_DEFAULT_GET(elm_entry, "icon")
 
 /* Internal EO APIs and hidden overrides */
 
-ELM_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
-ELM_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+EFL_UI_LAYOUT_CONTENT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
+EFL_UI_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
 
 #define ELM_ENTRY_EXTRA_OPS \
    ELM_PART_CONTENT_DEFAULT_OPS(elm_entry), \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(elm_entry), \
-   ELM_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
-   ELM_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
+   EFL_UI_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
+   EFL_UI_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
    EFL_CANVAS_GROUP_CALC_OPS(elm_entry)
 
 #include "elm_entry_eo.c"

@@ -40,8 +40,7 @@ test_ui_spin(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_i
    Eo *win, *bx, *sp;
 
    win = efl_add_ref(EFL_UI_WIN_CLASS, NULL,
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Efl.Ui.Spin"),
+                                  efl_text_set(efl_added, "Efl.Ui.Spin"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    bx = efl_add(EFL_UI_BOX_CLASS, win,

@@ -3,7 +3,7 @@
 #endif
 #include <Efl_Ui.h>
 #include <Elementary.h>
-
+#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
 #define MAX_NUM_OF_CONTENT 17
 
 const Efl_Class *content_class[MAX_NUM_OF_CONTENT];
@@ -15,7 +15,7 @@ _reset_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    Efl_Ui_Radio_Group *radio = data;
    Evas_Object *target;
 
-   radio = efl_ui_radio_group_selected_object_get(radio);
+   radio = efl_ui_selectable_last_selected_get(radio);
    target = evas_object_data_get(radio, "data");
 
    efl_gfx_color_set(efl_part(target, "background"), 0, 0, 0, 0);
@@ -29,7 +29,7 @@ _color_cb(void *data, const Efl_Event *ev EINA_UNUSED)
    Evas_Object *target;
    static Eina_Bool i;
 
-   radio = efl_ui_radio_group_selected_object_get(radio);
+   radio = efl_ui_selectable_last_selected_get(radio);
    target = evas_object_data_get(radio, "data");
    i ^= EINA_TRUE;
    efl_gfx_color_set(efl_part(target, "background"), (i) ? 255 : 0, (i) ? 0 : 255, 0, 255);
@@ -40,17 +40,17 @@ _scale_type_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Efl_Ui_Radio_Group *radio = data;
    Evas_Object *target;
-   Efl_Gfx_Image_Scale_Type type;
+   Efl_Gfx_Image_Scale_Method type;
    char buf[PATH_MAX];
 
-   radio = efl_ui_radio_group_selected_object_get(radio);
+   radio = efl_ui_selectable_last_selected_get(radio);
    target = evas_object_data_get(radio, "data");
 
    snprintf(buf, sizeof(buf), "%s/images/plant_01.jpg", elm_app_data_dir_get());
    efl_file_simple_load(efl_part(target, "background"), buf, NULL);
-   type = efl_gfx_image_scale_type_get(efl_part(target, "background"));
+   type = efl_gfx_image_scale_method_get(efl_part(target, "background"));
    type = (type + 1) % 6;
-   efl_gfx_image_scale_type_set(efl_part(target, "background"), type);
+   efl_gfx_image_scale_method_set(efl_part(target, "background"), type);
 }
 
 static Efl_Ui_Radio_Group *

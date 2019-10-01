@@ -154,7 +154,10 @@ _mesh_fini(Evas_Canvas3D_Mesh_Data *pd)
      }
 
    if (pd->indices && pd->owns_indices)
-     free(pd->indices);
+     {
+        free(pd->indices);
+        pd->indices = NULL;
+     }
 
    if (pd->nodes)
      eina_hash_free(pd->nodes);
@@ -859,6 +862,13 @@ EOLIAN static Eina_Bool
 _evas_canvas3d_mesh_alpha_test_enable_get(const Eo *obj EINA_UNUSED, Evas_Canvas3D_Mesh_Data *pd)
 {
    return pd->alpha_test_enabled;
+}
+
+EOLIAN static void
+_evas_canvas3d_mesh_efl_file_unload(Eo *obj, Evas_Canvas3D_Mesh_Data *pd)
+{
+   efl_file_unload(efl_super(obj, MY_CLASS));
+   _mesh_fini(pd);
 }
 
 EOLIAN static Eina_Error

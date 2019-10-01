@@ -116,7 +116,7 @@ EAPI int mkstemps(char *__template, int suffixlen);
  */
 EAPI char *realpath(const char *file_name, char *resolved_name);
 #ifndef HAVE_REALPATH
-#define HAVE_REALPATH 1
+# define HAVE_REALPATH 1
 #endif
 
 

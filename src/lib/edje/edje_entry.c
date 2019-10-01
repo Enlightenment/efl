@@ -1600,11 +1600,23 @@ static void
 _delete_emit(Edje *ed, Evas_Textblock_Cursor *c, Entry *en, size_t pos,
              Eina_Bool backspace)
 {
-   if (!evas_textblock_cursor_char_next(c))
+
+   if (backspace)
      {
-        return;
+        if (!evas_textblock_cursor_char_prev(c))
+          {
+             return;
+          }
+        evas_textblock_cursor_char_next(c);
      }
-   evas_textblock_cursor_char_prev(c);
+   else
+     {
+        if (!evas_textblock_cursor_char_next(c))
+          {
+             return;
+          }
+        evas_textblock_cursor_char_prev(c);
+     }
 
    Edje_Entry_Change_Info *info = calloc(1, sizeof(*info));
    if (!info)
@@ -1617,16 +1629,40 @@ _delete_emit(Edje *ed, Evas_Textblock_Cursor *c, Entry *en, size_t pos,
    info->insert = EINA_FALSE;
    if (backspace)
      {
-        info->change.del.start = pos - 1;
+
+        Evas_Textblock_Cursor *cc = evas_object_textblock_cursor_new(en->rp->object);
+        evas_textblock_cursor_copy(c, cc);
+        Eina_Bool remove_cluster = evas_textblock_cursor_at_cluster_as_single_glyph(cc,EINA_FALSE);
+        if (remove_cluster)
+          {
+             evas_textblock_cursor_cluster_prev(cc);
+          }
+        else
+          {
+             evas_textblock_cursor_char_prev(cc);
+          }
+
+        info->change.del.start = evas_textblock_cursor_pos_get(cc);
         info->change.del.end = pos;
-        tmp = evas_textblock_cursor_content_get(c);
-        evas_textblock_cursor_char_delete(c);
+
+        tmp = evas_textblock_cursor_range_text_get(c, cc, EVAS_TEXTBLOCK_TEXT_MARKUP);
+        evas_textblock_cursor_range_delete(c, cc);
+        evas_textblock_cursor_free(cc);
      }
    else
      {
         Evas_Textblock_Cursor *cc = evas_object_textblock_cursor_new(en->rp->object);
         evas_textblock_cursor_copy(c, cc);
-        evas_textblock_cursor_cluster_next(cc);
+
+        Eina_Bool remove_cluster = evas_textblock_cursor_at_cluster_as_single_glyph(cc,EINA_TRUE);
+        if (remove_cluster)
+          {
+             evas_textblock_cursor_cluster_next(cc);
+          }
+        else
+          {
+             evas_textblock_cursor_char_next(cc);
+          }
 
         info->change.del.start = evas_textblock_cursor_pos_get(cc);
         info->change.del.end = pos;
@@ -1954,7 +1990,7 @@ _edje_key_down_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
                }
              else
                {
-                  if (evas_textblock_cursor_char_prev(en->cursor))
+                  //if (evas_textblock_cursor_char_prev(en->cursor))
                     {
                        _delete_emit(ed, en->cursor, en, old_cur_pos, EINA_TRUE);
                     }

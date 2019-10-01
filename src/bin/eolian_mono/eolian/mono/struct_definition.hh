@@ -293,7 +293,7 @@ struct struct_internal_definition_generator
               || (regular && (regular->base_type == "string"
                               || regular->base_type == "mstring"
                               || regular->base_type == "stringshare"
-                              || regular->base_type == "any_value_ptr")))
+                              || regular->base_type == "any_value_ref")))
             {
                if (!as_generator(indent << scope_tab << "/// <summary>Internal wrapper for field " << field_name << "</summary>\n"
                                  << indent << scope_tab << "public System.IntPtr " << field_name << ";\n")
@@ -370,12 +370,12 @@ struct struct_internal_definition_generator
        }
 
      if (!as_generator(indent << scope_tab << scope_tab << "return _external_struct;\n"
-                       << indent << scope_tab << "}\n\n").generate(sink, nullptr, context))
+                       << indent << scope_tab << "}\n").generate(sink, nullptr, context))
        return false;
 
      // close internal class
-     if(!as_generator(indent << "}\n\n"
-                      << indent << "#pragma warning restore CS1591\n\n"
+     if(!as_generator(indent << "}\n"
+                      << indent << "#pragma warning restore CS1591\n"
                  ).generate(sink, attributes::unused, context)) return false;
 
      return true;
@@ -436,7 +436,7 @@ struct struct_definition_generator
           // Constructor with default parameters for easy struct initialization
           if(!as_generator(
                       indent << scope_tab << "/// <summary>Constructor for " << string << ".</summary>\n"
-                      << *(indent << scope_tab << field_argument_docs << ";\n")
+                      << *(indent << scope_tab << field_argument_docs << "\n")
                       << indent << scope_tab << "public " << string << "(\n"
                       << ((indent << scope_tab << scope_tab << field_argument_default) % ",\n")
                       << indent << scope_tab << ")\n"

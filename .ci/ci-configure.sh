@@ -57,10 +57,10 @@ if [ "$DISTRO" != "" ] ; then
   fi
 
   if [ "$1" = "coverity" ]; then
-    if [ $(date +%A) != "Saturday" ]; then
-      echo "Not Saturday so we are not running our weekly Coverity scan build."
-      exit 0
-    fi
+#    if [ $(date +%A) != "Saturday" ]; then
+#      echo "Not Saturday so we are not running our weekly Coverity scan build."
+#      exit 0
+#    fi
     OPTS="$OPTS $WAYLAND_LINUX_COPTS"
     travis_fold cov-download cov-download
     docker exec --env COVERITY_SCAN_TOKEN=$COVERITY_SCAN_TOKEN $(cat $HOME/cid) sh -c '.ci/coverity-tools-install.sh'
@@ -101,6 +101,6 @@ else
   export PKG_CONFIG_PATH="/usr/local/opt/openssl/lib/pkgconfig:/usr/local/Cellar/libffi/$LIBFFI_VER/lib/pkgconfig"
   export CC="ccache gcc"
   travis_fold meson meson
-  mkdir build && meson build -Decore-imf-loaders-disabler=scim,ibus -Dx11=false -Davahi=false -Dbindings=luajit -Deeze=false -Dsystemd=false -Dnls=false -Dcocoa=true -Demotion-loaders-disabler=gstreamer,gstreamer1,libvlc,xine
+  mkdir build && meson build -Dopengl=full -Decore-imf-loaders-disabler=scim,ibus -Dx11=false -Davahi=false -Dbindings=luajit -Deeze=false -Dsystemd=false -Dnls=false -Dcocoa=true -Demotion-loaders-disabler=gstreamer,gstreamer1,libvlc,xine
   travis_endfold meson
 fi

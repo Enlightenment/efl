@@ -62,9 +62,9 @@ struct _ptr_list_iterator : _ptr_list_iterator_base
     : _ptr_list_iterator_base(list, node)
   {
   }
-  _ptr_list_iterator(_ptr_list_iterator<value_type> const& other)
-    : _ptr_list_iterator_base(static_cast<_ptr_list_iterator_base const&>(other))
+  operator _ptr_list_iterator<T const>()
   {
+    return _ptr_list_iterator<T const>{_list, _node};
   }
 
   _ptr_list_iterator<T>& operator++()

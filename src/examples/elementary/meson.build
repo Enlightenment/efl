@@ -114,6 +114,7 @@ examples = [
   'efl_ui_list_view_example_1',
   'efl_ui_list_view_example_2',
   'efl_ui_list_view_example_3',
+  'efl_ui_collection_view_example_1',
   'efl_canvas_layout_text',
   'efl_ui_theme_example_01',
   'efl_ui_theme_example_02',

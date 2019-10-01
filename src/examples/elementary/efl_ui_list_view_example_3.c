@@ -52,17 +52,15 @@ static void
 _cleanup_cb(void *data, Evas *e EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Priv_Data *priv = (Priv_Data*)data;
-   efl_unref(priv->model);
+   efl_del(priv->model);
 }
 
 static void
-_focused(void *data, const Efl_Event *event)
+_selected(void *data, const Efl_Event *event)
 {
    Priv_Data *priv = (Priv_Data*)data;
-   Evas_Object *focused = efl_ui_focus_manager_focus_get(event->object);
 
-   if (focused)
-     priv->selected = focused;
+   priv->selected = efl_ui_selectable_last_selected_get(event->object);
 }
 
 static void
@@ -77,7 +75,7 @@ _bt_add_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
    child = efl_model_child_add(priv->model);
 
    eina_value_set(&vtext, elm_object_text_get(priv->e_name));
-   efl_model_property_set(child, "name", &vtext);
+   efl_model_property_set(child, "filename", &vtext);
 
    eina_value_set(&vtext, elm_object_text_get(priv->e_occ));
    efl_model_property_set(child, "occupation", &vtext);
@@ -95,7 +93,6 @@ _bt_del_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_
    Priv_Data *priv = (Priv_Data*)data;
    Eo *child = NULL;
 
-   //l = efl_ui_focus_manager_focus_get(priv->list1);
    if(priv->selected)
      {
         printf("focused %p\n", priv->selected);
@@ -113,21 +110,21 @@ static void
 _bt_none_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *li = data;
-   efl_ui_list_view_select_mode_set(li, ELM_OBJECT_SELECT_MODE_NONE);
+   efl_ui_multi_selectable_async_select_mode_set(li, EFL_UI_SELECT_MODE_NONE);
 }
 
 static void
-_bt_donly_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+_bt_donly_clicked(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
-   Evas_Object *li = data;
-   efl_ui_list_view_select_mode_set(li, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY);
+   /* Evas_Object *li = data; */
+   /* efl_ui_multi_selectable_async_select_mode_set(li, ELM_OBJECT_SELECT_MODE_DISPLAY_ONLY); */
 }
 
 static void
 _bt_default_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
 {
    Evas_Object *li = data;
-   efl_ui_list_view_select_mode_set(li, ELM_OBJECT_SELECT_MODE_DEFAULT);
+   efl_ui_multi_selectable_async_select_mode_set(li, EFL_UI_SELECT_MODE_SINGLE);
 }
 
 static void
@@ -146,28 +143,21 @@ _bt_unset_clicked(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EIN
 static void
 _realized_1_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Efl_Ui_List_View_Item_Event *ie = event->info;
+   Efl_Gfx_Entity *layout = event->info;
 
-   evas_object_size_hint_weight_set(ie->layout, EVAS_HINT_EXPAND, 0);
-   evas_object_size_hint_align_set(ie->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   efl_ui_property_bind(ie->layout, "efl.text", "name");
-   efl_ui_property_bind(ie->layout, "signal/efl,state,%v", "odd_style");
+   efl_ui_property_bind(layout, "efl.text", "filename");
 }
 
 static void
 _realized_2_cb(void *data EINA_UNUSED, const Efl_Event *event)
 {
-   Efl_Ui_List_View_Item_Event *ie = event->info;
-   printf("relized 2\n");
+   Efl_Gfx_Entity *layout = event->info;
 
-   elm_object_focus_allow_set(ie->layout, EINA_TRUE);
-   evas_object_size_hint_weight_set(ie->layout, EVAS_HINT_EXPAND, 0);
-   evas_object_size_hint_align_set(ie->layout, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   efl_ui_property_bind(ie->layout, "efl.text", "occupation");
+   efl_ui_property_bind(layout, "efl.text", "occupation");
 }
 
 static Efl_Model*
-_make_model()
+_make_model(void)
 {
    Eina_Value vtext, value;
    Efl_Generic_Model *model, *child;
@@ -182,11 +172,8 @@ _make_model()
      {
         child = efl_model_child_add(model);
 
-        i%2 ? eina_value_set(&vtext, "even") : eina_value_set(&vtext, "odd");
-        efl_model_property_set(child, "odd_style", &vtext);
-
         eina_value_set(&vtext, texts[(i % len)]);
-        efl_model_property_set(child, "name", &vtext);
+        efl_model_property_set(child, "filename", &vtext);
 
         eina_value_set(&vtext, subtexts[(i % len)]);
         efl_model_property_set(child, "occupation", &vtext);
@@ -226,21 +213,20 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    efl_ui_widget_factory_item_class_set(factory, EFL_UI_LIST_DEFAULT_ITEM_CLASS);
 
    priv->list1 = efl_add(EFL_UI_LIST_VIEW_CLASS, win, efl_ui_view_model_set(efl_added, priv->model));
-   efl_event_callback_add(priv->list1, EFL_UI_LIST_VIEW_EVENT_ITEM_REALIZED, _realized_1_cb, priv);
+   efl_event_callback_add(priv->list1, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_REALIZED, _realized_1_cb, priv);
    evas_object_size_hint_weight_set(priv->list1, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(priv->list1, EVAS_HINT_FILL, EVAS_HINT_FILL);
    elm_box_pack_end(bx, priv->list1);
-   efl_ui_list_view_layout_factory_set(priv->list1, factory);
+   efl_ui_collection_view_factory_set(priv->list1, factory);
 
    factory = efl_add(EFL_UI_LAYOUT_FACTORY_CLASS, win);
    efl_ui_property_bind(factory, "efl.text", "filename");
-   efl_ui_property_bind(factory, "signal/efl,state,%v", "selected");
    efl_ui_widget_factory_item_class_set(factory, EFL_UI_LIST_DEFAULT_ITEM_CLASS);
    priv->list2 = efl_add(EFL_UI_LIST_VIEW_CLASS, win, efl_ui_view_model_set(efl_added, priv->model));
-   efl_event_callback_add(priv->list2, EFL_UI_LIST_VIEW_EVENT_ITEM_REALIZED, _realized_2_cb, priv->list2);
+   efl_event_callback_add(priv->list2, EFL_UI_COLLECTION_VIEW_EVENT_ITEM_REALIZED, _realized_2_cb, priv->list2);
    evas_object_size_hint_weight_set(priv->list2, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    evas_object_size_hint_align_set(priv->list2, EVAS_HINT_FILL, EVAS_HINT_FILL);
-   efl_ui_list_view_layout_factory_set(priv->list2, factory);
+   efl_ui_collection_view_factory_set(priv->list2, factory);
 
    vbx = elm_box_add(win);
    elm_box_pack_end(bx, vbx);
@@ -313,7 +299,7 @@ elm_main(int argc EINA_UNUSED, char **argv EINA_UNUSED)
    elm_box_pack_end(vbx, bt);
 
    elm_box_pack_end(bx, priv->list2);
-   efl_event_callback_add(priv->list2, EFL_UI_FOCUS_MANAGER_EVENT_MANAGER_FOCUS_CHANGED, _focused ,priv);
+   efl_event_callback_add(priv->list2, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, _selected, priv);
 
    evas_object_event_callback_add(win, EVAS_CALLBACK_DEL, _cleanup_cb, priv);
 

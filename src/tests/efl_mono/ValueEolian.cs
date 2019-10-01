@@ -162,7 +162,7 @@ public static class TestEinaValueEolian {
     }
 
 // ValueType in eolian context is beta, so not allowed.
-// Value does not have this problem as it is used as any_value/any_value_ptr
+// Value does not have this problem as it is used as any_value/any_value_ref
 #if EFL_BETA
     public static void TestEolianEinaValueTypeMarshalling()
     {

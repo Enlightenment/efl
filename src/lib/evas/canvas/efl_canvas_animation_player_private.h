@@ -41,6 +41,7 @@ typedef struct _Efl_Canvas_Animation_Player_Data
 
    Eina_Bool                        auto_del : 1;
    Eina_Bool                        is_play : 1;
+   Eina_Bool                        is_paused : 1;
    Eina_Bool                        keep_final_state : 1;
    Eina_Bool                        is_direction_forward : 1;
 } Efl_Canvas_Animation_Player_Data;

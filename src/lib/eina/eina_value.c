@@ -5279,6 +5279,9 @@ typedef struct _Eina_Value_Inner_Mp Eina_Value_Inner_Mp;
 struct _Eina_Value_Inner_Mp
 {
    Eina_Mempool *mempool;
+#ifdef DEBUG
+   int size;
+#endif
    int references;
 };
 
@@ -5310,6 +5313,9 @@ _eina_value_inner_mp_get(int size)
      return NULL;
 
    imp->references = 0;
+#ifdef DEBUG
+   imp->size = size;
+#endif
 
    imp->mempool = eina_mempool_add(_eina_value_mp_choice,
                                    "Eina_Value_Inner_Mp", NULL, size, 16);
@@ -5517,7 +5523,42 @@ eina_value_init(void)
 Eina_Bool
 eina_value_shutdown(void)
 {
+#ifdef DEBUG
+   Eina_Iterator *it;
+   Eina_Value_Inner_Mp *imp;
+#endif
+
    eina_lock_take(&_eina_value_inner_mps_lock);
+
+#ifdef DEBUG
+   it = eina_hash_iterator_data_new(_eina_value_inner_mps);
+   EINA_ITERATOR_FOREACH(it, imp)
+     {
+        Eina_Iterator *mit;
+        Eina_Value *value;
+
+        fprintf(stderr, "There is still %i Eina_Value in pool of size %i\n",
+                imp->references, imp->size);
+        mit = eina_mempool_iterator_new(imp->mempool);
+        EINA_ITERATOR_FOREACH(mit, value)
+          {
+             if (value->type)
+               {
+                  char *str = eina_value_to_string(value);
+                  fprintf(stderr, "Value %p of type '%s' containing '%s' still allocated.\n",
+                          value, value->type->name, str);
+                  free(str);
+               }
+             else
+               {
+                  fprintf(stderr, "Unknown type found for value %p\n", value);
+               }
+          }
+        eina_iterator_free(mit);
+     }
+   eina_iterator_free(it);
+#endif
+
    if (eina_hash_population(_eina_value_inner_mps) != 0)
      ERR("Cannot free eina_value internal memory pools -- still in use!");
    else

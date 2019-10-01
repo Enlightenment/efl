@@ -12,7 +12,7 @@ interface Efl.Part
      Part proxy objects have a special lifetime that
      is limited to one and only one function call. This
      behavior is implemented in efl_part() which call
-     Efl.Part.part_get(). Calling Efl.Part.part_get() directly
+     @.part_get(). Calling @.part_get() directly
      should be avoided.
 
      In other words, the caller does not hold a reference

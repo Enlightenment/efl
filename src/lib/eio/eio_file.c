@@ -739,6 +739,12 @@ eio_file_cancel(Eio_File *ls)
 {
    if (!ls) return EINA_FALSE;
    EINA_SAFETY_ON_NULL_RETURN_VAL(ls, EINA_FALSE);
+   // ensure callbacks are not called aftera  cancel otherwise bad things
+   // happen higher up the stack - you cant stop these being caleld even if
+   // the dataptr they are passed has been freed or invalidated. being unable
+   // to stop future cb's and cancel them is BAD.
+   ls->error_cb = NULL;;
+   ls->done_cb = NULL;
    return ecore_thread_cancel(ls->thread);
 }
 

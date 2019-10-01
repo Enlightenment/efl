@@ -120,6 +120,11 @@ _efl_ui_table_homogeneous_cell_init(Table_Calc *table_calc, Eina_Bool axis)
 
         prev_cell = &cell_calc[i];
      }
+   if (!index)
+     {
+        memset(table_calc, 0, sizeof(Table_Calc));
+        return;
+     }
    if (prev_cell)
      prev_cell->next = count;
 

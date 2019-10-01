@@ -124,20 +124,20 @@ static void
 prev_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *spotlight = data;
-   int active_index = efl_ui_spotlight_active_index_get(spotlight);
+   int active_index = efl_pack_index_get(spotlight, efl_ui_spotlight_active_element_get(spotlight));
 
    if (active_index - 1 > -1)
-     efl_ui_spotlight_active_index_set(spotlight, active_index - 1);
+     efl_ui_spotlight_active_element_set(spotlight, efl_pack_content_get(spotlight, active_index - 1));
 }
 
 static void
 next_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Eo *spotlight = data;
-   int active_index = efl_ui_spotlight_active_index_get(spotlight);
+   int active_index = efl_pack_index_get(spotlight, efl_ui_spotlight_active_element_get(spotlight));
 
    if (active_index + 1 < efl_content_count(spotlight))
-     efl_ui_spotlight_active_index_set(spotlight, active_index + 1);
+     efl_ui_spotlight_active_element_set(spotlight, efl_pack_content_get(spotlight, active_index + 1));
 }
 
 static Eina_Value
@@ -280,7 +280,7 @@ pack_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Pack_Params *param = data;
    Eo *spotlight = param->spotlight;
-   Eo *page = NULL, *curr_page;
+   Eo *page = NULL;
    int index, cnt;
 
    if ((param->type != UNPACK_AT) && (param->type != CLEAR))
@@ -318,15 +318,11 @@ pack_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
           break;
 
         case PACK_BEFORE:
-          index = efl_ui_spotlight_active_index_get(spotlight);
-          curr_page = efl_pack_content_get(spotlight, index);
-          efl_pack_before(spotlight, page, curr_page);
+          efl_pack_before(spotlight, page, efl_ui_spotlight_active_element_get(spotlight));
           break;
 
         case PACK_AFTER:
-          index = efl_ui_spotlight_active_index_get(spotlight);
-          curr_page = efl_pack_content_get(spotlight, index);
-          efl_pack_after(spotlight, page, curr_page);
+          efl_pack_after(spotlight, page, efl_ui_spotlight_active_element_get(spotlight));
           break;
 
         case PACK_AT:
@@ -383,8 +379,9 @@ page_set_btn_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 {
    Page_Set_Params *psp = data;
 
-   efl_ui_spotlight_active_index_set(psp->spotlight,
-                                       efl_ui_range_value_get(psp->spinner));
+   efl_ui_spotlight_active_element_set(psp->spotlight,
+    efl_pack_content_get(psp->spotlight,
+      efl_ui_range_value_get(psp->spinner)));
 }
 
 static void
@@ -609,7 +606,7 @@ pack_cb(void *data,
    num = efl_content_count(spotlight);
    if (num)
      efl_ui_range_limits_set(sp1, 0, num);
-   num = efl_ui_spotlight_active_index_get(spotlight);
+   num = efl_pack_index_get(spotlight, efl_ui_spotlight_active_element_get(spotlight));
    if (num >= 0)
      efl_ui_range_value_set(sp1, num);
 
@@ -735,7 +732,7 @@ pack_cb(void *data,
         efl_ui_range_limits_set(sp2, 0,
                                  (efl_content_count(spotlight) - 1));
         efl_ui_range_value_set(sp2,
-                               efl_ui_spotlight_active_index_get(spotlight));
+                               efl_pack_index_get(spotlight, efl_ui_spotlight_active_element_get(spotlight)));
      }
    else
      {
@@ -801,7 +798,7 @@ active_index_cb(void *data,
         efl_ui_range_limits_set(sp, 0,
                                  (efl_content_count(spotlight) - 1));
         efl_ui_range_value_set(sp,
-                               efl_ui_spotlight_active_index_get(spotlight));
+                               efl_pack_index_get(spotlight, efl_ui_spotlight_active_element_get(spotlight)));
      }
    else
      {
@@ -859,8 +856,7 @@ test_ui_spotlight_stack(void *data EINA_UNUSED,
    int i;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Efl.Ui.Spotlight Stack"),
+                                  efl_text_set(efl_added, "Efl.Ui.Spotlight Stack"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    panes = efl_add(EFL_UI_PANES_CLASS, win,
@@ -958,8 +954,7 @@ test_ui_spotlight_plain(void *data EINA_UNUSED,
    int i;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Efl.Ui.Spotlight Plain"),
+                                  efl_text_set(efl_added, "Efl.Ui.Spotlight Plain"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    panes = efl_add(EFL_UI_PANES_CLASS, win,
@@ -1053,8 +1048,7 @@ test_ui_spotlight_scroll(void *data EINA_UNUSED,
    int i;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Efl.Ui.Spotlight Scroll"),
+                                  efl_text_set(efl_added, "Efl.Ui.Spotlight Scroll"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE));
 
    panes = efl_add(EFL_UI_PANES_CLASS, win,

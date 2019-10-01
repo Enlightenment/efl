@@ -84,7 +84,7 @@ _parse_number(const char **content, double *number)
 {
    char *end = NULL;
 
-   *number = strtod(*content, &end);
+   *number = eina_convert_strtod_c(*content, &end);
    // if the start of string is not number
    if ((*content) == end) return EINA_FALSE;
    //skip comma if any
@@ -102,7 +102,7 @@ _parse_number(const char **content, double *number)
 static inline double
 _to_double(Evas_SVG_Parser *svg_parse, const char *str, SVG_Parser_Length_Type type)
 {
-   double parsed_value = strtod(str, NULL);
+   double parsed_value = eina_convert_strtod_c(str, NULL);
 
    if (strstr(str, "cm"))
      parsed_value = parsed_value * 35.43307;
@@ -141,7 +141,7 @@ _gradient_to_double(Evas_SVG_Parser *svg_parse, const char *str, SVG_Parser_Leng
 {
    char *end = NULL;
 
-   double parsed_value = strtod(str, &end);
+   double parsed_value = eina_convert_strtod_c(str, &end);
    double max = 1;
 
    /**
@@ -182,7 +182,7 @@ _to_offset(const char *str)
 {
    char *end = NULL;
 
-   double parsed_value = strtod(str, &end);
+   double parsed_value = eina_convert_strtod_c(str, &end);
 
    if (strstr(str, "%"))
      parsed_value = parsed_value / 100.0;
@@ -195,7 +195,7 @@ _to_opacity(const char *str)
 {
    char *end = NULL;
    int a = 0;
-   double opacity = strtod(str, &end);
+   double opacity = eina_convert_strtod_c(str, &end);
 
    if (*end == '\0')
      a = lrint(opacity * 255);
@@ -277,7 +277,7 @@ _parse_dash_array(const char *str, Efl_Gfx_Dash** dash, int *length)
      {
         // skip white space, comma
         str = _skipcomma(str);
-        tmp[count++] = strtod(str, &end);
+        tmp[count++] = eina_convert_strtod_c(str, &end);
         str = _skipcomma(end);
      }
 
@@ -337,7 +337,7 @@ _color_parser(const char *value, char **end)
 {
    double r;
 
-   r = strtod(value + 4, end);
+   r = eina_convert_strtod_c(value + 4, end);
    *end = _skip_space(*end, NULL);
    if (**end == '%')
      r = 255 * r / 100;
@@ -590,7 +590,7 @@ parse_numbers_array(char *str, double *points, int *pt_count)
           *str == '+' ||
           *str == '.')
      {
-        points[count++] = strtod(str, &end);
+        points[count++] = eina_convert_strtod_c(str, &end);
         str = end;
         str = _skip_space(str, NULL);
         if (*str == ',')
@@ -758,7 +758,7 @@ parse_length(const char *str, Svg_Length_Type *type)
        {
           *type = length_tags[i].type;
        }
-   value = strtod(str, NULL);
+   value = eina_convert_strtod_c(str, NULL);
    return value;
 }
 

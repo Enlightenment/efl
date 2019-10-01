@@ -203,7 +203,7 @@ EFL_START_TEST(efl_ui_test_popup_events)
    efl_ui_popup_part_backwall_repeat_events_set(efl_part(popup, "backwall"), EINA_TRUE);
    click_object(repeat_test_btn);
 
-   efl_ui_popup_timeout_set(popup, 0.1);
+   efl_ui_popup_closing_timeout_set(popup, 0.1);
    ecore_main_loop_begin();
 }
 EFL_END_TEST
@@ -642,7 +642,7 @@ verify_anchor(Eo *popup, Eo **align_buttons, Align align, Eina_Size2D *popup_sz)
    else
      anchor_geom = win_geom;
 
-   Evas_Coord x, y;
+   Evas_Coord x = 0, y = 0;
 
    /* click the button to trigger changing the align on the popup
     * this could be done manually, but we're trying to copy the elm_test case

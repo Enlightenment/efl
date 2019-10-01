@@ -37,6 +37,14 @@ typedef struct {
  */
 
 static void
+cache_invalidate(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
+{
+   if (pd->size_cache)
+     free(pd->size_cache);
+   pd->size_cache = NULL;
+}
+
+static void
 cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
 {
    unsigned int i;
@@ -66,7 +74,7 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
 
         if (buffer_id == 0)
           {
-             BATCH_ACCESS_SIZE(pd->callbacks, i, MIN(len, pd->size - i), EINA_TRUE, size_buffer);
+             BATCH_ACCESS_SIZE(pd->callbacks, i, pd->size, MIN(len, pd->size - i), EINA_TRUE, size_buffer);
           }
        size = size_buffer[buffer_id].size;
 
@@ -82,19 +90,15 @@ cache_require(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
           }
         pd->size_cache[i + 1] = pd->size_cache[i] + step;
         pd->maximum_min_size = MAX(pd->maximum_min_size, min);
+        /* no point iterating further if size calc can't be done yet */
+        //if ((!i) && (!pd->maximum_min_size)) break;
      }
    pd->average_item_size = pd->size_cache[pd->size]/pd->size;
+   if ((!pd->average_item_size) && (!pd->maximum_min_size))
+     cache_invalidate(obj, pd);
 }
 
-static void
-cache_invalidate(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
-{
-   if (pd->size_cache)
-     free(pd->size_cache);
-   pd->size_cache = NULL;
-}
-
-static inline int
+static int
 cache_access(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, unsigned int idx)
 {
    EINA_SAFETY_ON_FALSE_RETURN_VAL(idx <= pd->size, 0);
@@ -105,7 +109,12 @@ static void
 recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
 {
    Eina_Size2D min_size = EINA_SIZE2D(-1, -1);
+   Eina_Size2D pabs_size = pd->abs_size;
+   int pmin_size = pd->maximum_min_size;
+
    cache_require(obj, pd);
+   /* deferred */
+   if (!pd->size_cache) return;
 
    pd->abs_size = pd->viewport.size;
 
@@ -116,8 +125,8 @@ recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
         else
           pd->abs_size.w = MAX(cache_access(obj, pd, pd->size), pd->abs_size.w);
      }
-
-   efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_SIZE_CHANGED, &pd->abs_size);
+   if ((pabs_size.w != pd->abs_size.w) || (pabs_size.h != pd->abs_size.h))
+     efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_SIZE_CHANGED, &pd->abs_size);
 
    if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
      {
@@ -127,8 +136,8 @@ recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
      {
         min_size.h = pd->maximum_min_size;
      }
-
-   efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_MIN_SIZE_CHANGED, &min_size);
+   if ((pd->maximum_min_size > 0) && (pd->maximum_min_size != pmin_size))
+     efl_event_callback_call(obj, EFL_UI_POSITION_MANAGER_ENTITY_EVENT_CONTENT_MIN_SIZE_CHANGED, &min_size);
 }
 
 static inline Vis_Segment
@@ -192,8 +201,8 @@ _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_
 
         if (buffer_id == 0)
           {
-             BATCH_ACCESS_SIZE(pd->callbacks, i, len, EINA_FALSE, size_buffer);
-             BATCH_ACCESS_OBJECT(pd->callbacks, i, len, obj_buffer);
+             BATCH_ACCESS_SIZE(pd->callbacks, i, new.end_id, len, EINA_FALSE, size_buffer);
+             BATCH_ACCESS_OBJECT(pd->callbacks, i, new.end_id, len, obj_buffer);
 
              if (i == new.start_id)
                {
@@ -209,6 +218,15 @@ _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_
 
         size = size_buffer[buffer_id].size;
         ent = obj_buffer[buffer_id].entity;
+
+        int diff = cache_access(obj, pd, i + 1) - cache_access(obj, pd, i);
+        int real_diff = 0;
+        if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
+          real_diff = size.h;
+        else
+          real_diff = size.w;
+        if (real_diff != diff)
+          ERR("Reported sizes changed during caching and placement %d %d %d", i, real_diff, diff);
 
         if (ent == pd->last_group)
           {
@@ -228,7 +246,16 @@ _position_items(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd, Vis_
           }
 
         if (ent)
-          efl_gfx_entity_geometry_set(ent, geom);
+          {
+             const char *signal;
+             efl_gfx_entity_visible_set(ent, EINA_TRUE);
+             efl_gfx_entity_geometry_set(ent, geom);
+             if (i % 2 == 0)
+               signal = "efl,state,even";
+             else
+               signal = "efl,state,odd";
+             efl_layout_signal_emit(ent, signal, "efl");
+          }
         if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
           geom.y += size.h;
         else
@@ -277,6 +304,8 @@ position_content(Eo *obj EINA_UNUSED, Efl_Ui_Position_Manager_List_Data *pd)
 
    if (!pd->size) return;
    if (pd->average_item_size <= 0) return;
+
+   cache_require(obj, pd);
 
    //space size contains the amount of space that is outside the viewport (either to the top or to the left)
    space_size.w = (MAX(pd->abs_size.w - pd->viewport.w, 0))*pd->scroll_position.x;
@@ -336,6 +365,12 @@ schedule_recalc_absolut_size(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
 EOLIAN static void
 _efl_ui_position_manager_list_efl_ui_position_manager_entity_viewport_set(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, Eina_Rect size)
 {
+   if (pd->viewport.x == size.x &&
+       pd->viewport.y == size.y &&
+       pd->viewport.w == size.w &&
+       pd->viewport.h == size.h)
+     return;
+
    pd->viewport = size;
 
    recalc_absolut_size(obj, pd);
@@ -391,6 +426,8 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_position_single_ite
 
    if (!pd->size) return EINA_RECT(0,0,0,0);
 
+   cache_require(obj, pd);
+
    //space size contains the amount of space that is outside the viewport (either to the top or to the left)
    space_size.w = (MAX(pd->abs_size.w - pd->viewport.w, 0))*pd->scroll_position.x;
    space_size.h = (MAX(pd->abs_size.h - pd->viewport.h, 0))*pd->scroll_position.y;
@@ -407,7 +444,7 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_position_single_ite
 
    geom = pd->viewport;
 
-   BATCH_ACCESS_SIZE_VAL(pd->callbacks, idx, 1, EINA_FALSE, size_buffer, EINA_RECT_EMPTY());
+   BATCH_ACCESS_SIZE_VAL(pd->callbacks, idx, idx + 1, 1, EINA_FALSE, size_buffer, EINA_RECT_EMPTY());
 
    size = size_buffer[0].size;
 
@@ -442,6 +479,7 @@ _efl_ui_position_manager_list_efl_ui_layout_orientable_orientation_set(Eo *obj E
 
    cache_invalidate(obj, pd);
    cache_require(obj,pd);
+   if (!efl_finalized_get(obj)) return;
    recalc_absolut_size(obj, pd);
    position_content(obj, pd);
 }
@@ -453,12 +491,14 @@ _efl_ui_position_manager_list_efl_ui_layout_orientable_orientation_get(const Eo 
 }
 
 EOLIAN static void
-_efl_ui_position_manager_list_efl_object_destructor(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
+_efl_ui_position_manager_list_efl_object_invalidate(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd)
 {
    if (pd->rebuild_absolut_size)
      eina_future_cancel(pd->rebuild_absolut_size);
 
-   efl_destructor(efl_super(obj, MY_CLASS));
+   efl_ui_position_manager_data_access_v1_data_access_set(obj, NULL, NULL, NULL, NULL, NULL, NULL, 0);
+
+   efl_invalidate(efl_super(obj, MY_CLASS));
 }
 
 EOLIAN static int
@@ -497,7 +537,16 @@ _efl_ui_position_manager_list_efl_ui_position_manager_entity_version(Eo *obj EIN
 EOLIAN static void
 _efl_ui_position_manager_list_efl_ui_position_manager_data_access_v1_data_access_set(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, void *obj_access_data, Efl_Ui_Position_Manager_Object_Batch_Callback obj_access, Eina_Free_Cb obj_access_free_cb, void *size_access_data, Efl_Ui_Position_Manager_Size_Batch_Callback size_access, Eina_Free_Cb size_access_free_cb, int size)
 {
+   // Cleanup cache first
    cache_invalidate(obj, pd);
+
+   // Clean callback if they were set
+   if (pd->callbacks.object.free_cb)
+     pd->callbacks.object.free_cb(pd->callbacks.object.data);
+   if (pd->callbacks.size.free_cb)
+     pd->callbacks.size.free_cb(pd->callbacks.size.data);
+
+   // Set them
    pd->callbacks.object.data = obj_access_data;
    pd->callbacks.object.access = obj_access;
    pd->callbacks.object.free_cb = obj_access_free_cb;
@@ -505,6 +554,36 @@ _efl_ui_position_manager_list_efl_ui_position_manager_data_access_v1_data_access
    pd->callbacks.size.access = size_access;
    pd->callbacks.size.free_cb = size_access_free_cb;
    pd->size = size;
+}
+
+
+EOLIAN static void
+_efl_ui_position_manager_list_efl_ui_position_manager_entity_entities_ready(Eo *obj, Efl_Ui_Position_Manager_List_Data *pd, unsigned int start_id, unsigned int end_id)
+{
+   Eina_Size2D space_size;
+   int relevant_space_size;
+
+   if (end_id < pd->prev_run.start_id || start_id > pd->prev_run.end_id)
+     return;
+
+   if (!pd->size) return;
+   if (pd->average_item_size <= 0) return;
+
+   cache_require(obj, pd);
+
+   //space size contains the amount of space that is outside the viewport (either to the top or to the left)
+   space_size.w = (MAX(pd->abs_size.w - pd->viewport.w, 0))*pd->scroll_position.x;
+   space_size.h = (MAX(pd->abs_size.h - pd->viewport.h, 0))*pd->scroll_position.y;
+
+   if (pd->dir == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
+     {
+        relevant_space_size = space_size.h;
+     }
+   else
+     {
+        relevant_space_size = space_size.w;
+     }
+   _position_items(obj, pd, pd->prev_run, relevant_space_size);
 }
 
 

@@ -5,7 +5,6 @@
 #include "region.h"
 
 #include <software/Ector_Software.h>
-#include "cairo/Ector_Cairo.h"
 #include "evas_ector_software.h"
 #include "draw.h"
 #include "evas_filter_private.h"
@@ -4193,26 +4192,13 @@ eng_output_idle_flush(void *engine EINA_UNUSED, void *data)
 
 // Ector functions
 
-static Eina_Bool use_cairo;
-
 static Ector_Surface *
 eng_ector_create(void *engine EINA_UNUSED)
 {
    Ector_Surface *ector;
-   const char *ector_backend;
 
-   ector_backend = getenv("ECTOR_BACKEND");
    efl_domain_current_push(EFL_ID_DOMAIN_SHARED);
-   if (ector_backend && !strcasecmp(ector_backend, "default"))
-     {
-        ector = efl_add_ref(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
-        use_cairo = EINA_FALSE;
-     }
-   else
-     {
-        ector = efl_add_ref(ECTOR_CAIRO_SOFTWARE_SURFACE_CLASS, NULL);
-        use_cairo = EINA_TRUE;
-     }
+   ector = efl_add_ref(ECTOR_SOFTWARE_SURFACE_CLASS, NULL);
    efl_domain_current_pop();
    return ector;
 }
@@ -4444,12 +4430,15 @@ _draw_thread_ector_surface_set(void *data)
    if (surface)
      {
         pixels = evas_cache_image_pixels(&surface->cache_entry);
-        w = surface->cache_entry.w;
-        h = surface->cache_entry.h;
-        x = ector_surface->x;
-        y = ector_surface->y;
-        // clear the surface before giving to ector
-        if (ector_surface->clear) memset(pixels, 0, (w * h * 4));
+        if (pixels)
+          {
+             w = surface->cache_entry.w;
+             h = surface->cache_entry.h;
+             x = ector_surface->x;
+             y = ector_surface->y;
+             // clear the surface before giving to ector
+             if (ector_surface->clear) memset(pixels, 0, (w * h * 4));
+          }
      }
 
    ector_buffer_pixels_set(ector_surface->ector, pixels, w, h, 0, EFL_GFX_COLORSPACE_ARGB8888, EINA_TRUE);

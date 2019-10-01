@@ -433,6 +433,17 @@ EFL_START_TEST(efl_ui_win_test_efl_input_interface_pointer_cancel)
    ck_assert_int_eq(called, 2);
 }
 EFL_END_TEST
+
+EFL_START_TEST(efl_ui_win_test_type)
+{
+   Efl_Ui_Win *win;
+
+   win = win_add();
+
+   ck_assert_int_eq(efl_ui_win_type_get(win), EFL_UI_WIN_TYPE_BASIC);
+}
+EFL_END_TEST
+
 void
 efl_ui_test_win(TCase *tc)
 {
@@ -447,4 +458,5 @@ efl_ui_test_win(TCase *tc)
    tcase_add_test(tc, efl_ui_win_test_efl_input_interface_pointer_in_out);
    tcase_add_test(tc, efl_ui_win_test_efl_input_interface_pointer_wheel);
    tcase_add_test(tc, efl_ui_win_test_efl_input_interface_pointer_cancel);
+   tcase_add_test(tc, efl_ui_win_test_type);
 }

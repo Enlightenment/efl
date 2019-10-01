@@ -16,8 +16,8 @@ interface @beta Efl.Access.Value
          }
       }
       @property range @protected @beta {
+         [[The range of all possible values and its description]]
          get {
-            [[Gets a range of all possible values and its description]]
          }
          values {
             lower_limit: double; [[Lower limit of the range]]
@@ -26,8 +26,8 @@ interface @beta Efl.Access.Value
          }
       }
       @property increment @protected @beta {
+         [[Gets an minimal incrementation value]]
          get {
-            [[Gets an minimal incrementation value]]
          }
          values {
             increment: double; [[Minimal incrementation value]]

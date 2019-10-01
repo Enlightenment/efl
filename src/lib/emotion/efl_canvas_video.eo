@@ -1,17 +1,19 @@
-class @beta Efl.Canvas.Video extends Efl.Canvas.Group implements Efl.File, Efl.Player, Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller
+class @beta Efl.Canvas.Video extends Efl.Canvas.Group
+                             implements Efl.File, Efl.Audio_Control, Efl.Player, Efl.Playable,
+                                        Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller
 {
    [[Efl canvas video class]]
    methods {
         @property option {
+             [[Sets options for the current module.
+
+               This function allows one to mute the video or audio of the
+               emotion object.
+
+               Please don't use this function, consider using
+               @Efl.Audio_Control.mute instead.
+             ]]
              set {
-                  [[Set the specified option for the current module.
-
-                    This function allows one to mute the video or audio of the
-                    emotion object.
-
-                    Please don't use this function, consider using
-                    @Efl.Player.mute instead.
-                  ]]
              }
              values {
                   opt: string; [[The option that is being set. Currently
@@ -21,23 +23,23 @@ class @beta Efl.Canvas.Video extends Efl.Canvas.Group implements Efl.File, Efl.P
              }
         }
         @property engine {
+             [[Initializes an emotion object with the specified module.
+
+               This function is required after creating the emotion object,
+               in order to specify which module will be used with this
+               object. Different objects can use different modules to
+               play a media file. The current supported modules are
+               gstreamer and xine.
+
+               To use any of them, you need to make sure that support for
+               them was compiled correctly.
+
+               It's possible to disable the build of a module with
+               --disable-module_name.
+
+               See also @Efl.File.file.
+             ]]
              set {
-                  [[Initializes an emotion object with the specified module.
-
-                    This function is required after creating the emotion object,
-                    in order to specify which module will be used with this
-                    object. Different objects can use different modules to
-                    play a media file. The current supported modules are
-                    gstreamer and xine.
-
-                    To use any of them, you need to make sure that support for
-                    them was compiled correctly.
-
-                    It's possible to disable the build of a module with
-                    --disable-module_name.
-
-                    See also @Efl.File.file.
-                  ]]
                   return: bool; [[$true if the specified module was successfully
                                   initialized for this object, $false otherwise.]]
              }
@@ -52,15 +54,17 @@ class @beta Efl.Canvas.Video extends Efl.Canvas.Group implements Efl.File, Efl.P
         Efl.Gfx.Entity.position { set; }
         Efl.Gfx.Entity.size { set; }
         Efl.File.load;
+        Efl.File.unload;
         Efl.File.file { set; }
         Efl.File.loaded { get; }
-        Efl.Player.play { get; set; }
-        Efl.Player.pos { get; set; }
-        Efl.Player.progress { get; }
-        Efl.Player.volume { get; set; }
-        Efl.Player.mute { get; set; }
-        Efl.Player.length { get; }
-        Efl.Player.seekable { get; }
+        Efl.Player.playing { get; set; }
+        Efl.Player.paused { get; set; }
+        Efl.Player.playback_position { get; set; }
+        Efl.Player.playback_progress { get; }
+        Efl.Audio_Control.volume { get; set; }
+        Efl.Audio_Control.mute { get; set; }
+        Efl.Playable.length { get; }
+        Efl.Playable.seekable { get; }
         Efl.Gfx.Image_Load_Controller.load_size { get; }
         Efl.Gfx.Image.ratio { get; }
         Efl.Gfx.Image.smooth_scale { get; set; }

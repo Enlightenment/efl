@@ -198,24 +198,25 @@ _pan_viewport_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
 }
 
 static void
-_pan_position_changed_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+_pan_position_changed_cb(void *data, const Efl_Event *ev)
 {
    MY_DATA_GET(data, pd);
-   Eina_Position2D pos = efl_ui_pan_position_get(pd->pan);
+   Eina_Position2D *pos = ev->info;
    Eina_Position2D max = efl_ui_pan_position_max_get(pd->pan);
    Eina_Vector2 rpos = {0.0, 0.0};
 
    if (max.x > 0.0)
-     rpos.x = (double)pos.x/(double)max.x;
+     rpos.x = (double)pos->x/(double)max.x;
    if (max.y > 0.0)
-     rpos.y = (double)pos.y/(double)max.y;
+     rpos.y = (double)pos->y/(double)max.y;
 
    efl_ui_position_manager_entity_scroll_position_set(pd->pos_man, rpos.x, rpos.y);
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(pan_events_cb,
-  {EFL_UI_PAN_EVENT_PAN_POSITION_CHANGED, _pan_position_changed_cb},
-  {EFL_UI_PAN_EVENT_PAN_VIEWPORT_CHANGED, _pan_viewport_changed_cb},
+  {EFL_UI_PAN_EVENT_PAN_CONTENT_POSITION_CHANGED, _pan_position_changed_cb},
+  {EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _pan_viewport_changed_cb},
+  {EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _pan_viewport_changed_cb},
 )
 
 static void
@@ -260,7 +261,7 @@ _efl_ui_collection_efl_ui_single_selectable_last_selected_get(const Eo *obj EINA
 }
 
 EOLIAN static Eina_Iterator*
-_efl_ui_collection_efl_ui_multi_selectable_selected_items_get(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
+_efl_ui_collection_efl_ui_multi_selectable_selected_iterator_new(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
 {
    return eina_list_iterator_new(pd->selected);
 }
@@ -299,14 +300,14 @@ _size_accessor_get_at(void *data, Efl_Ui_Position_Manager_Size_Call_Config conf,
    for (i = 0; i < (conf.range.end_id - conf.range.start_id); ++i)
      {
          Efl_Gfx_Entity *geom = eina_list_data_get(lst), *parent;
-         Eina_Size2D size = efl_gfx_hint_size_min_get(geom);
+         Eina_Size2D size = efl_gfx_hint_size_combined_min_get(geom);
 
          parent = efl_ui_item_parent_get(geom);
          sizes[i].size = size;
          _fill_depth(geom, &sizes[i].element_depth, &sizes[i].depth_leader);
          if (i == 0 && !sizes[0].depth_leader && parent)
            {
-              result.parent_size = efl_gfx_hint_size_min_get(parent);
+              result.parent_size = efl_gfx_hint_size_combined_min_get(parent);
            }
          lst = eina_list_next(lst);
          if (!lst)
@@ -365,7 +366,7 @@ _efl_ui_collection_efl_object_constructor(Eo *obj, Efl_Ui_Collection_Data *pd EI
    _fast_accessor_init(&pd->size_accessor, &pd->items);
 
    if (!elm_widget_theme_klass_get(obj))
-     elm_widget_theme_klass_set(obj, "item_container");
+     elm_widget_theme_klass_set(obj, "collection");
 
    o = efl_constructor(efl_super(obj, MY_CLASS));
 
@@ -430,7 +431,7 @@ _efl_ui_collection_efl_object_invalidate(Eo *obj, Efl_Ui_Collection_Data *pd EIN
 {
    efl_ui_collection_position_manager_set(obj, NULL);
 
-   efl_ui_single_selectable_fallback_selection_set(obj, NULL);
+   efl_ui_selectable_fallback_selection_set(obj, NULL);
 
    deselect_all(pd);
 
@@ -469,7 +470,7 @@ _efl_ui_collection_efl_ui_layout_orientable_orientation_get(const Eo *obj EINA_U
 }
 
 EOLIAN static void
-_efl_ui_collection_efl_ui_scrollable_interactive_match_content_set(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd, Eina_Bool w, Eina_Bool h)
+_efl_ui_collection_efl_ui_scrollable_match_content_set(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd, Eina_Bool w, Eina_Bool h)
 {
    if (pd->match_content.w == w && pd->match_content.h == h)
      return;
@@ -485,7 +486,7 @@ EOLIAN static void
 _efl_ui_collection_efl_ui_multi_selectable_select_mode_set(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd, Efl_Ui_Select_Mode mode)
 {
    pd->mode = mode;
-   if ((mode == EFL_UI_SELECT_MODE_SINGLE_ALWAYS || mode == EFL_UI_SELECT_MODE_SINGLE) &&
+   if ((mode == EFL_UI_SELECT_MODE_SINGLE) &&
        eina_list_count(pd->selected) > 0)
      {
         Efl_Ui_Item *last = eina_list_last_data_get(pd->selected);
@@ -513,7 +514,7 @@ _schedule_selection_job_cb(Eo *o, void *data EINA_UNUSED, const Eina_Value value
 
    pd->selection_changed_job = NULL;
 
-   efl_event_callback_call(o, EFL_UI_SINGLE_SELECTABLE_EVENT_SELECTION_CHANGED, NULL);
+   efl_event_callback_call(o, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, NULL);
 
    return EINA_VALUE_EMPTY;
 }
@@ -568,7 +569,7 @@ _selection_changed(void *data, const Efl_Event *ev)
 
    if (selection)
      {
-        if (pd->mode == EFL_UI_SELECT_MODE_SINGLE_ALWAYS || pd->mode == EFL_UI_SELECT_MODE_SINGLE)
+        if (pd->mode == EFL_UI_SELECT_MODE_SINGLE)
           {
              _single_selection_behaviour(obj, pd, ev->object);
           }
@@ -620,14 +621,36 @@ _redirect_cb(void *data, const Efl_Event *ev)
 {
    Eo *obj = data;
 
-#define REDIRECT_EVT(item_evt, item) \
-   if (item_evt == ev->desc) efl_event_callback_call(obj, item, ev->object);
-   REDIRECT_EVT(EFL_INPUT_EVENT_PRESSED, EFL_UI_EVENT_ITEM_PRESSED);
-   REDIRECT_EVT(EFL_INPUT_EVENT_UNPRESSED, EFL_UI_EVENT_ITEM_UNPRESSED);
-   REDIRECT_EVT(EFL_INPUT_EVENT_LONGPRESSED, EFL_UI_EVENT_ITEM_LONGPRESSED);
+#define REDIRECT_EVT(Desc, Item_Desc)                           \
+   if (Desc == ev->desc)                                        \
+     {                                                          \
+        Efl_Ui_Item_Clickable_Clicked item_clicked;             \
+        Efl_Input_Clickable_Clicked *clicked = ev->info;        \
+                                                                \
+        item_clicked.clicked = *clicked;                        \
+        item_clicked.item = ev->object;                         \
+                                                                \
+        efl_event_callback_call(obj, Item_Desc, &item_clicked); \
+     }
+#define REDIRECT_EVT_PRESS(Desc, Item_Desc)                           \
+   if (Desc == ev->desc)                                        \
+     {                                                          \
+        Efl_Ui_Item_Clickable_Pressed item_pressed;             \
+        int *button = ev->info;        \
+                                                                \
+        item_pressed.button = *button;                        \
+        item_pressed.item = ev->object;                         \
+                                                                \
+        efl_event_callback_call(obj, Item_Desc, &item_pressed); \
+     }
+
+   REDIRECT_EVT_PRESS(EFL_INPUT_EVENT_PRESSED, EFL_UI_EVENT_ITEM_PRESSED);
+   REDIRECT_EVT_PRESS(EFL_INPUT_EVENT_UNPRESSED, EFL_UI_EVENT_ITEM_UNPRESSED);
+   REDIRECT_EVT_PRESS(EFL_INPUT_EVENT_LONGPRESSED, EFL_UI_EVENT_ITEM_LONGPRESSED);
    REDIRECT_EVT(EFL_INPUT_EVENT_CLICKED_ANY, EFL_UI_EVENT_ITEM_CLICKED_ANY);
    REDIRECT_EVT(EFL_INPUT_EVENT_CLICKED, EFL_UI_EVENT_ITEM_CLICKED);
 #undef REDIRECT_EVT
+#undef REDIRECT_EVT_PRESS
 }
 
 EFL_CALLBACKS_ARRAY_DEFINE(active_item,
@@ -697,6 +720,53 @@ update_pos_man(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd, Efl_Gfx_Entity *
         pd->size_accessor.current = pd->items;
      }
    efl_ui_position_manager_entity_item_added(pd->pos_man, id, subobj);
+}
+
+static inline Efl_Ui_Item*
+fetch_rep_parent(Eina_List *lst)
+{
+   if (!lst)
+     return NULL;
+
+   Efl_Ui_Item *it = eina_list_data_get(lst);
+
+   return efl_ui_item_parent_get(it);
+}
+
+static Eina_Bool
+check_group_integrity(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd, Efl_Gfx_Entity *subobj)
+{
+   Eina_List *carrier_list = eina_list_data_find_list(pd->items, subobj), *prev_lst;
+   Efl_Ui_Item *next, *prev, *carrier;
+
+   prev_lst = eina_list_prev(carrier_list);
+   next = fetch_rep_parent(eina_list_next(carrier_list));
+   prev = fetch_rep_parent(prev_lst);
+   carrier = fetch_rep_parent(carrier_list);
+
+   if (next && next == prev && carrier != prev)
+     {
+        //a item got inserted into the middle of one group, but does not have the correct group header, that is a bug
+        ERR("Inserting a item with the wrong group into another group(%p,%p,%p)", prev, carrier, next);
+        unregister_item(obj, pd, subobj);
+        return EINA_FALSE;
+     }
+
+   if (prev_lst && eina_list_data_get(prev_lst) == next && carrier != next)
+     {
+        //a item got inserted between group header and group children, also a error
+        ERR("Inserting a item between group header, and group elements(%p,%p,%p)", prev_lst, eina_list_data_get(prev_lst), next);
+        unregister_item(obj, pd, subobj);
+        return EINA_FALSE;
+     }
+   if (!next && !prev && carrier && prev_lst && eina_list_data_get(prev_lst) != carrier)
+     {
+        ERR("Tried to insert a item with group, outside its group(%p,%p,%p)", next, prev, carrier);
+        unregister_item(obj, pd, subobj);
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
 }
 
 EOLIAN static Eina_Bool
@@ -773,11 +843,13 @@ EOLIAN static Eina_Bool
 _efl_ui_collection_efl_pack_linear_pack_before(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Gfx_Entity *subobj, const Efl_Gfx_Entity *existing)
 {
    Eina_List *subobj_list = eina_list_data_find_list(pd->items, existing);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(subobj_list, EINA_FALSE);
+   if (existing)
+     EINA_SAFETY_ON_NULL_RETURN_VAL(subobj_list, EINA_FALSE);
 
    if (!register_item(obj, pd, subobj))
      return EINA_FALSE;
    pd->items = eina_list_prepend_relative_list(pd->items, subobj, subobj_list);
+   if (!check_group_integrity(obj, pd, subobj)) return EINA_FALSE;
    update_pos_man(obj, pd, subobj);
    return EINA_TRUE;
 }
@@ -786,11 +858,13 @@ EOLIAN static Eina_Bool
 _efl_ui_collection_efl_pack_linear_pack_after(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Gfx_Entity *subobj, const Efl_Gfx_Entity *existing)
 {
    Eina_List *subobj_list = eina_list_data_find_list(pd->items, existing);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(subobj_list, EINA_FALSE);
+   if (existing)
+     EINA_SAFETY_ON_NULL_RETURN_VAL(subobj_list, EINA_FALSE);
 
    if (!register_item(obj, pd, subobj))
      return EINA_FALSE;
    pd->items = eina_list_append_relative_list(pd->items, subobj, subobj_list);
+   if (!check_group_integrity(obj, pd, subobj)) return EINA_FALSE;
    update_pos_man(obj, pd, subobj);
    return EINA_TRUE;
 }
@@ -804,7 +878,8 @@ _efl_ui_collection_efl_pack_linear_pack_at(Eo *obj, Efl_Ui_Collection_Data *pd, 
    clamp = clamp_index(pd, index);
    index = index_adjust(pd, index);
    subobj_list = eina_list_nth_list(pd->items, index);
-   EINA_SAFETY_ON_NULL_RETURN_VAL(subobj_list, EINA_FALSE);
+   if (pd->items)
+     EINA_SAFETY_ON_NULL_RETURN_VAL(subobj_list, EINA_FALSE);
    if (!register_item(obj, pd, subobj))
      return EINA_FALSE;
    if (clamp == 0)
@@ -813,6 +888,7 @@ _efl_ui_collection_efl_pack_linear_pack_at(Eo *obj, Efl_Ui_Collection_Data *pd, 
      pd->items = eina_list_append(pd->items, subobj);
    else
      pd->items = eina_list_prepend(pd->items, subobj);
+   if (!check_group_integrity(obj, pd, subobj)) return EINA_FALSE;
    update_pos_man(obj, pd, subobj);
    return EINA_TRUE;
 }
@@ -908,6 +984,7 @@ _efl_ui_collection_efl_ui_widget_focus_manager_focus_manager_create(Eo *obj, Efl
    Eo *man = efl_add(EFL_UI_COLLECTION_FOCUS_MANAGER_CLASS, obj,
                  efl_ui_focus_manager_root_set(efl_added, root));
    Efl_Ui_Collection_Focus_Manager_Data *fm_pd = efl_data_scope_safe_get(man, EFL_UI_COLLECTION_FOCUS_MANAGER_CLASS);
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fm_pd, NULL);
    fm_pd->collection = obj;
    return man;
 }
@@ -1024,13 +1101,13 @@ _selectable_range_apply(Eina_List *start, Eina_Bool flag)
 }
 
 EOLIAN static void
-_efl_ui_collection_efl_ui_multi_selectable_select_all(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
+_efl_ui_collection_efl_ui_multi_selectable_all_select(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
 {
    _selectable_range_apply(pd->items, EINA_TRUE);
 }
 
 EOLIAN static void
-_efl_ui_collection_efl_ui_multi_selectable_unselect_all(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
+_efl_ui_collection_efl_ui_multi_selectable_all_unselect(Eo *obj EINA_UNUSED, Efl_Ui_Collection_Data *pd)
 {
    _selectable_range_apply(pd->items, EINA_FALSE);
 }
@@ -1070,13 +1147,13 @@ _range_selection_find(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Ui_Selectable *a,
 }
 
 EOLIAN static void
-_efl_ui_collection_efl_ui_multi_selectable_select_range(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Ui_Selectable *a, Efl_Ui_Selectable *b)
+_efl_ui_collection_efl_ui_multi_selectable_range_select(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Ui_Selectable *a, Efl_Ui_Selectable *b)
 {
    _range_selection_find(obj, pd, a, b, EINA_TRUE);
 }
 
 EOLIAN static void
-_efl_ui_collection_efl_ui_multi_selectable_unselect_range(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Ui_Selectable *a, Efl_Ui_Selectable *b)
+_efl_ui_collection_efl_ui_multi_selectable_range_unselect(Eo *obj, Efl_Ui_Collection_Data *pd, Efl_Ui_Selectable *a, Efl_Ui_Selectable *b)
 {
    _range_selection_find(obj, pd, a, b, EINA_FALSE);
 }
@@ -1099,8 +1176,9 @@ _efl_ui_collection_efl_ui_single_selectable_fallback_selection_get(const Eo *obj
 #define ITEM_IS_OUTSIDE_VISIBLE(id) id < collection_pd->start_id || id > collection_pd->end_id
 
 static inline void
-_assert_item_available(Eo *item, int new_id, Efl_Ui_Collection_Data *pd)
+_assert_item_available(Eo *item, unsigned int new_id, Efl_Ui_Collection_Data *pd)
 {
+   EINA_SAFETY_ON_FALSE_RETURN(new_id < eina_list_count(pd->items));
    efl_gfx_entity_visible_set(item, EINA_TRUE);
    efl_gfx_entity_geometry_set(item, efl_ui_position_manager_entity_position_single_item(pd->pos_man, new_id));
 }

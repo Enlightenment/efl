@@ -562,7 +562,7 @@ _edje_file_open(const Eina_File *f, int *error_ret, time_t mtime, Eina_Bool coll
    edf->references = 1;
 
    /* This should be done at edje generation time */
-   _edje_textblock_style_parse_and_fix(edf);
+   _edje_file_textblock_style_parse_and_fix(edf);
 
    edf->style_hash = eina_hash_string_small_new(NULL);
    EINA_LIST_FOREACH(edf->styles, l, stl)

@@ -23,6 +23,8 @@ _efl_canvas_vg_shape_fill_set(Eo *obj EINA_UNUSED,
                        Efl_Canvas_Vg_Shape_Data *pd,
                        Efl_Canvas_Vg_Node *f)
 {
+   if (pd->fill == f) return;
+
    Efl_Canvas_Vg_Node *tmp = pd->fill;
 
    pd->fill = efl_ref(f);
@@ -40,8 +42,9 @@ _efl_canvas_vg_shape_stroke_fill_set(Eo *obj EINA_UNUSED,
                               Efl_Canvas_Vg_Shape_Data *pd,
                               Efl_Canvas_Vg_Node *f)
 {
-   Efl_Canvas_Vg_Node *tmp = pd->fill;
+   if (pd->stroke.fill == f) return;
 
+   Efl_Canvas_Vg_Node *tmp = pd->stroke.fill;
    pd->stroke.fill = efl_ref(f);
    efl_unref(tmp);
 }
@@ -78,8 +81,8 @@ _efl_canvas_vg_shape_render_pre(Evas_Object_Protected_Data *vg_pd,
                                 void *engine, void *output, void *context,
                                 Ector_Surface *surface,
                                 Eina_Matrix3 *ptransform,
-                                Ector_Buffer *mask,
-                                int mask_op,
+                                Ector_Buffer *comp,
+                                Efl_Gfx_Vg_Composite_Method comp_method,
                                 void *data)
 {
    Efl_Canvas_Vg_Shape_Data *pd = data;
@@ -93,13 +96,13 @@ _efl_canvas_vg_shape_render_pre(Evas_Object_Protected_Data *vg_pd,
 
    fill = _evas_vg_render_pre(vg_pd, pd->fill,
                               engine, output, context,
-                              surface, ctransform, mask, mask_op);
+                              surface, ctransform, comp, comp_method);
    stroke_fill = _evas_vg_render_pre(vg_pd, pd->stroke.fill,
                                      engine, output, context,
-                                     surface, ctransform, mask, mask_op);
+                                     surface, ctransform, comp, comp_method);
    stroke_marker = _evas_vg_render_pre(vg_pd, pd->stroke.marker,
                                        engine, output, context,
-                                       surface, ctransform, mask, mask_op);
+                                       surface, ctransform, comp, comp_method);
 
    if (!nd->renderer)
      {
@@ -117,7 +120,7 @@ _efl_canvas_vg_shape_render_pre(Evas_Object_Protected_Data *vg_pd,
    efl_gfx_path_copy_from(nd->renderer, obj);
    efl_gfx_path_commit(nd->renderer);
    ector_renderer_prepare(nd->renderer);
-   ector_renderer_mask_set(nd->renderer, mask, mask_op);
+   ector_renderer_comp_method_set(nd->renderer, comp, comp_method);
 }
 
 static Eo *

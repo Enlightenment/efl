@@ -1,5 +1,5 @@
-var @beta Efl.Net.Socket_Ssl_Error.HANDSHAKE: Eina.Error; [[Failed SSL handshake]]
-var @beta Efl.Net.Socket_Ssl_Error.CERTIFICATE_VERIFY_FAILED: Eina.Error; [[Failed to verify peer's certificate]]
+error @beta Efl.Net.Socket_Ssl_Error.HANDSHAKE = "Failed SSL handshake"; [[Failed SSL handshake]]
+error @beta Efl.Net.Socket_Ssl_Error.CERTIFICATE_VERIFY_FAILED = "Failed to verify peer's certificate"; [[Failed to verify peer's certificate]]
 
 class @beta Efl.Net.Socket_Ssl extends Efl.Loop_Consumer implements Efl.Net.Socket {
     [[A wrapper socket doing SSL (Secure Sockets Layer).
@@ -37,8 +37,8 @@ class @beta Efl.Net.Socket_Ssl extends Efl.Loop_Consumer implements Efl.Net.Sock
                 return: bool(false); [[$true if adopted, $false otherwise]]
             }
             values {
-                efl_net_socket: Efl.Net.Socket; [[The adopted object, if any, otherwise NULL]]
-                ctx: Efl.Net.Ssl.Context; [[The SSL context used when adopting the socket, if any, otherwise NULL]]
+                efl_net_socket: Efl.Net.Socket; [[The adopted object, if any, otherwise $NULL]]
+                ctx: Efl.Net.Ssl.Context; [[The SSL context used when adopting the socket, if any, otherwise $NULL]]
             }
         }
 
@@ -68,7 +68,7 @@ class @beta Efl.Net.Socket_Ssl extends Efl.Loop_Consumer implements Efl.Net.Sock
               address but the server certificate only specifies DNS
               (names).
 
-              If NULL, then it will fetch from socket using
+              If $NULL, then it will fetch from socket using
               @Efl.Net.Socket.address_remote or
               @Efl.Net.Dialer.address_dial.
 

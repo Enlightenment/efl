@@ -108,6 +108,23 @@ interface @beta Efl2.Text.Font.Properties {
             size: Efl2.Font.Size; [[The font size, in points.]]
          }
       }
+      @property font_size_factor {
+         [[Control the relative font size for a given text object.
+
+           This function allows the font size of a text object to
+           be set. It's similar to @.font_size, but instead of setting
+           the absolute size, it sets it relative to the currently set
+           font size. For example, a value of 2.0 would be double of the
+           current font size.
+         ]]
+         set {
+         }
+         get {
+         }
+         values {
+            factor: double; [[The factor to multiply the font size with]]
+         }
+      }
       @property font_source {
          set {
             [[Set the font (source) file to be used on a given text object.

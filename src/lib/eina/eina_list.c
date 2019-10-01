@@ -609,9 +609,9 @@ eina_list_append(Eina_List *list, const void *data)
    return list;
 #ifdef EINA_LIST_MAGIC
 on_error:
-#endif
    _eina_list_mempool_list_free(new_l);
    return NULL;
+#endif
 }
 
 EAPI Eina_List *
@@ -640,9 +640,9 @@ eina_list_prepend(Eina_List *list, const void *data)
 
 #ifdef EINA_LIST_MAGIC
 on_error:
-#endif
    _eina_list_mempool_list_free(new_l);
    return NULL;
+#endif
 }
 
 EAPI Eina_List *

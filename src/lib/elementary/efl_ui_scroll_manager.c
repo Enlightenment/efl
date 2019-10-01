@@ -137,8 +137,8 @@ static inline Eina_Bool
 _scroll_manager_thumb_scrollable_get(Efl_Ui_Scroll_Manager_Data *sd)
 {
    if (!sd) return EINA_FALSE;
-   if ((sd->block & EFL_UI_SCROLL_BLOCK_VERTICAL) &&
-       (sd->block & EFL_UI_SCROLL_BLOCK_HORIZONTAL))
+   if ((sd->block & EFL_UI_LAYOUT_ORIENTATION_VERTICAL) &&
+       (sd->block & EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL))
      return EINA_FALSE;
 
    if (!_elm_config->thumbscroll_enable) return EINA_FALSE;
@@ -158,20 +158,20 @@ static void
 _efl_ui_scroll_manager_scroll_start(Efl_Ui_Scroll_Manager_Data *sd)
 {
    sd->scrolling = EINA_TRUE;
-   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_START, NULL);
+   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_STARTED, NULL);
 }
 
 static void
 _efl_ui_scroll_manager_scroll_stop(Efl_Ui_Scroll_Manager_Data *sd)
 {
    sd->scrolling = EINA_FALSE;
-   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_STOP, NULL);
+   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_FINISHED, NULL);
 }
 
 static void
 _efl_ui_scroll_manager_drag_start(Efl_Ui_Scroll_Manager_Data *sd)
 {
-   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_DRAG_START, NULL);
+   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_DRAG_STARTED, NULL);
    if (!sd->scrolling)
      _efl_ui_scroll_manager_scroll_start(sd);
 }
@@ -179,13 +179,13 @@ _efl_ui_scroll_manager_drag_start(Efl_Ui_Scroll_Manager_Data *sd)
 static void
 _efl_ui_scroll_manager_drag_stop(Efl_Ui_Scroll_Manager_Data *sd)
 {
-   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_DRAG_STOP, NULL);
+   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_DRAG_FINISHED, NULL);
 }
 
 static void
 _efl_ui_scroll_manager_anim_start(Efl_Ui_Scroll_Manager_Data *sd)
 {
-   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_ANIM_START, NULL);
+   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_ANIM_STARTED, NULL);
    if (!sd->scrolling)
      _efl_ui_scroll_manager_scroll_start(sd);
 }
@@ -193,7 +193,7 @@ _efl_ui_scroll_manager_anim_start(Efl_Ui_Scroll_Manager_Data *sd)
 static void
 _efl_ui_scroll_manager_anim_stop(Efl_Ui_Scroll_Manager_Data *sd)
 {
-   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_ANIM_STOP, NULL);
+   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_ANIM_FINISHED, NULL);
    if (sd->scrolling)
      _efl_ui_scroll_manager_scroll_stop(sd);
 }
@@ -201,7 +201,7 @@ _efl_ui_scroll_manager_anim_stop(Efl_Ui_Scroll_Manager_Data *sd)
 static void
 _efl_ui_scroll_manager_scroll(Efl_Ui_Scroll_Manager_Data *sd)
 {
-   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL, NULL);
+   efl_event_callback_call(sd->parent, EFL_UI_EVENT_SCROLL_CHANGED, NULL);
 }
 
 static void
@@ -253,13 +253,13 @@ _efl_ui_scroll_manager_edge_right(Efl_Ui_Scroll_Manager_Data *sd)
 }
 
 EOLIAN static Eina_Size2D
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_content_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
+_efl_ui_scroll_manager_efl_ui_scrollable_content_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
 {
    return efl_ui_pan_content_size_get(sd->pan_obj);
 }
 
 EOLIAN static Eina_Rect
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_viewport_geometry_get(const Eo *obj EINA_UNUSED,
+_efl_ui_scroll_manager_efl_ui_scrollable_viewport_geometry_get(const Eo *obj EINA_UNUSED,
                                                                        Efl_Ui_Scroll_Manager_Data *sd)
 {
    if (!sd->pan_obj) return EINA_RECT(0, 0, 0, 0);
@@ -268,21 +268,21 @@ _efl_ui_scroll_manager_efl_ui_scrollable_interactive_viewport_geometry_get(const
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_match_content_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool w, Eina_Bool h)
+_efl_ui_scroll_manager_efl_ui_scrollable_match_content_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool w, Eina_Bool h)
 {
    sd->match_content_w = !!w;
    sd->match_content_h = !!h;
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_step_size_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Position2D step)
+_efl_ui_scroll_manager_efl_ui_scrollable_step_size_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Position2D step)
 {
    sd->step.x = step.x * elm_config_scale_get();
    sd->step.y = step.y * elm_config_scale_get();
 }
 
 EOLIAN static Eina_Position2D
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_step_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
+_efl_ui_scroll_manager_efl_ui_scrollable_step_size_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
 {
    return EINA_POSITION2D(sd->step.x, sd->step.y);
 }
@@ -408,7 +408,7 @@ _efl_ui_scroll_manager_bounce_eval(Efl_Ui_Scroll_Manager_Data *sd)
 }
 
 EOLIAN static Eina_Position2D
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_content_pos_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
+_efl_ui_scroll_manager_efl_ui_scrollable_content_pos_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
 {
    if (!sd->pan_obj) return EINA_POSITION2D(0, 0);
 
@@ -416,7 +416,7 @@ _efl_ui_scroll_manager_efl_ui_scrollable_interactive_content_pos_get(const Eo *o
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_content_pos_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Position2D pos)
+_efl_ui_scroll_manager_efl_ui_scrollable_content_pos_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Position2D pos)
 {
    Evas_Coord x = pos.x, y = pos.y;
    Eina_Position2D min = {0, 0}, max = {0, 0}, cur = {0, 0};
@@ -610,8 +610,8 @@ _efl_ui_scroll_manager_efl_ui_scrollbar_bar_mode_get(const Eo *obj EINA_UNUSED,
                                                      Efl_Ui_Scrollbar_Mode *hmode,
                                                      Efl_Ui_Scrollbar_Mode *vmode)
 {
-    *hmode = sd->hbar_mode;
-    *vmode = sd->vbar_mode;
+    if (hmode) *hmode = sd->hbar_mode;
+    if (vmode) *vmode = sd->vbar_mode;
 }
 
 /* returns TRUE when we need to move the scroller, FALSE otherwise.
@@ -791,8 +791,16 @@ _scroll_wheel_post_event_cb(void *data, Evas *e EINA_UNUSED)
    cur = efl_ui_pan_position_get(sd->pan_obj);
    x = cur.x;
    y = cur.y;
-   if (sd->scrollto.x.animator) x = sd->scrollto.x.end;
-   if (sd->scrollto.y.animator) y = sd->scrollto.y.end;
+   if (sd->scrollto.x.animator)
+     {
+        if (((ev->z > 0) && (sd->scrollto.x.end > x)) || ((ev->z < 0) && (sd->scrollto.x.end < x)))
+          x = sd->scrollto.x.end;
+     }
+   if (sd->scrollto.y.animator)
+     {
+        if (((ev->z > 0) && (sd->scrollto.y.end > y)) || ((ev->z < 0) && (sd->scrollto.y.end < y)))
+          y = sd->scrollto.y.end;
+     }
    max = efl_ui_pan_position_max_get(sd->pan_obj);
    min = efl_ui_pan_position_min_get(sd->pan_obj);
    if (x < min.x) x = min.x;
@@ -898,11 +906,11 @@ _efl_ui_scroll_manager_wheel_event_cb(void *data,
      return;
    if (direction)
      {
-        if (sd->block & EFL_UI_SCROLL_BLOCK_HORIZONTAL) return;
+        if (sd->block & EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL) return;
      }
    else
      {
-        if (sd->block & EFL_UI_SCROLL_BLOCK_VERTICAL) return;
+        if (sd->block & EFL_UI_LAYOUT_ORIENTATION_VERTICAL) return;
      }
 
    evas_post_event_callback_push(e, _scroll_wheel_post_event_cb, sd);
@@ -1641,10 +1649,10 @@ _efl_ui_scroll_manager_post_event_move_direction_restrict_eval(Efl_Ui_Scroll_Man
    else if (dy < 0)
       sd->down.vdir = DOWN;
 
-   if (!(sd->block & EFL_UI_SCROLL_BLOCK_HORIZONTAL))
+   if (!(sd->block & EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL))
      sd->down.dir_x = EINA_TRUE;
 
-   if (!(sd->block & EFL_UI_SCROLL_BLOCK_VERTICAL))
+   if (!(sd->block & EFL_UI_LAYOUT_ORIENTATION_VERTICAL))
      sd->down.dir_y = EINA_TRUE;
 
    return EINA_TRUE;
@@ -1964,25 +1972,40 @@ _scroll_event_object_attach(Evas_Object *obj)
 }
 
 static void
-_efl_ui_scroll_manager_pan_content_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
+_efl_ui_scroll_manager_content_resized(Efl_Ui_Scroll_Manager_Data *sd, Eina_Size2D content)
+{
+   sd->content_info.w = content.w;
+   sd->content_info.h = content.h;
+
+   sd->content_info.resized = EINA_TRUE;
+   efl_event_callback_call(sd->parent, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED, NULL);
+   efl_event_callback_call(sd->parent, EFL_UI_SCROLLBAR_EVENT_BAR_POS_CHANGED, NULL);
+   efl_ui_scrollbar_bar_visibility_update(sd->obj);
+   _efl_ui_scroll_manager_wanted_region_set(sd->obj);
+}
+
+static void
+_efl_ui_scroll_manager_pan_content_size_changed_cb(void *data, const Efl_Event *event)
 {
    Efl_Ui_Scroll_Manager_Data *sd = data;
-   Eina_Size2D content = {0, 0};
+   Eina_Size2D *content = event->info;
 
-   if (!sd->pan_obj) return;
+   _efl_ui_scroll_manager_content_resized(sd, *content);
+}
 
-   content = efl_ui_pan_content_size_get(sd->pan_obj);
-   if ((content.w != sd->content_info.w) || (content.h != sd->content_info.h))
-     {
-        sd->content_info.w = content.w;
-        sd->content_info.h = content.h;
+static void
+_efl_ui_scroll_manager_pan_content_changed(Efl_Ui_Scroll_Manager_Data *sd)
+{
+   Eina_Size2D sz = {0, 0};
 
-        sd->content_info.resized = EINA_TRUE;
-        efl_event_callback_call(sd->parent, EFL_UI_SCROLLBAR_EVENT_BAR_SIZE_CHANGED, NULL);
-        efl_event_callback_call(sd->parent, EFL_UI_SCROLLBAR_EVENT_BAR_POS_CHANGED, NULL);
-        efl_ui_scrollbar_bar_visibility_update(sd->obj);
-        _efl_ui_scroll_manager_wanted_region_set(sd->obj);
-     }
+   if (sd->pan_obj) sz = efl_ui_pan_content_size_get(sd->pan_obj);
+   _efl_ui_scroll_manager_content_resized(sd, sz);
+}
+
+static void
+_efl_ui_scroll_manager_pan_content_changed_cb(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   _efl_ui_scroll_manager_pan_content_changed(data);
 }
 
 static void
@@ -2248,27 +2271,37 @@ _efl_ui_scroll_manager_efl_ui_scrollbar_bar_size_get(const Eo *obj EINA_UNUSED, 
 EOLIAN static void
 _efl_ui_scroll_manager_pan_set(Eo *obj, Efl_Ui_Scroll_Manager_Data *sd, Eo *pan)
 {
+   if (sd->pan_obj == pan) return;
+
    if (sd->pan_obj)
      {
         efl_event_callback_del
-           (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_CHANGED, _efl_ui_scroll_manager_pan_content_changed_cb, sd);
+           (sd->pan_obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, _efl_ui_scroll_manager_pan_content_changed_cb, sd);
         efl_event_callback_del
-           (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_VIEWPORT_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
+           (sd->pan_obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
         efl_event_callback_del
-           (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_POSITION_CHANGED, _efl_ui_scroll_manager_pan_position_changed_cb, sd);
+           (sd->pan_obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
+        efl_event_callback_del
+           (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_POSITION_CHANGED, _efl_ui_scroll_manager_pan_position_changed_cb, sd);
+        efl_event_callback_del
+           (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_SIZE_CHANGED, _efl_ui_scroll_manager_pan_content_size_changed_cb, sd);
      }
 
+   sd->pan_obj = pan;
+   _efl_ui_scroll_manager_pan_content_changed(sd);
    if (!pan)
      return;
 
-   sd->pan_obj = pan;
-
    efl_event_callback_add
-     (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_CHANGED, _efl_ui_scroll_manager_pan_content_changed_cb, sd);
+     (sd->pan_obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, _efl_ui_scroll_manager_pan_content_changed_cb, sd);
    efl_event_callback_add
-     (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_VIEWPORT_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
+     (sd->pan_obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
    efl_event_callback_add
-     (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_POSITION_CHANGED, _efl_ui_scroll_manager_pan_position_changed_cb, sd);
+     (sd->pan_obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
+   efl_event_callback_add
+     (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_POSITION_CHANGED, _efl_ui_scroll_manager_pan_position_changed_cb, sd);
+   efl_event_callback_add
+     (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_SIZE_CHANGED, _efl_ui_scroll_manager_pan_content_size_changed_cb, sd);
    evas_object_event_callback_add(sd->pan_obj, EVAS_CALLBACK_RESIZE,
                                        _efl_ui_scroll_manager_pan_resized_cb, obj);
    evas_object_event_callback_add(sd->pan_obj, EVAS_CALLBACK_MOVE,
@@ -2276,25 +2309,25 @@ _efl_ui_scroll_manager_pan_set(Eo *obj, Efl_Ui_Scroll_Manager_Data *sd, Eo *pan)
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_scroll_hold_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
+_efl_ui_scroll_manager_efl_ui_scrollable_scroll_hold_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
 {
    return sd->hold;
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_scroll_hold_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool hold)
+_efl_ui_scroll_manager_efl_ui_scrollable_scroll_hold_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool hold)
 {
    sd->hold = hold;
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_scroll_freeze_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
+_efl_ui_scroll_manager_efl_ui_scrollable_scroll_freeze_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
 {
    return sd->freeze;
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_scroll_freeze_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool freeze)
+_efl_ui_scroll_manager_efl_ui_scrollable_scroll_freeze_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool freeze)
 {
    sd->freeze = freeze;
    if (sd->freeze)
@@ -2306,21 +2339,21 @@ _efl_ui_scroll_manager_efl_ui_scrollable_interactive_scroll_freeze_set(Eo *obj E
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_bounce_enabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool horiz, Eina_Bool vert)
+_efl_ui_scroll_manager_efl_ui_scrollable_bounce_enabled_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool horiz, Eina_Bool vert)
 {
    sd->bounce_horiz = !!horiz;
    sd->bounce_vert = !!vert;
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_bounce_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool *horiz, Eina_Bool *vert)
+_efl_ui_scroll_manager_efl_ui_scrollable_bounce_enabled_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool *horiz, Eina_Bool *vert)
 {
    if (horiz) *horiz = sd->bounce_horiz;
    if (vert) *vert = sd->bounce_vert;
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_scroll(Eo *obj, Efl_Ui_Scroll_Manager_Data *sd, Eina_Rect rect, Eina_Bool animation)
+_efl_ui_scroll_manager_efl_ui_scrollable_scroll(Eo *obj, Efl_Ui_Scroll_Manager_Data *sd, Eina_Rect rect, Eina_Bool animation)
 {
    _scroll_manager_animators_drop(obj);
    if (animation)
@@ -2348,7 +2381,7 @@ _efl_ui_scroll_manager_efl_ui_scrollable_interactive_scroll(Eo *obj, Efl_Ui_Scro
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_gravity_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, double x, double y)
+_efl_ui_scroll_manager_efl_ui_scrollable_gravity_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, double x, double y)
 {
    sd->gravity_x = x;
    sd->gravity_y = y;
@@ -2358,26 +2391,26 @@ _efl_ui_scroll_manager_efl_ui_scrollable_interactive_gravity_set(Eo *obj EINA_UN
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_gravity_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, double *x, double *y)
+_efl_ui_scroll_manager_efl_ui_scrollable_gravity_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, double *x, double *y)
 {
    if (x) *x = sd->gravity_x;
    if (y) *y = sd->gravity_y;
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_movement_block_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Efl_Ui_Scroll_Block block)
+_efl_ui_scroll_manager_efl_ui_scrollable_movement_block_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Efl_Ui_Layout_Orientation block)
 {
    sd->block = block;
 }
 
-EOLIAN static Efl_Ui_Scroll_Block
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_movement_block_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
+EOLIAN static Efl_Ui_Layout_Orientation
+_efl_ui_scroll_manager_efl_ui_scrollable_movement_block_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd)
 {
    return sd->block;
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_looping_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool loop_h, Eina_Bool loop_v)
+_efl_ui_scroll_manager_efl_ui_scrollable_looping_set(Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool loop_h, Eina_Bool loop_v)
 {
    if (sd->loop_h == loop_h && sd->loop_v == loop_v) return;
 
@@ -2386,7 +2419,7 @@ _efl_ui_scroll_manager_efl_ui_scrollable_interactive_looping_set(Eo *obj EINA_UN
 }
 
 EOLIAN static void
-_efl_ui_scroll_manager_efl_ui_scrollable_interactive_looping_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool *loop_h, Eina_Bool *loop_v)
+_efl_ui_scroll_manager_efl_ui_scrollable_looping_get(const Eo *obj EINA_UNUSED, Efl_Ui_Scroll_Manager_Data *sd, Eina_Bool *loop_h, Eina_Bool *loop_v)
 {
    *loop_h = sd->loop_h;
    *loop_v = sd->loop_v;
@@ -2418,7 +2451,7 @@ _efl_ui_scroll_manager_efl_object_constructor(Eo *obj, Efl_Ui_Scroll_Manager_Dat
    sd->bounce_horiz = _elm_config->thumbscroll_bounce_enable;
    sd->bounce_vert = _elm_config->thumbscroll_bounce_enable;
 
-   sd->block = EFL_UI_SCROLL_BLOCK_NONE;
+   sd->block = EFL_UI_LAYOUT_ORIENTATION_DEFAULT;
    sd->scrolling = EINA_FALSE;
 
    sd->event_rect = evas_object_rectangle_add(evas_object_evas_get(sd->parent));
@@ -2457,11 +2490,15 @@ _efl_ui_scroll_manager_efl_object_destructor(Eo *obj, Efl_Ui_Scroll_Manager_Data
         evas_object_event_callback_del_full(sd->pan_obj, EVAS_CALLBACK_MOVE,
                                             _efl_ui_scroll_manager_pan_moved_cb, obj);
         efl_event_callback_del
-           (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_CHANGED, _efl_ui_scroll_manager_pan_content_changed_cb, sd);
+           (sd->pan_obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, _efl_ui_scroll_manager_pan_content_changed_cb, sd);
         efl_event_callback_del
-           (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_VIEWPORT_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
+           (sd->pan_obj, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
         efl_event_callback_del
-           (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_POSITION_CHANGED, _efl_ui_scroll_manager_pan_position_changed_cb, sd);
+           (sd->pan_obj, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _efl_ui_scroll_manager_pan_viewport_changed_cb, sd);
+        efl_event_callback_del
+           (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_POSITION_CHANGED, _efl_ui_scroll_manager_pan_position_changed_cb, sd);
+        efl_event_callback_del
+           (sd->pan_obj, EFL_UI_PAN_EVENT_PAN_CONTENT_SIZE_CHANGED, _efl_ui_scroll_manager_pan_content_size_changed_cb, sd);
      }
    efl_destructor(efl_super(obj, MY_CLASS));
 }

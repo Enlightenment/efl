@@ -2,6 +2,7 @@
 # include "elementary_config.h"
 #endif
 
+#include <Elementary.h>
 #include <Efl_Ui.h>
 
 static Efl_Ui_Widget*
@@ -54,8 +55,7 @@ void test_efl_ui_item(void *data EINA_UNUSED,
    Eo *win, *box, *o;
 
    win = efl_add(EFL_UI_WIN_CLASS, efl_main_loop_get(),
-                 efl_ui_win_type_set(efl_added, EFL_UI_WIN_TYPE_BASIC),
-                 efl_text_set(efl_added, "Item examples"),
+                                  efl_text_set(efl_added, "Item examples"),
                  efl_ui_win_autodel_set(efl_added, EINA_TRUE)
                 );
 
@@ -92,5 +92,17 @@ void test_efl_ui_item(void *data EINA_UNUSED,
    o = _item_add(box, EFL_UI_GROUP_ITEM_CLASS, 6);
    efl_gfx_hint_size_min_set(o, EINA_SIZE2D(40, 40));
    efl_ui_widget_disabled_set(o, EINA_TRUE);
+
+   o = _item_add(box, EFL_UI_TAB_BAR_DEFAULT_ITEM_CLASS, 5);
+   efl_gfx_hint_size_min_set(o, EINA_SIZE2D(40, 40+40));
+   efl_pack_end(box, o);
+
+   o = _item_add(box, EFL_UI_TAB_BAR_DEFAULT_ITEM_CLASS, 6);
+   efl_gfx_hint_size_min_set(o, EINA_SIZE2D(40, 40));
+   efl_ui_widget_disabled_set(o, EINA_TRUE);
+   efl_pack_end(box, o);
+   o = _item_add(box, EFL_UI_TAB_BAR_DEFAULT_ITEM_CLASS, 5);
+   efl_ui_tab_bar_default_item_icon_set(o, "folder");
+   efl_gfx_hint_size_min_set(o, EINA_SIZE2D(40, 40+40));
    efl_pack_end(box, o);
 }

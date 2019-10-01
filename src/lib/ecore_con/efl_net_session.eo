@@ -34,10 +34,10 @@ class @beta Efl.Net.Session extends Efl.Loop_Consumer {
       Some platforms may not implement the backend for this class. In
       this cases the system will report always @.state "online"
       (@Efl.Net.Session_State.online) and other properties will be
-      NULL, such as @.network_name, @.interface, @.ipv4 and @.ipv6; as well as
+      $NULL, such as @.network_name, @.interface, @.ipv4 and @.ipv6; as well as
       @.technology is set to @Efl.Net.Session_Technology.unknown. As such
       if you need to detect for an actual backend, check if the
-      state is online but those properties are NULL or technology is
+      state is online but those properties are $NULL or technology is
       unknown.
 
       Note: the @.connect method is subject to backend policy. For
@@ -92,7 +92,7 @@ class @beta Efl.Net.Session extends Efl.Loop_Consumer {
               Note: if there is no backend for this class, then state
               will be always online, however @.technology will be
               unknown, @.interface, @.network_name, @.ipv4 and @.ipv6 will be
-              NULL.
+              $NULL.
             ]]
             get { }
             values {

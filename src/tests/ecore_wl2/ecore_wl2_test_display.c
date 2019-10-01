@@ -159,6 +159,8 @@ EFL_START_TEST(wl2_display_inputs_get)
 
    itr = ecore_wl2_display_inputs_get(disp);
    ck_assert(itr != NULL);
+
+   eina_iterator_free(itr);
 }
 EFL_END_TEST
 

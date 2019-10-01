@@ -33,6 +33,8 @@ static float xa, xb, ua, va, ca[4];
    b = tmp
 
 /************************** ANTI-ALIASING CODE ********************************/
+#ifdef MAP_HIGH_ANTI_ALIASING
+
 static void
 _map_irregular_coverage_calc(AALine* spans, int eidx, int y, int diagonal,
                        int edge_dist, Eina_Bool reverse)
@@ -332,6 +334,7 @@ _map_aa_apply(AASpans *aa_spans, DATA32 *dst, int dw)
    free(aa_spans->lines);
    free(aa_spans);
 }
+#endif
 
 /************************** TEXTURE MAPPING CODE ******************************/
 static void
@@ -822,6 +825,8 @@ _evas_common_map_rgba_internal_high(RGBA_Image *src, RGBA_Image *dst,
 
    //Setup Anti-Aliasing?
    AASpans *aa_spans = NULL;
+
+#ifdef MAP_HIGH_ANTI_ALIASING
    if (anti_alias)
      {
         //Adjust AA Y range
@@ -837,6 +842,7 @@ _evas_common_map_rgba_internal_high(RGBA_Image *src, RGBA_Image *dst,
         aa_spans =
            _map_aa_ready(dst->cache_entry.w, dst->cache_entry.h, ystart, yend);
      }
+#endif
 
    /* 
       1 polygon is consisted of 2 triangles, 4 polygons constructs 1 mesh.
@@ -900,7 +906,8 @@ _evas_common_map_rgba_internal_high(RGBA_Image *src, RGBA_Image *dst,
                            &poly, mul_col, aa_spans,
                            smooth, col_blend);
      }
-
+#ifdef MAP_HIGH_ANTI_ALIASING
    if (anti_alias)
      _map_aa_apply(aa_spans, dst->image.data, dst->cache_entry.w);
+#endif
 }

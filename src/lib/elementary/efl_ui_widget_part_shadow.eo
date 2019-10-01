@@ -1,4 +1,4 @@
-class @beta Efl.Ui.Widget_Part_Shadow extends Efl.Ui.Widget_Part implements Efl.Gfx.Color,
+class Efl.Ui.Widget_Part_Shadow extends Efl.Ui.Widget_Part implements Efl.Gfx.Color,
                                  Efl.Gfx.Blur, Efl.Gfx.Filter
 {
    [[A drop-shadow or glow effect around any widget.

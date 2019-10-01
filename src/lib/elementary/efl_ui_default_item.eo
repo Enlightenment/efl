@@ -1,4 +1,4 @@
-abstract @beta Efl.Ui.Default_Item extends Efl.Ui.Item implements
+abstract Efl.Ui.Default_Item extends Efl.Ui.Item implements
                                 Efl.Text,
                                 Efl.Text_Markup,
                                 Efl.Ui.L10n,
@@ -6,18 +6,20 @@ abstract @beta Efl.Ui.Default_Item extends Efl.Ui.Item implements
 {
    [[Default Item Class.
 
-     This class defines the standard parts of casual efl items.
-     The details about placement or item layout preferences are left to the extending classes.
-     Every text property related changes are mirrored to the text part. Content changes are mirrored to the content part.
-
+     This class defines the standard parts for most @Efl.Ui.Item: Text, Icon and Extra.
+     Placement and layout details for these parts are left to the extending classes like
+     @Efl.Ui.List_Default_Item and @Efl.Ui.Grid_Default_Item which should normally be used.
+     Text-related changes are mirrored to the $text part for convenience.
+     Content-related changes are mirrored to the $icon part.
    ]]
    data: null;
    parts {
-     text: Efl.Ui.Layout_Part_Text; [[The text part for default item.
-                                  text part is the caption of the item.]]
-     icon: Efl.Ui.Layout_Part_Content; [[The icon content part for default item.
-                                   icon part is the main content of item.]]
-     extra : Efl.Ui.Layout_Part_Content; [[The extra content part for default item.]]
+     text: Efl.Ui.Layout_Part_Text; [[The text part for default items.
+                                      This is the caption of the items.]]
+     icon: Efl.Ui.Layout_Part_Content; [[The icon part for default items.
+                                         This is the main content of the items.]]
+     extra : Efl.Ui.Layout_Part_Content; [[The extra part for default items.
+                                           This is used for additional details or badges.]]
    }
    implements {
       Efl.Text.text { get; set; }

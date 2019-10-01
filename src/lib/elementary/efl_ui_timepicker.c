@@ -22,7 +22,7 @@
 
 #define TIME_SET()                                                   \
    do {                                                              \
-     Efl_Time t;                                                     \
+     Efl_Time t = { 0 };                                             \
      t.tm_hour = pd->cur_time[TIMEPICKER_HOUR];                      \
      t.tm_min = pd->cur_time[TIMEPICKER_MIN];                        \
      efl_datetime_manager_value_set(pd->dt_manager, t);              \
@@ -106,7 +106,7 @@ _field_changed_cb(void *data, const Efl_Event *ev)
      }
 
    TIME_SET();
-   efl_event_callback_call(data, EFL_UI_TIMEPICKER_EVENT_CHANGED, NULL);
+   efl_event_callback_call(data, EFL_UI_TIMEPICKER_EVENT_TIME_CHANGED, NULL);
 }
 
 static void
@@ -173,16 +173,16 @@ _fields_init(Eo *obj)
                        //TODO: monitoring locale change and update field location.
                        if (field == 0)
                          {
-                            elm_object_signal_emit(obj, "efl,state,colon,visible,field1", "efl");
-                            elm_object_signal_emit(obj, "efl,state,colon,invisible,field0", "efl");
+                            elm_object_signal_emit(obj, "efl,colon_field1,visible,on", "efl");
+                            elm_object_signal_emit(obj, "efl,colon_field0,visible,off", "efl");
                          }
                        else
                          {
-                            elm_object_signal_emit(obj, "efl,state,colon,visible,field0", "efl");
-                            elm_object_signal_emit(obj, "efl,state,colon,invisible,field1", "efl");
+                            elm_object_signal_emit(obj, "efl,colon_field0,visible,on", "efl");
+                            elm_object_signal_emit(obj, "efl,colon_field1,visible,off", "efl");
                          }
 
-                       elm_layout_signal_emit(obj, "efl,state,ampm,visible", "efl");
+                       elm_layout_signal_emit(obj, "efl,ampm,visible,on", "efl");
                        edje_object_message_signal_process(elm_layout_edje_get(obj));
                        efl_content_set(efl_part(obj, buf), pd->ampm);
                     }
@@ -245,20 +245,20 @@ _efl_ui_timepicker_time_get(const Eo *obj EINA_UNUSED, Efl_Ui_Timepicker_Data *p
 }
 
 EOLIAN static void
-_efl_ui_timepicker_ampm_set(Eo *obj, Efl_Ui_Timepicker_Data *pd, Eina_Bool is_24hour)
+_efl_ui_timepicker_is_24hour_set(Eo *obj, Efl_Ui_Timepicker_Data *pd, Eina_Bool is_24hour)
 {
    if (pd->is_24hour == is_24hour) return;
 
    pd->is_24hour = is_24hour;
    if (pd->is_24hour == EINA_TRUE)
-     elm_layout_signal_emit(obj, "efl,state,ampm,invisible", "efl");
+     elm_layout_signal_emit(obj, "efl,ampm,visible,off", "efl");
    else
-     elm_layout_signal_emit(obj, "efl,state,ampm,visible", "efl");
+     elm_layout_signal_emit(obj, "efl,ampm,visible,on", "efl");
    _field_value_update(obj);
 }
 
 EOLIAN static Eina_Bool
-_efl_ui_timepicker_ampm_get(const Eo *obj EINA_UNUSED, Efl_Ui_Timepicker_Data *pd)
+_efl_ui_timepicker_is_24hour_get(const Eo *obj EINA_UNUSED, Efl_Ui_Timepicker_Data *pd)
 {
    return pd->is_24hour;
 }

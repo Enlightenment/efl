@@ -177,7 +177,7 @@ EFL_END_TEST
 EFL_START_TEST(eina_array_find_test)
 {
    Eina_Array sea;
-   unsigned int i;
+   unsigned long i;
    unsigned int out = 0;
 
    fail_if(eina_array_find(NULL, (void*)1, NULL) != EINA_FALSE);

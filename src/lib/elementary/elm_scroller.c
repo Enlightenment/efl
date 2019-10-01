@@ -487,8 +487,7 @@ static void
 _scroll_cb(Evas_Object *obj,
            void *data EINA_UNUSED)
 {
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL, NULL);
+   evas_object_smart_callback_call(obj, "scroll", NULL);
 }
 
 static void
@@ -523,32 +522,29 @@ static void
 _scroll_anim_start_cb(Evas_Object *obj,
                       void *data EINA_UNUSED)
 {
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL_ANIM_START, NULL);
+   evas_object_smart_callback_call(obj, "anim,start", NULL);
 }
 
 static void
 _scroll_anim_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL_ANIM_STOP, NULL);
+   evas_object_smart_callback_call(obj, "anim,stop", NULL);
 }
 
 static void
 _scroll_drag_start_cb(Evas_Object *obj,
                       void *data EINA_UNUSED)
 {
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL_DRAG_START, NULL);
+   evas_object_smart_callback_call(obj, "drag,start", NULL);
 }
+
 
 static void
 _scroll_drag_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   efl_event_callback_legacy_call
-     (obj, EFL_UI_EVENT_SCROLL_DRAG_STOP, NULL);
+   evas_object_smart_callback_call(obj, "drag,stop", NULL);
 }
 
 static void
@@ -1208,13 +1204,13 @@ elm_scroller_movement_block_set(Evas_Object *obj,
                                 Elm_Scroller_Movement_Block block)
 {
    ELM_SCROLLABLE_CHECK(obj);
-   Efl_Ui_Scroll_Block mode = EFL_UI_SCROLL_BLOCK_NONE;
+   Efl_Ui_Layout_Orientation mode = EFL_UI_LAYOUT_ORIENTATION_DEFAULT;
 
    // legacy -> eo
    if (block == ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL)
-     mode = EFL_UI_SCROLL_BLOCK_HORIZONTAL;
+     mode = EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL;
    else if (block == ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL)
-     mode = EFL_UI_SCROLL_BLOCK_VERTICAL;
+     mode = EFL_UI_LAYOUT_ORIENTATION_VERTICAL;
 
    elm_interface_scrollable_movement_block_set(obj, mode);
 }
@@ -1222,16 +1218,16 @@ elm_scroller_movement_block_set(Evas_Object *obj,
 EAPI Elm_Scroller_Movement_Block
 elm_scroller_movement_block_get(const Evas_Object *obj)
 {
-   Efl_Ui_Scroll_Block mode;
+   Efl_Ui_Layout_Orientation mode;
 
    ELM_SCROLLABLE_CHECK(obj, ELM_SCROLLER_MOVEMENT_NO_BLOCK);
 
    mode = elm_interface_scrollable_movement_block_get(obj);
 
    // eo -> legacy
-   if (mode == EFL_UI_SCROLL_BLOCK_HORIZONTAL)
+   if (mode == EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL)
      return ELM_SCROLLER_MOVEMENT_BLOCK_HORIZONTAL;
-   else if (mode == EFL_UI_SCROLL_BLOCK_VERTICAL)
+   else if (mode == EFL_UI_LAYOUT_ORIENTATION_VERTICAL)
      return ELM_SCROLLER_MOVEMENT_BLOCK_VERTICAL;
 
    return ELM_SCROLLER_MOVEMENT_NO_BLOCK;
