@@ -131,6 +131,7 @@ class @beta Efl2.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickab
          [[This executes a "paste" action in the entry.]]
       }
 
+      // FIXME: rename?
       @property selection_handler_disabled {
          set {
             [[This disables the entry's selection handlers.]]
