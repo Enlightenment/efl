@@ -88,6 +88,7 @@ public static class EldbusConnectionNativeFunctions
 //         eldbus_name_owner_changed_callback_del(IntPtr conn, string bus, Eldbus_Name_Owner_Changed_Cb cb, IntPtr cb_data);
 }
 
+/// <summary>Represents a DBus connection. (Since EFL 1.23)</summary>
 public class Connection : IDisposable
 {
     public enum Type

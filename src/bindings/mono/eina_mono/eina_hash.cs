@@ -130,6 +130,7 @@ public static class HashNativeFunctions
         eina_hash_iterator_ptr_key_wrapper_new_custom_export_mono(IntPtr hash);
 }
 
+/// <summary>Wrapper around native dictionary mapping keys to values. (Since EFL 1.23)</summary>
 public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDisposable
 {
     public IntPtr Handle {get; set;} = IntPtr.Zero;

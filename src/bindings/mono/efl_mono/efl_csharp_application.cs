@@ -9,7 +9,7 @@ namespace Efl
 namespace Csharp
 {
 
-///<summary>The components to be initialized.</summary>
+///<summary>The components to be initialized. (Since Efl 1.23)</summary>
 public enum Components
 {
     ///<summary>Basic components: Eina, Eo, Ecore, Evas and DBus.</summary>
@@ -26,6 +26,9 @@ public enum Components
 /// <remarks>
 /// Calls to efl outside those efl-callbacks or outside the mainloop are not allowed and will lead to issues
 /// </remarks>
+///
+/// (Since EFL 1.23)
+///
 /// <example>
 /// UserApp is the class that implements the Application abstract
 /// <code>

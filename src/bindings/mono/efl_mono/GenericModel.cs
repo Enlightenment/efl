@@ -9,7 +9,10 @@ using Eina;
 
 namespace Efl {
 
-/// <summary>Generic <see cref="Efl.IModel" /> implementation for MVVM models based on <see cref="Efl.UserModel&lt;T&gt;" /></summary>
+/// <summary>Generic <see cref="Efl.IModel" /> implementation for MVVM models based on <see cref="Efl.UserModel&lt;T&gt;" />
+///
+/// (Since EFL 1.23)
+/// </summary>
 public class GenericModel<T> : Efl.Object, Efl.IModel, IDisposable
 {
    private Efl.IModel model;
