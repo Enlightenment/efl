@@ -1,5 +1,3 @@
-#include "edje_types.eot.h"
-
 /** All available cursor states
  *
  * @ingroup Edje

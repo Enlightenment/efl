@@ -30,7 +30,6 @@ group { "efl/border"; data.item: "version" "123";
    images.image: "screen_circular_shadow.png" COMP;
    images.image: "win_shadow.png" COMP;
    data.item: "shadow" "1";
-   data.item: "version" "119";
    parts {
       /* opaque region of the window, to inform the compositor */
       spacer { "efl.spacer.opaque";

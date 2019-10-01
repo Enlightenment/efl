@@ -1,5 +1,8 @@
 struct Efl.Model_Property_Event {
-     [[EFL model property event data structure]]
+     [[EFL model property event data structure
+
+       @since 1.23
+     ]]
      changed_properties: array<stringshare>; [[List of changed properties]]
      invalidated_properties: array<stringshare>; [[Removed properties identified by name]]
 }
@@ -22,6 +25,8 @@ interface Efl.Model
 
      Additionally a model can have a list of children. The fetching of the children is asynchronous, this has the advantage of
      having as few data sets as possible in the memory itself.
+
+     @since 1.23
    ]]
    c_prefix: efl_model;
       methods {

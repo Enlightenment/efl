@@ -35,8 +35,8 @@ except ImportError:
 
 _already_halted = False
 
-###  Eolian Enums  ############################################################
 
+#  Eolian Enums  ##############################################################
 class Eolian_Function_Type(IntEnum):
     UNRESOLVED = 0
     PROPERTY = 1
@@ -45,11 +45,13 @@ class Eolian_Function_Type(IntEnum):
     METHOD = 4
     FUNCTION_POINTER = 5
 
+
 class Eolian_Parameter_Direction(IntEnum):
     UNKNOWN = 0
     IN = 1
     OUT = 2
     INOUT = 3
+
 
 class Eolian_Class_Type(IntEnum):
     UNKNOWN_TYPE = 0
@@ -58,11 +60,13 @@ class Eolian_Class_Type(IntEnum):
     MIXIN = 3
     INTERFACE = 4
 
+
 class Eolian_Object_Scope(IntEnum):
     UNKNOWN = 0
     PUBLIC = 1
     PRIVATE = 2
     PROTECTED = 3
+
 
 class Eolian_Typedecl_Type(IntEnum):
     UNKNOWN = 0
@@ -72,12 +76,14 @@ class Eolian_Typedecl_Type(IntEnum):
     ALIAS = 4
     FUNCTION_POINTER = 5
 
+
 class Eolian_Type_Type(IntEnum):
     UNKNOWN_TYPE = 0
     VOID = 1
     REGULAR = 2
     CLASS = 3
     UNDEFINED = 4
+
 
 class Eolian_Type_Builtin_Type(IntEnum):
     INVALID = 0
@@ -141,6 +147,7 @@ class Eolian_Type_Builtin_Type(IntEnum):
     HASH = 47
     VOID_PTR = 48
 
+
 class Eolian_Expression_Type(IntEnum):
     UNKNOWN = 0
     INT = 1
@@ -159,18 +166,20 @@ class Eolian_Expression_Type(IntEnum):
     UNARY = 14
     BINARY = 15
 
+
 class Eolian_Expression_Mask(IntEnum):
-    SINT   = 1 << 0
-    UINT   = 1 << 1
-    INT    = SINT | UINT
-    FLOAT  = 1 << 2
-    BOOL   = 1 << 3
+    SINT = 1 << 0
+    UINT = 1 << 1
+    INT = SINT | UINT
+    FLOAT = 1 << 2
+    BOOL = 1 << 3
     STRING = 1 << 4
-    CHAR   = 1 << 5
-    NULL   = 1 << 6
+    CHAR = 1 << 5
+    NULL = 1 << 6
     SIGNED = SINT | FLOAT
     NUMBER = INT | FLOAT
-    ALL    = NUMBER | BOOL | STRING | CHAR | NULL
+    ALL = NUMBER | BOOL | STRING | CHAR | NULL
+
 
 class Eolian_Binary_Operator(IntEnum):
     INVALID = 0
@@ -186,12 +195,13 @@ class Eolian_Binary_Operator(IntEnum):
     GE = 10  # >= int, float
     LE = 11  # <= int, float
     AND = 12  # && all types
-    OR =  13  # || all types
+    OR = 13  # || all types
     BAND = 14  # &  int
-    BOR =  15  # |  int
+    BOR = 15  # |  int
     BXOR = 16  # ^  int
-    LSH =  17  # << int
-    RSH =  18  # >> int
+    LSH = 17  # << int
+    RSH = 18  # >> int
+
 
 class Eolian_Unary_Operator(IntEnum):
     INVALID = 0
@@ -199,6 +209,7 @@ class Eolian_Unary_Operator(IntEnum):
     UNP = 2  # + sint
     NOT = 3   # ! int, float, bool
     BNOT = 4  # ~ int
+
 
 class Eolian_Doc_Token_Type(IntEnum):
     UNKNOWN = 0
@@ -211,12 +222,12 @@ class Eolian_Doc_Token_Type(IntEnum):
     MARKUP_MONOSPACE = 7
 
 
-###  internal Classes  ########################################################
+#  Internal Classes  ##########################################################
 
 class Iterator(object):
     """ Generic eina iterator wrapper """
     def __init__(self, conv_func, iterator):
-        self.next = self.__next__ # py2 compat
+        self.next = self.__next__  # py2 compat
         self._conv = conv_func
         self._iter = c_void_p(iterator)
         self._tmp = c_void_p(0)
@@ -251,6 +262,7 @@ class cached_property(object):
 
 class EolianBaseObject(object):
     __instances_cache = {}
+
     def __new__(cls, c_obj_pointer=None, *args, **kargs):
         # cannot cache without a pointer
         if c_obj_pointer is None:
@@ -307,7 +319,7 @@ class EolianBaseObject(object):
         return self._obj
 
 
-###  Main Eolian Unit  ########################################################
+#  Main Eolian Unit  ##########################################################
 
 class Eolian_Unit(EolianBaseObject):
     def __repr__(self):
@@ -451,7 +463,7 @@ class Eolian_State(Eolian_Unit):
 
     def objects_by_file_get(self, file_name):
         return Iterator(Object,
-            lib.eolian_state_objects_by_file_get(self, _str_to_bytes(file_name)))
+                        lib.eolian_state_objects_by_file_get(self, _str_to_bytes(file_name)))
 
     def class_by_file_get(self, file_name):
         c_cls = lib.eolian_state_class_by_file_get(self, _str_to_bytes(file_name))
@@ -459,22 +471,22 @@ class Eolian_State(Eolian_Unit):
 
     def constants_by_file_get(self, file_name):
         return Iterator(Constant,
-            lib.eolian_state_constants_by_file_get(self, _str_to_bytes(file_name)))
+                        lib.eolian_state_constants_by_file_get(self, _str_to_bytes(file_name)))
 
     def aliases_by_file_get(self, file_name):
         return Iterator(Typedecl,
-            lib.eolian_state_aliases_by_file_get(self, _str_to_bytes(file_name)))
+                        lib.eolian_state_aliases_by_file_get(self, _str_to_bytes(file_name)))
 
     def structs_by_file_get(self, file_name):
         return Iterator(Typedecl,
-            lib.eolian_state_structs_by_file_get(self, _str_to_bytes(file_name)))
+                        lib.eolian_state_structs_by_file_get(self, _str_to_bytes(file_name)))
 
     def enums_by_file_get(self, file_name):
         return Iterator(Typedecl,
-            lib.eolian_state_enums_by_file_get(self, _str_to_bytes(file_name)))
+                        lib.eolian_state_enums_by_file_get(self, _str_to_bytes(file_name)))
 
 
-###  Namespace Utility Class  #################################################
+#  Namespace Utility Class  ###################################################
 
 class Namespace(object):
     def __init__(self, unit, namespace_name):
@@ -512,55 +524,55 @@ class Namespace(object):
     def sub_namespaces(self):
         base = self._name + '.'
         deep = self._name.count('.') + 1
-        return [ ns for ns in self._unit.all_namespaces
-                 if ns.name.startswith(base) and ns.name.count('.') == deep ]
+        return [ns for ns in self._unit.all_namespaces
+                if ns.name.startswith(base) and ns.name.count('.') == deep]
 
     @property
     def classes(self):
-        return sorted([ c for c in self._unit.classes
-                        if c.namespace == self._name ])
+        return sorted([c for c in self._unit.classes
+                       if c.namespace == self._name])
 
     @property
     def regulars(self):
-        return sorted([ c for c in self._unit.classes
-                        if c.type == Eolian_Class_Type.REGULAR and
-                           c.namespace == self._name])
+        return sorted([c for c in self._unit.classes
+                       if c.type == Eolian_Class_Type.REGULAR
+                       and c.namespace == self._name])
 
     @property
     def abstracts(self):
-        return sorted([ c for c in self._unit.classes
-                        if c.type == Eolian_Class_Type.ABSTRACT and
-                           c.namespace == self._name])
+        return sorted([c for c in self._unit.classes
+                       if c.type == Eolian_Class_Type.ABSTRACT
+                       and c.namespace == self._name])
 
     @property
     def mixins(self):
-        return sorted([ c for c in self._unit.classes
-                        if c.type == Eolian_Class_Type.MIXIN and
-                           c.namespace == self._name])
+        return sorted([c for c in self._unit.classes
+                       if c.type == Eolian_Class_Type.MIXIN
+                       and c.namespace == self._name])
 
     @property
     def interfaces(self):
-        return sorted([ c for c in self._unit.classes
-                        if c.type == Eolian_Class_Type.INTERFACE and
-                           c.namespace == self._name])
+        return sorted([c for c in self._unit.classes
+                       if c.type == Eolian_Class_Type.INTERFACE
+                       and c.namespace == self._name])
 
     @property
     def aliases(self):
-        return sorted([ td for td in self._unit.aliases
-                        if td.namespace == self._name])
+        return sorted([td for td in self._unit.aliases
+                       if td.namespace == self._name])
 
     @property
     def structs(self):
-        return sorted([ td for td in self._unit.structs
-                        if td.namespace == self._name])
+        return sorted([td for td in self._unit.structs
+                       if td.namespace == self._name])
 
     @property
     def enums(self):
-        return sorted([ td for td in self._unit.enums
-                        if td.namespace == self._name])
+        return sorted([td for td in self._unit.enums
+                       if td.namespace == self._name])
 
 
-###  Eolian Classes  ##########################################################
+#  Eolian Classes  ############################################################
 
 class Object(EolianBaseObject):
     def __new__(cls, c_obj_pointer):
@@ -680,27 +692,27 @@ class Class(Object):
 
     @cached_property
     def inherits_full(self):
-        L = []
+        li = []
 
         def do_class_recursive(cls):
             if cls.parent:
-                L.append(cls.parent)
+                li.append(cls.parent)
             for other in cls.extensions:
-                if other not in L:
-                    L.append(other)
+                if other not in li:
+                    li.append(other)
                 do_class_recursive(other)
 
         do_class_recursive(self)
-        return L
+        return li
 
     @cached_property
     def hierarchy(self):
-        L = []
+        li = []
         base = self.parent
         while base:
-            L.append(base)
+            li.append(base)
             base = base.parent
-        return L
+        return li
 
     @cached_property
     def ctor_enable(self):
@@ -710,10 +722,10 @@ class Class(Object):
     def dtor_enable(self):
         return bool(lib.eolian_class_dtor_enable_get(self))
 
-    def function_by_name_get(self, func_name,
+    def function_by_name_get(self, function_name,
                              ftype=Eolian_Function_Type.UNRESOLVED):
         f = lib.eolian_class_function_by_name_get(self,
-                                                  _str_to_bytes(func_name),
+                                                  _str_to_bytes(function_name),
                                                   ftype)
         return Function(f) if f else None
 
@@ -868,36 +880,40 @@ class Function(Object):
         return Iterator(Function_Parameter,
                         lib.eolian_function_parameters_get(self))
 
-    def values_get(self, ftype): # TODO rename in property_values_get (or implement a proper Property class?)
+    def values_get(self, ftype):
+        # TODO rename in property_values_get
+        #  (or implement a proper Property class?)
         return Iterator(Function_Parameter,
                         lib.eolian_property_values_get(self, ftype))
 
     @property
-    def getter_values(self): # TODO rename ...
+    def getter_values(self):  # TODO rename ...
         return self.values_get(Eolian_Function_Type.PROP_GET)
 
     @property
-    def setter_values(self): # TODO rename ...
+    def setter_values(self):  # TODO rename ...
         return self.values_get(Eolian_Function_Type.PROP_SET)
 
-    def keys_get(self, ftype): # TODO rename in property_keys_get (or implement a proper Property class?)
+    def keys_get(self, ftype):
+        # TODO rename in property_keys_get
+        #  (or implement a proper Property class?)
         return Iterator(Function_Parameter,
                         lib.eolian_property_keys_get(self, ftype))
 
     @property
-    def getter_keys(self): # TODO rename ...
+    def getter_keys(self):  # TODO rename ...
         return self.keys_get(Eolian_Function_Type.PROP_GET)
 
     @property
-    def setter_keys(self): # TODO rename ...
+    def setter_keys(self):  # TODO rename ...
         return self.keys_get(Eolian_Function_Type.PROP_SET)
 
     def return_type_get(self, ftype):
         c_type = lib.eolian_function_return_type_get(self, ftype)
         return Type(c_type) if c_type else None
 
-    def return_default_value(self, ftye):
-        c_expr = lib.eolian_function_return_default_value_get(sel._obj, ftype)
+    def return_default_value(self, ftype):
+        c_expr = lib.eolian_function_return_default_value_get(self._obj, ftype)
         return Expression(c_expr) if c_expr else None
 
     def return_documentation(self, ftype):
@@ -1019,7 +1035,7 @@ class Implement(Object):
 
 class Type(Object):
     def __repr__(self):
-        #  return "<eolian.Type '{0.name}', type: {0.type!s}, c_type: '{0.c_type}'>".format(self)
+        # return "<eolian.Type '{0.name}', type: {0.type!s}, c_type: '{0.c_type}'>".format(self)
         return "<eolian.Type '{0.name}', type={0.type!s}>".format(self)
 
     @cached_property
@@ -1326,10 +1342,29 @@ class Documentation_Token(object):
         return self._ref
 
 
-###  internal string encode/decode  ###########################################
+class Error(Object):
+    def __repr__(self):
+        return "<eolian.Error '{0.name}', message='{0.message}'>".format(self)
+
+    @cached_property
+    def message(self):
+        return _str_to_py(lib.eolian_error_message_get(self))
+
+    @cached_property
+    def documentation(self):
+        c_doc = lib.eolian_error_documentation_get(self)
+        return Documentation(c_doc) if c_doc else None
+
+    @cached_property
+    def is_extern(self):
+        return bool(lib.eolian_error_is_extern(self))
+
+
+#  internal string encode/decode  #############################################
 
 def _str_to_bytes(s):
     return s.encode('utf-8')
+
 
 def _str_to_py(s):
     if s is None:
@@ -1345,7 +1380,7 @@ def _str_to_py(s):
     print('WARNING !!!!!!!!! Unknown type: %s' % type(s))
 
 
-###  internal Object type -> Class mapping  ###################################
+#  internal Object type -> Class mapping  #####################################
 
 class _Eolian_Object_Type(IntEnum):
     UNKNOWN = 0
@@ -1363,6 +1398,8 @@ class _Eolian_Object_Type(IntEnum):
     IMPLEMENT = 12
     CONSTRUCTOR = 13
     DOCUMENTATION = 14
+    ERROR = 15
+
 
 _eolian_type_class_mapping = {
     _Eolian_Object_Type.UNKNOWN: Object,
@@ -1380,19 +1417,23 @@ _eolian_type_class_mapping = {
     _Eolian_Object_Type.IMPLEMENT: Implement,
     _Eolian_Object_Type.CONSTRUCTOR: Constructor,
     _Eolian_Object_Type.DOCUMENTATION: Documentation,
+    _Eolian_Object_Type.ERROR: Error,
 }
 
-###  module init/shutdown  ####################################################
+
+#  module init/shutdown  ######################################################
+
 def _cleanup():
     global _already_halted
     lib.eolian_shutdown()
     _already_halted = True
 
+
 lib.eolian_init()
 atexit.register(_cleanup)
 
 
-###  API coverage statistics  #################################################
+#  API coverage statistics  ###################################################
 
 if __name__ == '__main__':
     import sys

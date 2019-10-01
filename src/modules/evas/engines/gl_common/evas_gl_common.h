@@ -265,7 +265,8 @@ enum _Shader_Type {
    SHD_FILTER_DISPLACE,
    SHD_FILTER_CURVE,
    SHD_FILTER_BLUR_X,
-   SHD_FILTER_BLUR_Y
+   SHD_FILTER_BLUR_Y,
+   SHD_FILTER_GRAYSCALE
 };
 
 #define ARRAY_BUFFER_USE 500
@@ -680,6 +681,7 @@ void              evas_gl_common_filter_curve_push(Evas_Engine_GL_Context *gc, E
 void              evas_gl_common_filter_blur_push(Evas_Engine_GL_Context *gc, Evas_GL_Texture *tex, double sx, double sy, double sw, double sh,
                                                   double dx, double dy, double dw, double dh, const double * const values, const double * const offsets, int count, double radius,
                                                   Eina_Bool horiz, Eina_Bool alphaonly);
+void              evas_gl_common_filter_grayscale_push(Evas_Engine_GL_Context *gc, Evas_GL_Texture *tex, int x, int y, int w, int h);
 
 int               evas_gl_common_shader_program_init(Evas_GL_Shared *shared);
 void              evas_gl_common_shader_program_shutdown(Evas_GL_Shared *shared);

@@ -1,7 +1,7 @@
 /**
 Group: efl/image_zoomable (@since 1.23)
-	 Part Rectangle: efl.dragable.hbar (required)
-	 Part Rectangle: efl.dragable.vbar (required)
+	 Part Rectangle: efl.draggable.horizontal_bar (required)
+	 Part Rectangle: efl.draggable.vertical_bar (required)
 	 Part Swallow: efl.background (required)
 	 Part Swallow: efl.content (required)
 	 Part Swallow: efl.overlay (required)

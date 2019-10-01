@@ -1,3 +1,4 @@
+#include <Elementary.h>
 #include <Efl_Ui.h>
 
 static Efl_Ui_Win *win;

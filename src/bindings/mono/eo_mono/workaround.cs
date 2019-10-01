@@ -47,29 +47,42 @@ public struct Efl_Object_Ops
 namespace Efl
 {
 
+///<summary>This struct holds the description of a specific event (Since EFL 1.22).</summary>
 [StructLayout(LayoutKind.Sequential)]
 public struct EventDescription
 {
+    ///<summary>Name of the event.</summary>
     public IntPtr Name;
+    ///<summary><c>true</c> if the event cannot be frozen.</summary>
     [MarshalAs(UnmanagedType.U1)] public bool Unfreezable;
+    ///<summary>Internal use: <c>true</c> if this is a legacy event.</summary>
     [MarshalAs(UnmanagedType.U1)] public bool Legacy_is;
+    ///<summary><c>true</c> if when the even is triggered again from a callback it
+    ///will start from where it was.</summary>
     [MarshalAs(UnmanagedType.U1)] public bool Restart;
 
     private static Dictionary<string, IntPtr> descriptions = new Dictionary<string, IntPtr>();
 
-    public EventDescription(string module, string name)
+    ///<summary>Constructor for EventDescription</summary>
+    ///<param name="moduleName">The name of the module containing the event.</param>
+    ///<param name="name">The name of the event.</param>
+    public EventDescription(string moduleName, string name)
     {
-        this.Name = GetNative(module, name);
+        this.Name = GetNative(moduleName, name);
         this.Unfreezable = false;
         this.Legacy_is = false;
         this.Restart = false;
     }
 
-    public static IntPtr GetNative(string module, string name)
+    ///<summary>Get the native structure.</summary>
+    ///<param name="moduleName">The name of the module containing the event.</param>
+    ///<param name="name">The name of the event.</param>
+    ///<returns>Pointer to the native structure.</returns>
+    public static IntPtr GetNative(string moduleName, string name)
     {
         if (!descriptions.ContainsKey(name))
         {
-            IntPtr data = Efl.Eo.FunctionInterop.LoadFunctionPointer(module, name);
+            IntPtr data = Efl.Eo.FunctionInterop.LoadFunctionPointer(moduleName, name);
 
             if (data == IntPtr.Zero)
             {

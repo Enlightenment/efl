@@ -17,6 +17,11 @@ struct enum_definition_generator
   template <typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::enum_def const& enum_, Context const& context) const
   {
+     auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
+
+     if(!options.want_beta && enum_.is_beta)
+       return true;
+
      if(!name_helpers::open_namespaces(sink, enum_.namespaces, context))
        return false;
 

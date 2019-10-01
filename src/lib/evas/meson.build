@@ -85,6 +85,7 @@ evas_header_src = [
   'Evas_GL.h',
   'Evas_Legacy.h',
   'Evas_Loader.h',
+  'Efl_Canvas.h',
 ]
 
 evas_include_directories += [

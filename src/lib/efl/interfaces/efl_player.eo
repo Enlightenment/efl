@@ -1,6 +1,9 @@
 interface Efl.Player
 {
-   [[Efl media player interface]]
+   [[Efl media player interface
+
+     @since 1.23
+   ]]
    c_prefix: efl_player;
    methods {
         @property playing {

@@ -7,6 +7,8 @@ mixin Efl.Input.Event requires Efl.Object extends Efl.Duplicate
      Note: Most Efl Events do not carry Efl Objects, rather simple data
            structures. This class is intended to carry more complex event
            data, such as pointer events.
+
+     @since 1.23
    ]]
    c_prefix: efl_input;
    data: null;

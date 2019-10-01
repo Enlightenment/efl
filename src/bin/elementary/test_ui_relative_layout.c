@@ -1,11 +1,11 @@
-#include "test.h"
 #ifdef HAVE_CONFIG_H
 # include "elementary_config.h"
 #endif
 
 #include <Efl_Ui.h>
 #include <Elementary.h>
-
+#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
+#include "test.h"
 static Eo *layout, *btn1, *btn2, *btn3;
 
 typedef enum {

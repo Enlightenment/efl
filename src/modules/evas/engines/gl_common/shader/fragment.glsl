@@ -230,6 +230,10 @@ vec4 fetch_pixel(float ox, float oy)
    c = vec4(c.a, c.a, c.a, c.a);
 #endif
 
+#ifdef SHD_FILTER_GRAYSCALE
+   c.rgb = 0.3 * c.r + 0.59 * c.g + 0.11 * c.b;
+#endif
+
 #ifndef SHD_FILTER_BLUR
 
    gl_FragColor =

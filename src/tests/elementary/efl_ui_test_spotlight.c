@@ -353,11 +353,11 @@ EFL_START_TEST (efl_ui_smart_transition_lifetime)
    t = _create_transition();
    efl_wref_add(t, &t);
    t1 = _create_transition();
-   efl_wref_add(t1, &t1);
 
    efl_ui_spotlight_manager_set(container, t);
    efl_ui_spotlight_manager_set(container, t1);
    ck_assert_ptr_eq(t, NULL);
+   ck_assert_ptr_ne(t1, NULL);
 }
 EFL_END_TEST
 
@@ -426,6 +426,7 @@ EFL_START_TEST (efl_ui_smart_indicator_calls)
    Efl_Ui_Spotlight_Manager*i = _create_indicator();
    efl_ui_spotlight_indicator_set(container, i);
    _verify_indicator_calls();
+   ck_assert_ptr_ne(i, NULL);
 }
 EFL_END_TEST
 
@@ -438,6 +439,8 @@ EFL_START_TEST (efl_ui_smart_indicator_transition_calls)
    efl_ui_spotlight_indicator_set(container, i);
    efl_ui_spotlight_manager_set(container, t);
    _verify_indicator_calls();
+   ck_assert_ptr_ne(i, NULL);
+   ck_assert_ptr_ne(t, NULL);
 }
 EFL_END_TEST
 

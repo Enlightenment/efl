@@ -1,5 +1,6 @@
 #include <ctype.h>
 #include <assert.h>
+#include <stdlib.h>
 
 #ifdef HAVE_CONFIG_H
 # include "config.h"
@@ -12,7 +13,10 @@ typedef struct _Validate_State
 {
    Eina_Bool warned;
    Eina_Bool stable;
+   Eina_Bool in_tree;
    Eina_Bool unimplemented_beta;
+   Eina_Bool verify_since;
+   const char *since_ver;
 } Validate_State;
 
 static Eina_Bool
@@ -88,6 +92,60 @@ _validate_docstr(Eina_Stringshare *str, const Eolian_Object *info, Eina_List **r
 }
 
 static Eina_Bool
+_validate_doc_since(Validate_State *vals, Eolian_Documentation *doc)
+{
+   if (!doc || !vals->stable || !vals->verify_since)
+     return EINA_TRUE;
+
+   if (doc->since)
+     {
+        if (!doc->since[0])
+          {
+             /* this should not really happen */
+             _eo_parser_log(&doc->base, "empty @since tag");
+             return EINA_FALSE;
+          }
+        /* this is EFL; check the numbers */
+        if (vals->in_tree)
+          {
+             const char *snum = doc->since;
+             if (strncmp(snum, "1.", 2))
+               {
+                  _eo_parser_log(&doc->base, "invalid EFL version in @since");
+                  return EINA_FALSE;
+               }
+             snum += 2;
+             unsigned long min = strtoul(snum, NULL, 10);
+             if (min < 22)
+               {
+                  _eo_parser_log(&doc->base, "stable APIs must be 1.22 or higher");
+                  return EINA_FALSE;
+               }
+          }
+        vals->since_ver = doc->since;
+     }
+   else if (!vals->since_ver)
+     {
+        _eo_parser_log(&doc->base, "missing @since tag");
+        return EINA_FALSE;
+     }
+
+   return EINA_TRUE;
+}
+
+static Eina_Bool
+_validate_doc_since_reset(Validate_State *vals, Eolian_Documentation *doc)
+{
+   if (!doc || !doc->since)
+     return EINA_TRUE;
+
+   const char *old_since = vals->since_ver;
+   Eina_Bool ret = _validate_doc_since(vals, doc);
+   vals->since_ver = old_since;
+   return ret;
+}
+
+static Eina_Bool
 _validate_doc(Eolian_Documentation *doc)
 {
    if (!doc)
@@ -133,6 +191,7 @@ _sf_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
      return EINA_FALSE;
 
    sc->succ = _validate_doc(sf->doc);
+   if (sc->succ) sc->succ = _validate_doc_since_reset(sc->vals, sf->doc);
 
    return sc->succ;
 }
@@ -150,6 +209,7 @@ _ef_map_cb(const Eina_Hash *hash EINA_UNUSED, const void *key EINA_UNUSED,
      return EINA_FALSE;
 
    sc->succ = _validate_doc(ef->doc);
+   if (sc->succ) sc->succ = _validate_doc_since_reset(sc->vals, ef->doc);
 
    return sc->succ;
 }
@@ -160,11 +220,17 @@ _validate_typedecl(Validate_State *vals, Eolian_Typedecl *tp)
    if (tp->base.validated)
      return EINA_TRUE;
 
-   if (!_validate_doc(tp->doc))
-     return EINA_FALSE;
+   const char *old_since = vals->since_ver;
+   vals->since_ver = NULL;
 
    /* for the time being assume all typedecls are beta unless overridden */
    Eina_Bool was_stable = _set_stable(vals, !tp->base.is_beta);
+
+   if (!_validate_doc(tp->doc))
+     return EINA_FALSE;
+
+   if (!_validate_doc_since(vals, tp->doc))
+     return EINA_FALSE;
 
    switch (tp->type)
      {
@@ -174,6 +240,7 @@ _validate_typedecl(Validate_State *vals, Eolian_Typedecl *tp)
         if (tp->base_type->ownable)
           tp->ownable = EINA_TRUE;
         _reset_stable(vals, was_stable, EINA_TRUE);
+        vals->since_ver = old_since;
         return _validate(&tp->base);
       case EOLIAN_TYPEDECL_STRUCT:
         {
@@ -182,10 +249,12 @@ _validate_typedecl(Validate_State *vals, Eolian_Typedecl *tp)
            if (!rt.succ)
              return _reset_stable(vals, was_stable, EINA_FALSE);
            _reset_stable(vals, was_stable, EINA_TRUE);
+           vals->since_ver = old_since;
            return _validate(&tp->base);
         }
       case EOLIAN_TYPEDECL_STRUCT_OPAQUE:
         _reset_stable(vals, was_stable, EINA_TRUE);
+        vals->since_ver = old_since;
         return _validate(&tp->base);
       case EOLIAN_TYPEDECL_ENUM:
         {
@@ -199,12 +268,14 @@ _validate_typedecl(Validate_State *vals, Eolian_Typedecl *tp)
            if (!rt.succ)
              return _reset_stable(vals, was_stable, EINA_FALSE);
            _reset_stable(vals, was_stable, EINA_TRUE);
+           vals->since_ver = old_since;
            return _validate(&tp->base);
         }
       case EOLIAN_TYPEDECL_FUNCTION_POINTER:
         if (!_validate_function(vals, tp->function_pointer, NULL))
           return _reset_stable(vals, was_stable, EINA_FALSE);
         _reset_stable(vals, was_stable, EINA_TRUE);
+        vals->since_ver = old_since;
         return _validate(&tp->base);
       default:
         return _reset_stable(vals, was_stable, EINA_FALSE);
@@ -576,6 +647,8 @@ _validate_part(Validate_State *vals, Eolian_Part *part, Eina_Hash *phash)
 
    if (!_validate_doc(part->doc))
      return _reset_stable(vals, was_stable, EINA_FALSE);
+   if (!_validate_doc_since_reset(vals, part->doc))
+     return _reset_stable(vals, was_stable, EINA_FALSE);
 
    /* switch the class name for class */
    Eolian_Class *pcl = eina_hash_find(part->base.unit->classes, part->klass_name);
@@ -694,6 +767,8 @@ _validate_event(Validate_State *vals, Eolian_Event *event, Eina_Hash *nhash)
      }
 
    if (!_validate_doc(event->doc))
+     return _reset_stable(vals, was_stable, EINA_FALSE);
+   if (!_validate_doc_since_reset(vals, event->doc))
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
    eina_hash_set(nhash, &event->base.name, &event->base);
@@ -1346,7 +1421,7 @@ _db_fill_inherits(Validate_State *vals, Eolian_Class *cl, Eina_Hash *fhash,
 }
 
 static Eina_Bool
-_validate_implement(Eolian_Implement *impl)
+_validate_implement(Validate_State *vals, Eolian_Implement *impl)
 {
    if (impl->base.validated)
      return EINA_TRUE;
@@ -1357,6 +1432,16 @@ _validate_implement(Eolian_Implement *impl)
      return EINA_FALSE;
    if (!_validate_doc(impl->set_doc))
      return EINA_FALSE;
+
+   /* common doc inherits @since into get/set doc */
+   const char *old_since = vals->since_ver;
+   if (impl->common_doc && !_validate_doc_since(vals, impl->common_doc))
+     return EINA_FALSE;
+   if (!_validate_doc_since_reset(vals, impl->get_doc))
+     return EINA_FALSE;
+   if (!_validate_doc_since_reset(vals, impl->set_doc))
+     return EINA_FALSE;
+   vals->since_ver = old_since;
 
    return _validate(&impl->base);
 }
@@ -1485,6 +1570,10 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
      }
 
    _set_stable(vals, !cl->base.is_beta);
+   vals->since_ver = NULL;
+
+   if (!_validate_doc_since(vals, cl->doc))
+     return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->properties, l, func)
      if (!_validate_function(vals, func, nhash))
@@ -1503,7 +1592,7 @@ _validate_class(Validate_State *vals, Eolian_Class *cl,
        return EINA_FALSE;
 
    EINA_LIST_FOREACH(cl->implements, l, impl)
-     if (!_validate_implement(impl))
+     if (!_validate_implement(vals, impl))
        return EINA_FALSE;
 
    /* all the checks that need to be done every time are performed now */
@@ -1529,7 +1618,13 @@ _validate_constant(Validate_State *vals, Eolian_Constant *var)
    if (var->base.validated)
      return EINA_TRUE;
 
+   const char *old_since = vals->since_ver;
+   vals->since_ver = NULL;
+
    Eina_Bool was_stable = _set_stable(vals, !var->base.is_beta && vals->stable);
+
+   if (!_validate_doc_since(vals, var->doc))
+     return EINA_FALSE;
 
    if (!_validate_type(vals, var->base_type, EINA_FALSE, EINA_FALSE))
      return _reset_stable(vals, was_stable, EINA_FALSE);
@@ -1541,6 +1636,7 @@ _validate_constant(Validate_State *vals, Eolian_Constant *var)
      return _reset_stable(vals, was_stable, EINA_FALSE);
 
    _reset_stable(vals, was_stable, EINA_TRUE);
+   vals->since_ver = old_since;
    return _validate(&var->base);
 }
 
@@ -1566,7 +1662,9 @@ database_validate(const Eolian_Unit *src)
    Validate_State vals = {
       EINA_FALSE,
       EINA_TRUE,
-      !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_BETA_WARN")
+      !!getenv("EFL_RUN_IN_TREE"),
+      !!getenv("EOLIAN_CLASS_UNIMPLEMENTED_BETA_WARN"),
+      !!getenv("EOLIAN_ENFORCE_SINCE")
    };
 
    /* do an initial pass to refill inherits */

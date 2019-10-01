@@ -3,7 +3,7 @@
 #endif
 #include <Efl_Ui.h>
 #include <Elementary.h>
-
+#include "elm_priv.h" //FIXME remove this once efl.ui.text doesn't need elm_general.h
 /* A simple test, just displaying clock in its default format */
 
 Evas_Object *dt1, *dt2, *dt3, *dt4;

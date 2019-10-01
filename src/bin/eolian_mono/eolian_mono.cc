@@ -173,6 +173,8 @@ run(options_type const& opts)
                 throw std::runtime_error("Failed to generate alias.");
            }
      }
+   ::eina_iterator_free(aliases);
+
 
    // Constants
    {
@@ -224,20 +226,6 @@ run(options_type const& opts)
              throw std::runtime_error("Failed to generate struct");
           }
      }
-}
-
-static void
-state_init(options_type const& opts)
-{
-   Eolian_State *eos = ::eolian_state_new();
-   if (!eos)
-     {
-        EINA_CXX_DOM_LOG_ERR(eolian_mono::domain)
-          << "Eolian failed creating state";
-        assert(false && "Error creating state");
-     }
-   opts.state = eos;
-   opts.unit = (Eolian_Unit*)eos;
 }
 
 static void
@@ -420,8 +408,10 @@ int main(int argc, char **argv)
      {
         efl::eina::eina_init eina_init;
         efl::eolian::eolian_init eolian_init;
+        efl::eolian::eolian_state eolian_state;
         eolian_mono::options_type opts = opts_get(argc, argv);
-        eolian_mono::state_init(opts);
+        opts.state = eolian_state.value;
+        opts.unit = eolian_state.as_unit();
         eolian_mono::database_load(opts);
         eolian_mono::run(opts);
      }

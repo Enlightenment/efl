@@ -5541,35 +5541,35 @@ static void
 _scroll_animate_start_cb(Evas_Object *obj,
                          void *data EINA_UNUSED)
 {
-   efl_event_callback_legacy_call(obj, EFL_UI_EVENT_SCROLL_ANIM_STARTED, NULL);
+   evas_object_smart_callback_call(obj, "anim,start", NULL);
 }
 
 static void
 _scroll_animate_stop_cb(Evas_Object *obj,
                         void *data EINA_UNUSED)
 {
-   efl_event_callback_legacy_call(obj, EFL_UI_EVENT_SCROLL_ANIM_FINISHED, NULL);
+   evas_object_smart_callback_call(obj, "anim,stop", NULL);
 }
 
 static void
 _scroll_drag_start_cb(Evas_Object *obj,
                       void *data EINA_UNUSED)
 {
-   efl_event_callback_legacy_call(obj, EFL_UI_EVENT_SCROLL_DRAG_STARTED, NULL);
+   evas_object_smart_callback_call(obj, "drag,start", NULL);
 }
 
 static void
 _scroll_cb(Evas_Object *obj,
            void *data EINA_UNUSED)
 {
-   efl_event_callback_legacy_call(obj, EFL_UI_EVENT_SCROLL_CHANGED, NULL);
+   evas_object_smart_callback_call(obj, "changed", NULL);
 }
 
 static void
 _scroll_drag_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   efl_event_callback_legacy_call(obj, EFL_UI_EVENT_SCROLL_DRAG_FINISHED, NULL);
+   evas_object_smart_callback_call(obj, "drag,stop", NULL);
 }
 
 static void

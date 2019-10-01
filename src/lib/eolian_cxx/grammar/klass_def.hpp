@@ -1617,6 +1617,7 @@ struct enum_def
   std::vector<std::string> namespaces;
   std::vector<enum_value_def> fields;
   documentation_def documentation;
+  bool is_beta;
 
   enum_def(Eolian_Typedecl const* enum_obj, Eolian_Unit const* unit)
   {
@@ -1634,6 +1635,7 @@ struct enum_def
           enum_value_def field_def(&*field_iterator, unit);
           this->fields.push_back(field_def);
        }
+     is_beta = eolian_object_is_beta(EOLIAN_OBJECT(enum_obj));
 
      documentation = ::eolian_typedecl_documentation_get(enum_obj);
   }

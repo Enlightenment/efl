@@ -17,7 +17,10 @@ error Efl.Ui.Theme.Apply_Error.VERSION = "The widget attempted to load a theme t
 
 enum Efl.Ui.Focus.Direction
 {
-   [[ Focus directions. ]]
+   [[ Focus directions.
+
+     @since 1.23
+   ]]
    previous = 0, [[ previous direction ]]
    next = 1,     [[ next direction ]]
    up = 2,       [[ up direction ]]

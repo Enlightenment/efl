@@ -1,7 +1,7 @@
 /**
 Group: efl/scroller (@since 1.23)
-	 Part Rectangle: efl.dragable.hbar (required)
-	 Part Rectangle: efl.dragable.vbar (required)
+	 Part Rectangle: efl.draggable.horizontal_bar (required)
+	 Part Rectangle: efl.draggable.vertical_bar (required)
 	 Part Swallow: efl.background (required)
 	 Part Swallow: efl.content (required)
 	 Part Swallow: efl.overlay (required)
@@ -11,8 +11,8 @@ Group: efl/scroller (@since 1.23)
 	 Signal: efl,vertical_bar,visible,off
 	 Signal: efl,vertical_bar,visible,on
 Group: efl/scroller:noclip (@since 1.23)
-	 Part Rectangle: efl.dragable.hbar (required)
-	 Part Rectangle: efl.dragable.vbar (required)
+	 Part Rectangle: efl.draggable.horizontal_bar (required)
+	 Part Rectangle: efl.draggable.vertical_bar (required)
 	 Part Swallow: efl.background (required)
 	 Part Swallow: efl.content (required)
 	 Part Swallow: efl.overlay (required)
@@ -22,8 +22,8 @@ Group: efl/scroller:noclip (@since 1.23)
 	 Signal: efl,vertical_bar,visible,off
 	 Signal: efl,vertical_bar,visible,on
 Group: efl/scroller:popup/no_inset_shadow (@since 1.23)
-	 Part Rectangle: efl.dragable.hbar (required)
-	 Part Rectangle: efl.dragable.vbar (required)
+	 Part Rectangle: efl.draggable.horizontal_bar (required)
+	 Part Rectangle: efl.draggable.vertical_bar (required)
 	 Part Swallow: efl.background (required)
 	 Part Swallow: efl.content (required)
 	 Part Swallow: efl.overlay (required)
@@ -191,7 +191,7 @@ group { name: "efl/scroller";
             rel1.relative: 0.0 1.0;
             rel1.to: "sb_vbar_a1";
             rel2.relative: 1.0 0.0;
-            rel2.to: "efl.dragable.vbar";
+            rel2.to: "efl.draggable.vertical_bar";
             fixed: 1 1;
          }
       }
@@ -200,13 +200,13 @@ group { name: "efl/scroller";
          description { state: "default" 0.0;
             color: 0 0 0 0;
             rel1.relative: 0.0 1.0;
-            rel1.to: "efl.dragable.vbar";
+            rel1.to: "efl.draggable.vertical_bar";
             rel2.relative: 1.0 0.0;
             rel2.to: "sb_vbar_a2";
             fixed: 1 1;
          }
       }
-      part { name: "efl.dragable.vbar"; type: RECT; required;
+      part { name: "efl.draggable.vertical_bar"; type: RECT; required;
          clip_to: "sb_vbar";
          scale: 1;
          dragable.x: 0 0 0;
@@ -254,8 +254,8 @@ group { name: "efl/scroller";
             max: 4 2;
             fixed: 1 1;
             align: 0.0 0.0;
-            rel1.to: "efl.dragable.vbar";
-            rel2.to: "efl.dragable.vbar";
+            rel1.to: "efl.draggable.vertical_bar";
+            rel2.to: "efl.draggable.vertical_bar";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -288,8 +288,8 @@ group { name: "efl/scroller";
             max: 4 2;
             fixed: 1 1;
             align: 0.0 1.0;
-            rel1.to: "efl.dragable.vbar";
-            rel2.to: "efl.dragable.vbar";
+            rel1.to: "efl.draggable.vertical_bar";
+            rel2.to: "efl.draggable.vertical_bar";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -340,7 +340,7 @@ group { name: "efl/scroller";
          action: STATE_SET "default" 0.0;
          target: "sb_vbar";
          target: "sb_vbar_show";
-         target: "efl.dragable.vbar";
+         target: "efl.draggable.vertical_bar";
          target: "sb_vbar_a1";
          target: "sb_vbar_a2";
          target: "y_vbar_up_mapper";
@@ -355,7 +355,7 @@ group { name: "efl/scroller";
          action: STATE_SET "hidden" 0.0;
          target: "sb_vbar";
          target: "sb_vbar_show";
-         target: "efl.dragable.vbar";
+         target: "efl.draggable.vertical_bar";
          target: "sb_vbar_a1";
          target: "sb_vbar_a2";
          target: "y_vbar_up_mapper";
@@ -379,7 +379,7 @@ group { name: "efl/scroller";
       }
       program { name: "drag_up";
          action: DRAG_VAL_STEP 0.0 -1.0;
-         target: "efl.dragable.vbar";
+         target: "efl.draggable.vertical_bar";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_vbar_a2";//ok
@@ -395,17 +395,17 @@ group { name: "efl/scroller";
       }
       program { name: "drag_down";
          action: DRAG_VAL_STEP 0.0 1.0;
-         target: "efl.dragable.vbar";
+         target: "efl.draggable.vertical_bar";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_vbar_p1";
          action: DRAG_VAL_PAGE 0.0 -1.0;
-         target: "efl.dragable.vbar";
+         target: "efl.draggable.vertical_bar";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_vbar_p2";
          action: DRAG_VAL_PAGE  0.0 1.0;
-         target: "efl.dragable.vbar";
+         target: "efl.draggable.vertical_bar";
       }
       program {
          signal: "efl,action,scroll"; source: "efl";
@@ -458,7 +458,7 @@ group { name: "efl/scroller";
             rel1.relative: 1.0 0.0;
             rel1.to: "sb_hbar_a1";
             rel2.relative: 0.0 1.0;
-            rel2.to: "efl.dragable.hbar";
+            rel2.to: "efl.draggable.horizontal_bar";
             fixed: 1 1;
          }
       }
@@ -467,13 +467,13 @@ group { name: "efl/scroller";
          description { state: "default" 0.0;
             color: 0 0 0 0;
             rel1.relative: 1.0 0.0;
-            rel1.to: "efl.dragable.hbar";
+            rel1.to: "efl.draggable.horizontal_bar";
             rel2.relative: 0.0 1.0;
             rel2.to: "sb_hbar_a2";
             fixed: 1 1;
          }
       }
-      part { name: "efl.dragable.hbar"; type: RECT; required;
+      part { name: "efl.draggable.horizontal_bar"; type: RECT; required;
          clip_to: "sb_hbar";
          scale: 1;
          dragable.x: 1 1 0;
@@ -521,8 +521,8 @@ group { name: "efl/scroller";
             max: 2 4;
             fixed: 1 1;
             align: 0.0 1.0;
-            rel1.to: "efl.dragable.hbar";
-            rel2.to: "efl.dragable.hbar";
+            rel1.to: "efl.draggable.horizontal_bar";
+            rel2.to: "efl.draggable.horizontal_bar";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -555,8 +555,8 @@ group { name: "efl/scroller";
             max: 2 4;
             fixed: 1 1;
             align: 1.0 1.0;
-            rel1.to: "efl.dragable.hbar";
-            rel2.to: "efl.dragable.hbar";
+            rel1.to: "efl.draggable.horizontal_bar";
+            rel2.to: "efl.draggable.horizontal_bar";
          }
          description { state: "hidden" 0.0;
             inherit: "default" 0.0;
@@ -607,7 +607,7 @@ group { name: "efl/scroller";
          action: STATE_SET "default" 0.0;
          target: "sb_hbar";
          target: "sb_hbar_show";
-         target: "efl.dragable.hbar";
+         target: "efl.draggable.horizontal_bar";
          target: "sb_hbar_a1";
          target: "sb_hbar_a2";
          target: "x_hbar_left_mapper";
@@ -622,7 +622,7 @@ group { name: "efl/scroller";
          action: STATE_SET "hidden" 0.0;
          target: "sb_hbar";
          target: "sb_hbar_show";
-         target: "efl.dragable.hbar";
+         target: "efl.draggable.horizontal_bar";
          target: "sb_hbar_a1";
          target: "sb_hbar_a2";
          target: "x_hbar_left_mapper";
@@ -646,7 +646,7 @@ group { name: "efl/scroller";
       }
       program { name: "drag_left";
          action: DRAG_VAL_STEP -1.0 0.0;
-         target: "efl.dragable.hbar";
+         target: "efl.draggable.horizontal_bar";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_hbar_a2";
@@ -662,17 +662,17 @@ group { name: "efl/scroller";
       }
       program { name: "drag_right";
          action: DRAG_VAL_STEP 1.0 0.0;
-         target: "efl.dragable.hbar";
+         target: "efl.draggable.horizontal_bar";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_hbar_p1";
          action: DRAG_VAL_PAGE -1.0 0.0;
-         target: "efl.dragable.hbar";
+         target: "efl.draggable.horizontal_bar";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_hbar_p2";
          action: DRAG_VAL_PAGE  1.0 0.0;
-         target: "efl.dragable.hbar";
+         target: "efl.draggable.horizontal_bar";
       }
       program {
          signal: "efl,action,scroll"; source: "efl";
@@ -909,9 +909,9 @@ group { name: "efl/scroller";
          description { state: "default" 0.0;
             fixed: 1 1;
             rel1.offset: 2 0;
-            rel1.to: "efl.dragable.vbar";
+            rel1.to: "efl.draggable.vertical_bar";
             rel2.offset: -3 -1;
-            rel2.to: "efl.dragable.vbar";
+            rel2.to: "efl.draggable.vertical_bar";
             image.normal: "vgrad_med_lighter.png";
             fill.smooth: 0;
             min: 3 13;
@@ -1070,9 +1070,9 @@ group { name: "efl/scroller";
          description { state: "default" 0.0;
             fixed: 1 1;
             rel1.offset: 0 2;
-            rel1.to: "efl.dragable.hbar";
+            rel1.to: "efl.draggable.horizontal_bar";
             rel2.offset: -1 -3;
-            rel2.to: "efl.dragable.hbar";
+            rel2.to: "efl.draggable.horizontal_bar";
             image.normal: "vgrad_med_lighter.png";
             fill.smooth: 0;
             min: 13 3;
@@ -1127,51 +1127,51 @@ group { name: "efl/scroller";
    }
    programs {
       program {
-         signal: "mouse,down,1*"; source: "efl.dragable.vbar";
+         signal: "mouse,down,1*"; source: "efl.draggable.vertical_bar";
          action: STATE_SET "clicked" 0.0;
-         target: "efl.dragable.vbar";
+         target: "efl.draggable.vertical_bar";
          target: "shadow_vbar";
          target: "glow_vbar";
          target: "center_glow_vbar";
       }
       program {
-         signal: "mouse,down,*"; source: "efl.dragable.vbar";
+         signal: "mouse,down,*"; source: "efl.draggable.vertical_bar";
          action: SIGNAL_EMIT "efl,vertical_bar,press" "efl";
       }
       program {
-         signal: "mouse,up,1"; source: "efl.dragable.vbar";
+         signal: "mouse,up,1"; source: "efl.draggable.vertical_bar";
          action: STATE_SET "default" 0.0;
-         target: "efl.dragable.vbar";
+         target: "efl.draggable.vertical_bar";
          target: "shadow_vbar";
          target: "glow_vbar";
          target: "center_glow_vbar";
       }
       program {
-         signal: "mouse,up,*"; source: "efl.dragable.vbar";
+         signal: "mouse,up,*"; source: "efl.draggable.vertical_bar";
          action: SIGNAL_EMIT "efl,vbar,unpress" "efl";
       }
       program {
-         signal: "mouse,down,1*"; source: "efl.dragable.hbar";
+         signal: "mouse,down,1*"; source: "efl.draggable.horizontal_bar";
          action: STATE_SET "clicked" 0.0;
-         target: "efl.dragable.hbar";
+         target: "efl.draggable.horizontal_bar";
          target: "shadow_hbar";
          target: "glow_hbar";
          target: "center_glow_hbar";
       }
       program {
-         signal: "mouse,down,*"; source: "efl.dragable.hbar";
+         signal: "mouse,down,*"; source: "efl.draggable.horizontal_bar";
          action: SIGNAL_EMIT "efl,horizontal_bar,press" "efl";
       }
       program {
-         signal: "mouse,up,1"; source: "efl.dragable.hbar";
+         signal: "mouse,up,1"; source: "efl.draggable.horizontal_bar";
          action: STATE_SET "default" 0.0;
-         target: "efl.dragable.hbar";
+         target: "efl.draggable.horizontal_bar";
          target: "shadow_hbar";
          target: "glow_hbar";
          target: "center_glow_hbar";
       }
       program {
-         signal: "mouse,up,*"; source: "efl.dragable.hbar";
+         signal: "mouse,up,*"; source: "efl.draggable.horizontal_bar";
          action: SIGNAL_EMIT "efl,horizontal_bar,unpress" "efl";
       }
    }

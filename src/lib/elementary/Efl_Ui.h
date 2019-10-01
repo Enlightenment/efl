@@ -47,10 +47,6 @@
 #endif
 #endif
 
-#include <Eina.h>
-#include <Eo.h>
-#include <Efl.h>
-
 #ifdef _WIN32
 # define WIN32_LEAN_AND_MEAN
 # include <winsock2.h>
@@ -76,25 +72,8 @@
 #include <Efl_Core.h>
 #include <Efl_Net.h>
 
-#include <Evas.h>
-#ifndef EFL_NOLEGACY_API_SUPPORT
-# include <Evas_GL.h>
-#endif
-#include <Eio.h>
-#include <Edje.h>
-#include <Eldbus.h>
-#include <Efreet.h>
-#include <Efreet_Mime.h>
-#include <Efreet_Trash.h>
-#include <Ethumb_Client.h>
-
-#ifdef ELM_ELOCATION
-#include <Elocation.h>
-#endif
-
-#ifdef ELM_EMAP
-#include <EMap.h>
-#endif
+#include <Efl_Canvas.h>
+#include <Efl_Layout.h>
 
 #ifdef EAPI
 # undef EAPI
@@ -245,16 +224,17 @@ EAPI Eina_Bool efl_ui_win_autodel_get(const Efl_Ui_Win *obj);
 # include <efl_ui_win_socket.eo.h>
 # include <efl_ui_relative_layout.eo.h>
 
-/* FIXME: Efl.Ui.Text must not use elm_general.h */
+/* FIXME: Efl.Ui.Text must not use elm_general.h
 # include <elm_general.h>
 # include <efl_text_interactive.eo.h>
 # include <efl_ui_text.eo.h>
 # include <efl_ui_text_editable.eo.h>
 # include <efl_ui_text_async.eo.h>
+*/
 
 # include <efl_ui_animation_view.eo.h>
-# include <efl_ui_clock.h>
-# include <efl_ui_video.h>
+# include <efl_ui_clock.eo.h>
+# include <efl_ui_video.eo.h>
 
 # include <efl_ui_widget_factory.eo.h>
 # include <efl_ui_image_factory.eo.h>

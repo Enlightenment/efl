@@ -7,8 +7,8 @@
 #include <Efl_Ui.h>
 #include "../efl_check.h"
 
-extern Evas_Object *win;
-extern Evas_Object *widget;
+extern Eo *win;
+extern Eo *widget;
 
 void efl_pack_behavior_test(TCase *tc);
 void efl_pack_linear_behavior_test(TCase *tc);
@@ -30,7 +30,7 @@ Efl_Ui_Widget* efl_test_parent_get(Eo *obj);
 
 Eo* create_test_widget(void);
 
-Evas_Object * win_add();
+Eo * win_add();
 
 const Efl_Class* efl_ui_widget_realized_class_get(void);
 

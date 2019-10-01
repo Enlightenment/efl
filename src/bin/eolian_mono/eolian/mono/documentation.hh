@@ -560,7 +560,7 @@ struct documentation_generator
    {
       std::string str = doc.full_text;
       if (!doc.since.empty())
-        str += "\n(Since EFL " + doc.since + ")";
+        str += "\\<br/\\>Since EFL " + doc.since;
       str += tail_text;
       return generate_tag_summary(sink, str, context);
    }
