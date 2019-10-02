@@ -7067,7 +7067,7 @@ _style_fetch(const char *style)
 }
 
 EOLIAN static void
-_efl2_canvas_text_style_set(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o EINA_UNUSED, const char *key, Efl2_Text_Attribute_Handle *attribute)
+_efl2_canvas_text_text_style_set(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o EINA_UNUSED, const char *key, Efl2_Text_Attribute_Handle *attribute)
 {
    // FIXME-implement
    (void) key;
@@ -7075,7 +7075,7 @@ _efl2_canvas_text_style_set(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o EIN
 }
 
 EOLIAN static Efl2_Text_Attribute_Handle *
-_efl2_canvas_text_style_get(const Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o, const char *key)
+_efl2_canvas_text_text_style_get(const Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o, const char *key)
 {
    // FIXME-implement
    (void) key;
@@ -7085,7 +7085,7 @@ _efl2_canvas_text_style_get(const Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data 
 
 
 EOLIAN static void
-_efl2_canvas_text_legacy_newline_set(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o, Eina_Bool mode)
+_efl2_canvas_text_newline_as_paragraph_separator_set(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o, Eina_Bool mode)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -7098,7 +7098,7 @@ _efl2_canvas_text_legacy_newline_set(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Da
 }
 
 EOLIAN static Eina_Bool
-_efl2_canvas_text_legacy_newline_get(const Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o)
+_efl2_canvas_text_newline_as_paragraph_separator_get(const Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o)
 {
    return o->legacy_newline;
 }
@@ -11162,15 +11162,18 @@ _evas_object_textblock_clear(Evas_Object *eo_obj)
    _evas_textblock_changed(o, eo_obj);
 }
 
-EOLIAN static void
-_efl2_canvas_text_size_formatted_get(const Eo *eo_obj, Efl2_Canvas_Text_Data *o, Evas_Coord *w, Evas_Coord *h)
+EOLIAN static Eina_Size2D
+_efl2_canvas_text_size_formatted_get(const Eo *eo_obj, Efl2_Canvas_Text_Data *o)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
    _relayout_if_needed(eo_obj, o);
 
-   if (w) *w = o->formatted.w;
-   if (h) *h = o->formatted.h;
+   Eina_Size2D ret = {
+        .w = o->formatted.w,
+        .h = o->formatted.h,
+   };
+   return ret;
 }
 
 #ifdef BIDI_SUPPORT
@@ -11405,8 +11408,8 @@ _size_native_calc_paragraph_size(const Evas_Object *eo_obj,
    *_w = wmax;
 }
 
-EOLIAN static void
-_efl2_canvas_text_size_native_get(const Eo *eo_obj, Efl2_Canvas_Text_Data *o, Evas_Coord *w, Evas_Coord *h)
+EOLIAN static Eina_Size2D
+_efl2_canvas_text_size_native_get(const Eo *eo_obj, Efl2_Canvas_Text_Data *o)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -11435,8 +11438,11 @@ _efl2_canvas_text_size_native_get(const Eo *eo_obj, Efl2_Canvas_Text_Data *o, Ev
         o->content_changed = 0;
         o->format_changed = EINA_FALSE;
      }
-   if (w) *w = o->native.w;
-   if (h) *h = o->native.h;
+   Eina_Size2D ret = {
+        .w = o->native.w,
+        .h = o->native.h,
+   };
+   return ret;
 }
 
 EOLIAN static void
@@ -13732,7 +13738,7 @@ _future_scheduler_get(void)
    return efl_loop_future_scheduler_get(efl_main_loop_get());
 }
 
-EOLIAN static Eina_Future *
+EOLIAN static void
 _efl2_canvas_text_async_layout(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o)
 {
    Ctxt *c;
@@ -13741,25 +13747,18 @@ _efl2_canvas_text_async_layout(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o)
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    Text_Promise_Ctx *ctx = calloc(1, sizeof(*ctx));
-   p = eina_promise_new(_future_scheduler_get(), _dummy_cancel, ctx);
-   if (!p)
-     {
-        CRI("Failed to allocate a promise");
-        return NULL;
-     }
-   ctx->p = p;
-   f = eina_future_new(p);
+   ctx->p = NULL; // FIXME: remove this
 
    if (o->layout_th)
      {
         o->layout_jobs++;
-        return f;
+        return;
      }
    evas_object_textblock_coords_recalc(eo_obj, obj, obj->private_data);
    if (o->formatted.valid)
      {
         _resolve_async(ctx, o->formatted.w, o->formatted.w);
-        return f;
+        return;
      }
 
    c = calloc(1, sizeof(*c));
@@ -13769,12 +13768,11 @@ _efl2_canvas_text_async_layout(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o)
             obj->cur->geometry.w, obj->cur->geometry.h))
      {
         _resolve_async(ctx, 0, 0);
-        return f;
+        return;
      }
    _layout_pre(c);
    o->layout_th = ecore_thread_run(_text_layout_async_do, _text_layout_async_done,
          NULL, ctx);
-   return f;
 }
 
 #include "canvas/efl2_canvas_text.eo.c"

@@ -44,7 +44,7 @@ static const char *style_buf =
    evas_font_hinting_set(evas, EVAS_FONT_HINTING_AUTO); \
    tb = efl_add(EFL2_CANVAS_TEXT_CLASS, evas); \
    fail_if(!tb); \
-   efl2_canvas_text_legacy_newline_set(tb, EINA_FALSE); \
+   efl2_canvas_text_newline_as_paragraph_separator_set(tb, EINA_FALSE); \
    Efl2_Text_Attribute_Factory *attr_factory = efl_add(EFL2_TEXT_ATTRIBUTE_FACTORY_CLASS, tb); \
    efl2_text_font_family_set(attr_factory, TEST_FONT_FAMILY); \
    efl2_text_font_source_set(attr_factory, TEST_FONT_SOURCE); \
@@ -141,6 +141,14 @@ static Eina_Bool
 _cursor_pen_geometry_get(const Efl2_Text_Cursor *cur, int *x1, int *y1, int *w1, int *h1)
 {
    return efl2_text_cursor_geometry_get(cur, EFL2_TEXT_CURSOR_TYPE_UNDER, x1, y1, w1, h1, NULL, NULL, NULL, NULL);
+}
+
+static void
+_size_native_get(const Efl2_Canvas_Text *obj, int *w, int *h)
+{
+   Eina_Size2D ret = efl2_canvas_text_size_native_get(obj);
+   if (w) *w = ret.w;
+   if (h) *h = ret.h;
 }
 
 // FIXME: It's checking against -1 and the functions return booleans nowadays.
@@ -451,7 +459,7 @@ EFL_START_TEST(canvas_text_cursor)
 
    /* Try positions before the first paragraph, and after the last paragraph */
    efl2_text_set(tb, buf);
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
    efl2_text_cursor_position_set(cur, 5);
    efl2_text_cursor_coord_set(cur, nw / 2,
@@ -822,7 +830,7 @@ EFL_START_TEST(canvas_text_cursor)
 
         /* And now with a valigned textblock. */
         efl2_text_set(tb, buf);
-        efl2_canvas_text_size_native_get(tb, &nw, &nh);
+        _size_native_get(tb, &nw, &nh);
         evas_object_resize(tb, 2 * nw, 2 * nh);
 
         evas_object_textblock_valign_set(tb, 0.5);
@@ -1070,7 +1078,7 @@ EFL_START_TEST(canvas_text_split_cursor)
     * Russian 't' in the beginnning to create additional item.*/
                                             /*01234    5 6789012345678  19  01234 */
    efl2_text_set(tb, "тest \u202bנסיוןabcנסיון\u202c bang");
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
 
    /* Logical cursor after "test " */
@@ -1146,7 +1154,7 @@ EFL_START_TEST(canvas_text_split_cursor)
                                            /*                1           2
                                               01234  5   67890123456789  0   123456 */
    efl2_text_set(tb, "שלום \u202atest עברית efl\u202c נסיון");
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
 
    /* Logical cursor before "test" */
@@ -1219,7 +1227,7 @@ EFL_START_TEST(canvas_text_split_cursor)
                                              /*              1
                                               01234   5  678901234567   */
    efl2_text_set(tb, "test \u202bנסיוןشسيبabc");
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
 
    efl2_text_cursor_line_end(cur);
@@ -1237,7 +1245,7 @@ EFL_START_TEST(canvas_text_split_cursor)
                                           /*                 1         2
                                               012345678   9  01234567890123 */
    efl2_text_set(tb, "נסיוןشسي \u202atestприветשלום");
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
 
    efl2_text_cursor_line_end(cur);
@@ -1276,7 +1284,7 @@ EFL_START_TEST(canvas_text_split_cursor)
    int i;
                                                       /* 012345678901234 */
    evas_object_textblock_text_markup_set(tb, "<wrap=char>testשלוםشسيبefl");
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    nh = nh * 15;
    evas_object_resize(tb, nw, nh);
 
@@ -1300,7 +1308,7 @@ EFL_START_TEST(canvas_text_split_cursor)
      }
                                                       /* 01234567890123456789 */
    evas_object_textblock_text_markup_set(tb, "<wrap=char>נסיוןhelloприветשלום");
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    nh = nh * 20;
    evas_object_resize(tb, nw, nh);
 
@@ -1325,7 +1333,7 @@ EFL_START_TEST(canvas_text_split_cursor)
    /* Testing multiline, when only RTL item is in the line. */
                                                       /* 012345678901234567890123 */
    evas_object_textblock_text_markup_set(tb, "<wrap=char>testtesttestтестשלוםشسيب");
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
 
    efl2_text_cursor_position_set(cur, 15);
@@ -1352,7 +1360,7 @@ EFL_START_TEST(canvas_text_split_cursor)
    /* Testing multiline, when only LTR item is in the line. */
                                                       /* 012345678901234567890123 */
    evas_object_textblock_text_markup_set(tb, "<wrap=char>שלוםשלוםשלוםشسيبtestтест");
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
 
    efl2_text_cursor_position_set(cur, 15);
@@ -1899,7 +1907,7 @@ EFL_START_TEST(evas_textblock_items)
    buf = "<item relsize=64x64 vsize=ascent href=emoticon/knowing-grin></item><item absize=64x64 vsize=ascent href=emoticon/knowing-grin></item><item relsize=64x64 vsize=ascent href=emoticon/knowing-grin></item>";
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    fail_if((nw != w) || (nh != h));
    evas_textblock_cursor_format_item_geometry_get(cur, NULL, NULL, &w, &h);
    efl2_text_cursor_char_next(cur);
@@ -1996,7 +2004,7 @@ EFL_START_TEST(evas_textblock_wrapping)
    evas_textblock_cursor_format_prepend(cur, "+ wrap=word");
    evas_object_resize(tb, bw, bh);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    ck_assert_int_eq(w, nw);
@@ -2014,7 +2022,7 @@ EFL_START_TEST(evas_textblock_wrapping)
          "aaaaaa"
          );
    evas_textblock_cursor_format_prepend(cur, "+ wrap=char");
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
 
    Evas_Coord iw;
    for (iw = nw ; iw >= bw ; iw--)
@@ -2028,13 +2036,13 @@ EFL_START_TEST(evas_textblock_wrapping)
 
    /* Verify that no empty line is added */
    evas_object_textblock_text_markup_set(tb, "<wrap=word>Hello</wrap>");
-   efl2_canvas_text_size_native_get(tb, NULL, &nh);
+   _size_native_get(tb, NULL, &nh);
    evas_object_resize(tb, 0, 1000);
    evas_object_textblock_size_formatted_get(tb, NULL, &h);
    ck_assert_int_eq(nh, h);
 
    evas_object_textblock_text_markup_set(tb, "<wrap=char>a</wrap>");
-   efl2_canvas_text_size_native_get(tb, NULL, &nh);
+   _size_native_get(tb, NULL, &nh);
    evas_object_resize(tb, 0, 1000);
    evas_object_textblock_size_formatted_get(tb, NULL, &h);
    ck_assert_int_eq(nh, h);
@@ -2049,7 +2057,7 @@ EFL_START_TEST(evas_textblock_wrapping)
          "aaaaa"
          );
    evas_textblock_cursor_format_prepend(cur, "+ wrap=word");
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
 
    for (iw = nw ; iw >= bw ; iw--)
      {
@@ -2070,7 +2078,7 @@ EFL_START_TEST(evas_textblock_wrapping)
          "aaaaa"
          );
    evas_textblock_cursor_format_prepend(cur, "+ wrap=mixed");
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
 
    for (iw = nw ; iw >= bw ; iw--)
      {
@@ -2117,7 +2125,7 @@ EFL_START_TEST(evas_textblock_wrapping)
          );
 
    /* Get minimum size */
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
 
    for (i = 0 ; i < wrap_items ; i++)
      {
@@ -2139,18 +2147,18 @@ EFL_START_TEST(evas_textblock_wrapping)
    /* Ellipsis */
    int ellip_w = 0;
    evas_object_textblock_text_markup_set(tb, "…");
-   efl2_canvas_text_size_native_get(tb, &ellip_w, NULL);
+   _size_native_get(tb, &ellip_w, NULL);
 
    evas_object_textblock_text_markup_set(tb, "aaaaaaaaaaaaaaaaaa<br/>b");
    evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0 wrap=word");
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw / 2, nh * 2);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    ck_assert_int_le(w, (nw / 2));
 
    evas_object_textblock_text_markup_set(tb, "a<b>b</b>a<b>b</b>a<b>b</b>");
    evas_textblock_cursor_format_prepend(cur, "+ font_size=50 ellipsis=1.0");
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw / 2, nh * 2);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    ck_assert_int_le(w, (nw / 2));
@@ -2172,7 +2180,7 @@ EFL_START_TEST(evas_textblock_wrapping)
 
    evas_object_textblock_text_markup_set(tb, "ab");
    evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0");
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw / 2, nh * 2);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    ck_assert_int_le(w, ellip_w);
@@ -2182,7 +2190,7 @@ EFL_START_TEST(evas_textblock_wrapping)
         evas_object_resize(tb, 500, 500);
         evas_object_textblock_text_markup_set(tb, "ABC 한글한글 DEF");
         evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0");
-        efl2_canvas_text_size_native_get(tb, &nw, &nh);
+        _size_native_get(tb, &nw, &nh);
         evas_object_resize(tb, nw, nh);
         evas_object_textblock_size_formatted_get(tb, &w, &h);
 
@@ -2218,7 +2226,7 @@ EFL_START_TEST(evas_textblock_wrapping)
            sprintf(buf, "+ ellipsis=%f", ellip);
            evas_object_textblock_text_markup_set(tb, "aaaaaaaaaa");
            evas_textblock_cursor_format_prepend(cur, buf);
-           efl2_canvas_text_size_native_get(tb, &nw, &nh);
+           _size_native_get(tb, &nw, &nh);
            evas_object_resize(tb, nw / 2, nh);
            evas_object_textblock_size_formatted_get(tb, &w, &h);
            ck_assert_int_le(w, (nw / 2));
@@ -2226,7 +2234,7 @@ EFL_START_TEST(evas_textblock_wrapping)
 
            evas_object_textblock_text_markup_set(tb, "aaaaaaaaaa");
            evas_textblock_cursor_format_prepend(cur, buf);
-           efl2_canvas_text_size_native_get(tb, &nw, &nh);
+           _size_native_get(tb, &nw, &nh);
            evas_object_resize(tb, nw, nh);
            evas_object_textblock_size_formatted_get(tb, &w, &h);
            evas_object_resize(tb, nw / 2, nh);
@@ -2242,7 +2250,7 @@ EFL_START_TEST(evas_textblock_wrapping)
                  "jumps<tab> over the<tab> lazy dog"
                  );
            evas_textblock_cursor_format_prepend(cur, buf);
-           efl2_canvas_text_size_native_get(tb, &nw, &nh);
+           _size_native_get(tb, &nw, &nh);
            evas_object_resize(tb, nw / 2, nh);
            evas_object_textblock_size_formatted_get(tb, &w, &h);
            ck_assert_int_le(w, (nw / 2));
@@ -2251,7 +2259,7 @@ EFL_START_TEST(evas_textblock_wrapping)
    }
 
    evas_object_textblock_text_markup_set(tb, "aaaaaaaaaaaaaaaaaa");
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
 
    evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0 wrap=char");
    nw /= 3;
@@ -2297,7 +2305,7 @@ EFL_START_TEST(evas_textblock_wrapping)
 
    evas_object_textblock_text_markup_set(tb,
          "<wrap=none>aaa bbbbbbbbbbb ccccc</wrap><wrap=word>dddddd</wrap>");
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw / 2, nh * 4);
    evas_object_textblock_size_formatted_get(tb, &w, NULL);
    ck_assert_int_le(w, nw);
@@ -2342,10 +2350,10 @@ EFL_START_TEST(evas_textblock_wrapping)
 
    /* Check char-wrapping for small items */
    evas_object_textblock_text_markup_set(tb, "x");
-   efl2_canvas_text_size_native_get(tb, &bw, NULL);
+   _size_native_get(tb, &bw, NULL);
    evas_object_textblock_text_markup_set(tb, "AxAx");
    evas_textblock_cursor_format_prepend(cur, "+ wrap=char");
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw - bw, nh);
    evas_object_textblock_size_formatted_get(tb, &bw, NULL);
 
@@ -2358,13 +2366,13 @@ EFL_START_TEST(evas_textblock_wrapping)
    /* Check the ellipsis is placed at proper place
     * in RTL text with formats */
    evas_object_textblock_text_markup_set(tb, ")");
-   efl2_canvas_text_size_native_get(tb, &bw, NULL);
+   _size_native_get(tb, &bw, NULL);
    bw++;
 
    /* Expect to see: "...)ي" */
    evas_object_textblock_text_markup_set(tb, "ي(ي)");
    evas_textblock_cursor_format_prepend(cur, "+ ellipsis=1.0");
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw - bw, nh);
    evas_object_textblock_size_formatted_get(tb, &bw, NULL);
 
@@ -2430,28 +2438,28 @@ EFL_START_TEST(evas_textblock_various)
         Evas_Coord nw, nh, lx, lw;
 
         evas_object_textblock_text_markup_set(tb, "This is a test");
-        efl2_canvas_text_size_native_get(tb, &nw, &nh);
+        _size_native_get(tb, &nw, &nh);
         evas_object_resize(tb, nw, nh);
         evas_object_textblock_line_number_geometry_get(tb, 0, &lx, NULL, &lw, NULL);
         ck_assert_int_eq(lx, 0);
         ck_assert_int_eq(lx + lw, nw);
 
         evas_object_textblock_text_markup_set(tb, "<left_margin=10 right_margin=5>This is a test</>");
-        efl2_canvas_text_size_native_get(tb, &nw, &nh);
+        _size_native_get(tb, &nw, &nh);
         evas_object_resize(tb, nw, nh);
         evas_object_textblock_line_number_geometry_get(tb, 0, &lx, NULL, &lw, NULL);
         ck_assert_int_eq(lx, 10);
         ck_assert_int_eq(lx + lw + 5, nw);
 
         evas_object_textblock_text_markup_set(tb, "עוד פסקה");
-        efl2_canvas_text_size_native_get(tb, &nw, &nh);
+        _size_native_get(tb, &nw, &nh);
         evas_object_resize(tb, nw, nh);
         evas_object_textblock_line_number_geometry_get(tb, 0, &lx, NULL, &lw, NULL);
         ck_assert_int_eq(lx, 0);
         ck_assert_int_eq(lx + lw, nw);
 
         evas_object_textblock_text_markup_set(tb, "<left_margin=10 right_margin=5>עוד פסקה</>");
-        efl2_canvas_text_size_native_get(tb, &nw, &nh);
+        _size_native_get(tb, &nw, &nh);
         evas_object_resize(tb, nw, nh);
         evas_object_textblock_line_number_geometry_get(tb, 0, &lx, NULL, &lw, NULL);
         ck_assert_int_eq(lx, 10);
@@ -3801,7 +3809,7 @@ EFL_START_TEST(evas_textblock_style)
    // Ellipsis style padding
    // Should be consistent if style_pad is added
    evas_object_textblock_text_markup_set(tb, "hello");
-   efl2_canvas_text_size_native_get(tb, &w, &h);
+   _size_native_get(tb, &w, &h);
    evas_object_resize(tb, w - 1, 200);
    evas_object_textblock_text_markup_set(tb,
          "<ellipsis=1.0>hello");
@@ -3964,7 +3972,7 @@ EFL_START_TEST(evas_textblock_size)
 
    /* Empty textblock */
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    ck_assert_int_eq(w, nw);
    ck_assert_int_eq(h, nh);
    fail_if(w != 0);
@@ -3974,19 +3982,19 @@ EFL_START_TEST(evas_textblock_size)
 
    evas_object_textblock_text_markup_set(tb, buf);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    ck_assert_int_eq(w, nw);
    ck_assert_int_eq(h, nh);
 
    evas_object_textblock_text_markup_set(tb, "a<br/>a");
    evas_object_textblock_size_formatted_get(tb, &w, &h2);
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    ck_assert_int_eq(w, nw);
    ck_assert_int_eq(h2, nh);
 
    evas_object_textblock_text_markup_set(tb, "/u200eאאא AAA");
    evas_object_resize(tb, 1, 1); //force wrapping
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
    evas_object_textblock_size_formatted_get(tb, &w, &h);
    ck_assert_int_eq(w, nw);
@@ -3998,19 +4006,19 @@ EFL_START_TEST(evas_textblock_size)
    evas_object_textblock_text_markup_set(tb, buf);
 
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    fail_if((w != nw) || (h != nh));
    fail_if(w <= 0);
 
    evas_object_textblock_text_markup_set(tb, "i<b>。</b>");
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    ck_assert_int_eq(w, nw);
    ck_assert_int_eq(h, nh);
 
    evas_object_textblock_text_markup_set(tb, "。<b>i</b>");
    evas_object_textblock_size_formatted_get(tb, &w, &h);
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    ck_assert_int_eq(w, nw);
    ck_assert_int_eq(h, nh);
 
@@ -4021,7 +4029,7 @@ EFL_START_TEST(evas_textblock_size)
 
         evas_object_textblock_text_markup_set(tb, buf);
         evas_object_textblock_size_formatted_get(tb, &oldw, &oldh);
-        efl2_canvas_text_size_native_get(tb, &oldnw, &oldnh);
+        _size_native_get(tb, &oldnw, &oldnh);
 
 
         newst = evas_textblock_style_new();
@@ -4031,7 +4039,7 @@ EFL_START_TEST(evas_textblock_size)
         evas_object_textblock_style_user_push(tb, newst);
 
         evas_object_textblock_size_formatted_get(tb, &w, &h);
-        efl2_canvas_text_size_native_get(tb, &nw, &nh);
+        _size_native_get(tb, &nw, &nh);
 
         fail_if((w != oldw + 8) || (h != oldh) ||
               (nw != oldnw + 8) || (nh != oldnh));
@@ -4040,7 +4048,7 @@ EFL_START_TEST(evas_textblock_size)
    evas_object_resize(tb, 1000, 1000);
    evas_object_textblock_text_markup_set(tb, "\u200fHello שלום");
    evas_object_textblock_size_formatted_get(tb, &w, NULL);
-   efl2_canvas_text_size_native_get(tb, &nw, NULL);
+   _size_native_get(tb, &nw, NULL);
    ck_assert_int_eq(nw, w);
 
      {
@@ -4199,7 +4207,7 @@ _hyphenation_width_stress(Evas_Object *tb, Efl2_Text_Cursor *cur)
    Evas_Coord bw, bh, iw, nw, nh, w, h;
 
    evas_object_resize(tb, 100000, 1000);
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, 1, 1000);
    evas_textblock_cursor_format_prepend(cur, "<wrap=mixed>");
    evas_object_textblock_size_formatted_get(tb, &bw, &bh);
@@ -4305,36 +4313,36 @@ EFL_START_TEST(evas_textblock_text_iface)
 
    /* Set text */
    efl_text_set(tb, "hello world");
-   efl2_canvas_text_size_native_get(tb, &bw, &bh);
+   _size_native_get(tb, &bw, &bh);
    efl_text_set(tb, "hello\nworld");
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    ck_assert_int_gt(nh, bh);
    ck_assert_int_gt(bw, nw);
    efl_text_set(tb, "hello\nworld\ngoodbye\nworld");
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    ck_assert_int_ge(nh, bh * 3);
 
    /* Delete text */
    efl_text_set(tb, "a");
-   efl2_canvas_text_size_native_get(tb, &bw, &bh);
+   _size_native_get(tb, &bw, &bh);
    efl_text_set(tb, "a\nb");
    efl2_text_cursor_position_set(cur, 1);
    evas_textblock_cursor_char_delete(cur);
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    ck_assert_int_eq(nh, bh);
 
    /* Paragraph checks */
    efl_text_set(tb, "d");
-   efl2_canvas_text_size_native_get(tb, &w, &h);
+   _size_native_get(tb, &w, &h);
    efl_text_set(tb, "aa\nb\nc\nd");
-   efl2_canvas_text_size_native_get(tb, &bw, &bh);
+   _size_native_get(tb, &bw, &bh);
    efl2_text_cursor_position_set(cur, 0);
    evas_textblock_cursor_char_delete(cur); // delete 'a'
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    ck_assert_int_eq(nh, bh);
    evas_textblock_cursor_char_delete(cur); // delete 'a'
    evas_textblock_cursor_char_delete(cur); // delete '\n'
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    ck_assert_int_lt(nh, bh);
    /* "b\nc\nd" is left */
    evas_textblock_cursor_char_delete(cur); // b
@@ -4342,7 +4350,7 @@ EFL_START_TEST(evas_textblock_text_iface)
    evas_textblock_cursor_char_delete(cur); // c
    evas_textblock_cursor_char_delete(cur); // \n
    /* expecting "d" only */
-   efl2_canvas_text_size_native_get(tb, &nw, &nh);
+   _size_native_get(tb, &nw, &nh);
    ck_assert_int_eq(nh, h);
    ck_assert_int_eq(nw, w);
 
