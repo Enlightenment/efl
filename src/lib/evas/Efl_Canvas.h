@@ -93,6 +93,11 @@ extern "C" {
 #include <canvas/efl_input_pointer.eo.h>
 #include <canvas/efl_input_state.eo.h>
 
+#include <canvas/efl2_text_cursor.eo.h>
+#include <canvas/efl2_text_attribute_factory.eo.h>
+#include <canvas/efl2_text_item_factory.eo.h>
+#include <canvas/efl2_canvas_text.eo.h>
+
 #include <gesture/efl_canvas_gesture_double_tap.eo.h>
 #include <gesture/efl_canvas_gesture_flick.eo.h>
 #include <gesture/efl_canvas_gesture_long_tap.eo.h>
