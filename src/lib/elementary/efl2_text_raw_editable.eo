@@ -103,15 +103,22 @@ class @beta Efl2.Text.Raw_Editable extends Efl2.Canvas.Text implements Efl2.Inpu
       select_none {
          [[Clears the selection.]]
       }
+
+      text_filter {
+         [[Replaces the string on the change info with the new filtered string
+
+           Works for both inserts, and deletions (e.g. have text you don't want to be deleted).
+           If $new_text is $null, the operation is cancelled.
+         ]]
+         params {
+            change_info: Efl2.Text.Change_Info @by_ref; [[The change info from the callback]]
+            new_text: string; [[The new text to use]]
+         }
+      }
    }
    events {
       // FIXME: All of these signals will be under this namespace, which is wrong. I guess as part of the composite object changes this will have to change.
 
-      // FIXME: add docs: used for filtering. You are meant to edit the event_info. So e.g. to block a change set content to "", or replace it (and free the existing) to filter.
-      // How do we feel about this change? Maybe cumbersome? Better way? Problematic also with ownership of strings.
-      // Maybe instead of filtering the string directly we could have functions on the object that let us manipulate it? Better API.
-      // Why do we need the pre? We just need to make sure "changed,user" that take it for undo/redo register with a low priority...
-      changed,user,pre: Efl2.Text.Change_Info; [[The text object has changed due to user interaction - before the changes are committed to the object]]
       changed,user: Efl2.Text.Change_Info; [[The text object has changed due to user interaction]]
 
       redo,request: void; [[Called when redo is requested]]

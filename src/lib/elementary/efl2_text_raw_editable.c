@@ -2776,4 +2776,11 @@ _efl2_text_raw_editable_efl2_input_text_input_panel_return_key_autoenabled_set(E
    efl2_input_text_input_panel_return_key_disabled_set(obj, return_key_disabled);
 }
 
+EOLIAN static void
+_efl2_text_raw_editable_text_filter(Eo *obj EINA_UNUSED, Efl2_Text_Raw_Editable_Data *pd EINA_UNUSED, Efl2_Text_Change_Info *change_info, const char *new_text)
+{
+   eina_stringshare_replace(&change_info->content, new_text);
+   change_info->length = eina_unicode_utf8_get_len(new_text);
+}
+
 #include "efl2_text_raw_editable.eo.c"
