@@ -1288,7 +1288,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
                      }
                   info->position =
                      efl2_text_cursor_position_get(efl2_text_raw_editable_main_cursor_get(obj));
-                  info->content = eina_stringshare_add("<tab/>");
+                  info->content = eina_stringshare_add("\t");
                   _text_filter_format_prepend(obj, en, efl2_text_raw_editable_main_cursor_get(obj), "tab");
                   #warning ANCHORS
                   //_anchors_get(efl2_text_raw_editable_main_cursor_get(obj), obj, en);
@@ -1358,12 +1358,12 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
                         efl2_canvas_text_legacy_newline_get(obj))
                      {
                         _text_filter_format_prepend(obj, en, efl2_text_raw_editable_main_cursor_get(obj), "br");
-                        info->content = eina_stringshare_add("<br/>");
+                        info->content = eina_stringshare_add("\n");
                      }
                   else
                      {
                         _text_filter_format_prepend(obj, en, efl2_text_raw_editable_main_cursor_get(obj), "ps");
-                        info->content = eina_stringshare_add("<ps/>");
+                        info->content = eina_stringshare_add(EFL_TEXT_PARAGRAPH_SEPARATOR_UTF8);
                      }
                   #warning ANCHORS
                   //_anchors_get(efl2_text_raw_editable_main_cursor_get(obj), obj, en);
