@@ -9737,7 +9737,7 @@ _evas_textblock_cursor_cluster_pos_get(Evas_Textblock_Cursor *cur, Eina_Bool inc
                        Evas_Text_Props_Info *info = ti->text_props.info;
                        int it_index = ((inc) ? cur->pos : ret) - last_it->text_pos;
 
-                       Evas_Font_OT_Info ot;
+                       Evas_Font_OT_Info ot = {0};
                        if (ti->text_props.len != ti->text_props.text_len)/*if code point count same as glyph count skip it*/
                          {
                             Evas_BiDi_Direction itdir = ti->text_props.bidi_dir;
