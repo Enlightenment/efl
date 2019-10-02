@@ -133,7 +133,7 @@ foreach widget_preview : widget_previews
       dependencies: elementary,
       build_by_default: false,
       c_args : [
-        '-DPACKAGE_DATA_DIR="'+meson.current_build_dir()+'"',
+        '-DPACKAGE_DATA_DIR="'+join_paths(meson.source_root(), 'data', 'elementary')+'"',
         '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
         '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"',
         '-DDOCW_DIR="'+meson.current_build_dir()+'"']
