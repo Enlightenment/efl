@@ -2783,4 +2783,10 @@ _efl2_text_raw_editable_text_filter(Eo *obj EINA_UNUSED, Efl2_Text_Raw_Editable_
    change_info->length = eina_unicode_utf8_get_len(new_text);
 }
 
+EOLIAN static void
+_efl2_text_raw_editable_validation_failed(Eo *obj EINA_UNUSED, Efl2_Text_Raw_Editable_Data *pd EINA_UNUSED, const char *reason)
+{
+   #warning IMPLEMENTATION
+}
+
 #include "efl2_text_raw_editable.eo.c"
