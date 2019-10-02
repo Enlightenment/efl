@@ -59,7 +59,6 @@ examples = [
   'list_example_01',
   'list_example_02',
   'list_example_03',
-  'location_example_01',
   'map_example_01',
   'map_example_02',
   'map_example_03',

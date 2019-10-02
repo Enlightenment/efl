@@ -6809,7 +6809,6 @@
  * @example efl_thread_win32_2.c
  * @example efl_thread_win32_3.c
  * @example efl_thread_win32_4.c
- * @example location_example_01.c
  * @example naviframe_example.c
  */
 
