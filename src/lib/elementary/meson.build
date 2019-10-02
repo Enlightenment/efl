@@ -951,6 +951,8 @@ elementary_src = [
   'efl_ui_select_model.c',
   'efl_ui_view_model.c',
   'efl_ui_collection_view.c',
+  'efl2_input_text.c',
+  'efl2_text_raw_editable.c',
 ]
 
 elementary_deps = [emile, eo, efl, edje, ethumb, ethumb_client, emotion, ecore_imf, ecore_con, eldbus, efreet, efreet_mime, efreet_trash, eio, atspi, dl, intl]
