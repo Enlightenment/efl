@@ -182,8 +182,8 @@ doc_target += custom_target('doxygen',
 )
 
 compress_target = custom_target('package_doc_tar',
-  command: [tar, '-C', meson.build_root(), '-cf', 'efl-'+meson.project_version()+'.tar', 'html', 'man'],
-  output: 'efl-'+meson.project_version()+'.tar',
+  command: [tar, '-C', meson.build_root(), '--xz',  '-cf', 'efl-'+meson.project_version()+'-doc.tar.xz', 'html', 'man'],
+  output: 'efl-'+meson.project_version()+'-doc.tar.xz',
   depends: doc_target,
   build_by_default: false
 )
