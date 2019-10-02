@@ -7136,7 +7136,7 @@ _canvas_text_cursor_emit_if_changed(Efl2_Text_Cursor_Handle *cur)
    if (cur && cur->changed)
      {
         cur->changed = EINA_FALSE;
-        // FIXME: efl_event_callback_call(cur->obj, EFL2_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
+        if (cur->cur_obj) efl_event_callback_call(cur->cur_obj, EFL2_TEXT_CURSOR_EVENT_CHANGED, NULL);
      }
 }
 
@@ -8878,7 +8878,7 @@ _canvas_text_cursor_line_jump_by(Efl2_Text_Cursor_Handle *cur, int by)
 
    if ((pnode != cur->node) || (ppos != cur->pos))
      {
-        // FIXME: efl_event_callback_call(eo_obj, EFL2_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
+        if (cur->cur_obj) efl_event_callback_call(cur->cur_obj, EFL2_TEXT_CURSOR_EVENT_CHANGED, NULL);
      }
 
    // FIXME: Actually implement here and everywhere correct returns if actualy moved.
@@ -10544,7 +10544,7 @@ _canvas_text_cursor_coord_set(Efl2_Text_Cursor_Handle *cur, Evas_Coord x, Evas_C
 end:
    if (ret)
      {
-        // FIXME: efl_event_callback_call(cur->obj, EFL2_CANVAS_TEXT_EVENT_CURSOR_CHANGED, NULL);
+        if (cur->cur_obj) efl_event_callback_call(cur->cur_obj, EFL2_TEXT_CURSOR_EVENT_CHANGED, NULL);
      }
    return ret;
 }
