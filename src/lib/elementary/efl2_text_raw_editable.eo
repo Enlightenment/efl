@@ -17,11 +17,6 @@ struct @beta Efl2.Text.Change_Info {
       - There would be a "changed" and a "pre-changed" events so you can filter / validate the text using those probably
         - Needs a better name
       - Maybe validation should be in efl.ui.text because it's really just a visual thing that doesn't edit the text
-  - It accepts user input, handles selection, IMF, and what not.
-  - low level object - Not theme aware
-  - a way to do "user_insert", so emulate an insertion as if it's from the user. Maybe just inherit Cursor and have Cursor.Interactive?
-
-  - missing a lot of IMF/etc functions
 */
 class @beta Efl2.Text.Raw_Editable extends Efl2.Canvas.Text implements Efl2.Input.Text {
    methods {
@@ -126,7 +121,6 @@ class @beta Efl2.Text.Raw_Editable extends Efl2.Canvas.Text implements Efl2.Inpu
       // validation is probaly no longer needed is we can validate using change,user? changed,user,pre? When exactly is validation called and how is it processed? Probably not the pre.
       // validate: Elm.Validate_Content; [[Called when validating]]
       cursor,changed,manual: void; [[Called on manual cursor change]]
-      context,open: void; [[Called when context menu was opened]]
       preedit,changed: void; [[Called when entry preedit changed]]
 
       selection,start: void; [[Called at selection start]]
