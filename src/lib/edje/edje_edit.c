@@ -3874,6 +3874,13 @@ edje_edit_part_mouse_events_set(Evas_Object *obj, const char *part, Eina_Bool mo
 }
 
 EAPI Eina_Bool
+edje_edit_part_required_get(Evas_Object *obj, const char *part)
+{
+   GET_RP_OR_RETURN(EINA_FALSE);
+   return rp->part->required;
+}
+
+EAPI Eina_Bool
 edje_edit_part_anti_alias_get(Evas_Object *obj, const char *part)
 {
    GET_RP_OR_RETURN(EINA_FALSE);

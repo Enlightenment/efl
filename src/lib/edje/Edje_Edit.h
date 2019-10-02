@@ -1879,6 +1879,17 @@ EAPI Eina_Bool edje_edit_part_mouse_events_get(Evas_Object *obj, const char *par
 EAPI Eina_Bool edje_edit_part_mouse_events_set(Evas_Object *obj, const char *part, Eina_Bool mouse_events);
 
 /**
+ * @brief Gets required value for part.
+ *
+ * @param obj Object being edited.
+ * @param part Part to get if the part is required by API.
+ *
+ * @return @c EINA_TRUE if part is required by the object's implementation, @c EINA_FALSE otherwise.
+ * @since 1.23
+ */
+EAPI Eina_Bool edje_edit_part_required_get(Evas_Object *obj, const char *part);
+
+/**
  * @brief Gets anti-aliasing for part.
  *
  * @param obj Object being edited.
