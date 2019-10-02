@@ -58,6 +58,7 @@ function @beta Efl2.Ui.Selection_Data_Ready {
    }
 };
 
+// FIXME: This looks bad on so many levels. Why does this expose all of this stuff?
 struct @beta Efl2.Ui.Selection_Changed
 {
    [[Selection-changed specific information.]] // TODO: This needs to be filled in.
@@ -144,6 +145,7 @@ class @beta Efl2.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickab
          }
       }
 
+      // FIXME: rename?
       @property context_menu_disabled {
          set {
             [[This disables the entry's contextual (longpress) menu.]]
