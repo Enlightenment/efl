@@ -8816,7 +8816,7 @@ _canvas_text_cursor_line_jump_by(Efl2_Text_Cursor_Handle *cur, int by)
    // Eo *eo_obj = cur->obj;
    int ln;
    Evas_Coord cx, cw;
-   Evas_Coord lx, ly, lw, lh;
+   Evas_Coord ly, lh;
    int last;
    Evas_Object_Textblock_Node_Text *pnode;
    size_t ppos;
@@ -8848,32 +8848,9 @@ _canvas_text_cursor_line_jump_by(Efl2_Text_Cursor_Handle *cur, int by)
 
    else
      {
-        // FIXME: This code seems to have a bug. It should just set the line and then set the x and that's it.
-        if (evas_object_textblock_line_number_geometry_get(cur->obj,
-                 ln, &lx, &ly, &lw, &lh) &&
-              (!_canvas_text_cursor_coord_set(cur, cx, ly + (lh / 2))))
-          {
-             _canvas_text_cursor_line_number_set(cur, ln);
-             if (cx < (lx + (lw / 2)))
-               {
-                  if (ln == last)
-                    {
-                       _canvas_text_cursor_paragraph_last(cur);
-                       _canvas_text_cursor_paragraph_end(cur);
-                    }
-                  _canvas_text_cursor_line_start(cur);
-               }
-             else
-               {
-                  if (ln == last)
-                    {
-                       _canvas_text_cursor_paragraph_last(cur);
-                       _canvas_text_cursor_paragraph_end(cur);
-                    }
-                  else
-                     _canvas_text_cursor_line_end(cur);
-               }
-          }
+        _canvas_text_cursor_line_number_set(cur, ln);
+        _cavas_text_cursor_geometry_get_old(cur, NULL, &ly, NULL, &lh, NULL, EVAS_TEXTBLOCK_CURSOR_UNDER);
+        _canvas_text_cursor_coord_set(cur, cx, ly + (lh / 2));
      }
 
    if ((pnode != cur->node) || (ppos != cur->pos))
