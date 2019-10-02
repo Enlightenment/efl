@@ -6,16 +6,6 @@ import elm_general;
 import efl2_text_attribute_factory;
 
 
-// FIXME: All of these need to be better named. It's not selection. Either dnd or cnp...
-enum @beta Efl2.Ui.Selection_Type
-{
-   [[Selection type]]
-   primary, [[Primary text selection (highlighted or selected text)]]
-   secondary, [[Used when primary selection is in use]]
-   dnd, [[Drag and Drop]]
-   clipboard [[Clipboard selection (ctrl+C)]]
-}
-
 enum @beta Efl2.Ui.Selection_Format
 {
    [[Selection format]]
@@ -26,47 +16,6 @@ enum @beta Efl2.Ui.Selection_Format
    image = 0x4, [[Images]]
    vcard = 0x08, [[Vcards]]
    html = 0x10 [[Raw HTML-like data (eg. webkit)]]
-}
-
-enum @beta Efl2.Ui.Selection_Action
-{
-   [[Defines the kind of action associated with the drop data]]
-   unknown, [[Action type is unknown]]
-   copy, [[Copy the data]]
-   move, [[Move the data]]
-   private, [[Private action type]]
-   ask, [[Ask the user what to do]]
-   list, [[List the data]]
-   link, [[Link the data]]
-   description [[Describe the data]]
-}
-
-struct @beta Efl2.Ui.Selection_Data
-{
-   [[Structure holding the info about selected data]]
-   pos: Eina.Position2D; [[Coordinates of the drop (DND operations only)]]
-   format: Efl2.Ui.Selection_Format; [[Format of the selection]]
-   content: Eina.Slice; [[Selection data]]
-   action: Efl2.Ui.Selection_Action; [[Action to perform with the data]]
-   item: Efl.Object; [[Item under the drag position. It is only available for container]]
-}
-
-function @beta Efl2.Ui.Selection_Data_Ready {
-   [[Function pointer for getting selection]]
-   params {
-      @in obj: Efl.Object; [[Object which requested for the selection]]
-      @in seldata: ptr(Efl2.Ui.Selection_Data); [[Selection data]]
-   }
-};
-
-// FIXME: This looks bad on so many levels. Why does this expose all of this stuff?
-struct @beta Efl2.Ui.Selection_Changed
-{
-   [[Selection-changed specific information.]] // TODO: This needs to be filled in.
-   type: Efl2.Ui.Selection_Type; [[Selection type]]
-   seat: int; [[The seat on which the selection changed, or NULL for "default"]]
-   display: void_ptr; [[The display connection object, NULL under X11]]
-   exist: bool; [[EINA_TRUE if the selection has an owner]]
 }
 
 struct @beta Efl2.Ui.Text_Anchor.Info
