@@ -73,6 +73,8 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
          [[Gets the left, right, top and bottom insets of the text.
 
            The inset is any applied padding on the text.
+
+           Will trigger a relayout of the object if it's not already layed out.
          ]]
          get {}
          values {
@@ -82,7 +84,7 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
             b: int; [[Bottom padding]]
          }
       }
-      @property legacy_newline {
+      @property newline_as_paragraph_separator {
          [[When $true, newline character will behave as a paragraph separator.
          ]]
          set {}
@@ -95,7 +97,7 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
       // Probably used when using theme and then retheming without changing use configuration...
       // Maybe have priorities built in rather than naming?
       // Maybe do peep/pop/push instead?
-      @property style {
+      @property text_style {
          [[The text style of the object.
 
            $key is how you reference the style (for deletion or fetching). $NULL
@@ -137,8 +139,7 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
          ]]
          get {}
          values {
-            w: int; [[The width of the object.]]
-            h: int; [[The height of the object.]]
+            size: Eina.Size2D; [[The size of the object]]
          }
       }
       @property size_native {
@@ -161,8 +162,7 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
          ]]
          get {}
          values {
-            w: int; [[The width returned.]]
-            h: int; [[The height returned.]]
+            size: Eina.Size2D; [[The size of the object]]
          }
       }
       // Obstacles
@@ -192,11 +192,7 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
       // Should probably be used in ui.text when e.g. the text is too large or something. No need when text is small.
       async_layout {
          [[Requests to layout the text off the mainloop.
-
-           Once layout is complete, the result is returned as @Eina.Rect,
-           with w, h fields set.
          ]]
-         return: future<Eina.Rect> @move; [[Future for layout result]]
       }
    }
    implements {
