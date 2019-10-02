@@ -7425,6 +7425,7 @@ _efl2_canvas_text_obstacle_del(Eo *eo_obj, Efl2_Canvas_Text_Data *o,
    return EINA_TRUE;
 }
 
+// FIXME: we need to add events on obstacle move/resize events and just call this one automatically instead of it being manual
 EOLIAN static void
 _efl_canvas_text_obstacles_update(Eo *eo_obj, Efl2_Canvas_Text_Data *obj)
 {
