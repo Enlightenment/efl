@@ -1738,6 +1738,50 @@ class TestEinaList
 
     }
 
+    public static void sorted_insert_custom_comparer_natural()
+    {
+        var lst = new Eina.List<int>();
+        Eina.List<int>.Compare comparator = (int a, int b) => a - b;
+
+        lst.SortedInsert(comparator, 1);
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{1}));
+        lst.SortedInsert(comparator, 2);
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{1, 2}));
+        lst.SortedInsert(comparator, 3);
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{1, 2, 3}));
+        lst.SortedInsert(comparator, -1);
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{-1, 1, 2, 3}));
+    }
+
+    public static void sorted_insert_custom_comparer_reversed()
+    {
+        var lst = new Eina.List<int>();
+        Eina.List<int>.Compare comparator = (int a, int b) => b - a;
+
+        lst.SortedInsert(comparator, 1);
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{1}));
+        lst.SortedInsert(comparator, 2);
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{2, 1}));
+        lst.SortedInsert(comparator, 3);
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{3, 2, 1}));
+        lst.SortedInsert(comparator, -1);
+        Test.Assert(lst.ToArray().SequenceEqual(new int[]{3, 2, 1, -1}));
+    }
+
+    public static void sorted_insert_custom_comparer_string()
+    {
+        var lst = new Eina.List<string>();
+        Eina.List<string>.Compare comparator = (string a, string b) => b.Length - a.Length;
+        lst.SortedInsert(comparator, "The");
+        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"The"}));
+        lst.SortedInsert(comparator, "Quick");
+        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"Quick","The"}));
+        lst.SortedInsert(comparator, "Brown");
+        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"Brown", "Quick", "The"}));
+        lst.SortedInsert(comparator, "Jumped");
+        Test.Assert(lst.ToArray().SequenceEqual(new string[]{"Jumped","Brown", "Quick", "The"}));
+    }
+
     public static void sort_int()
     {
         var lst = new Eina.List<int>();

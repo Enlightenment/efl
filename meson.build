@@ -1,6 +1,6 @@
 project('efl', ['c','cpp'],
-  version: '1.23.0',
-  default_options : ['buildtype=release', 'cpp_std=c++11'],
+  version: '1.23.99',
+  default_options : ['buildtype=plain', 'cpp_std=c++11'],
   meson_version : '>=0.47'
 )
 
@@ -440,16 +440,7 @@ if sys_windows == false
   subdir(join_paths('src', 'generic', 'emotion'))
 endif
 subdir('cmakeconfig')
-
-bindings = get_option('bindings')
-bindings_order = ['luajit', 'cxx', 'mono']
-
-foreach binding : bindings_order
-  if bindings.contains(binding)
-    subdir(join_paths('src', 'bindings', binding))
-  endif
-endforeach
-
+subdir(join_paths('src', 'bindings'))
 subdir(join_paths('src', 'edje_external'))
 subdir(join_paths('data'))
 

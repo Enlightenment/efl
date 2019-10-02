@@ -65,6 +65,7 @@ public static class EldbusProxyNativeFunctions
         eldbus_proxy_event_callback_del(IntPtr proxy, int type, IntPtr cb, IntPtr cb_data);
 }
 
+/// <summary>Represents a DBus proxy object. (Since EFL 1.23)</summary>
 public class Proxy : IDisposable
 {
     public IntPtr Handle {get;set;} = IntPtr.Zero;

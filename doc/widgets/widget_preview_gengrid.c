@@ -38,7 +38,7 @@ evas_object_size_hint_weight_set(gengrid, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 elm_win_resize_object_add(win, gengrid);
 evas_object_show(gengrid);
 
-Elm_Gengrid_Item_Class gic;
+Elm_Gengrid_Item_Class gic = { 0 };
 gic.item_style = "default";
 gic.func.text_get = _grid_text_get;
 gic.func.content_get = _grid_content_get;
