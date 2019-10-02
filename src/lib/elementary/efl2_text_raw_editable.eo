@@ -120,7 +120,7 @@ class @beta Efl2.Text.Raw_Editable extends Efl2.Canvas.Text implements Efl2.Inpu
 
       // FIXME: should be removed and the one on cursor interactive used instead.
       cursor,changed,manual: void; [[Called on manual cursor change]]
-      // FIXME: remove the next one
+      // FIXME: Need to improve the docs, not sure what this one actually means and if it should be exposed. Though it's imf related.
       preedit,changed: void; [[Called when entry preedit changed]]
 
       selection,start: void; [[Called at selection start]]
