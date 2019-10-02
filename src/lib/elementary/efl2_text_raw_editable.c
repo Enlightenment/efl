@@ -2286,6 +2286,8 @@ _efl2_text_raw_editable_editable_get(const Eo *obj EINA_UNUSED, Efl2_Text_Raw_Ed
 EOLIAN static void
 _efl2_text_raw_editable_password_mode_set(Eo *obj EINA_UNUSED, Efl2_Text_Raw_Editable_Data *pd EINA_UNUSED, Eina_Bool enabled EINA_UNUSED)
 {
+   // FIXME: password mode is just watches changes and updates an internal buffer in tandem to the text changes
+   // Can use the same mechanism as undo/redo
 #warning IMPLEMENTATION
 }
 
