@@ -1270,7 +1270,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
           }
         else
          {
-            Efl2_Text_Change_Info *info = calloc(1, sizeof(*info));
+            info = calloc(1, sizeof(*info));
             if (!info)
                {
                   //FIXME
@@ -1336,7 +1336,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
         _compose_seq_reset(en);
         if (multiline)
           {
-             Efl2_Text_Change_Info *info = calloc(1, sizeof(*info));
+             info = calloc(1, sizeof(*info));
              if (!info)
                {
                   //FIXME
