@@ -406,6 +406,7 @@ void test_efl_ui_item(void *data, Evas_Object *obj, void *event_info);
 void test_ui_frame(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED);
 
 void test_efl_ui_animation_view(void *data, Evas_Object *obj, void *event_info);
+void test_efl_gfx_vg_value_provider(void *data, Evas_Object *obj, void *event_info);
 
 static void _list_udpate(void);
 
@@ -1301,6 +1302,7 @@ add_tests:
 
    //------------------------------//
    ADD_TEST_EO(NULL, "Vector Animation", "Animation View", test_efl_ui_animation_view);
+   ADD_TEST_EO(NULL, "Vector Animation", "Value Provider", test_efl_gfx_vg_value_provider);
 
 #undef ADD_TEST
 

@@ -161,6 +161,7 @@ elementary_test_src = [
   'test_ui_items.c',
   'test_ui_frame.c',
   'test_efl_ui_animation_view.c',
+  'test_efl_gfx_vg_value_provider.c',
   'test.h'
 ]
 
