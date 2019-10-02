@@ -7900,12 +7900,11 @@ _canvas_text_cursor_word_start(Efl2_Text_Cursor_Handle *cur)
    size_t i;
    char *breaks;
 
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node, EINA_FALSE);
 
    size_t len = eina_ustrbuf_length_get(cur->node->unicode);
-
-   if (cur->pos == len)
-      return EINA_TRUE;
 
    text = eina_ustrbuf_string_get(cur->node->unicode);
 
@@ -7915,26 +7914,34 @@ _canvas_text_cursor_word_start(Efl2_Text_Cursor_Handle *cur)
         set_wordbreaks_utf32((const utf32_t *) text, len, lang, breaks);
      }
 
-   for (i = cur->pos; text[i] && _is_white(text[i]) && (BREAK_AFTER(i)) ; i++);
-   if (i == len)
+   if ((cur->pos > 0) && (cur->pos == len))
+      cur->pos--;
+
+   for (i = cur->pos ; _is_white(text[i]) && BREAK_AFTER(i) ; i--)
      {
-        Evas_Object_Textblock_Node_Text *nnode;
-        nnode = _NODE_TEXT(EINA_INLIST_GET(cur->node)->next);
-        if (nnode)
+        if (i == 0)
           {
-             cur->node = nnode;
-             cur->pos = 0;
-             free(breaks);
-             // FIXME: like word_start  return evas_textblock_cursor_word_end(cur);
-             return EINA_TRUE;
+             Evas_Object_Textblock_Node_Text *pnode;
+             pnode = _NODE_TEXT(EINA_INLIST_GET(cur->node)->prev);
+             if (pnode)
+               {
+                  cur->node = pnode;
+                  len = eina_ustrbuf_length_get(cur->node->unicode);
+                  cur->pos = len - 1;
+                  free(breaks);
+                  return _canvas_text_cursor_word_start(cur);
+               }
+             else
+               {
+                  break;
+               }
           }
      }
 
-   for ( ; text[i] ; i++)
+   for ( ; i > 0 ; i--)
      {
-        if (BREAK_AFTER(i))
+        if (BREAK_AFTER(i - 1))
           {
-             /* This is the one to break after. */
              break;
           }
      }
