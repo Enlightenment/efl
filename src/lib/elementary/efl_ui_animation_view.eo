@@ -256,7 +256,21 @@ class @beta Efl.Ui.Animation_View extends Efl.Ui.Widget implements Efl.Gfx.View,
                             ]]
          }
       }
+      value_provider_override{
+         [[Override each value of the animation object.
+           Values can be properties of Efl.Gfx.Vg.Value_provider such as color and matrix information.
 
+           Example:
+           Eo *vp = efl_add(EFL_GFX_VG_VALUE_PROVIDER_CLASS, NULL);
+           @Efl.Gfx.Vg.Value_Provider.keypath.set(vp, "SomeLayer:SomeObject:SomeContents");
+           // Set vp property
+           @.value_provider_override(target_animation_view, vg);
+           See @Efl.Gfx.Vg.Value_Provider
+         ]]
+         params {
+            value_provider: Efl.Gfx.Vg.Value_Provider; [[ Override the values of the animation object. this should have keypath infomation. See @Efl.Gfx.Vg.Value_Provider ]]
+         }
+      }
    }
    implements {
       Efl.Object.constructor;
