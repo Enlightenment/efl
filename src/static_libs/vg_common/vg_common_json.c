@@ -443,12 +443,67 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
 }
 #endif
 
+#ifdef BUILD_VG_LOADER_JSON
+void
+_value_provider_override(Vg_File_Data *vfd)
+{
+   Lottie_Animation *lot_anim = (Lottie_Animation *) vfd->loader_data;
+
+   Eina_List *l;
+   Efl_Gfx_Vg_Value_Provider *vp;
+   EINA_LIST_FOREACH(vfd->vp_list, l, vp)
+     {
+        const char *keypath;
+        Efl_Gfx_Vg_Value_Provider_Change_Flag flag;
+        flag = efl_gfx_vg_value_provider_changed_flag_get(vp);
+
+        if (flag & EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_FILL_COLOR)
+          {
+             int r, g, b, a;
+             r = g = b = a = 0;
+             efl_gfx_vg_value_provider_fill_color_get(vp, &r, &g, &b, &a);
+             keypath = efl_gfx_vg_value_provider_keypath_get(vp);
+
+             lottie_animation_property_override(lot_anim, LOTTIE_ANIMATION_PROPERTY_FILLCOLOR, (char*)keypath, r / 255.0, g / 255.0, b / 255.0);
+             lottie_animation_property_override(lot_anim, LOTTIE_ANIMATION_PROPERTY_FILLOPACITY, (char*)keypath, (a / 255.0) * 100.0);
+          }
+        if (flag & EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_STROKE_COLOR)
+          {
+             int r, g, b, a;
+             r = g = b = a = 0;
+             efl_gfx_vg_value_provider_stroke_color_get(vp, &r, &g, &b, &a);
+             keypath = efl_gfx_vg_value_provider_keypath_get(vp);
+
+             lottie_animation_property_override(lot_anim, LOTTIE_ANIMATION_PROPERTY_STROKECOLOR, (char*)keypath, r / 255.0, g / 255.0, b / 255.0);
+             lottie_animation_property_override(lot_anim, LOTTIE_ANIMATION_PROPERTY_STROKEOPACITY, (char*)keypath, (a / 255.0) * 100.0);
+          }
+        if (flag & EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_STROKE_WIDTH)
+          {
+             double w;
+             w = efl_gfx_vg_value_provider_stroke_width_get(vp);
+             keypath = efl_gfx_vg_value_provider_keypath_get(vp);
+
+             lottie_animation_property_override(lot_anim, LOTTIE_ANIMATION_PROPERTY_STROKEWIDTH, (char*)keypath, w);
+          }
+        if (flag & EFL_GFX_VG_VALUE_PROVIDER_CHANGE_FLAG_TRANSFORM_MATRIX)
+          {
+             //TODO: When the lottie animation's transform property is implemented,
+             //      the transform property override function have to added.
+          }
+     }
+}
+
+#endif
+
+
 Eina_Bool
 vg_common_json_create_vg_node(Vg_File_Data *vfd)
 {
 #ifdef BUILD_VG_LOADER_JSON
    Lottie_Animation *lot_anim = (Lottie_Animation *) vfd->loader_data;
    if (!lot_anim) return EINA_FALSE;
+
+   if (vfd->vp_list) _value_provider_override(vfd);
 
    unsigned int frame_num = (vfd->anim_data) ? vfd->anim_data->frame_num : 0;
    const LOTLayerNode *tree =

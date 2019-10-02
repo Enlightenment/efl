@@ -741,6 +741,7 @@ _efl_ui_animation_view_value_provider_override(Eo *obj EINA_UNUSED, Efl_Ui_Anima
 
    efl_ref(value_provider);
    pd->vp_list = eina_list_append(pd->vp_list, value_provider);
+   efl_key_data_set(pd->vg, "_vg_value_providers", pd->vp_list);
 }
 
 EAPI Elm_Animation_View*
