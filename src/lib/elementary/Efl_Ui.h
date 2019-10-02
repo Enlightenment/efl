@@ -245,6 +245,7 @@ EAPI Eina_Bool efl_ui_win_autodel_get(const Efl_Ui_Win *obj);
 # include <efl_ui_text_factory_emoticons.eo.h>
 # include <efl2_input_text.eo.h>
 # include <efl2_text_raw_editable.eo.h>
+# include <efl2_text_cursor_interactive.eo.h>
 
 /* FIXME: Multibuttonentry must not use elm_widget_item */
 
