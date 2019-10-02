@@ -3,6 +3,7 @@
 
 /* FIXME - Text object must stop using elm_general! */
 import elm_general;
+import efl2_text_attribute_factory;
 
 
 // FIXME: All of these need to be better named. It's not selection. Either dnd or cnp...
@@ -66,6 +67,14 @@ struct @beta Efl2.Ui.Selection_Changed
    seat: int; [[The seat on which the selection changed, or NULL for "default"]]
    display: void_ptr; [[The display connection object, NULL under X11]]
    exist: bool; [[EINA_TRUE if the selection has an owner]]
+}
+
+struct @beta Efl2.Ui.Text_Anchor.Info
+{
+   [[The event info associated with Anchors]]
+   href: string; [[The link set in the anchor.]]
+   button: int; [[The mouse button used to click on it.]]
+   attribute: Efl2.Text.Attribute.Handle @by_ref; [[The attribute that created this anchor. Can be used to query position and size.]]
 }
 
 // FIXME: Gotta figure out dnd and cnp modes.
@@ -244,10 +253,10 @@ class @beta Efl2.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickab
       context,open: void; [[Called when context menu was opened]]
       context,close: void; [[Called when context menu was closed]]
       // FIXME: here or the layer below??
-      // FIXME: how should these behave? Type isn't there anchor,down: Elm.Entry_Anchor_Info; [[Called on anchor down]]
-      // FIXME: how should these behave? Type isn't there anchor,in: Elm.Entry_Anchor_Info; [[Called on anchor in]]
-      // FIXME: how should these behave? Type isn't there anchor,out: Elm.Entry_Anchor_Info; [[Called on anchor out]]
-      // FIXME: how should these behave? Type isn't there anchor,up: Elm.Entry_Anchor_Info; [[called on anchor up]]
+      anchor,down: Efl2.Ui.Text_Anchor.Info; [[Called on anchor down]]
+      anchor,in: Efl2.Ui.Text_Anchor.Info; [[Called on anchor in]]
+      anchor,out: Efl2.Ui.Text_Anchor.Info; [[Called on anchor out]]
+      anchor,up: Efl2.Ui.Text_Anchor.Info; [[called on anchor up]]
 
       cnp,paste: void; [[Called when selection is pasted]]
       cnp,copy: void; [[Called when selection is copied]]

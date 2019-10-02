@@ -10,12 +10,6 @@ struct @beta Efl2.Text.Change_Info {
    merge: bool; [[$true if can be merged with the previous one. Used for example with insertion when something is already selected]]
 }
 
-/* FIXME
-       - Filters/validators/etc
-      - There would be a "changed" and a "pre-changed" events so you can filter / validate the text using those probably
-        - Needs a better name
-      - Maybe validation should be in efl.ui.text because it's really just a visual thing that doesn't edit the text
-*/
 class @beta Efl2.Text.Raw_Editable extends Efl2.Canvas.Text implements Efl2.Input.Text {
    methods {
       @property editable {

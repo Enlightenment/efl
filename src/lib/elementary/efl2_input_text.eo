@@ -1,3 +1,5 @@
+// FIXME: need to properly review this one
+
 enum Efl2.Input.Text_Panel.Layout
 {
    [[Input panel (virtual keyboard) layout types.
