@@ -3,5 +3,5 @@ class @beta Efl2.Ui.Label extends Efl.Ui.Text
    [[A convenience wrapper around Efl.Ui.Text that lets you have a nice uneditable label (but potentially selectable!]]
    methods {
    }
-   // Probably implement "editable" to block it
+   // FIXME: Probably implement "editable" to block it
 }
