@@ -81,7 +81,7 @@ _efl_ui_spotlight_indicator_icon_efl_ui_spotlight_indicator_bind(Eo *obj, Efl_Ui
         efl_content_set(efl_part(pd->container, "efl.indicator"), pd->indicator);
         efl_gfx_entity_visible_set(pd->indicator, EINA_TRUE);
         efl_ui_layout_orientation_set(pd->indicator, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
-        efl_gfx_arrangement_content_padding_set(pd->indicator, 15, 15, EINA_TRUE);
+        efl_gfx_arrangement_content_padding_set(pd->indicator, 15, 15);
 
         for (int i = 0; i < efl_content_count(pd->container); ++i)
           {

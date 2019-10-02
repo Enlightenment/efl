@@ -38,8 +38,7 @@ struct _Efl_Ui_Table_Data
    int last_col, last_row; // only used by pack api
    Efl_Ui_Layout_Orientation fill_dir;    // direction in which cells are added when using pack()
    struct {
-      double h, v;
-      Eina_Bool scalable: 1;
+      unsigned int h, v;
    } pad;
    struct {
       double h, v;

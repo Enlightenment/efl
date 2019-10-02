@@ -148,7 +148,7 @@ _efl_page_indicator_icon_efl_page_indicator_bind(Eo *obj,
    if (spd->pager.obj)
      {
         efl_ui_layout_orientation_set(spd->idbox, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL);
-        efl_gfx_arrangement_content_padding_set(spd->idbox, 15, 15, EINA_TRUE);
+        efl_gfx_arrangement_content_padding_set(spd->idbox, 15, 15);
 
         pd->v = eina_value_float_new(0.0);
 

@@ -79,7 +79,7 @@ static void
 padding_slider_cb(void *data, const Efl_Event *event)
 {
    int val = elm_slider_value_get(event->object);
-   efl_gfx_arrangement_content_padding_set(data, val, val, EINA_TRUE);
+   efl_gfx_arrangement_content_padding_set(data, val, val);
 }
 
 static void
@@ -201,7 +201,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
 
    vbox = efl_add(EFL_UI_BOX_CLASS, win,
                   efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
-   efl_gfx_arrangement_content_padding_set(vbox, 10, 10, EINA_TRUE);
+   efl_gfx_arrangement_content_padding_set(vbox, 10, 10);
    efl_gfx_hint_weight_set(vbox, 1, 1);
    efl_gfx_hint_margin_set(vbox, 5, 5, 5, 5);
    elm_win_resize_object_add(win, vbox);
@@ -222,7 +222,7 @@ test_ui_table(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *event_
    hbox = efl_add(EFL_UI_BOX_CLASS, win,
                   efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL));
    elm_object_content_set(f, hbox);
-   efl_gfx_arrangement_content_padding_set(hbox, 10, 0, EINA_TRUE);
+   efl_gfx_arrangement_content_padding_set(hbox, 10, 0);
 
 
    /* weights radio group */
@@ -570,7 +570,7 @@ test_ui_table_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
 
    vbox = efl_add(EFL_UI_BOX_CLASS, win,
                   efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_VERTICAL));
-   efl_gfx_arrangement_content_padding_set(vbox, 10, 10, EINA_TRUE);
+   efl_gfx_arrangement_content_padding_set(vbox, 10, 10);
    efl_gfx_hint_margin_set(vbox, 5, 5, 5, 5);
    elm_win_resize_object_add(win, vbox);
    efl_gfx_entity_visible_set(vbox, 1);
@@ -591,7 +591,7 @@ test_ui_table_linear(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED,
    hbox = efl_add(EFL_UI_BOX_CLASS, win,
                   efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL));
    elm_object_content_set(f, hbox);
-   efl_gfx_arrangement_content_padding_set(hbox, 5, 0, EINA_TRUE);
+   efl_gfx_arrangement_content_padding_set(hbox, 5, 0);
    efl_gfx_entity_visible_set(hbox, 1);
 
    ico = elm_icon_add(win);

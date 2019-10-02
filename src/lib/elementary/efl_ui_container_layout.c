@@ -111,16 +111,12 @@ void
 _efl_ui_container_layout_init(Eo* obj, Efl_Ui_Container_Layout_Calc *calc)
 {
    Eina_Rect geom;
-   Eina_Bool pad_scalable;
 
    geom = efl_gfx_entity_geometry_get(obj);
    efl_gfx_hint_margin_get(obj, &calc[0].margin[0], &calc[0].margin[1],
                                      &calc[1].margin[0], &calc[1].margin[1]);
-   calc[0].scale = calc[1].scale = efl_gfx_entity_scale_get(obj);
 
-   efl_gfx_arrangement_content_padding_get(obj, &calc[0].pad, &calc[1].pad, &pad_scalable);
-   calc[0].pad = pad_scalable ? (calc[0].pad * calc[0].scale) : calc[0].pad;
-   calc[1].pad = pad_scalable ? (calc[1].pad * calc[1].scale) : calc[1].pad;
+   efl_gfx_arrangement_content_padding_get(obj, &calc[0].pad, &calc[1].pad);
 
    // pack align is used if "no item has a weight"
    efl_gfx_arrangement_content_align_get(obj, &calc[0].align, &calc[1].align);

@@ -387,7 +387,7 @@ test_gfx_filters(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *eve
                      efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                      efl_gfx_hint_weight_set(efl_added, 1.0, 0.0),
                      efl_gfx_hint_fill_set(efl_added, EINA_TRUE, EINA_FALSE),
-                     efl_gfx_arrangement_content_padding_set(efl_added, 5, 5, 1),
+                     efl_gfx_arrangement_content_padding_set(efl_added, 5, 5),
                      efl_gfx_hint_margin_set(efl_added, 5, 5, 5, 5),
                      efl_gfx_arrangement_content_align_set(efl_added, 0, 0.5));
       efl_pack(box, box2);
