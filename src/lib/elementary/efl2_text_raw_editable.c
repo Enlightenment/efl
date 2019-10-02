@@ -474,7 +474,7 @@ _entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_U
    efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CHANGED_USER, &info);
    #warning EFL_UI_TEXT_EVENT_CHANGED
    //efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED, NULL);
-   efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CURSOR_CHANGED_MANUAL, NULL);
+   efl_event_callback_call(efl2_text_raw_editable_main_cursor_get(obj), EFL2_TEXT_CURSOR_EVENT_CHANGED_USER, NULL);
 
    _entry_imf_cursor_info_set(obj, en);
 
@@ -1016,7 +1016,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
 
              _key_down_sel_post(obj, cur, en, shift);
           }
-        efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CURSOR_CHANGED_MANUAL, NULL);
+        efl_event_callback_call(efl2_text_raw_editable_main_cursor_get(obj), EFL2_TEXT_CURSOR_EVENT_CHANGED_USER, NULL);
      }
    else if (!strcmp(ev->key, "Down") ||
             (!strcmp(ev->key, "KP_Down") && !ev->string))
@@ -1031,7 +1031,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
 
              _key_down_sel_post(obj, cur, en, shift);
           }
-        efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CURSOR_CHANGED_MANUAL, NULL);
+        efl_event_callback_call(efl2_text_raw_editable_main_cursor_get(obj), EFL2_TEXT_CURSOR_EVENT_CHANGED_USER, NULL);
      }
    else if (!strcmp(ev->key, "Left") ||
             (!strcmp(ev->key, "KP_Left") && !ev->string))
@@ -1051,7 +1051,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
         _key_down_sel_post(obj, cur, en, shift);
-        efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CURSOR_CHANGED_MANUAL, NULL);
+        efl_event_callback_call(efl2_text_raw_editable_main_cursor_get(obj), EFL2_TEXT_CURSOR_EVENT_CHANGED_USER, NULL);
      }
    else if (!strcmp(ev->key, "Right") ||
             (!strcmp(ev->key, "KP_Right") && !ev->string))
@@ -1071,7 +1071,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
         _key_down_sel_post(obj, cur, en, shift);
-        efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CURSOR_CHANGED_MANUAL, NULL);
+        efl_event_callback_call(efl2_text_raw_editable_main_cursor_get(obj), EFL2_TEXT_CURSOR_EVENT_CHANGED_USER, NULL);
      }
    else if (!strcmp(ev->key, "BackSpace"))
      {
@@ -1161,7 +1161,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
            efl2_text_cursor_line_start(cur);
 
         _key_down_sel_post(obj, cur, en, shift);
-        efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CURSOR_CHANGED_MANUAL, NULL);
+        efl_event_callback_call(efl2_text_raw_editable_main_cursor_get(obj), EFL2_TEXT_CURSOR_EVENT_CHANGED_USER, NULL);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((!alt) &&
@@ -1177,7 +1177,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
            efl2_text_cursor_line_end(cur);
 
         _key_down_sel_post(obj, cur, en, shift);
-        efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CURSOR_CHANGED_MANUAL, NULL);
+        efl_event_callback_call(efl2_text_raw_editable_main_cursor_get(obj), EFL2_TEXT_CURSOR_EVENT_CHANGED_USER, NULL);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
 #if defined(__APPLE__) && defined(__MACH__)
@@ -1316,7 +1316,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
         efl2_text_cursor_line_jump_by(cur, -10);
 
         _key_down_sel_post(obj, cur, en, shift);
-        efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CURSOR_CHANGED_MANUAL, NULL);
+        efl_event_callback_call(efl2_text_raw_editable_main_cursor_get(obj), EFL2_TEXT_CURSOR_EVENT_CHANGED_USER, NULL);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if (!strcmp(ev->key, "Next") ||
@@ -1328,7 +1328,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
         efl2_text_cursor_line_jump_by(cur, 10);
 
         _key_down_sel_post(obj, cur, en, shift);
-        efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CURSOR_CHANGED_MANUAL, NULL);
+        efl_event_callback_call(efl2_text_raw_editable_main_cursor_get(obj), EFL2_TEXT_CURSOR_EVENT_CHANGED_USER, NULL);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
    else if ((!strcmp(ev->key, "Return")) || (!strcmp(ev->key, "KP_Enter")))
@@ -1758,7 +1758,7 @@ _mouse_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj EINA_UNUSED,
 end:
    if (efl2_text_cursor_compare(tc, efl2_text_raw_editable_main_cursor_get(obj)))
      {
-        efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CURSOR_CHANGED_MANUAL, NULL);
+        efl_event_callback_call(efl2_text_raw_editable_main_cursor_get(obj), EFL2_TEXT_CURSOR_EVENT_CHANGED_USER, NULL);
      }
    efl_del(tc);
 
@@ -1828,7 +1828,7 @@ _mouse_up_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
      }
    if (efl2_text_cursor_compare(tc, cur))
      {
-        efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CURSOR_CHANGED_MANUAL, NULL);
+        efl_event_callback_call(efl2_text_raw_editable_main_cursor_get(obj), EFL2_TEXT_CURSOR_EVENT_CHANGED_USER, NULL);
      }
 
    _entry_imf_cursor_info_set(en);
@@ -1924,7 +1924,7 @@ _mouse_move_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event
           }
         if (efl2_text_cursor_compare(tc, cur))
           {
-             efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CURSOR_CHANGED_MANUAL, NULL);
+             efl_event_callback_call(efl2_text_raw_editable_main_cursor_get(obj), EFL2_TEXT_CURSOR_EVENT_CHANGED_USER, NULL);
           }
         efl_del(tc);
      }
@@ -2792,4 +2792,12 @@ _efl2_text_raw_editable_validation_failed(Eo *obj EINA_UNUSED, Efl2_Text_Raw_Edi
    #warning IMPLEMENTATION
 }
 
+EOLIAN static unsigned int
+_efl2_text_cursor_interactive_user_text_insert(Eo *obj, void *pd EINA_UNUSED, const char *text)
+{
+   // FIXME: we need to call the changed user event but only after filtering has happened. Need to figure this out.
+   return efl2_text_cursor_text_insert(obj, text);
+}
+
 #include "efl2_text_raw_editable.eo.c"
+#include "efl2_text_cursor_interactive.eo.c"
