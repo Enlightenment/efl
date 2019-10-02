@@ -2255,7 +2255,7 @@ _efl2_text_raw_editable_selection_allowed_get(const Eo *obj EINA_UNUSED, Efl2_Te
 }
 
 EOLIAN static void
-_efl2_text_raw_editable_selection_cursors_get(const Eo *obj EINA_UNUSED, Efl2_Text_Raw_Editable_Data *pd, Efl2_Text_Cursor **start, Efl2_Text_Cursor **end)
+_efl2_text_raw_editable_selection_cursors_get(const Eo *obj EINA_UNUSED, Efl2_Text_Raw_Editable_Data *pd, const Efl2_Text_Cursor **start, const Efl2_Text_Cursor **end)
 {
    if (efl2_text_cursor_position_get(pd->sel_start) >
          efl2_text_cursor_position_get(pd->sel_end))
@@ -2320,6 +2320,7 @@ _efl2_text_raw_editable_main_cursor_get(const Eo *obj EINA_UNUSED, Efl2_Text_Raw
 }
 
 
+#warning implement by just manipulating the cursors
 EOLIAN static void
 _efl2_text_raw_editable_selection_start(Eo *obj, Efl2_Text_Raw_Editable_Data *en)
 {
@@ -2331,6 +2332,7 @@ _efl2_text_raw_editable_selection_start(Eo *obj, Efl2_Text_Raw_Editable_Data *en
 }
 
 
+#warning implement by just manipulating the cursors
 EOLIAN static void
 _efl2_text_raw_editable_selection_end(Eo *obj, Efl2_Text_Raw_Editable_Data *en)
 {
@@ -2338,8 +2340,9 @@ _efl2_text_raw_editable_selection_end(Eo *obj, Efl2_Text_Raw_Editable_Data *en)
    _sel_extend(cur, obj, en);
 }
 
+#warning implement by just manipulating the cursors
 EOLIAN static void
-_efl2_text_raw_editable_select_none(Eo *obj, Efl2_Text_Raw_Editable_Data *pd)
+_efl2_text_raw_editable_selection_none(Eo *obj, Efl2_Text_Raw_Editable_Data *pd)
 {
    _sel_clear(obj, pd);
 }

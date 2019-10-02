@@ -12,7 +12,7 @@ enum @beta Efl2.Text.Cursor_Type
 // FIXME: Rename cluster ones to grapheme?
 // Missing pen_geometry get? - probably not, that's the cursor geometry with under.
 // Should we always do split cursor and "under" should just be content geometry? -- probably!
-//  Problem with this is that it doesn't necessarily work correctly vertically?
+//  Problem with this is that it doesn't necessarily work correctly vertically.
 class @beta Efl2.Text.Cursor extends Efl.Object {
    [[Cursor API
    ]]

@@ -1,5 +1,3 @@
-// FIXME: Make sure I'm happy with the undo/redo mechanism and filtering
-// FIXME: Remove length? It's we can always get utf8 length if that's what we want. Why is it there?
 struct @beta Efl2.Text.Change_Info {
    [[This structure includes all the information about content changes.
 
@@ -85,23 +83,9 @@ class @beta Efl2.Text.Raw_Editable extends Efl2.Canvas.Text implements Efl2.Inpu
          ]]
          get {}
          values {
-            start: Efl2.Text.Cursor; [[The start of the selection]]
-            end: Efl2.Text.Cursor; [[The end of the selection]]
+            start: const(Efl2.Text.Cursor); [[The start of the selection]]
+            end: const(Efl2.Text.Cursor); [[The end of the selection]]
          }
-      }
-
-      selection_start {
-         [[This starts a selection within the entry as though
-           the user had just started selecting text.]]
-      }
-
-      selection_end {
-         [[This ends a selection within the entry as though
-           the user had just released the mouse button while making a selection.]]
-      }
-
-      select_none {
-         [[Clears the selection.]]
       }
 
       text_filter {
