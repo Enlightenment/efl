@@ -81,7 +81,7 @@ Eina_Iterator *_canvas_text_selection_iterator_new(Eina_List *list);
 Eina_Unicode _canvas_text_cursor_content_get(const Efl2_Text_Cursor_Handle *cur);
 void _canvas_text_cursor_range_delete(Efl2_Text_Cursor_Handle *cur1, Efl2_Text_Cursor_Handle *cur2);
 void _canvas_text_cursor_char_delete(Efl2_Text_Cursor_Handle *cur);
-int _canvas_text_cursor_text_insert(Efl2_Text_Cursor_Handle *cur, const char *_text);
+unsigned int _canvas_text_cursor_text_insert(Efl2_Text_Cursor_Handle *cur, const char *_text);
 void _canvas_text_cursor_copy(Efl2_Text_Cursor_Handle *dst, const Efl2_Text_Cursor_Handle *src);
 Eina_Bool _canvas_text_cursor_equal(const Efl2_Text_Cursor_Handle *cur, const Efl2_Text_Cursor_Handle *cur2);
 int _canvas_text_cursor_compare(const Efl2_Text_Cursor_Handle *cur1, const Efl2_Text_Cursor_Handle *cur2);

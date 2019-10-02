@@ -132,15 +132,32 @@ _line_geometry_get(Efl2_Canvas_Text *tb, const Efl2_Text_Cursor *cur, int *x, in
 }
 
 static Eina_Bool
+_cursor_geometry_get(const Efl2_Text_Cursor *cur, Efl2_Text_Cursor_Type ctype, int *x1, int *y1, int *w1, int *h1, int *x2, int *y2, int *w2, int *h2)
+{
+   Eina_Rect geometry1, geometry2;
+   Eina_Bool ret = efl2_text_cursor_geometry_get(cur, ctype, &geometry1, &geometry2);
+   if (x1) *x1 = geometry1.x;
+   if (y1) *y1 = geometry1.y;
+   if (w1) *w1 = geometry1.w;
+   if (h1) *h1 = geometry1.h;
+   if (x2) *x2 = geometry2.x;
+   if (y2) *y2 = geometry2.y;
+   if (w2) *w2 = geometry2.w;
+   if (h2) *h2 = geometry2.h;
+
+   return ret;
+}
+
+static Eina_Bool
 _cursor_geometry_bidi_get(const Efl2_Text_Cursor *cur, int *x1, int *y1, int *w1, int *h1, int *x2, int *y2, int *w2, int *h2, Efl2_Text_Cursor_Type ctype)
 {
-   return efl2_text_cursor_geometry_get(cur, ctype, x1, y1, w1, h1, x2, y2, w2, h2);
+   return _cursor_geometry_get(cur, ctype, x1, y1, w1, h1, x2, y2, w2, h2);
 }
 
 static Eina_Bool
 _cursor_pen_geometry_get(const Efl2_Text_Cursor *cur, int *x1, int *y1, int *w1, int *h1)
 {
-   return efl2_text_cursor_geometry_get(cur, EFL2_TEXT_CURSOR_TYPE_UNDER, x1, y1, w1, h1, NULL, NULL, NULL, NULL);
+   return _cursor_geometry_get(cur, EFL2_TEXT_CURSOR_TYPE_UNDER, x1, y1, w1, h1, NULL, NULL, NULL, NULL);
 }
 
 static void
@@ -151,20 +168,29 @@ _size_native_get(const Efl2_Canvas_Text *obj, int *w, int *h)
    if (h) *h = ret.h;
 }
 
+static void
+_cursor_coord_set(Efl2_Text_Cursor *cur, int x, int y)
+{
+   Eina_Position2D coord = {
+        .x = x,
+        .y = y,
+   };
+  efl2_text_cursor_coord_set(cur, coord);
+}
+
 // FIXME: It's checking against -1 and the functions return booleans nowadays.
 #define _CHECK_CURSOR_COORDS() \
 do \
 { \
         Evas_Coord cx, cy, cw, ch; \
         int ret; \
-        ret = efl2_text_cursor_geometry_get(cur, EFL2_TEXT_CURSOR_TYPE_UNDER, \
+        ret = _cursor_geometry_get(cur, EFL2_TEXT_CURSOR_TYPE_UNDER, \
               &cx, &cy, &cw, &ch, NULL, NULL, NULL, NULL); \
         fail_if(ret == -1); \
-        ret = efl2_text_cursor_geometry_get(cur, EFL2_TEXT_CURSOR_TYPE_BEFORE, \
+        ret = _cursor_geometry_get(cur, EFL2_TEXT_CURSOR_TYPE_BEFORE, \
               &cx, &cy, &cw, &ch, NULL, NULL, NULL, NULL); \
         fail_if(ret == -1); \
-        efl2_text_cursor_content_geometry_get(cur, \
-              &cx, &cy, &cw, &ch); \
+        efl2_text_cursor_content_geometry_get(cur); \
    /* FIXME:
         ret = _cursor_pen_geometry_get(cur, &cx, &cy, &cw, &ch); \
         fail_if(ret == -1); \
@@ -451,8 +477,8 @@ EFL_START_TEST(canvas_text_cursor)
         int cur_pos;
 
         cur_pos = efl2_text_cursor_position_get(cur);
-        efl2_text_cursor_geometry_get(cur, EFL2_TEXT_CURSOR_TYPE_UNDER, &x, &y, &w, &h, NULL, NULL, NULL, NULL);
-        efl2_text_cursor_coord_set(cur, x + (w / 2), y + (h / 2));
+        _cursor_geometry_get(cur, EFL2_TEXT_CURSOR_TYPE_UNDER, &x, &y, &w, &h, NULL, NULL, NULL, NULL);
+        _cursor_coord_set(cur, x + (w / 2), y + (h / 2));
         ck_assert_int_eq(cur_pos, efl2_text_cursor_position_get(cur));
      }
    while (efl2_text_cursor_char_next(cur));
@@ -462,13 +488,13 @@ EFL_START_TEST(canvas_text_cursor)
    _size_native_get(tb, &nw, &nh);
    evas_object_resize(tb, nw, nh);
    efl2_text_cursor_position_set(cur, 5);
-   efl2_text_cursor_coord_set(cur, nw / 2,
+   _cursor_coord_set(cur, nw / 2,
          -50);
    efl2_text_cursor_paragraph_first(main_cur);
    fail_if(efl2_text_cursor_compare(cur, main_cur));
 
    efl2_text_cursor_position_set(cur, 5);
-   efl2_text_cursor_coord_set(cur, nw / 2,
+   _cursor_coord_set(cur, nw / 2,
          nh + 50);
    efl2_text_cursor_paragraph_last(main_cur);
    efl2_text_cursor_paragraph_end(main_cur);
@@ -477,7 +503,7 @@ EFL_START_TEST(canvas_text_cursor)
    /* Try positions between the first paragraph and the first line. */
    efl2_text_set(tb, buf);
    // FIXME: actually test something
-   efl2_text_cursor_coord_set(cur, 5, 1);
+   _cursor_coord_set(cur, 5, 1);
 
    /* Try positions beyond the left/right limits of lines. */
    for (i = 0 ; i < 2 ; i++)
@@ -486,12 +512,12 @@ EFL_START_TEST(canvas_text_cursor)
         _line_geometry_get(tb, cur, &x, &y, &w, &h);
 
         efl2_text_cursor_position_set(main_cur, 5);
-        efl2_text_cursor_coord_set(main_cur, x - 50, y);
+        _cursor_coord_set(main_cur, x - 50, y);
         fail_if(efl2_text_cursor_compare(main_cur, cur));
 
         efl2_text_cursor_line_end(cur);
         efl2_text_cursor_position_set(main_cur, 5);
-        efl2_text_cursor_coord_set(main_cur, x + w + 50, y);
+        _cursor_coord_set(main_cur, x + w + 50, y);
         fail_if(efl2_text_cursor_compare(main_cur, cur));
      }
 
@@ -735,12 +761,12 @@ EFL_START_TEST(canvas_text_cursor)
            case 5:
               /* Ltr paragraph */
               efl2_text_cursor_position_set(main_cur, 7);
-              efl2_text_cursor_coord_set(main_cur, x - 50, y);
+              _cursor_coord_set(main_cur, x - 50, y);
               fail_if(efl2_text_cursor_compare(main_cur, cur));
 
               efl2_text_cursor_line_end(cur);
               efl2_text_cursor_position_set(main_cur, 7);
-              efl2_text_cursor_coord_set(main_cur, x + w + 50, y);
+              _cursor_coord_set(main_cur, x + w + 50, y);
               fail_if(efl2_text_cursor_compare(main_cur, cur));
               break;
            case 1:
@@ -750,12 +776,12 @@ EFL_START_TEST(canvas_text_cursor)
               /* Rtl paragraph */
               efl2_text_cursor_line_end(cur);
               efl2_text_cursor_position_set(main_cur, 7);
-              efl2_text_cursor_coord_set(main_cur, x - 50, y);
+              _cursor_coord_set(main_cur, x - 50, y);
               fail_if(efl2_text_cursor_compare(main_cur, cur));
 
               efl2_text_cursor_line_start(cur);
               efl2_text_cursor_position_set(main_cur, 7);
-              efl2_text_cursor_coord_set(main_cur, x + w + 50, y);
+              _cursor_coord_set(main_cur, x + w + 50, y);
               fail_if(efl2_text_cursor_compare(main_cur, cur));
               break;
           }
@@ -839,7 +865,7 @@ EFL_START_TEST(canvas_text_cursor)
         fail_if(y <= 0);
 
         evas_textblock_cursor_paragraph_last(main_cur);
-        efl2_text_cursor_coord_set(main_cur, x + w, y / 2);
+        _cursor_coord_set(main_cur, x + w, y / 2);
         fail_if(efl2_text_cursor_compare(main_cur, cur));
 
         evas_textblock_cursor_paragraph_last(main_cur);
@@ -850,7 +876,7 @@ EFL_START_TEST(canvas_text_cursor)
          * go to the end. */
         efl2_text_cursor_paragraph_first(main_cur);
         evas_textblock_cursor_paragraph_last(cur);
-        efl2_text_cursor_coord_set(main_cur, x + w, nh + 1);
+        _cursor_coord_set(main_cur, x + w, nh + 1);
         fail_if(!efl2_text_cursor_compare(main_cur, cur));
 
         efl2_text_cursor_paragraph_first(main_cur);
@@ -861,7 +887,7 @@ EFL_START_TEST(canvas_text_cursor)
         /* Fail if it doesn't go to the end. */
         evas_textblock_cursor_paragraph_last(cur);
         efl2_text_cursor_paragraph_first(main_cur);
-        efl2_text_cursor_coord_set(main_cur, x + w, (2 * nh) - 1);
+        _cursor_coord_set(main_cur, x + w, (2 * nh) - 1);
         fail_if(efl2_text_cursor_compare(main_cur, cur));
 
         efl2_text_cursor_paragraph_first(main_cur);
@@ -1931,10 +1957,10 @@ EFL_START_TEST(evas_textblock_items)
    buf = "<item size=100x100 vsize=full></>.";
    evas_object_textblock_text_markup_set(tb, buf);
    evas_textblock_cursor_format_item_geometry_get(cur, &x, &y, &w, NULL);
-   efl2_text_cursor_coord_set(cur, x + (w / 2) + 1, y);
+   _cursor_coord_set(cur, x + (w / 2) + 1, y);
    fail_if(efl2_text_cursor_position_get(cur) != 1);
    /* Test small increment in x and cursor position will be same */
-   efl2_text_cursor_coord_set(cur, x + 10, y);
+   _cursor_coord_set(cur, x + 10, y);
    fail_if(efl2_text_cursor_position_get(cur) != 0);
 
    /* FIXME: Also verify x,y positions of the item. */

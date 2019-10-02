@@ -8812,7 +8812,7 @@ Eina_Bool
 _canvas_text_cursor_line_jump_by(Efl2_Text_Cursor_Handle *cur, int by)
 {
    // FIXME: ASYNC_BLOCK;
-   Eo *eo_obj = cur->obj;
+   // Eo *eo_obj = cur->obj;
    int ln;
    Evas_Coord cx, cw;
    Evas_Coord lx, ly, lw, lh;
@@ -9263,7 +9263,7 @@ _evas_textblock_cursor_text_append(Efl2_Text_Cursor_Handle *cur, const Eina_Unic
    return len;
 }
 
-int
+unsigned int
 _canvas_text_cursor_text_insert(Efl2_Text_Cursor_Handle *cur, const char *_text)
 {
    int total_len;
@@ -10382,9 +10382,16 @@ _efl2_canvas_text_visible_range_get(Eo *eo_obj EINA_UNUSED,
    Evas_Public_Data *e = efl_data_scope_get(eo_e, EVAS_CANVAS_CLASS);
    cy = 0 - obj->cur->geometry.y;
    ch = e->viewport.h;
-   efl2_text_cursor_coord_set(start, 0, cy);
+   Eina_Position2D coord = {
+        .x = 0,
+        .y = cy,
+   };
+   efl2_text_cursor_coord_set(start, coord);
    efl2_text_cursor_line_start(start);
-   efl2_text_cursor_coord_set(end, 0, cy + ch);
+
+   coord.x = 0;
+   coord.y = cy + ch;
+   efl2_text_cursor_coord_set(end, coord);
    efl2_text_cursor_line_end(end);
 
    return EINA_TRUE;
@@ -13724,23 +13731,10 @@ _text_layout_async_done(void *todo, Ecore_Thread *thread EINA_UNUSED)
      }
 }
 
-static void
-_dummy_cancel(void *data EINA_UNUSED, const Eina_Promise *dead EINA_UNUSED)
-{
-}
-
-static Eina_Future_Scheduler *
-_future_scheduler_get(void)
-{
-   return efl_loop_future_scheduler_get(efl_main_loop_get());
-}
-
 EOLIAN static void
 _efl2_canvas_text_async_layout(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o)
 {
    Ctxt *c;
-   Eina_Promise *p;
-   Eina_Future *f;
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
 
    Text_Promise_Ctx *ctx = calloc(1, sizeof(*ctx));

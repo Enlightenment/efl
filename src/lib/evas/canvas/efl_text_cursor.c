@@ -37,18 +37,26 @@ _efl2_text_cursor_content_get(const Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *
 }
 
 EOLIAN static Eina_Bool
-_efl2_text_cursor_geometry_get(const Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, Efl2_Text_Cursor_Type ctype, int *cx, int *cy, int *cw, int *ch, int *cx2, int *cy2, int *cw2, int *ch2)
+_efl2_text_cursor_geometry_get(const Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, Efl2_Text_Cursor_Type ctype, Eina_Rect *geometry, Eina_Rect *geometry2)
 {
    Efl2_Text_Cursor_Handle *cur = pd->cur;
 
-   return _canvas_text_cursor_geometry_get(cur, ctype, cx, cy, cw, ch, cx2, cy2, cw2, ch2);
+   Eina_Rect ret1, ret2;
+   Eina_Bool ret = _canvas_text_cursor_geometry_get(cur, ctype, &ret1.x, &ret1.y, &ret1.w, &ret1.h, &ret2.x, &ret2.y, &ret2.w, &ret2.h);
+
+   if (geometry) *geometry = ret1;
+   if (geometry2) *geometry2 = ret2;
+
+   return ret;
 }
 
-EOLIAN static void
-_efl2_text_cursor_content_geometry_get(const Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, int *cx, int *cy, int *cw, int *ch)
+EOLIAN static Eina_Rect
+_efl2_text_cursor_content_geometry_get(const Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd)
 {
    Efl2_Text_Cursor_Handle *cur = pd->cur;
-   _canvas_text_cursor_content_geometry_get(cur, cx, cy, cw, ch);
+   Eina_Rect ret;
+   _canvas_text_cursor_content_geometry_get(cur, &ret.x, &ret.y, &ret.w, &ret.h);
+   return ret;
 }
 
 EOLIAN static Eina_Bool
@@ -215,13 +223,13 @@ _efl2_text_cursor_line_jump_by(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, i
 }
 
 EOLIAN static void
-_efl2_text_cursor_coord_set(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, int x, int y)
+_efl2_text_cursor_coord_set(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, Eina_Position2D coord)
 {
    Efl2_Text_Cursor_Handle *cur = pd->cur;
-   _canvas_text_cursor_coord_set(cur, x, y);
+   _canvas_text_cursor_coord_set(cur, coord.x, coord.y);
 }
 
-EOLIAN static int
+EOLIAN static unsigned int
 _efl2_text_cursor_text_insert(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd, const char *text)
 {
    // FIXME: bring back async block to here and all the ones that change the text nodes

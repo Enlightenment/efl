@@ -38,10 +38,7 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
          ]]
          get { }
          values {
-            cx: int; [[The x of the content]]
-            cy: int; [[The y of the content]]
-            cw: int; [[The width of the content()]]
-            ch: int; [[The height of the content]]
+            geometry: Eina.Rect; [[The geometry]]
          }
       }
       @property line_number {
@@ -69,14 +66,8 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
             ctype: Efl2.Text.Cursor_Type; [[The type of the cursor.]]
          }
          values {
-            cx: int; [[The x of the cursor (or upper cursor)]]
-            cy: int; [[The y of the cursor (or upper cursor)]]
-            cw: int; [[The width of the cursor (or upper cursor)]]
-            ch: int; [[The height of the cursor (or upper cursor)]]
-            cx2: int; [[The x of the lower cursor]]
-            cy2: int; [[The y of the lower cursor]]
-            cw2: int; [[The width of the lower cursor]]
-            ch2: int; [[The height of the lower cursor]]
+            geometry: Eina.Rect; [[The geometry of the cursor (or upper cursor)]]
+            geometry2: Eina.Rect; [[The geometry of the lower cursor]]
          }
       }
       equal @const {
@@ -178,8 +169,7 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
       coord_set {
          [[Set cursor coordinates]]
          params {
-            @in x: int; [[X coord to set by.]]
-            @in y: int; [[Y coord to set by.]]
+            @in coord: Eina.Position2D; [[The coordinates to set to]]
          }
       }
 
@@ -194,7 +184,7 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
          params {
             @in text: string; [[Text to append (UTF-8 format).]]
          }
-         return: int; [[Length of the appended text.]]
+         return: uint; [[Length of the appended text.]]
       }
 
       range_text_get @const {

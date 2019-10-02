@@ -1577,7 +1577,11 @@ _cursor_cluster_coord_set(Efl_Canvas_Text *obj, Efl2_Text_Cursor *cur, Evas_Coor
    efl_del(line_cur);
    /* No need to check return value if not able to set the char coord Textblock
     * will take care */
-   efl2_text_cursor_coord_set(cur, *cx, *cy);
+   Eina_Position2D position = {
+        .x = *cx,
+        .y = *cy,
+   };
+   efl2_text_cursor_coord_set(cur, position);
 
    return tc;
 }
@@ -1834,7 +1838,6 @@ _mouse_up_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
 static void
 _mouse_move_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_info)
 {
-   Evas_Coord cx, cy;
    Efl2_Text_Raw_Editable_Data *en = efl_data_scope_get(obj, MY_CLASS);
    Efl2_Text_Cursor *cur = efl2_text_raw_editable_main_cursor_get(obj);
    Evas_Event_Mouse_Move *ev = event_info;
@@ -1861,9 +1864,11 @@ _mouse_move_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event
         tc = efl_add(EFL2_TEXT_CURSOR_CLASS, obj, efl2_text_cursor_handle_set(efl_added, efl2_canvas_text_cursor_handle_new(obj)));
         efl2_text_cursor_copy(cur, tc);
         evas_object_geometry_get(obj, &x, &y, &w, &h);
-        cx = ev->cur.canvas.x - x;
-        cy = ev->cur.canvas.y - y;
-        efl2_text_cursor_coord_set(cur, cx, cy);
+        Eina_Position2D position = {
+             .x = ev->cur.canvas.x - x,
+             .y = ev->cur.canvas.y - y,
+        };
+        efl2_text_cursor_coord_set(cur, position);
         //FIXME
         /*if (!efl2_text_cursor_coord_set(cur, cx, cy))
           {
