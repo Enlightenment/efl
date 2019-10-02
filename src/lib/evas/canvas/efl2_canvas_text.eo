@@ -188,8 +188,6 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
       }
       // FIXME: Needs to be removed! It should just keep callbacks on those objects and update the flag when they change
       // obstacles_update {
-      // FIXME: Should just be an event instead of future.
-      // Should probably be used in ui.text when e.g. the text is too large or something. No need when text is small.
       async_layout {
          [[Requests to layout the text off the mainloop.
          ]]
