@@ -239,6 +239,8 @@ class @beta Efl2.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickab
    events {
        // most/all of the events just come from raw_editable
 
+      context,open: void; [[Called when context menu was opened]]
+      context,close: void; [[Called when context menu was closed]]
       // FIXME: here or the layer below??
       // FIXME: how should these behave? Type isn't there anchor,down: Elm.Entry_Anchor_Info; [[Called on anchor down]]
       // FIXME: how should these behave? Type isn't there anchor,in: Elm.Entry_Anchor_Info; [[Called on anchor in]]

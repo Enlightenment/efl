@@ -11,11 +11,11 @@ class @beta Efl2.Text.Cursor_Interactive extends Efl2.Text.Cursor {
          params {
             @in text: string; [[Text to append (UTF-8 format).]]
          }
-         return: int; [[Length of the appended text.]]
+         return: uint; [[Length of the appended text.]]
       }
    }
    events {
       // FIXME: This is actually called externally to the cursor and in addition to changed
-      changed,user: void; [[Called when cursor changed beause of user interaction]]
+      changed,user: void; [[Called when the cursor position changed beause of user interaction]]
    }
 }

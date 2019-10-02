@@ -212,7 +212,8 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
    }
    events {
        // FIXME: define when changed is actually called compared to layout. I guess chaged is called everything time content changes, and layout one just after layout is done.
-      changed: void; [[Called when canvas text changed ]]
+      changed: void; [[Called when text content changes]] // FIXME: rename to content,changed?
+      attributes,changed: void; [[Called when attributes change]]
       layout,finished: void; [[Called when the object has been layed out]]
 
       // FIXME: rename if we rename the property
