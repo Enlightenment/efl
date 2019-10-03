@@ -178,8 +178,8 @@ interface#!
 #!####  FUNC_SCOPE(func)  ######################################################
 #!##############################################################################
 <!--(macro FUNC_SCOPE)-->
-   <!--(if func.is_class)-->
- ''class method'' #!
+   <!--(if func.is_static)-->
+ ''static method'' #!
    <!--(end)-->
    <!--(if func.type == Eolian_Function_Type.PROPERTY)-->
       <!--(if func.getter_scope == Eolian_Object_Scope.PROTECTED)-->

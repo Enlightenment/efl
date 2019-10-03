@@ -1154,7 +1154,7 @@ class Typedecl(Object):
 
 class Enum_Type_Field(Object):
     def __repr__(self):
-        return "<eolian.Enum_Type_Field '{0.name}', c_name='{0.c_name}'>".format(self)
+        return "<eolian.Enum_Type_Field '{0.name}', c_constant='{0.c_constant}'>".format(self)
 
     @cached_property
     def c_constant(self):

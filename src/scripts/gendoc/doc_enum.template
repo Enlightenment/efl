@@ -33,7 +33,7 @@ enum {
 <code>
 typedef enum {
 <!--(for field in enum.enum_fields)-->
-    ${field.c_name}$ = ${field.value.serialize}$,
+    ${field.c_constant}$ = ${field.value.serialize}$,
 <!--(end)-->
 } ${enum.name.replace('.', '_')}$;
 </code>

@@ -141,7 +141,7 @@ class Template(pyratemp.Template):
             'Eolian_Typedecl_Type': eolian.Eolian_Typedecl_Type,
             'Eolian_Type_Type': eolian.Eolian_Type_Type,
             'Eolian_Type_Builtin_Type': eolian.Eolian_Type_Builtin_Type,
-            'Eolian_C_Type_Type': eolian.Eolian_C_Type_Type,
+            # 'Eolian_C_Type_Type': eolian.Eolian_C_Type_Type,
             'Eolian_Expression_Type': eolian.Eolian_Expression_Type,
             'Eolian_Expression_Mask': eolian.Eolian_Expression_Mask,
             'Eolian_Binary_Operator': eolian.Eolian_Binary_Operator,

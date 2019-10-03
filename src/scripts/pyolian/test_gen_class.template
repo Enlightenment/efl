@@ -3,8 +3,7 @@
 Class:        ${cls.name}$ (${cls.short_name}$)
 ================================================================================
 Class type:   ${cls.type}$
-Base Class:   ${cls.base_class.name if cls.base_class else None}$
-Inherits:     ${', '.join([i.name for i in cls.inherits])}$
+Parent:       ${cls.parent.name if cls.parent else None}$
 Hierarchy:    ${' => '.join([i.name for i in cls.hierarchy])}$
 InheritsFull: ${', '.join([i.name for i in cls.inherits_full])}$
 Namespace:    ${cls.namespace}$

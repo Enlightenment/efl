@@ -59,7 +59,7 @@ Enums:
 <!--(for typedecl in namespace.enums)-->
  * ${typedecl.name}$
     <!--(for field in typedecl.enum_fields)-->
-    ${field.c_name}$ = ${field.value.serialize}$
+    ${field.c_constant}$ = ${field.value.serialize}$
     <!--(end)-->
 <!--(else)-->
  no enums available
