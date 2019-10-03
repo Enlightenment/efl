@@ -7985,8 +7985,7 @@ _canvas_text_cursor_word_end(Efl2_Text_Cursor_Handle *cur)
              cur->node = nnode;
              cur->pos = 0;
              free(breaks);
-             // FIXME: like word_start  return evas_textblock_cursor_word_end(cur);
-             return EINA_TRUE;
+             return _canvas_text_cursor_word_end(cur);
           }
      }
 
