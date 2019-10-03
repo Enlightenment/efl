@@ -178,7 +178,7 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
          }
          return: bool; [[$true on success, $false otherwise.]]
       }
-      obstacle_del {
+      obstacle_remove {
          [[Removes $eo_obs from observation during text layout.
          ]]
          params {
