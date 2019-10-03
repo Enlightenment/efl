@@ -7889,119 +7889,148 @@ _canvas_text_cursor_paragraph_prev(Efl2_Text_Cursor_Handle *cur)
 
 /* BREAK_AFTER: true if we can break after the current char.
  * Both macros assume str[i] is not the terminating nul */
-#define BREAK_AFTER(i) \
-   (breaks[i] == WORDBREAK_BREAK)
+#define BREAK_AFTER(Ind, i) \
+   (breaks[i] == Ind)
 
 Eina_Bool
-_canvas_text_cursor_word_start(Efl2_Text_Cursor_Handle *cur)
+_canvas_text_cursor_start_common(Efl2_Text_Cursor_Handle *cur, void (*set_breaks_utf32)(const utf32_t *s, size_t len, const char* lang, char *brks), unsigned char break_indicator, Eina_Bool merge_whites)
 {
    if (!cur) return EINA_FALSE;
    const Eina_Unicode *text;
    size_t i;
-   char *breaks;
 
-   Evas_Object_Protected_Data *obj = efl_data_scope_get(cur->obj, EFL_CANVAS_OBJECT_CLASS);
-   evas_object_async_block(obj);
    TB_NULL_CHECK(cur->node, EINA_FALSE);
 
    size_t len = eina_ustrbuf_length_get(cur->node->unicode);
 
    text = eina_ustrbuf_string_get(cur->node->unicode);
 
+   // paragraph start/end are automatically a boundary no need to move.
+   if ((cur->pos == 0) || (cur->pos == len))
+      return EINA_FALSE;
+
+   i = cur->pos;
+   if (merge_whites)
      {
-        const char *lang = ""; /* FIXME: get lang */
-        breaks = malloc(len);
-        set_wordbreaks_utf32((const utf32_t *) text, len, lang, breaks);
+        // If already at a whitespace/non whitespace limit, we don't need to move
+        if (_is_white(text[i - 1]) != _is_white(text[i]))
+           return EINA_FALSE;
+
+        // Treat all whitespace as one word
+        for (i = cur->pos; (i > 0) && _is_white(text[i - 1]) ; i--);
      }
 
-   if ((cur->pos > 0) && (cur->pos == len))
-      cur->pos--;
-
-   for (i = cur->pos ; _is_white(text[i]) && BREAK_AFTER(i) ; i--)
+   // If we already skipped whitespace that's all we need to do, else:
+   if (i == cur->pos)
      {
-        if (i == 0)
+        const char *lang = ""; /* FIXME: get lang */
+        char *breaks = malloc(len);
+        set_breaks_utf32((const utf32_t *) text, len, lang, breaks);
+
+        for ( ; i > 0 ; i--)
           {
-             Evas_Object_Textblock_Node_Text *pnode;
-             pnode = _NODE_TEXT(EINA_INLIST_GET(cur->node)->prev);
-             if (pnode)
-               {
-                  cur->node = pnode;
-                  len = eina_ustrbuf_length_get(cur->node->unicode);
-                  cur->pos = len - 1;
-                  free(breaks);
-                  return _canvas_text_cursor_word_start(cur);
-               }
-             else
+             if (BREAK_AFTER(break_indicator, i - 1))
                {
                   break;
                }
           }
+
+        free(breaks);
      }
 
-   for ( ; i > 0 ; i--)
-     {
-        if (BREAK_AFTER(i - 1))
-          {
-             break;
-          }
-     }
+   if (cur->pos == i)
+      return EINA_FALSE;
 
    cur->pos = i;
 
-   free(breaks);
    return EINA_TRUE;
+}
+
+Eina_Bool
+_canvas_text_cursor_end_common(Efl2_Text_Cursor_Handle *cur, void (*set_breaks_utf32)(const utf32_t *s, size_t len, const char* lang, char *brks), unsigned char break_indicator, Eina_Bool merge_whites)
+{
+   if (!cur) return EINA_FALSE;
+   const Eina_Unicode *text;
+   size_t i;
+
+   TB_NULL_CHECK(cur->node, EINA_FALSE);
+
+   size_t len = eina_ustrbuf_length_get(cur->node->unicode);
+
+   text = eina_ustrbuf_string_get(cur->node->unicode);
+
+   // paragraph start/end are automatically a boundary no need to move.
+   if ((cur->pos == 0) || (cur->pos == len))
+      return EINA_FALSE;
+
+   i = cur->pos;
+   if (merge_whites)
+     {
+        // If already at a whitespace/non whitespace limit, we don't need to move
+        if (_is_white(text[i - 1]) != _is_white(text[i]))
+           return EINA_FALSE;
+
+        // Treat all whitespace as one word
+        for (i = cur->pos; text[i] && _is_white(text[i]) ; i++);
+     }
+
+   // If we already skipped whitespace that's all we need to do, else:
+   if (i == cur->pos)
+     {
+        const char *lang = ""; /* FIXME: get lang */
+        char *breaks = malloc(len);
+        set_breaks_utf32((const utf32_t *) text, len, lang, breaks);
+
+        // If already at a limit, we don't need to move
+        if (BREAK_AFTER(break_indicator, i - 1))
+          {
+             free(breaks);
+             return EINA_FALSE;
+          }
+
+        for ( ; text[i] ; i++)
+          {
+             if (BREAK_AFTER(break_indicator, i))
+               {
+                  /* This is the one to break after. */
+                  i++;
+                  break;
+               }
+          }
+
+        free(breaks);
+     }
+
+   if (cur->pos == i)
+      return EINA_FALSE;
+
+   cur->pos = i;
+
+   return EINA_TRUE;
+}
+
+Eina_Bool
+_canvas_text_cursor_word_start(Efl2_Text_Cursor_Handle *cur)
+{
+   return _canvas_text_cursor_start_common(cur, set_wordbreaks_utf32, WORDBREAK_BREAK, EINA_TRUE);
 }
 
 Eina_Bool
 _canvas_text_cursor_word_end(Efl2_Text_Cursor_Handle *cur)
 {
-   if (!cur) return EINA_FALSE;
-   const Eina_Unicode *text;
-   size_t i;
-   char *breaks;
+   return _canvas_text_cursor_end_common(cur, set_wordbreaks_utf32, WORDBREAK_BREAK, EINA_TRUE);
+}
 
-   TB_NULL_CHECK(cur->node, EINA_FALSE);
+Eina_Bool
+_canvas_text_cursor_grapheme_start(Efl2_Text_Cursor_Handle *cur)
+{
+   return _canvas_text_cursor_start_common(cur, set_graphemebreaks_utf32, GRAPHEMEBREAK_BREAK, EINA_FALSE);
+}
 
-   size_t len = eina_ustrbuf_length_get(cur->node->unicode);
-
-   if (cur->pos == len)
-      return EINA_TRUE;
-
-   text = eina_ustrbuf_string_get(cur->node->unicode);
-
-     {
-        const char *lang = ""; /* FIXME: get lang */
-        breaks = malloc(len);
-        set_wordbreaks_utf32((const utf32_t *) text, len, lang, breaks);
-     }
-
-   for (i = cur->pos; text[i] && _is_white(text[i]) && (BREAK_AFTER(i)) ; i++);
-   if (i == len)
-     {
-        Evas_Object_Textblock_Node_Text *nnode;
-        nnode = _NODE_TEXT(EINA_INLIST_GET(cur->node)->next);
-        if (nnode)
-          {
-             cur->node = nnode;
-             cur->pos = 0;
-             free(breaks);
-             return _canvas_text_cursor_word_end(cur);
-          }
-     }
-
-   for ( ; text[i] ; i++)
-     {
-        if (BREAK_AFTER(i))
-          {
-             /* This is the one to break after. */
-             break;
-          }
-     }
-
-   cur->pos = i;
-
-   free(breaks);
-   return EINA_TRUE;
+Eina_Bool
+_canvas_text_cursor_grapheme_end(Efl2_Text_Cursor_Handle *cur)
+{
+   return _canvas_text_cursor_end_common(cur, set_graphemebreaks_utf32, GRAPHEMEBREAK_BREAK, EINA_FALSE);
 }
 
 static char *

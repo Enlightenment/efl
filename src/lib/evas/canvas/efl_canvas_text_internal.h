@@ -99,6 +99,8 @@ Eina_Bool _canvas_text_cursor_next(Efl2_Text_Cursor_Handle *cur);
 size_t _canvas_text_cursor_cluster_post_get(Efl2_Text_Cursor_Handle *cur, Eina_Bool inc);
 Eina_Bool _canvas_text_cursor_word_end(Efl2_Text_Cursor_Handle *cur);
 Eina_Bool _canvas_text_cursor_word_start(Efl2_Text_Cursor_Handle *cur);
+Eina_Bool _canvas_text_cursor_grapheme_end(Efl2_Text_Cursor_Handle *cur);
+Eina_Bool _canvas_text_cursor_grapheme_start(Efl2_Text_Cursor_Handle *cur);
 Eina_Bool _canvas_text_cursor_paragraph_prev(Efl2_Text_Cursor_Handle *cur);
 Eina_Bool _canvas_text_cursor_paragraph_next(Efl2_Text_Cursor_Handle *cur);
 Eina_Bool _canvas_text_cursor_paragraph_first(Efl2_Text_Cursor_Handle *cur);

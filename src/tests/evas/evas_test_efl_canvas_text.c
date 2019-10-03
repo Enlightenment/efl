@@ -1092,6 +1092,162 @@ EFL_START_TEST(canvas_text_cursor)
 }
 EFL_END_TEST
 
+EFL_START_TEST(canvas_text_word_and_cluster)
+{
+   START_TB_TEST();
+   const char *buf = "This is an example.\nSpaces and  \t   \t  tabs." EFL_TEXT_PARAGRAPH_SEPARATOR_UTF8 "Unicode \xE0\xA4\xA8\xE0\xA5\x80 cluster";
+
+   /* Walk the textblock using cursor_char_next */
+   efl2_text_set(tb, buf);
+
+   Efl2_Text_Cursor *cur2 = efl_add(EFL2_TEXT_CURSOR_CLASS, tb,
+         efl2_text_cursor_handle_set(efl_added, efl2_canvas_text_cursor_handle_new(tb)));
+
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+
+   // Shouldn't moved at boundaries
+   fail_if(efl2_text_cursor_word_start(cur));
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+   fail_if(efl2_text_cursor_word_end(cur));
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+
+   // Walk through the first 52 characters, we shouldn't have any graphemes.
+   for (int i = 0 ; i < 52 ; i++)
+     {
+        fail_if(efl2_text_cursor_cluster_start(cur));
+        fail_if(!efl2_text_cursor_equal(cur, cur2));
+        fail_if(efl2_text_cursor_cluster_end(cur));
+        fail_if(!efl2_text_cursor_equal(cur, cur2));
+
+        fail_if(!efl2_text_cursor_char_next(cur));
+        fail_if(!efl2_text_cursor_char_next(cur2));
+     }
+
+   efl2_text_cursor_position_set(cur, 0);
+   efl2_text_cursor_position_set(cur2, 0);
+
+
+   // Go to the word's end:
+   fail_if(!efl2_text_cursor_char_next(cur));
+   fail_if(!efl2_text_cursor_word_end(cur));
+   ck_assert_int_eq(efl2_text_cursor_position_get(cur), 4);
+   fail_if(efl2_text_cursor_content_get(cur) != ' ');
+
+   // Shouldn't move at boundaries
+   efl2_text_cursor_copy(cur, cur2);
+   fail_if(efl2_text_cursor_word_start(cur));
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+   fail_if(efl2_text_cursor_word_end(cur));
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+
+   fail_if(!efl2_text_cursor_char_next(cur));
+   fail_if(efl2_text_cursor_word_end(cur)); // shouldn't move
+   ck_assert_int_eq(efl2_text_cursor_position_get(cur), 5);
+   fail_if(efl2_text_cursor_content_get(cur) != 'i');
+
+
+   // Newline check
+   efl2_text_cursor_position_set(cur, 19);
+   fail_if(efl2_text_cursor_content_get(cur) != '\n');
+
+   // Shouldn't move at boundaries
+   efl2_text_cursor_copy(cur, cur2);
+   fail_if(efl2_text_cursor_word_start(cur));
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+   fail_if(efl2_text_cursor_word_end(cur));
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+
+   fail_if(!efl2_text_cursor_char_next(cur));
+
+   // Shouldn't move at boundaries
+   efl2_text_cursor_copy(cur, cur2);
+   fail_if(efl2_text_cursor_word_start(cur));
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+   fail_if(efl2_text_cursor_word_end(cur));
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+
+
+   // Many spaces
+   efl2_text_cursor_position_set(cur, 31);
+   fail_if(efl2_text_cursor_content_get(cur) != ' ');
+
+   fail_if(!efl2_text_cursor_word_start(cur));
+   ck_assert_int_eq(efl2_text_cursor_position_get(cur), 30);
+
+   // Shouldn't move at boundaries
+   efl2_text_cursor_copy(cur, cur2);
+   fail_if(efl2_text_cursor_word_start(cur));
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+   fail_if(efl2_text_cursor_word_end(cur));
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+
+   fail_if(!efl2_text_cursor_char_next(cur));
+   fail_if(!efl2_text_cursor_word_end(cur));
+   ck_assert_int_eq(efl2_text_cursor_position_get(cur), 39);
+   fail_if(efl2_text_cursor_content_get(cur) != 't');
+
+   // Tabs and many spaces
+   efl2_text_cursor_position_set(cur, 39);
+   fail_if(efl2_text_cursor_content_get(cur) != 't');
+   fail_if(!efl2_text_cursor_char_prev(cur));
+   fail_if(!efl2_text_cursor_word_start(cur));
+   ck_assert_int_eq(efl2_text_cursor_position_get(cur), 30);
+
+
+   // PS
+   efl2_text_cursor_position_set(cur, 44);
+   fail_if(efl2_text_cursor_content_get(cur) != EFL_TEXT_PARAGRAPH_SEPARATOR);
+
+   // Shouldn't move at boundaries
+   efl2_text_cursor_copy(cur, cur2);
+   fail_if(efl2_text_cursor_word_start(cur));
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+   fail_if(efl2_text_cursor_word_end(cur));
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+
+
+   // clusters
+   efl2_text_cursor_position_set(cur, 53);
+   fail_if(efl2_text_cursor_content_get(cur) != 2344);
+
+   // Shouldn't move at boundaries
+   efl2_text_cursor_copy(cur, cur2);
+   fail_if(efl2_text_cursor_word_start(cur));
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+   fail_if(efl2_text_cursor_word_end(cur));
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+   // Neither shoud graphemes
+   fail_if(efl2_text_cursor_cluster_start(cur));
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+   fail_if(efl2_text_cursor_cluster_end(cur));
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+
+   // Middle of the cluster to start
+   fail_if(!efl2_text_cursor_char_next(cur));
+   fail_if(!efl2_text_cursor_cluster_start(cur));
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+
+   fail_if(!efl2_text_cursor_char_next(cur));
+   fail_if(!efl2_text_cursor_word_start(cur));
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+
+   // Middle of the cluster to end
+   efl2_text_cursor_position_set(cur, 55);
+   efl2_text_cursor_copy(cur, cur2);
+
+   fail_if(!efl2_text_cursor_char_prev(cur));
+   fail_if(!efl2_text_cursor_cluster_end(cur));
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+
+   fail_if(!efl2_text_cursor_char_prev(cur));
+   fail_if(!efl2_text_cursor_word_end(cur));
+   fail_if(!efl2_text_cursor_equal(cur, cur2));
+
+
+   END_TB_TEST();
+}
+EFL_END_TEST
+
 #ifdef HAVE_FRIBIDI
 EFL_START_TEST(canvas_text_split_cursor)
 {
@@ -4631,6 +4787,7 @@ void evas_test_canvas_text(TCase *tc)
 {
    tcase_add_test(tc, canvas_text_simple);
    tcase_add_test(tc, canvas_text_cursor);
+   tcase_add_test(tc, canvas_text_word_and_cluster);
 #ifdef HAVE_FRIBIDI
    tcase_add_test(tc, canvas_text_split_cursor);
    // tcase_add_test(tc, efl_text);
