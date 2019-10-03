@@ -118,17 +118,15 @@ _efl2_text_cursor_char_delete(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd)
 EOLIAN static Eina_Bool
 _efl2_text_cursor_cluster_start(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd)
 {
-   // FIXME
-   (void) pd;
-   return EINA_TRUE;
+   Efl2_Text_Cursor_Handle *cur = pd->cur;
+   return _canvas_text_cursor_grapheme_start(cur);
 }
 
 EOLIAN static Eina_Bool
 _efl2_text_cursor_cluster_end(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd)
 {
-   // FIXME
-   (void) pd;
-   return EINA_TRUE;
+   Efl2_Text_Cursor_Handle *cur = pd->cur;
+   return _canvas_text_cursor_grapheme_end(cur);
 }
 
 EOLIAN static Eina_Bool
