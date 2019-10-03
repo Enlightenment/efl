@@ -96,7 +96,9 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
          }
       }
       // FIXME: updatedocs + am I happy with this?
-      // Probably used when using theme and then retheming without changing use configuration...
+      // Need to update the actual text_style object so it can be manipulated with new bindable functions.
+      // Make it an eo object so it's bindable? Will also let us have interfaces/functions on item.
+      // Try to make it compatible with the old styles so they could be shared thanks to edje (and be created from edje)
       text_style_push {
          [[Add a text style to the object
          ]]
