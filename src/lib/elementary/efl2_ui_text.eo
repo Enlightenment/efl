@@ -209,6 +209,7 @@ class @beta Efl2.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickab
       anchor,out: Efl2.Ui.Text_Anchor.Info; [[Called on anchor out]]
       anchor,up: Efl2.Ui.Text_Anchor.Info; [[called on anchor up]]
 
+      // FIXME: do we want these?
       cnp,paste: void; [[Called when selection is pasted]]
       cnp,copy: void; [[Called when selection is copied]]
       cnp,cut: void; [[Called when selection is cut]]
