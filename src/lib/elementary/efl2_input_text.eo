@@ -36,7 +36,7 @@ enum Efl2.Input.Text_Panel.Lang
    alphabet      [[Alphabet]]
 }
 
-enum Efl2.Input.Text_Autocapital.Type
+enum Efl2.Input.Text_Capitalize.Type
 {
    [[Autocapitalization Types.
      Choose method of auto-capitalization.
@@ -114,6 +114,7 @@ enum Efl2.Input.Text_Hints
                                                       @since 1.21]]
 }
 
+// FIXME: rename to Input.Text.Panel? Or something?
 interface @beta Efl2.Input.Text {
    [[All the functionality relating to input hints
    ]]
@@ -125,7 +126,7 @@ interface @beta Efl2.Input.Text {
             ]]
          }
          get {
-            [[Get the attribute to show the input panel in case of only an user's explicit Mouse Up event.
+             [[Get the attribute to show the input panel in case of only an user's explicit Mouse Up event.
             ]]
          }
          values {
@@ -134,6 +135,8 @@ interface @beta Efl2.Input.Text {
             ]]
          }
       }
+
+      // FIXME: I don't understand why this is needed in addition to Layout
       @property input_panel_language {
          set {
             [[Set the language mode of the input panel.
@@ -148,6 +151,8 @@ interface @beta Efl2.Input.Text {
             lang: Efl2.Input.Text_Panel.Lang; [[Language to be set to the input panel.]]
          }
       }
+
+      // FIXME: What is this?
       @property input_panel_layout_variation {
          set {
             [[Set the input panel layout variation of the entry
@@ -161,7 +166,9 @@ interface @beta Efl2.Input.Text {
             variation: int; [[Layout variation type.]]
          }
       }
-      @property autocapital_type {
+
+      // FIXME: input_capitalize/capitalization ?
+      @property capitalize {
          set {
             [[Set the autocapitalization type on the immodule.]]
          }
@@ -169,9 +176,11 @@ interface @beta Efl2.Input.Text {
             [[Get the autocapitalization type on the immodule.]]
          }
          values {
-            autocapital_type: Efl2.Input.Text_Autocapital.Type; [[The type of autocapitalization.]]
+            autocapital_type: Efl2.Input.Text_Capitalize.Type; [[The type of autocapitalization.]]
          }
       }
+
+      // FIXME: rename to conform with the rest of the efl? Maybe it's fine
       @property input_panel_return_key_disabled {
          set {
             [[Set the return key on the input panel to be disabled.]]
@@ -184,6 +193,7 @@ interface @beta Efl2.Input.Text {
             disabled, $false for enabled.]]
          }
       }
+      // FIXME: rename
       @property prediction_allow {
          set {
             [[Set whether the entry should allow predictive text.]]
@@ -195,6 +205,7 @@ interface @beta Efl2.Input.Text {
             prediction: bool; [[Whether the entry should allow predictive text.]]
          }
       }
+      // FIXME: I agree with Mike, looks bad
       @property input_hint {
          set {
             [[Sets the input hint which allows input methods to fine-tune their behavior.]]
@@ -231,6 +242,7 @@ interface @beta Efl2.Input.Text {
             return_key_type: Efl2.Input.Text_Panel.Return_Key.Type; [[The type of "return" key on the input panel.]]
          }
       }
+      // FIXME: shouldn't this be "autoshow" or something?
       @property input_panel_enabled {
          set {
             [[Sets the attribute to show the input panel automatically.]]
@@ -242,6 +254,7 @@ interface @beta Efl2.Input.Text {
             enabled: bool; [[If $true, the input panel is appeared when entry is clicked or has a focus.]]
          }
       }
+      // FIXME: this feels like it should be merged with "_disabled" as another state.
       @property input_panel_return_key_autoenabled {
          set {
             [[Set whether the return key on the input panel is disabled automatically when entry has no text.
@@ -264,7 +277,15 @@ interface @beta Efl2.Input.Text {
          ]]
       }
 
-      // FIXME: wanted????
+      input_panel_hide {
+         [[Hide the input panel (virtual keyboard).
+
+           Note that input panel is shown or hidden automatically according to the focus state of entry widget.
+           This API can be used in the case of manually controlling by using @.input_panel_enabled.set(en, $false)
+         ]]
+      }
+
+      // FIXME: wanted???? Should probably be private
       input_panel_imdata_set {
          [[Set the input panel-specific data to deliver to the input panel.
 
@@ -283,14 +304,6 @@ interface @beta Efl2.Input.Text {
             @inout data: void; [[The specific data to be obtained from the input panel.]]
             @out len: int; [[The length of data.]]
          }
-      }
-
-      input_panel_hide {
-         [[Hide the input panel (virtual keyboard).
-
-           Note that input panel is shown or hidden automatically according to the focus state of entry widget.
-           This API can be used in the case of manually controlling by using @.input_panel_enabled.set(en, $false)
-         ]]
       }
    }
 }
