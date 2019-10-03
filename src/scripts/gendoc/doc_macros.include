@@ -167,12 +167,9 @@ interface#!
    <!--(for n in func.class_.namespaces)-->
 :${n.lower()}$#!
    <!--(end)-->
-   <!--(if func.type == Eolian_Function_Type.METHOD)-->
-:method#!
-   <!--(else)-->
-:property#!
-   <!--(end)-->
-:${func.short_name}$|${func.short_name}$]]
+:${func.class_.short_name}$#!
+#${func.short_name}$#!
+|${func.short_name}$]]
 <!--(end)-->
 #!##############################################################################
 #!####  FUNC_SCOPE(func)  ######################################################
@@ -305,7 +302,7 @@ ${', ' if i else ''}$#!
       <!--(end)-->
    <!--(end)-->
 ) #!
-${IMPLEMENT_TAGS}$ #!
+${IMPLEMENT_TAGS(impl=impl)}$ #!
    <!--(if impl.is_method)-->
       <!--(if impl.function.method_return_type)-->
  => //${impl.function.method_return_type.short_name}$// #!
