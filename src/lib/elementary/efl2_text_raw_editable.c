@@ -984,7 +984,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
      {
         if (multiline)
           {
-             if (shift || efl2_canvas_text_legacy_newline_get(obj))
+             if (shift || efl2_canvas_text_newline_as_paragraph_separator_get(obj))
                {
                   string = "\n";
                }
@@ -1355,7 +1355,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
                   info->position =
                      efl2_text_cursor_position_get(efl2_text_raw_editable_main_cursor_get(obj));
                   if (shift ||
-                        efl2_canvas_text_legacy_newline_get(obj))
+                        efl2_canvas_text_newline_as_paragraph_separator_get(obj))
                      {
                         _text_filter_format_prepend(obj, en, efl2_text_raw_editable_main_cursor_get(obj), "br");
                         info->content = eina_stringshare_add("\n");
