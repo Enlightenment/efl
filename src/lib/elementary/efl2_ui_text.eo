@@ -37,7 +37,7 @@ class @beta Efl2.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickab
      context menus, password mode or autocapitalization, for example.]]
    methods {
       // FIXME: rename and improve doc
-      @property valign {
+      @property vertical_align {
          [[Vertical alignment of text]]
          values {
             value: double; [[Vertical alignment value]]
@@ -117,6 +117,8 @@ class @beta Efl2.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickab
             disabled: bool; [[If $true, the menu is disabled.]]
          }
       }
+
+      // FIXME: Context menu functions are bad. Waiting for feedback
       context_menu_clear {
          [[This clears and frees the items in a entry's contextual (longpress)
            menu.

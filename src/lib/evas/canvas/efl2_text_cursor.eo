@@ -112,7 +112,6 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
          [[Advances to the start of the grapheme cluster]]
          return: bool; [[True if actually moved]]
       }
-      // FIXME: need cluster_next and cluster_end?
 
       // FIXME: It's just implemented as range delete with cluster start + end.
       // Sholud we have convenience wrappers for those though? This and cluster prev/next?
