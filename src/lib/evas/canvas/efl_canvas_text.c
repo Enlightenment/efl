@@ -7401,7 +7401,7 @@ _efl2_canvas_text_obstacle_add(Eo *eo_obj,
 }
 
 EOLIAN static Eina_Bool
-_efl2_canvas_text_obstacle_del(Eo *eo_obj, Efl2_Canvas_Text_Data *o,
+_efl2_canvas_text_obstacle_remove(Eo *eo_obj, Efl2_Canvas_Text_Data *o,
       Eo *eo_obs EINA_UNUSED)
 {
    Evas_Textblock_Obstacle *obs;
