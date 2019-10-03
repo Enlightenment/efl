@@ -8139,7 +8139,13 @@ _canvas_text_cursor_prev(Efl2_Text_Cursor_Handle *cur)
         cur->pos--;
         return EINA_TRUE;
      }
-   return _canvas_text_cursor_paragraph_prev(cur);
+   Eina_Bool ret = _canvas_text_cursor_paragraph_prev(cur);
+   if (ret)
+     {
+        _canvas_text_cursor_paragraph_end(cur);
+     }
+
+   return ret;
 }
 
 Eina_Bool
