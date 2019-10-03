@@ -1,0 +1,34 @@
+/*
+FIXME:
+  - There should other such clases for e.g. markdown, pango markup or whatever
+  - This also includes all of the html entity handling (&nbsp;)
+  - Should figure out if we want to reduce the html entity list we support, if we want it case insensitive and etc.
+  - Add a static call to get the singleton?
+*/
+class @beta Efl2.Text.Serializer.Markup {
+   [[Markup creation object
+
+       See https://phab.enlightenment.org/T8306
+   ]]
+   methods {
+      insert {
+         [[Parse and insert the markup at the cursor's position
+         ]]
+         params {
+              @in position: const(Efl2.Text.Cursor); [[Start of range]]
+              @in markup: string; [[The markup string]]
+         }
+      }
+
+      range_get {
+         [[Get the markup representing the text inside a given range
+         ]]
+         params {
+              @in start: const(Efl2.Text.Cursor); [[Start of range]]
+              @in end: const(Efl2.Text.Cursor); [[End of range]]
+         }
+         // FIXME: shouldn't it be @move?
+         return: string; [[The markup within the range]]
+      }
+   }
+}
