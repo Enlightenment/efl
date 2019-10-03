@@ -38,26 +38,17 @@ static const char *style_buf =
    Evas *evas; \
    Efl2_Canvas_Text *tb; \
    Evas_Textblock_Style *st = NULL; \
-   (void) st; \
    Efl2_Text_Cursor *cur; \
    evas = EVAS_TEST_INIT_EVAS(); \
    evas_font_hinting_set(evas, EVAS_FONT_HINTING_AUTO); \
    tb = efl_add(EFL2_CANVAS_TEXT_CLASS, evas); \
    fail_if(!tb); \
    efl2_canvas_text_newline_as_paragraph_separator_set(tb, EINA_FALSE); \
-   Efl2_Text_Attribute_Factory *attr_factory = efl_add(EFL2_TEXT_ATTRIBUTE_FACTORY_CLASS, tb); \
-   efl2_text_font_family_set(attr_factory, TEST_FONT_FAMILY); \
-   efl2_text_font_source_set(attr_factory, TEST_FONT_SOURCE); \
-   efl2_text_font_size_set(attr_factory, 10); \
-   efl2_text_style_foreground_color_set(attr_factory, 0, 0, 0, 1); \
-   efl2_canvas_text_style_set(tb, "DEFAULT", efl2_text_attribute_factory_create(attr_factory)); \
-   /* FIXME:
    st = evas_textblock_style_new(); \
    fail_if(!st); \
    evas_textblock_style_set(st, style_buf); \
    fail_if(strcmp(style_buf, evas_textblock_style_get(st))); \
-   evas_object_textblock_style_set(tb, st); \
-   */ \
+   efl2_canvas_text_style_push(tb, st); \
    cur = efl_add(EFL2_TEXT_CURSOR_CLASS, tb, \
          efl2_text_cursor_handle_set(efl_added, efl2_canvas_text_cursor_handle_new(tb))); \
 do \

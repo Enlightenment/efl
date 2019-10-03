@@ -591,7 +591,6 @@ struct _Evas_Object_Textblock
 {
    Ecore_Thread                       *layout_th;
    int                                 layout_jobs;
-   Evas_Textblock_Style               *style;
    Eina_List                          *styles;
    Efl2_Text_Cursor_Handle        *cursor;
    Eina_List                          *cursors;
@@ -768,7 +767,7 @@ static const char *_textblock_format_node_from_style_tag(Efl2_Canvas_Text_Data *
 static Eina_Bool _evas_textblock_cursor_format_is_visible_get(const Efl2_Text_Cursor_Handle *cur);
 static void _find_layout_item_line_match(Evas_Object *eo_obj, Evas_Object_Textblock_Node_Text *n, size_t pos, Evas_Object_Textblock_Line **lnr, Evas_Object_Textblock_Item **itr);
 static Evas_Object_Textblock_Node_Format *_evas_textblock_cursor_node_format_at_pos_get(const Efl2_Text_Cursor_Handle *cur);
-static void _textblock_style_generic_set(Evas_Object *eo_obj, Evas_Textblock_Style *ts, const char *key);
+static void _textblock_style_generic_set(Evas_Object *eo_obj, Evas_Textblock_Style *ts);
 
 /** selection iterator */
 /**
@@ -6595,12 +6594,6 @@ _layout_setup(Ctxt *c, const Eo *eo_obj, Evas_Coord w, Evas_Coord h)
              c->fmt = _layout_format_push(c, NULL, NULL);
              finalize = EINA_TRUE;
           }
-        if ((c->o->style) && (c->o->style->default_tag))
-          {
-             _format_fill(c->obj, c->fmt, c->o->style->default_tag);
-             finalize = EINA_TRUE;
-          }
-
         EINA_LIST_FOREACH(c->o->styles, itr, use)
           {
              if ((use->st) && (use->st->default_tag))
@@ -6906,11 +6899,6 @@ _textblock_format_node_from_style_tag(Efl2_Canvas_Text_Data *o, Evas_Object_Text
            break;
      }
 
-   if (!match)
-     {
-        match = _style_match_tag(o->style, format, format_len);
-     }
-
    if (match)
      {
         if (match[0] != '-')
@@ -6930,47 +6918,18 @@ _textblock_format_node_from_style_tag(Efl2_Canvas_Text_Data *o, Evas_Object_Text
 static Eina_List *_style_cache = NULL;
 
 static void
-_textblock_style_generic_set(Evas_Object *eo_obj, Evas_Textblock_Style *ts,
-      const char *key)
+_textblock_style_generic_push(Evas_Object *eo_obj, Evas_Textblock_Style *ts)
 {
    TB_HEAD();
-   Eina_List *itr;
    Evas_Textblock_Style *old_ts = NULL;
 
-   if (!key)
-     {
-        old_ts = o->style;
-        o->style = ts;
-     }
-   else
      {
         User_Style_Entry *us;
+        us = calloc(1, sizeof(*us));
+        o->styles = eina_list_append(o->styles, us);
 
-        EINA_LIST_FOREACH(o->styles, itr, us)
-          {
-             if (!strcmp(us->key, key))
-               {
-                  //us->st = ts;
-                  break;
-               }
-          }
-        if (ts)
-          {
-             if (!us)
-               {
-                  us = calloc(1, sizeof(*us));
-                  us->key = eina_stringshare_add(key);
-                  o->styles = eina_list_append(o->styles, us);
-               }
-
-             old_ts = us->st;
-             us->st = ts;
-          }
-        else if (us)
-          {
-             o->styles = eina_list_remove_list(o->styles, itr);
-             free(us);
-          }
+        old_ts = us->st;
+        us->st = ts;
      }
 
    // Verify nothing has changed 
@@ -7017,9 +6976,6 @@ _style_by_key_find(Efl2_Canvas_Text_Data *o, const char *key)
    Eina_List *itr;
    User_Style_Entry *us;
 
-   if (!key)
-      return o->style;
-
    EINA_LIST_FOREACH(o->styles, itr, us)
      {
         if (!strcmp(us->key, key))
@@ -7053,19 +7009,27 @@ _style_fetch(const char *style)
 }
 
 EOLIAN static void
-_efl2_canvas_text_text_style_set(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o EINA_UNUSED, const char *key, Efl2_Text_Attribute_Handle *attribute)
+_efl2_canvas_text_text_style_push(Eo *eo_obj, Efl2_Canvas_Text_Data *o EINA_UNUSED, Efl2_Canvas_Text_Style *style)
 {
-   // FIXME-implement
-   (void) key;
+   _textblock_style_generic_push(eo_obj, style);
 }
 
-EOLIAN static Efl2_Text_Attribute_Handle *
-_efl2_canvas_text_text_style_get(const Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o, const char *key)
+EOLIAN static Eina_Bool
+_efl2_canvas_text_text_style_pop(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o EINA_UNUSED)
 {
-   // FIXME-implement
-   (void) key;
-   (void) o;
-   return NULL;
+   if (o->styles)
+     {
+        o->styles = eina_list_remove_list(o->styles, eina_list_last(o->styles));
+        return EINA_TRUE;
+     }
+
+   return EINA_FALSE;
+}
+
+EOLIAN static Efl2_Canvas_Text_Style *
+_efl2_canvas_text_text_style_peek(const Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o)
+{
+   return eina_list_data_get(eina_list_last(o->styles));
 }
 
 
@@ -11582,10 +11546,9 @@ evas_object_textblock_free(Evas_Object *eo_obj)
      }
    eina_hash_free(o->gfx_filter.sources);
 
-   while (evas_object_textblock_style_user_peek(eo_obj))
-     {
-        evas_object_textblock_style_user_pop(eo_obj);
-     }
+   while (efl2_canvas_text_style_pop(eo_obj))
+      ;
+
    while (o->cursors)
      {
         Efl2_Text_Cursor_Handle *cur;
