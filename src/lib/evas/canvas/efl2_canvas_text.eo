@@ -8,6 +8,8 @@ const efl_text_paragraph_separator: Eina.Unicode = 0x2029U;
 const efl_text_object_replacement_utf8: string = "\xEF\xBF\xBC";
 const efl_text_paragraph_separator_utf8: string = "\xE2\x80\xA9";
 
+struct @extern Efl2.Canvas.Text_Style;
+
 /* FIXME:
     missing:
         - pango_layout_set_indent equivalent
@@ -95,29 +97,22 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
       }
       // FIXME: updatedocs + am I happy with this?
       // Probably used when using theme and then retheming without changing use configuration...
-      // Maybe have priorities built in rather than naming?
-      // Maybe do peep/pop/push instead?
-      @property text_style {
-         [[The text style of the object.
-
-           $key is how you reference the style (for deletion or fetching). $NULL
-           as key indicates the style has the highest priority (default style).
-           The style priority is the order of creation, styles created first
-           are applied first with the exception of $NULL which is implicitly
-           first.
-
-           Set $style to $NULL to delete it.
+      text_style_push {
+         [[Add a text style to the object
          ]]
-         set {
+         params {
+            style: Efl2.Canvas.Text_Style @by_ref; [[The style to apply]]
          }
-         get {
-         }
-         keys {
-            key: string; [[The name to the style. $NULL is the default style]]
-         }
-         values {
-            attribute: ptr(Efl2.Text.Attribute.Handle); [[The style]]
-         }
+      }
+      text_style_pop {
+         [[Remove a text style from the object
+         ]]
+         return: bool; [[If succeededd]]
+      }
+      text_style_peek @const {
+         [[Peek at the top text style of the object
+         ]]
+         return: Efl2.Canvas.Text_Style @by_ref; [[The most recent style added]]
       }
       @property size_formatted {
          [[The formatted width and height.
