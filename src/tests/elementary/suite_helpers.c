@@ -193,7 +193,7 @@ _ui_win_visibility_change(void *data EINA_UNUSED, const Efl_Event *ev)
 EFL_CLASS_SIMPLE_CLASS(efl_loop, "Efl.Loop", EFL_LOOP_CLASS)
 
 static Evas_Object *
-_elm_suite_win_create()
+_elm_suite_win_create(void)
 {
    Evas_Object *win;
    Eo *loop, *timer;
@@ -225,9 +225,18 @@ _elm_suite_win_create()
    return win;
 }
 
+#define TEST_FONT_DIR TESTS_SRC_DIR "/fonts/"
+
 Evas_Object *
-win_add()
+win_add(void)
 {
+   static Eina_Bool font_path = EINA_FALSE;
+
+   if (!font_path)
+     {
+        evas_font_path_global_append(TEST_FONT_DIR);
+        font_path = EINA_TRUE;
+     }
    if (getpid() != main_pid)
      {
         if (global_win) return global_win;
