@@ -7353,9 +7353,20 @@ _obstacle_del_cb(void *data, const Efl_Event *event)
 }
 
 static void
+_obstacle_update_cb(void *data, const Efl_Event *event EINA_UNUSED)
+{
+   Eo *eo_obj = data;
+   Efl2_Canvas_Text_Data *obj = efl_data_scope_get(eo_obj, MY_CLASS);
+   _evas_textblock_changed(obj, eo_obj);
+   obj->obstacle_changed = EINA_TRUE;
+}
+
+static void
 _obstacle_clear(Eo *eo_obj, Evas_Textblock_Obstacle *obs)
 {
    efl_event_callback_del(obs->eo_obs, EFL_EVENT_DEL, _obstacle_del_cb, eo_obj);
+   efl_event_callback_del(obs->eo_obs, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _obstacle_update_cb, eo_obj);
+   efl_event_callback_del(obs->eo_obs, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _obstacle_update_cb, eo_obj);
 }
 
 static void
@@ -7392,6 +7403,8 @@ _efl2_canvas_text_obstacle_add(Eo *eo_obj,
 
    obs->eo_obs = eo_obs;
    efl_event_callback_add(eo_obs, EFL_EVENT_DEL, _obstacle_del_cb, eo_obj);
+   efl_event_callback_add(eo_obs, EFL_GFX_ENTITY_EVENT_POSITION_CHANGED, _obstacle_update_cb, eo_obj);
+   efl_event_callback_add(eo_obs, EFL_GFX_ENTITY_EVENT_SIZE_CHANGED, _obstacle_update_cb, eo_obj);
 
    o->obstacles = eina_list_append(o->obstacles, obs);
    _obstacle_update(obs, eo_obj);
@@ -7423,14 +7436,6 @@ _efl2_canvas_text_obstacle_remove(Eo *eo_obj, Efl2_Canvas_Text_Data *o,
    _evas_textblock_changed(o, eo_obj);
    o->obstacle_changed = EINA_TRUE;
    return EINA_TRUE;
-}
-
-// FIXME: we need to add events on obstacle move/resize events and just call this one automatically instead of it being manual
-EOLIAN static void
-_efl_canvas_text_obstacles_update(Eo *eo_obj, Efl2_Canvas_Text_Data *obj)
-{
-   _evas_textblock_changed(obj, eo_obj);
-   obj->obstacle_changed = EINA_TRUE;
 }
 
 static Evas_Textblock_Obstacle *
