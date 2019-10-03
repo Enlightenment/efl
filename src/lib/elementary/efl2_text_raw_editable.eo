@@ -44,7 +44,7 @@ class @beta Efl2.Text.Raw_Editable extends Efl2.Canvas.Text implements Efl2.Inpu
            is enabled.
          ]]
          values {
-            repch: string; [[Replacement character]]
+            repch: Eina.Unicode; [[Replacement character]]
          }
       }
 
