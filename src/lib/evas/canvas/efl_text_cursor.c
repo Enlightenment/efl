@@ -282,12 +282,16 @@ _efl2_text_cursor_range_delete(Eo *eo_obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd
 EOLIAN static void
 _efl2_text_cursor_handle_set(Eo *obj, Efl2_Text_Cursor_Data *pd, Efl2_Text_Cursor_Handle *handle)
 {
-   if (handle && handle->cur_obj) {
-        // Remove the handle from the previous object before setting here
-        efl2_text_cursor_handle_set(handle->cur_obj, NULL);
-   }
+   if (handle)
+     {
+        if (handle->cur_obj)
+          {
+             // Remove the handle from the previous object before setting here
+             efl2_text_cursor_handle_set(handle->cur_obj, NULL);
+          }
+        handle->cur_obj = obj;
+     }
    pd->cur = handle;
-   handle->cur_obj = obj;
 }
 
 EOLIAN static Efl2_Text_Cursor_Handle *
