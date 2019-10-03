@@ -1039,13 +1039,16 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
         _compose_seq_reset(en);
         _key_down_sel_pre(obj, cur, en, shift, EINA_FALSE);
 
-        efl2_text_cursor_cluster_start(cur);
-        efl2_text_cursor_char_prev(cur);
-        efl2_text_cursor_cluster_start(cur);
+        if (!efl2_text_cursor_cluster_start(cur))
+          {
+             efl2_text_cursor_char_prev(cur);
+             efl2_text_cursor_cluster_start(cur);
+          }
+
+        // We already moved so we just need to go to the start
 #if defined(__APPLE__) && defined(__MACH__)
         if (altgr) efl2_text_cursor_word_start(cur);
 #else
-        /* If control is pressed, go to the start of the word */
         if (control) efl2_text_cursor_word_start(cur);
 #endif
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
@@ -1059,14 +1062,17 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
         _compose_seq_reset(en);
         _key_down_sel_pre(obj, cur, en, shift, EINA_TRUE);
 
+        if (!efl2_text_cursor_cluster_end(cur))
+          {
+             efl2_text_cursor_char_next(cur);
+             efl2_text_cursor_cluster_end(cur);
+          }
+        // We already moved, so we just need to go to the end
 #if defined(__APPLE__) && defined(__MACH__)
         if (altgr) efl2_text_cursor_word_end(cur);
 #else
-        /* If control is pressed, go to the end of the word */
         if (control) efl2_text_cursor_word_end(cur);
 #endif
-        efl2_text_cursor_cluster_end(cur);
-        efl2_text_cursor_char_next(cur);
 
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
 
