@@ -8,6 +8,7 @@ evas_object_show(bx);
 Evas_Object *o = elm_colorselector_add(win);
 evas_object_size_hint_weight_set(o, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
 evas_object_size_hint_align_set(o, EVAS_HINT_FILL, EVAS_HINT_FILL);;
+elm_colorselector_palette_item_selected_set(eina_list_data_get(elm_colorselector_palette_items_get(o)), EINA_TRUE);
 elm_box_pack_end(bx, o);
 evas_object_show(o);
 
