@@ -591,7 +591,6 @@ struct _Evas_Object_Textblock
 {
    Ecore_Thread                       *layout_th;
    int                                 layout_jobs;
-   Efl2_Text_Attribute_Handle         *style_attribute;
    Evas_Textblock_Style               *style;
    Eina_List                          *styles;
    Efl2_Text_Cursor_Handle        *cursor;
@@ -6601,19 +6600,6 @@ _layout_setup(Ctxt *c, const Eo *eo_obj, Evas_Coord w, Evas_Coord h)
              _format_fill(c->obj, c->fmt, c->o->style->default_tag);
              finalize = EINA_TRUE;
           }
-        if (c->o->style_attribute)
-          {
-             // FIXME: actually handle this
-             Eina_Strbuf *strbuf = eina_strbuf_new();
-             eina_strbuf_append_printf(strbuf, "font=%s font_source=%s font_size=%d color=#000",
-                   c->o->style_attribute->fmt.font.family,
-                   c->o->style_attribute->fmt.font.source,
-                   c->o->style_attribute->fmt.font.size
-                   );
-             _format_fill(c->obj, c->fmt, eina_strbuf_string_get(strbuf));
-             eina_strbuf_free(strbuf);
-             finalize = EINA_TRUE;
-          }
 
         EINA_LIST_FOREACH(c->o->styles, itr, use)
           {
@@ -7071,7 +7057,6 @@ _efl2_canvas_text_text_style_set(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *
 {
    // FIXME-implement
    (void) key;
-   o->style_attribute = attribute;
 }
 
 EOLIAN static Efl2_Text_Attribute_Handle *
