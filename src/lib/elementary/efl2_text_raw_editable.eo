@@ -109,6 +109,7 @@ class @beta Efl2.Text.Raw_Editable extends Efl2.Canvas.Text implements Efl2.Inpu
 
       changed,user: Efl2.Text.Change_Info; [[The text object has changed due to user interaction]]
 
+      // FIXME: remove these and move this callback in ui/text
       redo,request: void; [[Called when redo is requested]]
       undo,request: void; [[Called when undo is requested]]
 

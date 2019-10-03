@@ -1227,7 +1227,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
 #endif
      {
         _compose_seq_reset(en);
-        //FIXME
+        //FIXME do in ui/text
         //efl_event_callback_call(obj, EFL_TEXT_INTERACTIVE_EVENT_TEXT_CUT, NULL);
         ev->event_flags |= EVAS_EVENT_FLAG_ON_HOLD;
      }
