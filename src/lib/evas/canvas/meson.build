@@ -59,6 +59,7 @@ pub_eo_files = [
   'efl2_text_attribute_factory.eo',
   'efl2_text_item_factory.eo',
   'efl2_text_serializer_markup.eo',
+  'efl2_text_serializer_markup_legacy.eo',
 ]
 
 evas_canvas_eo_files = pub_eo_files

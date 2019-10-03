@@ -1,0 +1,8 @@
+// FIXME: actually implement
+class @beta Efl2.Text.Serializer.Markup_Legacy {
+   [[This class implements old style (textblock) markup and applies it to
+       new canvas text objects.
+
+       See https://phab.enlightenment.org/T8306
+   ]]
+}
