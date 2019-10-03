@@ -23,7 +23,7 @@ struct @beta Efl2.Ui.Text_Anchor.Info
    [[The event info associated with Anchors]]
    href: string; [[The link set in the anchor.]]
    button: int; [[The mouse button used to click on it.]]
-   attribute: Efl2.Text.Attribute.Handle @by_ref; [[The attribute that created this anchor. Can be used to query position and size.]]
+   attribute: const(Efl2.Text.Attribute.Handle) @by_ref; [[The attribute that created this anchor. Can be used to query position and size.]]
 }
 
 // FIXME: Gotta figure out dnd and cnp modes.
