@@ -20,7 +20,7 @@ namespace Eo
 public abstract class EoWrapper : IWrapper, IDisposable
 {
     /// <summary>Object used to synchronize access to EFL events.</summary>
-    protected readonly object eflBindingEventLock = new object();
+    private readonly object eflBindingEventLock = new object();
     private bool generated = true;
     private System.IntPtr handle = IntPtr.Zero;
 
@@ -215,30 +215,33 @@ public abstract class EoWrapper : IWrapper, IDisposable
     /// <param name="evtDelegate">Managed delegate that will be called by evtCaller on event raising.</param>
     protected void AddNativeEventHandler(string lib, string key, Efl.EventCb evtCaller, object evtDelegate)
     {
-        IntPtr desc = Efl.EventDescription.GetNative(lib, key);
-        if (desc == IntPtr.Zero)
+        lock (eflBindingEventLock)
         {
-            Eina.Log.Error($"Failed to get native event {key}");
-            return;
-        }
+            IntPtr desc = Efl.EventDescription.GetNative(lib, key);
+            if (desc == IntPtr.Zero)
+            {
+                Eina.Log.Error($"Failed to get native event {key}");
+                return;
+            }
 
-        var wsPtr = Efl.Eo.Globals.efl_mono_wrapper_supervisor_get(handle);
-        var ws = Efl.Eo.Globals.WrapperSupervisorPtrToManaged(wsPtr);
-        if (ws.EoEvents.ContainsKey((desc, evtDelegate)))
-        {
-            Eina.Log.Warning($"Event proxy for event {key} already registered!");
-            return;
-        }
+            var wsPtr = Efl.Eo.Globals.efl_mono_wrapper_supervisor_get(handle);
+            var ws = Efl.Eo.Globals.WrapperSupervisorPtrToManaged(wsPtr);
+            if (ws.EoEvents.ContainsKey((desc, evtDelegate)))
+            {
+                Eina.Log.Warning($"Event proxy for event {key} already registered!");
+                return;
+            }
 
-        IntPtr evtCallerPtr = Marshal.GetFunctionPointerForDelegate(evtCaller);
-        if (!Efl.Eo.Globals.efl_event_callback_priority_add(handle, desc, 0, evtCallerPtr, wsPtr))
-        {
-            Eina.Log.Error($"Failed to add event proxy for event {key}");
-            return;
-        }
+            IntPtr evtCallerPtr = Marshal.GetFunctionPointerForDelegate(evtCaller);
+            if (!Efl.Eo.Globals.efl_event_callback_priority_add(handle, desc, 0, evtCallerPtr, wsPtr))
+            {
+                Eina.Log.Error($"Failed to add event proxy for event {key}");
+                return;
+            }
 
-        ws.EoEvents[(desc, evtDelegate)] = (evtCallerPtr, evtCaller);
-        Eina.Error.RaiseIfUnhandledException();
+            ws.EoEvents[(desc, evtDelegate)] = (evtCallerPtr, evtCaller);
+            Eina.Error.RaiseIfUnhandledException();
+        }
     }
 
     /// <summary>Removes the given event handler for the given event. For internal use only.</summary>
@@ -247,30 +250,33 @@ public abstract class EoWrapper : IWrapper, IDisposable
     /// <param name="evtDelegate">The delegate to be removed.</param>
     protected void RemoveNativeEventHandler(string lib, string key, object evtDelegate)
     {
-        IntPtr desc = Efl.EventDescription.GetNative(lib, key);
-        if (desc == IntPtr.Zero)
+        lock (eflBindingEventLock)
         {
-            Eina.Log.Error($"Failed to get native event {key}");
-            return;
-        }
-
-        var wsPtr = Efl.Eo.Globals.efl_mono_wrapper_supervisor_get(handle);
-        var ws = Efl.Eo.Globals.WrapperSupervisorPtrToManaged(wsPtr);
-        var evtPair = (desc, evtDelegate);
-        if (ws.EoEvents.TryGetValue(evtPair, out var caller))
-        {
-            if (!Efl.Eo.Globals.efl_event_callback_del(handle, desc, caller.evtCallerPtr, wsPtr))
+            IntPtr desc = Efl.EventDescription.GetNative(lib, key);
+            if (desc == IntPtr.Zero)
             {
-                Eina.Log.Error($"Failed to remove event proxy for event {key}");
+                Eina.Log.Error($"Failed to get native event {key}");
                 return;
             }
 
-            ws.EoEvents.Remove(evtPair);
-            Eina.Error.RaiseIfUnhandledException();
-        }
-        else
-        {
-            Eina.Log.Error($"Trying to remove proxy for event {key} when it is not registered.");
+            var wsPtr = Efl.Eo.Globals.efl_mono_wrapper_supervisor_get(handle);
+            var ws = Efl.Eo.Globals.WrapperSupervisorPtrToManaged(wsPtr);
+            var evtPair = (desc, evtDelegate);
+            if (ws.EoEvents.TryGetValue(evtPair, out var caller))
+            {
+                if (!Efl.Eo.Globals.efl_event_callback_del(handle, desc, caller.evtCallerPtr, wsPtr))
+                {
+                    Eina.Log.Error($"Failed to remove event proxy for event {key}");
+                    return;
+                }
+
+                ws.EoEvents.Remove(evtPair);
+                Eina.Error.RaiseIfUnhandledException();
+            }
+            else
+            {
+                Eina.Log.Error($"Trying to remove proxy for event {key} when it is not registered.");
+            }
         }
     }
 
