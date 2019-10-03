@@ -2307,13 +2307,13 @@ _efl2_text_raw_editable_password_mode_get(const Eo *obj EINA_UNUSED, Efl2_Text_R
 
 
 EOLIAN static void
-_efl2_text_raw_editable_replacement_char_set(Eo *obj EINA_UNUSED, Efl2_Text_Raw_Editable_Data *pd EINA_UNUSED, const char *repch EINA_UNUSED)
+_efl2_text_raw_editable_replacement_char_set(Eo *obj EINA_UNUSED, Efl2_Text_Raw_Editable_Data *pd EINA_UNUSED, Eina_Unicode repch EINA_UNUSED)
 {
 #warning IMPLEMENTATION
 }
 
 
-EOLIAN static const char *
+EOLIAN static Eina_Unicode
 _efl2_text_raw_editable_replacement_char_get(const Eo *obj EINA_UNUSED, Efl2_Text_Raw_Editable_Data *pd EINA_UNUSED)
 {
 #warning IMPLEMENTATION
