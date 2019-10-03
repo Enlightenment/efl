@@ -9814,7 +9814,15 @@ _canvas_text_cursor_range_delete(Efl2_Text_Cursor_Handle *cur1, Efl2_Text_Cursor
 Eina_Unicode
 _canvas_text_cursor_content_get(const Efl2_Text_Cursor_Handle *cur)
 {
-   return eina_ustrbuf_string_get(cur->node->unicode)[cur->pos];
+   Eina_Unicode ret = eina_ustrbuf_string_get(cur->node->unicode)[cur->pos];
+   if (ret)
+     {
+        return ret;
+     }
+   else
+     {
+        return (EINA_INLIST_GET(cur->node)->next) ? _PARAGRAPH_SEPARATOR : ret;
+     }
 }
 
 char *
