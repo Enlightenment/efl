@@ -2735,11 +2735,11 @@ _efl2_text_raw_editable_efl2_input_text_input_hint_get(const Eo *obj, Efl2_Text_
 
 
 EOLIAN static void
-_efl2_text_raw_editable_efl2_input_text_autocapital_type_set(Eo *obj, Efl2_Text_Raw_Editable_Data *en, Efl2_Input_Text_Autocapital_Type autocapital_type)
+_efl2_text_raw_editable_efl2_input_text_capitalize_set(Eo *obj, Efl2_Text_Raw_Editable_Data *en, Efl2_Input_Text_Capitalize_Type autocapital_type)
 {
 #ifdef HAVE_ECORE_IMF
    if (efl2_text_raw_editable_password_mode_get(obj) == EINA_TRUE)
-     autocapital_type = EFL2_INPUT_TEXT_AUTOCAPITAL_TYPE_NONE;
+     autocapital_type = EFL2_INPUT_TEXT_CAPITALIZE_TYPE_NONE;
 
    if (en->imf_context)
      ecore_imf_context_autocapital_type_set(en->imf_context, (Ecore_IMF_Autocapital_Type)autocapital_type);
@@ -2753,16 +2753,16 @@ _efl2_text_raw_editable_efl2_input_text_autocapital_type_set(Eo *obj, Efl2_Text_
 }
 
 
-EOLIAN static Efl2_Input_Text_Autocapital_Type
-_efl2_text_raw_editable_efl2_input_text_autocapital_type_get(const Eo *obj, Efl2_Text_Raw_Editable_Data *en)
+EOLIAN static Efl2_Input_Text_Capitalize_Type
+_efl2_text_raw_editable_efl2_input_text_capitalize_get(const Eo *obj, Efl2_Text_Raw_Editable_Data *en)
 {
 #ifdef HAVE_ECORE_IMF
    if (en->imf_context)
-     return (Efl2_Input_Text_Autocapital_Type)ecore_imf_context_autocapital_type_get(en->imf_context);
-   return EFL2_INPUT_TEXT_AUTOCAPITAL_TYPE_NONE;
+     return (Efl2_Input_Text_Capitalize_Type)ecore_imf_context_autocapital_type_get(en->imf_context);
+   return EFL2_INPUT_TEXT_CAPITALIZE_TYPE_NONE;
    (void)obj;
 #else
-   return EFL2_INPUT_TEXT_AUTOCAPITAL_TYPE_NONE;
+   return EFL2_INPUT_TEXT_CAPITALIZE_TYPE_NONE;
    (void)obj;
    (void)en;
 #endif
