@@ -11,7 +11,7 @@
  * @defgroup Evil_Dlfcn Functions that manage dynamic-link libraries.
  * @ingroup Evil
  *
-x * This header provides functions to load and unload dynamic-link
+ * This header provides functions to load and unload dynamic-link
  * libaries, to get the address of a symbol, and to get diagnostic
  * information.
  */
