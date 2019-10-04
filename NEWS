@@ -1,6 +1,19 @@
 ==========
-EFL 1.22.5
+EFL 1.22.6
 ==========
+Changes since 1.22.5:
+---------------------
+
+Features:
+
+
+Fixes:
+
+   * ecore/signal: also use nonblock for writing side of signal pipe
+   * ector engine: +null checking.
+   * ecore-x: fix null derefs in window prop code
+
+
 Changes since 1.22.4:
 ---------------------
 
