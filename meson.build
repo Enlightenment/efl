@@ -252,21 +252,7 @@ evas_img_modules = ['evas'                       ,[],  true, false, false, false
 evas_engines =     [join_paths('evas', 'engines'),[],  true, false, false, false, false, false, [], []]
 evas_goal =        ['evas_goal'                  ,[], false,  true, false, false, false, false, ['eina', 'efl', 'eo'], []]
 
-if get_option('evas-modules') == 'static'
-  evas_settings = [
-    evas_lib,
-    evas_img_modules,
-    evas_engines,
-    evas_goal,
-  ]
-else
-  evas_settings = [
-    evas_lib,
-    evas_img_modules,
-    evas_goal,
-    evas_engines,
-  ]
-endif
+evas_settings = [ evas_lib, evas_img_modules, evas_goal, evas_engines ]
 
 subprojects = [
 # name              |   option              | mod  | lib  | bin  | bench | tests | examples | pkg-config options | name of static libs
