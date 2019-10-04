@@ -1,5 +1,5 @@
 
-enum Efl.Ui.Animation_View_State
+enum @beta Efl.Ui.Animation_View_State
 {
    [[State of animation view]]
    not_ready, [[Animation is not ready to play. (Probably, it didn't file set yet or failed to read file.]]
