@@ -29,7 +29,10 @@ public static class IteratorNativeFunctions
         eina_carray_iterator_new(IntPtr array);
 }
 
-/// <summary>Wrapper around a native Eina iterator. (Since EFL 1.23)</summary>
+/// <summary>Wrapper around a native Eina iterator.
+///
+/// Since EFL 1.23.
+/// </summary>
 public class Iterator<T> : IEnumerable<T>, IDisposable
 {
     public IntPtr Handle {get;set;} = IntPtr.Zero;

@@ -9,7 +9,10 @@ namespace Efl
 namespace Csharp
 {
 
-///<summary>The components to be initialized. (Since Efl 1.23)</summary>
+/// <summary>The components to be initialized.
+///
+/// Since EFL 1.23.
+/// </summary>
 public enum Components
 {
     ///<summary>Basic components: Eina, Eo, Ecore, Evas and DBus.</summary>
@@ -22,12 +25,12 @@ public enum Components
 /// This represents the entry point for the EFL framework
 /// You can use this class to implement the 4 abstract methods which will then be called accordingly
 /// All subsystems of efl are booted up correctly when the abstract methods of this class are called.
+///
+/// Since EFL 1.23.
 /// </summary>
 /// <remarks>
 /// Calls to efl outside those efl-callbacks or outside the mainloop are not allowed and will lead to issues
 /// </remarks>
-///
-/// (Since EFL 1.23)
 ///
 /// <example>
 /// UserApp is the class that implements the Application abstract

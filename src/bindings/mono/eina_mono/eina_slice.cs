@@ -14,7 +14,10 @@ public interface ISliceBase
     int Length {get;set;}
 };
 
-/// <summary>Pointer to a slice of native memory. (Since EFL 1.23)</summary>
+/// <summary>Pointer to a slice of native memory.
+///
+/// Since EFL 1.23.
+/// </summary>
 [StructLayout(LayoutKind.Sequential)]
 public struct Slice : ISliceBase
 {
@@ -41,7 +44,10 @@ public struct Slice : ISliceBase
     }
 }
 
-/// <summary>Pointer to a slice of native memory. (Since EFL 1.23)</summary>
+/// <summary>Pointer to a slice of native memory.
+///
+/// Since EFL 1.23.
+/// </summary>
 [StructLayout(LayoutKind.Sequential)]
 public struct RwSlice : ISliceBase
 {

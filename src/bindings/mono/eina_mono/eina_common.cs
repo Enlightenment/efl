@@ -41,7 +41,10 @@ internal static class NativeCustomExportFunctions
         efl_mono_native_efl_unref_addr_get();
 }
 
-/// <summary>Wrapper around native memory DllImport'd functions (SINCE EFL 1.23).</summary>
+/// <summary>Wrapper around native memory DllImport'd functions.
+///
+/// Since EFL 1.23.
+/// </summary>
 public static class MemoryNative
 {
     public static void Free(IntPtr ptr)
@@ -127,7 +130,9 @@ public static class MemoryNative
 }
 
 /// <summary>
-///   Conversor of raw pointer to  a type and type to raw pointer (SINCE EFL 1.23).
+/// Conversor of raw pointer to  a type and type to raw pointer
+///
+/// Since EFL 1.23.
 /// </summary>
 public static class PrimitiveConversion
 {
@@ -152,7 +157,9 @@ public static class PrimitiveConversion
 }
 
 /// <summary>
-///   Conversor of string to native string and native string to string.. (SINCE EFL 1.23).
+/// Conversor of string to native string and native string to string.
+///
+/// Since EFL 1.23.
 /// </summary>
 public static class StringConversion
 {

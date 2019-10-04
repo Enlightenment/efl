@@ -9,7 +9,10 @@ namespace Eina
 {
 // Manual wrappers around eina functions
 
-/// <summary>EFL Logging facilities. (Since EFL 1.23)</summary>
+/// <summary>EFL Logging facilities.
+///
+/// Since EFL 1.23.
+/// </summary>
 public class Log
 {
     [DllImport(efl.Libs.Eina)] private static extern void eina_log_print(

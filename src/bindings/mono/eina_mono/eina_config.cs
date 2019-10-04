@@ -7,7 +7,9 @@ namespace Eina
 {
 
 /// <summary>
-///   Manage the initialization and cleanup for eina (SINCE EFL 1.23).
+/// Manage the initialization and cleanup for eina.
+///
+/// Since EFL 1.23.
 /// </summary>
 public class Config
 {
@@ -30,8 +32,9 @@ public class Config
 }
 
 /// <summary>
-/// Wrapper class for pointers that need some cleanup afterwards
-/// like strings (SINCE EFL 1.23).
+/// Wrapper class for pointers that need some cleanup afterwards like strings
+///
+/// Since EFL 1.23.
 /// </summary>
 public class DisposableIntPtr : IDisposable
 {

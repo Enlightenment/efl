@@ -80,7 +80,10 @@ public static class InlistNativeFunctions
         eina_inlist_iterator_wrapper_new_custom_export_mono(IntPtr in_list);
 }
 
-/// <summary>Wrapper around an inplace list. (Since EFL 1.23)</summary>
+/// <summary>Wrapper around an inplace list.
+///
+/// Since EFL 1.23.
+/// </summary>
 public class Inlist<T> : IEnumerable<T>, IDisposable
 {
     public IntPtr Handle {get;set;} = IntPtr.Zero;

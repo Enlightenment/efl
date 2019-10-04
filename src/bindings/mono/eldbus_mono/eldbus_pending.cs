@@ -41,7 +41,10 @@ public static class EldbusPendingNativeFunctions
         eldbus_pending_free_cb_del(IntPtr pending, IntPtr cb, IntPtr data);
 }
 
-/// <summary>Represents a DBus pending. (Since EFL 1.23)</summary>
+/// <summary>Represents a DBus pending.
+///
+/// Since EFL 1.23.
+/// </summary>
 public class Pending
 {
     public IntPtr Handle {get;set;} = IntPtr.Zero;
