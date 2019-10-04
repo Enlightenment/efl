@@ -13,7 +13,7 @@ namespace Efl {
 ///
 /// <para>It is internally instantiated and returned by generated extension methods.</para>
 ///
-/// (Since EFL 1.23)
+/// Since EFL 1.23.
 /// </summary>
 public class BindableProperty<T>
 {
@@ -79,7 +79,7 @@ public class BindableProperty<T>
 ///
 /// <para>It is internally instantiated and returned by generated extension methods.</para>
 ///
-/// (Since EFL 1.23)
+/// Since EFL 1.23.
 /// </summary>
 public class BindablePart<T>
 {
@@ -99,7 +99,7 @@ public class BindablePart<T>
 
 /// <summary>Represents bindable factory parts as used by <see cref="Efl.Ui.ItemFactory&lt;T&gt;" /> instances.
 ///
-/// (Since EFL 1.23)
+/// Since EFL 1.23.
 /// </summary>
 public class BindableFactoryPart<T>
 {

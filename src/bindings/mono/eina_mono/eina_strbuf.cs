@@ -50,7 +50,10 @@ static internal class StrbufNativeMethods
 
 } // namespace EinaNative
 
-///<summary>Native string buffer, similar to the C# StringBuilder class. (Since EFL 1.23)</summary>
+/// <summary>Native string buffer, similar to the C# StringBuilder class.
+///
+/// Since EFL 1.23.
+/// </summary>
 public class Strbuf : IDisposable
 {
     ///<summary>Pointer to the underlying native handle.</summary>

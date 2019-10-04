@@ -39,7 +39,10 @@ static class UnsafeNativeMethods
     }
 }
 
-/// <summary>Wrapper around the initialization functions of all modules. (Since EFL 1.23)</summary>
+/// <summary>Wrapper around the initialization functions of all modules.
+///
+/// Since EFL 1.23.
+/// </summary>
 public static class All
 {
     private static bool InitializedUi = false;
@@ -109,7 +112,10 @@ public static class All
 namespace Ui
 {
 
-/// <summary>Initialization and shutdown of the UI libraries. (Since EFL 1.23)</summary>
+/// <summary>Initialization and shutdown of the UI libraries.
+///
+/// Since EFL 1.23.
+/// </summary>
 public static class Config
 {
     public static void Init()

@@ -536,7 +536,10 @@ static internal class UnsafeNativeMethods
 }
 }
 
-/// <summary>Struct for passing Values by value to Unmanaged functions. (Since EFL 1.23)</summary>
+/// <summary>Struct for passing Values by value to Unmanaged functions.
+///
+/// Since EFL 1.23.
+/// </summary>
 [StructLayout(LayoutKind.Sequential)]
 public struct ValueNative
 {
@@ -549,7 +552,10 @@ public struct ValueNative
     }
 }
 
-/// <summary>Exception for failures when setting an container item. (Since EFL 1.23)</summary>
+/// <summary>Exception for failures when setting an container item.
+///
+/// Since EFL 1.23.
+/// </summary>
 [Serializable]
 public class SetItemFailedException : Exception
 {
@@ -574,7 +580,10 @@ public class SetItemFailedException : Exception
     }
 }
 
-/// <summary>Exception for methods that must have been called on a container. (Since EFL 1.23)</summary>
+/// <summary>Exception for methods that must have been called on a container.
+///
+/// Since EFL 1.23.
+/// </summary>
 [Serializable]
 public class InvalidValueTypeException: Exception
 {
@@ -600,7 +609,10 @@ public class InvalidValueTypeException: Exception
 }
 
 
-/// <summary>Managed-side Enum to represent Eina_Value_Type constants. (Since EFL 1.23)</summary>
+/// <summary>Managed-side Enum to represent Eina_Value_Type constants.
+///
+/// Since EFL 1.23.
+/// </summary>
 public enum ValueType
 {
     /// <summary>Signed 8 bit integer. Same as 'sbyte'</summary>
@@ -729,7 +741,7 @@ static class ValueTypeMethods
 /// marshall_type_impl.hh in the generator). User-facing API still uses Eina.ValueType
 /// normally.</para>
 ///
-/// (Since EFL 1.23)
+/// Since EFL 1.23.
 /// </summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
 public class ValueTypeBox
@@ -935,7 +947,7 @@ static class ValueTypeBridge
 /// blobs and structs. It is able to convert between data types, including
 /// to and from strings.</para>
 ///
-/// (Since EFL 1.23)
+/// Since EFL 1.23.
 /// </summary>
 public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
 {

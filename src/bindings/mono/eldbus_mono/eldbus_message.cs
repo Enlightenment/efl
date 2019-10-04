@@ -189,7 +189,10 @@ public static class EldbusMessageNativeFunctions
 }
 
 
-/// <summary>Represents a DBus message. (Since EFL 1.23)</summary>
+/// <summary>Represents a DBus message.
+///
+/// Since EFL 1.23.
+/// </summary>
 public class Message : IDisposable
 {
     public IntPtr Handle {get;set;} = IntPtr.Zero;

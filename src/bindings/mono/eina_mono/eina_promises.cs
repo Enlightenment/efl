@@ -71,7 +71,7 @@ static internal class PromiseNativeMethods
 ///
 /// With a Promise you can attach futures to it, which will be used to notify of the value being available.
 ///
-/// (Since Efl 1.23)
+/// Since Efl 1.23.
 /// </summary>
 public class Promise : IDisposable
 {

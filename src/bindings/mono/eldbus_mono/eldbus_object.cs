@@ -82,7 +82,10 @@ public static class EldbusObjectNativeFunctions
 //         eldbus_object_manager_interfaces_removed(IntPtr obj, Eldbus_Signal_Cb cb, IntPtr cb_data);
 }
 
-/// <summary>Represents a DBus object. (Since EFL 1.23)</summary>
+/// <summary>Represents a DBus object.
+///
+/// Since EFL 1.23.
+/// </summary>
 public class Object : System.IDisposable
 {
 
