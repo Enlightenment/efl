@@ -157,7 +157,7 @@ interface#!
    <!--(for n in type.namespaces)-->
 :${n.lower()}$#!
    <!--(end)-->
-:${type.short_name.lower()}$|${type.name}$]]
+:${type.short_name}$|${type.name}$]]
 <!--(end)-->
 #!##############################################################################
 #!####  FUNC_LINK(func)  #######################################################
@@ -250,7 +250,7 @@ interface#!
       <!--(if i == 0)-->
 ^ parameters ^ type ^ description ^
       <!--(end)-->
-|${PARAM_DIRECTION_TAG(param=par)}$ **${par.name}$**|${par.type.name}$ #!
+|${PARAM_DIRECTION_TAG(param=par)}$ **${par.name}$**|${TYPE_LINK(type=par.type)}$ #!
 |${BEST_SUMMARY(obj=par)}$ ${BEST_DESCRIPTION(obj=par)}$|
    <!--(else)-->
 **This function does not accept any parameter.**
@@ -259,7 +259,7 @@ interface#!
    <!--(if func.method_return_type)-->
 ${setvar("obj", "func.return_documentation(Eolian_Function_Type.METHOD)")}$#!
 ^ return ^ description ^
-|**${func.method_return_type.name}$**|${BEST_SUMMARY(obj=obj)}$ ${BEST_DESCRIPTION(obj=obj)}$|
+|**${TYPE_LINK(type=func.method_return_type)}$**|${BEST_SUMMARY(obj=obj)}$ ${BEST_DESCRIPTION(obj=obj)}$|
    <!--(else)-->
 **This function does not return anything.**
    <!--(end)-->
@@ -274,14 +274,14 @@ ${setvar("obj", "func.return_documentation(Eolian_Function_Type.METHOD)")}$#!
       <!--(if i == 0)-->
 ^ values ^ type ^ description ^
       <!--(end)-->
-|**${val.name}$**|${val.type.name}$|${BEST_SUMMARY(obj=val)}$|
+|**${val.name}$**|${TYPE_LINK(type=val.type)}$|${BEST_SUMMARY(obj=val)}$|
    <!--(end)-->
 
    <!--(for i, key in enumerate(func.getter_keys or func.setter_keys))-->
       <!--(if i == 0)-->
 ^ keys ^ type ^ description ^
       <!--(end)-->
-|**${key.name}$**|${key.type.name}$|${BEST_SUMMARY(obj=key)}$|
+|**${key.name}$**|${TYPE_LINK(type=key.type)}$|${BEST_SUMMARY(obj=key)}$|
    <!--(end)-->
 
 <!--(end)-->
