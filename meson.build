@@ -247,6 +247,8 @@ endif
 
 ecore_evas_wayland_engine_include_dir = []
 
+evas_static_list = []
+
 evas_lib =         ['evas'                       ,[], false,  true, false, false,  true,  true, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']]
 evas_img_modules = ['evas'                       ,[],  true, false, false, false, false, false, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']]
 evas_engines =     [join_paths('evas', 'engines'),[],  true, false, false, false, false, false, [], []]
