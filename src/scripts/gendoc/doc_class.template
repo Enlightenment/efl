@@ -2,6 +2,10 @@
 ~~Title: ${cls.name}$~~
 ====== ${cls.name}$ (${CLS_TYPE}$) ======
 
+<!--(if cls.is_beta)-->
+''beta'' This class is still in beta, api will probably change
+<!--(end)-->
+
 ${BEST_SUMMARY(obj=cls)}$
 
 ${BEST_DESCRIPTION(obj=cls)}$

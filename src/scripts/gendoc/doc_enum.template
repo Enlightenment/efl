@@ -2,6 +2,10 @@
 ~~Title: ${enum.name}$~~
 ====== ${enum.name}$ (enum) ======
 
+<!--(if enum.is_beta)-->
+''beta'' This enumeration is still in beta, api will probably change
+<!--(end)-->
+
 ${BEST_SUMMARY(obj=enum)}$
 
 ${BEST_DESCRIPTION(obj=enum)}$
