@@ -78,7 +78,15 @@ ${'\n\n' if i else ''}$#!
          <!--(if token.type == Eolian_Doc_Token_Type.TEXT)-->
 %%${token.text}$%%#!
          <!--(elif token.type == Eolian_Doc_Token_Type.REF)-->
-**REF ${token.text}$ ${token.ref}$ ??**#!
+            <!--(if token.ref_type == Eolian_Object_Type.FUNCTION)-->
+${CLS_LINK(cls=token.ref_obj)}$.${FUNC_LINK(func=token.ref_attr)}$#!
+            <!--(elif token.ref_type == Eolian_Object_Type.TYPEDECL)-->
+${TYPEDECL_LINK(typedecl=token.ref_obj)}$#!
+            <!--(elif token.ref_type == Eolian_Object_Type.CLASS)-->
+${CLS_LINK(cls=token.ref_obj)}$#!
+            <!--(else)-->
+**TODO REF ${token.ref_type}$**$#!
+            <!--(end)-->
          <!--(elif token.type == Eolian_Doc_Token_Type.MARKUP_MONOSPACE)-->
 ''${token.text}$''#!
          <!--(elif token.type == Eolian_Doc_Token_Type.MARK_NOTE)-->
