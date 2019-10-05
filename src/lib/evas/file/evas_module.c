@@ -599,12 +599,27 @@ evas_module_find_type(Evas_Module_Type type, const char *name)
           {
              if (run_in_tree == 1)
                {
-                  char subsystem[PATH_MAX];
+                  // special cases due to compleixty of meson build and
+                  // putting these in odd places in the tree - do special
+                  // name lookups for build in tree module lookups
+                  if (type == EVAS_MODULE_TYPE_IMAGE_LOADER)
+                    {
+                       snprintf(buffer, sizeof(buffer),
+                                PACKAGE_BUILD_DIR"/src/lib/evas_goal/libshared_loader_%s"MOD_SUFFIX, name);
+                    }
+                  else if (type == EVAS_MODULE_TYPE_IMAGE_SAVER)
+                    {
+                       snprintf(buffer, sizeof(buffer),
+                                PACKAGE_BUILD_DIR"/src/lib/evas_goal/libshared_saver_%s"MOD_SUFFIX, name);
+                    }
+                  else
+                    {
+                       char subsystem[PATH_MAX];
 
-                  snprintf(subsystem, sizeof(subsystem), "evas/%s", type_str);
-                  bs_mod_get(buffer, sizeof(buffer), subsystem, name);
-                  if (!evas_file_path_exists(buffer))
-                  buffer[0] = '\0';
+                       snprintf(subsystem, sizeof(subsystem), "evas/%s", type_str);
+                       bs_mod_get(buffer, sizeof(buffer), subsystem, name);
+                    }
+                  if (!evas_file_path_exists(buffer)) buffer[0] = '\0';
                }
           }
 #endif
