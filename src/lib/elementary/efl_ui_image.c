@@ -1749,6 +1749,9 @@ _efl_ui_image_animated_set_internal(Eo *obj, Efl_Ui_Image_Data *sd, Eina_Bool an
         return EINA_TRUE;
      }
    sd->img = elm_image_object_get(obj);
+
+   if (elm_widget_is_legacy(obj)) sd->anim = anim; //legacy
+
    if (!evas_object_image_animated_get(sd->img)) return EINA_FALSE;
    sd->anim = anim;
 
