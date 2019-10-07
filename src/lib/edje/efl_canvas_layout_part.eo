@@ -27,7 +27,6 @@ class @beta Efl.Canvas.Layout_Part extends Efl.Object implements Efl.Gfx.Entity,
       @property part_type {
          [[Type of this part in the layout.]]
          get {
-            [[Returns the type of the part.]]
          }
          values {
             type: Efl.Canvas.Layout_Part_Type(Efl.Canvas.Layout_Part_Type.none);

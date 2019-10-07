@@ -16,9 +16,8 @@ class @beta Efl.Ui.Internal_Text_Scroller extends Efl.Ui.Scroller
    ]]
    methods {
       @property scroller_mode {
-         [[Mode of operation for the scroller]]
+         [[Mode of operation for the scroller, either default (singleline) or multiline.]]
          set {
-            [[Sets mode to either default (singleline) or multiline]]
          }
          values {
             mode: Efl.Ui.Text_Scroller_Mode;
@@ -27,7 +26,6 @@ class @beta Efl.Ui.Internal_Text_Scroller extends Efl.Ui.Scroller
       @property viewport_clip {
          [[The viewport's clip object]]
          get {
-            [[Gets viewport's clip object]]
          }
          values {
             clip: Efl.Object;

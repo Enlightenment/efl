@@ -11,7 +11,6 @@ class @beta Efl.Ui.Theme extends Efl.Object
            is set.
          ]]
          get {
-            [[Gets the default theme handle.]]
          }
          values {
             theme: Efl.Ui.Theme; [[The default theme handle]]

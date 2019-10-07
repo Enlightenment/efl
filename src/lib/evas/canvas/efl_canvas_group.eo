@@ -111,7 +111,6 @@ class Efl.Canvas.Group extends Efl.Canvas.Object
             clipper: const(Efl.Canvas.Object); [[A clipper rectangle.]]
          }
          get {
-            [[Get the internal clipper.]]
          }
       }
    }

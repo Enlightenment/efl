@@ -120,10 +120,8 @@ class Efl.Ui.View_Model extends Efl.Composite_Model
 
            This can only be applied at construction time.]]
          get {
-            [[Get the state of the automatic binding of children object.]]
          }
          set {
-            [[Set the state of the automatic binding of children object.]]
          }
          values {
             enable: bool; [[Do you automatically bind children. Default to true.]]

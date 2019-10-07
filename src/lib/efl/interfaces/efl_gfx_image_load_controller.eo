@@ -53,18 +53,15 @@ interface Efl.Gfx.Image_Load_Controller
            size instead of its original size. This can save a lot of memory
            and is important for scalable types like SVG.
 
+           EFL will try to load an image of the requested size but does
+           not guarantee an exact match between the request and the loaded
+           image dimensions.
+
            By default, the load size is not specified, so it is $[0x0].
          ]]
          set {
-            [[Requests the canvas to load the image at the given size.
-
-              EFL will try to load an image of the requested size but does
-              not guarantee an exact match between the request and the loaded
-              image dimensions.
-            ]]
          }
          get {
-            [[Returns the requested load size.]]
          }
          values {
             size: Eina.Size2D; [[The image load size.]]
@@ -139,11 +136,7 @@ interface Efl.Gfx.Image_Load_Controller
 
            Powers of two (2, 4, 8, ...) are best supported (especially with JPEG).
          ]]
-         set {
-            [[Requests the image loader to scale down by $div times.
-              Call this before starting the actual image load.
-            ]]
-         }
+         set {}
          get {}
          values {
             div: int; [[The scale down dividing factor.]]
@@ -156,8 +149,7 @@ interface Efl.Gfx.Image_Load_Controller
            loading to a preload stage and/or data load later on rather than
            at the start when the load begins (e.g. when file is set).
          ]]
-         set {
-         }
+         set {}
          get {}
          values {
             skip: bool; [[$true if header is to be skipped.]]
