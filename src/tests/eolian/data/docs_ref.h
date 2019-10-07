@@ -132,6 +132,16 @@ EOAPI void eo_docs_prop_set(Eo *obj, int val);
  */
 EOAPI int eo_docs_prop_get(const Eo *obj);
 
+EOAPI void eo_docs_no_doc_meth(Eo *obj);
+
+/** No description supplied.
+ *
+ * @since 1.18
+ *
+ * @ingroup Eo_Docs
+ */
+EOAPI void eo_docs_doc_with_empty_doc(Eo *obj);
+
 EWAPI extern const Efl_Event_Description _EO_DOCS_EVENT_CLICKED;
 
 /** Event docs.

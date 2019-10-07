@@ -1263,6 +1263,15 @@ EFL_START_TEST(eolian_docs)
                   "Event docs."));
    fail_if(eolian_documentation_description_get(doc));
 
+   fail_if(!(fid = eolian_class_function_by_name_get(class, "no_doc_meth", EOLIAN_METHOD)));
+   fail_if(!(fimp = eolian_function_implement_get(fid)));
+   fail_if((doc = eolian_implement_documentation_get(fimp, EOLIAN_METHOD)));
+
+   fail_if(!(fid = eolian_class_function_by_name_get(class, "doc_with_empty_doc", EOLIAN_METHOD)));
+   fail_if(!(fimp = eolian_function_implement_get(fid)));
+   fail_if(!(doc = eolian_implement_documentation_get(fimp, EOLIAN_METHOD)));
+   fail_if(eolian_documentation_summary_get(doc));
+
    eolian_state_free(eos);
 }
 EFL_END_TEST
