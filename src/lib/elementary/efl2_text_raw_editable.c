@@ -270,7 +270,7 @@ _entry_imf_event_commit_cb(void *data, Ecore_IMF_Context *ctx EINA_UNUSED, void 
    //_anchors_get(efl2_text_raw_editable_main_cursor_get(obj), obj, en);
    if (info)
      {
-         efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CHANGED_USER, info);
+         efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CHANGED_USER_PRE, info);
          #warning EFL_UI_TEXT_EVENT_CHANGED
          //efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED, NULL);
          eina_stringshare_del(info->content);
@@ -471,7 +471,7 @@ _entry_imf_event_delete_surrounding_cb(void *data, Ecore_IMF_Context *ctx EINA_U
    //_anchors_get(efl2_text_raw_editable_main_cursor_get(obj), obj, en);
    //_anchors_update_check(ed, rp);
 
-   efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CHANGED_USER, &info);
+   efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CHANGED_USER_PRE, &info);
    #warning EFL_UI_TEXT_EVENT_CHANGED
    //efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED, NULL);
    efl_event_callback_call(efl2_text_raw_editable_main_cursor_get(obj), EFL2_TEXT_CURSOR_EVENT_CHANGED_USER, NULL);
@@ -731,7 +731,7 @@ _range_del_emit(Eo *obj, Efl2_Text_Cursor *cur1, Efl2_Text_Cursor *cur2)
 
    efl2_text_cursor_range_delete(cur1, cur2);
 
-   efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CHANGED_USER, &info);
+   efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CHANGED_USER_PRE, &info);
    #warning EFL_UI_TEXT_EVENT_CHANGED
    //efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED, NULL);
    if (tmp) free(tmp);
@@ -821,7 +821,7 @@ _delete_emit(Eo *obj, Efl2_Text_Cursor *c, Efl2_Text_Raw_Editable_Data *en EINA_
 
    info.content = eina_stringshare_add(tmp);
    if (tmp) free(tmp);
-   efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CHANGED_USER, &info);
+   efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CHANGED_USER_PRE, &info);
    #warning EFL_UI_TEXT_EVENT_CHANGED
    //efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED, NULL);
    eina_stringshare_del(info.content);
@@ -1299,7 +1299,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
                   #warning ANCHORS
                   //_anchors_get(efl2_text_raw_editable_main_cursor_get(obj), obj, en);
 
-                  efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CHANGED_USER, info);
+                  efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CHANGED_USER_PRE, info);
                   /* FIXME: this is kinda gross */
                   #warning EFL_UI_TEXT_EVENT_CHANGED
                   //efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED, NULL);
@@ -1373,7 +1373,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
                      }
                   #warning ANCHORS
                   //_anchors_get(efl2_text_raw_editable_main_cursor_get(obj), obj, en);
-                  efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CHANGED_USER, info);
+                  efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CHANGED_USER_PRE, info);
                   /* FIXME: this is kinda gross */
                   #warning EFL_UI_TEXT_EVENT_CHANGED
                   //efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED, NULL);
@@ -1490,7 +1490,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
 end:
    if (changed_user)
      {
-        efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CHANGED_USER, info);
+        efl_event_callback_call(obj, EFL2_TEXT_RAW_EDITABLE_EVENT_CHANGED_USER_PRE, info);
         /* FIXME: this is kinda gross */
         #warning EFL_UI_TEXT_EVENT_CHANGED
         //efl_event_callback_call(obj, EFL_UI_TEXT_EVENT_CHANGED, NULL);
