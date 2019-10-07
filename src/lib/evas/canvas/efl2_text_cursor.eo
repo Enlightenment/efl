@@ -247,6 +247,17 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
             handle: ptr(Efl2.Text.Cursor_Handle); [[The handle of the cursor object]]
          }
       }
+
+      @property text_object {
+         [[The text object this cursor is associated with. Should be set on object creation.
+
+           This is a shorter/simpler alternative to $.handle
+         ]]
+         set { }
+         values {
+            text_obj: Efl.Object; [[The text object]]
+         }
+      }
    }
    events {
       // FIXME: Needed for people who cache the position.

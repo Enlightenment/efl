@@ -299,6 +299,12 @@ _efl2_text_cursor_handle_get(const Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *p
 }
 
 EOLIAN static void
+_efl2_text_cursor_text_object_set(Eo *obj, Efl2_Text_Cursor_Data *pd EINA_UNUSED, Efl_Object *text_object)
+{
+   efl2_text_cursor_handle_set(obj, efl2_canvas_text_cursor_handle_new(text_object));
+}
+
+EOLIAN static void
 _efl2_text_cursor_efl_object_destructor(Eo *obj EINA_UNUSED, Efl2_Text_Cursor_Data *pd)
 {
    if (pd->cur)
