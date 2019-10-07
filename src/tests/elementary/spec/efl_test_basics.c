@@ -1,0 +1,126 @@
+#ifdef HAVE_CONFIG_H
+# include "elementary_config.h"
+#endif
+
+#include <Efl_Ui.h>
+#include "efl_ui_spec_suite.h"
+#include "suite_helpers.h"
+
+/* spec-meta-start
+      {"test-interface":"Efl.Ui.Widget",
+       "test-widgets": [
+             "Efl.Ui.Image",
+             "Efl.Ui.Image_Zoomable",
+             "Efl.Ui.Box",
+             "Efl.Ui.Clock",
+             "Efl.Ui.Layout",
+             "Efl.Ui.List_View",
+             "Efl.Ui.Tab_Bar",
+             "Efl.Ui.Tags",
+             "Efl.Ui.Panel",
+             "Efl.Ui.Scroller",
+             "Efl.Ui.Slider",
+             "Efl.Ui.Calendar",
+             "Efl.Ui.Check",
+             "Efl.Ui.Panes",
+             "Efl.Ui.Grid",
+             "Efl.Ui.List",
+             "Efl.Ui.Spin",
+             "Efl.Ui.Spin_Button",
+             "Efl.Ui.Spotlight.Container",
+             "Efl.Ui.Popup",
+             "Efl.Ui.Alert_Popup",
+             "Efl.Ui.Slider_Interval",
+             "Efl.Ui.Frame",
+             "Efl.Ui.Progressbar",
+             "Efl.Ui.Video",
+             "Efl.Ui.Navigation_Layout",
+             "Efl.Ui.Bg",
+             "Efl.Ui.Datepicker",
+             "Efl.Ui.Grid_Default_Item",
+             "Efl.Ui.List_Default_Item",
+             "Efl.Ui.List_Placeholder_Item",
+             "Efl.Ui.Tab_Page",
+             "Efl.Ui.Timepicker",
+             "Efl.Ui.Navigation_Bar",
+             "Efl.Ui.Relative_Layout",
+             "Efl.Ui.Animation_View",
+             "Efl.Ui.Table",
+             "Efl.Ui.Flip"
+             ],
+       "custom-mapping" : {
+          "Efl.Ui.Grid" : "EFL_UI_GRID_DEFAULT_ITEM_CLASS",
+          "Efl.Ui.List" : "EFL_UI_LIST_DEFAULT_ITEM_CLASS",
+          "Efl.Ui.Tab_Bar" : "EFL_UI_TAB_BAR_DEFAULT_ITEM_CLASS"
+        }
+       }
+
+   spec-meta-end */
+
+EFL_START_TEST(no_leaking_canvas_object)
+{
+   Eina_List *not_invalidate = NULL;
+   Eina_Iterator *iter = eo_objects_iterator_new();
+   Eo *obj;
+
+   EINA_ITERATOR_FOREACH(iter, obj)
+     {
+        if (!efl_alive_get(obj)) continue;
+        if (!efl_isa(obj, EFL_CANVAS_OBJECT_CLASS)) continue;
+
+        not_invalidate = eina_list_append(not_invalidate, obj);
+     }
+   eina_iterator_free(iter);
+
+   //now try to will those widgets
+   if (efl_isa(widget, EFL_PACK_LINEAR_INTERFACE))
+     {
+        for (int i = 0; i < 30; ++i)
+          {
+             Efl_Ui_Widget *w = create_test_widget();
+             efl_pack_end(widget, w);
+          }
+     }
+   else if (efl_isa(widget, EFL_CONTENT_INTERFACE))
+     {
+        efl_content_set(widget, create_test_widget());
+     }
+   else if (efl_isa(widget, EFL_TEXT_INTERFACE))
+     {
+        efl_text_set(widget, "Test Things!");
+     }
+   //now reference things, and delete the widget again. This means, the widget will be invalidated.
+   efl_ref(widget);
+   efl_del(widget);
+   ck_assert_int_eq(efl_alive_get(widget), EINA_FALSE);
+   ck_assert_int_eq(efl_ref_count(widget), 1);
+   iter = eo_objects_iterator_new();
+
+   //now check if there are leaked objects from the widget
+   EINA_ITERATOR_FOREACH(iter, obj)
+     {
+        if (!efl_alive_get(obj)) continue;
+        if (!efl_isa(obj, EFL_CANVAS_OBJECT_CLASS)) continue;
+
+        ck_assert_ptr_ne(eina_list_data_find(not_invalidate, obj), NULL);
+     }
+   eina_iterator_free(iter);
+
+   efl_unref(widget);
+}
+EFL_END_TEST
+
+EFL_START_TEST(no_err_on_shutdown)
+{
+   efl_ref(widget);
+   efl_del(widget);
+   efl_unref(widget);
+}
+EFL_END_TEST
+
+void
+efl_ui_widget_behavior_test(TCase *tc)
+{
+   tcase_add_test(tc, no_leaking_canvas_object);
+   tcase_add_test(tc, no_err_on_shutdown);
+}
