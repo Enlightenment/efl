@@ -105,7 +105,7 @@ _storage_lookup(Efl_Boolean_Model_Data *pd,
         lookup->offset = v->last ? v->last->offset + v->last->length + 1 : 0;
         lookup->length = sizeof (lookup->buffer) * 8; // Number of bits in the buffer
         // Initialize the buffer to the right default value
-        if (default_value) memset(&lookup->buffer[0], *default_value, sizeof (&lookup->buffer));
+        if (default_value) memset(&lookup->buffer[0], *default_value, sizeof (lookup->buffer));
 
         v->buffers_root = eina_rbtree_inline_insert(v->buffers_root, EINA_RBTREE_GET(lookup),
                                                     EINA_RBTREE_CMP_NODE_CB(_storage_range_cmp), NULL);
