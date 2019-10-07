@@ -25,7 +25,7 @@ class @beta Eldbus.Model.Arguments extends Eldbus.Model {
     implements {
         Efl.Object.constructor;
         Efl.Object.finalize;
-        Efl.Object.destructor;
+        Efl.Object.invalidate;
         Efl.Model.properties { get; }
         Efl.Model.property { set; get; }
     }
