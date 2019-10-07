@@ -20,8 +20,8 @@
  * evilness is so huge that the most of the functions are not POSIX or
  * BSD compliant.
  *
- * These functions are intended to be used in the Enlightenment
- * Foundation Libraries only and can be compiled only on Windows,
+ * These functions are intended to be used inside the Enlightenment Foundation
+ * Libraries as private library and can be compiled only on Windows,
  * using MSYS/MinGW on Windows, and cross-compilation on Unix. This
  * library is minimal in the sense that only the functions needed to
  * compile the EFL are available. The purpose of this library is NOT
