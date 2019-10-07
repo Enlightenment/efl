@@ -39,6 +39,14 @@ _eldbus_model_arguments_efl_object_constructor(Eo *obj, Eldbus_Model_Arguments_D
    return efl_constructor(efl_super(obj, MY_CLASS));
 }
 
+static void
+_cleanup_proxy_cb(void *data, const void *deadptr)
+{
+   Eldbus_Model_Arguments_Data *pd = data;
+
+   if (pd->proxy == deadptr) pd->proxy = NULL;
+}
+
 static Efl_Object *
 _eldbus_model_arguments_efl_object_finalize(Eo *obj, Eldbus_Model_Arguments_Data *pd)
 {
@@ -46,6 +54,8 @@ _eldbus_model_arguments_efl_object_finalize(Eo *obj, Eldbus_Model_Arguments_Data
    if (!eldbus_model_connection_get(obj))
      eldbus_model_connection_set(obj,
                                  eldbus_object_connection_get(eldbus_proxy_object_get(pd->proxy)));
+
+   eldbus_proxy_free_cb_add(pd->proxy, _cleanup_proxy_cb, pd);
 
    return efl_finalize(efl_super(obj, MY_CLASS));
 }
@@ -73,7 +83,12 @@ _eldbus_model_arguments_efl_object_destructor(Eo *obj, Eldbus_Model_Arguments_Da
    eina_hash_free(pd->properties);
 
    eina_stringshare_del(pd->name);
-   eldbus_proxy_unref(pd->proxy);
+   if (pd->proxy)
+     {
+        eldbus_proxy_free_cb_del(pd->proxy, _cleanup_proxy_cb, pd);
+        eldbus_proxy_unref(pd->proxy);
+        pd->proxy = NULL;
+     }
 
    efl_destructor(efl_super(obj, MY_CLASS));
 }
