@@ -1,15 +1,6 @@
 #fixed dependencies by efl
-png = dependency('libpng')
-tiff = dependency('libtiff-4', required: get_option('evas-loaders-disabler').contains('tiff') == false)
-giflib = cc.find_library('gif')
 json = dependency('rlottie', required: get_option('evas-loaders-disabler').contains('json') == false)
-webp = dependency('libwebp', required: get_option('evas-loaders-disabler').contains('webp') == false)
 
-#there are a few modules that should NEVER be build as a module but rather be build as static lib and linked in later
-evas_static_list = []
-
-subdir('image_loaders')
-subdir('image_savers')
 subdir('model_savers')
 subdir('model_loaders')
 subdir('vg_savers')

@@ -41,7 +41,7 @@ _choices = ['start', 'classes', 'enums', 'structs', 'aliases']
 parser.add_argument('--step', '-s', metavar='STEP', default=None,
                     choices=_choices,
                     help='A single step to run (default to all), '
-                         'valid choices: '+ ', '.join(_choices))
+                         'valid choices: ' + ', '.join(_choices))
 args = parser.parse_args()
 
 
@@ -64,6 +64,8 @@ if not eolian_db.all_eo_files_parse():
 def cleanup_db():
     global eolian_db
     del eolian_db
+
+
 atexit.register(cleanup_db)
 
 
@@ -72,14 +74,14 @@ def page_path_for_object(obj):
     path = ['data', 'pages', 'develop', 'api']
     for ns in obj.namespaces:
         path.append(ns.lower())
-    output_file = obj.short_name.lower() + '.txt'
-    return os.path.join(args.root_path, *path, output_file)
+    output_filename = obj.short_name.lower() + '.txt'
+    return os.path.join(args.root_path, *path, output_filename)
 
 
 # render a (temporary) page for analizying the namespaces hierarchy
 t = Template('namespaces.template')
-nspaces = [ ns for ns in eolian_db.all_namespaces
-            if ns.name.startswith(args.namespace) ]
+nspaces = [ns for ns in eolian_db.all_namespaces
+           if ns.name.startswith(args.namespace)]
 
 tot_classes = tot_regulars = tot_abstracts = tot_mixins = tot_ifaces = 0
 tot_enums = tot_structs = tot_aliases = 0
@@ -113,7 +115,7 @@ totals = [
 
 root_ns = eolian_db.namespace_get_by_name(args.namespace)
 
-output_file = os.path.join(args.root_path,'data','pages','develop','api','namespaces.txt')
+output_file = os.path.join(args.root_path, 'data', 'pages', 'develop', 'api', 'namespaces.txt')
 t.render(output_file, args.verbose, root_ns=root_ns, totals=totals)
 
 
@@ -121,10 +123,10 @@ t.render(output_file, args.verbose, root_ns=root_ns, totals=totals)
 if args.step in ('start', None):
     t = Template('doc_start.template')
 
-    nspaces = [ ns for ns in eolian_db.all_namespaces
-                if ns.name.startswith(args.namespace) ]
+    nspaces = [ns for ns in eolian_db.all_namespaces
+               if ns.name.startswith(args.namespace)]
 
-    output_file = os.path.join(args.root_path,'data','pages','develop','api','start.txt')
+    output_file = os.path.join(args.root_path, 'data', 'pages', 'develop', 'api', 'start.txt')
     t.render(output_file, args.verbose, nspaces=nspaces)
 
 

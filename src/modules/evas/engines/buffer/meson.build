@@ -13,15 +13,11 @@ install_headers('Evas_Engine_Buffer.h',
   install_dir : join_paths(dir_include, 'evas-'+version_major),
 )
 
-if get_option('evas-modules') == 'shared'
-  evas_engine_buffer_mod = shared_module(mod_full_name, engine_src,
-        include_directories : config_dir + [engine_include_dir],
-        dependencies : [eina, evas] + engine_deps,
-        install : true,
-        install_dir : mod_install_dir,
-        name_suffix : sys_mod_extension
-      )
-      module_files += join_paths(mod_install_dir, 'lib'+mod_full_name + '.' + sys_mod_extension)
-else
-  evas_engine_buffer_mod = []
-endif
+evas_engine_buffer_mod = shared_module(mod_full_name, engine_src,
+  include_directories : config_dir + [engine_include_dir],
+  dependencies : [eina, evas] + engine_deps,
+  install : true,
+  install_dir : mod_install_dir,
+  name_suffix : sys_mod_extension
+)
+module_files += join_paths(mod_install_dir, 'lib'+mod_full_name + '.' + sys_mod_extension)

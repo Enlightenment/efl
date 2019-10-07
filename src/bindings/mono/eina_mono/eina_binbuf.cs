@@ -7,7 +7,9 @@ namespace Eina
 {
 
 /// <summary>
-///   A Generic buffer designed to be a mutable string (SINCE EFL 1.23).
+/// A Generic buffer designed to be a mutable string.
+///
+/// Since EFL 1.23.
 /// </summary>
 public class Binbuf : IDisposable
 {

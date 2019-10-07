@@ -688,6 +688,11 @@ EOLIAN static void
 _efl_ui_animation_view_efl_object_destructor(Eo *obj,
                                           Efl_Ui_Animation_View_Data *pd EINA_UNUSED)
 {
+   Efl_Gfx_Vg_Value_Provider *vp;
+   EINA_LIST_FREE(pd->vp_list, vp)
+     efl_unref(vp);
+   eina_list_free(pd->vp_list);
+
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 
@@ -1237,6 +1242,37 @@ _efl_ui_animation_view_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Anima
      efl_canvas_group_change(obj);
 
    return EINA_TRUE;
+
+EOLIAN static void
+_efl_ui_animation_view_value_provider_override(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, Efl_Gfx_Vg_Value_Provider *value_provider)
+{
+   if (!value_provider) return;
+
+   if (pd->vp_list)
+     {
+        const char *keypath1 = efl_gfx_vg_value_provider_keypath_get(value_provider);
+        if (!keypath1)
+          {
+             ERR("Couldn't override Value Provider(%p). Keypath is NULL.", value_provider);
+             return;
+          }
+        const Eina_List *l;
+        Efl_Gfx_Vg_Value_Provider *_vp;
+        EINA_LIST_FOREACH(pd->vp_list, l, _vp)
+          {
+             const char *keypath2 = efl_gfx_vg_value_provider_keypath_get(_vp);
+             if (!strcmp(keypath1, keypath2))
+               {
+                  pd->vp_list = eina_list_remove(pd->vp_list, _vp);
+                  efl_unref(_vp);
+                  break;
+               }
+          }
+     }
+
+   efl_ref(value_provider);
+   pd->vp_list = eina_list_append(pd->vp_list, value_provider);
+   efl_key_data_set(pd->vg, "_vg_value_providers", pd->vp_list);
 }
 
 EAPI Elm_Animation_View*

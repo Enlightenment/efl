@@ -616,6 +616,8 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
         h = size.h;
 
      }
+   if (pd->vg_entry->vfd)
+      pd->vg_entry->vfd->vp_list = efl_key_data_get(obj->object, "_vg_value_providers");
    root = evas_cache_vg_tree_get(vg_entry, pd->frame_idx);
    if (!root) return;
 

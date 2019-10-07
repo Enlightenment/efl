@@ -292,7 +292,7 @@ _efl_ui_bg_legacy_efl_object_constructor(Eo *obj, void *_pd EINA_UNUSED)
    efl_canvas_object_type_set(obj, MY_CLASS_NAME_LEGACY);
    EFL_UI_BG_DATA_GET_OR_RETURN_VAL(obj, pd, obj);
    efl_gfx_entity_scale_set(pd->img, 1.0);
-
+   efl_ui_layout_finger_size_multiplier_set(obj, 0, 0);
    return obj;
 }
 

@@ -50,10 +50,10 @@ _shrink_mode_set(Eo *obj,
    if (shrink == EINA_TRUE)
      {
         Evas_Coord w = 0;
-        double box_inner_item_width_padding = 0;
+        unsigned int box_inner_item_width_padding = 0;
         Eina_Value val;
 
-        efl_gfx_arrangement_content_padding_get(sd->box, &box_inner_item_width_padding, NULL, NULL);
+        efl_gfx_arrangement_content_padding_get(sd->box, &box_inner_item_width_padding, NULL);
         // unpack all items and entry
         efl_pack_unpack_all(sd->box);
         EINA_LIST_FOREACH(sd->layouts, l, layout)
@@ -69,7 +69,7 @@ _shrink_mode_set(Eo *obj,
              Eina_Size2D label_min =
                 efl_gfx_hint_size_combined_min_get(sd->label);
              w -= label_min.w;
-             w -= box_inner_item_width_padding;
+             w -= (Evas_Coord)box_inner_item_width_padding;
           }
 
         layout = NULL;
@@ -487,14 +487,14 @@ _box_resize_cb(void *data,
    Eina_Rect r;
    Eina_List *l;
    Eo *layout;
-   double hpad;
+   unsigned int hpad;
 
    Efl_Ui_Tags_Data *sd = efl_data_scope_get(data, EFL_UI_TAGS_CLASS);
 
    r = efl_gfx_entity_geometry_get(sd->box);
    if ((r.w <= elm_config_finger_size_get()) || (r.h <= elm_config_finger_size_get())) return;
 
-   efl_gfx_arrangement_content_padding_get(obj, &hpad, NULL, NULL);
+   efl_gfx_arrangement_content_padding_get(obj, &hpad, NULL);
 
    if (sd->h_box < r.h)
      efl_event_callback_call
@@ -511,9 +511,9 @@ _box_resize_cb(void *data,
 
              min = efl_gfx_hint_size_combined_min_get(layout);
 
-             if (min.w > r.w - hpad)
+             if (min.w > r.w - (int)hpad)
                {
-                  min.w = r.w - hpad;
+                  min.w = r.w - (int)hpad;
                   efl_gfx_hint_size_min_set(layout, EINA_SIZE2D(min.w, min.h));
                   efl_gfx_entity_size_set(layout, EINA_SIZE2D(min.w, min.h));
                }
@@ -746,7 +746,7 @@ _view_init(Evas_Object *obj, Efl_Ui_Tags_Data *sd)
    if (str) hpad = atoi(str);
    str = elm_layout_data_get(obj, "vertical_pad");
    if (str) vpad = atoi(str);
-   efl_gfx_arrangement_content_padding_set(sd->box, hpad, vpad, EINA_TRUE);
+   efl_gfx_arrangement_content_padding_set(sd->box, hpad, vpad);
 
    efl_content_set(efl_part(obj, "efl.box"), sd->box);
 

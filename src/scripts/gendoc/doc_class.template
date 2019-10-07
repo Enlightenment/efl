@@ -2,6 +2,10 @@
 ~~Title: ${cls.name}$~~
 ====== ${cls.name}$ (${CLS_TYPE}$) ======
 
+<!--(if cls.is_beta)-->
+''beta'' This class is still in beta, api will probably change
+<!--(end)-->
+
 ${BEST_SUMMARY(obj=cls)}$
 
 ${BEST_DESCRIPTION(obj=cls)}$
@@ -57,8 +61,8 @@ ${OBJECT_STATIC_CONTENT(obj=cls, section='description')}$
 
 <!--(for impl in cls.implements)-->
   <!--(if impl.is_property)-->
+{{anchor:${impl.short_name}$}}
 ${IMPLEMENT_FULL(impl=impl, cls=cls)}$
-\\
   <!--(end)-->
 <!--(else)-->
 No properties defined in this class.
@@ -68,8 +72,8 @@ No properties defined in this class.
 
 <!--(for impl in cls.implements)-->
   <!--(if impl.is_method)-->
+{{anchor:${impl.short_name}$}}
 ${IMPLEMENT_FULL(impl=impl, cls=cls)}$
-\\
   <!--(end)-->
 <!--(else)-->
 No methods defined in this class.
@@ -103,4 +107,6 @@ No extensions defined in this class.
     <!--(end)-->
 | ''${ev.name}$'' | ${BEST_SUMMARY(obj=ev)}$ ${OBJECT_SCOPE(obj=ev)}$ ${EVENT_TAGS}$ | ${TYPE_LINK(type=ev.type) if ev.type else 'None'}$ |
   <!--(end)-->
+<!--(else)-->
+No events defined in this class.
 <!--(end)-->

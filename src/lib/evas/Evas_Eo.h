@@ -439,6 +439,7 @@ typedef void (Evas_Canvas3D_Surface_Func)(Evas_Real *out_x,
 #include "canvas/efl_canvas_proxy.eo.h"
 #include "canvas/efl_gfx_mapping.eo.h"
 
+#include "canvas/efl_gfx_vg_value_provider.eo.h"
 /**
  * @ingroup Evas_Object_VG
  *

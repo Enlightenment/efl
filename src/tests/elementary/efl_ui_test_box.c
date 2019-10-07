@@ -504,7 +504,7 @@ EFL_END_TEST
 EFL_START_TEST (efl_ui_box_properties)
 {
    double h, v;
-   Eina_Bool b;
+   unsigned int ph, pv;
 
    //align test
    efl_gfx_arrangement_content_align_get(layout, &h, &v);
@@ -522,22 +522,14 @@ EFL_START_TEST (efl_ui_box_properties)
    ck_assert(EINA_DBL_EQ(v, 1));
 
    //padding test
-   efl_gfx_arrangement_content_padding_get(layout, &h, &v, &b);
-   ck_assert(EINA_DBL_EQ(h, 0.0));
-   ck_assert(EINA_DBL_EQ(v, 0.0));
-   ck_assert_int_eq(b, 0);
+   efl_gfx_arrangement_content_padding_get(layout, &ph, &pv);
+   ck_assert_int_eq(ph, 0.0);
+   ck_assert_int_eq(pv, 0.0);
 
-   efl_gfx_arrangement_content_padding_set(layout, 0.3, 0.8234, 1);
-   efl_gfx_arrangement_content_padding_get(layout, &h, &v, &b);
-   ck_assert(EINA_DBL_EQ(h, 0.3));
-   ck_assert(EINA_DBL_EQ(v, 0.8234));
-   ck_assert_int_eq(b, 1);
-
-   efl_gfx_arrangement_content_padding_set(layout, -1.23, 123, 45);
-   efl_gfx_arrangement_content_padding_get(layout, &h, &v, &b);
-   ck_assert(EINA_DBL_EQ(h, 0));
-   ck_assert(EINA_DBL_EQ(v, 123));
-   ck_assert_int_eq(b, 1);
+   efl_gfx_arrangement_content_padding_set(layout, 3, 8234);
+   efl_gfx_arrangement_content_padding_get(layout, &ph, &pv);
+   ck_assert_int_eq(ph, 3);
+   ck_assert_int_eq(pv, 8234);
 
    //direction test
    ck_assert_int_eq(efl_ui_layout_orientation_get(layout), EFL_UI_LAYOUT_ORIENTATION_VERTICAL);

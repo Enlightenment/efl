@@ -1541,6 +1541,7 @@ struct _Vg_File_Data
    Vg_File_Anim_Data *anim_data;           //only when animation supported.
    int ref;
    int w, h;                               //default size
+   Eina_List         *vp_list;             //Value providers.
 
    void           *loader_data;            //loader specific local data
 

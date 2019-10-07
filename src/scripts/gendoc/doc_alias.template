@@ -2,6 +2,10 @@
 ~~Title: ${alias.name}$~~
 ====== ${alias.name}$ (alias) ======
 
+<!--(if alias.is_beta)-->
+''beta'' This alias is still in beta, api will probably change
+<!--(end)-->
+
 ${BEST_SUMMARY(obj=alias)}$
 
 ${BEST_DESCRIPTION(obj=alias)}$

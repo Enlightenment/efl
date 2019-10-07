@@ -133,7 +133,7 @@ foreach widget_preview : widget_previews
       dependencies: elementary,
       build_by_default: false,
       c_args : [
-        '-DPACKAGE_DATA_DIR="'+meson.current_build_dir()+'"',
+        '-DPACKAGE_DATA_DIR="'+join_paths(meson.source_root(), 'data', 'elementary')+'"',
         '-DTESTS_BUILD_DIR="'+meson.current_build_dir()+'"',
         '-DTESTS_SRC_DIR="'+meson.current_source_dir()+'"',
         '-DDOCW_DIR="'+meson.current_build_dir()+'"']
@@ -182,8 +182,8 @@ doc_target += custom_target('doxygen',
 )
 
 compress_target = custom_target('package_doc_tar',
-  command: [tar, '-C', meson.build_root(), '-cf', 'efl-'+meson.project_version()+'.tar', 'html', 'man'],
-  output: 'efl-'+meson.project_version()+'.tar',
+  command: [tar, '-C', meson.build_root(), '--xz',  '-cf', 'efl-'+meson.project_version()+'-doc.tar.xz', 'html', 'man'],
+  output: 'efl-'+meson.project_version()+'-doc.tar.xz',
   depends: doc_target,
   build_by_default: false
 )

@@ -45,7 +45,10 @@ public static class ArrayNativeFunctions
         eina_array_foreach_custom_export_mono(IntPtr array, IntPtr cb, IntPtr fdata);
 }
 
-/// <summary>A container of contiguous allocated elements (SINCE EFL 1.23).</summary>
+/// <summary>A container of contiguous allocated elements.
+///
+/// Since EFL 1.23.
+/// </summary>
 public class Array<T> : IEnumerable<T>, IDisposable
 {
     public static uint DefaultStep = 32;

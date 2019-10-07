@@ -6,7 +6,10 @@ using System.Runtime.InteropServices;
 namespace Eina
 {
 
-/// <summary>Error codes from native Eina methods. (Since EFL 1.23)</summary>
+/// <summary>Error codes from native Eina methods.
+///
+/// Since EFL 1.23.
+/// </summary>
 public struct Error : IComparable<Error>
 {
     int code;

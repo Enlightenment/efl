@@ -17,49 +17,49 @@ so it can be considered valid for all languages.
       <!--(if i == 0)-->
 ^ Regular Classes ^^
       <!--(end)-->
-| ${CLS_LINK}$ | ${BEST_SUMMARY(obj=cls)}$ |
+| ${CLS_LINK}$ ${OBJ_TAGS(obj=cls)}$ | ${BEST_SUMMARY(obj=cls)}$ |
    <!--(end)-->
 #!
    <!--(for i, cls in enumerate(sorted(ns.abstracts)))-->
       <!--(if i == 0)-->
 ^ Abstract Classes ^^
       <!--(end)-->
-| ${CLS_LINK}$ | ${BEST_SUMMARY(obj=cls)}$ |
+| ${CLS_LINK}$ ${OBJ_TAGS(obj=cls)}$ | ${BEST_SUMMARY(obj=cls)}$ |
    <!--(end)-->
 #!
    <!--(for i, cls in enumerate(sorted(ns.mixins)))-->
       <!--(if i == 0)-->
 ^ Mixins ^^
       <!--(end)-->
-| ${CLS_LINK}$ | ${BEST_SUMMARY(obj=cls)}$ |
+| ${CLS_LINK}$ ${OBJ_TAGS(obj=cls)}$ | ${BEST_SUMMARY(obj=cls)}$ |
    <!--(end)-->
 #!
    <!--(for i, cls in enumerate(sorted(ns.interfaces)))-->
       <!--(if i == 0)-->
 ^ Interfaces ^^
       <!--(end)-->
-| ${CLS_LINK}$ | ${BEST_SUMMARY(obj=cls)}$ |
+| ${CLS_LINK}$ ${OBJ_TAGS(obj=cls)}$ | ${BEST_SUMMARY(obj=cls)}$ |
    <!--(end)-->
 #!
    <!--(for i, typedecl in enumerate(sorted(ns.aliases)))-->
       <!--(if i == 0)-->
 ^ Aliases ^^
       <!--(end)-->
-| ${TYPEDECL_LINK}$ | ${BEST_SUMMARY(obj=typedecl)}$ |
+| ${TYPEDECL_LINK}$ ${OBJ_TAGS(obj=typedecl)}$ | ${BEST_SUMMARY(obj=typedecl)}$ |
    <!--(end)-->
 #!
    <!--(for i, typedecl in enumerate(sorted(ns.structs)))-->
       <!--(if i == 0)-->
 ^ Structures ^^
       <!--(end)-->
-| ${TYPEDECL_LINK}$ | ${BEST_SUMMARY(obj=typedecl)}$ |
+| ${TYPEDECL_LINK}$ ${OBJ_TAGS(obj=typedecl)}$ | ${BEST_SUMMARY(obj=typedecl)}$ |
    <!--(end)-->
 #!
    <!--(for i, typedecl in enumerate(sorted(ns.enums)))-->
       <!--(if i == 0)-->
 ^ Enumerations ^^
       <!--(end)-->
-| ${TYPEDECL_LINK}$ | ${BEST_SUMMARY(obj=typedecl)}$ |
+| ${TYPEDECL_LINK}$ ${OBJ_TAGS(obj=typedecl)}$ | ${BEST_SUMMARY(obj=typedecl)}$ |
    <!--(end)-->
 
 <!--(end)-->

@@ -106,7 +106,10 @@ public static class ListNativeFunctions
         eina_list_last_data_get_custom_export_mono(IntPtr list);
 }
 
-/// <summary>Native wrapper around a linked list of items. (Since EFL 1.23)</summary>
+/// <summary>Native wrapper around a linked list of items.
+///
+/// Since EFL 1.23.
+/// </summary>
 public class List<T> : IEnumerable<T>, IDisposable
 {
 

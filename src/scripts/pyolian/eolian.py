@@ -37,6 +37,25 @@ _already_halted = False
 
 
 #  Eolian Enums  ##############################################################
+class Eolian_Object_Type(IntEnum):
+    UNKNOWN = 0
+    CLASS = 1
+    TYPEDECL = 2
+    STRUCT_FIELD = 3
+    ENUM_FIELD = 4
+    TYPE = 5
+    CONSTANT = 6
+    EXPRESSION = 7
+    FUNCTION = 8
+    FUNCTION_PARAMETER = 9
+    EVENT = 10
+    PART = 11
+    IMPLEMENT = 12
+    CONSTRUCTOR = 13
+    DOCUMENTATION = 14
+    ERROR = 15
+
+
 class Eolian_Function_Type(IntEnum):
     UNRESOLVED = 0
     PROPERTY = 1
@@ -782,7 +801,7 @@ class Constructor(Object):
 
 class Event(Object):
     def __repr__(self):
-        return "<eolian.Event '{0.name}', c_name='{0.c_name}'>".format(self)
+        return "<eolian.Event '{0.name}', c_macro='{0.c_macro}'>".format(self)
 
     @cached_property
     def c_macro(self):
@@ -1154,7 +1173,7 @@ class Typedecl(Object):
 
 class Enum_Type_Field(Object):
     def __repr__(self):
-        return "<eolian.Enum_Type_Field '{0.name}', c_name='{0.c_name}'>".format(self)
+        return "<eolian.Enum_Type_Field '{0.name}', c_constant='{0.c_constant}'>".format(self)
 
     @cached_property
     def c_constant(self):
@@ -1262,7 +1281,7 @@ class _Eolian_Doc_Token_Struct(ctypes.Structure):
                 ("text_end", c_char_p)]
 
 
-class Documentation(Object):  # OK (1 TODO Unit*)
+class Documentation(Object):
     def __repr__(self):
         t = self.summary if len(self.summary) < 40 else self.summary[:40] + '...'
         return "<eolian.Documentation summary='{}'>".format(t)
@@ -1293,8 +1312,7 @@ class Documentation(Object):  # OK (1 TODO Unit*)
         """ return a list of paragraphs, each one is a list of tokens """
         return self._tokenize(self.description)
 
-    @classmethod
-    def _tokenize(cls, full_text):
+    def _tokenize(self, full_text):
         paragraphs = []
         if not full_text:
             return paragraphs
@@ -1309,8 +1327,10 @@ class Documentation(Object):  # OK (1 TODO Unit*)
             while next_chunk:
                 typ = lib.eolian_doc_token_type_get(byref(tok))
                 txt = lib.eolian_doc_token_text_get(byref(tok))
-                #  ref =  # TODO ... Stupido parametro '*unit'  :(
-                tokens.append(Documentation_Token(typ, txt))
+                ref_obj = c_void_p(0)
+                ref_attr = c_void_p(0)
+                ref_type = lib.eolian_doc_token_ref_resolve(byref(tok), self.unit.state, byref(ref_obj), byref(ref_attr))
+                tokens.append(Documentation_Token(typ, txt, ref_type, ref_obj, ref_attr))
                 lib.free(c_void_p(txt))
                 next_chunk = lib.eolian_documentation_tokenize(c_char_p(next_chunk), byref(tok))
             paragraphs.append(tokens)
@@ -1319,10 +1339,12 @@ class Documentation(Object):  # OK (1 TODO Unit*)
 
 
 class Documentation_Token(object):
-    def __init__(self, c_token_type, c_text):
+    def __init__(self, c_token_type, c_text, c_ref_type, c_ref_obj, c_ref_attr):
         self._type = Eolian_Doc_Token_Type(c_token_type)
         self._text = _str_to_py(c_text)
-        self._ref = None  # TODO
+        self._ref_type = Eolian_Object_Type(c_ref_type)
+        self._ref_obj = Object(c_ref_obj) if c_ref_obj else None
+        self._ref_attr = Object(c_ref_attr) if c_ref_attr else None
 
     def __repr__(self):
         t = self.text if len(self.text) < 40 else self.text[:40] + '...'
@@ -1338,8 +1360,16 @@ class Documentation_Token(object):
         return self._text
 
     @property
-    def ref(self):
-        return self._ref
+    def ref_type(self):
+        return self._ref_type
+
+    @property
+    def ref_obj(self):
+        return self._ref_obj
+
+    @property
+    def ref_attr(self):
+        return self._ref_attr
 
 
 class Error(Object):
@@ -1382,42 +1412,23 @@ def _str_to_py(s):
 
 #  internal Object type -> Class mapping  #####################################
 
-class _Eolian_Object_Type(IntEnum):
-    UNKNOWN = 0
-    CLASS = 1
-    TYPEDECL = 2
-    STRUCT_FIELD = 3
-    ENUM_FIELD = 4
-    TYPE = 5
-    CONSTANT = 6
-    EXPRESSION = 7
-    FUNCTION = 8
-    FUNCTION_PARAMETER = 9
-    EVENT = 10
-    PART = 11
-    IMPLEMENT = 12
-    CONSTRUCTOR = 13
-    DOCUMENTATION = 14
-    ERROR = 15
-
-
 _eolian_type_class_mapping = {
-    _Eolian_Object_Type.UNKNOWN: Object,
-    _Eolian_Object_Type.CLASS: Class,
-    _Eolian_Object_Type.TYPEDECL: Typedecl,
-    _Eolian_Object_Type.STRUCT_FIELD: Struct_Type_Field,
-    _Eolian_Object_Type.ENUM_FIELD: Enum_Type_Field,
-    _Eolian_Object_Type.TYPE: Type,
-    _Eolian_Object_Type.CONSTANT: Constant,
-    _Eolian_Object_Type.EXPRESSION: Expression,
-    _Eolian_Object_Type.FUNCTION: Function,
-    _Eolian_Object_Type.FUNCTION_PARAMETER: Function_Parameter,
-    _Eolian_Object_Type.EVENT: Event,
-    _Eolian_Object_Type.PART: Part,
-    _Eolian_Object_Type.IMPLEMENT: Implement,
-    _Eolian_Object_Type.CONSTRUCTOR: Constructor,
-    _Eolian_Object_Type.DOCUMENTATION: Documentation,
-    _Eolian_Object_Type.ERROR: Error,
+    Eolian_Object_Type.UNKNOWN: Object,
+    Eolian_Object_Type.CLASS: Class,
+    Eolian_Object_Type.TYPEDECL: Typedecl,
+    Eolian_Object_Type.STRUCT_FIELD: Struct_Type_Field,
+    Eolian_Object_Type.ENUM_FIELD: Enum_Type_Field,
+    Eolian_Object_Type.TYPE: Type,
+    Eolian_Object_Type.CONSTANT: Constant,
+    Eolian_Object_Type.EXPRESSION: Expression,
+    Eolian_Object_Type.FUNCTION: Function,
+    Eolian_Object_Type.FUNCTION_PARAMETER: Function_Parameter,
+    Eolian_Object_Type.EVENT: Event,
+    Eolian_Object_Type.PART: Part,
+    Eolian_Object_Type.IMPLEMENT: Implement,
+    Eolian_Object_Type.CONSTRUCTOR: Constructor,
+    Eolian_Object_Type.DOCUMENTATION: Documentation,
+    Eolian_Object_Type.ERROR: Error,
 }
 
 

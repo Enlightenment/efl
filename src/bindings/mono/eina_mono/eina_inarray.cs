@@ -67,7 +67,10 @@ public static class InarrayNativeFunctions
         eina_inarray_accessor_new(IntPtr array);
 }
 
-/// <summary>Wrapper around an inplace array. (Since EFL 1.23)</summary>
+/// <summary>Wrapper around an inplace array.
+///
+/// Since EFL 1.23.
+/// </summary>
 public class Inarray<T> : IEnumerable<T>, IDisposable
 {
     public static uint DefaultStep = 0;

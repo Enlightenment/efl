@@ -62,28 +62,6 @@ foreach engine_conf : engines
 
     subdir(engine)
 
-    if get_option('evas-modules') == 'static'
-      tmp = static_library(mod_full_name, engine_src,
-        include_directories : config_dir + [engine_include_dir],
-        dependencies : [eina, evas_pre] + engine_deps,
-      )
-      evas_static_list += declare_dependency(
-        include_directories: [include_directories('.')] + config_dir + [engine_include_dir],
-        link_with: tmp,
-        dependencies : [eina, evas_pre] + engine_deps,
-        sources : engine_src
-      )
-      if engine == 'gl_generic'
-        #special case, see evas_module.c
-        config_h.set('EVAS_STATIC_BUILD_GL_COMMON', '1')
-      else
-        config_h.set('EVAS_STATIC_BUILD_'+engine.to_upper(), '1')
-      endif
-    else
-      #nothing here shared building is handled directly on the engine configuration side
-      #reason for this is that the .so files have to be placed in the correct directory in order
-      # to make them discoverable by evas module code
-    endif
     config_h.set('BUILD_ENGINE_'+engine.to_upper(), '1')
   endif
 endforeach

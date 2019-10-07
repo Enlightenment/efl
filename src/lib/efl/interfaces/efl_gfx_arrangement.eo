@@ -40,9 +40,8 @@ interface @beta Efl.Gfx.Arrangement
          set {}
          get {}
          values {
-            pad_horiz: double(0.0); [[Horizontal padding.]]
-            pad_vert:  double(0.0); [[Vertical padding.]]
-            scalable:  bool(false); [[$true if scalable.]]
+            pad_horiz: uint(0u); [[Horizontal padding.]]
+            pad_vert:  uint(0u); [[Vertical padding.]]
          }
       }
    }

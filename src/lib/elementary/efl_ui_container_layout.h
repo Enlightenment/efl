@@ -30,8 +30,7 @@ struct _Efl_Ui_Container_Layout_Calc
    int size;
    int margin[2];
    double align;
-   double scale;
-   double pad;
+   unsigned int pad;
    Eina_Bool fill : 1;
 };
 

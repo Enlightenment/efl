@@ -81,6 +81,7 @@ extern "C" {
 #include <canvas/efl_canvas_vg_image.eo.h>
 #include <canvas/efl_canvas_vg_object.eo.h>
 #include <canvas/efl_canvas_vg_shape.eo.h>
+#include <canvas/efl_gfx_vg_value_provider.eo.h>
 #include <canvas/efl_gfx_mapping.eo.h>
 
 #include <canvas/efl_input_clickable.eo.h>

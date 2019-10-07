@@ -25,7 +25,7 @@ if [ "$DISTRO" != "" ] ; then
   DISABLED_LINUX_COPTS=" -Daudio=false -Davahi=false -Dx11=false -Dphysics=false -Deeze=false \
   -Dopengl=none -Deina-magic-debug=false -Dbuild-examples=false -Dbuild-tests=false \
   -Dcrypto=gnutls -Dglib=false -Dgstreamer=false -Dsystemd=false -Dpulseaudio=false \
-  -Dnetwork-backend=connman -Dxinput2=false -Dtslib=false -Devas-modules=static \
+  -Dnetwork-backend=connman -Dxinput2=false -Dtslib=false \
   -Devas-loaders-disabler=gst,pdf,ps,raw,svg,xcf,bmp,dds,eet,generic,gif,ico,jp2k,json,pmaps,psd,tga,tgv,tiff,wbmp,webp,xpm \
   -Decore-imf-loaders-disabler=xim,ibus,scim  -Demotion-loaders-disabler=gstreamer,gstreamer1,libvlc,xine \
   -Demotion-generic-loaders-disabler=vlc -Dfribidi=false -Dfontconfig=false \
@@ -37,7 +37,7 @@ if [ "$DISTRO" != "" ] ; then
 
   MINGW_COPTS="--cross-file .ci/cross_toolchain.txt -Davahi=false -Deeze=false -Dsystemd=false \
   -Dpulseaudio=false -Dx11=false -Dopengl=none -Dlibmount=false \
-  -Devas-loaders-disabler=json,pdf,ps,raw,svg,rsvg -Devas-modules=static -Dbindings=luajit \
+  -Devas-loaders-disabler=json,pdf,ps,raw,svg,rsvg -Dbindings=luajit \
   -Dharfbuzz=true -Dpixman=true -Dembedded-lz4=false "
 
   if [ "$1" = "options-enabled" ]; then

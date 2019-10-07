@@ -19,8 +19,7 @@ struct _Efl_Ui_Box_Data
    Eina_List *children;
 
    struct {
-      double h, v;
-      Eina_Bool scalable: 1;
+      unsigned int h, v;
    } pad;
 
    struct {

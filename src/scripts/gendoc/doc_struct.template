@@ -2,6 +2,10 @@
 ~~Title: ${struct.name}$~~
 ====== ${struct.name}$ (struct) ======
 
+<!--(if struct.is_beta)-->
+''beta'' This struct is still in beta, api will probably change
+<!--(end)-->
+
 ${BEST_SUMMARY(obj=struct)}$
 
 ${BEST_DESCRIPTION(obj=struct)}$

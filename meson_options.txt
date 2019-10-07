@@ -192,13 +192,6 @@ option('unmount-path',
   description : 'Path to the unmount binary, if "detect" internal eeze bins are used'
 )
 
-option('evas-modules',
-  type : 'combo',
-  choices : ['shared', 'static'],
-  value : 'shared',
-  description : 'Should modules be shared or statically inlined'
-)
-
 option('evas-loaders-disabler',
   type : 'array',
   description : 'List of modular image loaders to disable in efl',

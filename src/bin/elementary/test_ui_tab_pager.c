@@ -200,7 +200,7 @@ _current_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                  efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
-                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
+                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10),
                  elm_naviframe_item_push(navi, "Current", btn, NULL, efl_added, NULL));
 
    sp = efl_add(EFL_UI_SPIN_BUTTON_CLASS, box,
@@ -301,7 +301,7 @@ _pack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                  efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
-                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
+                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10),
                  elm_naviframe_item_push(navi, "Pack", btn, NULL, efl_added, NULL));
 
    /* Pack Begin */
@@ -329,7 +329,7 @@ _pack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                  efl_pack_end(box, efl_added));
 
    in_box = efl_add(EFL_UI_BOX_CLASS, box,
-                    efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
+                    efl_gfx_arrangement_content_padding_set(efl_added, 10, 10),
                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                     efl_pack_end(box, efl_added));
 
@@ -406,7 +406,7 @@ _unpack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                  efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
-                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
+                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10),
                  elm_naviframe_item_push(navi, "Unpack", btn, NULL, efl_added, NULL));
 
    /* Clear */
@@ -430,7 +430,7 @@ _unpack_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                  efl_pack_end(box, efl_added));
 
    in_box = efl_add(EFL_UI_BOX_CLASS, box,
-                    efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
+                    efl_gfx_arrangement_content_padding_set(efl_added, 10, 10),
                     efl_ui_layout_orientation_set(efl_added, EFL_UI_LAYOUT_ORIENTATION_HORIZONTAL),
                     efl_pack_end(box, efl_added));
 
@@ -500,7 +500,7 @@ _tab_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                  efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
-                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
+                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10),
                  elm_naviframe_item_push(navi, "Tab", btn, NULL, efl_added, NULL));
 
    label_check = efl_add(EFL_UI_CHECK_CLASS, box);
@@ -560,7 +560,7 @@ _transition_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info)
                  efl_event_callback_add(efl_added, EFL_INPUT_EVENT_CLICKED, _btn_cb, navi));
 
    box = efl_add(EFL_UI_BOX_CLASS, navi,
-                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10, EINA_TRUE),
+                 efl_gfx_arrangement_content_padding_set(efl_added, 10, 10),
                  elm_naviframe_item_push(navi, "Transition", btn, NULL, efl_added, NULL));
 
    btn = efl_add(EFL_UI_BUTTON_CLASS, box,

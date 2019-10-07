@@ -6,6 +6,11 @@ using System.Runtime.InteropServices;
 namespace Eina
 {
 
+/// <summary>
+/// Manage the initialization and cleanup for eina.
+///
+/// Since EFL 1.23.
+/// </summary>
 public class Config
 {
     [DllImport(efl.Libs.Eina)] private static extern int eina_init();
@@ -27,8 +32,9 @@ public class Config
 }
 
 /// <summary>
-/// Wrapper class for pointers that need some cleanup afterwards
-/// like strings.
+/// Wrapper class for pointers that need some cleanup afterwards like strings
+///
+/// Since EFL 1.23.
 /// </summary>
 public class DisposableIntPtr : IDisposable
 {
