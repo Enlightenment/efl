@@ -532,6 +532,10 @@ class Namespace(object):
         return hash(self._name)
 
     @property
+    def unit(self):
+        return self._unit
+
+    @property
     def name(self):
         return self._name
 
