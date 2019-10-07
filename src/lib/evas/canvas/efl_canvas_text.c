@@ -8781,6 +8781,9 @@ _canvas_text_cursor_position_set(Efl2_Text_Cursor_Handle *cur, int _pos)
         cur->node = last_n;
         cur->pos = pos;
      }
+
+   // FIXME: only emit if actually changed
+   if (cur->cur_obj) efl_event_callback_call(cur->cur_obj, EFL2_TEXT_CURSOR_EVENT_CHANGED, NULL);
 }
 
 Eina_Bool
