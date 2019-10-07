@@ -98,7 +98,7 @@ No extensions defined in this class.
   <!--(if i == 0)-->
 ^ Local implemented ^^ event info ^
   <!--(end)-->
-| ''${ev.name}$'' | ${BEST_SUMMARY(obj=ev)}$ ${OBJECT_SCOPE(obj=ev)}$ ${EVENT_TAGS}$| ${TYPE_LINK(type=ev.type) if ev.type else 'None'}$ |
+| {{anchor:event_${ev.short_name.lower().replace(',','_')}$}}''${ev.name}$'' | ${BEST_SUMMARY(obj=ev)}$ ${OBJECT_SCOPE(obj=ev)}$ ${EVENT_TAGS}$| ${TYPE_LINK(type=ev.type) if ev.type else 'None'}$ |
 <!--(end)-->
 <!--(for cls2 in cls.inherits_full)-->
   <!--(for i, ev in enumerate(cls2.events))-->

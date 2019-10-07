@@ -66,8 +66,10 @@ ${CLS_LINK(cls=token.ref_obj)}$.${FUNC_LINK(func=token.ref_attr)}$#!
 ${TYPEDECL_LINK(typedecl=token.ref_obj)}$#!
             <!--(elif token.ref_type == Eolian_Object_Type.CLASS)-->
 ${CLS_LINK(cls=token.ref_obj)}$#!
+            <!--(elif token.ref_type == Eolian_Object_Type.EVENT)-->
+${EVENT_LINK(cls=token.ref_obj, ev=token.ref_attr)}$#!
             <!--(else)-->
-**TODO REF ${token.ref_type}$**$#!
+**TODO REF ${token.ref_type}$** #!
             <!--(end)-->
          <!--(elif token.type == Eolian_Doc_Token_Type.MARKUP_MONOSPACE)-->
 ''${token.text}$''#!
@@ -121,13 +123,12 @@ interface#!
 #!####  EVENT_LINK(cls, ev)  ###################################################
 #!##############################################################################
 <!--(macro EVENT_LINK)-->
-[[:develop:api#!
+''[[:develop:api#!
    <!--(for n in cls.namespaces)-->
 :${n.lower()}$#!
    <!--(end)-->
 :${cls.short_name.lower()}$#!
-:event#!
-:${ev.short_name.lower().replace(',','_')}$|${ev.name}$]]
+#event_${ev.short_name.lower().replace(',','_')}$|${ev.name}$]]''
 <!--(end)-->
 #!##############################################################################
 #!####  TYPEDECL_LINK(typedecl)  ###############################################
