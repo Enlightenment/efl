@@ -99,7 +99,6 @@ interface Efl.Gfx.Hint
             ]]
          }
          get {
-            [[Get the "intrinsic" maximum size of this object.]]
          }
          values {
             sz: Eina.Size2D; [[Maximum size (hint) in pixels.]]

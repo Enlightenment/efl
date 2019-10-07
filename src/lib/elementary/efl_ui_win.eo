@@ -418,7 +418,6 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
            Note: Once set, it cannot be modified afterwards.
          ]]
          set {
-            [[Name can only be set before finalize.]]
          }
          get {
          }
@@ -435,12 +434,12 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
            creation time, before finalize. In C this means inside $efl_add().
 
            Note: Once set, it cannot be modified afterward.
+
+           If the object is not window object, returns @Efl.Ui.Win_Type.unknown.
          ]]
          set {
-            [[Type can on be set before finalize.]]
          }
          get {
-            [[If the object is not window object, returns $unknown.]]
          }
          values {
             type: Efl.Ui.Win_Type(Efl.Ui.Win_Type.basic); [[Window type]]
@@ -495,8 +494,6 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
          set {
          }
          get {
-            [[This will return the value of "accel_preference" when the window
-              was created.]]
          }
       }
       @property alpha {
@@ -741,20 +738,14 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
          }
       }
       @property focus_highlight_enabled {
-         [[Whether focus highlight is enabled or not.
+         [[Whether focus highlight is enabled or not on this window, regardless of the global setting.
 
            See also @.focus_highlight_style.
            See also @.focus_highlight_animate.
          ]]
          set {
-            [[Set the enabled status for the focus highlight in a window.
-
-              This function will enable or disable the focus highlight,
-              regardless of the global setting for it.
-            ]]
          }
          get {
-            [[Get the enabled value of the focus highlight for this window.]]
          }
          values {
             enabled: bool; [[The enabled value for the highlight.]]
@@ -785,14 +776,8 @@ class Efl.Ui.Win extends Efl.Ui.Widget implements Efl.Canvas.Scene, Efl.Access.W
            See also @.focus_highlight_enabled.
          ]]
          set {
-            [[Set the animate status for the focus highlight for this window.
-
-              This function will enable or disable the animation of focus
-              highlight.
-            ]]
          }
          get {
-            [[Get the animate value of the focus highlight for this window.]]
          }
          values {
             animate: bool; [[The enabled value for the highlight animation.]]
