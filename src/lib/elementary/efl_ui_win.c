@@ -5955,6 +5955,7 @@ _efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *pd)
    pd->obj = obj;
    pd->provider = efl_add_ref(EFL_UI_FOCUS_PARENT_PROVIDER_STANDARD_CLASS, NULL);
    pd->profile.available = eina_array_new(4);
+   pd->max_w = pd->max_h = -1;
 
    // For bindings: if no parent, allow simple unref
    if (!efl_parent_get(obj))
