@@ -3715,9 +3715,9 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
      wx = wy = 1;
 
    if (!wx) maxw = minw;
-   else if (maxw < 1) maxw = 32767;
+   if (maxw < 1) maxw = 32767;
    if (!wy) maxh = minh;
-   else if (maxh < 1) maxh = 32767;
+   if (maxh < 1) maxh = 32767;
    if (maxw < minw) maxw = minw;
    if (maxh < minh) maxh = minh;
    if (maxw > 32767) maxw = 32767;
