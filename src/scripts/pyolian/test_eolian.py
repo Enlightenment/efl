@@ -23,6 +23,13 @@ SCAN_FOLDER = os.path.join(root_path, 'src', 'lib')
 eolian_db = None
 
 
+class TestEolian(unittest.TestCase):
+    def test_file_format(self):
+        v = eolian.file_format_version
+        self.assertIsInstance(v, int)
+        self.assertGreaterEqual(v, 1)
+
+
 class TestBaseObject(unittest.TestCase):
     def test_base_object_equality(self):
         cls1 = eolian_db.class_by_name_get('Efl.Loop_Timer')
@@ -85,17 +92,24 @@ class TestEolianState(unittest.TestCase):
             count += 1
         self.assertGreater(count, 1)
 
+    @unittest.skip('Should this return True?')
+    def test_integrity(self):
+        self.assertTrue(eolian_db.state_check())
+
 
 class TestEolianUnit(unittest.TestCase):
     def test_unit_get(self):
         unit = eolian_db.unit_by_file_get('efl_ui_win.eo')
         self.assertIsInstance(unit.state, eolian.Eolian_State)
         self.assertEqual(unit.state, eolian_db)
+        self.assertIsInstance(unit.version, int)
+        self.assertGreaterEqual(unit.version, 1)
 
     def test_file_get(self):
         unit = eolian_db.unit_by_file_get('efl_ui_win.eo')
         self.assertIsInstance(unit, eolian.Eolian_Unit)
         self.assertEqual(unit.file, 'efl_ui_win.eo')
+        self.assertTrue(unit.file_path.endswith('efl_ui_win.eo'))  # full path can change
 
     @unittest.skip('Skipped until unit/state support is fixed')
     def test_children_listing(self):
@@ -299,6 +313,7 @@ class TestEolianObject(unittest.TestCase):
     def test_name(self):
         obj = eolian_db.object_by_name_get('Efl.Ui.Frame')
         self.assertEqual(obj.name, 'Efl.Ui.Frame')
+        self.assertEqual(obj.c_name, 'Efl_Ui_Frame')
 
     def test_short_name(self):
         obj = eolian_db.object_by_name_get('Efl.Ui.Frame')
@@ -387,6 +402,8 @@ class TestEolianFunction(unittest.TestCase):
         self.assertIsNone(p.default_value)
         self.assertFalse(p.is_optional)
         self.assertEqual(p.type.name, 'double')
+        self.assertEqual(p.c_type_get(False), 'double')
+        self.assertEqual(p.c_type_get(True), 'double')
         self.assertIsInstance(p.documentation, eolian.Documentation)
 
 
@@ -399,6 +416,8 @@ class TestEolianImplement(unittest.TestCase):
         self.assertEqual(im.name, 'Efl.Loop_Timer.timer_delay')
         self.assertIsInstance(im.class_, eolian.Class)
         self.assertIsInstance(im.function, eolian.Function)
+        self.assertIsInstance(im.implementing_class, eolian.Class)
+        self.assertEqual(im.implementing_class.name, 'Efl.Loop_Timer')
         self.assertIsInstance(im.documentation_get(), eolian.Documentation)  # TODO is UNRESOLVED correct ?
         self.assertFalse(im.is_auto())
         self.assertFalse(im.is_empty())
@@ -431,6 +450,7 @@ class TestEolianEvent(unittest.TestCase):
         self.assertFalse(ev.is_beta)
         self.assertFalse(ev.is_hot)
         self.assertFalse(ev.is_restart)
+        self.assertEqual(ev.class_.name, cls.name)
 
 
 class TestEolianPart(unittest.TestCase):

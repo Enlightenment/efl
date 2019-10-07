@@ -36,6 +36,10 @@ except ImportError:
 _already_halted = False
 
 
+# This is the same as the EOLIAN_FILE_FORMAT_VERSION macro
+file_format_version = lib.eolian_file_format_version_get()
+
+
 #  Eolian Enums  ##############################################################
 class Eolian_Object_Type(IntEnum):
     UNKNOWN = 0
@@ -353,9 +357,17 @@ class Eolian_Unit(EolianBaseObject):
         return _str_to_py(lib.eolian_unit_file_get(self))
 
     @cached_property
+    def file_path(self):
+        return _str_to_py(lib.eolian_unit_file_path_get(self))
+
+    @cached_property
     def state(self):
         c_state = lib.eolian_unit_state_get(self)
         return Eolian_State(c_state) if c_state else None
+
+    @cached_property
+    def version(self):
+        return lib.eolian_unit_version_get(self)
 
     @property
     def objects(self):
@@ -504,6 +516,9 @@ class Eolian_State(Eolian_Unit):
         return Iterator(Typedecl,
                         lib.eolian_state_enums_by_file_get(self, _str_to_bytes(file_name)))
 
+    def state_check(self):
+        return bool(lib.eolian_state_check(self))
+
 
 #  Namespace Utility Class  ###################################################
 
@@ -615,6 +630,10 @@ class Object(EolianBaseObject):
     @cached_property
     def name(self):
         return _str_to_py(lib.eolian_object_name_get(self))
+
+    @cached_property
+    def c_name(self):
+        return _str_to_py(lib.eolian_object_c_name_get(self))
 
     @cached_property
     def short_name(self):
@@ -820,6 +839,11 @@ class Event(Object):
         return Type(c_type) if c_type else None
 
     @cached_property
+    def class_(self):
+        c_cls = lib.eolian_event_class_get(self)
+        return Class(c_cls) if c_cls else None
+
+    @cached_property
     def documentation(self):
         c_doc = lib.eolian_event_documentation_get(self)
         return Documentation(c_doc) if c_doc else None
@@ -935,6 +959,12 @@ class Function(Object):
         c_type = lib.eolian_function_return_type_get(self, ftype)
         return Type(c_type) if c_type else None
 
+    def return_c_type_get(self, ftype):
+        s = lib.eolian_function_return_c_type_get(self, ftype)
+        ret = _str_to_py(s)
+        lib.eina_stringshare_del(c_void_p(s))
+        return ret
+
     def return_default_value(self, ftype):
         c_expr = lib.eolian_function_return_default_value_get(self._obj, ftype)
         return Expression(c_expr) if c_expr else None
@@ -1006,6 +1036,12 @@ class Function_Parameter(Object):
         c_expr = lib.eolian_parameter_default_value_get(self)
         return Expression(c_expr) if c_expr else None
 
+    def c_type_get(self, as_return=False):
+        s = lib.eolian_parameter_c_type_get(self, as_return)
+        ret = _str_to_py(s)
+        lib.eina_stringshare_del(c_void_p(s))
+        return ret
+
 
 class Implement(Object):
     def __repr__(self):
@@ -1019,6 +1055,11 @@ class Implement(Object):
     @cached_property
     def class_(self):
         c_cls = lib.eolian_implement_class_get(self)
+        return Class(c_cls) if c_cls else None
+
+    @cached_property
+    def implementing_class(self):
+        c_cls = lib.eolian_implement_implementing_class_get(self)
         return Class(c_cls) if c_cls else None
 
     @cached_property
