@@ -407,6 +407,14 @@ class TestEolianImplement(unittest.TestCase):
         self.assertFalse(im.is_prop_get)
         self.assertFalse(im.is_property)
         self.assertTrue(im.is_method)
+        self.assertIsNone(im.parent)
+
+    def test_implement_parent(self):
+        cls = eolian_db.class_by_name_get('Efl.Ui.Button')
+        im = [im for im in cls.implements if im.short_name == 'content_unset'][0]
+        self.assertIsInstance(im, eolian.Implement)
+        self.assertEqual(im.name, 'Efl.Content.content_unset')  # TODO is this right??
+        self.assertEqual(im.parent.name, 'Efl.Content.content_unset')
 
 
 class TestEolianEvent(unittest.TestCase):

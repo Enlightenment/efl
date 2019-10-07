@@ -706,3 +706,17 @@ lib.eolian_error_documentation_get.restype = c_void_p
 # EAPI Eina_Bool eolian_error_is_extern(const Eolian_Error *err);
 lib.eolian_error_is_extern.argtypes = (c_void_p,)
 lib.eolian_error_is_extern.restype = c_bool
+
+
+#  Eolian Aux  ################################################################
+# EAPI const Eolian_Implement *eolian_aux_implement_parent_get(const Eolian_Implement *impl);
+lib.eolian_aux_implement_parent_get.argtypes = (c_void_p,)
+lib.eolian_aux_implement_parent_get.restype = c_void_p
+
+# EAPI const Eolian_Documentation *eolian_aux_implement_documentation_get(const Eolian_Implement *impl, Eolian_Function_Type ftype);
+lib.eolian_aux_implement_documentation_get.argtypes = (c_void_p, c_int)
+lib.eolian_aux_implement_documentation_get.restype = c_void_p
+
+# EAPI const Eolian_Documentation *eolian_aux_implement_documentation_fallback_get(const Eolian_Implement *impl);
+lib.eolian_aux_implement_documentation_fallback_get.argtypes = (c_void_p,)
+lib.eolian_aux_implement_documentation_fallback_get.restype = c_void_p

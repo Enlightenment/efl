@@ -7,14 +7,8 @@ ${UNTOKENIZE(tokens=obj.summary_tokens)}$#!
    <!--(elif isinstance(obj, Implement))-->
       <!--(if obj.documentation_get(obj.function.type))-->
 ${UNTOKENIZE(tokens=obj.documentation_get(obj.function.type).summary_tokens)}$#!
-      <!--(else)-->
-         <!--(for parent_impl in obj.class_.implements)-->
-            <!--(if parent_impl.function.name == obj.function.name)-->
-               <!--(if parent_impl.documentation_get(parent_impl.function.type))-->
-${UNTOKENIZE(tokens=parent_impl.documentation_get(parent_impl.function.type).summary_tokens)}$#!
-               <!--(end)-->
-            <!--(end)-->
-         <!--(end)-->
+      <!--(elif obj.documentation_fallback)-->
+${UNTOKENIZE(tokens=obj.documentation_fallback.summary_tokens)}$#!
       <!--(end)-->
    <!--(elif obj and obj.documentation)-->
 ${UNTOKENIZE(tokens=obj.documentation.summary_tokens)}$#!
@@ -31,14 +25,8 @@ ${UNTOKENIZE(tokens=obj.description_tokens)}$#!
    <!--(elif isinstance(obj, Implement))-->
       <!--(if obj.documentation_get(obj.function.type))-->
 ${UNTOKENIZE(tokens=obj.documentation_get(obj.function.type).description_tokens)}$#!
-      <!--(else)-->
-         <!--(for parent_impl in obj.class_.implements)-->
-            <!--(if parent_impl.function.name == obj.function.name)-->
-               <!--(if parent_impl.documentation_get(parent_impl.function.type))-->
-${UNTOKENIZE(tokens=parent_impl.documentation_get(parent_impl.function.type).description_tokens)}$#!
-               <!--(end)-->
-            <!--(end)-->
-         <!--(end)-->
+      <!--(elif obj.documentation_fallback)-->
+${UNTOKENIZE(tokens=obj.documentation_fallback.description_tokens)}$#!
       <!--(end)-->
    <!--(elif obj and obj.documentation)-->
 ${UNTOKENIZE(tokens=obj.documentation.description_tokens)}$#!
@@ -55,14 +43,8 @@ ${UNTOKENIZE(tokens=obj.documentation.description_tokens)}$#!
    <!--(elif isinstance(obj, Implement))-->
       <!--(if obj.documentation_get(obj.function.type))-->
 //Since ${obj.documentation_get(obj.function.type).since}$//
-      <!--(else)-->
-         <!--(for parent_impl in obj.class_.implements)-->
-            <!--(if parent_impl.function.name == obj.function.name)-->
-               <!--(if parent_impl.documentation_get(parent_impl.function.type))-->
-//Since ${parent_impl.documentation_get(parent_impl.function.type).since}$//
-               <!--(end)-->
-            <!--(end)-->
-         <!--(end)-->
+      <!--(elif obj.documentation_fallback)-->
+//Since ${obj.documentation_fallback.since}$//
       <!--(end)-->
    <!--(elif obj and obj.documentation and obj.documentation.since)-->
 //Since ${obj.documentation.since}$//

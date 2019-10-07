@@ -1012,6 +1012,11 @@ class Implement(Object):
         return "<eolian.Implement '{0.name}'>".format(self)
 
     @cached_property
+    def parent(self):
+        c_impl = lib.eolian_aux_implement_parent_get(self)
+        return Implement(c_impl) if c_impl else None
+
+    @cached_property
     def class_(self):
         c_cls = lib.eolian_implement_class_get(self)
         return Class(c_cls) if c_cls else None
@@ -1022,10 +1027,14 @@ class Implement(Object):
         return Function(c_func) if c_func else None
 
     def documentation_get(self, ftype=Eolian_Function_Type.METHOD):
-        # something strange in this eolian api :/  (see 'documentation' property
-        c_doc = lib.eolian_implement_documentation_get(self, ftype)
+        # c_doc = lib.eolian_implement_documentation_get(self, ftype)
+        c_doc = lib.eolian_aux_implement_documentation_get(self, ftype)
         return Documentation(c_doc) if c_doc else None
-    # TODO implement util properties for documentation_get
+
+    @cached_property
+    def documentation_fallback(self):
+        c_doc = lib.eolian_aux_implement_documentation_fallback_get(self)
+        return Documentation(c_doc) if c_doc else None
 
     def is_auto(self, ftype=Eolian_Function_Type.METHOD):
         return bool(lib.eolian_implement_is_auto(self, ftype))
