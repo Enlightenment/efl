@@ -76,7 +76,7 @@ _eldbus_model_arguments_custom_constructor(Eo *obj EINA_UNUSED,
 }
 
 static void
-_eldbus_model_arguments_efl_object_destructor(Eo *obj, Eldbus_Model_Arguments_Data *pd)
+_eldbus_model_arguments_efl_object_invalidate(Eo *obj, Eldbus_Model_Arguments_Data *pd)
 {
    _eldbus_model_arguments_unload(pd);
 
@@ -90,7 +90,7 @@ _eldbus_model_arguments_efl_object_destructor(Eo *obj, Eldbus_Model_Arguments_Da
         pd->proxy = NULL;
      }
 
-   efl_destructor(efl_super(obj, MY_CLASS));
+   efl_invalidate(efl_super(obj, MY_CLASS));
 }
 
 static Eina_Iterator *

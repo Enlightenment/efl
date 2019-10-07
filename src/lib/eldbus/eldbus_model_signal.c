@@ -43,11 +43,11 @@ _eldbus_model_signal_signal_constructor(Eo *obj EINA_UNUSED,
 }
 
 static void
-_eldbus_model_signal_efl_object_destructor(Eo *obj, Eldbus_Model_Signal_Data *pd)
+_eldbus_model_signal_efl_object_invalidate(Eo *obj, Eldbus_Model_Signal_Data *pd)
 {
    _eldbus_model_signal_callback_del(pd);
 
-   efl_destructor(efl_super(obj, MY_CLASS));
+   efl_invalidate(efl_super(obj, MY_CLASS));
 }
 
 
