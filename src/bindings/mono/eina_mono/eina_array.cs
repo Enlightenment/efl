@@ -107,7 +107,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
     /// <summary>
     ///   Create a new array.
     /// </summary>
-    ///// <param name="step">Step size of the array.</param>
+    /// <param name="step">Step size of the array.</param>
     public Array(uint step)
     {
         InitNew(step);
@@ -116,8 +116,8 @@ public class Array<T> : IEnumerable<T>, IDisposable
     /// <summary>
     ///   Create a new array.
     /// </summary>
-    ///// <param name="handle">The native handle to be wrapped.</param>
-    ///// <param name="own">Whether this wrapper owns the native handle.</param>
+    /// <param name="handle">The native handle to be wrapped.</param>
+    /// <param name="own">Whether this wrapper owns the native handle.</param>
     public Array(IntPtr handle, bool own)
     {
         if (handle == IntPtr.Zero)
@@ -133,9 +133,9 @@ public class Array<T> : IEnumerable<T>, IDisposable
     /// <summary>
     ///   Create a new array
     /// </summary>
-    ///// <param name="handle">The native array to be wrapped.</param>
-    ///// <param name="own">Whether this wrapper owns the native array.</param>
-    ///// <param name="ownContent">For compatibility with other EFL# containers.</param>
+    /// <param name="handle">The native array to be wrapped.</param>
+    /// <param name="own">Whether this wrapper owns the native array.</param>
+    /// <param name="ownContent">For compatibility with other EFL# containers.</param>
     public Array(IntPtr handle, bool own, bool ownContent)
     {
         if (handle == IntPtr.Zero)
@@ -267,7 +267,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
     /// <summary>
     ///   Inserts the element of the array at the end.
     /// </summary>
-    ///// <param name="val">The value of the element to be inserted.</param>
+    /// <param name="val">The value of the element to be inserted.</param>
     public bool Push(T val)
     {
         IntPtr ele = ManagedToNativeAlloc(val);
@@ -308,7 +308,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
     /// <summary>
     ///   Returns the element of the array at the specified position.
     /// </summary>
-    ///// <param name="idx">The position of the desired element.</param>
+    /// <param name="idx">The position of the desired element.</param>
     /// <returns>The element at the specified position</returns>
     public T DataGet(int idx)
     {
@@ -319,7 +319,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
     /// <summary>
     ///   Returns the element of the array at the specified position.
     /// </summary>
-    ///// <param name="idx">The position of the desired element.</param>
+    /// <param name="idx">The position of the desired element.</param>
     /// <returns>The element at the specified position</returns>
     public T At(int idx)
     {
@@ -329,8 +329,8 @@ public class Array<T> : IEnumerable<T>, IDisposable
     /// <summary>
     ///  Replaces the element at the specified position.
     /// </summary>
-    ///// <param name="idx">The position of the desired element.</param>
-    ///// <param name="val">The value of the element to be inserted.</param>
+    /// <param name="idx">The position of the desired element.</param>
+    /// <param name="val">The value of the element to be inserted.</param>
     public void DataSet(int idx, T val)
     {
         IntPtr ele = InternalDataGet(idx); // TODO: check bondaries ??
