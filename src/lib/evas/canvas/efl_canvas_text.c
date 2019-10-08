@@ -7066,6 +7066,24 @@ _efl2_canvas_text_is_ellipsized_get(const Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Te
 }
 
 EOLIAN static void
+_efl2_canvas_text_vertical_align_set(Eo *eo_obj, Efl2_Canvas_Text_Data *o, double align)
+{
+   Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
+   evas_object_async_block(obj);
+   if (align < 0.0) align = 0.0;
+   else if (align > 1.0) align = 1.0;
+   if (EINA_DBL_EQ(o->valign, align)) return;
+   o->valign = align;
+   _evas_textblock_changed(o, eo_obj);
+}
+
+EOLIAN static double
+_efl2_canvas_text_vertical_align_get(const Eo *obj EINA_UNUSED, Efl2_Canvas_Text_Data *o)
+{
+   return o->valign;
+}
+
+EOLIAN static void
 _efl_canvas_text_bidi_delimiters_set(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o, const char *delim)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);

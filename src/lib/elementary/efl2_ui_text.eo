@@ -36,14 +36,6 @@ class @beta Efl2.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickab
      like automatic scrollbars, virtual keyboard, clipboard, configurable
      context menus, password mode or autocapitalization, for example.]]
    methods {
-      // FIXME: rename and improve doc
-      @property vertical_align {
-         [[Vertical alignment of text]]
-         values {
-            value: double; [[Vertical alignment value]]
-         }
-      }
-
       @property scrollable {
          [[Enable or disable scrolling in the widget.
 

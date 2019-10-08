@@ -19,6 +19,15 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
 {
    [[Efl canvas text class]]
    methods {
+      @property vertical_align {
+         [[Vertical alignment of text]]
+         set {}
+         get {}
+         values {
+            value: double; [[Vertical alignment value]]
+         }
+      }
+
       @property is_empty {
          [[Whether the object is empty (no text) or not
          ]]
