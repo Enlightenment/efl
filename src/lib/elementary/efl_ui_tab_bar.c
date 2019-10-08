@@ -26,6 +26,19 @@ _efl_ui_tab_bar_efl_ui_single_selectable_fallback_selection_set(Eo *obj EINA_UNU
      efl_ui_selectable_selected_set(pd->fallback_selection, EINA_TRUE);
 }
 
+EOLIAN static void
+_efl_ui_tab_bar_efl_ui_single_selectable_allow_manual_deselection_set(Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *pd, Eina_Bool allow_manual_deselection)
+{
+   pd->allow_manual_deselection = !!allow_manual_deselection;
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_tab_bar_efl_ui_single_selectable_allow_manual_deselection_get(const Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *pd)
+{
+   return pd->allow_manual_deselection;
+}
+
+
 EOLIAN static Efl_Ui_Selectable*
 _efl_ui_tab_bar_efl_ui_single_selectable_fallback_selection_get(const Eo *obj EINA_UNUSED, Efl_Ui_Tab_Bar_Data *pd)
 {
