@@ -290,7 +290,7 @@ _efl_canvas_vg_object_efl_file_load(Eo *eo_obj, Efl_Canvas_Vg_Object_Data *pd)
    pd->vg_entry = evas_cache_vg_entry_create(evas_object_evas_get(eo_obj),
                                              file, key,
                                              obj->cur->geometry.w,
-                                             obj->cur->geometry.h);
+                                             obj->cur->geometry.h, NULL);
    evas_object_change(eo_obj, obj);
 
    return 0;
@@ -569,6 +569,8 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
    Eina_Bool drop_cache = EINA_FALSE;
    void *buffer = NULL;
 
+   evas_cache_vg_entry_value_provider_update(pd->vg_entry, efl_key_data_get(obj->object, "_vg_value_providers"));
+
    // if the size changed in between path set and the draw call;
    if ((vg_entry->w != w) ||
        (vg_entry->h != h))
@@ -616,8 +618,6 @@ _cache_vg_entry_render(Evas_Object_Protected_Data *obj,
         h = size.h;
 
      }
-   if (pd->vg_entry->vfd)
-      pd->vg_entry->vfd->vp_list = efl_key_data_get(obj->object, "_vg_value_providers");
    root = evas_cache_vg_tree_get(vg_entry, pd->frame_idx);
    if (!root) return;
 

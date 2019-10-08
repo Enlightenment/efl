@@ -143,8 +143,9 @@ Efl_Gfx_Vg_Value_Provider_Change_Flag efl_gfx_vg_value_provider_changed_flag_get
 void                        evas_cache_vg_init(void);
 void                        evas_cache_vg_shutdown(void);
 Vg_Cache_Entry*             evas_cache_vg_entry_resize(Vg_Cache_Entry *entry, int w, int h);
-Vg_Cache_Entry*             evas_cache_vg_entry_create(Evas *evas, const Eina_File *file, const char *key, int w, int h);
+Vg_Cache_Entry*             evas_cache_vg_entry_create(Evas *evas, const Eina_File *file, const char *key, int w, int h, Eina_List *vp_list);
 Efl_VG*                     evas_cache_vg_tree_get(Vg_Cache_Entry *vg_entry, unsigned int frame_num);
+void                        evas_cache_vg_entry_value_provider_update(Vg_Cache_Entry *vg_entry, Eina_List *vp_list);
 void                        evas_cache_vg_entry_del(Vg_Cache_Entry *vg_entry);
 Vg_File_Data *              evas_cache_vg_file_open(const Eina_File *file, const char *key);
 Eina_Bool                   evas_cache_vg_file_save(Efl_VG *root, int w, int h, const char *file, const char *key, const Efl_File_Save_Info *info);
