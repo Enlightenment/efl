@@ -54,12 +54,6 @@ class TestEldbusConnection
         conn.Dispose();
     }
 
-    public static void eldbus_connection_new_system()
-    {
-        var conn = new eldbus.Connection(eldbus.Connection.Type.System);
-        conn.Dispose();
-    }
-
     public static void eldbus_connection_new_starter()
     {
         var conn = new eldbus.Connection(eldbus.Connection.Type.Starter);
@@ -69,12 +63,6 @@ class TestEldbusConnection
     public static void eldbus_connection_new_private_session()
     {
         var conn = eldbus.Connection.GetPrivate(eldbus.Connection.Type.Session);
-        conn.Dispose();
-    }
-
-    public static void eldbus_connection_new_private_system()
-    {
-        var conn = eldbus.Connection.GetPrivate(eldbus.Connection.Type.System);
         conn.Dispose();
     }
 
@@ -96,7 +84,7 @@ class TestEldbusObject
 {
     public static void utc_eldbus_object_send_info_get_p()
     {
-        var conn = new eldbus.Connection(eldbus.Connection.Type.System);
+        var conn = new eldbus.Connection(eldbus.Connection.Type.Session);
 
         var obj = new eldbus.Object(conn, DBusBus, DBusPath);
 
@@ -176,7 +164,7 @@ class TestEldbusObject
 
     public static void utc_eldbus_introspect_p()
     {
-        var conn = new eldbus.Connection(eldbus.Connection.Type.System);
+        var conn = new eldbus.Connection(eldbus.Connection.Type.Session);
 
         var obj = new eldbus.Object(conn, DBusBus, DBusPath);
 
@@ -244,7 +232,7 @@ class TestEldbusMessage
     {
         isSuccess = false;
 
-        var conn = new eldbus.Connection(eldbus.Connection.Type.System);
+        var conn = new eldbus.Connection(eldbus.Connection.Type.Session);
 
         eldbus.Pending pending = conn.ActivatableList(messageCb);
 
@@ -316,7 +304,7 @@ class TestEldbusMessage
     {
         isSuccess = false;
 
-        var conn = new eldbus.Connection(eldbus.Connection.Type.System);
+        var conn = new eldbus.Connection(eldbus.Connection.Type.Session);
 
         string methodName = "GetId";
         eldbus.Message msg = eldbus.Message.NewMethodCall(DBusBus, DBusPath, DBusInterface, methodName);
@@ -381,7 +369,7 @@ class TestEldbusMessage
 
     public static void utc_eldbus_message_ref_unref_p()
     {
-        var conn = new eldbus.Connection(eldbus.Connection.Type.System);
+        var conn = new eldbus.Connection(eldbus.Connection.Type.Session);
 
         eldbus.Message msg = eldbus.Message.NewMethodCall(DBusBus, DBusPath, DBusInterface, "GetId");
 
