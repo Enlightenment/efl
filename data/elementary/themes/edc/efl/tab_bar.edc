@@ -2,7 +2,6 @@ group { "efl/tab_bar";
    data.item: "version" "123";
    images.image: "vgrad_med_lighter.png" COMP;
    images.image: "bevel_out.png" COMP;
-   images.image: "shine.png" COMP;
    images.image: "shadow_square_tiny.png" COMP;
    parts {
       spacer { "base";
@@ -10,51 +9,10 @@ group { "efl/tab_bar";
          desc { "default";
          }
       }
-      image { "shadow";
-         nomouse;
-         desc { "default";
-            rel.to: "base";
-            rel1.offset: -3 -2;
-            rel2.offset: 2 3;
-            image.normal: "shadow_square_tiny.png";
-            image.border: 6 6 6 6;
-            fill.smooth: 0;
-         }
-      }
-      image { "bg";
-         desc { "default";
-            rel.to: "base";
-            image.normal: "vgrad_med_lighter.png";
-            rel1.offset: 0 0;
-            rel2.offset: -1 -1;
-            fill.smooth: 0;
-         }
-      }
       swallow { "efl.content";
          scale;
          desc { "default";
             rel.to: "base";
-         }
-      }
-      image { "bevel";
-         nomouse;
-         desc { "default";
-            rel.to: "base";
-            image.normal: "bevel_out.png";
-            image.border: 1 1 1 1;
-            image.middle: 0;
-            fill.smooth: 0;
-         }
-      }
-      image { "shine";
-         nomouse;
-         desc { "default";
-            image.normal: "shine.png";
-            rel.to: "base";
-            rel1.offset: 0 -2;
-            rel2.relative: 1.0 0.0;
-            rel2.offset: -1 2;
-            FIXED_SIZE(69, 5)
          }
       }
    }
@@ -134,63 +92,19 @@ group { "efl/tab_bar/tab";
          desc { "default";
          }
          desc { "vert";
-            rel1.offset: -1 0;
-            rel2.offset: 0 -1;
          }
       }
-      image { "shadow1";
+      rect { "shadow1";
          nomouse;
          desc { "default";
             rel.to: "base";
-            image.normal: "shadow_inset_bevels.png";
-            image.border: 2 2 0 1;
-            hid;
+            rel2.offset: 0 0;
+            color: 0 0 0 50;
+            vis;
          }
          desc { "selected";
             inherit: "default";
-            vis;
-         }
-      }
-      image { "shadow2";
-         nomouse;
-         desc { "default";
-            rel.to: "shadow1";
-            rel1.offset: 1 0;
-            rel2.offset: -2 -1;
-            image.normal: "shadow_angled_in_sides.png";
-            image.border: 8 8 0 1;
-            image.middle: 0;
             hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-      }
-      rect { "bend_clip";
-         desc { "default";
-            hid;
-         }
-         desc { "vert";
-            vis;
-         }
-      }
-      image { "bend";
-         clip_to: "bend_clip";
-         desc { "default";
-            min: 2 2;
-            max: 99999 2;
-            rel2.offset: -1 1;
-            rel2.relative: 1.0 0.0;
-            image.normal: "bevel_dark_in.png";
-            image.border: 2 2 2 2;
-            fill.smooth: 0;
-            hid;
-            fixed: 1 1;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
          }
       }
       rect { "icon_clip";
@@ -384,30 +298,12 @@ group { "efl/tab_bar/tab";
          nomouse;
          desc { "default";
             fixed: 0 1;
-            rel1.offset: -3 -7;
-            rel1.relative: 0.0 1.0;
-            rel1.to: "shadow2";
-            rel2.offset: 2 2;
-            rel2.to: "shadow2";
-            image.normal: "horizontal_separated_bar_small_glow.png";
-            image.border: 4 4 4 4;
-            fill.smooth: 0;
-            hid;
-         }
-         desc { "selected";
-            inherit: "default";
-            vis;
-         }
-      }
-      image { "highlight";
-         nomouse;
-         desc { "default";
-            fixed: 0 1;
-            rel1.offset: -3 -7;
-            rel1.relative: 0.0 1.0;
-            rel1.to: "shadow2";
-            rel2.offset: 2 2;
-            rel2.to: "shadow2";
+            rel1.relative: 0.0 0.0;
+            rel1.to: "shadow1";
+            rel1.offset: -2 -2;
+            rel2.relative: 1.0 0.0;
+            rel2.offset: 0 7;
+            rel2.to: "shadow1";
             image.normal: "horizontal_separated_bar_small_glow.png";
             image.border: 4 4 4 4;
             fill.smooth: 0;
@@ -439,13 +335,11 @@ group { "efl/tab_bar/tab";
          signal: "efl,state,horizontal"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "base";
-         target: "bend_clip";
       }
       program {
          signal: "efl,state,vertical"; source: "efl";
          action: STATE_SET "vert" 0.0;
          target: "base";
-         target: "bend_clip";
       }
       program { name: "st0";
          signal: "load"; source: "";
@@ -459,9 +353,7 @@ group { "efl/tab_bar/tab";
          target: "efl.text";
          target: "label2";
          target: "shadow1";
-         target: "shadow2";
          target: "bar";
-         target: "bend";
       }
       program {
          signal: "efl,state,unselected"; source: "efl";
@@ -469,19 +361,7 @@ group { "efl/tab_bar/tab";
          target: "efl.text";
          target: "label2";
          target: "shadow1";
-         target: "shadow2";
          target: "bar";
-         target: "bend";
-      }
-      program {
-         signal: "efl,highlight,on"; source: "efl";
-         action: STATE_SET "selected" 0.0;
-         target: "highlight";
-      }
-      program {
-         signal: "efl,highlight,off"; source: "efl";
-         action: STATE_SET "default" 0.0;
-         target: "highlight";
       }
       program { name: "st1";
          signal: "efl,text,unset"; source: "efl";
@@ -535,7 +415,6 @@ group { "efl/tab_bar/tab";
          signal: "efl,state,moving"; source: "efl";
          action: STATE_SET "default" 0.0;
          target: "shadow1";
-         target: "shadow2";
       }
       program { name: "icon_set,animation";
          signal: "efl,state,icon_new,set"; source: "efl";
