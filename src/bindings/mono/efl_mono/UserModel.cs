@@ -49,8 +49,8 @@ internal class ModelHelper
 
 /// <summary>Helper class to simplify the creation of MVVM Models based on <see cref="Efl.IModel" />.
 ///
-/// <para>This class works together with <see cref="Efl.GenericModel&lt;T&gt;" /> to wrap user defined classes as MVVM models.
-/// Example:</para>
+/// <para>This class enables usage of simple model classes to define the data to be stored in the native model
+/// and presented in a friendly manner to the C# developer. Example:</para>
 ///
 /// <code>
 /// public class PersonModel
@@ -65,12 +65,18 @@ internal class ModelHelper
 /// PersonModel p = await model.GetAtAsync(0);
 /// </code>
 ///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.24.</para>
 /// </summary>
+/// <typeparam name="T">The enclosed C# model class with the properties to be added to the native model.</typeparam>
 [Efl.Eo.BindingEntity]
 public class UserModel<T> : Efl.MonoModelInternal, IDisposable
 {
-   /// <summary>Creates a new model.</summary>
+   /// <summary>
+   /// Creates a new root model.
+   ///
+   /// <para>The properties of <code>T</code> will be added to the underlying native model as properties the user can get/set on children
+   /// of this model.</para>
+   /// </summary>
    /// <param name="parent">The parent of the model.</param>
    public UserModel (Efl.Object parent = null) : base(Efl.MonoModelInternal.efl_mono_model_internal_class_get(), parent)
    {
@@ -87,9 +93,9 @@ public class UserModel<T> : Efl.MonoModelInternal, IDisposable
        Dispose(false);
    }
 
-   /// <summary>Adds a new child to the model wrapping the properites of <c>o</c>
+   /// <summary>Adds a new child to the model wrapping the properties of <c>o</c>
    ///
-   /// <para>Reflection is used to instantiate a new <see cref="Efl.IModel" /> for this child and
+   /// <para>Reflection is used to instantiate a new <see cref="Efl.IModel" />-based class for this child and
    /// set the mirroring properties correctly.</para>
    /// </summary>
    ///

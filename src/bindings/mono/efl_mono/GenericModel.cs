@@ -9,10 +9,17 @@ using Eina;
 
 namespace Efl {
 
-/// <summary>Generic <see cref="Efl.IModel" /> implementation for MVVM models based on <see cref="Efl.UserModel&lt;T&gt;" />
+/// <summary>
+/// Generic <see cref="Efl.IModel" /> helper class to ease manual implementation of C# models.
 ///
-/// Since EFL 1.23.
+/// <para>It provides an expanded API like async helpers to get children.</para>
+///
+/// <para>For MVVM-based models, <see cref="Efl.UserModel&lt;T&gt;" /> provides a simpler API.</para>
+///
+/// <para>Since EFL 1.24.</para>
 /// </summary>
+/// <typeparam name="T">The type of the child model. It is the type used when adding/removing/getting items to this
+/// model.</typeparam>
 public class GenericModel<T> : Efl.Object, Efl.IModel, IDisposable
 {
    private Efl.IModel model;
@@ -78,7 +85,7 @@ public class GenericModel<T> : Efl.Object, Efl.IModel, IDisposable
       ModelHelper.SetProperties(o, child);
    }
 
-   /// <summary>Adds a new childs to the model and returns it.</summary>
+   /// <summary>Adds a new child to the model and returns it.</summary>
    public Efl.Object AddChild()
    {
        return model.AddChild();
