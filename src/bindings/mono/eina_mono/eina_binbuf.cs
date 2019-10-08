@@ -90,7 +90,7 @@ public class Binbuf : IDisposable
     /// <summary>
     ///   Create a new buffer with elements.
     /// </summary>
-    ///// <param name="bb">Elements to initialize the new buffer.</param>
+    /// <param name="bb">Elements to initialize the new buffer.</param>
     public Binbuf(Binbuf bb)
     {
         InitNew();
@@ -104,8 +104,8 @@ public class Binbuf : IDisposable
     /// <summary>
     ///   Create a new buffer.
     /// </summary>
-    ///// <param name="handle">The native handle to be wrapped.</param>
-    ///// <param name="own">Whether this wrapper owns the native handle.</param>
+    /// <param name="handle">The native handle to be wrapped.</param>
+    /// <param name="own">Whether this wrapper owns the native handle.</param>
     public Binbuf(IntPtr handle, bool own)
     {
         Handle = handle;
@@ -172,7 +172,7 @@ public class Binbuf : IDisposable
     /// <summary>
     ///   Appends a string of inputed buffer's length to the buffer, reallocating as necessary.
     /// </summary>
-    ///// <param name="str">The string buffer.</param>
+    /// <param name="str">The string buffer.</param>
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Append(byte[] str)
     {
@@ -182,8 +182,8 @@ public class Binbuf : IDisposable
     /// <summary>
     ///   Appends a string of exact length to the buffer, reallocating as necessary.
     /// </summary>
-    ///// <param name="str">The string buffer.</param>
-    ///// <param name="length">The exact length to use.</param>
+    /// <param name="str">The string buffer.</param>
+    /// <param name="length">The exact length to use.</param>
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Append(byte[] str, uint length)
     {
@@ -193,7 +193,7 @@ public class Binbuf : IDisposable
     /// <summary>
     ///   Appends a Binbuf to the buffer.
     /// </summary>
-    ///// <param name="bb">The buffer to be appended.</param>
+    /// <param name="bb">The buffer to be appended.</param>
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Append(Binbuf bb)
     {
@@ -203,7 +203,7 @@ public class Binbuf : IDisposable
     /// <summary>
     ///  Appends a character to the buffer, reallocating as necessary.
     /// </summary>
-    ///// <param name="c">The char to appended.</param>
+    /// <param name="c">The char to appended.</param>
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Append(byte c)
     {
@@ -213,7 +213,7 @@ public class Binbuf : IDisposable
     /// <summary>
     ///  Appends a slice to the buffer, reallocating as necessary.
     /// </summary>
-    ///// <param name="slice">The slice to appended.</param>
+    /// <param name="slice">The slice to appended.</param>
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Append(Eina.Slice slice)
     {
@@ -223,8 +223,8 @@ public class Binbuf : IDisposable
     /// <summary>
     ///   Inserts a string of inputed buffer's length into the buffer, reallocating as necessary.
     /// </summary>
-    ///// <param name="str">The string buffer.</param>
-    ///// <param name="pos">The position to insert the string.</param>
+    /// <param name="str">The string buffer.</param>
+    /// <param name="pos">The position to insert the string.</param>
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Insert(byte[] str, uint pos)
     {
@@ -234,9 +234,9 @@ public class Binbuf : IDisposable
     /// <summary>
     ///   Inserts a string of exact length into the buffer, reallocating as necessary.
     /// </summary>
-    ///// <param name="str">The string buffer.</param>
-    ///// <param name="length">The exact length to use.</param>
-    ///// <param name="pos">The position to insert the string.</param>
+    /// <param name="str">The string buffer.</param>
+    /// <param name="length">The exact length to use.</param>
+    /// <param name="pos">The position to insert the string.</param>
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Insert(byte[] str, uint length, uint pos)
     {
@@ -246,8 +246,8 @@ public class Binbuf : IDisposable
     /// <summary>
     ///   Inserts a character into the buffer, reallocating as  necessary.
     /// </summary>
-    ///// <param name="c">The char to appended.</param>
-    ///// <param name="pos">The position to insert the string.</param>
+    /// <param name="c">The char to appended.</param>
+    /// <param name="pos">The position to insert the string.</param>
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Insert(byte c, uint pos)
     {
@@ -257,8 +257,8 @@ public class Binbuf : IDisposable
     /// <summary>
     ///    Inserts a slice into the buffer, reallocating as necessary.
     /// </summary>
-    ///// <param name="slice">The slice to appended.</param>
-    ///// <param name="pos">The position to insert the string.</param>
+    /// <param name="slice">The slice to appended.</param>
+    /// <param name="pos">The position to insert the string.</param>
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Insert(Eina.Slice slice, uint pos)
     {
@@ -268,10 +268,10 @@ public class Binbuf : IDisposable
     /// <summary>
     ///    Removes a slice of the buffer.
     /// </summary>
-    ///// <param name="start">The initial (inclusive) slice position to start
-    ///// removing, in bytes.</param>
-    ///// <param name="end">The final (non-inclusive) slice position to finish
-    ///// removing, in bytes..</param>
+    /// <param name="start">The initial (inclusive) slice position to start
+    /// removing, in bytes.</param>
+    /// <param name="end">The final (non-inclusive) slice position to finish
+    /// removing, in bytes..</param>
     /// <returns>true on success, false on failure.</returns>
     public bool Remove(uint start, uint end)
     {
