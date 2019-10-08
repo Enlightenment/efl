@@ -45,19 +45,12 @@ collections {
             desc { "default";
             }
          }
-         rect { "bg";
-            scale;
-            desc { "default";
-               rel.to: "base";
-               color: 255 255 255 255;
-            }
-         }
          text { "text";
             scale;
             desc { "default";
                rel.to: "base";
                align: 0.5 0.5;
-               color: 0 0 0 255;
+               color: 255 255 255 255;
                text.size: 20;
             }
          }
