@@ -1677,6 +1677,8 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
       .inserted_before = 0,
       .generation = 1,
    };
+   Eina_Bool at_least_one = EINA_FALSE;
+   int c = 0;
 
    if (pd->callbacks_count == 0) return EINA_FALSE;
    else if ((desc == EFL_EVENT_CALLBACK_ADD) &&
@@ -1710,6 +1712,7 @@ restart_back:
 
    for (; idx > 0; idx--)
      {
+        c++;
         frame.idx = idx;
         cb = pd->callbacks + idx - 1;
         if (!(*cb)->delete_me)
@@ -1736,6 +1739,7 @@ restart_back:
                        // Handle nested restart of walking list
                        if (lookup) lookup->current = idx - 1;
                        it->func((void *) (*cb)->func_data, &ev);
+                    at_least_one = EINA_TRUE;
                        /* Abort callback calling if the func says so. */
                        if (pd->callback_stopped)
                          {
@@ -1759,6 +1763,7 @@ restart_back:
                   // Handle nested restart of walking list
                   if (lookup) lookup->current = idx - 1;
                   (*cb)->items.item.func((void *) (*cb)->func_data, &ev);
+                at_least_one = EINA_TRUE;
                   /* Abort callback calling if the func says so. */
                   if (pd->callback_stopped)
                     {
@@ -1788,6 +1793,9 @@ end:
    _eo_callbacks_clear(obj_id, pd);
 
    pd->callback_stopped = callback_already_stopped;
+
+   if (!at_least_one)
+    printf("Emitting dead event %s %d %d\n", desc->name, desc->legacy_is, c);
 
    return ret;
 restart:
