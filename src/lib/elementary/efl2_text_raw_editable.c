@@ -2774,7 +2774,6 @@ _efl2_text_raw_editable_efl2_input_text_capitalize_get(const Eo *obj, Efl2_Text_
 #endif
 }
 
-
 EOLIAN static void
 _efl2_text_raw_editable_efl2_input_text_input_panel_return_key_autoenabled_set(Eo *obj, Efl2_Text_Raw_Editable_Data *en, Eina_Bool enabled)
 {
@@ -2785,6 +2784,12 @@ _efl2_text_raw_editable_efl2_input_text_input_panel_return_key_autoenabled_set(E
    if (efl2_canvas_text_is_empty_get(obj) == EINA_TRUE)
      return_key_disabled = EINA_TRUE;
    efl2_input_text_input_panel_return_key_disabled_set(obj, return_key_disabled);
+}
+
+EOLIAN static void
+_efl2_text_raw_editable_item_provider_set(Eo *ob EINA_UNUSED, Efl2_Text_Raw_Editable_Data *pd, void *provider_function_data, Efl2_Ui_Text_Provider_Item provider_function, Eina_Free_Cb provider_function_free_cb)
+{
+   #warning IMPLEMENTATION
 }
 
 EOLIAN static void
