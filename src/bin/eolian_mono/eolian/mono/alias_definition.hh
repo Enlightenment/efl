@@ -18,7 +18,7 @@ struct alias_definition_generator
   template<typename OutputIterator, typename Context>
   bool generate(OutputIterator sink, attributes::alias_def const& alias, Context const& context) const
   {
-     if (blacklist::is_alias_blacklisted(alias))
+     if (blacklist::is_alias_blacklisted(alias, context))
        {
           EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "Alias " <<  name_helpers::alias_full_eolian_name(alias) << "is blacklisted. Skipping.";
           return true;

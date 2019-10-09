@@ -554,8 +554,10 @@ struct alias_def
   bool is_undefined;
   type_def base_type {};
   documentation_def documentation;
+  bool is_beta;
 
   alias_def(Eolian_Typedecl const* alias_obj, Eolian_Unit const* unit)
+      : is_beta(::eolian_typedecl_is_beta(alias_obj))
   {
      cxx_name = eolian_name = ::eolian_typedecl_short_name_get(alias_obj);
 

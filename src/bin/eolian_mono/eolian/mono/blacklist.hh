@@ -119,8 +119,13 @@ inline bool is_struct_blacklisted(attributes::regular_type_def const& struct_)
    return is_struct_blacklisted(name_helpers::type_full_eolian_name(struct_));
 }
 
-inline bool is_alias_blacklisted(attributes::alias_def const& alias)
+template <typename Context>
+inline bool is_alias_blacklisted(attributes::alias_def const& alias, Context const& context)
 {
+   auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
+   if (alias.is_beta && !options.want_beta)
+     return true;
+
    return name_helpers::alias_full_eolian_name(alias) == "Eina.Error";
 }
 
