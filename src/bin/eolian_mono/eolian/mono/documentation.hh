@@ -437,20 +437,24 @@ struct documentation_generator
    template<typename OutputIterator, typename Context>
    bool generate(OutputIterator sink, attributes::property_def const& prop, Context const& context) const
    {
-       std::string tail_text = "";
-
+       // Generate docs by merging Property, Accessor, Since and Beta pieces.
+       std::string text = prop.documentation.full_text;
+       if (!prop.documentation.since.empty())
+         text += "\\<br/\\>\nSince EFL " + prop.documentation.since + ".";
+       if (prop.setter.is_engaged() && !prop.setter->documentation.full_text.empty())
+         text += "\\<br/\\>\n\\<b\\>Note on writing:\\</b\\> " + prop.setter->documentation.full_text;
+       if (prop.getter.is_engaged() && !prop.getter->documentation.full_text.empty())
+         text += "\\<br/\\>\n\\<b\\>Note on reading:\\</b\\> " + prop.getter->documentation.full_text;
        if (!prop.klass.is_beta)
          {
             if ((prop.setter.is_engaged() && prop.setter->is_beta) ||
                 (prop.getter.is_engaged() && prop.getter->is_beta))
-              {
-                 tail_text = BETA_PROPERTY_REMARK;
-              }
+              text += BETA_PROPERTY_REMARK;
          }
-       if (!generate(sink, prop.documentation, context, tail_text))
-         return false;
+       if (!generate_tag_summary(sink, text, context))
+              return false;
 
-       std::string text;
+       text = "";
        if (prop.setter.is_engaged())
          text = prop.setter->parameters[0].documentation.full_text;
        else if (prop.getter.is_engaged())
@@ -478,21 +482,18 @@ struct documentation_generator
    template<typename OutputIterator, typename Context>
    bool generate_property(OutputIterator sink, attributes::function_def const& func, Context const& context) const
    {
-       std::string tail_text = "";
-       if (!func.klass.is_beta && func.is_beta)
+       if (!func.documentation.full_text.empty() ||
+           !func.property_documentation.full_text.empty())
          {
-            tail_text = BETA_METHOD_REMARK;
-         }
-
-       // First, try the get/set specific documentation
-       if (!func.documentation.summary.empty())
-         {
-            if (!generate(sink, func.documentation, context, tail_text))
-              return false;
-         }
-       else // fallback to common property documentation
-         {
-            if (!generate(sink, func.property_documentation, context, tail_text))
+            // Generate docs by merging Property, Accessor, Since and Beta pieces.
+            std::string text = func.property_documentation.full_text;
+            if (!func.property_documentation.since.empty())
+              text += "\\<br/\\>\nSince EFL " + func.property_documentation.since + ".";
+            if (!func.documentation.full_text.empty())
+              text += "\\<br/\\>\n\\<b\\>Note:\\</b\\> " + func.documentation.full_text;
+            if (!func.klass.is_beta && func.is_beta)
+              text += BETA_METHOD_REMARK;
+            if (!generate_tag_summary(sink, text, context))
               return false;
          }
 
