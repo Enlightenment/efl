@@ -162,8 +162,6 @@ main(int argc, const char *argv[])
    ecore_evas_shutdown();
    return 0;
 
-   ecore_evas_free(ee);
-
 error:
    ecore_evas_shutdown();
    return -1;
