@@ -70,12 +70,12 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
 
       cursor_handle_new {
          [[Creates a new cursor handle associated with the text object]]
-         return: ptr(Efl2.Text.Cursor_Handle); [[The new cursor handle]]
+         return: Efl2.Text.Cursor_Handle @by_ref; [[The new cursor handle]]
       }
       cursor_handle_free {
          [[Creates a new cursor handle associated with the text object]]
          params {
-             cur: ptr(Efl2.Text.Cursor_Handle); [[The new cursor handle]]
+             cur: Efl2.Text.Cursor_Handle @by_ref; [[The new cursor handle]]
          }
       }
 
