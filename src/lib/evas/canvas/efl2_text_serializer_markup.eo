@@ -1,9 +1,8 @@
 /*
 FIXME:
-  - There should other such clases for e.g. markdown, pango markup or whatever
+  - There could be other such classes for e.g. markdown, pango markup or whatever
   - This also includes all of the html entity handling (&nbsp;)
   - Should figure out if we want to reduce the html entity list we support, if we want it case insensitive and etc.
-  - Add a static call to get the singleton?
 */
 class @beta Efl2.Text.Serializer.Markup {
    [[Markup creation object
@@ -29,6 +28,12 @@ class @beta Efl2.Text.Serializer.Markup {
          }
          // FIXME: shouldn't it be @move?
          return: string; [[The markup within the range]]
+      }
+
+      @property singelton @static {
+         values {
+              singleton: Efl2.Text.Serializer.Markup; [[The singleton instance]]
+         }
       }
    }
 }
