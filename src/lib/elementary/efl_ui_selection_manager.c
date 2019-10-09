@@ -1254,8 +1254,8 @@ _x11_efl_sel_manager_selection_set(Efl_Ui_Selection_Manager_Data *pd, Efl_Object
    sel->active = EINA_TRUE;
    sel->format = format;
 
-   sel->set(xwin, &sel, sizeof(&sel));
-   sel_debug("data: %p (%zu)", &sel, sizeof(&sel));
+   sel->set(xwin, &sel, sizeof(Sel_Manager_Selection *));
+   sel_debug("data: %p (%zu)", &sel, sizeof(Sel_Manager_Selection *));
 
    return _update_sel_lost_list(owner, type, seat_sel);
 }
