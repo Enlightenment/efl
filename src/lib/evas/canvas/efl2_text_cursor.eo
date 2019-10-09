@@ -206,7 +206,7 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
          params {
              cur2: Efl2.Text.Cursor; [[End of range]]
          }
-         return: iterator<ptr(Eina.Rect)> @move; [[
+         return: iterator<Eina.Rect> @move; [[
             Iterator on all geoemtries of the given range
          ]]
       }
@@ -219,7 +219,7 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
          params {
              cur2: Efl2.Text.Cursor; [[End of range]]
          }
-         return: iterator<ptr(Eina.Rect)> @move; [[
+         return: iterator<Eina.Rect> @move; [[
             Iterator on all simple geometries of the given range
          ]]
       }
@@ -244,7 +244,7 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
          set {  }
          get {  }
          values {
-            handle: ptr(Efl2.Text.Cursor_Handle); [[The handle of the cursor object]]
+            handle: Efl2.Text.Cursor_Handle @by_ref; [[The handle of the cursor object]]
          }
       }
 
