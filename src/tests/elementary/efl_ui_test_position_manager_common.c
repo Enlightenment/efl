@@ -50,7 +50,7 @@ _obj_accessor_get_at(void *data EINA_UNUSED, Efl_Ui_Position_Manager_Request_Ran
 {
    int i;
    Efl_Ui_Position_Manager_Object_Batch_Entity *objs = memory.mem;
-   Efl_Ui_Position_Manager_Object_Batch_Result result;
+   Efl_Ui_Position_Manager_Object_Batch_Result result = {0};
 
    for (i = range.start_id; i < (int)(MIN(range.end_id, eina_array_count(arr_obj))); ++i)
      {
