@@ -10,6 +10,20 @@ struct @beta Efl2.Text.Change_Info {
    merge: bool; [[$true if can be merged with the previous one. Used for example with insertion when something is already selected]]
 }
 
+function @beta Efl2.Ui.Text_Provider.Item {
+  [[This is a function that takes in a $.key and creates an object based on it.
+
+    It's meant for translating <item> objects into actual canvas objects.
+
+    If the function found a suitable object it returns the object, otherwise $null.
+  ]]
+  params {
+     @in parent: Efl.Object; [[Parent of the object returned]]
+     @in key: string; [[The key to translate into an object]]
+  }
+  return: Efl.Object;
+};
+
 class @beta Efl2.Text.Raw_Editable extends Efl2.Canvas.Text implements Efl2.Input.Text {
    methods {
       @property editable {
@@ -79,6 +93,16 @@ class @beta Efl2.Text.Raw_Editable extends Efl2.Canvas.Text implements Efl2.Inpu
          values {
             start: const(Efl2.Text.Cursor); [[The start of the selection]]
             end: const(Efl2.Text.Cursor); [[The end of the selection]]
+         }
+      }
+
+      @property item_provider {
+         [[The item provider which will be used to create items from their names
+           e.g.: "emoticon/happy" or "href=file://image.jpg" etc.
+         ]]
+         set { }
+         values {
+            provider_function: Efl2.Ui.Text_Provider.Item; [[The provider function]]
          }
       }
 
