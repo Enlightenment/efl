@@ -336,7 +336,7 @@ EFL_START_TEST(eina_log_level_indexes)
         EINA_LOG(d, -1, "Negative index message");
         fail_if(ctx.did);
      }
-
+#ifdef EINA_LOG_LEVEL_MAXIMUM
    if (6 <= maxlevel)
      {
         // Displayed only if user sets level 6 or higher
@@ -345,7 +345,7 @@ EFL_START_TEST(eina_log_level_indexes)
         EINA_LOG(d, 6, "Higher level debug");
         fail_unless(ctx.did);
      }
-
+#endif
    if (5 <= maxlevel)
      {
         eina_log_domain_level_set("Levels", 5);
