@@ -103,8 +103,6 @@ pub_eo_files = [
 
   'efl2_text_content_plain.eo',
   'efl2_text_content_markup.eo',
-  'efl2_text_font_properties.eo',
-  'efl2_text_style_properties.eo',
   'efl2_text_wrap_properties.eo',
 ]
 

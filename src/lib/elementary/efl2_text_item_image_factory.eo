@@ -1,4 +1,0 @@
-// FIXME: Rename to drop the "Item"?
-class @beta Efl2.Text.Item.Image.Factory extends Efl2.Text.Item.Factory {
-    [[Image text item factory]]
-}

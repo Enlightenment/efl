@@ -3,7 +3,7 @@
 
 /* FIXME - Text object must stop using elm_general! */
 import elm_general;
-import efl2_text_attribute_factory;
+import efl2_canvas_text;
 
 
 enum @beta Efl2.Ui.Selection_Format

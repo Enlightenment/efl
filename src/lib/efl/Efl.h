@@ -222,9 +222,7 @@ typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 #include "interfaces/efl_text_markup_interactive.eo.h"
 #include "interfaces/efl_text_markup_util.eo.h"
 
-#include "interfaces/efl2_text_font_properties.eo.h"
 #include "interfaces/efl2_text_wrap_properties.eo.h"
-#include "interfaces/efl2_text_style_properties.eo.h"
 #include "interfaces/efl2_text_content_plain.eo.h"
 #include "interfaces/efl2_text_content_markup.eo.h"
 

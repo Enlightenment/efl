@@ -29,9 +29,7 @@
 #include "interfaces/efl_text_markup.eo.c"
 #include "interfaces/efl_text_markup_interactive.eo.c"
 
-#include "interfaces/efl2_text_font_properties.eo.c"
 #include "interfaces/efl2_text_wrap_properties.eo.c"
-#include "interfaces/efl2_text_style_properties.eo.c"
 #include "interfaces/efl2_text_content_plain.eo.c"
 #include "interfaces/efl2_text_content_markup.eo.c"
 
