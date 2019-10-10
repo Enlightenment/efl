@@ -3,6 +3,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 using static Eina.TraitFunctions;
 using static Eina.IteratorNativeFunctions;
@@ -10,6 +11,7 @@ using static Eina.IteratorNativeFunctions;
 namespace Eina
 {
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static class IteratorNativeFunctions
 {
     [DllImport(efl.Libs.Eina)] public static extern void
@@ -30,25 +32,38 @@ public static class IteratorNativeFunctions
 }
 
 /// <summary>Wrapper around a native Eina iterator.
-///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 public class Iterator<T> : IEnumerable<T>, IDisposable
 {
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public IntPtr Handle {get;set;} = IntPtr.Zero;
+    /// <summary>Whether this wrapper owns the native iterator.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public bool Own {get;set;} = true;
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public Iterator(IntPtr handle, bool own)
     {
         Handle = handle;
         Own = own;
     }
 
+    /// <summary>
+    ///   Finalizer to be called from the Garbage Collector.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     ~Iterator()
     {
         Dispose(false);
     }
 
+    /// <summary>Disposes of this wrapper, releasing the native array if owned.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="disposing">True if this was called from <see cref="Dispose()"/> public method. False if
+    /// called from the C# finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
         var h = Handle;
@@ -71,17 +86,28 @@ public class Iterator<T> : IEnumerable<T>, IDisposable
         }
     }
 
+    /// <summary>Releases the native resources held by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>Releases the native resources held by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Free()
     {
         Dispose();
     }
 
+    /// <summary>
+    ///   Releases the native iterator.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The native array.</returns>
     public IntPtr Release()
     {
         IntPtr h = Handle;
@@ -89,11 +115,20 @@ public class Iterator<T> : IEnumerable<T>, IDisposable
         return h;
     }
 
+    /// <summary>Sets own.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="own">If own the object.</param>
     public void SetOwnership(bool own)
     {
         Own = own;
     }
 
+    /// <summary>
+    ///   Go to the next one.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    ///
     public bool Next(out T res)
     {
         IntPtr data;
@@ -108,16 +143,29 @@ public class Iterator<T> : IEnumerable<T>, IDisposable
         return true;
     }
 
+    /// <summary>
+    ///   Locks the container of the iterator.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>true on success, false otherwise.</returns>
     public bool Lock()
     {
         return eina_iterator_lock(Handle);
     }
 
+    /// <summary>
+    ///   Unlocks the container of the iterator.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>true on success, false otherwise.</returns>
     public bool Unlock()
     {
         return eina_iterator_unlock(Handle);
     }
 
+    /// <summary> Gets an Enumerator for this iterator.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public IEnumerator<T> GetEnumerator()
     {
         for (T curr; Next(out curr);)
