@@ -790,6 +790,10 @@ class Class(Object):
     def parts(self):
         return Iterator(Part, lib.eolian_class_parts_get(self))
 
+    @property
+    def requires(self):
+        return Iterator(Class, lib.eolian_class_requires_get(self))
+
 
 class Part(Object):
     def __repr__(self):
@@ -976,6 +980,12 @@ class Function(Object):
     def return_allow_unused(self, ftype):
         return bool(lib.eolian_function_return_allow_unused(self, ftype))
 
+    def return_is_by_ref(self, ftype):
+        return bool(lib.eolian_function_return_is_by_ref(self, ftype))
+
+    def return_is_move(self, ftype):
+        return bool(lib.eolian_function_return_is_move(self, ftype))
+
     @cached_property
     def method_return_type(self):
         return self.return_type_get(Eolian_Function_Type.METHOD)
@@ -1025,6 +1035,14 @@ class Function_Parameter(Object):
     @cached_property
     def is_optional(self):
         return bool(lib.eolian_parameter_is_optional(self))
+
+    @cached_property
+    def is_by_ref(self):
+        return bool(lib.eolian_parameter_is_by_ref(self))
+
+    @cached_property
+    def is_move(self):
+        return bool(lib.eolian_parameter_is_move(self))
 
     @cached_property
     def type(self):
@@ -1158,6 +1176,10 @@ class Type(Object):
     def is_ptr(self):
         return bool(lib.eolian_type_is_ptr(self))
 
+    @cached_property
+    def is_move(self):
+        return bool(lib.eolian_type_is_move(self))
+
 
 class Typedecl(Object):
     def __repr__(self):
@@ -1255,7 +1277,22 @@ class Struct_Type_Field(Object):
     def type(self):
         c_type = lib.eolian_typedecl_struct_field_type_get(self)
         return Type(c_type) if c_type else None
-    
+
+    @cached_property
+    def c_type(self):
+        s = lib.eolian_typedecl_struct_field_c_type_get(self)
+        ret = _str_to_py(s)
+        lib.eina_stringshare_del(c_void_p(s))
+        return ret
+
+    @cached_property
+    def is_by_ref(self):
+        return bool(lib.eolian_typedecl_struct_field_is_by_ref(self))
+
+    @cached_property
+    def is_move(self):
+        return bool(lib.eolian_typedecl_struct_field_is_move(self))
+
     @cached_property
     def documentation(self):
         c_doc = lib.eolian_typedecl_struct_field_documentation_get(self)

@@ -392,6 +392,13 @@ class TestEolianClass(object):
         assert len(list(cls.implements)) > 5
         assert isinstance(list(cls.implements)[0], eolian.Implement)
 
+    def test_mixins_requires(self, eolian_db):
+        cls = eolian_db.class_by_name_get('Efl.Loop_Timer')
+        assert len(list(cls.requires)) == 0
+        cls = eolian_db.class_by_name_get('Efl.File')
+        assert len(list(cls.requires)) == 1
+        assert list(cls.requires)[0].name == 'Efl.Object'
+
 
 class TestEolianFunction(object):
     def test_function(self, eolian_db):
@@ -416,7 +423,9 @@ class TestEolianFunction(object):
         assert len(list(f.getter_values)) == 1
         assert len(list(f.getter_values)) == 1
         assert len(list(f.parameters)) == 1
-        assert f.return_allow_unused(eolian.Eolian_Function_Type.METHOD) is True
+        assert f.return_allow_unused(eolian.Eolian_Function_Type.PROP_GET) is True
+        assert f.return_is_by_ref(eolian.Eolian_Function_Type.PROP_GET) is False
+        assert f.return_is_move(eolian.Eolian_Function_Type.PROP_GET) is False
         assert f.object_is_const is False
         assert f.class_.name == 'Efl.Loop_Timer'
         assert isinstance(f.implement, eolian.Implement)
@@ -429,6 +438,8 @@ class TestEolianFunction(object):
         assert p.name == 'add'
         assert p.default_value is None
         assert p.is_optional is False
+        assert p.is_by_ref is False
+        assert p.is_move is False
         assert p.type.name == 'double'
         assert p.c_type_get(False) == 'double'
         assert p.c_type_get(True) == 'double'
@@ -583,6 +594,9 @@ class TestEolianTypedecl(object):
         assert field.name == 'b'
         assert isinstance(field.type, eolian.Type)
         assert isinstance(field.documentation, eolian.Documentation)
+        assert field.c_type == "uint8_t"
+        assert field.is_by_ref is False
+        assert field.is_move is False
 
     def test_typedecl_alias(self, eolian_db):
         alias = eolian_db.alias_by_name_get('Eina.Error')
@@ -611,6 +625,7 @@ class TestEolianType(object):
         assert t.next_type is None  # TODO find a better test
         assert t.is_const is False
         assert t.is_ptr is False
+        assert t.is_move is False
         assert list(t.namespaces) == []
         assert t.class_ is None
         assert t == t.aliased_base  # TODO find a better test
@@ -626,6 +641,9 @@ class TestEolianType(object):
         assert t.type == eolian.Eolian_Type_Type.REGULAR
         assert t.builtin_type == eolian.Eolian_Type_Builtin_Type.INVALID
         assert t.file == 'efl_gfx_entity.eo'  # TODO is this correct ?
+        assert t.is_const is False
+        assert t.is_ptr is False
+        assert t.is_move is False
         assert list(t.namespaces) == ['Eina']
         assert t.class_ is None
         assert t == t.aliased_base
@@ -645,6 +663,9 @@ class TestEolianType(object):
         assert t.type == eolian.Eolian_Type_Type.CLASS
         assert t.builtin_type == eolian.Eolian_Type_Builtin_Type.INVALID
         assert t.file == 'efl_content.eo'  # TODO is this correct ?
+        assert t.is_const is False
+        assert t.is_ptr is False
+        assert t.is_move is False
         assert list(t.namespaces) == ['Efl', 'Gfx']
         assert t == t.aliased_base
 
