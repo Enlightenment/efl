@@ -26,7 +26,10 @@ struct _Efl2_Text_Attribute_Handle
    Eina_Stringshare *properties;
    Eina_Bool ephemeral;
    // FIXME: Just add cursor handles for the start/end so they are updated automatically?
+   Evas_Object                       *obj;
+   Evas_Object_Textblock_Node_Format *start_node, *end_node;
    int ref;  /**< Value of the ref. */
+   Eina_Bool                         is_item : 1; /**< indicates it is an item/object placeholder */
 };
 
 Eina_Iterator *_canvas_text_selection_iterator_new(Eina_List *list);
@@ -69,4 +72,11 @@ Eina_List *_canvas_text_cursor_range_precise_geometry_get(const Efl2_Text_Cursor
 Eina_Iterator *_canvas_text_cursor_range_simple_geometry_get(const Efl2_Text_Cursor_Handle *cur1, const Efl2_Text_Cursor_Handle *cur2);
 Eina_Bool _canvas_text_cursor_coord_set(Efl2_Text_Cursor_Handle *cur, Evas_Coord x, Evas_Coord y);
 Eina_Bool _canvas_text_cursor_eol_get(const Efl2_Text_Cursor_Handle *cur);
+
+
+Efl2_Text_Attribute_Handle *_textblock_annotation_insert(Efl2_Text_Cursor_Handle *start, Efl2_Text_Cursor_Handle *end, Efl2_Text_Attribute_Handle *handle);
+Eina_Bool _canvas_text_annotation_remove(Eo *eo_obj, Efl2_Text_Attribute_Handle *annotation);
+Eina_Iterator *_canvas_text_range_annotations_get(const Efl2_Text_Cursor_Handle *start, const Efl2_Text_Cursor_Handle *end);
+void _evas_textblock_cursor_at_format_set(Efl2_Text_Cursor_Handle *cur, const Evas_Object_Textblock_Node_Format *fmt);
+void _canvas_text_annotation_free_if_not_reffed(Efl2_Text_Attribute_Handle *an);
 #endif

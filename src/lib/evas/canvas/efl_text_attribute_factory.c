@@ -3,7 +3,7 @@
 
 #include "efl_canvas_text_internal.h"
 
-#define MY_CLASS EFL2_TEXT_ATTRIBUTE_FACTORY
+#define MY_CLASS EFL2_TEXT_ATTRIBUTE_FACTORY_CLASS
 
 struct _Efl2_Text_Attribute_Factory_Data
 {
@@ -32,8 +32,16 @@ _efl2_text_attribute_factory_reset(Eo *obj EINA_UNUSED, Efl2_Text_Attribute_Fact
 Efl_Object *
 _efl2_text_attribute_factory_efl_object_constructor(Eo *obj, Efl2_Text_Attribute_Factory_Data *pd)
 {
+   obj = efl_constructor(efl_super(obj, MY_CLASS));
    _efl2_text_attribute_factory_reset(obj, pd);
    return obj;
+}
+
+void
+_efl2_text_attribute_factory_efl_object_destructor(Eo *obj, Efl2_Text_Attribute_Factory_Data *pd)
+{
+   efl_destructor(efl_super(obj, MY_CLASS));
+   _efl2_text_attribute_factory_reset(obj, pd);
 }
 
 EOLIAN static void
@@ -60,42 +68,47 @@ EOLIAN static Efl2_Text_Attribute_Handle *
 _efl2_text_attribute_factory_insert(Eo *obj, Efl2_Text_Attribute_Factory_Data *pd, const Efl2_Text_Cursor *cur1, const Efl2_Text_Cursor *cur2)
 {
    Efl2_Text_Attribute_Handle *handle = _efl2_text_attribute_factory_create(obj, pd);
-   // FIME: insert;
+   _textblock_annotation_insert(efl2_text_cursor_handle_get(cur1), efl2_text_cursor_handle_get(cur2), handle);
    return handle;
 }
 
 EOLIAN static Eina_Iterator *
 _efl2_text_attribute_factory_range_attributes_get(const Efl2_Text_Cursor *start, const Efl2_Text_Cursor *end)
 {
-   // FIXME: implement
-   return NULL;
+   return _canvas_text_range_annotations_get(efl2_text_cursor_handle_get(start), efl2_text_cursor_handle_get(end));
 }
 
 EOLIAN static void
-_efl2_text_attribute_factory_attribute_cursors_get(Efl2_Text_Cursor *start, Efl2_Text_Cursor *end)
+_efl2_text_attribute_factory_attribute_cursors_get(const Efl2_Text_Attribute_Handle *an, Efl2_Text_Cursor *start, Efl2_Text_Cursor *end)
 {
-   // FIXME: implement
+   _evas_textblock_cursor_at_format_set(efl2_text_cursor_handle_get(start), an->start_node);
+   _evas_textblock_cursor_at_format_set(efl2_text_cursor_handle_get(end), an->end_node);
 }
 
 EOLIAN static Efl2_Text_Attribute_Handle *
 _efl2_text_attribute_factory_ref(Efl2_Text_Attribute_Handle *handle)
 {
-   // FIXME: implement
+   handle->ref++;
    return handle;
 }
 
 EOLIAN static void
 _efl2_text_attribute_factory_unref(Efl2_Text_Attribute_Handle *handle)
 {
-   // FIXME: implement
-   (void) handle;
+   if (handle->ref == 0)
+     {
+        ERR("Tried unreffing an attribute with 0 refs");
+        return;
+     }
+
+   handle->ref--;
+   _canvas_text_annotation_free_if_not_reffed(handle);
 }
 
 EOLIAN static void
 _efl2_text_attribute_factory_remove(Efl2_Text_Attribute_Handle *handle)
 {
-   // FIXME: implement
-   (void) handle;
+   _canvas_text_annotation_remove(handle->obj, handle);
 }
 
 EOLIAN static void
