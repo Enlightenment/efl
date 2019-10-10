@@ -33,7 +33,7 @@ static class UnsafeNativeMethods
         _evas_init = new Efl.Eo.FunctionWrapper<init_func_delegate>(efl.Libs.Evas, "evas_init");
     }
 
-    public static void evas_init()
+    internal static void evas_init()
     {
         _evas_init.Value.Delegate();
     }
@@ -52,7 +52,7 @@ public static class All
         private set;
     }
 
-    public static readonly object InitLock = new object();
+    internal static readonly object InitLock = new object();
 
     public static void Init(Efl.Csharp.Components components = Efl.Csharp.Components.Basic)
     {
