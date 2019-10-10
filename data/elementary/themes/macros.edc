@@ -195,12 +195,17 @@
          } else { \
             set_state(PART:"elm.swallow.background", "default", 0.0); \
             if (!d) { \
-               if (!p) \
+               if (!p) { \
                   set_state(PART:"base", "default", 0.0); \
-               else \
+                  set_state(PART:"shadow", "default", 0.0); \
+               } else { \
                   set_state(PART:"base", "pressed", 0.0); \
-            } else \
+                  set_state(PART:"shadow", "pressed", 0.0); \
+               } \
+            } else { \
                set_state(PART:"base", "disabled", 0.0); \
+               set_state(PART:"shadow", "disabled", 0.0); \
+            } \
          } \
          if (m1 == (ICON | LABEL)) { \
             if (!d) { \

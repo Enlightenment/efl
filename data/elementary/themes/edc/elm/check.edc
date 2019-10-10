@@ -4,6 +4,14 @@ group { name: "elm/check/base/default";
       BUTTONMODE_SCRIPT
    }
    parts {
+      part { name: "shadow"; type: SPACER;
+         description { state: "default";
+         }
+         desc { "pressed"; inherit;
+         }
+         desc { "disabled"; inherit;
+         }
+      }
       swallow { "elm.swallow.background"; nomouse;
          desc { "default";
             visible: 0;
@@ -310,6 +318,14 @@ group { name: "elm/check/base/toggle";
       BUTTONMODE_SCRIPT
    }
    parts {
+      part { name: "shadow"; type: SPACER;
+         description { state: "default";
+         }
+         desc { "pressed"; inherit;
+         }
+         desc { "disabled"; inherit;
+         }
+      }
       swallow { "elm.swallow.background"; nomouse;
          desc { "default";
             visible: 0;
