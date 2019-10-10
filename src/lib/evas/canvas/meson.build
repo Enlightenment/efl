@@ -55,6 +55,7 @@ pub_eo_files = [
   'evas_textblock_legacy.eo',
 
   'efl2_canvas_text.eo',
+  'efl2_canvas_text_style.eo',
   'efl2_text_cursor.eo',
   'efl2_text_attribute_factory.eo',
   'efl2_text_serializer_markup.eo',
@@ -188,6 +189,7 @@ evas_src += files([
   'efl_canvas_animation_player.c',
   'efl_gfx_vg_value_provider.c',
   'efl_canvas_text.c',
+  'efl_canvas_text_style.c',
   'efl_canvas_vg_object.c',
   'efl_canvas_vg_node.c',
   'efl_canvas_vg_container.c',

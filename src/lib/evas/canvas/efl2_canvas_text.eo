@@ -8,8 +8,6 @@ const efl_text_paragraph_separator: Eina.Unicode = 0x2029U;
 const efl_text_object_replacement_utf8: string = "\xEF\xBF\xBC";
 const efl_text_paragraph_separator_utf8: string = "\xE2\x80\xA9";
 
-struct @extern Efl2.Canvas.Text_Style;
-
 /* FIXME:
     missing:
         - pango_layout_set_indent equivalent
@@ -112,7 +110,7 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
          [[Add a text style to the object
          ]]
          params {
-            style: Efl2.Canvas.Text_Style @by_ref; [[The style to apply]]
+            style: Efl2.Canvas.Text_Style; [[The style to apply]]
          }
       }
       text_style_pop {
@@ -123,7 +121,7 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
       text_style_peek @const {
          [[Peek at the top text style of the object
          ]]
-         return: Efl2.Canvas.Text_Style @by_ref; [[The most recent style added]]
+         return: Efl2.Canvas.Text_Style; [[The most recent style added]]
       }
       @property size_formatted {
          [[The formatted width and height.

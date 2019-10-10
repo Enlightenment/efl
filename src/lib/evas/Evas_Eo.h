@@ -157,8 +157,7 @@ struct _Efl_Canvas_Object_Animation_Event
 //#include "canvas/efl_canvas_text_cursor.eo.h"
 #include "canvas/evas_textblock_legacy.eo.h"
 #include "canvas/efl_canvas_text_factory.eo.h"
-// FIXME: solution until we migrate to the new type
-typedef struct _Evas_Textblock_Legacy_Style Efl2_Canvas_Text_Style;
+#include "canvas/efl2_canvas_text_style.eo.h"
 #include "canvas/efl2_text_cursor.eo.h"
 #include "canvas/efl2_text_attribute_factory.eo.h"
 #include "canvas/efl2_canvas_text.eo.h"

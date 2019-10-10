@@ -1,0 +1,50 @@
+class @beta Efl2.Canvas.Text_Style extends Efl.Object {
+   [[Annotation factory API
+
+       Long-lived you keep it and reuse it as needed
+   ]]
+   methods {
+      @property properties {
+         [[The properties of the format as a string
+
+           This property lets you manipulate the properties of the factory as a string.
+           This is similar to how you would set it when using markup.
+           For example, in order to set the markup <span font_weight=bold font_size=12>,
+           you would just set the tag using $.tag and then use this to set the
+           "font_weight=bold font_size=12" part.
+         ]]
+         set { }
+         get { }
+         values {
+            properties: string; [[The properties as a string]]
+         }
+      }
+
+      @property tag {
+         [[Override the style of existing tags or create new ones
+
+           This lets you define new tags such as <danger> or override
+           the default style of existing tags such as <a>.
+
+           You can also set a $.parent_tag to inherit style/behaviour from.
+           So for example if you want to create a tag called <visited_a> for
+           links that have been visited, you can just set the parent as a.
+           $null means a new tag.
+         ]]
+         set { }
+         get { }
+         keys {
+            tag_name: string; [[The name of the tag being overridden/created]]
+         }
+         values {
+            parent_tag: string; [[The tag to inherit from]]
+            properties: string; [[The properties of the new tag]]
+         }
+      }
+   }
+   implements {
+       Efl.Object.constructor;
+       Efl.Object.destructor;
+   }
+}
+

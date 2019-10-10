@@ -29,25 +29,24 @@ _evas_textblock_format_offset_get(const Evas_Object_Textblock_Node_Format *n);
 #define TEST_FONT_SOURCE TESTS_SRC_DIR "/fonts/TestFont.eet"
 #define TEST_FONT "font=" TEST_FONT_FAMILY " font_source=" TEST_FONT_SOURCE
 
-static const char *style_buf =
-   "DEFAULT='" TEST_FONT " font_size=10 color=#000 text_class=entry'"
-   "newline='br'"
-   "b='+ font_weight=bold'";
+static const char *style_buf = TEST_FONT " font_size=10 color=#000 text_class=entry";
 
 #define START_TB_TEST() \
    Evas *evas; \
    Efl2_Canvas_Text *tb; \
-   Evas_Textblock_Style *st = NULL; \
+   Efl2_Canvas_Text_Style *st = NULL; \
    Efl2_Text_Cursor *cur; \
    evas = EVAS_TEST_INIT_EVAS(); \
    evas_font_hinting_set(evas, EVAS_FONT_HINTING_AUTO); \
    tb = efl_add(EFL2_CANVAS_TEXT_CLASS, evas); \
    fail_if(!tb); \
    efl2_canvas_text_newline_as_paragraph_separator_set(tb, EINA_FALSE); \
-   st = evas_textblock_style_new(); \
+   st = efl_add(EFL2_CANVAS_TEXT_STYLE_CLASS, evas); \
    fail_if(!st); \
-   evas_textblock_style_set(st, style_buf); \
-   fail_if(strcmp(style_buf, evas_textblock_style_get(st))); \
+   efl2_canvas_text_style_properties_set(st, style_buf); \
+   efl2_canvas_text_style_tag_set(st, "newline", "br", NULL); \
+   efl2_canvas_text_style_tag_set(st, "b", NULL, "font_weight=bold"); \
+   fail_if(strcmp(style_buf, efl2_canvas_text_style_properties_get(st))); \
    efl2_canvas_text_style_push(tb, st); \
    cur = efl_add(EFL2_TEXT_CURSOR_CLASS, tb, \
          efl2_text_cursor_handle_set(efl_added, efl2_canvas_text_cursor_handle_new(tb))); \

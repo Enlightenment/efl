@@ -32,6 +32,34 @@ struct _Efl2_Text_Attribute_Handle
    Eina_Bool                         is_item : 1; /**< indicates it is an item/object placeholder */
 };
 
+typedef struct _Efl_Canvas_Text_Style_Tag             Efl_Canvas_Text_Style_Tag;
+typedef struct _Efl_Canvas_Text_Style_Tag_Base        Efl_Canvas_Text_Style_Tag_Base;
+
+struct _Efl_Canvas_Text_Style_Tag_Base
+{
+   Eina_Stringshare *parent_tag;  /**< The parent tag to inherit from */
+   Eina_Stringshare *tag;  /**< Format Identifier: b=Bold, i=Italic etc. */
+   Eina_Stringshare *replace;  /**< Replacement string. "font_weight=Bold", "font_style=Italic" etc. */
+};
+
+struct _Efl_Canvas_Text_Style_Tag
+{
+   EINA_INLIST;
+   Efl_Canvas_Text_Style_Tag_Base tag;  /**< Base style object for holding style information. */
+};
+
+struct _Efl2_Canvas_Text_Style_Handle
+{
+   Eo                    *eo_obj;
+   Eina_Stringshare      *properties;
+   Efl_Canvas_Text_Style_Tag *tags;
+   Eina_List             *objects;
+   Eina_Bool              delete_me : 1;
+   Eina_Bool              legacy : 1;
+};
+
+typedef struct _Efl2_Canvas_Text_Style_Handle Efl2_Canvas_Text_Style_Handle;
+
 Eina_Iterator *_canvas_text_selection_iterator_new(Eina_List *list);
 
 Eina_Unicode _canvas_text_cursor_content_get(const Efl2_Text_Cursor_Handle *cur);
@@ -79,4 +107,7 @@ Eina_Bool _canvas_text_annotation_remove(Eo *eo_obj, Efl2_Text_Attribute_Handle 
 Eina_Iterator *_canvas_text_range_annotations_get(const Efl2_Text_Cursor_Handle *start, const Efl2_Text_Cursor_Handle *end);
 void _evas_textblock_cursor_at_format_set(Efl2_Text_Cursor_Handle *cur, const Evas_Object_Textblock_Node_Format *fmt);
 void _canvas_text_annotation_free_if_not_reffed(Efl2_Text_Attribute_Handle *an);
+
+void _canvas_text_style_object_add(Eo *obj, Efl2_Canvas_Text *canvas_text);
+void _canvas_text_style_object_remove(Eo *obj, Efl2_Canvas_Text *canvas_text);
 #endif
