@@ -24,7 +24,7 @@ _handle_copy(Efl2_Text_Attribute_Handle *dst, const Efl2_Text_Attribute_Handle *
 EOLIAN static void
 _efl2_text_attribute_factory_reset(Eo *obj EINA_UNUSED, Efl2_Text_Attribute_Factory_Data *pd)
 {
-   eina_stringshare_replace(&pd->handle.tag, NULL);
+   eina_stringshare_replace(&pd->handle.tag, "span");
    eina_stringshare_replace(&pd->handle.properties, NULL);
    pd->handle.ephemeral = EINA_TRUE;
 }
@@ -121,7 +121,7 @@ _efl2_text_attribute_factory_remove(Efl2_Text_Attribute_Handle *handle)
 EOLIAN static void
 _efl2_text_attribute_factory_tag_set(Eo *obj EINA_UNUSED, Efl2_Text_Attribute_Factory_Data *pd, const char *name)
 {
-   eina_stringshare_replace(&pd->handle.tag, name);
+   eina_stringshare_replace(&pd->handle.tag, (name) ? name : "span");
 }
 
 EOLIAN static const char *
