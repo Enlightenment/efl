@@ -1307,7 +1307,7 @@ _scr_timeout_cb(void *data)
 
    _smooth_update(sd);
    sd->scr_timer = NULL;
-   evas_object_smart_callback_call(sd->obj, "drag,stop", NULL);
+   evas_object_smart_callback_call(sd->obj, "scroll,drag,stop", NULL);
 
    return ECORE_CALLBACK_CANCEL;
 }
@@ -1320,7 +1320,7 @@ _scroll_cb(Evas_Object *obj,
 
    if (sd->scr_timer) ecore_timer_del(sd->scr_timer);
    else
-      evas_object_smart_callback_call(sd->obj, "drag,stop", NULL);
+      evas_object_smart_callback_call(sd->obj, "scroll,drag,start", NULL);
    ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
    sd->scr_timer = ecore_timer_add(0.25, _scr_timeout_cb, obj);
    evas_object_smart_callback_call(sd->obj, "scroll", NULL);
@@ -1332,7 +1332,7 @@ _scroll_animate_start_cb(Evas_Object *obj,
 {
    ELM_MAP_DATA_GET(obj, sd);
 
-   evas_object_smart_callback_call(sd->obj, "anim,start", NULL);
+   evas_object_smart_callback_call(sd->obj, "scroll,anim,start", NULL);
 }
 
 static void
@@ -1341,7 +1341,7 @@ _scroll_animate_stop_cb(Evas_Object *obj,
 {
    ELM_MAP_DATA_GET(obj, sd);
 
-   evas_object_smart_callback_call(sd->obj, "anim,stop", NULL);
+   evas_object_smart_callback_call(sd->obj, "scroll,anim,stop", NULL);
 }
 
 static Eina_Bool

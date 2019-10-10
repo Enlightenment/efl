@@ -2242,14 +2242,14 @@ static void
 _scroll_anim_start_cb(Evas_Object *obj,
                       void *data EINA_UNUSED)
 {
-   evas_object_smart_callback_call(obj, "anim,start", NULL);
+   evas_object_smart_callback_call(obj, "scroll,anim,start", NULL);
 }
 
 static void
 _scroll_anim_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   evas_object_smart_callback_call(obj, "anim,stop", NULL);
+   evas_object_smart_callback_call(obj, "scroll,anim,stop", NULL);
 }
 
 static void
@@ -2259,14 +2259,14 @@ _scroll_drag_start_cb(Evas_Object *obj,
    ELM_TOOLBAR_DATA_GET(obj, sd);
    ELM_SAFE_FREE(sd->long_timer, ecore_timer_del);
 
-   evas_object_smart_callback_call(obj, "drag,start", NULL);
+   evas_object_smart_callback_call(obj, "scroll,drag,start", NULL);
 }
 
 static void
 _scroll_drag_stop_cb(Evas_Object *obj,
                      void *data EINA_UNUSED)
 {
-   evas_object_smart_callback_call(obj, "drag,stop", NULL);
+   evas_object_smart_callback_call(obj, "scroll,drag,stop", NULL);
 }
 
 static void
