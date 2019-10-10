@@ -145,8 +145,33 @@ EFL_START_TEST(evas_event_callbacks_priority)
 }
 EFL_END_TEST
 
+static void
+_smart_cb(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   int *called = data;
+
+   (*called)++;
+}
+
+EFL_START_TEST(evas_event_callbacks_smart)
+{
+   int called = 0;
+   Eo *box;
+   START_CALLBACK_TEST();
+   box = evas_object_box_add(evas);
+   evas_object_smart_callback_add(box, "move", _smart_cb, &called);
+   evas_object_smart_callback_add(box, "resize", _smart_cb, &called);
+   evas_object_smart_callback_add(box, "restack", _smart_cb, &called);
+   evas_object_geometry_set(box, 1, 1, 10, 10);
+   evas_object_layer_set(box, 10);
+   ck_assert_int_eq(called, 3);
+   END_CALLBACK_TEST();
+}
+EFL_END_TEST
+
 void evas_test_callbacks(TCase *tc)
 {
    tcase_add_test(tc, evas_object_event_callbacks_priority);
    tcase_add_test(tc, evas_event_callbacks_priority);
+   tcase_add_test(tc, evas_event_callbacks_smart);
 }
