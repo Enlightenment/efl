@@ -1043,7 +1043,7 @@ _edje_recalc_do(Edje *ed)
 #endif
    if (!ed->calc_only)
      {
-        if (ed->recalc_call)
+        if (ed->recalc_call && ed->has_recalc_event_cb)
           efl_event_callback_legacy_call(ed->obj, EFL_LAYOUT_EVENT_RECALC, NULL);
      }
    else
