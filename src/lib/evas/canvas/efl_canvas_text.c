@@ -7084,7 +7084,7 @@ _efl2_canvas_text_vertical_align_get(const Eo *obj EINA_UNUSED, Efl2_Canvas_Text
 }
 
 EOLIAN static void
-_efl_canvas_text_bidi_delimiters_set(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o, const char *delim)
+_efl2_canvas_text_efl2_text_content_plain_bidi_delimiters_set(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o, const char *delim)
 {
    Evas_Object_Protected_Data *obj = efl_data_scope_get(eo_obj, EFL_CANVAS_OBJECT_CLASS);
    evas_object_async_block(obj);
@@ -7092,7 +7092,7 @@ _efl_canvas_text_bidi_delimiters_set(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Da
 }
 
 EOLIAN static const char*
-_efl_canvas_text_bidi_delimiters_get(const Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o)
+_efl2_canvas_text_efl2_text_content_plain_bidi_delimiters_get(const Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_Data *o)
 {
    return o->bidi_delimiters;
 }

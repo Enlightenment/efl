@@ -212,6 +212,7 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
       Efl.Canvas.Filter.Internal.filter_state_prepare;
       Efl2.Text.Wrap.Properties.ellipsis { get; set; }
       Efl2.Text.Wrap.Properties.wrap { get; set; }
+      Efl2.Text.Content.Plain.bidi_delimiters { get; set; }
       Efl.Gfx.Entity.scale { set; }
    }
    events {
