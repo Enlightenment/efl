@@ -3088,7 +3088,8 @@ _edje_efl_content_content_set(Edje *ed, const char *part, Efl_Gfx_Entity *obj_sw
              eud->u.swallow.child = obj_swallow;
           }
      }
-   efl_event_callback_call(ed->obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, obj_swallow);
+   if (ed->has_content_change_event_cb)
+     efl_event_callback_call(ed->obj, EFL_CONTENT_EVENT_CONTENT_CHANGED, obj_swallow);
    return EINA_TRUE;
 }
 
