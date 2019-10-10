@@ -77,7 +77,6 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
          }
       }
 
-      // FIXME: Do extents instead? Also Pango has ink and logical pango_layout_get_extents -> check what that means.
       @property style_insets {
          [[Gets the left, right, top and bottom insets of the text.
 
@@ -102,10 +101,6 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
             mode: bool; [[$true for legacy mode, $false otherwise]]
          }
       }
-      // FIXME: updatedocs + am I happy with this?
-      // Need to update the actual text_style object so it can be manipulated with new bindable functions.
-      // Make it an eo object so it's bindable? Will also let us have interfaces/functions on item.
-      // Try to make it compatible with the old styles so they could be shared thanks to edje (and be created from edje)
       text_style_push {
          [[Add a text style to the object
          ]]
@@ -190,8 +185,7 @@ class @beta Efl2.Canvas.Text extends Efl.Canvas.Object implements Efl2.Text.Cont
          }
          return: bool; [[$true on success, $false otherwise.]]
       }
-      // FIXME: Needs to be removed! It should just keep callbacks on those objects and update the flag when they change
-      // obstacles_update {
+
       async_layout {
          [[Requests to layout the text off the mainloop.
          ]]
