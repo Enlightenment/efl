@@ -22,6 +22,9 @@ struct _Efl2_Text_Cursor_Handle
 struct _Efl2_Text_Attribute_Handle
 {
    EINA_INLIST;
+   Eina_Stringshare *tag;
+   Eina_Stringshare *properties;
+   Eina_Bool ephemeral;
    // FIXME: Just add cursor handles for the start/end so they are updated automatically?
    int ref;  /**< Value of the ref. */
 };
