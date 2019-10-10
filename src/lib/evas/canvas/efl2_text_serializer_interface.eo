@@ -1,0 +1,27 @@
+// FIXME: needs a better name (may clash in some languages) + better C prefix?
+interface @beta Efl2.Text.Serializer.Interface {
+   [[An interface for a text serializer
+   ]]
+   c_prefix: efl2_text_serializer;
+   methods {
+      insert {
+         [[Parse and insert the markup at the cursor's position
+         ]]
+         params {
+              @in position: const(Efl2.Text.Cursor); [[Start of range]]
+              @in markup: string; [[The markup string]]
+         }
+      }
+
+      range_get {
+         [[Get the markup representing the text inside a given range
+         ]]
+         params {
+              @in start: const(Efl2.Text.Cursor); [[Start of range]]
+              @in end: const(Efl2.Text.Cursor); [[End of range]]
+         }
+         // FIXME: shouldn't it be @move?
+         return: string; [[The markup within the range]]
+      }
+   }
+}
