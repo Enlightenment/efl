@@ -11,7 +11,7 @@
 
 #define EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj, ...) \
    Evas_Smart_Data *o = efl_data_scope_safe_get(eo_obj, MY_CLASS); \
-   do { if (!o) { MAGIC_CHECK_FAILED(eo_obj,0,MAGIC_SMART) return __VA_ARGS__; } } while (0)
+   do { if (!o) { ERR("calling smart object API on non-smart object!"); return __VA_ARGS__; } } while (0)
 
 extern Eina_Hash* signals_hash_table;
 
@@ -1615,7 +1615,7 @@ evas_object_smart_cleanup(Evas_Object *eo_obj)
           }
 
         evas_smart_cb_descriptions_resize(&o->callbacks_descriptions, 0);
-        evas_object_smart_data_set(eo_obj, NULL);
+        if (o->data) evas_object_smart_data_set(eo_obj, NULL);
      }
 
    obj->smart.parent = NULL;
