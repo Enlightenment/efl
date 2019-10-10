@@ -7470,33 +7470,6 @@ _evas_textblock_node_format_last_at_off(const Evas_Object_Textblock_Node_Format 
 
 /**
  * @internal
- * Returns the visible format at a specific location.
- *
- * @param n a format at the specific position.
- * @return the format node at the specific position or NULL if not found.
- */
-static Evas_Object_Textblock_Node_Format *
-_evas_textblock_node_visible_at_pos_get(const Evas_Object_Textblock_Node_Format *n)
-{
-   const Evas_Object_Textblock_Node_Format *nnode;
-   if (!n) return NULL;
-   /* The visible format is the last one, because it inserts a replacement
-    * char that advances the next formats. */
-
-   nnode = n;
-   do
-     {
-        n = nnode;
-        if (n->visible) return (Evas_Object_Textblock_Node_Format *) n;
-        nnode = _NODE_FORMAT(EINA_INLIST_GET(nnode)->next);
-     }
-   while (nnode && (nnode->offset == 0));
-
-   return NULL;
-}
-
-/**
- * @internal
  * Return the last format that applies to a specific cursor or at the specific
  * position the cursor points to. This means either a cursor at or before the
  * position of the cursor in the text node is returned or the previous's text
@@ -8485,41 +8458,6 @@ _evas_textblock_node_text_adjust_offsets_to_start(Efl2_Canvas_Text_Data *o,
      }
 
    return EINA_FALSE;
-}
-
-/**
- * @internal
- * Returns the first format in the range between start and end in the textblock
- * n.
- *
- * @param o the textblock object.
- * @param n the text node the positions refer to.
- * @param start the start of where to delete from.
- * @param end the end of the section to delete, if end == -1 it means the end of the string.
- */
-static Evas_Object_Textblock_Node_Format *
-_evas_textblock_node_text_get_first_format_between(
-      Evas_Object_Textblock_Node_Text *n, int start, int end)
-{
-   Evas_Object_Textblock_Node_Format *itr;
-   int use_end = 1;
-   itr = n->format_node;
-   if (end < 0) use_end = 0;
-   while (itr && (itr->text_node == n))
-     {
-        start -= itr->offset;
-        end -= itr->offset;
-        if ((end <= 0) && use_end)
-          {
-             break;
-          }
-        if (start <= 0)
-          {
-             return itr;
-          }
-        itr = _NODE_FORMAT(EINA_INLIST_GET(itr)->next);
-     }
-   return NULL;
 }
 
 /**
@@ -12840,21 +12778,6 @@ _efl2_canvas_text_efl_canvas_object_paragraph_direction_get(const Eo *eo_obj EIN
    return (Efl_Text_Bidirectional_Type)o->paragraph_direction;
 }
 
-static int
-_prepend_text_run2(Efl2_Text_Cursor_Handle *cur, const char *s, const char *p)
-{
-   if ((s) && (p > s))
-     {
-        char *ts;
-
-        ts = alloca(p - s + 1);
-        strncpy(ts, s, p - s);
-        ts[p - s] = 0;
-        return _canvas_text_cursor_text_insert(cur, ts);
-     }
-   return 0;
-}
-
 EOLIAN static void
 _efl2_canvas_text_efl2_text_content_plain_text_set(Eo *eo_obj, Efl2_Canvas_Text_Data *o,
       const char *text)
@@ -13009,19 +12932,6 @@ _textblock_annotation_insert_internal(Eo *eo_obj EINA_UNUSED, Efl2_Canvas_Text_D
 
    o->format_changed = EINA_TRUE;
    return EINA_TRUE;
-}
-
-EOLIAN static const char *
-_efl_canvas_text_efl_text_annotate_annotation_get(const Eo *eo_obj, Efl2_Canvas_Text_Data *o EINA_UNUSED,
-      Efl2_Text_Attribute_Handle *annotation)
-{
-   if (!annotation || (annotation->obj != eo_obj))
-     {
-        ERR("Used invalid handle or of a different object");
-        return NULL;
-     }
-
-   return (annotation->start_node ? annotation->start_node->format : NULL);
 }
 
 void
@@ -13187,16 +13097,6 @@ _canvas_text_range_annotations_get(const Efl2_Text_Cursor_Handle *start, const E
           }
      }
    return _evas_textblock_annotation_iterator_new(lst);
-}
-
-EOLIAN static void
-_efl_canvas_text_efl_text_annotate_annotation_positions_get(Eo *eo_obj,
-      Efl2_Canvas_Text_Data *o EINA_UNUSED,
-      const Efl2_Text_Attribute_Handle *annotation,
-      Efl2_Text_Cursor_Handle *start, Efl2_Text_Cursor_Handle *end)
-{
-   _textblock_cursor_pos_at_fnode_set(eo_obj, start, annotation->start_node);
-   _textblock_cursor_pos_at_fnode_set(eo_obj, end, annotation->end_node);
 }
 
 static void
