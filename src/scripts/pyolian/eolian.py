@@ -1549,34 +1549,57 @@ if __name__ == '__main__':
 
     # prepare the two regexp
     flags = re.S | re.M
-    DEFINED_RE = re.compile('^EAPI[\w\n *]*(eolian_\w*)\([\w *,]*\);', flags)
-    USED_RE = re.compile('lib\.(eolian_[\w]*)\(', flags)
+    FUNC_DEFINED_RE = re.compile(r'^\s*EAPI[\w\s*]*(eolian_\w*)\s*\([\w\s*,]*\);', flags)
+    FUNC_USED_RE = re.compile(r'^[^\n#]*lib\.(eolian_[\w]*)\s*\(', flags)
 
-    # extract all EAPI functions from Eolian.h
+    ENUM_DEFINED_RE = re.compile(r'typedef enum\s*{([^}]*)}\s*(Eolian_[\w]*);', flags)
+    ENUM_USED_RE = re.compile(r'^class\s([\w]*)\(IntEnum\):', flags)
+
+    # ignore some know cases (function or enum)
+    IGNORED = {
+        'eolian_implement_documentation_get',  # we are using eolian_aux_implement_documentation_get
+        'eolian_documentation_string_split',  # not needed in python
+    }
+
+    # extract functions and enums from Eolian.h
     defined_funcs = []
+    defined_enums = []
     with open(eolian_header, 'r') as fh:
         header = fh.read()
-        for match in re.finditer(DEFINED_RE, header):
-            func_name = match.group(1)
+    for match in re.finditer(FUNC_DEFINED_RE, header):
+        func_name = match.group(1)
+        if func_name not in IGNORED:
             defined_funcs.append(func_name)
+    for match in re.finditer(ENUM_DEFINED_RE, header):
+        enum_name = match.group(2)
+        if enum_name not in IGNORED:
+            defined_enums.append(enum_name)
     defined_funcs = set(defined_funcs)
+    defined_enums = set(defined_enums)
 
-    # extract all called functions in eolian.py (this file)
+    # extract functions and enums from eolian.py (this file)
     used_funcs = []
+    used_enums = []
     with open(__file__, 'r') as fh:
         source = fh.read()
-        for match in re.finditer(USED_RE, source):
-            func_name = match.group(1)
-            used_funcs.append(func_name)
+    for match in re.finditer(FUNC_USED_RE, source):
+        func_name = match.group(1)
+        used_funcs.append(func_name)
+    for match in re.finditer(ENUM_USED_RE, source):
+        enum_name = match.group(1)
+        used_enums.append(enum_name)
     used_funcs = set(used_funcs)
+    used_enums = set(used_enums)
 
     # show general info
-    num_def = len(defined_funcs)
-    num_usd = len(used_funcs)
+    num_def, num_usd = len(defined_funcs), len(used_funcs)
+    num_enum_def, num_enum_usd = len(defined_enums), len(used_enums)
     print('Pyolian coverage results')
     print('========================')
     print('Found %d functions defined in Eolian.h (%s)' % (num_def, eolian_header))
-    print('Found %d functions used in eolian.py (hopefully not commented out)' % num_usd)
+    print('Found %d functions used in eolian.py (hopefully not multiline-commented)' % num_usd)
+    print('Found %d enums defined in Eolian.h' % num_enum_def)
+    print('Found %d enums defined in eolian.py' % num_enum_usd)
     print('Total API coverage %.1f%%' % (num_usd / num_def * 100))
     print()
 
@@ -1588,15 +1611,31 @@ if __name__ == '__main__':
         print('{:02d}. {}'.format(i, func_name))
     print()
 
-    # List all functions found in Eolian.h  (--all option)
-    if '--all' in sys.argv:
-        print('{} functions found in Eolian.h'.format(num_def))
-        print('===============================')
-        for i, func_name in enumerate(sorted(defined_funcs), 1):
-            print('{:03d}. {}'.format(i, func_name))
+    # list all missing enums
+    missing = defined_enums - used_enums
+    if len(missing) > 0:
+        print('{} Missing enums in eolian.py'.format(len(missing)))
+        print('=================================')
+        for i, enum_name in enumerate(sorted(missing), 1):
+            print('{:02d}. {}'.format(i, enum_name))
         print()
+
+    # List all functions found in C and Py (--all option)
+    if '--all' in sys.argv:
+        to_list = (
+            (defined_funcs, '{} EAPI functions defined in Eolian.h'),
+            (used_funcs, '{} functions called in eolian.py'),
+            (defined_enums, '{} Enums defined in Eolian.h'),
+            (used_enums, '{} Enums defined in eolian.py'),
+        )
+        for bag, label in to_list:
+            print(label.format(len(bag)))
+            print('==============================')
+            for i, obj_name in enumerate(sorted(bag), 1):
+                print('{:03d}. {}'.format(i, obj_name))
+            print()
     else:
         print('Additional arguments')
         print('====================')
-        print(' --all   To list all functions found in Eolian.h')
+        print(' --all   To list all functions and enums found')
         print()
