@@ -1104,9 +1104,9 @@ EFL_START_TEST(canvas_text_word_and_cluster)
    // Walk through the first 52 characters, we shouldn't have any graphemes.
    for (int i = 0 ; i < 52 ; i++)
      {
-        fail_if(efl2_text_cursor_cluster_start(cur));
+        fail_if(efl2_text_cursor_grapheme_cluster_start(cur));
         fail_if(!efl2_text_cursor_equal(cur, cur2));
-        fail_if(efl2_text_cursor_cluster_end(cur));
+        fail_if(efl2_text_cursor_grapheme_cluster_end(cur));
         fail_if(!efl2_text_cursor_equal(cur, cur2));
 
         fail_if(!efl2_text_cursor_char_next(cur));
@@ -1207,14 +1207,14 @@ EFL_START_TEST(canvas_text_word_and_cluster)
    fail_if(efl2_text_cursor_word_end(cur));
    fail_if(!efl2_text_cursor_equal(cur, cur2));
    // Neither shoud graphemes
-   fail_if(efl2_text_cursor_cluster_start(cur));
+   fail_if(efl2_text_cursor_grapheme_cluster_start(cur));
    fail_if(!efl2_text_cursor_equal(cur, cur2));
-   fail_if(efl2_text_cursor_cluster_end(cur));
+   fail_if(efl2_text_cursor_grapheme_cluster_end(cur));
    fail_if(!efl2_text_cursor_equal(cur, cur2));
 
    // Middle of the cluster to start
    fail_if(!efl2_text_cursor_char_next(cur));
-   fail_if(!efl2_text_cursor_cluster_start(cur));
+   fail_if(!efl2_text_cursor_grapheme_cluster_start(cur));
    fail_if(!efl2_text_cursor_equal(cur, cur2));
 
    fail_if(!efl2_text_cursor_char_next(cur));
@@ -1226,7 +1226,7 @@ EFL_START_TEST(canvas_text_word_and_cluster)
    efl2_text_cursor_copy(cur, cur2);
 
    fail_if(!efl2_text_cursor_char_prev(cur));
-   fail_if(!efl2_text_cursor_cluster_end(cur));
+   fail_if(!efl2_text_cursor_grapheme_cluster_end(cur));
    fail_if(!efl2_text_cursor_equal(cur, cur2));
 
    fail_if(!efl2_text_cursor_char_prev(cur));

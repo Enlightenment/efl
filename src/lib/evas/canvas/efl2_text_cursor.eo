@@ -9,7 +9,6 @@ enum @beta Efl2.Text.Cursor_Type
    under [[Cursor type under]]
 }
 
-// FIXME: Rename cluster ones to grapheme?
 // Missing pen_geometry get? - probably not, that's the cursor geometry with under.
 // Should we always do split cursor and "under" should just be content geometry? -- probably!
 //  Problem with this is that it doesn't necessarily work correctly vertically.
@@ -104,18 +103,14 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
          [[Deletes a single character from position pointed by given cursor.]]
       }
 
-      cluster_start {
+      grapheme_cluster_start {
          [[Advances to the end of grapheme cluster]]
          return: bool; [[True if actually moved]]
       }
-      cluster_end {
+      grapheme_cluster_end {
          [[Advances to the start of the grapheme cluster]]
          return: bool; [[True if actually moved]]
       }
-
-      // FIXME: It's just implemented as range delete with cluster start + end.
-      // Sholud we have convenience wrappers for those though? This and cluster prev/next?
-      // cluster_delete {
 
       // FIXME: paragraph_end is inconsistent with word_end. The one goes to the last character and the other after the last character.
       paragraph_start {
@@ -172,9 +167,6 @@ class @beta Efl2.Text.Cursor extends Efl.Object {
             @in coord: Eina.Position2D; [[The coordinates to set to]]
          }
       }
-
-      // FIXME: should be removed. It's just char_coord_set + grapheme_start
-      // cluster_coord_set {
 
       // FIXME: Add a way to add with a length parameter (always have it?) so we just copy n characters, or all if -1. Useful for saving copies when inserting from another source.
       text_insert {

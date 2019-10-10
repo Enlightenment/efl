@@ -778,9 +778,9 @@ _delete_emit(Eo *obj, Efl2_Text_Cursor *c, Efl2_Text_Raw_Editable_Data *en EINA_
         Eina_Bool remove_cluster = evas_textblock_cursor_at_cluster_as_single_glyph(cc,EINA_FALSE);
         if (remove_cluster)
           {
-             efl2_text_cursor_cluster_start(cc);
+             efl2_text_cursor_grapheme_cluster_start(cc);
              efl2_text_cursor_char_prev(cc);
-             efl2_text_cursor_cluster_start(cc);
+             efl2_text_cursor_grapheme_cluster_start(cc);
           }
         else*/
           {
@@ -803,7 +803,7 @@ _delete_emit(Eo *obj, Efl2_Text_Cursor *c, Efl2_Text_Raw_Editable_Data *en EINA_
         Eina_Bool remove_cluster = evas_textblock_cursor_at_cluster_as_single_glyph(cc,EINA_TRUE);
         if (remove_cluster)*/
           {
-             efl2_text_cursor_cluster_end(cc);
+             efl2_text_cursor_grapheme_cluster_end(cc);
              efl2_text_cursor_char_next(cc);
           }
         /*else
@@ -1039,10 +1039,10 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
         _compose_seq_reset(en);
         _key_down_sel_pre(obj, cur, en, shift, EINA_FALSE);
 
-        if (!efl2_text_cursor_cluster_start(cur))
+        if (!efl2_text_cursor_grapheme_cluster_start(cur))
           {
              efl2_text_cursor_char_prev(cur);
-             efl2_text_cursor_cluster_start(cur);
+             efl2_text_cursor_grapheme_cluster_start(cur);
           }
 
         // We already moved so we just need to go to the start
@@ -1062,10 +1062,10 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
         _compose_seq_reset(en);
         _key_down_sel_pre(obj, cur, en, shift, EINA_TRUE);
 
-        if (!efl2_text_cursor_cluster_end(cur))
+        if (!efl2_text_cursor_grapheme_cluster_end(cur))
           {
              efl2_text_cursor_char_next(cur);
-             efl2_text_cursor_cluster_end(cur);
+             efl2_text_cursor_grapheme_cluster_end(cur);
           }
         // We already moved, so we just need to go to the end
 #if defined(__APPLE__) && defined(__MACH__)
@@ -1088,9 +1088,9 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
              Efl2_Text_Cursor *tc = efl_add(EFL2_TEXT_CURSOR_CLASS, obj, efl2_text_cursor_handle_set(efl_added, efl2_canvas_text_cursor_handle_new(obj)));
 
              efl2_text_cursor_copy(tc, cur);
-             efl2_text_cursor_cluster_start(cur);
+             efl2_text_cursor_grapheme_cluster_start(cur);
              efl2_text_cursor_char_prev(cur);
-             efl2_text_cursor_cluster_start(cur);
+             efl2_text_cursor_grapheme_cluster_start(cur);
              efl2_text_cursor_word_start(cur);
 
              _range_del_emit(obj, cur, tc);
@@ -1129,7 +1129,7 @@ _key_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj, void *event_i
 
              efl2_text_cursor_copy(tc, cur);
              efl2_text_cursor_word_end(cur);
-             efl2_text_cursor_cluster_end(cur);
+             efl2_text_cursor_grapheme_cluster_end(cur);
              efl2_text_cursor_char_next(cur);
 
              _range_del_emit(obj, cur, tc);
@@ -1669,7 +1669,7 @@ _mouse_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj EINA_UNUSED,
                   else
                     {
                        efl2_text_cursor_word_end(cur);
-                       efl2_text_cursor_cluster_end(cur);
+                       efl2_text_cursor_grapheme_cluster_end(cur);
                        efl2_text_cursor_char_next(cur);
                     }
                   _sel_extend(cur, obj, en);
@@ -1684,7 +1684,7 @@ _mouse_down_cb(void *data EINA_UNUSED, Evas *e EINA_UNUSED, Eo *obj EINA_UNUSED,
                   efl2_text_cursor_word_start(cur);
                   _sel_init(cur, obj, en);
                   efl2_text_cursor_word_end(cur);
-                  efl2_text_cursor_cluster_end(cur);
+                  efl2_text_cursor_grapheme_cluster_end(cur);
                   efl2_text_cursor_char_next(cur);
                   _sel_extend(cur, obj, en);
                }
