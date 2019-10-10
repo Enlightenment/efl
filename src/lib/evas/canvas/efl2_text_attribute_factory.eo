@@ -105,6 +105,19 @@ class @beta Efl2.Text.Attribute.Factory extends Efl.Object {
          }
       }
 
+      attribute_type_get @static {
+         [[The base type of the attribute.
+
+           Can be either item, span, a, ps or br. Any attribute that uses a tag
+           that inherits from one of those will return the top type.
+         ]]
+         params {
+              @in canvas_text: const(Efl2.Canvas.Text); [[The object this handle is a part of ]]
+              @in handle: const(Efl2.Text.Attribute.Handle) @by_ref; [[The handle of the attribute]]
+         }
+        return: stringshare; [[The type of the attribute.]]
+      }
+
       ref @static {
          [[Increase the attribute's refcount
          ]]

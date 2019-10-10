@@ -85,6 +85,13 @@ _efl2_text_attribute_factory_attribute_cursors_get(const Efl2_Text_Attribute_Han
    _evas_textblock_cursor_at_format_set(efl2_text_cursor_handle_get(end), an->end_node);
 }
 
+EOLIAN static Eina_Stringshare *
+_efl2_text_attribute_factory_attribute_type_get(const Efl2_Canvas_Text *canvas_text EINA_UNUSED, const Efl2_Text_Attribute_Handle *an)
+{
+   // FIXME: actually implement based on the canvas_text's object style.
+   return an->tag;
+}
+
 EOLIAN static Efl2_Text_Attribute_Handle *
 _efl2_text_attribute_factory_ref(Efl2_Text_Attribute_Handle *handle)
 {
