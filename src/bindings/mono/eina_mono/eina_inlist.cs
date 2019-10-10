@@ -3,6 +3,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 using static Eina.TraitFunctions;
 using static Eina.InlistNativeFunctions;
@@ -11,6 +12,7 @@ using Eina.Callbacks;
 namespace Eina
 {
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static class InlistNativeFunctions
 {
     [DllImport(efl.Libs.Eina)] public static extern IntPtr
@@ -81,13 +83,20 @@ public static class InlistNativeFunctions
 }
 
 /// <summary>Wrapper around an inplace list.
-///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 public class Inlist<T> : IEnumerable<T>, IDisposable
 {
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public IntPtr Handle {get;set;} = IntPtr.Zero;
+    /// <summary>Whether this wrapper owns the native buffer.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public bool Own {get;set;}
+    /// <summary>Who is in charge of releasing the resources wrapped by
+    /// this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public bool OwnContent {get;set;}
 
     public int Length
@@ -140,11 +149,16 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
     }
 
 
+    /// <summary>
+    ///   Default constructor.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public Inlist()
     {
         InitNew();
     }
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public Inlist(IntPtr handle, bool own)
     {
         Handle = handle;
@@ -152,6 +166,7 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
         OwnContent = own;
     }
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public Inlist(IntPtr handle, bool own, bool ownContent)
     {
         Handle = handle;
@@ -159,11 +174,20 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
         OwnContent = ownContent;
     }
 
+    /// <summary>
+    ///   Finalizer to be called from the Garbage Collector.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     ~Inlist()
     {
         Dispose(false);
     }
 
+    /// <summary>Disposes of this wrapper, releasing the native array if owned.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="disposing">True if this was called from <see cref="Dispose()"/> public method. False if
+    /// called from the C# finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
         IntPtr h = Handle;
@@ -192,41 +216,70 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
         }
     }
 
+    /// <summary>Releases the native resources held by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>Releases the native resources held by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Free()
     {
         Dispose();
     }
 
+    /// <summary>
+    ///   Releases the native inlist.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The native inlist.</returns>
     public IntPtr Release()
     {
         IntPtr h = Handle;
         Handle = IntPtr.Zero;
         return h;
     }
-
+    
+    /// <summary>Sets all ownership.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="ownAll">If the hash own for all ownerships.</param>
     public void SetOwnership(bool ownAll)
     {
         Own = ownAll;
         OwnContent = ownAll;
     }
 
+    /// <summary>Sets own individually.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="own">If own the object.</param>
+    /// <param name="ownContent">If own the content's object.</param>
     public void SetOwnership(bool own, bool ownContent)
     {
         Own = own;
         OwnContent = ownContent;
     }
 
+    /// <summary>
+    ///   Gets the count of the number of items.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The number of members in the list.</returns>
     public int Count()
     {
         return (int)eina_inlist_count(Handle);
     }
 
+    /// <summary>
+    ///   Cleanup the inlist.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Clean()
     {
         while (Handle != IntPtr.Zero)
@@ -237,18 +290,33 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
         }
     }
 
+    /// <summary>
+    ///   Adds a new value to the end.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">The value to be added.</param>
     public void Append(T val)
     {
         IntPtr node = ManagedToNativeAllocInlistNode(val);
         Handle = eina_inlist_append(Handle, node);
     }
 
+    /// <summary>
+    ///   Adds a new value to the begin.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">The value to be added.</param>
     public void Prepend(T val)
     {
         IntPtr node = ManagedToNativeAllocInlistNode(val);
         Handle = eina_inlist_prepend(Handle, node);
     }
 
+    /// <summary>
+    ///   Removes value at the specified position from list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="idx">The given position.</param>
     public void Remove(int idx)
     {
         IntPtr node = InternalAt(idx);
@@ -256,6 +324,12 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
         NativeFreeInlistNode<T>(node, OwnContent);
     }
 
+    /// <summary>
+    ///   Returns the element of the list at the specified position.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="idx">The position of the desired element.</param>
+    /// <returns>The element at the specified position</returns>
     public T At(int idx)
     {
         IntPtr node = InternalAt(idx);
@@ -267,6 +341,12 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
         return NativeToManagedInlistNode<T>(node);
     }
 
+    /// <summary>
+    ///  Replaces the element at the specified position.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="idx">The position of the desired element.</param>
+    /// <param name="val">The value of the element to be inserted.</param>
     public void DataSet(int idx, T val)
     {
         IntPtr old = InternalAt(idx);
@@ -283,6 +363,10 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
         NativeFreeInlistNode<T>(old, OwnContent);
     }
 
+    /// <summary>
+    ///   Accessor by index to the elements of this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public T this[int idx]
     {
         get
@@ -295,6 +379,12 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
         }
     }
 
+    
+    /// <summary>
+    ///   Returns a array containing all of the elements in proper sequence.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>A array</returns>
     public T[] ToArray()
     {
         var managed = new T[Count()];
@@ -307,6 +397,11 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
         return managed;
     }
 
+    /// <summary>
+    ///   Adds a array to the end.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="values">The values to be added.</param>
     public void AppendArray(T[] values)
     {
         foreach (T v in values)
@@ -315,12 +410,18 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
         }
     }
 
-
+    
+    /// <summary> Gets an Iterator for this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public Eina.Iterator<T> GetIterator()
     {
         return new Eina.Iterator<T>(eina_inlist_iterator_wrapper_new_custom_export_mono(Handle), true);
     }
 
+    /// <summary> Gets an Enumerator for this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public IEnumerator<T> GetEnumerator()
     {
         for (IntPtr curr = Handle; curr != IntPtr.Zero; curr = InternalNext(curr))
@@ -334,7 +435,9 @@ public class Inlist<T> : IEnumerable<T>, IDisposable
         return this.GetEnumerator();
     }
 
-    /// <summary> Gets an Accessor for this List.</summary>
+    /// <summary> Gets an Accessor for this List.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public Eina.Accessor<T> GetAccessor()
     {
         return new Eina.AccessorInList<T>(eina_inlist_accessor_new(Handle), Ownership.Managed);
