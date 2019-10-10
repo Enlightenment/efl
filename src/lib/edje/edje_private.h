@@ -1803,6 +1803,7 @@ struct _Edje
    Eina_Bool          canvas_animator : 1;
    Eina_Bool          has_state_clip : 1;
    Eina_Bool          has_recalc_event_cb : 1;
+   Eina_Bool          has_content_change_event_cb : 1;
 };
 
 struct _Edje_Calc_Params_Map
