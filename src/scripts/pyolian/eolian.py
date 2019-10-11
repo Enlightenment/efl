@@ -1137,7 +1137,8 @@ class Type(Object):
     def builtin_type(self):
         return Eolian_Type_Builtin_Type(lib.eolian_type_builtin_type_get(self))
 
-    def c_type_get(self):
+    @cached_property
+    def c_type(self):
         s = lib.eolian_type_c_type_get(self)
         ret = _str_to_py(s)
         lib.eina_stringshare_del(c_void_p(s))
