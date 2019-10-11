@@ -1201,7 +1201,7 @@ struct event_def
              } : eina::optional<type_def>{})
     , name( ::eolian_event_name_get(event))
     , c_name( ::eolian_event_c_macro_get(event))
-    , is_beta( ::eolian_event_is_beta(event))
+    , is_beta( ::eolian_event_is_beta(event) || klass.is_beta)
     , is_protected( ::eolian_event_scope_get(event) == EOLIAN_SCOPE_PROTECTED)
     , documentation( ::eolian_event_documentation_get(event)) {}
 };
