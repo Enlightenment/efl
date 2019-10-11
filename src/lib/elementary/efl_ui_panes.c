@@ -209,17 +209,15 @@ _efl_ui_panes_efl_canvas_group_group_calculate(Eo *obj, Efl_Ui_Panes_Data *sd)
    Eo *first_content, *second_content;
    Eina_Size2D min;
 
+   /* Legacy panes did not consider its content's min size.
+    * Therefore, to keep the backward compatibility, the following calculation
+    * is not done for legacy panes. */
+   if (elm_widget_is_legacy(obj)) return;
+
    efl_canvas_group_need_recalculate_set(obj, EINA_FALSE);
-   if (elm_widget_is_legacy(obj))
-     {
-        first_content = efl_content_get(efl_part(obj, "elm.swallow.left"));
-        second_content = efl_content_get(efl_part(obj, "elm.swallow.right"));
-     }
-   else
-     {
-        first_content = efl_content_get(efl_part(obj, "first"));
-        second_content = efl_content_get(efl_part(obj, "second"));
-     }
+
+   first_content = efl_content_get(efl_part(obj, "first"));
+   second_content = efl_content_get(efl_part(obj, "second"));
 
    if (first_content)
      {
