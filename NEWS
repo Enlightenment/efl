@@ -1,6 +1,63 @@
 ==========
-EFL 1.23.0
+EFL 1.23.1
 ==========
+
+Changes since 1.23.0:
+---------------------
+
+Fixes:
+
+   * docs: enable compression for tar file and avoid file name clash
+   * efl_ui/bg: unset finger_size multiplier during construction (T8304)
+   * meson: pass correct PACKAGE_DATA_DIR (T8304)
+   * doc: improve colorselector preview (T8304)
+   * docs: fix elementary group name in docs
+   * efl_ui_video: bring back Elm_video doxygen group for docs
+   * evil: bring back doxygen intro page for evil library
+   * evil: remove stray x character from docs section
+   * evil: make it clear in the docs that this library is private to efl
+   * elementary: Add documentatio to efl_ui_layout_factory.eo (T7717)
+   * docs: Fix problems with monospaced text
+   * csharp: More updated docs to 1.23. (T8293)
+   * evas: silence compiler warning in textblock
+   * efl_ui_animation_view : Put @beta on Efl.Ui.Animation_View_State
+   * csharp: Standardizing doc tag.
+   * ecore : fix incorrect size of expression for coverity
+   * c: coverity: resource leaked when using realloc. (CID1404749, CID1404741)
+   * efl_ui_datepicker: no need to delete the manager here
+   * efl_ui_image: fix backward compatibility issue
+   * eldbus: properly call parent finalize during creation of Eldbus.Model_Method.
+   * eldbus: Eldbus_Proxy require to handle self desctruction as refcounting doesn't fully protect.
+   * eldbus: connection are destroyed on invalidate, there is no point for any object to not cleanup on invalidate.
+   * eldbus: properly cleanup local variable during destruction.
+   * docs: Remove redundant documentation
+   * ci: fix return value warning in test build code
+   * efl_ui/win: fix max size hint eval (T8304)
+   * efl_ui/win: initialize max size hints to -1 during constructor
+   * csharp: Add some docs to MVVM infrastructure
+   * csharp: Do not use the System Bus for testing. (T8313)
+   * csharp: removing extra // (T8293)
+   * csharp: updating eina_accessor docs and hide api. (T8293)
+   * csharp: updating eina_binbuf docs and hide api. (T8293)
+   * efl_ui/selection_manager: be explicit with sizeof() usage (CID1385141)
+   * tests/position_manager: initialize variable in declaration (CID1404747)
+   * examples/emotion: remove dead code (CID1400928)
+   * csharp: updating eina_inarray docs and hide api. (T8293)
+   * csharp: updating eina_inlist docs and hide api. (T8293)
+   * csharp: updating eina_iterator docs and hide api. (T8293)
+   * elm: fix legacy callback names.
+   * csharp: Document eina_value.cs (T8293)
+   * csharp: Fix docs and hide stuff from stringshare. (T8293)
+   * csharp: Fix doc and hide stuff from strbuf. (T8293)
+   * csharp: Add missing docs to slice. (T8292)
+   * ecore_con: destructor are always called when finalize return NULL.
+   * ecore_con: do not crash in test if nothing is returned by Ecore_Con_Url.
+   * ecore_con: use only Eina_Magic infrastructure for set and check in Ecore_Con.
+   * cv: Switch to safe 32/64 bits printf masks
+   * efl_canvas_animation_player: fix double free
+   * evas/language: #ifdef guard variable which is only used inside #ifdef
+   * efl_ui_panes: fix not to consider content min size for legacy panes
+
 
 Changes since 1.22.0:
 ---------------------
