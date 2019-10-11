@@ -191,6 +191,7 @@ using efl::eolian::grammar::attributes::klass_def;
 using efl::eolian::grammar::attributes::function_def;
 using efl::eolian::grammar::attributes::property_def;
 using efl::eolian::grammar::attributes::type_def;
+using efl::eolian::grammar::attributes::event_def;
 
 // FIXME Unify this definition some so we can share it with documentation tests.
 static
@@ -318,6 +319,31 @@ EFL_START_TEST(eolian_cxx_test_beta)
 }
 EFL_END_TEST
 
+EFL_START_TEST(eolian_cxx_test_beta_cascading)
+{
+    efl::eolian::eolian_init eolian_init;
+    efl::eolian::eolian_state eolian_state;
+
+    klass_def cls = init_test_data("beta_class.eo", "Beta_Class", eolian_state);
+
+    ck_assert(cls.is_beta);
+
+    auto func = std::find_if(cls.functions.begin(), cls.functions.end(), [](function_def const& f) {
+        return f.name == "method_should_be_beta";
+    });
+
+    ck_assert(func != cls.functions.end());
+    ck_assert(func->is_beta);
+
+    auto evt = std::find_if(cls.events.begin(), cls.events.end(), [](event_def const& e) {
+        return e.name == "event_should_be_beta";
+    });
+
+    ck_assert(evt != cls.events.end());
+    ck_assert(evt->is_beta);
+}
+EFL_END_TEST
+
 void
 eolian_cxx_test_binding(TCase* tc)
 {
@@ -333,4 +359,5 @@ eolian_cxx_test_binding(TCase* tc)
    tcase_add_test(tc, eolian_cxx_test_cls_get);
    tcase_add_test(tc, eolian_cxx_test_constructors);
    tcase_add_test(tc, eolian_cxx_test_beta);
+   tcase_add_test(tc, eolian_cxx_test_beta_cascading);
 }

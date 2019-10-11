@@ -1,3 +1,11 @@
 class @beta Beta_Class extends Efl.Object
 {
+   methods {
+      method_should_be_beta {
+         [[ Method should be beta ]]
+      }
+   }
+   events {
+      event_should_be_beta: void; [[ Event should be beta.]]
+   }
 }
