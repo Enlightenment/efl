@@ -259,9 +259,11 @@ EFL_START_TEST(ecore_con_test_ecore_con_url_download)
 
    ecore_con_url_verbose_set(url, EINA_TRUE);
 
+   fail_unless (ecore_con_url_url_get(url));
    fail_if (strcmp(ecore_con_url_url_get(url), link));
 
    ecore_con_url_data_set(url, url_data);
+   fail_unless (ecore_con_url_data_get(url));
    fail_if (strcmp(ecore_con_url_data_get(url), url_data));
 
    info = (url_test *) malloc(sizeof(url_test));
