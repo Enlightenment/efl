@@ -247,16 +247,62 @@ struct event_argument_wrapper_generator
 
       std::string evt_name = name_helpers::managed_event_name(evt.name);
 
-      return as_generator("/// <summary>Event argument wrapper for event <see cref=\""
-                          << join_namespaces(evt.klass.namespaces, '.', managed_namespace)
-                          << klass_interface_name(evt.klass) << "." << evt_name << "\"/>.</summary>\n"
-                          << "[Efl.Eo.BindingEntity]\n"
-                          << "public class " << name_helpers::managed_event_args_short_name(evt) << " : EventArgs {\n"
-                          << scope_tab << "/// <summary>Actual event payload.</summary>\n"
-                          << scope_tab << "/// <value>" << documentation_string << "</value>\n"
-                          << scope_tab << "public " << type << " arg { get; set; }\n"
-                          << "}\n\n"
-                 ).generate(sink, std::make_tuple(evt.documentation.summary, *etype), context);
+      if (!as_generator("/// <summary>Event argument wrapper for event <see cref=\""
+                        << join_namespaces(evt.klass.namespaces, '.', managed_namespace)
+                        << klass_interface_name(evt.klass) << "." << evt_name << "\"/>.\n"
+             ).generate(sink, nullptr, context))
+        return false;
+
+      std::string since;
+
+      if (!evt.is_beta)
+        {
+           since = evt.documentation.since;
+
+           if (since.empty())
+             {
+                auto unit = (const Eolian_Unit*) context_find_tag<eolian_state_context>(context).state;
+                attributes::klass_def klass(get_klass(evt.klass, unit), unit);
+                since = klass.documentation.since;
+             }
+
+           if (!since.empty())
+             {
+
+                if (!as_generator(
+                      lit("/// <para>Since EFL ") << evt.documentation.since << ".</para>\n"
+                    ).generate(sink, nullptr, context))
+                  return false;
+             }
+           else
+             {
+                EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "Event " << evt.name << " of class " << evt.klass.eolian_name
+                    << " is stable but has no 'Since' information.";
+                // We do not bail out here because there are some cases of this happening upstream.
+             }
+        }
+
+      if (!as_generator(lit("/// </summary>\n")
+                         << "[Efl.Eo.BindingEntity]\n"
+                         << "public class " << name_helpers::managed_event_args_short_name(evt) << " : EventArgs {\n"
+                         << scope_tab << "/// <summary>Actual event payload.\n"
+             ).generate(sink, nullptr, context))
+        return false;
+
+      if (since != "")
+        {
+           if (!as_generator(scope_tab << "/// <para>Since EFL " << since << ".</para>\n").generate(sink, nullptr, context))
+             return false;
+        }
+
+      if (!as_generator(scope_tab << "/// </summary>\n"
+                        << scope_tab << "/// <value>" << documentation_string << "</value>\n"
+                        << scope_tab << "public " << type << " arg { get; set; }\n"
+                        << "}\n\n"
+                 ).generate(sink, std::make_tuple(evt.documentation.summary, *etype), context))
+        return false;
+
+      return true;
    }
 } const event_argument_wrapper {};
 
@@ -413,8 +459,41 @@ struct event_definition_generator
    {
       auto library_name = context_find_tag<library_context>(context).actual_library_name(klass.filename);
       std::string upper_c_name = utils::to_uppercase(evt.c_name);
+
       if (!as_generator(
-            scope_tab << "/// <summary>Method to raise event "<< event_name << ".</summary>\n"
+            scope_tab << "/// <summary>Method to raise event "<< event_name << ".\n"
+         ).generate(sink, nullptr, context))
+        return false;
+
+      if (!evt.is_beta)
+        {
+           std::string since = evt.documentation.since;
+
+           if (since.empty())
+             {
+                auto unit = (const Eolian_Unit*) context_find_tag<eolian_state_context>(context).state;
+                attributes::klass_def klass(get_klass(evt.klass, unit), unit);
+                since = klass.documentation.since;
+             }
+
+           if (!since.empty())
+             {
+
+                if (!as_generator(
+                      scope_tab << "/// <para>Since EFL " << evt.documentation.since << ".</para>\n"
+                    ).generate(sink, nullptr, context))
+                  return false;
+             }
+           else
+             {
+                EINA_CXX_DOM_LOG_ERR(eolian_mono::domain) << "Event " << evt.name << " of class " << evt.klass.eolian_name
+                    << " is stable but has no 'Since' information.";
+                // We do not bail out here because there are some cases of this happening upstream.
+             }
+        }
+
+      if (!as_generator(
+            scope_tab << "/// </summary>\n"
             << scope_tab << "/// <param name=\"e\">Event to raise.</param>\n"
             << scope_tab << "public void On" << event_name << "(" << event_args_type << " e)\n"
             << scope_tab << "{\n"

@@ -1,5 +1,9 @@
 interface Dummy.Test_Iface
 {
+   [[ Sample interface
+
+   @since 1.23
+   ]]
    methods {
       emit_nonconflicted {
       }
