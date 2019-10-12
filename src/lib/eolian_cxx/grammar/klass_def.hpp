@@ -1155,7 +1155,7 @@ struct event_def
   klass_name klass;
   eina::optional<type_def> type;
   std::string name, c_name;
-  bool beta, protect;
+  bool is_beta, is_protected;
   documentation_def documentation;
 
   friend inline bool operator==(event_def const& lhs, event_def const& rhs)
@@ -1164,8 +1164,8 @@ struct event_def
       && lhs.type == rhs.type
       && lhs.name == rhs.name
       && lhs.c_name == rhs.c_name
-      && lhs.beta == rhs.beta
-      && lhs.protect == rhs.protect
+      && lhs.is_beta == rhs.is_beta
+      && lhs.is_protected == rhs.is_protected
       && lhs.documentation == rhs.documentation;
   }
   friend inline bool operator!=(event_def const& lhs, event_def const& rhs)
@@ -1174,8 +1174,8 @@ struct event_def
   }
 
   event_def(klass_name _klass, type_def type, std::string name, std::string c_name,
-          bool beta, bool protect, documentation_def documentation)
-    : klass(_klass), type(type), name(name), c_name(c_name), beta(beta), protect(protect)
+          bool is_beta, bool is_protected, documentation_def documentation)
+    : klass(_klass), type(type), name(name), c_name(c_name), is_beta(is_beta), is_protected(is_protected)
     , documentation(documentation) {}
 
   event_def(Eolian_Event const* event, Eolian_Class const* cls, Eolian_Unit const* unit)
@@ -1188,8 +1188,8 @@ struct event_def
              } : eina::optional<type_def>{})
     , name( ::eolian_event_name_get(event))
     , c_name( ::eolian_event_c_macro_get(event))
-    , beta( ::eolian_event_is_beta(event))
-    , protect( ::eolian_event_scope_get(event) == EOLIAN_SCOPE_PROTECTED)
+    , is_beta( ::eolian_event_is_beta(event))
+    , is_protected( ::eolian_event_scope_get(event) == EOLIAN_SCOPE_PROTECTED)
     , documentation( ::eolian_event_documentation_get(event)) {}
 };
 
