@@ -188,7 +188,7 @@ inline bool is_event_blacklisted(attributes::event_def const& evt, Context const
 {
    auto options = efl::eolian::grammar::context_find_tag<options_context>(context);
 
-   return evt.beta && !options.want_beta;
+   return evt.is_beta && !options.want_beta;
 }
 
 }
