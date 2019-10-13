@@ -4,34 +4,30 @@ group { name: "elm/thumb/base/default";
    images.image: "shadow_square_tiny.png" COMP;
    parts {
       part { name: "shadow"; mouse_events: 0;
+         scale: 1;
          description { state: "default" 0.0;
-            rel1.offset: -3 -2;
-            rel1.to: "bg";
-            rel2.offset: 3 4;
-            rel2.to: "bg";
-            image.normal: "shadow_square_tiny.png";
-            image.border: 6 6 6 6;
-            fill.smooth: 0;
+            rel.to: "bg";
+            WIN_SHADOW_SMALL;
          }
       }
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "elm.swallow.content";
-            rel2.to: "elm.swallow.content";
+            rel.to: "elm.swallow.content";
             color: 64 64 64 255;
          }
       }
       part { name: "clip"; type: RECT;
          description { state: "default" 0.0;
-            rel1.to: "elm.swallow.content";
             rel2.to: "elm.swallow.content";
          }
       }
       part { name: "elm.swallow.content"; type: SWALLOW;
+         scale: 1;
          clip_to: "clip";
          description { state: "default" 0.0;
             rel1.offset: 4 4;
             rel2.offset: -5 -5;
+            offscale;
          }
       }
       part { name: "busy_clip"; type: RECT;
@@ -44,58 +40,42 @@ group { name: "elm/thumb/base/default";
             color: 255 255 255 255;
          }
       }
-      part { name: "knob"; mouse_events: 0;
+      part { name: "busy"; type: RECT; mouse_events: 0;
          clip_to: "busy_clip";
          description { state: "default" 0.0;
+            rel.to: "bg";
+            color: 51 153 255 255;
             fixed: 1 1;
-            image.normal: "knob_round_busy.png";
-            min: 40 40;
-            max: 40 40;
-            rel1.to: "bg";
-            rel2.to: "bg";
+            min: 10 5;
+            max: 10 5;
+            align: 0.0 1.0;
          }
-      }
-      part { name: "knob_spinner"; mouse_events: 0;
-         clip_to: "busy_clip";
-         description { state: "default" 0.0;
-            fixed: 1 1;
-            rel1.to: "knob";
-            rel2.to: "knob";
-            image.normal: "glow_round_corners.png";
-            map.on: 1;
-            map.smooth: 1;
-            map.rotation.center: "knob";
-         }
-         description { state: "spin" 0.0;
+         description { state: "other" 0.0;
             inherit: "default" 0.0;
-            map.rotation.z: 360;
+            align: 1.0 1.0;
          }
       }
    }
    programs {
       program { name: "spin";
-         signal: "elm,state,pulse,start";
-         source: "elm";
-         action: STATE_SET "spin" 0.0;
-         transition: LINEAR 1.0;
-         target: "knob_spinner";
+         signal: "elm,state,pulse,start"; source: "elm";
+         action: STATE_SET "other" 0.0;
+         transition: SINUSOIDAL 0.5;
+         target: "busy";
          after: "spin2";
       }
       program { name: "spin2";
          action: STATE_SET "default" 0.0;
-         target: "knob_spinner";
+         transition: SINUSOIDAL 0.5;
+         target: "busy";
          after: "spin";
       }
-      program { name: "pulse_start";
-         signal: "elm,state,pulse,start";
-         source: "elm";
+      program { signal: "elm,state,pulse,start"; source: "elm";
          action: STATE_SET "active" 0.0;
          transition: SINUSOIDAL 0.25;
          target: "busy_clip";
       }
-      program { name: "pulse_stop";
-         signal: "elm,state,pulse,stop";
-         source: "elm";
+      program { signal: "elm,state,pulse,stop"; source: "elm";
          action: STATE_SET "default" 0.0;
          transition: SINUSOIDAL 1.0;
          target: "busy_clip";
@@ -109,7 +89,7 @@ group { name: "elm/thumb/base/default";
       }
       program { name: "spin4";
          action: STATE_SET "default" 0.0;
-         target: "knob_spinner";
+         target: "busy";
       }
    }
 }
