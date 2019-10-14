@@ -737,6 +737,18 @@ EAPI const char *ecore_wl2_display_name_get(const Ecore_Wl2_Display *display);
 EAPI Ecore_Wl2_Window *ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x, int y, int w, int h);
 
 /**
+ * Set a callback to be caleld just before the window is closed and freed
+ *
+ * @param window The window to listen to for a xdg toplevel close callback
+ * @param cb The callback function to call being passed data and window
+ * @param data The Data pointer to pass as data to the callback
+ *
+ * @ingroup Ecore_Wl2_Window_Group
+ * @since 1.24
+ */
+EAPI void ecore_wl2_window_close_callback_set(Ecore_Wl2_Window *window, void (*cb) (void *data, Ecore_Wl2_Window *win), void *data);
+
+/**
  * Get the wl_surface which belongs to this window
  *
  * @param window The Ecore_Wl2_Window to get the surface of
