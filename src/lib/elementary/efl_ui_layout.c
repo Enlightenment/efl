@@ -537,7 +537,10 @@ _efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd, Elm_Widget_Smart_
      }
 
    if (ret != EFL_UI_THEME_APPLY_ERROR_GENERIC)
-     efl_event_callback_legacy_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
+     {
+        if (sd->cb_theme_changed)
+          efl_event_callback_legacy_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
+     }
 
    if (!_visuals_refresh(obj, sd))
      ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
@@ -2955,6 +2958,29 @@ _efl_ui_layout_base_theme_rotation_apply(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UN
 
 
 /* Internal EO APIs and hidden overrides */
+EOLIAN static Eina_Bool
+_efl_ui_layout_base_efl_object_event_callback_priority_add(Eo *obj, Efl_Ui_Layout_Data *pd, const Efl_Event_Description *desc, Efl_Callback_Priority priority, Efl_Event_Cb func, const void *user_data)
+{
+  if (desc == EFL_CANVAS_GROUP_EVENT_MEMBER_ADDED)
+    {
+       pd->cb_theme_changed = EINA_TRUE;
+    }
+
+  return efl_event_callback_priority_add(efl_super(obj, MY_CLASS), desc, priority, func, user_data);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_layout_base_efl_object_event_callback_array_priority_add(Eo *obj, Efl_Ui_Layout_Data *pd, const Efl_Callback_Array_Item *array, Efl_Callback_Priority priority, const void *user_data)
+{
+   for (int i = 0; array[i].desc; ++i)
+     {
+        if (array[i].desc == EFL_CANVAS_GROUP_EVENT_MEMBER_ADDED)
+          {
+             pd->cb_theme_changed = EINA_TRUE;
+          }
+     }
+   return efl_event_callback_array_priority_add(efl_super(obj, MY_CLASS), array, priority, user_data);
+}
 
 EFL_FUNC_BODY_CONST(efl_ui_layout_text_aliases_get, const Elm_Layout_Part_Alias_Description *, NULL)
 EFL_FUNC_BODY_CONST(efl_ui_layout_content_aliases_get, const Elm_Layout_Part_Alias_Description *, NULL)
@@ -2968,6 +2994,8 @@ EFL_UI_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_PART_TEXT_DEFAULT_OPS(efl_ui_layout_base), \
    EFL_UI_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
    EFL_UI_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_priority_add, _efl_ui_layout_base_efl_object_event_callback_priority_add), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_array_priority_add, _efl_ui_layout_base_efl_object_event_callback_array_priority_add), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_ui_layout_base_efl_object_dbg_info_get)
 
 

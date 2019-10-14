@@ -74,6 +74,7 @@ typedef struct _Efl_Ui_Layout_Data
    Eina_Bool             model_bound : 1; /**< Set to true once we are watching over a model*/
    Eina_Bool             model_watch : 1; /**< Set to true once we do watch for model change*/
    Eina_Bool             calc_subobjs : 1; /**< Set to true if group_calc should also handle subobjs during manual calc */
+   Eina_Bool             cb_theme_changed : 1; /**< if theme,changed event subscriber has been added */
 } Efl_Ui_Layout_Data;
 
 typedef struct _Elm_Layout_Data
