@@ -49,6 +49,8 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
 
              efl_canvas_vg_image_data_set(image, node->mImageInfo.data, EINA_SIZE2D(node->mImageInfo.width, node->mImageInfo.height));
 
+             efl_gfx_color_set(image, node->mImageInfo.mAlpha, node->mImageInfo.mAlpha, node->mImageInfo.mAlpha, node->mImageInfo.mAlpha);
+
              continue;
           }
 
