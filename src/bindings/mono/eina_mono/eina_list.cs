@@ -107,24 +107,33 @@ public static class ListNativeFunctions
 }
 
 /// <summary>Native wrapper around a linked list of items.
-///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 public class List<T> : IEnumerable<T>, IDisposable
 {
 
     [EditorBrowsable(EditorBrowsableState.Never)]
     public IntPtr Handle {get;set;} = IntPtr.Zero;
-    /// <summary>Whether this managed list owns the native one.</summary>
+    /// <summary>Whether this managed list owns the native one.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public bool Own {get;set;}
-    /// <summary>Whether the native list wrapped owns the content it points to.</summary>
+    /// <summary>Whether the native list wrapped owns the content it points to.
+    /// <para>Since EFL 1.23.</para>
+    ///</summary>
     public bool OwnContent {get;set;}
 
-    /// <summary>Delegate for comparing two elements of this list.</summary>
+    /// <summary>Delegate for comparing two elements of this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="a">First element.</param>
+    /// <param name="b">Second element.</param>
     /// <returns>-1, 0 or 1 for respectively smaller, equal or larger.</returns>
     public delegate int Compare(T a, T b);
 
-    /// <summary>The number of elements on this list.</summary>
+    /// <summary>The number of elements on this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public int Length
     {
         get { return Count(); }
@@ -164,7 +173,9 @@ public class List<T> : IEnumerable<T>, IDisposable
     }
 
 
-    /// <summary>Creates a new empty list.</summary>
+    /// <summary>Creates a new empty list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public List()
     {
         InitNew();
@@ -188,13 +199,17 @@ public class List<T> : IEnumerable<T>, IDisposable
         OwnContent = ownContent;
     }
 
-    /// <summary>Finalizes this list.</summary>
+    /// <summary>Finalizes this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     ~List()
     {
         Dispose(false);
     }
 
-    /// <summary>Disposes of this list.</summary>
+    /// <summary>Disposes of this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="disposing">Whether this was called from the finalizer (<c>false</c>) or from the
     /// <see cref="Dispose()"/> method.</param>
     protected virtual void Dispose(bool disposing)
@@ -227,20 +242,26 @@ public class List<T> : IEnumerable<T>, IDisposable
         }
     }
 
-    /// <summary>Disposes of this list.</summary>
+    /// <summary>Disposes of this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
 
-    /// <summary>Disposes of this list.</summary>
+    /// <summary>Disposes of this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Free()
     {
         Dispose();
     }
 
-    /// <summary>Relinquishes of the native list.</summary>
+    /// <summary>Relinquishes of the native list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <returns>The previously wrapped native list handle.</returns>
     public IntPtr Release()
     {
@@ -249,27 +270,40 @@ public class List<T> : IEnumerable<T>, IDisposable
         return h;
     }
 
-    /// <summary>Sets whether this wrapper should own the native list or not.</summary>
+    /// <summary>Sets whether this wrapper should own the native list or not.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="ownAll">If the hash own for all ownerships.</param>
     public void SetOwnership(bool ownAll)
     {
         Own = ownAll;
         OwnContent = ownAll;
     }
 
-    /// <summary>Sets whether this wrapper should own the native list and its content or not.</summary>
+    /// <summary>Sets whether this wrapper should own the native list and
+    /// its content or not.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="own">If own the object.</param>
+    /// <param name="ownContent">If own the content's object.</param>
     public void SetOwnership(bool own, bool ownContent)
     {
         Own = own;
         OwnContent = ownContent;
     }
 
-    /// <summary>Returns the number of elements in this list.</summary>
+    /// <summary>Returns the number of elements in this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The number of elements.</returns>
     public int Count()
     {
         return (int)eina_list_count_custom_export_mono(Handle);
     }
 
-    /// <summary>Appends <c>val</c> to the list.</summary>
+    /// <summary>Appends <c>val</c> to the list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="val">The item to be appended.</param>
     public void Append(T val)
     {
@@ -277,7 +311,9 @@ public class List<T> : IEnumerable<T>, IDisposable
         Handle = eina_list_append(Handle, ele);
     }
 
-    /// <summary>Prepends <c>val</c> to the list.</summary>
+    /// <summary>Prepends <c>val</c> to the list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="val">The item to be prepended.</param>
     public void Prepend(T val)
     {
@@ -285,7 +321,10 @@ public class List<T> : IEnumerable<T>, IDisposable
         Handle = eina_list_prepend(Handle, ele);
     }
 
-    /// <summary>Inserts <c>val</c> in the list in a sorted manner. It presumes the list is already sorted.</summary>
+    /// <summary>Inserts <c>val</c> in the list in a sorted manner.
+    /// It presumes the list is already sorted.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="val">The item to be inserted.</param>
     public void SortedInsert(T val)
     {
@@ -293,8 +332,11 @@ public class List<T> : IEnumerable<T>, IDisposable
         Handle = eina_list_sorted_insert(Handle, EinaCompareCb<T>(), ele);
     }
 
-    /// <summary>Inserts <c>val</c> in the list in a sorted manner with the given <c>compareCb</c> for element comparison.
-    /// It presumes the list is already sorted.</summary>
+    /// <summary>Inserts <c>val</c> in the list in a sorted manner with the
+    /// given <c>compareCb</c> for element comparison.
+    /// It presumes the list is already sorted.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="compareCb">The function to compare two elements of the list.</param>
     /// <param name="val">The item to be inserted.</param>
     public void SortedInsert(Compare compareCb, T val)
@@ -303,21 +345,27 @@ public class List<T> : IEnumerable<T>, IDisposable
         Handle = eina_list_sorted_insert(Handle, Marshal.GetFunctionPointerForDelegate(GetNativeCompareCb(compareCb)), ele);
     }
 
-    /// <summary>Sorts <c>limit</c> elements in this list inplace.</summary>
+    /// <summary>Sorts <c>limit</c> elements in this list inplace.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="limit">The max number of elements to be sorted.</param>
     public void Sort(int limit = 0)
     {
         Handle = eina_list_sort(Handle, (uint)limit, EinaCompareCb<T>());
     }
 
-    /// <summary>Sorts all elements in this list inplace.</summary>
+    /// <summary>Sorts all elements in this list inplace.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="compareCb">The function to compare two elements of the list.</param>
     public void Sort(Compare compareCb)
     {
         Handle = eina_list_sort(Handle, 0, Marshal.GetFunctionPointerForDelegate(GetNativeCompareCb(compareCb)));
     }
 
-    /// <summary>Sorts <c>limit</c> elements in this list inplace.</summary>
+    /// <summary>Sorts <c>limit</c> elements in this list inplace.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="limit">The max number of elements to be sorted.</param>
     /// <param name="compareCb">The function to compare two elements of the list.</param>
     public void Sort(int limit, Compare compareCb)
@@ -333,8 +381,11 @@ public class List<T> : IEnumerable<T>, IDisposable
     }
 
     /// <summary>Returns the <c>n</c>th element of this list. Due to marshalling details, the returned element
-    /// may be a different C# object from the one you used to append.</summary>
+    /// may be a different C# object from the one you used to append.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="n">The 0-based index to be retrieved.</param>
+    /// <returns>The value in the specified element.</returns>
     public T Nth(int n)
     {
         // TODO: check bounds ???
@@ -342,7 +393,9 @@ public class List<T> : IEnumerable<T>, IDisposable
         return NativeToManaged<T>(ele);
     }
 
-    /// <summary>Sets the data at the <c>idx</c> position.</summary>
+    /// <summary>Sets the data at the <c>idx</c> position.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="idx">The 0-based index to be set.</param>
     /// <param name="val">The value to be inserted.</param>
     public void DataSet(int idx, T val)
@@ -362,7 +415,9 @@ public class List<T> : IEnumerable<T>, IDisposable
         InternalDataSet(pos, ele);
     }
 
-    /// <summary>Accessor for the data at the <c>idx</c> position.</summary>
+    /// <summary>Accessor for the data at the <c>idx</c> position.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="idx">The 0-based index to be get/set.</param>
     public T this[int idx]
     {
@@ -376,7 +431,9 @@ public class List<T> : IEnumerable<T>, IDisposable
         }
     }
 
-    /// <summary>Returns the data at the last list element.</summary>
+    /// <summary>Returns the data at the last list element.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <returns>The value contained in the last list position.</returns>
     public T LastDataGet()
     {
@@ -384,7 +441,9 @@ public class List<T> : IEnumerable<T>, IDisposable
         return NativeToManaged<T>(ele);
     }
 
-    /// <summary>Reverses this list in place.</summary>
+    /// <summary>Reverses this list in place.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <returns>A reference to this object.</returns>
     public List<T> Reverse()
     {
@@ -392,13 +451,17 @@ public class List<T> : IEnumerable<T>, IDisposable
         return this;
     }
 
-    /// <summary>Randomly shuffles this list in place.</summary>
+    /// <summary>Randomly shuffles this list in place.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Shuffle()
     {
         Handle = eina_list_shuffle(Handle, IntPtr.Zero);
     }
 
-    /// <summary>Gets a C# array of the elements in this list.</summary>
+    /// <summary>Gets a C# array of the elements in this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <returns>A managed array of the elements.</returns>
     public T[] ToArray()
     {
@@ -412,7 +475,9 @@ public class List<T> : IEnumerable<T>, IDisposable
         return managed;
     }
 
-    /// <summary>Appends the given array of elements to this list.</summary>
+    /// <summary>Appends the given array of elements to this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="values">The values to be appended.</param>
     public void AppendArray(T[] values)
     {
@@ -423,21 +488,27 @@ public class List<T> : IEnumerable<T>, IDisposable
     }
 
 
-    /// <summary>Gets an iterator that iterates this list in normal order.</summary>
+    /// <summary>Gets an iterator that iterates this list in normal order.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <returns>The iterator.</returns>
     public Eina.Iterator<T> GetIterator()
     {
         return new Eina.Iterator<T>(eina_list_iterator_new(Handle), true);
     }
 
-    /// <summary>Gets an iterator that iterates this list in reverse order.</summary>
+    /// <summary>Gets an iterator that iterates this list in reverse order.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <returns>The iterator.</returns>
     public Eina.Iterator<T> GetReversedIterator()
     {
         return new Eina.Iterator<T>(eina_list_iterator_reversed_new(Handle), true);
     }
 
-    /// <summary>Gets an enumerator into this list.</summary>
+    /// <summary>Gets an enumerator into this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <returns>The enumerator.</returns>
     public IEnumerator<T> GetEnumerator()
     {
@@ -447,14 +518,18 @@ public class List<T> : IEnumerable<T>, IDisposable
         }
     }
 
-    /// <summary>Gets an enumerator into this list.</summary>
+    /// <summary>Gets an enumerator into this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <returns>The enumerator.</returns>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
         return this.GetEnumerator();
     }
 
-    /// <summary> Gets an Accessor for this List.</summary>
+    /// <summary> Gets an Accessor for this List.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <returns>The accessor.</returns>
     public Eina.Accessor<T> GetAccessor()
     {
