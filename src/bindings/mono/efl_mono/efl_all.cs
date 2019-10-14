@@ -40,13 +40,16 @@ static class UnsafeNativeMethods
 }
 
 /// <summary>Wrapper around the initialization functions of all modules.
-///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 public static class All
 {
     private static bool InitializedUi = false;
 
+    /// <summary>
+    ///   If the main loop was initialized.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public static bool MainLoopInitialized {
         get;
         private set;
@@ -54,6 +57,11 @@ public static class All
 
     public static readonly object InitLock = new object();
 
+    /// <summary>
+    ///   Initialize the Efl.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="components">The <see cref="Efl.Csharp.Components" /> that initialize the Efl.</param>
     public static void Init(Efl.Csharp.Components components = Efl.Csharp.Components.Basic)
     {
         Eina.Config.Init();
@@ -73,7 +81,9 @@ public static class All
         Monitor.Exit(InitLock);
     }
 
-    /// <summary>Shutdowns all EFL subsystems.</summary>
+    /// <summary>Shutdowns all EFL subsystems.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public static void Shutdown()
     {
         // Try to cleanup everything before actually shutting down.
@@ -113,11 +123,14 @@ namespace Ui
 {
 
 /// <summary>Initialization and shutdown of the UI libraries.
-///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 public static class Config
 {
+    /// <summary>
+    /// Initialize the configuration of Elm.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public static void Init()
     {
         // TODO Support elm command line arguments
@@ -133,16 +146,28 @@ public static class Config
         Efl.Ui.Win.ExitOnAllWindowsClosed = new Eina.Value(0);
     }
 
+    /// <summary>
+    ///   Shutdown Elm systems.
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
     public static void Shutdown()
     {
         elm_shutdown();
     }
 
+    /// <summary>
+    ///   Run Elm system.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public static void Run()
     {
         elm_run();
     }
 
+    /// <summary>
+    ///   Exit Elm.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public static void Exit()
     {
         elm_exit();
