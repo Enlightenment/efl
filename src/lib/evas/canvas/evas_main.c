@@ -2014,5 +2014,41 @@ EWAPI const Efl_Event_Description _EVAS_CANVAS_EVENT_AXIS_UPDATE =
 EWAPI const Efl_Event_Description _EVAS_CANVAS_EVENT_VIEWPORT_RESIZE =
    EFL_EVENT_DESCRIPTION("viewport,resize");
 
+#define CHECK_ADD(var, ev, member) \
+  if ((var) == (ev)) \
+    { \
+       e->member = EINA_TRUE; \
+    }
+
+
+EOLIAN static Eina_Bool
+_evas_canvas_efl_object_event_callback_priority_add(Eo *obj, Evas_Public_Data *e, const Efl_Event_Description *desc, Efl_Callback_Priority priority, Efl_Event_Cb func, const void *user_data)
+{
+   CHECK_ADD(desc, EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE, cb_render_flush_pre)
+   else CHECK_ADD(desc, EVAS_CANVAS_EVENT_RENDER_FLUSH_POST, cb_render_flush_post)
+   else CHECK_ADD(desc, EFL_CANVAS_SCENE_EVENT_RENDER_PRE, cb_render_pre)
+   else CHECK_ADD(desc, EFL_CANVAS_SCENE_EVENT_RENDER_POST, cb_render_post)
+
+   return efl_event_callback_priority_add(efl_super(obj, MY_CLASS), desc, priority, func, user_data);
+}
+
+EOLIAN static Eina_Bool
+_evas_canvas_efl_object_event_callback_array_priority_add(Eo *obj, Evas_Public_Data *e, const Efl_Callback_Array_Item *array, Efl_Callback_Priority priority, const void *user_data)
+{
+   for (int i = 0; array[i].desc; ++i)
+     {
+        CHECK_ADD(array[i].desc, EVAS_CANVAS_EVENT_RENDER_FLUSH_PRE, cb_render_flush_pre)
+        else CHECK_ADD(array[i].desc, EVAS_CANVAS_EVENT_RENDER_FLUSH_POST, cb_render_flush_post)
+        else CHECK_ADD(array[i].desc, EFL_CANVAS_SCENE_EVENT_RENDER_PRE, cb_render_pre)
+        else CHECK_ADD(array[i].desc, EFL_CANVAS_SCENE_EVENT_RENDER_POST, cb_render_post)
+     }
+   return efl_event_callback_array_priority_add(efl_super(obj, MY_CLASS), array, priority, user_data);
+}
+#undef CHECK_ADD
+#define EVAS_CANVAS_EXTRA_OPS \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_priority_add, _evas_canvas_efl_object_event_callback_priority_add), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_array_priority_add, _evas_canvas_efl_object_event_callback_array_priority_add)
+
+
 #include "evas_stack.x"
 #include "canvas/evas_canvas_eo.c"
