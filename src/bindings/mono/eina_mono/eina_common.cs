@@ -3,6 +3,7 @@
 using System;
 using System.Text;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 namespace Eina
 {
@@ -11,7 +12,7 @@ namespace Callbacks
 {
 
 internal delegate int EinaCompareCb(IntPtr data1, IntPtr data2);
-public delegate void EinaFreeCb(IntPtr data);
+internal delegate void EinaFreeCb(IntPtr data);
 
 }
 
@@ -42,9 +43,9 @@ internal static class NativeCustomExportFunctions
 }
 
 /// <summary>Wrapper around native memory DllImport'd functions.
-///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static class MemoryNative
 {
     public static void Free(IntPtr ptr)
@@ -78,6 +79,13 @@ public static class MemoryNative
         return NativeCustomExportFunctions.efl_mono_native_strdup(str);
     }
 
+    /// <summary>
+    ///   Retrieves an instance of a string for use in program.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="str"> The NULL-terminated string to retrieve an instance of.</param>
+    /// <returns> A pointer to an instance of the string on success,
+    ///  on failure a exception is raised.</returns>
     public static IntPtr AddStringshare(string str)
     {
         IntPtr nativeStr = StringConversion.ManagedStringToNativeUtf8Alloc(str);
@@ -92,6 +100,10 @@ public static class MemoryNative
         }
     }
 
+    /// <summary>
+    ///   Notes that the given string has lost an instance.
+    /// </summary>
+    /// <param name="str">the given string</param>
     public static void DelStringshare(IntPtr str)
     {
         NativeMethods.eina_stringshare_del(str);
@@ -131,9 +143,9 @@ public static class MemoryNative
 
 /// <summary>
 /// Conversor of raw pointer to  a type and type to raw pointer
-///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static class PrimitiveConversion
 {
    public static T PointerToManaged<T>(IntPtr nat)
@@ -158,9 +170,9 @@ public static class PrimitiveConversion
 
 /// <summary>
 /// Conversor of string to native string and native string to string.
-///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static class StringConversion
 {
     public static IntPtr ManagedStringToNativeUtf8Alloc(string managedString)
@@ -204,7 +216,10 @@ public static class StringConversion
     }
 }
 
-/// <summary>Enum to handle resource ownership between managed and unmanaged code.</summary>
+/// <summary>Enum to handle resource ownership between managed and unmanaged code.
+/// <para>Since EFL 1.23.</para>
+/// </summary>
+[EditorBrowsable(EditorBrowsableState.Never)]
 public enum Ownership
 {
     /// <summary> The resource is owned by the managed code. It should free the handle on disposal.</summary>
