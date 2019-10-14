@@ -1783,14 +1783,13 @@ _efl_model_child_removed(void *data, const Efl_Event *event)
    Efl_Model_Children_Event *ev = event->info;
    MY_DATA_GET(data, pd);
    Eina_List *requests = NULL;
-   Efl_Ui_Collection_Request *request = NULL;
 #ifdef VIEWPORT_ENABLE
-   Eina_List *requests = NULL;
    unsigned int i;
 #endif
    unsigned int upper_end;
    long length;
    unsigned int count;
+   uint64_t request_length;
 
    // FIXME: later optimization, instead of reloading everyone, we could actually track index and self
    // update would be more efficient, but it is also more tricky
@@ -1855,11 +1854,13 @@ _efl_model_child_removed(void *data, const Efl_Event *event)
 
  notify_manager:
 #endif
-   requests = _request_add(requests, &request, ev->index, EINA_TRUE);
-   request->length = upper_end - ev->index;
+   request_length = upper_end - ev->index;
 
-   if (request->length > 0)
+   if (request_length > 0)
      {
+        Efl_Ui_Collection_Request *request = NULL;
+        requests = _request_add(requests, &request, ev->index, EINA_TRUE);
+        request->length = request_length;
         requests = eina_list_append(requests, request);
         requests = _batch_request_flush(requests, data, pd);
      }
