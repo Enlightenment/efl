@@ -64,8 +64,6 @@ internal class ModelHelper
 /// var model = new Efl.GenericModel&lt;PersonModel&gt;(modelData, parent);
 /// PersonModel p = await model.GetAtAsync(0);
 /// </code>
-///
-/// <para>Since EFL 1.24.</para>
 /// </summary>
 /// <typeparam name="T">The enclosed C# model class with the properties to be added to the native model.</typeparam>
 [Efl.Eo.BindingEntity]
