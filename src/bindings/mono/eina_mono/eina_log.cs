@@ -10,8 +10,7 @@ namespace Eina
 // Manual wrappers around eina functions
 
 /// <summary>EFL Logging facilities.
-///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 public class Log
 {
@@ -31,55 +30,97 @@ public class Log
 
     [DllImport(efl.Libs.Eina)] private static extern Level eina_log_level_get();
 
-    /// <summary>The levels of logging.</summary>
+    /// <summary>The levels of logging.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public enum Level
     {
-        /// <summary>Critical events.</summary>
+        /// <summary>Critical events.
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         Critical,
-        /// <summary>Error events.</summary>
+        /// <summary>Error events.
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         Error,
-        /// <summary>Warning events.</summary>
+        /// <summary>Warning events.
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         Warning,
-        /// <summary>Informative events.</summary>
+        /// <summary>Informative events.
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         Info,
-        /// <summary>Debugging messages.</summary>
+        /// <summary>Debugging messages.
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         Debug,
-        /// <summary>Unknown events.</summary>
+        /// <summary>Unknown events.
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         Unkown = (-2147483647 - 1)
     }
 
-    /// <summary>The colors to be used by the logging system.</summary>
+    /// <summary>The colors to be used by the logging system.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public class Color
     {
-        /// <summary>Light red</summary>
+        /// <summary>Light red
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         public static string LIGHTRED  = "\033[31;1m";
-        /// <summary>Red</summary>
+        /// <summary>Red
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         public static string RED       = "\033[31m";
-        /// <summary>Light blue</summary>
+        /// <summary>Light blue
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         public static string LIGHTBLUE = "\033[34;1m";
-        /// <summary>Blue</summary>
+        /// <summary>Blue
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         public static string BLUE      = "\033[34m";
-        /// <summary>Green</summary>
+        /// <summary>Green
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         public static string GREEN     = "\033[32;1m";
-        /// <summary>Yellow</summary>
+        /// <summary>Yellow
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         public static string YELLOW    = "\033[33;1m";
-        /// <summary>Orange</summary>
+        /// <summary>Orange
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         public static string ORANGE    = "\033[0;33m";
-        /// <summary>White</summary>
+        /// <summary>White
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         public static string WHITE     = "\033[37;1m";
-        /// <summary>Light cyan</summary>
+        /// <summary>Light cyan
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         public static string LIGHTCYAN = "\033[36;1m";
-        /// <summary>Cyan</summary>
+        /// <summary>Cyan
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         public static string CYAN      = "\033[36m";
-        /// <summary>Reset</summary>
+        /// <summary>Reset
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         public static string RESET     = "\033[0m";
-        /// <summary>Bold</summary>
+        /// <summary>Bold
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         public static string HIGH      = "\033[1m";
     }
 
     private static int domain = -1;
 
-    /// <summary>Static class initializer.</summary>
+    /// <summary>Static class initializer.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     static Log()
     {
         const String name = "mono";
@@ -105,7 +146,10 @@ public class Log
         }
     }
 
-    /// <summary>Prints a critical message with context info. This context is filled automatically by the C# compiler.</summary>
+    /// <summary>Prints a critical message with context info. This context is
+    /// filled automatically by the C# compiler.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="message">The message to be printed.</param>
     /// <param name="line">The line number this method was called from.</param>
     /// <param name="file">The file this method was called from.</param>
@@ -116,7 +160,10 @@ public class Log
         eina_log_print(domain, Level.Critical, file, member, line, message);
     }
 
-    /// <summary>Prints an error message with context info. This context is filled automatically by the C# compiler.</summary>
+    /// <summary>Prints an error message with context info. This context is
+    /// filled automatically by the C# compiler.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="message">The message to be printed.</param>
     /// <param name="line">The line number this method was called from.</param>
     /// <param name="file">The file this method was called from.</param>
@@ -127,7 +174,10 @@ public class Log
         eina_log_print(domain, Level.Error, file, member, line, message);
     }
 
-    /// <summary>Prints a warning message with context info. This context is filled automatically by the C# compiler.</summary>
+    /// <summary>Prints a warning message with context info. This context is
+    /// filled automatically by the C# compiler.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="message">The message to be printed.</param>
     /// <param name="line">The line number this method was called from.</param>
     /// <param name="file">The file this method was called from.</param>
@@ -138,7 +188,10 @@ public class Log
         eina_log_print(domain, Level.Warning, file, member, line, message);
     }
 
-    /// <summary>Prints an informative message with context info. This context is filled automatically by the C# compiler.</summary>
+    /// <summary>Prints an informative message with context info. This context
+    /// is filled automatically by the C# compiler.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="message">The message to be printed.</param>
     /// <param name="line">The line number this method was called from.</param>
     /// <param name="file">The file this method was called from.</param>
@@ -149,7 +202,10 @@ public class Log
         eina_log_print(domain, Level.Info, file, member, line, message);
     }
 
-    /// <summary>Prints a debug message with context info. This context is filled automatically by the C# compiler.</summary>
+    /// <summary>Prints a debug message with context info. This context is
+    /// filled automatically by the C# compiler.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="message">The message to be printed.</param>
     /// <param name="line">The line number this method was called from.</param>
     /// <param name="file">The file this method was called from.</param>
@@ -160,14 +216,19 @@ public class Log
         eina_log_print(domain, Level.Debug, file, member, line, message);
     }
 
-    /// <summary>Sets the highest level log messages should be printed. Values larger than this one are ignored.</summary>
+    /// <summary>Sets the highest level log messages should be printed. Values
+    /// larger than this one are ignored.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="level">The global message level.</param>
     public static void GlobalLevelSet(Level level)
     {
         eina_log_level_set(level);
     }
 
-    /// <summary>Gets the lowest level of messages that are not ignored.</summary>
+    /// <summary>Gets the lowest level of messages that are not ignored.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <returns>The current message level.</returns>
     public static Level GlobalLevelGet()
     {
