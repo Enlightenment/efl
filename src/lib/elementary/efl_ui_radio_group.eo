@@ -3,6 +3,8 @@ interface Efl.Ui.Radio_Group extends Efl.Ui.Single_Selectable
    [[Interface for manually handling a group of @Efl.Ui.Radio buttons.
 
      See the documentation of @Efl.Ui.Radio for an explanation of radio button grouping.
+
+     @since 1.23
    ]]
    methods {
       @property selected_value {

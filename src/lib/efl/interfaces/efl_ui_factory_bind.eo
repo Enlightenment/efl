@@ -4,7 +4,10 @@ interface Efl.Ui.Factory_Bind
      view object can have @Efl.Model and need to set cotent with those model stored data.
      the interface can help binding the factory to create object with model property data.
      see @Efl.Model
-     see @Efl.Ui.Factory]]
+     see @Efl.Ui.Factory
+
+     @since 1.23
+   ]]
    methods {
       factory_bind {
          [[bind the factory with the given key string. when the data is ready or changed,

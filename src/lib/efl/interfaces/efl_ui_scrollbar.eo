@@ -2,7 +2,7 @@ import efl_ui_layout_orientable;
 
 enum Efl.Ui.Scrollbar_Mode
 {
-   [[When should the scrollbar be shown.]]
+   [[When should the scrollbar be shown. @since 1.23]]
    auto = 0, [[Visible if necessary.]]
    on,       [[Always visible.]]
    off,      [[Always invisible.]]
@@ -16,6 +16,8 @@ interface Efl.Ui.Scrollbar
      A scrollbar contains a draggable part (thumb) which allows the user to move the viewport
      around the content. The size of the thumb relates to the size of the viewport compared to
      the whole content.
+
+     @since 1.23
    ]]
    methods {
       @property bar_mode {

@@ -5,6 +5,8 @@ class Efl.Ui.Datepicker extends Efl.Ui.Layout_Base
      This is a widget which allows the user to pick a date using internal spinner.
      User can use the internal spinner to select year, month, day or user can input
      value using internal entry.
+
+     @since 1.23
    ]]
    methods {
       @property date_min {

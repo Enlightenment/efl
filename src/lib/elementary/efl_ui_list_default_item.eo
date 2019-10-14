@@ -4,6 +4,8 @@ class Efl.Ui.List_Default_Item extends Efl.Ui.Default_Item
    [[Default Item class to be used inside @Efl.Ui.List containers.
      It displays the three parts in horizontal order: $icon, $text and $extra.
      Theming can change this arrangement.
+
+     @since 1.23
    ]]
    data: null;
    implements {

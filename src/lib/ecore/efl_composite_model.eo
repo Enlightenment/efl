@@ -2,7 +2,10 @@ class Efl.Composite_Model extends Efl.Loop_Model implements Efl.Ui.View
 {
    [[Efl model for all composite class which provide a unified API to set source of data.
 
-   This class also provide an @Efl.Model.property "child.index" that match the value of @.index.]]
+     This class also provide an @Efl.Model.property "child.index" that match the value of @.index.
+
+     @since 1.23
+   ]]
    methods {
       @property index {
          [[Position of this object in the parent model.

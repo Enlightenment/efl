@@ -11,6 +11,8 @@ abstract Efl.Ui.Default_Item extends Efl.Ui.Item implements
      @Efl.Ui.List_Default_Item and @Efl.Ui.Grid_Default_Item which should normally be used.
      Text-related changes are mirrored to the $text part for convenience.
      Content-related changes are mirrored to the $icon part.
+
+     @since 1.23
    ]]
    data: null;
    parts {

@@ -6,6 +6,8 @@ class Efl.Ui.Box_Stack extends Efl.Ui.Box
      only the last item added through the @Efl.Pack interface will actually be visible.
 
      This can be useful to display transparent objects on top of each other, for example.
+
+     @since 1.23
    ]]
    data: null;
    implements {

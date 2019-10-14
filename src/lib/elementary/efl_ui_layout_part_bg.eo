@@ -1,6 +1,9 @@
 class Efl.Ui.Layout_Part_Bg extends Efl.Ui.Widget_Part_Bg
 {
-   [[Elementary layout internal part background class]]
+   [[Elementary layout internal part background class
+
+     @since 1.23
+   ]]
    data: null;
    implements {
       Efl.Object.finalize;

@@ -1,6 +1,8 @@
 class Efl.Input.Key extends Efl.Object implements Efl.Input.Event, Efl.Input.State
 {
    [[Represents a single key event from a keyboard or similar device.
+
+     @since 1.23
    ]]
    methods {
       @property pressed {

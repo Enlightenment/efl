@@ -15,7 +15,10 @@ enum @beta Efl.Gfx.Image_Load_Controller_State
 
 interface Efl.Gfx.Image_Load_Controller
 {
-   [[Common APIs for all loadable 2D images.]]
+   [[Common APIs for all loadable 2D images.
+
+     @since 1.23
+   ]]
 
    methods {
       load_async_start {

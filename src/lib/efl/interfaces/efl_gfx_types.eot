@@ -157,7 +157,7 @@ enum @beta Efl.Gfx.Vg_Composite_Method
 
 enum Efl.Gfx.Center_Fill_Mode
 {
-   [[How an image's center region (the complement to the border region) should be rendered by EFL]]
+   [[How an image's center region (the complement to the border region) should be rendered by EFL @since 1.23]]
    none = 0, [[Image's center region is $not to be rendered]]
    default = 1, [[Image's center region is to be $blended with objects underneath it, if it has transparency. This is the default behavior for image objects]]
    solid = 2 [[Image's center region is to be made solid, even if it has transparency on it]]
@@ -175,7 +175,7 @@ enum Efl.Gfx.Change_Flag
 
 struct Efl.Gfx.Event.Render_Post
 {
-   [[Data sent along a "render,post" event, after a frame has been rendered.]]
+   [[Data sent along a "render,post" event, after a frame has been rendered. @since 1.23]]
    updated_area: list<Eina.Rect>; [[A list of rectangles that were
                                     updated in the canvas.]]
 }

@@ -11,6 +11,8 @@ class Efl.Ui.Popup_Part_Backwall extends Efl.Ui.Layout_Part implements Efl.File
 
      To set an image to be used as a background for the Popup, the @Efl.File API can
      be used directly on the backwall object.
+
+     @since 1.23
    ]]
    data: null;
    methods {

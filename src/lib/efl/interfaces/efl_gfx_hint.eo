@@ -2,18 +2,18 @@ import eina_types;
 import efl_gfx_types;
 
 const Efl.Gfx.Hint_Expand: double = 1.0;
-   [[Use with @Efl.Gfx.Hint.hint_weight.]]
+   [[Use with @Efl.Gfx.Hint.hint_weight. @since 1.23]]
 
 const Efl.Gfx.Hint_Align_Left: double = 0.0;
-   [[Use with @Efl.Gfx.Hint.hint_align.]]
+   [[Use with @Efl.Gfx.Hint.hint_align. @since 1.23]]
 const Efl.Gfx.Hint_Align_Right: double = 1.0;
-   [[Use with @Efl.Gfx.Hint.hint_align.]]
+   [[Use with @Efl.Gfx.Hint.hint_align. @since 1.23]]
 const Efl.Gfx.Hint_Align_Top: double = 0.0;
-   [[Use with @Efl.Gfx.Hint.hint_align.]]
+   [[Use with @Efl.Gfx.Hint.hint_align. @since 1.23]]
 const Efl.Gfx.Hint_Align_Bottom: double = 1.0;
-   [[Use with @Efl.Gfx.Hint.hint_align.]]
+   [[Use with @Efl.Gfx.Hint.hint_align. @since 1.23]]
 const Efl.Gfx.Hint_Align_Center: double = 0.5;
-   [[Use with @Efl.Gfx.Hint.hint_align.]]
+   [[Use with @Efl.Gfx.Hint.hint_align. @since 1.23]]
 
 interface Efl.Gfx.Hint
 {

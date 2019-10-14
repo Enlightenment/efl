@@ -1,12 +1,12 @@
 enum Efl.Ui.Alert_Popup_Button {
-   [[Defines the type of the alert button.]]
+   [[Defines the type of the alert button. @since 1.23]]
    positive = 0, [[Button having positive meaning. E.g. "Yes".]]
    negative, [[Button having negative meaning. E.g. "No".]]
    user [[Button having user-defined meaning. E.g. "More information".]]
 }
 
 struct Efl.Ui.Alert_Popup_Button_Clicked_Event {
-   [[Information for @[Efl.Ui.Alert_Popup.button,clicked] event.]]
+   [[Information for @[Efl.Ui.Alert_Popup.button,clicked] event. @since 1.23]]
    button_type: Efl.Ui.Alert_Popup_Button; [[Clicked button type.]]
 }
 
@@ -18,6 +18,8 @@ class Efl.Ui.Alert_Popup extends Efl.Ui.Popup
      An Alert_Popup is a popup which can be used when an application requires user interaction. It provides
      functionality for easily creating button objects on the popup and passing information about
      which button has been pressed to the button event callback.
+
+     @since 1.23
    ]]
    methods {
       @property button {
