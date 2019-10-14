@@ -2,14 +2,14 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 namespace Eina
 {
 
 /// <summary>
 /// A Generic buffer designed to be a mutable string.
-///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 public class Binbuf : IDisposable
 {
@@ -45,11 +45,16 @@ public class Binbuf : IDisposable
         eina_binbuf_slice_get(IntPtr buf);
 
     /// <summary>Pointer to the native buffer.</summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public IntPtr Handle {get;set;} = IntPtr.Zero;
-    ///<summary>Whether this wrapper owns the native buffer.</summary>
+    /// <summary>Whether this wrapper owns the native buffer.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public bool Own {get;set;}
 
-    /// <summary> Length of the buffer.</summary>
+    /// <summary> Length of the buffer.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public int Length
     {
         get { return (int)GetLength(); }
@@ -67,12 +72,17 @@ public class Binbuf : IDisposable
 
     /// <summary>
     ///   Create a new buffer.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     public Binbuf()
     {
         InitNew();
     }
 
+    /// <summary>
+    ///   Create a new buffer.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public Binbuf(byte[] str, uint? length = null)
     {
         InitNew();
@@ -90,7 +100,8 @@ public class Binbuf : IDisposable
     /// <summary>
     ///   Create a new buffer with elements.
     /// </summary>
-    ///// <param name="bb">Elements to initialize the new buffer.</param>
+    /// <para>Since EFL 1.23.</para>
+    /// <param name="bb">Elements to initialize the new buffer.</param>
     public Binbuf(Binbuf bb)
     {
         InitNew();
@@ -104,8 +115,9 @@ public class Binbuf : IDisposable
     /// <summary>
     ///   Create a new buffer.
     /// </summary>
-    ///// <param name="handle">The native handle to be wrapped.</param>
-    ///// <param name="own">Whether this wrapper owns the native handle.</param>
+    /// <param name="handle">The native handle to be wrapped.</param>
+    /// <param name="own">Whether this wrapper owns the native handle.</param>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public Binbuf(IntPtr handle, bool own)
     {
         Handle = handle;
@@ -117,8 +129,11 @@ public class Binbuf : IDisposable
         Dispose(false);
     }
 
-    /// <summary>Disposes of this wrapper, releasing the native buffer if owned.</summary>
-    /// <param name="disposing">True if this was called from <see cref="Dispose()"/> public method. False if
+    /// <summary>Disposes of this wrapper, releasing the native buffer if owned.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="disposing">True if this was called from
+    /// <see cref="Dispose()"/> public method. False if
     /// called from the C# finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
@@ -137,14 +152,18 @@ public class Binbuf : IDisposable
         }
     }
 
-    /// <summary>Releases the native resources held by this instance.</summary>
+    /// <summary>Releases the native resources held by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
 
-    /// <summary>Releases the native resources held by this instance.</summary>
+    /// <summary>Releases the native resources held by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Free()
     {
         Dispose();
@@ -152,6 +171,7 @@ public class Binbuf : IDisposable
 
     /// <summary>
     ///   Releases the native buffer.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <returns>The native buffer.</returns>
     public IntPtr Release()
@@ -163,6 +183,7 @@ public class Binbuf : IDisposable
 
     /// <summary>
     ///   Resets the buffer.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     public void Reset()
     {
@@ -170,9 +191,11 @@ public class Binbuf : IDisposable
     }
 
     /// <summary>
-    ///   Appends a string of inputed buffer's length to the buffer, reallocating as necessary.
+    ///   Appends a string of inputed buffer's length to the buffer,
+    /// reallocating as necessary.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
-    ///// <param name="str">The string buffer.</param>
+    /// <param name="str">The string buffer.</param>
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Append(byte[] str)
     {
@@ -180,10 +203,12 @@ public class Binbuf : IDisposable
     }
 
     /// <summary>
-    ///   Appends a string of exact length to the buffer, reallocating as necessary.
+    ///   Appends a string of exact length to the buffer, reallocating
+    /// as necessary.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
-    ///// <param name="str">The string buffer.</param>
-    ///// <param name="length">The exact length to use.</param>
+    /// <param name="str">The string buffer.</param>
+    /// <param name="length">The exact length to use.</param>
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Append(byte[] str, uint length)
     {
@@ -192,8 +217,9 @@ public class Binbuf : IDisposable
 
     /// <summary>
     ///   Appends a Binbuf to the buffer.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
-    ///// <param name="bb">The buffer to be appended.</param>
+    /// <param name="bb">The buffer to be appended.</param>
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Append(Binbuf bb)
     {
@@ -202,8 +228,9 @@ public class Binbuf : IDisposable
 
     /// <summary>
     ///  Appends a character to the buffer, reallocating as necessary.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
-    ///// <param name="c">The char to appended.</param>
+    /// <param name="c">The char to appended.</param>
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Append(byte c)
     {
@@ -212,8 +239,9 @@ public class Binbuf : IDisposable
 
     /// <summary>
     ///  Appends a slice to the buffer, reallocating as necessary.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
-    ///// <param name="slice">The slice to appended.</param>
+    /// <param name="slice">The slice to appended.</param>
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Append(Eina.Slice slice)
     {
@@ -221,10 +249,12 @@ public class Binbuf : IDisposable
     }
 
     /// <summary>
-    ///   Inserts a string of inputed buffer's length into the buffer, reallocating as necessary.
+    ///   Inserts a string of inputed buffer's length into the buffer,
+    /// reallocating as necessary.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
-    ///// <param name="str">The string buffer.</param>
-    ///// <param name="pos">The position to insert the string.</param>
+    /// <param name="str">The string buffer.</param>
+    /// <param name="pos">The position to insert the string.</param>
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Insert(byte[] str, uint pos)
     {
@@ -232,11 +262,13 @@ public class Binbuf : IDisposable
     }
 
     /// <summary>
-    ///   Inserts a string of exact length into the buffer, reallocating as necessary.
+    ///   Inserts a string of exact length into the buffer,
+    /// reallocating as necessary.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
-    ///// <param name="str">The string buffer.</param>
-    ///// <param name="length">The exact length to use.</param>
-    ///// <param name="pos">The position to insert the string.</param>
+    /// <param name="str">The string buffer.</param>
+    /// <param name="length">The exact length to use.</param>
+    /// <param name="pos">The position to insert the string.</param>
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Insert(byte[] str, uint length, uint pos)
     {
@@ -245,9 +277,10 @@ public class Binbuf : IDisposable
 
     /// <summary>
     ///   Inserts a character into the buffer, reallocating as  necessary.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
-    ///// <param name="c">The char to appended.</param>
-    ///// <param name="pos">The position to insert the string.</param>
+    /// <param name="c">The char to appended.</param>
+    /// <param name="pos">The position to insert the string.</param>
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Insert(byte c, uint pos)
     {
@@ -256,9 +289,10 @@ public class Binbuf : IDisposable
 
     /// <summary>
     ///    Inserts a slice into the buffer, reallocating as necessary.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
-    ///// <param name="slice">The slice to appended.</param>
-    ///// <param name="pos">The position to insert the string.</param>
+    /// <param name="slice">The slice to appended.</param>
+    /// <param name="pos">The position to insert the string.</param>
     /// <returns>true on success, false if data could not be appended.</returns>
     public bool Insert(Eina.Slice slice, uint pos)
     {
@@ -267,11 +301,12 @@ public class Binbuf : IDisposable
 
     /// <summary>
     ///    Removes a slice of the buffer.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
-    ///// <param name="start">The initial (inclusive) slice position to start
-    ///// removing, in bytes.</param>
-    ///// <param name="end">The final (non-inclusive) slice position to finish
-    ///// removing, in bytes..</param>
+    /// <param name="start">The initial (inclusive) slice position to start
+    /// removing, in bytes.</param>
+    /// <param name="end">The final (non-inclusive) slice position to finish
+    /// removing, in bytes..</param>
     /// <returns>true on success, false on failure.</returns>
     public bool Remove(uint start, uint end)
     {
@@ -280,6 +315,7 @@ public class Binbuf : IDisposable
 
     /// <summary>
     ///   Retrieves a string to the contents of the buffer.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <returns>The string that is contained in buffer.</returns>
     public byte[] GetBytes()
@@ -300,6 +336,7 @@ public class Binbuf : IDisposable
     ///   Retrieves a string to the contents of the buffer.
     /// </summary>
     /// <returns>The string that is contained in buffer.</returns>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public IntPtr GetStringNative()
     {
         return eina_binbuf_string_get(Handle);
@@ -307,6 +344,7 @@ public class Binbuf : IDisposable
 
     /// <summary>
     ///   Frees the buffer.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     public void FreeString()
     {
@@ -315,6 +353,7 @@ public class Binbuf : IDisposable
 
     /// <summary>
     ///   Retrieves the length of the buffer's contents.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     public UIntPtr GetLength()
     {
@@ -323,6 +362,7 @@ public class Binbuf : IDisposable
 
     /// <summary>
     ///    Gets a slice of the buffer's contents.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     Eina.Slice GetSlice()
     {

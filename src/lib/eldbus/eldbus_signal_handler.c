@@ -241,14 +241,14 @@ _eldbus_signal_handler_del(Eldbus_Signal_Handler *handler)
 
    /* after cbs_free dispatch these shouldn't exit, error if they do */
 
-   eina_stringshare_del(handler->sender);
-   eina_stringshare_del(handler->path);
-   eina_stringshare_del(handler->interface);
-   eina_stringshare_del(handler->member);
+   eina_stringshare_replace(&handler->sender, NULL);
+   eina_stringshare_replace(&handler->path, NULL);
+   eina_stringshare_replace(&handler->interface, NULL);
+   eina_stringshare_replace(&handler->member, NULL);
    eina_strbuf_free(handler->match);
    EINA_INLIST_FOREACH_SAFE(handler->args, list, arg)
      {
-        eina_stringshare_del(arg->value);
+        eina_stringshare_replace(&arg->value, NULL);
         free(arg);
      }
    eina_inlist_sorted_state_free(handler->state_args);

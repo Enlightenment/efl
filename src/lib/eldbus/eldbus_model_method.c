@@ -37,7 +37,7 @@ _eldbus_model_method_efl_object_finalize(Eo *obj, Eldbus_Model_Method_Data *pd)
                                              pd->proxy,
                                              pd->method->name, pd->method->arguments);
 
-   return obj;
+   return efl_finalize(efl_super(obj, MY_CLASS));
 }
 
 static void

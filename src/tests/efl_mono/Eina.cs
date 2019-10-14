@@ -340,7 +340,7 @@ class TestEinaSlice
     public static void pinned_data_set()
     {
         var binbuf = new Eina.Binbuf();
-        binbuf.Append(new Eina.Slice().PinnedDataSet(pinnedPtr, (UIntPtr)3));
+        binbuf.Append(new Eina.Slice(pinnedPtr, (UIntPtr)3));
         Test.Assert(binbuf.GetBytes().SequenceEqual(base_seq));
     }
 #endif

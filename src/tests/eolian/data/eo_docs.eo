@@ -78,6 +78,13 @@ class Eo_Docs {
                 val: int; [[Value documentation.]]
             }
         }
+
+        no_doc_meth {
+        }
+
+        doc_with_empty_doc {
+            [[]]
+        }
     }
     events {
         clicked: void; [[Event docs.]]

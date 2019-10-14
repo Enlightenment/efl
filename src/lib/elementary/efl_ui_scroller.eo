@@ -17,6 +17,8 @@ class Efl.Ui.Scroller extends Efl.Ui.Layout_Base implements
      The @Efl.Ui.Scroller is a helper class that provides scrolling capabilities for widgets
      which don't have them. In the above example, simply putting the @Efl.Ui.Box inside a
      @Efl.Ui.Scroller (using @Efl.Content.content.set) would give it the ability to scroll.
+
+     @since 1.23
    ]]
    implements {
       Efl.Object.constructor;

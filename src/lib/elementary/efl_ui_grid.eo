@@ -13,6 +13,8 @@ class Efl.Ui.Grid extends Efl.Ui.Collection
      @Efl.Ui.Grid supports grouping by using @Efl.Ui.Group_Item objects.
      Group headers are displayed at the top of the viewport if items belonging to the group
      are visible in the viewport.
+
+     @since 1.23
    ]]
    data: null;
    implements {

@@ -3715,9 +3715,9 @@ _elm_win_resize_objects_eval(Evas_Object *obj, Eina_Bool force_resize)
      wx = wy = 1;
 
    if (!wx) maxw = minw;
-   else if (maxw < 1) maxw = 32767;
+   if (maxw < 1) maxw = 32767;
    if (!wy) maxh = minh;
-   else if (maxh < 1) maxh = 32767;
+   if (maxh < 1) maxh = 32767;
    if (maxw < minw) maxw = minw;
    if (maxh < minh) maxh = minh;
    if (maxw > 32767) maxw = 32767;
@@ -5955,6 +5955,7 @@ _efl_ui_win_efl_object_constructor(Eo *obj, Efl_Ui_Win_Data *pd)
    pd->obj = obj;
    pd->provider = efl_add_ref(EFL_UI_FOCUS_PARENT_PROVIDER_STANDARD_CLASS, NULL);
    pd->profile.available = eina_array_new(4);
+   pd->max_w = pd->max_h = -1;
 
    // For bindings: if no parent, allow simple unref
    if (!efl_parent_get(obj))

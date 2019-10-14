@@ -1,5 +1,9 @@
 class @beta Efl.Mono_Model_Internal_Child extends Efl.Loop_Consumer implements Efl.Model
 {
+  [[Internal @Efl.Model implementation for the actual model data contained in a root @Efl.Mono_Model_Internal.
+
+    This model's properties are added through C# reflection on the user-provided model through Efl.GenericModel<T>.
+  ]]
   implements {
     Efl.Object.constructor;
     Efl.Object.destructor;

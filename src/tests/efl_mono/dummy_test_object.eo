@@ -101,6 +101,9 @@ function Dummy.FormatCb {
 };
 
 class Dummy.Test_Object extends Efl.Object implements Dummy.Test_Iface {
+   [[ Simple test class
+
+      @since 1.23 ]]
    methods {
       return_object {
          return: Dummy.Test_Object;

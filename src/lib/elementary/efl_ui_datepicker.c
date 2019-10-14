@@ -247,9 +247,8 @@ _efl_ui_datepicker_efl_object_constructor(Eo *obj, Efl_Ui_Datepicker_Data *pd)
 }
 
 EOLIAN static void
-_efl_ui_datepicker_efl_object_destructor(Eo *obj, Efl_Ui_Datepicker_Data *pd)
+_efl_ui_datepicker_efl_object_destructor(Eo *obj, Efl_Ui_Datepicker_Data *pd EINA_UNUSED)
 {
-   efl_del(pd->dt_manager);
    efl_destructor(efl_super(obj, MY_CLASS));
 }
 

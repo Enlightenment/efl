@@ -20,6 +20,8 @@ abstract Efl.Ui.Item extends Efl.Ui.Layout_Base implements Efl.Ui.Selectable, Ef
        @[Efl.Ui.Selectable.selected,changed] (false) -> "efl,state,unselected".
 
      Item grouping inside containers is handled through the @Efl.Ui.Group_Item class.
+
+     @since 1.23
    ]]
    methods {
       @property index {

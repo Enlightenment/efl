@@ -7,6 +7,8 @@ class Efl.Ui.Box_Flow extends Efl.Ui.Box
      This is useful if an application wants to e.g., present a group of items and wrap them onto
      subsequent lines when the number of items grows too large to fit on the screen.
      Adding or removing items in the middle re-arrange the rest of the items as expected.
+
+     @since 1.23
    ]]
    implements {
       Efl.Pack_Layout.layout_update;

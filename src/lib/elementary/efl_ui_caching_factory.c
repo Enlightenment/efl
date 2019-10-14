@@ -201,15 +201,15 @@ _efl_ui_caching_factory_efl_ui_factory_create(Eo *obj,
                                               Efl_Ui_Caching_Factory_Data *pd,
                                               Eina_Iterator *models)
 {
-   Efl_Ui_Caching_Factory_Request *r;
-   Efl_Ui_Caching_Factory_Group_Request *gr;
+   Efl_Ui_Caching_Factory_Request *r = NULL;
+   Efl_Ui_Caching_Factory_Group_Request *gr = NULL;
    Efl_Gfx_Entity *w = NULL;
-   Efl_Model *model;
-   Eina_Future *f;
+   Efl_Model *model = NULL;
+   Eina_Future *f = NULL;
 
    if (pd->cache && pd->style && !pd->klass)
      {
-        Eina_Future **all;
+        Eina_Future **all = NULL;
         int count = 0;
 
         r = calloc(1, sizeof (Efl_Ui_Caching_Factory_Request));
@@ -228,8 +228,13 @@ _efl_ui_caching_factory_efl_ui_factory_create(Eo *obj,
                                             .success = _efl_ui_caching_factory_create_then,
                                             .data = r);
 
-             all = realloc(all, (count + 1) * sizeof (Eina_Future *));
-             if (!all) goto alloc_array_error;
+             Eina_Future **tmp = realloc(all, (count + 1) * sizeof (Eina_Future *));
+             if (!tmp)
+               {
+                 free(all);
+                 goto alloc_array_error;
+               }
+             all = tmp;
           }
         eina_iterator_free(models);
 

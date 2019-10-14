@@ -236,6 +236,55 @@ EFL_START_TEST(range_select2)
 }
 EFL_END_TEST
 
+EFL_START_TEST(change_mode_from_multi_to_single)
+{
+   int sel = 0;
+
+   efl_ui_selectable_select_mode_set(widget, EFL_UI_SELECT_MODE_MULTI);
+   efl_ui_selectable_all_select(widget);
+   efl_ui_selectable_select_mode_set(widget, EFL_UI_SELECT_MODE_SINGLE);
+   for (int i = 0; i < efl_content_count(widget); ++i)
+     {
+        if (efl_ui_selectable_selected_get(efl_pack_content_get(widget, i)))
+          sel ++;
+     }
+   ck_assert_int_eq(sel, 1);
+}
+EFL_END_TEST
+
+
+EFL_START_TEST(change_mode_from_multi_to_none)
+{
+   int sel = 0;
+
+   efl_ui_selectable_select_mode_set(widget, EFL_UI_SELECT_MODE_MULTI);
+   efl_ui_selectable_all_select(widget);
+   efl_ui_selectable_select_mode_set(widget, EFL_UI_SELECT_MODE_NONE);
+   for (int i = 0; i < efl_content_count(widget); ++i)
+     {
+        if (efl_ui_selectable_selected_get(efl_pack_content_get(widget, i)))
+          sel ++;
+     }
+   ck_assert_int_eq(sel, 0);
+}
+EFL_END_TEST
+
+EFL_START_TEST(change_mode_from_single_to_none)
+{
+   int sel = 0;
+
+   efl_ui_selectable_select_mode_set(widget, EFL_UI_SELECT_MODE_SINGLE);
+   efl_ui_selectable_all_select(widget);
+   efl_ui_selectable_select_mode_set(widget, EFL_UI_SELECT_MODE_NONE);
+   for (int i = 0; i < efl_content_count(widget); ++i)
+     {
+        if (efl_ui_selectable_selected_get(efl_pack_content_get(widget, i)))
+          sel ++;
+     }
+   ck_assert_int_eq(sel, 0);
+}
+EFL_END_TEST
+
 void
 efl_ui_multi_selectable_behavior_test(TCase *tc)
 {
@@ -250,5 +299,8 @@ efl_ui_multi_selectable_behavior_test(TCase *tc)
    tcase_add_test(tc, range_unselect2);
    tcase_add_test(tc, range_select);
    tcase_add_test(tc, range_select2);
+   tcase_add_test(tc, change_mode_from_multi_to_single);
+   tcase_add_test(tc, change_mode_from_multi_to_none);
+   tcase_add_test(tc, change_mode_from_single_to_none);
    efl_ui_single_selectable_behavior_test(tc);
 }

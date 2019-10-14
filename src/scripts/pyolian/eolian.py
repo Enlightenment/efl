@@ -36,6 +36,10 @@ except ImportError:
 _already_halted = False
 
 
+# This is the same as the EOLIAN_FILE_FORMAT_VERSION macro
+file_format_version = lib.eolian_file_format_version_get()
+
+
 #  Eolian Enums  ##############################################################
 class Eolian_Object_Type(IntEnum):
     UNKNOWN = 0
@@ -353,9 +357,17 @@ class Eolian_Unit(EolianBaseObject):
         return _str_to_py(lib.eolian_unit_file_get(self))
 
     @cached_property
+    def file_path(self):
+        return _str_to_py(lib.eolian_unit_file_path_get(self))
+
+    @cached_property
     def state(self):
         c_state = lib.eolian_unit_state_get(self)
         return Eolian_State(c_state) if c_state else None
+
+    @cached_property
+    def version(self):
+        return lib.eolian_unit_version_get(self)
 
     @property
     def objects(self):
@@ -504,6 +516,9 @@ class Eolian_State(Eolian_Unit):
         return Iterator(Typedecl,
                         lib.eolian_state_enums_by_file_get(self, _str_to_bytes(file_name)))
 
+    def state_check(self):
+        return bool(lib.eolian_state_check(self))
+
 
 #  Namespace Utility Class  ###################################################
 
@@ -530,6 +545,10 @@ class Namespace(object):
 
     def __hash__(self):
         return hash(self._name)
+
+    @property
+    def unit(self):
+        return self._unit
 
     @property
     def name(self):
@@ -611,6 +630,10 @@ class Object(EolianBaseObject):
     @cached_property
     def name(self):
         return _str_to_py(lib.eolian_object_name_get(self))
+
+    @cached_property
+    def c_name(self):
+        return _str_to_py(lib.eolian_object_c_name_get(self))
 
     @cached_property
     def short_name(self):
@@ -767,6 +790,10 @@ class Class(Object):
     def parts(self):
         return Iterator(Part, lib.eolian_class_parts_get(self))
 
+    @property
+    def requires(self):
+        return Iterator(Class, lib.eolian_class_requires_get(self))
+
 
 class Part(Object):
     def __repr__(self):
@@ -814,6 +841,11 @@ class Event(Object):
     def type(self):
         c_type = lib.eolian_event_type_get(self)
         return Type(c_type) if c_type else None
+
+    @cached_property
+    def class_(self):
+        c_cls = lib.eolian_event_class_get(self)
+        return Class(c_cls) if c_cls else None
 
     @cached_property
     def documentation(self):
@@ -931,6 +963,12 @@ class Function(Object):
         c_type = lib.eolian_function_return_type_get(self, ftype)
         return Type(c_type) if c_type else None
 
+    def return_c_type_get(self, ftype):
+        s = lib.eolian_function_return_c_type_get(self, ftype)
+        ret = _str_to_py(s)
+        lib.eina_stringshare_del(c_void_p(s))
+        return ret
+
     def return_default_value(self, ftype):
         c_expr = lib.eolian_function_return_default_value_get(self._obj, ftype)
         return Expression(c_expr) if c_expr else None
@@ -941,6 +979,12 @@ class Function(Object):
 
     def return_allow_unused(self, ftype):
         return bool(lib.eolian_function_return_allow_unused(self, ftype))
+
+    def return_is_by_ref(self, ftype):
+        return bool(lib.eolian_function_return_is_by_ref(self, ftype))
+
+    def return_is_move(self, ftype):
+        return bool(lib.eolian_function_return_is_move(self, ftype))
 
     @cached_property
     def method_return_type(self):
@@ -993,6 +1037,14 @@ class Function_Parameter(Object):
         return bool(lib.eolian_parameter_is_optional(self))
 
     @cached_property
+    def is_by_ref(self):
+        return bool(lib.eolian_parameter_is_by_ref(self))
+
+    @cached_property
+    def is_move(self):
+        return bool(lib.eolian_parameter_is_move(self))
+
+    @cached_property
     def type(self):
         c_type = lib.eolian_parameter_type_get(self)
         return Type(c_type) if c_type else None
@@ -1002,14 +1054,30 @@ class Function_Parameter(Object):
         c_expr = lib.eolian_parameter_default_value_get(self)
         return Expression(c_expr) if c_expr else None
 
+    def c_type_get(self, as_return=False):
+        s = lib.eolian_parameter_c_type_get(self, as_return)
+        ret = _str_to_py(s)
+        lib.eina_stringshare_del(c_void_p(s))
+        return ret
+
 
 class Implement(Object):
     def __repr__(self):
         return "<eolian.Implement '{0.name}'>".format(self)
 
     @cached_property
+    def parent(self):
+        c_impl = lib.eolian_aux_implement_parent_get(self)
+        return Implement(c_impl) if c_impl else None
+
+    @cached_property
     def class_(self):
         c_cls = lib.eolian_implement_class_get(self)
+        return Class(c_cls) if c_cls else None
+
+    @cached_property
+    def implementing_class(self):
+        c_cls = lib.eolian_implement_implementing_class_get(self)
         return Class(c_cls) if c_cls else None
 
     @cached_property
@@ -1018,10 +1086,14 @@ class Implement(Object):
         return Function(c_func) if c_func else None
 
     def documentation_get(self, ftype=Eolian_Function_Type.METHOD):
-        # something strange in this eolian api :/  (see 'documentation' property
-        c_doc = lib.eolian_implement_documentation_get(self, ftype)
+        # c_doc = lib.eolian_implement_documentation_get(self, ftype)
+        c_doc = lib.eolian_aux_implement_documentation_get(self, ftype)
         return Documentation(c_doc) if c_doc else None
-    # TODO implement util properties for documentation_get
+
+    @cached_property
+    def documentation_fallback(self):
+        c_doc = lib.eolian_aux_implement_documentation_fallback_get(self)
+        return Documentation(c_doc) if c_doc else None
 
     def is_auto(self, ftype=Eolian_Function_Type.METHOD):
         return bool(lib.eolian_implement_is_auto(self, ftype))
@@ -1065,7 +1137,8 @@ class Type(Object):
     def builtin_type(self):
         return Eolian_Type_Builtin_Type(lib.eolian_type_builtin_type_get(self))
 
-    def c_type_get(self):
+    @cached_property
+    def c_type(self):
         s = lib.eolian_type_c_type_get(self)
         ret = _str_to_py(s)
         lib.eina_stringshare_del(c_void_p(s))
@@ -1103,6 +1176,10 @@ class Type(Object):
     @cached_property
     def is_ptr(self):
         return bool(lib.eolian_type_is_ptr(self))
+
+    @cached_property
+    def is_move(self):
+        return bool(lib.eolian_type_is_move(self))
 
 
 class Typedecl(Object):
@@ -1201,7 +1278,22 @@ class Struct_Type_Field(Object):
     def type(self):
         c_type = lib.eolian_typedecl_struct_field_type_get(self)
         return Type(c_type) if c_type else None
-    
+
+    @cached_property
+    def c_type(self):
+        s = lib.eolian_typedecl_struct_field_c_type_get(self)
+        ret = _str_to_py(s)
+        lib.eina_stringshare_del(c_void_p(s))
+        return ret
+
+    @cached_property
+    def is_by_ref(self):
+        return bool(lib.eolian_typedecl_struct_field_is_by_ref(self))
+
+    @cached_property
+    def is_move(self):
+        return bool(lib.eolian_typedecl_struct_field_is_move(self))
+
     @cached_property
     def documentation(self):
         c_doc = lib.eolian_typedecl_struct_field_documentation_get(self)
@@ -1458,34 +1550,57 @@ if __name__ == '__main__':
 
     # prepare the two regexp
     flags = re.S | re.M
-    DEFINED_RE = re.compile('^EAPI[\w\n *]*(eolian_\w*)\([\w *,]*\);', flags)
-    USED_RE = re.compile('lib\.(eolian_[\w]*)\(', flags)
+    FUNC_DEFINED_RE = re.compile(r'^\s*EAPI[\w\s*]*(eolian_\w*)\s*\([\w\s*,]*\);', flags)
+    FUNC_USED_RE = re.compile(r'^[^\n#]*lib\.(eolian_[\w]*)\s*\(', flags)
 
-    # extract all EAPI functions from Eolian.h
+    ENUM_DEFINED_RE = re.compile(r'typedef enum\s*{([^}]*)}\s*(Eolian_[\w]*);', flags)
+    ENUM_USED_RE = re.compile(r'^class\s([\w]*)\(IntEnum\):', flags)
+
+    # ignore some know cases (function or enum)
+    IGNORED = {
+        'eolian_implement_documentation_get',  # we are using eolian_aux_implement_documentation_get
+        'eolian_documentation_string_split',  # not needed in python
+    }
+
+    # extract functions and enums from Eolian.h
     defined_funcs = []
+    defined_enums = []
     with open(eolian_header, 'r') as fh:
         header = fh.read()
-        for match in re.finditer(DEFINED_RE, header):
-            func_name = match.group(1)
+    for match in re.finditer(FUNC_DEFINED_RE, header):
+        func_name = match.group(1)
+        if func_name not in IGNORED:
             defined_funcs.append(func_name)
+    for match in re.finditer(ENUM_DEFINED_RE, header):
+        enum_name = match.group(2)
+        if enum_name not in IGNORED:
+            defined_enums.append(enum_name)
     defined_funcs = set(defined_funcs)
+    defined_enums = set(defined_enums)
 
-    # extract all called functions in eolian.py (this file)
+    # extract functions and enums from eolian.py (this file)
     used_funcs = []
+    used_enums = []
     with open(__file__, 'r') as fh:
         source = fh.read()
-        for match in re.finditer(USED_RE, source):
-            func_name = match.group(1)
-            used_funcs.append(func_name)
+    for match in re.finditer(FUNC_USED_RE, source):
+        func_name = match.group(1)
+        used_funcs.append(func_name)
+    for match in re.finditer(ENUM_USED_RE, source):
+        enum_name = match.group(1)
+        used_enums.append(enum_name)
     used_funcs = set(used_funcs)
+    used_enums = set(used_enums)
 
     # show general info
-    num_def = len(defined_funcs)
-    num_usd = len(used_funcs)
+    num_def, num_usd = len(defined_funcs), len(used_funcs)
+    num_enum_def, num_enum_usd = len(defined_enums), len(used_enums)
     print('Pyolian coverage results')
     print('========================')
     print('Found %d functions defined in Eolian.h (%s)' % (num_def, eolian_header))
-    print('Found %d functions used in eolian.py (hopefully not commented out)' % num_usd)
+    print('Found %d functions used in eolian.py (hopefully not multiline-commented)' % num_usd)
+    print('Found %d enums defined in Eolian.h' % num_enum_def)
+    print('Found %d enums defined in eolian.py' % num_enum_usd)
     print('Total API coverage %.1f%%' % (num_usd / num_def * 100))
     print()
 
@@ -1497,15 +1612,31 @@ if __name__ == '__main__':
         print('{:02d}. {}'.format(i, func_name))
     print()
 
-    # List all functions found in Eolian.h  (--all option)
-    if '--all' in sys.argv:
-        print('{} functions found in Eolian.h'.format(num_def))
-        print('===============================')
-        for i, func_name in enumerate(sorted(defined_funcs), 1):
-            print('{:03d}. {}'.format(i, func_name))
+    # list all missing enums
+    missing = defined_enums - used_enums
+    if len(missing) > 0:
+        print('{} Missing enums in eolian.py'.format(len(missing)))
+        print('=================================')
+        for i, enum_name in enumerate(sorted(missing), 1):
+            print('{:02d}. {}'.format(i, enum_name))
         print()
+
+    # List all functions found in C and Py (--all option)
+    if '--all' in sys.argv:
+        to_list = (
+            (defined_funcs, '{} EAPI functions defined in Eolian.h'),
+            (used_funcs, '{} functions called in eolian.py'),
+            (defined_enums, '{} Enums defined in Eolian.h'),
+            (used_enums, '{} Enums defined in eolian.py'),
+        )
+        for bag, label in to_list:
+            print(label.format(len(bag)))
+            print('==============================')
+            for i, obj_name in enumerate(sorted(bag), 1):
+                print('{:03d}. {}'.format(i, obj_name))
+            print()
     else:
         print('Additional arguments')
         print('====================')
-        print(' --all   To list all functions found in Eolian.h')
+        print(' --all   To list all functions and enums found')
         print()

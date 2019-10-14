@@ -1,6 +1,6 @@
 parse efl_gfx_hint;
 enum Efl.Ui.Popup_Align {
-    [[This is the alignment method for positioning Popup widgets.]]
+    [[This is the alignment method for positioning Popup widgets. @since 1.23]]
     none = 0, [[Popup not aligned.]]
     center,   [[Popup is aligned to the center of its anchor object.]]
     left,     [[Popup's left edge is aligned to the left side of its anchor object.]]
@@ -39,6 +39,8 @@ class Efl.Ui.Popup extends Efl.Ui.Layout_Base implements Efl.Content, Efl.Ui.Foc
      property.
 
      For a Popup with a more specialized purpose, see @Efl.Ui.Alert_Popup.
+
+     @since 1.23
    ]]
    methods {
       @property align {

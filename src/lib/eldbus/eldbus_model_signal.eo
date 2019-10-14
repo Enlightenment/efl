@@ -14,7 +14,7 @@ class @beta Eldbus.Model.Signal extends Eldbus.Model.Arguments {
     }
     implements {
         Efl.Object.constructor;
-        Efl.Object.destructor;
+        Efl.Object.invalidate;
     }
     constructors {
         .signal_constructor;

@@ -408,9 +408,6 @@ _efl_ui_box_efl_ui_layout_orientable_orientation_get(const Eo *obj EINA_UNUSED, 
 EOLIAN static void
 _efl_ui_box_efl_gfx_arrangement_content_padding_set(Eo *obj, Efl_Ui_Box_Data *pd, unsigned int h, unsigned int v)
 {
-   if (h < 0) h = 0;
-   if (v < 0) v = 0;
-
    if (EINA_DBL_EQ(pd->pad.h, h) && EINA_DBL_EQ(pd->pad.v, v))
      return;
 

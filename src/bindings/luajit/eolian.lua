@@ -881,7 +881,8 @@ M.type_type = {
     VOID             = 1,
     REGULAR          = 2,
     CLASS            = 3,
-    UNDEFINED        = 4
+    ERROR            = 4,
+    UNDEFINED        = 5
 }
 
 M.type_builtin_type = {
@@ -1856,6 +1857,8 @@ M.Eolian_Doc_Token = ffi.metatype("Eolian_Doc_Token", {
                            ffi.cast("const Eolian_Enum_Type_Field *", stor[1])
             elseif tp == reft.CONSTANT then
                 return tp, ffi.cast("const Eolian_Constant *", stor[0])
+            elseif tp == reft.ERROR then
+                return tp, ffi.cast("const Eolian_Error *", stor[0])
             else
                 return reft.UNKNOWN
             end

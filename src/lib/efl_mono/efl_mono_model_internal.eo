@@ -1,10 +1,18 @@
 class @beta Efl.Mono_Model_Internal extends Efl.Loop_Consumer implements Efl.Model
 {
+  [[Internal @Efl.Model implementation for the root models in C# MVVM infrastructure.
+
+    This represents the root model, containing @Efl.Mono_Model_Internal_Child elements. It is inherited from classes
+    like the C#-only Efl.UserModel<T>, which the end user will actually instantiate.
+  ]]
   methods {
     add_property {
+      [[Adds a new property to the wrapped children models.
+
+        When adding new children models, these children will have the properties that were added from this method.]]
       params {
-        @in name: string;
-        @in type: ptr(const(Eina.Value_Type));
+        @in name: string; [[Name of the property being added.]]
+        @in type: ptr(const(Eina.Value_Type)); [[Type of the property being added, as an @Eina.Value_Type.]]
       }
     }
   }

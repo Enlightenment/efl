@@ -59,7 +59,6 @@ interface @beta Efl.Gfx.Filter
            by using the function 'padding_set' in the Lua program.
          ]]
          get {
-            [[Gets the padding required to apply this filter.]]
          }
          values {
             l: int; [[Padding on the left]]

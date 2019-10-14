@@ -9,6 +9,8 @@ class Efl.Ui.Slider extends Efl.Ui.Layout_Base implements Efl.Ui.Range_Interacti
      changes are also available in that interface.
      The visual representation of min and max can be swapped using @Efl.Ui.Layout_Orientable.orientation.
      Normally the minimum of @Efl.Ui.Range_Display.range_limits is shown on the left side, the max on the right side.
+
+     @since 1.23
    ]]
    implements {
       Efl.Object.constructor;

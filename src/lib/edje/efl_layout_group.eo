@@ -111,7 +111,7 @@ interface Efl.Layout.Group
 
            See also @Efl.Canvas.Layout_Part.part_type.
          ]]
-         get { [[Returns $true if the part exists in the EDC group.]] }
+         get {}
          keys {
             part: string; [[The part name to check.]]
          }

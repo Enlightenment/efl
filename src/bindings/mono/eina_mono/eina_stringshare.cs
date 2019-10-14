@@ -2,12 +2,14 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 
 namespace Eina
 {
 
 // TODO: move all native functions to a "NativeMethods" class
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static partial class NativeMethods
 {
     [DllImport(efl.Libs.Eina)] public static extern IntPtr
@@ -25,7 +27,7 @@ public static partial class NativeMethods
 /// <summary>
 /// Placeholder type to interact with the native type Eina_Stringshare, mainly for eina containers.
 ///
-/// (Since Efl 1.23)
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 /// <remarks>
 /// Using System.String and merely converting this type to it (by cast or implicitly)
@@ -53,9 +55,11 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
     /// Main constructor. Wrap the given string.
     /// Have private acess to avoid wrapping a null reference,
     /// use convertion or the factory method to create a new instance.
+    /// <para>Since EFL 1.23.</para>
     /// <see cref="Create(string)"/>
     /// <see cref="implicit operator Stringshare(string)"/>
     /// </summary>
+    /// <param name="s">The string to be wrapped.</param>
     private Stringshare(string s)
     {
         Str = s;
@@ -70,8 +74,10 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
     /// Factory method to instantiate a new object.
     /// Get a wrappper for the given string or a null reference if the given
     /// string reference is also null.
+    /// <para>Since EFL 1.23.</para>
     /// <seealso cref="implicit operator Stringshare(string)"/>
     /// </summary>
+    /// <param name="s">The string to be wrapped.</param>
     /// <returns>
     /// A new instance wrapping the given string, or a null reference if
     /// the given string reference is also null.
@@ -101,6 +107,7 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
 
     /// <summary>
     /// Implicit convertion from string to Stringshare.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <remarks>
     /// Note that this method can be used to create an instance of this class,
@@ -119,6 +126,7 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
 
     /// <summary>
     /// Check two Stringshare objects for equality.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <returns>
     /// True if both wrapped strings have the same content or if both
@@ -132,6 +140,7 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
 
     /// <summary>
     /// Check two Stringshare objects for inequality.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <returns>
     /// True if the wrapped strings have different content or if one reference is null
@@ -144,6 +153,7 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
 
     /// <summary>
     /// Returns the wrapped string.
+    /// <para>Since EFL 1.23.</para>
     /// <seealso cref="Str"/>
     /// <seealso cref="Get()"/>
     /// </summary>
@@ -155,6 +165,7 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
 
     /// <summary>
     /// Override of GetHashCode for consistency with user-defined equality methods.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <returns>
     /// The wrapped string hash code.
@@ -166,7 +177,9 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
 
     /// <summary>
     /// Check the given object for equality.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
+    /// <param name="other">The string to be compare to.</param>
     /// <returns>
     /// True if the given object is the same object or if it is another Stringshare object
     /// and both wrapped strings are equal or if it is a string object and its content
@@ -195,7 +208,9 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
 
     /// <summary>
     /// Check the given Stringshare for equality.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
+    /// <param name="other">The string share to compare to.</param>
     /// <returns>
     /// True if the given Stringshare object is not null and its wrapped string
     /// have the same content of this.Str, false otherwise.
@@ -207,7 +222,9 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
 
     /// <summary>
     /// Check the given Stringshare for equality.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
+    /// <param name="other">The string to compare to.</param>
     /// <returns>
     /// True if the given string is not null and the wrapped string have the same
     /// content of the given string, false otherwise.
@@ -219,6 +236,7 @@ public class Stringshare : IEquatable<Stringshare>, IEquatable<string>
 
     /// <summary>
     /// Get the wrapped string.
+    /// <para>Since EFL 1.23.</para>
     /// <seealso cref="Str"/>
     /// <seealso cref="ToString()"/>
     /// </summary>

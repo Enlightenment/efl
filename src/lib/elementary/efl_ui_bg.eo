@@ -3,9 +3,11 @@ class Efl.Ui.Bg extends Efl.Ui.Layout_Base
                       composites Efl.Gfx.Image, Efl.Gfx.Image_Load_Controller
 {
    [[The bg (background) widget is used for setting (solid) background decorations
-   for a window (unless it has transparency enabled) or for any container object. It
-   works just like an image, but has some properties useful for backgrounds, such as
-   setting it to tiled, centered, scaled or stretched.
+     for a window (unless it has transparency enabled) or for any container object. It
+     works just like an image, but has some properties useful for backgrounds, such as
+     setting it to tiled, centered, scaled or stretched.
+
+     @since 1.23
    ]]
    implements {
       Efl.Object.constructor;

@@ -10,14 +10,18 @@ namespace Csharp
 {
 
 /// <summary>The components to be initialized.
-///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 public enum Components
 {
-    ///<summary>Basic components: Eina, Eo, Ecore, Evas and DBus.</summary>
+    ///<summary>Basic components: Eina, Eo, Ecore, Evas and DBus.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     Basic,
-    ///<summary>The same components of <see cref="Efl.Csharp.Components.Basic"/> and the Elementary widget toolkit.</summary>
+    ///<summary>The same components of <see cref="Efl.Csharp.Components.Basic"/>
+    /// and the Elementary widget toolkit.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     Ui,
 }
 
@@ -25,8 +29,7 @@ public enum Components
 /// This represents the entry point for the EFL framework
 /// You can use this class to implement the 4 abstract methods which will then be called accordingly
 /// All subsystems of efl are booted up correctly when the abstract methods of this class are called.
-///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 /// <remarks>
 /// Calls to efl outside those efl-callbacks or outside the mainloop are not allowed and will lead to issues
@@ -94,22 +97,27 @@ public abstract class Application
 
     /// <summary>
     /// Called when the application is started. Arguments from the command line are passed here.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
+    /// <param name="args">Arguments passed from command line.</param>
     protected abstract void OnInitialize(string[] args);
 
     /// <summary>
     /// Arguments are passed here, Additional calls to this function may occure,
     /// but then the initialization flag is set to false.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <remarks>
     /// When Initialize is true then OnInitialize is also called
     /// </remarks>
+    /// <param name="args">Argsuments passed from command line</param>
     protected virtual void OnArguments(Efl.LoopArguments args)
     {
     }
 
     /// <summary>
     /// Called when the application is not going to be displayed, or is not used by a user for some time.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     protected virtual void OnPause()
     {
@@ -117,6 +125,7 @@ public abstract class Application
 
     /// <summary>
     /// Called before an application is used again after a call to OnPause().
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     protected virtual void OnResume()
     {
@@ -124,6 +133,7 @@ public abstract class Application
 
     /// <summary>
     /// Called before starting the shutdown of the application.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     protected virtual void OnTerminate()
     {
@@ -132,7 +142,9 @@ public abstract class Application
     /// <summary>
     /// This function initializices everything in EFL and runs your application.
     /// This call will result in a call to OnInitialize(), which you application should override.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
+    /// <param name="components">The <see cref="Efl.Csharp.Components" /> to run the application.</param>
     public void Launch(Efl.Csharp.Components components = Components.Ui)
     {
         Init(components);

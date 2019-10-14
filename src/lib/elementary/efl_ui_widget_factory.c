@@ -267,9 +267,9 @@ static Eina_Future *
 _efl_ui_widget_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Widget_Factory_Data *pd,
                                              Eina_Iterator *models)
 {
-   Efl_Ui_Widget_Factory_Request *r;
-   Eina_Future **f;
-   Efl_Model *model;
+   Efl_Ui_Widget_Factory_Request *r = NULL;
+   Eina_Future **f = NULL;
+   Efl_Model *model = NULL;
    int count = 0;
 
    if (!pd->klass)
@@ -277,7 +277,7 @@ _efl_ui_widget_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Widget_Factory_Data
 
    if (!pd->style)
      {
-        Efl_Ui_Widget *w;
+        Efl_Ui_Widget *w = NULL;
         Eina_Value r;
 
         eina_value_array_setup(&r, EINA_VALUE_TYPE_OBJECT, 4);
@@ -309,8 +309,13 @@ _efl_ui_widget_factory_efl_ui_factory_create(Eo *obj, Efl_Ui_Widget_Factory_Data
                                      .success = _efl_ui_widget_factory_create_then,
                                      .free = _efl_ui_widget_factory_single_cleanup);
 
-        f = realloc(f, (count + 1) * sizeof (Eina_Future *));
-        if (!f) goto alloc_array_error;
+        Eina_Future** tmp = realloc(f, (count + 1) * sizeof (Eina_Future *));
+        if (!tmp)
+          {
+            free(f);
+            goto alloc_array_error;
+          }
+        f = tmp;
      }
    eina_iterator_free(models);
 

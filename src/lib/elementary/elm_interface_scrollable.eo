@@ -4,7 +4,7 @@ type @beta Elm_Interface_Scrollable_Resize_Cb: __undefined_type; [[Elementary in
 type @beta Elm_Interface_Scrollable_Min_Limit_Cb: __undefined_type; [[Elementary interface scrollable minimal limit callback type]]
 
 /* FIXME: Rename the namespace of the types. */
-enum Elm.Scroller.Policy
+enum @beta Elm.Scroller.Policy
 {
    [[Type that controls when scrollbars should appear.
 
@@ -16,7 +16,7 @@ enum Elm.Scroller.Policy
    last [[Internal. Sentinel value to indicate last enum field during iteration.]]
 }
 
-enum Elm.Scroller.Single_Direction
+enum @beta Elm.Scroller.Single_Direction
 {
    [[Type that controls how the content is scrolled.
 

@@ -274,6 +274,7 @@ void eio_monitor_backend_add(Eio_Monitor *monitor)
    fd = open(monitor->path, O_RDONLY);
    if (fd < 0) goto error;
 
+   eina_file_close_on_exec(fd, EINA_TRUE);
    backend->fd = fd;
    backend->parent = monitor;
    monitor->backend = backend;

@@ -417,7 +417,11 @@ evas_filter_object_render(Eo *eo_obj, Evas_Object_Protected_Data *obj,
 
    // Draw Context
    drawctx = ENFN->context_new(engine);
-   ENFN->context_color_set(engine, drawctx, 255, 255, 255, 255);
+   ENFN->context_color_set(engine, drawctx,
+                           obj->cur->cache.clip.r,
+                           obj->cur->cache.clip.g,
+                           obj->cur->cache.clip.b,
+                           obj->cur->cache.clip.a);
 
    // Set obscured region
    evas_filter_context_obscured_region_set(filter, pd->data->obscured);

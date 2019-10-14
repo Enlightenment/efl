@@ -1,5 +1,8 @@
 class Efl.Ui.Layout_Part extends Efl.Ui.Widget_Part
 {
-   [[Elementary layout internal part class]]
+   [[Elementary layout internal part class
+
+     @since 1.23
+   ]]
    data: null;
 }

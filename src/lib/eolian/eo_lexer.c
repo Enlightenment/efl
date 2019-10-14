@@ -522,8 +522,6 @@ read_doc(Eo_Lexer *ls, Eo_Token *tok, int line, int column)
 
    if (eina_strbuf_length_get(rbuf))
      doc->description = eina_stringshare_add(eina_strbuf_string_get(rbuf));
-   if (!doc->summary)
-     doc->summary = eina_stringshare_add("No description supplied.");
    if (!doc->since && ls->klass && ls->klass->doc)
      doc->since = eina_stringshare_ref(ls->klass->doc->since);
    eina_strbuf_free(rbuf);

@@ -1,6 +1,6 @@
 import evas_canvas3d_types;
 
-struct @extern Eina.Inarray; [[Eina inarray data structure]]
+struct @beta @extern Eina.Inarray; [[Eina inarray data structure]]
 
 class @beta Evas.Canvas3D.Mesh extends Evas.Canvas3D.Object implements Efl.File, Efl.File_Save
 {

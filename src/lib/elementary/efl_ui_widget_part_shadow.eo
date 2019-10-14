@@ -19,6 +19,8 @@ class Efl.Ui.Widget_Part_Shadow extends Efl.Ui.Widget_Part implements Efl.Gfx.Co
 
      It is also possible to manually specify which @Efl.Gfx.Filter program to
      use.
+
+     @since 1.23
    ]]
    data: null;
    implements {

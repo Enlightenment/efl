@@ -57,7 +57,18 @@ struct async_function_declaration_generator
       return true;
 
     if (!as_generator(
-            scope_tab << "/// <summary>Async wrapper for <see cref=\"" << name_helpers::managed_method_name(f) << "\" />.</summary>\n"
+            scope_tab << "/// <summary>Async wrapper for <see cref=\"" << name_helpers::managed_method_name(f) << "\" />.\n"
+        ).generate(sink, attributes::unused, context))
+      return false;
+
+    if (!f.documentation.since.empty())
+      if (!as_generator
+          (scope_tab << "/// <para>Since EFL " + f.documentation.since + ".</para>\n")
+          .generate (sink, attributes::unused, context))
+      return false;
+
+    if (!as_generator(
+            scope_tab << "/// </summary>\n"
         ).generate(sink, attributes::unused, context))
       return false;
 
@@ -104,7 +115,18 @@ struct async_function_definition_generator
     std::transform(f.parameters.begin(), f.parameters.end(), std::back_inserter(param_forwarding), parameter_forwarding);
 
     if (!as_generator(
-            scope_tab << "/// <summary>Async wrapper for <see cref=\"" << name_helpers::managed_method_name(f) << "\" />.</summary>\n"
+            scope_tab << "/// <summary>Async wrapper for <see cref=\"" << name_helpers::managed_method_name(f) << "\" />.\n"
+        ).generate(sink, attributes::unused, context))
+      return false;
+
+    if (!f.documentation.since.empty())
+      if (!as_generator
+          (scope_tab << "/// <para>Since EFL " + f.documentation.since + ".</para>\n")
+          .generate (sink, attributes::unused, context))
+      return false;
+
+    if (!as_generator(
+            scope_tab << "/// </summary>\n"
         ).generate(sink, attributes::unused, context))
       return false;
 

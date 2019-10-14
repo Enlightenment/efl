@@ -18,6 +18,8 @@ _indent_line(Eina_Strbuf *buf, int ind)
 #define DOC_LIMIT(ind) ((ind > DOC_LINE_TEST) ? (ind + DOC_LINE_OVER) \
                                               : DOC_LINE_LIMIT)
 
+#define SUMMARY_OR_DEFAULT(sum) (sum ? sum : "No description supplied.")
+
 static void
 _generate_ref(const Eolian_State *state, const char *refn, Eina_Strbuf *wbuf)
 {
@@ -385,6 +387,7 @@ _gen_doc_buf(const Eolian_State *state, const Eolian_Documentation *doc,
    if (!doc) return NULL;
 
    const char *sum = eolian_documentation_summary_get(doc);
+   sum = SUMMARY_OR_DEFAULT(sum);
    const char *desc = eolian_documentation_description_get(doc);
    const char *since = eolian_documentation_since_get(doc);
 
@@ -549,7 +552,7 @@ eo_gen_docs_func_gen(const Eolian_State *state, const Eolian_Function *fid,
    /* only summary, nothing else; generate standard brief doc */
    if (!desc && !par && !vpar && !rdoc && (ftype == EOLIAN_METHOD || !pdoc))
      {
-        _gen_doc_brief(state, sum ? sum : "No description supplied.", since, group,
+        _gen_doc_brief(state, SUMMARY_OR_DEFAULT(sum), since, group,
                        NULL, indent, buf);
         return buf;
      }
@@ -560,7 +563,7 @@ eo_gen_docs_func_gen(const Eolian_State *state, const Eolian_Function *fid,
    curl += _indent_line(buf, indent);
    eina_strbuf_append(buf, " * @brief ");
    curl += sizeof(" * @brief ") - 1;
-   _append_section(state, sum ? sum : "No description supplied.",
+   _append_section(state, SUMMARY_OR_DEFAULT(sum),
                    indent, curl, buf, wbuf);
 
    eina_strbuf_append_char(buf, '\n');
@@ -588,7 +591,8 @@ eo_gen_docs_func_gen(const Eolian_State *state, const Eolian_Function *fid,
         const char *pdesc = eolian_documentation_description_get(pdoc);
         curl = _indent_line(buf, indent);
         eina_strbuf_append(buf, " * ");
-        _append_section(state, eolian_documentation_summary_get(pdoc), indent,
+        const char *psum = eolian_documentation_summary_get(pdoc);
+        _append_section(state, SUMMARY_OR_DEFAULT(psum), indent,
             curl + 3, buf, wbuf);
         eina_strbuf_append_char(buf, '\n');
         if (pdesc)
@@ -651,7 +655,8 @@ eo_gen_docs_func_gen(const Eolian_State *state, const Eolian_Function *fid,
           {
              eina_strbuf_append_char(buf, ' ');
              curl += 1;
-             _append_section(state, eolian_documentation_summary_get(adoc),
+             const char *asum = eolian_documentation_summary_get(adoc);
+             _append_section(state, SUMMARY_OR_DEFAULT(asum),
                              indent, curl, buf, wbuf);
           }
 
@@ -684,7 +689,8 @@ eo_gen_docs_func_gen(const Eolian_State *state, const Eolian_Function *fid,
         curl = _indent_line(buf, indent);
         eina_strbuf_append(buf, " * @return ");
         curl += sizeof(" * @return ") - 1;
-        _append_section(state, eolian_documentation_summary_get(rdoc), indent,
+        const char *rsum = eolian_documentation_summary_get(rdoc);
+        _append_section(state, SUMMARY_OR_DEFAULT(rsum), indent,
             curl, buf, wbuf);
         eina_strbuf_append_char(buf, '\n');
         if (since)

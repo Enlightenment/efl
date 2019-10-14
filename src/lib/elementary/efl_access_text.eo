@@ -88,9 +88,8 @@ interface @beta Efl.Access.Text
          }
       }
       @property caret_offset @protected @beta {
-          [[Caret offset property]]
+          [[Offset position of the caret (cursor).]]
          get {
-            [[Gets offset position of caret (cursor)]]
          }
          set {
             return: bool; [[$true if caret was successfully moved, $false otherwise.]]

@@ -5,6 +5,8 @@ Efl.Ui.Format, Efl.Access.Value, Efl.Access.Widget.Action
 
      This is a widget which allows the user to increase or decrease a numeric value
      using arrow buttons. It's a basic type of widget for choosing and displaying values.
+
+     @since 1.23
    ]]
    implements {
       Efl.Object.constructor;

@@ -22,6 +22,8 @@ class Efl.Ui.Box extends Efl.Ui.Widget implements Efl.Pack_Linear, Efl.Pack_Layo
 
      Precise layout can be further customized through the @Efl.Gfx.Arrangement interface on
      the Box itself, or through the @Efl.Gfx.Hint interface on each of the children widgets.
+
+     @since 1.23
    ]]
    methods {
       @property homogeneous {

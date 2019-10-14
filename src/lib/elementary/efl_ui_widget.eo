@@ -39,17 +39,13 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
            If using X cursors, a definition of all the valid cursor names
            is listed on Elementary_Cursors.h. If an invalid name is set
            the default cursor will be used.
+
+           If $cursor is set to $null it will be reset to the default one.
          ]]
          set {
-            [[Sets or unsets the current cursor.
-
-              If $cursor is $null this function will reset the cursor
-              to the default one.
-            ]]
             return: bool; [[$true if successful.]]
          }
          get {
-            [[Returns the current cursor name.]]
          }
          values {
             cursor: string; [[The cursor name, defined either
@@ -64,11 +60,9 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
            setting its style with this property.
          ]]
          set {
-            [[Sets a style for the current cursor. Call after @.cursor.set.]]
             return: bool; [[$true if successful.]]
          }
          get {
-            [[Returns the current cursor style name.]]
          }
          values {
             style: string; [[A specific style to use, e.g. default,
@@ -82,11 +76,9 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
            i.e. from the display manager.
          ]]
          set {
-            [[Enables or disables theme cursors.]]
             return: bool; [[$true if successful.]]
          }
          get {
-            [[Returns the current state of theme cursors search.]]
          }
          values {
             allow: bool(true); [[Whether to use theme cursors.]]
@@ -100,7 +92,6 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
            function unless you're implementing a widget.
          ]]
          set {
-            [[Sets the new resize object for this widget.]]
          }
          values {
             sobj: Efl.Canvas.Object;
@@ -113,21 +104,17 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
            Each widget may handle the disabled state differently, but overall
            disabled widgets shall not respond to any input events. This is
            $false by default, meaning the widget is enabled.
+
+           Disabling a widget will disable all its children recursively,
+           but only this widget will be marked as disabled internally.
+
+           This will return $true if any widget in the parent hierarchy
+           is disabled. Re-enabling that parent may in turn change the
+           disabled state of this widget.
          ]]
          set {
-            [[Enables or disables this widget.
-
-              Disabling a widget will disable all its children recursively,
-              but only this widget will be marked as disabled internally.
-            ]]
          }
          get {
-            [[Returns whether the widget is disabled.
-
-              This will return $true if any widget in the parent hierarchy
-              is disabled. Re-enabling that parent may in turn change the
-              disabled state of this widget.
-            ]]
          }
          values {
             disabled: bool(false); [[$true if the widget is disabled.]]
@@ -145,13 +132,11 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
            at construction time of the object (inside $efl_add in C).
          ]]
          set {
-            [[Can only be called during construction, before finalize.]]
             return: Eina.Error;
                [[Whether the style was successfully applied or not, see
                  the Efl.Ui.Theme.Apply_Error subset of @Eina.Error for more information.]]
          }
          get {
-            [[Returns the current style of a widget.]]
          }
          values {
             style: string;
@@ -354,7 +339,6 @@ abstract Efl.Ui.Widget extends Efl.Canvas.Group implements Efl.Access.Object,
            displayed.
          ]]
          get {
-            [[This is a read-only property.]]
          }
          values {
             region: Eina.Rect; [[The rectangle area.]]

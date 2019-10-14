@@ -137,7 +137,7 @@ struct class_definition_generator
 
      for (auto&& e : cls.events)
        {
-          if (e.beta)
+          if (e.is_beta)
             {
                suffix = "BETA";
                if(!as_generator
@@ -145,7 +145,7 @@ struct class_definition_generator
                      .generate(sink, std::make_tuple(cls.namespaces, cls.eolian_name, suffix), add_upper_case_context(context)))
                  return false;
             }
-          if (e.protect)
+          if (e.is_protected)
             {
                suffix = "PROTECTED";
                if(!as_generator
@@ -193,9 +193,9 @@ struct class_definition_generator
           if (!as_generator("#endif\n").generate(sink, attributes::unused, context))
             return false;
 
-          if (e.beta && !as_generator("#endif\n").generate(sink, attributes::unused, context))
+          if (e.is_beta && !as_generator("#endif\n").generate(sink, attributes::unused, context))
             return false;
-          if (e.protect && !as_generator("#endif\n").generate(sink, attributes::unused, context))
+          if (e.is_protected && !as_generator("#endif\n").generate(sink, attributes::unused, context))
             return false;
        }
      

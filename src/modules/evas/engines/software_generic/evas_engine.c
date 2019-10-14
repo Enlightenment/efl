@@ -1252,9 +1252,25 @@ eng_image_size_get(void *data EINA_UNUSED, void *image, int *w, int *h)
 static void *
 eng_image_size_set(void *data EINA_UNUSED, void *image, int w, int h)
 {
-   Image_Entry *im = image;
+   RGBA_Image *rm;
+   Image_Entry *im = image, *im2;
    if (!im) return NULL;
-   return evas_cache_image_size_set(im, w, h);
+
+   /* sw engine im could be changed and removed in evas_cache_image_size_set.
+      in this case, there is no chance to free its resource.  */
+   evas_cache_image_ref(im);
+   im2 = evas_cache_image_size_set(im, w, h);
+   if (im != im2 && im->references == 1)
+     {
+        rm = (RGBA_Image *)im;
+        if (rm->native.data)
+          {
+             if (rm->native.func.free)
+               rm->native.func.free(im);
+          }
+     }
+   evas_cache_image_drop(im);
+   return im2;
 }
 
 static void *
@@ -4528,6 +4544,7 @@ _gfx_filter_func_get(Evas_Filter_Command *cmd)
       case EVAS_FILTER_MODE_FILL: func = eng_filter_fill_func_get(cmd); break;
       case EVAS_FILTER_MODE_MASK: func = eng_filter_mask_func_get(cmd); break;
       case EVAS_FILTER_MODE_TRANSFORM: func = eng_filter_transform_func_get(cmd); break;
+      case EVAS_FILTER_MODE_GRAYSCALE: func = eng_filter_grayscale_func_get(cmd); break;
       default: return NULL;
      }
 

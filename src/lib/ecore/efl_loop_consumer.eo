@@ -9,12 +9,11 @@ abstract Efl.Loop_Consumer extends Efl.Object
    c_prefix: efl_loop;
    methods {
       @property loop {
-         [[The loop to which this object belongs to.]]
+         [[Handle of the loop this object belongs to.]]
          get {
-            [[Gets a handle to the loop.]]
          }
          values {
-            loop: Efl.Loop; [[Efl loop]]
+            loop: Efl.Loop; [[Efl loop.]]
          }
       }
       future_resolved @const {

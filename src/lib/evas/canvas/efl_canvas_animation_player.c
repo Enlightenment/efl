@@ -149,6 +149,7 @@ _animator_cb(void *data)
      }
    efl_player_playing_set(eo_obj, EINA_FALSE);
 
+   pd->animator = NULL;
    return ECORE_CALLBACK_CANCEL;
 }
 

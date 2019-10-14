@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 using static Eina.TraitFunctions;
 
@@ -20,19 +21,23 @@ internal class AccessorNativeFunctions
 
 /// <summary>Accessors provide an uniform way of accessing Eina containers,
 /// similar to C++ STL's and C# IEnumerable.
-///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 public class Accessor<T> : IEnumerable<T>, IDisposable
 {
     /// <summary>Pointer to the native accessor.</summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public IntPtr Handle { get; private set; } = IntPtr.Zero;
 
-    /// <summary>Who is in charge of releasing the resources wrapped by this instance.</summary>
+    /// <summary>Who is in charge of releasing the resources wrapped by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     private Ownership Ownership { get; set; }
 
     // FIXME Part of the implicit EFL Container interface. Need to make it explicit.
-    ///<summary>Whether this wrapper owns the native accessor.</summary>
+    /// <summary>Whether this wrapper owns the native accessor.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public bool Own
     {
         get
@@ -45,31 +50,42 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
         }
     }
 
-    /// <summary>Create a new accessor wrapping the given pointer.</summary>
+    /// <summary>Create a new accessor wrapping the given pointer.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="handle">The native handle to be wrapped.</param>
     /// <param name="owner">Whether this wrapper owns the native accessor.</param>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public Accessor(IntPtr handle, Ownership owner = Ownership.Managed)
     {
         Handle = handle;
         Ownership = owner;
     }
 
-    /// <summary>Create a new accessor wrapping the given pointer.</summary>
+    /// <summary>Create a new accessor wrapping the given pointer.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="handle">The native handle to be wrapped.</param>
     /// <param name="own">Whether this wrapper owns the native accessor.</param>
     /// <param name="ownContent">For compatibility with other EFL# containers. Ignored in acessors.</param>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public Accessor(IntPtr handle, bool own, bool ownContent = false)
         : this(handle, own ? Ownership.Managed : Ownership.Unmanaged)
     {
     }
 
-    /// <summary>Release the native resources held by this instance.</summary>
+    /// <summary>Release the native resources held by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
     }
 
-    /// <summary>Disposes of this wrapper, releasing the native accessor if owned.</summary>
+    /// <summary>Disposes of this wrapper, releasing the native accessor if
+    /// owned.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="disposing">True if this was called from <see cref="Dispose()"/> public method. False if
     /// called from the C# finalizer.</param>
     protected virtual void Dispose(bool disposing)
@@ -88,22 +104,28 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
         }
     }
 
-    /// <summary>Finalizer to be called from the Garbage Collector.</summary>
+    /// <summary>Finalizer to be called from the Garbage Collector.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     ~Accessor()
     {
         Dispose(false);
     }
 
     /// <summary>Convert the native data into managed. This is used when returning the data through a
-    /// <see cref="System.Collections.Generic.IEnumerator&lt;T&gt;"/>.</summary>
+    /// <see cref="System.Collections.Generic.IEnumerator&lt;T&gt;"/>.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="data">The data to be converted</param>
     /// <returns>The managed data representing <c>data</c>.</returns>
-    protected virtual T Convert(IntPtr data)
+    internal virtual T Convert(IntPtr data)
     {
         return NativeToManaged<T>(data);
     }
 
-    /// <summary>Returns an enumerator that iterates throught this accessor.</summary>
+    /// <summary>Returns an enumerator that iterates throught this accessor.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <returns>An enumerator to walk through the acessor items.</returns>
     public IEnumerator<T> GetEnumerator()
     {
@@ -137,14 +159,16 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
 }
 
 /// <summary>Accessor for Inlists.
-///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 public class AccessorInList<T> : Accessor<T>
 {
-    /// <summary>Create a new accessor wrapping the given pointer.</summary>
+    /// <summary>Create a new accessor wrapping the given pointer.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="handle">The native handle to be wrapped.</param>
     /// <param name="own">Whether this wrapper owns the native accessor.</param>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public AccessorInList(IntPtr handle, Ownership own) : base(handle, own)
     {
     }
@@ -153,21 +177,23 @@ public class AccessorInList<T> : Accessor<T>
     /// <see cref="System.Collections.Generic.IEnumerator&lt;T&gt;"/>.</summary>
     /// <param name="data">The data to be converted</param>
     /// <returns>The managed data representing <c>data</c>.</returns>
-    protected override T Convert(IntPtr data)
+    internal override T Convert(IntPtr data)
     {
         return NativeToManagedInlistNode<T>(data);
     }
 }
 
 /// <summary>Accessor for Inarrays.
-///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 public class AccessorInArray<T> : Accessor<T>
 {
-    /// <summary>Create a new accessor wrapping the given pointer.</summary>
+    /// <summary>Create a new accessor wrapping the given pointer.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="handle">The native handle to be wrapped.</param>
     /// <param name="own">Whether this wrapper owns the native accessor.</param>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public AccessorInArray(IntPtr handle, Ownership own) : base(handle, own)
     {
     }
@@ -176,7 +202,7 @@ public class AccessorInArray<T> : Accessor<T>
     /// <see cref="System.Collections.Generic.IEnumerator&lt;T&gt;"/>.</summary>
     /// <param name="data">The data to be converted</param>
     /// <returns>The managed data representing <c>data</c>.</returns>
-    protected override T Convert(IntPtr data)
+    internal override T Convert(IntPtr data)
     {
         return NativeToManagedInplace<T>(data);
     }

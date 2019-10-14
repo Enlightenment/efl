@@ -35,6 +35,8 @@ parser.add_argument('--root-path', '-r', metavar='FOLDER', default='dokuwiki',
                          'default to: "./dokuwiki"')
 parser.add_argument('--verbose', '-v', action='store_true',
                     help='print a line for each rendered file')
+parser.add_argument('--exclude-beta', '-e', action='store_true',
+                    help='do not generate docs for class in beta state')
 parser.add_argument('--namespace', '-n', metavar='ROOT', default='Efl',
                     help='root namespace of the docs. (default to "Efl")')
 _choices = ['start', 'classes', 'enums', 'structs', 'aliases']
@@ -78,9 +80,52 @@ def page_path_for_object(obj):
     return os.path.join(args.root_path, *path, output_filename)
 
 
+class BetaNamespaceWrapper(eolian.Namespace):
+    """ A Namespace wrapper that hide objects marked as beta to the template """
+    def __init__(self, eolian_ns):
+        super(BetaNamespaceWrapper, self).__init__(eolian_ns.unit, eolian_ns.name)
+        self._ns = eolian_ns
+
+    @property
+    def sub_namespaces(self):
+        return [BetaNamespaceWrapper(ns) for ns in self._ns.sub_namespaces]
+
+    @property
+    def classes(self):
+        return [c for c in self._ns.classes if not (args.exclude_beta and c.is_beta)]
+
+    @property
+    def regulars(self):
+        return [c for c in self._ns.regulars if not (args.exclude_beta and c.is_beta)]
+
+    @property
+    def abstracts(self):
+        return [c for c in self._ns.abstracts if not (args.exclude_beta and c.is_beta)]
+
+    @property
+    def mixins(self):
+        return [c for c in self._ns.mixins if not (args.exclude_beta and c.is_beta)]
+
+    @property
+    def interfaces(self):
+        return [c for c in self._ns.interfaces if not (args.exclude_beta and c.is_beta)]
+
+    @property
+    def aliases(self):
+        return [c for c in self._ns.aliases if not (args.exclude_beta and c.is_beta)]
+
+    @property
+    def structs(self):
+        return [c for c in self._ns.structs if not (args.exclude_beta and c.is_beta)]
+
+    @property
+    def enums(self):
+        return [c for c in self._ns.enums if not (args.exclude_beta and c.is_beta)]
+
+
 # render a (temporary) page for analizying the namespaces hierarchy
 t = Template('namespaces.template')
-nspaces = [ns for ns in eolian_db.all_namespaces
+nspaces = [BetaNamespaceWrapper(ns) for ns in eolian_db.all_namespaces
            if ns.name.startswith(args.namespace)]
 
 tot_classes = tot_regulars = tot_abstracts = tot_mixins = tot_ifaces = 0
@@ -113,7 +158,7 @@ totals = [
     ('Aliases', tot_aliases),
 ]
 
-root_ns = eolian_db.namespace_get_by_name(args.namespace)
+root_ns = BetaNamespaceWrapper(eolian_db.namespace_get_by_name(args.namespace))
 
 output_file = os.path.join(args.root_path, 'data', 'pages', 'develop', 'api', 'namespaces.txt')
 t.render(output_file, args.verbose, root_ns=root_ns, totals=totals)
@@ -123,7 +168,7 @@ t.render(output_file, args.verbose, root_ns=root_ns, totals=totals)
 if args.step in ('start', None):
     t = Template('doc_start.template')
 
-    nspaces = [ns for ns in eolian_db.all_namespaces
+    nspaces = [BetaNamespaceWrapper(ns) for ns in eolian_db.all_namespaces
                if ns.name.startswith(args.namespace)]
 
     output_file = os.path.join(args.root_path, 'data', 'pages', 'develop', 'api', 'start.txt')
@@ -135,29 +180,33 @@ if args.step in ('classes', None):
     t = Template('doc_class.template')
     for cls in eolian_db.classes:
         if cls.name.startswith(args.namespace):
-            output_file = page_path_for_object(cls)
-            t.render(output_file, args.verbose, cls=cls.name)
+            if not (args.exclude_beta and cls.is_beta):
+                output_file = page_path_for_object(cls)
+                t.render(output_file, args.verbose, cls=cls.name)
 
 # render a page for each Enum
 if args.step in ('enums', None):
     t = Template('doc_enum.template')
     for enum in eolian_db.enums:
         if enum.name.startswith(args.namespace):
-            output_file = page_path_for_object(enum)
-            t.render(output_file, args.verbose, enum=enum.name)
+            if not (args.exclude_beta and enum.is_beta):
+                output_file = page_path_for_object(enum)
+                t.render(output_file, args.verbose, enum=enum.name)
 
 # render a page for each Struct
 if args.step in ('structs', None):
     t = Template('doc_struct.template')
     for struct in eolian_db.structs:
         if struct.name.startswith(args.namespace):
-            output_file = page_path_for_object(struct)
-            t.render(output_file, args.verbose, struct=struct.name)
+            if not (args.exclude_beta and struct.is_beta):
+                output_file = page_path_for_object(struct)
+                t.render(output_file, args.verbose, struct=struct.name)
 
 # render a page for each Alias
 if args.step in ('aliases', None):
     t = Template('doc_alias.template')
     for alias in eolian_db.aliases:
         if alias.name.startswith(args.namespace):
-            output_file = page_path_for_object(alias)
-            t.render(output_file, args.verbose, alias=alias.name)
+            if not (args.exclude_beta and alias.is_beta):
+                output_file = page_path_for_object(alias)
+                t.render(output_file, args.verbose, alias=alias.name)

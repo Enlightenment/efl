@@ -1,6 +1,6 @@
 import efl_ui;
 
-struct Efl.Ui.Position_Manager.Range_Update {
+struct @beta Efl.Ui.Position_Manager.Range_Update {
    [[A structure containing the updated range of visible items in this position manger.]]
    start_id : uint; [[The first item that is visible]]
    end_id : uint; [[The last item that is visible]]
