@@ -601,9 +601,33 @@ _efl_canvas_layout_efl_player_playback_speed_get(const Eo *obj EINA_UNUSED, Edje
 }
 
 /* Internal EO APIs and hidden overrides */
+EOLIAN static Eina_Bool
+_efl_canvas_layout_efl_object_event_callback_priority_add(Eo *obj, Edje *pd, const Efl_Event_Description *desc, Efl_Callback_Priority priority, Efl_Event_Cb func, const void *user_data)
+{
+  if (desc == EFL_LAYOUT_EVENT_RECALC)
+    {
+       pd->has_recalc_event_cb = EINA_TRUE;
+    }
 
+  return efl_event_callback_priority_add(efl_super(obj, MY_CLASS), desc, priority, func, user_data);
+}
+
+EOLIAN static Eina_Bool
+_efl_canvas_layout_efl_object_event_callback_array_priority_add(Eo *obj, Edje *pd, const Efl_Callback_Array_Item *array, Efl_Callback_Priority priority, const void *user_data)
+{
+   for (int i = 0; array[i].desc; ++i)
+     {
+        if (array[i].desc == EFL_LAYOUT_EVENT_RECALC)
+          {
+             pd->has_recalc_event_cb = EINA_TRUE;
+          }
+     }
+   return efl_event_callback_array_priority_add(efl_super(obj, MY_CLASS), array, priority, user_data);
+}
 #define EFL_CANVAS_LAYOUT_EXTRA_OPS \
    EFL_CANVAS_GROUP_ADD_DEL_OPS(efl_canvas_layout), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_priority_add, _efl_canvas_layout_efl_object_event_callback_priority_add), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_array_priority_add, _efl_canvas_layout_efl_object_event_callback_array_priority_add), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_canvas_layout_efl_object_dbg_info_get)
 
 #include "efl_canvas_layout.eo.c"
