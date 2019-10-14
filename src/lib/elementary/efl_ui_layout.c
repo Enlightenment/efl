@@ -175,6 +175,7 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd, Elm_Layout_Data *ld)
    ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
    if (!efl_alive_get(obj)) return;
+   if (ld) ld->in_calc = EINA_TRUE;
 
    if (sd->calc_subobjs && !evas_smart_objects_calculating_get(evas_object_evas_get(obj)))
      {
@@ -186,7 +187,7 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd, Elm_Layout_Data *ld)
      }
    elm_coords_finger_size_adjust(sd->finger_size_multiplier_x, &rest_w,
                                  sd->finger_size_multiplier_y, &rest_h);
-   if (ld)
+   if (ld && ld->user_min_sz)
      sz = efl_gfx_hint_size_combined_min_get(obj);
    else
      sz = efl_gfx_hint_size_min_get(obj);
@@ -218,7 +219,7 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd, Elm_Layout_Data *ld)
    efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
 
    if (ld)
-     ld->restricted_calc_w = ld->restricted_calc_h = EINA_FALSE;
+     ld->in_calc = ld->restricted_calc_w = ld->restricted_calc_h = EINA_FALSE;
 }
 
 void
@@ -1913,6 +1914,19 @@ _elm_layout_efl_canvas_group_change(Eo *obj, Elm_Layout_Data *ld)
    if (sd->frozen) return;
    ld->needs_size_calc = EINA_TRUE;
    efl_canvas_group_change(efl_super(obj, ELM_LAYOUT_MIXIN));
+}
+
+EOLIAN static void
+_elm_layout_efl_gfx_hint_size_restricted_min_set(Eo *obj, Elm_Layout_Data *ld, Eina_Size2D sz)
+{
+   /* correctly handle legacy case where the user has set a min size hint on the object:
+    * in legacy code, only restricted_min existed, which resulted in conflicts between
+    * internal sizing and user-expected sizing. we attempt to simulate this now in a more controlled
+    * manner by only checking this hint during sizing calcs if the user has set it
+    */
+   if (!ld->in_calc)
+     ld->user_min_sz = (sz.w > 0) || (sz.h > 0);
+   efl_gfx_hint_size_restricted_min_set(efl_super(obj, ELM_LAYOUT_MIXIN), sz);
 }
 
 /* layout's sizing evaluation is deferred. evaluation requests are

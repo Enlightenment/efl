@@ -81,6 +81,8 @@ typedef struct _Elm_Layout_Data
    Eina_Bool             needs_size_calc : 1; /**< This flag is set true when the layout sizing eval is already requested. This defers sizing evaluation until smart calculation to avoid unnecessary calculation. */
    Eina_Bool             restricted_calc_w : 1; /**< This is a flag to support edje restricted_calc in w axis. */
    Eina_Bool             restricted_calc_h : 1; /**< This is a flag to support edje restricted_calc in y axis. */
+   Eina_Bool             in_calc : 1; /**< object is currently in group_calc */
+   Eina_Bool             user_min_sz : 1; /**< min size was set by user (legacy only has restricted min) */
 } Elm_Layout_Data;
 
 /**
