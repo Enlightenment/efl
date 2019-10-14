@@ -10,6 +10,8 @@ class Efl.Ui.Button extends Efl.Ui.Layout_Base implements Efl.Input.Clickable, E
      The icon can be set using @Efl.Content.content, the text can be set using @Efl.Text.text.
 
      The events of @Efl.Input.Clickable can be used to listen to a click event from the user.
+
+     @since 1.23
    ]]
    implements {
       class.constructor;

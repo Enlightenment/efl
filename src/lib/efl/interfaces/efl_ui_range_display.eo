@@ -5,6 +5,8 @@ interface Efl.Ui.Range_Display
      A value range contains a value restricted between specified minimum and maximum
      limits at all times.
      This can be used for progressbars, sliders or spinners, for example.
+
+     @since 1.23
    ]]
    c_prefix: efl_ui_range;
    methods {

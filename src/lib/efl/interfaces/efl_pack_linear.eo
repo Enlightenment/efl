@@ -4,6 +4,8 @@ interface Efl.Pack_Linear extends Efl.Pack
      (sub-objects) which can be added and removed at runtime in a linear fashion.
 
      This means the sub-objects are internally organized in an ordered list.
+
+     @since 1.23
    ]]
    c_prefix: efl_pack;
    methods {

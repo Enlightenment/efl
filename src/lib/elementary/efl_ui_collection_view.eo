@@ -23,6 +23,8 @@ class Efl.Ui.Collection_View extends Efl.Ui.Layout_Base implements
 
      Items inside this widget can be selected according to the @Efl.Ui.Multi_Selectable_Async.select_mode
      policy, and the selection can be retrieved with @Efl.Ui.Multi_Selectable_Async.selected_iterator_new.
+
+     @since 1.23
    ]]
    methods {
       @property factory {

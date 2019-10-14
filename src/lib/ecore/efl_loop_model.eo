@@ -1,5 +1,9 @@
 abstract Efl.Loop_Model extends Efl.Loop_Consumer implements Efl.Model
 {
+   [[The Efl Loop Model class
+
+     @since 1.23
+   ]]
    data: null;
    methods {
       volatile_make {

@@ -1,5 +1,5 @@
 struct Efl.Ui.Factory_Item_Created_Event {
-   [[EFL UI Factory event structure provided when an item was just created.]]
+   [[EFL UI Factory event structure provided when an item was just created. @since 1.23]]
    model: Efl.Model; [[The model already set on the new item.]]
    item: Efl.Gfx.Entity; [[The item that was just created.]]
 }
@@ -13,6 +13,8 @@ interface Efl.Ui.Factory extends Efl.Ui.Property_Bind, Efl.Ui.Factory_Bind
      Objects created this way should be removed using @.release.
 
      It is recommended to not create your own @Efl.Ui.Factory and use event handler as much as possible.
+
+     @since 1.23
    ]]
    methods {
       create @protected {

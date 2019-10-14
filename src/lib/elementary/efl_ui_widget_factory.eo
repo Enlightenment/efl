@@ -4,6 +4,8 @@ class Efl.Ui.Widget_Factory extends Efl.Loop_Consumer implements Efl.Ui.Factory,
 
      This factory is designed to build @Efl.Ui.Widget and optionally set their
      @Efl.Ui.Widget.style if it was connected with @Efl.Ui.Property_Bind.property_bind "$style".
+
+     @since 1.23
    ]]
    methods {
       @property item_class {

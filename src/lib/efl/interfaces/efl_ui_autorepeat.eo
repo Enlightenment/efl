@@ -6,6 +6,8 @@ interface Efl.Ui.Autorepeat {
      event until the button is released. The time it takes until it starts
      emitting the event is given by @.autorepeat_initial_timeout, and the
      time between each new emission by @.autorepeat_gap_timeout.
+
+     @since 1.23
    ]]
    methods {
       @property autorepeat_initial_timeout {

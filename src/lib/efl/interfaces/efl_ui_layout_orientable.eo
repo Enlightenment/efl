@@ -13,6 +13,8 @@ enum Efl.Ui.Layout_Orientation
      not to rotate images.
 
      See also @Efl.Ui.Layout_Orientable.
+
+     @since 1.23
    ]]
    default = 0,      [[Default direction. Each widget may have a different default.]]
    horizontal = 1,   [[Horizontal direction, along the X axis. Usually left-to-right,
@@ -32,6 +34,8 @@ interface Efl.Ui.Layout_Orientable
      boxes, which can arrange their elements in a horizontal or vertical fashion.
 
      Compare with @Efl.Gfx.Image_Orientable that works for images and includes rotation.
+
+     @since 1.23
    ]]
    c_prefix: efl_ui_layout;
    methods {

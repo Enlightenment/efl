@@ -4,6 +4,8 @@ function Efl.Ui.Format_Func
 {
    [[A function taking an @Eina.Value and producing its textual representation.
      See @Efl.Ui.Format.format_func.
+
+     @since 1.23
    ]]
    params {
       @in str: strbuf; [[Output formatted string. Its contents will be overwritten by this method.]]
@@ -16,6 +18,8 @@ struct Efl.Ui.Format_Value
 {
    [[A value which should always be displayed as a specific text string.
      See @Efl.Ui.Format.format_values.
+
+     @since 1.23
    ]]
    value: int; [[Input value.]]
    text: string; [[Text string to replace it.]]
@@ -23,7 +27,7 @@ struct Efl.Ui.Format_Value
 
 enum Efl.Ui.Format_String_Type
 {
-   [[Type of formatting string.]]
+   [[Type of formatting string. @since 1.23]]
    simple, [[This is the simplest formatting mechanism, working pretty much like $printf.
              Accepted formats are $s, $f, $F, $d, $u, $i, $o, $x and $X.
              For example, "%1.2f meters", "%.0%%" or "%d items".
@@ -52,6 +56,8 @@ mixin Efl.Ui.Format requires Efl.Object
 
      Widgets including this mixin offer their users different properties to control how
      @Eina.Value's are converted to text.
+
+     @since 1.23
    ]]
    methods {
       @property format_func {

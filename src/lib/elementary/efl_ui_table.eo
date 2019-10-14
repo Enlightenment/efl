@@ -13,6 +13,8 @@ class Efl.Ui.Table extends Efl.Ui.Widget implements Efl.Pack_Table, Efl.Pack_Lay
      In this second case there is no need to define both the amount of columns and rows,
      as the table will expand as needed.
      The default fill direction is @Efl.Ui.Layout_Orientation.horizontal.
+
+     @since 1.23
    ]]
    methods {
       @property homogeneous {

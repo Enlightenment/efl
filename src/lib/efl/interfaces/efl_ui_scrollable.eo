@@ -3,7 +3,10 @@ import efl_ui_layout_orientable;
 
 interface Efl.Ui.Scrollable
 {
-   [[Efl UI scrollable interface]]
+   [[Efl UI scrollable interface
+
+     @since 1.23
+   ]]
    event_c_prefix: efl_ui;
    methods {
       @property content_pos {

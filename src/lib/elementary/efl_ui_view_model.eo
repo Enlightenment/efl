@@ -24,6 +24,8 @@ class Efl.Ui.View_Model extends Efl.Composite_Model
 
      There is two ways to use this class, you can either inherit from it and have a custom constructor for example.
      Or you can just instantiate it and manually define your property on it via callbacks.
+
+     @since 1.23
    ]]
    methods {
       property_string_add {

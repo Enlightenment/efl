@@ -7,6 +7,8 @@ class Efl.Ui.Spin_Button extends Efl.Ui.Spin
      This is a widget which allows the user to increase or decrease
      numeric values using the arrow buttons or to edit values directly by clicking
      over them and inputting new ones.
+
+     @since 1.23
    ]]
    methods {
       @property wraparound {

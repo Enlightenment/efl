@@ -6,6 +6,8 @@ class Efl.Ui.Widget_Part_Bg extends Efl.Ui.Widget_Part implements Efl.File, Efl.
      This internal object is stacked below the @Efl.Ui.Widget.resize_object and co-located with the widget.
 
      All @Efl.Ui.Widget objects have this part, allowing the background of the widget to be customized.
+
+     @since 1.23
    ]]
    data: null;
    implements {

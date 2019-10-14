@@ -1,11 +1,14 @@
 /* TODO: Define these structs in EO, or they are useless to bindings */
-struct @extern Elm.Photocam.Error; [[Photocam error information.]]
-struct @extern Elm.Photocam.Progress; [[Photocam progress information.]]
+struct @extern Elm.Photocam.Error; [[Photocam error information. @since 1.23]]
+struct @extern Elm.Photocam.Progress; [[Photocam progress information. @since 1.23]]
 
 class Efl.Ui.Image_Zoomable extends Efl.Ui.Image implements Efl.Ui.Zoom
    composites Efl.Ui.Scrollable, Efl.Ui.Scrollbar
 {
-   [[Elementary Image Zoomable class]]
+   [[Elementary Image Zoomable class
+
+     @since 1.23
+   ]]
    methods {
       @property gesture_enabled {
          [[The gesture state for photocam.

@@ -3,6 +3,8 @@ interface Efl.Pack_Layout
    [[Low-level APIs for objects that can lay their children out.
 
      Used for containers like @Efl.Ui.Box and @Efl.Ui.Table.
+
+     @since 1.23
    ]]
    c_prefix: efl_pack;
    methods {

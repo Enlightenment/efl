@@ -1,12 +1,15 @@
 struct Efl.Input.Clickable_Clicked {
-   [[A struct that expresses a click in elementary.]]
+   [[A struct that expresses a click in elementary. @since 1.23]]
    repeated : uint; [[The amount of how often the clicked event was repeated in a certain amount of time]]
    button : uint; [[The Button that is pressed]]
 }
 
 mixin Efl.Input.Clickable
 {
-   [[Efl input clickable interface]]
+   [[Efl input clickable interface.
+
+     @since 1.23
+   ]]
    event_c_prefix: efl_input;
    methods {
       press @protected {

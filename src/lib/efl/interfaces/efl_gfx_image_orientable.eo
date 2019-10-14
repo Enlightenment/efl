@@ -13,6 +13,8 @@ enum Efl.Gfx.Image_Orientation
      Not to be confused with @Efl.Ui.Layout_Orientation which is meant for widgets, rather
      than images and canvases. This enum is used to rotate images, videos and
      the like.
+
+     @since 1.23
    ]]
    none = 0,             [[Default, same as up, do not rotate.]]
    up = 0,               [[Orient up, do not rotate.]]
@@ -33,6 +35,8 @@ interface Efl.Gfx.Image_Orientable
 
      Compare with @Efl.Ui.Layout_Orientable which works for layout objects and does
      not include rotation.
+
+     @since 1.23
    ]]
    c_prefix: efl_gfx;
    methods {

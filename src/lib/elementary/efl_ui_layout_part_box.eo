@@ -5,6 +5,8 @@ class Efl.Ui.Layout_Part_Box extends Efl.Object implements Efl.Pack_Linear,
 
      Cannot be deleted. This is only a representation of an internal object
      of an EFL layout.
+
+     @since 1.23
    ]]
    data: Efl_Ui_Layout_Box_Data;
    methods {
