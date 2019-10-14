@@ -16,31 +16,6 @@ public static class EldbusTestUtil
     public const string DBusPath = "/org/freedesktop/DBus";
 
     [return: MarshalAs(UnmanagedType.U1)] public delegate bool Ecore_Task_Cb(IntPtr data);
-
-    public static Ecore_Task_Cb GetEcoreLoopClose()
-    {
-        if (_ecore_loop_close == null)
-            _ecore_loop_close = new Ecore_Task_Cb(_ecore_loop_close_impl);
-        return _ecore_loop_close;
-    }
-
-    [DllImport(efl.Libs.Ecore)] public static extern IntPtr
-        ecore_timer_add(double _in, Ecore_Task_Cb func, IntPtr data);
-    [DllImport(efl.Libs.Ecore)] public static extern IntPtr
-        ecore_timer_del(IntPtr timer);
-
-    [DllImport(efl.Libs.Ecore)] public static extern void
-        ecore_main_loop_begin();
-    [DllImport(efl.Libs.Ecore)] public static extern void
-        ecore_main_loop_quit();
-
-
-    static private bool _ecore_loop_close_impl(IntPtr data)
-    {
-        ecore_main_loop_quit();
-        return false;
-    }
-    static private Ecore_Task_Cb _ecore_loop_close = null;
 }
 
 namespace TestSuite
@@ -84,6 +59,7 @@ class TestEldbusObject
 {
     public static void utc_eldbus_object_send_info_get_p()
     {
+        var app = Efl.App.AppMain;
         var conn = new eldbus.Connection(eldbus.Connection.Type.Session);
 
         var obj = new eldbus.Object(conn, DBusBus, DBusPath);
@@ -105,7 +81,6 @@ class TestEldbusObject
             connectionFromObj.Dispose();
         }
 
-        IntPtr timeout = IntPtr.Zero;
         int messageCapture = 0;
         bool isSuccess = false;
 
@@ -113,12 +88,6 @@ class TestEldbusObject
         {
             try
             {
-                if (timeout != IntPtr.Zero)
-                {
-                    ecore_timer_del(timeout);
-                    timeout = IntPtr.Zero;
-                }
-
                 string errname;
                 string errmsg;
 
@@ -137,7 +106,7 @@ class TestEldbusObject
             }
             finally
             {
-                ecore_main_loop_quit();
+                app.Quit(0);
             }
         };
 
@@ -148,15 +117,18 @@ class TestEldbusObject
 
         AssertEquals(pending.GetMethod(), methodName);
 
-        timeout = ecore_timer_add(2.0, GetEcoreLoopClose(), IntPtr.Zero);
-        Assert(timeout != IntPtr.Zero);
+        var timer = new Efl.LoopTimer(app, 2.0);
+        timer.TimerTickEvent += (object sender, EventArgs e) => {
+            app.Quit(0);
+        };
 
         messageCapture = 5;
 
-        ecore_main_loop_begin();
+        app.Begin();
 
         Assert(isSuccess, $"Method {methodName} is not call");
 
+        timer.Dispose();
         message.Dispose();
         obj.Dispose();
         conn.Dispose();
@@ -164,11 +136,11 @@ class TestEldbusObject
 
     public static void utc_eldbus_introspect_p()
     {
+        var app = Efl.App.AppMain;
         var conn = new eldbus.Connection(eldbus.Connection.Type.Session);
 
         var obj = new eldbus.Object(conn, DBusBus, DBusPath);
 
-        IntPtr timeout = IntPtr.Zero;
         int messageCapture = 0;
         bool isSuccess = false;
 
@@ -176,12 +148,6 @@ class TestEldbusObject
         {
             try
             {
-                if (timeout != IntPtr.Zero)
-                {
-                    ecore_timer_del(timeout);
-                    timeout = IntPtr.Zero;
-                }
-
                 string errname;
                 string errmsg;
 
@@ -200,7 +166,7 @@ class TestEldbusObject
             }
             finally
             {
-                ecore_main_loop_quit();
+                app.Quit(0);
             }
         };
 
@@ -208,15 +174,18 @@ class TestEldbusObject
 
         AssertEquals(pending.GetMethod(), "Introspect");
 
-        timeout = ecore_timer_add(2.0, GetEcoreLoopClose(), IntPtr.Zero);
-        Assert(timeout != IntPtr.Zero);
+        var timer = new Efl.LoopTimer(app, 2.0);
+        timer.TimerTickEvent += (object sender, EventArgs e) => {
+            app.Quit(0);
+        };
 
         messageCapture = 5;
 
-        ecore_main_loop_begin();
+        app.Begin();
 
         Assert(isSuccess, "Method Introspect is not call");
 
+        timer.Dispose();
         obj.Dispose();
         conn.Dispose();
     }
@@ -224,7 +193,6 @@ class TestEldbusObject
 
 class TestEldbusMessage
 {
-    private static IntPtr timeout = IntPtr.Zero;
     private static bool isSuccess = false;
 
 
@@ -232,19 +200,23 @@ class TestEldbusMessage
     {
         isSuccess = false;
 
+        var app = Efl.App.AppMain;
         var conn = new eldbus.Connection(eldbus.Connection.Type.Session);
 
         eldbus.Pending pending = conn.ActivatableList(messageCb);
 
         AssertEquals(pending.GetMethod(), "ListActivatableNames");
 
-        timeout = ecore_timer_add(2.0, GetEcoreLoopClose(), IntPtr.Zero);
-        Assert(timeout != IntPtr.Zero);
+        var timer = new Efl.LoopTimer(app, 2.0);
+        timer.TimerTickEvent += (object sender, EventArgs e) => {
+            app.Quit(0);
+        };
 
-        ecore_main_loop_begin();
+        app.Begin();
 
         Assert(isSuccess, "Method ListActivatableNames is not call");
 
+        timer.Dispose();
         conn.Dispose();
     }
 
@@ -254,12 +226,6 @@ class TestEldbusMessage
         {
             try
             {
-                if (timeout != IntPtr.Zero)
-                {
-                    ecore_timer_del(timeout);
-                    timeout = IntPtr.Zero;
-                }
-
                 string errname, errmsg;
                 if (msg.GetError(out errname, out errmsg))
                 {
@@ -293,7 +259,7 @@ class TestEldbusMessage
             }
             finally
             {
-                ecore_main_loop_quit();
+                Efl.App.AppMain.Quit(0);
             }
         };
 
@@ -304,6 +270,7 @@ class TestEldbusMessage
     {
         isSuccess = false;
 
+        var app = Efl.App.AppMain;
         var conn = new eldbus.Connection(eldbus.Connection.Type.Session);
 
         string methodName = "GetId";
@@ -322,12 +289,6 @@ class TestEldbusMessage
         {
             try
             {
-                if (timeout != IntPtr.Zero)
-                {
-                    ecore_timer_del(timeout);
-                    timeout = IntPtr.Zero;
-                }
-
                 string errname, errmsg;
                 if (!m.GetError(out errname, out errmsg))
                 {
@@ -347,7 +308,7 @@ class TestEldbusMessage
             }
             finally
             {
-                ecore_main_loop_quit();
+                app.Quit(0);
             }
         };
 
@@ -356,13 +317,16 @@ class TestEldbusMessage
 
         AssertEquals(pending.GetMethod(), methodName);
 
-        timeout = ecore_timer_add(2.0, GetEcoreLoopClose(), IntPtr.Zero);
-        Assert(timeout != IntPtr.Zero);
+        var timer = new Efl.LoopTimer(app, 2.0);
+        timer.TimerTickEvent += (object sender, EventArgs e) => {
+            app.Quit(0);
+        };
 
-        ecore_main_loop_begin();
+        app.Begin();
 
         Assert(isSuccess, $"Method {methodName} is not call");
 
+        timer.Dispose();
         msg.Dispose();
         conn.Dispose();
     }
@@ -392,12 +356,6 @@ class TestEldbusMessage
         {
             try
             {
-                if (timeout != IntPtr.Zero)
-                {
-                    ecore_timer_del(timeout);
-                    timeout = IntPtr.Zero;
-                }
-
                 string errname, errmsg;
                 if (msg.GetError(out errname, out errmsg))
                 {
@@ -431,7 +389,7 @@ class TestEldbusMessage
             }
             finally
             {
-                ecore_main_loop_quit();
+                Efl.App.AppMain.Quit(0);
             }
         };
         ActivatableList(activatableListResponseCb);

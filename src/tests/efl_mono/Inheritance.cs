@@ -99,9 +99,6 @@ class TestInheritance
         parentWRef = new WeakReference(parent);
         childWRef = new WeakReference(child);
 
-        Console.WriteLine($"Parent [{parent.ToString()}] has {Efl.Eo.Globals.efl_ref_count(parent.NativeHandle)} refs");
-        Console.WriteLine($"Child [{child.ToString()}] has {Efl.Eo.Globals.efl_ref_count(child.NativeHandle)} refs");
-
         child = null;
 
         System.GC.Collect(System.GC.MaxGeneration, GCCollectionMode.Forced, true, true);
@@ -114,9 +111,6 @@ class TestInheritance
         Test.AssertNotNull(child);
         Test.AssertEquals(false, parent.disposed);
         Test.AssertEquals(false, parent.childDisposed);
-
-        Console.WriteLine($"Parent [{parent.ToString()}] has {Efl.Eo.Globals.efl_ref_count(parent.NativeHandle)} refs");
-        Console.WriteLine($"Child [{child.ToString()}] has {Efl.Eo.Globals.efl_ref_count(child.NativeHandle)} refs");
 
         parent = null;
         child = null;
