@@ -2283,11 +2283,11 @@ eet_data_read_cipher(Eet_File            *ef,
           return NULL;
      }
 
-   eet_dictionary_lock_read(ed); // XXX: get manual eet_dictionary lock
+   if (ed) eet_dictionary_lock_read(ed); // XXX: get manual eet_dictionary lock
    eet_free_context_init(&context);
    data_dec = _eet_data_descriptor_decode(&context, ed, edd, data, size, NULL, 0);
    eet_free_context_shutdown(&context);
-   eet_dictionary_unlock(ed); // XXX: release manual eet_dictionary lock
+   if (ed) eet_dictionary_unlock(ed); // XXX: release manual eet_dictionary lock
 
    if (required_free)
      free((void *)data);
@@ -2324,11 +2324,11 @@ eet_data_read_cipher_buffer(Eet_File            *ef,
           return NULL;
      }
 
-   eet_dictionary_lock_read(ed); // XXX: get manual eet_dictionary lock
+   if (ed) eet_dictionary_lock_read(ed); // XXX: get manual eet_dictionary lock
    eet_free_context_init(&context);
    data_dec = _eet_data_descriptor_decode(&context, ed, edd, data, size, buffer, buffer_size);
    eet_free_context_shutdown(&context);
-   eet_dictionary_unlock(ed); // XXX: release manual eet_dictionary lock
+   if (ed) eet_dictionary_unlock(ed); // XXX: release manual eet_dictionary lock
 
    if (required_free)
      free((void *)data);
@@ -2361,11 +2361,11 @@ eet_data_node_read_cipher(Eet_File   *ef,
           return NULL;
      }
 
-   eet_dictionary_lock_read(ed); // XXX: get manual eet_dictionary lock
+   if (ed) eet_dictionary_lock_read(ed); // XXX: get manual eet_dictionary lock
    eet_free_context_init(&context);
    result = _eet_data_descriptor_decode(&context, ed, NULL, data, size, NULL, 0);
    eet_free_context_shutdown(&context);
-   eet_dictionary_unlock(ed); // XXX: release manual eet_dictionary lock
+   if (ed) eet_dictionary_unlock(ed); // XXX: release manual eet_dictionary lock
 
    if (required_free)
      free((void *)data);
@@ -4839,11 +4839,11 @@ eet_data_dump_cipher(Eet_File         *ef,
           return 0;
      }
 
-   eet_dictionary_lock_read(ed); // XXX: get manual eet_dictionary lock
+   if (ed) eet_dictionary_lock_read(ed); // XXX: get manual eet_dictionary lock
    eet_free_context_init(&context);
    result = _eet_data_descriptor_decode(&context, ed, NULL, data, size, NULL, 0);
    eet_free_context_shutdown(&context);
-   eet_dictionary_unlock(ed); // XXX: release manual eet_dictionary lock
+   if (ed) eet_dictionary_unlock(ed); // XXX: release manual eet_dictionary lock
 
    eet_node_dump(result, 0, dumpfunc, dumpdata);
 
