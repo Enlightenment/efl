@@ -1242,6 +1242,7 @@ _efl_ui_animation_view_efl_ui_widget_widget_sub_object_del(Eo *obj, Efl_Ui_Anima
      efl_canvas_group_change(obj);
 
    return EINA_TRUE;
+}
 
 EOLIAN static void
 _efl_ui_animation_view_value_provider_override(Eo *obj EINA_UNUSED, Efl_Ui_Animation_View_Data *pd, Efl_Gfx_Vg_Value_Provider *value_provider)
