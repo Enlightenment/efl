@@ -1438,7 +1438,12 @@ _ecore_evas_wl_common_free(Ecore_Evas *ee)
    if (wdata->frame) ecore_wl2_window_frame_callback_del(wdata->frame);
    wdata->frame = NULL;
    ecore_event_handler_del(wdata->sync_handler);
-   if (wdata->win) ecore_wl2_window_free(wdata->win);
+   if (wdata->win)
+     {
+        ecore_wl2_window_close_callback_set(wdata->win, NULL, NULL);
+        ecore_wl2_window_free(wdata->win);
+        wdata->win = NULL;
+     }
    ecore_wl2_display_disconnect(wdata->display);
 
    EINA_LIST_FREE(wdata->devices_list, device)
@@ -2466,6 +2471,17 @@ static Ecore_Evas_Engine_Func _ecore_wl_engine_func =
    NULL, //fn_last_tick_get
 };
 
+static void
+_ecore_evas_wl_common_win_close(void *data, Ecore_Wl2_Window *win EINA_UNUSED)
+{
+   Ecore_Evas *ee = data;
+   Ecore_Evas_Engine_Wl_Data *wdata = ee->engine.data;
+
+   if (ee->func.fn_delete_request) ee->func.fn_delete_request(ee);
+
+   wdata->win = NULL;
+}
+
 Ecore_Evas *
 _ecore_evas_wl_common_new_internal(const char *disp_name, Ecore_Window parent, int x, int y, int w, int h, Eina_Bool frame, const int *opt, const char *engine_name)
 {
@@ -2553,6 +2569,7 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, Ecore_Window parent, i
    wdata->display = ewd;
 
    wdata->win = ecore_wl2_window_new(ewd, p, x, y, w, h);
+   ecore_wl2_window_close_callback_set(wdata->win, _ecore_evas_wl_common_win_close, ee);
    ee->prop.window = (Ecore_Window)wdata->win;
    ee->prop.aux_hint.supported_list = ecore_wl2_window_aux_hints_supported_get(wdata->win);
    ecore_evas_aux_hint_add(ee, "wm.policy.win.msg.use", "1");
