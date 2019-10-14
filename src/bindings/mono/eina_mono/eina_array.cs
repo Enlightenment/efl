@@ -3,6 +3,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 using static Eina.TraitFunctions;
 using static Eina.ArrayNativeFunctions;
@@ -10,6 +11,7 @@ using static Eina.ArrayNativeFunctions;
 namespace Eina
 {
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static class ArrayNativeFunctions
 {
     [DllImport(efl.Libs.Eina)] public static extern IntPtr
@@ -46,20 +48,27 @@ public static class ArrayNativeFunctions
 }
 
 /// <summary>A container of contiguous allocated elements.
-///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 public class Array<T> : IEnumerable<T>, IDisposable
 {
     public static uint DefaultStep = 32;
 
     /// <summary>Pointer to the native buffer.</summary>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public IntPtr Handle {get;set;} = IntPtr.Zero;
-    ///<summary>Whether this wrapper owns the native buffer.</summary>
+    /// <summary>Whether this wrapper owns the native buffer.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public bool Own {get;set;}
-    /// <summary>Who is in charge of releasing the resources wrapped by this instance.</summary>
+    /// <summary>Who is in charge of releasing the resources wrapped by
+    /// this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public bool OwnContent {get;set;}
-    /// <summary> Length of the array.</summary>
+    /// <summary> Length of the array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public int Length
     {
         get { return Count(); }
@@ -98,6 +107,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
 
     /// <summary>
     ///   Create a new array.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     public Array()
     {
@@ -106,6 +116,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
 
     /// <summary>
     ///   Create a new array.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <param name="step">Step size of the array.</param>
     public Array(uint step)
@@ -118,6 +129,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
     /// </summary>
     /// <param name="handle">The native handle to be wrapped.</param>
     /// <param name="own">Whether this wrapper owns the native handle.</param>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public Array(IntPtr handle, bool own)
     {
         if (handle == IntPtr.Zero)
@@ -131,11 +143,12 @@ public class Array<T> : IEnumerable<T>, IDisposable
     }
 
     /// <summary>
-    ///   Create a new array
+    ///   Create a new array.
     /// </summary>
     /// <param name="handle">The native array to be wrapped.</param>
     /// <param name="own">Whether this wrapper owns the native array.</param>
     /// <param name="ownContent">For compatibility with other EFL# containers.</param>
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public Array(IntPtr handle, bool own, bool ownContent)
     {
         if (handle == IntPtr.Zero)
@@ -150,12 +163,15 @@ public class Array<T> : IEnumerable<T>, IDisposable
 
     /// <summary>
     ///   Finalizer to be called from the Garbage Collector.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     ~Array()
     {
         Dispose(false);
     }
-    /// <summary>Disposes of this wrapper, releasing the native array if owned.</summary>
+    /// <summary>Disposes of this wrapper, releasing the native array if owned.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="disposing">True if this was called from <see cref="Dispose()"/> public method. False if
     /// called from the C# finalizer.</param>
     protected virtual void Dispose(bool disposing)
@@ -189,14 +205,18 @@ public class Array<T> : IEnumerable<T>, IDisposable
         }
     }
 
-    /// <summary>Releases the native resources held by this instance.</summary>
+    /// <summary>Releases the native resources held by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
 
-    /// <summary>Releases the native resources held by this instance.</summary>
+    /// <summary>Releases the native resources held by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Free()
     {
         Dispose();
@@ -204,6 +224,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
 
     /// <summary>
     ///   Releases the native array.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <returns>The native array.</returns>
     public IntPtr Release()
@@ -227,6 +248,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
 
     /// <summary>
     ///   Clears an array's elements and deallocates the memory.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     public void Clean()
     {
@@ -245,6 +267,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
 
     /// <summary>
     ///   Returns the number of elements in an array.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <returns>The number of elements.</returns>
     public int Count()
@@ -266,6 +289,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
 
     /// <summary>
     ///   Inserts the element of the array at the end.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <param name="val">The value of the element to be inserted.</param>
     public bool Push(T val)
@@ -291,6 +315,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
 
     /// <summary>
     ///   Returns the element of the array at the end.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <returns>The element at the end position.</returns>
     public T Pop()
@@ -307,6 +332,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
 
     /// <summary>
     ///   Returns the element of the array at the specified position.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <param name="idx">The position of the desired element.</param>
     /// <returns>The element at the specified position</returns>
@@ -318,6 +344,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
 
     /// <summary>
     ///   Returns the element of the array at the specified position.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <param name="idx">The position of the desired element.</param>
     /// <returns>The element at the specified position</returns>
@@ -328,6 +355,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
 
     /// <summary>
     ///  Replaces the element at the specified position.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <param name="idx">The position of the desired element.</param>
     /// <param name="val">The value of the element to be inserted.</param>
@@ -343,6 +371,10 @@ public class Array<T> : IEnumerable<T>, IDisposable
         InternalDataSet(idx, ele);
     }
 
+    /// <summary>
+    ///   Accessor by index to the elements of this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public T this[int idx]
     {
         get
@@ -357,6 +389,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
 
     /// <summary>
     ///   Returns a array containing all of the elements in proper sequence.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <returns>A array</returns>
     public T[] ToArray()
@@ -373,6 +406,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
 
     /// <summary>
     ///   Appends all elements at the end of array.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     public bool Append(T[] values)
     {
@@ -388,13 +422,17 @@ public class Array<T> : IEnumerable<T>, IDisposable
     }
 
 
-    /// <summary> Gets an Iterator for this Array.</summary>
+    /// <summary> Gets an Iterator for this Array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public Eina.Iterator<T> GetIterator()
     {
         return new Eina.Iterator<T>(eina_array_iterator_new(Handle), true);
     }
 
-    /// <summary> Gets an Enumerator for this Array.</summary>
+    /// <summary> Gets an Enumerator for this Array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public IEnumerator<T> GetEnumerator()
     {
         int len = Length;
@@ -404,13 +442,17 @@ public class Array<T> : IEnumerable<T>, IDisposable
         }
     }
 
-     /// <summary> Gets an Enumerator for this Array.</summary>
+    /// <summary> Gets an Enumerator for this Array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
     {
         return this.GetEnumerator();
     }
 
-    /// <summary> Gets an Accessor for this Array.</summary>
+    /// <summary> Gets an Accessor for this Array.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public Eina.Accessor<T> GetAccessor()
     {
         return new Eina.Accessor<T>(eina_array_accessor_new(Handle), Ownership.Managed);
