@@ -29,6 +29,10 @@ _efl_canvas_vg_image_render_pre(Evas_Object_Protected_Data *vg_pd,
 
    if (nd->flags == EFL_GFX_CHANGE_FLAG_NONE) return;
 
+   int a;
+   efl_gfx_color_get(obj, NULL, NULL, NULL, &a);
+   if (a <= 0) return;
+
    nd->flags = EFL_GFX_CHANGE_FLAG_NONE;
 
    EFL_CANVAS_VG_COMPUTE_MATRIX(ctransform, ptransform, nd);
