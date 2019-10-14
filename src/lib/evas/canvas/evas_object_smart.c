@@ -51,6 +51,9 @@ struct _Evas_Smart_Data
    Eina_Bool         clipped : 1; /* If true, smart clipped */
    Eina_Bool         data_nofree : 1; /* If true, do NOT free the data */
    Eina_Bool         constructed : 1; /* constructor finished */
+   Eina_Bool         cb_move : 1; /* has "move" cb added */
+   Eina_Bool         cb_resize : 1; /* has "resize" cb added */
+   Eina_Bool         cb_restack : 1; /* has "restack" cb added */
 };
 
 typedef struct
@@ -983,6 +986,35 @@ evas_object_smart_callback_add(Evas_Object *eo_obj, const char *event, Evas_Smar
          EVAS_CALLBACK_PRIORITY_DEFAULT, func, data);
 }
 
+static void
+_smart_cb_check(Evas_Smart_Data *o, const char *event)
+{
+   if (!o->cb_move)
+     {
+        if (eina_streq(event, "move"))
+          {
+             o->cb_move = EINA_TRUE;
+             return;
+          }
+     }
+   if (!o->cb_resize)
+     {
+        if (eina_streq(event, "resize"))
+          {
+             o->cb_resize = EINA_TRUE;
+             return;
+          }
+     }
+   if (!o->cb_restack)
+     {
+        if (eina_streq(event, "restack"))
+          {
+             o->cb_restack = EINA_TRUE;
+             return;
+          }
+     }
+}
+
 EAPI void
 evas_object_smart_callback_priority_add(Evas_Object *eo_obj, const char *event, Evas_Callback_Priority priority, Evas_Smart_Cb func, const void *data)
 {
@@ -996,6 +1028,7 @@ evas_object_smart_callback_priority_add(Evas_Object *eo_obj, const char *event, 
    cb_info->func = func;
    cb_info->data = (void *)data;
    cb_info->event = eo_desc;
+   _smart_cb_check(o, event);
 
    o->callbacks = eina_inlist_append(o->callbacks,
         EINA_INLIST_GET(cb_info));
@@ -1067,6 +1100,33 @@ evas_object_smart_callback_call(Evas_Object *eo_obj, const char *event, void *ev
    if (!event) return;
    const Efl_Event_Description *eo_desc = efl_object_legacy_only_event_description_get(event);
    efl_event_callback_legacy_call(eo_obj, eo_desc, event_info);
+}
+
+void
+_evas_object_smart_callback_call_internal(Evas_Object *eo_obj, const Efl_Event_Description *efl_event_desc)
+{
+   const char *event = NULL;
+   EVAS_OBJECT_SMART_GET_OR_RETURN(eo_obj);
+
+   if (efl_event_desc == EFL_GFX_ENTITY_EVENT_POSITION_CHANGED)
+     {
+        if (!o->cb_move) return;
+        event = "move";
+     }
+   else if (efl_event_desc == EFL_GFX_ENTITY_EVENT_SIZE_CHANGED)
+     {
+        if (!o->cb_resize) return;
+        event = "resize";
+     }
+   else if (efl_event_desc == EFL_GFX_ENTITY_EVENT_STACKING_CHANGED)
+     {
+        if (!o->cb_restack) return;
+        event = "restack";
+     }
+   else //invalidate
+     return;
+   const Efl_Event_Description *eo_desc = efl_object_legacy_only_event_description_get(event);
+   efl_event_callback_legacy_call(eo_obj, eo_desc, NULL);
 }
 
 EAPI Eina_Bool
