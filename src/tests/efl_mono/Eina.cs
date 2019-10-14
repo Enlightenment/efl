@@ -323,7 +323,7 @@ class TestEinaSlice
         var binbuf = new Eina.Binbuf(base_seq);
         Test.Assert(binbuf.Handle != IntPtr.Zero);
 
-        Eina.Slice slc = Eina.Binbuf.eina_binbuf_slice_get(binbuf.Handle);
+        Eina.Slice slc = binbuf.GetSlice();
 
         Test.Assert(slc.GetBytes().SequenceEqual(base_seq));
         Test.Assert(base_seq.Length == (int)(slc.Len));
