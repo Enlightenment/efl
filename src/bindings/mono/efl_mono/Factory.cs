@@ -14,13 +14,12 @@ namespace Efl { namespace Ui {
 /// var factory = Efl.Ui.Factory&lt;Efl.Ui.Button&gt;();
 /// factory.Style().Bind("Name"); // The factory Style property is bound to the Name property for the given model.
 /// </code>
-///
-/// Since EFL 1.23.
-///
 /// </summary>
 public class ItemFactory<T> : Efl.Ui.LayoutFactory, IDisposable
 {
-    /// <summary>Creates a new factory.</summary>
+    /// <summary>Creates a new factory.
+    /// </summary>
+    /// <param name="parent">The parent of the factory.</param>
     public ItemFactory(Efl.Object parent = null)
         : base (parent, typeof(T))
     {
