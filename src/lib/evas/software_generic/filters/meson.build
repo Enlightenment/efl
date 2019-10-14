@@ -10,6 +10,7 @@ raw_evas_src = [
   'evas_filter_fill.c',
   'evas_filter_mask.c',
   'evas_filter_transform.c',
+  'evas_filter_grayscale.c',
 ]
 
 foreach file : raw_evas_src
