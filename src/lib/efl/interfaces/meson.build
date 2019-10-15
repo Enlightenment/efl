@@ -120,7 +120,7 @@ pub_eo_files += pub_legacy_eo_files
 
 pub_eo_types_files = [
   'efl_gfx_types.eot',
-  'efl_ui_types.eot',
+  'efl_ui_drag_types.eot',
   'efl_input_types.eot',
   'efl_types.eot',
   'efl_text_types.eot',
