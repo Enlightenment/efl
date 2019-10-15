@@ -75,6 +75,7 @@ update()
 
    evas_object_map_set(d.target2, map);
    evas_object_map_enable_set(d.target2, EINA_TRUE);
+   evas_map_free(map);
 }
 
 static void
