@@ -15,8 +15,6 @@ namespace Efl {
 /// <para>It provides an expanded API like async helpers to get children.</para>
 ///
 /// <para>For MVVM-based models, <see cref="Efl.UserModel&lt;T&gt;" /> provides a simpler API.</para>
-///
-/// <para>Since EFL 1.24.</para>
 /// </summary>
 /// <typeparam name="T">The type of the child model. It is the type used when adding/removing/getting items to this
 /// model.</typeparam>
@@ -25,6 +23,8 @@ public class GenericModel<T> : Efl.Object, Efl.IModel, IDisposable
    private Efl.IModel model;
 
    /// <summary>Creates a new model wrapping <c>model</c>.</summary>
+   /// <param name="model">The model to be wrapped.</param>
+   /// <param name="parent">The parent of the model.</param>
    public GenericModel (Efl.IModel model, Efl.Object parent = null) : base(parent)
    {
        this.model = model;
@@ -43,42 +43,57 @@ public class GenericModel<T> : Efl.Object, Efl.IModel, IDisposable
    }
 
    /// <summary>The list of properties available in the wrapped model.</summary>
+   /// <returns>The list of properties in the model.</returns>
    public Eina.Iterator<System.String> GetProperties()
    {
        return model.GetProperties();
    }
 
    /// <summary>Gets the value of the given property in the wrapped model.</summary>
+   /// <param name="property">The property of the model.</param>
+   /// <returns>The value of the property.</returns>
    public Eina.Value GetProperty(  System.String property)
    {
        return model.GetProperty(property);
    }
 
    /// <summary>Sets the value of the given property in the given model.</summary>
+   /// <param name="property">The property of the model.</param>
+   /// <param name="value">The value of the property.</param>
+   /// <returns>An <see cref="Eina.Future" /> that resolves when the property has
+   /// been set or reports an error if it could not be set.</returns>
    public Eina.Future SetProperty(  System.String property,   Eina.Value value)
    {
        return model.SetProperty(property, value);
    }
 
    /// <summary>Returns the number of children in the wrapped model.</summary>
+   /// <returns>The number of children.</returns>
    public uint GetChildrenCount()
    {
        return model.GetChildrenCount();
    }
 
    /// <summary>Returns an <see cref="Eina.Future" /> that will resolve when the property is ready to be read.</summary>
+   /// <param name="property">The property of the model.</param>
+   /// <returns>An <see cref="Eina.Future" /> that resolves when the property is ready.</returns>
    public Eina.Future GetPropertyReady(  System.String property)
    {
        return model.GetPropertyReady(property);
    }
 
    /// <summary>Gets a number of children from the wrapped model.</summary>
+   /// <param name="start">The start of the range.</param>
+   /// <param name="count">The size of the range.</param>
+   /// <returns>An <see cref="Eina.Future" />  that resolves to an
+   /// <see cref="Eina.Array" /> of children models.</returns>
    public Eina.Future GetChildrenSlice(  uint start,   uint count)
    {
        return model.GetChildrenSlice(start, count);
    }
 
    /// <summary>Adds a new object to the wrapper model.</summary>
+   /// <param name="o">The object to get the properties from.</param>
    public void Add(T o)
    {
       Efl.IModel child = (Efl.IModel)this.AddChild();
@@ -86,18 +101,22 @@ public class GenericModel<T> : Efl.Object, Efl.IModel, IDisposable
    }
 
    /// <summary>Adds a new child to the model and returns it.</summary>
+   /// <returns>The object to be wrapped.</returns>
    public Efl.Object AddChild()
    {
        return model.AddChild();
    }
 
    /// <summary>Deletes the given <c>child</c> from the wrapped model.</summary>
+   /// <param name="child">The child to be deleted.</param>
    public void DelChild( Efl.Object child)
    {
        model.DelChild(child);
    }
 
    /// <summary>Gets the element at the specified <c>index</c>.</summary>
+   /// <param name="index">The position of the element.</param>
+   /// <returns>Token to notify the async operation of external request to cancel.</returns>
    async public System.Threading.Tasks.Task<T> GetAtAsync(uint index)
    {
        using (Eina.Value v = await GetChildrenSliceAsync(index, 1))
@@ -117,18 +136,32 @@ public class GenericModel<T> : Efl.Object, Efl.IModel, IDisposable
    }
 
    /// <summary>Async wrapper around <see cref="SetProperty(System.String, Eina.Value)" />.</summary>
+   /// <param name="property">The property to be added.</param>
+   /// <param name="value">The value of the property.</param>
+   /// <param name="token">The token for the task's cancellation.</param>
+   /// <returns>Task that resolves when the property has been set or could not
+   /// be set.</returns>
    public System.Threading.Tasks.Task<Eina.Value> SetPropertyAsync(  System.String property,  Eina.Value value, System.Threading.CancellationToken token=default(System.Threading.CancellationToken))
    {
        return model.SetPropertyAsync(property, value, token);
    }
 
    /// <summary>Async wrapper around <see cref="GetPropertyReady(System.String)" />.</summary>
+   /// <param name="property">The property of the model.</param>
+   /// <param name="token">The token for the task's cancellation.</param>
+   /// <returns>Task that resolves when the given property is ready to be
+   /// read.</returns>
    public System.Threading.Tasks.Task<Eina.Value> GetPropertyReadyAsync(  System.String property, System.Threading.CancellationToken token=default(System.Threading.CancellationToken))
    {
        return model.GetPropertyReadyAsync(property, token);
    }
 
    /// <summary>Async wrapper around <see cref="GetChildrenSlice(uint, uint)" />.</summary>
+   /// <param name="start">The start of the range.</param>
+   /// <param name="count">The size of the range.</param>
+   /// <param name="token">Token to notify the async operation of external request to cancel.</param>
+   /// <returns>Task that resolves when the desired <see cref="Eina.Array" /> of
+   /// children models is ready.</returns>
    public System.Threading.Tasks.Task<Eina.Value> GetChildrenSliceAsync(  uint start,  uint count, System.Threading.CancellationToken token=default(System.Threading.CancellationToken))
    {
        return model.GetChildrenSliceAsync(start, count, token);

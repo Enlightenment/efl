@@ -74,6 +74,7 @@ typedef struct _Efl_Ui_Layout_Data
    Eina_Bool             model_bound : 1; /**< Set to true once we are watching over a model*/
    Eina_Bool             model_watch : 1; /**< Set to true once we do watch for model change*/
    Eina_Bool             calc_subobjs : 1; /**< Set to true if group_calc should also handle subobjs during manual calc */
+   Eina_Bool             cb_theme_changed : 1; /**< if theme,changed event subscriber has been added */
 } Efl_Ui_Layout_Data;
 
 typedef struct _Elm_Layout_Data
@@ -81,6 +82,8 @@ typedef struct _Elm_Layout_Data
    Eina_Bool             needs_size_calc : 1; /**< This flag is set true when the layout sizing eval is already requested. This defers sizing evaluation until smart calculation to avoid unnecessary calculation. */
    Eina_Bool             restricted_calc_w : 1; /**< This is a flag to support edje restricted_calc in w axis. */
    Eina_Bool             restricted_calc_h : 1; /**< This is a flag to support edje restricted_calc in y axis. */
+   Eina_Bool             in_calc : 1; /**< object is currently in group_calc */
+   Eina_Bool             user_min_sz : 1; /**< min size was set by user (legacy only has restricted min) */
 } Elm_Layout_Data;
 
 /**

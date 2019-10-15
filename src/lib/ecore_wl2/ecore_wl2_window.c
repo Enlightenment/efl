@@ -264,7 +264,11 @@ _xdg_toplevel_cb_close(void *data, struct xdg_toplevel *xdg_toplevel EINA_UNUSED
 
    win = data;
    if (!win) return;
-
+   if (win->cb_close)
+     {
+        win->cb_close(win->cb_close_data, win);
+        win->cb_close = NULL;
+     }
    ecore_wl2_window_free(win);
 }
 
@@ -566,6 +570,14 @@ ecore_wl2_window_new(Ecore_Wl2_Display *display, Ecore_Wl2_Window *parent, int x
    _ecore_wl2_window_surface_create(win);
 
    return win;
+}
+
+EAPI void
+ecore_wl2_window_close_callback_set(Ecore_Wl2_Window *window, void (*cb) (void *data, Ecore_Wl2_Window *win), void *data)
+{
+   EINA_SAFETY_ON_NULL_RETURN(window);
+   window->cb_close = cb;
+   window->cb_close_data = data;
 }
 
 EAPI struct wl_surface *

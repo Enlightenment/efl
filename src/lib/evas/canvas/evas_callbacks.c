@@ -10,6 +10,7 @@ EVAS_MEMPOOL(_mp_pc);
 extern Eina_Hash* signals_hash_table;
 
 /* Legacy events, do not use anywhere */
+void _evas_object_smart_callback_call_internal(Evas_Object *eo_obj, const Efl_Event_Description *efl_event_desc);
 static const Efl_Event_Description _EVAS_OBJECT_EVENT_FREE = EFL_EVENT_DESCRIPTION("free");
 static const Efl_Event_Description _EVAS_OBJECT_EVENT_DEL = EFL_EVENT_DESCRIPTION("del");
 #define EVAS_OBJECT_EVENT_FREE (&(_EVAS_OBJECT_EVENT_FREE))
@@ -350,14 +351,8 @@ evas_event_callback_call(Evas *eo_e, Evas_Callback_Type type, void *event_info)
 static void
 _evas_callback_legacy_smart_compatibility_do_it(Evas_Object *eo_obj, const Efl_Event_Description *efl_event_desc, void *event_info)
 {
-   if (efl_event_desc == EFL_GFX_ENTITY_EVENT_POSITION_CHANGED)
-     evas_object_smart_callback_call(eo_obj, "move", NULL);
-   else if (efl_event_desc == EFL_GFX_ENTITY_EVENT_SIZE_CHANGED)
-     evas_object_smart_callback_call(eo_obj, "resize", NULL);
-   else if (efl_event_desc == EFL_GFX_ENTITY_EVENT_STACKING_CHANGED)
-     evas_object_smart_callback_call(eo_obj, "restack", NULL);
    /* this is inverted: the base call is the legacy compat and this is the new event */
-   else if ((efl_event_desc == EFL_GFX_ENTITY_EVENT_SHOW) || (efl_event_desc == EFL_GFX_ENTITY_EVENT_HIDE))
+   if ((efl_event_desc == EFL_GFX_ENTITY_EVENT_SHOW) || (efl_event_desc == EFL_GFX_ENTITY_EVENT_HIDE))
      efl_event_callback_call(eo_obj, EFL_GFX_ENTITY_EVENT_VISIBILITY_CHANGED, event_info);
    else if ((efl_event_desc == EFL_GFX_IMAGE_EVENT_IMAGE_PRELOAD) || (efl_event_desc == EFL_GFX_IMAGE_EVENT_IMAGE_UNLOAD))
      efl_event_callback_call(eo_obj, EFL_GFX_IMAGE_EVENT_IMAGE_PRELOAD_STATE_CHANGED, event_info);
@@ -402,6 +397,9 @@ evas_object_event_callback_call(Evas_Object *eo_obj, Evas_Object_Protected_Data 
         type == EVAS_CALLBACK_MOUSE_UP ||
         type == EVAS_CALLBACK_MULTI_UP)
      _efl_canvas_gesture_manager_filter_event(e->gesture_manager, eo_obj, event_info);
+
+   if (obj->is_smart)
+     _evas_object_smart_callback_call_internal(eo_obj, efl_event_desc);
 
    if (!_evas_object_callback_has_by_type(obj, type))
      goto nothing_here;

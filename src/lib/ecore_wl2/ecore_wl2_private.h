@@ -191,6 +191,9 @@ struct _Ecore_Wl2_Window
    struct zxdg_toplevel_v6 *zxdg_toplevel;
    struct zxdg_popup_v6 *zxdg_popup;
 
+   void (*cb_close) (void *data, Ecore_Wl2_Window *win);
+   void  *cb_close_data;
+
    Eina_Stringshare *uuid;
 
    void (*xdg_configure_ack)(struct xdg_surface *surface, uint32_t serial);

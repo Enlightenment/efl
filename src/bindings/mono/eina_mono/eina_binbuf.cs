@@ -364,7 +364,7 @@ public class Binbuf : IDisposable
     ///    Gets a slice of the buffer's contents.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    Eina.Slice GetSlice()
+    public Eina.Slice GetSlice()
     {
         return eina_binbuf_slice_get(Handle);
     }

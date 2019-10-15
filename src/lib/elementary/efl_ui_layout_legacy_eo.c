@@ -50,6 +50,7 @@ _elm_layout_class_initializer(Efl_Class *klass)
    EFL_OPS_DEFINE(ops,
       EFL_OBJECT_OP_FUNC(elm_layout_sizing_eval, _elm_layout_sizing_eval),
       EFL_OBJECT_OP_FUNC(efl_canvas_group_change, _elm_layout_efl_canvas_group_change),
+      EFL_OBJECT_OP_FUNC(efl_gfx_hint_size_restricted_min_set, _elm_layout_efl_gfx_hint_size_restricted_min_set),
       ELM_LAYOUT_EXTRA_OPS
    );
    opsp = &ops;

@@ -528,9 +528,10 @@ _ecore_main_idlers_exist(Efl_Loop_Data *pd)
 }
 
 static void
-_ecore_main_idler_all_call(Eo *loop)
+_ecore_main_idler_all_call(Eo *loop, Efl_Loop_Data *pd)
 {
-   efl_event_callback_call(loop, EFL_LOOP_EVENT_IDLE, NULL);
+   if (pd->idlers)
+     efl_event_callback_call(loop, EFL_LOOP_EVENT_IDLE, NULL);
    // just spin in an idler until the free queue is empty freeing 84 items
    // from the free queue each time.for now this seems like an ok balance
    // between going in and out of a reduce func with mutexes around it
@@ -803,7 +804,7 @@ _ecore_main_gsource_dispatch(GSource    *source EINA_UNUSED,
 
    if (ecore_idling)
      {
-        _ecore_main_idler_all_call(obj);
+        _ecore_main_idler_all_call(obj, pd);
 
         events_ready = pd->message_queue ? 1 : 0;
 
@@ -2236,7 +2237,7 @@ _ecore_main_loop_uv_prepare(uv_prepare_t *handle EINA_UNUSED)
 
    if (_ecore_main_uv_idling)
      {
-        _ecore_main_idler_all_call(obj);
+        _ecore_main_idler_all_call(obj, pd);
         DBG("called idles");
         if (_ecore_main_idlers_exist(pd) || (pd->message_queue)) t = 0.0;
      }
@@ -2300,7 +2301,7 @@ _ecore_main_loop_spin_core(Eo *obj, Efl_Loop_Data *pd)
    // as we are spinning we need to update loop time per spin
    _update_loop_time(pd);
    // call all idlers
-   _ecore_main_idler_all_call(obj);
+   _ecore_main_idler_all_call(obj, pd);
    // which returns false if no more idelrs exist
    if (!_ecore_main_idlers_exist(pd)) return SPIN_RESTART;
    // sneaky - drop through or if checks - the first one to succeed

@@ -61,6 +61,7 @@ struct _Efl_Object_Data
    unsigned short             event_cb_efl_event_callback_del_count;
    unsigned short             event_cb_efl_event_del_count;
    unsigned short             event_cb_efl_event_noref_count;
+   unsigned short             event_cb_efl_event_invalidate_count;
    Eina_Bool                  callback_stopped : 1;
    Eina_Bool                  need_cleaning : 1;
    Eina_Bool                  allow_parent_unref : 1; // Allows unref to zero even with a parent
@@ -1228,6 +1229,8 @@ _special_event_count_inc(Eo *obj_id, Efl_Object_Data *pd, const Efl_Callback_Arr
 
         CB_COUNT_INC(pd->event_cb_efl_event_noref_count);
      }
+   else if (it->desc == EFL_EVENT_INVALIDATE)
+     CB_COUNT_INC(pd->event_cb_efl_event_invalidate_count);
    else if (it->desc == EFL_EVENT_DESTRUCT)
      pd->has_destroyed_event_cb = EINA_TRUE;
    else if (it->desc == EFL_EVENT_OWNERSHIP_SHARED || it->desc == EFL_EVENT_OWNERSHIP_UNIQUE)
@@ -1247,6 +1250,8 @@ _special_event_count_dec(Eo *obj_id, Efl_Object_Data *pd, const Efl_Callback_Arr
      CB_COUNT_DEC(pd->event_cb_efl_event_callback_del_count);
    else if (it->desc == EFL_EVENT_DEL)
      CB_COUNT_DEC(pd->event_cb_efl_event_del_count);
+   else if (it->desc == EFL_EVENT_INVALIDATE)
+     CB_COUNT_DEC(pd->event_cb_efl_event_invalidate_count);
    else if (it->desc == EFL_EVENT_NOREF)
      {
         CB_COUNT_DEC(pd->event_cb_efl_event_noref_count);
@@ -1685,6 +1690,8 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
             (pd->event_cb_efl_event_callback_del_count == 0)) return EINA_FALSE;
    else if ((desc == EFL_EVENT_DEL) &&
             (pd->event_cb_efl_event_del_count == 0)) return EINA_FALSE;
+   else if ((desc == EFL_EVENT_INVALIDATE) &&
+            (pd->event_cb_efl_event_invalidate_count == 0)) return EINA_FALSE;
    else if ((desc == EFL_EVENT_NOREF) &&
             (pd->event_cb_efl_event_noref_count == 0)) return EINA_FALSE;
 

@@ -912,6 +912,11 @@ struct _Evas_Public_Data
    Eina_Bool      is_frozen : 1;
    Eina_Bool      inside_post_render : 1;
    Eina_Bool      devices_modified : 1;
+   Eina_Bool      cb_render_pre : 1;
+
+   Eina_Bool      cb_render_post : 1;
+   Eina_Bool      cb_render_flush_pre : 1;
+   Eina_Bool      cb_render_flush_post : 1;
 };
 
 struct _Evas_Layer

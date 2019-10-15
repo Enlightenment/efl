@@ -3,6 +3,7 @@
 using System;
 using System.Runtime.InteropServices;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 using static Eina.TraitFunctions;
 using static Eina.IteratorNativeFunctions;
@@ -13,6 +14,7 @@ namespace Eina
 {
 
 [StructLayout(LayoutKind.Sequential)]
+[EditorBrowsable(EditorBrowsableState.Never)]    
 public struct HashTupleNative
 {
     public IntPtr key;
@@ -20,6 +22,7 @@ public struct HashTupleNative
     public uint   key_length;
 }
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static class HashNativeFunctions
 {
     [DllImport(efl.Libs.Eina)] public static extern IntPtr
@@ -136,11 +139,24 @@ public static class HashNativeFunctions
 /// </summary>
 public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDisposable
 {
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public IntPtr Handle {get; set;} = IntPtr.Zero;
+    /// <summary>Whether this wrapper owns the native hash.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public bool Own {get; set;}
+    /// <summary>Whether this wrapper owns the key.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public bool OwnKey {get; set;}
+    /// <summary>Whether this wrapper owns the value.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public bool OwnValue {get; set;}
 
+    /// <summary>Quantity of elements in the hash.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public int Count
     {
         get
@@ -158,28 +174,42 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         SetOwnValue(true);
     }
 
+    /// <summary>Default constructor.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public Hash()
     {
         InitNew();
     }
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public Hash(IntPtr handle, bool own)
     {
         Handle = handle;
         SetOwnership(own);
     }
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public Hash(IntPtr handle, bool own, bool ownKey, bool ownValue)
     {
         Handle = handle;
         SetOwnership(own, ownKey, ownValue);
     }
 
+    /// <summary>Default destructor.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     ~Hash()
     {
         Dispose(false);
     }
 
+    /// <summary>Disposes of this wrapper, releasing the native accessor if
+    /// owned.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="disposing">True if this was called from <see cref="Dispose()"/> public method. False if
+    /// called from the C# finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
         IntPtr h = Handle;
@@ -202,17 +232,27 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         }
     }
 
+    /// <summary>Release the native resources held by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>Release the native resources held by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Free()
     {
         Dispose();
     }
 
+    /// <summary>Release the pointer.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The instance.</returns>
     public IntPtr Release()
     {
         IntPtr h = Handle;
@@ -220,16 +260,28 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         return h;
     }
 
+    /// <summary>Sets ownership.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="own">If the hash own the object.</param>
     public void SetOwn(bool own)
     {
         Own = own;
     }
 
+    /// <summary>Sets key's ownership.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="ownKey">If the hash own the key's object.</param>
     public void SetOwnKey(bool ownKey)
     {
         OwnKey = ownKey;
     }
 
+    /// <summary>Sets value's ownership.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="ownValue">If the hash own the value's object.</param>
     public void SetOwnValue(bool ownValue)
     {
         OwnValue = ownValue;
@@ -240,6 +292,10 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         }
     }
 
+    /// <summary>Sets all ownership.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="ownAll">If the hash own for all ownerships.</param>
     public void SetOwnership(bool ownAll)
     {
         SetOwn(ownAll);
@@ -247,6 +303,12 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         SetOwnValue(ownAll);
     }
 
+    /// <summary>Sets own individually.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="own">If the hash own the object.</param>
+    /// <param name="ownKey">If the hash own the key's object.</param>
+    /// <param name="ownValue">If the hash own the value's object.</param>
     public void SetOwnership(bool own, bool ownKey, bool ownValue)
     {
         SetOwn(own);
@@ -254,11 +316,22 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         SetOwnValue(ownValue);
     }
 
+    /// <summary>
+    ///   Cleanup for the hash.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void UnSetFreeCb()
     {
         eina_hash_free_cb_set(Handle, IntPtr.Zero);
     }
 
+    /// <summary>
+    ///   Adds an entry to the hash.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="key">A unique key.</param>
+    /// <param name="val">The value to associate with the key.</param>
+    /// <returns> false if an error occurred, true otherwise.</returns>
     public bool AddNew(TKey key, TValue val)
     {
         IntPtr gchnk = CopyNativeObject(key, ForceRefKey<TKey>());
@@ -271,11 +344,22 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         return r;
     }
 
+    /// <summary>
+    ///   Modifies the entry at the specified key.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="key">The key of the entry to modify.</param>
+    /// <param name="val">The value to replace the previous entry.</param>
     public void Add(TKey key, TValue val)
     {
         Set(key, val);
     }
 
+    /// <summary>
+    ///   Removes the entry identified by a key from the hash.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="key">The key.</param>
     public bool DelByKey(TKey key)
     {
         IntPtr gchnk = CopyNativeObject(key, ForceRefKey<TKey>());
@@ -285,7 +369,11 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         return r;
     }
 
-    /// <summary>Searches this hash for <c>val</c> and deletes it from the hash, also deleting it.</summary>
+    /// <summary>Searches this hash for <c>val</c> and deletes it from the hash,
+    /// also deleting it.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="val">The value to be deleted.</param>
     /// <returns><c>true</c> if the value was found and deleted, false if it was <c>null</c> or not found.</returns>
     public bool DelByValue(TValue val)
     {
@@ -309,11 +397,22 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
 
     }
 
+    /// <summary>
+    ///   Removes the entry identified by a key from the hash.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="key">The key.</param>
     public void Remove(TKey key)
     {
         DelByKey(key);
     }
 
+    /// <summary>
+    ///   Retrieves a specific entry in the hash.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="key">The key of the entry to find.</param>
+    /// <returns>The value of the entry.</returns>
     public TValue Find(TKey key)
     {
         var gchnk = CopyNativeObject<TKey>(key, ForceRefKey<TKey>());
@@ -329,6 +428,13 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         return NativeToManaged<TValue>(IndirectNative<TValue>(found, false));
     }
 
+    /// <summary>
+    ///   Check if key is present. if not, a default value is setted.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="key">The key to be checked.</param>
+    /// <param name="val">[out] The value of the entry.</param>
+    /// <returns>true if key exists, false otherwise.</returns>
     public bool TryGetValue(TKey key, out TValue val)
     {
         var gchnk = CopyNativeObject<TKey>(key, ForceRefKey<TKey>());
@@ -345,6 +451,12 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         return true;
     }
 
+    /// <summary>
+    ///   Check if key is present.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="key">The key to be checked.</param>
+    /// <returns>true if key exists, false otherwise.</returns>
     public bool ContainsKey(TKey key)
     {
         var gchnk = CopyNativeObject<TKey>(key, ForceRefKey<TKey>());
@@ -356,6 +468,13 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         return found != IntPtr.Zero;
     }
 
+    /// <summary>
+    ///   Modifies the speficied key if exists.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="key">The key to modify.</param>
+    /// <param name="val"> The new value.</param>
+    /// <returns>False if key do not exists, true otherwise.</returns>
     public bool Modify(TKey key, TValue val)
     {
         var gchnk = CopyNativeObject<TKey>(key, ForceRefKey<TKey>());
@@ -449,6 +568,13 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         }
     }
 
+
+    /// <summary>
+    ///   Modifies the entry at the specified key. Adds if key is not found.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="key">The key to modify.</param>
+    /// <param name="val">The value to replace the previous entry.</param>
     public void Set(TKey key, TValue val)
     {
         IntPtr gchnk = CopyNativeObject(key, ForceRefKey<TKey>());
@@ -465,6 +591,10 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         }
     }
 
+    /// <summary>
+    ///   Accessor by key to the hash.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public TValue this[TKey key]
     {
         get
@@ -477,6 +607,13 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         }
     }
 
+    /// <summary>
+    ///   Changes the keys of an entry in the hash.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="key_old">The current key with data.</param>
+    /// <param name="key_new">The new key with data.</param>
+    /// <returns>false in any case but success, true on success.</returns>
     public bool Move(TKey key_old, TKey key_new)
     {
         IntPtr gchnko = CopyNativeObject(key_old, ForceRefKey<TKey>());
@@ -493,26 +630,47 @@ public class Hash<TKey, TValue> : IEnumerable<KeyValuePair<TKey, TValue>>, IDi
         return r;
     }
 
+    /// <summary>
+    ///   Frees the hash buckets.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void FreeBuckets()
     {
         eina_hash_free_buckets(Handle);
     }
 
+    /// <summary>
+    ///   Returns the number of entries in the hash.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The number of entries, 0 on error.</returns>
     public int Population()
     {
         return eina_hash_population(Handle);
     }
 
+    /// <summary>
+    ///   Gets an Iterator for keys.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public Eina.Iterator<TKey> Keys()
     {
         return new Eina.Iterator<TKey>(EinaHashIteratorKeyNew<TKey>(Handle), true);
     }
 
+    /// <summary>
+    ///   Gets An Iterator for values.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public Eina.Iterator<TValue> Values()
     {
         return new Eina.Iterator<TValue>(eina_hash_iterator_data_new(Handle), true);
     }
 
+    /// <summary>
+    ///   Gets an Iterator for hask.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public IEnumerator<KeyValuePair<TKey, TValue>> GetEnumerator()
     {
         IntPtr itr = eina_hash_iterator_tuple_new(Handle);

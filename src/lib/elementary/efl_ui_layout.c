@@ -175,6 +175,7 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd, Elm_Layout_Data *ld)
    ELM_WIDGET_DATA_GET_OR_RETURN(sd->obj, wd);
 
    if (!efl_alive_get(obj)) return;
+   if (ld) ld->in_calc = EINA_TRUE;
 
    if (sd->calc_subobjs && !evas_smart_objects_calculating_get(evas_object_evas_get(obj)))
      {
@@ -186,7 +187,7 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd, Elm_Layout_Data *ld)
      }
    elm_coords_finger_size_adjust(sd->finger_size_multiplier_x, &rest_w,
                                  sd->finger_size_multiplier_y, &rest_h);
-   if (ld)
+   if (ld && ld->user_min_sz)
      sz = efl_gfx_hint_size_combined_min_get(obj);
    else
      sz = efl_gfx_hint_size_min_get(obj);
@@ -218,7 +219,7 @@ _sizing_eval(Evas_Object *obj, Efl_Ui_Layout_Data *sd, Elm_Layout_Data *ld)
    efl_gfx_hint_size_restricted_min_set(obj, EINA_SIZE2D(minw, minh));
 
    if (ld)
-     ld->restricted_calc_w = ld->restricted_calc_h = EINA_FALSE;
+     ld->in_calc = ld->restricted_calc_w = ld->restricted_calc_h = EINA_FALSE;
 }
 
 void
@@ -537,7 +538,10 @@ _efl_ui_layout_theme_internal(Eo *obj, Efl_Ui_Layout_Data *sd, Elm_Widget_Smart_
      }
 
    if (ret != EFL_UI_THEME_APPLY_ERROR_GENERIC)
-     efl_event_callback_legacy_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
+     {
+        if (sd->cb_theme_changed)
+          efl_event_callback_legacy_call(obj, EFL_UI_LAYOUT_EVENT_THEME_CHANGED, NULL);
+     }
 
    if (!_visuals_refresh(obj, sd))
      ret = EFL_UI_THEME_APPLY_ERROR_GENERIC;
@@ -1915,6 +1919,19 @@ _elm_layout_efl_canvas_group_change(Eo *obj, Elm_Layout_Data *ld)
    efl_canvas_group_change(efl_super(obj, ELM_LAYOUT_MIXIN));
 }
 
+EOLIAN static void
+_elm_layout_efl_gfx_hint_size_restricted_min_set(Eo *obj, Elm_Layout_Data *ld, Eina_Size2D sz)
+{
+   /* correctly handle legacy case where the user has set a min size hint on the object:
+    * in legacy code, only restricted_min existed, which resulted in conflicts between
+    * internal sizing and user-expected sizing. we attempt to simulate this now in a more controlled
+    * manner by only checking this hint during sizing calcs if the user has set it
+    */
+   if (!ld->in_calc)
+     ld->user_min_sz = (sz.w > 0) || (sz.h > 0);
+   efl_gfx_hint_size_restricted_min_set(efl_super(obj, ELM_LAYOUT_MIXIN), sz);
+}
+
 /* layout's sizing evaluation is deferred. evaluation requests are
  * queued up and only flag the object as 'changed'. when it comes to
  * Evas's rendering phase, it will be addressed, finally (see
@@ -2955,6 +2972,29 @@ _efl_ui_layout_base_theme_rotation_apply(Eo *obj, Efl_Ui_Layout_Data *pd EINA_UN
 
 
 /* Internal EO APIs and hidden overrides */
+EOLIAN static Eina_Bool
+_efl_ui_layout_base_efl_object_event_callback_priority_add(Eo *obj, Efl_Ui_Layout_Data *pd, const Efl_Event_Description *desc, Efl_Callback_Priority priority, Efl_Event_Cb func, const void *user_data)
+{
+  if (desc == EFL_CANVAS_GROUP_EVENT_MEMBER_ADDED)
+    {
+       pd->cb_theme_changed = EINA_TRUE;
+    }
+
+  return efl_event_callback_priority_add(efl_super(obj, MY_CLASS), desc, priority, func, user_data);
+}
+
+EOLIAN static Eina_Bool
+_efl_ui_layout_base_efl_object_event_callback_array_priority_add(Eo *obj, Efl_Ui_Layout_Data *pd, const Efl_Callback_Array_Item *array, Efl_Callback_Priority priority, const void *user_data)
+{
+   for (int i = 0; array[i].desc; ++i)
+     {
+        if (array[i].desc == EFL_CANVAS_GROUP_EVENT_MEMBER_ADDED)
+          {
+             pd->cb_theme_changed = EINA_TRUE;
+          }
+     }
+   return efl_event_callback_array_priority_add(efl_super(obj, MY_CLASS), array, priority, user_data);
+}
 
 EFL_FUNC_BODY_CONST(efl_ui_layout_text_aliases_get, const Elm_Layout_Part_Alias_Description *, NULL)
 EFL_FUNC_BODY_CONST(efl_ui_layout_content_aliases_get, const Elm_Layout_Part_Alias_Description *, NULL)
@@ -2968,6 +3008,8 @@ EFL_UI_LAYOUT_TEXT_ALIASES_IMPLEMENT(MY_CLASS_PFX)
    ELM_PART_TEXT_DEFAULT_OPS(efl_ui_layout_base), \
    EFL_UI_LAYOUT_CONTENT_ALIASES_OPS(MY_CLASS_PFX), \
    EFL_UI_LAYOUT_TEXT_ALIASES_OPS(MY_CLASS_PFX), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_priority_add, _efl_ui_layout_base_efl_object_event_callback_priority_add), \
+   EFL_OBJECT_OP_FUNC(efl_event_callback_array_priority_add, _efl_ui_layout_base_efl_object_event_callback_array_priority_add), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_ui_layout_base_efl_object_dbg_info_get)
 
 
