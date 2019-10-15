@@ -188,9 +188,37 @@ public class Globals
     public delegate  IntPtr efl_data_scope_get_delegate(IntPtr obj, IntPtr klass);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_data_scope_get(IntPtr obj, IntPtr klass);
     public delegate  IntPtr efl_super_delegate(IntPtr obj, IntPtr klass);
+
+    /// <summary>Gets a native pointer to <c>obj</c> that forwards the method call to its parent
+    /// implementation.
+    ///
+    /// <para>For generated code use only.</para>
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="obj">The native pointer to be prepared.</param>
+    /// <param name="klass">The current class.</param>
+    /// <returns>The native pointer to <c>obj</c> prepared to call the parent implementation of <c>klass</c>.</returns>
+    public static IntPtr Super(IntPtr obj, IntPtr klass)
+    {
+        return efl_super(obj, klass);
+    }
+
     [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_super(IntPtr obj, IntPtr klass);
     public delegate  IntPtr efl_class_get_delegate(IntPtr obj);
     [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_class_get(IntPtr obj);
+
+    /// <summary>Gets the native EO class pointer for the given object.
+    /// <para>For generated code use only.</para>
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="obj">The native pointer to the <see cref="Efl.Object" /> instance to get the native class
+    /// from.</param>
+    /// <returns>The native class pointer or <see cref="IntPtr.Zero" /> if no such class existis.</returns>
+    public static IntPtr GetClass(IntPtr obj)
+    {
+        return efl_class_get(obj);
+    }
+
     [DllImport(efl.Libs.Eo)] public static extern EflClassType efl_class_type_get(IntPtr klass);
     public delegate  IntPtr dlerror_delegate();
     [DllImport(efl.Libs.Evil)] public static extern IntPtr dlerror();
@@ -207,6 +235,20 @@ public class Globals
 
     [DllImport(efl.Libs.Eo)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
         efl_event_callback_call(IntPtr obj, IntPtr desc, IntPtr event_info);
+
+    /// <summary>Calls the callbacks associated to an event.
+    /// <para>For generated code use only.</para>
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="obj">The native pointer to the <see cref="Efl.Object" /> instance that will be the emitter
+    /// of the event.</param>
+    /// <param name="desc">The native event description.</param>
+    /// <param name="event_info">The native payload of the event.</param>
+    /// <returns><c>false</c> if one of the callbacks aborted the call. <c>true</c> otherwise.</returns>
+    public static bool CallEventCallback(IntPtr obj, IntPtr desc, IntPtr event_info)
+    {
+        return efl_event_callback_call(obj, desc, event_info);
+    }
 
     public const int RTLD_NOW = 2;
 

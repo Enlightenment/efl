@@ -127,7 +127,7 @@ struct pack_event_info_and_call_visitor
    Context const* context;
    attributes::type_def const& type;
 
-   static auto constexpr native_call = "Efl.Eo.Globals.efl_event_callback_call(this.NativeHandle, desc, info);\n";
+   static auto constexpr native_call = "Efl.Eo.Globals.CallEventCallback(this.NativeHandle, desc, info);\n";
 
    typedef pack_event_info_and_call_visitor<OutputIterator, Context> visitor_type;
    typedef bool result_type;
@@ -381,7 +381,7 @@ struct event_definition_generator
       if (!etype.is_engaged())
         {
            auto event_call_site_sink = std::back_inserter(event_native_call);
-           if (!as_generator(indent.inc().inc() << "Efl.Eo.Globals.efl_event_callback_call(this.NativeHandle, desc, IntPtr.Zero);\n")
+           if (!as_generator(indent.inc().inc() << "Efl.Eo.Globals.CallEventCallback(this.NativeHandle, desc, IntPtr.Zero);\n")
                  .generate(event_call_site_sink, attributes::unused, context))
              return false;
         }
