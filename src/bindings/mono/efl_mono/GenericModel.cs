@@ -86,7 +86,7 @@ public class GenericModel<T> : Efl.Object, Efl.IModel, IDisposable
    /// <param name="start">The start of the range.</param>
    /// <param name="count">The size of the range.</param>
    /// <returns>An <see cref="Eina.Future" />  that resolves to an
-   /// <see cref="Eina.Array" /> of children models.</returns>
+   /// <see cref="Eina.Array&lt;T&gt;" /> of children models.</returns>
    public Eina.Future GetChildrenSlice(  uint start,   uint count)
    {
        return model.GetChildrenSlice(start, count);
@@ -160,7 +160,7 @@ public class GenericModel<T> : Efl.Object, Efl.IModel, IDisposable
    /// <param name="start">The start of the range.</param>
    /// <param name="count">The size of the range.</param>
    /// <param name="token">Token to notify the async operation of external request to cancel.</param>
-   /// <returns>Task that resolves when the desired <see cref="Eina.Array" /> of
+   /// <returns>Task that resolves when the desired <see cref="Eina.Array&lt;T&gt;" /> of
    /// children models is ready.</returns>
    public System.Threading.Tasks.Task<Eina.Value> GetChildrenSliceAsync(  uint start,  uint count, System.Threading.CancellationToken token=default(System.Threading.CancellationToken))
    {
