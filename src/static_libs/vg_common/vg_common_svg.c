@@ -718,10 +718,7 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
 
    if (node->type != SVG_NODE_DOC && !node->display) efl_gfx_entity_visible_set(vg, EINA_FALSE);
 
-   if ((node->type == SVG_NODE_G) || (node->type == SVG_NODE_DOC)) return;
-
-   // apply the fill style property
-   efl_gfx_shape_fill_rule_set(vg, style->fill.fill_rule);
+   if (node->type == SVG_NODE_DOC) return;
 
    // if fill property is NULL then do nothing
    if (style->fill.paint.none)
@@ -756,6 +753,11 @@ _apply_vg_property(Svg_Node *node, Efl_VG *vg, Efl_VG *parent, Vg_File_Data *vg_
         float fa = ((float) style->opacity / 255);
         efl_gfx_color_set(vg, ((float) r) * fa, ((float) g) * fa, ((float) b) * fa, ((float) a) * fa);
      }
+
+   if (node->type == SVG_NODE_G)  return;
+
+   // apply the fill style property
+   efl_gfx_shape_fill_rule_set(vg, style->fill.fill_rule);
 
    efl_gfx_shape_stroke_width_set(vg, style->stroke.width);
    efl_gfx_shape_stroke_cap_set(vg, style->stroke.cap);
