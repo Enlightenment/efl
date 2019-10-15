@@ -43,11 +43,17 @@ evas_vg_load_file_open_json(Eina_File *file,
 
    Lottie_Animation *lot_anim = NULL;
 
-   const char *data = (const char*) eina_file_map_all(file, EINA_FILE_SEQUENTIAL);
-   if (!data) goto err;
-   //@TODO pass corrct external_resource path.
-   lot_anim = lottie_animation_from_data(data, key ? key:eina_file_filename_get(file), " ");
-   eina_file_map_free(file, (void *) data);
+   //Edje may use virtual memory.
+   if (eina_file_virtual(file))
+     {
+        const char *data = (const char*) eina_file_map_all(file, EINA_FILE_SEQUENTIAL);
+        if (!data) goto err;
+        //@TODO pass corrct external_resource path.
+        lot_anim = lottie_animation_from_data(data, key ? key:eina_file_filename_get(file), " ");
+        eina_file_map_free(file, (void *) data);
+     }
+   else
+     lot_anim = lottie_animation_from_file(eina_file_filename_get(file));
 
    if (!lot_anim)
      {
