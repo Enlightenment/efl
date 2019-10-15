@@ -2631,7 +2631,7 @@ EFL_START_TEST(eina_value_test_struct)
                (value, myst_members + 1, &other));
    fail_unless(other.type == EINA_VALUE_TYPE_CHAR);
    fail_unless(eina_value_get(&other, &c));
-   fail_unless(c = 0xf);
+   fail_unless(c == 0xf);
    eina_value_flush(&other);
 
    str = eina_value_to_string(value);
