@@ -102,7 +102,7 @@ struct native_function_definition_generator
     else
       klass_cast_name = name_helpers::klass_inherit_name(*klass);
 
-    std::string self = "Efl.Eo.Globals.efl_super(obj, Efl.Eo.Globals.efl_class_get(obj))";
+    std::string self = "Efl.Eo.Globals.Super(obj, Efl.Eo.Globals.GetClass(obj))";
 
     if (f.is_static)
       self = "";
@@ -198,7 +198,7 @@ struct function_definition_generator
     // IsGeneratedBindingClass is set in the constructor, true if this
     // instance is from a pure C# class (not generated).
     if (do_super && !f.is_static)
-      self = "(IsGeneratedBindingClass ? " + self + " : Efl.Eo.Globals.efl_super(" + self + ", this.NativeClass))";
+      self = "(IsGeneratedBindingClass ? " + self + " : Efl.Eo.Globals.Super(" + self + ", this.NativeClass))";
     else if (f.is_static)
       self = "";
 
