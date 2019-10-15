@@ -196,13 +196,14 @@ _double_container(const Eldbus_Service_Interface *iface EINA_UNUSED, const Eldbu
 {
    Eldbus_Message_Iter *array1, *array2, *structure;
    int num1, num2;
-   Eldbus_Message *reply = eldbus_message_method_return_new(msg);
+   Eldbus_Message *reply;
 
    if (!eldbus_message_arguments_get(msg, "a(ii)a(ii)", &array1, &array2))
      {
         printf("Error on eldbus_message_arguments_get()\n");
         return NULL;
      }
+   reply = eldbus_message_method_return_new(msg);
 
    printf("DoubleCountainer\n{\nArray1:\n");
    while (eldbus_message_iter_get_and_next(array1, 'r', &structure))
