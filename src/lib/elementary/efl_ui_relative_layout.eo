@@ -9,10 +9,10 @@ class @beta Efl.Ui.Relative_Layout extends Efl.Ui.Widget implements Efl.Pack_Lay
          [[Specifies the left side edge of the child relative to the target.
            By default, target is parent and relative is 0.0.]]
          keys {
-            child: Efl.Object; [[The child to specify relation.]]
+            child: Efl.Gfx.Entity; [[The child to specify relation.]]
          }
          values {
-            target: Efl.Object; [[The relative target.]]
+            target: Efl.Gfx.Entity; [[The relative target.]]
             relative: double; [[The ratio between left and right of the target,
                                 ranging from 0.0 to 1.0.]]
          }
@@ -21,10 +21,10 @@ class @beta Efl.Ui.Relative_Layout extends Efl.Ui.Widget implements Efl.Pack_Lay
          [[Specifies the right side edge of the child relative to the target.
            By default, target is parent and relative is 1.0.]]
          keys {
-            child: Efl.Object; [[The child to specify relation.]]
+            child: Efl.Gfx.Entity; [[The child to specify relation.]]
          }
          values {
-            target: Efl.Object; [[The relative target.]]
+            target: Efl.Gfx.Entity; [[The relative target.]]
             relative: double; [[The ratio between left and right of the target,
                                 ranging from 0.0 to 1.0.]]
          }
@@ -33,10 +33,10 @@ class @beta Efl.Ui.Relative_Layout extends Efl.Ui.Widget implements Efl.Pack_Lay
          [[Specifies the top side edge of the child relative to the target.
            By default, target is parent and relative is 0.0.]]
          keys {
-            child: Efl.Object; [[The child to specify relation.]]
+            child: Efl.Gfx.Entity; [[The child to specify relation.]]
          }
          values {
-            target: Efl.Object; [[The relative target.]]
+            target: Efl.Gfx.Entity; [[The relative target.]]
             relative: double; [[The ratio between top and bottom of the target,
                                 ranging from 0.0 to 1.0.]]
          }
@@ -45,10 +45,10 @@ class @beta Efl.Ui.Relative_Layout extends Efl.Ui.Widget implements Efl.Pack_Lay
          [[Specifies the bottom side edge of the child relative to the target.
            By default, target is parent and relative is 1.0.]]
          keys {
-            child: Efl.Object; [[The child to specify relation.]]
+            child: Efl.Gfx.Entity; [[The child to specify relation.]]
          }
          values {
-            target: Efl.Object; [[The relative target.]]
+            target: Efl.Gfx.Entity; [[The relative target.]]
             relative: double; [[The ratio between top and bottom of the target,
                                 ranging from 0.0 to 1.0.]]
          }
