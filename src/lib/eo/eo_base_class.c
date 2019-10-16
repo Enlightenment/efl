@@ -1159,7 +1159,6 @@ _legacy_events_hash_free_cb(void *_desc)
 }
 
 /* EOF Legacy */
-
 struct _Eo_Callback_Description
 {
    union

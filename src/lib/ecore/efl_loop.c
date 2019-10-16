@@ -681,7 +681,6 @@ efl_loop_future_scheduler_get(const Eo *obj)
                _ecore_event_future_scheduler_get();
              pd->future_scheduler.eina_future_scheduler = *sched;
              pd->future_scheduler.loop = obj;
-             pd->future_scheduler.loop_data = pd;
           }
         return &(pd->future_scheduler.eina_future_scheduler);
      }
