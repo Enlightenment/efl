@@ -108,7 +108,6 @@ struct _Efl_Loop_Future_Scheduler
 {
    Eina_Future_Scheduler  eina_future_scheduler;
    const Eo              *loop;
-   Efl_Loop_Data         *loop_data;
 
    Eina_List             *future_entries;
 };
