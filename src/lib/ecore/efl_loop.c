@@ -663,6 +663,10 @@ _efl_loop_efl_task_end(Eo *obj, Efl_Loop_Data *pd EINA_UNUSED)
    efl_loop_quit(obj, eina_value_int_init(0));
 }
 
+EFL_SCHEDULER_ARRAY_DEFINE(loop_scheduler,
+                           EFL_LOOP_EVENT_IDLE_ENTER,
+                           EFL_LOOP_EVENT_IDLE);
+
 EAPI Eina_Future_Scheduler *
 efl_loop_future_scheduler_get(const Eo *obj)
 {
@@ -675,14 +679,7 @@ efl_loop_future_scheduler_get(const Eo *obj)
         Efl_Loop_Data *pd = efl_data_scope_get(obj, EFL_LOOP_CLASS);
 
         if (!pd) return NULL;
-        if (!pd->future_scheduler.loop)
-          {
-             Eina_Future_Scheduler *sched =
-               _ecore_event_future_scheduler_get();
-             pd->future_scheduler.eina_future_scheduler = *sched;
-             pd->future_scheduler.loop = obj;
-          }
-        return &(pd->future_scheduler.eina_future_scheduler);
+        return efl_event_future_scheduler_get(obj, loop_scheduler());
      }
    if (efl_isa(obj, EFL_LOOP_CONSUMER_CLASS))
      return efl_loop_future_scheduler_get(efl_loop_get(obj));

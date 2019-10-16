@@ -88,7 +88,6 @@ typedef struct _Ecore_Factorized_Idle Ecore_Factorized_Idle;
 typedef struct _Efl_Loop_Promise_Simple_Data Efl_Loop_Promise_Simple_Data;
 
 typedef struct _Efl_Loop_Timer_Data Efl_Loop_Timer_Data;
-typedef struct _Efl_Loop_Future_Scheduler Efl_Loop_Future_Scheduler;
 typedef struct _Efl_Loop_Data Efl_Loop_Data;
 
 typedef struct _Efl_Task_Data Efl_Task_Data;
@@ -104,19 +103,9 @@ struct _Message
    Eina_Bool delete_me;
 };
 
-struct _Efl_Loop_Future_Scheduler
-{
-   Eina_Future_Scheduler  eina_future_scheduler;
-   const Eo              *loop;
-
-   Eina_List             *future_entries;
-};
-
 struct _Efl_Loop_Data
 {
    double               loop_time;
-
-   Efl_Loop_Future_Scheduler future_scheduler;
 
    Efl_Loop_Message_Handler *future_message_handler;
 
@@ -313,8 +302,6 @@ Ecore_Factorized_Idle *_ecore_factorized_idle_add(const Efl_Callback_Array_Item*
 void        *_ecore_factorized_idle_del(Ecore_Idler *idler);
 void    _ecore_factorized_idle_process(void *data, const Efl_Event *event);
 void    _ecore_factorized_idle_event_del(void *data, const Efl_Event *event);
-
-Eina_Future_Scheduler *_ecore_event_future_scheduler_get(void);
 
 Eina_Bool    _ecore_event_init(void);
 void         _ecore_event_shutdown(void);
