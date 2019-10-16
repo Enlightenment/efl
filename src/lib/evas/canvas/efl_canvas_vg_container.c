@@ -54,6 +54,8 @@ _prepare_comp(Evas_Object_Protected_Data *obj,     //vector object
               Ector_Surface *surface,
               Eina_Matrix3 *ptransform,
               Eina_Matrix3 *ctransform,
+              int p_opacity,
+              int c_opacity,
               Ector_Buffer *comp,
               Efl_Gfx_Vg_Composite_Method comp_method)
 {
@@ -127,7 +129,7 @@ _prepare_comp(Evas_Object_Protected_Data *obj,     //vector object
              src_pd = efl_data_scope_get(eina_list_nth(target_pd->comp.src, 0), MY_CLASS);
              _evas_vg_render_pre(obj, comp_target,
                                  engine, output, context, surface,
-                                 ctransform, comp, src_pd->comp.method);
+                                 ctransform, c_opacity, comp, src_pd->comp.method);
           }
      }
 
@@ -135,7 +137,7 @@ _prepare_comp(Evas_Object_Protected_Data *obj,     //vector object
    _evas_vg_render_pre(obj, comp_target,
                        engine, output, context,
                        surface,
-                       ptransform, comp, comp_method);
+                       ptransform, p_opacity, comp, comp_method);
 
    //4. Generating Composite Image.
    ector_buffer_pixels_set(surface, pd->comp.pixels, size.w, size.h, pd->comp.stride,
@@ -153,6 +155,7 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
                                     void *engine, void *output, void *context,
                                     Ector_Surface *surface,
                                     Eina_Matrix3 *ptransform,
+                                    int p_opacity,
                                     Ector_Buffer *comp,
                                     Efl_Gfx_Vg_Composite_Method comp_method,
                                     void *data)
@@ -168,6 +171,7 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
    nd->flags = EFL_GFX_CHANGE_FLAG_NONE;
 
    EFL_CANVAS_VG_COMPUTE_MATRIX(ctransform, ptransform, nd);
+   EFL_CANVAS_VG_COMPUTE_ALPHA(c_r, c_g, c_b, c_a, p_opacity, nd);
 
    //Container may have composite target.
    //FIXME : _prepare_comp() should only work in cases with matte or masking.
@@ -179,7 +183,7 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
         comp_method = pd->comp.method;
         comp = _prepare_comp(vg_pd, pd->comp_target,
                              engine, output, context, surface,
-                             ptransform, ctransform, comp, comp_method);
+                             ptransform, ctransform, p_opacity, c_a, comp, comp_method);
      }
 
    EINA_LIST_FOREACH(pd->children, l, child)
@@ -204,7 +208,7 @@ _efl_canvas_vg_container_render_pre(Evas_Object_Protected_Data *vg_pd,
 
         _evas_vg_render_pre(vg_pd, child,
                             engine, output, context, surface,
-                            ctransform, comp, comp_method);
+                            ctransform, c_a, comp, comp_method);
      }
 }
 

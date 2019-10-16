@@ -502,7 +502,7 @@ _render_to_buffer(Evas_Object_Protected_Data *obj, Efl_Canvas_Vg_Object_Data *pd
 
    //ector begin - end for drawing composite images.
    //ENFN->ector_begin(engine, buffer, context, ector, 0, 0, EINA_FALSE, EINA_FALSE);
-   _evas_vg_render_pre(obj, root, engine, buffer, context, ector, NULL, NULL, 0);
+   _evas_vg_render_pre(obj, root, engine, buffer, context, ector, NULL, 255, NULL, 0);
    //ENFN->ector_end(engine, buffer, context, ector, EINA_FALSE);
 
    //Actual content drawing
@@ -773,7 +773,7 @@ _efl_canvas_vg_object_render_pre(Evas_Object *eo_obj,
    // FIXME: Move this render_pre to efl_canvas_vg_render()
    s = evas_ector_get(obj->layer->evas);
    if (pd->root && s)
-     _evas_vg_render_pre(obj, pd->root, NULL, NULL, NULL, s, NULL, NULL, 0);
+     _evas_vg_render_pre(obj, pd->root, NULL, NULL, NULL, s, NULL, 255, NULL, 0);
 
    /* now figure what changed and add draw rects */
    /* if it just became visible or invisible */
