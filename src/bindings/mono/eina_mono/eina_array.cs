@@ -52,7 +52,7 @@ public static class ArrayNativeFunctions
 /// </summary>
 public class Array<T> : IEnumerable<T>, IDisposable
 {
-    public static uint DefaultStep = 32;
+    public const uint DefaultStep = 32;
 
     /// <summary>Pointer to the native buffer.</summary>
     [EditorBrowsable(EditorBrowsableState.Never)]

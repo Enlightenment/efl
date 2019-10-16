@@ -10,7 +10,7 @@ namespace eldbus
 
 public static class Timeout
 {
-    public static int Infinite = 0x7fffffff;
+    public const int Infinite = 0x7fffffff;
 }
 
 [StructLayout(LayoutKind.Sequential)]
