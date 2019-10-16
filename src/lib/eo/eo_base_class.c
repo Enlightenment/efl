@@ -40,6 +40,7 @@ typedef struct
    Eina_Inlist               *generic_data;
    Eo                      ***wrefs;
    Eina_Hash                 *providers;
+   Eina_Hash                 *schedulers;
 } Efl_Object_Extension;
 
 struct _Efl_Object_Data
@@ -155,7 +156,8 @@ _efl_object_extension_noneed(Efl_Object_Data *pd)
        (ext->generic_data) ||
        (ext->wrefs) ||
        (ext->composite_parent) ||
-       (ext->providers)) return;
+       (ext->providers) ||
+       (ext->schedulers)) return;
    _efl_object_extension_free(pd->ext);
    pd->ext = NULL;
 }
@@ -169,6 +171,12 @@ _efl_object_invalidate(Eo *obj_id, Efl_Object_Data *pd)
      {
         eina_hash_free(pd->ext->providers);
         pd->ext->providers = NULL;
+        _efl_object_extension_noneed(pd);
+     }
+   if (pd->ext && pd->ext->schedulers)
+     {
+        eina_hash_free(pd->ext->schedulers);
+        pd->ext->schedulers = NULL;
         _efl_object_extension_noneed(pd);
      }
 
@@ -1183,6 +1191,7 @@ struct _Eo_Callback_Description
 
 static Eina_Mempool *_eo_callback_mempool = NULL;
 static Eina_Mempool *_efl_pending_future_mempool = NULL;
+static Eina_Mempool *_efl_future_scheduler_entry_mempool = NULL;
 
 static void
 _eo_callback_free(Eo_Callback_Description *cb)
@@ -1676,6 +1685,188 @@ EOAPI EFL_FUNC_BODYV(efl_event_callback_array_del,
                      Eina_Bool, 0, EFL_FUNC_CALL(array, user_data),
                      const Efl_Callback_Array_Item *array,
                      const void *user_data);
+
+typedef struct _Efl_Future_Scheduler Efl_Future_Scheduler;
+typedef struct _Efl_Future_Scheduler_Entry Efl_Future_Scheduler_Entry;
+
+struct _Efl_Future_Scheduler
+{
+   Eina_Future_Scheduler scheduler;
+
+   const Efl_Callback_Array_Item *array;
+   const Eo *self;
+
+   Eina_List *futures;
+
+   Eina_Bool listener : 1;
+};
+
+struct _Efl_Future_Scheduler_Entry
+{
+   Eina_Future_Schedule_Entry base;
+   Eina_Future_Scheduler_Cb cb;
+   Eina_Future *future;
+   Eina_Value value;
+};
+
+static Eina_Trash *schedulers_trash = NULL;
+static unsigned char schedulers_count = 0;
+
+static void
+_future_scheduler_cleanup(Efl_Object_Data *pd)
+{
+   if (eina_hash_population(pd->ext->schedulers)) return ;
+
+   eina_hash_free(pd->ext->schedulers);
+   pd->ext->schedulers = NULL;
+   _efl_object_extension_noneed(pd);
+}
+
+static void
+_futures_dispatch_cb(void *data, const Efl_Event *ev EINA_UNUSED)
+{
+   Efl_Future_Scheduler *sched = data;
+   Eina_List *entries = sched->futures;
+   Efl_Future_Scheduler_Entry *entry;
+
+   sched->futures = NULL;
+
+   efl_event_callback_array_del((Eo *) sched->self, sched->array, sched);
+   sched->listener = EINA_FALSE;
+
+   // Now trigger callbacks
+   EINA_LIST_FREE(entries, entry)
+     {
+        entry->cb(entry->future, entry->value);
+        eina_mempool_free(_efl_future_scheduler_entry_mempool, entry);
+     }
+}
+
+static void
+_futures_cancel_cb(void *data)
+{
+   Efl_Future_Scheduler *sched = data;
+   Eina_List *entries = sched->futures;
+   Efl_Future_Scheduler_Entry *entry;
+
+   efl_event_callback_array_del((Eo *) sched->self, sched->array, sched);
+   sched->listener = EINA_FALSE;
+   sched->futures = NULL;
+
+   EINA_LIST_FREE(entries, entry)
+     {
+        eina_future_cancel(entry->future);
+        eina_value_flush(&entry->value);
+        eina_mempool_free(_efl_future_scheduler_entry_mempool, entry);
+     }
+
+   if (schedulers_count > 8)
+     {
+        free(sched);
+     }
+   else
+     {
+        eina_trash_push(&schedulers_trash, sched);
+        schedulers_count++;
+     }
+}
+
+static Eina_Future_Schedule_Entry *
+_efl_event_future_scheduler(Eina_Future_Scheduler *s_sched,
+                            Eina_Future_Scheduler_Cb cb,
+                            Eina_Future *future,
+                            Eina_Value value)
+{
+   Efl_Future_Scheduler *sched = (Efl_Future_Scheduler *)s_sched;
+   Efl_Future_Scheduler_Entry *entry;
+
+   entry = eina_mempool_malloc(_efl_future_scheduler_entry_mempool, sizeof(*entry));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(entry, NULL);
+
+   entry->base.scheduler = &sched->scheduler;
+   entry->cb = cb;
+   entry->future = future;
+   entry->value = value;
+
+   if (!sched->listener)
+     {
+        efl_event_callback_array_add((Eo *) sched->self, sched->array, sched);
+        sched->listener = EINA_TRUE;
+     }
+
+   sched->futures = eina_list_append(sched->futures, entry);
+   return &entry->base;
+}
+
+static void
+_efl_event_future_recall(Eina_Future_Schedule_Entry *s_entry)
+{
+   Efl_Future_Scheduler_Entry *entry = (Efl_Future_Scheduler_Entry *)s_entry;
+   Efl_Future_Scheduler *sched;
+   Eina_List *lookup;
+
+   sched = (Efl_Future_Scheduler *) entry->base.scheduler;
+
+   lookup = eina_list_data_find_list(sched->futures, entry);
+   if (!lookup) return;
+
+   sched->futures = eina_list_remove_list(sched->futures, lookup);
+   if (!sched->futures)
+     {
+        Efl_Object_Data *pd = efl_data_scope_get(sched->self, EFL_OBJECT_CLASS);
+
+        _future_scheduler_cleanup(pd);
+     }
+
+   eina_value_flush(&entry->value);
+   eina_mempool_free(_efl_future_scheduler_entry_mempool, entry);
+}
+
+EOLIAN static Eina_Future_Scheduler *
+_efl_object_event_future_scheduler_get(const Eo *obj, Efl_Object_Data *pd, Efl_Callback_Array_Item *array)
+{
+   Efl_Object_Extension *ext;
+   Efl_Future_Scheduler *sched;
+   unsigned int i;
+
+   if (!array) return NULL;
+
+   ext = _efl_object_extension_need(pd);
+
+   // First lookup for an existing scheduler that match the provided array
+   if (!ext->schedulers) ext->schedulers = eina_hash_pointer_new(_futures_cancel_cb);
+   sched = eina_hash_find(ext->schedulers, &array);
+   if (sched) return &sched->scheduler;
+
+   // Define all the callback in the array to point to our internal callback,
+   // making the array ready to use.
+   for (i = 0; array[i].desc; i++)
+     array[i].func = _futures_dispatch_cb;
+
+   if (schedulers_count)
+     {
+        // Take one out of the trash for faster cycling
+        sched = eina_trash_pop(&schedulers_trash);
+        schedulers_count--;
+     }
+   else
+     {
+        // Need to allocate a new scheduler as none are on standby.
+        sched = calloc(1, sizeof (Efl_Future_Scheduler));
+     }
+   sched->scheduler.schedule = _efl_event_future_scheduler;
+   sched->scheduler.recall = _efl_event_future_recall;
+   sched->array = array;
+   sched->self = obj;
+
+   eina_hash_add(ext->schedulers, &array, sched);
+
+   return &sched->scheduler;
+}
+
+EOAPI EFL_FUNC_BODYV_CONST(efl_event_future_scheduler_get,
+                           Eina_Future_Scheduler *, 0, EFL_FUNC_CALL(array),
+                           Efl_Callback_Array_Item *array);
 
 static Eina_Bool
 _cb_desc_match(const Efl_Event_Description *a, const Efl_Event_Description *b, Eina_Bool legacy_compare)
@@ -2396,12 +2587,17 @@ _efl_object_class_constructor(Efl_Class *klass EINA_UNUSED)
       eina_mempool_add("chained_mempool", NULL, NULL,
                        sizeof(Efl_Future_Pending), 256);
 
+   _efl_future_scheduler_entry_mempool =
+     eina_mempool_add("chained_mempool", NULL, NULL,
+                      sizeof(Efl_Future_Scheduler_Entry), 256);
+
    _eo_nostep_alloc = !!getenv("EO_NOSTEP_ALLOC");
 }
 
 EOLIAN static void
 _efl_object_class_destructor(Efl_Class *klass EINA_UNUSED)
 {
+   eina_mempool_del(_efl_future_scheduler_entry_mempool);
    eina_mempool_del(_efl_pending_future_mempool);
    eina_mempool_del(_eo_callback_mempool);
    eina_hash_free(_legacy_events_hash);
@@ -2414,6 +2610,7 @@ _efl_object_class_destructor(Efl_Class *klass EINA_UNUSED)
    EFL_OBJECT_OP_FUNC(efl_event_callback_array_del, _efl_object_event_callback_array_del), \
    EFL_OBJECT_OP_FUNC(efl_event_callback_call, _efl_object_event_callback_call), \
    EFL_OBJECT_OP_FUNC(efl_event_callback_legacy_call, _efl_object_event_callback_legacy_call), \
+   EFL_OBJECT_OP_FUNC(efl_event_future_scheduler_get, _efl_object_event_future_scheduler_get), \
    EFL_OBJECT_OP_FUNC(efl_dbg_info_get, _efl_object_dbg_info_get), \
    EFL_OBJECT_OP_FUNC(efl_wref_add, _efl_object_wref_add), \
    EFL_OBJECT_OP_FUNC(efl_wref_del, _efl_object_wref_del), \
