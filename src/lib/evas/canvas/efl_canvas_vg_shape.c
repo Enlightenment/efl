@@ -81,6 +81,7 @@ _efl_canvas_vg_shape_render_pre(Evas_Object_Protected_Data *vg_pd,
                                 void *engine, void *output, void *context,
                                 Ector_Surface *surface,
                                 Eina_Matrix3 *ptransform,
+                                int p_opacity,
                                 Ector_Buffer *comp,
                                 Efl_Gfx_Vg_Composite_Method comp_method,
                                 void *data)
@@ -93,16 +94,17 @@ _efl_canvas_vg_shape_render_pre(Evas_Object_Protected_Data *vg_pd,
    nd->flags = EFL_GFX_CHANGE_FLAG_NONE;
 
    EFL_CANVAS_VG_COMPUTE_MATRIX(ctransform, ptransform, nd);
+   EFL_CANVAS_VG_COMPUTE_ALPHA(c_r, c_g, c_b, c_a, p_opacity, nd);
 
    fill = _evas_vg_render_pre(vg_pd, pd->fill,
                               engine, output, context,
-                              surface, ctransform, comp, comp_method);
+                              surface, ctransform, c_a, comp, comp_method);
    stroke_fill = _evas_vg_render_pre(vg_pd, pd->stroke.fill,
                                      engine, output, context,
-                                     surface, ctransform, comp, comp_method);
+                                     surface, ctransform, c_a, comp, comp_method);
    stroke_marker = _evas_vg_render_pre(vg_pd, pd->stroke.marker,
                                        engine, output, context,
-                                       surface, ctransform, comp, comp_method);
+                                       surface, ctransform, c_a, comp, comp_method);
 
    if (!nd->renderer)
      {
@@ -112,7 +114,7 @@ _efl_canvas_vg_shape_render_pre(Evas_Object_Protected_Data *vg_pd,
      }
    ector_renderer_transformation_set(nd->renderer, ctransform);
    ector_renderer_origin_set(nd->renderer, nd->x, nd->y);
-   ector_renderer_color_set(nd->renderer, nd->r, nd->g, nd->b, nd->a);
+   ector_renderer_color_set(nd->renderer, c_r, c_g, c_b, c_a);
    ector_renderer_visibility_set(nd->renderer, nd->visibility);
    ector_renderer_shape_fill_set(nd->renderer, fill ? fill->renderer : NULL);
    ector_renderer_shape_stroke_fill_set(nd->renderer, stroke_fill ? stroke_fill->renderer : NULL);

@@ -80,6 +80,7 @@ _efl_canvas_vg_gradient_radial_render_pre(Evas_Object_Protected_Data *vg_pd EINA
                                           void *context EINA_UNUSED,
                                           Ector_Surface *surface,
                                           Eina_Matrix3 *ptransform,
+                                          int p_opacity,
                                           Ector_Buffer *comp,
                                           Efl_Gfx_Vg_Composite_Method comp_method,
                                           void *data)
@@ -93,6 +94,7 @@ _efl_canvas_vg_gradient_radial_render_pre(Evas_Object_Protected_Data *vg_pd EINA
 
    gd = efl_data_scope_get(obj, EFL_CANVAS_VG_GRADIENT_CLASS);
    EFL_CANVAS_VG_COMPUTE_MATRIX(ctransform, ptransform, nd);
+   EFL_CANVAS_VG_COMPUTE_ALPHA(c_r, c_g, c_b, c_a, p_opacity, nd);
 
    if (!nd->renderer)
      {
@@ -103,7 +105,7 @@ _efl_canvas_vg_gradient_radial_render_pre(Evas_Object_Protected_Data *vg_pd EINA
 
    ector_renderer_transformation_set(nd->renderer, ctransform);
    ector_renderer_origin_set(nd->renderer, nd->x, nd->y);
-   ector_renderer_color_set(nd->renderer, nd->r, nd->g, nd->b, nd->a);
+   ector_renderer_color_set(nd->renderer, c_r, c_g, c_b, c_a);
    ector_renderer_visibility_set(nd->renderer, nd->visibility);
    efl_gfx_gradient_stop_set(nd->renderer, gd->colors, gd->colors_count);
    efl_gfx_gradient_spread_set(nd->renderer, gd->spread);

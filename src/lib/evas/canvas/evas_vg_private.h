@@ -70,7 +70,7 @@ struct _Efl_Canvas_Vg_Node_Data
    void (*render_pre)(Evas_Object_Protected_Data *vg_pd, Efl_VG *node,
          Efl_Canvas_Vg_Node_Data *nd,
          void *engine, void *output, void *contenxt, Ector_Surface *surface,
-         Eina_Matrix3 *ptransform, Ector_Buffer *comp, Efl_Gfx_Vg_Composite_Method comp_method, void *data);
+         Eina_Matrix3 *ptransform, int opacity, Ector_Buffer *comp, Efl_Gfx_Vg_Composite_Method comp_method, void *data);
    void *data;
 
    double x, y;
@@ -171,13 +171,14 @@ _evas_vg_render_pre(Evas_Object_Protected_Data *vg_pd, Efl_VG *child,
                     void *engine, void *output, void *context,
                     Ector_Surface *surface,
                     Eina_Matrix3 *transform,
+                    int opacity,
                     Ector_Buffer *comp, Efl_Gfx_Vg_Composite_Method comp_method)
 {
    if (!child) return NULL;
    Efl_Canvas_Vg_Node_Data *nd = efl_data_scope_get(child, EFL_CANVAS_VG_NODE_CLASS);
    if (nd) nd->render_pre(vg_pd, child, nd,
                           engine, output, context, surface,
-                          transform, comp, comp_method, nd->data);
+                          transform, opacity, comp, comp_method, nd->data);
    return nd;
 }
 
@@ -202,5 +203,19 @@ _evas_vg_render_pre(Evas_Object_Protected_Data *vg_pd, Efl_VG *child,
          }                                                              \
     }
 
+#define EFL_CANVAS_VG_COMPUTE_ALPHA(Current_r, Current_g, Current_b, Current_a, Parent_Opacity, Nd)   \
+  int Current_r = Nd->r;                                                \
+  int Current_g = Nd->g;                                                \
+  int Current_b = Nd->b;                                                \
+  int Current_a = Nd->a;                                                \
+                                                                        \
+  if (Parent_Opacity < 255)                                             \
+    {                                                                   \
+       double pa = (double)Parent_Opacity / 255.0;                      \
+       Current_r = (double)Current_r * pa;                              \
+       Current_g = (double)Current_g * pa;                              \
+       Current_b = (double)Current_b * pa;                              \
+       Current_a = (double)Current_a * pa;                              \
+    }
 
 #endif

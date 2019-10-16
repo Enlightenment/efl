@@ -21,21 +21,23 @@ _efl_canvas_vg_image_render_pre(Evas_Object_Protected_Data *vg_pd,
                                 void *engine EINA_UNUSED, void *output EINA_UNUSED, void *context EINA_UNUSED,
                                 Ector_Surface *surface,
                                 Eina_Matrix3 *ptransform,
+                                int p_opacity,
                                 Ector_Buffer *comp,
                                 Efl_Gfx_Vg_Composite_Method comp_method,
                                 void *data)
 {
    Efl_Canvas_Vg_Image_Data *pd = data;
+   int a;
 
    if (nd->flags == EFL_GFX_CHANGE_FLAG_NONE) return;
 
-   int a;
    efl_gfx_color_get(obj, NULL, NULL, NULL, &a);
    if (a <= 0) return;
 
    nd->flags = EFL_GFX_CHANGE_FLAG_NONE;
 
    EFL_CANVAS_VG_COMPUTE_MATRIX(ctransform, ptransform, nd);
+   EFL_CANVAS_VG_COMPUTE_ALPHA(c_r, c_g, c_b, c_a, p_opacity, nd);
 
    if (!nd->renderer)
      {
@@ -60,13 +62,9 @@ _efl_canvas_vg_image_render_pre(Evas_Object_Protected_Data *vg_pd,
      }
    ector_renderer_image_buffer_set(nd->renderer, pd->buffer);
    ector_renderer_transformation_set(nd->renderer, ctransform);
-
-
-
    ector_renderer_origin_set(nd->renderer, nd->x, nd->y);
-   ector_renderer_color_set(nd->renderer, nd->r, nd->g, nd->b, nd->a);
+   ector_renderer_color_set(nd->renderer, c_r, c_g, c_b, c_a);
    ector_renderer_visibility_set(nd->renderer, nd->visibility);
-
    ector_renderer_comp_method_set(nd->renderer, comp, comp_method);
    ector_renderer_prepare(nd->renderer);
 }
