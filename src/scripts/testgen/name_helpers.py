@@ -77,13 +77,13 @@ def event_args_managed_name(event, cls):
 
     ret = class_managed_name(cls)
 
-    return ret + managed_name(event.myname) + "Evt_Args"
+    return ret + managed_name(event.myname) + "EventArgs"
 
 
 def event_managed_short_name(event):
     """Gets the managed short name of an event"""
 
-    return managed_name(event.name.replace(",", "_")) + "Evt"
+    return managed_name(event.name.replace(",", "_")) + "Event"
 
 
 def enum_field_managed_name(field):
