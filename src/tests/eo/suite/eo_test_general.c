@@ -1808,9 +1808,9 @@ EFL_START_TEST(efl_object_size)
    // Update this number only if you modified the class size on purpose
 
 #ifdef EO_DEBUG
-   ck_assert_int_le(efl_class_memory_size_get(SIMPLE_CLASS), 164);
+   ck_assert_int_le(efl_class_memory_size_get(SIMPLE_CLASS), 180);
 #else
-   ck_assert_int_le(efl_class_memory_size_get(SIMPLE_CLASS), 148);
+   ck_assert_int_le(efl_class_memory_size_get(SIMPLE_CLASS), 164);
 #endif
 }
 EFL_END_TEST

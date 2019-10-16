@@ -53,6 +53,11 @@ struct _Efl_Object_Data
 
    Efl_Event_Callback_Frame  *event_frame;
    Eo_Callback_Description  **callbacks;
+#ifdef EFL64
+   uint64_t                   callbacks_mask;
+#else
+   uint32_t                   callbacks_mask;
+#endif
    Eina_Inlist               *pending_futures;
    unsigned int               callbacks_count;
 
@@ -1209,9 +1214,26 @@ _efl_pending_future_new(void)
 #define CB_COUNT_INC(cnt) do { if ((cnt) != 0xffff) (cnt)++; } while(0)
 #define CB_COUNT_DEC(cnt) do { if ((cnt) != 0xffff) (cnt)--; } while(0)
 
+static inline unsigned char
+_pointer_hash(const uintptr_t val)
+{
+   static const unsigned char shift = (unsigned char) log2(1 + sizeof (Efl_Event_Description));
+#ifdef EFL64
+   return (unsigned char)(((val) >> shift) & 0x3F);
+#else
+   return (unsigned char)(((val) >> shift) & 0x1F);
+#endif
+}
+
 static inline void
 _special_event_count_inc(Eo *obj_id, Efl_Object_Data *pd, const Efl_Callback_Array_Item *it)
 {
+   int event_hash;
+
+   event_hash = _pointer_hash((uintptr_t) it->desc);
+
+   pd->callbacks_mask |= 1 << event_hash;
+
    if      (it->desc == EFL_EVENT_CALLBACK_ADD)
      CB_COUNT_INC(pd->event_cb_efl_event_callback_add_count);
    else if (it->desc == EFL_EVENT_CALLBACK_DEL)
@@ -1682,6 +1704,7 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
       .inserted_before = 0,
       .generation = 1,
    };
+   int event_hash;
 
    if (pd->callbacks_count == 0) return EINA_FALSE;
    else if ((desc == EFL_EVENT_CALLBACK_ADD) &&
@@ -1694,6 +1717,13 @@ _event_callback_call(Eo *obj_id, Efl_Object_Data *pd,
             (pd->event_cb_efl_event_invalidate_count == 0)) return EINA_FALSE;
    else if ((desc == EFL_EVENT_NOREF) &&
             (pd->event_cb_efl_event_noref_count == 0)) return EINA_FALSE;
+
+   if (!legacy_compare)
+     {
+        event_hash = _pointer_hash((uintptr_t) desc);
+        if (!(pd->callbacks_mask & (1 << event_hash)))
+          return EINA_FALSE;
+     }
 
    if (pd->event_frame)
      frame.generation = ((Efl_Event_Callback_Frame*)pd->event_frame)->generation + 1;
