@@ -36,12 +36,12 @@ public class Globals
 
     [return: MarshalAs(UnmanagedType.U1)]
     public delegate bool efl_object_init_delegate();
-    public static FunctionWrapper<efl_object_init_delegate> efl_object_init_ptr =
+    public static readonly FunctionWrapper<efl_object_init_delegate> efl_object_init_ptr =
         new FunctionWrapper<efl_object_init_delegate>(efl.Libs.EoModule, "efl_object_init");
     public static bool efl_object_init() => efl_object_init_ptr.Value.Delegate();
 
     public delegate void efl_object_shutdown_delegate();
-    public static FunctionWrapper<efl_object_shutdown_delegate> efl_object_shutdown_ptr = new FunctionWrapper<efl_object_shutdown_delegate>(efl.Libs.EoModule, "efl_object_shutdown");
+    public static readonly FunctionWrapper<efl_object_shutdown_delegate> efl_object_shutdown_ptr = new FunctionWrapper<efl_object_shutdown_delegate>(efl.Libs.EoModule, "efl_object_shutdown");
     public static void efl_object_shutdown() => efl_object_shutdown_ptr.Value.Delegate();
     // [DllImport(efl.Libs.Eo)] public static extern void efl_object_shutdown();
 
@@ -996,10 +996,10 @@ public static class ClassRegister
         typeFromKlass[klassPtr] = objectType;
     }
 
-    public static System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.IntPtr> klassFromType
+    public static readonly System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.IntPtr> klassFromType
         = new System.Collections.Concurrent.ConcurrentDictionary<System.Type, System.IntPtr>();
 
-    public static System.Collections.Concurrent.ConcurrentDictionary<System.IntPtr, System.Type> typeFromKlass
+    public static readonly System.Collections.Concurrent.ConcurrentDictionary<System.IntPtr, System.Type> typeFromKlass
         = new System.Collections.Concurrent.ConcurrentDictionary<System.IntPtr, System.Type>();
 
     private static readonly object klassAllocLock = new object();

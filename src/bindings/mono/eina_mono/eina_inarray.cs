@@ -74,7 +74,7 @@ public static class InarrayNativeFunctions
 /// </summary>
 public class Inarray<T> : IEnumerable<T>, IDisposable
 {
-    public static uint DefaultStep = 0;
+    public const uint DefaultStep = 0;
     [EditorBrowsable(EditorBrowsableState.Never)]
     public IntPtr Handle {get;set;} = IntPtr.Zero;
     /// <summary>Whether this wrapper owns the native buffer.
