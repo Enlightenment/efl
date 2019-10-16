@@ -2,12 +2,14 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 using static eldbus.EldbusConnectionNativeFunctions;
 
 namespace eldbus
 {
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static class EldbusConnectionNativeFunctions
 {
     [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
@@ -89,22 +91,55 @@ public static class EldbusConnectionNativeFunctions
 }
 
 /// <summary>Represents a DBus connection.
-///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 public class Connection : IDisposable
 {
+    /// <summary>
+    /// The type of the Connection.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public enum Type
     {
+        /// <summary>
+        /// Unknown type.
+        /// <para>It's a sentinel.</para>
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         Unknown = 0, // sentinel, not a real type
+        /// <summary>
+        /// Session type.
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         Session,
+        /// <summary>
+        /// System type.
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         System,
+        /// <summary>
+        /// Starter type.
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         Starter,
+        /// <summary>
+        /// Address type.
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         Address,
+        /// <summary>
+        /// Last type.
+        /// <para>It's a sentinel.</para>
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         Last         // sentinel, not a real type
     };
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public IntPtr Handle {get;set;} = IntPtr.Zero;
+    /// <summary>Whether this wrapper owns the native handle.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public bool Own {get;set;} = true;
 
     private void InitNew(IntPtr handle, bool own)
@@ -122,38 +157,67 @@ public class Connection : IDisposable
         }
     }
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public Connection(IntPtr handle, bool own)
     {
         InitNew(handle, own);
     }
 
-
+    /// <summary>
+    /// Constructor.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="type">The type of the connection.</param>
     public Connection(eldbus.Connection.Type type)
     {
         InitNew(eldbus_connection_get(type), true);
     }
 
+    /// <summary>
+    /// Constructor.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="address">The address of the connection.</param>
     public Connection(string address)
     {
         InitNew(eldbus_address_connection_get(address), true);
     }
 
+    /// <summary>
+    ///  Gets a Connection with a type.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="type"></param>
+    /// <returns>A Connection with the type.</returns>
     public static eldbus.Connection GetPrivate(eldbus.Connection.Type type)
     {
         return new eldbus.Connection(eldbus_private_connection_get(type), true);
     }
 
+    /// <summary>
+    /// Gets a Connection with a address.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="address">The address of the connection.</param>
     public static eldbus.Connection GetPrivate(string address)
     {
         return new eldbus.Connection(eldbus_private_address_connection_get(address), true);
     }
 
-
+    /// <summary>
+    ///   Finalizer to be called from the Garbage Collector.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     ~Connection()
     {
         Dispose(false);
     }
 
+    /// <summary>Disposes of this wrapper, releasing the native array if owned.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="disposing">True if this was called from <see cref="Dispose()"/> public method. False if
+    /// called from the C# finalizer.</param>
     protected virtual void Dispose(bool disposing)
     {
         IntPtr h = Handle;
@@ -176,17 +240,28 @@ public class Connection : IDisposable
         }
     }
 
+    /// <summary>Releases the native resources held by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>Releases the native resources held by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Free()
     {
         Dispose();
     }
 
+    /// <summary>
+    ///   Releases the native handler.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The native handler.</returns>
     public IntPtr Release()
     {
         IntPtr h = Handle;
@@ -194,6 +269,14 @@ public class Connection : IDisposable
         return h;
     }
 
+    /// <summary>
+    /// Send a message.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="msg">The message that will be sent.</param>
+    /// <param name="dlgt">The function that is executed when a response arrives..</param>
+    /// <param name="timeout">The timeout of the message.</param>
+    /// <returns>A <see cref="eldbus.Pending" /></returns>
     public eldbus.Pending Send(eldbus.Message msg, eldbus.MessageDelegate dlgt = null, double timeout = -1)
     {
         CheckHandle();
@@ -218,6 +301,11 @@ public class Connection : IDisposable
         return new eldbus.Pending(pending_hdl, false);
     }
 
+    /// <summary>
+    /// Gets a unique name assigned by the message bus.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The unique name string.</returns>
     public string GetUniqueName()
     {
         CheckHandle();
@@ -230,6 +318,14 @@ public class Connection : IDisposable
         return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
+    /// <summary>
+    ///  Send a RequestName method.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="bus">The name of the bus.</param>
+    /// <param name="flags">Parameter of the RequestName method.</param>
+    /// <param name="dlgt">The function to call when receiving answer.</param>
+    /// <returns>A <see cref="eldbus.Pending" /></returns>
     public eldbus.Pending NameRequest(string bus, uint flags, eldbus.MessageDelegate dlgt = null)
     {
         CheckHandle();
@@ -252,6 +348,13 @@ public class Connection : IDisposable
         return new eldbus.Pending(pending_hdl, false);
     }
 
+    /// <summary>
+    /// Send a ReleaseName method.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="bus">The name of the bus.</param>
+    /// <param name="dlgt">The function to call when receiving answer.</param>
+    /// <returns>A <see cref="eldbus.Pending" /></returns>
     public eldbus.Pending NameRelease(string bus, eldbus.MessageDelegate dlgt = null)
     {
         CheckHandle();
@@ -274,6 +377,13 @@ public class Connection : IDisposable
         return new eldbus.Pending(pending_hdl, false);
     }
 
+    /// <summary>
+    /// Send a GetNameOwner method.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="bus">The name of the bus.</param>
+    /// <param name="dlgt">The function to call when receiving answer.</param>
+    /// <returns>A <see cref="eldbus.Pending" /></returns>
     public eldbus.Pending GetNameOwner(string bus, eldbus.MessageDelegate dlgt = null)
     {
         CheckHandle();
@@ -296,6 +406,13 @@ public class Connection : IDisposable
         return new eldbus.Pending(pending_hdl, false);
     }
 
+    /// <summary>
+    /// Send NameHasOwner method.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="bus">The name of the bus.</param>
+    /// <param name="dlgt">The function to call when receiving the answer.</param>
+    /// <returns>A <see cref="eldbus.Pending" /></returns>
     public eldbus.Pending HasNameOwner(string bus, eldbus.MessageDelegate dlgt = null)
     {
         CheckHandle();
@@ -318,6 +435,12 @@ public class Connection : IDisposable
         return new eldbus.Pending(pending_hdl, false);
     }
 
+    /// <summary>
+    /// Send ListNames method.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="dlgt">The function to call when receiving answer.</param>
+    /// <returns>A <see cref="eldbus.Pending" /></returns>
     public eldbus.Pending NameList(eldbus.MessageDelegate dlgt = null)
     {
         CheckHandle();
@@ -335,6 +458,12 @@ public class Connection : IDisposable
         return new eldbus.Pending(pending_hdl, false);
     }
 
+    /// <summary>
+    /// Send ListActivatableNames method.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="dlgt">The function to call when receiving a method.</param>
+    /// <returns>A <see cref="eldbus.Pending" /></returns>
     public eldbus.Pending ActivatableList(eldbus.MessageDelegate dlgt = null)
     {
         CheckHandle();
@@ -352,6 +481,12 @@ public class Connection : IDisposable
         return new eldbus.Pending(pending_hdl, false);
     }
 
+    /// <summary>
+    /// Send Hello method.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="dlgt">The function to call when receiving answer.</param>
+    /// <returns>A <see cref="eldbus.Pending" /></returns>
     public eldbus.Pending Hello(eldbus.MessageDelegate dlgt = null)
     {
         CheckHandle();
@@ -369,6 +504,14 @@ public class Connection : IDisposable
         return new eldbus.Pending(pending_hdl, false);
     }
 
+    /// <summary>
+    /// Send StartServiceByName method.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="bus">The name of the bus.</param>
+    /// <param name="flags">Parameter of the StartServiceByName.</param>
+    /// <param name="dlgt">The function to call when receiving answer.</param>
+    /// <returns>A <see cref="eldbus.Pending" /></returns>
     public eldbus.Pending NameStart(string bus, uint flags, eldbus.MessageDelegate dlgt = null)
     {
         CheckHandle();
