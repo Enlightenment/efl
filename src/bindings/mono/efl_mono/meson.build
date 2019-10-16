@@ -3,7 +3,7 @@ mono_files += files(
   'efl_csharp_application.cs',
   'UserModel.cs',
   'GenericModel.cs',
-  'Factory.cs',
+  'ItemFactory.cs',
   'Bind.cs'
   )
 
