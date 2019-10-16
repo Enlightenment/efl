@@ -16,10 +16,7 @@ typedef struct _Ecore_Future_Schedule_Entry
 } Ecore_Future_Schedule_Entry;
 
 //////
-// XXX: still using legacy ecore events
-static Eina_Bool            shutting_down              = EINA_FALSE;
 static Eina_Mempool        *mp_future_schedule_entry   = NULL;
-//
 //////
 
 static Ecore_Event_Message_Handler *_event_msg_handler = NULL;
@@ -199,8 +196,6 @@ ecore_future_recall(Eina_Future_Schedule_Entry *s_entry)
    Efl_Loop_Future_Scheduler *loopsched;
    Eina_List *lookup;
 
-   if (shutting_down) return;
-
    loopsched = (Efl_Loop_Future_Scheduler *) entry->base.scheduler;
 
    lookup = eina_list_data_find_list(loopsched->future_entries, entry);
@@ -267,12 +262,6 @@ _ecore_event_init(void)
    // ECORE_EVENT_COUNT                    11
    // no need to do as it was a count, nto an event
 
-   //////
-   // XXX: ecore future still using legacy...
-   shutting_down = EINA_FALSE;
-//   ECORE_EV_FUTURE_ID = ecore_event_type_new();
-//   future_handler = ecore_event_handler_add(ECORE_EV_FUTURE_ID, ecore_future_dispatched, NULL);
-//   EINA_SAFETY_ON_NULL_GOTO(future_handler, err_handler);
    //FIXME: Is 512 too high?
    if (!mp_future_schedule_entry)
      {
@@ -287,27 +276,12 @@ _ecore_event_init(void)
    return EINA_TRUE;
 
  err_pool:
-// XXX:
-//   ecore_event_handler_del(future_handler);
-//   future_handler = NULL;
-// err_handler:
-//   ECORE_EV_FUTURE_ID = -1;
    return EINA_FALSE;
 }
 
 void
 _ecore_event_shutdown(void)
 {
-   shutting_down = EINA_TRUE;
-
-   //////
-   // XXX: ecore future still using legacy...
-//   ecore_event_handler_del(future_handler);
-//   future_handler = NULL;
-//   ECORE_EV_FUTURE_ID = -1;
-   //
-   //////
-
    efl_loop_message_handler_message_clear(_event_msg_handler);
    _event_msg_handler = NULL;
 }
