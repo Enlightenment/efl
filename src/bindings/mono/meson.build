@@ -173,7 +173,7 @@ if (get_option('dotnet'))
                               configuration: lib_csproj_conf_data)
 
   efl_mono = custom_target('efl_mono',
-    input: mono_generator_target + mono_files + [efl_src] + [lib_csproj],
+    input: mono_generator_target + mono_files + [efl_src] + [lib_csproj] + ['ca.ruleset'],
     output: 'efl_sharp.dll',
     build_by_default: true,
     command: [dotnet,

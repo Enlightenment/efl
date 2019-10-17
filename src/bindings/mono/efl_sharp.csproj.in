@@ -41,4 +41,13 @@
     <Compile Include="./*.cs" />
   </ItemGroup>
 
+  <!-- Code style configuration -->
+  <ItemGroup>
+    <PackageReference Include="Microsoft.CodeAnalysis.FxCopAnalyzers" Version="2.9.6" />
+    <PackageReference Include="StyleCop.Analyzers" Version="1.1.118" />
+  </ItemGroup>
+  <PropertyGroup>
+    <CodeAnalysisRuleSet>@BINDING_SRC@/ca.ruleset</CodeAnalysisRuleSet>
+  </PropertyGroup>
+
 </Project>
