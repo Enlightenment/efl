@@ -362,6 +362,10 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
         return;
      }
    efl_gfx_entity_visible_set(root, EINA_TRUE);
+   efl_gfx_color_set(root, layer->mAlpha, layer->mAlpha, layer->mAlpha, layer->mAlpha);
+
+   //Don't need to update it anymore since its layer is invisible.
+   if (layer->mAlpha == 0) return;
 
    Efl_Canvas_Vg_Container *ptree = NULL;
 
@@ -388,10 +392,6 @@ _update_vg_tree(Efl_Canvas_Vg_Container *root, const LOTLayerNode *layer, int de
         for (int i = 0; i < depth; i++) printf("    ");
         printf("%s (%p) matte:%d => %p\n", efl_class_name_get(efl_class_get(ctree)), ctree, matte_mode, ptree);
 #endif
-
-        //Set Container's alpha color
-        efl_gfx_color_set(ctree, clayer->mAlpha, clayer->mAlpha, clayer->mAlpha, clayer->mAlpha);
-
         _update_vg_tree(ctree, clayer, depth+1);
 
         if (matte_mode != 0)
@@ -470,8 +470,6 @@ vg_common_json_create_vg_node(Vg_File_Data *vfd)
         if (tree->keypath) efl_key_data_set(root, "_lot_node_name", tree->keypath);
         vfd->root = root;
      }
-   efl_gfx_color_set(root, tree->mAlpha, tree->mAlpha, tree->mAlpha, tree->mAlpha);
-
    _update_vg_tree(root, tree, 1);
 #else
    return EINA_FALSE;
