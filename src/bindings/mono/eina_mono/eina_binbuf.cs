@@ -13,35 +13,35 @@ namespace Eina
 /// </summary>
 public class Binbuf : IDisposable
 {
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_binbuf_new();
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_binbuf_free(IntPtr buf);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_binbuf_reset(IntPtr buf);
-    [DllImport(efl.Libs.Eina)] public static extern byte
+    [DllImport(efl.Libs.Eina)] internal static extern byte
         eina_binbuf_append_length(IntPtr buf, byte[] str, UIntPtr length);
-    [DllImport(efl.Libs.Eina)] public static extern byte
+    [DllImport(efl.Libs.Eina)] internal static extern byte
         eina_binbuf_append_slice(IntPtr buf, Eina.Slice slice);
-    [DllImport(efl.Libs.Eina)] public static extern byte
+    [DllImport(efl.Libs.Eina)] internal static extern byte
         eina_binbuf_append_buffer(IntPtr buf, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern byte
+    [DllImport(efl.Libs.Eina)] internal static extern byte
         eina_binbuf_append_char(IntPtr buf, byte c);
-    [DllImport(efl.Libs.Eina)] public static extern byte
+    [DllImport(efl.Libs.Eina)] internal static extern byte
         eina_binbuf_insert_length(IntPtr buf, byte[] str, UIntPtr length, UIntPtr pos);
-    [DllImport(efl.Libs.Eina)] public static extern byte
+    [DllImport(efl.Libs.Eina)] internal static extern byte
         eina_binbuf_insert_slice(IntPtr buf, Eina.Slice slice, UIntPtr pos);
-    [DllImport(efl.Libs.Eina)] public static extern byte
+    [DllImport(efl.Libs.Eina)] internal static extern byte
         eina_binbuf_insert_char(IntPtr buf, byte c, UIntPtr pos);
-    [DllImport(efl.Libs.Eina)] public static extern byte
+    [DllImport(efl.Libs.Eina)] internal static extern byte
         eina_binbuf_remove(IntPtr buf, UIntPtr start, UIntPtr end);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_binbuf_string_get(IntPtr buf);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_binbuf_string_free(IntPtr buf);
-    [DllImport(efl.Libs.Eina)] public static extern UIntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern UIntPtr
         eina_binbuf_length_get(IntPtr buf);
-    [DllImport(efl.Libs.Eina)] public static extern Eina.Slice
+    [DllImport(efl.Libs.Eina)] internal static extern Eina.Slice
         eina_binbuf_slice_get(IntPtr buf);
 
     /// <summary>Pointer to the native buffer.</summary>

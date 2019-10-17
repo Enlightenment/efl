@@ -14,58 +14,58 @@ namespace Eina
 [EditorBrowsable(EditorBrowsableState.Never)]
 public static class InarrayNativeFunctions
 {
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_inarray_new(uint member_size, uint step);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_inarray_free(IntPtr array);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_inarray_step_set(IntPtr array, uint sizeof_eina_inarray, uint member_size, uint step);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_inarray_flush(IntPtr array);
-    [DllImport(efl.Libs.Eina)] public static extern int
+    [DllImport(efl.Libs.Eina)] internal static extern int
         eina_inarray_push(IntPtr array, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_inarray_grow(IntPtr array, uint size);
-    [DllImport(efl.Libs.Eina)] public static extern int
+    [DllImport(efl.Libs.Eina)] internal static extern int
         eina_inarray_insert(IntPtr array, IntPtr data, IntPtr compare);
-    [DllImport(efl.Libs.Eina)] public static extern int
+    [DllImport(efl.Libs.Eina)] internal static extern int
         eina_inarray_insert_sorted(IntPtr array, IntPtr data, IntPtr compare);
-    [DllImport(efl.Libs.Eina)] public static extern int
+    [DllImport(efl.Libs.Eina)] internal static extern int
         eina_inarray_remove(IntPtr array, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_inarray_pop(IntPtr array);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_inarray_nth(IntPtr array, uint position);
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_inarray_insert_at(IntPtr array, uint position, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_inarray_alloc_at(IntPtr array, uint position, uint member_count);
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_inarray_replace_at(IntPtr array, uint position, IntPtr data);
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_inarray_remove_at(IntPtr array, uint position);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_inarray_reverse(IntPtr array);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_inarray_sort(IntPtr array, IntPtr compare);
-    [DllImport(efl.Libs.Eina)] public static extern int
+    [DllImport(efl.Libs.Eina)] internal static extern int
         eina_inarray_search(IntPtr array, IntPtr data, IntPtr compare);
-    [DllImport(efl.Libs.Eina)] public static extern int
+    [DllImport(efl.Libs.Eina)] internal static extern int
         eina_inarray_search_sorted(IntPtr array, IntPtr data, IntPtr compare);
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_inarray_foreach(IntPtr array, IntPtr function, IntPtr user_data);
-    [DllImport(efl.Libs.Eina)] public static extern int
+    [DllImport(efl.Libs.Eina)] internal static extern int
         eina_inarray_foreach_remove(IntPtr array, IntPtr match, IntPtr user_data);
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_inarray_resize(IntPtr array, uint new_size);
-    [DllImport(efl.Libs.Eina)] public static extern uint
+    [DllImport(efl.Libs.Eina)] internal static extern uint
         eina_inarray_count(IntPtr array);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_inarray_iterator_new(IntPtr array);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_inarray_iterator_reversed_new(IntPtr array);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_inarray_accessor_new(IntPtr array);
 }
 
