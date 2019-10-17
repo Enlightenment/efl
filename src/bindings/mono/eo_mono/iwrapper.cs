@@ -43,150 +43,150 @@ public static class Globals
     public delegate void efl_object_shutdown_delegate();
     public static readonly FunctionWrapper<efl_object_shutdown_delegate> efl_object_shutdown_ptr = new FunctionWrapper<efl_object_shutdown_delegate>(efl.Libs.EoModule, "efl_object_shutdown");
     public static void efl_object_shutdown() => efl_object_shutdown_ptr.Value.Delegate();
-    // [DllImport(efl.Libs.Eo)] public static extern void efl_object_shutdown();
+    // [DllImport(efl.Libs.Eo)] internal static extern void efl_object_shutdown();
 
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr efl_mono_wrapper_supervisor_get(IntPtr eo);
-    [DllImport(efl.Libs.CustomExports)] public static extern void efl_mono_wrapper_supervisor_set(IntPtr eo, IntPtr ws);
+    [DllImport(efl.Libs.CustomExports)] internal static extern IntPtr efl_mono_wrapper_supervisor_get(IntPtr eo);
+    [DllImport(efl.Libs.CustomExports)] internal static extern void efl_mono_wrapper_supervisor_set(IntPtr eo, IntPtr ws);
 
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         _efl_add_internal_start([MarshalAs(UnmanagedType.LPStr)] String file, int line,
                                 IntPtr klass, IntPtr parent, byte is_ref, byte is_fallback);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         _efl_add_internal_start_bindings([MarshalAs(UnmanagedType.LPStr)] String file, int line, IntPtr klass, IntPtr parent,
                                          byte is_ref, byte is_fallback, IntPtr substitute_ctor, IntPtr data);
     public delegate  IntPtr
         _efl_add_end_delegate(IntPtr eo, byte is_ref, byte is_fallback);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         _efl_add_end(IntPtr eo, byte is_ref, byte is_fallback);
     public delegate  IntPtr
         efl_ref_delegate(IntPtr eo);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_ref(IntPtr eo);
     public delegate  void
         efl_unref_delegate(IntPtr eo);
-    [DllImport(efl.Libs.CustomExports)] public static extern void
+    [DllImport(efl.Libs.CustomExports)] internal static extern void
         efl_unref(IntPtr eo);
     public delegate  int
         efl_ref_count_delegate(IntPtr eo);
-    [DllImport(efl.Libs.Eo)] public static extern int
+    [DllImport(efl.Libs.Eo)] internal static extern int
         efl_ref_count(IntPtr eo);
-    [DllImport(efl.Libs.CustomExports)] public static extern void
+    [DllImport(efl.Libs.CustomExports)] internal static extern void
         efl_mono_wrapper_supervisor_callbacks_set(Efl.FreeWrapperSupervisorCb freeWrapperSupervisorCb);
-    [DllImport(efl.Libs.CustomExports)] public static extern void
+    [DllImport(efl.Libs.CustomExports)] internal static extern void
         efl_mono_native_dispose(IntPtr eo);
-    [DllImport(efl.Libs.CustomExports)] public static extern void
+    [DllImport(efl.Libs.CustomExports)] internal static extern void
         efl_mono_thread_safe_native_dispose(IntPtr eo);
-    [DllImport(efl.Libs.CustomExports)] public static extern void
+    [DllImport(efl.Libs.CustomExports)] internal static extern void
         efl_mono_thread_safe_efl_unref(IntPtr eo);
 
-    [DllImport(efl.Libs.CustomExports)] public static extern void
+    [DllImport(efl.Libs.CustomExports)] internal static extern void
         efl_mono_thread_safe_free_cb_exec(IntPtr free_cb, IntPtr cb_data);
 
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_name_get(IntPtr eo);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr extn42, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr extn42, IntPtr extn43, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr extn42, IntPtr extn43, IntPtr extn44, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr extn42, IntPtr extn43, IntPtr extn44, IntPtr extn45, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr extn42, IntPtr extn43, IntPtr extn44, IntPtr extn45, IntPtr extn46, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr extn42, IntPtr extn43, IntPtr extn44, IntPtr extn45, IntPtr extn46, IntPtr extn47, IntPtr term);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr
         efl_class_new(IntPtr class_description, IntPtr parent, IntPtr extn1, IntPtr extn2, IntPtr extn3, IntPtr extn4, IntPtr extn5, IntPtr extn6, IntPtr extn7, IntPtr extn8, IntPtr extn9, IntPtr extn10, IntPtr extn11, IntPtr extn12, IntPtr extn13, IntPtr extn14, IntPtr extn15, IntPtr extn16, IntPtr extn17, IntPtr extn18, IntPtr extn19, IntPtr extn20, IntPtr extn21, IntPtr extn22, IntPtr extn23, IntPtr extn24, IntPtr extn25, IntPtr extn26, IntPtr extn27, IntPtr extn28, IntPtr extn29, IntPtr extn30, IntPtr extn31, IntPtr extn32, IntPtr extn33, IntPtr extn34, IntPtr extn35, IntPtr extn36, IntPtr extn37, IntPtr extn38, IntPtr extn39, IntPtr extn40, IntPtr extn41, IntPtr extn42, IntPtr extn43, IntPtr extn44, IntPtr extn45, IntPtr extn46, IntPtr extn47, IntPtr extn48, IntPtr term);
 
     public delegate  byte efl_class_functions_set_delegate(IntPtr klass_id, IntPtr object_ops, IntPtr class_ops);
-    [DllImport(efl.Libs.Eo)] public static extern byte efl_class_functions_set(IntPtr klass_id, IntPtr object_ops, IntPtr class_ops);
+    [DllImport(efl.Libs.Eo)] internal static extern byte efl_class_functions_set(IntPtr klass_id, IntPtr object_ops, IntPtr class_ops);
     public delegate  IntPtr efl_data_scope_get_delegate(IntPtr obj, IntPtr klass);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_data_scope_get(IntPtr obj, IntPtr klass);
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr efl_data_scope_get(IntPtr obj, IntPtr klass);
     public delegate  IntPtr efl_super_delegate(IntPtr obj, IntPtr klass);
 
     /// <summary>Gets a native pointer to <c>obj</c> that forwards the method call to its parent
@@ -203,9 +203,9 @@ public static class Globals
         return efl_super(obj, klass);
     }
 
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_super(IntPtr obj, IntPtr klass);
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr efl_super(IntPtr obj, IntPtr klass);
     public delegate  IntPtr efl_class_get_delegate(IntPtr obj);
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_class_get(IntPtr obj);
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr efl_class_get(IntPtr obj);
 
     /// <summary>Gets the native EO class pointer for the given object.
     /// <para>For generated code use only.</para>
@@ -219,21 +219,21 @@ public static class Globals
         return efl_class_get(obj);
     }
 
-    [DllImport(efl.Libs.Eo)] public static extern EflClassType efl_class_type_get(IntPtr klass);
+    [DllImport(efl.Libs.Eo)] internal static extern EflClassType efl_class_type_get(IntPtr klass);
     public delegate  IntPtr dlerror_delegate();
-    [DllImport(efl.Libs.Evil)] public static extern IntPtr dlerror();
+    [DllImport(efl.Libs.Evil)] internal static extern IntPtr dlerror();
 
-    [DllImport(efl.Libs.Eo)] public static extern IntPtr efl_constructor(IntPtr obj);
+    [DllImport(efl.Libs.Eo)] internal static extern IntPtr efl_constructor(IntPtr obj);
 
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr efl_mono_avoid_top_level_constructor_callback_addr_get();
+    [DllImport(efl.Libs.CustomExports)] internal static extern IntPtr efl_mono_avoid_top_level_constructor_callback_addr_get();
 
-    [DllImport(efl.Libs.Eo)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eo)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         efl_event_callback_priority_add(IntPtr obj, IntPtr desc, short priority, IntPtr cb, IntPtr data);
 
-    [DllImport(efl.Libs.Eo)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eo)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         efl_event_callback_del(IntPtr obj, IntPtr desc, IntPtr cb, IntPtr data);
 
-    [DllImport(efl.Libs.Eo)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eo)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         efl_event_callback_call(IntPtr obj, IntPtr desc, IntPtr event_info);
 
     /// <summary>Calls the callbacks associated to an event.

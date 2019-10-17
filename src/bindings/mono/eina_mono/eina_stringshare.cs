@@ -12,15 +12,15 @@ namespace Eina
 [EditorBrowsable(EditorBrowsableState.Never)]
 public static partial class NativeMethods
 {
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_stringshare_add(IntPtr str);
-    [DllImport(efl.Libs.Eina)] public static extern System.IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern System.IntPtr
         eina_stringshare_add_length(IntPtr str, UInt32 slen);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_stringshare_del(IntPtr str);
-    [DllImport(efl.Libs.CustomExports)] public static extern void
+    [DllImport(efl.Libs.CustomExports)] internal static extern void
         efl_mono_native_stringshare_del_ref(IntPtr str);
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(efl.Libs.CustomExports)] internal static extern IntPtr
         efl_mono_native_stringshare_del_addr_get();
 }
 

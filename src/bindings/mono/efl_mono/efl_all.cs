@@ -12,9 +12,9 @@ namespace Efl
 static class UnsafeNativeMethods
 {
     private delegate void init_func_delegate();
-    [DllImport(efl.Libs.Ecore)] public static extern void ecore_init();
-    [DllImport(efl.Libs.Ecore)] public static extern void ecore_init_ex(int argc, IntPtr argv);
-    [DllImport(efl.Libs.Ecore)] public static extern void ecore_shutdown();
+    [DllImport(efl.Libs.Ecore)] internal static extern void ecore_init();
+    [DllImport(efl.Libs.Ecore)] internal static extern void ecore_init_ex(int argc, IntPtr argv);
+    [DllImport(efl.Libs.Ecore)] internal static extern void ecore_shutdown();
     // dotnet loads libraries from DllImport with RTLD_LOCAL. Due to the
     // way evas modules are built with meson, currently they do not link directly
     // with libevas, leading to symbol not found errors when trying to open them.
@@ -22,11 +22,11 @@ static class UnsafeNativeMethods
     // allowing the symbols to remain visible for the modules until the build
     // is sorted out.
     private static Efl.Eo.FunctionWrapper<init_func_delegate> _evas_init;
-    [DllImport(efl.Libs.Evas)] public static extern void evas_shutdown();
-    [DllImport(efl.Libs.Elementary)] public static extern int elm_init(int argc, IntPtr argv);
-    [DllImport(efl.Libs.Elementary)] public static extern void elm_shutdown();
-    [DllImport(efl.Libs.Elementary)] public static extern void elm_run();
-    [DllImport(efl.Libs.Elementary)] public static extern void elm_exit();
+    [DllImport(efl.Libs.Evas)] internal static extern void evas_shutdown();
+    [DllImport(efl.Libs.Elementary)] internal static extern int elm_init(int argc, IntPtr argv);
+    [DllImport(efl.Libs.Elementary)] internal static extern void elm_shutdown();
+    [DllImport(efl.Libs.Elementary)] internal static extern void elm_run();
+    [DllImport(efl.Libs.Elementary)] internal static extern void elm_exit();
 
     static UnsafeNativeMethods()
     {
