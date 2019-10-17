@@ -1,7 +1,7 @@
-
 #pragma warning disable 1591
 
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 using static eldbus.EldbusObjectNativeFunctions;
 
@@ -10,6 +10,7 @@ using IntPtr = System.IntPtr;
 namespace eldbus
 {
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static class EldbusObjectNativeFunctions
 {
     [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
@@ -83,15 +84,18 @@ public static class EldbusObjectNativeFunctions
 }
 
 /// <summary>Represents a DBus object.
-///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 public class Object : System.IDisposable
 {
-
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public IntPtr Handle {get;set;} = IntPtr.Zero;
+    /// <summary>Whether this managed list owns the native one.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public bool Own {get;set;} = true;
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     private void InitNew(IntPtr handle, bool own)
     {
         Handle = handle;
@@ -107,11 +111,21 @@ public class Object : System.IDisposable
         }
     }
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public Object(IntPtr handle, bool own)
     {
         InitNew(handle, own);
     }
 
+    /// <summary>
+    /// Constructor.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="conn"><see cref="eldbus.Connection" /> where object
+    /// belongs.</param>
+    /// <param name="bus">The name of the bus or unique id who listens for calls
+    /// of this object</param>
+    /// <param name="path">The object path of this object.</param>
     public Object(eldbus.Connection conn, string bus, string path)
     {
         if (conn == null)
@@ -139,11 +153,20 @@ public class Object : System.IDisposable
         InitNew(handle, true);
     }
 
+    /// <summary>Finalizes with garbage collector.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     ~Object()
     {
         Dispose(false);
     }
 
+
+    /// <summary>Disposes of this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="disposing">Whether this was called from the finalizer (<c>false</c>) or from the
+    /// <see cref="Dispose()"/> method.</param>
     protected virtual void Dispose(bool disposing)
     {
         IntPtr h = Handle;
@@ -166,17 +189,28 @@ public class Object : System.IDisposable
         }
     }
 
+    /// <summary>Disposes of this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
         System.GC.SuppressFinalize(this);
     }
 
+    /// <summary>Releases the native resources held by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Free()
     {
         Dispose();
     }
 
+    /// <summary>
+    ///   Releases the native handler.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The native handler.</returns>
     public IntPtr Release()
     {
         IntPtr h = Handle;
@@ -184,6 +218,12 @@ public class Object : System.IDisposable
         return h;
     }
 
+    /// <summary>
+    ///   Get the <see cref="eldbus.Connection" /> object associated with a
+    /// <see cref="eldbus.Object" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The <see cref="eldbus.Connection" /> object</returns>
     public eldbus.Connection GetConnection()
     {
         CheckHandle();
@@ -197,6 +237,12 @@ public class Object : System.IDisposable
         return new eldbus.Connection(conn, false);
     }
 
+    /// <summary>
+    ///   Get the name associated with a <see cref="eldbus.Object" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>A string corresponding to the <see cref="eldbus.Object" />
+    /// name</returns>
     public string GetBusName()
     {
         CheckHandle();
@@ -204,6 +250,12 @@ public class Object : System.IDisposable
         return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
+    /// <summary>
+    ///   Get the path associated with a <see cref="eldbus.Object" />
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>A string corresponding to the <see cref="eldbus.Object" />
+    /// path.</returns>
     public string GetPath()
     {
         CheckHandle();
@@ -211,18 +263,37 @@ public class Object : System.IDisposable
         return Eina.StringConversion.NativeUtf8ToManagedString(ptr);
     }
 
+    /// <summary>
+    ///   Increse object reference
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Ref()
     {
         CheckHandle();
         eldbus_object_ref(Handle);
     }
 
+    /// <summary>
+    ///   Decrease object reference.
+    /// <para>If reference == 0 object will be freed and all its children.</para>
+    ///<para>
+    ///  Since EFL 1.23.
+    ///</para>
+    /// </summary>
     public void Unref()
     {
         CheckHandle();
         eldbus_object_unref(Handle);
     }
 
+    /// <summary>
+    ///   Send a message
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="msg">The message will be sent in connection to this object.</param>
+    /// <param name="dlgt">The function to call when receiving answer.</param>
+    /// <param name="timeout">Timeout.</param>
+    /// <returns>A <see cref="eldbus.Pending" /></returns>
     public eldbus.Pending Send(eldbus.Message msg, eldbus.MessageDelegate dlgt = null, double timeout = -1)
     {
         CheckHandle();
@@ -245,6 +316,13 @@ public class Object : System.IDisposable
         return new eldbus.Pending(pending_hdl, false);
     }
 
+    /// <summary>
+    ///   Call a dbus method on the <see cref="eldbus.Object" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="_interface">The interface name.</param>
+    /// <param name="member">Name of the method to be called.</param>
+    /// <returns>A new <see cref="eldbus.Message" /></returns>
     public eldbus.Message NewMethodCall(string _interface, string member)
     {
         CheckHandle();
@@ -259,6 +337,12 @@ public class Object : System.IDisposable
         return new eldbus.Message(hdl, false);
     }
 
+    /// <summary>
+    ///   Call the method Ping on the eldbus.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="dlgt">The function to call when receiving answer.</param>
+    /// <returns>A <see cref="eldbus.Pending" /></returns>
     public eldbus.Pending PeerPing(eldbus.MessageDelegate dlgt = null)
     {
         CheckHandle();
@@ -276,6 +360,12 @@ public class Object : System.IDisposable
         return new eldbus.Pending(pending_hdl, false);
     }
 
+    /// <summary>
+    ///   Call the method GetMachineId on the eldbus.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="dlgt">The function to call when receiving answer.</param>
+    /// <returns>A <see cref="eldbus.Pending" /></returns>
     public eldbus.Pending GetPeerMachineId(eldbus.MessageDelegate dlgt = null)
     {
         CheckHandle();
@@ -293,6 +383,12 @@ public class Object : System.IDisposable
         return new eldbus.Pending(pending_hdl, false);
     }
 
+    /// <summary>
+    ///   Call the method Introspect on the eldbus.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="dlgt">The function to call when receiving answer.</param>
+    /// <returns>A <see cref="eldbus.Pending" /></returns>
     public eldbus.Pending Introspect(eldbus.MessageDelegate dlgt = null)
     {
         CheckHandle();
@@ -310,6 +406,12 @@ public class Object : System.IDisposable
         return new eldbus.Pending(pending_hdl, false);
     }
 
+    /// <summary>
+    ///   Call the method GetmanagedObjects on eldbus.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="dlgt">The function to call when receiving answer.</param>
+    /// <returns>A <see cref="eldbus.Pending" /></returns>
     public eldbus.Pending GetManagedObjects(eldbus.MessageDelegate dlgt = null)
     {
         CheckHandle();
