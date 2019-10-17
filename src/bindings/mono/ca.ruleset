@@ -1,12 +1,101 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RuleSet Name="CustomRulset" Description="Custom Rulset" ToolsVersion="14.0">
 	<Rules AnalyzerId="Microsoft.Analyzers.ManagedCodeAnalysis" RuleNamespace="Microsoft.Rules.Managed">
+		<!-- Do not declare static members on Generic Types --> 
+		<Rule Id="CA1000" Action="None"/>
+		<!-- Consider making Raise an event --> 
+		<Rule Id="CA1030" Action="None"/>
+		<!-- Catch generic exception -->
+		<Rule Id="CA1031" Action="None"/>
+		<!-- Add extra exception constructors --> 
+		<Rule Id="CA1032" Action="None"/>
+		<!-- Do not nest NativeTypes --> 
+		<Rule Id="CA1034" Action="None"/>
+		<!-- IComparable must implement other comparison operators --> 
+		<Rule Id="CA1036" Action="None"/>
+		<!-- Avoid empty interface --> 
+		<Rule Id="CA1040" Action="None"/>
+		<!-- Consider making property with getter --> 
+		<Rule Id="CA1044" Action="None"/>
+		<!-- Visible instance fields -->
+		<Rule Id="CA1051" Action="None"/>
+		<!-- Static holder can be static -->
+		<Rule Id="CA1052" Action="None"/>
+		<!-- Using parameters before checking for null -->
+		<Rule Id="CA1062" Action="None"/>
+		<!-- Remove IDisposable as Object already has it -->
+		<Rule Id="CA1063" Action="None"/>
+		<!-- Exceptions must be public -->
+		<Rule Id="CA1064" Action="None"/>
+		<!-- Do not raise exception in unexpected locations -->
+		<Rule Id="CA1065" Action="None"/>
+		<!-- String localization -->
+		<Rule Id="CA1303" Action="None"/>
+		<!-- Specify IFormatProvider --> 
+		<Rule Id="CA1305" Action="None"/>
+		<!-- Specify Stringcomparison --> 
+		<Rule Id="CA1307" Action="None"/>
+		<!-- PInvoke should not be visible -->
+		<Rule Id="CA1401" Action="None"/>
+		<!-- Use nameof --> 
+		<Rule Id="CA1507" Action="None"/>
+		<!-- Parameter underscore -->
+		<Rule Id="CA1707" Action="None"/>
+		<!-- Attribute classes must have the Attribute Suffix --> 
+		<Rule Id="CA1710" Action="None"/>
+		<!-- Replace generic parameter with T -->
+		<Rule Id="CA1715" Action="None"/>
+		<!-- Parameter End conflicts with VB -->
+		<Rule Id="CA1716" Action="None"/>
+		<!-- Enum field must be plural -->
+		<Rule Id="CA1717" Action="None"/>
+		<!-- Variable has type name -->
+		<Rule Id="CA1720" Action="None"/>
+		<!-- Property with same name as getter -->
+		<Rule Id="CA1721" Action="None"/>
 		<!-- Type name must not match namespace -->
 		<Rule Id="CA1724" Action="None"/>
 		<!-- Unused parameter. Lots of warnings regarding Dispose(disposing) -->
 		<Rule Id="CA1801" Action="None"/>
+		<!-- Do not ignore function result -->
+		<Rule Id="CA1806" Action="None"/>
+		<!-- Remove static constructors -->
+		<Rule Id="CA1810" Action="None"/>
+		<!-- Realized classes are never instantiated --> 
+		<Rule Id="CA1812" Action="None"/>
+		<!-- Override equal and operator equal on Value Types--> 
+		<Rule Id="CA1815" Action="None"/>
+		<!-- Dispose must call SuppressFinalizers --> 
+		<Rule Id="CA1816" Action="None"/>
+		<!-- Member can be static -->
+		<Rule Id="CA1822" Action="None"/>
+		<!-- Consider zero length array allocation --> 
+		<Rule Id="CA1825" Action="None"/>
+		<!-- Use Count instead of Count() -->
+		<Rule Id="CA1829" Action="None"/>
+		<!-- Call dispose before going out of scope -->
+		<Rule Id="CA2000" Action="None"/>
+		<!-- Call ConfigureWait-->
+		<Rule Id="CA2007" Action="None"/>
+		<!-- PInvoke should specify string marshalling -->
+		<Rule Id="CA2101" Action="None"/>
+		<!-- Rethrow loses stack info -->
+		<Rule Id="CA2200" Action="None"/>
+		<!-- Declare static fields when they are declared and remove static constructor -->
+		<Rule Id="CA2207" Action="None"/>
+		<!-- Instantiate exception params correctly -->
+		<Rule Id="CA2208" Action="None"/>
+		<!-- Dot not call overrideable methods in constructors --> 
+		<Rule Id="CA2214" Action="None"/>
+		<!-- Replace implicit operator -->
+		<Rule Id="CA2225" Action="None"/>
+
+
+
 	</Rules>
 	<Rules AnalyzerId="StyleCop.Analyzers" RuleNamespace="StyleCop.Analyzers">
+		<!-- Ignore docs -->
+		<Rule Id="SA0001" Action="None"/>
 
 		<!-- 10** Spacing rules -->
 		<Rule Id="SA1000" Action="None"/>
