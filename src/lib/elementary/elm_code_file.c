@@ -185,17 +185,16 @@ EAPI void elm_code_file_save(Elm_Code_File *file)
    tmp = _elm_code_file_tmp_path_get(file);
    crchars = elm_code_file_line_ending_chars_get(file, &crlength);
 
-   if (stat(path, &st) != -1)
-     {
-        mode = st.st_mode;
-        have_mode = EINA_TRUE;
-     }
-
    out = fopen(tmp, "w");
    if (out == NULL)
      {
         free(tmp);
         return;
+     }
+   if (fstat(fileno(out), &st) != -1)
+     {
+        mode = st.st_mode;
+        have_mode = EINA_TRUE;
      }
 
    EINA_LIST_FOREACH(file->lines, item, line_item)
