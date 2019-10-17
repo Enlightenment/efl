@@ -2,12 +2,14 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 using static eldbus.EldbusServiceNativeFunctions;
 
 namespace eldbus
 {
 
+[EditorBrowsable(EditorBrowsableState.Never)]
 public static class EldbusServiceNativeFunctions
 {
     [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
