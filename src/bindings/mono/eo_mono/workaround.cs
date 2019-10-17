@@ -26,7 +26,7 @@ public struct ClassDescription
 
 ///<summary>Description of an Eo API operation.</summary>
 [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-public struct Efl_Op_Description
+public struct EflOpDescription
 {
     ///<summary>The EAPI function offering this op. (String with the name of the function on Windows)</summary>
     public IntPtr api_func;
@@ -36,7 +36,7 @@ public struct Efl_Op_Description
 
 ///<summary>List of operations on a given Object.</summary>
 [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-public struct Efl_Object_Ops
+public struct EflObjectOps
 {
     ///<summary>The op descriptions array of size count.</summary>
     public IntPtr descs;
