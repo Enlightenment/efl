@@ -12,7 +12,7 @@ namespace Eina
 /// <summary>EFL Logging facilities.
 /// <para>Since EFL 1.23.</para>
 /// </summary>
-public class Log
+public static class Log
 {
     [DllImport(efl.Libs.Eina)] private static extern void eina_log_print(
             int domain,
@@ -64,7 +64,7 @@ public class Log
     /// <summary>The colors to be used by the logging system.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public class Color
+    public static class Color
     {
         /// <summary>Light red
         /// <para>Since EFL 1.23.</para>

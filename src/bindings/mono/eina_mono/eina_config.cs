@@ -11,7 +11,7 @@ namespace Eina
 /// Manage the initialization and cleanup for eina.
 /// <para>Since EFL 1.23.</para>
 /// </summary>
-public class Config
+public static class Config
 {
     [DllImport(efl.Libs.Eina)] private static extern int eina_init();
     [DllImport(efl.Libs.Eina)] private static extern int eina_shutdown();

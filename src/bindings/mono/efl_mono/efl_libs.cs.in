@@ -5,7 +5,7 @@ namespace efl {
 /// <summary>
 /// Define the name of the libraries to be passed to DllImport statements.
 /// </summary>
-public class Libs {
+public static class Libs {
     public const string Efl = "@EFL_DL_MONO@";
     public const string Ecore = "@ECORE_DL_MONO@";
     public const string Eina = "@EINA_DL_MONO@";
