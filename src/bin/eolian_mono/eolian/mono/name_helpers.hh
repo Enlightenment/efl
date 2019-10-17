@@ -501,15 +501,18 @@ bool open_namespaces(OutputIterator sink, std::vector<std::string> namespaces, C
 {
   std::transform(namespaces.begin(), namespaces.end(), namespaces.begin(), managed_namespace);
 
-  auto open_namespace = *("namespace " << string << " {\n\n");
-  return as_generator(open_namespace).generate(sink, namespaces, context);
+  std::string joined_namespace = join_namespaces(namespaces, '.');
+  if (joined_namespace.empty()) return true;
+  joined_namespace.pop_back();
+
+  return as_generator("namespace " << string << " {\n").generate(sink, joined_namespace, context);
 }
 
 template<typename OutputIterator, typename Context>
 bool close_namespaces(OutputIterator sink, std::vector<std::string> const& namespaces, Context const& context)
 {
-     auto close_namespace = (lit("}") % "\n" ) << "\n\n";
-     return as_generator(close_namespace).generate(sink, namespaces, context);
+     if (namespaces.empty()) return true;
+     return as_generator("}\n\n").generate(sink, attributes::unused, context);
 }
 
 std::string constructor_managed_name(std::string full_name)
