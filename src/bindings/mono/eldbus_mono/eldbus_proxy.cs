@@ -2,12 +2,14 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.ComponentModel;
 
 using static eldbus.EldbusProxyNativeFunctions;
 
 namespace eldbus
 {
 
+[EditorBrowsable(EditorBrowsableState.Never)]    
 public static class EldbusProxyNativeFunctions
 {
     [DllImport(efl.Libs.Eldbus)] public static extern IntPtr
@@ -66,12 +68,15 @@ public static class EldbusProxyNativeFunctions
 }
 
 /// <summary>Represents a DBus proxy object.
-///
-/// Since EFL 1.23.
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 public class Proxy : IDisposable
 {
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public IntPtr Handle {get;set;} = IntPtr.Zero;
+    /// <summary>Whether this managed list owns the native one.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public bool Own {get;set;} = true;
 
     private void InitNew(IntPtr handle, bool own)
@@ -89,21 +94,36 @@ public class Proxy : IDisposable
         }
     }
 
+    [EditorBrowsable(EditorBrowsableState.Never)]
     public Proxy(IntPtr handle, bool own)
     {
         InitNew(handle, own);
     }
 
+    /// <summary>
+    ///   Constructor
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="obj">The <see cref="eldbus.Object" />.</param>
+    /// <param name="_interface">The interface name.</param>
     public Proxy(eldbus.Object obj, string _interface)
     {
         InitNew(eldbus_proxy_get(obj.Handle, _interface), true);
     }
 
+    /// <summary>Finalizes with garbage collector.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     ~Proxy()
     {
         Dispose(false);
     }
 
+    /// <summary>Disposes of this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="disposing">Whether this was called from the finalizer (<c>false</c>) or from the
+    /// <see cref="Dispose()"/> method.</param>
     protected virtual void Dispose(bool disposing)
     {
         IntPtr h = Handle;
@@ -126,17 +146,28 @@ public class Proxy : IDisposable
         }
     }
 
+    /// <summary>Disposes of this list.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
         GC.SuppressFinalize(this);
     }
 
+    /// <summary>Releases the native resources held by this instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Free()
     {
         Dispose();
     }
 
+    /// <summary>
+    ///   Releases the native handler.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>The native handler.</returns>
     public IntPtr Release()
     {
         IntPtr h = Handle;
