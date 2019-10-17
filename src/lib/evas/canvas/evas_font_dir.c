@@ -1264,10 +1264,9 @@ object_text_font_cache_dir_add(char *dir)
              char *p;
 
              fn->type = 0;
-             strcpy(tmp2, file);
-             p = strrchr(tmp2, '.');
-             if (p) *p = 0;
-             fn->simple.name = eina_stringshare_add(tmp2);
+             p = strrchr(file, '.');
+             if (p) fn->simple.name = eina_stringshare_add_length(file, p - file);
+             else fn->simple.name = eina_stringshare_add(file);
              eina_file_path_join(tmp2, PATH_MAX, dir, file);
              fn->path = eina_stringshare_add(tmp2);
              fd->fonts = eina_list_append(fd->fonts, fn);
