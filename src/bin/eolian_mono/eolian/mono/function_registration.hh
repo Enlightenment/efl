@@ -51,7 +51,7 @@ struct function_registration_generator
     if(!as_generator(
         indent << "if (methods.FirstOrDefault(m => m.Name == \"" << string << "\") != null)\n"
         << indent << "{\n"
-        << indent << scope_tab << "descs.Add(new Efl_Op_Description() {"
+        << indent << scope_tab << "descs.Add(new EflOpDescription() {"
 #ifdef _WIN32
         << "api_func = Marshal.StringToHGlobalAnsi(\"" << string << "\")"
 #else

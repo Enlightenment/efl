@@ -424,9 +424,9 @@ struct klass
          if(!as_generator(
              indent << scope_tab << "/// <summary>Gets the list of Eo operations to override.</summary>\n"
              << indent << scope_tab << "/// <returns>The list of Eo operations to be overload.</returns>\n"
-             << indent << scope_tab << "public override System.Collections.Generic.List<Efl_Op_Description> GetEoOps(System.Type type, bool includeInherited)\n"
+             << indent << scope_tab << "public override System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited)\n"
              << indent << scope_tab << "{\n"
-             << indent << scope_tab << scope_tab << "var descs = new System.Collections.Generic.List<Efl_Op_Description>();\n"
+             << indent << scope_tab << scope_tab << "var descs = new System.Collections.Generic.List<EflOpDescription>();\n"
             )
             .generate(sink, attributes::unused, inative_cxt))
            return false;

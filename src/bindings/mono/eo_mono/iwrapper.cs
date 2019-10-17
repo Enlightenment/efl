@@ -409,7 +409,7 @@ public class Globals
                ptr = IntPtr.Add(ptr, Marshal.SizeOf(descs[0]));
             }
 
-            Efl_Object_Ops ops;
+            EflObjectOps ops;
             ops.descs = descs_ptr;
             ops.count = (UIntPtr)count;
             IntPtr ops_ptr = Marshal.AllocHGlobal(Marshal.SizeOf(ops));
@@ -777,7 +777,7 @@ public static class Config
 public abstract class NativeClass : System.Attribute
 {
     public abstract IntPtr GetEflClass();
-    public abstract System.Collections.Generic.List<Efl_Op_Description> GetEoOps(System.Type type, bool includeInherited);
+    public abstract System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited);
 }
 
 /// <summary>Attribute for private native classes.
@@ -790,7 +790,7 @@ public class PrivateNativeClass : NativeClass
         return IntPtr.Zero;
     }
 
-    public override System.Collections.Generic.List<Efl_Op_Description> GetEoOps(System.Type type, bool includeInherited)
+    public override System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited)
     {
         return null;
     }

@@ -357,11 +357,11 @@ public abstract class EoWrapper : IWrapper, IDisposable
 
         /// <summary>Gets the list of Eo operations to override.</summary>
         /// <returns>The list of Eo operations to be overload.</returns>
-        public override System.Collections.Generic.List<Efl_Op_Description> GetEoOps(Type type, bool includeInherited)
+        public override System.Collections.Generic.List<EflOpDescription> GetEoOps(Type type, bool includeInherited)
         {
-            var descs = new System.Collections.Generic.List<Efl_Op_Description>();
+            var descs = new System.Collections.Generic.List<EflOpDescription>();
 
-            descs.Add(new Efl_Op_Description()
+            descs.Add(new EflOpDescription()
             {
                 api_func = Efl.Eo.FunctionInterop.LoadFunctionPointer(EoModule.Module, "efl_constructor"),
                 func = Marshal.GetFunctionPointerForDelegate(csharpEflConstructorStaticDelegate)
