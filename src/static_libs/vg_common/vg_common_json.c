@@ -54,18 +54,6 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
              continue;
           }
 
-        //Skip Invisible Stroke?
-        if (node->mStroke.enable && node->mStroke.width == 0)
-          {
-             char *key = _get_key_val(node);
-             Efl_Canvas_Vg_Shape *shape = efl_key_data_get(parent, key);
-             if (shape) efl_gfx_entity_visible_set(shape, EINA_FALSE);
-             continue;
-          }
-
-        const float *data = node->mPath.ptPtr;
-        if (!data) continue;
-
         char *key = _get_key_val(node);
         Efl_Canvas_Vg_Shape *shape = efl_key_data_get(parent, key);
         if (!shape)
@@ -75,6 +63,16 @@ _construct_drawable_nodes(Efl_Canvas_Vg_Container *parent, const LOTLayerNode *l
           }
         else
           efl_gfx_path_reset(shape);
+
+        //Skip Invisible Stroke?
+        if (node->mStroke.enable && node->mStroke.width == 0)
+          {
+             efl_gfx_entity_visible_set(shape, EINA_FALSE);
+             continue;
+          }
+
+        const float *data = node->mPath.ptPtr;
+        if (!data) continue;
 
         efl_gfx_entity_visible_set(shape, EINA_TRUE);
 #if DEBUG
