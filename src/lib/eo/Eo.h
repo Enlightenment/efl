@@ -2268,6 +2268,17 @@ EAPI int efl_callbacks_cmp(const Efl_Callback_Array_Item *a, const Efl_Callback_
 #define efl_event_callback_forwarder_add(obj, desc, new_obj) efl_event_callback_forwarder_priority_add(obj, desc, EFL_CALLBACK_PRIORITY_DEFAULT, new_obj)
 
 /**
+ * @brief Count the number of event handler registered for a specific event.
+ *
+ * @param[in] obj The object.
+ * @param[in] desc The specific event.
+ * @return The number of handler registered for this specific events.
+ *
+ * @ingroup Efl_Object
+ */
+EOAPI unsigned int efl_event_callback_count(const Eo *obj, const Efl_Event_Description *desc);
+
+/**
  * @def Replace the previous Eo pointer with new content.
  *
  * @param storage Pointer to the space holding the object to be replaced.
