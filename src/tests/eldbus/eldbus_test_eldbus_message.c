@@ -451,7 +451,7 @@ _vget_response(char *str,...)
 
    va_start(ap, str);
    if (!eldbus_message_arguments_vget(message_vget, str, ap))
-     return;
+     printf("%s:%u failed\n", __FILE__, __LINE__);
 
    va_end(ap);
 }
@@ -531,7 +531,7 @@ _vget_iter_response(Eldbus_Message_Iter *iter,...)
 
    va_start(ap, iter);
    if (!eldbus_message_iter_arguments_vget(iter, "i", ap))
-     return;
+     printf("%s:%u failed\n", __FILE__, __LINE__);
 
    va_end(ap);
 }
