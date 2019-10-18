@@ -174,6 +174,7 @@ _efl_appthread_efl_io_writer_write(Eo *obj, Efl_Appthread_Data *pd, Eina_Slice *
 
    errno = 0;
    if (pd->fd.in == -1) goto err;
+   if (!slice) return EINVAL;
 
    do
      {
@@ -194,7 +195,7 @@ _efl_appthread_efl_io_writer_write(Eo *obj, Efl_Appthread_Data *pd, Eina_Slice *
      }
    slice->len = r;
 
-   if ((slice) && (slice->len > 0))
+   if (slice->len > 0)
      efl_io_writer_can_write_set(obj, EINA_FALSE);
    if (r == 0)
      {
