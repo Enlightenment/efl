@@ -1359,6 +1359,7 @@ eng_image_native_set(void *engine, void *image, void *native)
           }
      }
 
+   if (!img) return NULL;
    img2 = glsym_evas_gl_common_image_new_from_data(ob->gl_context, img->w,
                                                    img->h, NULL, img->alpha,
                                                    EVAS_COLORSPACE_ARGB8888);
