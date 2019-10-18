@@ -446,7 +446,10 @@ Eina_Bool
 evas_bidi_props_reorder_line(Eina_Unicode *eina_ustr, size_t start, size_t len, const Evas_BiDi_Paragraph_Props *props, EvasBiDiStrIndex **_v_to_l)
 {
    EvasBiDiStrIndex *v_to_l = NULL;
-   FriBidiChar *ustr = NULL, *base_ustr = NULL;
+   FriBidiChar *ustr = NULL;
+#ifdef EVAS_FRIBIDI_EINA_UNICODE_UNEQUAL
+   FriBidiChar *base_ustr = NULL;
+#endif
 
    if (!props)
      return EINA_FALSE;
@@ -502,7 +505,9 @@ evas_bidi_props_reorder_line(Eina_Unicode *eina_ustr, size_t start, size_t len, 
    return EINA_FALSE;
 /* ERROR HANDLING */
 error:
+#ifdef EVAS_FRIBIDI_EINA_UNICODE_UNEQUAL
    if (base_ustr) free(base_ustr);
+#endif
    _SAFE_FREE(v_to_l);
    return EINA_TRUE;
 }
