@@ -1348,6 +1348,7 @@ elm_quicklaunch_exe_path_get(const char *exe, const char *cwd)
         const char *p, *pp;
         char *buf2;
         path = getenv("PATH");
+        if (!path) return NULL;
         buf2 = alloca(strlen(path) + 1);
         p = path;
         pp = p;
