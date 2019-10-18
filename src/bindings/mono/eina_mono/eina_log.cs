@@ -12,7 +12,7 @@ namespace Eina
 /// <summary>EFL Logging facilities.
 /// <para>Since EFL 1.23.</para>
 /// </summary>
-public class Log
+public static class Log
 {
     [DllImport(efl.Libs.Eina)] private static extern void eina_log_print(
             int domain,
@@ -64,56 +64,56 @@ public class Log
     /// <summary>The colors to be used by the logging system.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public class Color
+    public static class Color
     {
         /// <summary>Light red
         /// <para>Since EFL 1.23.</para>
         /// </summary>
-        public static string LIGHTRED  = "\033[31;1m";
+        public const string LIGHTRED  = "\033[31;1m";
         /// <summary>Red
         /// <para>Since EFL 1.23.</para>
         /// </summary>
-        public static string RED       = "\033[31m";
+        public const string RED       = "\033[31m";
         /// <summary>Light blue
         /// <para>Since EFL 1.23.</para>
         /// </summary>
-        public static string LIGHTBLUE = "\033[34;1m";
+        public const string LIGHTBLUE = "\033[34;1m";
         /// <summary>Blue
         /// <para>Since EFL 1.23.</para>
         /// </summary>
-        public static string BLUE      = "\033[34m";
+        public const string BLUE      = "\033[34m";
         /// <summary>Green
         /// <para>Since EFL 1.23.</para>
         /// </summary>
-        public static string GREEN     = "\033[32;1m";
+        public const string GREEN     = "\033[32;1m";
         /// <summary>Yellow
         /// <para>Since EFL 1.23.</para>
         /// </summary>
-        public static string YELLOW    = "\033[33;1m";
+        public const string YELLOW    = "\033[33;1m";
         /// <summary>Orange
         /// <para>Since EFL 1.23.</para>
         /// </summary>
-        public static string ORANGE    = "\033[0;33m";
+        public const string ORANGE    = "\033[0;33m";
         /// <summary>White
         /// <para>Since EFL 1.23.</para>
         /// </summary>
-        public static string WHITE     = "\033[37;1m";
+        public const string WHITE     = "\033[37;1m";
         /// <summary>Light cyan
         /// <para>Since EFL 1.23.</para>
         /// </summary>
-        public static string LIGHTCYAN = "\033[36;1m";
+        public const string LIGHTCYAN = "\033[36;1m";
         /// <summary>Cyan
         /// <para>Since EFL 1.23.</para>
         /// </summary>
-        public static string CYAN      = "\033[36m";
+        public const string CYAN      = "\033[36m";
         /// <summary>Reset
         /// <para>Since EFL 1.23.</para>
         /// </summary>
-        public static string RESET     = "\033[0m";
+        public const string RESET     = "\033[0m";
         /// <summary>Bold
         /// <para>Since EFL 1.23.</para>
         /// </summary>
-        public static string HIGH      = "\033[1m";
+        public const string HIGH      = "\033[1m";
     }
 
     private static int domain = -1;

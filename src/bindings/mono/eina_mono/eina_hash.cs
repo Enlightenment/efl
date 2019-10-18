@@ -25,111 +25,111 @@ public struct HashTupleNative
 [EditorBrowsable(EditorBrowsableState.Never)]
 public static class HashNativeFunctions
 {
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_hash_new(IntPtr key_length_cb, IntPtr key_cmp_cb, IntPtr key_hash_cb, IntPtr data_free_cb, int buckets_power_size);
 
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_hash_free_cb_set(IntPtr hash, IntPtr data_free_cb);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_hash_string_djb2_new(IntPtr data_free_cb);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_hash_string_superfast_new(IntPtr data_free_cb);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_hash_string_small_new(IntPtr data_free_cb);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_hash_int32_new(IntPtr data_free_cb);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_hash_int64_new(IntPtr data_free_cb);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_hash_pointer_new(IntPtr data_free_cb);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_hash_stringshared_new(IntPtr data_free_cb);
 
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_hash_add(IntPtr hash, IntPtr key, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_hash_direct_add(IntPtr hash, IntPtr key, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_hash_del(IntPtr hash, IntPtr key, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_hash_find(IntPtr hash, IntPtr key);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_hash_modify(IntPtr hash, IntPtr key, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_hash_set(IntPtr hash, IntPtr key, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_hash_move(IntPtr hash, IntPtr old_key, IntPtr new_key);
 
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_hash_free(IntPtr hash);
 
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_hash_free_buckets(IntPtr hash);
 
-    [DllImport(efl.Libs.Eina)] public static extern int
+    [DllImport(efl.Libs.Eina)] internal static extern int
         eina_hash_population(IntPtr hash);
 
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_hash_add_by_hash(IntPtr hash, IntPtr key, int key_length, int key_hash, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_hash_direct_add_by_hash(IntPtr hash, IntPtr key, int key_length, int key_hash, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_hash_del_by_key_hash(IntPtr hash, IntPtr key, int key_length, int key_hash);
 
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_hash_del_by_key(IntPtr hash, IntPtr key);
 
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_hash_del_by_data(IntPtr hash, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_hash_del_by_hash(IntPtr hash, IntPtr key, int key_length, int key_hash, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_hash_find_by_hash(IntPtr hash, IntPtr key, int key_length, int key_hash);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_hash_modify_by_hash(IntPtr hash, IntPtr key, int key_length, int key_hash, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_hash_iterator_key_new(IntPtr hash);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_hash_iterator_data_new(IntPtr hash);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_hash_iterator_tuple_new(IntPtr hash);
 
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_hash_foreach(IntPtr hash, IntPtr func, IntPtr fdata);
 
 
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_hash_list_append(IntPtr hash, IntPtr key, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_hash_list_prepend(IntPtr hash, IntPtr key, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_hash_list_remove(IntPtr hash, IntPtr key, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] public static extern int
+    [DllImport(efl.Libs.Eina)] internal static extern int
         eina_hash_superfast(string key, int len);
 
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(efl.Libs.CustomExports)] internal static extern IntPtr
         eina_hash_iterator_ptr_key_wrapper_new_custom_export_mono(IntPtr hash);
 }
 

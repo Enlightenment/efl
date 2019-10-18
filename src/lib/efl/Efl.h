@@ -115,7 +115,7 @@ extern EWAPI Eina_Error EFL_GFX_IMAGE_LOAD_ERROR_RECURSIVE_REFERENCE;
 #endif /* EFL_BETA_API_SUPPORT */
 
 #include "interfaces/efl_gfx_types.eot.h"
-#include "interfaces/efl_ui_types.eot.h"
+#include "interfaces/efl_ui_drag_types.eot.h"
 typedef Efl_Gfx_Path_Command_Type Efl_Gfx_Path_Command;
 
 /* Interfaces */
@@ -246,7 +246,7 @@ EAPI Efl_Object *efl_part(const Eo *obj, const char *name);
 
 #ifndef EFL_NOLEGACY_API_SUPPORT
 #include "interfaces/efl_gfx_types.eot.h"
-#include "interfaces/efl_ui_types.eot.h"
+#include "interfaces/efl_ui_drag_types.eot.h"
 #include "interfaces/efl_input_types.eot.h"
 #include "interfaces/efl_text_types.eot.h"
 #endif

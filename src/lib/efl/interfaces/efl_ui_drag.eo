@@ -1,6 +1,6 @@
 /* FIXME: "dragable" is not as common as "draggable" outside EFL... */
 
-import efl_ui_types;
+import efl_ui_drag_types;
 
 interface @beta Efl.Ui.Drag
 {

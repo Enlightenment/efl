@@ -3591,7 +3591,7 @@ public class ValueTypeMarshaler : ICustomMarshaler
         var r = ValueTypeBridge.GetManaged(pNativeData);
         return new ValueTypeBox(r);
     }
-    public static Eina.ValueType vtype;
+    public static readonly Eina.ValueType vtype;
 
     /// <summary>Retrieves the C pointer from a given boxed enum value type.</summary>
     public IntPtr MarshalManagedToNative(object managedObj)

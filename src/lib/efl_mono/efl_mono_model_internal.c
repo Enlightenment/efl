@@ -101,11 +101,12 @@ _efl_mono_model_internal_add_property(Eo *obj EINA_UNUSED, Efl_Mono_Model_Intern
   eina_array_push (pd->properties_names, eina_stringshare_add(info->name));
 }
 
+static const char* _efl_mono_model_properties_names[] = { };
 
 static Eina_Iterator *
 _efl_mono_model_internal_efl_model_properties_get(const Eo *obj EINA_UNUSED, Efl_Mono_Model_Internal_Data *pd EINA_UNUSED)
 {
-  return eina_array_iterator_new (NULL);
+  return EINA_C_ARRAY_ITERATOR_NEW(_efl_mono_model_properties_names);
 }
 
 static Efl_Object*
@@ -128,6 +129,38 @@ _efl_mono_model_internal_efl_model_children_count_get(const Eo *obj EINA_UNUSED,
 {
   return eina_array_count_get(pd->items);
 }
+
+static Eina_Future *
+_efl_mono_model_internal_efl_model_children_slice_get(Eo *obj, Efl_Mono_Model_Internal_Data *pd, unsigned int start, unsigned int count EINA_UNUSED)
+{
+  unsigned int i;
+  Eina_Value array = EINA_VALUE_EMPTY;
+  Efl_Mono_Model_Internal_Child_Data* pcd;
+
+  eina_value_array_setup(&array, EINA_VALUE_TYPE_OBJECT, count % 8);
+
+  for (i = start; i != start + count; ++i)
+  {
+    pcd = eina_array_data_get(pd->items, i);
+    eina_value_array_append (&array, pcd->child);
+  }
+
+  return efl_loop_future_resolved(obj, array);
+}
+
+static Eina_Future *
+_efl_mono_model_internal_efl_model_property_set(Eo *obj, Efl_Mono_Model_Internal_Data *pd EINA_UNUSED, const char *property EINA_UNUSED, Eina_Value *value EINA_UNUSED)
+{
+  return efl_loop_future_rejected(obj, ENOSYS);
+}
+
+static Eina_Value *
+_efl_mono_model_internal_efl_model_property_get(const Eo *obj EINA_UNUSED, Efl_Mono_Model_Internal_Data *pd EINA_UNUSED, const char *property EINA_UNUSED)
+{
+  return eina_value_error_new(ENOSYS);
+}
+
+/// Model_Internal_Child implementations
 
 static Eina_Future *
 _efl_mono_model_internal_child_efl_model_property_set(Eo *obj, Efl_Mono_Model_Internal_Child_Data *pd, const char *property, Eina_Value *value)
@@ -178,24 +211,6 @@ _efl_mono_model_internal_child_efl_model_property_get(const Eo *obj EINA_UNUSED,
       eina_value_copy (src, clone);
       return clone;
     }
-}
-
-static Eina_Future *
-_efl_mono_model_internal_efl_model_children_slice_get(Eo *obj, Efl_Mono_Model_Internal_Data *pd, unsigned int start, unsigned int count EINA_UNUSED)
-{
-  unsigned int i;
-  Eina_Value array = EINA_VALUE_EMPTY;
-  Efl_Mono_Model_Internal_Child_Data* pcd;
-
-  eina_value_array_setup(&array, EINA_VALUE_TYPE_OBJECT, count % 8);
-
-  for (i = start; i != start + count; ++i)
-  {
-    pcd = eina_array_data_get(pd->items, i);
-    eina_value_array_append (&array, pcd->child);
-  }
-
-  return efl_loop_future_resolved(obj, array);
 }
 
 static Eo *

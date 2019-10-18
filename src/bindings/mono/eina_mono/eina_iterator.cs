@@ -14,20 +14,20 @@ namespace Eina
 [EditorBrowsable(EditorBrowsableState.Never)]
 public static class IteratorNativeFunctions
 {
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_iterator_free(IntPtr iterator);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_iterator_container_get(IntPtr iterator);
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_iterator_next(IntPtr iterator, out IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_iterator_foreach(IntPtr iterator, IntPtr callback, IntPtr fdata);
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_iterator_lock(IntPtr iterator);
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_iterator_unlock(IntPtr iterator);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_carray_iterator_new(IntPtr array);
 }
 

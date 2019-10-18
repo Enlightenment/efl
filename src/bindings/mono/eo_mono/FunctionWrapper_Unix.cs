@@ -7,7 +7,7 @@ namespace Efl
 namespace Eo
 {
 
-public partial class FunctionInterop
+public static partial class FunctionInterop
 {
     [DllImport(efl.Libs.Libdl)]
     private static extern IntPtr dlsym(IntPtr handle, string symbol);

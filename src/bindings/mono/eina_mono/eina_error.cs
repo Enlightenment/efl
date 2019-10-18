@@ -26,28 +26,28 @@ public struct Error : IComparable<Error>
     /// Unhandled Exception error identifier.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static Error UNHANDLED_EXCEPTION;
+    public static readonly Error UNHANDLED_EXCEPTION;
 
     /// <summary>
     /// No error identifier.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static Error NO_ERROR = new Error(0);
+    public static readonly Error NO_ERROR = new Error(0);
     /// <summary>
     /// Permission error identifier.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static Error EPERM = new Error(1);
+    public static readonly Error EPERM = new Error(1);
     /// <summary>
     /// No entity error identifier.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static Error ENOENT = new Error(2);
+    public static readonly Error ENOENT = new Error(2);
     /// <summary>
     /// Cancelled error identifier.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static Error ECANCELED = new Error(125);
+    public static readonly Error ECANCELED = new Error(125);
 
     /// <summary>
     /// Constructor.

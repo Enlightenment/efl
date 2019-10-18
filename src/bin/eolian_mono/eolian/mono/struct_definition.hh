@@ -435,7 +435,17 @@ struct struct_definition_generator
        {
           // Constructor with default parameters for easy struct initialization
           if(!as_generator(
-                      indent << scope_tab << "/// <summary>Constructor for " << string << ".</summary>\n"
+                      indent << scope_tab << "/// <summary>Constructor for " << string << ".\n"
+               ).generate(sink, struct_name, context))
+            return false;
+
+          if (!struct_.documentation.since.empty())
+            if (!as_generator(indent << scope_tab << "/// <para>Since EFL " + struct_.documentation.since + ".</para>\n"
+                    ).generate(sink, attributes::unused, context))
+              return false;
+
+          if (!as_generator(
+                      indent << scope_tab << "/// </summary>\n"
                       << *(indent << scope_tab << field_argument_docs << "\n")
                       << indent << scope_tab << "public " << string << "(\n"
                       << ((indent << scope_tab << scope_tab << field_argument_default) % ",\n")
@@ -443,12 +453,22 @@ struct struct_definition_generator
                       << indent << scope_tab << "{\n"
                       << *(indent << scope_tab << scope_tab << field_argument_assignment << ";\n")
                       << indent << scope_tab << "}\n\n")
-             .generate(sink, std::make_tuple(struct_name, struct_.fields, struct_name, struct_.fields, struct_.fields), context))
+             .generate(sink, std::make_tuple(struct_.fields, struct_name, struct_.fields, struct_.fields), context))
               return false;
        }
 
      if(!as_generator(
-            indent << scope_tab << "/// <summary>Implicit conversion to the managed representation from a native pointer.</summary>\n"
+            indent << scope_tab << "/// <summary>Implicit conversion to the managed representation from a native pointer.\n"
+            ).generate(sink, attributes::unused, context))
+       return false;
+
+     if (!struct_.documentation.since.empty())
+       if (!as_generator(indent << scope_tab << "/// <para>Since EFL " + struct_.documentation.since + ".</para>\n"
+            ).generate(sink, attributes::unused, context))
+         return false;
+
+     if (!as_generator(
+            indent << scope_tab << "/// </summary>\n"
             << indent << scope_tab << "/// <param name=\"ptr\">Native pointer to be converted.</param>\n"
             << indent << scope_tab << "public static implicit operator " << struct_name << "(IntPtr ptr)\n"
             << indent << scope_tab << "{\n"

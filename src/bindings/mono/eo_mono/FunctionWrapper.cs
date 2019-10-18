@@ -12,7 +12,7 @@ namespace Eo
 ///This class has a platform-dependent implementation on whether it
 ///is compiled for Windows (using LoadLibrary/GetProcAddress) or Unix
 ///(dlopen/dlsym).</summary>
-public partial class FunctionInterop
+public static partial class FunctionInterop
 {
     ///<summary>Loads a function pointer from the given module.</summary>
     ///<param name="moduleName">The name of the module containing the function.</param>

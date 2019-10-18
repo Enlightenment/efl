@@ -7,7 +7,7 @@ namespace Efl
 namespace Eo
 {
 
-public partial class FunctionInterop
+public static partial class FunctionInterop
 {
     [DllImport(efl.Libs.Libdl)]
     public static extern IntPtr GetProcAddress(IntPtr handle, string symbol);

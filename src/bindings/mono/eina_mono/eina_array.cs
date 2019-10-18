@@ -14,36 +14,36 @@ namespace Eina
 [EditorBrowsable(EditorBrowsableState.Never)]
 public static class ArrayNativeFunctions
 {
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_array_new(uint step);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_array_free(IntPtr array);
-    [DllImport(efl.Libs.Eina)] public static extern void
+    [DllImport(efl.Libs.Eina)] internal static extern void
         eina_array_flush(IntPtr array);
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_array_remove(IntPtr array, IntPtr keep, IntPtr gdata);
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_array_push(IntPtr array, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_array_iterator_new(IntPtr array);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_array_accessor_new(IntPtr array);
 
-    [DllImport(efl.Libs.CustomExports)] public static extern void
+    [DllImport(efl.Libs.CustomExports)] internal static extern void
         eina_array_clean_custom_export_mono(IntPtr array);
-    [DllImport(efl.Libs.CustomExports)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.CustomExports)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_array_push_custom_export_mono(IntPtr array, IntPtr data);
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(efl.Libs.CustomExports)] internal static extern IntPtr
         eina_array_pop_custom_export_mono(IntPtr array);
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(efl.Libs.CustomExports)] internal static extern IntPtr
         eina_array_data_get_custom_export_mono(IntPtr array, uint idx);
-    [DllImport(efl.Libs.CustomExports)] public static extern void
+    [DllImport(efl.Libs.CustomExports)] internal static extern void
         eina_array_data_set_custom_export_mono(IntPtr array, uint idx, IntPtr data);
-    [DllImport(efl.Libs.CustomExports)] public static extern uint
+    [DllImport(efl.Libs.CustomExports)] internal static extern uint
         eina_array_count_custom_export_mono(IntPtr array);
 
-    [DllImport(efl.Libs.CustomExports)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.CustomExports)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_array_foreach_custom_export_mono(IntPtr array, IntPtr cb, IntPtr fdata);
 }
 
@@ -52,7 +52,7 @@ public static class ArrayNativeFunctions
 /// </summary>
 public class Array<T> : IEnumerable<T>, IDisposable
 {
-    public static uint DefaultStep = 32;
+    public const uint DefaultStep = 32;
 
     /// <summary>Pointer to the native buffer.</summary>
     [EditorBrowsable(EditorBrowsableState.Never)]

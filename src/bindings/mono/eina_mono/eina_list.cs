@@ -15,94 +15,94 @@ namespace Eina
 [EditorBrowsable(EditorBrowsableState.Never)]
 public static class ListNativeFunctions
 {
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_append(IntPtr list, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_prepend(IntPtr list, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_append_relative(IntPtr list, IntPtr data, IntPtr relative);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_append_relative_list(IntPtr list, IntPtr data, IntPtr relative);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_prepend_relative(IntPtr list, IntPtr data, IntPtr relative);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_prepend_relative_list(IntPtr list, IntPtr data, IntPtr relative);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_sorted_insert(IntPtr list, IntPtr func, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_remove(IntPtr list, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_remove_list(IntPtr list, IntPtr remove_list);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_promote_list(IntPtr list, IntPtr move_list);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_demote_list(IntPtr list, IntPtr move_list);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_data_find(IntPtr list, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_data_find_list(IntPtr list, IntPtr data);
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_list_move(ref IntPtr to, ref IntPtr from, IntPtr data);
-    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] public static extern bool
+    [DllImport(efl.Libs.Eina)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
         eina_list_move_list(ref IntPtr to, ref IntPtr from, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_free(IntPtr list);
-    [DllImport(efl.Libs.CustomExports)] public static extern void
+    [DllImport(efl.Libs.CustomExports)] internal static extern void
         efl_mono_thread_safe_eina_list_free(IntPtr list);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_nth(IntPtr list, uint n);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_nth_list(IntPtr list, uint n);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_reverse(IntPtr list);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_reverse_clone(IntPtr list);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_clone(IntPtr list);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_sort(IntPtr list, uint limit, IntPtr func);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_shuffle(IntPtr list, IntPtr func);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_merge(IntPtr left, IntPtr right);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_sorted_merge(IntPtr left, IntPtr right, IntPtr func);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_split_list(IntPtr list, IntPtr relative, ref IntPtr right);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_search_sorted_near_list(IntPtr list, IntPtr func, IntPtr data, IntPtr result_cmp);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_search_sorted_list(IntPtr list, IntPtr func, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_search_sorted(IntPtr list, IntPtr func, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_search_unsorted_list(IntPtr list, IntPtr func, IntPtr data);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_search_unsorted(IntPtr list, IntPtr func, IntPtr data);
 
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_iterator_new(IntPtr list);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_iterator_reversed_new(IntPtr list);
-    [DllImport(efl.Libs.Eina)] public static extern IntPtr
+    [DllImport(efl.Libs.Eina)] internal static extern IntPtr
         eina_list_accessor_new(IntPtr list);
-    [DllImport(efl.Libs.Eina)] public static extern int
+    [DllImport(efl.Libs.Eina)] internal static extern int
         eina_list_data_idx(IntPtr list, IntPtr data);
 
 
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(efl.Libs.CustomExports)] internal static extern IntPtr
         eina_list_last_custom_export_mono(IntPtr list);
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(efl.Libs.CustomExports)] internal static extern IntPtr
         eina_list_next_custom_export_mono(IntPtr list);
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(efl.Libs.CustomExports)] internal static extern IntPtr
         eina_list_prev_custom_export_mono(IntPtr list);
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(efl.Libs.CustomExports)] internal static extern IntPtr
         eina_list_data_get_custom_export_mono(IntPtr list);
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(efl.Libs.CustomExports)] internal static extern IntPtr
         eina_list_data_set_custom_export_mono(IntPtr list, IntPtr data);
-    [DllImport(efl.Libs.CustomExports)] public static extern uint
+    [DllImport(efl.Libs.CustomExports)] internal static extern uint
         eina_list_count_custom_export_mono(IntPtr list);
-    [DllImport(efl.Libs.CustomExports)] public static extern IntPtr
+    [DllImport(efl.Libs.CustomExports)] internal static extern IntPtr
         eina_list_last_data_get_custom_export_mono(IntPtr list);
 }
 
