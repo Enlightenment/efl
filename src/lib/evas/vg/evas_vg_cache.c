@@ -251,10 +251,10 @@ _caching_root_update(Vg_Cache_Entry *vg_entry)
            to this root pointer. */
         vg_entry->root[0] = efl_duplicate(vfd->root);
      }
-   else if (vg_entry->root[0] != vfd->root)
+   else
      {
         if (vg_entry->root[0]) efl_unref(vg_entry->root[0]);
-        vg_entry->root[0] = efl_ref(vfd->root);
+        vg_entry->root[0] = efl_duplicate(vfd->root);
      }
 
    //Animatable?
@@ -263,20 +263,14 @@ _caching_root_update(Vg_Cache_Entry *vg_entry)
    //Start frame
    if (vfd->anim_data->frame_num == 0)
      {
-        if (vg_entry->root[1] != vfd->root)
-          {
-             if (vg_entry->root[1]) efl_unref(vg_entry->root[1]);
-             vg_entry->root[1] = efl_ref(vfd->root);
-          }
+        if (vg_entry->root[1]) efl_unref(vg_entry->root[1]);
+        vg_entry->root[1] = efl_duplicate(vfd->root);
      }
    //End frame
    else if (vfd->anim_data->frame_num == (vfd->anim_data->frame_cnt - 1))
      {
-        if (vg_entry->root[2] != vfd->root)
-          {
-             if (vg_entry->root[2]) efl_unref(vg_entry->root[2]);
-             vg_entry->root[2] = efl_ref(vfd->root);
-          }
+        if (vg_entry->root[2]) efl_unref(vg_entry->root[2]);
+        vg_entry->root[2] = efl_duplicate(vfd->root);
      }
 }
 
