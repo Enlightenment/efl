@@ -476,6 +476,7 @@ eina_convert_strtod_c(const char *nptr, char **endptr)
    unsigned long long integer_part;
    int minus;
 
+   if (endptr) *endptr = (char*)nptr;
    EINA_SAFETY_ON_NULL_RETURN_VAL(nptr, 0.0);
 
    a = iter = nptr;
