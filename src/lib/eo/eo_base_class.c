@@ -1492,6 +1492,29 @@ _efl_object_event_callback_priority_add(Eo *obj, Efl_Object_Data *pd,
    const Efl_Callback_Array_Item_Full arr[] =
      { {desc, priority, func, (void *)user_data}, {NULL, 0, NULL, NULL}};
    Eo_Callback_Description *cb = _eo_callback_new();
+#ifdef EO_DEBUG
+   unsigned int idx, r = 0, entries = 0;
+
+   for (idx = pd->callbacks_count ; idx > 0; idx--)
+     {
+        Eo_Callback_Description **cb;
+
+        cb = pd->callbacks + idx - 1;
+        if (!(*cb)->func_array)
+          {
+             if (((*cb)->items.item.desc == desc) &&
+                 ((*cb)->items.item.func == func) &&
+                 ((*cb)->priority == priority) &&
+                 ((*cb)->generation == _efl_event_generation(pd)))
+               r++;
+          }
+        entries++;
+     }
+   if (r > 1) INF("Object '%s' got %i callback with event '%s' registered.",
+                  efl_debug_name_get(obj), r, desc->name);
+   if (entries > 10) INF("Object '%s' got %i callbacks.",
+                         efl_debug_name_get(obj), entries);
+#endif
 
    // very unlikely so improve l1 instr cache by using goto
    if (EINA_UNLIKELY(!cb || !desc || !func)) goto err;
@@ -1582,6 +1605,7 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
    Efl_Callback_Array_Item_Full *ev_array;
 #ifdef EO_DEBUG
    const Efl_Callback_Array_Item *prev;
+   unsigned int idx, r = 0, entries = 0;
 #endif
 
    // very unlikely so improve l1 instr cache by using goto
@@ -1605,6 +1629,40 @@ _efl_object_event_callback_array_priority_add(Eo *obj, Efl_Object_Data *pd,
    cb->func_array = EINA_TRUE;
    cb->generation = _efl_event_generation(pd);
    if (!!cb->generation) pd->need_cleaning = EINA_TRUE;
+
+#ifdef EO_DEBUG
+   for (idx = pd->callbacks_count ; idx > 0; idx--)
+     {
+        Eo_Callback_Description **cb;
+
+        cb = pd->callbacks + idx - 1;
+        if ((*cb)->func_array)
+          {
+             if (((*cb)->items.item_array == array) &&
+                 ((*cb)->priority == priority) &&
+                 ((*cb)->generation == _efl_event_generation(pd)))
+               r++;
+          }
+        entries++;
+     }
+   if (r > 1)
+     {
+        Eina_Strbuf *buf = eina_strbuf_new();
+        Eina_Bool first = EINA_TRUE;
+
+        for (it = array; it->func; it++)
+          {
+             if (first) eina_strbuf_append(buf, it->desc->name);
+             else eina_strbuf_append_printf(buf, ", %s", it->desc->name);
+             first = EINA_FALSE;
+          }
+        INF("Object '%s' got %i callback with events array %s registered.",
+            efl_debug_name_get(obj), r, eina_strbuf_string_get(buf));
+        eina_strbuf_free(buf);
+     }
+   if (entries > 10) INF("Object '%s' got %i callbacks.",
+                         efl_debug_name_get(obj), entries);
+#endif
 
    _eo_callbacks_sorted_insert(pd, cb);
    for (it = cb->items.item_array; it->func; it++)
