@@ -382,8 +382,8 @@ EFL_END_TEST
 
 EFL_START_TEST(ecore_test_ecore_file_path)
 {
-   const char *src_dir, *src_file, *dest_file;
-   char *dup_dir, *path;
+   const char *src_dir, *dest_file;
+   char *dup_dir, *path, *src_file;
    unsigned int ret;
    int fd;
    Eina_Bool res;
@@ -440,13 +440,14 @@ EFL_START_TEST(ecore_test_ecore_file_path)
 
    ret = ecore_file_shutdown();
    fail_if(ret != 0);
+   free(src_file);
 }
 EFL_END_TEST
 
 EFL_START_TEST(ecore_test_ecore_file_monitor)
 {
    Ecore_File_Monitor *mon;
-   const char *src_dir;
+   char *src_dir;
    const char *file = "EcoreFileDest";
    const char *sub_dir[] = {"subdir1", 0};
    char dir_name[MAXSIZE] = {'\0'};
@@ -495,6 +496,7 @@ EFL_START_TEST(ecore_test_ecore_file_monitor)
 
    ret = ecore_file_shutdown();
    fail_if(ret != 0);
+   free(src_dir);
 }
 EFL_END_TEST
 
