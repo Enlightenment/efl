@@ -2135,6 +2135,7 @@ ecore_getopt_parse_positional(const Ecore_Getopt *parser,
      start = argc;
    else if (start < 1)
      start = _ecore_getopt_parse_find_nonargs_base(parser, argc, argv);
+   if (start < 0) goto error;
 
    nonargs = start;
    for (desc = parser->descs; !_ecore_getopt_desc_is_sentinel(desc); desc++);
