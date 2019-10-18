@@ -1824,7 +1824,8 @@ _ecore_main_select(Eo *obj, Efl_Loop_Data *pd, double timeout)
      {
         // polling on the epoll fd will wake when fd in the epoll set is active
         max_fd = _ecore_get_epoll_fd(obj, pd);
-        FD_SET(max_fd, &rfds);
+        if (max_fd > -1)
+          FD_SET(max_fd, &rfds);
      }
 #endif
    EINA_LIST_FOREACH(pd->file_fd_handlers, l, fdh)
