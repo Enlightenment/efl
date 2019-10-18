@@ -416,6 +416,7 @@ ecore_hash_dump_stats(Ecore_Hash *hash)
    unsigned int i;
    double variance, sum_n_2 = 0, sum_n = 0;
 
+   if (!hash->size) return;
    for (i = 0; i < ecore_prime_table[hash->size]; i++)
      {
         if (hash->buckets[i])
