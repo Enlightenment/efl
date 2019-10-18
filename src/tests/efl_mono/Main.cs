@@ -15,6 +15,9 @@ class TestMain
 
     static int Main(string[] args)
     {
+        if (Environment.GetEnvironmentVariable("ELM_ENGINE") == null)
+            Environment.SetEnvironmentVariable("ELM_ENGINE", "buffer");
+
         Efl.All.Init(Efl.Csharp.Components.Ui);
 
         bool pass = true;
