@@ -236,6 +236,7 @@ _ecore_evas_wayland_window_update(Ecore_Evas *ee, Ecore_Evas_Engine_Wl_Data *wda
    int fullw, fullh;
 
    einfo = (Evas_Engine_Info_Wayland *)evas_engine_info_get(ee->evas);
+   EINA_SAFETY_ON_NULL_RETURN(einfo);
 
    change = ee->shadow.changed || (new_alpha != ee->alpha);
    ee->alpha = new_alpha;
