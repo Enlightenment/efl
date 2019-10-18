@@ -197,7 +197,7 @@ _to_opacity(const char *str)
    int a = 0;
    double opacity = eina_convert_strtod_c(str, &end);
 
-   if (*end == '\0')
+   if (end && (*end == '\0'))
      a = lrint(opacity * 255);
    return a;
 }
