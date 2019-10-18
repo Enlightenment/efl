@@ -70,8 +70,7 @@ func7(EINA_UNUSED const Eina_Hash *hash,
    val = data;
    if (!val)
      *res = 1;
-
-   if (*val != 7)
+   else if (*val != 7)
      *res = 1;
 
    return EINA_TRUE;

@@ -92,6 +92,7 @@ return_zero_frame(Evas_Canvas3D_Mesh_Data *pd)
    Eina_List *l;
    Evas_Canvas3D_Mesh_Frame *f;
 
+   if (!pd) return NULL;
    EINA_LIST_FOREACH(pd->frames, l, f)
      {
         if (f->frame == 0)

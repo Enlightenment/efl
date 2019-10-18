@@ -113,7 +113,7 @@ _handler_reset(Eo *obj, Efl_Loop_Handler_Data *pd)
 
         if (pd->handler_fd)
           _handler_active_update(obj, pd);
-        else
+        else if (pd->loop_data)
           {
              pd->handler_fd = _ecore_main_fd_handler_add
                (pd->loop, pd->loop_data, obj, pd->fd, _handler_flags_get(pd),
@@ -122,7 +122,7 @@ _handler_reset(Eo *obj, Efl_Loop_Handler_Data *pd)
              if (pd->handler_fd) _handler_active_update(obj, pd);
           }
      }
-   else if (pd->win32)
+   else if (pd->win32 && pd->loop_data)
      {
         pd->handler_win32 = _ecore_main_win32_handler_add
           (pd->loop, pd->loop_data, obj, pd->win32, _cb_handler_win32, obj);
