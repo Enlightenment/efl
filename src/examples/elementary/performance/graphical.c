@@ -509,6 +509,11 @@ _xml_attr_data(void *data EINA_UNUSED, const char *key, const char *value)
              globalGraphical.model_path = strdup(value);/*Don't forget update UI*/
              tmp = strdup(globalGraphical.model_path);
              a = strrchr(tmp,'.');
+             if (!a)
+               {
+                  free(tmp);
+                  return EINA_FALSE;
+               }
              format = malloc(sizeof (char) * (strlen(a) - 1));
              for (i = 0; i <= (int)strlen(a) - 1; i++)
                format[i] = a[i + 1];
