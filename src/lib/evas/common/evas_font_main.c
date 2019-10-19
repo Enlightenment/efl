@@ -355,33 +355,182 @@ end:
 /* Set of common functions that are used in a couple of places. */
 
 static void
-_fash_int2_free(Fash_Int_Map2 *fash)
-{
+_fash_int_map_and_variations_free(Fash_Int_Map *map)
+ {
+   if(!map)
+     return;
    int i;
 
-   for (i = 0; i < 256; i++) if (fash->bucket[i]) free(fash->bucket[i]);
-   free(fash);
+   for (i = 0; i < 256; i++)
+     {
+        if (map->items[i].variations)
+          {
+             if (map->items[i].variations->list)
+               {
+                  free(map->items[i].variations->list);
+                  map->items[i].variations->list = NULL;
+                  map->items[i].variations->capacity = 0;
+                  map->items[i].variations->length = 0;
+               }
+             free(map->items[i].variations);
+             map->items[i].variations = NULL;
+          }
+     }
+
+   free(map);
+}
+
+static void
+_fash_int2_free(Fash_Int_Map2 *fash)
+ {
+   int i;
+   if (fash)
+     {
+        for (i = 0; i < 256; i++)
+          if (fash->bucket[i])
+            {
+               _fash_int_map_and_variations_free(fash->bucket[i]);
+               fash->bucket[i] = NULL;
+            }
+        free(fash);
+        fash = NULL;
+     }
 }
 
 static void
 _fash_int_free(Fash_Int *fash)
 {
    int i;
+   if (fash)
+     {
+        if (fash->MAGIC != FASH_INT_MAGIC)
+          {
+             return;
+          }
 
-   for (i = 0; i < 256; i++) if (fash->bucket[i]) _fash_int2_free(fash->bucket[i]);
-   free(fash);
+        for (i = 0; i < 256; i++)
+          {
+             if (fash->bucket[i])
+               {
+                  _fash_int2_free(fash->bucket[i]);
+                  fash->bucket[i] = NULL;
+               }
+          }
+        free(fash);
+     }
 }
 
 static Fash_Int *
 _fash_int_new(void)
 {
    Fash_Int *fash = calloc(1, sizeof(Fash_Int));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fash, NULL);
+   fash->MAGIC = FASH_INT_MAGIC;
    fash->freeme = _fash_int_free;
    return fash;
 }
 
+static Fash_Item_variation_List *
+_variations_list_new(void)
+{
+   Fash_Item_variation_List *variations = calloc(1, sizeof(Fash_Item_variation_List));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(variations, NULL);
+   variations->capacity = 0;
+   variations->length = 0;
+   variations->list = 0;
+   return variations;
+}
+
+static void
+_variations_list_add(Fash_Item_variation_List *variations,RGBA_Font_Int *fint, int index, Eina_Unicode variation_sequence)
+{
+   Fash_Item_variation_Index_Item *list = variations->list;
+   if (variations->capacity == variations->length)
+     {
+        list = (Fash_Item_variation_Index_Item *) realloc(list, (variations->capacity + 4) * sizeof(Fash_Item_variation_Index_Item));
+        if (list)
+          {
+             variations->list = list;
+             variations->capacity += 4;
+          }
+     }
+
+   EINA_SAFETY_ON_NULL_RETURN(list);
+
+   int start = 0;
+   int end = variations->length;
+   if (end == 0)
+     {
+        // if only on element just add it in 0 index
+        variations->list[0].item.fint = fint;
+        variations->list[0].item.index = index;
+        variations->list[0].variation_sequence = variation_sequence;
+        variations->length++;
+     }
+   else
+     {
+        // find lower bound
+        while (end > start)
+          {
+             int middle = start + (end - start) / 2;
+             if (variations->list[middle].variation_sequence >= variation_sequence)
+               end = middle;
+             else
+               start = middle + 1;
+          }
+
+        // if passed value founded in list, just replace it
+        if (start < (int)variations->length && variations->list[start].variation_sequence == variation_sequence)
+          {
+             variations->list[start].item.fint = fint;
+             variations->list[start].item.index = index;
+             variations->list[start].variation_sequence = variation_sequence;
+             return;
+          }
+
+        // shift array to insert item
+        for (int i = (variations->length - 1) ; i >= start; i--)
+          {
+             variations->list[i + 1] = variations->list[i];
+          }
+
+        // insert new item and keep array sorted
+        variations->list[start].item.fint = fint;
+        variations->list[start].item.index = index;
+        variations->list[start].variation_sequence = variation_sequence;
+        variations->length++;
+     }
+}
+
+
 static Fash_Item_Index_Map *
-_fash_int_find(Fash_Int *fash, int item)
+_variations_list_find(Fash_Item_variation_List * variations, Eina_Unicode variation_sequence)
+{
+   if (!variations)
+     return NULL;
+
+   if (!variations->list)
+     return NULL;
+
+   int start = 0;
+   int end = variations->length;
+
+   while(end > start)
+     {
+        int middle = start + (end - start) / 2;
+        if (variations->list[middle].variation_sequence == variation_sequence)
+          return &(variations->list[middle].item);
+        else if (variations->list[middle].variation_sequence < variation_sequence)
+          start = middle + 1;
+        else
+          end = middle - 1;
+     }
+
+   return NULL;
+}
+
+static const Fash_Item_Index_Map *
+_fash_int_find(Fash_Int *fash, int item, Eina_Unicode variation_sequence)
 {
    int grp, maj, min;
 
@@ -391,13 +540,21 @@ _fash_int_find(Fash_Int *fash, int item)
    min = item & 0xff;
    if (!fash->bucket[grp]) return NULL;
    if (!fash->bucket[grp]->bucket[maj]) return NULL;
-   return &(fash->bucket[grp]->bucket[maj]->item[min]);
+   if (!variation_sequence)
+     return &(fash->bucket[grp]->bucket[maj]->items[min].item);
+   else
+     return _variations_list_find(fash->bucket[grp]->bucket[maj]->items[min].variations, variation_sequence);
 }
 
 static void
-_fash_int_add(Fash_Int *fash, int item, RGBA_Font_Int *fint, int idx)
+_fash_int_add(Fash_Int *fash, int item, RGBA_Font_Int *fint, int idx, Eina_Unicode variation_sequence)
 {
    int grp, maj, min;
+
+   // If we already have cached passed item, skip adding it again
+   const Fash_Item_Index_Map *fm = _fash_int_find(fash, item, variation_sequence);
+   if (fm && fm->fint)
+     return;
 
    // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
    grp = (item >> 16) & 0xff;
@@ -409,8 +566,20 @@ _fash_int_add(Fash_Int *fash, int item, RGBA_Font_Int *fint, int idx)
    if (!fash->bucket[grp]->bucket[maj])
      fash->bucket[grp]->bucket[maj] = calloc(1, sizeof(Fash_Int_Map));
    EINA_SAFETY_ON_NULL_RETURN(fash->bucket[grp]->bucket[maj]);
-   fash->bucket[grp]->bucket[maj]->item[min].fint = fint;
-   fash->bucket[grp]->bucket[maj]->item[min].index = idx;
+   if (variation_sequence)
+     {
+         if (!fash->bucket[grp]->bucket[maj]->items[min].variations)
+           {
+              fash->bucket[grp]->bucket[maj]->items[min].variations =_variations_list_new();
+              EINA_SAFETY_ON_NULL_RETURN(fash->bucket[grp]->bucket[maj]->items[min].variations);
+           }
+         _variations_list_add(fash->bucket[grp]->bucket[maj]->items[min].variations, fint, idx, variation_sequence);
+     }
+   else
+     {
+        fash->bucket[grp]->bucket[maj]->items[min].item.fint = fint;
+        fash->bucket[grp]->bucket[maj]->items[min].item.index = idx;
+     }
 }
 
 static void
@@ -462,24 +631,45 @@ _fash_gl2_free(Fash_Glyph_Map2 *fash)
    int i;
 
    // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
-   for (i = 0; i < 256; i++) if (fash->bucket[i]) _fash_glyph_free(fash->bucket[i]);
+   for (i = 0; i < 256; i++)
+     {
+        if (fash->bucket[i])
+          {
+             _fash_glyph_free(fash->bucket[i]);
+             fash->bucket[i] = NULL;
+          }
+     }
    free(fash);
 }
 
 static void
 _fash_gl_free(Fash_Glyph *fash)
 {
-   int i;
+   if (fash)
+     {
+        if (fash->MAGIC != FASH_GLYPH_MAGIC)
+          return;
 
-    // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
-   for (i = 0; i < 256; i++) if (fash->bucket[i]) _fash_gl2_free(fash->bucket[i]);
-   free(fash);
+        int i;
+          // 24bits for unicode - v6 up to E01EF (chrs) & 10FFFD for private use (plane 16)
+        for (i = 0; i < 256; i++)
+          {
+            if (fash->bucket[i])
+              {
+                 _fash_gl2_free(fash->bucket[i]);
+                 fash->bucket[i] = NULL;
+              }
+          }
+         free(fash);
+     }
 }
 
 static Fash_Glyph *
 _fash_gl_new(void)
 {
    Fash_Glyph *fash = calloc(1, sizeof(Fash_Glyph));
+   EINA_SAFETY_ON_NULL_RETURN_VAL(fash, NULL);
+   fash->MAGIC = FASH_GLYPH_MAGIC;
    fash->freeme = _fash_gl_free;
    return fash;
 }
@@ -680,7 +870,7 @@ struct _Font_Char_Index
 };
 
 EAPI FT_UInt
-evas_common_get_char_index(RGBA_Font_Int* fi, Eina_Unicode gl)
+evas_common_get_char_index(RGBA_Font_Int* fi, Eina_Unicode gl, Eina_Unicode variation_sequence)
 {
    static const unsigned short mapfix[] =
      {
@@ -742,7 +932,10 @@ evas_common_get_char_index(RGBA_Font_Int* fi, Eina_Unicode gl)
     * that something else try to use it.
     */
    /* FTLOCK(); */
-   result.index = FT_Get_Char_Index(fi->src->ft.face, gl);
+   if (variation_sequence)
+     result.index = FT_Face_GetCharVariantIndex(fi->src->ft.face, gl, variation_sequence);
+   else
+     result.index = FT_Get_Char_Index(fi->src->ft.face, gl);
    /* FTUNLOCK(); */
    result.gl = gl;
 
@@ -774,7 +967,10 @@ evas_common_get_char_index(RGBA_Font_Int* fi, Eina_Unicode gl)
                {
                   gl = mapfix[(i << 1) + 1];
                   FTLOCK();
-                  result.index = FT_Get_Char_Index(fi->src->ft.face, gl);
+                  if (variation_sequence)
+                    result.index = FT_Face_GetCharVariantIndex(fi->src->ft.face, gl, variation_sequence);
+                  else
+                    result.index = FT_Get_Char_Index(fi->src->ft.face, gl);
                   FTUNLOCK();
                   break;
                }
@@ -799,20 +995,49 @@ evas_common_get_char_index(RGBA_Font_Int* fi, Eina_Unicode gl)
    return result.index;
 }
 
+
+/*
+ * @internal
+ * Search for unicode glyph inside all font files, and return font and glyph index
+ *
+ * @param[in] fn the font to use.
+ * @param[out] fi_ret founded font.
+ * @param[in] gl unicode glyph to search for
+ * @param[in] variation_sequence for the gl glyph
+ * @param[in] evas_font_search_options search options when searching font files
+ *
+ */
+
 EAPI int
-evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicode gl)
+evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicode gl, Eina_Unicode variation_sequence, uint32_t evas_font_search_options)
 {
    Eina_List *l;
 
    if (fn->fash)
      {
-        Fash_Item_Index_Map *fm = _fash_int_find(fn->fash, gl);
+        const Fash_Item_Index_Map *fm = _fash_int_find(fn->fash, gl, variation_sequence);
         if (fm)
           {
              if (fm->fint)
                {
-                  *fi_ret = fm->fint;
-                  return fm->index;
+                  if (evas_font_search_options == EVAS_FONT_SEARCH_OPTION_NONE)
+                    {
+                        *fi_ret = fm->fint;
+                        return fm->index;
+                    }
+                  else if( (evas_font_search_options & EVAS_FONT_SEARCH_OPTION_SKIP_COLOR) == EVAS_FONT_SEARCH_OPTION_SKIP_COLOR)
+                    {
+                       if (!fm->fint->src->ft.face)
+                         {
+                            evas_common_font_int_reload(fm->fint);
+                         }
+
+                       if (fm->fint->src->ft.face && !FT_HAS_COLOR(fm->fint->src->ft.face))
+                         {
+                            *fi_ret = fm->fint;
+                            return fm->index;
+                         }
+                    }
                }
              else if (fm->index == -1) return 0;
           }
@@ -851,20 +1076,35 @@ evas_common_font_glyph_search(RGBA_Font *fn, RGBA_Font_Int **fi_ret, Eina_Unicod
           }
         if (fi->src->ft.face)
           {
-             idx = evas_common_get_char_index(fi, gl);
+             Eina_Bool is_color_only = (evas_font_search_options & EVAS_FONT_SEARCH_OPTION_SKIP_COLOR) == EVAS_FONT_SEARCH_OPTION_SKIP_COLOR &&
+                 FT_HAS_COLOR(fi->src->ft.face);
+
+             if (is_color_only)
+               {
+                  /* This is color font ignore it */
+                  continue;
+               }
+
+             idx = (int) evas_common_get_char_index(fi, gl, variation_sequence);
              if (idx != 0)
                {
                   if (!fi->ft.size)
                     evas_common_font_int_load_complete(fi);
-                  if (!fn->fash) fn->fash = _fash_int_new();
-                  if (fn->fash) _fash_int_add(fn->fash, gl, fi, idx);
+                  if (!is_color_only)
+                    {
+                       if (!fn->fash) fn->fash = _fash_int_new();
+                       if (fn->fash) _fash_int_add(fn->fash, gl, fi, idx, variation_sequence);
+                    }
                   *fi_ret = fi;
                   return idx;
                }
              else
                {
-                  if (!fn->fash) fn->fash = _fash_int_new();
-                  if (fn->fash) _fash_int_add(fn->fash, gl, NULL, -1);
+                  if (!is_color_only)
+                    {
+                        if (!fn->fash) fn->fash = _fash_int_new();
+                        if (fn->fash) _fash_int_add(fn->fash, gl, NULL, -1, variation_sequence);
+                    }
                }
           }
      }
