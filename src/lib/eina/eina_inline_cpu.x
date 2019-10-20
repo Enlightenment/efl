@@ -83,7 +83,7 @@ eina_swap64(unsigned long long x)
 static inline unsigned short
 eina_htons(unsigned short host)
 {
-#ifdef EINA_HAVE_BIGENDIAN
+#ifdef EINA_HAVE_WORDS_BIGENDIAN
    return host;
 #else
    return eina_swap16(host);
@@ -93,7 +93,7 @@ eina_htons(unsigned short host)
 static inline unsigned int
 eina_htonl(unsigned int host)
 {
-#ifdef EINA_HAVE_BIGENDIAN
+#ifdef EINA_HAVE_WORDS_BIGENDIAN
    return host;
 #else
    return eina_swap32(host);
@@ -103,7 +103,7 @@ eina_htonl(unsigned int host)
 static inline unsigned long long
 eina_htonll(unsigned long long host)
 {
-#ifdef EINA_HAVE_BIGENDIAN
+#ifdef EINA_HAVE_WORDS_BIGENDIAN
    return host;
 #else
    return eina_swap64(host);
@@ -113,7 +113,7 @@ eina_htonll(unsigned long long host)
 static inline unsigned short
 eina_ntohs(unsigned short net)
 {
-#ifdef EINA_HAVE_BIGENDIAN
+#ifdef EINA_HAVE_WORDS_BIGENDIAN
    return net;
 #else
    return eina_swap16(net);
@@ -123,7 +123,7 @@ eina_ntohs(unsigned short net)
 static inline unsigned int
 eina_ntohl(unsigned int net)
 {
-#ifdef EINA_HAVE_BIGENDIAN
+#ifdef EINA_HAVE_WORDS_BIGENDIAN
    return net;
 #else
    return eina_swap32(net);
@@ -133,7 +133,7 @@ eina_ntohl(unsigned int net)
 static inline unsigned long long
 eina_ntohll(unsigned long long net)
 {
-#ifdef EINA_HAVE_BIGENDIAN
+#ifdef EINA_HAVE_WORDS_BIGENDIAN
    return net;
 #else
    return eina_swap64(net);
