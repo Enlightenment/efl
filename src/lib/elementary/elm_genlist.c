@@ -3576,7 +3576,7 @@ _elm_genlist_efl_ui_widget_theme_apply(Eo *obj, Elm_Genlist_Data *sd)
 
         itb->changed = EINA_TRUE;
      }
-   if (sd->obj)
+   if (sd->obj && efl_finalized_get(obj))
      _add_calc_job(sd);
    elm_layout_sizing_eval(obj);
    evas_event_thaw(e);
