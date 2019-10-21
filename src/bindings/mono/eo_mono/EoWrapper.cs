@@ -352,6 +352,47 @@ public abstract class EoWrapper : IWrapper, IDisposable
         return keyValueHash[key];
     }
 
+    /// <summary>
+    /// Sets an EO property on this object through reflection.
+    ///
+    /// <para>Works only for properties recognized by EO (i.e. properties described in .eo files).</para>
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="name">The name of the target property.</param>
+    /// <param name="value">The name of the target property.</param>
+    /// <returns><see cref="Eina.Error.NO_ERROR" /> if the property was correctly set. An <see cref="Eina.Error" /> with the
+    /// error code otherwise.</returns>
+    public Eina.Error SetEoProperty(string name, Eina.Value value)
+    {
+        return Efl.Eo.NativeMethods.efl_property_reflection_set(NativeHandle, name, value);
+    }
+
+    /// <summary>
+    /// Gets an EO property on this object through reflection.
+    ///
+    /// <para>Works only for properties recognized by EO (i.e. properties described in .eo files).</para>
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="name">The name of the target property.</param>
+    /// <returns>An <see cref="Eina.Value" /> with the property value.</returns>
+    public Eina.Value GetEoProperty(string name)
+    {
+        return Efl.Eo.NativeMethods.efl_property_reflection_get(NativeHandle, name);
+    }
+
+    /// <summary>
+    /// Checks whether the given property is available on this object through reflection.
+    ///
+    /// <para>Works only for properties recognized by EO (i.e. properties described in .eo files).</para>
+    /// <para>Since EFL 1.24.</para>
+    /// </summary>
+    /// <param name="name">The name of the target property.</param>
+    /// <returns><c>true</c> if the property is available through reflection. <c>false</c> otherwise.</returns>
+    public bool HasEoProperty(string name)
+    {
+        return Efl.Eo.NativeMethods.efl_property_reflection_exist(NativeHandle, name);
+    }
+
     /// <summary>Wrapper for native methods and virtual method delegates.
     /// For internal use by generated code only.</summary>
     public abstract class NativeMethods : Efl.Eo.NativeClass
@@ -415,6 +456,22 @@ public abstract class EoWrapper : IWrapper, IDisposable
             }
         }
     }
+}
+
+internal static class NativeMethods
+{
+    [DllImport(efl.Libs.Eo)] internal static extern Eina.Error
+        efl_property_reflection_set(IntPtr eo,
+                [MarshalAs(UnmanagedType.LPStr)]string property_name,
+                Eina.ValueNative value);
+
+    [DllImport(efl.Libs.Eo)] internal static extern Eina.ValueNative
+        efl_property_reflection_get(IntPtr eo,
+                [MarshalAs(UnmanagedType.LPStr)]string property_name);
+
+    [DllImport(efl.Libs.Eo)] [return: MarshalAs(UnmanagedType.U1)] internal static extern bool
+        efl_property_reflection_exist(IntPtr eo,
+                [MarshalAs(UnmanagedType.LPStr)]string property_name);
 }
 
 } // namespace Eo
