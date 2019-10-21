@@ -12,6 +12,11 @@
     <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <DocumentationFile>$(AssemblyName).xml</DocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+  </PropertyGroup>
+
   <!-- <PropertyGroup Condition="'$(BuildType)'=='Beta'"> -->
   <!--   <DefineConstants>EFL_BETA</DefineConstants> -->
   <!-- </PropertyGroup> -->
