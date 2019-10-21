@@ -515,6 +515,14 @@ event_callback_single_call_int_data(void *data, Evas_Object *obj EINA_UNUSED, vo
 }
 
 void
+event_callback_that_increments_an_int_when_called(void *data, Evas_Object *obj EINA_UNUSED, void *event_info EINA_UNUSED)
+{
+   int *called = data;
+
+   *called += 1;
+}
+
+void
 event_callback_that_quits_the_main_loop_when_called()
 {
    ecore_main_loop_quit();
