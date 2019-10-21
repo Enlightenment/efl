@@ -97,7 +97,7 @@ public struct Error : IComparable<Error>
     /// <returns>The string representing the value of this.</returns>
     public override string ToString()
     {
-        return "Eina.Error(" + code + ")";
+        return "Eina.Error(" + code + ": " + MsgGet(code) + ")";
     }
 
     static Error()
