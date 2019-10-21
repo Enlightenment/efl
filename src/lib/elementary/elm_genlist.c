@@ -4847,9 +4847,10 @@ _queue_process(Elm_Genlist_Data *sd)
 {
    int n;
    double t0, t;
+   Evas *e = evas_object_evas_get(sd->obj);
 
    t0 = ecore_time_get();
-
+   evas_event_freeze(e);
    for (n = 0; (sd->queue) && (n < ITEM_QUEUE_MAX); n++)
      {
         Elm_Gen_Item *it;
@@ -4866,6 +4867,8 @@ _queue_process(Elm_Genlist_Data *sd)
              if ((t - t0) > (ecore_animator_frametime_get())) break;
           }
      }
+   evas_event_thaw(e);
+   evas_event_thaw_eval(e);
    return n;
 }
 
