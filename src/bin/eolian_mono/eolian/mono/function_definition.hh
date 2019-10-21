@@ -437,11 +437,13 @@ struct property_wrapper_definition_generator
            set_scope = "";
         }
 
+      std::string virtual_mod = (is_static || is_interface || is_concrete) ? "" : "virtual ";
+
       if (parameters.size() == 1)
       {
         if (!as_generator(
                     documentation(1)
-                    << scope_tab << scope << (is_static ? "static " : "") << type(true) << " " << managed_name << " {\n"
+                    << scope_tab << scope << (is_static ? "static " : virtual_mod) << type(true) << " " << managed_name << " {\n"
               ).generate(sink, std::make_tuple(property, parameters[0].type), context))
           return false;
       }
