@@ -383,6 +383,7 @@ EFL_START_TEST(elm_genlist_test_item_destroy)
 EFL_END_TEST
 
 #define NUM_TREE_ITEMS 10
+#define GL_ITEM_SIZE_ISH 30
 
 static Evas_Object *
 genlist_tree_test_content_get(void *data EINA_UNUSED, Evas_Object *obj, const char *part)
@@ -499,6 +500,7 @@ EFL_START_TEST(elm_genlist_test_tree_expand)
 
    evas_object_size_hint_align_set(genlist, EVAS_HINT_FILL, EVAS_HINT_FILL);
    evas_object_size_hint_weight_set(genlist, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
+   evas_object_size_hint_weight_set(win, EVAS_HINT_EXPAND, EVAS_HINT_EXPAND);
    elm_genlist_item_append(genlist, &itc,
                            NULL/* item data */, NULL/* parent */,
                            ELM_GENLIST_ITEM_TREE, NULL/* func */,
@@ -510,9 +512,10 @@ EFL_START_TEST(elm_genlist_test_tree_expand)
                              NULL/* func data */);
 
    evas_object_show(genlist);
-   evas_object_resize(genlist, 100, 10 + 10 * NUM_TREE_ITEMS);
+   evas_object_resize(genlist, 100, 10 + GL_ITEM_SIZE_ISH * NUM_TREE_ITEMS);
    evas_object_show(win);
-   evas_object_resize(win, 100, 10 + 10 * NUM_TREE_ITEMS);
+   evas_object_resize(win, 100, 10 + GL_ITEM_SIZE_ISH * NUM_TREE_ITEMS);
+
    ecore_main_loop_begin();
 }
 EFL_END_TEST
