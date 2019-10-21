@@ -5168,7 +5168,10 @@ _item_mouse_up_cb(void *data,
           }
      }
 
-   if (!it->selected && it->highlighted)
+   /* this is handled implicitly in _item_unselect() below unless there
+    * will be no select
+    */
+   if (!it->selected && it->highlighted && _is_no_select(it))
      _item_unhighlight(it);
 
    if ((ev->flags != EVAS_BUTTON_NONE) ||
@@ -5191,7 +5194,9 @@ _item_mouse_up_cb(void *data,
      {
         if (!it->selected)
           {
+             /* this should only be handled on mouse down
              _item_highlight(it);
+             */
              if (_item_select(it)) goto deleted;
           }
         else
@@ -5220,7 +5225,9 @@ _item_mouse_up_cb(void *data,
                     _item_unselect(it2);
                }
           }
+        /* this should only be handled on mouse down
         _item_highlight(it);
+        */
         if (_item_select(it)) goto deleted;
      }
 
