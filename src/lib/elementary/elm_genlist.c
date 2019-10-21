@@ -758,19 +758,8 @@ _item_block_unrealize(Item_Block *itb)
      }
    if (!dragging)
      {
-        Eina_List *n;
-
         itb->realized = EINA_FALSE;
         itb->want_unrealize = EINA_TRUE;
-
-        efl_ui_focus_manager_calc_unregister(itb->sd->obj, itb->adapter);
-        efl_del(itb->adapter);
-        itb->adapter = NULL;
-
-        EINA_LIST_FOREACH(itb->items, n, it)
-          {
-            efl_ui_focus_manager_calc_unregister(itb->sd->obj, EO_OBJ(it));
-          }
      }
    else
      itb->want_unrealize = EINA_FALSE;
@@ -1855,6 +1844,7 @@ _item_realize(Elm_Gen_Item *it, const int index, Eina_Bool calc)
         return;
      }
 
+   efl_ui_focus_manager_calc_register_logical(it->item->block->sd->obj, EO_OBJ(it), it->item->block->adapter, NULL);
    if (sd->tree_effect_enabled ||
        (!_item_cache_find(it)))
      {
@@ -2553,27 +2543,10 @@ _flush_block_order(Elm_Genlist_Data *sd)
 static void
 _item_block_realize(Item_Block *itb)
 {
-   Elm_Gen_Item *it;
-   Eina_List *n;
-
    if (itb->realized) return;
 
    itb->realized = EINA_TRUE;
    itb->want_unrealize = EINA_FALSE;
-
-   if (!itb->adapter)
-     {
-        itb->adapter = efl_add(EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS, itb->sd->obj);
-        efl_ui_focus_composition_adapter_focus_manager_parent_set(itb->adapter, itb->sd->obj);
-        efl_ui_focus_composition_adapter_focus_manager_object_set(itb->adapter, itb->sd->obj);
-        efl_ui_focus_manager_calc_register_logical(itb->sd->obj, itb->adapter, itb->sd->obj, NULL);
-        _flush_block_order(itb->sd);
-     }
-
-   EINA_LIST_FOREACH(itb->items, n, it)
-     {
-        efl_ui_focus_manager_calc_register_logical(itb->sd->obj, EO_OBJ(it), itb->adapter, NULL);
-     }
 }
 
 static Eina_Bool
@@ -3718,6 +3691,10 @@ _item_block_del(Elm_Gen_Item *it)
              _item_block_position_update(il->next, itb->position);
              sd->blocks = eina_inlist_remove(sd->blocks, il);
           }
+
+        efl_ui_focus_manager_calc_unregister(itb->sd->obj, itb->adapter);
+        efl_del(itb->adapter);
+        itb->adapter = NULL;
         free(itb);
         if (itbn) itbn->changed = EINA_TRUE;
      }
@@ -3743,6 +3720,10 @@ _item_block_del(Elm_Gen_Item *it)
                     (EINA_INLIST_GET(itb)->next, itb->position);
                   sd->blocks = eina_inlist_remove
                       (sd->blocks, EINA_INLIST_GET(itb));
+
+                  efl_ui_focus_manager_calc_unregister(itb->sd->obj, itb->adapter);
+                  efl_del(itb->adapter);
+                  itb->adapter = NULL;
                   free(itb);
                   block_changed = EINA_TRUE;
                }
@@ -3757,6 +3738,10 @@ _item_block_del(Elm_Gen_Item *it)
                     (EINA_INLIST_GET(itbn)->next, itbn->position);
                   sd->blocks =
                     eina_inlist_remove(sd->blocks, EINA_INLIST_GET(itbn));
+
+                  efl_ui_focus_manager_calc_unregister(itbn->sd->obj, itbn->adapter);
+                  efl_del(itbn->adapter);
+                  itbn->adapter = NULL;
                   free(itbn);
                   block_changed = EINA_TRUE;
                }
@@ -4431,6 +4416,17 @@ _item_mouse_down_cb(void *data,
          (WIDGET(it), "pressed", eo_it);
 }
 
+static void
+_item_block_focus_register(Item_Block *itb)
+{
+   if (itb->adapter) return;
+   itb->adapter = efl_add(EFL_UI_FOCUS_COMPOSITION_ADAPTER_CLASS, itb->sd->obj);
+   efl_ui_focus_composition_adapter_focus_manager_parent_set(itb->adapter, itb->sd->obj);
+   efl_ui_focus_composition_adapter_focus_manager_object_set(itb->adapter, itb->sd->obj);
+   efl_ui_focus_manager_calc_register_logical(itb->sd->obj, itb->adapter, itb->sd->obj, NULL);
+   _flush_block_order(itb->sd);
+}
+
 static Item_Block *
 _item_block_new(Elm_Genlist_Data *sd,
                 Eina_Bool prepend)
@@ -4459,7 +4455,7 @@ _item_block_new(Elm_Genlist_Data *sd,
              itb->position = 0;
           }
      }
-
+   _item_block_focus_register(itb);
    return itb;
 }
 
@@ -4506,6 +4502,7 @@ newblock:
              itb = calloc(1, sizeof(Item_Block));
              if (!itb) return EINA_FALSE;
              itb->sd = sd;
+             _item_block_focus_register(itb);
              if (!it->item->rel->item->block)
                {
                   sd->blocks =
@@ -4745,6 +4742,7 @@ newblock:
              itb2 = calloc(1, sizeof(Item_Block));
              if (!itb2) return EINA_FALSE;
              itb2->sd = sd;
+             _item_block_focus_register(itb2);
              sd->blocks =
                eina_inlist_append_relative(sd->blocks, EINA_INLIST_GET(itb2),
                                            EINA_INLIST_GET(itb));
@@ -5384,6 +5382,7 @@ _item_unrealize(Elm_Gen_Item *it)
              evas_object_del(c);
           }
      }
+   efl_ui_focus_manager_calc_unregister(it->item->block->sd->obj, EO_OBJ(it));
 
    it->states = NULL;
    it->realized = EINA_FALSE;
