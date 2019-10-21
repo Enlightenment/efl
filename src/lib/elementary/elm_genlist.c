@@ -101,7 +101,6 @@
     cmd(SIG_ITEM_UNFOCUSED, "item,unfocused", "") \
     cmd(SIG_PRESSED, "pressed", "") \
     cmd(SIG_RELEASED, "released", "") \
-    cmd(SIG_CHANGED, "changed", "") \
     cmd(SIG_FILTER_DONE, "filter,done", "")
 
 ELM_PRIV_GENLIST_SIGNALS(ELM_PRIV_STATIC_VARIABLE_DECLARE);
