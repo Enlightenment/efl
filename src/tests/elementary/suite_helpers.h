@@ -12,8 +12,11 @@ void fail_on_errors_setup(void);
 
 void get_me_to_those_events(Eo *obj);
 void click_object(Eo *obj);
+void click_object_flags(Eo *obj, int flags);
 void click_part(Eo *obj, const char *part);
+void click_part_flags(Eo *obj, const char *part, int flags);
 void click_object_at(Eo *obj, int x, int y);
+void click_object_at_flags(Eo *obj, int x, int y, int flags);
 void wheel_object(Eo *obj, Eina_Bool horiz, Eina_Bool down);
 void wheel_part(Eo *obj, const char *part, Eina_Bool horiz, Eina_Bool down);
 void wheel_object_at(Eo *obj, int x, int y, Eina_Bool horiz, Eina_Bool down);

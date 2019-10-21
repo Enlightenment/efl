@@ -430,23 +430,29 @@ attempt_to_find_the_right_point_for_mouse_positioning(Eo *obj, int dir)
 }
 
 static void
-click_object_internal(Eo *obj, int dir)
+click_object_internal(Eo *obj, int dir, int flags)
 {
    Evas *e = evas_object_evas_get(obj);
    Eina_Position2D pos = attempt_to_find_the_right_point_for_mouse_positioning(obj, dir);
    evas_event_feed_mouse_move(e, pos.x, pos.y, 0, NULL);
-   evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
+   evas_event_feed_mouse_down(e, 1, flags, 0, NULL);
    evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
 }
 
 void
 click_object(Eo *obj)
 {
-   click_object_internal(obj, NONE);
+   click_object_internal(obj, NONE, 0);
 }
 
 void
-click_part(Eo *obj, const char *part)
+click_object_flags(Eo *obj, int flags)
+{
+   click_object_internal(obj, NONE, flags);
+}
+
+void
+click_part_flags(Eo *obj, const char *part, int flags)
 {
    Efl_Part *part_obj = efl_ref(efl_part(obj, part));
    Eo *content;
@@ -466,11 +472,17 @@ click_part(Eo *obj, const char *part)
         else if (strstr(part, "bottom"))
           dir |= BOTTOM;
      }
-   click_object_internal(content, dir);
+   click_object_internal(content, dir, flags);
    if (efl_isa(content, EFL_LAYOUT_SIGNAL_INTERFACE))
      edje_object_message_signal_process(content);
    edje_object_message_signal_process(obj);
    efl_unref(part_obj);
+}
+
+void
+click_part(Eo *obj, const char *part)
+{
+   click_part_flags(obj, part, 0);
 }
 
 static void
@@ -543,6 +555,15 @@ click_object_at(Eo *obj, int x, int y)
    Evas *e = evas_object_evas_get(obj);
    evas_event_feed_mouse_move(e, x, y, 0, NULL);
    evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
+   evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
+}
+
+void
+click_object_at_flags(Eo *obj, int x, int y, int flags)
+{
+   Evas *e = evas_object_evas_get(obj);
+   evas_event_feed_mouse_move(e, x, y, 0, NULL);
+   evas_event_feed_mouse_down(e, 1, flags, 0, NULL);
    evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
 }
 
