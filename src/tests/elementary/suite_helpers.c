@@ -24,17 +24,16 @@ Eina_Bool abort_on_warnings = EINA_FALSE;
 
 void elm_test_init(TCase *tc);
 
+static char *args[] = { "exe" };
+
 SUITE_INIT(elm)
 {
-   char *args[] = { "exe" };
    ck_assert_int_eq(elm_init(1, args), 1);
 }
 
 void
 _elm2_suite_init(void)
 {
-   char *args[] = { "exe" };
-
    if (getpid() != main_pid)
      {
         if (abort_on_warnings)
