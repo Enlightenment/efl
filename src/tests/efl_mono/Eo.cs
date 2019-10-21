@@ -357,6 +357,67 @@ class TestCsharpProperties
         var ret = obj.MultiValuedProp;
         Test.AssertEquals(ret, (1, 2));
     }
+
+    public class Reimplementer : Dummy.TestObject
+    {
+        public bool GetCalled { get; private set; }
+        public bool SetCalled { get; private set; }
+
+        public override int IfaceProp
+        {
+            get
+            {
+                GetCalled = true;
+                return base.IfaceProp * 2;
+            }
+            set
+            {
+                SetCalled = true;
+                base.IfaceProp = value;
+            }
+        }
+
+        public void Reset()
+        {
+            GetCalled = false;
+            SetCalled = false;
+        }
+    }
+
+    public static void test_property_reimplementation_direct()
+    {
+        var obj = new Reimplementer();
+        Test.Assert(!obj.GetCalled);
+        Test.Assert(!obj.SetCalled);
+
+        obj.IfaceProp = 1337;
+        Test.Assert(!obj.GetCalled);
+        Test.Assert(obj.SetCalled);
+
+        obj.Reset();
+        Test.Assert(!obj.GetCalled);
+        Test.Assert(!obj.SetCalled);
+
+        int val = obj.IfaceProp;
+        Test.Assert(obj.GetCalled);
+        Test.Assert(!obj.SetCalled);
+
+        Test.AssertEquals(1337 * 2, val);
+    }
+
+    public static void test_property_reimplementation_from_c()
+    {
+        var obj = new Reimplementer();
+        Test.Assert(!obj.GetCalled);
+        Test.Assert(!obj.SetCalled);
+
+        var err = obj.SetEoProperty("iface_prop", -127);
+        Test.AssertEquals(Eina.Error.NO_ERROR, err);
+        Test.Assert(!obj.GetCalled);
+        /* Test.Assert(obj.SetCalled); */
+    }
+
+
 }
 
 class TestEoGrandChildrenFinalize
