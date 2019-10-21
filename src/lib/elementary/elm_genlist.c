@@ -4928,6 +4928,7 @@ _item_queue(Elm_Genlist_Data *sd,
 // FIXME: why does a freeze then thaw here cause some genlist
 // elm_genlist_item_append() to be much much slower?
 //   evas_event_freeze(evas_object_evas_get(sd->obj));
+/*
    while ((sd->queue) && ((!sd->blocks) || (!sd->blocks->next)))
      {
         ELM_SAFE_FREE(sd->queue_idle_enterer, ecore_idle_enterer_del);
@@ -4939,7 +4940,7 @@ _item_queue(Elm_Genlist_Data *sd,
         ELM_SAFE_FREE(sd->queue_idle_enterer, ecore_idle_enterer_del);
         _queue_process(sd);
      }
-
+*/
 //   evas_event_thaw(evas_object_evas_get(sd->obj));
 //   evas_event_thaw_eval(evas_object_evas_get(sd->obj));
    evas_object_geometry_get(sd->obj, NULL, NULL, &w, NULL);
