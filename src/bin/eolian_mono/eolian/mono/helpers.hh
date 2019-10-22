@@ -2,6 +2,7 @@
 #define EOLIAN_MONO_HELPERS_HH
 
 #include "grammar/klass_def.hpp"
+#include "using_decl.hh"
 #include "blacklist.hh"
 #include "generation_contexts.hh"
 #include "name_helpers.hh"
@@ -288,6 +289,45 @@ inline std::vector<attributes::constructor_def> reorder_constructors(std::vector
   auto is_required = [](attributes::constructor_def const& ctr) { return !ctr.is_optional; };
   std::stable_partition(constructors.begin(), constructors.end(), is_required);
   return constructors;
+}
+
+template<typename Context>
+inline bool is_property_wrapper(attributes::function_def const& func, Context const& context)
+{
+  auto ftype = func.type;
+  if (ftype != attributes::function_type::prop_get && ftype != attributes::function_type:: prop_set)
+    return false;
+
+  bool is_interface = context_find_tag<class_context>(context).current_wrapper_kind == class_context::interface;
+  bool is_concrete = context_find_tag<class_context>(context).current_wrapper_kind == class_context::concrete;
+
+  if ((is_interface || is_concrete) && func.is_static)
+    return false;
+
+  if (ftype == attributes::function_type::prop_get)
+    {
+       for (auto&& param : func.parameters)
+         if (param.direction != attributes::parameter_direction::out)
+           return false;
+
+       std::string return_type;
+       if(!as_generator(eolian_mono::type(true)).generate(std::back_inserter(return_type), f.return_type, context))
+         return false;
+
+       if (return_type == "void")
+         return false;
+    }
+
+  if (ftype == attributes::function_type::prop_set)
+    {
+       for (auto&& param : func.parameters)
+         if (param.direction != attributes::parameter_direction::in)
+           return false;
+    }
+
+  EINA_LOG_ERR("Func %s is WRAPPER!", func.c_name.c_str());
+  return true;
+  // Parameter calculation magic
 }
 
 } // namespace helpers
