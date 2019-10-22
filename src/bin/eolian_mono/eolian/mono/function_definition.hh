@@ -380,7 +380,9 @@ struct property_wrapper_definition_generator
         // we use the return type.
         if (get_params == 0)
           parameters.push_back({parameter_direction::in
-                , property.getter->return_type, "propertyResult", {}
+                , property.getter->return_type
+                , parameter_def::value_param
+                , "propertyResult", {}
                 , property.getter->unit});
         else
           std::transform (property.getter->parameters.begin(), property.getter->parameters.end()

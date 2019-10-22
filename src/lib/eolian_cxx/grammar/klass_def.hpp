@@ -654,15 +654,20 @@ struct parameter_def
 {
   parameter_direction direction;
   type_def type;
+  bool is_key;
   std::string param_name;
   documentation_def documentation;
   eina::optional<expression_def> default_value;
   Eolian_Unit const* unit;
 
+  static const bool key_param = true;
+  static const bool value_param = false;
+
   friend inline bool operator==(parameter_def const& lhs, parameter_def const& rhs)
   {
     return lhs.direction == rhs.direction
       && lhs.type == rhs.type
+      && lhs.is_key == rhs.is_key
       && lhs.param_name == rhs.param_name
       && lhs.documentation == rhs.documentation
       && lhs.default_value == rhs.default_value;
@@ -672,15 +677,18 @@ struct parameter_def
     return !(lhs == rhs);
   }
 
-  parameter_def(parameter_direction direction, type_def type, std::string param_name,
+  parameter_def(parameter_direction direction, type_def type, bool is_key, std::string param_name,
                 documentation_def documentation, Eolian_Unit const* unit)
-    : direction(std::move(direction)), type(std::move(type)), param_name(std::move(param_name)), documentation(documentation), unit(unit) {}
-  parameter_def(Eolian_Function_Parameter const* param, Eolian_Unit const* _unit)
+    : direction(std::move(direction)), type(std::move(type)), is_key(is_key)
+    , param_name(std::move(param_name)), documentation(documentation), unit(unit) {}
+
+  parameter_def(Eolian_Function_Parameter const* param, bool is_key, Eolian_Unit const* _unit)
     : type( ::eolian_parameter_type_get(param)
             , _unit
             , eolian_parameter_c_type_get(param, EINA_FALSE)
             , eolian_parameter_is_move(param)
             , eolian_parameter_is_by_ref(param))
+    , is_key(is_key)
     , param_name( ::eolian_parameter_name_get(param))
     , default_value(::eolian_parameter_default_value_get(param) ?
                         ::eolian_parameter_default_value_get(param) :
@@ -848,7 +856,7 @@ struct function_def
           for(efl::eina::iterator<Eolian_Function_Parameter> param_iterator ( ::eolian_function_parameters_get(function))
             , param_last; param_iterator != param_last; ++param_iterator)
             {
-               parameters.push_back({&*param_iterator, unit});
+               parameters.push_back({&*param_iterator, parameter_def::value_param, unit});
             }
        }
      else if(type == EOLIAN_PROP_GET || type == EOLIAN_PROP_SET)
@@ -861,14 +869,14 @@ struct function_def
                ( ::eolian_property_keys_get(function, type))
                , param_last; param_iterator != param_last; ++param_iterator)
            {
-              parameters.push_back({&*param_iterator, unit});
+              parameters.push_back({&*param_iterator, parameter_def::key_param, unit});
            }
          std::vector<parameter_def> values;
          for(efl::eina::iterator<Eolian_Function_Parameter> param_iterator
                ( ::eolian_property_values_get(function, type))
                , param_last; param_iterator != param_last; ++param_iterator)
            {
-              values.push_back({&*param_iterator, unit});
+              values.push_back({&*param_iterator, parameter_def::value_param, unit});
            }
 
          if(!r_type && type == EOLIAN_PROP_GET && values.size() == 1)

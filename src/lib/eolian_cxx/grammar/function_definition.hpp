@@ -117,7 +117,9 @@ struct function_definition_generator
       if(!as_generator(scope_tab).generate(sink, attributes::unused, ctx)) return false;
       
       if(f.return_type != attributes::void_
-         && !as_generator(attributes::c_type({attributes::parameter_direction::in, f.return_type, "", attributes::documentation_def{}, f.unit})
+         && !as_generator(attributes::c_type({attributes::parameter_direction::in, f.return_type
+                                              , attributes::parameter_def::value_param
+                                              , "", attributes::documentation_def{}, f.unit})
                           << " __return_value = "
                           ).generate(sink, attributes::unused, ctx)) return false;
 
