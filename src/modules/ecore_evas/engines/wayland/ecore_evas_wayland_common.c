@@ -1325,7 +1325,7 @@ _ecore_evas_wl_common_init(void)
    if (++_ecore_evas_wl_init_count != 1)
      return _ecore_evas_wl_init_count;
 
-   _ecore_evas_wl_event_hdls = eina_array_new(10);
+   _ecore_evas_wl_event_hdls = eina_array_new(1);
 
    h = ecore_event_handler_add(ECORE_EVENT_MOUSE_IN,
                              _ecore_evas_wl_common_cb_mouse_in, NULL);
