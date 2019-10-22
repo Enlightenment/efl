@@ -1399,6 +1399,7 @@ _ecore_evas_wl_common_init(void)
 
    h = ecore_event_handler_add(ECORE_WL2_EVENT_AUX_MESSAGE,
                                _ecore_evas_wl_common_cb_aux_message, NULL);
+   eina_array_push(_ecore_evas_wl_event_hdls, h);
 
    ecore_event_evas_init();
 
