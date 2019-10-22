@@ -107,49 +107,75 @@ struct native_function_definition_generator
     if (f.is_static)
       self = "";
 
-    if(!as_generator
-       (indent << "private static "
-        << eolian_mono::marshall_type(true) << " "
-        << string
-        << "(System.IntPtr obj, System.IntPtr pd"
-        << *(", " << marshall_parameter)
-        << ")\n"
-        << indent << "{\n"
-        << indent << scope_tab << "Eina.Log.Debug(\"function " << string << " was called\");\n"
-        << indent << scope_tab << "var ws = Efl.Eo.Globals.GetWrapperSupervisor(obj);\n"
-        << indent << scope_tab << "if (ws != null)\n"
-        << indent << scope_tab << "{\n"
-        << indent << scope_tab << scope_tab << eolian_mono::native_function_definition_preamble() << "\n"
-        << indent << scope_tab << scope_tab << "try\n"
-        << indent << scope_tab << scope_tab << "{\n"
-        << indent << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "_ret_var = " : "")
-        << (f.is_static ? "" : "((") << klass_cast_name << (f.is_static ? "." : ")ws.Target).") << string
-        << "(" << (native_argument_invocation % ", ") << ");\n"
-        << indent << scope_tab << scope_tab << "}\n"
-        << indent << scope_tab << scope_tab << "catch (Exception e)\n"
-        << indent << scope_tab << scope_tab << "{\n"
-        << indent << scope_tab << scope_tab << scope_tab << "Eina.Log.Warning($\"Callback error: {e.ToString()}\");\n"
-        << indent << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.UNHANDLED_EXCEPTION);\n"
-        << indent << scope_tab << scope_tab << "}\n\n"
-        << indent << eolian_mono::native_function_definition_epilogue(*klass) << "\n"
-        << indent << scope_tab << "}\n"
-        << indent << scope_tab << "else\n"
-        << indent << scope_tab << "{\n"
-        << indent << scope_tab << scope_tab << (return_type != "void" ? "return " : "") << string
-        << "_ptr.Value.Delegate(" << self << ((!f.is_static && f.parameters.size() > 0) ? ", " : "") << (argument % ", ") << ");\n"
-        << indent << scope_tab << "}\n"
-        << indent << "}\n\n"
+    // Preamble
+    if (!as_generator
+           (indent << "private static "
+            << eolian_mono::marshall_type(true) << " "
+            << string
+            << "(System.IntPtr obj, System.IntPtr pd"
+            << *(", " << marshall_parameter)
+            << ")\n"
+            << indent << "{\n"
+            << indent << scope_tab << "Eina.Log.Debug(\"function " << string << " was called\");\n"
+            << indent << scope_tab << "var ws = Efl.Eo.Globals.GetWrapperSupervisor(obj);\n"
+            << indent << scope_tab << "if (ws != null)\n"
+            << indent << scope_tab << "{\n"
+            << indent << scope_tab << scope_tab << eolian_mono::native_function_definition_preamble() << "\n"
+            << indent << scope_tab << scope_tab << "try\n"
+            << indent << scope_tab << scope_tab << "{\n"
+       ).generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name), f.parameters, f.c_name, f), context))
+      return false;
+
+    // Actual call
+    // FIXME Replace with attribute assignment for properties
+    if (!helpers::is_property_wrapper(f, context))
+      {
+         if (!as_generator
+                (indent << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "_ret_var = " : "")
+                 << (f.is_static ? "" : "((") << klass_cast_name << (f.is_static ? "." : ")ws.Target).") << string
+                 << "(" << (native_argument_invocation % ", ") << ");\n"
+            ).generate(sink, std::make_tuple(name_helpers::managed_method_name(f), f.parameters), context))
+           return false;
+      }
+    else if (f.type == attributes::function_type::prop_get)
+      {
+         if (!as_generator
+                (indent << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "_ret_var = " : "return ")
+                 << (f.is_static ? "" : "((") << klass_cast_name << (f.is_static ? "." : ")ws.Target).") << string
+                 << ";\n"
+            ).generate(sink, name_helpers::property_managed_name(f.klass, f.name.substr(0, f.name.size() - 3)), context))
+           return false;
+      }
+    else if (f.type == attributes::function_type::prop_get)
+      {
+         if (!as_generator
+                (indent << scope_tab << scope_tab << scope_tab << (return_type != "void" ? "_ret_var = " : "")
+                 << (f.is_static ? "" : "((") << klass_cast_name << (f.is_static ? "." : ")ws.Target).") << string
+                 << "(" << (native_argument_invocation % ", ") << ");\n"
+            ).generate(sink, std::make_tuple(name_helpers::managed_method_name(f), f.parameters), context))
+           return false;
+      }
+    else
+      EINA_CXX_DOM_LOG_DBG(eolian_mono::domain) << "Invalid type of native function for function " << f.c_name << std::endl;
+
+    // Epilogue
+    if (!as_generator(
+            indent << scope_tab << scope_tab << "}\n"
+            << indent << scope_tab << scope_tab << "catch (Exception e)\n"
+            << indent << scope_tab << scope_tab << "{\n"
+            << indent << scope_tab << scope_tab << scope_tab << "Eina.Log.Warning($\"Callback error: {e.ToString()}\");\n"
+            << indent << scope_tab << scope_tab << scope_tab << "Eina.Error.Set(Eina.Error.UNHANDLED_EXCEPTION);\n"
+            << indent << scope_tab << scope_tab << "}\n\n"
+            << indent << eolian_mono::native_function_definition_epilogue(*klass) << "\n"
+            << indent << scope_tab << "}\n"
+            << indent << scope_tab << "else\n"
+            << indent << scope_tab << "{\n"
+            << indent << scope_tab << scope_tab << (return_type != "void" ? "return " : "") << string
+            << "_ptr.Value.Delegate(" << self << ((!f.is_static && f.parameters.size() > 0) ? ", " : "") << (argument % ", ") << ");\n"
+            << indent << scope_tab << "}\n"
+            << indent << "}\n\n"
        )
-       .generate(sink, std::make_tuple(f.return_type, escape_keyword(f.name), f.parameters
-                                       , /***/f.c_name/***/
-                                       , f
-                                       , name_helpers::managed_method_name(f)
-                                       , f.parameters
-                                       , f
-                                       , f.c_name
-                                       , f.parameters
-                                      )
-                 , context))
+       .generate(sink, std::make_tuple(f, f.c_name, f.parameters), context))
       return false;
 
     // Static functions do not need to be called from C
