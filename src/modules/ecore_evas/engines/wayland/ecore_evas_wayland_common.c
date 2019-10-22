@@ -2560,7 +2560,8 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, Ecore_Window parent, i
    ee->alpha = EINA_FALSE;
 
    /* Wayland egl engine can't async render */
-   if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER") || !strcmp(engine_name, "wayland_egl"))
+   if (getenv("ECORE_EVAS_FORCE_SYNC_RENDER") ||
+       !strcmp(engine_name, "wayland_egl"))
      ee->can_async_render = 0;
    else
      ee->can_async_render = 1;
@@ -2572,9 +2573,11 @@ _ecore_evas_wl_common_new_internal(const char *disp_name, Ecore_Window parent, i
    wdata->display = ewd;
 
    wdata->win = ecore_wl2_window_new(ewd, p, x, y, w, h);
-   ecore_wl2_window_close_callback_set(wdata->win, _ecore_evas_wl_common_win_close, ee);
+   ecore_wl2_window_close_callback_set(wdata->win,
+                                       _ecore_evas_wl_common_win_close, ee);
    ee->prop.window = (Ecore_Window)wdata->win;
-   ee->prop.aux_hint.supported_list = ecore_wl2_window_aux_hints_supported_get(wdata->win);
+   ee->prop.aux_hint.supported_list =
+     ecore_wl2_window_aux_hints_supported_get(wdata->win);
    ecore_evas_aux_hint_add(ee, "wm.policy.win.msg.use", "1");
 
    if (!ecore_evas_evas_new(ee, ee->w, ee->h))
