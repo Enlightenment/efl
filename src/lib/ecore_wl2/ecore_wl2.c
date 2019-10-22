@@ -71,9 +71,9 @@ _ecore_wl2_surface_modules_init(void)
    const char *mod_dir;
 
 #ifdef NEED_RUN_IN_TREE
-#if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
+# if defined(HAVE_GETUID) && defined(HAVE_GETEUID)
    if (getuid() == geteuid())
-#endif
+# endif
      {
         char path[PATH_MAX];
         //when running in tree we are ignoring all the settings
