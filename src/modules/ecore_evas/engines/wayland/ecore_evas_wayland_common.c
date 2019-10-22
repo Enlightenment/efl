@@ -1326,78 +1326,79 @@ _ecore_evas_wl_common_init(void)
      return _ecore_evas_wl_init_count;
 
    _ecore_evas_wl_event_hdls = eina_array_new(10);
+
    h = ecore_event_handler_add(ECORE_EVENT_MOUSE_IN,
                              _ecore_evas_wl_common_cb_mouse_in, NULL);
    eina_array_push(_ecore_evas_wl_event_hdls, h);
-   h =
-     ecore_event_handler_add(ECORE_EVENT_MOUSE_OUT,
-                             _ecore_evas_wl_common_cb_mouse_out, NULL);
+
+   h = ecore_event_handler_add(ECORE_EVENT_MOUSE_OUT,
+                               _ecore_evas_wl_common_cb_mouse_out, NULL);
    eina_array_push(_ecore_evas_wl_event_hdls, h);
-   h =
-     ecore_event_handler_add(ECORE_WL2_EVENT_FOCUS_IN,
-                             _ecore_evas_wl_common_cb_focus_in, NULL);
+
+   h = ecore_event_handler_add(ECORE_WL2_EVENT_FOCUS_IN,
+                               _ecore_evas_wl_common_cb_focus_in, NULL);
    eina_array_push(_ecore_evas_wl_event_hdls, h);
-   h =
-     ecore_event_handler_add(ECORE_WL2_EVENT_FOCUS_OUT,
-                             _ecore_evas_wl_common_cb_focus_out, NULL);
+
+   h = ecore_event_handler_add(ECORE_WL2_EVENT_FOCUS_OUT,
+                               _ecore_evas_wl_common_cb_focus_out, NULL);
    eina_array_push(_ecore_evas_wl_event_hdls, h);
-   h =
-     ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE,
-                             _ecore_evas_wl_common_cb_window_configure, NULL);
+
+   h = ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE,
+                               _ecore_evas_wl_common_cb_window_configure, NULL);
    eina_array_push(_ecore_evas_wl_event_hdls, h);
-   h =
-     ecore_event_handler_add(_ecore_wl2_event_window_www,
-                             _ecore_evas_wl_common_cb_www, NULL);
+
+   h = ecore_event_handler_add(_ecore_wl2_event_window_www,
+                               _ecore_evas_wl_common_cb_www, NULL);
    eina_array_push(_ecore_evas_wl_event_hdls, h);
-   h =
-     ecore_event_handler_add(_ecore_wl2_event_window_www_drag,
-                             _ecore_evas_wl_common_cb_www_drag, NULL);
+
+   h = ecore_event_handler_add(_ecore_wl2_event_window_www_drag,
+                               _ecore_evas_wl_common_cb_www_drag, NULL);
    eina_array_push(_ecore_evas_wl_event_hdls, h);
-   h =
-     ecore_event_handler_add(ECORE_WL2_EVENT_DISCONNECT,
-                             _ecore_evas_wl_common_cb_disconnect, NULL);
+
+   h = ecore_event_handler_add(ECORE_WL2_EVENT_DISCONNECT,
+                               _ecore_evas_wl_common_cb_disconnect, NULL);
    eina_array_push(_ecore_evas_wl_event_hdls, h);
-   h =
-     ecore_event_handler_add(ECORE_WL2_EVENT_GLOBAL_ADDED,
-                             _ecore_evas_wl_common_cb_global_added, NULL);
+
+   h = ecore_event_handler_add(ECORE_WL2_EVENT_GLOBAL_ADDED,
+                               _ecore_evas_wl_common_cb_global_added, NULL);
    eina_array_push(_ecore_evas_wl_event_hdls, h);
-   h =
-     ecore_event_handler_add(ECORE_WL2_EVENT_GLOBAL_REMOVED,
-                             _ecore_evas_wl_common_cb_global_removed, NULL);
+
+   h = ecore_event_handler_add(ECORE_WL2_EVENT_GLOBAL_REMOVED,
+                               _ecore_evas_wl_common_cb_global_removed, NULL);
    eina_array_push(_ecore_evas_wl_event_hdls, h);
-   h =
-     ecore_event_handler_add(ECORE_WL2_EVENT_SEAT_NAME_CHANGED,
-                             _ecore_evas_wl_common_cb_seat_name_changed, NULL);
+
+   h = ecore_event_handler_add(ECORE_WL2_EVENT_SEAT_NAME_CHANGED,
+                               _ecore_evas_wl_common_cb_seat_name_changed, NULL);
    eina_array_push(_ecore_evas_wl_event_hdls, h);
-   h =
-     ecore_event_handler_add(ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED,
-                             _ecore_evas_wl_common_cb_seat_capabilities_changed,
-                             NULL);
+
+   h = ecore_event_handler_add(ECORE_WL2_EVENT_SEAT_CAPABILITIES_CHANGED,
+                               _ecore_evas_wl_common_cb_seat_capabilities_changed,
+                               NULL);
    eina_array_push(_ecore_evas_wl_event_hdls, h);
-   h =
-     ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE,
-                             _ecore_evas_wl_common_cb_window_configure_complete,
-                             NULL);
+
+   h = ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_CONFIGURE_COMPLETE,
+                               _ecore_evas_wl_common_cb_window_configure_complete,
+                               NULL);
    eina_array_push(_ecore_evas_wl_event_hdls, h);
-   h =
-     ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_ROTATE,
-                             _ecore_evas_wl_common_cb_window_rotate, NULL);
+
+   h = ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_ROTATE,
+                               _ecore_evas_wl_common_cb_window_rotate, NULL);
    eina_array_push(_ecore_evas_wl_event_hdls, h);
-   h =
-     ecore_event_handler_add(ECORE_WL2_EVENT_AUX_HINT_ALLOWED,
-                             _ecore_evas_wl_common_cb_aux_hint_allowed, NULL);
+
+   h = ecore_event_handler_add(ECORE_WL2_EVENT_AUX_HINT_ALLOWED,
+                               _ecore_evas_wl_common_cb_aux_hint_allowed, NULL);
    eina_array_push(_ecore_evas_wl_event_hdls, h);
-   h =
-     ecore_event_handler_add(ECORE_WL2_EVENT_AUX_HINT_SUPPORTED,
-                             _ecore_evas_wl_common_cb_aux_hint_supported, NULL);
+
+   h = ecore_event_handler_add(ECORE_WL2_EVENT_AUX_HINT_SUPPORTED,
+                               _ecore_evas_wl_common_cb_aux_hint_supported, NULL);
    eina_array_push(_ecore_evas_wl_event_hdls, h);
-   h =
-     ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE,
-                             _ecore_evas_wl_common_cb_iconify_state_change, NULL);
+
+   h = ecore_event_handler_add(ECORE_WL2_EVENT_WINDOW_ICONIFY_STATE_CHANGE,
+                               _ecore_evas_wl_common_cb_iconify_state_change, NULL);
    eina_array_push(_ecore_evas_wl_event_hdls, h);
-   h =
-     ecore_event_handler_add(ECORE_WL2_EVENT_AUX_MESSAGE,
-                             _ecore_evas_wl_common_cb_aux_message, NULL);
+
+   h = ecore_event_handler_add(ECORE_WL2_EVENT_AUX_MESSAGE,
+                               _ecore_evas_wl_common_cb_aux_message, NULL);
 
    ecore_event_evas_init();
 
