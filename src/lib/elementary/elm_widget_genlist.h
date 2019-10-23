@@ -205,6 +205,7 @@ struct _Elm_Genlist_Data
 
    Eina_Bool                             tree_effect_animator : 1;
    Eina_Bool                             pin_item_top : 1;
+   Eina_Bool                             need_calc : 1; /* _calc_job() must be called in group_calc */
 };
 
 typedef struct _Item_Block Item_Block;
