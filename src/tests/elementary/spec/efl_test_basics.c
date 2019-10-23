@@ -118,9 +118,38 @@ EFL_START_TEST(no_err_on_shutdown)
 }
 EFL_END_TEST
 
+EFL_START_TEST(correct_visibility_setting)
+{
+   Eo *checker = NULL;
+   efl_gfx_entity_visible_set(widget, EINA_TRUE);
+   checker = create_test_widget();
+   if (efl_isa(widget, EFL_PACK_INTERFACE))
+     {
+         efl_pack(widget, checker);
+     }
+   else if (efl_isa(widget, EFL_CONTENT_INTERFACE))
+     {
+        efl_content_set(widget, checker);
+     }
+   else
+     return;
+
+   if (checker)
+     ck_assert_int_eq(efl_gfx_entity_visible_get(checker), EINA_TRUE);
+
+   efl_gfx_entity_visible_set(widget, EINA_FALSE);
+   if (checker)
+     ck_assert_int_eq(efl_gfx_entity_visible_get(checker), EINA_FALSE);
+
+   efl_gfx_entity_visible_set(widget, EINA_TRUE);
+   if (checker)
+     ck_assert_int_eq(efl_gfx_entity_visible_get(checker), EINA_TRUE);
+}
+EFL_END_TEST
 void
 efl_ui_widget_behavior_test(TCase *tc)
 {
    tcase_add_test(tc, no_leaking_canvas_object);
    tcase_add_test(tc, no_err_on_shutdown);
+   tcase_add_test(tc, correct_visibility_setting);
 }
