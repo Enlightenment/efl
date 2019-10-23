@@ -166,7 +166,7 @@ static void _access_activate_cb(void *data EINA_UNUSED,
                                 Elm_Object_Item *item);
 static void _decorate_item_set(Elm_Gen_Item *);
 static void _internal_elm_genlist_clear(Evas_Object *obj);
-static Eina_Bool _item_filtered_get(Elm_Gen_Item *it);
+static Eina_Bool _item_filtered_get(Elm_Gen_Item *it, Elm_Genlist_Data *sd);
 
 static void _elm_genlist_tree_effect_stop(Elm_Genlist_Data *sd);
 static Eina_Bool _elm_genlist_tree_effect_setup(Elm_Genlist_Data *sd);
@@ -2411,8 +2411,8 @@ _item_block_position(Item_Block *itb, const int blk_idx)
         sd = it->item->wsd;
         if (sd->reorder_it == it) continue;
 
-        if (!it->filtered && sd->filter_data && it->itc->func.filter_get)
-          _item_filtered_get(it);
+        if (it->itc->func.filter_get)
+          _item_filtered_get(it, sd);
         if (it->hide)
           {
              if (it->realized) evas_object_hide(VIEW(it));
@@ -5397,8 +5397,7 @@ _item_block_recalc(Item_Block *itb, const int blk_idx, Eina_Bool qadd)
      {
         show_me |= it->item->show_me;
 
-        if (!it->filtered) _item_filtered_get(it);
-        if (it->hide)
+        if (!_item_filtered_get(it, itb->sd))
           {
              if (it->realized) evas_object_hide(VIEW(it));
              continue;
@@ -6973,7 +6972,7 @@ _elm_genlist_first_item_get(const Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
 {
    Elm_Gen_Item *it = ELM_GEN_ITEM_FROM_INLIST(sd->items);
 
-   while (it && sd->filter && !_item_filtered_get(it))
+   while (it && sd->filter && !_item_filtered_get(it, sd))
      it = ELM_GEN_ITEM_NEXT(it);
 
    return EO_OBJ(it);
@@ -6987,7 +6986,7 @@ _elm_genlist_last_item_get(const Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd)
    if (!sd->items) return NULL;
    it = ELM_GEN_ITEM_FROM_INLIST(sd->items->last);
 
-   while (it && sd->filter && !_item_filtered_get(it))
+   while (it && sd->filter && !_item_filtered_get(it, sd))
      it = ELM_GEN_ITEM_PREV(it);
 
    return EO_OBJ(it);
@@ -6999,7 +6998,7 @@ _elm_genlist_item_next_get(const Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
    do it = ELM_GEN_ITEM_NEXT(it);
-   while (it && sd->filter && !_item_filtered_get(it));
+   while (it && sd->filter && !_item_filtered_get(it, sd));
 
    return EO_OBJ(it);
 }
@@ -7010,7 +7009,7 @@ _elm_genlist_item_prev_get(const Eo *eo_it EINA_UNUSED, Elm_Gen_Item *it)
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
 
    do it = ELM_GEN_ITEM_PREV(it);
-   while (it && sd->filter && !_item_filtered_get(it));
+   while (it && sd->filter && !_item_filtered_get(it, sd));
 
    return EO_OBJ(it);
 }
@@ -7853,7 +7852,7 @@ _filter_item_internal(Elm_Gen_Item *it)
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
    if (sd->filter_data)
      {
-        if ((it->parent && !_item_filtered_get(it->parent)) ||
+        if ((it->parent && !_item_filtered_get(it->parent, sd)) ||
             (it->itc->func.filter_get &&
              !it->itc->func.filter_get(
                 (void *)WIDGET_ITEM_DATA_GET(EO_OBJ(it)),
@@ -7872,11 +7871,11 @@ _filter_item_internal(Elm_Gen_Item *it)
 
 // Returns true if the item is not filtered out, but remains visible.
 static Eina_Bool
-_item_filtered_get(Elm_Gen_Item *it)
+_item_filtered_get(Elm_Gen_Item *it, Elm_Genlist_Data *sd)
 {
    Eina_List *l;
-   if (!it) return EINA_FALSE;
-   ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
+   /* no filter exists: item will always be visible */
+   if (!sd->filter_data) return EINA_TRUE;
    if (!it->filtered)
      {
         l = eina_list_data_find_list(sd->filter_queue, it);
@@ -7900,8 +7899,7 @@ _item_filtered_get(Elm_Gen_Item *it)
         efl_canvas_group_change(sd->obj);
         sd->need_calc = EINA_TRUE;
    }
-   if (!it->hide) return EINA_TRUE;
-   return EINA_FALSE;
+   return !it->hide;
 }
 
 static int
@@ -8025,7 +8023,7 @@ _filter_iterator_next(Elm_Genlist_Filter *iter, void **data)
      {
         item = ELM_GENLIST_FILTER_ITERATOR_ITEM_GET(iter->current, Elm_Gen_Item);
         iter->current = iter->current->next;
-        if (_item_filtered_get(item))
+        if (_item_filtered_get(item, item->item->block->sd))
           {
              if (data)
                *data = EO_OBJ(item);
