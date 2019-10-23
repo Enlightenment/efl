@@ -8010,9 +8010,11 @@ _elm_genlist_filter_set(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, void *filter_
               }
          }
      }
-
-   sd->queue_filter_enterer = ecore_idle_enterer_add(_item_filter_enterer,
-                                                     sd->obj);
+   if (!sd->filter_queue)
+     efl_event_callback_legacy_call(sd->obj, ELM_GENLIST_EVENT_FILTER_DONE, NULL);
+   else
+     sd->queue_filter_enterer = ecore_idle_enterer_add(_item_filter_enterer,
+                                                       sd->obj);
 }
 
 static Eina_Bool
