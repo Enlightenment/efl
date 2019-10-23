@@ -788,6 +788,7 @@ _calc_job(void *data)
    Evas_Coord minw = -1, minh = 0, y = 0, ow = 0, vw = 0;
    Evas *e;
 
+   sd->need_calc = EINA_FALSE;
    evas_object_geometry_get(sd->pan_obj, NULL, NULL, &ow, &sd->h);
    if (sd->mode == ELM_LIST_COMPRESS)
       elm_interface_scrollable_content_viewport_geometry_get
@@ -944,12 +945,14 @@ _elm_genlist_efl_canvas_group_group_calculate(Eo *obj, Elm_Genlist_Data *sd)
                {
                   itb->must_recalc = EINA_TRUE;
                }
-             _calc_job(sd);
+             sd->need_calc = EINA_TRUE;
           }
         minw = vmw;
         minh = vmh;
      }
    else
+     sd->need_calc = EINA_TRUE;
+   if (sd->need_calc)
      _calc_job(sd);
 
    if (sd->scr_minw)
@@ -7896,6 +7899,7 @@ _item_filtered_get(Elm_Gen_Item *it)
         if (it->item->block)
           it->item->block->changed = EINA_TRUE;
         efl_canvas_group_change(sd->obj);
+        sd->need_calc = EINA_TRUE;
    }
    if (!it->hide) return EINA_TRUE;
    return EINA_FALSE;
@@ -7995,6 +7999,8 @@ _elm_genlist_filter_set(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, void *filter_
                     sd->filter_queue = eina_list_append(sd->filter_queue, it);
                }
             itb->changed = EINA_TRUE;
+            evas_object_smart_changed(obj);
+            sd->need_calc = EINA_TRUE;
          }
        else
          {
@@ -8006,7 +8012,6 @@ _elm_genlist_filter_set(Eo *obj EINA_UNUSED, Elm_Genlist_Data *sd, void *filter_
               }
          }
      }
-   _calc_job(sd);
 
    sd->queue_filter_enterer = ecore_idle_enterer_add(_item_filter_enterer,
                                                      sd->obj);
