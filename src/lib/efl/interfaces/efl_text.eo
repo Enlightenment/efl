@@ -9,15 +9,13 @@ interface Efl.Text
          [[The text string to be displayed by the given text object.
 
            Do not release (free) the returned value.
-
-           See also @.text.get.
          ]]
          set {
          }
          get {
          }
          values {
-            text: string; [[Text string to display on it.]]
+            text: string; [[Text string to display.]]
          }
       }
    }
