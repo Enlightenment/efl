@@ -31,7 +31,7 @@ _slstr_steal(void)
 {
    char *local = strdup("Hello world 2");
 
-   return eina_slstr_copy_new(local);
+   return eina_slstr_steal_new(local);
 }
 
 EFL_START_TEST(slstr_steal)
