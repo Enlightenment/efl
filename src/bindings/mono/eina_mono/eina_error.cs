@@ -41,7 +41,7 @@ public struct Error : IComparable<Error>
     /// Unhandled Exception error identifier.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public static readonly Error UNHANDLED_EXCEPTION;
+    public static readonly Error UNHANDLED_EXCEPTION = eina_error_msg_register("Unhandled C# exception occurred.");
 
     /// <summary>
     /// No error identifier.
@@ -113,11 +113,6 @@ public struct Error : IComparable<Error>
     public override string ToString()
     {
         return "Eina.Error(" + code + ")";
-    }
-
-    static Error()
-    {
-        UNHANDLED_EXCEPTION = eina_error_msg_register("Unhandled C# exception occurred.");
     }
 
     [DllImport(efl.Libs.Eina)] static extern Error eina_error_msg_register(string msg);
