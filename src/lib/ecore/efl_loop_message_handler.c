@@ -54,8 +54,16 @@ _efl_loop_message_handler_message_send(Eo *obj, Efl_Loop_Message_Handler_Data *p
      {
         msg->handler = obj;
         msg->message = message;
-        pd->loop_data->message_queue = eina_inlist_append
-          (pd->loop_data->message_queue, EINA_INLIST_GET(msg));
+        if (pd->loop_data->message_walking > 0)
+          {
+             pd->loop_data->message_pending_queue = eina_inlist_append
+                (pd->loop_data->message_pending_queue, EINA_INLIST_GET(msg));
+          }
+        else
+          {
+             pd->loop_data->message_queue = eina_inlist_append
+                (pd->loop_data->message_queue, EINA_INLIST_GET(msg));
+          }
         _efl_loop_message_send_info_set(message, EINA_INLIST_GET(msg),
                                        pd->loop, pd->loop_data);
         return;

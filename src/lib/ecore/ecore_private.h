@@ -147,6 +147,7 @@ struct _Efl_Loop_Data
    Eina_List           *thread_children;
 
    Eina_Inlist         *message_queue;
+   Eina_Inlist         *message_pending_queue;
    unsigned int         message_walking;
 
    unsigned int         throttle;

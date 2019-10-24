@@ -621,6 +621,14 @@ _efl_loop_message_process(Eo *obj, Efl_Loop_Data *pd)
                }
              else free(msg);
           }
+
+        while (pd->message_pending_queue)
+          {
+             msg = (Message *)pd->message_pending_queue;
+             pd->message_pending_queue = eina_inlist_remove(pd->message_pending_queue,
+                                                            pd->message_pending_queue);
+             pd->message_queue = eina_inlist_append(pd->message_queue, EINA_INLIST_GET(msg));
+          }
      }
    return EINA_TRUE;
 }
