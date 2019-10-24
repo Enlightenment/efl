@@ -288,6 +288,30 @@ EFL_START_TEST(ecore_test_timer_in_order)
 }
 EFL_END_TEST
 
+EFL_START_TEST(ecore_test_timer_iteration)
+{
+   count = 0;
+   ecore_timer_add(0, _timer_cb, (void *) 1);
+   ecore_main_loop_iterate();
+   /* timers should not expire for one loop iteration */
+   ck_assert_int_eq(count, 0);
+   ecore_main_loop_iterate();
+   /* timers should expire after one loop iteration */
+   ck_assert_int_eq(count, 1);
+   ecore_timer_add(0, _timer_cb, (void *) 2);
+   ecore_timer_add(0, _timer_cb, (void *) 3);
+   ecore_main_loop_iterate();
+   /* timers should not expire for one loop iteration */
+   ck_assert_int_eq(count, 1);
+   ecore_timer_add(0, _timer_cb, (void *) 4);
+   ecore_main_loop_iterate();
+   /* all pending and instantiated timers should expire after one loop iteration */
+   ck_assert_int_eq(count, 3);
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(count, 4);
+}
+EFL_END_TEST
+
 void ecore_test_timer(TCase *tc)
 {
   tcase_add_test(tc, ecore_test_timers);
@@ -295,4 +319,5 @@ void ecore_test_timer(TCase *tc)
   tcase_add_test(tc, ecore_test_timer_valid_callbackfunc);
   tcase_add_test(tc, ecore_test_ecore_main_loop_timer);
   tcase_add_test(tc, ecore_test_timer_in_order);
+  tcase_add_test(tc, ecore_test_timer_iteration);
 }
