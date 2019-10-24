@@ -16,10 +16,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Efl
-{
-
-namespace Eo
+namespace Efl.Eo
 {
 
 ///<summary>Class to load functions pointers from a native module.
@@ -167,8 +164,6 @@ public class FunctionLoadResult<T>
         this._Delegate = Delegate;
         this.Kind = FunctionLoadResultKind.Success;
     }
-}
-
 }
 
 }

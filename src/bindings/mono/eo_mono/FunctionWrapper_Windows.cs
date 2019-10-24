@@ -16,10 +16,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Efl
-{
-
-namespace Eo
+namespace Efl.Eo
 {
 
 public static partial class FunctionInterop
@@ -29,8 +26,6 @@ public static partial class FunctionInterop
 
     private static IntPtr LoadFunctionPointer(IntPtr nativeLibraryHandle, string functionName)
         => FunctionInterop.GetProcAddress(nativeLibraryHandle, functionName);
-}
-
 }
 
 }

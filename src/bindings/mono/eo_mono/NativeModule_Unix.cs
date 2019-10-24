@@ -16,10 +16,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Efl
-{
-
-namespace Eo
+namespace Efl.Eo
 {
 
 public partial class NativeModule
@@ -82,8 +79,6 @@ public partial class NativeModule
 
         return r;
     }
-}
-
 }
 
 }
