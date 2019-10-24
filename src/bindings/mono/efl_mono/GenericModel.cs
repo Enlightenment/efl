@@ -18,7 +18,7 @@ namespace Efl {
 /// </summary>
 /// <typeparam name="T">The type of the child model. It is the type used when adding/removing/getting items to this
 /// model.</typeparam>
-public class GenericModel<T> : Efl.Object, Efl.IModel, IDisposable
+public class GenericModel<T> : Efl.Object, Efl.IModel
 {
    private Efl.IModel model;
 

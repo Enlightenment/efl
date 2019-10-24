@@ -67,7 +67,7 @@ internal class ModelHelper
 /// </summary>
 /// <typeparam name="T">The enclosed C# model class with the properties to be added to the native model.</typeparam>
 [Efl.Eo.BindingEntity]
-public class UserModel<T> : Efl.MonoModelInternal, IDisposable
+public class UserModel<T> : Efl.MonoModelInternal
 {
    /// <summary>
    /// Creates a new root model.
@@ -83,12 +83,6 @@ public class UserModel<T> : Efl.MonoModelInternal, IDisposable
      {
         AddProperty(prop.Name, Eina.ValueTypeBridge.GetManaged(prop.PropertyType));
      }
-   }
-
-   /// <summary>Disposes of this instance.</summary>
-   ~UserModel()
-   {
-       Dispose(false);
    }
 
    /// <summary>Adds a new child to the model wrapping the properties of <c>o</c>

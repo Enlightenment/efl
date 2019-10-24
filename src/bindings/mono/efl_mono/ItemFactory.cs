@@ -16,7 +16,7 @@ namespace Efl.Ui
 /// factory.Style().Bind("Name"); // The factory Style property is bound to the Name property for the given model.
 /// </code>
 /// </summary>
-public class ItemFactory<T> : Efl.Ui.LayoutFactory, IDisposable
+public class ItemFactory<T> : Efl.Ui.LayoutFactory
 {
     /// <summary>Creates a new factory.
     /// </summary>

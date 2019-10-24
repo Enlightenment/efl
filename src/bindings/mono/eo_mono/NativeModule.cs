@@ -22,6 +22,7 @@ namespace Efl.Eo
 public partial class NativeModule : IDisposable
 {
     private Lazy<IntPtr> module;
+    private bool disposed = false;
 
     ///<summary>Lazily tries to load the module with the given name.</summary>
     ///<param name="libName">The name of the module to load.</param>
@@ -43,12 +44,39 @@ public partial class NativeModule : IDisposable
         }
     }
 
-    ///<summary>Unload and released the handle to the wrapped module.</summary>
+    /// <summary>Finalizer to be called from the Garbage Collector.</summary>
+    ~NativeModule()
+    {
+        Dispose(false);
+    }
+
+    /// <summary>Unload and released the handle to the wrapped module.</summary>
     public void Dispose()
     {
-        UnloadLibrary(module.Value);
-        module = null;
+        Dispose(true);
+        GC.SuppressFinalize(this);
     }
+
+    /// <summary>Unload and released the handle to the wrapped module.</summary>
+    protected virtual void Dispose(bool disposing)
+    {
+        if (disposed)
+        {
+            return;
+        }
+
+        if (disposing)
+        {
+           module = null;
+        }
+
+        if (module.IsValueCreated)
+        {
+           UnloadLibrary(module.Value);
+        }
+
+        disposed = true;
+   }
 }
 
 }
