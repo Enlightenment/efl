@@ -3989,8 +3989,7 @@ _item_mouse_move_cb(void *data,
                sd->movements++;
           }
         ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
-        efl_event_callback_legacy_call
-          (WIDGET(it), EFL_UI_EVENT_DRAG, eo_it);
+        evas_object_smart_callback_call(WIDGET(it), "drag", eo_it);
         return;
      }
    if ((!it->down) || (sd->longpressed))
