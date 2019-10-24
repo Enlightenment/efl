@@ -64,7 +64,7 @@ struct function_registration_generator
       return false;
 
     if(!as_generator(
-        indent << "if (methods.FirstOrDefault(m => m.Name == \"" << string << "\") != null)\n"
+        indent << "if (methods.Contains(\"" << string << "\"))\n"
         << indent << "{\n"
         << indent << scope_tab << "descs.Add(new EflOpDescription() {"
 #ifdef _WIN32
