@@ -95,6 +95,7 @@ public class Accessor<T> : IEnumerable<T>, IDisposable
     public void Dispose()
     {
         Dispose(true);
+        GC.SuppressFinalize(this);
     }
 
     /// <summary>Disposes of this wrapper, releasing the native accessor if
