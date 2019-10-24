@@ -472,8 +472,12 @@ _efl_loop_timer_efl_object_parent_set(Eo *obj, Efl_Loop_Timer_Data *pd, Efl_Obje
    // Remove the timer from all possible pending list
    first = eina_inlist_first(EINA_INLIST_GET(pd));
    if (first == pd->loop_data->timers)
-     pd->loop_data->timers = eina_inlist_remove
-       (pd->loop_data->timers, EINA_INLIST_GET(pd));
+     {
+        /* if this timer is currently being processed, update the pointer here so it is not lost */
+        if (pd == pd->loop_data->timer_current)
+          pd->loop_data->timer_current = (Efl_Loop_Timer_Data*)EINA_INLIST_GET(pd)->next;
+        pd->loop_data->timers = eina_inlist_remove(pd->loop_data->timers, EINA_INLIST_GET(pd));
+     }
    else if (first == pd->loop_data->suspended)
      pd->loop_data->suspended = eina_inlist_remove
        (pd->loop_data->suspended, EINA_INLIST_GET(pd));
@@ -642,14 +646,24 @@ _efl_loop_timer_expired_call(Eo *obj EINA_UNUSED, Efl_Loop_Data *pd, double when
 
         efl_ref(timer->object);
         eina_evlog("+timer", timer, 0.0, NULL);
+        /* this can remove timer from its inlist in the legacy codepath */
         efl_event_callback_call(timer->object, EFL_LOOP_TIMER_EVENT_TIMER_TICK, NULL);
         eina_evlog("-timer", timer, 0.0, NULL);
 
         // may have changed in recursive main loops
         // this current timer can not die yet as we hold a reference on it
+        /* this is tricky: the current timer cannot be deleted, but it CAN be removed from its inlist,
+         * thus breaking timer processing
+         */
         if (pd->timer_current)
-          pd->timer_current = (Efl_Loop_Timer_Data *)
-            EINA_INLIST_GET(pd->timer_current)->next;
+          {
+             if (pd->timer_current == timer)
+               pd->timer_current = (Efl_Loop_Timer_Data *)EINA_INLIST_GET(pd->timer_current)->next;
+             /* assume this has otherwise been modified either due to recursive mainloop processing or
+              * the timer being removed from its inlist and carefully updating pd->timer_current in the
+              * process as only the most elite of engineers would think to do
+              */
+          }
         _efl_loop_timer_reschedule(timer, when);
         efl_unref(timer->object);
      }
