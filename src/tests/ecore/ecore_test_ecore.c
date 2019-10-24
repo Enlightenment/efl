@@ -461,8 +461,15 @@ EFL_START_TEST(ecore_test_ecore_app)
    int argc_out = 0;
    char **argv_out = NULL;
 
+   int pargc;
+   char **pargv;
+
+   ecore_app_args_get(&pargc, &pargv);
+
    ecore_app_args_set(argc_in, argv_in);
    ecore_app_args_get(&argc_out, &argv_out);
+
+   ecore_app_args_set(pargc, (const char**)pargv);
 
    fail_if(argc_in != argc_out);
    int i;
