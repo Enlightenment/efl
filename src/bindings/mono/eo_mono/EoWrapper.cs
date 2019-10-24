@@ -31,6 +31,8 @@ namespace Eo
 ///
 /// Most of it is protected functionalities to serve the generated
 /// binding classes that inherit from it.
+///
+/// <para>Since EFL 1.23.</para>
 /// </summary>
 public abstract class EoWrapper : IWrapper, IDisposable
 {
@@ -45,14 +47,17 @@ public abstract class EoWrapper : IWrapper, IDisposable
     private Hashtable keyValueHash = null;
 
     /// <summary>Constructor to be used when objects are expected to be constructed from native code.
-    /// For a class that inherited from an EFL# class to be properly constructed from native code
+    /// <para>For a class that inherited from an EFL# class to be properly constructed from native code
     /// one must create a constructor with this signature and calls this base constructor from it.
     /// This constructor will take care of calling base constructors of the native classes and
-    /// perform additional setup so objects are ready to use.
-    /// It is advisable to check for the <see cref="NativeHandle"/> property in the top level
+    /// perform additional setup so objects are ready to use.</para>
+    /// <para>It is advisable to check for the <see cref="NativeHandle"/> property in the top level
     /// constructor and signal an error when it has a value of IntPtr.Zero after this
-    /// constructor completion.
-    /// Warning: Do not use this constructor directly from a `new` statement.</summary>
+    /// constructor completion.</para>
+    /// <para>Warning: Do not use this constructor directly from a `new` statement.</para>
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    ///
     /// <param name="ch">Tag struct storing the native handle of the object being constructed.</param>
     protected EoWrapper(ConstructingHandle ch)
     {
@@ -71,8 +76,10 @@ public abstract class EoWrapper : IWrapper, IDisposable
     }
 
     /// <summary>Initializes a new instance of the <see cref="Object"/> class.
-    /// Internal usage: Constructs an instance from a native pointer. This is used when interacting with C code and should not be used directly.
-    /// Do not implement this constructor.</summary>
+    /// <para>Internal usage: Constructs an instance from a native pointer. This is used when interacting with C code and should not be used directly.</para>
+    /// <para>Do not implement this constructor.</para>
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="wh">The native pointer to be wrapped.</param>
     protected EoWrapper(Efl.Eo.Globals.WrappingHandle wh)
     {
@@ -81,8 +88,10 @@ public abstract class EoWrapper : IWrapper, IDisposable
     }
 
     /// <summary>Initializes a new instance of the <see cref="Object"/> class.
-    /// Internal usage: Constructor to actually call the native library constructors. C# subclasses
-    /// must use the public constructor only.</summary>
+    /// <para>Internal usage: Constructor to actually call the native library constructors. C# subclasses
+    /// must use the public constructor only.</para>
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="baseKlass">The pointer to the base native Eo class.</param>
     /// <param name="parent">The Efl.Object parent of this instance.</param>
     /// <param name="file">Name of the file from where the constructor is called.</param>
@@ -129,19 +138,25 @@ public abstract class EoWrapper : IWrapper, IDisposable
         AddWrapperSupervisor();
     }
 
-    /// <summary>Destructor.</summary>
+    /// <summary>Destructor.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     ~EoWrapper()
     {
         Dispose(false);
     }
 
-    /// <summary>Pointer to the native instance.</summary>
+    /// <summary>Pointer to the native instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public System.IntPtr NativeHandle
     {
         get { return handle; }
     }
 
-    /// <summary>Pointer to the native class description.</summary>
+    /// <summary>Pointer to the native class description.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public abstract System.IntPtr NativeClass
     {
         get;
@@ -150,6 +165,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
     /// <summary>
     /// Whether this object type is one of the generated binding classes or a custom
     /// class defined by the user and that inherit from one of the generated ones.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <returns>
     /// True if this object type is one of the generated binding classes,
@@ -161,7 +177,9 @@ public abstract class EoWrapper : IWrapper, IDisposable
         get { return generated; }
     }
 
-    /// <summary>Releases the underlying native instance.</summary>
+    /// <summary>Releases the underlying native instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     protected virtual void Dispose(bool disposing)
     {
         if (disposing && handle != System.IntPtr.Zero)
@@ -182,14 +200,18 @@ public abstract class EoWrapper : IWrapper, IDisposable
         }
     }
 
-    /// <summary>Turns the native pointer into a string representation.</summary>
+    /// <summary>Turns the native pointer into a string representation.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <returns>A string with the type and the native pointer for this object.</returns>
     public override String ToString()
     {
         return $"{this.GetType().Name}@[0x{(UInt64)handle:x}]";
     }
 
-    /// <summary>Releases the underlying native instance.</summary>
+    /// <summary>Releases the underlying native instance.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public void Dispose()
     {
         Dispose(true);
@@ -200,6 +222,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
     ///
     /// This method is a C# counterpart to the C `efl_del` function. It removes the parent of the object
     /// and releases the Eo reference it was holding.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     public void Del()
     {
@@ -209,7 +232,9 @@ public abstract class EoWrapper : IWrapper, IDisposable
     }
 
     /// <summary>Finishes instantiating this object.
-    /// Internal usage by generated code.</summary>
+    /// <para>Internal usage by generated code.</para>
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     protected void FinishInstantiation()
     {
         Eina.Log.Debug("calling efl_add_internal_end");
@@ -223,7 +248,10 @@ public abstract class EoWrapper : IWrapper, IDisposable
         handle = h;
     }
 
-    /// <summary>Adds a new event handler, registering it to the native event. For internal use only.</summary>
+    /// <summary>Adds a new event handler, registering it to the native event.
+    /// <para>For internal use only.</para>
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="lib">The name of the native library definining the event.</param>
     /// <param name="key">The name of the native event.</param>
     /// <param name="evtCaller">Delegate to be called by native code on event raising.</param>
@@ -256,7 +284,10 @@ public abstract class EoWrapper : IWrapper, IDisposable
         Eina.Error.RaiseIfUnhandledException();
     }
 
-    /// <summary>Removes the given event handler for the given event. For internal use only.</summary>
+    /// <summary>Removes the given event handler for the given event.
+    /// <para>For internal use only.</para>
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     /// <param name="lib">The name of the native library definining the event.</param>
     /// <param name="key">The name of the native event.</param>
     /// <param name="evtDelegate">The delegate to be removed.</param>
@@ -325,22 +356,29 @@ public abstract class EoWrapper : IWrapper, IDisposable
 
     /// <summary>
     /// Struct to be used when constructing objects from native code.
-    /// Wraps the pointer handle to the native object instance.
+    /// <para>For internal use by generated code only.</para>
+    /// <para>Wraps the pointer handle to the native object instance.</para>
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     protected struct ConstructingHandle
     {
-        /// <summary>Constructor for wrapping the native handle.</summary>
+        /// <summary>Constructor for wrapping the native handle.
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         public ConstructingHandle(IntPtr h)
         {
             NativeHandle = h;
         }
 
-        /// <summary>Pointer to the native instance.</summary>
+        /// <summary>Pointer to the native instance.
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         public IntPtr NativeHandle { get; private set; }
     }
 
     /// <summary>
     /// Set a value object associated with a key object.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     public void SetKeyValue(object key, object val)
     {
@@ -352,6 +390,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
 
     /// <summary>
     /// Get a value object associated with a key object.
+    /// <para>Since EFL 1.23.</para>
     /// </summary>
     public object GetKeyValue(object key)
     {
@@ -362,7 +401,9 @@ public abstract class EoWrapper : IWrapper, IDisposable
     }
 
     /// <summary>Wrapper for native methods and virtual method delegates.
-    /// For internal use by generated code only.</summary>
+    /// <para>For internal use by generated code only.</para>
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
     public abstract class NativeMethods : Efl.Eo.NativeClass
     {
         private static EflConstructorDelegate csharpEflConstructorStaticDelegate = new EflConstructorDelegate(Constructor);
@@ -370,7 +411,9 @@ public abstract class EoWrapper : IWrapper, IDisposable
 
         private delegate IntPtr EflConstructorDelegate(IntPtr obj, IntPtr pd);
 
-        /// <summary>Gets the list of Eo operations to override.</summary>
+        /// <summary>Gets the list of Eo operations to override.
+        /// <para>Since EFL 1.23.</para>
+        /// </summary>
         /// <returns>The list of Eo operations to be overload.</returns>
         public override System.Collections.Generic.List<EflOpDescription> GetEoOps(Type type, bool includeInherited)
         {
