@@ -8,13 +8,13 @@
 		<!-- Catch generic exception -->
 		<Rule Id="CA1031" Action="None"/>
 		<!-- Add extra exception constructors --> 
-		<Rule Id="CA1032" Action="None"/>
+		<Rule Id="CA1032" Action="Warning"/>
 		<!-- Do not nest NativeTypes --> 
 		<Rule Id="CA1034" Action="None"/>
 		<!-- IComparable must implement other comparison operators --> 
 		<Rule Id="CA1036" Action="None"/>
 		<!-- Avoid empty interface --> 
-		<Rule Id="CA1040" Action="None"/>
+		<Rule Id="CA1040" Action="Warning"/>
 		<!-- Consider making property with getter --> 
 		<Rule Id="CA1044" Action="None"/>
 		<!-- Visible instance fields -->
@@ -24,9 +24,9 @@
 		<!-- Using parameters before checking for null -->
 		<Rule Id="CA1062" Action="None"/>
 		<!-- Remove IDisposable as Object already has it -->
-		<Rule Id="CA1063" Action="None"/>
+		<Rule Id="CA1063" Action="Warning"/>
 		<!-- Exceptions must be public -->
-		<Rule Id="CA1064" Action="None"/>
+		<Rule Id="CA1064" Action="Warning"/>
 		<!-- Do not raise exception in unexpected locations -->
 		<Rule Id="CA1065" Action="None"/>
 		<!-- String localization -->
@@ -34,9 +34,9 @@
 		<!-- Specify IFormatProvider --> 
 		<Rule Id="CA1305" Action="None"/>
 		<!-- Specify Stringcomparison --> 
-		<Rule Id="CA1307" Action="None"/>
+		<Rule Id="CA1307" Action="Warning"/>
 		<!-- PInvoke should not be visible -->
-		<Rule Id="CA1401" Action="None"/>
+		<Rule Id="CA1401" Action="Warning"/>
 		<!-- Use nameof --> 
 		<Rule Id="CA1507" Action="None"/>
 		<!-- Parameter underscore -->
@@ -48,7 +48,7 @@
 		<!-- Parameter End conflicts with VB -->
 		<Rule Id="CA1716" Action="None"/>
 		<!-- Enum field must be plural -->
-		<Rule Id="CA1717" Action="None"/>
+		<Rule Id="CA1717" Action="Warning"/>
 		<!-- Variable has type name -->
 		<Rule Id="CA1720" Action="None"/>
 		<!-- Property with same name as getter -->
@@ -64,31 +64,31 @@
 		<!-- Realized classes are never instantiated --> 
 		<Rule Id="CA1812" Action="None"/>
 		<!-- Override equal and operator equal on Value Types--> 
-		<Rule Id="CA1815" Action="None"/>
+		<Rule Id="CA1815" Action="Warning"/>
 		<!-- Dispose must call SuppressFinalizers --> 
-		<Rule Id="CA1816" Action="None"/>
+		<Rule Id="CA1816" Action="Warning"/>
 		<!-- Member can be static -->
 		<Rule Id="CA1822" Action="None"/>
 		<!-- Consider zero length array allocation --> 
-		<Rule Id="CA1825" Action="None"/>
+		<Rule Id="CA1825" Action="Warning"/>
 		<!-- Use Count instead of Count() -->
-		<Rule Id="CA1829" Action="None"/>
+		<Rule Id="CA1829" Action="Warning"/>
 		<!-- Call dispose before going out of scope -->
 		<Rule Id="CA2000" Action="None"/>
 		<!-- Call ConfigureWait-->
-		<Rule Id="CA2007" Action="None"/>
+		<Rule Id="CA2007" Action="Warning"/>
 		<!-- PInvoke should specify string marshalling -->
 		<Rule Id="CA2101" Action="None"/>
 		<!-- Rethrow loses stack info -->
-		<Rule Id="CA2200" Action="None"/>
+		<Rule Id="CA2200" Action="Warning"/>
 		<!-- Declare static fields when they are declared and remove static constructor -->
-		<Rule Id="CA2207" Action="None"/>
+		<Rule Id="CA2207" Action="Warning"/>
 		<!-- Instantiate exception params correctly -->
-		<Rule Id="CA2208" Action="None"/>
+		<Rule Id="CA2208" Action="Warning"/>
 		<!-- Dot not call overrideable methods in constructors --> 
 		<Rule Id="CA2214" Action="None"/>
 		<!-- Replace implicit operator -->
-		<Rule Id="CA2225" Action="None"/>
+		<Rule Id="CA2225" Action="Warning"/>
 
 
 
