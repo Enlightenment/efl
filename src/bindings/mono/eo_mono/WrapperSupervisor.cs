@@ -16,10 +16,7 @@
 using System;
 using EventDictionary = System.Collections.Generic.Dictionary<(System.IntPtr desc, object evtDelegate), (System.IntPtr evtCallerPtr, Efl.EventCb evtCaller)>;
 
-namespace Efl
-{
-
-namespace Eo
+namespace Efl.Eo
 {
 
 /// <summary>Observe the ownership state  of an Eo wrapper and control its life-cycle.</summary>
@@ -71,8 +68,6 @@ public class WrapperSupervisor
             throw new InvalidOperationException("Tried to make a null reference shared.");
         sharedRef = this.Target;
     }
-}
-
 }
 
 }

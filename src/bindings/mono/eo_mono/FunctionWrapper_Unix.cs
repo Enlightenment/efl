@@ -16,10 +16,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace Efl
-{
-
-namespace Eo
+namespace Efl.Eo
 {
 
 public static partial class FunctionInterop
@@ -38,8 +35,6 @@ public static partial class FunctionInterop
         Eina.Log.Debug($"searching {nativeLibraryHandle} for {functionName}, result {s}");
         return s;
     }
-}
-
 }
 
 }

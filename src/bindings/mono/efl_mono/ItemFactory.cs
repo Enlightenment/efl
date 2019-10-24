@@ -6,7 +6,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.ComponentModel;
 
-namespace Efl { namespace Ui {
+namespace Efl.Ui
+{
 
 /// <summary>Helper factory class. Makes use of C# extension methods for easier property binding.
 ///
@@ -26,6 +27,6 @@ public class ItemFactory<T> : Efl.Ui.LayoutFactory, IDisposable
     }
 }
 
-} }
+}
 
 #endif

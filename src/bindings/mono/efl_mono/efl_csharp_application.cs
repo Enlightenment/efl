@@ -18,10 +18,7 @@ using System.Runtime.InteropServices;
 using System.Threading;
 using static Efl.UnsafeNativeMethods;
 
-namespace Efl
-{
-
-namespace Csharp
+namespace Efl.Csharp
 {
 
 /// <summary>The components to be initialized.
@@ -201,8 +198,6 @@ public abstract class Application
         app.Begin();
         Shutdown();
     }
-}
-
 }
 
 }
