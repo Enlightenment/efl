@@ -3,6 +3,8 @@
 
 #include <Evas.h>
 
+#define DRAG_OBJECT_NUM_MOVES 4
+
 int suite_setup(Eina_Bool legacy);
 void _elm2_suite_init(void);
 void _elm_suite_shutdown(void);
@@ -17,6 +19,7 @@ void click_part(Eo *obj, const char *part);
 void click_part_flags(Eo *obj, const char *part, int flags);
 void click_object_at(Eo *obj, int x, int y);
 void click_object_at_flags(Eo *obj, int x, int y, int flags);
+void drag_object(Eo *obj, int x, int y, int dx, int dy, Eina_Bool iterate);
 void wheel_object(Eo *obj, Eina_Bool horiz, Eina_Bool down);
 void wheel_part(Eo *obj, const char *part, Eina_Bool horiz, Eina_Bool down);
 void wheel_object_at(Eo *obj, int x, int y, Eina_Bool horiz, Eina_Bool down);
