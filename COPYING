@@ -38,6 +38,7 @@ generic/evas:    licenses/COPYING.GPL (separate binary/executable)
 generic/emotion: licenses/COPYING.GPL (separate binary/executable)
 efl:             licenses/COPYING.LGPL
 csharp bindings: licenses/COPYING.ASL
+cxx bindings:    licenses/COPYING.ASL
 
 NOTE: If linked together, the result will be effectively be LGPL (or
 GPL if escape is used) due to license characteristics.
