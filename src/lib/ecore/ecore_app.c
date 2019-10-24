@@ -17,8 +17,10 @@ ecore_app_args_set(int          argc,
 {
    EINA_MAIN_LOOP_CHECK_RETURN;
 
-   if ((argc < 1) ||
-       (!argv)) return;
+   if ((argc < 1) || (!argv))
+     {
+        if (argc || argv) return;
+     }
    app_argc = argc;
    app_argv = (char **)argv;
 }
