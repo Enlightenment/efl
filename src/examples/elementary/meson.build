@@ -197,3 +197,4 @@ executable('codegen_example',
 
 subdir('sphere_hunter')
 subdir('performance')
+subdir('homescreen')
