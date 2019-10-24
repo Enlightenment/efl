@@ -82,7 +82,8 @@ _check_timer_event_catcher_add(void *data, const Efl_Event *event)
         if (array[i].desc == EFL_LOOP_TIMER_EVENT_TIMER_TICK)
           {
              if (timer->listening++ > 0) return;
-             _efl_loop_timer_util_instanciate(timer->loop_data, timer);
+             if (timer->finalized)
+               _efl_loop_timer_util_instanciate(timer->loop_data, timer);
              // No need to walk more than once per array as you can not del
              // a partial array
              return;
