@@ -407,11 +407,25 @@ EFL_START_TEST(ecore_test_ecore_file_path)
    ret = ecore_file_init();
 
    res = ecore_file_app_installed(dest_file);
+   if (!res)
+     {
+        /* attempt to mitigate cascading failures */
+        ret = setenv("PATH", src_dir, 1);
+        fail_if(ret != 0);
+     }
    fail_if(res != EINA_TRUE);
    res = ecore_file_app_installed(src_file);
+   if (!res)
+     {
+        /* attempt to mitigate cascading failures */
+        ret = setenv("PATH", src_dir, 1);
+        fail_if(ret != 0);
+     }
    fail_if(res != EINA_TRUE);
    list = NULL;
    list = ecore_file_app_list();
+   ret = setenv("PATH", src_dir, 1);
+   fail_if(ret != 0);
    fd = 0;
    EINA_LIST_FOREACH(list, l, path)
      {
@@ -424,8 +438,6 @@ EFL_START_TEST(ecore_test_ecore_file_path)
    fail_if(fd == 0);
    EINA_LIST_FREE(list, dup_dir)
      free(dup_dir);
-   ret = setenv("PATH", src_dir, 1);
-   fail_if(ret != 0);
 
    fail_if(ecore_file_remove(src_file) != EINA_TRUE);
 
