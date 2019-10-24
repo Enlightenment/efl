@@ -22,6 +22,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
+using System.Linq;
 
 using static Eina.NativeCustomExportFunctions;
 using EoG = Efl.Eo.Globals;
@@ -368,26 +369,31 @@ public static class Globals
         return null;
     }
 
-    public static System.Collections.Generic.List<System.Reflection.MethodInfo>
+    public static System.Collections.Generic.List<string>
         GetUserMethods(System.Type type)
     {
-        var r = new System.Collections.Generic.List<System.Reflection.MethodInfo>();
-        var flags = System.Reflection.BindingFlags.Instance
-                    | System.Reflection.BindingFlags.DeclaredOnly
-                    | System.Reflection.BindingFlags.Public
-                    | System.Reflection.BindingFlags.NonPublic;
-        r.AddRange(type.GetMethods(flags));
-        var base_type = type.BaseType;
+        var r = new System.Collections.Generic.List<string>();
+        var flags =
+            System.Reflection.BindingFlags.Instance
+            | System.Reflection.BindingFlags.DeclaredOnly
+            | System.Reflection.BindingFlags.Public
+            | System.Reflection.BindingFlags.NonPublic;
 
-        for (;base_type != null; base_type = base_type.BaseType)
+        for (var base_type = type;;base_type = base_type.BaseType)
         {
-            if (IsGeneratedClass(base_type))
+            r.AddRange(base_type.GetMethods(flags)
+                       .AsParallel().Select(info=>info.Name).ToList());
+            if (IsGeneratedClass(base_type.BaseType))
             {
-                return r;
+                break;
             }
 
-            r.AddRange(base_type.GetMethods(flags));
+            if (base_type.BaseType == null)
+            {
+                break;
+            }
         }
+
         return r;
     }
 
