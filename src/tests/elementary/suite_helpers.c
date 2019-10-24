@@ -573,3 +573,27 @@ wheel_object_at(Eo *obj, int x, int y, Eina_Bool horiz, Eina_Bool down)
    evas_event_feed_mouse_move(e, x, y, 0, NULL);
    evas_event_feed_mouse_wheel(e, horiz, down, 0, NULL);
 }
+
+void
+drag_object(Eo *obj, int x, int y, int dx, int dy, Eina_Bool iterate)
+{
+   Evas *e = evas_object_evas_get(obj);
+   int i;
+   evas_event_feed_mouse_move(e, x, y, 0, NULL);
+   evas_event_feed_mouse_down(e, 1, 0, 0, NULL);
+   if (iterate)
+     {
+        /* iterate twice to trigger timers */
+        ecore_main_loop_iterate();
+        ecore_main_loop_iterate();
+      }
+   /* create DRAG_OBJECT_NUM_MOVES move events distinct from up/down */
+   for (i = 0; i < DRAG_OBJECT_NUM_MOVES; i++)
+     {
+        evas_event_feed_mouse_move(e, x + (i * dx / DRAG_OBJECT_NUM_MOVES), y + (i * dy / DRAG_OBJECT_NUM_MOVES), 0, NULL);
+        /* also trigger smart calc if we're iterating just in case that's important */
+        evas_smart_objects_calculate(e);
+     }
+   evas_event_feed_mouse_move(e, x + dx, y + dy, 0, NULL);
+   evas_event_feed_mouse_up(e, 1, 0, 0, NULL);
+}
