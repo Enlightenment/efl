@@ -62,6 +62,7 @@ EFL_START_TEST(test_multi_select)
 
    efl_event_callback_del(widget, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, (void*) event_callback_single_call_int_data, &c);
    efl_event_callback_del(widget, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, event_callback_that_quits_the_main_loop_when_called, NULL);
+   eina_array_free(arr_selected);
 }
 EFL_END_TEST
 
@@ -91,6 +92,7 @@ EFL_START_TEST(test_multi_select_removal)
    ck_assert_int_eq(eina_array_count(arr_selected), 0);
    efl_event_callback_del(widget, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, (void*) event_callback_single_call_int_data, &c);
    efl_event_callback_del(widget, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, event_callback_that_quits_the_main_loop_when_called, NULL);
+   eina_array_free(arr_selected);
 }
 EFL_END_TEST
 
@@ -123,6 +125,7 @@ EFL_START_TEST(test_single_select)
 
    efl_event_callback_del(widget, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, (void*) event_callback_single_call_int_data, &c);
    efl_event_callback_del(widget, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, event_callback_that_quits_the_main_loop_when_called, NULL);
+   eina_array_free(arr_selected);
 }
 EFL_END_TEST
 
@@ -148,6 +151,7 @@ EFL_START_TEST(test_none_select)
    ck_assert_int_eq(eina_array_count(arr_selected), 0);
    efl_event_callback_del(widget, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, (void*) event_callback_single_call_int_data, &c);
    efl_event_callback_del(widget, EFL_UI_SELECTABLE_EVENT_SELECTION_CHANGED, event_callback_that_quits_the_main_loop_when_called, NULL);
+   eina_array_free(arr_selected);
 }
 EFL_END_TEST
 
@@ -164,6 +168,7 @@ EFL_START_TEST(all_select_api)
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 0), efl_pack_content_get(widget, 0));
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 1), efl_pack_content_get(widget, 1));
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 2), efl_pack_content_get(widget, 2));
+   eina_array_free(arr_selected);
 }
 EFL_END_TEST
 
@@ -179,6 +184,7 @@ EFL_START_TEST(all_unselect_api)
 
    ck_assert_int_eq(eina_array_count(arr_selected), 0);
    ck_assert_int_eq(efl_ui_selectable_selected_get(efl_pack_content_get(widget, 0)), EINA_FALSE);
+   eina_array_free(arr_selected);
 }
 EFL_END_TEST
 
@@ -193,6 +199,7 @@ EFL_START_TEST(range_unselect)
    _iterator_to_array(&arr_selected, efl_ui_selectable_selected_iterator_new(widget));
    ck_assert_int_eq(eina_array_count(arr_selected), 1);
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 0), efl_pack_content_get(widget, 0));
+   eina_array_free(arr_selected);
 }
 EFL_END_TEST
 
@@ -207,6 +214,7 @@ EFL_START_TEST(range_unselect2)
    _iterator_to_array(&arr_selected, efl_ui_selectable_selected_iterator_new(widget));
    ck_assert_int_eq(eina_array_count(arr_selected), 1);
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 0), efl_pack_content_get(widget, 0));
+   eina_array_free(arr_selected);
 }
 EFL_END_TEST
 
@@ -220,6 +228,7 @@ EFL_START_TEST(range_select)
    ck_assert_int_eq(eina_array_count(arr_selected), 2);
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 0), efl_pack_content_get(widget, 1));
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 1), efl_pack_content_get(widget, 2));
+   eina_array_free(arr_selected);
 }
 EFL_END_TEST
 
@@ -233,6 +242,7 @@ EFL_START_TEST(range_select2)
    ck_assert_int_eq(eina_array_count(arr_selected), 2);
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 0), efl_pack_content_get(widget, 1));
    ck_assert_ptr_eq(eina_array_data_get(arr_selected, 1), efl_pack_content_get(widget, 2));
+   eina_array_free(arr_selected);
 }
 EFL_END_TEST
 
