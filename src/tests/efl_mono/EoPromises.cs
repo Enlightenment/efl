@@ -106,7 +106,7 @@ class LoopConsumer
     public static async Task Consume(Efl.Loop loop)
     {
         Task<Eina.Value> task = loop.IdleAsync();
-        Eina.Value v = await task;
+        Eina.Value v = await task.ConfigureAwait(false);
         loop.Quit(v);
     }
 }
