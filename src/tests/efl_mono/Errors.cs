@@ -36,7 +36,7 @@ class TestEinaError
 class TestEolianError
 {
 
-    class CustomException : Exception {
+    public class CustomException : Exception {
         public CustomException(string msg): base(msg) {}
     }
 
