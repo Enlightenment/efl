@@ -231,7 +231,10 @@ void _evas_image_load(Evas_Object *eo_obj, Evas_Object_Protected_Data *obj, Evas
   EINA_COW_WRITE_BEGIN(evas_object_image_state_cow, Obj->cur, Evas_Object_Image_State, Write)
 
 # define EINA_COW_IMAGE_STATE_WRITE_END(Obj, Write) \
-  EINA_COW_WRITE_END(evas_object_image_state_cow, Obj->cur, Write)
+  eina_cow_done(evas_object_image_state_cow, ((const Eina_Cow_Data**)&(Obj->cur)), Write, \
+                Obj->content_hint == EFL_GFX_IMAGE_CONTENT_HINT_DYNAMIC ? EINA_FALSE : EINA_TRUE); \
+  }                                                                     \
+  while (0);
 
 # define EINA_COW_PIXEL_WRITE_BEGIN(Obj, Write) \
   EINA_COW_WRITE_BEGIN(evas_object_image_pixels_cow, Obj->pixels, Evas_Object_Image_Pixels, Write)
