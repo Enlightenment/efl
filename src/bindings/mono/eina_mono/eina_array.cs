@@ -149,7 +149,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
     {
         if (handle == IntPtr.Zero)
         {
-            throw new ArgumentNullException("Handle can't be null");
+            throw new ArgumentNullException("handle", "Handle can't be null");
         }
 
         Handle = handle;
@@ -168,7 +168,7 @@ public class Array<T> : IEnumerable<T>, IDisposable
     {
         if (handle == IntPtr.Zero)
         {
-            throw new ArgumentNullException("Handle can't be null");
+            throw new ArgumentNullException("handle", "Handle can't be null");
         }
 
         Handle = handle;
