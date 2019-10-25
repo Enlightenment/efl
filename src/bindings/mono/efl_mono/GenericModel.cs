@@ -119,7 +119,7 @@ public class GenericModel<T> : Efl.Object, Efl.IModel
    /// <returns>Token to notify the async operation of external request to cancel.</returns>
    async public System.Threading.Tasks.Task<T> GetAtAsync(uint index)
    {
-       using (Eina.Value v = await GetChildrenSliceAsync(index, 1))
+       using (Eina.Value v = await GetChildrenSliceAsync(index, 1).ConfigureAwait(false))
        {
            if (v.GetValueType().IsContainer())
            {
