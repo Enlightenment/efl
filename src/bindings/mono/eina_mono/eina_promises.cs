@@ -380,11 +380,11 @@ public class Future
     {
         SanityChecks();
         System.Collections.Generic.IList<ResolvedCb> cbsList = cbs.ToList();
-        FutureDesc[] descs = new FutureDesc[cbsList.Count() + 1]; // +1 due to the null-cb terminating descriptor.
+        FutureDesc[] descs = new FutureDesc[cbsList.Count + 1]; // +1 due to the null-cb terminating descriptor.
         int i = 0;
         try
         {
-            for (; i < cbsList.Count(); i++)
+            for (; i < cbsList.Count; i++)
             {
                 ResolvedCb cb = cbsList[i];
                 descs[i].cb = NativeResolvedCbDelegate;
