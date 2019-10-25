@@ -1044,22 +1044,26 @@ _item_tree_effect_before(Elm_Gen_Item *it)
    return ECORE_CALLBACK_CANCEL;
 }
 
-static void
+/* returns true if change occurred */
+static Eina_Bool
 _item_position(Elm_Gen_Item *it,
                Evas_Object *view,
                Evas_Coord it_x,
                Evas_Coord it_y)
 {
-   if (!it) return;
-   if (!view) return;
+   Eina_Position2D pos;
+   if (!it) return EINA_FALSE;
+   if (!view) return EINA_FALSE;
    ELM_GENLIST_DATA_GET_FROM_ITEM(it, sd);
    Evas *e = evas_object_evas_get(sd->obj);
 
    evas_event_freeze(e);
+   pos = efl_gfx_entity_position_get(view);
    efl_gfx_entity_geometry_set(view, EINA_RECT(it_x, it_y, it->item->w, it->item->h));
    evas_object_show(view);
    evas_event_thaw(e);
    evas_event_thaw_eval(e);
+   return (pos.x != it_x) || (pos.y != it_y);
 }
 
 static void
@@ -4012,6 +4016,7 @@ _item_mouse_move_cb(void *data,
         ELM_SAFE_FREE(it->long_timer, ecore_timer_del);
         if ((sd->reorder_mode) && (sd->reorder_it))
           {
+             Eina_Bool changed;
              evas_object_geometry_get(sd->pan_obj, &ox, &oy, &ow, &oh);
 
              if (ev->cur.canvas.y < (oy + (sd->reorder_it->item->h / 2)))
@@ -4033,11 +4038,13 @@ _item_mouse_move_cb(void *data,
                y_pos = it_scrl_y;
 
              if (it->deco_all_view)
-               _item_position(it, it->deco_all_view, it->item->scrl_x, y_pos);
+               changed = _item_position(it, it->deco_all_view, it->item->scrl_x, y_pos);
              else
-               _item_position(it, VIEW(it), it->item->scrl_x, y_pos);
+               changed = _item_position(it, VIEW(it), it->item->scrl_x, y_pos);
 
              efl_canvas_group_change(sd->obj);
+             if (changed)
+               efl_canvas_group_change(sd->pan_obj);
           }
         return;
      }
