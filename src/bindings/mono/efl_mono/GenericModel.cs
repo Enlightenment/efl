@@ -124,7 +124,7 @@ public class GenericModel<T> : Efl.Object, Efl.IModel
            if (v.GetValueType().IsContainer())
            {
                var child = (Efl.IModel)v[0];
-               T obj = (T)Activator.CreateInstance(typeof(T), new System.Object[] {});
+               T obj = (T)Activator.CreateInstance(typeof(T), Array.Empty<object>());
                ModelHelper.GetProperties(obj, child);
                return obj;
            }
