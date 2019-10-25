@@ -467,7 +467,7 @@ _elm_scroll_smooth_debug_shutdown(void)
 }
 
 static void
-_elm_direction_arrows_eval(Elm_Scrollable_Smart_Interface_Data *sid)
+_elm_direction_arrows_eval(Elm_Scrollable_Smart_Interface_Data *sid, Eina_Bool rely_on_cache)
 {
    Eina_Bool go_left = EINA_TRUE, go_right = EINA_TRUE;
    Eina_Bool go_up = EINA_TRUE, go_down = EINA_TRUE;
@@ -483,7 +483,8 @@ _elm_direction_arrows_eval(Elm_Scrollable_Smart_Interface_Data *sid)
    if (x >= (mx + minx)) go_right = EINA_FALSE;
    if (y <= miny) go_up = EINA_FALSE;
    if (y >= (my + miny)) go_down = EINA_FALSE;
-   if (go_left != sid->go_left)
+
+   if (!rely_on_cache || go_left != sid->go_left)
      {
         if (go_left)
           edje_object_signal_emit(sid->edje_obj, "elm,action,show,left", "elm");
@@ -491,7 +492,7 @@ _elm_direction_arrows_eval(Elm_Scrollable_Smart_Interface_Data *sid)
           edje_object_signal_emit(sid->edje_obj, "elm,action,hide,left", "elm");
         sid->go_left = go_left;
      }
-   if (go_right != sid->go_right)
+   if (!rely_on_cache || go_right != sid->go_right)
      {
         if (go_right)
           edje_object_signal_emit(sid->edje_obj, "elm,action,show,right", "elm");
@@ -499,7 +500,7 @@ _elm_direction_arrows_eval(Elm_Scrollable_Smart_Interface_Data *sid)
           edje_object_signal_emit(sid->edje_obj, "elm,action,hide,right", "elm");
         sid->go_right= go_right;
      }
-   if (go_up != sid->go_up)
+   if (!rely_on_cache ||go_up != sid->go_up)
      {
         if (go_up)
           edje_object_signal_emit(sid->edje_obj, "elm,action,show,up", "elm");
@@ -507,7 +508,7 @@ _elm_direction_arrows_eval(Elm_Scrollable_Smart_Interface_Data *sid)
           edje_object_signal_emit(sid->edje_obj, "elm,action,hide,up", "elm");
         sid->go_up = go_up;
      }
-   if (go_down != sid->go_down)
+   if (!rely_on_cache ||go_down != sid->go_down)
      {
         if (go_down)
           edje_object_signal_emit(sid->edje_obj, "elm,action,show,down", "elm");
@@ -587,6 +588,7 @@ _elm_scroll_scroll_bar_h_visibility_apply(Elm_Scrollable_Smart_Interface_Data *s
      edje_object_signal_emit(sid->edje_obj, "elm,action,hide,hbar", "elm");
    edje_object_message_signal_process(sid->edje_obj);
    _elm_scroll_scroll_bar_size_adjust(sid);
+   _elm_direction_arrows_eval(sid, EINA_FALSE);
    if (sid->cb_func.content_min_limit)
      sid->cb_func.content_min_limit(sid->obj, sid->min_w, sid->min_h);
 }
@@ -608,6 +610,7 @@ _elm_scroll_scroll_bar_v_visibility_apply(Elm_Scrollable_Smart_Interface_Data *s
        (sid->edje_obj, "elm,action,hide,vbar", "elm");
    edje_object_message_signal_process(sid->edje_obj);
    _elm_scroll_scroll_bar_size_adjust(sid);
+   _elm_direction_arrows_eval(sid, EINA_FALSE);
    if (sid->cb_func.content_min_limit)
      sid->cb_func.content_min_limit(sid->obj, sid->min_w, sid->min_h);
 }
@@ -681,7 +684,7 @@ _elm_scroll_scroll_bar_h_visibility_adjust(
 
    if (scroll_h_vis_change) _elm_scroll_scroll_bar_h_visibility_apply(sid);
 
-   _elm_direction_arrows_eval(sid);
+   _elm_direction_arrows_eval(sid, EINA_TRUE);
    return scroll_h_vis_change;
 }
 
@@ -753,7 +756,7 @@ _elm_scroll_scroll_bar_v_visibility_adjust(
      }
    if (scroll_v_vis_change) _elm_scroll_scroll_bar_v_visibility_apply(sid);
 
-   _elm_direction_arrows_eval(sid);
+   _elm_direction_arrows_eval(sid, EINA_TRUE);
    return scroll_v_vis_change;
 }
 
@@ -1105,6 +1108,7 @@ _elm_scroll_policy_signal_emit(Elm_Scrollable_Smart_Interface_Data *sid)
        (sid->edje_obj, "elm,action,show_notalways,vbar", "elm");
    edje_object_message_signal_process(sid->edje_obj);
    _elm_scroll_scroll_bar_size_adjust(sid);
+   _elm_direction_arrows_eval(sid, EINA_FALSE);
 }
 
 static void
@@ -1773,7 +1777,7 @@ _elm_interface_scrollable_content_pos_set(Eo *obj, Elm_Scrollable_Smart_Interfac
           }
      }
 
-   _elm_direction_arrows_eval(sid);
+   _elm_direction_arrows_eval(sid, EINA_TRUE);
 }
 
 EOLIAN static void
@@ -4023,6 +4027,11 @@ _elm_interface_scrollable_objects_set(Eo *obj, Elm_Scrollable_Smart_Interface_Da
 
    sid->edje_obj = edje_object;
 
+   edje_object_signal_emit(sid->edje_obj, "elm,action,hide,up", "elm");
+   edje_object_signal_emit(sid->edje_obj, "elm,action,hide,down", "elm");
+   edje_object_signal_emit(sid->edje_obj, "elm,action,hide,right", "elm");
+   edje_object_signal_emit(sid->edje_obj, "elm,action,hide,left", "elm");
+
    if (sid->event_rect)
      _scroll_event_object_detach(obj);
 
@@ -4121,7 +4130,7 @@ _elm_scroll_scroll_bar_reset(Elm_Scrollable_Smart_Interface_Data *sid)
      }
    if ((px != minx) || (py != miny))
      edje_object_signal_emit(sid->edje_obj, "elm,action,scroll", "elm");
-   _elm_direction_arrows_eval(sid);
+   _elm_direction_arrows_eval(sid, EINA_TRUE);
 }
 
 static void
@@ -4519,7 +4528,7 @@ _elm_interface_scrollable_policy_set(Eo *obj EINA_UNUSED, Elm_Scrollable_Smart_I
    _elm_scroll_policy_signal_emit(sid);
    if (sid->cb_func.content_min_limit)
      sid->cb_func.content_min_limit(sid->obj, sid->min_w, sid->min_h);
-   _elm_direction_arrows_eval(sid);
+   _elm_direction_arrows_eval(sid, EINA_TRUE);
 }
 
 EOLIAN static void
