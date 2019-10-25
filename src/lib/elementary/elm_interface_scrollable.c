@@ -484,6 +484,18 @@ _elm_direction_arrows_eval(Elm_Scrollable_Smart_Interface_Data *sid, Eina_Bool r
    if (y <= miny) go_up = EINA_FALSE;
    if (y >= (my + miny)) go_down = EINA_FALSE;
 
+   if (sid->loop_v)
+     {
+        go_up = EINA_TRUE;
+        go_down = EINA_TRUE;
+     }
+
+   if (sid->loop_h)
+     {
+        go_right = EINA_TRUE;
+        go_left = EINA_TRUE;
+     }
+
    if (!rely_on_cache || go_left != sid->go_left)
      {
         if (go_left)
