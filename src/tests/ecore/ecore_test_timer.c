@@ -290,7 +290,9 @@ EFL_END_TEST
 
 EFL_START_TEST(ecore_test_timer_iteration)
 {
+   Ecore_Timer *timer;
    count = 0;
+   /* verify that timers expire after exactly one loop iteration */
    ecore_timer_add(0, _timer_cb, (void *) 1);
    ecore_main_loop_iterate();
    /* timers should not expire for one loop iteration */
@@ -298,6 +300,8 @@ EFL_START_TEST(ecore_test_timer_iteration)
    ecore_main_loop_iterate();
    /* timers should expire after one loop iteration */
    ck_assert_int_eq(count, 1);
+
+   /* verify multiple timer expiration in single mainloop iteration */
    ecore_timer_add(0, _timer_cb, (void *) 2);
    ecore_timer_add(0, _timer_cb, (void *) 3);
    ecore_main_loop_iterate();
@@ -305,10 +309,28 @@ EFL_START_TEST(ecore_test_timer_iteration)
    ck_assert_int_eq(count, 1);
    ecore_timer_add(0, _timer_cb, (void *) 4);
    ecore_main_loop_iterate();
-   /* all pending and instantiated timers should expire after one loop iteration */
+   /* all pending and instantiated timers should expire after exactly one loop iteration */
    ck_assert_int_eq(count, 3);
    ecore_main_loop_iterate();
+   /* this should not interfere with successive timer processing */
    ck_assert_int_eq(count, 4);
+
+   /* verify out-of-order timer processing solely based on timer times */
+   timer = ecore_timer_add(1, _timer_cb, (void *) 6);
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(count, 4);
+   ecore_timer_add(0, _timer_cb, (void *) 5);
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(count, 4);
+   /* timer should expire after exactly 2 iterations */
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(count, 5);
+   ecore_timer_interval_set(timer, 0);
+   ecore_timer_reset(timer);
+   /* timer should expire after exactly 2 iterations since it becomes un-instantiated now */
+   ecore_main_loop_iterate();
+   ecore_main_loop_iterate();
+   ck_assert_int_eq(count, 6);
 }
 EFL_END_TEST
 
