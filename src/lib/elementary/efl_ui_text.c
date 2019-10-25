@@ -3389,13 +3389,6 @@ _efl_ui_text_efl_access_object_i18n_name_get(const Eo *obj, Efl_Ui_Text_Data *pd
    return ret;
 }
 
-EOLIAN static Efl_Text_Cursor_Cursor *
-_efl_ui_text_cursor_new(Eo *obj EINA_UNUSED, Efl_Ui_Text_Data *sd EINA_UNUSED)
-{
-   Eo *text_obj = sd->text_obj;
-   return efl_text_cursor_new(text_obj);
-}
-
 static void
 _edje_signal_emit(Efl_Ui_Text_Data *sd, const char *sig, const char *src)
 {

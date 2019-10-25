@@ -5,7 +5,7 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
                  Efl.Access.Text, Efl.Access.Editable.Text, Efl.File,
                  Efl.Ui.Text_Selectable
    composites
-                 Efl.Text_Interactive, Efl.Text_Markup
+                 Efl.Text_Interactive, Efl.Text_Markup, Efl.Text_Cursor
 {
    [[A flexible text widget which can be static (as a label) or editable by
      the user (as a text entry). It provides all sorts of editing facilities
@@ -278,10 +278,6 @@ class @beta Efl.Ui.Text extends Efl.Ui.Layout_Base implements Efl.Input.Clickabl
             @in func: Evas_Smart_Cb @optional; [[The callback to execute when the item is clicked.]]
             @in data: const(void_ptr) @optional; [[The data to associate with the item for related functions.]]
          }
-      }
-      cursor_new {
-         [[Creates and returns a new cursor for the text.]]
-         return: ptr(Efl.Text_Cursor_Cursor); [[Text cursor]]
       }
    }
    implements {
