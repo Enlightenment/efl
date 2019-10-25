@@ -71,6 +71,86 @@ EFL_START_TEST(efl_app_test_loop_timer_invalid)
 }
 EFL_END_TEST
 
+
+
+static int count = 0;
+
+static void
+_timer_cb(void *data EINA_UNUSED, const Efl_Event *ev EINA_UNUSED)
+{
+   count++;
+}
+
+static void
+array_clean(Eina_Array *arr)
+{
+   Eo *t;
+
+   while ((t = eina_array_pop(arr)))
+     efl_del(t);
+}
+
+EFL_START_TEST(efl_loop_test_loop_timer_iteration)
+{
+   Eo *t, *loop;
+   Eina_Array *arr;
+
+   loop = efl_main_loop_get();
+   count = 0;
+   arr = eina_array_new(5);
+#define TIMER(duration) \
+  t = efl_add(EFL_LOOP_TIMER_CLASS, loop, \
+    efl_loop_timer_interval_set(efl_added, (duration)), \
+    efl_event_callback_add(efl_added, EFL_LOOP_TIMER_EVENT_TIMER_TICK, _timer_cb, NULL) \
+  ); \
+  eina_array_push(arr, t)
+   /* verify that timers expire after exactly one loop iteration */
+   TIMER(0);
+   efl_loop_iterate(loop);
+   /* timers should not expire for one loop iteration */
+   ck_assert_int_eq(count, 0);
+   efl_loop_iterate(loop);
+   /* timers should expire after one loop iteration */
+   ck_assert_int_eq(count, 1);
+   array_clean(arr);
+
+   count = 0;
+   /* verify multiple timer expiration in single mainloop iteration */
+   TIMER(0);
+   TIMER(0);
+   efl_loop_iterate(loop);
+   /* timers should not expire for one loop iteration */
+   ck_assert_int_eq(count, 0);
+   TIMER(0);
+   efl_loop_iterate(loop);
+   /* all pending and instantiated timers should expire after exactly one loop iteration */
+   ck_assert_int_eq(count, 2);
+   efl_loop_iterate(loop);
+   /* this should not interfere with successive timer processing */
+   ck_assert_int_eq(count, 5);
+   array_clean(arr);
+
+   count = 0;
+   /* verify out-of-order timer processing solely based on timer times */
+   TIMER(1);
+   efl_loop_iterate(loop);
+   ck_assert_int_eq(count, 0);
+   TIMER(0);
+   efl_loop_iterate(loop);
+   ck_assert_int_eq(count, 0);
+   /* timer should expire after exactly 2 iterations */
+   efl_loop_iterate(loop);
+   ck_assert_int_eq(count, 1);
+   efl_loop_timer_interval_set(eina_array_data_get(arr, 0), 0);
+   efl_loop_timer_reset(eina_array_data_get(arr, 0));
+   /* timer should expire after exactly 2 iterations since it becomes un-instantiated now */
+   efl_loop_iterate(loop);
+   efl_loop_iterate(loop);
+   ck_assert_int_eq(count, 4);
+   array_clean(arr);
+}
+EFL_END_TEST
+
 void efl_app_test_efl_loop_timer(TCase *tc EINA_UNUSED)
 {
   /* XXX: this seems a silly test - that we del the loop object?
@@ -78,4 +158,5 @@ void efl_app_test_efl_loop_timer(TCase *tc EINA_UNUSED)
    */
 
    tcase_add_test(tc, efl_app_test_loop_timer_invalid);
+   tcase_add_test(tc, efl_loop_test_loop_timer_iteration);
 }
