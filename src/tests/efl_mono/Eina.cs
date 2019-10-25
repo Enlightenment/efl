@@ -37,7 +37,7 @@ class TestEinaBinbuf
     {
         var binbuf = new Eina.Binbuf();
         Test.Assert(binbuf.Handle != IntPtr.Zero);
-        Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[0]));
+        Test.Assert(binbuf.GetBytes().SequenceEqual(Array.Empty<byte>()));
     }
 
     public static void eina_binbuf_bytes()
@@ -89,7 +89,7 @@ class TestEinaBinbuf
         Test.Assert(cmp.SequenceEqual(test_string));
         binbuf.Reset();
         Test.Assert(binbuf.Handle != IntPtr.Zero);
-        Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[0]));
+        Test.Assert(binbuf.GetBytes().SequenceEqual(Array.Empty<byte>()));
     }
 
     public static void append_bytes()
@@ -114,7 +114,7 @@ class TestEinaBinbuf
     public static void append_binbuf()
     {
         var binbuf = new Eina.Binbuf();
-        Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[0]));
+        Test.Assert(binbuf.GetBytes().SequenceEqual(Array.Empty<byte>()));
         var binbuf2 = new Eina.Binbuf(test_string);
         binbuf.Append(binbuf2);
         byte[] cmp = binbuf.GetBytes();
@@ -158,7 +158,7 @@ class TestEinaBinbuf
         Test.Assert(binbuf.GetBytes().SequenceEqual(test_string));
         binbuf.FreeString();
         Test.Assert(binbuf.Handle != IntPtr.Zero);
-        Test.Assert(binbuf.GetBytes().SequenceEqual(new byte[0]));
+        Test.Assert(binbuf.GetBytes().SequenceEqual(Array.Empty<byte>()));
     }
 
     public static void binbuf_length()
