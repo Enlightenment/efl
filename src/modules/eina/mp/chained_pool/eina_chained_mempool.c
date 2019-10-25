@@ -726,7 +726,8 @@ static Eina_Mempool_Backend _eina_chained_mp_backend = {
    &eina_chained_mempool_shutdown,
    &eina_chained_mempool_repack,
    &eina_chained_mempool_from,
-   &eina_chained_mempool_iterator_new
+   &eina_chained_mempool_iterator_new,
+   NULL
 };
 
 Eina_Bool chained_init(void)
