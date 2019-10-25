@@ -479,10 +479,10 @@ _elm_direction_arrows_eval(Elm_Scrollable_Smart_Interface_Data *sid)
    elm_obj_pan_pos_min_get(sid->pan_obj, &minx, &miny);
    elm_obj_pan_pos_get(sid->pan_obj, &x, &y);
 
-   if (x == minx) go_left = EINA_FALSE;
-   if (x == (mx + minx)) go_right = EINA_FALSE;
-   if (y == miny) go_up = EINA_FALSE;
-   if (y == (my + miny)) go_down = EINA_FALSE;
+   if (x <= minx) go_left = EINA_FALSE;
+   if (x >= (mx + minx)) go_right = EINA_FALSE;
+   if (y <= miny) go_up = EINA_FALSE;
+   if (y >= (my + miny)) go_down = EINA_FALSE;
    if (go_left != sid->go_left)
      {
         if (go_left)
