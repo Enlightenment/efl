@@ -182,22 +182,23 @@ _eina_chained_mempool_usage_cmp(const Eina_Inlist *l1, const Eina_Inlist *l2)
 static void *
 _eina_chained_mempool_alloc_in(Chained_Mempool *pool, Chained_Pool *p)
 {
-  void *mem;
+  void *mem = NULL;
 
-  if (p->last)
-    {
-      mem = p->last;
-      p->last += pool->item_alloc;
-      if (p->last >= p->limit)
-        p->last = NULL;
-    }
-  else
+  // Let's try to first recycle memory
+  if (p->base)
     {
 #ifndef NVALGRIND
       VALGRIND_MAKE_MEM_DEFINED(p->base, pool->item_alloc);
 #endif
       // Request a free pointer
       mem = eina_trash_pop(&p->base);
+    }
+  else if (p->last)
+    {
+      mem = p->last;
+      p->last += pool->item_alloc;
+      if (p->last >= p->limit)
+        p->last = NULL;
     }
 
   // move to end - it just filled up
@@ -306,7 +307,7 @@ eina_chained_mempool_malloc(void *data, EINA_UNUSED unsigned int size)
 
    // we have reached the end of the list - no free pools
    if (!p)
-     {
+      {
        //new chain created ,point it to be the first_fill chain
         pool->first_fill = _eina_chained_mp_pool_new(pool);
         if (!pool->first_fill)
