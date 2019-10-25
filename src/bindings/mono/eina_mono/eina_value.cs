@@ -1293,7 +1293,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             }
 
             Type[] genericArguments = objType.GetGenericArguments();
-            if (genericArguments.Count() != 1)
+            if (genericArguments.Length != 1)
             {
                 throw new ArgumentException($"Unsupported type for direct construction: {objType}");
             }
