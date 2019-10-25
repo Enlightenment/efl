@@ -34,91 +34,9 @@ group { name: "elm/scroller/base/default";
    images.image: "sym_left_dark_normal.png" COMP;
    images.image: "sym_right_dark_normal.png" COMP;
 
-
    data.item: "focus_highlight" "on";
 
-   script {
-      public loop_x, loop_y;
-      public action_on_pos_vbar(val) {
-         new x, y , w, h, x1, y1 , w1, h1;
-
-         get_geometry(PART:"y_vbar_up", x,y,w, h);
-         get_geometry(PART:"y_vbar_up_mapper", x1,y1,w1, h1);
-
-         if(((y1 <= y) && (y <= (y1 + h1))) && (0 == get_int(loop_y)))
-         {
-            set_state(PART:"arrow1_vbar", "hidden", 0.0);
-            set_state(PART:"sb_vbar_a1", "hidden", 0.0);
-         }
-         else
-         {
-            set_state(PART:"arrow1_vbar", "default", 0.0);
-            set_state(PART:"sb_vbar_a1", "default", 0.0);
-         }
-
-         get_geometry(PART:"y_vbar_down", x,y,w, h);
-         get_geometry(PART:"y_vbar_down_mapper", x1,y1,w1, h1);
-
-         if(((y1 <= (y + h)) && ((y+ h) <= (y1 + h1))) && (0 == get_int(loop_y)))
-         {
-            set_state(PART:"arrow2_vbar", "hidden", 0.0);
-            set_state(PART:"sb_vbar_a2", "hidden", 0.0);
-         }
-         else
-         {
-            set_state(PART:"arrow2_vbar", "default", 0.0);
-            set_state(PART:"sb_vbar_a2", "default", 0.0);
-         }
-
-         if(val < 10)
-            timer(0.1,"action_on_pos_vbar", val+1);
-      }
-
-      public action_on_pos_hbar(val) {
-         new x, y , w, h, x1, y1 , w1, h1;
-
-         get_geometry(PART:"x_hbar_left", x,y,w, h);
-         get_geometry(PART:"x_hbar_left_mapper", x1,y1,w1, h1);
-
-         if(((x1 <= x) && (x <= (x1 + w1))) && (0 == get_int(loop_x)))
-         {
-            set_state(PART:"arrow1_hbar", "hidden", 0.0);
-            set_state(PART:"sb_hbar_a1", "hidden", 0.0);
-         }
-         else
-         {
-            set_state(PART:"arrow1_hbar", "default", 0.0);
-            set_state(PART:"sb_hbar_a1", "default", 0.0);
-         }
-
-         get_geometry(PART:"x_hbar_right", x,y,w, h);
-         get_geometry(PART:"x_hbar_right_mapper", x1,y1,w1, h1);
-
-         if(((x1 <= (x + w)) && ((x + w) <= (x1 + w1))) && (0 == get_int(loop_x)))
-         {
-            set_state(PART:"arrow2_hbar", "hidden", 0.0);
-            set_state(PART:"sb_hbar_a2", "hidden", 0.0);
-         }
-         else
-         {
-            set_state(PART:"arrow2_hbar", "default", 0.0);
-            set_state(PART:"sb_hbar_a2", "default", 0.0);
-         }
-
-         if(val < 10)
-            timer(0.1,"action_on_pos_hbar", val+1);
-      }
-   }
-
    parts {
-      program {
-         signal: "load"; source: "";
-         script {
-            emit("reload", "elm");
-            action_on_pos_vbar(0);
-            action_on_pos_hbar(0);
-         }
-      }
 // vert bar ////////////////////////////////////////////////////////////////
       part { name: "sb_vbar_show"; type: RECT;
          description { state: "default" 0.0;
@@ -321,7 +239,6 @@ group { name: "elm/scroller/base/default";
          target: "y_vbar_down";
          target: "arrow1_vbar_indent";
          target: "arrow2_vbar_indent";
-         after: "check_pos_vbar";
       }
       program {
          signal: "elm,action,hide,vbar"; source: "elm";
@@ -340,11 +257,13 @@ group { name: "elm/scroller/base/default";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_vbar_a1";//ok
+         filter: "sb_vbar_a1" "default";
          action: STATE_SET "clicked" 0.0;
          target: "arrow1_vbar";
          after: "anim1_up";
       }
       program { name: "anim1_up";
+         filter: "sb_vbar_a1" "default";
          action: STATE_SET "default" 0.0;
          transition: LINEAR 0.1;
          target: "arrow1_vbar";
@@ -356,11 +275,13 @@ group { name: "elm/scroller/base/default";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_vbar_a2";//ok
+         filter: "sb_vbar_a2" "default";
          action: STATE_SET "clicked" 0.0;
          target: "arrow2_vbar";
          after: "anim1_down";
       }
       program { name: "anim1_down";
+         filter: "sb_vbar_a2" "default";
          action: STATE_SET "default" 0.0;
          transition: LINEAR 0.1;
          target: "arrow2_vbar";
@@ -372,40 +293,40 @@ group { name: "elm/scroller/base/default";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_vbar_p1";
+         filter: "sb_vbar_a1" "default";
          action: DRAG_VAL_PAGE 0.0 -1.0;
          target: "elm.dragable.vbar";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_vbar_p2";
+         filter: "sb_vbar_a2" "default";
          action: DRAG_VAL_PAGE  0.0 1.0;
          target: "elm.dragable.vbar";
       }
       program {
-         signal: "elm,action,scroll"; source: "elm";
-         script {
-            action_on_pos_vbar(10);
-         }
+         signal: "elm,action,show,up"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "arrow1_vbar";
+         target: "sb_vbar_a1";
       }
-      program { name: "check_pos_vbar";
-         script {
-            action_on_pos_vbar(10);
-         }
+      program {
+         signal: "elm,action,hide,up"; source: "elm";
+         action: STATE_SET "hidden" 0.0;
+         target: "arrow1_vbar";
+         target: "sb_vbar_a1";
       }
-      program { name: "loop_set_vbar";
-         signal: "elm,loop_y,set"; source: "elm";
-         script {
-            set_int(loop_y, 1);
-            action_on_pos_vbar(10);
-         }
+      program {
+         signal: "elm,action,show,down"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "arrow2_vbar";
+         target: "sb_vbar_a2";
       }
-      program { name: "loop_unset_vbar";
-         signal: "elm,loop_y,unset"; source: "elm";
-         script {
-            set_int(loop_y, 0);
-            action_on_pos_vbar(10);
-         }
+      program {
+         signal: "elm,action,hide,down"; source: "elm";
+         action: STATE_SET "hidden" 0.0;
+         target: "arrow2_vbar";
+         target: "sb_vbar_a2";
       }
-
 // horiz bar /////////////////////////////////////////////////////////////
       part { name: "sb_hbar_show"; type: RECT;
          description { state: "default" 0.0;
@@ -608,7 +529,6 @@ group { name: "elm/scroller/base/default";
          target: "x_hbar_right";
          target: "arrow1_hbar_indent";
          target: "arrow2_hbar_indent";
-         after: "check_pos_hbar";
       }
       program {
          signal: "elm,action,hide,hbar"; source: "elm";
@@ -627,11 +547,13 @@ group { name: "elm/scroller/base/default";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_hbar_a1";
+         filter: "sb_hbar_a1" "default";
          action: STATE_SET "clicked" 0.0;
          target: "arrow1_hbar";
          after: "anim1_left";
       }
       program { name: "anim1_left";
+         filter: "sb_hbar_a1" "default";
          action: STATE_SET "default" 0.0;
          transition: LINEAR 0.1;
          target: "arrow1_hbar";
@@ -643,11 +565,13 @@ group { name: "elm/scroller/base/default";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_hbar_a2";
+         filter: "sb_hbar_a2" "default";
          action: STATE_SET "clicked" 0.0;
          target: "arrow2_hbar";
          after: "anim2_left";
       }
       program { name: "anim2_left";
+         filter: "sb_hbar_a2" "default";
          action: STATE_SET "default" 0.0;
          transition: LINEAR 0.1;
          target: "arrow2_hbar";
@@ -659,40 +583,39 @@ group { name: "elm/scroller/base/default";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_hbar_p1";
+         filter: "sb_hbar_a1" "default";
          action: DRAG_VAL_PAGE -1.0 0.0;
          target: "elm.dragable.hbar";
-         after: "check_pos_hbar";
       }
       program {
          signal: "mouse,down,1*"; source: "sb_hbar_p2";
+         filter: "sb_hbar_a2" "default";
          action: DRAG_VAL_PAGE  1.0 0.0;
          target: "elm.dragable.hbar";
-         after: "check_pos_hbar";
       }
       program {
-         signal: "elm,action,scroll"; source: "elm";
-         script {
-            action_on_pos_hbar(10);
-         }
+         signal: "elm,action,show,left"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "arrow1_hbar";
+         target: "sb_hbar_a1";
       }
-      program { name: "check_pos_hbar";
-         script {
-            action_on_pos_hbar(10);
-         }
+      program {
+         signal: "elm,action,hide,left"; source: "elm";
+         action: STATE_SET "hidden" 0.0;
+         target: "arrow1_hbar";
+         target: "sb_hbar_a1";
       }
-      program { name: "loop_set_hbar";
-         signal: "elm,loop_x,set"; source: "elm";
-         script {
-            set_int(loop_x, 1);
-            action_on_pos_hbar(10);
-         }
+      program {
+         signal: "elm,action,show,right"; source: "elm";
+         action: STATE_SET "default" 0.0;
+         target: "arrow2_hbar";
+         target: "sb_hbar_a2";
       }
-      program { name: "loop_unset_hbar";
-         signal: "elm,loop_x,unset"; source: "elm";
-         script {
-            set_int(loop_x, 0);
-            action_on_pos_hbar(10);
-         }
+      program {
+         signal: "elm,action,hide,right"; source: "elm";
+         action: STATE_SET "hidden" 0.0;
+         target: "arrow2_hbar";
+         target: "sb_hbar_a2";
       }
       part { name: "bg"; type: RECT;
          description { state: "default" 0.0;
