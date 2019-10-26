@@ -376,6 +376,14 @@ group { name: "elm/scroller/base/default";
          action: DRAG_VAL_PAGE  0.0 1.0;
          target: "elm.dragable.vbar";
       }
+//      program { signal: "elm,action,show,up"; source: "elm";
+//      }
+//      program { signal: "elm,action,show,down"; source: "elm";
+//      }
+//      program { signal: "elm,action,hide,up"; source: "elm";
+//      }
+//      program { signal: "elm,action,hide,down"; source: "elm";
+//      }
 //      program { signal: "elm,action,scroll"; source: "elm";
 //      }
 //      program { signal: "elm,loop_y,set"; source: "elm";
@@ -570,6 +578,14 @@ group { name: "elm/scroller/base/default";
          action: DRAG_VAL_PAGE  1.0 0.0;
          target: "elm.dragable.hbar";
       }
+//      program { signal: "elm,action,show,left"; source: "elm";
+//      }
+//      program { signal: "elm,action,show,right"; source: "elm";
+//      }
+//      program { signal: "elm,action,hide,left"; source: "elm";
+//      }
+//      program { signal: "elm,action,hide,right"; source: "elm";
+//      }
 //      program { signal: "elm,action,scroll"; source: "elm";
 //      }
 //      program { signal: "elm,loop_x,set"; source: "elm";
