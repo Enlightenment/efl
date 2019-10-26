@@ -657,61 +657,50 @@ group { name: "elm/scroller/base/default";
       }
    }
    programs {
-      program {
-         signal: "elm,state,disabled"; source: "elm";
+      program { signal: "elm,state,disabled"; source: "elm";
          action: STATE_SET "disabled" 0.0;
          target: "color_hbar";
          target: "color_vbar";
       }
-      program {
-         signal: "elm,state,enabled"; source: "elm";
+      program { signal: "elm,state,enabled"; source: "elm";
          action: STATE_SET "default" 0.0;
          target: "color_hbar";
          target: "color_vbar";
       }
-      program {
-         signal: "mouse,down,1*"; source: "elm.dragable.vbar";
+      program { signal: "mouse,down,1*"; source: "elm.dragable.vbar";
          action: STATE_SET "clicked" 0.0;
          target: "elm.dragable.vbar";
          target: "color_vbar";
       }
-      program {
-         signal: "mouse,down,*"; source: "elm.dragable.vbar";
+      program { signal: "mouse,down,*"; source: "elm.dragable.vbar";
          action: SIGNAL_EMIT "elm,vbar,press" "elm";
       }
-      program {
-         signal: "mouse,up,1"; source: "elm.dragable.vbar";
+      program { signal: "mouse,up,1"; source: "elm.dragable.vbar";
          action: STATE_SET "default" 0.0;
          target: "elm.dragable.vbar";
          target: "color_vbar";
       }
-      program {
-         signal: "mouse,up,*"; source: "elm.dragable.vbar";
+      program { signal: "mouse,up,*"; source: "elm.dragable.vbar";
          action: SIGNAL_EMIT "elm,vbar,unpress" "elm";
       }
 
-      program {
-         signal: "mouse,down,1*"; source: "elm.dragable.hbar";
+      program { signal: "mouse,down,1*"; source: "elm.dragable.hbar";
          action: STATE_SET "clicked" 0.0;
          target: "elm.dragable.hbar";
          target: "color_hbar";
       }
-      program {
-         signal: "mouse,down,*"; source: "elm.dragable.hbar";
+      program { signal: "mouse,down,*"; source: "elm.dragable.hbar";
          action: SIGNAL_EMIT "elm,hbar,press" "elm";
       }
-      program {
-         signal: "mouse,up,1"; source: "elm.dragable.hbar";
+      program { signal: "mouse,up,1"; source: "elm.dragable.hbar";
          action: STATE_SET "default" 0.0;
          target: "elm.dragable.hbar";
          target: "color_hbar";
       }
-      program {
-         signal: "mouse,up,*"; source: "elm.dragable.hbar";
+      program { signal: "mouse,up,*"; source: "elm.dragable.hbar";
          action: SIGNAL_EMIT "elm,hbar,unpress" "elm";
       }
-      program {
-         signal: "elm,action,looping,left"; source: "elm";
+      program { signal: "elm,action,looping,left"; source: "elm";
          action: STATE_SET "effect" 0.0;
          transition: LINEAR 0.3;
          target: "dim_effect";
@@ -720,14 +709,12 @@ group { name: "elm/scroller/base/default";
       program { name: "looping,left,done";
          action: SIGNAL_EMIT "elm,looping,left,done" "elm";
       }
-      program {
-         signal: "elm,action,looping,left,end"; source: "elm";
+      program { signal: "elm,action,looping,left,end"; source: "elm";
          action: STATE_SET "default" 0.0;
          transition: LINEAR 0.3;
          target: "dim_effect";
       }
-      program {
-         signal: "elm,action,looping,right"; source: "elm";
+      program { signal: "elm,action,looping,right"; source: "elm";
          action: STATE_SET "effect" 0.0;
          transition: LINEAR 0.3;
          target: "dim_effect";
@@ -736,14 +723,12 @@ group { name: "elm/scroller/base/default";
       program { name: "looping,right,done";
          action: SIGNAL_EMIT "elm,looping,right,done" "elm";
       }
-      program {
-         signal: "elm,action,looping,right,end"; source: "elm";
+      program { signal: "elm,action,looping,right,end"; source: "elm";
          action: STATE_SET "default" 0.0;
          transition: LINEAR 0.3;
          target: "dim_effect";
       }
-      program {
-         signal: "elm,action,looping,up"; source: "elm";
+      program { signal: "elm,action,looping,up"; source: "elm";
          action: STATE_SET "effect" 0.0;
          transition: LINEAR 0.3;
          target: "dim_effect";
@@ -752,14 +737,12 @@ group { name: "elm/scroller/base/default";
       program { name: "looping,up,done";
          action: SIGNAL_EMIT "elm,looping,up,done" "elm";
       }
-      program {
-         signal: "elm,action,looping,up,end"; source: "elm";
+      program { signal: "elm,action,looping,up,end"; source: "elm";
          action: STATE_SET "default" 0.0;
          transition: LINEAR 0.3;
          target: "dim_effect";
       }
-      program {
-         signal: "elm,action,looping,down"; source: "elm";
+      program { signal: "elm,action,looping,down"; source: "elm";
          action: STATE_SET "effect" 0.0;
          transition: LINEAR 0.3;
          target: "dim_effect";
@@ -768,8 +751,7 @@ group { name: "elm/scroller/base/default";
       program { name: "looping,down,done";
          action: SIGNAL_EMIT "elm,looping,down,done" "elm";
       }
-      program {
-         signal: "elm,action,looping,down,end"; source: "elm";
+      program { signal: "elm,action,looping,down,end"; source: "elm";
          action: STATE_SET "default" 0.0;
          transition: LINEAR 0.3;
          target: "dim_effect";
