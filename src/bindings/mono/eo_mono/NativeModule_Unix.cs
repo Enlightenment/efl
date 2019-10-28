@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 namespace Efl.Eo
 {
 
-public partial class NativeModule
+internal partial class NativeModule
 {
     private const int RTLD_NOW = 0x002;
     // Currently we are using GLOBAL due to issues
@@ -33,7 +33,7 @@ public partial class NativeModule
 
     ///<summary>Closes the library handle.</summary>
     ///<param name="handle">The handle to the library.</param>
-    public static void UnloadLibrary(IntPtr handle)
+    internal static void UnloadLibrary(IntPtr handle)
     {
         dlclose(handle);
     }
@@ -60,7 +60,7 @@ public partial class NativeModule
     ///</summary>
     ///<param name="filename">The name to search for.</param>
     ///<returns>The loaded library handle or <see cref="System.IntPtr.Zero"/> on failure.</returns>
-    public static IntPtr LoadLibrary(string filename)
+    internal static IntPtr LoadLibrary(string filename)
     {
         Eina.Log.Debug($"Loading library {filename}");
         var r = dlopen(filename, RTLD_NOW | RTLD_GLOBAL);

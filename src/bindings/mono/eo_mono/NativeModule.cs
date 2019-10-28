@@ -19,14 +19,14 @@ namespace Efl.Eo
 {
 
 ///<summary>Wraps a native module that was opened with dlopen/LoadLibrary.</summary>
-public partial class NativeModule : IDisposable
+internal partial class NativeModule : IDisposable
 {
     private Lazy<IntPtr> module;
     private bool disposed = false;
 
     ///<summary>Lazily tries to load the module with the given name.</summary>
     ///<param name="libName">The name of the module to load.</param>
-    public NativeModule(string libName)
+    internal NativeModule(string libName)
     {
         module = new Lazy<IntPtr>
             (() =>
@@ -36,7 +36,7 @@ public partial class NativeModule : IDisposable
     }
 
     ///<summary>The module that was loaded.</summary>
-    public IntPtr Module
+    internal IntPtr Module
     {
         get
         {
