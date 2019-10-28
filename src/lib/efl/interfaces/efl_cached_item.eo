@@ -1,13 +1,24 @@
 interface @beta Efl.Cached.Item
 {
-   [[Efl Cached Item interface]]
+   [[Interface for objects which can be cached in memory.
+
+     Since memory is a limited resource, it is interesting to know how much of it an object
+     requires. This interface provides a read-only property for objects to report their
+     memory consumption.
+
+     Keep in mind that this should not only take into account by the object structure
+     itself, but any dynamic memory it might allocate.
+
+     This is used by @Efl.Ui.Caching_Factory, for example, to keep track of the total
+     amount of memory used by the objects the factory creates.
+   ]]
    methods {
       @property memory_size {
-         [[The memory size associated with an object.]]
+         [[The amount of memory currently used by this object.]]
          get {
          }
          values {
-            consumed: uint; [[Bytes of memory consumed by this object.]]
+            consumed: uint; [[Bytes of memory.]]
          }
       }
    }

@@ -1,3 +1,5 @@
+parse efl_app;
+
 class @beta Efl.Ui.Caching_Factory extends Efl.Ui.Widget_Factory
 {
    [[Efl UI Factory that provides object caching.
@@ -6,14 +8,13 @@ class @beta Efl.Ui.Caching_Factory extends Efl.Ui.Widget_Factory
      defined.
      This factory will rely on its parent class @Efl.Ui.Widget_Factory for creating the subset of class that match the
      @Efl.Ui.Widget interface.
-     The factory will automatically empties the cache when the application goes into pause.
+     The factory will automatically empty the cache when the application goes into the background
+     (@[Efl.App.pause] event).
 
      Creating objects is costly and time consuming, keeping a few on hand for when you next will need them helps a lot.
      This is what this factory caching infrastructure provides. It will create the object from the class defined on it
      and set the parent and the model as needed for all created items. The View has to release the Item using the
      release function of the Factory interface for all of this to work properly.
-
-     The cache might decide to flush itself when the application event pause is triggered.
    ]]
    methods {
       @property memory_limit {
