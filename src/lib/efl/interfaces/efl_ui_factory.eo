@@ -24,7 +24,7 @@ interface Efl.Ui.Factory extends Efl.Ui.Property_Bind, Efl.Ui.Factory_Bind
            you should rely on @Efl.Ui.View_Factory.create_with_event.]]
          params {
             models: iterator<Efl.Model> @move; [[Efl iterator providing the model to be associated to the new item.
-                                           It should remain valid until the end of the function call.]]
+                                                 It should remain valid until the end of the function call.]]
          }
          return: future<Efl.Gfx.Entity> @move @no_unused; [[Created UI object.]]
       }
@@ -36,11 +36,18 @@ interface Efl.Ui.Factory extends Efl.Ui.Property_Bind, Efl.Ui.Factory_Bind
       }
    }
    events {
-      item,constructing: Efl.Gfx.Entity; [[Event triggered when an item is under construction (between the @Efl.Object.constructor and @Efl.Object.finalize call on the item).
-                                         Note:  If the @Efl.Ui.Factory does keep a cache of objects, this won't be called when objects are pulled out of the cache.]]
-      item,building: Efl.Gfx.Entity; [[Event triggered when an item has processed @Efl.Object.finalize, but before all the factory are done building it.
-                                     Note: if the @Efl.Ui.Factory does keep a cache of object, this will be called when object are pulled out of the cache.]]
-      item,created: Efl.Gfx.Entity; [[Event triggered when an item has been successfully created by the factory and is about to be used by an @Efl.Ui.View.]]
-      item,releasing: Efl.Gfx.Entity; [[Event triggered when an item is being released by the @Efl.Ui.Factory. It must be assumed that after this call, the object can be recycle to another @Efl.Ui.View and there can be more than one call for the same item.]]
+      item,constructing: Efl.Gfx.Entity; [[Event emitted when an item is under construction (between the
+                                           @Efl.Object.constructor and @Efl.Object.finalize call on the item).
+                                           Note: If the @Efl.Ui.Factory keeps a cache of objects, this won't be
+                                           called when objects are pulled from the cache.]]
+      item,building: Efl.Gfx.Entity; [[Event emitted when an item has processed @Efl.Object.finalize, but before all
+                                       the factory are done building it.
+                                       Note: If the @Efl.Ui.Factory keeps a cache of objects, this will be called when
+                                       objects are pulled from the cache.]]
+      item,created: Efl.Gfx.Entity; [[Event emitted when an item has been successfully created by the factory and is
+                                      about to be used by an @Efl.Ui.View.]]
+      item,releasing: Efl.Gfx.Entity; [[Event emitted when an item is being released by the @Efl.Ui.Factory.
+                                        It must be assumed that after this call, the object can be recycles to another
+                                        @Efl.Ui.View and there can be more than one call for the same item.]]
    }
 }
