@@ -253,11 +253,6 @@ public class Strbuf : IDisposable
     /// <returns>A string with the contents of this buffer.</returns>
     public override string ToString()
     {
-        if (Disposed)
-        {
-            throw new ObjectDisposedException(base.GetType().Name);
-        }
-
         return eina_strbuf_string_get(this.Handle);
     }
 }
