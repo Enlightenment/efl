@@ -1026,22 +1026,22 @@ public static class ClassRegister
     private static readonly object klassAllocLock = new object();
 }
 
-public interface IOwnershipTag
+interface IOwnershipTag
 {
 }
 
-public class OwnTag : IOwnershipTag
+class OwnTag : IOwnershipTag
 {
 }
 
-public class NonOwnTag : IOwnershipTag
+class NonOwnTag : IOwnershipTag
 {
 }
 
-public class MarshalEo<U> : ICustomMarshaler
+class MarshalEo<U> : ICustomMarshaler
     where U : IOwnershipTag
 {
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         Eina.Log.Debug("MarshalEo.GetInstace cookie " + cookie);
         return new MarshalEo<U>();
@@ -1091,9 +1091,9 @@ public class MarshalEo<U> : ICustomMarshaler
 }
 
 ///<summary>Marshals between System.Type instances and Eo classes (IntPtrs).</summary>
-public class MarshalEflClass : ICustomMarshaler
+class MarshalEflClass : ICustomMarshaler
 {
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         Eina.Log.Debug("MarshalEflClass.GetInstance cookie " + cookie);
         return new MarshalEflClass();
@@ -1137,7 +1137,7 @@ public class MarshalEflClass : ICustomMarshaler
     }
 }
 
-public class StringPassOwnershipMarshaler : ICustomMarshaler
+class StringPassOwnershipMarshaler : ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
@@ -1165,7 +1165,7 @@ public class StringPassOwnershipMarshaler : ICustomMarshaler
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         if (marshaler == null)
         {
@@ -1178,7 +1178,7 @@ public class StringPassOwnershipMarshaler : ICustomMarshaler
     static private StringPassOwnershipMarshaler marshaler;
 }
 
-public class StringKeepOwnershipMarshaler: ICustomMarshaler
+class StringKeepOwnershipMarshaler: ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
@@ -1204,7 +1204,7 @@ public class StringKeepOwnershipMarshaler: ICustomMarshaler
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         if (marshaler == null)
         {
@@ -1217,7 +1217,7 @@ public class StringKeepOwnershipMarshaler: ICustomMarshaler
     static private StringKeepOwnershipMarshaler marshaler;
 }
 
-public class StringsharePassOwnershipMarshaler : ICustomMarshaler
+class StringsharePassOwnershipMarshaler : ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
@@ -1245,7 +1245,7 @@ public class StringsharePassOwnershipMarshaler : ICustomMarshaler
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         if (marshaler == null)
         {
@@ -1258,7 +1258,7 @@ public class StringsharePassOwnershipMarshaler : ICustomMarshaler
     static private StringsharePassOwnershipMarshaler marshaler;
 }
 
-public class StringshareKeepOwnershipMarshaler : ICustomMarshaler
+class StringshareKeepOwnershipMarshaler : ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
@@ -1284,7 +1284,7 @@ public class StringshareKeepOwnershipMarshaler : ICustomMarshaler
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         if (marshaler == null)
         {
@@ -1297,7 +1297,7 @@ public class StringshareKeepOwnershipMarshaler : ICustomMarshaler
     static private StringshareKeepOwnershipMarshaler marshaler;
 }
 
-public class StrbufPassOwnershipMarshaler : ICustomMarshaler
+class StrbufPassOwnershipMarshaler : ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
@@ -1325,7 +1325,7 @@ public class StrbufPassOwnershipMarshaler : ICustomMarshaler
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         if (marshaler == null)
         {
@@ -1338,7 +1338,7 @@ public class StrbufPassOwnershipMarshaler : ICustomMarshaler
     static private StrbufPassOwnershipMarshaler marshaler;
 }
 
-public class StrbufKeepOwnershipMarshaler: ICustomMarshaler
+class StrbufKeepOwnershipMarshaler: ICustomMarshaler
 {
     public object MarshalNativeToManaged(IntPtr pNativeData)
     {
@@ -1365,7 +1365,7 @@ public class StrbufKeepOwnershipMarshaler: ICustomMarshaler
         return -1;
     }
 
-    public static ICustomMarshaler GetInstance(string cookie)
+    internal static ICustomMarshaler GetInstance(string cookie)
     {
         if (marshaler == null)
         {
