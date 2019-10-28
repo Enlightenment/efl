@@ -3701,6 +3701,7 @@ _item_block_del(Elm_Gen_Item *it)
    itb->count--;
    itb->changed = EINA_TRUE;
    efl_canvas_group_change(sd->obj);
+   if (itb->realized) efl_ui_focus_manager_calc_unregister(itb->sd->obj, EO_OBJ(it));
    if (itb->count < 1)
      {
         Item_Block *itbn;
