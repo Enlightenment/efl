@@ -7,8 +7,42 @@ static Efl_Ui_Spotlight_Container *over_container;
 
 #define SCALE 0.5
 
+typedef struct
+{
+  Eina_Rect prefered;
+  const char *name;
+  const char *icon_path;
+} Icon;
+
+
+static Icon workspace1[] = {
+    { EINA_RECT(0, 0, 0, 0), "bla", "ic"},
+    { EINA_RECT(0, 0, 0, 0), "bla", "ic2"},
+    { EINA_RECT(0, 0, 0, 0), NULL, NULL},
+};
+
+static Icon workspace2[] = {
+    { EINA_RECT(0, 0, 0, 0), "bla", "ic"},
+    { EINA_RECT(0, 0, 0, 0), "bla", "ic2"},
+    { EINA_RECT(0, 0, 0, 0), NULL, NULL},
+};
+
+static Icon workspace3[] = {
+    { EINA_RECT(0, 0, 0, 0), "bla", "ic"},
+    { EINA_RECT(0, 0, 0, 0), "bla", "ic2"},
+    { EINA_RECT(0, 0, 0, 0), NULL, NULL},
+};
+
+static Efl_Ui_Widget*
+_create_icon(Icon *icon, Eo *parent)
+{
+   Eo *ret = efl_add(EFL_UI_BUTTON_CLASS, parent);
+   efl_text_set(ret, icon->name);
+   return ret;
+}
+
 static Efl_Ui_Table*
-_hs_screen_new(Eina_List *icons, Eina_Size2D goal_size)
+_hs_screen_new(Icon *icons, Eina_Size2D goal_size)
 {
    Efl_Ui_Table *table;
 
