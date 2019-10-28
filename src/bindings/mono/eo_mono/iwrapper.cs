@@ -795,23 +795,23 @@ public static class Config
                        AllowMultiple = false,
                        Inherited = false)
 ]
-public abstract class NativeClass : System.Attribute
+abstract class NativeClass : System.Attribute
 {
-    public abstract IntPtr GetEflClass();
-    public abstract System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited);
+    internal abstract IntPtr GetEflClass();
+    internal abstract System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited);
 }
 
 /// <summary>Attribute for private native classes.
 ///
 /// <para>For internal usage by generated code only.</para></summary>
-public class PrivateNativeClass : NativeClass
+class PrivateNativeClass : NativeClass
 {
-    public override IntPtr GetEflClass()
+    internal override IntPtr GetEflClass()
     {
         return IntPtr.Zero;
     }
 
-    public override System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited)
+    internal override System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited)
     {
         return null;
     }
