@@ -422,7 +422,7 @@ struct klass
             (
              indent << lit("/// <summary>Wrapper for native methods and virtual method delegates.\n")
              << indent << "/// For internal use by generated code only.</summary>\n"
-             << indent << "public new class " << native_inherit_name << " : " << (root ? "Efl.Eo.EoWrapper.NativeMethods" : base_name) << "\n"
+             << indent << "internal new class " << native_inherit_name << " : " << (root ? "Efl.Eo.EoWrapper.NativeMethods" : base_name) << "\n"
              << indent << "{\n"
             ).generate(sink, attributes::unused, inative_cxt))
            return false;
@@ -439,7 +439,7 @@ struct klass
          if(!as_generator(
              indent << scope_tab << "/// <summary>Gets the list of Eo operations to override.</summary>\n"
              << indent << scope_tab << "/// <returns>The list of Eo operations to be overload.</returns>\n"
-             << indent << scope_tab << "public override System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited)\n"
+             << indent << scope_tab << "internal override System.Collections.Generic.List<EflOpDescription> GetEoOps(System.Type type, bool includeInherited)\n"
              << indent << scope_tab << "{\n"
              << indent << scope_tab << scope_tab << "var descs = new System.Collections.Generic.List<EflOpDescription>();\n"
             )
@@ -489,7 +489,7 @@ struct klass
          if(!as_generator(
               indent << scope_tab << "/// <summary>Returns the Eo class for the native methods of this class.</summary>\n"
               << indent << scope_tab << "/// <returns>The native class pointer.</returns>\n"
-              << indent << scope_tab << "public override IntPtr GetEflClass()\n"
+              << indent << scope_tab << "internal override IntPtr GetEflClass()\n"
               << indent << scope_tab << "{\n"
               << indent << scope_tab << scope_tab << "return " << name_helpers::klass_get_full_name(cls) << "();\n"
               << indent << scope_tab << "}\n\n"

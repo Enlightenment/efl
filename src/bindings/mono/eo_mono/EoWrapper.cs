@@ -410,7 +410,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
     /// <para>For internal use by generated code only.</para>
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    public abstract class NativeMethods : Efl.Eo.NativeClass
+    internal abstract class NativeMethods : Efl.Eo.NativeClass
     {
         private static EflConstructorDelegate csharpEflConstructorStaticDelegate = new EflConstructorDelegate(Constructor);
         private static Efl.Eo.NativeModule EoModule = new Efl.Eo.NativeModule("eo");
@@ -421,7 +421,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
         /// <para>Since EFL 1.23.</para>
         /// </summary>
         /// <returns>The list of Eo operations to be overload.</returns>
-        public override System.Collections.Generic.List<EflOpDescription> GetEoOps(Type type, bool includeInherited)
+        internal override System.Collections.Generic.List<EflOpDescription> GetEoOps(Type type, bool includeInherited)
         {
             var descs = new System.Collections.Generic.List<EflOpDescription>();
 
