@@ -24,7 +24,7 @@ namespace Eina
 /// <summary>Error codes from native Eina methods.
 /// <para>Since EFL 1.23.</para>
 /// </summary>
-public struct Error : IComparable<Error>
+public struct Error : IComparable<Error>, IEquatable<Error>
 {
     int code;
 
@@ -92,17 +92,6 @@ public struct Error : IComparable<Error>
     static public implicit operator int(Error error)
     {
         return error.code;
-    }
-
-    /// <summary>
-    ///   Compare two Errors.
-    /// <para>Since EFL 1.23.</para>
-    /// </summary>
-    /// <param name="err">Error to be compared with</param>
-    /// <returns>True with the Errors is equal, False otherwise.</returns>
-    public int CompareTo(Error err)
-    {
-        return code.CompareTo(err.code);
     }
 
     /// <summary>
@@ -197,6 +186,98 @@ public struct Error : IComparable<Error>
     {
         return eina_error_msg_register(msg);
     }
-}
 
+    /// <summary>
+    ///   Gets a hash for <see cref="Eina.Error" />.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <returns>A hash code.</returns>
+    public override int GetHashCode()
+        => code.GetHashCode() + Message.GetHashCode();
+
+    /// <summary>
+    ///   Compare to a given error.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="err">Error to be compared with.</param>
+    /// <returns>-1, 0 or 1 if -1 if Error is less, equal or greater than err.</returns>
+    public int CompareTo(Error err) => code.CompareTo(err.code);
+
+    /// <summary>
+    ///   Check if is equal to obj.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="obj">The object to be checked.</param>
+    /// <returns>false if obj is null or not equals, true otherwise.</returns>
+    public override bool Equals(object obj)
+    {
+        if (object.ReferenceEquals(obj, null))
+            return false;
+            
+        return this.Equals((Error)obj);
+    }
+
+    /// <summary>
+    ///   Check if is equal to err.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="err">The object to be checked.</param>
+    /// <returns>false if obj is null or not equals, true otherwise.</returns>
+    public bool Equals(Error err) => this.CompareTo(err) == 0;
+
+    /// <summary>
+    ///   Check if lhs is equals to rhs.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns>true if lhs is equals to rhs, false otherwise.</returns>
+    public static bool operator==(Error lhs, Error rhs) => lhs.Equals(rhs);
+
+    /// <summary>
+    ///   Check if lhs is not equals to rhs.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns>true if lhs is not equals to rhs, false otherwise.</returns>
+    public static bool operator!=(Error lhs, Error rhs) => !(lhs == rhs);
+
+    /// <summary>
+    ///   Check if lhs is less than rhs.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns>true if lhs is less than rhs, false otherwise.</returns>
+    public static bool operator<(Error lhs, Error rhs) => (lhs.CompareTo(rhs) < 0);
+
+    /// <summary>
+    ///   Check if lhs is greater to rhs.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns>true if lhs is greater than rhs, false otherwise.</returns>
+    public static bool operator>(Error lhs, Error rhs) => rhs < lhs;
+
+    /// <summary>
+    ///   Check if lhs is equals and less than rhs.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns>true if lhs is equals and less than rhs, false otherwise.</returns>
+    public static bool operator<=(Error lhs, Error rhs) => !(lhs > rhs);
+
+    /// <summary>
+    ///   Check if lhs is equals and greater than rhs.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns>true if lhs is equals and greater than rhs, false otherwise.</returns>
+    public static bool operator>=(Error lhs, Error rhs) => !(lhs < rhs);
+
+}
 }
