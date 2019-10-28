@@ -573,7 +573,7 @@ public static class Globals
                     }
                     else
                     {
-                        tcs.TrySetException(new Efl.FutureException(received));
+                        tcs.TrySetException(new Efl.FutureException(err));
                     }
                 }
                 else
@@ -1383,8 +1383,27 @@ public class StrbufKeepOwnershipMarshaler: ICustomMarshaler
 /// <summary>General exception for errors inside the binding.</summary>
 public class EflException : Exception
 {
+    /// <summary>
+    ///   Default Constructor.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public EflException()
+    {
+    }
+
     /// <summary>Create a new EflException with the given message.</summary>
     public EflException(string message) : base(message)
+    {
+    }
+
+    /// <summary>
+    ///   Create a new EflException with the given message and inner exception.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="message">The message of the exception.</param>
+    /// <param name="innerException">The inner exception.</param>
+    public EflException(string message, Exception innerException)
+        : base(message, innerException)
     {
     }
 }
@@ -1395,18 +1414,70 @@ public class FutureException : EflException
     /// <summary>The error code returned by the failed Eina.Future.</summary>
     public Eina.Error Error { get; private set; }
 
-    /// <summary>Construct a new exception from the Eina.Error stored in the given Eina.Value.</summary>
-    public FutureException(Eina.Value value) : base("Future failed.")
+    /// <summary>
+    ///   Default constructor.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    public FutureException() : this(Eina.Error.UNHANDLED_EXCEPTION)
     {
-        if (value.GetValueType() != Eina.ValueType.Error)
-        {
-            throw new ArgumentException("FutureException must receive an Eina.Value with Eina.Error.");
-        }
-
-        Eina.Error err;
-        value.Get(out err);
-        Error = err;
     }
-}
 
+    /// <summary>
+    ///   Construct a new exception from the <see cref="Eina.Error" />
+    /// with a given message
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="message">The message of the exception.</param>
+    public FutureException(string message)
+        : this(Eina.Error.UNHANDLED_EXCEPTION, message)
+    {
+    }
+
+    /// <summary>
+    ///   Construct a new exception from the <see cref="Eina.Error" />
+    /// with a given message and inner exception.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="message">The message of the exception.</param>
+    /// <param name="innerException">The inner exception.</param>
+    public FutureException(string message, Exception innerException)
+        : this(Eina.Error.UNHANDLED_EXCEPTION, message, innerException)
+    {
+    }
+
+    /// <summary>
+    ///   Construct a new exception from the <see cref="Eina.Error" />
+    /// with a given error.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="error">The error of the exception..</param>
+    public FutureException(Eina.Error error)
+        : this(error, "Future failed.")
+    {
+    }
+
+    /// <summary>
+    ///   Construct a new exception from the <see cref="Eina.Error" />
+    /// with a given error and message.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="error">The error of the exception..</param>
+    /// <param name="message">The message of the exception.</param>
+    public FutureException(Eina.Error error, string message)
+        : this(error, message, null)
+    {
+    }
+
+    /// <summary>
+    ///   Construct a new exception from the <see cref="Eina.Error" />
+    /// with a given error, message and innerException.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="error">The error of the exception..</param>
+    /// <param name="message">The message of the exception.</param>
+    /// <param name="innerException">The inner exception.</param>
+    public FutureException(Eina.Error error, string message,
+                           Exception innerException)
+        : base(message, innerException) => Error = error;
+}
 } // namespace efl
