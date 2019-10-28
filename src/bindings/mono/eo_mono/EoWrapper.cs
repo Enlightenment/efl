@@ -256,7 +256,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
     /// <param name="key">The name of the native event.</param>
     /// <param name="evtCaller">Delegate to be called by native code on event raising.</param>
     /// <param name="evtDelegate">Managed delegate that will be called by evtCaller on event raising.</param>
-    protected void AddNativeEventHandler(string lib, string key, Efl.EventCb evtCaller, object evtDelegate)
+    internal void AddNativeEventHandler(string lib, string key, Efl.EventCb evtCaller, object evtDelegate)
     {
         IntPtr desc = Efl.EventDescription.GetNative(lib, key);
         if (desc == IntPtr.Zero)
@@ -291,7 +291,7 @@ public abstract class EoWrapper : IWrapper, IDisposable
     /// <param name="lib">The name of the native library definining the event.</param>
     /// <param name="key">The name of the native event.</param>
     /// <param name="evtDelegate">The delegate to be removed.</param>
-    protected void RemoveNativeEventHandler(string lib, string key, object evtDelegate)
+    internal void RemoveNativeEventHandler(string lib, string key, object evtDelegate)
     {
         IntPtr desc = Efl.EventDescription.GetNative(lib, key);
         if (desc == IntPtr.Zero)
