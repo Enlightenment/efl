@@ -4876,16 +4876,6 @@ static const struct {
 };
 
 static const struct {
-   Efl_Ui_Slider_Indicator_Visible_Mode  val;
-   const char                           *str;
-} _enum_map_slider_indicator_visible_mode[] = {
-{ EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ON_DRAG, "on_drag" },
-{ EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ALWAYS, "always" },
-{ EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_ON_FOCUS, "on_focus" },
-{ EFL_UI_SLIDER_INDICATOR_VISIBLE_MODE_NONE, "none" },
-};
-
-static const struct {
    Efl_Ui_Focus_Move_Policy  val;
    const char               *str;
 } _enum_map_focus_move_policy[] = {
@@ -4994,7 +4984,6 @@ _efl_config_global_efl_config_config_set(Eo *obj EINA_UNUSED, void *_pd EINA_UNU
    CONFIG_SETD(scroll_thumbscroll_momentum_animation_duration_max_limit);
 
    CONFIG_SETE(focus_autoscroll_mode);
-   CONFIG_SETE(slider_indicator_visible_mode);
    CONFIG_SETD(longpress_timeout);
    CONFIG_SETE(softcursor_mode);
    CONFIG_SETD(tooltip_delay);
@@ -5138,7 +5127,6 @@ _efl_config_global_efl_config_config_get(const Eo *obj EINA_UNUSED, void *_pd EI
    CONFIG_GETD(scroll_thumbscroll_momentum_animation_duration_max_limit);
 
    CONFIG_GETE(focus_autoscroll_mode);
-   CONFIG_GETE(slider_indicator_visible_mode);
    CONFIG_GETD(longpress_timeout);
    CONFIG_GETE(softcursor_mode);
    CONFIG_GETD(tooltip_delay);
