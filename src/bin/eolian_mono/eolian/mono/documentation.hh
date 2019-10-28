@@ -85,7 +85,7 @@ struct documentation_generator
       const char* eo_name = ::eolian_function_name_get(function);
       std::string name = object_ref_conversion(klass);
 
-      // Klass is needed to check the property naming rulles
+      // Klass is needed to check the property naming rules
       attributes::klass_def klass_d((const ::Eolian_Class *)klass, eolian_object_unit_get(klass));
 
       // Comment the block below to enable @see reference conversion for non-public interface members.
