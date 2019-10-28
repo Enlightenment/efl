@@ -778,16 +778,35 @@ enum class member_scope
 
 struct function_def
 {
-  klass_name klass; // Klass information for function_def as method
-  type_def return_type;
+  // Klass information for function_def as method
+  klass_name klass;
+  // Eolian name of the function
   std::string name;
+
+  // Actual return type as expected in the C version of this function.
+  // For property getters, this could be the type of the single
+  // value it holds
+  type_def return_type;
+  // Parameters of this function as the C implementation of it
   std::vector<parameter_def> parameters;
+
+  // Original return type as declared in the Eo.
+  type_def explicit_return_type;
+  // Original Eolian keys of this function. Used only for properties
+  std::vector<parameter_def> keys;
+  // Original Eolian values of this function. Used only for properties
+  std::vector<parameter_def> values;
+
+  // Name of this function in the C api
   std::string c_name;
   std::string filename;
-  std::vector<std::string> namespaces; // Namespaces for top-level function pointers
+  // Namespaces for top-level function pointers
+  std::vector<std::string> namespaces;
+
   documentation_def documentation;
   documentation_def return_documentation;
   documentation_def property_documentation;
+
   function_type type;
   member_scope scope;
   bool is_beta;
@@ -801,6 +820,8 @@ struct function_def
       && lhs.return_type == rhs.return_type
       && lhs.name == rhs.name
       && lhs.parameters == rhs.parameters
+      && lhs.keys == rhs.keys
+      && lhs.values == rhs.values
       && lhs.c_name == rhs.c_name
       && lhs.filename == rhs.filename
       && lhs.namespaces == rhs.namespaces
@@ -818,46 +839,25 @@ struct function_def
     return !(lhs == rhs);
   }
   function_def() = default;
-  function_def(klass_name _klass,
-               type_def _return_type, std::string const& _name,
-               std::vector<parameter_def> const& _parameters,
-               std::string const& _c_name,
-               std::string _filename,
-               std::vector<std::string> const& _namespaces,
-               documentation_def _documentation,
-               documentation_def _return_documentation,
-               documentation_def _property_documentation,
-               function_type _type,
-               member_scope _scope,
-               bool _is_beta = false,
-               bool _is_protected = false,
-               bool _is_static = false,
-               Eolian_Unit const* unit = nullptr)
-    : klass(_klass), return_type(_return_type), name(_name),
-      parameters(_parameters), c_name(_c_name), filename(_filename),
-      namespaces(_namespaces),
-      documentation(_documentation),
-      return_documentation(_return_documentation),
-      property_documentation(_property_documentation),
-      type(_type),
-      scope(_scope),
-      is_beta(_is_beta), is_protected(_is_protected),
-      is_static(_is_static),
-      unit(unit) {}
 
   function_def( ::Eolian_Function const* function, Eolian_Function_Type type, Eolian_Typedecl const* tp, Eolian_Unit const* unit)
-    : return_type(void_), unit(unit)
+    : return_type(void_), explicit_return_type(void_), unit(unit)
   {
-    Eolian_Type const* r_type = ::eolian_function_return_type_get(function, type);
-    name = ::eolian_function_name_get(function);
-    return_documentation = eolian_function_return_documentation_get(function, type);
-    scope = static_cast<member_scope>(eolian_function_scope_get(function, type));
-    if(r_type)
-      return_type.set(r_type
-                      , unit
-                      , eolian_function_return_c_type_get(function, type)
-                      , eolian_function_return_is_move(function, type)
-                      , eolian_function_return_is_by_ref(function, type));
+     Eolian_Type const* r_type = ::eolian_function_return_type_get(function, type);
+     name = ::eolian_function_name_get(function);
+     return_documentation = eolian_function_return_documentation_get(function, type);
+     scope = static_cast<member_scope>(eolian_function_scope_get(function, type));
+
+     if(r_type)
+       {
+          return_type.set(r_type
+                         , unit
+                         , eolian_function_return_c_type_get(function, type)
+                         , eolian_function_return_is_move(function, type)
+                         , eolian_function_return_is_by_ref(function, type));
+          explicit_return_type = return_type;
+       }
+
      if(type == EOLIAN_METHOD || type == EOLIAN_FUNCTION_POINTER)
        {
           for(efl::eina::iterator<Eolian_Function_Parameter> param_iterator ( ::eolian_function_parameters_get(function))
@@ -876,9 +876,10 @@ struct function_def
                ( ::eolian_property_keys_get(function, type))
                , param_last; param_iterator != param_last; ++param_iterator)
            {
-              parameters.push_back({&*param_iterator, unit});
+              parameter_def param = {&*param_iterator, unit};
+              parameters.push_back(param);
+              keys.push_back(param);
            }
-         std::vector<parameter_def> values;
          for(efl::eina::iterator<Eolian_Function_Parameter> param_iterator
                ( ::eolian_property_values_get(function, type))
                , param_last; param_iterator != param_last; ++param_iterator)
