@@ -459,7 +459,7 @@ public static class TestEinaValue {
         }
     }
 
-    public static void TestValueComparisonOverloadLessMore()
+    public static void TestValueComparisonOverloadLessGreater()
     {
         using (Eina.Value a = new Eina.Value(Eina.ValueType.Int32))
         using (Eina.Value b = new Eina.Value(Eina.ValueType.Int32)) {
@@ -467,9 +467,18 @@ public static class TestEinaValue {
             Test.Assert(b.Set(0));
 
             Test.Assert(a > b);
+            Test.Assert(!(a <= b));
             Test.Assert(!(a < b));
+            Test.Assert(a >= b);
             Test.Assert(b < a);
+            Test.Assert(!(b >= a));
             Test.Assert(!(b > a));
+            Test.Assert(b <= a);
+
+            Test.AssertEquals(a > b, !(a <= b));
+            Test.AssertEquals(!(a < b), a >= b);
+            Test.AssertEquals(b < a, !(b >= a));
+            Test.AssertEquals(!(b > a), b <= a);
         }
     }
 

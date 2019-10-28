@@ -2918,7 +2918,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return eina_value_convert(this.Handle, destination.Handle);
     }
 
-    /// <summary>Compare two eina values.
+    /// <summary>Compare two <see cref="Eina.Value" />.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
     /// <param name="other">The object to be compared to.</param>
@@ -2926,7 +2926,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// the <c>other</c>.</returns>
     public int CompareTo(Value other)
     {
-        if (other == null)
+        if (object.ReferenceEquals(other, null))
         {
             return 1;
         }
@@ -2936,15 +2936,21 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return eina_value_compare_wrapper(this.Handle, other.Handle);
     }
 
-    /// <summary>Compare to other values.
+    /// <summary>Compare two values.
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    /// <param name="other">The object to be compared to.</param>
-    /// <returns><c>-1</c>, <c>0</c> or <c>1</c> if this value is respectively smaller than, equal to or greater than
-    /// the <c>other</c>.</returns>
-    public int Compare(Value other)
+    /// <param name="lhs">The left value.</param>
+    /// <param name="rhs">The right value.</param>
+    /// <returns><c>-1</c>, <c>0</c> or <c>1</c> if <c>lhs</c> is respectively
+    /// smaller than, equal to or greater than the <c>rhs</c>.</returns>
+    public static int Compare(Value lhs, Value rhs)
     {
-        return this.CompareTo(other);
+        if (object.ReferenceEquals(lhs, rhs))
+            return 0;
+        if (object.ReferenceEquals(lhs, null))
+            return -1;
+
+        return lhs.CompareTo(rhs);
     }
 
     /// <summary>Returns whether this value is equal to the given object.
@@ -2959,13 +2965,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
             return false;
         }
 
-        Value v = obj as Value;
-        if (v == null)
-        {
-            return false;
-        }
-
-        return this.Equals(v);
+        return this.Equals(obj as Value);
     }
 
     /// <summary>Returns whether this value is equal to the given value.
@@ -2973,17 +2973,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     /// </summary>
     /// <param name="other">The value to be compared to.</param>
     /// <returns><c>true</c> if this value is equal to <c>other</c>.</returns>
-    public bool Equals(Value other)
-    {
-        try
-        {
-            return this.CompareTo(other) == 0;
-        }
-        catch (ObjectDisposedException)
-        {
-            return false;
-        }
-    }
+    public bool Equals(Value other) => this.CompareTo(other) == 0;
 
     /// <summary>Gets the hash code for this value.
     ///
@@ -2995,70 +2985,72 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
         return this.Handle.ToInt32();
     }
 
-    /// <summary>Returns whether both values are null or <c>x</c> is equal to <c>y</c>.
+    /// <summary>Returns whether both values are null or <c>lhs</c> is equal to <c>rhs</c>.
     ///
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    /// <returns><c>true</c> if both parameters are <c>null</c> or if <c>x</c> is equal
-    /// to <c>y</c>.</returns>
-    public static bool operator==(Value x, Value y)
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if both parameters are <c>null</c> or if <c>lhs</c> is equal
+    /// to <c>lhs</c>.</returns>
+    public static bool operator==(Value lhs, Value rhs)
     {
-        if (object.ReferenceEquals(x, null))
-        {
-            return object.ReferenceEquals(y, null);
-        }
+        if (object.ReferenceEquals(lhs, null))
+            return  object.ReferenceEquals(rhs, null);
 
-        return x.Equals(y);
+        return lhs.Equals(rhs);
     }
 
-    /// <summary>Returns whether <c>x</c> is different from <c>y</c>.
+    /// <summary>Returns whether <c>lhs</c> is different from <c>rhs</c>.
     ///
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    /// <returns><c>true</c> if <c>x</c> is different from <c>y</c>.</returns>
-    public static bool operator!=(Value x, Value y)
-    {
-        if (object.ReferenceEquals(x, null))
-        {
-            return !object.ReferenceEquals(y, null);
-        }
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is different from <c>rhs</c>.</returns>
+    public static bool operator!=(Value lhs, Value rhs) => !(lhs == rhs);
 
-        return !x.Equals(y);
-    }
-
-    /// <summary>Returns whether <c>x</c> is greater than <c>y</c>.
+    /// <summary>Returns whether <c>lhs</c> is less than <c>rhs</c>.
     ///
     /// <para>If either parameter is <c>null</c>, <c>false</c> is returned.</para>
     ///
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    /// <returns><c>true</c> if <c>x</c> is greater than <c>y</c>.</returns>
-    public static bool operator>(Value x, Value y)
-    {
-        if (object.ReferenceEquals(x, null) || object.ReferenceEquals(y, null))
-        {
-            return false;
-        }
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is less than <c>rhs</c>.</returns>
+    public static bool operator<(Value lhs, Value rhs) => (Compare(lhs, rhs) < 0);
 
-        return x.CompareTo(y) > 0;
-    }
-
-    /// <summary>Returns whether <c>x</c> is smaller than <c>y</c>.
+    /// <summary>Returns whether <c>lhs</c> is greater than <c>rhs</c>.
     ///
     /// <para>If either parameter is <c>null</c>, <c>false</c> is returned.</para>
     ///
     /// <para>Since EFL 1.23.</para>
     /// </summary>
-    /// <returns><c>true</c> if <c>x</c> is smaller than <c>y</c>.</returns>
-    public static bool operator<(Value x, Value y)
-    {
-        if (object.ReferenceEquals(x, null) || object.ReferenceEquals(y, null))
-        {
-            return false;
-        }
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is greater than <c>rhs</c>.</returns>
+    public static bool operator>(Value lhs, Value rhs) => rhs < lhs;
 
-        return x.CompareTo(y) < 0;
-    }
+    /// <summary>
+    ///   Returns whether <c>lhs</c> is equal or less than <c>rhs</c>.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// or less than <c>rhs</c>.</returns>
+    public static bool operator<=(Value lhs, Value rhs) => !(lhs > rhs);
+
+    /// <summary>
+    ///   Returns whether <c>lhs</c> is equal or greater than <c>rhs</c>.
+    /// <para>Since EFL 1.23.</para>
+    /// </summary>
+    /// <param name="lhs">The left hand side of the operator.</param>
+    /// <param name="rhs">The right hand side of the operator.</param>
+    /// <returns><c>true</c> if <c>lhs</c> is equal
+    /// or greater than <c>rhs</c>.</returns>
+    public static bool operator>=(Value lhs, Value rhs) => !(lhs < rhs);
 
 
     /// <summary>Converts value to string.
