@@ -42,18 +42,6 @@ enum Efl.Ui.Focus.Move_Policy
                Left, Right, Up, Down, Tab, or Shift+Tab.]]
 }
 
-enum @beta Efl.Ui.Slider_Indicator_Visible_Mode
-{
-   [[Slider's indicator visibility mode.
-
-     @since 1.13
-   ]]
-   on_drag,    [[show indicator on mouse down or change in slider value]]
-   always,    [[Always show the indicator.]]
-   on_focus,  [[Show the indicator on focus]]
-   none      [[Never show the indicator ]]
-}
-
 enum Efl.Ui.Focus.Autoscroll_Mode
 {
    [[Focus Autoscroll Mode
