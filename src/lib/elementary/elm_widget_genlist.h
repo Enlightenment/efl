@@ -253,6 +253,7 @@ struct Elm_Gen_Item_Type
    Eina_Bool               queued : 1;
    Eina_Bool               before : 1;
    Eina_Bool               show_me : 1;
+   Eina_Bool               unfocusable : 1; /* item is not focusable; propagate to content */
 };
 
 struct _Item_Block
