@@ -32,7 +32,7 @@ public class TestModel {
     {
         Efl.Loop loop = Efl.App.AppMain;
 
-        var veggies = CreateModel(loop);
+        CreateModel(loop);
     }
 
     internal static async Task EasyModelExtractionAsync (Efl.Loop loop)
