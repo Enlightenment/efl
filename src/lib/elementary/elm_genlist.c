@@ -469,7 +469,8 @@ _item_content_realize(Elm_Gen_Item *it,
 
              if (elm_widget_is(content))
                {
-                  if (!calc)
+                  elm_widget_tree_unfocusable_set(content, it->item->unfocusable);
+                  if (!calc && (!it->item->unfocusable))
                     _elm_widget_full_eval(content);
                }
           }
@@ -1700,7 +1701,11 @@ _item_cache_find(Elm_Gen_Item *it)
              efl_wref_del(itc->base_view, &itc->base_view);
              itc->base_view = NULL;
              EINA_LIST_FREE(itc->contents, obj)
-               elm_widget_tree_unfocusable_set(obj, EINA_FALSE);
+               {
+                  if (elm_widget_is(obj))
+                    elm_widget_tree_unfocusable_set(obj, it->item->unfocusable);
+                  evas_object_show(obj);
+               }
              itc->contents = NULL;
              _item_cache_free(itc);
              return EINA_TRUE;
@@ -1718,7 +1723,8 @@ _content_cache_add(Elm_Gen_Item *it, Eina_List **cache)
      {
         *cache = eina_list_append(*cache, content);
         eina_hash_del_by_key(pd->content_item_map, &content);
-        elm_widget_tree_unfocusable_set(content, EINA_TRUE);
+        if (elm_widget_is(content)) elm_widget_tree_unfocusable_set(content, EINA_TRUE);
+        evas_object_hide(content);
      }
 
    return *cache;
@@ -5388,6 +5394,15 @@ _item_unrealize(Elm_Gen_Item *it)
    it->want_unrealize = EINA_FALSE;
 }
 
+static void
+_item_temp_realize(Elm_Gen_Item *it, const int index)
+{
+   it->item->unfocusable = EINA_TRUE;
+   _item_realize(it, index, EINA_TRUE);
+   _elm_genlist_item_unrealize(it, EINA_TRUE);
+   it->item->unfocusable = EINA_FALSE;
+}
+
 static Eina_Bool
 _item_block_recalc(Item_Block *itb, const int blk_idx, Eina_Bool qadd)
 {
@@ -5421,8 +5436,7 @@ _item_block_recalc(Item_Block *itb, const int blk_idx, Eina_Bool qadd)
                     {
                        if (!size || (it->item->expanded_depth != size->expanded_depth))
                          {
-                            _item_realize(it, blk_idx + vis_count, EINA_TRUE);
-                            _elm_genlist_item_unrealize(it, EINA_TRUE);
+                            _item_temp_realize(it, blk_idx + vis_count);
                          }
                        else
                          {
@@ -5443,10 +5457,7 @@ _item_block_recalc(Item_Block *itb, const int blk_idx, Eina_Bool qadd)
                        it->item->mincalcd = EINA_TRUE;
                     }
                   else
-                    {
-                       _item_realize(it, blk_idx + vis_count, EINA_TRUE);
-                       _elm_genlist_item_unrealize(it, EINA_TRUE);
-                    }
+                    _item_temp_realize(it, blk_idx + vis_count);
                }
           }
         else
