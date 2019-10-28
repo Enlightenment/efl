@@ -373,3 +373,9 @@ option('install-eo-files',
   value: false,
   description : 'Install any eo file'
 )
+
+option('mono-friend-assemblies',
+  type : 'array',
+  value : [],
+  description : 'List of friend assemblies that can access efl_mono assembly\'s internal types and members.'
+)
