@@ -1584,10 +1584,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator Value(byte x)
     {
         var v = new Eina.Value(ValueType.Byte);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1598,10 +1595,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator byte(Value v)
     {
         byte b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1612,10 +1606,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator Value(sbyte x)
     {
         var v = new Eina.Value(ValueType.SByte);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1626,10 +1617,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator sbyte(Value v)
     {
         sbyte b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1640,10 +1628,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator Value(short x)
     {
         var v = new Eina.Value(ValueType.Short);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1654,10 +1639,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator short(Value v)
     {
         short b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1668,10 +1650,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator Value(ushort x)
     {
         var v = new Eina.Value(ValueType.UShort);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1682,10 +1661,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator ushort(Value v)
     {
         ushort b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1696,10 +1672,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator Value(int x)
     {
         var v = new Eina.Value(ValueType.Int32);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1710,10 +1683,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator int(Value v)
     {
         int b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1724,10 +1694,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator Value(uint x)
     {
         var v = new Eina.Value(ValueType.UInt32);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1738,10 +1705,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator uint(Value v)
     {
         uint b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1752,10 +1716,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator Value(long x)
     {
         var v = new Eina.Value(ValueType.Long);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1766,10 +1727,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator long(Value v)
     {
         long b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1780,10 +1738,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator Value(ulong x)
     {
         var v = new Eina.Value(ValueType.ULong);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1794,10 +1749,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator ulong(Value v)
     {
         ulong b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1808,10 +1760,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator Value(float x)
     {
         var v = new Eina.Value(ValueType.Float);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1822,10 +1771,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator float(Value v)
     {
         float b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1836,10 +1782,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator Value(double x)
     {
         var v = new Eina.Value(ValueType.Double);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1850,10 +1793,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator double(Value v)
     {
         double b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -1864,10 +1804,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator Value(string x)
     {
         var v = new Eina.Value(ValueType.String);
-        if (!v.Set(x))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(x);
 
         return v;
     }
@@ -1878,10 +1815,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static implicit operator string(Value v)
     {
         string b;
-        if (!v.Get(out b))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out b);
 
         return b;
     }
@@ -2012,10 +1946,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static explicit operator Value(Efl.Object obj)
     {
         var v = new Eina.Value(ValueType.Object);
-        if (!v.Set(obj))
-        {
-            throw new InvalidOperationException("Couldn't set value.");
-        }
+        v.Set(obj);
         return v;
     }
 
@@ -2025,10 +1956,7 @@ public class Value : IDisposable, IComparable<Value>, IEquatable<Value>
     public static explicit operator Efl.Object(Value v)
     {
         Efl.Object obj;
-        if (!v.Get(out obj))
-        {
-            throw new InvalidOperationException("Couldn't get value.");
-        }
+        v.Get(out obj);
 
         return obj;
     }
