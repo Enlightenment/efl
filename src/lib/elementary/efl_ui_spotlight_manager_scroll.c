@@ -181,11 +181,13 @@ _efl_ui_spotlight_manager_scroll_efl_ui_spotlight_manager_bind(Eo *obj, Efl_Ui_S
         pd->foreclip = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
                                evas_object_evas_get(group));
         evas_object_static_clip_set(pd->foreclip, EINA_TRUE);
+        efl_canvas_group_member_add(spotlight, pd->foreclip);
 
         pd->backclip = efl_add(EFL_CANVAS_RECTANGLE_CLASS,
                                evas_object_evas_get(group));
         evas_object_static_clip_set(pd->backclip, EINA_TRUE);
         efl_gfx_entity_visible_set(pd->backclip, EINA_FALSE);
+        efl_canvas_group_member_add(spotlight, pd->backclip);
 
         for (int i = 0; i < efl_content_count(spotlight) ; ++i) {
            Efl_Gfx_Entity *elem = efl_pack_content_get(spotlight, i);
