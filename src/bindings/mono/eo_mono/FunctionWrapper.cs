@@ -24,13 +24,13 @@ namespace Efl.Eo
 ///This class has a platform-dependent implementation on whether it
 ///is compiled for Windows (using LoadLibrary/GetProcAddress) or Unix
 ///(dlopen/dlsym).</summary>
-public static partial class FunctionInterop
+internal static partial class FunctionInterop
 {
     ///<summary>Loads a function pointer from the given module.</summary>
     ///<param name="moduleName">The name of the module containing the function.</param>
     ///<param name="functionName">The name of the function to search for.</param>
     ///<returns>A function pointer that can be used with delegates.</returns>
-    public static IntPtr LoadFunctionPointer(string moduleName, string functionName)
+    internal static IntPtr LoadFunctionPointer(string moduleName, string functionName)
     {
         IntPtr module = NativeModule.LoadLibrary(moduleName);
         Eina.Log.Debug($"searching {module} for {functionName}");
@@ -42,7 +42,7 @@ public static partial class FunctionInterop
     ///<summary>Loads a function pointer from the default module.</summary>
     ///<param name="functionName">The name of the function to search for.</param>
     ///<returns>A function pointer that can be used with delegates.</returns>
-    public static IntPtr LoadFunctionPointer(string functionName)
+    internal static IntPtr LoadFunctionPointer(string functionName)
     {
         Eina.Log.Debug($"searching {null} for {functionName}");
         var s = FunctionInterop.dlsym(IntPtr.Zero, functionName);
@@ -57,7 +57,7 @@ public static partial class FunctionInterop
 ///
 ///The parameter T must be a delegate.
 ///</summary>
-public class FunctionWrapper<T> // NOTE: When supporting C# >=7.3, add a where T: System.Delegate?
+class FunctionWrapper<T> // NOTE: When supporting C# >=7.3, add a where T: System.Delegate?
 {
     private Lazy<FunctionLoadResult<T>> loadResult;
 #pragma warning disable 0414
@@ -87,7 +87,7 @@ public class FunctionWrapper<T> // NOTE: When supporting C# >=7.3, add a where T
     ///<summary>Creates a wrapper for the given function of the given module.</summary>
     ///<param name="moduleName">The name of the module containing the function.</param>
     ///<param name="functionName">The name of the function to search for.</param>
-    public FunctionWrapper(string moduleName, string functionName)
+    internal FunctionWrapper(string moduleName, string functionName)
         : this(new NativeModule(moduleName), functionName)
     {
     }
@@ -95,7 +95,7 @@ public class FunctionWrapper<T> // NOTE: When supporting C# >=7.3, add a where T
     ///<summary>Creates a wrapper for the given function of the given module.</summary>
     ///<param name="module">The module wrapper containing the function.</param>
     ///<param name="functionName">The name of the function to search for.</param>
-    public FunctionWrapper(NativeModule module, string functionName)
+    internal FunctionWrapper(NativeModule module, string functionName)
     {
         this.module = module;
         loadResult = new Lazy<FunctionLoadResult<T>>
@@ -107,7 +107,7 @@ public class FunctionWrapper<T> // NOTE: When supporting C# >=7.3, add a where T
 
     ///<summary>Retrieves the result of function load.</summary>
     ///<returns>The load result.</returns>
-    public FunctionLoadResult<T> Value
+    internal FunctionLoadResult<T> Value
     {
         get
         {
@@ -117,7 +117,7 @@ public class FunctionWrapper<T> // NOTE: When supporting C# >=7.3, add a where T
 }
 
 ///<summary>The outcome of the function load process.</summary>
-public enum FunctionLoadResultKind
+enum FunctionLoadResultKind
 {
     ///<summary>Function was loaded successfully.</summary>
     Success,
@@ -128,16 +128,16 @@ public enum FunctionLoadResultKind
 }
 
 ///<summary>Represents the result of loading a function pointer.</summary>
-public class FunctionLoadResult<T>
+class FunctionLoadResult<T>
 {
     ///<summary>The status of the load.</summary>
-    public FunctionLoadResultKind Kind;
+    FunctionLoadResultKind Kind;
     private T _Delegate;
 
     ///<summary>The delegate wrapping the loaded function pointer.
     ///
     ///Throws InvalidOperationException if trying to access while not loaded.</summary>
-    public T Delegate
+    internal T Delegate
     {
         get
         {
@@ -152,14 +152,14 @@ public class FunctionLoadResult<T>
 
     ///<summary>Creates a new load result of the given kind.</summary>
     ///<param name="kind">The outcome of the load process.</param>
-    public FunctionLoadResult(FunctionLoadResultKind kind)
+    internal FunctionLoadResult(FunctionLoadResultKind kind)
     {
         this.Kind = kind;
     }
 
     ///<summary>Creates a new load result with the given delegate.</summary>
     ///<param name="Delegate">The delegate wrapping the native function.</param>
-    public FunctionLoadResult(T Delegate)
+    internal FunctionLoadResult(T Delegate)
     {
         this._Delegate = Delegate;
         this.Kind = FunctionLoadResultKind.Success;

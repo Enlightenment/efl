@@ -52,12 +52,12 @@ public static class Globals
 
     [return: MarshalAs(UnmanagedType.U1)]
     public delegate bool efl_object_init_delegate();
-    public static readonly FunctionWrapper<efl_object_init_delegate> efl_object_init_ptr =
+    static readonly FunctionWrapper<efl_object_init_delegate> efl_object_init_ptr =
         new FunctionWrapper<efl_object_init_delegate>(efl.Libs.EoModule, "efl_object_init");
     public static bool efl_object_init() => efl_object_init_ptr.Value.Delegate();
 
     public delegate void efl_object_shutdown_delegate();
-    public static readonly FunctionWrapper<efl_object_shutdown_delegate> efl_object_shutdown_ptr = new FunctionWrapper<efl_object_shutdown_delegate>(efl.Libs.EoModule, "efl_object_shutdown");
+    static readonly FunctionWrapper<efl_object_shutdown_delegate> efl_object_shutdown_ptr = new FunctionWrapper<efl_object_shutdown_delegate>(efl.Libs.EoModule, "efl_object_shutdown");
     public static void efl_object_shutdown() => efl_object_shutdown_ptr.Value.Delegate();
     // [DllImport(efl.Libs.Eo)] internal static extern void efl_object_shutdown();
 

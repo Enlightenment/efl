@@ -19,7 +19,7 @@ using System.Runtime.InteropServices;
 namespace Efl.Eo
 {
 
-public static partial class FunctionInterop
+internal static partial class FunctionInterop
 {
     [DllImport(efl.Libs.Libdl)]
     private static extern IntPtr dlsym(IntPtr handle, string symbol);
@@ -28,7 +28,7 @@ public static partial class FunctionInterop
     ///<param name="nativeLibraryHandle">The module containing the function.</param>
     ///<param name="functionName">The name of the function to search for.</param>
     ///<returns>A function pointer that can be used with delegates.</returns>
-    public static IntPtr LoadFunctionPointer(IntPtr nativeLibraryHandle, string functionName)
+    internal static IntPtr LoadFunctionPointer(IntPtr nativeLibraryHandle, string functionName)
     {
         Eina.Log.Debug($"searching {nativeLibraryHandle} for {functionName}");
         var s = FunctionInterop.dlsym(nativeLibraryHandle, functionName);
