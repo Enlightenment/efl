@@ -1,0 +1,36 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>netcoreapp@NETCOREAPP_VERSION@</TargetFramework>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>Efl.Csharp.Test.Suite</PackageId>
+    <Version>@EFL_VERSION@</Version>
+    <Authors>EFL Team</Authors>
+    <PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <DefineConstants>@EFL_BETA@</DefineConstants>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="../../bindings/mono/efl_sharp.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Compile Include="@BINDING_TEST_SRC@/*.cs" />
+    <!-- Somehow dotnet build -o DIR seems to miss the genenerated files despite
+    them being in the same folder as the csproj file. The line below makes
+    sure we include them.
+
+    The side effect is that invoking directly `dotnet build` will raise "source file FOO
+    already included" warnings.
+    -->
+    <Compile Include="./*.cs" />
+  </ItemGroup>
+
+</Project>
+

@@ -1,32 +1,10 @@
-add_languages('cs')
+# dotnet supports cs files indirectly through custom_targets
+if not get_option('dotnet')
+  add_languages('cs')
+endif
 
 
 runtime_assemblies = []
-
-# Check if we should use dotnet options
-cs_is_dotnet = meson.get_compiler('cs').get_id().contains('dotnet')
-
-if (cs_is_dotnet)
-
-warning('Dotnet support is still not upstream in meson.')
-
-runtime_assemblies += [
-    '-r:System.Console.dll',
-    '-r:Microsoft.CSharp.dll',
-    '-r:System.Collections.dll',
-    '-r:System.Collections.Concurrent.dll',
-    '-r:System.ComponentModel.Primitives.dll',
-    '-r:System.ComponentModel.Primitives.dll',
-    '-r:System.Diagnostics.Debug.dll',
-    '-r:System.Diagnostics.TraceSource.dll',
-    '-r:System.Dynamic.Runtime.dll',
-    '-r:System.Linq.dll',
-    '-r:System.Runtime.dll',
-    '-r:System.Runtime.Extensions.dll',
-    '-r:System.Security.dll',
-]
-
-endif
 
 mono_sublibs = [
   ['Eina',        true, ], #
@@ -158,16 +136,81 @@ endif
 efl_mono_install_dir = join_paths(dir_lib, 'efl-mono-'+version_major)
 efl_mono_xml_doc = join_paths(meson.current_build_dir(), 'efl_mono.xml')
 
-efl_mono = library('efl_mono',
-    mono_generator_target + mono_files + [efl_src],
-    install : true,
-    install_dir : efl_mono_install_dir,
-    cs_args : extra_cs_args + ['-doc:' + efl_mono_xml_doc, '-warnaserror+']
-)
+if (get_option('dotnet'))
+  dotnet = find_program('dotnet')
+  warning('Dotnet support is still experimental.')
 
-meson.add_install_script(join_paths(meson.source_root(), 'meson', 'meson_csharp_docs.sh'),
-                         efl_mono_xml_doc,
-                         efl_mono_install_dir)
+  lib_csproj_conf_data = configuration_data()
+
+  dotnet_version = run_command(dotnet, ['--version'], check: true)
+  message('Found dotnet core version ' + dotnet_version.stdout().strip())
+
+  # The major version should be enough for now while we don't have to deal
+  # with minor differences and dotnet core is far from version 10
+  dotnet_major_version = dotnet_version.stdout().strip()[0].to_int()
+  if dotnet_major_version == 3
+    dotnet_core_app_version = '3.0'
+    dotnet_standard_version = '2.1'
+  elif dotnet_major_version == 2
+    dotnet_core_app_version = '2.0'
+    dotnet_standard_version = '2.0'
+  else
+    error('Unsupported dotnet version. Must be at least 2.2')
+  endif
+
+  lib_csproj_conf_data.set('NETSTANDARD_VERSION', dotnet_standard_version)
+  lib_csproj_conf_data.set('BINDING_SRC', meson.current_source_dir())
+  lib_csproj_conf_data.set('EFL_VERSION', meson.project_version())
+
+  if get_option('mono-beta')
+    lib_csproj_conf_data.set('EFL_BETA', 'EFL_BETA')
+  else
+    lib_csproj_conf_data.set('EFL_BETA', '')
+  endif
+
+  lib_csproj = configure_file(input: 'efl_sharp.csproj.in',
+                              output: 'efl_sharp.csproj',
+                              configuration: lib_csproj_conf_data)
+
+  efl_mono = custom_target('efl_mono',
+    input: mono_generator_target + mono_files + [efl_src] + [lib_csproj],
+    output: 'efl_sharp.dll',
+    build_by_default: true,
+    command: [dotnet,
+             'build',
+             '-o', meson.current_build_dir(),
+             '-p:BuildingLib=Yes',
+             lib_csproj],
+    install: true,
+    install_dir: efl_mono_install_dir,
+  )
+
+  efl_mono_pack = custom_target('efl_mono_nuget',
+    input: lib_csproj,
+    output: 'Efl.Csharp.' + meson.project_version() + '.nupkg',
+    depends: [efl_mono],
+    command: [dotnet,
+             'pack',
+             '-o', meson.current_build_dir(),
+             '-p:BuildingLib=No',
+             lib_csproj],
+    install: true,
+    install_dir: efl_mono_install_dir,
+  )
+
+else
+
+  efl_mono = library('efl_mono',
+      mono_generator_target + mono_files + [efl_src],
+      install : true,
+      install_dir : efl_mono_install_dir,
+      cs_args : extra_cs_args + ['-doc:' + efl_mono_xml_doc, '-warnaserror+']
+  )
+
+  meson.add_install_script(join_paths(meson.source_root(), 'meson', 'meson_csharp_docs.sh'),
+                           efl_mono_xml_doc,
+                           efl_mono_install_dir)
+endif
 
 efl_mono_test_suite_path=join_paths(meson.current_build_dir())
 

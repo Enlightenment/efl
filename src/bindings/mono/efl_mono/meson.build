@@ -37,8 +37,11 @@ efl_src = configure_file(
 friend_assemblies = ''
 mono_friend_assemblies = get_option('mono-friend-assemblies')
 if get_option('build-tests')
-   mono_friend_assemblies += 'efl-mono-suite'
-   mono_friend_assemblies += 'efl_mono_test'
+  if get_option('dotnet')
+     mono_friend_assemblies += 'efl_sharp_test_suite'
+  else
+     mono_friend_assemblies += 'efl_mono_test'
+  endif
 endif
 
 foreach f : mono_friend_assemblies
