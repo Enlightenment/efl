@@ -249,13 +249,6 @@ ecore_evas_wayland_engine_include_dir = []
 
 evas_static_list = []
 
-evas_lib =         ['evas'                       ,[], false,  true, false, false,  true,  true, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']]
-evas_img_modules = ['evas'                       ,[],  true, false, false, false, false, false, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']]
-evas_engines =     [join_paths('evas', 'engines'),[],  true, false, false, false, false, false, [], []]
-evas_goal =        ['evas_goal'                  ,[], false,  true, false, false, false, false, ['eina', 'efl', 'eo'], []]
-
-evas_settings = [ evas_lib, evas_img_modules, evas_goal, evas_engines ]
-
 subprojects = [
 # name              |   option              | mod  | lib  | bin  | bench | tests | examples | pkg-config options | name of static libs
 ['evil'             ,[]                    , false,  true, false, false, false, false, [], []],
@@ -284,7 +277,8 @@ subprojects = [
 ['ector'            ,[]                    , false,  true, false, false,  true, false, ['eina', 'efl'], ['draw', 'triangulator', 'freetype']],
 ['elput'            ,['drm']               , false,  true, false, false,  true, false, ['eina', 'eldbus'], []],
 ['ecore_drm2'       ,['drm']               , false,  true, false, false, false, false, ['ecore'], ['libdrm']],
-['ecore_cocoa'      ,['cocoa']             , false,  true, false, false, false, false, ['eina'], []]] + evas_settings +[
+['ecore_cocoa'      ,['cocoa']             , false,  true, false, false, false, false, ['eina'], []],
+['evas'             ,[]                    ,  true,  true, false, false,  true,  true, ['eina', 'efl', 'eo'], ['vg_common', 'libunibreak']],
 ['ecore_input_evas' ,[]                    , false,  true, false, false, false, false, ['eina', 'evas'], []],
 ['ecore_evas'       ,[]                    ,  true,  true,  true, false, false, false, ['evas', 'ector'], []],
 ['ecore_imf'        ,[]                    ,  true,  true, false, false, false, false, ['eina'], []],
