@@ -4036,12 +4036,7 @@ _edje_part_recalc(Edje *ed, Edje_Real_Part *ep, int flags, Edje_Calc_Params *sta
              ted = _edje_fetch(ep->typedata.swallow->swallowed_object);
              _edje_recalc_do(ted);
           }
-     }
-   if (ep->part->type == EDJE_PART_TYPE_GROUP &&
-       ((ep->type == EDJE_RP_TYPE_SWALLOW) &&
-        (ep->typedata.swallow)) &&
-       ep->typedata.swallow->swallowed_object)
-     {
+
         Edje_Size *min = NULL, *max = NULL;
 
         if (ep->chosen_description)
