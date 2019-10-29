@@ -38,54 +38,6 @@
            }                                                     \
      }
 
-#define CHECK_MESHES_IN_FOLDER(folder, ext)                             \
-  it = eina_file_direct_ls(folder);                                     \
-  EINA_ITERATOR_FOREACH(it, file)                                       \
-    {                                                                   \
-       int set_ok, save_ok;                                             \
-       Eina_File *f; \
-       const Eina_File *f_get = NULL; \
-       const char *filename = NULL; \
-       const char *key = NULL; \
-       mesh = efl_add(EVAS_CANVAS3D_MESH_CLASS, e);                      \
-       mesh2 = efl_add(EVAS_CANVAS3D_MESH_CLASS, e);                     \
-       fail_if(mesh == NULL);                                           \
-       fail_if(mesh2 == NULL);                                          \
-       snprintf(buffer, PATH_MAX, "%s%s", tmp, ext);                    \
-       set_ok = efl_file_simple_load(mesh, file->path, NULL); \
-       save_ok = efl_file_save(mesh, buffer, NULL, NULL);              \
-       fail_if(!set_ok);                                                \
-       fail_if(!save_ok);                                               \
-       set_ok = efl_file_simple_load(mesh2, buffer, NULL);               \
-       fail_if(!set_ok);                                                \
-       efl_file_simple_get(mesh2, &filename, &key);               \
-       fail_if(!filename);                                                \
-       fail_if(!!key);                                                \
-       res = _compare_meshes(mesh, mesh2);                              \
-       fail_if(res == 1);                                               \
-       f = eina_file_open(file->path, 0); \
-       fail_if(!f); \
-       set_ok = efl_file_simple_mmap_load(mesh, f, NULL); \
-       efl_file_simple_mmap_get(mesh, &f_get, &key); \
-       fail_if(!f_get); \
-       fail_if(!!key); \
-       eina_file_close(f); \
-       save_ok = efl_file_save(mesh, buffer, NULL, NULL);              \
-       fail_if(!set_ok);                                                \
-       fail_if(!save_ok);                                               \
-       f = eina_file_open(buffer, 0); \
-       fail_if(!f); \
-       set_ok = efl_file_simple_mmap_load(mesh2, f, NULL); \
-       eina_file_close(f); \
-       fail_if(!set_ok);                                                \
-       res = _compare_meshes(mesh, mesh2);                              \
-       fail_if(res == 1);                                               \
-       efl_del(mesh2);                                                   \
-       efl_del(mesh);                                                    \
-       unlink(buffer);                                                  \
-    } \
-  eina_iterator_free(it);
-
 static Evas_Canvas3D_Mesh_Frame *
 return_zero_frame(Evas_Canvas3D_Mesh_Data *pd)
 {
@@ -139,16 +91,68 @@ static int _compare_meshes(Evas_Canvas3D_Mesh *mesh1, Evas_Canvas3D_Mesh *mesh2)
    return 0;
 }
 
-EFL_START_TEST(evas_object_mesh_loader_saver)
+static void
+check_meshes_in_folder(Eina_Tmpstr *tmp, const char *folder, const char *ext)
 {
    char buffer[PATH_MAX];
    Evas *e = _setup_evas();
-   Eina_Tmpstr *tmp;
    Eo *mesh, *mesh2;
    Eina_Iterator *it;
-   char *file_mask = strdup("evas_test_mesh_XXXXXX");
-   int res = 0, tmpfd;
+   int res = 0;
    const Eina_File_Direct_Info *file;
+   it = eina_file_direct_ls(folder);
+   EINA_ITERATOR_FOREACH(it, file)
+     {
+        int set_ok, save_ok;
+        Eina_File *f;
+        const Eina_File *f_get = NULL;
+        const char *filename = NULL;
+        const char *key = NULL;
+        mesh = efl_add(EVAS_CANVAS3D_MESH_CLASS, e);
+        mesh2 = efl_add(EVAS_CANVAS3D_MESH_CLASS, e);
+        fail_if(mesh == NULL);
+        fail_if(mesh2 == NULL);
+        snprintf(buffer, PATH_MAX, "%s%s", tmp, ext);
+        set_ok = efl_file_simple_load(mesh, file->path, NULL);
+        fail_if(!set_ok);
+        save_ok = efl_file_save(mesh, buffer, NULL, NULL);
+        fail_if(!save_ok);
+        set_ok = efl_file_simple_load(mesh2, buffer, NULL);
+        fail_if(!set_ok);
+        efl_file_simple_get(mesh2, &filename, &key);
+        fail_if(!filename);
+        fail_if(!!key);
+        res = _compare_meshes(mesh, mesh2);
+        fail_if(res == 1);
+        f = eina_file_open(file->path, 0);
+        fail_if(!f);
+        set_ok = efl_file_simple_mmap_load(mesh, f, NULL);
+        efl_file_simple_mmap_get(mesh, &f_get, &key);
+        fail_if(!f_get);
+        fail_if(!!key);
+        eina_file_close(f);
+        save_ok = efl_file_save(mesh, buffer, NULL, NULL);
+        fail_if(!set_ok);
+        fail_if(!save_ok);
+        f = eina_file_open(buffer, 0);
+        fail_if(!f);
+        set_ok = efl_file_simple_mmap_load(mesh2, f, NULL);
+        eina_file_close(f);
+        fail_if(!set_ok);
+        res = _compare_meshes(mesh, mesh2);
+        fail_if(res == 1);
+        efl_del(mesh2);
+        efl_del(mesh);
+        unlink(buffer);
+     }
+   eina_iterator_free(it);
+   evas_free(e);
+}
+EFL_START_TEST(evas_object_mesh_loader_saver)
+{
+   Eina_Tmpstr *tmp;
+   char *file_mask = strdup("evas_test_mesh_XXXXXX");
+   int tmpfd;
    struct
    {
       const char *dir;
@@ -166,12 +170,11 @@ EFL_START_TEST(evas_object_mesh_loader_saver)
    fail_if(tmpfd == -1);
    fail_if(!!close(tmpfd));
 
-   CHECK_MESHES_IN_FOLDER(values[_i].dir, values[_i].fmt)
+   check_meshes_in_folder(tmp, values[_i].dir, values[_i].fmt);
 
    unlink(tmp);
 
    free(file_mask);
-   evas_free(e);
 }
 EFL_END_TEST
 
