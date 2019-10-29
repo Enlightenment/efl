@@ -1,5 +1,16 @@
 import eina_types;
 
+type Efl.Gfx.Align: double; [[Efl alignment type:
+                              As a horizontal component, 0.0 means the start of the axis
+                              in the direction that the current language reads, 1.0 means the end of the axis.
+
+                              As a vertical component, 0.0 is the top, 1.0 is the bottom.
+
+                              The default for this type is always 0.5 unless explicitly specified.
+
+                              @since 1.24
+                            ]]
+
 enum @beta Efl.Gfx.Colorspace {
   [[Graphics colorspace type]]
   argb8888,             [[ARGB 32 bits per pixel, high-byte is Alpha, accessed one 32bit word at a time.]]
