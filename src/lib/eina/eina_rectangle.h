@@ -62,6 +62,27 @@ typedef struct _Eina_Size2D
    int w, h;
 } Eina_Size2D;
 
+
+/**
+ * @brief convenience macro for comparing two Eina_Size2D structs
+ * @param[in] a An Eina_Size2D
+ * @param[in] b An Eina_Size2D
+ * @return 1 if the structs are equal, 0 if they are not
+ * @since 1.24
+ */
+#define EINA_SIZE2D_EQ(a, b) \
+  (((a).w == (b).w) && ((a).h == (b).h))
+
+/**
+ * @brief convenience macro for comparing two Eina_Position2D structs
+ * @param[in] a An Eina_Position2D
+ * @param[in] b An Eina_Position2D
+ * @return 1 if the structs are equal, 0 if they are not
+ * @since 1.24
+ */
+#define EINA_POSITION2D_EQ(a, b) \
+  (((a).x == (b).x) && ((a).y == (b).y))
+
 /**
  * @typedef Eina_Rectangle
  * Simple rectangle structure.

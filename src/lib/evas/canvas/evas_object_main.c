@@ -1471,7 +1471,7 @@ _efl_canvas_object_efl_gfx_hint_hint_size_restricted_max_set(Eo *eo_obj, Evas_Ob
         if (!sz.w && !sz.h) return;
         _evas_object_size_hint_alloc(eo_obj, obj);
      }
-   if ((obj->size_hints->max.w == sz.w) && (obj->size_hints->max.h == sz.h)) return;
+   if (EINA_SIZE2D_EQ(obj->size_hints->max, sz)) return;
    obj->size_hints->max = sz;
    if ((obj->size_hints->max.w != -1) && (obj->size_hints->max.w < obj->size_hints->min.w))
      ERR("restricted max width hint is now smaller than restricted min width hint! (%d < %d)", obj->size_hints->max.w, obj->size_hints->min.w);
@@ -1502,7 +1502,7 @@ _efl_canvas_object_efl_gfx_hint_hint_size_restricted_min_set(Eo *eo_obj, Evas_Ob
         if (!sz.w && !sz.h) return;
         _evas_object_size_hint_alloc(eo_obj, obj);
      }
-   if ((obj->size_hints->min.w == sz.w) && (obj->size_hints->min.h == sz.h)) return;
+   if (EINA_SIZE2D_EQ(obj->size_hints->min, sz)) return;
    obj->size_hints->min = sz;
    if ((obj->size_hints->max.w != -1) && (obj->size_hints->max.w < obj->size_hints->min.w))
      ERR("restricted max width hint is now smaller than restricted min width hint! (%d < %d)", obj->size_hints->max.w, obj->size_hints->min.w);
@@ -1588,7 +1588,7 @@ _efl_canvas_object_efl_gfx_hint_hint_size_max_set(Eo *eo_obj, Evas_Object_Protec
         if ((sz.w == -1) && (sz.h == -1)) return;
         _evas_object_size_hint_alloc(eo_obj, obj);
      }
-   if ((obj->size_hints->user_max.w == sz.w) && (obj->size_hints->user_max.h == sz.h)) return;
+   if (EINA_SIZE2D_EQ(obj->size_hints->user_max, sz)) return;
    obj->size_hints->user_max.w = sz.w;
    obj->size_hints->user_max.h = sz.h;
 
@@ -1652,7 +1652,7 @@ _efl_canvas_object_efl_gfx_hint_hint_size_min_set(Eo *eo_obj, Evas_Object_Protec
         if (!sz.w && !sz.h) return;
         _evas_object_size_hint_alloc(eo_obj, obj);
      }
-   if ((obj->size_hints->user_min.w == sz.w) && (obj->size_hints->user_min.h == sz.h)) return;
+   if (EINA_SIZE2D_EQ(obj->size_hints->user_min, sz)) return;
    obj->size_hints->user_min = sz;
    evas_object_inform_call_changed_size_hints(eo_obj, obj);
 }
