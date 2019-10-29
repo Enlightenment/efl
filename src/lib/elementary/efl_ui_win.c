@@ -8887,7 +8887,6 @@ _elm_win_legacy_init(Efl_Ui_Win_Data *sd)
    else
      edje_object_part_swallow(sd->legacy.edje, "efl.contents", sd->legacy.box);
 
-   evas_object_geometry_set(sd->legacy.edje, 0, 0, 1, 1);
    if (sd->type != EFL_UI_WIN_TYPE_FAKE)
      {
         edje_object_update_hints_set(sd->legacy.edje, EINA_TRUE);
