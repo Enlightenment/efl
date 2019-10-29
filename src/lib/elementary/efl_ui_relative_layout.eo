@@ -1,3 +1,4 @@
+import efl_gfx_types;
 class @beta Efl.Ui.Relative_Layout extends Efl.Ui.Widget implements Efl.Pack_Layout, Efl.Pack
 {
    [[The relative layout class.
@@ -13,8 +14,8 @@ class @beta Efl.Ui.Relative_Layout extends Efl.Ui.Widget implements Efl.Pack_Lay
          }
          values {
             target: Efl.Gfx.Entity; [[The relative target.]]
-            relative: double; [[The ratio between left and right of the target,
-                                ranging from 0.0 to 1.0.]]
+            relative: Efl.Gfx.Align; [[The ratio between left and right of the target,
+                                       ranging from 0.0 to 1.0.]]
          }
       }
       @property relation_right {
@@ -25,8 +26,8 @@ class @beta Efl.Ui.Relative_Layout extends Efl.Ui.Widget implements Efl.Pack_Lay
          }
          values {
             target: Efl.Gfx.Entity; [[The relative target.]]
-            relative: double; [[The ratio between left and right of the target,
-                                ranging from 0.0 to 1.0.]]
+            relative: Efl.Gfx.Align; [[The ratio between left and right of the target,
+                                       ranging from 0.0 to 1.0.]]
          }
       }
       @property relation_top {
@@ -37,8 +38,8 @@ class @beta Efl.Ui.Relative_Layout extends Efl.Ui.Widget implements Efl.Pack_Lay
          }
          values {
             target: Efl.Gfx.Entity; [[The relative target.]]
-            relative: double; [[The ratio between top and bottom of the target,
-                                ranging from 0.0 to 1.0.]]
+            relative: Efl.Gfx.Align; [[The ratio between top and bottom of the target,
+                                       ranging from 0.0 to 1.0.]]
          }
       }
       @property relation_bottom {
@@ -49,8 +50,8 @@ class @beta Efl.Ui.Relative_Layout extends Efl.Ui.Widget implements Efl.Pack_Lay
          }
          values {
             target: Efl.Gfx.Entity; [[The relative target.]]
-            relative: double; [[The ratio between top and bottom of the target,
-                                ranging from 0.0 to 1.0.]]
+            relative: Efl.Gfx.Align; [[The ratio between top and bottom of the target,
+                                       ranging from 0.0 to 1.0.]]
          }
       }
    }
