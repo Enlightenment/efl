@@ -66,7 +66,7 @@ struct function_pointer {
           return false;
       // "Internal" delegate, 1-to-1 with the Unamaged function type
       if (!as_generator(marshall_annotation(true)
-                  << "public delegate " << marshall_type(true) << " " << string // public?
+                  << "internal delegate " << marshall_type(true) << " " << string // public?
                   << "Internal(IntPtr data" << *grammar::attribute_reorder<-1, -1>((", " << marshall_annotation << " " << marshall_parameter)) << ");\n")
               .generate(sink, std::make_tuple(f.return_type, f.return_type, f_name, f.parameters), funcptr_ctx))
           return false;
