@@ -21,42 +21,42 @@ using System.Collections.Generic;
 
 ///<summary>Eo class description, passed to efl_class_new.</summary>
 [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-public struct ClassDescription
+internal struct ClassDescription
 {
     ///<summary>Current Eo version.</summary>
-    public uint version;
+    internal uint version;
     ///<summary>Name of the class.</summary>
-    [MarshalAs(UnmanagedType.LPStr)] public String name;
+    [MarshalAs(UnmanagedType.LPStr)] internal String name;
     ///<summary>Class type.</summary>
-    public int class_type;
+    internal int class_type;
     ///<summary>Size of data (private + protected + public) per instance.</summary>
-    public UIntPtr data_size;
+    internal UIntPtr data_size;
     ///<summary>Initializer for the class.</summary>
-    public IntPtr class_initializer;
+    internal IntPtr class_initializer;
     ///<summary>Constructor of the class.</summary>
-    public IntPtr class_constructor;
+    internal IntPtr class_constructor;
     ///<summary>Destructor of the class.</summary>
-    public IntPtr class_destructor;
+    internal IntPtr class_destructor;
 }
 
 ///<summary>Description of an Eo API operation.</summary>
 [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-public struct EflOpDescription
+internal struct EflOpDescription
 {
     ///<summary>The EAPI function offering this op. (String with the name of the function on Windows)</summary>
-    public IntPtr api_func;
+    internal IntPtr api_func;
     ///<summary>The static function to be called for this op</summary>
-    public IntPtr func;
+    internal IntPtr func;
 }
 
 ///<summary>List of operations on a given Object.</summary>
 [StructLayout(LayoutKind.Sequential, CharSet=CharSet.Ansi)]
-public struct EflObjectOps
+internal struct EflObjectOps
 {
     ///<summary>The op descriptions array of size count.</summary>
-    public IntPtr descs;
+    internal IntPtr descs;
     ///<summary>Number of op descriptions.</summary>
-    public UIntPtr count;
+    internal UIntPtr count;
 };
 
 namespace Efl
@@ -195,7 +195,7 @@ public struct Event
 }
 
 public delegate void EventCb(System.IntPtr data, ref Event.NativeStruct evt);
-public delegate void FreeWrapperSupervisorCb(System.IntPtr obj);
+internal delegate void FreeWrapperSupervisorCb(System.IntPtr obj);
 
 [StructLayout(LayoutKind.Sequential)]
 public struct TextCursorCursor
