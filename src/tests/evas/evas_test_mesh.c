@@ -92,7 +92,7 @@ static int _compare_meshes(Evas_Canvas3D_Mesh *mesh1, Evas_Canvas3D_Mesh *mesh2)
 }
 
 static void
-check_meshes_in_folder(Eina_Tmpstr *tmp, const char *folder, const char *ext)
+check_meshes_in_folder(Eina_Tmpstr *tmp, const char *folder, const char *loadext, const char *ext)
 {
    char buffer[PATH_MAX];
    Evas *e = _setup_evas();
@@ -108,6 +108,8 @@ check_meshes_in_folder(Eina_Tmpstr *tmp, const char *folder, const char *ext)
         const Eina_File *f_get = NULL;
         const char *filename = NULL;
         const char *key = NULL;
+        if (file->path[file->name_start] == '.') continue; //some hidden git file or whatever
+        if (!eina_str_has_extension(file->path + file->name_start, loadext)) continue; //some other file
         mesh = efl_add(EVAS_CANVAS3D_MESH_CLASS, e);
         mesh2 = efl_add(EVAS_CANVAS3D_MESH_CLASS, e);
         fail_if(mesh == NULL);
@@ -156,13 +158,14 @@ EFL_START_TEST(evas_object_mesh_loader_saver)
    struct
    {
       const char *dir;
-      const char *fmt;
+      const char *loadfmt;
+      const char *savefmt;
    } values[4] =
    {
-     { TESTS_OBJ_MESH_DIR, ".eet" },
-     { TESTS_MD2_MESH_DIR, ".eet" },
-     { TESTS_PLY_MESH_DIR, ".eet" },
-     { TESTS_PLY_MESH_DIR, ".ply" },
+     { TESTS_OBJ_MESH_DIR, ".obj", ".eet" },
+     { TESTS_MD2_MESH_DIR, ".md2", ".eet" },
+     { TESTS_PLY_MESH_DIR, ".ply", ".eet" },
+     { TESTS_PLY_MESH_DIR, ".ply", ".ply" },
    };
 
    /* create tmp file name, assume tmp.eet and tmp.ply also work */
@@ -170,7 +173,7 @@ EFL_START_TEST(evas_object_mesh_loader_saver)
    fail_if(tmpfd == -1);
    fail_if(!!close(tmpfd));
 
-   check_meshes_in_folder(tmp, values[_i].dir, values[_i].fmt);
+   check_meshes_in_folder(tmp, values[_i].dir, values[_i].loadfmt, values[_i].savefmt);
 
    unlink(tmp);
 
