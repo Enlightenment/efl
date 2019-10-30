@@ -38,9 +38,8 @@ _efl_canvas_animation_repeat_mode_set(Eo *eo_obj EINA_UNUSED,
                                Efl_Canvas_Animation_Data *pd,
                                Efl_Canvas_Animation_Repeat_Mode mode)
 {
-   if ((mode == EFL_CANVAS_ANIMATION_REPEAT_MODE_RESTART) ||
-       (mode == EFL_CANVAS_ANIMATION_REPEAT_MODE_REVERSE))
-     pd->repeat_mode = mode;
+   EINA_SAFETY_ON_FALSE_RETURN(mode >= 0 && mode < EFL_CANVAS_ANIMATION_REPEAT_MODE_LAST);
+   pd->repeat_mode = mode;
 }
 
 EOLIAN static Efl_Canvas_Animation_Repeat_Mode
@@ -54,8 +53,7 @@ _efl_canvas_animation_repeat_count_set(Eo *eo_obj EINA_UNUSED,
                                 Efl_Canvas_Animation_Data *pd,
                                 int count)
 {
-   //EFL_ANIMATION_REPEAT_INFINITE repeats animation infinitely
-   if ((count < 0) && (count != EFL_ANIMATION_REPEAT_INFINITE)) return;
+   EINA_SAFETY_ON_FALSE_RETURN(count >= EFL_ANIMATION_REPEAT_INFINITE);
 
    pd->repeat_count = count;
 }
@@ -71,7 +69,7 @@ _efl_canvas_animation_start_delay_set(Eo *eo_obj EINA_UNUSED,
                                Efl_Canvas_Animation_Data *pd,
                                double sec)
 {
-   if (sec < 0.0) return;
+   EINA_SAFETY_ON_FALSE_RETURN(sec < 0.0);
 
    pd->start_delay_time = sec;
 }

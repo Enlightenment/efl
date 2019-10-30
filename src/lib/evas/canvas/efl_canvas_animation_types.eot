@@ -8,5 +8,6 @@ enum @beta Efl.Canvas.Animation_Repeat_Mode
    [[Animation repeat mode]]
 
    restart = 0, [[Restart animation when the animation ends.]]
-   reverse      [[Reverse animation when the animation ends.]]
+   reverse = 1, [[Reverse animation when the animation ends.]]
+   last
 }
