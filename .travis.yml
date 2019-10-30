@@ -140,14 +140,3 @@ before_cache:
          mv $HOME/Library/Caches/Homebrew $HOME/cachedir/Homebrew
        fi
 
-notifications:
-  irc:
-    channels:
-      - "chat.freenode.net#edevelop"
-    on_success: change
-    on_failure: always
-    template:
-      - "TravisCI build %{build_number} in branch %{branch}: %{result} - %{message} (%{elapsed_time})"
-      - "Commit: %{commit_subject} (%{commit}) from %{author}"
-      - "Change view : %{compare_url}"
-      - "Build details : %{build_url}"
