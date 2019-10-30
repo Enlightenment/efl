@@ -511,10 +511,6 @@ struct klass
    template <typename OutputIterator, typename Context>
    bool generate_fields(OutputIterator sink, attributes::klass_def const& cls, Context const& context) const
    {
-     std::string visibility = is_inherit_context(context) ? "protected " : "private ";
-
-     std::string class_getter = name_helpers::klass_get_name(cls) + "()";
-     std::string native_inherit_full_name = name_helpers::klass_full_native_inherit_name(cls);
      auto inherit_name = name_helpers::klass_concrete_name(cls);
 
      if(!as_generator(
