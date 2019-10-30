@@ -1,4 +1,5 @@
 import efl_canvas_animation_types;
+parse efl_canvas_animation_player;
 
 class @beta Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
 {
@@ -10,12 +11,25 @@ class @beta Efl.Canvas.Animation extends Efl.Object implements Efl.Playable
      evolves from $[0] to $[1].
 
      For example implementations see @Efl.Canvas.Animation_Translate or @Efl.Canvas.Animation_Scale.
+
+     Note: Unless @.final_state_keep is used, when an animation finishes any effect it introduced on the object is
+     removed. This means that if the animation does not end in the object's initial state there will be a noticeable
+     sudden jump.
+     To avoid this, animations must finish in the same state as they begin, or the object's state must be
+     matched to the animation's ending state once the animation finishes (using the @[Efl.Canvas.Animation_Player.ended]
+     event).
    ]]
    c_prefix: efl_animation;
    methods {
       @property final_state_keep {
          [[If $true the last mapping state the animation applies will be kept.
-           Otherwise all the @Efl.Gfx.Mapping properties will be reset when the animation ends.]]
+           Otherwise all the @Efl.Gfx.Mapping properties will be reset when the animation ends.
+
+           Be careful, though. Object properties like @Efl.Gfx.Entity.position do not take
+           animations into account so they might not match the actual rendered values.
+           It is usually better to remove the effects of the animation as soon as it finishes
+           and set the final values on the object's properties.
+         ]]
          set {
          }
          get {
