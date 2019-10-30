@@ -11,10 +11,8 @@ class @beta Efl.Canvas.Animation_Translate extends Efl.Canvas.Animation
          get {
          }
          values {
-            from_x: int; [[Distance moved along x axis when animation starts]]
-            from_y: int; [[Distance moved along y axis when animation starts]]
-            to_x: int; [[Distance moved along x axis when animation ends]]
-            to_y: int; [[Distance moved along y axis when animation ends]]
+            from : Eina.Position2D; [[Position moved when animation starts.]]
+            to : Eina.Position2D; [[Position moved when animation ends.]]
          }
       }
       @property translate_absolute {
@@ -24,10 +22,8 @@ class @beta Efl.Canvas.Animation_Translate extends Efl.Canvas.Animation
          get {
          }
          values {
-            from_x: int; [[X coordinate when animation starts]]
-            from_y: int; [[Y coordinate when animation starts]]
-            to_x: int; [[X coordinate when animation ends]]
-            to_y: int; [[Y coordinate when animation ends]]
+            from : Eina.Position2D; [[The position where the animation starts.]]
+            to : Eina.Position2D; [[The position where the animation stops.]]
          }
       }
    }
