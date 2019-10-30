@@ -32,7 +32,7 @@ namespace Eina
 {
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public enum ElementType
+enum ElementType
 {
     NumericType,
     StringType,
@@ -42,7 +42,7 @@ public enum ElementType
 
 [EditorBrowsable(EditorBrowsableState.Never)]
 [StructLayout(LayoutKind.Sequential)]
-public struct InlistMem
+struct InlistMem
 {
     public IntPtr next {get;set;}
     public IntPtr prev {get;set;}
@@ -51,14 +51,14 @@ public struct InlistMem
 
 [EditorBrowsable(EditorBrowsableState.Never)]
 [StructLayout(LayoutKind.Sequential)]
-public struct InlistNode<T>
+struct InlistNode<T>
 {
     public InlistMem __in_list {get;set;}
     public T Val {get;set;}
 }
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public interface IBaseElementTraits<T>
+interface IBaseElementTraits<T>
 {
     IntPtr ManagedToNativeAlloc(T man);
     IntPtr ManagedToNativeAllocInlistNode(T man);
@@ -79,7 +79,7 @@ public interface IBaseElementTraits<T>
 }
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public class StringElementTraits : IBaseElementTraits<string>
+class StringElementTraits : IBaseElementTraits<string>
 {
     public StringElementTraits()
     {
@@ -218,7 +218,7 @@ public class StringElementTraits : IBaseElementTraits<string>
 }
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public class StringshareElementTraits : IBaseElementTraits<Eina.Stringshare>
+class StringshareElementTraits : IBaseElementTraits<Eina.Stringshare>
 {
     public StringshareElementTraits()
     {
@@ -358,7 +358,7 @@ public class StringshareElementTraits : IBaseElementTraits<Eina.Stringshare>
 }
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public class EflObjectElementTraits<T> : IBaseElementTraits<T>
+class EflObjectElementTraits<T> : IBaseElementTraits<T>
 {
     public IntPtr ManagedToNativeAlloc(T man)
     {
@@ -516,7 +516,7 @@ public class EflObjectElementTraits<T> : IBaseElementTraits<T>
 }
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public abstract class PrimitiveElementTraits<T>
+abstract class PrimitiveElementTraits<T>
 {
     private Eina.Callbacks.EinaCompareCb dlgt = null;
 
@@ -618,7 +618,7 @@ public abstract class PrimitiveElementTraits<T>
 }
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-abstract public class Primitive32ElementTraits<T> : PrimitiveElementTraits<T>, IBaseElementTraits<T>
+abstract class Primitive32ElementTraits<T> : PrimitiveElementTraits<T>, IBaseElementTraits<T>
 {
     private static IBaseElementTraits<Int32> int32Traits = null;
 
@@ -657,7 +657,7 @@ abstract public class Primitive32ElementTraits<T> : PrimitiveElementTraits<T>, I
 }
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-abstract public class Primitive64ElementTraits<T> : PrimitiveElementTraits<T>, IBaseElementTraits<T>
+abstract class Primitive64ElementTraits<T> : PrimitiveElementTraits<T>, IBaseElementTraits<T>
 {
     private static IBaseElementTraits<Int64> int64Traits = null;
 
@@ -696,7 +696,7 @@ abstract public class Primitive64ElementTraits<T> : PrimitiveElementTraits<T>, I
 }
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public class IntElementTraits : Primitive32ElementTraits<int>, IBaseElementTraits<int>
+class IntElementTraits : Primitive32ElementTraits<int>, IBaseElementTraits<int>
 {
     override public void ManagedToNativeCopyTo(int man, IntPtr mem)
     {
@@ -721,7 +721,7 @@ public class IntElementTraits : Primitive32ElementTraits<int>, IBaseElementTrait
 }
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public class CharElementTraits : Primitive32ElementTraits<char>, IBaseElementTraits<char>
+class CharElementTraits : Primitive32ElementTraits<char>, IBaseElementTraits<char>
 {
     override public void ManagedToNativeCopyTo(char man, IntPtr mem)
     {
@@ -746,7 +746,7 @@ public class CharElementTraits : Primitive32ElementTraits<char>, IBaseElementTra
 }
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public class LongElementTraits : Primitive64ElementTraits<long>, IBaseElementTraits<long>
+class LongElementTraits : Primitive64ElementTraits<long>, IBaseElementTraits<long>
 {
     override public void ManagedToNativeCopyTo(long man, IntPtr mem)
     {
@@ -771,7 +771,7 @@ public class LongElementTraits : Primitive64ElementTraits<long>, IBaseElementTra
 }
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public class ShortElementTraits : Primitive32ElementTraits<short>, IBaseElementTraits<short>
+class ShortElementTraits : Primitive32ElementTraits<short>, IBaseElementTraits<short>
 {
     override public void ManagedToNativeCopyTo(short man, IntPtr mem)
     {
@@ -796,7 +796,7 @@ public class ShortElementTraits : Primitive32ElementTraits<short>, IBaseElementT
 }
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public class FloatElementTraits : Primitive32ElementTraits<float>, IBaseElementTraits<float>
+class FloatElementTraits : Primitive32ElementTraits<float>, IBaseElementTraits<float>
 {
     override public void ManagedToNativeCopyTo(float man, IntPtr mem)
     {
@@ -821,7 +821,7 @@ public class FloatElementTraits : Primitive32ElementTraits<float>, IBaseElementT
 }
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public class DoubleElementTraits : Primitive64ElementTraits<double>, IBaseElementTraits<double>
+class DoubleElementTraits : Primitive64ElementTraits<double>, IBaseElementTraits<double>
 {
     override public void ManagedToNativeCopyTo(double man, IntPtr mem)
     {
@@ -846,7 +846,7 @@ public class DoubleElementTraits : Primitive64ElementTraits<double>, IBaseElemen
 }
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public class ByteElementTraits : Primitive32ElementTraits<byte>, IBaseElementTraits<byte>
+class ByteElementTraits : Primitive32ElementTraits<byte>, IBaseElementTraits<byte>
 {
     override public void ManagedToNativeCopyTo(byte man, IntPtr mem)
     {
@@ -871,7 +871,7 @@ public class ByteElementTraits : Primitive32ElementTraits<byte>, IBaseElementTra
 }
 
 [EditorBrowsable(EditorBrowsableState.Never)]
-public static class TraitFunctions
+static class TraitFunctions
 {
     public static bool IsEflObject(System.Type type)
     {

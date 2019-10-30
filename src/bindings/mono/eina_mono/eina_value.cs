@@ -58,7 +58,7 @@ struct Value_List
 
 [SuppressUnmanagedCodeSecurityAttribute]
 [EditorBrowsable(EditorBrowsableState.Never)]
-static internal class UnsafeNativeMethods
+static class UnsafeNativeMethods
 {
     [DllImport(efl.Libs.Eina)]
     internal static extern IntPtr eina_value_new(IntPtr type);

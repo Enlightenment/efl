@@ -25,7 +25,7 @@ namespace Eina
 namespace EinaNative
 {
 
-static internal class StrbufNativeMethods
+static class StrbufNativeMethods
 {
     [DllImport(efl.Libs.Eina)]
     internal static extern IntPtr eina_strbuf_new();

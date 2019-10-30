@@ -419,7 +419,7 @@ public class Future
 /// <summary>Custom marshaler to convert between managed and native <see cref="Eina.Future"/>.
 /// Internal usage in generated code.</summary>
 [EditorBrowsable(EditorBrowsableState.Never)]
-public class FutureMarshaler : ICustomMarshaler
+class FutureMarshaler : ICustomMarshaler
 {
 
     ///<summary>Wrap the native future with a managed wrapper.</summary>
