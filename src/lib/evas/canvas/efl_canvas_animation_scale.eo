@@ -11,16 +11,11 @@ class @beta Efl.Canvas.Animation_Scale extends Efl.Canvas.Animation
          get {
          }
          values {
-            from_scale_x: double; [[Scale factor along x axis when animation starts]]
-            from_scale_y: double; [[Scale factor along y axis when animation starts]]
-            to_scale_x: double; [[Scale factor along x axis when animation ends]]
-            to_scale_y: double; [[Scale factor along y axis when animation ends]]
+            from_scale : Eina.Vector2; [[Scale factor  when animation starts]]
+            to_scale : Eina.Vector2; [[Scale factor when animation ends]]
             pivot: Efl.Canvas.Object; [[Pivot object for the center point. If the pivot object is $NULL, then the object
                                         is scaled on itself.]]
-            cx: double; [[X relative coordinate of the center point. The left end is 0.0 and the right end is 1.0
-                          (the center is 0.5).]]
-            cy: double; [[Y relative coordinate of the center point. The top end is 0.0 and the bottom end is 1.0
-                          (the center is 0.5).]]
+            pivot_pos : Eina.Vector2; [[Relative coordinates of the center point. 0.0,0.0 is upper left.]]
          }
       }
       @property scale_absolute {
@@ -30,12 +25,9 @@ class @beta Efl.Canvas.Animation_Scale extends Efl.Canvas.Animation
          get {
          }
          values {
-            from_scale_x: double; [[Scale factor along x axis when animation starts]]
-            from_scale_y: double; [[Scale factor along y axis when animation starts]]
-            to_scale_x: double; [[Scale factor along x axis when animation ends]]
-            to_scale_y: double; [[Scale factor along y axis when animation ends]]
-            cx: int; [[X absolute coordinate of the center point.]]
-            cy: int; [[Y absolute coordinate of the center point.]]
+            from_scale : Eina.Vector2; [[Scale factor  when animation starts]]
+            to_scale : Eina.Vector2; [[Scale factor when animation ends]]
+            pos : Eina.Position2D; [[Absolut coordinates in canvas space]]
          }
       }
    }

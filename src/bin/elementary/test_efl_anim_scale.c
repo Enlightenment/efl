@@ -84,13 +84,13 @@ test_efl_anim_scale(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSED, void *
 
    //Scale Animation to zoom in
    Efl_Canvas_Animation *scale_double_anim = efl_add(EFL_CANVAS_ANIMATION_SCALE_CLASS, win);
-   efl_animation_scale_set(scale_double_anim, 1.0, 1.0, 2.0, 2.0, NULL, 0.5, 0.5);
+   efl_animation_scale_set(scale_double_anim, EINA_VECTOR2(1.0, 1.0), EINA_VECTOR2(2.0, 2.0), NULL, EINA_VECTOR2(0.5, 0.5));
    efl_animation_duration_set(scale_double_anim, 1.0);
    efl_animation_final_state_keep_set(scale_double_anim, EINA_TRUE);
 
    //Scale Animation to zoom out
    Efl_Canvas_Animation *scale_half_anim = efl_add(EFL_CANVAS_ANIMATION_SCALE_CLASS, win);
-   efl_animation_scale_set(scale_half_anim, 2.0, 2.0, 1.0, 1.0, NULL, 0.5, 0.5);
+   efl_animation_scale_set(scale_half_anim, EINA_VECTOR2(2.0, 2.0), EINA_VECTOR2(1.0, 1.0), NULL, EINA_VECTOR2(0.5, 0.5));
    efl_animation_duration_set(scale_half_anim, 1.0);
    efl_animation_final_state_keep_set(scale_half_anim, EINA_TRUE);
 
@@ -153,13 +153,13 @@ test_efl_anim_scale_relative(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 
    //Scale Animation to zoom in
    Efl_Canvas_Animation *scale_double_anim = efl_add(EFL_CANVAS_ANIMATION_SCALE_CLASS, win);
-   efl_animation_scale_set(scale_double_anim, 1.0, 1.0, 2.0, 2.0, pivot, 0.5, 0.5);
+   efl_animation_scale_set(scale_double_anim, EINA_VECTOR2(1.0, 1.0), EINA_VECTOR2(2.0, 2.0), pivot, EINA_VECTOR2(0.5, 0.5));
    efl_animation_duration_set(scale_double_anim, 1.0);
    efl_animation_final_state_keep_set(scale_double_anim, EINA_TRUE);
 
    //Scale Animation to zoom out
    Efl_Canvas_Animation *scale_half_anim = efl_add(EFL_CANVAS_ANIMATION_SCALE_CLASS, win);
-   efl_animation_scale_set(scale_half_anim, 2.0, 2.0, 1.0, 1.0, pivot, 0.5, 0.5);
+   efl_animation_scale_set(scale_half_anim, EINA_VECTOR2(2.0, 2.0), EINA_VECTOR2(1.0, 1.0), pivot, EINA_VECTOR2(0.5, 0.5));
    efl_animation_duration_set(scale_half_anim, 1.0);
    efl_animation_final_state_keep_set(scale_half_anim, EINA_TRUE);
 
@@ -219,13 +219,13 @@ test_efl_anim_scale_absolute(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 
    //Scale Animation to zoom in
    Efl_Canvas_Animation *scale_double_anim = efl_add(EFL_CANVAS_ANIMATION_SCALE_CLASS, win);
-   efl_animation_scale_absolute_set(scale_double_anim, 1.0, 1.0, 2.0, 2.0, 0, 0);
+   efl_animation_scale_absolute_set(scale_double_anim, EINA_VECTOR2(1.0, 1.0), EINA_VECTOR2(2.0, 2.0), EINA_POSITION2D(0, 0));
    efl_animation_duration_set(scale_double_anim, 1.0);
    efl_animation_final_state_keep_set(scale_double_anim, EINA_TRUE);
 
    //Scale Animation to zoom out
    Efl_Canvas_Animation *scale_half_anim = efl_add(EFL_CANVAS_ANIMATION_SCALE_CLASS, win);
-   efl_animation_scale_absolute_set(scale_half_anim, 2.0, 2.0, 1.0, 1.0, 0, 0);
+   efl_animation_scale_absolute_set(scale_half_anim, EINA_VECTOR2(2.0, 2.0), EINA_VECTOR2(1.0, 1.0), EINA_POSITION2D(0, 0));
    efl_animation_duration_set(scale_half_anim, 1.0);
    efl_animation_final_state_keep_set(scale_half_anim, EINA_TRUE);
 

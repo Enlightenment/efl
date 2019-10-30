@@ -94,7 +94,7 @@ test_efl_anim_group_parallel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 
    //Scale Animation to zoom out
    Efl_Canvas_Animation *scale_half_anim = efl_add(EFL_CANVAS_ANIMATION_SCALE_CLASS, win);
-   efl_animation_scale_set(scale_half_anim, 2.0, 2.0, 1.0, 1.0, NULL, 0.5, 0.5);
+   efl_animation_scale_set(scale_half_anim, EINA_VECTOR2(2.0, 2.0), EINA_VECTOR2(1.0, 1.0), NULL, EINA_VECTOR2(0.5, 0.5));
 
    //Show Parallel Group Animation
    Efl_Canvas_Animation *parallel_show_anim = efl_add(EFL_CANVAS_ANIMATION_GROUP_PARALLEL_CLASS, win);
@@ -117,7 +117,7 @@ test_efl_anim_group_parallel(void *data EINA_UNUSED, Evas_Object *obj EINA_UNUSE
 
    //Scale Animation to zoom in
    Efl_Canvas_Animation *scale_double_anim = efl_add(EFL_CANVAS_ANIMATION_SCALE_CLASS, win);
-   efl_animation_scale_set(scale_double_anim, 1.0, 1.0, 2.0, 2.0, NULL, 0.5, 0.5);
+   efl_animation_scale_set(scale_double_anim, EINA_VECTOR2(1.0, 1.0), EINA_VECTOR2(2.0, 2.0), NULL, EINA_VECTOR2(0.5, 0.5));
 
    //Hide Parallel Group Animation
    Efl_Canvas_Animation *parallel_hide_anim = efl_add(EFL_CANVAS_ANIMATION_GROUP_PARALLEL_CLASS, win);

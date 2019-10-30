@@ -90,7 +90,7 @@ test_efl_anim_group_sequential(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
 
    //Scale Animation to zoom in
    Efl_Canvas_Animation *scale_double_anim = efl_add(EFL_CANVAS_ANIMATION_SCALE_CLASS, win);
-   efl_animation_scale_set(scale_double_anim, 1.0, 1.0, 2.0, 2.0, NULL, 0.5, 0.5);
+   efl_animation_scale_set(scale_double_anim, EINA_VECTOR2(1.0, 1.0), EINA_VECTOR2(2.0, 2.0), NULL, EINA_VECTOR2(0.5, 0.5));
 
    //Hide Animation
    Efl_Canvas_Animation *hide_anim = efl_add(EFL_CANVAS_ANIMATION_ALPHA_CLASS, win);
@@ -115,7 +115,7 @@ test_efl_anim_group_sequential(void *data EINA_UNUSED, Evas_Object *obj EINA_UNU
 
    //Scale Animation to zoom out
    Efl_Canvas_Animation *scale_half_anim = efl_add(EFL_CANVAS_ANIMATION_SCALE_CLASS, win);
-   efl_animation_scale_set(scale_half_anim, 2.0, 2.0, 1.0, 1.0, NULL, 0.5, 0.5);
+   efl_animation_scale_set(scale_half_anim, EINA_VECTOR2(2.0, 2.0), EINA_VECTOR2(1.0, 1.0), NULL, EINA_VECTOR2(0.5, 0.5));
    efl_animation_duration_set(scale_half_anim, 1.0);
 
    //Rotate from 45 to 0 degrees Animation
